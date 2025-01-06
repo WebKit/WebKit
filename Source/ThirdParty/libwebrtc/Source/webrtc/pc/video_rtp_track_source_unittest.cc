@@ -10,7 +10,8 @@
 
 #include "pc/video_rtp_track_source.h"
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/scoped_refptr.h"
 #include "api/units/timestamp.h"
 #include "api/video/color_space.h"
@@ -109,12 +110,12 @@ TEST(VideoRtpTrackSourceTest, NoCallbacksAfterClearedCallback) {
 
 class TestFrame : public RecordableEncodedFrame {
  public:
-  rtc::scoped_refptr<const webrtc::EncodedImageBufferInterface> encoded_buffer()
+  rtc::scoped_refptr<const EncodedImageBufferInterface> encoded_buffer()
       const override {
     return nullptr;
   }
-  absl::optional<webrtc::ColorSpace> color_space() const override {
-    return absl::nullopt;
+  std::optional<ColorSpace> color_space() const override {
+    return std::nullopt;
   }
   VideoCodecType codec() const override { return kVideoCodecGeneric; }
   bool is_key_frame() const override { return false; }

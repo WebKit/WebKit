@@ -53,6 +53,7 @@ public:
     FloatRect visualRectIgnoringBlockDirection() const { return box().visualRectIgnoringBlockDirection(); }
 
     inline bool isHorizontal() const;
+    inline WritingMode writingMode() const;
     bool isLineBreak() const { return box().isLineBreak(); }
 
     unsigned minimumCaretOffset() const { return isText() ? start() : 0; }
@@ -126,7 +127,7 @@ public:
         ASSERT(box().isTextOrSoftLineBreak());
     }
 
-    void traverseNextOnLine()
+    void traverseNextLeafOnLine()
     {
         ASSERT(!atEnd());
 
@@ -138,7 +139,7 @@ public:
             setAtEnd();
     }
 
-    void traversePreviousOnLine()
+    void traversePreviousLeafOnLine()
     {
         ASSERT(!atEnd());
 
@@ -180,6 +181,33 @@ public:
         ASSERT(box().isInlineBox());
     }
 
+    void traverseNextBoxOnLine()
+    {
+        auto lineIndex = box().lineIndex();
+
+        traverseNextBox();
+
+        if (!atEnd() && lineIndex != box().lineIndex())
+            setAtEnd();
+    }
+
+    void traverseNextBoxOnLineSkippingChildren()
+    {
+        auto lineIndex = box().lineIndex();
+        bool wasInlineBox = box().isInlineBox();
+        auto& startBox = box().layoutBox();
+
+        traverseNextBox();
+
+        if (wasInlineBox) {
+            while (!atEnd() && isWithinInlineBox(startBox))
+                traverseNextBox();
+        }
+
+        if (!atEnd() && lineIndex != box().lineIndex())
+            setAtEnd();
+    }
+
     BoxModernPath firstLeafBoxForInlineBox() const
     {
         ASSERT(box().isInlineBox());
@@ -188,7 +216,7 @@ public:
 
         // The next box is the first descendant of this box;
         auto first = *this;
-        first.traverseNextOnLine();
+        first.traverseNextLeafOnLine();
 
         if (!first.atEnd() && !first.isWithinInlineBox(inlineBox))
             first.setAtEnd();
@@ -204,7 +232,7 @@ public:
 
         // FIXME: Get the last box index directly from the display box.
         auto last = firstLeafBoxForInlineBox();
-        for (auto box = last; !box.atEnd() && box.isWithinInlineBox(inlineBox); box.traverseNextOnLine())
+        for (auto box = last; !box.atEnd() && box.isWithinInlineBox(inlineBox); box.traverseNextLeafOnLine())
             last = box;
 
         return last;
@@ -234,19 +262,27 @@ public:
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
     bool isFirstLine() const { return !box().lineIndex(); }
 
+    const Vector<SVGTextFragment>& svgTextFragments() const
+    {
+        return m_inlineContent->svgTextFragments(m_boxIndex);
+    }
+
     friend bool operator==(const BoxModernPath&, const BoxModernPath&) = default;
 
     bool atEnd() const { return !m_inlineContent || m_boxIndex == boxes().size(); }
     const InlineDisplay::Box& box() const { return boxes()[m_boxIndex]; }
     auto& inlineContent() const { return *m_inlineContent; }
 
+    size_t boxIndex() const { return m_boxIndex; }
+
 private:
     bool isWithinInlineBox(const Layout::Box& inlineBox)
     {
-        auto* layoutBox = &box().layoutBox().parent();
-        for (; layoutBox->isInlineBox(); layoutBox = &layoutBox->parent()) {
+        for (auto* layoutBox = &box().layoutBox().parent();; layoutBox = &layoutBox->parent()) {
             if (layoutBox == &inlineBox)
                 return true;
+            if (!layoutBox->isInlineBox())
+                return false;
         }
         return false;
     }

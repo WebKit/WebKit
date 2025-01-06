@@ -485,3 +485,140 @@ typedef NS_ENUM(NSInteger, AVPlayerControllerTimeControlStatus) {
 NS_ASSUME_NONNULL_END
 
 #endif // PLATFORM(APPLETV)
+
+#if HAVE(AVKIT_CONTENT_SOURCE)
+
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <AVKit/AVMediaSource.h>
+
+#else
+
+@class CALayer;
+@class AVInterstitialTimeRange;
+
+typedef struct REEntity *REEntityRef;
+
+NS_ASSUME_NONNULL_BEGIN
+
+@protocol AVMediaPlaybackSource <NSObject>
+
+@property (nonatomic, readonly) double rate;
+@property (nonatomic, readonly) BOOL canTogglePlayback;
+@property (nonatomic, readonly) BOOL isLoading;
+@property (nonatomic, readonly) BOOL canSeek;
+@property (nonatomic, readonly) BOOL isSeeking;
+@property (nonatomic, readonly) BOOL canScanForward;
+@property (nonatomic, readonly) BOOL canScanBackward;
+@property (nonatomic, readonly) BOOL requiresLinearPlayback;
+@property (nonatomic, readonly) BOOL hasLiveStreamContent;
+@property (nonatomic, readonly, nullable) NSError *playbackError;
+- (void)play;
+- (void)pause;
+- (void)seekTo:(double)time;
+- (void)beginScanningForward;
+- (void)endScanningForward;
+- (void)beginScanningBackward;
+- (void)endScanningBackward;
+
+@end
+
+@protocol AVMediaTimelineSource <NSObject>
+
+@property (nonatomic, readonly) float minValue;
+@property (nonatomic, readonly) float maxValue;
+@property (nonatomic, readonly) float currentValue;
+
+@optional
+
+@property (nonatomic, readonly, nullable) NSArray<NSValue *> *seekableTimeRanges;
+- (void)beginScrubbing;
+- (void)endScrubbing;
+
+@end
+
+@protocol AVListable <NSObject>
+
+@property (nonatomic, readonly) NSString *localizedTitle;
+
+@end
+
+@protocol AVMediaAudioAndCaptionSource <NSObject>
+
+@property (nonatomic, readonly, nullable) id<AVListable> currentAudioOption;
+@property (nonatomic, readonly, nullable) NSArray<AVListable> *audioOptions;
+- (void)updateCurrentAudioOption:(id<AVListable>)currentAudioOption;
+@property (nonatomic, readonly, nullable) id<AVListable> currentCaptionOption;
+@property (nonatomic, readonly, nullable) NSArray<AVListable> *captionOptions;
+- (void)updateCurrentCaptionOption:(id<AVListable>)currentCaptionOption;
+@property (nonatomic, readonly, nullable) CALayer *captionLayer;
+- (void)setCaptionContentInsets:(UIEdgeInsets)insets;
+
+@end
+
+@protocol AVMediaVolumeSource <NSObject>
+
+@property (nonatomic, readonly) BOOL hasAudio;
+@property (nonatomic, readonly) BOOL muted;
+@property (nonatomic, readonly) double volume;
+- (void)updateVolume:(double)volume;
+- (void)updateMuted:(BOOL)muted;
+
+@optional
+
+- (void)beginChangingVolume;
+- (void)endChangingVolume;
+
+@end
+
+@protocol AVMediaContainerSource <NSObject>
+
+@property (nonatomic, readonly, nullable) CALayer *videoLayer;
+#if PLATFORM(VISION)
+@property (nonatomic, readonly, nullable) REEntityRef entityRef;
+#endif
+@property (nonatomic, readonly) CGSize videoSize;
+
+@end
+
+@protocol AVMediaThumbnailSource <NSObject>
+@end
+
+@protocol AVMediaInterstitialSource <NSObject>
+
+@property (nonatomic, readonly, nullable) NSArray<AVInterstitialTimeRange *> *interstitialTimeRanges;
+@property (nonatomic, readonly) BOOL isInterstitialActive;
+- (void)skipActiveInterstitial;
+
+@end
+
+@protocol AVMediaMetadataSource <NSObject>
+
+@property (nonatomic, readonly, nullable) NSString *title;
+@property (nonatomic, readonly, nullable) NSString *subtitle;
+
+@optional
+
+@property (nonatomic, readonly, nullable) NSDate *approximateStartDate;
+@property (nonatomic, readonly, nullable) NSDate *approximateEndDate;
+@property (nonatomic, readonly, nullable) NSDate *exactStartDate;
+@property (nonatomic, readonly, nullable) NSDate *exactEndDate;
+
+@end
+
+@protocol AVMediaSource <
+    AVMediaTimelineSource,
+    AVMediaPlaybackSource,
+    AVMediaAudioAndCaptionSource,
+    AVMediaVolumeSource,
+    AVMediaContainerSource,
+    AVMediaThumbnailSource,
+    AVMediaMetadataSource
+>
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#endif // HAVE(AVKIT_CONTENT_SOURCE)

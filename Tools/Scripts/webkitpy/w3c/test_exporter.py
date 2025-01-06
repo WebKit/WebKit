@@ -28,7 +28,6 @@ import argparse
 import logging
 import os
 import json
-import sys
 
 from webkitcorepy import string_utils
 
@@ -41,10 +40,7 @@ from webkitpy.w3c.wpt_linter import WPTLinter
 from webkitpy.w3c.common import WPT_GH_ORG, WPT_GH_REPO_NAME, WPT_GH_URL, WPTPaths
 from webkitpy.common.memoized import memoized
 
-if sys.version_info > (3, 0):
-    from urllib.error import HTTPError
-else:
-    from urllib2 import HTTPError
+from urllib.error import HTTPError
 
 _log = logging.getLogger(__name__)
 
@@ -52,7 +48,7 @@ WEBKIT_WPT_DIR = 'LayoutTests/imported/w3c/web-platform-tests'
 WPT_PR_URL = "%s/pull/" % WPT_GH_URL
 WEBKIT_EXPORT_PR_LABEL = 'webkit-export'
 
-EXCLUDED_FILE_SUFFIXES = ['-expected.txt', '-expected.html', '-expected-mismatch.html', '.worker.html', '.any.html', '.any.worker.html', 'w3c-import.log']
+EXCLUDED_FILE_SUFFIXES = ['-expected.txt', '-expected.html', '-expected-mismatch.html', '.worker.html', '.any.html', '.any.worker.html', '.any.serviceworker.html', '.any.sharedworker.html', 'w3c-import.log']
 
 
 class WebPlatformTestExporter(object):
@@ -345,10 +341,13 @@ class WebPlatformTestExporter(object):
             _log.info('Error creating a pull request on github. Please ensure that the provided github token has the "public_repo" scope.')
         return pr_number
 
-    def delete_local_branch(self):
-        _log.info('Removing local branch ' + self._branch_name)
-        self._git.checkout('master')
-        self._git.delete_branch(self._branch_name)
+    def delete_local_branch(self, *, is_success=True):
+        if self._options.clean and (is_success or self._options.clean_on_failure):
+            _log.info('Removing local branch ' + self._branch_name)
+            self._git.checkout('master')
+            self._git.delete_branch(self._branch_name)
+        else:
+            _log.info('Keeping local branch ' + self._branch_name)
 
     def create_upload_remote_if_needed(self):
         if not self._wpt_fork_remote in self._git.remote([]):
@@ -365,29 +364,31 @@ class WebPlatformTestExporter(object):
         self.clean()
 
         if not self.create_branch_with_patch(git_patch_file):
-            _log.error("Cannot create web-platform-tests local branch from the patch")
-            self.delete_local_branch()
+            _log.error("Cannot create web-platform-tests local branch from the patch %r", git_patch_file)
+            self.delete_local_branch(is_success=False)
             return
 
-        if git_patch_file:
+        if git_patch_file and self.clean:
             self._filesystem.remove(git_patch_file)
 
         if self._options.use_linter:
             lint_errors = self._linter.lint()
             if lint_errors:
                 _log.error("The wpt linter detected %s linting error(s). Please address the above errors before attempting to export changes to the web-platform-test repository." % (lint_errors,))
-                self.delete_local_branch()
-                self.clean()
+                self.delete_local_branch(is_success=False)
                 return
 
         try:
             if self.push_to_wpt_fork():
                 if self._options.create_pull_request:
                     self.make_pull_request()
+        except Exception:
+            self.delete_local_branch(is_success=False)
+            raise
+        else:
+            self.delete_local_branch(is_success=True)
         finally:
-            self.delete_local_branch()
             _log.info("Finished")
-            self.clean()
 
 
 def parse_args(args):
@@ -408,8 +409,8 @@ def parse_args(args):
     - As a dry run, one can start by running the script without -c. This will only create the branch on the user public GitHub repository.
     - By default, the script will create an https remote URL that will require a password-based authentication to GitHub. If you are using an SSH key, please use the --remote-url option.
     FIXME:
-    - The script is not yet able to update an existing pull request
-    - Need a way to monitor the progress of the pul request so that status of all pending pull requests can be done at import time.
+    - The script is not yet able to update an existing pull request.
+    - Need a way to monitor the progress of the pull request so that status of all pending pull requests can be done at import time.
     """ % {"wpt_name": WPT_GH_REPO_NAME, "wpt_url": WPT_GH_URL}
     parser = argparse.ArgumentParser(prog='export-w3c-test-changes ...', description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
 
@@ -426,6 +427,8 @@ def parse_args(args):
     parser.add_argument('-c', '--create-pr', dest='create_pull_request', action='store_true', default=False, help='create pull request to w3c web-platform-tests')
     parser.add_argument('--non-interactive', action='store_true', dest='non_interactive', default=False, help='Never prompt the user, fail as fast as possible.')
     parser.add_argument('--no-linter', action='store_false', dest='use_linter', default=True, help='Disable linter.')
+    parser.add_argument('--no-clean', action='store_false', dest='clean', help='Do not clean up.')
+    parser.add_argument('--clean-on-failure', action='store_true', dest='clean_on_failure', help='Do not clean up on failure.')
 
     options, args = parser.parse_known_args(args)
 

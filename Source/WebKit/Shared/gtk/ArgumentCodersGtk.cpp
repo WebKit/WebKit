@@ -27,7 +27,6 @@
 #include "ArgumentCodersGtk.h"
 
 #include "ArgumentCodersGLib.h"
-#include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Image.h>
 #include <WebCore/SelectionData.h>

@@ -1,7 +1,6 @@
 // Feature test to avoid timeouts
 function assert_permissions_policy_supported() {
-  assert_not_equals(document.featurePolicy, undefined,
-                    'permissions policy is supported');
+  assert_true("allow" in HTMLIFrameElement.prototype, 'permissions policy is supported');
 }
 // Tests whether a feature that is enabled/disabled by permissions policy works
 // as expected.
@@ -31,9 +30,9 @@ function assert_permissions_policy_supported() {
 //    promise. Used by test_feature_availability_with_post_message_result()
 function test_feature_availability(
     feature_descriptionOrObject, test, src, expect_feature_available, feature_name,
-    allowfullscreen, is_promise_test = false) {
+    allowfullscreen, is_promise_test = false, needs_focus = false) {
 
-  if (typeof feature_descriptionOrObject === "object") {
+  if (feature_descriptionOrObject && feature_descriptionOrObject instanceof Object) {
     const {
       feature_description,
       test,
@@ -42,6 +41,7 @@ function test_feature_availability(
       feature_name,
       allowfullscreen,
       is_promise_test,
+      needs_focus,
     } = feature_descriptionOrObject;
     return test_feature_availability(
       feature_description,
@@ -50,12 +50,12 @@ function test_feature_availability(
       expect_feature_available,
       feature_name,
       allowfullscreen,
-      is_promise_test
+      is_promise_test,
+      needs_focus,
     );
   }
 
   const feature_description = feature_descriptionOrObject;
-
   let frame = document.createElement('iframe');
   frame.src = src;
 
@@ -86,6 +86,9 @@ function test_feature_availability(
                     window.addEventListener('message', resolve);
                   }).then(expectFeatureAvailable);
   document.body.appendChild(frame);
+  if (needs_focus) {
+    frame.focus();
+  }
   return promise;
 }
 

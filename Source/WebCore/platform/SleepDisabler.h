@@ -28,11 +28,12 @@
 #include "PageIdentifier.h"
 #include "SleepDisablerIdentifier.h"
 #include <pal/system/SleepDisabler.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SleepDisabler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SleepDisabler, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT SleepDisabler(const String&, PAL::SleepDisabler::Type, std::optional<PageIdentifier>);
     WEBCORE_EXPORT ~SleepDisabler();
@@ -41,7 +42,7 @@ public:
 
 private:
     std::unique_ptr<PAL::SleepDisabler> m_platformSleepDisabler;
-    SleepDisablerIdentifier m_identifier;
+    Markable<SleepDisablerIdentifier> m_identifier;
     PAL::SleepDisabler::Type m_type;
     std::optional<PageIdentifier> m_pageID;
 };

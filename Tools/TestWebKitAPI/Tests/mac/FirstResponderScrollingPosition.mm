@@ -62,7 +62,7 @@ TEST(WebKit, DISABLED_FirstResponderScrollingPosition)
     PlatformWebView webView(configuration.get());
 
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
     loaderClient.base.version = 0;
     loaderClient.didFinishNavigation = didFinishNavigation;
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);

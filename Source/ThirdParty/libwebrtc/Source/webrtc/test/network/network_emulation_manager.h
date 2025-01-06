@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/field_trials_view.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/test/simulated_network.h"
 #include "api/test/time_controller.h"
@@ -36,9 +37,7 @@ namespace test {
 
 class NetworkEmulationManagerImpl : public NetworkEmulationManager {
  public:
-  NetworkEmulationManagerImpl(
-      TimeMode mode,
-      EmulatedNetworkStatsGatheringMode stats_gathering_mode);
+  explicit NetworkEmulationManagerImpl(NetworkEmulationManagerConfig config);
   ~NetworkEmulationManagerImpl();
 
   EmulatedNetworkNode* CreateEmulatedNode(BuiltInNetworkBehaviorConfig config,
@@ -100,12 +99,13 @@ class NetworkEmulationManagerImpl : public NetworkEmulationManager {
   using CrossTrafficSource =
       std::pair<std::unique_ptr<CrossTrafficGenerator>, RepeatingTaskHandle>;
 
-  absl::optional<rtc::IPAddress> GetNextIPv4Address();
+  std::optional<rtc::IPAddress> GetNextIPv4Address();
 
   const TimeMode time_mode_;
   const EmulatedNetworkStatsGatheringMode stats_gathering_mode_;
   const std::unique_ptr<TimeController> time_controller_;
   Clock* const clock_;
+  const bool fake_dtls_handshake_sizes_;
   int next_node_id_;
 
   RepeatingTaskHandle process_task_handle_;

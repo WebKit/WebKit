@@ -78,6 +78,7 @@ enum class WebKit::AllowsCellularAccess : bool;
     String webPushPartitionString;
     bool enablePrivateClickMeasurementDebugMode;
     bool isBlobRegistryTopOriginPartitioningEnabled;
+    bool isOptInCookiePartitioningEnabled;
     bool shouldSendPrivateTokenIPCForTesting;
 
     WebKit::UnifiedOriginStorageLevel unifiedOriginStorageLevel;
@@ -107,3 +108,7 @@ enum class WebKit::AllowsCellularAccess : bool;
 #endif
     WebKit::ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 };
+
+#if USE(SOUP)
+enum class WebKit::SoupCookiePersistentStorageType : bool
+#endif

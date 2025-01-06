@@ -42,7 +42,7 @@
 #include <wtf/SafeStrerror.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(LINUX_MEMFD_H)
@@ -51,6 +51,12 @@
 #endif
 
 namespace WebCore {
+
+SharedMemoryHandle::SharedMemoryHandle(const SharedMemoryHandle& handle)
+{
+    m_handle = handle.m_handle.duplicate();
+    m_size = handle.m_size;
+}
 
 UnixFileDescriptor SharedMemoryHandle::releaseHandle()
 {

@@ -65,11 +65,12 @@ class DtlsTransportInternal : public rtc::PacketTransportInternal {
   virtual bool GetSslVersionBytes(int* version) const = 0;
   // Finds out which DTLS-SRTP cipher was negotiated.
   // TODO(zhihuang): Remove this once all dependencies implement this.
-  virtual bool GetSrtpCryptoSuite(int* cipher) = 0;
+  virtual bool GetSrtpCryptoSuite(int* cipher) const = 0;
 
   // Finds out which DTLS cipher was negotiated.
   // TODO(zhihuang): Remove this once all dependencies implement this.
-  virtual bool GetSslCipherSuite(int* cipher) = 0;
+  virtual bool GetSslCipherSuite(int* cipher) const = 0;
+  virtual std::optional<absl::string_view> GetTlsCipherSuiteName() const = 0;
 
   // Find out which signature algorithm was used by the peer. Returns values
   // from
@@ -88,12 +89,8 @@ class DtlsTransportInternal : public rtc::PacketTransportInternal {
   virtual std::unique_ptr<rtc::SSLCertChain> GetRemoteSSLCertChain() const = 0;
 
   // Allows key material to be extracted for external encryption.
-  virtual bool ExportKeyingMaterial(absl::string_view label,
-                                    const uint8_t* context,
-                                    size_t context_len,
-                                    bool use_context,
-                                    uint8_t* result,
-                                    size_t result_len) = 0;
+  virtual bool ExportSrtpKeyingMaterial(
+      rtc::ZeroOnFreeBuffer<uint8_t>& keying_material) = 0;
 
   // Set DTLS remote fingerprint. Must be after local identity set.
   ABSL_DEPRECATED("Use SetRemoteParameters instead.")
@@ -106,7 +103,7 @@ class DtlsTransportInternal : public rtc::PacketTransportInternal {
       absl::string_view digest_alg,
       const uint8_t* digest,
       size_t digest_len,
-      absl::optional<rtc::SSLRole> role) = 0;
+      std::optional<rtc::SSLRole> role) = 0;
 
   ABSL_DEPRECATED("Set the max version via construction.")
   bool SetSslMaxProtocolVersion(rtc::SSLProtocolVersion version) {

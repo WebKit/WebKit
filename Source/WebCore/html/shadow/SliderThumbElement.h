@@ -41,7 +41,8 @@ class HTMLInputElement;
 class TouchEvent;
 
 class SliderThumbElement final : public HTMLDivElement {
-    WTF_MAKE_ISO_ALLOCATED(SliderThumbElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SliderThumbElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SliderThumbElement);
 public:
     static Ref<SliderThumbElement> create(Document&);
 
@@ -60,7 +61,7 @@ private:
     explicit SliderThumbElement(Document&);
     bool isSliderThumbElement() const final { return true; }
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(TreeScope&) final;
     bool isDisabledFormControl() const final;
     bool matchesReadWritePseudoClass() const final;
 
@@ -106,7 +107,8 @@ private:
 // --------------------------------
 
 class SliderContainerElement final : public HTMLDivElement {
-    WTF_MAKE_ISO_ALLOCATED(SliderContainerElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SliderContainerElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SliderContainerElement);
 public:
     static Ref<SliderContainerElement> create(Document&);
 

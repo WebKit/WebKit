@@ -33,6 +33,7 @@ enum TestEnumInStandaloneDictionaryFile { "enumValue1", "enumValue2" };
     Conditional=Condition1,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary TestStandaloneDictionary {
     boolean boolMember;
     DOMString stringMember;

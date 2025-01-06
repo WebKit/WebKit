@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT history.story should be nulled by navigate() handled by intercept() Test timed out
+PASS history.story should be nulled by navigate() handled by intercept()
 

@@ -59,7 +59,6 @@ partial interface TestGlobalObject {
     [Conditional=Condition1|Condition2] attribute TestSerializedScriptValueInterfaceConstructor TestSerializedScriptValueInterface;
     attribute TestSetLikeConstructor TestSetLike;
     attribute TestSetLikeWithOverriddenOperationsConstructor TestSetLikeWithOverriddenOperations;
-    attribute TestStringContextConstructor TestStringContext;
     attribute TestStringifierConstructor TestStringifier;
     attribute TestStringifierAnonymousOperationConstructor TestStringifierAnonymousOperation;
     attribute TestStringifierNamedOperationConstructor TestStringifierNamedOperation;

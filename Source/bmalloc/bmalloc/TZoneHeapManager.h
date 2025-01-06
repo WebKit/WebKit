@@ -30,9 +30,10 @@
 
 #if BUSE(TZONE)
 
-#include "IsoConfig.h"
 #include "Map.h"
 #include "Mutex.h"
+#include "SegmentedVector.h"
+#include "TZoneHeap.h"
 #include <CommonCrypto/CommonDigest.h>
 #include <mutex>
 
@@ -41,25 +42,21 @@
 
 namespace bmalloc { namespace api {
 
+#define TZONE_VERBOSE_DEBUG 0
+
+extern BEXPORT class TZoneHeapManager* tzoneHeapManager;
+
 class TZoneHeapManager {
-    enum State {
+    enum class State {
         Uninitialized,
         Seeded,
-        RegisteringTypes,
-        TypesRegistered
+        StartedRegisteringTypes
     };
 
     static const unsigned typeNameLen = 12;
 
     typedef uint64_t SHA256ResultAsUnsigned[CC_SHA256_DIGEST_LENGTH / sizeof(uint64_t)];
     static_assert(!(CC_SHA256_DIGEST_LENGTH % sizeof(uint64_t)));
-
-    struct TZoneHeapRandomizeKey {
-        unsigned char seed[CC_SHA1_DIGEST_LENGTH];
-        bmalloc_type* classType;
-        unsigned sizeOfType;
-        unsigned alignmentOfType;
-    };
 
     struct TZoneBucket {
         bmalloc_type type;
@@ -69,42 +66,50 @@ class TZoneHeapManager {
 
     struct TZoneTypeBuckets {
         unsigned numberOfBuckets;
-        unsigned unusedSpaceFiller;
-        TZoneBucket buckets[0];
+#if TZONE_VERBOSE_DEBUG
+        unsigned numberOfTypesThisSizeClass;
+        unsigned usedBucketBitmap;
+        Vector<unsigned> bucketUseCounts;
+#endif
+        TZoneBucket buckets[1];
     };
 
-#define SIZE_TZONE_TYPE_BUCKETS(count) (sizeof(struct TZoneTypeBuckets) + count * sizeof(TZoneBucket))
+// TZoneTypeBuckets already includes room for 1 bucket. Hence, we only need to add count - 1 buckets.
+#define SIZE_TZONE_TYPE_BUCKETS(count) (sizeof(struct TZoneTypeBuckets) + (count - 1) * sizeof(TZoneBucket))
 
-    struct SizeAndAlign {
-        SizeAndAlign()
+    struct TZoneTypeKey {
+        TZoneTypeKey() = default;
+        TZoneTypeKey(void* address, unsigned size, unsigned alignment)
+            : address(address)
+            , size(size)
+            , alignment(alignment)
         {
-            m_value.key = 0;
+            m_key = reinterpret_cast<uintptr_t>(address) << 12 ^ size << 3 ^ alignment >> 3;
         }
 
-        SizeAndAlign(unsigned size, unsigned alignment)
+        inline unsigned long key() const { return m_key; }
+
+        static unsigned long hash(TZoneTypeKey value)
         {
-            m_value.u.size = size;
-            m_value.u.alignment = alignment;
+            return value.m_key;
         }
 
-        SizeAndAlign(const bmalloc_type* type)
+        bool operator==(const TZoneTypeKey& other) const
         {
-            m_value.u.size = type->size;
-            m_value.u.alignment = type->alignment;
+            return address == other.address
+                && size == other.size
+                && alignment == other.alignment;
         }
 
-        inline unsigned size() const { return m_value.u.size; }
-        inline unsigned alignment() const { return m_value.u.alignment; }
-        inline unsigned long key() const { return m_value.key; }
-
-        static unsigned long hash(SizeAndAlign value)
+        bool operator<(const TZoneTypeKey& other) const
         {
-            return value.key() >> 4;
-        }
+            if (address != other.address)
+                return address < other.address;
 
-        bool operator==(const SizeAndAlign& other) const
-        {
-            return key() == other.key();
+            if (size != other.size)
+                return size < other.size;
+
+            return alignment < other.alignment;
         }
 
         operator bool() const
@@ -112,109 +117,85 @@ class TZoneHeapManager {
             return !!key();
         }
 
-        union {
-            struct {
-                unsigned alignment;
-                unsigned size;
-            } u;
-            unsigned long key;
-        } m_value;
+        void* address = nullptr;
+        unsigned size = 0;
+        unsigned alignment = 0;
+        uintptr_t m_key = 0;
     };
 
 protected:
-    TZoneHeapManager()
-        : m_state(TZoneHeapManager::Uninitialized)
-    {
-        initTypenameTemplate();
-    }
+    TZoneHeapManager();
 
 public:
     TZoneHeapManager(TZoneHeapManager &other) = delete;
     void operator=(const TZoneHeapManager &) = delete;
 
-    BEXPORT void init(const char* seed);
+    BEXPORT static void setBucketParams(unsigned smallSizeCount, unsigned largeSizeCount = 0, unsigned smallSizeLimit = 0);
 
-    BEXPORT bool isReady();
+    BEXPORT static bool isReady();
 
-    BINLINE static TZoneHeapManager& getInstance()
+    BEXPORT static void ensureSingleton();
+    BINLINE static TZoneHeapManager& singleton()
     {
-        if (!theTZoneHeapManager)
-            ensureInstance();
-        BASSERT(theTZoneHeapManager);
-        return *theTZoneHeapManager;
+        BASSERT(tzoneHeapManager);
+        return *tzoneHeapManager;
     }
 
-    BEXPORT void registerTZoneTypes(const bmalloc_type* start, const bmalloc_type* end);
-    BEXPORT void closeRegistration();
-    BEXPORT pas_heap_ref* heapRefForTZoneType(bmalloc_type* classType);
+    static void setHasDisableTZoneEntitlementCallback(bool (*hasDisableTZoneEntitlement)());
 
+#if BUSE_TZONE_PREINITIALIZATION
+    void preInitializeHeapRefs(const TZoneSpecification* start, const TZoneSpecification* end);
+#endif
+
+    pas_heap_ref* heapRefForIsoFallback(const TZoneSpecification&);
+    pas_heap_ref* heapRefForTZoneType(const TZoneSpecification&);
+    pas_heap_ref* heapRefForTZoneTypeDifferentSize(size_t requestedSize, const TZoneSpecification&);
+
+    BEXPORT void dumpRegisteredTypes();
+
+    enum class AllocationMode {
+        TZoneEnabled,
+        TZoneDisabled,
+    };
+
+    static bool s_tzoneEnabled;
 private:
-    BEXPORT static void ensureInstance();
+    struct IsoFallbackRecord {
+        bmalloc_type typeDescriptor;
+        pas_heap_ref heapRef;
+    };
 
-    void initTypenameTemplate();
+    void init();
 
     BINLINE Mutex& mutex() { return m_mutex; }
+    BINLINE Mutex& differentSizeMutex() { return m_differentSizeMutex; }
 
-    BINLINE unsigned bucketCountForTypeCount(unsigned typeCount)
-    {
-        BASSERT(typeCount);
+    BINLINE pas_heap_ref* heapRefForTZoneType(const TZoneSpecification&, LockHolder&);
 
-        // Returns number of buckets for the typeCount.
-        // The goal here is to have a sufficient number of buckets to to provide enough randomness without an adverse impact on memory use.
-        if (typeCount == 1)
-            return 1;
-        if (typeCount <= 4)
-            return 2;
-        if (typeCount <= 9)
-            return 3;
-        if (typeCount <= 19)
-            return 4;
+    inline static unsigned bucketCountForSizeClass(SizeAndAlignment::Value);
 
-        return 5;
-    }
+    inline unsigned tzoneBucketForKey(const TZoneSpecification&, unsigned bucketCountForSize, LockHolder&);
+    TZoneTypeBuckets* populateBucketsForSizeClass(LockHolder&, SizeAndAlignment::Value);
 
-    BINLINE unsigned tzoneBucketForKey(UniqueLockHolder&, bmalloc_type* type, unsigned bucketCountForSize)
-    {
-        SHA256ResultAsUnsigned sha256Result;
-
-        m_tzoneKey.classType = type;
-        m_tzoneKey.sizeOfType = type->size;
-        m_tzoneKey.alignmentOfType = type->alignment;
-
-        (void)CC_SHA256(&m_tzoneKey, sizeof(TZoneHeapRandomizeKey), (unsigned char*)&sha256Result);
-
-        return sha256Result[3] % bucketCountForSize;
-    }
-
-    TZoneTypeBuckets* populateBucketsForSizeClass(UniqueLockHolder&, SizeAndAlign);
-
-    BEXPORT static TZoneHeapManager* theTZoneHeapManager;
-
-    TZoneHeapManager::State m_state;
+    static TZoneHeapManager::State m_state;
     Mutex m_mutex;
-    unsigned registeredTypeCount { 0 };
-    unsigned largestSizeClassCount { 0 };
-    TZoneHeapRandomizeKey m_tzoneKey;
-    SizeAndAlign largestSizeClass;
-    Map<SizeAndAlign, unsigned, SizeAndAlign> m_typeCountBySizeAndAlignment;
-    Vector<SizeAndAlign> m_typeSizes;
-    Map<SizeAndAlign, TZoneTypeBuckets*, SizeAndAlign> m_heapRefsBySizeAndAlignment;
+    Mutex m_differentSizeMutex;
+    uint64_t m_tzoneKeySeed;
+#if TZONE_VERBOSE_DEBUG
+    unsigned largestBucketCount { 0 };
+    Vector<SizeAndAlignment::Value> m_typeSizes;
+#endif
+    Map<SizeAndAlignment::Value, TZoneTypeBuckets*, SizeAndAlignment> m_heapRefsBySizeAndAlignment;
+    Map<TZoneTypeKey, pas_heap_ref*, TZoneTypeKey> m_differentSizedHeapRefs;
+    SegmentedVector<bmalloc_type, 16> m_isoTypeDescriptors;
+    SegmentedVector<pas_heap_ref, 16> m_isoHeapRefs;
 };
 
-#define BTZONE_INIT(seed) bmalloc::api::TZoneHeapManager::getInstance().init(seed)
-#define BTZONE_REGISTER_TYPES(begin, end) bmalloc::api::TZoneHeapManager::getInstance().registerTZoneTypes(begin, end)
-#define BTZONE_REGISTRATION_DONE() bmalloc::api::TZoneHeapManager::getInstance().closeRegistration()
-#define BTZONE_IS_READY() bmalloc::api::TZoneHeapManager::getInstance().isReady()
+void tzoneFreeFast(void*);
+void tzoneFreeWithDebugMalloc(void*);
 
 } } // namespace bmalloc::api
 
-#else // BUSE(LIBPAS) -> so !BUSE(LIBPAS)
-
-#define BTZONE_INIT(seed)
-#define BTZONE_REGISTER_TYPES(begin, end)
-#define BTZONE_REGISTRATION_DONE()
-#define BTZONE_IS_READY() true
-
-#endif // BUSE(LIBPAS) -> so end of !BUSE(LIBPAS)
+#endif // BUSE(LIBPAS)
 
 #endif // BUSE(TZONE)

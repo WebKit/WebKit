@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -101,6 +101,8 @@ bool ReadTemporalUnit(InputContext *ctx, size_t *unit_size) {
   return true;
 }
 
+void CloseFile(FILE *stream) { fclose(stream); }
+
 }  // namespace
 
 int main(int argc, const char *argv[]) {
@@ -112,8 +114,8 @@ int main(int argc, const char *argv[]) {
 
   const std::string filename = argv[1];
 
-  using FilePtr = std::unique_ptr<FILE, decltype(&fclose)>;
-  FilePtr input_file(fopen(filename.c_str(), "rb"), &fclose);
+  using FilePtr = std::unique_ptr<FILE, decltype(&CloseFile)>;
+  FilePtr input_file(fopen(filename.c_str(), "rb"), &CloseFile);
   if (input_file.get() == nullptr) {
     input_file.release();
     fprintf(stderr, "Error: Cannot open input file.\n");

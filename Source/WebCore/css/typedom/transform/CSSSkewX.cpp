@@ -36,11 +36,11 @@
 #include "CSSStyleValueFactory.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSSkewX);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSSkewX);
 
 ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(Ref<CSSNumericValue> ax)
 {
@@ -49,19 +49,19 @@ ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(Ref<CSSNumericValue> ax)
     return adoptRef(*new CSSSkewX(WTFMove(ax)));
 }
 
-ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(CSSFunctionValue& cssFunctionValue)
+ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(Ref<const CSSFunctionValue> cssFunctionValue)
 {
-    if (cssFunctionValue.name() != CSSValueSkewX) {
+    if (cssFunctionValue->name() != CSSValueSkewX) {
         ASSERT_NOT_REACHED();
-        return CSSSkewX::create(CSSNumericFactory::deg(0));
+        return CSSSkewX::create(Ref<CSSNumericValue>(CSSNumericFactory::deg(0)));
     }
 
-    if (cssFunctionValue.size() != 1 || !cssFunctionValue.item(0)) {
+    if (cssFunctionValue->size() != 1 || !cssFunctionValue->item(0)) {
         ASSERT_NOT_REACHED();
         return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
     }
 
-    auto valueOrException = CSSStyleValueFactory::reifyValue(*cssFunctionValue.item(0), std::nullopt);
+    auto valueOrException = CSSStyleValueFactory::reifyValue(*cssFunctionValue->item(0), std::nullopt);
     if (valueOrException.hasException())
         return valueOrException.releaseException();
     RefPtr numericValue = dynamicDowncast<CSSNumericValue>(valueOrException.releaseReturnValue());

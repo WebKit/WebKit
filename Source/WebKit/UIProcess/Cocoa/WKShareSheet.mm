@@ -26,17 +26,18 @@
 #import "config.h"
 #import <WebKit/WKShareSheet.h>
 
-#if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if HAVE(SHARE_SHEET_UI)
 
 #import "PickerDismissalReason.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/NSURLUtilities.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ShareData.h>
 #import <pal/spi/mac/QuarantineSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/Scope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/UUID.h>
@@ -47,10 +48,88 @@
 #import "UIKitSPI.h"
 #import "UIKitUtilities.h"
 #import "WKContentViewInteraction.h"
-#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
-#import <pal/cocoa/LinkPresentationSoftLink.h>
 #else
+#import "AppKitSPI.h"
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
+#endif
+
+#import <pal/cocoa/LinkPresentationSoftLink.h>
+
+static NSString *typeIdentifierForFileURL(NSURL *url)
+{
+    NSString *typeIdentifier = nil;
+    [url getPromisedItemResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:nil];
+
+    if (typeIdentifier)
+        return typeIdentifier;
+
+    if (NSString *pathExtension = [url pathExtension]) {
+        if (UTType *type = [UTType typeWithFilenameExtension:pathExtension])
+            return type.identifier;
+    }
+
+    return UTTypeData.identifier;
+}
+
+static RetainPtr<LPLinkMetadata> placeholderMetadataWithURLAndTitle(NSURL *url, NSString *title)
+{
+    RetainPtr metadata = adoptNS([PAL::allocLPLinkMetadataInstance() init]);
+    [metadata setOriginalURL:url];
+    [metadata setURL:url];
+    [metadata setTitle:title];
+    [metadata _setIncomplete:YES];
+    return metadata;
+}
+
+#if PLATFORM(MAC)
+
+static uint64_t sizeForFileURL(NSURL *url)
+{
+    NSNumber *size = 0;
+    [url getResourceValue:&size forKey:NSURLFileSizeKey error:nil];
+
+    if (size)
+        return [size unsignedLongLongValue];
+
+    return 0;
+}
+
+static NSString *nameForFileURLWithTypeIdentifier(NSURL *url, NSString *typeIdentifier)
+{
+    BOOL isFolder = [typeIdentifier isEqualToString:UTTypeFolder.identifier];
+
+    NSDictionary<NSURLResourceKey, id> *itemResources = [url promisedItemResourceValuesForKeys:@[ NSURLHasHiddenExtensionKey, NSURLLocalizedNameKey ] error:nil];
+    if (NSString *localizedName = [itemResources objectForKey:NSURLLocalizedNameKey]) {
+        if (!isFolder) {
+            if (NSNumber *hasHiddenExtension = [itemResources objectForKey:NSURLHasHiddenExtensionKey]) {
+                if (![hasHiddenExtension boolValue])
+                    localizedName = localizedName.stringByDeletingPathExtension;
+            }
+        }
+
+        return localizedName;
+    }
+
+    return [[NSFileManager defaultManager] displayNameAtPath:url.path];
+}
+
+static RetainPtr<LPLinkMetadata> placeholderMetadataWithFileURL(NSURL *url)
+{
+    RetainPtr metadata = adoptNS([PAL::allocLPLinkMetadataInstance() init]);
+    [metadata setOriginalURL:url];
+    [metadata setURL:url];
+
+    NSString *typeIdentifier = typeIdentifierForFileURL(url);
+
+    RetainPtr fileMetadata = adoptNS([PAL::allocLPFileMetadataInstance() init]);
+    [fileMetadata setType:typeIdentifier];
+    [fileMetadata setName:nameForFileURLWithTypeIdentifier(url, typeIdentifier)];
+    [fileMetadata setSize:sizeForFileURL(url)];
+    [metadata setSpecialization:fileMetadata.get()];
+
+    return metadata;
+}
+
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -86,18 +165,7 @@
 
 - (NSString *)activityViewController:(UIActivityViewController *)activityViewController dataTypeIdentifierForActivityType:(UIActivityType)activityType
 {
-    NSString *typeIdentifier = nil;
-    [_url getPromisedItemResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:nil];
-
-    if (typeIdentifier)
-        return typeIdentifier;
-
-    if (NSString *pathExtension = [_url pathExtension]) {
-        if (UTType *type = [UTType typeWithFilenameExtension:pathExtension])
-            return type.identifier;
-    }
-
-    return UTTypeData.identifier;
+    return typeIdentifierForFileURL(_url.get());
 }
 
 - (LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController
@@ -121,12 +189,7 @@
     if (!(self = [super initWithPlaceholderItem:url]))
         return nil;
 
-    _metadata = adoptNS([PAL::allocLPLinkMetadataInstance() init]);
-    [_metadata setOriginalURL:url];
-    [_metadata setURL:url];
-    [_metadata setTitle:title];
-
-    [_metadata _setIncomplete:YES];
+    _metadata = placeholderMetadataWithURLAndTitle(url, title);
 
     _url = url;
 
@@ -212,15 +275,15 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 
             if (usePlaceholderFiles) {
 #if PLATFORM(IOS_FAMILY)
-                RetainPtr itemProvider = adoptNS([[WKShareSheetFileItemProvider alloc] initWithURL:fileURL]);
-                if (!itemProvider) {
+                RetainPtr item = adoptNS([[WKShareSheetFileItemProvider alloc] initWithURL:fileURL]);
+#else
+                RetainPtr item = adoptNS([[NSPreviewRepresentingActivityItem alloc] initWithItem:fileURL linkMetadata:placeholderMetadataWithFileURL(fileURL).get()]);
+#endif
+                if (!item) {
                     shareDataArray = nil;
                     break;
                 }
-                [shareDataArray addObject:itemProvider.get()];
-#else
-                RELEASE_ASSERT_NOT_REACHED();
-#endif
+                [shareDataArray addObject:item.get()];
             } else
                 [shareDataArray addObject:fileURL];
         }
@@ -239,24 +302,24 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     
     if (data.url) {
         NSURL *url = (NSURL *)data.url.value();
-#if PLATFORM(IOS_FAMILY)
         NSString *title = nil;
         if (!data.shareData.title.isEmpty())
             title = data.shareData.title;
 
         if (data.originator == WebCore::ShareDataOriginator::Web) {
-            auto itemProvider = adoptNS([[WKShareSheetURLItemProvider alloc] initWithURL:url title:title]);
-            if (itemProvider)
-                [shareDataArray addObject:itemProvider.get()];
+#if PLATFORM(IOS_FAMILY)
+            auto item = adoptNS([[WKShareSheetURLItemProvider alloc] initWithURL:url title:title]);
+#else
+            auto item = adoptNS([[NSPreviewRepresentingActivityItem alloc] initWithItem:url linkMetadata:placeholderMetadataWithURLAndTitle(url, title).get()]);
+#endif
+            if (item)
+                [shareDataArray addObject:item.get()];
         } else {
 #if HAVE(NSURL_TITLE)
             [url _web_setTitle:title];
 #endif
             [shareDataArray addObject:url];
         }
-#else
-        [shareDataArray addObject:url];
-#endif
     }
     
     if (!data.shareData.title.isEmpty() && ![shareDataArray count])
@@ -271,10 +334,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     }
     
     if (!data.files.isEmpty()) {
-        bool usePlaceholderFiles = false;
-#if PLATFORM(IOS_FAMILY)
-        usePlaceholderFiles = data.originator == WebCore::ShareDataOriginator::Web;
-#endif
+        bool usePlaceholderFiles = data.originator == WebCore::ShareDataOriginator::Web;
 
         _temporaryFileShareDirectory = [WKShareSheet createTemporarySharingDirectory];
         appendFilesAsShareableURLs(WTFMove(shareDataArray), data.files, _temporaryFileShareDirectory.get(), usePlaceholderFiles, [retainedSelf = retainPtr(self), rect = WTFMove(rect)](RetainPtr<NSMutableArray>&& shareDataArray) mutable {
@@ -311,11 +371,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
         presentationRect = [webView convertRect:mouseLocationInWindow fromView:nil];
     }
 
-#if HAVE(SHARING_SERVICE_PICKER_POPOVER_SPI)
     [_sharingServicePicker.get() showPopoverRelativeToRect:presentationRect ofView:webView preferredEdge:NSMinYEdge completion:^(NSSharingService *sharingService) { }];
-#else
-    [_sharingServicePicker showRelativeToRect:presentationRect ofView:webView preferredEdge:NSMinYEdge];
-#endif
 #else
     _shareSheetViewController = adoptNS([[UIActivityViewController alloc] initWithActivityItems:sharingItems applicationActivities:nil]);
 
@@ -447,7 +503,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 {
     auto quarantineProperties = @{
         (__bridge NSString *)kLSQuarantineTypeKey: (__bridge NSString *)kLSQuarantineTypeWebDownload,
-        (__bridge NSString *)kLSQuarantineAgentBundleIdentifierKey: WebCore::applicationBundleIdentifier()
+        (__bridge NSString *)kLSQuarantineAgentBundleIdentifierKey: applicationBundleIdentifier()
     };
 
     if (![fileURL setResourceValue:quarantineProperties forKey:NSURLQuarantinePropertiesKey error:nil])
@@ -524,4 +580,4 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 
 @end
 
-#endif // PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#endif // HAVE(SHARE_SHEET_UI)

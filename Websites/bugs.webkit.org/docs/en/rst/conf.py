@@ -383,13 +383,10 @@ pdf_fit_background_mode = 'scale'
 # Temporary highlighting of TODO items
 todo_include_todos = False
 
-# The readthedocs.org website cannot access POD.
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+# Originally, the readthedocs.org website could not access POD,
+# so we would conditionally override that here if we were building
+# on RTD, but that's no longer the case.
+base_api_url = '../integrating/api/'
 
-if on_rtd:
-    base_api_url = 'https://www.bugzilla.org/docs/5.0/en/html/integrating/api/'
-else:
-    base_api_url = '../integrating/api/'
-
-extlinks = {'bug': ('https://bugzilla.mozilla.org/show_bug.cgi?id=%s', 'bug  '),
-            'api': (base_api_url + '%s', '')}
+extlinks = {'bug': ('https://bugzilla.mozilla.org/show_bug.cgi?id=%s', 'bug %s'),
+            'api': (base_api_url + '%s', '%s')}

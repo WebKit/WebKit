@@ -34,15 +34,16 @@
 #include "MutationObserver.h"
 #include <memory>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class QualifiedName;
 
 class MutationObserverInterestGroup {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MutationObserverInterestGroup);
 public:
-    MutationObserverInterestGroup(HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions>&&, MutationRecordDeliveryOptions);
+    MutationObserverInterestGroup(UncheckedKeyHashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions>&&, MutationRecordDeliveryOptions);
 
     static std::unique_ptr<MutationObserverInterestGroup> createForChildListMutation(Node& target)
     {
@@ -77,7 +78,7 @@ private:
 
     bool hasOldValue(MutationRecordDeliveryOptions options) const { return options.containsAny(m_oldValueFlag); }
 
-    HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> m_observers;
+    UncheckedKeyHashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> m_observers;
     MutationRecordDeliveryOptions m_oldValueFlag;
 };
 

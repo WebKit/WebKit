@@ -157,7 +157,10 @@ _PATH_RULES_SPECIFIER = [
     ([
         # The WPEQtViewLoadRequest class uses Qt naming conventions (d_ptr).
         os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5', 'WPEQtViewLoadRequest.h'),
-        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtViewLoadRequest.h')],
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtViewLoadRequest.h'),
+
+        # The WPEQtView class uses Qt naming conventions (d_ptr).
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtView.h')],
      ["-readability/naming/underscores"]),
 
     ([
@@ -169,14 +172,16 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/parameter_name", "-readability/naming/acronym"]),
 
     ([
-        # The WPEViewQtQuick / WPEDisplayQtQuick follow GLib API conventions.
+        # The WPE QtQuick files follow GLib API conventions.
         os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEViewQtQuick.h'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEToplevelQtQuick.h'),
         os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEDisplayQtQuick.h')],
      ["-build/header_guard", "-readability/naming/underscores", "-readability/parameter_name", "-whitespace/declaration", "-whitespace/parens"]),
 
     ([
-        # The WPEViewQtQuick / WPEDisplayQtQuick follow GLib API conventions.
+        # The WPE QtQuick files follow GLib API conventions.
         os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEViewQtQuick.cpp'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEToplevelQtQuick.cpp'),
         os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEDisplayQtQuick.cpp')],
      ["-build/include_order", "-whitespace/parens"]),
 
@@ -193,6 +198,12 @@ _PATH_RULES_SPECIFIER = [
         os.path.join('Tools', 'MiniBrowser', 'wpe', 'qt5', 'main.cpp'),
         os.path.join('Tools', 'MiniBrowser', 'wpe', 'qt6', 'main.cpp')],
      ["-runtime/wtf_make_unique", "-readability/naming/underscores", "-readability/naming/acronym"]),
+
+    ([
+        # The MatchPattern API uses a lowercase "url" to match GObject standard naming schemes, and an
+        # underscored private struct similar to other Gtk APIs, yet the style checker only warns about MatchPattern
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'glib', 'WebKitWebExtensionMatchPattern.cpp')],
+     ["-readability/naming/acronym", "-readability/naming/underscores"]),
 
     ([
       # The GTK+ and WPE APIs use upper case, underscore separated, words in
@@ -266,8 +277,6 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GStreamerSinksWorkarounds.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GLVideoSinkGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GLVideoSinkGStreamer.h'),
-      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'DMABufVideoSinkGStreamer.cpp'),
-      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'DMABufVideoSinkGStreamer.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'TextCombinerGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'TextCombinerGStreamer.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'TextCombinerPadGStreamer.cpp'),
@@ -315,6 +324,7 @@ _PATH_RULES_SPECIFIER = [
     ([os.path.join('webkitpy', 'thirdparty'),
       os.path.join('Source', 'bmalloc', 'bmalloc', 'valgrind.h'),
       os.path.join('Source', 'ThirdParty', 'ANGLE'),
+      os.path.join('Source', 'ThirdParty', 'libsysprof-capture'),
       os.path.join('Source', 'ThirdParty', 'libwebrtc'),
       os.path.join('Source', 'ThirdParty', 'openvr'),
       os.path.join('Source', 'ThirdParty', 'skia'),
@@ -455,7 +465,7 @@ _NEVER_SKIPPED_FILES = _NEVER_SKIPPED_JS_FILES + [
     re.compile('.*TestExpectations$'),
     re.compile('.*TestExpectations.json$'),
     # Avoid imported WebDriverTests python machinery
-    re.compile('(?!WebDriverTests).{0,14}.*.py$'),
+    re.compile('^LayoutTests.(?!imported).*\\.py$'),
     re.compile('^' + re.escape(os.path.join('LayoutTests', 'imported', 'w3c', 'resources', 'import-expectations.json')) + r'$'),
 ]
 
@@ -518,6 +528,9 @@ _SKIPPED_FILES_WITHOUT_WARNING = [
     os.path.join('Source', 'WebCore', 'icu'),
     os.path.join('Source', 'WebKitLegacy', 'mac', 'icu'),
     os.path.join('Source', 'WTF', 'icu'),
+
+    # libsysprof-capture.
+    os.path.join('Source', 'ThirdParty', 'libsysprof-capture'),
 
     # Skia.
     os.path.join('Source', 'ThirdParty', 'skia'),

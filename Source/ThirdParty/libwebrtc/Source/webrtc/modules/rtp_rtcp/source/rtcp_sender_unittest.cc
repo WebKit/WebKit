@@ -10,22 +10,47 @@
 
 #include "modules/rtp_rtcp/source/rtcp_sender.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <utility>
+#include <vector>
 
 #include "absl/base/macros.h"
+#include "api/array_view.h"
+#include "api/call/transport.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
+#include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/remote_estimate.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/target_bitrate.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
+#include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "rtc_base/rate_limiter.h"
 #include "rtc_base/thread.h"
+#include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/ntp_time.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
 #include "test/rtcp_packet_parser.h"
+
+namespace webrtc {
+namespace {
 
 using ::testing::_;
 using ::testing::ElementsAre;
@@ -33,8 +58,6 @@ using ::testing::Eq;
 using ::testing::Invoke;
 using ::testing::Property;
 using ::testing::SizeIs;
-
-namespace webrtc {
 
 class RtcpPacketTypeCounterObserverImpl : public RtcpPacketTypeCounterObserver {
  public:
@@ -65,38 +88,22 @@ class TestTransport : public Transport {
   test::RtcpPacketParser parser_;
 };
 
-namespace {
-static const uint32_t kSenderSsrc = 0x11111111;
-static const uint32_t kRemoteSsrc = 0x22222222;
-static const uint32_t kStartRtpTimestamp = 0x34567;
-static const uint32_t kRtpTimestamp = 0x45678;
-
-std::unique_ptr<RTCPSender> CreateRtcpSender(
-    const RTCPSender::Configuration& config,
-    bool init_timestamps = true) {
-  auto rtcp_sender = std::make_unique<RTCPSender>(config);
-  rtcp_sender->SetRemoteSSRC(kRemoteSsrc);
-  if (init_timestamps) {
-    rtcp_sender->SetTimestampOffset(kStartRtpTimestamp);
-    rtcp_sender->SetLastRtpTime(kRtpTimestamp, config.clock->CurrentTime(),
-                                /*payload_type=*/0);
-  }
-  return rtcp_sender;
-}
-}  // namespace
+constexpr uint32_t kSenderSsrc = 0x11111111;
+constexpr uint32_t kRemoteSsrc = 0x22222222;
+constexpr uint32_t kStartRtpTimestamp = 0x34567;
+constexpr uint32_t kRtpTimestamp = 0x45678;
 
 class RtcpSenderTest : public ::testing::Test {
  protected:
   RtcpSenderTest()
       : clock_(1335900000),
-        receive_statistics_(ReceiveStatistics::Create(&clock_)) {
-    rtp_rtcp_impl_.reset(new ModuleRtpRtcpImpl2(GetDefaultRtpRtcpConfig()));
-  }
+        env_(CreateEnvironment(&clock_)),
+        receive_statistics_(ReceiveStatistics::Create(&clock_)),
+        rtp_rtcp_impl_(env_, GetDefaultRtpRtcpConfig()) {}
 
   RTCPSender::Configuration GetDefaultConfig() {
     RTCPSender::Configuration configuration;
     configuration.audio = false;
-    configuration.clock = &clock_;
     configuration.outgoing_transport = &test_transport_;
     configuration.rtcp_report_interval = TimeDelta::Millis(1000);
     configuration.receive_statistics = receive_statistics_.get();
@@ -108,12 +115,24 @@ class RtcpSenderTest : public ::testing::Test {
     RTCPSender::Configuration config = GetDefaultConfig();
     RtpRtcpInterface::Configuration result;
     result.audio = config.audio;
-    result.clock = config.clock;
     result.outgoing_transport = config.outgoing_transport;
     result.rtcp_report_interval_ms = config.rtcp_report_interval->ms();
     result.receive_statistics = config.receive_statistics;
     result.local_media_ssrc = config.local_media_ssrc;
     return result;
+  }
+
+  std::unique_ptr<RTCPSender> CreateRtcpSender(
+      const RTCPSender::Configuration& config,
+      bool init_timestamps = true) {
+    auto rtcp_sender = std::make_unique<RTCPSender>(env_, config);
+    rtcp_sender->SetRemoteSSRC(kRemoteSsrc);
+    if (init_timestamps) {
+      rtcp_sender->SetTimestampOffset(kStartRtpTimestamp);
+      rtcp_sender->SetLastRtpTime(kRtpTimestamp, env_.clock().CurrentTime(),
+                                  /*payload_type=*/0);
+    }
+    return rtcp_sender;
   }
 
   void InsertIncomingPacket(uint32_t remote_ssrc, uint16_t seq_num) {
@@ -128,14 +147,15 @@ class RtcpSenderTest : public ::testing::Test {
   test::RtcpPacketParser* parser() { return &test_transport_.parser_; }
 
   RTCPSender::FeedbackState feedback_state() {
-    return rtp_rtcp_impl_->GetFeedbackState();
+    return rtp_rtcp_impl_.GetFeedbackState();
   }
 
   rtc::AutoThread main_thread_;
   SimulatedClock clock_;
+  const Environment env_;
   TestTransport test_transport_;
   std::unique_ptr<ReceiveStatistics> receive_statistics_;
-  std::unique_ptr<ModuleRtpRtcpImpl2> rtp_rtcp_impl_;
+  ModuleRtpRtcpImpl2 rtp_rtcp_impl_;
 };
 
 TEST_F(RtcpSenderTest, SetRtcpStatus) {
@@ -163,7 +183,7 @@ TEST_F(RtcpSenderTest, SendSr) {
   const uint32_t kOctetCount = 0x23456;
   auto rtcp_sender = CreateRtcpSender(GetDefaultConfig());
   rtcp_sender->SetRTCPStatus(RtcpMode::kReducedSize);
-  RTCPSender::FeedbackState feedback_state = rtp_rtcp_impl_->GetFeedbackState();
+  RTCPSender::FeedbackState feedback_state = rtp_rtcp_impl_.GetFeedbackState();
   rtcp_sender->SetSendingStatus(feedback_state, true);
   feedback_state.packets_sent = kPacketCount;
   feedback_state.media_bytes_sent = kOctetCount;
@@ -188,7 +208,7 @@ TEST_F(RtcpSenderTest, SendConsecutiveSrWithExactSlope) {
   // Make sure clock is not exactly at some milliseconds point.
   clock_.AdvanceTimeMicroseconds(kTimeBetweenSRsUs);
   rtcp_sender->SetRTCPStatus(RtcpMode::kReducedSize);
-  RTCPSender::FeedbackState feedback_state = rtp_rtcp_impl_->GetFeedbackState();
+  RTCPSender::FeedbackState feedback_state = rtp_rtcp_impl_.GetFeedbackState();
   rtcp_sender->SetSendingStatus(feedback_state, true);
   feedback_state.packets_sent = kPacketCount;
   feedback_state.media_bytes_sent = kOctetCount;
@@ -215,7 +235,6 @@ TEST_F(RtcpSenderTest, SendConsecutiveSrWithExactSlope) {
 
 TEST_F(RtcpSenderTest, DoNotSendSrBeforeRtp) {
   RTCPSender::Configuration config;
-  config.clock = &clock_;
   config.receive_statistics = receive_statistics_.get();
   config.outgoing_transport = &test_transport_;
   config.rtcp_report_interval = TimeDelta::Millis(1000);
@@ -236,7 +255,6 @@ TEST_F(RtcpSenderTest, DoNotSendSrBeforeRtp) {
 
 TEST_F(RtcpSenderTest, DoNotSendCompundBeforeRtp) {
   RTCPSender::Configuration config;
-  config.clock = &clock_;
   config.receive_statistics = receive_statistics_.get();
   config.outgoing_transport = &test_transport_;
   config.rtcp_report_interval = TimeDelta::Millis(1000);
@@ -480,7 +498,7 @@ TEST_F(RtcpSenderTest, RembIncludedInEachCompoundPacketAfterSet) {
 TEST_F(RtcpSenderTest, SendXrWithDlrr) {
   auto rtcp_sender = CreateRtcpSender(GetDefaultConfig());
   rtcp_sender->SetRTCPStatus(RtcpMode::kCompound);
-  RTCPSender::FeedbackState feedback_state = rtp_rtcp_impl_->GetFeedbackState();
+  RTCPSender::FeedbackState feedback_state = rtp_rtcp_impl_.GetFeedbackState();
   rtcp::ReceiveTimeInfo last_xr_rr;
   last_xr_rr.ssrc = 0x11111111;
   last_xr_rr.last_rr = 0x22222222;
@@ -500,7 +518,7 @@ TEST_F(RtcpSenderTest, SendXrWithMultipleDlrrSubBlocks) {
   const size_t kNumReceivers = 2;
   auto rtcp_sender = CreateRtcpSender(GetDefaultConfig());
   rtcp_sender->SetRTCPStatus(RtcpMode::kCompound);
-  RTCPSender::FeedbackState feedback_state = rtp_rtcp_impl_->GetFeedbackState();
+  RTCPSender::FeedbackState feedback_state = rtp_rtcp_impl_.GetFeedbackState();
   for (size_t i = 0; i < kNumReceivers; ++i) {
     rtcp::ReceiveTimeInfo last_xr_rr;
     last_xr_rr.ssrc = i;
@@ -590,7 +608,6 @@ TEST_F(RtcpSenderTest, TestNoXrRrtrSentIfNotEnabled) {
 TEST_F(RtcpSenderTest, TestRegisterRtcpPacketTypeObserver) {
   RtcpPacketTypeCounterObserverImpl observer;
   RTCPSender::Configuration config;
-  config.clock = &clock_;
   config.receive_statistics = receive_statistics_.get();
   config.outgoing_transport = &test_transport_;
   config.rtcp_packet_type_counter_observer = &observer;
@@ -685,7 +702,6 @@ TEST_F(RtcpSenderTest, ByeMustBeLast) {
 
   // Re-configure rtcp_sender with mock_transport_
   RTCPSender::Configuration config;
-  config.clock = &clock_;
   config.receive_statistics = receive_statistics_.get();
   config.outgoing_transport = &mock_transport;
   config.rtcp_report_interval = TimeDelta::Millis(1000);
@@ -718,7 +734,7 @@ TEST_F(RtcpSenderTest, SendXrWithTargetBitrate) {
   EXPECT_EQ(0, rtcp_sender->SendRTCP(feedback_state(), kRtcpReport));
   EXPECT_EQ(1, parser()->xr()->num_packets());
   EXPECT_EQ(kSenderSsrc, parser()->xr()->sender_ssrc());
-  const absl::optional<rtcp::TargetBitrate>& target_bitrate =
+  const std::optional<rtcp::TargetBitrate>& target_bitrate =
       parser()->xr()->target_bitrate();
   ASSERT_TRUE(target_bitrate);
   const std::vector<rtcp::TargetBitrate::BitrateItem>& bitrates =
@@ -784,7 +800,7 @@ TEST_F(RtcpSenderTest, SendTargetBitrateExplicitZeroOnStreamRemoval) {
   allocation.SetBitrate(1, 0, 200000);
   rtcp_sender->SetVideoBitrateAllocation(allocation);
   EXPECT_EQ(0, rtcp_sender->SendRTCP(feedback_state(), kRtcpReport));
-  absl::optional<rtcp::TargetBitrate> target_bitrate =
+  std::optional<rtcp::TargetBitrate> target_bitrate =
       parser()->xr()->target_bitrate();
   ASSERT_TRUE(target_bitrate);
   std::vector<rtcp::TargetBitrate::BitrateItem> bitrates =
@@ -839,4 +855,5 @@ TEST_F(RtcpSenderTest, SendsCombinedRtcpPacket) {
   EXPECT_EQ(parser()->app()->sender_ssrc(), kSenderSsrc);
 }
 
+}  // namespace
 }  // namespace webrtc

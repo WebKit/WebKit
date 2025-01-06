@@ -25,6 +25,10 @@
 
 #import "WKPreferencesPrivate.h"
 
+#import <wtf/Platform.h>
+
+#ifdef __cplusplus
+
 #import "WKObject.h"
 #import "WebPreferences.h"
 
@@ -40,5 +44,17 @@ template<> struct WrapperTraits<WebPreferences> {
 @package
     API::ObjectStorage<WebKit::WebPreferences> _preferences;
 }
+
+@end
+
+#endif
+
+@interface WKPreferences ()
+
+#if PLATFORM(IOS_FAMILY)
+@property (nonatomic) BOOL tabFocusesLinks;
+#endif
+
+@property (nonatomic, setter=_setUseSystemAppearance:) BOOL _useSystemAppearance;
 
 @end

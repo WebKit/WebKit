@@ -28,6 +28,8 @@
 
 #include "Parser.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 void DebuggerPausePositions::forEachBreakpointLocation(int startLine, int startColumn, int endLine, int endColumn, Function<void(const JSTextPosition&)>&& callback)
@@ -155,15 +157,15 @@ template <DebuggerParseInfoTag T> struct DebuggerParseInfo { };
 
 template <> struct DebuggerParseInfo<Program> {
     typedef JSC::ProgramNode RootNode;
+    static constexpr LexicallyScopedFeatures lexicallyScopedFeatures = NoLexicallyScopedFeatures;
     static constexpr SourceParseMode parseMode = SourceParseMode::ProgramMode;
-    static constexpr JSParserStrictMode strictMode = JSParserStrictMode::NotStrict;
     static constexpr JSParserScriptMode scriptMode = JSParserScriptMode::Classic;
 };
 
 template <> struct DebuggerParseInfo<Module> {
     typedef JSC::ModuleProgramNode RootNode;
+    static constexpr LexicallyScopedFeatures lexicallyScopedFeatures = StrictModeLexicallyScopedFeature;
     static constexpr SourceParseMode parseMode = SourceParseMode::ModuleEvaluateMode;
-    static constexpr JSParserStrictMode strictMode = JSParserStrictMode::Strict;
     static constexpr JSParserScriptMode scriptMode = JSParserScriptMode::Module;
 };
 
@@ -171,13 +173,13 @@ template <DebuggerParseInfoTag T>
 bool gatherDebuggerParseData(VM& vm, const SourceCode& source, DebuggerParseData& debuggerParseData)
 {
     typedef typename DebuggerParseInfo<T>::RootNode RootNode;
+    LexicallyScopedFeatures lexicallyScopedFeatures = DebuggerParseInfo<T>::lexicallyScopedFeatures;
     SourceParseMode parseMode = DebuggerParseInfo<T>::parseMode;
-    JSParserStrictMode strictMode = DebuggerParseInfo<T>::strictMode;
     JSParserScriptMode scriptMode = DebuggerParseInfo<T>::scriptMode;
 
     ParserError error;
     std::unique_ptr<RootNode> rootNode = parseRootNode<RootNode>(vm, source, ImplementationVisibility::Public,
-        JSParserBuiltinMode::NotBuiltin, strictMode, scriptMode, parseMode,
+        JSParserBuiltinMode::NotBuiltin, lexicallyScopedFeatures, scriptMode, parseMode,
         error, ConstructorKind::None, nullptr, &debuggerParseData);
     if (!rootNode)
         return false;
@@ -203,5 +205,7 @@ bool gatherDebuggerParseDataForSource(VM& vm, SourceProvider* provider, Debugger
         return false;
     }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace JSC

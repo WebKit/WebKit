@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,84 +27,169 @@
 
 #if BUSE(TZONE)
 
+#include "IsoHeap.h"
 #include "IsoMallocFallback.h"
-#include "bmalloc_heap_inlines.h"
-#include "pas_allocation_mode.h"
+#include "TZoneHeapManager.h"
+#include "bmalloc.h"
+#include "bmalloc_heap_internal.h"
+#include "bmalloc_heap_ref.h"
+
+#if !BUSE(LIBPAS)
+#error TZONE implementation requires LIBPAS
+#endif
 
 namespace bmalloc { namespace api {
 
-void* tzoneAllocate(pas_heap_ref& heapRef)
-{
-    // FIXME: libpas should know how to do the fallback thing.
-    // https://bugs.webkit.org/show_bug.cgi?id=227177
+BEXPORT void (*tzoneFreeWithFastFallback)(void*);
+BEXPORT void (*tzoneFreeWithIsoFallback)(void*);
 
-    if (IsoMallocFallback::shouldTryToFallBack()) {
-        IsoMallocFallback::MallocResult result = IsoMallocFallback::tryMalloc(
-            pas_simple_type_size(reinterpret_cast<pas_simple_type>(heapRef.type)),
-            CompactAllocationMode::NonCompact);
-        if (result.didFallBack) {
-            RELEASE_BASSERT(result.ptr);
-            return result.ptr;
+#define TO_PAS_HEAPREF(heapRef) std::bit_cast<pas_heap_ref*>(heapRef)
+
+// HeapRef is an opaque alias for pas_heap_ref* in the underlying implementation.
+static_assert(sizeof(HeapRef) == sizeof(pas_heap_ref*));
+
+void* tzoneAllocateNonCompactWithFastFallbackSlow(size_t requestedSize, const TZoneSpecification& spec)
+{
+    HeapRef heapRef = *spec.addressOfHeapRef;
+    if (BUNLIKELY(tzoneMallocFallback != TZoneMallocFallback::DoNotFallBack)) {
+        if (tzoneMallocFallback == TZoneMallocFallback::ForceSpecifiedFallBack)
+            return bmalloc_allocate_inline(requestedSize, pas_non_compact_allocation_mode);
+
+        RELEASE_BASSERT(tzoneMallocFallback == TZoneMallocFallback::ForceDebugMalloc);
+        IsoMallocFallback::MallocResult result = IsoMallocFallback::tryMalloc(requestedSize, CompactAllocationMode::NonCompact);
+        BASSERT(result.didFallBack);
+        return result.ptr;
+    }
+
+    // Handle TZoneMallocFallback::DoNotFallBack.
+    if (BUNLIKELY(requestedSize != spec.size))
+        heapRef = tzoneHeapManager->heapRefForTZoneTypeDifferentSize(requestedSize, spec);
+
+    if (!heapRef) {
+        heapRef = tzoneHeapManager->heapRefForTZoneType(spec);
+        *spec.addressOfHeapRef = heapRef;
+    }
+    return bmalloc_iso_allocate_inline(TO_PAS_HEAPREF(heapRef), pas_non_compact_allocation_mode);
+}
+
+void* tzoneAllocateCompactWithFastFallbackSlow(size_t requestedSize, const TZoneSpecification& spec)
+{
+    HeapRef heapRef = *spec.addressOfHeapRef;
+    if (BUNLIKELY(tzoneMallocFallback != TZoneMallocFallback::DoNotFallBack)) {
+        if (BLIKELY(tzoneMallocFallback == TZoneMallocFallback::ForceSpecifiedFallBack))
+            return bmalloc_allocate_inline(requestedSize, pas_maybe_compact_allocation_mode);
+
+        RELEASE_BASSERT(tzoneMallocFallback == TZoneMallocFallback::ForceDebugMalloc);
+        IsoMallocFallback::MallocResult result = IsoMallocFallback::tryMalloc(requestedSize, CompactAllocationMode::Compact);
+        BASSERT(result.didFallBack);
+        return result.ptr;
+    }
+
+    // Handle TZoneMallocFallback::DoNotFallBack.
+    if (BUNLIKELY(requestedSize != spec.size))
+        heapRef = tzoneHeapManager->heapRefForTZoneTypeDifferentSize(requestedSize, spec);
+
+    if (!heapRef) {
+        heapRef = tzoneHeapManager->heapRefForTZoneType(spec);
+        *spec.addressOfHeapRef = heapRef;
+    }
+    return bmalloc_iso_allocate_inline(TO_PAS_HEAPREF(heapRef), pas_maybe_compact_allocation_mode);
+}
+
+void* tzoneAllocateNonCompactWithIsoFallbackSlow(size_t requestedSize, const TZoneSpecification& spec)
+{
+    HeapRef heapRef = *spec.addressOfHeapRef;
+    if (BUNLIKELY(tzoneMallocFallback != TZoneMallocFallback::DoNotFallBack)) {
+        if (BLIKELY(tzoneMallocFallback == TZoneMallocFallback::ForceSpecifiedFallBack)) {
+            if (!heapRef) {
+                heapRef = tzoneHeapManager->heapRefForIsoFallback(spec);
+                *spec.addressOfHeapRef = heapRef;
+            }
+            return bmalloc_iso_allocate_inline(TO_PAS_HEAPREF(heapRef), pas_non_compact_allocation_mode);
         }
+
+        RELEASE_BASSERT(tzoneMallocFallback == TZoneMallocFallback::ForceDebugMalloc);
+        IsoMallocFallback::MallocResult result = IsoMallocFallback::tryMalloc(requestedSize, CompactAllocationMode::NonCompact);
+        BASSERT(result.didFallBack);
+        return result.ptr;
     }
 
-    return bmalloc_iso_allocate_inline(&heapRef, pas_non_compact_allocation_mode);
-}
+    // Handle TZoneMallocFallback::DoNotFallBack.
+    if (BUNLIKELY(requestedSize != spec.size))
+        heapRef = tzoneHeapManager->heapRefForTZoneTypeDifferentSize(requestedSize, spec);
 
-void* tzoneTryAllocate(pas_heap_ref& heapRef)
-{
-    if (IsoMallocFallback::shouldTryToFallBack()) {
-        IsoMallocFallback::MallocResult result = IsoMallocFallback::tryMalloc(
-            pas_simple_type_size(reinterpret_cast<pas_simple_type>(heapRef.type)),
-            CompactAllocationMode::NonCompact);
-        if (result.didFallBack)
-            return result.ptr;
+    if (!heapRef) {
+        heapRef = tzoneHeapManager->heapRefForTZoneType(spec);
+        *spec.addressOfHeapRef = heapRef;
     }
-
-    return bmalloc_try_iso_allocate_inline(&heapRef, pas_non_compact_allocation_mode);
+    return bmalloc_iso_allocate_inline(TO_PAS_HEAPREF(heapRef), pas_non_compact_allocation_mode);
 }
 
-void* tzoneAllocateCompact(pas_heap_ref& heapRef)
+void* tzoneAllocateCompactWithIsoFallbackSlow(size_t requestedSize, const TZoneSpecification& spec)
 {
-    // FIXME: libpas should know how to do the fallback thing.
-    // https://bugs.webkit.org/show_bug.cgi?id=227177
-
-    if (IsoMallocFallback::shouldTryToFallBack()) {
-        IsoMallocFallback::MallocResult result = IsoMallocFallback::tryMalloc(
-            pas_simple_type_size(reinterpret_cast<pas_simple_type>(heapRef.type)),
-            CompactAllocationMode::Compact);
-        if (result.didFallBack) {
-            RELEASE_BASSERT(result.ptr);
-            return result.ptr;
+    HeapRef heapRef = *spec.addressOfHeapRef;
+    if (BUNLIKELY(tzoneMallocFallback != TZoneMallocFallback::DoNotFallBack)) {
+        if (BLIKELY(tzoneMallocFallback == TZoneMallocFallback::ForceSpecifiedFallBack)) {
+            if (!heapRef) {
+                heapRef = tzoneHeapManager->heapRefForIsoFallback(spec);
+                *spec.addressOfHeapRef = heapRef;
+            }
+            return bmalloc_iso_allocate_inline(TO_PAS_HEAPREF(heapRef), pas_maybe_compact_allocation_mode);
         }
+
+        RELEASE_BASSERT(tzoneMallocFallback == TZoneMallocFallback::ForceDebugMalloc);
+        IsoMallocFallback::MallocResult result = IsoMallocFallback::tryMalloc(requestedSize, CompactAllocationMode::Compact);
+        BASSERT(result.didFallBack);
+        return result.ptr;
     }
 
-    return bmalloc_iso_allocate_inline(&heapRef, pas_compact_allocation_mode);
-}
+    // Handle TZoneMallocFallback::DoNotFallBack.
+    if (BUNLIKELY(requestedSize != spec.size))
+        heapRef = tzoneHeapManager->heapRefForTZoneTypeDifferentSize(requestedSize, spec);
 
-void* tzoneTryAllocateCompact(pas_heap_ref& heapRef)
-{
-    if (IsoMallocFallback::shouldTryToFallBack()) {
-        IsoMallocFallback::MallocResult result = IsoMallocFallback::tryMalloc(
-            pas_simple_type_size(reinterpret_cast<pas_simple_type>(heapRef.type)),
-            CompactAllocationMode::Compact);
-        if (result.didFallBack)
-            return result.ptr;
+    if (!heapRef) {
+        heapRef = tzoneHeapManager->heapRefForTZoneType(spec);
+        *spec.addressOfHeapRef = heapRef;
     }
-
-    return bmalloc_try_iso_allocate_inline(&heapRef, pas_compact_allocation_mode);
+    return bmalloc_iso_allocate_inline(TO_PAS_HEAPREF(heapRef), pas_maybe_compact_allocation_mode);
 }
 
-void tzoneDeallocate(void* ptr)
+void* tzoneAllocateCompact(HeapRef heapRef)
 {
-    if (IsoMallocFallback::shouldTryToFallBack()
-        && IsoMallocFallback::tryFree(ptr))
-        return;
-
-    bmalloc_deallocate_inline(ptr);
+    return bmalloc_iso_allocate_inline(TO_PAS_HEAPREF(heapRef), pas_maybe_compact_allocation_mode);
 }
+
+void* tzoneAllocateNonCompact(HeapRef heapRef)
+{
+    return bmalloc_iso_allocate_inline(TO_PAS_HEAPREF(heapRef), pas_non_compact_allocation_mode);
+}
+
+void tzoneFreeFast(void* p)
+{
+    bmalloc_deallocate_inline(p);
+}
+
+void tzoneFreeWithDebugMalloc(void* p)
+{
+    RELEASE_BASSERT(tzoneMallocFallback == TZoneMallocFallback::ForceDebugMalloc);
+    IsoMallocFallback::tryFree(p);
+}
+
+#if BUSE_TZONE_PREINITIALIZATION
+void tzonePreInitializeHeapRefs(const TZoneSpecification* start, const TZoneSpecification* end)
+{
+    if (tzoneMallocFallback == TZoneMallocFallback::Undecided)
+        determineTZoneMallocFallback();
+    if (tzoneMallocFallback == TZoneMallocFallback::DoNotFallBack) {
+        if (!tzoneHeapManager)
+            TZoneHeapManager::ensureSingleton();
+        tzoneHeapManager->preInitializeHeapRefs(start, end);
+    }
+}
+#endif // BUSE_TZONE_PREINITIALIZATION
+
+#undef TO_PAS_HEAPREF
 
 } } // namespace bmalloc::api
 
 #endif // BUSE(TZONE)
-

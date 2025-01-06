@@ -32,12 +32,12 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMedia);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMedia);
 
 RenderMedia::RenderMedia(Type type, HTMLMediaElement& element, RenderStyle&& style)
     : RenderImage(type, element, WTFMove(style), ReplacedFlag::IsMedia)

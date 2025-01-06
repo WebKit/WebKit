@@ -81,11 +81,11 @@ struct PlatformRegisters {
 inline PlatformRegisters& registersFromUContext(ucontext_t* ucontext)
 {
 #if OS(OPENBSD)
-    return *bitwise_cast<PlatformRegisters*>(ucontext);
+    return *std::bit_cast<PlatformRegisters*>(ucontext);
 #elif CPU(PPC)
-    return *bitwise_cast<PlatformRegisters*>(ucontext->uc_mcontext.uc_regs);
+    return *std::bit_cast<PlatformRegisters*>(ucontext->uc_mcontext.uc_regs);
 #else
-    return *bitwise_cast<PlatformRegisters*>(&ucontext->uc_mcontext);
+    return *std::bit_cast<PlatformRegisters*>(&ucontext->uc_mcontext);
 #endif
 }
 
@@ -114,8 +114,8 @@ using WTF::threadStatePCInternal;
 
 #else // not CPU(ARM64E)
 
-#define threadStateLRInternal(regs) bitwise_cast<void*>(arm_thread_state64_get_lr(regs))
-#define threadStatePCInternal(regs) bitwise_cast<void*>(arm_thread_state64_get_pc(regs))
+#define threadStateLRInternal(regs) std::bit_cast<void*>(arm_thread_state64_get_lr(regs))
+#define threadStatePCInternal(regs) std::bit_cast<void*>(arm_thread_state64_get_pc(regs))
 
 #endif // CPU(ARM64E)
 

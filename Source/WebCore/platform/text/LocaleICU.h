@@ -42,10 +42,12 @@ namespace WebCore {
 
 // We should use this class only for LocalizedNumberICU.cpp, LocalizedDateICU.cpp,
 // and LocalizedNumberICUTest.cpp.
-class LocaleICU : public Locale {
+class LocaleICU final : public Locale {
 public:
     explicit LocaleICU(const char*);
     virtual ~LocaleICU();
+
+    Locale::WritingDirection defaultWritingDirection() const override;
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     String dateFormat() override;

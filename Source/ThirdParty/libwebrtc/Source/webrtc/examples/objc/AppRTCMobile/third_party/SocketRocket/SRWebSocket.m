@@ -527,9 +527,11 @@ static __strong NSData *CRLFCRLF;
         CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Sec-WebSocket-Protocol"), (__bridge CFStringRef)[_requestedProtocols componentsJoinedByString:@", "]);
     }
 
-    [_urlRequest.allHTTPHeaderFields enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        CFHTTPMessageSetHeaderFieldValue(request, (__bridge CFStringRef)key, (__bridge CFStringRef)obj);
-    }];
+    [_urlRequest.allHTTPHeaderFields
+        enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop __unused) {
+          CFHTTPMessageSetHeaderFieldValue(
+              request, (__bridge CFStringRef)key, (__bridge CFStringRef)obj);
+        }];
 
     NSData *message = CFBridgingRelease(CFHTTPMessageCopySerializedMessage(request));
     
@@ -1078,12 +1080,19 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
     
     NSUInteger dataLength = _outputBuffer.length;
     if (dataLength - _outputBufferOffset > 0 && _outputStream.hasSpaceAvailable) {
-        NSInteger bytesWritten = [_outputStream write:_outputBuffer.bytes + _outputBufferOffset maxLength:dataLength - _outputBufferOffset];
-        if (bytesWritten == -1) {
-            [self _failWithError:[NSError errorWithDomain:SRWebSocketErrorDomain code:2145 userInfo:[NSDictionary dictionaryWithObject:@"Error writing to stream" forKey:NSLocalizedDescriptionKey]]];
-             return;
-        }
-        
+      NSInteger bytesWritten =
+          [_outputStream write:(const unsigned char *)_outputBuffer.bytes + _outputBufferOffset
+                     maxLength:dataLength - _outputBufferOffset];
+      if (bytesWritten == -1) {
+        [self _failWithError:
+                  [NSError errorWithDomain:SRWebSocketErrorDomain
+                                      code:2145
+                                  userInfo:[NSDictionary
+                                               dictionaryWithObject:@"Error writing to stream"
+                                                             forKey:NSLocalizedDescriptionKey]]];
+        return;
+      }
+
         _outputBufferOffset += bytesWritten;
         
         if (_outputBufferOffset > 4096 && _outputBufferOffset > (_outputBuffer.length >> 1)) {
@@ -1627,7 +1636,7 @@ static const size_t SRFrameHeaderOverhead = 32;
 
 //#define SR_ENABLE_LOG
 
-static inline void SRFastLog(NSString *format, ...)  {
+static inline void SRFastLog(NSString *format, ...) {
 #ifdef SR_ENABLE_LOG
     __block va_list arg_list;
     va_start (arg_list, format);
@@ -1637,9 +1646,11 @@ static inline void SRFastLog(NSString *format, ...)  {
     va_end(arg_list);
     
     NSLog(@"[SR] %@", formattedString);
+#else
+  // Cannot use [[maybe_unused]] here since this file might compile with GCC in objc context.
+  (void)format;
 #endif
 }
-
 
 #ifdef HAS_ICU
 

@@ -31,6 +31,7 @@
 #include "ObjectConstructor.h"
 #include "ProfilerDumper.h"
 #include <wtf/StringPrintStream.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace JSC { namespace Profiler {
@@ -45,7 +46,7 @@ Bytecodes::Bytecodes(size_t id, CodeBlock* codeBlock)
 {
 }
 
-Bytecodes::~Bytecodes() { }
+Bytecodes::~Bytecodes() = default;
 
 void Bytecodes::dump(PrintStream& out) const
 {

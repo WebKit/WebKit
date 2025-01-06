@@ -21,6 +21,7 @@ use Bugzilla::Mailer;
 use Bugzilla::Hook;
 use Bugzilla::MIME;
 
+use Encode qw();
 use Date::Parse;
 use Date::Format;
 use Scalar::Util qw(blessed);
@@ -451,6 +452,7 @@ sub _generate_bugmail {
                 encoding     => 'quoted-printable',
             },
             body_str => $msg_text,
+            encode_check => Encode::FB_DEFAULT
         )
     );
     if ($user->setting('email_format') eq 'html') {
@@ -463,6 +465,7 @@ sub _generate_bugmail {
                 encoding     => 'quoted-printable',
             },
             body_str => $msg_html,
+            encode_check => Encode::FB_DEFAULT
         );
     }
 

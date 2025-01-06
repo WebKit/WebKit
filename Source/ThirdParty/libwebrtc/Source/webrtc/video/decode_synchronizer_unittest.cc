@@ -39,7 +39,7 @@ class MockMetronome : public Metronome {
               RequestCallOnNextTick,
               (absl::AnyInvocable<void() &&> callback),
               (override));
-  MOCK_METHOD(TimeDelta, TickPeriod, (), (const override));
+  MOCK_METHOD(TimeDelta, TickPeriod, (), (const, override));
 };
 
 class DecodeSynchronizerTest : public ::testing::Test {

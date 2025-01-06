@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2022, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -472,7 +472,7 @@ void aom_lpf_horizontal_8_quad_avx2(unsigned char *s, int p,
   }
 }
 
-static INLINE void trans_store_16x16_lpf_vert14(unsigned char *in0, int in_p,
+static inline void trans_store_16x16_lpf_vert14(unsigned char *in0, int in_p,
                                                 unsigned char *out, int out_p,
                                                 int is_store_avx2) {
   const __m128i x0 = _mm_loadu_si128((__m128i *)in0);

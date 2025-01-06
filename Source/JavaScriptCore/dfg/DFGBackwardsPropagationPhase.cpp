@@ -334,6 +334,7 @@ private:
             break;
         }
             
+        case StringAt:
         case StringCharAt:
         case StringCharCodeAt:
         case StringCodePointAt: {
@@ -516,7 +517,8 @@ private:
         case NewTypedArray:
         case NewArrayWithSize:
         case NewArrayWithConstantSize:
-        case NewArrayWithSpecies: {
+        case NewArrayWithSpecies:
+        case NewArrayWithSizeAndStructure: {
             // Negative zero is not observable. NaN versus undefined are only observable
             // in that you would get a different exception message. So, like, whatever: we
             // claim here that NaN v. undefined is observable.
@@ -526,7 +528,9 @@ private:
             
         case ToString:
         case CallStringConstructor: {
-            node->child1()->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeNeedsNaNOrInfinity);
+            if (typeFilterFor(node->child1().useKind()) & SpecOther)
+                node->child1()->mergeFlags(NodeBytecodeUsesAsOther);
+            node->child1()->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNaNOrInfinity);
             break;
         }
             

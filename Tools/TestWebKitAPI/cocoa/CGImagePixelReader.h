@@ -26,9 +26,12 @@
 #pragma once
 
 #include <CoreGraphics/CoreGraphics.h>
-#include <WebCore/Color.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+
+namespace WebCore {
+class Color;
+}
 
 namespace TestWebKitAPI {
 
@@ -44,6 +47,8 @@ public:
 
     unsigned width() const { return m_width; }
     unsigned height() const { return m_height; }
+
+    static constexpr auto defaultWebViewSamplingInterval { 100 };
 
 private:
     unsigned m_width { 0 };

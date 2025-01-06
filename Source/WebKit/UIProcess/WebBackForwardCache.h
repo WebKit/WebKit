@@ -27,9 +27,10 @@
 
 #include <WebCore/ProcessIdentifier.h>
 #include <pal/SessionID.h>
-#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakListHashSet.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
@@ -40,16 +41,18 @@ class WebPageProxy;
 class WebProcessPool;
 class WebProcessProxy;
 
-class WebBackForwardCache final : public CanMakeCheckedPtr<WebBackForwardCache> {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebBackForwardCache);
+class WebBackForwardCache final : public CanMakeWeakPtr<WebBackForwardCache> {
+    WTF_MAKE_TZONE_ALLOCATED(WebBackForwardCache);
 public:
     explicit WebBackForwardCache(WebProcessPool&);
     ~WebBackForwardCache();
 
-    void setCapacity(unsigned);
+    void ref() const;
+    void deref() const;
+
+    void setCapacity(WebProcessPool&, unsigned);
     unsigned capacity() const { return m_capacity; }
-    unsigned size() const { return m_itemsWithCachedPage.size(); }
+    unsigned size() const { return m_itemsWithCachedPage.computeSize(); }
 
     void clear();
     void pruneToSize(unsigned);
@@ -58,21 +61,22 @@ public:
     void removeEntriesForPageAndProcess(WebPageProxy&, WebProcessProxy&);
     void removeEntriesForSession(PAL::SessionID);
 
-    void addEntry(WebBackForwardListItem&, std::unique_ptr<SuspendedPageProxy>&&);
+    void addEntry(WebBackForwardListItem&, Ref<SuspendedPageProxy>&&);
     void addEntry(WebBackForwardListItem&, WebCore::ProcessIdentifier);
     void removeEntry(WebBackForwardListItem&);
     void removeEntry(SuspendedPageProxy&);
-    std::unique_ptr<SuspendedPageProxy> takeSuspendedPage(WebBackForwardListItem&);
+    Ref<SuspendedPageProxy> takeSuspendedPage(WebBackForwardListItem&);
 
 private:
+    Ref<WebProcessPool> protectedProcessPool() const;
+
     void removeOldestEntry();
     void removeEntriesMatching(const Function<bool(WebBackForwardListItem&)>&);
-    void addEntry(WebBackForwardListItem&, std::unique_ptr<WebBackForwardCacheEntry>&&);
+    void addEntry(WebBackForwardListItem&, Ref<WebBackForwardCacheEntry>&&);
 
-    WebProcessPool& m_processPool;
+    WeakRef<WebProcessPool> m_processPool;
     unsigned m_capacity { 0 };
-    // Items cannot be null, we're using WeakPtr for hardening.
-    Vector<WeakPtr<WebBackForwardListItem>, 2> m_itemsWithCachedPage;
+    WeakListHashSet<WebBackForwardListItem> m_itemsWithCachedPage;
 };
 
 } // namespace WebKit

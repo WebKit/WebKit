@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebPageGroupData.h"
 
-#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 

@@ -41,10 +41,10 @@ public:
         return &vm.plainObjectSpace();
     }
 
-    static JSONObject* create(VM& vm, Structure* structure)
+    static JSONObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
         JSONObject* object = new (NotNull, allocateCell<JSONObject>(vm)) JSONObject(vm, structure);
-        object->finishCreation(vm);
+        object->finishCreation(vm, globalObject);
         return object;
     }
 
@@ -54,7 +54,7 @@ public:
 
 private:
     JSONObject(VM&, Structure*);
-    void finishCreation(VM&);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 JS_EXPORT_PRIVATE JSValue JSONParse(JSGlobalObject*, StringView);

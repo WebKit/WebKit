@@ -44,3 +44,15 @@ assert(re3.test("es\ns"), "$ should match newline in modified group");
 
 var re4 = new RegExp("(?m-:es$)");
 assert(re4.test("es\ns"), "$ should match newline in modified group");
+
+var re5 = /^a\n(?m:^b$)\nc$/;
+assert(re5.test("a\nb\nc"), "^ and $ should match newline in modified group");
+assert(!re5.test("\na\nb\nc"), "^ should not match newline outside modified group");
+assert(!re5.test("a\nb\nc\n"), "$ should not match newline outside modified group");
+assert(!re5.test("\na\nb\nc\n"), "^ and $ should not match newline outside modified group");
+
+var re6 = new RegExp("^a\\n(?m:^b$)\\nc$");
+assert(re6.test("a\nb\nc"), "^ and $ should match newline in modified group");
+assert(!re6.test("\na\nb\nc"), "^ should not match newline outside modified group");
+assert(!re6.test("a\nb\nc\n"), "$ should not match newline outside modified group");
+assert(!re6.test("\na\nb\nc\n"), "^ and $ should not match newline outside modified group");

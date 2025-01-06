@@ -15,15 +15,13 @@
 #include "internal.h"
 
 #if defined(OPENSSL_AARCH64) && defined(OPENSSL_APPLE) && \
-    !defined(OPENSSL_STATIC_ARMCAP)
+    !defined(OPENSSL_STATIC_ARMCAP) && !defined(OPENSSL_NO_ASM)
 
 #include <sys/sysctl.h>
 #include <sys/types.h>
 
 #include <openssl/arm_arch.h>
 
-
-extern uint32_t OPENSSL_armcap_P;
 
 static int has_hw_feature(const char *name) {
   int value;
@@ -65,6 +63,9 @@ void OPENSSL_cpuid_setup(void) {
   // available in macOS 12. For compatibility with macOS 11, we also support
   // the old names. The old names don't have values for features like FEAT_AES,
   // so instead we detect them statically above.
+  //
+  // If querying new sysctls, update the Chromium sandbox definition. See
+  // https://crrev.com/c/4415225.
   if (has_hw_feature("hw.optional.arm.FEAT_SHA512") ||
       has_hw_feature("hw.optional.armv8_2_sha512")) {
     OPENSSL_armcap_P |= ARMV8_SHA512;

@@ -300,12 +300,6 @@ class RewriteR32fImagesTraverser : public TIntermTraverser
             case EbtImageCube:
                 newType->setBasicType(EbtUImageCube);
                 break;
-            case EbtImage1D:
-                newType->setBasicType(EbtUImage1D);
-                break;
-            case EbtImage1DArray:
-                newType->setBasicType(EbtUImage1DArray);
-                break;
             case EbtImage2DMS:
                 newType->setBasicType(EbtUImage2DMS);
                 break;

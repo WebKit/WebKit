@@ -10,8 +10,6 @@ PACKAGES+=(
     libfaad-dev
     libffi-dev
     libgl1-mesa-dev
-    $(aptIfExists libgl1-mesa-glx)
-    $(aptIfExists libgtk-4-dev)
     libgtk-3-dev
     libgudev-1.0-dev
     libhyphen-dev
@@ -33,6 +31,8 @@ PACKAGES+=(
     libxtst-dev
     unifdef
     xfonts-utils
+    $(aptIfExists libgl1-mesa-glx)
+    $(aptIfExists libgtk-4-dev)
 
     # These are dependencies necessary for running tests.
     cups-daemon

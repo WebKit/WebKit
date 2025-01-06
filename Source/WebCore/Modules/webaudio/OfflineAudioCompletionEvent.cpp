@@ -33,11 +33,11 @@
 #include "OfflineAudioCompletionEventInit.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/TypedArrayAdaptors.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioCompletionEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OfflineAudioCompletionEvent);
 
 Ref<OfflineAudioCompletionEvent> OfflineAudioCompletionEvent::create(Ref<AudioBuffer>&& renderedBuffer)
 {

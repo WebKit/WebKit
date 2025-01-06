@@ -48,21 +48,29 @@ extern "C" {
 void ecp_nistz256_neg(BN_ULONG res[P256_LIMBS], const BN_ULONG a[P256_LIMBS]);
 
 // ecp_nistz256_mul_mont sets |res| to |a| * |b| * 2^-256 mod P.
+#if defined(OPENSSL_X86_64)
+void ecp_nistz256_mul_mont_nohw(BN_ULONG res[P256_LIMBS],
+                                const BN_ULONG a[P256_LIMBS],
+                                const BN_ULONG b[P256_LIMBS]);
+void ecp_nistz256_mul_mont_adx(BN_ULONG res[P256_LIMBS],
+                               const BN_ULONG a[P256_LIMBS],
+                               const BN_ULONG b[P256_LIMBS]);
+#else
 void ecp_nistz256_mul_mont(BN_ULONG res[P256_LIMBS],
                            const BN_ULONG a[P256_LIMBS],
                            const BN_ULONG b[P256_LIMBS]);
+#endif
 
 // ecp_nistz256_sqr_mont sets |res| to |a| * |a| * 2^-256 mod P.
+#if defined(OPENSSL_X86_64)
+void ecp_nistz256_sqr_mont_nohw(BN_ULONG res[P256_LIMBS],
+                                const BN_ULONG a[P256_LIMBS]);
+void ecp_nistz256_sqr_mont_adx(BN_ULONG res[P256_LIMBS],
+                               const BN_ULONG a[P256_LIMBS]);
+#else
 void ecp_nistz256_sqr_mont(BN_ULONG res[P256_LIMBS],
                            const BN_ULONG a[P256_LIMBS]);
-
-// ecp_nistz256_from_mont sets |res| to |in|, converted from Montgomery domain
-// by multiplying with 1.
-static inline void ecp_nistz256_from_mont(BN_ULONG res[P256_LIMBS],
-                                          const BN_ULONG in[P256_LIMBS]) {
-  static const BN_ULONG ONE[P256_LIMBS] = { 1 };
-  ecp_nistz256_mul_mont(res, in, ONE);
-}
+#endif
 
 
 // P-256 scalar operations.
@@ -72,15 +80,31 @@ static inline void ecp_nistz256_from_mont(BN_ULONG res[P256_LIMBS],
 
 // ecp_nistz256_ord_mul_mont sets |res| to |a| * |b| where inputs and outputs
 // are in Montgomery form. That is, |res| is |a| * |b| * 2^-256 mod N.
+#if defined(OPENSSL_X86_64)
+void ecp_nistz256_ord_mul_mont_nohw(BN_ULONG res[P256_LIMBS],
+                                    const BN_ULONG a[P256_LIMBS],
+                                    const BN_ULONG b[P256_LIMBS]);
+void ecp_nistz256_ord_mul_mont_adx(BN_ULONG res[P256_LIMBS],
+                                   const BN_ULONG a[P256_LIMBS],
+                                   const BN_ULONG b[P256_LIMBS]);
+#else
 void ecp_nistz256_ord_mul_mont(BN_ULONG res[P256_LIMBS],
                                const BN_ULONG a[P256_LIMBS],
                                const BN_ULONG b[P256_LIMBS]);
+#endif
 
 // ecp_nistz256_ord_sqr_mont sets |res| to |a|^(2*|rep|) where inputs and
 // outputs are in Montgomery form. That is, |res| is
 // (|a| * 2^-256)^(2*|rep|) * 2^256 mod N.
+#if defined(OPENSSL_X86_64)
+void ecp_nistz256_ord_sqr_mont_nohw(BN_ULONG res[P256_LIMBS],
+                                    const BN_ULONG a[P256_LIMBS], BN_ULONG rep);
+void ecp_nistz256_ord_sqr_mont_adx(BN_ULONG res[P256_LIMBS],
+                                   const BN_ULONG a[P256_LIMBS], BN_ULONG rep);
+#else
 void ecp_nistz256_ord_sqr_mont(BN_ULONG res[P256_LIMBS],
                                const BN_ULONG a[P256_LIMBS], BN_ULONG rep);
+#endif
 
 // beeu_mod_inverse_vartime sets out = a^-1 mod p using a Euclidean algorithm.
 // Assumption: 0 < a < p < 2^(256) and p is odd.
@@ -111,27 +135,60 @@ typedef struct {
 // ecp_nistz256_select_w5 sets |*val| to |in_t[index-1]| if 1 <= |index| <= 16
 // and all zeros (the point at infinity) if |index| is 0. This is done in
 // constant time.
+#if defined(OPENSSL_X86_64)
+void ecp_nistz256_select_w5_nohw(P256_POINT *val, const P256_POINT in_t[16],
+                                 int index);
+void ecp_nistz256_select_w5_avx2(P256_POINT *val, const P256_POINT in_t[16],
+                                 int index);
+#else
 void ecp_nistz256_select_w5(P256_POINT *val, const P256_POINT in_t[16],
                             int index);
+#endif
 
 // ecp_nistz256_select_w7 sets |*val| to |in_t[index-1]| if 1 <= |index| <= 64
 // and all zeros (the point at infinity) if |index| is 0. This is done in
 // constant time.
+#if defined(OPENSSL_X86_64)
+void ecp_nistz256_select_w7_nohw(P256_POINT_AFFINE *val,
+                                 const P256_POINT_AFFINE in_t[64], int index);
+void ecp_nistz256_select_w7_avx2(P256_POINT_AFFINE *val,
+                                 const P256_POINT_AFFINE in_t[64], int index);
+#else
 void ecp_nistz256_select_w7(P256_POINT_AFFINE *val,
                             const P256_POINT_AFFINE in_t[64], int index);
+#endif
 
 // ecp_nistz256_point_double sets |r| to |a| doubled.
+#if defined(OPENSSL_X86_64)
+void ecp_nistz256_point_double_nohw(P256_POINT *r, const P256_POINT *a);
+void ecp_nistz256_point_double_adx(P256_POINT *r, const P256_POINT *a);
+#else
 void ecp_nistz256_point_double(P256_POINT *r, const P256_POINT *a);
+#endif
 
 // ecp_nistz256_point_add adds |a| to |b| and places the result in |r|.
+#if defined(OPENSSL_X86_64)
+void ecp_nistz256_point_add_nohw(P256_POINT *r, const P256_POINT *a,
+                                 const P256_POINT *b);
+void ecp_nistz256_point_add_adx(P256_POINT *r, const P256_POINT *a,
+                                const P256_POINT *b);
+#else
 void ecp_nistz256_point_add(P256_POINT *r, const P256_POINT *a,
                             const P256_POINT *b);
+#endif
 
 // ecp_nistz256_point_add_affine adds |a| to |b| and places the result in
 // |r|. |a| and |b| must not represent the same point unless they are both
 // infinity.
+#if defined(OPENSSL_X86_64)
+void ecp_nistz256_point_add_affine_adx(P256_POINT *r, const P256_POINT *a,
+                                       const P256_POINT_AFFINE *b);
+void ecp_nistz256_point_add_affine_nohw(P256_POINT *r, const P256_POINT *a,
+                                        const P256_POINT_AFFINE *b);
+#else
 void ecp_nistz256_point_add_affine(P256_POINT *r, const P256_POINT *a,
                                    const P256_POINT_AFFINE *b);
+#endif
 
 #endif /* !defined(OPENSSL_NO_ASM) && \
           (defined(OPENSSL_X86_64) || defined(OPENSSL_AARCH64)) &&   \

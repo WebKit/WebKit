@@ -23,9 +23,7 @@
 #include "JSDOMConvertStrings.h"
 
 #include "JSDOMGlobalObject.h"
-#include "JSTrustedHTML.h"
 #include "JSTrustedScript.h"
-#include "JSTrustedScriptURL.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -123,28 +121,13 @@ ConversionResult<IDLAtomStringAdaptor<IDLUSVString>> valueToUSVAtomString(JSGlob
 }
 
 // https://w3c.github.io/trusted-types/dist/spec/#get-trusted-type-compliant-string-algorithm
-ConversionResult<IDLDOMString> trustedTypeCompliantString(TrustedType expectedType, JSGlobalObject& global, JSValue input, const String& sink, ShouldConvertNullToEmptyString shouldConvertNullToEmptyString)
+ConversionResult<IDLDOMString> trustedScriptCompliantString(JSGlobalObject& global, JSValue input, const String& sink)
 {
     VM& vm = global.vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    switch (expectedType) {
-    case TrustedType::TrustedHTML:
-        if (auto* trustedHTML = JSTrustedHTML::toWrapped(vm, input))
-            return { trustedHTML->toString() };
-        break;
-    case TrustedType::TrustedScript:
-        if (auto* trustedScript = JSTrustedScript::toWrapped(vm, input))
-            return { trustedScript->toString() };
-        break;
-    case TrustedType::TrustedScriptURL:
-        if (auto* trustedScriptURL = JSTrustedScriptURL::toWrapped(vm, input))
-            return { trustedScriptURL->toString() };
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        return { String() };
-    }
+    if (auto* trustedScript = JSTrustedScript::toWrapped(vm, input))
+        return trustedScript->toString();
 
     RefPtr scriptExecutionContext = jsDynamicCast<JSDOMGlobalObject*>(&global)->scriptExecutionContext();
     if (!scriptExecutionContext) {
@@ -152,27 +135,17 @@ ConversionResult<IDLDOMString> trustedTypeCompliantString(TrustedType expectedTy
         return { String() };
     }
 
-    auto convertedValue = expectedType == TrustedType::TrustedScriptURL
-        ? ConversionResult<IDLDOMString> { convert<IDLUSVString>(global, input) }
-        : ConversionResult<IDLDOMString> { convert<IDLDOMString>(global, input) };
+    auto convertedValue = ConversionResult<IDLDOMString> { convert<IDLUSVString>(global, input) };
     if (UNLIKELY(convertedValue.hasException(throwScope)))
         return ConversionResultException { };
 
-    if (input.isNull() && shouldConvertNullToEmptyString == ShouldConvertNullToEmptyString::Yes)
-        convertedValue = ConversionResult<IDLDOMString> { String(emptyString()) };
-
-    auto stringValueHolder = trustedTypeCompliantString(expectedType, *scriptExecutionContext, convertedValue.releaseReturnValue(), sink);
+    auto stringValueHolder = trustedTypeCompliantString(TrustedType::TrustedScript, *scriptExecutionContext, convertedValue.releaseReturnValue(), sink);
     if (stringValueHolder.hasException()) {
         propagateException(global, throwScope, stringValueHolder.releaseException());
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
 
-    auto stringValue = stringValueHolder.releaseReturnValue();
-
-    if (stringValue.isNull() && shouldConvertNullToEmptyString == ShouldConvertNullToEmptyString::Yes)
-        return { String(emptyString()) };
-
-    return { WTFMove(stringValue) };
+    return stringValueHolder.releaseReturnValue();
 }
 
 } // namespace WebCore

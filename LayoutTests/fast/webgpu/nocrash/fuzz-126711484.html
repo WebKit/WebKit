@@ -1,0 +1,43 @@
+<script>
+function gc() {
+  if (globalThis.GCController) {
+    globalThis.GCController.collect();
+  } else if (globalThis.$vm) {
+    globalThis.$vm.gc();
+  }
+}
+
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let commandEncoder = device.createCommandEncoder();
+    let texture = device.createTexture({
+        size: [201],
+        format: 'depth24plus-stencil8',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT
+    });
+    let textureView = texture.createView();
+    let renderBundleEncoder = device.createRenderBundleEncoder({
+        colorFormats: [undefined],
+        depthReadOnly: true
+    });
+    let renderBundle = renderBundleEncoder.finish();
+    let renderPass = commandEncoder.beginRenderPass({
+        colorAttachments: [undefined],
+        depthStencilAttachment: {
+            view: textureView,
+            depthReadOnly: true,
+            stencilLoadOp: 'load',
+            stencilStoreOp: 'discard'
+        }
+    });
+    await 0;
+    gc();
+    renderPass.executeBundles([renderBundle]);
+    await device.queue.onSubmittedWorkDone();
+    globalThis.testRunner?.notifyDone();
+}
+
+globalThis.testRunner?.waitUntilDone();
+run();
+</script>

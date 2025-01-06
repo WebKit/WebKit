@@ -31,10 +31,8 @@ from io import open
 from webkitpy.featuredefines.matcher import flag_matcher, usage_matcher, idl_usage_matcher, cmake_options_matcher, declaration_matcher
 
 
-class FeatureDefinesSearch(object):
+class FeatureDefinesSearch(metaclass=ABCMeta):
     """ Base class for searching for feature defines. """
-
-    ___metaclass___ = ABCMeta
 
     def __init__(self):
         self._defines = {}

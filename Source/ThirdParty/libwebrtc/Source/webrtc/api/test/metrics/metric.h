@@ -12,10 +12,10 @@
 #define API_TEST_METRICS_METRIC_H_
 
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/units/timestamp.h"
 
 namespace webrtc {
@@ -66,12 +66,12 @@ struct Metric {
   struct Stats {
     // Sample mean of the metric
     // (https://en.wikipedia.org/wiki/Sample_mean_and_covariance).
-    absl::optional<double> mean;
+    std::optional<double> mean;
     // Standard deviation (https://en.wikipedia.org/wiki/Standard_deviation).
     // Is undefined if `time_series` contains only a single value.
-    absl::optional<double> stddev;
-    absl::optional<double> min;
-    absl::optional<double> max;
+    std::optional<double> stddev;
+    std::optional<double> min;
+    std::optional<double> max;
   };
 
   // Metric name, for example PSNR, SSIM, decode_time, etc.

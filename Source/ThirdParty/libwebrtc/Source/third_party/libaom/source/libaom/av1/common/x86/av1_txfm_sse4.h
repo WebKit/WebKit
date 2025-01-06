@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -18,14 +18,14 @@
 extern "C" {
 #endif
 
-static INLINE __m128i av1_round_shift_32_sse4_1(__m128i vec, int bit) {
+static inline __m128i av1_round_shift_32_sse4_1(__m128i vec, int bit) {
   __m128i tmp, round;
   round = _mm_set1_epi32(1 << (bit - 1));
   tmp = _mm_add_epi32(vec, round);
   return _mm_srai_epi32(tmp, bit);
 }
 
-static INLINE void av1_round_shift_array_32_sse4_1(const __m128i *input,
+static inline void av1_round_shift_array_32_sse4_1(const __m128i *input,
                                                    __m128i *output,
                                                    const int size,
                                                    const int bit) {
@@ -42,7 +42,7 @@ static INLINE void av1_round_shift_array_32_sse4_1(const __m128i *input,
   }
 }
 
-static INLINE void av1_round_shift_rect_array_32_sse4_1(const __m128i *input,
+static inline void av1_round_shift_rect_array_32_sse4_1(const __m128i *input,
                                                         __m128i *output,
                                                         const int size,
                                                         const int bit,

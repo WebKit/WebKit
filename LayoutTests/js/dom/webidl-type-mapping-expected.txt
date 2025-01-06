@@ -1205,6 +1205,11 @@ PASS converter.testLongRecord()['key'] is 1
 PASS converter.testLongRecord().hasOwnProperty('otherKey') is true
 PASS converter.testLongRecord()['otherKey'] is 2
 PASS var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { get: function() { throw new Error(); }, enumerable: true }); converter.setTestLongRecord(o); threw exception Error.
+converter.setTestLongRecord({ '1': 1 })
+PASS converter.testLongRecord() is an instance of Object
+PASS converter.testLongRecord().hasOwnProperty('1') is true
+PASS '1' in converter.testLongRecord() is true
+PASS converter.testLongRecord()['1'] is 1
 converter.setTestNodeRecord({ key: document, key2: document.documentElement })
 PASS converter.testNodeRecord().hasOwnProperty('key') is true
 PASS 'key' in converter.testNodeRecord() is true

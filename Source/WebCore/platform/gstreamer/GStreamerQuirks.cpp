@@ -36,9 +36,16 @@
 #include "GStreamerQuirkWesteros.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/StringCommon.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerQuirkBase);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerQuirk);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerHolePunchQuirk);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerQuirksManager);
 
 GST_DEBUG_CATEGORY_STATIC(webkit_quirks_debug);
 #define GST_CAT_DEFAULT webkit_quirks_debug
@@ -70,7 +77,7 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
     const char* quirksList = g_getenv("WEBKIT_GST_QUIRKS");
     GST_DEBUG("Attempting to parse requested quirks: %s", GST_STR_NULL(quirksList));
     if (quirksList) {
-        StringView quirks { std::span { quirksList, strlen(quirksList) } };
+        StringView quirks { span(quirksList) };
         if (WTF::equalLettersIgnoringASCIICase(quirks, "help"_s)) {
             WTFLogAlways("Supported quirks for WEBKIT_GST_QUIRKS are: amlogic, broadcom, bcmnexus, realtek, westeros");
             return;
@@ -96,7 +103,7 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
             }
 
             if (!quirk->isPlatformSupported()) {
-                GST_WARNING("Quirk %s was requested but is not supported on this platform. Skipping", quirk->identifier());
+                GST_WARNING("Quirk %s was requested but is not supported on this platform. Skipping", quirk->identifier().characters());
                 continue;
             }
             m_quirks.append(WTFMove(quirk));
@@ -108,7 +115,7 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
     if (!holePunchQuirk)
         return;
 
-    StringView identifier { std::span { holePunchQuirk, strlen(holePunchQuirk) } };
+    StringView identifier { span(holePunchQuirk) };
     if (WTF::equalLettersIgnoringASCIICase(identifier, "help"_s)) {
         WTFLogAlways("Supported quirks for WEBKIT_GST_HOLE_PUNCH_QUIRK are: fake, westeros, bcmnexus");
         return;
@@ -137,7 +144,7 @@ GstElement* GStreamerQuirksManager::createAudioSink()
     for (const auto& quirk : m_quirks) {
         auto* sink = quirk->createAudioSink();
         if (sink) {
-            GST_DEBUG("Using AudioSink from quirk %s : %" GST_PTR_FORMAT, quirk->identifier(), sink);
+            GST_DEBUG("Using AudioSink from quirk %s : %" GST_PTR_FORMAT, quirk->identifier().characters(), sink);
             return sink;
         }
     }
@@ -152,7 +159,7 @@ GstElement* GStreamerQuirksManager::createWebAudioSink()
         if (!sink)
             continue;
 
-        GST_DEBUG("Using WebAudioSink from quirk %s : %" GST_PTR_FORMAT, quirk->identifier(), sink);
+        GST_DEBUG("Using WebAudioSink from quirk %s : %" GST_PTR_FORMAT, quirk->identifier().characters(), sink);
         return sink;
     }
 
@@ -167,7 +174,7 @@ GstElement* GStreamerQuirksManager::createHolePunchVideoSink(bool isLegacyPlaybi
         return nullptr;
     }
     auto sink = m_holePunchQuirk->createHolePunchVideoSink(isLegacyPlaybin, player);
-    GST_DEBUG("Using HolePunchSink from quirk %s : %" GST_PTR_FORMAT, m_holePunchQuirk->identifier(), sink);
+    GST_DEBUG("Using HolePunchSink from quirk %s : %" GST_PTR_FORMAT, m_holePunchQuirk->identifier().characters(), sink);
     return sink;
 }
 
@@ -204,7 +211,7 @@ std::optional<bool> GStreamerQuirksManager::isHardwareAccelerated(GstElementFact
         if (!result)
             continue;
 
-        GST_DEBUG("Setting %" GST_PTR_FORMAT " as %s accelerated from quirk %s", factory, quirk->identifier(), *result ? "hardware" : "software");
+        GST_DEBUG("Setting %" GST_PTR_FORMAT " as %s accelerated from quirk %s", factory, quirk->identifier().characters(), *result ? "hardware" : "software");
         return *result;
     }
 
@@ -223,7 +230,7 @@ GstElementFactoryListType GStreamerQuirksManager::audioVideoDecoderFactoryListTy
         if (!result)
             continue;
 
-        GST_DEBUG("Quirk %s requests audio/video decoder factory list override to %" G_GUINT32_FORMAT, quirk->identifier(), static_cast<uint32_t>(*result));
+        GST_DEBUG("Quirk %s requests audio/video decoder factory list override to %" G_GUINT32_FORMAT, quirk->identifier().characters(), static_cast<uint32_t>(*result));
         return *result;
     }
 
@@ -252,7 +259,7 @@ unsigned GStreamerQuirksManager::getAdditionalPlaybinFlags() const
     unsigned flags = 0;
     for (const auto& quirk : m_quirks) {
         auto quirkFlags = quirk->getAdditionalPlaybinFlags();
-        GST_DEBUG("Quirk %s requests these playbin flags: %u", quirk->identifier(), quirkFlags);
+        GST_DEBUG("Quirk %s requests these playbin flags: %u", quirk->identifier().characters(), quirkFlags);
         flags |= quirkFlags;
     }
 
@@ -272,6 +279,64 @@ bool GStreamerQuirksManager::shouldParseIncomingLibWebRTCBitStream() const
             return false;
     }
     return true;
+}
+
+bool GStreamerQuirksManager::needsBufferingPercentageCorrection() const
+{
+    for (auto& quirk : m_quirks) {
+        if (quirk->needsBufferingPercentageCorrection())
+            return true;
+    }
+    return false;
+}
+
+ASCIILiteral GStreamerQuirksManager::queryBufferingPercentage(MediaPlayerPrivateGStreamer* mediaPlayerPrivate, const GRefPtr<GstQuery>& query) const
+{
+    // Only the first quirk that needs percentage correction must operate. We're assuming that the m_quirks Vector
+    // preserves its order among calls to the percentage correction family of methods.
+    for (auto& quirk : m_quirks) {
+        if (quirk->needsBufferingPercentageCorrection())
+            return quirk->queryBufferingPercentage(mediaPlayerPrivate, query);
+    }
+    return nullptr;
+}
+
+int GStreamerQuirksManager::correctBufferingPercentage(MediaPlayerPrivateGStreamer* playerPrivate, int originalBufferingPercentage, GstBufferingMode mode) const
+{
+    // Only the first quirk that needs percentage correction must operate. We're assuming that the m_quirks Vector
+    // preserves its order among calls to the percentage correction family of methods.
+    for (auto& quirk : m_quirks) {
+        if (quirk->needsBufferingPercentageCorrection())
+            return quirk->correctBufferingPercentage(playerPrivate, originalBufferingPercentage, mode);
+    }
+    return originalBufferingPercentage;
+}
+
+void GStreamerQuirksManager::resetBufferingPercentage(MediaPlayerPrivateGStreamer* playerPrivate, int bufferingPercentage) const
+{
+    // Only the first quirk that needs percentage correction must operate. We're assuming that the m_quirks Vector
+    // preserves its order among calls to the percentage correction family of methods.
+    for (auto& quirk : m_quirks) {
+        if (quirk->needsBufferingPercentageCorrection()) {
+            quirk->resetBufferingPercentage(playerPrivate, bufferingPercentage);
+            return;
+        }
+    }
+}
+
+void GStreamerQuirksManager::setupBufferingPercentageCorrection(MediaPlayerPrivateGStreamer* playerPrivate, GstState currentState, GstState newState, GRefPtr<GstElement>&& element) const
+{
+    // Only the first quirk that needs percentage correction must operate. We're assuming that the m_quirks Vector
+    // preserves its order among calls to the percentage correction family of methods.
+    for (auto& quirk : m_quirks) {
+        if (quirk->needsBufferingPercentageCorrection()) {
+            // We're moving the element to the inner method. If this loop ever needs to call the method twice,
+            // think about a solution to avoid passing a dummy element (after first move) to the method the second
+            // time it's called.
+            quirk->setupBufferingPercentageCorrection(playerPrivate, currentState, newState, WTFMove(element));
+            return;
+        }
+    }
 }
 
 #undef GST_CAT_DEFAULT

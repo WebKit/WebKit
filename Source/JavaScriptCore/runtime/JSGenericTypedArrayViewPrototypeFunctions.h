@@ -70,6 +70,8 @@
 #include <strings.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace JSGenericTypedArrayViewPrototypeFunctionsInternal {
@@ -303,28 +305,28 @@ static ALWAYS_INLINE size_t typedArrayIndexOfImpl(typename ViewClass::ElementTyp
 
     if constexpr (ViewClass::Adaptor::isInteger) {
         if constexpr (ViewClass::elementSize == 1) {
-            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::find8(bitwise_cast<const uint8_t*>(array + index), target, length - index));
+            auto* result = std::bit_cast<typename ViewClass::ElementType*>(WTF::find8(std::bit_cast<const uint8_t*>(array + index), target, length - index));
             if (result)
                 return result - array;
             return WTF::notFound;
         }
 
         if constexpr (ViewClass::elementSize == 2) {
-            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::find16(bitwise_cast<const uint16_t*>(array + index), target, length - index));
+            auto* result = std::bit_cast<typename ViewClass::ElementType*>(WTF::find16(std::bit_cast<const uint16_t*>(array + index), target, length - index));
             if (result)
                 return result - array;
             return WTF::notFound;
         }
 
         if constexpr (ViewClass::elementSize == 4) {
-            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::find32(bitwise_cast<const uint32_t*>(array + index), target, length - index));
+            auto* result = std::bit_cast<typename ViewClass::ElementType*>(WTF::find32(std::bit_cast<const uint32_t*>(array + index), target, length - index));
             if (result)
                 return result - array;
             return WTF::notFound;
         }
 
         if constexpr (ViewClass::elementSize == 8) {
-            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::find64(bitwise_cast<const uint64_t*>(array + index), target, length - index));
+            auto* result = std::bit_cast<typename ViewClass::ElementType*>(WTF::find64(std::bit_cast<const uint64_t*>(array + index), target, length - index));
             if (result)
                 return result - array;
             return WTF::notFound;
@@ -332,15 +334,22 @@ static ALWAYS_INLINE size_t typedArrayIndexOfImpl(typename ViewClass::ElementTyp
     }
 
     if constexpr (ViewClass::Adaptor::isFloat) {
+        if constexpr (ViewClass::elementSize == 2) {
+            auto* result = std::bit_cast<typename ViewClass::ElementType*>(WTF::findFloat16(std::bit_cast<const Float16*>(array + index), target, length - index));
+            if (result)
+                return result - array;
+            return WTF::notFound;
+        }
+
         if constexpr (ViewClass::elementSize == 4) {
-            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::findFloat(bitwise_cast<const float*>(array + index), target, length - index));
+            auto* result = std::bit_cast<typename ViewClass::ElementType*>(WTF::findFloat(std::bit_cast<const float*>(array + index), target, length - index));
             if (result)
                 return result - array;
             return WTF::notFound;
         }
 
         if constexpr (ViewClass::elementSize == 8) {
-            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::findDouble(bitwise_cast<const double*>(array + index), target, length - index));
+            auto* result = std::bit_cast<typename ViewClass::ElementType*>(WTF::findDouble(std::bit_cast<const double*>(array + index), target, length - index));
             if (result)
                 return result - array;
             return WTF::notFound;
@@ -393,12 +402,22 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIncludes(VM& vm, JSGl
 
     size_t searchLength = std::min<size_t>(length, updatedLength);
     if constexpr (ViewClass::Adaptor::isFloat) {
-        if (std::isnan(static_cast<double>(*targetOption))) {
-            for (; index < searchLength; ++index) {
-                if (std::isnan(static_cast<double>(array[index])))
-                    return JSValue::encode(jsBoolean(true));
+        if constexpr (ViewClass::elementSize == 2) {
+            if (std::isnan(*targetOption)) {
+                for (; index < searchLength; ++index) {
+                    if (std::isnan(array[index]))
+                        return JSValue::encode(jsBoolean(true));
+                }
+                return JSValue::encode(jsBoolean(false));
             }
-            return JSValue::encode(jsBoolean(false));
+        } else {
+            if (std::isnan(static_cast<double>(*targetOption))) {
+                for (; index < searchLength; ++index) {
+                    if (std::isnan(static_cast<double>(array[index])))
+                        return JSValue::encode(jsBoolean(true));
+                }
+                return JSValue::encode(jsBoolean(false));
+            }
         }
     }
 
@@ -1015,6 +1034,10 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
         scope.release();
         jsCast<JSUint32Array*>(result)->setFromTypedArray(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
         return JSValue::encode(result);
+    case Float16ArrayType:
+        scope.release();
+        jsCast<JSFloat16Array*>(result)->setFromTypedArray(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
+        return JSValue::encode(result);
     case Float32ArrayType:
         scope.release();
         jsCast<JSFloat32Array*>(result)->setFromTypedArray(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
@@ -1188,3 +1211,5 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncWith(VM& vm, JSGlobal
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -33,12 +33,15 @@
 #include "NotificationResources.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
 // 2.5. Resources
 // https://notifications.spec.whatwg.org/#resources
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NotificationResourcesLoader);
 
 NotificationResourcesLoader::NotificationResourcesLoader(Notification& notification)
     : m_notification(notification)
@@ -148,7 +151,7 @@ void NotificationResourcesLoader::ResourceLoader::cancel()
         completionHandler(this, nullptr);
 }
 
-void NotificationResourcesLoader::ResourceLoader::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
+void NotificationResourcesLoader::ResourceLoader::didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse& response)
 {
     // If the response's internal response's type is "default", then attempt to decode the resource as image.
     if (response.type() == ResourceResponse::Type::Default)
@@ -163,7 +166,7 @@ void NotificationResourcesLoader::ResourceLoader::didReceiveData(const SharedBuf
     }
 }
 
-void NotificationResourcesLoader::ResourceLoader::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&)
+void NotificationResourcesLoader::ResourceLoader::didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&)
 {
     m_finished = true;
 
@@ -174,7 +177,7 @@ void NotificationResourcesLoader::ResourceLoader::didFinishLoading(ResourceLoade
         m_completionHandler(this, WTFMove(m_image));
 }
 
-void NotificationResourcesLoader::ResourceLoader::didFail(const ResourceError&)
+void NotificationResourcesLoader::ResourceLoader::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&)
 {
     m_finished = true;
 

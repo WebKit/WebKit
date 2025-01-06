@@ -31,6 +31,7 @@
 #include "StyledElement.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -45,10 +46,12 @@ class SVGPropertyAnimatorFactory;
 class SVGResourceElementClient;
 class SVGSVGElement;
 class SVGUseElement;
+class Settings;
 class Timer;
 
 class SVGElement : public StyledElement, public SVGPropertyOwner {
-    WTF_MAKE_ISO_ALLOCATED(SVGElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGElement);
 public:
     bool isInnerSVGSVGElement() const;
     bool isOutermostSVGSVGElement() const;
@@ -181,7 +184,7 @@ protected:
     SVGElementRareData& ensureSVGRareData();
 
     void reportAttributeParsingError(SVGParsingError, const QualifiedName&, const AtomString&);
-    static CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName&);
+    static CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName&, const Settings&);
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;

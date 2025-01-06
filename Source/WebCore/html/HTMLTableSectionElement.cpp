@@ -34,11 +34,11 @@
 #include "NodeList.h"
 #include "NodeRareData.h"
 #include "Text.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTableSectionElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTableSectionElement);
 
 using namespace HTMLNames;
 

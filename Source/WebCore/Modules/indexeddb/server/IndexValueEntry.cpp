@@ -27,9 +27,12 @@
 #include "IndexValueEntry.h"
 
 #include "IDBCursorInfo.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IndexValueEntry);
 
 IndexValueEntry::IndexValueEntry(bool unique)
     : m_unique(unique)

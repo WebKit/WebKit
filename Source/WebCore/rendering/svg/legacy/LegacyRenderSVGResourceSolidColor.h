@@ -22,13 +22,14 @@
 #include "Color.h"
 #include "FloatRect.h"
 #include "LegacyRenderSVGResource.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class RenderObject;
 
 class LegacyRenderSVGResourceSolidColor final : public LegacyRenderSVGResource {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceSolidColor);
 public:
     LegacyRenderSVGResourceSolidColor();
     virtual ~LegacyRenderSVGResourceSolidColor();
@@ -36,7 +37,7 @@ public:
     void removeAllClientsFromCacheIfNeeded(bool, SingleThreadWeakHashSet<RenderObject>*) override { }
     void removeClientFromCache(RenderElement&, bool = true) override { }
 
-    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
+    OptionSet<ApplyResult> applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
     void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) override;
     FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) override { return FloatRect(); }
 

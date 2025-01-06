@@ -853,14 +853,12 @@ namespace JSC {
         : StatementNode(location)
         , m_expr(expr)
     {
-        m_expr->setIsOnlyChildOfStatement();
     }
 
     inline DeclarationStatement::DeclarationStatement(const JSTokenLocation& location, ExpressionNode* expr)
         : StatementNode(location)
         , m_expr(expr)
     {
-        m_expr->setIsOnlyChildOfStatement();
     }
 
     inline ModuleDeclarationNode::ModuleDeclarationNode(const JSTokenLocation& location)
@@ -881,11 +879,12 @@ namespace JSC {
     {
     }
 
-    inline ImportDeclarationNode::ImportDeclarationNode(const JSTokenLocation& location, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
+    inline ImportDeclarationNode::ImportDeclarationNode(const JSTokenLocation& location, ImportType type, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
         : ModuleDeclarationNode(location)
         , m_specifierList(importSpecifierList)
         , m_moduleName(moduleName)
         , m_attributesList(importAttributesList)
+        , m_type(type)
     {
     }
 
@@ -986,8 +985,6 @@ namespace JSC {
         : StatementNode(location)
         , m_value(value)
     {
-        if (m_value)
-            m_value->setIsOnlyChildOfStatement();
     }
 
     inline WithNode::WithNode(const JSTokenLocation& location, ExpressionNode* expr, StatementNode* statement, const JSTextPosition& divot, uint32_t expressionLength)
@@ -1010,7 +1007,6 @@ namespace JSC {
         : StatementNode(location)
         , m_expr(expr)
     {
-        m_expr->setIsOnlyChildOfStatement();
     }
 
     inline TryNode::TryNode(const JSTokenLocation& location, StatementNode* tryBlock, DestructuringPatternNode* catchPattern, StatementNode* catchBlock, VariableEnvironment&& catchEnvironment, StatementNode* finallyBlock)

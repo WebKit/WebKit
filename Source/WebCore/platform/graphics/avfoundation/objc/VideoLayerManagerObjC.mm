@@ -37,6 +37,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Logger.h>
 #import <wtf/MachSendRight.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -44,8 +45,10 @@ OBJC_CLASS AVPlayerLayer;
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoLayerManagerObjC);
+
 #if !RELEASE_LOG_DISABLED
-VideoLayerManagerObjC::VideoLayerManagerObjC(const Logger& logger, const void* logIdentifier)
+VideoLayerManagerObjC::VideoLayerManagerObjC(const Logger& logger, uint64_t logIdentifier)
     : m_logger(logger)
     , m_logIdentifier(logIdentifier)
 {

@@ -79,6 +79,9 @@ private:
     void unregisterSyncAccessHandle(FileSystemSyncAccessHandleIdentifier) final;
     void invalidateAccessHandle(FileSystemSyncAccessHandleIdentifier) final;
     void requestNewCapacityForSyncAccessHandle(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, uint64_t, RequestCapacityCallback&&) final;
+    void createWritable(FileSystemHandleIdentifier, bool keepExistingData, VoidCallback&&) final;
+    void closeWritable(FileSystemHandleIdentifier, FileSystemWriteCloseReason, VoidCallback&&) final;
+    void executeCommandForWritable(FileSystemHandleIdentifier, FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, VoidCallback&&) final;
 
     WeakPtr<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_scope;
     RefPtr<FileSystemStorageConnection> m_mainThreadConnection;

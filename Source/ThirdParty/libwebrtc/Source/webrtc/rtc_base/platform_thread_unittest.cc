@@ -10,7 +10,8 @@
 
 #include "rtc_base/platform_thread.h"
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "rtc_base/event.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/gmock.h"
@@ -19,13 +20,13 @@ namespace rtc {
 
 TEST(PlatformThreadTest, DefaultConstructedIsEmpty) {
   PlatformThread thread;
-  EXPECT_EQ(thread.GetHandle(), absl::nullopt);
+  EXPECT_EQ(thread.GetHandle(), std::nullopt);
   EXPECT_TRUE(thread.empty());
 }
 
 TEST(PlatformThreadTest, StartFinalize) {
   PlatformThread thread = PlatformThread::SpawnJoinable([] {}, "1");
-  EXPECT_NE(thread.GetHandle(), absl::nullopt);
+  EXPECT_NE(thread.GetHandle(), std::nullopt);
   EXPECT_FALSE(thread.empty());
   thread.Finalize();
   EXPECT_TRUE(thread.empty());

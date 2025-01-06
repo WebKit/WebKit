@@ -10,7 +10,8 @@
 
 #include "test/pc/e2e/analyzer/video/multi_reader_queue.h"
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -48,7 +49,7 @@ TEST(MultiReaderQueueTest, SizeIsCorrectAfterRemoveFromOnlyOneHead) {
   // Removing elements from queue #0
   for (int i = 0; i < 5; ++i) {
     EXPECT_EQ(queue.size(/*reader=*/0), static_cast<size_t>(5 - i));
-    EXPECT_EQ(queue.PopFront(/*reader=*/0), absl::optional<int>(i));
+    EXPECT_EQ(queue.PopFront(/*reader=*/0), std::optional<int>(i));
     for (int j = 1; j < 10; ++j) {
       EXPECT_EQ(queue.size(/*reader=*/j), 5lu);
     }
@@ -63,7 +64,7 @@ TEST(MultiReaderQueueTest, SingleHeadOneAddOneRemove) {
   EXPECT_EQ(queue.size(), 1lu);
   EXPECT_TRUE(queue.Front(/*reader=*/0).has_value());
   EXPECT_EQ(queue.Front(/*reader=*/0).value(), 1);
-  absl::optional<int> value = queue.PopFront(/*reader=*/0);
+  std::optional<int> value = queue.PopFront(/*reader=*/0);
   EXPECT_TRUE(value.has_value());
   EXPECT_EQ(value.value(), 1);
   EXPECT_EQ(queue.size(), 0lu);
@@ -78,8 +79,8 @@ TEST(MultiReaderQueueTest, SingleHead) {
     EXPECT_EQ(queue.size(), i + 1);
   }
   for (size_t i = 0; i < 10; ++i) {
-    EXPECT_EQ(queue.Front(/*reader=*/0), absl::optional<size_t>(i));
-    EXPECT_EQ(queue.PopFront(/*reader=*/0), absl::optional<size_t>(i));
+    EXPECT_EQ(queue.Front(/*reader=*/0), std::optional<size_t>(i));
+    EXPECT_EQ(queue.PopFront(/*reader=*/0), std::optional<size_t>(i));
     EXPECT_EQ(queue.size(), 10 - i - 1);
   }
 }
@@ -92,19 +93,19 @@ TEST(MultiReaderQueueTest, ThreeHeadsAddAllRemoveAllPerHead) {
     EXPECT_EQ(queue.size(), i + 1);
   }
   for (size_t i = 0; i < 10; ++i) {
-    absl::optional<size_t> value = queue.PopFront(/*reader=*/0);
+    std::optional<size_t> value = queue.PopFront(/*reader=*/0);
     EXPECT_EQ(queue.size(), 10lu);
     ASSERT_TRUE(value.has_value());
     EXPECT_EQ(value.value(), i);
   }
   for (size_t i = 0; i < 10; ++i) {
-    absl::optional<size_t> value = queue.PopFront(/*reader=*/1);
+    std::optional<size_t> value = queue.PopFront(/*reader=*/1);
     EXPECT_EQ(queue.size(), 10lu);
     ASSERT_TRUE(value.has_value());
     EXPECT_EQ(value.value(), i);
   }
   for (size_t i = 0; i < 10; ++i) {
-    absl::optional<size_t> value = queue.PopFront(/*reader=*/2);
+    std::optional<size_t> value = queue.PopFront(/*reader=*/2);
     EXPECT_EQ(queue.size(), 10 - i - 1);
     ASSERT_TRUE(value.has_value());
     EXPECT_EQ(value.value(), i);
@@ -119,9 +120,9 @@ TEST(MultiReaderQueueTest, ThreeHeadsAddAllRemoveAll) {
     EXPECT_EQ(queue.size(), i + 1);
   }
   for (size_t i = 0; i < 10; ++i) {
-    absl::optional<size_t> value1 = queue.PopFront(/*reader=*/0);
-    absl::optional<size_t> value2 = queue.PopFront(/*reader=*/1);
-    absl::optional<size_t> value3 = queue.PopFront(/*reader=*/2);
+    std::optional<size_t> value1 = queue.PopFront(/*reader=*/0);
+    std::optional<size_t> value2 = queue.PopFront(/*reader=*/1);
+    std::optional<size_t> value3 = queue.PopFront(/*reader=*/2);
     EXPECT_EQ(queue.size(), 10 - i - 1);
     ASSERT_TRUE(value1.has_value());
     ASSERT_TRUE(value2.has_value());
@@ -146,7 +147,7 @@ TEST(MultiReaderQueueTest, AddReaderSeeElementsOnlyFromReaderToCopy) {
 
   EXPECT_EQ(queue.readers_count(), 3lu);
   for (size_t i = 5; i < 10; ++i) {
-    absl::optional<size_t> value = queue.PopFront(/*reader=*/2);
+    std::optional<size_t> value = queue.PopFront(/*reader=*/2);
     EXPECT_EQ(queue.size(/*reader=*/2), 10 - i - 1);
     ASSERT_TRUE(value.has_value());
     EXPECT_EQ(value.value(), i);
@@ -167,7 +168,7 @@ TEST(MultiReaderQueueTest, AddReaderWithoutReaderToCopySeeFullQueue) {
 
   EXPECT_EQ(queue.readers_count(), 3lu);
   for (size_t i = 0; i < 10; ++i) {
-    absl::optional<size_t> value = queue.PopFront(/*reader=*/2);
+    std::optional<size_t> value = queue.PopFront(/*reader=*/2);
     EXPECT_EQ(queue.size(/*reader=*/2), 10 - i - 1);
     ASSERT_TRUE(value.has_value());
     EXPECT_EQ(value.value(), i);

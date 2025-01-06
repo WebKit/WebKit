@@ -130,9 +130,14 @@ unsigned CommandResult::httpStatusCode() const
     if (!m_errorCode)
         return 200;
 
+    return errorCodeToHTTPStatusCode(m_errorCode.value());
+}
+
+unsigned CommandResult::errorCodeToHTTPStatusCode(ErrorCode errorCode)
+{
     // §6.6 Handling Errors.
     // https://www.w3.org/TR/webdriver/#handling-errors
-    switch (m_errorCode.value()) {
+    switch (errorCode) {
     case ErrorCode::ElementClickIntercepted:
     case ErrorCode::ElementNotSelectable:
     case ErrorCode::ElementNotInteractable:

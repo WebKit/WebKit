@@ -315,19 +315,18 @@ TEST(BlockProcessor, ExternalDelayAppliedCorrectlyWithInitialCaptureCalls) {
   }
 
   EXPECT_CALL(*echo_remover_mock_pointer, ProcessCapture)
-      .WillRepeatedly(
-          [](EchoPathVariability /*echo_path_variability*/,
-             bool /*capture_signal_saturation*/,
-             const absl::optional<DelayEstimate>& /*external_delay*/,
-             RenderBuffer* render_buffer, Block* /*linear_output*/,
-             Block* capture) {
-            const auto& render = render_buffer->GetBlock(0);
-            const auto render_view = render.View(/*band=*/0, /*channel=*/0);
-            const auto capture_view = capture->View(/*band=*/0, /*channel=*/0);
-            for (size_t i = 0; i < kBlockSize; ++i) {
-              EXPECT_FLOAT_EQ(render_view[i], capture_view[i]);
-            }
-          });
+      .WillRepeatedly([](EchoPathVariability /*echo_path_variability*/,
+                         bool /*capture_signal_saturation*/,
+                         const std::optional<DelayEstimate>& /*external_delay*/,
+                         RenderBuffer* render_buffer, Block* /*linear_output*/,
+                         Block* capture) {
+        const auto& render = render_buffer->GetBlock(0);
+        const auto render_view = render.View(/*band=*/0, /*channel=*/0);
+        const auto capture_view = capture->View(/*band=*/0, /*channel=*/0);
+        for (size_t i = 0; i < kBlockSize; ++i) {
+          EXPECT_FLOAT_EQ(render_view[i], capture_view[i]);
+        }
+      });
 
   FillSampleVector(++capture_call_counter, kDelayInBlocks,
                    capture_block.View(/*band=*/0, /*capture=*/0));

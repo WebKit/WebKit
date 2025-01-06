@@ -30,7 +30,8 @@
 namespace WebCore {
 
 class TextPlaceholderElement final : public HTMLDivElement {
-    WTF_MAKE_ISO_ALLOCATED(TextPlaceholderElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextPlaceholderElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextPlaceholderElement);
 public:
     static Ref<TextPlaceholderElement> create(Document&, const LayoutSize&);
 

@@ -12,8 +12,8 @@
 #define MODULES_CONGESTION_CONTROLLER_GOOG_CC_PROBE_BITRATE_ESTIMATOR_H_
 
 #include <map>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
@@ -29,10 +29,10 @@ class ProbeBitrateEstimator {
 
   // Should be called for every probe packet we receive feedback about.
   // Returns the estimated bitrate if the probe completes a valid cluster.
-  absl::optional<DataRate> HandleProbeAndEstimateBitrate(
+  std::optional<DataRate> HandleProbeAndEstimateBitrate(
       const PacketResult& packet_feedback);
 
-  absl::optional<DataRate> FetchAndResetLastEstimatedBitrate();
+  std::optional<DataRate> FetchAndResetLastEstimatedBitrate();
 
  private:
   struct AggregatedCluster {
@@ -51,7 +51,7 @@ class ProbeBitrateEstimator {
 
   std::map<int, AggregatedCluster> clusters_;
   RtcEventLog* const event_log_;
-  absl::optional<DataRate> estimated_data_rate_;
+  std::optional<DataRate> estimated_data_rate_;
 };
 
 }  // namespace webrtc

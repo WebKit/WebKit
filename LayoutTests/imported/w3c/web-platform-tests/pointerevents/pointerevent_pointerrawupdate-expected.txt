@@ -7,5 +7,5 @@ Move your mouse within the black box.
 Press left button down and then press middle button while holding down left button. Then release the buttons
 
 
-PASS pointerrawupdate event received
+PASS pointerrawupdate event not received
 

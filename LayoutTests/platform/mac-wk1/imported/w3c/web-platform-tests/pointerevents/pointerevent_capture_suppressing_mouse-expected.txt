@@ -1,0 +1,5 @@
+
+
+PASS Validate pointer events track pointer movement without pointer capture.
+FAIL Test pointer capture. assert_equals: Check after button hover: Unexpected events pointermove@captureButton expected 0 but got 1
+

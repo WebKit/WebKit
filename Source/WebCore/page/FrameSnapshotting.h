@@ -31,7 +31,7 @@
 
 #include "Color.h"
 #include "DestinationColorSpace.h"
-#include "PixelFormat.h"
+#include "ImageBufferPixelFormat.h"
 #include "SimpleRange.h"
 #include <memory>
 #include <wtf/OptionSet.h>
@@ -55,11 +55,12 @@ enum class SnapshotFlags : uint16_t {
     Shareable = 1 << 7,
     Accelerated = 1 << 8,
     ExcludeReplacedContent = 1 << 9,
+    PaintWith3xBaseScale = 1 << 10,
 };
 
 struct SnapshotOptions {
     OptionSet<SnapshotFlags> flags;
-    PixelFormat pixelFormat;
+    ImageBufferPixelFormat pixelFormat;
     DestinationColorSpace colorSpace;
 };
 

@@ -28,12 +28,13 @@
 #include "InspectorWebAgentBase.h"
 #include "InstrumentingAgents.h"
 #include "WebHeapAgent.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class PageHeapAgent final : public WebHeapAgent {
     WTF_MAKE_NONCOPYABLE(PageHeapAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PageHeapAgent);
 public:
     PageHeapAgent(PageAgentContext&);
     ~PageHeapAgent();

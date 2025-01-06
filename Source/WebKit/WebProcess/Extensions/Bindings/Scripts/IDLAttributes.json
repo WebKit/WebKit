@@ -79,10 +79,22 @@
         "NeedsFrameWithCallbackHandler": {
             "contextsAllowed": ["interface"]
         },
+        "NeedsFrameIdentifier": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "NeedsFrameIdentifierWithCallbackHandler": {
+            "contextsAllowed": ["interface"]
+        },
         "NeedsPage": {
             "contextsAllowed": ["attribute", "operation"]
         },
         "NeedsPageWithCallbackHandler": {
+            "contextsAllowed": ["interface"]
+        },
+        "NeedsPageIdentifier": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "NeedsPageIdentifierWithCallbackHandler": {
             "contextsAllowed": ["interface"]
         },
         "NeedsScriptContext": {

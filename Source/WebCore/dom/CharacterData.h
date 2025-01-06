@@ -27,7 +27,8 @@
 namespace WebCore {
 
 class CharacterData : public Node {
-    WTF_MAKE_ISO_ALLOCATED(CharacterData);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CharacterData);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CharacterData);
 public:
     const String& data() const { return m_data; }
     static constexpr ptrdiff_t dataMemoryOffset() { return OBJECT_OFFSETOF(CharacterData, m_data); }

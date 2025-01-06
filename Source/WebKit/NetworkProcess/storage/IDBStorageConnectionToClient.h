@@ -28,22 +28,22 @@
 #include "Connection.h"
 #include <WebCore/IDBConnectionToClient.h>
 #include <WebCore/IDBConnectionToClientDelegate.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class IDBStorageConnectionToClient final : public WebCore::IDBServer::IDBConnectionToClientDelegate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IDBStorageConnectionToClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBStorageConnectionToClient);
 public:
     IDBStorageConnectionToClient(IPC::Connection::UniqueID, WebCore::IDBConnectionIdentifier);
     ~IDBStorageConnectionToClient();
 
-    WebCore::IDBConnectionIdentifier identifier() const final { return m_identifier; }
+    std::optional<WebCore::IDBConnectionIdentifier> identifier() const final { return m_identifier; }
     IPC::Connection::UniqueID ipcConnection() const { return m_connection; }
     WebCore::IDBServer::IDBConnectionToClient& connectionToClient();
 
 private:
-    template<class MessageType> void didGetResult(const WebCore::IDBResultData&);
-
     // IDBConnectionToClientDelegate
     void didDeleteDatabase(const WebCore::IDBResultData&) final;
     void didOpenDatabase(const WebCore::IDBResultData&) final;

@@ -37,16 +37,8 @@
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerTypes.h"
 #include <wtf/Identified.h>
-#include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class BackgroundFetch;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::BackgroundFetch> : std::true_type { };
-}
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -57,15 +49,24 @@ class SharedBuffer;
 struct BackgroundFetchRequest;
 struct CacheQueryOptions;
 
-class BackgroundFetch : public CanMakeWeakPtr<BackgroundFetch> {
-    WTF_MAKE_FAST_ALLOCATED;
+class BackgroundFetch : public RefCountedAndCanMakeWeakPtr<BackgroundFetch> {
+    WTF_MAKE_TZONE_ALLOCATED(BackgroundFetch);
 public:
     using NotificationCallback = Function<void(BackgroundFetch&)>;
-    BackgroundFetch(SWServerRegistration&, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
-    BackgroundFetch(SWServerRegistration&, String&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&, bool pausedFlag);
+
+    static Ref<BackgroundFetch> create(SWServerRegistration& sWServerRegistration, const String& identifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
+    {
+        return adoptRef(*new BackgroundFetch(sWServerRegistration, identifier, WTFMove(requests), WTFMove(options), WTFMove(store), WTFMove(notificationCallback)));
+    }
+
+    static Ref<BackgroundFetch> create(SWServerRegistration& swServerRegistration, String&& identifier, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback, bool pausedFlag)
+    {
+        return adoptRef(*new BackgroundFetch(swServerRegistration, WTFMove(identifier), WTFMove(options), WTFMove(store), WTFMove(notificationCallback), pausedFlag));
+    }
+
     ~BackgroundFetch();
 
-    static std::unique_ptr<BackgroundFetch> createFromStore(std::span<const uint8_t>, SWServer&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
+    static RefPtr<BackgroundFetch> createFromStore(std::span<const uint8_t>, SWServer&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
 
     String identifier() const { return m_identifier; }
     WEBCORE_EXPORT BackgroundFetchInformation information() const;
@@ -74,15 +75,18 @@ public:
 
     using RetrieveRecordResponseCallback = CompletionHandler<void(Expected<ResourceResponse, ExceptionData>&&)>;
     using RetrieveRecordResponseBodyCallback = Function<void(Expected<RefPtr<SharedBuffer>, ResourceError>&&)>;
-    using CreateLoaderCallback = Function<std::unique_ptr<BackgroundFetchRecordLoader>(BackgroundFetchRecordLoaderClient&, const BackgroundFetchRequest&, size_t responseDataSize, const ClientOrigin&)>;
+    using CreateLoaderCallback = Function<RefPtr<BackgroundFetchRecordLoader>(BackgroundFetchRecordLoaderClient&, const BackgroundFetchRequest&, size_t responseDataSize, const ClientOrigin&)>;
 
     bool pausedFlagIsSet() const { return m_pausedFlag; }
     void pause();
     void resume(const CreateLoaderCallback&);
 
     class Record final : public BackgroundFetchRecordLoaderClient, public RefCounted<Record>, private Identified<BackgroundFetchRecordIdentifier> {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Record);
     public:
+        void ref() const final { RefCounted::ref(); }
+        void deref() const final { RefCounted::deref(); }
+
         static Ref<Record> create(BackgroundFetch& fetch, BackgroundFetchRequest&& request, size_t size) { return adoptRef(*new Record(fetch, WTFMove(request), size)); }
         ~Record();
 
@@ -118,7 +122,7 @@ public:
         BackgroundFetchRequest m_request;
         size_t m_index { 0 };
         ResourceResponse m_response;
-        std::unique_ptr<BackgroundFetchRecordLoader> m_loader;
+        RefPtr<BackgroundFetchRecordLoader> m_loader;
         uint64_t m_responseDataSize { 0 };
         bool m_isCompleted { false };
         bool m_isAborted { false };
@@ -142,6 +146,9 @@ public:
     void unsetRecordsAvailableFlag();
 
 private:
+    BackgroundFetch(SWServerRegistration&, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
+    BackgroundFetch(SWServerRegistration&, String&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&, bool pausedFlag);
+
     void didSendData(uint64_t);
     void storeResponse(size_t, bool shouldClearResponseBody, ResourceResponse&&);
     void storeResponseBodyChunk(size_t, const SharedBuffer&);

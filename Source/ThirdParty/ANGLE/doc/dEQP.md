@@ -31,7 +31,7 @@ a better sense of total passing rate.
 
 ### Choosing a Renderer
 
-By default ANGLE tests with D3D11 on Windows, GLES on mobile and Desktop GL otherwise.
+By default ANGLE tests with Vulkan, except on Apple platforms where OpenGL is used.
 To specify the exact platform for ANGLE + dEQP, use the arguments:
 
   * `--deqp-egl-display-type=angle-d3d11` for D3D11 (highest available feature level)

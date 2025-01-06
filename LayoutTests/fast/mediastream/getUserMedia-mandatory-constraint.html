@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+const disallowedVideoConstraints = {
+    whiteBalanceMode: "manual",
+    zoom: 1,
+    torch: true,
+    backgroundBlur: true,
+    powerEfficient: true,
+};
+
+for (let name in disallowedVideoConstraints) {
+    promise_test(async (t) => {
+        const constraints = { };
+        constraints[name] = { exact : disallowedVideoConstraints[name] };
+        return promise_rejects_js(t, TypeError, navigator.mediaDevices.getUserMedia({ video: constraints }));
+    }, "Mandatory video disallowed constraint " + name);
+}
+
+const allowedVideoConstraints = {
+    width: 10,
+    height: 10,
+    aspectRatio: 16/9,
+    frameRate: 30,
+    facingMode: "environment"
+};
+
+for (let name in allowedVideoConstraints) {
+    promise_test(async (t) => {
+        const constraints = { };
+        constraints[name] = { exact : allowedVideoConstraints[name] };
+        return navigator.mediaDevices.getUserMedia({ video: constraints  });
+    }, "Mandatory video allowed constraint " + name);
+}
+
+const allowedAudioConstraints = {
+    volume: 1,
+    sampleRate: 44100,
+    sampleSize: 16,
+    echoCancellation: true,
+};
+
+for (let name in allowedAudioConstraints) {
+    promise_test(async (t) => {
+        const constraints = { };
+        constraints[name] = { exact : allowedAudioConstraints[name] };
+        return navigator.mediaDevices.getUserMedia({ audio: constraints  });
+    }, "Mandatory audio allowed constraint " + name);
+}
+
+promise_test(async (t) => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    for (let device of devices) {
+        if (device.kind === "audioinput" && device.deviceId) {
+            await navigator.mediaDevices.getUserMedia({ audio: { deviceId : { exact: device.deviceId } } });
+            return;
+        }
+    }
+    for (let device of devices) {
+        if (device.kind === "audioinput" && device.groupId) {
+            await navigator.mediaDevices.getUserMedia({ audio: { groupId : { exact: device.groupId } } });
+            return;
+        }
+    }
+    for (let device of devices) {
+        if (device.kind === "videoinput" && device.deviceId) {
+            await navigator.mediaDevices.getUserMedia({ video: { deviceId : { exact: device.deviceId } } });
+            return;
+        }
+    }
+    for (let device of devices) {
+        if (device.kind === "videoinput" && device.groupId) {
+            await navigator.mediaDevices.getUserMedia({ video: { groupId : { exact: device.groupId } } });
+            return;
+        }
+    }
+}, "Mandatory constraint groupId and deviceId");
+</script>
+</body>
+</html>

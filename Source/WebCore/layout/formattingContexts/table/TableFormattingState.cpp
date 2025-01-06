@@ -28,12 +28,12 @@
 
 #include "RenderObject.h"
 #include "TableFormattingContext.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TableFormattingState);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TableFormattingState);
 
 static UniqueRef<TableGrid> ensureTableGrid(const ElementBox& tableBox)
 {

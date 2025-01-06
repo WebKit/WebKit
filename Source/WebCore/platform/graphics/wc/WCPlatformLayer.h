@@ -26,11 +26,12 @@
 #pragma once
 
 #include "TextureMapperPlatformLayer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class WCPlatformLayer : public TextureMapperPlatformLayer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WCPlatformLayer);
 
 private:
     // TextureMapperPlatformLayer

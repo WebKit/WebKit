@@ -11,9 +11,9 @@
 #include "test/testsupport/fixed_fps_video_frame_writer_adapter.h"
 
 #include <cmath>
+#include <optional>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "api/units/time_delta.h"
 #include "api/video/video_sink_interface.h"
 #include "rtc_base/checks.h"

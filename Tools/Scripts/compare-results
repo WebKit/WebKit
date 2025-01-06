@@ -66,6 +66,7 @@ MotionMark1_1 = "MotionMark-1.1"
 MotionMark1_1_1 = "MotionMark-1.1.1"
 MotionMark1_2 = "MotionMark-1.2"
 MotionMark1_3 = "MotionMark-1.3"
+RAMification = "RAMification"
 
 unitMarker = "__unit__"
 
@@ -143,6 +144,17 @@ def detailedJetStream2Breakdown(jsonObject):
             result[test + "-" + subtest] = breakdown._results["JetStream2.0"]["tests"][test]["tests"][subtest]["metrics"]["Time"][None]["current"]
     return result
 
+def categoryJetStream2Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["JetStream2.0"]["tests"].keys():
+        for category in breakdown._results["JetStream2.0"]["tests"][test]["tests"]:
+            if not category in result:
+                result[category] = []
+            result[category] += breakdown._results["JetStream2.0"]["tests"][test]["tests"][category]["metrics"]["Time"][None]["current"]
+    return result
+
 def jetStream3Breakdown(jsonObject):
     breakdown = BenchmarkResults(jsonObject)
     result = {}
@@ -158,6 +170,17 @@ def detailedJetStream3Breakdown(jsonObject):
     for test in breakdown._results["JetStream3.0"]["tests"].keys():
         for subtest in breakdown._results["JetStream3.0"]["tests"][test]["tests"]:
             result[test + "-" + subtest] = breakdown._results["JetStream3.0"]["tests"][test]["tests"][subtest]["metrics"]["Time"][None]["current"]
+    return result
+
+def categoryJetStream3Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["JetStream3.0"]["tests"].keys():
+        for category in breakdown._results["JetStream3.0"]["tests"][test]["tests"]:
+            if not category in result:
+                result[category] = []
+            result[category] += breakdown._results["JetStream3.0"]["tests"][test]["tests"][category]["metrics"]["Time"][None]["current"]
     return result
 
 def motionMarkBreakdown(jsonObject):
@@ -240,6 +263,23 @@ def plum3Breakdown(jsonObject):
         result[test] = breakdown._results["PLUM3-PhysFootprint"]["tests"][test]["metrics"]["Allocations"]["Geometric"]["current"]
     return result
 
+def ramificationBreakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "B"
+    for test in breakdown._results["RAMification"]["tests"].keys():
+        result[test] = breakdown._results["RAMification"]["tests"][test]["metrics"]["Allocations"]["Geometric"]["current"]
+    return result
+
+def detailedRAMificationBreakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "B"
+    for test in breakdown._results["RAMification"]["tests"].keys():
+        for subtest in breakdown._results["RAMification"]["tests"][test]["tests"]:
+            result[test + "-" + subtest] = breakdown._results["RAMification"]["tests"][test]["tests"][subtest]["metrics"]["Allocations"]["Geometric"]["current"]
+    return result
+
 def displayStr(value):
     return "{:.6f}".format(float(value))
 
@@ -290,7 +330,7 @@ def computeMultipleHypothesesSignificance(a, b):
     return result
 
 
-def dumpBreakdowns(a, b):
+def dumpBreakdowns(a, b, sort_flag=False):
     nameLength = len("subtest")
     aLength = len(a[unitMarker])
     bLength = len(a[unitMarker])
@@ -323,10 +363,12 @@ def dumpBreakdowns(a, b):
 
     strings = []
     strings.append("|{key:^{nameLength}}|{aScore:^{aLength}} |{bScore:^{bLength}} |{compare:^{ratioLength}}|{pMarker:^{pLength}}|".format(key="subtest", aScore=a[unitMarker], bScore=b[unitMarker], nameLength=nameLength, aLength=aLength, bLength=bLength , compare="b / a", ratioLength=ratioLength, pMarker=pValueHeader, pLength=pLength))
-    for key in sorted(a.keys()):
-        if key == unitMarker:
-            continue
-
+    keys = [k for k in a.keys() if k != unitMarker]
+    if sort_flag:
+        keys.sort(key=lambda k: numpy.mean(b[k]) / numpy.mean(a[k]))
+    else:
+        keys.sort()
+    for key in keys:
         aScore = numpy.mean(a[key])
         bScore = numpy.mean(b[key])
 
@@ -352,17 +394,19 @@ def dumpBreakdowns(a, b):
         print(s)
     print("\n")
 
-def writeCSV(a, b, fileName):
+def writeCSV(a, b, fileName, sort_flag):
     strings = []
     result = ""
     result += "test_name, {}, {}, b_divided_by_a, pValue, is_significant_using_False_Discovery_Rate\n".format("a_in_" + a[unitMarker], "b_in_" + b[unitMarker])
 
     isSignificant = computeMultipleHypothesesSignificance(a, b)
 
-    for key in a.keys():
-        if key == unitMarker:
-            continue
-
+    keys = [k for k in a.keys() if k != unitMarker]
+    if sort_flag:
+        keys.sort(key=lambda k: numpy.mean(b[k]) / numpy.mean(a[k]))
+    else:
+        keys.sort()
+    for key in keys:
         aScore = numpy.mean(a[key])
         bScore = numpy.mean(b[key])
 
@@ -520,7 +564,6 @@ def detectMotionMark1_2(payload):
 def detectMotionMark1_3(payload):
     return "MotionMark-1.3" in payload
 
-
 def motionMarkResults(payload):
     assert any(validMotionMarkDetector(payload) for validMotionMarkDetector in [detectMotionMark, detectMotionMark1_1, detectMotionMark1_1_1, detectMotionMark1_2, detectMotionMark1_3])
     if detectMotionMark(payload):
@@ -543,6 +586,14 @@ def motionMarkResults(payload):
         results.append(stats.gmean(scores))
 
     return results
+
+def detectRAMification(payload):
+    return "RAMification" in payload
+
+def RAMificationResults(payload):
+    assert detectRAMification(payload)
+    breakdown = BenchmarkResults(payload)
+    return breakdown._results["RAMification"]["metrics"]["Allocations"][None]["current"]
 
 def detectBenchmark(payload):
     if detectJetStream3(payload):
@@ -569,12 +620,14 @@ def detectBenchmark(payload):
         return MotionMark1_2
     if detectMotionMark1_3(payload):
         return MotionMark1_3
+    if detectRAMification(payload):
+        return RAMification
     return None
 
 def biggerIsBetter(benchmarkType):
     if benchmarkType in [JetStream2, JetStream3, Speedometer2, Speedometer3, MotionMark, MotionMark1_1, MotionMark1_1_1, MotionMark1_2, MotionMark1_3]:
         return True
-    elif benchmarkType in [PLT5, CompetitivePLT, PLUM3]:
+    elif benchmarkType in [PLT5, CompetitivePLT, PLUM3, RAMification]:
         return False
     else:
         raise Exception('An unknown benchmark type was passed into biggerIsBetter: {}. It should not be possible to hit this.'.format(benchmarkType))
@@ -635,13 +688,17 @@ def getOptions():
     parser.add_argument("--detailed-breakdown", action="store_true",
         default=False, help="Print a detailed breakdown per subtest.")
 
+    parser.add_argument("--category-breakdown", action="store_true",
+        default=False, help="Print a breakdown per category. (e.g. startup, average, worst)")
+
+    parser.add_argument("--sort", action="store_true",
+        default=False, help="Sort the tests/sub-tests by b / a.")
+
     return parser.parse_known_args()[0]
 
 
 def main():
     args = getOptions()
-    if args.detailed_breakdown:
-        args.breakdown = True
 
     # Flatten the list of lists of JSON files.
     a = itertools.chain.from_iterable(args.a)
@@ -662,82 +719,92 @@ def main():
         sys.exit(1)
     
     if typeA == JetStream2:
+        if args.detailed_breakdown:
+            dumpBreakdowns(detailedJetStream2Breakdown(a), detailedJetStream2Breakdown(b), args.sort)
+        if args.category_breakdown:
+            dumpBreakdowns(categoryJetStream2Breakdown(a), categoryJetStream2Breakdown(b), args.sort)
         if args.breakdown:
-            if args.detailed_breakdown:
-                dumpBreakdowns(detailedJetStream2Breakdown(a), detailedJetStream2Breakdown(b))
-            else:
-                dumpBreakdowns(jetStream2Breakdown(a), jetStream2Breakdown(b))
+            dumpBreakdowns(jetStream2Breakdown(a), jetStream2Breakdown(b), args.sort)
 
         ttest(typeA, JetStream2Results(a), JetStream2Results(b))
 
         if args.csv:
-            writeCSV(jetStream2Breakdown(a), jetStream2Breakdown(b), args.csv)
+            writeCSV(jetStream2Breakdown(a), jetStream2Breakdown(b), args.csv, args.sort)
     elif typeA == JetStream3:
+        if args.detailed_breakdown:
+            dumpBreakdowns(detailedJetStream3Breakdown(a), detailedJetStream3Breakdown(b), args.sort)
+        if args.category_breakdown:
+            dumpBreakdowns(categoryJetStream3Breakdown(a), categoryJetStream3Breakdown(b), args.sort)
         if args.breakdown:
-            if args.detailed_breakdown:
-                dumpBreakdowns(detailedJetStream3Breakdown(a), detailedJetStream3Breakdown(b))
-            else:
-                dumpBreakdowns(jetStream3Breakdown(a), jetStream3Breakdown(b))
+            dumpBreakdowns(jetStream3Breakdown(a), jetStream3Breakdown(b), args.sort)
 
         ttest(typeA, JetStream3Results(a), JetStream3Results(b))
 
         if args.csv:
-            writeCSV(jetStream3Breakdown(a), jetStream3Breakdown(b), args.csv)
+            writeCSV(jetStream3Breakdown(a), jetStream3Breakdown(b), args.csv, args.sort)
     elif typeA == Speedometer2:
+        if args.detailed_breakdown:
+            dumpBreakdowns(speedometer2BreakdownSyncAsync(a), speedometer2BreakdownSyncAsync(b), args.sort)
         if args.breakdown:
-            if args.detailed_breakdown:
-                dumpBreakdowns(speedometer2BreakdownSyncAsync(a), speedometer2BreakdownSyncAsync(b))
-            else:
-                dumpBreakdowns(speedometer2Breakdown(a), speedometer2Breakdown(b))
+            dumpBreakdowns(speedometer2Breakdown(a), speedometer2Breakdown(b), args.sort)
 
         ttest(typeA, Speedometer2Results(a), Speedometer2Results(b))
 
         if args.csv:
-            writeCSV(speedometer2Breakdown(a), speedometer2Breakdown(b), args.csv)
+            writeCSV(speedometer2Breakdown(a), speedometer2Breakdown(b), args.csv, args.sort)
 
     elif typeA == Speedometer3:
+        if args.detailed_breakdown:
+            dumpBreakdowns(speedometer3BreakdownSyncAsync(a), speedometer3BreakdownSyncAsync(b), args.sort)
         if args.breakdown:
-            if args.detailed_breakdown:
-                dumpBreakdowns(speedometer3BreakdownSyncAsync(a), speedometer3BreakdownSyncAsync(b))
-            else:
-                dumpBreakdowns(speedometer3Breakdown(a), speedometer3Breakdown(b))
+            dumpBreakdowns(speedometer3Breakdown(a), speedometer3Breakdown(b), args.sort)
 
         ttest(typeA, Speedometer3Results(a), Speedometer3Results(b))
 
         if args.csv:
-            writeCSV(speedometer3Breakdown(a), speedometer3Breakdown(b), args.csv)
+            writeCSV(speedometer3Breakdown(a), speedometer3Breakdown(b), args.csv, args.sort)
     elif any(typeA == validMotionMarkTest for validMotionMarkTest in [MotionMark, MotionMark1_1, MotionMark1_1_1, MotionMark1_2, MotionMark1_3]):
         if args.breakdown:
-            dumpBreakdowns(motionMarkBreakdown(a), motionMarkBreakdown(b))
+            dumpBreakdowns(motionMarkBreakdown(a), motionMarkBreakdown(b), args.sort)
 
         ttest(typeA, motionMarkResults(a), motionMarkResults(b))
 
         if args.csv:
-            writeCSV(motionMarkBreakdown(a), motionMarkBreakdown(b), args.csv)
+            writeCSV(motionMarkBreakdown(a), motionMarkBreakdown(b), args.csv, args.sort)
     elif typeA == PLT5:
         if args.breakdown:
-            dumpBreakdowns(plt5Breakdown(a), plt5Breakdown(b))
+            dumpBreakdowns(plt5Breakdown(a), plt5Breakdown(b), args.sort)
 
         ttest(typeA, PLT5Results(a), PLT5Results(b))
 
         if args.csv:
-            writeCSV(plt5Breakdown(a), plt5Breakdown(b), args.csv)
+            writeCSV(plt5Breakdown(a), plt5Breakdown(b), args.csv, args.sort)
     elif typeA == CompetitivePLT:
         if args.breakdown:
-            dumpBreakdowns(competitivePLTBreakdown(a), competitivePLTBreakdown(b))
+            dumpBreakdowns(competitivePLTBreakdown(a), competitivePLTBreakdown(b), args.sort)
 
         ttest(typeA, CompetitivePLTResults(a), CompetitivePLTResults(b))
 
         if args.csv:
-            writeCSV(competitivePLTBreakdown(a), competitivePLTBreakdown(b), args.csv)
+            writeCSV(competitivePLTBreakdown(a), competitivePLTBreakdown(b), args.csv, args.sort)
     elif typeA == PLUM3:
         if args.breakdown:
-            dumpBreakdowns(plum3Breakdown(a), plum3Breakdown(b))
+            dumpBreakdowns(plum3Breakdown(a), plum3Breakdown(b), args.sort)
 
         ttest(typeA, PLUM3Results(a), PLUM3Results(b))
 
         if args.csv:
             writeCSV(plum3Breakdown(a), plum3Breakdown(b), args.csv)
+    elif typeA == RAMification:
+        if args.detailed_breakdown:
+            dumpBreakdowns(detailedRAMificationBreakdown(a), detailedRAMificationBreakdown(b), args.sort)
+        if args.breakdown:
+            dumpBreakdowns(ramificationBreakdown(a), ramificationBreakdown(b), args.sort)
+
+        ttest(typeA, RAMificationResults(a), RAMificationResults(b))
+
+        if args.csv:
+            writeCSV(ramificationBreakdown(a), ramificationBreakdown(b), args.csv, args.sort)
     else:
         print("Unknown benchmark type")
         sys.exit(1)

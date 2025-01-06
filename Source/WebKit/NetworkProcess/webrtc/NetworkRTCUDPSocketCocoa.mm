@@ -37,32 +37,37 @@
 #include <pal/spi/cocoa/NetworkSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/SoftLinking.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
-
-SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
-SOFT_LINK_OPTIONAL(libnetwork, nw_parameters_allow_sharing_port_with_listener, void, __cdecl, (nw_parameters_t, nw_listener_t))
+#include <wtf/cocoa/SpanCocoa.h>
 
 namespace WebKit {
 
 using namespace WebCore;
 
-class NetworkRTCUDPSocketCocoaConnections : public ThreadSafeRefCounted<NetworkRTCUDPSocketCocoaConnections> {
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkRTCUDPSocketCocoa);
+
+class NetworkRTCUDPSocketCocoaConnections : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<NetworkRTCUDPSocketCocoaConnections> {
 public:
     static Ref<NetworkRTCUDPSocketCocoaConnections> create(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& provider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain) { return adoptRef(*new NetworkRTCUDPSocketCocoaConnections(identifier, provider, address, WTFMove(connection), WTFMove(attributedBundleIdentifier), isFirstParty, isRelayDisabled, domain)); }
+
+    ~NetworkRTCUDPSocketCocoaConnections();
 
     void close();
     void setOption(int option, int value);
     void sendTo(std::span<const uint8_t>, const rtc::SocketAddress&, const rtc::PacketOptions&);
-    void setListeningPort(int);
 
     class ConnectionStateTracker : public ThreadSafeRefCounted<ConnectionStateTracker> {
     public:
         static Ref<ConnectionStateTracker> create() { return adoptRef(*new ConnectionStateTracker()); }
         void markAsStopped() { m_isStopped = true; }
         bool isStopped() const { return m_isStopped; }
+        bool shouldLogMissingECN() const { return !m_didLogMissingECN; }
+        void didLogMissingECN() { m_didLogMissingECN = true; }
 
     private:
         bool m_isStopped { false };
+        bool m_didLogMissingECN { false };
     };
 
 private:
@@ -71,6 +76,7 @@ private:
     std::pair<RetainPtr<nw_connection_t>, Ref<ConnectionStateTracker>> createNWConnection(const rtc::SocketAddress&);
     void setupNWConnection(nw_connection_t, ConnectionStateTracker&, const rtc::SocketAddress&);
     void configureParameters(nw_parameters_t, nw_ip_version_t);
+    void setListeningPort(int);
 
     WebCore::LibWebRTCSocketIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
@@ -114,12 +120,7 @@ NetworkRTCUDPSocketCocoa::~NetworkRTCUDPSocketCocoa()
 void NetworkRTCUDPSocketCocoa::close()
 {
     m_connections->close();
-    m_rtcProvider.takeSocket(m_identifier);
-}
-
-void NetworkRTCUDPSocketCocoa::setListeningPort(int port)
-{
-    m_connections->setListeningPort(port);
+    Ref { m_rtcProvider.get() }->takeSocket(m_identifier);
 }
 
 void NetworkRTCUDPSocketCocoa::setOption(int option, int value)
@@ -130,6 +131,35 @@ void NetworkRTCUDPSocketCocoa::setOption(int option, int value)
 void NetworkRTCUDPSocketCocoa::sendTo(std::span<const uint8_t> data, const rtc::SocketAddress& address, const rtc::PacketOptions& options)
 {
     m_connections->sendTo(data, address, options);
+}
+
+static RTC::Network::EcnMarking getECN(nw_content_context_t nwContext, NetworkRTCUDPSocketCocoaConnections::ConnectionStateTracker& connection)
+{
+    auto protocol = adoptNS(nw_protocol_copy_ip_definition());
+    auto metadata = adoptNS(nw_content_context_copy_protocol_metadata(nwContext, protocol.get()));
+
+    if (metadata && nw_protocol_metadata_is_ip(metadata.get())) {
+        auto ecnFlag = nw_ip_metadata_get_ecn_flag(metadata.get());
+        switch (ecnFlag) {
+        case nw_ip_ecn_flag_non_ect:
+            return RTC::Network::EcnMarking::kNotEct;
+        case nw_ip_ecn_flag_ect_0:
+            return RTC::Network::EcnMarking::kEct0;
+        case nw_ip_ecn_flag_ect_1:
+            return RTC::Network::EcnMarking::kEct1;
+        case nw_ip_ecn_flag_ce:
+            return RTC::Network::EcnMarking::kCe;
+        default:
+            return RTC::Network::EcnMarking::kNotEct;
+        }
+    }
+
+    if (!metadata && connection.shouldLogMissingECN()) {
+        connection.didLogMissingECN();
+        RELEASE_LOG_INFO(WebRTC, "Could not retrieve the metadata from UDPSocket Context, so use default ECN value");
+    }
+
+    return RTC::Network::EcnMarking::kNotEct;
 }
 
 static rtc::SocketAddress socketAddressFromIncomingConnection(nw_connection_t connection)
@@ -203,15 +233,15 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     nw_listener_set_queue(m_nwListener.get(), udpSocketQueue());
 
     // The callback holds a reference to the nw_listener and we clear it when going in nw_listener_state_cancelled state, which is triggered when closing the socket.
-    nw_listener_set_state_changed_handler(m_nwListener.get(), makeBlockPtr([nwListener = m_nwListener, connection = m_connection.copyRef(), protectedRTCProvider = Ref { rtcProvider }, identifier = m_identifier](nw_listener_state_t state, nw_error_t error) mutable {
+    nw_listener_set_state_changed_handler(m_nwListener.get(), makeBlockPtr([nwListener = m_nwListener, connection = m_connection.copyRef(), protectedRTCProvider = Ref { rtcProvider }, identifier = m_identifier, weakThis = ThreadSafeWeakPtr { *this }](nw_listener_state_t state, nw_error_t error) mutable {
         switch (state) {
         case nw_listener_state_invalid:
         case nw_listener_state_waiting:
             break;
         case nw_listener_state_ready:
-            protectedRTCProvider->doSocketTaskOnRTCNetworkThread(identifier, [port = nw_listener_get_port(nwListener.get())](auto& socket) mutable {
-                auto& udpSocket = static_cast<NetworkRTCUDPSocketCocoa&>(socket);
-                udpSocket.setListeningPort(port);
+            protectedRTCProvider->callOnRTCNetworkThread([weakThis, port = nw_listener_get_port(nwListener.get())] {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->setListeningPort(port);
             });
             break;
         case nw_listener_state_failed:
@@ -245,6 +275,11 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     }).get());
 
     nw_listener_start(m_nwListener.get());
+}
+
+NetworkRTCUDPSocketCocoaConnections::~NetworkRTCUDPSocketCocoaConnections()
+{
+    ASSERT(m_isClosed);
 }
 
 void NetworkRTCUDPSocketCocoaConnections::setListeningPort(int port)
@@ -298,15 +333,15 @@ void NetworkRTCUDPSocketCocoaConnections::setOption(int option, int value)
         nw_connection_reset_traffic_class(nwConnection.first.get(), *m_trafficClass);
 }
 
-static inline void processUDPData(RetainPtr<nw_connection_t>&& nwConnection, Ref<NetworkRTCUDPSocketCocoaConnections::ConnectionStateTracker> connectionStateTracker, int errorCode, Function<void(std::span<const uint8_t>)>&& processData)
+static inline void processUDPData(RetainPtr<nw_connection_t>&& nwConnection, Ref<NetworkRTCUDPSocketCocoaConnections::ConnectionStateTracker> connectionStateTracker, int errorCode, Function<void(std::span<const uint8_t>, RTC::Network::EcnMarking)>&& processData)
 {
     auto nwConnectionReference = nwConnection.get();
     nw_connection_receive(nwConnectionReference, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([nwConnection = WTFMove(nwConnection), processData = WTFMove(processData), errorCode, connectionStateTracker = WTFMove(connectionStateTracker)](dispatch_data_t content, nw_content_context_t context, bool, nw_error_t error) mutable {
         if (content) {
-            dispatch_data_apply(content, makeBlockPtr([&](dispatch_data_t, size_t, const void* data, size_t size) {
-                processData({ static_cast<const uint8_t*>(data), size });
+            dispatch_data_apply_span(content, [&](std::span<const uint8_t> data) {
+                processData(data, getECN(context, connectionStateTracker.get()));
                 return true;
-            }).get());
+            });
         }
         if (connectionStateTracker->isStopped() || nw_content_context_get_is_final(context))
             return;
@@ -327,13 +362,8 @@ std::pair<RetainPtr<nw_connection_t>, Ref<NetworkRTCUDPSocketCocoaConnections::C
         if (m_address.ipaddr().IsNil())
             hostAddress = m_address.hostname();
 
-        // rdar://80176676: we workaround local loop port reuse by using 0 instead of m_address.port() when nw_parameters_allow_sharing_port_with_listener is not available.
-        uint16_t port = 0;
-        if (nw_parameters_allow_sharing_port_with_listenerPtr()) {
-            nw_parameters_allow_sharing_port_with_listenerPtr()(parameters.get(), m_nwListener.get());
-            port = m_address.port();
-        }
-        auto localEndpoint = adoptNS(nw_endpoint_create_host_with_numeric_port(hostAddress.c_str(), port));
+        nw_parameters_allow_sharing_port_with_listener(parameters.get(), m_nwListener.get());
+        auto localEndpoint = adoptNS(nw_endpoint_create_host_with_numeric_port(hostAddress.c_str(), m_address.port()));
         nw_parameters_set_local_endpoint(parameters.get(), localEndpoint.get());
     }
     configureParameters(parameters.get(), remoteAddress.family() == AF_INET ? nw_ip_version_4 : nw_ip_version_6);
@@ -363,8 +393,8 @@ void NetworkRTCUDPSocketCocoaConnections::setupNWConnection(nw_connection_t nwCo
             connectionStateTracker->markAsStopped();
     }).get());
 
-    processUDPData(nwConnection, Ref  { connectionStateTracker }, 0, [identifier = m_identifier, connection = m_connection.copyRef(), ip = remoteAddress.ipaddr(), port = remoteAddress.port()](std::span<const uint8_t> message) mutable {
-        connection->send(Messages::LibWebRTCNetwork::SignalReadPacket { identifier, message, RTCNetwork::IPAddress(ip), port, rtc::TimeMillis() * 1000 }, 0);
+    processUDPData(nwConnection, Ref  { connectionStateTracker }, 0, [identifier = m_identifier, connection = m_connection.copyRef(), ip = remoteAddress.ipaddr(), port = remoteAddress.port()](std::span<const uint8_t> message, RTC::Network::EcnMarking ecn) mutable {
+        connection->send(Messages::LibWebRTCNetwork::SignalReadPacket { identifier, message, RTCNetwork::IPAddress(ip), port, rtc::TimeMicros(), ecn }, 0);
     });
 
     nw_connection_start(nwConnection);

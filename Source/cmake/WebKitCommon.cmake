@@ -48,7 +48,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         Mac
         PlayStation
         WPE
-        WinCairo
+        Win
     )
     set(PORT "NOPORT" CACHE STRING "choose which WebKit port to build (one of ${ALL_PORTS})")
 
@@ -71,8 +71,8 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     endif ()
 
     if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-        if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS "10.2.0")
-            message(FATAL_ERROR "GCC 10.2 or newer is required to build WebKit. Use a newer GCC version or Clang.")
+        if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS "11.2.0")
+            message(FATAL_ERROR "GCC 11.2 or newer is required to build WebKit. Use a newer GCC version or Clang.")
         endif ()
     endif ()
 
@@ -246,17 +246,94 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # -----------------------------------------------------------------------------
     # Generate a usable compile_commands.json when using unified builds
     # -----------------------------------------------------------------------------
+    # Ideally this would be done during configure or generation, but CMake doesn't
+    # produce compile_commands.json until generation has ended. Having a build
+    # target that processes it is the next best thing we can do.
     if (CMAKE_EXPORT_COMPILE_COMMANDS AND ENABLE_UNIFIED_BUILDS)
+        # compile_commands.json
+        add_custom_command(
+            OUTPUT  ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
+            DEPENDS ${CMAKE_SOURCE_DIR}/Tools/Scripts/rewrite-compile-commands
+                    ${CMAKE_BINARY_DIR}/compile_commands.json
+            COMMAND ${Python_EXECUTABLE}
+                    ${CMAKE_SOURCE_DIR}/Tools/Scripts/rewrite-compile-commands
+                    ${CMAKE_BINARY_DIR}/compile_commands.json
+                    ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
+                    ${CMAKE_SOURCE_DIR}
+                    ${CMAKE_BINARY_DIR}
+            VERBATIM
+        )
         add_custom_target(RewriteCompileCommands
             ALL
-            BYPRODUCTS DeveloperTools/compile_commands.json
-            DEPENDS "${CMAKE_BINARY_DIR}/compile_commands.json"
-            COMMAND "${PYTHON_EXECUTABLE}"
-                    "${CMAKE_SOURCE_DIR}/Tools/Scripts/rewrite-compile-commands"
-                    "${CMAKE_BINARY_DIR}/compile_commands.json"
-                    "${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json"
-                    "${CMAKE_SOURCE_DIR}"
-                    "${CMAKE_BINARY_DIR}"
+            DEPENDS ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
+        )
+    elseif (CMAKE_EXPORT_COMPILE_COMMANDS)
+        # Create a simple symlink in DeveloperTools/compile_commands.json so that
+        # it can be relied upon regardless of unified or non-unified builds.
+        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/DeveloperTools)
+        set(COMPILE_COMMANDS_PATH "../compile_commands.json")
+        cmake_path(NATIVE_PATH COMPILE_COMMANDS_PATH COMPILE_COMMANDS_PATH)
+        file(CREATE_LINK
+            ${COMPILE_COMMANDS_PATH}
+            ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
+            SYMBOLIC
+        )
+    endif ()
+
+    # CLANGD_AUTO_SETUP defaults to ON if ENABLE_DEVELOPER_MODE or if building inside <SOURCE>/WebKitBuild
+    set(webkitbuild_dir ${CMAKE_SOURCE_DIR}/WebKitBuild)
+    cmake_path(IS_PREFIX webkitbuild_dir ${CMAKE_BINARY_DIR} NORMALIZE building_inside_WebKitBuild)
+    if (building_inside_WebKitBuild OR ENABLE_DEVELOPER_MODE)
+        set(clangd_auto_setup_default ON)
+    else ()
+        set(clangd_auto_setup_default OFF)
+    endif ()
+    cmake_dependent_option(CLANGD_AUTO_SETUP
+        "Install a .clangd configuration file and a compile_commands.json symlink
+         in the root of the source tree to have out-of-the-box code completion
+         in editors."
+        ${clangd_auto_setup_default}
+        CMAKE_EXPORT_COMPILE_COMMANDS
+        OFF
+    )
+
+    if (CLANGD_AUTO_SETUP)
+        # update-compile-commands-symlink.conf
+        add_custom_command(
+            OUTPUT ${CMAKE_SOURCE_DIR}/update-compile-commands-symlink.conf
+            DEPENDS ${TOOLS_DIR}/clangd/update-compile-commands-symlink-conf
+                    ${TOOLS_DIR}/clangd/update-compile-commands-symlink.conf.example
+            COMMAND ${Python_EXECUTABLE}
+                    ${TOOLS_DIR}/clangd/update-compile-commands-symlink-conf
+                    ${TOOLS_DIR}/clangd/update-compile-commands-symlink.conf.example
+                    ${CMAKE_SOURCE_DIR}/update-compile-commands-symlink.conf
+            VERBATIM
+        )
+        # compile_commands.json
+        add_custom_target(UpdateCompileCommandsSymlink
+            ALL
+            DEPENDS ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
+                    ${CMAKE_SOURCE_DIR}/update-compile-commands-symlink.conf
+            COMMAND ${Python_EXECUTABLE}
+                    ${TOOLS_DIR}/clangd/update-compile-commands-symlink
+                    ${CMAKE_SOURCE_DIR}/compile_commands.json
+                    ${CMAKE_SOURCE_DIR}/update-compile-commands-symlink.conf
+            VERBATIM
+        )
+        # .clangd
+        add_custom_command(
+            OUTPUT ${CMAKE_SOURCE_DIR}/.clangd
+            DEPENDS ${TOOLS_DIR}/clangd/update-clangd-config
+                    ${TOOLS_DIR}/clangd/clangd-config.yaml.tpl
+            COMMAND ${Python_EXECUTABLE}
+                    ${TOOLS_DIR}/clangd/update-clangd-config
+                    ${TOOLS_DIR}/clangd/clangd-config.yaml.tpl
+                    ${CMAKE_SOURCE_DIR}/.clangd
+            VERBATIM
+        )
+        add_custom_target(UpdateClangdConf
+            ALL
+            DEPENDS ${CMAKE_SOURCE_DIR}/.clangd
         )
     endif ()
 

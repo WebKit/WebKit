@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -42,7 +43,9 @@ struct WebPopupItem;
 
 class WebPopupMenuProxy;
 
-class WebPopupMenuProxyClient {
+class WebPopupMenuProxyClient : public CanMakeCheckedPtr<WebPopupMenuProxyClient> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebPopupMenuProxyClient);
 protected:
     virtual ~WebPopupMenuProxyClient() = default;
 
@@ -65,7 +68,7 @@ public:
     virtual void hidePopupMenu() = 0;
     virtual void cancelTracking() { }
 
-    void invalidate() { m_client = 0; }
+    void invalidate() { m_client = nullptr; }
 
 protected:
     explicit WebPopupMenuProxy(Client& client)
@@ -73,7 +76,10 @@ protected:
     {
     }
 
-    Client* m_client;
+    Client* client() const { return m_client.get(); }
+
+private:
+    CheckedPtr<Client> m_client;
 };
 
 } // namespace WebKit

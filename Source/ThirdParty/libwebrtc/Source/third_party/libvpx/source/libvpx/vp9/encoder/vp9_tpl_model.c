@@ -18,17 +18,229 @@
 #include "vp9/common/vp9_reconintra.h"
 #include "vp9/common/vp9_scan.h"
 #include "vp9/encoder/vp9_encoder.h"
+#include "vp9/encoder/vp9_ext_ratectrl.h"
+#include "vp9/encoder/vp9_firstpass.h"
+#include "vp9/encoder/vp9_ratectrl.h"
 #include "vp9/encoder/vp9_tpl_model.h"
 #include "vpx/internal/vpx_codec_internal.h"
 #include "vpx/vpx_codec.h"
+#include "vpx/vpx_ext_ratectrl.h"
+
+static int init_gop_frames_rc(VP9_COMP *cpi, GF_PICTURE *gf_picture,
+                              const GF_GROUP *gf_group, int *tpl_group_frames) {
+  VP9_COMMON *cm = &cpi->common;
+  int frame_idx = 0;
+  int i;
+  int extend_frame_count = 0;
+  int pframe_qindex = cpi->tpl_stats[2].base_qindex;
+  int frame_gop_offset = 0;
+
+  int added_overlay = 0;
+
+  RefCntBuffer *frame_bufs = cm->buffer_pool->frame_bufs;
+  int8_t recon_frame_index[REFS_PER_FRAME + MAX_ARF_LAYERS];
+
+  memset(recon_frame_index, -1, sizeof(recon_frame_index));
+
+  for (i = 0; i < FRAME_BUFFERS; ++i) {
+    if (frame_bufs[i].ref_count == 0) {
+      alloc_frame_mvs(cm, i);
+      if (vpx_realloc_frame_buffer(&frame_bufs[i].buf, cm->width, cm->height,
+                                   cm->subsampling_x, cm->subsampling_y,
+#if CONFIG_VP9_HIGHBITDEPTH
+                                   cm->use_highbitdepth,
+#endif
+                                   VP9_ENC_BORDER_IN_PIXELS, cm->byte_alignment,
+                                   NULL, NULL, NULL))
+        vpx_internal_error(&cm->error, VPX_CODEC_MEM_ERROR,
+                           "Failed to allocate frame buffer");
+
+      recon_frame_index[frame_idx] = i;
+      ++frame_idx;
+
+      if (frame_idx >= REFS_PER_FRAME + cpi->oxcf.enable_auto_arf) break;
+    }
+  }
+
+  for (i = 0; i < REFS_PER_FRAME + 1; ++i) {
+    assert(recon_frame_index[i] >= 0);
+    cpi->tpl_recon_frames[i] = &frame_bufs[recon_frame_index[i]].buf;
+  }
+
+  *tpl_group_frames = 0;
+
+  int ref_table[3];
+
+  if (gf_group->index == 1 && gf_group->update_type[1] == ARF_UPDATE) {
+    if (gf_group->update_type[0] == KF_UPDATE) {
+      // This is the only frame in ref buffer. We need it to be on
+      // gf_picture[0].
+      for (i = 0; i < 3; ++i) ref_table[i] = -REFS_PER_FRAME;
+
+      gf_picture[0].frame =
+          &cm->buffer_pool
+               ->frame_bufs[cm->ref_frame_map[gf_group->update_ref_idx[0]]]
+               .buf;
+      ref_table[gf_group->update_ref_idx[0]] = 0;
+
+      for (i = 0; i < 3; ++i) gf_picture[0].ref_frame[i] = -REFS_PER_FRAME;
+      gf_picture[0].update_type = gf_group->update_type[0];
+    } else {
+      for (i = 0; i < REFS_PER_FRAME; i++) {
+        if (cm->ref_frame_map[i] != -1) {
+          gf_picture[-i].frame =
+              &cm->buffer_pool->frame_bufs[cm->ref_frame_map[i]].buf;
+          ref_table[i] = -i;
+        } else {
+          ref_table[i] = -REFS_PER_FRAME;
+        }
+      }
+      for (i = 0; i < 3; ++i) {
+        gf_picture[0].ref_frame[i] = ref_table[i];
+      }
+    }
+    ++*tpl_group_frames;
+
+    // Initialize base layer ARF frame
+    gf_picture[1].frame = cpi->Source;
+    for (i = 0; i < 3; ++i) gf_picture[1].ref_frame[i] = ref_table[i];
+    gf_picture[1].update_type = gf_group->update_type[1];
+    ref_table[gf_group->update_ref_idx[1]] = 1;
+
+    ++*tpl_group_frames;
+  } else {
+    assert(gf_group->index == 0);
+    if (gf_group->update_type[0] == KF_UPDATE) {
+      // This is the only frame in ref buffer. We need it to be on
+      // gf_picture[0].
+      gf_picture[0].frame = cpi->Source;
+      for (i = 0; i < 3; ++i) gf_picture[0].ref_frame[i] = -REFS_PER_FRAME;
+      gf_picture[0].update_type = gf_group->update_type[0];
+
+      for (i = 0; i < 3; ++i) ref_table[i] = -REFS_PER_FRAME;
+      ref_table[gf_group->update_ref_idx[0]] = 0;
+    } else {
+      // Initialize ref table
+      for (i = 0; i < REFS_PER_FRAME; i++) {
+        if (cm->ref_frame_map[i] != -1) {
+          gf_picture[-i].frame =
+              &cm->buffer_pool->frame_bufs[cm->ref_frame_map[i]].buf;
+          ref_table[i] = -i;
+        } else {
+          ref_table[i] = -REFS_PER_FRAME;
+        }
+      }
+      for (i = 0; i < 3; ++i) {
+        gf_picture[0].ref_frame[i] = ref_table[i];
+      }
+      gf_picture[0].update_type = gf_group->update_type[0];
+      if (gf_group->update_type[0] != OVERLAY_UPDATE &&
+          gf_group->update_ref_idx[0] != -1) {
+        ref_table[gf_group->update_ref_idx[0]] = 0;
+      }
+    }
+    ++*tpl_group_frames;
+  }
+
+  int has_arf =
+      gf_group->gf_group_size > 1 && gf_group->update_type[1] == ARF_UPDATE &&
+      gf_group->update_type[gf_group->gf_group_size] == OVERLAY_UPDATE;
+
+  // Initialize P frames
+  for (frame_idx = *tpl_group_frames; frame_idx < MAX_ARF_GOP_SIZE;
+       ++frame_idx) {
+    if (frame_idx >= gf_group->gf_group_size && !has_arf) break;
+    struct lookahead_entry *buf;
+    frame_gop_offset = gf_group->frame_gop_index[frame_idx];
+    buf = vp9_lookahead_peek(cpi->lookahead, frame_gop_offset - 1);
+
+    if (buf == NULL) break;
+
+    gf_picture[frame_idx].frame = &buf->img;
+    for (i = 0; i < 3; ++i) {
+      gf_picture[frame_idx].ref_frame[i] = ref_table[i];
+    }
+
+    if (gf_group->update_type[frame_idx] != OVERLAY_UPDATE &&
+        gf_group->update_ref_idx[frame_idx] != -1) {
+      ref_table[gf_group->update_ref_idx[frame_idx]] = frame_idx;
+    }
+
+    gf_picture[frame_idx].update_type = gf_group->update_type[frame_idx];
+
+    ++*tpl_group_frames;
+
+    // The length of group of pictures is baseline_gf_interval, plus the
+    // beginning golden frame from last GOP, plus the last overlay frame in
+    // the same GOP.
+    if (frame_idx == gf_group->gf_group_size) {
+      added_overlay = 1;
+
+      ++frame_idx;
+      ++frame_gop_offset;
+      break;
+    }
+
+    if (frame_idx == gf_group->gf_group_size - 1 &&
+        gf_group->update_type[gf_group->gf_group_size] != OVERLAY_UPDATE) {
+      ++frame_idx;
+      ++frame_gop_offset;
+      break;
+    }
+  }
+
+  int lst_index = frame_idx - 1;
+  // Extend two frames outside the current gf group.
+  for (; has_arf && frame_idx < MAX_LAG_BUFFERS && extend_frame_count < 2;
+       ++frame_idx) {
+    struct lookahead_entry *buf =
+        vp9_lookahead_peek(cpi->lookahead, frame_gop_offset - 1);
+
+    if (buf == NULL) break;
+
+    cpi->tpl_stats[frame_idx].base_qindex = pframe_qindex;
+
+    gf_picture[frame_idx].frame = &buf->img;
+    gf_picture[frame_idx].ref_frame[0] = gf_picture[lst_index].ref_frame[0];
+    gf_picture[frame_idx].ref_frame[1] = gf_picture[lst_index].ref_frame[1];
+    gf_picture[frame_idx].ref_frame[2] = gf_picture[lst_index].ref_frame[2];
+
+    if (gf_picture[frame_idx].ref_frame[0] >
+            gf_picture[frame_idx].ref_frame[1] &&
+        gf_picture[frame_idx].ref_frame[0] >
+            gf_picture[frame_idx].ref_frame[2]) {
+      gf_picture[frame_idx].ref_frame[0] = lst_index;
+    } else if (gf_picture[frame_idx].ref_frame[1] >
+                   gf_picture[frame_idx].ref_frame[0] &&
+               gf_picture[frame_idx].ref_frame[1] >
+                   gf_picture[frame_idx].ref_frame[2]) {
+      gf_picture[frame_idx].ref_frame[1] = lst_index;
+    } else {
+      gf_picture[frame_idx].ref_frame[2] = lst_index;
+    }
+
+    gf_picture[frame_idx].update_type = LF_UPDATE;
+    lst_index = frame_idx;
+    ++*tpl_group_frames;
+    ++extend_frame_count;
+    ++frame_gop_offset;
+  }
+
+  return extend_frame_count + added_overlay;
+}
 
 static int init_gop_frames(VP9_COMP *cpi, GF_PICTURE *gf_picture,
                            const GF_GROUP *gf_group, int *tpl_group_frames) {
+  if (cpi->ext_ratectrl.ready &&
+      (cpi->ext_ratectrl.funcs.rc_type & VPX_RC_GOP) != 0) {
+    return init_gop_frames_rc(cpi, gf_picture, gf_group, tpl_group_frames);
+  }
+
   VP9_COMMON *cm = &cpi->common;
   int frame_idx = 0;
   int i;
   int gld_index = -1;
-  int alt_index = -1;
+  int alt_index = -2;
   int lst_index = -1;
   int arf_index_stack[MAX_ARF_LAYERS];
   int arf_stack_size = 0;
@@ -71,10 +283,13 @@ static int init_gop_frames(VP9_COMP *cpi, GF_PICTURE *gf_picture,
 
   // Initialize Golden reference frame.
   gf_picture[0].frame = get_ref_frame_buffer(cpi, GOLDEN_FRAME);
-  for (i = 0; i < 3; ++i) gf_picture[0].ref_frame[i] = -1;
+  for (i = 0; i < 3; ++i) gf_picture[0].ref_frame[i] = -REFS_PER_FRAME;
   gf_picture[0].update_type = gf_group->update_type[0];
   gld_index = 0;
   ++*tpl_group_frames;
+
+  gf_picture[-1].frame = get_ref_frame_buffer(cpi, LAST_FRAME);
+  gf_picture[-2].frame = get_ref_frame_buffer(cpi, ALTREF_FRAME);
 
   // Initialize base layer ARF frame
   gf_picture[1].frame = cpi->Source;
@@ -184,8 +399,8 @@ static void init_tpl_stats_before_propagation(
       vpx_calloc(tpl_gop_frames, sizeof(*tpl_gop_stats->frame_stats_list)));
   tpl_gop_stats->size = tpl_gop_frames;
   for (frame_idx = 0; frame_idx < tpl_gop_frames; ++frame_idx) {
-    const int mi_rows = tpl_stats[frame_idx].height;
-    const int mi_cols = tpl_stats[frame_idx].width;
+    const int mi_rows = tpl_stats[frame_idx].mi_rows;
+    const int mi_cols = tpl_stats[frame_idx].mi_cols;
     CHECK_MEM_ERROR(
         error_info, tpl_gop_stats->frame_stats_list[frame_idx].block_stats_list,
         vpx_calloc(
@@ -392,25 +607,35 @@ static void tpl_model_store(TplDepStats *tpl_stats, int mi_row, int mi_col,
 static void tpl_store_before_propagation(VpxTplBlockStats *tpl_block_stats,
                                          TplDepStats *tpl_stats, int mi_row,
                                          int mi_col, BLOCK_SIZE bsize,
-                                         int stride, int64_t recon_error,
-                                         int64_t rate_cost, int ref_frame_idx) {
+                                         int src_stride, int64_t recon_error,
+                                         int64_t pred_error, int64_t rate_cost,
+                                         int ref_frame_idx, int mi_rows,
+                                         int mi_cols) {
   const int mi_height = num_8x8_blocks_high_lookup[bsize];
   const int mi_width = num_8x8_blocks_wide_lookup[bsize];
-  const TplDepStats *src_stats = &tpl_stats[mi_row * stride + mi_col];
+  const TplDepStats *src_stats = &tpl_stats[mi_row * src_stride + mi_col];
   int idx, idy;
 
   for (idy = 0; idy < mi_height; ++idy) {
     for (idx = 0; idx < mi_width; ++idx) {
+      if (mi_row + idy >= mi_rows || mi_col + idx >= mi_cols) continue;
       VpxTplBlockStats *tpl_block_stats_ptr =
-          &tpl_block_stats[(mi_row + idy) * stride + mi_col + idx];
-      tpl_block_stats_ptr->row = mi_row * 8;
-      tpl_block_stats_ptr->col = mi_col * 8;
+          &tpl_block_stats[(mi_row + idy) * mi_cols + mi_col + idx];
+      tpl_block_stats_ptr->row = mi_row * 8 + idy * 8;
+      tpl_block_stats_ptr->col = mi_col * 8 + idx * 8;
       tpl_block_stats_ptr->inter_cost = src_stats->inter_cost;
       tpl_block_stats_ptr->intra_cost = src_stats->intra_cost;
-      tpl_block_stats_ptr->recrf_dist = recon_error << TPL_DEP_COST_SCALE_LOG2;
-      tpl_block_stats_ptr->recrf_rate = rate_cost << TPL_DEP_COST_SCALE_LOG2;
-      tpl_block_stats_ptr->mv_r = src_stats->mv.as_mv.row;
-      tpl_block_stats_ptr->mv_c = src_stats->mv.as_mv.col;
+      // inter/intra_cost here is calculated with SATD which should be close
+      // enough to be used as inter/intra_pred_error
+      tpl_block_stats_ptr->inter_pred_err = src_stats->inter_cost;
+      tpl_block_stats_ptr->intra_pred_err = src_stats->intra_cost;
+      tpl_block_stats_ptr->srcrf_dist = recon_error << TPL_DEP_COST_SCALE_LOG2;
+      tpl_block_stats_ptr->srcrf_rate = rate_cost << TPL_DEP_COST_SCALE_LOG2;
+      tpl_block_stats_ptr->pred_error = pred_error << TPL_DEP_COST_SCALE_LOG2;
+      tpl_block_stats_ptr->mv_r = (src_stats->mv.as_mv.row >= 0 ? 1 : -1) *
+                                  (abs(src_stats->mv.as_mv.row) + 4) / 8;
+      tpl_block_stats_ptr->mv_c = (src_stats->mv.as_mv.col >= 0 ? 1 : -1) *
+                                  (abs(src_stats->mv.as_mv.col) + 4) / 8;
       tpl_block_stats_ptr->ref_frame_index = ref_frame_idx;
     }
   }
@@ -418,6 +643,8 @@ static void tpl_store_before_propagation(VpxTplBlockStats *tpl_block_stats,
 
 static void tpl_model_update_b(TplDepFrame *tpl_frame, TplDepStats *tpl_stats,
                                int mi_row, int mi_col, const BLOCK_SIZE bsize) {
+  if (tpl_stats->ref_frame_index < 0) return;
+
   TplDepFrame *ref_tpl_frame = &tpl_frame[tpl_stats->ref_frame_index];
   TplDepStats *ref_stats = ref_tpl_frame->tpl_stats_ptr;
   MV mv = tpl_stats->mv.as_mv;
@@ -721,7 +948,9 @@ static void mode_estimation(VP9_COMP *cpi, MACROBLOCK *x, MACROBLOCKD *xd,
       1, (best_inter_cost << TPL_DEP_COST_SCALE_LOG2) / (mi_height * mi_width));
   tpl_stats->intra_cost = VPXMAX(
       1, (best_intra_cost << TPL_DEP_COST_SCALE_LOG2) / (mi_height * mi_width));
-  tpl_stats->ref_frame_index = gf_picture[frame_idx].ref_frame[best_rf_idx];
+  if (best_rf_idx >= 0) {
+    tpl_stats->ref_frame_index = gf_picture[frame_idx].ref_frame[best_rf_idx];
+  }
   tpl_stats->mv.as_int = best_mv.as_int;
   *ref_frame_idx = best_rf_idx;
 }
@@ -1190,7 +1419,7 @@ static void mc_flow_dispenser(VP9_COMP *cpi, GF_PICTURE *gf_picture,
   // unavailable, the pointer will be set to Null.
   for (idx = 0; idx < MAX_INTER_REF_FRAMES; ++idx) {
     int rf_idx = gf_picture[frame_idx].ref_frame[idx];
-    if (rf_idx != -1) ref_frame[idx] = gf_picture[rf_idx].frame;
+    if (rf_idx != -REFS_PER_FRAME) ref_frame[idx] = gf_picture[rf_idx].frame;
   }
 
   xd->mi = cm->mi_grid_visible;
@@ -1246,7 +1475,8 @@ static void mc_flow_dispenser(VP9_COMP *cpi, GF_PICTURE *gf_picture,
       tpl_store_before_propagation(
           tpl_frame_stats_before_propagation->block_stats_list,
           tpl_frame->tpl_stats_ptr, mi_row, mi_col, bsize, tpl_frame->stride,
-          recon_error, rate_cost, ref_frame_idx);
+          recon_error, sse, rate_cost, ref_frame_idx, tpl_frame->mi_rows,
+          tpl_frame->mi_cols);
 
       tpl_model_update(cpi->tpl_stats, tpl_frame->tpl_stats_ptr, mi_row, mi_col,
                        bsize);
@@ -1489,14 +1719,78 @@ static void accumulate_frame_tpl_stats(VP9_COMP *cpi) {
 }
 #endif  // CONFIG_RATE_CTRL
 
+void vp9_estimate_tpl_qp_gop(VP9_COMP *cpi) {
+  VP9_COMMON *cm = &cpi->common;
+  int gop_length = cpi->twopass.gf_group.gf_group_size;
+  int bottom_index, top_index;
+  int idx;
+  const int gf_index = cpi->twopass.gf_group.index;
+  const int is_src_frame_alt_ref = cpi->rc.is_src_frame_alt_ref;
+  const int refresh_frame_context = cpi->common.refresh_frame_context;
+
+  const int sb_size = num_8x8_blocks_wide_lookup[BLOCK_64X64] * MI_SIZE;
+  const int frame_height_sb = (cm->height + sb_size - 1) / sb_size;
+  const int frame_width_sb = (cm->width + sb_size - 1) / sb_size;
+
+  vpx_codec_err_t codec_status;
+  const GF_GROUP *gf_group = &cpi->twopass.gf_group;
+  vpx_rc_encodeframe_decision_t encode_frame_decision;
+
+  CHECK_MEM_ERROR(
+      &cm->error, encode_frame_decision.sb_params_list,
+      (sb_params *)vpx_malloc(frame_height_sb * frame_width_sb *
+                              sizeof(*encode_frame_decision.sb_params_list)));
+
+  for (idx = gf_index; idx <= gop_length; ++idx) {
+    TplDepFrame *tpl_frame = &cpi->tpl_stats[idx];
+    int target_rate = cpi->twopass.gf_group.bit_allocation[idx];
+    cpi->twopass.gf_group.index = idx;
+    vp9_rc_set_frame_target(cpi, target_rate);
+    vp9_configure_buffer_updates(cpi, idx);
+    if (cpi->ext_ratectrl.ready &&
+        (cpi->ext_ratectrl.funcs.rc_type & VPX_RC_QP) != 0 &&
+        cpi->ext_ratectrl.funcs.get_encodeframe_decision != NULL) {
+      if (idx == gop_length) break;
+      memset(encode_frame_decision.sb_params_list, 0,
+             sizeof(*encode_frame_decision.sb_params_list) * frame_height_sb *
+                 frame_width_sb);
+      codec_status = vp9_extrc_get_encodeframe_decision(
+          &cpi->ext_ratectrl, gf_group->index, &encode_frame_decision);
+      if (codec_status != VPX_CODEC_OK) {
+        vpx_internal_error(&cm->error, codec_status,
+                           "vp9_extrc_get_encodeframe_decision() failed");
+      }
+      for (int i = 0; i < frame_height_sb * frame_width_sb; ++i) {
+        cpi->sb_mul_scale[i] =
+            (((int64_t)encode_frame_decision.sb_params_list[i].rdmult * 256) /
+             (encode_frame_decision.rdmult + 1));
+      }
+      tpl_frame->base_qindex = encode_frame_decision.q_index;
+    } else {
+      tpl_frame->base_qindex = vp9_rc_pick_q_and_bounds_two_pass(
+          cpi, &bottom_index, &top_index, idx);
+      tpl_frame->base_qindex = VPXMAX(tpl_frame->base_qindex, 1);
+    }
+  }
+  // Reset the actual index and frame update
+  cpi->twopass.gf_group.index = gf_index;
+  cpi->rc.is_src_frame_alt_ref = is_src_frame_alt_ref;
+  cpi->common.refresh_frame_context = refresh_frame_context;
+  vp9_configure_buffer_updates(cpi, gf_index);
+
+  vpx_free(encode_frame_decision.sb_params_list);
+}
+
 void vp9_setup_tpl_stats(VP9_COMP *cpi) {
-  GF_PICTURE gf_picture[MAX_ARF_GOP_SIZE];
+  GF_PICTURE gf_picture_buf[MAX_ARF_GOP_SIZE + REFS_PER_FRAME];
+  GF_PICTURE *gf_picture = &gf_picture_buf[REFS_PER_FRAME];
   const GF_GROUP *gf_group = &cpi->twopass.gf_group;
   int tpl_group_frames = 0;
   int frame_idx;
   int extended_frame_count;
   cpi->tpl_bsize = BLOCK_32X32;
 
+  memset(gf_picture_buf, 0, sizeof(gf_picture_buf));
   extended_frame_count =
       init_gop_frames(cpi, gf_picture, gf_group, &tpl_group_frames);
 
@@ -1512,12 +1806,16 @@ void vp9_setup_tpl_stats(VP9_COMP *cpi) {
     mc_flow_dispenser(cpi, gf_picture, frame_idx, cpi->tpl_bsize);
   }
 
-  // TPL stats has extra frames from next GOP. Trim those extra frames for
-  // Qmode.
-  trim_tpl_stats(&cpi->common.error, &cpi->tpl_gop_stats, extended_frame_count);
-
   if (cpi->ext_ratectrl.ready &&
       cpi->ext_ratectrl.funcs.send_tpl_gop_stats != NULL) {
+    // Intra search on key frame
+    if (gf_group->update_type[0] != OVERLAY_UPDATE) {
+      mc_flow_dispenser(cpi, gf_picture, 0, cpi->tpl_bsize);
+    }
+    // TPL stats has extra frames from next GOP. Trim those extra frames for
+    // Qmode.
+    trim_tpl_stats(&cpi->common.error, &cpi->tpl_gop_stats,
+                   extended_frame_count);
     const vpx_codec_err_t codec_status =
         vp9_extrc_send_tpl_stats(&cpi->ext_ratectrl, &cpi->tpl_gop_stats);
     if (codec_status != VPX_CODEC_OK) {

@@ -30,24 +30,17 @@
 #include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebProcessProxy.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/NavigationIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
-#include <WebCore/RegistrableDomain.h>
-
-namespace WebKit {
-class RemotePageProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemotePageProxy> : std::true_type { };
-}
+#include <WebCore/Site.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
 class Decoder;
 class Encoder;
-template<typename> struct ConnectionSendSyncResult;
+template<typename> class ConnectionSendSyncResult;
 }
 
 namespace WebCore {
@@ -69,76 +62,63 @@ class RemotePageVisitedLinkStoreRegistration;
 class UserData;
 class WebFrameProxy;
 class WebPageProxy;
+class WebProcessActivityState;
 class WebProcessProxy;
 
 struct FrameInfoData;
 struct FrameTreeCreationParameters;
 struct NavigationActionData;
 
-class RemotePageProxy : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+enum class ProcessTerminationReason : uint8_t;
+
+class RemotePageProxy : public IPC::MessageReceiver, public RefCounted<RemotePageProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(RemotePageProxy);
 public:
-    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::RegistrableDomain&, WebPageProxyMessageReceiverRegistration* = nullptr);
+    static Ref<RemotePageProxy> create(WebPageProxy&, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration* = nullptr);
     ~RemotePageProxy();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     WebPageProxy* page() const;
     RefPtr<WebPageProxy> protectedPage() const;
 
-    template<typename M> void send(M&&);
-    template<typename M> IPC::ConnectionSendSyncResult<M> sendSync(M&& message);
-    template<typename M, typename C> void sendWithAsyncReply(M&&, C&&);
-    template<typename M, typename C, typename RawValue> void sendWithAsyncReply(M&&, C&&, const ObjectIdentifierGenericBase<RawValue>&);
-
     void injectPageIntoNewProcess();
-    void processDidTerminate(WebCore::ProcessIdentifier);
+    void removePageFromProcess();
+    void processDidTerminate(WebProcessProxy&, ProcessTerminationReason);
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
 
     WebProcessProxy& process() { return m_process.get(); }
     Ref<WebProcessProxy> protectedProcess() const;
-    WebCore::PageIdentifier pageID() const { return m_webPageID; }
-    const WebCore::RegistrableDomain& domain() const { return m_domain; }
+    WebProcessProxy& siteIsolatedProcess() const { return m_process.get(); }
+    WebCore::PageIdentifier pageID() const { return m_webPageID; } // FIXME: Remove this in favor of identifierInSiteIsolatedProcess.
+    WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return m_webPageID; }
+    const WebCore::Site& site() const { return m_site; }
+
+    WebProcessActivityState& processActivityState();
 
 private:
+    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration*);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
-    void decidePolicyForResponse(FrameInfoData&&, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&&);
-    void didCommitLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
+    void decidePolicyForResponse(FrameInfoData&&, std::optional<WebCore::NavigationIdentifier>, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&&);
+    void didCommitLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
     void decidePolicyForNavigationActionAsync(NavigationActionData&&, CompletionHandler<void(PolicyDecision&&)>&&);
     void decidePolicyForNavigationActionSync(NavigationActionData&&, CompletionHandler<void(PolicyDecision&&)>&&);
-    void didFailProvisionalLoadForFrame(FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError&, WebCore::WillContinueLoading, const UserData&, WebCore::WillInternallyHandleFailure);
-    void didStartProvisionalLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, URL&&, URL&& unreachableURL, const UserData&);
-    void didChangeProvisionalURLForFrame(WebCore::FrameIdentifier, uint64_t, URL&&);
+    void didFailProvisionalLoadForFrame(FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, const String& provisionalURL, const WebCore::ResourceError&, WebCore::WillContinueLoading, const UserData&, WebCore::WillInternallyHandleFailure);
+    void didStartProvisionalLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, URL&&, URL&& unreachableURL, const UserData&, WallTime);
+    void didChangeProvisionalURLForFrame(WebCore::FrameIdentifier, std::optional<WebCore::NavigationIdentifier>, URL&&);
     void handleMessage(const String& messageName, const UserData& messageBody);
 
     const WebCore::PageIdentifier m_webPageID;
     const Ref<WebProcessProxy> m_process;
     WeakPtr<WebPageProxy> m_page;
-    const WebCore::RegistrableDomain m_domain;
-    std::unique_ptr<RemotePageDrawingAreaProxy> m_drawingArea;
+    const WebCore::Site m_site;
+    RefPtr<RemotePageDrawingAreaProxy> m_drawingArea;
     std::unique_ptr<RemotePageVisitedLinkStoreRegistration> m_visitedLinkStoreRegistration;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
+    UniqueRef<WebProcessActivityState> m_processActivityState;
 };
-
-template<typename M> void RemotePageProxy::send(M&& message)
-{
-    m_process->send(std::forward<M>(message), m_webPageID, { });
-}
-
-template<typename M>
-IPC::ConnectionSendSyncResult<M> RemotePageProxy::sendSync(M&& message)
-{
-    return m_process->sendSync(std::forward<M>(message), m_webPageID);
-}
-
-template<typename M, typename C> void RemotePageProxy::sendWithAsyncReply(M&& message, C&& completionHandler)
-{
-    sendWithAsyncReply(std::forward<M>(message), std::forward<C>(completionHandler), m_webPageID);
-}
-
-template<typename M, typename C, typename RawValue> void RemotePageProxy::sendWithAsyncReply(M&& message, C&& completionHandler, const ObjectIdentifierGenericBase<RawValue>& destinationID)
-{
-    m_process->sendWithAsyncReply(std::forward<M>(message), std::forward<C>(completionHandler), destinationID.toUInt64());
-}
 
 }

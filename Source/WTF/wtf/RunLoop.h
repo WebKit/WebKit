@@ -28,6 +28,7 @@
 #pragma once
 
 #include <functional>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -41,6 +42,7 @@
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
+#include <wtf/TypeTraits.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -72,7 +74,10 @@ using RunLoopMode = unsigned;
 #define DefaultRunLoopMode 0
 #endif
 
-class WTF_CAPABILITY("is current") RunLoop final : public RefCountedSerialFunctionDispatcher, public ThreadSafeRefCounted<RunLoop> {
+// Classes that offer Timers should be ref-counted of CanMakeCheckedPtr. Please do not add new exceptions.
+template<typename T> struct IsDeprecatedTimerSmartPointerException : std::false_type { };
+
+class WTF_CAPABILITY("is current") RunLoop final : public GuaranteedSerialFunctionDispatcher {
     WTF_MAKE_NONCOPYABLE(RunLoop);
 public:
     // Must be called from the main thread.
@@ -92,8 +97,6 @@ public:
     WTF_EXPORT_PRIVATE static Ref<RunLoop> create(ASCIILiteral threadName, ThreadType = ThreadType::Unknown, Thread::QOS = Thread::QOS::UserInitiated);
 
     static bool isMain() { return main().isCurrent(); }
-    void ref() const final { ThreadSafeRefCounted::ref(); }
-    void deref() const final { ThreadSafeRefCounted::deref(); }
     WTF_EXPORT_PRIVATE bool isCurrent() const final;
     WTF_EXPORT_PRIVATE ~RunLoop() final;
 
@@ -131,7 +134,7 @@ public:
     class TimerBase {
         friend class RunLoop;
     public:
-        WTF_EXPORT_PRIVATE explicit TimerBase(RunLoop&);
+        WTF_EXPORT_PRIVATE explicit TimerBase(Ref<RunLoop>&&);
         WTF_EXPORT_PRIVATE virtual ~TimerBase();
 
         void startRepeating(Seconds interval) { start(std::max(interval, 0_s), true); }
@@ -180,13 +183,38 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         template <typename TimerFiredClass>
-        Timer(RunLoop& runLoop, TimerFiredClass* o, void (TimerFiredClass::*f)())
-            : Timer(runLoop, std::bind(f, o))
+        requires (WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value)
+        Timer(Ref<RunLoop>&& runLoop, TimerFiredClass* object, void (TimerFiredClass::*function)())
+            : Timer(WTFMove(runLoop), [object, function] {
+                RefPtr protectedObject { object };
+                (object->*function)();
+            })
         {
         }
 
-        Timer(RunLoop& runLoop, Function<void ()>&& function)
-            : TimerBase(runLoop)
+        template <typename TimerFiredClass>
+        requires (WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value && !WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value)
+        Timer(Ref<RunLoop>&& runLoop, TimerFiredClass* object, void (TimerFiredClass::*function)())
+            : Timer(WTFMove(runLoop), [object, function] {
+                CheckedPtr checkedObject { object };
+                (object->*function)();
+            })
+        {
+        }
+
+        // FIXME: This constructor isn't as safe as the other ones and should be removed.
+        template <typename TimerFiredClass>
+        requires (!WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value && !WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value)
+        Timer(Ref<RunLoop>&& runLoop, TimerFiredClass* object, void (TimerFiredClass::*function)())
+            : Timer(WTFMove(runLoop), std::bind(function, object))
+        {
+            static_assert(IsDeprecatedTimerSmartPointerException<std::remove_cv_t<TimerFiredClass>>::value,
+                "Classes that use Timer should be ref-counted or CanMakeCheckedPtr. Please do not add new exceptions."
+            );
+        }
+
+        Timer(Ref<RunLoop>&& runLoop, Function<void ()>&& function)
+            : TimerBase(WTFMove(runLoop))
             , m_function(WTFMove(function))
         {
         }
@@ -237,6 +265,7 @@ private:
     static LRESULT CALLBACK RunLoopWndProc(HWND, UINT, WPARAM, LPARAM);
     LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
     HWND m_runLoopMessageWindow;
+    HashSet<UINT_PTR> m_liveTimers;
 
     Lock m_loopLock;
 #elif USE(COCOA_EVENT_LOOP)

@@ -44,11 +44,11 @@
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "XLinkNames.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGAElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGAElement);
 
 inline SVGAElement::SVGAElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -61,6 +61,8 @@ inline SVGAElement::SVGAElement(const QualifiedName& tagName, Document& document
         PropertyRegistry::registerProperty<SVGNames::targetAttr, &SVGAElement::m_target>();
     });
 }
+
+SVGAElement::~SVGAElement() = default;
 
 Ref<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Document& document)
 {
@@ -141,7 +143,7 @@ void SVGAElement::defaultEventHandler(Event& event)
             event.setDefaultHandled();
 
             if (RefPtr frame = document().frame())
-                frame->checkedLoader()->changeLocation(protectedDocument()->completeURL(url), target, &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
+                frame->protectedLoader()->changeLocation(protectedDocument()->completeURL(url), target, &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
             return;
         }
     }
@@ -182,7 +184,11 @@ bool SVGAElement::isKeyboardFocusable(KeyboardEvent* event) const
     if (isFocusable() && Element::supportsFocus())
         return SVGElement::isKeyboardFocusable(event);
 
-    if (isLink() && !document().frame()->eventHandler().tabsToLinks(event))
+    RefPtr frame = document().frame();
+    if (!frame)
+        return false;
+
+    if (isLink() && !frame->eventHandler().tabsToLinks(event))
         return false;
 
     return SVGElement::isKeyboardFocusable(event);

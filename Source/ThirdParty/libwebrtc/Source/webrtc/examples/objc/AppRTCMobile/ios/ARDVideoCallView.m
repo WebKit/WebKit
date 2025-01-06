@@ -39,8 +39,8 @@ static CGFloat const kStatusBarHeight = 20;
 @synthesize delegate = _delegate;
 
 - (instancetype)initWithFrame:(CGRect)frame {
-  if (self = [super initWithFrame:frame]) {
-
+  self = [super initWithFrame:frame];
+  if (self) {
     _remoteVideoView = [[RTC_OBJC_TYPE(RTCMTLVideoView) alloc] initWithFrame:CGRectZero];
 
     [self addSubview:_remoteVideoView];

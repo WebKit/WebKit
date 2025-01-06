@@ -171,8 +171,10 @@ size_t CryptoKeyRSA::keySizeInBits() const
 static std::optional<uint32_t> exponentVectorToUInt32(const Vector<uint8_t>& exponent)
 {
     if (exponent.size() > 4) {
-        if (std::any_of(exponent.begin(), exponent.end() - 4, [](uint8_t element) { return !!element; }))
-            return std::nullopt;
+        for (auto element : exponent.subspan(0, exponent.size() - 4)) {
+            if (!!element)
+                return std::nullopt;
+        }
     }
 
     uint32_t result = 0;

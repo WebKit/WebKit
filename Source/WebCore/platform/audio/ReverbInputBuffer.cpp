@@ -31,32 +31,36 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "ReverbInputBuffer.h"
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReverbInputBuffer);
 
 ReverbInputBuffer::ReverbInputBuffer(size_t length)
     : m_buffer(length)
 {
 }
 
-void ReverbInputBuffer::write(const float* sourceP, size_t numberOfFrames)
+void ReverbInputBuffer::write(std::span<const float> source)
 {
     size_t bufferLength = m_buffer.size();
-    bool isCopySafe = m_writeIndex + numberOfFrames <= bufferLength;
+    bool isCopySafe = m_writeIndex + source.size() <= bufferLength;
     ASSERT(isCopySafe);
     if (!isCopySafe)
         return;
         
-    memcpy(m_buffer.data() + m_writeIndex, sourceP, sizeof(float) * numberOfFrames);
+    memcpySpan(m_buffer.span().subspan(m_writeIndex), source);
 
-    m_writeIndex += numberOfFrames;
+    m_writeIndex += source.size();
     ASSERT(m_writeIndex <= bufferLength);
 
     if (m_writeIndex >= bufferLength)
         m_writeIndex = 0;
 }
 
-float* ReverbInputBuffer::directReadFrom(int* readIndex, size_t numberOfFrames)
+std::span<float> ReverbInputBuffer::directReadFrom(int* readIndex, size_t numberOfFrames)
 {
     size_t bufferLength = m_buffer.size();
     bool isPointerGood = readIndex && *readIndex >= 0 && *readIndex + numberOfFrames <= bufferLength;
@@ -65,11 +69,11 @@ float* ReverbInputBuffer::directReadFrom(int* readIndex, size_t numberOfFrames)
         // Should never happen in practice but return pointer to start of buffer (avoid crash)
         if (readIndex)
             *readIndex = 0;
-        return m_buffer.data();
+        return m_buffer.span().first(numberOfFrames);
     }
         
-    float* sourceP = m_buffer.data();
-    float* p = sourceP + *readIndex;
+    auto source = m_buffer.span();
+    auto p = source.subspan(*readIndex, numberOfFrames);
 
     // Update readIndex
     *readIndex = (*readIndex + numberOfFrames) % bufferLength;

@@ -33,7 +33,6 @@
 #include "NetworkProcessConnection.h"
 #include "NetworkResourceLoadParameters.h"
 #include "SharedBufferReference.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebFrame.h"
 #include "WebLoaderStrategy.h"
@@ -451,7 +450,7 @@ String WebPlatformStrategies::readStringFromPasteboard(size_t index, const Strin
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
 
-void WebPlatformStrategies::navigatorSubscribeToPushService(const URL& scope, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&& callback)
+void WebPlatformStrategies::windowSubscribeToPushService(const URL& scope, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&& callback)
 {
     auto completionHandler = [callback = WTFMove(callback)](auto&& valueOrException) mutable {
         if (!valueOrException.has_value()) {
@@ -464,7 +463,7 @@ void WebPlatformStrategies::navigatorSubscribeToPushService(const URL& scope, co
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorSubscribeToPushService(scope, applicationServerKey), WTFMove(completionHandler));
 }
 
-void WebPlatformStrategies::navigatorUnsubscribeFromPushService(const URL& scope, PushSubscriptionIdentifier subscriptionIdentifier, UnsubscribeFromPushServiceCallback&& callback)
+void WebPlatformStrategies::windowUnsubscribeFromPushService(const URL& scope, std::optional<PushSubscriptionIdentifier> subscriptionIdentifier, UnsubscribeFromPushServiceCallback&& callback)
 {
     auto completionHandler = [callback = WTFMove(callback)](auto&& valueOrException) mutable {
         if (!valueOrException.has_value()) {
@@ -474,10 +473,10 @@ void WebPlatformStrategies::navigatorUnsubscribeFromPushService(const URL& scope
         callback(WTFMove(*valueOrException));
     };
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorUnsubscribeFromPushService(scope, subscriptionIdentifier), WTFMove(completionHandler));
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorUnsubscribeFromPushService(scope, *subscriptionIdentifier), WTFMove(completionHandler));
 }
 
-void WebPlatformStrategies::navigatorGetPushSubscription(const URL& scope, GetPushSubscriptionCallback&& callback)
+void WebPlatformStrategies::windowGetPushSubscription(const URL& scope, GetPushSubscriptionCallback&& callback)
 {
     auto completionHandler = [callback = WTFMove(callback)](auto&& valueOrException) mutable {
         if (!valueOrException.has_value()) {
@@ -490,7 +489,7 @@ void WebPlatformStrategies::navigatorGetPushSubscription(const URL& scope, GetPu
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorGetPushSubscription(scope), WTFMove(completionHandler));
 }
 
-void WebPlatformStrategies::navigatorGetPushPermissionState(const URL& scope, GetPushPermissionStateCallback&& callback)
+void WebPlatformStrategies::windowGetPushPermissionState(const URL& scope, GetPushPermissionStateCallback&& callback)
 {
     auto completionHandler = [callback = WTFMove(callback)](auto&& valueOrException) mutable {
         if (!valueOrException.has_value())

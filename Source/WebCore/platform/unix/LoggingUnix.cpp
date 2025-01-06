@@ -25,6 +25,7 @@
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #include <wtf/LogInitialization.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

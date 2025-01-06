@@ -26,6 +26,8 @@
 #include "config.h"
 #include <wtf/text/StringCommon.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 SUPPRESS_ASAN
@@ -99,7 +101,7 @@ const LChar* find8NonASCIIAlignedImpl(std::span<const LChar> data)
     ASSERT(length);
     ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
     ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
-    const uint8_t* cursor = bitwise_cast<const uint8_t*>(pointer);
+    const uint8_t* cursor = std::bit_cast<const uint8_t*>(pointer);
     constexpr size_t stride = SIMD::stride<uint8_t>;
 
     simde_uint8x16_t charactersVector = simde_vdupq_n_u8(0x80);
@@ -110,7 +112,7 @@ const LChar* find8NonASCIIAlignedImpl(std::span<const LChar> data)
         if (simde_vmaxvq_u8(mask)) {
             simde_uint8x16_t ranked = simde_vornq_u8(indexMask, mask);
             uint8_t index = simde_vminvq_u8(ranked);
-            return bitwise_cast<const LChar*>((index < length) ? cursor + index : nullptr);
+            return std::bit_cast<const LChar*>((index < length) ? cursor + index : nullptr);
         }
         if (length <= stride)
             return nullptr;
@@ -131,7 +133,7 @@ const UChar* find16NonASCIIAlignedImpl(std::span<const UChar> data)
     ASSERT(length);
     ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
     ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
-    const uint16_t* cursor = bitwise_cast<const uint16_t*>(pointer);
+    const uint16_t* cursor = std::bit_cast<const uint16_t*>(pointer);
     constexpr size_t stride = SIMD::stride<uint16_t>;
 
     simde_uint16x8_t charactersVector = simde_vdupq_n_u16(0x80);
@@ -142,7 +144,7 @@ const UChar* find16NonASCIIAlignedImpl(std::span<const UChar> data)
         if (simde_vget_lane_u64(simde_vreinterpret_u64_u8(simde_vmovn_u16(mask)), 0)) {
             simde_uint16x8_t ranked = simde_vornq_u16(indexMask, mask);
             uint16_t index = simde_vminvq_u16(ranked);
-            return bitwise_cast<const UChar*>((index < length) ? cursor + index : nullptr);
+            return std::bit_cast<const UChar*>((index < length) ? cursor + index : nullptr);
         }
         if (length <= stride)
             return nullptr;
@@ -152,3 +154,5 @@ const UChar* find16NonASCIIAlignedImpl(std::span<const UChar> data)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

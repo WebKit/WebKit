@@ -46,21 +46,24 @@ struct TextRecognitionResult;
 
 enum class EnterKeyHint : uint8_t;
 enum class PageIsEditable : bool;
+enum class PopoverVisibilityState : bool;
+enum class ToggleState : bool;
+
+#if PLATFORM(IOS_FAMILY)
+enum class SelectionRenderingBehavior : bool;
+#endif
+
 enum class FireEvents : bool { No, Yes };
 enum class FocusPreviousElement : bool { No, Yes };
-enum class PopoverVisibilityState : bool;
 enum class PopoverState : uint8_t {
     None,
     Auto,
     Manual,
 };
 
-#if PLATFORM(IOS_FAMILY)
-enum class SelectionRenderingBehavior : bool;
-#endif
-
 class HTMLElement : public StyledElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLElement);
 public:
     static Ref<HTMLElement> create(const QualifiedName& tagName, Document&);
 
@@ -98,10 +101,6 @@ public:
 
     WEBCORE_EXPORT const AtomString& dir() const;
     WEBCORE_EXPORT void setDir(const AtomString&);
-
-    bool hasDirectionAuto() const;
-
-    std::optional<TextDirection> directionalityIfDirIsAuto() const;
 
     virtual bool isTextControlInnerTextElement() const { return false; }
     virtual bool isSearchFieldResultsButtonElement() const { return false; }
@@ -149,19 +148,28 @@ public:
 
     WEBCORE_EXPORT ExceptionOr<Ref<ElementInternals>> attachInternals();
 
-    void queuePopoverToggleEventTask(PopoverVisibilityState oldState, PopoverVisibilityState newState);
-    ExceptionOr<void> showPopover(const HTMLFormControlElement* = nullptr);
+    struct ShowPopoverOptions {
+        RefPtr<HTMLElement> source;
+    };
+
+    struct TogglePopoverOptions : public ShowPopoverOptions {
+        std::optional<bool> force;
+    };
+
+    void queuePopoverToggleEventTask(ToggleState oldState, ToggleState newState);
+    ExceptionOr<void> showPopover(const ShowPopoverOptions&);
+    ExceptionOr<void> showPopoverInternal(const HTMLElement* = nullptr);
     ExceptionOr<void> hidePopover();
     ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents);
-    ExceptionOr<bool> togglePopover(std::optional<bool> force);
+    ExceptionOr<bool> togglePopover(std::optional<std::variant<WebCore::HTMLElement::TogglePopoverOptions, bool>>);
 
     PopoverState popoverState() const;
     const AtomString& popover() const;
     void setPopover(const AtomString& value) { setAttributeWithoutSynchronization(HTMLNames::popoverAttr, value); };
     void popoverAttributeChanged(const AtomString& value);
 
-    bool isValidInvokeAction(const InvokeAction) override;
-    bool handleInvokeInternal(const HTMLFormControlElement& invoker, const InvokeAction&) override;
+    bool isValidCommandType(const CommandType) override;
+    bool handleCommandInternal(const HTMLFormControlElement& invoker, const CommandType&) override;
 
 #if PLATFORM(IOS_FAMILY)
     static SelectionRenderingBehavior selectionRenderingBehavior(const Node*);
@@ -194,30 +202,15 @@ protected:
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     unsigned parseBorderWidthAttribute(const AtomString&) const;
 
-    void childrenChanged(const ChildChange&) override;
-    void updateTextDirectionalityAfterInputTypeChange();
-    void updateEffectiveDirectionalityOfDirAuto();
-
     virtual void effectiveSpellcheckAttributeChanged(bool);
 
-    using EventHandlerNameMap = HashMap<AtomString, AtomString>;
+    using EventHandlerNameMap = UncheckedKeyHashMap<AtomString, AtomString>;
     static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
 
 private:
     String nodeName() const final;
 
     void mapLanguageAttributeToLocale(const AtomString&, MutableStyleProperties&);
-
-    void dirAttributeChanged(const AtomString&);
-    void updateEffectiveDirectionality(std::optional<TextDirection>);
-    void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
-    void adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChange::Type);
-
-    struct TextDirectionWithStrongDirectionalityNode {
-        TextDirection direction;
-        RefPtr<Node> strongDirectionalityNode;
-    };
-    TextDirectionWithStrongDirectionalityNode computeDirectionalityFromText() const;
 
     enum class AllowPercentage : bool { No, Yes };
     enum class UseCSSPXAsUnitType : bool { No, Yes };

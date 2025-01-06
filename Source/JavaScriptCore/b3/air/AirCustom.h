@@ -157,7 +157,7 @@ struct CCallCustom : public CommonCustomBase<CCallCustom> {
 
         for (unsigned i = 1; i < value->numChildren(); ++i) {
             Value* child = value->child(i);
-            for (size_t j = 0; j < cCallArgumentRegisterCount(child); j++) {
+            for (size_t j = 0; j < cCallArgumentRegisterCount(child->type()); j++) {
                 next(
                     Arg::Use,
                     bankForType(child->type()),
@@ -317,8 +317,8 @@ struct WasmBoundsCheckCustom : public CommonCustomBase<WasmBoundsCheckCustom> {
     template<typename Func>
     static void forEachArg(Inst& inst, const Func& functor)
     {
-        functor(inst.args[0], Arg::Use, GP, Width64);
-        functor(inst.args[1], Arg::Use, GP, Width64);
+        functor(inst.args[0], Arg::Use, GP, WidthPtr);
+        functor(inst.args[1], Arg::Use, GP, WidthPtr);
     }
 
     template<typename... Arguments>

@@ -29,12 +29,13 @@
 
 #include "ArgumentCodersCocoa.h"
 #include <Foundation/Foundation.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 class CoreIPCPersonNameComponents {
-WTF_MAKE_FAST_ALLOCATED;
+WTF_MAKE_TZONE_ALLOCATED(CoreIPCPersonNameComponents);
 public:
     CoreIPCPersonNameComponents(NSPersonNameComponents *);
 

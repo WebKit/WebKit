@@ -61,7 +61,7 @@ static void didLayout(WKPageRef, WKPageRenderingProgressEvents type, WKTypeRef, 
 static void setPageLoaderClient(WKPageRef page)
 {
     WKPageNavigationClientV3 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
 
     loaderClient.base.version = 3;
     loaderClient.renderingProgressDidChange = didLayout;

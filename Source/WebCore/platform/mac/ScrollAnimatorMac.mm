@@ -35,9 +35,12 @@
 #import "ScrollView.h"
 #import "ScrollableArea.h"
 #import "ScrollbarsController.h"
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollAnimatorMac);
 
 std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {

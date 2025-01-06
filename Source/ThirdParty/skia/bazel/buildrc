@@ -74,6 +74,16 @@ build:for_mac_x64_fastbuild --platforms=//bazel/platform:mac_x64_hermetic \
                             --compilation_mode=fastbuild \
                             --cc_output_directory_tag=mac_x64_fastbuild
 
+build:for_windows_x64_debug --platforms=//bazel/platform:windows_x64_hermetic \
+                            --compilation_mode=dbg \
+                            --cc_output_directory_tag=windows_x64_debug
+build:for_windows_x64_release --platforms=//bazel/platform:windows_x64_hermetic \
+                              --compilation_mode=opt \
+                              --cc_output_directory_tag=windows_x64_release
+build:for_windows_x64_fastbuild --platforms=//bazel/platform:windows_x64_hermetic \
+                                --compilation_mode=fastbuild \
+                                --cc_output_directory_tag=windows_x64_fastbuild
+
 # Shorter config names defaulting to fastbuild (same default as --compilation_mode, see
 # https://bazel.build/docs/user-manual#compilation-mode).
 build:for_mac_arm64 --config=for_mac_arm64_fastbuild
@@ -125,6 +135,9 @@ build:for_android_arm64 --config=for_android_arm64_fastbuild
 build:for_android_arm64_with_rbe --config=for_android_arm64_fastbuild_with_rbe
 build:android_rbe --config=for_android_arm64_fastbuild_with_rbe
 
+#IOS configs
+build:for_ios --platforms=//bazel/platform:ios --compilation_mode=dbg --cc_output_directory_tag=ios_arm64_fastbuild
+
 # =============================================================================
 # Configurations (what features we want on)
 # =============================================================================
@@ -135,34 +148,19 @@ build:debug --compilation_mode=dbg
 
 # See also https://github.com/emscripten-core/emsdk/issues/984 for disabling cc_toolchain_resolution
 build:canvaskit_full --noincompatible_enable_cc_toolchain_resolution \
-                     --include_decoder=gif_decode_codec --include_decoder=jpeg_decode_codec \
-                     --include_decoder=png_decode_codec --include_decoder=webp_decode_codec \
-                     \
-                     --include_encoder=jpeg_encode_codec --include_encoder=png_encode_codec \
-                     --include_encoder=webp_encode_codec \
-                     \
-                     --with_harfbuzz --with_icu --include_fontmgr=custom_embedded_fontmgr \
                      --ck_enable_fonts --ck_enable_embedded_font \
-                     \
-                     --disable_tracing \
                      \
                      --ck_enable_canvas_polyfill --ck_enable_skp_serialization --ck_enable_skottie \
                      --ck_enable_runtime_effect --ck_enable_matrix_js
 
-build:ck_webgl2 --ck_enable_webgl \
-                --disable_legacy_shader_context
-# CPU build needs legacy shader context otherwise SkPerlinNoiseShader does not render
-build:ck_cpu --enable_legacy_shader_context
-
-# flags for using the CanvasKit debugger.
-build:ck_debugger --enable_build_for_debugger
+build:ck_webgl2 --ck_enable_webgl
 
 build:ck_full_webgl2_release --config=canvaskit_full --config=ck_webgl2 --config=release
 build:ck_full_webgl2_debug --config=canvaskit_full --config=ck_webgl2 --config=debug
-build:ck_full_cpu_release --config=canvaskit_full --config=ck_cpu --config=release
-build:ck_full_cpu_debug --config=canvaskit_full --config=ck_cpu --config=debug
+build:ck_full_cpu_release --config=canvaskit_full --config=release
+build:ck_full_cpu_debug --config=canvaskit_full --config=debug
 build:ck_full_webgl2_release_debugger --config=canvaskit_full --config=ck_webgl2 \
-                                    --config=release --config=ck_debugger
+                                    --config=release --ck_include_debugger
 # TODO(kjlubick) We should be able to configure testing on Chrome or Firefox with this.
 build:ck_full_webgl2_release_chrome --config=ck_full_webgl2_release
 build:ck_full_cpu_release_chrome --config=ck_full_cpu_release
@@ -170,29 +168,34 @@ build:ck_full_cpu_release_chrome --config=ck_full_cpu_release
 # config when building //infra/debugger-app:debugger_container.
 # This is invoked in a Louhi flow.
 build:debugger_app_container --config=ck_full_webgl2_release_debugger \
-                             --workspace_status_command=bazel/get_workspace_status.sh
+                             --workspace_status_command=bazel/get_workspace_status.sh \
+                             --@io_bazel_rules_docker//transitions:enable=false
 
 # config when building //infra/jsfiddle:jsfiddle_container.
 # This is invoked in a Louhi flow.
 build:jsfiddle_container --config=ck_full_webgl2_release \
-                         --workspace_status_command=bazel/get_workspace_status.sh
+                         --workspace_status_command=bazel/get_workspace_status.sh \
+                         --@io_bazel_rules_docker//transitions:enable=false
 
 # config when building //infra/shaders:shaders_container.
 # This is invoked in a Louhi flow.
 build:shaders_container --config=ck_full_webgl2_release \
-                        --workspace_status_command=bazel/get_workspace_status.sh
+                        --workspace_status_command=bazel/get_workspace_status.sh \
+                        --@io_bazel_rules_docker//transitions:enable=false
 
 # config when building //infra/skottie:skottie_container.
 # This is invoked in a Louhi flow.
 build:skottie_container --config=ck_full_webgl2_release \
-                        --workspace_status_command=bazel/get_workspace_status.sh
+                        --workspace_status_command=bazel/get_workspace_status.sh \
+                        --@io_bazel_rules_docker//transitions:enable=false
 
 # We only want to enforce IWYU on debug builds because we have some things that are only
 # necessary to include in debug mode (e.g. SkDEBUGCODE), but very rarely something that is
 # only needed in release mode. Thus our C++ debug includes should be a superset of the
 # release includes.
 build:enforce_iwyu --features=skia_enforce_iwyu --cc_output_directory_tag=iwyu \
-                   --compilation_mode=dbg --keep_going
+                   --compilation_mode=dbg --keep_going \
+                   --linkopt="SKIA_SKIP_LINKING"
 
 build:use_linux_rbe_pool --config=linux_rbe --remote_download_minimal
 
@@ -218,6 +221,11 @@ build:metal_ganesh --enable_gpu_test_utils --gpu_backend=metal_ganesh\
 build:cpu --config=cpu_only
 build:gl --config=gl_ganesh
 build:vk --config=vulkan_ganesh
+
+# We would ideally like to remove the SKSL_STANDALONE define one day,
+# but it is needed by SkRasterPipelineBuilder when being compiled for GN
+build:compile_sksl --cc_output_directory_tag=compile_sksl \
+    --compilation_mode=opt --//src/core:load_sksl_from_disk --copt="-DSKSL_STANDALONE=1"
 
 # Layering check does not work without sandboxing because the system headers are not in the
 # right spot and so they are not found.

@@ -56,17 +56,17 @@ AudioBus::AudioBus(unsigned numberOfChannels, size_t length, bool allocate)
     : m_length(length)
 {
     m_channels = Vector<std::unique_ptr<AudioChannel>>(numberOfChannels, [&](size_t) {
-        return allocate ? makeUnique<AudioChannel>(length) : makeUnique<AudioChannel>(nullptr, length);
+        return allocate ? makeUnique<AudioChannel>(length) : makeUnique<AudioChannel>();
     });
 
     m_layout = LayoutCanonical; // for now this is the only layout we define
 }
 
-void AudioBus::setChannelMemory(unsigned channelIndex, float* storage, size_t length)
+void AudioBus::setChannelMemory(unsigned channelIndex, std::span<float> storage)
 {
     if (channelIndex < m_channels.size()) {
-        channel(channelIndex)->set(storage, length);
-        m_length = length; // FIXME: verify that this length matches all the other channel lengths
+        channel(channelIndex)->set(storage);
+        m_length = storage.size(); // FIXME: verify that this length matches all the other channel lengths
     }
 }
 
@@ -309,97 +309,97 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         // Handle stereo -> mono case. output += 0.5 * (input.L + input.R).
         AudioBus& sourceBusSafe = const_cast<AudioBus&>(sourceBus);
 
-        const float* sourceL = sourceBusSafe.channelByType(ChannelLeft)->data();
-        const float* sourceR = sourceBusSafe.channelByType(ChannelRight)->data();
+        auto sourceL = sourceBusSafe.channelByType(ChannelLeft)->span().first(length());
+        auto sourceR = sourceBusSafe.channelByType(ChannelRight)->span().first(length());
 
-        float* destination = channelByType(ChannelLeft)->mutableData();
-        VectorMath::multiplyByScalarThenAddToOutput(sourceL, 0.5, destination, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceR, 0.5, destination, length());
+        auto destination = channelByType(ChannelLeft)->mutableSpan();
+        VectorMath::multiplyByScalarThenAddToOutput(sourceL, 0.5, destination);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceR, 0.5, destination);
     } else if (numberOfSourceChannels == 4 && numberOfDestinationChannels == 1) {
         // Down-mixing: 4 -> 1
         // output = 0.25 * (input.L + input.R + input.SL + input.SR)
-        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
-        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
-        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->data();
-        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->data();
+        auto sourceL = sourceBus.channelByType(ChannelLeft)->span().first(length());
+        auto sourceR = sourceBus.channelByType(ChannelRight)->span().first(length());
+        auto sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->span().first(length());
+        auto sourceSR = sourceBus.channelByType(ChannelSurroundRight)->span().first(length());
 
-        auto* destination = channelByType(ChannelLeft)->mutableData();
+        auto destination = channelByType(ChannelLeft)->mutableSpan();
 
-        VectorMath::multiplyByScalarThenAddToOutput(sourceL, 0.25, destination, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceR, 0.25, destination, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceSL, 0.25, destination, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceSR, 0.25, destination, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceL, 0.25, destination);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceR, 0.25, destination);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSL, 0.25, destination);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSR, 0.25, destination);
     } else if (numberOfSourceChannels == 6 && numberOfDestinationChannels == 1) {
         // Down-mixing: 5.1 -> 1
         // output = sqrt(1/2) * (input.L + input.R) + input.C + 0.5 * (input.SL + input.SR)
-        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
-        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
-        auto* sourceC = sourceBus.channelByType(ChannelCenter)->data();
-        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->data();
-        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->data();
+        auto sourceL = sourceBus.channelByType(ChannelLeft)->span().first(length());
+        auto sourceR = sourceBus.channelByType(ChannelRight)->span().first(length());
+        auto sourceC = sourceBus.channelByType(ChannelCenter)->span().first(length());
+        auto sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->span().first(length());
+        auto sourceSR = sourceBus.channelByType(ChannelSurroundRight)->span().first(length());
 
-        auto* destination = channelByType(ChannelLeft)->mutableData();
+        auto destination = channelByType(ChannelLeft)->mutableSpan().first(length());
         float scaleSqrtHalf = sqrtf(0.5);
 
-        VectorMath::multiplyByScalarThenAddToOutput(sourceL, scaleSqrtHalf, destination, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceR, scaleSqrtHalf, destination, length());
-        VectorMath::add(sourceC, destination, destination, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceSL, 0.5, destination, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceSR, 0.5, destination, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceL, scaleSqrtHalf, destination);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceR, scaleSqrtHalf, destination);
+        VectorMath::add(sourceC, destination, destination);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSL, 0.5, destination);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSR, 0.5, destination);
     } else if (numberOfSourceChannels == 4 && numberOfDestinationChannels == 2) {
         // Down-mixing: 4 -> 2
         // output.L = 0.5 * (input.L + input.SL)
         // output.R = 0.5 * (input.R + input.SR)
-        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
-        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
-        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->data();
-        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->data();
+        auto sourceL = sourceBus.channelByType(ChannelLeft)->span().first(length());
+        auto sourceR = sourceBus.channelByType(ChannelRight)->span().first(length());
+        auto sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->span().first(length());
+        auto sourceSR = sourceBus.channelByType(ChannelSurroundRight)->span().first(length());
 
-        auto* destinationL = channelByType(ChannelLeft)->mutableData();
-        auto* destinationR = channelByType(ChannelRight)->mutableData();
+        auto destinationL = channelByType(ChannelLeft)->mutableSpan();
+        auto destinationR = channelByType(ChannelRight)->mutableSpan();
 
-        VectorMath::multiplyByScalarThenAddToOutput(sourceL, 0.5, destinationL, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceSL, 0.5, destinationL, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceR, 0.5, destinationR, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceSR, 0.5, destinationR, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceL, 0.5, destinationL);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSL, 0.5, destinationL);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceR, 0.5, destinationR);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSR, 0.5, destinationR);
     } else if (numberOfSourceChannels == 6 && numberOfDestinationChannels == 2) {
         // Down-mixing: 5.1 -> 2
         // output.L = input.L + sqrt(1/2) * (input.C + input.SL)
         // output.R = input.R + sqrt(1/2) * (input.C + input.SR)
-        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
-        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
-        auto* sourceC = sourceBus.channelByType(ChannelCenter)->data();
-        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->data();
-        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->data();
+        auto sourceL = sourceBus.channelByType(ChannelLeft)->span().first(length());
+        auto sourceR = sourceBus.channelByType(ChannelRight)->span().first(length());
+        auto sourceC = sourceBus.channelByType(ChannelCenter)->span().first(length());
+        auto sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->span().first(length());
+        auto sourceSR = sourceBus.channelByType(ChannelSurroundRight)->span().first(length());
 
-        float* destinationL = channelByType(ChannelLeft)->mutableData();
-        float* destinationR = channelByType(ChannelRight)->mutableData();
+        auto destinationL = channelByType(ChannelLeft)->mutableSpan().first(length());
+        auto destinationR = channelByType(ChannelRight)->mutableSpan().first(length());
         float scaleSqrtHalf = sqrtf(0.5);
 
-        VectorMath::add(sourceL, destinationL, destinationL, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceC, scaleSqrtHalf, destinationL, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceSL, scaleSqrtHalf, destinationL, length());
-        VectorMath::add(sourceR, destinationR, destinationR, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceC, scaleSqrtHalf, destinationR, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceSR, scaleSqrtHalf, destinationR, length());
+        VectorMath::add(sourceL, destinationL, destinationL);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceC, scaleSqrtHalf, destinationL);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSL, scaleSqrtHalf, destinationL);
+        VectorMath::add(sourceR, destinationR, destinationR);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceC, scaleSqrtHalf, destinationR);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSR, scaleSqrtHalf, destinationR);
     } else if (numberOfSourceChannels == 6 && numberOfDestinationChannels == 4) {
         // Down-mixing: 5.1 -> 4
         // output.L = input.L + sqrt(1/2) * input.C
         // output.R = input.R + sqrt(1/2) * input.C
         // output.SL = input.SL
         // output.SR = input.SR
-        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
-        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
-        auto* sourceC = sourceBus.channelByType(ChannelCenter)->data();
+        auto sourceL = sourceBus.channelByType(ChannelLeft)->span().first(length());
+        auto sourceR = sourceBus.channelByType(ChannelRight)->span().first(length());
+        auto sourceC = sourceBus.channelByType(ChannelCenter)->span().first(length());
 
-        auto* destinationL = channelByType(ChannelLeft)->mutableData();
-        auto* destinationR = channelByType(ChannelRight)->mutableData();
+        auto destinationL = channelByType(ChannelLeft)->mutableSpan().first(length());
+        auto destinationR = channelByType(ChannelRight)->mutableSpan().first(length());
         auto scaleSqrtHalf = sqrtf(0.5);
 
-        VectorMath::add(sourceL, destinationL, destinationL, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceC, scaleSqrtHalf, destinationL, length());
-        VectorMath::add(sourceR, destinationR, destinationR, length());
-        VectorMath::multiplyByScalarThenAddToOutput(sourceC, scaleSqrtHalf, destinationR, length());
+        VectorMath::add(sourceL, destinationL, destinationL);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceC, scaleSqrtHalf, destinationL);
+        VectorMath::add(sourceR, destinationR, destinationR);
+        VectorMath::multiplyByScalarThenAddToOutput(sourceC, scaleSqrtHalf, destinationR);
         channel(2)->sumFrom(sourceBus.channel(4));
         channel(3)->sumFrom(sourceBus.channel(5));
     } else {
@@ -447,12 +447,12 @@ void AudioBus::copyWithGainFrom(const AudioBus& sourceBus, float gain)
         return;
 
     AudioBus& sourceBusSafe = const_cast<AudioBus&>(sourceBus);
-    const float* sources[MaxBusChannels];
-    float* destinations[MaxBusChannels];
+    std::array<std::span<const float>, MaxBusChannels> sources;
+    std::array<std::span<float>, MaxBusChannels> destinations;
 
     for (unsigned i = 0; i < numberOfChannels; ++i) {
-        sources[i] = sourceBusSafe.channel(i)->data();
-        destinations[i] = channel(i)->mutableData();
+        sources[i] = sourceBusSafe.channel(i)->span();
+        destinations[i] = channel(i)->mutableSpan();
     }
 
     unsigned framesToProcess = length();
@@ -460,17 +460,17 @@ void AudioBus::copyWithGainFrom(const AudioBus& sourceBus, float gain)
     // Handle gains of 0 and 1 (exactly) specially.
     if (gain == 1) {
         for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
-            memcpy(destinations[channelIndex], sources[channelIndex], framesToProcess * sizeof(*destinations[channelIndex]));
+            memcpySpan(destinations[channelIndex], sources[channelIndex].first(framesToProcess));
     } else if (!gain) {
         for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
-            memset(destinations[channelIndex], 0, framesToProcess * sizeof(*destinations[channelIndex]));
+            zeroSpan(destinations[channelIndex].first(framesToProcess));
     } else {
         for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
-            VectorMath::multiplyByScalar(sources[channelIndex], gain, destinations[channelIndex], framesToProcess);
+            VectorMath::multiplyByScalar(sources[channelIndex].first(framesToProcess), gain, destinations[channelIndex]);
     }
 }
 
-void AudioBus::copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, float* gainValues, unsigned numberOfGainValues)
+void AudioBus::copyWithSampleAccurateGainValuesFrom(const AudioBus& sourceBus, std::span<float> gainValues)
 {
     // Make sure we're processing from the same type of bus.
     // We *are* able to process from mono -> stereo
@@ -479,23 +479,23 @@ void AudioBus::copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, f
         return;
     }
 
-    if (!gainValues || numberOfGainValues > sourceBus.length()) {
+    if (!gainValues.data() || gainValues.size() > sourceBus.length()) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    if (sourceBus.length() == numberOfGainValues && sourceBus.length() == length() && sourceBus.isSilent()) {
+    if (sourceBus.length() == gainValues.size() && sourceBus.length() == length() && sourceBus.isSilent()) {
         zero();
         return;
     }
 
     // We handle both the 1 -> N and N -> N case here.
-    const float* source = sourceBus.channel(0)->data();
+    auto source = sourceBus.channel(0)->span().first(gainValues.size());
     for (unsigned channelIndex = 0; channelIndex < numberOfChannels(); ++channelIndex) {
         if (sourceBus.numberOfChannels() == numberOfChannels())
-            source = sourceBus.channel(channelIndex)->data();
-        float* destination = channel(channelIndex)->mutableData();
-        VectorMath::multiply(source, gainValues, destination, numberOfGainValues);
+            source = sourceBus.channel(channelIndex)->span().first(gainValues.size());
+        auto destination = channel(channelIndex)->mutableSpan();
+        VectorMath::multiply(source, gainValues, destination);
     }
 }
 
@@ -574,12 +574,12 @@ RefPtr<AudioBus> AudioBus::createByMixingToMono(const AudioBus* sourceBus)
             unsigned n = sourceBus->length();
             RefPtr<AudioBus> destinationBus = create(1, n);
 
-            const float* sourceL = sourceBus->channel(0)->data();
-            const float* sourceR = sourceBus->channel(1)->data();
-            float* destination = destinationBus->channel(0)->mutableData();
+            auto sourceL = sourceBus->channel(0)->span();
+            auto sourceR = sourceBus->channel(1)->span();
+            auto destination = destinationBus->channel(0)->mutableSpan();
         
             // Do the mono mixdown.
-            VectorMath::addVectorsThenMultiplyByScalar(sourceL, sourceR, 0.5, destination, n);
+            VectorMath::addVectorsThenMultiplyByScalar(sourceL, sourceR, 0.5, destination);
 
             destinationBus->clearSilentFlag();
             destinationBus->setSampleRate(sourceBus->sampleRate());    

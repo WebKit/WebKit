@@ -40,10 +40,14 @@
 #include <wtf/FileSystem.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SoupNetworkSession);
 
 static CString& initialAcceptLanguages()
 {
@@ -85,7 +89,7 @@ private:
             return String();
 
         auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-        digest->addBytes(std::span { certificateData->data, certificateData->len });
+        digest->addBytes(span(certificateData));
 
         return base64EncodeToString(digest->computeHash());
     }
@@ -245,14 +249,11 @@ void SoupNetworkSession::clearHSTSCache(WallTime modifiedSince)
 #endif
 }
 
-static inline bool stringIsNumeric(const char* str)
+static inline bool stringIsNumeric(const std::string_view& str)
 {
-    while (*str) {
-        if (!g_ascii_isdigit(*str))
-            return false;
-        str++;
-    }
-    return true;
+    return std::all_of(str.cbegin(), str.cend(), [](const auto c) {
+        return WTF::isASCIIDigit(c);
+    });
 }
 
 // Old versions of WebKit created this cache.
@@ -268,7 +269,8 @@ void SoupNetworkSession::clearOldSoupCache(const String& cacheDirectory)
         return;
 
     while (const char* name = g_dir_read_name(dir.get())) {
-        if (!g_str_has_prefix(name, "soup.cache") && !stringIsNumeric(name))
+        const auto nameView = std::string_view(name);
+        if (!nameView.starts_with("soup.cache") && !stringIsNumeric(nameView))
             continue;
 
         GUniquePtr<gchar> filename(g_build_filename(cachePath.data(), name, nullptr));

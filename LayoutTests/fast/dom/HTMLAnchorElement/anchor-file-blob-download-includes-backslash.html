@@ -1,13 +1,16 @@
-<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true allowTestOnlyIPC=true ] -->
 <html>
 <head>
 <meta name="viewport" content="width=device-width">
 <script src="../../../resources/ui-helper.js"></script>
 <script>
-if (window.testRunner) {
-  testRunner.dumpAsText();
-  testRunner.setShouldLogDownloadCallbacks(true);
-  testRunner.waitUntilDownloadFinished();
+onload = async () => {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setShouldLogDownloadCallbacks(true);
+        testRunner.waitUntilDownloadFinished();
+    }
+    await runTest();
 }
 </script>
 </head>
@@ -24,14 +27,13 @@ function click(elmt)
     UIHelper.activateAt(elmt.offsetLeft + 5, elmt.offsetTop + 5);
 }
 
-function runTest()
+async function runTest()
 {
-    file = internals.createFile("../resources/abe.png");
+    file = await internals.asyncCreateFile("../resources/abe.png");
     var link = document.getElementById("blob-url");
     link.href = window.URL.createObjectURL(file);
     click(link);
 }
-runTest();
 </script>
 </body>
 </html>

@@ -11,7 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC2_INPUT_VOLUME_STATS_REPORTER_H_
 #define MODULES_AUDIO_PROCESSING_AGC2_INPUT_VOLUME_STATS_REPORTER_H_
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "rtc_base/gtest_prod_util.h"
 #include "system_wrappers/include/metrics.h"
 
@@ -83,7 +84,7 @@ class InputVolumeStatsReporter {
   const bool cannot_log_stats_;
 
   int log_volume_update_stats_counter_ = 0;
-  absl::optional<int> previous_input_volume_ = absl::nullopt;
+  std::optional<int> previous_input_volume_ = std::nullopt;
 };
 
 // Updates the histogram that keeps track of recommended input volume changes

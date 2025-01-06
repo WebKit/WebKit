@@ -1,5 +1,5 @@
 <!-- go/cmark -->
-<!--* freshness: {owner: 'mbonadei' reviewed: '2021-06-25'} *-->
+<!--* freshness: {owner: 'mbonadei' reviewed: '2024-09-04'} *-->
 
 # WebRTC supported plaftorms and compilers
 
@@ -10,7 +10,7 @@ The list of officially supported operating systems and CPUs is:
 *   Android: armeabi-v7a, arm64-v8a, x86, x86_64.
 *   iOS: arm64, x86_64.
 *   Linux: armeabi-v7a, arm64-v8a, x86, x86_64.
-*   macOS: x86_64, arm64 (M1).
+*   macOS: x86_64, arm64.
 *   Windows: x86_64.
 
 Other platforms are not officially supported (which means there is no CI

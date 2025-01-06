@@ -7,8 +7,9 @@
 
 #include "tools/window/ANGLEWindowContext.h"
 
-#include "include/gpu/gl/GrGLAssembleInterface.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleInterface.h"
 #include "src/gpu/ganesh/gl/GrGLDefines.h"
+#include "tools/window/DisplayParams.h"
 
 namespace skwindow::internal {
 
@@ -35,7 +36,7 @@ sk_sp<const GrGLInterface> ANGLEWindowContext::onInitializeContext() {
         return nullptr;
     }
     EGLint numConfigs;
-    fSampleCount = this->getDisplayParams().fMSAASampleCount;
+    fSampleCount = this->getDisplayParams()->msaaSampleCount();
     const int sampleBuffers = fSampleCount > 1 ? 1 : 0;
     const int eglSampleCnt = fSampleCount > 1 ? fSampleCount : 0;
     const EGLint configAttribs[] = {EGL_RENDERABLE_TYPE,

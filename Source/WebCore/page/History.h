@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "FrameLoaderTypes.h"
 #include "JSValueInWrappedObject.h"
 #include "LocalDOMWindowProperty.h"
 #include "ScriptWrappable.h"
@@ -37,7 +38,7 @@ namespace WebCore {
 class Document;
 
 class History final : public ScriptWrappable, public RefCounted<History>, public LocalDOMWindowProperty {
-    WTF_MAKE_ISO_ALLOCATED(History);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(History);
 public:
     static Ref<History> create(LocalDOMWindow& window) { return adoptRef(*new History(window)); }
 
@@ -73,11 +74,9 @@ public:
 private:
     explicit History(LocalDOMWindow&);
 
-    enum class StateObjectType { Push, Replace };
-    ExceptionOr<void> stateObjectAdded(RefPtr<SerializedScriptValue>&&, const String& url, StateObjectType);
+    ExceptionOr<void> stateObjectAdded(RefPtr<SerializedScriptValue>&&, const String& url, NavigationHistoryBehavior);
+    ExceptionOr<void> updateAndCheckStateObjectQuota(const URL&, SerializedScriptValue*, NavigationHistoryBehavior);
     bool stateChanged() const;
-
-    URL urlForState(const String& url);
 
     SerializedScriptValue* stateInternal() const;
     uint32_t totalStateObjectPayloadLimit() const;
@@ -98,12 +97,12 @@ private:
 
 inline ExceptionOr<void> History::pushState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString)
 {
-    return stateObjectAdded(WTFMove(data), urlString, StateObjectType::Push);
+    return stateObjectAdded(WTFMove(data), urlString, NavigationHistoryBehavior::Push);
 }
 
 inline ExceptionOr<void> History::replaceState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString)
 {
-    return stateObjectAdded(WTFMove(data), urlString, StateObjectType::Replace);
+    return stateObjectAdded(WTFMove(data), urlString, NavigationHistoryBehavior::Replace);
 }
 
 } // namespace WebCore

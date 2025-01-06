@@ -50,7 +50,7 @@ public:
     static constexpr uintptr_t shift() { return 48; }
     static constexpr uintptr_t addressMask() { return ~(0xffull << shift()); }
 
-    Node* node() const { return bitwise_cast<Node*>(m_encodedWord & addressMask()); }
+    Node* node() const { return std::bit_cast<Node*>(m_encodedWord & addressMask()); }
 #else
     Node* node() const { return m_node; }
 #endif
@@ -190,8 +190,8 @@ private:
     static uintptr_t makeWord(Node* node, UseKind useKind, ProofStatus proofStatus, KillStatus killStatus)
     {
         ASSERT(sizeof(node) == 8);
-        uintptr_t maskedPointer = bitwise_cast<uintptr_t>(node) & addressMask();
-        ASSERT(maskedPointer == bitwise_cast<uintptr_t>(node));
+        uintptr_t maskedPointer = std::bit_cast<uintptr_t>(node) & addressMask();
+        ASSERT(maskedPointer == std::bit_cast<uintptr_t>(node));
         ASSERT(useKind < LastUseKind);
         static_assert((static_cast<uintptr_t>(LastUseKind) << 2) < (static_cast<uintptr_t>(1) << shift()), "We rely on this being true to not clobber the node pointer.");
         uintptr_t kindBits = (static_cast<uintptr_t>(useKind) << 2) | (DFG::doesKill(killStatus) << 1) | static_cast<uintptr_t>(DFG::isProved(proofStatus));

@@ -28,15 +28,16 @@
 
 #include <JavaScriptCore/JavaScript.h>
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKSerializedScriptValueGetTypeID(void);
+WK_EXPORT WKTypeID WKSerializedScriptValueGetTypeID(void) WK_C_API_DEPRECATED;
 
-WK_EXPORT WKSerializedScriptValueRef WKSerializedScriptValueCreate(JSContextRef context, JSValueRef value, JSValueRef* exception);
-WK_EXPORT JSValueRef WKSerializedScriptValueDeserialize(WKSerializedScriptValueRef scriptValue, JSContextRef context, JSValueRef* exception);
+WK_EXPORT WKSerializedScriptValueRef WKSerializedScriptValueCreate(JSContextRef context, JSValueRef value, JSValueRef* exception) WK_C_API_DEPRECATED;
+WK_EXPORT JSValueRef WKSerializedScriptValueDeserialize(WKSerializedScriptValueRef scriptValue, JSContextRef context, JSValueRef* exception) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

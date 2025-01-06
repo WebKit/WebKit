@@ -22,9 +22,7 @@
 
 #include "WebKitConsoleMessagePrivate.h"
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 G_DEFINE_BOXED_TYPE(WebKitConsoleMessage, webkit_console_message, webkit_console_message_copy, webkit_console_message_free)
-ALLOW_DEPRECATED_DECLARATIONS_END
 
 /**
  * webkit_console_message_copy:
@@ -35,8 +33,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
  * Returns: (transfer full): A copy of passed in #WebKitConsoleMessage
  *
  * Since: 2.12
- *
- * Deprecated: 2.40
  */
 WebKitConsoleMessage* webkit_console_message_copy(WebKitConsoleMessage* consoleMessage)
 {
@@ -53,8 +49,6 @@ WebKitConsoleMessage* webkit_console_message_copy(WebKitConsoleMessage* consoleM
  * Free the #WebKitConsoleMessage
  *
  * Since: 2.12
- *
- * Deprecated: 2.40
  */
 void webkit_console_message_free(WebKitConsoleMessage* consoleMessage)
 {
@@ -72,8 +66,6 @@ void webkit_console_message_free(WebKitConsoleMessage* consoleMessage)
  * Returns: a #WebKitConsoleMessageSource indicating the source of @console_message
  *
  * Since: 2.12
- *
- * Deprecated: 2.40
  */
 WebKitConsoleMessageSource webkit_console_message_get_source(WebKitConsoleMessage* consoleMessage)
 {
@@ -104,8 +96,6 @@ WebKitConsoleMessageSource webkit_console_message_get_source(WebKitConsoleMessag
  * Returns: a #WebKitConsoleMessageLevel indicating the log level of @console_message
  *
  * Since: 2.12
- *
- * Deprecated: 2.40
  */
 WebKitConsoleMessageLevel webkit_console_message_get_level(WebKitConsoleMessage* consoleMessage)
 {
@@ -136,8 +126,6 @@ WebKitConsoleMessageLevel webkit_console_message_get_level(WebKitConsoleMessage*
  * Returns: the text message of @console_message
  *
  * Since: 2.12
- *
- * Deprecated: 2.40
  */
 const gchar* webkit_console_message_get_text(WebKitConsoleMessage* consoleMessage)
 {
@@ -154,8 +142,6 @@ const gchar* webkit_console_message_get_text(WebKitConsoleMessage* consoleMessag
  * Returns: the line number of @console_message
  *
  * Since: 2.12
- *
- * Deprecated: 2.40
  */
 guint webkit_console_message_get_line(WebKitConsoleMessage* consoleMessage)
 {
@@ -172,8 +158,6 @@ guint webkit_console_message_get_line(WebKitConsoleMessage* consoleMessage)
  * Returns: the source identifier of @console_message
  *
  * Since: 2.12
- *
- * Deprecated: 2.40
  */
 const gchar* webkit_console_message_get_source_id(WebKitConsoleMessage* consoleMessage)
 {

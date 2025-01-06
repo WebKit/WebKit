@@ -11,15 +11,18 @@
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "api/audio_codecs/L16/audio_decoder_L16.h"
+#include "api/audio_codecs/audio_codec_pair_id.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_decoder_factory_template.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/g711/audio_decoder_g711.h"
 #include "api/audio_codecs/g722/audio_decoder_g722.h"
-#if WEBRTC_USE_BUILTIN_ILBC
-#include "api/audio_codecs/ilbc/audio_decoder_ilbc.h"  // nogncheck
-#endif
+#include "api/scoped_refptr.h"
 #if WEBRTC_USE_BUILTIN_OPUS
 #include "api/audio_codecs/opus/audio_decoder_multi_channel_opus.h"
 #include "api/audio_codecs/opus/audio_decoder_opus.h"  // nogncheck
@@ -33,16 +36,16 @@ namespace {
 template <typename T>
 struct NotAdvertised {
   using Config = typename T::Config;
-  static absl::optional<Config> SdpToConfig(
-      const SdpAudioFormat& audio_format) {
+  static std::optional<Config> SdpToConfig(const SdpAudioFormat& audio_format) {
     return T::SdpToConfig(audio_format);
   }
-  static void AppendSupportedDecoders(std::vector<AudioCodecSpec>* specs) {
+  static void AppendSupportedDecoders(
+      std::vector<AudioCodecSpec>* /* specs */) {
     // Don't advertise support for anything.
   }
   static std::unique_ptr<AudioDecoder> MakeAudioDecoder(
       const Config& config,
-      absl::optional<AudioCodecPairId> codec_pair_id = absl::nullopt) {
+      std::optional<AudioCodecPairId> codec_pair_id = std::nullopt) {
     return T::MakeAudioDecoder(config, codec_pair_id);
   }
 };
@@ -57,11 +60,6 @@ rtc::scoped_refptr<AudioDecoderFactory> CreateBuiltinAudioDecoderFactory() {
 #endif
 
       AudioDecoderG722,
-
-#if WEBRTC_USE_BUILTIN_ILBC
-      AudioDecoderIlbc,
-#endif
-
       AudioDecoderG711, NotAdvertised<AudioDecoderL16>>();
 }
 

@@ -50,14 +50,6 @@ public:
     bool isAlphaUnchanged() const;
 
     /**
-     * Applies this filter to the input color. This function does no color management.
-     *
-     * DEPRECATED: Please use filterColor4f instead. That function supports higher precision,
-     *             wide-gamut color, and is explicit about the color space of the input and output.
-     */
-    SkColor filterColor(SkColor) const;
-
-    /**
      * Converts the src color (in src colorspace), into the dst colorspace,
      * then applies this filter to it, returning the filtered color in the dst colorspace.
      */
@@ -100,8 +92,10 @@ public:
     static sk_sp<SkColorFilter> Blend(const SkColor4f& c, sk_sp<SkColorSpace>, SkBlendMode mode);
     static sk_sp<SkColorFilter> Blend(SkColor c, SkBlendMode mode);
 
-    static sk_sp<SkColorFilter> Matrix(const SkColorMatrix&);
-    static sk_sp<SkColorFilter> Matrix(const float rowMajor[20]);
+    enum class Clamp : bool { kNo, kYes };
+
+    static sk_sp<SkColorFilter> Matrix(const SkColorMatrix&, Clamp clamp = Clamp::kYes);
+    static sk_sp<SkColorFilter> Matrix(const float rowMajor[20], Clamp clamp = Clamp::kYes);
 
     // A version of Matrix which operates in HSLA space instead of RGBA.
     // I.e. HSLA-to-RGBA(Matrix(RGBA-to-HSLA(input))).

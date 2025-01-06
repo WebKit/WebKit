@@ -33,9 +33,12 @@
 #include "MemoryCursor.h"
 #include "MemoryIndex.h"
 #include "MemoryObjectStore.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MemoryIndexCursor);
 
 MemoryIndexCursor::MemoryIndexCursor(MemoryIndex& index, const IDBCursorInfo& info)
     : MemoryCursor(info)
@@ -43,7 +46,7 @@ MemoryIndexCursor::MemoryIndexCursor(MemoryIndex& index, const IDBCursorInfo& in
 {
     LOG(IndexedDB, "MemoryIndexCursor::MemoryIndexCursor %s", info.range().loggingString().utf8().data());
 
-    auto* valueStore = m_index.valueStore();
+    auto* valueStore = index.valueStore();
     if (!valueStore)
         return;
 
@@ -55,7 +58,7 @@ MemoryIndexCursor::MemoryIndexCursor(MemoryIndex& index, const IDBCursorInfo& in
     if (m_currentIterator.isValid() && m_info.range().containsKey(m_currentIterator.key())) {
         m_currentKey = m_currentIterator.key();
         m_currentPrimaryKey = m_currentIterator.primaryKey();
-        m_index.cursorDidBecomeClean(*this);
+        index.cursorDidBecomeClean(*this);
     } else
         m_currentIterator.invalidate();
 }
@@ -72,8 +75,8 @@ void MemoryIndexCursor::currentData(IDBGetResult& getResult)
     if (m_info.cursorType() == IndexedDB::CursorType::KeyOnly)
         getResult = { m_currentKey, m_currentPrimaryKey };
     else {
-        IDBValue value = { m_index.objectStore()->valueForKey(m_currentPrimaryKey), { }, { } };
-        getResult = { m_currentKey, m_currentPrimaryKey, WTFMove(value), m_index.objectStore()->info().keyPath() };
+        IDBValue value = { m_index->protectedObjectStore()->valueForKey(m_currentPrimaryKey), { }, { } };
+        getResult = { m_currentKey, m_currentPrimaryKey, WTFMove(value), m_index->protectedObjectStore()->info().keyPath() };
     }
 }
 
@@ -86,11 +89,12 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, const IDBKeyData& primary
         ASSERT(key.isValid());
 #endif
 
+    Ref index = m_index.get();
     if (key.isValid()) {
         // Cannot iterate by both a count and to a key
         ASSERT(!count);
 
-        auto* valueStore = m_index.valueStore();
+        auto* valueStore = index->valueStore();
         if (!valueStore) {
             m_currentKey = { };
             m_currentPrimaryKey = { };
@@ -120,7 +124,7 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, const IDBKeyData& primary
             return;
         }
 
-        m_index.cursorDidBecomeClean(*this);
+        index->cursorDidBecomeClean(*this);
 
         m_currentKey = m_currentIterator.key();
         m_currentPrimaryKey = m_currentIterator.primaryKey();
@@ -135,7 +139,7 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, const IDBKeyData& primary
         count = 1;
 
     if (!m_currentIterator.isValid()) {
-        auto* valueStore = m_index.valueStore();
+        auto* valueStore = index->valueStore();
         if (!valueStore) {
             m_currentKey = { };
             m_currentPrimaryKey = { };
@@ -165,7 +169,7 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, const IDBKeyData& primary
             return;
         }
 
-        m_index.cursorDidBecomeClean(*this);
+        index->cursorDidBecomeClean(*this);
 
         // If we restored the current iterator and it does *not* match the current key/primaryKey,
         // then it is the next record in line and we should consider that an iteration.
@@ -203,10 +207,15 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, const IDBKeyData& primary
     currentData(getResult);
 }
 
+Ref<MemoryIndex> MemoryIndexCursor::protectedIndex() const
+{
+    return m_index.get();
+}
+
 void MemoryIndexCursor::indexRecordsAllChanged()
 {
     m_currentIterator.invalidate();
-    m_index.cursorDidBecomeDirty(*this);
+    protectedIndex()->cursorDidBecomeDirty(*this);
 }
 
 void MemoryIndexCursor::indexValueChanged(const IDBKeyData& key, const IDBKeyData& primaryKey)
@@ -215,7 +224,7 @@ void MemoryIndexCursor::indexValueChanged(const IDBKeyData& key, const IDBKeyDat
         return;
 
     m_currentIterator.invalidate();
-    m_index.cursorDidBecomeDirty(*this);
+    protectedIndex()->cursorDidBecomeDirty(*this);
 }
 
 } // namespace IDBServer

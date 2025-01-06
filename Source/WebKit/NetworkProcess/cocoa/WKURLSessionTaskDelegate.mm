@@ -31,7 +31,6 @@
 #import "NetworkProcess.h"
 #import "NetworkProcessProxyMessages.h"
 #import "NetworkSessionCocoa.h"
-#import "WebCoreArgumentCoders.h"
 #import <Foundation/NSURLSession.h>
 #import <WebCore/AuthenticationChallenge.h>
 #import <WebCore/Credential.h>
@@ -43,7 +42,7 @@
 #import <wtf/cocoa/SpanCocoa.h>
 
 @implementation WKURLSessionTaskDelegate {
-    WebKit::DataTaskIdentifier _identifier;
+    Markable<WebKit::DataTaskIdentifier> _identifier;
     WeakPtr<WebKit::NetworkSessionCocoa> _session;
 }
 
@@ -78,7 +77,7 @@
     RefPtr connection = [self connection];
     if (!connection)
         return completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
-    connection->sendWithAsyncReply(Messages::NetworkProcessProxy::DataTaskReceivedChallenge(_identifier, challenge), [completionHandler = makeBlockPtr(completionHandler)](WebKit::AuthenticationChallengeDisposition disposition, WebCore::Credential&& credential) {
+    connection->sendWithAsyncReply(Messages::NetworkProcessProxy::DataTaskReceivedChallenge(*_identifier, challenge), [completionHandler = makeBlockPtr(completionHandler)](WebKit::AuthenticationChallengeDisposition disposition, WebCore::Credential&& credential) {
         completionHandler(fromAuthenticationChallengeDisposition(disposition), credential.nsCredential());
     });
 }
@@ -89,7 +88,7 @@
     RefPtr connection = [self connection];
     if (!connection)
         return completionHandler(nil);
-    connection->sendWithAsyncReply(Messages::NetworkProcessProxy::DataTaskWillPerformHTTPRedirection(_identifier, response, request), [completionHandler = makeBlockPtr(completionHandler), request = RetainPtr { request }] (bool allowed) {
+    connection->sendWithAsyncReply(Messages::NetworkProcessProxy::DataTaskWillPerformHTTPRedirection(*_identifier, response, request), [completionHandler = makeBlockPtr(completionHandler), request = RetainPtr { request }] (bool allowed) {
         completionHandler(allowed ? request.get() : nil);
     });
 }
@@ -100,7 +99,7 @@
     RefPtr connection = [self connection];
     if (!connection)
         return completionHandler(NSURLSessionResponseCancel);
-    connection->sendWithAsyncReply(Messages::NetworkProcessProxy::DataTaskDidReceiveResponse(_identifier, response), [completionHandler = makeBlockPtr(completionHandler)] (bool allowed) {
+    connection->sendWithAsyncReply(Messages::NetworkProcessProxy::DataTaskDidReceiveResponse(*_identifier, response), [completionHandler = makeBlockPtr(completionHandler)] (bool allowed) {
         completionHandler(allowed ? NSURLSessionResponseAllow : NSURLSessionResponseCancel);
     });
 }
@@ -111,7 +110,7 @@
     RefPtr connection = [self connection];
     if (!connection)
         return;
-    connection->send(Messages::NetworkProcessProxy::DataTaskDidReceiveData(_identifier, span(data)), 0);
+    connection->send(Messages::NetworkProcessProxy::DataTaskDidReceiveData(*_identifier, span(data)), 0);
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
@@ -120,9 +119,9 @@
     RefPtr connection = [self connection];
     if (!connection)
         return;
-    connection->send(Messages::NetworkProcessProxy::DataTaskDidCompleteWithError(_identifier, error), 0);
+    connection->send(Messages::NetworkProcessProxy::DataTaskDidCompleteWithError(*_identifier, error), 0);
     if (_session)
-        _session->removeDataTask(_identifier);
+        _session->removeDataTask(*_identifier);
 }
 
 @end

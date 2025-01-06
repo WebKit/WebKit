@@ -1,0 +1,4 @@
+
+FAIL inside assert_equals: expected Element node <div id="target" style="transform:translateX(100px) trans... but got Element node <html><head><link rel="author" title="Morten Stenshorne" ...
+PASS outside
+

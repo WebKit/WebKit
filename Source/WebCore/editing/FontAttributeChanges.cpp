@@ -27,9 +27,8 @@
 #include "FontAttributeChanges.h"
 
 #include "CSSPropertyNames.h"
-#include "CSSShadowValue.h"
+#include "CSSTextShadowPropertyValue.h"
 #include "CSSValueKeywords.h"
-#include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "EditAction.h"
 #include "EditingStyle.h"
@@ -89,16 +88,25 @@ Ref<MutableStyleProperties> FontChanges::createStyleProperties() const
     return style;
 }
 
-static RefPtr<CSSValueList> cssValueListForShadow(const FontShadow& shadow)
+static RefPtr<CSSValue> cssValueForTextShadow(const FontShadow& shadow)
 {
     if (shadow.offset.isZero() && !shadow.blurRadius)
         return nullptr;
 
-    auto width = CSSPrimitiveValue::create(shadow.offset.width(), CSSUnitType::CSS_PX);
-    auto height = CSSPrimitiveValue::create(shadow.offset.height(), CSSUnitType::CSS_PX);
-    auto blurRadius = CSSPrimitiveValue::create(shadow.blurRadius, CSSUnitType::CSS_PX);
-    auto color = CSSValuePool::singleton().createColorValue(shadow.color);
-    return CSSValueList::createCommaSeparated(CSSShadowValue::create(WTFMove(width), WTFMove(height), WTFMove(blurRadius), { }, { }, WTFMove(color)));
+    auto color = CSS::Color { CSS::ResolvedColor { shadow.color } };
+    auto width = CSS::Length<> { CSS::LengthUnit::Px, shadow.offset.width() };
+    auto height = CSS::Length<> { CSS::LengthUnit::Px, shadow.offset.height() };
+    auto blur = CSS::Length<CSS::Nonnegative> { CSS::LengthUnit::Px, shadow.blurRadius };
+
+    CSS::TextShadowProperty::List list {
+        CSS::TextShadow {
+            .color = WTFMove(color),
+            .location = { WTFMove(width), WTFMove(height) },
+            .blur = WTFMove(blur),
+        }
+    };
+
+    return CSSTextShadowPropertyValue::create(CSS::TextShadowProperty { WTFMove(list) });
 }
 
 FontAttributeChanges::FontAttributeChanges(std::optional<VerticalAlignChange>&& verticalAlign, std::optional<Color>&& backgroundColor, std::optional<Color>&& foregroundColor, std::optional<FontShadow>&& shadow, std::optional<bool>&& strikeThrough, std::optional<bool>&& underline, FontChanges&& fontChanges)
@@ -136,7 +144,7 @@ Ref<EditingStyle> FontAttributeChanges::createEditingStyle() const
         style->setProperty(CSSPropertyColor, cssValuePool.createColorValue(*m_foregroundColor));
 
     if (m_shadow) {
-        if (auto shadowValue = cssValueListForShadow(*m_shadow))
+        if (auto shadowValue = cssValueForTextShadow(*m_shadow))
             style->setProperty(CSSPropertyTextShadow, WTFMove(shadowValue));
         else
             style->setProperty(CSSPropertyTextShadow, CSSValueNone);

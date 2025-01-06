@@ -34,6 +34,7 @@ namespace WebCore {
 class SVGElement;
 
 class SVGAnimatedAngleOrientAnimator final : public SVGAnimatedPropertyPairAnimator<SVGAnimatedAngleAnimator, SVGAnimatedOrientTypeAnimator> {
+    WTF_MAKE_TZONE_ALLOCATED(SVGAnimatedAngleOrientAnimator);
     using Base = SVGAnimatedPropertyPairAnimator<SVGAnimatedAngleAnimator, SVGAnimatedOrientTypeAnimator>;
     using Base::Base;
 
@@ -107,6 +108,7 @@ private:
 };
 
 class SVGAnimatedIntegerPairAnimator final : public SVGAnimatedPropertyPairAnimator<SVGAnimatedIntegerAnimator, SVGAnimatedIntegerAnimator> {
+    WTF_MAKE_TZONE_ALLOCATED(SVGAnimatedIntegerPairAnimator);
     using Base = SVGAnimatedPropertyPairAnimator<SVGAnimatedIntegerAnimator, SVGAnimatedIntegerAnimator>;
     using Base::Base;
 
@@ -150,6 +152,7 @@ private:
 };
 
 class SVGAnimatedNumberPairAnimator final : public SVGAnimatedPropertyPairAnimator<SVGAnimatedNumberAnimator, SVGAnimatedNumberAnimator> {
+    WTF_MAKE_TZONE_ALLOCATED(SVGAnimatedNumberPairAnimator);
     using Base = SVGAnimatedPropertyPairAnimator<SVGAnimatedNumberAnimator, SVGAnimatedNumberAnimator>;
     using Base::Base;
 

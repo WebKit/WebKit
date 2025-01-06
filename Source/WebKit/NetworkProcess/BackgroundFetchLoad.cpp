@@ -35,6 +35,8 @@
 #include "WebErrors.h"
 #include <WebCore/BackgroundFetchRequest.h>
 #include <WebCore/ClientOrigin.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 #define BGLOAD_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - BackgroundFetchLoad::" fmt, this, ##__VA_ARGS__)
 
@@ -42,11 +44,13 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchLoad);
+
 BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::SessionID sessionID, BackgroundFetchRecordLoaderClient& client, const BackgroundFetchRequest& request, size_t responseDataSize, const ClientOrigin& clientOrigin)
     : m_sessionID(WTFMove(sessionID))
     , m_client(client)
     , m_request(request.internalRequest)
-    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(networkProcess, nullptr, nullptr, FetchOptions { request.options }, m_sessionID, WebPageProxyIdentifier { }, HTTPHeaderMap { request.httpHeaders }, URL { m_request.url() }, URL { }, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), RefPtr<SecurityOrigin> { }, PreflightPolicy::Consider, String { request.referrer }, true, OptionSet<AdvancedPrivacyProtections> { }))
+    , m_networkLoadChecker(NetworkLoadChecker::create(networkProcess, nullptr, nullptr, FetchOptions { request.options }, m_sessionID, std::nullopt, HTTPHeaderMap { request.httpHeaders }, URL { m_request.url() }, URL { }, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), RefPtr<SecurityOrigin> { }, PreflightPolicy::Consider, String { request.referrer }, true, OptionSet<AdvancedPrivacyProtections> { }))
 {
     if (!m_request.url().protocolIsInHTTPFamily()) {
         didFinish(ResourceError { String { }, 0, m_request.url(), "URL is not HTTP(S)"_s, ResourceError::Type::Cancellation });
@@ -81,12 +85,13 @@ BackgroundFetchLoad::~BackgroundFetchLoad()
 
 void BackgroundFetchLoad::abort()
 {
-    if (!m_task)
+    RefPtr task = m_task;
+    if (!task)
         return;
 
-    ASSERT(m_task->client() == this);
-    m_task->clearClient();
-    m_task->cancel();
+    ASSERT(task->client() == this);
+    task->clearClient();
+    task->cancel();
     m_task = nullptr;
 }
 
@@ -110,8 +115,9 @@ void BackgroundFetchLoad::loadRequest(NetworkProcess& networkProcess, ResourceRe
     loadParameters.storedCredentialsPolicy = m_networkLoadChecker->options().credentials == FetchOptions::Credentials::Include ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
     loadParameters.clientCredentialPolicy = ClientCredentialPolicy::CannotAskClientForCredentials;
 
-    m_task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
-    m_task->resume();
+    Ref task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
+    m_task = task.ptr();
+    task->resume();
 }
 
 void BackgroundFetchLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
@@ -137,7 +143,7 @@ void BackgroundFetchLoad::didReceiveChallenge(AuthenticationChallenge&& challeng
 {
     BGLOAD_RELEASE_LOG("didReceiveChallenge");
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested) {
-        m_networkLoadChecker->networkProcess().authenticationManager().didReceiveAuthenticationChallenge(m_sessionID, { },  m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
+        Ref { m_networkLoadChecker }->protectedNetworkProcess()->protectedAuthenticationManager()->didReceiveAuthenticationChallenge(m_sessionID, { }, nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
         return;
     }
     WeakPtr weakThis { *this };

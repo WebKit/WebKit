@@ -29,7 +29,6 @@
 #include "APIFrameInfo.h"
 #include "MessageSenderInlines.h"
 #include "URLSchemeTaskParameters.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -68,7 +67,7 @@ ResourceRequest WebURLSchemeTask::request() const
     return m_request;
 }
 
-auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, ResourceRequest&& request,  Function<void(ResourceRequest&&)>&& completionHandler) -> ExceptionType
+auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, ResourceRequest&& request, Function<void(ResourceRequest&&)>&& completionHandler) -> ExceptionType
 {
     ASSERT(RunLoop::isMain());
 
@@ -95,8 +94,8 @@ auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, Resou
         m_request = request;
     }
 
-    auto page = WebProcessProxy::webPage(m_pageProxyID);
-    if (!page)
+    RefPtr page = m_pageProxyID ? WebProcessProxy::webPage(*m_pageProxyID) : nullptr;
+    if (!page || !m_process)
         return ExceptionType::None;
 
     m_waitingForRedirectCompletionHandlerCallback = true;
@@ -107,7 +106,7 @@ auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, Resou
             completionHandler(WTFMove(request));
     };
 
-    page->sendWithAsyncReply(Messages::WebPage::URLSchemeTaskWillPerformRedirection(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response, request), WTFMove(innerCompletionHandler));
+    m_process->sendWithAsyncReply(Messages::WebPage::URLSchemeTaskWillPerformRedirection(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response, request), WTFMove(innerCompletionHandler), page->webPageIDInMainFrameProcess());
 
     return ExceptionType::None;
 }
@@ -139,7 +138,7 @@ auto WebURLSchemeTask::didPerformRedirection(WebCore::ResourceResponse&& respons
         m_request = request;
     }
 
-    m_process->send(Messages::WebPage::URLSchemeTaskDidPerformRedirection(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response, request), m_webPageID);
+    m_process->send(Messages::WebPage::URLSchemeTaskDidPerformRedirection(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response, request), *m_webPageID);
 
     return ExceptionType::None;
 }
@@ -165,7 +164,7 @@ auto WebURLSchemeTask::didReceiveResponse(const ResourceResponse& response) -> E
     if (isSync())
         m_syncResponse = response;
 
-    m_process->send(Messages::WebPage::URLSchemeTaskDidReceiveResponse(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response), m_webPageID);
+    m_process->send(Messages::WebPage::URLSchemeTaskDidReceiveResponse(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response), *m_webPageID);
     return ExceptionType::None;
 }
 
@@ -192,7 +191,7 @@ auto WebURLSchemeTask::didReceiveData(Ref<SharedBuffer>&& buffer) -> ExceptionTy
         return ExceptionType::None;
     }
 
-    m_process->send(Messages::WebPage::URLSchemeTaskDidReceiveData(m_urlSchemeHandler->identifier(), m_resourceLoaderID, WTFMove(buffer)), m_webPageID);
+    m_process->send(Messages::WebPage::URLSchemeTaskDidReceiveData(m_urlSchemeHandler->identifier(), m_resourceLoaderID, WTFMove(buffer)), *m_webPageID);
     return ExceptionType::None;
 }
 
@@ -219,8 +218,8 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
         m_syncCompletionHandler(m_syncResponse, error, WTFMove(data));
     }
 
-    m_process->send(Messages::WebPage::URLSchemeTaskDidComplete(m_urlSchemeHandler->identifier(), m_resourceLoaderID, error), m_webPageID);
-    m_urlSchemeHandler->taskCompleted(pageProxyID(), *this);
+    m_process->send(Messages::WebPage::URLSchemeTaskDidComplete(m_urlSchemeHandler->identifier(), m_resourceLoaderID, error), *m_webPageID);
+    m_urlSchemeHandler->taskCompleted(*pageProxyID(), *this);
 
     return ExceptionType::None;
 }
@@ -229,8 +228,8 @@ void WebURLSchemeTask::pageDestroyed()
 {
     ASSERT(RunLoop::isMain());
 
-    m_pageProxyID = { };
-    m_webPageID = { };
+    m_pageProxyID = std::nullopt;
+    m_webPageID = std::nullopt;
     m_process = nullptr;
     m_stopped = true;
     

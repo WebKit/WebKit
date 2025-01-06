@@ -26,6 +26,7 @@
 #include "WritingMode.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -124,7 +125,7 @@ inline bool operator==(const BidiStatus& status1, const BidiStatus& status2)
 }
 
 struct BidiCharacterRun {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(BidiCharacterRun);
 public:
     BidiCharacterRun(unsigned start, unsigned stop, BidiContext* context, UCharDirection direction)
         : m_start(start)
@@ -261,7 +262,7 @@ protected:
     WhitespaceCollapsingState<Iterator> m_whitespaceCollapsingState;
 
     unsigned m_nestedIsolateCount { 0 };
-    HashMap<Run*, unsigned> m_whitespaceCollapsingTransitionForIsolatedRun;
+    UncheckedKeyHashMap<Run*, unsigned> m_whitespaceCollapsingTransitionForIsolatedRun;
 
 private:
     void raiseExplicitEmbeddingLevel(UCharDirection from, UCharDirection to);

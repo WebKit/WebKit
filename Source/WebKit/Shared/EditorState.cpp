@@ -26,7 +26,6 @@
 #include "config.h"
 #include "EditorState.h"
 
-#include "WebCoreArgumentCoders.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
@@ -46,12 +45,12 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
         ts.dumpProperty("isContentRichlyEditable", editorState.isContentRichlyEditable);
     if (editorState.isInPasswordField)
         ts.dumpProperty("isInPasswordField", editorState.isInPasswordField);
-    if (editorState.isInPlugin)
-        ts.dumpProperty("isInPlugin", editorState.isInPlugin);
     if (editorState.hasComposition)
         ts.dumpProperty("hasComposition", editorState.hasComposition);
     if (editorState.triggeredByAccessibilitySelectionChange)
         ts.dumpProperty("triggeredByAccessibilitySelectionChange", editorState.triggeredByAccessibilitySelectionChange);
+    if (editorState.isInPlugin)
+        ts.dumpProperty("isInPlugin", editorState.isInPlugin);
 #if PLATFORM(MAC)
     if (!editorState.canEnableAutomaticSpellingCorrection)
         ts.dumpProperty("canEnableAutomaticSpellingCorrection", editorState.canEnableAutomaticSpellingCorrection);
@@ -133,6 +132,8 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
 #if PLATFORM(IOS_FAMILY)
         if (editorState.visualData->selectionClipRect != IntRect())
             ts.dumpProperty("selectionClipRect", editorState.visualData->selectionClipRect);
+        if (editorState.visualData->editableRootBounds != IntRect())
+            ts.dumpProperty("editableRootBounds", editorState.visualData->editableRootBounds);
         if (editorState.visualData->caretRectAtEnd != IntRect())
             ts.dumpProperty("caretRectAtEnd", editorState.visualData->caretRectAtEnd);
         if (!editorState.visualData->selectionGeometries.isEmpty())
@@ -163,6 +164,7 @@ void EditorState::clipOwnedRectExtentsToNumericLimits()
     auto sanitizeVisualData = [](auto& visualData) {
 #if PLATFORM(IOS_FAMILY)
         visualData.selectionClipRect = visualData.selectionClipRect.toRectWithExtentsClippedToNumericLimits();
+        visualData.editableRootBounds = visualData.editableRootBounds.toRectWithExtentsClippedToNumericLimits();
         visualData.caretRectAtEnd = visualData.caretRectAtEnd.toRectWithExtentsClippedToNumericLimits();
         visualData.markedTextCaretRectAtStart = visualData.markedTextCaretRectAtStart.toRectWithExtentsClippedToNumericLimits();
         visualData.markedTextCaretRectAtEnd = visualData.markedTextCaretRectAtEnd.toRectWithExtentsClippedToNumericLimits();
@@ -175,6 +177,35 @@ void EditorState::clipOwnedRectExtentsToNumericLimits()
     };
     if (hasVisualData())
         sanitizeVisualData(*visualData);
+}
+
+void EditorState::move(float x, float y)
+{
+    if (!hasVisualData())
+        return;
+
+    if (!x && !y)
+        return;
+
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
+    int roundedX = std::round(x);
+    int roundedY = std::round(y);
+    visualData->caretRectAtStart.move(roundedX, roundedY);
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    visualData->selectionClipRect.move(roundedX, roundedY);
+    visualData->editableRootBounds.move(roundedX, roundedY);
+    visualData->caretRectAtEnd.move(roundedX, roundedY);
+    visualData->markedTextCaretRectAtStart.move(roundedX, roundedY);
+    visualData->markedTextCaretRectAtEnd.move(roundedX, roundedY);
+    for (auto& geometry : visualData->selectionGeometries)
+        geometry.move(x, y);
+    for (auto& geometry : visualData->markedTextRects)
+        geometry.move(x, y);
+#endif // PLATFORM(IOS_FAMILY)
+
+    clipOwnedRectExtentsToNumericLimits();
 }
 
 } // namespace WebKit

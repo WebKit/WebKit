@@ -38,6 +38,8 @@
 #include "JITOperations.h"
 #include "JITSizeStatistics.h"
 #include "JITThunks.h"
+#include "LLIntEntrypoint.h"
+#include "LLIntThunks.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ModuleProgramCodeBlock.h"
@@ -52,14 +54,14 @@
 #include <wtf/BubbleSort.h>
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/SimpleStats.h>
-#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 namespace JITInternal {
 static constexpr const bool verbose = false;
 }
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL(JIT);
 
 Seconds totalBaselineCompileTime;
 Seconds totalDFGCompileTime;
@@ -79,9 +81,7 @@ JIT::JIT(VM& vm, BaselineJITPlan& plan, CodeBlock* codeBlock)
 {
 }
 
-JIT::~JIT()
-{
-}
+JIT::~JIT() = default;
 
 JITConstantPool::Constant JIT::addToConstantPool(JITConstantPool::Type type, void* payload)
 {
@@ -101,26 +101,6 @@ BaselineUnlinkedCallLinkInfo* JIT::addUnlinkedCallLinkInfo()
 {
     return &m_unlinkedCalls.alloc();
 }
-
-#if ENABLE(DFG_JIT)
-void JIT::emitEnterOptimizationCheck()
-{
-    if (!canBeOptimized())
-        return;
-
-    JumpList skipOptimize;
-    loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-    skipOptimize.append(branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), Address(regT0, CodeBlock::offsetOfJITExecuteCounter())));
-    ASSERT(!m_bytecodeIndex.offset());
-
-    copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
-
-    callOperationNoExceptionCheck(operationOptimize, TrustedImmPtr(&vm()), m_bytecodeIndex.asBits());
-    skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
-    farJump(returnValueGPR, GPRInfo::callFrameRegister);
-    skipOptimize.link(this);
-}
-#endif
 
 void JIT::emitNotifyWriteWatchpoint(GPRReg pointerToSet)
 {
@@ -266,7 +246,6 @@ void JIT::privateCompileMainPass()
         }
 
         switch (opcodeID) {
-        DEFINE_SLOW_OP(instanceof_custom)
         DEFINE_SLOW_OP(is_callable)
         DEFINE_SLOW_OP(is_constructor)
         DEFINE_SLOW_OP(typeof)
@@ -304,8 +283,10 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_tail_call_varargs)
         DEFINE_OP(op_tail_call_forward_arguments)
         DEFINE_OP(op_construct_varargs)
+        DEFINE_OP(op_super_construct_varargs)
         DEFINE_OP(op_catch)
         DEFINE_OP(op_construct)
+        DEFINE_OP(op_super_construct)
         DEFINE_OP(op_create_this)
         DEFINE_OP(op_to_this)
         DEFINE_OP(op_get_argument)
@@ -589,6 +570,8 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_del_by_val)
         DEFINE_SLOWCASE_OP(op_del_by_id)
         DEFINE_SLOWCASE_OP(op_sub)
+        DEFINE_SLOWCASE_OP(op_resolve_scope)
+        DEFINE_SLOWCASE_OP(op_get_from_scope)
         DEFINE_SLOWCASE_OP(op_put_to_scope)
 
         DEFINE_SLOWCASE_OP(op_iterator_open)
@@ -665,9 +648,9 @@ void JIT::emitMaterializeMetadataAndConstantPoolRegisters()
 
 void JIT::emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers& jit)
 {
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), s_constantsGPR);
+    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), GPRInfo::jitDataRegister);
     static_assert(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
-    jit.loadPairPtr(Address(s_constantsGPR, CodeBlock::offsetOfJITData()), s_constantsGPR, s_metadataGPR);
+    jit.loadPairPtr(Address(GPRInfo::jitDataRegister, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister, GPRInfo::metadataTableRegister);
 }
 
 void JIT::emitSaveCalleeSaves()
@@ -706,11 +689,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::consistencyCheckGenerator(VM&)
     jit.breakpoint();
     stackPointerOK.link(&jit);
 
-    auto metadataOK = jit.branchPtr(Equal, expectedMetadataGPR, s_metadataGPR);
+    auto metadataOK = jit.branchPtr(Equal, expectedMetadataGPR, GPRInfo::metadataTableRegister);
     jit.breakpoint();
     metadataOK.link(&jit);
 
-    auto constantsOK = jit.branchPtr(Equal, expectedConstantsGPR, s_constantsGPR);
+    auto constantsOK = jit.branchPtr(Equal, expectedConstantsGPR, GPRInfo::jitDataRegister);
     jit.breakpoint();
     constantsOK.link(&jit);
 
@@ -787,8 +770,6 @@ RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffor
     jitAssertCodeBlockOnCallFrameWithType(regT2, JITType::BaselineJIT);
     jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame(regT1, regT2, *m_unlinkedCodeBlock);
 
-    Label beginLabel(this);
-
     int frameTopOffset = stackPointerOffsetFor(m_unlinkedCodeBlock) * sizeof(Register);
     unsigned maxFrameSize = -frameTopOffset;
     addPtr(TrustedImm32(frameTopOffset), callFrameRegister, regT1);
@@ -840,36 +821,41 @@ RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffor
 #endif
 
     // If the number of parameters is 1, we never require arity fixup.
+    JumpList stackOverflowWithEntry;
     bool requiresArityFixup = m_unlinkedCodeBlock->numParameters() != 1;
     if (m_unlinkedCodeBlock->codeType() == FunctionCode && requiresArityFixup) {
         m_arityCheck = label();
-
-        emitFunctionPrologue();
         RELEASE_ASSERT(m_unlinkedCodeBlock->codeType() == FunctionCode);
-        jitAssertCodeBlockOnCallFrameWithType(regT2, JITType::BaselineJIT);
-        jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame(regT1, regT2, *m_unlinkedCodeBlock);
-        emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, regT0);
-        store8(TrustedImm32(0), Address(regT0, CodeBlock::offsetOfShouldAlwaysBeInlined()));
 
         unsigned numberOfParameters = m_unlinkedCodeBlock->numParameters();
-        load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), regT1);
-        branch32(AboveOrEqual, regT1, TrustedImm32(numberOfParameters)).linkTo(beginLabel, this);
-
+        load32(CCallHelpers::calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis).withOffset(sizeof(CallerFrameAndPC) - prologueStackPointerDelta()), GPRInfo::argumentGPR2);
+        branch32(AboveOrEqual, GPRInfo::argumentGPR2, TrustedImm32(numberOfParameters)).linkTo(entryLabel, this);
         m_bytecodeIndex = BytecodeIndex(0);
+        getArityPadding(*m_vm, numberOfParameters, GPRInfo::argumentGPR2, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR3, stackOverflowWithEntry);
 
-        getArityPadding(*m_vm, numberOfParameters, regT1, regT0, regT2, regT3, stackOverflow);
-
-        move(regT0, GPRInfo::argumentGPR0);
-        nearCallThunk(CodeLocationLabel { m_vm->getCTIStub(CommonJITThunkID::ArityFixup).retaggedCode<NoPtrTag>() });
-
+#if CPU(X86_64)
+        pop(GPRInfo::argumentGPR1);
+#else
+        tagPtr(NoPtrTag, linkRegister);
+        move(linkRegister, GPRInfo::argumentGPR1);
+#endif
+        nearCallThunk(CodeLocationLabel { LLInt::arityFixup() });
+#if CPU(X86_64)
+        push(GPRInfo::argumentGPR1);
+#else
+        move(GPRInfo::argumentGPR1, linkRegister);
+        untagPtr(NoPtrTag, linkRegister);
+        validateUntaggedPtr(linkRegister, GPRInfo::argumentGPR0);
+#endif
 #if ASSERT_ENABLED
         m_bytecodeIndex = BytecodeIndex(); // Reset this, in order to guard its use with ASSERTs.
 #endif
-
-        jump(beginLabel);
+        jump(entryLabel);
     } else
         m_arityCheck = entryLabel; // Never require arity fixup.
 
+    stackOverflowWithEntry.link(this);
+    emitFunctionPrologue();
     stackOverflow.link(this);
     m_bytecodeIndex = BytecodeIndex(0);
     if (maxFrameExtentForSlowPathCall)
@@ -904,7 +890,7 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
             SimpleJumpTable& linkedTable = m_switchJumpTables[tableIndex];
             linkedTable.m_ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
             for (unsigned j = 0; j < unlinkedTable.m_branchOffsets.size(); ++j) {
-                unsigned offset = unlinkedTable.m_branchOffsets[j];
+                int32_t offset = unlinkedTable.m_branchOffsets[j];
                 linkedTable.m_ctiOffsets[j] = offset
                     ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
                     : linkedTable.m_ctiDefault;
@@ -917,7 +903,7 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
             StringJumpTable& linkedTable = m_stringSwitchJumpTables[tableIndex];
             auto ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
             for (auto& location : unlinkedTable.m_offsetTable.values()) {
-                unsigned offset = location.m_branchOffset;
+                int32_t offset = location.m_branchOffset;
                 linkedTable.m_ctiOffsets[location.m_indexInTable] = offset
                     ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
                     : ctiDefault;
@@ -1073,9 +1059,9 @@ int JIT::stackPointerOffsetFor(CodeBlock* codeBlock)
     return stackPointerOffsetFor(codeBlock->unlinkedCodeBlock());
 }
 
-HashMap<CString, Seconds> JIT::compileTimeStats()
+UncheckedKeyHashMap<CString, Seconds> JIT::compileTimeStats()
 {
-    HashMap<CString, Seconds> result;
+    UncheckedKeyHashMap<CString, Seconds> result;
     if (Options::reportTotalCompileTimes()) {
         result.add("Total Compile Time", totalCompileTime());
         result.add("Baseline Compile Time", totalBaselineCompileTime);
@@ -1112,5 +1098,7 @@ void JIT::exceptionChecksWithCallFrameRollback(Jump jumpToHandler)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(JIT)

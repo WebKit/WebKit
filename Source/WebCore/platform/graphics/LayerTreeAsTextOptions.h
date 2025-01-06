@@ -42,8 +42,9 @@ enum class LayerTreeAsTextOptions : uint16_t {
     IncludeBackingStoreAttached  = 1 << 9,
     IncludeRootLayerProperties   = 1 << 10,
     IncludeEventRegion           = 1 << 11,
-    IncludeDeepColor             = 1 << 12,
+    IncludeExtendedColor         = 1 << 12,
     IncludeDeviceScale           = 1 << 13,
+    IncludeRootLayers            = 1 << 14,
 };
 
 static constexpr OptionSet<LayerTreeAsTextOptions> AllLayerTreeAsTextOptions = {
@@ -59,7 +60,7 @@ static constexpr OptionSet<LayerTreeAsTextOptions> AllLayerTreeAsTextOptions = {
     LayerTreeAsTextOptions::IncludeBackingStoreAttached,
     LayerTreeAsTextOptions::IncludeRootLayerProperties,
     LayerTreeAsTextOptions::IncludeEventRegion,
-    LayerTreeAsTextOptions::IncludeDeepColor,
+    LayerTreeAsTextOptions::IncludeExtendedColor,
 };
 
 } // namespace WebCore

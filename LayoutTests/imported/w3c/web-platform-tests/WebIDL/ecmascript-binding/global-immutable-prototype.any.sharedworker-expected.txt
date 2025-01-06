@@ -1,0 +1,6 @@
+
+FAIL Setting to a different prototype assert_throws_js: function "() => {
+      Object.setPrototypeOf(object, {});
+    }" did not throw
+PASS Setting to the same prototype
+

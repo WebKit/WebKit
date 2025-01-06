@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/Algorithms.h>
-#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 
@@ -92,55 +92,71 @@ public:
 
     const_iterator end() const { return { { } }; }
 
-    template<typename U, std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr>
-    void add(const U& value)
+    template<typename U>
+    void add(const U& value) requires (std::is_convertible_v<U*, T*>)
     {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!value.controlBlock().objectHasStartedDeletion());
         Locker locker { m_lock };
         ControlBlockRefPtr retainedControlBlock { &value.controlBlock() };
-        if (!retainedControlBlock)
-            return;
+        ASSERT(retainedControlBlock);
         amortizedCleanupIfNeeded();
-        m_map.add(static_cast<const T*>(&value), WTFMove(retainedControlBlock));
+        m_set.add(std::make_pair(WTFMove(retainedControlBlock), &value));
     }
 
-    template<typename U, std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr>
-    bool remove(const U& value)
+    template<typename U>
+    bool remove(const U& value) requires (std::is_convertible_v<U*, T*>)
     {
         Locker locker { m_lock };
         amortizedCleanupIfNeeded();
-        auto it = m_map.find(static_cast<const T*>(&value));
-        if (it == m_map.end())
+        // If there are no weak refs then it can't be in our table. In that case
+        // there's no point in potentially allocating a ControlBlock.
+        if (!value.weakRefCount())
             return false;
-        bool wasDeleted = it->value && it->value->objectHasStartedDeletion();
-        bool result = m_map.remove(it);
-        return !wasDeleted && result;
+
+        auto it = m_set.find(std::make_pair(&value.controlBlock(), &value));
+        if (it == m_set.end())
+            return false;
+        bool wasDeleted = it->first->objectHasStartedDeletion();
+        bool result = m_set.remove(it);
+        ASSERT_UNUSED(result, result);
+        return !wasDeleted;
     }
 
     void clear()
     {
         Locker locker { m_lock };
-        m_map.clear();
+        m_set.clear();
         cleanupHappened();
     }
 
-    template<typename U, std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr>
-    bool contains(const U& value) const
+    template<typename U>
+    bool contains(const U& value) const requires (std::is_convertible_v<U*, T*>)
     {
         Locker locker { m_lock };
         amortizedCleanupIfNeeded();
-        auto it = m_map.find(static_cast<const T*>(&value));
-        if (it == m_map.end())
+        // If there are no weak refs then it can't be in our table. In that case
+        // there's no point in potentially allocating a ControlBlock.
+        if (!value.weakRefCount())
             return false;
-        return it->value && !it->value->objectHasStartedDeletion();
+
+        auto it = m_set.find(std::make_pair(&value.controlBlock(), &value));
+        if (it == m_set.end())
+            return false;
+
+        bool wasDeleted = it->first->objectHasStartedDeletion();
+        if (wasDeleted)
+            m_set.remove(it);
+        return !wasDeleted;
     }
 
     bool isEmptyIgnoringNullReferences() const
     {
         Locker locker { m_lock };
         amortizedCleanupIfNeeded();
-        for (auto& controlBlock : m_map.values()) {
-            if (!controlBlock->objectHasStartedDeletion())
+        // FIXME: This seems like it should remove any stale entries it finds along the way. Although, it might require a
+        // HashSet::removeNoRehash function. https://bugs.webkit.org/show_bug.cgi?id=283928
+        for (auto& pair : m_set) {
+            if (!pair.first->objectHasStartedDeletion())
                 return false;
         }
         return true;
@@ -152,14 +168,14 @@ public:
         {
             Locker locker { m_lock };
             bool hasNullReferences = false;
-            strongReferences = compactMap(m_map, [&hasNullReferences](auto& pair) -> RefPtr<T> {
-                if (RefPtr strongReference = pair.value->template makeStrongReferenceIfPossible<T>(pair.key))
+            strongReferences = compactMap(m_set, [&hasNullReferences](auto& pair) -> RefPtr<T> {
+                if (RefPtr strongReference = pair.first->template makeStrongReferenceIfPossible<T>(pair.second))
                     return strongReference;
                 hasNullReferences = true;
                 return nullptr;
             });
             if (hasNullReferences)
-                m_map.removeIf([](auto& pair) { return pair.value->objectHasStartedDeletion(); });
+                m_set.removeIf([](auto& pair) { return pair.first->objectHasStartedDeletion(); });
             cleanupHappened();
         }
         return strongReferences;
@@ -169,9 +185,10 @@ public:
     {
         Vector<ThreadSafeWeakPtr<T>> weakReferences;
         {
+            // FIXME: It seems like this should prune known dead entries as it goes. https://bugs.webkit.org/show_bug.cgi?id=283928
             Locker locker { m_lock };
-            weakReferences = WTF::map(m_map, [](auto& pair) {
-                return ThreadSafeWeakPtr { *pair.value, *pair.key };
+            weakReferences = WTF::map(m_set, [](auto& pair) {
+                return ThreadSafeWeakPtr<T> { *pair.first, *pair.second };
             });
         }
         return weakReferences;
@@ -187,21 +204,21 @@ public:
     unsigned sizeIncludingEmptyEntriesForTesting()
     {
         Locker locker { m_lock };
-        return m_map.size();
+        return m_set.size();
     }
 
 private:
     ALWAYS_INLINE void cleanupHappened() const WTF_REQUIRES_LOCK(m_lock)
     {
         m_operationCountSinceLastCleanup = 0;
-        m_maxOperationCountWithoutCleanup = std::min(std::numeric_limits<unsigned>::max() / 2, m_map.size()) * 2;
+        m_maxOperationCountWithoutCleanup = std::min(std::numeric_limits<unsigned>::max() / 2, m_set.size()) * 2;
     }
 
     ALWAYS_INLINE void moveFrom(ThreadSafeWeakHashSet&& other)
     {
         Locker locker { m_lock };
         Locker otherLocker { other.m_lock };
-        m_map = std::exchange(other.m_map, { });
+        m_set = std::exchange(other.m_set, { });
         m_operationCountSinceLastCleanup = std::exchange(other.m_operationCountSinceLastCleanup, 0);
         m_maxOperationCountWithoutCleanup = std::exchange(other.m_maxOperationCountWithoutCleanup, 0);
     }
@@ -209,14 +226,15 @@ private:
     ALWAYS_INLINE void amortizedCleanupIfNeeded() const WTF_REQUIRES_LOCK(m_lock)
     {
         if (++m_operationCountSinceLastCleanup > m_maxOperationCountWithoutCleanup) {
-            m_map.removeIf([] (auto& pair) {
-                return pair.value->objectHasStartedDeletion();
+            m_set.removeIf([] (auto& pair) {
+                ASSERT(pair.first->weakRefCount());
+                return pair.first->objectHasStartedDeletion();
             });
             cleanupHappened();
         }
     }
 
-    mutable HashMap<const T*, ControlBlockRefPtr> m_map WTF_GUARDED_BY_LOCK(m_lock);
+    mutable HashSet<std::pair<ControlBlockRefPtr, const T*>> m_set WTF_GUARDED_BY_LOCK(m_lock);
     mutable unsigned m_operationCountSinceLastCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     mutable unsigned m_maxOperationCountWithoutCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     mutable Lock m_lock;

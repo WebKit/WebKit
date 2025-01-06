@@ -32,13 +32,13 @@
 
 namespace JSC {
 
-// A HashMap with Weak<JSCell> values, which automatically removes values once they're garbage collected.
+// A UncheckedKeyHashMap with Weak<JSCell> values, which automatically removes values once they're garbage collected.
 
 template<typename KeyArg, typename ValueArg, typename HashArg = DefaultHash<KeyArg>, typename KeyTraitsArg = HashTraits<KeyArg>>
 class WeakGCMap final : public WeakGCHashTable {
     WTF_MAKE_FAST_ALLOCATED;
     typedef Weak<ValueArg> ValueType;
-    typedef HashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;
+    typedef UncheckedKeyHashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;
 
 public:
     typedef typename HashMapType::KeyType KeyType;
@@ -62,7 +62,7 @@ public:
     template<typename Functor>
     ValueArg* ensureValue(const KeyType& key, Functor&& functor)
     {
-        // If functor invokes GC, GC can prune WeakGCMap, and manipulate HashMap while we are touching it in ensure function.
+        // If functor invokes GC, GC can prune WeakGCMap, and manipulate UncheckedKeyHashMap while we are touching it in ensure function.
         // The functor must not invoke GC.
         DisallowGC disallowGC;
         AddResult result = m_map.ensure(key, std::forward<Functor>(functor));

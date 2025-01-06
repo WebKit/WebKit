@@ -67,18 +67,19 @@
 #include "VideoTrack.h"
 #include "VideoTrackList.h"
 #include "VideoTrackPrivate.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NativePromise.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaSource);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaSource);
 
 String convertEnumerationToString(MediaSourcePrivate::AddStatus enumerationValue)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 3> values {
         MAKE_STATIC_STRING_IMPL("Ok"),
         MAKE_STATIC_STRING_IMPL("NotSupported"),
         MAKE_STATIC_STRING_IMPL("ReachedIdLimit"),
@@ -92,7 +93,7 @@ String convertEnumerationToString(MediaSourcePrivate::AddStatus enumerationValue
 
 String convertEnumerationToString(MediaSourcePrivate::EndOfStreamStatus enumerationValue)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 3> values {
         MAKE_STATIC_STRING_IMPL("NoError"),
         MAKE_STATIC_STRING_IMPL("NetworkError"),
         MAKE_STATIC_STRING_IMPL("DecodeError"),
@@ -119,6 +120,12 @@ public:
         });
     }
 
+    void setMediaSourcePrivate(MediaSourcePrivate* source)
+    {
+        Locker locker { m_lock };
+        m_private = source;
+    }
+
 private:
     explicit MediaSourceClientImpl(MediaSource& parent)
         : m_parent(parent)
@@ -126,13 +133,21 @@ private:
 #if !RELEASE_LOG_DISABLED
         , m_logger(parent.logger())
 #endif
-        {
-        }
+        , m_private(parent.m_private)
+    {
+    }
 
     void setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate) final
     {
         ensureWeakOnDispatcher([mediaSourcePrivate = WTFMove(mediaSourcePrivate)](MediaSource& parent) mutable {
             parent.setPrivateAndOpen(WTFMove(mediaSourcePrivate));
+        }, true);
+    }
+
+    void reOpen() final
+    {
+        ensureWeakOnDispatcher([](MediaSource& parent) mutable {
+            parent.reOpen();
         }, true);
     }
 
@@ -158,6 +173,12 @@ private:
         return promise;
     }
 
+    RefPtr<MediaSourcePrivate> mediaSourcePrivate() const final
+    {
+        Locker locker { m_lock };
+        return m_private;
+    }
+
     void failedToCreateRenderer(RendererType type)
     {
         ensureWeakOnDispatcher([type](MediaSource& parent) {
@@ -166,7 +187,7 @@ private:
     }
 
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(const void* identifier)
+    void setLogIdentifier(uint64_t identifier)
     {
         ensureWeakOnDispatcher([identifier](MediaSource& parent) {
             parent.setLogIdentifier(identifier);
@@ -179,6 +200,8 @@ private:
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
 #endif
+    mutable Lock m_lock;
+    RefPtr<MediaSourcePrivate> m_private WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 URLRegistry* MediaSource::s_registry;
@@ -190,15 +213,16 @@ void MediaSource::setRegistry(URLRegistry* registry)
     s_registry = registry;
 }
 
-Ref<MediaSource> MediaSource::create(ScriptExecutionContext& context)
+Ref<MediaSource> MediaSource::create(ScriptExecutionContext& context, MediaSourceInit&& options)
 {
-    auto mediaSource = adoptRef(*new MediaSource(context));
+    auto mediaSource = adoptRef(*new MediaSource(context, WTFMove(options)));
     mediaSource->suspendIfNeeded();
     return mediaSource;
 }
 
-MediaSource::MediaSource(ScriptExecutionContext& context)
+MediaSource::MediaSource(ScriptExecutionContext& context, MediaSourceInit&& options)
     : ActiveDOMObject(&context)
+    , m_detachable(context.settingsValues().detachableMediaSourceEnabled ? options.detachable : false)
     , m_sourceBuffers(SourceBufferList::create(scriptExecutionContext()))
     , m_activeSourceBuffers(SourceBufferList::create(scriptExecutionContext()))
 #if !RELEASE_LOG_DISABLED
@@ -211,6 +235,9 @@ MediaSource::MediaSource(ScriptExecutionContext& context)
 MediaSource::~MediaSource()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+
+    m_detachable = false;
+
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     if (!isMainThread()) {
         // When deleted on a worker; the HTMLMediaElement wouldn't have started the deletion.
@@ -218,9 +245,10 @@ MediaSource::~MediaSource()
         ensureWeakOnHTMLMediaElementContext([](auto& mediaElement) {
             mediaElement.mediaSourceWasDetached();
         });
-        detachFromElement();
     }
 #endif
+    detachFromElement();
+
     ASSERT(isClosed());
 }
 
@@ -243,13 +271,37 @@ void MediaSource::didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLo
 
 #endif
 
+void MediaSource::setPrivate(RefPtr<MediaSourcePrivate>&& mediaSourcePrivate)
+{
+    m_client->setMediaSourcePrivate(mediaSourcePrivate.get());
+    m_private = WTFMove(mediaSourcePrivate);
+}
+
 void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate)
 {
     DEBUG_LOG(LOGIDENTIFIER);
     ASSERT(!m_private);
-    m_private = WTFMove(mediaSourcePrivate);
-    m_private->setTimeFudgeFactor(currentTimeFudgeFactor());
 
+    setPrivate(WTFMove(mediaSourcePrivate));
+    protectedPrivate()->setTimeFudgeFactor(currentTimeFudgeFactor());
+
+    open();
+}
+
+void MediaSource::reOpen()
+{
+    DEBUG_LOG(LOGIDENTIFIER);
+    ASSERT(detachable());
+    ASSERT(m_private);
+
+    open();
+
+    for (Ref sourceBuffer : m_sourceBuffers.get())
+        sourceBuffer->attach();
+}
+
+void MediaSource::open()
+{
     // 2.4.1 Attaching to a media element
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-attach
 
@@ -282,7 +334,7 @@ void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate
 
     // 2. Set the readyState attribute to "open".
     // 3. Queue a task to fire a simple event named sourceopen at the MediaSource.
-    setReadyState(ReadyState::Open);
+    setReadyState(m_readyStateBeforeDetached.value_or(ReadyState::Open));
 
     // 4. Continue the resource fetch algorithm by running the remaining "Otherwise (mode is local)" steps,
     // with these clarifications:
@@ -309,7 +361,9 @@ MediaTime MediaSource::duration() const
     // 1. If the readyState attribute is "closed" then return NaN and abort these steps.
     // 2. Return the current value of the attribute.
 
-    return isClosed() ? MediaTime::invalidTime() : m_private->duration();
+    if (RefPtr msp = protectedPrivate())
+        return msp->duration();
+    return MediaTime::invalidTime();
 }
 
 MediaTime MediaSource::currentTime() const
@@ -317,12 +371,14 @@ MediaTime MediaSource::currentTime() const
     if (m_pendingSeekTarget)
         return m_pendingSeekTarget->time;
 
-    return m_private ? m_private->currentTime() : MediaTime::zeroTime();
+    if (RefPtr msp = protectedPrivate())
+        return msp->currentTime();
+    return MediaTime::zeroTime();
 }
 
 PlatformTimeRanges MediaSource::buffered() const
 {
-    return isClosed() ? PlatformTimeRanges::emptyRanges() : m_private->buffered();
+    return isClosed() ? PlatformTimeRanges::emptyRanges() : protectedPrivate()->buffered();
 }
 
 Ref<MediaTimePromise> MediaSource::waitForTarget(const SeekTarget& target)
@@ -331,6 +387,10 @@ Ref<MediaTimePromise> MediaSource::waitForTarget(const SeekTarget& target)
 
     // 2.4.3 Seeking
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-seeking
+
+    RefPtr msp = protectedPrivate();
+    if (!msp)
+        return MediaTimePromise::createAndReject(PlatformMediaError::SourceRemoved);
 
     if (m_seekTargetPromise) {
         ALWAYS_LOG(LOGIDENTIFIER, "Previous seeking to ", m_pendingSeekTarget->time, "pending, cancelling it");
@@ -347,7 +407,7 @@ Ref<MediaTimePromise> MediaSource::waitForTarget(const SeekTarget& target)
         ALWAYS_LOG(LOGIDENTIFIER, "No data at seeked time, waiting");
         // 1. If the HTMLMediaElement.readyState attribute is greater than HAVE_METADATA,
         // then set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
-        m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveMetadata);
+        msp->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveMetadata);
 
         // 2. The media element waits until an appendBuffer() or an appendStream() call causes the coded
         // frame processing algorithm to set the HTMLMediaElement.readyState attribute to a value greater
@@ -384,7 +444,7 @@ void MediaSource::completeSeek()
     MediaTimePromise::AutoRejectProducer producer(PlatformMediaError::SourceRemoved);
     Ref promise = producer.promise();
 
-    scriptExecutionContext()->enqueueTaskWhenSettled(SourceBuffer::ComputeSeekPromise::all(WTF::map(*m_activeSourceBuffers, [&](auto&& sourceBuffer) {
+    scriptExecutionContext()->enqueueTaskWhenSettled(SourceBuffer::ComputeSeekPromise::all(WTF::map(m_activeSourceBuffers.get(), [&](auto&& sourceBuffer) {
         return sourceBuffer->computeSeekTime(seekTarget);
     })), TaskSource::MediaElement, [producer = WTFMove(producer), weakThis = WeakPtr { *this }, this, time = seekTarget.time](auto&& results) {
         RefPtr protectedThis = weakThis.get();
@@ -411,14 +471,16 @@ void MediaSource::completeSeek()
 
 Ref<MediaPromise> MediaSource::seekToTime(const MediaTime& time)
 {
-    for (auto& sourceBuffer : *m_activeSourceBuffers)
+    for (Ref sourceBuffer : m_activeSourceBuffers.get())
         sourceBuffer->seekToTime(time);
     return MediaPromise::createAndResolve();
 }
 
 Ref<TimeRanges> MediaSource::seekable()
 {
-    return m_private ? TimeRanges::create(m_private->seekable()) : TimeRanges::create();
+    if (RefPtr msp = protectedPrivate())
+        return TimeRanges::create(msp->seekable());
+    return TimeRanges::create();
 }
 
 ExceptionOr<void> MediaSource::setLiveSeekableRange(double start, double end)
@@ -432,13 +494,15 @@ ExceptionOr<void> MediaSource::setLiveSeekableRange(double start, double end)
     if (!isOpen())
         return Exception { ExceptionCode::InvalidStateError };
 
+    Ref msp = protectedPrivate().releaseNonNull();
+
     // If start is negative or greater than end, then throw a TypeError exception and abort these steps.
     if (start < 0 || start > end)
         return Exception { ExceptionCode::TypeError };
 
     // Set live seekable range to be a new normalized TimeRanges object containing a single range
     // whose start position is start and end position is end.
-    m_private->setLiveSeekableRange({ MediaTime::createWithDouble(start), MediaTime::createWithDouble(end) });
+    msp->setLiveSeekableRange({ MediaTime::createWithDouble(start), MediaTime::createWithDouble(end) });
 
     return { };
 }
@@ -453,7 +517,8 @@ ExceptionOr<void> MediaSource::clearLiveSeekableRange()
     // If the readyState attribute is not "open" then throw an InvalidStateError exception and abort these steps.
     if (!isOpen())
         return Exception { ExceptionCode::InvalidStateError };
-    m_private->clearLiveSeekableRange();
+    Ref msp = protectedPrivate().releaseNonNull();
+    msp->clearLiveSeekableRange();
     return { };
 }
 
@@ -480,11 +545,12 @@ bool MediaSource::hasBufferedTime(const MediaTime& time)
     if (time > duration())
         return false;
 
-    auto ranges = m_private->buffered();
+    Ref msp = protectedPrivate().releaseNonNull();
+    auto ranges = msp->buffered();
     if (!ranges.length())
         return false;
 
-    return abs(ranges.nearest(time) - time) <= m_private->timeFudgeFactor();
+    return abs(ranges.nearest(time) - time) <= msp->timeFudgeFactor();
 }
 
 bool MediaSource::hasCurrentTime()
@@ -497,7 +563,9 @@ bool MediaSource::hasFutureTime()
     if (isClosed())
         return false;
 
-    return m_private->hasFutureTime(currentTime(), m_private->timeIsProgressing() ? MediaTime::zeroTime() : MediaSourcePrivate::futureDataThreshold());
+    Ref msp = protectedPrivate().releaseNonNull();
+
+    return msp->hasFutureTime(currentTime(), msp->timeIsProgressing() ? MediaTime::zeroTime() : MediaSourcePrivate::futureDataThreshold());
 }
 
 bool MediaSource::isBuffered(const PlatformTimeRanges& ranges) const
@@ -507,7 +575,9 @@ bool MediaSource::isBuffered(const PlatformTimeRanges& ranges) const
 
     ASSERT(ranges.length() == 1);
 
-    auto bufferedRanges = m_private->buffered();
+    Ref msp = protectedPrivate().releaseNonNull();
+
+    auto bufferedRanges = msp->buffered();
     if (!bufferedRanges.length())
         return false;
     bufferedRanges.intersectWith(ranges);
@@ -516,7 +586,7 @@ bool MediaSource::isBuffered(const PlatformTimeRanges& ranges) const
         return false;
 
     auto hasBufferedTime = [&] (const MediaTime& time) {
-        return abs(bufferedRanges.nearest(time) - time) <= m_private->timeFudgeFactor();
+        return abs(bufferedRanges.nearest(time) - time) <= msp->timeFudgeFactor();
     };
 
     if (!hasBufferedTime(ranges.minimumBufferedTime()) || !hasBufferedTime(ranges.maximumBufferedTime()))
@@ -527,7 +597,7 @@ bool MediaSource::isBuffered(const PlatformTimeRanges& ranges) const
 
     // Ensure that if we have a gap in the buffered range, it is smaller than the fudge factor;
     for (unsigned i = 1; i < bufferedRanges.length(); i++) {
-        if (bufferedRanges.end(i) - bufferedRanges.start(i-1) > m_private->timeFudgeFactor())
+        if (bufferedRanges.end(i) - bufferedRanges.start(i-1) > msp->timeFudgeFactor())
             return false;
     }
 
@@ -536,17 +606,18 @@ bool MediaSource::isBuffered(const PlatformTimeRanges& ranges) const
 
 void MediaSource::monitorSourceBuffers()
 {
+    if (isClosed())
+        return;
+
+    Ref msp = protectedPrivate().releaseNonNull();
+
     // 2.4.4 SourceBuffer Monitoring
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#buffer-monitoring
 
     // Note, the behavior if activeSourceBuffers is empty is undefined.
-    if (!m_activeSourceBuffers) {
-        m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveNothing);
-        return;
-    }
 
     // ↳ If the HTMLMediaElement.readyState attribute equals HAVE_NOTHING:
-    if (m_private->mediaPlayerReadyState() == MediaPlayer::ReadyState::HaveNothing) {
+    if (msp->mediaPlayerReadyState() == MediaPlayer::ReadyState::HaveNothing) {
         // 1. Abort these steps.
         return;
     }
@@ -556,7 +627,7 @@ void MediaSource::monitorSourceBuffers()
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
         // 2. If this is the first transition to HAVE_METADATA, then queue a task to fire a simple event
         // named loadedmetadata at the media element.
-        m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveMetadata);
+        msp->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveMetadata);
 
         // 3. Abort these steps.
         return;
@@ -578,7 +649,7 @@ void MediaSource::monitorSourceBuffers()
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_ENOUGH_DATA.
         // 2. Queue a task to fire a simple event named canplaythrough at the media element.
         // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
-        m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveEnoughData);
+        msp->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveEnoughData);
 
         if (m_pendingSeekTarget)
             completeSeek();
@@ -593,7 +664,7 @@ void MediaSource::monitorSourceBuffers()
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_FUTURE_DATA.
         // 2. If the previous value of HTMLMediaElement.readyState was less than HAVE_FUTURE_DATA, then queue a task to fire a simple event named canplay at the media element.
         // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
-        m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveFutureData);
+        msp->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveFutureData);
 
         if (m_pendingSeekTarget)
             completeSeek();
@@ -610,7 +681,7 @@ void MediaSource::monitorSourceBuffers()
     // event named loadeddata at the media element.
     // 3. Playback is suspended at this point since the media element doesn't have enough data to
     // advance the media timeline.
-    m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveCurrentData);
+    msp->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveCurrentData);
 
     if (m_pendingSeekTarget)
         completeSeek();
@@ -636,7 +707,7 @@ ExceptionOr<void> MediaSource::setDuration(double duration)
 
     // 3. If the updating attribute equals true on any SourceBuffer in sourceBuffers, then throw an InvalidStateError
     // exception and abort these steps.
-    for (auto& sourceBuffer : *m_sourceBuffers) {
+    for (Ref sourceBuffer : m_sourceBuffers.get()) {
         if (sourceBuffer->updating())
             return Exception { ExceptionCode::InvalidStateError };
     }
@@ -647,6 +718,9 @@ ExceptionOr<void> MediaSource::setDuration(double duration)
 
 ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& newDuration)
 {
+    if (isClosed())
+        return Exception { ExceptionCode::InvalidStateError };
+
     // 2.4.6 Duration Change
     // https://www.w3.org/TR/2016/REC-media-source-20161117/#duration-change-algorithm
 
@@ -661,7 +735,7 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& newDuration)
     // across all SourceBuffer objects in sourceBuffers.
     MediaTime highestPresentationTimestamp;
     MediaTime highestEndTime;
-    for (auto& sourceBuffer : *m_sourceBuffers) {
+    for (Ref sourceBuffer : m_sourceBuffers.get()) {
         highestPresentationTimestamp = std::max(highestPresentationTimestamp, sourceBuffer->highestPresentationTimestamp());
         highestEndTime = std::max(highestEndTime, sourceBuffer->bufferedInternal().maximumBufferedTime());
     }
@@ -676,7 +750,7 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& newDuration)
 
     // 5. Update duration to new duration.
     // 6. Update the media duration to new duration and run the HTMLMediaElement duration change algorithm.
-    m_private->durationChanged(duration);
+    protectedPrivate()->durationChanged(duration);
 
     // Changing the duration affects the buffered range.
     monitorSourceBuffers();
@@ -690,10 +764,10 @@ void MediaSource::setReadyState(ReadyState state)
     if (oldState == state)
         return;
 
-    if (m_private)
-        m_private->setReadyState(state);
+    if (RefPtr msp = protectedPrivate())
+        msp->setReadyState(state);
 
-    onReadyStateChange(oldState, state);
+    onReadyStateChange(oldState, readyState());
 }
 
 ExceptionOr<void> MediaSource::endOfStream(std::optional<EndOfStreamError> error)
@@ -729,6 +803,8 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
     if (isClosed())
         return;
 
+    Ref msp = protectedPrivate().releaseNonNull();
+
     // 2.4.7 https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#end-of-stream-algorithm
 
     // 1. Change the readyState attribute value to "ended".
@@ -741,14 +817,14 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
         // 1. Run the duration change algorithm with new duration set to the highest end time reported by
         // the buffered attribute across all SourceBuffer objects in sourceBuffers.
         MediaTime maxEndTime;
-        for (auto& sourceBuffer : *m_sourceBuffers) {
+        for (Ref sourceBuffer : m_sourceBuffers.get()) {
             if (auto length = sourceBuffer->bufferedInternal().length())
                 maxEndTime = std::max(sourceBuffer->bufferedInternal().end(length - 1), maxEndTime);
         }
         setDurationInternal(maxEndTime);
 
         // 2. Notify the media element that it now has all of the media data.
-        m_private->markEndOfStream(MediaSourcePrivate::EndOfStreamStatus::NoError);
+        msp->markEndOfStream(MediaSourcePrivate::EndOfStreamStatus::NoError);
         return;
     }
 
@@ -756,9 +832,9 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
     MediaPlayer::NetworkState mediaElementNextState = MediaPlayer::NetworkState::NetworkError;
 
     if (error == EndOfStreamError::Network) {
-        m_private->markEndOfStream(MediaSourcePrivate::EndOfStreamStatus::NetworkError);
+        msp->markEndOfStream(MediaSourcePrivate::EndOfStreamStatus::NetworkError);
         // ↳ If error is set to "network"
-        if (m_private->mediaPlayerReadyState() == MediaPlayerReadyState::HaveNothing) {
+        if (msp->mediaPlayerReadyState() == MediaPlayerReadyState::HaveNothing) {
             //  ↳ If the HTMLMediaElement.readyState attribute equals HAVE_NOTHING
             //    Run the "If the media data cannot be fetched at all, due to network errors, causing
             //    the user agent to give up trying to fetch the resource" steps of the resource fetch algorithm.
@@ -775,9 +851,9 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
     } else {
         // ↳ If error is set to "decode"
         ASSERT(error == EndOfStreamError::Decode);
-        m_private->markEndOfStream(MediaSourcePrivate::EndOfStreamStatus::DecodeError);
+        msp->markEndOfStream(MediaSourcePrivate::EndOfStreamStatus::DecodeError);
 
-        if (m_private->mediaPlayerReadyState() == MediaPlayerReadyState::HaveNothing) {
+        if (msp->mediaPlayerReadyState() == MediaPlayerReadyState::HaveNothing) {
             //  ↳ If the HTMLMediaElement.readyState attribute equals HAVE_NOTHING
             //    Run the "If the media data can be fetched but is found by inspection to be in an unsupported
             //    format, or can otherwise not be rendered at all" steps of the resource fetch algorithm.
@@ -840,14 +916,15 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
     if (type.isEmpty())
         return Exception { ExceptionCode::TypeError };
 
-    auto context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return Exception { ExceptionCode::NotAllowedError };
 
     // 2. If type contains a MIME type that is not supported ..., then throw a
     // NotSupportedError exception and abort these steps.
     Vector<ContentType> mediaContentTypesRequiringHardwareSupport;
-    if (RefPtr document = dynamicDowncast<Document>(context))
+    RefPtr document = dynamicDowncast<Document>(*context);
+    if (document)
         mediaContentTypesRequiringHardwareSupport.appendVector(document->settings().mediaContentTypesRequiringHardwareSupport());
 
     if (!isTypeSupported(*context, type, WTFMove(mediaContentTypesRequiringHardwareSupport)))
@@ -860,7 +937,6 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
 
     // 5. Create a new SourceBuffer object and associated resources.
     ContentType contentType(type);
-    RefPtr document = dynamicDowncast<Document>(context);
     if (document && document->quirks().needsVP9FullRangeFlagQuirk())
         contentType = addVP9FullRangeVideoFlagToContentType(contentType);
 
@@ -912,6 +988,23 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
     // 3. If the sourceBuffer.updating attribute equals true, then run the following steps: ...
     buffer.abortIfUpdating();
 
+    removeSourceBufferWithOptionalDestruction(buffer, true);
+
+    // 10. If sourceBuffer is in activeSourceBuffers, then remove sourceBuffer from activeSourceBuffers ...
+    m_activeSourceBuffers->remove(buffer);
+
+    // 11. Remove sourceBuffer from sourceBuffers and fire a removesourcebuffer event
+    // on that object.
+    m_sourceBuffers->remove(buffer);
+
+    // 12. Destroy all resources for sourceBuffer.
+    buffer.removedFromMediaSource();
+
+    return { };
+}
+
+void MediaSource::removeSourceBufferWithOptionalDestruction(SourceBuffer& buffer, bool withDestruction)
+{
     ASSERT(scriptExecutionContext());
     if (!scriptExecutionContext()->activeDOMObjectsAreStopped()) {
         // 4. Let SourceBuffer audioTracks list equal the AudioTrackList object returned by sourceBuffer.audioTracks.
@@ -925,35 +1018,39 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
             bool removedEnabledAudioTrack = false;
 
             // 5.3 For each AudioTrack object in the SourceBuffer audioTracks list, run the following steps:
-            while (audioTracks->length()) {
-                auto& track = *audioTracks->lastItem();
+            for (ssize_t index = audioTracks->length() - 1; index >= 0; index--) {
+                Ref track = *audioTracks->item(index);
 
-                // 5.3.1 Set the sourceBuffer attribute on the AudioTrack object to null.
-                track.setSourceBuffer(nullptr);
+                if (withDestruction) {
+                    // 5.3.1 Set the sourceBuffer attribute on the AudioTrack object to null.
+                    track->setSourceBuffer(nullptr);
+                }
 
                 // 5.3.2 If the enabled attribute on the AudioTrack object is true, then set the removed enabled
                 // audio track flag to true.
-                if (track.enabled())
+                if (track->enabled())
                     removedEnabledAudioTrack = true;
 
                 // 5.3.3 Remove the AudioTrack object from the HTMLMediaElement audioTracks list.
                 // 5.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
                 // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement audioTracks list.
                 if (isMainThread()) {
-                    ensureWeakOnHTMLMediaElementContext([track = Ref { track }](auto& mediaElement) mutable {
+                    ensureWeakOnHTMLMediaElementContext([track = track](auto& mediaElement) mutable {
                         // FIXME: Need to send a mirror when we are in a worker.
                         mediaElement.removeAudioTrack(WTFMove(track));
                     });
                 } else {
-                    ensureWeakOnHTMLMediaElementContext([trackID = track.trackId()](auto& mediaElement) mutable {
+                    ensureWeakOnHTMLMediaElementContext([trackID = track->trackId()](auto& mediaElement) mutable {
                         mediaElement.removeAudioTrack(trackID);
                     });
                 }
 
-                // 5.3.5 Remove the AudioTrack object from the SourceBuffer audioTracks list.
-                // 5.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
-                // cancelable, and that uses the TrackEvent interface, at the SourceBuffer audioTracks list.
-                audioTracks->remove(track);
+                if (withDestruction) {
+                    // 5.3.5 Remove the AudioTrack object from the SourceBuffer audioTracks list.
+                    // 5.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+                    // cancelable, and that uses the TrackEvent interface, at the SourceBuffer audioTracks list.
+                    audioTracks->remove(track);
+                }
             }
 
             // 5.4 If the removed enabled audio track flag equals true, then queue a task to fire a simple event
@@ -976,35 +1073,39 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
             bool removedSelectedVideoTrack = false;
 
             // 7.3 For each VideoTrack object in the SourceBuffer videoTracks list, run the following steps:
-            while (videoTracks->length()) {
-                auto& track = *videoTracks->lastItem();
+            for (ssize_t index = videoTracks->length() - 1; index >= 0; index--) {
+                Ref track = *videoTracks->item(index);
 
-                // 7.3.1 Set the sourceBuffer attribute on the VideoTrack object to null.
-                track.setSourceBuffer(nullptr);
+                if (withDestruction) {
+                    // 7.3.1 Set the sourceBuffer attribute on the VideoTrack object to null.
+                    track->setSourceBuffer(nullptr);
+                }
 
                 // 7.3.2 If the selected attribute on the VideoTrack object is true, then set the removed selected
                 // video track flag to true.
-                if (track.selected())
+                if (track->selected())
                     removedSelectedVideoTrack = true;
 
                 // 7.3.3 Remove the VideoTrack object from the HTMLMediaElement videoTracks list.
                 // 7.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
                 // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement videoTracks list.
                 if (isMainThread()) {
-                    ensureWeakOnHTMLMediaElementContext([track = Ref { track }](auto& mediaElement) mutable {
+                    ensureWeakOnHTMLMediaElementContext([track = track](auto& mediaElement) mutable {
                         // FIXME: Need to send a mirror when we are in a worker.
                         mediaElement.removeVideoTrack(WTFMove(track));
                     });
                 } else {
-                    ensureWeakOnHTMLMediaElementContext([trackID = track.trackId()](auto& mediaElement) mutable {
+                    ensureWeakOnHTMLMediaElementContext([trackID = track->trackId()](auto& mediaElement) mutable {
                         mediaElement.removeVideoTrack(trackID);
                     });
                 }
 
-                // 7.3.5 Remove the VideoTrack object from the SourceBuffer videoTracks list.
-                // 7.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
-                // cancelable, and that uses the TrackEvent interface, at the SourceBuffer videoTracks list.
-                videoTracks->remove(track);
+                if (withDestruction) {
+                    // 7.3.5 Remove the VideoTrack object from the SourceBuffer videoTracks list.
+                    // 7.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+                    // cancelable, and that uses the TrackEvent interface, at the SourceBuffer videoTracks list.
+                    videoTracks->remove(track);
+                }
             }
 
             // 7.4 If the removed selected video track flag equals true, then queue a task to fire a simple event
@@ -1027,33 +1128,38 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
             bool removedEnabledTextTrack = false;
 
             // 9.3 For each TextTrack object in the SourceBuffer textTracks list, run the following steps:
-            while (textTracks->length()) {
-                auto& track = *textTracks->lastItem();
+            for (ssize_t index = textTracks->length() - 1; index >= 0; index--) {
+                Ref track = *textTracks->lastItem();
 
-                // 9.3.1 Set the sourceBuffer attribute on the TextTrack object to null.
-                track.setSourceBuffer(nullptr);
+                if (withDestruction) {
+                    // 9.3.1 Set the sourceBuffer attribute on the TextTrack object to null.
+                    track->setSourceBuffer(nullptr);
+                }
 
                 // 9.3.2 If the mode attribute on the TextTrack object is set to "showing" or "hidden", then
                 // set the removed enabled text track flag to true.
-                if (track.mode() == TextTrack::Mode::Showing || track.mode() == TextTrack::Mode::Hidden)
+                if (track->mode() == TextTrack::Mode::Showing || track->mode() == TextTrack::Mode::Hidden)
                     removedEnabledTextTrack = true;
 
                 // 9.3.3 Remove the TextTrack object from the HTMLMediaElement textTracks list.
                 // 9.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
                 // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement textTracks list.
                 if (isMainThread()) {
-                    ensureWeakOnHTMLMediaElementContext([track = Ref { track }](HTMLMediaElement& mediaElement) mutable {
+                    ensureWeakOnHTMLMediaElementContext([track = track](HTMLMediaElement& mediaElement) mutable {
                         mediaElement.removeTextTrack(WTFMove(track));
                     });
                 } else {
-                    ensureWeakOnHTMLMediaElementContext([trackID = track.trackId()](auto& mediaElement) mutable {
+                    ensureWeakOnHTMLMediaElementContext([trackID = track->trackId()](auto& mediaElement) mutable {
                         mediaElement.removeTextTrack(trackID);
                     });
                 }
-                // 9.3.5 Remove the TextTrack object from the SourceBuffer textTracks list.
-                // 9.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
-                // cancelable, and that uses the TrackEvent interface, at the SourceBuffer textTracks list.
-                textTracks->remove(track);
+
+                if (withDestruction) {
+                    // 9.3.5 Remove the TextTrack object from the SourceBuffer textTracks list.
+                    // 9.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+                    // cancelable, and that uses the TrackEvent interface, at the SourceBuffer textTracks list.
+                    textTracks->remove(track);
+                }
             }
 
             // 9.4 If the removed enabled text track flag equals true, then queue a task to fire a simple event
@@ -1066,19 +1172,7 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
         }
     }
 
-    // 10. If sourceBuffer is in activeSourceBuffers, then remove sourceBuffer from activeSourceBuffers ...
-    m_activeSourceBuffers->remove(buffer);
-
-    // 11. Remove sourceBuffer from sourceBuffers and fire a removesourcebuffer event
-    // on that object.
-    m_sourceBuffers->remove(buffer);
-
-    // 12. Destroy all resources for sourceBuffer.
-    buffer.removedFromMediaSource();
-
     notifyElementUpdateMediaState();
-
-    return { };
 }
 
 bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String& type)
@@ -1118,7 +1212,7 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
     parameters.isMediaSource = true;
     parameters.contentTypesRequiringHardwareSupport = WTFMove(contentTypesRequiringHardwareSupport);
 
-    if (RefPtr document = dynamicDowncast<Document>(context)) {
+    if (document) {
         if (!contentTypeMeetsContainerAndCodecTypeRequirements(contentType, document->settings().allowedMediaContainerTypes(), document->settings().allowedMediaCodecTypes()))
             return false;
 
@@ -1154,6 +1248,14 @@ bool MediaSource::isEnded() const
     return readyState() == ReadyState::Ended;
 }
 
+void MediaSource::elementIsShuttingDown()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_mediaElement = nullptr;
+    m_sourceopenPending = false;
+    detachFromElement();
+}
+
 void MediaSource::detachFromElement()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -1161,31 +1263,57 @@ void MediaSource::detachFromElement()
     // 2.4.2 Detaching from a media element
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-detach
 
+    if (detachable())
+        m_readyStateBeforeDetached = readyState();
+
     // 1. Set the readyState attribute to "closed".
     // 7. Queue a task to fire a simple event named sourceclose at the MediaSource.
     setReadyState(ReadyState::Closed);
     elementDetached();
 
     // 2. Update duration to NaN.
-    // Step is done in duration() method which will now always return invalidTime()
+    // Step is done in duration() method which will now always return invalidTime() if MediaSource is not detachable.
 
     // 3. Remove all the SourceBuffer objects from activeSourceBuffers.
     // 4. Queue a task to fire a simple event named removesourcebuffer at activeSourceBuffers.
-    while (m_activeSourceBuffers->length())
-        removeSourceBuffer(*m_activeSourceBuffers->item(0));
+    // can be called from the destructor, where we may no longer have a scriptExecutionContext.
+    if (scriptExecutionContext()) {
+        while (m_activeSourceBuffers->length()) {
+            Ref buffer = m_activeSourceBuffers->item(0).releaseNonNull();
+            if (detachable()) {
+                removeSourceBufferWithOptionalDestruction(buffer, false);
+                m_activeSourceBuffers->remove(buffer);
+            } else
+                removeSourceBuffer(buffer);
+        }
+    } else
+        m_activeSourceBuffers->replaceWith({ });
+
+    if (detachable()) {
+        for (Ref sourceBuffer : m_sourceBuffers.get())
+            sourceBuffer->detach();
+
+        m_mediaElement = nullptr;
+        m_isAttached = false;
+
+        return;
+    }
 
     // 5. Remove all the SourceBuffer objects from sourceBuffers.
     // 6. Queue a task to fire a simple event named removesourcebuffer at sourceBuffers.
-    while (m_sourceBuffers->length())
-        removeSourceBuffer(*m_sourceBuffers->item(0));
+    // can be called from the destructor, where we may no longer have a scriptExecutionContext.
+    if (scriptExecutionContext()) {
+        while (m_sourceBuffers->length())
+            removeSourceBuffer(*m_sourceBuffers->item(0));
+    } else
+        m_sourceBuffers->replaceWith({ });
 
-    m_private = nullptr;
     m_mediaElement = nullptr;
     m_isAttached = false;
 
-    if (m_seekTargetPromise) {
-        m_seekTargetPromise->reject(PlatformMediaError::Cancelled);
-        m_seekTargetPromise.reset();
+    if (RefPtr msp = protectedPrivate()) {
+        msp->shutdown();
+        setPrivate(nullptr);
     }
 }
 
@@ -1215,8 +1343,8 @@ void MediaSource::openIfInEndedState()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     setReadyState(ReadyState::Open);
-    m_private->unmarkEndOfStream();
-    for (auto& sourceBuffer : *m_sourceBuffers)
+    protectedPrivate()->unmarkEndOfStream();
+    for (Ref sourceBuffer : m_sourceBuffers.get())
         sourceBuffer->setMediaSourceEnded(false);
 }
 
@@ -1231,7 +1359,8 @@ void MediaSource::openIfDeferredOpen()
             if (!m_openDeferred)
                 return;
             m_openDeferred = false;
-            onReadyStateChange(ReadyState::Closed, ReadyState::Open);
+            onReadyStateChange(ReadyState::Closed, m_readyStateBeforeDetached.value_or(ReadyState::Open));
+            m_readyStateBeforeDetached.reset();
         }, true);
     });
 }
@@ -1259,41 +1388,43 @@ void MediaSource::stop()
         mediaElement.detachMediaSource();
     });
     m_seekTargetPromise.reset();
-    m_private = nullptr;
+    setPrivate(nullptr);
 }
 
 MediaSource::ReadyState MediaSource::readyState() const
 {
-    return (m_openDeferred || !m_private) ? ReadyState::Closed : m_private->readyState();
+    return (m_openDeferred || !m_private) ? ReadyState::Closed : protectedPrivate()->readyState();
 }
 
 void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "old state = ", oldState, ", new state = ", newState);
 
-    if (isOpen()) {
-        m_sourceopenPending = false;
-        scheduleEvent(eventNames().sourceopenEvent);
-        for (auto& sourceBuffer : *m_sourceBuffers)
-            sourceBuffer->setMediaSourceEnded(false);
-        monitorSourceBuffers();
+    if (oldState == newState)
         return;
-    }
-    if (oldState == ReadyState::Closed && newState == ReadyState::Open) {
-        // The sourceopen event got suspended due to lack of suitability. Abort
-        return;
-    }
 
-    if (oldState == ReadyState::Open && newState == ReadyState::Ended) {
+    if (oldState == ReadyState::Closed && newState >= ReadyState::Open)
+        m_sourceopenPending = false;
+
+    // MediaSource's readyState transitions from "closed" to "open" or from "ended" to "open".
+    // If `detachable` attribute is true, from "closed" to "ended"
+    if (oldState != ReadyState::Open && newState >= ReadyState::Open)
+        scheduleEvent(eventNames().sourceopenEvent);
+
+    // MediaSource's readyState transitions from "open" to "ended".
+    // If `detachable` attribute is true, from "closed" to "ended"
+    if (newState == ReadyState::Ended) {
         scheduleEvent(eventNames().sourceendedEvent);
         // We need to force the recalculation of the buffered range as its value depends
         // on the readyState.
         // https://w3c.github.io/media-source/#htmlmediaelement-extensions-buffered
-        for (auto& sourceBuffer : *m_sourceBuffers)
+        for (auto& sourceBuffer : m_sourceBuffers.get())
             sourceBuffer->setMediaSourceEnded(true);
         updateBufferedIfNeeded(true /* force */);
-    } else {
-        ASSERT(isClosed());
+    }
+
+    // MediaSource's readyState transitions from "open" to "closed" or "ended" to "closed".
+    if (oldState > ReadyState::Closed && newState == ReadyState::Closed) {
         if (m_seekTargetPromise)
             m_seekTargetPromise->reject(PlatformMediaError::Cancelled);
         m_seekTargetPromise.reset();
@@ -1305,7 +1436,7 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
 
 Vector<PlatformTimeRanges> MediaSource::activeRanges() const
 {
-    return WTF::map(*m_activeSourceBuffers, [](auto& sourceBuffer) {
+    return WTF::map(m_activeSourceBuffers.get(), [](auto& sourceBuffer) {
         return sourceBuffer->bufferedInternal();
     });
 }
@@ -1314,13 +1445,15 @@ ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(con
 {
     ContentType type { incomingType };
 
-    RefPtr context = scriptExecutionContext();
-    RefPtr document = dynamicDowncast<Document>(context);
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (document && document->quirks().needsVP9FullRangeFlagQuirk())
         type = addVP9FullRangeVideoFlagToContentType(incomingType);
 
+    ASSERT(isOpen());
+    Ref msp = protectedPrivate().releaseNonNull();
+
     RefPtr<SourceBufferPrivate> sourceBufferPrivate;
-    switch (m_private->addSourceBuffer(type, DeprecatedGlobalSettings::webMParserEnabled(), sourceBufferPrivate)) {
+    switch (msp->addSourceBuffer(type, DeprecatedGlobalSettings::webMParserEnabled(), sourceBufferPrivate)) {
     case MediaSourcePrivate::AddStatus::Ok:
         return sourceBufferPrivate.releaseNonNull();
     case MediaSourcePrivate::AddStatus::NotSupported:
@@ -1364,13 +1497,13 @@ URLRegistry& MediaSource::registry() const
 
 void MediaSource::regenerateActiveSourceBuffers()
 {
-    Vector<RefPtr<SourceBuffer>> newList;
-    for (auto& sourceBuffer : *m_sourceBuffers) {
+    Vector<Ref<SourceBuffer>> newList;
+    for (Ref sourceBuffer : m_sourceBuffers.get()) {
         if (sourceBuffer->active())
-            newList.append(sourceBuffer);
+            newList.append(WTFMove(sourceBuffer));
     }
-    m_activeSourceBuffers->swap(newList);
-    for (auto& sourceBuffer : *m_activeSourceBuffers)
+    m_activeSourceBuffers->replaceWith(WTFMove(newList));
+    for (Ref sourceBuffer : m_activeSourceBuffers.get())
         sourceBuffer->setBufferedDirty(true);
 
     notifyElementUpdateMediaState();
@@ -1388,7 +1521,7 @@ void MediaSource::notifyElementUpdateMediaState() const
 void MediaSource::ensureWeakOnHTMLMediaElementContext(Function<void(HTMLMediaElement&)>&& task) const
 {
     ensureOnMainThread([weakMediaElement = m_mediaElement, task = WTFMove(task)]() mutable {
-        if (RefPtrAllowingPartiallyDestroyed<HTMLMediaElement> mediaElement = weakMediaElement.get())
+        if (RefPtr<HTMLMediaElement> mediaElement = weakMediaElement.get())
             task(*mediaElement);
     });
 }
@@ -1403,17 +1536,19 @@ void MediaSource::updateBufferedIfNeeded(bool force)
     if (isClosed())
         return;
 
+    Ref msp = protectedPrivate().releaseNonNull();
+
     if (!force && m_activeSourceBuffers->length() && std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [](auto& buffer) { return !buffer->isBufferedDirty(); }))
         return;
 
-    for (auto& sourceBuffer : *m_activeSourceBuffers)
+    for (Ref sourceBuffer : m_activeSourceBuffers.get())
         sourceBuffer->setBufferedDirty(false);
 
     PlatformTimeRanges buffered;
     auto updatePrivate = makeScopeExit([&] {
-        if (buffered == m_private->buffered())
+        if (buffered == msp->buffered())
             return;
-        m_private->bufferedChanged(buffered);
+        msp->bufferedChanged(buffered);
         monitorSourceBuffers();
     });
 
@@ -1456,7 +1591,7 @@ void MediaSource::updateBufferedIfNeeded(bool force)
 }
 
 #if !RELEASE_LOG_DISABLED
-void MediaSource::setLogIdentifier(const void* identifier)
+void MediaSource::setLogIdentifier(uint64_t identifier)
 {
     m_logIdentifier = identifier;
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -1470,37 +1605,38 @@ WTFLogChannel& MediaSource::logChannel() const
 
 void MediaSource::failedToCreateRenderer(RendererType type)
 {
-    if (auto context = scriptExecutionContext())
+    if (RefPtr context = scriptExecutionContext())
         context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("MediaSource "_s, type == RendererType::Video ? "video"_s : "audio"_s, " renderer creation failed."_s));
 }
 
 void MediaSource::sourceBufferReceivedFirstInitializationSegmentChanged()
 {
-    if (m_private && m_private->mediaPlayerReadyState() == MediaPlayer::ReadyState::HaveNothing) {
+    RefPtr msp = protectedPrivate();
+
+    if (msp && msp->mediaPlayerReadyState() == MediaPlayer::ReadyState::HaveNothing) {
         // 6.1 If one or more objects in sourceBuffers have first initialization segment flag set to false, then abort these steps.
-        for (auto& sourceBuffer : *sourceBuffers()) {
+        for (auto& sourceBuffer : m_sourceBuffers.get()) {
             if (!sourceBuffer->receivedFirstInitializationSegment())
                 return;
         }
         // 6.2 Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
         // 6.3 Queue a task to fire a simple event named loadedmetadata at the media element.
-        m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveMetadata);
+        msp->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveMetadata);
     }
 }
 
 void MediaSource::sourceBufferActiveTrackFlagChanged(bool activeTrackFlag)
 {
-    if (!m_private)
-        return;
-    if (activeTrackFlag && m_private->mediaPlayerReadyState() > MediaPlayer::ReadyState::HaveCurrentData)
-        setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveMetadata);
+    if (RefPtr msp = protectedPrivate()) {
+        if (activeTrackFlag && msp->mediaPlayerReadyState() > MediaPlayer::ReadyState::HaveCurrentData)
+            setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveMetadata);
+    }
 }
 
 void MediaSource::setMediaPlayerReadyState(MediaPlayer::ReadyState readyState)
 {
-    if (!m_private)
-        return;
-    m_private->setMediaPlayerReadyState(readyState);
+    if (RefPtr msp = protectedPrivate())
+        msp->setMediaPlayerReadyState(readyState);
 }
 
 void MediaSource::incrementDroppedFrameCount()
@@ -1562,7 +1698,7 @@ void MediaSource::memoryPressure()
 {
     if (!isManaged())
         return;
-    for (auto& sourceBuffer : *m_sourceBuffers)
+    for (Ref sourceBuffer : m_sourceBuffers.get())
         sourceBuffer->memoryPressure();
 }
 
@@ -1583,6 +1719,21 @@ bool MediaSource::enabledForContext(ScriptExecutionContext& context)
     return true;
 }
 
+Ref<SourceBufferList> MediaSource::sourceBuffers() const
+{
+    return m_sourceBuffers;
+}
+
+Ref<SourceBufferList> MediaSource::activeSourceBuffers() const
+{
+    return m_activeSourceBuffers;
+}
+
+RefPtr<MediaSourcePrivate> MediaSource::protectedPrivate() const
+{
+    return m_private;
+}
+
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
 
 Ref<MediaSourceHandle> MediaSource::handle()
@@ -1591,7 +1742,7 @@ Ref<MediaSourceHandle> MediaSource::handle()
         m_handle = MediaSourceHandle::create(*this, [weakClient = ThreadSafeWeakPtr { m_client.get() }](MediaSourceHandle::TaskType&& task, bool forceRunInWorker) {
             if (RefPtr protectedClient = weakClient.get())
                 protectedClient->ensureWeakOnDispatcher(WTFMove(task), forceRunInWorker);
-        });
+        }, detachable());
     }
     return *m_handle;
 }

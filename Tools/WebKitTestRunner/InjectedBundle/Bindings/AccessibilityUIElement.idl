@@ -29,7 +29,10 @@ interface AccessibilityUIElement {
 
     // Element access.
     AccessibilityUIElement elementAtPoint(long x, long y);
+    AccessibilityUIElement elementAtPointWithRemoteElement(long x, long y);
+    undefined elementAtPointResolvingRemoteFrame(long x, long y, object callbackFunction);
     AccessibilityUIElement childAtIndex(unsigned long index);
+    AccessibilityUIElement childAtIndexWithRemoteElement(unsigned long index);
     unsigned long indexOfChild(AccessibilityUIElement child);
     AccessibilityUIElement linkedUIElementAtIndex(unsigned long index);
     readonly attribute AccessibilityUIElement activeElement;
@@ -60,6 +63,7 @@ interface AccessibilityUIElement {
     readonly attribute DOMString orientation;
     readonly attribute unsigned long numberOfCharacters;
     readonly attribute long insertionPointLineNumber;
+    readonly attribute DOMString selectedText;
     readonly attribute DOMString selectedTextRange;
     readonly attribute DOMString intersectionWithSelectionRange;
     readonly attribute DOMString textInputMarkedRange;
@@ -81,6 +85,7 @@ interface AccessibilityUIElement {
 
     readonly attribute DOMString stringValue;
     readonly attribute DOMString dateValue;
+    readonly attribute DOMString dateTimeValue;
     readonly attribute long intValue;
     readonly attribute long minValue;
     readonly attribute long maxValue;
@@ -111,7 +116,7 @@ interface AccessibilityUIElement {
     readonly attribute boolean isOffScreen;
     readonly attribute boolean isValid;
     readonly attribute long hierarchicalLevel;
-    readonly attribute boolean ariaIsGrabbed;
+    readonly attribute boolean isGrabbed;
     readonly attribute DOMString ariaDropEffects;
     readonly attribute DOMString classList;
     readonly attribute DOMString embeddedImageDescription;
@@ -120,6 +125,7 @@ interface AccessibilityUIElement {
     readonly attribute boolean isDeletion;
     readonly attribute boolean isFirstItemInSuggestion;
     readonly attribute boolean isLastItemInSuggestion;
+    readonly attribute boolean isRemoteFrame;
 
     readonly attribute long x;
     readonly attribute long y;
@@ -216,6 +222,7 @@ interface AccessibilityUIElement {
     AccessibilityUIElement uiElementForSearchPredicate(AccessibilityUIElement startElement, boolean isDirectionNext, object searchKey, DOMString searchText, boolean visibleOnly, boolean immediateDescendantsOnly);
     DOMString selectTextWithCriteria(DOMString ambiguityResolution, object searchStrings, DOMString replacementString, DOMString activity);
     object searchTextWithCriteria(object searchStrings, DOMString startFrom, DOMString direction);
+    object performTextOperation(DOMString operationType, object markerRanges, object replacementStrings, boolean shouldSmartReplace);
     boolean setSelectedTextRange(unsigned long location, unsigned long length);
 
     // Scroll area attributes.
@@ -239,6 +246,8 @@ interface AccessibilityUIElement {
     AccessibilityTextMarker previousLineStartTextMarkerForTextMarker(AccessibilityTextMarker textMarker);
     AccessibilityTextMarker nextLineEndTextMarkerForTextMarker(AccessibilityTextMarker textMarker);
     long lineIndexForTextMarker(AccessibilityTextMarker textMarker);
+    AccessibilityTextMarkerRange styleTextMarkerRangeForTextMarker(AccessibilityTextMarker textMarker);
+    AccessibilityTextMarkerRange textMarkerRangeForSearchPredicate(AccessibilityTextMarkerRange startRange, boolean forward, object searchKey, DOMString searchText, boolean visibleOnly, boolean immediateDescendantsOnly);
     AccessibilityTextMarkerRange misspellingTextMarkerRange(AccessibilityTextMarkerRange start, boolean forward);
     AccessibilityTextMarkerRange textMarkerRangeForElement(AccessibilityUIElement element);
     AccessibilityTextMarkerRange textMarkerRangeForMarkers(AccessibilityTextMarker startMarker, AccessibilityTextMarker endMarker);

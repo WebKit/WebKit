@@ -21,9 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 struct WebKit::NetworkProcessConnectionParameters {
-    bool allowTestOnlyIPC;
+    WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess;
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting;
 #endif
-    WebKit::NetworkProcessPreferencesForWebProcess preferencesForWebProcess;
 };

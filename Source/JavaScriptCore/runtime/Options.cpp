@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,8 +44,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TZoneMallocInlines.h>
 #include <wtf/TranslatedProcess.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/threads/Signals.h>
 
@@ -62,9 +62,15 @@
 #include <wtf/cocoa/Entitlements.h>
 #endif
 
+#if OS(LINUX)
+#include <unistd.h>
+extern "C" char **environ;
+#endif
+
 namespace JSC {
 
 bool useOSLogOptionHasChanged = false;
+Options::SandboxPolicy Options::machExceptionHandlerSandboxPolicy = Options::SandboxPolicy::Unknown;
 
 namespace OptionsHelper {
 
@@ -73,12 +79,12 @@ namespace OptionsHelper {
 // VM run time. For now, the only field it contains is a copy of Options defaults
 // which are only used to provide more info for Options dumps.
 struct Metadata {
-    WTF_MAKE_TZONE_ALLOCATED(Metadata);
+    // This struct does not need to be TZONE_ALLOCATED because it is only used for transient memory
+    // during Options initialization, and will not be re-allocated thereafter. See comment above.
+    WTF_MAKE_FAST_ALLOCATED(Metadata);
 public:
     OptionsStorage defaults;
 };
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL(Metadata);
 
 static LazyNeverDestroyed<std::unique_ptr<Metadata>> g_metadata;
 static LazyNeverDestroyed<WTF::BitSet<NumberOfOptions>> g_optionWasOverridden;
@@ -105,10 +111,12 @@ public:
 
     bool operator==(const Option&) const;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     ASCIILiteral name() const { return g_constMetaData[m_id].name; }
     ASCIILiteral description() const { return g_constMetaData[m_id].description; }
     Options::Type type() const { return g_constMetaData[m_id].type; }
     Options::Availability availability() const { return g_constMetaData[m_id].availability; }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     Option(Options::ID id, void* addressOfValue)
         : m_id(id)
@@ -150,6 +158,8 @@ static void releaseMetadata()
     g_metadata.get() = nullptr;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 static const Option defaultFor(Options::ID id)
 {
     auto offset = g_constMetaData[id].offsetOfOption;
@@ -162,6 +172,8 @@ inline static void* addressOfOption(Options::ID id)
     auto offset = g_constMetaData[id].offsetOfOption;
     return reinterpret_cast<uint8_t*>(&g_jscConfig.options) + offset;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static const Option optionFor(Options::ID id)
 {
@@ -374,6 +386,11 @@ bool Options::isAvailable(Options::ID id, Options::Availability availability)
         return !!LLINT_TRACING;
     if (id == traceLLIntSlowPathID)
         return !!LLINT_TRACING;
+    if (id == traceWasmLLIntExecutionID)
+        return !!LLINT_TRACING;
+
+    if (id == validateVMEntryCalleeSavesID)
+        return !!ASSERT_ENABLED;
     return false;
 }
 
@@ -401,6 +418,8 @@ bool overrideOptionWithHeuristic(T& variable, Options::ID id, const char* name, 
     return false;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 bool Options::overrideAliasedOptionWithHeuristic(const char* name)
 {
     const char* stringValue = getenv(name);
@@ -414,6 +433,8 @@ bool Options::overrideAliasedOptionWithHeuristic(const char* name)
     fprintf(stderr, "WARNING: failed to parse %s=%s\n", name, stringValue);
     return false;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // !PLATFORM(COCOA)
 
@@ -445,6 +466,8 @@ bool Options::defaultTCSMValue()
 }
 
 const char* const OptionRange::s_nullRangeStr = "<null>";
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 bool OptionRange::init(const char* rangeString)
 {
@@ -493,6 +516,8 @@ bool OptionRange::init(const char* rangeString)
     return true;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 bool OptionRange::isInRange(unsigned count) const
 {
     if (m_state < Normal)
@@ -536,8 +561,17 @@ static void scaleJITPolicy()
     scaleOption(Options::thresholdForOMGOptimizeSoon(), 1);
 }
 
+#if OS(DARWIN)
+static void disableAllSignalHandlerBasedOptions();
+#endif
+
 static void overrideDefaults()
 {
+#if OS(DARWIN)
+    if (Options::machExceptionHandlerSandboxPolicy == Options::SandboxPolicy::Block)
+        disableAllSignalHandlerBasedOptions();
+#endif
+
 #if !PLATFORM(IOS_FAMILY)
     if (WTF::numberOfProcessorCores() < 4)
 #endif
@@ -552,10 +586,10 @@ static void overrideDefaults()
             Options::gcIncrementScale() = 0;
     }
 
-#if PLATFORM(MAC) && CPU(ARM64)
-    Options::numberOfGCMarkers() = 3;
-    Options::numberOfDFGCompilerThreads() = 3;
-    Options::numberOfFTLCompilerThreads() = 3;
+#if OS(DARWIN) && CPU(ARM64)
+    Options::numberOfGCMarkers() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
+    Options::numberOfDFGCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
+    Options::numberOfFTLCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
 #endif
 
 #if OS(LINUX) && CPU(ARM)
@@ -578,18 +612,13 @@ static void overrideDefaults()
 #endif
 
 #if !ENABLE(WEBASSEMBLY)
-    Options::useWebAssemblyFastMemory() = false;
+    Options::useWasmFastMemory() = false;
     Options::useWasmFaultSignalHandler() = false;
 #endif
 
 #if !HAVE(MACH_EXCEPTIONS)
     Options::useMachForExceptions() = false;
 #endif
-
-    if (Options::useWasmLLInt() && !Options::wasmLLIntTiersUpToBBQ()) {
-        Options::thresholdForOMGOptimizeAfterWarmUp() = 1500;
-        Options::thresholdForOMGOptimizeSoon() = 100;
-    }
 
 #if ASAN_ENABLED
     // This is a heuristic because ASAN builds are memory hogs in terms of stack frame usage.
@@ -615,22 +644,53 @@ void Options::setAllJITCodeValidations(bool value)
     Options::useJITAsserts() = value;
 }
 
+static inline void disableAllWasmJITOptions()
+{
+    Options::useLLInt() = true;
+    Options::useWasmJIT() = false;
+    Options::useBBQJIT() = false;
+    Options::useOMGJIT() = false;
+
+    Options::useWasmSIMD() = false;
+
+    Options::dumpWasmDisassembly() = false;
+    Options::dumpBBQDisassembly() = false;
+    Options::dumpOMGDisassembly() = false;
+}
+
+static inline void disableAllWasmOptions()
+{
+    disableAllWasmJITOptions();
+
+    Options::useWasm() = false;
+    Options::useWasmIPInt() = false;
+    Options::useWasmLLInt() = false;
+    Options::failToCompileWasmCode() = true;
+
+    Options::useWasmFastMemory() = false;
+    Options::useWasmFaultSignalHandler() = false;
+    Options::numberOfWasmCompilerThreads() = 0;
+
+    // SIMD is already disabled by JITOptions
+    Options::useWasmGC() = false;
+    Options::useWasmRelaxedSIMD() = false;
+    Options::useWasmTailCalls() = false;
+}
+
 static inline void disableAllJITOptions()
 {
     Options::useLLInt() = true;
     Options::useJIT() = false;
+    Options::useWasmJIT() = false;
+    disableAllWasmJITOptions();
+
     Options::useBaselineJIT() = false;
     Options::useDFGJIT() = false;
     Options::useFTLJIT() = false;
-    Options::useBBQJIT() = false;
-    Options::useOMGJIT() = false;
     Options::useDOMJIT() = false;
     Options::useRegExpJIT() = false;
     Options::useJITCage() = false;
     Options::useConcurrentJIT() = false;
-
-    if (!OptionsHelper::wasOverridden(Options::useWebAssemblyID))
-        Options::useWebAssembly() = false;
 
     Options::usePollingTraps() = true;
 
@@ -640,11 +700,18 @@ static inline void disableAllJITOptions()
     Options::dumpDFGDisassembly() = false;
     Options::dumpFTLDisassembly() = false;
     Options::dumpRegExpDisassembly() = false;
-    Options::dumpWasmDisassembly() = false;
-    Options::dumpBBQDisassembly() = false;
-    Options::dumpOMGDisassembly() = false;
     Options::needDisassemblySupport() = false;
 }
+
+#if OS(DARWIN)
+static void disableAllSignalHandlerBasedOptions()
+{
+    Options::usePollingTraps() = true;
+    Options::useSharedArrayBuffer() = false;
+    Options::useWasmFastMemory() = false;
+    Options::useWasmFaultSignalHandler() = false;
+}
+#endif
 
 void Options::executeDumpOptions()
 {
@@ -675,6 +742,9 @@ void Options::executeDumpOptions()
     dataLog(builder.toString());
 }
 
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 void Options::notifyOptionsChanged()
 {
     AllowUnfinalizedAccessScope scope;
@@ -685,6 +755,7 @@ void Options::notifyOptionsChanged()
 
 #if !ENABLE(JIT)
     Options::useJIT() = false;
+    Options::useWasmJIT() = false;
 #endif
 #if !ENABLE(CONCURRENT_JS)
     Options::useConcurrentJIT() = false;
@@ -711,18 +782,10 @@ void Options::notifyOptionsChanged()
 #if !CPU(X86_64) && !CPU(ARM64)
     Options::useConcurrentGC() = false;
     Options::forceUnlinkedDFG() = false;
-    Options::useWebAssemblySIMD() = false;
-    Options::useInterpretedJSEntryWrappers() = false;
+    Options::useWasmSIMD() = false;
 #if !CPU(ARM_THUMB2)
     Options::useBBQJIT() = false;
 #endif
-#if CPU(ARM_THUMB2)
-    Options::useBBQTierUpChecks() = false;
-#endif
-#endif
-
-#if ENABLE(C_LOOP) || !CPU(ADDRESS64) || !(CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
-    Options::useInterpretedJSEntryWrappers() = false;
 #endif
 
 #if !CPU(ARM64)
@@ -735,12 +798,31 @@ void Options::notifyOptionsChanged()
     if (!Options::allowDoubleShape())
         Options::useJIT() = false; // We don't support JIT with !allowDoubleShape. So disable it.
 
+    // When reenabling JITLess wasm we should unskip the tests disabled in https://bugs.webkit.org/show_bug.cgi?id=281857
+    if (!Options::useWasm() || (!Options::useJIT() && !OptionsHelper::wasOverridden(useWasmID)))
+        disableAllWasmOptions();
+
+    if (!Options::useJIT())
+        Options::useWasmJIT() = false;
+    if (!Options::useWasmJIT())
+        disableAllWasmJITOptions();
+
+    if (!Options::useWasmLLInt() && !Options::useWasmIPInt())
+        Options::thresholdForBBQOptimizeAfterWarmUp() = 0; // Trigger immediate BBQ tier up.
+
     // At initialization time, we may decide that useJIT should be false for any
     // number of reasons (including failing to allocate JIT memory), and therefore,
     // will / should not be able to enable any JIT related services.
-    if (!Options::useJIT())
+    if (!Options::useJIT()) {
         disableAllJITOptions();
-    else {
+#if OS(DARWIN)
+        // If we don't know what the sandbox policy is on mach exception handler use is, we'll
+        // take the default behavior of blocking its use if the JIT is disabled. JIT disablement
+        // is a good proxy indicator for when mach exception handler use would also be blocked.
+        if (machExceptionHandlerSandboxPolicy == SandboxPolicy::Unknown)
+            disableAllSignalHandlerBasedOptions();
+#endif
+    } else {
         if (WTF::isX86BinaryRunningOnARM()) {
             Options::useBaselineJIT() = false;
             Options::useDFGJIT() = false;
@@ -810,32 +892,13 @@ void Options::notifyOptionsChanged()
         ASSERT((static_cast<int64_t>(Options::thresholdForOptimizeAfterLongWarmUp()) << Options::reoptimizationRetryCounterMax()) > 0);
         ASSERT((static_cast<int64_t>(Options::thresholdForOptimizeAfterLongWarmUp()) << Options::reoptimizationRetryCounterMax()) <= static_cast<int64_t>(std::numeric_limits<int32_t>::max()));
 
-#if CPU(ARM)
-        Options::useOMGJIT() = false;
-#endif
+        if (isX86_64() && !isX86_64_AVX())
+            Options::useWasmSIMD() = false;
 
-        if (!Options::useBBQJIT() && Options::useOMGJIT())
-            Options::wasmLLIntTiersUpToBBQ() = false;
-
-#if CPU(X86_64) && ENABLE(JIT)
-        if (!MacroAssembler::supportsAVX())
-            Options::useWebAssemblySIMD() = false;
-#endif
-
-        if (Options::forceAllFunctionsToUseSIMD() && !Options::useWebAssemblySIMD())
+        if (Options::forceAllFunctionsToUseSIMD() && !Options::useWasmSIMD())
             Options::forceAllFunctionsToUseSIMD() = false;
 
-        if (Options::useWebAssemblyTailCalls()) {
-            // The single-pass BBQ JIT doesn't support these features currently, so we should use a different
-            // BBQ backend if any of them are enabled. We should remove these limitations as support for each
-            // is added.
-            // FIXME: Add WASM tail calls support to single-pass BBQ JIT. https://bugs.webkit.org/show_bug.cgi?id=253192
-            Options::useBBQJIT() = false;
-            Options::useWasmLLInt() = true;
-            Options::wasmLLIntTiersUpToBBQ() = false;
-        }
-
-        if (Options::useWebAssemblySIMD() && !(Options::useWasmLLInt() || Options::useWasmIPInt())) {
+        if (Options::useWasmSIMD() && !(Options::useWasmLLInt() || Options::useWasmIPInt())) {
             // The LLInt is responsible for discovering if functions use SIMD.
             // If we can't run using it, then we should be conservative.
             Options::forceAllFunctionsToUseSIMD() = true;
@@ -905,10 +968,10 @@ void Options::notifyOptionsChanged()
 #if ASAN_ENABLED && OS(LINUX)
     if (Options::useWasmFaultSignalHandler()) {
         const char* asanOptions = getenv("ASAN_OPTIONS");
-        bool okToUseWebAssemblyFastMemory = asanOptions
+        bool okToUseWasmFastMemory = asanOptions
             && (strstr(asanOptions, "allow_user_segv_handler=1") || strstr(asanOptions, "handle_segv=0"));
-        if (!okToUseWebAssemblyFastMemory) {
-            dataLogLn("WARNING: ASAN interferes with JSC signal handlers; useWebAssemblyFastMemory and useWasmFaultSignalHandler will be disabled.");
+        if (!okToUseWasmFastMemory) {
+            dataLogLn("WARNING: ASAN interferes with JSC signal handlers; useWasmFastMemory and useWasmFaultSignalHandler will be disabled.");
             Options::useWasmFaultSignalHandler() = false;
         }
     }
@@ -920,15 +983,10 @@ void Options::notifyOptionsChanged()
         Options::allowNonSPTagging() = true;
 
     if (!Options::useWasmFaultSignalHandler())
-        Options::useWebAssemblyFastMemory() = false;
+        Options::useWasmFastMemory() = false;
 
-#if CPU(ADDRESS32)
-    Options::useWebAssemblyFastMemory() = false;
-#endif
-
-#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-    uint8_t* reservedConfigBytes = reinterpret_cast_ptr<uint8_t*>(WebConfig::g_config + WebConfig::reservedSlotsForExecutableAllocator);
-    reservedConfigBytes[WebConfig::ReservedByteForAllocationProfiling] = Options::useAllocationProfiling() ? 1 : 0;
+#if CPU(ADDRESS32) || PLATFORM(PLAYSTATION)
+    Options::useWasmFastMemory() = false;
 #endif
 
     // Do range checks where needed and make corrections to the options:
@@ -937,6 +995,8 @@ void Options::notifyOptionsChanged()
     ASSERT(Options::criticalGCMemoryThreshold() > 0.0 && Options::criticalGCMemoryThreshold() < 1.0);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 #if OS(WINDOWS)
 // FIXME: Use equalLettersIgnoringASCIICase.
 inline bool strncasecmp(const char* str1, const char* str2, size_t n)
@@ -944,6 +1004,8 @@ inline bool strncasecmp(const char* str1, const char* str2, size_t n)
     return _strnicmp(str1, str2, n);
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 void Options::initialize()
 {
@@ -959,9 +1021,10 @@ void Options::initialize()
             RELEASE_ASSERT(OptionsHelper::addressOfOption(gcMaxHeapSizeID) ==  &Options::gcMaxHeapSize());
             RELEASE_ASSERT(OptionsHelper::addressOfOption(forceOSRExitToLLIntID) ==  &Options::forceOSRExitToLLInt());
 
-#ifndef NDEBUG
+#if ENABLE(JSC_RESTRICTED_OPTIONS_BY_DEFAULT)
             Config::enableRestrictedOptions();
 #endif
+
             // Initialize each of the options with their default values:
 #define INIT_OPTION(type_, name_, defaultValue_, availability_, description_) { \
                 name_() = defaultValue_; \
@@ -973,11 +1036,17 @@ void Options::initialize()
             overrideDefaults();
 
             // Allow environment vars to override options if applicable.
-            // The evn var should be the name of the option prefixed with
+            // The env var should be the name of the option prefixed with
             // "JSC_".
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || OS(LINUX)
             bool hasBadOptions = false;
-            for (char** envp = *_NSGetEnviron(); *envp; envp++) {
+#if PLATFORM(COCOA)
+            char** envp = *_NSGetEnviron();
+#else
+            char** envp = environ;
+#endif
+
+            for (; *envp; envp++) {
                 const char* env = *envp;
                 if (!strncmp("JSC_", env, 4)) {
                     if (!Options::setOption(&env[4])) {
@@ -988,7 +1057,9 @@ void Options::initialize()
             }
             if (hasBadOptions && Options::validateOptions())
                 CRASH();
-#else // PLATFORM(COCOA)
+#endif // PLATFORM(COCOA) || OS(LINUX)
+
+#if !PLATFORM(COCOA)
 #define OVERRIDE_OPTION_WITH_HEURISTICS(type_, name_, defaultValue_, availability_, description_) \
             overrideOptionWithHeuristic(name_(), name_##ID, "JSC_" #name_, Availability::availability_);
             FOR_EACH_JSC_OPTION(OVERRIDE_OPTION_WITH_HEURISTICS)
@@ -999,7 +1070,7 @@ void Options::initialize()
             FOR_EACH_JSC_ALIASED_OPTION(OVERRIDE_ALIASED_OPTION_WITH_HEURISTICS)
 #undef OVERRIDE_ALIASED_OPTION_WITH_HEURISTICS
 
-#endif // PLATFORM(COCOA)
+#endif // !PLATFORM(COCOA)
 
 #if 0
                 ; // Deconfuse editors that do auto indentation
@@ -1023,6 +1094,8 @@ void Options::initialize()
     });
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 void Options::finalize()
 {
     ASSERT(!g_jscConfig.options.allowUnfinalizedAccess);
@@ -1041,6 +1114,8 @@ static bool isSeparator(char c)
 {
     return isUnicodeCompatibleASCIIWhitespace(c) || (c == ',');
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 bool Options::setOptions(const char* optionsStr)
 {
@@ -1156,6 +1231,8 @@ bool Options::setOptionWithoutAlias(const char* arg, bool verify)
     return false; // No option matched.
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 static ASCIILiteral invertBoolOptionValue(const char* valueStr)
 {
     std::optional<OptionsStorage::Bool> value = parse<OptionsStorage::Bool>(valueStr);
@@ -1164,6 +1241,8 @@ static ASCIILiteral invertBoolOptionValue(const char* valueStr)
     return value.value() ? "false"_s : "true"_s;
 }
 
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 bool Options::setAliasedOption(const char* arg, bool verify)
 {
@@ -1182,7 +1261,7 @@ bool Options::setAliasedOption(const char* arg, bool verify)
         && !strncasecmp(arg, #aliasedName_, equalStr - arg)) {          \
         auto unaliasedOption = String::fromLatin1(#unaliasedName_);     \
         if (equivalence == SameOption)                                  \
-            unaliasedOption = unaliasedOption + span(equalStr);         \
+            unaliasedOption = makeString(unaliasedOption, span(equalStr)); \
         else {                                                          \
             ASSERT(equivalence == InvertedOption);                      \
             auto invertedValueStr = invertBoolOptionValue(equalStr + 1); \
@@ -1200,6 +1279,8 @@ bool Options::setAliasedOption(const char* arg, bool verify)
 
     return false; // No option matched.
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 bool Options::setOption(const char* arg, bool verify)
 {
@@ -1281,7 +1362,7 @@ void Options::assertOptionsAreCoherent()
         coherent = false;
         dataLog("INCOHERENT OPTIONS: at least one of useLLInt or useJIT must be true\n");
     }
-    if (useWebAssembly() && !(useWasmLLInt() || useBBQJIT())) {
+    if (useWasm() && !(useWasmLLInt() || useBBQJIT())) {
         coherent = false;
         dataLog("INCOHERENT OPTIONS: at least one of useWasmLLInt or useBBQJIT must be true\n");
     }
@@ -1299,6 +1380,8 @@ void Options::assertOptionsAreCoherent()
 }
 
 namespace OptionsHelper {
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 void Option::initValue(void* addressOfValue)
 {
@@ -1334,6 +1417,8 @@ void Option::initValue(void* addressOfValue)
     }
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 void Option::dump(StringBuilder& builder) const
 {
     switch (type()) {
@@ -1359,7 +1444,7 @@ void Option::dump(StringBuilder& builder) const
         builder.append('"', m_optionString ? span8(m_optionString) : ""_span, '"');
         break;
     case Options::Type::GCLogLevel:
-        builder.append(GCLogging::levelAsString(m_gcLogLevel));
+        builder.append(m_gcLogLevel);
         break;
     case Options::Type::OSLogType:
         builder.append(asString(m_osLogType));
@@ -1401,7 +1486,7 @@ SUPPRESS_ASAN bool canUseJITCage()
 {
     if (JSC_FORCE_USE_JIT_CAGE)
         return true;
-    return JSC_JIT_CAGE_VERSION() && WTF::processHasEntitlement("com.apple.private.verified-jit"_s);
+    return JSC_JIT_CAGE_VERSION() && !ASAN_ENABLED && WTF::processHasEntitlement("com.apple.private.verified-jit"_s);
 }
 #else
 bool canUseJITCage() { return false; }
@@ -1409,15 +1494,7 @@ bool canUseJITCage() { return false; }
 
 bool canUseHandlerIC()
 {
-#if CPU(X86_64)
-#if OS(WINDOWS)
-    return false;
-#else
-    return true;
-#endif
-#elif CPU(ARM64)
-    return !isIOS();
-#elif CPU(RISCV64)
+#if USE(JSVALUE64)
     return true;
 #else
     return false;
@@ -1428,7 +1505,7 @@ bool hasCapacityToUseLargeGigacage()
 {
     // Gigacage::hasCapacityToUseLargeGigacage is determined based on EFFECTIVE_ADDRESS_WIDTH.
     // If we have enough address range to potentially use a large gigacage,
-    // then we have enough address range to useWebAssemblyFastMemory.
+    // then we have enough address range to useWasmFastMemory.
     return Gigacage::hasCapacityToUseLargeGigacage;
 }
 

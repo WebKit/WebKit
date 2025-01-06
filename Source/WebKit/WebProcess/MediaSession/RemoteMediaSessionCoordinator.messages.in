@@ -25,7 +25,11 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
-messages -> RemoteMediaSessionCoordinator NotRefCounted {
+[
+    DispatchedFrom=UI,
+    DispatchedTo=WebContent
+]
+messages -> RemoteMediaSessionCoordinator {
 
     SeekSessionToTime(double time) -> (bool result)
 

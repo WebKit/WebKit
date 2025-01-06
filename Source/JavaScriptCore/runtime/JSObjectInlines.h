@@ -38,6 +38,8 @@
 #include "StructureInlines.h"
 #include "TypedArrayType.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 inline Structure* JSObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -810,6 +812,7 @@ ALWAYS_INLINE void JSObject::getNonReifiedStaticPropertyNames(VM& vm, PropertyNa
     if (staticPropertiesReified())
         return;
 
+    Structure* structure = this->structure();
     // Add properties from the static hashtables of properties
     for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
         const HashTable* table = info->staticPropHashTable;
@@ -817,8 +820,15 @@ ALWAYS_INLINE void JSObject::getNonReifiedStaticPropertyNames(VM& vm, PropertyNa
             continue;
 
         for (auto iter = table->begin(); iter != table->end(); ++iter) {
-            if (mode == DontEnumPropertiesMode::Include || !(iter->attributes() & PropertyAttribute::DontEnum))
-                propertyNames.add(Identifier::fromLatin1(vm, iter.key()));
+            if (mode == DontEnumPropertiesMode::Include || !(iter->attributes() & PropertyAttribute::DontEnum)) {
+                auto identifier = Identifier::fromLatin1(vm, iter.key());
+                // If the structure is shadowing the static property use it's attributes to determine if
+                // the property name is enumerable but add it here to preserve the right property order.
+                unsigned structureAttributes;
+                if (isValidOffset(structure->get(vm, identifier, structureAttributes)) && (mode == DontEnumPropertiesMode::Exclude && (structureAttributes & PropertyAttribute::DontEnum)))
+                    continue;
+                propertyNames.add(identifier);
+            }
         }
     }
 }
@@ -957,3 +967,5 @@ ALWAYS_INLINE JSFinalObject* JSFinalObject::createDefaultEmptyObject(JSGlobalObj
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

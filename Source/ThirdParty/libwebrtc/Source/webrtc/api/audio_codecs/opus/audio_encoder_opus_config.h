@@ -13,9 +13,9 @@
 
 #include <stddef.h>
 
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -43,7 +43,7 @@ struct RTC_EXPORT AudioEncoderOpusConfig {
 
   // NOTE: This member must always be set.
   // TODO(kwiberg): Turn it into just an int.
-  absl::optional<int> bitrate_bps;
+  std::optional<int> bitrate_bps;
 
   bool fec_enabled;
   bool cbr_enabled;

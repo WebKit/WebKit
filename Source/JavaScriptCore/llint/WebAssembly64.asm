@@ -31,17 +31,17 @@ end)
 
 # Wasm specific bytecodes
 
-macro emitCheckAndPreparePointer(ctx, pointer, offset, size)
-    leap size - 1[pointer, offset], t5
-    bpb t5, boundsCheckingSize, .continuation
+macro emitCheckAndPreparePointer(ctx, pointer, offset, size, scratch)
+    leap size - 1[pointer, offset], scratch
+    bpb scratch, boundsCheckingSize, .continuation
     throwException(OutOfBoundsMemoryAccess)
 .continuation:
     addp memoryBase, pointer
 end
 
-macro emitCheckAndPreparePointerAddingOffset(ctx, pointer, offset, size)
-    leap size - 1[pointer, offset], t5
-    bpb t5, boundsCheckingSize, .continuation
+macro emitCheckAndPreparePointerAddingOffset(ctx, pointer, offset, size, scratch)
+    leap size - 1[pointer, offset], scratch
+    bpb scratch, boundsCheckingSize, .continuation
 .throw:
     throwException(OutOfBoundsMemoryAccess)
 .continuation:
@@ -49,15 +49,18 @@ macro emitCheckAndPreparePointerAddingOffset(ctx, pointer, offset, size)
     addp offset, pointer
 end
 
-macro emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, pointer, offset, size)
-    leap size - 1[pointer, offset], t5
-    bpb t5, boundsCheckingSize, .continuation
-.throw:
+macro emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, pointer, offset, size, scratch)
+    leap size - 1[pointer, offset], scratch
+    bpb scratch, boundsCheckingSize, .continuationInBounds
+.throwOOB:
     throwException(OutOfBoundsMemoryAccess)
-.continuation:
+.continuationInBounds:
     addp memoryBase, pointer
     addp offset, pointer
-    btpnz pointer, (size - 1), .throw
+    btpz pointer, (size - 1), .continuationAligned
+.throwUnaligned:
+    throwException(UnalignedMemoryAccess)
+.continuationAligned:
 end
 
 
@@ -65,7 +68,7 @@ macro wasmLoadOp(name, struct, size, fn)
     wasmOp(name, struct, macro(ctx)
         mloadi(ctx, m_pointer, t0)
         wgetu(ctx, m_offset, t1)
-        emitCheckAndPreparePointer(ctx, t0, t1, size)
+        emitCheckAndPreparePointer(ctx, t0, t1, size, t5)
         fn([t0, t1], t2)
         returnq(ctx, t2)
     end)
@@ -86,7 +89,7 @@ macro wasmStoreOp(name, struct, size, fn)
     wasmOp(name, struct, macro(ctx)
         mloadi(ctx, m_pointer, t0)
         wgetu(ctx, m_offset, t1)
-        emitCheckAndPreparePointer(ctx, t0, t1, size)
+        emitCheckAndPreparePointer(ctx, t0, t1, size, t5)
         mloadq(ctx, m_value, t2)
         fn(t2, [t0, t1])
         dispatch(ctx)
@@ -114,7 +117,7 @@ wasmOp(ref_as_non_null, WasmRefAsNonNull, macro(ctx)
 end)
 
 wasmOp(get_global, WasmGetGlobal, macro(ctx)
-    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    loadp JSWebAssemblyInstance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
     lshiftp 1, t1
     loadq [t0, t1, 8], t0
@@ -122,7 +125,7 @@ wasmOp(get_global, WasmGetGlobal, macro(ctx)
 end)
 
 wasmOp(set_global, WasmSetGlobal, macro(ctx)
-    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    loadp JSWebAssemblyInstance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
     lshiftp 1, t1
     mloadq(ctx, m_value, t2)
@@ -131,7 +134,7 @@ wasmOp(set_global, WasmSetGlobal, macro(ctx)
 end)
 
 wasmOp(get_global_portable_binding, WasmGetGlobalPortableBinding, macro(ctx)
-    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    loadp JSWebAssemblyInstance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
     lshiftp 1, t1
     loadq [t0, t1, 8], t0
@@ -140,7 +143,7 @@ wasmOp(get_global_portable_binding, WasmGetGlobalPortableBinding, macro(ctx)
 end)
 
 wasmOp(set_global_portable_binding, WasmSetGlobalPortableBinding, macro(ctx)
-    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    loadp JSWebAssemblyInstance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
     lshiftp 1, t1
     mloadq(ctx, m_value, t2)
@@ -155,11 +158,7 @@ end)
 
 wasmOp(i32_div_s, WasmI32DivS, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-    else
-        const divisor = t1
-    end
+    const divisor = t1
 
     mloadi(ctx, m_lhs, dividend)
     mloadi(ctx, m_rhs, divisor)
@@ -170,7 +169,7 @@ wasmOp(i32_div_s, WasmI32DivS, macro (ctx)
     bieq dividend, constexpr INT32_MIN, .throwIntegerOverflow
 
 .safe:
-    if X86_64 or X86_64_WIN
+    if X86_64
         # FIXME: Add a way to static_assert that dividend is rax and r_rdx is rdx
         # https://bugs.webkit.org/show_bug.cgi?id=203692
         cdqi
@@ -192,20 +191,15 @@ end)
 
 wasmOp(i32_div_u, WasmI32DivU, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-        const r_rdx = t1
-    else
-        const divisor = t1
-        const r_rdx = t2
-    end
+    const divisor = t1
+    const r_rdx = t2
 
     mloadi(ctx, m_lhs, dividend)
     mloadi(ctx, m_rhs, divisor)
 
     btiz divisor, .throwDivisionByZero
 
-    if X86_64 or X86_64_WIN
+    if X86_64
         xori r_rdx, r_rdx
         udivi divisor
     elsif ARM64 or ARM64E or RISCV64
@@ -221,13 +215,8 @@ end)
 
 wasmOp(i32_rem_s, WasmI32RemS, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-        const r_rdx = t1
-    else
-        const divisor = t1
-        const r_rdx = t2
-    end
+    const divisor = t1
+    const r_rdx = t2
 
     mloadi(ctx, m_lhs, dividend)
     mloadi(ctx, m_rhs, divisor)
@@ -241,7 +230,7 @@ wasmOp(i32_rem_s, WasmI32RemS, macro (ctx)
     jmp .return
 
 .safe:
-    if X86_64 or X86_64_WIN
+    if X86_64
         # FIXME: Add a way to static_assert that t0 is rax and r_rdx is rdx
         # https://bugs.webkit.org/show_bug.cgi?id=203692
         cdqi
@@ -265,20 +254,15 @@ end)
 
 wasmOp(i32_rem_u, WasmI32RemU, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-        const r_rdx = t1
-    else
-        const divisor = t1
-        const r_rdx = t2
-    end
+    const divisor = t1
+    const r_rdx = t2
 
     mloadi(ctx, m_lhs, dividend)
     mloadi(ctx, m_rhs, divisor)
 
     btiz divisor, .throwDivisionByZero
 
-    if X86_64 or X86_64_WIN
+    if X86_64
         xori r_rdx, r_rdx
         udivi divisor
     elsif ARM64 or ARM64E
@@ -322,11 +306,7 @@ end)
 
 wasmOp(i64_div_s, WasmI64DivS, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-    else
-        const divisor = t1
-    end
+    const divisor = t1
 
     mloadq(ctx, m_lhs, dividend)
     mloadq(ctx, m_rhs, divisor)
@@ -337,7 +317,7 @@ wasmOp(i64_div_s, WasmI64DivS, macro (ctx)
     bqeq dividend, constexpr INT64_MIN, .throwIntegerOverflow
 
 .safe:
-    if X86_64 or X86_64_WIN
+    if X86_64
         # FIXME: Add a way to static_assert that t0 is rax and divisor is not rdx
         # https://bugs.webkit.org/show_bug.cgi?id=203692 
         cqoq
@@ -358,20 +338,15 @@ end)
 
 wasmOp(i64_div_u, WasmI64DivU, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-        const r_rdx = t1
-    else
-        const divisor = t1
-        const r_rdx = t2
-    end
+    const divisor = t1
+    const r_rdx = t2
 
     mloadq(ctx, m_lhs, dividend)
     mloadq(ctx, m_rhs, divisor)
 
     btqz divisor, .throwDivisionByZero
 
-    if X86_64 or X86_64_WIN
+    if X86_64
         xorq r_rdx, r_rdx
         udivq divisor
     elsif ARM64 or ARM64E or RISCV64
@@ -387,13 +362,8 @@ end)
 
 wasmOp(i64_rem_s, WasmI64RemS, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-        const r_rdx = t1
-    else
-        const divisor = t1
-        const r_rdx = t2
-    end
+    const divisor = t1
+    const r_rdx = t2
 
     mloadq(ctx, m_lhs, dividend)
     mloadq(ctx, m_rhs, divisor)
@@ -407,7 +377,7 @@ wasmOp(i64_rem_s, WasmI64RemS, macro (ctx)
     jmp .return
 
 .safe:
-    if X86_64 or X86_64_WIN
+    if X86_64
         # FIXME: Add a way to static_assert that t0 is rax and r_rdx is rdx
         # https://bugs.webkit.org/show_bug.cgi?id=203692
         cqoq
@@ -431,20 +401,15 @@ end)
 
 wasmOp(i64_rem_u, WasmI64RemU, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-        const r_rdx = t1
-    else
-        const divisor = t1
-        const r_rdx = t2
-    end
+    const divisor = t1
+    const r_rdx = t2
 
     mloadq(ctx, m_lhs, dividend)
     mloadq(ctx, m_rhs, divisor)
 
     btqz divisor, .throwDivisionByZero
 
-    if X86_64 or X86_64_WIN
+    if X86_64
         xorq r_rdx, r_rdx
         udivq divisor
     elsif ARM64 or ARM64E
@@ -951,7 +916,7 @@ macro wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, fni, fn
         mloadi(ctx, m_pointer, t3)
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_value, t0)
-        emitCheckAndPreparePointerAddingOffset(ctx, t3, t1, 1)
+        emitCheckAndPreparePointerAddingOffset(ctx, t3, t1, 1, t5)
         fnb(t0, [t3], t2, t5, t1)
         andq 0xff, t0 # FIXME: ZeroExtend8To64
         assert(macro(ok) bqbeq t0, 0xff, .ok end)
@@ -961,7 +926,7 @@ macro wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, fni, fn
         mloadi(ctx, m_pointer, t3)
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_value, t0)
-        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 2)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 2, t5)
         fnh(t0, [t3], t2, t5, t1)
         andq 0xffff, t0 # FIXME: ZeroExtend16To64
         assert(macro(ok) bqbeq t0, 0xffff, .ok end)
@@ -971,7 +936,7 @@ macro wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, fni, fn
         mloadi(ctx, m_pointer, t3)
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_value, t0)
-        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 4)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 4, t5)
         fni(t0, [t3], t2, t5, t1)
         assert(macro(ok) bqbeq t0, 0xffffffff, .ok end)
         returnq(ctx, t0)
@@ -980,7 +945,7 @@ macro wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, fni, fn
         mloadi(ctx, m_pointer, t3)
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_value, t0)
-        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 8)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 8, t5)
         fnq(t0, [t3], t2, t5, t1)
         returnq(ctx, t0)
     end)
@@ -989,7 +954,7 @@ end
 macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, fnq)
     wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
-            if X86_64 or X86_64_WIN
+            if X86_64
                 move t0GPR, t5GPR
                 loadb mem, t0GPR
             .loop:
@@ -1006,7 +971,7 @@ macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, f
             end
         end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
-            if X86_64 or X86_64_WIN
+            if X86_64
                 move t0GPR, t5GPR
                 loadh mem, t0GPR
             .loop:
@@ -1023,7 +988,7 @@ macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, f
             end
         end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
-            if X86_64 or X86_64_WIN
+            if X86_64
                 move t0GPR, t5GPR
                 loadi mem, t0GPR
             .loop:
@@ -1040,7 +1005,7 @@ macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, f
             end
         end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
-            if X86_64 or X86_64_WIN
+            if X86_64
                 move t0GPR, t5GPR
                 loadq mem, t0GPR
             .loop:
@@ -1058,7 +1023,7 @@ macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, f
         end)
 end
 
-if X86_64 or X86_64_WIN
+if X86_64
     wasmAtomicBinaryRMWOps(_add, Add,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddb t0GPR, mem end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddh t0GPR, mem end,
@@ -1201,7 +1166,7 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_expected, t0)
         mloadq(ctx, m_value, t2)
-        emitCheckAndPreparePointerAddingOffset(ctx, t3, t1, 1)
+        emitCheckAndPreparePointerAddingOffset(ctx, t3, t1, 1, t5)
         fnb(t0, t2, [t3], t5, t1)
         assert(macro(ok) bqbeq t0, 0xff, .ok end)
         returnq(ctx, t0)
@@ -1211,7 +1176,7 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_expected, t0)
         mloadq(ctx, m_value, t2)
-        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 2)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 2, t5)
         fnh(t0, t2, [t3], t5, t1)
         assert(macro(ok) bqbeq t0, 0xffff, .ok end)
         returnq(ctx, t0)
@@ -1221,7 +1186,7 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_expected, t0)
         mloadq(ctx, m_value, t2)
-        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 4)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 4, t5)
         fni(t0, t2, [t3], t5, t1)
         assert(macro(ok) bqbeq t0, 0xffffffff, .ok end)
         returnq(ctx, t0)
@@ -1231,18 +1196,18 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_expected, t0)
         mloadq(ctx, m_value, t2)
-        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 8)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 8, t5)
         fnq(t0, t2, [t3], t5, t1)
         returnq(ctx, t0)
     end)
 end
 
-if X86_64 or X86_64_WIN or ARM64E or ARM64 or RISCV64
+if X86_64 or ARM64E or ARM64 or RISCV64
 # t0GPR => expected, t2GPR => value, mem => memory reference
 wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
         andq 0xff, t0GPR
-        if X86_64 or X86_64_WIN or ARM64E
+        if X86_64 or ARM64E
             atomicweakcasb t0GPR, t2GPR, mem
             jmp .done
         .done:
@@ -1263,7 +1228,7 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
         andq 0xffff, t0GPR
-        if X86_64 or X86_64_WIN or ARM64E
+        if X86_64 or ARM64E
             atomicweakcash t0GPR, t2GPR, mem
             jmp .done
         .done:
@@ -1284,7 +1249,7 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
         andq 0xffffffff, t0GPR
-        if X86_64 or X86_64_WIN or ARM64E
+        if X86_64 or ARM64E
             atomicweakcasi t0GPR, t2GPR, mem
             jmp .done
         .done:
@@ -1304,7 +1269,7 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
         end
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
-        if X86_64 or X86_64_WIN or ARM64E
+        if X86_64 or ARM64E
             atomicweakcasq t0GPR, t2GPR, mem
         else
         .loop:
@@ -1363,8 +1328,8 @@ wasmOp(extern_convert_any, WasmExternConvertAny, macro(ctx)
 end)
 
 if ARM64E
-    global _wasmTailCallJSEntrySlowPathTrampoline
-    _wasmTailCallJSEntrySlowPathTrampoline:
+    global _wasmTailCallTrampoline
+    _wasmTailCallTrampoline:
         untagReturnAddress ws2
-        jmp ws0, JSEntryPtrTag
+        jmp ws0, WasmEntryPtrTag
 end

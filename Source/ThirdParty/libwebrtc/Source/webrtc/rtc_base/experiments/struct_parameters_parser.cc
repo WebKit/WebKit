@@ -48,7 +48,7 @@ inline void StringEncode(std::string* target, TimeDelta val) {
 }
 
 template <typename T>
-inline void StringEncode(std::string* sb, absl::optional<T> val) {
+inline void StringEncode(std::string* sb, std::optional<T> val) {
   if (val)
     StringEncode(sb, *val);
 }
@@ -69,16 +69,16 @@ template class TypedParser<bool>;
 template class TypedParser<double>;
 template class TypedParser<int>;
 template class TypedParser<unsigned>;
-template class TypedParser<absl::optional<double>>;
-template class TypedParser<absl::optional<int>>;
-template class TypedParser<absl::optional<unsigned>>;
+template class TypedParser<std::optional<double>>;
+template class TypedParser<std::optional<int>>;
+template class TypedParser<std::optional<unsigned>>;
 
 template class TypedParser<DataRate>;
 template class TypedParser<DataSize>;
 template class TypedParser<TimeDelta>;
-template class TypedParser<absl::optional<DataRate>>;
-template class TypedParser<absl::optional<DataSize>>;
-template class TypedParser<absl::optional<TimeDelta>>;
+template class TypedParser<std::optional<DataRate>>;
+template class TypedParser<std::optional<DataSize>>;
+template class TypedParser<std::optional<TimeDelta>>;
 }  // namespace struct_parser_impl
 
 StructParametersParser::StructParametersParser(

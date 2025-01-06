@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -42,7 +42,7 @@ static int read_golomb(MACROBLOCKD *xd, aom_reader *r) {
   return x - 1;
 }
 
-static INLINE int rec_eob_pos(const int eob_token, const int extra) {
+static inline int rec_eob_pos(const int eob_token, const int extra) {
   int eob = av1_eob_group_start[eob_token];
   if (eob > 2) {
     eob += extra;
@@ -50,7 +50,7 @@ static INLINE int rec_eob_pos(const int eob_token, const int extra) {
   return eob;
 }
 
-static INLINE int get_dqv(const int16_t *dequant, int coeff_idx,
+static inline int get_dqv(const int16_t *dequant, int coeff_idx,
                           const qm_val_t *iqmatrix) {
   int dqv = dequant[!!coeff_idx];
   if (iqmatrix != NULL)
@@ -59,7 +59,7 @@ static INLINE int get_dqv(const int16_t *dequant, int coeff_idx,
   return dqv;
 }
 
-static INLINE void read_coeffs_reverse_2d(aom_reader *r, TX_SIZE tx_size,
+static inline void read_coeffs_reverse_2d(aom_reader *r, TX_SIZE tx_size,
                                           int start_si, int end_si,
                                           const int16_t *scan, int bhl,
                                           uint8_t *levels,
@@ -83,7 +83,7 @@ static INLINE void read_coeffs_reverse_2d(aom_reader *r, TX_SIZE tx_size,
   }
 }
 
-static INLINE void read_coeffs_reverse(aom_reader *r, TX_SIZE tx_size,
+static inline void read_coeffs_reverse(aom_reader *r, TX_SIZE tx_size,
                                        TX_CLASS tx_class, int start_si,
                                        int end_si, const int16_t *scan, int bhl,
                                        uint8_t *levels, base_cdf_arr base_cdf,
@@ -107,11 +107,11 @@ static INLINE void read_coeffs_reverse(aom_reader *r, TX_SIZE tx_size,
   }
 }
 
-uint8_t av1_read_coeffs_txb(const AV1_COMMON *const cm, DecoderCodingBlock *dcb,
-                            aom_reader *const r, const int blk_row,
-                            const int blk_col, const int plane,
-                            const TXB_CTX *const txb_ctx,
-                            const TX_SIZE tx_size) {
+static uint8_t read_coeffs_txb(const AV1_COMMON *const cm,
+                               DecoderCodingBlock *dcb, aom_reader *const r,
+                               const int blk_row, const int blk_col,
+                               const int plane, const TXB_CTX *const txb_ctx,
+                               const TX_SIZE tx_size) {
   MACROBLOCKD *const xd = &dcb->xd;
   FRAME_CONTEXT *const ec_ctx = xd->tile_ctx;
   const int32_t max_value = (1 << (7 + xd->bd)) - 1;
@@ -303,8 +303,9 @@ uint8_t av1_read_coeffs_txb(const AV1_COMMON *const cm, DecoderCodingBlock *dcb,
       tran_low_t dq_coeff;
       // Bitmasking to clamp dq_coeff to valid range:
       //   The valid range for 8/10/12 bit video is at most 17/19/21 bit
-      dq_coeff = (tran_low_t)(
-          (int64_t)level * get_dqv(dequant, scan[c], iqmatrix) & 0xffffff);
+      dq_coeff =
+          (tran_low_t)((int64_t)level * get_dqv(dequant, scan[c], iqmatrix) &
+                       0xffffff);
       dq_coeff = dq_coeff >> shift;
       if (sign) {
         dq_coeff = -dq_coeff;
@@ -321,10 +322,9 @@ uint8_t av1_read_coeffs_txb(const AV1_COMMON *const cm, DecoderCodingBlock *dcb,
   return cul_level;
 }
 
-void av1_read_coeffs_txb_facade(const AV1_COMMON *const cm,
-                                DecoderCodingBlock *dcb, aom_reader *const r,
-                                const int plane, const int row, const int col,
-                                const TX_SIZE tx_size) {
+void av1_read_coeffs_txb(const AV1_COMMON *const cm, DecoderCodingBlock *dcb,
+                         aom_reader *const r, const int plane, const int row,
+                         const int col, const TX_SIZE tx_size) {
 #if TXCOEFF_TIMER
   struct aom_usec_timer timer;
   aom_usec_timer_start(&timer);
@@ -342,7 +342,7 @@ void av1_read_coeffs_txb_facade(const AV1_COMMON *const cm,
   get_txb_ctx(plane_bsize, tx_size, plane, pd->above_entropy_context + col,
               pd->left_entropy_context + row, &txb_ctx);
   const uint8_t cul_level =
-      av1_read_coeffs_txb(cm, dcb, r, row, col, plane, &txb_ctx, tx_size);
+      read_coeffs_txb(cm, dcb, r, row, col, plane, &txb_ctx, tx_size);
   av1_set_entropy_contexts(xd, pd, plane, plane_bsize, tx_size, cul_level, col,
                            row);
 

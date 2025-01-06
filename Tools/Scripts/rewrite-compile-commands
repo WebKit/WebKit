@@ -79,11 +79,18 @@ for entry in compile_commands:
                 include_file = os.path.join(d, include_path)
 
                 if os.path.exists(include_file):
-                    generated_compile_commands.append({
+                    renamed_entry = {
                         "directory": entry["directory"],
-                        "command": entry["command"].replace(entry_file, include_file),
                         "file": include_file,
-                    })
+                    }
+
+                    if "command" in entry:
+                        renamed_entry["command"] = entry["command"].replace(entry_file, include_file)
+                    else:
+                        renamed_arguments = [arg.replace(entry_file, include_file) for arg in entry["arguments"]]
+                        renamed_entry["arguments"] = renamed_arguments
+
+                    generated_compile_commands.append(renamed_entry)
                     break
 
 output_directory = os.path.dirname(args.output_file)

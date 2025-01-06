@@ -26,732 +26,97 @@
 #include "config.h"
 #include "CSSGradientValue.h"
 
-#include "CSSCalcValue.h"
-#include "CSSToLengthConversionData.h"
-#include "CSSValueKeywords.h"
+#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "ColorInterpolation.h"
 #include "StyleBuilderState.h"
 #include "StyleGradientImage.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+namespace CSS {
+namespace {
 
-static bool styleImageIsCacheable(const CSSGradientColorStopList& stops)
+template<typename> struct StyleImageIsUncacheable;
+
+template<typename CSSType> static bool styleImageIsUncacheable(const CSSType& value)
 {
-    for (auto& stop : stops) {
-        if (stop.color && Style::BuilderState::isColorFromPrimitiveValueDerivedFromElement(*stop.color))
-            return false;
-    }
-    return true;
+    return StyleImageIsUncacheable<CSSType>()(value);
 }
 
-static inline std::optional<StyleColor> computeStyleColor(const RefPtr<CSSPrimitiveValue>& color, Style::BuilderState& state)
-{
-    if (!color)
-        return std::nullopt;
+template<> struct StyleImageIsUncacheable<GradientColorInterpolationMethod> {
+    constexpr bool operator()(const auto&) { return false; }
+};
 
-    return state.colorFromPrimitiveValue(*color);
-}
+template<> struct StyleImageIsUncacheable<Color> {
+    bool operator()(const auto& value) { return containsCurrentColor(value) || containsColorSchemeDependentColor(value); }
+};
 
-static decltype(auto) computeStops(const CSSGradientColorStopList& stops, Style::BuilderState& state)
-{
-    return stops.map([&] (auto& stop) -> StyleGradientImageStop {
-        return { computeStyleColor(stop.color, state), stop.position };
-    });
-}
+template<CSSValueID C> struct StyleImageIsUncacheable<Constant<C>> {
+    constexpr bool operator()(const auto&) { return false; }
+};
 
-RefPtr<StyleImage> CSSLinearGradientValue::createStyleImage(Style::BuilderState& state) const
+template<UnitEnum CSSType> struct StyleImageIsUncacheable<CSSType> {
+    constexpr bool operator()(const auto& value) { return conversionToCanonicalUnitRequiresConversionData(value); }
+};
+
+template<NumericRaw CSSType> struct StyleImageIsUncacheable<CSSType> {
+    constexpr bool operator()(const auto& value) { return styleImageIsUncacheable(value.unit); }
+};
+
+template<Calc CSSType> struct StyleImageIsUncacheable<CSSType> {
+    constexpr bool operator()(const auto& value) { return value.protectedCalc()->requiresConversionData(); }
+};
+
+template<OptionalLike CSSType> struct StyleImageIsUncacheable<CSSType> {
+    bool operator()(const auto& value) { return value && styleImageIsUncacheable(*value); }
+};
+
+template<TupleLike CSSType> struct StyleImageIsUncacheable<CSSType> {
+    bool operator()(const auto& value) { return WTF::apply([&](const auto& ...x) { return (styleImageIsUncacheable(x) || ...); }, value); }
+};
+
+template<RangeLike CSSType> struct StyleImageIsUncacheable<CSSType> {
+    bool operator()(const auto& value) { return std::ranges::any_of(value, [](auto& element) { return styleImageIsUncacheable(element); }); }
+};
+
+template<VariantLike CSSType> struct StyleImageIsUncacheable<CSSType> {
+    bool operator()(const auto& value) { return WTF::switchOn(value, [](const auto& alternative) { return styleImageIsUncacheable(alternative); }); }
+};
+
+} // namespace (anonymous)
+} // namespace CSS
+
+// MARK: -
+
+RefPtr<StyleImage> CSSGradientValue::createStyleImage(const Style::BuilderState& state) const
 {
     if (m_cachedStyleImage)
         return m_cachedStyleImage;
 
     auto styleImage = StyleGradientImage::create(
-        // FIXME: The parameters to LinearData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::LinearData { m_data, m_repeating },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
+        Style::toStyle(m_gradient, state)
     );
-    if (styleImageIsCacheable(m_stops))
+    if (!CSS::styleImageIsUncacheable(m_gradient))
         m_cachedStyleImage = styleImage.ptr();
 
     return styleImage;
 }
 
-RefPtr<StyleImage> CSSPrefixedLinearGradientValue::createStyleImage(Style::BuilderState& state) const
+String CSSGradientValue::customCSSText() const
 {
-    if (m_cachedStyleImage)
-        return m_cachedStyleImage;
-
-    auto styleImage = StyleGradientImage::create(
-        // FIXME: The parameters to LinearData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::PrefixedLinearData { m_data, m_repeating },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
-    );
-    if (styleImageIsCacheable(m_stops))
-        m_cachedStyleImage = styleImage.ptr();
-
-    return styleImage;
+    return CSS::serializationForCSS(m_gradient);
 }
 
-RefPtr<StyleImage> CSSDeprecatedLinearGradientValue::createStyleImage(Style::BuilderState& state) const
+bool CSSGradientValue::equals(const CSSGradientValue& other) const
 {
-    if (m_cachedStyleImage)
-        return m_cachedStyleImage;
-
-    auto styleImage = StyleGradientImage::create(
-        // FIXME: The parameters to LinearData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::DeprecatedLinearData { m_data },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
-    );
-    if (styleImageIsCacheable(m_stops))
-        m_cachedStyleImage = styleImage.ptr();
-
-    return styleImage;
+    return m_gradient == other.m_gradient;
 }
 
-RefPtr<StyleImage> CSSRadialGradientValue::createStyleImage(Style::BuilderState& state) const
+IterationStatus CSSGradientValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
 {
-    if (m_cachedStyleImage)
-        return m_cachedStyleImage;
-
-    auto styleImage = StyleGradientImage::create(
-        // FIXME: The parameters to RadialData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::RadialData { m_data, m_repeating },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
-    );
-    if (styleImageIsCacheable(m_stops))
-        m_cachedStyleImage = styleImage.ptr();
-
-    return styleImage;
-}
-
-RefPtr<StyleImage> CSSPrefixedRadialGradientValue::createStyleImage(Style::BuilderState& state) const
-{
-    if (m_cachedStyleImage)
-        return m_cachedStyleImage;
-
-    auto styleImage = StyleGradientImage::create(
-        // FIXME: The parameters to RadialData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::PrefixedRadialData { m_data, m_repeating },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
-    );
-    if (styleImageIsCacheable(m_stops))
-        m_cachedStyleImage = styleImage.ptr();
-
-    return styleImage;
-}
-
-RefPtr<StyleImage> CSSDeprecatedRadialGradientValue::createStyleImage(Style::BuilderState& state) const
-{
-    if (m_cachedStyleImage)
-        return m_cachedStyleImage;
-
-    auto styleImage = StyleGradientImage::create(
-        // FIXME: The parameters to RadialData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::DeprecatedRadialData { m_data },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
-    );
-    if (styleImageIsCacheable(m_stops))
-        m_cachedStyleImage = styleImage.ptr();
-
-    return styleImage;
-}
-
-RefPtr<StyleImage> CSSConicGradientValue::createStyleImage(Style::BuilderState& state) const
-{
-    if (m_cachedStyleImage)
-        return m_cachedStyleImage;
-
-    auto styleImage = StyleGradientImage::create(
-        // FIXME: The parameters to ConicData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::ConicData { m_data, m_repeating },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
-    );
-    if (styleImageIsCacheable(m_stops))
-        m_cachedStyleImage = styleImage.ptr();
-
-    return styleImage;
-}
-
-static bool appendColorInterpolationMethod(StringBuilder& builder, CSSGradientColorInterpolationMethod colorInterpolationMethod, bool needsLeadingSpace)
-{
-    return WTF::switchOn(colorInterpolationMethod.method.colorSpace,
-        [&] (const ColorInterpolationMethod::OKLab&) {
-            if (colorInterpolationMethod.defaultMethod != CSSGradientColorInterpolationMethod::Default::OKLab) {
-                builder.append(needsLeadingSpace ? " "_s : ""_s, "in oklab"_s);
-                return true;
-            }
-            return false;
-        },
-        [&] (const ColorInterpolationMethod::SRGB&) {
-            if (colorInterpolationMethod.defaultMethod != CSSGradientColorInterpolationMethod::Default::SRGB) {
-                builder.append(needsLeadingSpace ? " "_s : ""_s, "in srgb"_s);
-                return true;
-            }
-            return false;
-        },
-        [&]<typename MethodColorSpace> (const MethodColorSpace& methodColorSpace) {
-            builder.append(needsLeadingSpace ? " "_s : ""_s, "in "_s, serializationForCSS(methodColorSpace.interpolationColorSpace));
-            if constexpr (hasHueInterpolationMethod<MethodColorSpace>)
-                serializationForCSS(builder, methodColorSpace.hueInterpolationMethod);
-            return true;
-        }
-    );
-}
-
-static void appendGradientStops(StringBuilder& builder, const Vector<CSSGradientColorStop, 2>& stops)
-{
-    for (auto& stop : stops) {
-        double position = stop.position->doubleValue(CSSUnitType::CSS_NUMBER);
-        if (!position)
-            builder.append(", from("_s, stop.color->cssText(), ')');
-        else if (position == 1)
-            builder.append(", to("_s, stop.color->cssText(), ')');
-        else
-            builder.append(", color-stop("_s, position, ", "_s, stop.color->cssText(), ')');
-    }
-}
-
-template<typename T, typename U> static void appendSpaceSeparatedOptionalCSSPtrText(StringBuilder& builder, const T& a, const U& b)
-{
-    if (a && b)
-        builder.append(a->cssText(), ' ', b->cssText());
-    else if (a)
-        builder.append(a->cssText());
-    else if (b)
-        builder.append(b->cssText());
-}
-
-static void writeColorStop(StringBuilder& builder, const CSSGradientColorStop& stop)
-{
-    appendSpaceSeparatedOptionalCSSPtrText(builder, stop.color, stop.position);
-}
-
-static bool operator==(const std::optional<CSSGradientPosition>& a, const std::optional<CSSGradientPosition>& b)
-{
-    return (!a && !b) || (a && b && *a == *b);
-}
-
-// MARK: - Linear.
-
-static ASCIILiteral cssText(CSSLinearGradientValue::Horizontal horizontal)
-{
-    switch (horizontal) {
-    case CSSLinearGradientValue::Horizontal::Left:
-        return "left"_s;
-    case CSSLinearGradientValue::Horizontal::Right:
-        return "right"_s;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-static ASCIILiteral cssText(CSSLinearGradientValue::Vertical vertical)
-{
-    switch (vertical) {
-    case CSSLinearGradientValue::Vertical::Top:
-        return "top"_s;
-    case CSSLinearGradientValue::Vertical::Bottom:
-        return "bottom"_s;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-String CSSLinearGradientValue::customCSSText() const
-{
-    StringBuilder result;
-
-    result.append(m_repeating == CSSGradientRepeat::Repeating ? "repeating-linear-gradient("_s : "linear-gradient("_s);
-    bool wroteSomething = false;
-
-    WTF::switchOn(m_data.gradientLine,
-        [&] (std::monostate) { },
-        [&] (const Angle& angle) {
-            if (angle.value->computeDegrees() == 180)
-                return;
-
-            result.append(angle.value->cssText());
-            wroteSomething = true;
-        },
-        [&] (Horizontal horizontal) {
-            result.append("to "_s, WebCore::cssText(horizontal));
-            wroteSomething = true;
-        },
-        [&] (Vertical vertical) {
-            if (vertical == Vertical::Bottom)
-                return;
-    
-            result.append("to "_s, WebCore::cssText(vertical));
-            wroteSomething = true;
-        },
-        [&] (const std::pair<Horizontal, Vertical>& pair) {
-            result.append("to "_s, WebCore::cssText(pair.first), ' ', WebCore::cssText(pair.second));
-            wroteSomething = true;
-        }
-    );
-
-    if (appendColorInterpolationMethod(result, m_colorInterpolationMethod, wroteSomething))
-        wroteSomething = true;
-
-    for (auto& stop : m_stops) {
-        if (wroteSomething)
-            result.append(", "_s);
-        wroteSomething = true;
-        writeColorStop(result, stop);
-    }
-
-    result.append(')');
-    return result.toString();
-}
-
-bool operator==(const CSSLinearGradientValue::Angle& a, const CSSLinearGradientValue::Angle& b)
-{
-    return compareCSSValue(a.value, b.value);
-}
-
-bool CSSLinearGradientValue::equals(const CSSLinearGradientValue& other) const
-{
-    return m_stops == other.m_stops
-        && m_repeating == other.m_repeating
-        && m_colorInterpolationMethod == other.m_colorInterpolationMethod
-        && m_data == other.m_data;
-}
-
-// MARK: - Prefixed Linear.
-
-static ASCIILiteral cssText(CSSPrefixedLinearGradientValue::Horizontal horizontal)
-{
-    switch (horizontal) {
-    case CSSPrefixedLinearGradientValue::Horizontal::Left:
-        return "left"_s;
-    case CSSPrefixedLinearGradientValue::Horizontal::Right:
-        return "right"_s;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-static ASCIILiteral cssText(CSSPrefixedLinearGradientValue::Vertical vertical)
-{
-    switch (vertical) {
-    case CSSPrefixedLinearGradientValue::Vertical::Top:
-        return "top"_s;
-    case CSSPrefixedLinearGradientValue::Vertical::Bottom:
-        return "bottom"_s;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-String CSSPrefixedLinearGradientValue::customCSSText() const
-{
-    StringBuilder result;
-
-    result.append(m_repeating == CSSGradientRepeat::Repeating ? "-webkit-repeating-linear-gradient("_s : "-webkit-linear-gradient("_s);
-
-    WTF::switchOn(m_data.gradientLine,
-        [&] (std::monostate) {
-            result.append("top"_s);
-        },
-        [&] (const Angle& angle) {
-            result.append(angle.value->cssText());
-        },
-        [&] (Horizontal horizontal) {
-            result.append(WebCore::cssText(horizontal));
-        },
-        [&] (Vertical vertical) {
-            result.append(WebCore::cssText(vertical));
-        },
-        [&] (const std::pair<Horizontal, Vertical>& pair) {
-            result.append(WebCore::cssText(pair.first), ' ', WebCore::cssText(pair.second));
-        }
-    );
-
-    for (auto& stop : m_stops) {
-        result.append(", "_s);
-        writeColorStop(result, stop);
-    }
-
-    result.append(')');
-    return result.toString();
-}
-
-bool operator==(const CSSPrefixedLinearGradientValue::Angle& a, const CSSPrefixedLinearGradientValue::Angle& b)
-{
-    return compareCSSValue(a.value, b.value);
-}
-
-bool CSSPrefixedLinearGradientValue::equals(const CSSPrefixedLinearGradientValue& other) const
-{
-    return m_stops == other.m_stops
-        && m_repeating == other.m_repeating
-        && m_colorInterpolationMethod == other.m_colorInterpolationMethod
-        && m_data == other.m_data;
-}
-
-// MARK: - Deprecated Linear.
-
-String CSSDeprecatedLinearGradientValue::customCSSText() const
-{
-    StringBuilder result;
-    result.append("-webkit-gradient(linear, "_s, m_data.firstX->cssText(), ' ', m_data.firstY->cssText(), ", "_s, m_data.secondX->cssText(), ' ', m_data.secondY->cssText());
-    appendGradientStops(result, m_stops);
-    result.append(')');
-    return result.toString();
-}
-
-bool operator==(const CSSDeprecatedLinearGradientValue::Data& a, const CSSDeprecatedLinearGradientValue::Data& b)
-{
-    return compareCSSValue(a.firstX, b.firstX)
-        && compareCSSValue(a.firstY, b.firstY)
-        && compareCSSValue(a.secondX, b.secondX)
-        && compareCSSValue(a.secondY, b.secondY);
-}
-
-bool CSSDeprecatedLinearGradientValue::equals(const CSSDeprecatedLinearGradientValue& other) const
-{
-    return m_stops == other.m_stops
-        && m_colorInterpolationMethod == other.m_colorInterpolationMethod
-        && m_data == other.m_data;
-}
-
-// MARK: - Radial.
-
-static ASCIILiteral cssText(CSSRadialGradientValue::ExtentKeyword extent)
-{
-    switch (extent) {
-    case CSSRadialGradientValue::ExtentKeyword::ClosestCorner:
-        return "closest-corner"_s;
-    case CSSRadialGradientValue::ExtentKeyword::ClosestSide:
-        return "closest-side"_s;
-    case CSSRadialGradientValue::ExtentKeyword::FarthestCorner:
-        return "farthest-corner"_s;
-    case CSSRadialGradientValue::ExtentKeyword::FarthestSide:
-        return "farthest-side"_s;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-static bool isCenterPosition(const CSSValue& value)
-{
-    if (isValueID(value, CSSValueCenter))
-        return true;
-    auto* number = dynamicDowncast<CSSPrimitiveValue>(value);
-    return number && number->doubleValue(CSSUnitType::CSS_PERCENTAGE) == 50;
-}
-
-static bool isCenterPosition(const CSSGradientPosition& position)
-{
-    return isCenterPosition(position.first) && isCenterPosition(position.second);
-}
-
-String CSSRadialGradientValue::customCSSText() const
-{
-    StringBuilder result;
-
-    result.append(m_repeating == CSSGradientRepeat::Repeating ? "repeating-radial-gradient("_s : "radial-gradient("_s);
-
-    bool wroteSomething = false;
-
-    auto appendPosition = [&](const CSSGradientPosition& position) {
-        if (!isCenterPosition(position)) {
-            if (wroteSomething)
-                result.append(' ');
-            result.append("at "_s);
-            appendSpaceSeparatedOptionalCSSPtrText(result, position.first.ptr(), position.second.ptr());
-            wroteSomething = true;
-        }
-    };
-
-    auto appendOptionalPosition = [&](const std::optional<CSSGradientPosition>& position) {
-        if (!position)
-            return;
-        appendPosition(*position);
-    };
-
-    WTF::switchOn(m_data.gradientBox,
-        [&] (std::monostate) { },
-        [&] (const Shape& data) {
-            if (data.shape != ShapeKeyword::Ellipse) {
-                result.append("circle"_s);
-                wroteSomething = true;
-            }
-            appendOptionalPosition(data.position);
-        },
-        [&] (const Extent& data) {
-            if (data.extent != ExtentKeyword::FarthestCorner) {
-                result.append(WebCore::cssText(data.extent));
-                wroteSomething = true;
-            }
-
-            appendOptionalPosition(data.position);
-        },
-        [&] (const Length& data) {
-            result.append(data.length->cssText());
-            wroteSomething = true;
-
-            appendOptionalPosition(data.position);
-        },
-        [&] (const CircleOfLength& data) {
-            result.append(data.length->cssText());
-            wroteSomething = true;
-
-            appendOptionalPosition(data.position);
-        },
-        [&] (const CircleOfExtent& data) {
-            if (data.extent != ExtentKeyword::FarthestCorner)
-                result.append("circle "_s, WebCore::cssText(data.extent));
-            else
-                result.append("circle"_s);
-            wroteSomething = true;
-            appendOptionalPosition(data.position);
-        },
-        [&] (const Size& data) {
-            result.append(data.size.first->cssText(), ' ', data.size.second->cssText());
-            wroteSomething = true;
-            appendOptionalPosition(data.position);
-        },
-        [&] (const EllipseOfSize& data) {
-            result.append(data.size.first->cssText(), ' ', data.size.second->cssText());
-            wroteSomething = true;
-            appendOptionalPosition(data.position);
-        },
-        [&] (const EllipseOfExtent& data) {
-            if (data.extent != ExtentKeyword::FarthestCorner) {
-                result.append(WebCore::cssText(data.extent));
-                wroteSomething = true;
-            }
-            appendOptionalPosition(data.position);
-        },
-        [&] (const CSSGradientPosition& data) {
-            appendPosition(data);
-        }
-    );
-
-    if (appendColorInterpolationMethod(result, m_colorInterpolationMethod, wroteSomething))
-        wroteSomething = true;
-
-    if (wroteSomething)
-        result.append(", "_s);
-
-    bool wroteFirstStop = false;
-    for (auto& stop : m_stops) {
-        if (wroteFirstStop)
-            result.append(", "_s);
-        wroteFirstStop = true;
-        writeColorStop(result, stop);
-    }
-
-    result.append(')');
-
-    return result.toString();
-}
-
-bool operator==(const CSSRadialGradientValue::Length& a, const CSSRadialGradientValue::Length& b)
-{
-    return compareCSSValue(a.length, b.length)
-        && a.position == b.position;
-}
-
-bool operator==(const CSSRadialGradientValue::CircleOfLength& a, const CSSRadialGradientValue::CircleOfLength& b)
-{
-    return compareCSSValue(a.length, b.length)
-        && a.position == b.position;
-}
-
-bool operator==(const CSSRadialGradientValue::Size& a, const CSSRadialGradientValue::Size& b)
-{
-    return compareCSSValue(a.size.first, b.size.first)
-        && compareCSSValue(a.size.second, b.size.second)
-        && a.position == b.position;
-}
-
-bool operator==(const CSSRadialGradientValue::EllipseOfSize& a, const CSSRadialGradientValue::EllipseOfSize& b)
-{
-    return compareCSSValue(a.size.first, b.size.first)
-        && compareCSSValue(a.size.second, b.size.second)
-        && a.position == b.position;
-}
-
-bool CSSRadialGradientValue::equals(const CSSRadialGradientValue& other) const
-{
-    return m_stops == other.m_stops
-        && m_repeating == other.m_repeating
-        && m_colorInterpolationMethod == other.m_colorInterpolationMethod
-        && m_data == other.m_data;
-}
-
-// MARK: Prefixed Radial.
-
-static ASCIILiteral cssText(CSSPrefixedRadialGradientValue::ShapeKeyword shape)
-{
-    switch (shape) {
-    case CSSPrefixedRadialGradientValue::ShapeKeyword::Circle:
-        return "circle"_s;
-    case CSSPrefixedRadialGradientValue::ShapeKeyword::Ellipse:
-        return "ellipse"_s;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-static ASCIILiteral cssText(CSSPrefixedRadialGradientValue::ExtentKeyword extent)
-{
-    switch (extent) {
-    case CSSPrefixedRadialGradientValue::ExtentKeyword::ClosestCorner:
-        return "closest-corner"_s;
-    case CSSPrefixedRadialGradientValue::ExtentKeyword::ClosestSide:
-        return "closest-side"_s;
-    case CSSPrefixedRadialGradientValue::ExtentKeyword::FarthestCorner:
-        return "farthest-corner"_s;
-    case CSSPrefixedRadialGradientValue::ExtentKeyword::FarthestSide:
-        return "farthest-side"_s;
-    case CSSPrefixedRadialGradientValue::ExtentKeyword::Contain:
-        return "contain"_s;
-    case CSSPrefixedRadialGradientValue::ExtentKeyword::Cover:
-        return "cover"_s;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-String CSSPrefixedRadialGradientValue::customCSSText() const
-{
-    StringBuilder result;
-
-    result.append(m_repeating == CSSGradientRepeat::Repeating ? "-webkit-repeating-radial-gradient("_s : "-webkit-radial-gradient("_s);
-
-    if (m_data.position)
-        result.append(m_data.position->first->cssText(), ' ', m_data.position->second->cssText());
-    else
-        result.append("center"_s);
-
-    WTF::switchOn(m_data.gradientBox,
-        [&] (std::monostate) { },
-        [&] (const ShapeKeyword& shape) {
-            result.append(", "_s, WebCore::cssText(shape), " cover"_s);
-        },
-        [&] (const ExtentKeyword& extent) {
-            result.append(", ellipse "_s, WebCore::cssText(extent));
-        },
-        [&] (const ShapeAndExtent& shapeAndExtent) {
-            result.append(", "_s, WebCore::cssText(shapeAndExtent.shape), ' ', WebCore::cssText(shapeAndExtent.extent));
-        },
-        [&] (const MeasuredSize& measuredSize) {
-            result.append(", "_s, measuredSize.size.first->cssText(), ' ', measuredSize.size.second->cssText());
-        }
-    );
-
-    for (auto& stop : m_stops) {
-        result.append(", "_s);
-        writeColorStop(result, stop);
-    }
-
-    result.append(')');
-
-    return result.toString();
-}
-
-bool operator==(const CSSPrefixedRadialGradientValue::MeasuredSize& a, const CSSPrefixedRadialGradientValue::MeasuredSize& b)
-{
-    return compareCSSValue(a.size.first, b.size.first)
-        && compareCSSValue(a.size.second, b.size.second);
-}
-
-bool CSSPrefixedRadialGradientValue::equals(const CSSPrefixedRadialGradientValue& other) const
-{
-    return m_stops == other.m_stops
-        && m_repeating == other.m_repeating
-        && m_colorInterpolationMethod == other.m_colorInterpolationMethod
-        && m_data == other.m_data;
-}
-
-// MARK: - Deprecated Radial.
-
-String CSSDeprecatedRadialGradientValue::customCSSText() const
-{
-    StringBuilder result;
-
-    result.append("-webkit-gradient(radial, "_s,
-        m_data.firstX->cssText(), ' ', m_data.firstY->cssText(), ", "_s, m_data.firstRadius->cssText(), ", "_s,
-        m_data.secondX->cssText(), ' ', m_data.secondY->cssText(), ", "_s, m_data.secondRadius->cssText());
-
-    appendGradientStops(result, m_stops);
-
-    result.append(')');
-
-    return result.toString();
-}
-
-bool operator==(const CSSDeprecatedRadialGradientValue::Data& a, const CSSDeprecatedRadialGradientValue::Data& b)
-{
-    return compareCSSValue(a.firstX, b.firstX)
-        && compareCSSValue(a.firstY, b.firstY)
-        && compareCSSValue(a.secondX, b.secondX)
-        && compareCSSValue(a.secondY, b.secondY)
-        && compareCSSValue(a.firstRadius, b.firstRadius)
-        && compareCSSValue(a.secondRadius, b.secondRadius);
-}
-
-bool CSSDeprecatedRadialGradientValue::equals(const CSSDeprecatedRadialGradientValue& other) const
-{
-    return m_stops == other.m_stops
-        && m_colorInterpolationMethod == other.m_colorInterpolationMethod
-        && m_data == other.m_data;
-}
-
-// MARK: - Conic
-
-String CSSConicGradientValue::customCSSText() const
-{
-    StringBuilder result;
-
-    result.append(m_repeating == CSSGradientRepeat::Repeating ? "repeating-conic-gradient("_s : "conic-gradient("_s);
-
-    bool wroteSomething = false;
-
-    if (m_data.angle.value && m_data.angle.value->computeDegrees()) {
-        result.append("from "_s, m_data.angle.value->cssText());
-        wroteSomething = true;
-    }
-
-    if (m_data.position && !isCenterPosition(*m_data.position)) {
-        if (wroteSomething)
-            result.append(' ');
-        result.append("at "_s, m_data.position->first->cssText(), ' ', m_data.position->second->cssText());
-        wroteSomething = true;
-    }
-
-    if (appendColorInterpolationMethod(result, m_colorInterpolationMethod, wroteSomething))
-        wroteSomething = true;
-
-    if (wroteSomething)
-        result.append(", "_s);
-
-    bool wroteFirstStop = false;
-    for (auto& stop : m_stops) {
-        if (wroteFirstStop)
-            result.append(", "_s);
-        wroteFirstStop = true;
-        writeColorStop(result, stop);
-    }
-
-    result.append(')');
-    return result.toString();
-}
-
-bool operator==(const CSSConicGradientValue::Angle& a, const CSSConicGradientValue::Angle& b)
-{
-    return compareCSSValuePtr(a.value, b.value);
-}
-
-bool CSSConicGradientValue::equals(const CSSConicGradientValue& other) const
-{
-    return m_stops == other.m_stops
-        && m_repeating == other.m_repeating
-        && m_colorInterpolationMethod == other.m_colorInterpolationMethod
-        && m_data == other.m_data;
+    return CSS::visitCSSValueChildren(func, m_gradient);
 }
 
 } // namespace WebCore

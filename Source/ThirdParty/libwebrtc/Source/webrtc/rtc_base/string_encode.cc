@@ -187,84 +187,15 @@ std::vector<absl::string_view> split(absl::string_view source, char delimiter) {
   return fields;
 }
 
-std::string ToString(const bool b) {
+template <>
+std::string ToString(bool b) {
   return b ? "true" : "false";
 }
 
-std::string ToString(absl::string_view s) {
-  return std::string(s);
-}
-
-std::string ToString(const char* s) {
-  return std::string(s);
-}
-
-std::string ToString(const short s) {
-  char buf[32];
-  const int len = std::snprintf(&buf[0], arraysize(buf), "%hd", s);
-  RTC_DCHECK_LE(len, arraysize(buf));
-  return std::string(&buf[0], len);
-}
-std::string ToString(const unsigned short s) {
-  char buf[32];
-  const int len = std::snprintf(&buf[0], arraysize(buf), "%hu", s);
-  RTC_DCHECK_LE(len, arraysize(buf));
-  return std::string(&buf[0], len);
-}
-std::string ToString(const int s) {
-  char buf[32];
-  const int len = std::snprintf(&buf[0], arraysize(buf), "%d", s);
-  RTC_DCHECK_LE(len, arraysize(buf));
-  return std::string(&buf[0], len);
-}
-std::string ToString(const unsigned int s) {
-  char buf[32];
-  const int len = std::snprintf(&buf[0], arraysize(buf), "%u", s);
-  RTC_DCHECK_LE(len, arraysize(buf));
-  return std::string(&buf[0], len);
-}
-std::string ToString(const long int s) {
-  char buf[32];
-  const int len = std::snprintf(&buf[0], arraysize(buf), "%ld", s);
-  RTC_DCHECK_LE(len, arraysize(buf));
-  return std::string(&buf[0], len);
-}
-std::string ToString(const unsigned long int s) {
-  char buf[32];
-  const int len = std::snprintf(&buf[0], arraysize(buf), "%lu", s);
-  RTC_DCHECK_LE(len, arraysize(buf));
-  return std::string(&buf[0], len);
-}
-std::string ToString(const long long int s) {
-  char buf[32];
-  const int len = std::snprintf(&buf[0], arraysize(buf), "%lld", s);
-  RTC_DCHECK_LE(len, arraysize(buf));
-  return std::string(&buf[0], len);
-}
-std::string ToString(const unsigned long long int s) {
-  char buf[32];
-  const int len = std::snprintf(&buf[0], arraysize(buf), "%llu", s);
-  RTC_DCHECK_LE(len, arraysize(buf));
-  return std::string(&buf[0], len);
-}
-
-std::string ToString(const double d) {
-  char buf[32];
-  const int len = std::snprintf(&buf[0], arraysize(buf), "%g", d);
-  RTC_DCHECK_LE(len, arraysize(buf));
-  return std::string(&buf[0], len);
-}
-
-std::string ToString(const long double d) {
+template <>
+std::string ToString(long double d) {
   char buf[32];
   const int len = std::snprintf(&buf[0], arraysize(buf), "%Lg", d);
-  RTC_DCHECK_LE(len, arraysize(buf));
-  return std::string(&buf[0], len);
-}
-
-std::string ToString(const void* const p) {
-  char buf[32];
-  const int len = std::snprintf(&buf[0], arraysize(buf), "%p", p);
   RTC_DCHECK_LE(len, arraysize(buf));
   return std::string(&buf[0], len);
 }

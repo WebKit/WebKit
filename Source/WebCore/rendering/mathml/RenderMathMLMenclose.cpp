@@ -35,14 +35,14 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RoundedRect.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace MathMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLMenclose);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLMenclose);
 
 // The MathML in HTML5 implementation note suggests drawing the left part of longdiv with a parenthesis.
 // For now, we use a Bezier curve and this somewhat arbitrary value.
@@ -162,12 +162,15 @@ void RenderMathMLMenclose::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    RenderMathMLRow::computePreferredLogicalWidths();
-
-    LayoutUnit preferredWidth = m_maxPreferredLogicalWidth;
+    LayoutUnit preferredWidth = preferredLogicalWidthOfRowItems();
     SpaceAroundContent space = spaceAroundContent(preferredWidth, 0);
-    m_maxPreferredLogicalWidth = space.left + preferredWidth + space.right;
-    m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth;
+    preferredWidth += space.left + space.right;
+    m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = preferredWidth;
+
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth);
+    applySizeToMathContent(LayoutPhase::CalculatePreferredLogicalWidth, sizes);
+
+    adjustPreferredLogicalWidthsForBorderAndPadding();
 
     setPreferredLogicalWidthsDirty(false);
 }
@@ -176,8 +179,15 @@ void RenderMathMLMenclose::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
+    insertPositionedChildrenIntoContainingBlock();
+
     if (!relayoutChildren && simplifiedLayout())
         return;
+
+    layoutFloatingChildren();
+
+    recomputeLogicalWidth();
+    computeAndSetBlockDirectionMarginsOfChildren();
 
     LayoutUnit contentWidth, contentAscent, contentDescent;
     stretchVerticalOperatorsAndLayoutChildren();
@@ -187,12 +197,16 @@ void RenderMathMLMenclose::layoutBlock(bool relayoutChildren, LayoutUnit)
     SpaceAroundContent space = spaceAroundContent(contentWidth, contentAscent + contentDescent);
     setLogicalWidth(space.left + contentWidth + space.right);
     setLogicalHeight(space.top + contentAscent + contentDescent + space.bottom);
-
-    LayoutPoint contentLocation(space.left, space.top);
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
-        child->setLocation(child->location() + contentLocation);
+    shiftInFlowChildren(space.left, space.top);
 
     m_contentRect = LayoutRect(space.left, space.top, contentWidth, contentAscent + contentDescent);
+
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::Layout);
+    auto shift = applySizeToMathContent(LayoutPhase::Layout, sizes);
+    shiftInFlowChildren(shift, 0);
+
+    adjustLayoutForBorderAndPadding();
+    m_contentRect.moveBy(LayoutPoint(borderLeft() + paddingLeft(), borderAndPaddingBefore()));
 
     layoutPositionedObjects(relayoutChildren);
 

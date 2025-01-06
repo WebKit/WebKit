@@ -30,6 +30,7 @@
 #include "Attachment.h"
 #include "Encoder.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -78,7 +79,7 @@ private:
 };
 
 class UnixMessage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(UnixMessage);
 public:
     UnixMessage(Encoder& encoder)
         : m_attachments(encoder.releaseAttachments())
@@ -95,7 +96,9 @@ public:
             std::swap(m_body, other.m_body);
             std::swap(m_bodyOwned, other.m_bodyOwned);
         } else if (!m_messageInfo.isBodyOutOfLine()) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Unix port
             m_body = std::span { static_cast<uint8_t*>(fastMalloc(m_messageInfo.bodySize())), m_messageInfo.bodySize() };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             memcpySpan(m_body, other.m_body);
             m_bodyOwned = true;
             other.m_body = { };

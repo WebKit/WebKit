@@ -229,14 +229,12 @@ replay run stage of multiple tests together.
 From the command line, navigate to the ANGLE root folder [angle][angle_folder] then run the
 command below:
 ```
-python3 src/tests/capture_replay_tests.py --gtest_filter=*/ES2_Vulkan --keep-temp-files --output-to-file --batch-count=8
+python3 src/tests/capture_replay_tests.py --gtest_filter=*/ES2_Vulkan --keep-temp-files --batch-count=8
 ```
 
 * `--gtest_filter` to run only specific tests
 * `--keep-temp-files` to keep the trace files
-* `--output-to-file` to write the log to results.txt at
- [src/tests/capture_replay_tests][capture_replay_test_folder] folder.
-* `--batch-count` to set the number of tests in a batch. More tests in a batch means that
+* `--batch-count` to set the number of tests in a (capture) batch. More tests in a batch means that
 the tests will finish faster, but also means a lower level of granularity.
 All command line arguments can be found at the top of the [python script][link_to_python_script].
 

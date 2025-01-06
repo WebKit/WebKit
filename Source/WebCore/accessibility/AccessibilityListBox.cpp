@@ -42,22 +42,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityListBox::AccessibilityListBox(RenderObject& renderer)
-    : AccessibilityRenderObject(renderer)
+AccessibilityListBox::AccessibilityListBox(AXID axID, RenderObject& renderer)
+    : AccessibilityRenderObject(axID, renderer)
 {
 }
 
 AccessibilityListBox::~AccessibilityListBox() = default;
 
-Ref<AccessibilityListBox> AccessibilityListBox::create(RenderObject& renderer)
+Ref<AccessibilityListBox> AccessibilityListBox::create(AXID axID, RenderObject& renderer)
 {
-    return adoptRef(*new AccessibilityListBox(renderer));
-}
-
-bool AccessibilityListBox::canSetSelectedChildren() const
-{
-    auto* selectElement = dynamicDowncast<HTMLSelectElement>(node());
-    return selectElement && !selectElement->isDisabledFormControl();
+    return adoptRef(*new AccessibilityListBox(axID, renderer));
 }
 
 void AccessibilityListBox::addChildren()
@@ -81,7 +75,7 @@ void AccessibilityListBox::setSelectedChildren(const AccessibilityChildrenVector
         return;
 
     // Unselect any selected option.
-    for (const auto& child : m_children) {
+    for (const auto& child : unignoredChildren()) {
         if (child->isSelected())
             child->setSelected(false);
     }
@@ -90,19 +84,6 @@ void AccessibilityListBox::setSelectedChildren(const AccessibilityChildrenVector
         if (object->isListBoxOption())
             object->setSelected(true);
     }
-}
-
-std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityListBox::selectedChildren()
-{
-    if (!childrenInitialized())
-        addChildren();
-
-    AccessibilityChildrenVector result;
-    for (const auto& child : m_children) {
-        if (child->isSelected())
-            result.append(child.get());
-    }
-    return result;
 }
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityListBox::visibleChildren()
@@ -115,10 +96,12 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityListBox::visibleChildren(
     if (!childrenInitialized())
         addChildren();
     
+    const auto& children = const_cast<AccessibilityListBox*>(this)->unignoredChildren();
     AccessibilityChildrenVector result;
-    for (unsigned i = 0; i < m_children.size(); i++) {
+    size_t size = children.size();
+    for (size_t i = 0; i < size; i++) {
         if (listBox->listIndexIsVisible(i))
-            result.append(m_children[i]);
+            result.append(children[i]);
     }
     return result;
 }
@@ -145,18 +128,19 @@ AccessibilityObject* AccessibilityListBox::elementAccessibilityHitTest(const Int
     LayoutRect parentRect = boundingBoxRect();
     
     AccessibilityObject* listBoxOption = nullptr;
-    unsigned length = m_children.size();
+    const auto& children = const_cast<AccessibilityListBox*>(this)->unignoredChildren();
+    unsigned length = children.size();
     for (unsigned i = 0; i < length; ++i) {
         LayoutRect rect = downcast<RenderListBox>(*m_renderer).itemBoundingBoxRect(parentRect.location(), i);
         // The cast to HTMLElement below is safe because the only other possible listItem type
         // would be a WMLElement, but WML builds don't use accessibility features at all.
         if (rect.contains(point)) {
-            listBoxOption = dynamicDowncast<AccessibilityObject>(m_children[i].get());
+            listBoxOption = &downcast<AccessibilityObject>(children[i].get());
             break;
         }
     }
     
-    if (listBoxOption && !listBoxOption->accessibilityIsIgnored())
+    if (listBoxOption && !listBoxOption->isIgnored())
         return listBoxOption;
     
     return axObjectCache()->getOrCreate(renderer());

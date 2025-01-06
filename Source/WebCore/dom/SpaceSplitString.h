@@ -20,32 +20,29 @@
 
 #pragma once
 
+#include <algorithm>
 #include <wtf/MainThread.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 class SpaceSplitStringData {
+    WTF_MAKE_TZONE_ALLOCATED(SpaceSplitStringData);
     WTF_MAKE_NONCOPYABLE(SpaceSplitStringData);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<SpaceSplitStringData> create(const AtomString&);
 
-    auto begin() const { return tokenArrayStart(); }
-    auto end() const { return tokenArrayStart() + size(); }
-    auto begin() { return tokenArrayStart(); }
-    auto end() { return tokenArrayStart() + size(); }
+    auto begin() const { return std::to_address(tokenArray().begin()); }
+    auto end() const { return std::to_address(tokenArray().end()); }
+    auto begin() { return std::to_address(tokenArray().begin()); }
+    auto end() { return std::to_address(tokenArray().end()); }
 
     bool contains(const AtomString& string)
     {
-        const AtomString* data = tokenArrayStart();
-        unsigned i = 0;
-        do {
-            if (data[i] == string)
-                return true;
-            ++i;
-        } while (i < m_size);
-        return false;
+        auto tokens = tokenArray();
+        return std::ranges::find(tokens, string) != tokens.end();
     }
 
     bool containsAll(SpaceSplitStringData&);
@@ -53,11 +50,7 @@ public:
     unsigned size() const { return m_size; }
     static constexpr ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(SpaceSplitStringData, m_size); }
 
-    const AtomString& operator[](unsigned i)
-    {
-        RELEASE_ASSERT(i < m_size);
-        return tokenArrayStart()[i];
-    }
+    const AtomString& operator[](unsigned i) { return tokenArray()[i]; }
 
     void ref()
     {
@@ -96,8 +89,10 @@ private:
     ~SpaceSplitStringData() = default;
     static void destroy(SpaceSplitStringData*);
 
-    AtomString* tokenArrayStart() { return reinterpret_cast<AtomString*>(this + 1); }
-    const AtomString* tokenArrayStart() const { return reinterpret_cast<const AtomString*>(this + 1); }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    std::span<AtomString> tokenArray() { return unsafeMakeSpan(reinterpret_cast<AtomString*>(this + 1), m_size); }
+    std::span<const AtomString> tokenArray() const { return unsafeMakeSpan(reinterpret_cast<const AtomString*>(this + 1), m_size); }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     AtomString m_keyString;
     unsigned m_refCount;

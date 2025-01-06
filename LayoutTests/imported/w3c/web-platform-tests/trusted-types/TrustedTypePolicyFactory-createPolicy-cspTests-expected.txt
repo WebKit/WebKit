@@ -1,6 +1,8 @@
-CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'SomeOtherName' because it violates the following Content Security Policy directive: "trusted-types SomeName JustOneMoreName"
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'SomeOtherName' because it violates the following Content Security Policy directive: "trusted-types SomeName JustOneMoreName AnotherName"
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'AnotherName' because it violates the following Content Security Policy directive: "trusted-types SomeName JustOneMoreName AnotherName"
 
 PASS Allowed-name policy creation works.
 PASS Another allowed-name policy creation works.
 PASS Non-allowed name policy creation throws.
+PASS Duplicate name policy creation throws.
 

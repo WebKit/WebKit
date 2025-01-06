@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -64,7 +64,7 @@
 #define HAVE_BUILTIN_BSWAP64
 #endif
 
-static INLINE uint16_t BSwap16(uint16_t x) {
+static inline uint16_t BSwap16(uint16_t x) {
 #if defined(HAVE_BUILTIN_BSWAP16)
   return __builtin_bswap16(x);
 #elif defined(_MSC_VER)
@@ -75,7 +75,7 @@ static INLINE uint16_t BSwap16(uint16_t x) {
 #endif  // HAVE_BUILTIN_BSWAP16
 }
 
-static INLINE uint32_t BSwap32(uint32_t x) {
+static inline uint32_t BSwap32(uint32_t x) {
 #if defined(HAVE_BUILTIN_BSWAP32)
   return __builtin_bswap32(x);
 #elif defined(__i386__) || defined(__x86_64__)
@@ -89,7 +89,7 @@ static INLINE uint32_t BSwap32(uint32_t x) {
 #endif  // HAVE_BUILTIN_BSWAP32
 }
 
-static INLINE uint64_t BSwap64(uint64_t x) {
+static inline uint64_t BSwap64(uint64_t x) {
 #if defined(HAVE_BUILTIN_BSWAP64)
   return __builtin_bswap64(x);
 #elif defined(__x86_64__)

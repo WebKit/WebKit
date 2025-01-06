@@ -36,6 +36,7 @@
 #include <WebCore/PlatformVideoPresentationInterface.h>
 #include <WebCore/PlatformView.h>
 #include <WebCore/ShareableBitmap.h>
+#include <WebCore/SpatialVideoMetadata.h>
 #include <WebCore/VideoPresentationModel.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -59,6 +60,7 @@ class WebPageProxy;
 class PlaybackSessionManagerProxy;
 class PlaybackSessionModelContext;
 class VideoPresentationManagerProxy;
+struct SharedPreferencesForWebProcess;
 
 class VideoPresentationModelContext final
     : public WebCore::VideoPresentationModel  {
@@ -127,8 +129,8 @@ private:
     void setTextTrackRepresentationBounds(const WebCore::IntRect&) final;
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const final;
-    const void* nextChildIdentifier() const final;
+    uint64_t logIdentifier() const final;
+    uint64_t nextChildIdentifier() const final;
     const Logger* loggerPtr() const final;
 
     ASCIILiteral logClassName() const { return "VideoPresentationModelContext"_s; };
@@ -160,12 +162,13 @@ class VideoPresentationManagerProxy
     , public CanMakeWeakPtr<VideoPresentationManagerProxy>
     , private IPC::MessageReceiver {
 public:
-    using CanMakeWeakPtr<VideoPresentationManagerProxy>::WeakPtrImplType;
-    using CanMakeWeakPtr<VideoPresentationManagerProxy>::WeakValueType;
-    using CanMakeWeakPtr<VideoPresentationManagerProxy>::weakPtrFactory;
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<VideoPresentationManagerProxy>);
 
     static Ref<VideoPresentationManagerProxy> create(WebPageProxy&, PlaybackSessionManagerProxy&);
     virtual ~VideoPresentationManagerProxy();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void invalidate();
 
@@ -181,7 +184,7 @@ public:
 
     bool isPlayingVideoInEnhancedFullscreen() const;
 
-    WebCore::PlatformVideoPresentationInterface* controlsManagerInterface();
+    RefPtr<WebCore::PlatformVideoPresentationInterface> controlsManagerInterface();
     using VideoInPictureInPictureDidChangeObserver = WTF::Observer<void(bool)>;
     void addVideoInPictureInPictureDidChangeObserver(const VideoInPictureInPictureDidChangeObserver&);
 
@@ -190,7 +193,7 @@ public:
     void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 
 #if PLATFORM(IOS_FAMILY)
-    WebCore::PlatformVideoPresentationInterface* returningToStandbyInterface() const;
+    RefPtr<WebCore::PlatformVideoPresentationInterface> returningToStandbyInterface() const;
     AVPlayerViewController *playerViewController(PlaybackSessionContextIdentifier) const;
     RetainPtr<WKVideoView> createViewWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
 #endif
@@ -202,6 +205,7 @@ public:
     PlatformLayerContainer createLayerWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
 
     void willRemoveLayerForID(PlaybackSessionContextIdentifier);
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
     friend class VideoPresentationModelContext;
@@ -209,12 +213,12 @@ private:
     explicit VideoPresentationManagerProxy(WebPageProxy&, PlaybackSessionManagerProxy&);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    typedef std::tuple<RefPtr<VideoPresentationModelContext>, RefPtr<WebCore::PlatformVideoPresentationInterface>> ModelInterfaceTuple;
+    typedef std::tuple<Ref<VideoPresentationModelContext>, Ref<WebCore::PlatformVideoPresentationInterface>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
-    ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
-    VideoPresentationModelContext& ensureModel(PlaybackSessionContextIdentifier);
-    WebCore::PlatformVideoPresentationInterface& ensureInterface(PlaybackSessionContextIdentifier);
-    WebCore::PlatformVideoPresentationInterface* findInterface(PlaybackSessionContextIdentifier) const;
+    const ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
+    Ref<VideoPresentationModelContext> ensureModel(PlaybackSessionContextIdentifier);
+    Ref<WebCore::PlatformVideoPresentationInterface> ensureInterface(PlaybackSessionContextIdentifier);
+    RefPtr<WebCore::PlatformVideoPresentationInterface> findInterface(PlaybackSessionContextIdentifier) const;
     void ensureClientForContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);
@@ -228,6 +232,7 @@ private:
     void setInlineRect(PlaybackSessionContextIdentifier, const WebCore::FloatRect& inlineRect, bool visible);
     void setHasVideoContentLayer(PlaybackSessionContextIdentifier, bool value);
     void setHasVideo(PlaybackSessionContextIdentifier, bool);
+    void setDocumentVisibility(PlaybackSessionContextIdentifier, bool);
     void setVideoDimensions(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
     void enterFullscreen(PlaybackSessionContextIdentifier);
     void exitFullscreen(PlaybackSessionContextIdentifier, WebCore::FloatRect finalRect, CompletionHandler<void(bool)>&&);
@@ -267,13 +272,15 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const;
-    const void* logIdentifier() const;
+    uint64_t logIdentifier() const;
     ASCIILiteral logClassName() const;
     WTFLogChannel& logChannel() const;
 #endif
 
     bool m_mockVideoPresentationModeEnabled { false };
     WebCore::FloatSize m_mockPictureInPictureWindowSize { DefaultMockPictureInPictureWindowWidth, DefaultMockPictureInPictureWindowHeight };
+
+    Ref<PlaybackSessionManagerProxy> protectedPlaybackSessionManagerProxy() const;
 
     WeakPtr<WebPageProxy> m_page;
     Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;

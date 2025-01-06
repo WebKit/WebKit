@@ -9,7 +9,7 @@ description: >
 features: [BigInt, Symbol, Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const instance = new Temporal.Duration(1, 0, 0, 0, 24);
 
 const primitiveTests = [
@@ -31,8 +31,7 @@ for (const [calendar, description] of primitiveTests) {
 
 const typeErrorTests = [
   [Symbol(), "symbol"],
-  [{}, "plain object that doesn't implement the protocol"],
-  [new Temporal.TimeZone("UTC"), "time zone instance"],
+  [{}, "object"],
   [Temporal.PlainDate, "Temporal.PlainDate, object"],
   [Temporal.PlainDate.prototype, "Temporal.PlainDate.prototype, object"],
   [Temporal.ZonedDateTime, "Temporal.ZonedDateTime, object"],

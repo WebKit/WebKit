@@ -40,7 +40,7 @@ class SquareGenerator : public FrameGeneratorInterface {
   VideoFrameData NextFrame() override;
   Resolution GetResolution() const override;
 
-  absl::optional<int> fps() const override { return absl::nullopt; }
+  std::optional<int> fps() const override { return std::nullopt; }
 
  private:
   rtc::scoped_refptr<I420Buffer> CreateI420Buffer(int width, int height);
@@ -84,7 +84,7 @@ class YuvFileGenerator : public FrameGeneratorInterface {
   }
   Resolution GetResolution() const override;
 
-  absl::optional<int> fps() const override { return absl::nullopt; }
+  std::optional<int> fps() const override { return std::nullopt; }
 
  private:
   // Returns true if the new frame was loaded.
@@ -119,7 +119,7 @@ class NV12FileGenerator : public FrameGeneratorInterface {
   }
   Resolution GetResolution() const override;
 
-  absl::optional<int> fps() const override { return absl::nullopt; }
+  std::optional<int> fps() const override { return std::nullopt; }
 
  private:
   // Returns true if the new frame was loaded.
@@ -151,7 +151,7 @@ class SlideGenerator : public FrameGeneratorInterface {
   }
   Resolution GetResolution() const override;
 
-  absl::optional<int> fps() const override { return absl::nullopt; }
+  std::optional<int> fps() const override { return std::nullopt; }
 
  private:
   // Generates some randomly sized and colored squares scattered
@@ -185,7 +185,7 @@ class ScrollingImageFrameGenerator : public FrameGeneratorInterface {
   }
   Resolution GetResolution() const override;
 
-  absl::optional<int> fps() const override { return absl::nullopt; }
+  std::optional<int> fps() const override { return std::nullopt; }
 
  private:
   void UpdateSourceFrame(size_t frame_num);

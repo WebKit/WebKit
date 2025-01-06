@@ -134,7 +134,7 @@ public:
     ~JITOperationPrologueCallFrameTracer()
     {
         // Fill vm.topCallFrame with invalid value when leaving from JIT operation functions.
-        m_vm.topCallFrame = bitwise_cast<CallFrame*>(static_cast<uintptr_t>(0x0badbeef0badbeefULL));
+        m_vm.topCallFrame = std::bit_cast<CallFrame*>(static_cast<uintptr_t>(0x0badbeef0badbeefULL));
     }
 
     VM& m_vm;
@@ -149,7 +149,7 @@ public:
     ~ICSlowPathCallFrameTracer()
     {
         // Fill vm.topCallFrame with invalid value when leaving from JIT operation functions.
-        m_vm.topCallFrame = bitwise_cast<CallFrame*>(static_cast<uintptr_t>(0x0badbeef0badbeefULL));
+        m_vm.topCallFrame = std::bit_cast<CallFrame*>(static_cast<uintptr_t>(0x0badbeef0badbeefULL));
     }
 
     VM& m_vm;

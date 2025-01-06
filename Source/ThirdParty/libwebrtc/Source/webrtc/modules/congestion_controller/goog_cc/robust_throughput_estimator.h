@@ -12,9 +12,9 @@
 #define MODULES_CONGESTION_CONTROLLER_GOOG_CC_ROBUST_THROUGHPUT_ESTIMATOR_H_
 
 #include <deque>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/timestamp.h"
@@ -31,9 +31,9 @@ class RobustThroughputEstimator : public AcknowledgedBitrateEstimatorInterface {
   void IncomingPacketFeedbackVector(
       const std::vector<PacketResult>& packet_feedback_vector) override;
 
-  absl::optional<DataRate> bitrate() const override;
+  std::optional<DataRate> bitrate() const override;
 
-  absl::optional<DataRate> PeekRate() const override { return bitrate(); }
+  std::optional<DataRate> PeekRate() const override { return bitrate(); }
   void SetAlr(bool /*in_alr*/) override {}
   void SetAlrEndedTime(Timestamp /*alr_ended_time*/) override {}
 

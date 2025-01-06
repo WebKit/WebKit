@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 class WebIconDatabase;
@@ -34,7 +35,7 @@ class WebIconDatabase;
 namespace API {
 
 class IconDatabaseClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(IconDatabaseClient);
 public:
     virtual ~IconDatabaseClient() { }
 

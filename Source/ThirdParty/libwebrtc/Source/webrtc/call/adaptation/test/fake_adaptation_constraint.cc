@@ -31,9 +31,9 @@ std::string FakeAdaptationConstraint::Name() const {
 }
 
 bool FakeAdaptationConstraint::IsAdaptationUpAllowed(
-    const VideoStreamInputState& input_state,
-    const VideoSourceRestrictions& restrictions_before,
-    const VideoSourceRestrictions& restrictions_after) const {
+    const VideoStreamInputState& /* input_state */,
+    const VideoSourceRestrictions& /* restrictions_before */,
+    const VideoSourceRestrictions& /* restrictions_after */) const {
   return is_adaptation_up_allowed_;
 }
 

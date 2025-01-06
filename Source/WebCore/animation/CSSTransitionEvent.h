@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class CSSTransitionEvent final : public StyleOriginatedAnimationEvent {
-    WTF_MAKE_ISO_ALLOCATED(CSSTransitionEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSTransitionEvent);
 public:
     static Ref<CSSTransitionEvent> create(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime,  double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const String propertyName)
     {

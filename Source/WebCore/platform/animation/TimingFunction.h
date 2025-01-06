@@ -24,11 +24,10 @@
 
 #pragma once
 
-#include "CSSValue.h"
-#include "ExceptionOr.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WTF {
 class TextStream;
@@ -52,9 +51,8 @@ public:
 
     virtual bool operator==(const TimingFunction&) const = 0;
 
-    static ExceptionOr<RefPtr<TimingFunction>> createFromCSSText(const String&);
-    static RefPtr<TimingFunction> createFromCSSValue(const CSSValue&);
-    double transformProgress(double progress, double duration, bool before = false) const;
+    enum class Before : bool { No, Yes };
+    double transformProgress(double progress, double duration, Before = Before::No) const;
     String cssText() const;
 };
 
@@ -119,28 +117,17 @@ public:
         return create(TimingFunctionPreset::Ease, 0.25, 0.1, 0.25, 1.0);
     }
 
+    static Ref<CubicBezierTimingFunction> create(double x1, double y1, double x2, double y2)
+    {
+        return adoptRef(*new CubicBezierTimingFunction(TimingFunctionPreset::Custom, x1, y1, x2, y2));
+    }
+
     static Ref<CubicBezierTimingFunction> create(TimingFunctionPreset preset, double x1, double y1, double x2, double y2)
     {
         return adoptRef(*new CubicBezierTimingFunction(preset, x1, y1, x2, y2));
     }
 
-    static Ref<CubicBezierTimingFunction> create(TimingFunctionPreset preset)
-    {
-        switch (preset) {
-        case TimingFunctionPreset::Ease:
-            return create(TimingFunctionPreset::Ease, 0.25, 0.1, 0.25, 1.0);
-        case TimingFunctionPreset::EaseIn:
-            return create(TimingFunctionPreset::EaseIn, 0.42, 0.0, 1.0, 1.0);
-        case TimingFunctionPreset::EaseOut:
-            return create(TimingFunctionPreset::EaseOut, 0.0, 0.0, 0.58, 1.0);
-        case TimingFunctionPreset::EaseInOut:
-            return create(TimingFunctionPreset::EaseInOut, 0.42, 0.0, 0.58, 1.0);
-        case TimingFunctionPreset::Custom:
-            break;
-        }
-        ASSERT_NOT_REACHED();
-        return create();
-    }
+    WEBCORE_EXPORT static Ref<CubicBezierTimingFunction> create(TimingFunctionPreset);
 
     bool operator==(const TimingFunction& other) const final
     {

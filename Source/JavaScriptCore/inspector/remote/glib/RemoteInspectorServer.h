@@ -65,8 +65,8 @@ private:
     GRefPtr<GSocketService> m_service;
     uint16_t m_port { 0 };
     HashSet<RefPtr<SocketConnection>> m_connections;
-    HashMap<SocketConnection*, uint64_t> m_remoteInspectorConnectionToIDMap;
-    HashMap<uint64_t, SocketConnection*> m_idToRemoteInspectorConnectionMap;
+    UncheckedKeyHashMap<SocketConnection*, uint64_t> m_remoteInspectorConnectionToIDMap;
+    UncheckedKeyHashMap<uint64_t, SocketConnection*> m_idToRemoteInspectorConnectionMap;
     SocketConnection* m_clientConnection { nullptr };
     SocketConnection* m_automationConnection { nullptr };
     HashSet<std::pair<uint64_t, uint64_t>> m_inspectionTargets;

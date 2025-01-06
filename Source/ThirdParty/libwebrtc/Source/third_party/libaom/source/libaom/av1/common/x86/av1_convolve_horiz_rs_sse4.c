@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -126,6 +126,7 @@ void av1_convolve_horiz_rs_sse4_1(const uint8_t *src, int src_stride,
   }
 }
 
+#if CONFIG_AV1_HIGHBITDEPTH
 // Note: If the crop width is not a multiple of 4, then, unlike the C version,
 // this function will overwrite some of the padding on the right hand side of
 // the frame. This padding appears to be trashed anyway, so this should not
@@ -226,3 +227,4 @@ void av1_highbd_convolve_horiz_rs_sse4_1(const uint16_t *src, int src_stride,
     }
   }
 }
+#endif  // CONFIG_AV1_HIGHBITDEPTH

@@ -56,12 +56,12 @@ void AXObjectCache::attachWrapper(AccessibilityObject&)
     // software requests them via get_accChild.
 }
 
-void AXObjectCache::handleScrolledToAnchor(const Node* anchorNode)
+void AXObjectCache::handleScrolledToAnchor(const Node& anchorNode)
 {
     // The anchor node may not be accessible. Post the notification for the
     // first accessible object.
-    if (RefPtr object = AccessibilityObject::firstAccessibleObjectFromNode(anchorNode))
-        postPlatformNotification(*object, AXScrolledToAnchor);
+    if (RefPtr object = AccessibilityObject::firstAccessibleObjectFromNode(&anchorNode))
+        postPlatformNotification(*object, AXNotification::ScrolledToAnchor);
 }
 
 void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNotification notification)
@@ -76,38 +76,38 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
 
     DWORD msaaEvent;
     switch (notification) {
-        case AXCheckedStateChanged:
-            msaaEvent = EVENT_OBJECT_STATECHANGE;
-            break;
+    case AXNotification::CheckedStateChanged:
+        msaaEvent = EVENT_OBJECT_STATECHANGE;
+        break;
 
-        case AXFocusedUIElementChanged:
-        case AXActiveDescendantChanged:
-            msaaEvent = EVENT_OBJECT_FOCUS;
-            break;
+    case AXNotification::FocusedUIElementChanged:
+    case AXNotification::ActiveDescendantChanged:
+        msaaEvent = EVENT_OBJECT_FOCUS;
+        break;
 
-        case AXScrolledToAnchor:
-            msaaEvent = EVENT_SYSTEM_SCROLLINGSTART;
-            break;
+    case AXNotification::ScrolledToAnchor:
+        msaaEvent = EVENT_SYSTEM_SCROLLINGSTART;
+        break;
 
-        case AXLayoutComplete:
-            msaaEvent = EVENT_OBJECT_REORDER;
-            break;
+    case AXNotification::LayoutComplete:
+        msaaEvent = EVENT_OBJECT_REORDER;
+        break;
 
-        case AXLoadComplete:
-            msaaEvent = IA2_EVENT_DOCUMENT_LOAD_COMPLETE;
-            break;
+    case AXNotification::LoadComplete:
+        msaaEvent = IA2_EVENT_DOCUMENT_LOAD_COMPLETE;
+        break;
 
-        case AXValueChanged:
-        case AXMenuListValueChanged:
-            msaaEvent = EVENT_OBJECT_VALUECHANGE;
-            break;
+    case AXNotification::ValueChanged:
+    case AXNotification::MenuListValueChanged:
+        msaaEvent = EVENT_OBJECT_VALUECHANGE;
+        break;
 
-        case AXMenuListItemSelected:
-            msaaEvent = EVENT_OBJECT_SELECTION;
-            break;
+    case AXNotification::MenuListItemSelected:
+        msaaEvent = EVENT_OBJECT_SELECTION;
+        break;
 
-        default:
-            return;
+    default:
+        return;
     }
 
     // Windows will end up calling get_accChild() on the root accessible
@@ -118,7 +118,8 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
     ASSERT(object.objectID().toUInt64() >= 1);
     ASSERT(object.objectID().toUInt64() <= std::numeric_limits<LONG>::max());
 
-    NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(object.objectID().toUInt64()));
+    auto objectID = object.objectID();
+    NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(objectID.toUInt64()));
 }
 
 void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&)
@@ -138,24 +139,24 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* o
     if (!page)
         return;
 
-    if (notification == AXLoadingStarted)
+    if (notification == AXLoadingEvent::Started)
         page->chrome().client().AXStartFrameLoad();
-    else if (notification == AXLoadingFinished)
+    else if (notification == AXLoadingEvent::Finished)
         page->chrome().client().AXFinishFrameLoad();
 }
 
-void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newFocusedNode)
+void AXObjectCache::platformHandleFocusedUIElementChanged(Element*, Element* newFocus)
 {
-    if (!newFocusedNode)
+    if (!newFocus)
         return;
 
-    Page* page = newFocusedNode->document().page();
+    Page* page = newFocus->document().page();
     if (!page || !page->chrome().platformPageClient())
         return;
 
     if (RefPtr focusedObject = focusedObjectForPage(page)) {
-        ASSERT(!focusedObject->accessibilityIsIgnored());
-        postPlatformNotification(*focusedObject, AXFocusedUIElementChanged);
+        ASSERT(!focusedObject->isIgnored());
+        postPlatformNotification(*focusedObject, AXNotification::FocusedUIElementChanged);
     }
 }
 

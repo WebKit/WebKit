@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
 
 class PlatformAudioData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PlatformAudioData);
 public:
     virtual ~PlatformAudioData() = default;
 

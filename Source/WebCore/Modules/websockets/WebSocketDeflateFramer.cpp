@@ -34,13 +34,14 @@
 #include "WebSocketExtensionProcessor.h"
 #include "WebSocketFrame.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
 class WebSocketExtensionDeflateFrame final : public WebSocketExtensionProcessor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebSocketExtensionDeflateFrame);
 public:
     explicit WebSocketExtensionDeflateFrame(WebSocketDeflateFramer&);
 
@@ -53,6 +54,8 @@ private:
     bool m_responseProcessed { false };
     String m_failureReason;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketExtensionDeflateFrame);
 
 // FXIME: Remove vendor prefix after the specification matured.
 WebSocketExtensionDeflateFrame::WebSocketExtensionDeflateFrame(WebSocketDeflateFramer& framer)
@@ -106,6 +109,8 @@ bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, Strin
     return true;
 }
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeflateResultHolder);
+
 DeflateResultHolder::DeflateResultHolder(WebSocketDeflateFramer& framer)
     : m_framer(framer)
 {
@@ -121,6 +126,8 @@ void DeflateResultHolder::fail(const String& failureReason)
     m_succeeded = false;
     m_failureReason = failureReason;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InflateResultHolder);
 
 InflateResultHolder::InflateResultHolder(WebSocketDeflateFramer& framer)
     : m_framer(framer)

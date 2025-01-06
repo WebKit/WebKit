@@ -29,13 +29,16 @@
 #include "SQLiteDatabase.h"
 #include <span>
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 
 struct sqlite3_stmt;
 
 namespace WebCore {
 
-class SQLiteStatement {
-    WTF_MAKE_NONCOPYABLE(SQLiteStatement); WTF_MAKE_FAST_ALLOCATED;
+class SQLiteStatement : public CanMakeThreadSafeCheckedPtr<SQLiteStatement> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteStatement, WEBCORE_EXPORT);
+    WTF_MAKE_NONCOPYABLE(SQLiteStatement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SQLiteStatement);
 public:
     WEBCORE_EXPORT ~SQLiteStatement();
     WEBCORE_EXPORT SQLiteStatement(SQLiteStatement&&);

@@ -2,12 +2,9 @@ load("@rules_rust//rust:defs.bzl", "rust_static_library")
 load("//bazel:rust_cxx_bridge.bzl", "rust_cxx_bridge")
 load(
     "//bazel:skia_rules.bzl",
-    "exports_files_legacy",
     "select_multi",
     "skia_cc_library",
 )
-
-exports_files_legacy()
 
 # C++ sources
 skia_cc_library(
@@ -57,6 +54,12 @@ rust_static_library(
 cc_library(
     name = "vello_ffi",
     srcs = [":ffi_gen/filegroup"],
+    defines = select_multi(
+        {
+            "@vello//:msl_shaders": ["VELLO_MSL_SHADERS=true"],
+            "@vello//:wgsl_shaders": ["VELLO_WGSL_SHADERS=true"],
+        },
+    ),
     visibility = ["//visibility:public"],
     deps = [
         ":cpp",

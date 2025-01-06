@@ -26,9 +26,13 @@
 #pragma once
 
 #include "IDBDatabaseIdentifier.h"
+#include "IDBIndexIdentifier.h"
+#include "IDBObjectStoreIdentifier.h"
 #include "IDBResourceIdentifier.h"
 #include "IndexedDB.h"
+#include <optional>
 #include <wtf/ArgumentCoder.h>
+#include <wtf/Markable.h>
 
 namespace WebCore {
 
@@ -58,8 +62,8 @@ public:
     IDBConnectionIdentifier serverConnectionIdentifier() const;
     WEBCORE_EXPORT IDBResourceIdentifier requestIdentifier() const;
     WEBCORE_EXPORT IDBResourceIdentifier transactionIdentifier() const;
-    uint64_t objectStoreIdentifier() const;
-    uint64_t indexIdentifier() const;
+    IDBObjectStoreIdentifier objectStoreIdentifier() const;
+    std::optional<IDBIndexIdentifier> indexIdentifier() const;
     IndexedDB::IndexRecordType indexRecordType() const;
     IDBResourceIdentifier cursorIdentifier() const;
     uint64_t requestedVersion() const;
@@ -67,15 +71,15 @@ public:
 
 private:
     friend struct IPC::ArgumentCoder<IDBRequestData, void>;
-    WEBCORE_EXPORT IDBRequestData(IDBConnectionIdentifier serverConnectionIdentifier, IDBResourceIdentifier requestIdentifier, IDBResourceIdentifier transactionIdentifier, std::optional<IDBResourceIdentifier>&& cursorIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType, uint64_t requestedVersion, IndexedDB::RequestType);
+    WEBCORE_EXPORT IDBRequestData(IDBConnectionIdentifier serverConnectionIdentifier, IDBResourceIdentifier requestIdentifier, IDBResourceIdentifier transactionIdentifier, std::optional<IDBResourceIdentifier>&& cursorIdentifier, std::optional<IDBObjectStoreIdentifier>, std::optional<IDBIndexIdentifier>, IndexedDB::IndexRecordType, uint64_t requestedVersion, IndexedDB::RequestType);
     static void isolatedCopy(const IDBRequestData& source, IDBRequestData& destination);
 
     IDBConnectionIdentifier m_serverConnectionIdentifier;
     IDBResourceIdentifier m_requestIdentifier;
     IDBResourceIdentifier m_transactionIdentifier;
     std::optional<IDBResourceIdentifier> m_cursorIdentifier;
-    uint64_t m_objectStoreIdentifier { 0 };
-    uint64_t m_indexIdentifier { 0 };
+    Markable<IDBObjectStoreIdentifier> m_objectStoreIdentifier;
+    Markable<IDBIndexIdentifier> m_indexIdentifier;
     IndexedDB::IndexRecordType m_indexRecordType { IndexedDB::IndexRecordType::Key };
     uint64_t m_requestedVersion { 0 };
 

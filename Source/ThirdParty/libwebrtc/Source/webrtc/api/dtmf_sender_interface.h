@@ -13,8 +13,7 @@
 
 #include <string>
 
-#include "api/media_stream_interface.h"
-#include "rtc_base/ref_count.h"
+#include "api/ref_count.h"
 
 namespace webrtc {
 
@@ -28,12 +27,12 @@ class DtmfSenderObserverInterface {
   // tones.
   // The callback includes the state of the tone buffer at the time when
   // the tone finished playing.
-  virtual void OnToneChange(const std::string& tone,
-                            const std::string& tone_buffer) {}
+  virtual void OnToneChange(const std::string& /* tone */,
+                            const std::string& /* tone_buffer */) {}
   // DEPRECATED: Older API without tone buffer.
   // TODO(bugs.webrtc.org/9725): Remove old API and default implementation
   // when old callers are gone.
-  virtual void OnToneChange(const std::string& tone) {}
+  virtual void OnToneChange(const std::string& /* tone */) {}
 
  protected:
   virtual ~DtmfSenderObserverInterface() = default;
@@ -42,7 +41,7 @@ class DtmfSenderObserverInterface {
 // The interface of native implementation of the RTCDTMFSender defined by the
 // WebRTC W3C Editor's Draft.
 // See: https://www.w3.org/TR/webrtc/#peer-to-peer-dtmf
-class DtmfSenderInterface : public rtc::RefCountInterface {
+class DtmfSenderInterface : public webrtc::RefCountInterface {
  public:
   // Provides the spec compliant default 2 second delay for the ',' character.
   static const int kDtmfDefaultCommaDelayMs = 2000;
@@ -92,7 +91,7 @@ class DtmfSenderInterface : public rtc::RefCountInterface {
   virtual bool InsertDtmf(const std::string& tones,
                           int duration,
                           int inter_tone_gap,
-                          int comma_delay) {
+                          int /* comma_delay */) {
     // TODO(bugs.webrtc.org/165700): Remove once downstream implementations
     // override this signature rather than the 3-parameter one.
     return InsertDtmf(tones, duration, inter_tone_gap);

@@ -36,7 +36,7 @@ TEST(WebKit, OrthogonalFlowAvailableSize)
     CGPoint origin = CGPointMake(0, 0);
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(origin.x, origin.y, 500, 500)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"orthogonal-flow-available-size" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"orthogonal-flow-available-size" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 

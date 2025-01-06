@@ -27,6 +27,7 @@
 #import <WebCore/PageIdentifier.h>
 #import <wtf/Lock.h>
 #import <wtf/NakedPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 namespace WebKit {
 class WebPage;
@@ -38,15 +39,21 @@ class AXCoreObject;
 
 @interface WKAccessibilityWebPageObjectBase : NSObject {
     NakedPtr<WebKit::WebPage> m_page;
-    WebCore::PageIdentifier m_pageID;
+    Markable<WebCore::PageIdentifier> m_pageID;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     Lock m_cacheLock;
     WebCore::FloatPoint m_position WTF_GUARDED_BY_LOCK(m_cacheLock);
     WebCore::IntSize m_size WTF_GUARDED_BY_LOCK(m_cacheLock);
     ThreadSafeWeakPtr<WebCore::AXCoreObject> m_isolatedTreeRoot;
-#endif
+
+    Lock m_windowLock;
+    WeakObjCPtr<id> m_window;
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
     WebCore::IntPoint m_remoteFrameOffset;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    Lock m_parentLock;
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     RetainPtr<id> m_parent;
     bool m_hasMainFramePlugin;
 }
@@ -56,6 +63,7 @@ class AXCoreObject;
 - (void)setPosition:(const WebCore::FloatPoint&)point;
 - (void)setSize:(const WebCore::IntSize&)size;
 - (void)setIsolatedTreeRoot:(NakedPtr<WebCore::AXCoreObject>)root;
+- (void)setWindow:(id)window;
 #endif
 - (void)setRemoteParent:(id)parent;
 - (void)setRemoteFrameOffset:(WebCore::IntPoint)offset;

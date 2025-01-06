@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,12 +36,17 @@
 #include "AudioContext.h"
 #include "AudioFileReader.h"
 #include "AudioUtilities.h"
+#include "ScriptWrappableInlines.h"
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioBuffer);
 
 RefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, LegacyPreventDetaching preventDetaching)
 {
@@ -187,7 +192,7 @@ ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalO
 
     if (globalObject.worldIsNormal()) {
         if (!m_channelWrappers[channelIndex])
-            m_channelWrappers[channelIndex].setWeakly(constructJSArray());
+            m_channelWrappers[channelIndex].set(globalObject.vm(), wrapper(), constructJSArray());
         return m_channelWrappers[channelIndex].getValue();
     }
     return constructJSArray();
@@ -213,13 +218,13 @@ RefPtr<Float32Array> AudioBuffer::channelData(unsigned channelIndex)
     return m_channels[channelIndex].copyRef();
 }
 
-float* AudioBuffer::rawChannelData(unsigned channelIndex)
+std::span<float> AudioBuffer::rawChannelData(unsigned channelIndex)
 {
     if (channelIndex >= m_channels.size())
-        return nullptr;
+        return { };
     if (hasDetachedChannelBuffer())
-        return nullptr;
-    return m_channels[channelIndex]->data();
+        return { };
+    return m_channels[channelIndex]->typedMutableSpan();
 }
 
 ExceptionOr<void> AudioBuffer::copyFromChannel(Ref<Float32Array>&& destination, unsigned channelNumber, unsigned bufferOffset)
@@ -242,13 +247,13 @@ ExceptionOr<void> AudioBuffer::copyFromChannel(Ref<Float32Array>&& destination, 
     size_t count = dataLength - bufferOffset;
     count = std::min(destination.get().length(), count);
     
-    const float* src = channelData->data();
-    float* dst = destination->data();
+    auto src = channelData->typedSpan();
+    auto dst = destination->typedMutableSpan();
     
-    ASSERT(src);
-    ASSERT(dst);
+    ASSERT(src.data());
+    ASSERT(dst.data());
     
-    memmove(dst, src + bufferOffset, count * sizeof(*src));
+    memmoveSpan(dst, src.subspan(bufferOffset, count));
     return { };
 }
 
@@ -270,13 +275,13 @@ ExceptionOr<void> AudioBuffer::copyToChannel(Ref<Float32Array>&& source, unsigne
     size_t count = dataLength - bufferOffset;
     count = std::min(source.get().length(), count);
     
-    const float* src = source->data();
-    float* dst = channelData->data();
+    auto src = source->typedSpan();
+    auto dst = channelData->typedMutableSpan();
     
-    ASSERT(src);
-    ASSERT(dst);
+    ASSERT(src.data());
+    ASSERT(dst.data());
     
-    memmove(dst + bufferOffset, src, count * sizeof(*dst));
+    memmoveSpan(dst.subspan(bufferOffset), src.first(count));
     m_noiseInjectionMultiplier = 0;
     return { };
 }
@@ -326,7 +331,7 @@ bool AudioBuffer::copyTo(AudioBuffer& other) const
         return false;
 
     for (unsigned channelIndex = 0; channelIndex < numberOfChannels(); ++channelIndex)
-        memcpy(other.rawChannelData(channelIndex), m_channels[channelIndex]->data(), length() * sizeof(float));
+        memcpySpan(other.rawChannelData(channelIndex), m_channels[channelIndex]->typedSpan().first(length()));
 
     other.m_noiseInjectionMultiplier = m_noiseInjectionMultiplier;
     return true;
@@ -352,7 +357,7 @@ void AudioBuffer::applyNoiseIfNeeded()
         return;
 
     for (auto& channel : m_channels)
-        AudioUtilities::applyNoise(channel->data(), channel->length(), m_noiseInjectionMultiplier);
+        AudioUtilities::applyNoise(channel->typedMutableSpan(), m_noiseInjectionMultiplier);
 
     m_noiseInjectionMultiplier = 0;
 }

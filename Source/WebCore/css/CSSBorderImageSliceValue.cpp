@@ -26,12 +26,13 @@
 #include "config.h"
 #include "CSSBorderImageSliceValue.h"
 
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 CSSBorderImageSliceValue::CSSBorderImageSliceValue(Quad slices, bool fill)
-    : CSSValue(BorderImageSliceClass)
+    : CSSValue(ClassType::BorderImageSlice)
     , m_slices(WTFMove(slices))
     , m_fill(fill)
 {

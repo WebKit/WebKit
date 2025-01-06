@@ -29,24 +29,15 @@
 
 #include <WebCore/LibWebRTCProvider.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/StdMap.h>
+#include <wtf/TZoneMalloc.h>
 
-ALLOW_COMMA_BEGIN
-
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/rtc_base/async_packet_socket.h>
-
-ALLOW_COMMA_END
-
-namespace WebKit {
-class LibWebRTCSocket;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::LibWebRTCSocket> : std::true_type { };
-}
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace IPC {
 class Connection;
@@ -57,8 +48,9 @@ namespace WebKit {
 
 class LibWebRTCSocketFactory;
 
-class LibWebRTCSocket final : public rtc::AsyncPacketSocket, public CanMakeWeakPtr<LibWebRTCSocket>, public Identified<WebCore::LibWebRTCSocketIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+class LibWebRTCSocket final : public rtc::AsyncPacketSocket, public CanMakeCheckedPtr<LibWebRTCSocket>, public Identified<WebCore::LibWebRTCSocketIdentifier> {
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCSocket);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LibWebRTCSocket);
 public:
     enum class Type { UDP, ClientTCP, ServerConnectionTCP };
 
@@ -79,7 +71,7 @@ private:
     bool willSend(size_t);
 
     friend class LibWebRTCNetwork;
-    void signalReadPacket(std::span<const uint8_t>, rtc::SocketAddress&&, int64_t);
+    void signalReadPacket(std::span<const uint8_t>, rtc::SocketAddress&&, int64_t, rtc::EcnMarking);
     void signalSentPacket(int64_t, int64_t);
     void signalAddressReady(const rtc::SocketAddress&);
     void signalConnect();
@@ -98,7 +90,7 @@ private:
     int GetOption(rtc::Socket::Option, int*) final;
     int SetOption(rtc::Socket::Option, int) final;
 
-    LibWebRTCSocketFactory& m_factory;
+    CheckedRef<LibWebRTCSocketFactory> m_factory;
     Type m_type;
     rtc::SocketAddress m_localAddress;
     rtc::SocketAddress m_remoteAddress;
@@ -106,8 +98,7 @@ private:
     int m_error { 0 };
     State m_state { STATE_BINDING };
 
-    static const unsigned MAX_SOCKET_OPTION { rtc::Socket::OPT_RTP_SENDTIME_EXTN_ID + 1 };
-    std::optional<int> m_options[MAX_SOCKET_OPTION];
+    StdMap<rtc::Socket::Option, int> m_options;
 
     bool m_isSuspended { false };
     WebCore::ScriptExecutionContextIdentifier m_contextIdentifier;

@@ -10,6 +10,7 @@
 #define COMPILER_TRANSLATOR_TREEUTIL_REPLACEVARIABLE_H_
 
 #include "common/angleutils.h"
+#include "common/hash_containers.h"
 
 namespace sh
 {

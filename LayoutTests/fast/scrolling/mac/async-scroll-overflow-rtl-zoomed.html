@@ -100,10 +100,10 @@
             finishJSTest();
         }
 
-        window.addEventListener('load', () => {
+        window.addEventListener('load', async () => {
             
-            if (window.internals)
-                internals.setPageScaleFactor(1.5, 0, 0);
+            if (window.testRunner)
+                await testRunner.setPageScaleFactor(1.5, 0, 0);
             
             scroller = document.querySelector('.scroller');
             scroller.addEventListener('scroll', () => {

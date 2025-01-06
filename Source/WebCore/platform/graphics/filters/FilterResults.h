@@ -28,9 +28,9 @@
 #include "FilterEffect.h"
 #include "FilterImageVector.h"
 #include "ImageBufferAllocator.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +38,7 @@ class FilterEffect;
 class FilterImage;
 
 class FilterResults {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FilterResults, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT FilterResults(std::unique_ptr<ImageBufferAllocator>&& = nullptr);
 
@@ -52,11 +52,11 @@ private:
     size_t memoryCost() const;
     bool canCacheResult(const FilterImage&) const;
 
-    HashMap<Ref<FilterEffect>, Ref<FilterImage>> m_results;
+    UncheckedKeyHashMap<Ref<FilterEffect>, Ref<FilterImage>> m_results;
 
     // The value is a list of FilterEffects, whose FilterImages depend on the key FilterImage.
     using FilterEffectSet = HashSet<Ref<FilterEffect>>;
-    HashMap<Ref<FilterImage>, FilterEffectSet> m_resultReferences;
+    UncheckedKeyHashMap<Ref<FilterImage>, FilterEffectSet> m_resultReferences;
 
     std::unique_ptr<ImageBufferAllocator> m_allocator;
 };

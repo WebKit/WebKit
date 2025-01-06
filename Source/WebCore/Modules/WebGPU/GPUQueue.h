@@ -45,11 +45,15 @@ namespace WebCore {
 
 class GPUBuffer;
 
+namespace WebGPU {
+class Device;
+}
+
 class GPUQueue : public RefCounted<GPUQueue> {
 public:
-    static Ref<GPUQueue> create(Ref<WebGPU::Queue>&& backing)
+    static Ref<GPUQueue> create(Ref<WebGPU::Queue>&& backing, WebGPU::Device& device)
     {
-        return adoptRef(*new GPUQueue(WTFMove(backing)));
+        return adoptRef(*new GPUQueue(WTFMove(backing), device));
     }
 
     String label() const;
@@ -83,12 +87,10 @@ public:
     const WebGPU::Queue& backing() const { return m_backing; }
 
 private:
-    GPUQueue(Ref<WebGPU::Queue>&& backing)
-        : m_backing(WTFMove(backing))
-    {
-    }
+    GPUQueue(Ref<WebGPU::Queue>&&, WebGPU::Device&);
 
     Ref<WebGPU::Queue> m_backing;
+    WeakPtr<WebGPU::Device> m_device;
 };
 
 }

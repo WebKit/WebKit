@@ -33,13 +33,13 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderStyleInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace MathMLOperatorDictionary;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLFencedOperator);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLFencedOperator);
 
 RenderMathMLFencedOperator::RenderMathMLFencedOperator(Document& document, RenderStyle&& style, const String& operatorString, MathMLOperatorDictionary::Form form, unsigned short flags)
     : RenderMathMLOperator(Type::MathMLFencedOperator, document, WTFMove(style))

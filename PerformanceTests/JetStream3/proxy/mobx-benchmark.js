@@ -25,7 +25,7 @@
 
 "use strict";
 
-const { makeAutoObservable, autorun, reaction } = mobx;
+const { makeAutoObservable, autorun, reaction, runInAction } = mobx;
 
 class ObservableReminderStore extends ReminderStore {
     constructor(...args) {
@@ -53,13 +53,9 @@ class ObservableReminder extends Reminder {
 }
 
 class Benchmark {
-    constructor() {
-        this._verbose = false;
-    }
-    
-    runIteration() {
+    async runIteration() {
         const store = new ObservableReminderStore();
         autorun(() => { store.render(); });
-        test(store);
+        await test(store, runInAction);
     }
 }

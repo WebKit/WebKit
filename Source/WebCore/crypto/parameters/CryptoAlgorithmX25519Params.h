@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +29,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmX25519Params final : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmX25519Params);
 public:
     RefPtr<CryptoKey> publicKey;
     Class parametersClass() const final { return Class::X25519Params; }

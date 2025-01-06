@@ -1,0 +1,10 @@
+
+PASS e.style['align-self'] = "anchor-center" should set the property value
+PASS e.style['align-items'] = "anchor-center" should set the property value
+PASS e.style['justify-self'] = "anchor-center" should set the property value
+PASS e.style['justify-items'] = "anchor-center" should set the property value
+PASS Property align-self value 'anchor-center'
+PASS Property align-items value 'anchor-center'
+PASS Property justify-self value 'anchor-center'
+PASS Property justify-items value 'anchor-center'
+

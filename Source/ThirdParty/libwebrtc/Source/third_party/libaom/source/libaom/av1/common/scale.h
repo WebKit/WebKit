@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -33,7 +33,7 @@ struct scale_factors {
 };
 
 // Note: Expect val to be in q4 precision
-static INLINE int av1_scaled_x(int val, const struct scale_factors *sf) {
+static inline int av1_scaled_x(int val, const struct scale_factors *sf) {
   const int off =
       (sf->x_scale_fp - (1 << REF_SCALE_SHIFT)) * (1 << (SUBPEL_BITS - 1));
   const int64_t tval = (int64_t)val * sf->x_scale_fp + off;
@@ -42,7 +42,7 @@ static INLINE int av1_scaled_x(int val, const struct scale_factors *sf) {
 }
 
 // Note: Expect val to be in q4 precision
-static INLINE int av1_scaled_y(int val, const struct scale_factors *sf) {
+static inline int av1_scaled_y(int val, const struct scale_factors *sf) {
   const int off =
       (sf->y_scale_fp - (1 << REF_SCALE_SHIFT)) * (1 << (SUBPEL_BITS - 1));
   const int64_t tval = (int64_t)val * sf->y_scale_fp + off;
@@ -51,7 +51,7 @@ static INLINE int av1_scaled_y(int val, const struct scale_factors *sf) {
 }
 
 // Note: Expect val to be in q4 precision
-static INLINE int av1_unscaled_value(int val, const struct scale_factors *sf) {
+static inline int av1_unscaled_value(int val, const struct scale_factors *sf) {
   (void)sf;
   return val * (1 << SCALE_EXTRA_BITS);
 }
@@ -61,20 +61,20 @@ MV32 av1_scale_mv(const MV *mv, int x, int y, const struct scale_factors *sf);
 void av1_setup_scale_factors_for_frame(struct scale_factors *sf, int other_w,
                                        int other_h, int this_w, int this_h);
 
-static INLINE int av1_is_valid_scale(const struct scale_factors *sf) {
+static inline int av1_is_valid_scale(const struct scale_factors *sf) {
   assert(sf != NULL);
   return sf->x_scale_fp != REF_INVALID_SCALE &&
          sf->y_scale_fp != REF_INVALID_SCALE;
 }
 
-static INLINE int av1_is_scaled(const struct scale_factors *sf) {
+static inline int av1_is_scaled(const struct scale_factors *sf) {
   assert(sf != NULL);
   return av1_is_valid_scale(sf) &&
          (sf->x_scale_fp != REF_NO_SCALE || sf->y_scale_fp != REF_NO_SCALE);
 }
 
 // See AV1 spec, Section 6.8.6. Frame size with refs semantics.
-static INLINE int valid_ref_frame_size(int ref_width, int ref_height,
+static inline int valid_ref_frame_size(int ref_width, int ref_height,
                                        int this_width, int this_height) {
   return 2 * this_width >= ref_width && 2 * this_height >= ref_height &&
          this_width <= 16 * ref_width && this_height <= 16 * ref_height;

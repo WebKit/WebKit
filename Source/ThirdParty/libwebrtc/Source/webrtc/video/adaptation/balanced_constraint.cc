@@ -20,7 +20,7 @@ namespace webrtc {
 BalancedConstraint::BalancedConstraint(
     DegradationPreferenceProvider* degradation_preference_provider,
     const FieldTrialsView& field_trials)
-    : encoder_target_bitrate_bps_(absl::nullopt),
+    : encoder_target_bitrate_bps_(std::nullopt),
       balanced_settings_(field_trials),
       degradation_preference_provider_(degradation_preference_provider) {
   RTC_DCHECK(degradation_preference_provider_);
@@ -28,7 +28,7 @@ BalancedConstraint::BalancedConstraint(
 }
 
 void BalancedConstraint::OnEncoderTargetBitrateUpdated(
-    absl::optional<uint32_t> encoder_target_bitrate_bps) {
+    std::optional<uint32_t> encoder_target_bitrate_bps) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   encoder_target_bitrate_bps_ = std::move(encoder_target_bitrate_bps);
 }

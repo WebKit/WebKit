@@ -58,10 +58,8 @@ struct Bounder {
 };
 
 class SkDrawTiler {
-    enum {
-        // 8K is 1 too big, since 8K << supersample == 32768 which is too big for SkFixed
-        kMaxDim = 8192 - 1
-    };
+    // 8K is 1 too big, since 8K << supersample == 32768 which is too big for SkFixed
+    static constexpr int kMaxDim = 8192 - 1;
 
     SkBitmapDevice* fDevice;
     SkPixmap        fRootPixmap;
@@ -549,7 +547,7 @@ void SkBitmapDevice::drawVertices(const SkVertices* vertices,
 }
 
 void SkBitmapDevice::drawMesh(const SkMesh&, sk_sp<SkBlender>, const SkPaint&) {
-    // TODO(brianosman): Implement, maybe with a subclass of BitmapDevice that has SkSL support.
+    // TODO: Implement, maybe with a subclass of BitmapDevice that has SkSL support.
 }
 
 void SkBitmapDevice::drawAtlas(const SkRSXform xform[],

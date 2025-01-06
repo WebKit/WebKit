@@ -34,8 +34,11 @@
 #import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageRotationSessionVT);
 
 static ImageRotationSessionVT::RotationProperties transformToRotationProperties(const AffineTransform& inTransform)
 {

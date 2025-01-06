@@ -14,6 +14,7 @@
  */
 #include <assert.h>
 #include <limits.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include "vp8/common/blockd.h"
@@ -184,14 +185,14 @@ vpx_codec_err_t vpx_codec_enc_config_default(vpx_codec_iface_t *iface,
   while (0)
 
 #else
-static void FLOATING_POINT_INIT() {}
-static void FLOATING_POINT_RESTORE() {}
+static void FLOATING_POINT_INIT(void) {}
+static void FLOATING_POINT_RESTORE(void) {}
 #endif
 
 vpx_codec_err_t vpx_codec_encode(vpx_codec_ctx_t *ctx, const vpx_image_t *img,
                                  vpx_codec_pts_t pts, unsigned long duration,
                                  vpx_enc_frame_flags_t flags,
-                                 unsigned long deadline) {
+                                 vpx_enc_deadline_t deadline) {
   vpx_codec_err_t res = VPX_CODEC_OK;
 
   if (!ctx || (img && !duration))
@@ -200,6 +201,10 @@ vpx_codec_err_t vpx_codec_encode(vpx_codec_ctx_t *ctx, const vpx_image_t *img,
     res = VPX_CODEC_ERROR;
   else if (!(ctx->iface->caps & VPX_CODEC_CAP_ENCODER))
     res = VPX_CODEC_INCAPABLE;
+#if ULONG_MAX > UINT32_MAX
+  else if (duration > UINT32_MAX || deadline > UINT32_MAX)
+    res = VPX_CODEC_INVALID_PARAM;
+#endif
   else {
     unsigned int num_enc = ctx->priv->enc.total_encoders;
 

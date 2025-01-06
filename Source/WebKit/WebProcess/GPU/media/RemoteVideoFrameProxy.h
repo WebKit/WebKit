@@ -32,6 +32,7 @@
 #include "RemoteVideoFrameProxyProperties.h"
 #include <WebCore/VideoFrame.h>
 #include <wtf/ArgumentCoder.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 #if PLATFORM(COCOA)
@@ -47,7 +48,7 @@ class RemoteVideoFrameObjectHeapProxy;
 // A WebCore::VideoFrame class that points to a concrete WebCore::VideoFrame instance
 // in another process, GPU process.
 class RemoteVideoFrameProxy final : public WebCore::VideoFrame {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteVideoFrameProxy);
     WTF_MAKE_NONCOPYABLE(RemoteVideoFrameProxy);
 public:
     using Properties = RemoteVideoFrameProxyProperties;
@@ -67,7 +68,7 @@ public:
     WebCore::IntSize size() const { return m_size; }
 
     // WebCore::VideoFrame overrides.
-    WebCore::FloatSize presentationSize() const final { return m_size; }
+    WebCore::IntSize presentationSize() const final { return m_size; }
     uint32_t pixelFormat() const final;
     bool isRemoteProxy() const final { return true; }
 #if PLATFORM(COCOA)

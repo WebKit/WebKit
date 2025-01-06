@@ -29,12 +29,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-clips-sample.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-cross-origin-no-cookies.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-cross-origin-no-cookies.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-frame-ancestors-no-parent-cookies.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-frame-ancestors-with-x-frame-options.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-frame-ancestors.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-01.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-01.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-02.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-02.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-cross-origin-frame.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-cross-origin-frame.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-unsafe-eval.html

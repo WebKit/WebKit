@@ -51,7 +51,7 @@ static void ValidateStateHelper(const FunctionsGL *functions,
     {
         WARN() << localName << " (" << localValue << ") != " << driverName << " (" << queryValue
                << ")";
-        // Re-add ASSERT: http://anglebug.com/3900
+        // Re-add ASSERT: http://anglebug.com/42262547
         // ASSERT(false);
     }
 }
@@ -116,6 +116,7 @@ StateManagerGL::StateManagerGL(const FunctionsGL *functions,
       mClipDepthMode(gl::ClipDepthMode::NegativeOneToOne),
       mBlendColor(0, 0, 0, 0),
       mBlendStateExt(rendererCaps.maxDrawBuffers),
+      mBlendAdvancedCoherent(extensions.blendEquationAdvancedCoherentKHR),
       mIndependentBlendStates(extensions.drawBuffersIndexedAny()),
       mSampleAlphaToCoverageEnabled(false),
       mSampleCoverageEnabled(false),
@@ -211,7 +212,8 @@ StateManagerGL::StateManagerGL(const FunctionsGL *functions,
 
     // It's possible we've enabled the emulated VAO feature for testing but we're on a core profile.
     // Use a generated VAO as the default VAO so we can still test.
-    if (features.syncVertexArraysToDefault.enabled &&
+    if ((features.syncAllVertexArraysToDefault.enabled ||
+         features.syncDefaultVertexArraysToDefault.enabled) &&
         !nativegl::CanUseDefaultVertexArrayObject(mFunctions))
     {
         ASSERT(nativegl::SupportsVertexArrayObjects(mFunctions));
@@ -439,16 +441,20 @@ void StateManagerGL::bindVertexArray(GLuint vao, VertexArrayStateGL *vaoState)
 {
     if (mVAO != vao)
     {
-        ASSERT(!mFeatures.syncVertexArraysToDefault.enabled);
-
-        mVAO                                      = vao;
-        mVAOState                                 = vaoState;
-        mBuffers[gl::BufferBinding::ElementArray] = vaoState ? vaoState->elementArrayBuffer : 0;
-
-        mFunctions->bindVertexArray(vao);
-
-        mLocalDirtyBits.set(gl::state::DIRTY_BIT_VERTEX_ARRAY_BINDING);
+        ASSERT(!mFeatures.syncAllVertexArraysToDefault.enabled);
+        forceBindVertexArray(vao, vaoState);
     }
+}
+
+void StateManagerGL::forceBindVertexArray(GLuint vao, VertexArrayStateGL *vaoState)
+{
+    mVAO                                      = vao;
+    mVAOState                                 = vaoState;
+    mBuffers[gl::BufferBinding::ElementArray] = vaoState ? vaoState->elementArrayBuffer : 0;
+
+    mFunctions->bindVertexArray(vao);
+
+    mLocalDirtyBits.set(gl::state::DIRTY_BIT_VERTEX_ARRAY_BINDING);
 }
 
 void StateManagerGL::bindBuffer(gl::BufferBinding target, GLuint buffer)
@@ -1115,9 +1121,11 @@ void StateManagerGL::updateProgramImageBindings(const gl::Context *context)
         const TextureGL *textureGL     = SafeGetImplAs<TextureGL>(imageUnit.texture.get());
         if (textureGL)
         {
+            // Do not set layer parameters for non-layered texture types to avoid driver bugs.
+            const bool layered = IsLayeredTextureType(textureGL->getType());
             bindImageTexture(imageUnitIndex, textureGL->getTextureID(), imageUnit.level,
-                             imageUnit.layered, imageUnit.layer, imageUnit.access,
-                             imageUnit.format);
+                             layered && imageUnit.layered, layered ? imageUnit.layer : 0,
+                             imageUnit.access, imageUnit.format);
         }
         else
         {
@@ -1343,6 +1351,26 @@ void StateManagerGL::setBlendColor(const gl::ColorF &blendColor)
     }
 }
 
+void StateManagerGL::setBlendAdvancedCoherent(bool enabled)
+{
+    if (mBlendAdvancedCoherent != enabled)
+    {
+        mBlendAdvancedCoherent = enabled;
+
+        if (mBlendAdvancedCoherent)
+        {
+            mFunctions->enable(GL_BLEND_ADVANCED_COHERENT_KHR);
+        }
+        else
+        {
+            mFunctions->disable(GL_BLEND_ADVANCED_COHERENT_KHR);
+        }
+
+        mLocalDirtyBits.set(gl::state::DIRTY_BIT_EXTENDED);
+        mLocalExtendedDirtyBits.set(gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT);
+    }
+}
+
 void StateManagerGL::setBlendFuncs(const gl::BlendStateExt &blendStateExt)
 {
     if (mBlendStateExt.getSrcColorBits() == blendStateExt.getSrcColorBits() &&
@@ -1486,20 +1514,40 @@ void StateManagerGL::setBlendEquations(const gl::BlendStateExt &blendStateExt)
             }
             if (found)
             {
-                mFunctions->blendEquationSeparate(
-                    ToGLenum(gl::BlendStateExt::EquationStorage::GetValueIndexed(
-                        0, commonEquationColor)),
-                    ToGLenum(gl::BlendStateExt::EquationStorage::GetValueIndexed(
-                        0, commonEquationAlpha)));
+                if (commonEquationColor == commonEquationAlpha)
+                {
+                    mFunctions->blendEquation(
+                        ToGLenum(gl::BlendStateExt::EquationStorage::GetValueIndexed(
+                            0, commonEquationColor)));
+                }
+                else
+                {
+                    mFunctions->blendEquationSeparate(
+                        ToGLenum(gl::BlendStateExt::EquationStorage::GetValueIndexed(
+                            0, commonEquationColor)),
+                        ToGLenum(gl::BlendStateExt::EquationStorage::GetValueIndexed(
+                            0, commonEquationAlpha)));
+                }
             }
         }
 
         for (size_t drawBufferIndex : diffMask)
         {
-            mFunctions->blendEquationSeparatei(
-                static_cast<GLuint>(drawBufferIndex),
-                ToGLenum(blendStateExt.getEquationColorIndexed(drawBufferIndex)),
-                ToGLenum(blendStateExt.getEquationAlphaIndexed(drawBufferIndex)));
+            gl::BlendEquationType equationColor =
+                blendStateExt.getEquationColorIndexed(drawBufferIndex);
+            gl::BlendEquationType equationAlpha =
+                blendStateExt.getEquationAlphaIndexed(drawBufferIndex);
+            if (equationColor == equationAlpha)
+            {
+                mFunctions->blendEquationi(static_cast<GLuint>(drawBufferIndex),
+                                           ToGLenum(equationColor));
+            }
+            else
+            {
+                mFunctions->blendEquationSeparatei(static_cast<GLuint>(drawBufferIndex),
+                                                   ToGLenum(equationColor),
+                                                   ToGLenum(equationAlpha));
+            }
         }
     }
     mBlendStateExt.setEquationColorBits(blendStateExt.getEquationColorBits());
@@ -2238,7 +2286,7 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                 ANGLE_TRY(propagateProgramToVAO(context, state.getProgramExecutable(),
                                                 GetImplAs<VertexArrayGL>(state.getVertexArray())));
 
-                if (mFeatures.syncVertexArraysToDefault.enabled)
+                if (vaoGL->syncsToSharedState())
                 {
                     // Re-sync the vertex array because all frontend VAOs share the same backend
                     // state. Only sync bits that can be set in ES2.0 or 3.0
@@ -2467,9 +2515,8 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                         case gl::state::EXTENDED_DIRTY_BIT_SHADING_RATE:
                             // Unimplemented extensions.
                             break;
-                        case gl::state::EXTENDED_DIRTY_BIT_FOVEATED_RENDERING:
-                            // Unimplemented extensions.
-                            break;
+                        case gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT:
+                            setBlendAdvancedCoherent(state.isBlendAdvancedCoherentEnabled());
                         case gl::state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
                             // Unimplemented extensions.
                             break;
@@ -3346,6 +3393,17 @@ void StateManagerGL::syncBlendFromNativeContext(const gl::Extensions &extensions
         mBlendStateExt.setEquations(state->blendEquationRgb, state->blendEquationAlpha);
         mLocalDirtyBits.set(gl::state::DIRTY_BIT_BLEND_EQUATIONS);
     }
+
+    if (extensions.blendEquationAdvancedCoherentKHR)
+    {
+        get(GL_BLEND_ADVANCED_COHERENT_KHR, &state->enableBlendEquationAdvancedCoherent);
+        if (mBlendAdvancedCoherent != state->enableBlendEquationAdvancedCoherent)
+        {
+            setBlendAdvancedCoherent(state->enableBlendEquationAdvancedCoherent);
+            mLocalDirtyBits.set(gl::state::DIRTY_BIT_EXTENDED);
+            mLocalExtendedDirtyBits.set(gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT);
+        }
+    }
 }
 
 void StateManagerGL::restoreBlendNativeContext(const gl::Extensions &extensions,
@@ -3364,6 +3422,13 @@ void StateManagerGL::restoreBlendNativeContext(const gl::Extensions &extensions,
     mFunctions->blendEquationSeparate(state->blendEquationRgb, state->blendEquationAlpha);
     mBlendStateExt.setEquations(state->blendEquationRgb, state->blendEquationAlpha);
     mLocalDirtyBits.set(gl::state::DIRTY_BIT_BLEND_EQUATIONS);
+
+    if (extensions.blendEquationAdvancedCoherentKHR)
+    {
+        setBlendAdvancedCoherent(state->enableBlendEquationAdvancedCoherent);
+        mLocalDirtyBits.set(gl::state::DIRTY_BIT_EXTENDED);
+        mLocalExtendedDirtyBits.set(gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT);
+    }
 }
 
 void StateManagerGL::syncFramebufferFromNativeContext(const gl::Extensions &extensions,
@@ -3547,6 +3612,12 @@ void StateManagerGL::syncBufferBindingsFromNativeContext(const gl::Extensions &e
 
     get(GL_ELEMENT_ARRAY_BUFFER_BINDING, &state->elementArrayBufferBinding);
     mBuffers[gl::BufferBinding::ElementArray] = state->elementArrayBufferBinding;
+
+    if (mVAOState && mVAOState->elementArrayBuffer != state->elementArrayBufferBinding)
+    {
+        mVAOState->elementArrayBuffer = state->elementArrayBufferBinding;
+        mLocalDirtyBits.set(gl::state::DIRTY_BIT_VERTEX_ARRAY_BINDING);
+    }
 }
 
 void StateManagerGL::restoreBufferBindingsNativeContext(const gl::Extensions &extensions,
@@ -3603,13 +3674,74 @@ void StateManagerGL::syncVertexArraysFromNativeContext(const gl::Extensions &ext
     if (mSupportsVertexArrayObjects)
     {
         get(GL_VERTEX_ARRAY_BINDING, &state->vertexArrayBinding);
-        if (mVAO != static_cast<GLuint>(state->vertexArrayBinding))
+
+        if (state->vertexArrayBinding != 0 || mVAO != 0)
         {
-            mVAO                                      = state->vertexArrayBinding;
-            mBuffers[gl::BufferBinding::ElementArray] = 0;
-            mLocalDirtyBits.set(gl::state::DIRTY_BIT_VERTEX_ARRAY_BINDING);
+            // Force-bind VAO 0 if it's either not already bound or StateManagerGL thinks it's not
+            // bound.
+            forceBindVertexArray(0, &mDefaultVAOState);
         }
     }
+
+    // Save the state of the default VAO
+    state->defaultVertexArrayAttributes.resize(mDefaultVAOState.attributes.size());
+    for (GLint i = 0; i < static_cast<GLint>(state->defaultVertexArrayAttributes.size()); i++)
+    {
+        ExternalContextVertexAttribute &externalAttrib = state->defaultVertexArrayAttributes[i];
+
+        GLint enabled = 0;
+        mFunctions->getVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+        externalAttrib.enabled = (enabled != GL_FALSE);
+
+        GLint size = 0;
+        mFunctions->getVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+        GLint type = 0;
+        mFunctions->getVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+        GLint normalized = 0;
+        mFunctions->getVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+        externalAttrib.format = &angle::Format::Get(gl::GetVertexFormatID(
+            gl::FromGLenum<gl::VertexAttribType>(type), normalized != GL_FALSE, size, false));
+
+        GLint stride = 0;
+        mFunctions->getVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+        externalAttrib.stride = stride;
+
+        mFunctions->getVertexAttribPointerv(i, GL_VERTEX_ATTRIB_ARRAY_POINTER,
+                                            &externalAttrib.pointer);
+
+        GLint buffer = 0;
+        mFunctions->getVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING, &buffer);
+        externalAttrib.buffer = buffer;
+
+        GLfloat currentData[4] = {0};
+        mFunctions->getVertexAttribfv(i, GL_CURRENT_VERTEX_ATTRIB, currentData);
+        externalAttrib.currentData.setFloatValues(currentData);
+
+        // Update our local state to reflect the external context state
+        VertexAttributeGL &localAttribute = mDefaultVAOState.attributes[i];
+        localAttribute.enabled            = externalAttrib.enabled;
+        localAttribute.format             = externalAttrib.format;
+        localAttribute.pointer            = externalAttrib.pointer;
+        localAttribute.relativeOffset     = 0;
+        localAttribute.bindingIndex       = i;
+
+        VertexBindingGL &localBinding = mDefaultVAOState.bindings[i];
+        localBinding.stride           = externalAttrib.stride;
+        localBinding.buffer           = externalAttrib.buffer;
+        localBinding.divisor          = 0;
+        localBinding.offset           = 0;
+
+        gl::VertexAttribCurrentValueData &localCurrentData = mVertexAttribCurrentValues[i];
+        if (localCurrentData != externalAttrib.currentData)
+        {
+            localCurrentData = externalAttrib.currentData;
+            mLocalDirtyBits.set(gl::state::DIRTY_BIT_CURRENT_VALUES);
+            mLocalDirtyCurrentValues.set(i);
+        }
+    }
+
+    // Mark VAO state dirty and force it to be re-synced on the next draw
+    mLocalDirtyBits.set(gl::state::DIRTY_BIT_VERTEX_ARRAY_BINDING);
 }
 
 void StateManagerGL::restoreVertexArraysNativeContext(const gl::Extensions &extensions,
@@ -3617,8 +3749,68 @@ void StateManagerGL::restoreVertexArraysNativeContext(const gl::Extensions &exte
 {
     if (mSupportsVertexArrayObjects)
     {
-        bindVertexArray(state->vertexArrayBinding, 0);
+        // Restore the default VAO state first.
+        bindVertexArray(0, &mDefaultVAOState);
     }
+
+    for (GLint i = 0; i < static_cast<GLint>(state->defaultVertexArrayAttributes.size()); i++)
+    {
+        const ExternalContextVertexAttribute &externalAttrib =
+            state->defaultVertexArrayAttributes[i];
+        VertexAttributeGL &localAttribute = mDefaultVAOState.attributes[i];
+        VertexBindingGL &localBinding     = mDefaultVAOState.bindings[i];
+
+        if (externalAttrib.format != localAttribute.format ||
+            externalAttrib.stride != localBinding.stride ||
+            externalAttrib.pointer != localAttribute.pointer ||
+            externalAttrib.buffer != localBinding.buffer)
+        {
+            bindBuffer(gl::BufferBinding::Array, externalAttrib.buffer);
+            mFunctions->vertexAttribPointer(i, externalAttrib.format->channelCount,
+                                            gl::ToGLenum(externalAttrib.format->vertexAttribType),
+                                            externalAttrib.format->isNorm(), externalAttrib.stride,
+                                            externalAttrib.pointer);
+            if (mFunctions->vertexAttribDivisor)
+            {
+                mFunctions->vertexAttribDivisor(i, 0);
+            }
+
+            localAttribute.format         = externalAttrib.format;
+            localAttribute.pointer        = externalAttrib.pointer;
+            localAttribute.relativeOffset = 0;
+            localAttribute.bindingIndex   = i;
+
+            localBinding.stride  = externalAttrib.stride;
+            localBinding.buffer  = externalAttrib.buffer;
+            localBinding.divisor = 0;
+            localBinding.offset  = 0;
+        }
+
+        if (externalAttrib.enabled != localAttribute.enabled)
+        {
+            if (externalAttrib.enabled)
+            {
+                mFunctions->enableVertexAttribArray(i);
+            }
+            else
+            {
+                mFunctions->disableVertexAttribArray(i);
+            }
+
+            localAttribute.enabled = externalAttrib.enabled;
+        }
+
+        setAttributeCurrentData(i, externalAttrib.currentData);
+    }
+
+    if (mSupportsVertexArrayObjects)
+    {
+        // Restore the VAO binding
+        bindVertexArray(state->vertexArrayBinding, nullptr);
+    }
+
+    // Mark VAO state dirty and force it to be re-synced on the next draw
+    mLocalDirtyBits.set(gl::state::DIRTY_BIT_VERTEX_ARRAY_BINDING);
 }
 
 void StateManagerGL::setDefaultVAOStateDirty()

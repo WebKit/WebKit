@@ -34,8 +34,11 @@
 #include <wtf/Deque.h>
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebPushD {
@@ -45,17 +48,22 @@ class PushServiceRequest;
 class SubscribeRequest;
 class UnsubscribeRequest;
 
-class PushService {
-    WTF_MAKE_FAST_ALLOCATED;
+class PushService : public RefCountedAndCanMakeWeakPtr<PushService> {
+    WTF_MAKE_TZONE_ALLOCATED(PushService);
 public:
+    friend class SubscribeRequest;
+    friend class UnsubscribeRequest;
+
     using IncomingPushMessageHandler = Function<void(const WebCore::PushSubscriptionSetIdentifier&, WebKit::WebPushMessage&&)>;
 
-    static void create(const String& incomingPushServiceName, const String& databasePath, IncomingPushMessageHandler&&, CompletionHandler<void(std::unique_ptr<PushService>&&)>&&);
-    static void createMockService(IncomingPushMessageHandler&&, CompletionHandler<void(std::unique_ptr<PushService>&&)>&&);
+    static void create(const String& incomingPushServiceName, const String& databasePath, IncomingPushMessageHandler&&, CompletionHandler<void(RefPtr<PushService>&&)>&&);
+    static void createMockService(IncomingPushMessageHandler&&, CompletionHandler<void(RefPtr<PushService>&&)>&&);
     ~PushService();
 
     PushServiceConnection& connection() { return m_connection; }
+    Ref<PushServiceConnection> protectedConnection() { return m_connection; }
     WebCore::PushDatabase& database() { return m_database; }
+    Ref<WebCore::PushDatabase> protectedDatabase() { return m_database; }
 
     Vector<String> enabledTopics() { return m_connection->enabledTopics(); }
     Vector<String> ignoredTopics() { return m_connection->ignoredTopics(); }
@@ -70,6 +78,7 @@ public:
 
     void removeRecordsForSubscriptionSet(const WebCore::PushSubscriptionSetIdentifier&, CompletionHandler<void(unsigned)>&&);
     void removeRecordsForSubscriptionSetAndOrigin(const WebCore::PushSubscriptionSetIdentifier&, const String& securityOrigin, CompletionHandler<void(unsigned)>&&);
+    void removeRecordsForBundleIdentifierAndDataStore(const String& bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, CompletionHandler<void(unsigned)>&&);
 
     void didCompleteGetSubscriptionRequest(GetSubscriptionRequest&);
     void didCompleteSubscribeRequest(SubscribeRequest&);
@@ -79,23 +88,31 @@ public:
     void didReceivePublicToken(Vector<uint8_t>&&);
     void didReceivePushMessage(NSString *topic, NSDictionary *userInfo, CompletionHandler<void()>&& = [] { });
 
-private:
-    PushService(UniqueRef<PushServiceConnection>&&, UniqueRef<WebCore::PushDatabase>&&, IncomingPushMessageHandler&&);
+#if PLATFORM(IOS)
+    void updateSubscriptionSetState(const String& allowedBundleIdentifier, const HashSet<String>& webClipIdentifiers, CompletionHandler<void()>&&);
+#endif
 
-    using PushServiceRequestMap = HashMap<String, Deque<std::unique_ptr<PushServiceRequest>>>;
-    void enqueuePushServiceRequest(PushServiceRequestMap&, std::unique_ptr<PushServiceRequest>&&);
+private:
+    PushService(Ref<PushServiceConnection>&&, Ref<WebCore::PushDatabase>&&, IncomingPushMessageHandler&&);
+
+    using PushServiceRequestMap = HashMap<String, Deque<Ref<PushServiceRequest>>>;
+    void enqueuePushServiceRequest(PushServiceRequestMap&, Ref<PushServiceRequest>&&);
     void finishedPushServiceRequest(PushServiceRequestMap&, PushServiceRequest&);
 
     void removeRecordsImpl(const WebCore::PushSubscriptionSetIdentifier&, const std::optional<String>& securityOrigin, CompletionHandler<void(unsigned)>&&);
 
-    UniqueRef<PushServiceConnection> m_connection;
-    UniqueRef<WebCore::PushDatabase> m_database;
+    void updateTopicLists(CompletionHandler<void()>&&);
+
+    Ref<PushServiceConnection> m_connection;
+    Ref<WebCore::PushDatabase> m_database;
 
     IncomingPushMessageHandler m_incomingPushMessageHandler;
 
     PushServiceRequestMap m_getSubscriptionRequests;
     PushServiceRequestMap m_subscribeRequests;
     PushServiceRequestMap m_unsubscribeRequests;
+
+    size_t m_topicCount { 0 };
 };
 
 } // namespace WebPushD

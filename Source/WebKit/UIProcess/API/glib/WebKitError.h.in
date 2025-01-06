@@ -27,22 +27,23 @@
 
 G_BEGIN_DECLS
 
-#define WEBKIT_NETWORK_ERROR             webkit_network_error_quark ()
-#define WEBKIT_POLICY_ERROR              webkit_policy_error_quark ()
+#define WEBKIT_NETWORK_ERROR                     webkit_network_error_quark ()
+#define WEBKIT_POLICY_ERROR                      webkit_policy_error_quark ()
 #if !ENABLE(2022_GLIB_API)
-#define WEBKIT_PLUGIN_ERROR              webkit_plugin_error_quark ()
+#define WEBKIT_PLUGIN_ERROR                      webkit_plugin_error_quark ()
 #endif
-#define WEBKIT_DOWNLOAD_ERROR            webkit_download_error_quark ()
-#define WEBKIT_JAVASCRIPT_ERROR          webkit_javascript_error_quark ()
-#define WEBKIT_SNAPSHOT_ERROR            webkit_snapshot_error_quark ()
-#define WEBKIT_USER_CONTENT_FILTER_ERROR webkit_user_content_filter_error_quark ()
+#define WEBKIT_DOWNLOAD_ERROR                    webkit_download_error_quark ()
+#define WEBKIT_JAVASCRIPT_ERROR                  webkit_javascript_error_quark ()
+#define WEBKIT_SNAPSHOT_ERROR                    webkit_snapshot_error_quark ()
+#define WEBKIT_USER_CONTENT_FILTER_ERROR         webkit_user_content_filter_error_quark ()
+#define WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR webkit_web_extension_error_quark ()
 
 #if PLATFORM(GTK)
-#define WEBKIT_PRINT_ERROR               webkit_print_error_quark ()
+#define WEBKIT_PRINT_ERROR                       webkit_print_error_quark ()
 #endif
 
 #if ENABLE(2022_GLIB_API)
-#define WEBKIT_MEDIA_ERROR               webkit_media_error_quark ()
+#define WEBKIT_MEDIA_ERROR                       webkit_media_error_quark ()
 #endif
 
 /**
@@ -158,6 +159,22 @@ typedef enum {
 } WebKitSnapshotError;
 
 /**
+ * WebKitWebExtensionMatchPatternError:
+ * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_UNKNOWN: An unknown error occured.
+ * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_INVALID_SCHEME: The scheme component was invalid.
+ * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_INVALID_HOST: The host component was invalid.
+ * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_INVALID_PATH: The path component was invalid.
+ *
+ * Enum values used to denote errors happening when creating a #WebKitWebExtensionMatchPattern
+ */
+typedef enum {
+    WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_UNKNOWN = 899,
+    WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_INVALID_SCHEME = 808,
+    WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_INVALID_HOST = 809,
+    WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_INVALID_PATH = 810,
+} WebKitWebExtensionMatchPatternError;
+
+/**
  * WebKitUserContentFilterError:
  * @WEBKIT_USER_CONTENT_FILTER_ERROR_INVALID_SOURCE: The JSON source for a content filter is invalid.
  * @WEBKIT_USER_CONTENT_FILTER_ERROR_NOT_FOUND: The requested content filter could not be found.
@@ -186,36 +203,39 @@ typedef enum {
 #endif
 
 WEBKIT_API GQuark
-webkit_network_error_quark             (void);
+webkit_network_error_quark                     (void);
 
 WEBKIT_API GQuark
-webkit_policy_error_quark              (void);
+webkit_policy_error_quark                      (void);
 
 #if !ENABLE(2022_GLIB_API)
 WEBKIT_API GQuark
-webkit_plugin_error_quark              (void);
+webkit_plugin_error_quark                      (void);
 #endif
 
 WEBKIT_API GQuark
-webkit_download_error_quark            (void);
+webkit_download_error_quark                    (void);
 
 #if PLATFORM(GTK)
 WEBKIT_API GQuark
-webkit_print_error_quark               (void);
+webkit_print_error_quark                       (void);
 #endif
 
 WEBKIT_API GQuark
-webkit_javascript_error_quark          (void);
+webkit_javascript_error_quark                  (void);
 
 WEBKIT_API GQuark
-webkit_snapshot_error_quark            (void);
+webkit_snapshot_error_quark                    (void);
 
 WEBKIT_API GQuark
-webkit_user_content_filter_error_quark (void);
+webkit_web_extension_match_pattern_error_quark (void);
+
+WEBKIT_API GQuark
+webkit_user_content_filter_error_quark         (void);
 
 #if ENABLE(2022_GLIB_API)
 WEBKIT_API GQuark
-webkit_media_error_quark               (void);
+webkit_media_error_quark                       (void);
 #endif
 
 G_END_DECLS

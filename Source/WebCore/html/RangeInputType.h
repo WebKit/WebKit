@@ -32,12 +32,14 @@
 #pragma once
 
 #include "InputType.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SliderThumbElement;
 
 class RangeInputType final : public InputType {
+    WTF_MAKE_TZONE_ALLOCATED(RangeInputType);
 public:
     static Ref<RangeInputType> create(HTMLInputElement& element)
     {

@@ -37,6 +37,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -44,12 +45,12 @@ namespace WebCore {
 class DestinatationColorSpace;
 
 class IOSurfacePool : public ThreadSafeRefCounted<IOSurfacePool> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IOSurfacePool, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(IOSurfacePool);
-    WTF_MAKE_FAST_ALLOCATED;
     friend class LazyNeverDestroyed<IOSurfacePool>;
 
 public:
-    WEBCORE_EXPORT static IOSurfacePool& sharedPool();
+    WEBCORE_EXPORT static IOSurfacePool& sharedPoolSingleton();
     WEBCORE_EXPORT static Ref<IOSurfacePool> create();
 
     WEBCORE_EXPORT ~IOSurfacePool();
@@ -76,8 +77,8 @@ private:
     };
 
     typedef Deque<std::unique_ptr<IOSurface>> CachedSurfaceQueue;
-    typedef HashMap<IntSize, CachedSurfaceQueue> CachedSurfaceMap;
-    typedef HashMap<IOSurface*, CachedSurfaceDetails> CachedSurfaceDetailsMap;
+    typedef UncheckedKeyHashMap<IntSize, CachedSurfaceQueue> CachedSurfaceMap;
+    typedef UncheckedKeyHashMap<IOSurface*, CachedSurfaceDetails> CachedSurfaceDetailsMap;
 
 #if PLATFORM(MAC)
     static constexpr size_t defaultMaximumBytesCached { 256 * MB };

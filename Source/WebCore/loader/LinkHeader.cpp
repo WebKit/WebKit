@@ -28,7 +28,7 @@
 #include "config.h"
 #include "LinkHeader.h"
 
-#include "ParsingUtilities.h"
+#include <wtf/text/ParsingUtilities.h>
 
 namespace WebCore {
 
@@ -82,14 +82,14 @@ template<typename CharacterType> static std::optional<String> findURLBoundaries(
         return std::nullopt;
     skipWhile<isTabOrSpace>(buffer);
 
-    auto urlStart = buffer.position();
+    auto urlStart = buffer.span();
     skipWhile<isNotURLTerminatingChar>(buffer);
     auto urlEnd = buffer.position();
     skipUntil(buffer, '>');
     if (!skipExactly(buffer, '>'))
         return std::nullopt;
 
-    return String({ urlStart, urlEnd });
+    return String(urlStart.first(urlEnd - urlStart.data()));
 }
 
 template<typename CharacterType> static bool invalidParameterDelimiter(StringParsingBuffer<CharacterType>& buffer)
@@ -173,13 +173,13 @@ static LinkHeader::LinkParameterName parameterNameFromString(StringView name)
 //            position  end
 template<typename CharacterType> static std::optional<LinkHeader::LinkParameterName> parseParameterName(StringParsingBuffer<CharacterType>& buffer)
 {
-    auto nameStart = buffer.position();
+    auto nameStart = buffer.span();
     skipWhile<isValidParameterNameChar>(buffer);
     auto nameEnd = buffer.position();
     skipWhile<isTabOrSpace>(buffer);
     bool hasEqual = skipExactly(buffer, '=');
     skipWhile<isTabOrSpace>(buffer);
-    auto name = parameterNameFromString(std::span { nameStart, static_cast<size_t>(nameEnd - nameStart) });
+    auto name = parameterNameFromString(nameStart.first(static_cast<size_t>(nameEnd - nameStart.data())));
     if (hasEqual)
         return name;
     bool validParameterValueEnd = buffer.atEnd() || isParameterValueEnd(*buffer);
@@ -211,8 +211,10 @@ template<typename CharacterType> static bool skipQuotesIfNeeded(StringParsingBuf
 
     while (!completeQuotes && buffer.hasCharactersRemaining()) {
         skipUntil(buffer, static_cast<CharacterType>(quote));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         if (*(buffer.position() - 1) != '\\')
             completeQuotes = true;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         completeQuotes = skipExactly(buffer, static_cast<CharacterType>(quote)) && completeQuotes;
     }
     return true;
@@ -229,6 +231,7 @@ template<typename CharacterType> static bool skipQuotesIfNeeded(StringParsingBuf
 // <cat.jpg>; rel=preload; foo=bar
 //                       ^        ^
 //                   position     end
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 template<typename CharacterType> static bool parseParameterValue(StringParsingBuffer<CharacterType>& buffer, String& value)
 {
     auto valueStart = buffer.position();
@@ -251,6 +254,7 @@ template<typename CharacterType> static bool parseParameterValue(StringParsingBu
     value = String({ valueStart, valueEnd });
     return !hasQuotes || completeQuotes;
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void LinkHeader::setValue(LinkParameterName name, String&& value)
 {
@@ -349,4 +353,3 @@ LinkHeaderSet::LinkHeaderSet(const String& header)
 }
 
 } // namespace WebCore
-

@@ -54,8 +54,8 @@ TEST(WebKitLegacy, HTMLFormCollectionNamedItemTest)
     RetainPtr<HTMLFormCollectionNamedItemTest> testController = adoptNS([HTMLFormCollectionNamedItemTest new]);
 
     webView.get().frameLoadDelegate = testController.get();
-    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle]
-        URLForResource:@"HTMLFormCollectionNamedItem" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle
+        URLForResource:@"HTMLFormCollectionNamedItem" withExtension:@"html"]]];
 
     Util::run(&didFinishLoad);
     didFinishLoad = false;

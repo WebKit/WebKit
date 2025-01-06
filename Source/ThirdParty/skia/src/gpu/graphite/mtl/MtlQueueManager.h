@@ -25,10 +25,10 @@ public:
 private:
     const MtlSharedContext* mtlSharedContext() const;
 
-    std::unique_ptr<CommandBuffer> getNewCommandBuffer(ResourceProvider*) override;
+    std::unique_ptr<CommandBuffer> getNewCommandBuffer(ResourceProvider*, Protected) override;
     OutstandingSubmission onSubmitToGpu() override;
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     void startCapture() override;
     void stopCapture() override;
 #endif

@@ -40,6 +40,9 @@ class LayerPool;
 class AcceleratedEffect;
 struct AcceleratedEffectValues;
 #endif
+#if ENABLE(MODEL_PROCESS)
+class ModelContext;
+#endif
 }
 
 namespace WebKit {
@@ -57,7 +60,9 @@ class PlatformCALayerRemote : public WebCore::PlatformCALayer, public CanMakeWea
 public:
     static Ref<PlatformCALayerRemote> create(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
     static Ref<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
-    static Ref<PlatformCALayerRemote> create(LayerHostingContextID, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
+#if ENABLE(MODEL_PROCESS)
+    static Ref<PlatformCALayerRemote> create(Ref<WebCore::ModelContext>, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
+#endif
 #if ENABLE(MODEL_ELEMENT)
     static Ref<PlatformCALayerRemote> create(Ref<WebCore::Model>, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
 #endif
@@ -71,6 +76,7 @@ public:
     PlatformLayer* platformLayer() const override { return nullptr; }
 
     void recursiveBuildTransaction(RemoteLayerTreeContext&, RemoteLayerTreeTransaction&);
+    void recursiveMarkWillBeDisplayedWithRenderingSuppresion();
 
     void setNeedsDisplayInRect(const WebCore::FloatRect& dirtyRect) override;
     void setNeedsDisplay() override;
@@ -152,8 +158,8 @@ public:
     bool acceleratesDrawing() const override;
     void setAcceleratesDrawing(bool) override;
 
-    bool wantsDeepColorBackingStore() const override;
-    void setWantsDeepColorBackingStore(bool) override;
+    WebCore::ContentsFormat contentsFormat() const override;
+    void setContentsFormat(WebCore::ContentsFormat) override;
 
     bool hasContents() const override;
     CFTypeRef contents() const override;
@@ -213,8 +219,8 @@ public:
     void setEventRegion(const WebCore::EventRegion&) override;
 
 #if ENABLE(SCROLLING_THREAD)
-    WebCore::ScrollingNodeID scrollingNodeID() const override;
-    void setScrollingNodeID(WebCore::ScrollingNodeID) override;
+    std::optional<WebCore::ScrollingNodeID> scrollingNodeID() const override;
+    void setScrollingNodeID(std::optional<WebCore::ScrollingNodeID>) override;
 #endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
@@ -228,6 +234,11 @@ public:
     bool isDescendentOfSeparatedPortal() const override;
     void setIsDescendentOfSeparatedPortal(bool) override;
 #endif
+#endif
+
+#if HAVE(CORE_MATERIAL)
+    WebCore::AppleVisualEffect appleVisualEffect() const override;
+    void setAppleVisualEffect(WebCore::AppleVisualEffect) override;
 #endif
 
     WebCore::TiledBacking* tiledBacking() override { return nullptr; }
@@ -272,6 +283,8 @@ private:
     void updateBackingStore();
     void removeSublayer(PlatformCALayerRemote*);
 
+    WebCore::DestinationColorSpace displayColorSpace() const;
+
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     RemoteLayerBackingStore::IncludeDisplayList shouldIncludeDisplayListInBackingStore() const;
 #endif
@@ -282,12 +295,10 @@ private:
 
     LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;
-    PlatformCALayerRemote* m_superlayer { nullptr };
+    WeakPtr<PlatformCALayerRemote> m_superlayer;
     HashMap<String, RefPtr<WebCore::PlatformCAAnimation>> m_animations;
 
     bool m_acceleratesDrawing { false };
-    bool m_wantsDeepColorBackingStore { false };
-
     WeakPtr<RemoteLayerTreeContext> m_context;
 };
 

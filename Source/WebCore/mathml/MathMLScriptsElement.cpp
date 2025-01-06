@@ -30,11 +30,11 @@
 #if ENABLE(MATHML)
 
 #include "RenderMathMLScripts.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLScriptsElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLScriptsElement);
 
 using namespace MathMLNames;
 
@@ -57,7 +57,7 @@ static MathMLScriptsElement::ScriptType scriptTypeOf(const QualifiedName& tagNam
 }
 
 MathMLScriptsElement::MathMLScriptsElement(const QualifiedName& tagName, Document& document)
-    : MathMLPresentationElement(tagName, document)
+    : MathMLRowElement(tagName, document)
     , m_scriptType(scriptTypeOf(tagName))
 {
 }

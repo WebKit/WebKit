@@ -31,13 +31,14 @@
 #include "AudioContext.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class AudioParamTimeline {
+    WTF_MAKE_TZONE_ALLOCATED(AudioParamTimeline);
     WTF_MAKE_NONCOPYABLE(AudioParamTimeline);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     AudioParamTimeline() = default;
 
@@ -58,13 +59,13 @@ public:
     // controlRate is the rate (number per second) at which parameter values will be calculated.
     // It should equal sampleRate for sample-accurate parameter changes, and otherwise will usually match
     // the render quantum size such that the parameter value changes once per render quantum.
-    float valuesForFrameRange(size_t startFrame, size_t endFrame, float defaultValue, float minValue, float maxValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
+    float valuesForFrameRange(size_t startFrame, size_t endFrame, float defaultValue, float minValue, float maxValue, std::span<float> values, double sampleRate, double controlRate);
 
     bool hasValues(size_t startFrame, double sampleRate) const;
 
 private:
     class ParamEvent {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(ParamEvent);
     public:
         enum Type {
             SetValue,
@@ -162,7 +163,7 @@ private:
     struct AutomationState {
         // Parameters for the current automation request. Number of
         // values to be computed for the automation request
-        const unsigned numberOfValues;
+        const size_t numberOfValues;
         // Start and end frames for this automation request
         const size_t startFrame;
         const size_t endFrame;
@@ -173,7 +174,7 @@ private:
         const double samplingPeriod;
 
         // Parameters needed for processing the current event.
-        const unsigned fillToFrame;
+        const size_t fillToFrame;
         const size_t fillToEndFrame;
 
         // Value and time for the current event
@@ -192,18 +193,18 @@ private:
     void removeCancelledEvents(size_t firstEventToRemove) WTF_REQUIRES_LOCK(m_eventsLock);
     void removeOldEvents(size_t eventCount) WTF_REQUIRES_LOCK(m_eventsLock);
     ExceptionOr<void> insertEvent(ParamEvent&&) WTF_REQUIRES_LOCK(m_eventsLock);
-    float valuesForFrameRangeImpl(size_t startFrame, size_t endFrame, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate) WTF_REQUIRES_LOCK(m_eventsLock);
+    float valuesForFrameRangeImpl(size_t startFrame, size_t endFrame, float defaultValue, std::span<float> values, double sampleRate, double controlRate) WTF_REQUIRES_LOCK(m_eventsLock);
     float linearRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
     float exponentialRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
-    float valueCurveAtTime(Seconds t, Seconds time1, Seconds duration, const float* curveData, size_t curveLength);
+    float valueCurveAtTime(Seconds t, Seconds time1, Seconds duration, std::span<const float> curveData, size_t curveLength);
     void handleCancelValues(ParamEvent&, ParamEvent* nextEvent, float& value2, Seconds& time2, ParamEvent::Type& nextEventType);
     bool isEventCurrent(const ParamEvent&, const ParamEvent* nextEvent, size_t currentFrame, double sampleRate) const;
 
-    void processLinearRamp(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
-    void processExponentialRamp(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
-    void processCancelValues(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex) WTF_REQUIRES_LOCK(m_eventsLock);
-    void processSetTarget(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
-    void processSetValueCurve(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
+    void processLinearRamp(const AutomationState&, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex);
+    void processExponentialRamp(const AutomationState&, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex);
+    void processCancelValues(const AutomationState&, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex) WTF_REQUIRES_LOCK(m_eventsLock);
+    void processSetTarget(const AutomationState&, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex);
+    void processSetValueCurve(const AutomationState&, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex);
     void processSetTargetFollowedByRamp(int eventIndex, ParamEvent*&, ParamEvent::Type nextEventType, size_t currentFrame, double samplingPeriod, double controlRate, float& value) WTF_REQUIRES_LOCK(m_eventsLock);
 
     Vector<ParamEvent> m_events WTF_GUARDED_BY_LOCK(m_eventsLock);

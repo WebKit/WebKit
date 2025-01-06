@@ -168,10 +168,10 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, const AudioBus* in
     const AudioChannel* inputChannelR = numInputChannels > 1 ? inputBus->channelByType(AudioBus::ChannelRight) : 0;
 
     // Get source and destination pointers.
-    const float* sourceL = inputChannelL->data();
-    const float* sourceR = numInputChannels > 1 ? inputChannelR->data() : sourceL;
-    float* destinationL = outputBus->channelByType(AudioBus::ChannelLeft)->mutableData();
-    float* destinationR = outputBus->channelByType(AudioBus::ChannelRight)->mutableData();
+    auto sourceL = inputChannelL->span();
+    auto sourceR = numInputChannels > 1 ? inputChannelR->span() : sourceL;
+    auto destinationL = outputBus->channelByType(AudioBus::ChannelLeft)->mutableSpan();
+    auto destinationR = outputBus->channelByType(AudioBus::ChannelRight)->mutableSpan();
 
     double azimuthBlend;
     int desiredAzimuthIndex = calculateDesiredAzimuthIndexAndBlend(azimuth, azimuthBlend);
@@ -245,36 +245,36 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, const AudioBus* in
 
         // Calculate the source and destination pointers for the current segment.
         unsigned offset = segment * framesPerSegment;
-        const float* segmentSourceL = sourceL + offset;
-        const float* segmentSourceR = sourceR + offset;
-        float* segmentDestinationL = destinationL + offset;
-        float* segmentDestinationR = destinationR + offset;
+        auto segmentSourceL = sourceL.subspan(offset, framesPerSegment);
+        auto segmentSourceR = sourceR.subspan(offset, framesPerSegment);
+        auto segmentDestinationL = destinationL.subspan(offset, framesPerSegment);
+        auto segmentDestinationR = destinationR.subspan(offset, framesPerSegment);
 
         // First run through delay lines for inter-aural time difference.
         m_delayLineL.setDelayFrames(frameDelayL);
         m_delayLineR.setDelayFrames(frameDelayR);
-        m_delayLineL.process(segmentSourceL, segmentDestinationL, framesPerSegment);
-        m_delayLineR.process(segmentSourceR, segmentDestinationR, framesPerSegment);
+        m_delayLineL.process(segmentSourceL, segmentDestinationL);
+        m_delayLineR.process(segmentSourceR, segmentDestinationR);
 
         bool needsCrossfading = m_crossfadeIncr;
         
         // Have the convolvers render directly to the final destination if we're not cross-fading.
-        float* convolutionDestinationL1 = needsCrossfading ? m_tempL1.data() : segmentDestinationL;
-        float* convolutionDestinationR1 = needsCrossfading ? m_tempR1.data() : segmentDestinationR;
-        float* convolutionDestinationL2 = needsCrossfading ? m_tempL2.data() : segmentDestinationL;
-        float* convolutionDestinationR2 = needsCrossfading ? m_tempR2.data() : segmentDestinationR;
+        auto convolutionDestinationL1 = needsCrossfading ? m_tempL1.span() : segmentDestinationL;
+        auto convolutionDestinationR1 = needsCrossfading ? m_tempR1.span() : segmentDestinationR;
+        auto convolutionDestinationL2 = needsCrossfading ? m_tempL2.span() : segmentDestinationL;
+        auto convolutionDestinationR2 = needsCrossfading ? m_tempR2.span() : segmentDestinationR;
 
         // Now do the convolutions.
         // Note that we avoid doing convolutions on both sets of convolvers if we're not currently cross-fading.
         
         if (m_crossfadeSelection == CrossfadeSelection1 || needsCrossfading) {
-            m_convolverL1.process(kernelL1->fftFrame(), segmentDestinationL, convolutionDestinationL1, framesPerSegment);
-            m_convolverR1.process(kernelR1->fftFrame(), segmentDestinationR, convolutionDestinationR1, framesPerSegment);
+            m_convolverL1.process(kernelL1->fftFrame(), segmentDestinationL, convolutionDestinationL1);
+            m_convolverR1.process(kernelR1->fftFrame(), segmentDestinationR, convolutionDestinationR1);
         }
 
         if (m_crossfadeSelection == CrossfadeSelection2 || needsCrossfading) {
-            m_convolverL2.process(kernelL2->fftFrame(), segmentDestinationL, convolutionDestinationL2, framesPerSegment);
-            m_convolverR2.process(kernelR2->fftFrame(), segmentDestinationR, convolutionDestinationR2, framesPerSegment);
+            m_convolverL2.process(kernelL2->fftFrame(), segmentDestinationL, convolutionDestinationL2);
+            m_convolverR2.process(kernelR2->fftFrame(), segmentDestinationR, convolutionDestinationR2);
         }
         
         if (needsCrossfading) {
@@ -304,7 +304,7 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, const AudioBus* in
     }
 }
 
-void HRTFPanner::panWithSampleAccurateValues(double* azimuth, double* elevation, const AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess)
+void HRTFPanner::panWithSampleAccurateValues(std::span<double> azimuth, std::span<double> elevation, const AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess)
 {
     // Sample-accurate (a-rate) HRTF panner is not implemented, just k-rate. Just
     // grab the current azimuth/elevation and use that.

@@ -1,0 +1,10 @@
+
+RUN(video.src = "../media-source/content/test-vorbis.webm")
+EVENT(canplay)
+EXPECTED (video.audioTracks.length > '0') OK
+EXPECTED (video.audioTracks[0].configuration != 'null') OK
+EXPECTED (video.audioTracks[0].configuration.codec == 'vorbis'), OBSERVED '', AFTER TIMEOUT FAIL
+EXPECTED (video.audioTracks[0].configuration.sampleRate == '44100') OK
+EXPECTED (video.audioTracks[0].configuration.numberOfChannels == '1') OK
+END OF TEST
+

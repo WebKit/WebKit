@@ -111,6 +111,14 @@ void MediaSourceInterfaceWorker::detachFromElement()
     });
 }
 
+void MediaSourceInterfaceWorker::elementIsShuttingDown()
+{
+    ASSERT(m_handle->hasEverBeenAssignedAsSrcObject());
+    m_handle->ensureOnDispatcher([](MediaSource& mediaSource) {
+        mediaSource.elementIsShuttingDown();
+    });
+}
+
 void MediaSourceInterfaceWorker::openIfDeferredOpen()
 {
     ASSERT(m_handle->hasEverBeenAssignedAsSrcObject());
@@ -136,6 +144,11 @@ void MediaSourceInterfaceWorker::memoryPressure()
     m_handle->ensureOnDispatcher([](MediaSource& mediaSource) {
         mediaSource.memoryPressure();
     });
+}
+
+bool MediaSourceInterfaceWorker::detachable() const
+{
+    return m_handle->detachable();
 }
 
 } // namespace WebCore

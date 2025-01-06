@@ -15,29 +15,28 @@
 
 #include <map>
 #include <memory>
-#include <string>
-#include <vector>
+#include <optional>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/crypto/crypto_options.h"
 #include "api/fec_controller.h"
 #include "api/frame_transformer_interface.h"
-#include "api/rtc_event_log/rtc_event_log.h"
+#include "api/rtp_packet_sender.h"
+#include "api/scoped_refptr.h"
+#include "api/transport/bandwidth_estimation_settings.h"
 #include "api/transport/bitrate_settings.h"
+#include "api/transport/network_control.h"
+#include "api/transport/network_types.h"
 #include "api/units/timestamp.h"
 #include "call/rtp_config.h"
 #include "common_video/frame_counts.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/include/rtcp_statistics.h"
-#include "modules/rtp_rtcp/include/rtp_packet_sender.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace rtc {
 struct SentPacket;
 struct NetworkRoute;
-class TaskQueue;
 }  // namespace rtc
 namespace webrtc {
 
@@ -47,6 +46,7 @@ class Transport;
 class PacketRouter;
 class RtpVideoSenderInterface;
 class RtpPacketSender;
+class RtpRtcpInterface;
 
 struct RtpSenderObservers {
   RtcpRttStats* rtcp_rtt_stats;
@@ -101,15 +101,19 @@ class RtpTransportControllerSendInterface {
       int rtcp_report_interval_ms,
       Transport* send_transport,
       const RtpSenderObservers& observers,
-      RtcEventLog* event_log,
       std::unique_ptr<FecController> fec_controller,
       const RtpSenderFrameEncryptionConfig& frame_encryption_config,
       rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) = 0;
   virtual void DestroyRtpVideoSender(
       RtpVideoSenderInterface* rtp_video_sender) = 0;
 
+  // Register a specific RTP stream as sending. This means that the pacer and
+  // packet router can send packets using this RTP stream.
+  virtual void RegisterSendingRtpStream(RtpRtcpInterface& rtp_module) = 0;
+  // Pacer and PacketRouter stop using this RTP stream.
+  virtual void DeRegisterSendingRtpStream(RtpRtcpInterface& rtp_module) = 0;
+
   virtual NetworkStateEstimateObserver* network_state_estimate_observer() = 0;
-  virtual TransportFeedbackObserver* transport_feedback_observer() = 0;
 
   virtual RtpPacketSender* packet_sender() = 0;
 
@@ -117,6 +121,9 @@ class RtpTransportControllerSendInterface {
   // settings.
   virtual void SetAllocatedSendBitrateLimits(
       BitrateAllocationLimits limits) = 0;
+
+  virtual void ReconfigureBandwidthEstimation(
+      const BandwidthEstimationSettings& settings) = 0;
 
   virtual void SetPacingFactor(float pacing_factor) = 0;
   virtual void SetQueueTimeLimit(int limit_ms) = 0;
@@ -130,7 +137,7 @@ class RtpTransportControllerSendInterface {
   virtual void OnNetworkAvailability(bool network_available) = 0;
   virtual NetworkLinkRtcpObserver* GetRtcpObserver() = 0;
   virtual int64_t GetPacerQueuingDelayMs() const = 0;
-  virtual absl::optional<Timestamp> GetFirstPacketTime() const = 0;
+  virtual std::optional<Timestamp> GetFirstPacketTime() const = 0;
   virtual void EnablePeriodicAlrProbing(bool enable) = 0;
 
   // Called when a packet has been sent.
@@ -153,6 +160,7 @@ class RtpTransportControllerSendInterface {
   virtual void IncludeOverheadInPacedSender() = 0;
 
   virtual void EnsureStarted() = 0;
+  virtual NetworkControllerInterface* GetNetworkController() = 0;
 };
 
 }  // namespace webrtc

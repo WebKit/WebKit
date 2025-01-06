@@ -35,10 +35,10 @@
 
 #if PLATFORM(GTK)
 typedef struct _GdkMonitor GdkMonitor;
-using PlatformMonitor = GdkMonitor;
+using PlatformScreen = GdkMonitor;
 #elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
-typedef struct _WPEMonitor WPEMonitor;
-using PlatformMonitor = WPEMonitor;
+typedef struct _WPEScreen WPEScreen;
+using PlatformScreen = WPEScreen;
 #endif
 
 namespace WebKit {
@@ -51,8 +51,8 @@ class ScreenManager {
 public:
     static ScreenManager& singleton();
 
-    PlatformDisplayID displayID(PlatformMonitor*) const;
-    PlatformMonitor* monitor(PlatformDisplayID) const;
+    PlatformDisplayID displayID(PlatformScreen*) const;
+    PlatformScreen* screen(PlatformDisplayID) const;
     PlatformDisplayID primaryDisplayID() const { return m_primaryDisplayID; }
 
     WebCore::ScreenProperties collectScreenProperties() const;
@@ -60,15 +60,15 @@ public:
 private:
     ScreenManager();
 
-    static PlatformDisplayID generatePlatformDisplayID(PlatformMonitor*);
+    static PlatformDisplayID generatePlatformDisplayID(PlatformScreen*);
 
-    void addMonitor(PlatformMonitor*);
-    void removeMonitor(PlatformMonitor*);
+    void addScreen(PlatformScreen*);
+    void removeScreen(PlatformScreen*);
     void updatePrimaryDisplayID();
     void propertiesDidChange() const;
 
-    Vector<GRefPtr<PlatformMonitor>, 1> m_monitors;
-    HashMap<PlatformMonitor*, PlatformDisplayID> m_monitorToDisplayIDMap;
+    Vector<GRefPtr<PlatformScreen>, 1> m_screens;
+    HashMap<PlatformScreen*, PlatformDisplayID> m_screenToDisplayIDMap;
     PlatformDisplayID m_primaryDisplayID { 0 };
 };
 

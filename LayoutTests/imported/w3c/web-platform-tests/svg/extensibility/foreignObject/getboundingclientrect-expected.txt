@@ -1,0 +1,3 @@
+
+FAIL foreignObject: Element.prototype.getBoundingClientRect() assert_equals: top expected 24 but got 18
+

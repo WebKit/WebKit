@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
@@ -796,7 +797,12 @@ TEST(CSSViewportUnits, MaximumViewportInsetWithBounds)
 
 #if PLATFORM(MAC)
 
+// rdar://136706717
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+TEST(CSSViewportUnits, DISABLED_TopContentInset)
+#else
 TEST(CSSViewportUnits, TopContentInset)
+#endif
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
 
@@ -893,7 +899,12 @@ TEST(CSSViewportUnits, MinimumViewportInsetWithTopContentInset)
     }
 }
 
+// rdar://136706717
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+TEST(CSSViewportUnits, DISABLED_MaximumViewportInsetWithTopContentInset)
+#else
 TEST(CSSViewportUnits, MaximumViewportInsetWithTopContentInset)
+#endif
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
 
@@ -1649,7 +1660,7 @@ TEST(CSSViewportUnits, DifferentUnobscuredSizeOverrides)
 TEST(CSSViewportUnits, SVGDocument)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"CSSViewportUnits" withExtension:@"svg" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"CSSViewportUnits" withExtension:@"svg"]]];
     [webView _test_waitForDidFinishNavigation];
     [webView waitForNextPresentationUpdate];
 

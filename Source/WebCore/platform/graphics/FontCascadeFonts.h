@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef FontCascadeFonts_h
-#define FontCascadeFonts_h
+#pragma once
 
 #include "Font.h"
 #include "FontCascadeDescription.h"
@@ -37,6 +36,10 @@
 #if PLATFORM(IOS_FAMILY)
 #include "WebCoreThread.h"
 #endif
+
+namespace WTF {
+class TextStream;
+}
 
 namespace WebCore {
 
@@ -67,6 +70,8 @@ public:
     bool isLoadingCustomFonts() const;
 
     FontSelector* fontSelector() { return m_fontSelector.get(); }
+    const FontSelector* fontSelector() const { return m_fontSelector.get(); }
+
     // FIXME: It should be possible to combine fontSelectorVersion and generation.
     unsigned fontSelectorVersion() const { return m_fontSelectorVersion; }
     unsigned generation() const { return m_generation; }
@@ -111,7 +116,7 @@ private:
         std::unique_ptr<MixedFontGlyphPage> m_mixedFont;
     };
 
-    EnumeratedArray<ResolvedEmojiPolicy, HashMap<unsigned, GlyphPageCacheEntry, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>, ResolvedEmojiPolicy::RequireEmoji> m_cachedPages;
+    EnumeratedArray<ResolvedEmojiPolicy, UncheckedKeyHashMap<unsigned, GlyphPageCacheEntry, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>, ResolvedEmojiPolicy::RequireEmoji> m_cachedPages;
 
     HashSet<RefPtr<Font>> m_systemFallbackFontSet;
 
@@ -120,8 +125,8 @@ private:
 
     WidthCache m_widthCache;
 
-    unsigned m_fontSelectorVersion;
-    unsigned short m_generation;
+    unsigned m_fontSelectorVersion { 0 };
+    unsigned short m_generation { 0 };
     Pitch m_pitch { UnknownPitch };
     bool m_isForPlatformFont { false };
     TriState m_canTakeFixedPitchFastContentMeasuring : 2 { TriState::Indeterminate };
@@ -169,6 +174,6 @@ inline const Font& FontCascadeFonts::primaryFont(const FontCascadeDescription& d
     return *m_cachedPrimaryFont;
 }
 
-}
+WTF::TextStream& operator<<(WTF::TextStream&, const FontCascadeFonts&);
 
-#endif
+} // namespace WebCore

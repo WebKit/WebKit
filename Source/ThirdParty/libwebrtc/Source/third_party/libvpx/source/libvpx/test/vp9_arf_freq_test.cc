@@ -10,7 +10,7 @@
 
 #include <memory>
 
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
@@ -18,6 +18,7 @@
 #include "test/y4m_video_source.h"
 #include "test/yuv_video_source.h"
 #include "vp9/encoder/vp9_ratectrl.h"
+#include "vpx_config.h"
 
 namespace {
 

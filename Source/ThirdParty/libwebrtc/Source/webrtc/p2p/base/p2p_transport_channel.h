@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <utility>
@@ -33,10 +34,8 @@
 
 #include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/async_dns_resolver.h"
-#include "api/async_resolver_factory.h"
 #include "api/candidate.h"
 #include "api/ice_transport_interface.h"
 #include "api/rtc_error.h"
@@ -47,7 +46,6 @@
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
 #include "logging/rtc_event_log/ice_logger.h"
 #include "p2p/base/active_ice_controller_factory_interface.h"
-#include "p2p/base/basic_async_resolver_factory.h"
 #include "p2p/base/candidate_pair_interface.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/ice_agent_interface.h"
@@ -80,12 +78,6 @@ class RtcEventLog;
 }  // namespace webrtc
 
 namespace cricket {
-
-// Enum for UMA metrics, used to record whether the channel is
-// connected/connecting/disconnected when ICE restart happens.
-enum class IceRestartState { CONNECTING, CONNECTED, DISCONNECTED, MAX_VALUE };
-
-static const int MIN_PINGS_AT_WEAK_PING_INTERVAL = 3;
 
 bool IceCredentialsChanged(absl::string_view old_ufrag,
                            absl::string_view old_pwd,
@@ -136,7 +128,6 @@ class RTC_EXPORT P2PTransportChannel : public IceTransportInternal,
   bool receiving() const override;
   void SetIceRole(IceRole role) override;
   IceRole GetIceRole() const override;
-  void SetIceTiebreaker(uint64_t tiebreaker) override;
   void SetIceParameters(const IceParameters& ice_params) override;
   void SetRemoteIceParameters(const IceParameters& ice_params) override;
   void SetRemoteIceMode(IceMode mode) override;
@@ -153,7 +144,7 @@ class RTC_EXPORT P2PTransportChannel : public IceTransportInternal,
   // only update the parameter if it is considered set in `config`. For example,
   // a negative value of receiving_timeout will be considered "not set" and we
   // will not use it to update the respective parameter in `config_`.
-  // TODO(deadbeef): Use absl::optional instead of negative values.
+  // TODO(deadbeef): Use std::optional instead of negative values.
   void SetIceConfig(const IceConfig& config) override;
   const IceConfig& config() const;
   static webrtc::RTCError ValidateIceConfig(const IceConfig& config);
@@ -167,9 +158,9 @@ class RTC_EXPORT P2PTransportChannel : public IceTransportInternal,
   bool GetOption(rtc::Socket::Option opt, int* value) override;
   int GetError() override;
   bool GetStats(IceTransportStats* ice_transport_stats) override;
-  absl::optional<int> GetRttEstimate() override;
+  std::optional<int> GetRttEstimate() override;
   const Connection* selected_connection() const override;
-  absl::optional<const CandidatePair> GetSelectedCandidatePair() const override;
+  std::optional<const CandidatePair> GetSelectedCandidatePair() const override;
 
   // From IceAgentInterface
   void OnStartedPinging() override;
@@ -214,7 +205,7 @@ class RTC_EXPORT P2PTransportChannel : public IceTransportInternal,
 
   void PruneAllPorts();
   int check_receiving_interval() const;
-  absl::optional<rtc::NetworkRoute> network_route() const override;
+  std::optional<rtc::NetworkRoute> network_route() const override;
 
   void RemoveConnection(Connection* connection);
 
@@ -254,7 +245,7 @@ class RTC_EXPORT P2PTransportChannel : public IceTransportInternal,
     return ss.Release();
   }
 
-  absl::optional<std::reference_wrapper<StunDictionaryWriter>>
+  std::optional<std::reference_wrapper<StunDictionaryWriter>>
   GetDictionaryWriter() override {
     return stun_dict_writer_;
   }
@@ -378,7 +369,7 @@ class RTC_EXPORT P2PTransportChannel : public IceTransportInternal,
   }
 
   // Indicates if the given local port has been pruned.
-  bool IsPortPruned(const Port* port) const;
+  bool IsPortPruned(const PortInterface* port) const;
 
   // Indicates if the given remote candidate has been pruned.
   bool IsRemoteCandidatePruned(const Candidate& cand) const;
@@ -447,7 +438,6 @@ class RTC_EXPORT P2PTransportChannel : public IceTransportInternal,
       RTC_GUARDED_BY(network_thread_);
   IceMode remote_ice_mode_ RTC_GUARDED_BY(network_thread_);
   IceRole ice_role_ RTC_GUARDED_BY(network_thread_);
-  uint64_t tiebreaker_ RTC_GUARDED_BY(network_thread_);
   IceGatheringState gathering_state_ RTC_GUARDED_BY(network_thread_);
   std::unique_ptr<webrtc::BasicRegatheringController> regathering_controller_
       RTC_GUARDED_BY(network_thread_);
@@ -470,7 +460,7 @@ class RTC_EXPORT P2PTransportChannel : public IceTransportInternal,
   bool has_been_writable_ RTC_GUARDED_BY(network_thread_) =
       false;  // if writable_ has ever been true
 
-  absl::optional<rtc::NetworkRoute> network_route_
+  std::optional<rtc::NetworkRoute> network_route_
       RTC_GUARDED_BY(network_thread_);
   webrtc::IceEventLog ice_event_log_ RTC_GUARDED_BY(network_thread_);
 

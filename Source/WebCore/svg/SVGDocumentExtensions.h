@@ -24,6 +24,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -39,8 +40,8 @@ class SVGUseElement;
 class WeakPtrImplWithEventTargetData;
 
 class SVGDocumentExtensions final : public CanMakeCheckedPtr<SVGDocumentExtensions> {
+    WTF_MAKE_TZONE_ALLOCATED(SVGDocumentExtensions);
     WTF_MAKE_NONCOPYABLE(SVGDocumentExtensions);
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGDocumentExtensions);
 public:
     explicit SVGDocumentExtensions(Document&);

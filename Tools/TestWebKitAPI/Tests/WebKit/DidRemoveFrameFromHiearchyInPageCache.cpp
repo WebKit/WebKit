@@ -45,7 +45,7 @@ static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const voi
 static void setPageLoaderClient(WKPageRef page)
 {
     WKPageNavigationClientV1 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
 
     loaderClient.base.version = 1;
     loaderClient.didFinishNavigation = didFinishNavigation;

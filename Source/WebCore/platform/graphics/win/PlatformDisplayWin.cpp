@@ -26,12 +26,13 @@
 #include "config.h"
 #include "PlatformDisplayWin.h"
 
+#include "GLContext.h"
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
 namespace WebCore {
 
-void PlatformDisplayWin::initializeEGLDisplay()
+std::unique_ptr<PlatformDisplayWin> PlatformDisplayWin::create()
 {
     EGLint attributes[] = {
         // Disable debug layers that makes some tests fail because
@@ -41,9 +42,18 @@ void PlatformDisplayWin::initializeEGLDisplay()
         EGL_FALSE,
         EGL_NONE,
     };
-    m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, attributes);
+    auto glDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, attributes));
+    if (!glDisplay) {
+        WTFLogAlways("Could not create EGL display: %s. Aborting...", GLContext::lastErrorString());
+        CRASH();
+    }
 
-    PlatformDisplay::initializeEGLDisplay();
+    return std::unique_ptr<PlatformDisplayWin>(new PlatformDisplayWin(WTFMove(glDisplay)));
+}
+
+PlatformDisplayWin::PlatformDisplayWin(std::unique_ptr<GLDisplay>&& glDisplay)
+    : PlatformDisplay(WTFMove(glDisplay))
+{
 }
 
 } // namespace WebCore

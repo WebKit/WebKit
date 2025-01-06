@@ -13,7 +13,8 @@
 
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/numerics/sequence_number_unwrapper.h"
@@ -32,11 +33,11 @@ class InterFrameDelayVariationCalculator {
 
   // Calculates the inter-frame delay variation of a frame with the given
   // RTP timestamp. This method is called when the frame is complete.
-  absl::optional<TimeDelta> Calculate(uint32_t rtp_timestamp, Timestamp now);
+  std::optional<TimeDelta> Calculate(uint32_t rtp_timestamp, Timestamp now);
 
  private:
   // The previous wall clock timestamp used in the calculation.
-  absl::optional<Timestamp> prev_wall_clock_;
+  std::optional<Timestamp> prev_wall_clock_;
   // The previous RTP timestamp used in the calculation.
   int64_t prev_rtp_timestamp_unwrapped_;
 

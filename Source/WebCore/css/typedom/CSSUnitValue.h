@@ -27,7 +27,6 @@
 
 #include "CSSNumericValue.h"
 #include <wtf/RefCounted.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -35,7 +34,7 @@ namespace WebCore {
 enum class CSSUnitType : uint8_t;
 
 class CSSUnitValue final : public CSSNumericValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSUnitValue);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSUnitValue);
 public:
     static ExceptionOr<Ref<CSSUnitValue>> create(double value, const String& unit);
     static Ref<CSSUnitValue> create(double value, CSSUnitType unit) { return adoptRef(*new CSSUnitValue(value, unit)); }
@@ -53,7 +52,7 @@ public:
 
     RefPtr<CSSValue> toCSSValue() const final;
     RefPtr<CSSValue> toCSSValueWithProperty(CSSPropertyID) const final;
-    RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const final;
+    std::optional<CSSCalc::Child> toCalcTreeNode() const final;
 
 private:
     CSSUnitValue(double, CSSUnitType);

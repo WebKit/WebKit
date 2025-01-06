@@ -28,25 +28,17 @@ const expected = [
   "get other.second",
   "get other.second.valueOf",
   "call other.second.valueOf",
-  // CopyDataProperties
-  "ownKeys options",
-  "getOwnPropertyDescriptor options.roundingIncrement",
-  "get options.roundingIncrement",
-  "getOwnPropertyDescriptor options.roundingMode",
-  "get options.roundingMode",
-  "getOwnPropertyDescriptor options.largestUnit",
-  "get options.largestUnit",
-  "getOwnPropertyDescriptor options.smallestUnit",
-  "get options.smallestUnit",
-  "getOwnPropertyDescriptor options.additional",
-  "get options.additional",
   // GetDifferenceSettings
+  "get options.largestUnit",
   "get options.largestUnit.toString",
   "call options.largestUnit.toString",
+  "get options.roundingIncrement",
   "get options.roundingIncrement.valueOf",
   "call options.roundingIncrement.valueOf",
+  "get options.roundingMode",
   "get options.roundingMode.toString",
   "call options.roundingMode.toString",
+  "get options.smallestUnit",
   "get options.smallestUnit.toString",
   "call options.smallestUnit.toString",
 ];
@@ -62,7 +54,7 @@ const other = TemporalHelpers.propertyBagObserver(actual, {
   microsecond: 1.7,
   nanosecond: 1.7,
   calendar: "iso8601",
-}, "other");
+}, "other", ["calendar"]);
 
 const options = TemporalHelpers.propertyBagObserver(actual, {
   roundingIncrement: 1,

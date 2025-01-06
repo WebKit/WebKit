@@ -37,6 +37,7 @@
 #include <WebCore/ScrollView.h>
 #include <WebCore/TiledBacking.h>
 #include <WebCore/TransformationMatrix.h>
+#include <wtf/TZoneMallocInlines.h>
 
 // Subclasses
 #if PLATFORM(COCOA)
@@ -52,7 +53,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPageCreationParameters& parameters)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DrawingArea);
+
+RefPtr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPageCreationParameters& parameters)
 {
 #if PLATFORM(MAC)
     SandboxExtension::consumePermanently(parameters.renderServerMachExtensionHandle);
@@ -62,21 +65,21 @@ std::unique_ptr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPage
 #if PLATFORM(COCOA)
 #if !PLATFORM(IOS_FAMILY)
     case DrawingAreaType::TiledCoreAnimation:
-        return makeUnique<TiledCoreAnimationDrawingArea>(webPage, parameters);
+        return TiledCoreAnimationDrawingArea::create(webPage, parameters);
 #endif
     case DrawingAreaType::RemoteLayerTree:
 #if PLATFORM(MAC)
-        return makeUnique<RemoteLayerTreeDrawingAreaMac>(webPage, parameters);
+        return RemoteLayerTreeDrawingAreaMac::create(webPage, parameters);
 #else
-        return makeUnique<RemoteLayerTreeDrawingArea>(webPage, parameters);
+        return RemoteLayerTreeDrawingArea::create(webPage, parameters);
 #endif
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     case DrawingAreaType::CoordinatedGraphics:
-        return makeUnique<DrawingAreaCoordinatedGraphics>(webPage, parameters);
+        return DrawingAreaCoordinatedGraphics::create(webPage, parameters);
 #endif
 #if USE(GRAPHICS_LAYER_WC)
     case DrawingAreaType::WC:
-        return makeUnique<DrawingAreaWC>(webPage, parameters);
+        return DrawingAreaWC::create(webPage, parameters);
 #endif
     }
 

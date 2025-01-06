@@ -28,6 +28,7 @@
 
 #include "ContextDestructionObserver.h"
 #include "TaskSource.h"
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/Assertions.h>
 #include <wtf/CancellableTask.h>
 #include <wtf/Forward.h>
@@ -49,7 +50,7 @@ enum class ReasonForSuspension : uint8_t {
     PageWillBeSuspended,
 };
 
-class WEBCORE_EXPORT ActiveDOMObject : public ContextDestructionObserver {
+class WEBCORE_EXPORT ActiveDOMObject : public AbstractRefCounted, public ContextDestructionObserver {
 public:
     // The suspendIfNeeded must be called exactly once after object construction to update
     // the suspended state to match that of the ScriptExecutionContext.
@@ -69,9 +70,6 @@ public:
     // any ActiveDOMObject. That means they must not result in calls to arbitrary JavaScript.
     virtual void suspend(ReasonForSuspension);
     virtual void resume();
-
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 
     // This function must not have a side effect of creating an ActiveDOMObject.
     // That means it must not result in calls to arbitrary JavaScript.

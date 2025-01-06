@@ -33,6 +33,8 @@
 #include "RegisterSet.h"
 #include <wtf/DataLog.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace FTL {
 
 using namespace B3;
@@ -189,5 +191,6 @@ void printInternal(PrintStream& out, JSC::FTL::Location::Kind kind)
 
 } // namespace WTF
 
-#endif // ENABLE(FTL_JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(FTL_JIT)

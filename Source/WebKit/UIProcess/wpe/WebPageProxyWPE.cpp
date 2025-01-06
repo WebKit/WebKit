@@ -26,10 +26,15 @@
 #include "config.h"
 #include "WebPageProxy.h"
 
+#include "DrawingAreaMessages.h"
+#include "DrawingAreaProxy.h"
 #include "EditorState.h"
 #include "InputMethodState.h"
 #include "PageClientImpl.h"
+#include "UserMessage.h"
+#include "WebProcessProxy.h"
 #include <WebCore/PlatformEvent.h>
+#include <wtf/CallbackAggregator.h>
 
 #if USE(ATK)
 #include <atk/atk.h>
@@ -56,20 +61,25 @@ void WebPageProxy::platformInitialize()
 
 struct wpe_view_backend* WebPageProxy::viewBackend()
 {
-    return static_cast<PageClientImpl&>(pageClient()).viewBackend();
+    RefPtr pageClient = this->pageClient();
+    return pageClient ? static_cast<PageClientImpl&>(*pageClient).viewBackend() : nullptr;
 }
 
 #if ENABLE(WPE_PLATFORM)
 WPEView* WebPageProxy::wpeView() const
 {
-    return static_cast<PageClientImpl&>(pageClient()).wpeView();
+    RefPtr pageClient = this->pageClient();
+    return pageClient ? static_cast<PageClientImpl&>(*pageClient).wpeView() : nullptr;
 }
 #endif
 
 void WebPageProxy::bindAccessibilityTree(const String& plugID)
 {
 #if USE(ATK)
-    auto* accessible = static_cast<PageClientImpl&>(pageClient()).accessible();
+    RefPtr pageClient = this->pageClient();
+    if (!pageClient)
+        return;
+    auto* accessible = static_cast<PageClientImpl&>(*pageClient).accessible();
     atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(plugID.utf8().data()));
     atk_object_notify_state_change(accessible, ATK_STATE_TRANSIENT, FALSE);
 #else
@@ -79,13 +89,18 @@ void WebPageProxy::bindAccessibilityTree(const String& plugID)
 
 void WebPageProxy::didUpdateEditorState(const EditorState&, const EditorState& newEditorState)
 {
-    if (!newEditorState.shouldIgnoreSelectionChanges)
-        pageClient().selectionDidChange();
+    if (!newEditorState.shouldIgnoreSelectionChanges) {
+        if (RefPtr pageClient = this->pageClient())
+            pageClient->selectionDidChange();
+    }
 }
 
 void WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
-    static_cast<PageClientImpl&>(pageClient()).sendMessageToWebView(WTFMove(message), WTFMove(completionHandler));
+    RefPtr pageClient = this->pageClient();
+    if (!pageClient)
+        return completionHandler({ });
+    static_cast<PageClientImpl&>(*pageClient).sendMessageToWebView(WTFMove(message), WTFMove(completionHandler));
 }
 
 void WebPageProxy::sendMessageToWebView(UserMessage&& message)
@@ -95,7 +110,8 @@ void WebPageProxy::sendMessageToWebView(UserMessage&& message)
 
 void WebPageProxy::setInputMethodState(std::optional<InputMethodState>&& state)
 {
-    static_cast<PageClientImpl&>(pageClient()).setInputMethodState(WTFMove(state));
+    if (RefPtr pageClient = this->pageClient())
+        static_cast<PageClientImpl&>(*pageClient).setInputMethodState(WTFMove(state));
 }
 
 #if USE(GBM)
@@ -136,7 +152,9 @@ Vector<DMABufRendererBufferFormat> WebPageProxy::preferredBufferFormats() const
             auto* modifiers = wpe_buffer_dma_buf_formats_get_format_modifiers(formats, i, j);
             format.modifiers.reserveInitialCapacity(modifiers->len);
             for (unsigned k = 0; k < modifiers->len; ++k) {
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // WPE port
                 auto* modifier = &g_array_index(modifiers, guint64, k);
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 format.modifiers.append(*modifier);
             }
             dmabufFormat.formats.append(WTFMove(format));
@@ -157,7 +175,7 @@ void WebPageProxy::preferredBufferFormatsDidChange()
     if (!view)
         return;
 
-    send(Messages::WebPage::PreferredBufferFormatsDidChange(preferredBufferFormats()));
+    legacyMainFrameProcess().send(Messages::WebPage::PreferredBufferFormatsDidChange(preferredBufferFormats()), webPageIDInMainFrameProcess());
 }
 #endif
 #endif
@@ -199,7 +217,18 @@ void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& c
     }
 
 #if USE(COORDINATED_GRAPHICS)
-    static_cast<PageClientImpl&>(pageClient()).callAfterNextPresentationUpdate(WTFMove(callback));
+    Ref aggregator = CallbackAggregator::create([weakThis = WeakPtr { *this }, callback = WTFMove(callback)]() mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return callback();
+
+        if (RefPtr pageClient = protectedThis->pageClient())
+            static_cast<PageClientImpl&>(*pageClient).callAfterNextPresentationUpdate(WTFMove(callback));
+    });
+    auto drawingAreaIdentifier = m_drawingArea->identifier();
+    forEachWebContentProcess([&] (auto& process, auto) {
+        process.sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [aggregator] { }, drawingAreaIdentifier);
+    });
 #else
     callback();
 #endif

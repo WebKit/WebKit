@@ -60,6 +60,8 @@
 #import "VisibleUnits.h"
 #import <wtf/WorkQueue.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/text/MakeString.h>
+#import <wtf/text/ParsingUtilities.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
@@ -292,25 +294,31 @@ static void removeResultLinksFromAnchor(Element& element)
 
 static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode)
 {
-    for (auto* node = &startNode; node; node = NodeTraversal::next(*node)) {
-        if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(*node)) {
-            if (!equalLettersIgnoringASCIICase(anchor->attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
-                return true;
-            removeResultLinksFromAnchor(*anchor);
-        }
-        
-        if (node == &endNode) {
-            // If we found the end node and no link, return false unless an ancestor node is a link.
-            // The only ancestors not tested at this point are in the direct line from self's parent to the top.
-            for (auto& anchor : ancestorsOfType<HTMLAnchorElement>(startNode)) {
-                if (!equalLettersIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
+    Vector<Ref<HTMLAnchorElement>> elementsToProcess;
+    auto result = ([&] {
+        for (auto* node = &startNode; node; node = NodeTraversal::next(*node)) {
+            if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(*node)) {
+                if (!equalLettersIgnoringASCIICase(anchor->attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
                     return true;
-                removeResultLinksFromAnchor(anchor);
+                removeResultLinksFromAnchor(*anchor);
             }
-            return false;
+
+            if (node == &endNode) {
+                // If we found the end node and no link, return false unless an ancestor node is a link.
+                // The only ancestors not tested at this point are in the direct line from self's parent to the top.
+                for (auto& anchor : ancestorsOfType<HTMLAnchorElement>(startNode)) {
+                    if (!equalLettersIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
+                        return true;
+                    elementsToProcess.append(anchor);
+                }
+                return false;
+            }
         }
-    }
-    return false;
+        return false;
+    })();
+    for (auto& element : elementsToProcess)
+        removeResultLinksFromAnchor(element);
+    return result;
 }
 
 static NSString *dataDetectorTypeForCategory(DDResultCategory category)
@@ -377,31 +385,31 @@ static void buildQuery(DDScanQueryRef scanQuery, const SimpleRange& contextRange
         }
         // Test for white space nodes, we're coalescing them.
         auto currentTextUpconvertedCharactersWithSize = currentText.upconvertedCharacters();
-        auto currentCharPtr = currentTextUpconvertedCharactersWithSize.get();
+        auto upconvertedCharacters = currentTextUpconvertedCharactersWithSize.span();
         
         bool containsOnlyWhiteSpace = true;
         bool hasTab = false;
         bool hasNewline = false;
         int nbspCount = 0;
         for (NSUInteger i = 0; i < currentTextLength; i++) {
-            if (!CFCharacterSetIsCharacterMember(whiteSpacesSet, *currentCharPtr)) {
+            if (!CFCharacterSetIsCharacterMember(whiteSpacesSet, upconvertedCharacters.front())) {
                 containsOnlyWhiteSpace = false;
                 break;
             }
             
-            if (CFCharacterSetIsCharacterMember(newLinesSet, *currentCharPtr))
+            if (CFCharacterSetIsCharacterMember(newLinesSet, upconvertedCharacters.front()))
                 hasNewline = true;
-            else if (*currentCharPtr == '\t')
+            else if (upconvertedCharacters.front() == '\t')
                 hasTab = true;
             
             // Multiple consecutive non breakable spaces are most likely simulated tabs.
-            if (*currentCharPtr == 0xa0) {
+            if (upconvertedCharacters.front() == 0xa0) {
                 if (++nbspCount > 2)
                     hasTab = true;
             } else
                 nbspCount = 0;
 
-            currentCharPtr++;
+            skip(upconvertedCharacters, 1);
         }
         if (containsOnlyWhiteSpace) {
             if (hasNewline) {
@@ -591,7 +599,9 @@ static NSArray * processDataDetectorScannerResults(DDScannerRef scanner, OptionS
     RefPtr<Text> lastTextNodeToUpdate;
     String lastNodeContent;
     unsigned contentOffset = 0;
-    DDQueryOffset lastModifiedQueryOffset = { .queryIndex = -1, .offset = 0 };
+    DDQueryOffset lastModifiedQueryOffset = { };
+    lastModifiedQueryOffset.queryIndex = -1;
+    lastModifiedQueryOffset.offset = 0;
 
     // For each result add the link.
     // Since there could be multiple results in the same text node, the node is only modified when
@@ -725,23 +735,20 @@ void DataDetection::detectContentInFrame(LocalFrame* frame, OptionSet<DataDetect
     if (types.contains(DataDetectorType::LookupSuggestion))
         PAL::softLink_DataDetectorsCore_DDScannerEnableOptionalSource(scanner.get(), DDScannerSourceSpotlight, true);
 
-    workQueue().dispatch([scanner = WTFMove(scanner), types, referenceDateFromContext, scanQuery = WTFMove(scanQuery), frame, fragments = WTFMove(fragments), completionHandler = WTFMove(completionHandler)]() mutable {
+    workQueue().dispatch([scanner = WTFMove(scanner), types, referenceDateFromContext, scanQuery = WTFMove(scanQuery), weakDocument = WeakPtr { *document }, fragments = WTFMove(fragments), completionHandler = WTFMove(completionHandler)]() mutable {
         if (!PAL::softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), scanQuery.get())) {
-            callOnMainRunLoop([completionHandler = WTFMove(completionHandler)]() mutable {
+            callOnMainRunLoop([scanner = WTFMove(scanner), scanQuery = WTFMove(scanQuery), weakDocument = WTFMove(weakDocument), fragments = WTFMove(fragments), completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler(nil);
             });
             return;
         }
 
-        callOnMainRunLoop([scanner = WTFMove(scanner), types, referenceDateFromContext, scanQuery = WTFMove(scanQuery), frame, fragments = WTFMove(fragments), completionHandler = WTFMove(completionHandler)]() mutable {
-            RefPtr document = frame->document();
-            if (!document) {
-                completionHandler(nil);
+        callOnMainRunLoop([scanner = WTFMove(scanner), types, referenceDateFromContext, scanQuery = WTFMove(scanQuery), weakDocument = WTFMove(weakDocument), fragments = WTFMove(fragments), completionHandler = WTFMove(completionHandler)]() mutable {
+            RefPtr document = weakDocument.get();
+            if (!document)
                 return;
-            }
 
             auto contextRange = makeRangeSelectingNodeContents(*document);
-
             completionHandler(processDataDetectorScannerResults(scanner.get(), types, referenceDateFromContext, scanQuery.get(), contextRange, fragments));
         });
     });

@@ -19,8 +19,8 @@ struct DummyConfig {
   int retries = 5;
   unsigned size = 3;
   bool ping = 0;
-  absl::optional<TimeDelta> duration;
-  absl::optional<TimeDelta> latency = TimeDelta::Millis(100);
+  std::optional<TimeDelta> duration;
+  std::optional<TimeDelta> latency = TimeDelta::Millis(100);
   std::unique_ptr<StructParametersParser> Parser();
 };
 

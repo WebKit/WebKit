@@ -31,11 +31,11 @@
 #include "IntRect.h"
 #include "PixelBuffer.h"
 #include <skia/core/SkPixmap.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferSkiaUnacceleratedBackend);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferSkiaUnacceleratedBackend);
 
 std::unique_ptr<ImageBufferSkiaUnacceleratedBackend> ImageBufferSkiaUnacceleratedBackend::create(const Parameters& parameters, const ImageBufferCreationContext&)
 {
@@ -82,14 +82,14 @@ void ImageBufferSkiaUnacceleratedBackend::getPixelBuffer(const IntRect& srcRect,
 {
     SkPixmap pixmap;
     if (m_surface->peekPixels(&pixmap))
-        ImageBufferBackend::getPixelBuffer(srcRect, pixmap.writable_addr(), destination);
+        ImageBufferBackend::getPixelBuffer(srcRect, static_cast<const uint8_t*>(pixmap.writable_addr()), destination);
 }
 
 void ImageBufferSkiaUnacceleratedBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     SkPixmap pixmap;
     if (m_surface->peekPixels(&pixmap))
-        ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, pixmap.writable_addr());
+        ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, static_cast<uint8_t*>(pixmap.writable_addr()));
 }
 
 } // namespace WebCore

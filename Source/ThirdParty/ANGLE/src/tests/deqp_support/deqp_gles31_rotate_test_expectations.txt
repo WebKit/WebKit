@@ -6,8 +6,6 @@
 
 // Only tested on Vulkan currently
 
-6678 UBSAN : dEQP-GLES31.functional.shaders.sample_variables.sample_pos.distribution.* = SKIP
-
 // SwiftShader does not support tessellation and geometry shaders
 b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box*tessellation* = SKIP
 b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box*geometry* = SKIP

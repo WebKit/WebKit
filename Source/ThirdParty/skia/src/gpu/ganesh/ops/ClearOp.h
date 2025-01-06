@@ -8,12 +8,23 @@
 #ifndef ClearOp_DEFINED
 #define ClearOp_DEFINED
 
-#include "include/gpu/GrTypes.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkString.h"
+#include "include/private/base/SkMacros.h"
+#include "src/gpu/ganesh/GrCaps.h"
 #include "src/gpu/ganesh/GrScissorState.h"
 #include "src/gpu/ganesh/ops/GrOp.h"
 
+#include <array>
+
+class GrAppliedClip;
+class GrDstProxyView;
 class GrOpFlushState;
 class GrRecordingContext;
+class GrSurfaceProxyView;
+class SkArenaAlloc;
+enum class GrLoadOp;
+enum class GrXferBarrierFlags;
 
 namespace skgpu::ganesh {
 
@@ -43,7 +54,7 @@ private:
 
         kBoth        = 0b11,
     };
-    GR_DECL_BITFIELD_CLASS_OPS_FRIENDS(Buffer);
+    SK_DECL_BITFIELD_CLASS_OPS_FRIENDS(Buffer);
 
     ClearOp(Buffer buffer,
             const GrScissorState& scissor,
@@ -59,7 +70,7 @@ private:
     void onPrepare(GrOpFlushState*) override {}
 
     void onExecute(GrOpFlushState* state, const SkRect& chainBounds) override;
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     SkString onDumpInfo() const override {
         SkString string("Scissor [ ");
         if (fScissor.enabled()) {
@@ -79,7 +90,7 @@ private:
     Buffer               fBuffer;
 };
 
-GR_MAKE_BITFIELD_CLASS_OPS(ClearOp::Buffer)
+SK_MAKE_BITFIELD_CLASS_OPS(ClearOp::Buffer)
 
 }  // namespace skgpu::ganesh
 

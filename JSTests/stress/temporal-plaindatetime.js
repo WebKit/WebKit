@@ -116,7 +116,6 @@ const goodStrings = [
     '2007-01-09 03:24:30',
     '2007-01-09T03:24:30+20:20:59',
     '2007-01-09T03:24:30-20:20:59',
-    '2007-01-09T03:24:30\u221220:20:59',
     '2007-01-09T03:24:30+10',
     '2007-01-09T03:24:30+1020',
     '2007-01-09T03:24:30+102030',
@@ -136,13 +135,7 @@ const goodStrings = [
     '2007-01-09T03:24:30+01:00[Etc/GMT-20]', // TimeZone error should be ignored.
     '2007-01-09 03:24:30+01:00[+01]',
     '2007-01-09 03:24:30+01:00[+01:00]',
-    '2007-01-09 03:24:30+01:00[+01:00:00]',
-    '2007-01-09 03:24:30+01:00[+01:00:00.123]',
-    '2007-01-09 03:24:30+01:00[+01:00:00.12345]',
-    '2007-01-09 03:24:30+01:00[+01:00:00.12345678]',
-    '2007-01-09 03:24:30+01:00[+01:00:00.123456789]',
     '2007-01-09 03:24:30+01:00[-01:00]',
-    '2007-01-09 03:24:30+01:00[\u221201:00]',
     '2007-01-09 03:24:30+01:00[u-ca=japanese]',
     '2007-01-09 03:24:30+01:00[Europe/Brussels][u-ca=japanese]',
     '2007-01-09[u-ca=japanese]',
@@ -186,6 +179,15 @@ const badStrings = [
     "2007-01-09T03:24:30Z", // UTCDesignator
     "2007-01-09 03:24:30[u-ca=japanese][Europe/Brussels]",
     "2007-01-09 03:24:30+01:00[u-ca=japanese][Europe/Brussels]",
+    "2007-01-09T03:24:30\u221220:20:59",
+    "2007-01-09 03:24:30+01:00[\u221201:00]",
+    "2007-01-09Z",
+    "2007-01-09+01:00",
+    '2006-01-09 03:24:30+01:00[+01:00:00]',
+    '2006-01-09 03:24:30+01:00[+01:00:00.123]',
+    '2006-01-09 03:24:30+01:00[+01:00:00.12345]',
+    '2006-01-09 03:24:30+01:00[+01:00:00.12345678]',
+    '2006-01-09 03:24:30+01:00[+01:00:00.123456789]',
 ];
 for (let s of badStrings)
     shouldThrow(() => Temporal.PlainDateTime.from(s), RangeError);
@@ -276,10 +278,6 @@ shouldBe(pdt.with({ year: 2000, month: 10, hour: 1, minute: 3, millisecond: 0, m
 shouldBe(pdt.with({ second: 15 }).toString(), '0001-02-03T04:05:15.007008009');
 shouldBe(pdt.with({ day: 30 }).toString(), '0001-02-28T04:05:06.007008009');
 shouldThrow(() => { pdt.with({ day: 30 }, { overflow: 'reject' }); }, RangeError);
-
-shouldBe(Temporal.PlainDateTime.prototype.withPlainDate.length, 1);
-shouldThrow(() => { pdt.withPlainDate(); }, TypeError);
-shouldBe(pdt.withPlainDate({ year: 2000, month: 10, day: 30 }).toString(), '2000-10-30T04:05:06.007008009');
 
 shouldBe(Temporal.PlainDateTime.prototype.withPlainTime.length, 0);
 shouldBe(pdt.withPlainTime().toString(), '0001-02-03T00:00:00');

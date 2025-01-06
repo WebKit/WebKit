@@ -35,10 +35,10 @@ class CSSFunctionValue;
 template<typename> class ExceptionOr;
 
 class CSSSkewY : public CSSTransformComponent {
-    WTF_MAKE_ISO_ALLOCATED(CSSSkewY);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSSkewY);
 public:
     static ExceptionOr<Ref<CSSSkewY>> create(Ref<CSSNumericValue>);
-    static ExceptionOr<Ref<CSSSkewY>> create(CSSFunctionValue&);
+    static ExceptionOr<Ref<CSSSkewY>> create(Ref<const CSSFunctionValue>);
 
     const CSSNumericValue& ay() const { return m_ay.get(); }
     ExceptionOr<void> setAy(Ref<CSSNumericValue>);

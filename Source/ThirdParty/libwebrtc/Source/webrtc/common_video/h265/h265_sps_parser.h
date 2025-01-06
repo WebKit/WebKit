@@ -11,11 +11,12 @@
 #ifndef COMMON_VIDEO_H265_H265_SPS_PARSER_H_
 #define COMMON_VIDEO_H265_H265_SPS_PARSER_H_
 
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "rtc_base/bitstream_reader.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -42,7 +43,7 @@ enum H265ProfileIdc {
 };
 
 // A class for parsing out sequence parameter set (SPS) data from an H265 NALU.
-class H265SpsParser {
+class RTC_EXPORT H265SpsParser {
  public:
   struct ProfileTierLevel {
     ProfileTierLevel();
@@ -74,7 +75,7 @@ class H265SpsParser {
 
   // The parsed state of the SPS. Only some select values are stored.
   // Add more as they are actually needed.
-  struct SpsState {
+  struct RTC_EXPORT SpsState {
     SpsState() = default;
 
     uint32_t sps_max_sub_layers_minus1 = 0;
@@ -84,9 +85,6 @@ class H265SpsParser {
     uint32_t pic_height_in_luma_samples = 0;
     uint32_t log2_max_pic_order_cnt_lsb_minus4 = 0;
     uint32_t sps_max_dec_pic_buffering_minus1[kMaxSubLayers] = {};
-#if WEBRTC_WEBKIT_BUILD
-    uint32_t sps_max_num_reorder_pics[kMaxSubLayers] = {};
-#endif
     uint32_t log2_min_luma_coding_block_size_minus3 = 0;
     uint32_t log2_diff_max_min_luma_coding_block_size = 0;
     uint32_t sample_adaptive_offset_enabled_flag = 0;
@@ -106,18 +104,23 @@ class H265SpsParser {
   };
 
   // Unpack RBSP and parse SPS state from the supplied buffer.
-  static absl::optional<SpsState> ParseSps(const uint8_t* data, size_t length);
+  static std::optional<SpsState> ParseSps(rtc::ArrayView<const uint8_t> data);
+  // TODO: bugs.webrtc.org/42225170 - Deprecate.
+  static inline std::optional<SpsState> ParseSps(const uint8_t* data,
+                                                 size_t length) {
+    return ParseSps(rtc::MakeArrayView(data, length));
+  }
 
   static bool ParseScalingListData(BitstreamReader& reader);
 
-  static absl::optional<ShortTermRefPicSet> ParseShortTermRefPicSet(
+  static std::optional<ShortTermRefPicSet> ParseShortTermRefPicSet(
       uint32_t st_rps_idx,
       uint32_t num_short_term_ref_pic_sets,
       const std::vector<ShortTermRefPicSet>& ref_pic_sets,
       uint32_t sps_max_dec_pic_buffering_minus1,
       BitstreamReader& reader);
 
-  static absl::optional<H265SpsParser::ProfileTierLevel> ParseProfileTierLevel(
+  static std::optional<H265SpsParser::ProfileTierLevel> ParseProfileTierLevel(
       bool profile_present,
       int max_num_sub_layers_minus1,
       BitstreamReader& reader);
@@ -125,10 +128,8 @@ class H265SpsParser {
  protected:
   // Parse the SPS state, for a bit buffer where RBSP decoding has already been
   // performed.
-  static absl::optional<SpsState> ParseSpsInternal(
+  static std::optional<SpsState> ParseSpsInternal(
       rtc::ArrayView<const uint8_t> buffer);
-  static bool ParseProfileTierLevel(BitstreamReader& reader,
-                                    uint32_t sps_max_sub_layers_minus1);
 
   // From Table A.8 - General tier and level limits.
   static int GetMaxLumaPs(int general_level_idc);

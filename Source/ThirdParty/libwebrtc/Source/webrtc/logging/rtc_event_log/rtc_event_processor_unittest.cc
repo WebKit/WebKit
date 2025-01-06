@@ -15,9 +15,24 @@
 #include <cstdint>
 #include <initializer_list>
 #include <limits>
+#include <numeric>
+#include <optional>
+#include <utility>
+#include <vector>
 
-#include "absl/memory/memory.h"
+#include "api/rtp_headers.h"
+#include "api/units/timestamp.h"
+#include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
+#include "logging/rtc_event_log/events/rtc_event_begin_log.h"
+#include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
+#include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
+#include "logging/rtc_event_log/events/rtc_event_end_log.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
+#include "logging/rtc_event_log/events/rtc_event_remote_estimate.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
+#include "logging/rtc_event_log/rtc_event_processor_order.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/random.h"
 #include "test/gmock.h"
@@ -54,7 +69,7 @@ CreateRandomEventLists(size_t num_lists, size_t num_elements, uint64_t seed) {
 
 LoggedRtpPacket CreateRtpPacket(int64_t time_ms,
                                 uint32_t ssrc,
-                                absl::optional<uint16_t> transport_seq_num) {
+                                std::optional<uint16_t> transport_seq_num) {
   RTPHeader header;
   header.ssrc = ssrc;
   header.timestamp = static_cast<uint32_t>(time_ms);
@@ -222,8 +237,8 @@ TEST(RtcEventProcessor, IncomingFeedbackBeforeBwe) {
 
 TEST(RtcEventProcessor, RtpPacketsInTransportSeqNumOrder) {
   std::vector<LoggedRtpPacket> ssrc_1234{
-      CreateRtpPacket(1, 1234, absl::nullopt),
-      CreateRtpPacket(1, 1234, absl::nullopt)};
+      CreateRtpPacket(1, 1234, std::nullopt),
+      CreateRtpPacket(1, 1234, std::nullopt)};
   std::vector<LoggedRtpPacket> ssrc_2345{CreateRtpPacket(1, 2345, 2),
                                          CreateRtpPacket(1, 2345, 3),
                                          CreateRtpPacket(1, 2345, 6)};
@@ -232,9 +247,9 @@ TEST(RtcEventProcessor, RtpPacketsInTransportSeqNumOrder) {
                                          CreateRtpPacket(1, 3456, 5)};
 
   // Store SSRC and transport sequence number for each processed packet.
-  std::vector<std::pair<uint32_t, absl::optional<uint16_t>>> results;
+  std::vector<std::pair<uint32_t, std::optional<uint16_t>>> results;
   auto get_packet = [&results](const LoggedRtpPacket& packet) {
-    absl::optional<uint16_t> transport_seq_num;
+    std::optional<uint16_t> transport_seq_num;
     if (packet.header.extension.hasTransportSequenceNumber)
       transport_seq_num = packet.header.extension.transportSequenceNumber;
     results.emplace_back(packet.header.ssrc, transport_seq_num);
@@ -246,9 +261,9 @@ TEST(RtcEventProcessor, RtpPacketsInTransportSeqNumOrder) {
   processor.AddEvents(ssrc_3456, get_packet, PacketDirection::kIncomingPacket);
   processor.ProcessEventsInOrder();
 
-  std::vector<std::pair<uint32_t, absl::optional<uint16_t>>> expected{
-      {1234, absl::nullopt},
-      {1234, absl::nullopt},
+  std::vector<std::pair<uint32_t, std::optional<uint16_t>>> expected{
+      {1234, std::nullopt},
+      {1234, std::nullopt},
       {3456, 1},
       {2345, 2},
       {2345, 3},
@@ -267,9 +282,9 @@ TEST(RtcEventProcessor, TransportSeqNumOrderHandlesWrapAround) {
       CreateRtpPacket(1, 2345, 0), CreateRtpPacket(1, 2345, 3)};
 
   // Store SSRC and transport sequence number for each processed packet.
-  std::vector<std::pair<uint32_t, absl::optional<uint16_t>>> results;
+  std::vector<std::pair<uint32_t, std::optional<uint16_t>>> results;
   auto get_packet = [&results](const LoggedRtpPacket& packet) {
-    absl::optional<uint16_t> transport_seq_num;
+    std::optional<uint16_t> transport_seq_num;
     if (packet.header.extension.hasTransportSequenceNumber)
       transport_seq_num = packet.header.extension.transportSequenceNumber;
     results.emplace_back(packet.header.ssrc, transport_seq_num);
@@ -280,7 +295,7 @@ TEST(RtcEventProcessor, TransportSeqNumOrderHandlesWrapAround) {
   processor.AddEvents(ssrc_2345, get_packet, PacketDirection::kOutgoingPacket);
   processor.ProcessEventsInOrder();
 
-  std::vector<std::pair<uint32_t, absl::optional<uint16_t>>> expected{
+  std::vector<std::pair<uint32_t, std::optional<uint16_t>>> expected{
       {1234, std::numeric_limits<uint16_t>::max() - 1},
       {2345, std::numeric_limits<uint16_t>::max()},
       {2345, 0},

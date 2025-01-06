@@ -104,6 +104,7 @@ CallData InternalFunction::getCallData(JSCell* cell)
     callData.type = CallData::Type::Native;
     callData.native.function = function->m_functionForCall;
     callData.native.isBoundFunction = false;
+    callData.native.isWasm = false;
     return callData;
 }
 
@@ -116,6 +117,7 @@ CallData InternalFunction::getConstructData(JSCell* cell)
         constructData.type = CallData::Type::Native;
         constructData.native.function = function->m_functionForConstruct;
         constructData.native.isBoundFunction = false;
+        constructData.native.isWasm = false;
     }
     return constructData;
 }
@@ -144,6 +146,11 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
     if (UNLIKELY(!targetFunction || !targetFunction->canUseAllocationProfiles())) {
         JSValue prototypeValue = newTarget->get(globalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, nullptr);
+        // .prototype getter could have triggered having a bad time so need to recheck array structures.
+        if (UNLIKELY(baseGlobalObject->isHavingABadTime())) {
+            if (baseGlobalObject->isOriginalArrayStructure(baseClass))
+                baseClass = baseGlobalObject->arrayStructureForIndexingTypeDuringAllocation(baseClass->indexingType());
+        }
         if (JSObject* prototype = jsDynamicCast<JSObject*>(prototypeValue)) {
             // This only happens if someone Reflect.constructs our builtin constructor with another builtin constructor or weird .prototype property on a
             // JSFunction as the new.target. Thus, we don't care about the cost of looking up the structure from our hash table every time.

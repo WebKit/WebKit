@@ -1,3 +1,4 @@
 
-FAIL Basic test that buckets create independent databases. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storageBuckets.open')"
+Harness Error (FAIL), message = NetworkError: Load failed
+
 

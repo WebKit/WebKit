@@ -12,13 +12,14 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSize.h"
 #include "include/core/SkTextureCompressionType.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrTypes.h"
-#include "include/gpu/mock/GrMockTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrTypes.h"
+#include "include/gpu/ganesh/mock/GrMockTypes.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkTArray.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/core/SkTHash.h"
+#include "src/gpu/RefCntedCallback.h"
 #include "src/gpu/ganesh/GrAttachment.h"
 #include "src/gpu/ganesh/GrGpu.h"
 #include "src/gpu/ganesh/GrOpsRenderPass.h"
@@ -30,6 +31,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string_view>
 
 class GrBackendSemaphore;
@@ -45,7 +47,6 @@ class GrThreadSafePipelineBuilder;
 struct GrContextOptions;
 
 namespace skgpu {
-class RefCntedCallback;
 enum class Budgeted : bool;
 enum class Mipmapped : bool;
 }
@@ -77,7 +78,7 @@ public:
 
     void submit(GrOpsRenderPass* renderPass) override;
 
-    void checkFinishProcs() override {}
+    void checkFinishedCallbacks() override {}
     void finishOutstandingGpuWork() override {}
 
 private:
@@ -178,10 +179,8 @@ private:
 
     void onResolveRenderTarget(GrRenderTarget* target, const SkIRect&) override {}
 
-    void addFinishedProc(GrGpuFinishedProc finishedProc,
-                         GrGpuFinishedContext finishedContext) override {
-        SkASSERT(finishedProc);
-        finishedProc(finishedContext);
+    void addFinishedCallback(skgpu::AutoCallback callback, std::optional<GrTimerQuery>) override {
+        SkASSERT(callback);
     }
 
     GrOpsRenderPass* onGetOpsRenderPass(
@@ -195,7 +194,7 @@ private:
             const skia_private::TArray<GrSurfaceProxy*, true>& sampledProxies,
             GrXferBarrierFlags renderPassXferBarriers) override;
 
-    bool onSubmitToGpu(GrSyncCpu) override { return true; }
+    bool onSubmitToGpu(const GrSubmitInfo&) override { return true; }
 
     sk_sp<GrAttachment> makeStencilAttachment(const GrBackendFormat& /*colorFormat*/,
                                               SkISize dimensions, int numStencilSamples) override;
@@ -242,7 +241,7 @@ private:
 
     bool compile(const GrProgramDesc&, const GrProgramInfo&) override { return false; }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     bool isTestingOnlyBackendTexture(const GrBackendTexture&) const override;
 
     GrBackendRenderTarget createTestingOnlyBackendRenderTarget(SkISize dimensions,

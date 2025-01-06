@@ -29,6 +29,7 @@
 #include "Options.h"
 
 #include "StringFunctions.h"
+#include "TestOptions.h"
 #include <string.h>
 
 namespace WTR {
@@ -158,7 +159,11 @@ static bool handleOptionInternalFeature(Options& options, const char*, const cha
 
 static bool handleOptionAdditionalHeader(Options& options, const char*, const char* feature)
 {
-    return parseFeature(feature, options.features);
+    auto features = parseAdditionalHeaderString(feature, TestOptions::keyTypeMapping());
+    if (!features)
+        return false;
+    merge(options.features, *features);
+    return true;
 }
 
 static bool handleOptionWebCoreLogging(Options& options, const char*, const char* channels)

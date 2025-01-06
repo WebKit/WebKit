@@ -10,16 +10,15 @@
 #ifndef API_UNITS_FREQUENCY_H_
 #define API_UNITS_FREQUENCY_H_
 
-#ifdef WEBRTC_UNIT_TEST
-#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
-#endif              // WEBRTC_UNIT_TEST
-
+#include <cstdint>
 #include <cstdlib>
 #include <limits>
 #include <string>
 #include <type_traits>
 
 #include "api/units/time_delta.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/units/unit_base.h"  // IWYU pragma: export
 
 namespace webrtc {
@@ -43,6 +42,9 @@ class Frequency final : public rtc_units_impl::RelativeUnit<Frequency> {
   }
 
   Frequency() = delete;
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, Frequency value);
 
   template <typename T = int64_t>
   constexpr T hertz() const {
@@ -84,18 +86,12 @@ inline constexpr double operator*(TimeDelta time_delta, Frequency frequency) {
   return frequency * time_delta;
 }
 
-std::string ToString(Frequency value);
-inline std::string ToLogString(Frequency value) {
-  return ToString(value);
-}
+RTC_EXPORT std::string ToString(Frequency value);
 
-#ifdef WEBRTC_UNIT_TEST
-inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
-    std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
-    Frequency value) {
-  return stream << ToString(value);
+template <typename Sink>
+void AbslStringify(Sink& sink, Frequency value) {
+  sink.Append(ToString(value));
 }
-#endif  // WEBRTC_UNIT_TEST
 
 }  // namespace webrtc
 #endif  // API_UNITS_FREQUENCY_H_

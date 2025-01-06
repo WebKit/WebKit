@@ -11,7 +11,7 @@
     jsTestIsAsync = true;
 
     const partitionHost = "127.0.0.1:8000";
-    const thirdPartyOrigin = "http://localhost:8000";
+    const thirdPartyOrigin = "https://localhost:8443";
     const thirdPartyBaseUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
     const firstPartyCookieName = "firstPartyCookie";
     const subPathToSetFirstPartyCookie = "/set-cookie.py?name=" + firstPartyCookieName + "&value=value";
@@ -36,14 +36,12 @@
     }
 
 
-    function fireDataModificationHandlerAndContinue() {
+    async function fireDataModificationHandlerAndContinue() {
         console.log("In fireDataModificationHandlerAndContinue")
-        testRunner.installStatisticsDidScanDataRecordsCallback(function() {
-            console.log("In callback function for installStatisticsDidScanDataRecordsCallback")
-            setTimeout(runTest, 500);
-        });
-        console.log("Calling statisticsProcessStatisticsAndDataRecords")
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+        console.log("Calling await statisticsProcessStatisticsAndDataRecords")
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
+        console.log("awaited fireDataModificationHandlerAndContinue")
+        setTimeout(runTest, 500);
     }
 
     function setAsNonPrevalentAndContinue() {

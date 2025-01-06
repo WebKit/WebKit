@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -13,7 +13,7 @@
 
 #include "aom/aom_integer.h"
 
-static INLINE void load_b_values(const int16_t *zbin_ptr, __m128i *zbin,
+static inline void load_b_values(const int16_t *zbin_ptr, __m128i *zbin,
                                  const int16_t *round_ptr, __m128i *round,
                                  const int16_t *quant_ptr, __m128i *quant,
                                  const int16_t *dequant_ptr, __m128i *dequant,
@@ -27,17 +27,17 @@ static INLINE void load_b_values(const int16_t *zbin_ptr, __m128i *zbin,
 }
 
 // With ssse3 and later abs() and sign() are preferred.
-static INLINE __m128i invert_sign_sse2(__m128i a, __m128i sign) {
+static inline __m128i invert_sign_sse2(__m128i a, __m128i sign) {
   a = _mm_xor_si128(a, sign);
   return _mm_sub_epi16(a, sign);
 }
 
-static INLINE __m128i invert_sign_32_sse2(__m128i a, __m128i sign) {
+static inline __m128i invert_sign_32_sse2(__m128i a, __m128i sign) {
   a = _mm_xor_si128(a, sign);
   return _mm_sub_epi32(a, sign);
 }
 
-static INLINE void calculate_qcoeff(__m128i *coeff, const __m128i round,
+static inline void calculate_qcoeff(__m128i *coeff, const __m128i round,
                                     const __m128i quant, const __m128i shift) {
   __m128i tmp, qcoeff;
   qcoeff = _mm_adds_epi16(*coeff, round);
@@ -46,7 +46,7 @@ static INLINE void calculate_qcoeff(__m128i *coeff, const __m128i round,
   *coeff = _mm_mulhi_epi16(qcoeff, shift);
 }
 
-static INLINE void calculate_qcoeff_log_scale(__m128i *coeff,
+static inline void calculate_qcoeff_log_scale(__m128i *coeff,
                                               const __m128i round,
                                               const __m128i quant,
                                               const __m128i *shift,
@@ -62,11 +62,11 @@ static INLINE void calculate_qcoeff_log_scale(__m128i *coeff,
   *coeff = _mm_or_si128(tmp, tmp1);
 }
 
-static INLINE __m128i calculate_dqcoeff(__m128i qcoeff, __m128i dequant) {
+static inline __m128i calculate_dqcoeff(__m128i qcoeff, __m128i dequant) {
   return _mm_mullo_epi16(qcoeff, dequant);
 }
 
-static INLINE void calculate_dqcoeff_and_store_log_scale(__m128i qcoeff,
+static inline void calculate_dqcoeff_and_store_log_scale(__m128i qcoeff,
                                                          __m128i dequant,
                                                          const __m128i zero,
                                                          tran_low_t *dqcoeff,
@@ -95,7 +95,7 @@ static INLINE void calculate_dqcoeff_and_store_log_scale(__m128i qcoeff,
 
 // Scan 16 values for eob reference in scan_ptr. Use masks (-1) from comparing
 // to zbin to add 1 to the index in 'scan'.
-static INLINE __m128i scan_for_eob(__m128i *coeff0, __m128i *coeff1,
+static inline __m128i scan_for_eob(__m128i *coeff0, __m128i *coeff1,
                                    const __m128i zbin_mask0,
                                    const __m128i zbin_mask1,
                                    const int16_t *scan_ptr, const int index,
@@ -113,7 +113,7 @@ static INLINE __m128i scan_for_eob(__m128i *coeff0, __m128i *coeff1,
   return _mm_max_epi16(eob0, eob1);
 }
 
-static INLINE int16_t accumulate_eob(__m128i eob) {
+static inline int16_t accumulate_eob(__m128i eob) {
   __m128i eob_shuffled;
   eob_shuffled = _mm_shuffle_epi32(eob, 0xe);
   eob = _mm_max_epi16(eob, eob_shuffled);
@@ -124,14 +124,14 @@ static INLINE int16_t accumulate_eob(__m128i eob) {
   return _mm_extract_epi16(eob, 1);
 }
 
-static INLINE __m128i load_coefficients(const tran_low_t *coeff_ptr) {
+static inline __m128i load_coefficients(const tran_low_t *coeff_ptr) {
   assert(sizeof(tran_low_t) == 4);
   const __m128i coeff1 = _mm_load_si128((__m128i *)(coeff_ptr));
   const __m128i coeff2 = _mm_load_si128((__m128i *)(coeff_ptr + 4));
   return _mm_packs_epi32(coeff1, coeff2);
 }
 
-static INLINE void store_coefficients(__m128i coeff_vals,
+static inline void store_coefficients(__m128i coeff_vals,
                                       tran_low_t *coeff_ptr) {
   assert(sizeof(tran_low_t) == 4);
 
@@ -144,7 +144,7 @@ static INLINE void store_coefficients(__m128i coeff_vals,
   _mm_store_si128((__m128i *)(coeff_ptr + 4), coeff_vals_2);
 }
 
-static INLINE void update_mask1(__m128i *cmp_mask0, __m128i *cmp_mask1,
+static inline void update_mask1(__m128i *cmp_mask0, __m128i *cmp_mask1,
                                 const int16_t *iscan_ptr, int *is_found,
                                 __m128i *mask) {
   __m128i all_zero;
@@ -161,7 +161,7 @@ static INLINE void update_mask1(__m128i *cmp_mask0, __m128i *cmp_mask1,
   *mask = _mm_max_epi16(temp_mask, *mask);
 }
 
-static INLINE void update_mask0(__m128i *qcoeff0, __m128i *qcoeff1,
+static inline void update_mask0(__m128i *qcoeff0, __m128i *qcoeff1,
                                 __m128i *threshold, const int16_t *iscan_ptr,
                                 int *is_found, __m128i *mask) {
   __m128i zero = _mm_setzero_si128();
@@ -187,7 +187,7 @@ static INLINE void update_mask0(__m128i *qcoeff0, __m128i *qcoeff1,
   update_mask1(&cmp_mask0, &cmp_mask1, iscan_ptr, is_found, mask);
 }
 
-static INLINE int calculate_non_zero_count(__m128i mask) {
+static inline int calculate_non_zero_count(__m128i mask) {
   __m128i mask0, mask1;
   int non_zero_count = 0;
   mask0 = _mm_unpackhi_epi64(mask, mask);

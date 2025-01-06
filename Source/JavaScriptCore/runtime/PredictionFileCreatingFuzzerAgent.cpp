@@ -28,6 +28,8 @@
 #include <wtf/DataLog.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PredictionFileCreatingFuzzerAgent);
@@ -52,6 +54,8 @@ SpeculatedType PredictionFileCreatingFuzzerAgent::getPredictionInternal(CodeBloc
     case op_enumerator_get_by_val:
     case op_construct:
     case op_construct_varargs:
+    case op_super_construct:
+    case op_super_construct_varargs:
     case op_call:
     case op_call_ignore_result:
     case op_call_direct_eval:
@@ -68,3 +72,5 @@ SpeculatedType PredictionFileCreatingFuzzerAgent::getPredictionInternal(CodeBloc
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

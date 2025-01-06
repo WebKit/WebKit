@@ -27,6 +27,7 @@
 #pragma once
 
 #include "ResourceLoaderIdentifier.h"
+#include "ScriptExecutionContextIdentifier.h"
 
 namespace WebCore {
 class WorkerScriptLoaderClient;
@@ -43,8 +44,8 @@ class ResourceResponse;
 
 class WorkerScriptLoaderClient : public CanMakeWeakPtr<WorkerScriptLoaderClient> {
 public:
-    virtual void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) = 0;
-    virtual void notifyFinished() = 0;
+    virtual void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) = 0;
+    virtual void notifyFinished(std::optional<ScriptExecutionContextIdentifier>) = 0;
 
 protected:
     virtual ~WorkerScriptLoaderClient() = default;

@@ -185,8 +185,6 @@ bool Format::isPVRTC() const
 {
     switch (metalFormat)
     {
-#if (TARGET_OS_IOS && !TARGET_OS_MACCATALYST) || \
-    (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 110000))
         case MTLPixelFormatPVRTC_RGB_2BPP:
         case MTLPixelFormatPVRTC_RGB_2BPP_sRGB:
         case MTLPixelFormatPVRTC_RGB_4BPP:
@@ -196,7 +194,6 @@ bool Format::isPVRTC() const
         case MTLPixelFormatPVRTC_RGBA_4BPP:
         case MTLPixelFormatPVRTC_RGBA_4BPP_sRGB:
             return true;
-#endif
         default:
             return false;
     }
@@ -228,7 +225,7 @@ angle::Result FormatTable::initialize(const DisplayMtl *display)
         mVertexFormatTables[1][i].init(formatId, true);
     }
 
-    // TODO(anglebug.com/5505): unmerged change from WebKit was here -
+    // TODO(anglebug.com/40096755): unmerged change from WebKit was here -
     // D24S8 fallback to D32_FLOAT_S8X24_UINT, since removed.
 
     return angle::Result::Continue;

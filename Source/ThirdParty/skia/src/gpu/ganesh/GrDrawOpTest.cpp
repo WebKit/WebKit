@@ -7,14 +7,15 @@
 
 #include "src/gpu/ganesh/GrDrawOpTest.h"
 
-#include "include/core/SkTypes.h"
 #include "include/private/gpu/ganesh/GrContext_Base.h"
 #include "src/base/SkRandom.h"
 #include "src/gpu/ganesh/GrBaseContextPriv.h"
 #include "src/gpu/ganesh/GrCaps.h"
 #include "src/gpu/ganesh/GrUserStencilSettings.h"
 
-#if defined(GR_TEST_UTILS)
+#include <array>
+
+#if defined(GPU_TEST_UTILS)
 
 const GrUserStencilSettings* GrGetRandomStencil(SkRandom* random, GrContext_Base* context) {
     if (context->priv().caps()->avoidStencilBuffers()) {

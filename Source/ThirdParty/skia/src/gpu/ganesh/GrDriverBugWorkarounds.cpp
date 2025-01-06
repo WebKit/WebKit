@@ -5,11 +5,9 @@
  * found in the LICENSE file.
  */
 
-#include "include/gpu/GrDriverBugWorkarounds.h"
+#include "include/gpu/ganesh/GrDriverBugWorkarounds.h"
 
 #include "include/core/SkTypes.h"
-
-GrDriverBugWorkarounds::GrDriverBugWorkarounds() = default;
 
 GrDriverBugWorkarounds::GrDriverBugWorkarounds(
         const std::vector<int>& enabled_driver_bug_workarounds) {
@@ -37,5 +35,3 @@ void GrDriverBugWorkarounds::applyOverrides(
     GPU_DRIVER_BUG_WORKAROUNDS(GPU_OP)
 #undef GPU_OP
 }
-
-GrDriverBugWorkarounds::~GrDriverBugWorkarounds() = default;

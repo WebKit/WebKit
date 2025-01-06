@@ -67,6 +67,22 @@ UIKeyModifierFlags WebIOSEventFactory::toUIKeyModifierFlags(OptionSet<WebEventMo
     return modifierFlags;
 }
 
+UIEventButtonMask WebIOSEventFactory::toUIEventButtonMask(WebKit::WebMouseEventButton mouseButton)
+{
+    switch (mouseButton) {
+    case WebKit::WebMouseEventButton::None:
+        return 0;
+    case WebKit::WebMouseEventButton::Left:
+        return UIEventButtonMaskPrimary;
+    case WebKit::WebMouseEventButton::Right:
+        return UIEventButtonMaskSecondary;
+    case WebKit::WebMouseEventButton::Middle:
+        // iOS does not currently support any mouse buttons other than Primary and Secondary.
+        ASSERT_NOT_REACHED();
+        return UIEventButtonMaskPrimary;
+    }
+}
+
 static OptionSet<WebEventModifier> modifiersForEvent(::WebEvent *event)
 {
     OptionSet<WebEventModifier> modifiers;

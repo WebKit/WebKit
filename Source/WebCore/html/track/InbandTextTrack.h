@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class InbandTextTrack : public TextTrack, private InbandTextTrackPrivateClient {
-    WTF_MAKE_ISO_ALLOCATED(InbandTextTrack);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InbandTextTrack);
 public:
     static Ref<InbandTextTrack> create(ScriptExecutionContext&, InbandTextTrackPrivate&);
     virtual ~InbandTextTrack();
@@ -51,7 +51,7 @@ public:
 
     void setPrivate(InbandTextTrackPrivate&);
 #if !RELEASE_LOG_DISABLED
-    void setLogger(const Logger&, const void*) final;
+    void setLogger(const Logger&, uint64_t) final;
 #endif
 
 protected:

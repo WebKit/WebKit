@@ -28,11 +28,12 @@
 #if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
 #include "HIDGamepad.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class StadiaHIDGamepad final : public HIDGamepad {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StadiaHIDGamepad);
 public:
     StadiaHIDGamepad(HIDDevice&&, unsigned index);
 };

@@ -91,13 +91,116 @@
 #include "MediaCapability.h"
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-#include "HardwareKeyboardState.h"
+#if PLATFORM(COCOA)
+#include "CocoaWindow.h"
+#endif
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#include "ModelPresentationManagerProxy.h"
 #endif
 
 namespace WebKit {
 
-class WebPageProxyFrameLoadStateObserver;
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+class WebPageProxyFrameLoadStateObserver final : public FrameLoadStateObserver {
+    WTF_MAKE_NONCOPYABLE(WebPageProxyFrameLoadStateObserver);
+    WTF_MAKE_TZONE_ALLOCATED(WebPageProxyFrameLoadStateObserver);
+public:
+    static constexpr size_t maxVisitedDomainsSize = 6;
+
+    explicit WebPageProxyFrameLoadStateObserver(const WebPageProxy&);
+    virtual ~WebPageProxyFrameLoadStateObserver();
+
+    void ref() const final;
+    void deref() const final;
+
+    void didReceiveProvisionalURL(const URL& url) override
+    {
+        m_provisionalURLs.append(url);
+    }
+
+    void didCancelProvisionalLoad() override
+    {
+        m_provisionalURLs.clear();
+    }
+
+    void didCommitProvisionalLoad() override
+    {
+        for (auto& url : m_provisionalURLs)
+            didVisitDomain(WebCore::RegistrableDomain(url));
+    }
+
+    const ListHashSet<WebCore::RegistrableDomain>& visitedDomains() const
+    {
+        return m_visitedDomains;
+    }
+
+private:
+    void didVisitDomain(WebCore::RegistrableDomain&& domain)
+    {
+        if (domain.isEmpty())
+            return;
+
+        m_visitedDomains.prependOrMoveToFirst(WTFMove(domain));
+
+        if (m_visitedDomains.size() > maxVisitedDomainsSize)
+            m_visitedDomains.removeLast();
+    }
+
+    WeakRef<WebPageProxy> m_page;
+    Vector<URL> m_provisionalURLs;
+    ListHashSet<WebCore::RegistrableDomain> m_visitedDomains;
+};
+#endif
+
+class PageLoadTimingFrameLoadStateObserver final : public FrameLoadStateObserver {
+public:
+    explicit PageLoadTimingFrameLoadStateObserver(const WebPageProxy&page)
+        : m_page(page)
+    {
+    }
+
+    void ref() const final;
+    void deref() const final;
+
+    bool hasLoadingFrame() const { return !!m_loadingFrameCount; }
+
+private:
+    void didCommitProvisionalLoad(IsMainFrame isMainFrame)
+    {
+        if (isMainFrame == IsMainFrame::Yes) {
+            // Teardown doesn't reliably inform the UI process of each iframe's provisional load failure.
+            m_loadingFrameCount = 1;
+        }
+    }
+
+    void didStartProvisionalLoad(const URL&) final
+    {
+        m_loadingFrameCount++;
+    }
+
+    void didFailProvisionalLoad(const URL&) final
+    {
+        ASSERT(m_loadingFrameCount);
+        m_loadingFrameCount--;
+    }
+
+    void didFailLoad(const URL&) final
+    {
+        ASSERT(m_loadingFrameCount);
+        m_loadingFrameCount--;
+    }
+
+    void didFinishLoad(IsMainFrame, const URL& url) final
+    {
+        ASSERT(m_loadingFrameCount);
+        m_loadingFrameCount--;
+        // FIXME: Assert that m_loadingFrameCount is zero if this is a main frame.
+    }
+
+    WeakRef<WebPageProxy> m_page;
+    size_t m_loadingFrameCount { 0 };
+};
 
 struct PrivateClickMeasurementAndMetadata {
     WebCore::PrivateClickMeasurement pcm;
@@ -169,8 +272,26 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 #endif
 {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Internals);
 
-    WebPageProxy& page;
+public:
+    virtual ~Internals();
+
+    uint32_t checkedPtrCount() const { return WebPopupMenuProxy::Client::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const { return WebPopupMenuProxy::Client::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const { WebPopupMenuProxy::Client::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const { WebPopupMenuProxy::Client::decrementCheckedPtrCount(); }
+
+#if PLATFORM(MACCATALYST)
+    // EndowmentStateTrackerClient
+    void ref() const final { page->ref(); }
+    void deref() const final { page->deref(); }
+#else
+    void ref() const { page->ref(); }
+    void deref() const { page->deref(); }
+#endif
+
+    WeakRef<WebPageProxy> page;
     OptionSet<WebCore::ActivityState> activityState;
     RunLoop::Timer audibleActivityTimer;
     std::optional<WebCore::Color> backgroundColor;
@@ -182,7 +303,6 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     WebCore::IntSize fixedLayoutSize;
     GeolocationPermissionRequestManagerProxy geolocationPermissionRequestManager;
     HiddenPageThrottlingAutoIncreasesCounter::Token hiddenPageDOMTimerThrottlingAutoIncreasesCount;
-    Identifier identifier;
     Deque<NativeWebKeyboardEvent> keyEventQueue;
     LayerHostingMode layerHostingMode { LayerHostingMode::InProcess };
     WebCore::RectEdges<bool> mainFramePinnedState { true, true, true, true };
@@ -193,6 +313,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     WebCore::IntSize minimumSizeForAutoLayout;
     WebCore::FloatSize minimumUnobscuredSize;
     Deque<NativeWebMouseEvent> mouseEventQueue;
+    Vector<WebMouseEvent> coalescedMouseEvents;
     WebCore::MediaProducerMutedStateFlags mutedState;
     WebNotificationManagerMessageHandler notificationManagerMessageHandler;
     OptionSet<WebCore::LayoutMilestone> observedLayoutMilestones;
@@ -219,10 +340,9 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     std::optional<WebCore::FloatSize> viewportSizeForCSSViewportUnits;
     VisibleWebPageToken visiblePageToken;
     WebCore::IntRect visibleScrollerThumbRect;
-    WebCore::PageIdentifier webPageID;
     WindowKind windowKind { WindowKind::Unparented };
-    std::unique_ptr<ProcessThrottlerActivity> pageAllowedToRunInTheBackgroundActivityDueToTitleChanges;
-    std::unique_ptr<ProcessThrottlerActivity> pageAllowedToRunInTheBackgroundActivityDueToNotifications;
+    RefPtr<ProcessThrottlerActivity> pageAllowedToRunInTheBackgroundActivityDueToTitleChanges;
+    RefPtr<ProcessThrottlerActivity> pageAllowedToRunInTheBackgroundActivityDueToNotifications;
 
     WebPageProxyMessageReceiverRegistration messageReceiverRegistration;
 
@@ -230,7 +350,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> sleepDisablers;
 
 #if ENABLE(APPLE_PAY)
-    std::unique_ptr<WebPaymentCoordinatorProxy> paymentCoordinator;
+    RefPtr<WebPaymentCoordinatorProxy> paymentCoordinator;
 #endif
 
 #if PLATFORM(COCOA)
@@ -279,7 +399,6 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 #endif
 
     CompletionHandler<void(bool)> serviceWorkerLaunchCompletionHandler;
-    CompletionHandler<void(std::optional<WebCore::PageIdentifier>)> serviceWorkerOpenWindowCompletionCallback;
 
 #if ENABLE(SPEECH_SYNTHESIS)
     std::optional<SpeechSynthesisData> optionalSpeechSynthesisData;
@@ -293,8 +412,11 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     Deque<QueuedTouchEvents> touchEventQueue;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    HashMap<WTF::UUID, WebCore::TextIndicatorData> textIndicatorDataForChunk;
+#if ENABLE(WRITING_TOOLS)
+    HashMap<WTF::UUID, WebCore::TextIndicatorData> textIndicatorDataForAnimationID;
+    HashMap<WTF::UUID, CompletionHandler<void(WebCore::TextAnimationRunMode)>> completionHandlerForAnimationID;
+    HashMap<WTF::UUID, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>)>> completionHandlerForDestinationTextIndicatorForSourceID;
+    HashMap<WTF::UUID, WTF::UUID> sourceAnimationIDtoDestinationAnimationID;
 #endif
 
     MonotonicTime didFinishDocumentLoadForMainFrameTimestamp;
@@ -311,23 +433,36 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 #endif
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
-    std::unique_ptr<PlatformXRSystem> xrSystem;
+    RefPtr<PlatformXRSystem> xrSystem;
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    std::optional<MediaCapability> mediaCapability;
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-    HardwareKeyboardState hardwareKeyboardState;
+    RefPtr<MediaCapability> mediaCapability;
 #endif
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
     std::unique_ptr<WebPageProxyFrameLoadStateObserver> frameLoadStateObserver;
     HashMap<WebCore::RegistrableDomain, OptionSet<WebCore::WindowProxyProperty>> windowOpenerAccessedProperties;
 #endif
+    PageLoadTimingFrameLoadStateObserver pageLoadTimingFrameLoadStateObserver;
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    RunLoop::Timer activityStateChangeTimer;
+#endif
+
+#if PLATFORM(MAC)
+    WebCore::FloatPoint scrollPositionDuringLastEditorStateUpdate;
+#endif
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+    RefPtr<ModelPresentationManagerProxy> modelPresentationManagerProxy;
+#endif
+
+    bool allowsLayoutViewportHeightExpansion { true };
 
     explicit Internals(WebPageProxy&);
+
+    Ref<WebPageProxy> protectedPage() const;
 
     SpeechSynthesisData& speechSynthesisData();
 
@@ -348,17 +483,18 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     void paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&) final;
     void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName) final;
     void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebPaymentMessages() const final;
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY)
     UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) final;
     const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) final;
-    std::unique_ptr<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) final;
+    Ref<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) final;
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
     void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&) final;
 #endif
-#if ENABLE(APPLE_PAY) && PLATFORM(MAC)
-    NSWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) final;
+#if ENABLE(APPLE_PAY)
+    CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const final;
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -391,8 +527,15 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     void externalOutputDeviceAvailableDidChange(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) final;
-    bool alwaysOnLoggingAllowed() const final { return page.sessionID().isAlwaysOnLoggingAllowed(); }
+    bool alwaysOnLoggingAllowed() const final { return protectedPage()->isAlwaysOnLoggingAllowed(); }
     RetainPtr<PlatformView> platformView() const final;
+#endif
+
+    Ref<PageLoadState> protectedPageLoadState() { return pageLoadState; }
+    Ref<WebNotificationManagerMessageHandler> protectedNotificationManagerMessageHandler() { return notificationManagerMessageHandler; }
+    Ref<PageLoadTimingFrameLoadStateObserver> protectedPageLoadTimingFrameLoadStateObserver() { return pageLoadTimingFrameLoadStateObserver; }
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+    RefPtr<WebPageProxyFrameLoadStateObserver> protectedFrameLoadStateObserver() { return frameLoadStateObserver.get(); }
 #endif
 };
 

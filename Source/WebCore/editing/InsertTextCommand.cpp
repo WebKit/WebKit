@@ -30,6 +30,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "HTMLElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLInterchange.h"
 #include "LocalFrame.h"
 #include "Text.h"
@@ -230,8 +231,16 @@ void InsertTextCommand::doApply()
 
     setEndingSelectionWithoutValidation(startPosition, endPosition);
 
-    // Handle the case where there is a typing style.
-    if (RefPtr<EditingStyle> typingStyle = document().selection().typingStyle()) {
+    RefPtr typingStyle = document().selection().typingStyle();
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    if (!typingStyle && document().selection().isCaret()) {
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(document().selection().selection().start().deprecatedNode()); imageElement && imageElement->isMultiRepresentationHEIC())
+            typingStyle = EditingStyle::create(imageElement.get());
+    }
+#endif
+
+    if (typingStyle) {
         typingStyle->prepareToApplyAt(endPosition, EditingStyle::PreserveWritingDirection);
         if (!typingStyle->isEmpty())
             applyStyle(typingStyle.get());

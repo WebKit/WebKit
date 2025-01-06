@@ -10,9 +10,16 @@
 
 #include "api/video/nv12_buffer.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+
 #include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/video_frame_buffer.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/memory/aligned_malloc.h"
 #include "third_party/libyuv/include/libyuv/convert.h"
 #include "third_party/libyuv/include/libyuv/scale.h"
 

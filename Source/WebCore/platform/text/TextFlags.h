@@ -448,10 +448,12 @@ enum class Kerning : uint8_t {
 
 WTF::TextStream& operator<<(WTF::TextStream&, Kerning);
 
-enum class FontOpticalSizing : uint8_t {
+enum class FontOpticalSizing : bool {
     Enabled,
     Disabled
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, FontOpticalSizing);
 
 // https://www.microsoft.com/typography/otspec/fvar.htm#VAT
 enum class FontStyleAxis : uint8_t {
@@ -461,7 +463,7 @@ enum class FontStyleAxis : uint8_t {
 
 enum class AllowUserInstalledFonts : bool { No, Yes };
 
-using FeaturesMap = HashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits>;
+using FeaturesMap = UncheckedKeyHashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits>;
 FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&, RefPtr<FontFeatureValues>);
 
 enum class ResolvedEmojiPolicy : uint8_t {

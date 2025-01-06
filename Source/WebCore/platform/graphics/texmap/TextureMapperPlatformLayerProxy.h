@@ -26,18 +26,18 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
-
+#include <wtf/Function.h>
 #include <wtf/Lock.h>
+#include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
-
+class CoordinatedPlatformLayer;
+class CoordinatedPlatformLayerBuffer;
 class IntSize;
 class TextureMapperLayer;
-class TextureMapperPlatformLayerBuffer;
 
-class TextureMapperPlatformLayerProxy : public ThreadSafeRefCounted<TextureMapperPlatformLayerProxy> {
-    WTF_MAKE_FAST_ALLOCATED();
+class TextureMapperPlatformLayerProxy final : public ThreadSafeRefCounted<TextureMapperPlatformLayerProxy> {
 public:
     enum class ContentType : uint8_t {
         WebGL,
@@ -47,38 +47,51 @@ public:
         Canvas
     };
 
-    class Compositor {
-    public:
-        virtual void onNewBufferAvailable() = 0;
-    };
+    static Ref<TextureMapperPlatformLayerProxy> create(ContentType contentType)
+    {
+        return adoptRef(*new TextureMapperPlatformLayerProxy(contentType));
+    }
 
-    explicit TextureMapperPlatformLayerProxy(ContentType);
     virtual ~TextureMapperPlatformLayerProxy();
-
-    virtual bool isGLBased() const { return false; }
-    virtual bool isDMABufBased() const { return false; }
-
-    Lock& lock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
-    bool isActive();
 
     ContentType contentType() const { return m_contentType; }
 
-    virtual void activateOnCompositingThread(Compositor*, TextureMapperLayer*) = 0;
-    virtual void invalidate() = 0;
-    virtual void swapBuffer() = 0;
+    bool isActive();
+    void activateOnCompositingThread(CoordinatedPlatformLayer&);
+    void invalidate();
+    void swapBuffer();
 
-protected:
+    void pushNextBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
+    void dropCurrentBufferWhilePreservingTexture(bool shouldWait);
+    void setSwapBuffersFunction(Function<void(TextureMapperPlatformLayerProxy&)>&& function) { m_swapBuffersFunction = WTFMove(function); }
+    void swapBuffersIfNeeded();
+
+private:
+    explicit TextureMapperPlatformLayerProxy(ContentType);
+
+    bool isActiveLocked() const;
+
+    bool scheduleUpdateOnCompositorThread(Function<void()>&&);
+    void compositorThreadUpdateTimerFired();
+
     Lock m_lock;
-    Compositor* m_compositor { nullptr };
-    TextureMapperLayer* m_targetLayer { nullptr };
+    RefPtr<CoordinatedPlatformLayer> m_targetLayer;
+#if ASSERT_ENABLED
+    RefPtr<Thread> m_compositorThread;
+#endif
+    std::unique_ptr<RunLoop::Timer> m_compositorThreadUpdateTimer;
+    Function<void()> m_compositorThreadUpdateFunction;
+
     ContentType m_contentType;
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_currentBuffer;
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_pendingBuffer;
+    Function<void(TextureMapperPlatformLayerProxy&)> m_swapBuffersFunction;
+
+    Lock m_wasBufferDroppedLock;
+    Condition m_wasBufferDroppedCondition;
+    bool m_wasBufferDropped WTF_GUARDED_BY_LOCK(m_wasBufferDroppedLock) { false };
 };
 
 } // namespace WebCore
-
-#define SPECIALIZE_TYPE_TRAITS_TEXTUREMAPPER_PLATFORMLAYERPROXY(ToClassName, predicate) \
-    SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
-    static bool isType(const WebCore::TextureMapperPlatformLayerProxy& proxy) { return proxy.predicate; } \
-    SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // USE(COORDINATED_GRAPHICS)

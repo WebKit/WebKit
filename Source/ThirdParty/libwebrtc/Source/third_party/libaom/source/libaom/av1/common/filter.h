@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -76,21 +76,21 @@ typedef union int_interpfilters {
   InterpFilters as_filters;
 } int_interpfilters;
 
-static INLINE InterpFilter av1_extract_interp_filter(int_interpfilters filters,
+static inline InterpFilter av1_extract_interp_filter(int_interpfilters filters,
                                                      int dir) {
   return (InterpFilter)((dir) ? filters.as_filters.x_filter
                               : filters.as_filters.y_filter);
 }
 
-static INLINE int_interpfilters
-av1_broadcast_interp_filter(InterpFilter filter) {
+static inline int_interpfilters av1_broadcast_interp_filter(
+    InterpFilter filter) {
   int_interpfilters filters;
   filters.as_filters.x_filter = filter;
   filters.as_filters.y_filter = filter;
   return filters;
 }
 
-static INLINE InterpFilter av1_unswitchable_filter(InterpFilter filter) {
+static inline InterpFilter av1_unswitchable_filter(InterpFilter filter) {
   return filter == SWITCHABLE ? EIGHTTAP_REGULAR : filter;
 }
 
@@ -244,7 +244,7 @@ static const InterpFilterParams av1_interp_4tap[SWITCHABLE_FILTERS + 1] = {
   { (const int16_t *)av1_bilinear_filters, SUBPEL_TAPS, BILINEAR },
 };
 
-static INLINE const InterpFilterParams *
+static inline const InterpFilterParams *
 av1_get_interp_filter_params_with_block_size(const InterpFilter interp_filter,
                                              const int w) {
   if (w <= 4 && interp_filter != MULTITAP_SHARP2)
@@ -252,7 +252,7 @@ av1_get_interp_filter_params_with_block_size(const InterpFilter interp_filter,
   return &av1_interp_filter_params_list[interp_filter];
 }
 
-static INLINE const int16_t *av1_get_interp_filter_kernel(
+static inline const int16_t *av1_get_interp_filter_kernel(
     const InterpFilter interp_filter, int subpel_search) {
   assert(subpel_search >= USE_2_TAPS);
   return (subpel_search == USE_2_TAPS)
@@ -262,12 +262,12 @@ static INLINE const int16_t *av1_get_interp_filter_kernel(
                     : av1_interp_filter_params_list[interp_filter].filter_ptr);
 }
 
-static INLINE const int16_t *av1_get_interp_filter_subpel_kernel(
+static inline const int16_t *av1_get_interp_filter_subpel_kernel(
     const InterpFilterParams *const filter_params, const int subpel) {
   return filter_params->filter_ptr + filter_params->taps * subpel;
 }
 
-static INLINE const InterpFilterParams *av1_get_filter(int subpel_search) {
+static inline const InterpFilterParams *av1_get_filter(int subpel_search) {
   assert(subpel_search >= USE_2_TAPS);
 
   switch (subpel_search) {
@@ -278,24 +278,24 @@ static INLINE const InterpFilterParams *av1_get_filter(int subpel_search) {
   }
 }
 
-static INLINE void reset_interp_filter_allowed_mask(
+static inline void reset_interp_filter_allowed_mask(
     uint16_t *allow_interp_mask, DUAL_FILTER_TYPE filt_type) {
   uint16_t tmp = (~(1 << filt_type)) & 0xffff;
   *allow_interp_mask &= (tmp & ALLOW_ALL_INTERP_FILT_MASK);
 }
 
-static INLINE void set_interp_filter_allowed_mask(uint16_t *allow_interp_mask,
+static inline void set_interp_filter_allowed_mask(uint16_t *allow_interp_mask,
                                                   DUAL_FILTER_TYPE filt_type) {
   *allow_interp_mask |= (1 << filt_type);
 }
 
-static INLINE uint8_t get_interp_filter_allowed_mask(
+static inline uint8_t get_interp_filter_allowed_mask(
     uint16_t allow_interp_mask, DUAL_FILTER_TYPE filt_type) {
   return (allow_interp_mask >> filt_type) & 1;
 }
 
-static AOM_INLINE int get_filter_tap(
-    const InterpFilterParams *const filter_params, int subpel_qn) {
+static inline int get_filter_tap(const InterpFilterParams *const filter_params,
+                                 int subpel_qn) {
   const int16_t *const filter = av1_get_interp_filter_subpel_kernel(
       filter_params, subpel_qn & SUBPEL_MASK);
   if (filter_params->taps == 12) {
@@ -307,10 +307,14 @@ static AOM_INLINE int get_filter_tap(
   if (filter[1] | filter[6]) {
     return 6;
   }
+#if CONFIG_SVT_AV1
   if (filter[2] | filter[5]) {
     return 4;
   }
   return 2;
+#else
+  return 4;
+#endif
 }
 
 #ifdef __cplusplus

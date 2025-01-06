@@ -31,11 +31,15 @@
 #include "Document.h"
 #include "HTTPParsers.h"
 #include "LocalFrame.h"
-#include "ParsingUtilities.h"
 #include "SecurityContext.h"
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentSecurityPolicyDirectiveList);
 
 template<typename CharacterType> static bool isDirectiveNameCharacter(CharacterType c)
 {
@@ -244,12 +248,13 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForNonParserInsertedScripts(const String& nonce, const Vector<ContentSecurityPolicyHash>& hashes, const URL& url, ParserInserted parserInserted) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForNonParserInsertedScripts(const String& nonce, const Vector<ContentSecurityPolicyHash>& hashes, const Vector<ResourceCryptographicDigest>& subResourceIntegrityDigests, const URL& url, ParserInserted parserInserted) const
 {
     auto* operativeDirective = this->operativeDirectiveScript(m_scriptSrcElem.get(), ContentSecurityPolicyDirectiveNames::scriptSrcElem);
     if (checkHashes(operativeDirective, hashes)
         || checkNonParserInsertedScripts(operativeDirective, parserInserted)
         || checkNonce(operativeDirective, nonce)
+        || operativeDirective->containsAllHashes(subResourceIntegrityDigests)
         || (checkSource(operativeDirective, url) && !strictDynamicIncluded())
         || (url.isEmpty() && checkInline(operativeDirective)))
         return nullptr;
@@ -511,42 +516,42 @@ template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseD
     if (buffer.atEnd())
         return std::nullopt;
 
-    auto nameBegin = buffer.position();
+    auto nameBegin = buffer.span();
     skipWhile<isDirectiveNameCharacter>(buffer);
 
     // The directive-name must be non-empty.
-    if (nameBegin == buffer.position()) {
+    if (nameBegin.data() == buffer.position()) {
         skipWhile<isNotASCIISpace>(buffer);
-        m_policy.reportUnsupportedDirective(String({ nameBegin, buffer.position() }));
+        m_policy.reportUnsupportedDirective(nameBegin.first(buffer.position() - nameBegin.data()));
         return std::nullopt;
     }
 
-    auto name = String({ nameBegin, buffer.position() });
+    String name { nameBegin.first(buffer.position() - nameBegin.data()) };
 
     if (buffer.atEnd())
         return ParsedDirective { WTFMove(name), { } };
 
     if (!skipExactly<isUnicodeCompatibleASCIIWhitespace>(buffer)) {
         skipWhile<isNotASCIISpace>(buffer);
-        m_policy.reportUnsupportedDirective(String({ nameBegin, buffer.position() }));
+        m_policy.reportUnsupportedDirective(nameBegin.first(buffer.position() - nameBegin.data()));
         return std::nullopt;
     }
 
     skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
 
-    auto valueBegin = buffer.position();
+    auto valueBegin = buffer.span();
     skipWhile<isDirectiveValueCharacter>(buffer);
 
     if (!buffer.atEnd()) {
-        m_policy.reportInvalidDirectiveValueCharacter(name, String({ valueBegin, buffer.end() }));
+        m_policy.reportInvalidDirectiveValueCharacter(name, valueBegin);
         return std::nullopt;
     }
 
     // The directive-value may be empty.
-    if (valueBegin == buffer.position())
+    if (valueBegin.data() == buffer.position())
         return ParsedDirective { WTFMove(name), { } };
 
-    auto value = String({ valueBegin, buffer.position() });
+    String value { valueBegin.first(buffer.position() - valueBegin.data()) };
     return ParsedDirective { WTFMove(name), WTFMove(value) };
 }
 
@@ -610,8 +615,10 @@ void ContentSecurityPolicyDirectiveList::parseRequireTrustedTypesFor(ParsedDirec
             auto begin = buffer.position();
             if (skipExactlyIgnoringASCIICase(buffer, "'script'"_s))
                 m_requireTrustedTypesForScript = true;
-            else
-                policy().reportInvalidTrustedTypesSinkGroup(String({ begin, buffer.position() }));
+            else {
+                policy().reportInvalidTrustedTypesSinkGroup(std::span { begin, buffer.position() });
+                return;
+            }
 
             ASSERT(buffer.atEnd() || isUnicodeCompatibleASCIIWhitespace(*buffer));
         }

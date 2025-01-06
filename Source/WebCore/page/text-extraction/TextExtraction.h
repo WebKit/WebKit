@@ -31,17 +31,23 @@
 namespace WebCore {
 
 class Element;
+class FloatRect;
 class LocalFrame;
 class Page;
 enum class ExceptionCode : uint8_t;
 
 namespace TextExtraction {
 
-enum class OnlyIncludeTextContent : bool { No, Yes };
-
 WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
+WEBCORE_EXPORT Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page&);
 
-String extractRenderedText(Element&, OnlyIncludeTextContent);
+struct RenderedText {
+    String textWithReplacedContent;
+    String textWithoutReplacedContent;
+    bool hasLargeReplacedDescendant { false };
+};
+
+RenderedText extractRenderedText(Element&);
 
 } // namespace TextExtraction
 } // namespace WebCore

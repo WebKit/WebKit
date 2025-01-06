@@ -32,8 +32,11 @@
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FECompositeSoftwareArithmeticApplier);
 
 FECompositeSoftwareArithmeticApplier::FECompositeSoftwareArithmeticApplier(const FEComposite& effect)
     : Base(effect)
@@ -43,13 +46,13 @@ FECompositeSoftwareArithmeticApplier::FECompositeSoftwareArithmeticApplier(const
 
 uint8_t FECompositeSoftwareArithmeticApplier::clampByte(int c)
 {
-    uint8_t buff[] = { static_cast<uint8_t>(c), 255, 0 };
+    std::array<uint8_t, 3> buff { static_cast<uint8_t>(c), 255, 0 };
     unsigned uc = static_cast<unsigned>(c);
     return buff[!!(uc & ~0xff) + !!(uc & ~(~0u >> 1))];
 }
 
 template <int b1, int b4>
-inline void FECompositeSoftwareArithmeticApplier::computePixels(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
+inline void FECompositeSoftwareArithmeticApplier::computePixels(std::span<unsigned char> source, std::span<unsigned char> destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
 {
     float scaledK1;
     float scaledK4;
@@ -58,25 +61,23 @@ inline void FECompositeSoftwareArithmeticApplier::computePixels(unsigned char* s
     if (b4)
         scaledK4 = k4 * 255.0f;
 
-    while (--pixelArrayLength >= 0) {
-        unsigned char i1 = *source;
-        unsigned char i2 = *destination;
+    for (int index = 0; index < pixelArrayLength; ++index) {
+        unsigned char i1 = source[index];
+        unsigned char& i2 = destination[index];
         float result = k2 * i1 + k3 * i2;
         if (b1)
             result += scaledK1 * i1 * i2;
         if (b4)
             result += scaledK4;
 
-        *destination = clampByte(result);
-        ++source;
-        ++destination;
+        i2 = clampByte(result);
     }
 }
 
 // computePixelsUnclamped is a faster version of computePixels for the common case where clamping
 // is not necessary. This enables aggresive compiler optimizations such as auto-vectorization.
 template <int b1, int b4>
-inline void FECompositeSoftwareArithmeticApplier::computePixelsUnclamped(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
+inline void FECompositeSoftwareArithmeticApplier::computePixelsUnclamped(std::span<unsigned char> source, std::span<unsigned char> destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
 {
     float scaledK1;
     float scaledK4;
@@ -85,22 +86,20 @@ inline void FECompositeSoftwareArithmeticApplier::computePixelsUnclamped(unsigne
     if (b4)
         scaledK4 = k4 * 255.0f;
 
-    while (--pixelArrayLength >= 0) {
-        unsigned char i1 = *source;
-        unsigned char i2 = *destination;
+    for (int index = 0; index < pixelArrayLength; ++index) {
+        unsigned char i1 = source[index];
+        unsigned char& i2 = destination[index];
         float result = k2 * i1 + k3 * i2;
         if (b1)
             result += scaledK1 * i1 * i2;
         if (b4)
             result += scaledK4;
 
-        *destination = result;
-        ++source;
-        ++destination;
+        i2 = result;
     }
 }
 
-inline void FECompositeSoftwareArithmeticApplier::applyPlatform(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
+inline void FECompositeSoftwareArithmeticApplier::applyPlatform(std::span<unsigned char> source, std::span<unsigned char> destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
 {
     float upperLimit = std::max(0.0f, k1) + std::max(0.0f, k2) + std::max(0.0f, k3) + k4;
     float lowerLimit = std::min(0.0f, k1) + std::min(0.0f, k2) + std::min(0.0f, k3) + k4;
@@ -149,8 +148,8 @@ bool FECompositeSoftwareArithmeticApplier::apply(const Filter&, const FilterImag
     IntRect effectBDrawingRect = result.absoluteImageRectRelativeTo(input2);
     input2.copyPixelBuffer(*destinationPixelBuffer, effectBDrawingRect);
 
-    auto* sourcePixelBytes = sourcePixelBuffer->bytes().data();
-    auto* destinationPixelBytes = destinationPixelBuffer->bytes().data();
+    auto sourcePixelBytes = sourcePixelBuffer->bytes();
+    auto destinationPixelBytes = destinationPixelBuffer->bytes();
 
     auto length = sourcePixelBuffer->bytes().size();
     ASSERT(length == destinationPixelBuffer->bytes().size());

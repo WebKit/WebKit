@@ -3,5 +3,5 @@
 Set word spacing and word spacing to font dependent value and verify it works after font change.
 
 
-FAIL Set word spacing and word spacing to font dependent value and verify it works after font change. assert_equals: ctx.letterSpacing === '0px' (got [undefined], expected 0px[string]) expected (string) "0px" but got (undefined) undefined
+PASS Set word spacing and word spacing to font dependent value and verify it works after font change.
 

@@ -14,9 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/accent-color-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/appearance-no-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/caret-color-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/caret-color-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/cursor-no-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/outline-color-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/outline-offset-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/outline-offset-interpolation.html

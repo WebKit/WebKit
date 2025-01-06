@@ -1,0 +1,8 @@
+This test ensures we represent NSAccessibilityLinkTextAttribute in attributed strings.
+
+PASS: linkText.attributedStringForTextMarkerRangeContainsAttribute('AXLink', markerRange) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo

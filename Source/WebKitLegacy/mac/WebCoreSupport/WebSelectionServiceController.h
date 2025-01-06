@@ -30,6 +30,7 @@
 
 #import "WebSharingServicePickerController.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
@@ -43,7 +44,7 @@ class IntPoint;
 }
 
 class WebSelectionServiceController : public WebSharingServicePickerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebSelectionServiceController);
 public:
     WebSelectionServiceController(WebView*);
 

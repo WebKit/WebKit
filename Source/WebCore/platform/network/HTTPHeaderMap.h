@@ -89,6 +89,7 @@ public:
         const KeyValue& operator*() const { return *get(); }
         const KeyValue* operator->() const { return get(); }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         HTTPHeaderMapConstIterator& operator++()
         {
             if (m_commonHeadersIt != m_table.m_commonHeaders.end()) {
@@ -100,6 +101,7 @@ public:
             updateKeyValue(m_uncommonHeadersIt);
             return *this;
         }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         bool operator==(const HTTPHeaderMapConstIterator& other) const
         {

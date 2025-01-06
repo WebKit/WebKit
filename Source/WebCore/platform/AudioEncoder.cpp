@@ -33,24 +33,32 @@
 
 #if USE(GSTREAMER)
 #include "AudioEncoderGStreamer.h"
+#elif USE(AVFOUNDATION)
+#include "AudioEncoderCocoa.h"
 #endif
 
 namespace WebCore {
 
-void AudioEncoder::create(const String& codecName, const Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
+Ref<AudioEncoder::CreatePromise> AudioEncoder::create(const String& codecName, const Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
 #if USE(GSTREAMER)
-    GStreamerAudioEncoder::create(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
-    return;
+    CreatePromise::Producer producer;
+    Ref promise = producer.promise();
+    CreateCallback callback = [producer = WTFMove(producer)] (auto&& result) mutable {
+        producer.settle(WTFMove(result));
+    };
+    GStreamerAudioEncoder::create(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback));
+    return promise;
+#elif USE(AVFOUNDATION)
+    return AudioEncoderCocoa::create(codecName, config, WTFMove(descriptionCallback), WTFMove(outputCallback));
 #else
     UNUSED_PARAM(codecName);
     UNUSED_PARAM(config);
     UNUSED_PARAM(descriptionCallback);
     UNUSED_PARAM(outputCallback);
-    UNUSED_PARAM(postCallback);
-#endif
 
-    callback(makeUnexpected("Not supported"_s));
+    return CreatePromise::createAndReject("Not supported"_s));
+#endif
 }
 
 } // namespace WebCore

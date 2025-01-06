@@ -11,10 +11,11 @@
 #ifndef API_VIDEO_CODECS_H265_PROFILE_TIER_LEVEL_H_
 #define API_VIDEO_CODECS_H265_PROFILE_TIER_LEVEL_H_
 
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
-#include "api/video_codecs/sdp_video_format.h"
+#include "api/rtp_parameters.h"
+#include "api/video/resolution.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -79,15 +80,22 @@ RTC_EXPORT std::string H265TierToString(H265Tier tier);
 RTC_EXPORT std::string H265LevelToString(H265Level level);
 
 // Helper function to get H265Profile from profile string.
-RTC_EXPORT absl::optional<H265Profile> StringToH265Profile(
+RTC_EXPORT std::optional<H265Profile> StringToH265Profile(
     const std::string& profile);
 
 // Helper function to get H265Tier from tier string.
-RTC_EXPORT absl::optional<H265Tier> StringToH265Tier(const std::string& tier);
+RTC_EXPORT std::optional<H265Tier> StringToH265Tier(const std::string& tier);
 
 // Helper function to get H265Level from level string.
-RTC_EXPORT absl::optional<H265Level> StringToH265Level(
-    const std::string& level);
+RTC_EXPORT std::optional<H265Level> StringToH265Level(const std::string& level);
+
+// Given that a decoder supports up to a give frame size(in pixels) at up to a
+// given number of frames per second, return the highest H.265 level where it
+// can guranatee that it will be able to support all valid encoded streams that
+// are within that level.
+RTC_EXPORT std::optional<H265Level> GetSupportedH265Level(
+    const Resolution& resolution,
+    float max_fps);
 
 // Parses an SDP key-value map of format parameters to retrive an H265
 // profile/tier/level. Returns an H265ProfileTierlevel by setting its
@@ -96,13 +104,23 @@ RTC_EXPORT absl::optional<H265Level> StringToH265Level(
 // level defaults to "kLevel3_1" if no level-id is specified.
 // Returns empty value if any of the profile/tier/level key is present but
 // contains an invalid value.
-RTC_EXPORT absl::optional<H265ProfileTierLevel> ParseSdpForH265ProfileTierLevel(
-    const SdpVideoFormat::Parameters& params);
+RTC_EXPORT std::optional<H265ProfileTierLevel> ParseSdpForH265ProfileTierLevel(
+    const CodecParameterMap& params);
 
-// Returns true if the parameters have the same H265 profile or neither contains
-// an H265 profile, otherwise false.
-bool H265IsSameProfileTierLevel(const SdpVideoFormat::Parameters& params1,
-                                const SdpVideoFormat::Parameters& params2);
+// Returns true if the parameters have the same H265 profile/tier/level or
+// neither contains an H265 profile/tier/level, otherwise false.
+RTC_EXPORT bool H265IsSameProfileTierLevel(const CodecParameterMap& params1,
+                                           const CodecParameterMap& params2);
+
+// Returns true if the parameters have the same H265 profile, or neither
+// contains an H265 profile, otherwise false.
+RTC_EXPORT bool H265IsSameProfile(const CodecParameterMap& params1,
+                                  const CodecParameterMap& params2);
+
+// Returns true if the parameters have the same H265 tier, or neither
+// contains an H265 tier, otherwise false.
+RTC_EXPORT bool H265IsSameTier(const CodecParameterMap& params1,
+                               const CodecParameterMap& params2);
 
 }  // namespace webrtc
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,13 +20,13 @@
 #include "aom_dsp/aom_filter.h"
 #include "aom_ports/mem.h"
 
-static INLINE int horz_scalar_product(const uint8_t *a, const int16_t *b) {
+static inline int horz_scalar_product(const uint8_t *a, const int16_t *b) {
   int sum = 0;
   for (int k = 0; k < SUBPEL_TAPS; ++k) sum += a[k] * b[k];
   return sum;
 }
 
-static INLINE int vert_scalar_product(const uint8_t *a, ptrdiff_t a_stride,
+static inline int vert_scalar_product(const uint8_t *a, ptrdiff_t a_stride,
                                       const int16_t *b) {
   int sum = 0;
   for (int k = 0; k < SUBPEL_TAPS; ++k) sum += a[k * a_stride] * b[k];
@@ -111,7 +111,7 @@ void aom_convolve8_vert_c(const uint8_t *src, ptrdiff_t src_stride,
                 w, h);
 }
 
-void aom_convolve8_c(const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
+void aom_scaled_2d_c(const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
                      ptrdiff_t dst_stride, const InterpKernel *filter,
                      int x0_q4, int x_step_q4, int y0_q4, int y_step_q4, int w,
                      int h) {
@@ -145,14 +145,6 @@ void aom_convolve8_c(const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
                 y0_q4, y_step_q4, w, h);
 }
 
-void aom_scaled_2d_c(const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
-                     ptrdiff_t dst_stride, const InterpKernel *filter,
-                     int x0_q4, int x_step_q4, int y0_q4, int y_step_q4, int w,
-                     int h) {
-  aom_convolve8_c(src, src_stride, dst, dst_stride, filter, x0_q4, x_step_q4,
-                  y0_q4, y_step_q4, w, h);
-}
-
 void aom_convolve_copy_c(const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
                          ptrdiff_t dst_stride, int w, int h) {
   for (int r = h; r > 0; --r) {
@@ -163,7 +155,7 @@ void aom_convolve_copy_c(const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE int highbd_vert_scalar_product(const uint16_t *a,
+static inline int highbd_vert_scalar_product(const uint16_t *a,
                                              ptrdiff_t a_stride,
                                              const int16_t *b) {
   int sum = 0;
@@ -171,7 +163,7 @@ static INLINE int highbd_vert_scalar_product(const uint16_t *a,
   return sum;
 }
 
-static INLINE int highbd_horz_scalar_product(const uint16_t *a,
+static inline int highbd_horz_scalar_product(const uint16_t *a,
                                              const int16_t *b) {
   int sum = 0;
   for (int k = 0; k < SUBPEL_TAPS; ++k) sum += a[k] * b[k];

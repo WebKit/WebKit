@@ -13,6 +13,7 @@
 #include <memory>
 #include <utility>
 
+#include "api/test/video_quality_test_fixture.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/platform_thread_types.h"
 

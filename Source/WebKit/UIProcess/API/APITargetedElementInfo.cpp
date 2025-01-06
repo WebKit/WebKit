@@ -56,7 +56,10 @@ WebCore::FloatRect TargetedElementInfo::boundsInWebView() const
     RefPtr page = m_page.get();
     if (!page)
         return { };
-    return page->pageClient().rootViewToWebView(boundsInRootView());
+    RefPtr pageClient = page->pageClient();
+    if (!pageClient)
+        return { };
+    return pageClient->rootViewToWebView(boundsInRootView());
 }
 
 void TargetedElementInfo::childFrames(CompletionHandler<void(Vector<Ref<FrameTreeNode>>&&)>&& completion) const

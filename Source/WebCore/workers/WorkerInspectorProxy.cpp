@@ -34,9 +34,12 @@
 #include "WorkerThread.h"
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <wtf/NeverDestroyed.h>
-
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerInspectorProxy);
+
 using namespace Inspector;
 
 static Lock proxiesLock;

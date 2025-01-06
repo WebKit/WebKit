@@ -12,8 +12,12 @@
 #define API_TEST_MOCK_MEDIA_STREAM_INTERFACE_H_
 
 #include <string>
+#include <type_traits>
 
+#include "api/audio_options.h"
 #include "api/media_stream_interface.h"
+#include "api/scoped_refptr.h"
+#include "rtc_base/ref_counted_object.h"
 #include "test/gmock.h"
 
 namespace webrtc {
@@ -85,7 +89,7 @@ class MockAudioTrack : public rtc::RefCountedObject<AudioTrackInterface> {
 
 class MockMediaStream : public MediaStreamInterface {
  public:
-  MOCK_METHOD(std::string, id, (), (const override));
+  MOCK_METHOD(std::string, id, (), (const, override));
   MOCK_METHOD(AudioTrackVector, GetAudioTracks, (), (override));
   MOCK_METHOD(VideoTrackVector, GetVideoTracks, (), (override));
   MOCK_METHOD(rtc::scoped_refptr<AudioTrackInterface>,
@@ -112,11 +116,6 @@ class MockMediaStream : public MediaStreamInterface {
               RemoveTrack,
               (rtc::scoped_refptr<VideoTrackInterface> track),
               (override));
-  // Old AddTrack/RemoveTrack methods - slated for removal
-  MOCK_METHOD(bool, AddTrack, (AudioTrackInterface * track), (override));
-  MOCK_METHOD(bool, AddTrack, (VideoTrackInterface * track), (override));
-  MOCK_METHOD(bool, RemoveTrack, (AudioTrackInterface * track), (override));
-  MOCK_METHOD(bool, RemoveTrack, (VideoTrackInterface * track), (override));
   MOCK_METHOD(void,
               RegisterObserver,
               (ObserverInterface * observer),

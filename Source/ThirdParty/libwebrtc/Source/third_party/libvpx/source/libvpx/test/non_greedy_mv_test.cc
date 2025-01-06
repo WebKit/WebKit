@@ -9,7 +9,7 @@
  */
 
 #include <math.h>
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "vp9/encoder/vp9_non_greedy_mv.h"
 #include "./vpx_dsp_rtcd.h"
 

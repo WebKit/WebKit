@@ -32,6 +32,7 @@
 #include <wtf/ArgumentCoder.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
+#include <wtf/text/MakeString.h>
 
 namespace IPC {
 
@@ -70,7 +71,7 @@ bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientId
     return true;
 }
 
-void Connection::platformInitialize(Identifier identifier)
+void Connection::platformInitialize(Identifier&& identifier)
 {
     m_connectionPipe = identifier.handle;
 }

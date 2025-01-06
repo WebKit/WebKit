@@ -62,21 +62,21 @@ void GPUPresentationContext::unconfigure()
     m_backing->unconfigure();
 }
 
-RefPtr<GPUTexture> GPUPresentationContext::getCurrentTexture()
+RefPtr<GPUTexture> GPUPresentationContext::getCurrentTexture(uint32_t index)
 {
     if ((!m_currentTexture || m_currentTexture->isDestroyed()) && m_device.get()) {
-        if (auto currentTexture = m_backing->getCurrentTexture())
+        if (auto currentTexture = m_backing->getCurrentTexture(index))
             m_currentTexture = GPUTexture::create(*currentTexture, m_textureDescriptor, *m_device.get()).ptr();
     }
 
     return m_currentTexture;
 }
 
-void GPUPresentationContext::present(bool presentBacking)
+void GPUPresentationContext::present(uint32_t frameIndex, bool presentBacking)
 {
     m_currentTexture = nullptr;
     if (presentBacking)
-        m_backing->present(presentBacking);
+        m_backing->present(frameIndex, presentBacking);
 }
 
 } // namespace WebCore

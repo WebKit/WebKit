@@ -436,14 +436,16 @@ TEST(FontManagerTests, ChangeTypingAttributesWithInspectorBar)
     {
         // Add foreground and background colors.
         [webView selectNextWord];
-        NSColor *foregroundColor = [NSColor colorWithRed:1 green:1 blue:1 alpha:0.2];
-        NSColor *backgroundColor = [NSColor colorWithRed:0.8 green:0.2 blue:0.6 alpha:1];
-        [inspectorBar chooseForegroundColor:foregroundColor];
-        [inspectorBar chooseBackgroundColor:backgroundColor];
+        RetainPtr backgroundColor = [NSColor colorWithRed:0.8 green:0.2 blue:0.6 alpha:1];
+        RetainPtr foregroundColor = [NSColor colorWithRed:1 green:0 blue:0 alpha:1];
+
+        [inspectorBar chooseBackgroundColor:backgroundColor.get()];
         [webView waitForNextPresentationUpdate];
-        NSDictionary *attributes = [webView typingAttributes];
-        EXPECT_TRUE([attributes[NSForegroundColorAttributeName] isEqual:foregroundColor]);
-        EXPECT_TRUE([attributes[NSBackgroundColorAttributeName] isEqual:backgroundColor]);
+        EXPECT_TRUE([[webView typingAttributes][NSBackgroundColorAttributeName] isEqual:backgroundColor.get()]);
+
+        [inspectorBar chooseForegroundColor:foregroundColor.get()];
+        [webView waitForNextPresentationUpdate];
+        EXPECT_TRUE([[webView typingAttributes][NSForegroundColorAttributeName] isEqual:foregroundColor.get()]);
     }
 }
 

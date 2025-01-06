@@ -10,23 +10,30 @@
 
 #include "call/rtp_payload_params.h"
 
-#include <string.h>
-
+#include <cstdint>
 #include <map>
+#include <optional>
 #include <set>
 
 #include "absl/container/inlined_vector.h"
-#include "absl/types/optional.h"
 #include "absl/types/variant.h"
 #include "api/transport/field_trial_based_config.h"
+#include "api/transport/rtp/dependency_descriptor.h"
+#include "api/video/color_space.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_codec_constants.h"
+#include "api/video/video_codec_type.h"
 #include "api/video/video_content_type.h"
+#include "api/video/video_frame_type.h"
 #include "api/video/video_rotation.h"
-#include "modules/video_coding/codecs/h264/include/h264_globals.h"
+#include "call/rtp_config.h"
+#include "common_video/generic_frame_descriptor/generic_frame_info.h"
+#include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "modules/video_coding/include/video_codec_interface.h"
-#include "test/explicit_key_value_config.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/scoped_key_value_config.h"
@@ -37,6 +44,7 @@ namespace {
 using ::testing::AllOf;
 using ::testing::Each;
 using ::testing::ElementsAre;
+using ::testing::ElementsAreArray;
 using ::testing::Eq;
 using ::testing::Field;
 using ::testing::IsEmpty;
@@ -144,7 +152,7 @@ TEST(RtpPayloadParamsTest, InfoMappedToRtpVideoHeader_Vp9) {
   EXPECT_EQ(kVideoRotation_90, header.rotation);
   EXPECT_EQ(VideoContentType::SCREENSHARE, header.content_type);
   EXPECT_EQ(kVideoCodecVP9, header.codec);
-  EXPECT_EQ(absl::make_optional(color_space), header.color_space);
+  EXPECT_EQ(std::make_optional(color_space), header.color_space);
   EXPECT_EQ(kPictureId + 1, vp9_header.picture_id);
   EXPECT_EQ(kTl0PicIdx, vp9_header.tl0_pic_idx);
   EXPECT_EQ(vp9_header.temporal_idx, codec_info.codecSpecific.VP9.temporal_idx);
@@ -358,6 +366,30 @@ TEST(RtpPayloadParamsTest, Tl0PicIdxUpdatedForVp9) {
   // State should hold latest used picture id and tl0_pic_idx.
   EXPECT_EQ(kInitialPictureId1 + 2, params.state().picture_id);
   EXPECT_EQ(kInitialTl0PicIdx1 + 1, params.state().tl0_pic_idx);
+}
+
+TEST(RtpPayloadParamsTest, GenerateFrameIdWhenExternalFrameIdsAreNotProvided) {
+  RtpPayloadState state;
+  state.frame_id = 123;
+
+  EncodedImage encoded_image;
+  encoded_image._frameType = VideoFrameType::kVideoFrameKey;
+  CodecSpecificInfo codec_info;
+  codec_info.codecType = kVideoCodecGeneric;
+
+  RtpPayloadParams params(kSsrc1, &state, FieldTrialBasedConfig());
+  RTPVideoHeader header =
+      params.GetRtpVideoHeader(encoded_image, &codec_info, std::nullopt);
+
+  EXPECT_THAT(header.codec, Eq(kVideoCodecGeneric));
+
+  ASSERT_TRUE(header.generic);
+  EXPECT_THAT(header.generic->frame_id, Eq(123));
+
+  encoded_image._frameType = VideoFrameType::kVideoFrameDelta;
+  header = params.GetRtpVideoHeader(encoded_image, &codec_info, std::nullopt);
+  ASSERT_TRUE(header.generic);
+  EXPECT_THAT(header.generic->frame_id, Eq(124));
 }
 
 TEST(RtpPayloadParamsTest, PictureIdForOldGenericFormat) {
@@ -1313,7 +1345,13 @@ class RtpPayloadParamsH264ToGenericTest : public ::testing::Test {
                        LayerSync layer_sync,
                        const std::set<int64_t>& expected_deps,
                        uint16_t width = 0,
-                       uint16_t height = 0) {
+                       uint16_t height = 0,
+                       const std::vector<DecodeTargetIndication>&
+                           expected_decode_target_indication = {
+                               DecodeTargetIndication::kSwitch,
+                               DecodeTargetIndication::kSwitch,
+                               DecodeTargetIndication::kSwitch,
+                               DecodeTargetIndication::kSwitch}) {
     EncodedImage encoded_image;
     encoded_image._frameType = frame_type;
     encoded_image._encodedWidth = width;
@@ -1338,6 +1376,9 @@ class RtpPayloadParamsH264ToGenericTest : public ::testing::Test {
 
     EXPECT_EQ(header.width, width);
     EXPECT_EQ(header.height, height);
+
+    EXPECT_THAT(header.generic->decode_target_indications,
+                ElementsAreArray(expected_decode_target_indication));
   }
 
  protected:
@@ -1369,29 +1410,42 @@ TEST_F(RtpPayloadParamsH264ToGenericTest, TooHighTemporalIndex) {
 }
 
 TEST_F(RtpPayloadParamsH264ToGenericTest, LayerSync) {
+  constexpr auto kSwitch = DecodeTargetIndication::kSwitch;
+  constexpr auto kNotPresent = DecodeTargetIndication::kNotPresent;
+
   // 02120212 pattern
   ConvertAndCheck(0, 0, VideoFrameType::kVideoFrameKey, kNoSync, {}, 480, 360);
-  ConvertAndCheck(2, 1, VideoFrameType::kVideoFrameDelta, kNoSync, {0});
-  ConvertAndCheck(1, 2, VideoFrameType::kVideoFrameDelta, kNoSync, {0});
-  ConvertAndCheck(2, 3, VideoFrameType::kVideoFrameDelta, kNoSync, {0, 1, 2});
-
-  ConvertAndCheck(0, 4, VideoFrameType::kVideoFrameDelta, kNoSync, {0});
-  ConvertAndCheck(2, 5, VideoFrameType::kVideoFrameDelta, kNoSync, {2, 3, 4});
-  ConvertAndCheck(1, 6, VideoFrameType::kVideoFrameDelta, kSync,
-                  {4});  // layer sync
-  ConvertAndCheck(2, 7, VideoFrameType::kVideoFrameDelta, kNoSync, {4, 5, 6});
+  ConvertAndCheck(2, 1, VideoFrameType::kVideoFrameDelta, kNoSync, {0}, 0, 0,
+                  {kNotPresent, kNotPresent, kSwitch, kSwitch});
+  ConvertAndCheck(1, 2, VideoFrameType::kVideoFrameDelta, kNoSync, {0}, 0, 0,
+                  {kNotPresent, kSwitch, kSwitch, kSwitch});
+  ConvertAndCheck(2, 3, VideoFrameType::kVideoFrameDelta, kNoSync, {0, 1, 2}, 0,
+                  0, {kNotPresent, kNotPresent, kSwitch, kSwitch});
+  ConvertAndCheck(0, 4, VideoFrameType::kVideoFrameDelta, kNoSync, {0}, 0, 0);
+  ConvertAndCheck(2, 5, VideoFrameType::kVideoFrameDelta, kNoSync, {2, 3, 4}, 0,
+                  0, {kNotPresent, kNotPresent, kSwitch, kSwitch});
+  ConvertAndCheck(1, 6, VideoFrameType::kVideoFrameDelta, kSync, {4}, 0, 0,
+                  {kNotPresent, kSwitch, kSwitch, kSwitch});  // layer sync
+  ConvertAndCheck(2, 7, VideoFrameType::kVideoFrameDelta, kNoSync, {4, 5, 6}, 0,
+                  0, {kNotPresent, kNotPresent, kSwitch, kSwitch});
 }
 
 TEST_F(RtpPayloadParamsH264ToGenericTest, FrameIdGaps) {
+  constexpr auto kSwitch = DecodeTargetIndication::kSwitch;
+  constexpr auto kNotPresent = DecodeTargetIndication::kNotPresent;
+
   // 0101 pattern
   ConvertAndCheck(0, 0, VideoFrameType::kVideoFrameKey, kNoSync, {}, 480, 360);
-  ConvertAndCheck(1, 1, VideoFrameType::kVideoFrameDelta, kNoSync, {0});
+  ConvertAndCheck(1, 1, VideoFrameType::kVideoFrameDelta, kNoSync, {0}, 0, 0,
+                  {kNotPresent, kSwitch, kSwitch, kSwitch});
 
   ConvertAndCheck(0, 5, VideoFrameType::kVideoFrameDelta, kNoSync, {0});
-  ConvertAndCheck(1, 10, VideoFrameType::kVideoFrameDelta, kNoSync, {1, 5});
+  ConvertAndCheck(1, 10, VideoFrameType::kVideoFrameDelta, kNoSync, {1, 5}, 0,
+                  0, {kNotPresent, kSwitch, kSwitch, kSwitch});
 
   ConvertAndCheck(0, 15, VideoFrameType::kVideoFrameDelta, kNoSync, {5});
-  ConvertAndCheck(1, 20, VideoFrameType::kVideoFrameDelta, kNoSync, {10, 15});
+  ConvertAndCheck(1, 20, VideoFrameType::kVideoFrameDelta, kNoSync, {10, 15}, 0,
+                  0, {kNotPresent, kSwitch, kSwitch, kSwitch});
 }
 
 }  // namespace

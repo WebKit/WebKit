@@ -10,12 +10,14 @@
 #ifndef CALL_RTP_STREAM_RECEIVER_CONTROLLER_H_
 #define CALL_RTP_STREAM_RECEIVER_CONTROLLER_H_
 
+#include <cstdint>
 #include <memory>
 
 #include "api/sequence_checker.h"
 #include "call/rtp_demuxer.h"
 #include "call/rtp_stream_receiver_controller_interface.h"
 #include "modules/rtp_rtcp/include/recovered_packet_receiver.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

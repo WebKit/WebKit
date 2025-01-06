@@ -25,12 +25,15 @@
 
 #import "config.h"
 #import "GroupActivitiesSession.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
 
 #import "WKGroupSession.h"
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GroupActivitiesSession);
 
 Ref<GroupActivitiesSession> GroupActivitiesSession::create(RetainPtr<WKGroupSession>&& session)
 {

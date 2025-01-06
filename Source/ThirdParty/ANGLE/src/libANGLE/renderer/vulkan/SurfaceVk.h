@@ -37,6 +37,13 @@ class SurfaceVk : public SurfaceImpl, public angle::ObserverInterface, public vk
     // We monitor the staging buffer for changes. This handles staged data from outside this class.
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
 
+    // width and height can change with client window resizing
+    EGLint getWidth() const override;
+    EGLint getHeight() const override;
+
+    EGLint mWidth;
+    EGLint mHeight;
+
     RenderTargetVk mColorRenderTarget;
     RenderTargetVk mDepthStencilRenderTarget;
 };
@@ -66,11 +73,7 @@ class OffscreenSurfaceVk : public SurfaceVk
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
     egl::Error getMscRate(EGLint *numerator, EGLint *denominator) override;
-    void setSwapInterval(EGLint interval) override;
-
-    // width and height can change with client window resizing
-    EGLint getWidth() const override;
-    EGLint getHeight() const override;
+    void setSwapInterval(const egl::Display *display, EGLint interval) override;
 
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
@@ -116,9 +119,6 @@ class OffscreenSurfaceVk : public SurfaceVk
     };
 
     virtual angle::Result initializeImpl(DisplayVk *displayVk);
-
-    EGLint mWidth;
-    EGLint mHeight;
 
     AttachmentImage mColorAttachment;
     AttachmentImage mDepthStencilAttachment;
@@ -203,13 +203,17 @@ struct SwapchainImage : angle::NonCopyable
     uint64_t frameNumber = 0;
 };
 
-// Associated data for a call to vkAcquireNextImageKHR without necessarily holding the share group
-// lock.
-struct UnlockedTryAcquireData : angle::NonCopyable
+enum class ImageAcquireState
 {
-    // A mutex to protect against concurrent attempts to call vkAcquireNextImageKHR.
-    angle::SimpleMutex mutex;
+    Ready,
+    NeedToAcquire,
+    NeedToProcessResult,
+};
 
+// Associated data for a call to vkAcquireNextImageKHR without necessarily holding the share group
+// and global locks but ONLY from a thread where Surface is current.
+struct UnlockedAcquireData : angle::NonCopyable
+{
     // Given that the CPU is throttled after a number of swaps, there is an upper bound to the
     // number of semaphores that are used to acquire swapchain images, and that is
     // kSwapHistorySize+1:
@@ -234,10 +238,9 @@ struct UnlockedTryAcquireData : angle::NonCopyable
     angle::CircularBuffer<vk::Semaphore, impl::kSwapHistorySize + 1> acquireImageSemaphores;
 };
 
-struct UnlockedTryAcquireResult : angle::NonCopyable
+struct UnlockedAcquireResult : angle::NonCopyable
 {
-    // The result of the call to vkAcquireNextImageKHR.  This result is processed later under the
-    // share group lock.
+    // The result of the call to vkAcquireNextImageKHR.
     VkResult result = VK_SUCCESS;
 
     // Semaphore to signal.
@@ -249,32 +252,15 @@ struct UnlockedTryAcquireResult : angle::NonCopyable
 
 struct ImageAcquireOperation : angle::NonCopyable
 {
-    ImageAcquireOperation();
+    // Initially image needs to be acquired.
+    ImageAcquireState state = ImageAcquireState::NeedToAcquire;
 
-    // True when acquiring the next image is deferred.
-    std::atomic<bool> needToAcquireNextSwapchainImage;
-
-    // Data used to call vkAcquireNextImageKHR without necessarily holding the share group lock.
-    // The result of this operation can be found in mAcquireOperation.unlockedTryAcquireResult,
-    // which is processed once the share group lock is taken in the future.
-    //
-    // |unlockedTryAcquireData::mutex| is necessary to hold when making the vkAcquireNextImageKHR
-    // call as multiple contexts in the share group may end up provoking it (only one may be calling
-    // it without the share group lock though, the one calling eglPrepareSwapBuffersANGLE).  During
-    // processing of the results however (for example in the following eglSwapBuffers call, or if
-    // called during a GL call, immediately afterwards), the contents of |unlockedTryAcquireResult|
-    // can be accessed without |unlockedTryAcquireData::mutex| because the share group lock is
-    // already taken, and no thread can be attempting an unlocked vkAcquireNextImageKHR.
-    UnlockedTryAcquireData unlockedTryAcquireData;
-    UnlockedTryAcquireResult unlockedTryAcquireResult;
+    // No synchronization is necessary when making the vkAcquireNextImageKHR call since it is ONLY
+    // possible on a thread where Surface is current.
+    UnlockedAcquireData unlockedAcquireData;
+    UnlockedAcquireResult unlockedAcquireResult;
 };
 }  // namespace impl
-
-enum class FramebufferFetchMode
-{
-    Disabled,
-    Enabled,
-};
 
 class WindowSurfaceVk : public SurfaceVk
 {
@@ -310,13 +296,8 @@ class WindowSurfaceVk : public SurfaceVk
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
     egl::Error getMscRate(EGLint *numerator, EGLint *denominator) override;
-    void setSwapInterval(EGLint interval) override;
+    void setSwapInterval(const egl::Display *display, EGLint interval) override;
 
-    // width and height can change with client window resizing
-    EGLint getWidth() const override;
-    EGLint getHeight() const override;
-    EGLint getRotatedWidth() const;
-    EGLint getRotatedHeight() const;
     // Note: windows cannot be resized on Android.  The approach requires
     // calling vkGetPhysicalDeviceSurfaceCapabilitiesKHR.  However, that is
     // expensive; and there are troublesome timing issues for other parts of
@@ -339,7 +320,7 @@ class WindowSurfaceVk : public SurfaceVk
     vk::Framebuffer &chooseFramebuffer();
 
     angle::Result getCurrentFramebuffer(ContextVk *context,
-                                        FramebufferFetchMode fetchMode,
+                                        vk::FramebufferFetchMode fetchMode,
                                         const vk::RenderPass &compatibleRenderPass,
                                         vk::Framebuffer *framebufferOut);
 
@@ -398,7 +379,8 @@ class WindowSurfaceVk : public SurfaceVk
     // will recreate the swapchain (if needed due to present returning OUT_OF_DATE, swap interval
     // changing, surface size changing etc, by calling prepareForAcquireNextSwapchainImage()) and
     // call the doDeferredAcquireNextImageWithUsableSwapchain() method.
-    angle::Result doDeferredAcquireNextImage(const gl::Context *context, bool presentOutOfDate);
+    angle::Result doDeferredAcquireNextImage(const gl::Context *context,
+                                             bool forceSwapchainRecreate);
     // Calls acquireNextSwapchainImage() and sets up the acquired image.  On some platforms,
     // vkAcquireNextImageKHR returns OUT_OF_DATE instead of present, so this function may still
     // recreate the swapchain.  The main difference with doDeferredAcquireNextImage is that it does
@@ -415,31 +397,26 @@ class WindowSurfaceVk : public SurfaceVk
     virtual angle::Result createSurfaceVk(vk::Context *context, gl::Extents *extentsOut)      = 0;
     virtual angle::Result getCurrentWindowSize(vk::Context *context, gl::Extents *extentsOut) = 0;
 
+    void setSwapInterval(DisplayVk *displayVk, EGLint interval);
+
     angle::Result initializeImpl(DisplayVk *displayVk, bool *anyMatchesOut);
     angle::Result recreateSwapchain(ContextVk *contextVk, const gl::Extents &extents);
-    angle::Result createSwapChain(vk::Context *context,
-                                  const gl::Extents &extents,
-                                  VkSwapchainKHR oldSwapchain);
+    angle::Result createSwapChain(vk::Context *context, const gl::Extents &extents);
+    angle::Result collectOldSwapchain(ContextVk *contextVk, VkSwapchainKHR swapchain);
     angle::Result queryAndAdjustSurfaceCaps(ContextVk *contextVk,
                                             VkSurfaceCapabilitiesKHR *surfaceCaps);
-    angle::Result checkForOutOfDateSwapchain(ContextVk *contextVk,
-                                             bool presentOutOfDate,
-                                             bool *swapchainRecreatedOut);
+    angle::Result checkForOutOfDateSwapchain(ContextVk *contextVk, bool forceRecreate);
     angle::Result resizeSwapchainImages(vk::Context *context, uint32_t imageCount);
     void releaseSwapchainImages(ContextVk *contextVk);
     void destroySwapChainImages(DisplayVk *displayVk);
     angle::Result prepareForAcquireNextSwapchainImage(const gl::Context *context,
-                                                      bool presentOutOfDate,
-                                                      bool *swapchainRecreatedOut);
+                                                      bool forceSwapchainRecreate);
     // This method calls vkAcquireNextImageKHR() to acquire the next swapchain image.  It is called
     // when the swapchain is initially created and when present() finds the swapchain out of date.
     // Otherwise, it is scheduled to be called later by deferAcquireNextImage().
     VkResult acquireNextSwapchainImage(vk::Context *context);
-    // Process the result of vkAcquireNextImageKHR, which may have been done previously without
-    // holding a lock.
-    VkResult postProcessUnlockedTryAcquire(vk::Context *context);
-    // Whether vkAcquireNextImageKHR needs to be called or its results processed
-    bool needsAcquireImageOrProcessResult() const;
+    // Process the result of vkAcquireNextImageKHR.
+    VkResult postProcessUnlockedAcquire(vk::Context *context);
     // This method is called when a swapchain image is presented.  It schedules
     // acquireNextSwapchainImage() to be called later.
     void deferAcquireNextImage();
@@ -482,7 +459,8 @@ class WindowSurfaceVk : public SurfaceVk
 
     std::vector<vk::PresentMode> mPresentModes;
 
-    VkSwapchainKHR mSwapchain;
+    VkSwapchainKHR mSwapchain;      // Current swapchain (same as last created or NULL)
+    VkSwapchainKHR mLastSwapchain;  // Last created non retired swapchain (or NULL if retired)
     vk::SwapchainStatus mSwapchainStatus;
     // Cached information used to recreate swapchains.
     vk::PresentMode mSwapchainPresentMode;         // Current swapchain mode
@@ -494,10 +472,10 @@ class WindowSurfaceVk : public SurfaceVk
     VkColorSpaceKHR mSurfaceColorSpace;
 
     // Present modes that are compatible with the current mode.  If mDesiredSwapchainPresentMode is
-    // in this list, mode switch can happen without the need to recreate the swapchain.  Fast
-    // vector's size is 6, as there are currently only 6 possible present modes.
-    static constexpr uint32_t kMaxCompatiblePresentModes = 6;
-    angle::FixedVector<VkPresentModeKHR, kMaxCompatiblePresentModes> mCompatiblePresentModes;
+    // in this list, mode switch can happen without the need to recreate the swapchain.
+    // There are currently only 6 possible present modes but vector is bigger for a workaround.
+    static constexpr uint32_t kCompatiblePresentModesSize = 10;
+    angle::FixedVector<VkPresentModeKHR, kCompatiblePresentModesSize> mCompatiblePresentModes;
 
     // A circular buffer that stores the serial of the submission fence of the context on every
     // swap. The CPU is throttled by waiting for the 2nd previous serial to finish.  This should
@@ -553,7 +531,7 @@ class WindowSurfaceVk : public SurfaceVk
     uint64_t mBufferAgeQueryFrameNumber;
 
     // GL_EXT_shader_framebuffer_fetch
-    FramebufferFetchMode mFramebufferFetchMode = FramebufferFetchMode::Disabled;
+    vk::FramebufferFetchMode mFramebufferFetchMode = vk::FramebufferFetchMode::None;
 };
 
 }  // namespace rx

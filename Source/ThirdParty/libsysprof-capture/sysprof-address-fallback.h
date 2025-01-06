@@ -1,0 +1,6 @@
+#define PERF_CONTEXT_GUEST_USER   (-2560)
+#define PERF_CONTEXT_GUEST_KERNEL (-2176)
+#define PERF_CONTEXT_GUEST        (-2048)
+#define PERF_CONTEXT_USER         (-512)
+#define PERF_CONTEXT_KERNEL       (-128)
+#define PERF_CONTEXT_HV           (-32)

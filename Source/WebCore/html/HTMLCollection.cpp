@@ -26,13 +26,14 @@
 #include "CachedHTMLCollectionInlines.h"
 #include "HTMLNames.h"
 #include "NodeRareDataInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLCollection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CollectionNamedElementCache);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLCollection);
 
 inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> RootType
 {
@@ -49,7 +50,7 @@ inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> R
     case CollectionType::DocumentNamedItems:
     case CollectionType::DocumentAllNamedItems:
     case CollectionType::FormControls:
-        return HTMLCollection::IsRootedAtTreeScope;
+        return HTMLCollection::RootType::AtTreeScope;
     case CollectionType::AllDescendants:
     case CollectionType::ByClass:
     case CollectionType::ByTag:
@@ -64,10 +65,10 @@ inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> R
     case CollectionType::SelectedOptions:
     case CollectionType::DataListOptions:
     case CollectionType::MapAreas:
-        return HTMLCollection::IsRootedAtNode;
+        return HTMLCollection::RootType::AtNode;
     }
     ASSERT_NOT_REACHED();
-    return HTMLCollection::IsRootedAtNode;
+    return HTMLCollection::RootType::AtNode;
 }
 
 static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(CollectionType type)
@@ -115,7 +116,7 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
 HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type)
     : m_collectionType(static_cast<unsigned>(type))
     , m_invalidationType(static_cast<unsigned>(invalidationTypeExcludingIdAndNameAttributes(type)))
-    , m_rootType(rootTypeFromCollectionType(type))
+    , m_rootType(static_cast<unsigned>(rootTypeFromCollectionType(type)))
     , m_ownerNode(ownerNode)
 {
     ASSERT(m_rootType == static_cast<unsigned>(rootTypeFromCollectionType(type)));

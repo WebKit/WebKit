@@ -23,32 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// We keep this function small very carefully to encourage inlining.
-@linkTimeConstant
-function setIteratorNext(bucket, kind)
-{
-    "use strict";
-    var value;
-
-    bucket = @setBucketNext(bucket);
-    @putSetIteratorInternalField(this, @setIteratorFieldSetBucket, bucket);
-    var done = bucket === @sentinelSetBucket;
-    if (!done) {
-        value = @setBucketKey(bucket);
-        if (kind === @iterationKindEntries)
-            value = [ value, value ]
-    }
-    return { value, done };
-}
-
-function next()
-{
+function next() {
     "use strict";
 
     if (!@isSetIterator(this))
         @throwTypeError("%SetIteratorPrototype%.next requires that |this| be a Set Iterator instance");
 
-    var bucket = @getSetIteratorInternalField(this, @setIteratorFieldSetBucket);
-    var kind = @getSetIteratorInternalField(this, @setIteratorFieldKind);
-    return @setIteratorNext.@call(this, bucket, kind);
+    var value;
+    var done = @setIteratorNext(this);
+
+    if (!done) {
+        var kind = @getSetIteratorInternalField(this, @setIteratorFieldKind);
+        var value = @setIteratorKey(this);
+        if (kind === @iterationKindEntries)
+            value = [value, value];
+    }
+    return { value, done };
 }

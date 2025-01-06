@@ -28,11 +28,11 @@
 #include "HTMLNames.h"
 #include "RenderLineBreak.h"
 #include "RenderStyleInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLBRElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLBRElement);
 
 using namespace HTMLNames;
 

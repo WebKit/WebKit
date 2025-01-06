@@ -41,9 +41,9 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  */
 @property (readonly, copy) NSURL *URL;
 
-/*! @abstract Deprecated. Always returns nil.
+/*! @abstract The title of the webpage represented by this item.
  */
-@property (nullable, readonly, copy) NSString *title WK_API_DEPRECATED("No longer supported", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA), visionos(1.0, WK_XROS_TBA));
+@property (nullable, readonly, copy) NSString *title;
 
 /*! @abstract The URL of the initial request that created this item.
  */

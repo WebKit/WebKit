@@ -68,6 +68,7 @@ public:
     bool isValid() const { return isValidSessionIDValue(m_identifier); }
     bool isEphemeral() const { return m_identifier & EphemeralSessionMask && m_identifier != HashTableDeletedValueID; }
     bool isHashTableDeletedValue() const { return m_identifier == HashTableDeletedValueID; }
+    bool isHashTableEmptyValue() const { return m_identifier == HashTableEmptyValueID; }
 
     uint64_t toUInt64() const { return m_identifier; }
     friend bool operator==(SessionID, SessionID) = default;
@@ -94,6 +95,7 @@ struct SessionIDHash {
 
 template<> struct HashTraits<PAL::SessionID> : GenericHashTraits<PAL::SessionID> {
     static PAL::SessionID emptyValue() { return PAL::SessionID(HashTableEmptyValue); }
+    static bool isEmptyValue(const PAL::SessionID& value) { return value.isHashTableEmptyValue(); }
     static void constructDeletedValue(PAL::SessionID& slot) { new (NotNull, &slot) PAL::SessionID(HashTableDeletedValue); }
     static bool isDeletedValue(const PAL::SessionID& slot) { return slot.isHashTableDeletedValue(); }
 };

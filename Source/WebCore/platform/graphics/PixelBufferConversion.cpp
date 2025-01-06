@@ -34,10 +34,12 @@
 #if USE(ACCELERATE) && USE(CG)
 #include <Accelerate/Accelerate.h>
 #elif USE(SKIA)
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkPixmap.h>
-IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -62,6 +64,9 @@ static inline vImage_CGImageFormat makeVImageCGImageFormat(const PixelBufferForm
         case PixelFormat::BGRX8:
         case PixelFormat::RGB10:
         case PixelFormat::RGB10A8:
+#if HAVE(HDR_SUPPORT)
+        case PixelFormat::RGBA16F:
+#endif
             break;
         }
 
@@ -362,3 +367,5 @@ void copyRows(unsigned sourceBytesPerRow, const uint8_t* source, unsigned destin
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

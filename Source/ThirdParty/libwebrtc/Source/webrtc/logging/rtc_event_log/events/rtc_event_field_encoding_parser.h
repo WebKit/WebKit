@@ -11,12 +11,22 @@
 #ifndef LOGGING_RTC_EVENT_LOG_EVENTS_RTC_EVENT_FIELD_ENCODING_PARSER_H_
 #define LOGGING_RTC_EVENT_LOG_EVENTS_RTC_EVENT_FIELD_ENCODING_PARSER_H_
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <string>
+#include <type_traits>
 #include <vector>
 
+#include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "api/units/timestamp.h"
+#include "logging/rtc_event_log/events/fixed_length_encoding_parameters_v3.h"
 #include "logging/rtc_event_log/events/rtc_event_field_encoding.h"
+#include "logging/rtc_event_log/events/rtc_event_field_extraction.h"
 #include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -130,7 +140,7 @@ template <typename T,
 ABSL_MUST_USE_RESULT RtcEventLogParseStatus
 PopulateRtcEventMember(const rtc::ArrayView<uint8_t> positions,
                        const rtc::ArrayView<uint64_t> values,
-                       absl::optional<T> E::*member,
+                       std::optional<T> E::*member,
                        rtc::ArrayView<E> output) {
   size_t batch_size = positions.size();
   RTC_CHECK_EQ(output.size(), batch_size);
@@ -142,7 +152,7 @@ PopulateRtcEventMember(const rtc::ArrayView<uint8_t> positions,
       output[i].*member = DecodeFromUnsignedToType<T>(value_it);
       ++value_it;
     } else {
-      output[i].*member = absl::nullopt;
+      output[i].*member = std::nullopt;
     }
   }
   RTC_CHECK(value_it == values.end());

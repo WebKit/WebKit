@@ -13,11 +13,11 @@
 
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -29,18 +29,18 @@ enum class RtpSourceType {
 class RtpSource {
  public:
   struct Extensions {
-    absl::optional<uint8_t> audio_level;
+    std::optional<uint8_t> audio_level;
 
     // Fields from the Absolute Capture Time header extension:
     // http://www.webrtc.org/experiments/rtp-hdrext/abs-capture-time
-    absl::optional<AbsoluteCaptureTime> absolute_capture_time;
+    std::optional<AbsoluteCaptureTime> absolute_capture_time;
 
     // Clock offset between the local clock and the capturer's clock.
     // Do not confuse with `AbsoluteCaptureTime::estimated_capture_clock_offset`
     // which instead represents the clock offset between a remote sender and the
     // capturer. The following holds:
     //   Capture's NTP Clock = Local NTP Clock + Local-Capture Clock Offset
-    absl::optional<TimeDelta> local_capture_clock_offset;
+    std::optional<TimeDelta> local_capture_clock_offset;
   };
 
   RtpSource() = delete;
@@ -68,21 +68,19 @@ class RtpSource {
   // The source can be either a contributing source or a synchronization source.
   RtpSourceType source_type() const { return source_type_; }
 
-  absl::optional<uint8_t> audio_level() const {
-    return extensions_.audio_level;
-  }
+  std::optional<uint8_t> audio_level() const { return extensions_.audio_level; }
 
-  void set_audio_level(const absl::optional<uint8_t>& level) {
+  void set_audio_level(const std::optional<uint8_t>& level) {
     extensions_.audio_level = level;
   }
 
   uint32_t rtp_timestamp() const { return rtp_timestamp_; }
 
-  absl::optional<AbsoluteCaptureTime> absolute_capture_time() const {
+  std::optional<AbsoluteCaptureTime> absolute_capture_time() const {
     return extensions_.absolute_capture_time;
   }
 
-  absl::optional<TimeDelta> local_capture_clock_offset() const {
+  std::optional<TimeDelta> local_capture_clock_offset() const {
     return extensions_.local_capture_clock_offset;
   }
 

@@ -49,7 +49,7 @@ class FrameGeneratorCapturerVideoTrackSource : public VideoTrackSource {
     video_capturer_ = std::make_unique<test::FrameGeneratorCapturer>(
         clock,
         test::CreateSquareFrameGenerator(config.width, config.height,
-                                         absl::nullopt,
+                                         std::nullopt,
                                          config.num_squares_generated),
         config.frames_per_second, *task_queue_factory_);
     video_capturer_->Init();

@@ -31,7 +31,7 @@ class MockFrameReader : public FrameReader {
               ReadFrame,
               (int, Resolution),
               (override));
-  MOCK_METHOD(int, num_frames, (), (const override));
+  MOCK_METHOD(int, num_frames, (), (const, override));
 };
 
 }  // namespace test

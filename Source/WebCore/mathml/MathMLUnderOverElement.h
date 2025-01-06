@@ -32,7 +32,8 @@
 namespace WebCore {
 
 class MathMLUnderOverElement final : public MathMLScriptsElement {
-    WTF_MAKE_ISO_ALLOCATED(MathMLUnderOverElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MathMLUnderOverElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLUnderOverElement);
 public:
     static Ref<MathMLUnderOverElement> create(const QualifiedName& tagName, Document&);
     const BooleanValue& accent();

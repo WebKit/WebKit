@@ -38,6 +38,7 @@
 #include "MockPaymentError.h"
 #include "PaymentCoordinatorClient.h"
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -47,11 +48,14 @@ class Page;
 struct ApplePayDetailsUpdateBase;
 struct ApplePayPaymentMethod;
 
-class MockPaymentCoordinator final : public PaymentCoordinatorClient {
-    WTF_MAKE_FAST_ALLOCATED;
+class MockPaymentCoordinator final : public PaymentCoordinatorClient, public RefCounted<MockPaymentCoordinator> {
+    WTF_MAKE_TZONE_ALLOCATED(MockPaymentCoordinator);
 public:
-    explicit MockPaymentCoordinator(Page&);
+    static Ref<MockPaymentCoordinator> create(Page&);
     ~MockPaymentCoordinator();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void setCanMakePayments(bool canMakePayments) { m_canMakePayments = canMakePayments; }
     void setCanMakePaymentsWithActiveCard(bool canMakePaymentsWithActiveCard) { m_canMakePaymentsWithActiveCard = canMakePaymentsWithActiveCard; }
@@ -118,10 +122,9 @@ public:
 
     bool installmentConfigurationReturnsNil() const;
 
-    void ref() const { }
-    void deref() const { }
-
 private:
+    explicit MockPaymentCoordinator(Page&);
+
     std::optional<String> validatedPaymentNetwork(const String&) const final;
     bool canMakePayments() final;
     void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&&) final;
@@ -145,7 +148,10 @@ private:
 
     void dispatchIfShowing(Function<void()>&&);
 
-    Page& m_page;
+    WeakPtr<PaymentCoordinator> m_paymentCoordinator;
+    WeakPtr<Page> m_page;
+    uint64_t m_showCount { 0 };
+    uint64_t m_hideCount { 0 };
     bool m_canMakePayments { true };
     bool m_canMakePaymentsWithActiveCard { true };
     ApplePayPaymentContact m_shippingAddress;

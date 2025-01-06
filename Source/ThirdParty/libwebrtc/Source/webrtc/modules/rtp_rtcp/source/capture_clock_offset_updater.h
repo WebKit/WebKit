@@ -13,7 +13,8 @@
 
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/units/time_delta.h"
 
 namespace webrtc {
@@ -32,8 +33,8 @@ class CaptureClockOffsetUpdater {
   // Adjusts remote_capture_clock_offset, which originates from Absolute Capture
   // Time RTP header extension, to get the local clock offset against the
   // capturer's clock.
-  absl::optional<int64_t> AdjustEstimatedCaptureClockOffset(
-      absl::optional<int64_t> remote_capture_clock_offset) const;
+  std::optional<int64_t> AdjustEstimatedCaptureClockOffset(
+      std::optional<int64_t> remote_capture_clock_offset) const;
 
   // Sets the NTP clock offset between the sender system (which may be different
   // from the capture system) and the local system. This information is normally
@@ -41,14 +42,14 @@ class CaptureClockOffsetUpdater {
   // by RTCP sender reports (see DLSR/DLRR).
   //
   // Note that the value must be in Q32.32-formatted fixed-point seconds.
-  void SetRemoteToLocalClockOffset(absl::optional<int64_t> offset_q32x32);
+  void SetRemoteToLocalClockOffset(std::optional<int64_t> offset_q32x32);
 
   // Converts a signed Q32.32-formatted fixed-point to a TimeDelta.
-  static absl::optional<TimeDelta> ConvertsToTimeDela(
-      absl::optional<int64_t> q32x32);
+  static std::optional<TimeDelta> ConvertsToTimeDela(
+      std::optional<int64_t> q32x32);
 
  private:
-  absl::optional<int64_t> remote_to_local_clock_offset_;
+  std::optional<int64_t> remote_to_local_clock_offset_;
 };
 
 }  // namespace webrtc

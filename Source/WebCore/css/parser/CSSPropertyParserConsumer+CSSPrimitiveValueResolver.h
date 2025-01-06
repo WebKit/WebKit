@@ -24,11 +24,12 @@
 
 #pragma once
 
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+MetaResolver.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
+#include "CSSPropertyParserOptions.h"
+#include "CSSUnevaluatedCalc.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -38,37 +39,24 @@ namespace CSSPropertyParserHelpers {
 
 /// Non-template base type for code sharing.
 struct CSSPrimitiveValueResolverBase {
-    static RefPtr<CSSPrimitiveValue> resolve(AngleRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(LengthRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(NumberRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(PercentRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(ResolutionRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(TimeRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(NoneRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(SymbolRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static RefPtr<CSSPrimitiveValue> resolve(CSS::NumericRaw auto value, CSSPropertyParserOptions)
+    {
+        return CSSPrimitiveValue::create(value.value, CSS::toCSSUnitType(value.unit));
+    }
 
-    template<typename IntType, IntegerValueRange integerRange>
-    static RefPtr<CSSPrimitiveValue> resolve(IntegerRaw<IntType, integerRange> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    template<CSS::Range R, typename IntType> static RefPtr<CSSPrimitiveValue> resolve(CSS::IntegerRaw<R, IntType> value, CSSPropertyParserOptions)
     {
         return CSSPrimitiveValue::createInteger(value.value);
     }
 
-    template<typename RawType>
-    static RefPtr<CSSPrimitiveValue> resolve(UnevaluatedCalc<RawType> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    static RefPtr<CSSPrimitiveValue> resolve(CSS::Calc auto value, CSSPropertyParserOptions)
     {
-        return CSSPrimitiveValue::create(value.calc);
+        return CSSPrimitiveValue::create(value.protectedCalc());
     }
 
-    template<typename IntType, IntegerValueRange integerRange>
-    static RefPtr<CSSPrimitiveValue> resolve(UnevaluatedCalc<IntegerRaw<IntType, integerRange>> calc, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions)
+    static RefPtr<CSSPrimitiveValue> resolve(CSS::Numeric auto value, CSSPropertyParserOptions options)
     {
-        // FIXME: This should not be eagerly resolving the calc. Instead, callers
-        // should resolve and round at style resolution.
-
-        // https://drafts.csswg.org/css-values-4/#integers
-        // Rounding to the nearest integer requires rounding in the direction of +∞ when the fractional portion is exactly 0.5.
-        auto value = clampTo<IntType>(std::floor(std::max(calc.calc->doubleValue(symbolTable), computeMinimumValue(integerRange)) + 0.5));
-        return CSSPrimitiveValue::createInteger(value);
+        return WTF::switchOn(WTFMove(value), [&](auto&& value) { return resolve(WTFMove(value), options); });
     }
 };
 

@@ -45,6 +45,11 @@ bool FontCascade::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
+bool FontCascade::canUseGlyphDisplayList(const RenderStyle&)
+{
+    return true;
+}
+
 static bool characterSequenceIsEmoji(SurrogatePairAwareTextIterator& iterator, char32_t firstCharacter, unsigned firstClusterLength)
 {
     char32_t character = firstCharacter;
@@ -98,7 +103,7 @@ static bool characterSequenceIsEmoji(SurrogatePairAwareTextIterator& iterator, c
     return false;
 }
 
-const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
+RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
     auto normalizedString = normalizedNFC(stringView);
 

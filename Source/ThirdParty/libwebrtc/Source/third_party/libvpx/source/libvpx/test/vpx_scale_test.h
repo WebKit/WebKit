@@ -11,7 +11,7 @@
 #ifndef VPX_TEST_VPX_SCALE_TEST_H_
 #define VPX_TEST_VPX_SCALE_TEST_H_
 
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "./vpx_config.h"
 #include "./vpx_scale_rtcd.h"

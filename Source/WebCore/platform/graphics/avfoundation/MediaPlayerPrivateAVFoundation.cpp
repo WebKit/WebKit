@@ -48,9 +48,12 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -712,9 +715,6 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateAVFoundation::movieLoadType() const
     if (isHLS())
         return MediaPlayer::MovieLoadType::HttpLiveStream;
 
-    if (isLiveStream())
-        return MediaPlayer::MovieLoadType::LiveStream;
-
     return MediaPlayer::MovieLoadType::Download;
 }
 
@@ -842,7 +842,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!keyURIArray)
         return false;
 
-    keyURI = String({ reinterpret_cast<UChar*>(keyURIArray->data()), keyURILength / sizeof(unsigned short) });
+    keyURI = spanReinterpretCast<const UChar>(keyURIArray->span().first(keyURILength));
     offset += keyURILength;
 
     uint32_t keyIDLength = initDataView->get<uint32_t>(offset, true, &status);
@@ -854,7 +854,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!keyIDArray)
         return false;
 
-    keyID = String({ reinterpret_cast<UChar*>(keyIDArray->data()), keyIDLength / sizeof(unsigned short) });
+    keyID = spanReinterpretCast<const UChar>(keyIDArray->span().first(keyIDLength));
     offset += keyIDLength;
 
     uint32_t certificateLength = initDataView->get<uint32_t>(offset, true, &status);
@@ -886,21 +886,6 @@ bool MediaPlayerPrivateAVFoundation::canSaveMediaData() const
     return true;
 }
 
-bool MediaPlayerPrivateAVFoundation::isUnsupportedMIMEType(const String& type)
-{
-    String lowerCaseType = type.convertToASCIILowercase();
-
-    // AVFoundation will return non-video MIME types which it claims to support, but which we
-    // do not support in the <video> element. Reject all non video/, audio/, and application/ types.
-    if (!lowerCaseType.startsWith("video/"_s) && !lowerCaseType.startsWith("audio/"_s) && !lowerCaseType.startsWith("application/"_s))
-        return true;
-
-    // Reject types we know AVFoundation does not support that sites commonly ask about.
-    static constexpr ComparableASCIILiteral unsupportedTypesArray[] = { "application/ogg", "audio/ogg", "audio/webm", "video/h264", "video/ogg", "video/webm", "video/x-flv", "video/x-webm" };
-    static constexpr SortedArraySet unsupportedTypesSet { unsupportedTypesArray };
-    return unsupportedTypesSet.contains(lowerCaseType);
-}
-
 bool MediaPlayerPrivateAVFoundation::shouldEnableInheritURIQueryComponent() const
 {
     static NeverDestroyed<const AtomString> iTunesInheritsURIQueryComponent(MAKE_STATIC_STRING_IMPL("x-itunes-inherit-uri-query-component"));
@@ -922,43 +907,6 @@ WTFLogChannel& MediaPlayerPrivateAVFoundation::logChannel() const
 }
 #endif
 
-const HashSet<String>& MediaPlayerPrivateAVFoundation::staticMIMETypeList()
-{
-    static NeverDestroyed cache = HashSet<String> {
-        "application/vnd.apple.mpegurl"_s,
-        "application/x-mpegurl"_s,
-        "audio/3gpp"_s,
-        "audio/aac"_s,
-        "audio/aacp"_s,
-        "audio/aiff"_s,
-        "audio/basic"_s,
-        "audio/mp3"_s,
-        "audio/mp4"_s,
-        "audio/mpeg"_s,
-        "audio/mpeg3"_s,
-        "audio/mpegurl"_s,
-        "audio/mpg"_s,
-        "audio/vnd.wave"_s,
-        "audio/wav"_s,
-        "audio/wave"_s,
-        "audio/x-aac"_s,
-        "audio/x-aiff"_s,
-        "audio/x-m4a"_s,
-        "audio/x-mpegurl"_s,
-        "audio/x-wav"_s,
-        "video/3gpp"_s,
-        "video/3gpp2"_s,
-        "video/mp4"_s,
-        "video/mpeg"_s,
-        "video/mpeg2"_s,
-        "video/mpg"_s,
-        "video/quicktime"_s,
-        "video/x-m4v"_s,
-        "video/x-mpeg"_s,
-        "video/x-mpg"_s,
-    };
-    return cache;
-}
 
 String convertEnumerationToString(MediaPlayerPrivateAVFoundation::MediaRenderingMode enumerationValue)
 {
@@ -975,5 +923,7 @@ String convertEnumerationToString(MediaPlayerPrivateAVFoundation::MediaRendering
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

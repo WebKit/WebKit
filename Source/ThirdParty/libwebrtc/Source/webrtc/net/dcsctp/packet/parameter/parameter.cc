@@ -13,12 +13,12 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "net/dcsctp/common/math.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
@@ -70,20 +70,20 @@ std::vector<ParameterDescriptor> Parameters::descriptors() const {
   return result;
 }
 
-absl::optional<Parameters> Parameters::Parse(
+std::optional<Parameters> Parameters::Parse(
     rtc::ArrayView<const uint8_t> data) {
   // Validate the parameter descriptors
   rtc::ArrayView<const uint8_t> span(data);
   while (!span.empty()) {
     if (span.size() < kParameterHeaderSize) {
       RTC_DLOG(LS_WARNING) << "Insufficient parameter length";
-      return absl::nullopt;
+      return std::nullopt;
     }
     BoundedByteReader<kParameterHeaderSize> header(span);
     uint16_t length = header.Load16<2>();
     if (length < kParameterHeaderSize || length > span.size()) {
       RTC_DLOG(LS_WARNING) << "Invalid parameter length field";
-      return absl::nullopt;
+      return std::nullopt;
     }
     size_t length_with_padding = RoundUpTo4(length);
     if (length_with_padding > span.size()) {

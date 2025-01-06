@@ -11,7 +11,7 @@
 #include "include/core/SkColorSpace.h"
 #include "include/core/SkData.h"
 #include "include/core/SkFont.h"
-#include "include/gpu/GrContextOptions.h"
+#include "include/gpu/ganesh/GrContextOptions.h"
 #include "include/private/base/SkTArray.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "modules/skcms/skcms.h"
@@ -152,6 +152,7 @@ private:
     void initSlides();
     void updateTitle();
     void setBackend(sk_app::Window::BackendType);
+    void initGpuTimer();
     void setColorMode(ColorMode);
     int startupSlide() const;
     void setCurrentSlide(int);
@@ -166,7 +167,7 @@ private:
     void drawImGui();
 
     void changeZoomLevel(float delta);
-    void preTouchMatrixChanged();
+    void updateGestureTransLimit();
     SkMatrix computePreTouchMatrix();
     SkMatrix computePerspectiveMatrix();
     SkMatrix computeMatrix();
@@ -253,7 +254,7 @@ private:
 
     // fDisplay contains default values (fWindow.fRequestedDisplayParams contains the overrides),
     // fDisplayOverrides controls if overrides are applied.
-    skwindow::DisplayParams fDisplay;
+    std::unique_ptr<skwindow::DisplayParams> fDisplay;
     DisplayFields fDisplayOverrides;
 
     struct CachedShader {

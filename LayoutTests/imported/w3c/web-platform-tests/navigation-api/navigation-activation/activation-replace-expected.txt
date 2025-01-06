@@ -1,4 +1,4 @@
 
 
-FAIL navigation.activation after replace promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'i.contentWindow.navigation.activation.from')"
+PASS navigation.activation after replace
 

@@ -33,6 +33,7 @@
 #include <gtk/gtk.h>
 #include <wtf/SetForScope.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 

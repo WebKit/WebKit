@@ -40,6 +40,7 @@
 #include "FrameLoader.h"
 #include "HTMLElement.h"
 #include "HTMLFrameElement.h"
+#include "HTMLHeadElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
@@ -67,16 +68,16 @@ struct EntityDescription {
     std::optional<EntityMask> mask;
 };
 
-constexpr EntityDescription entitySubstitutionList[] = {
-    { ""_s, std::nullopt },
-    { "&amp;"_s, EntityMask::Amp },
-    { "&lt;"_s, EntityMask::Lt },
-    { "&gt;"_s, EntityMask::Gt },
-    { "&quot;"_s, EntityMask::Quot },
-    { "&nbsp;"_s, EntityMask::Nbsp },
-    { "&#9;"_s, EntityMask::Tab },
-    { "&#10;"_s, EntityMask::LineFeed },
-    { "&#13;"_s, EntityMask::CarriageReturn },
+constexpr std::array entitySubstitutionList {
+    EntityDescription { ""_s, std::nullopt },
+    EntityDescription { "&amp;"_s, EntityMask::Amp },
+    EntityDescription { "&lt;"_s, EntityMask::Lt },
+    EntityDescription { "&gt;"_s, EntityMask::Gt },
+    EntityDescription { "&quot;"_s, EntityMask::Quot },
+    EntityDescription { "&nbsp;"_s, EntityMask::Nbsp },
+    EntityDescription { "&#9;"_s, EntityMask::Tab },
+    EntityDescription { "&#10;"_s, EntityMask::LineFeed },
+    EntityDescription { "&#13;"_s, EntityMask::CarriageReturn },
 };
 
 namespace EntitySubstitutionIndex {
@@ -91,8 +92,8 @@ constexpr uint8_t LineFeed = 7;
 constexpr uint8_t CarriageReturn = 8;
 };
 
-static const unsigned maximumEscapedentityCharacter = noBreakSpace;
-static const uint8_t entityMap[maximumEscapedentityCharacter + 1] = {
+static constexpr unsigned maximumEscapedentityCharacter = noBreakSpace;
+static constexpr std::array<uint8_t, maximumEscapedentityCharacter + 1> entityMap {
     0, 0, 0, 0, 0, 0, 0, 0, 0,
     EntitySubstitutionIndex::Tab, // '\t'.
     EntitySubstitutionIndex::LineFeed, // '\n'.
@@ -206,7 +207,7 @@ MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resol
 
 MarkupAccumulator::~MarkupAccumulator() = default;
 
-void MarkupAccumulator::enableURLReplacement(HashMap<String, String>&& replacementURLStrings, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet)
+void MarkupAccumulator::enableURLReplacement(UncheckedKeyHashMap<String, String>&& replacementURLStrings, UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet)
 {
     m_urlReplacementData = URLReplacementData { WTFMove(replacementURLStrings), WTFMove(replacementURLStringsForCSSStyleSheet) };
 }
@@ -288,7 +289,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
         if (shouldAppendNode)
             startAppendingNode(*current, &namespaceStack.last());
 
-        bool shouldEmitCloseTag = !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
+        bool shouldEmitCloseTag = m_serializationSyntax == SerializationSyntax::XML || !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
         shouldSkipNode = shouldSkipNode || !shouldEmitCloseTag;
         if (!shouldSkipNode) {
             if (shouldIncludeShadowRoots()) {
@@ -341,7 +342,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
                 break;
 
             shouldAppendNode = !(current == &targetNode && root != SerializedNodes::SubtreeIncludingNode);
-            shouldEmitCloseTag = !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
+            shouldEmitCloseTag = m_serializationSyntax == SerializationSyntax::XML || !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
             if (shouldAppendNode && shouldEmitCloseTag)
                 endAppendingNode(*current);
         }
@@ -387,9 +388,16 @@ const ShadowRoot* MarkupAccumulator::suitableShadowRoot(const Node& node)
 
 void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespaces)
 {
-    if (RefPtr element = dynamicDowncast<Element>(node))
+    if (RefPtr element = dynamicDowncast<Element>(node)) {
         appendStartTag(m_markup, *element, namespaces);
-    else if (auto* shadowRoot = suitableShadowRoot(node)) {
+
+        // Currently URL Replacement only happens when saving markup to disk and the file uses UTF-8 encoding.
+        // To ensure the file can be loaded correctly, change the specified encoding to UTF-8.
+        // FIXME: This can be dropped when file encoding matches declared encoding.
+        if (m_urlReplacementData && is<HTMLHeadElement>(element))
+            m_markup.append("<meta charset=\"UTF-8\"><!-- Encoding specified by WebKit -->"_s);
+
+    } else if (auto* shadowRoot = suitableShadowRoot(node)) {
         m_markup.append("<template shadowrootmode=\""_s);
         switch (shadowRoot->mode()) {
         case ShadowRootMode::Open:
@@ -479,7 +487,7 @@ void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomString&
         return;
     }
 
-    // Use emptyAtom()s's impl() for null strings since this HashMap can't handle nullptr as a key
+    // Use emptyAtom()s's impl() for null strings since this UncheckedKeyHashMap can't handle nullptr as a key
     auto addResult = namespaces.add(prefix.isNull() ? emptyAtom().impl() : prefix.impl(), namespaceURI.impl());
     if (!addResult.isNewEntry) {
         if (addResult.iterator->value == namespaceURI.impl())
@@ -852,7 +860,7 @@ static bool isElementExcludedByRule(const MarkupExclusionRule& rule, const Eleme
                 continue;
             }
 
-            // FIXME: We might optimize this by using a HashMap when there are too many attributes.
+            // FIXME: We might optimize this by using a UncheckedKeyHashMap when there are too many attributes.
             for (const Attribute& attribute : element.attributesIterator()) {
                 if (!equalIgnoringASCIICase(attribute.localName(), attributeLocalName))
                     continue;

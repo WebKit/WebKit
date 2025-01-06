@@ -10,6 +10,7 @@
 
 #include "system_wrappers/include/clock.h"
 
+#include "api/units/time_delta.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -29,6 +30,15 @@ TEST(ClockTest, NtpTime) {
   EXPECT_GT(milliseconds_lower_bound / 1000, kNtpJan1970);
   EXPECT_LE(milliseconds_lower_bound - 1, ntp_time.ToMs());
   EXPECT_GE(milliseconds_upper_bound + 1, ntp_time.ToMs());
+}
+
+TEST(ClockTest, NtpToUtc) {
+  Clock* clock = Clock::GetRealTimeClock();
+  NtpTime ntp = clock->CurrentNtpTime();
+  Timestamp a = Clock::NtpToUtc(ntp);
+  Timestamp b = Timestamp::Millis(ntp.ToMs() - int64_t{kNtpJan1970} * 1000);
+  TimeDelta d = a - b;
+  EXPECT_LT(d.Abs(), TimeDelta::Millis(1));
 }
 
 }  // namespace webrtc

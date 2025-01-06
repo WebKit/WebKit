@@ -25,6 +25,7 @@
 #include "AudioFileReader.h"
 #include <gio/gio.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 #if PLATFORM(GTK)
@@ -40,7 +41,7 @@ RefPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRa
     GUniquePtr<char> path(g_strdup_printf(AUDIO_GRESOURCE_PATH "/%s", name));
     GRefPtr<GBytes> data = adoptGRef(g_resources_lookup_data(path.get(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     ASSERT(data);
-    return createBusFromInMemoryAudioFile(std::span(static_cast<const uint8_t*>(g_bytes_get_data(data.get(), nullptr)), g_bytes_get_size(data.get())), false, sampleRate);
+    return createBusFromInMemoryAudioFile(span(data), false, sampleRate);
 }
 
 } // namespace WebCore

@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Refused to load https://127.0.0.1/resources/execute-start.wasm because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://127.0.0.1/resources/execute-start.wasm because it does not appear in the script-src directive of the Content Security Policy.
+
+PASS Importing a WebAssembly module should be guarded by script-src CSP.
+

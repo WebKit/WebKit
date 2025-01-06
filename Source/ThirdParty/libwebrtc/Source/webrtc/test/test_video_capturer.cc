@@ -25,10 +25,10 @@ TestVideoCapturer::~TestVideoCapturer() = default;
 void TestVideoCapturer::OnOutputFormatRequest(
     int width,
     int height,
-    const absl::optional<int>& max_fps) {
-  absl::optional<std::pair<int, int>> target_aspect_ratio =
+    const std::optional<int>& max_fps) {
+  std::optional<std::pair<int, int>> target_aspect_ratio =
       std::make_pair(width, height);
-  absl::optional<int> max_pixel_count = width * height;
+  std::optional<int> max_pixel_count = width * height;
   video_adapter_.OnOutputFormatRequest(target_aspect_ratio, max_pixel_count,
                                        max_fps);
 }

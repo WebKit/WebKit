@@ -13,9 +13,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -92,7 +92,7 @@ class RtpDumpWriter : public RtpFileWriter {
   }
 
   FILE* file_;
-  absl::optional<uint32_t> first_packet_time_;
+  std::optional<uint32_t> first_packet_time_;
 };
 
 RtpFileWriter* RtpFileWriter::Create(FileFormat format,

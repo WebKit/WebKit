@@ -43,16 +43,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityListBoxOption::AccessibilityListBoxOption(HTMLElement& element)
-    : AccessibilityNodeObject(&element)
+AccessibilityListBoxOption::AccessibilityListBoxOption(AXID axID, HTMLElement& element)
+    : AccessibilityNodeObject(axID, &element)
 {
 }
 
 AccessibilityListBoxOption::~AccessibilityListBoxOption() = default;
 
-Ref<AccessibilityListBoxOption> AccessibilityListBoxOption::create(HTMLElement& element)
+Ref<AccessibilityListBoxOption> AccessibilityListBoxOption::create(AXID axID, HTMLElement& element)
 {
-    return adoptRef(*new AccessibilityListBoxOption(element));
+    return adoptRef(*new AccessibilityListBoxOption(axID, element));
 }
 
 bool AccessibilityListBoxOption::isEnabled() const
@@ -102,16 +102,13 @@ LayoutRect AccessibilityListBoxOption::elementRect() const
     return { };
 }
 
-bool AccessibilityListBoxOption::computeAccessibilityIsIgnored() const
+bool AccessibilityListBoxOption::computeIsIgnored() const
 {
-    if (!m_node)
-        return true;
-
-    if (accessibilityIsIgnoredByDefault())
+    if (!m_node || isIgnoredByDefault())
         return true;
 
     auto* parent = parentObject();
-    return parent ? parent->accessibilityIsIgnored() : true;
+    return parent ? parent->isIgnored() : true;
 }
 
 bool AccessibilityListBoxOption::canSetSelectedAttribute() const
@@ -149,11 +146,6 @@ Element* AccessibilityListBoxOption::actionElement() const
 {
     ASSERT(is<HTMLElement>(m_node.get()));
     return dynamicDowncast<Element>(m_node.get());
-}
-
-Node* AccessibilityListBoxOption::node() const
-{
-    return m_node.get();
 }
 
 AccessibilityObject* AccessibilityListBoxOption::parentObject() const

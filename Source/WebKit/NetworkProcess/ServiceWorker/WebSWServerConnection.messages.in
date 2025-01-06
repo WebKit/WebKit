@@ -20,7 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> WebSWServerConnection NotRefCounted {
+[
+    ExceptionForEnabledBy,
+    DispatchedFrom=WebContent,
+    DispatchedTo=Networking
+]
+messages -> WebSWServerConnection {
     # When possible, these messages can be implemented directly by WebCore::SWClientConnection
     ScheduleJobInServer(struct WebCore::ServiceWorkerJobData jobData)
     ScheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier jobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier identifier, WebCore::ServiceWorkerOrClientIdentifier documentIdentifier) -> (Expected<bool, WebCore::ExceptionData> result)
@@ -55,12 +60,20 @@ messages -> WebSWServerConnection NotRefCounted {
     SetNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier identifier, String value) -> (std::optional<WebCore::ExceptionData> result)
     GetNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<WebCore::NavigationPreloadState, WebCore::ExceptionData> result)
 
-    StartBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier, Vector<WebCore::BackgroundFetchRequest> requests, struct WebCore::BackgroundFetchOptions options) -> (Expected<WebCore::BackgroundFetchInformation, WebCore::ExceptionData> result)
-    BackgroundFetchInformation(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier) -> (Expected<WebCore::BackgroundFetchInformation, WebCore::ExceptionData> result)
+    StartBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier, Vector<WebCore::BackgroundFetchRequest> requests, struct WebCore::BackgroundFetchOptions options) -> (Expected<std::optional<WebCore::BackgroundFetchInformation>, WebCore::ExceptionData> result)
+    BackgroundFetchInformation(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier) -> (Expected<std::optional<WebCore::BackgroundFetchInformation>, WebCore::ExceptionData> result)
     BackgroundFetchIdentifiers(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier) -> (Vector<String> result)
 
     AbortBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier) -> (bool result)
     MatchBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (Vector<WebCore::BackgroundFetchRecordInformation> results)
     RetrieveRecordResponse(WebCore::BackgroundFetchRecordIdentifier recordIdentifier) -> (Expected<WebCore::ResourceResponse, WebCore::ExceptionData> result)
     RetrieveRecordResponseBody(WebCore::BackgroundFetchRecordIdentifier recordIdentifier, WebKit::RetrieveRecordResponseBodyCallbackIdentifier callbackIdentifier)
+
+    [EnabledBy=CookieStoreManagerEnabled] AddCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<WebCore::CookieChangeSubscription> subscriptions) -> (std::optional<WebCore::ExceptionData> result)
+    [EnabledBy=CookieStoreManagerEnabled] RemoveCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<WebCore::CookieChangeSubscription> subscriptions) -> (std::optional<WebCore::ExceptionData> result)
+    [EnabledBy=CookieStoreManagerEnabled] CookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<Vector<WebCore::CookieChangeSubscription>, WebCore::ExceptionData> result)
+
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    GetNotifications(URL registrationURL, String tag) -> (Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData> result)
+#endif
 }

@@ -52,19 +52,22 @@
         });
     }
 
-    if (document.location.hash === "" && window.testRunner && window.internals) {
-        setEnableFeature(true, function() {
-            testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
-                if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+    async function testMain() {
+        if (document.location.hash === "" && window.testRunner && window.internals) {
+            setEnableFeature(true, function() {
+                testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
+                    if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
                     testFailed("Host did not get set as non-prevalent resource.");
-
-                document.location.href = topFrameOrigin5 + "resourceLoadStatistics/resources/redirect.py?redirectTo=http://127.0.0.1:8000/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html#continue";
+                    
+                    document.location.href = topFrameOrigin5 + "resourceLoadStatistics/resources/redirect.py?redirectTo=http://127.0.0.1:8000/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html#continue";
+                });
             });
-        });
-    } else {
-        testRunner.statisticsNotifyObserver();
-        runTest();
-    }
+        } else {
+            await testRunner.statisticsNotifyObserver();
+            runTest();
+        }
+    };
+    testMain();
 </script>
 </body>
 </html>

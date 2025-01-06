@@ -585,6 +585,7 @@ class TestExpectationsModel(object):
 
         # Maps a test to a TestExpectationLine instance.
         self._test_to_expectation_line = {}  # type: Dict[str, TestExpectationLine]
+        self._test_to_expectation_lines = {}  # type: Dict[str, List[TestExpectationLine]]
 
         self._modifier_to_tests = self._dict_of_sets(TestExpectations.MODIFIERS)  # type: Dict[int, Set[str]]
         self._expectation_to_tests = self._dict_of_sets(TestExpectations.EXPECTATIONS)  # type: Dict[int, Set[str]]
@@ -664,6 +665,10 @@ class TestExpectationsModel(object):
         # type: (str) -> Optional[TestExpectationLine]
         return self._test_to_expectation_line.get(test)
 
+    def get_expectation_lines(self, test):
+        # type: (str) -> Optional[List[TestExpectationLine]]
+        return self._test_to_expectation_lines.get(test)
+
     def get_expectations(self, test):
         # type: (str) -> Set[int]
         return self._test_to_expectations[test]
@@ -715,6 +720,8 @@ class TestExpectationsModel(object):
             return
 
         for test in expectation_line.matching_tests:
+            self._test_to_expectation_lines.setdefault(test, []).append(expectation_line)
+
             if not in_skipped and self._already_seen_better_match(test, expectation_line):
                 continue
 
@@ -1172,30 +1179,6 @@ class TestExpectations(object):
     def has_warnings(self):
         # type: () -> bool
         return self._has_warnings
-
-    def remove_configuration_from_test(self, test, test_configuration):
-        # type: (str, TestConfiguration) -> str
-        expectations_to_remove = []
-        modified_expectations = []
-
-        for expectation in self._expectations:
-            if expectation.name != test or expectation.is_flaky() or not expectation.parsed_expectations:
-                continue
-            if not any([value in (FAIL, IMAGE) for value in expectation.parsed_expectations]):
-                continue
-            if test_configuration not in expectation.matching_configurations:
-                continue
-
-            expectation.matching_configurations.remove(test_configuration)
-            if expectation.matching_configurations:
-                modified_expectations.append(expectation)
-            else:
-                expectations_to_remove.append(expectation)
-
-        for expectation in expectations_to_remove:
-            self._expectations.remove(expectation)
-
-        return self.list_to_string(self._expectations, self._parser._test_configuration_converter, modified_expectations)
 
     def remove_rebaselined_tests(self, except_these_tests, filename):
         # type: (List[str], str) -> str

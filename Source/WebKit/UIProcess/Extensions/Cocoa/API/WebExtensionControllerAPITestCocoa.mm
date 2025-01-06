@@ -32,9 +32,10 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "CocoaHelpers.h"
 #import "Logging.h"
-#import "_WKWebExtensionControllerDelegatePrivate.h"
-#import "_WKWebExtensionControllerInternal.h"
+#import "WKWebExtensionControllerDelegatePrivate.h"
+#import "WKWebExtensionControllerInternal.h"
 
 namespace WebKit {
 
@@ -102,6 +103,17 @@ void WebExtensionController::testYielded(String message, String sourceURL, unsig
         message = "(no message)"_s;
 
     RELEASE_LOG_INFO(Extensions, "Test yielded: %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
+}
+
+void WebExtensionController::testSentMessage(String message, String argument, String sourceURL, unsigned lineNumber)
+{
+    auto delegate = this->delegate();
+    if ([delegate respondsToSelector:@selector(_webExtensionController:receivedTestMessage:withArgument:andSourceURL:lineNumber:)]) {
+        [delegate _webExtensionController:wrapper() receivedTestMessage:message withArgument:parseJSON(argument, JSONOptions::FragmentsAllowed) andSourceURL:sourceURL lineNumber:lineNumber];
+        return;
+    }
+
+    RELEASE_LOG_INFO(Extensions, "Test sent message: %{public}@ %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)argument, (NSString *)sourceURL, lineNumber);
 }
 
 void WebExtensionController::testFinished(bool result, String message, String sourceURL, unsigned lineNumber)

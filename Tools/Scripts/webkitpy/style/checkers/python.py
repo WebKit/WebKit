@@ -24,7 +24,6 @@
 """Supports checking WebKit style in Python files."""
 
 import re
-import sys
 
 from webkitcorepy import StringIO
 
@@ -47,8 +46,6 @@ class PythonChecker(object):
         self._check_pycodestyle(lines)
         # FIXME: https://bugs.webkit.org/show_bug.cgi?id=204133
         # Pylint can't live happily in python 2 and 3 world, we need to pick one
-        if sys.version_info < (3, 0):
-            self._check_pylint(lines)
         self._inclusive_language_checker.check(lines)
 
     def _check_pycodestyle(self, lines):

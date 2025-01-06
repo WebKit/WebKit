@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WPE {
 
 namespace DRM {
 
 class Session {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Session);
 public:
     static std::unique_ptr<Session> create();
     Session() = default;

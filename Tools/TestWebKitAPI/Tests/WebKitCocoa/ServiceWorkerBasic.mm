@@ -55,15 +55,19 @@
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
+#import <mach/mach_init.h>
+#import <mach/task.h>
+#import <mach/task_info.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Deque.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Scope.h>
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
@@ -217,16 +221,21 @@ navigator.serviceWorker.addEventListener("message", function(event) {
     log("Message from worker: " + event.data);
 });
 
+let worker;
 try {
-
-navigator.serviceWorker.register('/sw.js').then(function(reg) {
-    worker = reg.installing ? reg.installing : reg.active;
-    worker.postMessage("Hello from the web page");
-}).catch(function(error) {
-    log("Registration failed with: " + error);
-});
+    navigator.serviceWorker.register('/sw.js').then(function(reg) {
+        worker = reg.installing ? reg.installing : reg.active;
+        postMessageToServiceWorker();
+    }).catch(function(error) {
+        log("Registration failed with: " + error);
+    });
 } catch(e) {
     log("Exception: " + e);
+}
+
+function postMessageToServiceWorker()
+{
+    worker.postMessage('Hello from the web page');
 }
 
 </script>
@@ -1708,14 +1717,14 @@ TEST(ServiceWorkers, NonDefaultSessionID)
     done = false;
 }
 
-static bool waitUntilEvaluatesToTrue(const Function<bool()>& f)
+static bool waitUntilEvaluatesToTrue(const Function<bool()>& f, unsigned maxTimeout = 100)
 {
     unsigned timeout = 0;
     do {
         if (f())
             return true;
         TestWebKitAPI::Util::runFor(0.1_s);
-    } while (++timeout < 100);
+    } while (++timeout < maxTimeout);
     return false;
 }
 
@@ -2011,7 +2020,14 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWor
     TestWebKitAPI::Util::run(&done);
     done = false;
 
+
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    //  We disable the termination delay so that it takes 2s to drop service worker process assertions.
+    [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore.get();
 
     auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
@@ -2060,6 +2076,14 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWor
 
     // The service worker process should take activity based on webView2 process.
     [webView2 _setThrottleStateForTesting: 1];
+
+    // At this point, service worker should be idle so no assertion should be taken.
+    TestWebKitAPI::Util::spinRunLoop(10);
+    EXPECT_TRUE(![webView2 _hasServiceWorkerForegroundActivityForTesting] && ![webView2 _hasServiceWorkerBackgroundActivityForTesting]);
+
+    // We trigger activity again for the service worker.
+    [webView2 evaluateJavaScript:@"postMessageToServiceWorker()" completionHandler: nil];
+
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
         [webView2 _setThrottleStateForTesting:1];
         return ![webView2 _hasServiceWorkerForegroundActivityForTesting] && [webView2 _hasServiceWorkerBackgroundActivityForTesting];
@@ -2084,6 +2108,100 @@ TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcessesWithSepara
 TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcessesWithoutSeparateServiceWorkerProcess)
 {
     testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWorkerProcess::No);
+}
+
+static bool isPIDSuspended(pid_t pid)
+{
+    mach_port_t task = MACH_PORT_NULL;
+    if (task_name_for_pid(mach_task_self(), pid, &task) != KERN_SUCCESS)
+        return false;
+
+    auto scope = makeScopeExit([task]() {
+        mach_port_deallocate(mach_task_self(), task);
+    });
+
+    mach_task_basic_info_data_t basicInfo;
+    mach_msg_type_number_t basicInfoCount = MACH_TASK_BASIC_INFO_COUNT;
+    if (task_info(task, MACH_TASK_BASIC_INFO, (task_info_t)&basicInfo, &basicInfoCount) != KERN_SUCCESS)
+        return false;
+
+    return basicInfo.suspend_count;
+}
+
+TEST(ServiceWorkers, SuspendAndTerminateWorker)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    if ([[configuration preferences] inactiveSchedulingPolicy] == WKInactiveSchedulingPolicyNone)
+        return;
+
+    [[configuration preferences] setInactiveSchedulingPolicy:WKInactiveSchedulingPolicySuspend];
+
+    auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { mainBytes } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+    });
+
+    auto *processPool = configuration.get().processPool;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadRequest:server.request()];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [processPool _serviceWorkerProcessCount] == 1; }));
+
+    [webView _setThrottleStateForTesting:0];
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
+        return ![webView _hasServiceWorkerForegroundActivityForTesting] && ![webView _hasServiceWorkerBackgroundActivityForTesting];
+    }));
+
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [webView _webProcessState] == _WKWebProcessStateSuspended; }));
+
+    // Due to the process assertion cache, the process can actually run for a little while after it
+    // enters the suspended state. Wait until the OS tells us the process is actually suspended.
+    pid_t pidBeforeTerminatingServiceWorker = [webView _webProcessIdentifier];
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return isPIDSuspended(pidBeforeTerminatingServiceWorker); }));
+
+    // Process with service worker and page is suspended, let's terminate the service worker.
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    bool serviceWorkersAllTerminated = waitUntilEvaluatesToTrue([&]() {
+        __block bool done;
+        __block NSUInteger serviceWorkerCount;
+
+        [[WKWebsiteDataStore defaultDataStore] _runningOrTerminatingServiceWorkerCountForTesting:^(NSUInteger count) {
+            serviceWorkerCount = count;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+
+        return !serviceWorkerCount;
+    }, 20);
+    EXPECT_TRUE(serviceWorkersAllTerminated);
+
+    // Let's verify the WKWebView did not crash and has the same PID as before.
+    [webView evaluateJavaScript:@"log('OK')" completionHandler: nil];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    pid_t pidAfterTerminatingServiceWorker = [webView _webProcessIdentifier];
+    EXPECT_EQ(pidBeforeTerminatingServiceWorker, pidAfterTerminatingServiceWorker);
 }
 
 TEST(ServiceWorkers, ThrottleCrash)
@@ -2139,7 +2257,9 @@ TEST(ServiceWorkers, ThrottleCrash)
 #endif
     [webView2Configuration setProcessPool:processPool];
     [[webView2Configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webView2Configuration.get()._relatedWebView = webView1.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView2Configuration.get()]);
     [webView2 setNavigationDelegate:navigationDelegate.get()];
@@ -2324,7 +2444,7 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
 TEST(WebKit, ServiceWorkerDatabaseWithRecordsTableButUnexpectedSchema)
 {
     // Copy the baked database files to the database directory
-    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"BadServiceWorkerRegistrations-4" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url1 = [NSBundle.test_resourcesBundle URLForResource:@"BadServiceWorkerRegistrations-4" withExtension:@"sqlite3"];
 
     NSURL *swPath = [NSURL fileURLWithPath:[@"~/Library/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/ServiceWorkers/" stringByExpandingTildeInPath]];
     [[NSFileManager defaultManager] removeItemAtURL:swPath error:nil];
@@ -2958,7 +3078,9 @@ TEST(ServiceWorker, ExtensionServiceWorker)
     auto otherViewPID = [otherWebView _webProcessIdentifier];
 
     webViewConfiguration.websiteDataStore = [otherViewConfiguration websiteDataStore];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webViewConfiguration._relatedWebView = otherWebView.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [webViewConfiguration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"sw-ext"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
 
@@ -3284,7 +3406,9 @@ TEST(ServiceWorker, RemovalOfSameRegistrableDomainButDifferentOrigin)
     [mainWebView _setThrottleStateForTesting:1];
 
     // Load other page with different origin but same registrable domain in the same process as main page.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     mainViewConfiguration.get()._relatedWebView = mainWebView.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto otherWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:mainViewConfiguration.get()]);
     [otherWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://b.amazon.com:%d/other.html", server.port()]]]];
     EXPECT_WK_STREQ([otherWebView _test_waitForAlert], "loaded");
@@ -3311,36 +3435,48 @@ var cache1;
 onload = async () => {
     try {
         // Create cache1
-        cache1 = await self.caches.open("test1");
-        await cache1.put(new Request('test'), new Response('my response'));
+        cache1 = await self.caches.open("cache1");
+        await cache1.put(new Request('my request'), new Response('my response'));
         webkit.messageHandlers.sw.postMessage("PASS");
     } catch(e) {
-        webkit.messageHandlers.sw.postMessage("fill failed with " + e);
+        webkit.messageHandlers.sw.postMessage("put failed with " + e);
     }
 }
 
-function check()
+// The web process may not know that the network process has been terminated since
+// this notification happens asynchronously. So we make calls to open a cache. Until the
+// web process is notified, these calls will fail. Once a call succeeds, we know that the
+// web process has been notified and has established a new connection to a new network
+// process. Then, when match is called, we can check that this new process does not
+// contain cache1, which was created using the now-terminated network process.
+
+async function check()
 {
-    // Create several caches, one of which should have the same ObjectIdentifier value as cache1.
-    Promise.all([
-        self.caches.open("test2"),
-        self.caches.open("test3"),
-        self.caches.open("test4"),
-        self.caches.open("test5"),
-        self.caches.open("test6"),
-        self.caches.open("test7"),
-        self.caches.open("test8"),
-        self.caches.open("test9"),
-        self.caches.open("test10")
-    ]).then(() => {
-        cache1.match('test').then(() => {
-            webkit.messageHandlers.sw.postMessage("cache1 did match unexpectedly");
-        }, e => {
-            webkit.messageHandlers.sw.postMessage("PASS");
-        });
-    }, e => {
-        webkit.messageHandlers.sw.postMessage("check failed with " + e);
-    });
+    const maxAttempts = 10;
+    let attempt = 1;
+    let cache2 = null;
+
+    while (attempt <= maxAttempts) {
+        try {
+            cache2 = await self.caches.open("cache2");
+            break;
+        } catch(e) {
+            attempt++;
+        }
+    }
+
+    // If the test is flaky due to hitting this error, we likely need to increase maxAttempts.
+    if (!cache2) {
+        webkit.messageHandlers.sw.postMessage("FAIL: web process was not notified that network process was terminated");
+        return;
+    }
+
+    try {
+        await cache1.match('my request');
+        webkit.messageHandlers.sw.postMessage("FAIL: cache1 unexpectedly matched");
+    } catch(e) {
+        webkit.messageHandlers.sw.postMessage("PASS");
+    }
 }
 </script>
 </body>
@@ -3979,6 +4115,150 @@ TEST(ServiceWorker, OpenWindowCOOP)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "client");
 }
 
+#if PLATFORM(MAC)
+static constexpr auto ServiceWorkerNotYetFocusedMain =
+"<div>Test page 1</div>"
+"<script>"
+"let worker;"
+"async function registerServiceWorker() {"
+"    try {"
+"        const registration = await navigator.serviceWorker.register('/sw.js');"
+"        if (registration.active) {"
+"            worker = registration.active;"
+"            alert('already active');"
+"            return;"
+"        }"
+"        worker = registration.installing;"
+"        worker.addEventListener('statechange', () => {"
+"            if (worker.state == 'activated')"
+"                alert('successfully registered');"
+"        });"
+"    } catch(e) {"
+"        alert('Exception: ' + e);"
+"    }"
+"}"
+""
+"function getFocusResult(counter) {"
+"    try {"
+"        if (!counter)"
+"            counter = 0;"
+"        worker.postMessage('getFocusResult');"
+"        navigator.serviceWorker.onmessage = async event => {"
+"            if (event.data !== 'none') {"
+"                alert(event.data);"
+"                return;"
+"            }"
+"            if (counter > 100) {"
+"                alert('focus timed out');"
+"                return;"
+"            }"
+"            await new Promise(resolve => setTimeout(resolve, 50));"
+"            getFocusResult(++counter);"
+"        };"
+"    } catch (e) {"
+"         alert(e);"
+"    }"
+"}"
+"window.onload = registerServiceWorker;"
+"</script>"_s;
+
+static constexpr auto ServiceWorkerNotYetFocusedClient =
+"<div>Test page 2</div>"
+"<script>"
+"async function checkFocused() {"
+"    let counter = 0;"
+"    while (++counter < 100) {"
+"        if (document.hasFocus()) {"
+"           alert('PASS');"
+"           return;"
+"        }"
+"        await new Promise(resolve => setTimeout(resolve, 50));"
+"    }"
+"    alert('FAIL');"
+"}"
+"window.onload = checkFocused;"
+"</script>"_s;
+
+static constexpr auto ServiceWorkerNotYetFocusedJS =
+"var focusResult = 'none';"
+"self.addEventListener('message', event => {"
+"    event.source.postMessage(focusResult);"
+"});"
+""
+"async function serveContent(event) {"
+"    try {"
+"        const client = await self.clients.get(event.resultingClientId);"
+"        client.focus().then(() => focusResult = 'PASS focus', () => focusResult = 'FAIL focus');"
+"    } catch (e) {"
+"        return new Response('<div>Error page</div><script>alert(Response);</script>', {headers: {'Content-Type': 'text/html'} });"
+"    }"
+"    return fetch(event.request);"
+"}"
+"self.addEventListener('fetch', event => {"
+"    event.respondWith(serveContent(event));"
+"});"_s;
+
+TEST(ServiceWorker, FocusNotYetLoadedClient)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto preferences = [configuration preferences];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
+            [preferences _setEnabled:NO forFeature:feature];
+    }
+
+    auto dataStoreDelegate = adoptNS([[ServiceWorkerOpenWindowWebsiteDataStoreDelegate alloc] initWithConfiguration:configuration.get()]);
+    [[configuration websiteDataStore] set_delegate:dataStoreDelegate.get()];
+
+    TestWebKitAPI::HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&](auto connection) -> TestWebKitAPI::Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = TestWebKitAPI::HTTPServer::parsePath(request);
+            if (path == "/"_s) {
+                co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Type:text/html\r\nContent-Length: "_s, strlen(ServiceWorkerNotYetFocusedMain), "\r\n\r\n"_s));
+                co_await connection.awaitableSend(ServiceWorkerNotYetFocusedMain);
+                continue;
+            }
+            if (path == "/sw.js"_s) {
+                co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Type:application/javascript\r\nContent-Length: "_s, strlen(ServiceWorkerNotYetFocusedJS), "\r\n\r\n"_s));
+                co_await connection.awaitableSend(ServiceWorkerNotYetFocusedJS);
+                continue;
+            }
+            if (path == "/delayed-client"_s) {
+                TestWebKitAPI::Util::runFor(0.5_s);
+                co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Type:text/html\r\nContent-Length: "_s, strlen(ServiceWorkerNotYetFocusedClient), "\r\n\r\n"_s));
+                co_await connection.awaitableSend(ServiceWorkerNotYetFocusedClient);
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    });
+
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    [webView1 loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "successfully registered");
+
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    [webView2 loadRequest:server.request("/delayed-client"_s)];
+    EXPECT_WK_STREQ([webView2 _test_waitForAlert], "PASS");
+
+    [webView1 evaluateJavaScript:@"getFocusResult()" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+    }];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "PASS focus");
+}
+#endif
+
 #if WK_HAVE_C_SPI
 
 static constexpr auto serviceWorkerStorageTimingMainBytes = R"SWRESOURCE(
@@ -4331,6 +4611,136 @@ TEST(ServiceWorkers, ServiceWorkerCacheReference)
     [webView2 loadRequest:server.request("#check"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
+}
+
+static constexpr auto ServiceWorkerIdleOnMemoryPressureMain = R"SWRESOURCE(
+<!doctype html>
+<html>
+<body>
+<script>
+function waitForState(worker, state)
+{
+    if (!worker || worker.state == undefined)
+        return Promise.reject(new Error('waitForState must be passed a ServiceWorker'));
+
+    if (worker.state === state)
+        return Promise.resolve(state);
+
+    return new Promise(function(resolve, reject) {
+        worker.addEventListener('statechange', function() {
+            if (worker.state === state)
+                resolve(state);
+        });
+        setTimeout(() => reject("waitForState timed out, worker state is " + worker.state), 5000);
+    });
+}
+
+async function startServiceWorker(scope, hasActivity)
+{
+    const registration = await navigator.serviceWorker.register("sw.js", { scope });
+    const worker = registration.installing;
+    await waitForState(worker, "activated");
+
+    if (hasActivity) {
+        worker.postMessage("ping");
+        await new Promise((resolve, reject) => {
+            navigator.serviceWorker.onmessage = resolve;
+            setTimeout(() => reject('no pong'), 1000);
+        });
+    }
+    return worker;
+}
+
+function waitForTermination(worker)
+{
+    return new Promise(resolve => {
+        internals.whenServiceWorkerIsTerminated(worker).then(() => {
+            resolve(true);
+        });
+        setTimeout(() => resolve(false), 1000);
+    });
+}
+
+let promise1, promise2;
+onload = async () => {
+    let worker1, worker2;
+    try {
+        worker1 = await startServiceWorker("test1", false);
+        worker2 = await startServiceWorker("test2", true);
+    } catch (e) {
+        alert("startServiceWorker failed " + e);
+    }
+
+    // We need to wait two seconds so that worker1 is idle at memory pressure time.
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    promise1 = waitForTermination(worker1);
+    promise2 = waitForTermination(worker2);
+
+    alert("Ready");
+}
+
+async function checkServiceWorkers()
+{
+    const test1 = await promise1;
+    if (!test1) {
+        alert("test1 failed");
+        return;
+    }
+    const test2 = await promise2;
+    alert(test2 ? "test2 failed" : "PASS");
+}
+
+function doTest()
+{
+    checkServiceWorkers();
+}
+</script>
+</body>
+</html>
+)SWRESOURCE"_s;
+
+static constexpr auto ServiceWorkerIdleOnMemoryPressureJS = R"SWRESOURCE(
+onmessage = e => {
+    e.source.postMessage("pomg");
+    e.waitUntil(new Promise(resolve => setTimeout(resolve, 4000)));
+}
+)SWRESOURCE"_s;
+
+TEST(ServiceWorker, ServiceWorkerIdleOnMemoryPressure)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    setConfigurationInjectedBundlePath(configuration.get());
+    configuration.get().websiteDataStore = dataStore.get();
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { ServiceWorkerIdleOnMemoryPressureMain } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, ServiceWorkerIdleOnMemoryPressureJS } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 8091);
+
+    [webView loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "Ready");
+
+    // Need to trigger critical memory pressure.
+    [webView _terminateIdleServiceWorkersForTesting];
+
+    [webView evaluateJavaScript:@"doTest()" completionHandler: nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "PASS");
 }
 
 #endif // WK_HAVE_C_SPI

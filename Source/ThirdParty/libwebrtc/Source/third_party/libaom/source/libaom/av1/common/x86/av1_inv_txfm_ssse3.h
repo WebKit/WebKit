@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -57,7 +57,7 @@ extern "C" {
     out1 = _mm_subs_epi16(_in0, _in1);                  \
   } while (0)
 
-static INLINE void round_shift_16bit_ssse3(__m128i *in, int size, int bit) {
+static inline void round_shift_16bit_ssse3(__m128i *in, int size, int bit) {
   if (bit < 0) {
     const __m128i scale = _mm_set1_epi16(1 << (15 + bit));
     for (int i = 0; i < size; ++i) {
@@ -178,7 +178,7 @@ static const int tx_size_wide_log2_eob[TX_SIZES_ALL] = {
   2, 3, 4, 5, 5, 2, 3, 3, 4, 4, 5, 5, 5, 2, 4, 3, 5, 4, 5,
 };
 
-static INLINE void get_eobx_eoby_scan_default(int *eobx, int *eoby,
+static inline void get_eobx_eoby_scan_default(int *eobx, int *eoby,
                                               TX_SIZE tx_size, int eob) {
   if (eob == 1) {
     *eobx = 0;
@@ -198,7 +198,7 @@ static int eob_fill[32] = {
   31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31,
 };
 
-static INLINE void get_eobx_eoby_scan_h_identity(int *eobx, int *eoby,
+static inline void get_eobx_eoby_scan_h_identity(int *eobx, int *eoby,
                                                  TX_SIZE tx_size, int eob) {
   eob -= 1;
   const int txfm_size_col = tx_size_wide[tx_size];
@@ -209,7 +209,7 @@ static INLINE void get_eobx_eoby_scan_h_identity(int *eobx, int *eoby,
   *eoby = eob_fill[temp_eoby];
 }
 
-static INLINE void get_eobx_eoby_scan_v_identity(int *eobx, int *eoby,
+static inline void get_eobx_eoby_scan_v_identity(int *eobx, int *eoby,
                                                  TX_SIZE tx_size, int eob) {
   eob -= 1;
   const int txfm_size_row = tx_size_high[tx_size];

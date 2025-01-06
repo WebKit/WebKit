@@ -28,9 +28,12 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGUseElement.h"
 #include "XLinkNames.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGURIReference);
 
 SVGURIReference::SVGURIReference(SVGElement* contextElement)
     : m_href(SVGAnimatedString::create(contextElement))
@@ -99,6 +102,12 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
         return { externalDocument->getElementById(id), WTFMove(id) };
     }
 
+    if (url.protocolIsData()) {
+        // FIXME: We need to load the data url in a Document to be able to get the target element.
+        if (!equalIgnoringFragmentIdentifier(url, document->url()))
+            return { nullptr, WTFMove(id) };
+    }
+
     // Exit early if the referenced url is external, and we have no externalDocument given.
     if (isExternalURIReference(iri, document))
         return { nullptr, WTFMove(id) };
@@ -112,7 +121,11 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
 
 bool SVGURIReference::haveLoadedRequiredResources() const
 {
-    if (href().isEmpty() || !isExternalURIReference(href(), contextElement().protectedDocument()))
+    if (href().isEmpty())
+        return true;
+    if (contextElement().protectedDocument()->completeURL(href()).protocolIsData())
+        return true;
+    if (!isExternalURIReference(href(), contextElement().protectedDocument()))
         return true;
     return errorOccurred() || haveFiredLoadEvent();
 }

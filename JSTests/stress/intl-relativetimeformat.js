@@ -3,15 +3,6 @@ function shouldBe(actual, expected) {
         throw new Error(`expected ${expected} but got ${actual}`);
 }
 
-const icuVersion = $vm.icuVersion();
-function shouldBeForICUVersion(minimumVersion, actual, expected) {
-    if (icuVersion < minimumVersion)
-        return;
-
-    if (actual !== expected)
-        throw new Error(`expected ${expected} but got ${actual}`);
-}
-
 function shouldNotThrow(func) {
     func();
 }
@@ -65,9 +56,7 @@ shouldBe(JSON.stringify(Intl.RelativeTimeFormat.supportedLocalesOf({ length: 4, 
 shouldBe(JSON.stringify(Intl.RelativeTimeFormat.supportedLocalesOf(['en', 'pt', 'en', 'es'])), '["en","pt","es"]');
 shouldBe(
     JSON.stringify(Intl.RelativeTimeFormat.supportedLocalesOf('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')),
-    $vm.icuVersion() >= 67
-        ? '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
-        : '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-x-reserved"]'
+    '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
 );
 
 shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf('no-bok'), RangeError);
@@ -172,9 +161,7 @@ shouldThrow(() => defaultRTF.format(3, Symbol()), TypeError);
 shouldThrow(() => defaultRTF.format(Infinity, 'days'), RangeError);
 shouldThrow(() => defaultRTF.format(3, 'centuries'), RangeError);
 
-const units = ['second', 'minute', 'hour', 'day', 'week', 'month', 'year'];
-if (icuVersion >= 63)
-    units.push('quarter');
+const units = ['second', 'minute', 'hour', 'day', 'week', 'month', 'year', 'quarter'];
 
 for (let unit of units) {
     shouldBe(defaultRTF.format(10, unit), defaultRTF.format(10, `${unit}s`));
@@ -185,9 +172,9 @@ for (let unit of units) {
     shouldBe(defaultRTF.format(-10, unit), `10 ${unit}s ago`);
     shouldBe([`10,000.5 ${unit}s ago`, `10000.5 ${unit}s ago`].includes(defaultRTF.format(-10000.5, unit)), true);
 
-    shouldBeForICUVersion(64, defaultRTF.format(1, unit), `in 1 ${unit}`);
-    shouldBeForICUVersion(63, defaultRTF.format(-0, unit), `0 ${unit}s ago`);
-    shouldBeForICUVersion(64, defaultRTF.format(-1, unit), `1 ${unit} ago`);
+    shouldBe(defaultRTF.format(1, unit), `in 1 ${unit}`);
+    shouldBe(defaultRTF.format(-0, unit), `0 ${unit}s ago`);
+    shouldBe(defaultRTF.format(-1, unit), `1 ${unit} ago`);
 }
 
 shouldBe(new Intl.RelativeTimeFormat('en', { style: 'short' }).format(10, 'second'), 'in 10 sec.');
@@ -225,25 +212,23 @@ for (let unit of units) {
     shouldBe(concatenateValues(defaultRTF.formatToParts(-10, unit)), `10 ${unit}s ago`);
     shouldBe([`10,000.5 ${unit}s ago`, `10000.5 ${unit}s ago`].includes(concatenateValues(defaultRTF.formatToParts(-10000.5, unit))), true);
 
-    shouldBeForICUVersion(64, concatenateValues(defaultRTF.formatToParts(1, unit)), `in 1 ${unit}`);
-    shouldBeForICUVersion(63, concatenateValues(defaultRTF.formatToParts(-0, unit)), `0 ${unit}s ago`);
-    shouldBeForICUVersion(64, concatenateValues(defaultRTF.formatToParts(-1, unit)), `1 ${unit} ago`);
+    shouldBe(concatenateValues(defaultRTF.formatToParts(1, unit)), `in 1 ${unit}`);
+    shouldBe(concatenateValues(defaultRTF.formatToParts(-0, unit)), `0 ${unit}s ago`);
+    shouldBe(concatenateValues(defaultRTF.formatToParts(-1, unit)), `1 ${unit} ago`);
 }
 
-if ($vm.icuVersion() >= 64) {
-    shouldBe(
-        JSON.stringify(defaultRTF.formatToParts(10000.5, 'day')),
-        JSON.stringify([
-            { type: 'literal', value: 'in ' },
-            { type: 'integer', value: '10', unit: 'day' },
-            { type: 'group', value: ',', unit: 'day' },
-            { type: 'integer', value: '000', unit: 'day' },
-            { type: 'decimal', value: '.', unit: 'day' },
-            { type: 'fraction', value: '5', unit: 'day' },
-            { type: 'literal', value: ' days' }
-        ])
-    );
-}
+shouldBe(
+    JSON.stringify(defaultRTF.formatToParts(10000.5, 'day')),
+    JSON.stringify([
+        { type: 'literal', value: 'in ' },
+        { type: 'integer', value: '10', unit: 'day' },
+        { type: 'group', value: ',', unit: 'day' },
+        { type: 'integer', value: '000', unit: 'day' },
+        { type: 'decimal', value: '.', unit: 'day' },
+        { type: 'fraction', value: '5', unit: 'day' },
+        { type: 'literal', value: ' days' }
+    ])
+);
 
 shouldBe(
     JSON.stringify(new Intl.RelativeTimeFormat('sw').formatToParts(10, 'year')),

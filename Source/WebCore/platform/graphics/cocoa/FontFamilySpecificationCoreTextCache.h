@@ -28,6 +28,7 @@
 #include "FontCascadeCache.h"
 #include <CoreText/CoreText.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -67,8 +68,8 @@ struct FontFamilySpecificationKeyHash {
 };
 
 class FontFamilySpecificationCoreTextCache {
+    WTF_MAKE_TZONE_ALLOCATED(FontFamilySpecificationCoreTextCache);
     WTF_MAKE_NONCOPYABLE(FontFamilySpecificationCoreTextCache);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     FontFamilySpecificationCoreTextCache() = default;
 
@@ -78,7 +79,7 @@ public:
     void clear();
 
 private:
-    HashMap<FontFamilySpecificationKey, std::unique_ptr<FontPlatformData>, FontFamilySpecificationKeyHash, SimpleClassHashTraits<FontFamilySpecificationKey>> m_fonts;
+    UncheckedKeyHashMap<FontFamilySpecificationKey, std::unique_ptr<FontPlatformData>, FontFamilySpecificationKeyHash, SimpleClassHashTraits<FontFamilySpecificationKey>> m_fonts;
 };
 
 template<typename Functor> FontPlatformData& FontFamilySpecificationCoreTextCache::ensure(FontFamilySpecificationKey&& key, Functor&& functor)

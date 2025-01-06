@@ -29,7 +29,7 @@
 #include "LayoutElementBox.h"
 #include "LayoutUnit.h"
 #include "LayoutUnits.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -47,7 +47,7 @@ struct IntrinsicWidthConstraints;
 class LayoutState;
 
 class FormattingContext {
-    WTF_MAKE_ISO_ALLOCATED(FormattingContext);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FormattingContext);
 public:
     virtual ~FormattingContext();
 

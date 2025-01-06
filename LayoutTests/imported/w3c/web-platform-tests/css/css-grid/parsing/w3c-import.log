@@ -27,8 +27,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-auto-rows-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-auto-rows-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-auto-rows-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-column-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-column-shortest-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-column-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-columns-rows-get-set-multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-content-sized-columns-resolution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-row-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-row-shortest-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-row-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-shorthand-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-shorthand-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-shorthand-valid.html
@@ -44,6 +50,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-important.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-node-not-connected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-repeat-auto-computed-withcontent-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-repeat-auto-computed-withcontent-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-implicit-track.html

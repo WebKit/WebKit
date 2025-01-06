@@ -30,7 +30,8 @@ TEST(Expand, CreateAndDestroy) {
   BackgroundNoise bgn(channels);
   SyncBuffer sync_buffer(1, 1000);
   RandomVector random_vector;
-  StatisticsCalculator statistics;
+  TickTimer timer;
+  StatisticsCalculator statistics(&timer);
   Expand expand(&bgn, &sync_buffer, &random_vector, &statistics, fs, channels);
 }
 
@@ -40,7 +41,8 @@ TEST(Expand, CreateUsingFactory) {
   BackgroundNoise bgn(channels);
   SyncBuffer sync_buffer(1, 1000);
   RandomVector random_vector;
-  StatisticsCalculator statistics;
+  TickTimer timer;
+  StatisticsCalculator statistics(&timer);
   ExpandFactory expand_factory;
   Expand* expand = expand_factory.Create(&bgn, &sync_buffer, &random_vector,
                                          &statistics, fs, channels);
@@ -51,7 +53,10 @@ TEST(Expand, CreateUsingFactory) {
 namespace {
 class FakeStatisticsCalculator : public StatisticsCalculator {
  public:
-  void LogDelayedPacketOutageEvent(int num_samples, int fs_hz) override {
+  FakeStatisticsCalculator(TickTimer* tick_timer)
+      : StatisticsCalculator(tick_timer) {}
+
+  void LogDelayedPacketOutageEvent(int num_samples, int /* fs_hz */) override {
     last_outage_duration_samples_ = num_samples;
   }
 
@@ -77,6 +82,7 @@ class ExpandTest : public ::testing::Test {
         background_noise_(num_channels_),
         sync_buffer_(num_channels_,
                      kNetEqSyncBufferLengthMs * test_sample_rate_hz_ / 1000),
+        statistics_(&tick_timer_),
         expand_(&background_noise_,
                 &sync_buffer_,
                 &random_vector_,
@@ -106,6 +112,7 @@ class ExpandTest : public ::testing::Test {
   BackgroundNoise background_noise_;
   SyncBuffer sync_buffer_;
   RandomVector random_vector_;
+  TickTimer tick_timer_;
   FakeStatisticsCalculator statistics_;
   Expand expand_;
 };

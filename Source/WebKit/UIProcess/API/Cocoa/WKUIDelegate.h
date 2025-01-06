@@ -256,6 +256,10 @@ WK_SWIFT_UI_ACTOR
  */
 - (void)webView:(WKWebView *)webView showLockdownModeFirstUseMessage:(NSString *)message completionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKDialogResult))completionHandler WK_API_AVAILABLE(ios(13.0));
 
+#endif // TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
+
+#if TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION) || (defined(TARGET_OS_TV) && TARGET_OS_TV)
+
 /**
  * @abstract Called when the web view is about to present its edit menu.
  *
@@ -272,9 +276,7 @@ WK_SWIFT_UI_ACTOR
  */
 - (void)webView:(WKWebView *)webView willDismissEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator WK_API_AVAILABLE(ios(16.4));
 
-#endif // TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
-
-#if !TARGET_OS_IPHONE
+#endif // TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION) || (defined(TARGET_OS_TV) && TARGET_OS_TV)
 
 /*! @abstract Displays a file upload panel.
  @param webView The web view invoking the delegate method.
@@ -282,11 +284,11 @@ WK_SWIFT_UI_ACTOR
  @param frame Information about the frame whose file upload control initiated this call.
  @param completionHandler The completion handler to call after open panel has been dismissed. Pass the selected URLs if the user chose OK, otherwise nil.
 
- If you do not implement this method, the web view will behave as if the user selected the Cancel button.
+ If you do not implement this method on macOS, the web view will behave as if the user selected the Cancel button.
+ If you do not implement this method on iOS, the web view will match the file upload behavior of Safari. If you desire
+ the web view to act as if the user selected the Cancel button on iOS, immediately call the completion handler with nil.
  */
-- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSArray<NSURL *> * _Nullable URLs))completionHandler WK_API_AVAILABLE(macos(10.12));
-
-#endif
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSArray<NSURL *> * _Nullable URLs))completionHandler WK_API_AVAILABLE(macos(10.12), ios(WK_IOS_TBA));
 
 @end
 

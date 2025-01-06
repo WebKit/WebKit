@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2023 The WebM project authors. All Rights Reserved.
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023 The WebM project authors. All rights reserved.
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,7 +16,7 @@
 #include "config/aom_config.h"
 #include "config/aom_dsp_rtcd.h"
 
-static INLINE uint32_t highbd_mse8_8xh_neon_dotprod(const uint16_t *src_ptr,
+static inline uint32_t highbd_mse8_8xh_neon_dotprod(const uint16_t *src_ptr,
                                                     int src_stride,
                                                     const uint16_t *ref_ptr,
                                                     int ref_stride, int h,
@@ -45,7 +45,7 @@ static INLINE uint32_t highbd_mse8_8xh_neon_dotprod(const uint16_t *src_ptr,
   return *sse;
 }
 
-static INLINE uint32_t highbd_mse8_16xh_neon_dotprod(const uint16_t *src_ptr,
+static inline uint32_t highbd_mse8_16xh_neon_dotprod(const uint16_t *src_ptr,
                                                      int src_stride,
                                                      const uint16_t *ref_ptr,
                                                      int ref_stride, int h,

@@ -73,8 +73,6 @@ set(mkvmuxer_sources
     "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvmuxertypes.h"
     "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvmuxerutil.cc"
     "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvmuxerutil.h"
-    "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvwriter.cc"
-    "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvwriter.h"
     "${LIBWEBM_SRC_DIR}/common/webmids.h")
 
 set(mkvmuxer_sample_sources

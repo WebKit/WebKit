@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class SpeechSynthesisErrorEvent final : public SpeechSynthesisEvent {
-    WTF_MAKE_ISO_ALLOCATED(SpeechSynthesisErrorEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SpeechSynthesisErrorEvent);
 public:
     
     static Ref<SpeechSynthesisErrorEvent> create(const AtomString& type, const SpeechSynthesisErrorEventInit&);

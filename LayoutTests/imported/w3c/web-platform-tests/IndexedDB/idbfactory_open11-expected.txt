@@ -1,3 +1,0 @@
-
-PASS IDBFactory.open() - second open's transaction is available to get objectStores
-

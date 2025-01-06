@@ -32,10 +32,16 @@ if (window.accessibilityController) {
     var activeElementChangeCount = 0;
     var selectedChildrenChangeCount = 0;
     accessibilityController.addNotificationListener((target, notification) => {
-        if (notification == "AXActiveElementChanged" || notification == "AXSelectedChildrenChanged") {
+        if (notification === "AXActiveElementChanged") {
             output += `notification: ${notification}\n`;
-            logActiveElementAndSelectedChildren(axCombobox);
-            notification == "AXActiveElementChanged" ? ++activeElementChangeCount : ++selectedChildrenChangeCount;
+            output += `    activeElement: ${axCombobox.activeElement.domIdentifier}\n`;
+            ++activeElementChangeCount;
+        }
+
+        if (notification == "AXSelectedChildrenChanged") {
+            output += `notification: ${notification}\n`;
+            outputSelectedChildren(axCombobox);
+            ++selectedChildrenChangeCount;
         }
     });
 

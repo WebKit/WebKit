@@ -40,10 +40,12 @@
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "WindowEventLoop.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FetchBodyOwner);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FetchBodyOwner::BlobLoader);
 
 FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
     : ActiveDOMObject(context)
@@ -299,6 +301,9 @@ void FetchBodyOwner::blobLoadingSucceeded()
     }
 
     m_body->loadingSucceeded(contentType());
+    if (!m_blobLoader)
+        return;
+
     finishBlobLoading();
 }
 
@@ -337,6 +342,12 @@ void FetchBodyOwner::BlobLoader::didFail(const ResourceError&)
     // didFail might be called within FetchLoader::start call.
     if (loader->isStarted())
         owner.blobLoadingFailed();
+}
+
+void FetchBodyOwner::BlobLoader::didSucceed(const NetworkLoadMetrics&)
+{
+    Ref protectedOwner = Ref { owner };
+    protectedOwner->blobLoadingSucceeded();
 }
 
 ExceptionOr<RefPtr<ReadableStream>> FetchBodyOwner::readableStream(JSC::JSGlobalObject& state)
@@ -413,7 +424,7 @@ std::optional<Exception> FetchBodyOwner::loadingException() const
 
 bool FetchBodyOwner::virtualHasPendingActivity() const
 {
-    return !!m_blobLoader;
+    return !!m_blobLoader || (m_body && m_body->hasConsumerPendingActivity());
 }
 
 bool FetchBodyOwner::hasLoadingError() const

@@ -15,12 +15,8 @@ ifdef NDK_ROOT
 # In an Android project place a libvpx checkout in the jni directory.
 # Run the configure script from the jni directory.  Base libvpx
 # encoder/decoder configuration will look similar to:
-# ./libvpx/configure --target=armv7-android-gcc --disable-examples \
+# ./libvpx/configure --target=arm64-android-gcc --disable-examples \
 #                    --enable-external-build
-#
-# When targeting Android, realtime-only is enabled by default.  This can
-# be overridden by adding the command line flag:
-#  --disable-realtime-only
 #
 # This will create .mk files that contain variables that contain the
 # source files to compile.
@@ -38,11 +34,14 @@ ifdef NDK_ROOT
 # but the resulting library *must* be run on devices supporting all of the
 # enabled extensions. They can be disabled individually with
 #   --disable-{sse2, sse3, ssse3, sse4_1, avx, avx2, avx512}
-#   --disable-neon[-asm]
+#   --disable-neon{, -asm, -neon-dotprod, -neon-i8mm}
+#   --disable-sve
 #   --disable-{dspr2, msa}
 
 #
-# Running ndk-build will build libvpx and include it in your project.
+# Running ndk-build will build libvpx and include it in your project. Set
+# APP_ABI to match the --target passed to configure:
+# https://developer.android.com/ndk/guides/application_mk#app_abi.
 #
 
 CONFIG_DIR := $(LOCAL_PATH)/

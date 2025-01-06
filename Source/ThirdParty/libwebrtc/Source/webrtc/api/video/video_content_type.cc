@@ -10,6 +10,8 @@
 
 #include "api/video/video_content_type.h"
 
+#include <cstdint>
+
 #include "rtc_base/checks.h"
 
 namespace webrtc {

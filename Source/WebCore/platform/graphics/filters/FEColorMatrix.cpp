@@ -37,6 +37,8 @@
 #include "FEColorMatrixSkiaApplier.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 Ref<FEColorMatrix> FEColorMatrix::create(ColorMatrixType type, Vector<float>&& values, DestinationColorSpace colorSpace)
@@ -74,7 +76,7 @@ bool FEColorMatrix::setValues(const Vector<float> &values)
     return true;
 }
 
-void FEColorMatrix::calculateSaturateComponents(float* components, float value)
+void FEColorMatrix::calculateSaturateComponents(std::span<float> components, float value)
 {
     auto saturationMatrix = saturationColorMatrix(value);
 
@@ -91,7 +93,7 @@ void FEColorMatrix::calculateSaturateComponents(float* components, float value)
     components[8] = saturationMatrix.at(2, 2);
 }
 
-void FEColorMatrix::calculateHueRotateComponents(float* components, float angleInDegrees)
+void FEColorMatrix::calculateHueRotateComponents(std::span<float> components, float angleInDegrees)
 {
     auto hueRotateMatrix = hueRotateColorMatrix(angleInDegrees);
 
@@ -158,7 +160,7 @@ std::unique_ptr<FilterEffectApplier> FEColorMatrix::createSoftwareApplier() cons
 #endif
 }
 
-std::optional<GraphicsStyle> FEColorMatrix::createGraphicsStyle(const Filter&) const
+std::optional<GraphicsStyle> FEColorMatrix::createGraphicsStyle(GraphicsContext&, const Filter&) const
 {
     std::array<float, 20> values;
     std::copy_n(m_values.begin(), std::min<size_t>(m_values.size(), 20), values.begin());
@@ -211,3 +213,5 @@ TextStream& FEColorMatrix::externalRepresentation(TextStream& ts, FilterRepresen
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -1,0 +1,70 @@
+<meta name="fuzzy" content="maxDifference=127; totalPixels=0-11" />
+<style>
+.clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  font-family: Monospace;
+  font-size: 12px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+</style>
+<div class="clamp">
+  <div>PASS if trailing ellipsis does NOT show</div>
+</div>
+
+<div class="clamp">
+  <div><div><div style="display: inline-block">PASS if trailing ellipsis shows</div></div></div>
+</div>
+
+<div class="clamp">
+  <div><div><div>PASS if trailing ellipsis shows</div></div></div>
+  <div>second line</div>
+</div>
+
+<div class="clamp">
+  <div><div><div style="display: inline-block; width: 1000px;">PASS if trailing ellipsis shows</div></div></div>
+  <div>second line</div>
+</div>
+
+<div class="clamp">
+  <div>PASS if trailing ellipsis shows</div>
+  <div>
+    <div>
+      <div>second line</div>
+    </div>
+  </div>
+</div>
+
+<div class="clamp">
+  <div>PASS if trailing ellipsis shows<br>second<br>third line</div>
+  <div>
+    <div>
+      <div>forth line</div>
+    </div>
+  </div>
+</div>
+
+<div class="clamp">
+  <div></div>
+  <div></div>
+  <div>PASS if trailing ellipsis shows</div>
+  <div>
+    <div>
+      <div>second line</div>
+    </div>
+  </div>
+</div>
+
+<div class="clamp">
+  <div></div>
+  <div></div>
+  <div>PASS if trailing ellipsis shows</div>
+  <div></div>
+  <div>
+    <div>
+      <div>second line</div>
+    </div>
+  </div>
+</div>

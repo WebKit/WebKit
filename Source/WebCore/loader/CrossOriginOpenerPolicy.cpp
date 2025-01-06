@@ -41,6 +41,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityPolicy.h"
 #include "ViolationReportType.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -52,6 +53,8 @@ static ASCIILiteral crossOriginOpenerPolicyToString(const CrossOriginOpenerPolic
         return "same-origin"_s;
     case CrossOriginOpenerPolicyValue::SameOriginAllowPopups:
         return "same-origin-allow-popups"_s;
+    case CrossOriginOpenerPolicyValue::NoopenerAllowPopups:
+        return "noopener-allow-popups"_s;
     case CrossOriginOpenerPolicyValue::UnsafeNone:
         break;
     }
@@ -67,6 +70,8 @@ static ASCIILiteral crossOriginOpenerPolicyValueToEffectivePolicyString(CrossOri
         return "same-origin"_s;
     case CrossOriginOpenerPolicyValue::SameOriginPlusCOEP:
         return "same-origin-plus-coep"_s;
+    case CrossOriginOpenerPolicyValue::NoopenerAllowPopups:
+        return "noopener-allow-popups"_s;
     case CrossOriginOpenerPolicyValue::UnsafeNone:
         break;
     }
@@ -107,22 +112,42 @@ static void sendViolationReportWhenNavigatingAwayFromCOOPResponse(ReportingClien
     reportingClient.sendReportToEndpoints(coopURL, { }, { endpoint }, WTFMove(report), ViolationReportType::CrossOriginOpenerPolicy);
 }
 
+// https://html.spec.whatwg.org/multipage/origin.html#matching-coop
+static bool matchingCOOP(CrossOriginOpenerPolicyValue activeDocumentCOOPValue, const SecurityOrigin& activeDocumentNavigationOrigin, CrossOriginOpenerPolicyValue responseCOOPValue, const SecurityOrigin& responseOrigin)
+{
+    if (activeDocumentCOOPValue == CrossOriginOpenerPolicyValue::UnsafeNone && responseCOOPValue == CrossOriginOpenerPolicyValue::UnsafeNone)
+        return true;
+    if (activeDocumentCOOPValue == CrossOriginOpenerPolicyValue::UnsafeNone || responseCOOPValue == CrossOriginOpenerPolicyValue::UnsafeNone)
+        return false;
+    if (responseCOOPValue == CrossOriginOpenerPolicyValue::NoopenerAllowPopups)
+        return false;
+    if (activeDocumentCOOPValue == responseCOOPValue && activeDocumentNavigationOrigin.isSameOriginAs(responseOrigin))
+        return true;
+    return false;
+}
+
+// https://html.spec.whatwg.org/multipage/origin.html#check-browsing-context-group-switch-coop-value-popup
+static bool coopValuesRequireBrowsingContextGroupSwitchForPopup(CrossOriginOpenerPolicyValue activeDocumentCOOPValue, const SecurityOrigin& activeDocumentNavigationOrigin, CrossOriginOpenerPolicyValue responseCOOPValue, const SecurityOrigin& responseOrigin)
+{
+    if (responseCOOPValue == CrossOriginOpenerPolicyValue::NoopenerAllowPopups)
+        return true;
+
+    if ((activeDocumentCOOPValue == CrossOriginOpenerPolicyValue::SameOriginAllowPopups || activeDocumentCOOPValue == CrossOriginOpenerPolicyValue::NoopenerAllowPopups) && responseCOOPValue == CrossOriginOpenerPolicyValue::UnsafeNone)
+        return false;
+
+    if (matchingCOOP(activeDocumentCOOPValue, activeDocumentNavigationOrigin, responseCOOPValue, responseOrigin))
+        return false;
+
+    return true;
+}
+
 // https://html.spec.whatwg.org/multipage/origin.html#check-browsing-context-group-switch-coop-value
 bool coopValuesRequireBrowsingContextGroupSwitch(bool isInitialAboutBlank, CrossOriginOpenerPolicyValue activeDocumentCOOPValue, const SecurityOrigin& activeDocumentNavigationOrigin, CrossOriginOpenerPolicyValue responseCOOPValue, const SecurityOrigin& responseOrigin)
 {
-    // If the result of matching activeDocumentCOOPValue, activeDocumentNavigationOrigin, responseCOOPValue, and responseOrigin is true, return false.
-    // https://html.spec.whatwg.org/multipage/origin.html#matching-coop
-    if (activeDocumentCOOPValue == CrossOriginOpenerPolicyValue::UnsafeNone && responseCOOPValue == CrossOriginOpenerPolicyValue::UnsafeNone)
-        return false;
-    if (activeDocumentCOOPValue == responseCOOPValue && activeDocumentNavigationOrigin.isSameOriginAs(responseOrigin))
-        return false;
+    if (isInitialAboutBlank)
+        return coopValuesRequireBrowsingContextGroupSwitchForPopup(activeDocumentCOOPValue, activeDocumentNavigationOrigin, responseCOOPValue, responseOrigin);
 
-    // If all of the following are true:
-    // - isInitialAboutBlank,
-    // - activeDocumentCOOPValue's value is "same-origin-allow-popups".
-    // - responseCOOPValue is "unsafe-none",
-    // then return false.
-    if (isInitialAboutBlank && activeDocumentCOOPValue == CrossOriginOpenerPolicyValue::SameOriginAllowPopups && responseCOOPValue == CrossOriginOpenerPolicyValue::UnsafeNone)
+    if (matchingCOOP(activeDocumentCOOPValue, activeDocumentNavigationOrigin, responseCOOPValue, responseOrigin))
         return false;
 
     return true;
@@ -152,7 +177,7 @@ static std::pair<Ref<SecurityOrigin>, CrossOriginOpenerPolicy> computeResponseOr
         return { requester->securityOrigin, requester->securityOrigin->isSameOriginAs(requester->topOrigin) ? requester->policyContainer.crossOriginOpenerPolicy : CrossOriginOpenerPolicy { } };
 
     // If the HTTP response contains a CSP header, it may set sandbox flags, which would cause the origin to become opaque.
-    auto responseOrigin = responseCSP && responseCSP->sandboxFlags() != SandboxNone ? SecurityOrigin::createOpaque() : SecurityOrigin::create(response.url());
+    auto responseOrigin = responseCSP && !responseCSP->sandboxFlags().isEmpty() ? SecurityOrigin::createOpaque() : SecurityOrigin::create(response.url());
     return { WTFMove(responseOrigin), obtainCrossOriginOpenerPolicy(response) };
 }
 
@@ -209,6 +234,8 @@ CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse& re
                 value = CrossOriginOpenerPolicyValue::SameOrigin;
         } else if (policyString->string() == "same-origin-allow-popups"_s)
             value = CrossOriginOpenerPolicyValue::SameOriginAllowPopups;
+        else if (policyString->string() == "noopener-allow-popups"_s)
+            value = CrossOriginOpenerPolicyValue::NoopenerAllowPopups;
 
         if (auto* reportToString = coopParsingResult->second.getIf<String>("report-to"_s))
             reportingEndpoint = *reportToString;
@@ -256,7 +283,7 @@ std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandl
 
     // https://html.spec.whatwg.org/multipage/browsing-the-web.html#process-a-navigate-fetch (Step 13.5.6.2)
     // If sandboxFlags is not empty and responseCOOP's value is not "unsafe-none", then set response to an appropriate network error and break.
-    if (responseCOOP.value != CrossOriginOpenerPolicyValue::UnsafeNone && effectiveSandboxFlags != SandboxNone)
+    if (responseCOOP.value != CrossOriginOpenerPolicyValue::UnsafeNone && !effectiveSandboxFlags.isEmpty())
         return std::nullopt;
 
     return enforceResponseCrossOriginOpenerPolicy(reportingClient, currentCoopEnforcementResult, response.url(), responseOrigin, responseCOOP, referrer, isDisplayingInitialEmptyDocument);

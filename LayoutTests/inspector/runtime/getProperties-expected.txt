@@ -114,6 +114,46 @@ Internal Properties:
     "boundThis"       =>  null (object null)  []
     "boundArgs"       =>  "Array" (object array)  []
 
+-- Running test case: Runtime.getProperties.ArrowFunction
+Evaluating expression...
+Getting own properties...
+Properties:
+    "length"     =>  3 (number)  [configurable | isOwn]
+    "name"       =>  "" (string)  [configurable | isOwn]
+    "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
+Internal Properties:
+    "boundThis"  =>  undefined (undefined)  []
+
+-- Running test case: Runtime.getProperties.ArrowFunctionNoParameters
+Evaluating expression...
+Getting own properties...
+Properties:
+    "length"     =>  0 (number)  [configurable | isOwn]
+    "name"       =>  "" (string)  [configurable | isOwn]
+    "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
+Internal Properties:
+    "boundThis"  =>  undefined (undefined)  []
+
+-- Running test case: Runtime.getProperties.BoundArrowFunction
+Evaluating expression...
+Getting own properties...
+Properties:
+    "length"     =>  3 (number)  [configurable | isOwn]
+    "name"       =>  "" (string)  [configurable | isOwn]
+    "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
+Internal Properties:
+    "boundThis"  =>  "Object" (object)  []
+
+-- Running test case: Runtime.getProperties.BoundArrowFunctionNoParameters
+Evaluating expression...
+Getting own properties...
+Properties:
+    "length"     =>  0 (number)  [configurable | isOwn]
+    "name"       =>  "" (string)  [configurable | isOwn]
+    "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
+Internal Properties:
+    "boundThis"  =>  "Object" (object)  []
+
 -- Running test case: Runtime.getProperties.Private.Instance.Parent
 Evaluating expression...
 Getting own properties...

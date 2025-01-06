@@ -10,9 +10,13 @@
 
 #include "call/video_send_stream.h"
 
+#include <cstdint>
+#include <string>
 #include <utility>
 
-#include "api/crypto/frame_encryptor_interface.h"
+#include "api/call/transport.h"
+#include "api/video_codecs/video_encoder.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/strings/string_format.h"
 

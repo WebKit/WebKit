@@ -61,6 +61,37 @@ to other shading languages, and to optionally apply shader modifications to work
 quirks in the native graphics drivers. The translator targets Desktop GLSL, Vulkan GLSL, Direct3D
 HLSL, and even ESSL for native GLES2 platforms.
 
+### OpenCL Implementation
+
+In addition to OpenGL ES, ANGLE also provides an optional `OpenCL` runtime built into the same
+output GLES lib.
+
+This work/effort is currently **work-in-progress/experimental**.
+
+This work provides the same benefits as the OpenGL implementation, having OpenCL APIs be
+translated to other HW-supported APIs available on that platform.
+
+### Level of OpenCL support via backing renderers
+
+|             |  Vulkan     |  OpenCL     |
+|-------------|:-----------:|:-----------:|
+| OpenCL 1.0  | in progress | in progress |
+| OpenCL 1.1  | in progress | in progress |
+| OpenCL 1.2  | in progress | in progress |
+| OpenCL 3.0  | in progress | in progress |
+
+Each supported backing renderer above ends up being an OpenCL `Platform` for the user to choose from.
+
+The `OpenCL` backend is a "passthrough" implementation which does not perform any API translation
+at all, instead forwarding API calls to other OpenCL driver(s)/implementation(s).
+
+OpenCL also has an online compiler component to it that is used to compile `OpenCL C` source code at runtime
+(similarly to GLES and GLSL). Depending on the chosen backend(s), compiler implementations may vary. Below is
+a list of renderers and what OpenCL C compiler implementation is used for each:
+
+- `Vulkan` : [clspv](https://github.com/google/clspv/tree/main)
+- `OpenCL` : Compiler is part of the native driver
+
 ## Sources
 
 ANGLE repository is hosted by Chromium project and can be
@@ -92,14 +123,16 @@ View the [Dev setup instructions](doc/DevSetup.md).
 * Use ANGLE's [coding standard](doc/CodingStandard.md).
 * Learn how to [build ANGLE for Chromium development](doc/BuildingAngleForChromiumDevelopment.md).
 * Get help on [debugging ANGLE](doc/DebuggingTips.md).
-* Go through [ANGLE's orientation](doc/Orientation.md) and sift through [starter projects](https://bugs.chromium.org/p/angleproject/issues/list?q=Hotlist%3DStarterBug). If you decide to take on any task, write a comment so you can get in touch with us, and more importantly, set yourself as the "owner" of the bug. This avoids having multiple people accidentally working on the same issue.
+* Go through [ANGLE's orientation](doc/Orientation.md) and sift through [issues](https://issues.angleproject.org/). If you decide to take on any task, write a comment so you can get in touch with us, and more importantly, set yourself as the "owner" of the bug. This avoids having multiple people accidentally working on the same issue.
 
 
 * Read about WebGL on the [Khronos WebGL Wiki](http://khronos.org/webgl/wiki/Main_Page).
-* Learn about the initial ANGLE implementation details in the [OpenGL Insights chapter on ANGLE](http://www.seas.upenn.edu/~pcozzi/OpenGLInsights/OpenGLInsights-ANGLE.pdf) (this is not the most up-to-date ANGLE implementation details, it is listed here for historical reference only) and this [ANGLE presentation](https://drive.google.com/file/d/0Bw29oYeC09QbbHoxNE5EUFh0RGs/view?usp=sharing&resourcekey=0-CNvGnQGgFSvbXgX--Y_Iyg).
-* Learn about the past, present, and future of the ANGLE implementation in [this presentation](https://docs.google.com/presentation/d/1CucIsdGVDmdTWRUbg68IxLE5jXwCb2y1E9YVhQo0thg/pub?start=false&loop=false).
-* Watch a [short presentation](https://youtu.be/QrIKdjmpmaA) on the Vulkan back-end.
-* Track the [dEQP test conformance](doc/dEQP-Charts.md)
+* Learn about the internals of ANGLE:
+  * [Overview](https://docs.google.com/presentation/d/1qal4GgddwlUw-TPaXRYeTWLXUoaemgggBuTfg6_rwjU) with a focus on the Vulkan backend (2022)
+  * A [short presentation](https://youtu.be/QrIKdjmpmaA) on the Vulkan back-end (2018).
+  * Historical [presentation](https://docs.google.com/presentation/d/1CucIsdGVDmdTWRUbg68IxLE5jXwCb2y1E9YVhQo0thg/pub?start=false&loop=false) on the evolution of ANGLE and its use in Chromium
+  * Historical [presentation](https://drive.google.com/file/d/0Bw29oYeC09QbbHoxNE5EUFh0RGs/view?usp=sharing&resourcekey=0-CNvGnQGgFSvbXgX--Y_Iyg) with a focus on D3D
+  * The details of the initial implementation of ANGLE in the [OpenGL Insights chapter on ANGLE](http://www.seas.upenn.edu/~pcozzi/OpenGLInsights/OpenGLInsights-ANGLE.pdf) (these details are severely out-of-date, and this reference is listed here for historical reference only)
 * Read design docs on the [Vulkan back-end](src/libANGLE/renderer/vulkan/README.md)
 * Read about ANGLE's [testing infrastructure](infra/README.md)
 * View information on ANGLE's [supported extensions](doc/ExtensionSupport.md)

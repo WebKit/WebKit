@@ -76,6 +76,8 @@
 
 #endif // HAVE(UI_TEXT_SELECTION_RECT_CUSTOM_HANDLE_INFO)
 
+#if PLATFORM(IOS_FAMILY) || HAVE(NSTEXTPLACEHOLDER_RECTS)
+
 @implementation WKTextSelectionRect {
     WebCore::SelectionGeometry _selectionGeometry;
     CGFloat _scaleFactor;
@@ -119,12 +121,13 @@
     return result;
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-- (UITextWritingDirection)writingDirection
+- (NSWritingDirection)writingDirection
 {
-    return _selectionGeometry.direction() == WebCore::TextDirection::LTR ? UITextWritingDirectionLeftToRight : UITextWritingDirectionRightToLeft;
+    if (_selectionGeometry.direction() == WebCore::TextDirection::LTR)
+        return NSWritingDirectionLeftToRight;
+
+    return NSWritingDirectionRightToLeft;
 }
-ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (UITextRange *)range
 {
@@ -173,3 +176,5 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 @end
+
+#endif

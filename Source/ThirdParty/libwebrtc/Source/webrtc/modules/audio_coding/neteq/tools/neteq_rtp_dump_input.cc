@@ -22,7 +22,7 @@ class NetEqRtpDumpInput : public NetEqInput {
  public:
   NetEqRtpDumpInput(absl::string_view file_name,
                     const std::map<int, RTPExtensionType>& hdr_ext_map,
-                    absl::optional<uint32_t> ssrc_filter)
+                    std::optional<uint32_t> ssrc_filter)
       : source_(RtpFileSource::Create(file_name, ssrc_filter)) {
     for (const auto& ext_pair : hdr_ext_map) {
       source_->RegisterRtpHeaderExtension(ext_pair.second, ext_pair.first);
@@ -30,12 +30,12 @@ class NetEqRtpDumpInput : public NetEqInput {
     LoadNextPacket();
   }
 
-  absl::optional<int64_t> NextOutputEventTime() const override {
+  std::optional<int64_t> NextOutputEventTime() const override {
     return next_output_event_ms_;
   }
 
-  absl::optional<SetMinimumDelayInfo> NextSetMinimumDelayInfo() const override {
-    return absl::nullopt;
+  std::optional<SetMinimumDelayInfo> NextSetMinimumDelayInfo() const override {
+    return std::nullopt;
   }
 
   void AdvanceOutputEvent() override {
@@ -43,16 +43,16 @@ class NetEqRtpDumpInput : public NetEqInput {
       *next_output_event_ms_ += kOutputPeriodMs;
     }
     if (!NextPacketTime()) {
-      next_output_event_ms_ = absl::nullopt;
+      next_output_event_ms_ = std::nullopt;
     }
   }
 
   void AdvanceSetMinimumDelay() override {}
 
-  absl::optional<int64_t> NextPacketTime() const override {
-    return packet_ ? absl::optional<int64_t>(
+  std::optional<int64_t> NextPacketTime() const override {
+    return packet_ ? std::optional<int64_t>(
                          static_cast<int64_t>(packet_->time_ms()))
-                   : absl::nullopt;
+                   : std::nullopt;
   }
 
   std::unique_ptr<PacketData> PopPacket() override {
@@ -78,9 +78,8 @@ class NetEqRtpDumpInput : public NetEqInput {
     return packet_data;
   }
 
-  absl::optional<RTPHeader> NextHeader() const override {
-    return packet_ ? absl::optional<RTPHeader>(packet_->header())
-                   : absl::nullopt;
+  std::optional<RTPHeader> NextHeader() const override {
+    return packet_ ? std::optional<RTPHeader>(packet_->header()) : std::nullopt;
   }
 
   bool ended() const override { return !next_output_event_ms_; }
@@ -88,7 +87,7 @@ class NetEqRtpDumpInput : public NetEqInput {
  private:
   void LoadNextPacket() { packet_ = source_->NextPacket(); }
 
-  absl::optional<int64_t> next_output_event_ms_ = 0;
+  std::optional<int64_t> next_output_event_ms_ = 0;
   static constexpr int64_t kOutputPeriodMs = 10;
 
   std::unique_ptr<RtpFileSource> source_;
@@ -100,7 +99,7 @@ class NetEqRtpDumpInput : public NetEqInput {
 std::unique_ptr<NetEqInput> CreateNetEqRtpDumpInput(
     absl::string_view file_name,
     const std::map<int, RTPExtensionType>& hdr_ext_map,
-    absl::optional<uint32_t> ssrc_filter) {
+    std::optional<uint32_t> ssrc_filter) {
   return std::make_unique<NetEqRtpDumpInput>(file_name, hdr_ext_map,
                                              ssrc_filter);
 }

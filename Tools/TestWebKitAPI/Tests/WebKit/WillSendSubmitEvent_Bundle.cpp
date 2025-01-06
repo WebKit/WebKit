@@ -67,7 +67,7 @@ WillSendSubmitEventTest::WillSendSubmitEventTest(const std::string& identifier)
 void WillSendSubmitEventTest::didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
 {
     WKBundlePageFormClientV1 formClient;
-    memset(&formClient, 0, sizeof(formClient));
+    zeroBytes(formClient);
     
     formClient.base.version = 1;
     formClient.base.clientInfo = this;

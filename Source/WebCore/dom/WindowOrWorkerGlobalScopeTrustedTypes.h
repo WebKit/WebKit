@@ -25,21 +25,44 @@
 
 #pragma once
 
-namespace WTF { class ASCIILiteral; }
+#include "Supplementable.h"
+#include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class TrustedTypePolicyFactory;
 class DOMWindow;
+class WeakPtrImplWithEventTargetData;
 class WorkerGlobalScope;
 
 template<typename> class ExceptionOr;
 
 class WindowOrWorkerGlobalScopeTrustedTypes {
 public:
-    static WTF::ASCIILiteral workerGlobalSupplementName();
+    static ASCIILiteral workerGlobalSupplementName();
     static TrustedTypePolicyFactory* trustedTypes(DOMWindow&);
     static TrustedTypePolicyFactory* trustedTypes(WorkerGlobalScope&);
 };
+
+class WorkerGlobalScopeTrustedTypes : public Supplement<WorkerGlobalScope> {
+    WTF_MAKE_TZONE_ALLOCATED(WorkerGlobalScopeTrustedTypes);
+public:
+    explicit WorkerGlobalScopeTrustedTypes(WorkerGlobalScope&);
+    virtual ~WorkerGlobalScopeTrustedTypes();
+
+    static WorkerGlobalScopeTrustedTypes* from(WorkerGlobalScope&);
+    TrustedTypePolicyFactory* trustedTypes() const;
+
+    void prepareForDestruction();
+
+    static ASCIILiteral supplementName() { return WindowOrWorkerGlobalScopeTrustedTypes::workerGlobalSupplementName(); }
+
+private:
+    WeakPtr<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_scope;
+    mutable RefPtr<TrustedTypePolicyFactory> m_trustedTypes;
+};
+
 
 } // namespace WebCore

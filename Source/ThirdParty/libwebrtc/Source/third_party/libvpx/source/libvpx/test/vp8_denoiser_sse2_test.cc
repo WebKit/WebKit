@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "test/acm_random.h"
 #include "test/clear_system_state.h"
 #include "test/register_state_check.h"
@@ -21,6 +21,7 @@
 #include "vp8/encoder/denoising.h"
 #include "vp8/common/reconinter.h"
 #include "vpx/vpx_integer.h"
+#include "vpx_config.h"
 #include "vpx_mem/vpx_mem.h"
 
 using libvpx_test::ACMRandom;

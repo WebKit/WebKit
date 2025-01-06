@@ -26,10 +26,12 @@
 #pragma once
 
 #include "CaretAnimator.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SimpleCaretAnimator final : public CaretAnimator {
+    WTF_MAKE_TZONE_ALLOCATED(SimpleCaretAnimator);
 public:
     explicit SimpleCaretAnimator(CaretAnimationClient&);
 

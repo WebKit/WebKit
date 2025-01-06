@@ -81,7 +81,6 @@ public:
     RenderObject::HighlightState ellipsisSelectionState() const;
 
     const RenderBlockFlow& formattingContextRoot() const;
-    RenderFragmentContainer* containingFragment() const;
 
     bool isHorizontal() const;
     FontBaseline baselineType() const;
@@ -301,13 +300,6 @@ inline const RenderBlockFlow& LineBox::formattingContextRoot() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) -> const RenderBlockFlow& {
         return path.formattingContextRoot();
-    });
-}
-
-inline RenderFragmentContainer* LineBox::containingFragment() const
-{
-    return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.containingFragment();
     });
 }
 

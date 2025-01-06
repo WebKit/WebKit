@@ -15,7 +15,6 @@
 
 namespace webrtc {
 namespace rtcp {
-constexpr size_t RtcpPacket::kHeaderLength;
 
 rtc::Buffer RtcpPacket::Build() const {
   rtc::Buffer packet(BlockLength());

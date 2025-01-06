@@ -25,6 +25,7 @@
 
 #include "NotImplemented.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if !PLATFORM(COCOA)
 #include "BMPImageDecoder.h"
@@ -57,64 +58,49 @@ WTF_WEAK_LINK_FORCE_IMPORT(JxlSignatureCheck);
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScalableImageDecoder);
+
 namespace {
 
-static unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const FragmentedSharedBuffer& sharedBuffer)
-{
-    unsigned bytesExtracted = 0;
-    for (const auto& element : sharedBuffer) {
-        if (bytesExtracted + element.segment->size() <= bufferLength) {
-            memcpy(buffer + bytesExtracted, element.segment->span().data(), element.segment->size());
-            bytesExtracted += element.segment->size();
-        } else {
-            ASSERT(bufferLength - bytesExtracted < element.segment->size());
-            memcpy(buffer + bytesExtracted, element.segment->span().data(), bufferLength - bytesExtracted);
-            bytesExtracted = bufferLength;
-            break;
-        }
-    }
-    return bytesExtracted;
-}
-
 #if !PLATFORM(COCOA)
-static bool matchesGIFSignature(char* contents)
+static bool matchesGIFSignature(std::span<const uint8_t> contents)
 {
-    return !memcmp(contents, "GIF87a", 6) || !memcmp(contents, "GIF89a", 6);
+    return spanHasPrefix(contents, "GIF87a"_span) || spanHasPrefix(contents, "GIF89a"_span);
 }
 
-static bool matchesPNGSignature(char* contents)
+static bool matchesPNGSignature(std::span<const uint8_t> contents)
 {
-    return !memcmp(contents, "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A", 8);
+    return spanHasPrefix(contents, unsafeMakeSpan("\x89\x50\x4E\x47\x0D\x0A\x1A\x0A", 8));
 }
 
-static bool matchesJPEGSignature(char* contents)
+static bool matchesJPEGSignature(std::span<const uint8_t> contents)
 {
-    return !memcmp(contents, "\xFF\xD8\xFF", 3);
+    return spanHasPrefix(contents, unsafeMakeSpan("\xFF\xD8\xFF", 3));
 }
 
-static bool matchesBMPSignature(char* contents)
+static bool matchesBMPSignature(std::span<const uint8_t> contents)
 {
-    return !memcmp(contents, "BM", 2);
+    return spanHasPrefix(contents, "BM"_span);
 }
 
-static bool matchesICOSignature(char* contents)
+static bool matchesICOSignature(std::span<const uint8_t> contents)
 {
-    return !memcmp(contents, "\x00\x00\x01\x00", 4);
+    return spanHasPrefix(contents, unsafeMakeSpan("\x00\x00\x01\x00", 4));
 }
 
-static bool matchesCURSignature(char* contents)
+static bool matchesCURSignature(std::span<const uint8_t> contents)
 {
-    return !memcmp(contents, "\x00\x00\x02\x00", 4);
+    return spanHasPrefix(contents, unsafeMakeSpan("\x00\x00\x02\x00", 4));
 }
 
-static bool matchesWebPSignature(char* contents)
+static bool matchesWebPSignature(std::span<const uint8_t> contents)
 {
-    return !memcmp(contents, "RIFF", 4) && !memcmp(contents + 8, "WEBPVP", 6);
+    return spanHasPrefix(contents, "RIFF"_span) && spanHasPrefix(contents.subspan(8), "WEBPVP"_span);
 }
 #endif
 
 #if USE(AVIF)
-static bool matchesAVIFSignature(char* contents, FragmentedSharedBuffer& data)
+static bool matchesAVIFSignature(std::span<const uint8_t> contents, FragmentedSharedBuffer& data)
 {
 #if USE(CG)
     UNUSED_PARAM(contents);
@@ -125,19 +111,19 @@ static bool matchesAVIFSignature(char* contents, FragmentedSharedBuffer& data)
     return uti == "public.avif"_s || uti == "public.avis"_s;
 #else
     UNUSED_PARAM(data);
-    return !memcmp(contents + 4, "\x66\x74\x79\x70", 4);
+    return spanHasPrefix(contents.subspan(4), unsafeMakeSpan("\x66\x74\x79\x70", 4));
 #endif
 }
 #endif // USE(AVIF)
 
 #if USE(JPEGXL)
-static bool matchesJPEGXLSignature(const uint8_t* contents, size_t length)
+static bool matchesJPEGXLSignature(std::span<const uint8_t> contents)
 {
 #if PLATFORM(COCOA)
     if (!&JxlSignatureCheck)
         return false;
 #endif
-    JxlSignature signature = JxlSignatureCheck(contents, length);
+    JxlSignature signature = JxlSignatureCheck(contents.data(), contents.size());
     return signature != JXL_SIG_NOT_ENOUGH_BYTES && signature != JXL_SIG_INVALID;
 }
 #endif
@@ -146,34 +132,37 @@ static bool matchesJPEGXLSignature(const uint8_t* contents, size_t length)
 
 RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(FragmentedSharedBuffer& data, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
-    static const unsigned lengthOfLongestSignature = 14; // To wit: "RIFF????WEBPVP"
-    char contents[lengthOfLongestSignature];
-    unsigned length = copyFromSharedBuffer(contents, lengthOfLongestSignature, data);
-    if (length < lengthOfLongestSignature)
+    constexpr size_t lengthOfLongestSignature = 14; // To wit: "RIFF????WEBPVP"
+    if (data.size() < lengthOfLongestSignature)
         return nullptr;
 
+    std::array<uint8_t, lengthOfLongestSignature> contents;
+    data.copyTo(std::span { contents });
+
+    std::span contentsSpan { contents };
+
 #if !PLATFORM(COCOA)
-    if (matchesGIFSignature(contents))
+    if (matchesGIFSignature(contentsSpan))
         return GIFImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 
-    if (matchesPNGSignature(contents))
+    if (matchesPNGSignature(contentsSpan))
         return PNGImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 
-    if (matchesICOSignature(contents) || matchesCURSignature(contents))
+    if (matchesICOSignature(contentsSpan) || matchesCURSignature(contentsSpan))
         return ICOImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 
-    if (matchesJPEGSignature(contents))
+    if (matchesJPEGSignature(contentsSpan))
         return JPEGImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 
-    if (matchesBMPSignature(contents))
+    if (matchesBMPSignature(contentsSpan))
         return BMPImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 
-    if (matchesWebPSignature(contents))
+    if (matchesWebPSignature(contentsSpan))
         return WEBPImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 #endif
 
 #if USE(AVIF)
-    if (matchesAVIFSignature(contents, data))
+    if (matchesAVIFSignature(contentsSpan, data))
         return AVIFImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 #else
     UNUSED_PARAM(alphaOption);
@@ -181,7 +170,7 @@ RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(FragmentedSharedBuffer
 #endif
 
 #if USE(JPEGXL)
-    if (matchesJPEGXLSignature(reinterpret_cast<const uint8_t*>(contents), length))
+    if (matchesJPEGXLSignature(contentsSpan))
         return JPEGXLImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 #endif
 

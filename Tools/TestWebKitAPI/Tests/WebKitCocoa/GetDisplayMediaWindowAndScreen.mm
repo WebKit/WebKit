@@ -38,6 +38,8 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 
+static bool messageReceived;
+
 @interface WindowAndScreenCaptureTestView : TestWKWebView
 - (BOOL)haveStream:(BOOL)expected;
 @end
@@ -111,6 +113,17 @@ static constexpr unsigned stateChangeQueryMaxCount = 30;
     } while (++tries <= stateChangeQueryMaxCount);
 
     return expectedState == _displayCaptureSurfaces;
+}
+@end
+
+@interface DisplayGUMMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation DisplayGUMMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    EXPECT_WK_STREQ(@"PASS", [message body]);
+    messageReceived = true;
 }
 @end
 
@@ -251,6 +264,100 @@ TEST(WebKit2, GetDisplayMediaWindowAndScreenPrompt)
 
     [webView removeObserver:observer.get() forKeyPath:@"_displayCaptureSurfaces"];
     [webView removeObserver:observer.get() forKeyPath:@"_displayCaptureState"];
+}
+
+TEST(WebKit2, ToggleScreenshare)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("MediaSessionCaptureToggleAPIEnabled"));
+
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+
+    configuration.get()._mediaCaptureEnabled = YES;
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    preferences._mockCaptureDevicesEnabled = YES;
+
+    auto messageHandler = adoptNS([[DisplayGUMMessageHandler alloc] init]);
+    [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView _setMediaCaptureReportingDelayForTesting:0];
+
+    auto observer = adoptNS([[DisplayCaptureObserver alloc] init]);
+    [webView addObserver:observer.get() forKeyPath:@"_displayCaptureState" options:NSKeyValueObservingOptionNew context:nil];
+
+    messageReceived = false;
+    [webView synchronouslyLoadTestPageNamed:@"media-session-capture"];
+    TestWebKitAPI::Util::run(&messageReceived);
+
+    [delegate setGetDisplayMediaDecision:WKDisplayCapturePermissionDecisionScreenPrompt];
+
+    messageReceived = false;
+    [webView stringByEvaluatingJavaScript:@"startScreenshareCapture()"];
+    TestWebKitAPI::Util::run(&messageReceived);
+    EXPECT_TRUE([webView _displayCaptureState] == WKDisplayCaptureStateActive);
+
+    // Mute capture.
+    __block bool completionCalled = false;
+    [webView _setDisplayCaptureState:WKDisplayCaptureStateMuted completionHandler:^() {
+        completionCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&completionCalled);
+    EXPECT_EQ([webView _displayCaptureState], WKDisplayCaptureStateMuted);
+
+    [delegate resetWasPrompted];
+    [delegate setGetDisplayMediaDecision:WKDisplayCapturePermissionDecisionDeny];
+
+    // Try unmuting via MediaSession.
+    messageReceived = false;
+    [webView stringByEvaluatingJavaScript:@"setScreenshareActive(true, false)"];
+    TestWebKitAPI::Util::run(&messageReceived);
+
+    EXPECT_EQ([webView _displayCaptureState], WKDisplayCaptureStateMuted);
+    EXPECT_TRUE([delegate wasPrompted]);
+
+    [delegate resetWasPrompted];
+    [delegate setGetDisplayMediaDecision:WKDisplayCapturePermissionDecisionScreenPrompt];
+
+    // Unmute via MediaSession.
+    messageReceived = false;
+    [webView stringByEvaluatingJavaScript:@"setScreenshareActive(true, true)"];
+    TestWebKitAPI::Util::run(&messageReceived);
+
+    EXPECT_EQ([webView _displayCaptureState], WKDisplayCaptureStateActive);
+    EXPECT_TRUE([delegate wasPrompted]);
+
+    // Validate handlers/events order.
+    messageReceived = false;
+    [webView stringByEvaluatingJavaScript:@"validateActionState('deactivating screenshare, muting screenshare, setScreenshareActive not successful, setScreenshareActive successful, unmuting screenshare, end')"];
+
+    [delegate resetWasPrompted];
+
+    // Mute via MediaSession.
+    messageReceived = false;
+    [webView stringByEvaluatingJavaScript:@"setScreenshareActive(false, true)"];
+    TestWebKitAPI::Util::run(&messageReceived);
+
+    EXPECT_EQ([webView _displayCaptureState], WKDisplayCaptureStateMuted);
+    EXPECT_FALSE([delegate wasPrompted]);
+
+    // Unmute via MediaSession.
+    messageReceived = false;
+    [webView stringByEvaluatingJavaScript:@"setScreenshareActive(true, true)"];
+    TestWebKitAPI::Util::run(&messageReceived);
+
+    EXPECT_EQ([webView _displayCaptureState], WKDisplayCaptureStateActive);
+    EXPECT_FALSE([delegate wasPrompted]);
+
+    // Validate handlers/events order.
+    messageReceived = false;
+    [webView stringByEvaluatingJavaScript:@"validateActionState('setScreenshareActive successful, muting screenshare, setScreenshareActive successful, unmuting screenshare, end')"];
+    TestWebKitAPI::Util::run(&messageReceived);
 }
 
 } // namespace TestWebKitAPI

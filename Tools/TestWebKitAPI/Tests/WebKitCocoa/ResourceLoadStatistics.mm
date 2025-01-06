@@ -47,7 +47,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 
 static bool finishedNavigation = false;
 
@@ -89,8 +89,8 @@ static void ensureITPFileIsCreated()
     [dataStore _setResourceLoadStatisticsEnabled:NO];
 }
 
-// FIXME when rdar://109481486 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
+// FIXME when rdar://109481486 is resolved rdar://134535336
+#if PLATFORM(IOS) || PLATFORM(VISION) || PLATFORM(MAC)
 TEST(ResourceLoadStatistics, DISABLED_GrandfatherCallback)
 #else
 TEST(ResourceLoadStatistics, GrandfatherCallback)
@@ -226,7 +226,7 @@ TEST(ResourceLoadStatistics, IPCAfterStoreDestruction)
     auto navigationDelegate = adoptNS([[DisableITPDuringNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"notify-resourceLoadObserver" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"notify-resourceLoadObserver" withExtension:@"html"]]];
 
     TestWebKitAPI::Util::run(&finishedNavigation);
 }
@@ -891,7 +891,12 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
     TestWebKitAPI::Util::run(&doneFlag);
 }
 
+// rdar://134535336
+#if PLATFORM(IOS) || PLATFORM(MAC)
+TEST(ResourceLoadStatistics, DISABLED_MigrateDataFromIncorrectCreateTableSchema)
+#else
 TEST(ResourceLoadStatistics, MigrateDataFromIncorrectCreateTableSchema)
+#endif
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
 
@@ -905,7 +910,7 @@ TEST(ResourceLoadStatistics, MigrateDataFromIncorrectCreateTableSchema)
     // Load an incorrect database schema with pre-seeded ITP data.
     // This data should be migrated into the new database.
     [defaultFileManager createDirectoryAtURL:itpRootURL withIntermediateDirectories:YES attributes:nil error:nil];
-    NSURL *newFileURL = [[NSBundle mainBundle] URLForResource:@"incorrectCreateTableSchema" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *newFileURL = [NSBundle.test_resourcesBundle URLForResource:@"incorrectCreateTableSchema" withExtension:@"db"];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:newFileURL.path]);
     [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);
@@ -974,7 +979,12 @@ TEST(ResourceLoadStatistics, MigrateDataFromIncorrectCreateTableSchema)
     TestWebKitAPI::Util::run(&doneFlag);
 }
 
+// rdar://136535465
+#if PLATFORM(MAC)
+TEST(ResourceLoadStatistics, DISABLED_MigrateDataFromMissingTopFrameUniqueRedirectSameSiteStrictTableSchema)
+#else
 TEST(ResourceLoadStatistics, MigrateDataFromMissingTopFrameUniqueRedirectSameSiteStrictTableSchema)
+#endif
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
 
@@ -987,7 +997,7 @@ TEST(ResourceLoadStatistics, MigrateDataFromMissingTopFrameUniqueRedirectSameSit
 
     // Load an incorrect database schema with pre-seeded ITP data.
     [defaultFileManager createDirectoryAtURL:itpRootURL withIntermediateDirectories:YES attributes:nil error:nil];
-    NSURL *newFileURL = [[NSBundle mainBundle] URLForResource:@"missingTopFrameUniqueRedirectSameSiteStrictTableSchema" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *newFileURL = [NSBundle.test_resourcesBundle URLForResource:@"missingTopFrameUniqueRedirectSameSiteStrictTableSchema" withExtension:@"db"];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:newFileURL.path]);
     [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);
@@ -1031,7 +1041,7 @@ TEST(ResourceLoadStatistics, CanAccessDataSummaryWithNoProcessPool)
 
     // Load a a pre-seeded ITP database.
     [defaultFileManager createDirectoryAtURL:itpRootURL withIntermediateDirectories:YES attributes:nil error:nil];
-    NSURL *newFileURL = [[NSBundle mainBundle] URLForResource:@"basicITPDatabase" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *newFileURL = [NSBundle.test_resourcesBundle URLForResource:@"basicITPDatabase" withExtension:@"db"];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:newFileURL.path]);
     [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);
@@ -1259,7 +1269,12 @@ TEST(ResourceLoadStatistics, BackForwardPerPageData)
     TestWebKitAPI::Util::run(&doneFlag);
 }
 
+// rdar://136535465
+#if PLATFORM(MAC)
+TEST(ResourceLoadStatistics, DISABLED_MigrateDistinctDataFromTableWithMissingIndexes)
+#else
 TEST(ResourceLoadStatistics, MigrateDistinctDataFromTableWithMissingIndexes)
+#endif
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
 
@@ -1274,7 +1289,7 @@ TEST(ResourceLoadStatistics, MigrateDistinctDataFromTableWithMissingIndexes)
     // repeatedly stored as subframes, subresources, and unique redirects. It also has them as repeated source and destination sites for PCM.
     // Once we add unique indexes, each entry should be migrated exactly once. Debug asserts when running the test will indicate failure.
     [defaultFileManager createDirectoryAtURL:itpRootURL withIntermediateDirectories:YES attributes:nil error:nil];
-    NSURL *newFileURL = [[NSBundle mainBundle] URLForResource:@"resourceLoadStatisticsMissingUniqueIndex" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *newFileURL = [NSBundle.test_resourcesBundle URLForResource:@"resourceLoadStatisticsMissingUniqueIndex" withExtension:@"db"];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:newFileURL.path]);
     [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);
@@ -1361,7 +1376,12 @@ TEST(ResourceLoadStatistics, DatabaseSchemeUpdate)
     EXPECT_WK_STREQ(columns.last(), "mostRecentWebPushInteractionTime");
 }
 
+// rdar://136525714
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+TEST(ResourceLoadStatistics, DISABLED_ClientEvaluatedJavaScriptDoesNotLogUserInteraction)
+#else
 TEST(ResourceLoadStatistics, ClientEvaluatedJavaScriptDoesNotLogUserInteraction)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);
@@ -1391,7 +1411,12 @@ TEST(ResourceLoadStatistics, ClientEvaluatedJavaScriptDoesNotLogUserInteraction)
     TestWebKitAPI::Util::run(&done);
 }
 
+// rdar://136525714
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+TEST(ResourceLoadStatistics, DISABLED_UserGestureLogsUserInteraction)
+#else
 TEST(ResourceLoadStatistics, UserGestureLogsUserInteraction)
+#endif
 {
     auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);
@@ -1688,7 +1713,12 @@ TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithOutQuirk)
     TestWebKitAPI::Util::run(&done);
 }
 
+// rdar://136524076
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+TEST(ResourceLoadStatistics, DISABLED_StorageAccessOnRedirectSitesWithQuirk)
+#else
 TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithQuirk)
+#endif
 {
     using namespace TestWebKitAPI;
     HTTPServer httpServer({
@@ -1979,7 +2009,12 @@ TEST(ResourceLoadStatistics, StorageAccessSupportMultipleSubFrameDomains)
     gotRequestStorageAccessPanelForQuirksForDomain = false;
 }
 
+// rdar://136524076
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+TEST(ResourceLoadStatistics, DISABLED_StorageAccessGrantMultipleSubFrameDomains)
+#else
 TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
+#endif
 {
     using namespace TestWebKitAPI;
 

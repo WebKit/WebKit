@@ -85,7 +85,7 @@ TEST(WebKit, DISABLED_DOMWindowExtensionBasic)
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DOMWindowExtensionBasic"));
 
     WKContextInjectedBundleClientV0 injectedBundleClient;
-    memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+    zeroBytes(injectedBundleClient);
 
     injectedBundleClient.base.version = 0;
     injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
@@ -138,7 +138,7 @@ TEST(WebKit, DOMWindowExtensionCrashOnReload)
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DOMWindowExtensionBasic"));
 
     WKContextInjectedBundleClientV0 injectedBundleClient;
-    memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+    zeroBytes(injectedBundleClient);
 
     injectedBundleClient.base.version = 0;
     injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;

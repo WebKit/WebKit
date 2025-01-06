@@ -37,6 +37,10 @@ MediaStreamAudioSource::MediaStreamAudioSource(float sampleRate)
     : RealtimeMediaSource(CaptureDevice { { }, CaptureDevice::DeviceType::Microphone, "MediaStreamAudioDestinationNode"_s })
 {
     m_currentSettings.setSampleRate(sampleRate);
+
+#if USE(GSTREAMER)
+    gst_audio_info_init(&m_info);
+#endif
 }
 
 MediaStreamAudioSource::~MediaStreamAudioSource() = default;

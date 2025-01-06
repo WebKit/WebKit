@@ -119,7 +119,6 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/StyleScope.h>
@@ -151,6 +150,7 @@
 #import <wtf/NakedPtr.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -405,6 +405,8 @@ static std::optional<WebCore::ContextMenuAction> toAction(NSInteger tag)
         return ContextMenuItemTagEnterVideoFullscreen;
     case WebMenuItemTagToggleVideoEnhancedFullscreen:
         return ContextMenuItemTagToggleVideoEnhancedFullscreen;
+    case WebMenuItemTagToggleVideoViewer:
+        return ContextMenuItemTagToggleVideoViewer;
     case WebMenuItemTagMediaPlayPause:
         return ContextMenuItemTagMediaPlayPause;
     case WebMenuItemTagMediaMute:
@@ -413,8 +415,8 @@ static std::optional<WebCore::ContextMenuAction> toAction(NSInteger tag)
         return ContextMenuItemTagDictationAlternative;
     case WebMenuItemTagTranslate:
         return ContextMenuItemTagTranslate;
-    case WebMenuItemTagSwapCharacters:
-        return ContextMenuItemTagSwapCharacters;
+    case WebMenuItemTagWritingTools:
+        return ContextMenuItemTagWritingTools;
     }
     return std::nullopt;
 }
@@ -593,10 +595,12 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagShareMenu;
     case ContextMenuItemTagToggleVideoEnhancedFullscreen:
         return WebMenuItemTagToggleVideoEnhancedFullscreen;
+    case ContextMenuItemTagToggleVideoViewer:
+        return WebMenuItemTagToggleVideoViewer;
     case ContextMenuItemTagTranslate:
         return WebMenuItemTagTranslate;
-    case ContextMenuItemTagSwapCharacters:
-        return WebMenuItemTagSwapCharacters;
+    case ContextMenuItemTagWritingTools:
+        return WebMenuItemTagWritingTools;
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     case ContextMenuItemTagPlayAllAnimations:
         return WebMenuItemTagPlayAllAnimations;
@@ -2427,7 +2431,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return NO;
 
     auto* document = frame->document();
-    bool isHorizontal = !document || !document->renderView() || document->renderView()->style().isHorizontalWritingMode();
+    bool isHorizontal = !document || !document->renderView() || document->renderView()->writingMode().isHorizontal();
 
     float pageLogicalWidth = isHorizontal ? pageWidth : pageHeight;
     float pageLogicalHeight = isHorizontal ? pageHeight : pageWidth;
@@ -2463,7 +2467,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return NO;
 
     auto* document = frame->document();
-    bool isHorizontal = !document || !document->renderView() || document->renderView()->style().isHorizontalWritingMode();
+    bool isHorizontal = !document || !document->renderView() || document->renderView()->writingMode().isHorizontal();
 
     float pageLogicalWidth = isHorizontal ? pageSize.width : pageSize.height;
     float pageLogicalHeight = isHorizontal ? pageSize.height : pageSize.width;
@@ -3329,7 +3333,7 @@ IGNORE_WARNINGS_END
         if (minPageLogicalWidth > 0.0) {
             WebCore::FloatSize pageSize(minPageLogicalWidth, minPageLogicalHeight);
             WebCore::FloatSize originalPageSize(originalPageWidth, originalPageHeight);
-            if (coreFrame->document() && coreFrame->document()->renderView() && !coreFrame->document()->renderView()->style().isHorizontalWritingMode()) {
+            if (coreFrame->document() && coreFrame->document()->renderView() && !coreFrame->document()->renderView()->writingMode().isHorizontal()) {
                 pageSize = WebCore::FloatSize(minPageLogicalHeight, minPageLogicalWidth);
                 originalPageSize = WebCore::FloatSize(originalPageHeight, originalPageWidth);
             }
@@ -3612,6 +3616,11 @@ static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTes
 {
 #if HAVE(TRANSLATION_UI_SERVICES)
     if (item.action() == WebCore::ContextMenuItemTagTranslate && !WebView._canHandleContextMenuTranslation)
+        return nil;
+#endif
+
+#if ENABLE(WRITING_TOOLS)
+    if (item.action() == WebCore::ContextMenuItemTagWritingTools)
         return nil;
 #endif
 
@@ -4629,8 +4638,8 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::LocalFrame* 
 
 #if PLATFORM(IOS_FAMILY)
         if (auto* document = coreFrame->document()) {
-            document->markers().removeMarkers(WebCore::DocumentMarker::Type::DictationPhraseWithAlternatives);
-            document->markers().removeMarkers(WebCore::DocumentMarker::Type::DictationResult);
+            document->markers().removeMarkers(WebCore::DocumentMarkerType::DictationPhraseWithAlternatives);
+            document->markers().removeMarkers(WebCore::DocumentMarkerType::DictationResult);
         }
 #endif
 
@@ -4770,7 +4779,7 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::LocalFrame* 
     if (coreFrame) {
         auto* document = coreFrame->document();
         if (document && document->renderView())
-            useViewWidth = document->renderView()->style().isHorizontalWritingMode();
+            useViewWidth = document->renderView()->writingMode().isHorizontal();
     }
 
     float viewLogicalWidth = useViewWidth ? NSWidth([self bounds]) : NSHeight([self bounds]);
@@ -7017,7 +7026,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (!startContainer || !endContainer)
         return adoptNS([[NSAttributedString alloc] init]).autorelease();
     return attributedString(WebCore::SimpleRange { { *core(startContainer), static_cast<unsigned>(startOffset) },
-        { *core(endContainer), static_cast<unsigned>(endOffset) } }).nsAttributedString().autorelease();
+        { *core(endContainer), static_cast<unsigned>(endOffset) } }, WebCore::IgnoreUserSelectNone::Yes).nsAttributedString().autorelease();
 }
 
 - (NSAttributedString *)attributedString
@@ -7026,7 +7035,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (!document)
         return adoptNS([[NSAttributedString alloc] init]).autorelease();
     auto range = makeRangeSelectingNodeContents(*document);
-    if (auto result = attributedString(range).nsAttributedString())
+    if (auto result = attributedString(range, WebCore::IgnoreUserSelectNone::Yes).nsAttributedString())
         return result.autorelease();
     return editingAttributedString(range).nsAttributedString().autorelease();
 }
@@ -7039,7 +7048,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     auto range = frame->selection().selection().firstRange();
     if (!range)
         return adoptNS([[NSAttributedString alloc] init]).autorelease();
-    if (auto result = attributedString(*range).nsAttributedString())
+    if (auto result = attributedString(*range, WebCore::IgnoreUserSelectNone::Yes).nsAttributedString())
         return result.autorelease();
     return editingAttributedString(*range).nsAttributedString().autorelease();
 }
@@ -7114,7 +7123,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     auto* document = coreFrame->document();
     if (!document)
         return;
-    document->markers().removeMarkers(WebCore::DocumentMarker::Type::TextMatch);
+    document->markers().removeMarkers(WebCore::DocumentMarkerType::TextMatch);
 }
 
 - (NSArray *)rectsForTextMatches
@@ -7126,7 +7135,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (!document)
         return @[];
 
-    return createNSArray(document->markers().renderedRectsForMarkers(WebCore::DocumentMarker::Type::TextMatch)).autorelease();
+    return createNSArray(document->markers().renderedRectsForMarkers(WebCore::DocumentMarkerType::TextMatch)).autorelease();
 }
 
 - (BOOL)_findString:(NSString *)string options:(WebFindOptions)options
@@ -7136,6 +7145,22 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     auto* coreFrame = core([self _frame]);
     return coreFrame && coreFrame->editor().findString(string, coreOptions(options));
 }
+
+#if ENABLE(WRITING_TOOLS)
+
+// Disable Writing Tools in WebKitLegacy.
+
+- (NSInteger /* PlatformWritingToolsBehavior */)writingToolsBehavior
+{
+    return -1; // PlatformWritingToolsBehaviorNone
+}
+
+- (BOOL)providesWritingToolsContextMenu
+{
+    return YES;
+}
+
+#endif
 
 @end
 

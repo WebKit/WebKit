@@ -264,7 +264,7 @@ TEST(UIPasteboardTests, DataTransferGetDataWhenPastingImageAndText)
     auto copiedText = retainPtr(@"Apple Inc.");
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
     [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
-        completionHandler([NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]], nil);
+        completionHandler([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]], nil);
         return nil;
     }];
     [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[copiedText] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
@@ -377,7 +377,7 @@ TEST(UIPasteboardTests, ValidPreferredPresentationSizeForImage)
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
     [itemProvider setPreferredPresentationSize:CGSizeMake(10, 20)];
     [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
-        completionHandler([NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]], nil);
+        completionHandler([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]], nil);
         return nil;
     }];
     [UIPasteboard generalPasteboard].itemProviders = @[ itemProvider.get() ];
@@ -393,7 +393,7 @@ TEST(UIPasteboardTests, InvalidPreferredPresentationSizeForImage)
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
     [itemProvider setPreferredPresentationSize:CGSizeMake(-10, -20)];
     [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
-        completionHandler([NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]], nil);
+        completionHandler([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]], nil);
         return nil;
     }];
     [UIPasteboard generalPasteboard].itemProviders = @[ itemProvider.get() ];
@@ -408,7 +408,7 @@ TEST(UIPasteboardTests, MissingPreferredPresentationSizeForImage)
     auto webView = setUpWebViewForPasteboardTests(@"autofocus-contenteditable");
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
     [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
-        completionHandler([NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]], nil);
+        completionHandler([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]], nil);
         return nil;
     }];
     [UIPasteboard generalPasteboard].itemProviders = @[ itemProvider.get() ];

@@ -42,12 +42,12 @@
 #include "RenderTableCell.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLPresentationElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLPresentationElement);
 
 using namespace MathMLNames;
 
@@ -211,24 +211,24 @@ MathMLElement::MathVariant MathMLPresentationElement::parseMathVariantAttribute(
 {
     // The mathvariant attribute values is case-sensitive.
     static constexpr std::pair<ComparableASCIILiteral, MathVariant> mappings[] = {
-        { "bold", MathVariant::Bold },
-        { "bold-fraktur", MathVariant::BoldFraktur },
-        { "bold-italic", MathVariant::BoldItalic },
-        { "bold-sans-serif", MathVariant::BoldSansSerif },
-        { "bold-script", MathVariant::BoldScript },
-        { "double-struck", MathVariant::DoubleStruck },
-        { "fraktur", MathVariant::Fraktur },
-        { "initial", MathVariant::Initial },
-        { "italic", MathVariant::Italic },
-        { "looped", MathVariant::Looped },
-        { "monospace", MathVariant::Monospace },
-        { "normal", MathVariant::Normal },
-        { "sans-serif", MathVariant::SansSerif },
-        { "sans-serif-bold-italic", MathVariant::SansSerifBoldItalic },
-        { "sans-serif-italic", MathVariant::SansSerifItalic },
-        { "script", MathVariant::Script },
-        { "stretched", MathVariant::Stretched },
-        { "tailed", MathVariant::Tailed },
+        { "bold"_s, MathVariant::Bold },
+        { "bold-fraktur"_s, MathVariant::BoldFraktur },
+        { "bold-italic"_s, MathVariant::BoldItalic },
+        { "bold-sans-serif"_s, MathVariant::BoldSansSerif },
+        { "bold-script"_s, MathVariant::BoldScript },
+        { "double-struck"_s, MathVariant::DoubleStruck },
+        { "fraktur"_s, MathVariant::Fraktur },
+        { "initial"_s, MathVariant::Initial },
+        { "italic"_s, MathVariant::Italic },
+        { "looped"_s, MathVariant::Looped },
+        { "monospace"_s, MathVariant::Monospace },
+        { "normal"_s, MathVariant::Normal },
+        { "sans-serif"_s, MathVariant::SansSerif },
+        { "sans-serif-bold-italic"_s, MathVariant::SansSerifBoldItalic },
+        { "sans-serif-italic"_s, MathVariant::SansSerifItalic },
+        { "script"_s, MathVariant::Script },
+        { "stretched"_s, MathVariant::Stretched },
+        { "tailed"_s, MathVariant::Tailed },
     };
     static constexpr SortedArrayMap map { mappings };
     return map.get(attributeValue, MathVariant::None);

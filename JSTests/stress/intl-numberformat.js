@@ -233,9 +233,7 @@ shouldBe(JSON.stringify(Intl.NumberFormat.supportedLocalesOf([ 'en', 'pt', 'en',
 // Canonicalizes tags.
 shouldBe(
     JSON.stringify(Intl.NumberFormat.supportedLocalesOf('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')),
-    $vm.icuVersion() >= 67
-        ? '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
-        : '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-x-reserved"]'
+    '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
 );
 // Throws on problems with length, get, or toString.
 shouldThrow(() => Intl.NumberFormat.supportedLocalesOf(Object.create(null, { length: { get() { throw new Error(); } } })), Error);
@@ -502,10 +500,8 @@ shouldBe(Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(123456n
     });
     shouldBe(nf.resolvedOptions().maximumFractionDigits, 3);
     shouldBe(nf.resolvedOptions().minimumFractionDigits, 3);
-    if ($vm.icuVersion() >= 64) {
-        shouldBe([`CLF 30.333`, `CLF 30.333`].includes(nf.format(30.333333333333)), true);
-        shouldBe([`CLF 30.000`, `CLF 30.000`].includes(nf.format(30)), true);
-    }
+    shouldBe([`CLF 30.333`, `CLF 30.333`].includes(nf.format(30.333333333333)), true);
+    shouldBe([`CLF 30.000`, `CLF 30.000`].includes(nf.format(30)), true);
 }
 {
     let nf = new Intl.NumberFormat('en', {
@@ -515,11 +511,9 @@ shouldBe(Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(123456n
     });
     shouldBe(nf.resolvedOptions().maximumFractionDigits, 0);
     shouldBe(nf.resolvedOptions().minimumFractionDigits, 0);
-    if ($vm.icuVersion() >= 64) {
-        shouldBe([`CLF 30`, `CLF 30`].includes(nf.format(30.333333333333)), true);
-        shouldBe([`CLF 31`, `CLF 31`].includes(nf.format(30.5)), true);
-        shouldBe([`CLF 30`, `CLF 30`].includes(nf.format(30)), true);
-    }
+    shouldBe([`CLF 30`, `CLF 30`].includes(nf.format(30.333333333333)), true);
+    shouldBe([`CLF 31`, `CLF 31`].includes(nf.format(30.5)), true);
+    shouldBe([`CLF 30`, `CLF 30`].includes(nf.format(30)), true);
 }
 shouldThrow(() => {
     let nf = new Intl.NumberFormat('en', {

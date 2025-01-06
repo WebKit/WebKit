@@ -45,7 +45,7 @@ void EchoAudibility::Update(const RenderBuffer& render_buffer,
 void EchoAudibility::Reset() {
   render_stationarity_.Reset();
   non_zero_render_seen_ = false;
-  render_spectrum_write_prev_ = absl::nullopt;
+  render_spectrum_write_prev_ = std::nullopt;
 }
 
 void EchoAudibility::UpdateRenderStationarityFlags(

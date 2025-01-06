@@ -13,10 +13,10 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "common_video/generic_frame_descriptor/generic_frame_info.h"
 
@@ -37,7 +37,7 @@ class FrameDependenciesCalculator {
 
  private:
   struct BufferUsage {
-    absl::optional<int64_t> frame_id;
+    std::optional<int64_t> frame_id;
     absl::InlinedVector<int64_t, 4> dependencies;
   };
 

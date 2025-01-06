@@ -40,3 +40,11 @@ assert(re1.test("\nes"), "$ should match end of input in modified group");
 var re2 = new RegExp("^(?-m:es$)", "m");
 assert(!re2.test("\nes\ns"), "$ should not match newline in modified group");
 assert(re2.test("\nes"), "$ should match end of input in modified group");
+
+var re3 = /(?-m:^es)$/m;
+assert(!re3.test("e\nes\n"), "^ should not match newline in modified group");
+assert(re3.test("es\n"), "^ should match start of input in modified group");
+
+var re4 = new RegExp("(?-m:^es)$", "m");
+assert(!re4.test("e\nes\n"), "^ should not match newline in modified group");
+assert(re4.test("es\n"), "^ should match start of input in modified group");

@@ -35,8 +35,8 @@
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "XPCEndpoint.h"
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <wtf/EnumTraits.h>
+#import <wtf/RuntimeApplicationChecks.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
@@ -55,7 +55,8 @@ RefPtr<XPCEventHandler> NetworkProcessProxy::xpcEventHandler() const
 
 bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) const
 {
-    if (!m_networkProcess)
+    RefPtr networkProcess = m_networkProcess.get();
+    if (!networkProcess)
         return false;
 
     if (!event || xpc_get_type(event) == XPC_TYPE_ERROR)
@@ -66,14 +67,14 @@ bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) co
         return false;
 
     if (LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName == messageName) {
-        m_networkProcess->m_endpointMessage = event;
+        networkProcess->m_endpointMessage = event;
         for (auto& processPool : WebProcessPool::allProcessPools()) {
             for (Ref process : processPool->processes())
-                m_networkProcess->sendXPCEndpointToProcess(process);
+                networkProcess->sendXPCEndpointToProcess(process);
         }
 #if ENABLE(GPU_PROCESS)
-        if (auto gpuProcess = GPUProcessProxy::singletonIfCreated())
-            m_networkProcess->sendXPCEndpointToProcess(*gpuProcess);
+        if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
+            networkProcess->sendXPCEndpointToProcess(*gpuProcess);
 #endif
     }
 
@@ -96,7 +97,7 @@ bool NetworkProcessProxy::sendXPCEndpointToProcess(AuxiliaryProcessProxy& proces
     auto message = xpcEndpointMessage();
     if (!message)
         return false;
-    auto xpcConnection = process.connection()->xpcConnection();
+    auto xpcConnection = process.connection().xpcConnection();
     RELEASE_ASSERT(xpcConnection);
     xpc_connection_send_message(xpcConnection, message);
     return true;
@@ -133,14 +134,14 @@ void NetworkProcessProxy::setBackupExclusionPeriodForTesting(PAL::SessionID sess
 void NetworkProcessProxy::getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&& completionHandler)
 {
     auto sceneIdentifier = nullString();
-    auto bundleIdentifier = WebCore::applicationBundleIdentifier();
+    auto bundleIdentifier = applicationBundleIdentifier();
     auto page = WebProcessProxy::webPage(webPageProxyIdentifier);
-    if (!page) {
+    if (!page || !page->pageClient()) {
         completionHandler(sceneIdentifier, bundleIdentifier);
         return;
     }
 
-    sceneIdentifier = page->pageClient().sceneID();
+    sceneIdentifier = page->pageClient()->sceneID();
     RetainPtr<WKWebView> webView = page->cocoaView();
     id webViewUIDelegate = [webView UIDelegate];
     if ([webViewUIDelegate respondsToSelector:@selector(_hostSceneIdentifierForWebView:)])

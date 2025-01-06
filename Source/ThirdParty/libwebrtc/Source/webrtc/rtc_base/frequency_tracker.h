@@ -14,7 +14,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/units/frequency.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -46,7 +47,7 @@ class RTC_EXPORT FrequencyTracker {
 
   // Returns rate, moving averaging window as needed.
   // Returns nullopt when rate can't be measured.
-  absl::optional<Frequency> Rate(Timestamp now) const;
+  std::optional<Frequency> Rate(Timestamp now) const;
 
  private:
   RateStatistics impl_;

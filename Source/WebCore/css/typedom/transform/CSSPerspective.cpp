@@ -38,11 +38,11 @@
 #include "CSSUnitValue.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSPerspective);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSPerspective);
 
 static ExceptionOr<CSSPerspectiveValue> checkLength(CSSPerspectiveValue length)
 {
@@ -71,19 +71,19 @@ ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(CSSPerspectiveValue leng
     return adoptRef(*new CSSPerspective(checkedLength.releaseReturnValue()));
 }
 
-ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(CSSFunctionValue& cssFunctionValue)
+ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(Ref<const CSSFunctionValue> cssFunctionValue)
 {
-    if (cssFunctionValue.name() != CSSValuePerspective) {
+    if (cssFunctionValue->name() != CSSValuePerspective) {
         ASSERT_NOT_REACHED();
         return CSSPerspective::create("none"_s);
     }
 
-    if (cssFunctionValue.size() != 1 || !cssFunctionValue.item(0)) {
+    if (cssFunctionValue->size() != 1 || !cssFunctionValue->item(0)) {
         ASSERT_NOT_REACHED();
         return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
     }
 
-    auto keywordOrNumeric = CSSStyleValueFactory::reifyValue(*cssFunctionValue.item(0), std::nullopt);
+    auto keywordOrNumeric = CSSStyleValueFactory::reifyValue(*cssFunctionValue->item(0), std::nullopt);
     if (keywordOrNumeric.hasException())
         return keywordOrNumeric.releaseException();
     auto& keywordOrNumericValue = keywordOrNumeric.returnValue().get();
@@ -101,6 +101,8 @@ CSSPerspective::CSSPerspective(CSSPerspectiveValue length)
     , m_length(WTFMove(length))
 {
 }
+
+CSSPerspective::~CSSPerspective() = default;
 
 ExceptionOr<void> CSSPerspective::setLength(CSSPerspectiveValue length)
 {

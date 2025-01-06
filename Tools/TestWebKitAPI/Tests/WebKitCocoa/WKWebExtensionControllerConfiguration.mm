@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,70 +29,70 @@
 
 #import "TestCocoa.h"
 #import <WebKit/WKFoundation.h>
-#import <WebKit/_WKWebExtensionControllerConfigurationPrivate.h>
+#import <WebKit/WKWebExtensionControllerConfigurationPrivate.h>
 
 namespace TestWebKitAPI {
 
 TEST(WKWebExtensionControllerConfiguration, Initialization)
 {
-    auto *configuration = _WKWebExtensionControllerConfiguration.defaultConfiguration;
+    auto *configuration = WKWebExtensionControllerConfiguration.defaultConfiguration;
 
     EXPECT_TRUE(configuration.persistent);
     EXPECT_NULL(configuration.identifier);
     EXPECT_FALSE(configuration._temporary);
     EXPECT_NOT_NULL(configuration.webViewConfiguration);
-    EXPECT_NE(configuration, _WKWebExtensionControllerConfiguration.defaultConfiguration);
-    EXPECT_FALSE([configuration isEqual:_WKWebExtensionControllerConfiguration.defaultConfiguration]);
-    EXPECT_FALSE([configuration.webViewConfiguration isEqual:_WKWebExtensionControllerConfiguration.defaultConfiguration.webViewConfiguration]);
-    EXPECT_NS_EQUAL(configuration._storageDirectoryPath, _WKWebExtensionControllerConfiguration.defaultConfiguration._storageDirectoryPath);
+    EXPECT_NE(configuration, WKWebExtensionControllerConfiguration.defaultConfiguration);
+    EXPECT_FALSE([configuration isEqual:WKWebExtensionControllerConfiguration.defaultConfiguration]);
+    EXPECT_FALSE([configuration.webViewConfiguration isEqual:WKWebExtensionControllerConfiguration.defaultConfiguration.webViewConfiguration]);
+    EXPECT_NS_EQUAL(configuration._storageDirectoryPath, WKWebExtensionControllerConfiguration.defaultConfiguration._storageDirectoryPath);
     EXPECT_NS_EQUAL(configuration.defaultWebsiteDataStore, WKWebsiteDataStore.defaultDataStore);
 
-    configuration = _WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
+    configuration = WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
 
     EXPECT_FALSE(configuration.persistent);
     EXPECT_NULL(configuration.identifier);
     EXPECT_FALSE(configuration._temporary);
     EXPECT_NOT_NULL(configuration.webViewConfiguration);
     EXPECT_NULL(configuration._storageDirectoryPath);
-    EXPECT_NE(configuration, _WKWebExtensionControllerConfiguration.nonPersistentConfiguration);
-    EXPECT_FALSE([configuration isEqual:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration]);
-    EXPECT_FALSE([configuration.webViewConfiguration isEqual:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration.webViewConfiguration]);
+    EXPECT_NE(configuration, WKWebExtensionControllerConfiguration.nonPersistentConfiguration);
+    EXPECT_FALSE([configuration isEqual:WKWebExtensionControllerConfiguration.nonPersistentConfiguration]);
+    EXPECT_FALSE([configuration.webViewConfiguration isEqual:WKWebExtensionControllerConfiguration.nonPersistentConfiguration.webViewConfiguration]);
     EXPECT_NS_EQUAL(configuration.defaultWebsiteDataStore, WKWebsiteDataStore.defaultDataStore);
 
     auto *identifier = [NSUUID UUID];
-    configuration = [_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
+    configuration = [WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
 
     EXPECT_TRUE(configuration.persistent);
     EXPECT_NS_EQUAL(configuration.identifier, identifier);
     EXPECT_FALSE(configuration._temporary);
     EXPECT_NOT_NULL(configuration.webViewConfiguration);
-    EXPECT_NE(configuration, [_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier]);
-    EXPECT_FALSE([configuration isEqual:[_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier]]);
-    EXPECT_FALSE([configuration.webViewConfiguration isEqual:[_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier].webViewConfiguration]);
-    EXPECT_NS_EQUAL(configuration._storageDirectoryPath, [_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier]._storageDirectoryPath);
+    EXPECT_NE(configuration, [WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier]);
+    EXPECT_FALSE([configuration isEqual:[WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier]]);
+    EXPECT_FALSE([configuration.webViewConfiguration isEqual:[WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier].webViewConfiguration]);
+    EXPECT_NS_EQUAL(configuration._storageDirectoryPath, [WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier]._storageDirectoryPath);
     EXPECT_NS_EQUAL(configuration.defaultWebsiteDataStore, WKWebsiteDataStore.defaultDataStore);
 
-    configuration = _WKWebExtensionControllerConfiguration._temporaryConfiguration;
+    configuration = WKWebExtensionControllerConfiguration._temporaryConfiguration;
 
-    EXPECT_FALSE([configuration isEqual:_WKWebExtensionControllerConfiguration._temporaryConfiguration]);
+    EXPECT_FALSE([configuration isEqual:WKWebExtensionControllerConfiguration._temporaryConfiguration]);
 
     EXPECT_TRUE(configuration.persistent);
     EXPECT_TRUE(configuration._temporary);
     EXPECT_NULL(configuration.identifier);
     EXPECT_NOT_NULL(configuration.webViewConfiguration);
-    EXPECT_NE(configuration, _WKWebExtensionControllerConfiguration._temporaryConfiguration);
-    EXPECT_FALSE([configuration isEqual:_WKWebExtensionControllerConfiguration._temporaryConfiguration]);
-    EXPECT_FALSE([configuration.webViewConfiguration isEqual:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration.webViewConfiguration]);
-    EXPECT_FALSE([configuration._storageDirectoryPath isEqualToString:_WKWebExtensionControllerConfiguration._temporaryConfiguration._storageDirectoryPath]);
+    EXPECT_NE(configuration, WKWebExtensionControllerConfiguration._temporaryConfiguration);
+    EXPECT_FALSE([configuration isEqual:WKWebExtensionControllerConfiguration._temporaryConfiguration]);
+    EXPECT_FALSE([configuration.webViewConfiguration isEqual:WKWebExtensionControllerConfiguration.nonPersistentConfiguration.webViewConfiguration]);
+    EXPECT_FALSE([configuration._storageDirectoryPath isEqualToString:WKWebExtensionControllerConfiguration._temporaryConfiguration._storageDirectoryPath]);
     EXPECT_NS_EQUAL(configuration.defaultWebsiteDataStore, WKWebsiteDataStore.defaultDataStore);
 }
 
 TEST(WKWebExtensionControllerConfiguration, SecureCoding)
 {
     NSError *error = nil;
-    auto *configuration = _WKWebExtensionControllerConfiguration.defaultConfiguration;
+    auto *configuration = WKWebExtensionControllerConfiguration.defaultConfiguration;
     auto *data = [NSKeyedArchiver archivedDataWithRootObject:configuration requiringSecureCoding:YES error:&error];
-    _WKWebExtensionControllerConfiguration *result = [NSKeyedUnarchiver unarchivedObjectOfClass:_WKWebExtensionControllerConfiguration.class fromData:data error:&error];
+    WKWebExtensionControllerConfiguration *result = [NSKeyedUnarchiver unarchivedObjectOfClass:WKWebExtensionControllerConfiguration.class fromData:data error:&error];
 
     EXPECT_NULL(error);
     EXPECT_NOT_NULL(data);
@@ -109,9 +109,9 @@ TEST(WKWebExtensionControllerConfiguration, SecureCoding)
     EXPECT_FALSE([result.webViewConfiguration isEqual:configuration.webViewConfiguration]);
     EXPECT_NS_EQUAL(result.defaultWebsiteDataStore, configuration.defaultWebsiteDataStore);
 
-    configuration = _WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
+    configuration = WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
     data = [NSKeyedArchiver archivedDataWithRootObject:configuration requiringSecureCoding:YES error:&error];
-    result = [NSKeyedUnarchiver unarchivedObjectOfClass:_WKWebExtensionControllerConfiguration.class fromData:data error:&error];
+    result = [NSKeyedUnarchiver unarchivedObjectOfClass:WKWebExtensionControllerConfiguration.class fromData:data error:&error];
 
     EXPECT_NULL(error);
     EXPECT_NOT_NULL(data);
@@ -129,9 +129,9 @@ TEST(WKWebExtensionControllerConfiguration, SecureCoding)
     EXPECT_NS_EQUAL(result.defaultWebsiteDataStore, configuration.defaultWebsiteDataStore);
 
     auto *identifier = [NSUUID UUID];
-    configuration = [_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
+    configuration = [WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
     data = [NSKeyedArchiver archivedDataWithRootObject:configuration requiringSecureCoding:YES error:&error];
-    result = [NSKeyedUnarchiver unarchivedObjectOfClass:_WKWebExtensionControllerConfiguration.class fromData:data error:&error];
+    result = [NSKeyedUnarchiver unarchivedObjectOfClass:WKWebExtensionControllerConfiguration.class fromData:data error:&error];
 
     EXPECT_NULL(error);
     EXPECT_NOT_NULL(data);
@@ -148,9 +148,9 @@ TEST(WKWebExtensionControllerConfiguration, SecureCoding)
     EXPECT_FALSE([result.webViewConfiguration isEqual:configuration.webViewConfiguration]);
     EXPECT_NS_EQUAL(result.defaultWebsiteDataStore, configuration.defaultWebsiteDataStore);
 
-    configuration = _WKWebExtensionControllerConfiguration._temporaryConfiguration;
+    configuration = WKWebExtensionControllerConfiguration._temporaryConfiguration;
     data = [NSKeyedArchiver archivedDataWithRootObject:configuration requiringSecureCoding:YES error:&error];
-    result = [NSKeyedUnarchiver unarchivedObjectOfClass:_WKWebExtensionControllerConfiguration.class fromData:data error:&error];
+    result = [NSKeyedUnarchiver unarchivedObjectOfClass:WKWebExtensionControllerConfiguration.class fromData:data error:&error];
 
     EXPECT_NULL(error);
     EXPECT_NOT_NULL(data);
@@ -170,8 +170,8 @@ TEST(WKWebExtensionControllerConfiguration, SecureCoding)
 
 TEST(WKWebExtensionControllerConfiguration, Copying)
 {
-    auto *configuration = _WKWebExtensionControllerConfiguration.defaultConfiguration;
-    _WKWebExtensionControllerConfiguration *copy = [configuration copy];
+    auto *configuration = WKWebExtensionControllerConfiguration.defaultConfiguration;
+    WKWebExtensionControllerConfiguration *copy = [configuration copy];
 
     EXPECT_TRUE(copy.persistent);
     EXPECT_NULL(copy.identifier);
@@ -184,7 +184,7 @@ TEST(WKWebExtensionControllerConfiguration, Copying)
     EXPECT_FALSE([copy.webViewConfiguration isEqual:configuration.webViewConfiguration]);
     EXPECT_NS_EQUAL(copy.defaultWebsiteDataStore, configuration.defaultWebsiteDataStore);
 
-    configuration = _WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
+    configuration = WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
     copy = [configuration copy];
 
     EXPECT_FALSE(copy.persistent);
@@ -199,7 +199,7 @@ TEST(WKWebExtensionControllerConfiguration, Copying)
     EXPECT_NS_EQUAL(copy.defaultWebsiteDataStore, configuration.defaultWebsiteDataStore);
 
     auto *identifier = [NSUUID UUID];
-    configuration = [_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
+    configuration = [WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
     copy = [configuration copy];
 
     EXPECT_TRUE(copy.persistent);
@@ -213,7 +213,7 @@ TEST(WKWebExtensionControllerConfiguration, Copying)
     EXPECT_FALSE([copy.webViewConfiguration isEqual:configuration.webViewConfiguration]);
     EXPECT_NS_EQUAL(copy.defaultWebsiteDataStore, configuration.defaultWebsiteDataStore);
 
-    configuration = _WKWebExtensionControllerConfiguration._temporaryConfiguration;
+    configuration = WKWebExtensionControllerConfiguration._temporaryConfiguration;
     copy = [configuration copy];
 
     EXPECT_TRUE(copy.persistent);
@@ -230,7 +230,7 @@ TEST(WKWebExtensionControllerConfiguration, Copying)
 
 TEST(WKWebExtensionControllerConfiguration, WebViewConfigurationWithCopyAndCoding)
 {
-    auto *originalConfiguration = _WKWebExtensionControllerConfiguration.defaultConfiguration;
+    auto *originalConfiguration = WKWebExtensionControllerConfiguration.defaultConfiguration;
 
     EXPECT_NOT_NULL(originalConfiguration.webViewConfiguration);
 
@@ -238,7 +238,7 @@ TEST(WKWebExtensionControllerConfiguration, WebViewConfigurationWithCopyAndCodin
     originalConfiguration.webViewConfiguration = newWebViewConfiguration;
     EXPECT_NS_EQUAL(originalConfiguration.webViewConfiguration, newWebViewConfiguration);
 
-    _WKWebExtensionControllerConfiguration *copiedConfiguration = [originalConfiguration copy];
+    WKWebExtensionControllerConfiguration *copiedConfiguration = [originalConfiguration copy];
     EXPECT_NOT_NULL(copiedConfiguration);
     EXPECT_FALSE([copiedConfiguration isEqual:originalConfiguration]);
     EXPECT_FALSE([copiedConfiguration.webViewConfiguration isEqual:newWebViewConfiguration]);
@@ -248,7 +248,7 @@ TEST(WKWebExtensionControllerConfiguration, WebViewConfigurationWithCopyAndCodin
     EXPECT_NULL(error);
     EXPECT_NOT_NULL(encodedData);
 
-    _WKWebExtensionControllerConfiguration *decodedConfiguration = [NSKeyedUnarchiver unarchivedObjectOfClass:_WKWebExtensionControllerConfiguration.class fromData:encodedData error:&error];
+    WKWebExtensionControllerConfiguration *decodedConfiguration = [NSKeyedUnarchiver unarchivedObjectOfClass:WKWebExtensionControllerConfiguration.class fromData:encodedData error:&error];
     EXPECT_NULL(error);
     EXPECT_NOT_NULL(decodedConfiguration);
 
@@ -262,7 +262,7 @@ TEST(WKWebExtensionControllerConfiguration, WebViewConfigurationWithCopyAndCodin
 
 TEST(WKWebExtensionControllerConfiguration, DefaultWebsiteDataStoreWithCopyAndCoding)
 {
-    auto *originalConfiguration = _WKWebExtensionControllerConfiguration.defaultConfiguration;
+    auto *originalConfiguration = WKWebExtensionControllerConfiguration.defaultConfiguration;
 
     EXPECT_NS_EQUAL(originalConfiguration.defaultWebsiteDataStore, WKWebsiteDataStore.defaultDataStore);
 
@@ -270,7 +270,7 @@ TEST(WKWebExtensionControllerConfiguration, DefaultWebsiteDataStoreWithCopyAndCo
     originalConfiguration.defaultWebsiteDataStore = newDataStore;
     EXPECT_NS_EQUAL(originalConfiguration.defaultWebsiteDataStore, newDataStore);
 
-    _WKWebExtensionControllerConfiguration *copiedConfiguration = [originalConfiguration copy];
+    WKWebExtensionControllerConfiguration *copiedConfiguration = [originalConfiguration copy];
     EXPECT_NOT_NULL(copiedConfiguration);
     EXPECT_TRUE([copiedConfiguration isEqual:originalConfiguration]);
     EXPECT_NS_EQUAL(copiedConfiguration.defaultWebsiteDataStore, newDataStore);
@@ -280,7 +280,7 @@ TEST(WKWebExtensionControllerConfiguration, DefaultWebsiteDataStoreWithCopyAndCo
     EXPECT_NULL(error);
     EXPECT_NOT_NULL(encodedData);
 
-    _WKWebExtensionControllerConfiguration *decodedConfiguration = [NSKeyedUnarchiver unarchivedObjectOfClass:_WKWebExtensionControllerConfiguration.class fromData:encodedData error:&error];
+    WKWebExtensionControllerConfiguration *decodedConfiguration = [NSKeyedUnarchiver unarchivedObjectOfClass:WKWebExtensionControllerConfiguration.class fromData:encodedData error:&error];
     EXPECT_NULL(error);
     EXPECT_NOT_NULL(decodedConfiguration);
 

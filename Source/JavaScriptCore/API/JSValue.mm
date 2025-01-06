@@ -46,6 +46,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 #import <wtf/text/StringHash.h>
@@ -57,6 +58,8 @@
 #endif
 
 #if JSC_OBJC_API_ENABLED
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 using JSC::Integrity::audit;
 
@@ -835,7 +838,7 @@ public:
 
 private:
     JSGlobalContextRef m_context;
-    HashMap<JSValueRef, __unsafe_unretained id> m_objectMap;
+    UncheckedKeyHashMap<JSValueRef, __unsafe_unretained id> m_objectMap;
     Vector<Task> m_worklist;
     Vector<JSC::Strong<JSC::Unknown>> m_jsValues;
 };
@@ -1080,7 +1083,7 @@ public:
 
 private:
     JSContext *m_context;
-    HashMap<__unsafe_unretained id, JSValueRef> m_objectMap;
+    UncheckedKeyHashMap<__unsafe_unretained id, JSValueRef> m_objectMap;
     Vector<Task> m_worklist;
     Vector<JSC::Strong<JSC::Unknown>> m_jsValues;
 };
@@ -1247,7 +1250,7 @@ struct StructTagHandler {
     SEL typeToValueSEL;
     SEL valueToTypeSEL;
 };
-typedef HashMap<String, StructTagHandler> StructHandlers;
+typedef UncheckedKeyHashMap<String, StructTagHandler> StructHandlers;
 
 static StructHandlers* createStructHandlerMap()
 {
@@ -1259,10 +1262,9 @@ static StructHandlers* createStructHandlerMap()
     // Step 1: find all valueWith<Foo>:inContext: class methods in JSValue.
     forEachMethodInClass(object_getClass([JSValue class]), ^(Method method){
         SEL selector = method_getName(method);
-        const char* name = sel_getName(selector);
-        size_t nameLength = strlen(name);
+        auto name = span(sel_getName(selector));
         // Check for valueWith<Foo>:context:
-        if (nameLength < valueWithXinContextLength || memcmp(name, "valueWith", 9) || memcmp(name + nameLength - 11, ":inContext:", 11))
+        if (name.size() < valueWithXinContextLength || !spanHasPrefix(name, "valueWith"_span) || !spanHasSuffix(name, ":inContext:"_span))
             return;
         // Check for [ id, SEL, <type>, <contextType> ]
         if (method_getNumberOfArguments(method) != 4)
@@ -1287,10 +1289,9 @@ static StructHandlers* createStructHandlerMap()
     // Step 2: find all to<Foo> instance methods in JSValue.
     forEachMethodInClass([JSValue class], ^(Method method){
         SEL selector = method_getName(method);
-        const char* name = sel_getName(selector);
-        size_t nameLength = strlen(name);
+        auto name = span(sel_getName(selector));
         // Check for to<Foo>
-        if (nameLength < toXLength || memcmp(name, "to", 2))
+        if (name.size() < toXLength || !spanHasPrefix(name, "to"_span))
             return;
         // Check for [ id, SEL ]
         if (method_getNumberOfArguments(method) != 2)
@@ -1303,12 +1304,12 @@ static StructHandlers* createStructHandlerMap()
         StructTagHandler& handler = iter->value;
 
         // check that strlen(<foo>) == strlen(<Foo>)
-        const char* valueWithName = sel_getName(handler.typeToValueSEL);
-        size_t valueWithLength = strlen(valueWithName);
-        if (valueWithLength - valueWithXinContextLength != nameLength - toXLength)
+        auto valueWithName = span(sel_getName(handler.typeToValueSEL));
+        if (valueWithName.size() - valueWithXinContextLength != name.size() - toXLength)
             return;
         // Check that <Foo> == <Foo>
-        if (memcmp(valueWithName + 9, name + 2, nameLength - toXLength - 1))
+        auto lengthToCheck = name.size() - toXLength - 1;
+        if (!equalSpans(valueWithName.subspan(9, lengthToCheck), name.subspan(2, lengthToCheck)))
             return;
         handler.valueToTypeSEL = selector;
     });
@@ -1378,5 +1379,7 @@ NSInvocation *valueToTypeInvocationFor(const char* encodedType)
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

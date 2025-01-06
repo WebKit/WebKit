@@ -31,10 +31,15 @@
 #include "ModelProcessModelPlayer.h"
 #include "ModelProcessModelPlayerManagerProxyMessages.h"
 #include "WebPage.h"
+#include "WebProcess.h"
+#include <WebCore/ModelPlayer.h>
 #include <WebCore/ModelPlayerClient.h>
 #include <WebCore/ModelPlayerIdentifier.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelProcessModelPlayerManager);
 
 Ref<ModelProcessModelPlayerManager> ModelProcessModelPlayerManager::create()
 {
@@ -69,8 +74,9 @@ Ref<ModelProcessModelPlayer> ModelProcessModelPlayerManager::createModelProcessM
     return player;
 }
 
-void ModelProcessModelPlayerManager::deleteModelProcessModelPlayer(WebCore::ModelPlayerIdentifier identifier)
+void ModelProcessModelPlayerManager::deleteModelProcessModelPlayer(WebCore::ModelPlayer& modelPlayer)
 {
+    WebCore::ModelPlayerIdentifier identifier = modelPlayer.identifier();
     m_players.take(identifier);
     modelProcessConnection().connection().send(Messages::ModelProcessModelPlayerManagerProxy::DeleteModelPlayer(identifier), 0);
 }

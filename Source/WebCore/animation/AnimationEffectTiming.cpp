@@ -30,41 +30,120 @@
 
 namespace WebCore {
 
-void AnimationEffectTiming::updateComputedProperties()
+void AnimationEffectTiming::updateComputedProperties(std::optional<WebAnimationTime> timelineDuration, double playbackRate)
 {
-    // 3.8.2. Calculating the active duration
-    // https://drafts.csswg.org/web-animations-1/#calculating-the-active-duration
+    auto specifiedEndTime = [&] {
+        ASSERT(specifiedIterationDuration);
+        auto specifiedRepeatedDuration = *specifiedIterationDuration * iterations;
+        auto specifiedActiveDuration = playbackRate ? specifiedRepeatedDuration / std::abs(playbackRate) : Seconds::infinity();
+        return std::max(specifiedStartDelay + specifiedActiveDuration + specifiedEndDelay, 0_s);
+    };
 
-    // The active duration is calculated as follows:
-    // active duration = iteration duration × iteration count
-    // If either the iteration duration or iteration count are zero, the active duration is zero.
-    if (!iterationDuration || !iterations)
-        activeDuration = 0_s;
-    else
-        activeDuration = iterationDuration * iterations;
+    auto computeIntrinsicIterationDuration = [&] {
+        // https://drafts.csswg.org/web-animations-2/#intrinsic-iteration-duration
+        if (!timelineDuration || !iterations) {
+            // If timeline duration is unresolved or iteration count is zero, return 0
+            intrinsicIterationDuration = timelineDuration ? timelineDuration->matchingZero() : WebAnimationTime::fromMilliseconds(0);
+        } else {
+            // Otherwise, return (100% - start delay - end delay) / iteration count
+            if (std::isinf(iterations))
+                intrinsicIterationDuration = WebAnimationTime::fromPercentage(0);
+            else
+                intrinsicIterationDuration = (*timelineDuration - startDelay - endDelay) / iterations;
+        }
+    };
 
-    // 3.5.3 The active interval
-    // https://drafts.csswg.org/web-animations-1/#end-time
+    // https://drafts.csswg.org/web-animations-2/#normalize-specified-timing
+    if (timelineDuration) {
+        // If timeline duration is resolved:
+        // Follow the procedure to convert a time-based animation to a proportional animation.
+        if (!specifiedIterationDuration) {
+            // If the iteration duration is auto, then perform the following steps.
+            // Set start delay and end delay to 0, as it is not possible to mix time and proportions.
+            startDelay = WebAnimationTime::fromPercentage(0);
+            endDelay = WebAnimationTime::fromPercentage(0);
+            iterationDuration = std::isinf(iterations) ? WebAnimationTime::fromPercentage(0) : *timelineDuration / iterations;
+        } else if (auto totalTime = specifiedEndTime()) {
+            auto sanitize = [&](const WebAnimationTime& time) {
+                if (time.isInfinity() || time.isNaN())
+                    return *timelineDuration;
+                return time;
+            };
+            // Otherwise:
+            // Let total time be equal to end time
+            // Set start delay to be the result of evaluating specified start delay / total time * timeline duration.
+            startDelay = sanitize(*timelineDuration * (specifiedStartDelay / totalTime));
+            // Set iteration duration to be the result of evaluating specified iteration duration / total time * timeline duration.
+            iterationDuration = sanitize(*timelineDuration * (*specifiedIterationDuration / totalTime));
+            // Set end delay to be the result of evaluating specified end delay / total time * timeline duration.
+            endDelay = sanitize(*timelineDuration * (specifiedEndDelay / totalTime));
+        } else {
+            // The spec does not call out this case, filed https://github.com/w3c/csswg-drafts/issues/11276.
+            startDelay = WebAnimationTime::fromPercentage(0);
+            endDelay = WebAnimationTime::fromPercentage(0);
+            iterationDuration = WebAnimationTime::fromPercentage(0);
+        }
+        computeIntrinsicIterationDuration();
+    } else {
+        // Otherwise:
+        // Set start delay = specified start delay
+        startDelay = specifiedStartDelay;
+        // Set end delay = specified end delay
+        endDelay = specifiedEndDelay;
 
-    // The end time of an animation effect is the result of evaluating max(start delay + active duration + end delay, 0).
-    endTime = delay + activeDuration + endDelay;
-    if (endTime < 0_s)
-        endTime = 0_s;
+        computeIntrinsicIterationDuration();
+
+        // If iteration duration is auto:
+        // Set iteration duration = intrinsic iteration duration
+        // Otherwise:
+        // Set iteration duration = specified iteration duration
+        iterationDuration = specifiedIterationDuration ? WebAnimationTime(*specifiedIterationDuration) : intrinsicIterationDuration;
+    }
+
+    // https://drafts.csswg.org/web-animations-2/#repeated-duration
+    // In order to calculate the active duration we first define the repeated duration as follows:
+    //     repeated duration = iteration duration × iteration count
+    // If either the iteration duration or iteration count are zero, the repeated duration is zero.
+    auto repeatedDuration = [&] {
+        if (iterationDuration.isZero() || !iterations)
+            return iterationDuration.matchingZero();
+        return iterationDuration * iterations;
+    };
+
+    // 3.7.2. Calculating the active duration
+    // https://drafts.csswg.org/web-animations-2/#calculating-the-active-duration
+    activeDuration = [&] {
+        if (iterationDuration.time())
+            return repeatedDuration();
+
+        ASSERT(iterationDuration.percentage());
+        if (std::isinf(iterations))
+            return iterationDuration;
+        // The active duration is calculated according to the following steps:
+        // If the playback rate is zero, return Infinity.
+        if (!playbackRate)
+            return iterationDuration.matchingInfinity();
+        // Otherwise, return repeated duration / abs(playback rate).
+        return repeatedDuration() / std::abs(playbackRate);
+    }();
+
+    // https://drafts.csswg.org/web-animations-2/#end-time
+    // The end time of an animation effect is the result of evaluating
+    // max(start time + start delay + active duration + end delay, 0).
+    endTime = std::max(startDelay + activeDuration + endDelay, activeDuration.matchingZero());
 }
 
-BasicEffectTiming AnimationEffectTiming::getBasicTiming(std::optional<Seconds> localTime, double playbackRate) const
+BasicEffectTiming AnimationEffectTiming::getBasicTiming(const ResolutionData& data) const
 {
     // The Web Animations spec introduces a number of animation effect time-related definitions that refer
     // to each other a fair bit, so rather than implementing them as individual methods, it's more efficient
     // to return them all as a single BasicEffectTiming.
 
-    auto phase = [this, localTime, playbackRate]() -> AnimationEffectPhase {
-        // 3.5.5. Animation effect phases and states
-        // https://drafts.csswg.org/web-animations-1/#animation-effect-phases-and-states
+    auto localTime = data.localTime;
 
-        bool animationIsBackwards = playbackRate < 0;
-        auto beforeActiveBoundaryTime = std::max(std::min(delay, endTime), 0_s);
-        auto activeAfterBoundaryTime = std::max(std::min(delay + activeDuration, endTime), 0_s);
+    auto phase = [this, data, localTime]() -> AnimationEffectPhase {
+        // 3.5.5. Animation effect phases and states
+        // https://drafts.csswg.org/web-animations-2/#animation-effect-phases-and-states
 
         // (This should be the last statement, but it's more efficient to cache the local time and return right away if it's not resolved.)
         // Furthermore, it is often convenient to refer to the case when an animation effect is in none of the above phases
@@ -72,18 +151,54 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(std::optional<Seconds> l
         if (!localTime)
             return AnimationEffectPhase::Idle;
 
-        // An animation effect is in the before phase if the animation effect’s local time is not unresolved and
+        auto atProgressTimelineBoundary = [&]() {
+            // https://drafts.csswg.org/web-animations-2/#at-progress-timeline-boundary
+            // If any of the following conditions are true:
+            // - the associated animation's timeline is not a progress-based timeline, or
+            // - the associated animation's timeline duration is unresolved or zero, or
+            // - the animation’s playback rate is zero
+            // return false
+            if (!data.timelineDuration || data.timelineDuration->isZero())
+                return false;
+            if (!data.playbackRate)
+                return false;
+            // Let effective start time be the animation’s start time if resolved, or zero otherwise.
+            auto effectiveStartTime = data.startTime.value_or(WebAnimationTime::fromPercentage(0));
+            // Set unlimited current time based on the first matching condition:
+            // - start time is resolved: (timeline time - start time) × playback rate
+            // - Otherwise: animation's current time
+            ASSERT_IMPLIES(data.startTime, data.timelineTime);
+            auto unlimitedCurrentTime = data.startTime ? (*data.timelineTime - *data.startTime) * data.playbackRate : *data.localTime;
+            // Let effective timeline time be unlimited current time / animation’s playback rate + effective start time
+            auto effectiveTimelineTime = unlimitedCurrentTime / data.playbackRate + effectiveStartTime;
+            // Let effective timeline progress be effective timeline time / timeline duration
+            auto effectiveTimelineProgress = effectiveTimelineTime / *data.timelineDuration;
+            // If effective timeline progress is 0 or 1, return true, otherwise false.
+            return !effectiveTimelineProgress || effectiveTimelineProgress == 1;
+        };
+
+        auto animationIsBackwards = data.playbackRate < 0;
+
+        // https://drafts.csswg.org/web-animations-1/#before-active-boundary-time
+        auto beforeActiveBoundaryTime = std::max(std::min(startDelay, endTime), endTime.matchingZero());
+
+        // An animation effect is in the before phase if the animation effect's local time is not unresolved and
         // either of the following conditions are met:
         //     1. the local time is less than the before-active boundary time, or
-        //     2. the animation direction is ‘backwards’ and the local time is equal to the before-active boundary time.
-        if ((*localTime + timeEpsilon) < beforeActiveBoundaryTime || (animationIsBackwards && std::abs(localTime->microseconds() - beforeActiveBoundaryTime.microseconds()) < timeEpsilon.microseconds()))
+        //     2. the animation direction is "backwards" and the local time is equal to the before-active boundary time
+        //        and not at progress timeline boundary.
+        if (localTime->approximatelyLessThan(beforeActiveBoundaryTime) || (animationIsBackwards && localTime->approximatelyEqualTo(beforeActiveBoundaryTime) && !atProgressTimelineBoundary()))
             return AnimationEffectPhase::Before;
 
-        // An animation effect is in the after phase if the animation effect’s local time is not unresolved and
-        // either of the following conditions are met:
+        // https://drafts.csswg.org/web-animations-1/#active-after-boundary-time
+        auto activeAfterBoundaryTime = std::max(std::min(startDelay + activeDuration, endTime), endTime.matchingZero());
+
+        // An animation effect is in the after phase if the animation effect's local time is not unresolved
+        // and either of the following conditions are met:
         //     1. the local time is greater than the active-after boundary time, or
-        //     2. the animation direction is ‘forwards’ and the local time is equal to the active-after boundary time.
-        if ((*localTime - timeEpsilon) > activeAfterBoundaryTime || (!animationIsBackwards && std::abs(localTime->microseconds() - activeAfterBoundaryTime.microseconds()) < timeEpsilon.microseconds()))
+        //     2. the animation direction is "forwards" and the local time is equal to the active-after boundary time
+        //        and not at progress timeline boundary.
+        if (localTime->approximatelyGreaterThan(activeAfterBoundaryTime) || (!animationIsBackwards && localTime->approximatelyEqualTo(activeAfterBoundaryTime) && !atProgressTimelineBoundary()))
             return AnimationEffectPhase::After;
 
         // An animation effect is in the active phase if the animation effect’s local time is not unresolved and it is not
@@ -92,7 +207,7 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(std::optional<Seconds> l
         return AnimationEffectPhase::Active;
     }();
 
-    auto activeTime = [this, localTime, phase]() -> std::optional<Seconds> {
+    auto activeTime = [this, localTime, phase]() -> std::optional<WebAnimationTime> {
         // 3.8.3.1. Calculating the active time
         // https://drafts.csswg.org/web-animations-1/#calculating-the-active-time
 
@@ -106,14 +221,14 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(std::optional<Seconds> l
             // If the fill mode is backwards or both, return the result of evaluating
             // max(local time - start delay, 0).
             if (fill == FillMode::Backwards || fill == FillMode::Both)
-                return std::max(*localTime - delay, 0_s);
+                return std::max(*localTime - startDelay, localTime->matchingZero());
             // Otherwise, return an unresolved time value.
             return std::nullopt;
         }
 
         // If the animation effect is in the active phase, return the result of evaluating local time - start delay.
         if (phase == AnimationEffectPhase::Active)
-            return *localTime - delay;
+            return *localTime - startDelay;
 
         // If the animation effect is in the after phase, the result depends on the first matching
         // condition from the following,
@@ -121,7 +236,7 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(std::optional<Seconds> l
             // If the fill mode is forwards or both, return the result of evaluating
             // max(min(local time - start delay, active duration), 0).
             if (fill == FillMode::Forwards || fill == FillMode::Both)
-                return std::max(std::min(*localTime - delay, activeDuration), 0_s);
+                return std::max(std::min(*localTime - startDelay, activeDuration), localTime->matchingZero());
             // Otherwise, return an unresolved time value.
             return std::nullopt;
         }
@@ -135,13 +250,13 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(std::optional<Seconds> l
 
 enum ComputedDirection : uint8_t { Forwards, Reverse };
 
-ResolvedEffectTiming AnimationEffectTiming::resolve(std::optional<Seconds> localTime, double playbackRate) const
+ResolvedEffectTiming AnimationEffectTiming::resolve(const ResolutionData& data) const
 {
     // The Web Animations spec introduces a number of animation effect time-related definitions that refer
     // to each other a fair bit, so rather than implementing them as individual methods, it's more efficient
     // to return them all as a single ComputedEffectTiming.
 
-    auto basicEffectTiming = getBasicTiming(localTime, playbackRate);
+    auto basicEffectTiming = getBasicTiming(data);
     auto activeTime = basicEffectTiming.activeTime;
     auto phase = basicEffectTiming.phase;
 
@@ -156,13 +271,13 @@ ResolvedEffectTiming AnimationEffectTiming::resolve(std::optional<Seconds> local
             return std::nullopt;
 
         // 2. Calculate an initial value for overall progress based on the first matching condition from below,
-        auto overallProgress = [&]() -> double {
+        auto overallProgress = [&]() {
             // If the iteration duration is zero, if the animation effect is in the before phase, let overall progress be zero,
             // otherwise, let it be equal to the iteration count.
-            if (!iterationDuration)
+            if (iterationDuration.isZero())
                 return phase == AnimationEffectPhase::Before ? 0 : iterations;
             // Otherwise, let overall progress be the result of calculating active time / iteration duration.
-            return secondsToWebAnimationsAPITime(*activeTime) / secondsToWebAnimationsAPITime(iterationDuration);
+            return *activeTime / iterationDuration;
         }();
 
         // 3. Return the result of calculating overall progress + iteration start.
@@ -193,7 +308,7 @@ ResolvedEffectTiming AnimationEffectTiming::resolve(std::optional<Seconds> local
         // the active time is equal to the active duration, and
         // the iteration count is not equal to zero.
         // let the simple iteration progress be 1.0.
-        if (!simpleIterationProgress && (phase == AnimationEffectPhase::Active || phase == AnimationEffectPhase::After) && std::abs(activeTime->microseconds() - activeDuration.microseconds()) < timeEpsilon.microseconds() && iterations)
+        if (!simpleIterationProgress && (phase == AnimationEffectPhase::Active || phase == AnimationEffectPhase::After) && activeTime->approximatelyEqualTo(activeDuration) && iterations)
             return 1;
 
         return simpleIterationProgress;
@@ -268,37 +383,42 @@ ResolvedEffectTiming AnimationEffectTiming::resolve(std::optional<Seconds> local
         return 1 - *simpleIterationProgress;
     }();
 
-    auto transformedProgress = [this, directedProgress, currentDirection, phase]() -> std::optional<double> {
+    auto [transformedProgress, before] = [this, directedProgress, currentDirection, phase]() -> std::pair<std::optional<double>, TimingFunction::Before> {
         // 3.10.1. Calculating the transformed progress
         // https://drafts.csswg.org/web-animations-1/#calculating-the-transformed-progress
+        auto before = TimingFunction::Before::No;
 
         // The transformed progress is calculated from the directed progress using the following steps:
         //
         // 1. If the directed progress is unresolved, return unresolved.
         if (!directedProgress)
-            return std::nullopt;
+            return { std::nullopt, before };
 
-        if (iterationDuration) {
-            bool before = false;
+        if (!iterationDuration.isZero()) {
             // 2. Calculate the value of the before flag as follows:
-            if (is<StepsTimingFunction>(timingFunction)) {
-                // 1. Determine the current direction using the procedure defined in §3.9.1 Calculating the directed progress.
-                // 2. If the current direction is forwards, let going forwards be true, otherwise it is false.
-                bool goingForwards = currentDirection == ComputedDirection::Forwards;
-                // 3. The before flag is set if the animation effect is in the before phase and going forwards is true;
-                //    or if the animation effect is in the after phase and going forwards is false.
-                before = (phase == AnimationEffectPhase::Before && goingForwards) || (phase == AnimationEffectPhase::After && !goingForwards);
-            }
+            // 1. Determine the current direction using the procedure defined in §3.9.1 Calculating the directed progress.
+            // 2. If the current direction is forwards, let going forwards be true, otherwise it is false.
+            bool goingForwards = currentDirection == ComputedDirection::Forwards;
+            // 3. The before flag is set if the animation effect is in the before phase and going forwards is true;
+            //    or if the animation effect is in the after phase and going forwards is false.
+            if ((phase == AnimationEffectPhase::Before && goingForwards) || (phase == AnimationEffectPhase::After && !goingForwards))
+                before = TimingFunction::Before::Yes;
 
             // 3. Return the result of evaluating the animation effect’s timing function passing directed progress as the
             //    input progress value and before flag as the before flag.
-            return timingFunction->transformProgress(*directedProgress, iterationDuration.seconds(), before);
+            auto transformProgressDuration = [&]() {
+                if (auto time = iterationDuration.time())
+                    return time->seconds();
+                return 1.0;
+            };
+
+            return { timingFunction->transformProgress(*directedProgress, transformProgressDuration(), before), before };
         }
 
-        return *directedProgress;
+        return { *directedProgress, before };
     }();
 
-    return { currentIteration, phase, transformedProgress, simpleIterationProgress };
+    return { currentIteration, phase, transformedProgress, simpleIterationProgress, before };
 }
 
 } // namespace WebCore

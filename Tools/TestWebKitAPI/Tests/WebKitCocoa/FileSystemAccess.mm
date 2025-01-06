@@ -279,7 +279,7 @@ TEST(FileSystemAccess, MigrateToNewStorageDirectory)
     [fileManager createFileAtPath:oldFilePath contents:nil attributes:nil];
     EXPECT_TRUE([fileManager fileExistsAtPath:oldFilePath]);
 
-    NSString *resourceSaltPath = [[NSBundle mainBundle] URLForResource:@"file-system-access" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"].path;
+    NSString *resourceSaltPath = [NSBundle.test_resourcesBundle URLForResource:@"file-system-access" withExtension:@"salt"].path;
     NSString *oldSaltPath = [oldStorageDirectory stringByAppendingPathComponent:@"salt"];
     [fileManager copyItemAtPath:resourceSaltPath toPath:oldSaltPath error:nil];
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:oldSaltPath]);
@@ -422,37 +422,37 @@ TEST(FileSystemAccess, RemoveDataByModificationTime)
     TestWebKitAPI::Util::run(&done);
 }
 
-static NSString *mainFrameString = @"<script> \
-    function postResult(event) \
-    { \
-        window.webkit.messageHandlers.testHandler.postMessage(event.data); \
-    } \
-    addEventListener('message', postResult, false); \
-    </script> \
-    <iframe src='https://127.0.0.1:9091/'>";
-
-static constexpr auto frameBytes = R"TESTRESOURCE(
-<script>
-function postMessage(message)
-{
-    parent.postMessage(message, '*');
-}
-async function open()
-{
-    try {
-        var rootHandle = await navigator.storage.getDirectory();
-        var fileHandle = await rootHandle.getFileHandle('file-system-access.txt', { 'create' : true });
-        postMessage('file is opened');
-    } catch(err) {
-        postMessage('error: ' + err.name + ' - ' + err.message);
-    }
-}
-open();
-</script>
-)TESTRESOURCE"_s;
-
 TEST(FileSystemAccess, FetchDataForThirdParty)
 {
+    static NSString *mainFrameString = @"<script> \
+        function postResult(event) \
+        { \
+            window.webkit.messageHandlers.testHandler.postMessage(event.data); \
+        } \
+        addEventListener('message', postResult, false); \
+        </script> \
+        <iframe src='https://127.0.0.1:9091/'>";
+
+    static constexpr auto frameBytes = R"TESTRESOURCE(
+    <script>
+    function postMessage(message)
+    {
+        parent.postMessage(message, '*');
+    }
+    async function open()
+    {
+        try {
+            var rootHandle = await navigator.storage.getDirectory();
+            var fileHandle = await rootHandle.getFileHandle('file-system-access.txt', { 'create' : true });
+            postMessage('file is opened');
+        } catch(err) {
+            postMessage('error: ' + err.name + ' - ' + err.message);
+        }
+    }
+    open();
+    </script>
+    )TESTRESOURCE"_s;
+
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { frameBytes } },
     }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9091);

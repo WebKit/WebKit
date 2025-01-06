@@ -1,4 +1,7 @@
 set(WTF_PUBLIC_HEADERS
+    AbstractRefCounted.h
+    AbstractRefCountedAndCanMakeWeakPtr.h
+    AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h
     ASCIICType.h
     AccessibleAddress.h
     AggregateLogger.h
@@ -44,6 +47,8 @@ set(WTF_PUBLIC_HEADERS
     CompactRefPtr.h
     CompactRefPtrTuple.h
     CompactUniquePtrTuple.h
+    CompactVariant.h
+    CompactVariantOperations.h
     CompilationThread.h
     Compiler.h
     CompletionHandler.h
@@ -87,6 +92,7 @@ set(WTF_PUBLIC_HEADERS
     FixedVector.h
     FixedWidthDouble.h
     FlipBytes.h
+    Float16.h
     ForbidHeapAllocation.h
     Forward.h
     Function.h
@@ -112,6 +118,7 @@ set(WTF_PUBLIC_HEADERS
     HexNumber.h
     Identified.h
     Indenter.h
+    IndexedRange.h
     IndexKeyType.h
     IndexMap.h
     IndexSet.h
@@ -159,6 +166,7 @@ set(WTF_PUBLIC_HEADERS
     MainThreadData.h
     MainThreadDispatcher.h
     MallocPtr.h
+    MallocSpan.h
     Markable.h
     MathExtras.h
     MediaTime.h
@@ -167,6 +175,7 @@ set(WTF_PUBLIC_HEADERS
     MessageQueue.h
     MetaAllocator.h
     MetaAllocatorHandle.h
+    Mmap.h
     MonotonicTime.h
     NakedPtr.h
     NakedRef.h
@@ -188,6 +197,7 @@ set(WTF_PUBLIC_HEADERS
     OptionSet.h
     OptionSetHash.h
     OrderMaker.h
+    OverflowPolicy.h
     Packed.h
     PackedRef.h
     PackedRefPtr.h
@@ -208,7 +218,7 @@ set(WTF_PUBLIC_HEADERS
     PlatformEnableCocoa.h
     PlatformEnableGlib.h
     PlatformEnablePlayStation.h
-    PlatformEnableWinCairo.h
+    PlatformEnableWin.h
     PlatformHave.h
     PlatformLegacy.h
     PlatformOS.h
@@ -216,6 +226,7 @@ set(WTF_PUBLIC_HEADERS
     PlatformUse.h
     PointerComparison.h
     PointerPreparations.h
+    PreciseSum.h
     PrintStream.h
     PriorityQueue.h
     ProcessID.h
@@ -235,25 +246,31 @@ set(WTF_PUBLIC_HEADERS
     RedBlackTree.h
     Ref.h
     RefCounted.h
+    RefCountedAndCanMakeWeakPtr.h
     RefCountedFixedVector.h
     RefCountedLeakCounter.h
     RefCounter.h
     RefPtr.h
+    RefTrackerMixin.h
     RefVector.h
     ReferenceWrapperVector.h
     ResourceUsage.h
     RetainPtr.h
+    RetainReleaseSwift.h
     RobinHoodHashMap.h
     RobinHoodHashSet.h
     RobinHoodHashTable.h
     RunLoop.h
+    RuntimeApplicationChecks.h
     SHA1.h
     SIMDHelpers.h
+    SIMDUTF.h
     SafeStrerror.h
     SaturatedArithmetic.h
     SchedulePair.h
     Scope.h
     ScopedLambda.h
+    ScopedPrintStream.h
     Seconds.h
     SegmentedVector.h
     SentinelLinkedList.h
@@ -284,6 +301,7 @@ set(WTF_PUBLIC_HEADERS
     StdLibExtras.h
     StdList.h
     StdMap.h
+    StdMultimap.h
     StdSet.h
     StdUnorderedMap.h
     StdUnorderedSet.h
@@ -298,14 +316,15 @@ set(WTF_PUBLIC_HEADERS
     SystemMalloc.h
     SystemTracing.h
     TZoneMalloc.h
-    TZoneMallocInitialization.h
     TZoneMallocInlines.h
     TaggedArrayStoragePtr.h
+    TaggedPtr.h
     ThreadAssertions.h
     ThreadGroup.h
     ThreadMessage.h
     ThreadSafetyAnalysis.h
     ThreadSafeRefCounted.h
+    ThreadSafeRefCountedWithSuppressingSaferCPPChecking.h
     ThreadSafeWeakHashSet.h
     ThreadSafeWeakPtr.h
     ThreadSanitizerSupport.h
@@ -335,6 +354,9 @@ set(WTF_PUBLIC_HEADERS
     UniqueRefVector.h
     VMTags.h
     ValueCheck.h
+    VariantExtras.h
+    VariantList.h
+    VariantListOperations.h
     Vector.h
     VectorHash.h
     VectorTraits.h
@@ -357,6 +379,7 @@ set(WTF_PUBLIC_HEADERS
     WordLock.h
     WorkQueue.h
     WorkerPool.h
+    ZippedRange.h
     dtoa.h
 
     dragonbox/dragonbox.h
@@ -401,6 +424,9 @@ set(WTF_PUBLIC_HEADERS
     simde/simde.h
     simde/arm/neon.h
     simde/arm/sve.h
+    simde/wasm/simd128.h
+
+    simdutf/simdutf_impl.h
 
     text/ASCIIFastPath.h
     text/ASCIILiteral.h
@@ -420,11 +446,14 @@ set(WTF_PUBLIC_HEADERS
     text/IntegerToStringConversion.h
     text/LChar.h
     text/LineEnding.h
+    text/MakeString.h
     text/NullTextBreakIterator.h
     text/OrdinalNumber.h
+    text/ParsingUtilities.h
     text/StringBuffer.h
     text/StringBuilder.h
     text/StringBuilderInternals.h
+    text/StringBuilderJSON.h
     text/StringCommon.h
     text/StringConcatenate.h
     text/StringConcatenateNumbers.h
@@ -434,7 +463,6 @@ set(WTF_PUBLIC_HEADERS
     text/SuperFastHash.h
     text/WYHash.h
     text/StringImpl.h
-    text/StringOperators.h
     text/StringParsingBuffer.h
     text/StringSearch.h
     text/StringToIntegerConversion.h
@@ -450,6 +478,7 @@ set(WTF_PUBLIC_HEADERS
     text/WTFString.h
 
     text/icu/TextBreakIteratorICU.h
+    text/icu/UnicodeExtras.h
     text/icu/UTextProvider.h
     text/icu/UTextProviderLatin1.h
     text/icu/UTextProviderUTF16.h
@@ -522,6 +551,7 @@ set(WTF_SOURCES
     ParallelHelperPool.cpp
     ParallelJobsGeneric.cpp
     ParkingLot.cpp
+    PreciseSum.cpp
     PrintStream.cpp
     ProcessPrivilege.cpp
     RAMSize.cpp
@@ -529,8 +559,11 @@ set(WTF_SOURCES
     ReadWriteLock.cpp
     RefCounted.cpp
     RefCountedLeakCounter.cpp
+    RefTrackerMixin.cpp
     RunLoop.cpp
+    RuntimeApplicationChecks.cpp
     SHA1.cpp
+    SIMDUTF.cpp
     SafeStrerror.cpp
     Seconds.cpp
     SegmentedVector.cpp
@@ -600,6 +633,7 @@ set(WTF_SOURCES
     text/TextStream.cpp
     text/WTFString.cpp
 
+    text/icu/UnicodeExtras.cpp
     text/icu/UTextProvider.cpp
     text/icu/UTextProviderLatin1.cpp
     text/icu/UTextProviderUTF16.cpp
@@ -687,6 +721,7 @@ set(WTF_PRIVATE_INCLUDE_DIRECTORIES
     "${WTF_DIR}/wtf/dtoa"
     "${WTF_DIR}/wtf/fast_float"
     "${WTF_DIR}/wtf/persistence"
+    "${WTF_DIR}/wtf/simdutf"
     "${WTF_DIR}/wtf/text"
     "${WTF_DIR}/wtf/text/icu"
     "${WTF_DIR}/wtf/threads"
@@ -721,6 +756,13 @@ set(WTF_INTERFACE_DEPENDENCIES WTF_CopyHeaders)
 WEBKIT_FRAMEWORK_DECLARE(WTF)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
+if (PORT STREQUAL GTK OR PORT STREQUAL WPE)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(WTF
+        -Wunsafe-buffer-usage
+        -fsafe-buffer-usage-suggestions
+    )
+endif ()
+
 WEBKIT_COPY_FILES(WTF_CopyHeaders
     DESTINATION ${WTF_FRAMEWORK_HEADERS_DIR}/wtf
     FILES ${WTF_PUBLIC_HEADERS}
@@ -731,6 +773,14 @@ WEBKIT_FRAMEWORK(WTF)
 if (MSVC)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
+else ()
+    # Prior to GCC 13, GCC has a bug that warning suppression pragma cannot be effective on preprocessor itself.
+    # We need to disable preprocessor related warnings manually here.
+    # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53431
+    set_source_files_properties(
+        SIMDUTF.cpp
+        text/Base64.cpp
+        PROPERTIES COMPILE_FLAGS "-Wno-error=undef -Wno-undef")
 endif ()
 
 file(MAKE_DIRECTORY ${WTF_SCRIPTS_DIR})

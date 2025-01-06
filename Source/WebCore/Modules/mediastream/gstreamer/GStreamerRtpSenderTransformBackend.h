@@ -25,13 +25,14 @@
 #include "GStreamerRtpTransformBackend.h"
 #include "GStreamerWebRTCUtils.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class GStreamerSenderTransformer;
 
 class GStreamerRtpSenderTransformBackend final : public GStreamerRtpTransformBackend {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerRtpSenderTransformBackend);
 public:
     static Ref<GStreamerRtpSenderTransformBackend> create(const GRefPtr<GstWebRTCRTPSender>& sender) { return adoptRef(*new GStreamerRtpSenderTransformBackend(sender)); }
     ~GStreamerRtpSenderTransformBackend();

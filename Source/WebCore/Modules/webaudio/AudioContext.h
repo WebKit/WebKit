@@ -49,11 +49,14 @@ class AudioContext final
     , public MediaProducer
     , public MediaCanStartListener
     , private PlatformMediaSessionClient {
-    WTF_MAKE_ISO_ALLOCATED(AudioContext);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioContext);
 public:
     // Create an AudioContext for rendering to the audio hardware.
     static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&&);
     ~AudioContext();
+
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::ref(); }
 
     WEBCORE_EXPORT static void setDefaultSampleRateForTesting(std::optional<float>);
 
@@ -104,6 +107,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
+    uint64_t logIdentifier() const final { return BaseAudioContext::logIdentifier(); }
 #endif
 
     void constructCommon();
@@ -133,10 +137,12 @@ private:
     bool isSuspended() const final;
     bool isPlaying() const final;
     bool isAudible() const final;
-    MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
+    std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const final;
     bool isNowPlayingEligible() const final;
     std::optional<NowPlayingInfo> nowPlayingInfo() const final;
     WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlatformMediaSession::PlaybackControlsPurpose) final;
+    void isActiveNowPlayingSessionChanged() final;
+    ProcessID presentingApplicationPID() const final;
 
     // MediaCanStartListener.
     void mediaCanStart(Document&) final;

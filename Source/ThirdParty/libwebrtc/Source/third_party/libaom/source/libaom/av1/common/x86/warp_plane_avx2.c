@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -74,7 +74,7 @@ DECLARE_ALIGNED(32, static const uint8_t,
                                       10, 10, 12, 12, 14, 5,  7,  7,  9,  9, 11,
                                       11, 13, 6,  8,  8,  10, 10, 12, 12, 14 };
 
-static INLINE void filter_src_pixels_avx2(const __m256i src, __m256i *horz_out,
+static inline void filter_src_pixels_avx2(const __m256i src, __m256i *horz_out,
                                           __m256i *coeff,
                                           const __m256i *shuffle_src,
                                           const __m256i *round_const,
@@ -96,7 +96,7 @@ static INLINE void filter_src_pixels_avx2(const __m256i src, __m256i *horz_out,
   horz_out[row] = _mm256_srl_epi16(res, *shift);
 }
 
-static INLINE void prepare_horizontal_filter_coeff_avx2(int alpha, int beta,
+static inline void prepare_horizontal_filter_coeff_avx2(int alpha, int beta,
                                                         int sx,
                                                         __m256i *coeff) {
   __m128i tmp_0 = _mm_loadl_epi64(
@@ -191,7 +191,7 @@ static INLINE void prepare_horizontal_filter_coeff_avx2(int alpha, int beta,
   coeff[3] = _mm256_unpackhi_epi64(res_1, res_3);
 }
 
-static INLINE void prepare_horizontal_filter_coeff_beta0_avx2(int alpha, int sx,
+static inline void prepare_horizontal_filter_coeff_beta0_avx2(int alpha, int sx,
                                                               __m256i *coeff) {
   __m128i tmp_0 = _mm_loadl_epi64(
       (__m128i *)&av1_filter_8bit[(sx + 0 * alpha) >> WARPEDDIFF_PREC_BITS]);
@@ -231,7 +231,7 @@ static INLINE void prepare_horizontal_filter_coeff_beta0_avx2(int alpha, int sx,
   coeff[3] = _mm256_unpackhi_epi64(res_1, res_3);
 }
 
-static INLINE void prepare_horizontal_filter_coeff_alpha0_avx2(int beta, int sx,
+static inline void prepare_horizontal_filter_coeff_alpha0_avx2(int beta, int sx,
                                                                __m256i *coeff) {
   const __m128i tmp_0 =
       _mm_loadl_epi64((__m128i *)&av1_filter_8bit[sx >> WARPEDDIFF_PREC_BITS]);
@@ -251,7 +251,7 @@ static INLINE void prepare_horizontal_filter_coeff_alpha0_avx2(int beta, int sx,
       res_0, _mm256_load_si256((__m256i *)shuffle_alpha0_mask67_avx2));
 }
 
-static INLINE void horizontal_filter_avx2(const __m256i src, __m256i *horz_out,
+static inline void horizontal_filter_avx2(const __m256i src, __m256i *horz_out,
                                           int sx, int alpha, int beta, int row,
                                           const __m256i *shuffle_src,
                                           const __m256i *round_const,
@@ -261,7 +261,7 @@ static INLINE void horizontal_filter_avx2(const __m256i src, __m256i *horz_out,
   filter_src_pixels_avx2(src, horz_out, coeff, shuffle_src, round_const, shift,
                          row);
 }
-static INLINE void prepare_horizontal_filter_coeff(int alpha, int sx,
+static inline void prepare_horizontal_filter_coeff(int alpha, int sx,
                                                    __m256i *coeff) {
   const __m128i tmp_0 = _mm_loadl_epi64(
       (__m128i *)&av1_filter_8bit[(sx + 0 * alpha) >> WARPEDDIFF_PREC_BITS]);
@@ -296,7 +296,7 @@ static INLINE void prepare_horizontal_filter_coeff(int alpha, int sx,
   coeff[3] = _mm256_castsi128_si256(_mm_unpackhi_epi64(tmp_13, tmp_15));
 }
 
-static INLINE void warp_horizontal_filter_avx2(
+static inline void warp_horizontal_filter_avx2(
     const uint8_t *ref, __m256i *horz_out, int stride, int32_t ix4, int32_t iy4,
     int32_t sx4, int alpha, int beta, int p_height, int height, int i,
     const __m256i *round_const, const __m128i *shift,
@@ -329,7 +329,7 @@ static INLINE void warp_horizontal_filter_avx2(
                          shift, row);
 }
 
-static INLINE void warp_horizontal_filter_alpha0_avx2(
+static inline void warp_horizontal_filter_alpha0_avx2(
     const uint8_t *ref, __m256i *horz_out, int stride, int32_t ix4, int32_t iy4,
     int32_t sx4, int alpha, int beta, int p_height, int height, int i,
     const __m256i *round_const, const __m128i *shift,
@@ -364,7 +364,7 @@ static INLINE void warp_horizontal_filter_alpha0_avx2(
                          shift, row);
 }
 
-static INLINE void warp_horizontal_filter_beta0_avx2(
+static inline void warp_horizontal_filter_beta0_avx2(
     const uint8_t *ref, __m256i *horz_out, int stride, int32_t ix4, int32_t iy4,
     int32_t sx4, int alpha, int beta, int p_height, int height, int i,
     const __m256i *round_const, const __m128i *shift,
@@ -396,7 +396,7 @@ static INLINE void warp_horizontal_filter_beta0_avx2(
                          shift, row);
 }
 
-static INLINE void warp_horizontal_filter_alpha0_beta0_avx2(
+static inline void warp_horizontal_filter_alpha0_beta0_avx2(
     const uint8_t *ref, __m256i *horz_out, int stride, int32_t ix4, int32_t iy4,
     int32_t sx4, int alpha, int beta, int p_height, int height, int i,
     const __m256i *round_const, const __m128i *shift,
@@ -428,7 +428,7 @@ static INLINE void warp_horizontal_filter_alpha0_beta0_avx2(
                          shift, row);
 }
 
-static INLINE void unpack_weights_and_set_round_const_avx2(
+static inline void unpack_weights_and_set_round_const_avx2(
     ConvolveParams *conv_params, const int round_bits, const int offset_bits,
     __m256i *res_sub_const, __m256i *round_bits_const, __m256i *wt) {
   *res_sub_const =
@@ -443,7 +443,7 @@ static INLINE void unpack_weights_and_set_round_const_avx2(
   *wt = _mm256_unpacklo_epi16(wt0, wt1);
 }
 
-static INLINE void prepare_vertical_filter_coeffs_avx2(int gamma, int delta,
+static inline void prepare_vertical_filter_coeffs_avx2(int gamma, int delta,
                                                        int sy,
                                                        __m256i *coeffs) {
   __m128i filt_00 =
@@ -537,7 +537,7 @@ static INLINE void prepare_vertical_filter_coeffs_avx2(int gamma, int delta,
   coeffs[7] = _mm256_unpackhi_epi64(res_2, res_3);
 }
 
-static INLINE void prepare_vertical_filter_coeffs_delta0_avx2(int gamma, int sy,
+static inline void prepare_vertical_filter_coeffs_delta0_avx2(int gamma, int sy,
                                                               __m256i *coeffs) {
   __m128i filt_00 =
       _mm_loadu_si128((__m128i *)(av1_warped_filter +
@@ -596,7 +596,7 @@ static INLINE void prepare_vertical_filter_coeffs_delta0_avx2(int gamma, int sy,
   coeffs[7] = _mm256_unpackhi_epi64(res_2, res_3);
 }
 
-static INLINE void prepare_vertical_filter_coeffs_gamma0_avx2(int delta, int sy,
+static inline void prepare_vertical_filter_coeffs_gamma0_avx2(int delta, int sy,
                                                               __m256i *coeffs) {
   const __m128i filt_0 = _mm_loadu_si128(
       (__m128i *)(av1_warped_filter + (sy >> WARPEDDIFF_PREC_BITS)));
@@ -621,7 +621,7 @@ static INLINE void prepare_vertical_filter_coeffs_gamma0_avx2(int delta, int sy,
   coeffs[7] = coeffs[3];
 }
 
-static INLINE void filter_src_pixels_vertical_avx2(__m256i *horz_out,
+static inline void filter_src_pixels_vertical_avx2(__m256i *horz_out,
                                                    __m256i *src,
                                                    __m256i *coeffs,
                                                    __m256i *res_lo,
@@ -655,7 +655,7 @@ static INLINE void filter_src_pixels_vertical_avx2(__m256i *horz_out,
   *res_hi = _mm256_unpackhi_epi32(res_even, res_odd);
 }
 
-static INLINE void store_vertical_filter_output_avx2(
+static inline void store_vertical_filter_output_avx2(
     const __m256i *res_lo, const __m256i *res_hi, const __m256i *res_add_const,
     const __m256i *wt, const __m256i *res_sub_const,
     const __m256i *round_bits_const, uint8_t *pred, ConvolveParams *conv_params,
@@ -776,7 +776,7 @@ static INLINE void store_vertical_filter_output_avx2(
   }
 }
 
-static INLINE void warp_vertical_filter_avx2(
+static inline void warp_vertical_filter_avx2(
     uint8_t *pred, __m256i *horz_out, ConvolveParams *conv_params,
     int16_t gamma, int16_t delta, int p_height, int p_stride, int p_width,
     int i, int j, int sy4, const int reduce_bits_vert,
@@ -825,7 +825,7 @@ static INLINE void warp_vertical_filter_avx2(
   }
 }
 
-static INLINE void warp_vertical_filter_gamma0_avx2(
+static inline void warp_vertical_filter_gamma0_avx2(
     uint8_t *pred, __m256i *horz_out, ConvolveParams *conv_params,
     int16_t gamma, int16_t delta, int p_height, int p_stride, int p_width,
     int i, int j, int sy4, const int reduce_bits_vert,
@@ -874,7 +874,7 @@ static INLINE void warp_vertical_filter_gamma0_avx2(
   }
 }
 
-static INLINE void warp_vertical_filter_delta0_avx2(
+static inline void warp_vertical_filter_delta0_avx2(
     uint8_t *pred, __m256i *horz_out, ConvolveParams *conv_params,
     int16_t gamma, int16_t delta, int p_height, int p_stride, int p_width,
     int i, int j, int sy4, const int reduce_bits_vert,
@@ -922,7 +922,7 @@ static INLINE void warp_vertical_filter_delta0_avx2(
   }
 }
 
-static INLINE void warp_vertical_filter_gamma0_delta0_avx2(
+static inline void warp_vertical_filter_gamma0_delta0_avx2(
     uint8_t *pred, __m256i *horz_out, ConvolveParams *conv_params,
     int16_t gamma, int16_t delta, int p_height, int p_stride, int p_width,
     int i, int j, int sy4, const int reduce_bits_vert,
@@ -970,7 +970,7 @@ static INLINE void warp_vertical_filter_gamma0_delta0_avx2(
   }
 }
 
-static INLINE void prepare_warp_vertical_filter_avx2(
+static inline void prepare_warp_vertical_filter_avx2(
     uint8_t *pred, __m256i *horz_out, ConvolveParams *conv_params,
     int16_t gamma, int16_t delta, int p_height, int p_stride, int p_width,
     int i, int j, int sy4, const int reduce_bits_vert,
@@ -999,7 +999,7 @@ static INLINE void prepare_warp_vertical_filter_avx2(
                               res_sub_const, round_bits_const, wt);
 }
 
-static INLINE void prepare_warp_horizontal_filter_avx2(
+static inline void prepare_warp_horizontal_filter_avx2(
     const uint8_t *ref, __m256i *horz_out, int stride, int32_t ix4, int32_t iy4,
     int32_t sx4, int alpha, int beta, int p_height, int height, int i,
     const __m256i *round_const, const __m128i *shift,

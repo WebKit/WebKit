@@ -30,6 +30,7 @@
 #include "LocalDOMWindowProperty.h"
 #include "SpeechSynthesis.h"
 #include "Supplementable.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,7 +38,7 @@ class DOMWindow;
 class LocalDOMWindow;
 
 class LocalDOMWindowSpeechSynthesis : public Supplement<LocalDOMWindow>, public LocalDOMWindowProperty {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LocalDOMWindowSpeechSynthesis, WEBCORE_EXPORT);
 public:
     explicit LocalDOMWindowSpeechSynthesis(DOMWindow*);
     virtual ~LocalDOMWindowSpeechSynthesis();

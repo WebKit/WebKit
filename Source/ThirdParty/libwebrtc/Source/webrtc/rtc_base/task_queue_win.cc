@@ -26,12 +26,12 @@
 #include <algorithm>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <queue>
 #include <utility>
 
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -210,7 +210,7 @@ TaskQueueWin::TaskQueueWin(absl::string_view queue_name,
 
 void TaskQueueWin::Delete() {
   RTC_DCHECK(!IsCurrent());
-  RTC_CHECK(thread_.GetHandle() != absl::nullopt);
+  RTC_CHECK(thread_.GetHandle() != std::nullopt);
   while (
       !::PostThreadMessage(GetThreadId(*thread_.GetHandle()), WM_QUIT, 0, 0)) {
     RTC_CHECK_EQ(ERROR_NOT_ENOUGH_QUOTA, ::GetLastError());
@@ -239,7 +239,7 @@ void TaskQueueWin::PostDelayedTaskImpl(absl::AnyInvocable<void() &&> task,
   }
 
   auto* task_info = new DelayedTaskInfo(delay, std::move(task));
-  RTC_CHECK(thread_.GetHandle() != absl::nullopt);
+  RTC_CHECK(thread_.GetHandle() != std::nullopt);
   if (!::PostThreadMessage(GetThreadId(*thread_.GetHandle()),
                            WM_QUEUE_DELAYED_TASK, 0,
                            reinterpret_cast<LPARAM>(task_info))) {

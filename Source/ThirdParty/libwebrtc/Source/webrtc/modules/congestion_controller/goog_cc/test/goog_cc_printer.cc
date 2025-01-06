@@ -11,15 +11,28 @@
 
 #include <math.h>
 
+#include <deque>
+#include <memory>
+#include <optional>
+#include <string>
 #include <utility>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
+#include "api/rtc_event_log_output.h"
+#include "api/transport/goog_cc_factory.h"
+#include "api/transport/network_control.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/congestion_controller/goog_cc/alr_detector.h"
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
+#include "modules/congestion_controller/goog_cc/goog_cc_network_control.h"
 #include "modules/congestion_controller/goog_cc/trendline_estimator.h"
 #include "modules/remote_bitrate_estimator/aimd_rate_control.h"
 #include "rtc_base/checks.h"
+#include "test/logging/log_writer.h"
 
 namespace webrtc {
 namespace {
@@ -29,16 +42,16 @@ void WriteTypedValue(RtcEventLogOutput* out, int value) {
 void WriteTypedValue(RtcEventLogOutput* out, double value) {
   LogWriteFormat(out, "%.6f", value);
 }
-void WriteTypedValue(RtcEventLogOutput* out, absl::optional<DataRate> value) {
+void WriteTypedValue(RtcEventLogOutput* out, std::optional<DataRate> value) {
   LogWriteFormat(out, "%.0f", value ? value->bytes_per_sec<double>() : NAN);
 }
-void WriteTypedValue(RtcEventLogOutput* out, absl::optional<DataSize> value) {
+void WriteTypedValue(RtcEventLogOutput* out, std::optional<DataSize> value) {
   LogWriteFormat(out, "%.0f", value ? value->bytes<double>() : NAN);
 }
-void WriteTypedValue(RtcEventLogOutput* out, absl::optional<TimeDelta> value) {
+void WriteTypedValue(RtcEventLogOutput* out, std::optional<TimeDelta> value) {
   LogWriteFormat(out, "%.3f", value ? value->seconds<double>() : NAN);
 }
-void WriteTypedValue(RtcEventLogOutput* out, absl::optional<Timestamp> value) {
+void WriteTypedValue(RtcEventLogOutput* out, std::optional<Timestamp> value) {
   LogWriteFormat(out, "%.3f", value ? value->seconds<double>() : NAN);
 }
 
@@ -91,13 +104,13 @@ std::deque<FieldLogger*> GoogCcStatePrinter::CreateLoggers() {
                 ->loss_based_bandwidth_estimator_v1_;
   };
   std::deque<FieldLogger*> loggers({
-      Log("time", [=] { return target_.at_time; }),
-      Log("rtt", [=] { return target_.network_estimate.round_trip_time; }),
-      Log("target", [=] { return target_.target_rate; }),
-      Log("stable_target", [=] { return target_.stable_target_rate; }),
-      Log("pacing", [=] { return pacing_.data_rate(); }),
-      Log("padding", [=] { return pacing_.pad_rate(); }),
-      Log("window", [=] { return congestion_window_; }),
+      Log("time", [this] { return target_.at_time; }),
+      Log("rtt", [this] { return target_.network_estimate.round_trip_time; }),
+      Log("target", [this] { return target_.target_rate; }),
+      Log("stable_target", [this] { return target_.stable_target_rate; }),
+      Log("pacing", [this] { return pacing_.data_rate(); }),
+      Log("padding", [this] { return pacing_.pad_rate(); }),
+      Log("window", [this] { return congestion_window_; }),
       Log("rate_control_state", [=] { return rate_control_state(); }),
       Log("stable_estimate", [=] { return stable_estimate(); }),
       Log("trendline", [=] { return trend()->prev_trend_; }),
@@ -105,15 +118,15 @@ std::deque<FieldLogger*> GoogCcStatePrinter::CreateLoggers() {
           [=] { return trend()->prev_modified_trend_; }),
       Log("trendline_offset_threshold", [=] { return trend()->threshold_; }),
       Log("acknowledged_rate", [=] { return acknowledged_rate(); }),
-      Log("est_capacity", [=] { return est_.link_capacity; }),
-      Log("est_capacity_dev", [=] { return est_.link_capacity_std_dev; }),
-      Log("est_capacity_min", [=] { return est_.link_capacity_min; }),
-      Log("est_cross_traffic", [=] { return est_.cross_traffic_ratio; }),
-      Log("est_cross_delay", [=] { return est_.cross_delay_rate; }),
-      Log("est_spike_delay", [=] { return est_.spike_delay_rate; }),
-      Log("est_pre_buffer", [=] { return est_.pre_link_buffer_delay; }),
-      Log("est_post_buffer", [=] { return est_.post_link_buffer_delay; }),
-      Log("est_propagation", [=] { return est_.propagation_delay; }),
+      Log("est_capacity", [this] { return est_.link_capacity; }),
+      Log("est_capacity_dev", [this] { return est_.link_capacity_std_dev; }),
+      Log("est_capacity_min", [this] { return est_.link_capacity_min; }),
+      Log("est_cross_traffic", [this] { return est_.cross_traffic_ratio; }),
+      Log("est_cross_delay", [this] { return est_.cross_delay_rate; }),
+      Log("est_spike_delay", [this] { return est_.spike_delay_rate; }),
+      Log("est_pre_buffer", [this] { return est_.pre_link_buffer_delay; }),
+      Log("est_post_buffer", [this] { return est_.post_link_buffer_delay; }),
+      Log("est_propagation", [this] { return est_.propagation_delay; }),
       Log("loss_ratio", [=] { return loss_cont()->last_loss_ratio_; }),
       Log("loss_average", [=] { return loss_cont()->average_loss_; }),
       Log("loss_average_max", [=] { return loss_cont()->average_loss_max_; }),
@@ -125,9 +138,9 @@ std::deque<FieldLogger*> GoogCcStatePrinter::CreateLoggers() {
       Log("loss_based_rate", [=] { return loss_cont()->loss_based_bitrate_; }),
       Log("loss_ack_rate",
           [=] { return loss_cont()->acknowledged_bitrate_max_; }),
-      Log("data_window", [=] { return controller_->current_data_window_; }),
+      Log("data_window", [this] { return controller_->current_data_window_; }),
       Log("pushback_target",
-          [=] { return controller_->last_pushback_target_rate_; }),
+          [this] { return controller_->last_pushback_target_rate_; }),
   });
   return loggers;
 }

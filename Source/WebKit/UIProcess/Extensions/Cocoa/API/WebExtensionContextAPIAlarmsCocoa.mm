@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,12 +39,12 @@ namespace WebKit {
 
 bool WebExtensionContext::isAlarmsMessageAllowed()
 {
-    return isLoaded() && hasPermission(_WKWebExtensionPermissionAlarms);
+    return isLoaded() && hasPermission(WKWebExtensionPermissionAlarms);
 }
 
 void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval)
 {
-    m_alarmMap.set(name, WebExtensionAlarm::create(name, initialInterval, repeatInterval, [&](const WebExtensionAlarm& alarm) {
+    m_alarmMap.set(name, WebExtensionAlarm::create(name, initialInterval, repeatInterval, [this, protectedThis = Ref { *this }](const WebExtensionAlarm& alarm) {
         fireAlarmsEventIfNeeded(alarm);
     }));
 }

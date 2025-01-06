@@ -126,6 +126,8 @@ BSSL_NAMESPACE_BEGIN
 
 SSL_HANDSHAKE::SSL_HANDSHAKE(SSL *ssl_arg)
     : ssl(ssl_arg),
+      transcript(SSL_is_dtls(ssl_arg)),
+      inner_transcript(SSL_is_dtls(ssl_arg)),
       ech_is_inner(false),
       ech_authenticated_reject(false),
       scts_requested(false),
@@ -134,7 +136,6 @@ SSL_HANDSHAKE::SSL_HANDSHAKE(SSL *ssl_arg)
       cert_request(false),
       certificate_status_expected(false),
       ocsp_stapling_requested(false),
-      delegated_credential_requested(false),
       should_ack_sni(false),
       in_false_start(false),
       in_early_data(false),
@@ -150,7 +151,8 @@ SSL_HANDSHAKE::SSL_HANDSHAKE(SSL *ssl_arg)
       cert_compression_negotiated(false),
       apply_jdk11_workaround(false),
       can_release_private_key(false),
-      channel_id_negotiated(false) {
+      channel_id_negotiated(false),
+      received_hello_verify_request(false) {
   assert(ssl);
 
   // Draw entropy for all GREASE values at once. This avoids calling
@@ -162,13 +164,6 @@ SSL_HANDSHAKE::SSL_HANDSHAKE(SSL *ssl_arg)
 
 SSL_HANDSHAKE::~SSL_HANDSHAKE() {
   ssl->ctx->x509_method->hs_flush_cached_ca_names(this);
-}
-
-void SSL_HANDSHAKE::ResizeSecrets(size_t hash_len) {
-  if (hash_len > SSL_MAX_MD_SIZE) {
-    abort();
-  }
-  hash_len_ = hash_len;
 }
 
 bool SSL_HANDSHAKE::GetClientHello(SSLMessage *out_msg,
@@ -495,18 +490,18 @@ enum ssl_hs_wait_t ssl_get_finished(SSL_HANDSHAKE *hs) {
   }
 
   // Copy the Finished so we can use it for renegotiation checks.
-  if (finished_len > sizeof(ssl->s3->previous_client_finished) ||
-      finished_len > sizeof(ssl->s3->previous_server_finished)) {
+  if (finished_len > ssl->s3->previous_client_finished.capacity() ||
+      finished_len > ssl->s3->previous_server_finished.capacity()) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return ssl_hs_error;
   }
 
   if (ssl->server) {
-    OPENSSL_memcpy(ssl->s3->previous_client_finished, finished, finished_len);
-    ssl->s3->previous_client_finished_len = finished_len;
+    ssl->s3->previous_client_finished.CopyFrom(
+        MakeConstSpan(finished, finished_len));
   } else {
-    OPENSSL_memcpy(ssl->s3->previous_server_finished, finished, finished_len);
-    ssl->s3->previous_server_finished_len = finished_len;
+    ssl->s3->previous_server_finished.CopyFrom(
+        MakeConstSpan(finished, finished_len));
   }
 
   // The Finished message should be the end of a flight.
@@ -524,38 +519,32 @@ bool ssl_send_finished(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
   const SSL_SESSION *session = ssl_handshake_session(hs);
 
-  uint8_t finished[EVP_MAX_MD_SIZE];
+  uint8_t finished_buf[EVP_MAX_MD_SIZE];
   size_t finished_len;
-  if (!hs->transcript.GetFinishedMAC(finished, &finished_len, session,
+  if (!hs->transcript.GetFinishedMAC(finished_buf, &finished_len, session,
                                      ssl->server)) {
     return false;
   }
+  auto finished = MakeConstSpan(finished_buf, finished_len);
 
   // Log the master secret, if logging is enabled.
-  if (!ssl_log_secret(ssl, "CLIENT_RANDOM",
-                      MakeConstSpan(session->secret, session->secret_length))) {
+  if (!ssl_log_secret(ssl, "CLIENT_RANDOM", session->secret)) {
     return false;
   }
 
   // Copy the Finished so we can use it for renegotiation checks.
-  if (finished_len > sizeof(ssl->s3->previous_client_finished) ||
-      finished_len > sizeof(ssl->s3->previous_server_finished)) {
+  bool ok = ssl->server
+                ? ssl->s3->previous_server_finished.TryCopyFrom(finished)
+                : ssl->s3->previous_client_finished.TryCopyFrom(finished);
+  if (!ok) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-    return false;
-  }
-
-  if (ssl->server) {
-    OPENSSL_memcpy(ssl->s3->previous_server_finished, finished, finished_len);
-    ssl->s3->previous_server_finished_len = finished_len;
-  } else {
-    OPENSSL_memcpy(ssl->s3->previous_client_finished, finished, finished_len);
-    ssl->s3->previous_client_finished_len = finished_len;
+    return ssl_hs_error;
   }
 
   ScopedCBB cbb;
   CBB body;
   if (!ssl->method->init_message(ssl, cbb.get(), &body, SSL3_MT_FINISHED) ||
-      !CBB_add_bytes(&body, finished, finished_len) ||
+      !CBB_add_bytes(&body, finished.data(), finished.size()) ||
       !ssl_add_message_cbb(ssl, cbb.get())) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
@@ -564,18 +553,29 @@ bool ssl_send_finished(SSL_HANDSHAKE *hs) {
   return true;
 }
 
-bool ssl_output_cert_chain(SSL_HANDSHAKE *hs) {
+bool ssl_send_tls12_certificate(SSL_HANDSHAKE *hs) {
   ScopedCBB cbb;
-  CBB body;
+  CBB body, certs, cert;
   if (!hs->ssl->method->init_message(hs->ssl, cbb.get(), &body,
                                      SSL3_MT_CERTIFICATE) ||
-      !ssl_add_cert_chain(hs, &body) ||
-      !ssl_add_message_cbb(hs->ssl, cbb.get())) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+      !CBB_add_u24_length_prefixed(&body, &certs)) {
     return false;
   }
 
-  return true;
+  if (hs->credential != nullptr) {
+    assert(hs->credential->type == SSLCredentialType::kX509);
+    STACK_OF(CRYPTO_BUFFER) *chain = hs->credential->chain.get();
+    for (size_t i = 0; i < sk_CRYPTO_BUFFER_num(chain); i++) {
+      CRYPTO_BUFFER *buffer = sk_CRYPTO_BUFFER_value(chain, i);
+      if (!CBB_add_u24_length_prefixed(&certs, &cert) ||
+          !CBB_add_bytes(&cert, CRYPTO_BUFFER_data(buffer),
+                         CRYPTO_BUFFER_len(buffer))) {
+        return false;
+      }
+    }
+  }
+
+  return ssl_add_message_cbb(hs->ssl, cbb.get());
 }
 
 const SSL_SESSION *ssl_handshake_session(const SSL_HANDSHAKE *hs) {

@@ -30,6 +30,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS DDScannerResult;
 OBJC_CLASS PDFPage;
@@ -42,7 +43,7 @@ class FloatRect;
 namespace WebKit {
 
 class PDFDataDetectorItem : public RefCounted<PDFDataDetectorItem> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PDFDataDetectorItem);
     WTF_MAKE_NONCOPYABLE(PDFDataDetectorItem);
 public:
     static Ref<PDFDataDetectorItem> create(DDScannerResult *, PDFPage *);

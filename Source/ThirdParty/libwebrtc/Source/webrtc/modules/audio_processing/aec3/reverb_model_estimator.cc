@@ -31,7 +31,7 @@ void ReverbModelEstimator::Update(
     rtc::ArrayView<const std::vector<float>> impulse_responses,
     rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
         frequency_responses,
-    rtc::ArrayView<const absl::optional<float>> linear_filter_qualities,
+    rtc::ArrayView<const std::optional<float>> linear_filter_qualities,
     rtc::ArrayView<const int> filter_delays_blocks,
     const std::vector<bool>& usable_linear_estimates,
     bool stationary_block) {

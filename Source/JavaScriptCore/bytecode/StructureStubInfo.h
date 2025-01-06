@@ -98,16 +98,6 @@ enum class AccessType : int8_t {
 static constexpr unsigned numberOfAccessTypes = 0 JSC_FOR_EACH_STRUCTURE_STUB_INFO_ACCESS_TYPE(JSC_INCREMENT_ACCESS_TYPE);
 #undef JSC_INCREMENT_ACCESS_TYPE
 
-enum class CacheType : int8_t {
-    Unset,
-    GetByIdSelf,
-    PutByIdReplace,
-    InByIdSelf,
-    Stub,
-    ArrayLength,
-    StringLength
-};
-
 struct UnlinkedStructureStubInfo;
 struct BaselineUnlinkedStructureStubInfo;
 
@@ -143,6 +133,7 @@ public:
 
     void initializeFromUnlinkedStructureStubInfo(VM&, CodeBlock*, const BaselineUnlinkedStructureStubInfo&);
     void initializeFromDFGUnlinkedStructureStubInfo(CodeBlock*, const DFG::UnlinkedStructureStubInfo&);
+    void initializePredefinedRegisters();
 
     DECLARE_VISIT_AGGREGATE;
 
@@ -153,9 +144,9 @@ public:
     // This returns true if it has marked everything that it will ever mark.
     template<typename Visitor> void propagateTransitions(Visitor&);
         
-    StubInfoSummary summary(VM&) const;
+    StubInfoSummary summary(const ConcurrentJSLocker&, VM&) const;
     
-    static StubInfoSummary summary(VM&, const StructureStubInfo*);
+    static StubInfoSummary summary(const ConcurrentJSLocker&, VM&, const StructureStubInfo*);
 
     CacheableIdentifier identifier() const { return m_identifier; }
 
@@ -238,9 +229,15 @@ public:
         return m_inlineAccessBaseStructureID.get();
     }
 
-    CallLinkInfo* callLinkInfoAt(const ConcurrentJSLocker&, unsigned index);
+    CallLinkInfo* callLinkInfoAt(const ConcurrentJSLocker&, unsigned index, const AccessCase&);
+
+    bool useHandlerIC() const { return useDataIC && Options::useHandlerIC(); }
+
+    Vector<AccessCase*, 16> listedAccessCases(const AbstractLocker&) const;
 
 private:
+    AccessGenerationResult upgradeForPolyProtoIfNecessary(const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, const Vector<AccessCase*, 16>&, AccessCase&);
+
     ALWAYS_INLINE bool considerRepatchingCacheImpl(VM& vm, CodeBlock* codeBlock, Structure* structure, CacheableIdentifier impl)
     {
         DisallowGC disallowGC;
@@ -352,19 +349,25 @@ private:
             });
     }
 
-    void replaceHandler(CodeBlock*, Ref<InlineCacheHandler>&&);
-    void rewireStubAsJumpInAccess(CodeBlock*, InlineCacheHandler&);
+    void setInlinedHandler(CodeBlock*, Ref<InlineCacheHandler>&&);
+    void clearInlinedHandler(CodeBlock*);
+    void initializeWithUnitHandler(CodeBlock*, Ref<InlineCacheHandler>&&);
+    void prependHandler(CodeBlock*, Ref<InlineCacheHandler>&&, bool isMegamorphic);
+    void rewireStubAsJumpInAccess(CodeBlock*, Ref<InlineCacheHandler>&&);
 
 public:
     static constexpr ptrdiff_t offsetOfByIdSelfOffset() { return OBJECT_OFFSETOF(StructureStubInfo, byIdSelfOffset); }
     static constexpr ptrdiff_t offsetOfInlineAccessBaseStructureID() { return OBJECT_OFFSETOF(StructureStubInfo, m_inlineAccessBaseStructureID); }
-    static constexpr ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(StructureStubInfo, m_codePtr); }
+    static constexpr ptrdiff_t offsetOfInlineHolder() { return OBJECT_OFFSETOF(StructureStubInfo, m_inlineHolder); }
     static constexpr ptrdiff_t offsetOfDoneLocation() { return OBJECT_OFFSETOF(StructureStubInfo, doneLocation); }
     static constexpr ptrdiff_t offsetOfSlowPathStartLocation() { return OBJECT_OFFSETOF(StructureStubInfo, slowPathStartLocation); }
     static constexpr ptrdiff_t offsetOfSlowOperation() { return OBJECT_OFFSETOF(StructureStubInfo, m_slowOperation); }
     static constexpr ptrdiff_t offsetOfCountdown() { return OBJECT_OFFSETOF(StructureStubInfo, countdown); }
     static constexpr ptrdiff_t offsetOfCallSiteIndex() { return OBJECT_OFFSETOF(StructureStubInfo, callSiteIndex); }
     static constexpr ptrdiff_t offsetOfHandler() { return OBJECT_OFFSETOF(StructureStubInfo, m_handler); }
+    static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(StructureStubInfo, m_globalObject); }
+
+    JSGlobalObject* globalObject() const { return m_globalObject; }
 
     void resetStubAsJumpInAccess(CodeBlock*);
 
@@ -398,6 +401,7 @@ public:
     CodeOrigin codeOrigin { };
     PropertyOffset byIdSelfOffset;
     WriteBarrierStructureID m_inlineAccessBaseStructureID;
+    JSCell* m_inlineHolder { nullptr };
     CacheableIdentifier m_identifier;
     // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.
     // If useDataIC is true, then it is nullptr.
@@ -410,9 +414,10 @@ public:
         CodePtr<OperationPtrTag> m_slowOperation;
     };
 
-    CodePtr<JITStubRoutinePtrTag> m_codePtr;
-    std::unique_ptr<PolymorphicAccess> m_stub;
+    JSGlobalObject* m_globalObject { nullptr };
 private:
+    std::unique_ptr<PolymorphicAccess> m_stub;
+    RefPtr<InlineCacheHandler> m_inlinedHandler;
     RefPtr<InlineCacheHandler> m_handler;
     // Represents those structures that already have buffered AccessCases in the PolymorphicAccess.
     // Note that it's always safe to clear this. If we clear it prematurely, then if we see the same
@@ -444,6 +449,7 @@ public:
 private:
     CacheType m_cacheType { CacheType::Unset };
 public:
+    CacheType preconfiguredCacheType { CacheType::Unset };
     // We repatch only when this is zero. If not zero, we decrement.
     // Setting 1 for a totally clear stub, we'll patch it after the first execution.
     uint8_t countdown { 1 };
@@ -571,6 +577,7 @@ inline bool hasConstantIdentifier(AccessType accessType)
 
 struct UnlinkedStructureStubInfo {
     AccessType accessType;
+    CacheType preconfiguredCacheType { CacheType::Unset };
     bool propertyIsInt32 : 1 { false };
     bool propertyIsString : 1 { false };
     bool propertyIsSymbol : 1 { false };
@@ -585,7 +592,7 @@ struct BaselineUnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
     BytecodeIndex bytecodeIndex;
 };
 
-using StubInfoMap = HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash>;
+using StubInfoMap = UncheckedKeyHashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash>;
 
 #endif
 

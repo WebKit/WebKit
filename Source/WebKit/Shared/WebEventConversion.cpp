@@ -117,6 +117,12 @@ public:
         m_unadjustedMovementDelta = webEvent.unadjustedMovementDelta();
         m_globalPosition = webEvent.globalPosition();
         m_clickCount = webEvent.clickCount();
+        m_coalescedEvents = WTF::map(webEvent.coalescedEvents(), [&](const auto& event) {
+            return platform(event);
+        });
+        m_predictedEvents = WTF::map(webEvent.predictedEvents(), [&](const auto& event) {
+            return platform(event);
+        });
 #if PLATFORM(MAC)
         m_eventNumber = webEvent.eventNumber();
         m_menuTypeForEvent = webEvent.menuTypeForEvent();
@@ -278,7 +284,7 @@ static WebCore::PlatformTouchPoint::TouchType webPlatformTouchTypeToPlatform(con
 class WebKit2PlatformTouchPoint : public WebCore::PlatformTouchPoint {
 public:
 WebKit2PlatformTouchPoint(const WebPlatformTouchPoint& webTouchPoint)
-    : PlatformTouchPoint(webTouchPoint.identifier(), webTouchPoint.location(), touchEventType(webTouchPoint)
+    : PlatformTouchPoint(webTouchPoint.identifier(), webTouchPoint.locationInRootView(), webTouchPoint.locationInViewport(), touchEventType(webTouchPoint)
 #if ENABLE(IOS_TOUCH_EVENTS)
         , webTouchPoint.radiusX(), webTouchPoint.radiusY(), webTouchPoint.rotationAngle(), webTouchPoint.force(), webTouchPoint.altitudeAngle(), webTouchPoint.azimuthAngle(), webPlatformTouchTypeToPlatform(webTouchPoint.touchType())
 #endif
@@ -354,6 +360,14 @@ public:
 #if PLATFORM(IOS_FAMILY)
         m_touchPoints = WTF::map(webEvent.touchPoints(), [&](auto& touchPoint) -> WebCore::PlatformTouchPoint {
             return WebKit2PlatformTouchPoint(touchPoint);
+        });
+
+        m_coalescedEvents = WTF::map(webEvent.coalescedEvents(), [&](auto& event) {
+            return platform(event);
+        });
+
+        m_predictedEvents = WTF::map(webEvent.predictedEvents(), [&](auto& event) {
+            return platform(event);
         });
 
         m_gestureScale = webEvent.gestureScale();

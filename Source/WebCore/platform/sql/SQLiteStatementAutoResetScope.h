@@ -25,28 +25,30 @@
 
 #pragma once
 
-#include <wtf/FastMalloc.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class SQLiteStatement;
 
 class SQLiteStatementAutoResetScope {
-    WTF_MAKE_NONCOPYABLE(SQLiteStatementAutoResetScope); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteStatementAutoResetScope, WEBCORE_EXPORT);
+    WTF_MAKE_NONCOPYABLE(SQLiteStatementAutoResetScope);
 public:
     WEBCORE_EXPORT explicit SQLiteStatementAutoResetScope(SQLiteStatement* = nullptr);
-    WEBCORE_EXPORT SQLiteStatementAutoResetScope(SQLiteStatementAutoResetScope&& other);
-    WEBCORE_EXPORT SQLiteStatementAutoResetScope& operator=(SQLiteStatementAutoResetScope&& other);
+    WEBCORE_EXPORT SQLiteStatementAutoResetScope(SQLiteStatementAutoResetScope&&);
+    WEBCORE_EXPORT SQLiteStatementAutoResetScope& operator=(SQLiteStatementAutoResetScope&&);
     WEBCORE_EXPORT ~SQLiteStatementAutoResetScope();
 
-    explicit operator bool() const { return m_statement; }
+    explicit operator bool() const { return !!m_statement; }
     bool operator!() const { return !m_statement; }
 
-    SQLiteStatement* get() { return m_statement; }
-    SQLiteStatement* operator->() { return m_statement; }
+    SQLiteStatement* get() { return m_statement.get(); }
+    SQLiteStatement* operator->() { return m_statement.get(); }
 
 private:
-    SQLiteStatement* m_statement;
+    CheckedPtr<SQLiteStatement> m_statement;
 };
 
 } // namespace WebCore

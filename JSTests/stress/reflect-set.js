@@ -569,6 +569,7 @@ var symbol = Symbol();
     [ Int8Array, 1 ],
     [ Int16Array, 2 ],
     [ Int32Array, 4 ],
+    [ Float16Array, 2 ],
     [ Float32Array, 4 ],
     [ Float64Array, 8 ],
 ].forEach((function() {

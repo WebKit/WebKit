@@ -28,13 +28,13 @@ static inline bool SkStrStartsWith(const char string[], const char prefixStr[]) 
     SkASSERT(prefixStr);
     return !strncmp(string, prefixStr, strlen(prefixStr));
 }
-static inline bool SkStrStartsWith(const char string[], const char prefixChar) {
+static inline bool SkStrStartsWith(const char string[], char prefixChar) {
     SkASSERT(string);
     return (prefixChar == *string);
 }
 
 bool SkStrEndsWith(const char string[], const char suffixStr[]);
-bool SkStrEndsWith(const char string[], const char suffixChar);
+bool SkStrEndsWith(const char string[], char suffixChar);
 
 int SkStrStartsWithOneOf(const char string[], const char prefixes[]);
 
@@ -44,7 +44,7 @@ static inline int SkStrFind(const char string[], const char substring[]) {
     return SkToInt(first - &string[0]);
 }
 
-static inline int SkStrFindLastOf(const char string[], const char subchar) {
+static inline int SkStrFindLastOf(const char string[], char subchar) {
     const char* last = strrchr(string, subchar);
     if (nullptr == last) return -1;
     return SkToInt(last - &string[0]);
@@ -55,7 +55,7 @@ static inline bool SkStrContains(const char string[], const char substring[]) {
     SkASSERT(substring);
     return (-1 != SkStrFind(string, substring));
 }
-static inline bool SkStrContains(const char string[], const char subchar) {
+static inline bool SkStrContains(const char string[], char subchar) {
     SkASSERT(string);
     char tmp[2];
     tmp[0] = subchar;
@@ -132,6 +132,8 @@ public:
     const char* data() const { return fRec->data(); }
     const char* c_str() const { return fRec->data(); }
     char operator[](size_t n) const { return this->c_str()[n]; }
+    const char* begin() const { return data(); }
+    const char* end() const { return data() + size(); }
 
     bool equals(const SkString&) const;
     bool equals(const char text[]) const;
@@ -140,25 +142,25 @@ public:
     bool startsWith(const char prefixStr[]) const {
         return SkStrStartsWith(fRec->data(), prefixStr);
     }
-    bool startsWith(const char prefixChar) const {
+    bool startsWith(char prefixChar) const {
         return SkStrStartsWith(fRec->data(), prefixChar);
     }
     bool endsWith(const char suffixStr[]) const {
         return SkStrEndsWith(fRec->data(), suffixStr);
     }
-    bool endsWith(const char suffixChar) const {
+    bool endsWith(char suffixChar) const {
         return SkStrEndsWith(fRec->data(), suffixChar);
     }
     bool contains(const char substring[]) const {
         return SkStrContains(fRec->data(), substring);
     }
-    bool contains(const char subchar) const {
+    bool contains(char subchar) const {
         return SkStrContains(fRec->data(), subchar);
     }
     int find(const char substring[]) const {
         return SkStrFind(fRec->data(), substring);
     }
-    int findLastOf(const char subchar) const {
+    int findLastOf(char subchar) const {
         return SkStrFindLastOf(fRec->data(), subchar);
     }
 
@@ -177,6 +179,8 @@ public:
 
     char* data();
     char& operator[](size_t n) { return this->data()[n]; }
+    char* begin() { return data(); }
+    char* end() { return data() + size(); }
 
     void reset();
     /** String contents are preserved on resize. (For destructive resize, `set(nullptr, length)`.)

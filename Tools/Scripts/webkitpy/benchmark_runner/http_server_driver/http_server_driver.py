@@ -1,8 +1,7 @@
-from abc import abstractmethod, ABCMeta
-from six import with_metaclass
+from abc import ABCMeta, abstractmethod
 
 
-class HTTPServerDriver(with_metaclass(ABCMeta, object)):
+class HTTPServerDriver(metaclass=ABCMeta):
     platforms = []
 
     @abstractmethod

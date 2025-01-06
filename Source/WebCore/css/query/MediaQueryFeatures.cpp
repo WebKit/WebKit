@@ -25,7 +25,9 @@
 #include "config.h"
 #include "MediaQueryFeatures.h"
 
+#include "CalculationCategory.h"
 #include "Chrome.h"
+#include "ComputedStyleDependencies.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
@@ -43,70 +45,155 @@
 #include "Theme.h"
 #include <wtf/Function.h>
 
-namespace WebCore::MQ::Features {
+namespace WebCore::MQ {
+
+MediaProgressProviding::~MediaProgressProviding() = default;
+
+namespace Features {
 
 struct BooleanSchema : public FeatureSchema {
     using ValueFunction = Function<bool(const FeatureEvaluationContext&)>;
 
-    BooleanSchema(const AtomString& name, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Integer)
+    BooleanSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
+        : FeatureSchema(name, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Integer, dependencies)
         , valueFunction(WTFMove(valueFunction))
-    { }
+    {
+    }
+
+    // FeatureSchema conformance
 
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        return evaluateBooleanFeature(feature, valueFunction(context));
+        return evaluateBooleanFeature(feature, valueFunction(context), context.conversionData);
     }
 
 private:
     ValueFunction valueFunction;
 };
 
-struct IntegerSchema : public FeatureSchema {
+struct IntegerSchema : public FeatureSchema, public MediaProgressProviding {
     using ValueFunction = Function<int(const FeatureEvaluationContext&)>;
 
-    IntegerSchema(const AtomString& name, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Integer)
+    IntegerSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
+        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Integer, dependencies)
         , valueFunction(WTFMove(valueFunction))
-    { }
+    {
+    }
+
+    // FeatureSchema conformance
 
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        return evaluateIntegerFeature(feature, valueFunction(context));
+        return evaluateIntegerFeature(feature, valueFunction(context), context.conversionData);
+    }
+
+    // MediaProgressProviding conformance
+
+    AtomString name() const override
+    {
+        return static_cast<const FeatureSchema*>(this)->name;
+    }
+
+    Calculation::Category category() const override
+    {
+        return Calculation::Category::Integer;
+    }
+
+    void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const override
+    {
+        if (this->dependencies.contains(MediaQueryDynamicDependency::Viewport))
+            dependencies.viewportDimensions = true;
+    }
+
+    double valueInCanonicalUnits(const FeatureEvaluationContext& context) const override
+    {
+        return valueFunction(context);
     }
 
 private:
     ValueFunction valueFunction;
 };
 
-struct NumberSchema : public FeatureSchema {
+struct NumberSchema : public FeatureSchema, public MediaProgressProviding {
     using ValueFunction = Function<double(const FeatureEvaluationContext&)>;
 
-    NumberSchema(const AtomString& name, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Number)
+    NumberSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
+        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Number, dependencies)
         , valueFunction(WTFMove(valueFunction))
-    { }
+    {
+    }
+
+    // FeatureSchema conformance
 
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        return evaluateNumberFeature(feature, valueFunction(context));
+        return evaluateNumberFeature(feature, valueFunction(context), context.conversionData);
+    }
+
+    // MediaProgressProviding conformance
+
+    AtomString name() const override
+    {
+        return static_cast<const FeatureSchema*>(this)->name;
+    }
+
+    Calculation::Category category() const override
+    {
+        return Calculation::Category::Number;
+    }
+
+    void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const override
+    {
+        if (this->dependencies.contains(MediaQueryDynamicDependency::Viewport))
+            dependencies.viewportDimensions = true;
+    }
+
+    double valueInCanonicalUnits(const FeatureEvaluationContext& context) const override
+    {
+        return valueFunction(context);
     }
 
 private:
     ValueFunction valueFunction;
 };
 
-struct LengthSchema : public FeatureSchema {
+struct LengthSchema : public FeatureSchema, public MediaProgressProviding {
     using ValueFunction = Function<LayoutUnit(const FeatureEvaluationContext&)>;
 
-    LengthSchema(const AtomString& name, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length)
+    LengthSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
+        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length, dependencies)
         , valueFunction(WTFMove(valueFunction))
-    { }
+    {
+    }
+
+    // FeatureSchema conformance
 
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
         return evaluateLengthFeature(feature, valueFunction(context), context.conversionData);
+    }
+
+    // MediaProgressProviding conformance
+
+    AtomString name() const override
+    {
+        return static_cast<const FeatureSchema*>(this)->name;
+    }
+
+    Calculation::Category category() const override
+    {
+        return Calculation::Category::Length;
+    }
+
+    void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const override
+    {
+        if (this->dependencies.contains(MediaQueryDynamicDependency::Viewport))
+            dependencies.viewportDimensions = true;
+    }
+
+    double valueInCanonicalUnits(const FeatureEvaluationContext& context) const override
+    {
+        return valueFunction(context);
     }
 
 private:
@@ -116,31 +203,60 @@ private:
 struct RatioSchema : public FeatureSchema {
     using ValueFunction = Function<FloatSize(const FeatureEvaluationContext&)>;
 
-    RatioSchema(const AtomString& name, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Ratio)
+    RatioSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
+        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Ratio, dependencies)
         , valueFunction(WTFMove(valueFunction))
-    { }
+    {
+    }
+
+    // FeatureSchema conformance
 
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        return evaluateRatioFeature(feature, valueFunction(context));
+        return evaluateRatioFeature(feature, valueFunction(context), context.conversionData);
     }
 
 private:
     ValueFunction valueFunction;
 };
 
-struct ResolutionSchema : public FeatureSchema {
+struct ResolutionSchema : public FeatureSchema, public MediaProgressProviding {
     using ValueFunction = Function<float(const FeatureEvaluationContext&)>;
 
-    ResolutionSchema(const AtomString& name, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Resolution)
+    ResolutionSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
+        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Resolution, dependencies)
         , valueFunction(WTFMove(valueFunction))
-    { }
+    {
+    }
+
+    // FeatureSchema conformance
 
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        return evaluateResolutionFeature(feature, valueFunction(context));
+        return evaluateResolutionFeature(feature, valueFunction(context), context.conversionData);
+    }
+
+    // MediaProgressProviding conformance
+
+    AtomString name() const override
+    {
+        return static_cast<const FeatureSchema*>(this)->name;
+    }
+
+    Calculation::Category category() const override
+    {
+        return Calculation::Category::Resolution;
+    }
+
+    void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const override
+    {
+        if (this->dependencies.contains(MediaQueryDynamicDependency::Viewport))
+            dependencies.viewportDimensions = true;
+    }
+
+    double valueInCanonicalUnits(const FeatureEvaluationContext& context) const override
+    {
+        return valueFunction(context);
     }
 
 private:
@@ -152,17 +268,18 @@ using MatchingIdentifiers = Vector<CSSValueID, 1>;
 struct IdentifierSchema : public FeatureSchema {
     using ValueFunction = Function<MatchingIdentifiers(const FeatureEvaluationContext&)>;
 
-    IdentifierSchema(const AtomString& name, FixedVector<CSSValueID>&& valueIdentifiers, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Identifier, WTFMove(valueIdentifiers))
+    IdentifierSchema(const AtomString& name, FixedVector<CSSValueID>&& valueIdentifiers, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
+        : FeatureSchema(name, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Identifier, dependencies, WTFMove(valueIdentifiers))
         , valueFunction(WTFMove(valueFunction))
-    { }
+    {
+    }
 
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
         auto valueIDs = valueFunction(context);
         for (auto valueID : valueIDs) {
             ASSERT(valueIdentifiers.contains(valueID));
-            if (evaluateIdentifierFeature(feature, valueID) == EvaluationResult::True)
+            if (evaluateIdentifierFeature(feature, valueID, context.conversionData) == EvaluationResult::True)
                 return EvaluationResult::True;
         }
         return EvaluationResult::False;
@@ -189,20 +306,24 @@ static float deviceScaleFactor(const FeatureEvaluationContext& context)
     return 0;
 }
 
-const FeatureSchema& animation()
+// MARK: - Singleton readonly instances of FeatureSchemas
+
+static const BooleanSchema& animationFeatureSchema()
 {
     static MainThreadNeverDestroyed<BooleanSchema> schema {
         "-webkit-animation"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto&) { return true; }
     };
     return schema;
 }
 
-const FeatureSchema& anyHover()
+static const IdentifierSchema& anyHoverFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "any-hover"_s,
         FixedVector { CSSValueNone, CSSValueHover },
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             RefPtr page = context.document->frame()->page();
             bool isSupported = page && page->chrome().client().hoverSupportedByAnyAvailablePointingDevice();
@@ -212,11 +333,12 @@ const FeatureSchema& anyHover()
     return schema;
 }
 
-const FeatureSchema& anyPointer()
+static const IdentifierSchema& anyPointerFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "any-pointer"_s,
         FixedVector { CSSValueNone, CSSValueFine, CSSValueCoarse },
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             RefPtr page = context.document->frame()->page();
             auto pointerCharacteristics = page ? page->chrome().client().pointerCharacteristicsOfAllAvailablePointingDevices() : OptionSet<PointerCharacteristics>();
@@ -235,10 +357,11 @@ const FeatureSchema& anyPointer()
     return schema;
 }
 
-const FeatureSchema& aspectRatio()
+static const RatioSchema& aspectRatioFeatureSchema()
 {
     static MainThreadNeverDestroyed<RatioSchema> schema {
         "aspect-ratio"_s,
+        MediaQueryDynamicDependency::Viewport,
         [](auto& context) {
             auto& view = *context.document->view();
             return FloatSize(view.layoutWidth(), view.layoutHeight());
@@ -247,10 +370,11 @@ const FeatureSchema& aspectRatio()
     return schema;
 }
 
-const FeatureSchema& color()
+static const IntegerSchema& colorFeatureSchema()
 {
     static MainThreadNeverDestroyed<IntegerSchema> schema {
         "color"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             return screenDepthPerComponent(context.document->frame()->mainFrame().protectedVirtualView().get());
         }
@@ -258,41 +382,40 @@ const FeatureSchema& color()
     return schema;
 }
 
-const FeatureSchema& colorGamut()
+static const IdentifierSchema& colorGamutFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "color-gamut"_s,
         FixedVector { CSSValueSRGB, CSSValueP3, CSSValueRec2020 },
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
-            Ref frame = *context.document->frame();
-
             // FIXME: At some point we should start detecting displays that support more colors.
             MatchingIdentifiers identifiers { CSSValueSRGB };
-            if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame())) {
-                if (screenSupportsExtendedColor(localFrame->protectedView().get()))
-                    identifiers.append(CSSValueP3);
-            }
+            if (screenSupportsExtendedColor(context.document->protectedFrame()->mainFrame().protectedVirtualView().get()))
+                identifiers.append(CSSValueP3);
             return identifiers;
         }
     };
     return schema;
 }
 
-const FeatureSchema& colorIndex()
+static const IntegerSchema& colorIndexFeatureSchema()
 {
     static MainThreadNeverDestroyed<IntegerSchema> schema {
         "color-index"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto&) { return 0; }
     };
     return schema;
 }
 
-const FeatureSchema& deviceAspectRatio()
+static const RatioSchema& deviceAspectRatioFeatureSchema()
 {
     static MainThreadNeverDestroyed<RatioSchema> schema {
         "device-aspect-ratio"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
-            if (RefPtr localFrame = dynamicDowncast<LocalFrame>(context.document->frame()->mainFrame())) {
+            if (RefPtr localFrame = context.document->frame()->localMainFrame()) {
                 auto screenSize = localFrame->screenSize();
                 return FloatSize { screenSize.width(), screenSize.height() };
             }
@@ -302,12 +425,13 @@ const FeatureSchema& deviceAspectRatio()
     return schema;
 }
 
-const FeatureSchema& deviceHeight()
+static const LengthSchema& deviceHeightFeatureSchema()
 {
     static MainThreadNeverDestroyed<LengthSchema> schema {
         "device-height"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
-            if (RefPtr localFrame = dynamicDowncast<LocalFrame>(context.document->frame()->mainFrame()))
+            if (RefPtr localFrame = context.document->frame()->localMainFrame())
                 return LayoutUnit { localFrame->screenSize().height() };
             return LayoutUnit { 0.0f };
         }
@@ -315,10 +439,11 @@ const FeatureSchema& deviceHeight()
     return schema;
 }
 
-const FeatureSchema& devicePixelRatio()
+static const NumberSchema& devicePixelRatioFeatureSchema()
 {
     static MainThreadNeverDestroyed<NumberSchema> schema {
         "-webkit-device-pixel-ratio"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             return deviceScaleFactor(context);
         }
@@ -326,12 +451,13 @@ const FeatureSchema& devicePixelRatio()
     return schema;
 }
 
-const FeatureSchema& deviceWidth()
+static const LengthSchema& deviceWidthFeatureSchema()
 {
     static MainThreadNeverDestroyed<LengthSchema> schema {
         "device-width"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
-            if (RefPtr localFrame = dynamicDowncast<LocalFrame>(context.document->frame()->mainFrame()))
+            if (RefPtr localFrame = context.document->frame()->localMainFrame())
                 return LayoutUnit { localFrame->screenSize().width() };
             return LayoutUnit { 0.0f };
         }
@@ -339,11 +465,12 @@ const FeatureSchema& deviceWidth()
     return schema;
 }
 
-const FeatureSchema& dynamicRange()
+static const IdentifierSchema& dynamicRangeFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "dynamic-range"_s,
         FixedVector { CSSValueStandard, CSSValueHigh },
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             bool supportsHighDynamicRange = [&] {
                 Ref frame = *context.document->frame();
@@ -363,11 +490,12 @@ const FeatureSchema& dynamicRange()
     return schema;
 }
 
-const FeatureSchema& forcedColors()
+static const IdentifierSchema& forcedColorsFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "forced-colors"_s,
         FixedVector { CSSValueNone, CSSValueActive },
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto&) {
             return MatchingIdentifiers { CSSValueNone };
         }
@@ -375,19 +503,21 @@ const FeatureSchema& forcedColors()
     return schema;
 }
 
-const FeatureSchema& grid()
+static const BooleanSchema& gridFeatureSchema()
 {
     static MainThreadNeverDestroyed<BooleanSchema> schema {
         "grid"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto&) { return false; }
     };
     return schema;
 }
 
-const FeatureSchema& height()
+static const LengthSchema& heightFeatureSchema()
 {
     static MainThreadNeverDestroyed<LengthSchema> schema {
         "height"_s,
+        MediaQueryDynamicDependency::Viewport,
         [](auto& context) {
             auto height = context.document->protectedView()->layoutHeight();
             if (CheckedPtr renderView = context.document->renderView())
@@ -398,11 +528,12 @@ const FeatureSchema& height()
     return schema;
 }
 
-const FeatureSchema& hover()
+static const IdentifierSchema& hoverFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "hover"_s,
         FixedVector { CSSValueNone, CSSValueHover },
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             RefPtr page = context.document->frame()->page();
             bool isSupported =  page && page->chrome().client().hoverSupportedByPrimaryPointingDevice();
@@ -412,11 +543,12 @@ const FeatureSchema& hover()
     return schema;
 }
 
-const FeatureSchema& invertedColors()
+static const IdentifierSchema& invertedColorsFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "inverted-colors"_s,
         FixedVector { CSSValueNone, CSSValueInverted },
+        MediaQueryDynamicDependency::Accessibility,
         [](auto& context) {
             bool isInverted = [&] {
                 Ref frame = *context.document->frame();
@@ -433,13 +565,14 @@ const FeatureSchema& invertedColors()
     return schema;
 }
 
-const FeatureSchema& monochrome()
+static const IntegerSchema& monochromeFeatureSchema()
 {
     static MainThreadNeverDestroyed<IntegerSchema> schema {
         "monochrome"_s,
+        MediaQueryDynamicDependency::Accessibility,
         [](auto& context) {
             Ref frame = *context.document->frame();
-            RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
+            RefPtr localFrame = context.document->localMainFrame();
             bool isMonochrome = [&] {
                 if (frame->settings().forcedDisplayIsMonochromeAccessibilityValue() == ForcedAccessibilityValue::On)
                     return true;
@@ -456,12 +589,16 @@ const FeatureSchema& monochrome()
     return schema;
 }
 
-const FeatureSchema& orientation()
+static const IdentifierSchema& orientationFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "orientation"_s,
         FixedVector { CSSValueLandscape, CSSValuePortrait },
+        MediaQueryDynamicDependency::Viewport,
         [](auto& context) {
+            if (context.document->quirks().shouldPreventOrientationMediaQueryFromEvaluatingToLandscape())
+                return MatchingIdentifiers { CSSValuePortrait };
+
             Ref view = *context.document->view();
             // Square viewport is portrait.
             bool isPortrait = view->layoutHeight() >= view->layoutWidth();
@@ -471,24 +608,19 @@ const FeatureSchema& orientation()
     return schema;
 }
 
-const FeatureSchema& pointer()
+static const IdentifierSchema& pointerFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "pointer"_s,
         FixedVector { CSSValueNone, CSSValueFine, CSSValueCoarse },
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             RefPtr page = context.document->frame()->page();
             auto pointerCharacteristics = page ? page->chrome().client().pointerCharacteristicsOfPrimaryPointingDevice() : OptionSet<PointerCharacteristics>();
-#if ENABLE(TOUCH_EVENTS)
-            if (pointerCharacteristics.contains(PointerCharacteristics::Coarse)) {
-                if (context.document->quirks().shouldPreventPointerMediaQueryFromEvaluatingToCoarse())
-                    pointerCharacteristics = PointerCharacteristics::Fine;
-            }
-#endif
             MatchingIdentifiers identifiers;
             if (pointerCharacteristics.contains(PointerCharacteristics::Fine))
                 identifiers.append(CSSValueFine);
-            if (pointerCharacteristics.contains(PointerCharacteristics::Coarse))
+            if (pointerCharacteristics.contains(PointerCharacteristics::Coarse) && !context.document->quirks().shouldHideCoarsePointerCharacteristics())
                 identifiers.append(CSSValueCoarse);
             if (identifiers.isEmpty())
                 identifiers.append(CSSValueNone);
@@ -499,11 +631,12 @@ const FeatureSchema& pointer()
     return schema;
 }
 
-const FeatureSchema& prefersContrast()
+static const IdentifierSchema& prefersContrastFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "prefers-contrast"_s,
-        FixedVector { CSSValueNoPreference, CSSValueMore, CSSValueLess },
+        FixedVector { CSSValueNoPreference, CSSValueMore, CSSValueLess, CSSValueCustom },
+        MediaQueryDynamicDependency::Accessibility,
         [](auto& context) {
             bool userPrefersContrast = [&] {
                 Ref frame = *context.document->frame();
@@ -524,14 +657,15 @@ const FeatureSchema& prefersContrast()
     return schema;
 }
 
-const FeatureSchema& prefersDarkInterface()
+static const IdentifierSchema& prefersDarkInterfaceFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "prefers-dark-interface"_s,
         FixedVector { CSSValueNoPreference, CSSValuePrefers },
+        MediaQueryDynamicDependency::Appearance,
         [](auto& context) {
             Ref page = *context.document->frame()->page();
-            bool prefersDarkInterface = page->useSystemAppearance() && page->useDarkAppearance();
+            bool prefersDarkInterface = page->settings().useSystemAppearance() && page->useDarkAppearance();
 
             return MatchingIdentifiers { prefersDarkInterface ? CSSValuePrefers : CSSValueNoPreference };
         }
@@ -539,11 +673,12 @@ const FeatureSchema& prefersDarkInterface()
     return schema;
 }
 
-const FeatureSchema& prefersReducedMotion()
+static const IdentifierSchema& prefersReducedMotionFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "prefers-reduced-motion"_s,
         FixedVector { CSSValueNoPreference, CSSValueReduce },
+        MediaQueryDynamicDependency::Accessibility,
         [](auto& context) {
             bool userPrefersReducedMotion = [&] {
                 Ref frame = *context.document->frame();
@@ -564,10 +699,11 @@ const FeatureSchema& prefersReducedMotion()
     return schema;
 }
 
-const FeatureSchema& resolution()
+static const ResolutionSchema& resolutionFeatureSchema()
 {
     static MainThreadNeverDestroyed<ResolutionSchema> schema {
         "resolution"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             return deviceScaleFactor(context);
         }
@@ -575,11 +711,12 @@ const FeatureSchema& resolution()
     return schema;
 }
 
-const FeatureSchema& scan()
+static const IdentifierSchema& scanFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "scan"_s,
         FixedVector { CSSValueInterlace, CSSValueProgressive },
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto&) {
             return MatchingIdentifiers { };
         }
@@ -587,11 +724,12 @@ const FeatureSchema& scan()
     return schema;
 }
 
-const FeatureSchema& scripting()
+static const IdentifierSchema& scriptingFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "scripting"_s,
         FixedVector { CSSValueNone, CSSValueInitialOnly, CSSValueEnabled },
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             Ref frame = *context.document->frame();
             if (!frame->checkedScript()->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
@@ -602,19 +740,21 @@ const FeatureSchema& scripting()
     return schema;
 }
 
-const FeatureSchema& transform2d()
+static const BooleanSchema& transform2dFeatureSchema()
 {
     static MainThreadNeverDestroyed<BooleanSchema> schema {
         "-webkit-transform-2d"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto&) { return true; }
     };
     return schema;
 }
 
-const FeatureSchema& transform3d()
+static const BooleanSchema& transform3dFeatureSchema()
 {
     static MainThreadNeverDestroyed<BooleanSchema> schema {
         "-webkit-transform-3d"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             CheckedPtr view = context.document->renderView();
             return view && view->compositor().canRender3DTransforms();
@@ -623,20 +763,22 @@ const FeatureSchema& transform3d()
     return schema;
 }
 
-const FeatureSchema& transition()
+static const BooleanSchema& transitionFeatureSchema()
 {
     static MainThreadNeverDestroyed<BooleanSchema> schema {
         "-webkit-transition"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto&) { return true; }
     };
     return schema;
 }
 
-const FeatureSchema& update()
+static const IdentifierSchema& updateFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "update"_s,
         FixedVector { CSSValueNone, CSSValueSlow, CSSValueFast },
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             RefPtr frameView = context.document->frame()->view();
             if (frameView && frameView->mediaType() == printAtom())
@@ -649,10 +791,11 @@ const FeatureSchema& update()
     return schema;
 }
 
-const FeatureSchema& videoPlayableInline()
+static const BooleanSchema& videoPlayableInlineFeatureSchema()
 {
     static MainThreadNeverDestroyed<BooleanSchema> schema {
         "-webkit-video-playable-inline"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             return context.document->frame()->settings().allowsInlineMediaPlayback();
         }
@@ -660,10 +803,11 @@ const FeatureSchema& videoPlayableInline()
     return schema;
 }
 
-const FeatureSchema& width()
+static const LengthSchema& widthFeatureSchema()
 {
     static MainThreadNeverDestroyed<LengthSchema> schema {
         "width"_s,
+        MediaQueryDynamicDependency::Viewport,
         [](auto& context) {
             auto width = context.document->protectedView()->layoutWidth();
             if (CheckedPtr renderView = context.document->renderView())
@@ -675,11 +819,12 @@ const FeatureSchema& width()
 }
 
 #if ENABLE(APPLICATION_MANIFEST)
-const FeatureSchema& displayMode()
+static const IdentifierSchema& displayModeFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "display-mode"_s,
         FixedVector { CSSValueFullscreen, CSSValueStandalone, CSSValueMinimalUi, CSSValueBrowser },
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             auto identifier = [&] {
                 Ref frame = *context.document->frame();
@@ -708,11 +853,12 @@ const FeatureSchema& displayMode()
 }
 #endif
 
-const FeatureSchema& overflowBlock()
+static const IdentifierSchema& overflowBlockFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "overflow-block"_s,
         FixedVector { CSSValueNone, CSSValueScroll, CSSValuePaged },
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             // FIXME: Match none when scrollEnabled is set to false by UIKit.
             bool matchesPaged = [&] {
@@ -727,11 +873,12 @@ const FeatureSchema& overflowBlock()
     return schema;
 }
 
-const FeatureSchema& overflowInline()
+static const IdentifierSchema& overflowInlineFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "overflow-inline"_s,
         FixedVector { CSSValueNone, CSSValueScroll },
+        OptionSet<MediaQueryDynamicDependency>(),
         [](auto&) {
             // FIXME: Match none when scrollEnabled is set to false by UIKit.
             return MatchingIdentifiers { CSSValueScroll };
@@ -741,11 +888,12 @@ const FeatureSchema& overflowInline()
 }
 
 #if ENABLE(DARK_MODE_CSS)
-const FeatureSchema& prefersColorScheme()
+static const IdentifierSchema& prefersColorSchemeFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "prefers-color-scheme"_s,
         FixedVector { CSSValueLight, CSSValueDark },
+        MediaQueryDynamicDependency::Appearance,
         [](auto& context) {
             Ref page = *context.document->frame()->page();
             bool useDarkAppearance = page->useDarkAppearance();
@@ -754,6 +902,192 @@ const FeatureSchema& prefersColorScheme()
         }
     };
     return schema;
+}
+#endif
+
+// MARK: - Type erased exposed schemas
+
+const FeatureSchema& animation()
+{
+    return animationFeatureSchema();
+}
+
+const FeatureSchema& anyHover()
+{
+    return anyHoverFeatureSchema();
+}
+
+const FeatureSchema& anyPointer()
+{
+    return anyPointerFeatureSchema();
+}
+
+const FeatureSchema& aspectRatio()
+{
+    return aspectRatioFeatureSchema();
+}
+
+const FeatureSchema& color()
+{
+    return colorFeatureSchema();
+}
+
+const FeatureSchema& colorGamut()
+{
+    return colorGamutFeatureSchema();
+}
+
+const FeatureSchema& colorIndex()
+{
+    return colorIndexFeatureSchema();
+}
+
+const FeatureSchema& deviceAspectRatio()
+{
+    return deviceAspectRatioFeatureSchema();
+}
+
+const FeatureSchema& deviceHeight()
+{
+    return deviceHeightFeatureSchema();
+}
+
+const FeatureSchema& devicePixelRatio()
+{
+    return devicePixelRatioFeatureSchema();
+}
+
+const FeatureSchema& deviceWidth()
+{
+    return deviceWidthFeatureSchema();
+}
+
+const FeatureSchema& dynamicRange()
+{
+    return dynamicRangeFeatureSchema();
+}
+
+const FeatureSchema& forcedColors()
+{
+    return forcedColorsFeatureSchema();
+}
+
+const FeatureSchema& grid()
+{
+    return gridFeatureSchema();
+}
+
+const FeatureSchema& height()
+{
+    return heightFeatureSchema();
+}
+
+const FeatureSchema& hover()
+{
+    return hoverFeatureSchema();
+}
+
+const FeatureSchema& invertedColors()
+{
+    return invertedColorsFeatureSchema();
+}
+
+const FeatureSchema& monochrome()
+{
+    return monochromeFeatureSchema();
+}
+
+const FeatureSchema& orientation()
+{
+    return orientationFeatureSchema();
+}
+
+const FeatureSchema& pointer()
+{
+    return pointerFeatureSchema();
+}
+
+const FeatureSchema& prefersContrast()
+{
+    return prefersContrastFeatureSchema();
+}
+
+const FeatureSchema& prefersDarkInterface()
+{
+    return prefersDarkInterfaceFeatureSchema();
+}
+
+const FeatureSchema& prefersReducedMotion()
+{
+    return prefersReducedMotionFeatureSchema();
+}
+
+const FeatureSchema& resolution()
+{
+    return resolutionFeatureSchema();
+}
+
+const FeatureSchema& scan()
+{
+    return scanFeatureSchema();
+}
+
+const FeatureSchema& scripting()
+{
+    return scriptingFeatureSchema();
+}
+
+const FeatureSchema& transform2d()
+{
+    return transform2dFeatureSchema();
+}
+
+const FeatureSchema& transform3d()
+{
+    return transform3dFeatureSchema();
+}
+
+const FeatureSchema& transition()
+{
+    return transitionFeatureSchema();
+}
+
+const FeatureSchema& update()
+{
+    return updateFeatureSchema();
+}
+
+const FeatureSchema& videoPlayableInline()
+{
+    return videoPlayableInlineFeatureSchema();
+}
+
+const FeatureSchema& width()
+{
+    return widthFeatureSchema();
+}
+
+#if ENABLE(APPLICATION_MANIFEST)
+const FeatureSchema& displayMode()
+{
+    return displayModeFeatureSchema();
+}
+#endif
+
+const FeatureSchema& overflowBlock()
+{
+    return overflowBlockFeatureSchema();
+}
+
+const FeatureSchema& overflowInline()
+{
+    return overflowInlineFeatureSchema();
+}
+
+#if ENABLE(DARK_MODE_CSS)
+const FeatureSchema& prefersColorScheme()
+{
+    return prefersColorSchemeFeatureSchema();
 }
 #endif
 
@@ -803,23 +1137,20 @@ Vector<const FeatureSchema*> allSchemas()
     };
 }
 
-// FIXME: This could be part of the schema.
-std::optional<MediaQueryDynamicDependency> dynamicDependency(const FeatureSchema& schema)
+Vector<const MediaProgressProviding*> allMediaProgressProvidingSchemas()
 {
-    if (&schema == &width() || &schema == &height() || &schema == &orientation() || &schema == &aspectRatio())
-        return MediaQueryDynamicDependency::Viewport;
-
-    if (&schema == &prefersDarkInterface())
-        return MediaQueryDynamicDependency::Appearance;
-#if ENABLE(DARK_MODE_CSS)
-    if (&schema == &prefersColorScheme())
-        return MediaQueryDynamicDependency::Appearance;
-#endif
-
-    if (&schema == &invertedColors() || &schema == &monochrome() || &schema == &prefersReducedMotion() || &schema == &prefersContrast())
-        return MediaQueryDynamicDependency::Accessibility;
-
-    return { };
+    return {
+        &colorFeatureSchema(),
+        &colorIndexFeatureSchema(),
+        &deviceHeightFeatureSchema(),
+        &devicePixelRatioFeatureSchema(),
+        &deviceWidthFeatureSchema(),
+        &heightFeatureSchema(),
+        &monochromeFeatureSchema(),
+        &resolutionFeatureSchema(),
+        &widthFeatureSchema(),
+    };
 }
 
-}
+} // namespace Features
+} // namespace WebCore::MQ

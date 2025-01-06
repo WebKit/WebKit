@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from mod_pywebsocket import msgutil
+from pywebsocket3 import msgutil
 
 
 _GOODBYE_MESSAGE = 'Goodbye'

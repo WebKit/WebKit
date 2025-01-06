@@ -14,22 +14,23 @@
 #include <cstdint>
 #include <cstring>
 #include <memory>
+#include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
 
+#include "absl/base/nullability.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio/audio_frame.h"
+#include "api/task_queue/task_queue_base.h"
 #include "common_audio/audio_converter.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/aec_dump/aec_dump_factory.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/include/audio_frame_view.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
-#include "modules/audio_processing/optionally_built_submodule_creators.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
@@ -322,231 +323,6 @@ constexpr int kUnspecifiedDataDumpInputVolume = -100;
 // Throughout webrtc, it's assumed that success is represented by zero.
 static_assert(AudioProcessing::kNoError == 0, "kNoError must be zero");
 
-absl::optional<AudioProcessingImpl::GainController2ExperimentParams>
-AudioProcessingImpl::GetGainController2ExperimentParams() {
-  constexpr char kFieldTrialName[] = "WebRTC-Audio-GainController2";
-
-  if (!field_trial::IsEnabled(kFieldTrialName)) {
-    return absl::nullopt;
-  }
-
-  FieldTrialFlag enabled("Enabled", false);
-
-  // Whether the gain control should switch to AGC2. Enabled by default.
-  FieldTrialParameter<bool> switch_to_agc2("switch_to_agc2", true);
-
-  // AGC2 input volume controller configuration.
-  constexpr InputVolumeController::Config kDefaultInputVolumeControllerConfig;
-  FieldTrialConstrained<int> min_input_volume(
-      "min_input_volume", kDefaultInputVolumeControllerConfig.min_input_volume,
-      0, 255);
-  FieldTrialConstrained<int> clipped_level_min(
-      "clipped_level_min",
-      kDefaultInputVolumeControllerConfig.clipped_level_min, 0, 255);
-  FieldTrialConstrained<int> clipped_level_step(
-      "clipped_level_step",
-      kDefaultInputVolumeControllerConfig.clipped_level_step, 0, 255);
-  FieldTrialConstrained<double> clipped_ratio_threshold(
-      "clipped_ratio_threshold",
-      kDefaultInputVolumeControllerConfig.clipped_ratio_threshold, 0, 1);
-  FieldTrialConstrained<int> clipped_wait_frames(
-      "clipped_wait_frames",
-      kDefaultInputVolumeControllerConfig.clipped_wait_frames, 0,
-      absl::nullopt);
-  FieldTrialParameter<bool> enable_clipping_predictor(
-      "enable_clipping_predictor",
-      kDefaultInputVolumeControllerConfig.enable_clipping_predictor);
-  FieldTrialConstrained<int> target_range_max_dbfs(
-      "target_range_max_dbfs",
-      kDefaultInputVolumeControllerConfig.target_range_max_dbfs, -90, 30);
-  FieldTrialConstrained<int> target_range_min_dbfs(
-      "target_range_min_dbfs",
-      kDefaultInputVolumeControllerConfig.target_range_min_dbfs, -90, 30);
-  FieldTrialConstrained<int> update_input_volume_wait_frames(
-      "update_input_volume_wait_frames",
-      kDefaultInputVolumeControllerConfig.update_input_volume_wait_frames, 0,
-      absl::nullopt);
-  FieldTrialConstrained<double> speech_probability_threshold(
-      "speech_probability_threshold",
-      kDefaultInputVolumeControllerConfig.speech_probability_threshold, 0, 1);
-  FieldTrialConstrained<double> speech_ratio_threshold(
-      "speech_ratio_threshold",
-      kDefaultInputVolumeControllerConfig.speech_ratio_threshold, 0, 1);
-
-  // AGC2 adaptive digital controller configuration.
-  constexpr AudioProcessing::Config::GainController2::AdaptiveDigital
-      kDefaultAdaptiveDigitalConfig;
-  FieldTrialConstrained<double> headroom_db(
-      "headroom_db", kDefaultAdaptiveDigitalConfig.headroom_db, 0,
-      absl::nullopt);
-  FieldTrialConstrained<double> max_gain_db(
-      "max_gain_db", kDefaultAdaptiveDigitalConfig.max_gain_db, 0,
-      absl::nullopt);
-  FieldTrialConstrained<double> initial_gain_db(
-      "initial_gain_db", kDefaultAdaptiveDigitalConfig.initial_gain_db, 0,
-      absl::nullopt);
-  FieldTrialConstrained<double> max_gain_change_db_per_second(
-      "max_gain_change_db_per_second",
-      kDefaultAdaptiveDigitalConfig.max_gain_change_db_per_second, 0,
-      absl::nullopt);
-  FieldTrialConstrained<double> max_output_noise_level_dbfs(
-      "max_output_noise_level_dbfs",
-      kDefaultAdaptiveDigitalConfig.max_output_noise_level_dbfs, absl::nullopt,
-      0);
-
-  // Transient suppressor.
-  FieldTrialParameter<bool> disallow_transient_suppressor_usage(
-      "disallow_transient_suppressor_usage", false);
-
-  // Field-trial based override for the input volume controller and adaptive
-  // digital configs.
-  ParseFieldTrial(
-      {&enabled, &switch_to_agc2, &min_input_volume, &clipped_level_min,
-       &clipped_level_step, &clipped_ratio_threshold, &clipped_wait_frames,
-       &enable_clipping_predictor, &target_range_max_dbfs,
-       &target_range_min_dbfs, &update_input_volume_wait_frames,
-       &speech_probability_threshold, &speech_ratio_threshold, &headroom_db,
-       &max_gain_db, &initial_gain_db, &max_gain_change_db_per_second,
-       &max_output_noise_level_dbfs, &disallow_transient_suppressor_usage},
-      field_trial::FindFullName(kFieldTrialName));
-  // Checked already by `IsEnabled()` before parsing, therefore always true.
-  RTC_DCHECK(enabled);
-
-  const bool do_not_change_agc_config = !switch_to_agc2.Get();
-  if (do_not_change_agc_config && !disallow_transient_suppressor_usage.Get()) {
-    // Return an unspecifed value since, in this case, both the AGC2 and TS
-    // configurations won't be adjusted.
-    return absl::nullopt;
-  }
-  using Params = AudioProcessingImpl::GainController2ExperimentParams;
-  if (do_not_change_agc_config) {
-    // Return a value that leaves the AGC2 config unchanged and that always
-    // disables TS.
-    return Params{.agc2_config = absl::nullopt,
-                  .disallow_transient_suppressor_usage = true};
-  }
-  // Return a value that switches all the gain control to AGC2.
-  return Params{
-      .agc2_config =
-          Params::Agc2Config{
-              .input_volume_controller =
-                  {
-                      .min_input_volume = min_input_volume.Get(),
-                      .clipped_level_min = clipped_level_min.Get(),
-                      .clipped_level_step = clipped_level_step.Get(),
-                      .clipped_ratio_threshold =
-                          static_cast<float>(clipped_ratio_threshold.Get()),
-                      .clipped_wait_frames = clipped_wait_frames.Get(),
-                      .enable_clipping_predictor =
-                          enable_clipping_predictor.Get(),
-                      .target_range_max_dbfs = target_range_max_dbfs.Get(),
-                      .target_range_min_dbfs = target_range_min_dbfs.Get(),
-                      .update_input_volume_wait_frames =
-                          update_input_volume_wait_frames.Get(),
-                      .speech_probability_threshold = static_cast<float>(
-                          speech_probability_threshold.Get()),
-                      .speech_ratio_threshold =
-                          static_cast<float>(speech_ratio_threshold.Get()),
-                  },
-              .adaptive_digital_controller =
-                  {
-                      .headroom_db = static_cast<float>(headroom_db.Get()),
-                      .max_gain_db = static_cast<float>(max_gain_db.Get()),
-                      .initial_gain_db =
-                          static_cast<float>(initial_gain_db.Get()),
-                      .max_gain_change_db_per_second = static_cast<float>(
-                          max_gain_change_db_per_second.Get()),
-                      .max_output_noise_level_dbfs =
-                          static_cast<float>(max_output_noise_level_dbfs.Get()),
-                  }},
-      .disallow_transient_suppressor_usage =
-          disallow_transient_suppressor_usage.Get()};
-}
-
-AudioProcessing::Config AudioProcessingImpl::AdjustConfig(
-    const AudioProcessing::Config& config,
-    const absl::optional<AudioProcessingImpl::GainController2ExperimentParams>&
-        experiment_params) {
-  if (!experiment_params.has_value() ||
-      (!experiment_params->agc2_config.has_value() &&
-       !experiment_params->disallow_transient_suppressor_usage)) {
-    // When the experiment parameters are unspecified or when the AGC and TS
-    // configuration are not overridden, return the unmodified configuration.
-    return config;
-  }
-
-  AudioProcessing::Config adjusted_config = config;
-
-  // Override the transient suppressor configuration.
-  if (experiment_params->disallow_transient_suppressor_usage) {
-    adjusted_config.transient_suppression.enabled = false;
-  }
-
-  // Override the auto gain control configuration if the AGC1 analog gain
-  // controller is active and `experiment_params->agc2_config` is specified.
-  const bool agc1_analog_enabled =
-      config.gain_controller1.enabled &&
-      (config.gain_controller1.mode ==
-           AudioProcessing::Config::GainController1::kAdaptiveAnalog ||
-       config.gain_controller1.analog_gain_controller.enabled);
-  if (agc1_analog_enabled && experiment_params->agc2_config.has_value()) {
-    // Check that the unadjusted AGC config meets the preconditions.
-    const bool hybrid_agc_config_detected =
-        config.gain_controller1.enabled &&
-        config.gain_controller1.analog_gain_controller.enabled &&
-        !config.gain_controller1.analog_gain_controller
-             .enable_digital_adaptive &&
-        config.gain_controller2.enabled &&
-        config.gain_controller2.adaptive_digital.enabled;
-    const bool full_agc1_config_detected =
-        config.gain_controller1.enabled &&
-        config.gain_controller1.analog_gain_controller.enabled &&
-        config.gain_controller1.analog_gain_controller
-            .enable_digital_adaptive &&
-        !config.gain_controller2.enabled;
-    const bool one_and_only_one_input_volume_controller =
-        hybrid_agc_config_detected != full_agc1_config_detected;
-    const bool agc2_input_volume_controller_enabled =
-        config.gain_controller2.enabled &&
-        config.gain_controller2.input_volume_controller.enabled;
-    if (!one_and_only_one_input_volume_controller ||
-        agc2_input_volume_controller_enabled) {
-      RTC_LOG(LS_ERROR) << "Cannot adjust AGC config (precondition failed)";
-      if (!one_and_only_one_input_volume_controller)
-        RTC_LOG(LS_ERROR)
-            << "One and only one input volume controller must be enabled.";
-      if (agc2_input_volume_controller_enabled)
-        RTC_LOG(LS_ERROR)
-            << "The AGC2 input volume controller must be disabled.";
-    } else {
-      adjusted_config.gain_controller1.enabled = false;
-      adjusted_config.gain_controller1.analog_gain_controller.enabled = false;
-
-      adjusted_config.gain_controller2.enabled = true;
-      adjusted_config.gain_controller2.input_volume_controller.enabled = true;
-      adjusted_config.gain_controller2.adaptive_digital =
-          experiment_params->agc2_config->adaptive_digital_controller;
-      adjusted_config.gain_controller2.adaptive_digital.enabled = true;
-    }
-  }
-
-  return adjusted_config;
-}
-
-bool AudioProcessingImpl::UseApmVadSubModule(
-    const AudioProcessing::Config& config,
-    const absl::optional<GainController2ExperimentParams>& experiment_params) {
-  // The VAD as an APM sub-module is needed only in one case, that is when TS
-  // and AGC2 are both enabled and when the AGC2 experiment is running and its
-  // parameters require to fully switch the gain control to AGC2.
-  return config.transient_suppression.enabled &&
-         config.gain_controller2.enabled &&
-         (config.gain_controller2.input_volume_controller.enabled ||
-          config.gain_controller2.adaptive_digital.enabled) &&
-         experiment_params.has_value() &&
-         experiment_params->agc2_config.has_value();
-}
-
 AudioProcessingImpl::SubmoduleStates::SubmoduleStates(
     bool capture_post_processor_enabled,
     bool render_pre_processor_enabled,
@@ -561,10 +337,8 @@ bool AudioProcessingImpl::SubmoduleStates::Update(
     bool noise_suppressor_enabled,
     bool adaptive_gain_controller_enabled,
     bool gain_controller2_enabled,
-    bool voice_activity_detector_enabled,
     bool gain_adjustment_enabled,
-    bool echo_controller_enabled,
-    bool transient_suppressor_enabled) {
+    bool echo_controller_enabled) {
   bool changed = false;
   changed |= (high_pass_filter_enabled != high_pass_filter_enabled_);
   changed |=
@@ -573,21 +347,16 @@ bool AudioProcessingImpl::SubmoduleStates::Update(
   changed |=
       (adaptive_gain_controller_enabled != adaptive_gain_controller_enabled_);
   changed |= (gain_controller2_enabled != gain_controller2_enabled_);
-  changed |=
-      (voice_activity_detector_enabled != voice_activity_detector_enabled_);
   changed |= (gain_adjustment_enabled != gain_adjustment_enabled_);
   changed |= (echo_controller_enabled != echo_controller_enabled_);
-  changed |= (transient_suppressor_enabled != transient_suppressor_enabled_);
   if (changed) {
     high_pass_filter_enabled_ = high_pass_filter_enabled;
     mobile_echo_controller_enabled_ = mobile_echo_controller_enabled;
     noise_suppressor_enabled_ = noise_suppressor_enabled;
     adaptive_gain_controller_enabled_ = adaptive_gain_controller_enabled;
     gain_controller2_enabled_ = gain_controller2_enabled;
-    voice_activity_detector_enabled_ = voice_activity_detector_enabled;
     gain_adjustment_enabled_ = gain_adjustment_enabled;
     echo_controller_enabled_ = echo_controller_enabled;
-    transient_suppressor_enabled_ = transient_suppressor_enabled;
   }
 
   changed |= first_update_;
@@ -664,14 +433,12 @@ AudioProcessingImpl::AudioProcessingImpl(
     : data_dumper_(new ApmDataDumper(instance_count_.fetch_add(1) + 1)),
       use_setup_specific_default_aec3_config_(
           UseSetupSpecificDefaultAec3Congfig()),
-      gain_controller2_experiment_params_(GetGainController2ExperimentParams()),
-      transient_suppressor_vad_mode_(TransientSuppressor::VadMode::kDefault),
       capture_runtime_settings_(RuntimeSettingQueueSize()),
       render_runtime_settings_(RuntimeSettingQueueSize()),
       capture_runtime_settings_enqueuer_(&capture_runtime_settings_),
       render_runtime_settings_enqueuer_(&render_runtime_settings_),
       echo_control_factory_(std::move(echo_control_factory)),
-      config_(AdjustConfig(config, gain_controller2_experiment_params_)),
+      config_(config),
       submodule_states_(!!capture_post_processor,
                         !!render_pre_processor,
                         !!capture_analyzer),
@@ -684,8 +451,7 @@ AudioProcessingImpl::AudioProcessingImpl(
                  !field_trial::IsEnabled(
                      "WebRTC-ApmExperimentalMultiChannelCaptureKillSwitch"),
                  EnforceSplitBandHpf(),
-                 MinimizeProcessingForUnusedOutput(),
-                 field_trial::IsEnabled("WebRTC-TransientSuppressorForcedOff")),
+                 MinimizeProcessingForUnusedOutput()),
       capture_(),
       capture_nonlocked_(),
       applied_input_volume_stats_reporter_(
@@ -806,12 +572,10 @@ void AudioProcessingImpl::InitializeLocked() {
   AllocateRenderQueue();
 
   InitializeGainController1();
-  InitializeTransientSuppressor();
   InitializeHighPassFilter(true);
   InitializeResidualEchoDetector();
   InitializeEchoController();
   InitializeGainController2();
-  InitializeVoiceActivityDetector();
   InitializeNoiseSuppressor();
   InitializeAnalyzer();
   InitializePostProcessor();
@@ -906,52 +670,41 @@ void AudioProcessingImpl::ApplyConfig(const AudioProcessing::Config& config) {
   MutexLock lock_render(&mutex_render_);
   MutexLock lock_capture(&mutex_capture_);
 
-  const auto adjusted_config =
-      AdjustConfig(config, gain_controller2_experiment_params_);
-  RTC_LOG(LS_INFO) << "AudioProcessing::ApplyConfig: "
-                   << adjusted_config.ToString();
+  RTC_LOG(LS_INFO) << "AudioProcessing::ApplyConfig: " << config.ToString();
 
   const bool pipeline_config_changed =
       config_.pipeline.multi_channel_render !=
-          adjusted_config.pipeline.multi_channel_render ||
+          config.pipeline.multi_channel_render ||
       config_.pipeline.multi_channel_capture !=
-          adjusted_config.pipeline.multi_channel_capture ||
+          config.pipeline.multi_channel_capture ||
       config_.pipeline.maximum_internal_processing_rate !=
-          adjusted_config.pipeline.maximum_internal_processing_rate ||
+          config.pipeline.maximum_internal_processing_rate ||
       config_.pipeline.capture_downmix_method !=
-          adjusted_config.pipeline.capture_downmix_method;
+          config.pipeline.capture_downmix_method;
 
   const bool aec_config_changed =
-      config_.echo_canceller.enabled !=
-          adjusted_config.echo_canceller.enabled ||
-      config_.echo_canceller.mobile_mode !=
-          adjusted_config.echo_canceller.mobile_mode;
+      config_.echo_canceller.enabled != config.echo_canceller.enabled ||
+      config_.echo_canceller.mobile_mode != config.echo_canceller.mobile_mode;
 
   const bool agc1_config_changed =
-      config_.gain_controller1 != adjusted_config.gain_controller1;
+      config_.gain_controller1 != config.gain_controller1;
 
   const bool agc2_config_changed =
-      config_.gain_controller2 != adjusted_config.gain_controller2;
+      config_.gain_controller2 != config.gain_controller2;
 
   const bool ns_config_changed =
-      config_.noise_suppression.enabled !=
-          adjusted_config.noise_suppression.enabled ||
-      config_.noise_suppression.level !=
-          adjusted_config.noise_suppression.level;
-
-  const bool ts_config_changed = config_.transient_suppression.enabled !=
-                                 adjusted_config.transient_suppression.enabled;
+      config_.noise_suppression.enabled != config.noise_suppression.enabled ||
+      config_.noise_suppression.level != config.noise_suppression.level;
 
   const bool pre_amplifier_config_changed =
-      config_.pre_amplifier.enabled != adjusted_config.pre_amplifier.enabled ||
+      config_.pre_amplifier.enabled != config.pre_amplifier.enabled ||
       config_.pre_amplifier.fixed_gain_factor !=
-          adjusted_config.pre_amplifier.fixed_gain_factor;
+          config.pre_amplifier.fixed_gain_factor;
 
   const bool gain_adjustment_config_changed =
-      config_.capture_level_adjustment !=
-      adjusted_config.capture_level_adjustment;
+      config_.capture_level_adjustment != config.capture_level_adjustment;
 
-  config_ = adjusted_config;
+  config_ = config;
 
   if (aec_config_changed) {
     InitializeEchoController();
@@ -959,10 +712,6 @@ void AudioProcessingImpl::ApplyConfig(const AudioProcessing::Config& config) {
 
   if (ns_config_changed) {
     InitializeNoiseSuppressor();
-  }
-
-  if (ts_config_changed) {
-    InitializeTransientSuppressor();
   }
 
   InitializeHighPassFilter(false);
@@ -978,11 +727,8 @@ void AudioProcessingImpl::ApplyConfig(const AudioProcessing::Config& config) {
     config_.gain_controller2 = AudioProcessing::Config::GainController2();
   }
 
-  if (agc2_config_changed || ts_config_changed) {
-    // AGC2 also depends on TS because of the possible dependency on the APM VAD
-    // sub-module.
+  if (agc2_config_changed) {
     InitializeGainController2();
-    InitializeVoiceActivityDetector();
   }
 
   if (pre_amplifier_config_changed || gain_adjustment_config_changed) {
@@ -994,12 +740,6 @@ void AudioProcessingImpl::ApplyConfig(const AudioProcessing::Config& config) {
   if (pipeline_config_changed) {
     InitializeLocked(formats_.api_format);
   }
-}
-
-void AudioProcessingImpl::OverrideSubmoduleCreationForTesting(
-    const ApmSubmoduleCreationOverrides& overrides) {
-  MutexLock lock(&mutex_capture_);
-  submodule_creation_overrides_ = overrides;
 }
 
 int AudioProcessingImpl::proc_sample_rate_hz() const {
@@ -1660,7 +1400,7 @@ int AudioProcessingImpl::ProcessCaptureStreamLocked() {
   if (submodules_.agc_manager) {
     submodules_.agc_manager->Process(*capture_buffer);
 
-    absl::optional<int> new_digital_gain =
+    std::optional<int> new_digital_gain =
         submodules_.agc_manager->GetDigitalComressionGain();
     if (new_digital_gain && submodules_.gain_control) {
       submodules_.gain_control->set_compression_gain_db(*new_digital_gain);
@@ -1697,44 +1437,6 @@ int AudioProcessingImpl::ProcessCaptureStreamLocked() {
                                       capture_buffer->num_frames()));
     }
 
-    absl::optional<float> voice_probability;
-    if (!!submodules_.voice_activity_detector) {
-      voice_probability = submodules_.voice_activity_detector->Analyze(
-          AudioFrameView<const float>(capture_buffer->channels(),
-                                      capture_buffer->num_channels(),
-                                      capture_buffer->num_frames()));
-    }
-
-    if (submodules_.transient_suppressor) {
-      float transient_suppressor_voice_probability = 1.0f;
-      switch (transient_suppressor_vad_mode_) {
-        case TransientSuppressor::VadMode::kDefault:
-          if (submodules_.agc_manager) {
-            transient_suppressor_voice_probability =
-                submodules_.agc_manager->voice_probability();
-          }
-          break;
-        case TransientSuppressor::VadMode::kRnnVad:
-          RTC_DCHECK(voice_probability.has_value());
-          transient_suppressor_voice_probability = *voice_probability;
-          break;
-        case TransientSuppressor::VadMode::kNoVad:
-          // The transient suppressor will ignore `voice_probability`.
-          break;
-      }
-      float delayed_voice_probability =
-          submodules_.transient_suppressor->Suppress(
-              capture_buffer->channels()[0], capture_buffer->num_frames(),
-              capture_buffer->num_channels(),
-              capture_buffer->split_bands_const(0)[kBand0To8kHz],
-              capture_buffer->num_frames_per_band(),
-              /*reference_data=*/nullptr, /*reference_length=*/0,
-              transient_suppressor_voice_probability, capture_.key_pressed);
-      if (voice_probability.has_value()) {
-        *voice_probability = delayed_voice_probability;
-      }
-    }
-
     // Experimental APM sub-module that analyzes `capture_buffer`.
     if (submodules_.capture_analyzer) {
       submodules_.capture_analyzer->Analyze(capture_buffer);
@@ -1744,8 +1446,8 @@ int AudioProcessingImpl::ProcessCaptureStreamLocked() {
       // TODO(bugs.webrtc.org/7494): Let AGC2 detect applied input volume
       // changes.
       submodules_.gain_controller2->Process(
-          voice_probability, capture_.applied_input_volume_changed,
-          capture_buffer);
+          /*speech_probability=*/std::nullopt,
+          capture_.applied_input_volume_changed, capture_buffer);
     }
 
     if (submodules_.capture_post_processor) {
@@ -1877,8 +1579,8 @@ int AudioProcessingImpl::ProcessReverseStream(const float* const* src,
 
 int AudioProcessingImpl::AnalyzeReverseStreamLocked(
     const float* const* src,
-    const StreamConfig& input_config,
-    const StreamConfig& output_config) {
+    const StreamConfig& /* input_config */,
+    const StreamConfig& /* output_config */) {
   if (aec_dump_) {
     const size_t channel_size =
         formats_.api_format.reverse_input_stream().num_frames();
@@ -2023,7 +1725,7 @@ void AudioProcessingImpl::set_stream_analog_level_locked(int level) {
 
   // Invalidate any previously recommended input volume which will be updated by
   // `ProcessStream()`.
-  capture_.recommended_input_volume = absl::nullopt;
+  capture_.recommended_input_volume = std::nullopt;
 
   if (submodules_.agc_manager) {
     submodules_.agc_manager->set_stream_analog_level(level);
@@ -2056,7 +1758,7 @@ void AudioProcessingImpl::UpdateRecommendedInputVolumeLocked() {
   if (!capture_.applied_input_volume.has_value()) {
     // When `set_stream_analog_level()` is not called, no input level can be
     // recommended.
-    capture_.recommended_input_volume = absl::nullopt;
+    capture_.recommended_input_volume = std::nullopt;
     return;
   }
 
@@ -2082,9 +1784,10 @@ void AudioProcessingImpl::UpdateRecommendedInputVolumeLocked() {
   capture_.recommended_input_volume = capture_.applied_input_volume;
 }
 
-bool AudioProcessingImpl::CreateAndAttachAecDump(absl::string_view file_name,
-                                                 int64_t max_log_size_bytes,
-                                                 rtc::TaskQueue* worker_queue) {
+bool AudioProcessingImpl::CreateAndAttachAecDump(
+    absl::string_view file_name,
+    int64_t max_log_size_bytes,
+    absl::Nonnull<TaskQueueBase*> worker_queue) {
   std::unique_ptr<AecDump> aec_dump =
       AecDumpFactory::Create(file_name, max_log_size_bytes, worker_queue);
   if (!aec_dump) {
@@ -2095,9 +1798,10 @@ bool AudioProcessingImpl::CreateAndAttachAecDump(absl::string_view file_name,
   return true;
 }
 
-bool AudioProcessingImpl::CreateAndAttachAecDump(FILE* handle,
-                                                 int64_t max_log_size_bytes,
-                                                 rtc::TaskQueue* worker_queue) {
+bool AudioProcessingImpl::CreateAndAttachAecDump(
+    FILE* handle,
+    int64_t max_log_size_bytes,
+    absl::Nonnull<TaskQueueBase*> worker_queue) {
   std::unique_ptr<AecDump> aec_dump =
       AecDumpFactory::Create(handle, max_log_size_bytes, worker_queue);
   if (!aec_dump) {
@@ -2142,43 +1846,9 @@ bool AudioProcessingImpl::UpdateActiveSubmoduleStates() {
   return submodule_states_.Update(
       config_.high_pass_filter.enabled, !!submodules_.echo_control_mobile,
       !!submodules_.noise_suppressor, !!submodules_.gain_control,
-      !!submodules_.gain_controller2, !!submodules_.voice_activity_detector,
+      !!submodules_.gain_controller2,
       config_.pre_amplifier.enabled || config_.capture_level_adjustment.enabled,
-      capture_nonlocked_.echo_controller_enabled,
-      !!submodules_.transient_suppressor);
-}
-
-void AudioProcessingImpl::InitializeTransientSuppressor() {
-  // Choose the VAD mode for TS and detect a VAD mode change.
-  const TransientSuppressor::VadMode previous_vad_mode =
-      transient_suppressor_vad_mode_;
-  transient_suppressor_vad_mode_ = TransientSuppressor::VadMode::kDefault;
-  if (UseApmVadSubModule(config_, gain_controller2_experiment_params_)) {
-    transient_suppressor_vad_mode_ = TransientSuppressor::VadMode::kRnnVad;
-  }
-  const bool vad_mode_changed =
-      previous_vad_mode != transient_suppressor_vad_mode_;
-
-  if (config_.transient_suppression.enabled &&
-      !constants_.transient_suppressor_forced_off) {
-    // Attempt to create a transient suppressor, if one is not already created.
-    if (!submodules_.transient_suppressor || vad_mode_changed) {
-      submodules_.transient_suppressor = CreateTransientSuppressor(
-          submodule_creation_overrides_, transient_suppressor_vad_mode_,
-          proc_fullband_sample_rate_hz(), capture_nonlocked_.split_rate,
-          num_proc_channels());
-      if (!submodules_.transient_suppressor) {
-        RTC_LOG(LS_WARNING)
-            << "No transient suppressor created (probably disabled)";
-      }
-    } else {
-      submodules_.transient_suppressor->Initialize(
-          proc_fullband_sample_rate_hz(), capture_nonlocked_.split_rate,
-          num_proc_channels());
-    }
-  } else {
-    submodules_.transient_suppressor.reset();
-  }
+      capture_nonlocked_.echo_controller_enabled);
 }
 
 void AudioProcessingImpl::InitializeHighPassFilter(bool forced_reset) {
@@ -2220,7 +1890,7 @@ void AudioProcessingImpl::InitializeEchoController() {
       RTC_DCHECK(submodules_.echo_controller);
     } else {
       EchoCanceller3Config config;
-      absl::optional<EchoCanceller3Config> multichannel_config;
+      std::optional<EchoCanceller3Config> multichannel_config;
       if (use_setup_specific_default_aec3_config_) {
         multichannel_config = EchoCanceller3::CreateDefaultMultichannelConfig();
       }
@@ -2361,44 +2031,17 @@ void AudioProcessingImpl::InitializeGainController2() {
     submodules_.gain_controller2.reset();
     return;
   }
-  // Override the input volume controller configuration if the AGC2 experiment
-  // is running and its parameters require to fully switch the gain control to
+  // Input volume controller configuration if the AGC2 is running
+  // and its parameters require to fully switch the gain control to
   // AGC2.
-  const bool input_volume_controller_config_overridden =
-      gain_controller2_experiment_params_.has_value() &&
-      gain_controller2_experiment_params_->agc2_config.has_value();
   const InputVolumeController::Config input_volume_controller_config =
-      input_volume_controller_config_overridden
-          ? gain_controller2_experiment_params_->agc2_config
-                ->input_volume_controller
-          : InputVolumeController::Config{};
-  // If the APM VAD sub-module is not used, let AGC2 use its internal VAD.
-  const bool use_internal_vad =
-      !UseApmVadSubModule(config_, gain_controller2_experiment_params_);
+      InputVolumeController::Config{};
   submodules_.gain_controller2 = std::make_unique<GainController2>(
       config_.gain_controller2, input_volume_controller_config,
-      proc_fullband_sample_rate_hz(), num_proc_channels(), use_internal_vad);
+      proc_fullband_sample_rate_hz(), num_output_channels(),
+      /*use_internal_vad=*/true);
   submodules_.gain_controller2->SetCaptureOutputUsed(
       capture_.capture_output_used);
-}
-
-void AudioProcessingImpl::InitializeVoiceActivityDetector() {
-  if (!UseApmVadSubModule(config_, gain_controller2_experiment_params_)) {
-    submodules_.voice_activity_detector.reset();
-    return;
-  }
-
-  if (!submodules_.voice_activity_detector) {
-    RTC_DCHECK(!!submodules_.gain_controller2);
-    // TODO(bugs.webrtc.org/13663): Cache CPU features in APM and use here.
-    submodules_.voice_activity_detector =
-        std::make_unique<VoiceActivityDetectorWrapper>(
-            submodules_.gain_controller2->GetCpuFeatures(),
-            proc_fullband_sample_rate_hz());
-  } else {
-    submodules_.voice_activity_detector->Initialize(
-        proc_fullband_sample_rate_hz());
-  }
 }
 
 void AudioProcessingImpl::InitializeNoiseSuppressor() {
@@ -2535,8 +2178,6 @@ void AudioProcessingImpl::WriteAecDumpConfigMessage(bool forced) {
   apm_config.ns_enabled = config_.noise_suppression.enabled;
   apm_config.ns_level = static_cast<int>(config_.noise_suppression.level);
 
-  apm_config.transient_suppression_enabled =
-      config_.transient_suppression.enabled;
   apm_config.experiments_description = experiments_description;
   apm_config.pre_amplifier_enabled = config_.pre_amplifier.enabled;
   apm_config.pre_amplifier_fixed_gain_factor =

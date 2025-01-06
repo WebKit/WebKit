@@ -31,12 +31,32 @@
     "script": "//src/tests/capture_tests/capture_tests.py",
     "type": "script",
   },
-  "angle_deqp_egl_tests": {
-    "label": "//src/tests:angle_deqp_egl_tests",
+  "angle_oclcts_api": {
+    "label": "//src/tests:angle_oclcts_api",
     "type": "windowed_test_launcher",
   },
-  "angle_deqp_gl46_tests": {
-    "label": "//src/tests:angle_deqp_gl46_tests",
+  "angle_oclcts_basic": {
+    "label": "//src/tests:angle_oclcts_basic",
+    "type": "windowed_test_launcher",
+  },
+  "angle_oclcts_buffers": {
+    "label": "//src/tests:angle_oclcts_buffers",
+    "type": "windowed_test_launcher",
+  },
+  "angle_oclcts_compiler": {
+    "label": "//src/tests:angle_oclcts_compiler",
+    "type": "windowed_test_launcher",
+  },
+  "angle_oclcts_events": {
+    "label": "//src/tests:angle_oclcts_events",
+    "type": "windowed_test_launcher",
+  },
+  "angle_oclcts_profiling": {
+    "label": "//src/tests:angle_oclcts_profiling",
+    "type": "windowed_test_launcher",
+  },
+  "angle_deqp_egl_tests": {
+    "label": "//src/tests:angle_deqp_egl_tests",
     "type": "windowed_test_launcher",
   },
   "angle_deqp_gles2_tests": {

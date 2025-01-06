@@ -5,6 +5,9 @@ specific_include_rules = {
   ".*": [
     "+video"
   ],
+  ".*": [
+    "+rtc_base/ref_counted_object.h",
+  ],
   "dummy_peer_connection\.h": [
     "+rtc_base/ref_counted_object.h",
   ],
@@ -15,6 +18,8 @@ specific_include_rules = {
     "+rtc_base/thread.h",
     "+rtc_base/network.h",
     "+rtc_base/network_constants.h",
+    "+rtc_base/ip_address.h",
+    "+rtc_base/socket_address.h",
   ],
   "peer_network_dependencies\.h": [
     "+rtc_base/network.h",
@@ -32,8 +37,23 @@ specific_include_rules = {
   "time_controller\.h": [
     "+rtc_base/synchronization/yield_policy.h",
     "+system_wrappers/include/clock.h",
+    "+rtc_base/socket_server.h",
   ],
   "create_frame_generator\.h": [
     "+system_wrappers/include/clock.h",
+  ],
+  "mock_async_dns_resolver\.h": [
+    "+rtc_base/socket_address.h",
+  ],
+  "mock_packet_socket_factory\.h": [
+    "+rtc_base/async_packet_socket.h",
+    "+rtc_base/socket_address.h",
+  ],
+  "mock_peer_connection_factory_interface\.h": [
+    "+p2p/base/port_allocator.h",
+    "+rtc_base/rtc_certificate_generator.h",
+  ],
+  "videocodec_test_fixture\.h": [
+    "+modules/video_coding/codecs/h264/include/h264_globals.h",
   ],
 }

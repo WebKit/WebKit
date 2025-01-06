@@ -30,12 +30,14 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS SOAuthorization;
 OBJC_CLASS WKSOAuthorizationDelegate;
 
 namespace API {
 class NavigationAction;
+class PageConfiguration;
 }
 
 namespace WebCore {
@@ -47,7 +49,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class SOAuthorizationCoordinator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SOAuthorizationCoordinator);
     WTF_MAKE_NONCOPYABLE(SOAuthorizationCoordinator);
 public:
     SOAuthorizationCoordinator();
@@ -58,7 +60,7 @@ public:
     // For PopUp interception.
     using NewPageCallback = CompletionHandler<void(RefPtr<WebPageProxy>&&)>;
     using UIClientCallback = Function<void(Ref<API::NavigationAction>&&, NewPageCallback&&)>;
-    void tryAuthorize(Ref<API::NavigationAction>&&, WebPageProxy&, NewPageCallback&&, UIClientCallback&&);
+    void tryAuthorize(Ref<API::PageConfiguration>&&, Ref<API::NavigationAction>&&, WebPageProxy&, NewPageCallback&&, UIClientCallback&&);
 
 private:
     bool canAuthorize(const URL&) const;

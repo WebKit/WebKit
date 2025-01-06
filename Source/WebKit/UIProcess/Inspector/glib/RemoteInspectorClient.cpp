@@ -36,13 +36,15 @@
 #include <WebCore/InspectorDebuggableType.h>
 #include <gio/gio.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 
 class RemoteInspectorProxy final : public RemoteWebInspectorUIProxyClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteInspectorProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteInspectorProxy);
 public:
     RemoteInspectorProxy(RemoteInspectorClient& inspectorClient, uint64_t connectionID, uint64_t targetID)
@@ -116,6 +118,8 @@ private:
     uint64_t m_connectionID;
     uint64_t m_targetID;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteInspectorClient);
 
 const SocketConnection::MessageHandlers& RemoteInspectorClient::messageHandlers()
 {
@@ -293,6 +297,8 @@ void RemoteInspectorClient::sendMessageToFrontend(uint64_t connectionID, uint64_
     proxy->sendMessageToFrontend(String::fromUTF8(message));
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
+
 void RemoteInspectorClient::appendTargertList(GString* html, InspectorType inspectorType, ShouldEscapeSingleQuote escapeSingleQuote) const
 {
     if (m_targets.isEmpty())
@@ -362,6 +368,8 @@ GString* RemoteInspectorClient::buildTargetListPage(InspectorType inspectorType)
 
     return html;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace WebKit
 

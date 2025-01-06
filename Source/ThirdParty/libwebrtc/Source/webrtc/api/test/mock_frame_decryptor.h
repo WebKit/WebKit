@@ -11,9 +11,13 @@
 #ifndef API_TEST_MOCK_FRAME_DECRYPTOR_H_
 #define API_TEST_MOCK_FRAME_DECRYPTOR_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <vector>
 
+#include "api/array_view.h"
 #include "api/crypto/frame_decryptor_interface.h"
+#include "api/media_types.h"
 #include "test/gmock.h"
 
 namespace webrtc {

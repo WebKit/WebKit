@@ -35,11 +35,11 @@
 #include "PlatformDisplay.h"
 #include "SharedBuffer.h"
 #include <skia/core/SkData.h>
-#include <skia/core/SkImage.h>
 
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkImage.h>
 #include <skia/core/SkPixmap.h>
-IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
@@ -47,9 +47,6 @@ GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
 
 bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication)
 {
-    if (!m_image)
-        return false;
-
     PlatformImagePtr platformImage;
     bool hasAlpha = !m_image->currentFrameKnownToBeOpaque();
     if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && m_image->data()) {
@@ -100,15 +97,18 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
 
     if (platformImage->isTextureBacked()) {
         auto data = SkData::MakeUninitialized(imageInfo.computeMinByteSize());
-        if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+        if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
             return false;
 
-        GrDirectContext* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
+        GrDirectContext* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
         if (!platformImage->readPixels(grContext, imageInfo, static_cast<uint8_t*>(data->writable_data()), bytesPerRow, 0, 0))
             return false;
 
         m_pixelData = WTFMove(data);
         m_imagePixelData = m_pixelData->data();
+
+        // SkSurfaces backed by textures have RGBA format.
+        m_imageSourceFormat = DataFormat::RGBA8;
     } else {
         SkPixmap pixmap;
         if (!platformImage->peekPixels(&pixmap))
@@ -116,9 +116,11 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
 
         m_skImage = WTFMove(platformImage);
         m_imagePixelData = pixmap.addr();
+
+        // Raster SkSurfaces have BGRA format.
+        m_imageSourceFormat = DataFormat::BGRA8;
     }
 
-    m_imageSourceFormat = DataFormat::BGRA8;
     m_imageSourceUnpackAlignment = srcUnpackAlignment;
     return true;
 }

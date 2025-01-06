@@ -44,8 +44,8 @@ class OneByteChunk : public TLVTrait<OneByteTypeConfig> {
     writer.CopyToVariableData(rtc::ArrayView<const uint8_t>(variable_data));
   }
 
-  static absl::optional<BoundedByteReader<OneByteTypeConfig::kHeaderSize>>
-  Parse(rtc::ArrayView<const uint8_t> data) {
+  static std::optional<BoundedByteReader<OneByteTypeConfig::kHeaderSize>> Parse(
+      rtc::ArrayView<const uint8_t> data) {
     return ParseTLV(data);
   }
 };
@@ -64,7 +64,7 @@ TEST(TlvDataTest, CanReadOneByteTypeTlvs) {
   uint8_t data[] = {0x49, 0x00, 0x00, 0x10, 0x01, 0x02, 0x03, 0x04,
                     0x05, 0x06, 0x07, 0x08, 0xDE, 0xAD, 0xBE, 0xEF};
 
-  absl::optional<BoundedByteReader<OneByteTypeConfig::kHeaderSize>> reader =
+  std::optional<BoundedByteReader<OneByteTypeConfig::kHeaderSize>> reader =
       OneByteChunk::Parse(data);
   ASSERT_TRUE(reader.has_value());
   EXPECT_EQ(reader->Load32<4>(), 0x01020304U);
@@ -93,8 +93,8 @@ class TwoByteChunk : public TLVTrait<TwoByteTypeConfig> {
     writer.CopyToVariableData(rtc::ArrayView<const uint8_t>(variable_data));
   }
 
-  static absl::optional<BoundedByteReader<TwoByteTypeConfig::kHeaderSize>>
-  Parse(rtc::ArrayView<const uint8_t> data) {
+  static std::optional<BoundedByteReader<TwoByteTypeConfig::kHeaderSize>> Parse(
+      rtc::ArrayView<const uint8_t> data) {
     return ParseTLV(data);
   }
 };
@@ -114,7 +114,7 @@ TEST(TlvDataTest, CanReadTwoByteTypeTlvs) {
   uint8_t data[] = {0x7A, 0x69, 0x00, 0x10, 0x01, 0x02, 0x03, 0x04,
                     0x05, 0x06, 0x07, 0x08, 0xDE, 0xAD, 0xBE, 0xEF};
 
-  absl::optional<BoundedByteReader<TwoByteTypeConfig::kHeaderSize>> reader =
+  std::optional<BoundedByteReader<TwoByteTypeConfig::kHeaderSize>> reader =
       TwoByteChunk::Parse(data);
   EXPECT_TRUE(reader.has_value());
   EXPECT_EQ(reader->Load32<4>(), 0x01020304U);

@@ -27,6 +27,7 @@
 #include "LayoutUnit.h"
 #include "RenderStyleConstants.h"
 #include "WritingMode.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -48,6 +49,7 @@ class RenderBox;
 // (first/last baseline), it's ready to collect the items that will participate in the Baseline Alignment logic.
 //
 class BaselineGroup {
+    WTF_MAKE_TZONE_ALLOCATED(BaselineGroup);
 public:
     // It stores an item (if not already present) and update the max_ascent associated to this
     // baseline-sharing group.
@@ -59,21 +61,21 @@ public:
 
 private:
     friend class BaselineAlignmentState;
-    BaselineGroup(BlockFlowDirection, ItemPosition childPreference);
+    BaselineGroup(FlowDirection, ItemPosition childPreference);
 
     // Determines whether a baseline-sharing group is compatible with an item, based on its 'block-flow' and
     // 'baseline-preference'
-    bool isCompatible(BlockFlowDirection, ItemPosition) const;
+    bool isCompatible(FlowDirection, ItemPosition) const;
 
     // Determines whether the baseline-sharing group's associated block-flow is opposite (LR vs RL) to particular
     // item's writing-mode.
-    bool isOppositeBlockFlow(BlockFlowDirection) const;
+    bool isOppositeBlockFlow(FlowDirection) const;
 
     // Determines whether the baseline-sharing group's associated block-flow is orthogonal (vertical vs horizontal)
     // to particular item's writing-mode.
-    bool isOrthogonalBlockFlow(BlockFlowDirection) const;
+    bool isOrthogonalBlockFlow(FlowDirection) const;
 
-    BlockFlowDirection m_blockFlow;
+    FlowDirection m_blockFlow;
     ItemPosition m_preference;
     LayoutUnit m_maxAscent;
     SingleThreadWeakHashSet<RenderBox> m_items;
@@ -94,7 +96,7 @@ private:
 // if there is one that is compatible with such item. Otherwise, a new baseline-sharing group is created,
 // compatible with the new item.
 class BaselineAlignmentState {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BaselineAlignmentState);
 public:
     BaselineAlignmentState(const RenderBox& child, ItemPosition preference, LayoutUnit ascent);
     const BaselineGroup& sharedGroup(const RenderBox& child, ItemPosition preference) const;

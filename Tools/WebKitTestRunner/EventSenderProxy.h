@@ -34,6 +34,7 @@
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSEvent;
+OBJC_CLASS NSView;
 #endif
 
 namespace WTR {
@@ -118,6 +119,8 @@ public:
     void scaleGestureEnd(double scale);
 #endif
 
+    void waitForPendingMouseEvents();
+
 private:
     TestController* m_testController;
 
@@ -147,6 +150,7 @@ private:
     unsigned m_mouseButtonsCurrentlyDown { 0 };
 #if PLATFORM(COCOA)
     int m_eventNumber { 0 };
+    RetainPtr<NSView> m_targetView;
 #endif
 #if PLATFORM(GTK)
     bool m_hasPreciseDeltas { false };

@@ -1,0 +1,4 @@
+
+FAIL Size container query responds to fallback width assert_equals: expected "rgb(0, 255, 0)" but got "rgba(0, 0, 0, 0)"
+FAIL Size container query responds to fallback width and applies height to not fit the first fallback assert_equals: expected "rgb(255, 255, 0)" but got "rgba(0, 0, 0, 0)"
+

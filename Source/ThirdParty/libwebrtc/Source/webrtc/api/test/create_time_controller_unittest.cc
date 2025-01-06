@@ -10,10 +10,12 @@
 
 #include "api/test/create_time_controller.h"
 
+#include <functional>
+
 #include "api/test/time_controller.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "test/gmock.h"
+#include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 
 namespace webrtc {

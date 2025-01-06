@@ -11,18 +11,6 @@ description("Test IndexedDB IDBKeyRange when we are Out of Memory.");
 // Since we are low on memory, it is difficult to use the exception test helpers.
 let exceptionString = undefined;
 
-const a = [];
-a.length = 2**30;
-a.__proto__ = {};
-Object.defineProperty(a, 0, { get: foo });
-function foo() {
-    new Uint8Array(a);
-}
-
-try {
-    foo();
-} catch { }
-
 try {
     for (let timeoutCount = 1000; timeoutCount--;)
         new ArrayBuffer(2**20);

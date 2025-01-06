@@ -50,47 +50,16 @@ Xp   > 
 
 PASS .container 1
 PASS .container 2
-FAIL .container 3 assert_equals:
-<div class="container">
-  Xp<table data-offset-y="25">
-    <tbody>
-      <tr></tr>
-    </tbody>
-  </table>
-</div>
-offsetTop expected 25 but got 10
-FAIL .container 4 assert_equals:
-<div class="container">
-  Xp<table style="font: 12px fixed" data-offset-y="25">
-    <tbody>
-      <tr></tr>
-      <tr><td>1,0</td></tr>
-    </tbody>
-  </table>
-</div>
-offsetTop expected 25 but got 0
+PASS .container 3
+PASS .container 4
 PASS .container 5
 PASS .container 6
 PASS .container 7
 PASS .container 8
 PASS .container 9
 PASS .container 10
-FAIL .container 11 assert_equals:
-<div class="container">
-  Xp<table data-offset-y="25" data-expected-height="50">
-    <tbody><tr style="height:20px"></tr>
-    <tr></tr>
-  </tbody></table>
-</div>
-offsetTop expected 25 but got 0
-FAIL .container 12 assert_equals:
-<div class="container">
-  Xp<table data-offset-y="25" data-expected-height="68">
-    <tbody><tr style="height:20px"></tr>
-    <tr><td style="font-size:10px">X</td></tr>
-  </tbody></table>
-</div>
-offsetTop expected 25 but got 0
+PASS .container 11
+PASS .container 12
 FAIL .container 13 assert_equals:
 <div class="container">
   Xp<table>

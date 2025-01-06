@@ -40,14 +40,13 @@ class RTCPeerConnection;
 class ScriptExecutionContext;
 
 class RTCDtlsTransport final : public RefCounted<RTCDtlsTransport>, public ActiveDOMObject, public EventTarget, public RTCDtlsTransportBackendClient {
-    WTF_MAKE_ISO_ALLOCATED(RTCDtlsTransport);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCDtlsTransport);
 public:
-    static Ref<RTCDtlsTransport> create(ScriptExecutionContext&, UniqueRef<RTCDtlsTransportBackend>&&, Ref<RTCIceTransport>&&);
-    ~RTCDtlsTransport();
-
-    // ActiveDOMObject.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+
+    static Ref<RTCDtlsTransport> create(ScriptExecutionContext&, UniqueRef<RTCDtlsTransportBackend>&&, Ref<RTCIceTransport>&&);
+    ~RTCDtlsTransport();
 
     RTCIceTransport& iceTransport() { return m_iceTransport.get(); }
     RTCDtlsTransportState state() { return m_state; }

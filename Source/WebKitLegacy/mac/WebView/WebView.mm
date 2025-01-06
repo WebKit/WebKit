@@ -103,7 +103,7 @@
 #import "WebPluginInfoProvider.h"
 #import "WebPolicyDelegate.h"
 #import "WebPreferenceKeysPrivate.h"
-#import "WebPreferencesPrivate.h"
+#import "WebPreferencesInternal.h"
 #import "WebProgressTrackerClient.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebResourceLoadDelegatePrivate.h"
@@ -137,6 +137,7 @@
 #import <WebCore/BackForwardCache.h>
 #import <WebCore/BackForwardController.h>
 #import <WebCore/BroadcastChannelRegistry.h>
+#import <WebCore/CGWindowUtilities.h>
 #import <WebCore/CacheStorageProvider.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
@@ -190,7 +191,6 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/MIMETypeRegistry.h>
-#import <WebCore/MediaRecorderProvider.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/MutableStyleProperties.h>
@@ -205,6 +205,7 @@
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformTextAlternatives.h>
+#import <WebCore/ProcessSyncClient.h>
 #import <WebCore/ProgressTracker.h>
 #import <WebCore/Range.h>
 #import <WebCore/RemoteFrameClient.h>
@@ -216,7 +217,6 @@
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceLoadObserver.h>
 #import <WebCore/ResourceRequest.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SQLiteFileSystem.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
@@ -259,6 +259,7 @@
 #import <pal/spi/mac/NSViewSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <wtf/Assertions.h>
+#import <wtf/Atomics.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashTraits.h>
@@ -271,6 +272,7 @@
 #import <wtf/RefCountedLeakCounter.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
@@ -289,7 +291,6 @@
 #import "WebNSPasteboardExtras.h"
 #import "WebNSPrintOperationExtras.h"
 #import "WebPDFView.h"
-#import "WebSwitchingGPUClient.h"
 #import "WebVideoFullscreenController.h"
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
@@ -330,7 +331,6 @@
 #import <WebCore/WebEvent.h>
 #import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #import <WebCore/WebVideoFullscreenControllerAVKit.h>
-#import <libkern/OSAtomic.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <wtf/FastMalloc.h>
@@ -1334,7 +1334,7 @@ static RetainPtr<CFMutableSetRef>& allWebViewsSet()
 #if PLATFORM(IOS) || PLATFORM(VISION)
 static bool needsLaBanquePostaleQuirks()
 {
-    static bool needsQuirks = WebCore::IOSApplication::isLaBanquePostale() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoLaBanquePostaleQuirks);
+    static bool needsQuirks = WTF::IOSApplication::isLaBanquePostale() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoLaBanquePostaleQuirks);
     return needsQuirks;
 }
 
@@ -1484,13 +1484,14 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 #if ENABLE(GAMEPAD)
         WebKitInitializeGamepadProviderIfNecessary();
 #endif
-#if PLATFORM(MAC)
-        WebCore::SwitchingGPUClient::setSingleton(WebKit::WebSwitchingGPUClient::singleton());
-#endif
+
 
 #if PLATFORM(IOS_FAMILY)
-        if (WebCore::IOSApplication::isMobileSafari())
+        if (WTF::IOSApplication::isMobileSafari())
             WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
+#endif
+#if USE(AUDIO_SESSION)
+        WebCore::AudioSession::enableMediaPlayback();
 #endif
 
 #if ENABLE(VIDEO)
@@ -1514,13 +1515,15 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
-        CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
-            return makeUniqueRef<WebFrameLoaderClient>();
-        } },
+        WebCore::PageConfiguration::LocalMainFrameCreationParameters {
+            CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&, WebCore::FrameLoader&)> { [] (auto&, auto& frameLoader) {
+                return makeUniqueRefWithoutRefCountedCheck<WebFrameLoaderClient>(frameLoader);
+            } },
+            WebCore::SandboxFlags { } // Set by updateSandboxFlags after instantiation.
+        },
         WebCore::FrameIdentifier::generate(),
-        nullptr,
+        nullptr, // Opener may be set by setOpenerForWebKitLegacy after instantiation.
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
-        makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
         makeUniqueRef<WebCore::DummyStorageProvider>(),
         makeUniqueRef<WebCore::DummyModelPlayerProvider>(),
@@ -1530,14 +1533,15 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         makeUniqueRef<WebContextMenuClient>(self),
 #endif
 #if ENABLE(APPLE_PAY)
-        makeUniqueRef<WebPaymentCoordinatorClient>(),
+        WebPaymentCoordinatorClient::create(),
 #endif
 #if !PLATFORM(IOS_FAMILY)
         makeUniqueRef<WebChromeClient>(self),
 #else
         makeUniqueRef<WebChromeClientIOS>(self),
 #endif
-        makeUniqueRef<WebCryptoClient>(self)
+        makeUniqueRef<WebCryptoClient>(self),
+        makeUniqueRef<WebCore::ProcessSyncClient>()
     );
 #if !PLATFORM(IOS_FAMILY)
     pageConfiguration.validationMessageClient = makeUnique<WebValidationMessageClient>(self);
@@ -1661,7 +1665,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         WebCore::ResourceHandle::forceContentSniffing();
 
     _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
-    _private->page->effectiveAppearanceDidChange(self._effectiveAppearanceIsDark, self._effectiveUserInterfaceLevelIsElevated);
+    _private->page->setUseColorAppearance(self._effectiveAppearanceIsDark, self._effectiveUserInterfaceLevelIsElevated);
 
     [WebViewVisualIdentificationOverlay installForWebViewIfNeeded:self kind:@"WebView" deprecated:YES];
 
@@ -1777,23 +1781,26 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
-        CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
-            return makeUniqueRef<WebFrameLoaderClient>();
-        } },
+        WebCore::PageConfiguration::LocalMainFrameCreationParameters {
+            CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&, WebCore::FrameLoader&)> { [] (auto&, auto& frameLoader) {
+                return makeUniqueRefWithoutRefCountedCheck<WebFrameLoaderClient>(frameLoader);
+            } },
+            WebCore::SandboxFlags { } // Set by updateSandboxFlags after instantiation.
+        },
         WebCore::FrameIdentifier::generate(),
-        nullptr,
+        nullptr, // Opener may be set by setOpenerForWebKitLegacy after instantiation.
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
-        makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
         makeUniqueRef<WebCore::DummyStorageProvider>(),
         makeUniqueRef<WebCore::DummyModelPlayerProvider>(),
         WebCore::EmptyBadgeClient::create(),
         LegacyHistoryItemClient::singleton(),
 #if ENABLE(APPLE_PAY)
-        makeUniqueRef<WebPaymentCoordinatorClient>(),
+        WebPaymentCoordinatorClient::create(),
 #endif
         makeUniqueRef<WebChromeClientIOS>(self),
-        makeUniqueRef<WebCryptoClient>(self)
+        makeUniqueRef<WebCryptoClient>(self),
+        makeUniqueRef<WebCore::ProcessSyncClient>()
     );
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = makeUnique<WebDragClient>(self);
@@ -1869,7 +1876,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 {
     auto* frame = [self _mainCoreFrame];
     if (frame)
-        frame->history().replaceCurrentItem(core(item));
+        frame->loader().history().replaceCurrentItem(core(item));
 }
 
 + (void)willEnterBackgroundWithCompletionHandler:(void(^)(void))handler
@@ -2306,10 +2313,8 @@ static NSMutableSet *knownPluginMIMETypes()
         return;
     }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (!OSAtomicCompareAndSwap32(0, 1, &_private->didDrawTiles))
+    if (!WTF::atomicCompareExchangeStrong(&_private->didDrawTiles, NO, YES))
         return;
-ALLOW_DEPRECATED_DECLARATIONS_END
 
     WebThreadLock();
 
@@ -2625,7 +2630,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (!_private || !_private->page)
         return;
-    _private->page->effectiveAppearanceDidChange(useDarkAppearance, useElevatedUserInterfaceLevel);
+    _private->page->setUseColorAppearance(useDarkAppearance, useElevatedUserInterfaceLevel);
 }
 
 + (void)_setIconLoadingEnabled:(BOOL)enabled
@@ -2764,28 +2769,28 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // type.  (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
     // in the back forward list, and go to the current one.
 
-    auto& backForward = _private->page->backForward();
-    ASSERT(!backForward.currentItem()); // destination list should be empty
+    CheckedRef backForward = _private->page->backForward();
+    ASSERT(!backForward->currentItem()); // destination list should be empty
 
-    auto& otherBackForward = otherView->_private->page->backForward();
-    if (!otherBackForward.currentItem())
+    CheckedRef otherBackForward = otherView->_private->page->backForward();
+    if (!otherBackForward->currentItem())
         return; // empty back forward list, bail
 
     WebCore::HistoryItem* newItemToGoTo = nullptr;
 
-    int lastItemIndex = otherBackForward.forwardCount();
-    for (int i = -otherBackForward.backCount(); i <= lastItemIndex; ++i) {
+    int lastItemIndex = otherBackForward->forwardCount();
+    for (int i = -otherBackForward->backCount(); i <= lastItemIndex; ++i) {
         if (i == 0) {
             // If this item is showing , save away its current scroll and form state,
             // since that might have changed since loading and it is normally not saved
             // until we leave that page.
             if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(otherView->_private->page->mainFrame()))
-                localMainFrame->history().saveDocumentAndScrollState();
+                localMainFrame->loader().history().saveDocumentAndScrollState();
         }
-        Ref<WebCore::HistoryItem> newItem = otherBackForward.itemAtIndex(i)->copy();
+        Ref newItem = otherBackForward->itemAtIndex(i)->copy();
         if (i == 0)
             newItemToGoTo = newItem.ptr();
-        backForward.client().addItem(_private->page->mainFrame().frameID(), WTFMove(newItem));
+        backForward->client().addItem(WTFMove(newItem));
     }
 
     ASSERT(newItemToGoTo);
@@ -3470,7 +3475,7 @@ IGNORE_WARNINGS_END
 - (void)_didCommitLoadForFrame:(WebFrame *)frame
 {
     if (frame == [self mainFrame])
-        _private->didDrawTiles = 0;
+        WTF::atomicStore(&_private->didDrawTiles, NO);
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -4164,6 +4169,12 @@ IGNORE_WARNINGS_END
     return nil;
 }
 
+- (void)_setTopContentInsetForTesting:(float)contentInset
+{
+    if (_private && _private->page)
+        _private->page->setTopContentInset(contentInset);
+}
+
 - (BOOL)_isSoftwareRenderable
 {
     auto* coreFrame = [self _mainCoreFrame];
@@ -4696,6 +4707,10 @@ IGNORE_WARNINGS_END
 
 + (void)_setLoadResourcesSerially:(BOOL)serialize
 {
+#if PLATFORM(IOS_FAMILY)
+    WebThreadLock();
+#endif
+
     WebPlatformStrategies::initializeIfNecessary();
 
     webResourceLoadScheduler().setSerialLoadingEnabled(serialize);
@@ -4811,16 +4826,16 @@ IGNORE_WARNINGS_END
 
 - (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
 {
-    if (_private && _private->page)
-        _private->page->setUseSystemAppearance(useSystemAppearance);
+    if (_private)
+        [_private->preferences _setUseSystemAppearance:useSystemAppearance];
 }
 
 - (BOOL)_useSystemAppearance
 {
-    if (!_private->page)
+    if (!_private)
         return NO;
 
-    return _private->page->useSystemAppearance();
+    return [_private->preferences _useSystemAppearance];
 }
 
 #if PLATFORM(MAC)
@@ -4831,7 +4846,7 @@ IGNORE_WARNINGS_END
     if (!_private || !_private->page)
         return;
 
-    _private->page->effectiveAppearanceDidChange(self._effectiveAppearanceIsDark, self._effectiveUserInterfaceLevelIsElevated);
+    _private->page->setUseColorAppearance(self._effectiveAppearanceIsDark, self._effectiveUserInterfaceLevelIsElevated);
 }
 #endif
 
@@ -8970,7 +8985,7 @@ FORWARD(toggleUnderline)
 {
     for (auto& alternativeWithRange : alternativesWithRange) {
         if (auto dictationContext = _private->m_alternativeTextUIController->addAlternatives(alternativeWithRange.alternatives.get()))
-            alternatives.append({ alternativeWithRange.range, dictationContext });
+            alternatives.append({ alternativeWithRange.range, *dictationContext });
     }
 }
 
@@ -9837,3 +9852,16 @@ void WebInstallMemoryPressureHandler(void)
         });
     }
 }
+
+#if !TARGET_OS_IPHONE
+@implementation WebView (WKWindowSnapshot)
+- (NSImage *)_windowSnapshotInRect:(CGRect)rect withOptions:(CGWindowImageOption)options
+{
+    RetainPtr snapshot = WebCore::cgWindowListCreateImage(rect, kCGWindowListOptionIncludingWindow, (CGSWindowID)[[self window] windowNumber], options);
+    if (!snapshot)
+        return nil;
+
+    return [[NSImage alloc] initWithCGImage:snapshot.get() size:NSZeroSize];
+}
+@end
+#endif

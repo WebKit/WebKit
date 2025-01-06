@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -56,15 +56,12 @@ typedef struct intrabc_hash_info {
 } IntraBCHashInfo;
 
 void av1_hash_table_init(IntraBCHashInfo *intra_bc_hash_info);
-void av1_hash_table_clear_all(hash_table *p_hash_table);
 void av1_hash_table_destroy(hash_table *p_hash_table);
 bool av1_hash_table_create(hash_table *p_hash_table);
 int32_t av1_hash_table_count(const hash_table *p_hash_table,
                              uint32_t hash_value);
 Iterator av1_hash_get_first_iterator(hash_table *p_hash_table,
                                      uint32_t hash_value);
-int32_t av1_has_exact_match(hash_table *p_hash_table, uint32_t hash_value1,
-                            uint32_t hash_value2);
 void av1_generate_block_2x2_hash_value(IntraBCHashInfo *intra_bc_hash_info,
                                        const YV12_BUFFER_CONFIG *picture,
                                        uint32_t *pic_block_hash[2],

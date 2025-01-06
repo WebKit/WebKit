@@ -10,7 +10,7 @@
 
 #include "modules/audio_processing/agc2/gain_applier.h"
 
-#include "api/array_view.h"
+#include "api/audio/audio_view.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
@@ -24,9 +24,9 @@ bool GainCloseToOne(float gain_factor) {
          gain_factor <= 1.f + 1.f / kMaxFloatS16Value;
 }
 
-void ClipSignal(AudioFrameView<float> signal) {
-  for (int k = 0; k < signal.num_channels(); ++k) {
-    rtc::ArrayView<float> channel_view = signal.channel(k);
+void ClipSignal(DeinterleavedView<float> signal) {
+  for (size_t k = 0; k < signal.num_channels(); ++k) {
+    MonoView<float> channel_view = signal[k];
     for (auto& sample : channel_view) {
       sample = rtc::SafeClamp(sample, kMinFloatS16Value, kMaxFloatS16Value);
     }
@@ -36,7 +36,7 @@ void ClipSignal(AudioFrameView<float> signal) {
 void ApplyGainWithRamping(float last_gain_linear,
                           float gain_at_end_of_frame_linear,
                           float inverse_samples_per_channel,
-                          AudioFrameView<float> float_frame) {
+                          DeinterleavedView<float> float_frame) {
   // Do not modify the signal.
   if (last_gain_linear == gain_at_end_of_frame_linear &&
       GainCloseToOne(gain_at_end_of_frame_linear)) {
@@ -45,8 +45,8 @@ void ApplyGainWithRamping(float last_gain_linear,
 
   // Gain is constant and different from 1.
   if (last_gain_linear == gain_at_end_of_frame_linear) {
-    for (int k = 0; k < float_frame.num_channels(); ++k) {
-      rtc::ArrayView<float> channel_view = float_frame.channel(k);
+    for (size_t k = 0; k < float_frame.num_channels(); ++k) {
+      MonoView<float> channel_view = float_frame[k];
       for (auto& sample : channel_view) {
         sample *= gain_at_end_of_frame_linear;
       }
@@ -57,12 +57,12 @@ void ApplyGainWithRamping(float last_gain_linear,
   // The gain changes. We have to change slowly to avoid discontinuities.
   const float increment = (gain_at_end_of_frame_linear - last_gain_linear) *
                           inverse_samples_per_channel;
-  float gain = last_gain_linear;
-  for (int i = 0; i < float_frame.samples_per_channel(); ++i) {
-    for (int ch = 0; ch < float_frame.num_channels(); ++ch) {
-      float_frame.channel(ch)[i] *= gain;
+  for (size_t ch = 0; ch < float_frame.num_channels(); ++ch) {
+    float gain = last_gain_linear;
+    for (float& sample : float_frame[ch]) {
+      sample *= gain;
+      gain += increment;
     }
-    gain += increment;
   }
 }
 
@@ -73,7 +73,7 @@ GainApplier::GainApplier(bool hard_clip_samples, float initial_gain_factor)
       last_gain_factor_(initial_gain_factor),
       current_gain_factor_(initial_gain_factor) {}
 
-void GainApplier::ApplyGain(AudioFrameView<float> signal) {
+void GainApplier::ApplyGain(DeinterleavedView<float> signal) {
   if (static_cast<int>(signal.samples_per_channel()) != samples_per_channel_) {
     Initialize(signal.samples_per_channel());
   }

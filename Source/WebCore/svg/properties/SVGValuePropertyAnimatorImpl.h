@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class SVGLengthAnimator final : public SVGValuePropertyAnimator<SVGLength, SVGAnimationLengthFunction> {
+    WTF_MAKE_TZONE_ALLOCATED(SVGLengthAnimator);
     using Base = SVGValuePropertyAnimator<SVGLength, SVGAnimationLengthFunction>;
     using Base::Base;
     using Base::m_attributeName;

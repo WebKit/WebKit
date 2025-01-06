@@ -1,0 +1,97 @@
+/*
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.media-controls.fullscreen.tvos {
+    background-color: rgba(0, 0, 0, 0.55);
+}
+
+.media-controls.fullscreen.tvos.faded {
+    background-color: transparent;
+}
+
+.media-controls.fullscreen.tvos {
+    --tvos-bottom-bar-horizontal-margin: 48px;
+    --tvos-controls-bar-height: 62px;
+    --tvos-controls-bottom-margin: 84px;
+    --tvos-controls-top-margin: 60px;
+    --tvos-metadata-container-bottom-margin: 16px;
+    --tvos-overflow-button-bottom-margin: 38px;
+    --tvos-time-control-bottom-margin: 30px;
+    --tvos-top-bar-horizontal-margin: 40px;
+}
+
+.media-controls.fullscreen.tvos.uses-ltr-user-interface-layout-direction > .controls-bar.top-left,
+.media-controls.fullscreen.tvos:not(.uses-ltr-user-interface-layout-direction) > .controls-bar.top-right {
+    position: absolute;
+    left: var(--tvos-top-bar-horizontal-margin);
+    top: var(--tvos-controls-top-margin);
+}
+
+.media-controls.fullscreen.tvos.uses-ltr-user-interface-layout-direction > .controls-bar.top-right,
+.media-controls.fullscreen.tvos:not(.uses-ltr-user-interface-layout-direction) > .controls-bar.top-left {
+    position: absolute;
+    right: var(--tvos-top-bar-horizontal-margin);
+    top: var(--tvos-controls-top-margin);
+}
+
+.media-controls.fullscreen.tvos > .controls-bar.bottom {
+    position: absolute;
+    bottom: var(--tvos-controls-bottom-margin);
+    left: var(--tvos-bottom-bar-horizontal-margin);
+    height: var(--tvos-controls-bar-height);
+}
+
+.media-controls.fullscreen.tvos > .controls-bar.bottom > .buttons-container {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+.media-controls.fullscreen.tvos > .metadata-container {
+    position: absolute;
+    left: var(--tvos-bottom-bar-horizontal-margin);
+    bottom: calc(var(--tvos-controls-bottom-margin) + var(--tvos-controls-bar-height) + var(--tvos-metadata-container-bottom-margin));
+}
+
+.media-controls.fullscreen.tvos .slider.default.disabled > .appearance > .fill > :is(.primary, .secondary) {
+    display: initial;
+}
+
+.media-controls.fullscreen.tvos > .controls-bar.overflow {
+    position: absolute;
+    bottom: calc(var(--tvos-controls-bottom-margin) + var(--tvos-controls-bar-height) + var(--tvos-overflow-button-bottom-margin));
+}
+
+.media-controls.fullscreen.tvos.uses-ltr-user-interface-layout-direction > .controls-bar.overflow {
+    right: var(--tvos-bottom-bar-horizontal-margin);
+}
+
+.media-controls.fullscreen.tvos:not(.uses-ltr-user-interface-layout-direction) > .controls-bar.overflow {
+    left: var(--tvos-bottom-bar-horizontal-margin);
+}
+
+.media-controls.fullscreen.tvos > .controls-bar.bottom > .time-control {
+    margin-bottom: var(--tvos-time-control-bottom-margin);
+}

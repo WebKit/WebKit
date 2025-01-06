@@ -4,7 +4,7 @@ function resetCookies()
         testRunner.setAlwaysAcceptCookies(true);
 
     // Due to cross-origin restrictions, we can only (simply) reset cookies for our current origin.
-    var url = "http://" + window.location.hostname +":8000/cookies/resources/cookie-utility.py?queryfunction=deleteCookies";
+    var url = location.origin + "/cookies/resources/cookie-utility.py?queryfunction=deleteCookies";
     var req = new XMLHttpRequest();
     try {
         req.open('GET', url, false);

@@ -6,17 +6,19 @@
     <script type="text/javascript">
 
         var numberOfFocusedElements = 0;
-        function test()
+        async function test()
         {
             if (!window.testRunner)
                 return;
 
+            testRunner.waitUntilDone();
+
             for (var i = 1; i <= 5; i++) {
                 var aElement = document.getElementById('a' + i);
                 aElement.onfocus = handleFocus;
-                eventSender.mouseMoveTo(aElement.offsetLeft + 2, aElement.offsetTop + 2);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(aElement.offsetLeft + 2, aElement.offsetTop + 2);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
             }
 
             if(numberOfFocusedElements == 5)
@@ -26,6 +28,7 @@
 
             var tc = document.getElementById('test-container');
             tc.parentNode.removeChild(tc);
+            testRunner.notifyDone();
         };
 
         function handleFocus(e)

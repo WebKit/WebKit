@@ -26,7 +26,7 @@
 #pragma once
 
 #include "IDLTypes.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

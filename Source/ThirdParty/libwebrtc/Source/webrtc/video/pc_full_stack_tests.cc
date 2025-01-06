@@ -26,11 +26,12 @@
 #include "api/test/simulated_network.h"
 #include "api/test/time_controller.h"
 #include "api/video_codecs/vp9_profile.h"
-#include "call/simulated_network.h"
+#include "media/base/media_constants.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "system_wrappers/include/field_trial.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
+#include "test/network/simulated_network.h"
 #include "test/pc/e2e/network_quality_metrics_reporter.h"
 #include "test/testsupport/file_utils.h"
 
@@ -98,7 +99,7 @@ std::vector<PCFullStackTestParams> ParameterizedTestParams() {
           // Use the worker thread for sending packets.
           // https://bugs.chromium.org/p/webrtc/issues/detail?id=14502
           {.use_network_thread_as_worker_thread = true,
-           .field_trials = "WebRTC-SendPacketsOnWorkerThread/Enabled/",
+           .field_trials = "",
            .test_case_name_postfix = "_ReducedThreads"}};
 }
 
@@ -217,36 +218,6 @@ TEST(PCFullStackTest, MAYBE_Pc_Generator_Net_Delay_0_0_Plr_0_VP9Profile2) {
   fixture->Run(RunParams(TimeDelta::Seconds(kTestDurationSec)));
 }
 
-/*
-// TODO(bugs.webrtc.org/10639) migrate commented out test, when required
-// functionality will be supported in PeerConnection level framework.
-TEST(PCFullStackTest, ForemanCifWithoutPacketLossMultiplexI420Frame) {
-  auto fixture = CreateVideoQualityTestFixture();
-  ParamsWithLogging foreman_cif;
-  foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,        352,    288,    30,
-      700000,      700000, 700000, false,
-      "multiplex", 1,      0,      0,
-      false,       false,  false,  ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_net_delay_0_0_plr_0_Multiplex", 0.0, 0.0,
-                          kTestDurationSec};
-  fixture->RunWithAnalyzer(foreman_cif);
-}
-
-TEST(PCFullStackTest, GeneratorWithoutPacketLossMultiplexI420AFrame) {
-  auto fixture = CreateVideoQualityTestFixture();
-
-  ParamsWithLogging generator;
-  generator.call.send_side_bwe = true;
-  generator.video[0] = {
-      true,        352, 288, 30, 700000, 700000, 700000, false,
-      "multiplex", 1,   0,   0,  false,  false,  false,  "GeneratorI420A"};
-  generator.analyzer = {"generator_net_delay_0_0_plr_0_Multiplex", 0.0, 0.0,
-                        kTestDurationSec};
-  fixture->RunWithAnalyzer(generator);
-}
-*/
 #endif  // defined(RTC_ENABLE_VP9)
 
 TEST(PCFullStackTest, Pc_Net_Delay_0_0_Plr_0) {
@@ -319,7 +290,7 @@ TEST(PCFullStackTest, Pc_Foreman_Cif_Link_150kbps_Net_Delay_0_0_Plr_0) {
   std::unique_ptr<NetworkEmulationManager> network_emulation_manager =
       CreateNetworkEmulationManager();
   BuiltInNetworkBehaviorConfig config;
-  config.link_capacity_kbps = 150;
+  config.link_capacity = DataRate::KilobitsPerSec(150);
   auto fixture = CreateTestFixture(
       "pc_foreman_cif_link_150kbps_net_delay_0_0_plr_0",
       *network_emulation_manager->time_controller(),
@@ -339,7 +310,7 @@ TEST(PCFullStackTest, Pc_Foreman_Cif_Link_130kbps_Delay100ms_Loss1_Ulpfec) {
   std::unique_ptr<NetworkEmulationManager> network_emulation_manager =
       CreateNetworkEmulationManager();
   BuiltInNetworkBehaviorConfig config;
-  config.link_capacity_kbps = 130;
+  config.link_capacity = DataRate::KilobitsPerSec(130);
   config.queue_delay_ms = 100;
   config.loss_percent = 1;
   auto fixture = CreateTestFixture(
@@ -362,7 +333,7 @@ TEST(PCFullStackTest, Pc_Foreman_Cif_Link_50kbps_Delay100ms_Loss1_Ulpfec) {
   std::unique_ptr<NetworkEmulationManager> network_emulation_manager =
       CreateNetworkEmulationManager();
   BuiltInNetworkBehaviorConfig config;
-  config.link_capacity_kbps = 50;
+  config.link_capacity = DataRate::KilobitsPerSec(50);
   config.queue_delay_ms = 100;
   config.loss_percent = 1;
   auto fixture = CreateTestFixture(
@@ -387,7 +358,7 @@ TEST(PCFullStackTest,
   std::unique_ptr<NetworkEmulationManager> network_emulation_manager =
       CreateNetworkEmulationManager();
   BuiltInNetworkBehaviorConfig config;
-  config.link_capacity_kbps = 150;
+  config.link_capacity = DataRate::KilobitsPerSec(150);
   config.queue_length_packets = 30;
   config.queue_delay_ms = 100;
   auto fixture = CreateTestFixture(
@@ -414,7 +385,7 @@ TEST(PCFullStackTest, Pc_Foreman_Cif_Link_250kbps_Delay100ms_10pkts_Loss1) {
   std::unique_ptr<NetworkEmulationManager> network_emulation_manager =
       CreateNetworkEmulationManager();
   BuiltInNetworkBehaviorConfig config;
-  config.link_capacity_kbps = 250;
+  config.link_capacity = DataRate::KilobitsPerSec(250);
   config.queue_length_packets = 10;
   config.queue_delay_ms = 100;
   config.loss_percent = 1;
@@ -508,7 +479,7 @@ TEST(PCFullStackTest, Pc_Foreman_Cif_500kbps_Delay_50_0_Plr_3_Flexfec) {
       CreateNetworkEmulationManager();
   BuiltInNetworkBehaviorConfig config;
   config.loss_percent = 3;
-  config.link_capacity_kbps = 500;
+  config.link_capacity = DataRate::KilobitsPerSec(500);
   config.queue_delay_ms = 50;
   auto fixture = CreateTestFixture(
       "pc_foreman_cif_500kbps_delay_50_0_plr_3_flexfec",
@@ -533,7 +504,7 @@ TEST(PCFullStackTest, Pc_Foreman_Cif_500kbps_Delay_50_0_Plr_3_Ulpfec) {
       CreateNetworkEmulationManager();
   BuiltInNetworkBehaviorConfig config;
   config.loss_percent = 3;
-  config.link_capacity_kbps = 500;
+  config.link_capacity = DataRate::KilobitsPerSec(500);
   config.queue_delay_ms = 50;
   auto fixture = CreateTestFixture(
       "pc_foreman_cif_500kbps_delay_50_0_plr_3_ulpfec",
@@ -717,7 +688,7 @@ TEST(PCFullStackTest, Pc_Foreman_Cif_500kbps) {
   BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 0;
   config.queue_delay_ms = 0;
-  config.link_capacity_kbps = 500;
+  config.link_capacity = DataRate::KilobitsPerSec(500);
   auto fixture = CreateTestFixture(
       "pc_foreman_cif_500kbps", *network_emulation_manager->time_controller(),
       network_emulation_manager->CreateEndpointPairWithTwoWayRoutes(config),
@@ -738,7 +709,7 @@ TEST_P(ParameterizedPCFullStackTest, Pc_Foreman_Cif_500kbps_32pkts_Queue) {
   BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 32;
   config.queue_delay_ms = 0;
-  config.link_capacity_kbps = 500;
+  config.link_capacity = DataRate::KilobitsPerSec(500);
   auto fixture = CreateTestFixture(
       "pc_foreman_cif_500kbps_32pkts_queue" + GetParam().test_case_name_postfix,
       *network_emulation_manager->time_controller(),
@@ -767,7 +738,7 @@ TEST(PCFullStackTest, Pc_Foreman_Cif_500kbps_100ms) {
   BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 0;
   config.queue_delay_ms = 100;
-  config.link_capacity_kbps = 500;
+  config.link_capacity = DataRate::KilobitsPerSec(500);
   auto fixture = CreateTestFixture(
       "pc_foreman_cif_500kbps_100ms",
       *network_emulation_manager->time_controller(),
@@ -790,7 +761,7 @@ TEST(PCGenericDescriptorTest,
   BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 32;
   config.queue_delay_ms = 100;
-  config.link_capacity_kbps = 500;
+  config.link_capacity = DataRate::KilobitsPerSec(500);
   auto fixture = CreateTestFixture(
       "pc_foreman_cif_500kbps_100ms_32pkts_queue_generic_descriptor",
       *network_emulation_manager->time_controller(),
@@ -822,7 +793,7 @@ TEST(PCFullStackTest, ForemanCif500kbps100msLimitedQueueRecvBwe) {
                           0.0, 0.0, kTestDurationSec};
   foreman_cif.config->queue_length_packets = 32;
   foreman_cif.config->queue_delay_ms = 100;
-  foreman_cif.config->link_capacity_kbps = 500;
+  foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
   fixture->RunWithAnalyzer(foreman_cif);
 }
 */
@@ -833,7 +804,7 @@ TEST(PCFullStackTest, Pc_Foreman_Cif_1000kbps_100ms_32pkts_Queue) {
   BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 32;
   config.queue_delay_ms = 100;
-  config.link_capacity_kbps = 1000;
+  config.link_capacity = DataRate::KilobitsPerSec(1000);
   auto fixture = CreateTestFixture(
       "pc_foreman_cif_1000kbps_100ms_32pkts_queue",
       *network_emulation_manager->time_controller(),
@@ -856,7 +827,7 @@ TEST(PCFullStackTest, Pc_Conference_Motion_Hd_2000kbps_100ms_32pkts_Queue) {
   BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 32;
   config.queue_delay_ms = 100;
-  config.link_capacity_kbps = 2000;
+  config.link_capacity = DataRate::KilobitsPerSec(2000);
   auto fixture = CreateTestFixture(
       "pc_conference_motion_hd_2000kbps_100ms_32pkts_queue",
       *network_emulation_manager->time_controller(),
@@ -893,7 +864,7 @@ TEST(PCGenericDescriptorTest, ConferenceMotionHd2TLModerateLimits) {
   conf_motion_hd.config->queue_length_packets = 50;
   conf_motion_hd.config->loss_percent = 3;
   conf_motion_hd.config->queue_delay_ms = 100;
-  conf_motion_hd.config->link_capacity_kbps = 2000;
+  conf_motion_hd.config->link_capacity = DataRate::KilobitsPerSec(2000);
   conf_motion_hd.call.generic_descriptor = GenericDescriptorEnabled();
   fixture->RunWithAnalyzer(conf_motion_hd);
 }
@@ -917,7 +888,7 @@ TEST(PCFullStackTest, ConferenceMotionHd3TLModerateLimits) {
   conf_motion_hd.config->queue_length_packets = 50;
   conf_motion_hd.config->loss_percent = 3;
   conf_motion_hd.config->queue_delay_ms = 100;
-  conf_motion_hd.config->link_capacity_kbps = 2000;
+  conf_motion_hd.config->link_capacity = DataRate::KilobitsPerSec(2000);
   fixture->RunWithAnalyzer(conf_motion_hd);
 }
 
@@ -940,62 +911,10 @@ TEST(PCFullStackTest, ConferenceMotionHd4TLModerateLimits) {
   conf_motion_hd.config->queue_length_packets = 50;
   conf_motion_hd.config->loss_percent = 3;
   conf_motion_hd.config->queue_delay_ms = 100;
-  conf_motion_hd.config->link_capacity_kbps = 2000;
+  conf_motion_hd.config->link_capacity = DataRate::KilobitsPerSec(2000);
   fixture->RunWithAnalyzer(conf_motion_hd);
 }
 
-// TODO(bugs.webrtc.org/10639) requires simulcast/SVC support in PC framework
-TEST(PCFullStackTest, ConferenceMotionHd3TLModerateLimitsAltTLPattern) {
-  test::ScopedFieldTrials field_trial(
-      AppendFieldTrials("WebRTC-UseShortVP8TL3Pattern/Enabled/"));
-  auto fixture = CreateVideoQualityTestFixture();
-  ParamsWithLogging conf_motion_hd;
-  conf_motion_hd.call.send_side_bwe = true;
-  conf_motion_hd.video[0] = {
-      true,    1280,
-      720,     50,
-      30000,   3000000,
-      3000000, false,
-      "VP8",   3,
-      -1,      0,
-      false,   false,
-      false,   ClipNameToClipPath("ConferenceMotion_1280_720_50")};
-  conf_motion_hd.analyzer = {"conference_motion_hd_3tl_alt_moderate_limits",
-                             0.0, 0.0, kTestDurationSec};
-  conf_motion_hd.config->queue_length_packets = 50;
-  conf_motion_hd.config->loss_percent = 3;
-  conf_motion_hd.config->queue_delay_ms = 100;
-  conf_motion_hd.config->link_capacity_kbps = 2000;
-  fixture->RunWithAnalyzer(conf_motion_hd);
-}
-
-// TODO(bugs.webrtc.org/10639) requires simulcast/SVC support in PC framework
-TEST(PCFullStackTest,
-     ConferenceMotionHd3TLModerateLimitsAltTLPatternAndBaseHeavyTLAllocation) {
-  auto fixture = CreateVideoQualityTestFixture();
-  test::ScopedFieldTrials field_trial(
-      AppendFieldTrials("WebRTC-UseShortVP8TL3Pattern/Enabled/"
-                        "WebRTC-UseBaseHeavyVP8TL3RateAllocation/Enabled/"));
-  ParamsWithLogging conf_motion_hd;
-  conf_motion_hd.call.send_side_bwe = true;
-  conf_motion_hd.video[0] = {
-      true,    1280,
-      720,     50,
-      30000,   3000000,
-      3000000, false,
-      "VP8",   3,
-      -1,      0,
-      false,   false,
-      false,   ClipNameToClipPath("ConferenceMotion_1280_720_50")};
-  conf_motion_hd.analyzer = {
-      "conference_motion_hd_3tl_alt_heavy_moderate_limits", 0.0, 0.0,
-      kTestDurationSec};
-  conf_motion_hd.config->queue_length_packets = 50;
-  conf_motion_hd.config->loss_percent = 3;
-  conf_motion_hd.config->queue_delay_ms = 100;
-  conf_motion_hd.config->link_capacity_kbps = 2000;
-  fixture->RunWithAnalyzer(conf_motion_hd);
-}
 */
 
 #if defined(RTC_ENABLE_VP9)
@@ -1006,7 +925,7 @@ TEST_P(ParameterizedPCFullStackTest,
   BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 32;
   config.queue_delay_ms = 100;
-  config.link_capacity_kbps = 2000;
+  config.link_capacity = DataRate::KilobitsPerSec(2000);
   auto fixture = CreateTestFixture(
       "pc_conference_motion_hd_2000kbps_100ms_32pkts_queue_vp9" +
           GetParam().test_case_name_postfix,
@@ -1201,7 +1120,7 @@ TEST(PCGenericDescriptorTest, Screenshare_Slides_Lossy_Net_Generic_Descriptor) {
                           0.0, 0.0, kTestDurationSec};
   screenshare.config->loss_percent = 5;
   screenshare.config->queue_delay_ms = 200;
-  screenshare.config->link_capacity_kbps = 500;
+  screenshare.config->link_capacity = DataRate::KilobitsPerSec(500);
   screenshare.call.generic_descriptor = true;
   fixture->RunWithAnalyzer(screenshare);
 }
@@ -1219,7 +1138,7 @@ TEST(PCFullStackTest, ScreenshareSlidesVP8_2TL_VeryLossyNet) {
                           kTestDurationSec};
   screenshare.config->loss_percent = 10;
   screenshare.config->queue_delay_ms = 200;
-  screenshare.config->link_capacity_kbps = 500;
+  screenshare.config->link_capacity = DataRate::KilobitsPerSec(500);
   fixture->RunWithAnalyzer(screenshare);
 }
 
@@ -1235,7 +1154,7 @@ TEST(PCFullStackTest, ScreenshareSlidesVP8_2TL_LossyNetRestrictedQueue) {
   screenshare.analyzer = {"screenshare_slides_lossy_limited", 0.0, 0.0,
                           kTestDurationSec};
   screenshare.config->loss_percent = 5;
-  screenshare.config->link_capacity_kbps = 200;
+  screenshare.config->link_capacity = DataRate::KilobitsPerSec(200);
   screenshare.config->queue_length_packets = 30;
 
   fixture->RunWithAnalyzer(screenshare);
@@ -1253,7 +1172,7 @@ TEST(PCFullStackTest, ScreenshareSlidesVP8_2TL_ModeratelyRestricted) {
   screenshare.analyzer = {"screenshare_slides_moderately_restricted", 0.0, 0.0,
                           kTestDurationSec};
   screenshare.config->loss_percent = 1;
-  screenshare.config->link_capacity_kbps = 1200;
+  screenshare.config->link_capacity = DataRate::KilobitsPerSec(1200);
   screenshare.config->queue_length_packets = 30;
 
   fixture->RunWithAnalyzer(screenshare);
@@ -1479,7 +1398,7 @@ TEST(PCFullStackTest, VP9KSVC_3SL_Medium_Network_Restricted) {
   simulcast.ss[0] = {
       std::vector<VideoStream>(),  0,    3, -1, InterLayerPredMode::kOnKeyPic,
       std::vector<SpatialLayer>(), false};
-  simulcast.config->link_capacity_kbps = 1000;
+  simulcast.config->link_capacity = DataRate::KilobitsPerSec(1000);
   simulcast.config->queue_delay_ms = 100;
   fixture->RunWithAnalyzer(simulcast);
 }
@@ -1498,7 +1417,7 @@ TEST(PCFullStackTest, VP9KSVC_3SL_Medium_Network_Restricted_Trusted_Rate) {
   simulcast.ss[0] = {
       std::vector<VideoStream>(),  0,    3, -1, InterLayerPredMode::kOnKeyPic,
       std::vector<SpatialLayer>(), false};
-  simulcast.config->link_capacity_kbps = 1000;
+  simulcast.config->link_capacity = DataRate::KilobitsPerSec(1000);
   simulcast.config->queue_delay_ms = 100;
   fixture->RunWithAnalyzer(simulcast);
 }
@@ -1777,7 +1696,7 @@ TEST_P(PCDualStreamsTest,
                            std::to_string(first_stream);
   dual_streams.analyzer = {test_label, 0.0, 0.0, kTestDurationSec};
   dual_streams.config->loss_percent = 1;
-  dual_streams.config->link_capacity_kbps = 7500;
+  dual_streams.config->link_capacity = DataRate::KilobitsPerSec(7500);
   dual_streams.config->queue_length_packets = 30;
   dual_streams.config->queue_delay_ms = 100;
 
@@ -1815,7 +1734,7 @@ TEST_P(PCDualStreamsTest, Conference_Restricted) {
                            std::to_string(first_stream);
   dual_streams.analyzer = {test_label, 0.0, 0.0, kTestDurationSec};
   dual_streams.config->loss_percent = 1;
-  dual_streams.config->link_capacity_kbps = 5000;
+  dual_streams.config->link_capacity = DataRate::KilobitsPerSec(5000);
   dual_streams.config->queue_length_packets = 30;
   dual_streams.config->queue_delay_ms = 100;
 

@@ -37,7 +37,7 @@ class ShutdownCompleteChunk : public Chunk,
   explicit ShutdownCompleteChunk(bool tag_reflected)
       : tag_reflected_(tag_reflected) {}
 
-  static absl::optional<ShutdownCompleteChunk> Parse(
+  static std::optional<ShutdownCompleteChunk> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

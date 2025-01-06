@@ -33,6 +33,7 @@
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
 
 #if !OS(WINDOWS)
@@ -88,7 +89,7 @@ static String fromStdFileSystemPath(const std::filesystem::path& path)
 //     - Pipe              (7C)
 //     - Delete            (7F)
 
-static const bool needsEscaping[128] = {
+constexpr std::array<bool, 128> needsEscaping = {
     true,  true,  true,  true,  true,  true,  true,  true,  /* 00-07 */
     true,  true,  true,  true,  true,  true,  true,  true,  /* 08-0F */
 
@@ -267,7 +268,7 @@ bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& targ
     });
 
     do {
-        int readBytes = readFromFile(source, buffer.data(), bufferSize);
+        int readBytes = readFromFile(source, buffer.mutableSpan());
 
         if (readBytes < 0)
             return false;
@@ -310,19 +311,13 @@ void setMetadataURL(const String&, const String&, const String&)
 MappedFileData::MappedFileData(const String& filePath, MappedFileMode mapMode, bool& success)
 {
     auto fd = openFile(filePath, FileSystem::FileOpenMode::Read);
-
     success = mapFileHandle(fd, FileSystem::FileOpenMode::Read, mapMode);
     closeFile(fd);
 }
 
 #if HAVE(MMAP)
 
-MappedFileData::~MappedFileData()
-{
-    if (!m_fileData)
-        return;
-    munmap(m_fileData, m_fileSize);
-}
+MappedFileData::~MappedFileData() = default;
 
 bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openMode, MappedFileMode mapMode)
 {
@@ -332,14 +327,12 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
     int fd = posixFileDescriptor(handle);
 
     struct stat fileStat;
-    if (fstat(fd, &fileStat)) {
+    if (fstat(fd, &fileStat))
         return false;
-    }
 
-    unsigned size;
-    if (!WTF::convertSafely(fileStat.st_size, size)) {
+    size_t size;
+    if (!WTF::convertSafely(fileStat.st_size, size))
         return false;
-    }
 
     if (!size)
         return true;
@@ -361,14 +354,11 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
 #endif
     }
 
-    void* data = mmap(0, size, pageProtection, MAP_FILE | (mapMode == MappedFileMode::Shared ? MAP_SHARED : MAP_PRIVATE), fd, 0);
-
-    if (data == MAP_FAILED) {
+    auto fileData = MallocSpan<uint8_t, Mmap>::mmap(size, pageProtection, MAP_FILE | (mapMode == MappedFileMode::Shared ? MAP_SHARED : MAP_PRIVATE), fd);
+    if (!fileData)
         return false;
-    }
 
-    m_fileData = data;
-    m_fileSize = size;
+    m_fileData = WTFMove(fileData);
     return true;
 }
 #endif
@@ -413,6 +403,11 @@ bool makeSafeToUseMemoryMapForPath(const String&)
 #if !PLATFORM(COCOA)
 
 String createTemporaryZipArchive(const String&)
+{
+    return { };
+}
+
+String extractTemporaryZipArchive(const String&)
 {
     return { };
 }
@@ -464,7 +459,7 @@ MappedFileData createMappedFileData(const String& path, size_t bytesSize, Platfo
 
 void finalizeMappedFileData(MappedFileData& mappedFileData, size_t bytesSize)
 {
-    void* map = const_cast<void*>(mappedFileData.data());
+    auto* map = mappedFileData.mutableSpan().data();
 #if OS(WINDOWS)
     DWORD oldProtection;
     VirtualProtect(map, bytesSize, FILE_MAP_READ, &oldProtection);
@@ -484,12 +479,10 @@ MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(con
     if (!mappedFile)
         return { };
 
-    void* map = const_cast<void*>(mappedFile.data());
-    uint8_t* mapData = static_cast<uint8_t*>(map);
+    auto mapData = mappedFile.mutableSpan();
 
     apply([&mapData](std::span<const uint8_t> chunk) {
-        memcpy(mapData, chunk.data(), chunk.size());
-        mapData += chunk.size();
+        memcpySpan(consumeSpan(mapData, chunk.size()), chunk);
         return true;
     });
 
@@ -510,7 +503,7 @@ std::optional<Salt> readOrMakeSalt(const String& path)
     if (FileSystem::fileExists(path)) {
         auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
         Salt salt;
-        auto bytesRead = static_cast<std::size_t>(FileSystem::readFromFile(file, salt.data(), salt.size()));
+        auto bytesRead = static_cast<std::size_t>(FileSystem::readFromFile(file, salt));
         FileSystem::closeFile(file);
         if (bytesRead == salt.size())
             return salt;
@@ -549,7 +542,7 @@ std::optional<Vector<uint8_t>> readEntireFile(PlatformFileHandle handle)
     size_t totalBytesRead = 0;
     int bytesRead;
 
-    while ((bytesRead = FileSystem::readFromFile(handle, buffer.data() + totalBytesRead, bytesToRead - totalBytesRead)) > 0)
+    while ((bytesRead = FileSystem::readFromFile(handle, buffer.mutableSpan().subspan(totalBytesRead))) > 0)
         totalBytesRead += bytesRead;
 
     if (totalBytesRead != bytesToRead)
@@ -654,6 +647,9 @@ bool moveFile(const String& oldPath, const String& newPath)
     if (!ec)
         return true;
 
+    if (isAncestor(oldPath, newPath))
+        return false;
+
     // Fall back to copying and then deleting source as rename() does not work across volumes.
     ec = { };
     std::filesystem::copy(fsOldPath, fsNewPath, std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive, ec);
@@ -746,6 +742,16 @@ bool hardLinkOrCopyFile(const String& targetPath, const String& linkPath)
     return !ec;
 }
 
+bool copyFile(const String& targetPath, const String& sourcePath)
+{
+    auto fsTargetPath = toStdFileSystemPath(targetPath);
+    auto fsSourcePath = toStdFileSystemPath(sourcePath);
+
+    std::error_code ec;
+    std::filesystem::copy_file(fsSourcePath, fsTargetPath, std::filesystem::copy_options::overwrite_existing, ec);
+    return !ec;
+}
+
 std::optional<uint64_t> hardLinkCount(const String& path)
 {
     std::error_code ec;
@@ -826,6 +832,22 @@ String pathFileName(const String& path)
 String parentPath(const String& path)
 {
     return fromStdFileSystemPath(toStdFileSystemPath(path).parent_path());
+}
+
+String lexicallyNormal(const String& path)
+{
+    return fromStdFileSystemPath(toStdFileSystemPath(path).lexically_normal());
+}
+
+bool isAncestor(const String& possibleAncestor, const String& possibleChild)
+{
+    auto possibleChildLexicallyNormal = lexicallyNormal(possibleChild);
+    auto possibleAncestorLexicallyNormal = lexicallyNormal(possibleAncestor);
+    if (possibleChildLexicallyNormal.endsWith(static_cast<UChar>(std::filesystem::path::preferred_separator)))
+        possibleChildLexicallyNormal = possibleChildLexicallyNormal.left(possibleChildLexicallyNormal.length() - 1);
+    if (possibleAncestorLexicallyNormal.endsWith(static_cast<UChar>(std::filesystem::path::preferred_separator)))
+        possibleAncestorLexicallyNormal = possibleAncestorLexicallyNormal.left(possibleAncestorLexicallyNormal.length() - 1);
+    return possibleChildLexicallyNormal.startsWith(possibleAncestorLexicallyNormal) && possibleChildLexicallyNormal.length() != possibleAncestorLexicallyNormal.length();
 }
 
 String createTemporaryFile(StringView prefix, StringView suffix)

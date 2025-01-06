@@ -52,7 +52,7 @@ TEST(WebKit, DocumentStartUserScriptAlertCrashTest)
     PlatformWebView webView(context.get());
 
     WKPageUIClientV0 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
+    zeroBytes(uiClient);
 
     uiClient.base.version = 0;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;

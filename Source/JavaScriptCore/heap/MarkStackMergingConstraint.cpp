@@ -40,9 +40,7 @@ MarkStackMergingConstraint::MarkStackMergingConstraint(JSC::Heap& heap)
 {
 }
 
-MarkStackMergingConstraint::~MarkStackMergingConstraint()
-{
-}
+MarkStackMergingConstraint::~MarkStackMergingConstraint() = default;
 
 double MarkStackMergingConstraint::quickWorkEstimate(SlotVisitor&)
 {
@@ -65,7 +63,7 @@ void MarkStackMergingConstraint::executeImplImpl(Visitor& visitor)
     // We want to skip this constraint for the GC verifier because:
     // 1. There should be no mutator marking action between the End phase and verifyGC().
     //    Hence, we can ignore these stacks.
-    // 2. The End phase explictly calls iterateExecutingAndCompilingCodeBlocks()
+    // 2. The End phase explicitly calls iterateExecutingAndCompilingCodeBlocks()
     //    to add executing CodeBlocks to m_heap.m_mutatorMarkStack. We want to
     //    leave those unperturbed.
     if (m_heap.m_isMarkingForGCVerifier)

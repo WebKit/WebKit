@@ -5,11 +5,11 @@
  * found in the LICENSE file.
  */
 
+#include "modules/jsonreader/SkJSONReader.h"
 #include "modules/skottie/include/ExternalLayer.h"
 #include "modules/skottie/src/SkottiePriv.h"
 #include "modules/skottie/src/SkottieValue.h"
 #include "modules/skottie/src/animator/Animator.h"
-#include "src/utils/SkJSON.h"
 #include "tests/Test.h"
 
 #include <cmath>
@@ -196,5 +196,32 @@ DEF_TEST(Skottie_Keyframe, reporter) {
         // Supernormal region triggers extrapolation.
         REPORTER_ASSERT(reporter, prop(0.85f).x > 200);
         REPORTER_ASSERT(reporter, prop(0.85f).y > 200);
+    }
+    {
+        // Coincident keyframes (t == 1)
+        //
+        // Effective interpolation intervals:
+        //   [0 .. 1) -> [100 .. 200)
+        //   [1 .. 2) -> [300 .. 400)
+        //
+        // When more than 2 concident keyframes are present, only the first and last one count.
+        MockProperty<ScalarValue> prop(R"({
+                                            "a": 1,
+                                            "k": [
+                                              { "t": 0, "s": [100]  },
+                                              { "t": 1, "s": [200]  },
+                                              { "t": 1, "s": [1000] },
+                                              { "t": 1, "s": [300]  },
+                                              { "t": 2, "s": [400]  }
+                                            ]
+                                          })");
+        REPORTER_ASSERT(reporter, prop);
+        REPORTER_ASSERT(reporter, !prop.isStatic());
+
+        REPORTER_ASSERT(reporter, prop(0.9999f) > 100);
+        REPORTER_ASSERT(reporter, prop(0.9999f) < 200);
+        REPORTER_ASSERT(reporter, prop(1) == 300);
+        REPORTER_ASSERT(reporter, prop(1.0001f) > 300);
+        REPORTER_ASSERT(reporter, prop(1.0001f) < 400);
     }
 }

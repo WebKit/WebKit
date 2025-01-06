@@ -27,6 +27,7 @@
     Conditional=APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary ApplePayDateComponents {
     unsigned long years;
     unsigned long months;

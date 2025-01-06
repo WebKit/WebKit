@@ -34,13 +34,13 @@ layer at (0,0) size 800x4659
                       text run at (22,0) width 54: "Channel"
                       text run at (24,19) width 51: "number"
                 RenderText {#text} at (0,0) size 0x0
-              RenderTableCell {TD} at (98,22) size 171x20 [border: (0.50px solid #000000) (0.50px none #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,22) size 171x20 [border: (0.50px solid #000000) (0.50px none #000000)] [r=1 c=1 rs=1 cs=1]
                 RenderInline {B} at (39,-1) size 93x20
                   RenderInline {SPAN} at (39,0) size 93x19
                     RenderText {#text} at (39,0) size 93x19
                       text run at (39,0) width 93: "Member name"
                 RenderText {#text} at (0,0) size 0x0
-              RenderTableCell {TD} at (268,22) size 100x39 [border: (0.50px solid #000000) (0.50px none #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,22) size 100x39 [border: (0.50px solid #000000) (0.50px none #000000)] [r=1 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x20
                   RenderInline {B} at (20,2) size 44x15
                     RenderInline {SPAN} at (20,0) size 44x18
@@ -53,7 +53,7 @@ layer at (0,0) size 800x4659
                     RenderInline {SPAN} at (24,0) size 36x18
                       RenderText {#text} at (24,0) size 36x18
                         text run at (24,0) width 36: "Plane"
-              RenderTableCell {TD} at (367,22) size 106x39 [border: (0.50px solid #000000) (0.50px none #808080)] [r=1 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,22) size 106x39 [border: (0.50px solid #000000) (0.50px none #000000)] [r=1 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x20
                   RenderInline {B} at (12,2) size 67x15
                     RenderInline {SPAN} at (12,0) size 67x18
@@ -67,13 +67,13 @@ layer at (0,0) size 800x4659
                       RenderText {#text} at (21,0) size 48x18
                         text run at (21,0) width 48: "thingy.-"
             RenderTableRow {TR} at (0,61) size 473x33
-              RenderTableCell {TD} at (0,61) size 99x17 [border: (0.50px none #808080) none] [r=2 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,61) size 99x17 [border: (0.50px none #000000) none] [r=2 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "00"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,61) size 171x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,61) size 171x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=2 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 55x15
                     text run at (0,0) width 55: "Paul Scott"
@@ -82,68 +82,68 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 92: "Donald Carvalho"
                   RenderInline {SPAN} at (91,0) size 0x15
                     RenderInline {O:P} at (91,0) size 0x15
-              RenderTableCell {TD} at (268,61) size 100x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,61) size 100x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=2 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (33,0) size 18x15
                     text run at (33,0) width 18: "No"
                   RenderInline {SPAN} at (50,0) size 0x15
                     RenderInline {O:P} at (50,0) size 0x15
-              RenderTableCell {TD} at (367,61) size 106x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=2 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,61) size 106x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=2 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
                   RenderInline {SPAN} at (54,0) size 0x15
                     RenderInline {O:P} at (54,0) size 0x15
             RenderTableRow {TR} at (0,93) size 473x17
-              RenderTableCell {TD} at (0,93) size 99x17 [border: (0.50px none #808080) none] [r=3 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,93) size 99x17 [border: (0.50px none #000000) none] [r=3 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "01"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,93) size 171x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=3 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,93) size 171x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=3 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 55x15
                     text run at (0,0) width 55: "Paul Scott"
                   RenderInline {SPAN} at (54,0) size 0x15
                     RenderInline {O:P} at (54,0) size 0x15
-              RenderTableCell {TD} at (268,93) size 100x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=3 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,93) size 100x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=3 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (33,0) size 18x15
                     text run at (33,0) width 18: "No"
                   RenderInline {SPAN} at (50,0) size 0x15
                     RenderInline {O:P} at (50,0) size 0x15
-              RenderTableCell {TD} at (367,93) size 106x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=3 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,93) size 106x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=3 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
                   RenderInline {SPAN} at (54,0) size 0x15
                     RenderInline {O:P} at (54,0) size 0x15
             RenderTableRow {TR} at (0,110) size 473x21
-              RenderTableCell {TD} at (0,110) size 99x17 [border: (0.50px none #808080) none] [r=4 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,110) size 99x17 [border: (0.50px none #000000) none] [r=4 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderInline {FONT} at (35,0) size 14x15
                     RenderText {#text} at (35,0) size 14x15
                       text run at (35,0) width 14: "02"
                   RenderText {#text} at (0,0) size 0x0
-              RenderTableCell {TD} at (98,110) size 171x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=4 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,110) size 171x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=4 c=1 rs=1 cs=1]
                 RenderInline {FONT} at (7,0) size 55x16
                   RenderText {#text} at (7,0) size 55x16
                     text run at (7,0) width 55: "Don Coon"
                 RenderText {#text} at (0,0) size 0x0
-              RenderTableCell {TD} at (268,110) size 100x21 [border: (0.50px none #808080) none (0.50px none #808080)] [r=4 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,110) size 100x21 [border: (0.50px none #000000) none (0.50px none #000000)] [r=4 c=2 rs=1 cs=1]
                 RenderText {#text} at (7,0) size 5x20
                   text run at (7,0) width 5: " "
-              RenderTableCell {TD} at (367,110) size 106x21 [border: (0.50px none #808080) none (0.50px none #808080)] [r=4 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,110) size 106x21 [border: (0.50px none #000000) none (0.50px none #000000)] [r=4 c=3 rs=1 cs=1]
                 RenderText {#text} at (7,0) size 5x20
                   text run at (7,0) width 5: " "
             RenderTableRow {TR} at (0,130) size 473x33
-              RenderTableCell {TD} at (0,130) size 99x17 [border: (0.50px none #808080) none] [r=5 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,130) size 99x17 [border: (0.50px none #000000) none] [r=5 c=0 rs=1 cs=1]
                 RenderInline {FONT} at (42,0) size 14x16
                   RenderText {#text} at (42,0) size 14x16
                     text run at (42,0) width 14: "05"
                 RenderText {#text} at (0,0) size 0x0
-              RenderTableCell {TD} at (98,130) size 171x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=5 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,130) size 171x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=5 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderInline {FONT} at (0,0) size 54x15
                     RenderText {#text} at (0,0) size 54x15
@@ -154,14 +154,14 @@ layer at (0,0) size 800x4659
                       text run at (0,0) width 49: "Bill Hunt"
                     RenderInline {SPAN} at (48,0) size 0x15
                       RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (268,130) size 100x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=5 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,130) size 100x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=5 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderInline {FONT} at (34,0) size 17x15
                     RenderText {#text} at (34,0) size 17x15
                       text run at (34,0) width 17: "No"
                     RenderInline {SPAN} at (50,0) size 0x15
                       RenderInline {O:P} at (50,0) size 0x15
-              RenderTableCell {TD} at (367,130) size 106x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=5 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,130) size 106x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=5 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderInline {FONT} at (35,0) size 20x15
                     RenderText {#text} at (35,0) size 20x15
@@ -169,25 +169,25 @@ layer at (0,0) size 800x4659
                     RenderInline {SPAN} at (54,0) size 0x15
                       RenderInline {O:P} at (54,0) size 0x15
             RenderTableRow {TR} at (0,163) size 473x33
-              RenderTableCell {TD} at (0,163) size 99x17 [border: (0.50px none #808080) none] [r=6 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,163) size 99x17 [border: (0.50px none #000000) none] [r=6 c=0 rs=1 cs=1]
                 RenderInline {FONT} at (42,0) size 14x16
                   RenderText {#text} at (42,0) size 14x16
                     text run at (42,0) width 14: "06"
                 RenderText {#text} at (0,0) size 0x0
-              RenderTableCell {TD} at (98,163) size 171x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=6 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,163) size 171x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=6 c=1 rs=1 cs=1]
                 RenderInline {FONT} at (7,0) size 135x32
                   RenderText {#text} at (7,0) size 135x32
                     text run at (7,0) width 135: "Gene Pheiffer                   "
                     text run at (7,16) width 81: "Alberto Lanzas"
                 RenderText {#text} at (0,0) size 0x0
-              RenderTableCell {TD} at (268,163) size 100x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=6 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,163) size 100x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=6 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
                 RenderBlock {P} at (7,16) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
-              RenderTableCell {TD} at (367,163) size 106x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=6 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,163) size 106x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=6 c=3 rs=1 cs=1]
                 RenderBlock (anonymous) at (7,0) size 91x17
                   RenderInline {SPAN} at (37,-3) size 17x19
                     RenderInline {FONT} at (37,0) size 17x15
@@ -198,37 +198,37 @@ layer at (0,0) size 800x4659
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
             RenderTableRow {TR} at (0,195) size 473x17
-              RenderTableCell {TD} at (0,195) size 99x17 [border: (0.50px none #808080) none] [r=7 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,195) size 99x17 [border: (0.50px none #000000) none] [r=7 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderInline {FONT} at (35,0) size 14x15
                     RenderText {#text} at (35,0) size 14x15
                       text run at (35,0) width 14: "07"
                   RenderText {#text} at (0,0) size 0x0
-              RenderTableCell {TD} at (98,195) size 171x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=7 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,195) size 171x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=7 c=1 rs=1 cs=1]
                 RenderInline {FONT} at (7,0) size 50x16
                   RenderText {#text} at (7,0) size 50x16
                     text run at (7,0) width 50: "Phil Cole"
                 RenderText {#text} at (0,0) size 0x0
-              RenderTableCell {TD} at (268,195) size 100x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=7 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,195) size 100x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=7 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderInline {FONT} at (32,0) size 20x15
                     RenderText {#text} at (32,0) size 20x15
                       text run at (32,0) width 20: "Yes"
                   RenderText {#text} at (0,0) size 0x0
-              RenderTableCell {TD} at (367,195) size 106x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=7 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,195) size 106x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=7 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderInline {FONT} at (35,0) size 20x15
                     RenderText {#text} at (35,0) size 20x15
                       text run at (35,0) width 20: "Yes"
                   RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,212) size 473x33
-              RenderTableCell {TD} at (0,212) size 99x17 [border: (0.50px none #808080) none] [r=8 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,212) size 99x17 [border: (0.50px none #000000) none] [r=8 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "08"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,212) size 171x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=8 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,212) size 171x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=8 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 55x15
                     text run at (0,0) width 55: "Paul Scott"
@@ -237,7 +237,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 75: "Gene Pheiffer"
                   RenderInline {SPAN} at (74,0) size 0x15
                     RenderInline {O:P} at (74,0) size 0x15
-              RenderTableCell {TD} at (268,212) size 100x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=8 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,212) size 100x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=8 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (33,0) size 18x15
                     text run at (33,0) width 18: "No"
@@ -246,7 +246,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,212) size 106x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=8 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,212) size 106x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=8 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
@@ -256,13 +256,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,244) size 473x49
-              RenderTableCell {TD} at (0,244) size 99x17 [border: (0.50px none #808080) none] [r=9 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,244) size 99x17 [border: (0.50px none #000000) none] [r=9 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (2,0) size 79x15
                     text run at (2,0) width 79: "Programmable"
                   RenderInline {SPAN} at (80,0) size 0x15
                     RenderInline {O:P} at (80,0) size 0x15
-              RenderTableCell {TD} at (98,244) size 171x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=9 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,244) size 171x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=9 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 103x15
                     text run at (0,0) width 103: "Richard Pevehouse"
@@ -276,7 +276,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 63: "Scott Hersh"
                   RenderInline {SPAN} at (62,0) size 0x15
                     RenderInline {O:P} at (62,0) size 0x15
-              RenderTableCell {TD} at (268,244) size 100x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=9 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,244) size 100x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=9 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -287,7 +287,7 @@ layer at (0,0) size 800x4659
                     text run at (33,0) width 18: "No"
                   RenderInline {SPAN} at (50,0) size 0x15
                     RenderInline {O:P} at (50,0) size 0x15
-              RenderTableCell {TD} at (367,244) size 106x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=9 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,244) size 106x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=9 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -299,13 +299,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (54,0) size 0x15
                     RenderInline {O:P} at (54,0) size 0x15
             RenderTableRow {TR} at (0,293) size 473x113
-              RenderTableCell {TD} at (0,293) size 99x17 [border: (0.50px none #808080) none] [r=10 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,293) size 99x17 [border: (0.50px none #000000) none] [r=10 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (35,0) size 14x15
                     text run at (35,0) width 14: "11"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,293) size 171x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=10 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,293) size 171x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=10 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 81x15
                     text run at (0,0) width 81: "George Cowan"
@@ -333,7 +333,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 85: "Jason Anderson"
                   RenderInline {SPAN} at (84,0) size 0x15
                     RenderInline {O:P} at (84,0) size 0x15
-              RenderTableCell {TD} at (268,293) size 100x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=10 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,293) size 100x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=10 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -361,7 +361,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,293) size 106x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=10 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,293) size 106x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=10 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -390,13 +390,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,405) size 473x81
-              RenderTableCell {TD} at (0,405) size 99x17 [border: (0.50px none #808080) none] [r=11 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,405) size 99x17 [border: (0.50px none #000000) none] [r=11 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "12"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,405) size 171x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=11 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,405) size 171x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=11 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 75x15
                     text run at (0,0) width 75: "Rick Klement"
@@ -412,7 +412,7 @@ layer at (0,0) size 800x4659
                 RenderBlock {P} at (7,64) size 157x17
                   RenderText {#text} at (0,0) size 99x15
                     text run at (0,0) width 99: "Ellsworth Crowell"
-              RenderTableCell {TD} at (268,405) size 100x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=11 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,405) size 100x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=11 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -430,7 +430,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,405) size 106x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=11 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,405) size 106x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=11 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
@@ -449,13 +449,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,486) size 473x65
-              RenderTableCell {TD} at (0,486) size 99x17 [border: (0.50px none #808080) none] [r=12 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,486) size 99x17 [border: (0.50px none #000000) none] [r=12 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "13"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,486) size 171x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=12 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,486) size 171x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=12 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 66x15
                     text run at (0,0) width 66: " Oliver Baer"
@@ -470,7 +470,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 63: "Scott Hersh"
                   RenderInline {SPAN} at (62,0) size 0x15
                     RenderInline {O:P} at (62,0) size 0x15
-              RenderTableCell {TD} at (268,486) size 100x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=12 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,486) size 100x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=12 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (30,0) size 24x15
                     text run at (30,0) width 24: " Yes"
@@ -485,7 +485,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,486) size 106x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=12 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,486) size 106x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=12 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: " No"
@@ -501,13 +501,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,550) size 473x49
-              RenderTableCell {TD} at (0,550) size 99x17 [border: (0.50px none #808080) none] [r=13 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,550) size 99x17 [border: (0.50px none #000000) none] [r=13 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "14"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,550) size 171x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=13 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,550) size 171x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=13 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 62x15
                     text run at (0,0) width 62: " Joe Araujo"
@@ -519,7 +519,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 79: "Gary Williams"
                   RenderInline {SPAN} at (78,0) size 0x15
                     RenderInline {O:P} at (78,0) size 0x15
-              RenderTableCell {TD} at (268,550) size 100x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=13 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,550) size 100x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=13 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (40,0) size 4x15
                     text run at (40,0) width 4: " "
@@ -528,7 +528,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,550) size 106x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=13 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,550) size 106x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=13 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (43,0) size 4x15
                     text run at (43,0) width 4: " "
@@ -538,13 +538,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,599) size 473x81
-              RenderTableCell {TD} at (0,599) size 99x17 [border: (0.50px none #808080) none] [r=14 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,599) size 99x17 [border: (0.50px none #000000) none] [r=14 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "15"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,599) size 171x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=14 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,599) size 171x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=14 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 66x15
                     text run at (0,0) width 66: " Oliver Baer"
@@ -562,7 +562,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 70: "Harald Close"
                   RenderInline {SPAN} at (69,0) size 0x15
                     RenderInline {O:P} at (69,0) size 0x15
-              RenderTableCell {TD} at (268,599) size 100x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=14 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,599) size 100x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=14 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (30,0) size 24x15
                     text run at (30,0) width 24: " Yes"
@@ -580,7 +580,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,599) size 106x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=14 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,599) size 106x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=14 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: " No"
@@ -599,13 +599,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,679) size 473x33
-              RenderTableCell {TD} at (0,679) size 99x17 [border: (0.50px none #808080) none] [r=15 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,679) size 99x17 [border: (0.50px none #000000) none] [r=15 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "16"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,679) size 171x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=15 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,679) size 171x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=15 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 83x15
                     text run at (0,0) width 83: " James Haladus"
@@ -614,26 +614,26 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 53: "Joe Smith"
                   RenderInline {SPAN} at (52,0) size 0x15
                     RenderInline {O:P} at (52,0) size 0x15
-              RenderTableCell {TD} at (268,679) size 100x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=15 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,679) size 100x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=15 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (30,0) size 24x15
                     text run at (30,0) width 24: " Yes"
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
-              RenderTableCell {TD} at (367,679) size 106x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=15 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,679) size 106x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=15 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: " No"
                   RenderInline {SPAN} at (54,0) size 0x15
                     RenderInline {O:P} at (54,0) size 0x15
             RenderTableRow {TR} at (0,712) size 473x81
-              RenderTableCell {TD} at (0,712) size 99x17 [border: (0.50px none #808080) none] [r=16 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,712) size 99x17 [border: (0.50px none #000000) none] [r=16 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "17"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,712) size 171x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=16 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,712) size 171x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=16 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 61x15
                     text run at (0,0) width 61: "Doug Field"
@@ -653,7 +653,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 99: "Dave Christiansen"
                   RenderInline {SPAN} at (98,0) size 0x15
                     RenderInline {O:P} at (98,0) size 0x15
-              RenderTableCell {TD} at (268,712) size 100x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=16 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,712) size 100x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=16 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -673,7 +673,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,712) size 106x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=16 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,712) size 106x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=16 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -694,13 +694,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,792) size 473x113
-              RenderTableCell {TD} at (0,792) size 99x17 [border: (0.50px none #808080) none] [r=17 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,792) size 99x17 [border: (0.50px none #000000) none] [r=17 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "18"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,792) size 171x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=17 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,792) size 171x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=17 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 79x15
                     text run at (0,0) width 79: "Robert Barnett"
@@ -724,7 +724,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 59: "Jim Colvin"
                   RenderInline {SPAN} at (58,0) size 0x15
                     RenderInline {O:P} at (58,0) size 0x15
-              RenderTableCell {TD} at (268,792) size 100x97 [border: (0.50px none #808080) none (0.50px none #808080)] [r=17 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,792) size 100x97 [border: (0.50px none #000000) none (0.50px none #000000)] [r=17 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -745,7 +745,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,792) size 106x97 [border: (0.50px none #808080) none (0.50px none #808080)] [r=17 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,792) size 106x97 [border: (0.50px none #000000) none (0.50px none #000000)] [r=17 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -767,13 +767,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,905) size 473x65
-              RenderTableCell {TD} at (0,905) size 99x17 [border: (0.50px none #808080) none] [r=18 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,905) size 99x17 [border: (0.50px none #000000) none] [r=18 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "19"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,905) size 171x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=18 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,905) size 171x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=18 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderInline {SPAN} at (0,0) size 67x15
                     RenderText {#text} at (0,0) size 67x15
@@ -790,7 +790,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 84: "Mike Anderson"
                   RenderInline {SPAN} at (83,0) size 0x15
                     RenderInline {O:P} at (83,0) size 0x15
-              RenderTableCell {TD} at (268,905) size 100x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=18 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,905) size 100x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=18 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderInline {SPAN} at (32,0) size 20x15
                     RenderText {#text} at (32,0) size 20x15
@@ -808,7 +808,7 @@ layer at (0,0) size 800x4659
                       text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,905) size 106x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=18 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,905) size 106x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=18 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderInline {SPAN} at (36,0) size 18x15
                     RenderText {#text} at (36,0) size 18x15
@@ -827,13 +827,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,969) size 473x49
-              RenderTableCell {TD} at (0,969) size 99x17 [border: (0.50px none #808080) none] [r=19 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,969) size 99x17 [border: (0.50px none #000000) none] [r=19 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "20"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,969) size 171x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=19 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,969) size 171x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=19 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 68x15
                     text run at (0,0) width 68: "Bill Johnson"
@@ -845,7 +845,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 70: "Rick Latham"
                   RenderInline {SPAN} at (69,0) size 0x15
                     RenderInline {O:P} at (69,0) size 0x15
-              RenderTableCell {TD} at (268,969) size 100x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=19 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,969) size 100x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=19 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -857,7 +857,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,969) size 106x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=19 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,969) size 106x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=19 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -870,38 +870,38 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,1018) size 473x17
-              RenderTableCell {TD} at (0,1018) size 99x17 [border: (0.50px none #808080) none] [r=20 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1018) size 99x17 [border: (0.50px none #000000) none] [r=20 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "21"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,1018) size 171x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=20 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,1018) size 171x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=20 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 65x15
                     text run at (0,0) width 65: " Simon Tam"
                   RenderInline {SPAN} at (64,0) size 0x15
                     RenderInline {O:P} at (64,0) size 0x15
-              RenderTableCell {TD} at (268,1018) size 100x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=20 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,1018) size 100x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=20 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (40,0) size 4x15
                     text run at (40,0) width 4: " "
                   RenderInline {SPAN} at (43,0) size 0x15
                     RenderInline {O:P} at (43,0) size 0x15
-              RenderTableCell {TD} at (367,1018) size 106x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=20 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,1018) size 106x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=20 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (43,0) size 4x15
                     text run at (43,0) width 4: " "
                   RenderInline {SPAN} at (46,0) size 0x15
                     RenderInline {O:P} at (46,0) size 0x15
             RenderTableRow {TR} at (0,1034) size 473x81
-              RenderTableCell {TD} at (0,1034) size 99x17 [border: (0.50px none #808080) none] [r=21 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1034) size 99x17 [border: (0.50px none #000000) none] [r=21 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "22"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,1034) size 171x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=21 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,1034) size 171x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=21 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 65x15
                     text run at (0,0) width 65: "Dave Neves"
@@ -923,7 +923,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 66: "Chris Walsh"
                   RenderInline {SPAN} at (65,0) size 0x15
                     RenderInline {O:P} at (65,0) size 0x15
-              RenderTableCell {TD} at (268,1034) size 100x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=21 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,1034) size 100x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=21 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -945,7 +945,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,1034) size 106x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=21 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,1034) size 106x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=21 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
@@ -968,13 +968,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,1115) size 473x81
-              RenderTableCell {TD} at (0,1115) size 99x17 [border: (0.50px none #808080) none] [r=22 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1115) size 99x17 [border: (0.50px none #000000) none] [r=22 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "23"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,1115) size 171x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=22 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,1115) size 171x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=22 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 65x15
                     text run at (0,0) width 65: "Dave Neves"
@@ -994,7 +994,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 66: "Rich Saunef"
                   RenderInline {SPAN} at (65,0) size 0x15
                     RenderInline {O:P} at (65,0) size 0x15
-              RenderTableCell {TD} at (268,1115) size 100x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=22 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,1115) size 100x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=22 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -1014,7 +1014,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,1115) size 106x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=22 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,1115) size 106x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=22 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
@@ -1035,13 +1035,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,1195) size 473x81
-              RenderTableCell {TD} at (0,1195) size 99x17 [border: (0.50px none #808080) none] [r=23 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1195) size 99x17 [border: (0.50px none #000000) none] [r=23 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "24"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,1195) size 171x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=23 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,1195) size 171x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=23 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 67x15
                     text run at (0,0) width 67: " Dan Sievert"
@@ -1059,7 +1059,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 57: "Eric Shum"
                   RenderInline {SPAN} at (56,0) size 0x15
                     RenderInline {O:P} at (56,0) size 0x15
-              RenderTableCell {TD} at (268,1195) size 100x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=23 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,1195) size 100x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=23 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (30,0) size 24x15
                     text run at (30,0) width 24: " Yes"
@@ -1077,7 +1077,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,1195) size 106x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=23 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,1195) size 106x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=23 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: " No"
@@ -1096,13 +1096,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,1276) size 473x33
-              RenderTableCell {TD} at (0,1276) size 99x17 [border: (0.50px none #808080) none] [r=24 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1276) size 99x17 [border: (0.50px none #000000) none] [r=24 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "25"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,1276) size 171x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=24 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,1276) size 171x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=24 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 71x15
                     text run at (0,0) width 71: "James Davey"
@@ -1111,26 +1111,26 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 93: "Ruenjoe (Joe) Lu"
                   RenderInline {SPAN} at (92,0) size 0x15
                     RenderInline {O:P} at (92,0) size 0x15
-              RenderTableCell {TD} at (268,1276) size 100x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=24 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,1276) size 100x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=24 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,1276) size 106x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=24 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,1276) size 106x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=24 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
                   RenderInline {SPAN} at (54,0) size 0x15
                     RenderInline {O:P} at (54,0) size 0x15
             RenderTableRow {TR} at (0,1308) size 473x161
-              RenderTableCell {TD} at (0,1308) size 99x17 [border: (0.50px none #808080) none] [r=25 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1308) size 99x17 [border: (0.50px none #000000) none] [r=25 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "26"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,1308) size 171x161 [border: (0.50px none #808080) none (0.50px none #808080)] [r=25 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,1308) size 171x161 [border: (0.50px none #000000) none (0.50px none #000000)] [r=25 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 88x15
                     text run at (0,0) width 88: "Alan Littlewood"
@@ -1167,7 +1167,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 89: "Jack Goodfriend"
                   RenderInline {SPAN} at (88,0) size 0x15
                     RenderInline {O:P} at (88,0) size 0x15
-              RenderTableCell {TD} at (268,1308) size 100x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=25 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,1308) size 100x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=25 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -1195,7 +1195,7 @@ layer at (0,0) size 800x4659
                     text run at (33,0) width 18: "No"
                   RenderInline {SPAN} at (50,0) size 0x15
                     RenderInline {O:P} at (50,0) size 0x15
-              RenderTableCell {TD} at (367,1308) size 106x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=25 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,1308) size 106x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=25 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -1224,13 +1224,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (54,0) size 0x15
                     RenderInline {O:P} at (54,0) size 0x15
             RenderTableRow {TR} at (0,1469) size 473x97
-              RenderTableCell {TD} at (0,1469) size 99x17 [border: (0.50px none #808080) none] [r=26 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1469) size 99x17 [border: (0.50px none #000000) none] [r=26 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "27"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,1469) size 171x97 [border: (0.50px none #808080) none (0.50px none #808080)] [r=26 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,1469) size 171x97 [border: (0.50px none #000000) none (0.50px none #000000)] [r=26 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 73x15
                     text run at (0,0) width 73: "Darren Braun"
@@ -1255,7 +1255,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 57: "Saibal Sen"
                   RenderInline {SPAN} at (56,0) size 0x15
                     RenderInline {O:P} at (56,0) size 0x15
-              RenderTableCell {TD} at (268,1469) size 100x97 [border: (0.50px none #808080) none (0.50px none #808080)] [r=26 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,1469) size 100x97 [border: (0.50px none #000000) none (0.50px none #000000)] [r=26 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -1280,7 +1280,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,1469) size 106x97 [border: (0.50px none #808080) none (0.50px none #808080)] [r=26 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,1469) size 106x97 [border: (0.50px none #000000) none (0.50px none #000000)] [r=26 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -1306,13 +1306,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,1565) size 473x145
-              RenderTableCell {TD} at (0,1565) size 99x17 [border: (0.50px none #808080) none] [r=27 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1565) size 99x17 [border: (0.50px none #000000) none] [r=27 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "28"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,1565) size 171x145 [border: (0.50px none #808080) none (0.50px none #808080)] [r=27 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,1565) size 171x145 [border: (0.50px none #000000) none (0.50px none #000000)] [r=27 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 93x15
                     text run at (0,0) width 93: "Zak + Mike West"
@@ -1348,7 +1348,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 62: "Jerry Davis"
                   RenderInline {SPAN} at (61,0) size 0x15
                     RenderInline {O:P} at (61,0) size 0x15
-              RenderTableCell {TD} at (268,1565) size 100x145 [border: (0.50px none #808080) none (0.50px none #808080)] [r=27 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,1565) size 100x145 [border: (0.50px none #000000) none (0.50px none #000000)] [r=27 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -1384,7 +1384,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,1565) size 106x145 [border: (0.50px none #808080) none (0.50px none #808080)] [r=27 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,1565) size 106x145 [border: (0.50px none #000000) none (0.50px none #000000)] [r=27 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
@@ -1421,13 +1421,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,1710) size 473x49
-              RenderTableCell {TD} at (0,1710) size 99x17 [border: (0.50px none #808080) none] [r=28 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1710) size 99x17 [border: (0.50px none #000000) none] [r=28 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "29"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,1710) size 171x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=28 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,1710) size 171x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=28 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 69x15
                     text run at (0,0) width 69: "Javier Flores"
@@ -1441,7 +1441,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 56: "John Todd"
                   RenderInline {SPAN} at (55,0) size 0x15
                     RenderInline {O:P} at (55,0) size 0x15
-              RenderTableCell {TD} at (268,1710) size 100x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=28 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,1710) size 100x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=28 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -1452,7 +1452,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,1710) size 106x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=28 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,1710) size 106x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=28 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -1464,13 +1464,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,1758) size 473x113
-              RenderTableCell {TD} at (0,1758) size 99x17 [border: (0.50px none #808080) none] [r=29 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1758) size 99x17 [border: (0.50px none #000000) none] [r=29 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "30"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,1758) size 171x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=29 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,1758) size 171x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=29 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 88x15
                     text run at (0,0) width 88: "Alan Littlewood"
@@ -1498,7 +1498,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 90: "Richard Sanchez"
                   RenderInline {SPAN} at (89,0) size 0x15
                     RenderInline {O:P} at (89,0) size 0x15
-              RenderTableCell {TD} at (268,1758) size 100x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=29 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,1758) size 100x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=29 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -1526,7 +1526,7 @@ layer at (0,0) size 800x4659
                     text run at (33,0) width 18: "No"
                   RenderInline {SPAN} at (50,0) size 0x15
                     RenderInline {O:P} at (50,0) size 0x15
-              RenderTableCell {TD} at (367,1758) size 106x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=29 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,1758) size 106x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=29 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -1555,13 +1555,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (54,0) size 0x15
                     RenderInline {O:P} at (54,0) size 0x15
             RenderTableRow {TR} at (0,1871) size 473x49
-              RenderTableCell {TD} at (0,1871) size 99x17 [border: (0.50px none #808080) none] [r=30 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1871) size 99x17 [border: (0.50px none #000000) none] [r=30 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "31"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,1871) size 171x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=30 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,1871) size 171x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=30 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 65x15
                     text run at (0,0) width 65: "Dave Neves"
@@ -1573,7 +1573,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 64: "Randy Reid"
                   RenderInline {SPAN} at (63,0) size 0x15
                     RenderInline {O:P} at (63,0) size 0x15
-              RenderTableCell {TD} at (268,1871) size 100x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=30 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,1871) size 100x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=30 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -1582,7 +1582,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,1871) size 106x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=30 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,1871) size 106x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=30 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
@@ -1592,13 +1592,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,1919) size 473x65
-              RenderTableCell {TD} at (0,1919) size 99x17 [border: (0.50px none #808080) none] [r=31 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1919) size 99x17 [border: (0.50px none #000000) none] [r=31 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "32"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,1919) size 171x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=31 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,1919) size 171x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=31 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 66x15
                     text run at (0,0) width 66: " Oliver Baer"
@@ -1613,7 +1613,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 88: "Dominic Bayani"
                   RenderInline {SPAN} at (87,0) size 0x15
                     RenderInline {O:P} at (87,0) size 0x15
-              RenderTableCell {TD} at (268,1919) size 100x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=31 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,1919) size 100x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=31 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (30,0) size 24x15
                     text run at (30,0) width 24: " Yes"
@@ -1622,7 +1622,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,1919) size 106x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=31 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,1919) size 106x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=31 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: " No"
@@ -1632,13 +1632,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,1984) size 473x145
-              RenderTableCell {TD} at (0,1984) size 99x17 [border: (0.50px none #808080) none] [r=32 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1984) size 99x17 [border: (0.50px none #000000) none] [r=32 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "33"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,1984) size 171x145 [border: (0.50px none #808080) none (0.50px none #808080)] [r=32 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,1984) size 171x145 [border: (0.50px none #000000) none (0.50px none #000000)] [r=32 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 69x15
                     text run at (0,0) width 69: "Tom Wagner"
@@ -1670,7 +1670,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 68: "Terry Chong"
                   RenderInline {SPAN} at (67,0) size 0x15
                     RenderInline {O:P} at (67,0) size 0x15
-              RenderTableCell {TD} at (268,1984) size 100x145 [border: (0.50px none #808080) none (0.50px none #808080)] [r=32 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,1984) size 100x145 [border: (0.50px none #000000) none (0.50px none #000000)] [r=32 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -1702,7 +1702,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,1984) size 106x145 [border: (0.50px none #808080) none (0.50px none #808080)] [r=32 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,1984) size 106x145 [border: (0.50px none #000000) none (0.50px none #000000)] [r=32 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -1735,13 +1735,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,2128) size 473x129
-              RenderTableCell {TD} at (0,2128) size 99x17 [border: (0.50px none #808080) none] [r=33 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,2128) size 99x17 [border: (0.50px none #000000) none] [r=33 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "34"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,2128) size 171x129 [border: (0.50px none #808080) none (0.50px none #808080)] [r=33 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,2128) size 171x129 [border: (0.50px none #000000) none (0.50px none #000000)] [r=33 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 57x15
                     text run at (0,0) width 57: "Jay Ribera"
@@ -1768,7 +1768,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 63: "Scott Hersh"
                   RenderInline {SPAN} at (62,0) size 0x15
                     RenderInline {O:P} at (62,0) size 0x15
-              RenderTableCell {TD} at (268,2128) size 100x129 [border: (0.50px none #808080) none (0.50px none #808080)] [r=33 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,2128) size 100x129 [border: (0.50px none #000000) none (0.50px none #000000)] [r=33 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -1795,7 +1795,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,2128) size 106x129 [border: (0.50px none #808080) none (0.50px none #808080)] [r=33 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,2128) size 106x129 [border: (0.50px none #000000) none (0.50px none #000000)] [r=33 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -1823,13 +1823,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,2257) size 473x81
-              RenderTableCell {TD} at (0,2257) size 99x17 [border: (0.50px none #808080) none] [r=34 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,2257) size 99x17 [border: (0.50px none #000000) none] [r=34 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "35"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,2257) size 171x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=34 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,2257) size 171x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=34 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 82x15
                     text run at (0,0) width 82: " Richard Green"
@@ -1847,7 +1847,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 63: "Oliver Baer"
                   RenderInline {SPAN} at (62,0) size 0x15
                     RenderInline {O:P} at (62,0) size 0x15
-              RenderTableCell {TD} at (268,2257) size 100x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=34 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,2257) size 100x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=34 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (40,0) size 4x15
                     text run at (40,0) width 4: " "
@@ -1865,7 +1865,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,2257) size 106x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=34 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,2257) size 106x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=34 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (43,0) size 4x15
                     text run at (43,0) width 4: " "
@@ -1884,13 +1884,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,2337) size 473x81
-              RenderTableCell {TD} at (0,2337) size 99x17 [border: (0.50px none #808080) none] [r=35 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,2337) size 99x17 [border: (0.50px none #000000) none] [r=35 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "36"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,2337) size 171x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=35 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,2337) size 171x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=35 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 71x15
                     text run at (0,0) width 71: "Jason Beehm"
@@ -1908,7 +1908,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 64: "Dan Sievert"
                   RenderInline {SPAN} at (63,0) size 0x15
                     RenderInline {O:P} at (63,0) size 0x15
-              RenderTableCell {TD} at (268,2337) size 100x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=35 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,2337) size 100x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=35 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -1926,7 +1926,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,2337) size 106x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=35 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,2337) size 106x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=35 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -1945,13 +1945,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,2418) size 473x65
-              RenderTableCell {TD} at (0,2418) size 99x17 [border: (0.50px none #808080) none] [r=36 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,2418) size 99x17 [border: (0.50px none #000000) none] [r=36 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "37"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,2418) size 171x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=36 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,2418) size 171x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=36 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 94x15
                     text run at (0,0) width 94: "Dominic Civiletti"
@@ -1966,7 +1966,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 78: "Soohong  Kim"
                   RenderInline {SPAN} at (77,0) size 0x15
                     RenderInline {O:P} at (77,0) size 0x15
-              RenderTableCell {TD} at (268,2418) size 100x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=36 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,2418) size 100x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=36 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -1981,7 +1981,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,2418) size 106x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=36 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,2418) size 106x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=36 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -1997,13 +1997,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,2482) size 473x97
-              RenderTableCell {TD} at (0,2482) size 99x17 [border: (0.50px none #808080) none] [r=37 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,2482) size 99x17 [border: (0.50px none #000000) none] [r=37 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "38"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,2482) size 171x97 [border: (0.50px none #808080) none (0.50px none #808080)] [r=37 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,2482) size 171x97 [border: (0.50px none #000000) none (0.50px none #000000)] [r=37 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 102x15
                     text run at (0,0) width 102: "Karl Allmendinger"
@@ -2028,7 +2028,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 93: "Ruenjoe (Joe) Lu"
                   RenderInline {SPAN} at (92,0) size 0x15
                     RenderInline {O:P} at (92,0) size 0x15
-              RenderTableCell {TD} at (268,2482) size 100x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=37 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,2482) size 100x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=37 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -2047,7 +2047,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,2482) size 106x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=37 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,2482) size 106x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=37 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -2067,13 +2067,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,2579) size 473x49
-              RenderTableCell {TD} at (0,2579) size 99x17 [border: (0.50px none #808080) none] [r=38 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,2579) size 99x17 [border: (0.50px none #000000) none] [r=38 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "39"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,2579) size 171x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=38 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,2579) size 171x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=38 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 69x15
                     text run at (0,0) width 69: "Tom Wagner"
@@ -2085,7 +2085,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 65: "Will Sievert"
                   RenderInline {SPAN} at (64,0) size 0x15
                     RenderInline {O:P} at (64,0) size 0x15
-              RenderTableCell {TD} at (268,2579) size 100x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=38 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,2579) size 100x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=38 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -2097,7 +2097,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,2579) size 106x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=38 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,2579) size 106x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=38 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -2110,13 +2110,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,2627) size 473x129
-              RenderTableCell {TD} at (0,2627) size 99x17 [border: (0.50px none #808080) none] [r=39 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,2627) size 99x17 [border: (0.50px none #000000) none] [r=39 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "40"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,2627) size 171x129 [border: (0.50px none #808080) none (0.50px none #808080)] [r=39 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,2627) size 171x129 [border: (0.50px none #000000) none (0.50px none #000000)] [r=39 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 82x15
                     text run at (0,0) width 82: "Alberto Lanzas"
@@ -2151,7 +2151,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 70: "Harald Close"
                   RenderInline {SPAN} at (69,0) size 0x15
                     RenderInline {O:P} at (69,0) size 0x15
-              RenderTableCell {TD} at (268,2627) size 100x129 [border: (0.50px none #808080) none (0.50px none #808080)] [r=39 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,2627) size 100x129 [border: (0.50px none #000000) none (0.50px none #000000)] [r=39 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -2186,7 +2186,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,2627) size 106x129 [border: (0.50px none #808080) none (0.50px none #808080)] [r=39 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,2627) size 106x129 [border: (0.50px none #000000) none (0.50px none #000000)] [r=39 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
@@ -2222,13 +2222,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,2756) size 473x129
-              RenderTableCell {TD} at (0,2756) size 99x17 [border: (0.50px none #808080) none] [r=40 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,2756) size 99x17 [border: (0.50px none #000000) none] [r=40 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "41"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,2756) size 171x129 [border: (0.50px none #808080) none (0.50px none #808080)] [r=40 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,2756) size 171x129 [border: (0.50px none #000000) none (0.50px none #000000)] [r=40 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 94x15
                     text run at (0,0) width 94: "Dominic Civiletti"
@@ -2261,7 +2261,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 55: "John Paye"
                   RenderInline {SPAN} at (54,0) size 0x15
                     RenderInline {O:P} at (54,0) size 0x15
-              RenderTableCell {TD} at (268,2756) size 100x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=40 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,2756) size 100x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=40 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -2291,7 +2291,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,2756) size 106x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=40 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,2756) size 106x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=40 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -2322,13 +2322,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,2884) size 473x129
-              RenderTableCell {TD} at (0,2884) size 99x17 [border: (0.50px none #808080) none] [r=41 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,2884) size 99x17 [border: (0.50px none #000000) none] [r=41 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "42"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,2884) size 171x129 [border: (0.50px none #808080) none (0.50px none #808080)] [r=41 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,2884) size 171x129 [border: (0.50px none #000000) none (0.50px none #000000)] [r=41 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 46x15
                     text run at (0,0) width 46: "Tony Yu"
@@ -2359,7 +2359,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 66: "Chris Walsh"
                   RenderInline {SPAN} at (65,0) size 0x15
                     RenderInline {O:P} at (65,0) size 0x15
-              RenderTableCell {TD} at (268,2884) size 100x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=41 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,2884) size 100x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=41 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -2381,7 +2381,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,2884) size 106x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=41 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,2884) size 106x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=41 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -2404,13 +2404,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,3013) size 473x113
-              RenderTableCell {TD} at (0,3013) size 99x17 [border: (0.50px none #808080) none] [r=42 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,3013) size 99x17 [border: (0.50px none #000000) none] [r=42 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "43"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,3013) size 171x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=42 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,3013) size 171x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=42 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 94x15
                     text run at (0,0) width 94: "Dominic Civiletti"
@@ -2438,7 +2438,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 89: "Rick Rasmussen"
                   RenderInline {SPAN} at (88,0) size 0x15
                     RenderInline {O:P} at (88,0) size 0x15
-              RenderTableCell {TD} at (268,3013) size 100x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=42 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,3013) size 100x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=42 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -2460,7 +2460,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,3013) size 106x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=42 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,3013) size 106x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=42 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -2483,13 +2483,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,3125) size 473x65
-              RenderTableCell {TD} at (0,3125) size 99x17 [border: (0.50px none #808080) none] [r=43 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,3125) size 99x17 [border: (0.50px none #000000) none] [r=43 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "44"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,3125) size 171x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=43 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,3125) size 171x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=43 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 62x15
                     text run at (0,0) width 62: "Gary Heath"
@@ -2506,7 +2506,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 85: "Alexander Wert"
                   RenderInline {SPAN} at (84,0) size 0x15
                     RenderInline {O:P} at (84,0) size 0x15
-              RenderTableCell {TD} at (268,3125) size 100x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=43 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,3125) size 100x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=43 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (33,0) size 18x15
                     text run at (33,0) width 18: "No"
@@ -2523,7 +2523,7 @@ layer at (0,0) size 800x4659
                     text run at (33,0) width 18: "No"
                   RenderInline {SPAN} at (50,0) size 0x15
                     RenderInline {O:P} at (50,0) size 0x15
-              RenderTableCell {TD} at (367,3125) size 106x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=43 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,3125) size 106x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=43 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
@@ -2541,13 +2541,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (54,0) size 0x15
                     RenderInline {O:P} at (54,0) size 0x15
             RenderTableRow {TR} at (0,3190) size 473x49
-              RenderTableCell {TD} at (0,3190) size 99x17 [border: (0.50px none #808080) none] [r=44 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,3190) size 99x17 [border: (0.50px none #000000) none] [r=44 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "45"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,3190) size 171x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=44 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,3190) size 171x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=44 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 82x15
                     text run at (0,0) width 82: "James Holaduz"
@@ -2560,7 +2560,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 83: "John Yearwood"
                   RenderInline {SPAN} at (82,0) size 0x15
                     RenderInline {O:P} at (82,0) size 0x15
-              RenderTableCell {TD} at (268,3190) size 100x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=44 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,3190) size 100x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=44 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -2572,7 +2572,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,3190) size 106x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=44 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,3190) size 106x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=44 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -2585,13 +2585,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,3238) size 473x129
-              RenderTableCell {TD} at (0,3238) size 99x17 [border: (0.50px none #808080) none] [r=45 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,3238) size 99x17 [border: (0.50px none #000000) none] [r=45 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "46"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,3238) size 171x129 [border: (0.50px none #808080) none (0.50px none #808080)] [r=45 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,3238) size 171x129 [border: (0.50px none #000000) none (0.50px none #000000)] [r=45 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 51x15
                     text run at (0,0) width 51: "Zak West"
@@ -2620,7 +2620,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 85: "Jason Anderson"
                   RenderInline {SPAN} at (84,0) size 0x15
                     RenderInline {O:P} at (84,0) size 0x15
-              RenderTableCell {TD} at (268,3238) size 100x129 [border: (0.50px none #808080) none (0.50px none #808080)] [r=45 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,3238) size 100x129 [border: (0.50px none #000000) none (0.50px none #000000)] [r=45 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -2649,7 +2649,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,3238) size 106x129 [border: (0.50px none #808080) none (0.50px none #808080)] [r=45 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,3238) size 106x129 [border: (0.50px none #000000) none (0.50px none #000000)] [r=45 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
@@ -2679,13 +2679,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,3367) size 473x177
-              RenderTableCell {TD} at (0,3367) size 99x17 [border: (0.50px none #808080) none] [r=46 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,3367) size 99x17 [border: (0.50px none #000000) none] [r=46 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "47"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,3367) size 171x177 [border: (0.50px none #808080) none (0.50px none #808080)] [r=46 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,3367) size 171x177 [border: (0.50px none #000000) none (0.50px none #000000)] [r=46 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 82x15
                     text run at (0,0) width 82: "James Holaduz"
@@ -2732,7 +2732,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 107: "Raymund Leonardo"
                   RenderInline {SPAN} at (106,0) size 0x15
                     RenderInline {O:P} at (106,0) size 0x15
-              RenderTableCell {TD} at (268,3367) size 100x177 [border: (0.50px none #808080) none (0.50px none #808080)] [r=46 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,3367) size 100x177 [border: (0.50px none #000000) none (0.50px none #000000)] [r=46 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -2778,7 +2778,7 @@ layer at (0,0) size 800x4659
                     text run at (33,0) width 18: "No"
                   RenderInline {SPAN} at (50,0) size 0x15
                     RenderInline {O:P} at (50,0) size 0x15
-              RenderTableCell {TD} at (367,3367) size 106x177 [border: (0.50px none #808080) none (0.50px none #808080)] [r=46 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,3367) size 106x177 [border: (0.50px none #000000) none (0.50px none #000000)] [r=46 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -2825,13 +2825,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (54,0) size 0x15
                     RenderInline {O:P} at (54,0) size 0x15
             RenderTableRow {TR} at (0,3543) size 473x145
-              RenderTableCell {TD} at (0,3543) size 99x17 [border: (0.50px none #808080) none] [r=47 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,3543) size 99x17 [border: (0.50px none #000000) none] [r=47 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "48"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,3543) size 171x145 [border: (0.50px none #808080) none (0.50px none #808080)] [r=47 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,3543) size 171x145 [border: (0.50px none #000000) none (0.50px none #000000)] [r=47 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 82x15
                     text run at (0,0) width 82: "Mark Glanville"
@@ -2863,7 +2863,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 93: "Ruenjoe (Joe) Lu"
                   RenderInline {SPAN} at (92,0) size 0x15
                     RenderInline {O:P} at (92,0) size 0x15
-              RenderTableCell {TD} at (268,3543) size 100x97 [border: (0.50px none #808080) none (0.50px none #808080)] [r=47 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,3543) size 100x97 [border: (0.50px none #000000) none (0.50px none #000000)] [r=47 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -2886,7 +2886,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,3543) size 106x97 [border: (0.50px none #808080) none (0.50px none #808080)] [r=47 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,3543) size 106x97 [border: (0.50px none #000000) none (0.50px none #000000)] [r=47 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -2910,13 +2910,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,3688) size 473x65
-              RenderTableCell {TD} at (0,3688) size 99x17 [border: (0.50px none #808080) none] [r=48 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,3688) size 99x17 [border: (0.50px none #000000) none] [r=48 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "49"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,3688) size 171x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=48 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,3688) size 171x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=48 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 69x15
                     text run at (0,0) width 69: "Ali Erdengiz"
@@ -2933,7 +2933,7 @@ layer at (0,0) size 800x4659
                     RenderText {#text} at (0,0) size 85x15
                       text run at (0,0) width 33: "Jason "
                       text run at (32,0) width 53: "Anderson"
-              RenderTableCell {TD} at (268,3688) size 100x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=48 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,3688) size 100x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=48 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (40,0) size 4x15
                     text run at (40,0) width 4: " "
@@ -2948,7 +2948,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,3688) size 106x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=48 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,3688) size 106x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=48 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (43,0) size 4x15
                     text run at (43,0) width 4: " "
@@ -2964,13 +2964,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,3752) size 473x145
-              RenderTableCell {TD} at (0,3752) size 99x17 [border: (0.50px none #808080) none] [r=49 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,3752) size 99x17 [border: (0.50px none #000000) none] [r=49 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "50"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,3752) size 171x145 [border: (0.50px none #808080) none (0.50px none #808080)] [r=49 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,3752) size 171x145 [border: (0.50px none #000000) none (0.50px none #000000)] [r=49 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 51x15
                     text run at (0,0) width 51: "Zak West"
@@ -3004,7 +3004,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 67: "Ken Manuel"
                   RenderInline {SPAN} at (66,0) size 0x15
                     RenderInline {O:P} at (66,0) size 0x15
-              RenderTableCell {TD} at (268,3752) size 100x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=49 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,3752) size 100x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=49 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -3032,7 +3032,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,3752) size 106x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=49 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,3752) size 106x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=49 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
@@ -3061,13 +3061,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,3897) size 473x49
-              RenderTableCell {TD} at (0,3897) size 99x17 [border: (0.50px none #808080) none] [r=50 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,3897) size 99x17 [border: (0.50px none #000000) none] [r=50 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "51"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,3897) size 171x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=50 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,3897) size 171x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=50 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 79x15
                     text run at (0,0) width 79: "Robert Barnett"
@@ -3079,7 +3079,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 85: "Jason Anderson"
                   RenderInline {SPAN} at (84,0) size 0x15
                     RenderInline {O:P} at (84,0) size 0x15
-              RenderTableCell {TD} at (268,3897) size 100x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=50 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,3897) size 100x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=50 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -3091,7 +3091,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,3897) size 106x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=50 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,3897) size 106x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=50 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderInline {SPAN} at (36,0) size 18x15
                     RenderText {#text} at (36,0) size 18x15
@@ -3108,13 +3108,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,3945) size 473x81
-              RenderTableCell {TD} at (0,3945) size 99x17 [border: (0.50px none #808080) none] [r=51 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,3945) size 99x17 [border: (0.50px none #000000) none] [r=51 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "52"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,3945) size 171x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=51 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,3945) size 171x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=51 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 58x15
                     text run at (0,0) width 58: "Mike West"
@@ -3134,7 +3134,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 68: "Dale Barnett"
                   RenderInline {SPAN} at (67,0) size 0x15
                     RenderInline {O:P} at (67,0) size 0x15
-              RenderTableCell {TD} at (268,3945) size 100x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=51 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,3945) size 100x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=51 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -3154,7 +3154,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,3945) size 106x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=51 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,3945) size 106x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=51 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
@@ -3175,13 +3175,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,4026) size 473x81
-              RenderTableCell {TD} at (0,4026) size 99x17 [border: (0.50px none #808080) none] [r=52 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,4026) size 99x17 [border: (0.50px none #000000) none] [r=52 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "53"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,4026) size 171x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=52 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,4026) size 171x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=52 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 82x15
                     text run at (0,0) width 82: "Alberto Lanzas"
@@ -3201,7 +3201,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 102: "Ramin Khoshnevis"
                   RenderInline {SPAN} at (101,0) size 0x15
                     RenderInline {O:P} at (101,0) size 0x15
-              RenderTableCell {TD} at (268,4026) size 100x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=52 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,4026) size 100x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=52 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -3221,7 +3221,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,4026) size 106x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=52 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,4026) size 106x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=52 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
@@ -3242,13 +3242,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,4106) size 473x113
-              RenderTableCell {TD} at (0,4106) size 99x17 [border: (0.50px none #808080) none] [r=53 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,4106) size 99x17 [border: (0.50px none #000000) none] [r=53 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "54"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,4106) size 171x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=53 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,4106) size 171x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=53 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 76x15
                     text run at (0,0) width 76: "Gene Langley"
@@ -3272,7 +3272,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 63: "Scott Hersh"
                   RenderInline {SPAN} at (62,0) size 0x15
                     RenderInline {O:P} at (62,0) size 0x15
-              RenderTableCell {TD} at (268,4106) size 100x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=53 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,4106) size 100x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=53 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -3296,7 +3296,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,4106) size 106x113 [border: (0.50px none #808080) none (0.50px none #808080)] [r=53 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,4106) size 106x113 [border: (0.50px none #000000) none (0.50px none #000000)] [r=53 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (6,0) size 79x15
                     text run at (6,0) width 79: "Gyro wannabe"
@@ -3321,13 +3321,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,4219) size 473x49
-              RenderTableCell {TD} at (0,4219) size 99x17 [border: (0.50px none #808080) none] [r=54 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,4219) size 99x17 [border: (0.50px none #000000) none] [r=54 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "55"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,4219) size 171x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=54 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,4219) size 171x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=54 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 82x15
                     text run at (0,0) width 82: "Alberto Lanzas"
@@ -3341,7 +3341,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 76: "Randy StClair"
                   RenderInline {SPAN} at (75,0) size 0x15
                     RenderInline {O:P} at (75,0) size 0x15
-              RenderTableCell {TD} at (268,4219) size 100x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=54 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,4219) size 100x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=54 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -3355,7 +3355,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,4219) size 106x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=54 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,4219) size 106x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=54 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (35,0) size 20x15
                     text run at (35,0) width 20: "Yes"
@@ -3370,13 +3370,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,4267) size 473x81
-              RenderTableCell {TD} at (0,4267) size 99x17 [border: (0.50px none #808080) none] [r=55 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,4267) size 99x17 [border: (0.50px none #000000) none] [r=55 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "56"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,4267) size 171x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=55 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,4267) size 171x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=55 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 82x15
                     text run at (0,0) width 82: "Mark Glanville"
@@ -3394,7 +3394,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 70: "Harald Close"
                   RenderInline {SPAN} at (69,0) size 0x15
                     RenderInline {O:P} at (69,0) size 0x15
-              RenderTableCell {TD} at (268,4267) size 100x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=55 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,4267) size 100x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=55 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -3412,7 +3412,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,4267) size 106x81 [border: (0.50px none #808080) none (0.50px none #808080)] [r=55 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,4267) size 106x81 [border: (0.50px none #000000) none (0.50px none #000000)] [r=55 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -3431,13 +3431,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,4348) size 473x49
-              RenderTableCell {TD} at (0,4348) size 99x17 [border: (0.50px none #808080) none] [r=56 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,4348) size 99x17 [border: (0.50px none #000000) none] [r=56 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "57"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,4348) size 171x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=56 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,4348) size 171x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=56 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 59x15
                     text run at (0,0) width 59: "Bob Roger"
@@ -3449,26 +3449,26 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 66: "David Dunn"
                   RenderInline {SPAN} at (65,0) size 0x15
                     RenderInline {O:P} at (65,0) size 0x15
-              RenderTableCell {TD} at (268,4348) size 100x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=56 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,4348) size 100x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=56 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,4348) size 106x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=56 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,4348) size 106x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=56 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,4396) size 473x65
-              RenderTableCell {TD} at (0,4396) size 99x17 [border: (0.50px none #808080) none] [r=57 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,4396) size 99x17 [border: (0.50px none #000000) none] [r=57 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "58"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,4396) size 171x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=57 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,4396) size 171x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=57 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 94x15
                     text run at (0,0) width 94: "Ian + Brad Carter"
@@ -3485,7 +3485,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 66: "David Dunn"
                   RenderInline {SPAN} at (65,0) size 0x15
                     RenderInline {O:P} at (65,0) size 0x15
-              RenderTableCell {TD} at (268,4396) size 100x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=57 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,4396) size 100x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=57 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -3499,7 +3499,7 @@ layer at (0,0) size 800x4659
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,4396) size 106x49 [border: (0.50px none #808080) none (0.50px none #808080)] [r=57 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,4396) size 106x49 [border: (0.50px none #000000) none (0.50px none #000000)] [r=57 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
@@ -3514,13 +3514,13 @@ layer at (0,0) size 800x4659
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,4461) size 473x33
-              RenderTableCell {TD} at (0,4461) size 99x17 [border: (0.50px none #808080) none] [r=58 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,4461) size 99x17 [border: (0.50px none #000000) none] [r=58 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "59"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,4461) size 171x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=58 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,4461) size 171x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=58 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 59x15
                     text run at (0,0) width 59: "Bob Roger"
@@ -3529,26 +3529,26 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 69: "Rich Burnett"
                   RenderInline {SPAN} at (68,0) size 0x15
                     RenderInline {O:P} at (68,0) size 0x15
-              RenderTableCell {TD} at (268,4461) size 100x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=58 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,4461) size 100x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=58 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
                   RenderInline {SPAN} at (51,0) size 0x15
                     RenderInline {O:P} at (51,0) size 0x15
-              RenderTableCell {TD} at (367,4461) size 106x17 [border: (0.50px none #808080) none (0.50px none #808080)] [r=58 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,4461) size 106x17 [border: (0.50px none #000000) none (0.50px none #000000)] [r=58 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"
                   RenderInline {SPAN} at (53,0) size 0x15
                     RenderInline {O:P} at (53,0) size 0x15
             RenderTableRow {TR} at (0,4493) size 473x65
-              RenderTableCell {TD} at (0,4493) size 99x17 [border: (0.50px none #808080) none] [r=59 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,4493) size 99x17 [border: (0.50px none #000000) none] [r=59 c=0 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 84x17
                   RenderText {#text} at (34,0) size 15x15
                     text run at (34,0) width 15: "60"
                   RenderInline {SPAN} at (48,0) size 0x15
                     RenderInline {O:P} at (48,0) size 0x15
-              RenderTableCell {TD} at (98,4493) size 171x65 [border: (0.50px none #808080) none (0.50px none #808080)] [r=59 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (98,4493) size 171x65 [border: (0.50px none #000000) none (0.50px none #000000)] [r=59 c=1 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 157x17
                   RenderText {#text} at (0,0) size 68x15
                     text run at (0,0) width 68: "Bill Johnson"
@@ -3563,7 +3563,7 @@ layer at (0,0) size 800x4659
                     text run at (0,0) width 89: "Rick Rasmussen"
                   RenderInline {SPAN} at (88,0) size 0x15
                     RenderInline {O:P} at (88,0) size 0x15
-              RenderTableCell {TD} at (268,4493) size 100x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=59 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (268,4493) size 100x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=59 c=2 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 85x17
                   RenderText {#text} at (32,0) size 20x15
                     text run at (32,0) width 20: "Yes"
@@ -3572,7 +3572,7 @@ layer at (0,0) size 800x4659
                     text run at (33,0) width 18: "No"
                   RenderInline {SPAN} at (50,0) size 0x15
                     RenderInline {O:P} at (50,0) size 0x15
-              RenderTableCell {TD} at (367,4493) size 106x33 [border: (0.50px none #808080) none (0.50px none #808080)] [r=59 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (367,4493) size 106x33 [border: (0.50px none #000000) none (0.50px none #000000)] [r=59 c=3 rs=1 cs=1]
                 RenderBlock {P} at (7,0) size 91x17
                   RenderText {#text} at (36,0) size 18x15
                     text run at (36,0) width 18: "No"

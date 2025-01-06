@@ -239,26 +239,36 @@ const char *GetDebugMessageSourceString(GLenum source);
 const char *GetDebugMessageTypeString(GLenum type);
 const char *GetDebugMessageSeverityString(GLenum severity);
 
-// For use with EXT_texture_format_sRGB_override and EXT_texture_sRGB_decode
-// A texture may be forced to decode to a nonlinear colorspace, to a linear colorspace, or to the
-// default colorspace of its current format.
+// For use with EXT_texture_sRGB_decode
+// A texture may be forced to skip decoding to a linear colorspace even if its format
+// is in sRGB colorspace.
 //
-// Default corresponds to "the texture should use the imageview that corresponds to its format"
-// Linear corresponds to "the texture has sRGB decoding disabled by extension, and should use a
-// linear imageview even if it is in a nonlinear format" NonLinear corresponds to "the texture has
-// sRGB override enabled by extension, and should use a nonlinear imageview even if it is in a
-// linear format"
+// Default - decode data according to the image's format's colorspace
+// Skip - data is not decoded during sampling
+enum class SrgbDecode
+{
+    Default = 0,
+    Skip
+};
+
+// For use with EXT_texture_format_sRGB_override
+// A texture may be forced to decode data to linear colorspace even if its format
+// is in linear colorspace.
+//
+// Default - decode data according to the image's format's colorspace
+// SRGB - data will be decoded to linear colorspace irrespective of texture's format
 enum class SrgbOverride
 {
     Default = 0,
-    SRGB,
-    Linear
+    SRGB
 };
 
 // For use with EXT_sRGB_write_control
-// A render target may be forced to convert to a linear colorspace, or may be allowed to do whatever
-// colorspace conversion is appropriate for its format. There is no option to force linear->sRGB, it
-// can only convert from sRGB->linear
+// A framebuffer may be forced to not encode data to sRGB colorspace even if its format
+// is in sRGB colorspace.
+//
+// Default - encode data according to the image's format's colorspace
+// Linear - data will not be encoded into sRGB colorspace
 enum class SrgbWriteControlMode
 {
     Default = 0,
@@ -285,6 +295,19 @@ ShaderType GetLastPreFragmentStage(ShaderBitSet shaderTypes);
 
 namespace egl
 {
+// For use with EGL_EXT_image_gl_colorspace
+// An EGLImage can be created with attributes that override the color space of underlying image data
+// when rendering to the image, or sampling from the image. The possible values are -
+//  Default - EGLImage source's colorspace should be preserved
+//  sRGB - EGLImage targets will assume sRGB colorspace
+//  Linear - EGLImage targets will assume linear colorspace
+enum class ImageColorspace
+{
+    Default = 0,
+    SRGB,
+    Linear
+};
+
 static const EGLenum FirstCubeMapTextureTarget = EGL_GL_TEXTURE_CUBE_MAP_POSITIVE_X_KHR;
 static const EGLenum LastCubeMapTextureTarget  = EGL_GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_KHR;
 bool IsCubeMapTextureTarget(EGLenum target);
@@ -310,6 +333,32 @@ EGLClientBuffer GLObjectHandleToEGLClientBuffer(GLuint handle);
 
 namespace angle
 {
+
+// All state that modify attachment's colorspace
+struct ColorspaceState
+{
+  public:
+    ColorspaceState() { reset(); }
+    void reset()
+    {
+        hasStaticTexelFetchAccess = false;
+        srgbDecode                = gl::SrgbDecode::Default;
+        srgbOverride              = gl::SrgbOverride::Default;
+        srgbWriteControl          = gl::SrgbWriteControlMode::Default;
+        eglImageColorspace        = egl::ImageColorspace::Default;
+    }
+
+    // States that affect read operations
+    bool hasStaticTexelFetchAccess;
+    gl::SrgbDecode srgbDecode;
+    gl::SrgbOverride srgbOverride;
+
+    // States that affect write operations
+    gl::SrgbWriteControlMode srgbWriteControl;
+
+    // States that affect both read and write operations
+    egl::ImageColorspace eglImageColorspace;
+};
 
 template <typename T>
 constexpr size_t ConstStrLen(T s)

@@ -8,12 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstdint>
+#include <optional>
+
 #include "api/test/mock_video_decoder.h"
+#include "api/units/time_delta.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
 #include "api/video_codecs/video_decoder.h"
 #include "modules/video_coding/include/video_coding.h"
 #include "modules/video_coding/timing/timing.h"
 #include "modules/video_coding/video_coding_impl.h"
 #include "system_wrappers/include/clock.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/scoped_key_value_config.h"
 
@@ -41,10 +49,14 @@ class MockVCMReceiveCallback : public VCMReceiveCallback {
   MOCK_METHOD(int32_t,
               FrameToRender,
               (VideoFrame&,
-               absl::optional<uint8_t>,
+               std::optional<uint8_t>,
                TimeDelta,
                VideoContentType,
                VideoFrameType),
+              (override));
+  MOCK_METHOD(int32_t,
+              OnFrameToRender,
+              (const struct FrameToRender&),
               (override));
   MOCK_METHOD(void, OnIncomingPayloadType, (int), (override));
   MOCK_METHOD(void,

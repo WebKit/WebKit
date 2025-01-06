@@ -13,26 +13,14 @@
 #include "api/field_trials_view.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/transport/field_trial_based_config.h"
-#include "rtc_base/logging.h"
 #include "rtc_base/memory/always_valid_pointer.h"
-#include "rtc_base/task_queue_libevent.h"
 #include "rtc_base/task_queue_stdlib.h"
 
 namespace webrtc {
 
 std::unique_ptr<TaskQueueFactory> CreateDefaultTaskQueueFactory(
     const FieldTrialsView* field_trials_view) {
-  AlwaysValidPointer<const FieldTrialsView, FieldTrialBasedConfig> field_trials(
-      field_trials_view);
-  if (field_trials->IsEnabled("WebRTC-TaskQueue-ReplaceLibeventWithStdlib")) {
-    RTC_LOG(LS_INFO) << "WebRTC-TaskQueue-ReplaceLibeventWithStdlib: "
-                     << "using TaskQueueStdlibFactory.";
-    return CreateTaskQueueStdlibFactory();
-  }
-
-  RTC_LOG(LS_INFO) << "WebRTC-TaskQueue-ReplaceLibeventWithStdlib: "
-                   << "using TaskQueueLibeventFactory.";
-  return CreateTaskQueueLibeventFactory();
+  return CreateTaskQueueStdlibFactory();
 }
 
 }  // namespace webrtc

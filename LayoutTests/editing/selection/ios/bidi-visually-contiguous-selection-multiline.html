@@ -1,0 +1,75 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true VisuallyContiguousBidiTextSelectionEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 20px;
+    font-family: monospace;
+    margin: 0;
+}
+
+.start {
+    border: 1px solid tomato;
+}
+
+.container {
+    width: 300px;
+    box-sizing: border-box;
+    border: 1px solid black;
+    line-height: 150%;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that the text selection appears visually contiguous when selecting across bidi text boundaries that span multiple lines.");
+
+    await UIHelper.longPressElement(document.querySelector(".start"));
+    await UIHelper.waitForSelectionToAppear();
+
+    const range = document.createRange();
+    const bottomText = document.querySelector(".line[dir='rtl']").childNodes[0];
+    range.setStart(bottomText, 33); // Select to "ik" the word "like".
+    range.setEnd(bottomText, 35);
+    const targetRect = range.getBoundingClientRect();
+    targetRect.y += 20; // Account for the vertical range adjustment offset.
+    const target = UIHelper.midPointOfRect(targetRect);
+
+    const start = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(start.x, start.y)
+        .move(target.x, target.y, 0.5)
+        .takeResult());
+    await UIHelper.ensurePresentationUpdate();
+
+    selectionRectsBeforeEndingTouch = await UIHelper.getUISelectionViewRects();
+    // The last selection rect should span most of the last line.
+    shouldBe("selectionRectsBeforeEndingTouch.length", "3");
+    shouldBeGreaterThanOrEqual("selectionRectsBeforeEndingTouch[2]?.width", "100");
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder().end().takeResult());
+    await UIHelper.ensurePresentationUpdate();
+
+    // The whole text content (both paragraphs) should be selected after ending the selection.
+    selectedText = getSelection().toString();
+    shouldBeTrue("selectedText.startsWith('Arabic')");
+    shouldBeTrue("selectedText.endsWith('text')");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="container">
+        <div class="line"><span class="start">Arabic</span> is left to right مث لهذا النص</div>
+        <div class="line" dir="rtl">الإنجليزية من اليسار إلى اليمين like this text</div>
+    </div>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

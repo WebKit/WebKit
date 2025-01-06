@@ -25,12 +25,15 @@
 
 #include "config.h"
 #include "HIDGamepadElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
 #include <IOKit/hid/IOHIDElement.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HIDGamepadElement);
 
 #pragma mark HIDGamepadElement
 

@@ -1,0 +1,3 @@
+
+PASS link rel=expect: only connected elements are eligible
+

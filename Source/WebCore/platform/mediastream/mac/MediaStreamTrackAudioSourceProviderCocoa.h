@@ -32,6 +32,7 @@
 #include "WebAudioSourceProviderCocoa.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ class MediaStreamTrackAudioSourceProviderCocoa final
     , MediaStreamTrackPrivateObserver
     , RealtimeMediaSource::AudioSampleObserver
     , public CanMakeCheckedPtr<MediaStreamTrackAudioSourceProviderCocoa> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaStreamTrackAudioSourceProviderCocoa);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaStreamTrackAudioSourceProviderCocoa);
 public:
     static Ref<MediaStreamTrackAudioSourceProviderCocoa> create(MediaStreamTrackPrivate&);
@@ -50,10 +51,10 @@ private:
     explicit MediaStreamTrackAudioSourceProviderCocoa(MediaStreamTrackPrivate&);
 
     // CheckedPtr interface
-    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
-    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     // WebAudioSourceProviderCocoa
     void hasNewClient(AudioSourceProviderClient*) final;

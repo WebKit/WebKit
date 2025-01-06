@@ -33,8 +33,11 @@
 #include "Document.h"
 #include "Page.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ConstantPropertyMap);
 
 ConstantPropertyMap::ConstantPropertyMap(Document& document)
     : m_document(document)

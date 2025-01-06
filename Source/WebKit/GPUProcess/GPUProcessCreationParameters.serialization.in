@@ -33,11 +33,9 @@
 #endif
 #endif
 
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    bool sampleBufferContentKeySessionSupportEnabled;
+#if USE(MODERN_AVCONTENTKEYSESSION)
+    bool shouldUseModernAVContentKeySession;
 #endif
-
-    ProcessID parentPID;
 
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
     WebKit::SandboxExtensionHandle containerCachesDirectoryExtensionHandle;
@@ -63,6 +61,10 @@
 #endif
 
     Vector<String> overrideLanguages;
+#if PLATFORM(COCOA)
+    bool enableMetalDebugDeviceForTesting;
+    bool enableMetalShaderValidationForTesting;
+#endif
 };
 
 #endif

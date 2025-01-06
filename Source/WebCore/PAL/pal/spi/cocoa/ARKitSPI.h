@@ -25,6 +25,10 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#ifndef OS_UNFAIR_LOCK_INLINE
+#define OS_UNFAIR_LOCK_INLINE 1
+#endif
+
 #import <ARKit/ARKit.h>
 #import <ARKit/ARKitPrivate.h>
 

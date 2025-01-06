@@ -35,11 +35,11 @@
 #include "WebXRSession.h"
 #include "WebXRViewerPose.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRFrame);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRFrame);
 
 Ref<WebXRFrame> WebXRFrame::create(WebXRSession& session, IsAnimationFrame isAnimationFrame)
 {

@@ -31,6 +31,7 @@
 #include <new>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -102,9 +103,9 @@ public:
         static const bool safeToCompareToEmptyOrDeleted = DefaultHash<AtomString>::safeToCompareToEmptyOrDeleted;
     };
 
-    using NodeListCacheMap = HashMap<std::pair<unsigned char, AtomString>, LiveNodeList*, NodeListCacheMapEntryHash>;
-    using CollectionCacheMap = HashMap<std::pair<std::underlying_type_t<CollectionType>, AtomString>, HTMLCollection*, NodeListCacheMapEntryHash>;
-    using TagCollectionNSCache = HashMap<QualifiedName, TagCollectionNS*>;
+    using NodeListCacheMap = UncheckedKeyHashMap<std::pair<unsigned char, AtomString>, LiveNodeList*, NodeListCacheMapEntryHash>;
+    using CollectionCacheMap = UncheckedKeyHashMap<std::pair<std::underlying_type_t<CollectionType>, AtomString>, HTMLCollection*, NodeListCacheMapEntryHash>;
+    using TagCollectionNSCache = UncheckedKeyHashMap<QualifiedName, TagCollectionNS*>;
 
     template<typename T, typename ContainerType>
     ALWAYS_INLINE Ref<T> addCacheWithAtomName(ContainerType& container, const AtomString& name)
@@ -213,12 +214,13 @@ private:
 };
 
 class NodeMutationObserverData {
-    WTF_MAKE_NONCOPYABLE(NodeMutationObserverData); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NodeMutationObserverData);
+    WTF_MAKE_NONCOPYABLE(NodeMutationObserverData);
 public:
     Vector<std::unique_ptr<MutationObserverRegistration>> registry;
     WeakHashSet<MutationObserverRegistration> transientRegistry;
 
-    NodeMutationObserverData() { }
+    NodeMutationObserverData() = default;
 };
 
 DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(NodeRareData);
@@ -256,6 +258,7 @@ public:
         Popover = 1 << 25,
         DisplayContentsOrNoneStyle = 1 << 26,
         CustomStateSet = 1 << 27,
+        UserInfo = 1 << 28,
     };
 #endif
 

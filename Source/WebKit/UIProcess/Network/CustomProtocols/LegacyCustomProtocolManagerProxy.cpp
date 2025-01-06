@@ -25,7 +25,6 @@
 #include "LegacyCustomProtocolManagerMessages.h"
 #include "LegacyCustomProtocolManagerProxyMessages.h"
 #include "NetworkProcessProxy.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebProcessPool.h"
 #include <WebCore/ResourceRequest.h>
 
@@ -37,6 +36,16 @@ LegacyCustomProtocolManagerProxy::LegacyCustomProtocolManagerProxy(NetworkProces
     networkProcessProxy.addMessageReceiver(Messages::LegacyCustomProtocolManagerProxy::messageReceiverName(), *this);
 }
 
+void LegacyCustomProtocolManagerProxy::ref() const
+{
+    m_networkProcessProxy->ref();
+}
+
+void LegacyCustomProtocolManagerProxy::deref() const
+{
+    m_networkProcessProxy->deref();
+}
+
 Ref<NetworkProcessProxy> LegacyCustomProtocolManagerProxy::protectedProcess()
 {
     return m_networkProcessProxy.get();
@@ -44,7 +53,7 @@ Ref<NetworkProcessProxy> LegacyCustomProtocolManagerProxy::protectedProcess()
 
 LegacyCustomProtocolManagerProxy::~LegacyCustomProtocolManagerProxy()
 {
-    RefAllowingPartiallyDestroyed<NetworkProcessProxy> networkProcessProxy = m_networkProcessProxy.get();
+    Ref<NetworkProcessProxy> networkProcessProxy = m_networkProcessProxy.get();
     networkProcessProxy->removeMessageReceiver(Messages::LegacyCustomProtocolManagerProxy::messageReceiverName());
     invalidate();
 }
@@ -61,7 +70,7 @@ void LegacyCustomProtocolManagerProxy::stopLoading(LegacyCustomProtocolID custom
 
 void LegacyCustomProtocolManagerProxy::invalidate()
 {
-    RefAllowingPartiallyDestroyed<NetworkProcessProxy> networkProcessProxy = m_networkProcessProxy.get();
+    Ref<NetworkProcessProxy> networkProcessProxy = m_networkProcessProxy.get();
     networkProcessProxy->customProtocolManagerClient().invalidate(*this);
 }
 

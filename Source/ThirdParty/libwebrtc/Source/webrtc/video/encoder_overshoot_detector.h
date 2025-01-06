@@ -12,8 +12,8 @@
 #define VIDEO_ENCODER_OVERSHOOT_DETECTOR_H_
 
 #include <deque>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/units/data_rate.h"
 #include "api/video_codecs/video_codec.h"
 
@@ -34,11 +34,11 @@ class EncoderOvershootDetector {
   // This utilization factor reaches 1.0 only if the encoder produces encoded
   // frame in such a way that they can be sent onto the network at
   // `target_bitrate` without building growing queues.
-  absl::optional<double> GetNetworkRateUtilizationFactor(int64_t time_ms);
+  std::optional<double> GetNetworkRateUtilizationFactor(int64_t time_ms);
   // This utilization factor is based just on actual encoded frame sizes in
   // relation to ideal sizes. An undershoot may be compensated by an
   // overshoot so that the average over time is close to `target_bitrate`.
-  absl::optional<double> GetMediaRateUtilizationFactor(int64_t time_ms);
+  std::optional<double> GetMediaRateUtilizationFactor(int64_t time_ms);
   void Reset();
 
  private:

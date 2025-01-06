@@ -107,6 +107,7 @@ our $unfilteredOutputPath = "build.log";
 our $inEntitlements = 0;
 our $inMultilineShellCommand = 0;
 our $inDevicePreparationWarnings = 0;
+our $inAuxiliaryFile = 0;
 
 sub usageAndExit()
 {
@@ -175,8 +176,9 @@ sub main() {
             printLine($line, $target, $project, STYLE_PLAIN);
         } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
             printLine("Build Succeeded", $target, $project, STYLE_SUCCESS);
-        } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|ProcessProductPackagingDER|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile|ValidateEmbeddedBinary|Copy)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
+        } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|ProcessProductPackagingDER|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile|ValidateEmbeddedBinary|Copy|ScanDependencies)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
             my ($command, $path) = ($2, basename($4));
+            $command = "ScanDeps" if $command eq "ScanDependencies";
             $path =~ s/("|\\|\.[ah]$)//g;
             printLine("$command $path", $target, $project, STYLE_PLAIN);
         } elsif ($line =~ /^(Ditto) (\S+) (\S+)/) {
@@ -380,6 +382,14 @@ sub shouldIgnoreLine($$)
         return 1;
     }
 
+    if ($line =~ /^\s*write-file /) {
+        $inAuxiliaryFile = 1;
+        return 1;
+    } elsif ($inAuxiliaryFile) {
+        $inAuxiliaryFile = 0;
+        return 1;
+    }
+
     return 1 if $line =~ /^\s*$/;
     return 1 if $line =~ /^Command line invocation:/;
     return 1 if $line =~ /^Build settings from command line:/;
@@ -472,7 +482,7 @@ sub shouldIgnoreLine($$)
         return 1 if $line =~ /MSB3073:\s+if not exist/;
         return 1 if $line =~ /which.exe bash/;
     } else {
-        return 1 if $line =~ /^(touch|perl|cat|rm -f|python|\/usr\/bin\/g\+\+|\/bin\/ln|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file|write-file|chmod) /;
+        return 1 if $line =~ /^(touch|perl|cat|rm -f|python|\/usr\/bin\/g\+\+|\/bin\/ln|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file|chmod) /;
         return 1 if $line =~ /^    / && !shouldShowSubsequentLine($previousLine);
         return 1 if $line =~ /^printf /;
         return 1 if $line =~ /^offlineasm: Nothing changed/;

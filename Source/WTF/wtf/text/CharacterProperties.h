@@ -26,6 +26,7 @@
 #pragma once
 
 #include <unicode/uchar.h>
+#include <unicode/uscript.h>
 #include <wtf/text/StringCommon.h>
 
 namespace WTF {
@@ -113,6 +114,61 @@ inline bool isPrivateUseAreaCharacter(char32_t character)
     return block == UBLOCK_PRIVATE_USE_AREA || block == UBLOCK_SUPPLEMENTARY_PRIVATE_USE_AREA_A || block == UBLOCK_SUPPLEMENTARY_PRIVATE_USE_AREA_B;
 }
 
+inline bool isPunctuation(char32_t character)
+{
+    return U_GET_GC_MASK(character) & U_GC_P_MASK;
+}
+
+inline bool isOpeningPunctuation(uint32_t generalCategoryMask)
+{
+    return generalCategoryMask & U_GC_PS_MASK;
+}
+
+inline bool isClosingPunctuation(uint32_t generalCategoryMask)
+{
+    return generalCategoryMask & U_GC_PE_MASK;
+}
+
+inline bool isOfScriptType(char32_t codePoint, UScriptCode scriptType)
+{
+    UErrorCode error = U_ZERO_ERROR;
+    UScriptCode script = uscript_getScript(codePoint, &error);
+    if (error != U_ZERO_ERROR) {
+        LOG_ERROR("got ICU error while trying to look at scripts: %d", error);
+        return false;
+    }
+    return script == scriptType;
+}
+
+inline UEastAsianWidth eastAsianWidth(char32_t character)
+{
+    return static_cast<UEastAsianWidth>(u_getIntPropertyValue(character, UCHAR_EAST_ASIAN_WIDTH));
+}
+
+inline bool isEastAsianFullWidth(char32_t character)
+{
+    return eastAsianWidth(character) == UEastAsianWidth::U_EA_FULLWIDTH;
+}
+
+inline bool isCJKSymbolOrPunctuation(char32_t character)
+{
+    // CJK Symbols and Punctuation block (U+3000–U+303F)
+    return character >= 0x3000 && character <= 0x303F;
+}
+
+inline bool isFullwidthMiddleDotPunctuation(char32_t character)
+{
+    // U+00B7 MIDDLE DOT
+    // U+2027 HYPHENATION POINT
+    // U+30FB KATAKANA MIDDLE DOT
+    return character == 0x00B7 || character == 0x2027 || character == 0x30FB;
+}
+
+inline bool isCombiningMark(char32_t character)
+{
+    return 0x0300 <= character && character <= 0x036F;
+}
+
 } // namespace WTF
 
 using WTF::isEmojiGroupCandidate;
@@ -125,3 +181,11 @@ using WTF::isEmojiModifierBase;
 using WTF::isDefaultIgnorableCodePoint;
 using WTF::isControlCharacter;
 using WTF::isPrivateUseAreaCharacter;
+using WTF::isPunctuation;
+using WTF::isOpeningPunctuation;
+using WTF::isClosingPunctuation;
+using WTF::isOfScriptType;
+using WTF::isEastAsianFullWidth;
+using WTF::isCJKSymbolOrPunctuation;
+using WTF::isFullwidthMiddleDotPunctuation;
+using WTF::isCombiningMark;

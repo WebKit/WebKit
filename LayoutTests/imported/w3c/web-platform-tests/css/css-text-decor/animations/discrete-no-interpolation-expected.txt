@@ -209,16 +209,16 @@ PASS Web Animations: property <text-emphasis-style> from [initial] to [dot] at (
 PASS Web Animations: property <text-emphasis-style> from [initial] to [dot] at (0.6) should be [dot]
 PASS Web Animations: property <text-emphasis-style> from [initial] to [dot] at (1) should be [dot]
 PASS Web Animations: property <text-emphasis-style> from [initial] to [dot] at (1.5) should be [dot]
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <text-underline-position> from [initial] to [under] at (-0.3) should be [initial] assert_equals: expected "auto " but got "under "
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <text-underline-position> from [initial] to [under] at (0) should be [initial] assert_equals: expected "auto " but got "under "
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <text-underline-position> from [initial] to [under] at (0.3) should be [initial] assert_equals: expected "auto " but got "under "
+PASS CSS Transitions with transition-behavior:allow-discrete: property <text-underline-position> from [initial] to [under] at (-0.3) should be [initial]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <text-underline-position> from [initial] to [under] at (0) should be [initial]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <text-underline-position> from [initial] to [under] at (0.3) should be [initial]
 PASS CSS Transitions with transition-behavior:allow-discrete: property <text-underline-position> from [initial] to [under] at (0.5) should be [under]
 PASS CSS Transitions with transition-behavior:allow-discrete: property <text-underline-position> from [initial] to [under] at (0.6) should be [under]
 PASS CSS Transitions with transition-behavior:allow-discrete: property <text-underline-position> from [initial] to [under] at (1) should be [under]
 PASS CSS Transitions with transition-behavior:allow-discrete: property <text-underline-position> from [initial] to [under] at (1.5) should be [under]
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <text-underline-position> from [initial] to [under] at (-0.3) should be [initial] assert_equals: expected "auto " but got "under "
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <text-underline-position> from [initial] to [under] at (0) should be [initial] assert_equals: expected "auto " but got "under "
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <text-underline-position> from [initial] to [under] at (0.3) should be [initial] assert_equals: expected "auto " but got "under "
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <text-underline-position> from [initial] to [under] at (-0.3) should be [initial]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <text-underline-position> from [initial] to [under] at (0) should be [initial]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <text-underline-position> from [initial] to [under] at (0.3) should be [initial]
 PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <text-underline-position> from [initial] to [under] at (0.5) should be [under]
 PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <text-underline-position> from [initial] to [under] at (0.6) should be [under]
 PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <text-underline-position> from [initial] to [under] at (1) should be [under]
@@ -240,15 +240,15 @@ PASS CSS Transitions with transition: all: property <text-underline-position> fr
 PASS CSS Animations: property <text-underline-position> from [initial] to [under] at (-0.3) should be [initial]
 PASS CSS Animations: property <text-underline-position> from [initial] to [under] at (0) should be [initial]
 PASS CSS Animations: property <text-underline-position> from [initial] to [under] at (0.3) should be [initial]
-FAIL CSS Animations: property <text-underline-position> from [initial] to [under] at (0.5) should be [under] assert_equals: expected "under " but got "auto "
-FAIL CSS Animations: property <text-underline-position> from [initial] to [under] at (0.6) should be [under] assert_equals: expected "under " but got "auto "
-FAIL CSS Animations: property <text-underline-position> from [initial] to [under] at (1) should be [under] assert_equals: expected "under " but got "auto "
-FAIL CSS Animations: property <text-underline-position> from [initial] to [under] at (1.5) should be [under] assert_equals: expected "under " but got "auto "
+PASS CSS Animations: property <text-underline-position> from [initial] to [under] at (0.5) should be [under]
+PASS CSS Animations: property <text-underline-position> from [initial] to [under] at (0.6) should be [under]
+PASS CSS Animations: property <text-underline-position> from [initial] to [under] at (1) should be [under]
+PASS CSS Animations: property <text-underline-position> from [initial] to [under] at (1.5) should be [under]
 PASS Web Animations: property <text-underline-position> from [initial] to [under] at (-0.3) should be [initial]
 PASS Web Animations: property <text-underline-position> from [initial] to [under] at (0) should be [initial]
 PASS Web Animations: property <text-underline-position> from [initial] to [under] at (0.3) should be [initial]
-FAIL Web Animations: property <text-underline-position> from [initial] to [under] at (0.5) should be [under] assert_equals: expected "under " but got "auto "
-FAIL Web Animations: property <text-underline-position> from [initial] to [under] at (0.6) should be [under] assert_equals: expected "under " but got "auto "
-FAIL Web Animations: property <text-underline-position> from [initial] to [under] at (1) should be [under] assert_equals: expected "under " but got "auto "
-FAIL Web Animations: property <text-underline-position> from [initial] to [under] at (1.5) should be [under] assert_equals: expected "under " but got "auto "
+PASS Web Animations: property <text-underline-position> from [initial] to [under] at (0.5) should be [under]
+PASS Web Animations: property <text-underline-position> from [initial] to [under] at (0.6) should be [under]
+PASS Web Animations: property <text-underline-position> from [initial] to [under] at (1) should be [under]
+PASS Web Animations: property <text-underline-position> from [initial] to [under] at (1.5) should be [under]
 

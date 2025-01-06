@@ -1,0 +1,26 @@
+<style>
+.shrink {
+  position: absolute;
+  width: fit-content;
+  left: 100%;
+
+  background-color: green;
+  color: transparent;
+  font-size: 30px;
+  height: 100px;
+}
+.container {
+  position: relative;
+  width: 100px;
+}
+.ref {
+  width: auto;
+}
+</style>
+<div class=container>
+  <div class="shrink ref">some text</div>
+  <div class=shrink style="top: 100px;">some text</div>
+  <div class=shrink style="top: 200px; border: 10px solid green;">some text</div>
+  <div class=shrink style="top: 320px; margin-left: 10px">some text</div>
+  <div class=shrink style="top: 420px; margin-right: 10px">some text</div>
+</div>

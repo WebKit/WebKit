@@ -94,6 +94,7 @@ struct NetworkStatistics {
   uint64_t removedSamplesForAcceleration;
   uint64_t fecPacketsReceived;
   uint64_t fecPacketsDiscarded;
+  uint64_t totalProcessingDelayUs;
   // Stats below correspond to similarly-named fields in the WebRTC stats spec.
   // https://w3c.github.io/webrtc-stats/#dom-rtcreceivedrtpstreamstats
   uint64_t packetsDiscarded;

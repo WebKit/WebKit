@@ -3,6 +3,7 @@ This tests behavior of "noreferrer" links in subframes. A referrer should not be
 <a id="link" href="resources/no-referrer-helper.py" rel="noreferrer" target="subframe">Load subframe</a>
 <iframe id="subframe" name="subframe" src="about:blank"></iframe>
 <script>
+onload = async () => {
     window.name = "consoleWindow";
     if (window.testRunner) {
         testRunner.dumpAsText();
@@ -10,9 +11,10 @@ This tests behavior of "noreferrer" links in subframes. A referrer should not be
     }
 
     var target = document.getElementById("link");
-    eventSender.mouseMoveTo(target.offsetLeft + 2, target.offsetTop + 2);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(target.offsetLeft + 2, target.offsetTop + 2);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+}
     
 function log(msg)
 {

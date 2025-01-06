@@ -1,0 +1,5 @@
+1
+
+PASS Rendering is blocked before render-blocking resources are loaded
+PASS Script-inserted render-blocking module script is evaluated
+

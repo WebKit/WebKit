@@ -47,17 +47,17 @@
 #include "SubframeLoader.h"
 #include "Text.h"
 #include "Widget.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "RuntimeApplicationChecks.h"
+#include <wtf/RuntimeApplicationChecks.h>
 #endif
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLObjectElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLObjectElement);
 
 using namespace HTMLNames;
 
@@ -287,8 +287,13 @@ void HTMLObjectElement::renderFallbackContent()
     scheduleUpdateForAfterStyleResolution();
     invalidateStyleAndRenderersForSubtree();
 
+    // Presence of a UA shadow root indicates render invalidation during embedded PDF plugin bringup, and not a failed render.
+    // It's safe to special case here because UA shadow root cannot be attached to <object>/<embed> programmatically.
+    if (userAgentShadowRoot())
+        return;
+
     // Before we give up and use fallback content, check to see if this is a MIME type issue.
-    auto* loader = imageLoader();
+    RefPtr loader = imageLoader();
     if (loader && loader->image() && loader->image()->status() != CachedResource::LoadError) {
         m_serviceType = loader->image()->response().mimeType();
         if (!isImageType()) {
@@ -305,10 +310,10 @@ static inline bool preventsParentObjectFromExposure(const Element& child)
 {
     static NeverDestroyed mostKnownTags = [] {
         MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> set;
-        auto* tags = HTMLNames::getHTMLTags();
-        set.reserveInitialCapacity(HTMLNames::HTMLTagsCount);
-        for (size_t i = 0; i < HTMLNames::HTMLTagsCount; i++) {
-            auto& tag = *tags[i];
+        auto tags = HTMLNames::getHTMLTags();
+        set.reserveInitialCapacity(tags.size());
+        for (auto* tagPtr : tags) {
+            auto& tag = *tagPtr;
             // Only the param element was explicitly mentioned in the HTML specification rule
             // we were trying to implement, but these are other known HTML elements that we
             // have decided, over the years, to treat as children that do not prevent object
@@ -319,8 +324,9 @@ static inline bool preventsParentObjectFromExposure(const Element& child)
                 || tag == figureTag
                 || tag == paramTag
                 || tag == summaryTag
-                || tag == trackTag)
+                || tag == trackTag) {
                 continue;
+            }
             set.add(tag);
         }
         return set;

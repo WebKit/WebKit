@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <video id=video autoplay playsinline></video>
+    <script>
+promise_test(async (t) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const track = stream.getTracks()[0];
+
+    if (!window.testRunner)
+        return;
+
+    testRunner.setMockCaptureDevicesInterrupted(true, false);
+
+    await new Promise(resolve => track.onmute = resolve);
+
+    const cloneTrack = track.clone();
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert_true(track.muted, "track muted");
+    assert_true(cloneTrack.muted, "cloneTrack muted");
+
+    testRunner.setMockCaptureDevicesInterrupted(false, false);
+
+    await new Promise(resolve => track.onunmute = resolve);
+    if (cloneTrack.muted)
+        await new Promise(resolve => cloneTrack.onunmute = resolve);
+
+    video.srcObject = new MediaStream([cloneTrack]);
+    await video.play();
+    video.srcObject = null;
+}, "Video clone during interruption");
+
+promise_test(async (t) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const track = stream.getTracks()[0];
+
+    if (!window.internals)
+        return;
+
+    internals.setPageMuted("capturedevices");
+
+    await new Promise(resolve => track.onmute = resolve);
+
+    const cloneTrack = track.clone();
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert_true(track.muted, "track muted");
+    assert_true(cloneTrack.muted, "cloneTrack muted");
+
+    internals.setPageMuted("");
+
+    await new Promise(resolve => track.onunmute = resolve);
+    if (cloneTrack.muted)
+        await new Promise(resolve => cloneTrack.onunmute = resolve);
+
+    video.srcObject = new MediaStream([cloneTrack]);
+    await video.play();
+    video.srcObject = null;
+}, "Video clone during muting");
+
+promise_test(async (t) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const track = stream.getTracks()[0];
+
+    if (!window.testRunner)
+        return;
+
+    testRunner.setMockCaptureDevicesInterrupted(false, true);
+
+    await new Promise(resolve => track.onmute = resolve);
+
+    const cloneTrack = track.clone();
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert_true(track.muted, "track muted");
+    assert_true(cloneTrack.muted, "cloneTrack muted");
+
+    testRunner.setMockCaptureDevicesInterrupted(false, false);
+
+    await new Promise(resolve => track.onunmute = resolve);
+    if (cloneTrack.muted)
+        await new Promise(resolve => cloneTrack.onunmute = resolve);
+
+
+    video.srcObject = new MediaStream([cloneTrack]);
+    await video.play();
+    video.srcObject = null;
+}, "Audio clone during interruption");
+
+promise_test(async (t) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const track = stream.getTracks()[0];
+
+    if (!window.internals)
+        return;
+
+    internals.setPageMuted("capturedevices");
+
+    await new Promise(resolve => track.onmute = resolve);
+
+    const cloneTrack = track.clone();
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert_true(track.muted, "track muted");
+    assert_true(cloneTrack.muted, "cloneTrack muted");
+
+    internals.setPageMuted("");
+
+    await new Promise(resolve => track.onunmute = resolve);
+    if (cloneTrack.muted)
+        await new Promise(resolve => cloneTrack.onunmute = resolve);
+
+    video.srcObject = new MediaStream([cloneTrack]);
+    await video.play();
+    video.srcObject = null;
+}, "Audio clone during muting");
+
+    </script>
+</body>
+</html>

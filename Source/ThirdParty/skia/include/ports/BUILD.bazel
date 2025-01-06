@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "select_multi", "skia_filegroup")
+load("//bazel:skia_rules.bzl", "skia_filegroup")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 skia_filegroup(
     name = "android_fontmgr_hdrs",
@@ -15,10 +13,18 @@ skia_filegroup(
 )
 
 skia_filegroup(
+    name = "android_ndk_fontmgr_hdrs",
+    srcs = ["SkFontMgr_android_ndk.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
     name = "core_foundation_hdrs",
     srcs = ["SkCFObject.h"],
     visibility = [
         "//src/gpu/ganesh/mtl:__pkg__",
+        "//src/gpu/graphite:__subpackages__",  # TODO(kjlubick) remove after decoupling
+        "//src/gpu/graphite/mtl:__pkg__",
         "//src/ports:__pkg__",
     ],
 )
@@ -54,6 +60,11 @@ skia_filegroup(
 )
 
 skia_filegroup(
+    name = "fuchsia_fontmgr_hdrs",
+    srcs = ["SkFontMgr_fuchsia.h"],
+)
+
+skia_filegroup(
     name = "fci_fontmgr_hdrs",
     srcs = [
         "SkFontConfigInterface.h",
@@ -63,7 +74,18 @@ skia_filegroup(
 
 skia_filegroup(
     name = "typeface_fontations_hdrs",
-    srcs = ["SkTypeface_fontations.h"],
+    srcs = [
+        "SkFontScanner_Fontations.h",
+        "SkTypeface_fontations.h",
+    ],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "typeface_freetype_hdrs",
+    srcs = [
+        "SkFontScanner_FreeType.h",
+    ],
     visibility = ["//src/ports:__pkg__"],
 )
 
@@ -74,44 +96,9 @@ skia_filegroup(
 )
 
 skia_filegroup(
-    name = "fontmgr",
-    srcs = select_multi(
-        {
-            "//bazel/common_config_settings:android_fontmgr": [":android_fontmgr_hdrs"],
-            "//bazel/common_config_settings:custom_directory_fontmgr": [":directory_fontmgr_hdrs"],
-            "//bazel/common_config_settings:custom_embedded_fontmgr": [":data_fontmgr_hdrs"],
-            "//bazel/common_config_settings:custom_empty_fontmgr": [":empty_fontmgr_hdrs"],
-            "//bazel/common_config_settings:fci_fontmgr": [":fci_fontmgr_hdrs"],
-            # TODO(kjlubick, bungeman) fuchsia_fontmgr, fontmgr_mac_ct, fontmgr_win
-        },
-    ) + select({
-        "@platforms//os:linux": [":fontconfig_fontmgr_hdrs"],
-        "//conditions:default": [],
-    }),
-)
-
-skia_filegroup(
-    name = "public_hdrs",
-    srcs = [
-        "SkImageGeneratorCG.h",
-        "SkImageGeneratorNDK.h",
-        "SkImageGeneratorWIC.h",
-        ":fontmgr",
-    ] + select({
-        "@platforms//os:macos": ["SkCFObject.h"],
-        "@platforms//os:ios": ["SkCFObject.h"],
-        "//conditions:default": [],
-    }) + select({
-        "@platforms//os:macos": ["SkTypeface_mac.h"],
-        "@platforms//os:windows": ["SkTypeface_win.h"],
-        "//conditions:default": [],
-    }) + select({
-        "//bazel/common_config_settings:use_fontations_true": [
-            ":typeface_fontations_hdrs",
-        ],
-        "//conditions:default": [],
-    }),
-    visibility = ["//include:__pkg__"],
+    name = "typeface_windows_hdrs",
+    srcs = ["SkTypeface_win.h"],
+    visibility = ["//src/ports:__pkg__"],
 )
 
 skia_filegroup(
@@ -121,6 +108,18 @@ skia_filegroup(
         "//src/gpu/ganesh/mtl:__pkg__",
         "//src/ports:__pkg__",
     ],
+)
+
+skia_filegroup(
+    name = "imagegenerator_ndk_hdrs",
+    srcs = ["SkImageGeneratorNDK.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "imagegenerator_wic_hdrs",
+    srcs = ["SkImageGeneratorWIC.h"],
+    visibility = ["//src/ports:__pkg__"],
 )
 
 skia_filegroup(

@@ -30,10 +30,28 @@
 
 #include "GPUProcessCreationParameters.h"
 
+#if USE(GBM)
+#include <WebCore/DRMDeviceManager.h>
+#include <WebCore/PlatformDisplayGBM.h>
+#endif
+
 namespace WebKit {
 
-void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters&)
+void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& parameters)
 {
+#if USE(GBM)
+    WebCore::DRMDeviceManager::singleton().initializeMainDevice(parameters.renderDeviceFile);
+
+    if (auto* device = WebCore::DRMDeviceManager::singleton().mainGBMDeviceNode(WebCore::DRMDeviceManager::NodeType::Render)) {
+        WebCore::PlatformDisplay::setSharedDisplay(WebCore::PlatformDisplayGBM::create(device));
+        return;
+    }
+#else
+    UNUSED_PARAM(parameters);
+#endif
+
+    WTFLogAlways("Could not create EGL display for GPU process: no supported platform available. Aborting...");
+    CRASH();
 }
 
 void GPUProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)

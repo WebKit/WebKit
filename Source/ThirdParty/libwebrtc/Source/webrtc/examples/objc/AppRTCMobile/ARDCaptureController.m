@@ -24,12 +24,12 @@ const Float64 kFramerateLimit = 30.0;
 
 - (instancetype)initWithCapturer:(RTC_OBJC_TYPE(RTCCameraVideoCapturer) *)capturer
                         settings:(ARDSettingsModel *)settings {
-  if (self = [super init]) {
+  self = [super init];
+  if (self) {
     _capturer = capturer;
     _settings = settings;
     _usingFrontCamera = YES;
   }
-
   return self;
 }
 

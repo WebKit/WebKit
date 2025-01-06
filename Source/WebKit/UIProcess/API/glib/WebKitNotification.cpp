@@ -58,7 +58,7 @@ struct _WebKitNotificationPrivate {
     guint64 id;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitNotification, webkit_notification, G_TYPE_OBJECT, GObject)
 
@@ -285,7 +285,6 @@ const gchar* webkit_notification_get_tag(WebKitNotification* notification)
 void webkit_notification_close(WebKitNotification* notification)
 {
     g_return_if_fail(WEBKIT_IS_NOTIFICATION(notification));
-
     g_signal_emit(notification, signals[CLOSED], 0);
 }
 
@@ -303,6 +302,5 @@ void webkit_notification_close(WebKitNotification* notification)
 void webkit_notification_clicked(WebKitNotification* notification)
 {
     g_return_if_fail(WEBKIT_IS_NOTIFICATION(notification));
-
     g_signal_emit(notification, signals[CLICKED], 0);
 }

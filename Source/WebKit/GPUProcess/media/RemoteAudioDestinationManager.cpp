@@ -32,6 +32,8 @@
 #include "GPUProcess.h"
 #include "Logging.h"
 #include <WebCore/AudioUtilities.h>
+#include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(COCOA)
@@ -42,24 +44,8 @@
 #include <WebCore/WebAudioBufferList.h>
 #endif
 
-#if ENABLE(IPC_TESTING_API)
-#define WEB_PROCESS_TERMINATE_CONDITION !connection->connection().ignoreInvalidMessageForTesting()
-#else
-#define WEB_PROCESS_TERMINATE_CONDITION true
-#endif
-
-#define TERMINATE_WEB_PROCESS_WITH_MESSAGE(message) \
-    if (WEB_PROCESS_TERMINATE_CONDITION) { \
-        RELEASE_LOG_FAULT(IPC, "Requesting termination of web process %" PRIu64 " for reason: %" PUBLIC_LOG_STRING, connection->webProcessIdentifier().toUInt64(), #message); \
-        connection->terminateWebProcess(); \
-    }
-
-#define MESSAGE_CHECK(assertion, message) do { \
-    if (UNLIKELY(!(assertion))) { \
-        TERMINATE_WEB_PROCESS_WITH_MESSAGE(message); \
-        return; \
-    } \
-} while (0)
+#define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, &connection->connection(), message)
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection->connection(), completion)
 
 namespace WebKit {
 
@@ -68,16 +54,21 @@ class RemoteAudioDestination final
     : public WebCore::AudioUnitRenderer
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteAudioDestination);
 public:
-    RemoteAudioDestination(GPUConnectionToWebProcess&, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
+    RemoteAudioDestination(GPUConnectionToWebProcess& connection, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
         : m_renderSemaphore(WTFMove(renderSemaphore))
+#if !RELEASE_LOG_DISABLED
+        , m_logger(connection.logger())
+        , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
+#endif
 #if PLATFORM(COCOA)
         , m_audioOutputUnitAdaptor(*this)
         , m_numOutputChannels(numberOfOutputChannels)
 #endif
     {
         ASSERT(isMainRunLoop());
+        ALWAYS_LOG(LOGIDENTIFIER);
 #if PLATFORM(COCOA)
         m_audioOutputUnitAdaptor.configure(hardwareSampleRate, numberOfOutputChannels);
 #endif
@@ -86,6 +77,7 @@ public:
     ~RemoteAudioDestination()
     {
         ASSERT(isMainRunLoop());
+        ALWAYS_LOG(LOGIDENTIFIER);
         // Make sure we stop audio rendering and wait for it to finish before destruction.
         if (m_isPlaying)
             stop();
@@ -99,6 +91,7 @@ public:
 
     void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle)
     {
+        bool wasPlaying = m_isPlaying;
         if (m_isPlaying) {
             stop();
             ASSERT(!m_isPlaying);
@@ -108,17 +101,22 @@ public:
         m_ringBuffer = ConsumerSharedCARingBuffer::map(sizeof(Float32), m_numOutputChannels, WTFMove(handle));
         if (!m_ringBuffer)
             return;
-        start();
-        ASSERT(m_isPlaying);
+        if (wasPlaying) {
+            start();
+            ASSERT(m_isPlaying);
+        }
     }
 #endif
 
     void start()
     {
 #if PLATFORM(COCOA)
-        if (m_audioOutputUnitAdaptor.start())
+        if (m_audioOutputUnitAdaptor.start()) {
+            ERROR_LOG(LOGIDENTIFIER, "Failed to start AudioOutputUnit");
             return;
+        }
 
+        ALWAYS_LOG(LOGIDENTIFIER);
         m_isPlaying = true;
 #endif
     }
@@ -126,9 +124,12 @@ public:
     void stop()
     {
 #if PLATFORM(COCOA)
-        if (m_audioOutputUnitAdaptor.stop())
+        if (m_audioOutputUnitAdaptor.stop()) {
+            ERROR_LOG(LOGIDENTIFIER, "Failed to stop AudioOutputUnit");
             return;
+        }
 
+        ALWAYS_LOG(LOGIDENTIFIER);
         m_isPlaying = false;
 #endif
     }
@@ -140,10 +141,8 @@ private:
     void incrementTotalFrameCount(UInt32 numberOfFrames)
     {
         static_assert(std::atomic<UInt32>::is_always_lock_free, "Shared memory atomic usage assumes lock free primitives are used");
-        if (m_frameCount) {
-            RELEASE_ASSERT(m_frameCount->size() == sizeof(std::atomic<uint32_t>));
-            WTF::atomicExchangeAdd(static_cast<uint32_t*>(m_frameCount->data()), numberOfFrames);
-        }
+        if (m_frameCount)
+            WTF::atomicExchangeAdd(spanReinterpretCast<uint32_t>(m_frameCount->mutableSpan()).data(), numberOfFrames);
     }
 
     OSStatus render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData)
@@ -162,8 +161,19 @@ private:
         return status;
     }
 #endif
+
     IPC::Semaphore m_renderSemaphore;
     bool m_isPlaying { false };
+
+#if !RELEASE_LOG_DISABLED
+    ASCIILiteral logClassName() const { return "RemoteAudioDestination"_s; }
+    WTFLogChannel& logChannel() const { return WebKit2LogMedia; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
+    Logger& logger() const { return m_logger; }
+
+    Ref<Logger> m_logger;
+    const uint64_t m_logIdentifier;
+#endif
 
 #if PLATFORM(COCOA)
     WebCore::AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
@@ -174,12 +184,24 @@ private:
 #endif
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioDestinationManager);
+
 RemoteAudioDestinationManager::RemoteAudioDestinationManager(GPUConnectionToWebProcess& connection)
     : m_gpuConnectionToWebProcess(connection)
 {
 }
 
 RemoteAudioDestinationManager::~RemoteAudioDestinationManager() = default;
+
+void RemoteAudioDestinationManager::ref() const
+{
+    m_gpuConnectionToWebProcess.get()->ref();
+}
+
+void RemoteAudioDestinationManager::deref() const
+{
+    m_gpuConnectionToWebProcess.get()->deref();
+}
 
 void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, WebCore::SharedMemory::Handle&& handle)
 {
@@ -207,7 +229,7 @@ void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinatio
     m_audioDestinations.remove(identifier);
 
     if (allowsExitUnderMemoryPressure())
-        connection->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+        connection->protectedGPUProcess()->tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
@@ -215,7 +237,7 @@ void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestination
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection)
         return completionHandler(false);
-    MESSAGE_CHECK(!connection->isLockdownModeEnabled(), "Received a startAudioDestination() message from a webpage in Lockdown mode.");
+    MESSAGE_CHECK_COMPLETION(!connection->isLockdownModeEnabled(), completionHandler(false));
 
     bool isPlaying = false;
     if (auto* item = m_audioDestinations.get(identifier)) {
@@ -230,7 +252,7 @@ void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationI
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection)
         return completionHandler(false);
-    MESSAGE_CHECK(!connection->isLockdownModeEnabled(), "Received a stopAudioDestination() message from a webpage in Lockdown mode.");
+    MESSAGE_CHECK_COMPLETION(!connection->isLockdownModeEnabled(), completionHandler(false));
 
     bool isPlaying = false;
     if (auto* item = m_audioDestinations.get(identifier)) {
@@ -257,10 +279,16 @@ bool RemoteAudioDestinationManager::allowsExitUnderMemoryPressure() const
     return true;
 }
 
+std::optional<SharedPreferencesForWebProcess> RemoteAudioDestinationManager::sharedPreferencesForWebProcess() const
+{
+    if (RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
+        return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
-#undef TERMINATE_WEB_PROCESS_WITH_MESSAGE
-#undef WEB_PROCESS_TERMINATE_CONDITION
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)

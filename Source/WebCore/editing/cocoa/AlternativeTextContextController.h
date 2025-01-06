@@ -32,7 +32,7 @@ namespace WebCore {
 
 class AlternativeTextContextController {
 public:
-    DictationContext addAlternatives(PlatformTextAlternatives *);
+    std::optional<DictationContext> addAlternatives(PlatformTextAlternatives *);
     void replaceAlternatives(PlatformTextAlternatives *, DictationContext);
     void removeAlternativesForContext(DictationContext);
     void clear();
@@ -40,8 +40,8 @@ public:
     PlatformTextAlternatives *alternativesForContext(DictationContext) const;
 
 private:
-    HashMap<DictationContext, RetainPtr<PlatformTextAlternatives>> m_alternatives;
-    HashMap<RetainPtr<PlatformTextAlternatives>, DictationContext> m_contexts;
+    UncheckedKeyHashMap<DictationContext, RetainPtr<PlatformTextAlternatives>> m_alternatives;
+    UncheckedKeyHashMap<RetainPtr<PlatformTextAlternatives>, DictationContext> m_contexts;
 };
 
 } // namespace WebCore

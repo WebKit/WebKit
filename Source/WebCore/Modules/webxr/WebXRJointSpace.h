@@ -31,10 +31,10 @@
 #include "PlatformXR.h"
 #include "WebXRSpace.h"
 #include "XRHandJoint.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ class WebXRHand;
 class WebXRSession;
 
 class WebXRJointSpace final: public RefCounted<WebXRJointSpace>, public WebXRSpace {
-    WTF_MAKE_ISO_ALLOCATED(WebXRJointSpace);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRJointSpace);
 public:
     static Ref<WebXRJointSpace> create(Document&, WebXRHand&, XRHandJoint, std::optional<PlatformXR::FrameData::InputSourceHandJoint>&& = std::nullopt);
     virtual ~WebXRJointSpace();

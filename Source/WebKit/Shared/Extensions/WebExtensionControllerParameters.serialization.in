@@ -27,9 +27,7 @@ struct WebKit::WebExtensionControllerParameters {
 
     bool testingMode;
 
-#if PLATFORM(COCOA)
     Vector<WebKit::WebExtensionContextParameters> contextParameters;
-#endif
 }
 
 #endif

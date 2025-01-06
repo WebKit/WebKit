@@ -40,8 +40,8 @@ FileAudioDevice* FileAudioDeviceFactory::CreateFileAudioDevice() {
 }
 
 void FileAudioDeviceFactory::SetFilenamesToUse(
-    absl::string_view inputAudioFilename,
-    absl::string_view outputAudioFilename) {
+    [[maybe_unused]] absl::string_view inputAudioFilename,
+    [[maybe_unused]] absl::string_view outputAudioFilename) {
 #ifdef WEBRTC_DUMMY_FILE_DEVICES
   RTC_DCHECK_LT(inputAudioFilename.size(), MAX_FILENAME_LEN);
   RTC_DCHECK_LT(outputAudioFilename.size(), MAX_FILENAME_LEN);

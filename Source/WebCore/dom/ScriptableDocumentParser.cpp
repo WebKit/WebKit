@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScriptableDocumentParser.h"
 
+#include "CSSPrimitiveValue.h"
 #include "Document.h"
 #include "Settings.h"
 #include "StyleScope.h"
@@ -57,8 +58,6 @@ void ScriptableDocumentParser::executeScriptsWaitingForStylesheetsSoon()
 void ScriptableDocumentParser::scriptsWaitingForStylesheetsExecutionTimerFired()
 {
     ASSERT(!isDetached());
-
-    Ref protectedThis { *this };
 
     RefPtr document = this->document();
     if (!document->styleScope().hasPendingSheets())

@@ -29,12 +29,12 @@
 #if ENABLE(WEBXR)
 
 #include "XRRenderStateInit.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRRenderState);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRRenderState);
 
 Ref<WebXRRenderState> WebXRRenderState::create(XRSessionMode mode)
 {
@@ -61,6 +61,13 @@ WebXRRenderState::WebXRRenderState(const WebXRRenderState& other)
     , m_baseLayer(other.baseLayer())
 {
 }
+
+#if ENABLE(WEBXR_LAYERS)
+void WebXRRenderState::setLayers(const Vector<Ref<WebXRLayer>>& layers)
+{
+    m_layers = layers;
+}
+#endif
 
 } // namespace WebCore
 

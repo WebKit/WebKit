@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -28,7 +28,7 @@
 #include "av1/common/reconintra.h"
 #include "av1/encoder/reconinter_enc.h"
 
-static AOM_INLINE void enc_calc_subpel_params(
+static inline void enc_calc_subpel_params(
     const MV *const src_mv, InterPredParams *const inter_pred_params,
     uint8_t **pre, SubpelParams *subpel_params, int *src_stride) {
   struct buf_2d *pre_buf = &inter_pred_params->ref_frame_buf;
@@ -157,7 +157,7 @@ static void setup_address_for_obmc(MACROBLOCKD *xd, int mi_row_offset,
       get_ref_scale_factors_const(ctxt->cm, frame);
 
   xd->block_ref_scale_factors[0] = sf;
-  if ((!av1_is_valid_scale(sf)))
+  if (!av1_is_valid_scale(sf))
     aom_internal_error(xd->error_info, AOM_CODEC_UNSUP_BITSTREAM,
                        "Reference frame has invalid dimensions");
 
@@ -165,7 +165,7 @@ static void setup_address_for_obmc(MACROBLOCKD *xd, int mi_row_offset,
                        num_planes);
 }
 
-static INLINE void build_obmc_prediction(MACROBLOCKD *xd, int rel_mi_row,
+static inline void build_obmc_prediction(MACROBLOCKD *xd, int rel_mi_row,
                                          int rel_mi_col, uint8_t op_mi_size,
                                          int dir, MB_MODE_INFO *above_mbmi,
                                          void *fun_ctxt, const int num_planes) {
@@ -534,30 +534,6 @@ void aom_comp_mask_upsampled_pred(MACROBLOCKD *xd, const AV1_COMMON *const cm,
                      mask_stride, invert_mask);
 }
 
-void aom_dist_wtd_comp_avg_upsampled_pred_c(
-    MACROBLOCKD *xd, const AV1_COMMON *const cm, int mi_row, int mi_col,
-    const MV *const mv, uint8_t *comp_pred, const uint8_t *pred, int width,
-    int height, int subpel_x_q3, int subpel_y_q3, const uint8_t *ref,
-    int ref_stride, const DIST_WTD_COMP_PARAMS *jcp_param, int subpel_search) {
-  int i, j;
-  const int fwd_offset = jcp_param->fwd_offset;
-  const int bck_offset = jcp_param->bck_offset;
-
-  aom_upsampled_pred_c(xd, cm, mi_row, mi_col, mv, comp_pred, width, height,
-                       subpel_x_q3, subpel_y_q3, ref, ref_stride,
-                       subpel_search);
-
-  for (i = 0; i < height; i++) {
-    for (j = 0; j < width; j++) {
-      int tmp = pred[j] * bck_offset + comp_pred[j] * fwd_offset;
-      tmp = ROUND_POWER_OF_TWO(tmp, DIST_PRECISION_BITS);
-      comp_pred[j] = (uint8_t)tmp;
-    }
-    comp_pred += width;
-    pred += width;
-  }
-}
-
 #if CONFIG_AV1_HIGHBITDEPTH
 void aom_highbd_upsampled_pred_c(MACROBLOCKD *xd,
                                  const struct AV1Common *const cm, int mi_row,
@@ -654,32 +630,6 @@ void aom_highbd_comp_avg_upsampled_pred_c(
   for (i = 0; i < height; ++i) {
     for (j = 0; j < width; ++j) {
       comp_pred[j] = ROUND_POWER_OF_TWO(pred[j] + comp_pred[j], 1);
-    }
-    comp_pred += width;
-    pred += width;
-  }
-}
-
-void aom_highbd_dist_wtd_comp_avg_upsampled_pred_c(
-    MACROBLOCKD *xd, const struct AV1Common *const cm, int mi_row, int mi_col,
-    const MV *const mv, uint8_t *comp_pred8, const uint8_t *pred8, int width,
-    int height, int subpel_x_q3, int subpel_y_q3, const uint8_t *ref8,
-    int ref_stride, int bd, const DIST_WTD_COMP_PARAMS *jcp_param,
-    int subpel_search) {
-  int i, j;
-  const int fwd_offset = jcp_param->fwd_offset;
-  const int bck_offset = jcp_param->bck_offset;
-  const uint16_t *pred = CONVERT_TO_SHORTPTR(pred8);
-  uint16_t *comp_pred = CONVERT_TO_SHORTPTR(comp_pred8);
-  aom_highbd_upsampled_pred_c(xd, cm, mi_row, mi_col, mv, comp_pred8, width,
-                              height, subpel_x_q3, subpel_y_q3, ref8,
-                              ref_stride, bd, subpel_search);
-
-  for (i = 0; i < height; i++) {
-    for (j = 0; j < width; j++) {
-      int tmp = pred[j] * bck_offset + comp_pred[j] * fwd_offset;
-      tmp = ROUND_POWER_OF_TWO(tmp, DIST_PRECISION_BITS);
-      comp_pred[j] = (uint16_t)tmp;
     }
     comp_pred += width;
     pred += width;

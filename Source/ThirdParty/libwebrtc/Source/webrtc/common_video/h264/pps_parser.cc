@@ -29,16 +29,15 @@ constexpr int kMinPicInitQpDeltaValue = -26;
 // You can find it on this page:
 // http://www.itu.int/rec/T-REC-H.264
 
-absl::optional<PpsParser::PpsState> PpsParser::ParsePps(const uint8_t* data,
-                                                        size_t length) {
+std::optional<PpsParser::PpsState> PpsParser::ParsePps(
+    rtc::ArrayView<const uint8_t> data) {
   // First, parse out rbsp, which is basically the source buffer minus emulation
   // bytes (the last byte of a 0x00 0x00 0x03 sequence). RBSP is defined in
   // section 7.3.1 of the H.264 standard.
-  return ParseInternal(H264::ParseRbsp(data, length));
+  return ParseInternal(H264::ParseRbsp(data));
 }
 
-bool PpsParser::ParsePpsIds(const uint8_t* data,
-                            size_t length,
+bool PpsParser::ParsePpsIds(rtc::ArrayView<const uint8_t> data,
                             uint32_t* pps_id,
                             uint32_t* sps_id) {
   RTC_DCHECK(pps_id);
@@ -46,31 +45,35 @@ bool PpsParser::ParsePpsIds(const uint8_t* data,
   // First, parse out rbsp, which is basically the source buffer minus emulation
   // bytes (the last byte of a 0x00 0x00 0x03 sequence). RBSP is defined in
   // section 7.3.1 of the H.264 standard.
-  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data, length);
+  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data);
   BitstreamReader reader(unpacked_buffer);
   *pps_id = reader.ReadExponentialGolomb();
   *sps_id = reader.ReadExponentialGolomb();
   return reader.Ok();
 }
 
-absl::optional<uint32_t> PpsParser::ParsePpsIdFromSlice(const uint8_t* data,
-                                                        size_t length) {
-  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data, length);
+std::optional<PpsParser::SliceHeader> PpsParser::ParseSliceHeader(
+    rtc::ArrayView<const uint8_t> data) {
+  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data);
   BitstreamReader slice_reader(unpacked_buffer);
+  PpsParser::SliceHeader slice_header;
 
   // first_mb_in_slice: ue(v)
-  slice_reader.ReadExponentialGolomb();
+  slice_header.first_mb_in_slice = slice_reader.ReadExponentialGolomb();
   // slice_type: ue(v)
   slice_reader.ReadExponentialGolomb();
   // pic_parameter_set_id: ue(v)
-  uint32_t slice_pps_id = slice_reader.ReadExponentialGolomb();
+  slice_header.pic_parameter_set_id = slice_reader.ReadExponentialGolomb();
+
+  // The rest of the slice header requires information from the SPS to parse.
+
   if (!slice_reader.Ok()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
-  return slice_pps_id;
+  return slice_header;
 }
 
-absl::optional<PpsParser::PpsState> PpsParser::ParseInternal(
+std::optional<PpsParser::PpsState> PpsParser::ParseInternal(
     rtc::ArrayView<const uint8_t> buffer) {
   BitstreamReader reader(buffer);
   PpsState pps;
@@ -120,15 +123,19 @@ absl::optional<PpsParser::PpsState> PpsParser::ParseInternal(
       int64_t bits_to_consume =
           int64_t{slice_group_id_bits} * pic_size_in_map_units;
       if (!reader.Ok() || bits_to_consume > std::numeric_limits<int>::max()) {
-        return absl::nullopt;
+        return std::nullopt;
       }
       reader.ConsumeBits(bits_to_consume);
     }
   }
   // num_ref_idx_l0_default_active_minus1: ue(v)
-  reader.ReadExponentialGolomb();
+  pps.num_ref_idx_l0_default_active_minus1 = reader.ReadExponentialGolomb();
   // num_ref_idx_l1_default_active_minus1: ue(v)
-  reader.ReadExponentialGolomb();
+  pps.num_ref_idx_l1_default_active_minus1 = reader.ReadExponentialGolomb();
+  if (pps.num_ref_idx_l0_default_active_minus1 > H264::kMaxReferenceIndex ||
+      pps.num_ref_idx_l1_default_active_minus1 > H264::kMaxReferenceIndex) {
+    return std::nullopt;
+  }
   // weighted_pred_flag: u(1)
   pps.weighted_pred_flag = reader.Read<bool>();
   // weighted_bipred_idc: u(2)
@@ -139,7 +146,7 @@ absl::optional<PpsParser::PpsState> PpsParser::ParseInternal(
   // Sanity-check parsed value
   if (!reader.Ok() || pps.pic_init_qp_minus26 > kMaxPicInitQpDeltaValue ||
       pps.pic_init_qp_minus26 < kMinPicInitQpDeltaValue) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   // pic_init_qs_minus26: se(v)
   reader.ReadExponentialGolomb();
@@ -151,7 +158,7 @@ absl::optional<PpsParser::PpsState> PpsParser::ParseInternal(
   // redundant_pic_cnt_present_flag: u(1)
   pps.redundant_pic_cnt_present_flag = reader.ReadBit();
   if (!reader.Ok()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   return pps;

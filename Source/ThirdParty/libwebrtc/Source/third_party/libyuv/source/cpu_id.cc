@@ -23,6 +23,22 @@
 #include <stdio.h>  // For fopen()
 #include <string.h>
 
+#if defined(__linux__) && defined(__aarch64__)
+#include <sys/auxv.h>  // For getauxval()
+#endif
+
+#if defined(_WIN32) && defined(__aarch64__)
+#undef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#undef WIN32_EXTRA_LEAN
+#define WIN32_EXTRA_LEAN
+#include <windows.h>  // For IsProcessorFeaturePresent()
+#endif
+
+#if defined(__APPLE__) && defined(__aarch64__)
+#include <sys/sysctl.h>  // For sysctlbyname()
+#endif
+
 #ifdef __cplusplus
 namespace libyuv {
 extern "C" {
@@ -132,6 +148,13 @@ static int GetXCR0() {
 #pragma optimize("g", on)
 #endif
 
+static int cpuinfo_search(const char* cpuinfo_line,
+                          const char* needle,
+                          int needle_len) {
+  const char* p = strstr(cpuinfo_line, needle);
+  return p && (p[needle_len] == ' ' || p[needle_len] == '\n');
+}
+
 // Based on libvpx arm_cpudetect.c
 // For Arm, but public to allow testing on any CPU
 LIBYUV_API SAFEBUFFERS int ArmCpuCaps(const char* cpuinfo_name) {
@@ -143,24 +166,117 @@ LIBYUV_API SAFEBUFFERS int ArmCpuCaps(const char* cpuinfo_name) {
     return kCpuHasNEON;
   }
   memset(cpuinfo_line, 0, sizeof(cpuinfo_line));
+  int features = 0;
   while (fgets(cpuinfo_line, sizeof(cpuinfo_line), f)) {
     if (memcmp(cpuinfo_line, "Features", 8) == 0) {
-      char* p = strstr(cpuinfo_line, " neon");
-      if (p && (p[5] == ' ' || p[5] == '\n')) {
-        fclose(f);
-        return kCpuHasNEON;
-      }
-      // aarch64 uses asimd for Neon.
-      p = strstr(cpuinfo_line, " asimd");
-      if (p) {
-        fclose(f);
-        return kCpuHasNEON;
+      if (cpuinfo_search(cpuinfo_line, " neon", 5)) {
+        features |= kCpuHasNEON;
       }
     }
   }
   fclose(f);
-  return 0;
+  return features;
 }
+
+#ifdef __aarch64__
+#ifdef __linux__
+// Define hwcap values ourselves: building with an old auxv header where these
+// hwcap values are not defined should not prevent features from being enabled.
+#define YUV_AARCH64_HWCAP_ASIMDDP (1 << 20)
+#define YUV_AARCH64_HWCAP_SVE (1 << 22)
+#define YUV_AARCH64_HWCAP2_SVE2 (1 << 1)
+#define YUV_AARCH64_HWCAP2_I8MM (1 << 13)
+#define YUV_AARCH64_HWCAP2_SME (1 << 23)
+
+// For AArch64, but public to allow testing on any CPU.
+LIBYUV_API SAFEBUFFERS int AArch64CpuCaps(unsigned long hwcap,
+                                          unsigned long hwcap2) {
+  // Neon is mandatory on AArch64, so enable regardless of hwcaps.
+  int features = kCpuHasNEON;
+
+  // Don't try to enable later extensions unless earlier extensions are also
+  // reported available. Some of these constraints aren't strictly required by
+  // the architecture, but are satisfied by all micro-architectures of
+  // interest. This also avoids an issue on some emulators where true
+  // architectural constraints are not satisfied, e.g. SVE2 may be reported as
+  // available while SVE is not.
+  if (hwcap & YUV_AARCH64_HWCAP_ASIMDDP) {
+    features |= kCpuHasNeonDotProd;
+    if (hwcap2 & YUV_AARCH64_HWCAP2_I8MM) {
+      features |= kCpuHasNeonI8MM;
+      if (hwcap & YUV_AARCH64_HWCAP_SVE) {
+        features |= kCpuHasSVE;
+        if (hwcap2 & YUV_AARCH64_HWCAP2_SVE2) {
+          features |= kCpuHasSVE2;
+          if (hwcap2 & YUV_AARCH64_HWCAP2_SME) {
+            features |= kCpuHasSME;
+          }
+        }
+      }
+    }
+  }
+  return features;
+}
+
+#elif defined(_WIN32)
+// For AArch64, but public to allow testing on any CPU.
+LIBYUV_API SAFEBUFFERS int AArch64CpuCaps() {
+  // Neon is mandatory on AArch64, so enable unconditionally.
+  int features = kCpuHasNEON;
+
+  // For more information on IsProcessorFeaturePresent(), see:
+  // https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-isprocessorfeaturepresent#parameters
+#ifdef PF_ARM_V82_DP_INSTRUCTIONS_AVAILABLE
+  if (IsProcessorFeaturePresent(PF_ARM_V82_DP_INSTRUCTIONS_AVAILABLE)) {
+    features |= kCpuHasNeonDotProd;
+  }
+#endif
+  // No Neon I8MM or SVE feature detection available here at time of writing.
+  return features;
+}
+
+#elif defined(__APPLE__)
+static bool have_feature(const char* feature) {
+  // For more information on sysctlbyname(), see:
+  // https://developer.apple.com/documentation/kernel/1387446-sysctlbyname/determining_instruction_set_characteristics
+  int64_t feature_present = 0;
+  size_t size = sizeof(feature_present);
+  if (sysctlbyname(feature, &feature_present, &size, NULL, 0) != 0) {
+    return false;
+  }
+  return feature_present;
+}
+
+// For AArch64, but public to allow testing on any CPU.
+LIBYUV_API SAFEBUFFERS int AArch64CpuCaps() {
+  // Neon is mandatory on AArch64, so enable unconditionally.
+  int features = kCpuHasNEON;
+
+  if (have_feature("hw.optional.arm.FEAT_DotProd")) {
+    features |= kCpuHasNeonDotProd;
+    if (have_feature("hw.optional.arm.FEAT_I8MM")) {
+      features |= kCpuHasNeonI8MM;
+      if (have_feature("hw.optional.arm.FEAT_SME2")) {
+        features |= kCpuHasSME;
+      }
+    }
+  }
+  // No SVE feature detection available here at time of writing.
+  return features;
+}
+
+#else  // !defined(__linux__) && !defined(_WIN32) && !defined(__APPLE__)
+// For AArch64, but public to allow testing on any CPU.
+LIBYUV_API SAFEBUFFERS int AArch64CpuCaps() {
+  // Neon is mandatory on AArch64, so enable unconditionally.
+  int features = kCpuHasNEON;
+
+  // TODO(libyuv:980) support feature detection on other platforms.
+
+  return features;
+}
+#endif
+#endif  // defined(__aarch64__)
 
 LIBYUV_API SAFEBUFFERS int RiscvCpuCaps(const char* cpuinfo_name) {
   char cpuinfo_line[512];
@@ -292,10 +408,12 @@ static SAFEBUFFERS int GetCpuFlags(void) {
   int cpu_info0[4] = {0, 0, 0, 0};
   int cpu_info1[4] = {0, 0, 0, 0};
   int cpu_info7[4] = {0, 0, 0, 0};
+  int cpu_einfo7[4] = {0, 0, 0, 0};
   CpuId(0, 0, cpu_info0);
   CpuId(1, 0, cpu_info1);
   if (cpu_info0[0] >= 7) {
     CpuId(7, 0, cpu_info7);
+    CpuId(7, 1, cpu_einfo7);
   }
   cpu_info = kCpuHasX86 | ((cpu_info1[3] & 0x04000000) ? kCpuHasSSE2 : 0) |
              ((cpu_info1[2] & 0x00000200) ? kCpuHasSSSE3 : 0) |
@@ -308,7 +426,9 @@ static SAFEBUFFERS int GetCpuFlags(void) {
       ((GetXCR0() & 6) == 6)) {  // Test OS saves YMM registers
     cpu_info |= kCpuHasAVX | ((cpu_info7[1] & 0x00000020) ? kCpuHasAVX2 : 0) |
                 ((cpu_info1[2] & 0x00001000) ? kCpuHasFMA3 : 0) |
-                ((cpu_info1[2] & 0x20000000) ? kCpuHasF16C : 0);
+                ((cpu_info1[2] & 0x20000000) ? kCpuHasF16C : 0) |
+                ((cpu_einfo7[0] & 0x00000010) ? kCpuHasAVXVNNI : 0) |
+                ((cpu_einfo7[3] & 0x00000010) ? kCpuHasAVXVNNIINT8 : 0);
 
     // Detect AVX512bw
     if ((GetXCR0() & 0xe0) == 0xe0) {
@@ -318,8 +438,8 @@ static SAFEBUFFERS int GetCpuFlags(void) {
       cpu_info |= (cpu_info7[2] & 0x00000040) ? kCpuHasAVX512VBMI2 : 0;
       cpu_info |= (cpu_info7[2] & 0x00000800) ? kCpuHasAVX512VNNI : 0;
       cpu_info |= (cpu_info7[2] & 0x00001000) ? kCpuHasAVX512VBITALG : 0;
-      cpu_info |= (cpu_info7[2] & 0x00004000) ? kCpuHasAVX512VPOPCNTDQ : 0;
-      cpu_info |= (cpu_info7[2] & 0x00000100) ? kCpuHasGFNI : 0;
+      cpu_info |= (cpu_einfo7[3] & 0x00080000) ? kCpuHasAVX10 : 0;
+      cpu_info |= (cpu_info7[3] & 0x02000000) ? kCpuHasAMXINT8 : 0;
     }
   }
 #endif
@@ -331,21 +451,31 @@ static SAFEBUFFERS int GetCpuFlags(void) {
   cpu_info = LoongarchCpuCaps();
   cpu_info |= kCpuHasLOONGARCH;
 #endif
-#if defined(__arm__) || defined(__aarch64__)
-// gcc -mfpu=neon defines __ARM_NEON__
-// __ARM_NEON__ generates code that requires Neon.  NaCL also requires Neon.
-// For Linux, /proc/cpuinfo can be tested but without that assume Neon.
-#if defined(__ARM_NEON__) || defined(__native_client__) || !defined(__linux__)
-  cpu_info = kCpuHasNEON;
-// For aarch64(arm64), /proc/cpuinfo's feature is not complete, e.g. no neon
-// flag in it.
-// So for aarch64, neon enabling is hard coded here.
-#endif
 #if defined(__aarch64__)
+#if defined(__linux__)
+  // getauxval is supported since Android SDK version 18, minimum at time of
+  // writing is 21, so should be safe to always use this. If getauxval is
+  // somehow disabled then getauxval returns 0, which will leave Neon enabled
+  // since Neon is mandatory on AArch64.
+  unsigned long hwcap = getauxval(AT_HWCAP);
+  unsigned long hwcap2 = getauxval(AT_HWCAP2);
+  cpu_info = AArch64CpuCaps(hwcap, hwcap2);
+#else
+  cpu_info = AArch64CpuCaps();
+#endif
+  cpu_info |= kCpuHasARM;
+#endif  // __aarch64__
+#if defined(__arm__)
+  // gcc -mfpu=neon defines __ARM_NEON__
+  // __ARM_NEON__ generates code that requires Neon.  NaCL also requires Neon.
+  // For Linux, /proc/cpuinfo can be tested but without that assume Neon.
+  // Linux arm parse text file for neon detect.
+#if defined(__linux__)
+  cpu_info = ArmCpuCaps("/proc/cpuinfo");
+#elif defined(__ARM_NEON__)
   cpu_info = kCpuHasNEON;
 #else
-  // Linux arm parse text file for neon detect.
-  cpu_info = ArmCpuCaps("/proc/cpuinfo");
+  cpu_info = 0;
 #endif
   cpu_info |= kCpuHasARM;
 #endif  // __arm__

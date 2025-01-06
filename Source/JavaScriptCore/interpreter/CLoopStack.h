@@ -73,10 +73,14 @@ namespace JSC {
             return m_end;
         }
 
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
         Register* highAddress() const
         {
             return reinterpret_cast_ptr<Register*>(static_cast<char*>(m_reservation.base()) + m_reservation.size());
         }
+
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         Register* reservationTop() const
         {

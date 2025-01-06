@@ -81,7 +81,7 @@ private:
 
     Vector<Resource>& m_resources;
     ListHashSet<URL> m_resourceURLs;
-    HashMap<LocalFrame*, URL> m_blankFrameURLs;
+    UncheckedKeyHashMap<LocalFrame*, URL> m_blankFrameURLs;
     unsigned m_blankFrameCounter { 0 };
 };
 

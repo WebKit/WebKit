@@ -33,6 +33,7 @@
 #include <WebCore/TextureMapperFPSCounter.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class TextureMapper;
@@ -47,7 +48,7 @@ class WCSceneContext;
 struct WCUpdateInfo;
 
 class WCScene {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WCScene);
 public:
     WCScene(WebCore::ProcessIdentifier, bool usesOffscreenRendering);
     ~WCScene();

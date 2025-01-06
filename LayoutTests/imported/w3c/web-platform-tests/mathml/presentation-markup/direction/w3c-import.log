@@ -26,6 +26,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-010-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-010-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-010.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-mpadded-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-mpadded-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-mpadded.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall-002.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall-003.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall.html

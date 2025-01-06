@@ -35,9 +35,12 @@
 #include "WebFakeXRInputController.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SimulatedXRDevice);
 
 static constexpr Seconds FakeXRFrameTime = 15_ms;
 
@@ -161,9 +164,18 @@ void SimulatedXRDevice::frameTimerFired()
     for (auto& layer : m_layers) {
 #if PLATFORM(COCOA)
         PlatformXR::FrameData::LayerSetupData layerSetupData;
-        layerSetupData.physicalSize[0] = { static_cast<uint16_t>(layer.value.width()), static_cast<uint16_t>(layer.value.height()) };
+        auto width = layer.value.width();
+        auto height = layer.value.height();
+        layerSetupData.physicalSize[0] = { static_cast<uint16_t>(width), static_cast<uint16_t>(height) };
+        layerSetupData.viewports[0] = { 0, 0, width, height };
+        layerSetupData.physicalSize[1] = { 0, 0 };
+        layerSetupData.viewports[1] = { 0, 0, 0, 0 };
+
         auto layerData = makeUniqueRef<PlatformXR::FrameData::LayerData>(PlatformXR::FrameData::LayerData {
             .layerSetup = layerSetupData,
+            .renderingFrameIndex = 0,
+            .textureData = std::nullopt,
+            .requestDepth = false
         });
         data.layers.add(layer.key, WTFMove(layerData));
 #else
@@ -184,7 +196,7 @@ void SimulatedXRDevice::frameTimerFired()
         m_FrameCallback(WTFMove(data));
 }
 
-void SimulatedXRDevice::requestFrame(RequestFrameCallback&& callback)
+void SimulatedXRDevice::requestFrame(std::optional<PlatformXR::RequestData>&&, RequestFrameCallback&& callback)
 {
     m_FrameCallback = WTFMove(callback);
     if (!m_frameTimer.isActive())

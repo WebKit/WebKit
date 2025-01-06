@@ -1,0 +1,23 @@
+This tests nested aria-modal dialogs
+
+Initial focus: showInner
+Before button reachable: false
+ShowInner button reachable: true
+
+Clicking on showInner
+
+New focus: closeInner
+Before button reachable: false
+ShowInner button reachable: false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before
+
+Outer modal dialog
+
+Show inner dialog
+Inner modal dialog
+
+Close inner dialog

@@ -1,17 +1,20 @@
 <head>
 <script>
-window.onload = function () {
-    if (window.testRunner)
+window.onload = async function () {
+    if (window.testRunner) {
         testRunner.dumpAsText(); 
+        testRunner.waitUntilDone();
+    }
 
     var abe = document.getElementById("abe");
     var dragTarget = document.getElementById("dragTarget");
 
-    eventSender.mouseMoveTo(abe.offsetLeft + 50, abe.offsetTop + 50);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseMoveTo(abe.offsetLeft + 50, abe.offsetTop + 50);
+    await eventSender.asyncMouseDown();
     eventSender.leapForward(500);
-    eventSender.mouseMoveTo(dragTarget.offsetLeft + 10, dragTarget.offsetTop + 10);
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(dragTarget.offsetLeft + 10, dragTarget.offsetTop + 10);
+    await eventSender.asyncMouseUp();
+    testRunner.notifyDone();
 }
 </script>
 </head>

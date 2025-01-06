@@ -14,12 +14,12 @@
 
 #include <limits>
 #include <memory>
+#include <optional>
 #include <string>
 #include <tuple>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "absl/types/variant.h"
 #include "api/metronome/test/fake_metronome.h"
 #include "api/units/frequency.h"
@@ -183,7 +183,7 @@ class VideoStreamBufferControllerFixture
   using WaitResult =
       absl::variant<std::unique_ptr<EncodedFrame>, TimeDelta /*wait_time*/>;
 
-  absl::optional<WaitResult> WaitForFrameOrTimeout(TimeDelta wait) {
+  std::optional<WaitResult> WaitForFrameOrTimeout(TimeDelta wait) {
     if (wait_result_) {
       return std::move(wait_result_);
     }
@@ -245,7 +245,7 @@ class VideoStreamBufferControllerFixture
   }
 
   uint32_t dropped_frames_ = 0;
-  absl::optional<WaitResult> wait_result_;
+  std::optional<WaitResult> wait_result_;
 };
 
 class VideoStreamBufferControllerTest
@@ -260,7 +260,7 @@ TEST_P(VideoStreamBufferControllerTest,
 
   // No new timeout set since receiver has not started new decode.
   ResetLastResult();
-  EXPECT_THAT(WaitForFrameOrTimeout(kMaxWaitForKeyframe), Eq(absl::nullopt));
+  EXPECT_THAT(WaitForFrameOrTimeout(kMaxWaitForKeyframe), Eq(std::nullopt));
 
   // Now that receiver has asked for new frame, a new timeout can occur.
   StartNextDecodeForceKeyframe();
@@ -362,7 +362,7 @@ TEST_P(VideoStreamBufferControllerTest,
   buffer_->Stop();
   // Wait for 2x max wait time. Since we stopped, this should cause no timeouts
   // or frame-ready callbacks.
-  EXPECT_THAT(WaitForFrameOrTimeout(kMaxWaitForFrame * 2), Eq(absl::nullopt));
+  EXPECT_THAT(WaitForFrameOrTimeout(kMaxWaitForFrame * 2), Eq(std::nullopt));
 }
 
 TEST_P(VideoStreamBufferControllerTest, FramesWaitForDecoderToComplete) {
@@ -383,7 +383,7 @@ TEST_P(VideoStreamBufferControllerTest, FramesWaitForDecoderToComplete) {
 
   // Advancing time should not result in a frame since the scheduler has not
   // been signalled that we are ready.
-  EXPECT_THAT(WaitForFrameOrTimeout(kFps30Delay), Eq(absl::nullopt));
+  EXPECT_THAT(WaitForFrameOrTimeout(kFps30Delay), Eq(std::nullopt));
   // Signal ready.
   StartNextDecode();
   EXPECT_THAT(WaitForFrameOrTimeout(kFps30Delay), Frame(test::WithId(1)));
@@ -566,7 +566,7 @@ TEST_P(VideoStreamBufferControllerTest,
                                                            .AsLast()
                                                            .Build()));
   StartNextDecode();
-  EXPECT_THAT(WaitForFrameOrTimeout(TimeDelta::Zero()), Eq(absl::nullopt));
+  EXPECT_THAT(WaitForFrameOrTimeout(TimeDelta::Zero()), Eq(std::nullopt));
 
   // Scheduler is waiting to deliver Frame 1 now. Insert Frame 2. Frame 1 should
   // be delivered still.
@@ -747,7 +747,7 @@ TEST_P(VideoStreamBufferControllerTest, NextFrameWithOldTimestamp) {
   // Avoid timeout being set while waiting for the frame and before the receiver
   // is ready.
   ResetLastResult();
-  EXPECT_THAT(WaitForFrameOrTimeout(kMaxWaitForFrame), Eq(absl::nullopt));
+  EXPECT_THAT(WaitForFrameOrTimeout(kMaxWaitForFrame), Eq(std::nullopt));
   time_controller_.AdvanceTime(kRolloverDelay - kMaxWaitForFrame);
   StartNextDecode();
   buffer_->InsertFrame(test::FakeFrameBuilder()
@@ -844,7 +844,7 @@ TEST_P(LowLatencyVideoStreamBufferControllerTest,
               .Build();
   buffer_->InsertFrame(std::move(frame));
   // Pacing is set to 16ms in the field trial so we should not decode yet.
-  EXPECT_THAT(WaitForFrameOrTimeout(TimeDelta::Zero()), Eq(absl::nullopt));
+  EXPECT_THAT(WaitForFrameOrTimeout(TimeDelta::Zero()), Eq(std::nullopt));
   time_controller_.AdvanceTime(TimeDelta::Millis(16));
   EXPECT_THAT(WaitForFrameOrTimeout(TimeDelta::Zero()), Frame(test::WithId(1)));
 }

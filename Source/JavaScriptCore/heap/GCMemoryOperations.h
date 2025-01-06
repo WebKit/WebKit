@@ -28,6 +28,8 @@
 #include "CPU.h"
 #include "JSCJSValue.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 // We use these memory operations when modifying memory that might be scanned by the concurrent collector.
@@ -50,7 +52,7 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, const T* src, size_t bytes)
     auto slowPathForwardMemcpy = [&] {
         size_t count = bytes / 8;
         for (unsigned i = 0; i < count; ++i)
-            bitwise_cast<volatile uint64_t*>(dst)[i] = bitwise_cast<volatile uint64_t*>(src)[i];
+            std::bit_cast<volatile uint64_t*>(dst)[i] = std::bit_cast<volatile uint64_t*>(src)[i];
     };
 
 #if CPU(X86_64) || CPU(ARM64)
@@ -94,8 +96,8 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, const T* src, size_t bytes)
 #elif CPU(ARM64)
         uint64_t alignedBytes = (static_cast<uint64_t>(bytes) / 32) * 32;
 
-        uint64_t dstPtr = static_cast<uint64_t>(bitwise_cast<uintptr_t>(dst));
-        uint64_t srcPtr = static_cast<uint64_t>(bitwise_cast<uintptr_t>(src));
+        uint64_t dstPtr = static_cast<uint64_t>(std::bit_cast<uintptr_t>(dst));
+        uint64_t srcPtr = static_cast<uint64_t>(std::bit_cast<uintptr_t>(src));
         uint64_t end = dstPtr + bytes;
         uint64_t alignedEnd = dstPtr + alignedBytes;
 
@@ -148,13 +150,13 @@ ALWAYS_INLINE void gcSafeMemmove(T* dst, const T* src, size_t bytes)
     static_assert(sizeof(T) == sizeof(JSValue));
     RELEASE_ASSERT(bytes % 8 == 0);
 #if USE(JSVALUE64)
-    if (bitwise_cast<uintptr_t>(src) >= bitwise_cast<uintptr_t>(dst)) {
+    if (std::bit_cast<uintptr_t>(src) >= std::bit_cast<uintptr_t>(dst)) {
         // This is written to do a forwards loop, so calling it is ok.
         gcSafeMemcpy(dst, src, bytes);
         return;
     }
 
-    if ((static_cast<uint64_t>(bitwise_cast<uintptr_t>(src)) + static_cast<uint64_t>(bytes)) <= static_cast<uint64_t>(bitwise_cast<uintptr_t>(dst))) {
+    if ((static_cast<uint64_t>(std::bit_cast<uintptr_t>(src)) + static_cast<uint64_t>(bytes)) <= static_cast<uint64_t>(std::bit_cast<uintptr_t>(dst))) {
         gcSafeMemcpy(dst, src, bytes);
         return;
     }
@@ -162,7 +164,7 @@ ALWAYS_INLINE void gcSafeMemmove(T* dst, const T* src, size_t bytes)
     auto slowPathBackwardsMemmove = [&] {
         size_t count = bytes / 8;
         for (size_t i = count; i--; )
-            bitwise_cast<volatile uint64_t*>(dst)[i] = bitwise_cast<volatile uint64_t*>(src)[i];
+            std::bit_cast<volatile uint64_t*>(dst)[i] = std::bit_cast<volatile uint64_t*>(src)[i];
     };
 
 #if CPU(X86_64) || CPU(ARM64)
@@ -209,10 +211,10 @@ ALWAYS_INLINE void gcSafeMemmove(T* dst, const T* src, size_t bytes)
         );
 #elif CPU(ARM64)
         uint64_t alignedBytes = (static_cast<uint64_t>(bytes) / 32) * 32;
-        uint64_t dstPtr = static_cast<uint64_t>(bitwise_cast<uintptr_t>(dst) + static_cast<uint64_t>(bytes));
-        uint64_t srcPtr = static_cast<uint64_t>(bitwise_cast<uintptr_t>(src) + static_cast<uint64_t>(bytes));
-        uint64_t alignedEnd = bitwise_cast<uintptr_t>(dst) + alignedBytes;
-        uint64_t end = bitwise_cast<uintptr_t>(dst);
+        uint64_t dstPtr = static_cast<uint64_t>(std::bit_cast<uintptr_t>(dst) + static_cast<uint64_t>(bytes));
+        uint64_t srcPtr = static_cast<uint64_t>(std::bit_cast<uintptr_t>(src) + static_cast<uint64_t>(bytes));
+        uint64_t alignedEnd = std::bit_cast<uintptr_t>(dst) + alignedBytes;
+        uint64_t end = std::bit_cast<uintptr_t>(dst);
 
         asm volatile(
             "1:\t\n"
@@ -262,7 +264,7 @@ ALWAYS_INLINE void gcSafeZeroMemory(T* dst, size_t bytes)
     );
 #elif CPU(ARM64)
     uint64_t alignedBytes = (static_cast<uint64_t>(bytes) / 64) * 64;
-    uint64_t dstPtr = static_cast<uint64_t>(bitwise_cast<uintptr_t>(dst));
+    uint64_t dstPtr = static_cast<uint64_t>(std::bit_cast<uintptr_t>(dst));
     uint64_t end = dstPtr + bytes;
     uint64_t alignedEnd = dstPtr + alignedBytes;
     asm volatile(
@@ -293,7 +295,7 @@ ALWAYS_INLINE void gcSafeZeroMemory(T* dst, size_t bytes)
 #else
     size_t count = bytes / 8;
     for (size_t i = 0; i < count; ++i)
-        bitwise_cast<volatile uint64_t*>(dst)[i] = 0;
+        std::bit_cast<volatile uint64_t*>(dst)[i] = 0;
 #endif
 #else
     memset(reinterpret_cast<char*>(dst), 0, bytes);
@@ -301,3 +303,5 @@ ALWAYS_INLINE void gcSafeZeroMemory(T* dst, size_t bytes)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -15,6 +15,7 @@
 #include <utility>
 
 #include "absl/strings/string_view.h"
+#include "api/environment/environment_factory.h"
 #include "common_audio/mocks/mock_smoothing_filter.h"
 #include "modules/audio_coding/audio_network_adaptor/mock/mock_audio_network_adaptor.h"
 #include "modules/audio_coding/codecs/opus/audio_encoder_opus.h"
@@ -22,16 +23,16 @@
 #include "modules/audio_coding/neteq/tools/audio_loop.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/fake_clock.h"
-#include "test/field_trial.h"
+#include "test/explicit_key_value_config.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
 namespace webrtc {
+namespace {
+using test::ExplicitKeyValueConfig;
 using ::testing::NiceMock;
 using ::testing::Return;
-
-namespace {
 
 constexpr int kDefaultOpusPayloadType = 105;
 constexpr int kDefaultOpusRate = 32000;
@@ -39,7 +40,7 @@ constexpr int kDefaultOpusPacSize = 960;
 constexpr int64_t kInitialTimeUs = 12345678;
 
 AudioEncoderOpusConfig CreateConfigWithParameters(
-    const SdpAudioFormat::Parameters& params) {
+    const CodecParameterMap& params) {
   const SdpAudioFormat format("opus", 48000, 2, params);
   return *AudioEncoderOpus::SdpToConfig(format);
 }
@@ -52,8 +53,10 @@ struct AudioEncoderOpusStates {
   AudioEncoderOpusConfig config;
 };
 
-std::unique_ptr<AudioEncoderOpusStates> CreateCodec(int sample_rate_hz,
-                                                    size_t num_channels) {
+std::unique_ptr<AudioEncoderOpusStates> CreateCodec(
+    int sample_rate_hz,
+    size_t num_channels,
+    const FieldTrialsView* field_trials = nullptr) {
   std::unique_ptr<AudioEncoderOpusStates> states =
       std::make_unique<AudioEncoderOpusStates>();
   states->mock_audio_network_adaptor = nullptr;
@@ -62,7 +65,7 @@ std::unique_ptr<AudioEncoderOpusStates> CreateCodec(int sample_rate_hz,
 
   MockAudioNetworkAdaptor** mock_ptr = &states->mock_audio_network_adaptor;
   AudioEncoderOpusImpl::AudioNetworkAdaptorCreator creator =
-      [mock_ptr](absl::string_view, RtcEventLog* event_log) {
+      [mock_ptr](absl::string_view, RtcEventLog* /* event_log */) {
         std::unique_ptr<MockAudioNetworkAdaptor> adaptor(
             new NiceMock<MockAudioNetworkAdaptor>());
         EXPECT_CALL(*adaptor, Die());
@@ -85,9 +88,9 @@ std::unique_ptr<AudioEncoderOpusStates> CreateCodec(int sample_rate_hz,
       new MockSmoothingFilter());
   states->mock_bitrate_smoother = bitrate_smoother.get();
 
-  states->encoder.reset(
-      new AudioEncoderOpusImpl(states->config, kDefaultOpusPayloadType, creator,
-                               std::move(bitrate_smoother)));
+  states->encoder = AudioEncoderOpusImpl::CreateForTesting(
+      CreateEnvironment(field_trials), states->config, kDefaultOpusPayloadType,
+      creator, std::move(bitrate_smoother));
   return states;
 }
 
@@ -205,24 +208,24 @@ TEST_P(AudioEncoderOpusTest,
                            rtc::CheckedDivExact(48000, kDefaultOpusPacSize);
   // Set a too low bitrate.
   states->encoder->OnReceivedUplinkBandwidth(kMinBitrateBps + kOverheadBps - 1,
-                                             absl::nullopt);
+                                             std::nullopt);
   EXPECT_EQ(kMinBitrateBps, states->encoder->GetTargetBitrate());
   // Set a too high bitrate.
   states->encoder->OnReceivedUplinkBandwidth(kMaxBitrateBps + kOverheadBps + 1,
-                                             absl::nullopt);
+                                             std::nullopt);
   EXPECT_EQ(kMaxBitrateBps, states->encoder->GetTargetBitrate());
   // Set the minimum rate.
   states->encoder->OnReceivedUplinkBandwidth(kMinBitrateBps + kOverheadBps,
-                                             absl::nullopt);
+                                             std::nullopt);
   EXPECT_EQ(kMinBitrateBps, states->encoder->GetTargetBitrate());
   // Set the maximum rate.
   states->encoder->OnReceivedUplinkBandwidth(kMaxBitrateBps + kOverheadBps,
-                                             absl::nullopt);
+                                             std::nullopt);
   EXPECT_EQ(kMaxBitrateBps, states->encoder->GetTargetBitrate());
   // Set rates from kMaxBitrateBps up to 32000 bps.
   for (int rate = kMinBitrateBps + kOverheadBps; rate <= 32000 + kOverheadBps;
        rate += 1000) {
-    states->encoder->OnReceivedUplinkBandwidth(rate, absl::nullopt);
+    states->encoder->OnReceivedUplinkBandwidth(rate, std::nullopt);
     EXPECT_EQ(rate - kOverheadBps, states->encoder->GetTargetBitrate());
   }
 }
@@ -264,9 +267,9 @@ TEST_P(AudioEncoderOpusTest,
 
 TEST_P(AudioEncoderOpusTest,
        InvokeAudioNetworkAdaptorOnReceivedUplinkBandwidth) {
-  test::ScopedFieldTrials override_field_trials(
+  ExplicitKeyValueConfig field_trials(
       "WebRTC-Audio-StableTargetAdaptation/Disabled/");
-  auto states = CreateCodec(sample_rate_hz_, 2);
+  auto states = CreateCodec(sample_rate_hz_, 2, &field_trials);
   states->encoder->EnableAudioNetworkAdaptor("", nullptr);
 
   auto config = CreateEncoderRuntimeConfig();
@@ -376,7 +379,7 @@ TEST_P(AudioEncoderOpusTest, DoNotInvokeSetTargetBitrateIfOverheadUnknown) {
   auto states = CreateCodec(sample_rate_hz_, 2);
 
   states->encoder->OnReceivedUplinkBandwidth(kDefaultOpusRate * 2,
-                                             absl::nullopt);
+                                             std::nullopt);
 
   // Since `OnReceivedOverhead` has not been called, the codec bitrate should
   // not change.
@@ -391,7 +394,7 @@ TEST(AudioEncoderOpusTest, ConfigComplexityAdaptation) {
 
   // Bitrate within hysteresis window. Expect empty output.
   config.bitrate_bps = 12500;
-  EXPECT_EQ(absl::nullopt, AudioEncoderOpusImpl::GetNewComplexity(config));
+  EXPECT_EQ(std::nullopt, AudioEncoderOpusImpl::GetNewComplexity(config));
 
   // Bitrate below hysteresis window. Expect higher complexity.
   config.bitrate_bps = 10999;
@@ -399,7 +402,7 @@ TEST(AudioEncoderOpusTest, ConfigComplexityAdaptation) {
 
   // Bitrate within hysteresis window. Expect empty output.
   config.bitrate_bps = 12500;
-  EXPECT_EQ(absl::nullopt, AudioEncoderOpusImpl::GetNewComplexity(config));
+  EXPECT_EQ(std::nullopt, AudioEncoderOpusImpl::GetNewComplexity(config));
 
   // Bitrate above hysteresis window. Expect lower complexity.
   config.bitrate_bps = 14001;
@@ -425,9 +428,9 @@ TEST_P(AudioEncoderOpusTest, ConfigBandwidthAdaptation) {
                    sample_rate_hz_));
 
   // Bitrate below minmum wideband. Expect narrowband.
-  config.bitrate_bps = absl::optional<int>(7999);
+  config.bitrate_bps = std::optional<int>(7999);
   auto bandwidth = AudioEncoderOpusImpl::GetNewBandwidth(config, inst);
-  EXPECT_EQ(absl::optional<int>(OPUS_BANDWIDTH_NARROWBAND), bandwidth);
+  EXPECT_EQ(std::optional<int>(OPUS_BANDWIDTH_NARROWBAND), bandwidth);
   WebRtcOpus_SetBandwidth(inst, *bandwidth);
   // It is necessary to encode here because Opus has some logic in the encoder
   // that goes from the user-set bandwidth to the used and returned one.
@@ -436,14 +439,14 @@ TEST_P(AudioEncoderOpusTest, ConfigBandwidthAdaptation) {
                     kMaxBytes, bitstream);
 
   // Bitrate not yet above maximum narrowband. Expect empty.
-  config.bitrate_bps = absl::optional<int>(9000);
+  config.bitrate_bps = std::optional<int>(9000);
   bandwidth = AudioEncoderOpusImpl::GetNewBandwidth(config, inst);
-  EXPECT_EQ(absl::optional<int>(), bandwidth);
+  EXPECT_EQ(std::optional<int>(), bandwidth);
 
   // Bitrate above maximum narrowband. Expect wideband.
-  config.bitrate_bps = absl::optional<int>(9001);
+  config.bitrate_bps = std::optional<int>(9001);
   bandwidth = AudioEncoderOpusImpl::GetNewBandwidth(config, inst);
-  EXPECT_EQ(absl::optional<int>(OPUS_BANDWIDTH_WIDEBAND), bandwidth);
+  EXPECT_EQ(std::optional<int>(OPUS_BANDWIDTH_WIDEBAND), bandwidth);
   WebRtcOpus_SetBandwidth(inst, *bandwidth);
   // It is necessary to encode here because Opus has some logic in the encoder
   // that goes from the user-set bandwidth to the used and returned one.
@@ -452,14 +455,14 @@ TEST_P(AudioEncoderOpusTest, ConfigBandwidthAdaptation) {
                     kMaxBytes, bitstream);
 
   // Bitrate not yet below minimum wideband. Expect empty.
-  config.bitrate_bps = absl::optional<int>(8000);
+  config.bitrate_bps = std::optional<int>(8000);
   bandwidth = AudioEncoderOpusImpl::GetNewBandwidth(config, inst);
-  EXPECT_EQ(absl::optional<int>(), bandwidth);
+  EXPECT_EQ(std::optional<int>(), bandwidth);
 
   // Bitrate above automatic threshold. Expect automatic.
-  config.bitrate_bps = absl::optional<int>(12001);
+  config.bitrate_bps = std::optional<int>(12001);
   bandwidth = AudioEncoderOpusImpl::GetNewBandwidth(config, inst);
-  EXPECT_EQ(absl::optional<int>(OPUS_AUTO), bandwidth);
+  EXPECT_EQ(std::optional<int>(OPUS_AUTO), bandwidth);
 
   EXPECT_EQ(0, WebRtcOpus_EncoderFree(inst));
 }
@@ -485,9 +488,9 @@ TEST_P(AudioEncoderOpusTest, EmptyConfigDoesNotAffectEncoderSettings) {
 }
 
 TEST_P(AudioEncoderOpusTest, UpdateUplinkBandwidthInAudioNetworkAdaptor) {
-  test::ScopedFieldTrials override_field_trials(
+  ExplicitKeyValueConfig field_trials(
       "WebRTC-Audio-StableTargetAdaptation/Disabled/");
-  auto states = CreateCodec(sample_rate_hz_, 2);
+  auto states = CreateCodec(sample_rate_hz_, 2, &field_trials);
   states->encoder->EnableAudioNetworkAdaptor("", nullptr);
   const size_t opus_rate_khz = rtc::CheckedDivExact(sample_rate_hz_, 1000);
   const std::vector<int16_t> audio(opus_rate_khz * 10 * 2, 0);
@@ -525,7 +528,7 @@ TEST_P(AudioEncoderOpusTest, EncodeAtMinBitrate) {
   rtc::Buffer encoded;
   uint32_t rtp_timestamp = 12345;  // Just a number not important to this test.
 
-  states->encoder->OnReceivedUplinkBandwidth(0, absl::nullopt);
+  states->encoder->OnReceivedUplinkBandwidth(0, std::nullopt);
   for (int packet_index = 0; packet_index < kNumPacketsToEncode;
        packet_index++) {
     // Make sure we are not encoding before we have enough data for
@@ -670,10 +673,10 @@ TEST(AudioEncoderOpusTest, TestConfigFromInvalidParams) {
 TEST(AudioEncoderOpusTest, GetFrameLenghtRange) {
   AudioEncoderOpusConfig config =
       CreateConfigWithParameters({{"maxptime", "10"}, {"ptime", "10"}});
-  std::unique_ptr<AudioEncoder> encoder =
-      AudioEncoderOpus::MakeAudioEncoder(config, kDefaultOpusPayloadType);
+  std::unique_ptr<AudioEncoder> encoder = AudioEncoderOpus::MakeAudioEncoder(
+      CreateEnvironment(), config, {.payload_type = kDefaultOpusPayloadType});
   auto ptime = webrtc::TimeDelta::Millis(10);
-  absl::optional<std::pair<webrtc::TimeDelta, webrtc::TimeDelta>> range = {
+  std::optional<std::pair<webrtc::TimeDelta, webrtc::TimeDelta>> range = {
       {ptime, ptime}};
   EXPECT_EQ(encoder->GetFrameLengthRange(), range);
 }
@@ -762,8 +765,8 @@ TEST_P(AudioEncoderOpusTest, OpusFlagDtxAsNonSpeech) {
   AudioEncoderOpusConfig config;
   config.dtx_enabled = true;
   config.sample_rate_hz = sample_rate_hz_;
-  constexpr int payload_type = 17;
-  const auto encoder = AudioEncoderOpus::MakeAudioEncoder(config, payload_type);
+  const auto encoder = AudioEncoderOpus::MakeAudioEncoder(
+      CreateEnvironment(), config, {.payload_type = 17});
 
   // Open file containing speech and silence.
   const std::string kInputFileName =
@@ -816,99 +819,6 @@ TEST_P(AudioEncoderOpusTest, OpusFlagDtxAsNonSpeech) {
 
   // Maximum number of consecutive non-speech packets should exceed 15.
   EXPECT_GT(max_nonspeech_frames, 15);
-}
-
-TEST(AudioEncoderOpusTest, OpusDtxFilteringHighEnergyRefreshPackets) {
-  test::ScopedFieldTrials override_field_trials(
-      "WebRTC-Audio-OpusAvoidNoisePumpingDuringDtx/Enabled/");
-  const std::string kInputFileName =
-      webrtc::test::ResourcePath("audio_coding/testfile16kHz", "pcm");
-  constexpr int kSampleRateHz = 16000;
-  AudioEncoderOpusConfig config;
-  config.dtx_enabled = true;
-  config.sample_rate_hz = kSampleRateHz;
-  constexpr int payload_type = 17;
-  const auto encoder = AudioEncoderOpus::MakeAudioEncoder(config, payload_type);
-  test::AudioLoop audio_loop;
-  constexpr size_t kMaxLoopLengthSaples = kSampleRateHz * 11.6f;
-  constexpr size_t kInputBlockSizeSamples = kSampleRateHz / 100;
-  EXPECT_TRUE(audio_loop.Init(kInputFileName, kMaxLoopLengthSaples,
-                              kInputBlockSizeSamples));
-  AudioEncoder::EncodedInfo info;
-  rtc::Buffer encoded(500);
-  // Encode the audio file and store the last part that corresponds to silence.
-  constexpr size_t kSilenceDurationSamples = kSampleRateHz * 0.2f;
-  std::array<int16_t, kSilenceDurationSamples> silence;
-  uint32_t rtp_timestamp = 0;
-  bool last_packet_dtx_frame = false;
-  bool opus_entered_dtx = false;
-  bool silence_filled = false;
-  size_t timestamp_start_silence = 0;
-  while (!silence_filled && rtp_timestamp < kMaxLoopLengthSaples) {
-    encoded.Clear();
-    // Every second call to the encoder will generate an Opus packet.
-    for (int j = 0; j < 2; j++) {
-      auto next_frame = audio_loop.GetNextBlock();
-      info = encoder->Encode(rtp_timestamp, next_frame, &encoded);
-      if (opus_entered_dtx) {
-        size_t silence_frame_start = rtp_timestamp - timestamp_start_silence;
-        silence_filled = silence_frame_start >= kSilenceDurationSamples;
-        if (!silence_filled) {
-          std::copy(next_frame.begin(), next_frame.end(),
-                    silence.begin() + silence_frame_start);
-        }
-      }
-      rtp_timestamp += kInputBlockSizeSamples;
-    }
-    EXPECT_TRUE(info.encoded_bytes > 0 || last_packet_dtx_frame);
-    last_packet_dtx_frame = info.encoded_bytes > 0 ? info.encoded_bytes <= 2
-                                                   : last_packet_dtx_frame;
-    if (info.encoded_bytes <= 2 && !opus_entered_dtx) {
-      timestamp_start_silence = rtp_timestamp;
-    }
-    opus_entered_dtx = info.encoded_bytes <= 2;
-  }
-
-  EXPECT_TRUE(silence_filled);
-  // The copied 200 ms of silence is used for creating 6 bursts that are fed to
-  // the encoder, the first three ones with a larger energy and the last three
-  // with a lower energy. This test verifies that the encoder just sends refresh
-  // DTX packets during the last bursts.
-  int number_non_empty_packets_during_increase = 0;
-  int number_non_empty_packets_during_decrease = 0;
-  for (size_t burst = 0; burst < 6; ++burst) {
-    uint32_t rtp_timestamp_start = rtp_timestamp;
-    const bool increase_noise = burst < 3;
-    const float gain = increase_noise ? 1.4f : 0.0f;
-    while (rtp_timestamp < rtp_timestamp_start + kSilenceDurationSamples) {
-      encoded.Clear();
-      // Every second call to the encoder will generate an Opus packet.
-      for (int j = 0; j < 2; j++) {
-        std::array<int16_t, kInputBlockSizeSamples> silence_frame;
-        size_t silence_frame_start = rtp_timestamp - rtp_timestamp_start;
-        std::transform(
-            silence.begin() + silence_frame_start,
-            silence.begin() + silence_frame_start + kInputBlockSizeSamples,
-            silence_frame.begin(), [gain](float s) { return gain * s; });
-        info = encoder->Encode(rtp_timestamp, silence_frame, &encoded);
-        rtp_timestamp += kInputBlockSizeSamples;
-      }
-      EXPECT_TRUE(info.encoded_bytes > 0 || last_packet_dtx_frame);
-      last_packet_dtx_frame = info.encoded_bytes > 0 ? info.encoded_bytes <= 2
-                                                     : last_packet_dtx_frame;
-      // Tracking the number of non empty packets.
-      if (increase_noise && info.encoded_bytes > 2) {
-        number_non_empty_packets_during_increase++;
-      }
-      if (!increase_noise && info.encoded_bytes > 2) {
-        number_non_empty_packets_during_decrease++;
-      }
-    }
-  }
-  // Check that the refresh DTX packets are just sent during the decrease energy
-  // region.
-  EXPECT_EQ(number_non_empty_packets_during_increase, 0);
-  EXPECT_GT(number_non_empty_packets_during_decrease, 0);
 }
 
 }  // namespace webrtc

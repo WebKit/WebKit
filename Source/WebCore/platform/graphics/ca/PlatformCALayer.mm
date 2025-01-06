@@ -72,10 +72,13 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
     const float verticalMargin = 2.5;
     const float horizontalMargin = 5;
     const unsigned fontSize = 22;
-    constexpr auto backgroundColor = SRGBA<uint8_t> { 128, 64, 255 };
+    constexpr auto defaultBackgroundColor = SRGBA<uint8_t> { 128, 64, 255 };
     constexpr auto acceleratedContextLabelColor = Color::red;
     constexpr auto unacceleratedContextLabelColor = Color::white;
     constexpr auto displayListBorderColor = Color::black.colorWithAlphaByte(166);
+#if HAVE(HDR_SUPPORT)
+    constexpr auto hdrBackgroundColor = SRGBA<uint8_t> { 116, 214, 255 };
+#endif
 
     TextRun textRun(String::number(repaintCount));
 
@@ -89,11 +92,18 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
 
     float textWidth = cascade.width(textRun);
 
+    auto backgroundColor = customBackgroundColor.isValid() ? customBackgroundColor : defaultBackgroundColor;
+
+#if HAVE(HDR_SUPPORT)
+    if (platformCALayer->contentsFormat() == ContentsFormat::RGBA16F)
+        backgroundColor = hdrBackgroundColor;
+#endif
+
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
     graphicsContext.beginTransparencyLayer(0.5f);
 
-    graphicsContext.setFillColor(customBackgroundColor.isValid() ? customBackgroundColor : backgroundColor);
+    graphicsContext.setFillColor(backgroundColor);
     FloatRect indicatorBox(1, 1, horizontalMargin * 2 + textWidth, verticalMargin * 2 + fontSize);
     if (platformCALayer->isOpaque())
         graphicsContext.fillRect(indicatorBox);
@@ -256,6 +266,11 @@ TextStream& operator<<(TextStream& ts, PlatformCALayer::LayerType layerType)
     case PlatformCALayer::LayerType::LayerTypeBackdropLayer:
         ts << "backdrop-layer";
         break;
+#if HAVE(CORE_MATERIAL)
+    case PlatformCALayer::LayerType::LayerTypeMaterialLayer:
+        ts << "material-layer";
+        break;
+#endif
     case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer:
         ts << "av-player-layer";
         break;
@@ -274,6 +289,11 @@ TextStream& operator<<(TextStream& ts, PlatformCALayer::LayerType layerType)
 #if ENABLE(MODEL_ELEMENT)
     case PlatformCALayer::LayerType::LayerTypeModelLayer:
         ts << "model-layer";
+        break;
+#endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    case PlatformCALayer::LayerType::LayerTypeSeparatedImageLayer:
+        ts << "separated-image-layer";
         break;
 #endif
     case PlatformCALayer::LayerType::LayerTypeHost:

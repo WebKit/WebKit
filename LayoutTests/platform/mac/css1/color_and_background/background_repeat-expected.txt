@@ -166,18 +166,18 @@ layer at (0,0) size 785x1856
           text run at (212,72) width 245: "This ought to be enough text, though. "
           text run at (456,72) width 299: "A background color is present, although if it is"
           text run at (0,90) width 366: "visible, then the image may not have been tiled correctly."
-      RenderTable {TABLE} at (0,1046) size 769x794 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,1046) size 769x794 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x792
           RenderTableRow {TR} at (0,0) size 767x26
-            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x766
-            RenderTableCell {TD} at (0,396) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,396) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,374) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 755x766 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 755x766 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x54
                 RenderText {#text} at (0,0) size 731x36
                   text run at (0,0) width 731: "This sentence should have an orange stripe repeated in the \"y\" direction, starting at the upper left corner (since the"

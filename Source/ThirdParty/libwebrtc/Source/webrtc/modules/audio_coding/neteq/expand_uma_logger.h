@@ -13,10 +13,10 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/neteq/tick_timer.h"
 
 namespace webrtc {
@@ -48,7 +48,7 @@ class ExpandUmaLogger {
   const int logging_period_s_;
   const TickTimer& tick_timer_;
   std::unique_ptr<TickTimer::Countdown> timer_;
-  absl::optional<uint64_t> last_logged_value_;
+  std::optional<uint64_t> last_logged_value_;
   uint64_t last_value_ = 0;
   int sample_rate_hz_ = 0;
 };

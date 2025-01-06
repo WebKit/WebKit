@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -13,6 +13,8 @@
 #include "config/aom_config.h"
 
 #include "aom_mem/aom_mem.h"
+#include "aom_scale/yv12config.h"
+#include "aom_util/aom_pthread.h"
 
 #include "av1/common/alloccommon.h"
 #include "av1/common/av1_common_int.h"
@@ -20,6 +22,8 @@
 #include "av1/common/cdef_block.h"
 #include "av1/common/entropymode.h"
 #include "av1/common/entropymv.h"
+#include "av1/common/enums.h"
+#include "av1/common/restoration.h"
 #include "av1/common/thread_common.h"
 
 int av1_get_MBs(int width, int height) {
@@ -56,7 +60,7 @@ void av1_free_ref_frame_buffers(BufferPool *pool) {
   pool->num_frame_bufs = 0;
 }
 
-static INLINE void free_cdef_linebuf_conditional(
+static inline void free_cdef_linebuf_conditional(
     AV1_COMMON *const cm, const size_t *new_linebuf_size) {
   CdefInfo *cdef_info = &cm->cdef_info;
   for (int plane = 0; plane < MAX_MB_PLANE; plane++) {
@@ -67,7 +71,7 @@ static INLINE void free_cdef_linebuf_conditional(
   }
 }
 
-static INLINE void free_cdef_bufs_conditional(AV1_COMMON *const cm,
+static inline void free_cdef_bufs_conditional(AV1_COMMON *const cm,
                                               uint16_t **colbuf,
                                               uint16_t **srcbuf,
                                               const size_t *new_colbuf_size,
@@ -85,7 +89,7 @@ static INLINE void free_cdef_bufs_conditional(AV1_COMMON *const cm,
   }
 }
 
-static INLINE void free_cdef_bufs(uint16_t **colbuf, uint16_t **srcbuf) {
+static inline void free_cdef_bufs(uint16_t **colbuf, uint16_t **srcbuf) {
   aom_free(*srcbuf);
   *srcbuf = NULL;
   for (int plane = 0; plane < MAX_MB_PLANE; plane++) {
@@ -94,15 +98,19 @@ static INLINE void free_cdef_bufs(uint16_t **colbuf, uint16_t **srcbuf) {
   }
 }
 
-static INLINE void free_cdef_row_sync(AV1CdefRowSync **cdef_row_mt,
+static inline void free_cdef_row_sync(AV1CdefRowSync **cdef_row_mt,
                                       const int num_mi_rows) {
   if (*cdef_row_mt == NULL) return;
 #if CONFIG_MULTITHREAD
   for (int row_idx = 0; row_idx < num_mi_rows; row_idx++) {
-    pthread_mutex_destroy((*cdef_row_mt)[row_idx].row_mutex_);
-    pthread_cond_destroy((*cdef_row_mt)[row_idx].row_cond_);
-    aom_free((*cdef_row_mt)[row_idx].row_mutex_);
-    aom_free((*cdef_row_mt)[row_idx].row_cond_);
+    if ((*cdef_row_mt)[row_idx].row_mutex_ != NULL) {
+      pthread_mutex_destroy((*cdef_row_mt)[row_idx].row_mutex_);
+      aom_free((*cdef_row_mt)[row_idx].row_mutex_);
+    }
+    if ((*cdef_row_mt)[row_idx].row_cond_ != NULL) {
+      pthread_cond_destroy((*cdef_row_mt)[row_idx].row_cond_);
+      aom_free((*cdef_row_mt)[row_idx].row_cond_);
+    }
   }
 #else
   (void)num_mi_rows;
@@ -137,7 +145,7 @@ void av1_free_cdef_buffers(AV1_COMMON *const cm,
   }
 }
 
-static INLINE void alloc_cdef_linebuf(AV1_COMMON *const cm, uint16_t **linebuf,
+static inline void alloc_cdef_linebuf(AV1_COMMON *const cm, uint16_t **linebuf,
                                       const int num_planes) {
   CdefInfo *cdef_info = &cm->cdef_info;
   for (int plane = 0; plane < num_planes; plane++) {
@@ -147,7 +155,7 @@ static INLINE void alloc_cdef_linebuf(AV1_COMMON *const cm, uint16_t **linebuf,
   }
 }
 
-static INLINE void alloc_cdef_bufs(AV1_COMMON *const cm, uint16_t **colbuf,
+static inline void alloc_cdef_bufs(AV1_COMMON *const cm, uint16_t **colbuf,
                                    uint16_t **srcbuf, const int num_planes) {
   CdefInfo *cdef_info = &cm->cdef_info;
   if (*srcbuf == NULL)
@@ -161,13 +169,13 @@ static INLINE void alloc_cdef_bufs(AV1_COMMON *const cm, uint16_t **colbuf,
   }
 }
 
-static INLINE void alloc_cdef_row_sync(AV1_COMMON *const cm,
+static inline void alloc_cdef_row_sync(AV1_COMMON *const cm,
                                        AV1CdefRowSync **cdef_row_mt,
                                        const int num_mi_rows) {
   if (*cdef_row_mt != NULL) return;
 
   CHECK_MEM_ERROR(cm, *cdef_row_mt,
-                  aom_malloc(sizeof(**cdef_row_mt) * num_mi_rows));
+                  aom_calloc(num_mi_rows, sizeof(**cdef_row_mt)));
 #if CONFIG_MULTITHREAD
   for (int row_idx = 0; row_idx < num_mi_rows; row_idx++) {
     CHECK_MEM_ERROR(cm, (*cdef_row_mt)[row_idx].row_mutex_,
@@ -177,8 +185,6 @@ static INLINE void alloc_cdef_row_sync(AV1_COMMON *const cm,
     CHECK_MEM_ERROR(cm, (*cdef_row_mt)[row_idx].row_cond_,
                     aom_malloc(sizeof(*(*cdef_row_mt)[row_idx].row_cond_)));
     pthread_cond_init((*cdef_row_mt)[row_idx].row_cond_, NULL);
-
-    (*cdef_row_mt)[row_idx].is_row_done = 0;
   }
 #endif  // CONFIG_MULTITHREAD
 }
@@ -198,7 +204,7 @@ void av1_alloc_cdef_buffers(AV1_COMMON *const cm,
   const int is_num_workers_changed =
       cdef_info->allocated_num_workers != num_workers;
   const int is_cdef_enabled =
-      cm->seq_params->enable_cdef && !cm->tiles.large_scale;
+      cm->seq_params->enable_cdef && !cm->tiles.single_tile_decoding;
 
   // num-bufs=3 represents ping-pong buffers for top linebuf,
   // followed by bottom linebuf.
@@ -288,11 +294,10 @@ void av1_alloc_cdef_buffers(AV1_COMMON *const cm,
                       cdef_info->allocated_mi_rows);
 }
 
-// Assumes cm->rst_info[p].restoration_unit_size is already initialized
+#if !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
+// Allocate buffers which are independent of restoration_unit_size
 void av1_alloc_restoration_buffers(AV1_COMMON *cm, bool is_sgr_enabled) {
   const int num_planes = av1_num_planes(cm);
-  for (int p = 0; p < num_planes; ++p)
-    av1_alloc_restoration_struct(cm, &cm->rst_info[p], p > 0);
 
   if (cm->rst_tmpbuf == NULL && is_sgr_enabled) {
     CHECK_MEM_ERROR(cm, cm->rst_tmpbuf,
@@ -360,6 +365,7 @@ void av1_free_restoration_buffers(AV1_COMMON *cm) {
 
   aom_free_frame_buffer(&cm->rst_frame);
 }
+#endif  // !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 
 void av1_free_above_context_buffers(CommonContexts *above_contexts) {
   int i;
@@ -468,11 +474,11 @@ static int alloc_mi(CommonModeInfoParams *mi_params) {
     mi_params->mi_grid_base = (MB_MODE_INFO **)aom_calloc(
         mi_grid_size, sizeof(*mi_params->mi_grid_base));
     if (!mi_params->mi_grid_base) return 1;
-    mi_params->mi_grid_size = mi_grid_size;
 
     mi_params->tx_type_map =
         aom_calloc(mi_grid_size, sizeof(*mi_params->tx_type_map));
     if (!mi_params->tx_type_map) return 1;
+    mi_params->mi_grid_size = mi_grid_size;
   }
 
   return 0;

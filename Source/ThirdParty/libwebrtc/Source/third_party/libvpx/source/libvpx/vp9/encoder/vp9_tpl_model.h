@@ -31,6 +31,7 @@ typedef struct GF_PICTURE {
 void vp9_init_tpl_buffer(VP9_COMP *cpi);
 void vp9_setup_tpl_stats(VP9_COMP *cpi);
 void vp9_free_tpl_buffer(VP9_COMP *cpi);
+void vp9_estimate_tpl_qp_gop(VP9_COMP *cpi);
 
 void vp9_wht_fwd_txfm(int16_t *src_diff, int bw, tran_low_t *coeff,
                       TX_SIZE tx_size);

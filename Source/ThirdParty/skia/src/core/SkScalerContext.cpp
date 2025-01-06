@@ -45,6 +45,7 @@
 #include <cstring>
 #include <limits>
 #include <new>
+#include <utility>
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -116,77 +117,80 @@ static SkMutex& mask_gamma_cache_mutex() {
     return mutex;
 }
 
-static SkMaskGamma* gLinearMaskGamma = nullptr;
+static const SkMaskGamma& linear_gamma() {
+    static const SkMaskGamma kLinear;
+    return kLinear;
+}
+
+static SkMaskGamma* gDefaultMaskGamma = nullptr;
 static SkMaskGamma* gMaskGamma = nullptr;
-static SkScalar gContrast = SK_ScalarMin;
-static SkScalar gPaintGamma = SK_ScalarMin;
-static SkScalar gDeviceGamma = SK_ScalarMin;
+static uint8_t gContrast = 0;
+static uint8_t gGamma = 0;
 
 /**
  * The caller must hold the mask_gamma_cache_mutex() and continue to hold it until
  * the returned SkMaskGamma pointer is refed or forgotten.
  */
-static const SkMaskGamma& cached_mask_gamma(SkScalar contrast, SkScalar paintGamma,
-                                            SkScalar deviceGamma) {
+const SkMaskGamma& SkScalerContextRec::CachedMaskGamma(uint8_t contrast, uint8_t gamma) {
     mask_gamma_cache_mutex().assertHeld();
-    if (0 == contrast && SK_Scalar1 == paintGamma && SK_Scalar1 == deviceGamma) {
-        if (nullptr == gLinearMaskGamma) {
-            gLinearMaskGamma = new SkMaskGamma;
-        }
-        return *gLinearMaskGamma;
+
+    constexpr uint8_t contrast0 = InternalContrastFromExternal(0);
+    constexpr uint8_t gamma1 = InternalGammaFromExternal(1);
+    if (contrast0 == contrast && gamma1 == gamma) {
+        return linear_gamma();
     }
-    if (gContrast != contrast || gPaintGamma != paintGamma || gDeviceGamma != deviceGamma) {
+    constexpr uint8_t defaultContrast = InternalContrastFromExternal(SK_GAMMA_CONTRAST);
+    constexpr uint8_t defaultGamma = InternalGammaFromExternal(SK_GAMMA_EXPONENT);
+    if (defaultContrast == contrast && defaultGamma == gamma) {
+        if (!gDefaultMaskGamma) {
+            gDefaultMaskGamma = new SkMaskGamma(ExternalContrastFromInternal(contrast),
+                                                ExternalGammaFromInternal(gamma));
+        }
+        return *gDefaultMaskGamma;
+    }
+    if (!gMaskGamma || gContrast != contrast || gGamma != gamma) {
         SkSafeUnref(gMaskGamma);
-        gMaskGamma = new SkMaskGamma(contrast, paintGamma, deviceGamma);
+        gMaskGamma = new SkMaskGamma(ExternalContrastFromInternal(contrast),
+                                     ExternalGammaFromInternal(gamma));
         gContrast = contrast;
-        gPaintGamma = paintGamma;
-        gDeviceGamma = deviceGamma;
+        gGamma = gamma;
     }
     return *gMaskGamma;
 }
 
 /**
- * Expands fDeviceGamma, fPaintGamma, fContrast, and fLumBits into a mask pre-blend.
+ * Expands fDeviceGamma, fContrast, and fLumBits into a mask pre-blend.
  */
 SkMaskGamma::PreBlend SkScalerContext::GetMaskPreBlend(const SkScalerContextRec& rec) {
     SkAutoMutexExclusive ama(mask_gamma_cache_mutex());
 
-    const SkMaskGamma& maskGamma = cached_mask_gamma(rec.getContrast(),
-                                                     rec.getPaintGamma(),
-                                                     rec.getDeviceGamma());
+    const SkMaskGamma& maskGamma = rec.cachedMaskGamma();
 
     // TODO: remove CanonicalColor when we to fix up Chrome layout tests.
     return maskGamma.preBlend(rec.getLuminanceColor());
 }
 
-size_t SkScalerContext::GetGammaLUTSize(SkScalar contrast, SkScalar paintGamma,
-                                        SkScalar deviceGamma, int* width, int* height) {
+size_t SkScalerContext::GetGammaLUTSize(SkScalar contrast, SkScalar deviceGamma,
+                                        int* width, int* height) {
     SkAutoMutexExclusive ama(mask_gamma_cache_mutex());
-    const SkMaskGamma& maskGamma = cached_mask_gamma(contrast,
-                                                     paintGamma,
-                                                     deviceGamma);
-
+    const SkMaskGamma& maskGamma = SkScalerContextRec::CachedMaskGamma(
+            SkScalerContextRec::InternalContrastFromExternal(contrast),
+            SkScalerContextRec::InternalGammaFromExternal(deviceGamma));
     maskGamma.getGammaTableDimensions(width, height);
-    size_t size = (*width)*(*height)*sizeof(uint8_t);
-
-    return size;
+    return maskGamma.getGammaTableSizeInBytes();
 }
 
-bool SkScalerContext::GetGammaLUTData(SkScalar contrast, SkScalar paintGamma, SkScalar deviceGamma,
-                                      uint8_t* data) {
+bool SkScalerContext::GetGammaLUTData(SkScalar contrast, SkScalar deviceGamma, uint8_t* data) {
     SkAutoMutexExclusive ama(mask_gamma_cache_mutex());
-    const SkMaskGamma& maskGamma = cached_mask_gamma(contrast,
-                                                     paintGamma,
-                                                     deviceGamma);
+    const SkMaskGamma& maskGamma = SkScalerContextRec::CachedMaskGamma(
+            SkScalerContextRec::InternalContrastFromExternal(contrast),
+            SkScalerContextRec::InternalGammaFromExternal(deviceGamma));
     const uint8_t* gammaTables = maskGamma.getGammaTables();
     if (!gammaTables) {
         return false;
     }
 
-    int width, height;
-    maskGamma.getGammaTableDimensions(&width, &height);
-    size_t size = width*height * sizeof(uint8_t);
-    memcpy(data, gammaTables, size);
+    memcpy(data, gammaTables, maskGamma.getGammaTableSizeInBytes());
     return true;
 }
 
@@ -277,7 +281,7 @@ SkGlyph SkScalerContext::internalMakeGlyph(SkPackedGlyphID packedID, SkMask::For
     } else {
         SaturateGlyphBounds(&glyph, std::move(mx.bounds));
         if (mx.neverRequestPath) {
-            glyph.setPath(alloc, nullptr, false);
+            glyph.setPath(alloc, nullptr, false, false);
         }
     }
     SkDEBUGCODE(glyph.fAdvancesBoundsFormatAndInitialPathDone = true;)
@@ -762,10 +766,11 @@ void SkScalerContext::internalGetPath(SkGlyph& glyph, SkArenaAlloc* alloc) {
     SkPath path;
     SkPath devPath;
     bool hairline = false;
+    bool pathModified = false;
 
     SkPackedGlyphID glyphID = glyph.getPackedID();
-    if (!generatePath(glyph, &path)) {
-        glyph.setPath(alloc, (SkPath*)nullptr, hairline);
+    if (!generatePath(glyph, &path, &pathModified)) {
+        glyph.setPath(alloc, (SkPath*)nullptr, hairline, pathModified);
         return;
     }
 
@@ -773,6 +778,7 @@ void SkScalerContext::internalGetPath(SkGlyph& glyph, SkArenaAlloc* alloc) {
         SkFixed dx = glyphID.getSubXFixed();
         SkFixed dy = glyphID.getSubYFixed();
         if (dx | dy) {
+            pathModified = true;
             path.offset(SkFixedToScalar(dx), SkFixedToScalar(dy));
         }
     }
@@ -780,6 +786,8 @@ void SkScalerContext::internalGetPath(SkGlyph& glyph, SkArenaAlloc* alloc) {
     if (fRec.fFrameWidth < 0 && fPathEffect == nullptr) {
         devPath.swap(path);
     } else {
+        pathModified = true; // It could still end up the same, but it's probably going to change.
+
         // need the path in user-space, with only the point-size applied
         // so that our stroking and effects will operate the same way they
         // would if the user had extracted the path themself, and then
@@ -790,7 +798,7 @@ void SkScalerContext::internalGetPath(SkGlyph& glyph, SkArenaAlloc* alloc) {
 
         fRec.getMatrixFrom2x2(&matrix);
         if (!matrix.invert(&inverse)) {
-            glyph.setPath(alloc, &devPath, hairline);
+            glyph.setPath(alloc, &devPath, hairline, pathModified);
         }
         path.transform(inverse, &localPath);
         // now localPath is only affected by the paint settings, and not the canvas matrix
@@ -828,7 +836,7 @@ void SkScalerContext::internalGetPath(SkGlyph& glyph, SkArenaAlloc* alloc) {
 
         localPath.transform(matrix, &devPath);
     }
-    glyph.setPath(alloc, &devPath, hairline);
+    glyph.setPath(alloc, &devPath, hairline, pathModified);
 }
 
 
@@ -998,6 +1006,30 @@ void SkScalerContextRec::setLuminanceColor(SkColor c) {
             SkColorSetRGB(SkColorGetR(c), SkColorGetG(c), SkColorGetB(c)));
 }
 
+void SkScalerContextRec::useStrokeForFakeBold() {
+    if (!SkToBool(fFlags & SkScalerContext::kEmbolden_Flag)) {
+        return;
+    }
+    fFlags &= ~SkScalerContext::kEmbolden_Flag;
+
+    SkScalar fakeBoldScale = SkScalarInterpFunc(fTextSize,
+                                                kStdFakeBoldInterpKeys,
+                                                kStdFakeBoldInterpValues,
+                                                kStdFakeBoldInterpLength);
+    SkScalar extra = fTextSize * fakeBoldScale;
+
+    if (fFrameWidth >= 0) {
+        fFrameWidth += extra;
+    } else {
+        fFlags |= SkScalerContext::kFrameAndFill_Flag;
+        fFrameWidth = extra;
+        SkPaint paint;
+        fMiterLimit = paint.getStrokeMiter();
+        fStrokeJoin = SkToU8(paint.getStrokeJoin());
+        fStrokeCap = SkToU8(paint.getStrokeCap());
+    }
+}
+
 /*
  *  Return the scalar with only limited fractional precision. Used to consolidate matrices
  *  that vary only slightly when we create our key into the font cache, since the font scaler
@@ -1083,22 +1115,7 @@ void SkScalerContext::MakeRecAndEffects(const SkFont& font, const SkPaint& paint
     unsigned flags = 0;
 
     if (font.isEmbolden()) {
-#ifdef SK_USE_FREETYPE_EMBOLDEN
         flags |= SkScalerContext::kEmbolden_Flag;
-#else
-        SkScalar fakeBoldScale = SkScalarInterpFunc(font.getSize(),
-                                                    kStdFakeBoldInterpKeys,
-                                                    kStdFakeBoldInterpValues,
-                                                    kStdFakeBoldInterpLength);
-        SkScalar extra = font.getSize() * fakeBoldScale;
-
-        if (style == SkPaint::kFill_Style) {
-            style = SkPaint::kStrokeAndFill_Style;
-            strokeWidth = extra;    // ignore paint's strokeWidth if it was "fill"
-        } else {
-            strokeWidth += extra;
-        }
-#endif
     }
 
     if (style != SkPaint::kFill_Style && strokeWidth >= 0) {
@@ -1174,12 +1191,12 @@ void SkScalerContext::MakeRecAndEffects(const SkFont& font, const SkPaint& paint
     rec->setHinting(font.getHinting());
     rec->setLuminanceColor(SkPaintPriv::ComputeLuminanceColor(paint));
 
-    // For now always set the paint gamma equal to the device gamma.
+    // The paint color is always converted to the device colr space,
+    // so the paint gamma is now always equal to the device gamma.
     // The math in SkMaskGamma can handle them being different,
     // but it requires superluminous masks when
     // Ex : deviceGamma(x) < paintGamma(x) and x is sufficiently large.
     rec->setDeviceGamma(surfaceProps.textGamma());
-    rec->setPaintGamma(surfaceProps.textGamma());
     rec->setContrast(surfaceProps.textContrast());
 
     if (!SkToBool(scalerContextFlags & SkScalerContextFlags::kFakeGamma)) {
@@ -1283,7 +1300,7 @@ std::unique_ptr<SkScalerContext> SkScalerContext::MakeEmpty(
             return {glyph.maskFormat()};
         }
         void generateImage(const SkGlyph&, void*) override {}
-        bool generatePath(const SkGlyph& glyph, SkPath* path) override {
+        bool generatePath(const SkGlyph& glyph, SkPath* path, bool* modified) override {
             path->reset();
             return false;
         }

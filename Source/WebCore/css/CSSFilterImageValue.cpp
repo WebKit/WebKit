@@ -28,15 +28,18 @@
 #include "config.h"
 #include "CSSFilterImageValue.h"
 
+#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "StyleBuilderState.h"
 #include "StyleFilterImage.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-CSSFilterImageValue::CSSFilterImageValue(Ref<CSSValue>&& imageValueOrNone, Ref<CSSValue>&& filterValue)
-    : CSSValue { FilterImageClass }
+CSSFilterImageValue::CSSFilterImageValue(Ref<CSSValue>&& imageValueOrNone, CSS::FilterProperty&& filter)
+    : CSSValue { ClassType::FilterImage }
     , m_imageValueOrNone { WTFMove(imageValueOrNone) }
-    , m_filterValue { WTFMove(filterValue) }
+    , m_filter { WTFMove(filter) }
 {
 }
 
@@ -44,7 +47,7 @@ CSSFilterImageValue::~CSSFilterImageValue() = default;
 
 bool CSSFilterImageValue::equals(const CSSFilterImageValue& other) const
 {
-    return equalInputImages(other) && compareCSSValue(m_filterValue, other.m_filterValue);
+    return equalInputImages(other) && m_filter == other.m_filter;
 }
 
 bool CSSFilterImageValue::equalInputImages(const CSSFilterImageValue& other) const
@@ -54,12 +57,21 @@ bool CSSFilterImageValue::equalInputImages(const CSSFilterImageValue& other) con
 
 String CSSFilterImageValue::customCSSText() const
 {
-    return makeString("filter("_s, m_imageValueOrNone->cssText(), ", "_s, m_filterValue->cssText(), ')');
+    return makeString("filter("_s, m_imageValueOrNone->cssText(), ", "_s, CSS::serializationForCSS(m_filter), ')');
 }
 
-RefPtr<StyleImage> CSSFilterImageValue::createStyleImage(Style::BuilderState& state) const
+IterationStatus CSSFilterImageValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
 {
-    return StyleFilterImage::create(state.createStyleImage(m_imageValueOrNone), state.createFilterOperations(m_filterValue).value_or(FilterOperations { }));
+    if (func(m_imageValueOrNone.get()) == IterationStatus::Done)
+        return IterationStatus::Done;
+    if (CSS::visitCSSValueChildren(func, m_filter) == IterationStatus::Done)
+        return IterationStatus::Done;
+    return IterationStatus::Continue;
+}
+
+RefPtr<StyleImage> CSSFilterImageValue::createStyleImage(const Style::BuilderState& state) const
+{
+    return StyleFilterImage::create(state.createStyleImage(m_imageValueOrNone), state.createFilterOperations(m_filter));
 }
 
 } // namespace WebCore

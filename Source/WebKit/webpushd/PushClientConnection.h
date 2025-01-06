@@ -25,12 +25,15 @@
 
 #pragma once
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
+#include "Connection.h"
 #include "MessageReceiver.h"
 #include "PushMessageForTesting.h"
 #include "WebPushMessage.h"
 #include <WebCore/ExceptionData.h>
+#include <WebCore/NotificationResources.h>
+#include <WebCore/PushPermissionState.h>
 #include <WebCore/PushSubscriptionData.h>
 #include <WebCore/PushSubscriptionIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
@@ -40,10 +43,13 @@
 #include <wtf/OSObjectPtr.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 #include <wtf/text/WTFString.h>
+
+OBJC_CLASS UIWebClip;
 
 namespace WebCore {
 class SecurityOriginData;
@@ -66,41 +72,35 @@ enum class PushClientConnectionIdentifierType { };
 using PushClientConnectionIdentifier = AtomicObjectIdentifier<PushClientConnectionIdentifierType>;
 
 class PushClientConnection : public RefCounted<PushClientConnection>, public Identified<PushClientConnectionIdentifier>, public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PushClientConnection);
 public:
-    static Ref<PushClientConnection> create(xpc_connection_t);
+    static RefPtr<PushClientConnection> create(xpc_connection_t, IPC::Decoder&);
 
-    bool hasHostAppAuditToken() const { return !!m_hostAppAuditToken; }
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
-    WebCore::PushSubscriptionSetIdentifier subscriptionSetIdentifier();
-    const String& hostAppCodeSigningIdentifier();
-
-    bool hostAppHasPushEntitlement();
-    bool hostAppHasPushInjectEntitlement();
-
-    const String& pushPartitionString() const { return m_pushPartitionString; }
+    std::optional<WebCore::PushSubscriptionSetIdentifier> subscriptionSetIdentifierForOrigin(const WebCore::SecurityOriginData&) const;
+    const String& hostAppCodeSigningIdentifier() const { return m_hostAppCodeSigningIdentifier; }
+    bool hostAppHasPushInjectEntitlement() const { return m_hostAppHasPushInjectEntitlement; };
     std::optional<WTF::UUID> dataStoreIdentifier() const { return m_dataStoreIdentifier; }
 
-    bool debugModeIsEnabled() const { return m_debugModeEnabled; }
-    void setDebugModeIsEnabled(bool);
+    // You almost certainly do not want to use this and should probably use subscriptionSetIdentifierForOrigin instead.
+    const String& pushPartitionIfExists() const { return m_pushPartitionString; }
 
-    bool useMockBundlesForTesting() const { return m_useMockBundlesForTesting; }
+    String debugDescription() const;
 
     void connectionClosed();
-
-    void broadcastDebugMessage(const String&);
-    void sendDebugMessage(const String&);
 
     void didReceiveMessageWithReplyHandler(IPC::Decoder&, Function<void(UniqueRef<IPC::Encoder>&&)>&&) override;
 
 private:
-    PushClientConnection(xpc_connection_t);
+    PushClientConnection(xpc_connection_t, String&& hostAppCodeSigningIdentifier, bool hostAppHasPushInjectEntitlement, String&& pushPartitionString, std::optional<WTF::UUID>&& dataStoreIdentifier);
 
     // PushClientConnectionMessages
     void setPushAndNotificationsEnabledForOrigin(const String& originString, bool, CompletionHandler<void()>&& replySender);
-    void deletePushAndNotificationRegistration(const String& originString, CompletionHandler<void(const String&)>&& replySender);
     void injectPushMessageForTesting(PushMessageForTesting&&, CompletionHandler<void(const String&)>&&);
     void injectEncryptedPushMessageForTesting(const String&, CompletionHandler<void(bool)>&&);
+    void getPendingPushMessage(CompletionHandler<void(const std::optional<WebKit::WebPushMessage>&)>&& replySender);
     void getPendingPushMessages(CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
     void subscribeToPushService(URL&& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender);
     void unsubscribeFromPushService(URL&& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender);
@@ -109,26 +109,26 @@ private:
     void removeAllPushSubscriptions(CompletionHandler<void(unsigned)>&&);
     void removePushSubscriptionsForOrigin(WebCore::SecurityOriginData&&, CompletionHandler<void(unsigned)>&&);
     void setPublicTokenForTesting(const String& publicToken, CompletionHandler<void()>&&);
-    void updateConnectionConfiguration(WebPushDaemonConnectionConfiguration&&);
-    void getPushPermissionState(URL&& scopeURL, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&&);
+    void initializeConnection(WebPushDaemonConnectionConfiguration&&);
+    void getPushPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&);
+    void requestPushPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&);
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
     void getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&&);
-    String bundleIdentifierFromAuditToken(audit_token_t);
-    bool hostHasEntitlement(ASCIILiteral);
+
+    void showNotification(const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>, CompletionHandler<void()>&&);
+    void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+    void cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID);
+    void setAppBadge(WebCore::SecurityOriginData&&, std::optional<uint64_t>);
+    void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
+    void setProtocolVersionForTesting(unsigned, CompletionHandler<void()>&&);
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
-
-    std::optional<audit_token_t> m_hostAppAuditToken;
-    std::optional<String> m_hostAppCodeSigningIdentifier;
-    std::optional<bool> m_hostAppHasPushEntitlement;
-
+    String m_hostAppCodeSigningIdentifier;
+    bool m_hostAppHasPushInjectEntitlement { false };
     String m_pushPartitionString;
     Markable<WTF::UUID> m_dataStoreIdentifier;
-
-    bool m_debugModeEnabled { false };
-    bool m_useMockBundlesForTesting { false };
 };
 
 } // namespace WebPushD
 
-#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

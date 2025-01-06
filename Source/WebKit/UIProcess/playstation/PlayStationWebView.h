@@ -30,11 +30,12 @@
 #include "PageClientImpl.h"
 #include "WKView.h"
 #include "WebPageProxy.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class PlayStationWebView : public API::ObjectImpl<API::Object::Type::View> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PlayStationWebView);
 public:
 #if USE(WPE_BACKEND_PLAYSTATION)
     static RefPtr<PlayStationWebView> create(struct wpe_view_backend*, const API::PageConfiguration&);

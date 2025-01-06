@@ -99,7 +99,6 @@ static void checkColor(PlatformColor *color, CGFloat red, CGFloat green, CGFloat
     EXPECT_EQ(alpha, observedAlpha);
 }
 
-#if HAVE(OS_DARK_MODE_SUPPORT)
 TEST(CopyRTF, StripsDefaultTextColorOfDarkContent)
 {
     auto attributedString = copyAttributedStringFromHTML(@"<style>:root { color-scheme: dark }</style> Default <span style=\"color: black\">Black</span> <span style=\"color: white\">White</span>", true);
@@ -121,7 +120,6 @@ TEST(CopyRTF, StripsDefaultTextColorOfDarkContent)
 
     EXPECT_EQ(i, 3UL);
 }
-#endif
 
 TEST(CopyRTF, StripsDefaultTextColorOfLightContent)
 {

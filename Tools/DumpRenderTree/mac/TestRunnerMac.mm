@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebCore/GeolocationPositionData.h>
 #import <WebKit/DOMDocument.h>
@@ -77,6 +78,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WallTime.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
@@ -127,9 +129,7 @@
 - (id)initWithGeolocationPosition:(WebCore::GeolocationPositionData&&)coreGeolocationPosition;
 @end
 
-TestRunner::~TestRunner()
-{
-}
+TestRunner::~TestRunner() = default;
 
 JSContextRef TestRunner::mainFrameJSContext()
 {
@@ -472,6 +472,20 @@ void TestRunner::setAutomaticLinkDetectionEnabled(bool enabled)
 #if !PLATFORM(IOS_FAMILY)
     [[mainFrame webView] setAutomaticLinkDetectionEnabled:enabled];
 #endif
+}
+
+JSValueRef TestRunner::alwaysResolvePromise(JSContextRef context)
+{
+    JSContext *jsContext = [JSContext contextWithJSGlobalContextRef:toGlobalRef(toJS(context))];
+    auto callback = ^(JSValue *resolve, JSValue *) {
+        [resolve callWithArguments:nil];
+    };
+    return [[JSValue valueWithNewPromiseInContext:jsContext fromExecutor:callback] JSValueRef];
+}
+
+void TestRunner::setPageScaleFactor(double scaleFactor, long x, long y)
+{
+    [[mainFrame webView] _scaleWebView:scaleFactor atOrigin:NSMakePoint(x, y)];
 }
 
 void TestRunner::setTabKeyCyclesThroughElements(bool cycles)
@@ -1194,3 +1208,8 @@ bool TestRunner::isSecureEventInputEnabled() const
 }
 
 #endif // PLATFORM(MAC)
+
+void TestRunner::setTopContentInset(double contentInset)
+{
+    [[mainFrame webView] _setTopContentInsetForTesting:contentInset];
+}

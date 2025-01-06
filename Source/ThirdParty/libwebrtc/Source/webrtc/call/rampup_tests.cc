@@ -10,27 +10,48 @@
 
 #include "call/rampup_tests.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "absl/flags/flag.h"
 #include "absl/strings/string_view.h"
+#include "api/field_trials_view.h"
+#include "api/make_ref_counted.h"
+#include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
 #include "api/rtc_event_log_output_file.h"
-#include "api/task_queue/default_task_queue_factory.h"
+#include "api/rtp_parameters.h"
+#include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
-#include "api/task_queue/task_queue_factory.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
 #include "api/test/metrics/metric.h"
+#include "api/test/simulated_network.h"
+#include "api/transport/bitrate_settings.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "call/audio_receive_stream.h"
+#include "call/audio_send_stream.h"
+#include "call/call.h"
 #include "call/fake_network_pipe.h"
+#include "call/flexfec_receive_stream.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
-#include "rtc_base/platform_thread.h"
 #include "rtc_base/string_encode.h"
 #include "rtc_base/task_queue_for_test.h"
-#include "rtc_base/time_utils.h"
+#include "rtc_base/task_utils/repeating_task.h"
+#include "test/call_test.h"
 #include "test/encoder_settings.h"
 #include "test/gtest.h"
+#include "test/rtp_rtcp_observer.h"
 #include "test/video_test_constants.h"
+#include "video/config/video_encoder_config.h"
 
 ABSL_FLAG(std::string,
           ramp_dump_name,
@@ -108,7 +129,7 @@ void RampUpTester::ModifySenderBitrateConfig(
 
 void RampUpTester::OnVideoStreamsCreated(
     VideoSendStream* send_stream,
-    const std::vector<VideoReceiveStreamInterface*>& receive_streams) {
+    const std::vector<VideoReceiveStreamInterface*>& /* receive_streams */) {
   send_stream_ = send_stream;
 }
 
@@ -135,6 +156,7 @@ class RampUpTester::VideoStreamFactory
 
  private:
   std::vector<VideoStream> CreateEncoderStreams(
+      const FieldTrialsView& /*field_trials*/,
       int frame_width,
       int frame_height,
       const VideoEncoderConfig& encoder_config) override {
@@ -262,7 +284,8 @@ void RampUpTester::ModifyFlexfecConfigs(
   (*receive_configs)[0].rtp.local_ssrc = video_ssrcs_[0];
 }
 
-void RampUpTester::OnCallsCreated(Call* sender_call, Call* receiver_call) {
+void RampUpTester::OnCallsCreated(Call* sender_call,
+                                  Call* /* receiver_call */) {
   RTC_DCHECK(sender_call);
   sender_call_ = sender_call;
   pending_task_ = RepeatingTaskHandle::Start(task_queue_, [this] {
@@ -274,8 +297,8 @@ void RampUpTester::OnCallsCreated(Call* sender_call, Call* receiver_call) {
 void RampUpTester::OnTransportCreated(
     test::PacketTransport* to_receiver,
     SimulatedNetworkInterface* sender_network,
-    test::PacketTransport* to_sender,
-    SimulatedNetworkInterface* receiver_network) {
+    test::PacketTransport* /* to_sender */,
+    SimulatedNetworkInterface* /* receiver_network */) {
   RTC_DCHECK_RUN_ON(task_queue_);
 
   send_transport_ = to_receiver;
@@ -411,7 +434,8 @@ RampUpDownUpTester::RampUpDownUpTester(size_t num_video_streams,
       interval_start_ms_(clock_->TimeInMilliseconds()),
       sent_bytes_(0),
       loss_rates_(loss_rates) {
-  forward_transport_config_.link_capacity_kbps = link_rates_[test_state_];
+  forward_transport_config_.link_capacity =
+      DataRate::KilobitsPerSec(link_rates_[test_state_]);
   forward_transport_config_.queue_delay_ms = 100;
   forward_transport_config_.loss_percent = loss_rates_[test_state_];
 }
@@ -550,7 +574,8 @@ void RampUpDownUpTester::EvolveTestState(int bitrate_bps, bool suspended) {
     case kTransitionToNextState:
       if (!ExpectingFec() || GetFecBytes() > 0) {
         test_state_ = next_state_;
-        forward_transport_config_.link_capacity_kbps = link_rates_[test_state_];
+        forward_transport_config_.link_capacity =
+            DataRate::KilobitsPerSec(link_rates_[test_state_]);
         // No loss while ramping up and down as it may affect the BWE
         // negatively, making the test flaky.
         forward_transport_config_.loss_percent = 0;
@@ -565,30 +590,29 @@ void RampUpDownUpTester::EvolveTestState(int bitrate_bps, bool suspended) {
 
 class RampUpTest : public test::CallTest {
  public:
-  RampUpTest()
-      : task_queue_factory_(CreateDefaultTaskQueueFactory()),
-        rtc_event_log_factory_(task_queue_factory_.get()) {
+  RampUpTest() {
     std::string dump_name(absl::GetFlag(FLAGS_ramp_dump_name));
     if (!dump_name.empty()) {
-      send_event_log_ = rtc_event_log_factory_.CreateRtcEventLog(
-          RtcEventLog::EncodingType::Legacy);
-      recv_event_log_ = rtc_event_log_factory_.CreateRtcEventLog(
-          RtcEventLog::EncodingType::Legacy);
+      std::unique_ptr<RtcEventLog> send_event_log =
+          rtc_event_log_factory_.Create(env());
+      std::unique_ptr<RtcEventLog> recv_event_log =
+          rtc_event_log_factory_.Create(env());
       bool event_log_started =
-          send_event_log_->StartLogging(
+          send_event_log->StartLogging(
               std::make_unique<RtcEventLogOutputFile>(
                   dump_name + ".send.rtc.dat", RtcEventLog::kUnlimitedOutput),
               RtcEventLog::kImmediateOutput) &&
-          recv_event_log_->StartLogging(
+          recv_event_log->StartLogging(
               std::make_unique<RtcEventLogOutputFile>(
                   dump_name + ".recv.rtc.dat", RtcEventLog::kUnlimitedOutput),
               RtcEventLog::kImmediateOutput);
       RTC_DCHECK(event_log_started);
+      SetSendEventLog(std::move(send_event_log));
+      SetRecvEventLog(std::move(recv_event_log));
     }
   }
 
  private:
-  const std::unique_ptr<TaskQueueFactory> task_queue_factory_;
   RtcEventLogFactory rtc_event_log_factory_;
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,6 +76,7 @@ struct Configuration {
     uint32_t maxBuffersPlusVertexBuffersForVertexStage = 8;
     uint32_t maxBuffersForFragmentStage = 8;
     uint32_t maxBuffersForComputeStage = 8;
+    uint32_t maximumCombinedWorkgroupVariablesSize = 16384;
     const HashSet<String> supportedFeatures = { };
 };
 
@@ -232,8 +233,8 @@ struct PrepareResult {
 std::variant<PrepareResult, Error> prepare(ShaderModule&, const HashMap<String, PipelineLayout*>&);
 std::variant<PrepareResult, Error> prepare(ShaderModule&, const String& entryPointName, PipelineLayout*);
 
-String generate(ShaderModule&, PrepareResult&, HashMap<String, ConstantValue>&);
+std::variant<String, Error> generate(ShaderModule&, PrepareResult&, HashMap<String, ConstantValue>&);
 
-ConstantValue evaluate(const AST::Expression&, const HashMap<String, ConstantValue>&);
+std::optional<ConstantValue> evaluate(const AST::Expression&, const HashMap<String, ConstantValue>&);
 
 } // namespace WGSL

@@ -14,11 +14,12 @@
 #include <fstream>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/environment/environment.h"
 #include "api/neteq/neteq.h"
 #include "api/neteq/neteq_factory.h"
 #include "api/test/neteq_simulator.h"
@@ -32,7 +33,8 @@ namespace test {
 class NetEqTestErrorCallback {
  public:
   virtual ~NetEqTestErrorCallback() = default;
-  virtual void OnInsertPacketError(const NetEqInput::PacketData& packet) {}
+  virtual void OnInsertPacketError(const NetEqInput::PacketData& /* packet */) {
+  }
   virtual void OnGetAudioError() {}
 };
 
@@ -87,7 +89,8 @@ class NetEqTest : public NetEqSimulator {
             NetEqFactory* neteq_factory,
             std::unique_ptr<NetEqInput> input,
             std::unique_ptr<AudioSink> output,
-            Callbacks callbacks);
+            Callbacks callbacks,
+            absl::string_view field_trials = "");
 
   ~NetEqTest() override;
 
@@ -100,6 +103,7 @@ class NetEqTest : public NetEqSimulator {
 
   void SetNextAction(Action next_operation) override;
   NetEqState GetNetEqState() override;
+  NetEq* GetNetEq() override { return neteq_.get(); }
 
   // Returns the statistics from NetEq.
   NetEqNetworkStatistics SimulationStats();
@@ -111,8 +115,9 @@ class NetEqTest : public NetEqSimulator {
   void RegisterDecoders(const DecoderMap& codecs);
   std::unique_ptr<NetEqInput> input_;
   SimulatedClock clock_;
-  absl::optional<Action> next_action_;
-  absl::optional<int> last_packet_time_ms_;
+  const Environment env_;
+  std::optional<Action> next_action_;
+  std::optional<int> last_packet_time_ms_;
   std::unique_ptr<NetEq> neteq_;
   std::unique_ptr<AudioSink> output_;
   Callbacks callbacks_;
@@ -120,7 +125,7 @@ class NetEqTest : public NetEqSimulator {
   NetEqState current_state_;
   NetEqOperationsAndState prev_ops_state_;
   NetEqLifetimeStatistics prev_lifetime_stats_;
-  absl::optional<uint32_t> last_packet_timestamp_;
+  std::optional<uint32_t> last_packet_timestamp_;
   std::unique_ptr<std::ofstream> text_log_;
 };
 

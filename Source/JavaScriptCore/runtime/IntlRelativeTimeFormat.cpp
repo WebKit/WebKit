@@ -31,6 +31,7 @@
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {

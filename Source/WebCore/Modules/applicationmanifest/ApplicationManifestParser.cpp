@@ -35,6 +35,7 @@
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <optional>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -101,6 +102,7 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const JSON::Object&
     parsedManifest.rawJSON = text;
     parsedManifest.manifestURL = manifestURL;
     parsedManifest.startURL = parseStartURL(manifest, documentURL);
+    parsedManifest.dir = parseDir(manifest);
     parsedManifest.display = parseDisplay(manifest);
     parsedManifest.name = parseName(manifest);
     parsedManifest.description = parseDescription(manifest);
@@ -172,6 +174,34 @@ URL ApplicationManifestParser::parseStartURL(const JSON::Object& manifest, const
     return startURL;
 }
 
+ApplicationManifest::Direction ApplicationManifestParser::parseDir(const JSON::Object& manifest)
+{
+    using enum ApplicationManifest::Direction;
+
+    auto value = manifest.getValue("dir"_s);
+    if (!value)
+        return Auto;
+
+    auto stringValue = value->asString();
+    if (!stringValue) {
+        logManifestPropertyNotAString("dir"_s);
+        return Auto;
+    }
+
+    static constexpr std::pair<ComparableLettersLiteral, ApplicationManifest::Direction> directionMappings[] = {
+        { "auto"_s, Auto },
+        { "ltr"_s, LTR },
+        { "rtl"_s, RTL },
+    };
+    static constexpr SortedArrayMap directions { directionMappings };
+
+    if (auto* dirValue = directions.tryGet(StringView(stringValue).trim(isASCIIWhitespace<UChar>)))
+        return *dirValue;
+
+    logDeveloperWarning(makeString('"', stringValue, "\" is not a valid dir."_s));
+    return Auto;
+}
+
 ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON::Object& manifest)
 {
     auto value = manifest.getValue("display"_s);
@@ -185,14 +215,14 @@ ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON:
     }
 
     static constexpr std::pair<ComparableLettersLiteral, ApplicationManifest::Display> displayValueMappings[] = {
-        { "browser", ApplicationManifest::Display::Browser },
-        { "fullscreen", ApplicationManifest::Display::Fullscreen },
-        { "minimal-ui", ApplicationManifest::Display::MinimalUI },
-        { "standalone", ApplicationManifest::Display::Standalone },
+        { "browser"_s, ApplicationManifest::Display::Browser },
+        { "fullscreen"_s, ApplicationManifest::Display::Fullscreen },
+        { "minimal-ui"_s, ApplicationManifest::Display::MinimalUI },
+        { "standalone"_s, ApplicationManifest::Display::Standalone },
     };
     static constexpr SortedArrayMap displayValues { displayValueMappings };
 
-    if (auto* displayValue = displayValues.tryGet(StringView(stringValue).trim(isUnicodeCompatibleASCIIWhitespace<UChar>)))
+    if (auto* displayValue = displayValues.tryGet(StringView(stringValue).trim(isASCIIWhitespace<UChar>)))
         return *displayValue;
 
     logDeveloperWarning(makeString("\""_s, stringValue, "\" is not a valid display mode."_s));
@@ -212,19 +242,19 @@ const std::optional<ScreenOrientationLockType> ApplicationManifestParser::parseO
     }
 
     static constexpr std::pair<ComparableLettersLiteral, WebCore::ScreenOrientationLockType> orientationValueMappings[] = {
-        { "any", WebCore::ScreenOrientationLockType::Any },
-        { "landscape", WebCore::ScreenOrientationLockType::Landscape },
-        { "landscape-primary", WebCore::ScreenOrientationLockType::LandscapePrimary },
-        { "landscape-secondary", WebCore::ScreenOrientationLockType::LandscapeSecondary },
-        { "natural", WebCore::ScreenOrientationLockType::Natural },
-        { "portrait", WebCore::ScreenOrientationLockType::Portrait },
-        { "portrait-primary", WebCore::ScreenOrientationLockType::PortraitPrimary },
-        { "portrait-secondary", WebCore::ScreenOrientationLockType::PortraitSecondary },
+        { "any"_s, WebCore::ScreenOrientationLockType::Any },
+        { "landscape"_s, WebCore::ScreenOrientationLockType::Landscape },
+        { "landscape-primary"_s, WebCore::ScreenOrientationLockType::LandscapePrimary },
+        { "landscape-secondary"_s, WebCore::ScreenOrientationLockType::LandscapeSecondary },
+        { "natural"_s, WebCore::ScreenOrientationLockType::Natural },
+        { "portrait"_s, WebCore::ScreenOrientationLockType::Portrait },
+        { "portrait-primary"_s, WebCore::ScreenOrientationLockType::PortraitPrimary },
+        { "portrait-secondary"_s, WebCore::ScreenOrientationLockType::PortraitSecondary },
     };
 
     static SortedArrayMap orientationValues { orientationValueMappings };
 
-    if (auto* orientationValue = orientationValues.tryGet(StringView(stringValue).trim(isUnicodeCompatibleASCIIWhitespace<UChar>)))
+    if (auto* orientationValue = orientationValues.tryGet(StringView(stringValue).trim(isASCIIWhitespace<UChar>)))
         return *orientationValue;
 
     logDeveloperWarning(makeString("\""_s, stringValue, "\" is not a valid orientation."_s));
@@ -326,7 +356,7 @@ Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JS
                 purposes.add(ApplicationManifest::Icon::Purpose::Any);
                 currentIcon.purposes = purposes;
             } else {
-                for (auto keyword : StringView(purposeStringValue).trim(isUnicodeCompatibleASCIIWhitespace<UChar>).splitAllowingEmptyEntries(' ')) {
+                for (auto keyword : StringView(purposeStringValue).trim(isASCIIWhitespace<UChar>).splitAllowingEmptyEntries(' ')) {
                     if (equalLettersIgnoringASCIICase(keyword, "monochrome"_s))
                         purposes.add(ApplicationManifest::Icon::Purpose::Monochrome);
                     else if (equalLettersIgnoringASCIICase(keyword, "maskable"_s))

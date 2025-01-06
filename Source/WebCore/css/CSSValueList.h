@@ -66,7 +66,7 @@ public:
     using CSSValue::separatorCSSText;
 
     bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
-    void customSetReplacementURLForSubresources(const HashMap<String, String>&);
+    void customSetReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>&);
     void customClearReplacementURLForSubresources();
 
     CSSValueListBuilder copyValues() const;
@@ -146,7 +146,9 @@ inline const CSSValue& CSSValueContainingVector::operator[](unsigned index) cons
         return *m_inlineStorage[index];
     }
     RELEASE_ASSERT(index < m_size);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return *m_additionalStorage[index - maxInlineSize];
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 void add(Hasher&, const CSSValueContainingVector&);

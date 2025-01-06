@@ -38,6 +38,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

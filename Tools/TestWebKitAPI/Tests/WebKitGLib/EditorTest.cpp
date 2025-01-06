@@ -40,7 +40,9 @@ private:
         s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(editor));
         g_signal_connect_swapped(editor, "selection-changed", G_CALLBACK(selectionChangedCallback), &selectionChanged);
 
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(webkit_web_page_get_main_frame(page)));
+        G_GNUC_END_IGNORE_DEPRECATIONS
         g_assert_true(JSC_IS_CONTEXT(jsContext.get()));
         s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsContext.get()));
 

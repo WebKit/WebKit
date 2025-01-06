@@ -53,7 +53,7 @@ TEST(WebKit, InjectedBundleInitializationUserDataCallbackWins)
     WKContextSetInitializationUserDataForInjectedBundle(context.get(), initializationDictionary.get());
 
     WKContextInjectedBundleClientV1 injectedBundleClient;
-    memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+    zeroBytes(injectedBundleClient);
 
     injectedBundleClient.base.version = 1;
     injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;

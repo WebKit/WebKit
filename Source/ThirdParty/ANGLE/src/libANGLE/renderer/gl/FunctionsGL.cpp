@@ -53,7 +53,8 @@ static std::vector<std::string> GetIndexedExtensions(PFNGLGETINTEGERVPROC getInt
 
     for (GLint i = 0; i < numExtensions; i++)
     {
-        result.push_back(reinterpret_cast<const char *>(getStringIFunction(GL_EXTENSIONS, i)));
+        if (const char* extensionString = reinterpret_cast<const char *>(getStringIFunction(GL_EXTENSIONS, i)))
+            result.push_back(extensionString);
     }
 
     return result;
@@ -157,7 +158,7 @@ void FunctionsGL::initialize(const egl::AttributeMap &displayAttributes)
             {
                 initProcsDesktopGL(version, extensionSet);
                 // Test that ANGLE_ENABLE_GL_DESKTOP_BACKEND has been enabled
-                // See http://anglebug.com/8195
+                // See http://anglebug.com/42266631
                 ASSERT(getString != nullptr && getError != nullptr);
             }
             break;

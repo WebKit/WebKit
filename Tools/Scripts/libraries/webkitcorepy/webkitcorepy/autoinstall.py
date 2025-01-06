@@ -42,14 +42,10 @@ from webkitcorepy import log
 from webkitcorepy.version import Version
 from webkitcorepy.file_lock import FileLock
 
-if sys.version_info > (3, 0):
-    from html.parser import HTMLParser
-    from importlib import machinery as importmachinery
-    from urllib.request import urlopen
-    from urllib.error import URLError
-else:
-    from urllib2 import urlopen, URLError
-    from HTMLParser import HTMLParser
+from html.parser import HTMLParser
+from importlib import machinery as importmachinery
+from urllib.request import urlopen
+from urllib.error import URLError
 
 
 class SimplyPypiIndexPageParser(HTMLParser):
@@ -116,7 +112,7 @@ class Package(object):
                             file.write(data)
                     return
                 except (IOError, URLError) as e:
-                    if count > (AutoInstall.times_to_retry or 0):
+                    if count == (AutoInstall.times_to_retry or 0):
                         raise
                     else:
                         AutoInstall.log(str(e))
@@ -125,6 +121,8 @@ class Package(object):
                     if response:
                         response.close()
                     count += 1
+            # This is unreachable because the raise in the above loop should always return or raise.
+            raise RuntimeError("unreachable")
 
         def unpack(self, target):
             if not os.path.isfile(self.path):
@@ -213,11 +211,11 @@ class Package(object):
                                 # This is a subset of compatible tags, but these are the
                                 # only ones that are particularly common; we need these
                                 # to be able to install packaging and its dependencies.
-                                generic_tags = ["py2.py3-none-any", "py3.py2-none-any"]
-                                if sys.version_info >= (3,):
-                                    generic_tags.append("py3-none-any")
-                                else:
-                                    generic_tags.append("py2-none-any")
+                                generic_tags = [
+                                    "py2.py3-none-any",
+                                    "py3.py2-none-any",
+                                    "py3-none-any",
+                                ]
 
                                 if match.group(1) not in generic_tags:
                                     continue
@@ -412,9 +410,13 @@ class Package(object):
                         )
                     ):
                         raise OSError('Cannot install {}, could not find setup.py'.format(self.name))
-                    for directory in to_be_moved:
-                        shutil.rmtree(os.path.join(AutoInstall.directory, directory), ignore_errors=True)
-                        shutil.move(os.path.join(temp_location, directory), AutoInstall.directory)
+                    for file in to_be_moved:
+                        target = os.path.join(AutoInstall.directory, file)
+                        if os.path.isdir(target):
+                            shutil.rmtree(target, ignore_errors=True)
+                        elif os.path.exists(target):
+                            os.remove(target)
+                        shutil.move(os.path.join(temp_location, file), AutoInstall.directory)
 
                 self.do_post_install(temp_location)
 
@@ -428,15 +430,19 @@ class Package(object):
                     'version': str(archive.version),
                 }
 
+                AutoInstall.log('Installed {}!'.format(archive))
+            except Exception:
+                if self.name in AutoInstall.manifest:
+                    del AutoInstall.manifest[self.name]
+
+                AutoInstall.log('Failed to install {}!'.format(archive), level=logging.CRITICAL)
+                raise
+            finally:
                 manifest = os.path.join(AutoInstall.directory, AutoInstall.MANIFEST_JSON)
                 with open(manifest, 'w') as file:
                     json.dump(AutoInstall.manifest, file, indent=4)
                 AutoInstall.userspace_should_own(manifest)
 
-                AutoInstall.log('Installed {}!'.format(archive))
-            except Exception:
-                AutoInstall.log('Failed to install {}!'.format(archive), level=logging.CRITICAL)
-                raise
 
 
 def _default_pypi_index():
@@ -459,9 +465,7 @@ class AutoInstall(object):
     CA_CERT_PATH_ENV_VAR = 'AUTOINSTALL_CA_CERT_PATH'
 
     # This list of libraries is required to install other libraries, and must be installed first
-    BASE_LIBRARIES = ['setuptools', 'wheel', 'six', 'pyparsing', 'packaging', 'setuptools_scm']
-    if sys.version_info >= (3, 0):
-        BASE_LIBRARIES.insert(-1, 'tomli')
+    BASE_LIBRARIES = ['setuptools', 'wheel', 'six', 'pyparsing', 'packaging', 'tomli', 'setuptools_scm']
 
     directory = None
     index = _default_pypi_index()
@@ -705,9 +709,6 @@ class AutoInstall(object):
             return None
 
         cls.install(name)
-        if sys.version_info < (3, 0):
-            # Python 2 works fine with the default module finder, once we've installed the module in question
-            return None
 
         path = cls.directory
         for part in fullname.split('.'):

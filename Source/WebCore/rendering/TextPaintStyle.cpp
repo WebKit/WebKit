@@ -50,9 +50,7 @@ bool TextPaintStyle::operator==(const TextPaintStyle& other) const
 {
     return fillColor == other.fillColor && strokeColor == other.strokeColor && emphasisMarkColor == other.emphasisMarkColor
         && strokeWidth == other.strokeWidth && paintOrder == other.paintOrder && lineJoin == other.lineJoin
-#if HAVE(OS_DARK_MODE_SUPPORT)
         && useDarkAppearance == other.useDarkAppearance
-#endif
         && lineCap == other.lineCap && miterLimit == other.miterLimit;
 }
 
@@ -76,10 +74,7 @@ static Color adjustColorForVisibilityOnBackground(const Color& textColor, const 
 TextPaintStyle computeTextPaintStyle(const LocalFrame& frame, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
 {
     TextPaintStyle paintStyle;
-
-#if HAVE(OS_DARK_MODE_SUPPORT)
     paintStyle.useDarkAppearance = frame.document() ? frame.document()->useDarkAppearance(&lineStyle) : false;
-#endif
 
     auto viewportSize = frame.view() ? frame.view()->size() : IntSize();
     paintStyle.strokeWidth = lineStyle.computedStrokeWidth(viewportSize);
@@ -99,7 +94,7 @@ TextPaintStyle computeTextPaintStyle(const LocalFrame& frame, const RenderStyle&
         Page* page = frame.page();
         if (page && page->focusController().isActive()) {
             OptionSet<StyleColorOptions> options;
-            if (page->useSystemAppearance())
+            if (page->settings().useSystemAppearance())
                 options.add(StyleColorOptions::UseSystemAppearance);
             paintStyle.fillColor = RenderTheme::singleton().defaultButtonTextColor(options);
             return paintStyle;
@@ -180,10 +175,7 @@ void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paint
         context.setTextDrawingMode(newMode);
         mode = newMode;
     }
-
-#if HAVE(OS_DARK_MODE_SUPPORT)
     context.setUseDarkAppearance(paintStyle.useDarkAppearance);
-#endif
 
     Color fillColor = fillColorType == UseEmphasisMarkColor ? paintStyle.emphasisMarkColor : paintStyle.fillColor;
     if (mode.contains(TextDrawingMode::Fill) && (fillColor != context.fillColor()))

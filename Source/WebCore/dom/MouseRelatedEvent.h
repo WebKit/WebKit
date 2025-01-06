@@ -39,7 +39,7 @@ struct MouseRelatedEventInit : public EventModifierInit {
 
 // Internal only: Helper class for what's common between mouse and wheel events.
 class MouseRelatedEvent : public UIEventWithKeyState {
-    WTF_MAKE_ISO_ALLOCATED(MouseRelatedEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MouseRelatedEvent);
 public:
     enum class IsSimulated : bool { No, Yes };
 
@@ -52,6 +52,8 @@ public:
     int clientY() const { return m_clientLocation.y(); }
     double movementX() const { return m_movementX; }
     double movementY() const { return m_movementY; }
+
+    const IntPoint& windowLocation() const { return m_windowLocation; }
 
     const LayoutPoint& clientLocation() const { return m_clientLocation; }
     int layerX() override;
@@ -84,7 +86,7 @@ protected:
 
     void initCoordinates();
     void initCoordinates(const LayoutPoint& clientLocation);
-    void receivedTarget() final;
+    void receivedTarget() override;
 
     void computePageLocation();
     void computeRelativePosition();
@@ -104,6 +106,7 @@ private:
     LayoutPoint m_layerLocation;
     LayoutPoint m_offsetLocation;
     LayoutPoint m_absoluteLocation;
+    IntPoint m_windowLocation;
     bool m_isSimulated { false };
     bool m_hasCachedRelativePosition { false };
 };

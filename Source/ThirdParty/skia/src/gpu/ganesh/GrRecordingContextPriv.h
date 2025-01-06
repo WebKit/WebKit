@@ -4,28 +4,60 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-
 #ifndef GrRecordingContextPriv_DEFINED
 #define GrRecordingContextPriv_DEFINED
 
-#include "include/core/SkPaint.h"
+#include "include/core/SkRefCnt.h"
 #include "include/core/SkTypes.h"
-#include "include/gpu/GrRecordingContext.h"
-#include "src/gpu/RefCntedCallback.h"
+#include "include/gpu/GpuTypes.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
+#include "include/private/base/SkDebug.h"
+#include "include/private/base/SkTArray.h"
 #include "src/gpu/SkBackingFit.h"
 #include "src/gpu/ganesh/Device.h"
+#include "src/gpu/ganesh/GrColorInfo.h"
 #include "src/gpu/ganesh/GrImageContextPriv.h"
-#include "src/text/gpu/SDFTControl.h"
+#include "src/text/gpu/SubRunControl.h"
 
-class GrImageInfo;
+#include <memory>
+#include <string_view>
+
+class GrAuditTrail;
+class GrBackendFormat;
+class GrBackendTexture;
+class GrContextThreadSafeProxy;
 class GrDeferredDisplayList;
+class GrDrawingManager;
+class GrImageInfo;
+class GrOnFlushCallbackObject;
+class GrProgramInfo;
+class GrProxyProvider;
+class GrSurfaceProxy;
+class GrSurfaceProxyView;
+class GrThreadSafeCache;
+class SkArenaAlloc;
+class SkColorSpace;
+class SkSurfaceProps;
+enum SkAlphaType : int;
+enum class GrColorType;
+struct SkISize;
+struct SkImageInfo;
+
 namespace skgpu {
-    class Swizzle;
-}
-namespace skgpu::ganesh {
+class Swizzle;
+class RefCntedCallback;
+
+namespace ganesh {
 class SurfaceContext;
 class SurfaceFillContext;
-}  // namespace skgpu::ganesh
+}  // namespace ganesh
+}  // namespace skgpu
+
+namespace sktext::gpu {
+class SubRunAllocator;
+class TextBlobRedrawCoordinator;
+}  // namespace sktext::gpu
 
 /** Class that exposes methods on GrRecordingContext that are only intended for use internal to
     Skia. This class is purely a privileged window into GrRecordingContext. It should never have
@@ -76,7 +108,7 @@ public:
 
     GrAuditTrail* auditTrail() { return this->context()->fAuditTrail.get(); }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     // Used by tests that intentionally exercise codepaths that print warning messages, in order to
     // not confuse users with output that looks like a testing failure.
     class AutoSuppressWarningMessages {
@@ -95,7 +127,7 @@ public:
 #endif
 
     void printWarningMessage(const char* msg) const {
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
         if (this->context()->fSuppressWarningMessages > 0) {
             return;
         }
@@ -107,12 +139,12 @@ public:
         return &this->context()->fStats;
     }
 
-#if GR_GPU_STATS && defined(GR_TEST_UTILS)
+#if GR_GPU_STATS && defined(GPU_TEST_UTILS)
     using DMSAAStats = GrRecordingContext::DMSAAStats;
     DMSAAStats& dmsaaStats() { return this->context()->fDMSAAStats; }
 #endif
 
-    sktext::gpu::SDFTControl getSDFTControl(bool useSDFTForSmallText) const;
+    sktext::gpu::SubRunControl getSubRunControl(bool useSDFTForSmallText) const;
 
     /**
      * Create a GrRecordingContext without a resource cache

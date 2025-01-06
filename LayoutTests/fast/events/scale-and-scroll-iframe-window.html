@@ -8,6 +8,8 @@
     </style>
     <script>
         window.enablePixelTesting = true;
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
 
         function scroll() {
             window.scrollTo(0, 100);
@@ -18,18 +20,20 @@
             shouldBe("frame.contentDocument.body.scrollLeft", "100");
             shouldBe("frame.contentWindow.scrollX", "100");
             shouldBe("frame.contentWindow.scrollY", "100");
+            if (window.testRunner)
+                window.testRunner.notifyDone();
         }
 
-        function scaleWithEventSender() {
+        async function scaleWithEventSender() {
             var scaleFactor = 0.5;
             var scaleOffset = 0;
-            if (window.internals) {
-                 window.internals.setPageScaleFactor(scaleFactor, scaleOffset, scaleOffset);
+            if (window.testRunner) {
+                await window.testRunner.setPageScaleFactor(scaleFactor, scaleOffset, scaleOffset);
             }
         }
 
-        function test() {
-            scaleWithEventSender();
+        async function test() {
+            await scaleWithEventSender();
             scroll();
         }
     </script>

@@ -17,9 +17,10 @@
 #include "p2p/base/basic_packet_socket_factory.h"
 #include "p2p/base/p2p_constants.h"
 #include "p2p/base/transport_description.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/helpers.h"
 #include "rtc_base/ip_address.h"
+#include "rtc_base/socket_address.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
@@ -82,18 +83,30 @@ class TCPPortTest : public ::testing::Test, public sigslot::has_slots<> {
     return &networks_.back();
   }
 
-  std::unique_ptr<TCPPort> CreateTCPPort(const SocketAddress& addr) {
+  std::unique_ptr<TCPPort> CreateTCPPort(const SocketAddress& addr,
+                                         bool allow_listen = true,
+                                         int port_number = 0) {
     auto port = std::unique_ptr<TCPPort>(
-        TCPPort::Create(&main_, &socket_factory_, MakeNetwork(addr), 0, 0,
-                        username_, password_, true, &field_trials_));
+        TCPPort::Create({.network_thread = &main_,
+                         .socket_factory = &socket_factory_,
+                         .network = MakeNetwork(addr),
+                         .ice_username_fragment = username_,
+                         .ice_password = password_,
+                         .field_trials = &field_trials_},
+                        port_number, port_number, allow_listen));
     port->SetIceTiebreaker(kTiebreakerDefault);
     return port;
   }
 
   std::unique_ptr<TCPPort> CreateTCPPort(const rtc::Network* network) {
     auto port = std::unique_ptr<TCPPort>(
-        TCPPort::Create(&main_, &socket_factory_, network, 0, 0, username_,
-                        password_, true, &field_trials_));
+        TCPPort::Create({.network_thread = &main_,
+                         .socket_factory = &socket_factory_,
+                         .network = network,
+                         .ice_username_fragment = username_,
+                         .ice_password = password_,
+                         .field_trials = &field_trials_},
+                        0, 0, true));
     port->SetIceTiebreaker(kTiebreakerDefault);
     return port;
   }
@@ -256,4 +269,94 @@ TEST_F(TCPPortTest, SignalSentPacket) {
   }
   EXPECT_EQ_WAIT(10, client_counter.sent_packets(), kTimeout);
   EXPECT_EQ_WAIT(10, server_counter.sent_packets(), kTimeout);
+}
+
+// Test that SignalSentPacket is fired when a packet is successfully sent, even
+// after a remote server has been restarted.
+TEST_F(TCPPortTest, SignalSentPacketAfterReconnect) {
+  std::unique_ptr<TCPPort> client(
+      CreateTCPPort(kLocalAddr, /*allow_listen=*/false));
+  constexpr int kServerPort = 123;
+  std::unique_ptr<TCPPort> server(
+      CreateTCPPort(kRemoteAddr, /*allow_listen=*/true, kServerPort));
+  client->SetIceRole(cricket::ICEROLE_CONTROLLING);
+  server->SetIceRole(cricket::ICEROLE_CONTROLLED);
+  client->PrepareAddress();
+  server->PrepareAddress();
+
+  Connection* client_conn =
+      client->CreateConnection(server->Candidates()[0], Port::ORIGIN_MESSAGE);
+  ASSERT_NE(nullptr, client_conn);
+  ASSERT_TRUE_WAIT(client_conn->connected(), kTimeout);
+
+  // Need to get the port of the actual outgoing socket.
+  cricket::Candidate client_candidate = client->Candidates()[0];
+  client_candidate.set_address(static_cast<cricket::TCPConnection*>(client_conn)
+                                   ->socket()
+                                   ->GetLocalAddress());
+  client_candidate.set_tcptype("");
+  Connection* server_conn =
+      server->CreateConnection(client_candidate, Port::ORIGIN_THIS_PORT);
+  ASSERT_TRUE_WAIT(server_conn->connected(), kTimeout);
+  EXPECT_FALSE(client_conn->writable());
+  client_conn->Ping(rtc::TimeMillis());
+  ASSERT_TRUE_WAIT(client_conn->writable(), kTimeout);
+
+  SentPacketCounter client_counter(client.get());
+  static const char kData[] = "hello";
+  int result = client_conn->Send(&kData, sizeof(kData), rtc::PacketOptions());
+  EXPECT_EQ(result, 6);
+
+  // Deleting the server port should break the current connection.
+  server = nullptr;
+  server_conn = nullptr;
+  ASSERT_TRUE_WAIT(!client_conn->connected(), kTimeout);
+
+  // Recreate the server port with the same port number.
+  server = CreateTCPPort(kRemoteAddr, /*allow_listen=*/true, kServerPort);
+  server->SetIceRole(cricket::ICEROLE_CONTROLLED);
+  server->PrepareAddress();
+
+  // Sending a packet from the client will trigger a reconnect attempt but the
+  // packet will be discarded.
+  result = client_conn->Send(&kData, sizeof(kData), rtc::PacketOptions());
+  EXPECT_EQ(result, SOCKET_ERROR);
+  ASSERT_TRUE_WAIT(client_conn->connected(), kTimeout);
+  // For unknown reasons, connection is still supposed to be writable....
+  EXPECT_TRUE(client_conn->writable());
+  for (int i = 0; i < 10; ++i) {
+    // All sent packets still fail to send.
+    EXPECT_EQ(client_conn->Send(&kData, sizeof(kData), rtc::PacketOptions()),
+              SOCKET_ERROR);
+  }
+  // And are not reported as sent.
+  EXPECT_EQ_WAIT(client_counter.sent_packets(), 1, kTimeout);
+
+  // Create the server connection again so server can reply to STUN pings.
+  // Client outgoing socket port will have changed since the client create a new
+  // socket when it reconnect.
+  client_candidate = client->Candidates()[0];
+  client_candidate.set_address(static_cast<cricket::TCPConnection*>(client_conn)
+                                   ->socket()
+                                   ->GetLocalAddress());
+  client_candidate.set_tcptype("");
+  server_conn =
+      server->CreateConnection(client_candidate, Port::ORIGIN_THIS_PORT);
+  ASSERT_TRUE_WAIT(server_conn->connected(), kTimeout);
+  EXPECT_EQ_WAIT(client_counter.sent_packets(), 1, kTimeout);
+
+  // Send Stun Binding request.
+  client_conn->Ping(rtc::TimeMillis());
+  // The Stun Binding request is reported as sent.
+  EXPECT_EQ_WAIT(client_counter.sent_packets(), 2, kTimeout);
+  // Wait a bit for the Stun response to be received.
+  rtc::Thread::Current()->ProcessMessages(100);
+
+  // After the Stun Ping response has been received, packets can be sent again
+  // and SignalSentPacket should be invoked.
+  for (int i = 0; i < 5; ++i) {
+    EXPECT_EQ(client_conn->Send(&kData, sizeof(kData), rtc::PacketOptions()),
+              6);
+  }
+  EXPECT_EQ_WAIT(client_counter.sent_packets(), 2 + 5, kTimeout);
 }

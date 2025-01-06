@@ -29,6 +29,7 @@
 #include <WebKit/WKGeolocationManager.h>
 #include <string.h>
 #include <wtf/Assertions.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/WallTime.h>
 
 namespace WTR {
@@ -50,7 +51,7 @@ GeolocationProviderMock::GeolocationProviderMock(WKContextRef context)
     , m_geolocationManager(WKContextGetGeolocationManager(context))
 {
     WKGeolocationProviderV1 providerCallback;
-    memset(&providerCallback, 0, sizeof(WKGeolocationProviderV1));
+    zeroBytes(providerCallback);
     providerCallback.base.version = 1;
     providerCallback.base.clientInfo = this;
     providerCallback.startUpdating = startUpdatingCallback;

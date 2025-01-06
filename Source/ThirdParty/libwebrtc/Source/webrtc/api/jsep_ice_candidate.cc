@@ -10,11 +10,15 @@
 
 #include "api/jsep_ice_candidate.h"
 
+#include <cstddef>
 #include <memory>
+#include <string>
 #include <utility>
 
 #include "absl/algorithm/container.h"
 #include "absl/memory/memory.h"
+#include "api/candidate.h"
+#include "api/jsep.h"
 
 namespace webrtc {
 

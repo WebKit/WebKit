@@ -29,7 +29,7 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLineBreak.h"
 #include "RenderStyleInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(TREE_DEBUGGING)
@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyInlineBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyInlineBox);
 
 struct SameSizeAsLegacyInlineBox {
     virtual ~SameSizeAsLegacyInlineBox() = default;
@@ -250,38 +250,38 @@ void LegacyInlineBox::clearKnownToHaveNoOverflow()
 
 FloatPoint LegacyInlineBox::locationIncludingFlipping() const
 {
-    if (!renderer().style().isFlippedBlocksWritingMode())
+    if (!renderer().writingMode().isBlockFlipped())
         return topLeft();
     RenderBlockFlow& block = root().blockFlow();
-    if (block.style().isHorizontalWritingMode())
+    if (block.writingMode().isHorizontal())
         return { x(), block.height() - height() - y() };
     return { block.width() - width() - x(), y() };
 }
 
 void LegacyInlineBox::flipForWritingMode(FloatRect& rect) const
 {
-    if (!renderer().style().isFlippedBlocksWritingMode())
+    if (!renderer().writingMode().isBlockFlipped())
         return;
     root().blockFlow().flipForWritingMode(rect);
 }
 
 FloatPoint LegacyInlineBox::flipForWritingMode(const FloatPoint& point) const
 {
-    if (!renderer().style().isFlippedBlocksWritingMode())
+    if (!renderer().writingMode().isBlockFlipped())
         return point;
     return root().blockFlow().flipForWritingMode(point);
 }
 
 void LegacyInlineBox::flipForWritingMode(LayoutRect& rect) const
 {
-    if (!renderer().style().isFlippedBlocksWritingMode())
+    if (!renderer().writingMode().isBlockFlipped())
         return;
     root().blockFlow().flipForWritingMode(rect);
 }
 
 LayoutPoint LegacyInlineBox::flipForWritingMode(const LayoutPoint& point) const
 {
-    if (!renderer().style().isFlippedBlocksWritingMode())
+    if (!renderer().writingMode().isBlockFlipped())
         return point;
     return root().blockFlow().flipForWritingMode(point);
 }

@@ -441,6 +441,69 @@ bool skcms_GetWTPT(const skcms_ICCProfile* profile, float xyz[3]) {
            read_tag_xyz(&tag, &xyz[0], &xyz[1], &xyz[2]);
 }
 
+static int data_color_space_channel_count(uint32_t data_color_space) {
+    switch (data_color_space) {
+        case skcms_Signature_CMYK:   return 4;
+        case skcms_Signature_Gray:   return 1;
+        case skcms_Signature_RGB:    return 3;
+        case skcms_Signature_Lab:    return 3;
+        case skcms_Signature_XYZ:    return 3;
+        case skcms_Signature_CIELUV: return 3;
+        case skcms_Signature_YCbCr:  return 3;
+        case skcms_Signature_CIEYxy: return 3;
+        case skcms_Signature_HSV:    return 3;
+        case skcms_Signature_HLS:    return 3;
+        case skcms_Signature_CMY:    return 3;
+        case skcms_Signature_2CLR:   return 2;
+        case skcms_Signature_3CLR:   return 3;
+        case skcms_Signature_4CLR:   return 4;
+        case skcms_Signature_5CLR:   return 5;
+        case skcms_Signature_6CLR:   return 6;
+        case skcms_Signature_7CLR:   return 7;
+        case skcms_Signature_8CLR:   return 8;
+        case skcms_Signature_9CLR:   return 9;
+        case skcms_Signature_10CLR:  return 10;
+        case skcms_Signature_11CLR:  return 11;
+        case skcms_Signature_12CLR:  return 12;
+        case skcms_Signature_13CLR:  return 13;
+        case skcms_Signature_14CLR:  return 14;
+        case skcms_Signature_15CLR:  return 15;
+        default:                     return -1;
+    }
+}
+
+int skcms_GetInputChannelCount(const skcms_ICCProfile* profile) {
+    int a2b_count = 0;
+    if (profile->has_A2B) {
+        a2b_count = profile->A2B.input_channels != 0
+                        ? static_cast<int>(profile->A2B.input_channels)
+                        : 3;
+    }
+
+    skcms_ICCTag tag;
+    int trc_count = 0;
+    if (skcms_GetTagBySignature(profile, skcms_Signature_kTRC, &tag)) {
+        trc_count = 1;
+    } else if (profile->has_trc) {
+        trc_count = 3;
+    }
+
+    int dcs_count = data_color_space_channel_count(profile->data_color_space);
+
+    if (dcs_count < 0) {
+        return -1;
+    }
+
+    if (a2b_count > 0 && a2b_count != dcs_count) {
+        return -1;
+    }
+    if (trc_count > 0 && trc_count != dcs_count) {
+        return -1;
+    }
+
+    return dcs_count;
+}
+
 static bool read_to_XYZD50(const skcms_ICCTag* rXYZ, const skcms_ICCTag* gXYZ,
                            const skcms_ICCTag* bXYZ, skcms_Matrix3x3* toXYZ) {
     return read_tag_xyz(rXYZ, &toXYZ->vals[0][0], &toXYZ->vals[1][0], &toXYZ->vals[2][0]) &&
@@ -1401,88 +1464,89 @@ const skcms_ICCProfile* skcms_sRGB_profile() {
 
         // We choose to represent sRGB with its canonical transfer function,
         // and with its canonical XYZD50 gamut matrix.
-        true,  // has_trc, followed by the 3 trc curves
-        {
+        {   // the 3 trc curves
             {{0, {2.4f, (float)(1/1.055), (float)(0.055/1.055), (float)(1/12.92), 0.04045f, 0, 0}}},
             {{0, {2.4f, (float)(1/1.055), (float)(0.055/1.055), (float)(1/12.92), 0.04045f, 0, 0}}},
             {{0, {2.4f, (float)(1/1.055), (float)(0.055/1.055), (float)(1/12.92), 0.04045f, 0, 0}}},
         },
 
-        true,  // has_toXYZD50, followed by 3x3 toXYZD50 matrix
-        {{
+        {{  // 3x3 toXYZD50 matrix
             { 0.436065674f, 0.385147095f, 0.143066406f },
             { 0.222488403f, 0.716873169f, 0.060607910f },
             { 0.013916016f, 0.097076416f, 0.714096069f },
         }},
 
-        false, // has_A2B, followed by A2B itself, which we don't care about.
-        {
-            0,
-            {
+        {   // an empty A2B
+            {   // input_curves
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
             },
-            {0,0,0,0},
-            nullptr,
-            nullptr,
+            nullptr,   // grid_8
+            nullptr,   // grid_16
+            0,         // input_channels
+            {0,0,0,0}, // grid_points
 
-            0,
-            {
+            {   // matrix_curves
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
             },
-            {{
+            {{  // matrix (3x4)
                 { 0,0,0,0 },
                 { 0,0,0,0 },
                 { 0,0,0,0 },
             }},
+            0,  // matrix_channels
 
-            0,
-            {
+            0,  // output_channels
+            {   // output_curves
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
             },
         },
 
-        false, // has_B2A, followed by B2A itself, which we also don't care about.
-        {
-            0,
-            {
+        {   // an empty B2A
+            {   // input_curves
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
             },
+            0,  // input_channels
 
-            0,
-            {{
+            0,  // matrix_channels
+            {   // matrix_curves
+                {{0, {0,0, 0,0,0,0,0}}},
+                {{0, {0,0, 0,0,0,0,0}}},
+                {{0, {0,0, 0,0,0,0,0}}},
+            },
+            {{  // matrix (3x4)
                 { 0,0,0,0 },
                 { 0,0,0,0 },
                 { 0,0,0,0 },
             }},
-            {
-                {{0, {0,0, 0,0,0,0,0}}},
-                {{0, {0,0, 0,0,0,0,0}}},
-                {{0, {0,0, 0,0,0,0,0}}},
-            },
 
-            0,
-            {0,0,0,0},
-            nullptr,
-            nullptr,
-            {
+            {   // output_curves
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
             },
+            nullptr,    // grid_8
+            nullptr,    // grid_16
+            {0,0,0,0},  // grid_points
+            0,          // output_channels
         },
 
-        false, // has_CICP, followed by cicp itself which we don't care about.
-        { 0, 0, 0, 0 },
+        { 0, 0, 0, 0 },  // an empty CICP
+
+        true,  // has_trc
+        true,  // has_toXYZD50
+        false, // has_A2B
+        false, // has B2A
+        false, // has_CICP
     };
     return &sRGB_profile;
 }
@@ -1497,88 +1561,89 @@ const skcms_ICCProfile* skcms_XYZD50_profile() {
         skcms_Signature_XYZ,   // pcs
         0,                     // tag count, moot here
 
-        true,  // has_trc, followed by the 3 trc curves
-        {
+        {   // the 3 trc curves
             {{0, {1,1, 0,0,0,0,0}}},
             {{0, {1,1, 0,0,0,0,0}}},
             {{0, {1,1, 0,0,0,0,0}}},
         },
 
-        true,  // has_toXYZD50, followed by 3x3 toXYZD50 matrix
-        {{
+        {{  // 3x3 toXYZD50 matrix
             { 1,0,0 },
             { 0,1,0 },
             { 0,0,1 },
         }},
 
-        false, // has_A2B, followed by A2B itself, which we don't care about.
-        {
-            0,
-            {
+        {   // an empty A2B
+            {   // input_curves
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
             },
-            {0,0,0,0},
-            nullptr,
-            nullptr,
+            nullptr,   // grid_8
+            nullptr,   // grid_16
+            0,         // input_channels
+            {0,0,0,0}, // grid_points
 
-            0,
-            {
+            {   // matrix_curves
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
             },
-            {{
+            {{  // matrix (3x4)
                 { 0,0,0,0 },
                 { 0,0,0,0 },
                 { 0,0,0,0 },
             }},
+            0,  // matrix_channels
 
-            0,
-            {
+            0,  // output_channels
+            {   // output_curves
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
             },
         },
 
-        false, // has_B2A, followed by B2A itself, which we also don't care about.
-        {
-            0,
-            {
+        {   // an empty B2A
+            {   // input_curves
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
             },
+            0,  // input_channels
 
-            0,
-            {{
+            0,  // matrix_channels
+            {   // matrix_curves
+                {{0, {0,0, 0,0,0,0,0}}},
+                {{0, {0,0, 0,0,0,0,0}}},
+                {{0, {0,0, 0,0,0,0,0}}},
+            },
+            {{  // matrix (3x4)
                 { 0,0,0,0 },
                 { 0,0,0,0 },
                 { 0,0,0,0 },
             }},
-            {
-                {{0, {0,0, 0,0,0,0,0}}},
-                {{0, {0,0, 0,0,0,0,0}}},
-                {{0, {0,0, 0,0,0,0,0}}},
-            },
 
-            0,
-            {0,0,0,0},
-            nullptr,
-            nullptr,
-            {
+            {   // output_curves
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
                 {{0, {0,0, 0,0,0,0,0}}},
             },
+            nullptr,    // grid_8
+            nullptr,    // grid_16
+            {0,0,0,0},  // grid_points
+            0,          // output_channels
         },
 
-        false, // has_CICP, followed by cicp itself which we don't care about.
-        { 0, 0, 0, 0 },
+        { 0, 0, 0, 0 },  // an empty CICP
+
+        true,  // has_trc
+        true,  // has_toXYZD50
+        false, // has_A2B
+        false, // has B2A
+        false, // has_CICP
     };
 
     return &XYZD50_profile;
@@ -2448,25 +2513,27 @@ static int select_curve_ops(const skcms_Curve* curves, int numChannels, OpAndArg
 
 static size_t bytes_per_pixel(skcms_PixelFormat fmt) {
     switch (fmt >> 1) {   // ignore rgb/bgr
-        case skcms_PixelFormat_A_8             >> 1: return  1;
-        case skcms_PixelFormat_G_8             >> 1: return  1;
-        case skcms_PixelFormat_ABGR_4444       >> 1: return  2;
-        case skcms_PixelFormat_RGB_565         >> 1: return  2;
-        case skcms_PixelFormat_RGB_888         >> 1: return  3;
-        case skcms_PixelFormat_RGBA_8888       >> 1: return  4;
-        case skcms_PixelFormat_RGBA_8888_sRGB  >> 1: return  4;
-        case skcms_PixelFormat_RGBA_1010102    >> 1: return  4;
-        case skcms_PixelFormat_RGB_101010x_XR  >> 1: return  4;
-        case skcms_PixelFormat_RGB_161616LE    >> 1: return  6;
-        case skcms_PixelFormat_RGBA_16161616LE >> 1: return  8;
-        case skcms_PixelFormat_RGB_161616BE    >> 1: return  6;
-        case skcms_PixelFormat_RGBA_16161616BE >> 1: return  8;
-        case skcms_PixelFormat_RGB_hhh_Norm    >> 1: return  6;
-        case skcms_PixelFormat_RGBA_hhhh_Norm  >> 1: return  8;
-        case skcms_PixelFormat_RGB_hhh         >> 1: return  6;
-        case skcms_PixelFormat_RGBA_hhhh       >> 1: return  8;
-        case skcms_PixelFormat_RGB_fff         >> 1: return 12;
-        case skcms_PixelFormat_RGBA_ffff       >> 1: return 16;
+        case skcms_PixelFormat_A_8              >> 1: return  1;
+        case skcms_PixelFormat_G_8              >> 1: return  1;
+        case skcms_PixelFormat_GA_88            >> 1: return  2;
+        case skcms_PixelFormat_ABGR_4444        >> 1: return  2;
+        case skcms_PixelFormat_RGB_565          >> 1: return  2;
+        case skcms_PixelFormat_RGB_888          >> 1: return  3;
+        case skcms_PixelFormat_RGBA_8888        >> 1: return  4;
+        case skcms_PixelFormat_RGBA_8888_sRGB   >> 1: return  4;
+        case skcms_PixelFormat_RGBA_1010102     >> 1: return  4;
+        case skcms_PixelFormat_RGB_101010x_XR   >> 1: return  4;
+        case skcms_PixelFormat_RGB_161616LE     >> 1: return  6;
+        case skcms_PixelFormat_RGBA_10101010_XR >> 1: return  8;
+        case skcms_PixelFormat_RGBA_16161616LE  >> 1: return  8;
+        case skcms_PixelFormat_RGB_161616BE     >> 1: return  6;
+        case skcms_PixelFormat_RGBA_16161616BE  >> 1: return  8;
+        case skcms_PixelFormat_RGB_hhh_Norm     >> 1: return  6;
+        case skcms_PixelFormat_RGBA_hhhh_Norm   >> 1: return  8;
+        case skcms_PixelFormat_RGB_hhh          >> 1: return  6;
+        case skcms_PixelFormat_RGBA_hhhh        >> 1: return  8;
+        case skcms_PixelFormat_RGB_fff          >> 1: return 12;
+        case skcms_PixelFormat_RGBA_ffff        >> 1: return 16;
     }
     assert(false);
     return 0;
@@ -2559,24 +2626,26 @@ bool skcms_Transform(const void*             src,
 
     switch (srcFmt >> 1) {
         default: return false;
-        case skcms_PixelFormat_A_8             >> 1: add_op(Op::load_a8);         break;
-        case skcms_PixelFormat_G_8             >> 1: add_op(Op::load_g8);         break;
-        case skcms_PixelFormat_ABGR_4444       >> 1: add_op(Op::load_4444);       break;
-        case skcms_PixelFormat_RGB_565         >> 1: add_op(Op::load_565);        break;
-        case skcms_PixelFormat_RGB_888         >> 1: add_op(Op::load_888);        break;
-        case skcms_PixelFormat_RGBA_8888       >> 1: add_op(Op::load_8888);       break;
-        case skcms_PixelFormat_RGBA_1010102    >> 1: add_op(Op::load_1010102);    break;
-        case skcms_PixelFormat_RGB_101010x_XR  >> 1: add_op(Op::load_101010x_XR); break;
-        case skcms_PixelFormat_RGB_161616LE    >> 1: add_op(Op::load_161616LE);   break;
-        case skcms_PixelFormat_RGBA_16161616LE >> 1: add_op(Op::load_16161616LE); break;
-        case skcms_PixelFormat_RGB_161616BE    >> 1: add_op(Op::load_161616BE);   break;
-        case skcms_PixelFormat_RGBA_16161616BE >> 1: add_op(Op::load_16161616BE); break;
-        case skcms_PixelFormat_RGB_hhh_Norm    >> 1: add_op(Op::load_hhh);        break;
-        case skcms_PixelFormat_RGBA_hhhh_Norm  >> 1: add_op(Op::load_hhhh);       break;
-        case skcms_PixelFormat_RGB_hhh         >> 1: add_op(Op::load_hhh);        break;
-        case skcms_PixelFormat_RGBA_hhhh       >> 1: add_op(Op::load_hhhh);       break;
-        case skcms_PixelFormat_RGB_fff         >> 1: add_op(Op::load_fff);        break;
-        case skcms_PixelFormat_RGBA_ffff       >> 1: add_op(Op::load_ffff);       break;
+        case skcms_PixelFormat_A_8              >> 1: add_op(Op::load_a8);          break;
+        case skcms_PixelFormat_G_8              >> 1: add_op(Op::load_g8);          break;
+        case skcms_PixelFormat_GA_88            >> 1: add_op(Op::load_ga88);        break;
+        case skcms_PixelFormat_ABGR_4444        >> 1: add_op(Op::load_4444);        break;
+        case skcms_PixelFormat_RGB_565          >> 1: add_op(Op::load_565);         break;
+        case skcms_PixelFormat_RGB_888          >> 1: add_op(Op::load_888);         break;
+        case skcms_PixelFormat_RGBA_8888        >> 1: add_op(Op::load_8888);        break;
+        case skcms_PixelFormat_RGBA_1010102     >> 1: add_op(Op::load_1010102);     break;
+        case skcms_PixelFormat_RGB_101010x_XR   >> 1: add_op(Op::load_101010x_XR);  break;
+        case skcms_PixelFormat_RGBA_10101010_XR >> 1: add_op(Op::load_10101010_XR); break;
+        case skcms_PixelFormat_RGB_161616LE     >> 1: add_op(Op::load_161616LE);    break;
+        case skcms_PixelFormat_RGBA_16161616LE  >> 1: add_op(Op::load_16161616LE);  break;
+        case skcms_PixelFormat_RGB_161616BE     >> 1: add_op(Op::load_161616BE);    break;
+        case skcms_PixelFormat_RGBA_16161616BE  >> 1: add_op(Op::load_16161616BE);  break;
+        case skcms_PixelFormat_RGB_hhh_Norm     >> 1: add_op(Op::load_hhh);         break;
+        case skcms_PixelFormat_RGBA_hhhh_Norm   >> 1: add_op(Op::load_hhhh);        break;
+        case skcms_PixelFormat_RGB_hhh          >> 1: add_op(Op::load_hhh);         break;
+        case skcms_PixelFormat_RGBA_hhhh        >> 1: add_op(Op::load_hhhh);        break;
+        case skcms_PixelFormat_RGB_fff          >> 1: add_op(Op::load_fff);         break;
+        case skcms_PixelFormat_RGBA_ffff        >> 1: add_op(Op::load_ffff);        break;
 
         case skcms_PixelFormat_RGBA_8888_sRGB >> 1:
             add_op(Op::load_8888);
@@ -2591,12 +2660,17 @@ bool skcms_Transform(const void*             src,
         add_op(Op::swap_rb);
     }
     skcms_ICCProfile gray_dst_profile;
-    if ((dstFmt >> 1) == (skcms_PixelFormat_G_8 >> 1)) {
-        // When transforming to gray, stop at XYZ (by setting toXYZ to identity), then transform
-        // luminance (Y) by the destination transfer function.
-        gray_dst_profile = *dstProfile;
-        skcms_SetXYZD50(&gray_dst_profile, &skcms_XYZD50_profile()->toXYZD50);
-        dstProfile = &gray_dst_profile;
+    switch (dstFmt >> 1) {
+        case skcms_PixelFormat_G_8:
+        case skcms_PixelFormat_GA_88:
+            // When transforming to gray, stop at XYZ (by setting toXYZ to identity), then transform
+            // luminance (Y) by the destination transfer function.
+            gray_dst_profile = *dstProfile;
+            skcms_SetXYZD50(&gray_dst_profile, &skcms_XYZD50_profile()->toXYZD50);
+            dstProfile = &gray_dst_profile;
+            break;
+        default:
+            break;
     }
 
     if (srcProfile->data_color_space == skcms_Signature_CMYK) {
@@ -2758,6 +2832,7 @@ bool skcms_Transform(const void*             src,
         default: return false;
         case skcms_PixelFormat_A_8             >> 1: add_op(Op::store_a8);         break;
         case skcms_PixelFormat_G_8             >> 1: add_op(Op::store_g8);         break;
+        case skcms_PixelFormat_GA_88           >> 1: add_op(Op::store_ga88);       break;
         case skcms_PixelFormat_ABGR_4444       >> 1: add_op(Op::store_4444);       break;
         case skcms_PixelFormat_RGB_565         >> 1: add_op(Op::store_565);        break;
         case skcms_PixelFormat_RGB_888         >> 1: add_op(Op::store_888);        break;

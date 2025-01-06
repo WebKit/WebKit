@@ -10,10 +10,12 @@
 
 #include "call/receive_time_calculator.h"
 
+#include <cstdint>
 #include <memory>
 #include <string>
-#include <type_traits>
 
+#include "api/field_trials_view.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/numerics/safe_minmax.h"
 

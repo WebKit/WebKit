@@ -29,6 +29,7 @@
 #include "NavigatingToAppBoundDomain.h"
 #include "SandboxExtension.h"
 #include "WebsitePoliciesData.h"
+#include <WebCore/NavigationIdentifier.h>
 
 namespace JSC {
 enum class MessageLevel : uint8_t;
@@ -46,7 +47,7 @@ struct PolicyDecisionConsoleMessage {
 struct PolicyDecision {
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { std::nullopt };
     WebCore::PolicyAction policyAction { WebCore::PolicyAction::Ignore };
-    uint64_t navigationID { 0 };
+    std::optional<WebCore::NavigationIdentifier> navigationID { std::nullopt };
     std::optional<DownloadID> downloadID { std::nullopt };
     std::optional<WebsitePoliciesData> websitePoliciesData { std::nullopt };
     std::optional<SandboxExtension::Handle> sandboxExtensionHandle { std::nullopt };

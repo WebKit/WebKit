@@ -61,12 +61,6 @@ void QualityScalerResource::SetQpThresholds(
   quality_scaler_->SetQpThresholds(std::move(qp_thresholds));
 }
 
-bool QualityScalerResource::QpFastFilterLow() {
-  RTC_DCHECK_RUN_ON(encoder_queue());
-  RTC_DCHECK(is_started());
-  return quality_scaler_->QpFastFilterLow();
-}
-
 void QualityScalerResource::OnEncodeCompleted(const EncodedImage& encoded_image,
                                               int64_t time_sent_in_us) {
   RTC_DCHECK_RUN_ON(encoder_queue());

@@ -28,8 +28,10 @@
     ActiveDOMObject,
     Conditional=WEB_CODECS,
     EnabledBySetting=WebCodecsVideoEnabled,
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,DedicatedWorker),
     InterfaceName=VideoDecoder,
+    JSCustomMarkFunction,
 ] interface WebCodecsVideoDecoder : EventTarget {
     [CallWith=CurrentScriptExecutionContext] constructor(WebCodecsVideoDecoderInit init);
 

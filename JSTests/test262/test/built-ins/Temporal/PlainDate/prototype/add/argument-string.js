@@ -11,3 +11,5 @@ features: [Temporal]
 const instance = Temporal.PlainDate.from({ year: 2000, month: 5, day: 2 });
 const result = instance.add("P3D");
 TemporalHelpers.assertPlainDate(result, 2000, 5, "M05", 5);
+
+TemporalHelpers.assertPlainDate(instance.add("P1M1W"), 2000, 6, "M06", 9, "calendar units");

@@ -1,3 +1,5 @@
+
+baseannotation
 First line
 baseannotation
 Third line
@@ -21,12 +23,13 @@ baseannotation
 
 PASS Over ruby doesn't overflow the block
 PASS Over ruby + vertical-align doesn't overflow the block
-FAIL Under ruby doesn't overflow the block assert_true: expected true got false
-FAIL Under ruby + vertical-align doesn't overflow the block assert_true: expected true got false
+PASS Under ruby doesn't overflow the block
+PASS Under ruby + vertical-align doesn't overflow the block
 PASS Under ruby doesn't overwrap with the next block
 PASS Expand inter-lines spacing
 PASS Consume half-leading of the previous line
-PASS Don't Consume half-leading of the previous line with text-emphasis
+FAIL Don't Consume half-leading of the previous line with text-emphasis assert_greater_than_equal: expected a number greater than or equal to 32 but got 28
 PASS Consume half-leading of the next line
-PASS Don't Consume half-leading of the next line with text-emphasis
+FAIL Don't Consume half-leading of the next line with text-emphasis assert_greater_than_equal: expected a number greater than or equal to 32 but got 28
+PASS An atomic-inline should not overlap with an annotation in the next line
 

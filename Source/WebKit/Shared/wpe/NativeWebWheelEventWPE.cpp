@@ -37,6 +37,11 @@ NativeWebWheelEvent::NativeWebWheelEvent(WPEEvent* event)
 {
 }
 
+NativeWebWheelEvent::NativeWebWheelEvent(WPEEvent* event, WebWheelEvent::Phase phase)
+    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, phase))
+{
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WPE_PLATFORM)

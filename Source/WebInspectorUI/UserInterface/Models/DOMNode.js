@@ -935,7 +935,8 @@ WI.DOMNode = class DOMNode extends WI.Object
                     required: accessibilityProperties.required,
                     role: accessibilityProperties.role,
                     selected: accessibilityProperties.selected,
-                    selectedChildNodeIds: accessibilityProperties.selectedChildNodeIds
+                    selectedChildNodeIds: accessibilityProperties.selectedChildNodeIds,
+                    switchState: accessibilityProperties.switchState,
                 });
             }
         }
@@ -1322,6 +1323,7 @@ WI.DOMNode = class DOMNode extends WI.Object
             this.showLayoutOverlay();
     }
 
+    // COMPATIBILITY (iOS 18.0, macOS 15.0): `DOM.getMediaStats` did not exist yet.
     async getMediaStats()
     {
         let target = WI.assumingMainTarget();

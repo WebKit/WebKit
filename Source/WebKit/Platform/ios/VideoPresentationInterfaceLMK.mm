@@ -28,6 +28,7 @@
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 
+#import "LinearMediaKitExtras.h"
 #import "LinearMediaKitSPI.h"
 #import "PlaybackSessionInterfaceLMK.h"
 #import "WKSLinearMediaPlayer.h"
@@ -40,7 +41,11 @@
 #import <WebCore/WebAVPlayerLayerView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/UUID.h>
+#import <wtf/text/MakeString.h>
+
+#import "WebKitSwiftSoftLink.h"
 
 @interface WKLinearMediaKitCaptionsLayer : CALayer {
     ThreadSafeWeakPtr<WebKit::VideoPresentationInterfaceLMK> _parent;
@@ -69,6 +74,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoPresentationInterfaceLMK);
+
 VideoPresentationInterfaceLMK::~VideoPresentationInterfaceLMK()
 {
 }
@@ -88,16 +95,25 @@ WKSLinearMediaPlayer *VideoPresentationInterfaceLMK::linearMediaPlayer() const
     return playbackSessionInterface().linearMediaPlayer();
 }
 
+void VideoPresentationInterfaceLMK::setSpatialImmersive(bool immersive)
+{
+    linearMediaPlayer().spatialImmersive = immersive;
+}
+
 void VideoPresentationInterfaceLMK::setupFullscreen(UIView& videoView, const WebCore::FloatRect& initialRect, const WebCore::FloatSize& videoDimensions, UIView* parentView, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
     linearMediaPlayer().contentDimensions = videoDimensions;
+    if (!linearMediaPlayer().enteredFromInline && playerViewController()) {
+        playableViewController().wks_automaticallyDockOnFullScreenPresentation = NO;
+        playableViewController().wks_dismissFullScreenOnExitingDocking = NO;
+    }
     VideoPresentationInterfaceIOS::setupFullscreen(videoView, initialRect, videoDimensions, parentView, mode, allowsPictureInPicturePlayback, standby, blocksReturnToFullscreenFromPictureInPicture);
 }
 
 void VideoPresentationInterfaceLMK::finalizeSetup()
 {
-    RunLoop::main().dispatch([protectedThis = Ref { *this }, this] {
-        if (RefPtr model = videoPresentationModel())
+    RunLoop::main().dispatch([protectedThis = Ref { *this }] {
+        if (RefPtr model = protectedThis->videoPresentationModel())
             model->didSetupFullscreen();
     });
 }
@@ -112,6 +128,7 @@ void VideoPresentationInterfaceLMK::setupPlayerViewController()
 
 void VideoPresentationInterfaceLMK::invalidatePlayerViewController()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     m_playerViewController = nil;
 }
 
@@ -119,7 +136,7 @@ void VideoPresentationInterfaceLMK::presentFullscreen(bool animated, Function<vo
 {
     playbackSessionInterface().startObservingNowPlayingMetadata();
     [linearMediaPlayer() enterFullscreenWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *error) {
-        if (auto* playbackSessionModel = playbackSessionInterface().playbackSessionModel()) {
+        if (auto* playbackSessionModel = this->playbackSessionModel()) {
             playbackSessionModel->setSpatialTrackingLabel(m_spatialTrackingLabel);
             playbackSessionModel->setSoundStageSize(WebCore::AudioSessionSoundStageSize::Large);
         }
@@ -131,7 +148,7 @@ void VideoPresentationInterfaceLMK::dismissFullscreen(bool animated, Function<vo
 {
     playbackSessionInterface().stopObservingNowPlayingMetadata();
     [linearMediaPlayer() exitFullscreenWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *error) {
-        if (auto* playbackSessionModel = playbackSessionInterface().playbackSessionModel()) {
+        if (auto* playbackSessionModel = this->playbackSessionModel()) {
             playbackSessionModel->setSpatialTrackingLabel(nullString());
             playbackSessionModel->setSoundStageSize(WebCore::AudioSessionSoundStageSize::Automatic);
         }
@@ -200,8 +217,12 @@ LMPlayableViewController *VideoPresentationInterfaceLMK::playableViewController(
 
 void VideoPresentationInterfaceLMK::ensurePlayableViewController()
 {
-    if (!m_playerViewController)
-        m_playerViewController = [linearMediaPlayer() makeViewController];
+    if (m_playerViewController)
+        return;
+
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    m_playerViewController = [linearMediaPlayer() makeViewController];
+    [m_playerViewController view].alpha = 0;
 }
 
 } // namespace WebKit

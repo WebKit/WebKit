@@ -29,16 +29,20 @@
 
 #import <wtf/CompletionHandler.h>
 #import <wtf/MainThread.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 
-// FIXME: Why is this distinct from EmptyPaymentCoordinatorClient?
-WebPaymentCoordinatorClient::WebPaymentCoordinatorClient()
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPaymentCoordinatorClient);
+
+Ref<WebPaymentCoordinatorClient> WebPaymentCoordinatorClient::create()
 {
+    return adoptRef(*new WebPaymentCoordinatorClient);
 }
 
-WebPaymentCoordinatorClient::~WebPaymentCoordinatorClient()
-{
-}
+// FIXME: Why is this distinct from EmptyPaymentCoordinatorClient?
+WebPaymentCoordinatorClient::WebPaymentCoordinatorClient() = default;
+
+WebPaymentCoordinatorClient::~WebPaymentCoordinatorClient() = default;
 
 std::optional<String> WebPaymentCoordinatorClient::validatedPaymentNetwork(const String&) const
 {

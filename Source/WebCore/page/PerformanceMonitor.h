@@ -28,15 +28,19 @@
 #include "ActivityState.h"
 #include "Timer.h"
 #include <wtf/CPUTime.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Page;
 
 class PerformanceMonitor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceMonitor);
 public:
     explicit PerformanceMonitor(Page&);
+
+    void ref() const;
+    void deref() const;
 
     void didStartProvisionalLoad();
     void didFinishLoad();
@@ -52,7 +56,7 @@ private:
     void processMayBecomeInactiveTimerFired();
     static void updateProcessStateForMemoryPressure();
 
-    SingleThreadWeakRef<Page> m_page;
+    WeakRef<Page> m_page;
 
     Timer m_postPageLoadCPUUsageTimer;
     std::optional<CPUTime> m_postLoadCPUTime;

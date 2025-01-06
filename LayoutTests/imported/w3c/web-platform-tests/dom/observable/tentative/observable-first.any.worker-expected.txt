@@ -1,0 +1,7 @@
+
+PASS first(): Promise resolves with the first value from the source Observable
+PASS first(): Promise rejects with the error emitted from the source Observable
+PASS first(): Promise rejects with RangeError when source Observable completes without emitting any values
+PASS first(): Aborting a signal rejects the Promise with an AbortError DOMException
+PASS first(): Lifecycle
+

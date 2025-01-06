@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,12 +32,16 @@
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
+#if PLATFORM(COCOA)
 #include <wtf/WeakObjCPtr.h>
+#endif
 
-OBJC_PROTOCOL(_WKWebExtensionWindow);
+OBJC_PROTOCOL(WKWebExtensionWindow);
 
 #ifdef __OBJC__
-#import "_WKWebExtensionWindow.h"
+#import "WKWebExtensionWindow.h"
 #endif
 
 namespace WebKit {
@@ -60,9 +64,9 @@ static constexpr OptionSet<WebExtensionWindowTypeFilter> allWebExtensionWindowTy
     };
 }
 
-class WebExtensionWindow : public RefCounted<WebExtensionWindow>, public CanMakeWeakPtr<WebExtensionWindow>, public Identified<WebExtensionWindowIdentifier> {
+class WebExtensionWindow : public RefCountedAndCanMakeWeakPtr<WebExtensionWindow>, public Identified<WebExtensionWindowIdentifier> {
     WTF_MAKE_NONCOPYABLE(WebExtensionWindow);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebExtensionWindow);
 
 public:
     template<typename... Args>
@@ -71,7 +75,7 @@ public:
         return adoptRef(*new WebExtensionWindow(std::forward<Args>(args)...));
     }
 
-    explicit WebExtensionWindow(const WebExtensionContext&, _WKWebExtensionWindow*);
+    explicit WebExtensionWindow(const WebExtensionContext&, WKWebExtensionWindow*);
 
     enum class Type : uint8_t {
         Normal,
@@ -88,6 +92,7 @@ public:
     };
 
     enum class PopulateTabs : bool { No, Yes };
+    enum class SkipValidation : bool { No, Yes };
 
     using TabVector = Vector<Ref<WebExtensionTab>>;
 
@@ -103,8 +108,8 @@ public:
 
     bool extensionHasAccess() const;
 
-    TabVector tabs() const;
-    RefPtr<WebExtensionTab> activeTab() const;
+    TabVector tabs(SkipValidation = SkipValidation::No) const;
+    RefPtr<WebExtensionTab> activeTab(SkipValidation = SkipValidation::No) const;
 
     Type type() const;
 
@@ -121,26 +126,32 @@ public:
 
     bool isPrivate() const;
 
+#if PLATFORM(COCOA)
     // Returns the frame using top-down coordinates.
     CGRect normalizedFrame() const;
 
     // Handles the frame in the screen's native coordinate system.
     CGRect frame() const;
     void setFrame(CGRect, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+#endif
 
+#if PLATFORM(MAC)
     CGRect screenFrame() const;
+#endif
 
     void close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
 #ifdef __OBJC__
-    _WKWebExtensionWindow *delegate() const { return m_delegate.getAutoreleased(); }
+    WKWebExtensionWindow *delegate() const { return m_delegate.getAutoreleased(); }
 
     bool isValid() const { return m_extensionContext && m_delegate; }
 #endif
 
 private:
     WeakPtr<WebExtensionContext> m_extensionContext;
-    WeakObjCPtr<_WKWebExtensionWindow> m_delegate;
+#if PLATFORM(COCOA)
+    WeakObjCPtr<WKWebExtensionWindow> m_delegate;
+#endif
     bool m_isOpen : 1 { false };
     mutable bool m_private : 1 { false };
     mutable bool m_cachedPrivate : 1 { false };
@@ -149,7 +160,7 @@ private:
     bool m_respondsToWindowType : 1 { false };
     bool m_respondsToWindowState : 1 { false };
     bool m_respondsToSetWindowState : 1 { false };
-    bool m_respondsToIsUsingPrivateBrowsing : 1 { false };
+    bool m_respondsToIsPrivate : 1 { false };
     bool m_respondsToFrame : 1 { false };
     bool m_respondsToSetFrame : 1 { false };
     bool m_respondsToScreenFrame : 1 { false };
@@ -158,8 +169,8 @@ private:
 };
 
 #ifdef __OBJC__
-_WKWebExtensionWindowType toAPI(WebExtensionWindow::Type);
-_WKWebExtensionWindowState toAPI(WebExtensionWindow::State);
+WKWebExtensionWindowType toAPI(WebExtensionWindow::Type);
+WKWebExtensionWindowState toAPI(WebExtensionWindow::State);
 #endif
 
 } // namespace WebKit

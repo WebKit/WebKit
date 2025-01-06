@@ -15,7 +15,10 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/resources/empty.js
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/resources/importer.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/resources/in-scope-test.js
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/resources/inject-base.js
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/resources/log.js
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/resources/log.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/resources/log.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/resources/test-helper.js

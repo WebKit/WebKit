@@ -11,9 +11,9 @@
 #ifndef MODULES_AUDIO_PROCESSING_TEST_PERFORMANCE_TIMER_H_
 #define MODULES_AUDIO_PROCESSING_TEST_PERFORMANCE_TIMER_H_
 
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -37,7 +37,7 @@ class PerformanceTimer {
 
  private:
   webrtc::Clock* clock_;
-  absl::optional<int64_t> start_timestamp_us_;
+  std::optional<int64_t> start_timestamp_us_;
   std::vector<int64_t> timestamps_us_;
 };
 

@@ -20,16 +20,21 @@
 
 #pragma once
 
-#include <QQmlEngine>
 #include <QQuickItem>
 #include <QUrl>
-#include <memory>
+
 #include <wpe/webkit.h>
-#include <wtf/glib/GRefPtr.h>
+
+#if defined(QT_WPE_LIBRARY)
+#define QT_WPE_EXPORT Q_DECL_EXPORT
+#else
+#define QT_WPE_EXPORT Q_DECL_IMPORT
+#endif
 
 class WPEQtViewLoadRequest;
+class WPEQtViewPrivate;
 
-class Q_DECL_EXPORT WPEQtView : public QQuickItem {
+class QT_WPE_EXPORT WPEQtView : public QQuickItem {
     Q_OBJECT
     Q_DISABLE_COPY(WPEQtView)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
@@ -49,7 +54,7 @@ public:
     };
 
     WPEQtView(QQuickItem* parent = nullptr);
-    ~WPEQtView();
+    virtual ~WPEQtView();
 
     void triggerUpdateScene() { QMetaObject::invokeMethod(this, "update", Qt::QueuedConnection); };
     void triggerDidUpdateScene() { QMetaObject::invokeMethod(this, "didUpdateScene", Qt::QueuedConnection); };
@@ -80,9 +85,10 @@ Q_SIGNALS:
     void loadProgressChanged();
 
 protected:
-    bool errorOccured() const { return m_errorOccured; };
-    void setErrorOccured(bool errorOccured) { m_errorOccured = errorOccured; };
+    bool errorOccured() const;
+    void setErrorOccured(bool);
 
+    bool event(QEvent*) override;
     void geometryChange(const QRectF&, const QRectF&) override;
 
     void hoverEnterEvent(QHoverEvent*) override;
@@ -113,10 +119,6 @@ private:
     static void notifyLoadChangedCallback(WebKitWebView*, WebKitLoadEvent, WPEQtView*);
     static void notifyLoadFailedCallback(WebKitWebView*, WebKitLoadEvent, const gchar* failingURI, GError*, WPEQtView*);
 
-    GRefPtr<WebKitWebView> m_webView;
-    QUrl m_url;
-    QString m_html;
-    QUrl m_baseUrl;
-    QSize m_size;
-    bool m_errorOccured { false };
+    Q_DECLARE_PRIVATE(WPEQtView)
+    QScopedPointer<WPEQtViewPrivate> d_ptr;
 };

@@ -4,4 +4,4 @@ one
 two
 three
 Before: <blockquote id="test">one<br>two<br>three</blockquote>
-After: <blockquote id="test">one<br></blockquote>two<br><blockquote>three</blockquote>
+After: <blockquote id="test">one<br></blockquote><div>two</div><blockquote>three</blockquote>

@@ -71,10 +71,7 @@ New Tokens
 
         EGL_FEATURE_NAME_ANGLE          0x3460
         EGL_FEATURE_CATEGORY_ANGLE      0x3461
-        EGL_FEATURE_DESCRIPTION_ANGLE   0x3462
-        EGL_FEATURE_BUG_ANGLE           0x3463
         EGL_FEATURE_STATUS_ANGLE        0x3464
-        EGL_FEATURE_CONDITION_ANGLE     0x3468
 
     Accepted as a queried <attribute> in eglQueryDisplayAttribANGLE
 
@@ -111,28 +108,17 @@ Add the following to the end of section 3.3 "EGL Queries":
     terminated string describing some aspect of the EGL
     implementation running on the specified display, from an array of
     strings. name may be one of EGL_FEATURE_NAME_ANGLE,
-    EGL_FEATURE_CATEGORY_ANGLE, EGL_FEATURE_DESCRIPTION_ANGLE,
-    EGL_FEATURE_BUG_ANGLE, or EGL_FEATURE_STATUS_ANGLE. Index
+    EGL_FEATURE_CATEGORY_ANGLE, EGL_FEATURE_STATUS_ANGLE. Index
     must be a valid index to access into the array of strings.
         The EGL_FEATURE_NAME_ANGLE array contains strings that
     describe the name of each feature available in the display.
         The EGL_FEATURE_CATEGORY_ANGLE array contains strings
     with corresponding indices to the array of names. Each string
     describes the category of the feature at the specified index.
-        The EGL_FEATURE_DESCRIPTION_ANGLE array contains strings
-    with corresponding indices to the array of names. Each string
-    describes the feature at the specified index.
-        The EGL_FEATURE_BUG_ANGLE array contains strings
-    with corresponding indices to the array of names. Each string
-    describes the bug related to the feature at the specified
-    index.
         The EGL_FEATURE_STATUS_ANGLE array contains strings
     with corresponding indices to the array of names. Each string has
     the value "enabled" if the feature is currently enabled, or
     "disabled" if the feature is currently disabled.
-        The EGL_FEATURE_CONDITION_ANGLE array contains strings that
-    describe to the condition that sets the corresponding value in
-    the EGL_FEATURE_STATUS_ANGLE array.
 
     Errors
 

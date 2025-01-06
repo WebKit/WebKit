@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT View transitions: skipTransition() in pageswap aborts the transition Test timed out
+PASS View transitions: skipTransition() in pageswap aborts the transition
 

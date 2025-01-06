@@ -132,7 +132,7 @@ Usage: $programName [options] [options to pass to build system]
 
   --gtk                             Build the GTK+ port
   --wpe                             Build the WPE port
-  --wincairo                        Build the Windows port
+  --win                             Build the Windows port
   --playstation                     Build the PlayStation port
 
   --inspector-frontend              Copy Web Inspector user interface resources to the build directory
@@ -211,7 +211,7 @@ push @projects, ("Source/WebKitLegacy");
 
 
 # Build WTF as a separate static library on ports which support it.
-splice @projects, 0, 0, "Source/WTF" if isWinCairo();
+splice @projects, 0, 0, "Source/WTF" if isWin();
 
 splice @projects, 0, 0, "Source/bmalloc" if isAppleCocoaWebKit();
 
@@ -224,7 +224,7 @@ if (!isCMakeBuild()) {
     }
 }
 
-if ((isAppleWebKit() || isWinCairo() || isPlayStation()) && !-d "WebKitLibraries") {
+if ((isAppleWebKit() || isWin() || isPlayStation()) && !-d "WebKitLibraries") {
     die "Error: No WebKitLibraries directory found. Please do a fresh checkout.\n";
 }
 
@@ -288,8 +288,8 @@ if (isAppleCocoaWebKit()) {
         push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
     }
 
-} elsif (isWinCairo() && !$skipLibraryUpdate) {
-    (system("python Tools/Scripts/update-webkit-wincairo-libs.py") == 0) or die;
+} elsif (isWin() && !$skipLibraryUpdate) {
+    (system("python Tools/Scripts/update-webkit-win-libs.py") == 0) or die;
 }
 
 # If asked to build just the WebKit project, overwrite the projects
@@ -324,7 +324,7 @@ if (isCMakeBuild() && !isAnyWindows()) {
 }
 
 my $baseProductDir = baseProductDir();
-if (isWinCairo() || isPlayStation()) {
+if (isWin() || isPlayStation()) {
     my @featureArgs = cmakeArgsFromFeatures(@features, !$noExperimentalFeatures);
     removeCMakeCache(@featureArgs);
 
@@ -431,7 +431,7 @@ exit 0;
 
 sub writeCongrats()
 {
-    my $launcherPath = launcherPath();
+    my $launcherCommand = launcherPath() . ' ' . join(' ', argumentsForConfiguration());
     my $launcherName = launcherName();
     my $endTime = time();
     my $buildTime = formatBuildTime($endTime - $startTime);
@@ -439,9 +439,9 @@ sub writeCongrats()
     print "\n";
     print "====================================================================\n";
     print " WebKit is now built ($buildTime). \n";
-    if ($launcherPath && $launcherName) {
-        print " To run $launcherName with this newly-built code, use the\n";
-        print " \"$launcherPath\" script.\n";
+    if ($launcherCommand && $launcherName) {
+        print " To run $launcherName with this newly-built code, use\n";
+        print " the command \"$launcherCommand\".\n";
     }
     print "====================================================================\n";
 }

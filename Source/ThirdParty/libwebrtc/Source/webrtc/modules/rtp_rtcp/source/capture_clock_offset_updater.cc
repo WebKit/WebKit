@@ -14,12 +14,12 @@
 
 namespace webrtc {
 
-absl::optional<int64_t>
+std::optional<int64_t>
 CaptureClockOffsetUpdater::AdjustEstimatedCaptureClockOffset(
-    absl::optional<int64_t> remote_capture_clock_offset) const {
-  if (remote_capture_clock_offset == absl::nullopt ||
-      remote_to_local_clock_offset_ == absl::nullopt) {
-    return absl::nullopt;
+    std::optional<int64_t> remote_capture_clock_offset) const {
+  if (remote_capture_clock_offset == std::nullopt ||
+      remote_to_local_clock_offset_ == std::nullopt) {
+    return std::nullopt;
   }
 
   // Do calculations as "unsigned" to make overflows deterministic.
@@ -27,16 +27,16 @@ CaptureClockOffsetUpdater::AdjustEstimatedCaptureClockOffset(
          static_cast<uint64_t>(*remote_to_local_clock_offset_);
 }
 
-absl::optional<TimeDelta> CaptureClockOffsetUpdater::ConvertsToTimeDela(
-    absl::optional<int64_t> q32x32) {
-  if (q32x32 == absl::nullopt) {
-    return absl::nullopt;
+std::optional<TimeDelta> CaptureClockOffsetUpdater::ConvertsToTimeDela(
+    std::optional<int64_t> q32x32) {
+  if (q32x32 == std::nullopt) {
+    return std::nullopt;
   }
   return TimeDelta::Millis(Q32x32ToInt64Ms(*q32x32));
 }
 
 void CaptureClockOffsetUpdater::SetRemoteToLocalClockOffset(
-    absl::optional<int64_t> offset_q32x32) {
+    std::optional<int64_t> offset_q32x32) {
   remote_to_local_clock_offset_ = offset_q32x32;
 }
 

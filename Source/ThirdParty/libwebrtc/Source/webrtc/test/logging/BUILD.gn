@@ -27,9 +27,6 @@ rtc_library("log_writer") {
     "../../rtc_base:rtc_base_tests_utils",
     "../../rtc_base:stringutils",
     "../../test:fileutils",
-  ]
-  absl_deps = [
-    "//third_party/abseil-cpp/absl/strings",
-    "//third_party/abseil-cpp/absl/types:optional",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }

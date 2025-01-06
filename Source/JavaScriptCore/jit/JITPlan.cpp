@@ -31,6 +31,8 @@
 #include "AbstractSlotVisitor.h"
 #include "CodeBlock.h"
 #include "HeapInlines.h"
+#include "JITSafepoint.h"
+#include "JITWorklistThread.h"
 #include "JSCellInlines.h"
 #include "VMInlines.h"
 #include <wtf/CompilationThread.h>
@@ -50,12 +52,21 @@ JITPlan::JITPlan(JITCompilationMode mode, CodeBlock* codeBlock)
     , m_vm(&codeBlock->vm())
     , m_codeBlock(codeBlock)
 {
+    m_vm->changeNumberOfActiveJITPlans(1);
+}
+
+JITPlan::~JITPlan()
+{
+    if (m_vm)
+        m_vm->changeNumberOfActiveJITPlans(-1);
 }
 
 void JITPlan::cancel()
 {
     RELEASE_ASSERT(m_stage != JITPlanStage::Canceled);
+    RELEASE_ASSERT(!safepointKeepsDependenciesLive());
     ASSERT(m_vm);
+    m_vm->changeNumberOfActiveJITPlans(-1);
     m_stage = JITPlanStage::Canceled;
     m_vm = nullptr;
     m_codeBlock = nullptr;
@@ -138,6 +149,16 @@ bool JITPlan::checkLivenessAndVisitChildren(AbstractSlotVisitor& visitor)
     return true;
 }
 
+bool JITPlan::isInSafepoint() const
+{
+    return m_thread && m_thread->safepoint();
+}
+
+bool JITPlan::safepointKeepsDependenciesLive() const
+{
+    return m_thread && m_thread->safepoint() && m_thread->safepoint()->keepDependenciesLive();
+}
+
 bool JITPlan::computeCompileTimes() const
 {
     return reportCompileTimes()
@@ -155,7 +176,7 @@ bool JITPlan::reportCompileTimes() const
 
 void JITPlan::compileInThread(JITWorklistThread* thread)
 {
-    m_thread = thread;
+    SetForScope threadScope(m_thread, thread);
 
     MonotonicTime before;
     CString codeBlockName;
@@ -180,7 +201,7 @@ void JITPlan::compileInThread(JITWorklistThread* thread)
         StringPrintStream stream;
         stream.print(m_mode, " ", *m_codeBlock, " instructions size = ", m_codeBlock->instructionsSize());
         signpostMessage = stream.toCString();
-        WTFBeginSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, signpostMessage.data());
+        WTFBeginSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, signpostMessage.data() ? signpostMessage.data() : "(nullptr)");
     }
 
     CompilationPath path = compileInThreadImpl();
@@ -188,7 +209,7 @@ void JITPlan::compileInThread(JITWorklistThread* thread)
     RELEASE_ASSERT((path == CancelPath) == (m_stage == JITPlanStage::Canceled));
 
     if (UNLIKELY(Options::useCompilerSignpost()))
-        WTFEndSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, signpostMessage.data());
+        WTFEndSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, signpostMessage.data() ? signpostMessage.data() : "(nullptr)");
 
     if (LIKELY(!computeCompileTimes))
         return;

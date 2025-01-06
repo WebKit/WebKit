@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT transition finishes with no named elements Test timed out
+PASS transition finishes with no named elements
 

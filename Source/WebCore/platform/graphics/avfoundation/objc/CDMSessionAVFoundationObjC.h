@@ -26,7 +26,9 @@
 #pragma once
 
 #include "LegacyCDMSession.h"
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,23 +38,20 @@ OBJC_CLASS AVAssetResourceLoadingRequest;
 OBJC_CLASS WebCDMSessionAVFoundationObjCListener;
 
 namespace WebCore {
-class CDMSessionAVFoundationObjC;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CDMSessionAVFoundationObjC> : std::true_type { };
-}
-
-namespace WebCore {
 
 class MediaPlayerPrivateAVFoundationObjC;
 
-class CDMSessionAVFoundationObjC final : public LegacyCDMSession, public CanMakeWeakPtr<CDMSessionAVFoundationObjC> {
-    WTF_MAKE_FAST_ALLOCATED;
+class CDMSessionAVFoundationObjC final : public LegacyCDMSession, public RefCountedAndCanMakeWeakPtr<CDMSessionAVFoundationObjC> {
+    WTF_MAKE_TZONE_ALLOCATED(CDMSessionAVFoundationObjC);
 public:
-    CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient&);
+    static Ref<CDMSessionAVFoundationObjC> create(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient& client)
+    {
+        return adoptRef(*new CDMSessionAVFoundationObjC(parent, client));
+    }
     virtual ~CDMSessionAVFoundationObjC();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     LegacyCDMSessionType type() override { return CDMSessionTypeAVFoundationObjC; }
     const String& sessionId() const override { return m_sessionId; }
@@ -64,9 +63,11 @@ public:
     void playerDidReceiveError(NSError *);
 
 private:
+    CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient&);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "CDMSessionAVFoundationObjC"_s; }
     WTFLogChannel& logChannel() const;
 #endif
@@ -78,7 +79,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

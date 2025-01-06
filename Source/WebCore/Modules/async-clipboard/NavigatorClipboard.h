@@ -26,7 +26,9 @@
 #pragma once
 
 #include "Supplementable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,7 +36,7 @@ class Clipboard;
 class Navigator;
 
 class NavigatorClipboard final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorClipboard);
 public:
     explicit NavigatorClipboard(Navigator&);
     ~NavigatorClipboard();
@@ -47,7 +49,7 @@ private:
     static ASCIILiteral supplementName();
 
     RefPtr<Clipboard> m_clipboard;
-    Navigator& m_navigator;
+    CheckedRef<Navigator> m_navigator;
 };
 
 }

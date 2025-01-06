@@ -1,4 +1,5 @@
 //@ skip if $architecture == "arm"
+//@ skip if $platform == "tvos" || $platform == "watchos"
 //@ runDefault
 
 if (platformSupportsSamplingProfiler() && $vm.isWasmSupported()) {

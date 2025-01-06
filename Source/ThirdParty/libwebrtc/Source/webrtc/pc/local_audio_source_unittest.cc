@@ -10,7 +10,8 @@
 
 #include "pc/local_audio_source.h"
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "test/gtest.h"
 
 using webrtc::LocalAudioSource;
@@ -26,5 +27,5 @@ TEST(LocalAudioSourceTest, InitWithAudioOptions) {
 TEST(LocalAudioSourceTest, InitWithNoOptions) {
   rtc::scoped_refptr<LocalAudioSource> source =
       LocalAudioSource::Create(nullptr);
-  EXPECT_EQ(absl::nullopt, source->options().highpass_filter);
+  EXPECT_EQ(std::nullopt, source->options().highpass_filter);
 }

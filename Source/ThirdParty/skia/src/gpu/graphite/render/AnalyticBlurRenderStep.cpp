@@ -7,11 +7,27 @@
 
 #include "src/gpu/graphite/render/AnalyticBlurRenderStep.h"
 
+#include "include/core/SkM44.h"
+#include "include/core/SkSamplingOptions.h"
+#include "include/core/SkTileMode.h"
+#include "include/private/base/SkDebug.h"
+#include "src/base/SkEnumBitMask.h"
+#include "src/core/SkSLTypeShared.h"
+#include "src/gpu/BufferWriter.h"
+#include "src/gpu/graphite/Attribute.h"
 #include "src/gpu/graphite/ContextUtils.h"
+#include "src/gpu/graphite/DrawOrder.h"
 #include "src/gpu/graphite/DrawParams.h"
+#include "src/gpu/graphite/DrawTypes.h"
 #include "src/gpu/graphite/DrawWriter.h"
 #include "src/gpu/graphite/PipelineData.h"
+#include "src/gpu/graphite/geom/AnalyticBlurMask.h"
+#include "src/gpu/graphite/geom/Geometry.h"
+#include "src/gpu/graphite/geom/Rect.h"
+#include "src/gpu/graphite/geom/Transform_graphite.h"
 #include "src/gpu/graphite/render/CommonDepthStencilSettings.h"
+
+#include <string_view>
 
 namespace skgpu::graphite {
 
@@ -26,11 +42,11 @@ AnalyticBlurRenderStep::AnalyticBlurRenderStep()
                       {"blurData", SkSLType::kHalf2},
                       {"shapeType", SkSLType::kInt},
                       {"depth", SkSLType::kFloat}},
-                     PrimitiveType::kTriangleStrip,
+                     PrimitiveType::kTriangles,
                      kDirectDepthGreaterPass,
                      /*vertexAttrs=*/
                      {{"position", VertexAttribType::kFloat2, SkSLType::kFloat2},
-                      {"ssboIndices", VertexAttribType::kUShort2, SkSLType::kUShort2}},
+                      {"ssboIndices", VertexAttribType::kUInt2, SkSLType::kUInt2}},
                      /*instanceAttrs=*/{},
                      /*varyings=*/
                      // scaledShapeCoords are the fragment coordinates in local shape space, where
@@ -60,13 +76,15 @@ const char* AnalyticBlurRenderStep::fragmentCoverageSkSL() const {
 
 void AnalyticBlurRenderStep::writeVertices(DrawWriter* writer,
                                            const DrawParams& params,
-                                           skvx::ushort2 ssboIndices) const {
+                                           skvx::uint2 ssboIndices) const {
     const Rect& r = params.geometry().analyticBlurMask().drawBounds();
     DrawWriter::Vertices verts{*writer};
-    verts.append(4) << skvx::float2(r.left(), r.top()) << ssboIndices
+    verts.append(6) << skvx::float2(r.left(), r.top()) << ssboIndices
                     << skvx::float2(r.right(), r.top()) << ssboIndices
                     << skvx::float2(r.left(), r.bot()) << ssboIndices
-                    << skvx::float2(r.right(), r.bot()) << ssboIndices;
+                    << skvx::float2(r.right(), r.top()) << ssboIndices
+                    << skvx::float2(r.right(), r.bot()) << ssboIndices
+                    << skvx::float2(r.left(), r.bot()) << ssboIndices;
 }
 
 void AnalyticBlurRenderStep::writeUniformsAndTextures(const DrawParams& params,
@@ -85,8 +103,7 @@ void AnalyticBlurRenderStep::writeUniformsAndTextures(const DrawParams& params,
     SkSamplingOptions samplingOptions = blur.shapeType() == AnalyticBlurMask::ShapeType::kRect
                                                 ? SkFilterMode::kLinear
                                                 : SkFilterMode::kNearest;
-    constexpr SkTileMode kTileModes[2] = {SkTileMode::kClamp, SkTileMode::kClamp};
-    gatherer->add(samplingOptions, kTileModes, blur.refProxy());
+    gatherer->add(blur.refProxy(), {samplingOptions, SkTileMode::kClamp});
 }
 
 }  // namespace skgpu::graphite

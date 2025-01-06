@@ -101,12 +101,12 @@ bool FileHandle::open()
     return static_cast<bool>(*this);
 }
 
-int FileHandle::read(void* data, int length)
+int FileHandle::read(std::span<uint8_t> data)
 {
     if (!open())
         return -1;
 
-    return FileSystem::readFromFile(m_fileHandle, data, length);
+    return FileSystem::readFromFile(m_fileHandle, data);
 }
 
 int FileHandle::write(std::span<const uint8_t> data)
@@ -132,7 +132,7 @@ bool FileHandle::printf(const char* format, ...)
 
     va_end(args);
 
-    return write({ reinterpret_cast<const uint8_t*>(buffer.data()), stringLength }) >= 0;
+    return write(byteCast<uint8_t>(buffer.mutableSpan()).first(stringLength)) >= 0;
 }
 
 void FileHandle::close()
@@ -149,6 +149,11 @@ void FileHandle::close()
 FileSystem::PlatformFileHandle FileHandle::handle() const
 {
     return m_fileHandle;
+}
+
+String FileHandle::path() const
+{
+    return m_path;
 }
 
 } // namespace WebCore

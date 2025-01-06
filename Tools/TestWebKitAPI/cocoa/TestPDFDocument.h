@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(PDFKIT)
+#if USE(PDFKIT_FOR_TESTING)
 
 #import <PDFKit/PDFKit.h>
 #import <wtf/RefCounted.h>
@@ -89,4 +89,4 @@ private:
 };
 
 } // namespace TestWebKitAPI
-#endif // HAVE(PDFKIT)
+#endif // USE(PDFKIT_FOR_TESTING)

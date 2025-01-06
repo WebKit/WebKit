@@ -8,11 +8,10 @@ includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const isoCalendar = Temporal.Calendar.from('iso8601');
 
 assert.throws(RangeError, () => new Temporal.PlainYearMonth(-Infinity, 1));
 assert.throws(RangeError, () => new Temporal.PlainYearMonth(1970, -Infinity));
-assert.throws(RangeError, () => new Temporal.PlainYearMonth(1970, 1, isoCalendar, -Infinity));
+assert.throws(RangeError, () => new Temporal.PlainYearMonth(1970, 1, "iso8601", -Infinity));
 
 const O = (primitiveValue, propertyName) => (calls) => TemporalHelpers.toPrimitiveObserver(calls, primitiveValue, propertyName);
 const tests = [

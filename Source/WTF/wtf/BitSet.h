@@ -26,8 +26,11 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdIntExtras.h>
+#include <wtf/StdLibExtras.h>
 #include <string.h>
 #include <type_traits>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -141,6 +144,9 @@ public:
 
     constexpr size_t storageLengthInBytes() { return sizeof(bits); }
 
+    std::span<uint8_t> storageBytes() { return unsafeMakeSpan(reinterpret_cast<uint8_t*>(storage()), storageLengthInBytes()); }
+    std::span<const uint8_t> storageBytes() const { return unsafeMakeSpan(reinterpret_cast<const uint8_t*>(storage()), storageLengthInBytes()); }
+
 private:
     void cleanseLastWord();
 
@@ -207,7 +213,7 @@ ALWAYS_INLINE constexpr bool BitSet<bitSetSize, WordType>::concurrentTestAndSet(
     // transactionRelaxed() returns true if the bit was changed. If the bit was changed,
     // then the previous bit must have been false since we're trying to set it. Hence,
     // the result of transactionRelaxed() is the inverse of our expected result.
-    return !bitwise_cast<Atomic<WordType>*>(data)->transactionRelaxed(
+    return !std::bit_cast<Atomic<WordType>*>(data)->transactionRelaxed(
         [&] (WordType& value) -> bool {
             if (value & mask)
                 return false;
@@ -226,7 +232,7 @@ ALWAYS_INLINE constexpr bool BitSet<bitSetSize, WordType>::concurrentTestAndClea
     // transactionRelaxed() returns true if the bit was changed. If the bit was changed,
     // then the previous bit must have been true since we're trying to clear it. Hence,
     // the result of transactionRelaxed() matches our expected result.
-    return bitwise_cast<Atomic<WordType>*>(data)->transactionRelaxed(
+    return std::bit_cast<Atomic<WordType>*>(data)->transactionRelaxed(
         [&] (WordType& value) -> bool {
             if (!(value & mask))
                 return false;
@@ -401,92 +407,14 @@ template<size_t bitSetSize, typename WordType>
 template<typename Func>
 ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(const Func& func) const
 {
-    for (size_t i = 0; i < words; ++i) {
-        WordType word = bits[i];
-        if (!word)
-            continue;
-        size_t base = i * wordSize;
-
-#if CPU(X86_64) || CPU(ARM64)
-        // We should only use ctz() when we know that ctz() is implementated using
-        // a fast hardware instruction. Otherwise, this will actually result in
-        // worse performance.
-        while (word) {
-            WordType temp = word & -word;
-            size_t offset = ctz(word);
-            if constexpr (std::is_same_v<IterationStatus, decltype(func(base + offset))>) {
-                if (func(base + offset) == IterationStatus::Done)
-                    return;
-            } else
-                func(base + offset);
-            word ^= temp;
-        }
-#else
-        for (size_t j = 0; j < wordSize; ++j) {
-            if (word & 1) {
-                if constexpr (std::is_same_v<IterationStatus, decltype(func(base + j))>) {
-                    if (func(base + j) == IterationStatus::Done)
-                        return;
-                } else
-                    func(base + j);
-            }
-            word >>= 1;
-        }
-#endif
-    }
+    WTF::forEachSetBit(std::span { bits.data(), bits.size() }, func);
 }
 
 template<size_t bitSetSize, typename WordType>
 template<typename Func>
 ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(size_t startIndex, const Func& func) const
 {
-    auto iterate = [&](WordType word, size_t i) ALWAYS_INLINE_LAMBDA {
-        size_t base = i * wordSize;
-
-#if CPU(X86_64) || CPU(ARM64)
-        // We should only use ctz() when we know that ctz() is implementated using
-        // a fast hardware instruction. Otherwise, this will actually result in
-        // worse performance.
-        while (word) {
-            WordType temp = word & -word;
-            size_t offset = ctz(word);
-            if constexpr (std::is_same_v<IterationStatus, decltype(func(base + offset))>) {
-                if (func(base + offset) == IterationStatus::Done)
-                    return;
-            } else
-                func(base + offset);
-            word ^= temp;
-        }
-#else
-        for (size_t j = 0; j < wordSize; ++j) {
-            if (word & 1) {
-                if constexpr (std::is_same_v<IterationStatus, decltype(func(base + j))>) {
-                    if (func(base + j) == IterationStatus::Done)
-                        return;
-                } else
-                    func(base + j);
-            }
-            word >>= 1;
-        }
-#endif
-    };
-
-    size_t startWord = startIndex / wordSize;
-    if (startWord == words)
-        return;
-
-    WordType word = bits[startWord];
-    size_t startIndexInWord = startIndex - startWord * wordSize;
-    WordType masked = word & (~((static_cast<WordType>(1) << startIndexInWord) - 1));
-    if (masked)
-        iterate(masked, startWord);
-
-    for (size_t i = startWord + 1; i < words; ++i) {
-        WordType word = bits[i];
-        if (!word)
-            continue;
-        iterate(word, i);
-    }
+    WTF::forEachSetBit(std::span { bits.data(), bits.size() }, startIndex, func);
 }
 
 template<size_t bitSetSize, typename WordType>
@@ -606,3 +534,5 @@ inline void BitSet<bitSetSize, WordType>::dump(PrintStream& out) const
 } // namespace WTF
 
 // We can't do "using WTF::BitSet;" here because there is a function in the macOS SDK named BitSet() already.
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

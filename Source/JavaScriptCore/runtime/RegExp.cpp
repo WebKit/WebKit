@@ -29,7 +29,7 @@
 #include "YarrJIT.h"
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 
@@ -47,7 +47,7 @@ RegExpFunctionalTestCollector* RegExpFunctionalTestCollector::get()
     return s_instance;
 }
 
-void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, const String& s, int startOffset, int* ovector, int result)
+void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, StringView s, int startOffset, int* ovector, int result)
 {
     if ((!m_lastRegExp) || (m_lastRegExp != regExp)) {
         m_lastRegExp = regExp;
@@ -89,7 +89,7 @@ RegExpFunctionalTestCollector::~RegExpFunctionalTestCollector()
     s_instance = 0;
 }
 
-void RegExpFunctionalTestCollector::outputEscapedString(const String& s, bool escapeSlash)
+void RegExpFunctionalTestCollector::outputEscapedString(StringView s, bool escapeSlash)
 {
     int len = s.length();
     
@@ -164,6 +164,8 @@ void RegExp::finishCreation(VM& vm)
         return;
     }
 
+    setAtom(WTFMove(pattern.m_atom));
+
     m_numSubpatterns = pattern.m_numSubpatterns;
     if (!pattern.m_captureGroupNames.isEmpty() || !pattern.m_namedGroupToParenIndices.isEmpty()) {
         m_rareData = makeUnique<RareData>();
@@ -223,6 +225,8 @@ void RegExp::byteCodeCompileIfNecessary(VM* vm)
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
+    setAtom(WTFMove(pattern.m_atom));
+
     m_regExpBytecode = byteCodeCompilePattern(vm, pattern, m_constructionErrorCode);
     if (!m_regExpBytecode) {
         m_state = ParseError;
@@ -240,6 +244,8 @@ void RegExp::compile(VM* vm, Yarr::CharSize charSize, std::optional<StringView> 
         return;
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
+
+    setAtom(WTFMove(pattern.m_atom));
 
     if (!hasCode()) {
         ASSERT(m_state == NotCompiled);
@@ -276,13 +282,13 @@ void RegExp::compile(VM* vm, Yarr::CharSize charSize, std::optional<StringView> 
     }
 }
 
-int RegExp::match(JSGlobalObject* globalObject, const String& s, unsigned startOffset, Vector<int>& ovector)
+int RegExp::match(JSGlobalObject* globalObject, StringView s, unsigned startOffset, Vector<int>& ovector)
 {
     return matchInline(globalObject, globalObject->vm(), s, startOffset, ovector);
 }
 
 bool RegExp::matchConcurrently(
-    VM& vm, const String& s, unsigned startOffset, int& position, Vector<int>& ovector)
+    VM& vm, StringView s, unsigned startOffset, int& position, Vector<int>& ovector)
 {
     Locker locker { cellLock() };
 
@@ -305,6 +311,8 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::CharSize charSize, std::optional<Str
         return;
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
+
+    setAtom(WTFMove(pattern.m_atom));
 
     if (!hasCode()) {
         ASSERT(m_state == NotCompiled);
@@ -341,12 +349,12 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::CharSize charSize, std::optional<Str
     }
 }
 
-MatchResult RegExp::match(JSGlobalObject* globalObject, const String& s, unsigned startOffset)
+MatchResult RegExp::match(JSGlobalObject* globalObject, StringView s, unsigned startOffset)
 {
     return matchInline(globalObject, globalObject->vm(), s, startOffset);
 }
 
-bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, MatchResult& result)
+bool RegExp::matchConcurrently(VM& vm, StringView s, unsigned startOffset, MatchResult& result)
 {
     Locker locker { cellLock() };
 
@@ -364,6 +372,7 @@ void RegExp::deleteCode()
     if (!hasCode())
         return;
     m_state = NotCompiled;
+    m_atom = String();
 #if ENABLE(YARR_JIT)
     if (m_regExpJITCode)
         m_regExpJITCode->clear(locker);
@@ -372,7 +381,7 @@ void RegExp::deleteCode()
 }
 
 #if ENABLE(YARR_JIT_DEBUG)
-void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* offsetVector, int jitResult)
+void RegExp::matchCompareWithInterpreter(StringView s, int startOffset, int* offsetVector, int jitResult)
 {
     int offsetVectorSize = (m_numSubpatterns + 1) * 2;
     Vector<int> interpreterOvector(offsetVectorSize);

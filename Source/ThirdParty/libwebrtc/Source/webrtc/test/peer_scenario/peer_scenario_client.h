@@ -79,7 +79,7 @@ class PeerScenarioClient {
       struct PulsedNoise {
         double amplitude = 0.1;
       };
-      absl::optional<PulsedNoise> pulsed_noise = PulsedNoise();
+      std::optional<PulsedNoise> pulsed_noise = PulsedNoise();
     } audio;
     struct Video {
       bool use_fake_codecs = false;
@@ -147,6 +147,7 @@ class PeerScenarioClient {
       std::function<void(SessionDescriptionInterface*)> munge_offer,
       std::function<void(std::string)> offer_handler);
   void SetSdpOfferAndGetAnswer(std::string remote_offer,
+                               std::function<void()> remote_description_set,
                                std::function<void(std::string)> answer_handler);
   void SetSdpAnswer(
       std::string remote_answer,

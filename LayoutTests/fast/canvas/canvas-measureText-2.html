@@ -33,15 +33,15 @@
                             shouldBeGreaterThanOrEqual("metrics.emHeightAscent + metrics.emHeightDescent", "0");
 
                             if (baseline === 'top')
-                                shouldBeZero("Math.abs(metrics.emHeightAscent)");
+                                shouldBeCloseTo("Math.abs(metrics.emHeightAscent)", 0, 0.25);
                             if (baseline === 'bottom')
-                                shouldBeZero("Math.abs(metrics.emHeightDescent)");
+                                shouldBeCloseTo("Math.abs(metrics.emHeightDescent)", 0, 0.25);
                             if (baseline === 'hanging')
-                                shouldBeZero("Math.abs(metrics.hangingBaseline)");
+                                shouldBeCloseTo("Math.abs(metrics.hangingBaseline)", 0, 0.25);
                             if (baseline === 'alphabetic')
-                                shouldBeZero("Math.abs(metrics.alphabeticBaseline)");
+                                shouldBeCloseTo("Math.abs(metrics.alphabeticBaseline)", 0, 0.25);
                             if (baseline === 'ideographic')
-                                shouldBeZero("Math.abs(metrics.ideographicBaseline)");
+                                shouldBeCloseTo("Math.abs(metrics.ideographicBaseline)", 0, 0.25);
 
                             shouldBeGreaterThanOrEqual("metrics.emHeightAscent", "metrics.hangingBaseline");
                             shouldBeGreaterThanOrEqual("metrics.hangingBaseline", "metrics.alphabeticBaseline");

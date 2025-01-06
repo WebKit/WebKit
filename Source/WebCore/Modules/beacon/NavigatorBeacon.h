@@ -30,7 +30,9 @@
 #include "ExceptionOr.h"
 #include "FetchBody.h"
 #include "Supplementable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,7 +42,7 @@ class Navigator;
 class ResourceError;
 
 class NavigatorBeacon final : public Supplement<Navigator>, private CachedRawResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorBeacon);
 public:
     explicit NavigatorBeacon(Navigator&);
     ~NavigatorBeacon();
@@ -58,7 +60,7 @@ private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
     void logError(const ResourceError&);
 
-    Navigator& m_navigator;
+    CheckedRef<Navigator> m_navigator;
     Vector<CachedResourceHandle<CachedRawResource>> m_inflightBeacons;
 };
 

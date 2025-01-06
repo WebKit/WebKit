@@ -30,26 +30,23 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "PaymentAuthorizationPresenter.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PaymentHeaders.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 
+#if PLATFORM(COCOA)
+#include "CocoaWindow.h"
+#endif
+
 OBJC_CLASS PKPaymentSetupViewController;
 OBJC_CLASS UIViewController;
-
-namespace WebKit {
-class WebPaymentCoordinatorProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebPaymentCoordinatorProxy> : std::true_type { };
-}
 
 namespace IPC {
 class Connection;
@@ -69,7 +66,6 @@ struct ApplePayShippingMethodUpdate;
 }
 
 OBJC_CLASS NSObject;
-OBJC_CLASS NSWindow;
 OBJC_CLASS PKPaymentAuthorizationViewController;
 OBJC_CLASS PKPaymentRequest;
 OBJC_CLASS UIViewController;
@@ -83,13 +79,20 @@ namespace WebKit {
 class PaymentSetupConfiguration;
 class PaymentSetupFeatures;
 
-class WebPaymentCoordinatorProxy
+class WebPaymentCoordinatorProxy final
     : public IPC::MessageReceiver
     , private IPC::MessageSender
-    , public PaymentAuthorizationPresenter::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    , public PaymentAuthorizationPresenter::Client
+    , public RefCounted<WebPaymentCoordinatorProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(WebPaymentCoordinatorProxy);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebPaymentCoordinatorProxy);
 public:
-    struct Client {
+    USING_CAN_MAKE_WEAKPTR(MessageReceiver);
+
+    struct Client : public CanMakeWeakPtr<Client>, public CanMakeCheckedPtr<Client> {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(Client);
+
         virtual ~Client() = default;
 
         virtual IPC::Connection* paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&) = 0;
@@ -104,21 +107,33 @@ public:
         virtual void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&) = 0;
 #endif
         virtual const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) = 0;
-        virtual std::unique_ptr<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) = 0;
+        virtual Ref<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) = 0;
 #endif
-#if PLATFORM(MAC)
-        virtual NSWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) = 0;
-#endif
+        virtual CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const = 0;
         virtual void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) = 0;
+        virtual std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebPaymentMessages() const = 0;
     };
 
+    static Ref<WebPaymentCoordinatorProxy> create(Client&);
+
     friend class NetworkConnectionToWebProcess;
-    explicit WebPaymentCoordinatorProxy(Client&);
     ~WebPaymentCoordinatorProxy();
 
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     void webProcessExited();
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const
+    {
+        CheckedPtr client = m_client.get();
+        return client ? client->sharedPreferencesForWebPaymentMessages() : std::nullopt;
+    }
 
 private:
+    explicit WebPaymentCoordinatorProxy(Client&);
+    Ref<WorkQueue> protectedCanMakePaymentsQueue() const;
+    CheckedPtr<Client> checkedClient() const { return m_client.get(); }
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
@@ -137,6 +152,7 @@ private:
     void presenterDidChangeCouponCode(PaymentAuthorizationPresenter&, const String& couponCode) final;
 #endif
     void presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL&) final;
+    CocoaWindow *presentingWindowForPaymentAuthorization(PaymentAuthorizationPresenter&) const final;
 
     // Message handlers
     void canMakePayments(CompletionHandler<void(bool)>&&);
@@ -185,7 +201,9 @@ private:
     void platformSetPaymentRequestUserAgent(PKPaymentRequest *, const String& userAgent);
 #endif
 
-    Client& m_client;
+    RefPtr<PaymentAuthorizationPresenter> protectedAuthorizationPresenter() { return m_authorizationPresenter; }
+
+    WeakPtr<Client> m_client;
     std::optional<WebCore::PageIdentifier> m_destinationID;
 
     enum class State : uint16_t {
@@ -234,7 +252,7 @@ private:
         ValidationComplete
     } m_merchantValidationState { MerchantValidationState::Idle };
 
-    std::unique_ptr<PaymentAuthorizationPresenter> m_authorizationPresenter;
+    RefPtr<PaymentAuthorizationPresenter> m_authorizationPresenter;
     Ref<WorkQueue> m_canMakePaymentsQueue;
 
 #if PLATFORM(MAC)

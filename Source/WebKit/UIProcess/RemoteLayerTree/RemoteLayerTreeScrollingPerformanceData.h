@@ -26,15 +26,16 @@
 #pragma once
 
 #import <WebCore/FloatRect.h>
+#import <wtf/MonotonicTime.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
-#include <wtf/MonotonicTime.h>
 
 namespace WebKit {
 
 class RemoteLayerTreeDrawingAreaProxy;
 
 class RemoteLayerTreeScrollingPerformanceData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeScrollingPerformanceData);
 public:
     RemoteLayerTreeScrollingPerformanceData(RemoteLayerTreeDrawingAreaProxy&);
     ~RemoteLayerTreeScrollingPerformanceData();
@@ -70,7 +71,7 @@ private:
     void appendBlankPixelCount(ScrollingLogEvent::EventType, uint64_t blankPixelCount);
     void appendSynchronousScrollingChange(WTF::MonotonicTime, uint64_t);
 
-    RemoteLayerTreeDrawingAreaProxy& m_drawingArea;
+    CheckedRef<RemoteLayerTreeDrawingAreaProxy> m_drawingArea;
     Vector<ScrollingLogEvent> m_events;
 #if PLATFORM(MAC)
     uint64_t m_lastUnfilledArea;

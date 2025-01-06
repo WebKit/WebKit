@@ -81,13 +81,10 @@ struct bio_bio_st {
 };
 
 static int bio_new(BIO *bio) {
-  struct bio_bio_st *b;
-
-  b = OPENSSL_malloc(sizeof *b);
+  struct bio_bio_st *b = OPENSSL_zalloc(sizeof *b);
   if (b == NULL) {
     return 0;
   }
-  OPENSSL_memset(b, 0, sizeof(struct bio_bio_st));
 
   b->size = 17 * 1024;  // enough for one TLS record (just a default)
   bio->ptr = b;

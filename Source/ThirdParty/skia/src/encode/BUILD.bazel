@@ -1,23 +1,10 @@
-load("//bazel:flags.bzl", "string_flag_with_values")
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "generate_cpp_files_for_headers", "select_multi", "skia_cc_deps", "skia_cc_library", "skia_filegroup")
+load("//bazel:skia_rules.bzl", "generate_cpp_files_for_headers", "skia_cc_library", "skia_filegroup")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
-
-string_flag_with_values(
-    name = "include_encoder",
-    multiple = True,
-    values = [
-        "jpeg_encode_codec",
-        "png_encode_codec",
-        "webp_encode_codec",
-    ],
-)
 
 # In separate skia_filegroups to export these as gni file lists
 skia_filegroup(
@@ -39,6 +26,16 @@ skia_filegroup(
 skia_filegroup(
     name = "no_jpeg_encode_srcs",
     srcs = ["SkJpegEncoder_none.cpp"],
+)
+
+skia_filegroup(
+    name = "png_encode_base_hdrs",
+    srcs = ["SkPngEncoderBase.h"],
+)
+
+skia_filegroup(
+    name = "png_encode_base_srcs",
+    srcs = ["SkPngEncoderBase.cpp"],
 )
 
 skia_filegroup(
@@ -66,54 +63,6 @@ skia_filegroup(
     srcs = ["SkWebpEncoder_none.cpp"],
 )
 
-skia_filegroup(
-    name = "srcs",
-    srcs = [
-        "SkEncoder.cpp",
-        "SkICC.cpp",
-    ] + select_multi(
-        default_cases = {
-            ":jpeg_encode_codec": [":no_jpeg_encode_srcs"],
-            ":png_encode_codec": [":no_png_encode_srcs"],
-            ":webp_encode_codec": [":no_webp_encode_srcs"],
-        },
-        values_map = {
-            ":jpeg_encode_codec": [":jpeg_encode_srcs"],
-            ":png_encode_codec": [":png_encode_srcs"],
-            ":webp_encode_codec": [":webp_encode_srcs"],
-        },
-    ),
-    visibility = ["//src:__pkg__"],
-)
-
-skia_filegroup(
-    name = "private_hdrs",
-    srcs = [
-        "SkICCPriv.h",
-        "SkImageEncoderFns.h",
-        "SkImageEncoderPriv.h",
-    ] + select_multi({
-        ":png_encode_codec": [":png_encode_hdrs"],
-        ":jpeg_encode_codec": [
-            ":jpeg_encode_hdrs",
-            "//src/codec:shared_jpeg_hdrs",
-        ],
-    }),
-    visibility = ["//src:__pkg__"],
-)
-
-skia_cc_deps(
-    name = "deps",
-    visibility = ["//src:__pkg__"],
-    deps = select_multi(
-        {
-            ":jpeg_encode_codec": ["@libjpeg_turbo"],
-            ":png_encode_codec": ["@libpng"],
-            ":webp_encode_codec": ["@libwebp"],
-        },
-    ),
-)
-
 skia_cc_library(
     name = "icc_support",
     srcs = [
@@ -136,18 +85,20 @@ skia_cc_library(
     name = "encoder_common",
     srcs = [
         "SkEncoder.cpp",
-        "//include/encode:encode_hdrs",
     ],
     hdrs = [
         "SkImageEncoderFns.h",
         "SkImageEncoderPriv.h",
+        "//include/encode:encode_hdrs",
     ],
     features = ["layering_check"],
+    visibility = ["//experimental/rust_png/encoder:__subpackages__"],
     deps = [
         ":icc_support",
         "//:core",
         "//modules/skcms",
         "//src/base",
+        "//src/codec:any_decoder",
         "//src/core:core_priv",
     ],
 )
@@ -164,23 +115,46 @@ skia_cc_library(
 )
 
 skia_cc_library(
+    name = "png_encode_base",
+    srcs = [":png_encode_base_srcs"],
+    hdrs = [":png_encode_base_hdrs"],
+    features = ["layering_check"],
+    visibility = [
+        "//:__pkg__",
+        "//experimental/rust_png/encoder:__pkg__",
+    ],
+    deps = [
+        ":encoder_common",
+        "//:core",
+        "//src/base",
+        "//src/codec:any_decoder",
+    ],
+)
+
+skia_cc_library(
     name = "png_encode",
     srcs = [
         ":png_encode_hdrs",
         ":png_encode_srcs",
-        "//src/codec:common_png_srcs",
+        "//src/codec:common_libpng_srcs",
     ],
     hdrs = [
         "//include/encode:encode_hdrs",
         "//include/encode:png_hdrs",
     ],
+    defines = [
+        "SK_CODEC_ENCODES_PNG",
+        "SK_CODEC_ENCODES_PNG_WITH_LIBPNG",
+    ],
     features = ["layering_check"],
     visibility = ["//:__pkg__"],
     deps = [
         ":encoder_common",
+        ":png_encode_base",
         "//:core",
         "//modules/skcms",
         "//src/base",
+        "//src/codec:any_decoder",
         "//src/core:core_priv",
         "@libpng",
     ],
@@ -197,6 +171,7 @@ skia_cc_library(
         "//include/encode:encode_hdrs",
         "//include/encode:jpeg_hdrs",
     ],
+    defines = ["SK_CODEC_ENCODES_JPEG"],
     features = ["layering_check"],
     visibility = ["//:__pkg__"],
     deps = [
@@ -217,6 +192,7 @@ skia_cc_library(
         "//include/encode:encode_hdrs",
         "//include/encode:webp_hdrs",
     ],
+    defines = ["SK_CODEC_ENCODES_WEBP"],
     features = ["layering_check"],
     visibility = ["//:__pkg__"],
     deps = [

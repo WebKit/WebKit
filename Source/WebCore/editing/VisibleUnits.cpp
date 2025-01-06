@@ -48,6 +48,8 @@
 #include "TextIterator.h"
 #include "VisibleSelection.h"
 #include <unicode/ubrk.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
@@ -421,7 +423,7 @@ static void prepend(Vector<UChar, 1024>& buffer, StringView string)
     unsigned oldSize = buffer.size();
     unsigned length = string.length();
     buffer.grow(oldSize + length);
-    memmove(buffer.data() + length, buffer.data(), oldSize * sizeof(UChar));
+    memmoveSpan(buffer.mutableSpan().subspan(length), buffer.span().first(oldSize));
     for (unsigned i = 0; i < length; ++i)
         buffer[i] = string[i];
 }
@@ -430,7 +432,7 @@ static void prependRepeatedCharacter(Vector<UChar, 1024>& buffer, UChar characte
 {
     unsigned oldSize = buffer.size();
     buffer.grow(oldSize + count);
-    memmove(buffer.data() + count, buffer.data(), oldSize * sizeof(UChar));
+    memmoveSpan(buffer.mutableSpan().subspan(count), buffer.span().first(oldSize));
     for (unsigned i = 0; i < count; ++i)
         buffer[i] = character;
 }
@@ -1835,7 +1837,7 @@ std::ptrdiff_t distanceBetweenPositions(const VisiblePosition& a, const VisibleP
 void charactersAroundPosition(const VisiblePosition& position, char32_t& oneAfter, char32_t& oneBefore, char32_t& twoBefore)
 {
     const int maxCharacters = 3;
-    char32_t characters[maxCharacters] = { 0 };
+    std::array<char32_t, maxCharacters> characters = { };
 
     if (position.isNull() || isStartOfDocument(position))
         return;
@@ -1942,6 +1944,32 @@ std::optional<SimpleRange> rangeExpandedAroundPositionByCharacters(const Visible
         start = start.previous(Character);
         end = end.next(Character);
     }
+    return makeSimpleRange(start, end);
+}
+
+std::optional<SimpleRange> rangeExpandedAroundRangeByCharacters(const VisibleSelection& selection, uint64_t numberOfCharactersToExpandBackwards, uint64_t numberOfCharactersToExpandForwards)
+{
+    auto range = selection.firstRange();
+    if (!range)
+        return std::nullopt;
+
+    auto extendedPosition = [](const BoundaryPoint& point, uint64_t characterCount, SelectionDirection direction) {
+        auto visiblePosition = VisiblePosition { makeContainerOffsetPosition(point) };
+
+        for (uint64_t i = 0; i < characterCount; ++i) {
+            auto nextVisiblePosition = positionOfNextBoundaryOfGranularity(visiblePosition, TextGranularity::CharacterGranularity, direction);
+            if (nextVisiblePosition.isNull())
+                break;
+
+            visiblePosition = nextVisiblePosition;
+        }
+
+        return visiblePosition;
+    };
+
+    auto start = extendedPosition(range->start, numberOfCharactersToExpandBackwards, SelectionDirection::Backward);
+    auto end = extendedPosition(range->end, numberOfCharactersToExpandForwards, SelectionDirection::Forward);
+
     return makeSimpleRange(start, end);
 }
 

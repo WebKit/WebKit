@@ -9,6 +9,20 @@
     <body>
         <script src ="routines.js"></script>
         <script>
+test(() => {
+    const pc = new RTCPeerConnection;
+    const transceiver = pc.addTransceiver("video", { sendEncodings: [
+        { rid:"a" }, { rid:"b" }, { rid:"c" }
+    ]});
+    const parameters = transceiver.sender.getParameters();
+    assert_equals(parameters.encodings[0].rid, "a");
+    assert_equals(parameters.encodings[1].rid, "b");
+    assert_equals(parameters.encodings[2].rid, "c");
+    assert_equals(parameters.encodings[0].scaleResolutionDownBy, 4);
+    assert_equals(parameters.encodings[1].scaleResolutionDownBy, 2);
+    assert_equals(parameters.encodings[2].scaleResolutionDownBy, 1);
+}, "default encodings values");
+
 var firstConnection, secondConnection;
 promise_test((test) => {
     if (window.testRunner)

@@ -29,32 +29,28 @@
 
 #include "LibWebRTCMacros.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
-ALLOW_UNUSED_PARAMETERS_BEGIN
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/rtc_base/logging.h>
-ALLOW_UNUSED_PARAMETERS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 class LibWebRTCLogSink;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LibWebRTCLogSink> : std::true_type { };
-}
-
 namespace WebCore {
 
-class LibWebRTCLogSink final : rtc::LogSink, public CanMakeWeakPtr<LibWebRTCLogSink, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_FAST_ALLOCATED;
+class LibWebRTCLogSink final : rtc::LogSink {
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCLogSink);
 public:
-    using LogCallback = Function<void(String&& level, String&& message)>;
+    using LogCallback = Function<void(rtc::LoggingSeverity, const std::string&)>;
     explicit LibWebRTCLogSink(LogCallback&&);
 
     ~LibWebRTCLogSink();
 
-    void start();
+    void start(rtc::LoggingSeverity = rtc::LoggingSeverity::LS_VERBOSE);
     void stop();
 
 private:
@@ -64,6 +60,7 @@ private:
     void logMessage(const std::string&, rtc::LoggingSeverity);
 
     LogCallback m_callback;
+    std::optional<rtc::LoggingSeverity> m_loggingLevel;
 };
 
 } // namespace WebCore

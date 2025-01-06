@@ -109,14 +109,14 @@
     return _tileController ? _tileController->acceleratesDrawing() : NO;
 }
 
-- (void)setWantsDeepColorBackingStore:(BOOL)wantsDeepColor
+- (void)setContentsFormat:(WebCore::ContentsFormat)contentsFormat
 {
-    _tileController->setWantsDeepColorBackingStore(wantsDeepColor);
+    _tileController->setContentsFormat(contentsFormat);
 }
 
-- (BOOL)wantsDeepColorBackingStore
+- (WebCore::ContentsFormat)contentsFormat
 {
-    return _tileController->wantsDeepColorBackingStore();
+    return _tileController->contentsFormat();
 }
 
 - (void)setContentsScale:(CGFloat)contentsScale

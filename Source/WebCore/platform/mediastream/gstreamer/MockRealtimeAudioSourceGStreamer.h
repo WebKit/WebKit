@@ -42,8 +42,11 @@ public:
     // GStreamerCapturerObserver
     void captureEnded() final;
 
+    std::pair<GstClockTime, GstClockTime> queryCaptureLatency() const final;
+
 protected:
     void render(Seconds) final;
+    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
 private:
     friend class MockRealtimeAudioSource;

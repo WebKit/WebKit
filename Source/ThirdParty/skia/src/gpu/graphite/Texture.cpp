@@ -16,24 +16,18 @@
 
 namespace skgpu::graphite {
 
-
 Texture::Texture(const SharedContext* sharedContext,
                  SkISize dimensions,
                  const TextureInfo& info,
                  sk_sp<MutableTextureState> mutableState,
-                 std::string_view label,
                  Ownership ownership,
                  skgpu::Budgeted budgeted)
-        : Resource(sharedContext,
-                   ownership,
-                   budgeted,
-                   ComputeSize(dimensions, info),
-                   std::move(label))
+        : Resource(sharedContext, ownership, budgeted, ComputeSize(dimensions, info))
         , fDimensions(dimensions)
         , fInfo(info)
         , fMutableState(std::move(mutableState)) {}
 
-Texture::~Texture() {}
+Texture::~Texture() = default;
 
 void Texture::setReleaseCallback(sk_sp<RefCntedCallback> releaseCallback) {
     fReleaseCallback = std::move(releaseCallback);

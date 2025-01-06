@@ -53,8 +53,8 @@ void EchoRemoverMetrics::ResetMetrics() {
 
 void EchoRemoverMetrics::Update(
     const AecState& aec_state,
-    const std::array<float, kFftLengthBy2Plus1>& comfort_noise_spectrum,
-    const std::array<float, kFftLengthBy2Plus1>& suppressor_gain) {
+    const std::array<float, kFftLengthBy2Plus1>& /* comfort_noise_spectrum */,
+    const std::array<float, kFftLengthBy2Plus1>& /* suppressor_gain */) {
   metrics_reported_ = false;
   if (++block_counter_ <= kMetricsCollectionBlocks) {
     erl_time_domain_.UpdateInstant(aec_state.ErlTimeDomain());

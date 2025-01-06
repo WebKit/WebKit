@@ -40,11 +40,11 @@
 #include "SVGPathElement.h"
 #include "SVGSubpathData.h"
 #include "SVGVisitedRendererTracking.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGPath);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGPath);
 
 RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderSVGShape(Type::SVGPath, element, WTFMove(style))
@@ -290,6 +290,16 @@ bool RenderSVGPath::isRenderingDisabled() const
     // For a polygon, polyline or path, rendering is disabled if there is no path data.
     // No path data is possible in the case of a missing or empty 'd' or 'points' attribute.
     return !hasPath() || path().isEmpty();
+}
+
+void RenderSVGPath::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    if (RefPtr pathElement = dynamicDowncast<SVGPathElement>(graphicsElement())) {
+        if (!oldStyle || style().d() != oldStyle->d())
+            pathElement->pathDidChange();
+    }
+
+    RenderSVGShape::styleDidChange(diff, oldStyle);
 }
 
 }

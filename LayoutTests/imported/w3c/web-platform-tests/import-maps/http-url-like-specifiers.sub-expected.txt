@@ -1,27 +1,6 @@
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
 Blocked access to external URL https://www1.localhost:9443/import-maps/resources/log.js?pipe=sub&name=cross-origin-bar
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
 Blocked access to external URL https://www1.localhost:9443/import-maps/resources/log.js?pipe=sub&name=cross-origin-bar
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
 Blocked access to external URL https://www1.localhost:9443/import-maps/resources/log.js?pipe=sub&name=cross-origin-bar
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: TypeError: Module name, 'http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=to-bare' does not resolve to a valid URL.
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
 
 
 PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=foo: <script src type=module>

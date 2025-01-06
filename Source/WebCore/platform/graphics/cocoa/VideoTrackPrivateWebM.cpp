@@ -25,12 +25,15 @@
 
 #include "config.h"
 #include "VideoTrackPrivateWebM.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaSample.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoTrackPrivateWebM);
 
 Ref<VideoTrackPrivateWebM> VideoTrackPrivateWebM::create(webm::TrackEntry&& trackEntry)
 {
@@ -183,6 +186,7 @@ IGNORE_WARNINGS_BEGIN("c99-designator")
         .height = height(),
         .colorSpace = colorSpace(),
         .framerate = framerate(),
+        .spatialVideoMetadata = { }
     };
 IGNORE_WARNINGS_END
     setConfiguration(WTFMove(configuration));

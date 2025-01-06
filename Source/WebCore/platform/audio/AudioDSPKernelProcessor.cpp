@@ -35,14 +35,19 @@
 #include "AudioDSPKernelProcessor.h"
 
 #include "AudioDSPKernel.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioDSPKernelProcessor);
 
 // setNumberOfChannels() may later be called if the object is not yet in an "initialized" state.
 AudioDSPKernelProcessor::AudioDSPKernelProcessor(float sampleRate, unsigned numberOfChannels)
     : AudioProcessor(sampleRate, numberOfChannels)
 {
 }
+
+AudioDSPKernelProcessor::~AudioDSPKernelProcessor() = default;
 
 void AudioDSPKernelProcessor::initialize()
 {
@@ -91,7 +96,7 @@ void AudioDSPKernelProcessor::process(const AudioBus* source, AudioBus* destinat
         return;
         
     for (unsigned i = 0; i < m_kernels.size(); ++i)
-        m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->mutableData(), framesToProcess);
+        m_kernels[i]->process(source->channel(i)->span().first(framesToProcess), destination->channel(i)->mutableSpan());
 }
 
 void AudioDSPKernelProcessor::processOnlyAudioParams(size_t framesToProcess)

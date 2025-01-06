@@ -30,8 +30,11 @@
 #include "SleepDisabler.h"
 #include "VisibilityState.h"
 #include "WakeLockSentinel.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WakeLockManager);
 
 WakeLockManager::WakeLockManager(Document& document)
     : m_document(document)
@@ -42,6 +45,16 @@ WakeLockManager::WakeLockManager(Document& document)
 WakeLockManager::~WakeLockManager()
 {
     m_document.unregisterForVisibilityStateChangedCallbacks(*this);
+}
+
+void WakeLockManager::ref() const
+{
+    m_document.ref();
+}
+
+void WakeLockManager::deref() const
+{
+    m_document.deref();
 }
 
 void WakeLockManager::addWakeLock(Ref<WakeLockSentinel>&& lock, std::optional<PageIdentifier> pageID)

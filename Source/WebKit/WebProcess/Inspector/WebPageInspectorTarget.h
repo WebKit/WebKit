@@ -28,6 +28,8 @@
 #include <JavaScriptCore/InspectorTarget.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -35,11 +37,11 @@ class WebPage;
 class WebPageInspectorTargetFrontendChannel;
 
 class WebPageInspectorTarget final : public Inspector::InspectorTarget {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPageInspectorTarget);
     WTF_MAKE_NONCOPYABLE(WebPageInspectorTarget);
 public:
     explicit WebPageInspectorTarget(WebPage&);
-    ~WebPageInspectorTarget() = default;
+    virtual ~WebPageInspectorTarget();
 
     Inspector::InspectorTargetType type() const final { return Inspector::InspectorTargetType::Page; }
 
@@ -52,7 +54,7 @@ public:
     static String toTargetID(WebCore::PageIdentifier);
 
 private:
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
     std::unique_ptr<WebPageInspectorTargetFrontendChannel> m_channel;
 };
 

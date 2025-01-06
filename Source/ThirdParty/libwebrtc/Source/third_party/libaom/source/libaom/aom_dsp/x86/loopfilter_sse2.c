@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -18,14 +18,14 @@
 #include "aom_ports/emmintrin_compat.h"
 #include "aom_dsp/x86/lpf_common_sse2.h"
 
-static INLINE __m128i abs_diff(__m128i a, __m128i b) {
+static inline __m128i abs_diff(__m128i a, __m128i b) {
   return _mm_or_si128(_mm_subs_epu8(a, b), _mm_subs_epu8(b, a));
 }
 
 // this function treats its input as 2 parallel 8x4 matrices, transposes each of
 // them to 4x8  independently while flipping the second matrix horizontally.
 // Used for 14 taps pq pairs creation
-static INLINE void transpose_pq_14_sse2(__m128i *x0, __m128i *x1, __m128i *x2,
+static inline void transpose_pq_14_sse2(__m128i *x0, __m128i *x1, __m128i *x2,
                                         __m128i *x3, __m128i *q0p0,
                                         __m128i *q1p1, __m128i *q2p2,
                                         __m128i *q3p3, __m128i *q4p4,
@@ -84,7 +84,7 @@ static INLINE void transpose_pq_14_sse2(__m128i *x0, __m128i *x1, __m128i *x2,
 // this function treats its input as 2 parallel 8x4 matrices, transposes each of
 // them  independently while flipping the second matrix horizontaly  Used for 14
 // taps filter pq pairs inverse
-static INLINE void transpose_pq_14_inv_sse2(__m128i *x0, __m128i *x1,
+static inline void transpose_pq_14_inv_sse2(__m128i *x0, __m128i *x1,
                                             __m128i *x2, __m128i *x3,
                                             __m128i *x4, __m128i *x5,
                                             __m128i *x6, __m128i *x7,
@@ -386,7 +386,7 @@ void aom_lpf_vertical_4_sse2(uint8_t *s, int p /* pitch */,
   xx_storel_32(s + 3 * p - 2, d3);
 }
 
-static INLINE void store_buffer_horz_8(__m128i x, int p, int num, uint8_t *s) {
+static inline void store_buffer_horz_8(__m128i x, int p, int num, uint8_t *s) {
   xx_storel_32(s - (num + 1) * p, x);
   xx_storel_32(s + num * p, _mm_srli_si128(x, 4));
 }
@@ -2099,7 +2099,7 @@ void aom_lpf_vertical_14_dual_sse2(
   _mm_storeu_si128((__m128i *)(s - 8 + 7 * p), q3);
 }
 
-static INLINE __m128i filter_add2_sub2(const __m128i *const total,
+static inline __m128i filter_add2_sub2(const __m128i *const total,
                                        const __m128i *const a1,
                                        const __m128i *const a2,
                                        const __m128i *const s1,
@@ -2109,7 +2109,7 @@ static INLINE __m128i filter_add2_sub2(const __m128i *const total,
   return x;
 }
 
-static INLINE __m128i filter8_mask(const __m128i *const flat,
+static inline __m128i filter8_mask(const __m128i *const flat,
                                    const __m128i *const other_filt,
                                    const __m128i *const f8_lo,
                                    const __m128i *const f8_hi) {
@@ -2119,7 +2119,7 @@ static INLINE __m128i filter8_mask(const __m128i *const flat,
   return _mm_or_si128(_mm_andnot_si128(*flat, *other_filt), result);
 }
 
-static INLINE __m128i filter16_mask(const __m128i *const flat,
+static inline __m128i filter16_mask(const __m128i *const flat,
                                     const __m128i *const other_filt,
                                     const __m128i *const f_lo,
                                     const __m128i *const f_hi) {

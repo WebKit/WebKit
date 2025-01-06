@@ -3,6 +3,8 @@ PASS role is defined in ElementInternals
 PASS ariaActiveDescendantElement is defined in ElementInternals
 PASS ariaAtomic is defined in ElementInternals
 PASS ariaAutoComplete is defined in ElementInternals
+PASS ariaBrailleLabel is defined in ElementInternals
+PASS ariaBrailleRoleDescription is defined in ElementInternals
 PASS ariaBusy is defined in ElementInternals
 PASS ariaChecked is defined in ElementInternals
 PASS ariaColCount is defined in ElementInternals
@@ -40,6 +42,7 @@ PASS ariaRowCount is defined in ElementInternals
 PASS ariaRowIndex is defined in ElementInternals
 PASS ariaRowSpan is defined in ElementInternals
 PASS ariaSelected is defined in ElementInternals
+PASS ariaSetSize is defined in ElementInternals
 PASS ariaSort is defined in ElementInternals
 PASS ariaValueMax is defined in ElementInternals
 PASS ariaValueMin is defined in ElementInternals

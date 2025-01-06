@@ -10,14 +10,16 @@ set(WPEPlatformDRM_SOURCES
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDRMSession.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDRMSessionLogind.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDisplayDRM.cpp
-    ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEMonitorDRM.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEScreenDRM.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEToplevelDRM.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEViewDRM.cpp
 )
 
 set(WPEPlatformDRM_INSTALLED_HEADERS
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/wpe-drm.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDisplayDRM.h
-    ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEMonitorDRM.h
+    ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEScreenDRM.h
+    ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEToplevelDRM.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEViewDRM.h
 )
 

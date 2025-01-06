@@ -31,16 +31,17 @@
 #include "Gradient.h"
 #include "LegacyRenderSVGShapeInlines.h"
 #include "RenderStyleInlines.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
 #include "SVGRenderStyle.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGSubpathData.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGPath);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGPath);
 
 LegacyRenderSVGPath::LegacyRenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
     : LegacyRenderSVGShape(Type::LegacySVGPath, element, WTFMove(style))
@@ -294,6 +295,16 @@ bool LegacyRenderSVGPath::isRenderingDisabled() const
     // For a polygon, polyline or path, rendering is disabled if there is no path data.
     // No path data is possible in the case of a missing or empty 'd' or 'points' attribute.
     return !hasPath() || path().isEmpty();
+}
+
+void LegacyRenderSVGPath::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    if (RefPtr pathElement = dynamicDowncast<SVGPathElement>(graphicsElement())) {
+        if (!oldStyle || style().d() != oldStyle->d())
+            pathElement->pathDidChange();
+    }
+
+    LegacyRenderSVGShape::styleDidChange(diff, oldStyle);
 }
 
 }

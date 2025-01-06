@@ -29,6 +29,7 @@
 #include "RenderSVGText.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGInlineTextBoxInlines.h"
+#include "SVGTextBoxPainter.h"
 #include "VisiblePosition.h"
 
 #include <wtf/MathExtras.h>
@@ -37,69 +38,55 @@ namespace WebCore {
 
 // Base structure for callback user data
 struct SVGTextQuery::Data {
-    Data()
-        : isVerticalText(false)
-        , processedCharacters(0)
-        , textRenderer(0)
-        , textBox(0)
-    {
-    }
-
-    bool isVerticalText;
-    unsigned processedCharacters;
-    RenderSVGInlineText* textRenderer;
-    const SVGInlineTextBox* textBox;
+    bool isVerticalText { false };
+    unsigned processedCharacters { 0 };
+    CheckedPtr<const RenderSVGInlineText> textRenderer;
+    InlineIterator::SVGTextBoxIterator textBox;
 };
 
-static inline LegacyInlineFlowBox* flowBoxForRenderer(RenderObject* renderer)
+static inline InlineIterator::InlineBoxIterator inlineBoxForRenderer(RenderObject* renderer)
 {
     if (!renderer)
-        return nullptr;
+        return { };
 
     if (CheckedPtr renderBlock = dynamicDowncast<RenderBlockFlow>(*renderer)) {
         // If we're given a block element, it has to be a RenderSVGText.
         ASSERT(is<RenderSVGText>(*renderBlock));
-
-        // RenderSVGText only ever contains a single line box.
-        auto* flowBox = renderBlock->firstRootBox();
-        ASSERT(flowBox == renderBlock->lastRootBox());
-        return flowBox;
+        return InlineIterator::firstRootInlineBoxFor(*renderBlock);
     }
 
-    if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(*renderer)) {
-        // We're given a RenderSVGInline or objects that derive from it (RenderSVGTSpan / RenderSVGTextPath)
-        // RenderSVGInline only ever contains a single line box.
-        auto* flowBox = renderInline->firstLineBox();
-        ASSERT(flowBox == renderInline->lastLineBox());
-        return flowBox;
-    }
+    if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(*renderer))
+        return InlineIterator::firstInlineBoxFor(*renderInline);
 
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return { };
 }
 
 SVGTextQuery::SVGTextQuery(RenderObject* renderer)
 {
-    collectTextBoxesInFlowBox(flowBoxForRenderer(renderer));
+    collectTextBoxesInInlineBox(inlineBoxForRenderer(renderer));
 }
 
-void SVGTextQuery::collectTextBoxesInFlowBox(LegacyInlineFlowBox* flowBox)
+void SVGTextQuery::collectTextBoxesInInlineBox(InlineIterator::InlineBoxIterator parent)
 {
-    if (!flowBox)
+    if (!parent)
         return;
 
-    for (auto* child = flowBox->firstChild(); child; child = child->nextOnLine()) {
-        if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child)) {
+    auto descendants = parent->descendants();
+    for (auto box = descendants.begin(), end = descendants.end(); box != end;) {
+        if (auto* flowBox = dynamicDowncast<InlineIterator::InlineBox>(*box)) {
             // Skip generated content.
             if (!flowBox->renderer().element())
-                continue;
-
-            collectTextBoxesInFlowBox(flowBox);
+                box.traverseNextOnLineSkippingChildren();
+            else
+                box.traverseNextOnLine();
             continue;
         }
 
-        if (auto* inlineTextBox = dynamicDowncast<SVGInlineTextBox>(*child))
-            m_textBoxes.append(inlineTextBox);
+        if (auto* inlineTextBox = dynamicDowncast<InlineIterator::SVGTextBoxIterator>(box))
+            m_textBoxes.append(*inlineTextBox);
+
+        box.traverseNextOnLine();
     }
 }
 
@@ -113,7 +100,7 @@ bool SVGTextQuery::executeQuery(Data* queryData, ProcessTextFragmentCallback fra
         queryData->textBox = m_textBoxes.at(textBoxPosition);
         queryData->textRenderer = &queryData->textBox->renderer();
 
-        queryData->isVerticalText = queryData->textRenderer->style().isVerticalWritingMode();
+        queryData->isVerticalText = queryData->textRenderer->writingMode().isVertical();
         const Vector<SVGTextFragment>& fragments = queryData->textBox->textFragments();
     
         // Loop over all text fragments in this text box, firing a callback for each.
@@ -153,7 +140,7 @@ bool SVGTextQuery::mapStartEndPositionsIntoFragmentCoordinates(Data* queryData, 
         return false;
 
     modifyStartEndPositionsRespectingLigatures(queryData, fragment, startPosition, endPosition);
-    if (!queryData->textBox->mapStartEndPositionsIntoFragmentCoordinates(fragment, startPosition, endPosition))
+    if (!WebCore::mapStartEndPositionsIntoFragmentCoordinates(queryData->textBox->start(), fragment, startPosition, endPosition))
         return false;
 
     ASSERT_WITH_SECURITY_IMPLICATION(startPosition < endPosition);
@@ -162,8 +149,8 @@ bool SVGTextQuery::mapStartEndPositionsIntoFragmentCoordinates(Data* queryData, 
 
 void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, const SVGTextFragment& fragment, unsigned& startPosition, unsigned& endPosition) const
 {
-    SVGTextLayoutAttributes* layoutAttributes = queryData->textRenderer->layoutAttributes();
-    Vector<SVGTextMetrics>& textMetricsValues = layoutAttributes->textMetricsValues();
+    const SVGTextLayoutAttributes* layoutAttributes = queryData->textRenderer->layoutAttributes();
+    const Vector<SVGTextMetrics>& textMetricsValues = layoutAttributes->textMetricsValues();
 
     unsigned textMetricsOffset = fragment.metricsListOffset;
 

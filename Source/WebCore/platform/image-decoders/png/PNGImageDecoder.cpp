@@ -42,16 +42,22 @@
 #include "PNGImageDecoder.h"
 
 #include "Color.h"
-#include "PlatformDisplay.h"
 #include <png.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueArray.h>
+
+#if USE(LCMS)
+#include "LCMSUniquePtr.h"
+#endif
 
 #if defined(PNG_LIBPNG_VER_MAJOR) && defined(PNG_LIBPNG_VER_MINOR) && (PNG_LIBPNG_VER_MAJOR > 1 || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 4))
 #define JMPBUF(png_ptr) png_jmpbuf(png_ptr)
 #else
 #define JMPBUF(png_ptr) png_ptr->jmpbuf
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -113,7 +119,7 @@ static int PNGAPI readChunks(png_structp png, png_unknown_chunkp chunk)
 }
 
 class PNGImageReader {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PNGImageReader);
 public:
     PNGImageReader(PNGImageDecoder* decoder)
         : m_png(png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, decodingFailed, decodingWarning))
@@ -302,10 +308,10 @@ void PNGImageDecoder::headerAvailable()
 
     m_hasInfo = true;
     if (m_isAnimated) {
-        png_save_uint_32(m_dataIHDR, 13);
-        memcpy(m_dataIHDR + 4, "IHDR", 4);
-        png_save_uint_32(m_dataIHDR + 8, width);
-        png_save_uint_32(m_dataIHDR + 12, height);
+        png_save_uint_32(m_dataIHDR.data(), 13);
+        memcpySpan(std::span { m_dataIHDR }.subspan(4), "IHDR"_span);
+        png_save_uint_32(&m_dataIHDR[8], width);
+        png_save_uint_32(&m_dataIHDR[12], height);
         m_dataIHDR[16] = bitDepth;
         m_dataIHDR[17] = colorType;
         m_dataIHDR[18] = compressionType;
@@ -320,9 +326,9 @@ void PNGImageDecoder::headerAvailable()
             int paletteSize = 0;
             png_get_PLTE(png, info, &palette, &paletteSize);
             paletteSize *= 3;
-            png_save_uint_32(m_dataPLTE, paletteSize);
-            memcpy(m_dataPLTE + 4, "PLTE", 4);
-            memcpy(m_dataPLTE + 8, palette, paletteSize);
+            png_save_uint_32(m_dataPLTE.data(), paletteSize);
+            memcpySpan(std::span { m_dataPLTE }.subspan(4), "PLTE"_span);
+            memcpySpan(std::span { m_dataPLTE }.subspan(8), unsafeMakeSpan(reinterpret_cast<png_byte*>(palette), paletteSize));
             m_sizePLTE = paletteSize + 12;
         }
         png_set_expand(png);
@@ -338,18 +344,18 @@ void PNGImageDecoder::headerAvailable()
         png_get_tRNS(png, info, &trns, &trnsCount, &transValues);
         if (m_isAnimated) {
             if (colorType == PNG_COLOR_TYPE_RGB) {
-                png_save_uint_16(m_datatRNS + 8, transValues->red);
-                png_save_uint_16(m_datatRNS + 10, transValues->green);
-                png_save_uint_16(m_datatRNS + 12, transValues->blue);
+                png_save_uint_16(&m_datatRNS[8], transValues->red);
+                png_save_uint_16(&m_datatRNS[10], transValues->green);
+                png_save_uint_16(&m_datatRNS[12], transValues->blue);
                 trnsCount = 6;
             } else if (colorType == PNG_COLOR_TYPE_GRAY) {
-                png_save_uint_16(m_datatRNS + 8, transValues->gray);
+                png_save_uint_16(&m_datatRNS[8], transValues->gray);
                 trnsCount = 2;
             } else if (colorType == PNG_COLOR_TYPE_PALETTE)
-                memcpy(m_datatRNS + 8, trns, trnsCount);
+                memcpySpan(std::span { m_datatRNS }.subspan(8), unsafeMakeSpan(trns, trnsCount));
 
-            png_save_uint_32(m_datatRNS, trnsCount);
-            memcpy(m_datatRNS + 4, "tRNS", 4);
+            png_save_uint_32(m_datatRNS.data(), trnsCount);
+            memcpySpan(std::span { m_datatRNS }.subspan(4), "tRNS"_span);
             m_sizetRNS = trnsCount + 12;
         }
         png_set_expand(png);
@@ -381,10 +387,9 @@ void PNGImageDecoder::headerAvailable()
         int compressionType;
         if (png_get_iCCP(png, info, &iccProfileTitle, &compressionType, &iccProfileData, &iccProfileDataSize)) {
             auto iccProfile = LCMSProfilePtr(cmsOpenProfileFromMem(iccProfileData, iccProfileDataSize));
-            if (iccProfile) {
-                auto* displayProfile = PlatformDisplay::sharedDisplay().colorProfile();
-                if (cmsGetColorSpace(iccProfile.get()) == cmsSigRgbData && cmsGetColorSpace(displayProfile) == cmsSigRgbData)
-                    m_iccTransform = LCMSTransformPtr(cmsCreateTransform(iccProfile.get(), TYPE_BGRA_8, displayProfile, TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0));
+            if (iccProfile && cmsGetColorSpace(iccProfile.get()) == cmsSigRgbData) {
+                auto srgbProfile = LCMSProfilePtr(cmsCreate_sRGBProfile());
+                m_iccTransform = LCMSTransformPtr(cmsCreateTransform(iccProfile.get(), TYPE_BGRA_8, srgbProfile.get(), TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0));
             }
         }
     }
@@ -560,7 +565,7 @@ void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame, bool allDataRe
 
 void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
 {
-    if (!memcmp(chunk->name, "acTL", 4) && chunk->size == 8) {
+    if (chunk->size == 8 && spanHasPrefix(span(chunk->name), "acTL"_span)) {
         if (m_hasInfo || m_isAnimated)
             return;
 
@@ -580,7 +585,7 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
             return;
 
         m_frameBufferCache.resize(m_frameCount);
-    } else if (!memcmp(chunk->name, "fcTL", 4) && chunk->size == 26) {
+    } else if (chunk->size == 26 && spanHasPrefix(span(chunk->name), "fcTL"_span)) {
         if (m_hasInfo && !m_isAnimated)
             return;
 
@@ -647,7 +652,7 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
             fallbackNotAnimated();
             return;
         }
-    } else if (!memcmp(chunk->name, "fdAT", 4) && chunk->size >= 4) {
+    } else if (chunk->size >= 4 && spanHasPrefix(span(chunk->name), "fdAT"_span)) {
         if (!m_frameInfo || !m_isAnimated)
             return;
 
@@ -664,7 +669,7 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
 
         png_save_uint_32(chunk->data, chunk->size - 4);
         png_process_data(m_png, m_info, chunk->data, 4);
-        memcpy(chunk->data, "IDAT", 4);
+        memcpySpan(unsafeMakeSpan(chunk->data, chunk->size), "IDAT"_span);
         png_process_data(m_png, m_info, chunk->data, chunk->size);
         png_process_data(m_png, m_info, chunk->data, 4);
     }
@@ -869,16 +874,16 @@ int PNGImageDecoder::processingStart(png_unknown_chunkp chunk)
     png_set_progressive_read_fn(m_png, static_cast<png_voidp>(this),
         WebCore::frameHeader, WebCore::rowAvailable, 0);
 
-    memcpy(m_dataIHDR + 8, chunk->data + 4, 8);
+    memcpySpan(std::span { m_dataIHDR }.subspan(8), unsafeMakeSpan(chunk->data + 4, 8));
     png_save_uint_32(datagAMA + 8, m_gamma);
 
     png_process_data(m_png, m_info, dataPNG, 8);
-    png_process_data(m_png, m_info, m_dataIHDR, 25);
+    png_process_data(m_png, m_info, m_dataIHDR.data(), 25);
     png_process_data(m_png, m_info, datagAMA, 16);
     if (m_sizePLTE > 0)
-        png_process_data(m_png, m_info, m_dataPLTE, m_sizePLTE);
+        png_process_data(m_png, m_info, m_dataPLTE.data(), m_sizePLTE);
     if (m_sizetRNS > 0)
-        png_process_data(m_png, m_info, m_datatRNS, m_sizetRNS);
+        png_process_data(m_png, m_info, m_datatRNS.data(), m_sizetRNS);
 
     return 0;
 }
@@ -910,3 +915,5 @@ void PNGImageDecoder::fallbackNotAnimated()
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

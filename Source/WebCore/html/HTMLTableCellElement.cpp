@@ -33,23 +33,13 @@
 #include "HTMLTableElement.h"
 #include "NodeName.h"
 #include "RenderTableCell.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTableCellElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTableCellElement);
 
 using namespace HTMLNames;
-
-// These limits are defined in the HTML specification:
-// - https://html.spec.whatwg.org/#dom-tdth-colspan
-// - https://html.spec.whatwg.org/#dom-tdth-rowspan
-static const unsigned minColspan = 1;
-static const unsigned maxColspan = 1000;
-static const unsigned defaultColspan = 1;
-static const unsigned minRowspan = 0;
-static const unsigned maxRowspan = 65534;
-static const unsigned defaultRowspan = 1;
 
 Ref<HTMLTableCellElement> HTMLTableCellElement::create(const QualifiedName& tagName, Document& document)
 {

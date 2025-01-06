@@ -1,0 +1,22 @@
+
+RUN(internals.setMediaElementRestrictions(video, 'NoRestrictions'))
+RUN(window.internals.settings.setAllowsPictureInPictureMediaPlayback(true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
+RUN(video.volume = 0.1)
+RUN(video.src = findMediaFile("video", "../content/test"))
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video.paused == 'false') OK
+EVENT(webkitpresentationmodechanged)
+RUN(internals.beginMediaSessionInterruption("EnteringBackground"))
+EXPECTED (internals.mediaSessionState(video) != 'Interrupted') OK
+EXPECTED (video.paused == 'false') OK
+RUN(internals.beginMediaSessionInterruption("System"))
+EXPECTED (video.paused == 'true') OK
+EXPECTED (internals.mediaSessionState(video) == 'Interrupted') OK
+RUN(internals.endMediaSessionInterruption("MayResumePlaying"))
+RUN(internals.endMediaSessionInterruption(""))
+EXPECTED (internals.mediaSessionState(video) != 'Interrupted') OK
+END OF TEST
+

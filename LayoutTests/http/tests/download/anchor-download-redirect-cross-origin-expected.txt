@@ -1,0 +1,6 @@
+Download started.
+Download failed.
+Failed: NSURLErrorDomain, code=-999, description=cancelled
+Download cross origin redirect with anchor in an iframe. Logs should say it failed.
+
+

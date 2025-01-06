@@ -11,4 +11,5 @@ PASS window cannot find applet
 PASS applet is not styled
 PASS HTMLTableDataCellElement interface is removed
 PASS HTMLTableHeaderCellElement interface is removed
+PASS HashChangeEvent's initHashChangeEvent method is removed
 

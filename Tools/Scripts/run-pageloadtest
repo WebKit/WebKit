@@ -67,7 +67,7 @@ my $safariExecutablePath = safariPath();
 my $safariResourcePath = File::Spec->catdir(dirname(dirname($safariExecutablePath)), "Resources");
 
 # Check to see that all the frameworks are built.
-checkFrameworks();
+checkBuild();
 
 chdirWebKit();
 

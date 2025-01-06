@@ -30,6 +30,10 @@
 #include <wpe/wpe.h>
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+#include "WebExtensionMatchPattern.h"
+#endif
+
 #if PLATFORM(GTK)
 unsigned toPlatformModifiers(OptionSet<WebKit::WebEventModifier> wkModifiers)
 {
@@ -149,6 +153,25 @@ unsigned toWebKitError(unsigned webCoreError)
         return webCoreError;
     }
 }
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+unsigned toWebKitWebExtensionMatchPatternError(unsigned apiError)
+{
+    auto error = static_cast<WebKit::WebExtensionMatchPattern::Error>(apiError);
+
+    switch (error) {
+    case WebKit::WebExtensionMatchPattern::Error::InvalidScheme:
+        return WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_INVALID_SCHEME;
+    case WebKit::WebExtensionMatchPattern::Error::InvalidHost:
+        return WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_INVALID_HOST;
+    case WebKit::WebExtensionMatchPattern::Error::InvalidPath:
+        return WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_INVALID_PATH;
+    case WebKit::WebExtensionMatchPattern::Error::Unknown:
+    default:
+        return WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_UNKNOWN;
+    }
+}
+#endif
 
 unsigned toWebCoreError(unsigned webKitError)
 {

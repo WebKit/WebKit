@@ -30,10 +30,7 @@ static int pkey_ed25519_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY *pkey) {
     return 0;
   }
 
-  if (!EVP_PKEY_set_type(pkey, EVP_PKEY_ED25519)) {
-    OPENSSL_free(key);
-    return 0;
-  }
+  evp_pkey_set_method(pkey, &ed25519_asn1_meth);
 
   uint8_t pubkey_unused[32];
   ED25519_keypair(pubkey_unused, key->key);

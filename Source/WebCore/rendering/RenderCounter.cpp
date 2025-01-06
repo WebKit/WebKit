@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,8 +35,8 @@
 #include "RenderListItem.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(TREE_DEBUGGING)
 #include <stdio.h>
@@ -46,9 +46,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderCounter);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderCounter);
 
-using CounterMap = HashMap<AtomString, Ref<CounterNode>>;
+using CounterMap = UncheckedKeyHashMap<AtomString, Ref<CounterNode>>;
 using CounterMaps = SingleThreadWeakHashMap<RenderElement, std::unique_ptr<CounterMap>>;
 
 static CounterNode* makeCounterNode(RenderElement&, const AtomString& identifier, bool alwaysCreateCounter);
@@ -438,10 +438,8 @@ RenderCounter::RenderCounter(Document& document, const CounterContent& counter)
     view().addCounterNeedingUpdate(*this);
 }
 
-RenderCounter::~RenderCounter()
-{
-    // Do not add any code here. Add it to willBeDestroyed() instead.
-}
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderCounter::~RenderCounter() = default;
 
 void RenderCounter::willBeDestroyed()
 {
@@ -466,13 +464,13 @@ String RenderCounter::originalText() const
     RefPtr child = m_counterNode.get();
     int value = child->actsAsReset() ? child->value() : child->countInParent();
 
-    auto counterText = [this](int value) {
-        if (this->m_counter.listStyleType().type == ListStyleType::Type::None)
+    auto counterText = [&](int value) {
+        if (m_counter.listStyleType().type == ListStyleType::Type::None)
             return emptyString();
 
-        if (this->m_counter.listStyleType().type == ListStyleType::Type::CounterStyle) {
-            ASSERT(this->counterStyle());
-            return this->counterStyle()->text(value, this->style().direction());
+        if (m_counter.listStyleType().type == ListStyleType::Type::CounterStyle) {
+            ASSERT(counterStyle());
+            return counterStyle()->text(value, writingMode());
         }
 
         ASSERT_NOT_REACHED();
@@ -483,8 +481,7 @@ String RenderCounter::originalText() const
         if (!child->actsAsReset())
             child = child->parent();
         while (CounterNode* parent = child->parent()) {
-            text = counterText(child->countInParent())
-                + m_counter.separator() + text;
+            text = makeString(counterText(child->countInParent()), m_counter.separator(), text);
             child = parent;
         }
     }

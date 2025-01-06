@@ -33,6 +33,7 @@
 #include <Metal/Metal.h>
 #include <pal/spi/cocoa/MetalSPI.h>
 #include <wtf/SoftLinking.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/darwin/WeakLinking.h>
 
 #if USE(APPLE_INTERNAL_SDK) && PLATFORM(VISION)
@@ -121,7 +122,7 @@ void destroyPbufferAndDetachIOSurface(EGLDisplay display, void* handle)
     EGL_DestroySurface(display, handle);
 }
 
-RetainPtr<MTLRasterizationRateMap> newRasterizationRateMap(GCGLDisplay display, IntSize physicalSizeLeft, IntSize physicalSizeRight, IntSize screenSize, std::span<const float> horizontalSamplesLeft, std::span<const float> verticalSamples, std::span<const float> horizontalSamplesRight)
+RetainPtr<id<MTLRasterizationRateMap>> newRasterizationRateMap(GCGLDisplay display, IntSize physicalSizeLeft, IntSize physicalSizeRight, IntSize screenSize, std::span<const float> horizontalSamplesLeft, std::span<const float> verticalSamples, std::span<const float> horizontalSamplesRight)
 {
     EGLDeviceEXT device = EGL_NO_DEVICE_EXT;
     if (!EGL_QueryDisplayAttribEXT(display, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device)))
@@ -142,18 +143,18 @@ RetainPtr<MTLRasterizationRateMap> newRasterizationRateMap(GCGLDisplay display, 
     descriptor_spi.minFactor  = 0.01;
 
     constexpr MTLSize maxSampleCount { 256, 256, 1 };
-    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorLeft = [[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:maxSampleCount];
-    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorRight = [[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:maxSampleCount];
+    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorLeft = adoptNS([[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:maxSampleCount]);
+    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorRight = adoptNS([[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:maxSampleCount]);
 
     if (horizontalSamplesLeft.size() > maxSampleCount.width || horizontalSamplesRight.size() > maxSampleCount.width || verticalSamples.size() > maxSampleCount.height || !layerDescriptorLeft.get() || !layerDescriptorRight.get())
         return nullptr;
 
-    memcpy([layerDescriptorLeft horizontalSampleStorage], horizontalSamplesLeft.data(), horizontalSamplesLeft.size_bytes());
-    memcpy([layerDescriptorLeft verticalSampleStorage], verticalSamples.data(), verticalSamples.size_bytes());
+    memcpySpan(unsafeMakeSpan([layerDescriptorLeft horizontalSampleStorage], [layerDescriptorLeft sampleCount].width), horizontalSamplesLeft);
+    memcpySpan(unsafeMakeSpan([layerDescriptorLeft verticalSampleStorage], [layerDescriptorLeft sampleCount].height), verticalSamples);
     [layerDescriptorLeft setSampleCount:MTLSizeMake(horizontalSamplesLeft.size(), verticalSamples.size(), 0)];
 
-    memcpy([layerDescriptorRight horizontalSampleStorage], horizontalSamplesRight.data(), horizontalSamplesRight.size_bytes());
-    memcpy([layerDescriptorRight verticalSampleStorage], verticalSamples.data(), verticalSamples.size_bytes());
+    memcpySpan(unsafeMakeSpan([layerDescriptorRight horizontalSampleStorage], [layerDescriptorRight sampleCount].width), horizontalSamplesRight);
+    memcpySpan(unsafeMakeSpan([layerDescriptorRight verticalSampleStorage], [layerDescriptorRight sampleCount].height), verticalSamples);
     [layerDescriptorRight setSampleCount:MTLSizeMake(horizontalSamplesRight.size(), verticalSamples.size(), 0)];
 
     [descriptor setScreenSize:MTLSizeMake(screenSize.width(), screenSize.height(), 0)];
@@ -163,9 +164,9 @@ RetainPtr<MTLRasterizationRateMap> newRasterizationRateMap(GCGLDisplay display, 
     auto rateMap = cp_proxy_process_rasterization_rate_map_create(mtlDevice, cp_layer_renderer_layout_shared, 2);
     cp_rasterization_rate_map_update_shared_from_layered_descriptor(rateMap, descriptor.get());
 
-    RetainPtr<MTLRasterizationRateMap> rasterizationRateMap = cp_proxy_process_rasterization_rate_map_get_metal_maps(rateMap).firstObject;
+    RetainPtr<id<MTLRasterizationRateMap>> rasterizationRateMap = cp_proxy_process_rasterization_rate_map_get_metal_maps(rateMap).firstObject;
 #else
-    RetainPtr<MTLRasterizationRateMap> rasterizationRateMap;
+    RetainPtr<id<MTLRasterizationRateMap>> rasterizationRateMap;
     UNUSED_PARAM(display);
     UNUSED_PARAM(physicalSizeLeft);
     UNUSED_PARAM(physicalSizeRight);
@@ -177,7 +178,7 @@ RetainPtr<MTLRasterizationRateMap> newRasterizationRateMap(GCGLDisplay display, 
     return rasterizationRateMap;
 }
 
-RetainPtr<MTLSharedEvent> newSharedEventWithMachPort(GCGLDisplay display, mach_port_t machPort)
+RetainPtr<id<MTLSharedEvent>> newSharedEventWithMachPort(GCGLDisplay display, mach_port_t machPort)
 {
     // FIXME: Check for invalid mach_port_t
     EGLDeviceEXT device = EGL_NO_DEVICE_EXT;
@@ -191,7 +192,7 @@ RetainPtr<MTLSharedEvent> newSharedEventWithMachPort(GCGLDisplay display, mach_p
     return adoptNS([(id<MTLDeviceSPI>)mtlDevice newSharedEventWithMachPort:machPort]);
 }
 
-RetainPtr<MTLSharedEvent> newSharedEvent(GCGLDisplay display)
+RetainPtr<id<MTLSharedEvent>> newSharedEvent(GCGLDisplay display)
 {
     EGLDeviceEXT device = EGL_NO_DEVICE_EXT;
     if (!EGL_QueryDisplayAttribEXT(display, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device)))

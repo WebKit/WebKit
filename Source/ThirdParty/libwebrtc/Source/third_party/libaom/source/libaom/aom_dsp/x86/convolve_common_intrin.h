@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,7 +15,7 @@
 // Note:
 //  This header file should be put below any x86 intrinsics head file
 
-static INLINE void add_store(CONV_BUF_TYPE *const dst, const __m128i *const res,
+static inline void add_store(CONV_BUF_TYPE *const dst, const __m128i *const res,
                              const int do_average) {
   __m128i d;
   if (do_average) {
@@ -28,7 +28,7 @@ static INLINE void add_store(CONV_BUF_TYPE *const dst, const __m128i *const res,
   _mm_store_si128((__m128i *)dst, d);
 }
 
-static INLINE void prepare_coeffs_12tap(const InterpFilterParams *filter_params,
+static inline void prepare_coeffs_12tap(const InterpFilterParams *filter_params,
                                         int subpel_q4,
                                         __m128i *coeffs /* [6] */) {
   const int16_t *const y_filter = av1_get_interp_filter_subpel_kernel(
@@ -48,7 +48,7 @@ static INLINE void prepare_coeffs_12tap(const InterpFilterParams *filter_params,
       _mm_shuffle_epi32(coeffs_y, 85);  // coeffs 10 11 10 11 10 11 10 11
 }
 
-static INLINE __m128i convolve_12tap(const __m128i *s, const __m128i *coeffs) {
+static inline __m128i convolve_12tap(const __m128i *s, const __m128i *coeffs) {
   const __m128i d0 = _mm_madd_epi16(s[0], coeffs[0]);
   const __m128i d1 = _mm_madd_epi16(s[1], coeffs[1]);
   const __m128i d2 = _mm_madd_epi16(s[2], coeffs[2]);
@@ -61,7 +61,7 @@ static INLINE __m128i convolve_12tap(const __m128i *s, const __m128i *coeffs) {
   return d;
 }
 
-static INLINE __m128i convolve_lo_x_12tap(const __m128i *s,
+static inline __m128i convolve_lo_x_12tap(const __m128i *s,
                                           const __m128i *coeffs,
                                           const __m128i zero) {
   __m128i ss[6];
@@ -74,7 +74,7 @@ static INLINE __m128i convolve_lo_x_12tap(const __m128i *s,
   return convolve_12tap(ss, coeffs);
 }
 
-static INLINE __m128i convolve_lo_y_12tap(const __m128i *s,
+static inline __m128i convolve_lo_y_12tap(const __m128i *s,
                                           const __m128i *coeffs) {
   __m128i ss[6];
   const __m128i zero = _mm_setzero_si128();
@@ -87,7 +87,7 @@ static INLINE __m128i convolve_lo_y_12tap(const __m128i *s,
   return convolve_12tap(ss, coeffs);
 }
 
-static INLINE __m128i convolve_hi_y_12tap(const __m128i *s,
+static inline __m128i convolve_hi_y_12tap(const __m128i *s,
                                           const __m128i *coeffs) {
   __m128i ss[6];
   const __m128i zero = _mm_setzero_si128();

@@ -49,9 +49,13 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobRegistryImpl);
 
 BlobRegistryImpl::~BlobRegistryImpl() = default;
 
@@ -90,24 +94,26 @@ void BlobRegistryImpl::appendStorageItems(BlobData* blobData, const BlobDataItem
 {
     ASSERT(length != BlobDataItem::toEndOfFile);
 
-    BlobDataItemList::const_iterator iter = items.begin();
+    size_t itemsIndex = 0;
     if (offset) {
-        for (; iter != items.end(); ++iter) {
-            if (offset >= iter->length())
-                offset -= iter->length();
+        for (; itemsIndex < items.size(); ++itemsIndex) {
+            auto& item = items[itemsIndex];
+            if (offset >= item.length())
+                offset -= item.length();
             else
                 break;
         }
     }
 
-    for (; iter != items.end() && length > 0; ++iter) {
-        long long currentLength = iter->length() - offset;
+    for (; itemsIndex < items.size() && length > 0; ++itemsIndex) {
+        auto& item = items[itemsIndex];
+        long long currentLength = item.length() - offset;
         long long newLength = currentLength > length ? length : currentLength;
-        if (iter->type() == BlobDataItem::Type::Data)
-            blobData->appendData(*iter->data(), iter->offset() + offset, newLength);
+        if (item.type() == BlobDataItem::Type::Data)
+            blobData->appendData(*item.data(), item.offset() + offset, newLength);
         else {
-            ASSERT(iter->type() == BlobDataItem::Type::File);
-            blobData->appendFile(iter->file(), iter->offset() + offset, newLength);
+            ASSERT(item.type() == BlobDataItem::Type::File);
+            blobData->appendFile(item.file(), item.offset() + offset, newLength);
         }
         length -= newLength;
         offset = 0;
@@ -140,7 +146,7 @@ static FileSystem::MappedFileData storeInMappedFileData(const String& path, std:
         return { };
     FileSystem::deleteFile(path);
 
-    memcpy(const_cast<void*>(mappedFileData.data()), data.data(), data.size());
+    memcpySpan(mappedFileData.mutableSpan(), data);
 
     FileSystem::finalizeMappedFileData(mappedFileData, data.size());
     return mappedFileData;
@@ -325,8 +331,8 @@ unsigned long long BlobRegistryImpl::blobSize(const URL& url)
 
 static WorkQueue& blobUtilityQueue()
 {
-    static auto& queue = WorkQueue::create("org.webkit.BlobUtility"_s, WorkQueue::QOS::Utility).leakRef();
-    return queue;
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("org.webkit.BlobUtility"_s, WorkQueue::QOS::Utility));
+    return queue.get();
 }
 
 bool BlobRegistryImpl::populateBlobsForFileWriting(const Vector<String>& blobURLs, Vector<BlobForFileWriting>& blobsForWriting)
@@ -368,7 +374,7 @@ static bool writeFilePathsOrDataBuffersToFile(const Vector<std::pair<String, Ref
 
     for (auto& part : filePathsOrDataBuffers) {
         if (part.second) {
-            int length = part.second->size();
+            int64_t length = part.second->size();
             if (FileSystem::writeToFile(file, part.second->span()) != length) {
                 LOG_ERROR("Failed writing a Blob to temporary file");
                 return false;

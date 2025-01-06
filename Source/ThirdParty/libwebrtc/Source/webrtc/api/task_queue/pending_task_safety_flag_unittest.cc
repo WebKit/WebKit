@@ -11,11 +11,13 @@
 #include "api/task_queue/pending_task_safety_flag.h"
 
 #include <memory>
+#include <utility>
 
+#include "api/scoped_refptr.h"
+#include "api/task_queue/task_queue_base.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/event.h"
-#include "rtc_base/logging.h"
 #include "rtc_base/task_queue_for_test.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {

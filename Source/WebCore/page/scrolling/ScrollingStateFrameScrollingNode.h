@@ -32,12 +32,14 @@
 #include "ScrollbarThemeComposite.h"
 #include "ScrollingCoordinator.h"
 #include "ScrollingStateScrollingNode.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class Scrollbar;
 
 class ScrollingStateFrameScrollingNode final : public ScrollingStateScrollingNode {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStateFrameScrollingNode, WEBCORE_EXPORT);
 public:
     template<typename... Args> static Ref<ScrollingStateFrameScrollingNode> create(Args&&... args) { return adoptRef(*new ScrollingStateFrameScrollingNode(std::forward<Args>(args)...)); }
 
@@ -104,10 +106,6 @@ public:
     bool visualViewportIsSmallerThanLayoutViewport() const { return m_visualViewportIsSmallerThanLayoutViewport; }
     WEBCORE_EXPORT void setVisualViewportIsSmallerThanLayoutViewport(bool);
 
-    // These are more like Settings, and should probably move to the Scrolling{State}Tree itself.
-    bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
-    WEBCORE_EXPORT void setFixedElementsLayoutRelativeToFrame(bool);
-
     bool asyncFrameOrOverflowScrollingEnabled() const { return m_asyncFrameOrOverflowScrollingEnabled; }
     WEBCORE_EXPORT void setAsyncFrameOrOverflowScrollingEnabled(bool);
 
@@ -154,6 +152,8 @@ private:
         ScrollbarHoverState&&,
         ScrollbarEnabledState&&,
         UserInterfaceLayoutDirection,
+        ScrollbarWidth,
+        bool useDarkAppearanceForScrollbars,
         RequestedKeyboardScrollData&&,
         float frameScaleFactor,
         EventTrackingRegions&&,
@@ -165,7 +165,6 @@ private:
         int footerHeight,
         ScrollBehaviorForFixedElements&&,
         float topContentInset,
-        bool fixedElementsLayoutRelativeToFrame,
         bool visualViewportIsSmallerThanLayoutViewport,
         bool asyncFrameOrOverflowScrollingEnabled,
         bool wheelEventGesturesBecomeNonBlocking,
@@ -201,7 +200,6 @@ private:
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };
     ScrollBehaviorForFixedElements m_behaviorForFixed { ScrollBehaviorForFixedElements::StickToDocumentBounds };
-    bool m_fixedElementsLayoutRelativeToFrame { false };
     bool m_visualViewportIsSmallerThanLayoutViewport { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
     bool m_wheelEventGesturesBecomeNonBlocking { false };

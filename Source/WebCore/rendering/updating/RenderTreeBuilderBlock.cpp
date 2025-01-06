@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,11 @@
 #include "RenderStyleInlines.h"
 #include "RenderTextControl.h"
 #include "RenderTreeBuilderMultiColumn.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTreeBuilder::Block);
 
 static void moveAllChildrenToInternal(RenderBoxModelObject& from, RenderElement& newParent)
 {
@@ -48,34 +51,28 @@ static bool canDropAnonymousBlock(const RenderBlock& anonymousBlock)
     return true;
 }
 
-static bool canMergeContiguousAnonymousBlocks(RenderObject& oldChild, RenderObject* previous, RenderObject* next)
+static bool canMergeContiguousAnonymousBlocks(const RenderObject& rendererToBeRemoved, const RenderObject* previous, const RenderObject* next, const RenderObject* anonymousDestroyRoot)
 {
-    ASSERT(!oldChild.renderTreeBeingDestroyed());
+    ASSERT(!rendererToBeRemoved.renderTreeBeingDestroyed());
 
-    if (oldChild.isInline())
+    if (rendererToBeRemoved.isInline())
         return false;
 
-    if (auto* boxModelObject = dynamicDowncast<RenderBoxModelObject>(oldChild); boxModelObject && boxModelObject->continuation())
+    if (previous && (!previous->isAnonymousBlock() || !canDropAnonymousBlock(downcast<RenderBlock>(*previous))))
         return false;
 
-    if (previous) {
-        if (!previous->isAnonymousBlock())
-            return false;
-        RenderBlock& previousAnonymousBlock = downcast<RenderBlock>(*previous);
-        if (!canDropAnonymousBlock(previousAnonymousBlock))
-            return false;
-    }
-    if (next) {
-        if (!next->isAnonymousBlock())
-            return false;
-        RenderBlock& nextAnonymousBlock = downcast<RenderBlock>(*next);
-        if (!canDropAnonymousBlock(nextAnonymousBlock))
-            return false;
-    }
-    return true;
+    if (next && (!next->isAnonymousBlock() || !canDropAnonymousBlock(downcast<RenderBlock>(*next))))
+        return false;
+
+    auto* boxToBeRemoved = dynamicDowncast<RenderBoxModelObject>(rendererToBeRemoved);
+    if (!boxToBeRemoved || !boxToBeRemoved->continuation())
+        return true;
+
+    // Let's merge pre and post anonymous block containers when the continuation triggering box (rendererToBeRemoved) is going away.
+    return previous && next && previous != anonymousDestroyRoot && next != anonymousDestroyRoot;
 }
 
-static RenderBlock* continuationBefore(RenderBlock& parent, RenderObject* beforeChild)
+RenderBlock* RenderTreeBuilder::Block::continuationBefore(RenderBlock& parent, RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() == &parent)
         return &parent;
@@ -170,7 +167,7 @@ static std::optional<ParentAndBeforeChild> findParentAndBeforeChildForNonSibling
     if (beforeChildContainer->isInline() && child.isInline()) {
         // The before child happens to be a block level box wrapped in an anonymous inline-block in an inline context (e.g. ruby).
         // Let's attach this new child before the anonymous inline-block wrapper.
-        ASSERT(beforeChildContainer->isInlineBlockOrInlineTable());
+        ASSERT(beforeChildContainer->isNonReplacedAtomicInline());
         return ParentAndBeforeChild { &parent, beforeChildContainer };
     }
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!beforeChildContainer->isInline() || beforeChildContainer->isRenderTable());
@@ -319,7 +316,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
     // with inline content, then we can fold the inline content back together.
     WeakPtr prev = oldChild.previousSibling();
     WeakPtr next = oldChild.nextSibling();
-    bool canMergeAnonymousBlocks = canCollapseAnonymousBlock == CanCollapseAnonymousBlock::Yes && canMergeContiguousAnonymousBlocks(oldChild, prev.get(), next.get());
+    bool canMergeAnonymousBlocks = canCollapseAnonymousBlock == CanCollapseAnonymousBlock::Yes && canMergeContiguousAnonymousBlocks(oldChild, prev.get(), next.get(), m_builder.m_anonymousDestroyRoot.get());
 
     auto takenChild = m_builder.detachFromRenderElement(parent, oldChild, willBeDestroyed);
 

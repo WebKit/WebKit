@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,7 +11,7 @@
 
 #include <tuple>
 
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "test/register_state_check.h"
 #include "test/acm_random.h"
@@ -362,6 +362,12 @@ INSTANTIATE_TEST_SUITE_P(SSE4_1, PixelProjHighbdErrorTest,
 INSTANTIATE_TEST_SUITE_P(AVX2, PixelProjHighbdErrorTest,
                          ::testing::Values(av1_highbd_pixel_proj_error_avx2));
 #endif  // HAVE_AVX2
+
+#if HAVE_NEON
+
+INSTANTIATE_TEST_SUITE_P(NEON, PixelProjHighbdErrorTest,
+                         ::testing::Values(av1_highbd_pixel_proj_error_neon));
+#endif  // HAVE_NEON
 
 }  // namespace pickrst_test_highbd
 #endif  // CONFIG_AV1_HIGHBITDEPTH

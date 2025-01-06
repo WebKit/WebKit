@@ -8,7 +8,7 @@
 
         <script>
             function firstCueElement() {
-                return internals.shadowRoot(video).querySelector('[useragentpart="cue"]');
+                return internals.shadowRoot(video).querySelector('span[useragentpart="-internal-cue-background"]');
             }
 
             async function runTest()

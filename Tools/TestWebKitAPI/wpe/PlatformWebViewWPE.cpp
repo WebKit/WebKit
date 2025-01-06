@@ -53,7 +53,9 @@ PlatformWebView::PlatformWebView(WKPageRef relatedPage)
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetContext(configuration.get(), WKPageGetContext(relatedPage));
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKPageConfigurationSetRelatedPage(configuration.get(), relatedPage);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto relatedConfiguration = adoptWK(WKPageCopyPageConfiguration(relatedPage));
     if (auto* preferences = WKPageConfigurationGetPreferences(relatedConfiguration.get()))
@@ -64,6 +66,7 @@ PlatformWebView::PlatformWebView(WKPageRef relatedPage)
 
 PlatformWebView::~PlatformWebView()
 {
+    WKRelease(m_view);
     delete m_window;
 }
 

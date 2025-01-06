@@ -32,12 +32,14 @@
 #include "Font.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace DisplayList {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayList);
 
 void DisplayList::append(Item&& item)
 {

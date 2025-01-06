@@ -29,8 +29,11 @@
 
 #include "BytecodeIndex.h"
 #include "CodeLocation.h"
+#include <wtf/MallocPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -64,12 +67,12 @@ public:
 private:
     CodeLocationLabel<JSEntryPtrTag>* codeLocations() const
     {
-        return bitwise_cast<CodeLocationLabel<JSEntryPtrTag>*>(m_pointer.get());
+        return std::bit_cast<CodeLocationLabel<JSEntryPtrTag>*>(m_pointer.get());
     }
 
     BytecodeIndex* indexes() const
     {
-        return bitwise_cast<BytecodeIndex*>(m_pointer.get() + sizeof(CodeLocationLabel<JSEntryPtrTag>) * m_size);
+        return std::bit_cast<BytecodeIndex*>(m_pointer.get() + sizeof(CodeLocationLabel<JSEntryPtrTag>) * m_size);
     }
 
     MallocPtr<uint8_t, JITCodeMapMalloc> m_pointer;
@@ -97,5 +100,7 @@ private:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(JIT)

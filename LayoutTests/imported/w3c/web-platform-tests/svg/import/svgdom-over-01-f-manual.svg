@@ -132,7 +132,7 @@
         new Subtest("i.href.baseVal == \"\""),
 
         // test SVGStringList
-        new Subtest("i.requiredFeatures.numberOfItems == 0"),
+        new Subtest("i.requiredExtensions.numberOfItems == 0"),
 
         // SVGAnimatedNumberList
         new Subtest("c.kernelMatrix.baseVal.numberOfItems == 0"),

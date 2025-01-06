@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,11 +38,17 @@
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
+#if !LOG_DISABLED
+#include "Logging.h"
+#include <wtf/text/TextStream.h>
+#endif
+
 namespace WebKit {
 
 class RemoteRenderingBackend;
 class RemoteResourceCache;
 class SharedVideoFrameReader;
+struct SharedPreferencesForWebProcess;
 
 class RemoteDisplayListRecorder : public IPC::StreamMessageReceiver, public CanMakeWeakPtr<RemoteDisplayListRecorder> {
 public:
@@ -86,8 +92,12 @@ public:
     void drawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions);
     void drawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions);
     void drawSystemImage(Ref<WebCore::SystemImage>, const WebCore::FloatRect&);
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    void drawVideoFrame(SharedVideoFrame&&, const WebCore::FloatRect& destination, WebCore::ImageOrientation, bool shouldDiscardAlpha);
+#endif
     void drawPattern(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions);
     void beginTransparencyLayer(float opacity);
+    void beginTransparencyLayerWithCompositeMode(WebCore::CompositeMode);
     void endTransparencyLayer();
     void drawRect(const WebCore::FloatRect&, float borderThickness);
     void drawLine(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2);
@@ -97,7 +107,7 @@ public:
     void drawPath(const WebCore::Path&);
     void drawFocusRingPath(const WebCore::Path&, float outlineWidth, const WebCore::Color&);
     void drawFocusRingRects(const Vector<WebCore::FloatRect>&, float outlineOffset, float outlineWidth, const WebCore::Color&);
-    void fillRect(const WebCore::FloatRect&);
+    void fillRect(const WebCore::FloatRect&, WebCore::GraphicsContext::RequiresClipToRect);
     void fillRectWithColor(const WebCore::FloatRect&, const WebCore::Color&);
     void fillRectWithGradient(WebCore::DisplayList::FillRectWithGradient&&);
     void fillRectWithGradientAndSpaceTransform(WebCore::DisplayList::FillRectWithGradientAndSpaceTransform&&);
@@ -114,9 +124,6 @@ public:
     void fillPathSegment(const WebCore::PathSegment&);
     void fillPath(const WebCore::Path&);
     void fillEllipse(const WebCore::FloatRect&);
-#if ENABLE(VIDEO)
-    void paintFrameForMedia(WebCore::MediaPlayerIdentifier, const WebCore::FloatRect& destination);
-#endif
     void strokeRect(const WebCore::FloatRect&, float lineWidth);
 #if ENABLE(INLINE_PATH_DATA)
     void strokeLine(const WebCore::PathDataLine&);
@@ -136,6 +143,10 @@ public:
     void applyFillPattern();
 #endif
     void applyDeviceScaleFactor(float);
+    std::optional<WebKit::SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+
+    void beginPage(const WebCore::IntSize& pageSize);
+    void endPage();
 
 private:
     RemoteDisplayListRecorder(WebCore::ImageBuffer&, WebCore::RenderingResourceIdentifier, RemoteRenderingBackend&);
@@ -143,9 +154,13 @@ private:
     void drawFilteredImageBufferInternal(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, const WebCore::FloatRect& sourceImageRect, WebCore::Filter&, WebCore::FilterResults&);
 
     RemoteResourceCache& resourceCache() const;
-    WebCore::GraphicsContext& drawingContext() { return m_imageBuffer->context(); }
+    WebCore::ControlFactory& controlFactory();
+    Ref<WebCore::ControlFactory> protectedControlFactory() { return controlFactory(); }
+    WebCore::GraphicsContext& drawingContext() { return Ref { m_imageBuffer }->context(); }
     RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier) const;
     std::optional<WebCore::SourceImage> sourceImage(WebCore::RenderingResourceIdentifier) const;
+
+    RefPtr<RemoteRenderingBackend> protectedRenderingBackend() const { return m_renderingBackend; }
 
     template<typename T, typename ... AdditionalArgs>
     void handleItem(T&& item, AdditionalArgs&&... args)
@@ -153,6 +168,7 @@ private:
         // FIXME: In the future, we should consider buffering up batches of display list items before
         // applying them instead of applying them immediately, so that we can apply clipping and occlusion
         // optimizations to skip over parts of a display list, if possible.
+        LOG_WITH_STREAM(DisplayLists, stream << "handleItem " << item);
         item.apply(drawingContext(), std::forward<AdditionalArgs>(args)...);
     }
 
@@ -161,8 +177,6 @@ private:
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     SharedVideoFrameReader& sharedVideoFrameReader();
-
-    void paintVideoFrame(SharedVideoFrame&&, const WebCore::FloatRect&, bool shouldDiscardAlpha);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
 #endif
@@ -171,7 +185,7 @@ private:
     WebCore::RenderingResourceIdentifier m_imageBufferIdentifier;
     RefPtr<RemoteRenderingBackend> m_renderingBackend;
     Ref<RemoteSharedResourceCache> m_sharedResourceCache;
-    std::unique_ptr<WebCore::ControlFactory> m_controlFactory;
+    RefPtr<WebCore::ControlFactory> m_controlFactory;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     std::unique_ptr<SharedVideoFrameReader> m_sharedVideoFrameReader;
 #endif

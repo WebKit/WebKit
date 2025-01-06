@@ -35,6 +35,7 @@
 #include <WebCore/ImageBufferBackend.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -45,14 +46,15 @@ namespace WebKit {
 class RemoteRenderingBackendProxy;
 
 class RemoteImageBufferProxy : public WebCore::ImageBuffer {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteImageBufferProxy);
     friend class RemoteSerializedImageBufferProxy;
 public:
     template<typename BackendType>
-    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, bool avoidBackendSizeCheck = false)
+    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferPixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     {
         Parameters parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
         auto backendParameters = ImageBuffer::backendParameters(parameters);
-        if (!avoidBackendSizeCheck && BackendType::calculateSafeBackendSize(backendParameters).isEmpty())
+        if (BackendType::calculateSafeBackendSize(backendParameters).isEmpty())
             return nullptr;
         auto info = populateBackendInfo<BackendType>(backendParameters);
         return adoptRef(new RemoteImageBufferProxy(parameters, info, remoteRenderingBackendProxy));
@@ -98,8 +100,8 @@ private:
     void assertDispatcherIsCurrent() const;
     template<typename T> void send(T&& message);
     template<typename T> auto sendSync(T&& message);
-
-    IPC::StreamClientConnection& streamConnection() const;
+    RefPtr<IPC::StreamClientConnection> connection() const;
+    void didBecomeUnresponsive() const;
 
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteDisplayListRecorderProxy m_remoteDisplayList;
@@ -107,6 +109,7 @@ private:
 };
 
 class RemoteSerializedImageBufferProxy : public WebCore::SerializedImageBuffer {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteSerializedImageBufferProxy);
     friend class RemoteRenderingBackendProxy;
 public:
     ~RemoteSerializedImageBufferProxy();

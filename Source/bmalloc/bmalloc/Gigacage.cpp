@@ -47,10 +47,6 @@
 
 namespace Gigacage {
 
-#if !BENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-Config g_gigacageConfig;
-#endif
-
 struct Callback {
     Callback() { }
     
@@ -73,7 +69,9 @@ struct PrimitiveDisableCallbacks : public StaticPerProcess<PrimitiveDisableCallb
     
     Vector<Gigacage::Callback> callbacks;
 };
+BALLOW_DEPRECATED_DECLARATIONS_BEGIN
 DECLARE_STATIC_PER_PROCESS_STORAGE_WITH_LINKAGE(PrimitiveDisableCallbacks, BNOEXPORT);
+BALLOW_DEPRECATED_DECLARATIONS_END
 DEFINE_STATIC_PER_PROCESS_STORAGE(PrimitiveDisableCallbacks);
 
 } // namespace bmalloc
@@ -96,23 +94,22 @@ void ensureGigacage()
             if (!shouldBeEnabled())
                 return;
 
-#if BENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
             // We might only get page size alignment, but that's also the minimum
             // alignment we need for freezing the Config.
             RELEASE_BASSERT(!(reinterpret_cast<size_t>(&WebConfig::g_config) & (vmPageSize() - 1)));
-#endif
 
-            Kind shuffledKinds[NumberOfKinds];
-            for (unsigned i = 0; i < NumberOfKinds; ++i)
+            constexpr size_t numberOfKinds = static_cast<size_t>(NumberOfKinds);
+            Kind shuffledKinds[numberOfKinds];
+            for (unsigned i = 0; i < numberOfKinds; ++i)
                 shuffledKinds[i] = static_cast<Kind>(i);
             
             // We just go ahead and assume that 64 bits is enough randomness. That's trivially true right
             // now, but would stop being true if we went crazy with gigacages. Based on my math, 21 is the
             // largest value of n so that n! <= 2^64.
-            static_assert(NumberOfKinds <= 21, "too many kinds");
+            static_assert(numberOfKinds <= 21, "too many kinds");
             uint64_t random;
             cryptoRandom(reinterpret_cast<unsigned char*>(&random), sizeof(random));
-            for (unsigned i = NumberOfKinds; i--;) {
+            for (unsigned i = numberOfKinds; i--;) {
                 unsigned limit = i + 1;
                 unsigned j = static_cast<unsigned>(random % limit);
                 random /= limit;
@@ -178,6 +175,7 @@ void ensureGigacage()
             g_gigacageConfig.start = base;
             g_gigacageConfig.totalSize = totalSize;
             g_gigacageConfig.isEnabled = true;
+            BPROFILE_ALLOCATION(INITIAL_GIGACAGE, totalSize);
         });
 }
 
@@ -190,7 +188,7 @@ void disablePrimitiveGigacage()
 
     ensureGigacage();
     disablePrimitiveGigacageRequested = true;
-    if (!g_gigacageConfig.basePtrs[Primitive]) {
+    if (!g_gigacageConfig.basePtrs[static_cast<size_t>(Primitive)]) {
         // It was never enabled. That means that we never even saved any callbacks. Or, we had already disabled
         // it before, and already called the callbacks.
         return;
@@ -206,7 +204,7 @@ void disablePrimitiveGigacage()
 void addPrimitiveDisableCallback(void (*function)(void*), void* argument)
 {
     ensureGigacage();
-    if (!g_gigacageConfig.basePtrs[Primitive]) {
+    if (!g_gigacageConfig.basePtrs[static_cast<size_t>(Primitive)]) {
         // It was already disabled or we were never able to enable it.
         function(argument);
         return;
@@ -234,7 +232,7 @@ void removePrimitiveDisableCallback(void (*function)(void*), void* argument)
 static bool verifyGigacageIsEnabled()
 {
     bool isEnabled = g_gigacageConfig.isEnabled;
-    for (size_t i = 0; i < NumberOfKinds; ++i)
+    for (size_t i = 0; i < static_cast<size_t>(NumberOfKinds); ++i)
         isEnabled = isEnabled && g_gigacageConfig.basePtrs[i];
     isEnabled = isEnabled && g_gigacageConfig.start;
     isEnabled = isEnabled && g_gigacageConfig.totalSize;

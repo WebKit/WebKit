@@ -34,61 +34,61 @@ QualityScalerSettings::QualityScalerSettings(
                   field_trials.Lookup("WebRTC-Video-QualityScalerSettings"));
 }
 
-absl::optional<int> QualityScalerSettings::SamplingPeriodMs() const {
+std::optional<int> QualityScalerSettings::SamplingPeriodMs() const {
   if (sampling_period_ms_ && sampling_period_ms_.Value() <= 0) {
     RTC_LOG(LS_WARNING) << "Unsupported sampling_period_ms value, ignored.";
-    return absl::nullopt;
+    return std::nullopt;
   }
   return sampling_period_ms_.GetOptional();
 }
 
-absl::optional<int> QualityScalerSettings::AverageQpWindow() const {
+std::optional<int> QualityScalerSettings::AverageQpWindow() const {
   if (average_qp_window_ && average_qp_window_.Value() <= 0) {
     RTC_LOG(LS_WARNING) << "Unsupported average_qp_window value, ignored.";
-    return absl::nullopt;
+    return std::nullopt;
   }
   return average_qp_window_.GetOptional();
 }
 
-absl::optional<int> QualityScalerSettings::MinFrames() const {
+std::optional<int> QualityScalerSettings::MinFrames() const {
   if (min_frames_ && min_frames_.Value() < kMinFrames) {
     RTC_LOG(LS_WARNING) << "Unsupported min_frames value, ignored.";
-    return absl::nullopt;
+    return std::nullopt;
   }
   return min_frames_.GetOptional();
 }
 
-absl::optional<double> QualityScalerSettings::InitialScaleFactor() const {
+std::optional<double> QualityScalerSettings::InitialScaleFactor() const {
   if (initial_scale_factor_ &&
       initial_scale_factor_.Value() < kMinScaleFactor) {
     RTC_LOG(LS_WARNING) << "Unsupported initial_scale_factor value, ignored.";
-    return absl::nullopt;
+    return std::nullopt;
   }
   return initial_scale_factor_.GetOptional();
 }
 
-absl::optional<double> QualityScalerSettings::ScaleFactor() const {
+std::optional<double> QualityScalerSettings::ScaleFactor() const {
   if (scale_factor_ && scale_factor_.Value() < kMinScaleFactor) {
     RTC_LOG(LS_WARNING) << "Unsupported scale_factor value, ignored.";
-    return absl::nullopt;
+    return std::nullopt;
   }
   return scale_factor_.GetOptional();
 }
 
-absl::optional<int> QualityScalerSettings::InitialBitrateIntervalMs() const {
+std::optional<int> QualityScalerSettings::InitialBitrateIntervalMs() const {
   if (initial_bitrate_interval_ms_ &&
       initial_bitrate_interval_ms_.Value() < 0) {
     RTC_LOG(LS_WARNING) << "Unsupported bitrate_interval value, ignored.";
-    return absl::nullopt;
+    return std::nullopt;
   }
   return initial_bitrate_interval_ms_.GetOptional();
 }
 
-absl::optional<double> QualityScalerSettings::InitialBitrateFactor() const {
+std::optional<double> QualityScalerSettings::InitialBitrateFactor() const {
   if (initial_bitrate_factor_ &&
       initial_bitrate_factor_.Value() < kMinScaleFactor) {
     RTC_LOG(LS_WARNING) << "Unsupported initial_bitrate_factor value, ignored.";
-    return absl::nullopt;
+    return std::nullopt;
   }
   return initial_bitrate_factor_.GetOptional();
 }

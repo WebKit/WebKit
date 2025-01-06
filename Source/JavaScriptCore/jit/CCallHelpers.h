@@ -38,11 +38,7 @@
 
 namespace JSC {
 
-#if OS(WINDOWS) && CPU(X86_64)
-#define POKE_ARGUMENT_OFFSET 4
-#else
 #define POKE_ARGUMENT_OFFSET 0
-#endif
 
 class CallFrame;
 class Structure;
@@ -92,10 +88,8 @@ public:
         poke(GPRInfo::nonArgGPR0, POKE_ARGUMENT_OFFSET + argumentIndex - GPRInfo::numberOfArgumentRegisters);
     }
 
-private:
-
-    template<unsigned NumberOfRegisters, typename RegType>
-    ALWAYS_INLINE void setupStubArgs(std::array<RegType, NumberOfRegisters> destinations, std::array<RegType, NumberOfRegisters> sources)
+    template<typename RegType, unsigned NumberOfRegisters>
+    ALWAYS_INLINE void shuffleRegisters(std::array<RegType, NumberOfRegisters> sources, std::array<RegType, NumberOfRegisters> destinations)
     {
         if (ASSERT_ENABLED) {
             RegisterSetBuilder set;
@@ -104,7 +98,7 @@ private:
             ASSERT_WITH_MESSAGE(set.numberOfSetRegisters() == NumberOfRegisters, "Destinations should not be aliased.");
         }
 
-        typedef std::pair<RegType, RegType> RegPair;
+        using RegPair = std::pair<RegType, RegType>;
         Vector<RegPair, NumberOfRegisters> pairs;
 
         // if constexpr avoids warnings when NumberOfRegisters is 0.
@@ -139,7 +133,7 @@ private:
         };
 #endif
 
-        while (pairs.size()) {
+        while (!pairs.isEmpty()) {
             RegisterSet freeDestinations;
             for (auto& pair : pairs) {
                 RegType dest = pair.second;
@@ -153,9 +147,7 @@ private:
             if (freeDestinations.numberOfSetRegisters()) {
                 bool madeMove = false;
                 for (unsigned i = 0; i < pairs.size(); i++) {
-                    auto& pair = pairs[i];
-                    RegType source = pair.first;
-                    RegType dest = pair.second;
+                    auto [source, dest] = pairs[i];
                     if (freeDestinations.contains(dest, IgnoreVectors)) {
                         // This means that this setup function cannot handle SIMD vectors as a part of parameters.
                         // Now, this is guaranteed that we ensure FP parameter is always `double`.
@@ -178,8 +170,7 @@ private:
             // any free destination registers that won't also clobber a source. We get around this by
             // exchanging registers.
 
-            RegType source = pairs[0].first;
-            RegType dest = pairs[0].second;
+            auto [source, dest] = pairs.first();
             if constexpr (std::is_same_v<RegType, FPRReg>)
                 swapDouble(source, dest);
             else
@@ -196,16 +187,35 @@ private:
             }
 
             // We may have introduced pairs that have the same source and destination. Remove those now.
-            for (unsigned i = 0; i < pairs.size(); i++) {
-                auto& pair = pairs[i];
-                if (pair.first == pair.second) {
-                    pairs.remove(i);
-                    i--;
-                }
-            }
+            pairs.removeAllMatching([](const auto& pair) {
+                return pair.first == pair.second;
+            });
         }
     }
 
+    template<unsigned NumberOfJSRs>
+    ALWAYS_INLINE void shuffleJSRs(std::array<JSValueRegs, NumberOfJSRs> sources, std::array<JSValueRegs, NumberOfJSRs> destinations)
+    {
+#if USE(JSVALUE64)
+        constexpr unsigned NumberOfRegisters = NumberOfJSRs;
+#else
+        constexpr unsigned NumberOfRegisters = NumberOfJSRs * 2;
+#endif
+        std::array<GPRReg, NumberOfRegisters> sourceRegs;
+        std::array<GPRReg, NumberOfRegisters> destinationRegs;
+
+        for (unsigned i = 0; i < NumberOfJSRs; ++i) {
+            sourceRegs[i] = sources[i].payloadGPR();
+            destinationRegs[i] = destinations[i].payloadGPR();
+#if !USE(JSVALUE64)
+            sourceRegs[i + NumberOfJSRs] = sources[i].tagGPR();
+            destinationRegs[i + NumberOfJSRs] = destinations[i].tagGPR();
+#endif
+        }
+        shuffleRegisters<GPRReg, NumberOfRegisters>(sourceRegs, destinationRegs);
+    }
+
+private:
     template<typename RegType>
     using InfoTypeForReg = decltype(toInfoFromReg(RegType(-1)));
 
@@ -304,13 +314,8 @@ private:
             return ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke + 1>(*this);
         }
 
-#if OS(WINDOWS) && CPU(X86_64)
-        unsigned argCount(GPRReg) { return numGPRArgs + numFPRArgs; }
-        unsigned argCount(FPRReg) { return numGPRArgs + numFPRArgs; }
-#else
         unsigned argCount(GPRReg) { return numGPRArgs + extraGPRArgs; }
         unsigned argCount(FPRReg) { return numFPRArgs; }
-#endif
 
         // store GPR -> GPR assignments
         std::array<GPRReg, GPRInfo::numberOfRegisters> gprSources;
@@ -354,11 +359,10 @@ private:
 
         currentGPRArgument += extraGPRArgs;
         currentFPRArgument -= numCrossSources;
-#if !(OS(WINDOWS) && CPU(X86_64))
+
         IGNORE_WARNINGS_BEGIN("type-limits")
         ASSERT(currentGPRArgument >= GPRInfo::numberOfArgumentRegisters || currentFPRArgument >= FPRInfo::numberOfArgumentRegisters);
         IGNORE_WARNINGS_END
-#endif
 
         unsigned pokeOffset = POKE_ARGUMENT_OFFSET + extraPoke;
         pokeOffset += std::max(currentGPRArgument, numberOfGPArgumentRegisters) - numberOfGPArgumentRegisters;
@@ -401,22 +405,14 @@ private:
     {
         using InfoType = InfoTypeForReg<RegType>;
         unsigned numArgRegisters = InfoType::numberOfArgumentRegisters;
-#if OS(WINDOWS) && CPU(X86_64)
-        unsigned currentArgCount = argSourceRegs.argCount(arg) + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0);
-#else
         unsigned currentArgCount = argSourceRegs.argCount(arg);
-#endif
         if (currentArgCount < numArgRegisters) {
             auto updatedArgSourceRegs = argSourceRegs.pushRegArg(arg, InfoType::toArgumentRegister(currentArgCount));
             setupArgumentsImpl<OperationType>(updatedArgSourceRegs, args...);
             return;
         }
 
-#if OS(WINDOWS) && CPU(X86_64)
-        pokeForArgument(arg, numGPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0), numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-#else
         pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-#endif
         setupArgumentsImpl<OperationType>(argSourceRegs.addStackArg(arg), args...);
     }
 
@@ -568,22 +564,14 @@ private:
         // gross so it's probably better to do that marshalling before the call operation...
         static_assert(!std::is_floating_point<CURRENT_ARGUMENT_TYPE>::value, "We don't support immediate floats/doubles in setupArguments");
         auto numArgRegisters = GPRInfo::numberOfArgumentRegisters;
-#if OS(WINDOWS) && CPU(X86_64)
-        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0);
-#else
         auto currentArgCount = numGPRArgs + extraGPRArgs;
-#endif
         if (currentArgCount < numArgRegisters) {
             setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
             move(arg, GPRInfo::toArgumentRegister(currentArgCount));
             return;
         }
 
-#if OS(WINDOWS) && CPU(X86_64)
-        pokeForArgument(arg, numGPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0), numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-#else
         pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-#endif
         setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
     }
 
@@ -632,11 +620,7 @@ private:
     {
         static_assert(!std::is_floating_point<CURRENT_ARGUMENT_TYPE>::value, "We don't support immediate floats/doubles in setupArguments");
         auto numArgRegisters = GPRInfo::numberOfArgumentRegisters;
-#if OS(WINDOWS) && CPU(X86_64)
-        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0);
-#else
         auto currentArgCount = numGPRArgs + extraGPRArgs;
-#endif
         if (currentArgCount < numArgRegisters) {
             setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
             arg.materialize(*this, GPRInfo::toArgumentRegister(currentArgCount));
@@ -644,11 +628,7 @@ private:
         }
 
 
-#if OS(WINDOWS) && CPU(X86_64)
-        pokeForArgument(arg, numGPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0), numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-#else
         pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-#endif
         setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
     }
 
@@ -711,17 +691,10 @@ private:
         static_assert(gprArgsCount<TraitsType>(std::make_index_sequence<TraitsType::arity>()) == numGPRArgs);
         static_assert(fprArgsCount<TraitsType>(std::make_index_sequence<TraitsType::arity>()) == numFPRArgs);
 
-        setupStubArgs<numGPRSources, GPRReg>(clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprDestinations), clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprSources));
+        shuffleRegisters<GPRReg, numGPRSources>(clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprSources), clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprDestinations));
         static_assert(!numCrossSources, "shouldn't be used on this architecture.");
 
-        setupStubArgs<numFPRSources, FPRReg>(clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprDestinations), clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprSources));
-
-#if OS(WINDOWS) && CPU(X86_64)
-        if constexpr (std::is_same<RESULT_TYPE, UGPRPair>::value) {
-            unsigned pokeOffset = calculatePokeOffset(numGPRArgs + /* implicit first parameter */ 1, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-            addPtr(TrustedImm32(pokeOffset * sizeof(CPURegister)), stackPointerRegister, GPRInfo::argumentGPR0);
-        }
-#endif
+        shuffleRegisters<FPRReg, numFPRSources>(clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprSources), clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprDestinations));
     }
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>
@@ -812,19 +785,38 @@ public:
         farJump(GPRInfo::regT1, ExceptionHandlerPtrTag);
     }
 
+#if USE(JSVALUE64)
     template<typename T>
     requires (isExceptionOperationResult<T>)
     static constexpr GPRReg operationExceptionRegister()
     {
+        static_assert(assertNotOperationSignature<T>);
         if (std::is_floating_point_v<typename T::ResultType> || std::is_same_v<typename T::ResultType, void>)
             return GPRInfo::returnValueGPR;
         return GPRInfo::returnValueGPR2;
     }
+#else
+    template<typename T>
+    requires (isExceptionOperationResult<T>)
+    static constexpr GPRReg operationExceptionRegister()
+    {
+        static_assert(assertNotOperationSignature<T>);
+        if (std::is_same_v<T, ExceptionOperationResult<void>>)
+            return GPRInfo::returnValueGPR;
+        return GPRInfo::returnValueGPR2;
+    }
+#endif
 
     template<typename T>
     requires (!isExceptionOperationResult<T>)
-    static constexpr GPRReg operationExceptionRegister() { return InvalidGPRReg; }
+    static constexpr GPRReg operationExceptionRegister()
+    {
+        static_assert(assertNotOperationSignature<T>);
+        return InvalidGPRReg;
+    }
 
+    template<auto operation>
+    static constexpr GPRReg operationExceptionRegister() { return operationExceptionRegister<OperationReturnType<typename FunctionTraits<decltype(operation)>::ResultType>>(); }
 
     void prepareForTailCallSlow(RegisterSet preserved = { })
     {
@@ -951,11 +943,11 @@ public:
         storeWasmCalleeCallee(scratchRegister());
     }
 
-    DataLabelPtr storeWasmCalleeCalleePatchable()
+    DataLabelPtr storeWasmCalleeCalleePatchable(int offset = 0)
     {
         JIT_COMMENT(*this, "Store Callee's wasm callee (patchable)");
         auto patch = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
-        auto addr = CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(0);
+        auto addr = CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(offset);
 #if USE(JSVALUE64)
         storePtr(scratchRegister(), addr);
 #elif USE(JSVALUE32_64)

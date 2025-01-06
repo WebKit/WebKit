@@ -31,10 +31,11 @@
 #include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceSettings.h"
 #include "UserActivity.h"
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Observer.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,11 +49,6 @@ class CapturerObserver;
 }
 
 namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CapturerObserver> : std::true_type { };
-}
-
-namespace WTF {
 class MediaTime;
 }
 
@@ -62,7 +58,7 @@ class CaptureDeviceInfo;
 class ImageTransferSessionVT;
 class PixelBufferConformerCV;
 
-class CapturerObserver : public CanMakeWeakPtr<CapturerObserver> {
+class CapturerObserver : public AbstractRefCountedAndCanMakeWeakPtr<CapturerObserver> {
 public:
     virtual ~CapturerObserver() = default;
 
@@ -75,11 +71,12 @@ class DisplayCaptureSourceCocoa final
     : public RealtimeMediaSource
     , public CapturerObserver
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DisplayCaptureSourceCocoa, WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_TZONE_ALLOCATED(DisplayCaptureSourceCocoa);
 public:
     using DisplayFrameType = std::variant<RefPtr<NativeImage>, RetainPtr<IOSurfaceRef>, RetainPtr<CMSampleBufferRef>>;
 
     class Capturer : public LoggerHelper {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Capturer);
     public:
 
         virtual ~Capturer() = default;
@@ -92,17 +89,23 @@ public:
         virtual DisplaySurfaceType surfaceType() const = 0;
         virtual void commitConfiguration(const RealtimeMediaSourceSettings&) = 0;
         virtual IntSize intrinsicSize() const = 0;
+        virtual void whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback) { callback({ }); }
 
-        virtual void setLogger(const Logger&, const void*);
+        virtual void setLogger(const Logger&, uint64_t);
         const Logger* loggerPtr() const { return m_logger.get(); }
         const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
-        const void* logIdentifier() const final { return m_logIdentifier; }
+        uint64_t logIdentifier() const final { return m_logIdentifier; }
         WTFLogChannel& logChannel() const final;
 
-        void setObserver(CapturerObserver&);
+        void ref() { m_observer->ref(); }
+        void deref() { m_observer->deref(); }
 
     protected:
-        Capturer() = default;
+        explicit Capturer(CapturerObserver& observer)
+            : m_observer(observer)
+        {
+        }
+
         void isRunningChanged(bool running)
         {
             if (m_observer)
@@ -122,21 +125,19 @@ public:
     private:
         WeakPtr<CapturerObserver> m_observer;
         RefPtr<const Logger> m_logger;
-        const void* m_logIdentifier;
+        uint64_t m_logIdentifier { 0 };
     };
 
-    static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier);
-    static CaptureSourceOrError create(Expected<UniqueRef<Capturer>, CaptureSourceError>&&, const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier);
+    static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
+    static CaptureSourceOrError create(const std::function<UniqueRef<Capturer>(CapturerObserver&)>&, const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
 
     Seconds elapsedTime();
 
-    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DisplayCaptureSourceCocoa, WTF::DestructionThread::MainRunLoop>::ref(); }
-    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DisplayCaptureSourceCocoa, WTF::DestructionThread::MainRunLoop>::deref(); }
-    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DisplayCaptureSourceCocoa, WTF::DestructionThread::MainRunLoop>::controlBlock(); }
+    WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
     virtual ~DisplayCaptureSourceCocoa();
 
 private:
-    DisplayCaptureSourceCocoa(UniqueRef<Capturer>&&, const CaptureDevice&, MediaDeviceHashSalts&&, PageIdentifier);
+    DisplayCaptureSourceCocoa(const std::function<UniqueRef<Capturer>(CapturerObserver&)>&, const CaptureDevice&, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
 
     // RealtimeMediaSource
     void startProducingData() final;
@@ -149,11 +150,12 @@ private:
     CaptureDevice::DeviceType deviceType() const { return m_capturer->deviceType(); }
     void endApplyingConstraints() final { commitConfiguration(); }
     IntSize computeResizedVideoFrameSize(IntSize desiredSize, IntSize actualSize) final;
-    void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) final;
+    void setSizeFrameRateAndZoom(const VideoPresetConstraints&) final;
     double observedFrameRate() const final;
+    void whenReady(CompletionHandler<void(CaptureSourceError&&)>&&) final;
 
     ASCIILiteral logClassName() const final { return "DisplayCaptureSourceCocoa"_s; }
-    void setLogger(const Logger&, const void*) final;
+    void setLogger(const Logger&, uint64_t) final;
 
     // CapturerObserver
     void capturerIsRunningChanged(bool isRunning) final { notifyMutedChange(!isRunning); }

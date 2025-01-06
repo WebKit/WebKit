@@ -73,7 +73,7 @@ Expected<String, ArchiveError> ArchiveResource::saveToDisk(const String& directo
     auto filePath = FileSystem::pathByAppendingComponent(directory, m_relativeFilePath);
     FileSystem::makeAllDirectories(FileSystem::parentPath(filePath));
     auto fileData = data().extractData();
-    int bytesWritten = FileSystem::overwriteEntireFile(filePath, { fileData.data(), fileData.size() });
+    int bytesWritten = FileSystem::overwriteEntireFile(filePath, fileData.span());
 
     if (bytesWritten < 0)
         return makeUnexpected(ArchiveError::FileSystemError);

@@ -35,6 +35,7 @@
 #include "IPCTesterReceiverMessages.h"
 #include "IPCUtilities.h"
 
+#include <WebCore/ExceptionData.h>
 #include <atomic>
 #include <dlfcn.h>
 #include <stdio.h>
@@ -51,7 +52,7 @@ typedef void (*WKMessageTestDriverFunc)(WKMessageTestSendMessageFunc sendMessage
 
 namespace {
 struct SendMessageContext {
-    IPC::Connection& connection;
+    Ref<IPC::Connection> connection;
     std::atomic<bool>& shouldStop;
 };
 
@@ -107,6 +108,11 @@ static void runMessageTesting(IPC::Connection& connection, std::atomic<bool>& sh
     SendMessageContext context { connection, shouldStop };
     auto driver = messageTestDriver(WTFMove(driverName));
     driver(sendTestMessage, &context);
+}
+
+Ref<IPCTester> IPCTester::create()
+{
+    return adoptRef(*new IPCTester);
 }
 
 IPCTester::IPCTester() = default;
@@ -218,11 +224,20 @@ void IPCTester::syncPingEmptyReply(IPC::Connection&, uint32_t value, CompletionH
     completionHandler();
 }
 
+void IPCTester::asyncOptionalExceptionData(IPC::Connection&, bool sendEngaged, CompletionHandler<void(std::optional<WebCore::ExceptionData>, String)>&& completionHandler)
+{
+    if (sendEngaged) {
+        completionHandler(WebCore::ExceptionData { WebCore::ExceptionCode::WrongDocumentError, "m"_s }, "a"_s);
+        return;
+    }
+    completionHandler(std::nullopt, "b"_s);
+}
+
 void IPCTester::stopIfNeeded()
 {
-    if (m_testQueue) {
+    if (RefPtr testQueue = m_testQueue) {
         m_shouldStop = true;
-        m_testQueue->dispatchSync([] { });
+        testQueue->dispatchSync([] { });
         m_testQueue = nullptr;
     }
 }

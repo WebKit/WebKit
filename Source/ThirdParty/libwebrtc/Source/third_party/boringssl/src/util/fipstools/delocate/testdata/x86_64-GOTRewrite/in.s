@@ -65,4 +65,7 @@ bar:
 	cmpq foo@GOTPCREL(%rip), %rax
 	cmpq %rax, foo@GOTPCREL(%rip)
 
+	# With -mcmodel=medium, the code may load the address of the GOT directly.
+	leaq _GLOBAL_OFFSET_TABLE_(%rip), %rcx
+
 .comm foobar,64,32

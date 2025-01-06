@@ -33,8 +33,11 @@
 #include "RemoteMediaResourceManager.h"
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaResource);
 
 using namespace WebCore;
 

@@ -22,6 +22,7 @@
 #pragma once
 
 #include "SVGGraphicsElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -62,7 +63,8 @@ template<> struct SVGPropertyTraits<SVGLengthAdjustType> {
 };
 
 class SVGTextContentElement : public SVGGraphicsElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGTextContentElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGTextContentElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGTextContentElement);
 public:
     enum {
         LENGTHADJUST_UNKNOWN = SVGLengthAdjustUnknown,
@@ -80,7 +82,7 @@ public:
     int getCharNumAtPosition(DOMPointInit&&);
     ExceptionOr<void> selectSubString(unsigned charnum, unsigned nchars);
 
-    static SVGTextContentElement* elementFromRenderer(RenderObject*);
+    static const SVGTextContentElement* elementFromRenderer(const RenderObject*);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextContentElement, SVGGraphicsElement>;
 

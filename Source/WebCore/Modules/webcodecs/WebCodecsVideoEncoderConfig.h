@@ -55,6 +55,22 @@ struct WebCodecsVideoEncoderConfig {
     WebCodecsVideoEncoderConfig isolatedCopy() const & { return { codec.isolatedCopy(), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, scalabilityMode.isolatedCopy(), bitrateMode, latencyMode, avc }; }
 };
 
+inline bool isSameConfigurationExceptBitrateAndFramerate(const WebCodecsVideoEncoderConfig& a, const WebCodecsVideoEncoderConfig& b)
+{
+    return a.codec == b.codec
+        && a.width == b.width
+        && a.height == b.height
+        && a.displayWidth == b.displayWidth
+        && a.displayHeight == b.displayHeight
+        && a.hardwareAcceleration == b.hardwareAcceleration
+        && a.alpha == b.alpha
+        && a.scalabilityMode == b.scalabilityMode
+        && a.bitrateMode == b.bitrateMode
+        && a.latencyMode == b.latencyMode
+        && (!!a.avc == !!b.avc)
+        && (!a.avc || (a.avc->format == b.avc->format));
+}
+
 }
 
 #endif // ENABLE(WEB_CODECS)

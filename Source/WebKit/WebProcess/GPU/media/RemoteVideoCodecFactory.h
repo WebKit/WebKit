@@ -29,20 +29,21 @@
 
 #include <WebCore/VideoDecoder.h>
 #include <WebCore/VideoEncoder.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebProcess;
 
 class RemoteVideoCodecFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteVideoCodecFactory);
 public:
     explicit RemoteVideoCodecFactory(WebProcess&);
     ~RemoteVideoCodecFactory();
 
 private:
-    static void createDecoder(const String&, const WebCore::VideoDecoder::Config&, WebCore::VideoDecoder::CreateCallback&&, WebCore::VideoDecoder::OutputCallback&&, WebCore::VideoDecoder::PostTaskCallback&&);
-    static void createEncoder(const String&, const WebCore::VideoEncoder::Config&, WebCore::VideoEncoder::CreateCallback&&, WebCore::VideoEncoder::DescriptionCallback&&, WebCore::VideoEncoder::OutputCallback&&, WebCore::VideoEncoder::PostTaskCallback&&);
+    static void createDecoder(const String&, const WebCore::VideoDecoder::Config&, WebCore::VideoDecoder::CreateCallback&&, WebCore::VideoDecoder::OutputCallback&&);
+    static void createEncoder(const String&, const WebCore::VideoEncoder::Config&, WebCore::VideoEncoder::CreateCallback&&, WebCore::VideoEncoder::DescriptionCallback&&, WebCore::VideoEncoder::OutputCallback&&);
 };
 
 } // namespace WebKit

@@ -23,6 +23,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,7 +35,7 @@ class ValidatedFormListedElement;
 using FormControlState = Vector<AtomString>;
 
 class FormController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FormController);
 
 public:
     FormController();
@@ -54,7 +55,7 @@ public:
 private:
     class FormKeyGenerator;
     class SavedFormState;
-    using SavedFormStateMap = HashMap<String, SavedFormState>;
+    using SavedFormStateMap = UncheckedKeyHashMap<String, SavedFormState>;
 
     FormControlState takeStateForFormElement(const ValidatedFormListedElement&);
     static SavedFormStateMap parseStateVector(const Vector<AtomString>&);

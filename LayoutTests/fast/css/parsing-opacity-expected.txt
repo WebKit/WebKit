@@ -17,6 +17,7 @@ PASS innerStyle("opacity", "100.25%") is "1.0025"
 PASS computedStyle("opacity", "0") is "0"
 PASS computedStyle("opacity", "0.5") is "0.5"
 PASS computedStyle("opacity", "1") is "1"
+PASS computedStyle("opacity", "1.") is "1"
 PASS computedStyle("opacity", "1000") is "1"
 PASS computedStyle("opacity", "-400") is "0"
 PASS computedStyle("opacity", "25%") is "0.25"
@@ -29,6 +30,10 @@ PASS innerStyle("opacity", "2px") is ""
 PASS innerStyle("opacity", "auto") is ""
 PASS innerStyle("opacity", "none") is ""
 PASS innerStyle("opacity", "'str'") is ""
+PASS innerStyle("opacity", "'inf'") is ""
+PASS innerStyle("opacity", "23.4a%") is ""
+PASS innerStyle("opacity", "23.4 a%") is ""
+PASS innerStyle("opacity", "23.4%%") is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

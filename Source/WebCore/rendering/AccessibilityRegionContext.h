@@ -28,6 +28,7 @@
 #include "InlineIteratorTextBox.h"
 #include "LayoutRect.h"
 #include "RegionContext.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,7 +38,7 @@ class RenderText;
 class RenderView;
 
 class AccessibilityRegionContext final : public RegionContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityRegionContext);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AccessibilityRegionContext);
 public:
     AccessibilityRegionContext() = default;

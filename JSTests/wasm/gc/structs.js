@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true", "--useWebAssemblyExtendedConstantExpressions=true")
+//@ runWebAssemblySuite("--useWasmGC=true")
 
 import * as assert from "../assert.js";
 import { compile, instantiate } from "./wast-wrapper.js";
@@ -159,7 +159,7 @@ function testStructJS() {
       m.exports.g.value = 42;
     },
     TypeError,
-    "Argument value did not match reference type"
+    "Argument value did not match the reference type"
   )
 }
 
@@ -1268,17 +1268,17 @@ function testStructTable() {
     assert.throws(
       () => m.exports.t.set(0, "foo"),
       TypeError,
-      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+      "Argument value did not match the reference type"
     );
     assert.throws(
       () => m.exports.t.set(0, 3),
       TypeError,
-      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+      "Argument value did not match the reference type"
     );
     assert.throws(
       () => m.exports.t.set(0, m2.exports.makeArray()),
       TypeError,
-      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+      "Argument value did not match the reference type"
     );
     const str = m.exports.makeStruct();
     m.exports.t.set(0, str);

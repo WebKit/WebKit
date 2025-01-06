@@ -83,6 +83,12 @@
         _didFailProvisionalLoadWithRequestInFrameWithError(webView, request, frame, error);
 }
 
+- (void)_webView:(WKWebView *)webView navigation:(WKNavigation *)navigation didFailProvisionalLoadInSubframe:(WKFrameInfo *)subframe withError:(NSError *)error
+{
+    if (_didFailProvisionalLoadInSubframeWithError)
+        _didFailProvisionalLoadInSubframeWithError(webView, subframe, error);
+}
+
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     if (_didFinishNavigation)
@@ -95,10 +101,10 @@
         _didSameDocumentNavigation(webView, navigation);
 }
 
-- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
+- (void)_webView:(WKWebView *)webView webContentProcessDidTerminateWithReason:(_WKProcessTerminationReason)reason
 {
     if (_webContentProcessDidTerminate)
-        _webContentProcessDidTerminate(webView);
+        _webContentProcessDidTerminate(webView, reason);
 }
 
 - (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents
@@ -113,6 +119,12 @@
         _didReceiveAuthenticationChallenge(webView, challenge, completionHandler);
     else
         completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+}
+
+- (void)_webView:(WKWebView *)webView didGeneratePageLoadTiming:(_WKPageLoadTiming *)timing
+{
+    if (_didGeneratePageLoadTiming)
+        _didGeneratePageLoadTiming(timing);
 }
 
 - (void)allowAnyTLSCertificate
@@ -166,18 +178,21 @@
     self.didSameDocumentNavigation = nil;
 }
 
-- (void)waitForWebContentProcessDidTerminate
+- (_WKProcessTerminationReason)waitForWebContentProcessDidTerminate
 {
     EXPECT_FALSE(self.webContentProcessDidTerminate);
 
     __block bool crashed = false;
-    self.webContentProcessDidTerminate = ^(WKWebView *) {
+    __block _WKProcessTerminationReason crashReason;
+    self.webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason reason) {
         crashed = true;
+        crashReason = reason;
     };
 
     TestWebKitAPI::Util::run(&crashed);
 
     self.webContentProcessDidTerminate = nil;
+    return crashReason;
 }
 
 - (void)waitForDidFinishNavigationWithPreferences:(WKWebpagePreferences *)preferences
@@ -340,15 +355,16 @@
 #endif
 }
 
-- (void)_test_waitForWebContentProcessDidTerminate
+- (_WKProcessTerminationReason)_test_waitForWebContentProcessDidTerminate
 {
     EXPECT_FALSE(self.navigationDelegate);
 
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     self.navigationDelegate = navigationDelegate.get();
-    [navigationDelegate waitForWebContentProcessDidTerminate];
+    auto result = [navigationDelegate waitForWebContentProcessDidTerminate];
 
     self.navigationDelegate = nil;
+    return result;
 }
 
 @end

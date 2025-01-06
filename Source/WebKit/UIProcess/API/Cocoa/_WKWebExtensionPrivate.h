@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,22 +24,3 @@
  */
 
 #import <WebKit/_WKWebExtension.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface _WKWebExtension ()
-
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest;
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
-
-- (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
-
-/*! @abstract A Boolean value indicating whether the extension background content is a service worker. */
-@property (readonly, nonatomic) BOOL _backgroundContentIsServiceWorker;
-
-/*! @abstract A Boolean value indicating whether the extension use modules for the background content. */
-@property (readonly, nonatomic) BOOL _backgroundContentUsesModules;
-
-@end
-
-NS_ASSUME_NONNULL_END

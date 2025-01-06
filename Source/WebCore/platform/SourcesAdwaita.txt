@@ -24,4 +24,16 @@
 platform/adwaita/ScrollbarThemeAdwaita.cpp
 platform/adwaita/ThemeAdwaita.cpp
 
+platform/graphics/adwaita/Adwaita.cpp
+platform/graphics/adwaita/ButtonControlAdwaita.cpp
+platform/graphics/adwaita/ControlAdwaita.cpp
+platform/graphics/adwaita/ControlFactoryAdwaita.cpp
+platform/graphics/adwaita/InnerSpinButtonAdwaita.cpp
+platform/graphics/adwaita/MenuListAdwaita.cpp
+platform/graphics/adwaita/ProgressBarAdwaita.cpp
+platform/graphics/adwaita/TextFieldAdwaita.cpp
+platform/graphics/adwaita/SliderThumbAdwaita.cpp
+platform/graphics/adwaita/SliderTrackAdwaita.cpp
+platform/graphics/adwaita/ToggleButtonAdwaita.cpp
+
 rendering/adwaita/RenderThemeAdwaita.cpp

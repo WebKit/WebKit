@@ -27,56 +27,69 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/WebTransportSession.h>
+#include <wtf/NativePromise.h>
 #include <wtf/ObjectIdentifier.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+
+namespace IPC {
+enum class Error : uint8_t;
+}
+
+namespace WebCore {
+class WebTransportSession;
+struct ClientOrigin;
+struct WebTransportStreamIdentifierType;
+using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
+using WebTransportSessionPromise = NativePromise<Ref<WebTransportSession>, void>;
+}
 
 namespace WebKit {
 
 class WebTransportBidirectionalStream;
 class WebTransportReceiveStream;
-class WebTransportReceiveStreamSource;
 class WebTransportSendStream;
 
-struct WebTransportStreamIdentifierType { };
 struct WebTransportSessionIdentifierType { };
 
-using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 using WebTransportSessionIdentifier = ObjectIdentifier<WebTransportSessionIdentifierType>;
 
-class WebTransportSession : public WebCore::WebTransportSession, public IPC::MessageReceiver, public IPC::MessageSender, public ThreadSafeRefCounted<WebTransportSession, WTF::DestructionThread::MainRunLoop> {
+class WebTransportSession : public WebCore::WebTransportSession, public IPC::MessageReceiver, public IPC::MessageSender, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebTransportSession, WTF::DestructionThread::MainRunLoop> {
 public:
-    static void initialize(const URL&, CompletionHandler<void(RefPtr<WebTransportSession>&&)>&&);
+    static Ref<WebCore::WebTransportSessionPromise> initialize(Ref<IPC::Connection>&&, const URL&, const WebPageProxyIdentifier&, const WebCore::ClientOrigin&);
     ~WebTransportSession();
 
     void receiveDatagram(std::span<const uint8_t>);
-    void receiveIncomingUnidirectionalStream(WebTransportStreamIdentifier);
-    void receiveBidirectionalStream(WebTransportStreamIdentifier);
-    void streamReceiveBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin);
+    void receiveIncomingUnidirectionalStream(WebCore::WebTransportStreamIdentifier);
+    void receiveBidirectionalStream(WebCore::WebTransportStreamIdentifier);
+    void streamReceiveBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin);
 
-    void streamSendBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin, CompletionHandler<void()>&&);
+    Ref<GenericPromise> streamSendBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin);
 
-    void ref() const final { ThreadSafeRefCounted::ref(); }
-    void deref() const final { ThreadSafeRefCounted::deref(); }
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     // MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+
+    void networkProcessCrashed();
 private:
-    WebTransportSession(WebTransportSessionIdentifier);
+    WebTransportSession(Ref<IPC::Connection>&&, WebTransportSessionIdentifier);
 
     // WebTransportSession
-    void sendDatagram(std::span<const uint8_t>, CompletionHandler<void()>&&) final;
-    void createOutgoingUnidirectionalStream(CompletionHandler<void(RefPtr<WebCore::WritableStreamSink>&&)>&&) final;
-    void createBidirectionalStream(CompletionHandler<void(std::optional<WebCore::WebTransportBidirectionalStreamConstructionParameters>&&)>&&) final;
+    Ref<GenericPromise> sendDatagram(std::span<const uint8_t>) final;
+    Ref<WebCore::WritableStreamPromise> createOutgoingUnidirectionalStream() final;
+    Ref<WebCore::BidirectionalStreamPromise> createBidirectionalStream() final;
     void terminate(uint32_t, CString&&) final;
 
     // MessageSender
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    WebTransportSessionIdentifier m_identifier;
-    HashMap<WebTransportStreamIdentifier, Ref<WebTransportReceiveStreamSource>> m_readStreamSources;
+    const Ref<IPC::Connection> m_connection;
+    const WebTransportSessionIdentifier m_identifier;
 };
 
 }

@@ -22,6 +22,11 @@
 
 #if ENABLE(MODEL_PROCESS)
 
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=Model,
+    EnabledBy=ModelElementEnabled && ModelProcessEnabled
+]
 messages -> ModelConnectionToWebProcess WantsDispatchMessage {
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     CreateVisibilityPropagationContextForPage(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, bool canShowWhileLocked)

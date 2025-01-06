@@ -124,6 +124,11 @@ public:
         return isHeld();
     }
 
+    void assertIsOwner() const
+    {
+        ASSERT(isHeld());
+    }
+
 private:
     friend struct TestWebKitAPI::LockInspector;
     
@@ -161,12 +166,18 @@ public:
     {
         os_unfair_lock_unlock(&m_lock);
     }
+    void assertIsOwner() const
+    {
+        os_unfair_lock_assert_owner(&m_lock);
+    }
 
     UnfairLock() = default;
 
 private:
     os_unfair_lock m_lock = OS_UNFAIR_LOCK_INIT;
 };
+
+inline void assertIsHeld(const UnfairLock& lock) WTF_ASSERTS_ACQUIRED_LOCK(lock) { lock.assertIsOwner(); }
 #endif // ENABLE(UNFAIR_LOCK)
 
 // Locker specialization to use with Lock and UnfairLock that integrates with thread safety analysis.
@@ -203,6 +214,13 @@ public:
     }
     Locker(const Locker<T>&) = delete;
     Locker& operator=(const Locker<T>&) = delete;
+
+    void assertIsHolding(T& lock) WTF_ASSERTS_ACQUIRED_LOCK(lock)
+    {
+        ASSERT(m_isLocked);
+        ASSERT(&lock == &m_lock);
+        lock.assertIsOwner();
+    }
 
 private:
     // Support DropLockForScope even though it doesn't support thread safety analysis.

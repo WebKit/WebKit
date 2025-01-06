@@ -53,7 +53,8 @@ public:
 };
 
 class SpinButtonElement final : public HTMLDivElement, public PopupOpeningObserver {
-    WTF_MAKE_ISO_ALLOCATED(SpinButtonElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SpinButtonElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SpinButtonElement);
 public:
     enum UpDownState {
         Indeterminate, // Hovered, but the event is not handled.
@@ -69,9 +70,7 @@ public:
     void releaseCapture();
     void removeSpinButtonOwner() { m_spinButtonOwner = nullptr; }
 
-    using HTMLDivElement::weakPtrFactory;
-    using HTMLDivElement::WeakValueType;
-    using HTMLDivElement::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(HTMLDivElement);
 
     void step(int amount);
     

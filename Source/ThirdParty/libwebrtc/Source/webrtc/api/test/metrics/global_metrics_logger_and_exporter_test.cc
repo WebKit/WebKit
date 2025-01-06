@@ -11,11 +11,11 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_exporter.h"
 #include "api/test/metrics/metrics_logger.h"
@@ -91,10 +91,10 @@ TEST(ExportPerfMetricTest, CollectedMetricsAreExporter) {
   EXPECT_THAT(metric.time_series.samples[0].value, Eq(10.0));
   EXPECT_THAT(metric.time_series.samples[0].sample_metadata,
               Eq(std::map<std::string, std::string>{}));
-  ASSERT_THAT(metric.stats.mean, absl::optional<double>(10.0));
-  ASSERT_THAT(metric.stats.stddev, absl::nullopt);
-  ASSERT_THAT(metric.stats.min, absl::optional<double>(10.0));
-  ASSERT_THAT(metric.stats.max, absl::optional<double>(10.0));
+  ASSERT_THAT(metric.stats.mean, std::optional<double>(10.0));
+  ASSERT_THAT(metric.stats.stddev, std::nullopt);
+  ASSERT_THAT(metric.stats.min, std::optional<double>(10.0));
+  ASSERT_THAT(metric.stats.max, std::optional<double>(10.0));
 }
 
 TEST(ExportPerfMetricTest, OneFailedExporterDoesNotPreventExportToOthers) {

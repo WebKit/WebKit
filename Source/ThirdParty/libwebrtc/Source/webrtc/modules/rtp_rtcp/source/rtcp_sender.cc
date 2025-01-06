@@ -13,20 +13,30 @@
 #include <string.h>  // memcpy
 
 #include <algorithm>  // std::min
+#include <cstdint>
 #include <memory>
+#include <optional>
+#include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
+#include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtp_headers.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_codec_constants.h"
 #include "logging/rtc_event_log/events/rtc_event_rtcp_packet_outgoing.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/ntp_time_util.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/app.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
-#include "modules/rtp_rtcp/source/rtcp_packet/compound_packet.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/extended_reports.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/fir.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/loss_notification.h"
@@ -34,18 +44,22 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/pli.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/remb.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/rrtr.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/sdes.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/target_bitrate.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmbn.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmbr.h"
-#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
+#include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
-#include "modules/rtp_rtcp/source/time_util.h"
 #include "modules/rtp_rtcp/source/tmmbr_help.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/trace_event.h"
 
 namespace webrtc {
@@ -124,10 +138,8 @@ RTCPSender::Configuration RTCPSender::Configuration::FromRtpRtcpConfiguration(
   RTCPSender::Configuration result;
   result.audio = configuration.audio;
   result.local_media_ssrc = configuration.local_media_ssrc;
-  result.clock = configuration.clock;
   result.outgoing_transport = configuration.outgoing_transport;
   result.non_sender_rtt_measurement = configuration.non_sender_rtt_measurement;
-  result.event_log = configuration.event_log;
   if (configuration.rtcp_report_interval_ms) {
     result.rtcp_report_interval =
         TimeDelta::Millis(configuration.rtcp_report_interval_ms);
@@ -138,13 +150,12 @@ RTCPSender::Configuration RTCPSender::Configuration::FromRtpRtcpConfiguration(
   return result;
 }
 
-RTCPSender::RTCPSender(Configuration config)
-    : audio_(config.audio),
+RTCPSender::RTCPSender(const Environment& env, Configuration config)
+    : env_(env),
+      audio_(config.audio),
       ssrc_(config.local_media_ssrc),
-      clock_(config.clock),
-      random_(clock_->TimeInMicroseconds()),
+      random_(env_.clock().TimeInMicroseconds()),
       method_(RtcpMode::kOff),
-      event_log_(config.event_log),
       transport_(config.outgoing_transport),
       report_interval_(config.rtcp_report_interval.value_or(
           TimeDelta::Millis(config.audio ? kDefaultAudioReportInterval
@@ -197,7 +208,7 @@ void RTCPSender::SetRTCPStatus(RtcpMode new_method) {
   MutexLock lock(&mutex_rtcp_sender_);
 
   if (new_method == RtcpMode::kOff) {
-    next_time_to_send_rtcp_ = absl::nullopt;
+    next_time_to_send_rtcp_ = std::nullopt;
   } else if (method_ == RtcpMode::kOff) {
     // When switching on, reschedule the next packet
     SetNextRtcpSendEvaluationDuration(report_interval_ / 2);
@@ -230,11 +241,9 @@ int32_t RTCPSender::SendLossNotification(const FeedbackState& feedback_state,
   auto callback = [&](rtc::ArrayView<const uint8_t> packet) {
     transport_->SendRtcp(packet);
     error_code = 0;
-    if (event_log_) {
-      event_log_->Log(std::make_unique<RtcEventRtcpPacketOutgoing>(packet));
-    }
+    env_.event_log().Log(std::make_unique<RtcEventRtcpPacketOutgoing>(packet));
   };
-  absl::optional<PacketSender> sender;
+  std::optional<PacketSender> sender;
   {
     MutexLock lock(&mutex_rtcp_sender_);
 
@@ -302,8 +311,8 @@ void RTCPSender::SetTimestampOffset(uint32_t timestamp_offset) {
 }
 
 void RTCPSender::SetLastRtpTime(uint32_t rtp_timestamp,
-                                absl::optional<Timestamp> capture_time,
-                                absl::optional<int8_t> payload_type) {
+                                std::optional<Timestamp> capture_time,
+                                std::optional<int8_t> payload_type) {
   MutexLock lock(&mutex_rtcp_sender_);
   // For compatibility with clients who don't set payload type correctly on all
   // calls.
@@ -313,7 +322,7 @@ void RTCPSender::SetLastRtpTime(uint32_t rtp_timestamp,
   last_rtp_timestamp_ = rtp_timestamp;
   if (!capture_time.has_value()) {
     // We don't currently get a capture time from VoiceEngine.
-    last_frame_capture_time_ = clock_->CurrentTime();
+    last_frame_capture_time_ = env_.clock().CurrentTime();
   } else {
     last_frame_capture_time_ = *capture_time;
   }
@@ -347,7 +356,7 @@ int32_t RTCPSender::SetCNAME(absl::string_view c_name) {
 }
 
 bool RTCPSender::TimeToSendRTCPReport(bool send_keyframe_before_rtp) const {
-  Timestamp now = clock_->CurrentTime();
+  Timestamp now = env_.clock().CurrentTime();
 
   MutexLock lock(&mutex_rtcp_sender_);
   RTC_DCHECK(
@@ -387,7 +396,7 @@ void RTCPSender::BuildSR(const RtcpContext& ctx, PacketSender& sender) {
 
   rtcp::SenderReport report;
   report.SetSenderSsrc(ssrc_);
-  report.SetNtp(clock_->ConvertTimestampToNtpTime(ctx.now_));
+  report.SetNtp(env_.clock().ConvertTimestampToNtpTime(ctx.now_));
   report.SetRtpTimestamp(rtp_timestamp);
   report.SetPacketCount(ctx.feedback_state_.packets_sent);
   report.SetOctetCount(ctx.feedback_state_.media_bytes_sent);
@@ -555,7 +564,7 @@ void RTCPSender::BuildExtendedReports(const RtcpContext& ctx,
 
   if (!sending_ && xr_send_receiver_reference_time_enabled_) {
     rtcp::Rrtr rrtr;
-    rrtr.SetNtp(clock_->ConvertTimestampToNtpTime(ctx.now_));
+    rrtr.SetNtp(env_.clock().ConvertTimestampToNtpTime(ctx.now_));
     xr.SetRrtr(rrtr);
   }
 
@@ -589,12 +598,11 @@ int32_t RTCPSender::SendRTCP(const FeedbackState& feedback_state,
   auto callback = [&](rtc::ArrayView<const uint8_t> packet) {
     if (transport_->SendRtcp(packet)) {
       error_code = 0;
-      if (event_log_) {
-        event_log_->Log(std::make_unique<RtcEventRtcpPacketOutgoing>(packet));
-      }
+      env_.event_log().Log(
+          std::make_unique<RtcEventRtcpPacketOutgoing>(packet));
     }
   };
-  absl::optional<PacketSender> sender;
+  std::optional<PacketSender> sender;
   {
     MutexLock lock(&mutex_rtcp_sender_);
     sender.emplace(callback, max_packet_size_);
@@ -609,7 +617,7 @@ int32_t RTCPSender::SendRTCP(const FeedbackState& feedback_state,
   return error_code;
 }
 
-absl::optional<int32_t> RTCPSender::ComputeCompoundRTCPPacket(
+std::optional<int32_t> RTCPSender::ComputeCompoundRTCPPacket(
     const FeedbackState& feedback_state,
     RTCPPacketType packet_type,
     int32_t nack_size,
@@ -641,7 +649,7 @@ absl::optional<int32_t> RTCPSender::ComputeCompoundRTCPPacket(
 
   // We need to send our NTP even if we haven't received any reports.
   RtcpContext context(feedback_state, nack_size, nack_list,
-                      clock_->CurrentTime());
+                      env_.clock().CurrentTime());
 
   PrepareReport(feedback_state);
 
@@ -684,7 +692,7 @@ absl::optional<int32_t> RTCPSender::ComputeCompoundRTCPPacket(
   }
 
   RTC_DCHECK(AllVolatileFlagsConsumed());
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 TimeDelta RTCPSender::ComputeTimeUntilNextReport(DataRate send_bitrate) {
@@ -768,7 +776,7 @@ std::vector<rtcp::ReportBlock> RTCPSender::CreateReportBlocks(
 
   if (!result.empty() && feedback_state.last_rr.Valid()) {
     // Get our NTP as late as possible to avoid a race.
-    uint32_t now = CompactNtp(clock_->CurrentNtpTime());
+    uint32_t now = CompactNtp(env_.clock().CurrentNtpTime());
     uint32_t receive_time = CompactNtp(feedback_state.last_rr);
     uint32_t delay_since_last_sr = now - receive_time;
 
@@ -831,7 +839,7 @@ void RTCPSender::SetVideoBitrateAllocation(
   // Check if this allocation is first ever, or has a different set of
   // spatial/temporal layers signaled and enabled, if so trigger an rtcp report
   // as soon as possible.
-  absl::optional<VideoBitrateAllocation> new_bitrate =
+  std::optional<VideoBitrateAllocation> new_bitrate =
       CheckAndUpdateLayerStructure(bitrate);
   if (new_bitrate) {
     video_bitrate_allocation_ = *new_bitrate;
@@ -847,9 +855,9 @@ void RTCPSender::SetVideoBitrateAllocation(
   SetFlag(kRtcpAnyExtendedReports, true);
 }
 
-absl::optional<VideoBitrateAllocation> RTCPSender::CheckAndUpdateLayerStructure(
+std::optional<VideoBitrateAllocation> RTCPSender::CheckAndUpdateLayerStructure(
     const VideoBitrateAllocation& bitrate) const {
-  absl::optional<VideoBitrateAllocation> updated_bitrate;
+  std::optional<VideoBitrateAllocation> updated_bitrate;
   for (size_t si = 0; si < kMaxSpatialLayers; ++si) {
     for (size_t ti = 0; ti < kMaxTemporalStreams; ++ti) {
       if (!updated_bitrate &&
@@ -887,8 +895,8 @@ void RTCPSender::SendCombinedRtcpPacket(
   RTC_DCHECK_LE(max_packet_size, IP_PACKET_SIZE);
   auto callback = [&](rtc::ArrayView<const uint8_t> packet) {
     if (transport_->SendRtcp(packet)) {
-      if (event_log_)
-        event_log_->Log(std::make_unique<RtcEventRtcpPacketOutgoing>(packet));
+      env_.event_log().Log(
+          std::make_unique<RtcEventRtcpPacketOutgoing>(packet));
     }
   };
   PacketSender sender(callback, max_packet_size);
@@ -900,7 +908,7 @@ void RTCPSender::SendCombinedRtcpPacket(
 }
 
 void RTCPSender::SetNextRtcpSendEvaluationDuration(TimeDelta duration) {
-  next_time_to_send_rtcp_ = clock_->CurrentTime() + duration;
+  next_time_to_send_rtcp_ = env_.clock().CurrentTime() + duration;
   // TODO(bugs.webrtc.org/11581): make unconditional once downstream consumers
   // are using the callback method.
   if (schedule_next_rtcp_send_evaluation_function_)

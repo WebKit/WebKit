@@ -30,8 +30,11 @@
 #include "MediaDecodingConfiguration.h"
 #include "MediaEncodingConfiguration.h"
 #include "NotImplemented.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerWebRTCProvider);
 
 void WebRTCProvider::setH264HardwareEncoderAllowed(bool)
 {
@@ -47,11 +50,6 @@ UniqueRef<WebRTCProvider> WebRTCProvider::create()
 bool WebRTCProvider::webRTCAvailable()
 {
     return true;
-}
-
-void WebRTCProvider::setActive(bool)
-{
-    notImplemented();
 }
 
 std::optional<RTCRtpCapabilities> GStreamerWebRTCProvider::receiverCapabilities(const String& kind)
@@ -118,6 +116,7 @@ void GStreamerWebRTCProvider::initializeVideoDecodingCapabilities()
 std::optional<MediaCapabilitiesDecodingInfo> GStreamerWebRTCProvider::videoDecodingCapabilitiesOverride(const VideoConfiguration& configuration)
 {
     MediaCapabilitiesDecodingInfo info;
+    info.supportedConfiguration.type = MediaDecodingType::WebRTC;
     ContentType contentType { configuration.contentType };
     auto containerType = contentType.containerType();
     if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s)) {

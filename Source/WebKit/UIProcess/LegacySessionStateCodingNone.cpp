@@ -27,11 +27,11 @@
 #include "LegacySessionStateCoding.h"
 
 #include "APIData.h"
+#include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "Encoder.h"
 #include "MessageNames.h"
 #include "SessionState.h"
-#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 

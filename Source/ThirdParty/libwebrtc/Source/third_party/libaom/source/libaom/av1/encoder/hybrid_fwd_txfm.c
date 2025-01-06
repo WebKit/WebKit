@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -313,7 +313,7 @@ void av1_highbd_fwd_txfm(const int16_t *src_diff, tran_low_t *coeff,
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE void highbd_wht_fwd_txfm(TX_SIZE tx_size, const int16_t *src_diff,
+static inline void highbd_wht_fwd_txfm(TX_SIZE tx_size, const int16_t *src_diff,
                                        ptrdiff_t src_stride,
                                        tran_low_t *coeff) {
   switch (tx_size) {
@@ -333,7 +333,7 @@ static INLINE void highbd_wht_fwd_txfm(TX_SIZE tx_size, const int16_t *src_diff,
 }
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
-static INLINE void wht_fwd_txfm(TX_SIZE tx_size, const int16_t *src_diff,
+static inline void wht_fwd_txfm(TX_SIZE tx_size, const int16_t *src_diff,
                                 ptrdiff_t src_stride, tran_low_t *coeff) {
   switch (tx_size) {
     case TX_4X4: aom_hadamard_4x4(src_diff, src_stride, coeff); break;

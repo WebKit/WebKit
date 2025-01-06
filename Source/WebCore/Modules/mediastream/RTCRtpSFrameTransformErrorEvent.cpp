@@ -29,11 +29,11 @@
 #if ENABLE(WEB_RTC)
 
 #include "EventNames.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RTCRtpSFrameTransformErrorEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCRtpSFrameTransformErrorEvent);
 
 Ref<RTCRtpSFrameTransformErrorEvent> RTCRtpSFrameTransformErrorEvent::create(CanBubble canBubble, IsCancelable isCancelable, Type errorType)
 {

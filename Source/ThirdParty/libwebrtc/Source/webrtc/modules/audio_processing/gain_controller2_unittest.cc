@@ -16,7 +16,6 @@
 #include <numeric>
 #include <tuple>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/agc2_testing_common.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/test/audio_buffer_tools.h"
@@ -58,7 +57,7 @@ float RunAgc2WithConstantInput(GainController2& agc2,
     const auto applied_volume = agc2.recommended_input_volume();
     agc2.Analyze(applied_volume.value_or(applied_initial_volume), ab);
 
-    agc2.Process(/*speech_probability=*/absl::nullopt,
+    agc2.Process(/*speech_probability=*/std::nullopt,
                  /*input_volume_changed=*/false, &ab);
   }
 
@@ -439,18 +438,18 @@ TEST(GainController2, CheckFinalGainWithAdaptiveDigitalController) {
       x *= gain;
     }
     test::CopyVectorToAudioBuffer(stream_config, frame, &audio_buffer);
-    agc2.Process(/*speech_probability=*/absl::nullopt,
+    agc2.Process(/*speech_probability=*/std::nullopt,
                  /*input_volume_changed=*/false, &audio_buffer);
   }
 
   // Estimate the applied gain by processing a probing frame.
   SetAudioBufferSamples(/*value=*/1.0f, audio_buffer);
-  agc2.Process(/*speech_probability=*/absl::nullopt,
+  agc2.Process(/*speech_probability=*/std::nullopt,
                /*input_volume_changed=*/false, &audio_buffer);
   const float applied_gain_db =
       20.0f * std::log10(audio_buffer.channels_const()[0][0]);
 
-  constexpr float kExpectedGainDb = 5.6f;
+  constexpr float kExpectedGainDb = 7.0f;
   constexpr float kToleranceDb = 0.3f;
   EXPECT_NEAR(applied_gain_db, kExpectedGainDb, kToleranceDb);
 }
@@ -528,7 +527,7 @@ TEST(GainController2,
                  &audio_buffer);
     test::CopyVectorToAudioBuffer(stream_config, frame,
                                   &audio_buffer_reference);
-    agc2_reference.Process(/*speech_probability=*/absl::nullopt,
+    agc2_reference.Process(/*speech_probability=*/std::nullopt,
                            /*input_volume_changed=*/false,
                            &audio_buffer_reference);
     // Check the output buffers.
@@ -593,12 +592,10 @@ TEST(GainController2,
     }
     test::CopyVectorToAudioBuffer(stream_config, frame,
                                   &audio_buffer_reference);
-    agc2_reference.Process(absl::nullopt, /*input_volume_changed=*/false,
+    agc2_reference.Process(std::nullopt, /*input_volume_changed=*/false,
                            &audio_buffer_reference);
     test::CopyVectorToAudioBuffer(stream_config, frame, &audio_buffer);
-    float speech_probability = vad.Analyze(AudioFrameView<const float>(
-        audio_buffer.channels(), audio_buffer.num_channels(),
-        audio_buffer.num_frames()));
+    float speech_probability = vad.Analyze(audio_buffer.view());
     agc2.Process(speech_probability, /*input_volume_changed=*/false,
                  &audio_buffer);
     // Check the output buffer.

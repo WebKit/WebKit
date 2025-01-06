@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,13 +48,6 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
     _WKContentSecurityPolicyModeForExtensionManifestV3
 } WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
-typedef NS_ENUM(NSUInteger, _WKUnifiedTextReplacementBehavior) {
-    _WKUnifiedTextReplacementBehaviorNone = 0,
-    _WKUnifiedTextReplacementBehaviorDefault,
-    _WKUnifiedTextReplacementBehaviorLimited,
-    _WKUnifiedTextReplacementBehaviorComplete
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 @class WKWebView;
 @class _WKApplicationManifest;
 @class _WKVisitedLinkStore;
@@ -62,7 +55,7 @@ typedef NS_ENUM(NSUInteger, _WKUnifiedTextReplacementBehavior) {
 
 @interface WKWebViewConfiguration (WKPrivate)
 
-@property (nonatomic, weak, setter=_setRelatedWebView:) WKWebView *_relatedWebView;
+@property (nonatomic, weak, setter=_setRelatedWebView:) WKWebView *_relatedWebView WK_API_DEPRECATED("Please migrate away from using _relatedWebView and talk to the WebKit team if there are difficulties doing so", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 @property (nonatomic, weak, setter=_setWebViewToCloneSessionStorageFrom:) WKWebView *_webViewToCloneSessionStorageFrom;
 @property (nonatomic, copy, setter=_setGroupIdentifier:) NSString *_groupIdentifier;
 
@@ -72,8 +65,8 @@ typedef NS_ENUM(NSUInteger, _WKUnifiedTextReplacementBehavior) {
 // When not set, the web view allows navigation to any URL that isn't a web extension URL. This is needed to ensure proper configuration of the web view.
 @property (nonatomic, strong, setter=_setRequiredWebExtensionBaseURL:) NSURL *_requiredWebExtensionBaseURL;
 
-@property (nonatomic, strong, readonly) _WKWebExtensionController *_strongWebExtensionController;
-@property (nonatomic, weak, setter=_setWeakWebExtensionController:) _WKWebExtensionController *_weakWebExtensionController;
+@property (nonatomic, strong, readonly) WKWebExtensionController *_strongWebExtensionController;
+@property (nonatomic, weak, setter=_setWeakWebExtensionController:) WKWebExtensionController *_weakWebExtensionController;
 @property (nonatomic, strong, setter=_setWebExtensionController:) _WKWebExtensionController *_webExtensionController;
 
 @property (nonatomic, weak, setter=_setAlternateWebViewForNavigationGestures:) WKWebView *_alternateWebViewForNavigationGestures;
@@ -114,7 +107,7 @@ typedef NS_ENUM(NSUInteger, _WKUnifiedTextReplacementBehavior) {
 @property (nonatomic, setter=_setLoadsSubresources:) BOOL _loadsSubresources WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic, setter=_setIgnoresAppBoundDomains:) BOOL _ignoresAppBoundDomains WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic, setter=_setClientNavigationsRunAtForegroundPriority:) BOOL _clientNavigationsRunAtForegroundPriority WK_API_AVAILABLE(macos(13.5), ios(13.4));
-@property (nonatomic, setter=_setPortsForUpgradingInsecureSchemeForTesting:) NSArray<NSNumber *> *_portsForUpgradingInsecureSchemeForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, setter=_setPortsForUpgradingInsecureSchemeForTesting:) NSArray<NSNumber *> *_portsForUpgradingInsecureSchemeForTesting WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setAlwaysRunsAtForegroundPriority:) BOOL _alwaysRunsAtForegroundPriority WK_API_DEPRECATED_WITH_REPLACEMENT("_clientNavigationsRunAtForegroundPriority", ios(9.0, 14.0));
@@ -176,13 +169,16 @@ typedef NS_ENUM(NSUInteger, _WKUnifiedTextReplacementBehavior) {
 
 @property (nonatomic, setter=_setMarkedTextInputEnabled:) BOOL _markedTextInputEnabled WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
-@property (nonatomic, setter=_setMultiRepresentationHEICInsertionEnabled:) BOOL _multiRepresentationHEICInsertionEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, setter=_setMultiRepresentationHEICInsertionEnabled:) BOOL _multiRepresentationHEICInsertionEnabled WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
-@property (nonatomic, setter=_setScrollToTextFragmentIndicatorEnabled:) BOOL _scrollToTextFragmentIndicatorEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, setter=_setScrollToTextFragmentIndicatorEnabled:) BOOL _scrollToTextFragmentIndicatorEnabled WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
-@property (nonatomic, setter=_setScrollToTextFragmentMarkingEnabled:) BOOL _scrollToTextFragmentMarkingEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, setter=_setScrollToTextFragmentMarkingEnabled:) BOOL _scrollToTextFragmentMarkingEnabled WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
-@property (nonatomic, setter=_setUnifiedTextReplacementBehavior:) _WKUnifiedTextReplacementBehavior _unifiedTextReplacementBehavior WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+#if defined(TARGET_OS_VISION) && TARGET_OS_VISION
+@property (nonatomic, setter=_setGamepadAccessRequiresExplicitConsent:) BOOL _gamepadAccessRequiresExplicitConsent WK_API_AVAILABLE(visionos(2.0));
+@property (nonatomic, setter=_setCSSTransformStyleSeparatedEnabled:) BOOL _cssTransformStyleSeparatedEnabled WK_API_AVAILABLE(visionos(WK_XROS_TBA));
+#endif
 
 @end
 

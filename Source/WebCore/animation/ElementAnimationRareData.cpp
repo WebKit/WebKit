@@ -35,8 +35,7 @@
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ElementAnimationRareData);
 
-ElementAnimationRareData::ElementAnimationRareData(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
-    : m_pseudoElementIdentifier(pseudoElementIdentifier)
+ElementAnimationRareData::ElementAnimationRareData()
 {
 }
 

@@ -2,4 +2,5 @@
 PASS Element.setAttributeNS assigned via policy (successful HTML transformation)
 PASS Element.setAttributeNS assigned via policy (successful Script transformation)
 PASS Element.setAttributeNS assigned via policy (successful ScriptURL transformation)
+PASS Element.setAttributeNS accepts a URL on <svg:image xlink:href/>
 

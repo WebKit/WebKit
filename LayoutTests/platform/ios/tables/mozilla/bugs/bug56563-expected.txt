@@ -13,4 +13,4 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,36) size 784x40
         RenderImage {IMG} at (0,0) size 126x40
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,92) size 2x2 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,92) size 2x2 [border: (1px outset #000000)]

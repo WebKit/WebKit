@@ -68,8 +68,8 @@
 #import <WebCore/AudioSession.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/LocalFrameView.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/WebCoreThreadRun.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SoftLinking.h>
 #endif
 

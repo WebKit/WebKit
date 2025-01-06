@@ -1,0 +1,17 @@
+<style>
+#selection_start {
+  display: grid;
+  height: 100px;
+}
+</style>
+before selection
+<div id=selection_start>start</div>
+<div id=selection_end>end</div>
+after selection
+<script>
+const selection = window.getSelection();
+const range = document.createRange();
+range.setStart(document.getElementById("selection_start"), 0);
+range.setEnd(document.getElementById("selection_end"), 1);
+selection.addRange(range);
+</script>

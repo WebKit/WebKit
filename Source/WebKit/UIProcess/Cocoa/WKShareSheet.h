@@ -25,7 +25,7 @@
 
 #import "WKAPICast.h"
 
-#if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if HAVE(SHARE_SHEET_UI)
 
 @class WKWebView;
 @protocol WKShareSheetDelegate;
@@ -55,4 +55,4 @@ enum class PickerDismissalReason : uint8_t;
 - (void)shareSheet:(WKShareSheet *)shareSheet willShowActivityItems:(NSArray *)activityItems;
 @end
 
-#endif // PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#endif // HAVE(SHARE_SHEET_UI)

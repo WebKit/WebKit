@@ -29,7 +29,10 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+// FIXME: Remove once rdar://131328679 is fixed and distributed.
+IGNORE_WARNINGS_BEGIN("#warnings")
 #include <AccessibilitySupport.h>
+IGNORE_WARNINGS_END
 
 #else
 

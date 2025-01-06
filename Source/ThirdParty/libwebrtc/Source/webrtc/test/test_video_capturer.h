@@ -47,7 +47,7 @@ class TestVideoCapturer : public rtc::VideoSourceInterface<VideoFrame> {
   }
   void OnOutputFormatRequest(int width,
                              int height,
-                             const absl::optional<int>& max_fps);
+                             const std::optional<int>& max_fps);
 
   // Starts or resumes video capturing. Can be called multiple times during
   // lifetime of this object.

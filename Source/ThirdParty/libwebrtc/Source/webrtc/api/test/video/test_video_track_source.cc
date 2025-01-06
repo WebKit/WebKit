@@ -9,9 +9,10 @@
  */
 #include "api/test/video/test_video_track_source.h"
 
+#include <optional>
+#include <string>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "api/media_stream_interface.h"
 #include "api/sequence_checker.h"
 #include "api/video/video_frame.h"
@@ -24,7 +25,7 @@ namespace test {
 
 TestVideoTrackSource::TestVideoTrackSource(
     bool remote,
-    absl::optional<std::string> stream_label)
+    std::optional<std::string> stream_label)
     : stream_label_(std::move(stream_label)),
       state_(kInitializing),
       remote_(remote) {

@@ -27,8 +27,11 @@
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include "ShadowBlur.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEDropShadowSoftwareApplier);
 
 bool FEDropShadowSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const
 {
@@ -65,7 +68,7 @@ bool FEDropShadowSoftwareApplier::apply(const Filter& filter, const FilterImageV
     if (!pixelBuffer)
         return false;
 
-    contextShadow.blurLayerImage(pixelBuffer->bytes().data(), pixelBuffer->size(), 4 * pixelBuffer->size().width());
+    contextShadow.blurLayerImage(pixelBuffer->bytes(), pixelBuffer->size(), 4 * pixelBuffer->size().width());
 
     resultImage->putPixelBuffer(*pixelBuffer, shadowArea);
 

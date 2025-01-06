@@ -380,14 +380,14 @@ static ALWAYS_INLINE bool isDenormal(double x)
 {
     static const uint64_t signbit = 0x8000000000000000ULL;
     static const uint64_t minNormal = 0x0001000000000000ULL;
-    return (bitwise_cast<uint64_t>(x) & ~signbit) - 1 < minNormal - 1;
+    return (std::bit_cast<uint64_t>(x) & ~signbit) - 1 < minNormal - 1;
 }
 
 static ALWAYS_INLINE bool isEdgeCase(double x)
 {
     static const uint64_t signbit = 0x8000000000000000ULL;
     static const uint64_t infinity = 0x7fffffffffffffffULL;
-    return (bitwise_cast<uint64_t>(x) & ~signbit) - 1 >= infinity - 1;
+    return (std::bit_cast<uint64_t>(x) & ~signbit) - 1 >= infinity - 1;
 }
 
 static ALWAYS_INLINE double mathPowInternal(double x, double y)
@@ -634,6 +634,33 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_nearest, double, (double operand))
     static_assert(std::numeric_limits<float>::round_style == std::round_to_nearest);
     return std::nearbyint(operand);
 }
+
+#if OS(LINUX) && !defined(__GLIBC__)
+static inline float roundevenf(float operand)
+{
+    float rounded = roundf(operand);
+    if (fabsf(operand - rounded) == 0.5f) {
+        if (fmod(rounded, 2.0f) != 0.0f)
+            return rounded - copysignf(1.0f, operand);
+    }
+    return rounded;
+}
+
+static inline double roundeven(double operand)
+{
+    double rounded = round(operand);
+    if (fabs(operand - rounded) == 0.5) {
+        if (fmod(rounded, 2.0) != 0.0)
+            return rounded - copysign(1.0, operand);
+    }
+    return rounded;
+}
+#endif
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_roundeven, float, (float operand)) { return roundevenf(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_roundeven, double, (double operand)) { return roundeven(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_trunc, float, (float operand)) { return std::trunc(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_trunc, double, (double operand)) { return std::trunc(operand); }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i32_div_s, int32_t, (int32_t a, int32_t b)) { return a / b; }
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i32_div_u, uint32_t, (uint32_t a, uint32_t b)) { return a / b; }

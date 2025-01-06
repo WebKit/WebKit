@@ -66,10 +66,11 @@
 #import <wtf/UniqueRef.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
-
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
+#import <wtf/text/MakeString.h>
 
 #if ENABLE(IMAGE_ANALYSIS)
+
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
 
 #if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 
@@ -89,6 +90,7 @@ static UIMenu *fakeMachineReadableCodeMenuForTesting()
 @interface FakeMachineReadableCodeImageAnalysis : NSObject
 @property (nonatomic, readonly) UIMenu *mrcMenu;
 @property (nonatomic, weak) UIViewController *presentingViewControllerForMrcAction;
+@property (nonatomic) CGRect rectForMrcActionInPresentingViewController;
 @end
 
 @implementation FakeMachineReadableCodeImageAnalysis
@@ -172,6 +174,10 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
         [configuration _setAllowUniversalAccessFromFileURLs:YES];
         [configuration _setAllowTopNavigationToDataURLs:YES];
         [configuration _setApplePayEnabled:YES];
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+        [configuration _setCSSTransformStyleSeparatedEnabled:YES];
+#endif
 
         globalWebsiteDataStoreDelegateClient() = adoptNS([[TestWebsiteDataStoreDelegate alloc] init]);
         [[configuration websiteDataStore] set_delegate:globalWebsiteDataStoreDelegateClient().get()];
@@ -282,6 +288,26 @@ void TestController::platformInitializeDataStore(WKPageConfigurationRef, const T
         m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)[globalWebViewConfiguration() websiteDataStore];
 }
 
+static bool currentGPUProcessConfigurationCompatibleWithOptions(const TestOptions& options)
+{
+    if ([WKProcessPool _isMetalDebugDeviceEnabledInGPUProcessForTesting] != options.enableMetalDebugDevice())
+        return false;
+
+    if ([WKProcessPool _isMetalShaderValidationEnabledInGPUProcessForTesting] != options.enableMetalShaderValidation())
+        return false;
+
+    return true;
+}
+
+void TestController::platformEnsureGPUProcessConfiguredForOptions(const TestOptions& options)
+{
+    [WKProcessPool _setEnableMetalDebugDeviceInNewGPUProcessesForTesting:options.enableMetalDebugDevice()];
+    [WKProcessPool _setEnableMetalShaderValidationInNewGPUProcessesForTesting:options.enableMetalShaderValidation()];
+
+    if (!currentGPUProcessConfigurationCompatibleWithOptions(options))
+        terminateGPUProcess();
+}
+
 void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOptions& options)
 {
     auto copiedConfiguration = adoptNS([globalWebViewConfiguration() copy]);
@@ -325,7 +351,6 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         [copiedConfiguration _setApplicationManifest:[_WKApplicationManifest applicationManifestFromJSON:text manifestURL:nil documentURL:nil]];
     }
     
-    [copiedConfiguration _setAllowTestOnlyIPC:options.allowTestOnlyIPC()];
     [copiedConfiguration _setPortsForUpgradingInsecureSchemeForTesting:@[@(options.insecureUpgradePort()), @(options.secureUpgradePort())]];
 
     m_mainWebView = makeUnique<PlatformWebView>((__bridge WKPageConfigurationRef)copiedConfiguration.get(), options);
@@ -453,6 +478,7 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
 
         auto configuration = platformView.configuration;
         configuration.preferences.textInteractionEnabled = options.textInteractionEnabled();
+        configuration.preferences._textExtractionEnabled = options.textExtractionEnabled();
     }
 
     [LayoutTestSpellChecker uninstallAndReset];
@@ -598,22 +624,37 @@ void TestController::cleanUpKeychain(const String& attrLabel, const String& appl
     [deleteQuery setObject:(id)kSecClassKey forKey:(id)kSecClass];
     [deleteQuery setObject:attrLabel forKey:(id)kSecAttrLabel];
     [deleteQuery setObject:@YES forKey:(id)kSecUseDataProtectionKeychain];
-    if (!!applicationLabelBase64)
-        [deleteQuery setObject:adoptNS([[NSData alloc] initWithBase64EncodedString:applicationLabelBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get() forKey:(id)kSecAttrApplicationLabel];
 
-    SecItemDelete((__bridge CFDictionaryRef)deleteQuery.get());
+    auto credentialID = adoptNS([[NSData alloc] initWithBase64EncodedString:applicationLabelBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]);
+    if (!!applicationLabelBase64)
+        [deleteQuery setObject:credentialID.get() forKey:(id)kSecAttrAlias];
+
+    OSStatus status = SecItemDelete((__bridge CFDictionaryRef)deleteQuery.get());
+    if (status == errSecItemNotFound) {
+        [deleteQuery removeObjectForKey:(id)kSecAttrAlias];
+        [deleteQuery setObject:credentialID.get() forKey:(id)kSecAttrApplicationLabel];
+        SecItemDelete((__bridge CFDictionaryRef)deleteQuery.get());
+    }
 }
 
 bool TestController::keyExistsInKeychain(const String& attrLabel, const String& applicationLabelBase64)
 {
-    NSDictionary *query = @{
+    auto credentialID = adoptNS([[NSData alloc] initWithBase64EncodedString:applicationLabelBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]);
+    auto query = adoptNS([[NSMutableDictionary alloc] init]);
+    [query setDictionary:@{
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrLabel: attrLabel,
-        (id)kSecAttrApplicationLabel: adoptNS([[NSData alloc] initWithBase64EncodedString:applicationLabelBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
+        (id)kSecAttrAlias: credentialID.get(),
         (id)kSecUseDataProtectionKeychain: @YES
-    };
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, NULL);
+    }];
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), NULL);
+    if (status == errSecItemNotFound) {
+        [query removeObjectForKey:(id)kSecAttrAlias];
+        [query setObject:credentialID.get() forKey:(id)kSecAttrApplicationLabel];
+        status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), NULL);
+    }
+
     if (!status)
         return true;
     ASSERT(status == errSecItemNotFound);

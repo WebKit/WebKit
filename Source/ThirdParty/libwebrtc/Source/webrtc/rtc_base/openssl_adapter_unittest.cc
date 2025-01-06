@@ -10,14 +10,19 @@
 
 #include "rtc_base/openssl_adapter.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include "absl/memory/memory.h"
-#include "rtc_base/gunit.h"
 #include "rtc_base/socket.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/ssl_certificate.h"
+#include "rtc_base/thread.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace rtc {
 namespace {
@@ -114,21 +119,6 @@ TEST(OpenSSLAdapterFactoryTest, CreateWorksWithCustomVerifier) {
   auto simple_adapter = std::unique_ptr<OpenSSLAdapter>(
       adapter_factory.CreateAdapter(async_socket));
   EXPECT_NE(simple_adapter, nullptr);
-}
-
-TEST(StrJoinTest, SingleElement) {
-  EXPECT_EQ(webrtc_openssl_adapter_internal::StrJoin({"a"}, ','), "a");
-}
-
-TEST(StrJoinTest, TwoElements) {
-  EXPECT_EQ(webrtc_openssl_adapter_internal::StrJoin({"first", "second"}, ':'),
-            "first:second");
-}
-
-TEST(StrJoinTest, WithEmptyElement) {
-  EXPECT_EQ(
-      webrtc_openssl_adapter_internal::StrJoin({"first", "", "second"}, ':'),
-      "first::second");
 }
 
 }  // namespace rtc

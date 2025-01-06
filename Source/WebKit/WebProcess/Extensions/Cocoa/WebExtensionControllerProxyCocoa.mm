@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -126,13 +126,22 @@ void WebExtensionControllerProxy::addBindingsToWebPageFrameIfNecessary(WebFrame&
     JSObjectSetProperty(context, globalObject, toJSString("browser").get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
 }
 
+static WebExtensionFrameParameters toFrameParameters(WebFrame& frame, const URL& url, bool includeDocumentIdentifier = true)
+{
+    return {
+        .url = url,
+        .parentFrameIdentifier = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame()),
+        .frameIdentifier = toWebExtensionFrameIdentifier(frame),
+        .documentIdentifier = includeDocumentIdentifier ? toDocumentIdentifier(frame) : std::nullopt
+    };
+}
+
 void WebExtensionControllerProxy::didStartProvisionalLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
     if (!hasLoadedContexts())
         return;
 
-    WebExtensionFrameIdentifier parentFrameID = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame());
-    WebProcess::singleton().send(Messages::WebExtensionController::DidStartProvisionalLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), parentFrameID, url, WallTime::now()), identifier());
+    WebProcess::singleton().send(Messages::WebExtensionController::DidStartProvisionalLoadForFrame(page.webPageProxyIdentifier(), toFrameParameters(frame, url, false), WallTime::now()), identifier());
 }
 
 void WebExtensionControllerProxy::didCommitLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
@@ -140,8 +149,7 @@ void WebExtensionControllerProxy::didCommitLoadForFrame(WebPage& page, WebFrame&
     if (!hasLoadedContexts())
         return;
 
-    WebExtensionFrameIdentifier parentFrameID = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame());
-    WebProcess::singleton().send(Messages::WebExtensionController::DidCommitLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), parentFrameID, url, WallTime::now()), identifier());
+    WebProcess::singleton().send(Messages::WebExtensionController::DidCommitLoadForFrame(page.webPageProxyIdentifier(), toFrameParameters(frame, url), WallTime::now()), identifier());
 }
 
 void WebExtensionControllerProxy::didFinishLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
@@ -149,8 +157,7 @@ void WebExtensionControllerProxy::didFinishLoadForFrame(WebPage& page, WebFrame&
     if (!hasLoadedContexts())
         return;
 
-    WebExtensionFrameIdentifier parentFrameID = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame());
-    WebProcess::singleton().send(Messages::WebExtensionController::DidFinishLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), parentFrameID, url, WallTime::now()), identifier());
+    WebProcess::singleton().send(Messages::WebExtensionController::DidFinishLoadForFrame(page.webPageProxyIdentifier(), toFrameParameters(frame, url), WallTime::now()), identifier());
 }
 
 void WebExtensionControllerProxy::didFailLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
@@ -158,8 +165,7 @@ void WebExtensionControllerProxy::didFailLoadForFrame(WebPage& page, WebFrame& f
     if (!hasLoadedContexts())
         return;
 
-    WebExtensionFrameIdentifier parentFrameID = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame());
-    WebProcess::singleton().send(Messages::WebExtensionController::DidFailLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), parentFrameID, url, WallTime::now()), identifier());
+    WebProcess::singleton().send(Messages::WebExtensionController::DidFailLoadForFrame(page.webPageProxyIdentifier(), toFrameParameters(frame, url), WallTime::now()), identifier());
 }
 
 } // namespace WebKit

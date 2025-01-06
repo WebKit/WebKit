@@ -14,7 +14,7 @@
 #include "rtc_base/ref_count.h"
 #include "rtc_base/ref_counter.h"
 
-namespace rtc {
+namespace webrtc {
 
 template <class T>
 class RefCountedObject : public T {
@@ -84,6 +84,13 @@ class FinalRefCountedObject final : public T {
   mutable webrtc::webrtc_impl::RefCounter ref_count_{0};
 };
 
+}  // namespace webrtc
+
+// Backwards compatibe aliases.
+// TODO: https://issues.webrtc.org/42225969 - deprecate and remove.
+namespace rtc {
+using ::webrtc::FinalRefCountedObject;
+using ::webrtc::RefCountedObject;
 }  // namespace rtc
 
 #endif  // RTC_BASE_REF_COUNTED_OBJECT_H_

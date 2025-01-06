@@ -23,7 +23,7 @@
 
 #if defined(SK_GANESH)
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkImageGanesh.h"
 #include "src/gpu/ganesh/GrCaps.h"
 #include "src/gpu/ganesh/GrDirectContextPriv.h"
@@ -77,7 +77,7 @@ void run_test(skiatest::Reporter* reporter, bool testMipmaps,
 DEF_GANESH_TEST_FOR_ALL_CONTEXTS(ImageSizeTest_Ganesh,
                                  reporter,
                                  ctxInfo,
-                                 CtsEnforcement::kNextRelease) {
+                                 CtsEnforcement::kApiLevel_V) {
     auto dContext = ctxInfo.directContext();
 
     bool testMipmaps = dContext->priv().caps()->mipmapSupport();
@@ -93,7 +93,7 @@ DEF_GANESH_TEST_FOR_ALL_CONTEXTS(ImageSizeTest_Ganesh,
 #if defined(SK_GRAPHITE)
 
 DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(ImageSizeTest_Graphite, reporter, context,
-                                   CtsEnforcement::kNextRelease) {
+                                   CtsEnforcement::kApiLevel_V) {
     using namespace skgpu::graphite;
 
     std::unique_ptr<Recorder> recorder = context->makeRecorder();

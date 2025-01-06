@@ -1,0 +1,21 @@
+%
+
+%%
+
+%F
+
+%%f
+
+✅
+
+Hello world
+
+
+PASS Test navigation with fragment: Percent-encoded "%" char..
+PASS Test navigation with fragment: Percent char without hex digits is invalid..
+PASS Test navigation with fragment: Percent char followed by percent char is invalid..
+PASS Test navigation with fragment: Single digit percent-encoding is invalid..
+PASS Test navigation with fragment: Percent-encoding limited to two digits..
+PASS Test navigation with fragment: Percent-encoded "%%F".
+PASS Test navigation with fragment: Percent-encoding multibyte codepoint (CHECKMARK)..
+

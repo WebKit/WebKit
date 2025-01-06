@@ -59,13 +59,21 @@ struct InputElementClickState {
 enum class WasSetByJavaScript : bool { No, Yes };
 
 class HTMLInputElement final : public HTMLTextFormControlElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLInputElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLInputElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLInputElement);
 public:
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    WEBCORE_EXPORT bool alpha();
+#endif
     bool checked() const { return m_isChecked; }
     WEBCORE_EXPORT void setChecked(bool, WasSetByJavaScript = WasSetByJavaScript::Yes);
+#if ENABLE(INPUT_TYPE_COLOR)
+    String colorSpace();
+    void setColorSpace(const AtomString&);
+#endif
     WEBCORE_EXPORT FileList* files();
     WEBCORE_EXPORT void setFiles(RefPtr<FileList>&&, WasSetByJavaScript = WasSetByJavaScript::No);
     FileList* filesForBindings() { return files(); }
@@ -139,13 +147,13 @@ public:
     bool isPresentingAttachedView() const;
 
     bool isSteppable() const; // stepUp()/stepDown() for user-interaction.
-    bool isTextButton() const;
+    WEBCORE_EXPORT bool isTextButton() const;
     bool isRadioButton() const;
     WEBCORE_EXPORT bool isTextField() const final;
     WEBCORE_EXPORT bool isSearchField() const;
     bool isInputTypeHidden() const;
     WEBCORE_EXPORT bool isPasswordField() const;
-    bool isSecureField() const { return isPasswordField() || isAutoFilledAndObscured(); }
+    bool isSecureField() const { return isPasswordField() || autofilledAndObscured(); }
     bool isCheckbox() const;
     bool isSwitch() const;
     bool isRangeControl() const;
@@ -163,7 +171,7 @@ public:
     WEBCORE_EXPORT bool isFileUpload() const;
     bool isImageButton() const;
     WEBCORE_EXPORT bool isNumberField() const;
-    bool isSubmitButton() const final;
+    WEBCORE_EXPORT bool isSubmitButton() const final;
     WEBCORE_EXPORT bool isTelephoneField() const;
     WEBCORE_EXPORT bool isURLField() const;
     WEBCORE_EXPORT bool isDateField() const;
@@ -171,6 +179,8 @@ public:
     WEBCORE_EXPORT bool isMonthField() const;
     WEBCORE_EXPORT bool isTimeField() const;
     WEBCORE_EXPORT bool isWeekField() const;
+
+    bool isDevolvableWidget() const override;
 
     DateComponentsType dateType() const;
 
@@ -211,7 +221,7 @@ public:
     String localizeValue(const String&) const;
 
     // The value which is drawn by a renderer.
-    String visibleValue() const;
+    WEBCORE_EXPORT String visibleValue() const;
 
     String valueWithDefault() const;
 
@@ -222,6 +232,7 @@ public:
 
     bool rendererIsNeeded(const RenderStyle&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    bool isReplaced(const RenderStyle&) const final;
     void willAttachRenderers() final;
     void didAttachRenderers() final;
     void didDetachRenderers() final;
@@ -249,18 +260,28 @@ public:
     WEBCORE_EXPORT bool multiple() const;
 
     // AutoFill.
-    bool isAutoFilled() const { return m_isAutoFilled; }
-    WEBCORE_EXPORT void setAutoFilled(bool = true);
-    bool isAutoFilledAndViewable() const { return m_isAutoFilledAndViewable; }
-    WEBCORE_EXPORT void setAutoFilledAndViewable(bool = true);
-    bool isAutoFilledAndObscured() const { return m_isAutoFilledAndObscured; }
-    WEBCORE_EXPORT void setAutoFilledAndObscured(bool = true);
-    AutoFillButtonType lastAutoFillButtonType() const { return static_cast<AutoFillButtonType>(m_lastAutoFillButtonType); }
-    AutoFillButtonType autoFillButtonType() const { return static_cast<AutoFillButtonType>(m_autoFillButtonType); }
-    WEBCORE_EXPORT void setShowAutoFillButton(AutoFillButtonType);
-    bool hasAutoFillStrongPasswordButton() const  { return autoFillButtonType() == AutoFillButtonType::StrongPassword; }
-    bool isAutoFillAvailable() const { return m_isAutoFillAvailable; }
-    void setAutoFillAvailable(bool autoFillAvailable) { m_isAutoFillAvailable = autoFillAvailable; }
+    using AutofillButtonType = WebCore::AutoFillButtonType;
+    bool autofilled() const { return m_isAutoFilled; }
+    WEBCORE_EXPORT void setAutofilled(bool = true);
+    bool autofilledAndViewable() const { return m_isAutoFilledAndViewable; }
+    WEBCORE_EXPORT void setAutofilledAndViewable(bool = true);
+    bool autofilledAndObscured() const { return m_isAutoFilledAndObscured; }
+    WEBCORE_EXPORT void setAutofilledAndObscured(bool = true);
+    AutoFillButtonType lastAutofillButtonType() const { return static_cast<AutoFillButtonType>(m_lastAutoFillButtonType); }
+    AutoFillButtonType autofillButtonType() const { return static_cast<AutoFillButtonType>(m_autoFillButtonType); }
+    WEBCORE_EXPORT void setAutofillButtonType(AutoFillButtonType);
+    bool hasAutofillStrongPasswordButton() const  { return autofillButtonType() == AutoFillButtonType::StrongPassword; }
+    bool autofillAvailable() const { return m_isAutoFillAvailable; }
+    void setAutofillAvailable(bool autoFillAvailable) { m_isAutoFillAvailable = autoFillAvailable; }
+    enum class AutofillVisibility : uint8_t {
+        Normal,
+        Visible,
+        Hidden,
+    };
+    AutofillVisibility autofillVisibility() const;
+    void setAutofillVisibility(AutofillVisibility);
+    bool autofillSpellcheck() const { return !m_isSpellcheckDisabledExceptTextReplacement; }
+    void setAutofillSpellcheck(bool value) { m_isSpellcheckDisabledExceptTextReplacement = !value; }
 
 #if ENABLE(DRAG_SUPPORT)
     // Returns true if the given DragData has more than one dropped file.
@@ -275,7 +296,6 @@ public:
     void setCanReceiveDroppedFiles(bool);
 
     void addSearchResult();
-    void onSearch();
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
@@ -337,7 +357,7 @@ public:
 
     String resultForDialogSubmit() const final;
 
-    bool isInnerTextElementEditable() const final { return !hasAutoFillStrongPasswordButton() && HTMLTextFormControlElement::isInnerTextElementEditable(); }
+    bool isInnerTextElementEditable() const final { return !hasAutofillStrongPasswordButton() && HTMLTextFormControlElement::isInnerTextElementEditable(); }
     void finishParsingChildren() final;
 
     bool hasEverBeenPasswordField() const { return m_hasEverBeenPasswordField; }
@@ -355,7 +375,7 @@ private:
 
     void defaultEventHandler(Event&) final;
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(TreeScope&) override;
 
     enum AutoCompleteSetting : uint8_t { Uninitialized, On, Off };
     static constexpr int defaultSize = 20;

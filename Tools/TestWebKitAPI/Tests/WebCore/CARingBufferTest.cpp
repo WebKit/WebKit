@@ -52,29 +52,31 @@ public:
         WTF::initializeMainThread();
     }
 
-    // CAAudioStreamDescription(double sampleRate, UInt32 numChannels, PCMFormat format, bool isInterleaved, size_t capacity)
+    // CAAudioStreamDescription(double sampleRate, UInt32 numChannels, PCMFormat format, IsInterleaved isInterleaved, size_t capacity)
     void setup(double sampleRate, UInt32 numChannels, CAAudioStreamDescription::PCMFormat format, bool isInterleaved, size_t capacity)
     {
-        m_description = CAAudioStreamDescription(sampleRate, numChannels, format, isInterleaved);
+        m_description = CAAudioStreamDescription(sampleRate, numChannels, format, isInterleaved ? CAAudioStreamDescription::IsInterleaved::Yes : CAAudioStreamDescription::IsInterleaved::No);
         m_capacity = capacity;
         size_t listSize = offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * std::max<uint32_t>(1, m_description->numberOfChannelStreams()));
         m_bufferList = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (listSize)));
         m_ringBuffer = InProcessCARingBuffer::allocate(*m_description, capacity);
     }
 
-    void setListDataBuffer(uint8_t* bufferData, size_t sampleCount)
+    template<typename T, size_t ArraySize>
+    void setListDataBuffer(std::array<T, ArraySize>& buffer)
     {
         size_t bufferCount = m_description->numberOfChannelStreams();
         size_t channelCount = m_description->numberOfInterleavedChannels();
-        size_t bytesPerChannel = sampleCount * m_description->bytesPerFrame();
+        size_t bytesPerChannel = buffer.size() * m_description->bytesPerFrame();
 
         m_bufferList->mNumberBuffers = bufferCount;
+        auto bufferBytes = asMutableByteSpan(buffer);
         for (unsigned i = 0; i < bufferCount; ++i) {
             m_bufferList->mBuffers[i].mNumberChannels = channelCount;
             m_bufferList->mBuffers[i].mDataByteSize = bytesPerChannel;
-            m_bufferList->mBuffers[i].mData = bufferData;
-            if (bufferData)
-                bufferData = bufferData + bytesPerChannel;
+            m_bufferList->mBuffers[i].mData = bufferBytes.data();
+            if (!bufferBytes.empty())
+                bufferBytes = bufferBytes.subspan(bytesPerChannel);
         }
     }
 
@@ -105,11 +107,11 @@ TEST_F(CARingBufferTest, Basics)
     auto fetchBounds = ringBuffer().getFetchTimeBounds();
     EXPECT_EQ(fetchBounds, makeBounds(0, 0));
 
-    float sourceBuffer[capacity];
+    std::array<float, capacity> sourceBuffer;
     for (size_t i = 0; i < capacity; i++)
         sourceBuffer[i] = i + 0.5;
 
-    setListDataBuffer(reinterpret_cast<uint8_t*>(sourceBuffer), capacity);
+    setListDataBuffer(sourceBuffer);
 
     // Fill the first half of the buffer ...
     uint64_t sampleCount = capacity / 2;
@@ -119,11 +121,11 @@ TEST_F(CARingBufferTest, Basics)
     fetchBounds = ringBuffer().getFetchTimeBounds();
     EXPECT_EQ(fetchBounds, makeBounds(0, sampleCount));
 
-    float scratchBuffer[capacity];
-    setListDataBuffer(reinterpret_cast<uint8_t*>(scratchBuffer), capacity);
+    std::array<float, capacity> scratchBuffer;
+    setListDataBuffer(scratchBuffer);
 
     ringBuffer().fetch(&bufferList(), sampleCount, 0);
-    EXPECT_TRUE(!memcmp(sourceBuffer, scratchBuffer, sampleCount * description().sampleWordSize()));
+    EXPECT_TRUE(!memcmp(sourceBuffer.data(), scratchBuffer.data(), sampleCount * description().sampleWordSize()));
 
     // ... and the second half.
     err = ringBuffer().store(&bufferList(), capacity / 2, capacity / 2);
@@ -132,9 +134,9 @@ TEST_F(CARingBufferTest, Basics)
     fetchBounds = ringBuffer().getFetchTimeBounds();
     EXPECT_EQ(fetchBounds, makeBounds(0, capacity));
 
-    memset(scratchBuffer, 0, sampleCount * description().sampleWordSize());
+    zeroSpan(std::span { scratchBuffer }.first(sampleCount));
     ringBuffer().fetch(&bufferList(), sampleCount, 0);
-    EXPECT_TRUE(!memcmp(sourceBuffer, scratchBuffer, sampleCount * description().sampleWordSize()));
+    EXPECT_TRUE(!memcmp(sourceBuffer.data(), scratchBuffer.data(), sampleCount * description().sampleWordSize()));
 
     // Force the buffer to wrap around
     err = ringBuffer().store(&bufferList(), capacity, capacity - 1);
@@ -158,15 +160,15 @@ TEST_F(CARingBufferTest, SmallBufferListForFetch)
     const int halfCapacity = capacity / 2;
     setup(44100, 1, CAAudioStreamDescription::PCMFormat::Float32, true, capacity);
 
-    float sourceBuffer[capacity];
+    std::array<float, capacity> sourceBuffer;
     for (int i = 0; i < capacity; i++)
         sourceBuffer[i] = i + 0.5;
-    setListDataBuffer(reinterpret_cast<uint8_t*>(sourceBuffer), capacity);
+    setListDataBuffer(sourceBuffer);
     CARingBuffer::Error err = ringBuffer().store(&bufferList(), capacity, 0);
     EXPECT_EQ(err, CARingBuffer::Error::Ok);
 
-    float destinationBuffer[halfCapacity];
-    setListDataBuffer(reinterpret_cast<uint8_t*>(destinationBuffer), halfCapacity);
+    std::array<float, halfCapacity> destinationBuffer;
+    setListDataBuffer(destinationBuffer);
     int bufferCount = bufferList().mNumberBuffers;
     EXPECT_GE(bufferCount, 1);
     size_t listDataByteSizeBeforeFetch = bufferList().mBuffers[0].mDataByteSize;
@@ -179,8 +181,8 @@ TEST_F(CARingBufferTest, FetchTimeBoundsInMiddleCorrect)
 {
     const size_t capacity = 32;
     setup(44100, 1, CAAudioStreamDescription::PCMFormat::Float32, true, capacity);
-    float sourceBuffer[capacity] { };
-    setListDataBuffer(reinterpret_cast<uint8_t*>(sourceBuffer), capacity);
+    std::array<float, capacity> sourceBuffer = { };
+    setListDataBuffer(sourceBuffer);
     EXPECT_EQ(makeBounds(0u, 0u), ringBuffer().getFetchTimeBounds());
 
     ringBuffer().store(&bufferList(), 32, 55);
@@ -197,8 +199,8 @@ TEST_F(CARingBufferTest, FetchTimeBoundsInvalid)
 {
     const size_t capacity = 32;
     setup(44100, 1, CAAudioStreamDescription::PCMFormat::Float32, true, capacity);
-    float sourceBuffer[capacity] { };
-    setListDataBuffer(reinterpret_cast<uint8_t*>(sourceBuffer), capacity);
+    std::array<float, capacity> sourceBuffer = { };
+    setListDataBuffer(sourceBuffer);
     EXPECT_EQ(makeBounds(0u, 0u), ringBuffer().getFetchTimeBounds());
 
     ringBuffer().store(&bufferList(), 8, 0);
@@ -234,8 +236,8 @@ TEST_F(CARingBufferTest, FetchTimeBoundsConsistent)
 {
     const size_t capacity = 32;
     setup(44100, 1, CAAudioStreamDescription::PCMFormat::Float32, true, capacity);
-    float sourceBuffer[capacity] { };
-    setListDataBuffer(reinterpret_cast<uint8_t*>(sourceBuffer), capacity);
+    std::array<float, capacity> sourceBuffer = { };
+    setListDataBuffer(sourceBuffer);
 
     std::atomic<bool> done = false;
     auto thread = Thread::create("FetchTimeBoundsConsistent test"_s, [&] {
@@ -280,21 +282,21 @@ public:
 
         test.setup(44100, 1, format, true, sampleCount);
 
-        type referenceBuffer[sampleCount];
-        type sourceBuffer[sampleCount];
-        type readBuffer[sampleCount];
+        std::array<type, sampleCount> referenceBuffer;
+        std::array<type, sampleCount> sourceBuffer;
+        std::array<type, sampleCount> readBuffer;
 
         for (int i = 0; i < sampleCount; i++) {
             sourceBuffer[i] = i * 0.5;
             referenceBuffer[i] = sourceBuffer[i];
         }
 
-        test.setListDataBuffer(reinterpret_cast<uint8_t*>(sourceBuffer), sampleCount);
+        test.setListDataBuffer(sourceBuffer);
         CARingBuffer::Error err = test.ringBuffer().store(&test.bufferList(), sampleCount, 0);
         EXPECT_EQ(err, CARingBuffer::Error::Ok);
 
-        memset(readBuffer, 0, sampleCount * test.description().sampleWordSize());
-        test.setListDataBuffer(reinterpret_cast<uint8_t*>(readBuffer), sampleCount);
+        readBuffer.fill(0);
+        test.setListDataBuffer(readBuffer);
         auto mixFetchMode = CARingBuffer::fetchModeForMixing(test.description().format());
         test.ringBuffer().fetch(&test.bufferList(), sampleCount, 0, mixFetchMode);
 

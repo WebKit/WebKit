@@ -26,17 +26,16 @@
 #include "config.h"
 #include "CSSMathSum.h"
 
-#include "CSSCalcOperationNode.h"
 #include "CSSMathNegate.h"
 #include "CSSNumericArray.h"
 #include "ExceptionOr.h"
 #include <wtf/Algorithms.h>
 #include <wtf/FixedVector.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathSum);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSMathSum);
 
 ExceptionOr<Ref<CSSMathSum>> CSSMathSum::create(FixedVector<CSSNumberish> numberishes)
 {
@@ -132,17 +131,20 @@ auto CSSMathSum::toSumValue() const -> std::optional<SumValue>
     return { WTFMove(values) };
 }
 
-RefPtr<CSSCalcExpressionNode> CSSMathSum::toCalcExpressionNode() const
+std::optional<CSSCalc::Child> CSSMathSum::toCalcTreeNode() const
 {
-    Vector<Ref<CSSCalcExpressionNode>> values;
-    values.reserveInitialCapacity(m_values->length());
-    for (auto& item : m_values->array()) {
-        auto value = item->toCalcExpressionNode();
-        if (!value)
-            return nullptr;
-        values.append(value.releaseNonNull());
-    }
-    return CSSCalcOperationNode::createSum(WTFMove(values));
+    CSSCalc::Children children = WTF::compactMap(m_values->array(), [](auto& child) {
+        return child->toCalcTreeNode();
+    });
+    if (children.size() != m_values->array().size())
+        return std::nullopt;
+
+    auto sum = CSSCalc::Sum { .children = WTFMove(children) };
+    auto type = CSSCalc::toType(sum);
+    if (!type)
+        return std::nullopt;
+
+    return CSSCalc::makeChild(WTFMove(sum), *type);
 }
 
 } // namespace WebCore

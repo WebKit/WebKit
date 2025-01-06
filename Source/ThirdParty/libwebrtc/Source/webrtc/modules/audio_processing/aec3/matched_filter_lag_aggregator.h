@@ -11,9 +11,9 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_MATCHED_FILTER_LAG_AGGREGATOR_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_MATCHED_FILTER_LAG_AGGREGATOR_H_
 
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/delay_estimate.h"
 #include "modules/audio_processing/aec3/matched_filter.h"
@@ -41,8 +41,8 @@ class MatchedFilterLagAggregator {
   void Reset(bool hard_reset);
 
   // Aggregates the provided lag estimates.
-  absl::optional<DelayEstimate> Aggregate(
-      const absl::optional<const MatchedFilter::LagEstimate>& lag_estimate);
+  std::optional<DelayEstimate> Aggregate(
+      const std::optional<const MatchedFilter::LagEstimate>& lag_estimate);
 
   // Returns whether a reliable delay estimate has been found.
   bool ReliableDelayFound() const { return significant_candidate_found_; }
@@ -64,7 +64,6 @@ class MatchedFilterLagAggregator {
 
    private:
     const int block_size_log2_;
-    const bool penalize_high_delays_initial_phase_;
     std::array<int, 250> histogram_data_;
     std::vector<int> histogram_;
     int histogram_data_index_ = 0;

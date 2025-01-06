@@ -14,8 +14,8 @@
 #include <algorithm>
 #include <atomic>
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
@@ -44,7 +44,7 @@ class RenderDelayControllerImpl final : public RenderDelayController {
   ~RenderDelayControllerImpl() override;
   void Reset(bool reset_delay_confidence) override;
   void LogRenderCall() override;
-  absl::optional<DelayEstimate> GetDelay(
+  std::optional<DelayEstimate> GetDelay(
       const DownsampledRenderBuffer& render_buffer,
       size_t render_delay_buffer_delay,
       const Block& capture) override;
@@ -54,17 +54,17 @@ class RenderDelayControllerImpl final : public RenderDelayController {
   static std::atomic<int> instance_count_;
   std::unique_ptr<ApmDataDumper> data_dumper_;
   const int hysteresis_limit_blocks_;
-  absl::optional<DelayEstimate> delay_;
+  std::optional<DelayEstimate> delay_;
   EchoPathDelayEstimator delay_estimator_;
   RenderDelayControllerMetrics metrics_;
-  absl::optional<DelayEstimate> delay_samples_;
+  std::optional<DelayEstimate> delay_samples_;
   size_t capture_call_counter_ = 0;
   int delay_change_counter_ = 0;
   DelayEstimate::Quality last_delay_estimate_quality_;
 };
 
 DelayEstimate ComputeBufferDelay(
-    const absl::optional<DelayEstimate>& current_delay,
+    const std::optional<DelayEstimate>& current_delay,
     int hysteresis_limit_blocks,
     DelayEstimate estimated_delay) {
   // Compute the buffer delay increase required to achieve the desired latency.
@@ -100,8 +100,8 @@ RenderDelayControllerImpl::RenderDelayControllerImpl(
 RenderDelayControllerImpl::~RenderDelayControllerImpl() = default;
 
 void RenderDelayControllerImpl::Reset(bool reset_delay_confidence) {
-  delay_ = absl::nullopt;
-  delay_samples_ = absl::nullopt;
+  delay_ = std::nullopt;
+  delay_samples_ = std::nullopt;
   delay_estimator_.Reset(reset_delay_confidence);
   delay_change_counter_ = 0;
   if (reset_delay_confidence) {
@@ -111,9 +111,9 @@ void RenderDelayControllerImpl::Reset(bool reset_delay_confidence) {
 
 void RenderDelayControllerImpl::LogRenderCall() {}
 
-absl::optional<DelayEstimate> RenderDelayControllerImpl::GetDelay(
+std::optional<DelayEstimate> RenderDelayControllerImpl::GetDelay(
     const DownsampledRenderBuffer& render_buffer,
-    size_t render_delay_buffer_delay,
+    size_t /* render_delay_buffer_delay */,
     const Block& capture) {
   ++capture_call_counter_;
 
@@ -155,11 +155,10 @@ absl::optional<DelayEstimate> RenderDelayControllerImpl::GetDelay(
     last_delay_estimate_quality_ = delay_samples_->quality;
   }
 
-  metrics_.Update(
-      delay_samples_ ? absl::optional<size_t>(delay_samples_->delay)
-                     : absl::nullopt,
-      delay_ ? absl::optional<size_t>(delay_->delay) : absl::nullopt,
-      delay_estimator_.Clockdrift());
+  metrics_.Update(delay_samples_ ? std::optional<size_t>(delay_samples_->delay)
+                                 : std::nullopt,
+                  delay_ ? std::optional<size_t>(delay_->delay) : std::nullopt,
+                  delay_estimator_.Clockdrift());
 
   data_dumper_->DumpRaw("aec3_render_delay_controller_delay",
                         delay_samples ? delay_samples->delay : 0);

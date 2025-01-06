@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,7 +93,7 @@ template<typename T> using WeakPtrFactory = WTF::WeakPtrFactory<T, WeakPtrImplWi
 // FIXME: Drop when we support C++20. C++17 does not support template parameter deduction for aliases and WeakPtr is an alias in this file.
 template<typename T, typename = std::enable_if_t<!WTF::IsSmartPtr<T>::value>> inline auto makeWeakPtr(T& object, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes)
 {
-    return object.weakPtrFactory().template createWeakPtr<T>(object, enableWeakPtrThreadingAssertions);
+    return WeakPtr<T>(object, enableWeakPtrThreadingAssertions);
 }
 
 // FIXME: Drop when we support C++20. C++17 does not support template parameter deduction for aliases and WeakPtr is an alias in this file.
@@ -332,7 +332,7 @@ TEST(WTF_WeakPtr, Downcasting)
         Derived* derivedPtr = &object;
         Base* basePtr = static_cast<Base*>(&object);
 
-        baseWeakPtr = object.weakPtrFactory().createWeakPtr(object);
+        baseWeakPtr = WeakPtr<Base>(object);
         EXPECT_EQ(basePtr->foo(), dummy0);
         EXPECT_EQ(baseWeakPtr->foo(), basePtr->foo());
         EXPECT_EQ(baseWeakPtr.get()->foo(), basePtr->foo());
@@ -441,40 +441,40 @@ TEST(WTF_WeakPtr, MakeWeakPtrTakesRef)
 {
     Ref baseObject = BaseObjectWithRefAndWeakPtr::create();
     EXPECT_EQ(baseObject->refCount(), 1U);
-    EXPECT_EQ(baseObject->weakPtrFactory().weakPtrCount(), 0U);
+    EXPECT_EQ(baseObject->weakCount(), 0U);
     {
         auto baseObjectWeakPtr = makeWeakPtr(baseObject);
         EXPECT_EQ(baseObject->refCount(), 1U);
-        EXPECT_EQ(baseObject->weakPtrFactory().weakPtrCount(), 1U);
+        EXPECT_EQ(baseObject->weakCount(), 1U);
         EXPECT_EQ(baseObjectWeakPtr.get(), baseObject.ptr());
     }
     EXPECT_EQ(baseObject->refCount(), 1U);
-    EXPECT_EQ(baseObject->weakPtrFactory().weakPtrCount(), 0U);
+    EXPECT_EQ(baseObject->weakCount(), 0U);
 
     WeakPtr<BaseObjectWithRefAndWeakPtr> baseWeakPtr;
     {
         Ref derivedObject = DerivedObjectWithRefAndWeakPtr::create();
         EXPECT_EQ(derivedObject->refCount(), 1U);
-        EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 0U);
+        EXPECT_EQ(derivedObject->weakCount(), 0U);
         {
             WeakPtr<DerivedObjectWithRefAndWeakPtr> derivedObjectWeakPtr = makeWeakPtr(derivedObject);
             EXPECT_EQ(derivedObject->refCount(), 1U);
-            EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 1U);
+            EXPECT_EQ(derivedObject->weakCount(), 1U);
             EXPECT_EQ(derivedObjectWeakPtr.get(), derivedObject.ptr());
         }
         EXPECT_EQ(derivedObject->refCount(), 1U);
-        EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 0U);
+        EXPECT_EQ(derivedObject->weakCount(), 0U);
         {
             Ref<BaseObjectWithRefAndWeakPtr> baseRefPtr = derivedObject;
             EXPECT_EQ(derivedObject->refCount(), 2U);
-            EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 0U);
+            EXPECT_EQ(derivedObject->weakCount(), 0U);
             baseWeakPtr = makeWeakPtr(baseRefPtr);
             EXPECT_EQ(derivedObject->refCount(), 2U);
-            EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 1U);
+            EXPECT_EQ(derivedObject->weakCount(), 1U);
             EXPECT_EQ(baseWeakPtr.get(), derivedObject.ptr());
         }
         EXPECT_EQ(derivedObject->refCount(), 1U);
-        EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 1U);
+        EXPECT_EQ(derivedObject->weakCount(), 1U);
         EXPECT_EQ(baseWeakPtr.get(), derivedObject.ptr());
     }
     EXPECT_EQ(baseWeakPtr.get(), nullptr);
@@ -484,11 +484,11 @@ TEST(WTF_WeakPtr, MakeWeakPtrTakesRefPtr)
 {
     RefPtr<BaseObjectWithRefAndWeakPtr> baseObject = BaseObjectWithRefAndWeakPtr::create();
     EXPECT_EQ(baseObject->refCount(), 1U);
-    EXPECT_EQ(baseObject->weakPtrFactory().weakPtrCount(), 0U);
+    EXPECT_EQ(baseObject->weakCount(), 0U);
     {
         auto baseObjectWeakPtr = makeWeakPtr(baseObject);
         EXPECT_EQ(baseObject->refCount(), 1U);
-        EXPECT_EQ(baseObject->weakPtrFactory().weakPtrCount(), 1U);
+        EXPECT_EQ(baseObject->weakCount(), 1U);
         EXPECT_EQ(baseObjectWeakPtr.get(), baseObject.get());
         baseObject = nullptr;
         EXPECT_EQ(baseObjectWeakPtr.get(), nullptr);
@@ -496,20 +496,20 @@ TEST(WTF_WeakPtr, MakeWeakPtrTakesRefPtr)
 
     RefPtr<DerivedObjectWithRefAndWeakPtr> derivedObject = DerivedObjectWithRefAndWeakPtr::create();
     EXPECT_EQ(derivedObject->refCount(), 1U);
-    EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 0U);
+    EXPECT_EQ(derivedObject->weakCount(), 0U);
     {
         WeakPtr<DerivedObjectWithRefAndWeakPtr> derivedObjectWeakPtr = makeWeakPtr(derivedObject);
         EXPECT_EQ(derivedObject->refCount(), 1U);
-        EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 1U);
+        EXPECT_EQ(derivedObject->weakCount(), 1U);
         EXPECT_EQ(derivedObjectWeakPtr.get(), derivedObject.get());
 
         WeakPtr<BaseObjectWithRefAndWeakPtr> baseObjectWeakPtr = makeWeakPtr<BaseObjectWithRefAndWeakPtr>(derivedObject);
         EXPECT_EQ(derivedObject->refCount(), 1U);
-        EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 2U);
+        EXPECT_EQ(derivedObject->weakCount(), 2U);
         EXPECT_EQ(baseObjectWeakPtr.get(), derivedObject.get());
     }
     EXPECT_EQ(derivedObject->refCount(), 1U);
-    EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 0U);
+    EXPECT_EQ(derivedObject->weakCount(), 0U);
 }
 
 template <typename T>
@@ -2714,6 +2714,9 @@ TEST(WTF_WeakPtr, WeakListHashSetInsertBefore)
 
 class MultipleInheritanceBase1 : public CanMakeWeakPtr<MultipleInheritanceBase1> {
 public:
+    MultipleInheritanceBase1() = default;
+    virtual ~MultipleInheritanceBase1() = default;
+
     virtual void meow() = 0;
 
     int dummy; // Prevent empty base class optimization, to make testing more interesting.
@@ -2721,6 +2724,9 @@ public:
 
 class MultipleInheritanceBase2 : public CanMakeWeakPtr<MultipleInheritanceBase2> {
 public:
+    MultipleInheritanceBase2() = default;
+    virtual ~MultipleInheritanceBase2() = default;
+
     virtual void woof() = 0;
 
     int dummy; // Prevent empty base class optimization, to make testing more interesting.
@@ -2728,6 +2734,9 @@ public:
 
 class MultipleInheritanceDerived : public MultipleInheritanceBase1, public MultipleInheritanceBase2 {
 public:
+    MultipleInheritanceDerived() = default;
+    virtual ~MultipleInheritanceDerived() = default;
+
     bool meowCalled() const
     {
         return m_meowCalled;
@@ -2925,16 +2934,13 @@ public:
 
     ~ObjectAddingAndRemovingItself()
     {
-        EXPECT_FALSE(m_set.contains(*this));
         auto sizeBefore = m_set.sizeIncludingEmptyEntriesForTesting();
-        EXPECT_FALSE(m_set.remove(*this));
+        EXPECT_FALSE(m_set.contains(*this));
         auto sizeAfter = m_set.sizeIncludingEmptyEntriesForTesting();
-        static size_t i { 0 };
-        if (++i == 8) {
-            // Amortized cleanup gets this one during the contains call.
-            EXPECT_EQ(sizeBefore, sizeAfter);
-        } else
-            EXPECT_EQ(sizeBefore, sizeAfter + 1);
+        EXPECT_FALSE(m_set.remove(*this));
+        auto sizeAfterRemove = m_set.sizeIncludingEmptyEntriesForTesting();
+        EXPECT_EQ(sizeBefore, sizeAfter + 1);
+        EXPECT_EQ(sizeAfter, sizeAfterRemove);
         EXPECT_FALSE(m_set.contains(*this));
     }
 
@@ -2969,6 +2975,37 @@ TEST(WTF_ThreadSafeWeakPtr, ThreadSafeWeakHashSetRemoveOnDestruction)
     setSize = 0;
     set.forEach([&](auto& object) { ++setSize; });
     EXPECT_EQ(setSize, 0u);
+}
+
+class ObjectRemovingItself : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ObjectRemovingItself> {
+public:
+    static Ref<ObjectRemovingItself> create(ThreadSafeWeakHashSet<ObjectRemovingItself>& set)
+    {
+        return adoptRef(*new ObjectRemovingItself(set));
+    }
+
+    ~ObjectRemovingItself()
+    {
+        EXPECT_FALSE(m_set.contains(*this));
+        EXPECT_FALSE(m_set.remove(*this));
+    }
+
+private:
+    ObjectRemovingItself(ThreadSafeWeakHashSet<ObjectRemovingItself>& set)
+        : m_set(set)
+    {
+    }
+
+    ThreadSafeWeakHashSet<ObjectRemovingItself>& m_set;
+};
+
+// Test removing an object that was never inserted during its destructor is ok.
+TEST(WTF_ThreadSafeWeakPtr, ThreadSafeWeakHashSetRemoveNonExistantOnDestruction)
+{
+    ThreadSafeWeakHashSet<ObjectRemovingItself> set;
+    {
+        Ref<ObjectRemovingItself> object = ObjectRemovingItself::create(set);
+    }
 }
 
 class ObjectAddingItselfOnly : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ObjectAddingAndRemovingItself> {
@@ -3031,12 +3068,13 @@ TEST(WTF_ThreadSafeWeakPtr, MultipleInheritance)
     };
 
     struct Dog {
-        ~Dog() { destructors.append(Destructor::Dog); }
+        virtual ~Dog() { destructors.append(Destructor::Dog); }
         virtual void woof() = 0;
 
         virtual void ref() const = 0;
         virtual void deref() const = 0;
         virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0;
+        virtual size_t weakRefCount() const = 0;
 
         bool dog { true };
     };
@@ -3047,6 +3085,7 @@ TEST(WTF_ThreadSafeWeakPtr, MultipleInheritance)
         void ref() const final { Cat::ref(); }
         void deref() const final { Cat::deref(); }
         ThreadSafeWeakPtrControlBlock& controlBlock() const final { return Cat::controlBlock(); }
+        size_t weakRefCount() const final { return Cat::weakRefCount(); }
 
         void meow() final { meowed = true; }
         void woof() final { barked = true; }
@@ -3137,20 +3176,7 @@ TEST(WTF_ThreadSafeWeakPtr, RemoveInDestructor)
     }
 }
 
-TEST(WTF_ThreadSafeWeakPtr, WeakRefInDestructor)
-{
-    struct S;
-    static ThreadSafeWeakPtr<S> weakPtr;
-    struct S : ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<S> {
-        ~S() { weakPtr = { *this }; }
-    };
-
-    {
-        auto s = adoptRef(*new S);
-    }
-    auto shouldBeNull = weakPtr.get();
-    EXPECT_NULL(shouldBeNull.get());
-}
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DidUpdateRefCountWeakPtrImpl);
 
 class DidUpdateRefCountWeakPtrImpl final {
     WTF_MAKE_NONCOPYABLE(DidUpdateRefCountWeakPtrImpl);
@@ -3200,6 +3226,7 @@ private:
     void* m_ptr;
     mutable bool m_didUpdateRefCount { false };
 };
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DidUpdateRefCountWeakPtrImpl);
 
 class TestType : public WTF::CanMakeWeakPtr<TestType, WeakPtrFactoryInitialization::Lazy, DidUpdateRefCountWeakPtrImpl> {
 public:

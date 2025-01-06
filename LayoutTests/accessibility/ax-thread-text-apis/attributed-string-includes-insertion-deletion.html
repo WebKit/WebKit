@@ -1,0 +1,56 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- This is a modern-style rewrite of existing test mac/attributed-string-includes-insertion-deletion.html. After accessibilityThreadTextApisEnabled is enabled by default, we should replace mac/attributed-string-includes-insertion-deletion.html with this file. -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body" role="group">
+
+<div id="item1"><span role="insertion">inserted text</span></div>
+<div id="item2"><span role="deletion">deleted text</span></div>
+<div id="item3"><span role="suggestion"><span role="insertion">hello</span><span role="deletion">hi</span></span></div>
+
+<script>
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    let output = "This verifies that using the insertion and deletion roles adds the attribute to the attributed string.\n";
+
+    var item1 = accessibilityController.accessibleElementById("item1");
+    var markerRange = item1.textMarkerRangeForElement(item1);
+    output += expect("item1.attributedStringForTextMarkerRangeContainsAttribute('AXIsSuggestedInsertion', markerRange)", "true");
+
+    var item2 = accessibilityController.accessibleElementById("item2");
+    markerRange = item2.textMarkerRangeForElement(item2);
+    output += expect("item2.attributedStringForTextMarkerRangeContainsAttribute('AXIsSuggestedDeletion', markerRange)", "true");
+
+    var item3 = accessibilityController.accessibleElementById("item3");
+    markerRange = item3.textMarkerRangeForElement(item3);
+    output += expect("item3.attributedStringForTextMarkerRangeContainsAttribute('AXIsSuggestion', markerRange)", "true");
+    setTimeout(async function() {
+        document.getElementById("item1").children[0].removeAttribute("role");
+        document.getElementById("item2").children[0].removeAttribute("role");
+        document.getElementById("item3").children[0].removeAttribute("role");
+
+        await waitFor(() => {
+            markerRange = item1.textMarkerRangeForElement(item1);
+            return !item1.attributedStringForTextMarkerRangeContainsAttribute("AXIsSuggestedInsertion", markerRange);
+        });
+
+        await waitFor(() => {
+            markerRange = item2.textMarkerRangeForElement(item2);
+            return !item2.attributedStringForTextMarkerRangeContainsAttribute("AXIsSuggestedDeletion", markerRange);
+        });
+
+        await waitFor(() => {
+            markerRange = item3.textMarkerRangeForElement(item3);
+            return !item3.attributedStringForTextMarkerRangeContainsAttribute("AXIsSuggestion", markerRange);
+        });
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

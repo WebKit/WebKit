@@ -11,8 +11,6 @@
 #ifndef VPX_VP9_ENCODER_VP9_BLOCK_H_
 #define VPX_VP9_ENCODER_VP9_BLOCK_H_
 
-#include "vpx_util/vpx_thread.h"
-
 #include "vp9/common/vp9_blockd.h"
 #include "vp9/common/vp9_entropymv.h"
 #include "vp9/common/vp9_entropy.h"

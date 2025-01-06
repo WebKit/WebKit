@@ -9,10 +9,15 @@
     {
         document.getElementById("inner").style.visibility = "visible";
     }
-    if (window.testRunner) {
-        document.body.offsetTop;
-        testRunner.displayAndTrackRepaints();
-        test();
-    } else
-        setTimeout(test, 0);
+    
+    onload = async () => {
+        if (window.testRunner) {
+            document.body.offsetTop;
+            testRunner.waitUntilDone();
+            await testRunner.displayAndTrackRepaints();
+            test();
+            testRunner.notifyDone();
+        } else
+            setTimeout(test, 0);
+    }
 </script>

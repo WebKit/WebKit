@@ -115,6 +115,8 @@ class TIntermNode : angle::NonCopyable
     // node and it is replaced; otherwise, return false.
     virtual bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) = 0;
 
+    TIntermNode *getAsNode() { return this; }
+
   protected:
     TSourceLoc mLine;
 };
@@ -401,7 +403,6 @@ class TIntermConstantUnion : public TIntermExpression
                                               int index);
     static TConstantUnion *FoldAggregateBuiltIn(TIntermAggregate *aggregate,
                                                 TDiagnostics *diagnostics);
-    static bool IsFloatDivision(TBasicType t1, TBasicType t2);
 
   protected:
     // Same data may be shared between multiple constant unions, so it can't be modified.

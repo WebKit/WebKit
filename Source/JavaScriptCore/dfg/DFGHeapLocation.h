@@ -43,9 +43,11 @@ enum LocationKind {
     CheckTypeInfoFlagsLoc,
     OverridesHasInstanceLoc,
     ClosureVariableLoc,
+    ClosureVariableDoubleLoc,
     DirectArgumentsLoc,
     GetterLoc,
     GlobalVariableLoc,
+    GlobalVariableDoubleLoc,
     EnumeratorNextUpdateIndexAndModeLoc,
     HasIndexedPropertyLoc,
     IndexedPropertyDoubleLoc,
@@ -55,8 +57,9 @@ enum LocationKind {
     IndexedPropertyInt32Loc,
     IndexedPropertyInt32OutOfBoundsSaneChainLoc,
     IndexedPropertyInt52Loc,
-    IndexedPropertyJSOutOfBoundsSaneChainLoc,
+    IndexedPropertyInt52OutOfBoundsSaneChainLoc,
     IndexedPropertyJSLoc,
+    IndexedPropertyJSOutOfBoundsSaneChainLoc,
     IndexedPropertyStorageLoc,
     InvalidationPointLoc,
     IsCallableLoc,
@@ -64,6 +67,7 @@ enum LocationKind {
     TypeOfIsObjectLoc,
     TypeOfIsFunctionLoc,
     NamedPropertyLoc,
+    NamedPropertyDoubleLoc,
     RegExpObjectLastIndexLoc,
     SetterLoc,
     StructureLoc,
@@ -73,12 +77,24 @@ enum LocationKind {
     PrototypeLoc,
     StackLoc,
     StackPayloadLoc,
+    GlobalProxyTargetLoc,
     DateFieldLoc,
     MapBucketLoc,
     MapBucketHeadLoc,
     MapBucketValueLoc,
     MapBucketKeyLoc,
     MapBucketNextLoc,
+    MapIteratorNextLoc,
+    MapIteratorKeyLoc,
+    MapIteratorValueLoc,
+    MapStorageLoc,
+    MapIterationNextLoc,
+    MapIterationEntryLoc,
+    MapIterationEntryKeyLoc,
+    MapIterationEntryValueLoc,
+    MapEntryKeyLoc,
+    MapEntryValueLoc,
+    LoadMapValueLoc,
     WeakMapGetLoc,
     InternalFieldObjectLoc,
     DOMStateLoc,
@@ -142,9 +158,9 @@ public:
         return m_kind
             + m_heap.hash()
             + m_index.hash()
-            + static_cast<unsigned>(bitwise_cast<uintptr_t>(m_base))
-            + static_cast<unsigned>(bitwise_cast<uintptr_t>(m_descriptor))
-            + static_cast<unsigned>(bitwise_cast<uintptr_t>(m_extraState));
+            + static_cast<unsigned>(std::bit_cast<uintptr_t>(m_base))
+            + static_cast<unsigned>(std::bit_cast<uintptr_t>(m_descriptor))
+            + static_cast<unsigned>(std::bit_cast<uintptr_t>(m_extraState));
     }
     
     friend bool operator==(const HeapLocation&, const HeapLocation&) = default;
@@ -171,8 +187,6 @@ struct HeapLocationHash {
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-LocationKind indexedPropertyLocForResultType(NodeFlags);
-
 inline LocationKind indexedPropertyLocForResultType(NodeFlags canonicalResultRepresentation)
 {
     if (!canonicalResultRepresentation)
@@ -196,11 +210,25 @@ inline LocationKind indexedPropertyLocForResultType(NodeFlags canonicalResultRep
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+inline LocationKind indexedPropertyLocToOutOfBoundsSaneChain(LocationKind location)
+{
+    switch (location) {
+    case IndexedPropertyInt32Loc:
+        return IndexedPropertyInt32OutOfBoundsSaneChainLoc;
+    case IndexedPropertyInt52Loc:
+        return IndexedPropertyInt52OutOfBoundsSaneChainLoc;
+    case IndexedPropertyDoubleLoc:
+        return IndexedPropertyDoubleOutOfBoundsSaneChainLoc;
+    case IndexedPropertyJSLoc:
+        return IndexedPropertyJSOutOfBoundsSaneChainLoc;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 } } // namespace JSC::DFG
 
 namespace WTF {
-
-void printInternal(PrintStream&, JSC::DFG::LocationKind);
 
 template<typename T> struct DefaultHash;
 template<> struct DefaultHash<JSC::DFG::HeapLocation> : JSC::DFG::HeapLocationHash { };

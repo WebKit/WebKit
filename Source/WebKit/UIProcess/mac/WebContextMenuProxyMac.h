@@ -37,6 +37,12 @@ OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
 OBJC_CLASS WKMenuDelegate;
 
+#if ENABLE(WRITING_TOOLS)
+namespace WebCore::WritingTools {
+enum class RequestedTool : uint16_t;
+}
+#endif
+
 namespace WebKit {
 
 class WebContextMenuItemData;
@@ -50,6 +56,12 @@ public:
     ~WebContextMenuProxyMac();
 
     void contextMenuItemSelected(const WebContextMenuItemData&);
+
+#if ENABLE(WRITING_TOOLS)
+    void handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool);
+#endif
+
+    void handleShareMenuItem();
 
 #if ENABLE(SERVICE_CONTROLS)
     void clearServicesMenu();
@@ -75,7 +87,9 @@ private:
     void getContextMenuFromItems(const Vector<WebContextMenuItemData>&, CompletionHandler<void(NSMenu *)>&&);
 
 #if ENABLE(SERVICE_CONTROLS)
-    void getShareMenuItem(CompletionHandler<void(NSMenuItem *)>&&);
+    enum class ShareMenuItemType : uint8_t { Placeholder, Popover };
+    RetainPtr<NSMenuItem> createShareMenuItem(ShareMenuItemType);
+
     void showServicesMenu();
     void setupServicesMenu();
     void appendRemoveBackgroundItemToControlledImageMenuIfNeeded();

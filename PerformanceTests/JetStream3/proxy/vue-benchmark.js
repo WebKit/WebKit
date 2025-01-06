@@ -56,13 +56,9 @@ class ObservableReminder extends Reminder {
 }
 
 class Benchmark {
-    constructor() {
-        this._verbose = false;
-    }
-    
-    runIteration() {
+    async runIteration() {
         const store = new ObservableReminderStore();
-        watchEffect(() => { store.render(); }, { flush: "sync" });
-        test(store);
+        watchEffect(() => { store.render(); });
+        await test(store, fn => { fn(); });
     }
 }

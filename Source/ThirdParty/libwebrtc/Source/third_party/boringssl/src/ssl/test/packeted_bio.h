@@ -15,6 +15,8 @@
 #ifndef HEADER_PACKETED_BIO
 #define HEADER_PACKETED_BIO
 
+#include <functional>
+
 #include <openssl/base.h>
 #include <openssl/bio.h>
 
@@ -29,11 +31,13 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 
 // PacketedBioCreate creates a filter BIO which implements a reliable in-order
 // blocking datagram socket. It uses the value of |*clock| as the clock.
+// |set_mtu| will be called when the runner asks to change the MTU.
 //
 // During a |BIO_read|, the peer may signal the filter BIO to simulate a
 // timeout. The operation will fail immediately. The caller must then call
 // |PacketedBioAdvanceClock| before retrying |BIO_read|.
-bssl::UniquePtr<BIO> PacketedBioCreate(timeval *clock);
+bssl::UniquePtr<BIO> PacketedBioCreate(timeval *clock,
+                                       std::function<bool(uint32_t)> set_mtu);
 
 // PacketedBioAdvanceClock advances |bio|'s clock and returns true if there is a
 // pending timeout. Otherwise, it returns false.

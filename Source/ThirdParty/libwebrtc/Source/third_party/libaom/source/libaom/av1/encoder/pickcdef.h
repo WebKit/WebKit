@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -22,9 +22,10 @@ extern "C" {
  * \brief This enum controls to which frames CDEF is applied.
  */
 typedef enum {
-  CDEF_NONE = 0,      /*!< Disable CDEF on all frames. */
-  CDEF_ALL = 1,       /*!< Enable CDEF for all frames. */
-  CDEF_REFERENCE = 2, /*!< Disable CDEF on non reference frames. */
+  CDEF_NONE = 0,      /* Disable CDEF on all frames. */
+  CDEF_ALL = 1,       /* Enable CDEF for all frames. */
+  CDEF_REFERENCE = 2, /* Disable CDEF on non reference frames. */
+  CDEF_ADAPTIVE = 3,  /* Enable CDEF adaptively on frame qindex */
 } CDEF_CONTROL;
 
 /*!\cond */
@@ -171,7 +172,7 @@ typedef struct {
   bool use_highbitdepth;
 } CdefSearchCtx;
 
-static INLINE int sb_all_skip(const CommonModeInfoParams *const mi_params,
+static inline int sb_all_skip(const CommonModeInfoParams *const mi_params,
                               int mi_row, int mi_col) {
   const int maxr = AOMMIN(mi_params->mi_rows - mi_row, MI_SIZE_64X64);
   const int maxc = AOMMIN(mi_params->mi_cols - mi_col, MI_SIZE_64X64);
@@ -194,7 +195,7 @@ static INLINE int sb_all_skip(const CommonModeInfoParams *const mi_params,
 // Returns:
 //   1/0 will be returned to indicate skip/don't skip cdef processing of sb
 //   respectively.
-static INLINE int cdef_sb_skip(const CommonModeInfoParams *const mi_params,
+static inline int cdef_sb_skip(const CommonModeInfoParams *const mi_params,
                                int fbr, int fbc) {
   const MB_MODE_INFO *const mbmi =
       mi_params->mi_grid_base[MI_SIZE_64X64 * fbr * mi_params->mi_stride +

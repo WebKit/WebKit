@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="../../resources/js-test-pre.js"></script>
+  <script src="../../resources/js-test.js"></script>
 </head>
 <body>
   <script>
@@ -82,21 +82,6 @@
   shouldBe("left_of_center_pixel.data[0]", "0");
   shouldBe("left_of_center_pixel.data[1]", "0");
   shouldBe("left_of_center_pixel.data[2]", "0");
-  
-  debug("Test that the prefixed attribute mirrors the unprefixed attribute.");
-  ctx.imageSmoothingEnabled = false;
-  shouldBe("ctx.imageSmoothingEnabled", "false");
-  shouldBe("ctx.webkitImageSmoothingEnabled", "false");
-  ctx.imageSmoothingEnabled = true;
-  shouldBe("ctx.imageSmoothingEnabled", "true");
-  shouldBe("ctx.webkitImageSmoothingEnabled", "true");
-  ctx.webkitImageSmoothingEnabled = false;
-  shouldBe("ctx.imageSmoothingEnabled", "false");
-  shouldBe("ctx.webkitImageSmoothingEnabled", "false");
-  ctx.webkitImageSmoothingEnabled = true;
-  shouldBe("ctx.imageSmoothingEnabled", "true");
-  shouldBe("ctx.webkitImageSmoothingEnabled", "true");
   </script>
-  <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

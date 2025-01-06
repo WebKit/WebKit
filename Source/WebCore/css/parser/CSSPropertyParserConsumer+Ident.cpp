@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +26,7 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 
+#include "CSSParserIdioms.h"
 #include "CSSValuePool.h"
 
 namespace WebCore {
@@ -57,6 +59,47 @@ RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange& range, CSSValue
     if (!value)
         return nullptr;
     return CSSPrimitiveValue::create(*value);
+}
+
+// MARK: <custom-ident>
+// https://drafts.csswg.org/css-values/#custom-idents
+
+String consumeCustomIdentRaw(CSSParserTokenRange& range, bool shouldLowercase)
+{
+    if (range.peek().type() != IdentToken || !isValidCustomIdentifier(range.peek().id()))
+        return String();
+    auto identifier = range.consumeIncludingWhitespace().value();
+    return shouldLowercase ? identifier.convertToASCIILowercase() : identifier.toString();
+}
+
+RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange& range, bool shouldLowercase)
+{
+    auto identifier = consumeCustomIdentRaw(range, shouldLowercase);
+    if (identifier.isNull())
+        return nullptr;
+    return CSSPrimitiveValue::createCustomIdent(WTFMove(identifier));
+}
+
+// MARK: <dashed-ident>
+// https://drafts.csswg.org/css-values/#dashed-idents
+
+String consumeDashedIdentRaw(CSSParserTokenRange& range, bool shouldLowercase)
+{
+    auto rangeCopy = range;
+    auto identifier = consumeCustomIdentRaw(range, shouldLowercase);
+    if (!identifier.startsWith("--"_s)) {
+        range = rangeCopy;
+        return { };
+    }
+    return identifier;
+}
+
+RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange& range, bool shouldLowercase)
+{
+    auto identifier = consumeDashedIdentRaw(range, shouldLowercase);
+    if (identifier.isNull())
+        return nullptr;
+    return CSSPrimitiveValue::createCustomIdent(WTFMove(identifier));
 }
 
 } // namespace CSSPropertyParserHelpers

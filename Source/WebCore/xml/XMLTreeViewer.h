@@ -31,6 +31,8 @@
 
 #if ENABLE(XSLT)
 
+#include <wtf/CheckedRef.h>
+
 namespace WebCore {
 
 class Document;
@@ -42,7 +44,7 @@ public:
     void transformDocumentToTreeView();
 
 private:
-    Document& m_document;
+    CheckedRef<Document> m_document;
 };
 
 } // namespace WebCore

@@ -78,13 +78,13 @@
 #include "Quirks.h"
 #include "ScriptController.h"
 #include "StyleResolver.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDocument);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLDocument);
 
 using namespace HTMLNames;
 
@@ -95,7 +95,7 @@ Ref<HTMLDocument> HTMLDocument::createSynthesizedDocument(LocalFrame& frame, con
     return document;
 }
 
-HTMLDocument::HTMLDocument(LocalFrame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier documentIdentifier, DocumentClasses documentClasses, OptionSet<ConstructionFlag> constructionFlags)
+HTMLDocument::HTMLDocument(LocalFrame* frame, const Settings& settings, const URL& url, std::optional<ScriptExecutionContextIdentifier> documentIdentifier, DocumentClasses documentClasses, OptionSet<ConstructionFlag> constructionFlags)
     : Document(frame, settings, url, documentClasses | DocumentClasses(DocumentClass::HTML), constructionFlags, documentIdentifier)
 {
     clearXMLVersion();

@@ -20,7 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> ServiceWorkerFetchTask NotRefCounted {
+[
+    ExceptionForEnabledBy,
+    DispatchedFrom=WebContent,
+    DispatchedTo=Networking
+]
+messages -> ServiceWorkerFetchTask {
     DidNotHandle()
     DidFail(WebCore::ResourceError error)
     DidReceiveRedirectResponse(WebCore::ResourceResponse response)
@@ -29,4 +34,5 @@ messages -> ServiceWorkerFetchTask NotRefCounted {
     DidReceiveFormData(IPC::FormDataReference data)
     DidFinish(WebCore::NetworkLoadMetrics metrics)
     UsePreload()
+    WorkerClosed()
 }

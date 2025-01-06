@@ -1,0 +1,19 @@
+<body>
+    <div id="root">
+        <slot name="x24">
+            <slot dir="auto"></slot>
+            <div id="child"></div>
+        </slot>
+    </div>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        const child = document.getElementById("child");
+        child.replaceWith("This test passes if it does not crash.");
+
+        const innerHTML = root.innerHTML;
+        const shadow = child.attachShadow({ mode: "closed" });
+        shadow.innerHTML = innerHTML;
+    </script>
+</body>

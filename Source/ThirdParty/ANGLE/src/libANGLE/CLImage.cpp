@@ -6,6 +6,7 @@
 // CLImage.cpp: Implements the cl::Image class.
 
 #include "libANGLE/CLImage.h"
+#include "libANGLE/CLContext.h"
 
 #include "libANGLE/cl_utils.h"
 
@@ -146,9 +147,10 @@ Image::Image(Context &context,
              const ImageDescriptor &desc,
              Memory *parent,
              void *hostPtr)
-    : Memory(*this, context, std::move(properties), flags, format, desc, parent, hostPtr),
-      mFormat(format),
-      mDesc(desc)
-{}
+    : Memory(context, std::move(properties), flags, parent, hostPtr), mFormat(format), mDesc(desc)
+{
+    mSize = getSliceSize() * getDepth() * getArraySize();
+    ANGLE_CL_IMPL_TRY(context.getImpl().createImage(*this, hostPtr, &mImpl));
+}
 
 }  // namespace cl

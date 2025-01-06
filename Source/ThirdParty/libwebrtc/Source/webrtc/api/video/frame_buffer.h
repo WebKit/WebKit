@@ -11,12 +11,13 @@
 #ifndef API_VIDEO_FRAME_BUFFER_H_
 #define API_VIDEO_FRAME_BUFFER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <memory>
-#include <utility>
+#include <optional>
 
 #include "absl/container/inlined_vector.h"
-#include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "api/video/encoded_frame.h"
 #include "modules/video_coding/utility/decoded_frames_history.h"
@@ -60,9 +61,9 @@ class FrameBuffer {
   // Drop all frames in the next decodable unit.
   void DropNextDecodableTemporalUnit();
 
-  absl::optional<int64_t> LastContinuousFrameId() const;
-  absl::optional<int64_t> LastContinuousTemporalUnitFrameId() const;
-  absl::optional<DecodabilityInfo> DecodableTemporalUnitsInfo() const;
+  std::optional<int64_t> LastContinuousFrameId() const;
+  std::optional<int64_t> LastContinuousTemporalUnitFrameId() const;
+  std::optional<DecodabilityInfo> DecodableTemporalUnitsInfo() const;
 
   int GetTotalNumberOfContinuousTemporalUnits() const;
   int GetTotalNumberOfDroppedFrames() const;
@@ -91,10 +92,10 @@ class FrameBuffer {
   const bool legacy_frame_id_jump_behavior_;
   const size_t max_size_;
   FrameMap frames_;
-  absl::optional<TemporalUnit> next_decodable_temporal_unit_;
-  absl::optional<DecodabilityInfo> decodable_temporal_units_info_;
-  absl::optional<int64_t> last_continuous_frame_id_;
-  absl::optional<int64_t> last_continuous_temporal_unit_frame_id_;
+  std::optional<TemporalUnit> next_decodable_temporal_unit_;
+  std::optional<DecodabilityInfo> decodable_temporal_units_info_;
+  std::optional<int64_t> last_continuous_frame_id_;
+  std::optional<int64_t> last_continuous_temporal_unit_frame_id_;
   video_coding::DecodedFramesHistory decoded_frame_history_;
 
   int num_continuous_temporal_units_ = 0;

@@ -18,14 +18,14 @@
 #include <cstdio>
 #include <deque>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 
 #include "absl/strings/match.h"
-#include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "api/network_state_predictor.h"
-#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "api/transport/bandwidth_usage.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
 #include "rtc_base/logging.h"
@@ -57,7 +57,7 @@ size_t ReadTrendlineFilterWindowSize(const FieldTrialsView* key_value_config) {
   return TrendlineEstimatorSettings::kDefaultTrendlineWindowSize;
 }
 
-absl::optional<double> LinearFitSlope(
+std::optional<double> LinearFitSlope(
     const std::deque<TrendlineEstimator::PacketTiming>& packets) {
   RTC_DCHECK(packets.size() >= 2);
   // Compute the "center of mass".
@@ -79,11 +79,11 @@ absl::optional<double> LinearFitSlope(
     denominator += (x - x_avg) * (x - x_avg);
   }
   if (denominator == 0)
-    return absl::nullopt;
+    return std::nullopt;
   return numerator / denominator;
 }
 
-absl::optional<double> ComputeSlopeCap(
+std::optional<double> ComputeSlopeCap(
     const std::deque<TrendlineEstimator::PacketTiming>& packets,
     const TrendlineEstimatorSettings& settings) {
   RTC_DCHECK(1 <= settings.beginning_packets &&
@@ -104,7 +104,7 @@ absl::optional<double> ComputeSlopeCap(
       late = packets[i];
   }
   if (late.arrival_time_ms - early.arrival_time_ms < 1) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return (late.raw_delay_ms - early.raw_delay_ms) /
              (late.arrival_time_ms - early.arrival_time_ms) +
@@ -199,9 +199,9 @@ TrendlineEstimator::~TrendlineEstimator() {}
 
 void TrendlineEstimator::UpdateTrendline(double recv_delta_ms,
                                          double send_delta_ms,
-                                         int64_t send_time_ms,
+                                         int64_t /* send_time_ms */,
                                          int64_t arrival_time_ms,
-                                         size_t packet_size) {
+                                         size_t /* packet_size */) {
   const double delta_ms = recv_delta_ms - send_delta_ms;
   ++num_of_deltas_;
   num_of_deltas_ = std::min(num_of_deltas_, kDeltaCounterMax);
@@ -210,12 +210,8 @@ void TrendlineEstimator::UpdateTrendline(double recv_delta_ms,
 
   // Exponential backoff filter.
   accumulated_delay_ += delta_ms;
-  BWE_TEST_LOGGING_PLOT(1, "accumulated_delay_ms", arrival_time_ms,
-                        accumulated_delay_);
   smoothed_delay_ = smoothing_coef_ * smoothed_delay_ +
                     (1 - smoothing_coef_) * accumulated_delay_;
-  BWE_TEST_LOGGING_PLOT(1, "smoothed_delay_ms", arrival_time_ms,
-                        smoothed_delay_);
 
   // Maintain packet window
   delay_hist_.emplace_back(
@@ -242,7 +238,7 @@ void TrendlineEstimator::UpdateTrendline(double recv_delta_ms,
     //   trend < 0     ->  the delay decreases, queues are being emptied
     trend = LinearFitSlope(delay_hist_).value_or(trend);
     if (settings_.enable_cap) {
-      absl::optional<double> cap = ComputeSlopeCap(delay_hist_, settings_);
+      std::optional<double> cap = ComputeSlopeCap(delay_hist_, settings_);
       // We only use the cap to filter out overuse detections, not
       // to detect additional underuses.
       if (trend >= 0 && cap.has_value() && trend > cap.value()) {
@@ -250,7 +246,6 @@ void TrendlineEstimator::UpdateTrendline(double recv_delta_ms,
       }
     }
   }
-  BWE_TEST_LOGGING_PLOT(1, "trendline_slope", arrival_time_ms, trend);
 
   Detect(trend, send_delta_ms, arrival_time_ms);
 }
@@ -283,8 +278,6 @@ void TrendlineEstimator::Detect(double trend, double ts_delta, int64_t now_ms) {
   const double modified_trend =
       std::min(num_of_deltas_, kMinNumDeltas) * trend * threshold_gain_;
   prev_modified_trend_ = modified_trend;
-  BWE_TEST_LOGGING_PLOT(1, "T", now_ms, modified_trend);
-  BWE_TEST_LOGGING_PLOT(1, "threshold", now_ms, threshold_);
   if (modified_trend > threshold_) {
     if (time_over_using_ == -1) {
       // Initialize the timer. Assume that we've been

@@ -62,6 +62,7 @@
 #import <WebKitLegacy/DOMExtensions.h>
 #import <WebKitLegacy/DOMHTML.h>
 #import <wtf/Assertions.h>
+#import <wtf/text/MakeString.h>
 
 using namespace WebCore;
 using namespace JSC;
@@ -111,7 +112,7 @@ using namespace JSC;
     if (!renderer)
         return YES;
     
-    return renderer->style().isHorizontalWritingMode();
+    return renderer->writingMode().isHorizontal();
 }
 
 - (void)hidePlaceholder
@@ -139,7 +140,7 @@ using namespace JSC;
     String markupString = serializeFragment(node, SerializedNodes::SubtreeIncludingNode);
     Node::NodeType nodeType = node.nodeType();
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
-        markupString = documentTypeString(node.document()) + markupString;
+        markupString = makeString(documentTypeString(node.document()), markupString);
 
     return markupString;
 }
@@ -192,7 +193,7 @@ using namespace JSC;
 - (NSString *)markupString
 {
     auto range = makeSimpleRange(*core(self));
-    return String { documentTypeString(range.start.document()) + serializePreservingVisualAppearance(range, nullptr, AnnotateForInterchange::Yes) };
+    return makeString(documentTypeString(range.start.document()), serializePreservingVisualAppearance(range, nullptr, AnnotateForInterchange::Yes));
 }
 
 @end
@@ -219,22 +220,22 @@ using namespace JSC;
 
 - (BOOL)_isAutofilled
 {
-    return downcast<HTMLInputElement>(core((DOMElement *)self))->isAutoFilled();
+    return downcast<HTMLInputElement>(core((DOMElement *)self))->autofilled();
 }
 
 - (BOOL)_isAutoFilledAndViewable
 {
-    return downcast<HTMLInputElement>(core((DOMElement *)self))->isAutoFilledAndViewable();
+    return downcast<HTMLInputElement>(core((DOMElement *)self))->autofilledAndViewable();
 }
 
 - (void)_setAutofilled:(BOOL)autofilled
 {
-    downcast<HTMLInputElement>(core((DOMElement *)self))->setAutoFilled(autofilled);
+    downcast<HTMLInputElement>(core((DOMElement *)self))->setAutofilled(autofilled);
 }
 
 - (void)_setAutoFilledAndViewable:(BOOL)autoFilledAndViewable
 {
-    downcast<HTMLInputElement>(core((DOMElement *)self))->setAutoFilledAndViewable(autoFilledAndViewable);
+    downcast<HTMLInputElement>(core((DOMElement *)self))->setAutofilledAndViewable(autoFilledAndViewable);
 }
 
 @end

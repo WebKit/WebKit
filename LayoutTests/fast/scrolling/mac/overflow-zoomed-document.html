@@ -62,7 +62,7 @@
 
         const pageScale = 2;
 
-        window.addEventListener('load', () => {
+        window.addEventListener('load', async () => {
             scroller = document.querySelector('.scroller');
             scroller.addEventListener('scroll', () => {
                 ++overflowScrollEventCount;
@@ -72,8 +72,8 @@
                 ++windowScrollEventCount;
             }, false);
 
-            if (window.internals)
-                internals.setPageScaleFactor(pageScale, 0, 0);
+            if (window.testRunner)
+                await testRunner.setPageScaleFactor(pageScale, 0, 0);
 
             setTimeout(scrollTest, 0);
         }, false);

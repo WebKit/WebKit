@@ -26,7 +26,6 @@
 #include "config.h"
 #include "IPCSemaphore.h"
 
-#include "WebCoreArgumentCoders.h"
 #include <mach/mach.h>
 
 namespace IPC {

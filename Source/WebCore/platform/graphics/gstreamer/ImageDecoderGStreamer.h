@@ -29,6 +29,7 @@
 #include "SharedBuffer.h"
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +39,7 @@ class ImageDecoderGStreamerSample;
 void teardownGStreamerImageDecoders();
 
 class ImageDecoderGStreamer final : public ImageDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ImageDecoderGStreamer);
     WTF_MAKE_NONCOPYABLE(ImageDecoderGStreamer);
 public:
     static RefPtr<ImageDecoderGStreamer> create(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);

@@ -58,6 +58,7 @@ public:
     HWND window() const { return m_window; }
     void setParentWindow(HWND);
     void windowAncestryDidChange();
+    WebCore::IntSize viewSize() { return m_viewSize; }
     void setIsInWindow(bool);
     void setIsVisible(bool);
     bool isWindowActive();
@@ -77,6 +78,8 @@ public:
     WebPageProxy* page() const { return m_page.get(); }
 
     DrawingAreaProxy* drawingArea() { return page() ? page()->drawingArea() : nullptr; }
+
+    void close();
 
 private:
     WebView(RECT, const API::PageConfiguration&, HWND parentWindow);
@@ -114,7 +117,7 @@ private:
 
     bool shouldInitializeTrackPointHack();
 
-    void close();
+    void closeInternal();
 
     HCURSOR cursorToShow() const;
     void updateNativeCursor();
@@ -154,6 +157,7 @@ private:
 
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebPageProxy> m_page;
+    WebCore::IntSize m_viewSize;
 };
 
 } // namespace WebKit

@@ -20,6 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+// Currently being DispatchedFrom both the UI and Networking Process
+[
+    DispatchedTo=WebContent
+]
 messages -> WebSWContextManagerConnection {
     InstallServiceWorker(struct WebCore::ServiceWorkerContextData contextData, struct WebCore::ServiceWorkerData workerData, String userAgent, enum:bool WebCore::WorkerThreadMode workerThreadMode, enum:bool WebCore::ServiceWorkerIsInspectable inspectable, OptionSet<WebCore::AdvancedPrivacyProtections> protections)
     UpdateAppInitiatedValue(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum:bool WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
@@ -38,8 +42,6 @@ messages -> WebSWContextManagerConnection {
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
     DidSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::ScriptBuffer script, HashMap<URL, WebCore::ScriptBuffer> importedScripts);
 #endif
-    MatchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientData> clientsData)
-    SkipWaitingCompleted(uint64_t matchAllRequestIdentifier)
     SetUserAgent(String userAgent)
     UpdatePreferencesStore(struct WebKit::WebPreferencesStore store)
     Close()

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,10 +16,10 @@
 
 #include "config/av1_rtcd.h"
 
+#include "gtest/gtest.h"
 #include "test/acm_random.h"
 #include "test/util.h"
 #include "test/register_state_check.h"
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
 
 #include "aom_ports/aom_timer.h"
 #include "av1/common/convolve.h"
@@ -34,7 +34,7 @@ typedef void (*hiprec_convolve_func)(const uint8_t *src, ptrdiff_t src_stride,
                                      const int16_t *filter_x, int x_step_q4,
                                      const int16_t *filter_y, int y_step_q4,
                                      int w, int h,
-                                     const ConvolveParams *conv_params);
+                                     const WienerConvolveParams *conv_params);
 
 typedef std::tuple<int, int, int, hiprec_convolve_func> HiprecConvolveParam;
 
@@ -62,7 +62,7 @@ typedef void (*highbd_hiprec_convolve_func)(
     const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
     ptrdiff_t dst_stride, const int16_t *filter_x, int x_step_q4,
     const int16_t *filter_y, int y_step_q4, int w, int h,
-    const ConvolveParams *conv_params, int bps);
+    const WienerConvolveParams *conv_params, int bps);
 
 typedef std::tuple<int, int, int, int, highbd_hiprec_convolve_func>
     HighbdHiprecConvolveParam;

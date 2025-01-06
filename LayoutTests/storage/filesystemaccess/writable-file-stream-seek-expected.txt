@@ -1,0 +1,10 @@
+This test checks seek command of FileSystemWritableFileStream
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fileContent is "abcdihgfe\u0000abcde"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,4 +1,5 @@
 [
+  ActiveDOMObject,
   EnabledBySetting=NavigationAPIEnabled,
   Exposed=Window
 ] interface NavigationHistoryEntry : EventTarget {

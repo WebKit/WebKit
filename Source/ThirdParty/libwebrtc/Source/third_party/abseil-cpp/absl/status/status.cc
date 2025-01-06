@@ -28,6 +28,8 @@
 #include "absl/base/internal/raw_logging.h"
 #include "absl/base/internal/strerror.h"
 #include "absl/base/macros.h"
+#include "absl/base/no_destructor.h"
+#include "absl/base/nullability.h"
 #include "absl/debugging/stacktrace.h"
 #include "absl/debugging/symbolize.h"
 #include "absl/status/internal/status_internal.h"
@@ -89,21 +91,18 @@ std::ostream& operator<<(std::ostream& os, StatusCode code) {
   return os << StatusCodeToString(code);
 }
 
-const std::string* Status::EmptyString() {
-  static union EmptyString {
-    std::string str;
-    ~EmptyString() {}
-  } empty = {{}};
-  return &empty.str;
+absl::Nonnull<const std::string*> Status::EmptyString() {
+  static const absl::NoDestructor<std::string> kEmpty;
+  return kEmpty.get();
 }
 
 #ifdef ABSL_INTERNAL_NEED_REDUNDANT_CONSTEXPR_DECL
 constexpr const char Status::kMovedFromString[];
 #endif
 
-const std::string* Status::MovedFromString() {
-  static std::string* moved_from_string = new std::string(kMovedFromString);
-  return moved_from_string;
+absl::Nonnull<const std::string*> Status::MovedFromString() {
+  static const absl::NoDestructor<std::string> kMovedFrom(kMovedFromString);
+  return kMovedFrom.get();
 }
 
 Status::Status(absl::StatusCode code, absl::string_view msg)
@@ -113,7 +112,8 @@ Status::Status(absl::StatusCode code, absl::string_view msg)
   }
 }
 
-status_internal::StatusRep* Status::PrepareToModify(uintptr_t rep) {
+absl::Nonnull<status_internal::StatusRep*> Status::PrepareToModify(
+    uintptr_t rep) {
   if (IsInlined(rep)) {
     return new status_internal::StatusRep(InlinedRepToCode(rep),
                                           absl::string_view(), nullptr);
@@ -273,14 +273,12 @@ StatusCode ErrnoToStatusCode(int error_number) {
     case EFAULT:        // Bad address
     case EILSEQ:        // Illegal byte sequence
     case ENOPROTOOPT:   // Protocol not available
-    case ENOSTR:        // Not a STREAM
     case ENOTSOCK:      // Not a socket
     case ENOTTY:        // Inappropriate I/O control operation
     case EPROTOTYPE:    // Protocol wrong type for socket
     case ESPIPE:        // Invalid seek
       return StatusCode::kInvalidArgument;
     case ETIMEDOUT:  // Connection timed out
-    case ETIME:      // Timer expired
       return StatusCode::kDeadlineExceeded;
     case ENODEV:  // No such device
     case ENOENT:  // No such file or directory
@@ -339,9 +337,7 @@ StatusCode ErrnoToStatusCode(int error_number) {
     case EMLINK:   // Too many links
     case ENFILE:   // Too many open files in system
     case ENOBUFS:  // No buffer space available
-    case ENODATA:  // No message is available on the STREAM read queue
     case ENOMEM:   // Not enough space
-    case ENOSR:    // No STREAM resources
 #ifdef EUSERS
     case EUSERS:  // Too many users
 #endif
@@ -414,7 +410,7 @@ Status ErrnoToStatus(int error_number, absl::string_view message) {
                 MessageForErrnoToStatus(error_number, message));
 }
 
-const char* StatusMessageAsCStr(const Status& status) {
+absl::Nonnull<const char*> StatusMessageAsCStr(const Status& status) {
   // As an internal implementation detail, we guarantee that if status.message()
   // is non-empty, then the resulting string_view is null terminated.
   auto sv_message = status.message();

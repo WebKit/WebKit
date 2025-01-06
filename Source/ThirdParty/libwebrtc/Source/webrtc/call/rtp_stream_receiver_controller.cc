@@ -10,8 +10,12 @@
 
 #include "call/rtp_stream_receiver_controller.h"
 
+#include <cstdint>
 #include <memory>
 
+#include "api/sequence_checker.h"
+#include "call/rtp_packet_sink_interface.h"
+#include "call/rtp_stream_receiver_controller_interface.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

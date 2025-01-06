@@ -42,10 +42,10 @@ class QualityScaler::QpSmoother {
         last_sample_ms_(0),
         smoother_(alpha) {}
 
-  absl::optional<int> GetAvg() const {
+  std::optional<int> GetAvg() const {
     float value = smoother_.filtered();
     if (value == rtc::ExpFilter::kValueUndefined) {
-      return absl::nullopt;
+      return std::nullopt;
     }
     return static_cast<int>(value);
   }
@@ -260,21 +260,6 @@ void QualityScaler::ReportQp(int qp, int64_t time_sent_us) {
     qp_smoother_low_->Add(qp, time_sent_us);
 }
 
-bool QualityScaler::QpFastFilterLow() const {
-  RTC_DCHECK_RUN_ON(&task_checker_);
-  size_t num_frames = config_.use_all_drop_reasons
-                          ? framedrop_percent_all_.Size()
-                          : framedrop_percent_media_opt_.Size();
-  const size_t kMinNumFrames = 10;
-  if (num_frames < kMinNumFrames) {
-    return false;  // Wait for more frames before making a decision.
-  }
-  absl::optional<int> avg_qp_high = qp_smoother_high_
-                                        ? qp_smoother_high_->GetAvg()
-                                        : average_qp_.GetAverageRoundedDown();
-  return (avg_qp_high) ? (avg_qp_high.value() <= thresholds_.low) : false;
-}
-
 QualityScaler::CheckQpResult QualityScaler::CheckQp() const {
   RTC_DCHECK_RUN_ON(&task_checker_);
   // Should be set through InitEncode -> Should be set by now.
@@ -290,7 +275,7 @@ QualityScaler::CheckQpResult QualityScaler::CheckQp() const {
   }
 
   // Check if we should scale down due to high frame drop.
-  const absl::optional<int> drop_rate =
+  const std::optional<int> drop_rate =
       config_.use_all_drop_reasons
           ? framedrop_percent_all_.GetAverageRoundedDown()
           : framedrop_percent_media_opt_.GetAverageRoundedDown();
@@ -300,10 +285,10 @@ QualityScaler::CheckQpResult QualityScaler::CheckQp() const {
   }
 
   // Check if we should scale up or down based on QP.
-  const absl::optional<int> avg_qp_high =
+  const std::optional<int> avg_qp_high =
       qp_smoother_high_ ? qp_smoother_high_->GetAvg()
                         : average_qp_.GetAverageRoundedDown();
-  const absl::optional<int> avg_qp_low =
+  const std::optional<int> avg_qp_low =
       qp_smoother_low_ ? qp_smoother_low_->GetAvg()
                        : average_qp_.GetAverageRoundedDown();
   if (avg_qp_high && avg_qp_low) {

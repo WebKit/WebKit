@@ -28,6 +28,7 @@
 #if USE(AUDIO_SESSION) && PLATFORM(IOS_FAMILY)
 
 #include "AudioSessionCocoa.h"
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WebInterruptionObserverHelper;
 
@@ -38,8 +39,9 @@ class WorkQueue;
 namespace WebCore {
 
 class AudioSessionIOS final : public AudioSessionCocoa {
+    WTF_MAKE_TZONE_ALLOCATED(AudioSessionIOS);
 public:
-    AudioSessionIOS();
+    static Ref<AudioSessionIOS> create();
     virtual ~AudioSessionIOS();
 
     void setHostProcessAttribution(audit_token_t) final;
@@ -49,6 +51,8 @@ public:
     WEBCORE_EXPORT static void addAudioSessionCategoryChangedObserver(const CategoryChangedObserver&);
 
 private:
+    AudioSessionIOS();
+
     // AudioSession
     CategoryType category() const final;
     Mode mode() const final;
@@ -72,7 +76,7 @@ private:
     void setSoundStageSize(SoundStageSize) final;
     SoundStageSize soundStageSize() const final { return m_soundStageSize; }
 
-    String m_lastSetPreferredAudioDeviceUID;
+    String m_lastSetPreferredMicrophoneID;
     RetainPtr<WebInterruptionObserverHelper> m_interruptionObserverHelper;
     String m_sceneIdentifier;
     SoundStageSize m_soundStageSize { SoundStageSize::Automatic };

@@ -12,8 +12,8 @@
 #define MODULES_AUDIO_CODING_NETEQ_UNDERRUN_OPTIMIZER_H_
 
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/neteq/tick_timer.h"
 #include "modules/audio_coding/neteq/histogram.h"
 
@@ -27,12 +27,12 @@ class UnderrunOptimizer {
   UnderrunOptimizer(const TickTimer* tick_timer,
                     int histogram_quantile,
                     int forget_factor,
-                    absl::optional<int> start_forget_weight,
-                    absl::optional<int> resample_interval_ms);
+                    std::optional<int> start_forget_weight,
+                    std::optional<int> resample_interval_ms);
 
   void Update(int relative_delay_ms);
 
-  absl::optional<int> GetOptimalDelayMs() const { return optimal_delay_ms_; }
+  std::optional<int> GetOptimalDelayMs() const { return optimal_delay_ms_; }
 
   void Reset();
 
@@ -40,10 +40,10 @@ class UnderrunOptimizer {
   const TickTimer* tick_timer_;
   Histogram histogram_;
   const int histogram_quantile_;  // In Q30.
-  const absl::optional<int> resample_interval_ms_;
+  const std::optional<int> resample_interval_ms_;
   std::unique_ptr<TickTimer::Stopwatch> resample_stopwatch_;
   int max_delay_in_interval_ms_ = 0;
-  absl::optional<int> optimal_delay_ms_;
+  std::optional<int> optimal_delay_ms_;
 };
 
 }  // namespace webrtc

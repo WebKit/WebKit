@@ -10,7 +10,8 @@
 
 #include "rtc_base/experiments/stable_target_rate_experiment.h"
 
-#include "api/transport/field_trial_based_config.h"
+#include "api/field_trials_view.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 
 namespace webrtc {
 namespace {
@@ -18,35 +19,21 @@ constexpr char kFieldTrialName[] = "WebRTC-StableTargetRate";
 }  // namespace
 
 StableTargetRateExperiment::StableTargetRateExperiment(
-    const FieldTrialsView* const key_value_config,
-    double default_video_hysteresis,
-    double default_screenshare_hysteresis)
+    const FieldTrialsView& key_value_config)
     : enabled_("enabled", false),
       video_hysteresis_factor_("video_hysteresis_factor",
-                               default_video_hysteresis),
+                               /*default_value=*/1.2),
       screenshare_hysteresis_factor_("screenshare_hysteresis_factor",
-                                     default_screenshare_hysteresis) {
+                                     /*default_value=*/1.35) {
   ParseFieldTrial(
       {&enabled_, &video_hysteresis_factor_, &screenshare_hysteresis_factor_},
-      key_value_config->Lookup(kFieldTrialName));
+      key_value_config.Lookup(kFieldTrialName));
 }
 
 StableTargetRateExperiment::StableTargetRateExperiment(
     const StableTargetRateExperiment&) = default;
 StableTargetRateExperiment::StableTargetRateExperiment(
     StableTargetRateExperiment&&) = default;
-
-StableTargetRateExperiment StableTargetRateExperiment::ParseFromFieldTrials() {
-  FieldTrialBasedConfig config;
-  return ParseFromKeyValueConfig(&config);
-}
-
-StableTargetRateExperiment StableTargetRateExperiment::ParseFromKeyValueConfig(
-    const FieldTrialsView* const key_value_config) {
-  return StableTargetRateExperiment(key_value_config,
-                                    /*default_video_hysteresis=*/1.2,
-                                    /*default_screenshare_hysteresis=*/1.35);
-}
 
 bool StableTargetRateExperiment::IsEnabled() const {
   return enabled_.Get();

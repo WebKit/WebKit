@@ -35,9 +35,9 @@ class LoggingDelayVariationCalculator {
   void Insert(uint32_t rtp_timestamp,
               Timestamp arrival_time,
               DataSize size,
-              absl::optional<int> spatial_layer = absl::nullopt,
-              absl::optional<int> temporal_layer = absl::nullopt,
-              absl::optional<VideoFrameType> frame_type = absl::nullopt);
+              std::optional<int> spatial_layer = std::nullopt,
+              std::optional<int> temporal_layer = std::nullopt,
+              std::optional<VideoFrameType> frame_type = std::nullopt);
 
  private:
   void LogMetrics() const;

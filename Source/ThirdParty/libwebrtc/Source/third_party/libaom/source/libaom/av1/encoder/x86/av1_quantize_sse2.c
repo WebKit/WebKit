@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -17,7 +17,7 @@
 #include "aom/aom_integer.h"
 #include "aom_dsp/x86/quantize_x86.h"
 
-static INLINE void read_coeff(const tran_low_t *coeff, intptr_t offset,
+static inline void read_coeff(const tran_low_t *coeff, intptr_t offset,
                               __m128i *c0, __m128i *c1) {
   const tran_low_t *addr = coeff + offset;
   if (sizeof(tran_low_t) == 4) {
@@ -33,7 +33,7 @@ static INLINE void read_coeff(const tran_low_t *coeff, intptr_t offset,
   }
 }
 
-static INLINE void write_qcoeff(const __m128i *qc0, const __m128i *qc1,
+static inline void write_qcoeff(const __m128i *qc0, const __m128i *qc1,
                                 tran_low_t *qcoeff, intptr_t offset) {
   tran_low_t *addr = qcoeff + offset;
   if (sizeof(tran_low_t) == 4) {
@@ -55,7 +55,7 @@ static INLINE void write_qcoeff(const __m128i *qc0, const __m128i *qc1,
   }
 }
 
-static INLINE void write_zero(tran_low_t *qcoeff, intptr_t offset) {
+static inline void write_zero(tran_low_t *qcoeff, intptr_t offset) {
   const __m128i zero = _mm_setzero_si128();
   tran_low_t *addr = qcoeff + offset;
   if (sizeof(tran_low_t) == 4) {
@@ -69,7 +69,7 @@ static INLINE void write_zero(tran_low_t *qcoeff, intptr_t offset) {
   }
 }
 
-static INLINE void quantize(const int16_t *iscan_ptr,
+static inline void quantize(const int16_t *iscan_ptr,
                             const tran_low_t *coeff_ptr, intptr_t n_coeffs,
                             tran_low_t *qcoeff_ptr, tran_low_t *dqcoeff_ptr,
                             const __m128i *round0, const __m128i *round1,
@@ -189,7 +189,7 @@ void av1_quantize_fp_sse2(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
   }
 }
 
-static INLINE void quantize_lp(const int16_t *iscan_ptr,
+static inline void quantize_lp(const int16_t *iscan_ptr,
                                const int16_t *coeff_ptr, intptr_t n_coeffs,
                                int16_t *qcoeff_ptr, int16_t *dqcoeff_ptr,
                                const __m128i *round0, const __m128i *round1,

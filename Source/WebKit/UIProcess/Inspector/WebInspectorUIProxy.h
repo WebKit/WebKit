@@ -61,6 +61,10 @@ OBJC_CLASS WKInspectorViewController;
 #include "WebView.h"
 #elif PLATFORM(GTK)
 #include <wtf/glib/GWeakPtr.h>
+#elif PLATFORM(WPE)
+#include "WPEWebView.h"
+#include <wtf/glib/GRefPtr.h>
+typedef struct _WPEToplevel WPEToplevel;
 #endif
 
 namespace WebCore {
@@ -103,17 +107,21 @@ public:
     explicit WebInspectorUIProxy(WebPageProxy&);
     virtual ~WebInspectorUIProxy();
 
+    void ref() const final { API::ObjectImpl<API::Object::Type::Inspector>::ref(); }
+    void deref() const final { API::ObjectImpl<API::Object::Type::Inspector>::deref(); }
+
     void invalidate();
 
     API::InspectorClient& inspectorClient() { return *m_inspectorClient; }
     void setInspectorClient(std::unique_ptr<API::InspectorClient>&&);
 
     // Public APIs
-    RefPtr<WebPageProxy> inspectedPage() const { return m_inspectedPage.get(); }
-    RefPtr<WebPageProxy> inspectorPage() const { return m_inspectorPage.get(); }
+    RefPtr<WebPageProxy> protectedInspectedPage() const { return m_inspectedPage.get(); }
+    RefPtr<WebPageProxy> protectedInspectorPage() const { return m_inspectorPage.get(); }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
+    RefPtr<WebInspectorUIExtensionControllerProxy> protectedExtensionController() const;
 #endif
 
     bool isConnected() const { return !!m_inspectorPage; }
@@ -165,7 +173,7 @@ public:
 
     void showConsole();
     void showResources();
-    void showMainResourceForFrame(WebFrameProxy*);
+    void showMainResourceForFrame(WebCore::FrameIdentifier);
     void openURLExternally(const String& url);
     void revealFileExternally(const String& path);
 
@@ -220,7 +228,7 @@ private:
     void sendMessageToFrontend(const String& message) override;
     ConnectionType connectionType() const override { return ConnectionType::Local; }
 
-    WebPageProxy* platformCreateFrontendPage();
+    RefPtr<WebPageProxy> platformCreateFrontendPage();
     void platformCreateFrontendWindow();
     void platformCloseFrontendPageAndWindow();
 
@@ -249,6 +257,8 @@ private:
 
 #if PLATFORM(MAC)
     bool platformCanAttach(bool webProcessCanAttach);
+#elif PLATFORM(WPE)
+    bool platformCanAttach(bool) { return false; }
 #else
     bool platformCanAttach(bool webProcessCanAttach) { return webProcessCanAttach; }
 #endif
@@ -288,6 +298,7 @@ private:
     unsigned inspectionLevel() const;
 
     WebPreferences& inspectorPagePreferences() const;
+    Ref<WebPreferences> protectedInspectorPagePreferences() const;
 
 #if PLATFORM(MAC)
     void applyForcedAppearance();
@@ -343,6 +354,9 @@ private:
     GWeakPtr<GtkWidget> m_inspectorWindow;
     GtkWidget* m_headerBar { nullptr };
     String m_inspectedURLString;
+#elif PLATFORM(WPE)
+    RefPtr<WKWPE::View> m_inspectorView;
+    GRefPtr<WPEToplevel> m_inspectorWindow;
 #elif PLATFORM(WIN)
     HWND m_inspectedViewWindow { nullptr };
     HWND m_inspectedViewParentWindow { nullptr };

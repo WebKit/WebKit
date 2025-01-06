@@ -33,9 +33,14 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN // GLib/Win ports
 #include <skia/core/SkCanvas.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceGraphicSkiaApplier);
 
 bool SourceGraphicSkiaApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {

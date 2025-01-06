@@ -11,15 +11,18 @@
 #include "src/gpu/RefCntedCallback.h"
 #include "src/gpu/graphite/Buffer.h"
 #include "src/gpu/graphite/ComputePipeline.h"
+#include "src/gpu/graphite/DrawPass.h"
 #include "src/gpu/graphite/GraphicsPipeline.h"
 #include "src/gpu/graphite/Log.h"
+#include "src/gpu/graphite/RenderPassDesc.h"
+#include "src/gpu/graphite/ResourceProvider.h"
 #include "src/gpu/graphite/Sampler.h"
 #include "src/gpu/graphite/Texture.h"
 #include "src/gpu/graphite/TextureProxy.h"
 
 namespace skgpu::graphite {
 
-CommandBuffer::CommandBuffer() {}
+CommandBuffer::CommandBuffer(Protected isProtected) : fIsProtected(isProtected) {}
 
 CommandBuffer::~CommandBuffer() {
     this->releaseResources();
@@ -35,6 +38,10 @@ void CommandBuffer::releaseResources() {
 void CommandBuffer::resetCommandBuffer() {
     TRACE_EVENT0("skia.gpu", TRACE_FUNC);
 
+    // The dst copy texture and sampler are kept alive by the tracked resources, so reset these
+    // before we release their refs. Assuming we don't go idle and free lots of resources, we'll
+    // get the same cached sampler the next time we need a dst copy.
+    fDstCopy = {nullptr, nullptr};
     this->releaseResources();
     this->onResetCommandBuffer();
     fBuffersToAsyncMap.clear();
@@ -57,6 +64,14 @@ void CommandBuffer::callFinishedProcs(bool success) {
         for (int i = 0; i < fFinishedProcs.size(); ++i) {
             fFinishedProcs[i]->setFailureResult();
         }
+    } else {
+        if (auto stats = this->gpuStats()) {
+            for (int i = 0; i < fFinishedProcs.size(); ++i) {
+                if (fFinishedProcs[i]->receivesGpuStats()) {
+                    fFinishedProcs[i]->setStats(*stats);
+                }
+            }
+        }
     }
     fFinishedProcs.clear();
 }
@@ -76,12 +91,55 @@ bool CommandBuffer::addRenderPass(const RenderPassDesc& renderPassDesc,
                                   sk_sp<Texture> colorTexture,
                                   sk_sp<Texture> resolveTexture,
                                   sk_sp<Texture> depthStencilTexture,
-                                  SkRect viewport,
+                                  const Texture* dstCopy,
+                                  SkIRect dstCopyBounds,
+                                  SkISize viewportDims,
                                   const DrawPassList& drawPasses) {
     TRACE_EVENT0("skia.gpu", TRACE_FUNC);
 
-    fRenderPassSize = colorTexture->dimensions();
+    fColorAttachmentSize = colorTexture->dimensions();
+    SkIRect colorAttachmentBounds = SkIRect::MakeSize(fColorAttachmentSize);
+
+    SkIRect renderPassBounds;
+    for (const auto& drawPass : drawPasses) {
+        renderPassBounds.join(drawPass->bounds());
+    }
+    if (renderPassDesc.fColorAttachment.fLoadOp == LoadOp::kClear) {
+        renderPassBounds.join(colorAttachmentBounds);
+    }
+    renderPassBounds.offset(fReplayTranslation.x(), fReplayTranslation.y());
+    if (!renderPassBounds.intersect(colorAttachmentBounds)) {
+        // The entire RenderPass is offscreen given the replay translation so skip adding the pass
+        // at all
+        return true;
+    }
+
+    dstCopyBounds.offset(fReplayTranslation.x(), fReplayTranslation.y());
+    if (!dstCopyBounds.intersect(colorAttachmentBounds)) {
+        // The draws within the RenderPass that would sample from the dstCopy have been translated
+        // off screen. Set the bounds to empty and let the GPU clipping do its job.
+        dstCopyBounds = SkIRect::MakeEmpty();
+    }
+    // Save the dstCopy texture so that it can be embedded into texture bind commands later on.
+    // Stash the texture's full dimensions on the rect so we can calculate normalized coords later.
+    fDstCopy.first = dstCopy;
+    fDstCopyBounds = dstCopy ? SkIRect::MakePtSize(dstCopyBounds.topLeft(), dstCopy->dimensions())
+                             : SkIRect::MakeEmpty();
+    if (dstCopy && !fDstCopy.second) {
+        // Only lookup the sampler the first time we require a dstCopy. The texture can change
+        // on subsequent passes but it will always use the same nearest neighbor sampling.
+        sk_sp<Sampler> nearestNeighbor = this->resourceProvider()->findOrCreateCompatibleSampler(
+                {SkFilterMode::kNearest, SkTileMode::kClamp});
+        fDstCopy.second = nearestNeighbor.get();
+        this->trackResource(std::move(nearestNeighbor));
+    }
+
+    // We don't intersect the viewport with the render pass bounds or target size because it just
+    // defines a linear transform, which we don't want to change just because a portion of it maps
+    // to a region that gets clipped.
+    SkIRect viewport = SkIRect::MakePtSize(fReplayTranslation, viewportDims);
     if (!this->onAddRenderPass(renderPassDesc,
+                               renderPassBounds,
                                colorTexture.get(),
                                resolveTexture.get(),
                                depthStencilTexture.get(),

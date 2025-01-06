@@ -16,10 +16,10 @@
 #include "absl/strings/string_view.h"
 #include "api/audio_codecs/audio_decoder_factory_template.h"
 #include "api/audio_codecs/audio_encoder_factory_template.h"
-#include "api/audio_codecs/ilbc/audio_decoder_ilbc.h"
-#include "api/audio_codecs/ilbc/audio_encoder_ilbc.h"
 #include "api/audio_codecs/opus/audio_decoder_opus.h"
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
+#include "api/environment/environment_factory.h"
+#include "api/neteq/default_neteq_factory.h"
 #include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
 #include "modules/audio_coding/test/PCMFile.h"
 #include "rtc_base/strings/string_builder.h"
@@ -66,29 +66,29 @@ void MonitoringAudioPacketizationCallback::GetStatistics(uint32_t* counter) {
 }
 
 TestVadDtx::TestVadDtx()
-    : encoder_factory_(
-          CreateAudioEncoderFactory<AudioEncoderIlbc, AudioEncoderOpus>()),
-      decoder_factory_(
-          CreateAudioDecoderFactory<AudioDecoderIlbc, AudioDecoderOpus>()),
+    : env_(CreateEnvironment()),
+      encoder_factory_(CreateAudioEncoderFactory<AudioEncoderOpus>()),
+      decoder_factory_(CreateAudioDecoderFactory<AudioDecoderOpus>()),
       acm_send_(AudioCodingModule::Create()),
-      acm_receive_(std::make_unique<acm2::AcmReceiver>(
-          acm2::AcmReceiver::Config(decoder_factory_))),
+      neteq_(DefaultNetEqFactory().Create(env_,
+                                          NetEq::Config(),
+                                          decoder_factory_)),
       channel_(std::make_unique<Channel>()),
       packetization_callback_(
           std::make_unique<MonitoringAudioPacketizationCallback>(
               channel_.get())) {
   EXPECT_EQ(
       0, acm_send_->RegisterTransportCallback(packetization_callback_.get()));
-  channel_->RegisterReceiverACM(acm_receive_.get());
+  channel_->RegisterReceiverNetEq(neteq_.get());
 }
 
 bool TestVadDtx::RegisterCodec(const SdpAudioFormat& codec_format,
-                               absl::optional<Vad::Aggressiveness> vad_mode) {
+                               std::optional<Vad::Aggressiveness> vad_mode) {
   constexpr int payload_type = 17, cn_payload_type = 117;
   bool added_comfort_noise = false;
 
-  auto encoder = encoder_factory_->MakeAudioEncoder(payload_type, codec_format,
-                                                    absl::nullopt);
+  auto encoder = encoder_factory_->Create(env_, codec_format,
+                                          {.payload_type = payload_type});
   if (vad_mode.has_value() &&
       !absl::EqualsIgnoreCase(codec_format.name, "opus")) {
     AudioEncoderCngConfig config;
@@ -103,7 +103,7 @@ bool TestVadDtx::RegisterCodec(const SdpAudioFormat& codec_format,
   acm_send_->SetEncoder(std::move(encoder));
 
   std::map<int, SdpAudioFormat> receive_codecs = {{payload_type, codec_format}};
-  acm_receive_->SetCodecs(receive_codecs);
+  neteq_->SetCodecs(receive_codecs);
 
   return added_comfort_noise;
 }
@@ -142,7 +142,8 @@ void TestVadDtx::Run(absl::string_view in_filename,
     time_stamp_ += frame_size_samples;
     EXPECT_GE(acm_send_->Add10MsData(audio_frame), 0);
     bool muted;
-    acm_receive_->GetAudio(kOutputFreqHz, &audio_frame, &muted);
+    neteq_->GetAudio(&audio_frame, &muted);
+    resampler_helper_.MaybeResample(kOutputFreqHz, &audio_frame);
     ASSERT_FALSE(muted);
     out_file.Write10MsData(audio_frame);
   }
@@ -177,14 +178,13 @@ void TestVadDtx::Run(absl::string_view in_filename,
 TestWebRtcVadDtx::TestWebRtcVadDtx() : output_file_num_(0) {}
 
 void TestWebRtcVadDtx::Perform() {
-  RunTestCases({"ILBC", 8000, 1});
   RunTestCases({"opus", 48000, 2});
 }
 
 // Test various configurations on VAD/DTX.
 void TestWebRtcVadDtx::RunTestCases(const SdpAudioFormat& codec_format) {
   Test(/*new_outfile=*/true,
-       /*expect_dtx_enabled=*/RegisterCodec(codec_format, absl::nullopt));
+       /*expect_dtx_enabled=*/RegisterCodec(codec_format, std::nullopt));
 
   Test(/*new_outfile=*/false,
        /*expect_dtx_enabled=*/RegisterCodec(codec_format, Vad::kVadAggressive));
@@ -219,7 +219,7 @@ void TestOpusDtx::Perform() {
   // Register Opus as send codec
   std::string out_filename =
       webrtc::test::OutputPath() + "testOpusDtx_outFile_mono.pcm";
-  RegisterCodec({"opus", 48000, 2}, absl::nullopt);
+  RegisterCodec({"opus", 48000, 2}, std::nullopt);
   acm_send_->ModifyEncoder([](std::unique_ptr<AudioEncoder>* encoder_ptr) {
     (*encoder_ptr)->SetDtx(false);
   });

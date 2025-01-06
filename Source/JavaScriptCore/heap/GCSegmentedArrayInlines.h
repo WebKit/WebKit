@@ -27,6 +27,8 @@
 
 #include "GCSegmentedArray.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 template <typename T>
@@ -221,3 +223,5 @@ inline size_t GCSegmentedArray<T>::size() const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

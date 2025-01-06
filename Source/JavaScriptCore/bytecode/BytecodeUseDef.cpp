@@ -70,6 +70,11 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
             (functor(virtualRegisters), ...);
     };
 
+    auto useAt = [&] (Checkpoint target, auto... virtualRegisters) {
+        if (target == checkpoint)
+            (functor(virtualRegisters), ...);
+    };
+
     switch (opcodeID) {
     case op_wide16:
     case op_wide32:
@@ -231,7 +236,6 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     USES(OpHasPrivateBrand, base, brand)
     USES(OpHasStructureWithFlags, operand)
     USES(OpOverridesHasInstance, constructor, hasInstanceValue)
-    USES(OpInstanceof, value, prototype)
     USES(OpAdd, lhs, rhs)
     USES(OpMul, lhs, rhs)
     USES(OpDiv, lhs, rhs)
@@ -260,7 +264,6 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     USES(OpTailCallForwardArguments, callee, thisValue)
 
     USES(OpGetByValWithThis, base, thisValue, property)
-    USES(OpInstanceofCustom, value, constructor, hasInstanceValue)
 
     case op_call_varargs: {
         auto bytecode = instruction->as<OpCallVarargs>();
@@ -274,6 +277,11 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     }
     case op_construct_varargs: {
         auto bytecode = instruction->as<OpConstructVarargs>();
+        useAtEachCheckpoint(bytecode.m_callee, bytecode.m_thisValue, bytecode.m_arguments);
+        return;
+    }
+    case op_super_construct_varargs: {
+        auto bytecode = instruction->as<OpSuperConstructVarargs>();
         useAtEachCheckpoint(bytecode.m_callee, bytecode.m_thisValue, bytecode.m_arguments);
         return;
     }
@@ -325,6 +333,11 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     case op_construct:
         handleOpCallLike(instruction->as<OpConstruct>());
         return;
+
+    case op_super_construct:
+        handleOpCallLike(instruction->as<OpSuperConstruct>());
+        return;
+
     case op_call_direct_eval: {
         auto bytecode = instruction->as<OpCallDirectEval>();
         handleOpCallLike(bytecode);
@@ -341,6 +354,14 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     case op_call_ignore_result:
         handleOpCallLike(instruction->as<OpCallIgnoreResult>());
         return;
+
+    case op_instanceof: {
+        auto bytecode = instruction->as<OpInstanceof>();
+        useAt(OpInstanceof::getHasInstance, bytecode.m_constructor);
+        useAt(OpInstanceof::getPrototype, bytecode.m_value, bytecode.m_constructor, bytecode.m_hasInstanceOrPrototype);
+        useAt(OpInstanceof::instanceof, bytecode.m_value, bytecode.m_hasInstanceOrPrototype);
+        return;
+    }
 
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -477,6 +498,11 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
         defAt(OpConstructVarargs::makeCall, bytecode.m_dst);
         return;
     }
+    case op_super_construct_varargs: {
+        auto bytecode = instruction->as<OpSuperConstructVarargs>();
+        defAt(OpSuperConstructVarargs::makeCall, bytecode.m_dst);
+        return;
+    }
 
     DEFS(OpTailCallForwardArguments, dst)
     DEFS(OpGetFromScope, dst)
@@ -484,6 +510,7 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     DEFS(OpTailCall, dst)
     DEFS(OpCallDirectEval, dst)
     DEFS(OpConstruct, dst)
+    DEFS(OpSuperConstruct, dst)
     DEFS(OpTryGetById, dst)
     DEFS(OpGetById, dst)
     DEFS(OpGetLength, dst)
@@ -492,8 +519,6 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     DEFS(OpGetByValWithThis, dst)
     DEFS(OpGetPrototypeOf, dst)
     DEFS(OpOverridesHasInstance, dst)
-    DEFS(OpInstanceof, dst)
-    DEFS(OpInstanceofCustom, dst)
     DEFS(OpGetByVal, dst)
     DEFS(OpGetPrivateName, dst)
     DEFS(OpTypeof, dst)
@@ -595,6 +620,14 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     case op_enter: {
         for (unsigned i = numVars; i--;)
             functor(virtualRegisterForLocal(i));
+        return;
+    }
+
+    case op_instanceof: {
+        auto bytecode = instruction->as<OpInstanceof>();
+        defAt(OpInstanceof::getHasInstance, bytecode.m_hasInstanceOrPrototype);
+        defAt(OpInstanceof::getPrototype, bytecode.m_hasInstanceOrPrototype);
+        defAt(OpInstanceof::instanceof, bytecode.m_dst);
         return;
     }
     }

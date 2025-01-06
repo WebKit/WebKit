@@ -51,7 +51,7 @@ TEST(WKWebView, EvaluateJavaScriptBlockCrash)
     @autoreleasepool {
         RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
         [webView loadRequest:request];
 
         [webView evaluateJavaScript:@"" completionHandler:^(id result, NSError *error) {
@@ -77,7 +77,7 @@ TEST(WKWebView, EvaluateJavaScriptErrorCases)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -483,6 +483,20 @@ TEST(WebKit, AllowsContentJavaScriptFromDefaultPreferences)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebKit, AllowsContentJavaScriptAffectsNoscriptElements)
+{
+    RetainPtr preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [preferences setAllowsContentJavaScript:NO];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setDefaultWebpagePreferences:preferences.get()];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView synchronouslyLoadHTMLString:@"<noscript>this text should be inserted into the DOM</noscript>"];
+    EXPECT_WK_STREQ([webView contentsAsString], "this text should be inserted into the DOM");
 }
 
 TEST(WebKit, SPIJavascriptMarkupVsAPIContentJavaScript)

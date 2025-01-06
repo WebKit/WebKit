@@ -31,15 +31,7 @@
 #include "XRDeviceIdentifier.h"
 #include "XRDeviceProxy.h"
 #include <WebCore/PlatformXR.h>
-
-namespace WebKit {
-class PlatformXRSystemProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PlatformXRSystemProxy> : std::true_type { };
-}
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 class SecurityOriginData;
@@ -50,6 +42,7 @@ namespace WebKit {
 class WebPage;
 
 class PlatformXRSystemProxy : public IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PlatformXRSystemProxy(WebPage&);
     virtual ~PlatformXRSystemProxy();
@@ -58,13 +51,19 @@ public:
     void requestPermissionOnSessionFeatures(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& /* granted */, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, const PlatformXR::Device::FeatureList& /* requiredFeaturesRequested */, const PlatformXR::Device::FeatureList& /* optionalFeaturesRequested */,  CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&);
     void initializeTrackingAndRendering();
     void shutDownTrackingAndRendering();
-    void requestFrame(PlatformXR::Device::RequestFrameCallback&&);
+    void didCompleteShutdownTriggeredBySystem();
+    void requestFrame(std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&&);
     std::optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t, uint32_t, bool);
     void submitFrame();
+
+    void ref() const final;
+    void deref() const final;
 
 private:
     RefPtr<XRDeviceProxy> deviceByIdentifier(XRDeviceIdentifier);
     bool webXREnabled() const;
+
+    Ref<WebPage> protectedPage() const;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -74,7 +73,7 @@ private:
     void sessionDidUpdateVisibilityState(XRDeviceIdentifier, PlatformXR::VisibilityState);
 
     PlatformXR::Instance::DeviceList m_devices;
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
 };
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -41,7 +41,7 @@ void aom_wb_write_bit(struct aom_write_bit_buffer *wb, int bit) {
   wb->bit_offset = off + 1;
 }
 
-void aom_wb_overwrite_bit(struct aom_write_bit_buffer *wb, int bit) {
+static void overwrite_bit(struct aom_write_bit_buffer *wb, int bit) {
   // Do not zero bytes but overwrite exisiting values
   const int off = (int)wb->bit_offset;
   const int p = off / CHAR_BIT;
@@ -67,8 +67,7 @@ void aom_wb_write_unsigned_literal(struct aom_write_bit_buffer *wb,
 void aom_wb_overwrite_literal(struct aom_write_bit_buffer *wb, int data,
                               int bits) {
   int bit;
-  for (bit = bits - 1; bit >= 0; bit--)
-    aom_wb_overwrite_bit(wb, (data >> bit) & 1);
+  for (bit = bits - 1; bit >= 0; bit--) overwrite_bit(wb, (data >> bit) & 1);
 }
 
 void aom_wb_write_inv_signed_literal(struct aom_write_bit_buffer *wb, int data,

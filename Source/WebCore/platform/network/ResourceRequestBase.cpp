@@ -36,8 +36,11 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include <wtf/PointerComparison.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceRequestBase);
 
 #if PLATFORM(IOS_FAMILY)
 double ResourceRequestBase::s_defaultTimeoutInterval = INT_MAX;
@@ -185,6 +188,54 @@ ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& r
     request.m_requestData.m_httpHeaderFields.remove(HTTPHeaderName::ProxyAuthorization);
 
     return request;
+}
+
+bool ResourceRequestBase::upgradeInsecureRequest(URL& url)
+{
+    if (!url.protocolIs("http"_s) && !url.protocolIs("ws"_s))
+        return false;
+
+    if (url.protocolIs("http"_s))
+        url.setProtocol("https"_s);
+    else {
+        ASSERT(url.protocolIs("ws"_s));
+        url.setProtocol("wss"_s);
+    }
+
+    if (url.port() == 80)
+        url.setPort(std::nullopt);
+
+    return true;
+}
+
+bool ResourceRequestBase::upgradeInsecureRequestIfNeeded(URL& url, ShouldUpgradeLocalhostAndIPAddress shouldUpgradeLocalhostAndIPAddress, const std::optional<uint16_t>& upgradePort)
+{
+    if (!url.protocolIs("http"_s) && !url.protocolIs("ws"_s))
+        return false;
+
+    // Do not automatically upgrade localhost or IP address connections unless the CSP policy requires it.
+    bool isHostLocalhostOrIPaddress = SecurityOrigin::isLocalhostAddress(url.host()) || URL::hostIsIPAddress(url.host());
+    if (isHostLocalhostOrIPaddress && shouldUpgradeLocalhostAndIPAddress == ShouldUpgradeLocalhostAndIPAddress::No)
+        return false;
+
+    if (!upgradeInsecureRequest(url))
+        return false;
+
+    if (url.port() && upgradePort)
+        url.setPort(*upgradePort);
+
+    return true;
+}
+
+void ResourceRequestBase::upgradeInsecureRequestIfNeeded(ShouldUpgradeLocalhostAndIPAddress shouldUpgradeLocalhostAndIPAddress, const std::optional<uint16_t>& upgradePort)
+{
+    bool wasUpgraded = upgradeInsecureRequestIfNeeded(m_requestData.m_url, shouldUpgradeLocalhostAndIPAddress, upgradePort);
+    setWasSchemeOptimisticallyUpgraded(wasUpgraded);
+}
+
+void ResourceRequestBase::upgradeInsecureRequest()
+{
+    upgradeInsecureRequest(m_requestData.m_url);
 }
 
 void ResourceRequestBase::removeCredentials()
@@ -679,6 +730,11 @@ void ResourceRequestBase::setIsPrivateTokenUsageByThirdPartyAllowed(bool isPriva
     m_requestData.m_isPrivateTokenUsageByThirdPartyAllowed = isPrivateTokenUsageByThirdPartyAllowed;
 }
 
+void ResourceRequestBase::setWasSchemeOptimisticallyUpgraded(bool wasSchemeOptimisticallyUpgraded)
+{
+    m_requestData.m_wasSchemeOptimisticallyUpgraded = wasSchemeOptimisticallyUpgraded;
+}
+
 bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceRequestBase& b)
 {
     if (a.url() != b.url())
@@ -791,18 +847,6 @@ void ResourceRequestBase::updateResourceRequest(HTTPBodyUpdatePolicy bodyPolicy)
         const_cast<ResourceRequest&>(asResourceRequest()).doUpdateResourceHTTPBody();
         m_resourceRequestBodyUpdated = true;
     }
-}
-
-void ResourceRequestBase::upgradeToHTTPS()
-{
-    const URL& originalURL = url();
-    ASSERT(originalURL.protocolIs("http"_s));
-
-    URL newURL = originalURL;
-    newURL.setProtocol("https"_s);
-    if (originalURL.port() && WTF::isDefaultPortForProtocol(originalURL.port().value(), originalURL.protocol()))
-        newURL.setPort(std::nullopt);
-    setURL(newURL);
 }
 
 #if !PLATFORM(COCOA) && !USE(SOUP)

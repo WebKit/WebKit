@@ -34,18 +34,27 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <WebCore/WebCoreMotionManager.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebDeviceOrientationUpdateProviderProxy);
+
+Ref<WebDeviceOrientationUpdateProviderProxy> WebDeviceOrientationUpdateProviderProxy::create(WebPageProxy& page)
+{
+    return adoptRef(*new WebDeviceOrientationUpdateProviderProxy(page));
+}
 
 WebDeviceOrientationUpdateProviderProxy::WebDeviceOrientationUpdateProviderProxy(WebPageProxy& page)
     : m_page(page)
 {
-    m_page.process().addMessageReceiver(Messages::WebDeviceOrientationUpdateProviderProxy::messageReceiverName(), m_page.webPageID(), *this);
+    page.protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebDeviceOrientationUpdateProviderProxy::messageReceiverName(), page.webPageIDInMainFrameProcess(), *this);
 }
 
 WebDeviceOrientationUpdateProviderProxy::~WebDeviceOrientationUpdateProviderProxy()
 {
-    m_page.process().removeMessageReceiver(Messages::WebDeviceOrientationUpdateProviderProxy::messageReceiverName(), m_page.webPageID());
+    if (RefPtr page = m_page.get())
+        page->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebDeviceOrientationUpdateProviderProxy::messageReceiverName(), page->webPageIDInMainFrameProcess());
 }
 
 void WebDeviceOrientationUpdateProviderProxy::startUpdatingDeviceOrientation()
@@ -70,12 +79,21 @@ void WebDeviceOrientationUpdateProviderProxy::stopUpdatingDeviceMotion()
 
 void WebDeviceOrientationUpdateProviderProxy::orientationChanged(double alpha, double beta, double gamma, double compassHeading, double compassAccuracy)
 {
-    m_page.send(Messages::WebDeviceOrientationUpdateProvider::DeviceOrientationChanged(alpha, beta, gamma, compassHeading, compassAccuracy));
+    if (RefPtr page = m_page.get())
+        page->protectedLegacyMainFrameProcess()->send(Messages::WebDeviceOrientationUpdateProvider::DeviceOrientationChanged(alpha, beta, gamma, compassHeading, compassAccuracy), m_page->webPageIDInMainFrameProcess());
 }
 
 void WebDeviceOrientationUpdateProviderProxy::motionChanged(double xAcceleration, double yAcceleration, double zAcceleration, double xAccelerationIncludingGravity, double yAccelerationIncludingGravity, double zAccelerationIncludingGravity, std::optional<double> xRotationRate, std::optional<double> yRotationRate, std::optional<double> zRotationRate)
 {
-    m_page.send(Messages::WebDeviceOrientationUpdateProvider::DeviceMotionChanged(xAcceleration, yAcceleration, zAcceleration, xAccelerationIncludingGravity, yAccelerationIncludingGravity, zAccelerationIncludingGravity, xRotationRate, yRotationRate, zRotationRate));
+    if (RefPtr page = m_page.get())
+        page->protectedLegacyMainFrameProcess()->send(Messages::WebDeviceOrientationUpdateProvider::DeviceMotionChanged(xAcceleration, yAcceleration, zAcceleration, xAccelerationIncludingGravity, yAccelerationIncludingGravity, zAccelerationIncludingGravity, xRotationRate, yRotationRate, zRotationRate), m_page->webPageIDInMainFrameProcess());
+}
+
+std::optional<SharedPreferencesForWebProcess> WebDeviceOrientationUpdateProviderProxy::sharedPreferencesForWebProcess() const
+{
+    if (RefPtr page = m_page.get())
+        return m_page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
+    return std::nullopt;
 }
 
 } // namespace WebKit

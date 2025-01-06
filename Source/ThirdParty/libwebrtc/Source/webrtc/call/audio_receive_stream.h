@@ -11,16 +11,23 @@
 #ifndef CALL_AUDIO_RECEIVE_STREAM_H_
 #define CALL_AUDIO_RECEIVE_STREAM_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
-#include <memory>
+#include <optional>
 #include <string>
-#include <vector>
 
-#include "absl/types/optional.h"
+#include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/call/transport.h"
 #include "api/crypto/crypto_options.h"
-#include "api/rtp_parameters.h"
+#include "api/crypto/frame_decryptor_interface.h"
+#include "api/frame_transformer_interface.h"
+#include "api/rtp_headers.h"
+#include "api/scoped_refptr.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "call/receive_stream.h"
 #include "call/rtp_config.h"
 
@@ -42,7 +49,7 @@ class AudioReceiveStreamInterface : public MediaReceiveStreamInterface {
     uint64_t packets_discarded = 0;
     uint32_t nacks_sent = 0;
     std::string codec_name;
-    absl::optional<int> codec_payload_type;
+    std::optional<int> codec_payload_type;
     uint32_t jitter_ms = 0;
     uint32_t jitter_buffer_ms = 0;
     uint32_t jitter_buffer_preferred_ms = 0;
@@ -62,6 +69,7 @@ class AudioReceiveStreamInterface : public MediaReceiveStreamInterface {
     double jitter_buffer_minimum_delay_seconds = 0.0;
     uint64_t inserted_samples_for_deceleration = 0;
     uint64_t removed_samples_for_acceleration = 0;
+    double total_processing_delay_seconds = 0.0;
     // Stats below DO NOT correspond directly to anything in the WebRTC stats
     float expand_rate = 0.0f;
     float speech_expand_rate = 0.0f;
@@ -83,21 +91,24 @@ class AudioReceiveStreamInterface : public MediaReceiveStreamInterface {
     // The timestamp at which the last packet was received, i.e. the time of the
     // local clock when it was received - not the RTP timestamp of that packet.
     // https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-lastpacketreceivedtimestamp
-    absl::optional<Timestamp> last_packet_received;
+    std::optional<Timestamp> last_packet_received;
     uint64_t jitter_buffer_flushes = 0;
     double relative_packet_arrival_delay_seconds = 0.0;
     int32_t interruption_count = 0;
     int32_t total_interruption_duration_ms = 0;
     // https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-estimatedplayouttimestamp
-    absl::optional<int64_t> estimated_playout_ntp_timestamp_ms;
+    std::optional<int64_t> estimated_playout_ntp_timestamp_ms;
     // Remote outbound stats derived by the received RTCP sender reports.
     // https://w3c.github.io/webrtc-stats/#remoteoutboundrtpstats-dict*
-    absl::optional<int64_t> last_sender_report_timestamp_ms;
-    absl::optional<int64_t> last_sender_report_remote_timestamp_ms;
+    std::optional<Timestamp> last_sender_report_timestamp;
+    // TODO: bugs.webrtc.org/370535296 - Remove the utc timestamp when linked
+    // issue is fixed.
+    std::optional<Timestamp> last_sender_report_utc_timestamp;
+    std::optional<Timestamp> last_sender_report_remote_utc_timestamp;
     uint64_t sender_reports_packets_sent = 0;
     uint64_t sender_reports_bytes_sent = 0;
     uint64_t sender_reports_reports_count = 0;
-    absl::optional<TimeDelta> round_trip_time;
+    std::optional<TimeDelta> round_trip_time;
     TimeDelta total_round_trip_time = TimeDelta::Zero();
     int round_trip_time_measurements = 0;
   };
@@ -117,6 +128,7 @@ class AudioReceiveStreamInterface : public MediaReceiveStreamInterface {
 
       // See NackConfig for description.
       NackConfig nack;
+      RtcpMode rtcp_mode = RtcpMode::kCompound;
     } rtp;
 
     // Receive-side RTT.
@@ -139,7 +151,7 @@ class AudioReceiveStreamInterface : public MediaReceiveStreamInterface {
 
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory;
 
-    absl::optional<AudioCodecPairId> codec_pair_id;
+    std::optional<AudioCodecPairId> codec_pair_id;
 
     // Per PeerConnection crypto options.
     webrtc::CryptoOptions crypto_options;

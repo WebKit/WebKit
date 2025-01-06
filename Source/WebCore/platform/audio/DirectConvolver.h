@@ -31,16 +31,17 @@
 
 #include "AudioArray.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DirectConvolver final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DirectConvolver);
     WTF_MAKE_NONCOPYABLE(DirectConvolver);
 public:
     explicit DirectConvolver(size_t inputBlockSize);
 
-    void process(AudioFloatArray* convolutionKernel, const float* sourceP, float* destP, size_t framesToProcess);
+    void process(AudioFloatArray* convolutionKernel, std::span<const float> source, std::span<float> destination);
 
     void reset();
 

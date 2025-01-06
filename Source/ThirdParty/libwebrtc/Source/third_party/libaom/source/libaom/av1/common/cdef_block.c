@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -22,7 +22,7 @@ beginning and end of the table. The cdef direction range is [0, 7] and the
 first index is offset +/-2. This removes the need to constrain the first
 index to the same range using e.g., & 7.
 */
-DECLARE_ALIGNED(16, const int, cdef_directions_padded[12][2]) = {
+DECLARE_ALIGNED(16, static const int, cdef_directions_padded[12][2]) = {
   /* Padding: cdef_directions[6] */
   { 1 * CDEF_BSTRIDE + 0, 2 * CDEF_BSTRIDE + 0 },
   /* Padding: cdef_directions[7] */
@@ -286,16 +286,16 @@ void cdef_filter_16_3_c(void *dst16, int dstride, const uint16_t *in,
    edge), so we can apply more deringing. A low variance means that we
    either have a low contrast edge, or a non-directional texture, so
    we want to be careful not to blur. */
-static INLINE int adjust_strength(int strength, int32_t var) {
+static inline int adjust_strength(int strength, int32_t var) {
   const int i = var >> 6 ? AOMMIN(get_msb(var >> 6), 12) : 0;
   /* We use the variance of 8x8 blocks to adjust the strength. */
   return var ? (strength * (4 + i) + 8) >> 4 : 0;
 }
 
-static AOM_INLINE void aom_cdef_find_dir(const uint16_t *in, cdef_list *dlist,
-                                         int var[CDEF_NBLOCKS][CDEF_NBLOCKS],
-                                         int cdef_count, int coeff_shift,
-                                         int dir[CDEF_NBLOCKS][CDEF_NBLOCKS]) {
+static inline void aom_cdef_find_dir(const uint16_t *in, cdef_list *dlist,
+                                     int var[CDEF_NBLOCKS][CDEF_NBLOCKS],
+                                     int cdef_count, int coeff_shift,
+                                     int dir[CDEF_NBLOCKS][CDEF_NBLOCKS]) {
   int bi;
 
   // Find direction of two 8x8 blocks together.

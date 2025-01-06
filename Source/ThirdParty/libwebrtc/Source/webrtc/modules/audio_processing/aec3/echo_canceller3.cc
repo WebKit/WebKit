@@ -378,14 +378,6 @@ EchoCanceller3Config AdjustConfig(const EchoCanceller3Config& config) {
         false;
   }
 
-  if (field_trial::IsEnabled("WebRTC-Aec3DelayEstimatorDetectPreEcho")) {
-    adjusted_cfg.delay.detect_pre_echo = true;
-  }
-
-  if (field_trial::IsDisabled("WebRTC-Aec3DelayEstimatorDetectPreEcho")) {
-    adjusted_cfg.delay.detect_pre_echo = false;
-  }
-
   if (field_trial::IsEnabled("WebRTC-Aec3SensitiveDominantNearendActivation")) {
     adjusted_cfg.suppressor.dominant_nearend_detection.enr_threshold = 0.5f;
   } else if (field_trial::IsEnabled(
@@ -641,6 +633,13 @@ EchoCanceller3Config AdjustConfig(const EchoCanceller3Config& config) {
       "WebRTC-Aec3DelayEstimateSmoothingDelayFoundOverride", 0.f, 1.f,
       &adjusted_cfg.delay.delay_estimate_smoothing_delay_found);
 
+  int max_allowed_excess_render_blocks_override =
+      adjusted_cfg.buffering.max_allowed_excess_render_blocks;
+  RetrieveFieldTrialValue(
+      "WebRTC-Aec3BufferingMaxAllowedExcessRenderBlocksOverride", 0, 20,
+      &max_allowed_excess_render_blocks_override);
+  adjusted_cfg.buffering.max_allowed_excess_render_blocks =
+      max_allowed_excess_render_blocks_override;
   return adjusted_cfg;
 }
 
@@ -719,7 +718,7 @@ std::atomic<int> EchoCanceller3::instance_count_(0);
 
 EchoCanceller3::EchoCanceller3(
     const EchoCanceller3Config& config,
-    const absl::optional<EchoCanceller3Config>& multichannel_config,
+    const std::optional<EchoCanceller3Config>& multichannel_config,
     int sample_rate_hz,
     size_t num_render_channels,
     size_t num_capture_channels)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -48,7 +48,7 @@ typedef struct TOKEN_STATS {
 #endif
 } TOKEN_STATS;
 
-static INLINE void init_token_stats(TOKEN_STATS *token_stats) {
+static inline void init_token_stats(TOKEN_STATS *token_stats) {
 #if CONFIG_RD_DEBUG
   int r, c;
   for (r = 0; r < TXB_COEFF_COST_MAP_SIZE; ++r) {
@@ -62,11 +62,13 @@ static INLINE void init_token_stats(TOKEN_STATS *token_stats) {
 
 void aom_start_encode(aom_writer *w, uint8_t *buffer);
 
+// Returns a negative number on error. Caller must check the return value and
+// handle error.
 int aom_stop_encode(aom_writer *w);
 
 int aom_tell_size(aom_writer *w);
 
-static INLINE void aom_write(aom_writer *w, int bit, int probability) {
+static inline void aom_write(aom_writer *w, int bit, int probability) {
   int p = (0x7FFFFF - (probability << 15) + probability) >> 8;
 #if CONFIG_BITSTREAM_DEBUG
   aom_cdf_prob cdf[2] = { (aom_cdf_prob)p, 32767 };
@@ -76,17 +78,17 @@ static INLINE void aom_write(aom_writer *w, int bit, int probability) {
   od_ec_encode_bool_q15(&w->ec, bit, p);
 }
 
-static INLINE void aom_write_bit(aom_writer *w, int bit) {
+static inline void aom_write_bit(aom_writer *w, int bit) {
   aom_write(w, bit, 128);  // aom_prob_half
 }
 
-static INLINE void aom_write_literal(aom_writer *w, int data, int bits) {
+static inline void aom_write_literal(aom_writer *w, int data, int bits) {
   int bit;
 
   for (bit = bits - 1; bit >= 0; bit--) aom_write_bit(w, 1 & (data >> bit));
 }
 
-static INLINE void aom_write_cdf(aom_writer *w, int symb,
+static inline void aom_write_cdf(aom_writer *w, int symb,
                                  const aom_cdf_prob *cdf, int nsymbs) {
 #if CONFIG_BITSTREAM_DEBUG
   bitstream_queue_push(symb, cdf, nsymbs);
@@ -95,7 +97,7 @@ static INLINE void aom_write_cdf(aom_writer *w, int symb,
   od_ec_encode_cdf_q15(&w->ec, symb, cdf, nsymbs);
 }
 
-static INLINE void aom_write_symbol(aom_writer *w, int symb, aom_cdf_prob *cdf,
+static inline void aom_write_symbol(aom_writer *w, int symb, aom_cdf_prob *cdf,
                                     int nsymbs) {
   aom_write_cdf(w, symb, cdf, nsymbs);
   if (w->allow_update_cdf) update_cdf(cdf, symb, nsymbs);

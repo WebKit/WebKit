@@ -15,7 +15,7 @@
 #include "common/PackedEnums.h"
 #include "common/platform.h"
 #include "gpu_info_util/SystemInfo.h"
-#include "test_utils/runner/TestSuite.h"
+#include "test_expectations/GPUTestConfig.h"
 #include "util/EGLWindow.h"
 #include "util/OSWindow.h"
 #include "util/random_utils.h"
@@ -24,6 +24,10 @@
 #if defined(ANGLE_PLATFORM_WINDOWS)
 #    include <VersionHelpers.h>
 #endif  // defined(ANGLE_PLATFORM_WINDOWS)
+
+#if defined(ANGLE_HAS_RAPIDJSON)
+#    include "test_utils/runner/TestSuite.h"
+#endif  // defined(ANGLE_HAS_RAPIDJSON)
 
 namespace angle
 {
@@ -165,8 +169,16 @@ const char *GetColorName(GLColorRGB color)
 // Always re-use displays when using --bot-mode in the test runner.
 bool gReuseDisplays = false;
 
-bool ShouldAlwaysForceNewDisplay()
+bool ShouldAlwaysForceNewDisplay(const PlatformParameters &params)
 {
+    // When running WebGPU tests on linux always force a new display. The underlying vulkan swap
+    // chain appears to fail to get a new image after swapping when rapidly creating new swap chains
+    // for an existing window.
+    if (params.isWebGPU() && IsLinux())
+    {
+        return true;
+    }
+
     if (gReuseDisplays)
         return false;
 
@@ -460,6 +472,20 @@ testing::AssertionResult AssertEGLEnumsEqual(const char *lhsExpr,
     }
 }
 
+void *ANGLETestBase::operator new(size_t size)
+{
+    void *ptr = malloc(size ? size : size + 1);
+    // Initialize integer primitives to large positive values to avoid tests relying
+    // on the assumption that primitives (e.g. GLuint) would be zero-initialized.
+    memset(ptr, 0x7f, size);
+    return ptr;
+}
+
+void ANGLETestBase::operator delete(void *ptr)
+{
+    free(ptr);
+}
+
 ANGLETestBase::ANGLETestBase(const PlatformParameters &params)
     : mWidth(16),
       mHeight(16),
@@ -468,8 +494,9 @@ ANGLETestBase::ANGLETestBase(const PlatformParameters &params)
       mQuadIndexBuffer(0),
       m2DTexturedQuadProgram(0),
       m3DTexturedQuadProgram(0),
+      m2DArrayTexturedQuadProgram(0),
       mDeferContextInit(false),
-      mAlwaysForceNewDisplay(ShouldAlwaysForceNewDisplay()),
+      mAlwaysForceNewDisplay(ShouldAlwaysForceNewDisplay(params)),
       mForceNewDisplay(mAlwaysForceNewDisplay),
       mSetUpCalled(false),
       mTearDownCalled(false),
@@ -566,8 +593,7 @@ void ANGLETestBase::initOSWindow()
         case GLESDriverType::ZinkEGL:
         {
             mFixture->eglWindow =
-                EGLWindow::New(mCurrentParams->clientType, mCurrentParams->majorVersion,
-                               mCurrentParams->minorVersion, mCurrentParams->profileMask);
+                EGLWindow::New(mCurrentParams->majorVersion, mCurrentParams->minorVersion);
             break;
         }
 
@@ -597,6 +623,10 @@ ANGLETestBase::~ANGLETestBase()
     if (m3DTexturedQuadProgram)
     {
         glDeleteProgram(m3DTexturedQuadProgram);
+    }
+    if (m2DArrayTexturedQuadProgram)
+    {
+        glDeleteProgram(m2DArrayTexturedQuadProgram);
     }
 
     if (!mSetUpCalled)
@@ -641,6 +671,9 @@ void ANGLETestBase::ANGLETestSetUp()
     fullTestNameStr << testInfo->test_suite_name() << "." << testInfo->name();
     std::string fullTestName = fullTestNameStr.str();
 
+    // TODO(b/279980674): TestSuite depends on rapidjson which we don't have in aosp builds,
+    // for now disable both TestSuite and expectations.
+#if defined(ANGLE_HAS_RAPIDJSON)
     TestSuite *testSuite = TestSuite::GetInstance();
     int32_t testExpectation =
         testSuite->getTestExpectationWithConfigAndUpdateTimeout(testConfig, fullTestName);
@@ -649,6 +682,7 @@ void ANGLETestBase::ANGLETestSetUp()
     {
         GTEST_SKIP() << "Test skipped on this config";
     }
+#endif
 
     if (IsWindows())
     {
@@ -1244,6 +1278,40 @@ void main()
     return m3DTexturedQuadProgram;
 }
 
+GLuint ANGLETestBase::get2DArrayTexturedQuadProgram()
+{
+    if (m2DArrayTexturedQuadProgram)
+    {
+        return m2DArrayTexturedQuadProgram;
+    }
+
+    constexpr char kVS[] = R"(#version 300 es
+in vec2 position;
+out vec2 texCoord;
+void main()
+{
+    gl_Position = vec4(position, 0, 1);
+    texCoord = position * 0.5 + vec2(0.5);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+
+in vec2 texCoord;
+out vec4 my_FragColor;
+
+uniform highp sampler2DArray tex;
+uniform float u_layer;
+
+void main()
+{
+    my_FragColor = texture(tex, vec3(texCoord, u_layer));
+})";
+
+    m2DArrayTexturedQuadProgram = CompileProgram(kVS, kFS);
+    return m2DArrayTexturedQuadProgram;
+}
+
 void ANGLETestBase::draw2DTexturedQuad(GLfloat positionAttribZ,
                                        GLfloat positionAttribXYScale,
                                        bool useVertexBuffer)
@@ -1259,6 +1327,29 @@ void ANGLETestBase::draw3DTexturedQuad(GLfloat positionAttribZ,
                                        float layer)
 {
     GLuint program = get3DTexturedQuadProgram();
+    ASSERT_NE(0u, program);
+    GLint activeProgram = 0;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &activeProgram);
+    if (static_cast<GLuint>(activeProgram) != program)
+    {
+        glUseProgram(program);
+    }
+    glUniform1f(glGetUniformLocation(program, "u_layer"), layer);
+
+    drawQuad(program, "position", positionAttribZ, positionAttribXYScale, useVertexBuffer);
+
+    if (static_cast<GLuint>(activeProgram) != program)
+    {
+        glUseProgram(static_cast<GLuint>(activeProgram));
+    }
+}
+
+void ANGLETestBase::draw2DArrayTexturedQuad(GLfloat positionAttribZ,
+                                            GLfloat positionAttribXYScale,
+                                            bool useVertexBuffer,
+                                            float layer)
+{
+    GLuint program = get2DArrayTexturedQuadProgram();
     ASSERT_NE(0u, program);
     GLint activeProgram = 0;
     glGetIntegerv(GL_CURRENT_PROGRAM, &activeProgram);

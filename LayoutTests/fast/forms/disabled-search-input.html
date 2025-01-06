@@ -14,32 +14,20 @@ function log(msg, success)
     logDiv.appendChild(document.createElement('div')).textContent = msg + ': ' + (!!success ? 'PASS' : 'FAIL');
 }
 
-function clickOn(element)
-{
-    if (!window.eventSender)
-        return;
-
-    var x = element.offsetLeft + element.offsetWidth / 2;
-    var y = element.offsetTop + element.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-}
-
 function runTest()
 {
     logDiv = document.getElementById('console');
     var input = document.getElementsByTagName('input')[0];
-    setTimeout(function() {
+    setTimeout(async function() {
         input.disabled = false;
         if (!window.eventSender)
             return;
 
         var x = input.offsetLeft + input.offsetWidth / 2;
         var y = input.offsetTop + input.offsetHeight / 2;
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(x, y);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
         eventSender.keyDown('a');
         log('The inner text element of the search input should never be 0-height', input.value == 'a');
         testRunner.notifyDone();

@@ -58,15 +58,17 @@ void PlatformWebViewClientLibWPE::removeFromWindow()
 PlatformImage PlatformWebViewClientLibWPE::snapshot()
 {
     {
-        struct TimeoutTimer {
+        class TimeoutTimer {
+        public:
             TimeoutTimer()
-                : timer(RunLoop::main(), this, &TimeoutTimer::fired)
+                : m_timer(RunLoop::main(), [] {
+                    RunLoop::main().stop();
+                })
             {
-                timer.startOneShot(1_s / 60);
+                m_timer.startOneShot(1_s / 60);
             }
-
-            void fired() { RunLoop::main().stop(); }
-            RunLoop::Timer timer;
+        private:
+            RunLoop::Timer m_timer;
         } timeoutTimer;
 
         RunLoop::main().run();

@@ -25,11 +25,8 @@ function finishTest() {
     setEnableFeature(false, finishJSTest);
 }
 
-onload = function() {
-    setEnableFeature(true, function() {
-        if (testRunner)
-            testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
-
+onload = async function() {
+    setEnableFeature(true, async function() {
         shouldBe("document.location.origin", "topFrameOrigin");
 
         if (testRunner) {
@@ -38,6 +35,8 @@ onload = function() {
 
             activateElement("testFrame");
         }
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
+        finishTest();
     });
 };
 </script>

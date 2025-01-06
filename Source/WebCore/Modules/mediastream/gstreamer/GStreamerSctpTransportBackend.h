@@ -23,6 +23,7 @@
 
 #include "GRefPtrGStreamer.h"
 #include "RTCSctpTransportBackend.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 typedef struct _GstWebRTCSCTPTransport GstWebRTCSCTPTransport;
@@ -30,7 +31,7 @@ typedef struct _GstWebRTCSCTPTransport GstWebRTCSCTPTransport;
 namespace WebCore {
 
 class GStreamerSctpTransportBackend final : public RTCSctpTransportBackend, public CanMakeWeakPtr<GStreamerSctpTransportBackend> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerSctpTransportBackend);
 public:
     explicit GStreamerSctpTransportBackend(GRefPtr<GstWebRTCSCTPTransport>&&);
     ~GStreamerSctpTransportBackend();

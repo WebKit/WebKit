@@ -15,10 +15,10 @@
 		rect1.setAttribute("systemLanguage", "foo");
 
 		var rect2 = document.getElementById("rect2");
-		rect2.setAttribute("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Gradient");
+		rect2.setAttribute("requiredExtensions", "http://www.w3.org/1999/xhtml");
 
 		var rect3 = document.getElementById("rect3");
-		rect3.setAttribute("requiredFeatures", "foo");
+		rect3.setAttribute("requiredExtensions", "foo");
 
 		var rect4 = document.getElementById("rect4");
 		rect4.setAttribute("requiredExtensions", "foo");

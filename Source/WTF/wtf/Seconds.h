@@ -97,6 +97,11 @@ public:
     {
         return Seconds(std::numeric_limits<double>::quiet_NaN());
     }
+
+    static constexpr Seconds highTimePrecision()
+    {
+        return Seconds::fromMicroseconds(20);
+    }
     
     bool isNaN() const { return std::isnan(m_value); }
     bool isInfinity() const { return std::isinf(m_value); }
@@ -221,6 +226,12 @@ public:
         return *this;
     }
 
+    constexpr Seconds reduceTimeResolution(Seconds resolution)
+    {
+        double reduced = std::floor(seconds() / resolution.seconds()) * resolution.seconds();
+        return Seconds(reduced);
+    }
+
     struct MarkableTraits;
 
 private:
@@ -243,62 +254,62 @@ struct Seconds::MarkableTraits {
 
 inline namespace seconds_literals {
 
-constexpr Seconds operator"" _min(long double minutes)
+constexpr Seconds operator""_min(long double minutes)
 {
     return Seconds::fromMinutes(minutes);
 }
 
-constexpr Seconds operator"" _h(long double hours)
+constexpr Seconds operator""_h(long double hours)
 {
     return Seconds::fromHours(hours);
 }
 
-constexpr Seconds operator"" _s(long double seconds)
+constexpr Seconds operator""_s(long double seconds)
 {
     return Seconds(seconds);
 }
 
-constexpr Seconds operator"" _ms(long double milliseconds)
+constexpr Seconds operator""_ms(long double milliseconds)
 {
     return Seconds::fromMilliseconds(milliseconds);
 }
 
-constexpr Seconds operator"" _us(long double microseconds)
+constexpr Seconds operator""_us(long double microseconds)
 {
     return Seconds::fromMicroseconds(microseconds);
 }
 
-constexpr Seconds operator"" _ns(long double nanoseconds)
+constexpr Seconds operator""_ns(long double nanoseconds)
 {
     return Seconds::fromNanoseconds(nanoseconds);
 }
 
-constexpr Seconds operator"" _min(unsigned long long minutes)
+constexpr Seconds operator""_min(unsigned long long minutes)
 {
     return Seconds::fromMinutes(minutes);
 }
 
-constexpr Seconds operator"" _h(unsigned long long hours)
+constexpr Seconds operator""_h(unsigned long long hours)
 {
     return Seconds::fromHours(hours);
 }
 
-constexpr Seconds operator"" _s(unsigned long long seconds)
+constexpr Seconds operator""_s(unsigned long long seconds)
 {
     return Seconds(seconds);
 }
 
-constexpr Seconds operator"" _ms(unsigned long long milliseconds)
+constexpr Seconds operator""_ms(unsigned long long milliseconds)
 {
     return Seconds::fromMilliseconds(milliseconds);
 }
 
-constexpr Seconds operator"" _us(unsigned long long microseconds)
+constexpr Seconds operator""_us(unsigned long long microseconds)
 {
     return Seconds::fromMicroseconds(microseconds);
 }
 
-constexpr Seconds operator"" _ns(unsigned long long nanoseconds)
+constexpr Seconds operator""_ns(unsigned long long nanoseconds)
 {
     return Seconds::fromNanoseconds(nanoseconds);
 }

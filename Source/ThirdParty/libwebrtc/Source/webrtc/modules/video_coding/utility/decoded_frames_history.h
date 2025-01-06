@@ -14,9 +14,9 @@
 #include <stdint.h>
 
 #include <bitset>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/video/encoded_frame.h"
 
 namespace webrtc {
@@ -35,16 +35,16 @@ class DecodedFramesHistory {
 
   void Clear();
 
-  absl::optional<int64_t> GetLastDecodedFrameId() const;
-  absl::optional<uint32_t> GetLastDecodedFrameTimestamp() const;
+  std::optional<int64_t> GetLastDecodedFrameId() const;
+  std::optional<uint32_t> GetLastDecodedFrameTimestamp() const;
 
  private:
   int FrameIdToIndex(int64_t frame_id) const;
 
   std::vector<bool> buffer_;
-  absl::optional<int64_t> last_frame_id_;
-  absl::optional<int64_t> last_decoded_frame_;
-  absl::optional<uint32_t> last_decoded_frame_timestamp_;
+  std::optional<int64_t> last_frame_id_;
+  std::optional<int64_t> last_decoded_frame_;
+  std::optional<uint32_t> last_decoded_frame_timestamp_;
 };
 
 }  // namespace video_coding

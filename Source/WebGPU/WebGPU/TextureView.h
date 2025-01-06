@@ -27,7 +27,9 @@
 
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
+#import <wtf/RefCountedAndCanMakeWeakPtr.h>
+#import <wtf/RetainReleaseSwift.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
@@ -41,8 +43,8 @@ class Device;
 class Texture;
 
 // https://gpuweb.github.io/gpuweb/#gputextureview
-class TextureView : public WGPUTextureViewImpl, public RefCounted<TextureView>, public CanMakeWeakPtr<TextureView> {
-    WTF_MAKE_FAST_ALLOCATED;
+class TextureView : public RefCountedAndCanMakeWeakPtr<TextureView>, public WGPUTextureViewImpl {
+    WTF_MAKE_TZONE_ALLOCATED(TextureView);
 public:
     static Ref<TextureView> create(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Texture& parentTexture, Device& device)
     {
@@ -101,6 +103,16 @@ private:
     const Ref<Device> m_device;
     Ref<Texture> m_parentTexture;
     mutable WeakHashSet<CommandEncoder> m_commandEncoders;
-};
+} SWIFT_SHARED_REFERENCE(refTextureView, derefTextureView);
 
 } // namespace WebGPU
+
+inline void refTextureView(WebGPU::TextureView* obj)
+{
+    ref(obj);
+}
+
+inline void derefTextureView(WebGPU::TextureView* obj)
+{
+    deref(obj);
+}

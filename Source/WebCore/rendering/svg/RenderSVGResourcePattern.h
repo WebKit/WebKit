@@ -29,7 +29,7 @@ class Pattern;
 namespace WebCore {
 
 class RenderSVGResourcePattern final : public RenderSVGResourcePaintServer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourcePattern);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGResourcePattern);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourcePattern);
 public:
     RenderSVGResourcePattern(SVGElement&, RenderStyle&&);
@@ -64,8 +64,8 @@ protected:
 
     std::optional<PatternAttributes> m_attributes;
 
-    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, RefPtr<ImageBuffer>> m_imageMap;
-    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, AffineTransform> m_transformMap;
+    UncheckedKeyHashMap<SingleThreadWeakRef<const RenderLayerModelObject>, RefPtr<ImageBuffer>> m_imageMap;
+    UncheckedKeyHashMap<SingleThreadWeakRef<const RenderLayerModelObject>, AffineTransform> m_transformMap;
 };
 
 }

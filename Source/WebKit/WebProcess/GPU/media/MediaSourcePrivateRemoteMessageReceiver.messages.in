@@ -25,10 +25,13 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
-messages -> MediaSourcePrivateRemoteMessageReceiver NotRefCounted {
+[
+    DispatchedFrom=GPU,
+    DispatchedTo=WebContent
+]
+messages -> MediaSourcePrivateRemoteMessageReceiver {
     ProxyWaitForTarget(struct WebCore::SeekTarget target) -> (Expected<MediaTime, WebCore::PlatformMediaError> seekedTime);
     ProxySeekToTime(MediaTime time) -> (Expected<void, WebCore::PlatformMediaError> result);
-    MediaSourcePrivateShuttingDown() -> ();
 }
 
 #endif

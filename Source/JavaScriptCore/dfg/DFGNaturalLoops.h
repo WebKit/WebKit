@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,13 +37,15 @@ namespace JSC { namespace DFG {
 template <typename CFGKind>
 class NaturalLoops : public WTF::NaturalLoops<CFGKind> {
     WTF_MAKE_NONCOPYABLE(NaturalLoops);
-    WTF_MAKE_TZONE_ALLOCATED(NaturalLoops);
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(NaturalLoops);
 public:
     NaturalLoops(Graph& graph)
         : WTF::NaturalLoops<CFGKind>(selectCFG<CFGKind>(graph), ensureDominatorsForCFG<CFGKind>(graph), validationEnabled())
     {
     }
 };
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename CFGKind>, NaturalLoops<CFGKind>);
 
 using SSANaturalLoop = WTF::NaturalLoop<SSACFG>;
 using CPSNaturalLoop = WTF::NaturalLoop<CPSCFG>;

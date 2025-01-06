@@ -61,8 +61,4 @@ void HeadlessViewBackend::updateSnapshot(PlatformBuffer)
 {
 }
 
-void HeadlessViewBackend::vsync()
-{
-}
-
 } // namespace WPEToolingBackends

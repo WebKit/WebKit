@@ -28,13 +28,10 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "ActiveDOMObject.h"
 #include "AudioEncoder.h"
-#include "EventTarget.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "WebCodecsAudioEncoderConfig.h"
-#include "WebCodecsCodecState.h"
-#include <wtf/RefCounted.h>
+#include "WebCodecsBase.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -45,11 +42,8 @@ class WebCodecsEncodedAudioChunkOutputCallback;
 class WebCodecsAudioData;
 struct WebCodecsEncodedAudioChunkMetadata;
 
-class WebCodecsAudioEncoder
-    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsAudioEncoder>
-    , public ActiveDOMObject
-    , public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(WebCodecsAudioEncoder);
+class WebCodecsAudioEncoder : public WebCodecsBase {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsAudioEncoder);
 public:
     ~WebCodecsAudioEncoder();
 
@@ -60,8 +54,7 @@ public:
 
     static Ref<WebCodecsAudioEncoder> create(ScriptExecutionContext&, Init&&);
 
-    WebCodecsCodecState state() const { return m_state; }
-    size_t encodeQueueSize() const { return m_encodeQueueSize; }
+    size_t encodeQueueSize() const { return codecQueueSize(); }
 
     ExceptionOr<void> configure(ScriptExecutionContext&, WebCodecsAudioEncoderConfig&&);
     ExceptionOr<void> encode(Ref<WebCodecsAudioData>&&);
@@ -71,49 +64,34 @@ public:
 
     static void isConfigSupported(ScriptExecutionContext&, WebCodecsAudioEncoderConfig&&, Ref<DeferredPromise>&&);
 
-    // ActiveDOMObject.
-    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
-    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
-
+    WebCodecsEncodedAudioChunkOutputCallback& outputCallbackConcurrently() { return m_output.get(); }
+    WebCodecsErrorCallback& errorCallbackConcurrently() { return m_error.get(); }
 private:
     WebCodecsAudioEncoder(ScriptExecutionContext&, Init&&);
 
     // ActiveDOMObject.
     void stop() final;
     void suspend(ReasonForSuspension) final;
-    bool virtualHasPendingActivity() const final;
 
     // EventTarget.
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebCodecsAudioEncoder; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     ExceptionOr<void> closeEncoder(Exception&&);
     ExceptionOr<void> resetEncoder(const Exception&);
-    void setInternalEncoder(UniqueRef<AudioEncoder>&&);
-    void scheduleDequeueEvent();
+    void setInternalEncoder(Ref<AudioEncoder>&&);
 
-    void queueControlMessageAndProcess(Function<void()>&&);
-    void processControlMessageQueue();
     WebCodecsEncodedAudioChunkMetadata createEncodedChunkMetadata();
 
-    WebCodecsCodecState m_state { WebCodecsCodecState::Unconfigured };
     size_t m_encodeQueueSize { 0 };
-    size_t m_beingEncodedQueueSize { 0 };
     Ref<WebCodecsEncodedAudioChunkOutputCallback> m_output;
     Ref<WebCodecsErrorCallback> m_error;
-    std::unique_ptr<AudioEncoder> m_internalEncoder;
-    bool m_dequeueEventScheduled { false };
-    Deque<Ref<DeferredPromise>> m_pendingFlushPromises;
-    size_t m_clearFlushPromiseCount { 0 };
+    RefPtr<AudioEncoder> m_internalEncoder;
+    Vector<Ref<DeferredPromise>> m_pendingFlushPromises;
     bool m_isKeyChunkRequired { false };
-    Deque<Function<void()>> m_controlMessageQueue;
-    bool m_isMessageQueueBlocked { false };
     WebCodecsAudioEncoderConfig m_baseConfiguration;
     AudioEncoder::ActiveConfiguration m_activeConfiguration;
     bool m_hasNewActiveConfiguration { false };
-    bool m_isFlushing { false };
+    size_t m_encoderCount { 0 };
 };
 
 }

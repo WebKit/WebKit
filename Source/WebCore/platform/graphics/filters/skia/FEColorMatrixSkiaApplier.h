@@ -28,13 +28,14 @@
 #if USE(SKIA)
 
 #include "FilterEffectApplier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FEColorMatrix;
 
 class FEColorMatrixSkiaApplier final : public FilterEffectConcreteApplier<FEColorMatrix> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FEColorMatrixSkiaApplier);
     using Base = FilterEffectConcreteApplier<FEColorMatrix>;
 
 public:

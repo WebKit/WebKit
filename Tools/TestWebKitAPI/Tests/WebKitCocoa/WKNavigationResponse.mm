@@ -27,9 +27,9 @@
 
 #import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
+#import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
-#import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKNavigationResponsePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -270,7 +270,7 @@ TEST(WebKit, SkipDecidePolicyForResponse)
     [delegate waitForDidFinishNavigation];
     EXPECT_FALSE(responseDelegateCalled);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.mainBundle URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     [delegate waitForDidFinishNavigation];
     EXPECT_TRUE(std::exchange(responseDelegateCalled, false));
 

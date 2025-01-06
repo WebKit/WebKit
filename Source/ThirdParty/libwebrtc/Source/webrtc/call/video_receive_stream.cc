@@ -10,6 +10,14 @@
 
 #include "call/video_receive_stream.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <utility>
+
+#include "api/call/transport.h"
+#include "api/rtp_headers.h"
+#include "api/video_codecs/sdp_video_format.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {

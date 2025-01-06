@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -10,13 +10,14 @@
  */
 
 #include "av1/encoder/hash.h"
+#include "config/av1_rtcd.h"
 
 static void crc_calculator_process_data(CRC_CALCULATOR *p_crc_calculator,
                                         uint8_t *pData, uint32_t dataLength) {
   for (uint32_t i = 0; i < dataLength; i++) {
-    const uint8_t index = (uint8_t)(
-        (p_crc_calculator->remainder >> (p_crc_calculator->bits - 8)) ^
-        pData[i]);
+    const uint8_t index = (uint8_t)((p_crc_calculator->remainder >>
+                                     (p_crc_calculator->bits - 8)) ^
+                                    pData[i]);
     p_crc_calculator->remainder <<= 8;
     p_crc_calculator->remainder ^= p_crc_calculator->table[index];
   }

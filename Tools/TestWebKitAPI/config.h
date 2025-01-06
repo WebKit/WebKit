@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,6 +99,7 @@
 #undef new
 #undef delete
 #include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #endif
 
 #include <wtf/DisallowCType.h>
@@ -118,11 +119,6 @@
 #endif
 
 // FIXME: Move this to PlatformHave.h.
-#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
-#define HAVE_PDFKIT 1
-#endif
-
-// FIXME: Move this to PlatformHave.h.
 #if PLATFORM(IOS_FAMILY) && !(PLATFORM(MACCATALYST) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000)
 #define HAVE_UIWEBVIEW 1
 #endif
@@ -130,4 +126,9 @@
 // FIXME: Move this to PlatformHave.h.
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000)
 #define HAVE_TLS_VERSION_DURING_CHALLENGE 1
+#endif
+
+// FIXME (rdar://133488399): Weak link PDFKit on tvOS and use HAVE(PDFKit) in TestWebKitAPI.
+#if HAVE(PDFKIT) && !PLATFORM(APPLETV)
+#define USE_PDFKIT_FOR_TESTING 1
 #endif

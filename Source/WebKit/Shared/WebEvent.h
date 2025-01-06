@@ -32,9 +32,10 @@
 #include "WebEvent.h"
 #include "WebEventModifier.h"
 #include "WebEventType.h"
-
+#include <wtf/CheckedPtr.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
@@ -46,8 +47,9 @@ class Encoder;
 
 namespace WebKit {
 
-class WebEvent {
-    WTF_MAKE_FAST_ALLOCATED;
+class WebEvent : public CanMakeCheckedPtr<WebEvent> {
+    WTF_MAKE_TZONE_ALLOCATED(WebEvent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebEvent);
 public:
     WebEvent(WebEventType, OptionSet<WebEventModifier>, WallTime timestamp, WTF::UUID authorizationToken);
     WebEvent(WebEventType, OptionSet<WebEventModifier>, WallTime timestamp);

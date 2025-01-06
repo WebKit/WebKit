@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,14 +76,7 @@
 #import <WebCore/ValidationBubble.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/Entitlements.h>
-
-#define MESSAGE_CHECK(assertion) do { \
-    if (auto webView = this->webView()) { \
-        MESSAGE_CHECK_BASE(assertion, webView->_page->process().connection()); \
-    } else { \
-        ASSERT_NOT_REACHED(); \
-    } \
-while (0)
+#import <wtf/cocoa/SpanCocoa.h>
 
 @interface UIWindow ()
 - (BOOL)_isHostedInAnotherProcess;
@@ -103,7 +96,7 @@ PageClientImpl::~PageClientImpl()
 {
 }
 
-std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& webProcessProxy)
+Ref<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& webProcessProxy)
 {
     return [contentView() _createDrawingAreaProxy:webProcessProxy];
 }
@@ -298,7 +291,7 @@ void PageClientImpl::didCompleteSyntheticClick()
 void PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& frame, const FrameInfoData& frameInfo, Function<void(bool)>& completionHandler)
 {
     if (auto webView = this->webView()) {
-        auto* geolocationProvider = [wrapper(webView->_page->process().processPool()) _geolocationProvider];
+        auto* geolocationProvider = [wrapper(webView->_page->configuration().processPool()) _geolocationProvider];
         [geolocationProvider decidePolicyForGeolocationRequestFromOrigin:FrameInfoData { frameInfo } completionHandler:std::exchange(completionHandler, nullptr) view:webView.get()];
     }
 }
@@ -367,11 +360,6 @@ void PageClientImpl::setCursorHiddenUntilMouseMoves(bool)
     notImplemented();
 }
 
-void PageClientImpl::didChangeViewportProperties(const ViewportAttributes&)
-{
-    notImplemented();
-}
-
 void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, UndoOrRedo undoOrRedo)
 {
     auto actionName = command->label();
@@ -398,10 +386,9 @@ void PageClientImpl::executeUndoRedo(UndoOrRedo undoOrRedo)
     return (undoOrRedo == UndoOrRedo::Undo) ? [[contentView() undoManager] undo] : [[contentView() undoManager] redo];
 }
 
-void PageClientImpl::accessibilityWebProcessTokenReceived(std::span<const uint8_t> data, WebCore::FrameIdentifier, pid_t)
+void PageClientImpl::accessibilityWebProcessTokenReceived(std::span<const uint8_t> data, pid_t)
 {
-    NSData *remoteToken = [NSData dataWithBytes:data.data() length:data.size()];
-    [contentView() _setAccessibilityWebProcessToken:remoteToken];
+    [contentView() _setAccessibilityWebProcessToken:toNSData(data).get()];
 }
 
 bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, bool isCharEvent)
@@ -575,22 +562,22 @@ void PageClientImpl::makeViewBlank(bool makeBlank)
     [contentView() layer].opacity = makeBlank ? 0 : 1;
 }
 
-void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&& completionHandler)
+void PageClientImpl::showBrowsingWarning(const BrowsingWarning& warning, CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&& completionHandler)
 {
     if (auto webView = this->webView())
-        [webView _showSafeBrowsingWarning:warning completionHandler:WTFMove(completionHandler)];
+        [webView _showBrowsingWarning:warning completionHandler:WTFMove(completionHandler)];
     else
         completionHandler(ContinueUnsafeLoad::No);
 }
 
-void PageClientImpl::clearSafeBrowsingWarning()
+void PageClientImpl::clearBrowsingWarning()
 {
-    [webView() _clearSafeBrowsingWarning];
+    [webView() _clearBrowsingWarning];
 }
 
-void PageClientImpl::clearSafeBrowsingWarningIfForMainFrameNavigation()
+void PageClientImpl::clearBrowsingWarningIfForMainFrameNavigation()
 {
-    [webView() _clearSafeBrowsingWarningIfForMainFrameNavigation];
+    [webView() _clearBrowsingWarningIfForMainFrameNavigation];
 }
 
 void PageClientImpl::exitAcceleratedCompositingMode()
@@ -688,6 +675,11 @@ void PageClientImpl::updateInputContextAfterBlurringAndRefocusingElement()
     [contentView() _updateInputContextAfterBlurringAndRefocusingElement];
 }
 
+void PageClientImpl::didProgrammaticallyClearFocusedElement(WebCore::ElementContext&& context)
+{
+    [contentView() _didProgrammaticallyClearFocusedElement:WTFMove(context)];
+}
+
 void PageClientImpl::updateFocusedElementInformation(const FocusedElementInformation& information)
 {
     [contentView() _updateFocusedElementInformation:information];
@@ -713,9 +705,9 @@ void PageClientImpl::didUpdateEditorState()
     [contentView() _didUpdateEditorState];
 }
 
-void PageClientImpl::didClearEditorStateAfterPageTransition()
+void PageClientImpl::reconcileEnclosingScrollViewContentOffset(EditorState& state)
 {
-    [contentView() _didClearEditorStateAfterPageTransition];
+    [contentView() _reconcileEnclosingScrollViewContentOffset:state];
 }
 
 void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect, WebCore::RouteSharingPolicy policy, const String& contextUID)
@@ -793,10 +785,17 @@ bool PageClientImpl::isFullScreen()
     return [webView fullScreenWindowController].isFullScreen;
 }
 
-void PageClientImpl::enterFullScreen(FloatSize videoDimensions)
+void PageClientImpl::enterFullScreen(FloatSize mediaDimensions)
 {
-    [[webView() fullScreenWindowController] enterFullScreen:videoDimensions];
+    [[webView() fullScreenWindowController] enterFullScreen:mediaDimensions];
 }
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+void PageClientImpl::updateImageSource()
+{
+    [[webView() fullScreenWindowController] updateImageSource];
+}
+#endif
 
 void PageClientImpl::exitFullScreen()
 {
@@ -844,8 +843,7 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 
 void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t> dataReference)
 {
-    RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytes:dataReference.data() length:dataReference.size()]);
-    [webView() _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:suggestedFilename data:data.get()];
+    [webView() _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:suggestedFilename data:toNSData(dataReference).get()];
 }
 
 void PageClientImpl::scrollingNodeScrollViewWillStartPanGesture(ScrollingNodeID)
@@ -858,12 +856,12 @@ void PageClientImpl::scrollingNodeScrollViewDidScroll(ScrollingNodeID)
     [contentView() _didScroll];
 }
 
-void PageClientImpl::scrollingNodeScrollWillStartScroll(ScrollingNodeID nodeID)
+void PageClientImpl::scrollingNodeScrollWillStartScroll(std::optional<ScrollingNodeID> nodeID)
 {
     [contentView() _scrollingNodeScrollingWillBegin:nodeID];
 }
 
-void PageClientImpl::scrollingNodeScrollDidEndScroll(ScrollingNodeID nodeID)
+void PageClientImpl::scrollingNodeScrollDidEndScroll(std::optional<ScrollingNodeID> nodeID)
 {
     [contentView() _scrollingNodeScrollingDidEnd:nodeID];
 }
@@ -946,6 +944,7 @@ void PageClientImpl::didChangeBackgroundColor()
 
 void PageClientImpl::videoControlsManagerDidChange()
 {
+    PageClientImplCocoa::videoControlsManagerDidChange();
     [webView() _videoControlsManagerDidChange];
 }
 
@@ -978,7 +977,7 @@ Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& messa
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&, Vector<WebCore::Color>&&)
+RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&, ColorControlSupportsAlpha, Vector<WebCore::Color>&&)
 {
     return nullptr;
 }
@@ -1065,9 +1064,9 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
 }
 #endif
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
-    [contentView() _requestDOMPasteAccessForCategory:pasteAccessCategory elementRect:elementRect originIdentifier:originIdentifier completionHandler:WTFMove(completionHandler)];
+    [contentView() _requestDOMPasteAccessForCategory:pasteAccessCategory requiresInteraction:requiresInteraction elementRect:elementRect originIdentifier:originIdentifier completionHandler:WTFMove(completionHandler)];
 }
 
 void PageClientImpl::cancelPointersForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
@@ -1101,13 +1100,6 @@ void PageClientImpl::hardwareKeyboardAvailabilityChanged()
 }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-
-void PageClientImpl::didExitFullscreen()
-{
-#if ENABLE(FULLSCREEN_API)
-    [[webView() fullScreenWindowController] didExitFullscreen];
-#endif
-}
 
 void PageClientImpl::didCleanupFullscreen()
 {
@@ -1147,6 +1139,11 @@ void PageClientImpl::handleAsynchronousCancelableScrollEvent(WKBaseScrollView *s
     [webView() scrollView:scrollView handleScrollUpdate:update completion:completion];
 }
 #endif
+
+bool PageClientImpl::isSimulatingCompatibilityPointerTouches() const
+{
+    return [webView() _isSimulatingCompatibilityPointerTouches];
+}
 
 void PageClientImpl::runModalJavaScriptDialog(CompletionHandler<void()>&& callback)
 {
@@ -1201,7 +1198,7 @@ bool PageClientImpl::isTextRecognitionInFullscreenVideoEnabled() const
     return [contentView() isTextRecognitionInFullscreenVideoEnabled];
 }
 
-#if ENABLE(VIDEO)
+#if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
 void PageClientImpl::beginTextRecognitionForVideoInElementFullscreen(ShareableBitmap::Handle&& bitmapHandle, FloatRect bounds)
 {
     [contentView() beginTextRecognitionForVideoInElementFullscreen:WTFMove(bitmapHandle) bounds:bounds];
@@ -1254,8 +1251,23 @@ const String& PageClientImpl::spatialTrackingLabel() const
 }
 #endif
 
+void PageClientImpl::scheduleVisibleContentRectUpdate()
+{
+    [webView() _scheduleVisibleContentRectUpdate];
+}
+
+#if ENABLE(PDF_PLUGIN)
+void PageClientImpl::pluginDidInstallPDFDocument(double initialScale)
+{
+    [webView() _pluginDidInstallPDFDocument:initialScale];
+}
+#endif
+
+bool PageClientImpl::isPotentialTapInProgress() const
+{
+    return [m_contentView isPotentialTapInProgress];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)
-
-#undef MESSAGE_CHECK

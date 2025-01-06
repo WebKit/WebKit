@@ -22,6 +22,7 @@
 
 # Tests various parts of generating message handlers that work with custom transport (e.g. not an IPC Conneciton)
 
+[ExceptionForEnabledBy]
 messages -> TestWithoutUsingIPCConnection NotUsingIPCConnection {
     void MessageWithoutArgument()
     void MessageWithoutArgumentAndEmptyReply() -> ()

@@ -58,6 +58,7 @@
 #define OPENSSL_HEADER_SHA_H
 
 #include <openssl/base.h>
+#include <openssl/bcm_public.h> // IWYU pragma: export
 
 #if defined(__cplusplus)
 extern "C" {
@@ -96,27 +97,21 @@ OPENSSL_EXPORT uint8_t *SHA1(const uint8_t *data, size_t len,
 OPENSSL_EXPORT void SHA1_Transform(SHA_CTX *sha,
                                    const uint8_t block[SHA_CBLOCK]);
 
-struct sha_state_st {
-#if defined(OPENSSL_WINDOWS)
-  uint32_t h[5];
-#else
-  // wpa_supplicant accesses |h0|..|h4| so we must support those names
-  // for compatibility with it until it can be updated.
-  union {
-    uint32_t h[5];
-    struct {
-      uint32_t h0;
-      uint32_t h1;
-      uint32_t h2;
-      uint32_t h3;
-      uint32_t h4;
-    };
-  };
-#endif
-  uint32_t Nl, Nh;
-  uint8_t data[SHA_CBLOCK];
-  unsigned num;
-};
+// CRYPTO_fips_186_2_prf derives |out_len| bytes from |xkey| using the PRF
+// defined in FIPS 186-2, Appendix 3.1, with change notice 1 applied. The b
+// parameter is 160 and seed, XKEY, is also 160 bits. The optional XSEED user
+// input is all zeros.
+//
+// The PRF generates a sequence of 320-bit numbers. Each number is encoded as a
+// 40-byte string in big-endian and then concatenated to form |out|. If
+// |out_len| is not a multiple of 40, the result is truncated. This matches the
+// construction used in Section 7 of RFC 4186 and Section 7 of RFC 4187.
+//
+// This PRF is based on SHA-1, a weak hash function, and should not be used
+// in new protocols. It is provided for compatibility with some legacy EAP
+// methods.
+OPENSSL_EXPORT void CRYPTO_fips_186_2_prf(
+    uint8_t *out, size_t out_len, const uint8_t xkey[SHA_DIGEST_LENGTH]);
 
 
 // SHA-224.
@@ -135,7 +130,7 @@ OPENSSL_EXPORT int SHA224_Update(SHA256_CTX *sha, const void *data, size_t len);
 
 // SHA224_Final adds the final padding to |sha| and writes the resulting digest
 // to |out|, which must have at least |SHA224_DIGEST_LENGTH| bytes of space. It
-// returns one on success and zero on programmer error.
+// returns 1.
 OPENSSL_EXPORT int SHA224_Final(uint8_t out[SHA224_DIGEST_LENGTH],
                                 SHA256_CTX *sha);
 
@@ -185,14 +180,6 @@ OPENSSL_EXPORT void SHA256_Transform(SHA256_CTX *sha,
 OPENSSL_EXPORT void SHA256_TransformBlocks(uint32_t state[8],
                                            const uint8_t *data,
                                            size_t num_blocks);
-
-struct sha256_state_st {
-  uint32_t h[8];
-  uint32_t Nl, Nh;
-  uint8_t data[SHA256_CBLOCK];
-  unsigned num, md_len;
-};
-
 
 // SHA-384.
 
@@ -252,14 +239,6 @@ OPENSSL_EXPORT uint8_t *SHA512(const uint8_t *data, size_t len,
 // from |block|.
 OPENSSL_EXPORT void SHA512_Transform(SHA512_CTX *sha,
                                      const uint8_t block[SHA512_CBLOCK]);
-
-struct sha512_state_st {
-  uint64_t h[8];
-  uint64_t Nl, Nh;
-  uint8_t p[128];
-  unsigned num, md_len;
-};
-
 
 // SHA-512-256
 //

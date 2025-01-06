@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -79,12 +79,12 @@ struct frame_contexts;
 
 typedef char ENTROPY_CONTEXT;
 
-static INLINE int combine_entropy_contexts(ENTROPY_CONTEXT a,
+static inline int combine_entropy_contexts(ENTROPY_CONTEXT a,
                                            ENTROPY_CONTEXT b) {
   return (a != 0) + (b != 0);
 }
 
-static INLINE int get_entropy_context(TX_SIZE tx_size, const ENTROPY_CONTEXT *a,
+static inline int get_entropy_context(TX_SIZE tx_size, const ENTROPY_CONTEXT *a,
                                       const ENTROPY_CONTEXT *l) {
   ENTROPY_CONTEXT above_ec = 0, left_ec = 0;
 
@@ -170,7 +170,7 @@ static INLINE int get_entropy_context(TX_SIZE tx_size, const ENTROPY_CONTEXT *a,
   return combine_entropy_contexts(above_ec, left_ec);
 }
 
-static INLINE TX_SIZE get_txsize_entropy_ctx(TX_SIZE txsize) {
+static inline TX_SIZE get_txsize_entropy_ctx(TX_SIZE txsize) {
   return (TX_SIZE)((txsize_sqr_map[txsize] + txsize_sqr_up_map[txsize] + 1) >>
                    1);
 }

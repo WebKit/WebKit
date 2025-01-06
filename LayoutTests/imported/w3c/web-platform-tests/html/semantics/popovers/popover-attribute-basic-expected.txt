@@ -28,6 +28,7 @@ PASS Removing a visible popover=manual element from the document should close th
 PASS A showing popover=manual does not match :modal
 PASS A popover=manual never matches :open or :closed
 PASS Changing the popover type in a "beforetoggle" event handler should throw an exception (during showPopover())
+PASS Changing the popover type in a "beforetoggle" event handler should not show the popover (during popovertarget invoking)
 PASS Changing the popover type in a "beforetoggle" event handler during hidePopover() should not throw an exception
 PASS Calling hidePopover on a disconnected popover should not throw.
 PASS Changing a popover from auto to auto (via attr), and then auto during 'beforetoggle' works

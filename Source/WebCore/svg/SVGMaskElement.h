@@ -24,13 +24,15 @@
 #include "SVGNames.h"
 #include "SVGTests.h"
 #include "SVGUnitTypes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 enum class RepaintRectCalculation : bool;
 
 class SVGMaskElement final : public SVGElement, public SVGTests {
-    WTF_MAKE_ISO_ALLOCATED(SVGMaskElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGMaskElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGMaskElement);
 public:
     static Ref<SVGMaskElement> create(const QualifiedName&, Document&);
 
@@ -50,10 +52,10 @@ public:
 
     FloatRect calculateMaskContentRepaintRect(RepaintRectCalculation);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMaskElement, SVGElement, SVGTests>;
+
 private:
     SVGMaskElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMaskElement, SVGElement, SVGTests>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

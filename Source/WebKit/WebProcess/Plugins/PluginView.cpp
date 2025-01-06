@@ -28,9 +28,10 @@
 
 #if ENABLE(PDF_PLUGIN)
 
+#include "DocumentEditingContext.h"
+#include "FrameInfoData.h"
 #include "PDFPlugin.h"
 #include "UnifiedPDFPlugin.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebKeyboardEvent.h"
 #include "WebLoaderStrategy.h"
@@ -117,7 +118,7 @@ private:
     // True if the stream was explicitly cancelled by calling cancel().
     // (As opposed to being cancelled by the user hitting the stop button for example.
     bool m_streamWasCancelled;
-    
+
     RefPtr<NetscapePlugInStreamLoader> m_loader;
 };
 
@@ -127,7 +128,7 @@ PluginView::Stream::~Stream()
         m_loadCallback({ });
     ASSERT(!m_pluginView);
 }
-    
+
 void PluginView::Stream::start()
 {
     ASSERT(!m_loader);
@@ -382,12 +383,12 @@ id PluginView::accessibilityAssociatedPluginParentForElement(Element* element) c
 {
     return protectedPlugin()->accessibilityAssociatedPluginParentForElement(element);
 }
-    
+
 id PluginView::accessibilityObject() const
 {
     if (!m_isInitialized)
         return nil;
-    
+
     return protectedPlugin()->accessibilityObject();
 }
 
@@ -542,7 +543,7 @@ void PluginView::paint(GraphicsContext& context, const IntRect& dirtyRect, Widge
         return;
 
     if (m_transientPaintingSnapshot) {
-        if (!context.platformContext()) {
+        if (!context.hasPlatformContext()) {
             RefPtr image = m_transientPaintingSnapshot->createImage();
             if (!image)
                 return;
@@ -594,7 +595,7 @@ void PluginView::clipRectChanged()
 void PluginView::setParent(ScrollView* scrollView)
 {
     Widget::setParent(scrollView);
-    
+
     if (scrollView)
         initializePlugin();
 }
@@ -639,12 +640,60 @@ RefPtr<TextIndicator> PluginView::textIndicatorForCurrentSelection(OptionSet<Web
     return protectedPlugin()->textIndicatorForCurrentSelection(options, transition);
 }
 
+Vector<WebFoundTextRange::PDFData> PluginView::findTextMatches(const String& target, WebCore::FindOptions options)
+{
+    if (!m_isInitialized)
+        return { };
+
+    return protectedPlugin()->findTextMatches(target, options);
+}
+
+Vector<FloatRect> PluginView::rectsForTextMatch(const WebFoundTextRange::PDFData& match)
+{
+    if (!m_isInitialized)
+        return { };
+
+    return protectedPlugin()->rectsForTextMatch(match);
+}
+
+RefPtr<WebCore::TextIndicator> PluginView::textIndicatorForTextMatch(const WebFoundTextRange::PDFData& match, WebCore::TextIndicatorPresentationTransition transition)
+{
+    if (!m_isInitialized)
+        return { };
+
+    return protectedPlugin()->textIndicatorForTextMatch(match, transition);
+}
+
+void PluginView::scrollToRevealTextMatch(const WebFoundTextRange::PDFData& match)
+{
+    if (!m_isInitialized)
+        return;
+
+    return protectedPlugin()->scrollToRevealTextMatch(match);
+}
+
+String PluginView::fullDocumentString() const
+{
+    if (!m_isInitialized)
+        return { };
+
+    return protectedPlugin()->fullDocumentString();
+}
+
 String PluginView::selectionString() const
 {
     if (!m_isInitialized)
         return String();
 
     return protectedPlugin()->selectionString();
+}
+
+std::pair<String, String> PluginView::stringsBeforeAndAfterSelection(int characterCount) const
+{
+    if (!m_isInitialized)
+        return { };
+
+    return protectedPlugin()->stringsBeforeAndAfterSelection(characterCount);
 }
 
 void PluginView::handleEvent(Event& event)
@@ -692,7 +741,7 @@ bool PluginView::handleEditingCommand(const String& commandName, const String& a
 
     return protectedPlugin()->handleEditingCommand(commandName, argument);
 }
-    
+
 bool PluginView::isEditingCommandEnabled(const String& commandName)
 {
     if (!m_isInitialized)
@@ -730,10 +779,10 @@ bool PluginView::usesAsyncScrolling() const
     return protectedPlugin()->usesAsyncScrolling();
 }
 
-ScrollingNodeID PluginView::scrollingNodeID() const
+std::optional<ScrollingNodeID> PluginView::scrollingNodeID() const
 {
     if (!m_isInitialized)
-        return { };
+        return std::nullopt;
 
     return protectedPlugin()->scrollingNodeID();
 }
@@ -1024,6 +1073,11 @@ void PluginView::windowActivityDidChange()
     protectedPlugin()->windowActivityDidChange();
 }
 
+void PluginView::didChangeIsInWindow()
+{
+    protectedPlugin()->didChangeIsInWindow();
+}
+
 void PluginView::didSameDocumentNavigationForFrame(WebFrame& frame)
 {
     if (!m_isInitialized)
@@ -1032,9 +1086,19 @@ void PluginView::didSameDocumentNavigationForFrame(WebFrame& frame)
     return protectedPlugin()->didSameDocumentNavigationForFrame(frame);
 }
 
+bool PluginView::sendEditingCommandToPDFForTesting(const String& commandName, const String& argument)
+{
+    return protectedPlugin()->handleEditingCommand(commandName, argument);
+}
+
 void PluginView::setPDFDisplayModeForTesting(const String& mode)
 {
     protectedPlugin()->setPDFDisplayModeForTesting(mode);
+}
+
+void PluginView::unlockPDFDocumentForTesting(const String& password)
+{
+    protectedPlugin()->attemptToUnlockPDF(password);
 }
 
 Vector<WebCore::FloatRect> PluginView::pdfAnnotationRectsForTesting() const
@@ -1042,9 +1106,83 @@ Vector<WebCore::FloatRect> PluginView::pdfAnnotationRectsForTesting() const
     return protectedPlugin()->annotationRectsForTesting();
 }
 
+void PluginView::setPDFTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, const String& value)
+{
+    return protectedPlugin()->setTextAnnotationValueForTesting(pageIndex, annotationIndex, value);
+}
+
 void PluginView::registerPDFTestCallback(RefPtr<VoidCallback>&& callback)
 {
     protectedPlugin()->registerPDFTest(WTFMove(callback));
+}
+
+PDFPluginIdentifier PluginView::pdfPluginIdentifier() const
+{
+    return protectedPlugin()->identifier();
+}
+
+void PluginView::openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&& completionHandler)
+{
+    protectedPlugin()->openWithPreview(WTFMove(completionHandler));
+}
+
+#if PLATFORM(IOS_FAMILY)
+
+void PluginView::pluginDidInstallPDFDocument(double initialScale)
+{
+    protectedWebPage()->pluginDidInstallPDFDocument(initialScale);
+}
+
+void PluginView::setSelectionRange(FloatPoint pointInRootView, TextGranularity granularity)
+{
+    protectedPlugin()->setSelectionRange(pointInRootView, granularity);
+}
+
+SelectionWasFlipped PluginView::moveSelectionEndpoint(FloatPoint pointInRootView, SelectionEndpoint endpoint)
+{
+    return protectedPlugin()->moveSelectionEndpoint(pointInRootView, endpoint);
+}
+
+SelectionEndpoint PluginView::extendInitialSelection(FloatPoint pointInRootView, TextGranularity granularity)
+{
+    return protectedPlugin()->extendInitialSelection(pointInRootView, granularity);
+}
+
+DocumentEditingContext PluginView::documentEditingContext(DocumentEditingContextRequest&& request) const
+{
+    return protectedPlugin()->documentEditingContext(WTFMove(request));
+}
+
+void PluginView::clearSelection()
+{
+    protectedPlugin()->clearSelection();
+}
+
+std::pair<URL, FloatRect> PluginView::linkURLAndBoundsAtPoint(FloatPoint pointInRootView) const
+{
+    return protectedPlugin()->linkURLAndBoundsAtPoint(pointInRootView);
+}
+
+std::optional<FloatRect> PluginView::highlightRectForTapAtPoint(FloatPoint pointInRootView) const
+{
+    return protectedPlugin()->highlightRectForTapAtPoint(pointInRootView);
+}
+
+void PluginView::handleSyntheticClick(PlatformMouseEvent&& event)
+{
+    protectedPlugin()->handleSyntheticClick(WTFMove(event));
+}
+
+CursorContext PluginView::cursorContext(FloatPoint pointInRootView) const
+{
+    return protectedPlugin()->cursorContext(pointInRootView);
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
+bool PluginView::populateEditorStateIfNeeded(EditorState& state) const
+{
+    return protectedPlugin()->populateEditorStateIfNeeded(state);
 }
 
 } // namespace WebKit

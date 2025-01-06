@@ -5,7 +5,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > BODY > HTML > #document to 8 of #text > SPAN > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 8 of #text > SPAN > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -40,13 +40,13 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,1) size 171x34
                 text run at (0,1) width 171: "There is a tide"
           RenderBlock {DIV} at (14,50) size 756x64 [border: (2px solid #FF0000)]
-            RenderInline {SPAN} at (14,15) size 77x34
-              RenderText {#text} at (14,15) size 77x34
-                text run at (14,15) width 77: "In the "
-            RenderText {#text} at (90,20) size 135x28
-              text run at (90,20) width 135: "affairs of men"
+            RenderInline {SPAN} at (14,15) size 70x34
+              RenderText {#text} at (14,15) size 70x34
+                text run at (14,15) width 70: "In the"
+            RenderText {#text} at (83,20) size 141x28
+              text run at (83,20) width 141: " affairs of men"
           RenderBlock (anonymous) at (14,114) size 756x30
             RenderText {#text} at (0,1) size 238x28
               text run at (0,1) width 238: "Which taken at the flood"
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 5 {DIV} of body
-selection end:   position 8 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body
+selection end:   position 7 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body

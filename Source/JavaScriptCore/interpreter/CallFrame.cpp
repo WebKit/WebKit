@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,8 +37,9 @@
 #include "VMEntryRecord.h"
 #include "VMEntryScopeInlines.h"
 #include "WasmContext.h"
-#include "WasmInstance.h"
 #include <wtf/StringPrintStream.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -286,8 +287,8 @@ void CallFrame::dump(PrintStream& out) const
         case NativeCallee::Category::Wasm: {
 #if ENABLE(WEBASSEMBLY)
             auto* wasmCallee = static_cast<Wasm::Callee*>(nativeCallee);
-            out.print(Wasm::makeString(wasmCallee->indexOrName()), " [", Wasm::makeString(wasmCallee->compilationMode()), "]");
-            out.print("(Wasm::Instance: ", RawPointer(wasmInstance()), ")");
+            out.print(Wasm::makeString(wasmCallee->indexOrName()), " [", wasmCallee->compilationMode(), " ", RawPointer(callee().rawPtr()), "]");
+            out.print("(JSWebAssemblyInstance: ", RawPointer(wasmInstance()), ")");
 #else
             out.print(RawPointer(returnPCForInspection()));
 #endif
@@ -386,7 +387,7 @@ JSCell* CallFrame::codeOwnerCellSlow() const
     switch (nativeCallee->category()) {
     case NativeCallee::Category::Wasm: {
 #if ENABLE(WEBASSEMBLY)
-        return jsCast<JSWebAssemblyInstance*>(wasmInstance()->owner())->module();
+        return wasmInstance()->jsModule();
 #else
         return nullptr;
 #endif
@@ -411,4 +412,19 @@ bool isFromJSCode(void* returnAddress)
 #endif
 }
 
+#if ENABLE(WEBASSEMBLY)
+JSWebAssemblyInstance* CallFrame::wasmInstance() const
+{
+    ASSERT(callee().isNativeCallee());
+#if USE(JSVALUE32_64)
+    return std::bit_cast<JSWebAssemblyInstance*>(this[static_cast<int>(CallFrameSlot::codeBlock)].asanUnsafePointer());
+#else
+    return jsCast<JSWebAssemblyInstance*>(this[static_cast<int>(CallFrameSlot::codeBlock)].jsValue());
+#endif
+}
+#endif
+
+
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

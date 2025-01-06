@@ -1,6 +1,6 @@
 Pointer Events touch-action attribute support
 
-Test Description: Test complete
+Test Description: Press DOWN ARROW key, then RIGHT ARROW key. Expected: pan enabled
 
 Note: this test is for keyboard only
 

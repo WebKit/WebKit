@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,22 @@
 #import <WebKit/WKURLSchemeTask.h>
 #import <WebKit/WKUserContentController.h>
 #import <WebKit/WKUserScript.h>
+#import <WebKit/WKWebExtension.h>
+#import <WebKit/WKWebExtensionAction.h>
+#import <WebKit/WKWebExtensionCommand.h>
+#import <WebKit/WKWebExtensionContext.h>
+#import <WebKit/WKWebExtensionController.h>
+#import <WebKit/WKWebExtensionControllerConfiguration.h>
+#import <WebKit/WKWebExtensionControllerDelegate.h>
+#import <WebKit/WKWebExtensionDataRecord.h>
+#import <WebKit/WKWebExtensionDataType.h>
+#import <WebKit/WKWebExtensionMatchPattern.h>
+#import <WebKit/WKWebExtensionMessagePort.h>
+#import <WebKit/WKWebExtensionPermission.h>
+#import <WebKit/WKWebExtensionTab.h>
+#import <WebKit/WKWebExtensionTabConfiguration.h>
+#import <WebKit/WKWebExtensionWindow.h>
+#import <WebKit/WKWebExtensionWindowConfiguration.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebpagePreferences.h>

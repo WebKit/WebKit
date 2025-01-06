@@ -100,9 +100,4 @@ void BlobData::appendFile(BlobDataFileReference* file, long long offset, long lo
     m_items.append(BlobDataItem(file, offset, length));
 }
 
-void BlobData::swapItems(BlobDataItemList& items)
-{
-    m_items.swap(items);
-}
-
 } // namespace WebCore

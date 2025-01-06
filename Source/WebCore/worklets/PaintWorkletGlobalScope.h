@@ -61,7 +61,7 @@ struct PaintDefinition : public CanMakeWeakPtr<PaintDefinition> {
 };
 
 class PaintWorkletGlobalScope final : public WorkletGlobalScope {
-    WTF_MAKE_ISO_ALLOCATED(PaintWorkletGlobalScope);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PaintWorkletGlobalScope);
 public:
     static RefPtr<PaintWorkletGlobalScope> tryCreate(Document&, ScriptSourceCode&&);
 

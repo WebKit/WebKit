@@ -62,9 +62,9 @@ void SaturationProtectorBuffer::PushBack(float v) {
   }
 }
 
-absl::optional<float> SaturationProtectorBuffer::Front() const {
+std::optional<float> SaturationProtectorBuffer::Front() const {
   if (size_ == 0) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   RTC_DCHECK_LT(FrontIndex(), buffer_.size());
   return buffer_[FrontIndex()];

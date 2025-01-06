@@ -1,0 +1,3 @@
+
+FAIL Verifies that the beforematch event is fired on the matching element of a ScrollToTextFragment navigation. assert_true: The matching closed details element should be open. expected true got false
+

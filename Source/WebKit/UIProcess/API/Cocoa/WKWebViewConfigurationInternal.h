@@ -23,9 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+
+#ifdef __cplusplus
+
 #import "APIPageConfiguration.h"
 #import "WKObject.h"
-#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/Ref.h>
 
 namespace WebKit {
@@ -41,7 +44,7 @@ template<> struct WrapperTraits<API::PageConfiguration> {
     API::ObjectStorage<API::PageConfiguration> _pageConfiguration;
 }
 
-@property (nonatomic, readonly) NSString *_applicationNameForDesktopUserAgent;
+@property (nonatomic, readonly, nullable) NSString *_applicationNameForDesktopUserAgent;
 
 @end
 
@@ -50,3 +53,15 @@ _WKDragLiftDelay toDragLiftDelay(NSUInteger);
 _WKDragLiftDelay toWKDragLiftDelay(WebKit::DragLiftDelay);
 WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay);
 #endif
+
+#endif // __cplusplus
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface WKWebViewConfiguration ()
+
++ (BOOL)_isValidCustomScheme:(NSString *)urlScheme;
+
+@end
+
+NS_ASSUME_NONNULL_END

@@ -147,6 +147,9 @@ PASS rem(-18vw,5vw) should be used-value-equivalent to -3vw
 PASS calc(round(1px + 0%, 1px + 0%)) should be used-value-equivalent to 1px
 PASS calc(mod(3px + 0%, 2px + 0%)) should be used-value-equivalent to 1px
 PASS calc(rem(3px + 0%, 2px + 0%)) should be used-value-equivalent to 1px
+PASS round(1px + 0%, 1px) should be used-value-equivalent to 1px
+PASS mod(3px + 0%, 2px) should be used-value-equivalent to 1px
+PASS rem(3px + 0%, 2px) should be used-value-equivalent to 1px
 PASS round(0, 0) should be used-value-equivalent to calc(NaN)
 PASS round(-0, 0) should be used-value-equivalent to calc(NaN)
 PASS round(Infinity, 0) should be used-value-equivalent to calc(NaN)

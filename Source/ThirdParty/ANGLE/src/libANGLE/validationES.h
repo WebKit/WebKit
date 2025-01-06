@@ -1237,7 +1237,7 @@ ANGLE_INLINE bool ValidateDrawElementsCommon(const Context *context,
     {
         // Use the parameter buffer to retrieve and cache the index range.
         // TODO: this calculation should take basevertex into account for
-        // glDrawElementsInstancedBaseVertexBaseInstanceEXT.  http://anglebug.com/8448
+        // glDrawElementsInstancedBaseVertexBaseInstanceEXT.  http://anglebug.com/41481166
         IndexRange indexRange{IndexRange::Undefined()};
         ANGLE_VALIDATION_TRY(vao->getIndexRange(context, type, count, indices, &indexRange));
 

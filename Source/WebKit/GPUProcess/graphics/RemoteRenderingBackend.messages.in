@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,18 +22,19 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteRenderingBackend NotRefCounted Stream {
-    CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::PixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+[
+    ExceptionForEnabledBy,
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU
+]
+messages -> RemoteRenderingBackend Stream {
+    CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::ImageBufferPixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     ReleaseImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    GetImageBufferResourceLimitsForTesting() -> (struct WebCore::ImageBufferResourceLimits limits) Async
     DestroyGetPixelBufferSharedMemory()
     CacheNativeImage(WebCore::ShareableBitmapHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
     CacheFont(struct WebCore::FontInternalAttributes data, struct WebCore::FontPlatformDataAttributes platformData, std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier) NotStreamEncodable
-#if PLATFORM(COCOA)
     CacheFontCustomPlatformData(struct WebCore::FontCustomPlatformSerializedData fontCustomPlatformData) NotStreamEncodable
-#endif
-#if !PLATFORM(COCOA)
-    CacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData> customPlatformData) NotStreamEncodable
-#endif
     CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs)
     CacheGradient(Ref<WebCore::Gradient> gradient) NotStreamEncodable
     CacheFilter(Ref<WebCore::Filter> filter) NotStreamEncodable
@@ -62,13 +63,17 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer)
     MoveToImageBuffer(WebCore::RenderingResourceIdentifier destinationImageBuffer)
 
-    CreateRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier, WebCore::ShapeDetection::BarcodeDetectorOptions barcodeDetectorOptions) AllowedWhenWaitingForSyncReply
-    ReleaseRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
-    GetRemoteBarcodeDetectorSupportedFormats() -> (Vector<WebCore::ShapeDetection::BarcodeFormat> formats) Async
-    CreateRemoteFaceDetector(WebKit::ShapeDetectionIdentifier identifier, WebCore::ShapeDetection::FaceDetectorOptions faceDetectorOptions) AllowedWhenWaitingForSyncReply
-    ReleaseRemoteFaceDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
-    CreateRemoteTextDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
-    ReleaseRemoteTextDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
+#if PLATFORM(COCOA)
+    DidDrawCompositedToPDF(WebCore::PageIdentifier pageID, WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::SnapshotIdentifier snapshotIdentifier)
+#endif
+
+    [EnabledBy=ShapeDetection] CreateRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier, WebCore::ShapeDetection::BarcodeDetectorOptions barcodeDetectorOptions) AllowedWhenWaitingForSyncReply
+    [EnabledBy=ShapeDetection] ReleaseRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
+    [EnabledBy=ShapeDetection] GetRemoteBarcodeDetectorSupportedFormats() -> (Vector<WebCore::ShapeDetection::BarcodeFormat> formats) Async
+    [EnabledBy=ShapeDetection] CreateRemoteFaceDetector(WebKit::ShapeDetectionIdentifier identifier, WebCore::ShapeDetection::FaceDetectorOptions faceDetectorOptions) AllowedWhenWaitingForSyncReply
+    [EnabledBy=ShapeDetection] ReleaseRemoteFaceDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
+    [EnabledBy=ShapeDetection] CreateRemoteTextDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
+    [EnabledBy=ShapeDetection] ReleaseRemoteTextDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
 }
 
 #endif // ENABLE(GPU_PROCESS)

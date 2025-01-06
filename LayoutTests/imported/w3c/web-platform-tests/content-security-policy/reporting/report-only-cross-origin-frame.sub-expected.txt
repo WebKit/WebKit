@@ -1,0 +1,10 @@
+Blocked access to external URL http://www1.localhost:8800/content-security-policy/support/postmessage-pass.html
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS The load event triggers
+NOTRUN The iframe is allowed to load.
+PASS The securitypolicyviolation is triggered.
+PASS Violation report status OK.
+

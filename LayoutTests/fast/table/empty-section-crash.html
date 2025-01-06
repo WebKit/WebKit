@@ -2,11 +2,11 @@
 <head>
     <title></title>
     <script type="text/javascript">
-        function finish()
+        async function finish()
         {
             /* Since the crash happens in painting code, force painting. This
                makes the test work even when run without the --pixel option. */
-            testRunner.displayAndTrackRepaints();
+            await testRunner.displayAndTrackRepaints();
             testRunner.notifyDone();
         }
 

@@ -49,12 +49,12 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSString.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRSystem);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRSystem);
 
 Ref<WebXRSystem> WebXRSystem::create(Navigator& navigator)
 {
@@ -453,7 +453,7 @@ void WebXRSystem::resolveFeaturePermissions(XRSessionMode mode, const XRSessionI
     }
 
     // FIXME: Replace with Permissions API implementation.
-    document->page()->chrome().client().requestPermissionOnXRSessionFeatures(document->securityOrigin().data(), mode, resolvedFeatures->granted, resolvedFeatures->consentRequired, resolvedFeatures->consentOptional, resolvedFeatures->requiredFeaturesRequested, resolvedFeatures->optionalFeaturesRequested, [device, mode, consentRequired = WTFMove(resolvedFeatures->consentRequired), completionHandler = WTFMove(completionHandler)](std::optional<PlatformXR::Device::FeatureList>&& userGranted) mutable {
+    document->page()->chrome().client().requestPermissionOnXRSessionFeatures(document->securityOrigin().data(), mode, resolvedFeatures->granted, resolvedFeatures->consentRequired, resolvedFeatures->consentOptional, resolvedFeatures->requiredFeaturesRequested, resolvedFeatures->optionalFeaturesRequested, [device, document, isUserGesture = UserGestureIndicator::processingUserGesture(), mode, consentRequired = WTFMove(resolvedFeatures->consentRequired), completionHandler = WTFMove(completionHandler)](std::optional<PlatformXR::Device::FeatureList>&& userGranted) mutable {
         if (!userGranted) {
             completionHandler(std::nullopt);
             return;
@@ -470,6 +470,11 @@ void WebXRSystem::resolveFeaturePermissions(XRSessionMode mode, const XRSessionI
         // 12. Set device's list of enabled features for mode to granted.
         // 13. Set status's state to "granted".
         device->setEnabledFeatures(mode, *userGranted);
+
+        // https://immersive-web.github.io/webxr/#protect-immersiveness
+        // requestSession() requires transient activation.
+        if (isUserGesture)
+            UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, document);
 
         completionHandler(*userGranted);
     });
@@ -620,6 +625,9 @@ public:
     {
         return adoptRef(*new InlineRequestAnimationFrameCallback(scriptExecutionContext, WTFMove(callback)));
     }
+
+    bool hasCallback() const final { return true; }
+
 private:
     InlineRequestAnimationFrameCallback(ScriptExecutionContext& scriptExecutionContext, Function<void()>&& callback)
         : RequestAnimationFrameCallback(&scriptExecutionContext), m_callback(WTFMove(callback)) 
@@ -630,6 +638,11 @@ private:
     {
         m_callback();
         return { };
+    }
+
+    CallbackResult<void> handleEventRethrowingException(double now) final
+    {
+        return handleEvent(now);
     }
 
     Function<void()> m_callback;
@@ -646,7 +659,7 @@ WebXRSystem::DummyInlineDevice::DummyInlineDevice(ScriptExecutionContext& script
     setSupportedFeatures(XRSessionMode::Inline, { PlatformXR::SessionFeature::ReferenceSpaceTypeViewer });
 }
 
-void WebXRSystem::DummyInlineDevice::requestFrame(PlatformXR::Device::RequestFrameCallback&& callback)
+void WebXRSystem::DummyInlineDevice::requestFrame(std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&& callback)
 {
     if (!scriptExecutionContext())
         return;

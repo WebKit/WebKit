@@ -1,5 +1,5 @@
 #!/bin/sh
-## Copyright (c) 2023, Alliance for Open Media. All rights reserved
+## Copyright (c) 2023, Alliance for Open Media. All rights reserved.
 ##
 ## This source code is subject to the terms of the BSD 2 Clause License and
 ## the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -23,7 +23,7 @@ common_flags="-k 10000"
 common_flags="${common_flags} --max-q=63"
 common_flags="${common_flags} --error-resilient=0"
 
-# Runs svc_encoder_rtc using with 1 spatial layer 3 temporal layers.
+# Runs svc_encoder_rtc with 1 spatial layer 3 temporal layers.
 svc_encoder_s1_t3() {
   local encoder="${LIBAOM_BIN_PATH}/svc_encoder_rtc${AOM_TEST_EXE_SUFFIX}"
   local output_file="${AOM_TEST_OUTPUT_DIR}/svc_encoder_rtc"
@@ -50,7 +50,7 @@ svc_encoder_s1_t3() {
   [ -e "${output_file}" ] || return 1
 }
 
-# Runs svc_encoder_rtc using with 1 spatial layer 2 temporal layers with
+# Runs svc_encoder_rtc with 1 spatial layer 2 temporal layers with
 # speed 10.
 svc_encoder_s1_t2() {
   local encoder="${LIBAOM_BIN_PATH}/svc_encoder_rtc${AOM_TEST_EXE_SUFFIX}"
@@ -78,8 +78,69 @@ svc_encoder_s1_t2() {
   [ -e "${output_file}" ] || return 1
 }
 
+# Runs svc_encoder_rtc with 2 spatial layers 1 temporal layer, specifying
+# one input file per layer (although it's the same file twice).
+svc_encoder_s2_t1() {
+  local encoder="${LIBAOM_BIN_PATH}/svc_encoder_rtc${AOM_TEST_EXE_SUFFIX}"
+  local output_file="${AOM_TEST_OUTPUT_DIR}/svc_encoder_rtc"
+  local metadata_file="${AOM_TEST_OUTPUT_DIR}/multilayer_metadata.yaml"
+  cat > "${metadata_file}" <<EOF
+
+  # test comment
+
+use_case: 1 # alpha
+layers:
+# first layer...
+use_case: 1 # alpha
+layers:
+  - layer_type: 5 # alpha
+    luma_plane_only_flag: 1
+    layer_metadata_scope: 2 # global
+    alpha:
+      alpha_use_idc: 2 # segmentation
+      alpha_bit_depth: 8
+      alpha_transparent_value: 0
+      alpha_opaque_value: 4
+      label_type_id:
+          - 5
+          - 3
+          - 9
+          - 128
+          - 42
+
+# second layer...
+  - layer_type: 1 # texture
+    luma_plane_only_flag: 0
+
+EOF
+
+  if [ ! -x "${encoder}" ]; then
+    elog "${encoder} does not exist or is not executable."
+    return 1
+  fi
+
+  eval "${AOM_TEST_PREFIX}" "${encoder}" "${common_flags}" \
+      "--width=${YUV_RAW_INPUT_WIDTH}" \
+      "--height=${YUV_RAW_INPUT_HEIGHT}" \
+      "-lm 5" \
+      "--speed=8" \
+      "--target-bitrate=400" \
+      "--bitrates=100,300" \
+      "--spatial-layers=2" \
+      "--temporal-layers=1" \
+      "--timebase=1/30" \
+      "--multilayer_metadata_file=${metadata_file}" \
+      "${YUV_RAW_INPUT}" \
+      "${YUV_RAW_INPUT}" \
+      "-o ${output_file}" \
+      ${devnull} || return 1
+
+  [ -e "${output_file}" ] || return 1
+}
+
 if [ "$(av1_encode_available)" = "yes" ]; then
   svc_encoder_rtc_tests="svc_encoder_s1_t3
-                         svc_encoder_s1_t2"
+                         svc_encoder_s1_t2
+                         svc_encoder_s2_t1"
   run_tests svc_encoder_verify_environment "${svc_encoder_rtc_tests}"
 fi

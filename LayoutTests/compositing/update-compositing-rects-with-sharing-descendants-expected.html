@@ -1,0 +1,12 @@
+<!DOCTYPE HTML>
+<html>
+<p>This test should not crash.</p>
+
+<div style="width: 200px; height: 200px; isolation: isolate">
+  <div style="width: 200px; height: 200px; overflow: scroll">
+    <div style="width: 200px; height: 400px; background: green; position: relative"></div>
+
+  </div>
+  <div style="mix-blend-mode: screen; width: 100px; height: 120px; background: blue"></div>
+</div>
+</html>

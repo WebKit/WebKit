@@ -42,6 +42,10 @@ typedef struct __DDResult *DDResultRef;
 
 #else // !USE(APPLE_INTERNAL_SDK)
 
+#import <wtf/Compiler.h>
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+
 #import <Foundation/Foundation.h>
 
 typedef enum {
@@ -161,6 +165,9 @@ static inline CFIndex _DDScanQueryGetNumberOfFragments(DDScanQueryRef query)
 {
     return query->numberOfFragments;
 }
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+
 #endif
 
 typedef CFIndex DDScannerCopyResultsOptions;

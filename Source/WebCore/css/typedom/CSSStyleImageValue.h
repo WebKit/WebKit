@@ -29,7 +29,6 @@
 #include "CSSStyleValue.h"
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -38,7 +37,7 @@ class Document;
 class WeakPtrImplWithEventTargetData;
 
 class CSSStyleImageValue final : public CSSStyleValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSStyleImageValue);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSStyleImageValue);
 public:
     static Ref<CSSStyleImageValue> create(Ref<CSSImageValue>&& cssValue, Document* document)
     {

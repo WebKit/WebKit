@@ -34,8 +34,12 @@
 
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebRTCProvider);
 
 #if !USE(LIBWEBRTC) && !USE(GSTREAMER_WEBRTC)
 UniqueRef<WebRTCProvider> WebRTCProvider::create()
@@ -46,10 +50,6 @@ UniqueRef<WebRTCProvider> WebRTCProvider::create()
 bool WebRTCProvider::webRTCAvailable()
 {
     return false;
-}
-
-void WebRTCProvider::setActive(bool)
-{
 }
 
 void WebRTCProvider::setH264HardwareEncoderAllowed(bool)
@@ -305,6 +305,47 @@ std::optional<MediaCapabilitiesDecodingInfo> WebRTCProvider::videoDecodingCapabi
 std::optional<MediaCapabilitiesEncodingInfo> WebRTCProvider::videoEncodingCapabilitiesOverride(const VideoConfiguration&)
 {
     return { };
+}
+
+void WebRTCProvider::setPortAllocatorRange(StringView range)
+{
+    if (range.isEmpty())
+        return;
+
+    if (range == "0:0"_s)
+        return;
+
+    auto components = range.toStringWithoutCopying().split(':');
+    if (UNLIKELY(components.size() != 2)) {
+        WTFLogAlways("Invalid format for UDP port range. Should be \"min-port:max-port\"");
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto minPort = WTF::parseInteger<int>(components[0]);
+    auto maxPort = WTF::parseInteger<int>(components[1]);
+    if (!minPort || !maxPort) {
+        WTFLogAlways("Invalid format for UDP port range. Should be \"min-port:max-port\"");
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (*minPort < 0) {
+        WTFLogAlways("Invalid value for UDP minimum port value: %d", *minPort);
+        return;
+    }
+
+    if (*maxPort < 0) {
+        WTFLogAlways("Invalid value for UDP maximum port value: %d", *maxPort);
+        return;
+    }
+
+    m_portAllocatorRange = { { *minPort, *maxPort } };
+}
+
+std::optional<std::pair<int, int>> WebRTCProvider::portAllocatorRange() const
+{
+    return m_portAllocatorRange;
 }
 
 } // namespace WebCore

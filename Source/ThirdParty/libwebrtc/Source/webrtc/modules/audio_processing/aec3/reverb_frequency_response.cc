@@ -62,7 +62,7 @@ void ReverbFrequencyResponse::Update(
     const std::vector<std::array<float, kFftLengthBy2Plus1>>&
         frequency_response,
     int filter_delay_blocks,
-    const absl::optional<float>& linear_filter_quality,
+    const std::optional<float>& linear_filter_quality,
     bool stationary_block) {
   if (stationary_block || !linear_filter_quality) {
     return;

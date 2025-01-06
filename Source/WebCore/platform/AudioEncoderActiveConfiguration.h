@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2023 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,11 +33,11 @@
 namespace WebCore {
 
 struct AudioEncoderActiveConfiguration {
-    String codec;
-    std::optional<size_t> sampleRate;
-    std::optional<size_t> numberOfChannels;
-    std::optional<uint64_t> bitrate;
-    std::optional<Vector<uint8_t>> description;
+    String codec { };
+    std::optional<size_t> sampleRate { };
+    std::optional<size_t> numberOfChannels { };
+    std::optional<uint64_t> bitrate { };
+    std::optional<Vector<uint8_t>> description { };
 };
 }
 

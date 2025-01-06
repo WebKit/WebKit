@@ -51,7 +51,7 @@ private:
 };
 
 class InbandGenericTextTrack final : public InbandTextTrack, private WebVTTParserClient {
-    WTF_MAKE_ISO_ALLOCATED(InbandGenericTextTrack);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InbandGenericTextTrack);
 public:
     static Ref<InbandGenericTextTrack> create(ScriptExecutionContext&, InbandTextTrackPrivate&);
     virtual ~InbandGenericTextTrack();

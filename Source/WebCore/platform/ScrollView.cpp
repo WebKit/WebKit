@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,13 +36,19 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
 #include "Scrollbar.h"
+#include "ScrollbarGutter.h"
 #include "ScrollbarTheme.h"
 #include <wtf/HexNumber.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollView);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollView::ProhibitScrollingWhenChangingContentSizeForScope);
 
 ScrollView::ScrollView() = default;
 
@@ -288,13 +294,10 @@ IntSize ScrollView::sizeForVisibleContent(VisibleContentRectIncludesScrollbars s
     if (platformWidget())
         return platformVisibleContentSizeIncludingObscuredArea(scrollbarInclusion == VisibleContentRectIncludesScrollbars::Yes);
 
-#if USE(COORDINATED_GRAPHICS)
-    if (m_useFixedLayout && !m_fixedVisibleContentRect.isEmpty())
-        return m_fixedVisibleContentRect.size();
-#endif
-
     IntSize scrollbarSpace;
-    if (scrollbarInclusion == VisibleContentRectIncludesScrollbars::No)
+    if (!scrollbarGutterStyle().isAuto && scrollbarInclusion == VisibleContentRectIncludesScrollbars::No)
+        scrollbarSpace = totalScrollbarSpace();
+    else if (scrollbarInclusion == VisibleContentRectIncludesScrollbars::No)
         scrollbarSpace = scrollbarIntrusion();
 
     return IntSize(width() - scrollbarSpace.width(), height() - scrollbarSpace.height()).expandedTo(IntSize());
@@ -306,12 +309,6 @@ IntSize ScrollView::sizeForUnobscuredContent(VisibleContentRectIncludesScrollbar
         return platformVisibleContentSize(scrollbarInclusion == VisibleContentRectIncludesScrollbars::Yes);
 
     IntSize visibleContentSize = sizeForVisibleContent(scrollbarInclusion);
-
-#if USE(COORDINATED_GRAPHICS)
-    if (m_useFixedLayout && !m_fixedVisibleContentRect.isEmpty())
-        return visibleContentSize;
-#endif
-
     visibleContentSize.setHeight(visibleContentSize.height() - topContentInset());
     return visibleContentSize;
 }
@@ -332,11 +329,6 @@ IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollb
 
     if (platformWidget())
         return platformVisibleContentRect(scrollbarInclusion == VisibleContentRectIncludesScrollbars::Yes);
-
-#if USE(COORDINATED_GRAPHICS)
-    if (m_useFixedLayout && !m_fixedVisibleContentRect.isEmpty())
-        return m_fixedVisibleContentRect;
-#endif
 
     return unobscuredContentRect(scrollbarInclusion);
 }
@@ -440,8 +432,7 @@ void ScrollView::cacheCurrentScrollState()
 
 ScrollPosition ScrollView::documentScrollPositionRelativeToViewOrigin() const
 {
-    return scrollPosition() - IntSize(
-        shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0,
+    return scrollPosition() - IntSize(insetForLeftScrollbarSpace(),
         headerHeight() + topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset));
 }
 
@@ -511,12 +502,6 @@ void ScrollView::scrollTo(const ScrollPosition& newPosition)
     if (scrollbarsSuppressed())
         return;
 
-#if USE(COORDINATED_GRAPHICS)
-    if (delegatesScrolling()) {
-        requestScrollToPosition(newPosition);
-        return;
-    }
-#endif
     // We should not attempt to actually modify layer contents if the layout phase
     // is not complete. Instead, defer the scroll event until the layout finishes.
     if (shouldDeferScrollUpdateAfterContentSizeChange()) {
@@ -830,11 +815,14 @@ IntRect ScrollView::rectToCopyOnScroll() const
 {
     IntRect scrollViewRect = convertToRootView(IntRect(0, 0, visibleWidth(), visibleHeight()));
     if (hasOverlayScrollbars()) {
-        int verticalScrollbarWidth = (verticalScrollbar() && !hasLayerForVerticalScrollbar()) ? verticalScrollbar()->width() : 0;
-        int horizontalScrollbarHeight = (horizontalScrollbar() && !hasLayerForHorizontalScrollbar()) ? horizontalScrollbar()->height() : 0;
-        
-        scrollViewRect.setWidth(scrollViewRect.width() - verticalScrollbarWidth);
-        scrollViewRect.setHeight(scrollViewRect.height() - horizontalScrollbarHeight);
+        if (verticalScrollbar() && !hasLayerForVerticalScrollbar()) {
+            if (shouldPlaceVerticalScrollbarOnLeft())
+                scrollViewRect.shiftXEdgeBy(verticalScrollbar()->width());
+            else
+                scrollViewRect.shiftMaxXEdgeBy(-verticalScrollbar()->width());
+        }
+        if (horizontalScrollbar() && !hasLayerForHorizontalScrollbar())
+            scrollViewRect.shiftMaxYEdgeBy(-horizontalScrollbar()->height());
     }
     return scrollViewRect;
 }
@@ -1613,8 +1601,7 @@ void ScrollView::styleAndRenderTreeDidChange()
 IntPoint ScrollView::locationOfContents() const
 {
     IntPoint result = location();
-    if (shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar)
-        result.move(m_verticalScrollbar->occupiedWidth(), 0);
+    result.move(insetForLeftScrollbarSpace(), 0);
     return result;
 }
 

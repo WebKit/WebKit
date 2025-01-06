@@ -57,7 +57,7 @@ TEST(WebKit, LayoutMilestonesWithAllContentInFrame)
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV3 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
 
     loaderClient.base.version = 3;
     loaderClient.base.clientInfo = &webView;
@@ -81,7 +81,7 @@ TEST(WebKit, FirstVisuallyNonEmptyLayoutAfterPageCacheRestore)
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV3 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
 
     loaderClient.base.version = 3;
     loaderClient.base.clientInfo = &webView;
@@ -123,7 +123,7 @@ TEST(WebKit, FirstVisuallyNonEmptyMilestoneWithLoadComplete)
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV3 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
 
     loaderClient.base.version = 3;
     loaderClient.base.clientInfo = &webView;

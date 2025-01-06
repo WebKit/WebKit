@@ -27,6 +27,7 @@
 #pragma once
 
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(CF)
@@ -44,7 +45,7 @@ typedef struct _GModule GModule;
 namespace WebKit {
 
 class Module {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Module);
     WTF_MAKE_NONCOPYABLE(Module);
 public:
     explicit Module(const String& path);

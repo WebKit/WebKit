@@ -10,11 +10,11 @@
 #include "net/dcsctp/packet/error_cause/unrecognized_chunk_type_cause.h"
 
 #include <cstdint>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
@@ -33,11 +33,11 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 constexpr int UnrecognizedChunkTypeCause::kType;
 
-absl::optional<UnrecognizedChunkTypeCause> UnrecognizedChunkTypeCause::Parse(
+std::optional<UnrecognizedChunkTypeCause> UnrecognizedChunkTypeCause::Parse(
     rtc::ArrayView<const uint8_t> data) {
-  absl::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
+  std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   std::vector<uint8_t> unrecognized_chunk(reader->variable_data().begin(),
                                           reader->variable_data().end());

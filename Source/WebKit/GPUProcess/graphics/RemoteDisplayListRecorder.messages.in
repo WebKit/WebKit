@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,7 +22,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteDisplayListRecorder NotRefCounted Stream {
+[
+    ExceptionForEnabledBy,
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU
+]
+messages -> RemoteDisplayListRecorder Stream {
     Save() StreamBatched
     Restore() StreamBatched
     Translate(float x, float y) StreamBatched
@@ -55,6 +60,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     DrawSystemImage(Ref<WebCore::SystemImage> systemImage, WebCore::FloatRect destinationRect)
     DrawPattern(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::ImagePaintingOptions options)
     BeginTransparencyLayer(float opacity)
+    BeginTransparencyLayerWithCompositeMode(struct WebCore::CompositeMode compositeMode)
     EndTransparencyLayer()
     DrawRect(WebCore::FloatRect rect, float borderThickness)
     DrawLine(WebCore::FloatPoint point1, WebCore::FloatPoint point2)
@@ -64,7 +70,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     DrawPath(WebCore::Path path)
     DrawFocusRingPath(WebCore::Path path, float outlineWidth, WebCore::Color color)
     DrawFocusRingRects(Vector<WebCore::FloatRect> rects, float outlineOffset, float outlineWidth, WebCore::Color color)
-    FillRect(WebCore::FloatRect rect)
+    FillRect(WebCore::FloatRect rect, WebCore::GraphicsContext::RequiresClipToRect requiresClipToRect)
     FillRectWithColor(WebCore::FloatRect rect, WebCore::Color color)
     FillRectWithGradient(WebCore::DisplayList::FillRectWithGradient item)
     FillRectWithGradientAndSpaceTransform(WebCore::DisplayList::FillRectWithGradientAndSpaceTransform item)
@@ -81,9 +87,6 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     FillPathSegment(WebCore::PathSegment segment) StreamBatched
     FillPath(WebCore::Path path)
     FillEllipse(WebCore::FloatRect rect)
-#if ENABLE(VIDEO)
-    PaintFrameForMedia(WebCore::MediaPlayerIdentifier identifier, WebCore::FloatRect destination)
-#endif
     StrokeRect(WebCore::FloatRect rect, float lineWidth)
 #if ENABLE(INLINE_PATH_DATA)
     StrokeLine(struct WebCore::PathDataLine line) StreamBatched
@@ -104,8 +107,11 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
 #endif
     ApplyDeviceScaleFactor(float scaleFactor)
 
+    BeginPage(WebCore::IntSize pageSize)
+    EndPage()
+
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    PaintVideoFrame(struct WebKit::SharedVideoFrame frame, WebCore::FloatRect rect, bool shouldDiscardAlpha) NotStreamEncodable
+    DrawVideoFrame(struct WebKit::SharedVideoFrame frame, WebCore::FloatRect rect, struct WebCore::ImageOrientation orientation, bool shouldDiscardAlpha) NotStreamEncodable
     SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
 #endif

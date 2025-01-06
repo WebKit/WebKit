@@ -42,6 +42,7 @@
     IBOutlet NSMenuItem *_newWebKit2WindowItem;
     IBOutlet NSMenuItem *_newWebKit1EditorItem;
     IBOutlet NSMenuItem *_newWebKit2EditorItem;
+    IBOutlet NSMenuItem *_newSwiftUIWindowItem;
 
     bool _openNewWindowAtStartup;
 }

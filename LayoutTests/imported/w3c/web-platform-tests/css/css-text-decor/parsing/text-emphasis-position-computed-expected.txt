@@ -1,4 +1,5 @@
 
+FAIL Property text-emphasis-position value 'auto' assert_true: 'auto' is a supported value for text-emphasis-position. expected true got false
 PASS Property text-emphasis-position value 'over'
 PASS Property text-emphasis-position value 'under'
 PASS Property text-emphasis-position value 'over right'

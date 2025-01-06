@@ -27,15 +27,15 @@
 
 #include "WebGLExtension.h"
 #include "WebGLRenderingContext.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebGLVertexArrayObjectOES;
 
 class OESVertexArrayObject final : public WebGLExtension<WebGLRenderingContext> {
-    WTF_MAKE_ISO_ALLOCATED(OESVertexArrayObject);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(OESVertexArrayObject);
 public:
     explicit OESVertexArrayObject(WebGLRenderingContext&);
     ~OESVertexArrayObject();

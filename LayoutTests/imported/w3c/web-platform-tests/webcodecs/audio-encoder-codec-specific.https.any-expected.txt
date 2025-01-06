@@ -1,5 +1,5 @@
 
 PASS Test the Opus DTX flag works.
-FAIL Test the Opus bitrateMode flag works. assert_less_than: expected a number less than 40330 but got 80660
+PASS Test the Opus bitrateMode flag works.
 PASS Test the AAC bitrateMode flag works.
 

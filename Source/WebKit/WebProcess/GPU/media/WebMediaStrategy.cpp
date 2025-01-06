@@ -30,7 +30,6 @@
 #include "GPUProcessConnection.h"
 #include "RemoteAudioDestinationProxy.h"
 #include "RemoteCDMFactory.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/AudioDestination.h>
 #include <WebCore/AudioIOCallback.h>
@@ -40,6 +39,7 @@
 #include <WebCore/SharedAudioDestination.h>
 
 #if PLATFORM(COCOA)
+#include "RemoteMediaRecorderPrivateWriter.h"
 #include <WebCore/MediaSessionManagerCocoa.h>
 #endif
 
@@ -74,11 +74,11 @@ std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingMa
         class NowPlayingInfoForGPUManager : public WebCore::NowPlayingManager {
             void clearNowPlayingInfoPrivate() final
             {
-                if (auto* connection = WebProcess::singleton().existingGPUProcessConnection())
+                if (RefPtr connection = WebProcess::singleton().existingGPUProcessConnection())
                     connection->connection().send(Messages::GPUConnectionToWebProcess::ClearNowPlayingInfo { }, 0);
             }
 
-            void setNowPlayingInfoPrivate(const WebCore::NowPlayingInfo& nowPlayingInfo) final
+            void setNowPlayingInfoPrivate(const WebCore::NowPlayingInfo& nowPlayingInfo, bool) final
             {
                 Ref connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
                 connection->send(Messages::GPUConnectionToWebProcess::SetNowPlayingInfo { nowPlayingInfo }, 0);
@@ -121,4 +121,18 @@ void WebMediaStrategy::enableMockMediaSource()
 }
 #endif
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
+std::unique_ptr<MediaRecorderPrivateWriter> WebMediaStrategy::createMediaRecorderPrivateWriter(const String& type, WebCore::MediaRecorderPrivateWriterListener& listener) const
+{
+    ASSERT(isMainRunLoop());
+#if ENABLE(GPU_PROCESS)
+    if (m_useGPUProcess && (equalLettersIgnoringASCIICase(type, "video/mp4"_s) || equalLettersIgnoringASCIICase(type, "audio/mp4"_s)))
+        return RemoteMediaRecorderPrivateWriter::create(WebProcess::singleton().ensureGPUProcessConnection(), type, listener);
+#else
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(listener);
+#endif
+    return nullptr;
+}
+#endif
 } // namespace WebKit

@@ -13,7 +13,10 @@
 
 #include <memory>
 
-#include "api/video_codecs/vp8_temporal_layers.h"
+#include "api/fec_controller_override.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_encoder.h"
+#include "api/video_codecs/vp8_frame_buffer_controller.h"
 
 namespace webrtc {
 

@@ -31,12 +31,15 @@
 #include "GtkUtilities.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-static HashMap<unsigned, std::unique_ptr<RenderThemeScrollbar>>& widgetMap()
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderThemeScrollbar);
+
+static UncheckedKeyHashMap<unsigned, std::unique_ptr<RenderThemeScrollbar>>& widgetMap()
 {
-    static NeverDestroyed<HashMap<unsigned, std::unique_ptr<RenderThemeScrollbar>>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<unsigned, std::unique_ptr<RenderThemeScrollbar>>> map;
     return map;
 }
 

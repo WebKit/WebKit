@@ -1,4 +1,5 @@
 # Copyright (C) 2024 Igalia S.L.
+# Copyright (C) 2024 Sony Interactive Entertainment Inc.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,9 +23,9 @@
 
 #if USE(SKIA)
 
-webkit_platform_headers: "CoreIPCSkColorSpace.h"
-
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCSkColorSpace {
+additional_forward_declaration: class SkColorSpace;
+headers: "CoreIPCSkColorSpace.h"
+[Wrapper=WebKit::CoreIPCSkColorSpace, CreateUsing=create, AdditionalEncoder=StreamConnectionEncoder] class sk_sp<SkColorSpace> {
     std::span<const uint8_t> dataReference();
 }
 

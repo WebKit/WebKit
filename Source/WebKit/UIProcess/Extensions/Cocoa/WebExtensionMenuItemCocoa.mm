@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,15 +32,18 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "APIError.h"
 #import "CocoaHelpers.h"
+#import "WKNSError.h"
+#import "WKWebExtensionContextPrivate.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionMenuItemContextParameters.h"
 #import "WebExtensionMenuItemParameters.h"
-#import "_WKWebExtensionContextPrivate.h"
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
@@ -77,6 +80,11 @@
         _handler(sender);
 }
 
++ (BOOL)usesUserKeyEquivalents
+{
+    return NO;
+}
+
 @end
 #endif // USE(APPKIT)
 
@@ -95,7 +103,7 @@ WebExtensionMenuItem::WebExtensionMenuItem(WebExtensionContext& extensionContext
     relaxAdoptionRequirement();
 
     if (parameters.parentIdentifier) {
-        if (RefPtr parentMenuItem = m_extensionContext->menuItem(parameters.parentIdentifier.value()))
+        if (RefPtr parentMenuItem = extensionContext.menuItem(parameters.parentIdentifier.value()))
             parentMenuItem->addSubmenuItem(*this);
     }
 
@@ -106,8 +114,14 @@ WebExtensionMenuItem::WebExtensionMenuItem(WebExtensionContext& extensionContext
     else
         m_contexts = WebExtensionMenuItemContextType::Page;
 
-    if (!parameters.iconDictionaryJSON.isEmpty())
-        m_icons = parseJSON(parameters.iconDictionaryJSON);
+    if (!parameters.iconsJSON.isEmpty()) {
+        RefPtr parsedIcons = JSON::Value::parseJSON(parameters.iconsJSON);
+        m_icons = parsedIcons ? parsedIcons->asObject() : nullptr;
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        m_iconVariants = parsedIcons ? parsedIcons->asArray() : nullptr;
+#endif
+        clearIconCache();
+    }
 
     if (parameters.documentURLPatterns) {
         for (auto& patternString : parameters.documentURLPatterns.value()) {
@@ -134,7 +148,7 @@ WebExtensionMenuItemParameters WebExtensionMenuItem::minimalParameters() const
 
         nullString(), // title
         nullString(), // command
-        nullString(), // iconDictionaryJSON
+        nullString(), // iconsJSON
 
         isChecked(),
         isEnabled(),
@@ -149,7 +163,8 @@ WebExtensionMenuItemParameters WebExtensionMenuItem::minimalParameters() const
 
 void WebExtensionMenuItem::update(const WebExtensionMenuItemParameters& parameters)
 {
-    ASSERT(extensionContext());
+    RefPtr extensionContext = this->extensionContext();
+    ASSERT(extensionContext);
 
     if (parameters.type)
         m_type = parameters.type.value();
@@ -158,10 +173,10 @@ void WebExtensionMenuItem::update(const WebExtensionMenuItemParameters& paramete
         m_identifier = parameters.identifier;
 
     if (parameters.parentIdentifier) {
-        RefPtr updatedParentMenuItem = m_extensionContext->menuItem(parameters.parentIdentifier.value());
+        RefPtr updatedParentMenuItem = extensionContext->menuItem(parameters.parentIdentifier.value());
         if (updatedParentMenuItem.get() != m_parentMenuItem) {
-            if (m_parentMenuItem)
-                m_parentMenuItem->removeSubmenuItem(*this);
+            if (RefPtr parentMenuItem = m_parentMenuItem.get())
+                parentMenuItem->removeSubmenuItem(*this);
 
             if (updatedParentMenuItem)
                 updatedParentMenuItem->addSubmenuItem(*this);
@@ -172,10 +187,16 @@ void WebExtensionMenuItem::update(const WebExtensionMenuItemParameters& paramete
         m_title = removeAmpersands(parameters.title);
 
     if (!parameters.command.isNull())
-        m_command = extensionContext()->command(parameters.command);
+        m_command = extensionContext->command(parameters.command);
 
-    if (!parameters.iconDictionaryJSON.isNull())
-        m_icons = parseJSON(parameters.iconDictionaryJSON);
+    if (!parameters.iconsJSON.isNull()) {
+        RefPtr parsedIcons = JSON::Value::parseJSON(parameters.iconsJSON);
+        m_icons = parsedIcons ? parsedIcons->asObject() : nullptr;
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        m_iconVariants = parsedIcons ? parsedIcons->asArray() : nullptr;
+#endif
+        clearIconCache();
+    }
 
     if (parameters.checked)
         m_checked = parameters.checked.value();
@@ -278,8 +299,9 @@ CocoaMenuItem *WebExtensionMenuItem::platformMenuItem(const WebExtensionMenuItem
         result.keyEquivalentModifierMask = command->modifierFlags().toRaw();
     }
 
-    auto idealSize = CGSizeMake(16, 16);
-    auto *image = icon(idealSize);
+    auto idealSize = WebCore::FloatSize(16, 16);
+    auto *image = toCocoaImage(icon(idealSize));
+
     image.size = idealSize;
 
     result.image = image;
@@ -305,7 +327,7 @@ CocoaMenuItem *WebExtensionMenuItem::platformMenuItem(const WebExtensionMenuItem
 
     // iOS does not support sub-menus that are disabled or hidden, so return a normal action in that case.
     if (submenuItems().isEmpty() || !isEnabled() || !isVisible()) {
-        auto *action = [UIAction actionWithTitle:processedTitle image:icon(CGSizeMake(20, 20)) identifier:nil handler:makeBlockPtr([this, protectedThis = Ref { *this }, contextParameters](UIAction *) mutable {
+        auto *action = [UIAction actionWithTitle:processedTitle image:toCocoaImage(icon({ 20, 20 })) identifier:nil handler:makeBlockPtr([this, protectedThis = Ref { *this }, contextParameters](UIAction *) mutable {
             if (RefPtr context = extensionContext())
                 context->performMenuItem(const_cast<WebExtensionMenuItem&>(*this), contextParameters, WebExtensionContext::UserTriggered::Yes);
         }).get()];
@@ -322,15 +344,63 @@ CocoaMenuItem *WebExtensionMenuItem::platformMenuItem(const WebExtensionMenuItem
         return action;
     }
 
-    return [UIMenu menuWithTitle:processedTitle image:icon(CGSizeMake(20, 20)) identifier:nil options:0 children:submenuItemArray];
+    return [UIMenu menuWithTitle:processedTitle image:toCocoaImage(icon({ 20, 20 })) identifier:nil options:0 children:submenuItemArray];
 #endif
 }
 
-CocoaImage *WebExtensionMenuItem::icon(CGSize idealSize) const
+RefPtr<WebCore::Icon> WebExtensionMenuItem::icon(WebCore::FloatSize idealSize) const
 {
-    ASSERT(extensionContext());
+    RefPtr extensionContext = this->extensionContext();
+    ASSERT(extensionContext);
 
-    return extensionContext()->extension().bestImageInIconsDictionary(m_icons.get(), idealSize.width > idealSize.height ? idealSize.width : idealSize.height);
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (!m_iconVariants && !m_icons)
+#else
+    if (!m_icons)
+#endif
+        return nullptr;
+
+    // Clear the cache if the display scales change (connecting display, etc.)
+    auto currentScales = availableScreenScales();
+    if (currentScales != m_cachedIconScales)
+        clearIconCache();
+
+    if (m_cachedIcon && CGSizeEqualToSize(idealSize, m_cachedIconIdealSize))
+        return m_cachedIcon;
+
+    RefPtr<WebCore::Icon> result;
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (m_iconVariants) {
+        result = extensionContext->protectedExtension()->bestIconVariant(m_iconVariants, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
+            extensionContext->recordError(wrapper(error.get()));
+        });
+    } else
+#endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (m_icons) {
+        result = extensionContext->protectedExtension()->bestIcon(m_icons, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
+            extensionContext->recordError(wrapper(error.get()));
+        });
+    }
+
+    if (result) {
+        m_cachedIcon = result;
+        m_cachedIconIdealSize = idealSize;
+        m_cachedIconScales = currentScales;
+
+        return result;
+    }
+
+    clearIconCache();
+
+    return nullptr;
+}
+
+void WebExtensionMenuItem::clearIconCache() const
+{
+    m_cachedIcon = nil;
+    m_cachedIconScales = { };
+    m_cachedIconIdealSize = { };
 }
 
 } // namespace WebKit

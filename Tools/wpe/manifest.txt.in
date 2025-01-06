@@ -3,11 +3,10 @@ exclude #$
 exclude ChangeLog
 exclude CMakeLists.txt.user
 exclude Makefile
-exclude PlatformAppleWin.cmake
 exclude PlatformMac.cmake
+exclude PlatformPlayStation.cmake
 exclude PlatformGTK.cmake
 exclude PlatformWin.cmake
-exclude PlatformWinCairo.cmake
 exclude tags$
 exclude ~$
 exclude \.#$
@@ -52,9 +51,9 @@ exclude Source/WebCore/platform/audio/resources
 exclude Source/WebCore/bindings/scripts/test
 exclude Source/WebCore/Resources
 exclude Source/WebKitLegacy/.*
-exclude Source/cmake/OptionsWinCairo.cmake$
-exclude Source/cmake/OptionsWindows.cmake$
-exclude Source/cmake/OptionsAppleWin.cmake$
+exclude Source/cmake/OptionsMac.cmake$
+exclude Source/cmake/OptionsPlayStation.cmake$
+exclude Source/cmake/OptionsWin.cmake$
 exclude Source/cmake/OptionsGTK.cmake$
 exclude Source/WebInspectorUI/Tools
 
@@ -68,8 +67,16 @@ file Source/ThirdParty/skia/CMakeLists.txt
 file Source/ThirdParty/skia/LICENSE
 directory Source/ThirdParty/skia/include
 directory Source/ThirdParty/skia/modules/skcms
+directory Source/ThirdParty/skia/modules/skresources/include
+directory Source/ThirdParty/skia/modules/skresources/src
+directory Source/ThirdParty/skia/modules/skshaper/include
+directory Source/ThirdParty/skia/modules/skshaper/src
+directory Source/ThirdParty/skia/modules/svg/include
+directory Source/ThirdParty/skia/modules/svg/src
 directory Source/ThirdParty/skia/src
+directory Source/ThirdParty/unifdef
 directory Source/ThirdParty/xdgmime
+directory Source/ThirdParty/libsysprof-capture
 
 exclude Source/WebKit/Resources
 
@@ -93,6 +100,7 @@ exclude Tools/wpe/jhbuild.modules
 exclude Tools/wpe/jhbuildrc
 
 file Tools/glib/common.py
+file Tools/glib/fix-glib-resources-depfile.pl
 file Tools/glib/generate-inspector-gresource-manifest.py
 file Tools/glib/generate-modern-media-controls-gresource-manifest.py
 file Tools/glib/generate-pdfjs-resource-manifest.py

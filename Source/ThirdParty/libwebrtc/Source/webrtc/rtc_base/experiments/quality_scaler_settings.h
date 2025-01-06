@@ -11,7 +11,8 @@
 #ifndef RTC_BASE_EXPERIMENTS_QUALITY_SCALER_SETTINGS_H_
 #define RTC_BASE_EXPERIMENTS_QUALITY_SCALER_SETTINGS_H_
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/field_trials_view.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 
@@ -21,13 +22,13 @@ class QualityScalerSettings final {
  public:
   explicit QualityScalerSettings(const FieldTrialsView& field_trials);
 
-  absl::optional<int> SamplingPeriodMs() const;
-  absl::optional<int> AverageQpWindow() const;
-  absl::optional<int> MinFrames() const;
-  absl::optional<double> InitialScaleFactor() const;
-  absl::optional<double> ScaleFactor() const;
-  absl::optional<int> InitialBitrateIntervalMs() const;
-  absl::optional<double> InitialBitrateFactor() const;
+  std::optional<int> SamplingPeriodMs() const;
+  std::optional<int> AverageQpWindow() const;
+  std::optional<int> MinFrames() const;
+  std::optional<double> InitialScaleFactor() const;
+  std::optional<double> ScaleFactor() const;
+  std::optional<int> InitialBitrateIntervalMs() const;
+  std::optional<double> InitialBitrateFactor() const;
 
  private:
   FieldTrialOptional<int> sampling_period_ms_;

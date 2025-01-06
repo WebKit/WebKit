@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2012 the V8 project authors. All rights reserved.
  * Copyright (C) 2010 Research In Motion Limited. All rights reserved.
@@ -49,6 +49,8 @@
 #include <wtf/SaturatedArithmetic.h>
 #include <wtf/TZoneMalloc.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class JSGlobalObject;
@@ -79,7 +81,7 @@ struct LocalTimeOffsetCache {
 };
 
 class DateCache {
-    WTF_MAKE_TZONE_ALLOCATED(DateCache);
+    WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(DateCache);
     WTF_MAKE_NONCOPYABLE(DateCache);
 public:
     DateCache();
@@ -204,3 +206,5 @@ ALWAYS_INLINE bool isUTCEquivalent(StringView timeZone)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

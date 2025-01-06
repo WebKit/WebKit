@@ -47,7 +47,11 @@ public:
     WEBCORE_EXPORT void removeCaptionsLayer();
 
 protected:
+    WEBCORE_EXPORT VideoFullscreenCaptions();
+
+    bool m_captionsLayerHidden  { false };
     RetainPtr<CALayer> m_captionsLayer;
+    RetainPtr<id> m_captionsLayerContents;
 };
 
 }

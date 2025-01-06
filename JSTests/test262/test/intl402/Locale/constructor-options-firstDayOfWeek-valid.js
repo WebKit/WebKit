@@ -9,18 +9,15 @@ info: |
     Intl.Locale( tag [, options] )
 
     ...
-    x. Let numberingSystem be ? GetOption(options, "firstDayOfWeek", "string", < *"mon"*, *"tue"*, *"wed"*, *"thu"*, *"fri"*, *"sat"*, *"sun"*, *"0"*, *"1"*, *"2"*, *"3"*, *"4"*, *"5"*, *"6"*, *"7"*> , undefined).
-    x. Let firstDay be *undefined*.
-    x. If fw is not *undefined*, then
-       x. Set firstDay to !WeekdayToString(fw).
-       x. Set opt.[[fw]] to firstDay.
+    x. Let fw be ? GetOption(options, "firstDayOfWeek", "string", undefined, undefined).
+    x. If fw is not undefined, then
+       x. Set fw to !WeekdayToString(fw).
+       x. If fw does not match the type sequence (from UTS 35 Unicode Locale Identifier, section 3.2), throw a RangeError exception.
+    x. Set opt.[[fw]] to fw.
     ...
     x. Let r be ! ApplyUnicodeExtensionToTag(tag, opt, relevantExtensionKeys).
     ...
-    x. Let firstDay be *undefined*.
-    x. If r.[[fw]] is not *undefined*, then
-       x. Set firstDay to ! WeekdayToNumber(r.[[fw]]).
-       x. Set locale.[[FirstDayOfWeek]] to firstDay.
+    x. Set locale.[[FirstDayOfWeek]] to r.[[fw]].
     ...
 
 features: [Intl.Locale,Intl.Locale-info]
@@ -50,6 +47,24 @@ const validFirstDayOfWeekOptions = [
   [6, "en-u-fw-sat"],
   [7, "en-u-fw-sun"],
   [0, "en-u-fw-sun"],
+  [true, "en-u-fw"],
+  [false, "en-u-fw-false"],
+  [null, "en-u-fw-null"],
+  ["primidi", "en-u-fw-primidi"],
+  ["duodi", "en-u-fw-duodi"],
+  ["tridi", "en-u-fw-tridi"],
+  ["quartidi", "en-u-fw-quartidi"],
+  ["quintidi", "en-u-fw-quintidi"],
+  ["sextidi", "en-u-fw-sextidi"],
+  ["septidi", "en-u-fw-septidi"],
+  ["octidi", "en-u-fw-octidi"],
+  ["nonidi", "en-u-fw-nonidi"],
+  ["decadi", "en-u-fw-decadi"],
+  ["frank", "en-u-fw-frank"],
+  ["yungfong", "en-u-fw-yungfong"],
+  ["yung-fong", "en-u-fw-yung-fong"],
+  ["tang", "en-u-fw-tang"],
+  ["frank-yung-fong-tang", "en-u-fw-frank-yung-fong-tang"],
 ];
 for (const [firstDayOfWeek, expected] of validFirstDayOfWeekOptions) {
   assert.sameValue(

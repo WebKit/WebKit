@@ -8,7 +8,7 @@ description: >
     with the order of properties in 'O' (any other built-in object)
 ---*/
 
-var obj = new Date();
+var obj = new Date(0);
 obj.prop1 = 100;
 obj.prop2 = "prop2";
 

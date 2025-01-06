@@ -1,0 +1,5 @@
+PASS The ReportingObserver and callback were garbage collected.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

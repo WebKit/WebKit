@@ -56,7 +56,7 @@ fidl::InterfacePtr<Interface> ConnectToService(zx_handle_t serviceRoot,
 
 }  // namespace
 
-// TODO: http://anglebug.com/7868 - Implement using fuchsia.element.GraphicalPresenter to pass a
+// TODO: http://anglebug.com/42050005 - Implement using fuchsia.element.GraphicalPresenter to pass a
 // ViewCreationToken to Fuchsia Flatland.
 ScenicWindow::ScenicWindow()
     : mLoop(GetDefaultLoop()),

@@ -31,6 +31,7 @@
 #pragma once
 
 #include <wtf/Deque.h>
+#include <wtf/text/ParsingUtilities.h>
 
 namespace WTF {
 
@@ -62,8 +63,7 @@ public:
             if (!m_buffer.size() || m_buffer.last()->size() == BlockSize)
                 m_buffer.append(makeUnique<Block>());
             size_t appendSize = std::min(BlockSize - m_buffer.last()->size(), data.size());
-            m_buffer.last()->append(data.first(appendSize));
-            data = data.subspan(appendSize);
+            m_buffer.last()->append(consumeSpan(data, appendSize));
         }
     }
 

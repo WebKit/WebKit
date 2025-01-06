@@ -28,12 +28,13 @@ class SamplerVk : public SamplerImpl
 
     const vk::SamplerHelper &getSampler() const
     {
-        ASSERT(mSampler.valid());
-        return mSampler.get();
+        ASSERT(mSampler);
+        ASSERT(mSampler->valid());
+        return *mSampler.get();
     }
 
   private:
-    vk::SamplerBinding mSampler;
+    vk::SharedSamplerPtr mSampler;
 };
 
 }  // namespace rx

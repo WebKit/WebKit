@@ -32,11 +32,11 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "RTCPeerConnection.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RTCIceTransport);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCIceTransport);
 
 Ref<RTCIceTransport> RTCIceTransport::create(ScriptExecutionContext& context, UniqueRef<RTCIceTransportBackend>&& backend, RTCPeerConnection& connection)
 {
@@ -79,6 +79,9 @@ void RTCIceTransport::onStateChanged(RTCIceTransportState state)
             return;
 
         m_transportState = state;
+        if (m_transportState == RTCIceTransportState::Failed)
+            m_selectedCandidatePair = { };
+
         if (auto connection = this->connection())
             connection->processIceTransportStateChange(*this);
     });

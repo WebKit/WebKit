@@ -34,40 +34,47 @@
 #include "Page.h"
 #include "PageOverlayController.h"
 #include "PlatformMouseEvent.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceUsageOverlay);
+
+Ref<ResourceUsageOverlay> ResourceUsageOverlay::create(Page& page)
+{
+    return adoptRef(*new ResourceUsageOverlay(page));
+}
 
 ResourceUsageOverlay::ResourceUsageOverlay(Page& page)
     : m_page(page)
     , m_overlay(PageOverlay::create(*this, PageOverlay::OverlayType::View))
 {
+    ASSERT(isMainThread());
     // Let the event loop cycle before continuing with initialization.
     // This way we'll have access to the FrameView's dimensions.
-    callOnMainThread([this] {
-        initialize();
+    callOnMainThread([weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->initialize();
     });
 }
 
 ResourceUsageOverlay::~ResourceUsageOverlay()
 {
+    ASSERT(isMainThread());
     platformDestroy();
-    // FIXME: This is a hack so we don't try to uninstall the PageOverlay during Page destruction.
-    if (m_page.mainFrame().page())
-        m_page.pageOverlayController().uninstallPageOverlay(*m_overlay.copyRef(), PageOverlay::FadeMode::DoNotFade);
+    if (RefPtr page = m_page.get())
+        page->pageOverlayController().uninstallPageOverlay(*m_overlay.copyRef(), PageOverlay::FadeMode::DoNotFade);
 }
 
 void ResourceUsageOverlay::initialize()
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
+    RefPtr page = m_page.get();
+    if (!page)
         return;
-
-    if (!localMainFrame->view())
+    auto* frameView = page->mainFrame().virtualView();
+    if (!frameView)
         return;
-
-    auto& frameView = *localMainFrame->view();
-
-    IntRect initialRect(frameView.width() / 2 - normalWidth / 2, frameView.height() - normalHeight - 20, normalWidth, normalHeight);
+    IntRect initialRect(frameView->width() / 2 - normalWidth / 2, frameView->height() - normalHeight - 20, normalWidth, normalHeight);
 
 #if PLATFORM(IOS_FAMILY)
     // FIXME: The overlay should be stuck to the viewport instead of moving along with the page.
@@ -76,7 +83,7 @@ void ResourceUsageOverlay::initialize()
 
     RefPtr overlay = m_overlay;
     overlay->setFrame(initialRect);
-    m_page.pageOverlayController().installPageOverlay(*overlay, PageOverlay::FadeMode::DoNotFade);
+    page->pageOverlayController().installPageOverlay(*overlay, PageOverlay::FadeMode::DoNotFade);
     platformInitialize();
 }
 
@@ -103,6 +110,9 @@ bool ResourceUsageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& ev
         break;
     case PlatformEvent::Type::MouseMoved:
         if (m_dragging) {
+            RefPtr page = m_page.get();
+            if (!page)
+                return false;
             IntRect newFrame = overlay->frame();
 
             // Move the new frame relative to the point where the drag was initiated.
@@ -112,9 +122,9 @@ bool ResourceUsageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& ev
             // Force the frame to stay inside the viewport entirely.
             if (newFrame.x() < 0)
                 newFrame.setX(0);
-            if (newFrame.y() < m_page.topContentInset())
-                newFrame.setY(m_page.topContentInset());
-            auto& frameView = *m_page.mainFrame().virtualView();
+            if (newFrame.y() < page->topContentInset())
+                newFrame.setY(page->topContentInset());
+            auto& frameView = *page->mainFrame().virtualView();
             if (newFrame.maxX() > frameView.width())
                 newFrame.setX(frameView.width() - newFrame.width());
             if (newFrame.maxY() > frameView.height())

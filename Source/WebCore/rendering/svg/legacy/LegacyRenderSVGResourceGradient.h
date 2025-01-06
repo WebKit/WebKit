@@ -57,7 +57,7 @@ struct GradientData {
 };
 
 class LegacyRenderSVGResourceGradient : public LegacyRenderSVGResourceContainer {
-    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceGradient);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGResourceGradient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceGradient);
 public:
     virtual ~LegacyRenderSVGResourceGradient();
@@ -67,7 +67,7 @@ public:
     void removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers) final;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) final;
 
-    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) final;
+    OptionSet<ApplyResult> applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) final;
     void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) final;
     FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) final { return FloatRect(); }
 
@@ -87,7 +87,7 @@ private:
     virtual bool collectGradientAttributes() = 0;
     virtual Ref<Gradient> buildGradient(const RenderStyle&) const = 0;
 
-    HashMap<RenderObject*, std::unique_ptr<GradientData>> m_gradientMap;
+    UncheckedKeyHashMap<RenderObject*, std::unique_ptr<GradientData>> m_gradientMap;
 
 #if USE(CG)
     GraphicsContext* m_savedContext { nullptr };

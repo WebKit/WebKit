@@ -33,8 +33,7 @@
 #include "PlatformXR.h"
 #include <openxr/openxr.h>
 #include <openxr/openxr_platform.h>
-
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace PlatformXR {
@@ -117,9 +116,9 @@ inline XrViewConfigurationType toXrViewConfigurationType(SessionMode mode)
     return XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO;
 }
 
-inline String handenessToString(XRHandedness handeness)
+inline String handednessToString(XRHandedness handedness)
 {
-    switch (handeness) {
+    switch (handedness) {
     case XRHandedness::Left:
         return "left"_s;
     case XRHandedness::Right:

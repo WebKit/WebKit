@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -323,21 +323,6 @@ const FIRSTPASS_STATS *av1_firstpass_info_peek(
 int av1_firstpass_info_future_count(const FIRSTPASS_INFO *firstpass_info,
                                     int offset_from_cur);
 
-/*!\brief Count the past stats before the target in firstpass_info
- * Note that the target stats will NOT be counted.
- * The target index is as follows.
- * (cur_index + offset_from_cur) % firstpass_info->stats_buf_size
- *
- * \ingroup rate_control
- * \param[in]  firstpass_info    struct of firstpass_info.
- * \param[in]  offset_from_cur  target stats's index offset
- *                               from cur_index.
- * \return Number of stats in the past before the target stats
- *         excluding itself.
- */
-int av1_firstpass_info_past_count(const FIRSTPASS_INFO *firstpass_info,
-                                  int offset_from_cur);
-
 /*!\cond */
 #define FC_ANIMATION_THRESH 0.15
 enum {
@@ -548,13 +533,13 @@ struct EncodeFrameParams;
 struct AV1EncoderConfig;
 struct TileDataEnc;
 
-static INLINE int is_fp_wavelet_energy_invalid(
+static inline int is_fp_wavelet_energy_invalid(
     const FIRSTPASS_STATS *fp_stats) {
   assert(fp_stats != NULL);
   return (fp_stats->frame_avg_wavelet_energy < 0);
 }
 
-static INLINE BLOCK_SIZE get_fp_block_size(int is_screen_content_type) {
+static inline BLOCK_SIZE get_fp_block_size(int is_screen_content_type) {
   return (is_screen_content_type ? BLOCK_8X8 : BLOCK_16X16);
 }
 

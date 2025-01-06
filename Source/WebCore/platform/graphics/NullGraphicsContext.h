@@ -26,6 +26,7 @@
 #pragma once
 
 #include "GraphicsContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ enum class NullGraphicsContextPaintInvalidationReasons : uint8_t {
 };
 
 class NullGraphicsContext : public GraphicsContext {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(NullGraphicsContext);
 public:
     using PaintInvalidationReasons = NullGraphicsContextPaintInvalidationReasons;
 
@@ -79,8 +81,8 @@ private:
     void drawEllipse(const FloatRect&) final { }
     void fillPath(const Path&) final { }
     void strokePath(const Path&) final { }
-    void fillRect(const FloatRect&) final { }
-    void fillRect(const FloatRect&, Gradient&, const AffineTransform&) final { }
+    void fillRect(const FloatRect&, RequiresClipToRect) final { }
+    void fillRect(const FloatRect&, Gradient&, const AffineTransform&, RequiresClipToRect) final { }
     void fillRect(const FloatRect&, const Color&) final { }
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final { }
     void strokeRect(const FloatRect&, float) final { }
@@ -108,7 +110,7 @@ private:
 
     FloatSize drawText(const FontCascade&, const TextRun&, const FloatPoint&, unsigned = 0, std::optional<unsigned> = std::nullopt) final { return { }; }
 
-    void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned, const FloatPoint&, FontSmoothingMode) final { }
+    void drawGlyphs(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode) final { }
     void drawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) final { }
 
     void drawEmphasisMarks(const FontCascade&, const TextRun&, const AtomString&, const FloatPoint&, unsigned = 0, std::optional<unsigned> = std::nullopt) final { }
@@ -137,7 +139,7 @@ private:
     void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) final { }
 
 #if ENABLE(VIDEO)
-    void paintFrameForMedia(MediaPlayer&, const FloatRect&) final { }
+    void drawVideoFrame(VideoFrame&, const FloatRect&, ImageOrientation, bool) final { }
 #endif
 
 private:

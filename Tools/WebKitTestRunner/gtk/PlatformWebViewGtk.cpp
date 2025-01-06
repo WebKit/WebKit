@@ -33,16 +33,10 @@
 #include <WebKit/WKView.h>
 #include <WebKit/WKViewPrivate.h>
 #include <gtk/gtk.h>
+#include <webkit/WebKitWebViewBaseInternal.h>
 #include <wtf/Assertions.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
-
-#if USE(SKIA)
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
-#include <skia/core/SkColorSpace.h>
-#include <skia/core/SkPixmap.h>
-IGNORE_CLANG_WARNINGS_END
-#endif
 
 namespace WTR {
 
@@ -228,59 +222,10 @@ void PlatformWebView::changeWindowScaleIfNeeded(float)
 {
 }
 
-static cairo_surface_t* viewSnapshot(GtkWidget* view)
+PlatformImage PlatformWebView::windowSnapshotImage()
 {
-#if USE(GTK4)
-    int width = gtk_widget_get_width(view);
-    int height = gtk_widget_get_height(view);
-#else
-    int width = gtk_widget_get_allocated_width(view);
-    int height = gtk_widget_get_allocated_height(view);
-#endif
-
-    while (g_main_context_pending(nullptr))
-        g_main_context_iteration(nullptr, TRUE);
-
-    cairo_surface_t* imageSurface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, width, height);
-    cairo_t* context = cairo_create(imageSurface);
-
-#if USE(GTK4)
-    GRefPtr<GdkPaintable> paintable = adoptGRef(gtk_widget_paintable_new(view));
-    auto* snapshot = gtk_snapshot_new();
-    gdk_paintable_snapshot(paintable.get(), snapshot, width, height);
-    if (auto* node = gtk_snapshot_free_to_node(snapshot)) {
-        gsk_render_node_draw(node, context);
-        gsk_render_node_unref(node);
-    }
-#else
-    gtk_widget_draw(view, context);
-#endif
-
-    cairo_destroy(context);
-
-    return imageSurface;
+    return webkitWebViewBaseSnapshotForTesting(const_cast<WebKitWebViewBase*>(reinterpret_cast<const WebKitWebViewBase*>(m_view)));
 }
-
-#if USE(CAIRO)
-cairo_surface_t* PlatformWebView::windowSnapshotImage()
-{
-    return viewSnapshot(GTK_WIDGET(m_view));
-}
-#elif USE(SKIA)
-SkImage* PlatformWebView::windowSnapshotImage()
-{
-    auto* surface = viewSnapshot(GTK_WIDGET(m_view));
-    if (!surface)
-        return nullptr;
-
-    cairo_surface_flush(surface);
-    auto imageInfo = SkImageInfo::MakeN32Premul(cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface), SkColorSpace::MakeSRGB());
-    SkPixmap pixmap(imageInfo, cairo_image_surface_get_data(surface), cairo_image_surface_get_stride(surface));
-    return SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
-        cairo_surface_destroy(static_cast<cairo_surface_t*>(context));
-    }, surface).release();
-}
-#endif
 
 void PlatformWebView::didInitializeClients()
 {

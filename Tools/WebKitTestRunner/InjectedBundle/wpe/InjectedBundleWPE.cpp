@@ -30,6 +30,7 @@ namespace WTR {
 
 void InjectedBundle::platformInitialize(WKTypeRef)
 {
+    g_setenv("WEBKIT_TOP_LEVEL", TOP_LEVEL_DIR, FALSE);
 }
 
 } // namespace WTR

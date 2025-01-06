@@ -23,11 +23,11 @@ class RtpPacketToSend;
 struct RTPVideoHeader;
 
 namespace RtpFormatVideoGeneric {
-static const uint8_t kKeyFrameBit = 0x01;
-static const uint8_t kFirstPacketBit = 0x02;
+inline constexpr uint8_t kKeyFrameBit = 0x01;
+inline constexpr uint8_t kFirstPacketBit = 0x02;
 // If this bit is set, there will be an extended header contained in this
 // packet. This was added later so old clients will not send this.
-static const uint8_t kExtendedHeaderBit = 0x04;
+inline constexpr uint8_t kExtendedHeaderBit = 0x04;
 }  // namespace RtpFormatVideoGeneric
 
 class RtpPacketizerGeneric : public RtpPacketizer {

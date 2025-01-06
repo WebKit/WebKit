@@ -73,7 +73,7 @@
 #include "ValueProfile.h"
 #include "WasmCallingConvention.h"
 #include "WasmFunctionCodeBlockGenerator.h"
-#include "WasmInstance.h"
+#include "WasmIPIntGenerator.h"
 #include "Watchdog.h"
 #include "WebAssemblyFunction.h"
 #include <stdio.h>

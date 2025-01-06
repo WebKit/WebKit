@@ -89,7 +89,7 @@ std::tuple<ServiceType, absl::string_view> GetServiceTypeAndHostnameFromUri(
   return {ServiceType::INVALID, ""};
 }
 
-absl::optional<int> ParsePort(absl::string_view in_str) {
+std::optional<int> ParsePort(absl::string_view in_str) {
   // Make sure port only contains digits. StringToNumber doesn't check this.
   for (const char& c : in_str) {
     if (!std::isdigit(static_cast<unsigned char>(c))) {
@@ -123,7 +123,7 @@ std::tuple<bool, absl::string_view, int> ParseHostnameAndPortFromString(
     }
     auto colonpos = in_str.find(':', closebracket);
     if (absl::string_view::npos != colonpos) {
-      if (absl::optional<int> opt_port =
+      if (std::optional<int> opt_port =
               ParsePort(in_str.substr(closebracket + 2))) {
         port = *opt_port;
       } else {
@@ -135,7 +135,7 @@ std::tuple<bool, absl::string_view, int> ParseHostnameAndPortFromString(
     // IPv4address or reg-name syntax
     auto colonpos = in_str.find(':');
     if (absl::string_view::npos != colonpos) {
-      if (absl::optional<int> opt_port =
+      if (std::optional<int> opt_port =
               ParsePort(in_str.substr(colonpos + 1))) {
         port = *opt_port;
       } else {
@@ -196,7 +196,7 @@ RTCError ParseIceServerUrl(
           "ICE server parsing failed: Transport parameter missing value.");
     }
 
-    absl::optional<cricket::ProtocolType> proto =
+    std::optional<cricket::ProtocolType> proto =
         cricket::StringToProto(transport_tokens[1]);
     if (!proto ||
         (*proto != cricket::PROTO_UDP && *proto != cricket::PROTO_TCP)) {
@@ -348,13 +348,6 @@ RTCError ParseIceServersOrError(
     }
   }
   return RTCError::OK();
-}
-
-RTCErrorType ParseIceServers(
-    const PeerConnectionInterface::IceServers& servers,
-    cricket::ServerAddresses* stun_servers,
-    std::vector<cricket::RelayServerConfig>* turn_servers) {
-  return ParseIceServersOrError(servers, stun_servers, turn_servers).type();
 }
 
 }  // namespace webrtc

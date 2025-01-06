@@ -30,9 +30,13 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
+
 namespace WebCore {
 
-class WorkerReportingProxy {
+class WorkerReportingProxy : public CanMakeThreadSafeCheckedPtr<WorkerReportingProxy> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerReportingProxy);
 public:
     virtual ~WorkerReportingProxy() = default;
 
@@ -45,6 +49,12 @@ public:
 
     // Invoked when the thread has stopped.
     virtual void workerGlobalScopeDestroyed() = 0;
+
+    // CanMakeCheckedPtr.
+    virtual uint32_t checkedPtrCount() const = 0;
+    virtual uint32_t checkedPtrCountWithoutThreadCheck() const = 0;
+    virtual void incrementCheckedPtrCount() const = 0;
+    virtual void decrementCheckedPtrCount() const = 0;
 };
 
 } // namespace WebCore

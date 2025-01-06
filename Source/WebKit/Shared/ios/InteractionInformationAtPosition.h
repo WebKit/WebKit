@@ -28,8 +28,8 @@
 #if PLATFORM(IOS_FAMILY)
 
 #include "ArgumentCoders.h"
+#include "CursorContext.h"
 #include "InteractionInformationRequest.h"
-#include <WebCore/Cursor.h>
 #include <WebCore/ElementAnimationContext.h>
 #include <WebCore/ElementContext.h>
 #include <WebCore/IntPoint.h>
@@ -86,9 +86,12 @@ struct InteractionInformationAtPosition {
     bool preventTextInteraction { false };
 #endif
     bool elementContainsImageOverlay { false };
-    bool shouldNotUseIBeamInEditableContent { false };
     bool isImageOverlayText { false };
-    bool isVerticalWritingMode { false };
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    bool isSpatialImage { false };
+#endif
+    bool isInPlugin { false };
+    bool needsPointerTouchCompatibilityQuirk { false };
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     URL url;
     URL imageURL;
@@ -103,10 +106,7 @@ struct InteractionInformationAtPosition {
     String textBefore;
     String textAfter;
 
-    float caretLength { 0 };
-    WebCore::FloatRect lineCaretExtent;
-
-    std::optional<WebCore::Cursor> cursor;
+    CursorContext cursorContext;
 
     WebCore::TextIndicatorData linkIndicator;
 #if ENABLE(DATA_DETECTION)

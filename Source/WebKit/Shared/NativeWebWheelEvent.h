@@ -68,10 +68,11 @@ public:
     NativeWebWheelEvent(struct wpe_input_axis_event*, float deviceScaleFactor, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     explicit NativeWebWheelEvent(WPEEvent*);
+    NativeWebWheelEvent(WPEEvent*, WebWheelEvent::Phase);
 #endif
 
 #elif PLATFORM(WIN)
-    NativeWebWheelEvent(HWND, UINT message, WPARAM, LPARAM);
+    NativeWebWheelEvent(HWND, UINT message, WPARAM, LPARAM, float deviceScaleFactor);
 #endif
 
 #if USE(APPKIT)

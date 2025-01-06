@@ -23,11 +23,11 @@
 #include "LegacyRenderSVGResourceRadialGradient.h"
 
 #include "LegacyRenderSVGResourceRadialGradientInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceRadialGradient);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceRadialGradient);
 
 LegacyRenderSVGResourceRadialGradient::LegacyRenderSVGResourceRadialGradient(SVGRadialGradientElement& element, RenderStyle&& style)
     : LegacyRenderSVGResourceGradient(Type::LegacySVGResourceRadialGradient, element, WTFMove(style))

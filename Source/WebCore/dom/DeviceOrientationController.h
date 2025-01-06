@@ -28,6 +28,7 @@
 
 #include "DeviceController.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,8 +37,8 @@ class DeviceOrientationData;
 class Page;
 
 class DeviceOrientationController final : public DeviceController {
+    WTF_MAKE_TZONE_ALLOCATED(DeviceOrientationController);
     WTF_MAKE_NONCOPYABLE(DeviceOrientationController);
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceOrientationController);
 public:
     explicit DeviceOrientationController(DeviceOrientationClient&);

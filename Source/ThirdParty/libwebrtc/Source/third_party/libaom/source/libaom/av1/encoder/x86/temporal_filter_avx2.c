@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -327,7 +327,7 @@ static AOM_FORCE_INLINE int32_t xx_mask_and_hadd(__m256i vsum, int i) {
 }
 
 // AVX2 implementation of approx_exp()
-static AOM_INLINE __m256 approx_exp_avx2(__m256 y) {
+static inline __m256 approx_exp_avx2(__m256 y) {
 #define A ((1 << 23) / 0.69314718056f)  // (1 << 23) / ln(2)
 #define B \
   127  // Offset for the exponent according to IEEE floating point standard.

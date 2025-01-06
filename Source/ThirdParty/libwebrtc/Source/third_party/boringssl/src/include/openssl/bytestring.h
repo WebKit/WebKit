@@ -58,17 +58,20 @@ struct cbs_st {
 
 // CBS_init sets |cbs| to point to |data|. It does not take ownership of
 // |data|.
-OPENSSL_EXPORT void CBS_init(CBS *cbs, const uint8_t *data, size_t len);
+OPENSSL_INLINE void CBS_init(CBS *cbs, const uint8_t *data, size_t len) {
+  cbs->data = data;
+  cbs->len = len;
+}
 
 // CBS_skip advances |cbs| by |len| bytes. It returns one on success and zero
 // otherwise.
 OPENSSL_EXPORT int CBS_skip(CBS *cbs, size_t len);
 
 // CBS_data returns a pointer to the contents of |cbs|.
-OPENSSL_EXPORT const uint8_t *CBS_data(const CBS *cbs);
+OPENSSL_INLINE const uint8_t *CBS_data(const CBS *cbs) { return cbs->data; }
 
 // CBS_len returns the number of bytes remaining in |cbs|.
-OPENSSL_EXPORT size_t CBS_len(const CBS *cbs);
+OPENSSL_INLINE size_t CBS_len(const CBS *cbs) { return cbs->len; }
 
 // CBS_stow copies the current contents of |cbs| into |*out_ptr| and
 // |*out_len|. If |*out_ptr| is not NULL, the contents are freed with
@@ -633,6 +636,33 @@ OPENSSL_EXPORT int CBB_add_asn1_oid_from_text(CBB *cbb, const char *text,
 //
 // Note a SET type has a slightly different ordering than a SET OF.
 OPENSSL_EXPORT int CBB_flush_asn1_set_of(CBB *cbb);
+
+
+// Unicode utilities.
+//
+// These functions consider noncharacters (see section 23.7 from Unicode 15.0.0)
+// to be invalid code points and will treat them as an error condition.
+
+// The following functions read one Unicode code point from |cbs| with the
+// corresponding encoding and store it in |*out|. They return one on success and
+// zero on error.
+OPENSSL_EXPORT int CBS_get_utf8(CBS *cbs, uint32_t *out);
+OPENSSL_EXPORT int CBS_get_latin1(CBS *cbs, uint32_t *out);
+OPENSSL_EXPORT int CBS_get_ucs2_be(CBS *cbs, uint32_t *out);
+OPENSSL_EXPORT int CBS_get_utf32_be(CBS *cbs, uint32_t *out);
+
+// CBB_get_utf8_len returns the number of bytes needed to represent |u| in
+// UTF-8.
+OPENSSL_EXPORT size_t CBB_get_utf8_len(uint32_t u);
+
+// The following functions encode |u| to |cbb| with the corresponding
+// encoding. They return one on success and zero on error. Error conditions
+// include |u| being an invalid code point, or |u| being unencodable in the
+// specified encoding.
+OPENSSL_EXPORT int CBB_add_utf8(CBB *cbb, uint32_t u);
+OPENSSL_EXPORT int CBB_add_latin1(CBB *cbb, uint32_t u);
+OPENSSL_EXPORT int CBB_add_ucs2_be(CBB *cbb, uint32_t u);
+OPENSSL_EXPORT int CBB_add_utf32_be(CBB *cbb, uint32_t u);
 
 
 #if defined(__cplusplus)

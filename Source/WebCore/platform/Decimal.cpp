@@ -39,6 +39,7 @@
 #include <wtf/Int128.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -162,6 +163,8 @@ static uint64_t scaleUp(uint64_t x, int n)
 } // namespace DecimalPrivate
 
 using namespace DecimalPrivate;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Decimal);
 
 Decimal& Decimal::operator+=(const Decimal& other)
 {
@@ -473,6 +476,11 @@ Decimal::AlignedOperands Decimal::alignOperands(const Decimal& lhs, const Decima
     return alignedOperands;
 }
 
+static bool isMultiplePowersOfTen(uint64_t coefficient, int n)
+{
+    return !coefficient || !(coefficient % scaleUp(1, n));
+}
+
 // Round toward positive infinity.
 Decimal Decimal::ceil() const
 {
@@ -488,10 +496,9 @@ Decimal Decimal::ceil() const
     if (numberOfDigits <= numberOfDropDigits)
         return isPositive() ? Decimal(1) : zero(Positive);
 
-    result = scaleDown(result, numberOfDropDigits - 1);
-    if (sign() == Positive && result % 10 > 0)
-        result += 10;
-    result /= 10;
+    result = scaleDown(result, numberOfDropDigits);
+    if (isPositive() && !isMultiplePowersOfTen(result, numberOfDropDigits))
+        ++result;
     return Decimal(sign(), 0, result);
 }
 
@@ -530,10 +537,9 @@ Decimal Decimal::floor() const
     if (numberOfDigits < numberOfDropDigits)
         return isPositive() ? zero(Positive) : Decimal(-1);
 
-    result = scaleDown(result, numberOfDropDigits - 1);
-    if (isNegative() && result % 10 > 0)
-        result += 10;
-    result /= 10;
+    result = scaleDown(result, numberOfDropDigits);
+    if (isNegative() && !isMultiplePowersOfTen(result, numberOfDropDigits))
+        ++result;
     return Decimal(sign(), 0, result);
 }
 
@@ -541,8 +547,7 @@ Decimal Decimal::fromDouble(double doubleValue)
 {
     if (std::isfinite(doubleValue)) {
         NumberToStringBuffer buffer;
-        auto* result = numberToString(doubleValue, buffer);
-        return fromString(span8(result));
+        return fromString(StringView { numberToStringAndSize(doubleValue, buffer) });
     }
 
     if (std::isinf(doubleValue))

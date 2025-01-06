@@ -12,6 +12,7 @@
 
 #include <cmath>
 
+#include "api/audio/audio_view.h"
 #include "test/gtest.h"
 #include "test/testsupport/rtc_expect_death.h"
 
@@ -90,4 +91,28 @@ TEST(AudioBufferTest, CopyWithResampling) {
   // Verify that energies match.
   EXPECT_NEAR(energy_ab1, energy_ab2 * 32000.f / 48000.f, .01f * energy_ab1);
 }
+
+TEST(AudioBufferTest, DeinterleavedView) {
+  AudioBuffer ab(48000, 2, 48000, 2, 48000, 2);
+  // Fill the buffer with data.
+  const float pi = std::acos(-1.f);
+  float* const* channels = ab.channels();
+  for (size_t ch = 0; ch < ab.num_channels(); ++ch) {
+    for (size_t i = 0; i < ab.num_frames(); ++i) {
+      channels[ch][i] = std::sin(2 * pi * 100.f / 32000.f * i);
+    }
+  }
+
+  // Verify that the DeinterleavedView correctly maps to channels.
+  DeinterleavedView<float> view = ab.view();
+  ASSERT_EQ(view.num_channels(), ab.num_channels());
+  for (size_t c = 0; c < view.num_channels(); ++c) {
+    MonoView<float> channel = view[c];
+    EXPECT_EQ(SamplesPerChannel(channel), ab.num_frames());
+    for (size_t s = 0; s < SamplesPerChannel(channel); ++s) {
+      ASSERT_EQ(channel[s], channels[c][s]);
+    }
+  }
+}
+
 }  // namespace webrtc

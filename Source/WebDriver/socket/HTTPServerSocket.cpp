@@ -127,7 +127,7 @@ String HTTPRequestHandler::packHTTPMessage(HTTPRequestHandler::Response&& respon
     builder.append(EOL);
 
     if (!response.data.isNull())
-        builder.append(response.data.span());
+        builder.append(String::fromUTF8(response.data.span()));
 
     return builder.toString();
 }

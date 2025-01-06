@@ -25,20 +25,11 @@
 
 #pragma once
 
-#include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class WebViewDidMoveToWindowObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebViewDidMoveToWindowObserver> : std::true_type { };
-}
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 
 namespace WebKit {
 
-class WebViewDidMoveToWindowObserver : public CanMakeWeakPtr<WebViewDidMoveToWindowObserver> {
+class WebViewDidMoveToWindowObserver : public AbstractRefCountedAndCanMakeWeakPtr<WebViewDidMoveToWindowObserver> {
 public:
     virtual ~WebViewDidMoveToWindowObserver() = default;
 

@@ -31,11 +31,11 @@
 #include "LibWebRTCMacros.h"
 #include "Logging.h"
 #include <algorithm>
-#include <wtf/FastMalloc.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 
-ALLOW_UNUSED_PARAMETERS_BEGIN
-ALLOW_COMMA_BEGIN
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
 #include <dav1d/dav1d.h>
 #include <webrtc/api/scoped_refptr.h>
@@ -45,8 +45,7 @@ ALLOW_COMMA_BEGIN
 #include <webrtc/modules/video_coding/include/video_error_codes.h>
 #include <webrtc/rtc_base/logging.h>
 
-ALLOW_UNUSED_PARAMETERS_END
-ALLOW_COMMA_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace libyuv {
 extern "C" int I420Copy(const uint8_t* src_y,
@@ -68,7 +67,7 @@ extern "C" int I420Copy(const uint8_t* src_y,
 namespace WebCore {
 
 class Dav1dDecoder final : public webrtc::VideoDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Dav1dDecoder);
 public:
     Dav1dDecoder();
     ~Dav1dDecoder();
@@ -171,7 +170,7 @@ int32_t Dav1dDecoder::Decode(const webrtc::EncodedImage& encodedImage, bool /*mi
 
     ScopedDav1dData scopedDav1dData;
     Dav1dData& dav1dData = scopedDav1dData.Data();
-    memset(&dav1dData, 0, sizeof(Dav1dData));
+    zeroBytes(dav1dData);
     auto* data = encodedImage.data();
     auto size = encodedImage.size();
     if (!data || !size) {
@@ -187,7 +186,7 @@ int32_t Dav1dDecoder::Decode(const webrtc::EncodedImage& encodedImage, bool /*mi
 
     ScopedDav1dPicture scopedDav1dPicture;
     Dav1dPicture& dav1dPicture = scopedDav1dPicture.Picture();
-    memset(&dav1dPicture, 0, sizeof(Dav1dPicture));
+    zeroBytes(dav1dPicture);
 
     if (int res = dav1d_get_picture(m_context, &dav1dPicture)) {
         RELEASE_LOG_ERROR(WebRTC, "Dav1dDecoder::Decode getting picture failed with error code %d", res);
@@ -204,11 +203,13 @@ int32_t Dav1dDecoder::Decode(const webrtc::EncodedImage& encodedImage, bool /*mi
         return WEBRTC_VIDEO_CODEC_ERROR;
     }
 
-    auto* yData = static_cast<uint8_t*>(dav1dPicture.data[0]);
-    auto* uData = static_cast<uint8_t*>(dav1dPicture.data[1]);
-    auto* vData = static_cast<uint8_t*>(dav1dPicture.data[2]);
-    int yStride = dav1dPicture.stride[0];
-    int uvStride = dav1dPicture.stride[1];
+    auto pictureData = std::span { dav1dPicture.data };
+    auto* yData = static_cast<uint8_t*>(pictureData[0]);
+    auto* uData = static_cast<uint8_t*>(pictureData[1]);
+    auto* vData = static_cast<uint8_t*>(pictureData[2]);
+    auto pictureStride = std::span { dav1dPicture.stride };
+    int yStride = pictureStride[0];
+    int uvStride = pictureStride[1];
     libyuv::I420Copy(yData, yStride,
         uData, uvStride,
         vData, uvStride,
@@ -225,7 +226,7 @@ int32_t Dav1dDecoder::Decode(const webrtc::EncodedImage& encodedImage, bool /*mi
         .set_color_space(encodedImage.ColorSpace())
         .build();
 
-    m_decodeCompleteCallback->Decoded(decodedFrame, absl::nullopt, absl::nullopt);
+    m_decodeCompleteCallback->Decoded(decodedFrame, std::nullopt, std::nullopt);
     return WEBRTC_VIDEO_CODEC_OK;
 }
 

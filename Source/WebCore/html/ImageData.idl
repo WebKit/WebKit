@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (Uint8ClampedArray or Float16Array) ImageDataArray;
+
 [
     CustomToJSObject,
     ExportMacro=WEBCORE_EXPORT,
@@ -33,9 +35,11 @@
 ] interface ImageData {
     constructor(unsigned long sw, unsigned long sh, optional ImageDataSettings settings);
     constructor(Uint8ClampedArray data, unsigned long sw, optional unsigned long sh, optional ImageDataSettings settings);
+    [EnabledBySetting=CanvasPixelFormatEnabled] constructor(Float16Array data, unsigned long sw, optional unsigned long sh, optional ImageDataSettings settings);
 
     readonly attribute unsigned long width;
     readonly attribute unsigned long height;
-    readonly attribute Uint8ClampedArray data;
+    readonly attribute ImageDataArray data;
     [EnabledBySetting=CanvasColorSpaceEnabled] readonly attribute PredefinedColorSpace colorSpace;
+    [EnabledBySetting=CanvasPixelFormatEnabled] readonly attribute ImageDataStorageFormat storageFormat;
 };

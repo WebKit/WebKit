@@ -30,6 +30,10 @@
 #import "WebAccessibilityObjectWrapperBase.h"
 #import "WAKView.h"
 
+namespace WebCore {
+class VisiblePosition;
+}
+
 // NSAttributedStrings support.
 
 static NSString * const UIAccessibilityTextAttributeContext = @"UIAccessibilityTextAttributeContext";
@@ -63,13 +67,24 @@ static NSString * const UIAccessibilityTextualContextSourceCode = @"UIAccessibil
 - (BOOL)isAttachment;
 
 // This interacts with Accessibility system to post-process some notifications.
-// FIXME: remove this first overload once the system Accessibility bundle has been updated to the second overload.
-- (void)accessibilityOverrideProcessNotification:(NSString *)notificationName;
 - (void)accessibilityOverrideProcessNotification:(NSString *)notificationName notificationData:(NSData *)notificationData;
 
 // This is called by the Accessibility system to relay back to the chrome.
 - (void)handleNotificationRelayToChrome:(NSString *)notificationName notificationData:(NSData *)notificationData;
 
+@end
+
+@interface WebAccessibilityTextMarker : NSObject {
+    WebCore::AXObjectCache* _cache;
+    WebCore::TextMarkerData _textMarkerData;
+}
+
++ (WebAccessibilityTextMarker *)textMarkerWithVisiblePosition:(WebCore::VisiblePosition&)visiblePos cache:(WebCore::AXObjectCache*)cache;
++ (WebAccessibilityTextMarker *)textMarkerWithCharacterOffset:(WebCore::CharacterOffset&)characterOffset cache:(WebCore::AXObjectCache*)cache;
++ (WebAccessibilityTextMarker *)startOrEndTextMarkerForRange:(const std::optional<WebCore::SimpleRange>&)range isStart:(BOOL)isStart cache:(WebCore::AXObjectCache*)cache;
+
+- (id)initWithTextMarker:(const WebCore::TextMarkerData *)data cache:(WebCore::AXObjectCache*)cache;
+- (WebCore::TextMarkerData)textMarkerData;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

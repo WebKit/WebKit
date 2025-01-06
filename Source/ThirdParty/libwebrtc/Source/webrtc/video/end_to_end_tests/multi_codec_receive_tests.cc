@@ -13,7 +13,6 @@
 #include "api/test/simulated_network.h"
 #include "api/test/video/function_video_encoder_factory.h"
 #include "call/fake_network_pipe.h"
-#include "call/simulated_network.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
@@ -24,6 +23,7 @@
 #include "test/call_test.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/network/simulated_network.h"
 #include "test/video_test_constants.h"
 
 using ::testing::Contains;
@@ -107,11 +107,11 @@ class FrameObserver : public test::RtpRtcpObserver,
   // Verifies that all sent frames are decoded and rendered.
   void OnFrame(const VideoFrame& rendered_frame) override {
     MutexLock lock(&mutex_);
-    EXPECT_THAT(sent_timestamps_, Contains(rendered_frame.timestamp()));
+    EXPECT_THAT(sent_timestamps_, Contains(rendered_frame.rtp_timestamp()));
 
     // Remove old timestamps too, only the newest decoded frame is rendered.
     num_rendered_frames_ +=
-        RemoveOlderOrEqual(rendered_frame.timestamp(), &sent_timestamps_);
+        RemoveOlderOrEqual(rendered_frame.rtp_timestamp(), &sent_timestamps_);
 
     if (num_rendered_frames_ >= kFramesToObserve) {
       EXPECT_TRUE(sent_timestamps_.empty()) << "All sent frames not decoded.";
@@ -120,8 +120,8 @@ class FrameObserver : public test::RtpRtcpObserver,
   }
 
   Mutex mutex_;
-  absl::optional<uint32_t> last_timestamp_;  // Only accessed from pacer thread.
-  absl::optional<uint8_t> expected_payload_type_ RTC_GUARDED_BY(mutex_);
+  std::optional<uint32_t> last_timestamp_;  // Only accessed from pacer thread.
+  std::optional<uint8_t> expected_payload_type_ RTC_GUARDED_BY(mutex_);
   int num_sent_frames_ RTC_GUARDED_BY(mutex_) = 0;
   int num_rendered_frames_ RTC_GUARDED_BY(mutex_) = 0;
   std::vector<uint32_t> sent_timestamps_ RTC_GUARDED_BY(mutex_);
@@ -199,23 +199,25 @@ void MultiCodecReceiveTest::RunTestWithCodecs(
   EXPECT_TRUE(!configs.empty());
 
   test::FunctionVideoEncoderFactory encoder_factory(
-      [](const SdpVideoFormat& format) -> std::unique_ptr<VideoEncoder> {
+      [](const Environment& env,
+         const SdpVideoFormat& format) -> std::unique_ptr<VideoEncoder> {
         if (format.name == "VP8") {
-          return VP8Encoder::Create();
+          return CreateVp8Encoder(env);
         }
         if (format.name == "VP9") {
-          return VP9Encoder::Create();
+          return CreateVp9Encoder(env);
         }
         if (format.name == "H264") {
-          return H264Encoder::Create();
+          return CreateH264Encoder(env);
         }
         RTC_DCHECK_NOTREACHED() << format.name;
         return nullptr;
       });
   test::FunctionVideoDecoderFactory decoder_factory(
-      [](const SdpVideoFormat& format) -> std::unique_ptr<VideoDecoder> {
+      [](const Environment& env,
+         const SdpVideoFormat& format) -> std::unique_ptr<VideoDecoder> {
         if (format.name == "VP8") {
-          return VP8Decoder::Create();
+          return CreateVp8Decoder(env);
         }
         if (format.name == "VP9") {
           return VP9Decoder::Create();

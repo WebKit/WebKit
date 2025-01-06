@@ -28,14 +28,18 @@
 
 #if ENABLE(BUBBLEWRAP_SANDBOX)
 #include "BubblewrapLauncher.h"
-#include <WebCore/PlatformDisplay.h>
 #include <gio/gunixinputstream.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniStdExtras.h>
+#include <wtf/glib/Application.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XDGDBusProxy);
 
 CString XDGDBusProxy::makeProxy(const char* baseDirectory, const char* proxyTemplate)
 {
@@ -74,12 +78,8 @@ std::optional<CString> XDGDBusProxy::dbusSessionProxy(const char* baseDirectory,
     });
 
 #if ENABLE(MEDIA_SESSION)
-    if (auto* app = g_application_get_default()) {
-        if (const char* appID = g_application_get_application_id(app)) {
-            auto mprisSessionID = makeString("--own=org.mpris.MediaPlayer2."_s, WTF::span(appID), ".Sandboxed.*"_s);
-            m_args.append(mprisSessionID.ascii().data());
-        }
-    }
+    auto mprisSessionID = makeString("--own=org.mpris.MediaPlayer2."_s, WTF::applicationID().span(), ".Sandboxed.*"_s);
+    m_args.append(mprisSessionID.ascii().data());
 #endif
 
     if (allowPortals == AllowPortals::Yes)
@@ -91,27 +91,24 @@ std::optional<CString> XDGDBusProxy::dbusSessionProxy(const char* baseDirectory,
     return m_dbusSessionProxyPath;
 }
 
-std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirectory, const char* sandboxedAccessibilityBusPath)
+#if USE(ATSPI)
+std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirectory, const String& accessibilityBusAddress, const String& accessibilityBusName)
 {
     if (!m_accessibilityProxyPath.isNull())
         return m_accessibilityProxyPath;
-
-    auto dbusAddress = WebCore::PlatformDisplay::sharedDisplay().accessibilityBusAddress().utf8();
-    if (dbusAddress.isNull())
-        return std::nullopt;
 
     m_accessibilityProxyPath = makeProxy(baseDirectory, "a11y-proxy-XXXXXX");
     if (m_accessibilityProxyPath.isNull())
         return std::nullopt;
 
-#if USE(ATSPI)
-    setSandboxedAccessibilityBusAddress(makeString("unix:path="_s, WTF::span(sandboxedAccessibilityBusPath)));
-#endif
+    auto webProcessA11yOwnArg = makeString("--own="_s, accessibilityBusName);
 
     m_args.appendVector(Vector<CString> {
-        WTFMove(dbusAddress), m_accessibilityProxyPath,
+        accessibilityBusAddress.utf8(), m_accessibilityProxyPath,
         "--filter",
         "--sloppy-names",
+        "--broadcast=org.a11y.atspi.Registry.EventListenerRegistered=@/org/a11y/atspi/registry",
+        "--broadcast=org.a11y.atspi.Registry.EventListenerDeregistered=@/org/a11y/atspi/registry",
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.Socket.Embed@/org/a11y/atspi/accessible/root",
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.Socket.Unembed@/org/a11y/atspi/accessible/root",
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.Registry.GetRegisteredEvents@/org/a11y/atspi/registry",
@@ -119,6 +116,7 @@ std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirector
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.GetDeviceEventListeners@/org/a11y/atspi/registry/deviceeventcontroller",
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersSync@/org/a11y/atspi/registry/deviceeventcontroller",
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersAsync@/org/a11y/atspi/registry/deviceeventcontroller",
+        webProcessA11yOwnArg.utf8(),
     });
 
     if (!g_strcmp0(g_getenv("WEBKIT_ENABLE_A11Y_DBUS_PROXY_LOGGING"), "1"))
@@ -126,6 +124,7 @@ std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirector
 
     return m_accessibilityProxyPath;
 }
+#endif
 
 static void waitUntilSyncedOrDie(GSubprocess* subprocess, int syncFd)
 {
@@ -176,13 +175,12 @@ static void waitUntilSyncedOrDie(GSubprocess* subprocess, int syncFd)
         g_error("Failed to fully launch dbus-proxy: %s", data.error->message);
 }
 
-bool XDGDBusProxy::launch()
+void XDGDBusProxy::launch(const ProcessLaunchOptions& webProcessLaunchOptions)
 {
-    if (m_syncFD)
-        return true;
-
     if (m_args.isEmpty())
-        return false;
+        return;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
 
     int syncFds[2];
     if (pipe(syncFds) == -1)
@@ -209,6 +207,8 @@ bool XDGDBusProxy::launch()
         argv[i++] = const_cast<char*>(arg.data());
     argv[i] = nullptr;
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
     // Warning: we want GIO to be able to spawn with posix_spawn() rather than fork()/exec(), in
     // order to better accommodate applications that use a huge amount of memory or address space
     // in the UI process, like Eclipse. This means we must use GSubprocess in a manner that follows
@@ -226,16 +226,22 @@ bool XDGDBusProxy::launch()
     // We are purposefully leaving syncFds[0] open here.
     // xdg-dbus-proxy will exit() itself once that is closed on our exit.
 
-    ProcessLauncher::LaunchOptions launchOptions;
+    ProcessLauncher::LaunchOptions launchOptions { WebCore::ProcessIdentifier::generate() };
     launchOptions.processType = ProcessLauncher::ProcessType::DBusProxy;
 
+#if USE(ATSPI)
+    launchOptions.extraInitializationData.set("accessibilityBusAddress"_s, webProcessLaunchOptions.extraInitializationData.get("accessibilityBusAddress"_s));
+    launchOptions.extraInitializationData.set("accessibilityBusName"_s, webProcessLaunchOptions.extraInitializationData.get("accessibilityBusName"_s));
+#else
+    UNUSED_PARAM(webProcessLaunchOptions);
+#endif
+
     GUniqueOutPtr<GError> error;
-    GRefPtr<GSubprocess> subprocess = bubblewrapSpawn(launcher.get(), launchOptions, argv, &error.outPtr());
+    GRefPtr<GSubprocess> subprocess = bubblewrapSpawn(launcher.get(), launchOptions, *this, argv, &error.outPtr());
     if (!subprocess)
         g_error("Failed to start dbus proxy: %s", error->message);
 
     waitUntilSyncedOrDie(subprocess.get(), syncFds[0]);
-    return true;
 }
 
 } // namespace WebKit

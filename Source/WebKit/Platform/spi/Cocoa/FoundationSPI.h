@@ -27,10 +27,12 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <Foundation/NSPrivateDecls.h>
+#import <Foundation/NSExtension.h>
+#import <Foundation/NSLocale_Private.h>
+#import <Foundation/NSPrivateDecls.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include <Foundation/NSDistributedNotificationCenter.h>
+#import <Foundation/NSDistributedNotificationCenter.h>
 #endif
 
 #else
@@ -48,6 +50,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)postNotificationName:(NSNotificationName)aName object:(nullable NSString *)anObject userInfo:(nullable NSDictionary *)aUserInfo;
 @end
 #endif
+
+@interface NSExtension : NSObject
++ (NSExtension *)extensionWithIdentifier:(NSString *)bundleIdentifier error:(NSError **)error;
+- (void)beginExtensionRequestWithInputItems:(NSArray *)inputItems completion:(void (^)(id <NSCopying>, NSError *))handler;
+- (void)cancelExtensionRequestWithIdentifier:(id <NSCopying>)requestIdentifier;
+@property (copy, NS_NONATOMIC_IOSONLY) void (^requestCompletionBlock)(id <NSCopying>, NSArray *);
+@property (copy, NS_NONATOMIC_IOSONLY) void (^requestCancellationBlock)(id <NSCopying>, NSError *);
+@property (copy, NS_NONATOMIC_IOSONLY) void (^requestInterruptionBlock)(id <NSCopying>);
+@end
+
+@interface NSLocale ()
++ (NSString *)_deviceLanguage;
+@end
 
 NS_ASSUME_NONNULL_END
 

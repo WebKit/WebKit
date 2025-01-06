@@ -111,7 +111,7 @@ layer at (0,0) size 785x663
             text run at (213,21) width 112: "tr:first-child"
         RenderText {#text} at (325,18) size 4x17
           text run at (325,18) width 4: "."
-      RenderTable {TABLE} at (0,565) size 150x66 [border: (1px none #808080)]
+      RenderTable {TABLE} at (0,565) size 150x66 [border: (1px none #000000)]
         RenderTableSection {TBODY} at (0,1) size 150x65
           RenderTableRow {TR} at (0,0) size 150x22 [border: (2px solid #000000) none]
             RenderTableCell {TD} at (0,0) size 50x22 [border: (1px none #000000)] [r=0 c=0 rs=1 cs=1]

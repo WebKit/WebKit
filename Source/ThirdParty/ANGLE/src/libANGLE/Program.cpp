@@ -584,7 +584,7 @@ class Program::MainLinkLoadTask : public angle::Closure
                          &mState.mExecutable->mPostLinkSubTaskWaitableEvents);
 
         // No further use for worker pool.  Release it earlier than the destructor (to avoid
-        // situations such as http://anglebug.com/8661)
+        // situations such as http://anglebug.com/42267099)
         mSubTaskWorkerPool.reset();
     }
 
@@ -963,7 +963,7 @@ angle::Result Program::link(const Context *context, angle::JobResultExpectancy r
                                     ? nullptr
                                     : context->getMemoryProgramCache();
 
-    // TODO: http://anglebug.com/4530: Enable program caching for separable programs
+    // TODO: http://anglebug.com/42263141: Enable program caching for separable programs
     if (cache && !isSeparable())
     {
         std::lock_guard<angle::SimpleMutex> cacheLock(context->getProgramCacheMutex());
@@ -1050,11 +1050,11 @@ angle::Result Program::linkJobImpl(const Caps &caps,
     linkShaders();
 
     linkingVariables->initForProgram(mState);
-    resources->init(&mState.mExecutable->mUniformBlocks, &mState.mExecutable->mUniforms,
-                    &mState.mExecutable->mUniformNames, &mState.mExecutable->mUniformMappedNames,
-                    &mState.mExecutable->mShaderStorageBlocks,
-                    &mState.mExecutable->mBufferVariables,
-                    &mState.mExecutable->mAtomicCounterBuffers);
+    resources->init(
+        &mState.mExecutable->mUniformBlocks, &mState.mExecutable->mUniforms,
+        &mState.mExecutable->mUniformNames, &mState.mExecutable->mUniformMappedNames,
+        &mState.mExecutable->mShaderStorageBlocks, &mState.mExecutable->mBufferVariables,
+        &mState.mExecutable->mAtomicCounterBuffers, &mState.mExecutable->mPixelLocalStorageFormats);
 
     updateLinkedShaderStages();
 
@@ -1156,6 +1156,10 @@ angle::Result Program::linkJobImpl(const Caps &caps,
                 fragmentShader->metadataFlags.test(sh::MetadataFlags::HasDiscard);
             mState.mExecutable->mPod.enablesPerSampleShading =
                 fragmentShader->metadataFlags.test(sh::MetadataFlags::EnablesPerSampleShading);
+            mState.mExecutable->mPod.hasDepthInputAttachment =
+                fragmentShader->metadataFlags.test(sh::MetadataFlags::HasDepthInputAttachment);
+            mState.mExecutable->mPod.hasStencilInputAttachment =
+                fragmentShader->metadataFlags.test(sh::MetadataFlags::HasStencilInputAttachment);
             mState.mExecutable->mPod.advancedBlendEquations =
                 fragmentShader->advancedBlendEquations;
             mState.mExecutable->mPod.specConstUsageBits |= fragmentShader->specConstUsageBits;
@@ -1194,6 +1198,9 @@ bool Program::isBinaryReady(const Context *context)
 {
     if (mState.mExecutable->mPostLinkSubTasks.empty())
     {
+        // Ensure the program binary is cached, even if the backend waits for post-link tasks
+        // without the knowledge of the front-end.
+        cacheProgramBinaryIfNotAlready(context);
         return true;
     }
 
@@ -1240,6 +1247,16 @@ void Program::resolveLinkImpl(const Context *context)
     // Only successfully linked program can replace the executables.
     ASSERT(mLinked);
 
+    // In case of a successful link, it is no longer required for the attached shaders to hold on to
+    // the memory they have used. Therefore, the shader compilations are resolved to save memory.
+    for (Shader *shader : mAttachedShaders)
+    {
+        if (shader != nullptr)
+        {
+            shader->resolveCompile(context);
+        }
+    }
+
     // Mark implementation-specific unreferenced uniforms as ignored.
     std::vector<ImageBinding> *imageBindings = getExecutable().getImageBindings();
     mProgram->markUnusedUniformLocations(&mState.mExecutable->mUniformLocations,
@@ -1263,19 +1280,17 @@ void Program::resolveLinkImpl(const Context *context)
     //
     if (!linkingState->linkingFromBinary && mState.mExecutable->mPostLinkSubTasks.empty())
     {
-        cacheProgramBinary(context);
+        cacheProgramBinaryIfNotAlready(context);
     }
 }
 
 void Program::waitForPostLinkTasks(const Context *context)
 {
-    if (!mState.mExecutable->mPostLinkSubTasks.empty())
-    {
-        mState.mExecutable->waitForPostLinkTasks(context);
-    }
+    // No-op if no tasks.
+    mState.mExecutable->waitForPostLinkTasks(context);
 
     // Now that the subtasks are done, cache the binary (this was deferred in resolveLinkImpl).
-    cacheProgramBinary(context);
+    cacheProgramBinaryIfNotAlready(context);
 }
 
 void Program::updateLinkedShaderStages()
@@ -1907,7 +1922,7 @@ bool Program::linkVaryings()
         previousShaderType = currentShader->shaderType;
     }
 
-    // TODO: http://anglebug.com/3571 and http://anglebug.com/3572
+    // TODO: http://anglebug.com/42262233 and http://anglebug.com/42262234
     // Need to move logic of validating builtin varyings inside the for-loop above.
     // This is because the built-in symbols `gl_ClipDistance` and `gl_CullDistance`
     // can be redeclared in Geometry or Tessellation shaders as well.
@@ -2334,7 +2349,7 @@ void Program::postResolveLink(const Context *context)
     }
 }
 
-void Program::cacheProgramBinary(const Context *context)
+void Program::cacheProgramBinaryIfNotAlready(const Context *context)
 {
     // If program caching is disabled, we already consider the binary cached.
     ASSERT(!context->getFrontendFeatures().disableProgramCaching.enabled || mIsBinaryCached);
@@ -2351,7 +2366,7 @@ void Program::cacheProgramBinary(const Context *context)
     // Save to the program cache.
     std::lock_guard<angle::SimpleMutex> cacheLock(context->getProgramCacheMutex());
     MemoryProgramCache *cache = context->getMemoryProgramCache();
-    // TODO: http://anglebug.com/4530: Enable program caching for separable programs
+    // TODO: http://anglebug.com/42263141: Enable program caching for separable programs
     if (cache && !isSeparable() &&
         (mState.mExecutable->mLinkedTransformFeedbackVaryings.empty() ||
          !context->getFrontendFeatures().disableProgramCachingForTransformFeedback.enabled))

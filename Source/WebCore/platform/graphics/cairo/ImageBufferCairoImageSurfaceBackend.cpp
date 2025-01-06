@@ -34,12 +34,13 @@
 
 #include "Color.h"
 #include "ImageBackingStore.h"
+#include "ImageBuffer.h"
 #include <cairo.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferCairoImageSurfaceBackend);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferCairoImageSurfaceBackend);
 
 IntSize ImageBufferCairoImageSurfaceBackend::calculateSafeBackendSize(const Parameters& parameters)
 {
@@ -74,7 +75,7 @@ size_t ImageBufferCairoImageSurfaceBackend::calculateMemoryCost(const Parameters
 
 std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const Parameters& parameters, const ImageBufferCreationContext&)
 {
-    ASSERT(parameters.pixelFormat == PixelFormat::BGRA8);
+    ASSERT(parameters.pixelFormat == ImageBufferPixelFormat::BGRA8);
 
     static cairo_user_data_key_t s_surfaceDataKey;
 

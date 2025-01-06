@@ -38,10 +38,12 @@ namespace Inspector {
 
 class FrontendChannel;
 
-class JS_EXPORT_PRIVATE RemoteInspectionTarget : public RemoteControllableTarget {
+class RemoteInspectionTarget : public RemoteControllableTarget {
 public:
-    bool inspectable() const;
-    void setInspectable(bool);
+    JS_EXPORT_PRIVATE RemoteInspectionTarget();
+    JS_EXPORT_PRIVATE ~RemoteInspectionTarget() override;
+    JS_EXPORT_PRIVATE bool inspectable() const;
+    JS_EXPORT_PRIVATE void setInspectable(bool);
 
     bool allowsInspectionByPolicy() const;
 
@@ -58,14 +60,14 @@ public:
     virtual void setIndicating(bool) { } // Default is to do nothing.
 
     virtual bool automaticInspectionAllowed() const { return false; }
-    virtual void pauseWaitingForAutomaticInspection();
-    virtual void unpauseForInitializedInspector();
+    JS_EXPORT_PRIVATE virtual void pauseWaitingForAutomaticInspection();
+    JS_EXPORT_PRIVATE virtual void unpauseForInitializedInspector();
 
     // RemoteControllableTarget overrides.
-    bool remoteControlAllowed() const final;
+    JS_EXPORT_PRIVATE bool remoteControlAllowed() const final;
 
     std::optional<ProcessID> presentingApplicationPID() const { return m_presentingApplicationPID; }
-    void setPresentingApplicationPID(std::optional<ProcessID>&&);
+    JS_EXPORT_PRIVATE void setPresentingApplicationPID(std::optional<ProcessID>&&);
 
 private:
     enum class Inspectable : uint8_t {

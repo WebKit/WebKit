@@ -31,8 +31,8 @@
 #include "SharedBuffer.h"
 #include "ThreadableLoader.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,7 +43,7 @@ class ResourceError;
 class ResourceResponse;
 
 class NotificationResourcesLoader {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NotificationResourcesLoader);
 public:
     explicit NotificationResourcesLoader(Notification&);
 
@@ -67,10 +67,10 @@ private:
 
     private:
         // ThreadableLoaderClient API.
-        void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
+        void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;
         void didReceiveData(const SharedBuffer&) final;
-        void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) final;
-        void didFail(const ResourceError&) final;
+        void didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&) final;
+        void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&) final;
 
         bool m_finished { false };
         SharedBufferBuilder m_buffer;

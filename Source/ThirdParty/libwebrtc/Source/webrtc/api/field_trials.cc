@@ -11,8 +11,13 @@
 #include "api/field_trials.h"
 
 #include <atomic>
+#include <memory>
+#include <string>
+#include <utility>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/containers/flat_map.h"
 #include "system_wrappers/include/field_trial.h"
 
 namespace {

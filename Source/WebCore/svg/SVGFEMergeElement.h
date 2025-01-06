@@ -22,18 +22,20 @@
 #pragma once
 
 #include "SVGFilterPrimitiveStandardAttributes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGFEMergeElement final : public SVGFilterPrimitiveStandardAttributes {
-    WTF_MAKE_ISO_ALLOCATED(SVGFEMergeElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEMergeElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEMergeElement);
 public:
     static Ref<SVGFEMergeElement> create(const QualifiedName&, Document&);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMergeElement, SVGFilterPrimitiveStandardAttributes>;
+
 private:
     SVGFEMergeElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMergeElement, SVGFilterPrimitiveStandardAttributes>;
 
     void childrenChanged(const ChildChange&) override;
 

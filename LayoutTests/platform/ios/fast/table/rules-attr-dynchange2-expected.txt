@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderTable {TABLE} at (0,0) size 153x70 [border: (0.50px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 153x70 [border: (0.50px outset #000000)]
         RenderTableSection {TBODY} at (0,0) size 153x70
           RenderTableRow {TR} at (0,0) size 152x23
-            RenderTableCell {TD} at (0,0) size 76x23 [border: (0.50px solid #808080) none (0.50px solid #808080) (0.50px none #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 76x23 [border: (0.50px solid #000000) none (0.50px solid #000000) (0.50px none #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 74x20
                 text run at (1,1) width 74: "Row1 cell1"
-            RenderTableCell {TD} at (75,0) size 77x23 [border: (0.50px solid #808080) (0.50px none #808080) (0.50px solid #808080) none] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (75,0) size 77x23 [border: (0.50px solid #000000) (0.50px none #000000) (0.50px solid #000000) none] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 74x20
                 text run at (1,1) width 74: "Row1 cell2"
           RenderTableRow {TR} at (0,23) size 152x23
-            RenderTableCell {TD} at (0,23) size 76x23 [border: (0.50px solid #808080) none (0.50px solid #808080) (0.50px none #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,23) size 76x23 [border: (0.50px solid #000000) none (0.50px solid #000000) (0.50px none #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 74x20
                 text run at (1,1) width 74: "Row2 cell1"
-            RenderTableCell {TD} at (75,23) size 77x23 [border: (0.50px solid #808080) (0.50px none #808080) (0.50px solid #808080) none] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (75,23) size 77x23 [border: (0.50px solid #000000) (0.50px none #000000) (0.50px solid #000000) none] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 74x20
                 text run at (1,1) width 74: "Row2 cell2"
           RenderTableRow {TR} at (0,46) size 152x23
-            RenderTableCell {TD} at (0,46) size 76x23 [border: (0.50px solid #808080) none (0.50px solid #808080) (0.50px none #808080)] [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,46) size 76x23 [border: (0.50px solid #000000) none (0.50px solid #000000) (0.50px none #000000)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 74x20
                 text run at (1,1) width 74: "Row3 cell1"
-            RenderTableCell {TD} at (75,46) size 77x23 [border: (0.50px solid #808080) (0.50px none #808080) (0.50px solid #808080) none] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (75,46) size 77x23 [border: (0.50px solid #000000) (0.50px none #000000) (0.50px solid #000000) none] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 74x20
                 text run at (1,1) width 74: "Row3 cell2"
       RenderBlock {P} at (0,86) size 784x20

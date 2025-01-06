@@ -1,0 +1,9 @@
+This test ensures we return a -1 insertion point line number for non-collapsed selections.
+
+PASS: axTextarea.insertionPointLineNumber === 1 === true
+PASS: axTextarea.insertionPointLineNumber === -1 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

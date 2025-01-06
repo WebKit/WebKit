@@ -42,7 +42,7 @@ TEST(WebKit, AttrStyle)
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"AttrStyle" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"AttrStyle" withExtension:@"html"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
     __block bool isDone = false;
@@ -61,7 +61,7 @@ TEST(WebKit, AttrStyle)
 
     isDone = false;
     [webView evaluateJavaScript:@"document.body.getAttributeNode('dir').style.cssText" completionHandler:^(NSString *result, NSError *error) {
-        EXPECT_STREQ("direction: rtl; unicode-bidi: isolate;", result.UTF8String);
+        EXPECT_STREQ("direction: rtl;", result.UTF8String);
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);

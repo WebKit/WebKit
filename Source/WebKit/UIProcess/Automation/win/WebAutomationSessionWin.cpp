@@ -32,6 +32,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/WindowsKeyboardCodes.h>
 #include <WebKit/WKEvent.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -109,7 +110,7 @@ static void doMouseButtonEvent(WebPageProxy& page, MouseInteraction interaction,
     }
 
     auto hwnd = reinterpret_cast<HWND>(page.viewWidget());
-    page.handleMouseEvent(NativeWebMouseEvent(hwnd, message, wparam, lparam, { }));
+    page.handleMouseEvent(NativeWebMouseEvent(hwnd, message, wparam, lparam, { }, page.deviceScaleFactor()));
 }
 
 void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, const String& pointerType)
@@ -349,7 +350,7 @@ OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(We
 void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
 {
     // https://www.w3.org/TR/uievents-code/#key-alphanumeric-writing-system
-    String keyIdentifier = "Key"_s + keySequence.convertToASCIIUppercase();
+    auto keyIdentifier = makeString("Key"_s, keySequence.convertToASCIIUppercase());
 
     auto hwnd = reinterpret_cast<HWND>(page.viewWidget());
     String key = (m_currentModifiers & kWKEventModifiersShiftKey) ? keySequence.convertToASCIIUppercase() : keySequence;

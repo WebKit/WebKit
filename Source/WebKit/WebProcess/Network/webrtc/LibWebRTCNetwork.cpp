@@ -29,14 +29,39 @@
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "WebProcess.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCNetwork);
+
+LibWebRTCNetwork::LibWebRTCNetwork(WebProcess& webProcess)
+    : m_webProcess(webProcess)
+#if USE(LIBWEBRTC)
+    , m_webNetworkMonitor(*this)
+#endif
+#if ENABLE(WEB_RTC)
+    , m_mdnsRegister(*this)
+#endif
+{
+}
 
 LibWebRTCNetwork::~LibWebRTCNetwork()
 {
     ASSERT_NOT_REACHED();
+}
+
+void LibWebRTCNetwork::ref() const
+{
+    m_webProcess->ref();
+}
+
+void LibWebRTCNetwork::deref() const
+{
+    m_webProcess->deref();
 }
 
 void LibWebRTCNetwork::setAsActive()
@@ -108,6 +133,23 @@ void LibWebRTCNetwork::dispatch(Function<void()>&& callback)
 }
 
 #if USE(LIBWEBRTC)
+static rtc::EcnMarking convertToWebRTCEcnMarking(RTC::Network::EcnMarking ecn)
+{
+    switch (ecn) {
+    case RTC::Network::EcnMarking::kNotEct:
+        return rtc::EcnMarking::kNotEct;
+    case RTC::Network::EcnMarking::kEct1:
+        return rtc::EcnMarking::kEct1;
+    case RTC::Network::EcnMarking::kEct0:
+        return rtc::EcnMarking::kEct0;
+    case RTC::Network::EcnMarking::kCe:
+        return rtc::EcnMarking::kCe;
+    }
+
+    ASSERT_NOT_REACHED();
+    return rtc::EcnMarking::kNotEct;
+}
+
 void LibWebRTCNetwork::signalAddressReady(WebCore::LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& address)
 {
     ASSERT(!WTF::isMainRunLoop());
@@ -115,11 +157,11 @@ void LibWebRTCNetwork::signalAddressReady(WebCore::LibWebRTCSocketIdentifier ide
         socket->signalAddressReady(address.rtcAddress());
 }
 
-void LibWebRTCNetwork::signalReadPacket(WebCore::LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, const RTCNetwork::IPAddress& address, uint16_t port, int64_t timestamp)
+void LibWebRTCNetwork::signalReadPacket(WebCore::LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, const RTCNetwork::IPAddress& address, uint16_t port, int64_t timestamp, RTC::Network::EcnMarking ecn)
 {
     ASSERT(!WTF::isMainRunLoop());
     if (auto* socket = m_socketFactory.socket(identifier))
-        socket->signalReadPacket(data, rtc::SocketAddress(address.rtcAddress(), port), timestamp);
+        socket->signalReadPacket(data, rtc::SocketAddress(address.rtcAddress(), port), timestamp, convertToWebRTCEcnMarking(ecn));
 }
 
 void LibWebRTCNetwork::signalSentPacket(WebCore::LibWebRTCSocketIdentifier identifier, int64_t rtcPacketID, int64_t sendTimeMs)

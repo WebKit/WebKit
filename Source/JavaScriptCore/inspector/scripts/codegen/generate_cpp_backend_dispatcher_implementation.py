@@ -81,6 +81,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         header_includes = [
             (["JavaScriptCore", "WebKit"], ("JavaScriptCore", "inspector/InspectorFrontendRouter.h")),
             (["JavaScriptCore", "WebKit"], ("WTF", "wtf/NeverDestroyed.h")),
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/text/MakeString.h")),
         ]
         return self.generate_includes_from_entries(header_includes)
 

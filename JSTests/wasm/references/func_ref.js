@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=false", "--useWebAssemblyGC=false")
+//@ runWebAssemblySuite("--useWasmGC=false")
 
 import * as assert from '../assert.js';
 import Builder from '../Builder.js';
@@ -126,13 +126,13 @@ function makeFuncrefIdent() {
 
     assert.eq(instance.exports.i(null), null)
     assert.eq(instance.exports.i(myfun), myfun)
-    assert.throws(() => instance.exports.i(fun), TypeError, "Funcref must be an exported wasm function")
-    assert.throws(() => instance.exports.i(5), TypeError, "Funcref must be an exported wasm function")
+    assert.throws(() => instance.exports.i(fun), TypeError, "Argument value did not match the reference type")
+    assert.throws(() => instance.exports.i(5), TypeError, "Argument value did not match the reference type")
 
-    assert.throws(() => instance.exports.get_i()(fun), TypeError, "Funcref must be an exported wasm function")
+    assert.throws(() => instance.exports.get_i()(fun), TypeError, "Argument value did not match the reference type")
     assert.eq(instance.exports.get_i()(null), null)
     assert.eq(instance.exports.get_i()(myfun), myfun)
-    assert.throws(() => instance.exports.get_i()(5), TypeError, "Funcref must be an exported wasm function")
+    assert.throws(() => instance.exports.get_i()(5), TypeError, "Argument value did not match the reference type")
 
     assert.eq(instance.exports.fix()(), instance.exports.fix());
     assert.eq(instance.exports.fix(), instance.exports.fix);
@@ -158,7 +158,7 @@ function makeFuncrefIdent() {
           .End();
 
     const bin = builder.WebAssembly().get();
-    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: set_local to type Funcref expected Externref, in function at index 0 (evaluating 'new WebAssembly.Module(bin)')");
+    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `WebAssembly.Module doesn't validate: set_local to type (ref null func) expected (ref null extern), in function at index 0 (evaluating 'new WebAssembly.Module(bin)')`);
 }
 
 // Globals
@@ -228,7 +228,7 @@ function makeFuncrefIdent() {
     $1.exports.set_glob(null); assert.eq($1.exports.get_glob(), null)
     $1.exports.set_glob(myfun); assert.eq($1.exports.get_glob()(), 42);
 
-    assert.throws(() => $1.exports.set_glob(fun), TypeError, "Funcref must be an exported wasm function")
+    assert.throws(() => $1.exports.set_glob(fun), TypeError, "Argument value did not match the reference type")
 
     assert.eq($1.exports.glob_is_null(), 0)
     $1.exports.set_glob_null(); assert.eq($1.exports.get_glob(), null)
@@ -250,7 +250,7 @@ assert.throws(() => new WebAssembly.Module((new Builder())
     .Function("h", { params: ["externref"], ret: "funcref" })
       .GetLocal(0)
     .End()
-  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a Funcref, in function at index 0 (evaluating 'new WebAssembly.Module");
+  .End().WebAssembly().get()), Error, `WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null extern) is not a (ref null func), in function at index 0 (evaluating 'new WebAssembly.Module((new Builder())`);
 
 assert.throws(() => new WebAssembly.Module((new Builder())
   .Type().End()
@@ -264,7 +264,7 @@ assert.throws(() => new WebAssembly.Module((new Builder())
       .I32Const(0)
       .TableSet(0)
     .End()
-  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: table.set value to type I32 expected Funcref, in function at index 0 (evaluating 'new WebAssembly.Module");
+  .End().WebAssembly().get()), Error, `WebAssembly.Module doesn't validate: table.set value to type I32 expected (ref null func), in function at index 0 (evaluating 'new WebAssembly.Module((new Builder())`);
 
 // Tables
 {
@@ -319,11 +319,11 @@ assert.throws(() => new WebAssembly.Module((new Builder())
     $1.exports.set_glob(null); assert.eq($1.exports.get_glob(), null); assert.throws(() => $1.exports.call_glob(42), Error, "call_indirect to a null table entry (evaluating 'func(...args)')")
     $1.exports.set_glob(ident); assert.eq($1.exports.get_glob(), ident); assert.eq($1.exports.call_glob(42), 42)
 
-    assert.throws(() => $1.exports.set_glob(fun), TypeError, "Funcref must be an exported wasm function")
+    assert.throws(() => $1.exports.set_glob(fun), TypeError, "Argument value did not match the reference type")
     $1.exports.set_glob(myfun); assert.eq($1.exports.get_glob(), myfun); assert.throws(() => $1.exports.call_glob(42), Error, "call_indirect to a signature that does not match (evaluating 'func(...args)')")
 
     for (let i=0; i<1000; ++i) {
-        assert.throws(() => $1.exports.set_glob(function() {}), TypeError, "Funcref must be an exported wasm function");
+        assert.throws(() => $1.exports.set_glob(function() {}), TypeError, "Argument value did not match the reference type");
     }
 }
 
@@ -438,20 +438,20 @@ for (let importedFun of [function(i) { return i; }, makeFuncrefIdent()]) {
     for (let test of [$1.exports.test1, $1.exports.test3]) {
         assert.eq(test(myfun), myfun)
         assert.eq(test(myfun)(), 1337)
-        assert.throws(() => test(fun), TypeError, "Funcref must be an exported wasm function")
+        assert.throws(() => test(fun), TypeError, "Argument value did not match the reference type")
 
         for (let i=0; i<1000; ++i) {
-            assert.throws(() => test(fun), TypeError, "Funcref must be an exported wasm function")
+            assert.throws(() => test(fun), TypeError, "Argument value did not match the reference type")
         }
     }
 
     for (let test of [$1.exports.test2, $1.exports.test4]) {
         assert.eq(test(), $1.exports.test1)
         assert.eq(test()(myfun), myfun)
-        assert.throws(() => test()(fun), TypeError, "Funcref must be an exported wasm function")
+        assert.throws(() => test()(fun), TypeError, "Argument value did not match the reference type")
 
         for (let i=0; i<1000; ++i) {
-            assert.throws(() => test()(fun), TypeError, "Funcref must be an exported wasm function")
+            assert.throws(() => test()(fun), TypeError, "Argument value did not match the reference type")
         }
     }
 }
@@ -473,7 +473,7 @@ for (let importedFun of [function(i) { return i; }, makeFuncrefIdent()]) {
     const myfun = makeExportedFunction(1337);
     assert.eq(myfun(), 1337)
     assert.eq(42, $1.exports.test(42, myfun))
-    assert.throws(() => $1.exports.test(42, () => 5), TypeError, "Funcref must be an exported wasm function")
+    assert.throws(() => $1.exports.test(42, () => 5), TypeError, "Argument value did not match the reference type")
 }
 
 {
@@ -510,7 +510,7 @@ for (let importedFun of [function(i) { return i; }, makeFuncrefIdent()]) {
     for (let i = 0; i < 100; ++i)
         foo(0);
 
-    assert.throws(() => $1.exports.test(42, () => 5), TypeError, "Funcref must be an exported wasm function")
+    assert.throws(() => $1.exports.test(42, () => 5), TypeError, "Argument value did not match the reference type")
     assert.throws(() => $1.exports.test(42, myfun), RangeError, "Maximum call stack size exceeded.")
     assert.throws(() => foo(1), RangeError, "Maximum call stack size exceeded.")
 }

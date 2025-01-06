@@ -36,7 +36,7 @@ class Change(models.Model):
     bug_id = models.IntegerField()
     pr_id = models.IntegerField(default=-1)
     pr_project = models.TextField(default='')
-    comment_id = models.IntegerField(default=-1)
+    comment_id = models.BigIntegerField(default=-1)
     obsolete = models.BooleanField(default=False)
     sent_to_buildbot = models.BooleanField(default=False)
     sent_to_commit_queue = models.BooleanField(default=False)

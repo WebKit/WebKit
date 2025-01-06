@@ -7,4 +7,8 @@ PASS e.style['background-image'] = "repeating-radial-gradient(-20% 30% at center
 PASS e.style['background-image'] = "radial-gradient(20px -30px at center, red, blue)" should not set the property value
 PASS e.style['background-image'] = "repeating-radial-gradient(20px -30px ellipse at center, red, blue)" should not set the property value
 PASS e.style['background-image'] = "cross-fade(auto blue, 50% red)" should not set the property value
+PASS e.style['background-image'] = "cross-fade(1px red, green)" should not set the property value
+PASS e.style['background-image'] = "cross-fade(calc(1% + 1px) red, green)" should not set the property value
+PASS e.style['background-image'] = "cross-fade(-1% red, green)" should not set the property value
+PASS e.style['background-image'] = "cross-fade(101% red, green)" should not set the property value
 

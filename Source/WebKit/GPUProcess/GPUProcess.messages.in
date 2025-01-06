@@ -22,10 +22,13 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> GPUProcess LegacyReceiver {
-    InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters)
+[ExceptionForEnabledBy]
+messages -> GPUProcess : AuxiliaryProcess {
+    InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters) -> ()
 
     CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::ConnectionHandle connectionHandle, struct WebKit::GPUProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
+    SharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier processIdentifier, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess) -> ()
+
     UpdateGPUProcessPreferences(struct WebKit::GPUProcessPreferences preferences)
     UpdateSandboxAccess(Vector<WebKit::SandboxExtensionHandle> extensions);
 
@@ -38,6 +41,8 @@ messages -> GPUProcess LegacyReceiver {
 #if ENABLE(MEDIA_STREAM)
     SetMockCaptureDevicesEnabled(bool isEnabled)
     SetOrientationForMediaCapture(WebCore::IntDegrees orientation);
+    RotationAngleForCaptureDeviceChanged(String persistentId, enum:uint16_t WebCore::VideoFrameRotation rotation);
+
     UpdateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID) -> ()
     UpdateCaptureOrigin(WebCore::SecurityOriginData originData, WebCore::ProcessIdentifier processID)
     AddMockMediaDevice(struct WebCore::MockMediaDevice device)
@@ -47,12 +52,13 @@ messages -> GPUProcess LegacyReceiver {
     ResetMockMediaDevices()
     SetMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
     TriggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay)
+    SetShouldListenToVoiceActivity(bool shouldListen)
+    EnableMicrophoneMuteStatusAPI()
 #endif
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     SetUseSCContentSharingPicker(bool use)
 #endif
 #if PLATFORM(MAC)
-    DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
 #endif
 
@@ -85,6 +91,12 @@ messages -> GPUProcess LegacyReceiver {
 
 #if USE(EXTENSIONKIT)
     ResolveBookmarkDataForCacheDirectory(std::span<const uint8_t> bookmarkData)
+#endif
+#if ENABLE(WEBXR)
+    WebXRPromptAccepted(std::optional<WebCore::ProcessIdentity> processIdentity) -> (bool accepted)
+#endif
+#if HAVE(AUDIT_TOKEN)
+    SetPresentingApplicationAuditToken(WebCore::ProcessIdentifier processIdentifier, WebCore::PageIdentifier pageIdentifier, std::optional<WebKit::CoreIPCAuditToken> auditToken);
 #endif
 }
 

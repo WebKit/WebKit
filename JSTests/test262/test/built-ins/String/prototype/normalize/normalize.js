@@ -17,6 +17,8 @@ assert.sameValue(
   '`typeof String.prototype.normalize` is `function`'
 );
 
-verifyNotEnumerable(String.prototype, 'normalize');
-verifyWritable(String.prototype, 'normalize');
-verifyConfigurable(String.prototype, 'normalize');
+verifyProperty(String.prototype, 'normalize', {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

@@ -30,7 +30,8 @@ namespace WebCore {
 class RenderText;
 
 class Text : public CharacterData {
-    WTF_MAKE_ISO_ALLOCATED(Text);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Text);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Text);
 public:
     static const unsigned defaultLengthLimit = 1 << 16;
 
@@ -66,7 +67,7 @@ protected:
 
 private:
     String nodeName() const override;
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    Ref<Node> cloneNodeInternal(TreeScope&, CloningOperation) override;
     void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges) final;
 
     virtual Ref<Text> virtualCreate(String&&);

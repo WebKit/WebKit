@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,7 +11,7 @@
 
 #include <string>
 
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "config/aom_config.h"
 #include "config/aom_dsp_rtcd.h"
@@ -292,6 +292,7 @@ TEST_P(LowbdIntraPredTest, DISABLED_Speed) {
       &aom_highbd_##type##_predictor_##width##x##height##_c, width, height, \
       bd)
 
+#if !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 #define highbd_intrapred(type, opt, bd)                                        \
   highbd_entry(type, 4, 4, opt, bd), highbd_entry(type, 4, 8, opt, bd),        \
       highbd_entry(type, 4, 16, opt, bd), highbd_entry(type, 8, 4, opt, bd),   \
@@ -305,6 +306,18 @@ TEST_P(LowbdIntraPredTest, DISABLED_Speed) {
       highbd_entry(type, 32, 64, opt, bd),                                     \
       highbd_entry(type, 64, 16, opt, bd),                                     \
       highbd_entry(type, 64, 32, opt, bd), highbd_entry(type, 64, 64, opt, bd)
+#else
+#define highbd_intrapred(type, opt, bd)                                       \
+  highbd_entry(type, 4, 4, opt, bd), highbd_entry(type, 4, 8, opt, bd),       \
+      highbd_entry(type, 8, 4, opt, bd), highbd_entry(type, 8, 8, opt, bd),   \
+      highbd_entry(type, 8, 16, opt, bd), highbd_entry(type, 16, 8, opt, bd), \
+      highbd_entry(type, 16, 16, opt, bd),                                    \
+      highbd_entry(type, 16, 32, opt, bd),                                    \
+      highbd_entry(type, 32, 16, opt, bd),                                    \
+      highbd_entry(type, 32, 32, opt, bd),                                    \
+      highbd_entry(type, 32, 64, opt, bd),                                    \
+      highbd_entry(type, 64, 32, opt, bd), highbd_entry(type, 64, 64, opt, bd)
+#endif  // !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
 // ---------------------------------------------------------------------------
@@ -315,6 +328,7 @@ TEST_P(LowbdIntraPredTest, DISABLED_Speed) {
                            &aom_##type##_predictor_##width##x##height##_c,     \
                            width, height, 8)
 
+#if !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 #define lowbd_intrapred(type, opt)                                    \
   lowbd_entry(type, 4, 4, opt), lowbd_entry(type, 4, 8, opt),         \
       lowbd_entry(type, 4, 16, opt), lowbd_entry(type, 8, 4, opt),    \
@@ -326,6 +340,16 @@ TEST_P(LowbdIntraPredTest, DISABLED_Speed) {
       lowbd_entry(type, 32, 32, opt), lowbd_entry(type, 32, 64, opt), \
       lowbd_entry(type, 64, 16, opt), lowbd_entry(type, 64, 32, opt), \
       lowbd_entry(type, 64, 64, opt)
+#else
+#define lowbd_intrapred(type, opt)                                    \
+  lowbd_entry(type, 4, 4, opt), lowbd_entry(type, 4, 8, opt),         \
+      lowbd_entry(type, 8, 4, opt), lowbd_entry(type, 8, 8, opt),     \
+      lowbd_entry(type, 8, 16, opt), lowbd_entry(type, 16, 8, opt),   \
+      lowbd_entry(type, 16, 16, opt), lowbd_entry(type, 16, 32, opt), \
+      lowbd_entry(type, 32, 16, opt), lowbd_entry(type, 32, 32, opt), \
+      lowbd_entry(type, 32, 64, opt), lowbd_entry(type, 64, 32, opt), \
+      lowbd_entry(type, 64, 64, opt)
+#endif  // !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 
 #if HAVE_SSE2
 const IntraPredFunc<IntraPred> LowbdIntraPredTestVector[] = {
@@ -365,6 +389,7 @@ INSTANTIATE_TEST_SUITE_P(SSSE3, LowbdIntraPredTest,
 
 #if HAVE_AVX2
 const IntraPredFunc<IntraPred> LowbdIntraPredTestVectorAvx2[] = {
+#if !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
   lowbd_entry(dc, 32, 16, avx2),      lowbd_entry(dc, 32, 32, avx2),
   lowbd_entry(dc, 32, 64, avx2),      lowbd_entry(dc, 64, 16, avx2),
   lowbd_entry(dc, 64, 32, avx2),      lowbd_entry(dc, 64, 64, avx2),
@@ -388,10 +413,37 @@ const IntraPredFunc<IntraPred> LowbdIntraPredTestVectorAvx2[] = {
   lowbd_entry(h, 32, 32, avx2),
 
   lowbd_entry(paeth, 16, 8, avx2),    lowbd_entry(paeth, 16, 16, avx2),
-  lowbd_entry(paeth, 16, 32, avx2),   lowbd_entry(paeth, 16, 64, avx2),
-  lowbd_entry(paeth, 32, 16, avx2),   lowbd_entry(paeth, 32, 32, avx2),
-  lowbd_entry(paeth, 32, 64, avx2),   lowbd_entry(paeth, 64, 16, avx2),
+  lowbd_entry(paeth, 16, 32, avx2),   lowbd_entry(paeth, 32, 16, avx2),
+  lowbd_entry(paeth, 32, 32, avx2),   lowbd_entry(paeth, 32, 64, avx2),
   lowbd_entry(paeth, 64, 32, avx2),   lowbd_entry(paeth, 64, 64, avx2),
+#else
+  lowbd_entry(dc, 32, 16, avx2),      lowbd_entry(dc, 32, 32, avx2),
+  lowbd_entry(dc, 32, 64, avx2),      lowbd_entry(dc, 64, 32, avx2),
+  lowbd_entry(dc, 64, 64, avx2),
+
+  lowbd_entry(dc_top, 32, 16, avx2),  lowbd_entry(dc_top, 32, 32, avx2),
+  lowbd_entry(dc_top, 32, 64, avx2),  lowbd_entry(dc_top, 64, 32, avx2),
+  lowbd_entry(dc_top, 64, 64, avx2),
+
+  lowbd_entry(dc_left, 32, 16, avx2), lowbd_entry(dc_left, 32, 32, avx2),
+  lowbd_entry(dc_left, 32, 64, avx2), lowbd_entry(dc_left, 64, 32, avx2),
+  lowbd_entry(dc_left, 64, 64, avx2),
+
+  lowbd_entry(dc_128, 32, 16, avx2),  lowbd_entry(dc_128, 32, 32, avx2),
+  lowbd_entry(dc_128, 32, 64, avx2),  lowbd_entry(dc_128, 64, 32, avx2),
+  lowbd_entry(dc_128, 64, 64, avx2),
+
+  lowbd_entry(v, 32, 16, avx2),       lowbd_entry(v, 32, 32, avx2),
+  lowbd_entry(v, 32, 64, avx2),       lowbd_entry(v, 64, 32, avx2),
+  lowbd_entry(v, 64, 64, avx2),
+
+  lowbd_entry(h, 32, 32, avx2),
+
+  lowbd_entry(paeth, 16, 8, avx2),    lowbd_entry(paeth, 16, 16, avx2),
+  lowbd_entry(paeth, 16, 32, avx2),   lowbd_entry(paeth, 32, 16, avx2),
+  lowbd_entry(paeth, 32, 32, avx2),   lowbd_entry(paeth, 32, 64, avx2),
+  lowbd_entry(paeth, 64, 32, avx2),   lowbd_entry(paeth, 64, 64, avx2),
+#endif  // !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 };
 
 INSTANTIATE_TEST_SUITE_P(AVX2, LowbdIntraPredTest,

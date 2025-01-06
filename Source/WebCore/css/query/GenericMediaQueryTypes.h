@@ -76,6 +76,12 @@ struct Condition {
 
 enum class EvaluationResult : uint8_t { False, True, Unknown };
 
+enum class MediaQueryDynamicDependency : uint8_t  {
+    Viewport = 1 << 0,
+    Appearance = 1 << 1,
+    Accessibility = 1 << 2,
+};
+
 struct FeatureEvaluationContext {
     WeakRef<const Document, WeakPtrImplWithEventTargetData> document;
     CSSToLengthConversionData conversionData { };
@@ -91,14 +97,16 @@ struct FeatureSchema {
     AtomString name;
     Type type;
     ValueType valueType;
+    OptionSet<MediaQueryDynamicDependency> dependencies;
     FixedVector<CSSValueID> valueIdentifiers;
 
     virtual EvaluationResult evaluate(const Feature&, const FeatureEvaluationContext&) const { return EvaluationResult::Unknown; }
 
-    FeatureSchema(const AtomString& name, Type type, ValueType valueType, FixedVector<CSSValueID>&& valueIdentifiers = { })
+    FeatureSchema(const AtomString& name, Type type, ValueType valueType, OptionSet<MediaQueryDynamicDependency> dependencies, FixedVector<CSSValueID>&& valueIdentifiers = { })
         : name(name)
         , type(type)
         , valueType(valueType)
+        , dependencies(dependencies)
         , valueIdentifiers(WTFMove(valueIdentifiers))
     { }
     virtual ~FeatureSchema() = default;

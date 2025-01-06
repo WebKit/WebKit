@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -183,12 +183,6 @@ static const int_interpfilters filter_sets[DUAL_FILTER_SET_SIZE] = {
   { 0x00000001 }, { 0x00010001 }, { 0x00020001 },  // y = 1
   { 0x00000002 }, { 0x00010002 }, { 0x00020002 },  // y = 2
 };
-
-int av1_find_interp_filter_match(
-    MB_MODE_INFO *const mbmi, const AV1_COMP *const cpi,
-    const InterpFilter assign_filter, const int need_search,
-    INTERPOLATION_FILTER_STATS *interp_filter_stats,
-    int interp_filter_stats_idx);
 
 int64_t av1_interpolation_filter_search(
     MACROBLOCK *const x, const AV1_COMP *const cpi,

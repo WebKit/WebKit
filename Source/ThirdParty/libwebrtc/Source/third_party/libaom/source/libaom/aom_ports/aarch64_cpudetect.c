@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -9,7 +9,11 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include "config/aom_config.h"
+
 #include "arm_cpudetect.h"
+
+#include "aom_ports/arm.h"
 
 #if defined(__APPLE__)
 #include <sys/sysctl.h>
@@ -32,7 +36,7 @@ static int arm_get_cpu_caps(void) {
 
 // sysctlbyname() parameter documentation for instruction set characteristics:
 // https://developer.apple.com/documentation/kernel/1387446-sysctlbyname/determining_instruction_set_characteristics
-static INLINE bool have_feature(const char *feature) {
+static inline bool have_feature(const char *feature) {
   int64_t feature_present = 0;
   size_t size = sizeof(feature_present);
   if (sysctlbyname(feature, &feature_present, &size, NULL, 0) != 0) {
@@ -81,11 +85,39 @@ static int arm_get_cpu_caps(void) {
   }
 #endif  // defined(PF_ARM_V82_DP_INSTRUCTIONS_AVAILABLE)
 #endif  // HAVE_NEON_DOTPROD
-  // No I8MM or SVE feature detection available on Windows at time of writing.
+#if HAVE_NEON_I8MM
+// Support for PF_ARM_SVE_I8MM_INSTRUCTIONS_AVAILABLE was added in Windows SDK
+// 26100.
+#if defined(PF_ARM_SVE_I8MM_INSTRUCTIONS_AVAILABLE)
+  // There's no PF_* flag that indicates whether plain I8MM is available
+  // or not. But if SVE_I8MM is available, that also implies that
+  // regular I8MM is available.
+  if (IsProcessorFeaturePresent(PF_ARM_SVE_I8MM_INSTRUCTIONS_AVAILABLE)) {
+    flags |= HAS_NEON_I8MM;
+  }
+#endif  // defined(PF_ARM_SVE_I8MM_INSTRUCTIONS_AVAILABLE)
+#endif  // HAVE_NEON_I8MM
+#if HAVE_SVE
+// Support for PF_ARM_SVE_INSTRUCTIONS_AVAILABLE was added in Windows SDK 26100.
+#if defined(PF_ARM_SVE_INSTRUCTIONS_AVAILABLE)
+  if (IsProcessorFeaturePresent(PF_ARM_SVE_INSTRUCTIONS_AVAILABLE)) {
+    flags |= HAS_SVE;
+  }
+#endif  // defined(PF_ARM_SVE_INSTRUCTIONS_AVAILABLE)
+#endif  // HAVE_SVE
+#if HAVE_SVE2
+// Support for PF_ARM_SVE2_INSTRUCTIONS_AVAILABLE was added in Windows SDK
+// 26100.
+#if defined(PF_ARM_SVE2_INSTRUCTIONS_AVAILABLE)
+  if (IsProcessorFeaturePresent(PF_ARM_SVE2_INSTRUCTIONS_AVAILABLE)) {
+    flags |= HAS_SVE2;
+  }
+#endif  // defined(PF_ARM_SVE2_INSTRUCTIONS_AVAILABLE)
+#endif  // HAVE_SVE2
   return flags;
 }
 
-#elif defined(ANDROID_USE_CPU_FEATURES_LIB)
+#elif defined(AOM_USE_ANDROID_CPU_FEATURES)
 
 static int arm_get_cpu_caps(void) {
   int flags = 0;
@@ -104,12 +136,18 @@ static int arm_get_cpu_caps(void) {
 #define AOM_AARCH64_HWCAP_CRC32 (1 << 7)
 #define AOM_AARCH64_HWCAP_ASIMDDP (1 << 20)
 #define AOM_AARCH64_HWCAP_SVE (1 << 22)
+#define AOM_AARCH64_HWCAP2_SVE2 (1 << 1)
 #define AOM_AARCH64_HWCAP2_I8MM (1 << 13)
 
 static int arm_get_cpu_caps(void) {
   int flags = 0;
+#if HAVE_ARM_CRC32 || HAVE_NEON_DOTPROD || HAVE_SVE
   unsigned long hwcap = getauxval(AT_HWCAP);
+#endif
+#if HAVE_NEON_I8MM || HAVE_SVE2
   unsigned long hwcap2 = getauxval(AT_HWCAP2);
+#endif
+
 #if HAVE_NEON
   flags |= HAS_NEON;  // Neon is mandatory in Armv8.0-A.
 #endif  // HAVE_NEON
@@ -125,6 +163,9 @@ static int arm_get_cpu_caps(void) {
 #if HAVE_SVE
   if (hwcap & AOM_AARCH64_HWCAP_SVE) flags |= HAS_SVE;
 #endif  // HAVE_SVE
+#if HAVE_SVE2
+  if (hwcap2 & AOM_AARCH64_HWCAP2_SVE2) flags |= HAS_SVE2;
+#endif  // HAVE_SVE2
   return flags;
 }
 
@@ -183,6 +224,9 @@ int aom_arm_cpu_caps(void) {
   // Restrict flags: SVE assumes that FEAT_{DotProd,I8MM} are available.
   if (!(flags & HAS_NEON_DOTPROD)) flags &= ~HAS_SVE;
   if (!(flags & HAS_NEON_I8MM)) flags &= ~HAS_SVE;
+
+  // Restrict flags: SVE2 assumes that FEAT_SVE is available.
+  if (!(flags & HAS_SVE)) flags &= ~HAS_SVE2;
 
   return flags;
 }

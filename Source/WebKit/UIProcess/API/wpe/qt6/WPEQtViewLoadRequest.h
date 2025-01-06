@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018, 2019 Igalia S.L
+ * Copyright (C) 2018, 2019, 2024 Igalia S.L
  * Copyright (C) 2018, 2019 Zodiac Inflight Innovations
  *
  * This library is free software; you can redistribute it and/or
@@ -22,29 +22,26 @@
 
 #include "WPEQtView.h"
 
-#include <QObject>
-
 class WPEQtViewLoadRequestPrivate;
 
-class Q_DECL_EXPORT WPEQtViewLoadRequest : public QObject {
+class QT_WPE_EXPORT WPEQtViewLoadRequest : public QObject {
     Q_OBJECT
     Q_PROPERTY(QUrl url READ url)
     Q_PROPERTY(WPEQtView::LoadStatus status READ status)
     Q_PROPERTY(QString errorString READ errorString)
 
 public:
-    ~WPEQtViewLoadRequest();
+    explicit WPEQtViewLoadRequest(const QUrl&, WPEQtView::LoadStatus, const QString& errorString);
+    virtual ~WPEQtViewLoadRequest();
 
     QUrl url() const;
     WPEQtView::LoadStatus status() const;
     QString errorString() const;
 
-    explicit WPEQtViewLoadRequest(const WPEQtViewLoadRequestPrivate&);
+protected:
+    bool event(QEvent*) override;
 
 private:
-    friend class WPEQtView;
-
     Q_DECLARE_PRIVATE(WPEQtViewLoadRequest)
     QScopedPointer<WPEQtViewLoadRequestPrivate> d_ptr;
 };
-

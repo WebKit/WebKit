@@ -26,13 +26,13 @@
 #include "config.h"
 #include "IDBVersionChangeEvent.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(IDBVersionChangeEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBVersionChangeEvent);
 
-IDBVersionChangeEvent::IDBVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomString& name)
+IDBVersionChangeEvent::IDBVersionChangeEvent(std::optional<IDBResourceIdentifier> requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomString& name)
     : Event(EventInterfaceType::IDBVersionChangeEvent, name, CanBubble::No, IsCancelable::No)
     , m_requestIdentifier(requestIdentifier)
     , m_oldVersion(oldVersion)

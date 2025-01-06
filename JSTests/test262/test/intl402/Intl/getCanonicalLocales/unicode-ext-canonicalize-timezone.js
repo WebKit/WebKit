@@ -40,8 +40,8 @@ const testData = {
   "eire": "iedub",
 
   // NB: "EST" matches the |uvalue| production.
-  // <type name="utcw05" [...] alias="Etc/GMT+5 EST"/>
-  "est": "utcw05",
+  // <type name="papty" [...] alias="America/Panama EST"/>
+  "est": "papty",
 
   // NB: "GMT0" matches the |uvalue| production.
   // <type name="gmt" [...] alias="Etc/GMT Etc/GMT+0 Etc/GMT-0 Etc/GMT0 Etc/Greenwich GMT GMT+0 GMT-0 GMT0 Greenwich"/>

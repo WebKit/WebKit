@@ -119,6 +119,8 @@ static pas_aligned_allocation_result megapage_cache_allocate_aligned(size_t size
     }
     
     begin = (uintptr_t)base_before_exclusion;
+    PAS_PROFILE(MEGAPAGE_SET, begin);
+
     end = begin + new_size;
 
     PAS_ASSERT(pas_alignment_is_ptr_aligned(cache_config->allocation_alignment, begin));

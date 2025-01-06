@@ -32,16 +32,16 @@
 #import "FrameInfoData.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
-#import "PDFAnnotationTextWidgetDetails.h"
+#import "PDFAnnotationTypeHelpers.h"
 #import "PDFContextMenu.h"
 #import "PDFIncrementalLoader.h"
+#import "PDFKitSPI.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPluginAnnotation.h"
 #import "PDFPluginPasswordField.h"
 #import "PluginView.h"
 #import "WKAccessibilityWebPageObjectMac.h"
 #import "WKPageFindMatchesClient.h"
-#import "WebCoreArgumentCoders.h"
 #import "WebEventConversion.h"
 #import "WebFindOptions.h"
 #import "WebFrame.h"
@@ -64,6 +64,7 @@
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/EventNames.h>
+#import <WebCore/FontCocoa.h>
 #import <WebCore/FormState.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/GraphicsContextCG.h>
@@ -96,6 +97,7 @@
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/HexNumber.h>
 #import <wtf/Scope.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/UUID.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
@@ -145,7 +147,7 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     if (!protectedSelf->_parent) {
         callOnMainRunLoopAndWait([&protectedSelf] {
             if (auto* axObjectCache = protectedSelf->_pdfPlugin->axObjectCache()) {
-                if (RefPtr pluginAxObject = axObjectCache->getOrCreate(protectedSelf->_pluginElement.get()))
+                if (RefPtr pluginAxObject = axObjectCache->getOrCreate(RefPtr { protectedSelf->_pluginElement.get() }.get()))
                     protectedSelf->_parent = pluginAxObject->wrapper();
             }
         });
@@ -288,7 +290,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (RefPtr activeAnnotation = _pdfPlugin->activeAnnotation()) {
         if (WebCore::AXObjectCache* existingCache = _pdfPlugin->axObjectCache()) {
-            if (RefPtr object = existingCache->getOrCreate(activeAnnotation->element()))
+            if (RefPtr object = existingCache->getOrCreate(activeAnnotation->protectedElement().get()))
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 return [object->wrapper() accessibilityAttributeValue:@"_AXAssociatedPluginParent"];
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -299,20 +301,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)accessibilityAssociatedControlForAnnotation:(PDFAnnotation *)annotation
 {
-    // Only active annotations seem to have their associated controls available.
     RefPtr activeAnnotation = _pdfPlugin->activeAnnotation();
-    if (!activeAnnotation || ![activeAnnotation->annotation() isEqual:annotation])
-        return nil;
-    
-    WebCore::AXObjectCache* cache = _pdfPlugin->axObjectCache();
-    if (!cache)
-        return nil;
-    
-    RefPtr object = cache->getOrCreate(activeAnnotation->element());
-    if (!object)
+    if (!activeAnnotation)
         return nil;
 
-    return object->wrapper();
+    id wrapper = nil;
+    callOnMainRunLoopAndWait([activeAnnotation, protectedSelf = retainPtr(self), &wrapper] {
+        if (auto* axObjectCache = protectedSelf->_pdfPlugin->axObjectCache()) {
+            if (RefPtr annotationElementAxObject = axObjectCache->getOrCreate(activeAnnotation->protectedElement().get()))
+                wrapper = annotationElementAxObject->wrapper();
+        }
+    });
+
+    return wrapper;
 }
 
 - (id)accessibilityHitTestIntPoint:(const WebCore::IntPoint&)point
@@ -424,7 +425,11 @@ static WebCore::Cursor::Type toWebCoreCursorType(PDFLayerControllerCursorType cu
 
 - (void)writeItemsToPasteboard:(NSArray *)items withTypes:(NSArray *)types
 {
-    _pdfPlugin->writeItemsToPasteboard(NSPasteboardNameGeneral, items, types);
+    Vector<WebKit::PDFPluginPasteboardItem> pasteboardItems;
+    ASSERT(items.count >= types.count);
+    for (NSUInteger i = 0, count = items.count; i < count; ++i)
+        pasteboardItems.append({ [items objectAtIndex:i], [types objectAtIndex:i] });
+    _pdfPlugin->writeItemsToGeneralPasteboard(WTFMove(pasteboardItems));
 }
 
 - (void)showDefinitionForAttributedString:(NSAttributedString *)string atPoint:(CGPoint)point
@@ -504,6 +509,9 @@ static WebCore::Cursor::Type toWebCoreCursorType(PDFLayerControllerCursorType cu
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
+using namespace WebKit::PDFAnnotationTypeHelpers;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFPlugin);
 
 bool PDFPlugin::pdfKitLayerControllerIsAvailable()
 {
@@ -538,26 +546,27 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     }
 
     if (supportsForms()) {
-        m_annotationContainer = document->createElement(divTag, false);
-        m_annotationContainer->setAttributeWithoutSynchronization(idAttr, "annotationContainer"_s);
+        RefPtr annotationContainer = m_annotationContainer = document->createElement(divTag, false);
+        annotationContainer->setAttributeWithoutSynchronization(idAttr, "annotationContainer"_s);
 
         auto annotationStyleElement = document->createElement(styleTag, false);
-        annotationStyleElement->setTextContent(annotationStyle);
+        annotationStyleElement->setTextContent(annotationStyle());
 
-        m_annotationContainer->appendChild(annotationStyleElement);
-        RefPtr { document->bodyOrFrameset() }->appendChild(*m_annotationContainer);
+        annotationContainer->appendChild(annotationStyleElement);
+        RefPtr { document->bodyOrFrameset() }->appendChild(*annotationContainer);
     }
 
+    RefPtr frame = m_frame.get();
     m_accessibilityObject = adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this andElement:&element]);
     [m_accessibilityObject setPdfLayerController:m_pdfLayerController.get()];
-    if (isFullFrame && m_frame->isMainFrame())
-        [m_accessibilityObject setParent:m_frame->page()->accessibilityRemoteObject()];
+    if (isFullFrame && frame->isMainFrame())
+        [m_accessibilityObject setParent:frame->page()->accessibilityRemoteObject()];
     // If this is not a main-frame (e.g. it originated from an iframe) full-frame plugin, we'll need to set the parent later after the AXObjectCache has been initialized.
 
     [m_containerLayer addSublayer:m_contentLayer.get()];
     [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
     if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)])
-        [m_pdfLayerController setDeviceColorSpace:screenColorSpace(m_frame->coreLocalFrame()->view()).platformColorSpace()];
+        [m_pdfLayerController setDeviceColorSpace:screenColorSpace(frame->protectedCoreLocalFrame()->view()).platformColorSpace()];
     
     if ([getPDFLayerControllerClass() respondsToSelector:@selector(setUseIOSurfaceForTiles:)])
         [getPDFLayerControllerClass() setUseIOSurfaceForTiles:false];
@@ -570,13 +579,13 @@ void PDFPlugin::updateScrollbars()
     PDFPluginBase::updateScrollbars();
 
     if (m_verticalScrollbarLayer) {
-        m_verticalScrollbarLayer.get().frame = verticalScrollbar()->frameRect();
+        m_verticalScrollbarLayer.get().frame = protectedVerticalScrollbar()->frameRect();
         [m_verticalScrollbarLayer setContents:nil];
         [m_verticalScrollbarLayer setNeedsDisplay];
     }
     
     if (m_horizontalScrollbarLayer) {
-        m_horizontalScrollbarLayer.get().frame = horizontalScrollbar()->frameRect();
+        m_horizontalScrollbarLayer.get().frame = protectedHorizontalScrollbar()->frameRect();
         [m_horizontalScrollbarLayer setContents:nil];
         [m_horizontalScrollbarLayer setNeedsDisplay];
     }
@@ -641,8 +650,8 @@ void PDFPlugin::installPDFDocument()
     [m_pdfLayerController setFrameSize:size()];
     m_pdfLayerController.get().document = m_pdfDocument.get();
 
-    if (handlesPageScaleFactor())
-        m_view->setPageScaleFactor([m_pdfLayerController contentScaleFactor], std::nullopt);
+    if (RefPtr view = m_view.get(); view && handlesPageScaleFactor())
+        view->setPageScaleFactor([m_pdfLayerController contentScaleFactor], std::nullopt);
 
     notifyScrollPositionChanged(IntPoint([m_pdfLayerController scrollPosition]));
 
@@ -655,8 +664,8 @@ void PDFPlugin::installPDFDocument()
     if (isLocked())
         createPasswordEntryForm();
 
-    if (m_frame && [m_pdfLayerController respondsToSelector:@selector(setURLFragment:)])
-        [m_pdfLayerController setURLFragment:m_frame->url().fragmentIdentifier().createNSString().get()];
+    if (RefPtr frame = m_frame.get(); frame && [m_pdfLayerController respondsToSelector:@selector(setURLFragment:)])
+        [m_pdfLayerController setURLFragment:frame->url().fragmentIdentifier().createNSString().get()];
 }
 
 void PDFPlugin::createPasswordEntryForm()
@@ -667,6 +676,11 @@ void PDFPlugin::createPasswordEntryForm()
     auto passwordField = PDFPluginPasswordField::create(this);
     m_passwordField = passwordField.ptr();
     passwordField->attach(m_annotationContainer.get());
+}
+
+void PDFPlugin::teardownPasswordEntryForm()
+{
+    m_passwordField = nullptr;
 }
 
 void PDFPlugin::attemptToUnlockPDF(const String& password)
@@ -689,8 +703,10 @@ void PDFPlugin::updatePageAndDeviceScaleFactors()
 
     CGFloat newScaleFactor = deviceScaleFactor();
     if (!handlesPageScaleFactor()) {
-        if (auto* page = m_frame ? m_frame->page() : nullptr)
-            newScaleFactor *= page->pageScaleFactor();
+        if (RefPtr frame = m_frame.get()) {
+            if (RefPtr page = frame->page())
+                newScaleFactor *= page->pageScaleFactor();
+        }
     }
 
     if (newScaleFactor != [m_pdfLayerController deviceScaleFactor])
@@ -730,7 +746,8 @@ void PDFPlugin::teardown()
 
     m_pdfLayerController.get().delegate = nil;
 
-    if (auto* frameView = m_frame && m_frame->coreLocalFrame() ? m_frame->coreLocalFrame()->view() : nullptr)
+    RefPtr frame = m_frame.get();
+    if (RefPtr frameView = frame && frame->coreLocalFrame() ? frame->protectedCoreLocalFrame()->view() : nullptr)
         frameView->removeScrollableArea(this);
 
     m_activeAnnotation = nullptr;
@@ -1072,7 +1089,9 @@ bool PDFPlugin::handleMouseLeaveEvent(const WebMouseEvent&)
     
 bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
 {
-    auto* frameView = m_frame ? m_frame->coreLocalFrame()->view() : nullptr;
+    RefPtr frame = m_frame.get();
+    RefPtr localFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr frameView = localFrame ? localFrame->view() : nullptr;
     if (!frameView)
         return false;
     IntPoint contentsPoint = frameView->contentsToRootView(point);
@@ -1082,12 +1101,13 @@ bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
 
 bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 {
-    if (!m_frame || !m_frame->coreLocalFrame())
+    RefPtr frame = m_frame.get();
+    if (!frame || !frame->coreLocalFrame())
         return false;
-    RefPtr webPage = m_frame->page();
+    RefPtr webPage = frame->page();
     if (!webPage)
         return false;
-    RefPtr frameView = m_frame->coreLocalFrame()->view();
+    RefPtr frameView = frame->protectedCoreLocalFrame()->view();
     if (!frameView)
         return false;
 
@@ -1153,7 +1173,7 @@ bool PDFPlugin::handleEditingCommand(const String& commandName, const String&)
     else if (commandName == "takeFindStringFromSelection"_s) {
         NSString *string = [m_pdfLayerController currentSelection].string;
         if (string.length)
-            writeItemsToPasteboard(NSPasteboardNameFind, @[ [string dataUsingEncoding:NSUTF8StringEncoding] ], @[ NSPasteboardTypeString ]);
+            writeStringToFindPasteboard(string);
     }
 
     return true;
@@ -1205,12 +1225,10 @@ void PDFPlugin::setActiveAnnotation(SetActiveAnnotationParams&& setActiveAnnotat
             m_activeAnnotation->commit();
 
         if (annotation) {
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && static_cast<PDFAnnotationTextWidget *>(annotation).isReadOnly) {
+            if (annotationIsWidgetOfType(annotation.get(), WidgetType::Text) && [annotation isReadOnly]) {
                 m_activeAnnotation = nullptr;
                 return;
             }
-            ALLOW_DEPRECATED_DECLARATIONS_END
 
             auto activeAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
             m_activeAnnotation = activeAnnotation.get();
@@ -1222,8 +1240,8 @@ void PDFPlugin::setActiveAnnotation(SetActiveAnnotationParams&& setActiveAnnotat
 
 void PDFPlugin::notifyContentScaleFactorChanged(CGFloat scaleFactor)
 {
-    if (handlesPageScaleFactor())
-        m_view->setPageScaleFactor(scaleFactor, std::nullopt);
+    if (RefPtr view = m_view.get(); view && handlesPageScaleFactor())
+        view->setPageScaleFactor(scaleFactor, std::nullopt);
 
     updateHUDLocation();
     updateScrollbars();
@@ -1277,10 +1295,10 @@ void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CG
     dataForSelection.presentationTransition = TextIndicatorPresentationTransition::FadeIn;
     dictionaryPopupInfo.textIndicator = dataForSelection;
     
-    if (!m_frame || !m_frame->page())
-        return;
-
-    m_frame->page()->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
+    if (RefPtr frame = m_frame.get()) {
+        if (RefPtr page = frame->page())
+            page->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
+    }
 }
 
 unsigned PDFPlugin::countFindMatches(const String& target, WebCore::FindOptions options, unsigned /*maxMatchCount*/)
@@ -1367,6 +1385,56 @@ bool PDFPlugin::findString(const String& target, WebCore::FindOptions options, u
     }
 
     return foundMatch;
+}
+
+WebCore::DictionaryPopupInfo PDFPlugin::dictionaryPopupInfoForSelection(PDFSelection *selection, WebCore::TextIndicatorPresentationTransition presentationTransition)
+{
+    DictionaryPopupInfo dictionaryPopupInfo;
+    if (!selection.string.length)
+        return dictionaryPopupInfo;
+
+    NSAttributedString *nsAttributedString = [selection] {
+        static constexpr unsigned maximumSelectionLength = 250;
+        if (selection.string.length > maximumSelectionLength)
+            return [selection.attributedString attributedSubstringFromRange:NSMakeRange(0, maximumSelectionLength)];
+        return selection.attributedString;
+    }();
+    RetainPtr scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
+
+    auto scaleFactor = contentScaleFactor();
+
+    [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
+        RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
+
+        CocoaFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
+        if (font) {
+            auto desiredFontSize = font.pointSize * scaleFactor;
+#if USE(APPKIT)
+            font = [[NSFontManager sharedFontManager] convertFont:font toSize:desiredFontSize];
+#else
+            font = [font fontWithSize:desiredFontSize];
+#endif
+            [scaledAttributes setObject:font forKey:NSFontAttributeName];
+        }
+
+        [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
+    }];
+
+    NSRect rangeRect = rectForSelectionInRootView(selection);
+    rangeRect.size.height = nsAttributedString.size.height * scaleFactor;
+    rangeRect.size.width = nsAttributedString.size.width * scaleFactor;
+
+    TextIndicatorData dataForSelection;
+    dataForSelection.selectionRectInRootViewCoordinates = rangeRect;
+    dataForSelection.textBoundingRectInRootViewCoordinates = rangeRect;
+    dataForSelection.contentImageScaleFactor = scaleFactor;
+    dataForSelection.presentationTransition = presentationTransition;
+
+    dictionaryPopupInfo.origin = rangeRect.origin;
+    dictionaryPopupInfo.textIndicator = dataForSelection;
+    dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(scaledNSAttributedString);
+
+    return dictionaryPopupInfo;
 }
 
 bool PDFPlugin::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)
@@ -1462,17 +1530,14 @@ std::pair<String, RetainPtr<PDFSelection>> PDFPlugin::textForImmediateActionHitT
     NSPoint pointInPageSpace = [[m_pdfLayerController layout] convertPoint:pointInLayoutSpace toPage:currentPage forScaleFactor:1.0];
 
     for (PDFAnnotation *annotation in currentPage.annotations) {
-        if (![annotation isKindOfClass:getPDFAnnotationLinkClass()])
+        if (!annotationIsOfType(annotation, AnnotationType::Link))
             continue;
 
         NSRect bounds = annotation.bounds;
         if (!NSPointInRect(pointInPageSpace, bounds))
             continue;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        PDFAnnotationLink *linkAnnotation = (PDFAnnotationLink *)annotation;
-ALLOW_DEPRECATED_DECLARATIONS_END
-        NSURL *url = linkAnnotation.URL;
+        NSURL *url = annotation.URL;
         if (!url)
             continue;
 
@@ -1506,13 +1571,6 @@ static NSRect rectInViewSpaceForRectInLayoutSpace(PDFLayerController* pdfLayerCo
     newRect.origin.y -= scrollOffset.y;
 
     return NSRectFromCGRect(newRect);
-}
-    
-WebCore::AXObjectCache* PDFPlugin::axObjectCache() const
-{
-    if (!m_frame || !m_frame->coreLocalFrame() || !m_frame->coreLocalFrame()->document())
-        return nullptr;
-    return m_frame->coreLocalFrame()->document()->axObjectCache();
 }
 
 WebCore::FloatRect PDFPlugin::rectForSelectionInRootView(PDFSelection *selection) const

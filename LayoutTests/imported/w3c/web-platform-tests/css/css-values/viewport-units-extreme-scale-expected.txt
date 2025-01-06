@@ -1,0 +1,7 @@
+
+
+PASS 100vw computes to 640px
+PASS 100vh computes to 480px
+FAIL calc((1vw - 6.3999px) * 10000000) computes to 1000px assert_equals: expected "1000px" but got "1000.953125px"
+FAIL calc((100vh - 479px) * 60000) computes to 60000px assert_equals: expected "60000px" but got "60001.140625px"
+

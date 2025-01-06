@@ -35,6 +35,7 @@
 #include "GeometryUtilities.h"
 #include "RenderTheme.h"
 #include <pal/spi/cf/CoreTextSPI.h>
+#include <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebCore {
 
@@ -282,10 +283,9 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, Attachmen
     }
 
     if (action.isEmpty() && !hasProgress) {
+        attachment.attachmentElement().requestIconIfNeededWithSize(FloatSize());
         FloatSize iconSize = attachment.attachmentElement().iconSize();
         icon = attachment.attachmentElement().icon();
-        if (!icon)
-            attachment.attachmentElement().requestIconWithSize(FloatSize());
         thumbnailIcon = attachment.attachmentElement().thumbnail();
         if (thumbnailIcon)
             iconSize = largestRectWithAspectRatioInsideRect(thumbnailIcon->size().aspectRatio(), FloatRect(0, 0, attachmentIconSize, attachmentIconSize)).size();

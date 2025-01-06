@@ -29,11 +29,17 @@
 #include <WebCore/EmptyFrameLoaderClient.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 
+namespace WebCore {
+
+class FrameLoader;
+
+}
+
 namespace WebKit {
 
 class RemoteWorkerFrameLoaderClient final : public WebCore::EmptyFrameLoaderClient {
 public:
-    RemoteWorkerFrameLoaderClient(WebPageProxyIdentifier, WebCore::PageIdentifier, const String& userAgent);
+    RemoteWorkerFrameLoaderClient(WebCore::FrameLoader&, WebPageProxyIdentifier, WebCore::PageIdentifier, const String& userAgent);
 
     WebPageProxyIdentifier webPageProxyID() const { return m_webPageProxyID; }
 

@@ -63,44 +63,12 @@ class Git(SCM):
 
     def __init__(self, cwd, patch_directories, **kwargs):
         SCM.__init__(self, cwd, **kwargs)
-        self._check_git_architecture()
         if patch_directories == []:
             raise Exception(message='Empty list of patch directories passed to SCM.__init__')
         elif patch_directories == None:
             self._patch_directories = [self._filesystem.relpath(cwd, self.checkout_root)]
         else:
             self._patch_directories = patch_directories
-
-    def _machine_is_64bit(self):
-        import platform
-        # This only is tested on Mac.
-        if not platform.mac_ver()[0]:
-            return False
-
-        # platform.architecture()[0] can be '64bit' even if the machine is 32bit:
-        # http://mail.python.org/pipermail/pythonmac-sig/2009-September/021648.html
-        # Use the sysctl command to find out what the processor actually supports.
-        return self.run(['sysctl', '-n', 'hw.cpu64bit_capable']).rstrip() == '1'
-
-    def _executable_is_64bit(self, path):
-        # Again, platform.architecture() fails us.  On my machine
-        # git_bits = platform.architecture(executable=git_path, bits='default')[0]
-        # git_bits is just 'default', meaning the call failed.
-        file_output = self.run(['file', path])
-        return re.search('64', file_output)
-
-    def _check_git_architecture(self):
-        if not self._machine_is_64bit():
-            return
-
-        # We could path-search entirely in python or with
-        # which.py (http://code.google.com/p/which), but this is easier:
-        git_path = self.run(['which', self.executable_name]).rstrip()
-        if self._executable_is_64bit(git_path):
-            return
-
-        webkit_dev_thread_url = "https://lists.webkit.org/pipermail/webkit-dev/2010-December/015287.html"
-        _log.warning("This machine is 64-bit, but the git binary (%s) does not support 64-bit.\nInstall a 64-bit git for better performance, see:\n%s\n" % (git_path, webkit_dev_thread_url))
 
     def _run_git(self, command_args, **kwargs):
         full_command_args = [self.executable_name] + command_args
@@ -120,11 +88,8 @@ class Git(SCM):
 
     @classmethod
     def clone(cls, url, directory, executive=None):
-        try:
-            executive = executive or Executive()
-            return executive.run_command([cls.executable_name, 'clone', '-v', url, directory], ignore_errors=True)
-        except OSError:
-            return False
+        executive = executive or Executive()
+        return executive.run_command([cls.executable_name, 'clone', '-v', url, directory])
 
     def find_checkout_root(self, path):
         # "git rev-parse --show-cdup" would be another way to get to the root

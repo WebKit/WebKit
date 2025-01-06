@@ -1,4 +1,5 @@
 [
+  JSCustomMarkFunction,
   EnabledBySetting=NavigationAPIEnabled,
   Exposed=Window
 ] interface NavigateEvent : Event {
@@ -15,8 +16,8 @@
   readonly attribute any info;
   [EnabledBySetting=UAVisualTransitionDetectionEnabled] readonly attribute boolean hasUAVisualTransition;
 
-  undefined intercept(optional NavigationInterceptOptions options = {});
-  undefined scroll();
+  [CallWith=RelevantDocument] undefined intercept(optional NavigationInterceptOptions options = {});
+  [CallWith=RelevantDocument] undefined scroll();
 };
 
 dictionary NavigateEventInit : EventInit {

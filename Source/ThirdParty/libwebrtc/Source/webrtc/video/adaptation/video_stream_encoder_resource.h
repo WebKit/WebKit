@@ -11,10 +11,10 @@
 #ifndef VIDEO_ADAPTATION_VIDEO_STREAM_ENCODER_RESOURCE_H_
 #define VIDEO_ADAPTATION_VIDEO_STREAM_ENCODER_RESOURCE_H_
 
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/adaptation/resource.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"

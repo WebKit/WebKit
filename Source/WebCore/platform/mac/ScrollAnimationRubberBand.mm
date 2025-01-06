@@ -30,6 +30,7 @@
 #import "FloatPoint.h"
 #import "GeometryUtilities.h"
 #import <pal/spi/mac/NSScrollViewSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 static float elasticDeltaForTimeDelta(float initialPosition, float initialVelocity, Seconds elapsedTime)
 {
@@ -37,6 +38,8 @@ static float elasticDeltaForTimeDelta(float initialPosition, float initialVeloci
 }
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollAnimationRubberBand);
 
 static inline float roundTowardZero(float num)
 {

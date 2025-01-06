@@ -54,7 +54,7 @@ public:
     void didSendWebSocketFrame(const WebSocketFrame&) const;
     void didReceiveWebSocketFrameError(const String& errorMessage) const;
     
-    WebSocketChannelIdentifier progressIdentifier() const;
+    WebSocketChannelIdentifier progressIdentifier() const { return m_progressIdentifier; }
 
     static WebSocketFrame createFrame(std::span<const uint8_t> data, WebSocketFrame::OpCode);
 

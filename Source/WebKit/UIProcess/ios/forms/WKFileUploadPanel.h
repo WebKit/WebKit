@@ -26,6 +26,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIViewController.h>
+#import <wtf/RetainPtr.h>
 
 @class WKContentView;
 @protocol WKFileUploadPanelDelegate;
@@ -37,6 +38,14 @@ class OpenPanelParameters;
 namespace WebKit {
 class WebOpenPanelResultListenerProxy;
 enum class PickerDismissalReason : uint8_t;
+enum class MovedSuccessfully : bool { No, Yes };
+enum class KeyboardIsDismissing : bool { No, Yes };
+
+struct TemporaryFileMoveResults {
+    MovedSuccessfully operationResult;
+    RetainPtr<NSURL> maybeMovedURL;
+    RetainPtr<NSURL> temporaryDirectoryURL;
+};
 }
 
 @interface WKFileUploadPanel : UIViewController
@@ -47,11 +56,13 @@ enum class PickerDismissalReason : uint8_t;
 - (BOOL)dismissIfNeededWithReason:(WebKit::PickerDismissalReason)reason;
 
 #if USE(UICONTEXTMENU)
-- (void)repositionContextMenuIfNeeded;
+- (void)repositionContextMenuIfNeeded:(WebKit::KeyboardIsDismissing)isKeyboardBeingDismissed;
 #endif
 
 - (NSArray<NSString *> *)currentAvailableActionTitles;
 - (NSArray<NSString *> *)acceptedTypeIdentifiers;
+
++ (WebKit::TemporaryFileMoveResults)_moveToNewTemporaryDirectory:(NSURL *)originalURL fileCoordinator:(NSFileCoordinator *)fileCoordinator fileManager:(NSFileManager *)fileManager asCopy:(BOOL)asCopy;
 @end
 
 @protocol WKFileUploadPanelDelegate <NSObject>

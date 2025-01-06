@@ -170,6 +170,9 @@ func (b *taskBuilder) nanobenchFlags(doUpload bool) {
 					configs = []string{"grdawn_gles"}
 				}
 
+				if b.extraConfig("TintIR") {
+					args = append(args, "--useTintIR")
+				}
 			}
 			if b.extraConfig("Native") {
 				if b.extraConfig("Metal") {
@@ -278,6 +281,10 @@ func (b *taskBuilder) nanobenchFlags(doUpload bool) {
 	if b.model("Pixel3a") {
 		// skia:9413
 		match = append(match, "~^path_text$")
+		match = append(match, "~^path_text_clipped_uncached$")
+	}
+	if b.model("Pixel4XL") && b.extraConfig("Vulkan") {
+		// skia:9413?
 		match = append(match, "~^path_text_clipped_uncached$")
 	}
 

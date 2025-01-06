@@ -34,13 +34,11 @@ static std::optional<Vector<uint8_t>> deriveBitsCryptoKit(const Vector<uint8_t>&
     if (baseKey.size() != ed25519KeySize || publicKey.size() != ed25519KeySize)
         return std::nullopt;
     auto rv = PAL::EdKey::deriveBits(PAL::EdKeyAgreementAlgorithm::x25519(), baseKey.span(), publicKey.span());
-    if (!rv.getErrorCode().isSuccess())
+    if (rv.errorCode != Cpp::ErrorCodes::Success)
         return std::nullopt;
-    if (!rv.getKeyBytes())
-        return std::nullopt;
-    return *rv.getKeyBytes();
+    return WTFMove(rv.result);
 }
-#endif
+#else
 static std::optional<Vector<uint8_t>> deriveBitsCoreCrypto(const Vector<uint8_t>& baseKey, const Vector<uint8_t>& publicKey)
 {
     if (baseKey.size() != ed25519KeySize || publicKey.size() != ed25519KeySize)
@@ -54,18 +52,15 @@ static std::optional<Vector<uint8_t>> deriveBitsCoreCrypto(const Vector<uint8_t>
 #else
     cccurve25519(derivedKey, baseKey.data(), publicKey.data());
 #endif
-    return Vector<uint8_t>(std::span { derivedKey, ed25519KeySize });
+    return Vector<uint8_t>(std::span { derivedKey });
 }
-
-std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const CryptoKeyOKP& baseKey, const CryptoKeyOKP& publicKey, UseCryptoKit useCryptoKit)
+#endif
+std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const CryptoKeyOKP& baseKey, const CryptoKeyOKP& publicKey)
 {
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes)
-        return deriveBitsCryptoKit(baseKey.platformKey(), publicKey.platformKey());
+    return deriveBitsCryptoKit(baseKey.platformKey(), publicKey.platformKey());
 #else
-    UNUSED_PARAM(useCryptoKit);
-#endif
     return deriveBitsCoreCrypto(baseKey.platformKey(), publicKey.platformKey());
-
+#endif
 }
 } // namespace WebCore

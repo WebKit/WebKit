@@ -11,10 +11,20 @@
 #ifndef API_TEST_MOCK_RTP_TRANSCEIVER_H_
 #define API_TEST_MOCK_RTP_TRANSCEIVER_H_
 
+#include <optional>
 #include <string>
 #include <vector>
 
+#include "api/array_view.h"
+#include "api/make_ref_counted.h"
+#include "api/media_types.h"
+#include "api/rtc_error.h"
+#include "api/rtp_parameters.h"
+#include "api/rtp_receiver_interface.h"
+#include "api/rtp_sender_interface.h"
+#include "api/rtp_transceiver_direction.h"
 #include "api/rtp_transceiver_interface.h"
+#include "api/scoped_refptr.h"
 #include "test/gmock.h"
 
 namespace webrtc {
@@ -28,7 +38,7 @@ class MockRtpTransceiver : public RtpTransceiverInterface {
   }
 
   MOCK_METHOD(cricket::MediaType, media_type, (), (const, override));
-  MOCK_METHOD(absl::optional<std::string>, mid, (), (const, override));
+  MOCK_METHOD(std::optional<std::string>, mid, (), (const, override));
   MOCK_METHOD(rtc::scoped_refptr<RtpSenderInterface>,
               sender,
               (),
@@ -48,11 +58,11 @@ class MockRtpTransceiver : public RtpTransceiverInterface {
               SetDirectionWithError,
               (RtpTransceiverDirection new_direction),
               (override));
-  MOCK_METHOD(absl::optional<RtpTransceiverDirection>,
+  MOCK_METHOD(std::optional<RtpTransceiverDirection>,
               current_direction,
               (),
               (const, override));
-  MOCK_METHOD(absl::optional<RtpTransceiverDirection>,
+  MOCK_METHOD(std::optional<RtpTransceiverDirection>,
               fired_direction,
               (),
               (const, override));

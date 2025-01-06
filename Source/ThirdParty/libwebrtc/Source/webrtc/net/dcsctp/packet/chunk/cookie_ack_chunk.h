@@ -35,7 +35,7 @@ class CookieAckChunk : public Chunk, public TLVTrait<CookieAckChunkConfig> {
 
   CookieAckChunk() {}
 
-  static absl::optional<CookieAckChunk> Parse(
+  static std::optional<CookieAckChunk> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

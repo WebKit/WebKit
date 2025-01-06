@@ -18,7 +18,7 @@ if [ $# -eq 0 ]; then
     echo "Using unified source list files: Sources.txt, SourcesCocoa.txt, Platform/Sources.txt, Platform/SourcesCocoa.txt"
 fi
 
-UnifiedSourceCppFileCount=130
+UnifiedSourceCppFileCount=137
 UnifiedSourceCFileCount=0
 UnifiedSourceMmFileCount=80
 

@@ -33,7 +33,8 @@ class RenderTextControlMultiLine;
 enum class SelectionRestorationMode : uint8_t;
 
 class HTMLTextAreaElement final : public HTMLTextFormControlElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLTextAreaElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLTextAreaElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTextAreaElement);
 public:
     WEBCORE_EXPORT static Ref<HTMLTextAreaElement> create(Document&);
     static Ref<HTMLTextAreaElement> create(const QualifiedName&, Document&, HTMLFormElement*);
@@ -54,6 +55,8 @@ public:
     WEBCORE_EXPORT RefPtr<TextControlInnerTextElement> innerTextElement() const final;
 
     bool shouldSaveAndRestoreFormControlState() const final { return true; }
+
+    bool isDevolvableWidget() const override { return true; }
 
     bool dirAutoUsesValue() const final { return true; }
 

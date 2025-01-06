@@ -401,7 +401,7 @@ void SQLTransactionBackend::doCleanup()
 
 SQLTransactionBackend::StateFunction SQLTransactionBackend::stateFunctionFor(SQLTransactionState state)
 {
-    static const StateFunction stateFunctions[] = {
+    static constexpr std::array<StateFunction, 13> stateFunctions {
         &SQLTransactionBackend::unreachableState,            // 0. end
         &SQLTransactionBackend::unreachableState,            // 1. idle
         &SQLTransactionBackend::acquireLock,                 // 2.
@@ -417,7 +417,7 @@ SQLTransactionBackend::StateFunction SQLTransactionBackend::stateFunctionFor(SQL
         &SQLTransactionBackend::unreachableState             // 12. deliverSuccessCallback
     };
 
-    ASSERT(std::size(stateFunctions) == static_cast<int>(SQLTransactionState::NumberOfStates));
+    ASSERT(stateFunctions.size() == static_cast<int>(SQLTransactionState::NumberOfStates));
     ASSERT(state < SQLTransactionState::NumberOfStates);
 
     return stateFunctions[static_cast<int>(state)];

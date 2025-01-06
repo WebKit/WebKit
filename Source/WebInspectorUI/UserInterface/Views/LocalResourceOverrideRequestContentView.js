@@ -99,7 +99,7 @@ WI.LocalResourceOverrideRequestContentView = class LocalResourceOverrideRequestC
 
         case WI.LocalResourceOverride.InterceptType.Request: {
             let requestMethod = this.representedObject.localResource.requestMethod;
-            if (!WI.HTTPUtilities.RequestMethodsWithBody.has(requestMethod))
+            if (requestMethod && !WI.HTTPUtilities.RequestMethodsWithBody.has(requestMethod))
                 message = WI.UIString("%s requests do not have a body").format(requestMethod);
             break;
         }

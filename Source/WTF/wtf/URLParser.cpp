@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include <functional>
 #include <mutex>
 #include <wtf/text/CodePointIterator.h>
+#include <wtf/text/MakeString.h>
 
 namespace WTF {
 
@@ -51,52 +52,52 @@ ALWAYS_INLINE static void appendCodePoint(Vector<UChar>& destination, char32_t c
 }
 
 enum URLCharacterClass {
-    UserInfo = 0x1,
-    Default = 0x2,
+    UserInfoEncode = 0x1,
+    PathEncode = 0x2,
     ForbiddenHost = 0x4,
     ForbiddenDomain = 0x8,
-    QueryPercent = 0x10,
+    QueryEncode = 0x10,
     SlashQuestionOrHash = 0x20,
     ValidScheme = 0x40,
 };
 
-static const uint8_t characterClassTable[256] = {
-    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // 0x0
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x2
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x3
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x4
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x5
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x6
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x7
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x8
-    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // 0x9
-    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // 0xA
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0xB
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0xC
-    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // 0xD
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0xE
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0xF
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x10
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x11
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x12
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x13
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x14
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x15
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x16
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x17
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x18
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x19
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1A
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1B
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1C
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1D
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1E
-    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1F
-    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // ' '
+static constexpr std::array<uint8_t, 256> characterClassTable {
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenHost | ForbiddenDomain, // 0x0
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x1
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x2
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x3
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x4
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x5
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x6
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x7
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x8
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenHost | ForbiddenDomain, // 0x9
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenHost | ForbiddenDomain, // 0xA
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0xB
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0xC
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenHost | ForbiddenDomain, // 0xD
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0xE
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0xF
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x10
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x11
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x12
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x13
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x14
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x15
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x16
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x17
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x18
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x19
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x1A
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x1B
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x1C
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x1D
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x1E
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenDomain, // 0x1F
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenHost | ForbiddenDomain, // ' '
     0, // '!'
-    UserInfo | Default | QueryPercent, // '"'
-    UserInfo | Default | QueryPercent | SlashQuestionOrHash | ForbiddenHost | ForbiddenDomain, // '#'
+    UserInfoEncode | PathEncode | QueryEncode, // '"'
+    UserInfoEncode | PathEncode | QueryEncode | SlashQuestionOrHash | ForbiddenHost | ForbiddenDomain, // '#'
     0, // '$'
     ForbiddenDomain, // '%'
     0, // '&'
@@ -108,7 +109,7 @@ static const uint8_t characterClassTable[256] = {
     0, // ','
     ValidScheme, // '-'
     ValidScheme, // '.'
-    UserInfo | SlashQuestionOrHash | ForbiddenHost | ForbiddenDomain, // '/'
+    UserInfoEncode | SlashQuestionOrHash | ForbiddenHost | ForbiddenDomain, // '/'
     ValidScheme, // '0'
     ValidScheme, // '1'
     ValidScheme, // '2'
@@ -119,13 +120,13 @@ static const uint8_t characterClassTable[256] = {
     ValidScheme, // '7'
     ValidScheme, // '8'
     ValidScheme, // '9'
-    UserInfo | ForbiddenHost | ForbiddenDomain, // ':'
-    UserInfo, // ';'
-    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // '<'
-    UserInfo, // '='
-    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // '>'
-    UserInfo | Default | SlashQuestionOrHash | ForbiddenHost | ForbiddenDomain, // '?'
-    UserInfo | ForbiddenHost | ForbiddenDomain, // '@'
+    UserInfoEncode | ForbiddenHost | ForbiddenDomain, // ':'
+    UserInfoEncode, // ';'
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenHost | ForbiddenDomain, // '<'
+    UserInfoEncode, // '='
+    UserInfoEncode | PathEncode | QueryEncode | ForbiddenHost | ForbiddenDomain, // '>'
+    UserInfoEncode | PathEncode | SlashQuestionOrHash | ForbiddenHost | ForbiddenDomain, // '?'
+    UserInfoEncode | ForbiddenHost | ForbiddenDomain, // '@'
     ValidScheme, // 'A'
     ValidScheme, // 'B'
     ValidScheme, // 'C'
@@ -152,12 +153,12 @@ static const uint8_t characterClassTable[256] = {
     ValidScheme, // 'X'
     ValidScheme, // 'Y'
     ValidScheme, // 'Z'
-    UserInfo | ForbiddenHost | ForbiddenDomain, // '['
-    UserInfo | SlashQuestionOrHash | ForbiddenHost | ForbiddenDomain, // '\\'
-    UserInfo | ForbiddenHost | ForbiddenDomain, // ']'
-    UserInfo | ForbiddenHost | ForbiddenDomain, // '^'
+    UserInfoEncode | ForbiddenHost | ForbiddenDomain, // '['
+    UserInfoEncode | SlashQuestionOrHash | ForbiddenHost | ForbiddenDomain, // '\\'
+    UserInfoEncode | ForbiddenHost | ForbiddenDomain, // ']'
+    UserInfoEncode | ForbiddenHost | ForbiddenDomain, // '^'
     0, // '_'
-    UserInfo | Default, // '`'
+    UserInfoEncode | PathEncode, // '`'
     ValidScheme, // 'a'
     ValidScheme, // 'b'
     ValidScheme, // 'c'
@@ -184,152 +185,152 @@ static const uint8_t characterClassTable[256] = {
     ValidScheme, // 'x'
     ValidScheme, // 'y'
     ValidScheme, // 'z'
-    UserInfo | Default, // '{'
-    UserInfo | ForbiddenHost | ForbiddenDomain, // '|'
-    UserInfo | Default, // '}'
+    UserInfoEncode | PathEncode, // '{'
+    UserInfoEncode | ForbiddenHost | ForbiddenDomain, // '|'
+    UserInfoEncode | PathEncode, // '}'
     0, // '~'
-    QueryPercent | ForbiddenDomain, // 0x7F
-    QueryPercent, // 0x80
-    QueryPercent, // 0x81
-    QueryPercent, // 0x82
-    QueryPercent, // 0x83
-    QueryPercent, // 0x84
-    QueryPercent, // 0x85
-    QueryPercent, // 0x86
-    QueryPercent, // 0x87
-    QueryPercent, // 0x88
-    QueryPercent, // 0x89
-    QueryPercent, // 0x8A
-    QueryPercent, // 0x8B
-    QueryPercent, // 0x8C
-    QueryPercent, // 0x8D
-    QueryPercent, // 0x8E
-    QueryPercent, // 0x8F
-    QueryPercent, // 0x90
-    QueryPercent, // 0x91
-    QueryPercent, // 0x92
-    QueryPercent, // 0x93
-    QueryPercent, // 0x94
-    QueryPercent, // 0x95
-    QueryPercent, // 0x96
-    QueryPercent, // 0x97
-    QueryPercent, // 0x98
-    QueryPercent, // 0x99
-    QueryPercent, // 0x9A
-    QueryPercent, // 0x9B
-    QueryPercent, // 0x9C
-    QueryPercent, // 0x9D
-    QueryPercent, // 0x9E
-    QueryPercent, // 0x9F
-    QueryPercent, // 0xA0
-    QueryPercent, // 0xA1
-    QueryPercent, // 0xA2
-    QueryPercent, // 0xA3
-    QueryPercent, // 0xA4
-    QueryPercent, // 0xA5
-    QueryPercent, // 0xA6
-    QueryPercent, // 0xA7
-    QueryPercent, // 0xA8
-    QueryPercent, // 0xA9
-    QueryPercent, // 0xAA
-    QueryPercent, // 0xAB
-    QueryPercent, // 0xAC
-    QueryPercent, // 0xAD
-    QueryPercent, // 0xAE
-    QueryPercent, // 0xAF
-    QueryPercent, // 0xB0
-    QueryPercent, // 0xB1
-    QueryPercent, // 0xB2
-    QueryPercent, // 0xB3
-    QueryPercent, // 0xB4
-    QueryPercent, // 0xB5
-    QueryPercent, // 0xB6
-    QueryPercent, // 0xB7
-    QueryPercent, // 0xB8
-    QueryPercent, // 0xB9
-    QueryPercent, // 0xBA
-    QueryPercent, // 0xBB
-    QueryPercent, // 0xBC
-    QueryPercent, // 0xBD
-    QueryPercent, // 0xBE
-    QueryPercent, // 0xBF
-    QueryPercent, // 0xC0
-    QueryPercent, // 0xC1
-    QueryPercent, // 0xC2
-    QueryPercent, // 0xC3
-    QueryPercent, // 0xC4
-    QueryPercent, // 0xC5
-    QueryPercent, // 0xC6
-    QueryPercent, // 0xC7
-    QueryPercent, // 0xC8
-    QueryPercent, // 0xC9
-    QueryPercent, // 0xCA
-    QueryPercent, // 0xCB
-    QueryPercent, // 0xCC
-    QueryPercent, // 0xCD
-    QueryPercent, // 0xCE
-    QueryPercent, // 0xCF
-    QueryPercent, // 0xD0
-    QueryPercent, // 0xD1
-    QueryPercent, // 0xD2
-    QueryPercent, // 0xD3
-    QueryPercent, // 0xD4
-    QueryPercent, // 0xD5
-    QueryPercent, // 0xD6
-    QueryPercent, // 0xD7
-    QueryPercent, // 0xD8
-    QueryPercent, // 0xD9
-    QueryPercent, // 0xDA
-    QueryPercent, // 0xDB
-    QueryPercent, // 0xDC
-    QueryPercent, // 0xDD
-    QueryPercent, // 0xDE
-    QueryPercent, // 0xDF
-    QueryPercent, // 0xE0
-    QueryPercent, // 0xE1
-    QueryPercent, // 0xE2
-    QueryPercent, // 0xE3
-    QueryPercent, // 0xE4
-    QueryPercent, // 0xE5
-    QueryPercent, // 0xE6
-    QueryPercent, // 0xE7
-    QueryPercent, // 0xE8
-    QueryPercent, // 0xE9
-    QueryPercent, // 0xEA
-    QueryPercent, // 0xEB
-    QueryPercent, // 0xEC
-    QueryPercent, // 0xED
-    QueryPercent, // 0xEE
-    QueryPercent, // 0xEF
-    QueryPercent, // 0xF0
-    QueryPercent, // 0xF1
-    QueryPercent, // 0xF2
-    QueryPercent, // 0xF3
-    QueryPercent, // 0xF4
-    QueryPercent, // 0xF5
-    QueryPercent, // 0xF6
-    QueryPercent, // 0xF7
-    QueryPercent, // 0xF8
-    QueryPercent, // 0xF9
-    QueryPercent, // 0xFA
-    QueryPercent, // 0xFB
-    QueryPercent, // 0xFC
-    QueryPercent, // 0xFD
-    QueryPercent, // 0xFE
-    QueryPercent, // 0xFF
+    QueryEncode | ForbiddenDomain, // 0x7F
+    QueryEncode, // 0x80
+    QueryEncode, // 0x81
+    QueryEncode, // 0x82
+    QueryEncode, // 0x83
+    QueryEncode, // 0x84
+    QueryEncode, // 0x85
+    QueryEncode, // 0x86
+    QueryEncode, // 0x87
+    QueryEncode, // 0x88
+    QueryEncode, // 0x89
+    QueryEncode, // 0x8A
+    QueryEncode, // 0x8B
+    QueryEncode, // 0x8C
+    QueryEncode, // 0x8D
+    QueryEncode, // 0x8E
+    QueryEncode, // 0x8F
+    QueryEncode, // 0x90
+    QueryEncode, // 0x91
+    QueryEncode, // 0x92
+    QueryEncode, // 0x93
+    QueryEncode, // 0x94
+    QueryEncode, // 0x95
+    QueryEncode, // 0x96
+    QueryEncode, // 0x97
+    QueryEncode, // 0x98
+    QueryEncode, // 0x99
+    QueryEncode, // 0x9A
+    QueryEncode, // 0x9B
+    QueryEncode, // 0x9C
+    QueryEncode, // 0x9D
+    QueryEncode, // 0x9E
+    QueryEncode, // 0x9F
+    QueryEncode, // 0xA0
+    QueryEncode, // 0xA1
+    QueryEncode, // 0xA2
+    QueryEncode, // 0xA3
+    QueryEncode, // 0xA4
+    QueryEncode, // 0xA5
+    QueryEncode, // 0xA6
+    QueryEncode, // 0xA7
+    QueryEncode, // 0xA8
+    QueryEncode, // 0xA9
+    QueryEncode, // 0xAA
+    QueryEncode, // 0xAB
+    QueryEncode, // 0xAC
+    QueryEncode, // 0xAD
+    QueryEncode, // 0xAE
+    QueryEncode, // 0xAF
+    QueryEncode, // 0xB0
+    QueryEncode, // 0xB1
+    QueryEncode, // 0xB2
+    QueryEncode, // 0xB3
+    QueryEncode, // 0xB4
+    QueryEncode, // 0xB5
+    QueryEncode, // 0xB6
+    QueryEncode, // 0xB7
+    QueryEncode, // 0xB8
+    QueryEncode, // 0xB9
+    QueryEncode, // 0xBA
+    QueryEncode, // 0xBB
+    QueryEncode, // 0xBC
+    QueryEncode, // 0xBD
+    QueryEncode, // 0xBE
+    QueryEncode, // 0xBF
+    QueryEncode, // 0xC0
+    QueryEncode, // 0xC1
+    QueryEncode, // 0xC2
+    QueryEncode, // 0xC3
+    QueryEncode, // 0xC4
+    QueryEncode, // 0xC5
+    QueryEncode, // 0xC6
+    QueryEncode, // 0xC7
+    QueryEncode, // 0xC8
+    QueryEncode, // 0xC9
+    QueryEncode, // 0xCA
+    QueryEncode, // 0xCB
+    QueryEncode, // 0xCC
+    QueryEncode, // 0xCD
+    QueryEncode, // 0xCE
+    QueryEncode, // 0xCF
+    QueryEncode, // 0xD0
+    QueryEncode, // 0xD1
+    QueryEncode, // 0xD2
+    QueryEncode, // 0xD3
+    QueryEncode, // 0xD4
+    QueryEncode, // 0xD5
+    QueryEncode, // 0xD6
+    QueryEncode, // 0xD7
+    QueryEncode, // 0xD8
+    QueryEncode, // 0xD9
+    QueryEncode, // 0xDA
+    QueryEncode, // 0xDB
+    QueryEncode, // 0xDC
+    QueryEncode, // 0xDD
+    QueryEncode, // 0xDE
+    QueryEncode, // 0xDF
+    QueryEncode, // 0xE0
+    QueryEncode, // 0xE1
+    QueryEncode, // 0xE2
+    QueryEncode, // 0xE3
+    QueryEncode, // 0xE4
+    QueryEncode, // 0xE5
+    QueryEncode, // 0xE6
+    QueryEncode, // 0xE7
+    QueryEncode, // 0xE8
+    QueryEncode, // 0xE9
+    QueryEncode, // 0xEA
+    QueryEncode, // 0xEB
+    QueryEncode, // 0xEC
+    QueryEncode, // 0xED
+    QueryEncode, // 0xEE
+    QueryEncode, // 0xEF
+    QueryEncode, // 0xF0
+    QueryEncode, // 0xF1
+    QueryEncode, // 0xF2
+    QueryEncode, // 0xF3
+    QueryEncode, // 0xF4
+    QueryEncode, // 0xF5
+    QueryEncode, // 0xF6
+    QueryEncode, // 0xF7
+    QueryEncode, // 0xF8
+    QueryEncode, // 0xF9
+    QueryEncode, // 0xFA
+    QueryEncode, // 0xFB
+    QueryEncode, // 0xFC
+    QueryEncode, // 0xFD
+    QueryEncode, // 0xFE
+    QueryEncode, // 0xFF
 };
 
 template<typename CharacterType> ALWAYS_INLINE static bool isC0Control(CharacterType character) { return character <= 0x1F; }
 template<typename CharacterType> ALWAYS_INLINE static bool isC0ControlOrSpace(CharacterType character) { return character <= 0x20; }
 template<typename CharacterType> ALWAYS_INLINE static bool isTabOrNewline(CharacterType character) { return character <= 0xD && character >= 0x9 && character != 0xB && character != 0xC; }
-template<typename CharacterType> ALWAYS_INLINE static bool isInSimpleEncodeSet(CharacterType character) { return character > 0x7E || isC0Control(character); }
-template<typename CharacterType> ALWAYS_INLINE static bool isInFragmentEncodeSet(CharacterType character) { return character > 0x7E || character == '`' || ((characterClassTable[character] & QueryPercent) && character != '#'); }
-template<typename CharacterType> ALWAYS_INLINE static bool isInDefaultEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & Default; }
-template<typename CharacterType> ALWAYS_INLINE static bool isInUserInfoEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & UserInfo; }
+template<typename CharacterType> ALWAYS_INLINE static bool isInC0ControlEncodeSet(CharacterType character) { return character > 0x7E || isC0Control(character); }
+template<typename CharacterType> ALWAYS_INLINE static bool isInFragmentEncodeSet(CharacterType character) { return character > 0x7E || character == '`' || ((characterClassTable[character] & QueryEncode) && character != '#'); }
+template<typename CharacterType> ALWAYS_INLINE static bool isInPathEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & PathEncode; }
+template<typename CharacterType> ALWAYS_INLINE static bool isInUserInfoEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & UserInfoEncode; }
 template<typename CharacterType> ALWAYS_INLINE static bool isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
 template<typename CharacterType> ALWAYS_INLINE static bool isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
 template<typename CharacterType> ALWAYS_INLINE static bool isValidSchemeCharacter(CharacterType character) { return character <= 'z' && characterClassTable[character] & ValidScheme; }
-template<typename CharacterType> ALWAYS_INLINE static bool isSpecialCharacterForFragmentDirective(CharacterType character) { return character == ',' || character == '-'; }
+template<typename CharacterType> ALWAYS_INLINE static bool isSpecialCharacterForFragmentDirective(CharacterType character) { return !isASCII(character) || character == ',' || character == '-'; }
 
 template<typename CharacterType>
 ALWAYS_INLINE bool URLParser::isForbiddenHostCodePoint(CharacterType character)
@@ -347,7 +348,7 @@ ALWAYS_INLINE bool URLParser::isForbiddenDomainCodePoint(CharacterType character
 
 ALWAYS_INLINE static bool shouldPercentEncodeQueryByte(uint8_t byte, const bool& urlIsSpecial)
 {
-    if (characterClassTable[byte] & QueryPercent)
+    if (characterClassTable[byte] & QueryEncode)
         return true;
     if (byte == '\'' && urlIsSpecial)
         return true;
@@ -507,7 +508,7 @@ ALWAYS_INLINE void URLParser::utf8PercentEncode(const CodePointIterator<Characte
     ASSERT_WITH_MESSAGE(isInCodeSet(codePoint), "isInCodeSet should always return true for non-ASCII characters");
     syntaxViolation(iterator);
 
-    uint8_t buffer[U8_MAX_LENGTH];
+    std::array<uint8_t, U8_MAX_LENGTH> buffer;
     int32_t offset = 0;
     UBool isError = false;
     U8_APPEND(buffer, offset, U8_MAX_LENGTH, codePoint, isError);
@@ -535,7 +536,7 @@ ALWAYS_INLINE void URLParser::utf8QueryEncode(const CodePointIterator<CharacterT
 
     syntaxViolation(iterator);
 
-    uint8_t buffer[U8_MAX_LENGTH];
+    std::array<uint8_t, U8_MAX_LENGTH> buffer;
     int32_t offset = 0;
     UBool isError = false;
     U8_APPEND(buffer, offset, U8_MAX_LENGTH, codePoint, isError);
@@ -556,7 +557,6 @@ template<typename CharacterType>
 void URLParser::encodeNonUTF8Query(const Vector<UChar>& source, const URLTextEncoding& encoding, CodePointIterator<CharacterType> iterator)
 {
     auto encoded = encoding.encodeForURLParsing(source.span());
-    auto* data = encoded.data();
     size_t length = encoded.size();
     
     if (!length == !iterator.atEnd()) {
@@ -567,7 +567,7 @@ void URLParser::encodeNonUTF8Query(const Vector<UChar>& source, const URLTextEnc
     size_t i = 0;
     for (; i < length; ++i) {
         ASSERT(!iterator.atEnd());
-        uint8_t byte = data[i];
+        uint8_t byte = encoded[i];
         if (UNLIKELY(byte != *iterator)) {
             syntaxViolation(iterator);
             break;
@@ -584,7 +584,7 @@ void URLParser::encodeNonUTF8Query(const Vector<UChar>& source, const URLTextEnc
     ASSERT((i == length) == iterator.atEnd());
     for (; i < length; ++i) {
         ASSERT(m_didSeeSyntaxViolation);
-        uint8_t byte = data[i];
+        uint8_t byte = encoded[i];
         if (shouldPercentEncodeQueryByte(byte, m_urlIsSpecial))
             percentEncodeByte(byte);
         else
@@ -868,7 +868,7 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePoint
     ASSERT_NOT_REACHED();
 }
 
-constexpr uint8_t dotASCIICode[2] = { '2', 'e' };
+constexpr std::array<uint8_t, 2> dotASCIICode { '2', 'e' };
 
 template<typename CharacterType>
 ALWAYS_INLINE bool URLParser::isSingleDotPathSegment(CodePointIterator<CharacterType> c)
@@ -970,7 +970,7 @@ bool URLParser::shouldPopPath(unsigned newPathAfterLastSlash)
         return true;
 
     ASSERT(m_url.m_pathAfterLastSlash <= m_asciiBuffer.size());
-    CodePointIterator<LChar> componentToPop({ &m_asciiBuffer[newPathAfterLastSlash], &m_asciiBuffer[0] + m_url.m_pathAfterLastSlash });
+    CodePointIterator<LChar> componentToPop(m_asciiBuffer.subspan(newPathAfterLastSlash, m_url.m_pathAfterLastSlash - newPathAfterLastSlash));
     if (newPathAfterLastSlash == m_url.m_hostEnd + m_url.m_portLength + 1 && isWindowsDriveLetter(componentToPop))
         return false;
     return true;
@@ -1749,7 +1749,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                 state = State::Fragment;
                 break;
             }
-            utf8PercentEncode<isInDefaultEncodeSet>(c);
+            utf8PercentEncode<isInPathEncodeSet>(c);
             ++c;
             break;
         case State::OpaquePath:
@@ -1772,7 +1772,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                 ++c;
                 m_url.m_pathAfterLastSlash = currentPosition(c);
             } else {
-                utf8PercentEncode<isInSimpleEncodeSet>(c);
+                utf8PercentEncode<isInC0ControlEncodeSet>(c);
                 ++c;
             }
             break;
@@ -2077,14 +2077,15 @@ void URLParser::parseAuthority(CodePointIterator<CharacterType> iterator)
 template<typename UnsignedIntegerType>
 void URLParser::appendNumberToASCIIBuffer(UnsignedIntegerType number)
 {
-    LChar buf[sizeof(UnsignedIntegerType) * 3 + 1];
-    LChar* end = std::end(buf);
-    LChar* p = end;
+    constexpr size_t bufferSize = sizeof(UnsignedIntegerType) * 3 + 1;
+    std::array<LChar, bufferSize> buffer;
+    size_t index = bufferSize;
     do {
-        *--p = (number % 10) + '0';
+        buffer[--index] = (number % 10) + '0';
         number /= 10;
     } while (number);
-    appendToASCIIBuffer(std::span { p, static_cast<size_t>(end - p) });
+
+    appendToASCIIBuffer(std::span { buffer }.subspan(index));
 }
 
 void URLParser::serializeIPv4(IPv4Address address)
@@ -2251,7 +2252,7 @@ Expected<uint32_t, URLParser::IPv4PieceParsingError> URLParser::parseIPv4Piece(C
 ALWAYS_INLINE static uint64_t pow256(size_t exponent)
 {
     RELEASE_ASSERT(exponent <= 4);
-    static constexpr uint64_t values[5] = { 1, 256, 256 * 256, 256 * 256 * 256, 256ull * 256 * 256 * 256 };
+    static constexpr std::array<uint64_t, 5> values { 1, 256, 256 * 256, 256 * 256 * 256, 256ull * 256 * 256 * 256 };
     return values[exponent];
 }
 
@@ -2561,10 +2562,10 @@ template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser
         return ascii;
     }
 
-    UChar hostnameBuffer[hostnameBufferLength];
+    std::array<UChar, hostnameBufferLength> hostnameBuffer;
     UErrorCode error = U_ZERO_ERROR;
     UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
-    size_t numCharactersConverted = uidna_nameToASCII(&internationalDomainNameTranscoder(), StringView(domain).upconvertedCharacters(), domain.length(), hostnameBuffer, hostnameBufferLength, &processingDetails, &error);
+    size_t numCharactersConverted = uidna_nameToASCII(&internationalDomainNameTranscoder(), StringView(domain).upconvertedCharacters(), domain.length(), hostnameBuffer.data(), hostnameBufferLength, &processingDetails, &error);
 
     if (U_SUCCESS(error) && !(processingDetails.errors & ~allowedNameToASCIIErrors) && numCharactersConverted) {
 #if ASSERT_ENABLED
@@ -2575,7 +2576,7 @@ template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser
 #else
         UNUSED_PARAM(numCharactersConverted);
 #endif // ASSERT_ENABLED
-        ascii.append(std::span { hostnameBuffer, numCharactersConverted });
+        ascii.append(std::span { hostnameBuffer }.first(numCharactersConverted));
         if (domain != StringView(ascii.span()))
             syntaxViolation(iteratorForSyntaxViolationPosition);
         return ascii;
@@ -2585,8 +2586,8 @@ template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser
 
 bool URLParser::hasForbiddenHostCodePoint(const URLParser::LCharBuffer& asciiDomain)
 {
-    for (size_t i = 0; i < asciiDomain.size(); ++i) {
-        if (isForbiddenDomainCodePoint(asciiDomain[i]))
+    for (auto character : asciiDomain) {
+        if (isForbiddenDomainCodePoint(character))
             return true;
     }
     return false;
@@ -2777,7 +2778,7 @@ auto URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator) -> H
                 break;
             if (UNLIKELY(isForbiddenHostCodePoint(*iterator) && *iterator != '%'))
                 return HostParsingResult::InvalidHost;
-            utf8PercentEncode<isInSimpleEncodeSet>(iterator);
+            utf8PercentEncode<isInC0ControlEncodeSet>(iterator);
         }
         m_url.m_hostEnd = currentPosition(iterator);
         if (iterator.atEnd()) {
@@ -2841,13 +2842,13 @@ auto URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator) -> H
         if (UNLIKELY(!isASCII(*iterator)))
             syntaxViolation(hostBegin);
 
-        uint8_t buffer[U8_MAX_LENGTH];
+        std::array<uint8_t, U8_MAX_LENGTH> buffer;
         size_t offset = 0;
         UBool isError = false;
         U8_APPEND(buffer, offset, U8_MAX_LENGTH, *iterator, isError);
         if (isError)
             return HostParsingResult::InvalidHost;
-        utf8Encoded.append(std::span { buffer, offset });
+        utf8Encoded.append(std::span { buffer }.first(offset));
     }
     LCharBuffer percentDecoded = percentDecode(utf8Encoded.span(), hostBegin);
     String domain = String::fromUTF8(percentDecoded.span());
@@ -2859,7 +2860,6 @@ auto URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator) -> H
     if (!asciiDomain || hasForbiddenHostCodePoint(asciiDomain.value()))
         return HostParsingResult::InvalidHost;
     LCharBuffer& asciiDomainValue = asciiDomain.value();
-    const LChar* asciiDomainCharacters = asciiDomainValue.data();
 
     auto address = parseIPv4Host<CharacterType, LChar>(hostBegin, asciiDomainValue.span());
     if (address) {
@@ -2874,7 +2874,7 @@ auto URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator) -> H
     if (address.error() == IPv4ParsingError::Failure)
         return HostParsingResult::InvalidHost;
 
-    appendToASCIIBuffer(std::span { asciiDomainCharacters, asciiDomainValue.size() });
+    appendToASCIIBuffer(asciiDomainValue.span());
     m_url.m_hostEnd = currentPosition(iterator);
     auto hostStart = m_url.hostStart();
     if (UNLIKELY(dnsNameEndsInNumber(parsedDataView(hostStart, m_url.m_hostEnd - hostStart))))

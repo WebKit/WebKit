@@ -22,7 +22,6 @@ requestAnimationFrame(function() {
     square.rect(0, 0, 100, 10);
     offscreenContext.fillStyle = 'green';
     offscreenContext.fill(square);
-    offscreenContext.commit();
 
     requestAnimationFrame(function() {
         if (window.testRunner)

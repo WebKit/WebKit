@@ -31,8 +31,10 @@
 
 #include "DMABufRendererBufferFormat.h"
 #include "MessageReceiver.h"
+#include <WebCore/Damage.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if USE(GBM)
@@ -44,18 +46,33 @@ struct gbm_bo;
 #endif
 
 namespace WebCore {
+class GLFence;
+class Region;
 class ShareableBitmap;
 class ShareableBitmapHandle;
 }
 
 namespace WebKit {
+class AcceleratedSurfaceDMABuf;
+}
 
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::AcceleratedSurfaceDMABuf> : std::true_type { };
+}
+
+namespace WebKit {
+
+class ThreadedCompositor;
 class WebPage;
 
 class AcceleratedSurfaceDMABuf final : public AcceleratedSurface, public IPC::MessageReceiver {
 public:
-    static std::unique_ptr<AcceleratedSurfaceDMABuf> create(WebPage&, Client&);
+    static std::unique_ptr<AcceleratedSurfaceDMABuf> create(ThreadedCompositor&, WebPage&, Function<void()>&& frameCompleteHandler);
     ~AcceleratedSurfaceDMABuf();
+
+    void ref() const final;
+    void deref() const final;
 
 private:
     uint64_t window() const override { return 0; }
@@ -74,6 +91,8 @@ private:
     void willRenderFrame() override;
     void didRenderFrame() override;
 
+    const WebCore::Damage& addDamage(const WebCore::Damage&) override;
+
     void didCreateCompositingRunLoop(WTF::RunLoop&) override;
     void willDestroyCompositingRunLoop() override;
 
@@ -84,31 +103,41 @@ private:
     void visibilityDidChange(bool) override;
     bool backgroundColorDidChange() override;
 
-    AcceleratedSurfaceDMABuf(WebPage&, Client&);
+    AcceleratedSurfaceDMABuf(ThreadedCompositor&, WebPage&, Function<void()>&& frameCompleteHandler);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void releaseBuffer(uint64_t);
+    void releaseBuffer(uint64_t, WTF::UnixFileDescriptor&&);
     void frameDone();
     void releaseUnusedBuffersTimerFired();
 
     class RenderTarget {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(RenderTarget);
     public:
         virtual ~RenderTarget();
 
         uint64_t id() const { return m_id; }
+        const WebCore::Damage& damage() { return m_damage; }
+        void addDamage(const WebCore::Damage&);
 
         virtual void willRenderFrame() const;
-        virtual void didRenderFrame() { };
+        virtual void didRenderFrame() { m_damage = WebCore::Damage { }; }
+
+        std::unique_ptr<WebCore::GLFence> createRenderingFence(bool) const;
+        void setReleaseFenceFD(UnixFileDescriptor&&);
+        void waitRelease();
 
     protected:
         RenderTarget(uint64_t, const WebCore::IntSize&);
 
+        virtual bool supportsExplicitSync() const = 0;
+
         uint64_t m_id { 0 };
         uint64_t m_surfaceID { 0 };
         unsigned m_depthStencilBuffer { 0 };
+        UnixFileDescriptor m_releaseFenceFD;
+        WebCore::Damage m_damage { WebCore::Damage::invalid() };
     };
 
     class RenderTargetColorBuffer : public RenderTarget {
@@ -160,6 +189,8 @@ private:
         ~RenderTargetEGLImage();
 
     private:
+        bool supportsExplicitSync() const override { return true; }
+
         EGLImage m_image { nullptr };
     };
 #endif
@@ -171,6 +202,7 @@ private:
         ~RenderTargetSHMImage() = default;
 
     private:
+        bool supportsExplicitSync() const override { return false; }
         void didRenderFrame() override;
 
         Ref<WebCore::ShareableBitmap> m_bitmap;
@@ -183,6 +215,7 @@ private:
         ~RenderTargetTexture();
 
     private:
+        bool supportsExplicitSync() const override { return true; }
         void willRenderFrame() const override;
 
         unsigned m_texture { 0 };
@@ -206,9 +239,11 @@ private:
         Type type() const { return m_type; }
         void resize(const WebCore::IntSize&);
         RenderTarget* nextTarget();
-        void releaseTarget(uint64_t);
+        void releaseTarget(uint64_t, UnixFileDescriptor&& releaseFence);
         void reset();
         void releaseUnusedBuffers();
+
+        void addDamage(const WebCore::Damage&);
 
         unsigned size() const { return m_freeTargets.size() + m_lockedTargets.size(); }
 
@@ -233,11 +268,14 @@ private:
 #endif
     };
 
+    CheckedRef<ThreadedCompositor> m_compositor;
     uint64_t m_id { 0 };
     unsigned m_fbo { 0 };
     SwapChain m_swapChain;
     RenderTarget* m_target { nullptr };
     bool m_isVisible { false };
+    bool m_useExplicitSync { false };
+    WebCore::Damage m_frameDamage;
     std::unique_ptr<RunLoop::Timer> m_releaseUnusedBuffersTimer;
 };
 

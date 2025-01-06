@@ -11,6 +11,8 @@
 #include <memory>
 #include <vector>
 
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_decoder.h"
 #include "api/video_codecs/video_decoder_factory.h"
@@ -86,6 +88,8 @@ class VideoEncoderDecoderInstantiationTest
     }
   }
 
+  const Environment env_ = CreateEnvironment();
+
   const SdpVideoFormat vp8_format_;
   const SdpVideoFormat vp9_format_;
   const SdpVideoFormat h264cbp_format_;
@@ -119,14 +123,14 @@ INSTANTIATE_TEST_SUITE_P(MultipleEncodersDecoders,
 TEST_P(VideoEncoderDecoderInstantiationTest, DISABLED_InstantiateVp8Codecs) {
   for (int i = 0; i < num_encoders_; ++i) {
     std::unique_ptr<VideoEncoder> encoder =
-        encoder_factory_->CreateVideoEncoder(vp8_format_);
+        encoder_factory_->Create(env_, vp8_format_);
     EXPECT_EQ(0, InitEncoder(kVideoCodecVP8, encoder.get()));
     encoders_.emplace_back(std::move(encoder));
   }
 
   for (int i = 0; i < num_decoders_; ++i) {
     std::unique_ptr<VideoDecoder> decoder =
-        decoder_factory_->CreateVideoDecoder(vp8_format_);
+        decoder_factory_->Create(env_, vp8_format_);
     ASSERT_THAT(decoder, NotNull());
     EXPECT_TRUE(decoder->Configure(DecoderSettings(kVideoCodecVP8)));
     decoders_.emplace_back(std::move(decoder));
@@ -137,14 +141,14 @@ TEST_P(VideoEncoderDecoderInstantiationTest,
        DISABLED_InstantiateH264CBPCodecs) {
   for (int i = 0; i < num_encoders_; ++i) {
     std::unique_ptr<VideoEncoder> encoder =
-        encoder_factory_->CreateVideoEncoder(h264cbp_format_);
+        encoder_factory_->Create(env_, h264cbp_format_);
     EXPECT_EQ(0, InitEncoder(kVideoCodecH264, encoder.get()));
     encoders_.emplace_back(std::move(encoder));
   }
 
   for (int i = 0; i < num_decoders_; ++i) {
     std::unique_ptr<VideoDecoder> decoder =
-        decoder_factory_->CreateVideoDecoder(h264cbp_format_);
+        decoder_factory_->Create(env_, h264cbp_format_);
     ASSERT_THAT(decoder, NotNull());
     EXPECT_TRUE(decoder->Configure(DecoderSettings(kVideoCodecH264)));
     decoders_.push_back(std::move(decoder));

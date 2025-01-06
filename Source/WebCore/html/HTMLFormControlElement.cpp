@@ -27,6 +27,7 @@
 
 #include "AXObjectCache.h"
 #include "Autofill.h"
+#include "CommandEvent.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "ElementInlines.h"
@@ -37,7 +38,6 @@
 #include "HTMLButtonElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
-#include "InvokeEvent.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "PopoverData.h"
@@ -49,19 +49,19 @@
 #include "Settings.h"
 #include "StyleTreeResolver.h"
 #include "ValidationMessage.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFormControlElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLFormControlElement);
 
 using namespace HTMLNames;
 
 HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLElement(tagName, document, { TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument } )
+    : HTMLElement(tagName, document, { TypeFlag::IsFormControlElement, TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument } )
     , ValidatedFormListedElement(form)
     , m_isRequired(false)
     , m_valueMatchesRenderer(false)
@@ -253,7 +253,8 @@ bool HTMLFormControlElement::isMouseFocusable() const
 #if (PLATFORM(GTK) || PLATFORM(WPE))
     return HTMLElement::isMouseFocusable();
 #else
-    if (!!tabIndexSetExplicitly() || needsMouseFocusableQuirk())
+    // FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.
+    if (!!tabIndexSetExplicitly() || document().quirks().needsFormControlToBeMouseFocusable())
         return HTMLElement::isMouseFocusable();
     return false;
 #endif
@@ -274,8 +275,12 @@ void HTMLFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedEleme
 
 bool HTMLFormControlElement::shouldAutocorrect() const
 {
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(*this); input
+        && (input->isPasswordField() || input->isEmailField() || input->isURLField())) {
+        return false;
+    }
     const AtomString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
-    if (!autocorrectValue.isEmpty())
+    if (!autocorrectValue.isNull())
         return !equalLettersIgnoringASCIICase(autocorrectValue, "off"_s);
     if (RefPtr<HTMLFormElement> form = this->form())
         return form->shouldAutocorrect();
@@ -390,27 +395,32 @@ void HTMLFormControlElement::setPopoverTargetAction(const AtomString& value)
 }
 
 // https://html.spec.whatwg.org/#popover-target-attribute-activation-behavior
-void HTMLFormControlElement::handlePopoverTargetAction() const
+void HTMLFormControlElement::handlePopoverTargetAction(const EventTarget* eventTarget) const
 {
-    RefPtr target = popoverTargetElement();
-    if (!target)
+    RefPtr popover = popoverTargetElement();
+    if (!popover)
         return;
 
-    ASSERT(target->popoverData());
+    ASSERT(popover->popoverData());
+
+    if (RefPtr eventTargetNode = dynamicDowncast<Node>(eventTarget)) {
+        if (popover->containsIncludingShadowDOM(eventTargetNode.get()) && popover->isDescendantOrShadowDescendantOf(this))
+            return;
+    }
 
     auto action = popoverTargetAction();
     bool canHide = action == hideAtom() || action == toggleAtom();
-    bool shouldHide = canHide && target->popoverData()->visibilityState() == PopoverVisibilityState::Showing;
+    bool shouldHide = canHide && popover->popoverData()->visibilityState() == PopoverVisibilityState::Showing;
     bool canShow = action == showAtom() || action == toggleAtom();
-    bool shouldShow = canShow && target->popoverData()->visibilityState() == PopoverVisibilityState::Hidden;
+    bool shouldShow = canShow && popover->popoverData()->visibilityState() == PopoverVisibilityState::Hidden;
 
     if (shouldHide)
-        target->hidePopover();
+        popover->hidePopover();
     else if (shouldShow)
-        target->showPopover(this);
+        popover->showPopoverInternal(this);
 }
 
-RefPtr<Element> HTMLFormControlElement::invokeTargetElement() const
+RefPtr<Element> HTMLFormControlElement::commandForElement() const
 {
     auto canInvoke = [](const HTMLFormControlElement& element) -> bool {
         if (!element.document().settings().invokerAttributesEnabled())
@@ -423,7 +433,7 @@ RefPtr<Element> HTMLFormControlElement::invokeTargetElement() const
     if (!canInvoke(*this))
         return nullptr;
 
-    return getElementAttribute(invoketargetAttr);
+    return getElementAttribute(commandforAttr);
 }
 
 constexpr ASCIILiteral togglePopoverLiteral = "togglepopover"_s;
@@ -431,67 +441,61 @@ constexpr ASCIILiteral showPopoverLiteral = "showpopover"_s;
 constexpr ASCIILiteral hidePopoverLiteral = "hidepopover"_s;
 constexpr ASCIILiteral showModalLiteral = "showmodal"_s;
 constexpr ASCIILiteral closeLiteral = "close"_s;
-InvokeAction HTMLFormControlElement::invokeAction() const
+CommandType HTMLFormControlElement::commandType() const
 {
-    auto action = attributeWithoutSynchronization(HTMLNames::invokeactionAttr);
+    auto action = attributeWithoutSynchronization(HTMLNames::commandAttr);
     if (action.isNull() || action.isEmpty())
-        return InvokeAction::Auto;
+        return CommandType::Invalid;
 
     if (equalLettersIgnoringASCIICase(action, togglePopoverLiteral))
-        return InvokeAction::TogglePopover;
+        return CommandType::TogglePopover;
 
     if (equalLettersIgnoringASCIICase(action, showPopoverLiteral))
-        return InvokeAction::ShowPopover;
+        return CommandType::ShowPopover;
 
     if (equalLettersIgnoringASCIICase(action, hidePopoverLiteral))
-        return InvokeAction::HidePopover;
+        return CommandType::HidePopover;
 
     if (equalLettersIgnoringASCIICase(action, showModalLiteral))
-        return InvokeAction::ShowModal;
+        return CommandType::ShowModal;
 
     if (equalLettersIgnoringASCIICase(action, closeLiteral))
-        return InvokeAction::Close;
+        return CommandType::Close;
 
     if (action.contains('-'))
-        return InvokeAction::Custom;
+        return CommandType::Custom;
 
-    return InvokeAction::Invalid;
+    return CommandType::Invalid;
 }
 
-void HTMLFormControlElement::handleInvokeAction()
+void HTMLFormControlElement::handleCommand()
 {
-    RefPtr invokee = invokeTargetElement();
+    RefPtr invokee = commandForElement();
     if (!invokee)
         return;
 
-    auto actionRaw = attributeWithoutSynchronization(HTMLNames::invokeactionAttr);
-    auto action = invokeAction();
+    auto commandRaw = attributeWithoutSynchronization(HTMLNames::commandAttr);
+    auto command = commandType();
 
-    if (action == InvokeAction::Invalid)
+    if (command == CommandType::Invalid)
         return;
 
-    if (action != InvokeAction::Custom && !invokee->isValidInvokeAction(action))
+    if (command != CommandType::Custom && !invokee->isValidCommandType(command))
         return;
 
-    InvokeEvent::Init init;
+    CommandEvent::Init init;
     init.bubbles = false;
     init.cancelable = true;
     init.composed = true;
     init.invoker = this;
-    init.action = actionRaw.isNull() ? emptyAtom() : actionRaw;
+    init.command = commandRaw.isNull() ? emptyAtom() : commandRaw;
 
-    Ref<InvokeEvent> event = InvokeEvent::create(eventNames().invokeEvent, init,
-        InvokeEvent::IsTrusted::Yes);
+    Ref<CommandEvent> event = CommandEvent::create(eventNames().commandEvent, init,
+        CommandEvent::IsTrusted::Yes);
     invokee->dispatchEvent(event);
 
-    if (!event->defaultPrevented() && action != InvokeAction::Custom)
-        invokee->handleInvokeInternal(*this, action);
-}
-
-// FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.
-bool HTMLFormControlElement::needsMouseFocusableQuirk() const
-{
-    return document().quirks().needsFormControlToBeMouseFocusable();
+    if (!event->defaultPrevented() && command != CommandType::Custom)
+        invokee->handleCommandInternal(*this, command);
 }
 
 } // namespace Webcore

@@ -37,7 +37,7 @@ struct VectorKey {
     const Type* elementType;
     uint8_t size;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Vector, size, 0, 0, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Vector, size, 0, 0, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 struct MatrixKey {
@@ -45,7 +45,7 @@ struct MatrixKey {
     uint8_t columns;
     uint8_t rows;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Matrix, columns, rows, 0, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Matrix, columns, rows, 0, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 struct ArrayKey {
@@ -55,16 +55,17 @@ struct ArrayKey {
     TypeCache::EncodedKey encode() const
     {
         auto encodedSize = WTF::switchOn(size,
-            [&](unsigned size) -> unsigned {
-                return size;
+            [&](unsigned size) -> std::tuple<uint16_t, unsigned> {
+                return { 0, size };
             },
-            [&](std::monostate) -> unsigned {
-                return 0;
+            [&](std::monostate) -> std::tuple<uint16_t, unsigned> {
+                return { 0, 0 };
             },
-            [&](AST::Expression*) -> unsigned {
-                RELEASE_ASSERT_NOT_REACHED();
+            [&](AST::Expression* expression) -> std::tuple<uint16_t, unsigned> {
+                auto address = static_cast<uint64_t>(std::bit_cast<uintptr_t>(expression));
+                return { address >> 32, address };
             });
-        return std::tuple(TypeCache::Array, 0, 0, encodedSize, bitwise_cast<uintptr_t>(elementType));
+        return std::tuple(TypeCache::Array, 0, std::get<0>(encodedSize), std::get<1>(encodedSize), std::bit_cast<uintptr_t>(elementType));
     }
 };
 
@@ -72,7 +73,7 @@ struct TextureKey {
     const Type* elementType;
     Texture::Kind kind;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Texture, WTF::enumToUnderlyingType(kind), 0, 0, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Texture, WTF::enumToUnderlyingType(kind), 0, 0, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 struct TextureStorageKey {
@@ -89,7 +90,7 @@ struct ReferenceKey {
     AccessMode accessMode;
     bool isVectorComponent;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Reference, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), isVectorComponent, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Reference, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), isVectorComponent, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 struct PointerKey {
@@ -97,14 +98,14 @@ struct PointerKey {
     AddressSpace addressSpace;
     AccessMode accessMode;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Pointer, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), 0, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Pointer, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), 0, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 struct PrimitiveStructKey {
     unsigned kind;
     const Type* elementType;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::PrimitiveStruct, kind, 0, 0, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::PrimitiveStruct, kind, 0, 0, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 template<typename Key>
@@ -156,10 +157,6 @@ const Type* TypeStore::structType(AST::Structure& structure, HashMap<String, con
 
 const Type* TypeStore::arrayType(const Type* elementType, Types::Array::Size size)
 {
-    // don't cache override-sized arrays as they are only used once
-    if (std::holds_alternative<AST::Expression*>(size))
-        return allocateType<Array>(elementType, size);
-
     ArrayKey key { elementType, size };
     const Type* type = m_cache.find(key);
     if (type)

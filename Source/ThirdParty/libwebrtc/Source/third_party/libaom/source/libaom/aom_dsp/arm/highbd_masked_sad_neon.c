@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,7 +20,7 @@
 #include "aom_dsp/arm/sum_neon.h"
 #include "aom_dsp/blend.h"
 
-static INLINE uint16x8_t masked_sad_8x1_neon(uint16x8_t sad,
+static inline uint16x8_t masked_sad_8x1_neon(uint16x8_t sad,
                                              const uint16_t *src,
                                              const uint16_t *a,
                                              const uint16_t *b,
@@ -35,7 +35,7 @@ static INLINE uint16x8_t masked_sad_8x1_neon(uint16x8_t sad,
   return vaddq_u16(sad, vabdq_u16(blend_u16, s0));
 }
 
-static INLINE uint16x8_t masked_sad_16x1_neon(uint16x8_t sad,
+static inline uint16x8_t masked_sad_16x1_neon(uint16x8_t sad,
                                               const uint16_t *src,
                                               const uint16_t *a,
                                               const uint16_t *b,
@@ -44,7 +44,7 @@ static INLINE uint16x8_t masked_sad_16x1_neon(uint16x8_t sad,
   return masked_sad_8x1_neon(sad, &src[8], &a[8], &b[8], &m[8]);
 }
 
-static INLINE uint16x8_t masked_sad_32x1_neon(uint16x8_t sad,
+static inline uint16x8_t masked_sad_32x1_neon(uint16x8_t sad,
                                               const uint16_t *src,
                                               const uint16_t *a,
                                               const uint16_t *b,
@@ -53,7 +53,7 @@ static INLINE uint16x8_t masked_sad_32x1_neon(uint16x8_t sad,
   return masked_sad_16x1_neon(sad, &src[16], &a[16], &b[16], &m[16]);
 }
 
-static INLINE unsigned int masked_sad_128xh_large_neon(
+static inline unsigned int masked_sad_128xh_large_neon(
     const uint8_t *src8, int src_stride, const uint8_t *a8, int a_stride,
     const uint8_t *b8, int b_stride, const uint8_t *m, int m_stride,
     int height) {
@@ -92,7 +92,7 @@ static INLINE unsigned int masked_sad_128xh_large_neon(
   return horizontal_add_u32x4(sad_u32[0]);
 }
 
-static INLINE unsigned int masked_sad_64xh_large_neon(
+static inline unsigned int masked_sad_64xh_large_neon(
     const uint8_t *src8, int src_stride, const uint8_t *a8, int a_stride,
     const uint8_t *b8, int b_stride, const uint8_t *m, int m_stride,
     int height) {
@@ -121,7 +121,7 @@ static INLINE unsigned int masked_sad_64xh_large_neon(
   return horizontal_add_u32x4(vaddq_u32(sad_u32[0], sad_u32[1]));
 }
 
-static INLINE unsigned int masked_sad_32xh_large_neon(
+static inline unsigned int masked_sad_32xh_large_neon(
     const uint8_t *src8, int src_stride, const uint8_t *a8, int a_stride,
     const uint8_t *b8, int b_stride, const uint8_t *m, int m_stride,
     int height) {
@@ -148,7 +148,7 @@ static INLINE unsigned int masked_sad_32xh_large_neon(
   return horizontal_add_u32x4(sad_u32);
 }
 
-static INLINE unsigned int masked_sad_16xh_large_neon(
+static inline unsigned int masked_sad_16xh_large_neon(
     const uint8_t *src8, int src_stride, const uint8_t *a8, int a_stride,
     const uint8_t *b8, int b_stride, const uint8_t *m, int m_stride,
     int height) {
@@ -177,7 +177,7 @@ static INLINE unsigned int masked_sad_16xh_large_neon(
 }
 
 #if !CONFIG_REALTIME_ONLY
-static INLINE unsigned int masked_sad_8xh_large_neon(
+static inline unsigned int masked_sad_8xh_large_neon(
     const uint8_t *src8, int src_stride, const uint8_t *a8, int a_stride,
     const uint8_t *b8, int b_stride, const uint8_t *m, int m_stride,
     int height) {
@@ -206,7 +206,7 @@ static INLINE unsigned int masked_sad_8xh_large_neon(
 }
 #endif  // !CONFIG_REALTIME_ONLY
 
-static INLINE unsigned int masked_sad_16xh_small_neon(
+static inline unsigned int masked_sad_16xh_small_neon(
     const uint8_t *src8, int src_stride, const uint8_t *a8, int a_stride,
     const uint8_t *b8, int b_stride, const uint8_t *m, int m_stride,
     int height) {
@@ -231,7 +231,7 @@ static INLINE unsigned int masked_sad_16xh_small_neon(
   return horizontal_add_u16x8(sad);
 }
 
-static INLINE unsigned int masked_sad_8xh_small_neon(
+static inline unsigned int masked_sad_8xh_small_neon(
     const uint8_t *src8, int src_stride, const uint8_t *a8, int a_stride,
     const uint8_t *b8, int b_stride, const uint8_t *m, int m_stride,
     int height) {
@@ -256,7 +256,7 @@ static INLINE unsigned int masked_sad_8xh_small_neon(
   return horizontal_add_u16x8(sad);
 }
 
-static INLINE unsigned int masked_sad_4xh_small_neon(
+static inline unsigned int masked_sad_4xh_small_neon(
     const uint8_t *src8, int src_stride, const uint8_t *a8, int a_stride,
     const uint8_t *b8, int b_stride, const uint8_t *m, int m_stride,
     int height) {

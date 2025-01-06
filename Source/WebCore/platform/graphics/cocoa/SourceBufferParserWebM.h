@@ -36,11 +36,12 @@
 #include <pal/spi/cf/CoreMediaSPI.h>
 #include <variant>
 #include <webm/callback.h>
+#include <webm/common/vp9_header_parser.h>
 #include <webm/status.h>
-#include <webm/vp9_header_parser.h>
 #include <wtf/Deque.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
@@ -58,7 +59,7 @@ struct TrackInfo;
 class WebMParser
     : private webm::Callback
     , private LoggerHelper {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebMParser, WEBCORE_EXPORT);
 public:
     class Callback {
     public:
@@ -85,7 +86,7 @@ public:
 
     void provideMediaData(MediaSamplesBlock&&);
 
-    WEBCORE_EXPORT void setLogger(const Logger&, const void* identifier);
+    WEBCORE_EXPORT void setLogger(const Logger&, uint64_t identifier);
     WTFLogChannel& logChannel() const final;
 
     enum class ErrorCode : int32_t {
@@ -125,7 +126,7 @@ public:
     using ConsumeFrameDataResult = std::variant<MediaTime, webm::Status>;
 
     class TrackData {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(TrackData);
     public:
         static auto create(CodecType codecType, const webm::TrackEntry& trackEntry, WebMParser& parser) -> UniqueRef<TrackData>
         {
@@ -144,8 +145,6 @@ public:
         CodecType codec() const { return m_codec; }
         webm::TrackEntry& track() { return m_track; }
         TrackInfo::TrackType trackType() const { return m_trackType; }
-
-        void createByteRangeSamples() { m_useByteRange = true; }
 
         RefPtr<TrackInfo> formatDescription() const { return m_formatDescription.copyRef(); }
         void setFormatDescription(Ref<TrackInfo>&& description)
@@ -191,7 +190,6 @@ public:
         webm::Status readFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t* bytesRemaining);
         WTFLogChannel& logChannel() const { return m_parser.logChannel(); }
         MediaSamplesBlock m_processedMediaSamples;
-        bool m_useByteRange { false };
         MediaSamplesBlock::MediaSampleDataType m_completeFrameData;
         RefPtr<TrackInfo> m_trackInfo;
 
@@ -201,7 +199,7 @@ public:
         const TrackInfo::TrackType m_trackType;
         RefPtr<TrackInfo> m_formatDescription;
         SharedBufferBuilder m_currentBlockBuffer;
-        RefPtr<const FragmentedSharedBuffer> m_completeBlockBuffer;
+        RefPtr<FragmentedSharedBuffer> m_completeBlockBuffer;
         WebMParser& m_parser;
         std::optional<size_t> m_completePacketSize;
         // Size of the currently incomplete parsed packet.
@@ -209,6 +207,7 @@ public:
     };
 
     class VideoTrackData : public TrackData {
+        WTF_MAKE_TZONE_ALLOCATED(VideoTrackData);
     public:
         static auto create(CodecType codecType, const webm::TrackEntry& trackEntry, WebMParser& parser) -> UniqueRef<VideoTrackData>
         {
@@ -237,6 +236,7 @@ public:
     };
 
     class AudioTrackData : public TrackData {
+        WTF_MAKE_TZONE_ALLOCATED(AudioTrackData);
     public:
         static auto create(CodecType codecType, const webm::TrackEntry& trackEntry, WebMParser& parser) -> UniqueRef<AudioTrackData>
         {
@@ -288,7 +288,7 @@ private:
 
     const Logger* loggerPtr() const { return m_logger.get(); }
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "WebMParser"_s; }
 
     std::unique_ptr<SourceBufferParser::InitializationSegment> m_initializationSegment;
@@ -311,7 +311,7 @@ private:
     std::optional<uint64_t> m_rewindToPosition;
 
     RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier { nullptr };
+    uint64_t m_logIdentifier { 0 };
     uint64_t m_nextChildIdentifier { 0 };
     Callback& m_callback;
     bool m_createByteRangeSamples { false };
@@ -321,9 +321,8 @@ class SourceBufferParserWebM
     : public SourceBufferParser
     , public WebMParser::Callback
     , private LoggerHelper {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SourceBufferParserWebM);
 public:
-    static bool isWebMFormatReaderAvailable();
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
     static std::span<const ASCIILiteral> supportedMIMETypes();
     WEBCORE_EXPORT static RefPtr<SourceBufferParserWebM> create();
@@ -347,7 +346,7 @@ public:
     void flushPendingAudioSamples();
     void setMinimumAudioSampleDuration(float);
 
-    WEBCORE_EXPORT void setLogger(const Logger&, const void* identifier) final;
+    WEBCORE_EXPORT void setLogger(const Logger&, uint64_t identifier) final;
 
 private:
     SourceBufferParserWebM();
@@ -363,7 +362,7 @@ private:
 
     const Logger* loggerPtr() const { return m_logger.get(); }
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "SourceBufferParserWebM"_s; }
     WTFLogChannel& logChannel() const final;
 
@@ -378,7 +377,7 @@ private:
     MediaTime m_queuedAudioDuration;
     bool m_audioDiscontinuity { true };
     RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier { nullptr };
+    uint64_t m_logIdentifier { 0 };
 };
 
 }

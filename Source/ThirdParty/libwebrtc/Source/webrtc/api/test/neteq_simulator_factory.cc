@@ -12,12 +12,10 @@
 
 #include <memory>
 #include <string>
-#include <vector>
 
-#include "absl/flags/flag.h"
-#include "absl/flags/parse.h"
+#include "absl/strings/string_view.h"
+#include "api/test/neteq_simulator.h"
 #include "modules/audio_coding/neteq/tools/neteq_test_factory.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
@@ -36,6 +34,7 @@ NetEqTestFactory::Config convertConfig(
   config.plot_scripts_basename = simulation_config.python_plot_filename;
   config.textlog = simulation_config.text_log_filename.has_value();
   config.textlog_filename = simulation_config.text_log_filename;
+  config.ssrc_filter = simulation_config.ssrc_filter;
   return config;
 }
 }  // namespace

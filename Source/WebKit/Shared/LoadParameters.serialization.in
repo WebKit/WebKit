@@ -22,15 +22,14 @@
 
 enum class WebCore::LockHistory : bool;
 enum class WebCore::LockBackForwardList : bool;
-enum class WebKit::NavigatingToAppBoundDomain : bool;
 
 [RValue] struct WebKit::LoadParameters {
     WebCore::PublicSuffix publicSuffix;
-    uint64_t navigationID;
+    std::optional<WebCore::NavigationIdentifier> navigationID;
     std::optional<WebCore::FrameIdentifier> frameIdentifier;
     [EncodeRequestBody] WebCore::ResourceRequest request;
     WebKit::SandboxExtensionHandle sandboxExtensionHandle;
-    std::span<const uint8_t> data;
+    RefPtr<WebCore::SharedBuffer> data;
 
     String MIMEType;
     String encodingName;
@@ -46,6 +45,7 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
     WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility
     String clientRedirectSourceForHistory;
     WebCore::SandboxFlags effectiveSandboxFlags;
+    std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
     std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
     std::optional<WebKit::NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
     bool isServiceWorkerLoad;
@@ -54,6 +54,7 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
     std::optional<double> dataDetectionReferenceDate;
 #endif
     bool isRequestFromClientOrUserInput;
+    bool isPerformingHTTPFallback;
 
-    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+    std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
 };

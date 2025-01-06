@@ -33,6 +33,7 @@
 #include "src/sksl/SkSLUtil.h"
 #include "src/sksl/analysis/SkSLProgramUsage.h"
 #include "src/sksl/analysis/SkSLProgramVisitor.h"
+#include "src/sksl/codegen/SkSLCodeGenTypes.h"
 #include "src/sksl/codegen/SkSLCodeGenerator.h"
 #include "src/sksl/ir/SkSLBinaryExpression.h"
 #include "src/sksl/ir/SkSLBlock.h"
@@ -45,10 +46,12 @@
 #include "src/sksl/ir/SkSLExpression.h"
 #include "src/sksl/ir/SkSLExpressionStatement.h"
 #include "src/sksl/ir/SkSLFieldAccess.h"
+#include "src/sksl/ir/SkSLFieldSymbol.h"
 #include "src/sksl/ir/SkSLForStatement.h"
 #include "src/sksl/ir/SkSLFunctionCall.h"
 #include "src/sksl/ir/SkSLFunctionDeclaration.h"
 #include "src/sksl/ir/SkSLFunctionDefinition.h"
+#include "src/sksl/ir/SkSLIRHelpers.h"
 #include "src/sksl/ir/SkSLIRNode.h"
 #include "src/sksl/ir/SkSLIfStatement.h"
 #include "src/sksl/ir/SkSLIndexExpression.h"
@@ -86,12 +89,6 @@
 #include <string>
 #include <string_view>
 #include <utility>
-
-#ifdef SK_ENABLE_WGSL_VALIDATION
-#include "tint/tint.h"
-#include "src/tint/lang/wgsl/reader/options.h"
-#include "src/tint/lang/wgsl/extension.h"
-#endif
 
 using namespace skia_private;
 
@@ -166,13 +163,16 @@ public:
     WGSLCodeGenerator(const Context* context,
                       const ShaderCaps* caps,
                       const Program* program,
-                      OutputStream* out)
-            : INHERITED(context, caps, program, out) {}
+                      OutputStream* out,
+                      PrettyPrint pp,
+                      IncludeSyntheticCode isc)
+            : CodeGenerator(context, caps, program, out)
+            , fPrettyPrint(pp)
+            , fGenSyntheticCode(isc) {}
 
     bool generateCode() override;
 
 private:
-    using INHERITED = CodeGenerator;
     using Precedence = OperatorPrecedence;
 
     // Called by generateCode() as the first step.
@@ -186,10 +186,12 @@ private:
     // Helpers to declare a pipeline stage IO parameter declaration.
     void writePipelineIODeclaration(const Layout& layout,
                                     const Type& type,
+                                    ModifierFlags modifiers,
                                     std::string_view name,
                                     Delimiter delimiter);
     void writeUserDefinedIODecl(const Layout& layout,
                                 const Type& type,
+                                ModifierFlags modifiers,
                                 std::string_view name,
                                 Delimiter delimiter);
     void writeBuiltinIODecl(const Type& type,
@@ -312,7 +314,7 @@ private:
 
     // Writes a scratch let-variable into the program, gives it the value of `expr`, and returns its
     // name (e.g. `_skTemp123`).
-    std::string writeScratchLet(const std::string& expr);
+    std::string writeScratchLet(const std::string& expr, bool isCompileTimeConstant = false);
     std::string writeScratchLet(const Expression& expr, Precedence parentPrecedence);
 
     // Converts `expr` into a string and returns a scratch let-variable associated with the
@@ -385,6 +387,8 @@ private:
     bool fWrittenInverse2 = false;
     bool fWrittenInverse3 = false;
     bool fWrittenInverse4 = false;
+    PrettyPrint fPrettyPrint;
+    IncludeSyntheticCode fGenSyntheticCode;
 
     // These fields control uniform polyfill support in cases where WGSL and std140 disagree.
     // In std140 layout, matrices need to be represented as arrays of @size(16)-aligned vectors, and
@@ -994,7 +998,7 @@ private:
     bool visitProgramElement(const ProgramElement& p) override {
         // Only visit the program that matches the requested function.
         if (p.is<FunctionDefinition>() && &p.as<FunctionDefinition>().declaration() == fFunction) {
-            return INHERITED::visitProgramElement(p);
+            return ProgramVisitor::visitProgramElement(p);
         }
         // Continue visiting other program elements.
         return false;
@@ -1041,15 +1045,13 @@ private:
                 fDeps |= calleeDeps;
             }
         }
-        return INHERITED::visitExpression(e);
+        return ProgramVisitor::visitExpression(e);
     }
 
     const Program* const fProgram;
     const FunctionDeclaration* const fFunction;
     DepsMap* const fDependencyMap;
     Deps fDeps = WGSLFunctionDependency::kNone;
-
-    using INHERITED = ProgramVisitor;
 };
 
 WGSLCodeGenerator::ProgramRequirements resolve_program_requirements(const Program* program) {
@@ -1551,13 +1553,11 @@ void WGSLCodeGenerator::write(std::string_view s) {
     if (s.empty()) {
         return;
     }
-#if defined(SK_DEBUG) || defined(SKSL_STANDALONE)
-    if (fAtLineStart) {
+    if (fAtLineStart && fPrettyPrint == PrettyPrint::kYes) {
         for (int i = 0; i < fIndentation; i++) {
             fOut->writeText("  ");
         }
     }
-#endif
     fOut->writeText(std::string(s).c_str());
     fAtLineStart = false;
 }
@@ -1598,6 +1598,7 @@ void WGSLCodeGenerator::writeVariableDecl(const Layout& layout,
 
 void WGSLCodeGenerator::writePipelineIODeclaration(const Layout& layout,
                                                    const Type& type,
+                                                   ModifierFlags modifiers,
                                                    std::string_view name,
                                                    Delimiter delimiter) {
     // In WGSL, an entry-point IO parameter is "one of either a built-in value or assigned a
@@ -1613,7 +1614,7 @@ void WGSLCodeGenerator::writePipelineIODeclaration(const Layout& layout,
     // https://www.w3.org/TR/WGSL/#attribute-location
     // https://www.w3.org/TR/WGSL/#builtin-inputs-outputs
     if (layout.fLocation >= 0) {
-        this->writeUserDefinedIODecl(layout, type, name, delimiter);
+        this->writeUserDefinedIODecl(layout, type, modifiers, name, delimiter);
         return;
     }
     if (layout.fBuiltin >= 0) {
@@ -1624,6 +1625,9 @@ void WGSLCodeGenerator::writePipelineIODeclaration(const Layout& layout,
         }
         auto builtin = builtin_from_sksl_name(layout.fBuiltin);
         if (builtin.has_value()) {
+            // Builtin IO parameters should only have in/out modifiers, which are then implicit in
+            // the generated WGSL, hence why writeBuiltinIODecl does not need them passed in.
+            SkASSERT(!(modifiers & ~(ModifierFlag::kIn | ModifierFlag::kOut)));
             this->writeBuiltinIODecl(type, name, *builtin, delimiter);
             return;
         }
@@ -1633,6 +1637,7 @@ void WGSLCodeGenerator::writePipelineIODeclaration(const Layout& layout,
 
 void WGSLCodeGenerator::writeUserDefinedIODecl(const Layout& layout,
                                                const Type& type,
+                                               ModifierFlags flags,
                                                std::string_view name,
                                                Delimiter delimiter) {
     this->write("@location(" + std::to_string(layout.fLocation) + ") ");
@@ -1644,8 +1649,15 @@ void WGSLCodeGenerator::writeUserDefinedIODecl(const Layout& layout,
 
     // "User-defined IO of scalar or vector integer type must always be specified as
     // @interpolate(flat)" (see https://www.w3.org/TR/WGSL/#interpolation)
-    if (type.isInteger() || (type.isVector() && type.componentType().isInteger())) {
-        this->write("@interpolate(flat) ");
+    if (flags.isFlat() || type.isInteger() ||
+        (type.isVector() && type.componentType().isInteger())) {
+        // We can use 'either' to hint to WebGPU that we don't care about the provoking vertex and
+        // avoid any expensive shader or data rewriting to ensure 'first'. Skia has a long-standing
+        // policy to only use flat shading when it's constant for a primitive so the vertex doesn't
+        // matter. See https://www.w3.org/TR/WGSL/#interpolation-sampling-either
+        this->write("@interpolate(flat, either) ");
+    } else if (flags & ModifierFlag::kNoPerspective) {
+        this->write("@interpolate(linear) ");
     }
 
     this->writeVariableDecl(layout, type, name, delimiter);
@@ -1776,7 +1788,14 @@ void WGSLCodeGenerator::writeFunctionDeclaration(const FunctionDeclaration& decl
                 this->write(this->assembleName(param.name()));
             }
             this->write(": ");
-            if (param.modifierFlags() & ModifierFlag::kOut) {
+            if (param.type().isUnsizedArray()) {
+                // Creates a storage address space pointer for unsized array parameters.
+                // The buffer the array resides in must be marked `readonly` to have the array
+                // be used in function parameters, since access modes in wgsl must exactly match.
+                this->write("ptr<storage, ");
+                this->write(to_wgsl_type(fContext, param.type(), &param.layout()));
+                this->write(", read>");
+            } else if (param.modifierFlags() & ModifierFlag::kOut) {
                 // Declare an "out" function parameter as a pointer.
                 this->write(to_ptr_type(fContext, param.type(), &param.layout()));
             } else {
@@ -1795,8 +1814,8 @@ void WGSLCodeGenerator::writeEntryPoint(const FunctionDefinition& main) {
     SkASSERT(main.declaration().isMain());
     const ProgramKind programKind = fProgram.fConfig->fKind;
 
-#if defined(SKSL_STANDALONE)
-    if (ProgramConfig::IsRuntimeShader(programKind)) {
+    if (fGenSyntheticCode == IncludeSyntheticCode::kYes &&
+        ProgramConfig::IsRuntimeShader(programKind)) {
         // Synthesize a basic entrypoint which just calls straight through to main.
         // This is only used by skslc and just needs to pass the WGSL validator; Skia won't ever
         // emit functions like this.
@@ -1808,7 +1827,6 @@ void WGSLCodeGenerator::writeEntryPoint(const FunctionDefinition& main) {
         this->writeLine("}");
         return;
     }
-#endif
 
     // The input and output parameters for a vertex/fragment stage entry point function have the
     // FSIn/FSOut/VSIn/VSOut/CSIn struct types that have been synthesized in generateCode(). An
@@ -1861,18 +1879,16 @@ void WGSLCodeGenerator::writeEntryPoint(const FunctionDefinition& main) {
         this->writeLine("Out;");
     }
 
-#if defined(SKSL_STANDALONE)
     // We are compiling a Runtime Effect as a fragment shader, for testing purposes. We assign the
     // result from _skslMain into sk_FragColor if the user-defined main returns a color. This
     // doesn't actually matter, but it is more indicative of what a real program would do.
     // `addImplicitFragColorWrite` from Transform::FindAndDeclareBuiltinVariables has already
     // injected sk_FragColor into our stage outputs even if it wasn't explicitly referenced.
-    if (ProgramConfig::IsFragment(programKind)) {
+    if (fGenSyntheticCode == IncludeSyntheticCode::kYes && ProgramConfig::IsFragment(programKind)) {
         if (main.declaration().returnType().matches(*fContext.fTypes.fHalf4)) {
             this->write("_stageOut.sk_FragColor = ");
         }
     }
-#endif
 
     // Generate a function call to the user-defined main.
     this->write("_skslMain(");
@@ -1889,21 +1905,22 @@ void WGSLCodeGenerator::writeEntryPoint(const FunctionDefinition& main) {
         }
     }
 
-#if defined(SKSL_STANDALONE)
-    if (const Variable* v = main.declaration().getMainCoordsParameter()) {
-        // We are compiling a Runtime Effect as a fragment shader, for testing purposes.
-        // We need to synthesize a coordinates parameter, but the coordinates don't matter.
-        SkASSERT(ProgramConfig::IsFragment(programKind));
-        const Type& type = v->type();
-        if (!type.matches(*fContext.fTypes.fFloat2)) {
-            fContext.fErrors->error(main.fPosition, "main function has unsupported parameter: " +
-                                                    type.description());
-            return;
+    if (fGenSyntheticCode == IncludeSyntheticCode::kYes) {
+        if (const Variable* v = main.declaration().getMainCoordsParameter()) {
+            // We are compiling a Runtime Effect as a fragment shader, for testing purposes.
+            // We need to synthesize a coordinates parameter, but the coordinates don't matter.
+            SkASSERT(ProgramConfig::IsFragment(programKind));
+            const Type& type = v->type();
+            if (!type.matches(*fContext.fTypes.fFloat2)) {
+                fContext.fErrors->error(
+                        main.fPosition,
+                        "main function has unsupported parameter: " + type.description());
+                return;
+            }
+            this->write(separator());
+            this->write("/*fragcoord*/ vec2<f32>()");
         }
-        this->write(separator());
-        this->write("/*fragcoord*/ vec2<f32>()");
     }
-#endif
 
     this->writeLine(");");
 
@@ -2387,12 +2404,13 @@ void WGSLCodeGenerator::writeVarDeclaration(const VarDeclaration& varDecl) {
             varDecl.value() ? this->assembleExpression(*varDecl.value(), Precedence::kAssignment)
                             : std::string();
 
-    if (varDecl.var()->modifierFlags().isConst()) {
+    if (varDecl.var()->modifierFlags().isConst() ||
+        (fProgram.fUsage->get(*varDecl.var()).fWrite == 1 && varDecl.value())) {
         // Use `const` at global scope, or if the value is a compile-time constant.
-        SkASSERTF(varDecl.value(), "a constant variable must specify a value");
-        this->write((!fAtFunctionScope || Analysis::IsCompileTimeConstant(*varDecl.value()))
-                            ? "const "
-                            : "let ");
+        SkASSERTF(varDecl.value(), "an immutable variable must specify a value");
+        const bool useConst =
+                !fAtFunctionScope || Analysis::IsCompileTimeConstant(*varDecl.value());
+        this->write(useConst ? "const " : "let ");
     } else {
         this->write("var ");
     }
@@ -3498,6 +3516,19 @@ std::string WGSLCodeGenerator::assembleFunctionCall(const FunctionCall& call,
             expr += ", ";
             expr += this->assembleExpression(*args[index], Precedence::kSequence);
             expr += kSamplerSuffix;
+        } else if (args[index]->type().isUnsizedArray()) {
+            // If the array is in the parameter storage space then manually just pass it through
+            // since it is already a pointer.
+            if (args[index]->is<VariableReference>()) {
+                const Variable* v = args[index]->as<VariableReference>().variable();
+                // A variable reference to an unsized array should always be a parameter,
+                // because unsized arrays coming from uniforms will have the `FieldAccess`
+                // expression type.
+                SkASSERT(v->storage() == Variable::Storage::kParameter);
+                expr += this->assembleName(v->mangledName());
+            } else {
+                expr += "&(" + this->assembleExpression(*args[index], Precedence::kSequence) + ")";
+            }
         } else {
             expr += this->assembleExpression(*args[index], Precedence::kSequence);
         }
@@ -3663,9 +3694,10 @@ std::string WGSLCodeGenerator::writeScratchVar(const Type& type, const std::stri
     return scratchVarName;
 }
 
-std::string WGSLCodeGenerator::writeScratchLet(const std::string& expr) {
+std::string WGSLCodeGenerator::writeScratchLet(const std::string& expr,
+                                               bool isCompileTimeConstant) {
     std::string scratchVarName = "_skTemp" + std::to_string(fScratchCount++);
-    this->write(fAtFunctionScope ? "let " : "const ");
+    this->write(fAtFunctionScope && !isCompileTimeConstant ? "let " : "const ");
     this->write(scratchVarName);
     this->write(" = ");
     this->write(expr);
@@ -3681,8 +3713,9 @@ std::string WGSLCodeGenerator::writeScratchLet(const Expression& expr,
 std::string WGSLCodeGenerator::writeNontrivialScratchLet(const Expression& expr,
                                                          Precedence parentPrecedence) {
     std::string result = this->assembleExpression(expr, parentPrecedence);
-    return is_nontrivial_expression(expr) ? this->writeScratchLet(result)
-                                          : result;
+    return is_nontrivial_expression(expr)
+                   ? this->writeScratchLet(result, Analysis::IsCompileTimeConstant(expr))
+                   : result;
 }
 
 std::string WGSLCodeGenerator::assembleTernaryExpression(const TernaryExpression& t,
@@ -3791,10 +3824,11 @@ std::string WGSLCodeGenerator::variablePrefix(const Variable& v) {
 std::string WGSLCodeGenerator::variableReferenceNameForLValue(const VariableReference& r) {
     const Variable& v = *r.variable();
 
-    if ((v.storage() == Variable::Storage::kParameter &&
-         v.modifierFlags() & ModifierFlag::kOut)) {
-        // This is an out-parameter; it's pointer-typed, so we need to dereference it. We wrap the
-        // dereference in parentheses, in case the value is used in an access expression later.
+    if (v.storage() == Variable::Storage::kParameter &&
+         (v.modifierFlags() & ModifierFlag::kOut || v.type().isUnsizedArray())) {
+        // This is an out-parameter or unsized array parameter; it's pointer-typed, so we need to
+        // dereference it. We wrap the dereference in parentheses, in case the value is used in an
+        // access expression later.
         return "(*" + this->assembleName(v.mangledName()) + ')';
     }
 
@@ -3915,8 +3949,7 @@ std::string WGSLCodeGenerator::assembleConstructorDiagonalMatrix(
 
 std::string WGSLCodeGenerator::assembleConstructorMatrixResize(
         const ConstructorMatrixResize& ctor) {
-    std::string source = this->writeScratchLet(this->assembleExpression(*ctor.argument(),
-                                                                        Precedence::kSequence));
+    std::string source = this->writeNontrivialScratchLet(*ctor.argument(), Precedence::kSequence);
     int columns = ctor.type().columns();
     int rows = ctor.type().rows();
     int sourceColumns = ctor.argument()->type().columns();
@@ -4259,7 +4292,7 @@ void WGSLCodeGenerator::writeEnables() {
         this->writeLine("enable chromium_experimental_framebuffer_fetch;");
     }
     if (fProgram.fInterface.fOutputSecondaryColor) {
-        this->writeLine("enable chromium_internal_dual_source_blending;");
+        this->writeLine("enable dual_source_blending;");
     }
 }
 
@@ -4285,11 +4318,12 @@ void WGSLCodeGenerator::writeStageInputStruct() {
     for (const Variable* v : fPipelineInputs) {
         if (v->type().isInterfaceBlock()) {
             for (const Field& f : v->type().fields()) {
-                this->writePipelineIODeclaration(f.fLayout, *f.fType, f.fName, Delimiter::kComma);
+                this->writePipelineIODeclaration(f.fLayout, *f.fType, f.fModifierFlags, f.fName,
+                                                 Delimiter::kComma);
             }
         } else {
-            this->writePipelineIODeclaration(v->layout(), v->type(), v->mangledName(),
-                                             Delimiter::kComma);
+            this->writePipelineIODeclaration(v->layout(), v->type(), v->modifierFlags(),
+                                             v->mangledName(), Delimiter::kComma);
         }
     }
 
@@ -4322,7 +4356,8 @@ void WGSLCodeGenerator::writeStageOutputStruct() {
     for (const Variable* v : fPipelineOutputs) {
         if (v->type().isInterfaceBlock()) {
             for (const auto& f : v->type().fields()) {
-                this->writePipelineIODeclaration(f.fLayout, *f.fType, f.fName, Delimiter::kComma);
+                this->writePipelineIODeclaration(f.fLayout, *f.fType, f.fModifierFlags, f.fName,
+                                                 Delimiter::kComma);
                 if (f.fLayout.fBuiltin == SK_POSITION_BUILTIN) {
                     declaredPositionBuiltin = true;
                 } else if (f.fLayout.fBuiltin == SK_POINTSIZE_BUILTIN) {
@@ -4333,8 +4368,8 @@ void WGSLCodeGenerator::writeStageOutputStruct() {
                 }
             }
         } else {
-            this->writePipelineIODeclaration(v->layout(), v->type(), v->mangledName(),
-                                             Delimiter::kComma);
+            this->writePipelineIODeclaration(v->layout(), v->type(), v->modifierFlags(),
+                                             v->mangledName(), Delimiter::kComma);
         }
     }
 
@@ -4542,69 +4577,46 @@ bool WGSLCodeGenerator::writeFunctionDependencyParams(const FunctionDeclaration&
     return true;
 }
 
-#if defined(SK_ENABLE_WGSL_VALIDATION)
-static bool validate_wgsl(ErrorReporter& reporter, const std::string& wgsl, std::string* warnings) {
-    // Enable the WGSL optional features that Skia might rely on.
-    tint::wgsl::reader::Options options;
-    for (auto extension : {tint::wgsl::Extension::kChromiumExperimentalPixelLocal,
-                           tint::wgsl::Extension::kChromiumInternalDualSourceBlending}) {
-        options.allowed_features.extensions.insert(extension);
-    }
-
-    // Verify that the WGSL we produced is valid.
-    tint::Source::File srcFile("", wgsl);
-    tint::Program program(tint::wgsl::reader::Parse(&srcFile, options));
-
-    if (program.Diagnostics().ContainsErrors()) {
-        // The program isn't valid WGSL.
-#if defined(SKSL_STANDALONE)
-        reporter.error(Position(), std::string("Tint compilation failed.\n\n") + wgsl);
-#else
-        // In debug, report the error via SkDEBUGFAIL. We also append the generated program for
-        // ease of debugging.
-        tint::diag::Formatter diagFormatter;
-        std::string diagOutput = diagFormatter.Format(program.Diagnostics()).Plain();
-        diagOutput += "\n";
-        diagOutput += wgsl;
-        SkDEBUGFAILF("%s", diagOutput.c_str());
-#endif
-        return false;
-    }
-
-    if (!program.Diagnostics().empty()) {
-        // The program contains warnings. Report them as-is.
-        tint::diag::Formatter diagFormatter;
-        *warnings = diagFormatter.Format(program.Diagnostics()).Plain();
-    }
-    return true;
-}
-#endif  // defined(SK_ENABLE_WGSL_VALIDATION)
-
-bool ToWGSL(Program& program, const ShaderCaps* caps, OutputStream& out) {
+bool ToWGSL(Program& program,
+            const ShaderCaps* caps,
+            OutputStream& out,
+            PrettyPrint pp,
+            IncludeSyntheticCode isc,
+            ValidateWGSLProc validateWGSL) {
     TRACE_EVENT0("skia.shaders", "SkSL::ToWGSL");
     SkASSERT(caps != nullptr);
 
     program.fContext->fErrors->setSource(*program.fSource);
-#ifdef SK_ENABLE_WGSL_VALIDATION
-    StringStream wgsl;
-    WGSLCodeGenerator cg(program.fContext.get(), caps, &program, &wgsl);
-    bool result = cg.generateCode();
-    if (result) {
-        std::string wgslString = wgsl.str();
-        std::string warnings;
-        result = validate_wgsl(*program.fContext->fErrors, wgslString, &warnings);
-        if (!warnings.empty()) {
-            out.writeText("/* Tint reported warnings. */\n\n");
+    bool result;
+    if (validateWGSL) {
+        StringStream wgsl;
+        WGSLCodeGenerator cg(program.fContext.get(), caps, &program, &wgsl, pp, isc);
+        result = cg.generateCode();
+        if (result) {
+            std::string_view wgslBytes = wgsl.str();
+            std::string warnings;
+            result = validateWGSL(*program.fContext->fErrors, wgslBytes, &warnings);
+            if (!warnings.empty()) {
+                out.writeText("/* Tint reported warnings. */\n\n");
+            }
+            out.write(wgslBytes.data(), wgslBytes.size());
         }
-        out.writeString(wgslString);
+    } else {
+        WGSLCodeGenerator cg(program.fContext.get(), caps, &program, &out, pp, isc);
+        result = cg.generateCode();
     }
-#else
-    WGSLCodeGenerator cg(program.fContext.get(), caps, &program, &out);
-    bool result = cg.generateCode();
-#endif
     program.fContext->fErrors->setSource(std::string_view());
 
     return result;
+}
+
+bool ToWGSL(Program& program, const ShaderCaps* caps, OutputStream& out) {
+#if defined(SK_DEBUG)
+    constexpr PrettyPrint defaultPrintOpts = PrettyPrint::kYes;
+#else
+    constexpr PrettyPrint defaultPrintOpts = PrettyPrint::kNo;
+#endif
+    return ToWGSL(program, caps, out, defaultPrintOpts, IncludeSyntheticCode::kNo, nullptr);
 }
 
 bool ToWGSL(Program& program, const ShaderCaps* caps, std::string* out) {

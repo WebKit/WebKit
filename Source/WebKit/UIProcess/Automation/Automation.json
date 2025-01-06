@@ -83,7 +83,10 @@
                 "ElementNotSelectable",
                 "ScreenshotError",
                 "UnexpectedAlertOpen",
-                "TargetOutOfBounds"
+                "TargetOutOfBounds",
+                "UnableToLoadExtension",
+                "UnableToUnloadExtension",
+                "NoSuchExtension"
             ]
         },
         {
@@ -330,6 +333,7 @@
                 { "name": "pressedCharKey", "type": "string", "optional": true, "description": "For 'keyboard' input sources, specifies a character key that has 'pressed' state. Unmentioned character keys are assumed to have a 'released' state." },
                 { "name": "pressedVirtualKeys", "type": "array", "items": { "$ref": "VirtualKey" }, "optional": true, "description": "For 'keyboard' input sources, specifies virtual keys that have a 'pressed' state. Unmentioned virtual keys are assumed to have a 'released' state." },
                 { "name": "pressedButton", "$ref": "MouseButton", "optional": true, "description": "For 'mouse' input sources, specifies which mouse button has a 'pressed' state. Unmentioned mouse buttons are assumed to have a 'released' state. For 'touch' input sources, passing MouseButton::Left denotes a touch-down state." },
+                { "name": "mouseInteraction", "$ref": "MouseInteraction", "optional": true, "description": "For 'mouse' input sources, specifies which type of interaction took place. If unmentioned and the interaction cannot be determined through other heuristics, the state is dropped."},
                 { "name": "origin", "$ref": "MouseMoveOrigin", "optional": true, "description": "For 'mouse' or 'wheel' input sources, specifies the origin type of a mouse move transition. Defaults to 'Viewport' if omitted."},
                 { "name": "nodeHandle", "$ref": "NodeHandle", "optional": true, "description": "The handle of the element to use as origin when origin type is 'Element'."},
                 { "name": "location", "$ref": "Point", "optional": true, "description": "For 'mouse', 'wheel' or 'touch' input sources, specifies a location in view coordinates to which the input source should transition. Transitioning to this state may interpolate intemediate input source states to better simulate real user movements and gestures." },
@@ -386,6 +390,16 @@
                 { "name": "extensions", "type": "array", "items": {"type": "string"}, "optional": true, "description": "An array containing extension identifiers" },
                 { "name": "uvm", "type": "array", "items": {"type": "integer"}, "optional": true, "description": "Up to 3 User Verification Method entries"}
             ]
+        },
+        {
+            "id": "WebExtensionResourceOptions",
+            "type": "string",
+            "description": "The format of the resource used to load the web extension.",
+            "enum": [
+                "Path",
+                "ArchivePath",
+                "Base64"
+            ]
         }
     ],
     "commands": [
@@ -426,6 +440,10 @@
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be closed." }
             ]
+        },
+        {
+            "name": "deleteSession",
+            "description": "Closes the automation session. Deletion of browsing contexts is handled by separate previous closeBrowsingContext commands."
         },
         {
             "name": "switchToBrowsingContext",
@@ -533,6 +551,7 @@
                 { "name": "function", "type": "string", "description": "The script to evaluate in the browsing context. It must be a function result." },
                 { "name": "arguments", "type": "array", "items": { "type": "string" }, "description": "The arguments to pass to the function when called. They will be parsed as JSON before calling the function." },
                 { "name": "expectsImplicitCallbackArgument", "type": "boolean", "optional": true, "description": "The function expects a callback function as the last argument. It is expected to call this callback with a result." },
+                { "name": "forceUserGesture", "type": "boolean", "optional": true, "description": "Force a user gesture when the script is evaluated. Defaults to false if omitted." },
                 { "name": "callbackTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the implicit callback is expected to be called in, otherwise a <code>JavaScriptTimeout</code> error is returned." }
             ],
             "returns": [
@@ -864,6 +883,30 @@
                 { "name": "message", "type": "string", "description": "The body message for the generated test report." },
                 { "name": "group", "type": "string", "description": "The group value to use when sending a test report."}
             ]
+        },
+        {
+            "name": "loadWebExtension",
+            "description": "Loads a web extension in the automation session.",
+            "condition": "defined(WK_WEB_EXTENSIONS_IN_WEBDRIVER) && WK_WEB_EXTENSIONS_IN_WEBDRIVER",
+            "platform": "macos",
+            "parameters": [
+                { "name": "type", "$ref": "WebExtensionResourceOptions", "optional": false, "description": "A hint for the resource format used to load the extension." },
+                { "name": "value", "type": "string", "description": "One of the following: the path to the extension, the path to the extension's archive, or the base 64 encoded data of the extension's archive." }
+            ],
+            "returns": [
+                { "name": "extensionId", "type": "string", "description": "The unique identifier of the extension." }
+            ],
+            "async": true
+        },
+        {
+            "name": "unloadWebExtension",
+            "description": "Unloads a web extension in the automation session.",
+            "condition": "defined(WK_WEB_EXTENSIONS_IN_WEBDRIVER) && WK_WEB_EXTENSIONS_IN_WEBDRIVER",
+            "platform": "macos",
+            "parameters": [
+                { "name": "identifier", "type": "string", "description": "The identifier of the extension to unload." }
+            ],
+            "async": true
         }
     ],
     "events": [
@@ -881,6 +924,18 @@
             "description": "Fired when the specified browsing context has navigated or closed. Existing element references from the browsing context are no longer valid.",
             "parameters": [
                 { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle" }
+            ]
+        },
+        {
+            "name": "logEntryAdded",
+            "description": "Fired when a new log entry is added.",
+            "parameters": [
+                { "name": "level", "type": "string", "description": "The log entry level." },
+                { "name": "source", "type": "string", "description": "The source script information" },
+                { "name": "text", "type": "string", "description": "The log entry text message." },
+                { "name": "timestamp", "type": "number", "description": "The timestamp of the log entry." },
+                { "name": "type", "type": "string", "description": "The log entry type." },
+                { "name": "method", "type": "string", "optional": true, "description": "The log entry console method."}
             ]
         }
     ]

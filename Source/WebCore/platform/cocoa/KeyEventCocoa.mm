@@ -32,6 +32,7 @@
 #import <wtf/ASCIICType.h>
 #import <wtf/HexNumber.h>
 #import <wtf/MainThread.h>
+#import <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "KeyEventCodesIOS.h"

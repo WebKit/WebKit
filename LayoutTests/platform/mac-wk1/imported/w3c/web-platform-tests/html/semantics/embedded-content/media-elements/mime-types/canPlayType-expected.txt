@@ -7,8 +7,8 @@ PASS audio/mp4 (optional)
 PASS audio/mp4; codecs="mp4a.40.2" (optional)
 PASS audio/mp4 with bogus codec
 PASS audio/mp4 with and without codecs
-FAIL audio/ogg (optional) assert_equals: audio/ogg expected "maybe" but got ""
-FAIL audio/ogg; codecs="opus" (optional) assert_equals: audio/ogg; codecs="opus" expected "probably" but got ""
+PASS audio/ogg (optional)
+PASS audio/ogg; codecs="opus" (optional)
 FAIL audio/ogg; codecs="vorbis" (optional) assert_equals: audio/ogg; codecs="vorbis" expected "probably" but got ""
 PASS audio/ogg with bogus codec
 PASS audio/ogg with and without codecs

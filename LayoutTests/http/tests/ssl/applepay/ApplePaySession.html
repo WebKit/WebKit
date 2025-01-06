@@ -110,7 +110,6 @@ function go() {
     logAndShouldThrow("request = validRequest(); request.total = { label: 'label' };", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: 'amount' };", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: '-10.00' };", "new ApplePaySession(2, request)")
-    logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: '10000000000.00' };", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: '10.00', type: 'invalid' };", "new ApplePaySession(2, request)")
     logAndShouldNotThrow("request = validRequest(); request.total = { label: 'label', amount: '10.00', type: 'pending' };", "new ApplePaySession(2, request)")
     

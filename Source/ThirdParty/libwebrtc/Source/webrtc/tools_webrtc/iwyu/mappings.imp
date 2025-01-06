@@ -20,7 +20,6 @@
 
 # LIBSRTP overrides
 { include: ['"rdbx.h"', "private", '"third_party/libsrtp/include/srtp_priv.h"', "public"] },
-{ include: ['"auth.h"', "private", '"third_party/libsrtp/include/srtp_priv.h"', "public"] },
 
 # pthread internals
 { include: ['<bits/pthread_types.h>', "private", '<pthread.h>', "public"] },

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Supplementable.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ class Permissions;
 class WorkerNavigator;
 
 class WorkerNavigatorPermissions final : public Supplement<WorkerNavigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WorkerNavigatorPermissions);
 public:
     explicit WorkerNavigatorPermissions(WorkerNavigator&);
 

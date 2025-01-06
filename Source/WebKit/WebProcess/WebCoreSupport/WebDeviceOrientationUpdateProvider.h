@@ -41,6 +41,9 @@ class WebDeviceOrientationUpdateProvider final : public WebCore::DeviceOrientati
 public:
     static Ref<WebDeviceOrientationUpdateProvider> create(WebPage& page) { return adoptRef(*new WebDeviceOrientationUpdateProvider(page));}
 
+    void ref() const final { WebCore::DeviceOrientationUpdateProvider::ref(); }
+    void deref() const final { WebCore::DeviceOrientationUpdateProvider::deref(); }
+
 private:
     WebDeviceOrientationUpdateProvider(WebPage&);
     ~WebDeviceOrientationUpdateProvider();

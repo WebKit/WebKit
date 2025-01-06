@@ -37,18 +37,10 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 OBJC_CLASS LAContext;
-
-namespace WebKit {
-class AuthenticatorManager;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::AuthenticatorManager> : std::true_type { };
-}
 
 namespace API {
 class WebAuthenticationPanel;
@@ -56,21 +48,19 @@ class WebAuthenticationPanel;
 
 namespace WebKit {
 
-class AuthenticatorManager : public AuthenticatorTransportServiceObserver, public AuthenticatorObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+class AuthenticatorManager : public RefCounted<AuthenticatorManager>, public AuthenticatorTransportServiceObserver, public AuthenticatorObserver {
+    WTF_MAKE_TZONE_ALLOCATED(AuthenticatorManager);
     WTF_MAKE_NONCOPYABLE(AuthenticatorManager);
 public:
     using Respond = std::variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>;
     using Callback = CompletionHandler<void(Respond&&)>;
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
 
-    using AuthenticatorTransportServiceObserver::weakPtrFactory;
-    using AuthenticatorTransportServiceObserver::WeakValueType;
-    using AuthenticatorTransportServiceObserver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(AuthenticatorTransportServiceObserver);
 
     const static size_t maxTransportNumber;
 
-    AuthenticatorManager();
+    static Ref<AuthenticatorManager> create();
     virtual ~AuthenticatorManager() = default;
 
     void handleRequest(WebAuthenticationRequestData&&, Callback&&);
@@ -83,7 +73,12 @@ public:
 
     void enableNativeSupport();
 
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
 protected:
+    AuthenticatorManager();
+
     RunLoop::Timer& requestTimeOutTimer() { return m_requestTimeOutTimer; }
     void clearStateAsync(); // To void cyclic dependence.
     void clearState();
@@ -110,11 +105,12 @@ private:
     void downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator) final;
     void authenticatorStatusUpdated(WebAuthenticationStatus) final;
     void requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&&) final;
+    void requestNewPin(uint64_t minLength, CompletionHandler<void(const WTF::String&)>&&) final;
     void requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&&) final;
     void cancelRequest() final;
 
     // Overriden by MockAuthenticatorManager.
-    virtual UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&) const;
+    virtual Ref<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&) const;
     // Overriden to return every exception for tests to confirm.
     virtual void respondReceivedInternal(Respond&&) { }
     virtual void filterTransports(TransportSet&) const;
@@ -130,9 +126,9 @@ private:
     WebAuthenticationRequestData m_pendingRequestData;
     Callback m_pendingCompletionHandler; // Should not be invoked directly, use invokePendingCompletionHandler.
     RunLoop::Timer m_requestTimeOutTimer;
-    std::unique_ptr<AuthenticatorPresenterCoordinator> m_presenter;
+    RefPtr<AuthenticatorPresenterCoordinator> m_presenter;
 
-    Vector<UniqueRef<AuthenticatorTransportService>> m_services;
+    Vector<Ref<AuthenticatorTransportService>> m_services;
     HashSet<Ref<Authenticator>> m_authenticators;
 
     Mode m_mode { Mode::Compatible };

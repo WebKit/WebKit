@@ -28,6 +28,7 @@
 
 #include "PendingScript.h"
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/TextPosition.h>
 
@@ -40,7 +41,7 @@ class ScriptSourceCode;
 class WeakPtrImplWithEventTargetData;
 
 class HTMLScriptRunner {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(HTMLScriptRunner);
 public:
     HTMLScriptRunner(Document&, HTMLScriptRunnerHost&);
     ~HTMLScriptRunner();

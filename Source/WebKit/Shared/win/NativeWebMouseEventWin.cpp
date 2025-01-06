@@ -31,8 +31,8 @@
 
 namespace WebKit {
 
-NativeWebMouseEvent::NativeWebMouseEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(hwnd, message, wParam, lParam, didActivateWebView))
+NativeWebMouseEvent::NativeWebMouseEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView, float deviceScaleFactor)
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(hwnd, message, wParam, lParam, didActivateWebView, deviceScaleFactor))
     , m_nativeEvent(createNativeEvent(hwnd, message, wParam, lParam))
 {
 }

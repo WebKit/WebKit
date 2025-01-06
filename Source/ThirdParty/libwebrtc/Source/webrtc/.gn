@@ -12,8 +12,8 @@ import("//build/dotfile_settings.gni")
 buildconfig = "//build/config/BUILDCONFIG.gn"
 
 # The python interpreter to use by default. On Windows, this will look
-# for python3.exe and python3.bat.
-script_executable = "python3"
+# for vpython3.exe and vpython3.bat.
+script_executable = "vpython3"
 
 # The secondary source root is a parallel directory tree where
 # GN build files are placed when they can not be placed directly
@@ -27,8 +27,9 @@ secondary_source = "//build/secondary/"
 no_check_targets = [
   "//third_party/icu/*",
 
-  # TODO(crbug.com/1151236) Remove once fixed.
-  "//base/allocator/partition_allocator:partition_alloc",
+  # TODO: crbug/326607005 - GTEST_HAS_ABSL is broken
+  "//third_party/googletest:gmock",
+  "//third_party/googletest:gtest",
 ]
 
 # These are the list of GN files that run exec_script. This whitelist exists
@@ -36,6 +37,8 @@ no_check_targets = [
 # discouraged except for gypi_to_gn calls.
 exec_script_whitelist = build_dotfile_settings.exec_script_whitelist +
                         [ "//build_overrides/build.gni" ]
+
+export_compile_commands = [ "*" ]
 
 default_args = {
   # Webrtc does not support component builds because we are not using the
@@ -49,7 +52,7 @@ default_args = {
 
   mac_sdk_min = "10.12"
 
-  ios_deployment_target = "12.0"
+  ios_deployment_target = "14.0"
 
   # The SDK API level, in contrast, is set by build/android/AndroidManifest.xml.
   android32_ndk_api_level = 21
@@ -74,4 +77,12 @@ default_args = {
   # Chromium fix resolves the problem.
   fuchsia_sdk_readelf_exec =
       "//third_party/llvm-build/Release+Asserts/bin/llvm-readelf"
+
+  # WebRTC doesn't use jni_zero's multiplexing. Since this causes an error
+  # let's temporarily disable it.
+  enable_jni_multiplexing = false
+
+  # TODO(b/42223878): use_fuzztest_wrapper adds a dependency to //base so
+  # let's temporarly disable it.
+  use_fuzztest_wrapper = false
 }

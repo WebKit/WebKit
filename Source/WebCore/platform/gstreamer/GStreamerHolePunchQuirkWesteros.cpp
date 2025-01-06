@@ -25,6 +25,7 @@
 #if USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

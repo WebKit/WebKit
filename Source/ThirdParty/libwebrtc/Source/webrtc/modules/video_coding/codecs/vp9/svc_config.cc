@@ -12,13 +12,19 @@
 
 #include <algorithm>
 #include <cmath>
-#include <memory>
+#include <cstddef>
+#include <numeric>
+#include <optional>
 #include <vector>
 
-#include "media/base/video_common.h"
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/scalability_mode.h"
+#include "api/video_codecs/spatial_layer.h"
+#include "api/video_codecs/video_codec.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "modules/video_coding/svc/create_scalability_structure.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
+#include "modules/video_coding/svc/scalable_video_controller.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -83,7 +89,7 @@ std::vector<SpatialLayer> ConfigureSvcNormalVideo(
     size_t first_active_layer,
     size_t num_spatial_layers,
     size_t num_temporal_layers,
-    absl::optional<ScalableVideoController::StreamLayersConfig> config) {
+    std::optional<ScalableVideoController::StreamLayersConfig> config) {
   RTC_DCHECK_LT(first_active_layer, num_spatial_layers);
 
   // Limit number of layers for given resolution.
@@ -105,8 +111,8 @@ std::vector<SpatialLayer> ConfigureSvcNormalVideo(
   if (config) {
     required_divisiblity = 1;
     for (size_t sl_idx = 0; sl_idx < num_spatial_layers; ++sl_idx) {
-      required_divisiblity = cricket::LeastCommonMultiple(
-          required_divisiblity, config->scaling_factor_den[sl_idx]);
+      required_divisiblity =
+          std::lcm(required_divisiblity, config->scaling_factor_den[sl_idx]);
     }
   }
   input_width = input_width - input_width % required_divisiblity;
@@ -169,7 +175,7 @@ std::vector<SpatialLayer> ConfigureSvcNormalVideo(
 std::vector<SpatialLayer> GetVp9SvcConfig(VideoCodec& codec) {
   RTC_DCHECK_EQ(codec.codecType, kVideoCodecVP9);
 
-  absl::optional<ScalabilityMode> scalability_mode = codec.GetScalabilityMode();
+  std::optional<ScalabilityMode> scalability_mode = codec.GetScalabilityMode();
   RTC_DCHECK(scalability_mode.has_value());
 
   bool requested_single_spatial_layer =
@@ -190,7 +196,10 @@ std::vector<SpatialLayer> GetVp9SvcConfig(VideoCodec& codec) {
     codec.SetScalabilityMode(limited_scalability_mode);
   }
 
-  absl::optional<ScalableVideoController::StreamLayersConfig> info =
+  codec.VP9()->interLayerPred =
+      ScalabilityModeToInterLayerPredMode(*scalability_mode);
+
+  std::optional<ScalableVideoController::StreamLayersConfig> info =
       ScalabilityStructureConfig(*scalability_mode);
   if (!info.has_value()) {
     RTC_LOG(LS_WARNING) << "Failed to create structure "
@@ -203,7 +212,7 @@ std::vector<SpatialLayer> GetVp9SvcConfig(VideoCodec& codec) {
       GetSvcConfig(codec.width, codec.height, codec.maxFramerate,
                    /*first_active_layer=*/0, info->num_spatial_layers,
                    info->num_temporal_layers, /*is_screen_sharing=*/false,
-                   codec.GetScalabilityMode() ? info : absl::nullopt);
+                   codec.GetScalabilityMode() ? info : std::nullopt);
   RTC_DCHECK(!spatial_layers.empty());
 
   spatial_layers[0].minBitrate = kMinVp9SvcBitrateKbps;
@@ -227,7 +236,7 @@ std::vector<SpatialLayer> GetSvcConfig(
     size_t num_spatial_layers,
     size_t num_temporal_layers,
     bool is_screen_sharing,
-    absl::optional<ScalableVideoController::StreamLayersConfig> config) {
+    std::optional<ScalableVideoController::StreamLayersConfig> config) {
   RTC_DCHECK_GT(input_width, 0);
   RTC_DCHECK_GT(input_height, 0);
   RTC_DCHECK_GT(num_spatial_layers, 0);

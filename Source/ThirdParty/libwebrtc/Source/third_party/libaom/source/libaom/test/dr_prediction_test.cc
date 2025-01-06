@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -10,14 +10,16 @@
  */
 
 #include <tuple>
+#include <vector>
 
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "config/aom_config.h"
 #include "config/aom_dsp_rtcd.h"
 
 #include "aom_mem/aom_mem.h"
 #include "aom_ports/aom_timer.h"
+#include "aom_ports/sanitizer.h"
 #include "av1/common/blockd.h"
 #include "av1/common/pred_common.h"
 #include "av1/common/reconintra.h"
@@ -26,6 +28,9 @@
 #include "test/util.h"
 
 namespace {
+
+const int kNumIntraNeighbourPixels = MAX_TX_SIZE * 2 + 32;
+const int kIntraPredInputPadding = 16;
 
 const int kZ1Start = 0;
 const int kZ2Start = 90;
@@ -149,10 +154,6 @@ class DrPredTest : public ::testing::TestWithParam<DrPredFunc<FuncType> > {
  protected:
   static const int kMaxNumTests = 10000;
   static const int kIterations = 10;
-  static const int kDstStride = 64;
-  static const int kDstSize = kDstStride * kDstStride;
-  static const int kOffset = 16;
-  static const int kBufSize = ((2 * MAX_TX_SIZE) << 1) + 16;
 
   DrPredTest()
       : enable_upsample_(0), upsample_above_(0), upsample_left_(0), bw_(0),
@@ -160,27 +161,12 @@ class DrPredTest : public ::testing::TestWithParam<DrPredFunc<FuncType> > {
     params_ = this->GetParam();
     start_angle_ = params_.start_angle;
     stop_angle_ = start_angle_ + 90;
-
-    dst_ref_ = &dst_ref_data_[0];
-    dst_tst_ = &dst_tst_data_[0];
-    dst_stride_ = kDstStride;
-    above_ = &above_data_[kOffset];
-    left_ = &left_data_[kOffset];
-
-    for (int i = 0; i < kBufSize; ++i) {
-      above_data_[i] = rng_.Rand8();
-      left_data_[i] = rng_.Rand8();
-    }
-
-    for (int i = 0; i < kDstSize; ++i) {
-      dst_ref_[i] = 0;
-      dst_tst_[i] = 0;
-    }
   }
 
   ~DrPredTest() override = default;
 
-  void Predict(bool speedtest, int tx) {
+  void Predict(bool speedtest, int tx, const Pixel *above, const Pixel *left,
+               Pixel *dst_ref, Pixel *dst_tst, int dst_stride) {
     const int kNumTests = speedtest ? kMaxNumTests : 1;
     aom_usec_timer timer;
     int tst_time = 0;
@@ -189,7 +175,7 @@ class DrPredTest : public ::testing::TestWithParam<DrPredFunc<FuncType> > {
 
     aom_usec_timer_start(&timer);
     for (int k = 0; k < kNumTests; ++k) {
-      params_.ref_fn(dst_ref_, dst_stride_, bw_, bh_, above_, left_,
+      params_.ref_fn(dst_ref, dst_stride, bw_, bh_, above, left,
                      upsample_above_, upsample_left_, dx_, dy_, bd_);
     }
     aom_usec_timer_mark(&timer);
@@ -198,15 +184,17 @@ class DrPredTest : public ::testing::TestWithParam<DrPredFunc<FuncType> > {
     if (params_.tst_fn) {
       aom_usec_timer_start(&timer);
       for (int k = 0; k < kNumTests; ++k) {
-        API_REGISTER_STATE_CHECK(params_.tst_fn(dst_tst_, dst_stride_, bw_, bh_,
-                                                above_, left_, upsample_above_,
+        API_REGISTER_STATE_CHECK(params_.tst_fn(dst_tst, dst_stride, bw_, bh_,
+                                                above, left, upsample_above_,
                                                 upsample_left_, dx_, dy_, bd_));
       }
       aom_usec_timer_mark(&timer);
       tst_time = static_cast<int>(aom_usec_timer_elapsed(&timer));
     } else {
-      for (int i = 0; i < kDstSize; ++i) {
-        dst_ref_[i] = dst_tst_[i];
+      for (int r = 0; r < bh_; ++r) {
+        for (int c = 0; c < bw_; ++c) {
+          dst_tst[r * dst_stride + c] = dst_ref[r * dst_stride + c];
+        }
       }
     }
 
@@ -216,24 +204,7 @@ class DrPredTest : public ::testing::TestWithParam<DrPredFunc<FuncType> > {
   void RunTest(bool speedtest, bool needsaturation, int p_angle) {
     bd_ = params_.bit_depth;
 
-    if (needsaturation) {
-      for (int i = 0; i < kBufSize; ++i) {
-        above_data_[i] = left_data_[i] = (1 << bd_) - 1;
-      }
-    }
     for (int tx = 0; tx < TX_SIZES_ALL; ++tx) {
-      if (params_.tst_fn == nullptr) {
-        for (int i = 0; i < kDstSize; ++i) {
-          dst_tst_[i] = (1 << bd_) - 1;
-          dst_ref_[i] = (1 << bd_) - 1;
-        }
-      } else {
-        for (int i = 0; i < kDstSize; ++i) {
-          dst_ref_[i] = 0;
-          dst_tst_[i] = 0;
-        }
-      }
-
       bw_ = tx_size_wide[kTxSize[tx]];
       bh_ = tx_size_high[kTxSize[tx]];
 
@@ -246,12 +217,54 @@ class DrPredTest : public ::testing::TestWithParam<DrPredFunc<FuncType> > {
         upsample_above_ = upsample_left_ = 0;
       }
 
-      Predict(speedtest, tx);
+      // Declare input buffers as local arrays to allow checking for
+      // over-reads.
+      DECLARE_ALIGNED(16, Pixel, left_data[kNumIntraNeighbourPixels]);
+      DECLARE_ALIGNED(16, Pixel, above_data[kNumIntraNeighbourPixels]);
+
+      // We need to allow reading some previous bytes from the input pointers.
+      const Pixel *above = &above_data[kIntraPredInputPadding];
+      const Pixel *left = &left_data[kIntraPredInputPadding];
+
+      if (needsaturation) {
+        const Pixel sat = (1 << bd_) - 1;
+        for (int i = 0; i < kNumIntraNeighbourPixels; ++i) {
+          left_data[i] = sat;
+          above_data[i] = sat;
+        }
+      } else {
+        for (int i = 0; i < kNumIntraNeighbourPixels; ++i) {
+          left_data[i] = rng_.Rand8();
+          above_data[i] = rng_.Rand8();
+        }
+      }
+
+      // Add additional padding to allow detection of over reads/writes when
+      // the transform width is equal to MAX_TX_SIZE.
+      const int dst_stride = MAX_TX_SIZE + 16;
+      std::vector<Pixel> dst_ref(dst_stride * bh_);
+      std::vector<Pixel> dst_tst(dst_stride * bh_);
+
+      for (int r = 0; r < bh_; ++r) {
+        ASAN_POISON_MEMORY_REGION(&dst_ref[r * dst_stride + bw_],
+                                  (dst_stride - bw_) * sizeof(Pixel));
+        ASAN_POISON_MEMORY_REGION(&dst_tst[r * dst_stride + bw_],
+                                  (dst_stride - bw_) * sizeof(Pixel));
+      }
+
+      Predict(speedtest, tx, above, left, dst_ref.data(), dst_tst.data(),
+              dst_stride);
+
+      for (int r = 0; r < bh_; ++r) {
+        ASAN_UNPOISON_MEMORY_REGION(&dst_ref[r * dst_stride + bw_],
+                                    (dst_stride - bw_) * sizeof(Pixel));
+        ASAN_UNPOISON_MEMORY_REGION(&dst_tst[r * dst_stride + bw_],
+                                    (dst_stride - bw_) * sizeof(Pixel));
+      }
 
       for (int r = 0; r < bh_; ++r) {
         for (int c = 0; c < bw_; ++c) {
-          ASSERT_EQ(dst_ref_[r * dst_stride_ + c],
-                    dst_tst_[r * dst_stride_ + c])
+          ASSERT_EQ(dst_ref[r * dst_stride + c], dst_tst[r * dst_stride + c])
               << bw_ << "x" << bh_ << " r: " << r << " c: " << c
               << " dx: " << dx_ << " dy: " << dy_
               << " upsample_above: " << upsample_above_
@@ -291,19 +304,6 @@ class DrPredTest : public ::testing::TestWithParam<DrPredFunc<FuncType> > {
       }
     }
   }
-
-  Pixel dst_ref_data_[kDstSize];
-  Pixel dst_tst_data_[kDstSize];
-
-  Pixel left_data_[kBufSize];
-  Pixel dummy_data_[kBufSize];
-  Pixel above_data_[kBufSize];
-
-  Pixel *dst_ref_;
-  Pixel *dst_tst_;
-  Pixel *above_;
-  Pixel *left_;
-  int dst_stride_;
 
   int enable_upsample_;
   int upsample_above_;
@@ -386,6 +386,33 @@ TEST_P(LowbdDrPredTest, OperationCheck) { RundrPredTest(0); }
 
 TEST_P(LowbdDrPredTest, DISABLED_Speed) { RundrPredTest(1); }
 
+#if CONFIG_AV1_HIGHBITDEPTH
+TEST_P(HighbdDrPredTest, OperationCheck) {
+  if (params_.tst_fn == nullptr) return;
+  for (enable_upsample_ = 0; enable_upsample_ < 2; ++enable_upsample_) {
+    for (int angle = start_angle_; angle < stop_angle_; angle++) {
+      dx_ = av1_get_dx(angle);
+      dy_ = av1_get_dy(angle);
+      if (dx_ && dy_) RunTest(false, false, angle);
+    }
+  }
+}
+
+TEST_P(HighbdDrPredTest, DISABLED_Speed) {
+  const int angles[] = { 3, 45, 87 };
+  for (enable_upsample_ = 0; enable_upsample_ < 2; ++enable_upsample_) {
+    for (int i = 0; i < 3; ++i) {
+      int angle = angles[i] + start_angle_;
+      dx_ = av1_get_dx(angle);
+      dy_ = av1_get_dy(angle);
+      printf("enable_upsample: %d angle: %d ~~~~~~~~~~~~~~~\n",
+             enable_upsample_, angle);
+      if (dx_ && dy_) RunTest(true, false, angle);
+    }
+  }
+}
+#endif  // CONFIG_AV1_HIGHBITDEPTH
+
 #if HAVE_SSE4_1
 INSTANTIATE_TEST_SUITE_P(
     SSE4_1, LowbdDrPredTest,
@@ -453,32 +480,6 @@ INSTANTIATE_TEST_SUITE_P(
                           &z3_wrapper_hbd<av1_highbd_dr_prediction_z3_c>,
                           &z3_wrapper_hbd<av1_highbd_dr_prediction_z3_avx2>,
                           AOM_BITS_12, kZ3Start)));
-
-TEST_P(HighbdDrPredTest, DISABLED_Speed) {
-  const int angles[] = { 3, 45, 87 };
-  for (enable_upsample_ = 0; enable_upsample_ < 2; ++enable_upsample_) {
-    for (int i = 0; i < 3; ++i) {
-      int angle = angles[i] + start_angle_;
-      dx_ = av1_get_dx(angle);
-      dy_ = av1_get_dy(angle);
-      printf("enable_upsample: %d angle: %d ~~~~~~~~~~~~~~~\n",
-             enable_upsample_, angle);
-      if (dx_ && dy_) RunTest(true, false, angle);
-    }
-  }
-}
-
-TEST_P(HighbdDrPredTest, OperationCheck) {
-  if (params_.tst_fn == nullptr) return;
-  // const int angles[] = { 3, 45, 81, 87, 93, 100, 145, 187, 199, 260 };
-  for (enable_upsample_ = 0; enable_upsample_ < 2; ++enable_upsample_) {
-    for (int angle = start_angle_; angle < stop_angle_; angle++) {
-      dx_ = av1_get_dx(angle);
-      dy_ = av1_get_dy(angle);
-      if (dx_ && dy_) RunTest(false, false, angle);
-    }
-  }
-}
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 #endif  // HAVE_AVX2
 
@@ -494,6 +495,47 @@ INSTANTIATE_TEST_SUITE_P(
                       DrPredFunc<DrPred>(&z3_wrapper<av1_dr_prediction_z3_c>,
                                          &z3_wrapper<av1_dr_prediction_z3_neon>,
                                          AOM_BITS_8, kZ3Start)));
+
+#if CONFIG_AV1_HIGHBITDEPTH
+INSTANTIATE_TEST_SUITE_P(
+    NEON, HighbdDrPredTest,
+    ::testing::Values(DrPredFunc<DrPred_Hbd>(
+                          &z1_wrapper_hbd<av1_highbd_dr_prediction_z1_c>,
+                          &z1_wrapper_hbd<av1_highbd_dr_prediction_z1_neon>,
+                          AOM_BITS_8, kZ1Start),
+                      DrPredFunc<DrPred_Hbd>(
+                          &z1_wrapper_hbd<av1_highbd_dr_prediction_z1_c>,
+                          &z1_wrapper_hbd<av1_highbd_dr_prediction_z1_neon>,
+                          AOM_BITS_10, kZ1Start),
+                      DrPredFunc<DrPred_Hbd>(
+                          &z1_wrapper_hbd<av1_highbd_dr_prediction_z1_c>,
+                          &z1_wrapper_hbd<av1_highbd_dr_prediction_z1_neon>,
+                          AOM_BITS_12, kZ1Start),
+                      DrPredFunc<DrPred_Hbd>(
+                          &z2_wrapper_hbd<av1_highbd_dr_prediction_z2_c>,
+                          &z2_wrapper_hbd<av1_highbd_dr_prediction_z2_neon>,
+                          AOM_BITS_8, kZ2Start),
+                      DrPredFunc<DrPred_Hbd>(
+                          &z2_wrapper_hbd<av1_highbd_dr_prediction_z2_c>,
+                          &z2_wrapper_hbd<av1_highbd_dr_prediction_z2_neon>,
+                          AOM_BITS_10, kZ2Start),
+                      DrPredFunc<DrPred_Hbd>(
+                          &z2_wrapper_hbd<av1_highbd_dr_prediction_z2_c>,
+                          &z2_wrapper_hbd<av1_highbd_dr_prediction_z2_neon>,
+                          AOM_BITS_12, kZ2Start),
+                      DrPredFunc<DrPred_Hbd>(
+                          &z3_wrapper_hbd<av1_highbd_dr_prediction_z3_c>,
+                          &z3_wrapper_hbd<av1_highbd_dr_prediction_z3_neon>,
+                          AOM_BITS_8, kZ3Start),
+                      DrPredFunc<DrPred_Hbd>(
+                          &z3_wrapper_hbd<av1_highbd_dr_prediction_z3_c>,
+                          &z3_wrapper_hbd<av1_highbd_dr_prediction_z3_neon>,
+                          AOM_BITS_10, kZ3Start),
+                      DrPredFunc<DrPred_Hbd>(
+                          &z3_wrapper_hbd<av1_highbd_dr_prediction_z3_c>,
+                          &z3_wrapper_hbd<av1_highbd_dr_prediction_z3_neon>,
+                          AOM_BITS_12, kZ3Start)));
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 
 #endif  // HAVE_NEON
 

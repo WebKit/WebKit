@@ -30,10 +30,13 @@
 #include "IDBKeyRangeData.h"
 #include "Logging.h"
 #include "MemoryIndex.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IndexValueStore);
 
 IndexValueStore::IndexValueStore(bool unique)
     : m_unique(unique)
@@ -104,8 +107,10 @@ void IndexValueStore::removeRecord(const IDBKeyData& indexKey, const IDBKeyData&
     if (!iterator->value)
         return;
 
-    if (iterator->value->removeKey(valueKey))
+    if (iterator->value->removeKey(valueKey)) {
         m_records.remove(iterator);
+        m_orderedKeys.erase(indexKey);
+    }
 }
 
 void IndexValueStore::removeEntriesWithValueKey(MemoryIndex& index, const IDBKeyData& valueKey)

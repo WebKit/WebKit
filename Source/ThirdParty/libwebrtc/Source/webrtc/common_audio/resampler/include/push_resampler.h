@@ -14,45 +14,44 @@
 #include <memory>
 #include <vector>
 
+#include "api/audio/audio_view.h"
+
 namespace webrtc {
 
 class PushSincResampler;
 
 // Wraps PushSincResampler to provide stereo support.
-// TODO(ajm): add support for an arbitrary number of channels.
+// Note: This implementation assumes 10ms buffer sizes throughout.
 template <typename T>
-class PushResampler {
+class PushResampler final {
  public:
   PushResampler();
-  virtual ~PushResampler();
-
-  // Must be called whenever the parameters change. Free to be called at any
-  // time as it is a no-op if parameters have not changed since the last call.
-  int InitializeIfNeeded(int src_sample_rate_hz,
-                         int dst_sample_rate_hz,
-                         size_t num_channels);
+  PushResampler(size_t src_samples_per_channel,
+                size_t dst_samples_per_channel,
+                size_t num_channels);
+  ~PushResampler();
 
   // Returns the total number of samples provided in destination (e.g. 32 kHz,
   // 2 channel audio gives 640 samples).
-  int Resample(const T* src, size_t src_length, T* dst, size_t dst_capacity);
+  int Resample(InterleavedView<const T> src, InterleavedView<T> dst);
+  // For when a deinterleaved/mono channel already exists and we can skip the
+  // deinterleaved operation.
+  int Resample(MonoView<const T> src, MonoView<T> dst);
 
  private:
-  int src_sample_rate_hz_;
-  int dst_sample_rate_hz_;
-  size_t num_channels_;
-  // Vector that is needed to provide the proper inputs and outputs to the
-  // interleave/de-interleave methods used in Resample. This needs to be
-  // heap-allocated on the state to support an arbitrary number of channels
-  // without doing run-time heap-allocations in the Resample method.
-  std::vector<T*> channel_data_array_;
+  // Ensures that source and destination buffers for deinterleaving are
+  // correctly configured prior to resampling that requires deinterleaving.
+  void EnsureInitialized(size_t src_samples_per_channel,
+                         size_t dst_samples_per_channel,
+                         size_t num_channels);
 
-  struct ChannelResampler {
-    std::unique_ptr<PushSincResampler> resampler;
-    std::vector<T> source;
-    std::vector<T> destination;
-  };
+  // Buffers used for when a deinterleaving step is necessary.
+  std::unique_ptr<T[]> source_;
+  std::unique_ptr<T[]> destination_;
+  DeinterleavedView<T> source_view_;
+  DeinterleavedView<T> destination_view_;
 
-  std::vector<ChannelResampler> channel_resamplers_;
+  std::vector<std::unique_ptr<PushSincResampler>> resamplers_;
 };
 }  // namespace webrtc
 

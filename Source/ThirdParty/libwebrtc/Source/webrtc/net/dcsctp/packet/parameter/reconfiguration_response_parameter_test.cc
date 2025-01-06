@@ -11,10 +11,10 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <type_traits>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "net/dcsctp/testing/testing_macros.h"
 #include "rtc_base/gunit.h"
 #include "test/gmock.h"
@@ -37,8 +37,8 @@ TEST(ReconfigurationResponseParameterTest, SerializeAndDeserializeFirstForm) {
   EXPECT_EQ(*deserialized.response_sequence_number(), 1u);
   EXPECT_EQ(deserialized.result(),
             ReconfigurationResponseParameter::Result::kSuccessPerformed);
-  EXPECT_EQ(deserialized.sender_next_tsn(), absl::nullopt);
-  EXPECT_EQ(deserialized.receiver_next_tsn(), absl::nullopt);
+  EXPECT_EQ(deserialized.sender_next_tsn(), std::nullopt);
+  EXPECT_EQ(deserialized.receiver_next_tsn(), std::nullopt);
 }
 
 TEST(ReconfigurationResponseParameterTest,

@@ -11,7 +11,10 @@
 # CMake provided targets. Remove wrappers whenever the minimum version is bumped.
 #
 # ICU::<C> : need to be kept for Apple ICU
-# LibXslt::LibXslt: since 3.18
+
+if (NOT APPLE)
+    return()
+endif ()
 
 macro(find_package package)
     set(_found_package OFF)
@@ -58,22 +61,6 @@ macro(find_package package)
                 IMPORTED_LOCATION "${ICU_UC_LIBRARY}"
                 INTERFACE_INCLUDE_DIRECTORIES "${ICU_INCLUDE_DIRS}"
                 IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
-            )
-        endif ()
-    elseif ("${package}" STREQUAL "LibXslt")
-        if (LIBXSLT_FOUND AND NOT TARGET LibXslt::LibXslt)
-            add_library(LibXslt::LibXslt UNKNOWN IMPORTED)
-            set_target_properties(LibXslt::LibXslt PROPERTIES
-                IMPORTED_LOCATION "${LIBXSLT_LIBRARIES}"
-                INTERFACE_INCLUDE_DIRECTORIES "${LIBXSLT_INCLUDE_DIR}"
-                INTERFACE_COMPILE_OPTIONS "${LIBXSLT_DEFINITIONS}"
-            )
-        endif ()
-        if (LIBXSLT_EXSLT_LIBRARY AND NOT TARGET LibXslt::LibExslt)
-            add_library(LibXslt::LibExslt UNKNOWN IMPORTED)
-            set_target_properties(LibXslt::LibExslt PROPERTIES
-                IMPORTED_LOCATION "${LIBXSLT_EXSLT_LIBRARY}"
-                INTERFACE_INCLUDE_DIRECTORIES "${LIBXSLT_INCLUDE_DIR}"
             )
         endif ()
     endif ()

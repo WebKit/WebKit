@@ -35,7 +35,7 @@ class AudioBuffer;
 class Reverb;
     
 class ConvolverNode final : public AudioNode {
-    WTF_MAKE_ISO_ALLOCATED(ConvolverNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ConvolverNode);
 public:
     static ExceptionOr<Ref<ConvolverNode>> create(BaseAudioContext&, ConvolverOptions&& = { });
     

@@ -26,7 +26,11 @@
 #include "config.h"
 #include "FileMonitor.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileMonitor);
 
 #if !PLATFORM(COCOA) && !USE(GLIB)
 

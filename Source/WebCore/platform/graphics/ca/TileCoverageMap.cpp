@@ -29,8 +29,11 @@
 #include "GraphicsContext.h"
 #include "TileController.h"
 #include "TileGrid.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TileCoverageMap);
 
 TileCoverageMap::TileCoverageMap(const TileController& controller)
     : m_controller(controller)
@@ -150,6 +153,11 @@ void TileCoverageMap::update()
     }
 
     m_visibleViewportIndicatorLayer.get().setBorderColor(visibleRectIndicatorColor);
+}
+
+PlatformLayerIdentifier TileCoverageMap::platformCALayerIdentifier() const
+{
+    return m_layer->layerID();
 }
 
 void TileCoverageMap::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>)

@@ -11,6 +11,8 @@
 #include "modules/pacing/interval_budget.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 
 #include "rtc_base/numerics/safe_conversions.h"
 

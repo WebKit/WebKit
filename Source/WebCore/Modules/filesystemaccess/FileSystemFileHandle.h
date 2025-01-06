@@ -32,10 +32,13 @@ namespace WebCore {
 
 class File;
 class FileSystemSyncAccessHandle;
+class FileSystemWritableFileStream;
+enum class FileSystemWriteCloseReason : bool;
+enum class FileSystemWriteCommandType : uint8_t;
 template<typename> class ExceptionOr;
 
 class FileSystemFileHandle final : public FileSystemHandle {
-    WTF_MAKE_ISO_ALLOCATED(FileSystemFileHandle);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FileSystemFileHandle);
 public:
     WEBCORE_EXPORT static Ref<FileSystemFileHandle> create(ScriptExecutionContext&, String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
     void getFile(DOMPromiseDeferred<IDLInterface<File>>&&);
@@ -45,6 +48,14 @@ public:
     std::optional<uint64_t> requestNewCapacityForSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, uint64_t newCapacity);
     void registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, FileSystemSyncAccessHandle&);
     void unregisterSyncAccessHandle(FileSystemSyncAccessHandleIdentifier);
+
+    struct CreateWritableOptions {
+        bool keepExistingData { false };
+    };
+    void createWritable(const CreateWritableOptions&, DOMPromiseDeferred<IDLInterface<FileSystemWritableFileStream>>&&);
+
+    void closeWritable(FileSystemWriteCloseReason);
+    void executeCommandForWritable(FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, DOMPromiseDeferred<void>&&);
 
 private:
     FileSystemFileHandle(ScriptExecutionContext&, String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);

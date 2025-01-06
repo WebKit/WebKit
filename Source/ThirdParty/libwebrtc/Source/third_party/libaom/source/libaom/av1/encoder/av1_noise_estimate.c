@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -26,7 +26,7 @@
 
 #if CONFIG_AV1_TEMPORAL_DENOISING
 // For SVC: only do noise estimation on top spatial layer.
-static INLINE int noise_est_svc(const struct AV1_COMP *const cpi) {
+static inline int noise_est_svc(const struct AV1_COMP *const cpi) {
   return (!cpi->ppi->use_svc ||
           (cpi->ppi->use_svc &&
            cpi->svc.spatial_layer_id == cpi->svc.number_spatial_layers - 1));
@@ -34,18 +34,19 @@ static INLINE int noise_est_svc(const struct AV1_COMP *const cpi) {
 #endif
 
 void av1_noise_estimate_init(NOISE_ESTIMATE *const ne, int width, int height) {
+  const int64_t area = (int64_t)width * height;
   ne->enabled = 0;
-  ne->level = (width * height < 1280 * 720) ? kLowLow : kLow;
+  ne->level = (area < 1280 * 720) ? kLowLow : kLow;
   ne->value = 0;
   ne->count = 0;
   ne->thresh = 90;
   ne->last_w = 0;
   ne->last_h = 0;
-  if (width * height >= 1920 * 1080) {
+  if (area >= 1920 * 1080) {
     ne->thresh = 200;
-  } else if (width * height >= 1280 * 720) {
+  } else if (area >= 1280 * 720) {
     ne->thresh = 140;
-  } else if (width * height >= 640 * 360) {
+  } else if (area >= 640 * 360) {
     ne->thresh = 115;
   }
   ne->num_frames_estimate = 15;

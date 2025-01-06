@@ -29,6 +29,8 @@
 #include "CachedTypes.h"
 #include "UnlinkedFunctionExecutable.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 void CachedBytecode::addGlobalUpdate(Ref<CachedBytecode> bytecode)
@@ -46,7 +48,7 @@ void CachedBytecode::addFunctionUpdate(const UnlinkedFunctionExecutable* executa
     ptrdiff_t offset = it->value.base();
     ASSERT(offset);
     copyLeafExecutables(bytecode.get());
-    m_updates.append(CacheUpdate::FunctionUpdate { offset, kind, { executable->features(), executable->lexicalScopeFeatures(), executable->hasCapturedVariables() }, WTFMove(bytecode->m_payload) });
+    m_updates.append(CacheUpdate::FunctionUpdate { offset, kind, { executable->features(), executable->lexicallyScopedFeatures(), executable->hasCapturedVariables() }, WTFMove(bytecode->m_payload) });
 }
 
 void CachedBytecode::copyLeafExecutables(const CachedBytecode& bytecode)
@@ -90,3 +92,5 @@ void CachedBytecode::commitUpdates(const ForEachUpdateCallback& callback) const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

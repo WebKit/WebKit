@@ -39,11 +39,15 @@ public:
     }
 
     const CSSPropertyID* begin() const { return properties(); }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     const CSSPropertyID* end() const { return properties() + length(); }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     const CSSPropertyID* properties() const { return m_properties; }
     unsigned length() const { return m_length; }
     CSSPropertyID id() const { return m_shorthandID; }
+
+    std::span<const CSSPropertyID> propertiesSpan() const { return unsafeMakeSpan(m_properties, m_length); }
 
 private:
     const CSSPropertyID* m_properties { nullptr };

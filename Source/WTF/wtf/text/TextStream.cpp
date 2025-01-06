@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/text/TextStream.h>
 
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -144,7 +145,13 @@ TextStream& TextStream::operator<<(StringView string)
 
 TextStream& TextStream::operator<<(const HexNumberBuffer& buffer)
 {
-    m_text.append(makeString(buffer));
+    m_text.append(buffer);
+    return *this;
+}
+
+TextStream& TextStream::operator<<(const FormattedCSSNumber& number)
+{
+    m_text.append(number);
     return *this;
 }
 

@@ -42,7 +42,7 @@
         setEnableFeature(false, finishJSTest);
     }
 
-    function secondStep() {
+    async function secondStep() {
         let cookies = internals.getCookies();
         if (cookies.length !== 1) {
             testFailed("Should have exactly one cookie before test but found " + cookies.length + " cookies.");
@@ -58,12 +58,11 @@
         // Set the cookie again to reset its SameSite status.
         document.cookie = "clientSideCookie=1";
 
-        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
+        completeTest();
     }
 
-    function runTest() {
+    async function runTest() {
         document.cookie = "clientSideCookie=1";
 
         testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true);
@@ -82,9 +81,8 @@
 
         setMultipleTopFrameUniqueRedirectTo(statisticsUrl);
 
-        testRunner.installStatisticsDidScanDataRecordsCallback(secondStep);
-
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
+        secondStep();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

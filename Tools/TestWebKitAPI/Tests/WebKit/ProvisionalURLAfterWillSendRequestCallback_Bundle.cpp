@@ -67,13 +67,13 @@ public:
     void didCreatePage(WKBundleRef bundle, WKBundlePageRef page) override
     {
         WKBundlePageResourceLoadClientV0 resourceLoadClient;
-        memset(&resourceLoadClient, 0, sizeof(resourceLoadClient));
+        zeroBytes(resourceLoadClient);
         resourceLoadClient.base.version = 0;
         resourceLoadClient.willSendRequestForFrame = willSendRequestForFrame;
         WKBundlePageSetResourceLoadClient(page, &resourceLoadClient.base);
 
         WKBundlePageLoaderClientV0 pageLoaderClient;
-        memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
+        zeroBytes(pageLoaderClient);
         pageLoaderClient.base.version = 0;
         pageLoaderClient.didCommitLoadForFrame = didCommitLoadForFrame;
         WKBundlePageSetPageLoaderClient(page, &pageLoaderClient.base);

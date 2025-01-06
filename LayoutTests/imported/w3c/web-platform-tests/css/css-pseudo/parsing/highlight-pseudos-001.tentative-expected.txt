@@ -1,0 +1,32 @@
+
+FAIL "::search-text" should be a valid selector '::search-text' is not a valid selector.
+FAIL ".a::search-text" should be a valid selector '.a::search-text' is not a valid selector.
+FAIL "div ::search-text" should be a valid selector 'div ::search-text' is not a valid selector.
+FAIL "::part(my-part)::search-text" should be a valid selector '::part(my-part)::search-text' is not a valid selector.
+PASS "::before::search-text" should be an invalid selector
+PASS "::search-text.a" should be an invalid selector
+PASS "::search-text div" should be an invalid selector
+PASS "::search-text::after" should be an invalid selector
+PASS "::search-text:hover" should be an invalid selector
+PASS ":not(::search-text)" should be an invalid selector
+FAIL "::search-text:current" should be a valid selector '::search-text:current' is not a valid selector.
+FAIL ".a::search-text:current" should be a valid selector '.a::search-text:current' is not a valid selector.
+FAIL "div ::search-text:current" should be a valid selector 'div ::search-text:current' is not a valid selector.
+FAIL "::part(my-part)::search-text:current" should be a valid selector '::part(my-part)::search-text:current' is not a valid selector.
+PASS "::before::search-text:current" should be an invalid selector
+PASS "::search-text:current.a" should be an invalid selector
+PASS "::search-text:current div" should be an invalid selector
+PASS "::search-text:current::after" should be an invalid selector
+PASS "::search-text:current:hover" should be an invalid selector
+PASS ":not(::search-text:current)" should be an invalid selector
+FAIL "::search-text:not(:current)" should be a valid selector '::search-text:not(:current)' is not a valid selector.
+FAIL ".a::search-text:not(:current)" should be a valid selector '.a::search-text:not(:current)' is not a valid selector.
+FAIL "div ::search-text:not(:current)" should be a valid selector 'div ::search-text:not(:current)' is not a valid selector.
+FAIL "::part(my-part)::search-text:not(:current)" should be a valid selector '::part(my-part)::search-text:not(:current)' is not a valid selector.
+PASS "::before::search-text:not(:current)" should be an invalid selector
+PASS "::search-text:not(:current).a" should be an invalid selector
+PASS "::search-text:not(:current) div" should be an invalid selector
+PASS "::search-text:not(:current)::after" should be an invalid selector
+PASS "::search-text:not(:current):hover" should be an invalid selector
+PASS ":not(::search-text:not(:current))" should be an invalid selector
+

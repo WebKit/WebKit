@@ -100,7 +100,12 @@ TEST(AppHighlights, AppHighlightCreateAndRestore)
     }, 2, @"Expected Highlights to be populated.");
 }
 
+// FIXME when rdar://141462057 is resolved.
+#if PLATFORM(IOS)
+TEST(AppHighlights, DISABLED_AppHighlightCreateAndRestoreAndScroll)
+#else
 TEST(AppHighlights, AppHighlightCreateAndRestoreAndScroll)
+#endif
 {
     auto highlight = createAppHighlightWithHTML(@"<div style='height: 10000px'></div>Test", @"document.execCommand('SelectAll')", @"Test");
     auto webViewRestore = createWebViewForAppHighlightsWithHTML(@"<div style='height: 10000px'></div>Test");

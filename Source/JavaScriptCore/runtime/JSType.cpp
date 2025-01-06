@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Sosuke Suzuki <aosukeke@gmail.com>.
+ * Copyright (C) 2024 Tetsuharu Ohzeki <tetsuharu.ohzeki@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,6 +85,7 @@ void printInternal(PrintStream& out, JSC::JSType type)
     CASE(Uint16ArrayType)
     CASE(Int32ArrayType)
     CASE(Uint32ArrayType)
+    CASE(Float16ArrayType)
     CASE(Float32ArrayType)
     CASE(Float64ArrayType)
     CASE(BigInt64ArrayType)
@@ -103,6 +106,8 @@ void printInternal(PrintStream& out, JSC::JSType type)
     CASE(JSGeneratorType)
     CASE(JSAsyncGeneratorType)
     CASE(JSArrayIteratorType)
+    CASE(JSIteratorType)
+    CASE(JSIteratorHelperType)
     CASE(JSMapIteratorType)
     CASE(JSSetIteratorType)
     CASE(JSStringIteratorType)
@@ -117,6 +122,9 @@ void printInternal(PrintStream& out, JSC::JSType type)
     CASE(StringObjectType)
     CASE(DerivedStringObjectType)
     CASE(MaxJSType)
+    CASE(JSWrapForValidIteratorType)
+    CASE(JSRegExpStringIteratorType)
+    CASE(JSAsyncFromSyncIteratorType)
     }
 }
 

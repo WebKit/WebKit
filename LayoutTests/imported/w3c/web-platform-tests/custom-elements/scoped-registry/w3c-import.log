@@ -16,4 +16,11 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/scoped-registry/CustomElementRegistry-constructor.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/scoped-registry/CustomElementRegistry-multi-register.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/scoped-registry/ShadowRoot-createElement.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/scoped-registry/ShadowRoot-init-registry.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/scoped-registry/ShadowRoot-innerHTML-upgrade.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/scoped-registry/constructor-call.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/scoped-registry/constructor-reentry-with-different-definition.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/scoped-registry/scoped-registry-define-upgrade-criteria.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/scoped-registry/scoped-registry-define-upgrade-order.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/scoped-registry/scoped-registry-registry-define-get-etc.tentative.html

@@ -10,7 +10,10 @@
 
 #include "rtc_base/ssl_adapter.h"
 
+#include <memory>
+
 #include "rtc_base/openssl_adapter.h"
+#include "rtc_base/socket.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -29,8 +29,11 @@
 #include "Navigator.h"
 #include "UserActivation.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorUserActivation);
 
 NavigatorUserActivation::NavigatorUserActivation(Navigator& navigator)
     : m_userActivation(UserActivation::create(navigator))

@@ -41,8 +41,7 @@ from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.checkout.scm import Git
 
-if sys.version_info > (3, 0):
-    from functools import reduce
+from functools import reduce
 
 
 # This class represents the WebKit-specific parts of the checkout (like ChangeLogs).

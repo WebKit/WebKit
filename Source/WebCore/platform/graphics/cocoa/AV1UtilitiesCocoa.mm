@@ -63,6 +63,9 @@ static bool isConfigurationRecordHDR(const AV1CodecConfigurationRecord& record)
 
 std::optional<MediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigurationRecord& record, const VideoConfiguration& configuration)
 {
+    if (!validateAV1ConfigurationRecord(record))
+        return std::nullopt;
+
     if (!validateAV1PerLevelConstraints(record, configuration))
         return std::nullopt;
 
@@ -118,7 +121,25 @@ std::optional<MediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigu
         auto supportedChromaSubsampling = makeVector(cfSupportedChromaSubsampling, [](CFStringRef chromaSubsamplingString) {
             return parseInteger<uint8_t>(String(chromaSubsamplingString));
         });
-        if (!supportedChromaSubsampling.contains(static_cast<uint8_t>(record.chromaSubsampling)))
+
+        // CoreMedia defines the kVTDecoderCapability_ChromaSubsampling value as
+        // three decimal digits consisting of, in order from highest digit to lowest:
+        // [subsampling_x, subsampling_y, mono_chrome]. This conflicts with AV1's
+        // definition of chromaSubsampling in the Codecs Parameter String:
+        // "The chromaSubsampling parameter value, represented by a three-digit decimal,
+        // SHALL have its first digit equal to subsampling_x and its second digit equal to
+        // subsampling_y. If both subsampling_x and subsampling_y are set to 1, then the third
+        // digit SHALL be equal to chroma_sample_position, otherwise it SHALL be set to 0."
+
+        // CoreMedia supports all values of chroma_sample_position, so to reconcile this
+        // discrepency, construct a "chroma subsampling" query out of the high-order digits
+        // of the AV1CodecConfigurationRecord.chromaSubsampling field, and use the
+        // AV1CodecConfigurationRecord.monochrome field as the low-order digit.
+
+        uint8_t subsamplingXandY = record.chromaSubsampling - (record.chromaSubsampling % 10);
+        uint8_t subsamplingQuery = subsamplingXandY + (record.monochrome ? 1 : 0);
+
+        if (!supportedChromaSubsampling.contains(subsamplingQuery))
             return std::nullopt;
     }
 

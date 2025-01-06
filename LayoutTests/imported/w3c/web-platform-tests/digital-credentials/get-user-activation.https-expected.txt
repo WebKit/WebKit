@@ -1,0 +1,4 @@
+
+PASS navigator.identity.get() calling the API without user activation should reject with NotAllowedError.
+PASS navigator.identity.get() consumes user activation.
+

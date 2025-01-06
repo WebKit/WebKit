@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/body-onload.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/compile-event-handler-lexical-scopes-form-owner.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/compile-event-handler-lexical-scopes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/compile-event-handler-settings-objects.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/compile-event-handler-symbol-unscopables.html

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,7 +15,7 @@
 #include "aom_dsp/quantize.h"
 #include "aom_dsp/x86/quantize_x86.h"
 
-static INLINE void load_b_values_avx2(const int16_t *zbin_ptr, __m256i *zbin,
+static inline void load_b_values_avx2(const int16_t *zbin_ptr, __m256i *zbin,
                                       const int16_t *round_ptr, __m256i *round,
                                       const int16_t *quant_ptr, __m256i *quant,
                                       const int16_t *dequant_ptr,
@@ -36,13 +36,13 @@ static INLINE void load_b_values_avx2(const int16_t *zbin_ptr, __m256i *zbin,
   *shift = _mm256_permute4x64_epi64(*shift, 0x54);
 }
 
-static INLINE __m256i load_coefficients_avx2(const tran_low_t *coeff_ptr) {
+static inline __m256i load_coefficients_avx2(const tran_low_t *coeff_ptr) {
   const __m256i coeff1 = _mm256_load_si256((__m256i *)(coeff_ptr));
   const __m256i coeff2 = _mm256_load_si256((__m256i *)(coeff_ptr + 8));
   return _mm256_packs_epi32(coeff1, coeff2);
 }
 
-static INLINE void update_mask1_avx2(__m256i *cmp_mask,
+static inline void update_mask1_avx2(__m256i *cmp_mask,
                                      const int16_t *iscan_ptr, int *is_found,
                                      __m256i *mask) {
   __m256i temp_mask = _mm256_setzero_si256();
@@ -54,7 +54,7 @@ static INLINE void update_mask1_avx2(__m256i *cmp_mask,
   *mask = _mm256_max_epi16(temp_mask, *mask);
 }
 
-static INLINE void update_mask0_avx2(__m256i *qcoeff, __m256i *threshold,
+static inline void update_mask0_avx2(__m256i *qcoeff, __m256i *threshold,
                                      const int16_t *iscan_ptr, int *is_found,
                                      __m256i *mask) {
   __m256i zero = _mm256_setzero_si256();
@@ -70,7 +70,7 @@ static INLINE void update_mask0_avx2(__m256i *qcoeff, __m256i *threshold,
   update_mask1_avx2(&cmp_mask0, iscan_ptr, is_found, mask);
 }
 
-static INLINE void calculate_qcoeff_avx2(__m256i *coeff, const __m256i *round,
+static inline void calculate_qcoeff_avx2(__m256i *coeff, const __m256i *round,
                                          const __m256i *quant,
                                          const __m256i *shift) {
   __m256i tmp, qcoeff;
@@ -80,11 +80,11 @@ static INLINE void calculate_qcoeff_avx2(__m256i *coeff, const __m256i *round,
   *coeff = _mm256_mulhi_epi16(qcoeff, *shift);
 }
 
-static INLINE __m256i calculate_dqcoeff_avx2(__m256i qcoeff, __m256i dequant) {
+static inline __m256i calculate_dqcoeff_avx2(__m256i qcoeff, __m256i dequant) {
   return _mm256_mullo_epi16(qcoeff, dequant);
 }
 
-static INLINE void store_coefficients_avx2(__m256i coeff_vals,
+static inline void store_coefficients_avx2(__m256i coeff_vals,
                                            tran_low_t *coeff_ptr) {
   __m256i coeff_sign = _mm256_srai_epi16(coeff_vals, 15);
   __m256i coeff_vals_lo = _mm256_unpacklo_epi16(coeff_vals, coeff_sign);

@@ -31,6 +31,7 @@
 #include <mach/message.h>
 #include <memory>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
 namespace IPC {
@@ -45,6 +46,8 @@ public:
 
     size_t size() const { return m_size; }
     mach_msg_header_t* header() { return m_messageHeader; }
+
+    std::span<uint8_t> span() { return unsafeMakeSpan(reinterpret_cast<uint8_t*>(m_messageHeader), m_size); }
 
     void leakDescriptors();
 

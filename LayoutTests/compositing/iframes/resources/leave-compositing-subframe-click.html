@@ -22,9 +22,9 @@
   <script type="text/javascript">
     function doTest()
     {
-      window.setTimeout(function() {
+      window.setTimeout(async function() {
         document.getElementById('target').className = 'box';
-        parent.testDone();
+        await parent.testDone();
       }, 50);
     }
     window.addEventListener('load', doTest, false);

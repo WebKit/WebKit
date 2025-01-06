@@ -1,0 +1,4 @@
+
+PASS @supports doesn't use unsupported -moz-user-modify property
+PASS CSS.supports doesn't use unsupported -moz-user-modify property
+

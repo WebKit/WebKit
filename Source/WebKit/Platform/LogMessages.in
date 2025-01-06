@@ -1,0 +1,57 @@
+# Copyright (C) 2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# File format:
+#
+# Identifier, format string, parameters, Log type (DEFAULT, INFO, ERROR, FAULT), Category (Default, Process, Loading, etc) 
+
+RECEIVED_LAUNCH_SERVICES_DATABASE, "Received Launch Services database", (), INFO, Loading
+WAITING_FOR_LAUNCH_SERVICES_DATABASE_UPDATE_TOOK_F_SECONDS, "Waiting for Launch Services database update took %f seconds", (double), ERROR, Loading
+TIMED_OUT_WAITING_FOR_LAUNCH_SERVICES_DATABASE_UPDATE, "Timed out waiting for Launch Services database update", (), FAULT, Loading
+
+PLATFORM_INITIALIZE_WEBPROCESS, "WebProcess::platformInitializeWebProcess", (), DEFAULT, Process
+
+WEBRESOURCELOADER_CONSTRUCTOR, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::WebResourceLoader", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBRESOURCELOADER_WILLSENDREQUEST, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::willSendRequest", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBRESOURCELOADER_WILLSENDREQUEST_NO_CORELOADER, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::willSendRequest: exiting early because no coreloader or identifier", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBRESOURCELOADER_WILLSENDREQUEST_CONTINUE, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::willSendRequest: returning ContinueWillSendRequest", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBRESOURCELOADER_DIDRECEIVERESPONSE, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::didReceiveResponse: (httpStatusCode=%d)", (uint64_t, uint64_t, uint64_t, int), DEFAULT, Network
+WEBRESOURCELOADER_DIDRECEIVERESPONSE_NOT_CONTINUING_LOAD, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::didReceiveResponse: not continuing load because no coreLoader or no ID", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBRESOURCELOADER_DIDRECEIVERESPONSE_NOT_CONTINUING_INTERCEPT_LOAD, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::didReceiveResponse: not continuing intercept load because no coreLoader or no ID", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBRESOURCELOADER_DIDRECEIVEDATA, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::didReceiveData: Started receiving data", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBRESOURCELOADER_DIDFINISHRESOURCELOAD, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::didFinishResourceLoad: (length=%zd)", (uint64_t, uint64_t, uint64_t, size_t), DEFAULT, Network
+WEBRESOURCELOADER_SERVICEWORKERDIDNOTHANDLE, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::serviceWorkerDidNotHandle", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBRESOURCELOADER_DIDFAILRESOURCELOAD, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::didFailResourceLoad", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBRESOURCELOADER_DIDBLOCKAUTHENTICATIONCHALLENGE, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::didBlockAuthenticationChallenge", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBRESOURCELOADER_STOPLOADINGAFTERSECURITYPOLICYDENIED, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBRESOURCELOADER_DIDRECEIVERESOURCE, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::didReceiveResource", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBRESOURCELOADER_DIDRECEIVERESOURCE_UNABLE_TO_CREATE_FRAGMENTEDSHAREDBUFFER, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebResourceLoader::didReceiveResource: Unable to create FragmentedSharedBuffer", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+
+WEBLOADERSTRATEGY_SCHEDULELOAD, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebLoaderStrategy::scheduleLoad: URL will be scheduled with the NetworkProcess", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+WEBLOADERSTRATEGY_SCHEDULELOAD_RESOURCE_SCHEDULED_WITH_NETWORKPROCESS, "[webPageID=%llu, frameID=%llu, resourceID=%llu] WebLoaderStrategy::scheduleLoad: Resource is being scheduled with the NetworkProcess (priority=%d, existingNetworkResourceLoadIdentifierToResume=%llu)", (uint64_t, uint64_t, uint64_t, int, uint64_t), DEFAULT, Network
+
+WEBFRAMELOADERCLIENT_NAVIGATIONACTIONDATA_NO_WEBPAGE, "[webFrameID=%llu, webPageID=%llu] WebFrameLoaderClient::navigationActionData: returning std::nullopt because there's no web page", (uint64_t, uint64_t), DEFAULT, Network
+WEBFRAMELOADERCLIENT_NAVIGATIONACTIONDATA_EMPTY_REQUEST, "[webFrameID=%llu, webPageID=%llu] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: returning std::nullopt because request is empty", (uint64_t, uint64_t), DEFAULT, Network
+WEBFRAMELOADERCLIENT_NAVIGATIONACTIONDATA_NO_FRAME, "[webFrameID=%llu, webPageID=%llu] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: returning std::nullopt because frame does not exist", (uint64_t, uint64_t), DEFAULT, Network
+WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_SYNC_IPC_FAILED, "[webFrameID=%llu, webPageID=%llu] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC, error = %hhu", (uint64_t, uint64_t, uint8_t), DEFAULT, Network
+WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_GOT_POLICYACTION_FROM_SYNC_IPC, "[webFrameID=%llu, webPageID=%llu] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: Got policyAction %u from sync IPC", (uint64_t, uint64_t, unsigned), DEFAULT, Network
+WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_GOT_POLICYACTION_FROM_ASYNC_IPC, "[webFrameID=%llu, webPageID=%llu] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: Got policyAction %u from async IPC", (uint64_t, uint64_t, unsigned), DEFAULT, Network

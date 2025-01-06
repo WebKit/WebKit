@@ -1,5 +1,7 @@
 /*
  * Copyright (C) Research In Motion Limited 2010-2011. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,7 +41,7 @@ struct SVGCharacterData {
     float rotate;
 };
 
-typedef HashMap<unsigned, SVGCharacterData> SVGCharacterDataMap;
+typedef UncheckedKeyHashMap<unsigned, SVGCharacterData> SVGCharacterDataMap;
 
 class SVGTextLayoutAttributes {
     WTF_MAKE_NONCOPYABLE(SVGTextLayoutAttributes);
@@ -47,7 +49,8 @@ public:
     explicit SVGTextLayoutAttributes(RenderSVGInlineText&);
 
     void clear();
-    static float emptyValue();
+    static constexpr float emptyValue() { return std::numeric_limits<float>::quiet_NaN(); }
+    static bool isEmptyValue(float value) { return std::isnan(value); }
 
     RenderSVGInlineText& context();
     const RenderSVGInlineText& context() const;
@@ -56,6 +59,7 @@ public:
     const SVGCharacterDataMap& characterDataMap() const { return m_characterDataMap; }
 
     Vector<SVGTextMetrics>& textMetricsValues() { return m_textMetricsValues; }
+    const Vector<SVGTextMetrics>& textMetricsValues() const { return m_textMetricsValues; }
 
 private:
     SingleThreadWeakRef<RenderSVGInlineText> m_context;

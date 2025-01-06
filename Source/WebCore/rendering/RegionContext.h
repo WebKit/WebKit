@@ -28,6 +28,7 @@
 #include "AffineTransform.h"
 #include "IntRect.h"
 #include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ namespace WebCore {
 class Path;
 
 class RegionContext : public CanMakeCheckedPtr<RegionContext> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RegionContext);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RegionContext);
 public:
     virtual ~RegionContext() = default;

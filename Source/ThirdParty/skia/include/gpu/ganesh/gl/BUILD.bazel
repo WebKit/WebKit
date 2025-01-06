@@ -1,4 +1,4 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
+load("//bazel:skia_rules.bzl", "skia_filegroup")
 
 package(
     default_applicable_licenses = ["//:license"],
@@ -6,16 +6,20 @@ package(
 
 licenses(["notice"])
 
-exports_files_legacy()
-
 skia_filegroup(
     name = "public_hdrs",
     srcs = [
+        "GrGLAssembleHelpers.h",
+        "GrGLAssembleInterface.h",
         "GrGLBackendSurface.h",
+        "GrGLConfig.h",
         "GrGLDirectContext.h",
+        "GrGLExtensions.h",
+        "GrGLFunctions.h",
+        "GrGLInterface.h",
+        "GrGLTypes.h",
     ],
     visibility = [
-        "//include/gpu/ganesh:__pkg__",
         "//src/gpu/ganesh/gl:__pkg__",
     ],
 )

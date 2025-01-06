@@ -23,7 +23,7 @@
 #include <memory>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/message_digest.h"
 #include "rtc_base/openssl_digest.h"
@@ -56,6 +56,7 @@ static void PrintCert(X509* x509) {
 // Generate a self-signed certificate, with the public key from the
 // given key pair. Caller is responsible for freeing the returned object.
 static X509* MakeCertificate(EVP_PKEY* pkey, const SSLIdentityParams& params) {
+  RTC_DCHECK(pkey != nullptr);
   RTC_LOG(LS_INFO) << "Making certificate for " << params.common_name;
 
   ASN1_INTEGER* asn1_serial_number = nullptr;
@@ -95,8 +96,8 @@ static X509* MakeCertificate(EVP_PKEY* pkey, const SSLIdentityParams& params) {
   name.reset(X509_NAME_new());
   if (name == nullptr ||
       !X509_NAME_add_entry_by_NID(name.get(), NID_commonName, MBSTRING_UTF8,
-                                  (unsigned char*)params.common_name.c_str(),
-                                  -1, -1, 0) ||
+                                  (unsigned char*)params.common_name.data(), -1,
+                                  -1, 0) ||
       !X509_set_subject_name(x509.get(), name.get()) ||
       !X509_set_issuer_name(x509.get(), name.get())) {
     return nullptr;

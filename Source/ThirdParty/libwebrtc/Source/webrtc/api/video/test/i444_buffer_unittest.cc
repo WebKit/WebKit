@@ -11,9 +11,13 @@
 
 #include "api/video/i444_buffer.h"
 
+#include <cstdint>
+#include <cstring>
+
+#include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/video_frame_buffer.h"
 #include "test/frame_utils.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {

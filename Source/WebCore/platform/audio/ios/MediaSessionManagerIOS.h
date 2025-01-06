@@ -31,6 +31,7 @@
 #include "MediaSessionHelperIOS.h"
 #include "MediaSessionManagerCocoa.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WebMediaSessionHelper;
 
@@ -47,16 +48,14 @@ class MediaSessionManageriOS
     : public MediaSessionManagerCocoa
     , public MediaSessionHelperClient
     , public AudioSessionInterruptionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(MediaSessionManageriOS);
 public:
     virtual ~MediaSessionManageriOS();
 
     bool hasWirelessTargetsAvailable() override;
     bool isMonitoringWirelessTargets() const override;
-    static WEBCORE_EXPORT void providePresentingApplicationPID();
 
-    using MediaSessionHelperClient::weakPtrFactory;
-    using MediaSessionHelperClient::WeakValueType;
-    using MediaSessionHelperClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(MediaSessionHelperClient);
 
 private:
     friend class PlatformMediaSessionManager;
@@ -68,7 +67,8 @@ private:
 #endif
 
     void configureWirelessTargetMonitoring() final;
-    void providePresentingApplicationPIDIfNecessary() final;
+    void providePresentingApplicationPIDIfNecessary(ProcessID) final;
+    void updatePresentingApplicationPIDIfNecessary(ProcessID) final;
     bool sessionWillBeginPlayback(PlatformMediaSession&) final;
     void sessionWillEndPlayback(PlatformMediaSession&, DelayCallingUpdateNowPlaying) final;
 

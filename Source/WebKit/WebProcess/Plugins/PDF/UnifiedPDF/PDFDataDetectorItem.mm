@@ -31,6 +31,7 @@
 #include "PDFKitSPI.h"
 #include <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #include <pal/spi/mac/DataDetectorsSPI.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/cf/TypeCastsCF.h>
 
 #include "PDFKitSoftlink.h"
@@ -55,6 +56,8 @@ Ref<PDFDataDetectorItem> PDFDataDetectorItem::create(DDScannerResult *dataDetect
 {
     return adoptRef(*new PDFDataDetectorItem(dataDetectorResult, pdfPage));
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFDataDetectorItem);
 
 PDFDataDetectorItem::PDFDataDetectorItem(DDScannerResult *dataDetectorResult, PDFPage *pdfPage)
     : m_result { dataDetectorResult }

@@ -33,8 +33,11 @@
 #include "PermissionsPolicy.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "UserMediaRequest.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserMediaController);
 
 ASCIILiteral UserMediaController::supplementName()
 {
@@ -75,6 +78,41 @@ void UserMediaController::logEnumerateDevicesDenial(Document& document)
     PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, document);
     if (RefPtr window = document.domWindow())
         window->printErrorMessage("Not allowed to call enumerateDevices."_s);
+}
+
+void UserMediaController::setShouldListenToVoiceActivity(Document& document, bool shouldListen)
+{
+    if (shouldListen) {
+        ASSERT(!m_voiceActivityDocuments.contains(document));
+        m_voiceActivityDocuments.add(document);
+    } else {
+        ASSERT(m_voiceActivityDocuments.contains(document));
+        m_voiceActivityDocuments.remove(document);
+    }
+    checkDocumentForVoiceActivity(nullptr);
+}
+
+void UserMediaController::checkDocumentForVoiceActivity(const Document* document)
+{
+    if (document) {
+        if (m_shouldListenToVoiceActivity == document->mediaState().containsAny(MediaProducer::IsCapturingAudioMask))
+            return;
+    }
+
+    bool shouldListenToVoiceActivity = anyOf(m_voiceActivityDocuments, [] (auto& document) {
+        return document.mediaState().containsAny(MediaProducer::IsCapturingAudioMask);
+    });
+    if (m_shouldListenToVoiceActivity == shouldListenToVoiceActivity)
+        return;
+
+    m_shouldListenToVoiceActivity = shouldListenToVoiceActivity;
+    m_client->setShouldListenToVoiceActivity(m_shouldListenToVoiceActivity);
+}
+
+void UserMediaController::voiceActivityDetected()
+{
+    for (auto& document : m_voiceActivityDocuments)
+        Ref(document)->voiceActivityDetected();
 }
 
 } // namespace WebCore

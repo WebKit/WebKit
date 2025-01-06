@@ -40,7 +40,6 @@ class VM;
 
 namespace Wasm {
 
-class Instance;
 class WasmToJSCallee;
 
 Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIndex, unsigned importIndex);

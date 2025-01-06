@@ -57,8 +57,8 @@ class CallLinkInfoBase : public BasicRawSentinelNode<CallLinkInfoBase> {
 public:
     enum class CallSiteType : uint8_t {
         CallLinkInfo,
-#if ENABLE(JIT)
         PolymorphicCallNode,
+#if ENABLE(JIT)
         DirectCall,
 #endif
         CachedCall,

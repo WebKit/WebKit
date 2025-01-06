@@ -10,6 +10,8 @@
 
 #include "api/units/data_size.h"
 
+#include <string>
+
 #include "api/array_view.h"
 #include "rtc_base/strings/string_builder.h"
 

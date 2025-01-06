@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -31,13 +31,9 @@ typedef struct {
   int th_step;
 } CONVOLVE_OPS;
 
-typedef float (*activation_fn)(float);
+static inline float softsign(float x) { return x / (fabsf(x) + 1.0f); }
 
-static float softsign(float x) { return x / (float)(fabsf(x) + 1.0); }
-
-static float relu(float x) { return (x < 0) ? 0 : x; }
-
-static float identity(float x) { return x; }
+static inline float relu(float x) { return (x < 0) ? 0 : x; }
 
 typedef struct {
   int allocsize;
@@ -142,14 +138,16 @@ static bool concat_tensor(const TENSOR *src, TENSOR *dst) {
   return true;
 }
 
-int check_tensor_equal_dims(TENSOR *t1, TENSOR *t2) {
+#ifndef NDEBUG
+static int check_tensor_equal_dims(TENSOR *t1, TENSOR *t2) {
   return (t1->width == t2->width && t1->height == t2->height);
 }
 
-int check_tensor_equal_size(TENSOR *t1, TENSOR *t2) {
+static int check_tensor_equal_size(TENSOR *t1, TENSOR *t2) {
   return (t1->channels == t2->channels && t1->width == t2->width &&
           t1->height == t2->height);
 }
+#endif  // NDEBUG
 
 void av1_find_cnn_layer_output_size(int in_width, int in_height,
                                     const CNN_LAYER_CONFIG *layer_config,
@@ -193,8 +191,8 @@ void av1_find_cnn_layer_output_size(int in_width, int in_height,
   }
 }
 
-void find_cnn_out_channels(const CNN_LAYER_CONFIG *layer_config,
-                           int channels_per_branch[]) {
+static void find_cnn_out_channels(const CNN_LAYER_CONFIG *layer_config,
+                                  int channels_per_branch[]) {
   int branch = layer_config->branch;
   const CNN_BRANCH_CONFIG *branch_config = &layer_config->branch_config;
   for (int b = 0; b < CNN_MAX_BRANCHES; ++b) {
@@ -224,7 +222,7 @@ void find_cnn_out_channels(const CNN_LAYER_CONFIG *layer_config,
 }
 
 #if CONFIG_DEBUG
-static INLINE int cnn_has_at_least_one_output(const CNN_CONFIG *cnn_config) {
+static inline int cnn_has_at_least_one_output(const CNN_CONFIG *cnn_config) {
   const int num_layers = cnn_config->num_layers;
   const CNN_LAYER_CONFIG *layer_configs = cnn_config->layer_config;
 
@@ -291,19 +289,7 @@ void av1_find_cnn_output_size(int in_width, int in_height,
   }
 }
 
-activation_fn get_activation(ACTIVATION layer_activation) {
-  switch (layer_activation) {
-    case NONE: return identity;
-    case RELU: return relu;
-    case SOFTSIGN: return softsign;
-    case SIGMOID:
-      assert(0 && "Sigmoid has not been supported in CNN.");  // TO DO
-      return NULL;
-    default: assert(0 && "Unknown activation type"); return NULL;
-  }
-}
-
-static INLINE int get_start_shift_convolve(int width, int filt_width,
+static inline int get_start_shift_convolve(int width, int filt_width,
                                            int stride) {
   const int mod = (width % stride);
   const int filt_off = (filt_width - 1) / 2;
@@ -322,11 +308,22 @@ void av1_cnn_add_c(float **output, int channels, int width, int height,
 
 void av1_cnn_activate_c(float **output, int channels, int width, int height,
                         int stride, ACTIVATION layer_activation) {
-  activation_fn activation = get_activation(layer_activation);
-  for (int c = 0; c < channels; ++c) {
-    for (int i = 0; i < height; ++i)
-      for (int j = 0; j < width; ++j)
-        output[c][i * stride + j] = activation(output[c][i * stride + j]);
+  if (layer_activation == RELU) {
+    for (int c = 0; c < channels; ++c) {
+      for (int i = 0; i < height; ++i)
+        for (int j = 0; j < width; ++j)
+          output[c][i * stride + j] = relu(output[c][i * stride + j]);
+    }
+  } else if (layer_activation == SOFTSIGN) {
+    for (int c = 0; c < channels; ++c) {
+      for (int i = 0; i < height; ++i)
+        for (int j = 0; j < width; ++j)
+          output[c][i * stride + j] = softsign(output[c][i * stride + j]);
+    }
+  } else if (layer_activation == SIGMOID) {
+    assert(0 && "Sigmoid has not been supported in CNN.");  // TO DO
+  } else if (layer_activation != NONE) {
+    assert(0 && "Unknown activation type");
   }
 }
 
@@ -758,7 +755,7 @@ static void convolve_layer_mt(const float **input, int in_width, int in_height,
   }
 }
 
-static INLINE int get_start_shift_deconvolve(int filt_width, int stride) {
+static inline int get_start_shift_deconvolve(int filt_width, int stride) {
   const int dif = AOMMAX(filt_width - stride, 0);
   return dif / 2;
 }
@@ -1013,10 +1010,9 @@ bool av1_cnn_predict_c(const float **input, int in_width, int in_height,
     }
 
     // Non-linearity
-    if (layer_config->activation != IDENTITY)
-      av1_cnn_activate(tensor2[branch].buf, tensor2[branch].channels,
-                       tensor2[branch].width, tensor2[branch].height,
-                       tensor2[branch].stride, layer_config->activation);
+    av1_cnn_activate(tensor2[branch].buf, tensor2[branch].channels,
+                     tensor2[branch].width, tensor2[branch].height,
+                     tensor2[branch].stride, layer_config->activation);
 
     if (layer_config->bn_params.bn_gamma) {
       av1_cnn_batchnorm(

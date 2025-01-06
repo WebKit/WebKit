@@ -25,8 +25,8 @@
 
 #include "IsoSharedPage.h"
 
-#include "StdLibExtras.h"
 #include "VMAllocate.h"
+#include <bit>
 
 #if !BUSE(LIBPAS)
 

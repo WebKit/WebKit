@@ -42,7 +42,9 @@ struct WebExtensionWindowParameters {
 
     std::optional<Vector<WebExtensionTabParameters>> tabs;
 
+#if PLATFORM(COCOA)
     std::optional<CGRect> frame;
+#endif
 
     std::optional<bool> focused;
     std::optional<bool> privateBrowsing;

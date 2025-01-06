@@ -1,4 +1,4 @@
-//@ requireOptions("--useWebAssemblySIMD=1")
+//@ requireOptions("--useWasmSIMD=1")
 //@ skip if !$isSIMDPlatform
 import * as assert from '../assert.js';
 
@@ -9,4 +9,4 @@ var f = wasm_instance.exports.main;
 
 assert.throws(() => {
     f();
-}, TypeError, `an exported wasm function cannot contain a v128 parameter or return value`);
+}, WebAssembly.Exception);

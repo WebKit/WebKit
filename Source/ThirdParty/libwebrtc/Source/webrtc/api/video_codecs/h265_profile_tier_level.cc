@@ -10,8 +10,12 @@
 
 #include "api/video_codecs/h265_profile_tier_level.h"
 
+#include <optional>
 #include <string>
 
+#include "api/rtp_parameters.h"
+#include "api/video/resolution.h"
+#include "rtc_base/arraysize.h"
 #include "rtc_base/string_to_number.h"
 
 namespace webrtc {
@@ -22,13 +26,49 @@ const char kH265FmtpProfile[] = "profile-id";
 const char kH265FmtpTier[] = "tier-flag";
 const char kH265FmtpLevel[] = "level-id";
 
+// Used to align frame width and height for luma picture size calculation.
+// Use the maximum value allowed by spec to get upper bound of luma picture
+// size for given resolution.
+static constexpr int kMinCbSizeYMax = 64;
+
+struct LevelConstraint {
+  const int max_luma_picture_size;
+  const double max_luma_sample_rate;
+  const int max_pic_width_or_height_in_pixels;
+  const H265Level level;
+};
+
+// This is from ITU-T H.265 (09/2023) Table A.8, A.9 & A.11 – Level limits.
+// The max_pic_width_or_height_in_luma_samples is pre-calculated following
+// ITU-T H.265 section A.4.1, that is, find the largest integer value that
+// is multiple of minimal MinCbSizeY(8 according to equation 7-10 and 7-12), is
+// less than sqrt(max_luma_picture_size * 8). For example, at level 1,
+// max_luma_picture_size is 36864, so pic_width_in_luma_samples <= sqrt(36864 *
+// 8) = 543.06. The largest integer that is multiple of 8 and less than 543.06
+// is 536.
+static constexpr LevelConstraint kLevelConstraints[] = {
+    {36864, 552960, 536, H265Level::kLevel1},
+    {122880, 3686400, 984, H265Level::kLevel2},
+    {245760, 7372800, 1400, H265Level::kLevel2_1},
+    {552960, 16588800, 2096, H265Level::kLevel3},
+    {983040, 33177600, 2800, H265Level::kLevel3_1},
+    {2228224, 66846720, 4216, H265Level::kLevel4},
+    {2228224, 133693400, 4216, H265Level::kLevel4_1},
+    {8912896, 267386880, 8440, H265Level::kLevel5},
+    {8912896, 534773760, 8440, H265Level::kLevel5_1},
+    {8912896, 1069547520, 8440, H265Level::kLevel5_2},
+    {35651584, 1069547520, 16888, H265Level::kLevel6},
+    {35651584, 2139095040, 16888, H265Level::kLevel6_1},
+    {35651584, 4278190080, 16888, H265Level::kLevel6_2},
+};
+
 }  // anonymous namespace
 
 // Annex A of https://www.itu.int/rec/T-REC-H.265 (08/21), section A.3.
-absl::optional<H265Profile> StringToH265Profile(const std::string& profile) {
-  absl::optional<int> i = rtc::StringToNumber<int>(profile);
+std::optional<H265Profile> StringToH265Profile(const std::string& profile) {
+  std::optional<int> i = rtc::StringToNumber<int>(profile);
   if (!i.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   switch (i.value()) {
@@ -55,16 +95,16 @@ absl::optional<H265Profile> StringToH265Profile(const std::string& profile) {
     case 11:
       return H265Profile::kProfileHighThroughputScreenContentCoding;
     default:
-      return absl::nullopt;
+      return std::nullopt;
   }
 }
 
 // Annex A of https://www.itu.int/rec/T-REC-H.265 (08/21), section A.4,
 // tiers and levels.
-absl::optional<H265Tier> StringToH265Tier(const std::string& tier) {
-  absl::optional<int> i = rtc::StringToNumber<int>(tier);
+std::optional<H265Tier> StringToH265Tier(const std::string& tier) {
+  std::optional<int> i = rtc::StringToNumber<int>(tier);
   if (!i.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   switch (i.value()) {
@@ -73,14 +113,14 @@ absl::optional<H265Tier> StringToH265Tier(const std::string& tier) {
     case 1:
       return H265Tier::kTier1;
     default:
-      return absl::nullopt;
+      return std::nullopt;
   }
 }
 
-absl::optional<H265Level> StringToH265Level(const std::string& level) {
-  const absl::optional<int> i = rtc::StringToNumber<int>(level);
+std::optional<H265Level> StringToH265Level(const std::string& level) {
+  const std::optional<int> i = rtc::StringToNumber<int>(level);
   if (!i.has_value())
-    return absl::nullopt;
+    return std::nullopt;
 
   switch (i.value()) {
     case 30:
@@ -110,7 +150,7 @@ absl::optional<H265Level> StringToH265Level(const std::string& level) {
     case 186:
       return H265Level::kLevel6_2;
     default:
-      return absl::nullopt;
+      return std::nullopt;
   }
 }
 
@@ -181,44 +221,44 @@ std::string H265LevelToString(H265Level level) {
   }
 }
 
-absl::optional<H265ProfileTierLevel> ParseSdpForH265ProfileTierLevel(
-    const SdpVideoFormat::Parameters& params) {
+std::optional<H265ProfileTierLevel> ParseSdpForH265ProfileTierLevel(
+    const CodecParameterMap& params) {
   static const H265ProfileTierLevel kDefaultProfileTierLevel(
       H265Profile::kProfileMain, H265Tier::kTier0, H265Level::kLevel3_1);
   bool profile_tier_level_specified = false;
 
-  absl::optional<H265Profile> profile;
+  std::optional<H265Profile> profile;
   const auto profile_it = params.find(kH265FmtpProfile);
   if (profile_it != params.end()) {
     profile_tier_level_specified = true;
     const std::string& profile_str = profile_it->second;
     profile = StringToH265Profile(profile_str);
     if (!profile) {
-      return absl::nullopt;
+      return std::nullopt;
     }
   } else {
     profile = H265Profile::kProfileMain;
   }
-  absl::optional<H265Tier> tier;
+  std::optional<H265Tier> tier;
   const auto tier_it = params.find(kH265FmtpTier);
   if (tier_it != params.end()) {
     profile_tier_level_specified = true;
     const std::string& tier_str = tier_it->second;
     tier = StringToH265Tier(tier_str);
     if (!tier) {
-      return absl::nullopt;
+      return std::nullopt;
     }
   } else {
     tier = H265Tier::kTier0;
   }
-  absl::optional<H265Level> level;
+  std::optional<H265Level> level;
   const auto level_it = params.find(kH265FmtpLevel);
   if (level_it != params.end()) {
     profile_tier_level_specified = true;
     const std::string& level_str = level_it->second;
     level = StringToH265Level(level_str);
     if (!level) {
-      return absl::nullopt;
+      return std::nullopt;
     }
   } else {
     level = H265Level::kLevel3_1;
@@ -226,7 +266,7 @@ absl::optional<H265ProfileTierLevel> ParseSdpForH265ProfileTierLevel(
 
   // Spec Table A.9, level 1 to level 3.1 does not allow high tiers.
   if (level <= H265Level::kLevel3_1 && tier == H265Tier::kTier1) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   return !profile_tier_level_specified
@@ -235,14 +275,59 @@ absl::optional<H265ProfileTierLevel> ParseSdpForH265ProfileTierLevel(
                                     level.value());
 }
 
-bool H265IsSameProfileTierLevel(const SdpVideoFormat::Parameters& params1,
-                                const SdpVideoFormat::Parameters& params2) {
-  const absl::optional<H265ProfileTierLevel> ptl1 =
+bool H265IsSameProfileTierLevel(const CodecParameterMap& params1,
+                                const CodecParameterMap& params2) {
+#if WEBRTC_WEBKIT_BUILD
+  // FIXME: https://bugs.webkit.org/show_bug.cgi?id=276486.
+  // Populate encoder and decoder factories to properly support negotiation.
+  if (!params1.size() || !params2.size())
+      return true;
+#endif
+  const std::optional<H265ProfileTierLevel> ptl1 =
       ParseSdpForH265ProfileTierLevel(params1);
-  const absl::optional<H265ProfileTierLevel> ptl2 =
+  const std::optional<H265ProfileTierLevel> ptl2 =
       ParseSdpForH265ProfileTierLevel(params2);
   return ptl1 && ptl2 && ptl1->profile == ptl2->profile &&
          ptl1->tier == ptl2->tier && ptl1->level == ptl2->level;
+}
+
+bool H265IsSameProfile(const CodecParameterMap& params1,
+                       const CodecParameterMap& params2) {
+  const std::optional<H265ProfileTierLevel> ptl1 =
+      ParseSdpForH265ProfileTierLevel(params1);
+  const std::optional<H265ProfileTierLevel> ptl2 =
+      ParseSdpForH265ProfileTierLevel(params2);
+  return ptl1 && ptl2 && ptl1->profile == ptl2->profile;
+}
+
+bool H265IsSameTier(const CodecParameterMap& params1,
+                    const CodecParameterMap& params2) {
+  const std::optional<H265ProfileTierLevel> ptl1 =
+      ParseSdpForH265ProfileTierLevel(params1);
+  const std::optional<H265ProfileTierLevel> ptl2 =
+      ParseSdpForH265ProfileTierLevel(params2);
+  return ptl1 && ptl2 && ptl1->tier == ptl2->tier;
+}
+
+std::optional<H265Level> GetSupportedH265Level(const Resolution& resolution,
+                                               float max_fps) {
+  int aligned_width =
+      (resolution.width + kMinCbSizeYMax - 1) & ~(kMinCbSizeYMax - 1);
+  int aligned_height =
+      (resolution.height + kMinCbSizeYMax - 1) & ~(kMinCbSizeYMax - 1);
+
+  for (int i = arraysize(kLevelConstraints) - 1; i >= 0; --i) {
+    const LevelConstraint& level_constraint = kLevelConstraints[i];
+    if (level_constraint.max_luma_picture_size <=
+            aligned_width * aligned_height &&
+        level_constraint.max_luma_sample_rate <=
+            aligned_width * aligned_height * max_fps &&
+        level_constraint.max_pic_width_or_height_in_pixels >= aligned_width &&
+        level_constraint.max_pic_width_or_height_in_pixels >= aligned_height) {
+      return level_constraint.level;
+    }
+  }
+  return std::nullopt;
 }
 
 }  // namespace webrtc

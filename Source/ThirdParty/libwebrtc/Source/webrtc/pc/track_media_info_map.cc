@@ -107,8 +107,8 @@ void GetAudioAndVideoTrackBySsrc(
 TrackMediaInfoMap::TrackMediaInfoMap() = default;
 
 void TrackMediaInfoMap::Initialize(
-    absl::optional<cricket::VoiceMediaInfo> voice_media_info,
-    absl::optional<cricket::VideoMediaInfo> video_media_info,
+    std::optional<cricket::VoiceMediaInfo> voice_media_info,
+    std::optional<cricket::VideoMediaInfo> video_media_info,
     rtc::ArrayView<rtc::scoped_refptr<RtpSenderInternal>> rtp_senders,
     rtc::ArrayView<rtc::scoped_refptr<RtpReceiverInternal>> rtp_receivers) {
   rtc::Thread::ScopedDisallowBlockingCalls no_blocking_calls;
@@ -262,12 +262,12 @@ rtc::scoped_refptr<VideoTrackInterface> TrackMediaInfoMap::GetVideoTrack(
   return FindValueOrNull(video_track_by_receiver_info_, &video_receiver_info);
 }
 
-absl::optional<int> TrackMediaInfoMap::GetAttachmentIdByTrack(
+std::optional<int> TrackMediaInfoMap::GetAttachmentIdByTrack(
     const MediaStreamTrackInterface* track) const {
   RTC_DCHECK(is_initialized_);
   auto it = attachment_id_by_track_.find(track);
-  return it != attachment_id_by_track_.end() ? absl::optional<int>(it->second)
-                                             : absl::nullopt;
+  return it != attachment_id_by_track_.end() ? std::optional<int>(it->second)
+                                             : std::nullopt;
 }
 
 }  // namespace webrtc

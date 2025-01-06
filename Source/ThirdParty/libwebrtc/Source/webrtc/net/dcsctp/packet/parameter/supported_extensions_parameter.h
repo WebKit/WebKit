@@ -41,7 +41,7 @@ class SupportedExtensionsParameter
   explicit SupportedExtensionsParameter(std::vector<uint8_t> chunk_types)
       : chunk_types_(std::move(chunk_types)) {}
 
-  static absl::optional<SupportedExtensionsParameter> Parse(
+  static std::optional<SupportedExtensionsParameter> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

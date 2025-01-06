@@ -62,10 +62,17 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_INTRINSIC_HEAP_INITIALIZER(heap_ptr, primitive_type, intrinsic_support, passed_config, runtime_config) { \
         PAS_INTRINSIC_HEAP_SEGREGATED_HEAP_FIELDS(heap_ptr, intrinsic_support, runtime_config) \
+        .megapage_large_heap = { \
+            .free_heap = PAS_FAST_LARGE_FREE_HEAP_INITIALIZER, \
+            .index = 0, \
+            .table_state = pas_heap_table_state_uninitialized, \
+            .is_megapage_heap = true, \
+        }, \
         .large_heap = { \
             .free_heap = PAS_FAST_LARGE_FREE_HEAP_INITIALIZER, \
             .index = 0, \
             .table_state = pas_heap_table_state_uninitialized, \
+            .is_megapage_heap = false, \
         }, \
         .type = (const pas_heap_type*)(primitive_type), \
         .heap_ref = NULL, \
@@ -85,7 +92,7 @@ pas_try_allocate_intrinsic_impl_casual_case(
     pas_try_allocate_common_slow try_allocate_common_slow,
     pas_intrinsic_heap_designation_mode designation_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     size_t aligned_size;
     size_t index;
@@ -185,7 +192,7 @@ pas_try_allocate_intrinsic_impl_inline_only(
     pas_try_allocate_common_fast_inline_only try_allocate_common_fast_inline_only,
     pas_intrinsic_heap_designation_mode designation_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     size_t aligned_size;
     size_t index;
@@ -291,7 +298,7 @@ pas_try_allocate_intrinsic_impl_inline_only(
     \
     static PAS_ALWAYS_INLINE pas_allocation_result name(size_t size, size_t alignment, pas_allocation_mode allocation_mode) \
     { \
-        static const bool verbose = false; \
+        static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER); \
         pas_allocation_result result; \
         result = name ## _inline_only(size, alignment, allocation_mode); \
         if (PAS_LIKELY(result.did_succeed)) { \
@@ -305,7 +312,7 @@ pas_try_allocate_intrinsic_impl_inline_only(
     static PAS_UNUSED PAS_NEVER_INLINE pas_allocation_result \
     name ## _for_realloc(size_t size, pas_allocation_mode allocation_mode) \
     { \
-        static const bool verbose = false; \
+        static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER); \
         pas_allocation_result result = name(size, 1, allocation_mode); \
         if (verbose) \
             pas_log("result.begin = %p\n", (void*)result.begin); \

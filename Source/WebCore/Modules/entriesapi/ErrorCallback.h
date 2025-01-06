@@ -39,9 +39,13 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(DOMException&) = 0;
+    virtual CallbackResult<void> handleEventRethrowingException(DOMException&) = 0;
 
     // Helper to post callback task.
     void scheduleCallback(ScriptExecutionContext&, Ref<DOMException>&&);
+
+private:
+    virtual bool hasCallback() const = 0;
 };
 
 } // namespace WebCore

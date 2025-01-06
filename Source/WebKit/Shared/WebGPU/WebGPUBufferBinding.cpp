@@ -37,16 +37,14 @@ namespace WebKit::WebGPU {
 
 std::optional<BufferBinding> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BufferBinding& bufferBinding)
 {
-    auto buffer = convertToBacking(bufferBinding.buffer);
-    if (!buffer)
-        return std::nullopt;
+    auto buffer = convertToBacking(bufferBinding.protectedBuffer().get());
 
     return { { buffer, bufferBinding.offset, bufferBinding.size } };
 }
 
 std::optional<WebCore::WebGPU::BufferBinding> ConvertFromBackingContext::convertFromBacking(const BufferBinding& bufferBinding)
 {
-    auto* buffer = convertBufferFromBacking(bufferBinding.buffer);
+    WeakPtr buffer = convertBufferFromBacking(bufferBinding.buffer);
     if (!buffer)
         return std::nullopt;
 

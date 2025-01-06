@@ -8,11 +8,15 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLPROGRAMVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLPROGRAMVK_H_
 
+#include <cstdint>
+
 #include "common/SimpleMutex.h"
+#include "common/hash_containers.h"
 
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLKernelVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
+#include "libANGLE/renderer/vulkan/clspv_utils.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
@@ -35,6 +39,13 @@ class CLProgramVk : public CLProgramImpl
 {
   public:
     using Ptr = std::unique_ptr<CLProgramVk>;
+    // TODO: Look into moving this information in CLKernelArgument
+    // https://anglebug.com/378514267
+    struct ImagePushConstant
+    {
+        VkPushConstantRange pcRange;
+        uint32_t ordinal;
+    };
     struct SpvReflectionData
     {
         angle::HashMap<uint32_t, uint32_t> spvIntLookup;
@@ -44,8 +55,14 @@ class CLProgramVk : public CLProgramImpl
         angle::HashMap<std::string, std::string> kernelAttributes;
         angle::HashMap<std::string, std::array<uint32_t, 3>> kernelCompileWorkgroupSize;
         angle::HashMap<uint32_t, VkPushConstantRange> pushConstants;
-        std::array<uint32_t, 3> specConstantWorkgroupSizeIDs{0, 0, 0};
+        angle::PackedEnumMap<SpecConstantType, uint32_t> specConstantIDs;
+        angle::PackedEnumBitSet<SpecConstantType, uint32_t> specConstantsUsed;
+        angle::HashMap<uint32_t, std::vector<ImagePushConstant>> imagePushConstants;
         CLKernelArgsMap kernelArgsMap;
+        angle::HashMap<std::string, CLKernelArgument> kernelArgMap;
+        angle::HashSet<uint32_t> kernelIDs;
+        ClspvPrintfBufferStorage printfBufferStorage;
+        angle::HashMap<uint32_t, ClspvPrintfInfo> printfInfoMap;
     };
 
     // Output binary structure (for CL_PROGRAM_BINARIES query)
@@ -124,6 +141,15 @@ class CLProgramVk : public CLProgramImpl
             return names;
         }
 
+        uint32_t getKernelFlags(const std::string &kernelName) const
+        {
+            if (containsKernel(kernelName))
+            {
+                return reflectionData.kernelFlags.at(kernelName);
+            }
+            return 0;
+        }
+
         CLKernelArguments getKernelArguments(const std::string &kernelName) const
         {
             CLKernelArguments kargsCopy;
@@ -183,6 +209,84 @@ class CLProgramVk : public CLProgramImpl
             return getPushConstantRangeFromClspvReflectionType(
                 NonSemanticClspvReflectionPushConstantGlobalSize);
         }
+
+        inline const VkPushConstantRange *getEnqueuedLocalSizeRange() const
+        {
+            return getPushConstantRangeFromClspvReflectionType(
+                NonSemanticClspvReflectionPushConstantEnqueuedLocalSize);
+        }
+
+        inline const VkPushConstantRange *getNumWorkgroupsRange() const
+        {
+            return getPushConstantRangeFromClspvReflectionType(
+                NonSemanticClspvReflectionPushConstantNumWorkgroups);
+        }
+
+        inline const VkPushConstantRange *getRegionOffsetRange() const
+        {
+            return getPushConstantRangeFromClspvReflectionType(
+                NonSemanticClspvReflectionPushConstantRegionOffset);
+        }
+
+        inline const VkPushConstantRange *getRegionGroupOffsetRange() const
+        {
+            return getPushConstantRangeFromClspvReflectionType(
+                NonSemanticClspvReflectionPushConstantRegionGroupOffset);
+        }
+
+        const VkPushConstantRange *getImageDataChannelOrderRange(size_t ordinal) const
+        {
+            const VkPushConstantRange *pushConstantRangePtr = nullptr;
+            if (reflectionData.imagePushConstants.contains(
+                    NonSemanticClspvReflectionImageArgumentInfoChannelOrderPushConstant))
+            {
+                for (const auto &imageConstant : reflectionData.imagePushConstants.at(
+                         NonSemanticClspvReflectionImageArgumentInfoChannelOrderPushConstant))
+                {
+                    if (static_cast<size_t>(imageConstant.ordinal) == ordinal)
+                    {
+                        pushConstantRangePtr = &imageConstant.pcRange;
+                    }
+                }
+            }
+            return pushConstantRangePtr;
+        }
+
+        const VkPushConstantRange *getImageDataChannelDataTypeRange(size_t ordinal) const
+        {
+            const VkPushConstantRange *pushConstantRangePtr = nullptr;
+            if (reflectionData.imagePushConstants.contains(
+                    NonSemanticClspvReflectionImageArgumentInfoChannelDataTypePushConstant))
+            {
+                for (const auto &imageConstant : reflectionData.imagePushConstants.at(
+                         NonSemanticClspvReflectionImageArgumentInfoChannelDataTypePushConstant))
+                {
+                    if (static_cast<size_t>(imageConstant.ordinal) == ordinal)
+                    {
+                        pushConstantRangePtr = &imageConstant.pcRange;
+                    }
+                }
+            }
+            return pushConstantRangePtr;
+        }
+
+        const VkPushConstantRange *getNormalizedSamplerMaskRange(size_t ordinal) const
+        {
+            const VkPushConstantRange *pushConstantRangePtr = nullptr;
+            if (reflectionData.imagePushConstants.contains(
+                    NonSemanticClspvReflectionNormalizedSamplerMaskPushConstant))
+            {
+                for (const auto &imageConstant : reflectionData.imagePushConstants.at(
+                         NonSemanticClspvReflectionNormalizedSamplerMaskPushConstant))
+                {
+                    if (static_cast<size_t>(imageConstant.ordinal) == ordinal)
+                    {
+                        pushConstantRangePtr = &imageConstant.pcRange;
+                    }
+                }
+            }
+            return pushConstantRangePtr;
+        }
     };
     using DevicePrograms   = angle::HashMap<const _cl_device_id *, DeviceProgramData>;
     using LinkPrograms     = std::vector<const DeviceProgramData *>;
@@ -227,7 +331,7 @@ class CLProgramVk : public CLProgramImpl
     const DeviceProgramData *getDeviceProgramData(const char *kernelName) const;
     const DeviceProgramData *getDeviceProgramData(const _cl_device_id *device) const;
     CLPlatformVk *getPlatform() { return mContext->getPlatform(); }
-    vk::RefCounted<vk::ShaderModule> *getShaderModule() { return &mShader; }
+    const vk::ShaderModulePtr &getShaderModule() const { return mShader; }
 
     bool buildInternal(const cl::DevicePtrs &devices,
                        std::string options,
@@ -236,20 +340,37 @@ class CLProgramVk : public CLProgramImpl
                        const LinkProgramsList &LinkProgramsList);
     angle::spirv::Blob stripReflection(const DeviceProgramData *deviceProgramData);
 
-    angle::Result allocateDescriptorSet(const vk::DescriptorSetLayout &descriptorSetLayout,
-                                        VkDescriptorSet *descriptorSetOut);
+    angle::Result allocateDescriptorSet(const DescriptorSetIndex setIndex,
+                                        const vk::DescriptorSetLayout &descriptorSetLayout,
+                                        vk::CommandBufferHelperCommon *commandBuffer,
+                                        vk::DescriptorSetPointer *descriptorSetOut);
+
+    // Sets the status for given associated device programs
+    void setBuildStatus(const cl::DevicePtrs &devices, cl_build_status status);
+
+    vk::MetaDescriptorPool &getMetaDescriptorPool(DescriptorSetIndex index)
+    {
+        return mMetaDescriptorPools[index];
+    }
+
+    vk::DynamicDescriptorPoolPointer &getDynamicDescriptorPoolPointer(DescriptorSetIndex index)
+    {
+        return mDynamicDescriptorPools[index];
+    }
+
+    const angle::HashMap<uint32_t, ClspvPrintfInfo> *getPrintfDescriptors(
+        const std::string &kernelName) const;
 
   private:
     CLContextVk *mContext;
     std::string mProgramOpts;
-    vk::RefCounted<vk::ShaderModule> mShader;
+    vk::ShaderModulePtr mShader;
     DevicePrograms mAssociatedDevicePrograms;
-    PipelineLayoutCache mPipelineLayoutCache;
-    vk::MetaDescriptorPool mMetaDescriptorPool;
-    DescriptorSetLayoutCache mDescSetLayoutCache;
-    vk::DescriptorSetArray<vk::DescriptorPoolPointer> mDescriptorPools;
-    vk::RefCountedDescriptorPoolBinding mPoolBinding;
+    vk::DescriptorSetArray<vk::MetaDescriptorPool> mMetaDescriptorPools;
+    vk::DescriptorSetArray<vk::DynamicDescriptorPoolPointer> mDynamicDescriptorPools;
     angle::SimpleMutex mProgramMutex;
+
+    std::shared_ptr<angle::WaitableEvent> mAsyncBuildEvent;
 };
 
 class CLAsyncBuildTask : public angle::Closure

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,7 +15,7 @@
 
 // out0 = in0*w0 + in1*w1
 // out1 = -in1*w0 + in0*w1
-static INLINE void btf_32_avx2_type0(const int32_t w0, const int32_t w1,
+static inline void btf_32_avx2_type0(const int32_t w0, const int32_t w1,
                                      __m256i *in0, __m256i *in1,
                                      const __m256i _r, const int32_t cos_bit) {
   __m256i _in0 = *in0;
@@ -34,7 +34,7 @@ static INLINE void btf_32_avx2_type0(const int32_t w0, const int32_t w1,
   *in1 = _mm256_srai_epi32(temp1, cos_bit);
 }
 
-static INLINE void btf_32_avx2_type1(const int32_t w0, const int32_t w1,
+static inline void btf_32_avx2_type1(const int32_t w0, const int32_t w1,
                                      __m256i *in0, __m256i *in1,
                                      const __m256i _r, const int32_t cos_bit) {
   __m256i _in0 = *in0;
@@ -55,7 +55,7 @@ static INLINE void btf_32_avx2_type1(const int32_t w0, const int32_t w1,
 
 // out0 = in0*w0 + in1*w1
 // out1 = -in1*w0 + in0*w1
-static INLINE void btf_32_avx2_type0_new(const __m256i ww0, const __m256i ww1,
+static inline void btf_32_avx2_type0_new(const __m256i ww0, const __m256i ww1,
                                          __m256i *in0, __m256i *in1,
                                          const __m256i _r,
                                          const int32_t cos_bit) {
@@ -75,7 +75,7 @@ static INLINE void btf_32_avx2_type0_new(const __m256i ww0, const __m256i ww1,
 
 // out0 = in0*w0 + in1*w1
 // out1 = in1*w0 - in0*w1
-static INLINE void btf_32_avx2_type1_new(const __m256i ww0, const __m256i ww1,
+static inline void btf_32_avx2_type1_new(const __m256i ww0, const __m256i ww1,
                                          __m256i *in0, __m256i *in1,
                                          const __m256i _r,
                                          const int32_t cos_bit) {

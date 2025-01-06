@@ -1,0 +1,19 @@
+<meta charset="UTF-8">
+<style>
+div {
+  width: min-content;
+  font-family: Monospace;
+  font-size: 20px;
+}
+rt {
+  color: transparent;
+}
+</style>
+<!-- There's a breaking opportunity between み and ず -->
+<div><ruby>み<rt>annotation</rt>ず<rt>annotation</rt></ruby></div>
+<div><ruby><span><span>み</span></span><rt>annotation</rt><span><span>ず</span></span><rt>annotation</rt></ruby></div>
+<div><ruby><span>み<img style="position: absolute;"></span><rt>annotation</rt>ず<rt>annotation</rt></ruby></div>
+<!-- no breaking opportunity from this point -->
+<div><span style="white-space: nowrap"><ruby>み<rt>annotation</rt>ず<rt>annotation</rt></ruby></soan></div>
+<div><ruby style="white-space: nowrap">み<rt>annotation</rt>ず<rt>annotation</rt></ruby></soan></div>
+<div><ruby>base<rt>annotation</rt>base<rt>annotation</rt></ruby></div>

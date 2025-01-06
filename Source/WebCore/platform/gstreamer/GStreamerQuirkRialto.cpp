@@ -29,7 +29,10 @@
 #if USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
+#include "WebKitAudioSinkGStreamer.h"
 #include <wtf/OptionSet.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
 
 namespace WebCore {
 
@@ -87,6 +90,9 @@ GstElement* GStreamerQuirkRialto::createAudioSink()
 
 GstElement* GStreamerQuirkRialto::createWebAudioSink()
 {
+    if (GstElement* sink = webkitAudioSinkNew())
+        return sink;
+
     auto sink = makeGStreamerElement("rialtowebaudiosink", nullptr);
     RELEASE_ASSERT_WITH_MESSAGE(sink, "rialtowebaudiosink should be available in the system but it is not");
     return sink;
@@ -103,5 +109,7 @@ std::optional<bool> GStreamerQuirkRialto::isHardwareAccelerated(GstElementFactor
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(GSTREAMER)

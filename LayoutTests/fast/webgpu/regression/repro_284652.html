@@ -1,0 +1,348 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+async function gc() {
+  await 0;
+  if (globalThis.GCController) {
+    globalThis.GCController.collect();
+  } else if (globalThis.$vm) {
+    globalThis.$vm.gc();
+  } else {
+    log('no GC available');
+  }
+}
+
+/**
+ * @param {GPUDevice} device
+ * @param {GPUComputePassEncoder} computePassEncoder
+ */
+function clearResourceUsages(device, computePassEncoder) {
+  let code = `@compute @workgroup_size(1) fn c() {}`;
+  let module = device.createShaderModule({code});
+  computePassEncoder.setPipeline(device.createComputePipeline(
+    {
+      layout: 'auto',
+      compute: {module},
+    }));
+  computePassEncoder.dispatchWorkgroups(1);
+}
+
+/**
+ * @template {any} T
+ * @param {GPUDevice} device
+ * @param {string} label
+ * @param {()=>T} payload
+ * @returns {Promise<T>}
+ */
+async function validationWrapper(device, label, payload)  {
+  device.pushErrorScope('internal');
+  device.pushErrorScope('out-of-memory');
+  device.pushErrorScope('validation');
+  let result = payload();
+  let validationError = await device.popErrorScope();
+  let outOfMemoryError = await device.popErrorScope();
+  let internalError = await device.popErrorScope();
+  let error = validationError ?? outOfMemoryError ?? internalError;
+  if (error) {
+    log('*'.repeat(25));
+    log(error[Symbol.toStringTag]);
+    log(error.message);
+    log(label);
+    if (error.stack != `_`) {
+      log(error.stack);
+    }
+    log(location);
+    log('*'.repeat(25));
+    throw error;
+  }
+  return result;
+}
+
+const videoUrls = [
+
+];
+
+/**
+ * @param {number} index
+ * @returns {Promise<HTMLVideoElement>}
+ */
+function videoWithData(index) {
+  let video = document.createElement('video');
+  video.src = videoUrls[index % videoUrls.length];
+  return new Promise(resolve => {
+    video.onloadeddata = () => {
+      resolve(video);
+    };
+  });
+}
+
+/**
+* @returns {Promise<string>}
+*/
+async function makeDataUrl(width, height, color0, color1) {
+  let offscreenCanvas = new OffscreenCanvas(width, height);
+  let ctx = offscreenCanvas.getContext('2d');
+  let gradient = ctx.createLinearGradient(0, 0, width, height);
+  gradient.addColorStop(0, color0);
+  gradient.addColorStop(0.1, color1);
+  gradient.addColorStop(0.3, color0);
+  gradient.addColorStop(0.7, color1);
+  gradient.addColorStop(0.9, color0);
+  gradient.addColorStop(1, color1);
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+  let blob = await offscreenCanvas.convertToBlob();
+  let fileReader = new FileReader();
+  fileReader.readAsDataURL(blob);
+  return new Promise(resolve => {
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+  });
+}
+
+async function imageWithData(width, height, color0, color1) {
+  let dataUrl = await makeDataUrl(width, height, color0, color1);
+  let img = document.createElement('img');
+  img.src = dataUrl;
+  await img.decode();
+  return img;
+}
+
+/**
+ * @param {string} payload
+ * @returns {string}
+ */
+function toBlobUrl(payload) {
+  let blob = new Blob([payload], {type: 'text/javascript'});
+  return URL.createObjectURL(blob);
+}
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+// START
+adapter0 = await navigator.gpu.requestAdapter();
+device0 = await adapter0.requestDevice();
+bindGroupLayout2 = device0.createBindGroupLayout({
+  entries : [
+    {
+      binding : 499,
+      visibility : GPUShaderStage.VERTEX,
+      buffer : {hasDynamicOffset : true}
+    }]});
+{
+}
+buffer4 = device0.createBuffer({
+  size : 21404,
+  usage : GPUBufferUsage.UNIFORM | GPUBufferUsage,
+  });
+{
+}
+pipelineLayout4 = device0.createPipelineLayout({
+  bindGroupLayouts : [ bindGroupLayout2, bindGroupLayout2, bindGroupLayout2 ]});
+shaderModule3 = device0.createShaderModule({
+  code : ` ;
+              struct FragmentOutput1 {
+              @location(0) f0: vec2f,   @location(3) f1: i32,   @location(7) f2: vec2i}
+              @fragment fn fragment3() -> FragmentOutput1 {
+              var out: FragmentOutput1;
+              return out;
+            }
+             `,
+  });
+buffer11 = device0.createBuffer({
+  size : 32587,
+  usage : GPUBufferUsage.UNIFORM |
+              GPUBufferUsage});
+texture19 = device0.createTexture({
+  size : {width : 1, depthOrArrayLayers : 23},
+  dimension : '3d',
+  format : 'rg32float',
+  usage : GPUTextureUsage.RENDER_ATTACHMENT |
+              GPUTextureUsage});
+{
+}
+shaderModule5 = device0.createShaderModule({
+  code : ` ;
+             fn unconst_bool(v: bool) -> bool {
+           return v;
+           }
+             fn unconst_f32(v: f32) -> f32 {
+           return v;
+           }
+             @group(2) @binding(499) var<uniform> buffer18: VertexOutput4;
+             struct VertexOutput4 {
+             @builtin(position) f29: vec4f}
+             override override12: f16;
+             override override13: f32;
+             
+            
+            fn fn0() {
+                _ = override13;
+            }
+            
+             fn fn2(a0: VertexOutput4) -> i32 
+             {
+                 var out: i32;
+                 out &= bitcast<vec4i>(smoothstep(vec4f(), vec4f(), (vec2f(unconst_f32(0.1294))).rrrr))[2];
+                 let vf108= select(vec2h(), vec2h(), vec2((false), ));
+                 var vf109= a0;
+                 out = bitcast<i32>((vec2f((0.1103), unconst_f32(0.04778)))[0]);
+                 var vf112= (vec3i());
+                 let vf114f32 = a0.f29[u32()];
+                 let ptr54: ptr<function, vec3i> = &vf112;
+                 vf109.f29 += (f32(vf112[u32()]));
+                 var vf117= vf108[u32()];
+                 let vf118f16 = override12;
+                 out &= bitcast<vec4i>(smoothstep(vec4f(), vec4f(), vec4f((0.03282), (0.3133), (0.01408), unconst_f32(0.01364))))[3];
+                 vf109 = VertexOutput4(vec4f(vf109.f29[u32()]));
+                 vf117 = vec3h((*ptr54))[0];
+                 return out;
+               }
+            
+             @vertex fn vertex5() -> VertexOutput4 {
+             var out: VertexOutput4;
+             fn0();
+             fn2(VertexOutput4((buffer18).f29));
+             return out;
+           }
+            `,
+  });
+pipeline3 = await device0.createRenderPipelineAsync({
+  layout : pipelineLayout4,
+  multisample : {},
+  fragment : {
+    module : shaderModule3,
+    constants : {},
+    targets : [ {
+      format : 'rg32float',
+      writeMask : GPUColorWrite.GREEN
+    } ]},
+  vertex : {
+    module : shaderModule5,
+    constants : {override13 : 0, override12 : 0},
+    }});
+bindGroup14 = device0.createBindGroup({
+  layout : bindGroupLayout2,
+  entries : [
+    {binding : 499, resource : {buffer : buffer11, size : 1471}}
+  ]});
+{
+}
+({
+  });
+{
+}
+buffer31 = device0.createBuffer({
+  size : 901,
+  usage : GPUBufferUsage.UNIFORM
+});
+{
+}
+textureView25 = texture19.createView({
+  mipLevelCount : 1
+});
+bindGroup18 = device0.createBindGroup({
+  layout : bindGroupLayout2,
+  entries : [ {binding : 499, resource : {buffer : buffer4, }} ]});
+commandEncoder36 = device0.createCommandEncoder();
+renderPassEncoder12 = commandEncoder36.beginRenderPass({
+  colorAttachments : [
+    {view : textureView25, depthSlice : 9, loadOp : 'clear', storeOp : 'store'}
+  ],
+  });
+{
+}
+bindGroup24 = device0.createBindGroup({
+  layout : bindGroupLayout2,
+  entries : [
+    {binding : 499, resource : {buffer : buffer31, }}
+  ]});
+try {
+  renderPassEncoder12.setBindGroup(0, bindGroup18, new Uint32Array(1346), 629,
+                                   1)} catch {
+}
+                   try {
+                       renderPassEncoder12.setBindGroup(2, bindGroup24, new Uint32Array(2748), 0, 1);
+                   } catch {
+}
+({
+  });
+commandEncoder83 = device0.createCommandEncoder();
+{
+}
+try {
+  renderPassEncoder12.setPipeline(pipeline3)} catch {
+}
+try {
+  renderPassEncoder12.setBindGroup(1, bindGroup14, [ 11776 ]);
+  renderPassEncoder12.draw(1306)} catch {
+}
+commandBuffer13 = commandEncoder83;
+{
+}
+try {
+  renderPassEncoder12.end()} catch {
+}
+commandBuffer14 = commandEncoder36.finish();
+try {
+  device0.queue.submit([ commandBuffer14 ])} catch {
+}
+// END
+await device0.queue.onSubmittedWorkDone();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  log('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  log('the end')
+  log(location);
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.notifyDone();
+};
+</script>

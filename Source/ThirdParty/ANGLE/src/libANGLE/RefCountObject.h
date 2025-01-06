@@ -68,12 +68,12 @@ class ThreadSafeRefCountObject : angle::NonCopyable
 
     virtual void onDestroy(const ContextType *context) {}
 
-    void addRef() const { ++mRefCount; }
+    void addRef() const { mRefCount.fetch_add(1, std::memory_order_relaxed); }
 
     ANGLE_INLINE void release(const ContextType *context)
     {
         ASSERT(mRefCount > 0);
-        if (mRefCount.fetch_sub(1) == 1)
+        if (mRefCount.fetch_sub(1, std::memory_order_acq_rel) == 1)
         {
             onDestroy(context);
             delete this;
@@ -206,10 +206,11 @@ class Context;
 template <class ObjectType>
 class BindingPointer;
 
-using RefCountObjectNoID = angle::RefCountObject<Context, angle::Result>;
+using RefCountObjectNoID           = angle::RefCountObject<Context, angle::Result>;
+using ThreadSafeRefCountObjectNoID = angle::ThreadSafeRefCountObject<Context, angle::Result>;
 
-template <typename IDType>
-class RefCountObject : public gl::RefCountObjectNoID
+template <typename IDType, typename RC = RefCountObjectNoID>
+class RefCountObject : public RC
 {
   public:
     explicit RefCountObject(rx::UniqueSerial serial, IDType id) : mSerial(serial), mId(id) {}
@@ -225,6 +226,8 @@ class RefCountObject : public gl::RefCountObjectNoID
     rx::UniqueSerial mSerial;
     IDType mId;
 };
+template <typename IDType>
+using ThreadSafeRefCountObject = RefCountObject<IDType, ThreadSafeRefCountObjectNoID>;
 
 template <class ObjectType>
 class BindingPointer : public angle::BindingPointer<ObjectType, Context>

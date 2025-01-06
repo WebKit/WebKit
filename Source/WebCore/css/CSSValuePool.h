@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSColorValue.h"
 #include "CSSPrimitiveValue.h"
 #include "ColorHash.h"
 #include <wtf/HashMap.h>
@@ -49,16 +50,16 @@ private:
 
     LazyNeverDestroyed<CSSPrimitiveValue> m_implicitInitialValue;
 
-    LazyNeverDestroyed<CSSPrimitiveValue> m_transparentColor;
-    LazyNeverDestroyed<CSSPrimitiveValue> m_whiteColor;
-    LazyNeverDestroyed<CSSPrimitiveValue> m_blackColor;
+    LazyNeverDestroyed<CSSColorValue> m_transparentColor;
+    LazyNeverDestroyed<CSSColorValue> m_whiteColor;
+    LazyNeverDestroyed<CSSColorValue> m_blackColor;
 
     static constexpr int maximumCacheableIntegerValue = 255;
 
-    LazyNeverDestroyed<CSSPrimitiveValue> m_pixelValues[maximumCacheableIntegerValue + 1];
-    LazyNeverDestroyed<CSSPrimitiveValue> m_percentValues[maximumCacheableIntegerValue + 1];
-    LazyNeverDestroyed<CSSPrimitiveValue> m_numberValues[maximumCacheableIntegerValue + 1];
-    LazyNeverDestroyed<CSSPrimitiveValue> m_identifierValues[numCSSValueKeywords];
+    std::array<LazyNeverDestroyed<CSSPrimitiveValue>, maximumCacheableIntegerValue + 1> m_pixelValues;
+    std::array<LazyNeverDestroyed<CSSPrimitiveValue>, maximumCacheableIntegerValue + 1> m_percentageValues;
+    std::array<LazyNeverDestroyed<CSSPrimitiveValue>, maximumCacheableIntegerValue + 1> m_numberValues;
+    std::array<LazyNeverDestroyed<CSSPrimitiveValue>, numCSSValueKeywords> m_identifierValues;
 };
 
 WEBCORE_EXPORT extern LazyNeverDestroyed<StaticCSSValuePool> staticCSSValuePool;
@@ -72,14 +73,14 @@ public:
     static CSSValuePool& singleton();
     void drain();
 
-    Ref<CSSPrimitiveValue> createColorValue(const Color&);
+    Ref<CSSColorValue> createColorValue(const WebCore::Color&);
     RefPtr<CSSValueList> createFontFaceValue(const AtomString&);
     Ref<CSSPrimitiveValue> createFontFamilyValue(const AtomString&);
 
 private:
-    HashMap<Color, Ref<CSSPrimitiveValue>> m_colorValueCache;
-    HashMap<AtomString, RefPtr<CSSValueList>> m_fontFaceValueCache;
-    HashMap<AtomString, Ref<CSSPrimitiveValue>> m_fontFamilyValueCache;
+    UncheckedKeyHashMap<WebCore::Color, Ref<CSSColorValue>> m_colorValueCache;
+    UncheckedKeyHashMap<AtomString, RefPtr<CSSValueList>> m_fontFaceValueCache;
+    UncheckedKeyHashMap<AtomString, Ref<CSSPrimitiveValue>> m_fontFamilyValueCache;
 };
 
 inline CSSPrimitiveValue& CSSPrimitiveValue::implicitInitialValue()

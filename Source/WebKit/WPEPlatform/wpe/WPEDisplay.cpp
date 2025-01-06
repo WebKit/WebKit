@@ -29,6 +29,7 @@
 #include "WPEDisplayPrivate.h"
 #include "WPEEGLError.h"
 #include "WPEExtensions.h"
+#include "WPEInputMethodContextNone.h"
 #include <epoxy/egl.h>
 #include <gio/gio.h>
 #include <mutex>
@@ -57,18 +58,20 @@ struct _WPEDisplayPrivate {
     GUniqueOutPtr<GError> eglDisplayError;
     HashMap<String, bool> extensionsMap;
     GRefPtr<WPEBufferDMABufFormats> preferredDMABufFormats;
+    GRefPtr<WPEKeymap> keymap;
+    GRefPtr<WPESettings> settings;
 };
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WPEDisplay, wpe_display, G_TYPE_OBJECT)
 
 enum {
-    MONITOR_ADDED,
-    MONITOR_REMOVED,
+    SCREEN_ADDED,
+    SCREEN_REMOVED,
 
     LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 /**
  * wpe_display_error_quark:
@@ -93,7 +96,10 @@ static void wpeDisplayDispose(GObject* object)
 {
     auto* priv = WPE_DISPLAY(object)->priv;
 
-    g_clear_pointer(&priv->eglDisplay, eglTerminate);
+    if (priv->eglDisplay) {
+        eglTerminate(priv->eglDisplay);
+        priv->eglDisplay = nullptr;
+    }
 
     G_OBJECT_CLASS(wpe_display_parent_class)->dispose(object);
 }
@@ -105,43 +111,43 @@ static void wpe_display_class_init(WPEDisplayClass* displayClass)
     objectClass->dispose = wpeDisplayDispose;
 
     /**
-     * WPEDisplay::monitor-added:
+     * WPEDisplay::screen-added:
      * @display: a #WPEDisplay
-     * @monitor: the #WPEMonitor added
+     * @screen: the #WPEScreen added
      *
-     * Emitted when a monitor is added
+     * Emitted when a screen is added
      */
-    signals[MONITOR_ADDED] = g_signal_new(
-        "monitor-added",
+    signals[SCREEN_ADDED] = g_signal_new(
+        "screen-added",
         G_TYPE_FROM_CLASS(displayClass),
         G_SIGNAL_RUN_LAST,
         0, nullptr, nullptr,
         g_cclosure_marshal_generic,
         G_TYPE_NONE, 1,
-        WPE_TYPE_MONITOR);
+        WPE_TYPE_SCREEN);
 
     /**
-     * WPEDisplay::monitor-removed:
+     * WPEDisplay::screen-removed:
      * @display: a #WPEDisplay
-     * @monitor: the #WPEMonitor removed
+     * @screen: the #WPEScreen removed
      *
-     * Emitted after a monitor is removed.
-     * Note that the monitor is always invalidated before this signal is emitted.
+     * Emitted after a screen is removed.
+     * Note that the screen is always invalidated before this signal is emitted.
      */
-    signals[MONITOR_REMOVED] = g_signal_new(
-        "monitor-removed",
+    signals[SCREEN_REMOVED] = g_signal_new(
+        "screen-removed",
         G_TYPE_FROM_CLASS(displayClass),
         G_SIGNAL_RUN_LAST,
         0, nullptr, nullptr,
         g_cclosure_marshal_generic,
         G_TYPE_NONE, 1,
-        WPE_TYPE_MONITOR);
+        WPE_TYPE_SCREEN);
 }
 
 WPEView* wpeDisplayCreateView(WPEDisplay* display)
 {
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
-    return wpeDisplayClass->create_view ? wpeDisplayClass->create_view(display) : nullptr;
+    return wpeDisplayClass->create_view(display);
 }
 
 bool wpeDisplayCheckEGLExtension(WPEDisplay* display, const char* extensionName)
@@ -151,6 +157,12 @@ bool wpeDisplayCheckEGLExtension(WPEDisplay* display, const char* extensionName)
         return eglDisplay ? epoxy_has_egl_extension(eglDisplay, extensionName) : false;
     });
     return addResult.iterator->value;
+}
+
+WPEInputMethodContext* wpeDisplayCreateInputMethodContext(WPEDisplay* display)
+{
+    auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
+    return wpeDisplayClass->create_input_method_context ? wpeDisplayClass->create_input_method_context(display) : wpeInputMethodContextNoneNew();
 }
 
 /**
@@ -177,9 +189,10 @@ WPEDisplay* wpe_display_get_default(void)
                     s_defaultDisplay = WTFMove(display);
                     return;
                 }
-                g_warning("Failed to connect to display of type %s: %s", extensionName, error->message);
+                g_error("Failed to connect to display of type %s: %s", extensionName, error->message);
             } else
-                g_warning("Display of type %s was not found", extensionName);
+                g_error("Display of type %s was not found", extensionName);
+            return;
         }
 
         auto* extensionList = g_io_extension_point_get_extensions(extensionPoint);
@@ -295,6 +308,9 @@ gpointer wpe_display_get_egl_display(WPEDisplay* display, GError** error)
  *
  * Get the #WPEKeymap of @display
  *
+ * As a fallback, a #WPEKeymapXKB for the pc105 "US" layout is returned if the actual display
+ * implementation does not provide a keymap itself.
+ *
  * Returns: (transfer none): a #WPEKeymap or %NULL in case of error
  */
 WPEKeymap* wpe_display_get_keymap(WPEDisplay* display, GError** error)
@@ -303,11 +319,32 @@ WPEKeymap* wpe_display_get_keymap(WPEDisplay* display, GError** error)
 
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
     if (!wpeDisplayClass->get_keymap) {
-        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_NOT_SUPPORTED, "Operation not supported");
-        return nullptr;
+        auto* priv = display->priv;
+        if (!priv->keymap)
+            priv->keymap = adoptGRef(wpe_keymap_xkb_new());
+        return priv->keymap.get();
     }
 
     return wpeDisplayClass->get_keymap(display, error);
+}
+
+/**
+ * wpe_display_get_settings:
+ * @display: a #WPEDisplay
+ *
+ * Get the #WPESettings of @display
+ *
+ * Returns: (transfer none): a #WPESettings
+ */
+WPESettings* wpe_display_get_settings(WPEDisplay* display)
+{
+    g_return_val_if_fail(WPE_IS_DISPLAY(display), nullptr);
+
+    auto* priv = display->priv;
+    if (!priv->settings)
+        priv->settings = adoptGRef(WPE_SETTINGS(g_object_new(WPE_TYPE_SETTINGS, nullptr)));
+
+    return priv->settings.get();
 }
 
 #if USE(LIBDRM)
@@ -390,74 +427,74 @@ WPEBufferDMABufFormats* wpe_display_get_preferred_dma_buf_formats(WPEDisplay* di
 }
 
 /**
- * wpe_display_get_n_monitors:
+ * wpe_display_get_n_screens:
  * @display: a #WPEDisplay
  *
- * Get the number of monitors of @display
+ * Get the number of screens of @display
  *
- * Returns: the number of monitors
+ * Returns: the number of screens
  */
-guint wpe_display_get_n_monitors(WPEDisplay* display)
+guint wpe_display_get_n_screens(WPEDisplay* display)
 {
     g_return_val_if_fail(WPE_IS_DISPLAY(display), 0);
 
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
-    if (!wpeDisplayClass->get_n_monitors)
+    if (!wpeDisplayClass->get_n_screens)
         return 0;
 
-    return wpeDisplayClass->get_n_monitors(display);
+    return wpeDisplayClass->get_n_screens(display);
 }
 
 /**
- * wpe_display_get_monitor:
+ * wpe_display_get_screen:
  * @display: a #WPEDisplay
- * @index: the number of the monitor
+ * @index: the number of the screen
  *
- * Get the monitor of @display at @index
+ * Get the screen of @display at @index
  *
- * Returns: (transfer none) (nullable): a #WPEMonitor, or %NULL
+ * Returns: (transfer none) (nullable): a #WPEScreen, or %NULL
  */
-WPEMonitor* wpe_display_get_monitor(WPEDisplay* display, guint index)
+WPEScreen* wpe_display_get_screen(WPEDisplay* display, guint index)
 {
     g_return_val_if_fail(WPE_IS_DISPLAY(display), nullptr);
 
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
-    if (!wpeDisplayClass->get_monitor)
+    if (!wpeDisplayClass->get_screen)
         return nullptr;
 
-    return wpeDisplayClass->get_monitor(display, index);
+    return wpeDisplayClass->get_screen(display, index);
 }
 
 /**
- * wpe_display_monitor_added:
+ * wpe_display_screen_added:
  * @display: a #WPEDisplay
- * @monitor: the #WPEMonitor added
+ * @screen: the #WPEScreen added
  *
- * Emit the signal #WPEDisplay::monitor-added.
+ * Emit the signal #WPEDisplay::screen-added.
  */
-void wpe_display_monitor_added(WPEDisplay* display, WPEMonitor* monitor)
+void wpe_display_screen_added(WPEDisplay* display, WPEScreen* screen)
 {
     g_return_if_fail(WPE_IS_DISPLAY(display));
-    g_return_if_fail(WPE_IS_MONITOR(monitor));
+    g_return_if_fail(WPE_IS_SCREEN(screen));
 
-    g_signal_emit(display, signals[MONITOR_ADDED], 0, monitor);
+    g_signal_emit(display, signals[SCREEN_ADDED], 0, screen);
 }
 
 /**
- * wpe_display_monitor_removed:
+ * wpe_display_screen_removed:
  * @display: a #WPEDisplay
- * @monitor: the #WPEMonitor removed
+ * @screen: the #WPEScreen removed
  *
- * Emit the signal #WPEDisplay::monitor-removed.
- * Note that wpe_monitor_invalidate() is called before the signal is emitted.
+ * Emit the signal #WPEDisplay::screen-removed.
+ * Note that wpe_screen_invalidate() is called before the signal is emitted.
  */
-void wpe_display_monitor_removed(WPEDisplay* display, WPEMonitor* monitor)
+void wpe_display_screen_removed(WPEDisplay* display, WPEScreen* screen)
 {
     g_return_if_fail(WPE_IS_DISPLAY(display));
-    g_return_if_fail(WPE_IS_MONITOR(monitor));
+    g_return_if_fail(WPE_IS_SCREEN(screen));
 
-    wpe_monitor_invalidate(monitor);
-    g_signal_emit(display, signals[MONITOR_REMOVED], 0, monitor);
+    wpe_screen_invalidate(screen);
+    g_signal_emit(display, signals[SCREEN_REMOVED], 0, screen);
 }
 
 static bool isSotfwareRast()
@@ -522,4 +559,25 @@ const char* wpe_display_get_drm_render_node(WPEDisplay* display)
 
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
     return wpeDisplayClass->get_drm_render_node ? wpeDisplayClass->get_drm_render_node(display) : nullptr;
+}
+
+/**
+ * wpe_display_use_explicit_sync:
+ * @display: a #WPEDisplay
+ *
+ * Get whether explicit sync should be used with @display for
+ * supported buffers.
+ *
+ * Returns: %TRUE if explicit sync should be used, or %FALSE otherwise
+ */
+gboolean wpe_display_use_explicit_sync(WPEDisplay* display)
+{
+    g_return_val_if_fail(WPE_IS_DISPLAY(display), FALSE);
+
+    static const char* envExplicitSync = getenv("WPE_USE_EXPLICIT_SYNC");
+    if (envExplicitSync && !strcmp(envExplicitSync, "0"))
+        return false;
+
+    auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
+    return wpeDisplayClass->use_explicit_sync ? wpeDisplayClass->use_explicit_sync(display) : FALSE;
 }

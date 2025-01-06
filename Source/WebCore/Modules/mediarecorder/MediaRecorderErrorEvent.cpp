@@ -29,11 +29,11 @@
 #if ENABLE(MEDIA_RECORDER)
 
 #include "DOMException.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaRecorderErrorEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaRecorderErrorEvent);
 
 Ref<MediaRecorderErrorEvent> MediaRecorderErrorEvent::create(const AtomString& type, Exception&& exception)
 {

@@ -53,7 +53,9 @@ static std::optional<WebCore::ClientOrigin> toClientOrigin(const WebCore::Partit
 
 void WebBroadcastChannelRegistry::registerChannel(const WebCore::PartitionedSecurityOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
 {
-    auto& channelsForOrigin = m_channelsPerOrigin.ensure(origin, [] { return HashMap<String, Vector<WebCore::BroadcastChannelIdentifier>> { }; }).iterator->value;
+    auto& channelsForOrigin = m_channelsPerOrigin.ensure(origin, [] {
+        return HashMap<String, Vector<WebCore::BroadcastChannelIdentifier>> { };
+    }).iterator->value;
     auto& channelsForName = channelsForOrigin.ensure(name, [] { return Vector<WebCore::BroadcastChannelIdentifier> { }; }).iterator->value;
     channelsForName.append(identifier);
 

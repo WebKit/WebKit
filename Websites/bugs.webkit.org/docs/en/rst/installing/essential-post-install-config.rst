@@ -94,7 +94,7 @@ This section corresponds to choosing a :param:`mail_delivery_method` of
 :paramval:`Sendmail`.
 
 Unless you know what you are doing, and can deal with the possible problems
-of spam, bounces and blacklists, it is probably unwise to set up your own
+of spam, bounces and blocklists, it is probably unwise to set up your own
 mail server just for Bugzilla. However, if you wish to do so, some guidance
 follows.
 

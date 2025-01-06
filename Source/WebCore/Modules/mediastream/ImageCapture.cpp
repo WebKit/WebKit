@@ -33,13 +33,13 @@
 #include "JSPhotoSettings.h"
 #include "Logging.h"
 #include "TaskSource.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageCapture);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageCapture);
 
 ExceptionOr<Ref<ImageCapture>> ImageCapture::create(Document& document, Ref<MediaStreamTrack> track)
 {

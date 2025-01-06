@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,7 +11,10 @@
 
 #include <assert.h>
 #include <limits.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "aom/aom_encoder.h"
 #include "aom_dsp/aom_dsp_common.h"
@@ -26,6 +29,7 @@
 
 #include "av1/common/cdef.h"
 #include "av1/common/cfl.h"
+#include "av1/common/debugmodes.h"
 #include "av1/common/entropy.h"
 #include "av1/common/entropymode.h"
 #include "av1/common/entropymv.h"
@@ -51,7 +55,7 @@
 #define SETUP_TIME_OH_CONST 5     // Setup time overhead constant per worker
 #define JOB_DISP_TIME_OH_CONST 1  // Job dispatch time overhead per tile
 
-static INLINE void write_uniform(aom_writer *w, int n, int v) {
+static inline void write_uniform(aom_writer *w, int n, int v) {
   const int l = get_unsigned_bits(n);
   const int m = (1 << l) - n;
   if (l == 0) return;
@@ -64,26 +68,25 @@ static INLINE void write_uniform(aom_writer *w, int n, int v) {
 }
 
 #if !CONFIG_REALTIME_ONLY
-static AOM_INLINE void loop_restoration_write_sb_coeffs(
+static inline void loop_restoration_write_sb_coeffs(
     const AV1_COMMON *const cm, MACROBLOCKD *xd, int runit_idx,
     aom_writer *const w, int plane, FRAME_COUNTS *counts);
 #endif
 
-static AOM_INLINE void write_intra_y_mode_kf(FRAME_CONTEXT *frame_ctx,
-                                             const MB_MODE_INFO *mi,
-                                             const MB_MODE_INFO *above_mi,
-                                             const MB_MODE_INFO *left_mi,
-                                             PREDICTION_MODE mode,
-                                             aom_writer *w) {
+static inline void write_intra_y_mode_kf(FRAME_CONTEXT *frame_ctx,
+                                         const MB_MODE_INFO *mi,
+                                         const MB_MODE_INFO *above_mi,
+                                         const MB_MODE_INFO *left_mi,
+                                         PREDICTION_MODE mode, aom_writer *w) {
   assert(!is_intrabc_block(mi));
   (void)mi;
   aom_write_symbol(w, mode, get_y_mode_cdf(frame_ctx, above_mi, left_mi),
                    INTRA_MODES);
 }
 
-static AOM_INLINE void write_inter_mode(aom_writer *w, PREDICTION_MODE mode,
-                                        FRAME_CONTEXT *ec_ctx,
-                                        const int16_t mode_ctx) {
+static inline void write_inter_mode(aom_writer *w, PREDICTION_MODE mode,
+                                    FRAME_CONTEXT *ec_ctx,
+                                    const int16_t mode_ctx) {
   const int16_t newmv_ctx = mode_ctx & NEWMV_CTX_MASK;
 
   aom_write_symbol(w, mode != NEWMV, ec_ctx->newmv_cdf[newmv_ctx], 2);
@@ -100,9 +103,10 @@ static AOM_INLINE void write_inter_mode(aom_writer *w, PREDICTION_MODE mode,
   }
 }
 
-static AOM_INLINE void write_drl_idx(
-    FRAME_CONTEXT *ec_ctx, const MB_MODE_INFO *mbmi,
-    const MB_MODE_INFO_EXT_FRAME *mbmi_ext_frame, aom_writer *w) {
+static inline void write_drl_idx(FRAME_CONTEXT *ec_ctx,
+                                 const MB_MODE_INFO *mbmi,
+                                 const MB_MODE_INFO_EXT_FRAME *mbmi_ext_frame,
+                                 aom_writer *w) {
   assert(mbmi->ref_mv_idx < 3);
 
   const int new_mv = mbmi->mode == NEWMV || mbmi->mode == NEW_NEWMV;
@@ -135,20 +139,19 @@ static AOM_INLINE void write_drl_idx(
   }
 }
 
-static AOM_INLINE void write_inter_compound_mode(MACROBLOCKD *xd, aom_writer *w,
-                                                 PREDICTION_MODE mode,
-                                                 const int16_t mode_ctx) {
+static inline void write_inter_compound_mode(MACROBLOCKD *xd, aom_writer *w,
+                                             PREDICTION_MODE mode,
+                                             const int16_t mode_ctx) {
   assert(is_inter_compound_mode(mode));
   aom_write_symbol(w, INTER_COMPOUND_OFFSET(mode),
                    xd->tile_ctx->inter_compound_mode_cdf[mode_ctx],
                    INTER_COMPOUND_MODES);
 }
 
-static AOM_INLINE void write_tx_size_vartx(MACROBLOCKD *xd,
-                                           const MB_MODE_INFO *mbmi,
-                                           TX_SIZE tx_size, int depth,
-                                           int blk_row, int blk_col,
-                                           aom_writer *w) {
+static inline void write_tx_size_vartx(MACROBLOCKD *xd,
+                                       const MB_MODE_INFO *mbmi,
+                                       TX_SIZE tx_size, int depth, int blk_row,
+                                       int blk_col, aom_writer *w) {
   FRAME_CONTEXT *const ec_ctx = xd->tile_ctx;
   const int max_blocks_high = max_block_high(xd, mbmi->bsize, 0);
   const int max_blocks_wide = max_block_wide(xd, mbmi->bsize, 0);
@@ -198,8 +201,8 @@ static AOM_INLINE void write_tx_size_vartx(MACROBLOCKD *xd,
   }
 }
 
-static AOM_INLINE void write_selected_tx_size(const MACROBLOCKD *xd,
-                                              aom_writer *w) {
+static inline void write_selected_tx_size(const MACROBLOCKD *xd,
+                                          aom_writer *w) {
   const MB_MODE_INFO *const mbmi = xd->mi[0];
   const BLOCK_SIZE bsize = mbmi->bsize;
   FRAME_CONTEXT *ec_ctx = xd->tile_ctx;
@@ -258,9 +261,9 @@ static int write_skip_mode(const AV1_COMMON *cm, const MACROBLOCKD *xd,
   return skip_mode;
 }
 
-static AOM_INLINE void write_is_inter(const AV1_COMMON *cm,
-                                      const MACROBLOCKD *xd, uint8_t segment_id,
-                                      aom_writer *w, const int is_inter) {
+static inline void write_is_inter(const AV1_COMMON *cm, const MACROBLOCKD *xd,
+                                  uint8_t segment_id, aom_writer *w,
+                                  const int is_inter) {
   if (!segfeature_active(&cm->seg, segment_id, SEG_LVL_REF_FRAME)) {
     if (segfeature_active(&cm->seg, segment_id, SEG_LVL_GLOBALMV)) {
       assert(is_inter);
@@ -272,9 +275,8 @@ static AOM_INLINE void write_is_inter(const AV1_COMMON *cm,
   }
 }
 
-static AOM_INLINE void write_motion_mode(const AV1_COMMON *cm, MACROBLOCKD *xd,
-                                         const MB_MODE_INFO *mbmi,
-                                         aom_writer *w) {
+static inline void write_motion_mode(const AV1_COMMON *cm, MACROBLOCKD *xd,
+                                     const MB_MODE_INFO *mbmi, aom_writer *w) {
   MOTION_MODE last_motion_mode_allowed =
       cm->features.switchable_motion_mode
           ? motion_mode_allowed(cm->global_motion, xd, mbmi,
@@ -294,8 +296,8 @@ static AOM_INLINE void write_motion_mode(const AV1_COMMON *cm, MACROBLOCKD *xd,
   }
 }
 
-static AOM_INLINE void write_delta_qindex(const MACROBLOCKD *xd,
-                                          int delta_qindex, aom_writer *w) {
+static inline void write_delta_qindex(const MACROBLOCKD *xd, int delta_qindex,
+                                      aom_writer *w) {
   int sign = delta_qindex < 0;
   int abs = sign ? -delta_qindex : delta_qindex;
   int rem_bits, thr;
@@ -316,10 +318,10 @@ static AOM_INLINE void write_delta_qindex(const MACROBLOCKD *xd,
   }
 }
 
-static AOM_INLINE void write_delta_lflevel(const AV1_COMMON *cm,
-                                           const MACROBLOCKD *xd, int lf_id,
-                                           int delta_lflevel,
-                                           int delta_lf_multi, aom_writer *w) {
+static inline void write_delta_lflevel(const AV1_COMMON *cm,
+                                       const MACROBLOCKD *xd, int lf_id,
+                                       int delta_lflevel, int delta_lf_multi,
+                                       aom_writer *w) {
   int sign = delta_lflevel < 0;
   int abs = sign ? -delta_lflevel : delta_lflevel;
   int rem_bits, thr;
@@ -348,8 +350,8 @@ static AOM_INLINE void write_delta_lflevel(const AV1_COMMON *cm,
   }
 }
 
-static AOM_INLINE void pack_map_tokens(aom_writer *w, const TokenExtra **tp,
-                                       int n, int num, MapCdf map_pb_cdf) {
+static inline void pack_map_tokens(aom_writer *w, const TokenExtra **tp, int n,
+                                   int num, MapCdf map_pb_cdf) {
   const TokenExtra *p = *tp;
   const int palette_size_idx = n - PALETTE_MIN_SIZE;
   write_uniform(w, n, p->token);  // The first color index.
@@ -365,7 +367,7 @@ static AOM_INLINE void pack_map_tokens(aom_writer *w, const TokenExtra **tp,
   *tp = p;
 }
 
-static AOM_INLINE void pack_txb_tokens(
+static inline void pack_txb_tokens(
     aom_writer *w, AV1_COMMON *cm, MACROBLOCK *const x, const TokenExtra **tp,
     const TokenExtra *const tok_end, MACROBLOCKD *xd, MB_MODE_INFO *mbmi,
     int plane, BLOCK_SIZE plane_bsize, aom_bit_depth_t bit_depth, int block,
@@ -414,7 +416,7 @@ static AOM_INLINE void pack_txb_tokens(
   }
 }
 
-static INLINE void set_spatial_segment_id(
+static inline void set_spatial_segment_id(
     const CommonModeInfoParams *const mi_params, uint8_t *segment_ids,
     BLOCK_SIZE bsize, int mi_row, int mi_col, uint8_t segment_id) {
   const int mi_offset = mi_row * mi_params->mi_cols + mi_col;
@@ -452,12 +454,12 @@ int av1_neg_interleave(int x, int ref, int max) {
   }
 }
 
-static AOM_INLINE void write_segment_id(AV1_COMP *cpi, MACROBLOCKD *const xd,
-                                        const MB_MODE_INFO *const mbmi,
-                                        aom_writer *w,
-                                        const struct segmentation *seg,
-                                        struct segmentation_probs *segp,
-                                        int skip_txfm) {
+static inline void write_segment_id(AV1_COMP *cpi, MACROBLOCKD *const xd,
+                                    const MB_MODE_INFO *const mbmi,
+                                    aom_writer *w,
+                                    const struct segmentation *seg,
+                                    struct segmentation_probs *segp,
+                                    int skip_txfm) {
   if (!seg->enabled || !seg->update_map) return;
 
   AV1_COMMON *const cm = &cpi->common;
@@ -494,8 +496,8 @@ static AOM_INLINE void write_segment_id(AV1_COMP *cpi, MACROBLOCKD *const xd,
   aom_write_symbol(w, bname, av1_get_pred_cdf_##pname(xd), 2)
 
 // This function encodes the reference frame
-static AOM_INLINE void write_ref_frames(const AV1_COMMON *cm,
-                                        const MACROBLOCKD *xd, aom_writer *w) {
+static inline void write_ref_frames(const AV1_COMMON *cm, const MACROBLOCKD *xd,
+                                    aom_writer *w) {
   const MB_MODE_INFO *const mbmi = xd->mi[0];
   const int is_compound = has_second_ref(mbmi);
   const uint8_t segment_id = mbmi->segment_id;
@@ -598,9 +600,10 @@ static AOM_INLINE void write_ref_frames(const AV1_COMMON *cm,
   }
 }
 
-static AOM_INLINE void write_filter_intra_mode_info(
-    const AV1_COMMON *cm, const MACROBLOCKD *xd, const MB_MODE_INFO *const mbmi,
-    aom_writer *w) {
+static inline void write_filter_intra_mode_info(const AV1_COMMON *cm,
+                                                const MACROBLOCKD *xd,
+                                                const MB_MODE_INFO *const mbmi,
+                                                aom_writer *w) {
   if (av1_filter_intra_allowed(cm, mbmi)) {
     aom_write_symbol(w, mbmi->filter_intra_mode_info.use_filter_intra,
                      xd->tile_ctx->filter_intra_cdfs[mbmi->bsize], 2);
@@ -613,14 +616,14 @@ static AOM_INLINE void write_filter_intra_mode_info(
   }
 }
 
-static AOM_INLINE void write_angle_delta(aom_writer *w, int angle_delta,
-                                         aom_cdf_prob *cdf) {
+static inline void write_angle_delta(aom_writer *w, int angle_delta,
+                                     aom_cdf_prob *cdf) {
   aom_write_symbol(w, angle_delta + MAX_ANGLE_DELTA, cdf,
                    2 * MAX_ANGLE_DELTA + 1);
 }
 
-static AOM_INLINE void write_mb_interp_filter(AV1_COMMON *const cm,
-                                              ThreadData *td, aom_writer *w) {
+static inline void write_mb_interp_filter(AV1_COMMON *const cm, ThreadData *td,
+                                          aom_writer *w) {
   const MACROBLOCKD *xd = &td->mb.e_mbd;
   const MB_MODE_INFO *const mbmi = xd->mi[0];
   FRAME_CONTEXT *ec_ctx = xd->tile_ctx;
@@ -649,9 +652,9 @@ static AOM_INLINE void write_mb_interp_filter(AV1_COMMON *const cm,
 // Transmit color values with delta encoding. Write the first value as
 // literal, and the deltas between each value and the previous one. "min_val" is
 // the smallest possible value of the deltas.
-static AOM_INLINE void delta_encode_palette_colors(const int *colors, int num,
-                                                   int bit_depth, int min_val,
-                                                   aom_writer *w) {
+static inline void delta_encode_palette_colors(const int *colors, int num,
+                                               int bit_depth, int min_val,
+                                               aom_writer *w) {
   if (num <= 0) return;
   assert(colors[0] < (1 << bit_depth));
   aom_write_literal(w, colors[0], bit_depth);
@@ -681,9 +684,9 @@ static AOM_INLINE void delta_encode_palette_colors(const int *colors, int num,
 // Transmit luma palette color values. First signal if each color in the color
 // cache is used. Those colors that are not in the cache are transmitted with
 // delta encoding.
-static AOM_INLINE void write_palette_colors_y(
-    const MACROBLOCKD *const xd, const PALETTE_MODE_INFO *const pmi,
-    int bit_depth, aom_writer *w) {
+static inline void write_palette_colors_y(const MACROBLOCKD *const xd,
+                                          const PALETTE_MODE_INFO *const pmi,
+                                          int bit_depth, aom_writer *w) {
   const int n = pmi->palette_size[0];
   uint16_t color_cache[2 * PALETTE_MAX_SIZE];
   const int n_cache = av1_get_palette_cache(xd, 0, color_cache);
@@ -705,9 +708,9 @@ static AOM_INLINE void write_palette_colors_y(
 // Write chroma palette color values. U channel is handled similarly to the luma
 // channel. For v channel, either use delta encoding or transmit raw values
 // directly, whichever costs less.
-static AOM_INLINE void write_palette_colors_uv(
-    const MACROBLOCKD *const xd, const PALETTE_MODE_INFO *const pmi,
-    int bit_depth, aom_writer *w) {
+static inline void write_palette_colors_uv(const MACROBLOCKD *const xd,
+                                           const PALETTE_MODE_INFO *const pmi,
+                                           int bit_depth, aom_writer *w) {
   const int n = pmi->palette_size[1];
   const uint16_t *colors_u = pmi->palette_colors + PALETTE_MAX_SIZE;
   const uint16_t *colors_v = pmi->palette_colors + 2 * PALETTE_MAX_SIZE;
@@ -764,10 +767,10 @@ static AOM_INLINE void write_palette_colors_uv(
   }
 }
 
-static AOM_INLINE void write_palette_mode_info(const AV1_COMMON *cm,
-                                               const MACROBLOCKD *xd,
-                                               const MB_MODE_INFO *const mbmi,
-                                               aom_writer *w) {
+static inline void write_palette_mode_info(const AV1_COMMON *cm,
+                                           const MACROBLOCKD *xd,
+                                           const MB_MODE_INFO *const mbmi,
+                                           aom_writer *w) {
   const int num_planes = av1_num_planes(cm);
   const BLOCK_SIZE bsize = mbmi->bsize;
   assert(av1_allow_palette(cm->features.allow_screen_content_tools, bsize));
@@ -843,26 +846,25 @@ void av1_write_tx_type(const AV1_COMMON *const cm, const MACROBLOCKD *xd,
   }
 }
 
-static AOM_INLINE void write_intra_y_mode_nonkf(FRAME_CONTEXT *frame_ctx,
-                                                BLOCK_SIZE bsize,
-                                                PREDICTION_MODE mode,
-                                                aom_writer *w) {
+static inline void write_intra_y_mode_nonkf(FRAME_CONTEXT *frame_ctx,
+                                            BLOCK_SIZE bsize,
+                                            PREDICTION_MODE mode,
+                                            aom_writer *w) {
   aom_write_symbol(w, mode, frame_ctx->y_mode_cdf[size_group_lookup[bsize]],
                    INTRA_MODES);
 }
 
-static AOM_INLINE void write_intra_uv_mode(FRAME_CONTEXT *frame_ctx,
-                                           UV_PREDICTION_MODE uv_mode,
-                                           PREDICTION_MODE y_mode,
-                                           CFL_ALLOWED_TYPE cfl_allowed,
-                                           aom_writer *w) {
+static inline void write_intra_uv_mode(FRAME_CONTEXT *frame_ctx,
+                                       UV_PREDICTION_MODE uv_mode,
+                                       PREDICTION_MODE y_mode,
+                                       CFL_ALLOWED_TYPE cfl_allowed,
+                                       aom_writer *w) {
   aom_write_symbol(w, uv_mode, frame_ctx->uv_mode_cdf[cfl_allowed][y_mode],
                    UV_INTRA_MODES - !cfl_allowed);
 }
 
-static AOM_INLINE void write_cfl_alphas(FRAME_CONTEXT *const ec_ctx,
-                                        uint8_t idx, int8_t joint_sign,
-                                        aom_writer *w) {
+static inline void write_cfl_alphas(FRAME_CONTEXT *const ec_ctx, uint8_t idx,
+                                    int8_t joint_sign, aom_writer *w) {
   aom_write_symbol(w, joint_sign, ec_ctx->cfl_sign_cdf, CFL_JOINT_SIGNS);
   // Magnitudes are only signaled for nonzero codes.
   if (CFL_SIGN_U(joint_sign) != CFL_SIGN_ZERO) {
@@ -875,8 +877,8 @@ static AOM_INLINE void write_cfl_alphas(FRAME_CONTEXT *const ec_ctx,
   }
 }
 
-static AOM_INLINE void write_cdef(AV1_COMMON *cm, MACROBLOCKD *const xd,
-                                  aom_writer *w, int skip) {
+static inline void write_cdef(AV1_COMMON *cm, MACROBLOCKD *const xd,
+                              aom_writer *w, int skip) {
   if (cm->features.coded_lossless || cm->features.allow_intrabc) return;
 
   // At the start of a superblock, mark that we haven't yet written CDEF
@@ -915,10 +917,11 @@ static AOM_INLINE void write_cdef(AV1_COMMON *cm, MACROBLOCKD *const xd,
   }
 }
 
-static AOM_INLINE void write_inter_segment_id(
-    AV1_COMP *cpi, MACROBLOCKD *const xd, aom_writer *w,
-    const struct segmentation *const seg, struct segmentation_probs *const segp,
-    int skip, int preskip) {
+static inline void write_inter_segment_id(AV1_COMP *cpi, MACROBLOCKD *const xd,
+                                          aom_writer *w,
+                                          const struct segmentation *const seg,
+                                          struct segmentation_probs *const segp,
+                                          int skip, int preskip) {
   MB_MODE_INFO *const mbmi = xd->mi[0];
   AV1_COMMON *const cm = &cpi->common;
   const int mi_row = xd->mi_row;
@@ -954,9 +957,9 @@ static AOM_INLINE void write_inter_segment_id(
 
 // If delta q is present, writes delta_q index.
 // Also writes delta_q loop filter levels, if present.
-static AOM_INLINE void write_delta_q_params(AV1_COMMON *const cm,
-                                            MACROBLOCKD *const xd, int skip,
-                                            aom_writer *w) {
+static inline void write_delta_q_params(AV1_COMMON *const cm,
+                                        MACROBLOCKD *const xd, int skip,
+                                        aom_writer *w) {
   const DeltaQInfo *const delta_q_info = &cm->delta_q_info;
 
   if (delta_q_info->delta_q_present_flag) {
@@ -997,10 +1000,10 @@ static AOM_INLINE void write_delta_q_params(AV1_COMMON *const cm,
   }
 }
 
-static AOM_INLINE void write_intra_prediction_modes(const AV1_COMMON *cm,
-                                                    MACROBLOCKD *const xd,
-                                                    int is_keyframe,
-                                                    aom_writer *w) {
+static inline void write_intra_prediction_modes(const AV1_COMMON *cm,
+                                                MACROBLOCKD *const xd,
+                                                int is_keyframe,
+                                                aom_writer *w) {
   FRAME_CONTEXT *ec_ctx = xd->tile_ctx;
   const MB_MODE_INFO *const mbmi = xd->mi[0];
   const PREDICTION_MODE mode = mbmi->mode;
@@ -1028,10 +1031,10 @@ static AOM_INLINE void write_intra_prediction_modes(const AV1_COMMON *cm,
     write_intra_uv_mode(ec_ctx, uv_mode, mode, is_cfl_allowed(xd), w);
     if (uv_mode == UV_CFL_PRED)
       write_cfl_alphas(ec_ctx, mbmi->cfl_alpha_idx, mbmi->cfl_alpha_signs, w);
-    const PREDICTION_MODE equiv_mode = get_uv_mode(uv_mode);
-    if (use_angle_delta && av1_is_directional_mode(equiv_mode)) {
+    const PREDICTION_MODE intra_mode = get_uv_mode(uv_mode);
+    if (use_angle_delta && av1_is_directional_mode(intra_mode)) {
       write_angle_delta(w, mbmi->angle_delta[PLANE_TYPE_UV],
-                        ec_ctx->angle_delta_cdf[equiv_mode - V_PRED]);
+                        ec_ctx->angle_delta_cdf[intra_mode - V_PRED]);
     }
   }
 
@@ -1044,7 +1047,7 @@ static AOM_INLINE void write_intra_prediction_modes(const AV1_COMMON *cm,
   write_filter_intra_mode_info(cm, xd, mbmi, w);
 }
 
-static INLINE int16_t mode_context_analyzer(
+static inline int16_t mode_context_analyzer(
     const int16_t mode_context, const MV_REFERENCE_FRAME *const rf) {
   if (rf[1] <= INTRA_FRAME) return mode_context;
 
@@ -1056,7 +1059,7 @@ static INLINE int16_t mode_context_analyzer(
   return comp_ctx;
 }
 
-static INLINE int_mv get_ref_mv_from_stack(
+static inline int_mv get_ref_mv_from_stack(
     int ref_idx, const MV_REFERENCE_FRAME *ref_frame, int ref_mv_idx,
     const MB_MODE_INFO_EXT_FRAME *mbmi_ext_frame) {
   const int8_t ref_frame_type = av1_ref_frame_type(ref_frame);
@@ -1074,7 +1077,7 @@ static INLINE int_mv get_ref_mv_from_stack(
              : mbmi_ext_frame->global_mvs[ref_frame_type];
 }
 
-static INLINE int_mv get_ref_mv(const MACROBLOCK *x, int ref_idx) {
+static inline int_mv get_ref_mv(const MACROBLOCK *x, int ref_idx) {
   const MACROBLOCKD *xd = &x->e_mbd;
   const MB_MODE_INFO *mbmi = xd->mi[0];
   int ref_mv_idx = mbmi->ref_mv_idx;
@@ -1086,8 +1089,8 @@ static INLINE int_mv get_ref_mv(const MACROBLOCK *x, int ref_idx) {
                                x->mbmi_ext_frame);
 }
 
-static AOM_INLINE void pack_inter_mode_mvs(AV1_COMP *cpi, ThreadData *const td,
-                                           aom_writer *w) {
+static inline void pack_inter_mode_mvs(AV1_COMP *cpi, ThreadData *const td,
+                                       aom_writer *w) {
   AV1_COMMON *const cm = &cpi->common;
   MACROBLOCK *const x = &td->mb;
   MACROBLOCKD *const xd = &x->e_mbd;
@@ -1245,7 +1248,7 @@ static AOM_INLINE void pack_inter_mode_mvs(AV1_COMP *cpi, ThreadData *const td,
   }
 }
 
-static AOM_INLINE void write_intrabc_info(
+static inline void write_intrabc_info(
     MACROBLOCKD *xd, const MB_MODE_INFO_EXT_FRAME *mbmi_ext_frame,
     aom_writer *w) {
   const MB_MODE_INFO *const mbmi = xd->mi[0];
@@ -1261,7 +1264,7 @@ static AOM_INLINE void write_intrabc_info(
   }
 }
 
-static AOM_INLINE void write_mb_modes_kf(
+static inline void write_mb_modes_kf(
     AV1_COMP *cpi, MACROBLOCKD *xd,
     const MB_MODE_INFO_EXT_FRAME *mbmi_ext_frame, aom_writer *w) {
   AV1_COMMON *const cm = &cpi->common;
@@ -1291,7 +1294,7 @@ static AOM_INLINE void write_mb_modes_kf(
 }
 
 #if CONFIG_RD_DEBUG
-static AOM_INLINE void dump_mode_info(MB_MODE_INFO *mi) {
+static inline void dump_mode_info(MB_MODE_INFO *mi) {
   printf("\nmi->mi_row == %d\n", mi->mi_row);
   printf("&& mi->mi_col == %d\n", mi->mi_col);
   printf("&& mi->bsize == %d\n", mi->bsize);
@@ -1311,7 +1314,7 @@ static int rd_token_stats_mismatch(RD_STATS *rd_stats, TOKEN_STATS *token_stats,
 #endif
 
 #if ENC_MISMATCH_DEBUG
-static AOM_INLINE void enc_dump_logs(
+static inline void enc_dump_logs(
     const AV1_COMMON *const cm,
     const MBMIExtFrameBufferInfo *const mbmi_ext_info, int mi_row, int mi_col) {
   const MB_MODE_INFO *const mbmi = *(
@@ -1367,8 +1370,8 @@ static AOM_INLINE void enc_dump_logs(
 }
 #endif  // ENC_MISMATCH_DEBUG
 
-static AOM_INLINE void write_mbmi_b(AV1_COMP *cpi, ThreadData *const td,
-                                    aom_writer *w) {
+static inline void write_mbmi_b(AV1_COMP *cpi, ThreadData *const td,
+                                aom_writer *w) {
   AV1_COMMON *const cm = &cpi->common;
   MACROBLOCKD *const xd = &td->mb.e_mbd;
   MB_MODE_INFO *m = xd->mi[0];
@@ -1389,7 +1392,7 @@ static AOM_INLINE void write_mbmi_b(AV1_COMP *cpi, ThreadData *const td,
   }
 }
 
-static AOM_INLINE void write_inter_txb_coeff(
+static inline void write_inter_txb_coeff(
     AV1_COMMON *const cm, MACROBLOCK *const x, MB_MODE_INFO *const mbmi,
     aom_writer *w, const TokenExtra **tok, const TokenExtra *const tok_end,
     TOKEN_STATS *token_stats, const int row, const int col, int *block,
@@ -1425,9 +1428,9 @@ static AOM_INLINE void write_inter_txb_coeff(
   }
 }
 
-static AOM_INLINE void write_tokens_b(AV1_COMP *cpi, MACROBLOCK *const x,
-                                      aom_writer *w, const TokenExtra **tok,
-                                      const TokenExtra *const tok_end) {
+static inline void write_tokens_b(AV1_COMP *cpi, MACROBLOCK *const x,
+                                  aom_writer *w, const TokenExtra **tok,
+                                  const TokenExtra *const tok_end) {
   AV1_COMMON *const cm = &cpi->common;
   MACROBLOCKD *const xd = &x->e_mbd;
   MB_MODE_INFO *const mbmi = xd->mi[0];
@@ -1478,11 +1481,11 @@ static AOM_INLINE void write_tokens_b(AV1_COMP *cpi, MACROBLOCK *const x,
   }
 }
 
-static AOM_INLINE void write_modes_b(AV1_COMP *cpi, ThreadData *const td,
-                                     const TileInfo *const tile, aom_writer *w,
-                                     const TokenExtra **tok,
-                                     const TokenExtra *const tok_end,
-                                     int mi_row, int mi_col) {
+static inline void write_modes_b(AV1_COMP *cpi, ThreadData *const td,
+                                 const TileInfo *const tile, aom_writer *w,
+                                 const TokenExtra **tok,
+                                 const TokenExtra *const tok_end, int mi_row,
+                                 int mi_col) {
   const AV1_COMMON *cm = &cpi->common;
   const CommonModeInfoParams *const mi_params = &cm->mi_params;
   MACROBLOCKD *xd = &td->mb.e_mbd;
@@ -1566,10 +1569,10 @@ static AOM_INLINE void write_modes_b(AV1_COMP *cpi, ThreadData *const td,
   }
 }
 
-static AOM_INLINE void write_partition(const AV1_COMMON *const cm,
-                                       const MACROBLOCKD *const xd, int hbs,
-                                       int mi_row, int mi_col, PARTITION_TYPE p,
-                                       BLOCK_SIZE bsize, aom_writer *w) {
+static inline void write_partition(const AV1_COMMON *const cm,
+                                   const MACROBLOCKD *const xd, int hbs,
+                                   int mi_row, int mi_col, PARTITION_TYPE p,
+                                   BLOCK_SIZE bsize, aom_writer *w) {
   const int is_partition_point = bsize >= BLOCK_8X8;
 
   if (!is_partition_point) return;
@@ -1603,10 +1606,11 @@ static AOM_INLINE void write_partition(const AV1_COMMON *const cm,
   }
 }
 
-static AOM_INLINE void write_modes_sb(
-    AV1_COMP *const cpi, ThreadData *const td, const TileInfo *const tile,
-    aom_writer *const w, const TokenExtra **tok,
-    const TokenExtra *const tok_end, int mi_row, int mi_col, BLOCK_SIZE bsize) {
+static inline void write_modes_sb(AV1_COMP *const cpi, ThreadData *const td,
+                                  const TileInfo *const tile,
+                                  aom_writer *const w, const TokenExtra **tok,
+                                  const TokenExtra *const tok_end, int mi_row,
+                                  int mi_col, BLOCK_SIZE bsize) {
   const AV1_COMMON *const cm = &cpi->common;
   const CommonModeInfoParams *const mi_params = &cm->mi_params;
   MACROBLOCKD *const xd = &td->mb.e_mbd;
@@ -1709,11 +1713,11 @@ static AOM_INLINE void write_modes_sb(
 }
 
 // Populate token pointers appropriately based on token_info.
-static AOM_INLINE void get_token_pointers(const TokenInfo *token_info,
-                                          const int tile_row, int tile_col,
-                                          const int sb_row_in_tile,
-                                          const TokenExtra **tok,
-                                          const TokenExtra **tok_end) {
+static inline void get_token_pointers(const TokenInfo *token_info,
+                                      const int tile_row, int tile_col,
+                                      const int sb_row_in_tile,
+                                      const TokenExtra **tok,
+                                      const TokenExtra **tok_end) {
   if (!is_token_info_allocated(token_info)) {
     *tok = NULL;
     *tok_end = NULL;
@@ -1724,10 +1728,9 @@ static AOM_INLINE void get_token_pointers(const TokenInfo *token_info,
       *tok + token_info->tplist[tile_row][tile_col][sb_row_in_tile].count;
 }
 
-static AOM_INLINE void write_modes(AV1_COMP *const cpi, ThreadData *const td,
-                                   const TileInfo *const tile,
-                                   aom_writer *const w, int tile_row,
-                                   int tile_col) {
+static inline void write_modes(AV1_COMP *const cpi, ThreadData *const td,
+                               const TileInfo *const tile, aom_writer *const w,
+                               int tile_row, int tile_col) {
   AV1_COMMON *const cm = &cpi->common;
   MACROBLOCKD *const xd = &td->mb.e_mbd;
   const int mi_row_start = tile->mi_row_start;
@@ -1768,8 +1771,8 @@ static AOM_INLINE void write_modes(AV1_COMP *const cpi, ThreadData *const td,
   }
 }
 
-static AOM_INLINE void encode_restoration_mode(
-    AV1_COMMON *cm, struct aom_write_bit_buffer *wb) {
+static inline void encode_restoration_mode(AV1_COMMON *cm,
+                                           struct aom_write_bit_buffer *wb) {
   assert(!cm->features.all_lossless);
   if (!cm->seq_params->enable_restoration) return;
   if (cm->features.allow_intrabc) return;
@@ -1841,10 +1844,10 @@ static AOM_INLINE void encode_restoration_mode(
 }
 
 #if !CONFIG_REALTIME_ONLY
-static AOM_INLINE void write_wiener_filter(int wiener_win,
-                                           const WienerInfo *wiener_info,
-                                           WienerInfo *ref_wiener_info,
-                                           aom_writer *wb) {
+static inline void write_wiener_filter(int wiener_win,
+                                       const WienerInfo *wiener_info,
+                                       WienerInfo *ref_wiener_info,
+                                       aom_writer *wb) {
   if (wiener_win == WIENER_WIN)
     aom_write_primitive_refsubexpfin(
         wb, WIENER_FILT_TAP0_MAXV - WIENER_FILT_TAP0_MINV + 1,
@@ -1886,9 +1889,9 @@ static AOM_INLINE void write_wiener_filter(int wiener_win,
   memcpy(ref_wiener_info, wiener_info, sizeof(*wiener_info));
 }
 
-static AOM_INLINE void write_sgrproj_filter(const SgrprojInfo *sgrproj_info,
-                                            SgrprojInfo *ref_sgrproj_info,
-                                            aom_writer *wb) {
+static inline void write_sgrproj_filter(const SgrprojInfo *sgrproj_info,
+                                        SgrprojInfo *ref_sgrproj_info,
+                                        aom_writer *wb) {
   aom_write_literal(wb, sgrproj_info->ep, SGRPROJ_PARAMS_BITS);
   const sgr_params_type *params = &av1_sgr_params[sgrproj_info->ep];
 
@@ -1917,7 +1920,7 @@ static AOM_INLINE void write_sgrproj_filter(const SgrprojInfo *sgrproj_info,
   memcpy(ref_sgrproj_info, sgrproj_info, sizeof(*sgrproj_info));
 }
 
-static AOM_INLINE void loop_restoration_write_sb_coeffs(
+static inline void loop_restoration_write_sb_coeffs(
     const AV1_COMMON *const cm, MACROBLOCKD *xd, int runit_idx,
     aom_writer *const w, int plane, FRAME_COUNTS *counts) {
   const RestorationUnitInfo *rui = &cm->rst_info[plane].unit_info[runit_idx];
@@ -2024,8 +2027,8 @@ static bool is_mode_ref_delta_meaningful(AV1_COMMON *cm) {
   return false;
 }
 
-static AOM_INLINE void encode_loopfilter(AV1_COMMON *cm,
-                                         struct aom_write_bit_buffer *wb) {
+static inline void encode_loopfilter(AV1_COMMON *cm,
+                                     struct aom_write_bit_buffer *wb) {
   assert(!cm->features.coded_lossless);
   if (cm->features.allow_intrabc) return;
   const int num_planes = av1_num_planes(cm);
@@ -2076,8 +2079,8 @@ static AOM_INLINE void encode_loopfilter(AV1_COMMON *cm,
   }
 }
 
-static AOM_INLINE void encode_cdef(const AV1_COMMON *cm,
-                                   struct aom_write_bit_buffer *wb) {
+static inline void encode_cdef(const AV1_COMMON *cm,
+                               struct aom_write_bit_buffer *wb) {
   assert(!cm->features.coded_lossless);
   if (!cm->seq_params->enable_cdef) return;
   if (cm->features.allow_intrabc) return;
@@ -2094,8 +2097,7 @@ static AOM_INLINE void encode_cdef(const AV1_COMMON *cm,
   }
 }
 
-static AOM_INLINE void write_delta_q(struct aom_write_bit_buffer *wb,
-                                     int delta_q) {
+static inline void write_delta_q(struct aom_write_bit_buffer *wb, int delta_q) {
   if (delta_q != 0) {
     aom_wb_write_bit(wb, 1);
     aom_wb_write_inv_signed_literal(wb, delta_q, 6);
@@ -2104,7 +2106,7 @@ static AOM_INLINE void write_delta_q(struct aom_write_bit_buffer *wb,
   }
 }
 
-static AOM_INLINE void encode_quantization(
+static inline void encode_quantization(
     const CommonQuantParams *const quant_params, int num_planes,
     bool separate_uv_delta_q, struct aom_write_bit_buffer *wb) {
   aom_wb_write_literal(wb, quant_params->base_qindex, QINDEX_BITS);
@@ -2132,8 +2134,8 @@ static AOM_INLINE void encode_quantization(
   }
 }
 
-static AOM_INLINE void encode_segmentation(AV1_COMMON *cm,
-                                           struct aom_write_bit_buffer *wb) {
+static inline void encode_segmentation(AV1_COMMON *cm,
+                                       struct aom_write_bit_buffer *wb) {
   int i, j;
   struct segmentation *seg = &cm->seg;
 
@@ -2170,16 +2172,16 @@ static AOM_INLINE void encode_segmentation(AV1_COMMON *cm,
   }
 }
 
-static AOM_INLINE void write_frame_interp_filter(
-    InterpFilter filter, struct aom_write_bit_buffer *wb) {
+static inline void write_frame_interp_filter(InterpFilter filter,
+                                             struct aom_write_bit_buffer *wb) {
   aom_wb_write_bit(wb, filter == SWITCHABLE);
   if (filter != SWITCHABLE)
     aom_wb_write_literal(wb, filter, LOG_SWITCHABLE_FILTERS);
 }
 
 // Same function as write_uniform but writing to uncompresses header wb
-static AOM_INLINE void wb_write_uniform(struct aom_write_bit_buffer *wb, int n,
-                                        int v) {
+static inline void wb_write_uniform(struct aom_write_bit_buffer *wb, int n,
+                                    int v) {
   const int l = get_unsigned_bits(n);
   const int m = (1 << l) - n;
   if (l == 0) return;
@@ -2191,8 +2193,8 @@ static AOM_INLINE void wb_write_uniform(struct aom_write_bit_buffer *wb, int n,
   }
 }
 
-static AOM_INLINE void write_tile_info_max_tile(
-    const AV1_COMMON *const cm, struct aom_write_bit_buffer *wb) {
+static inline void write_tile_info_max_tile(const AV1_COMMON *const cm,
+                                            struct aom_write_bit_buffer *wb) {
   int width_sb =
       CEIL_POWER_OF_TWO(cm->mi_params.mi_cols, cm->seq_params->mib_size_log2);
   int height_sb =
@@ -2240,9 +2242,9 @@ static AOM_INLINE void write_tile_info_max_tile(
   }
 }
 
-static AOM_INLINE void write_tile_info(const AV1_COMMON *const cm,
-                                       struct aom_write_bit_buffer *saved_wb,
-                                       struct aom_write_bit_buffer *wb) {
+static inline void write_tile_info(const AV1_COMMON *const cm,
+                                   struct aom_write_bit_buffer *saved_wb,
+                                   struct aom_write_bit_buffer *wb) {
   write_tile_info_max_tile(cm, wb);
 
   *saved_wb = *wb;
@@ -2254,9 +2256,9 @@ static AOM_INLINE void write_tile_info(const AV1_COMMON *const cm,
   }
 }
 
-static AOM_INLINE void write_ext_tile_info(
-    const AV1_COMMON *const cm, struct aom_write_bit_buffer *saved_wb,
-    struct aom_write_bit_buffer *wb) {
+static inline void write_ext_tile_info(const AV1_COMMON *const cm,
+                                       struct aom_write_bit_buffer *saved_wb,
+                                       struct aom_write_bit_buffer *wb) {
   // This information is stored as a separate byte.
   int mod = wb->bit_offset % CHAR_BIT;
   if (mod > 0) aom_wb_write_literal(wb, 0, CHAR_BIT - mod);
@@ -2273,7 +2275,7 @@ static AOM_INLINE void write_ext_tile_info(
   }
 }
 
-static INLINE int find_identical_tile(
+static inline int find_identical_tile(
     const int tile_row, const int tile_col,
     TileBufferEnc (*const tile_buffers)[MAX_TILE_COLS]) {
   const MV32 candidate_offset[1] = { { 1, 0 } };
@@ -2324,8 +2326,8 @@ static INLINE int find_identical_tile(
   return 0;
 }
 
-static AOM_INLINE void write_render_size(const AV1_COMMON *cm,
-                                         struct aom_write_bit_buffer *wb) {
+static inline void write_render_size(const AV1_COMMON *cm,
+                                     struct aom_write_bit_buffer *wb) {
   const int scaling_active = av1_resize_scaled(cm);
   aom_wb_write_bit(wb, scaling_active);
   if (scaling_active) {
@@ -2334,8 +2336,8 @@ static AOM_INLINE void write_render_size(const AV1_COMMON *cm,
   }
 }
 
-static AOM_INLINE void write_superres_scale(const AV1_COMMON *const cm,
-                                            struct aom_write_bit_buffer *wb) {
+static inline void write_superres_scale(const AV1_COMMON *const cm,
+                                        struct aom_write_bit_buffer *wb) {
   const SequenceHeader *const seq_params = cm->seq_params;
   if (!seq_params->enable_superres) {
     assert(cm->superres_scale_denominator == SCALE_NUMERATOR);
@@ -2356,9 +2358,9 @@ static AOM_INLINE void write_superres_scale(const AV1_COMMON *const cm,
   }
 }
 
-static AOM_INLINE void write_frame_size(const AV1_COMMON *cm,
-                                        int frame_size_override,
-                                        struct aom_write_bit_buffer *wb) {
+static inline void write_frame_size(const AV1_COMMON *cm,
+                                    int frame_size_override,
+                                    struct aom_write_bit_buffer *wb) {
   const int coded_width = cm->superres_upscaled_width - 1;
   const int coded_height = cm->superres_upscaled_height - 1;
 
@@ -2374,8 +2376,8 @@ static AOM_INLINE void write_frame_size(const AV1_COMMON *cm,
   write_render_size(cm, wb);
 }
 
-static AOM_INLINE void write_frame_size_with_refs(
-    const AV1_COMMON *const cm, struct aom_write_bit_buffer *wb) {
+static inline void write_frame_size_with_refs(const AV1_COMMON *const cm,
+                                              struct aom_write_bit_buffer *wb) {
   int found = 0;
 
   MV_REFERENCE_FRAME ref_frame;
@@ -2401,14 +2403,14 @@ static AOM_INLINE void write_frame_size_with_refs(
   }
 }
 
-static AOM_INLINE void write_profile(BITSTREAM_PROFILE profile,
-                                     struct aom_write_bit_buffer *wb) {
+static inline void write_profile(BITSTREAM_PROFILE profile,
+                                 struct aom_write_bit_buffer *wb) {
   assert(profile >= PROFILE_0 && profile < MAX_PROFILES);
   aom_wb_write_literal(wb, profile, PROFILE_BITS);
 }
 
-static AOM_INLINE void write_bitdepth(const SequenceHeader *const seq_params,
-                                      struct aom_write_bit_buffer *wb) {
+static inline void write_bitdepth(const SequenceHeader *const seq_params,
+                                  struct aom_write_bit_buffer *wb) {
   // Profile 0/1: [0] for 8 bit, [1]  10-bit
   // Profile   2: [0] for 8 bit, [10] 10-bit, [11] - 12-bit
   aom_wb_write_bit(wb, seq_params->bit_depth == AOM_BITS_8 ? 0 : 1);
@@ -2417,8 +2419,8 @@ static AOM_INLINE void write_bitdepth(const SequenceHeader *const seq_params,
   }
 }
 
-static AOM_INLINE void write_color_config(
-    const SequenceHeader *const seq_params, struct aom_write_bit_buffer *wb) {
+static inline void write_color_config(const SequenceHeader *const seq_params,
+                                      struct aom_write_bit_buffer *wb) {
   write_bitdepth(seq_params, wb);
   const int is_monochrome = seq_params->monochrome;
   // monochrome bit
@@ -2483,7 +2485,7 @@ static AOM_INLINE void write_color_config(
   aom_wb_write_bit(wb, seq_params->separate_uv_delta_q);
 }
 
-static AOM_INLINE void write_timing_info_header(
+static inline void write_timing_info_header(
     const aom_timing_info_t *const timing_info,
     struct aom_write_bit_buffer *wb) {
   aom_wb_write_unsigned_literal(wb, timing_info->num_units_in_display_tick, 32);
@@ -2494,7 +2496,7 @@ static AOM_INLINE void write_timing_info_header(
   }
 }
 
-static AOM_INLINE void write_decoder_model_info(
+static inline void write_decoder_model_info(
     const aom_dec_model_info_t *const decoder_model_info,
     struct aom_write_bit_buffer *wb) {
   aom_wb_write_literal(
@@ -2507,7 +2509,7 @@ static AOM_INLINE void write_decoder_model_info(
       wb, decoder_model_info->frame_presentation_time_length - 1, 5);
 }
 
-static AOM_INLINE void write_dec_model_op_parameters(
+static inline void write_dec_model_op_parameters(
     const aom_dec_model_op_parameters_t *op_params, int buffer_delay_length,
     struct aom_write_bit_buffer *wb) {
   aom_wb_write_unsigned_literal(wb, op_params->decoder_buffer_delay,
@@ -2517,15 +2519,15 @@ static AOM_INLINE void write_dec_model_op_parameters(
   aom_wb_write_bit(wb, op_params->low_delay_mode_flag);
 }
 
-static AOM_INLINE void write_tu_pts_info(AV1_COMMON *const cm,
-                                         struct aom_write_bit_buffer *wb) {
+static inline void write_tu_pts_info(AV1_COMMON *const cm,
+                                     struct aom_write_bit_buffer *wb) {
   aom_wb_write_unsigned_literal(
       wb, cm->frame_presentation_time,
       cm->seq_params->decoder_model_info.frame_presentation_time_length);
 }
 
-static AOM_INLINE void write_film_grain_params(
-    const AV1_COMP *const cpi, struct aom_write_bit_buffer *wb) {
+static inline void write_film_grain_params(const AV1_COMP *const cpi,
+                                           struct aom_write_bit_buffer *wb) {
   const AV1_COMMON *const cm = &cpi->common;
   const aom_film_grain_t *const pars = &cm->cur_frame->film_grain_params;
   aom_wb_write_bit(wb, pars->apply_grain);
@@ -2628,8 +2630,8 @@ static AOM_INLINE void write_film_grain_params(
   aom_wb_write_bit(wb, pars->clip_to_restricted_range);
 }
 
-static AOM_INLINE void write_sb_size(const SequenceHeader *const seq_params,
-                                     struct aom_write_bit_buffer *wb) {
+static inline void write_sb_size(const SequenceHeader *const seq_params,
+                                 struct aom_write_bit_buffer *wb) {
   (void)seq_params;
   (void)wb;
   assert(seq_params->mib_size == mi_size_wide[seq_params->sb_size]);
@@ -2639,8 +2641,8 @@ static AOM_INLINE void write_sb_size(const SequenceHeader *const seq_params,
   aom_wb_write_bit(wb, seq_params->sb_size == BLOCK_128X128 ? 1 : 0);
 }
 
-static AOM_INLINE void write_sequence_header(
-    const SequenceHeader *const seq_params, struct aom_write_bit_buffer *wb) {
+static inline void write_sequence_header(const SequenceHeader *const seq_params,
+                                         struct aom_write_bit_buffer *wb) {
   aom_wb_write_literal(wb, seq_params->num_bits_width - 1, 4);
   aom_wb_write_literal(wb, seq_params->num_bits_height - 1, 4);
   aom_wb_write_literal(wb, seq_params->max_frame_width - 1,
@@ -2705,7 +2707,7 @@ static AOM_INLINE void write_sequence_header(
   aom_wb_write_bit(wb, seq_params->enable_restoration);
 }
 
-static AOM_INLINE void write_global_motion_params(
+static inline void write_global_motion_params(
     const WarpedMotionParams *params, const WarpedMotionParams *ref_params,
     struct aom_write_bit_buffer *wb, int allow_hp) {
   const TransformationType type = params->wmtype;
@@ -2764,8 +2766,8 @@ static AOM_INLINE void write_global_motion_params(
   }
 }
 
-static AOM_INLINE void write_global_motion(AV1_COMP *cpi,
-                                           struct aom_write_bit_buffer *wb) {
+static inline void write_global_motion(AV1_COMP *cpi,
+                                       struct aom_write_bit_buffer *wb) {
   AV1_COMMON *const cm = &cpi->common;
   int frame;
   for (frame = LAST_FRAME; frame <= ALTREF_FRAME; ++frame) {
@@ -2892,7 +2894,7 @@ static int check_frame_refs_short_signaling(AV1_COMMON *const cm,
 }
 
 // New function based on HLS R18
-static AOM_INLINE void write_uncompressed_header_obu(
+static inline void write_uncompressed_header_obu(
     AV1_COMP *cpi, MACROBLOCKD *const xd, struct aom_write_bit_buffer *saved_wb,
     struct aom_write_bit_buffer *wb) {
   AV1_COMMON *const cm = &cpi->common;
@@ -3099,12 +3101,34 @@ static AOM_INLINE void write_uncompressed_header_obu(
         const int gld_ref = get_ref_frame_map_idx(cm, GOLDEN_FRAME);
         aom_wb_write_literal(wb, gld_ref, REF_FRAMES_LOG2);
       }
-
+      int first_ref_map_idx = INVALID_IDX;
+      if (cpi->ppi->rtc_ref.set_ref_frame_config) {
+        for (ref_frame = LAST_FRAME; ref_frame <= ALTREF_FRAME; ++ref_frame) {
+          if (cpi->ppi->rtc_ref.reference[ref_frame - 1] == 1) {
+            first_ref_map_idx = cpi->ppi->rtc_ref.ref_idx[ref_frame - 1];
+            break;
+          }
+        }
+      }
       for (ref_frame = LAST_FRAME; ref_frame <= ALTREF_FRAME; ++ref_frame) {
         assert(get_ref_frame_map_idx(cm, ref_frame) != INVALID_IDX);
-        if (!current_frame->frame_refs_short_signaling)
-          aom_wb_write_literal(wb, get_ref_frame_map_idx(cm, ref_frame),
-                               REF_FRAMES_LOG2);
+        if (!current_frame->frame_refs_short_signaling) {
+          if (cpi->ppi->rtc_ref.set_ref_frame_config &&
+              first_ref_map_idx != INVALID_IDX &&
+              cpi->svc.number_spatial_layers == 1 &&
+              !seq_params->order_hint_info.enable_order_hint) {
+            // For the usage of set_ref_frame_config:
+            // for any reference not used set their ref_map_idx
+            // to the first used reference.
+            const int map_idx = cpi->ppi->rtc_ref.reference[ref_frame - 1]
+                                    ? get_ref_frame_map_idx(cm, ref_frame)
+                                    : first_ref_map_idx;
+            aom_wb_write_literal(wb, map_idx, REF_FRAMES_LOG2);
+          } else {
+            aom_wb_write_literal(wb, get_ref_frame_map_idx(cm, ref_frame),
+                                 REF_FRAMES_LOG2);
+          }
+        }
         if (seq_params->frame_id_numbers_present_flag) {
           int i = get_ref_frame_map_idx(cm, ref_frame);
           int frame_id_len = seq_params->frame_id_length;
@@ -3237,8 +3261,8 @@ static int choose_size_bytes(uint32_t size, int spare_msbs) {
     return 1;
 }
 
-static AOM_INLINE void mem_put_varsize(uint8_t *const dst, const int sz,
-                                       const int val) {
+static inline void mem_put_varsize(uint8_t *const dst, const int sz,
+                                   const int val) {
   switch (sz) {
     case 1: dst[0] = (uint8_t)(val & 0xff); break;
     case 2: mem_put_le16(dst, val); break;
@@ -3354,36 +3378,74 @@ static int remux_tiles(const CommonTileParams *const tiles, uint8_t *dst,
 
 uint32_t av1_write_obu_header(AV1LevelParams *const level_params,
                               int *frame_header_count, OBU_TYPE obu_type,
+                              bool has_nonzero_operating_point_idc,
                               int obu_extension, uint8_t *const dst) {
+  assert(IMPLIES(!has_nonzero_operating_point_idc, obu_extension == 0));
+
   if (level_params->keep_level_stats &&
       (obu_type == OBU_FRAME || obu_type == OBU_FRAME_HEADER))
     ++(*frame_header_count);
 
-  struct aom_write_bit_buffer wb = { dst, 0 };
   uint32_t size = 0;
 
-  aom_wb_write_literal(&wb, 0, 1);  // forbidden bit.
-  aom_wb_write_literal(&wb, (int)obu_type, 4);
-  aom_wb_write_literal(&wb, obu_extension ? 1 : 0, 1);
-  aom_wb_write_literal(&wb, 1, 1);  // obu_has_size_field
-  aom_wb_write_literal(&wb, 0, 1);  // reserved
+  // The AV1 spec Version 1.0.0 with Errata 1 has the following requirements on
+  // the OBU extension header:
+  //
+  // 6.4.1. General sequence header OBU semantics:
+  //   It is a requirement of bitstream conformance that if OperatingPointIdc
+  //   is equal to 0, then obu_extension_flag is equal to 0 for all OBUs that
+  //   follow this sequence header until the next sequence header.
+  //
+  // 7.5. Ordering of OBUs:
+  //   If a coded video sequence contains at least one enhancement layer (OBUs
+  //   with spatial_id greater than 0 or temporal_id greater than 0) then all
+  //   frame headers and tile group OBUs associated with base (spatial_id
+  //   equals 0 and temporal_id equals 0) and enhancement layer (spatial_id
+  //   greater than 0 or temporal_id greater than 0) data must include the OBU
+  //   extension header.
+  //
+  // Set obu_extension_flag to satisfy these requirements.
+  int obu_extension_flag = 0;
+  if (has_nonzero_operating_point_idc) {
+    obu_extension_flag =
+        (obu_type == OBU_FRAME_HEADER || obu_type == OBU_TILE_GROUP ||
+         obu_type == OBU_FRAME || obu_type == OBU_REDUNDANT_FRAME_HEADER);
+  }
+  const int obu_has_size_field = 1;
 
-  if (obu_extension) {
-    aom_wb_write_literal(&wb, obu_extension & 0xFF, 8);
+  dst[0] = ((int)obu_type << 3) | (obu_extension_flag << 2) |
+           (obu_has_size_field << 1);
+  size++;
+
+  if (obu_extension_flag) {
+    dst[1] = obu_extension & 0xFF;
+    size++;
   }
 
-  size = aom_wb_bytes_written(&wb);
   return size;
 }
 
-int av1_write_uleb_obu_size(size_t obu_header_size, size_t obu_payload_size,
-                            uint8_t *dest) {
-  const size_t offset = obu_header_size;
+int av1_write_uleb_obu_size(size_t obu_payload_size, uint8_t *dest,
+                            size_t dest_size) {
   size_t coded_obu_size = 0;
-  const uint32_t obu_size = (uint32_t)obu_payload_size;
-  assert(obu_size == obu_payload_size);
 
-  if (aom_uleb_encode(obu_size, sizeof(obu_size), dest + offset,
+  if (aom_uleb_encode(obu_payload_size, dest_size, dest, &coded_obu_size) !=
+      0) {
+    return AOM_CODEC_ERROR;
+  }
+  if (coded_obu_size != dest_size) {
+    return AOM_CODEC_ERROR;
+  }
+
+  return AOM_CODEC_OK;
+}
+
+// Deprecated. Use av1_write_uleb_obu_size() instead.
+static int av1_write_uleb_obu_size_unsafe(size_t obu_payload_size,
+                                          uint8_t *dest) {
+  size_t coded_obu_size = 0;
+
+  if (aom_uleb_encode(obu_payload_size, sizeof(uint32_t), dest,
                       &coded_obu_size) != 0) {
     return AOM_CODEC_ERROR;
   }
@@ -3391,17 +3453,37 @@ int av1_write_uleb_obu_size(size_t obu_header_size, size_t obu_payload_size,
   return AOM_CODEC_OK;
 }
 
-size_t av1_obu_memmove(size_t obu_header_size, size_t obu_payload_size,
-                       uint8_t *data) {
+// Returns 0 on failure.
+static size_t obu_memmove(size_t obu_header_size, size_t obu_payload_size,
+                          uint8_t *data, size_t data_size) {
   const size_t length_field_size = aom_uleb_size_in_bytes(obu_payload_size);
-  const size_t move_dst_offset = length_field_size + obu_header_size;
+  const size_t move_dst_offset = obu_header_size + length_field_size;
+  const size_t move_src_offset = obu_header_size;
+  const size_t move_size = obu_payload_size;
+  if (move_size > data_size || move_src_offset > data_size - move_size) {
+    assert(0 && "obu_memmove: output buffer overflow");
+    return 0;
+  }
+  if (move_dst_offset > data_size - move_size) {
+    // Buffer full.
+    return 0;
+  }
+  memmove(data + move_dst_offset, data + move_src_offset, move_size);
+  return length_field_size;
+}
+
+// Deprecated. Use obu_memmove() instead.
+static size_t obu_memmove_unsafe(size_t obu_header_size,
+                                 size_t obu_payload_size, uint8_t *data) {
+  const size_t length_field_size = aom_uleb_size_in_bytes(obu_payload_size);
+  const size_t move_dst_offset = obu_header_size + length_field_size;
   const size_t move_src_offset = obu_header_size;
   const size_t move_size = obu_payload_size;
   memmove(data + move_dst_offset, data + move_src_offset, move_size);
   return length_field_size;
 }
 
-static AOM_INLINE void add_trailing_bits(struct aom_write_bit_buffer *wb) {
+static inline void add_trailing_bits(struct aom_write_bit_buffer *wb) {
   if (aom_wb_is_byte_aligned(wb)) {
     aom_wb_write_literal(wb, 0x80, 8);
   } else {
@@ -3410,14 +3492,16 @@ static AOM_INLINE void add_trailing_bits(struct aom_write_bit_buffer *wb) {
   }
 }
 
-static AOM_INLINE void write_bitstream_level(AV1_LEVEL seq_level_idx,
-                                             struct aom_write_bit_buffer *wb) {
+static inline void write_bitstream_level(AV1_LEVEL seq_level_idx,
+                                         struct aom_write_bit_buffer *wb) {
   assert(is_valid_seq_level_idx(seq_level_idx));
   aom_wb_write_literal(wb, seq_level_idx, LEVEL_BITS);
 }
 
 uint32_t av1_write_sequence_header_obu(const SequenceHeader *seq_params,
-                                       uint8_t *const dst) {
+                                       uint8_t *const dst, size_t dst_size) {
+  // TODO: bug 42302568 - Use dst_size.
+  (void)dst_size;
   struct aom_write_bit_buffer wb = { dst, 0 };
   uint32_t size = 0;
 
@@ -3521,9 +3605,6 @@ static uint32_t write_tile_group_header(uint8_t *const dst, int start_tile,
   return size;
 }
 
-extern void av1_print_uncompressed_frame_header(const uint8_t *data, int size,
-                                                const char *filename);
-
 typedef struct {
   uint32_t tg_hdr_size;
   uint32_t frame_header_size;
@@ -3532,14 +3613,16 @@ typedef struct {
 // Initialize OBU header for large scale tile case.
 static uint32_t init_large_scale_tile_obu_header(
     AV1_COMP *const cpi, uint8_t **data, struct aom_write_bit_buffer *saved_wb,
-    LargeTileFrameOBU *lst_obu) {
+    uint8_t obu_extension_header, LargeTileFrameOBU *lst_obu) {
   AV1LevelParams *const level_params = &cpi->ppi->level_params;
   CurrentFrame *const current_frame = &cpi->common.current_frame;
   // For large_scale_tile case, we always have only one tile group, so it can
   // be written as an OBU_FRAME.
   const OBU_TYPE obu_type = OBU_FRAME;
   lst_obu->tg_hdr_size = av1_write_obu_header(
-      level_params, &cpi->frame_header_count, obu_type, 0, *data);
+      level_params, &cpi->frame_header_count, obu_type,
+      cpi->common.seq_params->has_nonzero_operating_point_idc,
+      obu_extension_header, *data);
   *data += lst_obu->tg_hdr_size;
 
   const uint32_t frame_header_size =
@@ -3581,9 +3664,9 @@ static void write_large_scale_tile_obu_size(
   *total_size += lst_obu->tg_hdr_size;
   const uint32_t obu_payload_size = *total_size - lst_obu->tg_hdr_size;
   const size_t length_field_size =
-      av1_obu_memmove(lst_obu->tg_hdr_size, obu_payload_size, dst);
-  if (av1_write_uleb_obu_size(lst_obu->tg_hdr_size, obu_payload_size, dst) !=
-      AOM_CODEC_OK)
+      obu_memmove_unsafe(lst_obu->tg_hdr_size, obu_payload_size, dst);
+  if (av1_write_uleb_obu_size_unsafe(
+          obu_payload_size, dst + lst_obu->tg_hdr_size) != AOM_CODEC_OK)
     assert(0);
 
   *total_size += (uint32_t)length_field_size;
@@ -3642,7 +3725,9 @@ static void write_large_scale_tile_obu(
           mode_bc.allow_update_cdf && !cm->features.disable_cdf_update;
       aom_start_encode(&mode_bc, buf->data + data_offset);
       write_modes(cpi, &cpi->td, &tile_info, &mode_bc, tile_row, tile_col);
-      aom_stop_encode(&mode_bc);
+      if (aom_stop_encode(&mode_bc) < 0) {
+        aom_internal_error(cm->error, AOM_CODEC_ERROR, "Error writing modes");
+      }
       tile_size = mode_bc.pos;
       buf->size = tile_size;
 
@@ -3693,9 +3778,10 @@ static void write_large_scale_tile_obu(
 }
 
 // Packs information in the obu header for large scale tiles.
-static INLINE uint32_t pack_large_scale_tiles_in_tg_obus(
+static inline uint32_t pack_large_scale_tiles_in_tg_obus(
     AV1_COMP *const cpi, uint8_t *const dst,
-    struct aom_write_bit_buffer *saved_wb, int *const largest_tile_id) {
+    struct aom_write_bit_buffer *saved_wb, uint8_t obu_extension_header,
+    int *const largest_tile_id) {
   AV1_COMMON *const cm = &cpi->common;
   const CommonTileParams *const tiles = &cm->tiles;
   uint32_t total_size = 0;
@@ -3706,8 +3792,8 @@ static INLINE uint32_t pack_large_scale_tiles_in_tg_obus(
 
   LargeTileFrameOBU lst_obu;
 
-  total_size +=
-      init_large_scale_tile_obu_header(cpi, &data, saved_wb, &lst_obu);
+  total_size += init_large_scale_tile_obu_header(
+      cpi, &data, saved_wb, obu_extension_header, &lst_obu);
 
   write_large_scale_tile_obu(cpi, dst, &lst_obu, largest_tile_id, &total_size,
                              have_tiles, &max_tile_size, &max_tile_col_size);
@@ -3735,6 +3821,7 @@ void av1_write_obu_tg_tile_headers(AV1_COMP *const cpi, MACROBLOCKD *const xd,
   const OBU_TYPE obu_type = (cpi->num_tg == 1) ? OBU_FRAME : OBU_TILE_GROUP;
   *curr_tg_hdr_size = av1_write_obu_header(
       &cpi->ppi->level_params, &cpi->frame_header_count, obu_type,
+      cm->seq_params->has_nonzero_operating_point_idc,
       pack_bs_params->obu_extn_header, pack_bs_params->tile_data_curr);
   pack_bs_params->obu_header_size = *curr_tg_hdr_size;
 
@@ -3778,7 +3865,10 @@ void av1_pack_tile_info(AV1_COMP *const cpi, ThreadData *const td,
   // Pack tile data
   aom_start_encode(&mode_bc, pack_bs_params->dst + *total_size);
   write_modes(cpi, td, &tile_info, &mode_bc, tile_row, tile_col);
-  aom_stop_encode(&mode_bc);
+  if (aom_stop_encode(&mode_bc) < 0) {
+    aom_internal_error(td->mb.e_mbd.error_info, AOM_CODEC_ERROR,
+                       "Error writing modes");
+  }
   tile_size = mode_bc.pos;
   assert(tile_size >= AV1_MIN_TILE_SIZE_BYTES);
 
@@ -3798,15 +3888,15 @@ void av1_write_last_tile_info(
     uint8_t **tile_data_start, int *const largest_tile_id,
     int *const is_first_tg, uint32_t obu_header_size, uint8_t obu_extn_header) {
   // write current tile group size
-  const uint32_t obu_payload_size =
-      (uint32_t)(*curr_tg_data_size) - obu_header_size;
+  const size_t obu_payload_size = *curr_tg_data_size - obu_header_size;
   const size_t length_field_size =
-      av1_obu_memmove(obu_header_size, obu_payload_size, curr_tg_start);
-  if (av1_write_uleb_obu_size(obu_header_size, obu_payload_size,
-                              curr_tg_start) != AOM_CODEC_OK) {
-    assert(0);
+      obu_memmove_unsafe(obu_header_size, obu_payload_size, curr_tg_start);
+  if (av1_write_uleb_obu_size_unsafe(
+          obu_payload_size, curr_tg_start + obu_header_size) != AOM_CODEC_OK) {
+    aom_internal_error(cpi->common.error, AOM_CODEC_ERROR,
+                       "av1_write_last_tile_info: output buffer full");
   }
-  *curr_tg_data_size += (int)length_field_size;
+  *curr_tg_data_size += length_field_size;
   *total_size += (uint32_t)length_field_size;
   *tile_data_start += length_field_size;
   if (cpi->num_tg == 1) {
@@ -3830,12 +3920,14 @@ void av1_write_last_tile_info(
 
     // Rewrite the OBU header to change the OBU type to Redundant Frame
     // Header.
-    av1_write_obu_header(&cpi->ppi->level_params, &cpi->frame_header_count,
-                         OBU_REDUNDANT_FRAME_HEADER, obu_extn_header,
-                         &curr_tg_start[fh_info->obu_header_byte_offset]);
+    av1_write_obu_header(
+        &cpi->ppi->level_params, &cpi->frame_header_count,
+        OBU_REDUNDANT_FRAME_HEADER,
+        cpi->common.seq_params->has_nonzero_operating_point_idc,
+        obu_extn_header, &curr_tg_start[fh_info->obu_header_byte_offset]);
 
-    *curr_tg_data_size += (int)(fh_info->total_length);
-    *total_size += (uint32_t)(fh_info->total_length);
+    *curr_tg_data_size += fh_info->total_length;
+    *total_size += (uint32_t)fh_info->total_length;
   }
   *is_first_tg = 0;
 }
@@ -4010,8 +4102,8 @@ static void write_tile_obu_size(AV1_COMP *const cpi, uint8_t *const dst,
 // to pack the smaller bitstream of such frames. This function computes the
 // number of required number of workers based on setup time overhead and job
 // dispatch time overhead for given tiles and available workers.
-int calc_pack_bs_mt_workers(const TileDataEnc *tile_data, int num_tiles,
-                            int avail_workers, bool pack_bs_mt_enabled) {
+static int calc_pack_bs_mt_workers(const TileDataEnc *tile_data, int num_tiles,
+                                   int avail_workers, bool pack_bs_mt_enabled) {
   if (!pack_bs_mt_enabled) return 1;
 
   uint64_t frame_abs_sum_level = 0;
@@ -4038,7 +4130,7 @@ int calc_pack_bs_mt_workers(const TileDataEnc *tile_data, int num_tiles,
   return ideal_num_workers;
 }
 
-static INLINE uint32_t pack_tiles_in_tg_obus(
+static inline uint32_t pack_tiles_in_tg_obus(
     AV1_COMP *const cpi, uint8_t *const dst,
     struct aom_write_bit_buffer *saved_wb, uint8_t obu_extension_header,
     const FrameHeaderInfo *fh_info, int *const largest_tile_id) {
@@ -4072,10 +4164,13 @@ static INLINE uint32_t pack_tiles_in_tg_obus(
 }
 
 static uint32_t write_tiles_in_tg_obus(AV1_COMP *const cpi, uint8_t *const dst,
+                                       size_t dst_size,
                                        struct aom_write_bit_buffer *saved_wb,
                                        uint8_t obu_extension_header,
                                        const FrameHeaderInfo *fh_info,
                                        int *const largest_tile_id) {
+  // TODO: bug 42302568 - Use dst_size.
+  (void)dst_size;
   AV1_COMMON *const cm = &cpi->common;
   const CommonTileParams *const tiles = &cm->tiles;
   *largest_tile_id = 0;
@@ -4093,28 +4188,33 @@ static uint32_t write_tiles_in_tg_obus(AV1_COMP *const cpi, uint8_t *const dst,
   }
 
   if (tiles->large_scale)
-    return pack_large_scale_tiles_in_tg_obus(cpi, dst, saved_wb,
-                                             largest_tile_id);
+    return pack_large_scale_tiles_in_tg_obus(
+        cpi, dst, saved_wb, obu_extension_header, largest_tile_id);
 
   return pack_tiles_in_tg_obus(cpi, dst, saved_wb, obu_extension_header,
                                fh_info, largest_tile_id);
 }
 
+// Returns the number of bytes written on success. Returns 0 on failure.
 static size_t av1_write_metadata_obu(const aom_metadata_t *metadata,
-                                     uint8_t *const dst) {
+                                     uint8_t *const dst, size_t dst_size) {
   size_t coded_metadata_size = 0;
   const uint64_t metadata_type = (uint64_t)metadata->type;
-  if (aom_uleb_encode(metadata_type, sizeof(metadata_type), dst,
-                      &coded_metadata_size) != 0) {
+  if (aom_uleb_encode(metadata_type, dst_size, dst, &coded_metadata_size) !=
+      0) {
+    return 0;
+  }
+  if (coded_metadata_size + metadata->sz + 1 > dst_size) {
     return 0;
   }
   memcpy(dst + coded_metadata_size, metadata->payload, metadata->sz);
   // Add trailing bits.
   dst[coded_metadata_size + metadata->sz] = 0x80;
-  return (uint32_t)(coded_metadata_size + metadata->sz + 1);
+  return coded_metadata_size + metadata->sz + 1;
 }
 
-static size_t av1_write_metadata_array(AV1_COMP *const cpi, uint8_t *dst) {
+static size_t av1_write_metadata_array(AV1_COMP *const cpi, uint8_t *dst,
+                                       size_t dst_size) {
   if (!cpi->source) return 0;
   AV1_COMMON *const cm = &cpi->common;
   aom_metadata_array_t *arr = cpi->source->metadata;
@@ -4131,21 +4231,38 @@ static size_t av1_write_metadata_array(AV1_COMP *const cpi, uint8_t *dst) {
           (cm->current_frame.frame_type != KEY_FRAME &&
            current_metadata->insert_flag == AOM_MIF_NON_KEY_FRAME) ||
           current_metadata->insert_flag == AOM_MIF_ANY_FRAME) {
-        obu_header_size = av1_write_obu_header(&cpi->ppi->level_params,
-                                               &cpi->frame_header_count,
-                                               OBU_METADATA, 0, dst);
+        // OBU header is either one or two bytes.
+        if (dst_size < 2) {
+          aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                             "av1_write_metadata_array: output buffer full");
+        }
+        obu_header_size = av1_write_obu_header(
+            &cpi->ppi->level_params, &cpi->frame_header_count, OBU_METADATA,
+            cm->seq_params->has_nonzero_operating_point_idc, 0, dst);
+        assert(obu_header_size <= 2);
         obu_payload_size =
-            av1_write_metadata_obu(current_metadata, dst + obu_header_size);
+            av1_write_metadata_obu(current_metadata, dst + obu_header_size,
+                                   dst_size - obu_header_size);
+        if (obu_payload_size == 0) {
+          aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                             "av1_write_metadata_array: output buffer full");
+        }
         length_field_size =
-            av1_obu_memmove(obu_header_size, obu_payload_size, dst);
-        if (av1_write_uleb_obu_size(obu_header_size, obu_payload_size, dst) ==
-            AOM_CODEC_OK) {
-          const size_t obu_size = obu_header_size + obu_payload_size;
-          dst += obu_size + length_field_size;
-          total_bytes_written += obu_size + length_field_size;
+            obu_memmove(obu_header_size, obu_payload_size, dst, dst_size);
+        if (length_field_size == 0) {
+          aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                             "av1_write_metadata_array: output buffer full");
+        }
+        if (av1_write_uleb_obu_size(obu_payload_size, dst + obu_header_size,
+                                    length_field_size) == AOM_CODEC_OK) {
+          const size_t obu_size =
+              obu_header_size + length_field_size + obu_payload_size;
+          dst += obu_size;
+          dst_size -= obu_size;
+          total_bytes_written += obu_size;
         } else {
           aom_internal_error(cpi->common.error, AOM_CODEC_ERROR,
-                             "Error writing metadata OBU size");
+                             "av1_write_metadata_array: output buffer full");
         }
       }
     }
@@ -4153,10 +4270,10 @@ static size_t av1_write_metadata_array(AV1_COMP *const cpi, uint8_t *dst) {
   return total_bytes_written;
 }
 
-int av1_pack_bitstream(AV1_COMP *const cpi, uint8_t *dst, size_t *size,
-                       int *const largest_tile_id) {
+int av1_pack_bitstream(AV1_COMP *const cpi, uint8_t *dst, size_t dst_size,
+                       size_t *size, int *const largest_tile_id) {
   uint8_t *data = dst;
-  uint32_t data_size;
+  size_t data_size = dst_size;
   AV1_COMMON *const cm = &cpi->common;
   AV1LevelParams *const level_params = &cpi->ppi->level_params;
   uint32_t obu_header_size = 0;
@@ -4182,22 +4299,38 @@ int av1_pack_bitstream(AV1_COMP *const cpi, uint8_t *dst, size_t *size,
   // preceded by 4-byte size
   if (cm->current_frame.frame_type == INTRA_ONLY_FRAME ||
       cm->current_frame.frame_type == KEY_FRAME) {
+    // OBU header is either one or two bytes.
+    if (data_size < 2) {
+      return AOM_CODEC_ERROR;
+    }
     obu_header_size = av1_write_obu_header(
-        level_params, &cpi->frame_header_count, OBU_SEQUENCE_HEADER, 0, data);
-    obu_payload_size =
-        av1_write_sequence_header_obu(cm->seq_params, data + obu_header_size);
+        level_params, &cpi->frame_header_count, OBU_SEQUENCE_HEADER,
+        cm->seq_params->has_nonzero_operating_point_idc, 0, data);
+    assert(obu_header_size <= 2);
+    obu_payload_size = av1_write_sequence_header_obu(
+        cm->seq_params, data + obu_header_size, data_size - obu_header_size);
     const size_t length_field_size =
-        av1_obu_memmove(obu_header_size, obu_payload_size, data);
-    if (av1_write_uleb_obu_size(obu_header_size, obu_payload_size, data) !=
-        AOM_CODEC_OK) {
+        obu_memmove(obu_header_size, obu_payload_size, data, data_size);
+    if (length_field_size == 0) {
+      return AOM_CODEC_ERROR;
+    }
+    if (av1_write_uleb_obu_size(obu_payload_size, data + obu_header_size,
+                                length_field_size) != AOM_CODEC_OK) {
       return AOM_CODEC_ERROR;
     }
 
-    data += obu_header_size + obu_payload_size + length_field_size;
+    const size_t bytes_written =
+        obu_header_size + length_field_size + obu_payload_size;
+    data += bytes_written;
+    data_size -= bytes_written;
   }
 
   // write metadata obus before the frame obu that has the show_frame flag set
-  if (cm->show_frame) data += av1_write_metadata_array(cpi, data);
+  if (cm->show_frame) {
+    const size_t bytes_written = av1_write_metadata_array(cpi, data, data_size);
+    data += bytes_written;
+    data_size -= bytes_written;
+  }
 
   const int write_frame_header =
       (cpi->num_tg > 1 || encode_show_existing_frame(cm));
@@ -4206,26 +4339,40 @@ int av1_pack_bitstream(AV1_COMP *const cpi, uint8_t *dst, size_t *size,
   if (write_frame_header) {
     // Write Frame Header OBU.
     fh_info.frame_header = data;
-    obu_header_size =
-        av1_write_obu_header(level_params, &cpi->frame_header_count,
-                             OBU_FRAME_HEADER, obu_extension_header, data);
+    // OBU header is either one or two bytes.
+    if (data_size < 2) {
+      return AOM_CODEC_ERROR;
+    }
+    obu_header_size = av1_write_obu_header(
+        level_params, &cpi->frame_header_count, OBU_FRAME_HEADER,
+        cm->seq_params->has_nonzero_operating_point_idc, obu_extension_header,
+        data);
+    // TODO: bug 42302568 - Pass data_size - obu_header_size to
+    // write_frame_header_obu().
     obu_payload_size = write_frame_header_obu(cpi, &cpi->td.mb.e_mbd, &saved_wb,
                                               data + obu_header_size, 1);
 
-    length_field = av1_obu_memmove(obu_header_size, obu_payload_size, data);
-    if (av1_write_uleb_obu_size(obu_header_size, obu_payload_size, data) !=
-        AOM_CODEC_OK) {
+    length_field =
+        obu_memmove(obu_header_size, obu_payload_size, data, data_size);
+    if (length_field == 0) {
+      return AOM_CODEC_ERROR;
+    }
+    if (av1_write_uleb_obu_size(obu_payload_size, data + obu_header_size,
+                                length_field) != AOM_CODEC_OK) {
       return AOM_CODEC_ERROR;
     }
 
     fh_info.obu_header_byte_offset = 0;
-    fh_info.total_length = obu_header_size + obu_payload_size + length_field;
+    fh_info.total_length = obu_header_size + length_field + obu_payload_size;
+    // Make sure it is safe to cast fh_info.total_length to uint32_t.
+    if (fh_info.total_length > UINT32_MAX) {
+      return AOM_CODEC_ERROR;
+    }
     data += fh_info.total_length;
+    data_size -= fh_info.total_length;
   }
 
-  if (encode_show_existing_frame(cm)) {
-    data_size = 0;
-  } else {
+  if (!encode_show_existing_frame(cm)) {
     // Since length_field is determined adaptively after frame header
     // encoding, saved_wb must be adjusted accordingly.
     if (saved_wb.bit_buffer != NULL) {
@@ -4234,10 +4381,13 @@ int av1_pack_bitstream(AV1_COMP *const cpi, uint8_t *dst, size_t *size,
 
     //  Each tile group obu will be preceded by 4-byte size of the tile group
     //  obu
-    data_size = write_tiles_in_tg_obus(
-        cpi, data, &saved_wb, obu_extension_header, &fh_info, largest_tile_id);
+    const size_t bytes_written =
+        write_tiles_in_tg_obus(cpi, data, data_size, &saved_wb,
+                               obu_extension_header, &fh_info, largest_tile_id);
+    data += bytes_written;
+    data_size -= bytes_written;
   }
-  data += data_size;
   *size = data - dst;
+  (void)data_size;
   return AOM_CODEC_OK;
 }

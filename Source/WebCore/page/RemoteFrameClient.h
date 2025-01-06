@@ -26,7 +26,9 @@
 #pragma once
 
 #include "FrameLoaderClient.h"
-#include <wtf/FastMalloc.h>
+#include "LayerTreeAsTextOptions.h"
+#include "ScrollTypes.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -40,13 +42,14 @@ enum class RenderAsTextFlag : uint16_t;
 struct MessageWithMessagePorts;
 
 class RemoteFrameClient : public FrameLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteFrameClient);
 public:
     virtual void frameDetached() = 0;
     virtual void sizeDidChange(IntSize) = 0;
     virtual void postMessageToRemote(FrameIdentifier source, const String& sourceOrigin, FrameIdentifier target, std::optional<SecurityOriginData> targetOrigin, const MessageWithMessagePorts&) = 0;
     virtual void changeLocation(FrameLoadRequest&&) = 0;
     virtual String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>) = 0;
+    virtual String layerTreeAsText(size_t baseIndent, OptionSet<LayerTreeAsTextOptions>) = 0;
     virtual void closePage() = 0;
     virtual void bindRemoteAccessibilityFrames(int processIdentifier, FrameIdentifier target, Vector<uint8_t>&& dataToken, CompletionHandler<void(Vector<uint8_t>, int)>&&) = 0;
     virtual void updateRemoteFrameAccessibilityOffset(FrameIdentifier target, IntPoint) = 0;
@@ -54,6 +57,7 @@ public:
     virtual void focus() = 0;
     virtual void unfocus() = 0;
     virtual void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) = 0;
+    virtual void updateScrollingMode(ScrollbarMode scrollingMode) = 0;
     virtual ~RemoteFrameClient() { }
 };
 

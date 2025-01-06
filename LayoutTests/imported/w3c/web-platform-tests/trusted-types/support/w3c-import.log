@@ -22,10 +22,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/WorkerGlobalScope-importScripts.https.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/frame-without-trusted-types.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/helper.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/namespaces.js
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/navigation-report-only-support.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/navigation-report-only-support.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/navigation-support.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/navigation-support.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/navigation-support.js
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/resolve-spv.js
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/set-inner-html.js
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/support/worker.js

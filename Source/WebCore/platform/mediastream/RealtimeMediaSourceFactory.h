@@ -45,10 +45,13 @@ struct MediaConstraints;
 class AudioCaptureFactory {
 public:
     virtual ~AudioCaptureFactory() = default;
-    virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier) = 0;
+    virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>) = 0;
     virtual CaptureDeviceManager& audioCaptureDeviceManager() = 0;
     virtual const Vector<CaptureDevice>& speakerDevices() const = 0;
     virtual void computeSpeakerDevices(CompletionHandler<void()>&& callback) const { callback(); }
+
+    WEBCORE_EXPORT virtual void enableMutedSpeechActivityEventListener(Function<void()>&&) { }
+    WEBCORE_EXPORT virtual void disableMutedSpeechActivityEventListener() { }
 
 protected:
     AudioCaptureFactory() = default;
@@ -57,7 +60,7 @@ protected:
 class VideoCaptureFactory {
 public:
     virtual ~VideoCaptureFactory() = default;
-    virtual CaptureSourceOrError createVideoCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier) = 0;
+    virtual CaptureSourceOrError createVideoCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>) = 0;
     virtual CaptureDeviceManager& videoCaptureDeviceManager() = 0;
 
 protected:
@@ -67,7 +70,7 @@ protected:
 class DisplayCaptureFactory {
 public:
     virtual ~DisplayCaptureFactory() = default;
-    virtual CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier) = 0;
+    virtual CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>) = 0;
     virtual DisplayCaptureManager& displayCaptureDeviceManager() = 0;
 
 protected:

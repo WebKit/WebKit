@@ -40,6 +40,9 @@ public:
     virtual ~RemoteCDMInstance();
     static Ref<RemoteCDMInstance> create(WeakPtr<RemoteCDMFactory>&&, RemoteCDMInstanceIdentifier&&, RemoteCDMInstanceConfiguration&&);
 
+    void ref() const final { WebCore::CDMInstance::ref(); }
+    void deref() const final { WebCore::CDMInstance::deref(); }
+
     const RemoteCDMInstanceIdentifier& identifier() const { return m_identifier; }
 
 private:

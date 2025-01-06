@@ -32,7 +32,7 @@
 #include <gio/gio.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
-#include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/GSpanExtras.h>
 
 namespace Inspector {
 
@@ -88,10 +88,9 @@ static RemoteInspector::Client::SessionCapabilities processSessionCapabilities(G
             capabilities.proxy->socksURL = String::fromUTF8(socksURL);
 
         if (GRefPtr<GVariant> ignoreAddressList = g_variant_lookup_value(proxy.get(), "ignoreAddressList", G_VARIANT_TYPE("as"))) {
-            gsize ignoreAddressListLength;
-            GUniquePtr<char> ignoreAddressArray(reinterpret_cast<char*>(g_variant_get_strv(ignoreAddressList.get(), &ignoreAddressListLength)));
-            for (unsigned i = 0; i < ignoreAddressListLength; ++i)
-                capabilities.proxy->ignoreAddressList.append(String::fromUTF8(reinterpret_cast<char**>(ignoreAddressArray.get())[i]));
+            auto addresses = gVariantGetStrv(ignoreAddressList);
+            for (const char* address : addresses.span())
+                capabilities.proxy->ignoreAddressList.append(String::fromUTF8(address));
         }
     }
 
@@ -228,7 +227,7 @@ void RemoteInspectorServer::setTargetList(SocketConnection& remoteInspectorConne
     gboolean remoteAutomationEnabled;
     GRefPtr<GVariant> targetList;
     g_variant_get(parameters, "(@a(tsssb)b)", &targetList.outPtr(), &remoteAutomationEnabled);
-    SocketConnection* clientConnection = remoteAutomationEnabled && m_automationConnection ? m_automationConnection : m_clientConnection;
+    RefPtr clientConnection = remoteAutomationEnabled && m_automationConnection ? m_automationConnection : m_clientConnection;
     if (!clientConnection)
         return;
 
@@ -248,7 +247,7 @@ GVariant* RemoteInspectorServer::setupInspectorClient(SocketConnection& clientCo
         backendCommands = g_variant_new_bytestring("");
 
     // Ask all remote inspectors to push their target lists to notify the new client.
-    for (auto* remoteInspectorConnection : m_remoteInspectorConnectionToIDMap.keys())
+    for (RefPtr remoteInspectorConnection : m_remoteInspectorConnectionToIDMap.keys())
         remoteInspectorConnection->sendMessage("GetTargetList", nullptr);
 
     return backendCommands;
@@ -286,11 +285,11 @@ void RemoteInspectorServer::connectionDidClose(SocketConnection& clientConnectio
 {
     ASSERT(m_connections.contains(&clientConnection));
     if (&clientConnection == m_automationConnection) {
-        for (auto connectionTargetPair : m_automationTargets)
+        for (auto connectionTargetPair : copyToVector(m_automationTargets))
             close(clientConnection, connectionTargetPair.first, connectionTargetPair.second);
         m_automationConnection = nullptr;
     } else if (&clientConnection == m_clientConnection) {
-        for (auto connectionTargetPair : m_inspectionTargets)
+        for (auto connectionTargetPair : copyToVector(m_inspectionTargets))
             close(clientConnection, connectionTargetPair.first, connectionTargetPair.second);
         m_clientConnection = nullptr;
     } else if (m_remoteInspectorConnectionToIDMap.contains(&clientConnection)) {
@@ -298,7 +297,7 @@ void RemoteInspectorServer::connectionDidClose(SocketConnection& clientConnectio
         m_idToRemoteInspectorConnectionMap.remove(connectionID);
         // Send an empty target list to the clients.
         Vector<SocketConnection*> clientConnections = { m_automationConnection, m_clientConnection };
-        for (auto* connection : clientConnections) {
+        for (RefPtr connection : clientConnections) {
             if (!connection)
                 continue;
             connection->sendMessage("SetTargetList", g_variant_new("(t@a(tsssb))", connectionID, g_variant_new_array(G_VARIANT_TYPE("(tsssb)"), nullptr, 0)));
@@ -329,7 +328,7 @@ void RemoteInspectorServer::sendMessageToFrontend(SocketConnection& remoteInspec
     if (!m_automationTargets.contains(connectionTargetPair) && !m_inspectionTargets.contains(connectionTargetPair))
         return;
 
-    SocketConnection* clientConnection = m_inspectionTargets.contains(connectionTargetPair) ? m_clientConnection : m_automationConnection;
+    RefPtr clientConnection = m_inspectionTargets.contains(connectionTargetPair) ? m_clientConnection : m_automationConnection;
     ASSERT(clientConnection);
     clientConnection->sendMessage("SendMessageToFrontend", g_variant_new("(tt&s)", connectionID, targetID, message));
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ namespace WebCore {
 const float cGlyphSizeUnknown = -1;
 
 template<class T> class GlyphMetricsMap {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(GlyphMetricsMap);
 public:
     T metricsForGlyph(Glyph glyph)
     {
@@ -58,7 +58,7 @@ public:
 
 private:
     class GlyphMetricsPage {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(GlyphMetricsPage);
     public:
         static const size_t size = 16;
 
@@ -102,8 +102,11 @@ private:
 
     bool m_filledPrimaryPage { false };
     GlyphMetricsPage m_primaryPage; // We optimize for the page that contains glyph indices 0-255.
-    HashMap<int, std::unique_ptr<GlyphMetricsPage>> m_pages;
+    UncheckedKeyHashMap<int, std::unique_ptr<GlyphMetricsPage>> m_pages;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<class T>, GlyphMetricsMap<T>);
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<class T>, GlyphMetricsMap<T>::GlyphMetricsPage);
 
 template<> inline float GlyphMetricsMap<float>::unknownMetrics()
 {

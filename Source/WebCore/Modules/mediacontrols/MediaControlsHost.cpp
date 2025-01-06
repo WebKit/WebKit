@@ -38,6 +38,7 @@
 #include "ContextMenuController.h"
 #include "ContextMenuItem.h"
 #include "ContextMenuProvider.h"
+#include "DocumentInlines.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -47,14 +48,19 @@
 #include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
 #include "InspectorController.h"
+#include "LocalDOMWindow.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MediaControlTextTrackContainerElement.h"
 #include "MediaControlsContextMenuItem.h"
+#include "Navigator.h"
+#include "NavigatorMediaSession.h"
 #include "Node.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "Quirks.h"
 #include "RenderTheme.h"
+#include "ShadowRoot.h"
 #include "TextTrack.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
@@ -308,9 +314,8 @@ bool MediaControlsHost::inWindowFullscreen() const
     if (!m_mediaElement)
         return false;
 
-    auto& mediaElement = *m_mediaElement;
-    if (is<HTMLVideoElement>(mediaElement))
-        return downcast<HTMLVideoElement>(mediaElement).webkitPresentationMode() == HTMLVideoElement::VideoPresentationMode::InWindow;
+    if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(*m_mediaElement))
+        return videoElement->webkitPresentationMode() == HTMLVideoElement::VideoPresentationMode::InWindow;
 #endif
     return false;
 }
@@ -321,6 +326,13 @@ bool MediaControlsHost::supportsRewind() const
     if (auto sourceType = this->sourceType())
         return *sourceType == SourceType::HLS || *sourceType == SourceType::File;
 #endif
+    return false;
+}
+
+bool MediaControlsHost::needsChromeMediaControlsPseudoElement() const
+{
+    if (m_mediaElement)
+        return m_mediaElement->document().quirks().needsChromeMediaControlsPseudoElement();
     return false;
 }
 
@@ -734,6 +746,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
                 }
             },
             [&] (RefPtr<TextTrack>& selectedTextTrack) {
+                protectedThis->savePreviouslySelectedTextTrackIfNecessary();
                 for (auto& track : idMap.values()) {
                     if (auto* textTrack = std::get_if<RefPtr<TextTrack>>(&track))
                         (*textTrack)->setMode(TextTrack::Mode::Disabled);
@@ -804,6 +817,116 @@ auto MediaControlsHost::sourceType() const -> std::optional<SourceType>
 }
 
 #endif // ENABLE(MODERN_MEDIA_CONTROLS)
+
+
+void MediaControlsHost::presentationModeChanged()
+{
+    restorePreviouslySelectedTextTrackIfNecessary();
+}
+
+void MediaControlsHost::savePreviouslySelectedTextTrackIfNecessary()
+{
+    if (!inWindowFullscreen())
+        return;
+
+    if (m_previouslySelectedTextTrack)
+        return;
+
+    auto mediaElement = RefPtr { m_mediaElement.get() };
+    if (!mediaElement)
+        return;
+
+    Page* page = mediaElement->document().page();
+    if (!page)
+        return;
+
+    RefPtr textTracks = mediaElement->textTracks();
+    for (unsigned i = 0; textTracks && i < textTracks->length(); ++i) {
+        auto* textTrack = textTracks->item(i);
+        ASSERT(textTrack);
+        if (!textTrack)
+            continue;
+
+        if (textTrack->mode() == TextTrack::Mode::Showing) {
+            m_previouslySelectedTextTrack = textTrack;
+            return;
+        }
+    }
+
+    switch (page->group().ensureCaptionPreferences().captionDisplayMode()) {
+    case CaptionUserPreferences::CaptionDisplayMode::Automatic:
+        m_previouslySelectedTextTrack = &TextTrack::captionMenuAutomaticItem();
+        return;
+    case CaptionUserPreferences::CaptionDisplayMode::ForcedOnly:
+    case CaptionUserPreferences::CaptionDisplayMode::Manual:
+    case CaptionUserPreferences::CaptionDisplayMode::AlwaysOn:
+        m_previouslySelectedTextTrack = &TextTrack::captionMenuOffItem();
+        return;
+    }
+}
+
+void MediaControlsHost::restorePreviouslySelectedTextTrackIfNecessary()
+{
+    if (inWindowFullscreen())
+        return;
+
+    if (!m_previouslySelectedTextTrack)
+        return;
+
+    auto mediaElement = RefPtr { m_mediaElement.get() };
+    if (!mediaElement)
+        return;
+
+    RefPtr textTracks = mediaElement->textTracks();
+    for (unsigned i = 0; textTracks && i < textTracks->length(); ++i) {
+        auto* textTrack = textTracks->item(i);
+        ASSERT(textTrack);
+        if (!textTrack)
+            continue;
+
+        if (m_previouslySelectedTextTrack != textTrack)
+            textTrack->setMode(TextTrack::Mode::Disabled);
+    }
+    m_previouslySelectedTextTrack->setMode(TextTrack::Mode::Showing);
+    m_previouslySelectedTextTrack = nullptr;
+}
+
+#if ENABLE(MEDIA_SESSION)
+RefPtr<MediaSession> MediaControlsHost::mediaSession() const
+{
+    RefPtr mediaElement = m_mediaElement.get();
+    if (!mediaElement)
+        return { };
+
+    RefPtr window = mediaElement->document().domWindow();
+    if (!window)
+        return { };
+
+    return NavigatorMediaSession::mediaSessionIfExists(window->protectedNavigator().get());
+}
+
+void MediaControlsHost::ensureMediaSessionObserver()
+{
+    RefPtr mediaSession = this->mediaSession();
+    if (!mediaSession || mediaSession->hasObserver(*this))
+        return;
+
+    mediaSession->addObserver(*this);
+}
+
+void MediaControlsHost::metadataChanged(const RefPtr<MediaMetadata>&)
+{
+    RefPtr mediaElement = m_mediaElement.get();
+    if (!mediaElement)
+        return;
+
+    RefPtr shadowRoot = m_mediaElement->userAgentShadowRoot();
+    if (!shadowRoot)
+        return;
+
+    shadowRoot->dispatchEvent(Event::create(eventNames().webkitmediasessionmetadatachangedEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+#endif // ENABLE(MEDIA_SESSION)
 
 } // namespace WebCore
 

@@ -1,0 +1,320 @@
+
+FAIL CSS Transitions: property <height> from [initial] to [90px] at (-0.3) should be [38px] assert_equals: expected "38px " but got "90px "
+FAIL CSS Transitions: property <height> from [initial] to [90px] at (0) should be [50px] assert_equals: expected "50px " but got "90px "
+FAIL CSS Transitions: property <height> from [initial] to [90px] at (0.3) should be [62px] assert_equals: expected "62px " but got "90px "
+FAIL CSS Transitions: property <height> from [initial] to [90px] at (0.6) should be [74px] assert_equals: expected "74px " but got "90px "
+PASS CSS Transitions: property <height> from [initial] to [90px] at (1) should be [90px]
+FAIL CSS Transitions: property <height> from [initial] to [90px] at (1.5) should be [110px] assert_equals: expected "110px " but got "90px "
+FAIL CSS Transitions with transition: all: property <height> from [initial] to [90px] at (-0.3) should be [38px] assert_equals: expected "38px " but got "90px "
+FAIL CSS Transitions with transition: all: property <height> from [initial] to [90px] at (0) should be [50px] assert_equals: expected "50px " but got "90px "
+FAIL CSS Transitions with transition: all: property <height> from [initial] to [90px] at (0.3) should be [62px] assert_equals: expected "62px " but got "90px "
+FAIL CSS Transitions with transition: all: property <height> from [initial] to [90px] at (0.6) should be [74px] assert_equals: expected "74px " but got "90px "
+PASS CSS Transitions with transition: all: property <height> from [initial] to [90px] at (1) should be [90px]
+FAIL CSS Transitions with transition: all: property <height> from [initial] to [90px] at (1.5) should be [110px] assert_equals: expected "110px " but got "90px "
+FAIL CSS Animations: property <height> from [initial] to [90px] at (-0.3) should be [38px] assert_equals: expected "38px " but got "50px "
+PASS CSS Animations: property <height> from [initial] to [90px] at (0) should be [50px]
+FAIL CSS Animations: property <height> from [initial] to [90px] at (0.3) should be [62px] assert_equals: expected "62px " but got "50px "
+FAIL CSS Animations: property <height> from [initial] to [90px] at (0.6) should be [74px] assert_equals: expected "74px " but got "90px "
+PASS CSS Animations: property <height> from [initial] to [90px] at (1) should be [90px]
+FAIL CSS Animations: property <height> from [initial] to [90px] at (1.5) should be [110px] assert_equals: expected "110px " but got "90px "
+FAIL Web Animations: property <height> from [initial] to [90px] at (-0.3) should be [38px] assert_equals: expected "38px " but got "50px "
+PASS Web Animations: property <height> from [initial] to [90px] at (0) should be [50px]
+FAIL Web Animations: property <height> from [initial] to [90px] at (0.3) should be [62px] assert_equals: expected "62px " but got "50px "
+FAIL Web Animations: property <height> from [initial] to [90px] at (0.6) should be [74px] assert_equals: expected "74px " but got "90px "
+PASS Web Animations: property <height> from [initial] to [90px] at (1) should be [90px]
+FAIL Web Animations: property <height> from [initial] to [90px] at (1.5) should be [110px] assert_equals: expected "110px " but got "90px "
+FAIL CSS Transitions: property <height> from [unset] to [10px] at (-0.3) should be [62px] assert_equals: expected "62px " but got "10px "
+FAIL CSS Transitions: property <height> from [unset] to [10px] at (0) should be [50px] assert_equals: expected "50px " but got "10px "
+FAIL CSS Transitions: property <height> from [unset] to [10px] at (0.3) should be [38px] assert_equals: expected "38px " but got "10px "
+FAIL CSS Transitions: property <height> from [unset] to [10px] at (0.6) should be [26px] assert_equals: expected "26px " but got "10px "
+PASS CSS Transitions: property <height> from [unset] to [10px] at (1) should be [10px]
+FAIL CSS Transitions: property <height> from [unset] to [10px] at (1.5) should be [0px] assert_equals: expected "0px " but got "10px "
+FAIL CSS Transitions with transition: all: property <height> from [unset] to [10px] at (-0.3) should be [62px] assert_equals: expected "62px " but got "10px "
+FAIL CSS Transitions with transition: all: property <height> from [unset] to [10px] at (0) should be [50px] assert_equals: expected "50px " but got "10px "
+FAIL CSS Transitions with transition: all: property <height> from [unset] to [10px] at (0.3) should be [38px] assert_equals: expected "38px " but got "10px "
+FAIL CSS Transitions with transition: all: property <height> from [unset] to [10px] at (0.6) should be [26px] assert_equals: expected "26px " but got "10px "
+PASS CSS Transitions with transition: all: property <height> from [unset] to [10px] at (1) should be [10px]
+FAIL CSS Transitions with transition: all: property <height> from [unset] to [10px] at (1.5) should be [0px] assert_equals: expected "0px " but got "10px "
+FAIL CSS Animations: property <height> from [unset] to [10px] at (-0.3) should be [62px] assert_equals: expected "62px " but got "50px "
+PASS CSS Animations: property <height> from [unset] to [10px] at (0) should be [50px]
+FAIL CSS Animations: property <height> from [unset] to [10px] at (0.3) should be [38px] assert_equals: expected "38px " but got "50px "
+FAIL CSS Animations: property <height> from [unset] to [10px] at (0.6) should be [26px] assert_equals: expected "26px " but got "10px "
+PASS CSS Animations: property <height> from [unset] to [10px] at (1) should be [10px]
+FAIL CSS Animations: property <height> from [unset] to [10px] at (1.5) should be [0px] assert_equals: expected "0px " but got "10px "
+FAIL Web Animations: property <height> from [unset] to [10px] at (-0.3) should be [62px] assert_equals: expected "62px " but got "50px "
+PASS Web Animations: property <height> from [unset] to [10px] at (0) should be [50px]
+FAIL Web Animations: property <height> from [unset] to [10px] at (0.3) should be [38px] assert_equals: expected "38px " but got "50px "
+FAIL Web Animations: property <height> from [unset] to [10px] at (0.6) should be [26px] assert_equals: expected "26px " but got "10px "
+PASS Web Animations: property <height> from [unset] to [10px] at (1) should be [10px]
+FAIL Web Animations: property <height> from [unset] to [10px] at (1.5) should be [0px] assert_equals: expected "0px " but got "10px "
+FAIL CSS Transitions: property <height> from [0px] to [auto] at (-0.3) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Transitions: property <height> from [0px] to [auto] at (0) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Transitions: property <height> from [0px] to [auto] at (0.3) should be [15px] assert_equals: expected "15px " but got "50px "
+FAIL CSS Transitions: property <height> from [0px] to [auto] at (0.6) should be [30px] assert_equals: expected "30px " but got "50px "
+PASS CSS Transitions: property <height> from [0px] to [auto] at (1) should be [50px]
+FAIL CSS Transitions: property <height> from [0px] to [auto] at (1.5) should be [75px] assert_equals: expected "75px " but got "50px "
+FAIL CSS Transitions with transition: all: property <height> from [0px] to [auto] at (-0.3) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Transitions with transition: all: property <height> from [0px] to [auto] at (0) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Transitions with transition: all: property <height> from [0px] to [auto] at (0.3) should be [15px] assert_equals: expected "15px " but got "50px "
+FAIL CSS Transitions with transition: all: property <height> from [0px] to [auto] at (0.6) should be [30px] assert_equals: expected "30px " but got "50px "
+PASS CSS Transitions with transition: all: property <height> from [0px] to [auto] at (1) should be [50px]
+FAIL CSS Transitions with transition: all: property <height> from [0px] to [auto] at (1.5) should be [75px] assert_equals: expected "75px " but got "50px "
+PASS CSS Animations: property <height> from [0px] to [auto] at (-0.3) should be [0px]
+PASS CSS Animations: property <height> from [0px] to [auto] at (0) should be [0px]
+FAIL CSS Animations: property <height> from [0px] to [auto] at (0.3) should be [15px] assert_equals: expected "15px " but got "0px "
+FAIL CSS Animations: property <height> from [0px] to [auto] at (0.6) should be [30px] assert_equals: expected "30px " but got "50px "
+PASS CSS Animations: property <height> from [0px] to [auto] at (1) should be [50px]
+FAIL CSS Animations: property <height> from [0px] to [auto] at (1.5) should be [75px] assert_equals: expected "75px " but got "50px "
+PASS Web Animations: property <height> from [0px] to [auto] at (-0.3) should be [0px]
+PASS Web Animations: property <height> from [0px] to [auto] at (0) should be [0px]
+FAIL Web Animations: property <height> from [0px] to [auto] at (0.3) should be [15px] assert_equals: expected "15px " but got "0px "
+FAIL Web Animations: property <height> from [0px] to [auto] at (0.6) should be [30px] assert_equals: expected "30px " but got "50px "
+PASS Web Animations: property <height> from [0px] to [auto] at (1) should be [50px]
+FAIL Web Animations: property <height> from [0px] to [auto] at (1.5) should be [75px] assert_equals: expected "75px " but got "50px "
+FAIL CSS Transitions: property <height> from [auto] to [10px] at (-0.3) should be [62px] assert_equals: expected "62px " but got "10px "
+FAIL CSS Transitions: property <height> from [auto] to [10px] at (0) should be [50px] assert_equals: expected "50px " but got "10px "
+FAIL CSS Transitions: property <height> from [auto] to [10px] at (0.3) should be [38px] assert_equals: expected "38px " but got "10px "
+FAIL CSS Transitions: property <height> from [auto] to [10px] at (0.6) should be [26px] assert_equals: expected "26px " but got "10px "
+PASS CSS Transitions: property <height> from [auto] to [10px] at (1) should be [10px]
+FAIL CSS Transitions: property <height> from [auto] to [10px] at (1.5) should be [0px] assert_equals: expected "0px " but got "10px "
+FAIL CSS Transitions with transition: all: property <height> from [auto] to [10px] at (-0.3) should be [62px] assert_equals: expected "62px " but got "10px "
+FAIL CSS Transitions with transition: all: property <height> from [auto] to [10px] at (0) should be [50px] assert_equals: expected "50px " but got "10px "
+FAIL CSS Transitions with transition: all: property <height> from [auto] to [10px] at (0.3) should be [38px] assert_equals: expected "38px " but got "10px "
+FAIL CSS Transitions with transition: all: property <height> from [auto] to [10px] at (0.6) should be [26px] assert_equals: expected "26px " but got "10px "
+PASS CSS Transitions with transition: all: property <height> from [auto] to [10px] at (1) should be [10px]
+FAIL CSS Transitions with transition: all: property <height> from [auto] to [10px] at (1.5) should be [0px] assert_equals: expected "0px " but got "10px "
+FAIL CSS Animations: property <height> from [auto] to [10px] at (-0.3) should be [62px] assert_equals: expected "62px " but got "50px "
+PASS CSS Animations: property <height> from [auto] to [10px] at (0) should be [50px]
+FAIL CSS Animations: property <height> from [auto] to [10px] at (0.3) should be [38px] assert_equals: expected "38px " but got "50px "
+FAIL CSS Animations: property <height> from [auto] to [10px] at (0.6) should be [26px] assert_equals: expected "26px " but got "10px "
+PASS CSS Animations: property <height> from [auto] to [10px] at (1) should be [10px]
+FAIL CSS Animations: property <height> from [auto] to [10px] at (1.5) should be [0px] assert_equals: expected "0px " but got "10px "
+FAIL Web Animations: property <height> from [auto] to [10px] at (-0.3) should be [62px] assert_equals: expected "62px " but got "50px "
+PASS Web Animations: property <height> from [auto] to [10px] at (0) should be [50px]
+FAIL Web Animations: property <height> from [auto] to [10px] at (0.3) should be [38px] assert_equals: expected "38px " but got "50px "
+FAIL Web Animations: property <height> from [auto] to [10px] at (0.6) should be [26px] assert_equals: expected "26px " but got "10px "
+PASS Web Animations: property <height> from [auto] to [10px] at (1) should be [10px]
+FAIL Web Animations: property <height> from [auto] to [10px] at (1.5) should be [0px] assert_equals: expected "0px " but got "10px "
+FAIL CSS Transitions: property <height> from [min-content] to [inherit] at (-0.3) should be [5px] assert_equals: expected "5px " but got "200px "
+FAIL CSS Transitions: property <height> from [min-content] to [inherit] at (0) should be [50px] assert_equals: expected "50px " but got "200px "
+FAIL CSS Transitions: property <height> from [min-content] to [inherit] at (0.3) should be [95px] assert_equals: expected "95px " but got "200px "
+FAIL CSS Transitions: property <height> from [min-content] to [inherit] at (0.6) should be [140px] assert_equals: expected "140px " but got "200px "
+PASS CSS Transitions: property <height> from [min-content] to [inherit] at (1) should be [200px]
+FAIL CSS Transitions: property <height> from [min-content] to [inherit] at (1.5) should be [275px] assert_equals: expected "275px " but got "200px "
+FAIL CSS Transitions with transition: all: property <height> from [min-content] to [inherit] at (-0.3) should be [5px] assert_equals: expected "5px " but got "200px "
+FAIL CSS Transitions with transition: all: property <height> from [min-content] to [inherit] at (0) should be [50px] assert_equals: expected "50px " but got "200px "
+FAIL CSS Transitions with transition: all: property <height> from [min-content] to [inherit] at (0.3) should be [95px] assert_equals: expected "95px " but got "200px "
+FAIL CSS Transitions with transition: all: property <height> from [min-content] to [inherit] at (0.6) should be [140px] assert_equals: expected "140px " but got "200px "
+PASS CSS Transitions with transition: all: property <height> from [min-content] to [inherit] at (1) should be [200px]
+FAIL CSS Transitions with transition: all: property <height> from [min-content] to [inherit] at (1.5) should be [275px] assert_equals: expected "275px " but got "200px "
+FAIL CSS Animations: property <height> from [min-content] to [inherit] at (-0.3) should be [5px] assert_equals: expected "5px " but got "50px "
+PASS CSS Animations: property <height> from [min-content] to [inherit] at (0) should be [50px]
+FAIL CSS Animations: property <height> from [min-content] to [inherit] at (0.3) should be [95px] assert_equals: expected "95px " but got "50px "
+FAIL CSS Animations: property <height> from [min-content] to [inherit] at (0.6) should be [140px] assert_equals: expected "140px " but got "200px "
+PASS CSS Animations: property <height> from [min-content] to [inherit] at (1) should be [200px]
+FAIL CSS Animations: property <height> from [min-content] to [inherit] at (1.5) should be [275px] assert_equals: expected "275px " but got "200px "
+FAIL Web Animations: property <height> from [min-content] to [inherit] at (-0.3) should be [5px] assert_equals: expected "5px " but got "50px "
+PASS Web Animations: property <height> from [min-content] to [inherit] at (0) should be [50px]
+FAIL Web Animations: property <height> from [min-content] to [inherit] at (0.3) should be [95px] assert_equals: expected "95px " but got "50px "
+FAIL Web Animations: property <height> from [min-content] to [inherit] at (0.6) should be [140px] assert_equals: expected "140px " but got "200px "
+PASS Web Animations: property <height> from [min-content] to [inherit] at (1) should be [200px]
+FAIL Web Animations: property <height> from [min-content] to [inherit] at (1.5) should be [275px] assert_equals: expected "275px " but got "200px "
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [auto] to [min-content] at (-0.3) should be [auto]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [auto] to [min-content] at (0) should be [auto]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [auto] to [min-content] at (0.3) should be [auto]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [auto] to [min-content] at (0.5) should be [min-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [auto] to [min-content] at (0.6) should be [min-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [auto] to [min-content] at (1) should be [min-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [auto] to [min-content] at (1.5) should be [min-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [auto] to [min-content] at (-0.3) should be [auto]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [auto] to [min-content] at (0) should be [auto]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [auto] to [min-content] at (0.3) should be [auto]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [auto] to [min-content] at (0.5) should be [min-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [auto] to [min-content] at (0.6) should be [min-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [auto] to [min-content] at (1) should be [min-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [auto] to [min-content] at (1.5) should be [min-content]
+PASS CSS Transitions: property <height> from [auto] to [min-content] at (-0.3) should be [min-content]
+PASS CSS Transitions: property <height> from [auto] to [min-content] at (0) should be [min-content]
+PASS CSS Transitions: property <height> from [auto] to [min-content] at (0.3) should be [min-content]
+PASS CSS Transitions: property <height> from [auto] to [min-content] at (0.5) should be [min-content]
+PASS CSS Transitions: property <height> from [auto] to [min-content] at (0.6) should be [min-content]
+PASS CSS Transitions: property <height> from [auto] to [min-content] at (1) should be [min-content]
+PASS CSS Transitions: property <height> from [auto] to [min-content] at (1.5) should be [min-content]
+PASS CSS Transitions with transition: all: property <height> from [auto] to [min-content] at (-0.3) should be [min-content]
+PASS CSS Transitions with transition: all: property <height> from [auto] to [min-content] at (0) should be [min-content]
+PASS CSS Transitions with transition: all: property <height> from [auto] to [min-content] at (0.3) should be [min-content]
+PASS CSS Transitions with transition: all: property <height> from [auto] to [min-content] at (0.5) should be [min-content]
+PASS CSS Transitions with transition: all: property <height> from [auto] to [min-content] at (0.6) should be [min-content]
+PASS CSS Transitions with transition: all: property <height> from [auto] to [min-content] at (1) should be [min-content]
+PASS CSS Transitions with transition: all: property <height> from [auto] to [min-content] at (1.5) should be [min-content]
+PASS CSS Animations: property <height> from [auto] to [min-content] at (-0.3) should be [auto]
+PASS CSS Animations: property <height> from [auto] to [min-content] at (0) should be [auto]
+PASS CSS Animations: property <height> from [auto] to [min-content] at (0.3) should be [auto]
+PASS CSS Animations: property <height> from [auto] to [min-content] at (0.5) should be [min-content]
+PASS CSS Animations: property <height> from [auto] to [min-content] at (0.6) should be [min-content]
+PASS CSS Animations: property <height> from [auto] to [min-content] at (1) should be [min-content]
+PASS CSS Animations: property <height> from [auto] to [min-content] at (1.5) should be [min-content]
+PASS Web Animations: property <height> from [auto] to [min-content] at (-0.3) should be [auto]
+PASS Web Animations: property <height> from [auto] to [min-content] at (0) should be [auto]
+PASS Web Animations: property <height> from [auto] to [min-content] at (0.3) should be [auto]
+PASS Web Animations: property <height> from [auto] to [min-content] at (0.5) should be [min-content]
+PASS Web Animations: property <height> from [auto] to [min-content] at (0.6) should be [min-content]
+PASS Web Animations: property <height> from [auto] to [min-content] at (1) should be [min-content]
+PASS Web Animations: property <height> from [auto] to [min-content] at (1.5) should be [min-content]
+FAIL CSS Transitions: property <height> from [fit-content] to [10px] at (-0.3) should be [62px] assert_equals: expected "62px " but got "10px "
+FAIL CSS Transitions: property <height> from [fit-content] to [10px] at (0) should be [50px] assert_equals: expected "50px " but got "10px "
+FAIL CSS Transitions: property <height> from [fit-content] to [10px] at (0.3) should be [38px] assert_equals: expected "38px " but got "10px "
+FAIL CSS Transitions: property <height> from [fit-content] to [10px] at (0.6) should be [26px] assert_equals: expected "26px " but got "10px "
+PASS CSS Transitions: property <height> from [fit-content] to [10px] at (1) should be [10px]
+FAIL CSS Transitions: property <height> from [fit-content] to [10px] at (1.5) should be [0px] assert_equals: expected "0px " but got "10px "
+FAIL CSS Transitions with transition: all: property <height> from [fit-content] to [10px] at (-0.3) should be [62px] assert_equals: expected "62px " but got "10px "
+FAIL CSS Transitions with transition: all: property <height> from [fit-content] to [10px] at (0) should be [50px] assert_equals: expected "50px " but got "10px "
+FAIL CSS Transitions with transition: all: property <height> from [fit-content] to [10px] at (0.3) should be [38px] assert_equals: expected "38px " but got "10px "
+FAIL CSS Transitions with transition: all: property <height> from [fit-content] to [10px] at (0.6) should be [26px] assert_equals: expected "26px " but got "10px "
+PASS CSS Transitions with transition: all: property <height> from [fit-content] to [10px] at (1) should be [10px]
+FAIL CSS Transitions with transition: all: property <height> from [fit-content] to [10px] at (1.5) should be [0px] assert_equals: expected "0px " but got "10px "
+FAIL CSS Animations: property <height> from [fit-content] to [10px] at (-0.3) should be [62px] assert_equals: expected "62px " but got "50px "
+PASS CSS Animations: property <height> from [fit-content] to [10px] at (0) should be [50px]
+FAIL CSS Animations: property <height> from [fit-content] to [10px] at (0.3) should be [38px] assert_equals: expected "38px " but got "50px "
+FAIL CSS Animations: property <height> from [fit-content] to [10px] at (0.6) should be [26px] assert_equals: expected "26px " but got "10px "
+PASS CSS Animations: property <height> from [fit-content] to [10px] at (1) should be [10px]
+FAIL CSS Animations: property <height> from [fit-content] to [10px] at (1.5) should be [0px] assert_equals: expected "0px " but got "10px "
+FAIL Web Animations: property <height> from [fit-content] to [10px] at (-0.3) should be [62px] assert_equals: expected "62px " but got "50px "
+PASS Web Animations: property <height> from [fit-content] to [10px] at (0) should be [50px]
+FAIL Web Animations: property <height> from [fit-content] to [10px] at (0.3) should be [38px] assert_equals: expected "38px " but got "50px "
+FAIL Web Animations: property <height> from [fit-content] to [10px] at (0.6) should be [26px] assert_equals: expected "26px " but got "10px "
+PASS Web Animations: property <height> from [fit-content] to [10px] at (1) should be [10px]
+FAIL Web Animations: property <height> from [fit-content] to [10px] at (1.5) should be [0px] assert_equals: expected "0px " but got "10px "
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [fit-content] at (-0.3) should be [max-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [fit-content] at (0) should be [max-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [fit-content] at (0.3) should be [max-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [fit-content] at (0.5) should be [fit-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [fit-content] at (0.6) should be [fit-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [fit-content] at (1) should be [fit-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [fit-content] at (1.5) should be [fit-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [fit-content] at (-0.3) should be [max-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [fit-content] at (0) should be [max-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [fit-content] at (0.3) should be [max-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [fit-content] at (0.5) should be [fit-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [fit-content] at (0.6) should be [fit-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [fit-content] at (1) should be [fit-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [fit-content] at (1.5) should be [fit-content]
+PASS CSS Transitions: property <height> from [max-content] to [fit-content] at (-0.3) should be [fit-content]
+PASS CSS Transitions: property <height> from [max-content] to [fit-content] at (0) should be [fit-content]
+PASS CSS Transitions: property <height> from [max-content] to [fit-content] at (0.3) should be [fit-content]
+PASS CSS Transitions: property <height> from [max-content] to [fit-content] at (0.5) should be [fit-content]
+PASS CSS Transitions: property <height> from [max-content] to [fit-content] at (0.6) should be [fit-content]
+PASS CSS Transitions: property <height> from [max-content] to [fit-content] at (1) should be [fit-content]
+PASS CSS Transitions: property <height> from [max-content] to [fit-content] at (1.5) should be [fit-content]
+PASS CSS Transitions with transition: all: property <height> from [max-content] to [fit-content] at (-0.3) should be [fit-content]
+PASS CSS Transitions with transition: all: property <height> from [max-content] to [fit-content] at (0) should be [fit-content]
+PASS CSS Transitions with transition: all: property <height> from [max-content] to [fit-content] at (0.3) should be [fit-content]
+PASS CSS Transitions with transition: all: property <height> from [max-content] to [fit-content] at (0.5) should be [fit-content]
+PASS CSS Transitions with transition: all: property <height> from [max-content] to [fit-content] at (0.6) should be [fit-content]
+PASS CSS Transitions with transition: all: property <height> from [max-content] to [fit-content] at (1) should be [fit-content]
+PASS CSS Transitions with transition: all: property <height> from [max-content] to [fit-content] at (1.5) should be [fit-content]
+PASS CSS Animations: property <height> from [max-content] to [fit-content] at (-0.3) should be [max-content]
+PASS CSS Animations: property <height> from [max-content] to [fit-content] at (0) should be [max-content]
+PASS CSS Animations: property <height> from [max-content] to [fit-content] at (0.3) should be [max-content]
+PASS CSS Animations: property <height> from [max-content] to [fit-content] at (0.5) should be [fit-content]
+PASS CSS Animations: property <height> from [max-content] to [fit-content] at (0.6) should be [fit-content]
+PASS CSS Animations: property <height> from [max-content] to [fit-content] at (1) should be [fit-content]
+PASS CSS Animations: property <height> from [max-content] to [fit-content] at (1.5) should be [fit-content]
+PASS Web Animations: property <height> from [max-content] to [fit-content] at (-0.3) should be [max-content]
+PASS Web Animations: property <height> from [max-content] to [fit-content] at (0) should be [max-content]
+PASS Web Animations: property <height> from [max-content] to [fit-content] at (0.3) should be [max-content]
+PASS Web Animations: property <height> from [max-content] to [fit-content] at (0.5) should be [fit-content]
+PASS Web Animations: property <height> from [max-content] to [fit-content] at (0.6) should be [fit-content]
+PASS Web Animations: property <height> from [max-content] to [fit-content] at (1) should be [fit-content]
+PASS Web Animations: property <height> from [max-content] to [fit-content] at (1.5) should be [fit-content]
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [stretch] at (-0.3) should be [max-content] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [stretch] at (0) should be [max-content] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [stretch] at (0.3) should be [max-content] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [stretch] at (0.5) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [stretch] at (0.6) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [stretch] at (1) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <height> from [max-content] to [stretch] at (1.5) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [stretch] at (-0.3) should be [max-content] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [stretch] at (0) should be [max-content] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [stretch] at (0.3) should be [max-content] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [stretch] at (0.5) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [stretch] at (0.6) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [stretch] at (1) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <height> from [max-content] to [stretch] at (1.5) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <height> from [max-content] to [stretch] at (-0.3) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <height> from [max-content] to [stretch] at (0) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <height> from [max-content] to [stretch] at (0.3) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <height> from [max-content] to [stretch] at (0.5) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <height> from [max-content] to [stretch] at (0.6) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <height> from [max-content] to [stretch] at (1) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <height> from [max-content] to [stretch] at (1.5) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <height> from [max-content] to [stretch] at (-0.3) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <height> from [max-content] to [stretch] at (0) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <height> from [max-content] to [stretch] at (0.3) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <height> from [max-content] to [stretch] at (0.5) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <height> from [max-content] to [stretch] at (0.6) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <height> from [max-content] to [stretch] at (1) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <height> from [max-content] to [stretch] at (1.5) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <height> from [max-content] to [stretch] at (-0.3) should be [max-content] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <height> from [max-content] to [stretch] at (0) should be [max-content] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <height> from [max-content] to [stretch] at (0.3) should be [max-content] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <height> from [max-content] to [stretch] at (0.5) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <height> from [max-content] to [stretch] at (0.6) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <height> from [max-content] to [stretch] at (1) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <height> from [max-content] to [stretch] at (1.5) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <height> from [max-content] to [stretch] at (-0.3) should be [max-content] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <height> from [max-content] to [stretch] at (0) should be [max-content] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <height> from [max-content] to [stretch] at (0.3) should be [max-content] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <height> from [max-content] to [stretch] at (0.5) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <height> from [max-content] to [stretch] at (0.6) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <height> from [max-content] to [stretch] at (1) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <height> from [max-content] to [stretch] at (1.5) should be [stretch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <height> from [max-content] to neutral at (-0.3) should be [20px] assert_equals: expected "20px " but got "150px "
+FAIL CSS Transitions: property <height> from [max-content] to neutral at (0) should be [50px] assert_equals: expected "50px " but got "150px "
+FAIL CSS Transitions: property <height> from [max-content] to neutral at (0.3) should be [80px] assert_equals: expected "80px " but got "150px "
+FAIL CSS Transitions: property <height> from [max-content] to neutral at (0.6) should be [110px] assert_equals: expected "110px " but got "150px "
+PASS CSS Transitions: property <height> from [max-content] to neutral at (1) should be [150px]
+FAIL CSS Transitions: property <height> from [max-content] to neutral at (1.5) should be [200px] assert_equals: expected "200px " but got "150px "
+FAIL CSS Transitions with transition: all: property <height> from [max-content] to neutral at (-0.3) should be [20px] assert_equals: expected "20px " but got "150px "
+FAIL CSS Transitions with transition: all: property <height> from [max-content] to neutral at (0) should be [50px] assert_equals: expected "50px " but got "150px "
+FAIL CSS Transitions with transition: all: property <height> from [max-content] to neutral at (0.3) should be [80px] assert_equals: expected "80px " but got "150px "
+FAIL CSS Transitions with transition: all: property <height> from [max-content] to neutral at (0.6) should be [110px] assert_equals: expected "110px " but got "150px "
+PASS CSS Transitions with transition: all: property <height> from [max-content] to neutral at (1) should be [150px]
+FAIL CSS Transitions with transition: all: property <height> from [max-content] to neutral at (1.5) should be [200px] assert_equals: expected "200px " but got "150px "
+FAIL CSS Animations: property <height> from [max-content] to neutral at (-0.3) should be [20px] assert_equals: expected "20px " but got "50px "
+PASS CSS Animations: property <height> from [max-content] to neutral at (0) should be [50px]
+FAIL CSS Animations: property <height> from [max-content] to neutral at (0.3) should be [80px] assert_equals: expected "80px " but got "50px "
+FAIL CSS Animations: property <height> from [max-content] to neutral at (0.6) should be [110px] assert_equals: expected "110px " but got "150px "
+PASS CSS Animations: property <height> from [max-content] to neutral at (1) should be [150px]
+FAIL CSS Animations: property <height> from [max-content] to neutral at (1.5) should be [200px] assert_equals: expected "200px " but got "150px "
+FAIL Web Animations: property <height> from [max-content] to neutral at (-0.3) should be [20px] assert_equals: expected "20px " but got "50px "
+PASS Web Animations: property <height> from [max-content] to neutral at (0) should be [50px]
+FAIL Web Animations: property <height> from [max-content] to neutral at (0.3) should be [80px] assert_equals: expected "80px " but got "50px "
+FAIL Web Animations: property <height> from [max-content] to neutral at (0.6) should be [110px] assert_equals: expected "110px " but got "150px "
+PASS Web Animations: property <height> from [max-content] to neutral at (1) should be [150px]
+FAIL Web Animations: property <height> from [max-content] to neutral at (1.5) should be [200px] assert_equals: expected "200px " but got "150px "
+FAIL CSS Transitions: property <height> from neutral to [fit-content] at (-0.3) should be [180px] assert_equals: expected "180px " but got "50px "
+FAIL CSS Transitions: property <height> from neutral to [fit-content] at (0) should be [150px] assert_equals: expected "150px " but got "50px "
+FAIL CSS Transitions: property <height> from neutral to [fit-content] at (0.3) should be [120px] assert_equals: expected "120px " but got "50px "
+FAIL CSS Transitions: property <height> from neutral to [fit-content] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS CSS Transitions: property <height> from neutral to [fit-content] at (1) should be [50px]
+FAIL CSS Transitions: property <height> from neutral to [fit-content] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Transitions with transition: all: property <height> from neutral to [fit-content] at (-0.3) should be [180px] assert_equals: expected "180px " but got "50px "
+FAIL CSS Transitions with transition: all: property <height> from neutral to [fit-content] at (0) should be [150px] assert_equals: expected "150px " but got "50px "
+FAIL CSS Transitions with transition: all: property <height> from neutral to [fit-content] at (0.3) should be [120px] assert_equals: expected "120px " but got "50px "
+FAIL CSS Transitions with transition: all: property <height> from neutral to [fit-content] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS CSS Transitions with transition: all: property <height> from neutral to [fit-content] at (1) should be [50px]
+FAIL CSS Transitions with transition: all: property <height> from neutral to [fit-content] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Animations: property <height> from neutral to [fit-content] at (-0.3) should be [180px] assert_equals: expected "180px " but got "150px "
+PASS CSS Animations: property <height> from neutral to [fit-content] at (0) should be [150px]
+FAIL CSS Animations: property <height> from neutral to [fit-content] at (0.3) should be [120px] assert_equals: expected "120px " but got "150px "
+FAIL CSS Animations: property <height> from neutral to [fit-content] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS CSS Animations: property <height> from neutral to [fit-content] at (1) should be [50px]
+FAIL CSS Animations: property <height> from neutral to [fit-content] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL Web Animations: property <height> from neutral to [fit-content] at (-0.3) should be [180px] assert_equals: expected "180px " but got "150px "
+PASS Web Animations: property <height> from neutral to [fit-content] at (0) should be [150px]
+FAIL Web Animations: property <height> from neutral to [fit-content] at (0.3) should be [120px] assert_equals: expected "120px " but got "150px "
+FAIL Web Animations: property <height> from neutral to [fit-content] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS Web Animations: property <height> from neutral to [fit-content] at (1) should be [50px]
+FAIL Web Animations: property <height> from neutral to [fit-content] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+

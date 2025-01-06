@@ -1,16 +1,16 @@
 This tests that the ARIA drag and drop attributes work as intended.
 
 PASS: dropeffectDiv.ariaDropEffects === 'copy,move'
-PASS: initiallyGrabbedDiv.ariaIsGrabbed === true
-PASS: initiallyUngrabbedDiv.ariaIsGrabbed === false
+PASS: initiallyGrabbedDiv.isGrabbed === true
+PASS: initiallyUngrabbedDiv.isGrabbed === false
 PASS: initiallyGrabbedDiv.isAttributeSettable('AXGrabbed') === true
 PASS: initiallyUngrabbedDiv.isAttributeSettable('AXGrabbed') === true
-PASS: displayContentsDiv.ariaIsGrabbed === true
+PASS: displayContentsDiv.isGrabbed === true
 PASS: displayContentsDiv.isAttributeSettable('AXGrabbed') === true
 PASS: displayContentsDiv.ariaDropEffects === 'copy,move'
 
 Setting aria-grabbed false for element #initially-grabbed-div.
-PASS: initiallyGrabbedDiv.ariaIsGrabbed === false
+PASS: initiallyGrabbedDiv.isGrabbed === false
 
 Setting aria-dropeffect of #dropeffect-div to 'move'.
 PASS: dropeffectDiv.ariaDropEffects === 'move'

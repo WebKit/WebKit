@@ -10,13 +10,13 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkStream.h"
 #include "include/core/SkSurface.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "include/gpu/ganesh/mtl/GrMtlDirectContext.h"
 #include "include/gpu/ganesh/mtl/GrMtlBackendContext.h"
 #include "include/encode/SkJpegEncoder.h"
 
-#include "metal_context_helper.h"
+#include "ganesh_metal_context_helper.h"
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {

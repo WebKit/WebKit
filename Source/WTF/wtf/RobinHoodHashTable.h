@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,8 @@
 
 #include <wtf/HashTable.h>
 #include <wtf/text/StringHash.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -175,14 +177,14 @@ public:
         internalCheckTableConsistency();
     }
 
-    AddResult add(const ValueType& value) { return add<IdentityTranslatorType>(Extractor::extract(value), value); }
-    AddResult add(ValueType&& value) { return add<IdentityTranslatorType>(Extractor::extract(value), WTFMove(value)); }
+    AddResult add(const ValueType& value) { return add<IdentityTranslatorType>(Extractor::extract(value), [&]() ALWAYS_INLINE_LAMBDA { return value; }); }
+    AddResult add(ValueType&& value) { return add<IdentityTranslatorType>(Extractor::extract(value), [&]() ALWAYS_INLINE_LAMBDA { return WTFMove(value); }); }
 
     // A special version of add() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion if the object is already
     // in the table.
-    template<typename HashTranslator, typename T, typename Extra> AddResult add(T&& key, Extra&&);
-    template<typename HashTranslator, typename T, typename Extra> AddResult addPassingHashCode(T&& key, Extra&&);
+    template<typename HashTranslator> AddResult add(auto&& key, NOESCAPE const std::invocable<> auto& functor);
+    template<typename HashTranslator> AddResult addPassingHashCode(auto&& key, NOESCAPE const std::invocable<> auto& functor);
 
     iterator find(const KeyType& key) { return find<IdentityTranslatorType>(key); }
     const_iterator find(const KeyType& key) const { return find<IdentityTranslatorType>(key); }
@@ -323,7 +325,9 @@ void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits,
     if (!HashFunctions::safeToCompareToEmptyOrDeleted)
         return;
     ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     typename std::aligned_storage<sizeof(ValueType), std::alignment_of<ValueType>::value>::type deletedValueBuffer;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     ValueType* deletedValuePtr = reinterpret_cast_ptr<ValueType*>(&deletedValueBuffer);
     ValueType& deletedValue = *deletedValuePtr;
     Traits::constructDeletedValue(deletedValue);
@@ -383,8 +387,8 @@ inline void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, Key
 }
 
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy>
-template<typename HashTranslator, typename T, typename Extra>
-ALWAYS_INLINE auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy>::add(T&& key, Extra&& extra) -> AddResult
+template<typename HashTranslator, typename T>
+ALWAYS_INLINE auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy>::add(T&& key, NOESCAPE const std::invocable<> auto& functor) -> AddResult
 {
     checkKey<HashTranslator>(key);
 
@@ -412,7 +416,7 @@ ALWAYS_INLINE auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Trai
         if (isEmptyBucket(*entry)) {
             if (distance >= probeDistanceThreshold)
                 m_willExpand = true;
-            HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra));
+            HashTranslator::translate(*entry, std::forward<T>(key), functor);
             break;
         }
 
@@ -426,7 +430,7 @@ ALWAYS_INLINE auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Trai
             ValueType existingEntry = WTFMove(*entry);
             entry->~ValueType();
             initializeBucket(*entry);
-            HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra));
+            HashTranslator::translate(*entry, std::forward<T>(key), functor);
             maintainProbeDistanceForAdd(WTFMove(existingEntry), index, entryDistance, size, sizeMask, tableHash);
             break;
         }
@@ -473,8 +477,8 @@ ALWAYS_INLINE void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Trai
 
 
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy>
-template<typename HashTranslator, typename T, typename Extra>
-inline auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy>::addPassingHashCode(T&& key, Extra&& extra) -> AddResult
+template<typename HashTranslator, typename T>
+inline auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy>::addPassingHashCode(T&& key, NOESCAPE const std::invocable<> auto& functor) -> AddResult
 {
     checkKey<HashTranslator>(key);
 
@@ -503,7 +507,7 @@ inline auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, Key
         if (isEmptyBucket(*entry)) {
             if (distance >= probeDistanceThreshold)
                 m_willExpand = true;
-            HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra), originalHash);
+            HashTranslator::translate(*entry, std::forward<T>(key), functor, originalHash);
             break;
         }
 
@@ -517,7 +521,7 @@ inline auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, Key
             ValueType existingEntry = WTFMove(*entry);
             entry->~ValueType();
             initializeBucket(*entry);
-            HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra), originalHash);
+            HashTranslator::translate(*entry, std::forward<T>(key), functor, originalHash);
             maintainProbeDistanceForAdd(WTFMove(existingEntry), index, entryDistance, size, sizeMask, tableHash);
             break;
         }
@@ -714,7 +718,7 @@ void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits,
 {
     for (unsigned i = 0; i < size; ++i)
         table[i].~ValueType();
-    HashTableMalloc::free(reinterpret_cast<char*>(table));
+    HashTableMalloc::free(table);
 }
 
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy>
@@ -787,7 +791,7 @@ void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits,
     }
 
     if (oldTable)
-        HashTableMalloc::free(reinterpret_cast<char*>(oldTable));
+        HashTableMalloc::free(oldTable);
 
     internalCheckTableConsistency();
 }
@@ -917,18 +921,20 @@ void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits,
 #endif // ASSERT_ENABLED
 
 struct MemoryCompactLookupOnlyRobinHoodHashTableTraits {
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, ShouldValidateKey shouldValidateKey>
     using TableType = RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, MemoryCompactLookupOnlyRobinHoodHashTableSizePolicy>;
 };
 
 struct MemoryCompactRobinHoodHashTableTraits {
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, ShouldValidateKey shouldValidateKey>
     using TableType = RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, MemoryCompactRobinHoodHashTableSizePolicy>;
 };
 
 struct FastRobinHoodHashTableTraits {
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, ShouldValidateKey shouldValidateKey>
     using TableType = RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, FastRobinHoodHashTableSizePolicy>;
 };
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

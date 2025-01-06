@@ -83,7 +83,7 @@ function doStep(step, location) {
     }
 }
 
-window.onpageshow = function() {
+window.onpageshow = async function() {
     if (!window.testRunner || !window.eventSender || !window.internals) {
         log.innerText =
             'This test requires eventSender, testRunner and window.internals. ' +
@@ -93,8 +93,8 @@ window.onpageshow = function() {
     if (!location.search) {
         sessionStorage.step = 0;
         testRunner.dumpAsText();
-        testRunner.clearBackForwardList();
         testRunner.waitUntilDone();
+        await testRunner.clearBackForwardList();
     }
 
     setTimeout(function() {

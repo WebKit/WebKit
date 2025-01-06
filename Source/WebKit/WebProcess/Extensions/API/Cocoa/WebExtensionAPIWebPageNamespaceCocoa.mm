@@ -37,13 +37,16 @@
 #import "WebExtensionAPITest.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionControllerProxy.h"
+#import "WebPage.h"
 
 namespace WebKit {
 
-bool WebExtensionAPIWebPageNamespace::isPropertyAllowed(const ASCIILiteral& name, WebPage& page)
+bool WebExtensionAPIWebPageNamespace::isPropertyAllowed(const ASCIILiteral& name, WebPage* page)
 {
     if (name == "test"_s) {
-        if (RefPtr extensionController = page.webExtensionControllerProxy())
+        if (!page)
+            return false;
+        if (RefPtr extensionController = page->webExtensionControllerProxy())
             return extensionController->inTestingMode();
         return false;
     }

@@ -12,6 +12,7 @@ align
 alink
 allow
 allowfullscreen
+alpha
 alt
 archive
 aria-activedescendant
@@ -83,6 +84,7 @@ axis
 background
 behavior
 bgcolor
+blocking
 border
 bordercolor
 capture
@@ -102,8 +104,11 @@ code
 codebase
 codetype
 color
+colorspace
 cols
 colspan
+command
+commandfor
 compact
 composite
 content
@@ -131,6 +136,7 @@ dropzone
 enctype
 end
 enterkeyhint
+environmentmap
 event
 expanded
 exportparts
@@ -158,13 +164,10 @@ http-equiv
 id
 imagesizes
 imagesrcset
-incremental
 inert
 inputmode
 integrity
 interactive
-invokeaction
-invoketarget
 is
 ismap
 keytype
@@ -182,7 +185,6 @@ loopend
 loopstart
 low
 lowsrc
-manifest
 marginheight
 marginwidth
 max
@@ -199,6 +201,7 @@ name
 nohref
 nomodule
 nonce
+noportal
 noresize
 noshade
 novalidate
@@ -212,6 +215,7 @@ onanimationiteration
 onanimationstart
 onautocomplete
 onautocompleteerror
+onauxclick
 onbeforecopy
 onbeforecut
 onbeforeinput
@@ -283,7 +287,9 @@ onoffline
 ononline
 onorientationchange
 onpagehide
+onpagereveal
 onpageshow
+onpageswap
 onpaste
 onpause
 onplay
@@ -299,11 +305,11 @@ onpointerup
 onpopstate
 onprogress
 onratechange
+onredraw
 onrejectionhandled
 onreset
 onresize
 onscroll
-onsearch
 onsecuritypolicyviolation
 onseeked
 onseeking

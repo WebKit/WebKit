@@ -8,6 +8,7 @@
 
 #include "compiler/translator/tree_ops/RewriteStructSamplers.h"
 
+#include "common/hash_containers.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
@@ -23,33 +24,11 @@ struct StructureData
 {
     // The structure this was replaced with.  If nullptr, it means the structure is removed (because
     // it had all samplers).
+    //
+    // ParseContext reorders the samplers to the end of the struct, so the EOpIndexDirectStruct
+    // expressions that select non-sampler members don't have to change when they are moved out of
+    // the struct.
     const TStructure *modified;
-    // Indexed by the field index of original structure, to get the field index of the modified
-    // structure.  For example:
-    //
-    //     struct Original
-    //     {
-    //         sampler2D s1;
-    //         vec4 f1;
-    //         sampler2D s2;
-    //         sampler2D s3;
-    //         vec4 f2;
-    //     };
-    //
-    //     struct Modified
-    //     {
-    //         vec4 f1;
-    //         vec4 f2;
-    //     };
-    //
-    //     fieldMap:
-    //         0 -> Invalid
-    //         1 -> 0
-    //         2 -> Invalid
-    //         3 -> Invalid
-    //         4 -> 1
-    //
-    TVector<int> fieldMap;
 };
 
 using StructureMap        = angle::HashMap<const TStructure *, StructureData>;
@@ -185,34 +164,8 @@ void RewriteIndexExpression(TCompiler *compiler,
 //                          /        \
 //                      sampler    index 1
 //
-// Alternatively, if the expression is as such:
-//
-//                                                    EOpIndexDirectStruct
-//                                                    /                  \
-//                        (modified struct type) EOpIndex*           field index
-//                                              /        \
-//                                EOpIndexDirectStruct   index 2
-//                                /                  \
-//                           EOpIndex*           field index
-//                          /        \
-//            EOpIndexDirectStruct   index 1
-//            /                  \
-//     Uniform Struct           field index
-//
-// produces:
-//
-//                                                    EOpIndexDirectStruct
-//                                                    /                  \
-//                                               EOpIndex*     mapped field index
-//                                              /        \
-//                                EOpIndexDirectStruct   index 2
-//                                /                  \
-//                           EOpIndex*      mapped field index
-//                          /        \
-//            EOpIndexDirectStruct   index 1
-//            /                  \
-//     Uniform Struct     mapped field index
-//
+// If the expression is not a sampler, it only replaces the struct with the modified one, while
+// still processing the EOpIndexIndirect expressions (which may contain more structs to map).
 TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
     TCompiler *compiler,
     TIntermBinary *node,
@@ -281,22 +234,8 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
             case EOpIndexDirectStruct:
                 if (!isSampler)
                 {
-                    // Remap the field.
-                    const TStructure *structure = indexNode->getLeft()->getType().getStruct();
-                    ASSERT(structureMap.find(structure) != structureMap.end());
-
-                    TIntermConstantUnion *asConstantUnion =
-                        indexNode->getRight()->getAsConstantUnion();
-                    ASSERT(asConstantUnion);
-
-                    const int fieldIndex = asConstantUnion->getIConst(0);
-                    ASSERT(fieldIndex <
-                           static_cast<int>(structureMap.at(structure).fieldMap.size()));
-
-                    const int mappedFieldIndex = structureMap.at(structure).fieldMap[fieldIndex];
-
-                    rewritten = new TIntermBinary(EOpIndexDirectStruct, rewritten,
-                                                  CreateIndexNode(mappedFieldIndex));
+                    rewritten =
+                        new TIntermBinary(EOpIndexDirectStruct, rewritten, indexNode->getRight());
                 }
                 break;
 
@@ -426,7 +365,6 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
         StructureData *modifiedData = &mStructureMap[structure];
 
         modifiedData->modified = nullptr;
-        modifiedData->fieldMap.resize(structure->fields().size(), std::numeric_limits<int>::max());
 
         for (size_t fieldIndex = 0; fieldIndex < structure->fields().size(); ++fieldIndex)
         {
@@ -459,10 +397,6 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
                     // If not, duplicate the field as is.
                     newType = new TType(fieldType);
                 }
-
-                // Record the mapping of the field indices, so future EOpIndexDirectStruct's into
-                // this struct can be fixed up.
-                modifiedData->fieldMap[fieldIndex] = static_cast<int>(newFieldList->size());
 
                 TField *newField =
                     new TField(newType, field->name(), field->line(), field->symbolType());
@@ -624,7 +558,7 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
         // TODO: Use a temp name instead of generating a name as currently done.  There is no
         // guarantee that these generated names cannot clash.  Create a mapping from the previous
         // name to the name assigned to the temp variable so ShaderVariable::mappedName can be
-        // updated post-transformation.  http://anglebug.com/4301
+        // updated post-transformation.  http://anglebug.com/42262930
         ASSERT(mExtractedSamplers.find(newName) == mExtractedSamplers.end());
         mExtractedSamplers[newName] = newVariable;
     }

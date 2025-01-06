@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if HAVE(PDFKIT)
+#if USE(PDFKIT_FOR_TESTING)
 
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -257,4 +257,4 @@ TEST(PDFSnapshot, AllowTransparentBackground)
 
 }
 
-#endif // HAVE(PDFKIT)
+#endif // USE(PDFKIT_FOR_TESTING)

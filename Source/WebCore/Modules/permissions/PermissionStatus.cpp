@@ -40,13 +40,13 @@
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 #include <wtf/HashMap.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PermissionStatus);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PermissionStatus);
 
 static HashMap<MainThreadPermissionObserverIdentifier, std::unique_ptr<MainThreadPermissionObserver>>& allMainThreadPermissionObservers()
 {
@@ -54,23 +54,22 @@ static HashMap<MainThreadPermissionObserverIdentifier, std::unique_ptr<MainThrea
     return map;
 }
 
-Ref<PermissionStatus> PermissionStatus::create(ScriptExecutionContext& context, PermissionState state, PermissionDescriptor descriptor, PermissionQuerySource source, SingleThreadWeakPtr<Page>&& page)
+Ref<PermissionStatus> PermissionStatus::create(ScriptExecutionContext& context, PermissionState state, PermissionDescriptor descriptor, PermissionQuerySource source, WeakPtr<Page>&& page)
 {
     auto status = adoptRef(*new PermissionStatus(context, state, descriptor, source, WTFMove(page)));
     status->suspendIfNeeded();
     return status;
 }
 
-PermissionStatus::PermissionStatus(ScriptExecutionContext& context, PermissionState state, PermissionDescriptor descriptor, PermissionQuerySource source, SingleThreadWeakPtr<Page>&& page)
+PermissionStatus::PermissionStatus(ScriptExecutionContext& context, PermissionState state, PermissionDescriptor descriptor, PermissionQuerySource source, WeakPtr<Page>&& page)
     : ActiveDOMObject(&context)
     , m_state(state)
     , m_descriptor(descriptor)
+    , m_mainThreadPermissionObserverIdentifier(MainThreadPermissionObserverIdentifier::generate())
 {
     RefPtr origin = context.securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };
     ClientOrigin clientOrigin { context.topOrigin().data(), WTFMove(originData) };
-
-    m_mainThreadPermissionObserverIdentifier = MainThreadPermissionObserverIdentifier::generate();
 
     ensureOnMainThread([weakThis = ThreadSafeWeakPtr { *this }, contextIdentifier = context.identifier(), state = m_state, descriptor = m_descriptor, source, page = WTFMove(page), origin = WTFMove(clientOrigin).isolatedCopy(), identifier = m_mainThreadPermissionObserverIdentifier]() mutable {
         auto mainThreadPermissionObserver = makeUnique<MainThreadPermissionObserver>(WTFMove(weakThis), contextIdentifier, state, descriptor, source, WTFMove(page), WTFMove(origin));
@@ -80,9 +79,6 @@ PermissionStatus::PermissionStatus(ScriptExecutionContext& context, PermissionSt
 
 PermissionStatus::~PermissionStatus()
 {
-    if (!m_mainThreadPermissionObserverIdentifier)
-        return;
-
     callOnMainThread([identifier = m_mainThreadPermissionObserverIdentifier] {
         allMainThreadPermissionObservers().remove(identifier);
     });

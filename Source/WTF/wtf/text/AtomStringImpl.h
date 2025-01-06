@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <wtf/TypeCasts.h>
 #include <wtf/text/UniquedStringImpl.h>
 
 namespace WTF {
@@ -82,8 +83,10 @@ private:
 
 inline RefPtr<AtomStringImpl> AtomStringImpl::lookUp(StringImpl* string)
 {
-    if (!string || string->isAtom())
-        return static_cast<AtomStringImpl*>(string);
+    if (!string)
+        return nullptr;
+    if (auto* atom = dynamicDowncast<AtomStringImpl>(*string))
+        return atom;
     return lookUpSlowCase(*string);
 }
 
@@ -126,9 +129,9 @@ ALWAYS_INLINE RefPtr<AtomStringImpl> AtomStringImpl::addWithStringTableProvider(
 
 ALWAYS_INLINE Ref<AtomStringImpl> AtomStringImpl::add(StringImpl& string)
 {
-    if (string.isAtom()) {
+    if (auto* atom = dynamicDowncast<AtomStringImpl>(string)) {
         ASSERT_WITH_MESSAGE(!string.length() || isInAtomStringTable(&string), "The atom string comes from an other thread!");
-        return static_cast<AtomStringImpl&>(string);
+        return *atom;
     }
     return addSlowCase(string);
 }
@@ -144,9 +147,9 @@ ALWAYS_INLINE Ref<AtomStringImpl> AtomStringImpl::add(Ref<StringImpl>&& string)
 
 ALWAYS_INLINE Ref<AtomStringImpl> AtomStringImpl::add(AtomStringTable& stringTable, StringImpl& string)
 {
-    if (string.isAtom()) {
+    if (auto* atom = dynamicDowncast<AtomStringImpl>(string)) {
         ASSERT_WITH_MESSAGE(!string.length() || isInAtomStringTable(&string), "The atom string comes from an other thread!");
-        return static_cast<AtomStringImpl&>(string);
+        return *atom;
     }
     return addSlowCase(stringTable, string);
 }
@@ -167,6 +170,10 @@ template<> struct ValueCheck<const AtomStringImpl*> {
 
 #endif // ASSERT_ENABLED
 
-}
+} // namespace WTF
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WTF::AtomStringImpl) \
+    static bool isType(const WTF::StringImpl& string) { return string.isAtom(); } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 using WTF::AtomStringImpl;

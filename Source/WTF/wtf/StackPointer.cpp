@@ -167,11 +167,15 @@ asm (
 #elif USE(GENERIC_CURRENT_STACK_POINTER)
 constexpr size_t sizeOfFrameHeader = 2 * sizeof(void*);
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 SUPPRESS_ASAN NEVER_INLINE
 void* currentStackPointer()
 {
     return reinterpret_cast<uint8_t*>(__builtin_frame_address(0)) + sizeOfFrameHeader;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif // USE(GENERIC_CURRENT_STACK_POINTER)
 
 } // namespace WTF

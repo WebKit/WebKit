@@ -36,7 +36,7 @@ class OutOfResourceErrorCause : public Parameter,
 
   OutOfResourceErrorCause() {}
 
-  static absl::optional<OutOfResourceErrorCause> Parse(
+  static std::optional<OutOfResourceErrorCause> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

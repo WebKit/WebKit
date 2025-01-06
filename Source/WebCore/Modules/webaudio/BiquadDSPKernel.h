@@ -27,6 +27,7 @@
 #include "AudioDSPKernel.h"
 #include "Biquad.h"
 #include "BiquadProcessor.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,30 +36,31 @@ class BiquadProcessor;
 // BiquadDSPKernel is an AudioDSPKernel and is responsible for filtering one channel of a BiquadProcessor using a Biquad object.
 
 class BiquadDSPKernel final : public AudioDSPKernel {
-public:  
+    WTF_MAKE_TZONE_ALLOCATED(BiquadDSPKernel);
+public:
     explicit BiquadDSPKernel(BiquadProcessor* processor)
     : AudioDSPKernel(processor)
     {
     }
     
     // AudioDSPKernel
-    void process(const float* source, float* dest, size_t framesToProcess) override;
+    void process(std::span<const float> source, std::span<float> destination) final;
     void reset() override { m_biquad.reset(); }
 
     // Get the magnitude and phase response of the filter at the given
     // set of frequencies (in Hz). The phase response is in radians.
-    void getFrequencyResponse(unsigned nFrequencies, const float* frequencyHz, float* magResponse, float* phaseResponse);
+    void getFrequencyResponse(unsigned nFrequencies, std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse);
 
     double tailTime() const override;
     double latencyTime() const override;
 
-    void updateCoefficients(size_t numberOfFrames, const float* cutoffFrequency, const float* q, const float* gain, const float* detune);
+    void updateCoefficients(size_t numberOfFrames, std::span<const float> cutoffFrequency, std::span<const float> q, std::span<const float> gain, std::span<const float> detune);
 
     bool requiresTailProcessing() const final;
 
 private:
     Biquad m_biquad;
-    BiquadProcessor* biquadProcessor() { return static_cast<BiquadProcessor*>(processor()); }
+    BiquadProcessor* biquadProcessor() { return downcast<BiquadProcessor>(processor()); }
 
     // To prevent audio glitches when parameters are changed,
     // dezippering is used to slowly change the parameters.

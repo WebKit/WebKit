@@ -36,8 +36,11 @@
 #include "PerformanceLogging.h"
 #include "RegistrableDomain.h"
 #include "Settings.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceMonitor);
 
 #define PERFMONITOR_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - PerformanceMonitor::" fmt, this, ##__VA_ARGS__)
 
@@ -79,6 +82,16 @@ PerformanceMonitor::PerformanceMonitor(Page& page)
         m_perActivityStateCPUTime = CPUTime::get();
         m_perActivityStateCPUUsageTimer.startRepeating(cpuUsageSamplingInterval);
     }
+}
+
+void PerformanceMonitor::ref() const
+{
+    m_page->ref();
+}
+
+void PerformanceMonitor::deref() const
+{
+    m_page->deref();
 }
 
 void PerformanceMonitor::didStartProvisionalLoad()
@@ -143,15 +156,7 @@ void PerformanceMonitor::activityStateChanged(OptionSet<ActivityState> oldState,
 enum class ReportingReason { HighCPUUsage, HighMemoryUsage };
 static void reportPageOverPostLoadResourceThreshold(Page& page, ReportingReason reason)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
-    if (!localMainFrame)
-        return;
-
-    auto* document = localMainFrame->document();
-    if (!document)
-        return;
-
-    RegistrableDomain registrableDomain { document->url() };
+    RegistrableDomain registrableDomain { page.mainFrameURL() };
     if (registrableDomain.isEmpty())
         return;
 

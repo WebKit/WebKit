@@ -43,10 +43,18 @@
 #include <ImageIO/ImageIO.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/FlipBytes.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include "MediaAccessibilitySoftLink.h"
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+#include "PhotosFormatSoftLink.h"
+#endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageDecoderCG);
 
 const CFStringRef WebCoreCGImagePropertyAVISDictionary = CFSTR("{AVIS}");
 const CFStringRef WebCoreCGImagePropertyHEICSDictionary = CFSTR("{HEICS}");
@@ -80,6 +88,7 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
 #if HAVE(IMAGEIO_CREATE_UNPREMULTIPLIED_PNG)
     CFDictionarySetValue(options.get(), kCGImageSourceCreateUnpremultipliedPNG, kCFBooleanTrue);
 #endif
+
     return options;
 }
 
@@ -543,6 +552,9 @@ bool ImageDecoderCG::fetchFrameMetaDataAtIndex(size_t index, SubsamplingLevel su
     else
         frame.m_densityCorrectedSize = std::nullopt;
 
+    if (frame.hasNativeImage())
+        frame.m_headroom = frame.nativeImage()->headroom();
+
     bool frameIsComplete = frameIsCompleteAtIndex(index);
 
     frame.m_subsamplingLevel = subsamplingLevel;
@@ -700,21 +712,33 @@ bool ImageDecoderCG::canDecodeType(const String& mimeType)
     return MIMETypeRegistry::isSupportedImageMIMEType(mimeType);
 }
 
-} // namespace WebCore
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ImageDecoderCGAdditions.cpp>)
-#include <WebKitAdditions/ImageDecoderCGAdditions.cpp>
-#else
-namespace WebCore {
-
 #if ENABLE(QUICKLOOK_FULLSCREEN)
+bool ImageDecoderCG::isMaybePanoramic() const
+{
+    auto imageSize = FloatSize(frameSizeAtIndex(0));
+    auto aspectRatio = imageSize.aspectRatio();
+
+    constexpr float panoramicImageAspectRatioThreshold = 2.0;
+    return aspectRatio > panoramicImageAspectRatioThreshold;
+}
+
+bool ImageDecoderCG::isSpatial() const
+{
+    CGImageSourceRef imageSource = m_nativeDecoder.get();
+    if (!canLoad_PhotosFormats_PFMetadataImageSourceIsSpatialMedia())
+        return false;
+
+    return softLink_PhotosFormats_PFMetadataImageSourceIsSpatialMedia(imageSource);
+}
+
 bool ImageDecoderCG::shouldUseQuickLookForFullscreen() const
 {
-    return false;
+    return isMaybePanoramic() || isSpatial();
 }
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
 
 } // namespace WebCore
-#endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CG)

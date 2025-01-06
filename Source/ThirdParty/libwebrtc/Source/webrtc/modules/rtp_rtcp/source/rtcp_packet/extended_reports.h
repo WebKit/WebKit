@@ -11,9 +11,9 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_EXTENDED_REPORTS_H_
 #define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_EXTENDED_REPORTS_H_
 
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/rrtr.h"
@@ -40,9 +40,9 @@ class ExtendedReports : public RtcpPacket {
   bool AddDlrrItem(const ReceiveTimeInfo& time_info);
   void SetTargetBitrate(const TargetBitrate& target_bitrate);
 
-  const absl::optional<Rrtr>& rrtr() const { return rrtr_block_; }
+  const std::optional<Rrtr>& rrtr() const { return rrtr_block_; }
   const Dlrr& dlrr() const { return dlrr_block_; }
-  const absl::optional<TargetBitrate>& target_bitrate() const {
+  const std::optional<TargetBitrate>& target_bitrate() const {
     return target_bitrate_;
   }
 
@@ -64,9 +64,9 @@ class ExtendedReports : public RtcpPacket {
   void ParseDlrrBlock(const uint8_t* block, uint16_t block_length);
   void ParseTargetBitrateBlock(const uint8_t* block, uint16_t block_length);
 
-  absl::optional<Rrtr> rrtr_block_;
+  std::optional<Rrtr> rrtr_block_;
   Dlrr dlrr_block_;  // Dlrr without items treated same as no dlrr block.
-  absl::optional<TargetBitrate> target_bitrate_;
+  std::optional<TargetBitrate> target_bitrate_;
 };
 }  // namespace rtcp
 }  // namespace webrtc

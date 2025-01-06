@@ -29,13 +29,13 @@ class GraphicsContext;
 class RenderSVGShape;
 
 class RenderSVGResourcePaintServer : public RenderSVGResourceContainer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourcePaintServer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGResourcePaintServer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourcePaintServer);
 public:
     virtual ~RenderSVGResourcePaintServer();
 
-    virtual bool prepareFillOperation(GraphicsContext&, const RenderLayerModelObject&, const RenderStyle&) = 0;
-    virtual bool prepareStrokeOperation(GraphicsContext&, const RenderLayerModelObject&, const RenderStyle&) = 0;
+    virtual bool prepareFillOperation(GraphicsContext&, const RenderLayerModelObject&, const RenderStyle&) { return false; }
+    virtual bool prepareStrokeOperation(GraphicsContext&, const RenderLayerModelObject&, const RenderStyle&) { return false; }
 
 protected:
     RenderSVGResourcePaintServer(Type, SVGElement&, RenderStyle&&);

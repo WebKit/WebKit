@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
  - `CanvasKit.Typeface.GetDefault()` as a way to explicitly get the compiled-in typeface (if any).
+ - `Canvas.quickReject` to quickly check if a Rect is within the current clip region.
+ - `Canvas.saveLayer` now accepts a `TileMode` argument which affects the backdrop filter
+   in the save layer.
 
 ## [0.39.1] - 2023-10-12
 

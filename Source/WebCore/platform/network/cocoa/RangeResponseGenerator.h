@@ -41,7 +41,7 @@ class ResourceResponse;
 class RangeResponseGenerator final
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RangeResponseGenerator, WTF::DestructionThread::Main> {
 public:
-    static Ref<RangeResponseGenerator> create(RefCountedSerialFunctionDispatcher& dispatcher) { return adoptRef(*new RangeResponseGenerator(dispatcher)); }
+    static Ref<RangeResponseGenerator> create(GuaranteedSerialFunctionDispatcher& dispatcher) { return adoptRef(*new RangeResponseGenerator(dispatcher)); }
     ~RangeResponseGenerator();
 
     bool willSynthesizeRangeResponses(WebCoreNSURLSessionDataTask *, PlatformMediaResource&, const ResourceResponse&);
@@ -51,7 +51,7 @@ public:
 private:
     struct Data;
 
-    RangeResponseGenerator(WTF::RefCountedSerialFunctionDispatcher&);
+    RangeResponseGenerator(WTF::GuaranteedSerialFunctionDispatcher&);
     HashMap<String, std::unique_ptr<Data>>& map();
 
     class MediaResourceClient;
@@ -60,7 +60,7 @@ private:
     static std::optional<size_t> expectedContentLengthFromData(const Data&);
 
     HashMap<String, std::unique_ptr<Data>> m_map WTF_GUARDED_BY_CAPABILITY(m_targetDispatcher.get());
-    Ref<RefCountedSerialFunctionDispatcher> m_targetDispatcher;
+    Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;
 };
 
 } // namespace WebCore

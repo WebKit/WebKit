@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Tests Stream receiver attribute.
+[ExceptionForEnabledBy]
 messages -> TestWithStreamServerConnectionHandle  {
     void SendStreamServerConnection(IPC::StreamServerConnectionHandle handle)
 }

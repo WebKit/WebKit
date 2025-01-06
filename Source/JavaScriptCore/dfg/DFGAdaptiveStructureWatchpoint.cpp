@@ -28,7 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlock.h"
+#include "CodeBlockInlines.h"
 #include "JSCellInlines.h"
 
 namespace JSC { namespace DFG {
@@ -65,7 +65,8 @@ void AdaptiveStructureWatchpoint::install(VM&)
 
 void AdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail& detail)
 {
-    if (!m_codeBlock->isLive())
+    ASSERT(!m_codeBlock->wasDestructed());
+    if (m_codeBlock->isPendingDestruction())
         return;
 
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {

@@ -102,6 +102,7 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
 #define FOR_EACH_OPCODE_WITH_VALUE_PROFILE(macro) \
     macro(OpCallVarargs) \
     macro(OpConstructVarargs) \
+    macro(OpSuperConstructVarargs) \
     macro(OpGetByVal) \
     macro(OpEnumeratorGetByVal) \
     macro(OpGetById) \
@@ -119,6 +120,7 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpCall) \
     macro(OpCallDirectEval) \
     macro(OpConstruct) \
+    macro(OpSuperConstruct) \
     macro(OpGetFromScope) \
     macro(OpGetPrivateName) \
     macro(OpNewArrayWithSpecies) \
@@ -128,12 +130,14 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpTailCall) \
     macro(OpCallDirectEval) \
     macro(OpConstruct) \
+    macro(OpSuperConstruct) \
     macro(OpIteratorOpen) \
     macro(OpIteratorNext) \
     macro(OpCallVarargs) \
     macro(OpTailCallVarargs) \
     macro(OpTailCallForwardArguments) \
     macro(OpConstructVarargs) \
+    macro(OpSuperConstructVarargs) \
     macro(OpCallIgnoreResult) \
 
 #define FOR_EACH_OPCODE_WITH_SIMPLE_ARRAY_PROFILE(macro) \

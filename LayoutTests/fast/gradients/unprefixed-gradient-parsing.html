@@ -153,7 +153,7 @@ shouldBe('testGradientSpecifiedValue("background-image: radial-gradient(10px 10p
 shouldBe('testGradientSpecifiedValue("background-image: radial-gradient(10px 10px at center, white, 100%, black)")', '"radial-gradient(10px 10px, white, 100%, black)"');
 
 shouldBe('testGradientComputedValue("background-image: radial-gradient(white, black)")', '"radial-gradient(rgb(255, 255, 255), rgb(0, 0, 0))"');
-shouldBe('testGradientComputedValue("background-image: radial-gradient(at bottom right, white, black)")', '"radial-gradient(at right bottom, rgb(255, 255, 255), rgb(0, 0, 0))"');
+shouldBe('testGradientComputedValue("background-image: radial-gradient(at bottom right, white, black)")', '"radial-gradient(at 100% 100%, rgb(255, 255, 255), rgb(0, 0, 0))"');
 shouldBe('testGradientComputedValue("background-image: radial-gradient(farthest-corner, white, black)")', '"radial-gradient(rgb(255, 255, 255), rgb(0, 0, 0))"');
 shouldBe('testGradientComputedValue("background-image: radial-gradient(farthest-corner, white, 35%, black)")', '"radial-gradient(rgb(255, 255, 255), 35%, rgb(0, 0, 0))"');
 shouldBe('testGradientComputedValue("background-image: radial-gradient(closest-side, white, black)")', '"radial-gradient(closest-side, rgb(255, 255, 255), rgb(0, 0, 0))"');
@@ -163,8 +163,8 @@ shouldBe('testGradientComputedValue("background-image: radial-gradient(ellipse c
 shouldBe('testGradientComputedValue("background-image: radial-gradient(circle, white, black)")', '"radial-gradient(circle, rgb(255, 255, 255), rgb(0, 0, 0))"');
 shouldBe('testGradientComputedValue("background-image: radial-gradient(circle farthest-corner, white, black)")', '"radial-gradient(circle, rgb(255, 255, 255), rgb(0, 0, 0))"');
 shouldBe('testGradientComputedValue("background-image: radial-gradient(circle closest-side, white, black)")', '"radial-gradient(circle closest-side, rgb(255, 255, 255), rgb(0, 0, 0))"');
-shouldBe('testGradientComputedValue("background-image: radial-gradient(circle closest-side at top, white, black)")', '"radial-gradient(circle closest-side at center top, rgb(255, 255, 255), rgb(0, 0, 0))"');
-shouldBe('testGradientComputedValue("background-image: radial-gradient(circle closest-side at top left, white, black)")', '"radial-gradient(circle closest-side at left top, rgb(255, 255, 255), rgb(0, 0, 0))"');
+shouldBe('testGradientComputedValue("background-image: radial-gradient(circle closest-side at top, white, black)")', '"radial-gradient(circle closest-side at 50% 0%, rgb(255, 255, 255), rgb(0, 0, 0))"');
+shouldBe('testGradientComputedValue("background-image: radial-gradient(circle closest-side at top left, white, black)")', '"radial-gradient(circle closest-side at 0% 0%, rgb(255, 255, 255), rgb(0, 0, 0))"');
 shouldBe('testGradientComputedValue("background-image: radial-gradient(circle closest-side at 10px 20%, white, black)")', '"radial-gradient(circle closest-side at 10px 20%, rgb(255, 255, 255), rgb(0, 0, 0))"');
 shouldBe('testGradientComputedValue("background-image: radial-gradient(at 10px 20% circle closest-side, white, black)")', '"none"');
 shouldBe('testGradientComputedValue("background-image: radial-gradient(circle at 10px 20% circle, white, black)")', '"none"');

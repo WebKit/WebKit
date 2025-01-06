@@ -16,6 +16,8 @@ features: [TypedArray]
 
 assert.sameValue(TypedArray.prototype.constructor, TypedArray);
 
-verifyNotEnumerable(TypedArray.prototype, "constructor");
-verifyWritable(TypedArray.prototype, "constructor");
-verifyConfigurable(TypedArray.prototype, "constructor");
+verifyProperty(TypedArray.prototype, "constructor", {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

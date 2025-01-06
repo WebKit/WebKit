@@ -27,23 +27,28 @@
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-struct CookieStoreGetOptions;
 class DeferredPromise;
+class ServiceWorkerRegistration;
+class WeakPtrImplWithEventTargetData;
+struct CookieStoreGetOptions;
 
 class CookieStoreManager : public RefCounted<CookieStoreManager> {
 public:
-    static Ref<CookieStoreManager> create();
+    static Ref<CookieStoreManager> create(ServiceWorkerRegistration&);
     ~CookieStoreManager();
 
     void subscribe(Vector<CookieStoreGetOptions>&&, Ref<DeferredPromise>&&);
-    void getSubscriptions(Ref<DeferredPromise>&&);
     void unsubscribe(Vector<CookieStoreGetOptions>&&, Ref<DeferredPromise>&&);
+    void getSubscriptions(Ref<DeferredPromise>&&);
 
 private:
-    CookieStoreManager();
+    explicit CookieStoreManager(ServiceWorkerRegistration&);
+
+    WeakPtr<ServiceWorkerRegistration, WebCore::WeakPtrImplWithEventTargetData> m_serviceWorkerRegistration;
 };
 
 } // namespace WebCore

@@ -25,19 +25,18 @@
 
 #include "config.h"
 #include <wtf/CryptographicUtilities.h>
+#include <wtf/ZippedRange.h>
 
 namespace WTF {
 
 #if !HAVE(TIMINGSAFE_BCMP)
-NEVER_INLINE int constantTimeMemcmp(const void* voidA, const void* voidB, size_t length)
+NEVER_INLINE int constantTimeMemcmp(std::span<const uint8_t> a, std::span<const uint8_t> b)
 {
-    const uint8_t* a = static_cast<const uint8_t*>(voidA);
-    const uint8_t* b = static_cast<const uint8_t*>(voidB);
+    RELEASE_ASSERT(a.size() == b.size());
 
     uint8_t result = 0;
-    for (size_t i = 0; i < length; ++i)
-        result |= a[i] ^ b[i];
-
+    for (auto [value1, value2] : zippedRange(a, b))
+        result |= value1 ^ value2;
     return result;
 }
 #endif

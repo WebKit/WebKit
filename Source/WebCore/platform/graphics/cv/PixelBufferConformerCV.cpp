@@ -32,11 +32,16 @@
 #include "Logging.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/StackTrace.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include "CoreVideoSoftLink.h"
 #include "VideoToolboxSoftLink.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PixelBufferConformerCV);
 
 #if RELEASE_LOG_DISABLED
 #define RELEASE_LOG_STACKTRACE(channel) ((void)0)
@@ -101,7 +106,7 @@ static const void* CVPixelBufferGetBytePointerCallback(void* refcon)
 
     size_t byteLength = CVPixelBufferGetBytesPerRow(info->pixelBuffer.get()) * CVPixelBufferGetHeight(info->pixelBuffer.get());
 
-    verifyImageBufferIsBigEnough(address, byteLength);
+    verifyImageBufferIsBigEnough({ static_cast<const uint8_t*>(address), byteLength });
     RELEASE_LOG_INFO(Media, "CVPixelBufferGetBytePointerCallback() returning bytePointer: %p, size: %zu", address, byteLength);
     return address;
 }
@@ -224,3 +229,5 @@ RetainPtr<CGImageRef> PixelBufferConformerCV::imageFrom32BGRAPixelBuffer(RetainP
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

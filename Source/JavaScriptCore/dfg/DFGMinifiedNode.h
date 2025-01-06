@@ -62,7 +62,7 @@ public:
     
     JSValue constant() const
     {
-        return JSValue::decode(bitwise_cast<EncodedJSValue>(m_info.get()));
+        return JSValue::decode(std::bit_cast<EncodedJSValue>(m_info.get()));
     }
     
     bool isPhantomDirectArguments() const { return m_isPhantomDirectArguments; }
@@ -71,7 +71,7 @@ public:
     
     InlineCallFrame* inlineCallFrame() const
     {
-        return bitwise_cast<InlineCallFrame*>(static_cast<uintptr_t>(m_info.get()));
+        return std::bit_cast<InlineCallFrame*>(static_cast<uintptr_t>(m_info.get()));
     }
     
     static MinifiedID getID(MinifiedNode* node) { return node->id(); }

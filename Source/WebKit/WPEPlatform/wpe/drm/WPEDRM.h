@@ -27,8 +27,9 @@
 
 #include <gbm.h>
 #include <optional>
-#include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 #include <xf86drmMode.h>
 
 namespace WPE {
@@ -38,7 +39,7 @@ namespace DRM {
 using Property = std::pair<uint32_t, uint64_t>;
 
 class Crtc {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Crtc);
 public:
     struct Properties {
         Property active { 0, 0 };
@@ -72,7 +73,7 @@ private:
 };
 
 class Connector {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Connector);
 public:
     struct Properties {
         Property crtcID { 0, 0 };
@@ -103,7 +104,7 @@ private:
 };
 
 class Plane {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Plane);
 public:
     enum class Type : uint8_t {
         Primary = DRM_PLANE_TYPE_PRIMARY,
@@ -121,6 +122,8 @@ public:
         Property srcY { 0, 0 };
         Property srcW { 0, 0 };
         Property srcH { 0, 0 };
+        Property fbDamageClips { 0, 0 };
+        Property inFenceFD { 0, 0 };
     };
 
     struct Format {
@@ -147,7 +150,7 @@ private:
 };
 
 class Buffer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Buffer);
 public:
     static std::unique_ptr<Buffer> create(struct gbm_bo*);
     Buffer(struct gbm_bo*, uint32_t);
@@ -155,10 +158,13 @@ public:
 
     struct gbm_bo* bufferObject() const { return m_bufferObject; }
     uint32_t frameBufferID() const { return m_frameBufferID; }
+    void setFenceFD(WTF::UnixFileDescriptor&& fenceFD) { m_fenceFD = WTFMove(fenceFD); }
+    const WTF::UnixFileDescriptor& fenceFD() const { return m_fenceFD; }
 
 private:
     struct gbm_bo* m_bufferObject { nullptr };
     uint32_t m_frameBufferID { 0 };
+    mutable WTF::UnixFileDescriptor m_fenceFD;
 };
 
 } // namespace DRM

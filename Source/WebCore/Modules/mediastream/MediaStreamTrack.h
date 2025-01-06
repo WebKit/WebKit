@@ -61,8 +61,11 @@ class MediaStreamTrack
     , private LoggerHelper
 #endif
 {
-    WTF_MAKE_ISO_ALLOCATED(MediaStreamTrack);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaStreamTrack);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     class Observer {
     public:
         virtual ~Observer() = default;
@@ -123,6 +126,7 @@ public:
         std::optional<double> zoom;
         std::optional<bool> torch;
         std::optional<bool> backgroundBlur;
+        std::optional<bool> powerEfficient;
     };
     TrackSettings getSettings() const;
 
@@ -157,15 +161,11 @@ public:
     void addObserver(Observer&);
     void removeObserver(Observer&);
 
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     void setIdForTesting(String&& id) { m_private->setIdForTesting(WTFMove(id)); }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_private->logger(); }
-    const void* logIdentifier() const final { return m_private->logIdentifier(); }
+    uint64_t logIdentifier() const final { return m_private->logIdentifier(); }
 #endif
 
     void setShouldFireMuteEventImmediately(bool value) { m_shouldFireMuteEventImmediately = value; }
@@ -181,6 +181,9 @@ public:
 
     bool isDetached() const { return m_isDetached; }
     UniqueRef<MediaStreamTrackDataHolder> detach();
+
+    void setMediaStreamId(const String& id) { m_mediaStreamId = id; }
+    const String& mediaStreamId() const { return m_mediaStreamId; }
 
 protected:
     MediaStreamTrack(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
@@ -225,6 +228,7 @@ private:
 
     MediaTrackConstraints m_constraints;
 
+    String m_mediaStreamId;
     String m_groupId;
     State m_readyState { State::Live };
     bool m_muted { false };

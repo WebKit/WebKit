@@ -15,32 +15,9 @@ includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const calendar = {
-  id: "custom",
-  dateAdd() {},
-  dateFromFields() {},
-  dateUntil() {},
-  day() {},
-  dayOfWeek() {},
-  dayOfYear() {},
-  daysInMonth() {},
-  daysInWeek() {},
-  daysInYear() {},
-  fields() {},
-  inLeapYear() {},
-  mergeFields() {},
-  month() {},
-  monthCode() {},
-  monthDayFromFields() {},
-  monthsInYear() {},
-  weekOfYear() {},
-  year() {},
-  yearMonthFromFields() {},
-  yearOfWeek() {},
-};
-const date = new Temporal.PlainDate(2000, 5, 2, calendar);
+const date = new Temporal.PlainDate(2000, 5, 2, "iso8601");
 
 TemporalHelpers.checkStringOptionWrongType("calendarName", "auto",
   (calendarName) => date.toString({ calendarName }),
-  (result, descr) => assert.sameValue(result, "2000-05-02[u-ca=custom]", descr),
+  (result, descr) => assert.sameValue(result, "2000-05-02", descr),
 );

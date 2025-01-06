@@ -7,9 +7,9 @@
 #ifndef COMPILER_TRANSLATOR_MSL_PIPELINE_H_
 #define COMPILER_TRANSLATOR_MSL_PIPELINE_H_
 
+#include "compiler/translator/Name.h"
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/msl/ModifyStruct.h"
-#include "compiler/translator/msl/Name.h"
 #include "compiler/translator/msl/SymbolEnv.h"
 
 namespace sh

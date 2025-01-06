@@ -1,4 +1,6 @@
 
-FAIL Element references should stay valid when content is disconnected (single element) assert_true: idrefs should continue to work when target is disconnected expected true got false
-FAIL Element references should stay valid when content is disconnected (element array) assert_true: idrefs should continue to work when target is disconnected expected true got false
+
+
+PASS Element references should stay valid when content is disconnected (single element)
+PASS Element references should stay valid when content is disconnected (element array)
 

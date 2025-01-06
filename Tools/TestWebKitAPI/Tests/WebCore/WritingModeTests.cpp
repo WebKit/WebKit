@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2022 Igalia S.L.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,95 +31,137 @@
 
 #include "config.h"
 
+#include <WebCore/BoxSides.h>
 #include <WebCore/WritingMode.h>
 
 using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-constexpr std::array<TextFlow, 8> allTextFlows = {
-    InlineEastBlockSouth,
-    InlineWestBlockSouth,
-    InlineEastBlockNorth,
-    InlineWestBlockNorth,
-    InlineSouthBlockEast,
-    InlineSouthBlockWest,
-    InlineNorthBlockEast,
-    InlineNorthBlockWest,
+constexpr std::array<WritingMode, 28> flows = {
+    WritingMode { StyleWritingMode::HorizontalTb, TextDirection::LTR, TextOrientation::Mixed  },
+    WritingMode { StyleWritingMode::HorizontalTb, TextDirection::LTR, TextOrientation::Mixed  },
+    WritingMode { StyleWritingMode::HorizontalBt, TextDirection::RTL, TextOrientation::Mixed  },
+    WritingMode { StyleWritingMode::HorizontalBt, TextDirection::RTL, TextOrientation::Mixed  },
+
+    WritingMode { StyleWritingMode::VerticalRl, TextDirection::LTR, TextOrientation::Mixed    },
+    WritingMode { StyleWritingMode::VerticalRl, TextDirection::LTR, TextOrientation::Upright  },
+    WritingMode { StyleWritingMode::VerticalRl, TextDirection::LTR, TextOrientation::Sideways },
+    WritingMode { StyleWritingMode::VerticalRl, TextDirection::RTL, TextOrientation::Mixed    },
+    WritingMode { StyleWritingMode::VerticalRl, TextDirection::RTL, TextOrientation::Upright  },
+    WritingMode { StyleWritingMode::VerticalRl, TextDirection::RTL, TextOrientation::Sideways },
+
+    WritingMode { StyleWritingMode::VerticalLr, TextDirection::LTR, TextOrientation::Mixed    },
+    WritingMode { StyleWritingMode::VerticalLr, TextDirection::LTR, TextOrientation::Upright  },
+    WritingMode { StyleWritingMode::VerticalLr, TextDirection::LTR, TextOrientation::Sideways },
+    WritingMode { StyleWritingMode::VerticalLr, TextDirection::RTL, TextOrientation::Mixed    },
+    WritingMode { StyleWritingMode::VerticalLr, TextDirection::RTL, TextOrientation::Upright  },
+    WritingMode { StyleWritingMode::VerticalLr, TextDirection::RTL, TextOrientation::Sideways },
+
+    WritingMode { StyleWritingMode::SidewaysRl, TextDirection::LTR, TextOrientation::Mixed    },
+    WritingMode { StyleWritingMode::SidewaysRl, TextDirection::LTR, TextOrientation::Upright  },
+    WritingMode { StyleWritingMode::SidewaysRl, TextDirection::LTR, TextOrientation::Sideways },
+    WritingMode { StyleWritingMode::SidewaysRl, TextDirection::RTL, TextOrientation::Mixed    },
+    WritingMode { StyleWritingMode::SidewaysRl, TextDirection::RTL, TextOrientation::Upright  },
+    WritingMode { StyleWritingMode::SidewaysRl, TextDirection::RTL, TextOrientation::Sideways },
+
+    WritingMode { StyleWritingMode::SidewaysLr, TextDirection::LTR, TextOrientation::Mixed    },
+    WritingMode { StyleWritingMode::SidewaysLr, TextDirection::LTR, TextOrientation::Upright  },
+    WritingMode { StyleWritingMode::SidewaysLr, TextDirection::LTR, TextOrientation::Sideways },
+    WritingMode { StyleWritingMode::SidewaysLr, TextDirection::RTL, TextOrientation::Mixed    },
+    WritingMode { StyleWritingMode::SidewaysLr, TextDirection::RTL, TextOrientation::Upright  },
+    WritingMode { StyleWritingMode::SidewaysLr, TextDirection::RTL, TextOrientation::Sideways }
 };
+
+inline std::string writingModeString(WritingMode writingMode)
+{
+    TextStream stream;
+    stream << writingMode;
+    return stream.release().utf8().toStdString();
+}
 
 TEST(WritingMode, LogicalBoxSide)
 {
-    auto mapBackAndForth = [](TextFlow textFlow, LogicalBoxSide logicalSide) {
-        return mapPhysicalSideToLogicalSide(textFlow, mapLogicalSideToPhysicalSide(textFlow, logicalSide));
+    auto mapBackAndForth = [](WritingMode writingMode, LogicalBoxSide logicalSide) {
+        return mapSidePhysicalToLogical(writingMode, mapSideLogicalToPhysical(writingMode, logicalSide));
     };
-    for (TextFlow textFlow : allTextFlows) {
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxSide::BlockStart), LogicalBoxSide::BlockStart) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxSide::BlockEnd), LogicalBoxSide::BlockEnd) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxSide::InlineStart), LogicalBoxSide::InlineStart) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxSide::InlineEnd), LogicalBoxSide::InlineEnd) << "with textFlow=" << textFlow;
+    for (auto flow : flows) {
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxSide::BlockStart), LogicalBoxSide::BlockStart) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxSide::BlockEnd), LogicalBoxSide::BlockEnd) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxSide::InlineStart), LogicalBoxSide::InlineStart) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxSide::InlineEnd), LogicalBoxSide::InlineEnd) << "with flow=" << writingModeString(flow);
     }
 }
 
 TEST(WritingMode, BoxSide)
 {
-    auto mapBackAndForth = [](TextFlow textFlow, BoxSide side) {
-        return mapLogicalSideToPhysicalSide(textFlow, mapPhysicalSideToLogicalSide(textFlow, side));
+    auto mapBackAndForth = [](WritingMode writingMode, BoxSide side) {
+        return mapSideLogicalToPhysical(writingMode, mapSidePhysicalToLogical(writingMode, side));
     };
-    for (TextFlow textFlow : allTextFlows) {
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxSide::Top), BoxSide::Top) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxSide::Right), BoxSide::Right) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxSide::Bottom), BoxSide::Bottom) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxSide::Left), BoxSide::Left) << "with textFlow=" << textFlow;
+    for (auto flow : flows) {
+        EXPECT_EQ(mapBackAndForth(flow, BoxSide::Top), BoxSide::Top) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxSide::Right), BoxSide::Right) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxSide::Bottom), BoxSide::Bottom) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxSide::Left), BoxSide::Left) << "with flow=" << writingModeString(flow);
     }
 }
 
 TEST(WritingMode, LogicalBoxCorner)
 {
-    auto mapBackAndForth = [](TextFlow textFlow, LogicalBoxCorner logicalCorner) {
-        return mapPhysicalCornerToLogicalCorner(textFlow, mapLogicalCornerToPhysicalCorner(textFlow, logicalCorner));
+    auto mapBackAndForth = [](WritingMode writingMode, LogicalBoxCorner logicalCorner) {
+        return mapCornerPhysicalToLogical(writingMode, mapCornerLogicalToPhysical(writingMode, logicalCorner));
     };
-    for (TextFlow textFlow : allTextFlows) {
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxCorner::StartStart), LogicalBoxCorner::StartStart) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxCorner::StartEnd), LogicalBoxCorner::StartEnd) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxCorner::EndStart), LogicalBoxCorner::EndStart) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxCorner::EndEnd), LogicalBoxCorner::EndEnd) << "with textFlow=" << textFlow;
+    for (auto flow : flows) {
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxCorner::StartStart), LogicalBoxCorner::StartStart) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxCorner::StartEnd), LogicalBoxCorner::StartEnd) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxCorner::EndStart), LogicalBoxCorner::EndStart) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxCorner::EndEnd), LogicalBoxCorner::EndEnd) << "with flow=" << writingModeString(flow);
     }
 }
 
 TEST(WritingMode, BoxCorner)
 {
-    auto mapBackAndForth = [](TextFlow textFlow, BoxCorner corner) {
-        return mapLogicalCornerToPhysicalCorner(textFlow, mapPhysicalCornerToLogicalCorner(textFlow, corner));
+    auto mapBackAndForth = [](WritingMode writingMode, BoxCorner corner) {
+        return mapCornerLogicalToPhysical(writingMode, mapCornerPhysicalToLogical(writingMode, corner));
     };
-    for (TextFlow textFlow : allTextFlows) {
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxCorner::TopLeft), BoxCorner::TopLeft) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxCorner::TopRight), BoxCorner::TopRight) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxCorner::BottomRight), BoxCorner::BottomRight) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxCorner::BottomLeft), BoxCorner::BottomLeft) << "with textFlow=" << textFlow;
+    for (auto flow : flows) {
+        EXPECT_EQ(mapBackAndForth(flow, BoxCorner::TopLeft), BoxCorner::TopLeft) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxCorner::TopRight), BoxCorner::TopRight) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxCorner::BottomRight), BoxCorner::BottomRight) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxCorner::BottomLeft), BoxCorner::BottomLeft) << "with flow=" << writingModeString(flow);
     }
 }
 
 TEST(WritingMode, LogicalBoxAxis)
 {
-    auto mapBackAndForth = [](TextFlow textFlow, LogicalBoxAxis logicalAxis) {
-        return mapPhysicalAxisToLogicalAxis(textFlow, mapLogicalAxisToPhysicalAxis(textFlow, logicalAxis));
+    auto mapBackAndForth = [](WritingMode writingMode, LogicalBoxAxis logicalAxis) {
+        return mapAxisPhysicalToLogical(writingMode, mapAxisLogicalToPhysical(writingMode, logicalAxis));
     };
-    for (TextFlow textFlow : allTextFlows) {
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxAxis::Block), LogicalBoxAxis::Block) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxAxis::Inline), LogicalBoxAxis::Inline) << "with textFlow=" << textFlow;
+    for (auto flow : flows) {
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxAxis::Block), LogicalBoxAxis::Block) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxAxis::Inline), LogicalBoxAxis::Inline) << "with flow=" << writingModeString(flow);
     }
 }
 
 TEST(WritingMode, BoxAxis)
 {
-    auto mapBackAndForth = [](TextFlow textFlow, BoxAxis axis) {
-        return mapLogicalAxisToPhysicalAxis(textFlow, mapPhysicalAxisToLogicalAxis(textFlow, axis));
+    auto mapBackAndForth = [](WritingMode writingMode, BoxAxis axis) {
+        return mapAxisLogicalToPhysical(writingMode, mapAxisPhysicalToLogical(writingMode, axis));
     };
-    for (TextFlow textFlow : allTextFlows) {
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxAxis::Horizontal), BoxAxis::Horizontal) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxAxis::Vertical), BoxAxis::Vertical) << "with textFlow=" << textFlow;
+    for (auto flow : flows) {
+        EXPECT_EQ(mapBackAndForth(flow, BoxAxis::Horizontal), BoxAxis::Horizontal) << "with flow=" << writingModeString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxAxis::Vertical), BoxAxis::Vertical) << "with flow=" << writingModeString(flow);
     }
+}
+
+TEST(WritingMode, LineQueries)
+{
+    EXPECT_EQ(false, (WritingMode { StyleWritingMode::HorizontalTb, TextDirection::LTR, TextOrientation::Mixed }.isLineInverted()));
+    EXPECT_EQ(true, (WritingMode { StyleWritingMode::HorizontalBt, TextDirection::LTR, TextOrientation::Mixed }.isLineInverted()));
+    EXPECT_EQ(false, (WritingMode { StyleWritingMode::VerticalRl, TextDirection::LTR, TextOrientation::Mixed }.isLineInverted()));
+    EXPECT_EQ(true, (WritingMode { StyleWritingMode::VerticalLr, TextDirection::LTR, TextOrientation::Mixed }.isLineInverted()));
+    EXPECT_EQ(false, (WritingMode { StyleWritingMode::SidewaysRl, TextDirection::LTR, TextOrientation::Mixed }.isLineInverted()));
+    EXPECT_EQ(false, (WritingMode { StyleWritingMode::SidewaysLr, TextDirection::LTR, TextOrientation::Mixed }.isLineInverted()));
 }
 
 }

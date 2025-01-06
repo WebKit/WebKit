@@ -32,6 +32,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace Wasm {
@@ -45,107 +47,122 @@ unsigned FunctionIPIntMetadataGenerator::addSignature(const TypeDefinition& sign
     return index;
 }
 
-void FunctionIPIntMetadataGenerator::addBlankSpace(uint32_t size)
+void FunctionIPIntMetadataGenerator::setTailCall(uint32_t functionIndex, bool isImportedFunctionFromFunctionIndexSpace)
 {
-    m_metadata.grow(m_metadata.size() + size);
+    m_tailCallSuccessors.set(functionIndex);
+    if (isImportedFunctionFromFunctionIndexSpace)
+        setTailCallClobbersInstance();
 }
 
-void FunctionIPIntMetadataGenerator::addRawValue(uint64_t value)
+void FunctionIPIntMetadataGenerator::addLength(size_t length)
 {
-    auto size = m_metadata.size();
-    m_metadata.grow(m_metadata.size() + 8);
-    WRITE_TO_METADATA(m_metadata.data() + size, value, uint64_t);
-}
-
-void FunctionIPIntMetadataGenerator::addLength(uint32_t length)
-{
+    IPInt::InstructionLengthMetadata instructionLength {
+        .length = safeCast<uint8_t>(length)
+    };
     size_t size = m_metadata.size();
-    m_metadata.grow(size + 1);
-    WRITE_TO_METADATA(m_metadata.data() + size, length, uint8_t);
+    m_metadata.grow(size + sizeof(instructionLength));
+    WRITE_TO_METADATA(m_metadata.data() + size, instructionLength, IPInt::InstructionLengthMetadata);
 }
 
-void FunctionIPIntMetadataGenerator::addLEB128ConstantInt32AndLength(uint32_t value, uint32_t length)
+void FunctionIPIntMetadataGenerator::addLEB128ConstantInt32AndLength(uint32_t value, size_t length)
 {
+    IPInt::Const32Metadata mdConst {
+        .instructionLength = { .length = safeCast<uint8_t>(length) },
+        .value = value
+    };
     size_t size = m_metadata.size();
-    m_metadata.grow(size + 5);
-    WRITE_TO_METADATA(m_metadata.data() + size, length, uint8_t);
-    WRITE_TO_METADATA(m_metadata.data() + size + 1, value, uint32_t);
+    m_metadata.grow(size + sizeof(mdConst));
+    WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::Const32Metadata);
 }
 
-void FunctionIPIntMetadataGenerator::addCondensedLocalIndexAndLength(uint32_t index, uint32_t length)
-{
-    size_t size = m_metadata.size();
-    if (length == 2) {
-        m_metadata.grow(size + 1);
-        WRITE_TO_METADATA(m_metadata.data() + size, 0, uint8_t);
-    } else {
-        m_metadata.grow(size + 5);
-        WRITE_TO_METADATA(m_metadata.data() + size, length, uint8_t);
-        WRITE_TO_METADATA(m_metadata.data() + size + 1, index, uint32_t);
-    }
-}
-
-void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type, uint64_t value, uint32_t length)
+void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type, uint64_t value, size_t length)
 {
     if (type.isI32()) {
         size_t size = m_metadata.size();
         if (length == 2) {
-            m_metadata.grow(size + 1);
-            WRITE_TO_METADATA(m_metadata.data() + size, (value >> 7) & 1, uint8_t);
+            IPInt::InstructionLengthMetadata mdConst {
+                .length = safeCast<uint8_t>((value >> 7) & 1)
+            };
+            m_metadata.grow(size + sizeof(mdConst));
+            WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::InstructionLengthMetadata);
         } else {
-            m_metadata.grow(size + 5);
-            WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint8_t>(length), uint8_t);
-            WRITE_TO_METADATA(m_metadata.data() + size + 1, static_cast<uint32_t>(value), uint32_t);
+            IPInt::Const32Metadata mdConst {
+                .instructionLength = { .length = safeCast<uint8_t>(length) },
+                .value = static_cast<uint32_t>(value)
+            };
+            m_metadata.grow(size + sizeof(mdConst));
+            WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::Const32Metadata);
         }
     } else if (type.isI64()) {
         size_t size = m_metadata.size();
-        m_metadata.grow(size + 9);
-        WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint8_t>(length), uint8_t);
-        WRITE_TO_METADATA(m_metadata.data() + size + 1, static_cast<uint64_t>(value), uint64_t);
-    }  else if (type.isFuncref()) {
+        IPInt::Const64Metadata mdConst {
+            .instructionLength = { .length = safeCast<uint8_t>(length) },
+            .value = static_cast<uint64_t>(value)
+        };
+        m_metadata.grow(size + sizeof(mdConst));
+        WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::Const64Metadata);
+    } else if (type.isRef() || type.isRefNull() || type.isFuncref()) {
         size_t size = m_metadata.size();
-        m_metadata.grow(size + 5);
-        WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint8_t>(length), uint8_t);
-        WRITE_TO_METADATA(m_metadata.data() + size + 1, static_cast<uint32_t>(value), uint32_t);
+        IPInt::Const32Metadata mdConst {
+            .instructionLength = { .length = safeCast<uint8_t>(length) },
+            .value = static_cast<uint32_t>(value)
+        };
+        m_metadata.grow(size + sizeof(mdConst));
+        WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::Const32Metadata);
     } else if (!type.isF32() && !type.isF64())
         ASSERT_NOT_IMPLEMENTED_YET();
 }
 
-void FunctionIPIntMetadataGenerator::addLEB128V128Constant(v128_t value, uint32_t length)
+void FunctionIPIntMetadataGenerator::addLEB128V128Constant(v128_t value, size_t length)
 {
+    IPInt::Const128Metadata mdConst {
+        .instructionLength = { .length = safeCast<uint8_t>(length) },
+        .value = value
+    };
     size_t size = m_metadata.size();
-    m_metadata.grow(size + 17);
-    WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint8_t>(length), uint8_t);
-    WRITE_TO_METADATA(m_metadata.data() + size + 1, value, v128_t);
+    m_metadata.grow(size + sizeof(mdConst));
+    WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::Const128Metadata);
 }
 
-void FunctionIPIntMetadataGenerator::addReturnData(const Vector<Type, 16>& types)
+void FunctionIPIntMetadataGenerator::addReturnData(const FunctionSignature& sig)
 {
-    const int returnGPRs = 2;
-    const int returnFPRs = 1;
+    CallInformation returnCC = wasmCallingConvention().callInformationFor(sig, CallRole::Callee);
+    m_uINTBytecode.reserveInitialCapacity(sig.returnCount() + 1);
     // uINT: the interpreter smaller than mINT
-    // 0x00: r0
-    // 0x01: r1
-    // 0x02: fr0
-    // 0x03: stack (TODO)
-    // 0x04: return
-    Vector<uint8_t, 16> uINTBytecode;
-    int gprsUsed = 0;
-    int fprsUsed = 0;
-    for (size_t i = 0; i < types.size(); ++i) {
-        auto type = types[i];
-        if ((type.isI32() || type.isI64()) && gprsUsed != returnGPRs)
-            uINTBytecode.append(gprsUsed++);
-        else if ((type.isF32() || type.isF64()) && fprsUsed != returnFPRs)
-            uINTBytecode.append(2 + fprsUsed++);
-        else
-            uINTBytecode.append(0x03);
+    // 0x00-0x07: r0 - r7
+    // 0x08-0x0f: f0 - f7
+    // 0x10: stack
+    // 0x11: return
+
+    constexpr static int NUM_UINT_GPRS = 8;
+    constexpr static int NUM_UINT_FPRS = 8;
+    ASSERT_UNUSED(NUM_UINT_GPRS, wasmCallingConvention().jsrArgs.size() <= NUM_UINT_GPRS);
+    ASSERT_UNUSED(NUM_UINT_FPRS, wasmCallingConvention().fprArgs.size() <= NUM_UINT_FPRS);
+
+    for (size_t i = 0; i < sig.returnCount(); ++i) {
+        auto loc = returnCC.results[i].location;
+
+        if (loc.isGPR()) {
+            ASSERT_UNUSED(NUM_UINT_GPRS, GPRInfo::toArgumentIndex(loc.jsr().gpr()) < NUM_UINT_GPRS);
+#if USE(JSVALUE64)
+            m_uINTBytecode.append(static_cast<uint8_t>(IPInt::UIntBytecode::RetGPR) + GPRInfo::toArgumentIndex(loc.jsr().gpr()));
+#elif USE(JSVALUE32_64)
+            m_uINTBytecode.append(static_cast<uint8_t>(IPInt::UIntBytecode::RetGPR) + GPRInfo::toArgumentIndex(loc.jsr().gpr(WhichValueWord::PayloadWord)));
+#endif
+        } else if (loc.isFPR()) {
+            ASSERT_UNUSED(NUM_UINT_FPRS, FPRInfo::toArgumentIndex(loc.fpr()) < NUM_UINT_FPRS);
+            m_uINTBytecode.append(static_cast<uint8_t>(IPInt::UIntBytecode::RetFPR) + FPRInfo::toArgumentIndex(loc.fpr()));
+        } else if (loc.isStack()) {
+            m_highestReturnStackOffset = loc.offsetFromFP();
+            m_uINTBytecode.append(static_cast<uint8_t>(IPInt::UIntBytecode::Stack));
+        }
     }
-    uINTBytecode.append(0x04);
-    m_returnMetadata = m_metadata.size();
-    m_metadata.appendVector(uINTBytecode);
+    m_uINTBytecode.reverse();
+    m_uINTBytecode.append(static_cast<uint8_t>(IPInt::UIntBytecode::End));
 }
 
 } }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

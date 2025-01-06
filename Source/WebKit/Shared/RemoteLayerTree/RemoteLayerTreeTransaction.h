@@ -40,8 +40,10 @@
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/ScrollTypes.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -56,6 +58,10 @@
 
 #if ENABLE(MODEL_ELEMENT)
 #include <WebCore/Model.h>
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+#include <WebCore/ModelContext.h>
 #endif
 
 namespace WebKit {
@@ -74,8 +80,9 @@ struct ChangedLayers {
     ~ChangedLayers();
 };
 
-class RemoteLayerTreeTransaction {
-    WTF_MAKE_FAST_ALLOCATED;
+class RemoteLayerTreeTransaction : public CanMakeCheckedPtr<RemoteLayerTreeTransaction> {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeTransaction);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerTreeTransaction);
 public:
     struct LayerCreationProperties {
         struct NoAdditionalData { };
@@ -94,17 +101,20 @@ public:
             CustomData, // PlatformCALayerRemoteCustom
 #if ENABLE(MODEL_ELEMENT)
             Ref<WebCore::Model>, // PlatformCALayerRemoteModelHosting
+#if ENABLE(MODEL_PROCESS)
+            Ref<WebCore::ModelContext>, // PlatformCALayerRemoteCustom
+#endif
 #endif
             WebCore::LayerHostingContextIdentifier // PlatformCALayerRemoteHost
         >;
 
-        WebCore::PlatformLayerIdentifier layerID;
+        Markable<WebCore::PlatformLayerIdentifier> layerID;
         WebCore::PlatformCALayer::LayerType type { WebCore::PlatformCALayer::LayerType::LayerTypeLayer };
         std::optional<VideoElementData> videoElementData;
         AdditionalData additionalData;
 
         LayerCreationProperties();
-        LayerCreationProperties(WebCore::PlatformLayerIdentifier, WebCore::PlatformCALayer::LayerType, std::optional<VideoElementData>&&, AdditionalData&&);
+        LayerCreationProperties(Markable<WebCore::PlatformLayerIdentifier>, WebCore::PlatformCALayer::LayerType, std::optional<VideoElementData>&&, AdditionalData&&);
         LayerCreationProperties(LayerCreationProperties&&);
         LayerCreationProperties& operator=(LayerCreationProperties&&);
 
@@ -112,6 +122,10 @@ public:
         uint32_t hostingContextID() const;
         bool preservesFlip() const;
         float hostingDeviceScaleFactor() const;
+
+#if ENABLE(MODEL_PROCESS)
+        RefPtr<WebCore::ModelContext> modelContext() const;
+#endif
     };
 
     explicit RemoteLayerTreeTransaction();
@@ -119,7 +133,7 @@ public:
     RemoteLayerTreeTransaction(RemoteLayerTreeTransaction&&);
     RemoteLayerTreeTransaction& operator=(RemoteLayerTreeTransaction&&);
 
-    WebCore::PlatformLayerIdentifier rootLayerID() const { return m_rootLayerID; }
+    std::optional<WebCore::PlatformLayerIdentifier> rootLayerID() const { return m_rootLayerID.asOptional(); }
     void setRootLayerID(WebCore::PlatformLayerIdentifier);
     void layerPropertiesChanged(PlatformCALayerRemote&);
     void setCreatedLayers(Vector<LayerCreationProperties>);
@@ -180,11 +194,11 @@ public:
     void setScaleWasSetByUIProcess(bool scaleWasSetByUIProcess) { m_scaleWasSetByUIProcess = scaleWasSetByUIProcess; }
 
 #if PLATFORM(MAC)
-    WebCore::PlatformLayerIdentifier pageScalingLayerID() const { return m_pageScalingLayerID.value(); }
-    void setPageScalingLayerID(WebCore::PlatformLayerIdentifier layerID) { m_pageScalingLayerID = layerID; }
+    std::optional<WebCore::PlatformLayerIdentifier> pageScalingLayerID() const { return m_pageScalingLayerID.asOptional(); }
+    void setPageScalingLayerID(std::optional<WebCore::PlatformLayerIdentifier> layerID) { m_pageScalingLayerID = layerID; }
 
-    WebCore::PlatformLayerIdentifier scrolledContentsLayerID() const { return m_scrolledContentsLayerID.value(); }
-    void setScrolledContentsLayerID(WebCore::PlatformLayerIdentifier layerID) { m_scrolledContentsLayerID = layerID; }
+    std::optional<WebCore::PlatformLayerIdentifier> scrolledContentsLayerID() const { return m_scrolledContentsLayerID.asOptional(); }
+    void setScrolledContentsLayerID(std::optional<WebCore::PlatformLayerIdentifier> layerID) { m_scrolledContentsLayerID = layerID; }
 #endif
 
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
@@ -247,7 +261,7 @@ public:
 private:
     friend struct IPC::ArgumentCoder<RemoteLayerTreeTransaction, void>;
 
-    WebCore::PlatformLayerIdentifier m_rootLayerID;
+    Markable<WebCore::PlatformLayerIdentifier> m_rootLayerID;
     ChangedLayers m_changedLayers;
 
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;

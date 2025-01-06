@@ -40,12 +40,14 @@ extern "C" {
 // respectively.
 
 // The following constants are KEM identifiers.
+#define EVP_HPKE_DHKEM_P256_HKDF_SHA256 0x0010
 #define EVP_HPKE_DHKEM_X25519_HKDF_SHA256 0x0020
 
 // The following functions are KEM algorithms which may be used with HPKE. Note
 // that, while some HPKE KEMs use KDFs internally, this is separate from the
 // |EVP_HPKE_KDF| selection.
 OPENSSL_EXPORT const EVP_HPKE_KEM *EVP_hpke_x25519_hkdf_sha256(void);
+OPENSSL_EXPORT const EVP_HPKE_KEM *EVP_hpke_p256_hkdf_sha256(void);
 
 // EVP_HPKE_KEM_id returns the HPKE KEM identifier for |kem|, which
 // will be one of the |EVP_HPKE_KEM_*| constants.
@@ -53,7 +55,7 @@ OPENSSL_EXPORT uint16_t EVP_HPKE_KEM_id(const EVP_HPKE_KEM *kem);
 
 // EVP_HPKE_MAX_PUBLIC_KEY_LENGTH is the maximum length of an encoded public key
 // for all KEMs currently supported by this library.
-#define EVP_HPKE_MAX_PUBLIC_KEY_LENGTH 32
+#define EVP_HPKE_MAX_PUBLIC_KEY_LENGTH 65
 
 // EVP_HPKE_KEM_public_key_len returns the length of a public key for |kem|.
 // This value will be at most |EVP_HPKE_MAX_PUBLIC_KEY_LENGTH|.
@@ -69,7 +71,7 @@ OPENSSL_EXPORT size_t EVP_HPKE_KEM_private_key_len(const EVP_HPKE_KEM *kem);
 
 // EVP_HPKE_MAX_ENC_LENGTH is the maximum length of "enc", the encapsulated
 // shared secret, for all KEMs currently supported by this library.
-#define EVP_HPKE_MAX_ENC_LENGTH 32
+#define EVP_HPKE_MAX_ENC_LENGTH 65
 
 // EVP_HPKE_KEM_enc_len returns the length of the "enc", the encapsulated shared
 // secret, for |kem|. This value will be at most |EVP_HPKE_MAX_ENC_LENGTH|.
@@ -139,6 +141,10 @@ OPENSSL_EXPORT void EVP_HPKE_KEY_free(EVP_HPKE_KEY *key);
 // necessary.
 OPENSSL_EXPORT int EVP_HPKE_KEY_copy(EVP_HPKE_KEY *dst,
                                      const EVP_HPKE_KEY *src);
+
+// EVP_HPKE_KEY_move sets |out|, which must be initialized or in the zero state,
+// to the key in |in|. |in| is mutated and left in the zero state.
+OPENSSL_EXPORT void EVP_HPKE_KEY_move(EVP_HPKE_KEY *out, EVP_HPKE_KEY *in);
 
 // EVP_HPKE_KEY_init decodes |priv_key| as a private key for |kem| and
 // initializes |key| with the result. It returns one on success and zero if
@@ -229,7 +235,7 @@ OPENSSL_EXPORT int EVP_HPKE_CTX_setup_sender(
 // EVP_HPKE_CTX_setup_sender_with_seed_for_testing behaves like
 // |EVP_HPKE_CTX_setup_sender|, but takes a seed to behave deterministically.
 // The seed's format depends on |kem|. For X25519, it is the sender's
-// ephemeral private key.
+// ephemeral private key. For P256, it's an HKDF input.
 OPENSSL_EXPORT int EVP_HPKE_CTX_setup_sender_with_seed_for_testing(
     EVP_HPKE_CTX *ctx, uint8_t *out_enc, size_t *out_enc_len, size_t max_enc,
     const EVP_HPKE_KEM *kem, const EVP_HPKE_KDF *kdf, const EVP_HPKE_AEAD *aead,
@@ -261,7 +267,7 @@ OPENSSL_EXPORT int EVP_HPKE_CTX_setup_auth_sender(
 // EVP_HPKE_CTX_setup_auth_sender_with_seed_for_testing behaves like
 // |EVP_HPKE_CTX_setup_auth_sender|, but takes a seed to behave
 // deterministically. The seed's format depends on |kem|. For X25519, it is the
-// sender's ephemeral private key.
+// sender's ephemeral private key. For P256, it's an HKDF input.
 OPENSSL_EXPORT int EVP_HPKE_CTX_setup_auth_sender_with_seed_for_testing(
     EVP_HPKE_CTX *ctx, uint8_t *out_enc, size_t *out_enc_len, size_t max_enc,
     const EVP_HPKE_KEY *key, const EVP_HPKE_KDF *kdf, const EVP_HPKE_AEAD *aead,
@@ -371,8 +377,8 @@ struct evp_hpke_ctx_st {
 
 struct evp_hpke_key_st {
   const EVP_HPKE_KEM *kem;
-  uint8_t private_key[X25519_PRIVATE_KEY_LEN];
-  uint8_t public_key[X25519_PUBLIC_VALUE_LEN];
+  uint8_t private_key[EVP_HPKE_MAX_PRIVATE_KEY_LENGTH];
+  uint8_t public_key[EVP_HPKE_MAX_PUBLIC_KEY_LENGTH];
 };
 
 
@@ -389,8 +395,8 @@ using ScopedEVP_HPKE_CTX =
     internal::StackAllocated<EVP_HPKE_CTX, void, EVP_HPKE_CTX_zero,
                              EVP_HPKE_CTX_cleanup>;
 using ScopedEVP_HPKE_KEY =
-    internal::StackAllocated<EVP_HPKE_KEY, void, EVP_HPKE_KEY_zero,
-                             EVP_HPKE_KEY_cleanup>;
+    internal::StackAllocatedMovable<EVP_HPKE_KEY, void, EVP_HPKE_KEY_zero,
+                                    EVP_HPKE_KEY_cleanup, EVP_HPKE_KEY_move>;
 
 BORINGSSL_MAKE_DELETER(EVP_HPKE_CTX, EVP_HPKE_CTX_free)
 BORINGSSL_MAKE_DELETER(EVP_HPKE_KEY, EVP_HPKE_KEY_free)

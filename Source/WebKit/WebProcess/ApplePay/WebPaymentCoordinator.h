@@ -35,6 +35,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -49,16 +50,21 @@ namespace WebKit {
 class NetworkProcessConnection;
 class WebPage;
 
-class WebPaymentCoordinator final : public WebCore::PaymentCoordinatorClient, private IPC::MessageReceiver, private IPC::MessageSender {
-    WTF_MAKE_FAST_ALLOCATED;
+class WebPaymentCoordinator final : public WebCore::PaymentCoordinatorClient, public RefCounted<WebPaymentCoordinator>, private IPC::MessageReceiver, private IPC::MessageSender {
+    WTF_MAKE_TZONE_ALLOCATED(WebPaymentCoordinator);
 public:
     friend class NetworkProcessConnection;
-    explicit WebPaymentCoordinator(WebPage&);
+    static Ref<WebPaymentCoordinator> create(WebPage&);
     ~WebPaymentCoordinator();
 
     void networkProcessConnectionClosed();
 
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
 private:
+    explicit WebPaymentCoordinator(WebPage&);
+
     // WebCore::PaymentCoordinatorClient.
     std::optional<String> validatedPaymentNetwork(const String&) const override;
     bool canMakePayments() override;
@@ -106,7 +112,7 @@ private:
     using AvailablePaymentNetworksSet = HashSet<String, ASCIICaseInsensitiveHash>;
     static AvailablePaymentNetworksSet platformAvailablePaymentNetworks();
 
-    WebPage& m_webPage;
+    WeakPtr<WebPage> m_webPage;
 
     mutable std::optional<AvailablePaymentNetworksSet> m_availablePaymentNetworks;
 

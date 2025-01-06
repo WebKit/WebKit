@@ -33,7 +33,6 @@
 #include "RemoteCDMInstanceProxyMessages.h"
 #include "RemoteCDMInstanceSession.h"
 #include "RemoteCDMInstanceSessionIdentifier.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/CDMKeySystemConfiguration.h>
 
@@ -51,56 +50,58 @@ RemoteCDMInstance::RemoteCDMInstance(WeakPtr<RemoteCDMFactory>&& factory, Remote
     , m_identifier(WTFMove(identifier))
     , m_configuration(WTFMove(configuration))
 {
-    if (m_factory)
-        m_factory->gpuProcessConnection().messageReceiverMap().addMessageReceiver(Messages::RemoteCDMInstance::messageReceiverName(), m_identifier.toUInt64(), *this);
+    if (RefPtr factory = m_factory.get())
+        factory->gpuProcessConnection().messageReceiverMap().addMessageReceiver(Messages::RemoteCDMInstance::messageReceiverName(), m_identifier.toUInt64(), *this);
 }
 
 RemoteCDMInstance::~RemoteCDMInstance()
 {
-    if (!m_factory)
+    RefPtr factory = m_factory.get();
+    if (!factory)
         return;
 
-    m_factory->removeInstance(m_identifier);
-    m_factory->gpuProcessConnection().messageReceiverMap().removeMessageReceiver(Messages::RemoteCDMInstance::messageReceiverName(), m_identifier.toUInt64());
+    factory->removeInstance(m_identifier);
+    factory->gpuProcessConnection().messageReceiverMap().removeMessageReceiver(Messages::RemoteCDMInstance::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteCDMInstance::unrequestedInitializationDataReceived(const String& type, Ref<SharedBuffer>&& initData)
 {
-    if (m_client)
-        m_client->unrequestedInitializationDataReceived(type, WTFMove(initData));
+    if (RefPtr client = m_client.get())
+        client->unrequestedInitializationDataReceived(type, WTFMove(initData));
 }
 
 void RemoteCDMInstance::initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers distinctiveIdentifiers, AllowPersistentState persistentState, SuccessCallback&& callback)
 {
-    if (!m_factory) {
+    RefPtr factory = m_factory.get();
+    if (!factory) {
         callback(Failed);
         return;
     }
 
-    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::InitializeWithConfiguration(configuration, distinctiveIdentifiers, persistentState), WTFMove(callback), m_identifier);
+    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::InitializeWithConfiguration(configuration, distinctiveIdentifiers, persistentState), WTFMove(callback), m_identifier);
 }
 
 void RemoteCDMInstance::setServerCertificate(Ref<WebCore::SharedBuffer>&& certificate, SuccessCallback&& callback)
 {
-    if (!m_factory) {
+    RefPtr factory = m_factory.get();
+    if (!factory) {
         callback(Failed);
         return;
     }
 
-    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::SetServerCertificate(WTFMove(certificate)), WTFMove(callback), m_identifier);
+    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::SetServerCertificate(WTFMove(certificate)), WTFMove(callback), m_identifier);
 }
 
 void RemoteCDMInstance::setStorageDirectory(const String& directory)
 {
-    if (!m_factory)
-        return;
-
-    m_factory->gpuProcessConnection().connection().send(Messages::RemoteCDMInstanceProxy::SetStorageDirectory(directory), m_identifier);
+    if (RefPtr factory = m_factory.get())
+        factory->gpuProcessConnection().connection().send(Messages::RemoteCDMInstanceProxy::SetStorageDirectory(directory), m_identifier);
 }
 
 RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
 {
-    if (!m_factory)
+    RefPtr factory = m_factory.get();
+    if (!factory)
         return nullptr;
 
     uint64_t logIdentifier { 0 };
@@ -109,12 +110,12 @@ RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
         logIdentifier = reinterpret_cast<uint64_t>(m_client->logIdentifier());
 #endif
 
-    auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(logIdentifier), m_identifier);
-    auto [identifier] = sendResult.takeReplyOr(RemoteCDMInstanceSessionIdentifier { });
+    auto sendResult = factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(logIdentifier), m_identifier);
+    auto [identifier] = sendResult.takeReplyOr(std::nullopt);
     if (!identifier)
         return nullptr;
-    auto session = RemoteCDMInstanceSession::create(m_factory.get(), WTFMove(identifier));
-    m_factory->addSession(session.copyRef());
+    auto session = RemoteCDMInstanceSession::create(factory.get(), WTFMove(*identifier));
+    factory->addSession(session.copyRef());
     return session;
 }
 

@@ -36,11 +36,12 @@
 #include "Page.h"
 #include "Supplementable.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class DOMWindowIndexedDatabase : public LocalDOMWindowProperty, public Supplement<LocalDOMWindow> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DOMWindowIndexedDatabase);
 public:
     explicit DOMWindowIndexedDatabase(LocalDOMWindow&);
     virtual ~DOMWindowIndexedDatabase() = default;
@@ -55,7 +56,7 @@ private:
 };
 
 class WorkerGlobalScopeIndexedDatabase : public Supplement<WorkerGlobalScope> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WorkerGlobalScopeIndexedDatabase);
 public:
     explicit WorkerGlobalScopeIndexedDatabase(IDBClient::IDBConnectionProxy&);
     virtual ~WorkerGlobalScopeIndexedDatabase() = default;
@@ -71,6 +72,8 @@ private:
 };
 
 // DOMWindowIndexedDatabase supplement.
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMWindowIndexedDatabase);
 
 DOMWindowIndexedDatabase::DOMWindowIndexedDatabase(LocalDOMWindow& window)
     : LocalDOMWindowProperty(&window)
@@ -117,6 +120,8 @@ IDBFactory* DOMWindowIndexedDatabase::indexedDB()
 }
 
 // WorkerGlobalScope supplement.
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerGlobalScopeIndexedDatabase);
 
 WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase(IDBClient::IDBConnectionProxy& connectionProxy)
     : m_connectionProxy(connectionProxy)

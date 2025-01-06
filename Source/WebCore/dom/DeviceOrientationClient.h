@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010, The Android Open Source Project
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +38,7 @@ class DeviceOrientationData;
 class Page;
 
 class DeviceOrientationClient : public DeviceClient {
+    WTF_MAKE_TZONE_ALLOCATED(DeviceOrientationClient);
     WTF_MAKE_NONCOPYABLE(DeviceOrientationClient);
 public:
     DeviceOrientationClient() = default;

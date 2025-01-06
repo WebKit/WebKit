@@ -1,0 +1,44 @@
+<style>
+     canvas {
+         width: 700px;
+         height: 400px;
+     }
+ </style>
+ <body>
+    <h3>This tests multiple nested layers with filters are drawn to the canvas.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 700;
+        canvas.height = 400;
+
+        ctx.filter = 'drop-shadow(10px 10px 0 #666)';
+        ctx.beginLayer();
+            ctx.fillStyle = 'beige';
+            ctx.fillRect(120, 120, 200, 200);
+            ctx.fillRect(20, 20, 200, 200);
+
+            ctx.filter = 'drop-shadow(10px 10px 0 SteelBlue)';
+            ctx.beginLayer();
+                ctx.fillStyle = 'YellowGreen';
+                ctx.fillRect(145, 145, 100, 100);
+                ctx.fillRect(95, 95, 100, 100);
+            ctx.endLayer();
+        ctx.endLayer();
+
+        ctx.beginLayer();
+            ctx.fillStyle = 'salmon';
+            ctx.fillRect(480, 120, 200, 200);
+            ctx.fillRect(360, 20, 200, 200);
+
+            ctx.fillStyle = 'YellowGreen';
+            ctx.filter = 'drop-shadow(10px 10px 0 SteelBlue)';
+            ctx.fillRect(505, 145, 100, 100);
+
+            ctx.fillStyle = 'SteelBlue';
+            ctx.filter = 'drop-shadow(10px 10px 0 YellowGreen)';
+            ctx.fillRect(435, 95, 100, 100);
+        ctx.endLayer();
+    </script>
+</body>

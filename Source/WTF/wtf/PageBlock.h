@@ -28,6 +28,8 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 // We attempt to guess a value that is *AT LEAST* as large as the system's actual page size.
@@ -105,3 +107,5 @@ using WTF::CeilingOnPageSize;
 using WTF::pageSize;
 using WTF::isPageAligned;
 using WTF::isPowerOfTwo;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

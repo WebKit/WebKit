@@ -5,4 +5,6 @@ PASS Property counter-set value 'myCounter 5'
 PASS Property counter-set value 'myCounter 7 otherCounter 8'
 PASS Property counter-set value 'myCounter otherCounter 8'
 PASS Property counter-set value 'myCounter 7 otherCounter'
+PASS Property counter-set value 'myCounter calc(10 + (sign(2cqw - 10px) * 5))'
+PASS Property counter-set value 'myCounter calc(10 + (sign(2cqw - 10px) * 5)) otherCounter calc(15 + (sign(2cqw - 10px) * 5))'
 

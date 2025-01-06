@@ -33,6 +33,8 @@
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <WebCore/SQLiteTransaction.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit::PCM {
 
@@ -81,6 +83,13 @@ static WeakHashSet<Database>& allDatabases()
     return set;
 }
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Database);
+
+Ref<Database> Database::create(const String& storageDirectory)
+{
+    return adoptRef(*new Database(storageDirectory));
+}
+
 Database::Database(const String& storageDirectory)
     : DatabaseUtilities(FileSystem::pathByAppendingComponent(storageDirectory, "pcm.db"_s))
 {
@@ -117,7 +126,7 @@ std::span<const ASCIILiteral> Database::sortedTables()
         "AttributedPrivateClickMeasurement"_s
     };
 
-    return { sortedTables.data(), sortedTables.size() };
+    return sortedTables;
 }
 
 void Database::interruptAllDatabases()

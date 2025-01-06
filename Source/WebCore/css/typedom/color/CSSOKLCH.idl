@@ -33,7 +33,7 @@ typedef (CSSNumberish or CSSKeywordish) CSSColorPercent;
     EnabledBySetting=CSSTypedOMColorEnabled,
     Exposed=(Window,Worker,PaintWorklet/*,LayoutWorklet*/),
     JSGenerateToNativeObject,
-] interface CSSOKLCH : CSSColorValue {
+] interface CSSOKLCH : CSSOMColorValue {
     constructor(CSSColorPercent l, CSSColorPercent c, CSSColorAngle h, optional CSSColorPercent alpha = 1.0);
     attribute CSSColorPercent l;
     attribute CSSColorPercent c;

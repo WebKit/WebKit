@@ -51,6 +51,9 @@ class RenderTargetMtl final : public FramebufferAttachmentRenderTarget
     const mtl::Format &getFormat() const { return mFormat; }
 
     void toRenderPassAttachmentDesc(mtl::RenderPassAttachmentDesc *rpaDescOut) const;
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+    void toRenderPassResolveAttachmentDesc(mtl::RenderPassAttachmentDesc *rpaDescOut) const;
+#endif
 
   private:
     mtl::TextureWeakRef mTexture;

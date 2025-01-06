@@ -27,9 +27,12 @@
 #import <objc/Protocol.h>
 #import <objc/runtime.h>
 #import <wtf/HashSet.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/SystemFree.h>
 #import <wtf/Vector.h>
 #import <wtf/text/CString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 template<typename T, typename U>
 inline std::unique_ptr<T, WTF::SystemFree<T>> adoptSystem(U value)
@@ -39,10 +42,9 @@ inline std::unique_ptr<T, WTF::SystemFree<T>> adoptSystem(U value)
 
 inline bool protocolImplementsProtocol(Protocol *candidate, Protocol *target)
 {
-    unsigned protocolProtocolsCount;
-    auto protocolProtocols = adoptSystem<__unsafe_unretained Protocol*[]>(protocol_copyProtocolList(candidate, &protocolProtocolsCount));
-    for (unsigned i = 0; i < protocolProtocolsCount; ++i) {
-        if (protocol_isEqual(protocolProtocols[i], target))
+    auto protocolProtocols = protocol_copyProtocolListSpan(candidate);
+    for (auto* protocolProtocol : protocolProtocols.span()) {
+        if (protocol_isEqual(protocolProtocol, target))
             return true;
     }
     return false;
@@ -58,9 +60,8 @@ inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, voi
 
     // Initially fill the worklist with the Class's protocols.
     {
-        unsigned protocolsCount;
-        auto protocols = adoptSystem<__unsafe_unretained Protocol*[]>(class_copyProtocolList(cls, &protocolsCount));
-        worklist.append(std::span { protocols.get(), protocolsCount });
+        auto protocols = class_copyProtocolListSpan(cls);
+        worklist.append(protocols.span());
     }
 
     bool stop = false;
@@ -80,36 +81,29 @@ inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, voi
         }
 
         // Add incorporated protocols to the worklist.
-        {
-            unsigned protocolsCount;
-            auto protocols = adoptSystem<__unsafe_unretained Protocol*[]>(protocol_copyProtocolList(protocol, &protocolsCount));
-            worklist.append(std::span { protocols.get(), protocolsCount });
-        }
+        worklist.append(protocol_copyProtocolListSpan(protocol).span());
     }
 }
 
 inline void forEachMethodInClass(Class cls, void (^callback)(Method))
 {
-    unsigned count;
-    auto methods = adoptSystem<Method[]>(class_copyMethodList(cls, &count));
-    for (unsigned i = 0; i < count; ++i)
-        callback(methods[i]);
+    auto methods = class_copyMethodListSpan(cls);
+    for (auto& method : methods.span())
+        callback(method);
 }
 
 inline void forEachMethodInProtocol(Protocol *protocol, BOOL isRequiredMethod, BOOL isInstanceMethod, void (^callback)(SEL, const char*))
 {
-    unsigned count;
-    auto methods = adoptSystem<objc_method_description[]>(protocol_copyMethodDescriptionList(protocol, isRequiredMethod, isInstanceMethod, &count));
-    for (unsigned i = 0; i < count; ++i)
-        callback(methods[i].name, methods[i].types);
+    auto methods = protocol_copyMethodDescriptionListSpan(protocol, isRequiredMethod, isInstanceMethod);
+    for (auto& method : methods.span())
+        callback(method.name, method.types);
 }
 
 inline void forEachPropertyInProtocol(Protocol *protocol, void (^callback)(objc_property_t))
 {
-    unsigned count;
-    auto properties = adoptSystem<objc_property_t[]>(protocol_copyPropertyList(protocol, &count));
-    for (unsigned i = 0; i < count; ++i)
-        callback(properties[i]);
+    auto properties = protocol_copyPropertyListSpan(protocol);
+    for (auto& property : properties.span())
+        callback(property);
 }
 
 template<char open, char close>
@@ -246,3 +240,5 @@ extern "C" {
     bool _Block_has_signature(void *);
     const char * _Block_signature(void *);
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

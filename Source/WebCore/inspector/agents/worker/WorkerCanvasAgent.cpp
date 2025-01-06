@@ -27,10 +27,13 @@
 #include "WorkerCanvasAgent.h"
 
 #include "WorkerOrWorkletGlobalScope.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerCanvasAgent);
 
 WorkerCanvasAgent::WorkerCanvasAgent(WorkerAgentContext& context)
     : InspectorCanvasAgent(context)

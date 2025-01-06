@@ -135,10 +135,11 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 @interface WebAccessibilityObjectWrapper : WebAccessibilityObjectWrapperBase
 
-- (RetainPtr<AXTextMarkerRef>)textMarkerForFirstPositionInTextControl:(WebCore::HTMLTextFormControlElement&)textControl;
-
 // When a plugin uses a WebKit control to act as a surrogate view (e.g. PDF use WebKit to create text fields).
 - (id)_associatedPluginParent;
+// For testing use only.
+- (void)_accessibilityHitTestResolvingRemoteFrame:(NSPoint)point callback:(void(^)(NSString *))callback;
+- (NSArray *)_accessibilityChildrenFromIndex:(NSUInteger)index maxCount:(NSUInteger)maxCount returnPlatformElements:(BOOL)returnPlatformElements;
 
 @end
 

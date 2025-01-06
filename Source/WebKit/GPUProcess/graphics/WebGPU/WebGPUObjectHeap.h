@@ -34,7 +34,8 @@
 #include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
 class Adapter;
@@ -61,6 +62,10 @@ class Sampler;
 class ShaderModule;
 class Texture;
 class TextureView;
+class XRBinding;
+class XRProjectionLayer;
+class XRSubImage;
+class XRView;
 }
 
 namespace WebKit {
@@ -87,12 +92,16 @@ class RemoteSampler;
 class RemoteShaderModule;
 class RemoteTexture;
 class RemoteTextureView;
+class RemoteXRBinding;
+class RemoteXRProjectionLayer;
+class RemoteXRSubImage;
+class RemoteXRView;
 }
 
 namespace WebKit::WebGPU {
 
-class ObjectHeap final : public RefCounted<ObjectHeap>, public WebGPU::ConvertFromBackingContext, public CanMakeWeakPtr<ObjectHeap> {
-    WTF_MAKE_FAST_ALLOCATED;
+class ObjectHeap final : public RefCountedAndCanMakeWeakPtr<ObjectHeap>, public WebGPU::ConvertFromBackingContext {
+    WTF_MAKE_TZONE_ALLOCATED(ObjectHeap);
 public:
     static Ref<ObjectHeap> create()
     {
@@ -124,34 +133,42 @@ public:
     void addObject(WebGPUIdentifier, RemoteShaderModule&);
     void addObject(WebGPUIdentifier, RemoteTexture&);
     void addObject(WebGPUIdentifier, RemoteTextureView&);
+    void addObject(WebGPUIdentifier, RemoteXRBinding&);
+    void addObject(WebGPUIdentifier, RemoteXRSubImage&);
+    void addObject(WebGPUIdentifier, RemoteXRProjectionLayer&);
+    void addObject(WebGPUIdentifier, RemoteXRView&);
 
     void removeObject(WebGPUIdentifier);
 
     void clear();
 
-    WebCore::WebGPU::Adapter* convertAdapterFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::BindGroup* convertBindGroupFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::BindGroupLayout* convertBindGroupLayoutFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::Buffer* convertBufferFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::CommandBuffer* convertCommandBufferFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::CommandEncoder* convertCommandEncoderFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::CompositorIntegration* convertCompositorIntegrationFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::ComputePassEncoder* convertComputePassEncoderFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::ComputePipeline* convertComputePipelineFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::Device* convertDeviceFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::ExternalTexture* convertExternalTextureFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::PipelineLayout* convertPipelineLayoutFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::PresentationContext* convertPresentationContextFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::QuerySet* convertQuerySetFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::Queue* convertQueueFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::RenderBundleEncoder* convertRenderBundleEncoderFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::RenderBundle* convertRenderBundleFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::RenderPassEncoder* convertRenderPassEncoderFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::RenderPipeline* convertRenderPipelineFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::Sampler* convertSamplerFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::ShaderModule* convertShaderModuleFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::Texture* convertTextureFromBacking(WebGPUIdentifier) final;
-    WebCore::WebGPU::TextureView* convertTextureViewFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::Adapter> convertAdapterFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::BindGroup> convertBindGroupFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::BindGroupLayout> convertBindGroupLayoutFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::Buffer> convertBufferFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::CommandBuffer> convertCommandBufferFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::CommandEncoder> convertCommandEncoderFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::CompositorIntegration> convertCompositorIntegrationFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::ComputePassEncoder> convertComputePassEncoderFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::ComputePipeline> convertComputePipelineFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::Device> convertDeviceFromBacking(WebGPUIdentifier) final;
+    ThreadSafeWeakPtr<WebCore::WebGPU::ExternalTexture> convertExternalTextureFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::PipelineLayout> convertPipelineLayoutFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::PresentationContext> convertPresentationContextFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::QuerySet> convertQuerySetFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::Queue> convertQueueFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::RenderBundleEncoder> convertRenderBundleEncoderFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::RenderBundle> convertRenderBundleFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::RenderPassEncoder> convertRenderPassEncoderFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::RenderPipeline> convertRenderPipelineFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::Sampler> convertSamplerFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::ShaderModule> convertShaderModuleFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::Texture> convertTextureFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::TextureView> convertTextureViewFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::XRBinding> convertXRBindingFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::XRSubImage> convertXRSubImageFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::XRProjectionLayer> convertXRProjectionLayerFromBacking(WebGPUIdentifier) final;
+    WeakPtr<WebCore::WebGPU::XRView> createXRViewFromBacking(WebGPUIdentifier) final;
 
     struct ExistsAndValid {
         bool exists { false };
@@ -185,7 +202,11 @@ private:
         IPC::ScopedActiveMessageReceiveQueue<RemoteSampler>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>
+        IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteXRBinding>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteXRSubImage>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteXRProjectionLayer>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteXRView>
     >;
 
     HashMap<WebGPUIdentifier, Object> m_objects;

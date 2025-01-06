@@ -12,23 +12,33 @@
 
 #include <stddef.h>
 
+#include <cstdint>
+#include <functional>
+#include <memory>
+#include <optional>
 #include <queue>
 #include <string>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
-#include "absl/types/optional.h"
+#include "absl/functional/any_invocable.h"
+#include "api/field_trials_view.h"
 #include "api/jsep.h"
 #include "api/jsep_session_description.h"
+#include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
+#include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
+#include "call/payload_type.h"
 #include "pc/connection_context.h"
+#include "pc/media_session.h"
 #include "pc/sdp_state_provider.h"
 #include "pc/session_description.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/rtc_certificate.h"
+#include "rtc_base/rtc_certificate_generator.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/string_encode.h"
@@ -108,13 +118,15 @@ WebRtcSessionDescriptionFactory::WebRtcSessionDescriptionFactory(
     rtc::scoped_refptr<rtc::RTCCertificate> certificate,
     std::function<void(const rtc::scoped_refptr<rtc::RTCCertificate>&)>
         on_certificate_ready,
+    PayloadTypeSuggester* pt_suggester,
     const FieldTrialsView& field_trials)
     : signaling_thread_(context->signaling_thread()),
       transport_desc_factory_(field_trials),
       session_desc_factory_(context->media_engine(),
                             context->use_rtx(),
                             context->ssrc_generator(),
-                            &transport_desc_factory_),
+                            &transport_desc_factory_,
+                            pt_suggester),
       // RFC 4566 suggested a Network Time Protocol (NTP) format timestamp
       // as the session id and session version. To simplify, it should be fine
       // to just use a random number as session id and start version from
@@ -128,13 +140,10 @@ WebRtcSessionDescriptionFactory::WebRtcSessionDescriptionFactory(
   RTC_DCHECK(signaling_thread_);
 
   if (!dtls_enabled) {
-    SetSdesPolicy(cricket::SEC_REQUIRED);
-    RTC_LOG(LS_VERBOSE) << "DTLS-SRTP disabled.";
+    RTC_LOG(LS_INFO) << "DTLS-SRTP disabled";
+    transport_desc_factory_.SetInsecureForTesting();
     return;
   }
-
-  // SRTP-SDES is disabled if DTLS is on.
-  SetSdesPolicy(cricket::SEC_DISABLED);
   if (certificate) {
     // Use `certificate`.
     certificate_request_state_ = CERTIFICATE_WAITING;
@@ -142,31 +151,32 @@ WebRtcSessionDescriptionFactory::WebRtcSessionDescriptionFactory(
     RTC_LOG(LS_VERBOSE) << "DTLS-SRTP enabled; has certificate parameter.";
     RTC_LOG(LS_INFO) << "Using certificate supplied to the constructor.";
     SetCertificate(certificate);
-  } else {
-    // Generate certificate.
-    certificate_request_state_ = CERTIFICATE_WAITING;
-
-    auto callback = [weak_ptr = weak_factory_.GetWeakPtr()](
-                        rtc::scoped_refptr<rtc::RTCCertificate> certificate) {
-      if (!weak_ptr) {
-        return;
-      }
-      if (certificate) {
-        weak_ptr->SetCertificate(std::move(certificate));
-      } else {
-        weak_ptr->OnCertificateRequestFailed();
-      }
-    };
-
-    rtc::KeyParams key_params = rtc::KeyParams();
-    RTC_LOG(LS_VERBOSE)
-        << "DTLS-SRTP enabled; sending DTLS identity request (key type: "
-        << key_params.type() << ").";
-
-    // Request certificate. This happens asynchronously on a different thread.
-    cert_generator_->GenerateCertificateAsync(key_params, absl::nullopt,
-                                              std::move(callback));
+    return;
   }
+  // Generate certificate.
+  RTC_DCHECK(cert_generator_);
+  certificate_request_state_ = CERTIFICATE_WAITING;
+
+  auto callback = [weak_ptr = weak_factory_.GetWeakPtr()](
+                      rtc::scoped_refptr<rtc::RTCCertificate> certificate) {
+    if (!weak_ptr) {
+      return;
+    }
+    if (certificate) {
+      weak_ptr->SetCertificate(std::move(certificate));
+    } else {
+      weak_ptr->OnCertificateRequestFailed();
+    }
+  };
+
+  rtc::KeyParams key_params = rtc::KeyParams();
+  RTC_LOG(LS_VERBOSE)
+      << "DTLS-SRTP enabled; sending DTLS identity request (key type: "
+      << key_params.type() << ").";
+
+  // Request certificate. This happens asynchronously on a different thread.
+  cert_generator_->GenerateCertificateAsync(key_params, std::nullopt,
+                                            std::move(callback));
 }
 
 WebRtcSessionDescriptionFactory::~WebRtcSessionDescriptionFactory() {
@@ -258,15 +268,6 @@ void WebRtcSessionDescriptionFactory::CreateAnswer(
   }
 }
 
-void WebRtcSessionDescriptionFactory::SetSdesPolicy(
-    cricket::SecurePolicy secure_policy) {
-  session_desc_factory_.set_secure(secure_policy);
-}
-
-cricket::SecurePolicy WebRtcSessionDescriptionFactory::SdesPolicy() const {
-  return session_desc_factory_.secure();
-}
-
 void WebRtcSessionDescriptionFactory::InternalCreateOffer(
     CreateSessionDescriptionRequest request) {
   if (sdp_info_->local_description()) {
@@ -329,7 +330,7 @@ void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
           sdp_info_->IceRestartPending(options.mid);
       // We should pass the current DTLS role to the transport description
       // factory, if there is already an existing ongoing session.
-      absl::optional<rtc::SSLRole> dtls_role =
+      std::optional<rtc::SSLRole> dtls_role =
           sdp_info_->GetDtlsRole(options.mid);
       if (dtls_role) {
         options.transport_options.prefer_passive_role =
@@ -450,7 +451,6 @@ void WebRtcSessionDescriptionFactory::SetCertificate(
   on_certificate_ready_(certificate);
 
   transport_desc_factory_.set_certificate(std::move(certificate));
-  transport_desc_factory_.set_secure(cricket::SEC_ENABLED);
 
   while (!create_session_description_requests_.empty()) {
     if (create_session_description_requests_.front().type ==
@@ -462,4 +462,5 @@ void WebRtcSessionDescriptionFactory::SetCertificate(
     create_session_description_requests_.pop();
   }
 }
+
 }  // namespace webrtc

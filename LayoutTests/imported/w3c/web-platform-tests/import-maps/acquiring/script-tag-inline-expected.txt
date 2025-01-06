@@ -1,4 +1,3 @@
 
-PASS After inline <script type="module"> import maps should fire error events
-PASS After inline <script type="module"> import maps are not effective
+PASS After inline <script type="module"> import maps work fine
 

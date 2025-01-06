@@ -2,6 +2,6 @@ CONSOLE MESSAGE: Blocked https://127.0.0.1:9443/resources/testdriver.js from ask
 CONSOLE MESSAGE: Permission policy 'Geolocation' check failed for document with origin 'https://127.0.0.1:9443'.
 
 
-PASS Permissions-Policy allow="geolocation" allows same-origin relocation
-FAIL Permissions-Policy allow="geolocation" allows cross-origin relocation assert_true: geolocation expected true got false
+PASS Permissions-Policy allow="geolocation" allows same-origin redirection
+FAIL Permissions-Policy allow="geolocation" allows cross-origin redirection assert_true: Geolocation API expected true got false
 

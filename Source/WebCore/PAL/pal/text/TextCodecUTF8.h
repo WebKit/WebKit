@@ -27,11 +27,13 @@
 
 #include "TextCodec.h"
 #include <unicode/utf8.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/LChar.h>
 
 namespace PAL {
 
 class TextCodecUTF8 final : public TextCodec {
+    WTF_MAKE_TZONE_ALLOCATED(TextCodecUTF8);
 public:
     static void registerEncodingNames(EncodingNameRegistrar);
     static void registerCodecs(TextCodecRegistrar);
@@ -44,12 +46,12 @@ private:
     String decode(std::span<const uint8_t>, bool flush, bool stopOnError, bool& sawError) final;
     Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 
-    bool handlePartialSequence(LChar*& destination, std::span<const uint8_t>& source, bool flush);
-    void handlePartialSequence(UChar*& destination, std::span<const uint8_t>& source, bool flush, bool stopOnError, bool& sawError);
+    bool handlePartialSequence(std::span<LChar>& destination, std::span<const uint8_t>& source, bool flush);
+    void handlePartialSequence(std::span<UChar>& destination, std::span<const uint8_t>& source, bool flush, bool stopOnError, bool& sawError);
     void consumePartialSequenceByte();
 
     int m_partialSequenceSize { 0 };
-    uint8_t m_partialSequence[U8_MAX_LENGTH];
+    std::array<uint8_t, U8_MAX_LENGTH> m_partialSequence;
     bool m_shouldStripByteOrderMark { false };
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,10 +43,12 @@
 
 namespace WebKit {
 
-static NSString *tabIdKey = @"tabId";
+static NSString *documentIdKey = @"documentId";
+static NSString *errorOccurredKey = @"errorOccurred";
 static NSString *frameIdKey = @"frameId";
 static NSString *parentFrameIdKey = @"parentFrameId";
-static NSString *errorOccurredKey = @"errorOccurred";
+static NSString *tabIdKey = @"tabId";
+static NSString *timeStampKey = @"timeStamp";
 static NSString *urlKey = @"url";
 
 static NSString * const emptyURLValue = @"";
@@ -61,6 +63,9 @@ static NSDictionary *toWebAPI(WebExtensionFrameParameters frameInfo)
 
     if (frameInfo.frameIdentifier)
         result[frameIdKey] = @(toWebAPI(frameInfo.frameIdentifier.value()));
+
+    if (frameInfo.documentIdentifier)
+        result[documentIdKey] = frameInfo.documentIdentifier.value().toString();
 
     return [result copy];
 }
@@ -184,16 +189,25 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onErrorOccurred
     return *m_onErrorOccurredEvent;
 }
 
-void WebExtensionContextProxy::dispatchWebNavigationEvent(WebExtensionEventListenerType type, WebExtensionTabIdentifier tabID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
+void WebExtensionContextProxy::dispatchWebNavigationEvent(WebExtensionEventListenerType type, WebExtensionTabIdentifier tabID, const WebExtensionFrameParameters& frameParameters, WallTime timestamp)
 {
-    auto *navigationDetails = @{
-        @"url": (NSString *)frameURL.string(),
+    ASSERT(frameParameters.url);
+    ASSERT(frameParameters.frameIdentifier);
 
-        @"tabId": @(toWebAPI(tabID)),
-        @"frameId": @(toWebAPI(frameID)),
-        @"parentFrameId": @(toWebAPI(parentFrameID)),
-        @"timeStamp": @(floor(timestamp.approximateWallTime().secondsSinceEpoch().milliseconds()))
-    };
+    auto& frameURL = *frameParameters.url;
+    auto& frameID = *frameParameters.frameIdentifier;
+    auto& parentFrameID = frameParameters.parentFrameIdentifier;
+
+    NSMutableDictionary *navigationDetails = [@{
+        urlKey: frameURL.string(),
+        tabIdKey: @(toWebAPI(tabID)),
+        frameIdKey: @(toWebAPI(frameID)),
+        parentFrameIdKey: @(toWebAPI(parentFrameID)),
+        timeStampKey: @(floor(timestamp.approximateWallTime().secondsSinceEpoch().milliseconds()))
+    } mutableCopy];
+
+    if (frameParameters.documentIdentifier)
+        navigationDetails[documentIdKey] = frameParameters.documentIdentifier.value().toString();
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         auto& webNavigationObject = namespaceObject.webNavigation();

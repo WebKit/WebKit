@@ -420,11 +420,9 @@ sub dump {
 
     # Make sure we've read in our data
     my $data = $self->data;
-    
+
     require Data::Dumper;
-    say "<pre>Bugzilla::Chart object:";
-    print html_quote(Data::Dumper::Dumper($self));
-    print "</pre>";
+    return Data::Dumper::Dumper($self);
 }
 
 1;

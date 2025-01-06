@@ -33,11 +33,11 @@
 #include "FileList.h"
 #include "Pasteboard.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DataTransferItemList);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DataTransferItemList);
 
 DataTransferItemList::DataTransferItemList(Document& document, DataTransfer& dataTransfer)
     : ContextDestructionObserver(&document)
@@ -147,16 +147,16 @@ Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
     if (m_items)
         return *m_items;
 
+    Ref document = *this->document();
     Ref dataTransfer = m_dataTransfer.get();
     Vector<Ref<DataTransferItem>> items;
-    for (auto& type : dataTransfer->typesForItemList()) {
+    for (auto& type : dataTransfer->typesForItemList(document)) {
         auto lowercasedType = type.convertToASCIILowercase();
         if (shouldExposeTypeInItemList(lowercasedType))
             items.append(DataTransferItem::create(*this, lowercasedType));
     }
 
-    RefPtr document { this->document() };
-    for (auto& file : dataTransfer->files(*document).files())
+    for (auto& file : dataTransfer->files(document).files())
         items.append(DataTransferItem::create(*this, file->type(), file.copyRef()));
 
     m_items = WTFMove(items);

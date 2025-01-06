@@ -62,6 +62,11 @@ public:
         return result;
     }
 
+    T* cloneAndAdd(const T& node)
+    {
+        return add(makeUnique<T>(node));
+    }
+
     template<typename... Arguments>
     T* addNew(Arguments&&... arguments)
     {

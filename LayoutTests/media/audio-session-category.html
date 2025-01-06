@@ -121,14 +121,9 @@
             await sleepFor(500);
             testExpected('internals.audioSessionCategory()', 'PlayAndRecord');
 
-            consoleWrite('<br>** Check 500ms after MediaStream stopping capture.');
+            consoleWrite('<br>** Check right after MediaStream stopping capture.');
             audioTrack.stop();
-            await sleepFor(500);
-            testExpected('internals.audioSessionCategory()', 'PlayAndRecord');
-
-            await waitForCategory('None', 3, '<br>** And check again after 3 seconds.');
-            video.src = '';
-            video.load();
+            testExpected('internals.audioSessionCategory()', 'None');
         }
 
 

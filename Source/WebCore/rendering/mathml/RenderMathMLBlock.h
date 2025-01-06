@@ -39,7 +39,7 @@ class RenderMathMLOperator;
 class MathMLPresentationElement;
 
 class RenderMathMLBlock : public RenderBlock {
-    WTF_MAKE_ISO_ALLOCATED(RenderMathMLBlock);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMathMLBlock);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLBlock);
 public:
     RenderMathMLBlock(Type, MathMLPresentationElement&, RenderStyle&&);
@@ -57,13 +57,9 @@ public:
     // embellished operator, and omits any embellishments.
     // FIXME: We don't yet handle all the cases in the MathML spec. See
     // https://bugs.webkit.org/show_bug.cgi?id=78617.
-    virtual RenderMathMLOperator* unembellishedOperator() const { return 0; }
+    virtual RenderMathMLOperator* unembellishedOperator() const { return nullptr; }
 
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
-
-#if ENABLE(DEBUG_MATH_LAYOUT)
-    virtual void paint(PaintInfo&, const LayoutPoint&);
-#endif
 
 protected:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
@@ -77,7 +73,29 @@ protected:
     static inline LayoutUnit ascentForChild(const RenderBox& child);
 
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
-    void layoutInvalidMarkup(bool relayoutChildren);
+    void computeAndSetBlockDirectionMarginsOfChildren();
+    void insertPositionedChildrenIntoContainingBlock();
+    void layoutFloatingChildren();
+
+    void shiftInFlowChildren(LayoutUnit left, LayoutUnit top);
+    void adjustPreferredLogicalWidthsForBorderAndPadding();
+    void adjustLayoutForBorderAndPadding();
+
+    enum class LayoutPhase : uint8_t {
+        CalculatePreferredLogicalWidth,
+        Layout,
+    };
+    struct SizeAppliedToMathContent {
+        std::optional<LayoutUnit> logicalWidth;
+        std::optional<LayoutUnit> logicalHeight;
+    };
+    // Retrieve the specified (and supported) CSS width/height to apply to math
+    // content box, if any.
+    SizeAppliedToMathContent sizeAppliedToMathContent(LayoutPhase);
+    // Whether math content should be centered on the inline axis if a different size is specified by the user.
+    virtual bool isMathContentCentered() const { return false; }
+    // Apply the specified CSS width/height to the math content box and return inline shift for further adjustments.
+    LayoutUnit applySizeToMathContent(LayoutPhase, const SizeAppliedToMathContent&);
 
 private:
     bool isRenderMathMLBlock() const final { return true; }
@@ -90,7 +108,7 @@ private:
 };
 
 class RenderMathMLTable final : public RenderTable {
-    WTF_MAKE_ISO_ALLOCATED(RenderMathMLTable);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMathMLTable);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLTable);
 public:
     inline RenderMathMLTable(MathMLElement&, RenderStyle&&);

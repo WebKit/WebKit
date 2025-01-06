@@ -34,10 +34,10 @@
     function doTest()
     {
         // Need to wait for compositing layers to be updated.
-        window.setTimeout(function() {
+        window.setTimeout(async function() {
           document.getElementById('overlay').style.height = '150px';
             if (window.testRunner) {
-                testRunner.displayAndTrackRepaints(); // Painting has to happen to detect overlap.
+                await testRunner.displayAndTrackRepaints(); // Painting has to happen to detect overlap.
                 document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
                 testRunner.notifyDone();
             }

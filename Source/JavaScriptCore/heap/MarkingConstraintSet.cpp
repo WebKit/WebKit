@@ -42,9 +42,7 @@ MarkingConstraintSet::MarkingConstraintSet(JSC::Heap& heap)
 {
 }
 
-MarkingConstraintSet::~MarkingConstraintSet()
-{
-}
+MarkingConstraintSet::~MarkingConstraintSet() = default;
 
 void MarkingConstraintSet::didStartMarking()
 {

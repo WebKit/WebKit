@@ -1,7 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: Buttons attribute on pointerover expected 0 but got 4
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: Buttons attribute on pointerenter expected 0 but got 4
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: Buttons attribute on pointermove expected 0 but got 4
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerdown event Reached unreachable code
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: Buttons attribute on pointerdown expected 2 but got 4
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerover event Reached unreachable code
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerenter event Reached unreachable code
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerdown event Reached unreachable code
@@ -14,8 +11,29 @@ done
 
 Harness Error (FAIL), message = Unhandled rejection: assert_unreached: missing pointermove event Reached unreachable code
 
-FAIL Test pointer events in the main document assert_equals: Buttons attribute on pointerover expected 0 but got 4
+FAIL Test pointer events in the main document assert_equals: Buttons attribute on pointerdown expected 2 but got 4
 FAIL Test pointer events in an iframe assert_unreached: missing pointerover event Reached unreachable code
+PASS mouse pointerover event is a PointerEvent event
+PASS mouse pointerover.isTrusted value is true
+PASS mouse pointerover.composed value is valid
+PASS mouse pointerover.bubbles value is valid
+PASS mouse pointerover.cancelable value is valid
+PASS mouse pointerover.pressure value is valid
+PASS mouse pointerover properties for pointerType = mouse
+PASS mouse pointerenter event is a PointerEvent event
+PASS mouse pointerenter.isTrusted value is true
+PASS mouse pointerenter.composed value is valid
+PASS mouse pointerenter.bubbles value is valid
+PASS mouse pointerenter.cancelable value is valid
+PASS mouse pointerenter.pressure value is valid
+PASS mouse pointerenter properties for pointerType = mouse
+PASS mouse pointermove event is a PointerEvent event
+PASS mouse pointermove.isTrusted value is true
+PASS mouse pointermove.composed value is valid
+PASS mouse pointermove.bubbles value is valid
+PASS mouse pointermove.cancelable value is valid
+PASS mouse pointermove.pressure value is valid
+PASS mouse pointermove properties for pointerType = mouse
 PASS mouse pointerup event is a PointerEvent event
 PASS mouse pointerup.isTrusted value is true
 PASS mouse pointerup.composed value is valid

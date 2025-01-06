@@ -37,7 +37,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters&, RefPtr<API:
     if (!lib)
         return false;
 
-    WKBundleInitializeFunctionPtr proc = reinterpret_cast<WKBundleInitializeFunctionPtr>(::GetProcAddress(lib, "WKBundleInitialize"));
+    WKBundleInitializeFunctionPtr proc = reinterpret_cast<WKBundleInitializeFunctionPtr>((void*)::GetProcAddress(lib, "WKBundleInitialize"));
     if (!proc)
         return false;
 

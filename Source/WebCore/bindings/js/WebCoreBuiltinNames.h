@@ -152,6 +152,7 @@ namespace WebCore {
     macro(CSSOKLab) \
     macro(CSSPaintSize) \
     macro(CSSPerspective) \
+    macro(CSSPositionTryRule) \
     macro(CSSRGB) \
     macro(CSSRotate) \
     macro(CSSScale) \
@@ -168,6 +169,8 @@ namespace WebCore {
     macro(CSSUnitValue) \
     macro(CSSUnparsedValue) \
     macro(CSSVariableReferenceValue) \
+    macro(CSSViewTransitionRule) \
+    macro(CommandEvent) \
     macro(CookieChangeEvent) \
     macro(CookieStore) \
     macro(CookieStoreManager) \
@@ -205,6 +208,7 @@ namespace WebCore {
     macro(FileSystemFileHandle) \
     macro(FileSystemHandle) \
     macro(FileSystemSyncAccessHandle) \
+    macro(FileSystemWritableFileStream) \
     macro(FragmentDirective) \
     macro(GainNode) \
     macro(GPU) \
@@ -250,6 +254,10 @@ namespace WebCore {
     macro(GamepadButton) \
     macro(GamepadEvent) \
     macro(GamepadHapticActuator) \
+    macro(Geolocation) \
+    macro(GeolocationCoordinates) \
+    macro(GeolocationPosition) \
+    macro(GeolocationPositionError) \
     macro(HighlightRegistry) \
     macro(Highlight) \
     macro(HTMLAttachmentElement) \
@@ -280,7 +288,6 @@ namespace WebCore {
     macro(InputEvent) \
     macro(IntersectionObserver) \
     macro(IntersectionObserverEntry) \
-    macro(InvokeEvent) \
     macro(KeyframeEffect) \
     macro(Lock) \
     macro(LockManager) \
@@ -325,6 +332,7 @@ namespace WebCore {
     macro(NavigatorUserMedia) \
     macro(Notification) \
     macro(NotificationEvent) \
+    macro(Observable) \
     macro(OfflineAudioCompletionEvent) \
     macro(OfflineAudioContext) \
     macro(OffscreenCanvas) \
@@ -359,7 +367,6 @@ namespace WebCore {
     macro(PushEvent) \
     macro(PushManager) \
     macro(PushMessageData) \
-    macro(PushNotificationEvent) \
     macro(PushSubscription) \
     macro(PushSubscriptionChangeEvent) \
     macro(PushSubscriptionOptions) \
@@ -434,6 +441,7 @@ namespace WebCore {
     macro(StylePropertyMap) \
     macro(StorageManager) \
     macro(StorageManagerFileSystemAccess) \
+    macro(Subscriber) \
     macro(SubtleCrypto) \
     macro(TestReportBody) \
     macro(TextDecoderStream) \
@@ -452,6 +460,7 @@ namespace WebCore {
     macro(TrustedTypePolicy) \
     macro(TrustedTypePolicyFactory) \
     macro(TrustedTypePolicyOptions) \
+    macro(URLPattern) \
     macro(UndoItem) \
     macro(UndoManager) \
     macro(VideoDecoder) \
@@ -459,6 +468,7 @@ namespace WebCore {
     macro(VideoFrame) \
     macro(ViewTimeline) \
     macro(ViewTransition) \
+    macro(ViewTransitionTypeSet) \
     macro(VisualViewport) \
     macro(WGSLLanguageFeatures) \
     macro(WakeLock) \
@@ -501,7 +511,15 @@ namespace WebCore {
     macro(WritableStreamDefaultWriter) \
     macro(XMLHttpRequest) \
     macro(XRBoundedReferenceSpace) \
+    macro(XRCompositionLayer) \
+    macro(XRCubeLayer) \
+    macro(XRCylinderLayer) \
+    macro(XREquirectLayer) \
     macro(XRFrame) \
+    macro(XRGPUBinding) \
+    macro(XRGPULayerInit) \
+    macro(XRGPUProjectionLayerInit) \
+    macro(XRGPUSubImage) \
     macro(XRHand) \
     macro(XRInputSource) \
     macro(XRInputSourceArray) \
@@ -510,7 +528,10 @@ namespace WebCore {
     macro(XRJointPose) \
     macro(XRJointSpace) \
     macro(XRLayer) \
+    macro(XRLayerEvent) \
     macro(XRPose) \
+    macro(XRProjectionLayer) \
+    macro(XRQuadLayer) \
     macro(XRReferenceSpace) \
     macro(XRReferenceSpaceEvent) \
     macro(XRRenderState) \
@@ -518,18 +539,20 @@ namespace WebCore {
     macro(XRSession) \
     macro(XRSessionEvent) \
     macro(XRSpace) \
+    macro(XRSubImage) \
     macro(XRSystem) \
     macro(XRTest) \
     macro(XRView) \
     macro(XRViewerPose) \
     macro(XRViewport) \
+    macro(XRWebGLBinding) \
     macro(XRWebGLLayer) \
+    macro(XRWebGLSubImage) \
     macro(VideoTrackGenerator) \
     macro(abortAlgorithm) \
     macro(abortSteps) \
     macro(addAbortAlgorithmToSignal) \
     macro(appendFromJS) \
-    macro(applicationCache) \
     macro(associatedReadableByteStreamController) \
     macro(autoAllocateChunkSize) \
     macro(backingMap) \
@@ -627,7 +650,6 @@ namespace WebCore {
     macro(onpush) \
     macro(onpushsubscriptionchange) \
     macro(onrtctransform) \
-    macro(onsearch) \
     macro(ontouchcancel) \
     macro(ontouchend) \
     macro(ontouchmove) \
@@ -653,6 +675,7 @@ namespace WebCore {
     macro(pullAgain) \
     macro(pullAlgorithm) \
     macro(pulling) \
+    macro(pushManager) \
     macro(queue) \
     macro(queuedAddIceCandidate) \
     macro(queuedCreateAnswer) \

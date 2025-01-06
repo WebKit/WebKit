@@ -30,10 +30,13 @@
 #include "ContextDestructionObserverInlines.h"
 #include "SecurityOrigin.h"
 #include "URLRegistry.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PublicURLManager);
 
 Ref<PublicURLManager> PublicURLManager::create(ScriptExecutionContext* context)
 {
@@ -60,7 +63,7 @@ void PublicURLManager::revoke(const URL& url)
     if (m_isStopped || !scriptExecutionContext())
         return;
 
-    auto* contextOrigin = scriptExecutionContext()->securityOrigin();
+    RefPtr contextOrigin = scriptExecutionContext()->securityOrigin();
     if (!contextOrigin)
         return;
 
@@ -79,7 +82,7 @@ void PublicURLManager::stop()
         return;
 
     m_isStopped = true;
-    if (auto* context = scriptExecutionContext()) {
+    if (RefPtr context = scriptExecutionContext()) {
         URLRegistry::forEach([&](auto& registry) {
             registry.unregisterURLsForContext(*context);
         });

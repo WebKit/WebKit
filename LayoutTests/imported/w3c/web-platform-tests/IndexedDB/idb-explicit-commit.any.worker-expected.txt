@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Explicitly committed data can be read back out.
 PASS commit() on a version change transaction does not cause errors.
 PASS A committed transaction becomes inactive immediately.
@@ -10,7 +8,7 @@ PASS Calling commit on an aborted transaction throws.
 PASS Calling commit on a committed transaction throws.
 PASS Calling abort on a committed transaction throws and does not prevent persisting the data.
 PASS Calling txn.commit() when txn is inactive should throw.
-TIMEOUT Transactions with same scope should stay in program order, even if one calls commit. Test timed out
-NOTRUN Transactions that explicitly commit and have errors should abort.
-NOTRUN Transactions that handle all errors properly should behave as expected when an explicit commit is called in an onerror handler.
+PASS Transactions with same scope should stay in program order, even if one calls commit.
+PASS Transactions that explicitly commit and have errors should abort.
+PASS Transactions that handle all errors properly should behave as expected when an explicit commit is called in an onerror handler.
 

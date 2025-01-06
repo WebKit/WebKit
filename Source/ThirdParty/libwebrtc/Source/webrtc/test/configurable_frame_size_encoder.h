@@ -16,9 +16,9 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_frame.h"
 #include "api/video_codecs/video_codec.h"
@@ -60,7 +60,7 @@ class ConfigurableFrameSizeEncoder : public VideoEncoder {
 
  private:
   EncodedImageCallback* callback_;
-  absl::optional<std::function<void(void)>> post_encode_callback_;
+  std::optional<std::function<void(void)>> post_encode_callback_;
 
   size_t current_frame_size_;
   VideoCodecType codec_type_;

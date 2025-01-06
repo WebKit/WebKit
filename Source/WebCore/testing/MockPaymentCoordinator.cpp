@@ -46,9 +46,18 @@
 #include "PaymentSessionError.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
+
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockPaymentCoordinator);
+
+Ref<MockPaymentCoordinator> MockPaymentCoordinator::create(Page& page)
+{
+    return adoptRef(*new MockPaymentCoordinator(page));
+}
 
 MockPaymentCoordinator::MockPaymentCoordinator(Page& page)
     : m_page { page }
@@ -91,21 +100,18 @@ void MockPaymentCoordinator::openPaymentSetup(const String&, const String&, Comp
     });
 }
 
-static uint64_t showCount;
-static uint64_t hideCount;
-
 MockPaymentCoordinator::~MockPaymentCoordinator()
 {
-    ASSERT(showCount == hideCount);
+    ASSERT(m_showCount == m_hideCount);
 }
 
 void MockPaymentCoordinator::dispatchIfShowing(Function<void()>&& function)
 {
-    if (showCount <= hideCount)
+    if (m_showCount <= m_hideCount)
         return;
 
-    RunLoop::main().dispatch([currentShowCount = showCount, function = WTFMove(function)]() {
-        if (showCount > hideCount && showCount == currentShowCount)
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, currentShowCount = m_showCount, function = WTFMove(function)]() {
+        if (protectedThis->m_showCount > protectedThis->m_hideCount && protectedThis->m_showCount == currentShowCount)
             function();
     });
 }
@@ -151,9 +157,13 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
     m_merchantCategoryCode = request.merchantCategoryCode();
 #endif
 
-    ASSERT(showCount == hideCount);
-    ++showCount;
-    dispatchIfShowing([page = &m_page]() {
+    RefPtr page = m_page.get();
+    if (!page)
+        return false;
+
+    ASSERT(m_showCount == m_hideCount);
+    ++m_showCount;
+    dispatchIfShowing([page = WTFMove(page)]() {
         page->paymentCoordinator().validateMerchant(URL { "https://webkit.org/"_str });
     });
     return true;
@@ -161,7 +171,11 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
 
 void MockPaymentCoordinator::completeMerchantValidation(const PaymentMerchantSession&)
 {
-    dispatchIfShowing([page = &m_page, shippingAddress = m_shippingAddress]() mutable {
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    dispatchIfShowing([page = WTFMove(page), shippingAddress = m_shippingAddress]() mutable {
         page->paymentCoordinator().didSelectShippingContact(MockPaymentContact { WTFMove(shippingAddress) });
     });
 }
@@ -284,7 +298,11 @@ void MockPaymentCoordinator::completeCouponCodeChange(std::optional<ApplePayCoup
 
 void MockPaymentCoordinator::changeShippingOption(String&& shippingOption)
 {
-    dispatchIfShowing([page = &m_page, shippingOption = WTFMove(shippingOption)]() mutable {
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    dispatchIfShowing([page = WTFMove(page), shippingOption = WTFMove(shippingOption)]() mutable {
         ApplePayShippingMethod shippingMethod;
         shippingMethod.identifier = WTFMove(shippingOption);
         page->paymentCoordinator().didSelectShippingMethod(shippingMethod);
@@ -293,7 +311,11 @@ void MockPaymentCoordinator::changeShippingOption(String&& shippingOption)
 
 void MockPaymentCoordinator::changePaymentMethod(ApplePayPaymentMethod&& paymentMethod)
 {
-    dispatchIfShowing([page = &m_page, paymentMethod = WTFMove(paymentMethod)]() mutable {
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    dispatchIfShowing([page = WTFMove(page), paymentMethod = WTFMove(paymentMethod)]() mutable {
         page->paymentCoordinator().didSelectPaymentMethod(MockPaymentMethod { WTFMove(paymentMethod) });
     });
 }
@@ -302,7 +324,11 @@ void MockPaymentCoordinator::changePaymentMethod(ApplePayPaymentMethod&& payment
 
 void MockPaymentCoordinator::changeCouponCode(String&& couponCode)
 {
-    dispatchIfShowing([page = &m_page, couponCode = WTFMove(couponCode)]() mutable {
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    dispatchIfShowing([page = WTFMove(page), couponCode = WTFMove(couponCode)]() mutable {
         page->paymentCoordinator().didChangeCouponCode(WTFMove(couponCode));
     });
 }
@@ -311,7 +337,11 @@ void MockPaymentCoordinator::changeCouponCode(String&& couponCode)
 
 void MockPaymentCoordinator::acceptPayment()
 {
-    dispatchIfShowing([page = &m_page, shippingAddress = m_shippingAddress]() mutable {
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    dispatchIfShowing([page = WTFMove(page), shippingAddress = m_shippingAddress]() mutable {
         ApplePayPayment payment;
         payment.shippingContact = WTFMove(shippingAddress);
         page->paymentCoordinator().didAuthorizePayment(MockPayment { WTFMove(payment) });
@@ -320,10 +350,14 @@ void MockPaymentCoordinator::acceptPayment()
 
 void MockPaymentCoordinator::cancelPayment()
 {
-    dispatchIfShowing([page = &m_page] {
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    dispatchIfShowing([protectedThis = Ref { *this }, page = WTFMove(page)] {
         page->paymentCoordinator().didCancelPaymentSession({ });
-        ++hideCount;
-        ASSERT(showCount == hideCount);
+        ++protectedThis->m_hideCount;
+        ASSERT(protectedThis->m_showCount == protectedThis->m_hideCount);
     });
 }
 
@@ -335,20 +369,20 @@ void MockPaymentCoordinator::completePaymentSession(ApplePayPaymentAuthorization
     if (!isFinalState)
         return;
 
-    ++hideCount;
-    ASSERT(showCount == hideCount);
+    ++m_hideCount;
+    ASSERT(m_showCount == m_hideCount);
 }
 
 void MockPaymentCoordinator::abortPaymentSession()
 {
-    ++hideCount;
-    ASSERT(showCount == hideCount);
+    ++m_hideCount;
+    ASSERT(m_showCount == m_hideCount);
 }
 
 void MockPaymentCoordinator::cancelPaymentSession()
 {
-    ++hideCount;
-    ASSERT(showCount == hideCount);
+    ++m_hideCount;
+    ASSERT(m_showCount == m_hideCount);
 }
 
 void MockPaymentCoordinator::addSetupFeature(ApplePaySetupFeatureState state, ApplePaySetupFeatureType type, bool supportsInstallments)

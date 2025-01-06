@@ -35,9 +35,9 @@
 #include "include/core/SkTileMode.h"
 #include "include/effects/SkRuntimeEffect.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrRecordingContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/private/SkColorData.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkFixed.h"
@@ -557,7 +557,7 @@ static std::unique_ptr<GrFragmentProcessor> make_rect_integral_fp(GrRecordingCon
                 std::move(view), kPremul_SkAlphaType, m, GrSamplerState::Filter::kLinear);
     }
 
-    SkBitmap bitmap = skgpu::CreateIntegralTable(sixSigma);
+    SkBitmap bitmap = skgpu::CreateIntegralTable(width);
     if (bitmap.empty()) {
         return {};
     }
@@ -1036,7 +1036,7 @@ static bool direct_filter_mask(GrRecordingContext* context,
 
     SkRRect srcRRect;
     bool inverted;
-    if (!shape.asRRect(&srcRRect, nullptr, nullptr, &inverted) || inverted) {
+    if (!shape.asRRect(&srcRRect, &inverted) || inverted) {
         return false;
     }
 

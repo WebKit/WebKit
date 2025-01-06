@@ -52,7 +52,7 @@ class BaseAudioContext;
 // All of these effects follow the OpenAL specification very closely.
 
 class PannerNode final : public AudioNode {
-    WTF_MAKE_ISO_ALLOCATED(PannerNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PannerNode);
 public:
     static ExceptionOr<Ref<PannerNode>> create(BaseAudioContext&, const PannerOptions& = { });
 

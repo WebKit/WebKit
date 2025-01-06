@@ -17,33 +17,49 @@ namespace skgpu::graphite {
 sk_sp<Buffer> VulkanBuffer::Make(const VulkanSharedContext* sharedContext,
                                  size_t size,
                                  BufferType type,
-                                 AccessPattern accessPattern,
-                                 std::string_view label) {
+                                 AccessPattern accessPattern) {
     if (size <= 0) {
         return nullptr;
     }
     VkBuffer buffer;
     skgpu::VulkanAlloc alloc;
 
-    // The only time we don't require mappable buffers is when we're on a device where gpu only
-    // memory has faster reads on the gpu than memory that is also mappable on the cpu. Protected
-    // memory always uses mappable buffers.
-    bool requiresMappable = sharedContext->isProtected() == Protected::kYes ||
-                            accessPattern == AccessPattern::kHostVisible ||
-                            !sharedContext->vulkanCaps().gpuOnlyBuffersMorePerformant();
+    // TODO (b/374749633): We can't use protected buffers in the vertex shader. The checks below
+    // make sure we don't use it for vertex or index buffers. But we currently don't have a way to
+    // check here if it is a uniform or storage buffer that is used in the vertex shader. If we hit
+    // that issue and need those GpuOnly buffers, we'll need to pass in some information to the
+    // factory to say what stage the buffer is for. Maybe expand AccessPattern to be
+    // GpuOnly_NotVertex or some better name like that.
+    bool isProtected = sharedContext->isProtected() == Protected::kYes &&
+                       accessPattern == AccessPattern::kGpuOnly &&
+                       type != BufferType::kVertex &&
+                       type != BufferType::kIndex;
+
+    // Protected memory _never_ uses mappable buffers.
+    // Otherwise, the only time we don't require mappable buffers is when we're on a device
+    // where gpu only memory has faster reads on the gpu than memory that is also mappable
+    // on the cpu.
+    bool requiresMappable = !isProtected &&
+                            (accessPattern == AccessPattern::kHostVisible ||
+                             !sharedContext->vulkanCaps().gpuOnlyBuffersMorePerformant());
 
     using BufferUsage = skgpu::VulkanMemoryAllocator::BufferUsage;
 
-    // The default usage captures use cases besides transfer buffers. GPU-only buffers are preferred
-    // unless mappability is required.
-    BufferUsage allocUsage =
-            requiresMappable ? BufferUsage::kCpuWritesGpuReads : BufferUsage::kGpuOnly;
+    BufferUsage allocUsage;
+    if (type == BufferType::kXferCpuToGpu) {
+        allocUsage = BufferUsage::kTransfersFromCpuToGpu;
+    } else if (type == BufferType::kXferGpuToCpu) {
+        allocUsage = BufferUsage::kTransfersFromGpuToCpu;
+    } else {
+        // GPU-only buffers are preferred unless mappability is required.
+        allocUsage = requiresMappable ? BufferUsage::kCpuWritesGpuReads : BufferUsage::kGpuOnly;
+    }
 
     // Create the buffer object
     VkBufferCreateInfo bufInfo;
     memset(&bufInfo, 0, sizeof(VkBufferCreateInfo));
     bufInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    bufInfo.flags = 0;
+    bufInfo.flags = isProtected ? VK_BUFFER_CREATE_PROTECTED_BIT : 0;
     bufInfo.size = size;
 
     // To support SkMesh buffer updates we make Vertex and Index buffers capable of being transfer
@@ -59,6 +75,9 @@ sk_sp<Buffer> VulkanBuffer::Make(const VulkanSharedContext* sharedContext,
         case BufferType::kStorage:
             bufInfo.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
             break;
+        case BufferType::kQuery:
+            SK_ABORT("Query buffers not supported on Vulkan");
+            break;
         case BufferType::kIndirect:
             bufInfo.usage =
                     VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
@@ -71,15 +90,12 @@ sk_sp<Buffer> VulkanBuffer::Make(const VulkanSharedContext* sharedContext,
             break;
         case BufferType::kUniform:
             bufInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-            allocUsage = BufferUsage::kCpuWritesGpuReads;
             break;
         case BufferType::kXferCpuToGpu:
             bufInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-            allocUsage = BufferUsage::kTransfersFromCpuToGpu;
             break;
         case BufferType::kXferGpuToCpu:
             bufInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-            allocUsage = BufferUsage::kTransfersFromGpuToCpu;
             break;
     }
 
@@ -115,13 +131,15 @@ sk_sp<Buffer> VulkanBuffer::Make(const VulkanSharedContext* sharedContext,
     };
     if (!skgpu::VulkanMemory::AllocBufferMemory(allocator,
                                                 buffer,
+                                                skgpu::Protected(isProtected),
                                                 allocUsage,
                                                 shouldPersistentlyMapCpuToGpu,
                                                 checkResult,
                                                 &alloc)) {
-        VULKAN_CALL(sharedContext->interface(), DestroyBuffer(sharedContext->device(),
-                buffer,
-                /*const VkAllocationCallbacks*=*/nullptr));
+        VULKAN_CALL(sharedContext->interface(),
+                    DestroyBuffer(sharedContext->device(),
+                                  buffer,
+                                  /*const VkAllocationCallbacks*=*/nullptr));
         return nullptr;
     }
 
@@ -138,14 +156,9 @@ sk_sp<Buffer> VulkanBuffer::Make(const VulkanSharedContext* sharedContext,
         return nullptr;
     }
 
-    return sk_sp<Buffer>(new VulkanBuffer(sharedContext,
-                                          size,
-                                          type,
-                                          accessPattern,
-                                          std::move(buffer),
-                                          alloc,
-                                          bufInfo.usage,
-                                          std::move(label)));
+    return sk_sp<Buffer>(new VulkanBuffer(
+            sharedContext, size, type, accessPattern, std::move(buffer), alloc, bufInfo.usage,
+            Protected(isProtected)));
 }
 
 VulkanBuffer::VulkanBuffer(const VulkanSharedContext* sharedContext,
@@ -155,8 +168,8 @@ VulkanBuffer::VulkanBuffer(const VulkanSharedContext* sharedContext,
                            VkBuffer buffer,
                            const skgpu::VulkanAlloc& alloc,
                            const VkBufferUsageFlags usageFlags,
-                           std::string_view label)
-        : Buffer(sharedContext, size, std::move(label))
+                           Protected isProtected)
+        : Buffer(sharedContext, size, isProtected)
         , fBuffer(std::move(buffer))
         , fAlloc(alloc)
         , fBufferUsageFlags(usageFlags)

@@ -26,10 +26,10 @@
 #include "config.h"
 #include "ArgumentCodersGLib.h"
 
-#include "WebCoreArgumentCoders.h"
 #include <gio/gio.h>
 #include <gio/gunixfdlist.h>
 #include <wtf/Vector.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -43,7 +43,7 @@ void ArgumentCoder<GRefPtr<GByteArray>>::encode(Encoder& encoder, const GRefPtr<
     }
 
     encoder << true;
-    encoder << std::span(array->data, array->len);
+    encoder << span(array);
 }
 
 std::optional<GRefPtr<GByteArray>> ArgumentCoder<GRefPtr<GByteArray>>::decode(Decoder& decoder)
@@ -73,7 +73,7 @@ void ArgumentCoder<GRefPtr<GVariant>>::encode(Encoder& encoder, const GRefPtr<GV
     }
 
     encoder << CString(g_variant_get_type_string(variant.get()));
-    encoder << std::span(static_cast<const uint8_t*>(g_variant_get_data(variant.get())), g_variant_get_size(variant.get()));
+    encoder << span(variant);
 }
 
 std::optional<GRefPtr<GVariant>> ArgumentCoder<GRefPtr<GVariant>>::decode(Decoder& decoder)

@@ -17,6 +17,7 @@ namespace sh
 {
 
 class ImmutableString;
+class TSymbol;
 class TType;
 
 // Returns the fractional part of the given floating-point number.
@@ -72,6 +73,7 @@ class TInfoSinkBase
     TInfoSinkBase &operator<<(const ImmutableString &str);
 
     TInfoSinkBase &operator<<(const TType &type);
+    TInfoSinkBase &operator<<(const TSymbol &symbol);
 
     // Make sure floats are written with correct precision.
     TInfoSinkBase &operator<<(float f)
@@ -90,7 +92,7 @@ class TInfoSinkBase
         {
             stream.unsetf(std::ios::fixed);
             stream.unsetf(std::ios::scientific);
-            stream.precision(8);
+            stream.precision(9);
             stream << f;
         }
         sink.append(stream.str());

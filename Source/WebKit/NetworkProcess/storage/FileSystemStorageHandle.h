@@ -30,19 +30,17 @@
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <wtf/Identified.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class FileSystemStorageHandle;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::FileSystemStorageHandle> : std::true_type { };
-}
 
 namespace IPC {
 class SharedFileHandle;
+}
+
+namespace WebCore {
+enum class FileSystemWriteCloseReason : bool;
+enum class FileSystemWriteCommandType : uint8_t;
 }
 
 namespace WebKit {
@@ -50,11 +48,11 @@ namespace WebKit {
 class FileSystemStorageManager;
 enum class FileSystemStorageError : uint8_t;
 
-class FileSystemStorageHandle : public CanMakeWeakPtr<FileSystemStorageHandle, WeakPtrFactoryInitialization::Eager>, public Identified<WebCore::FileSystemHandleIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+class FileSystemStorageHandle final : public RefCounted<FileSystemStorageHandle>, public CanMakeWeakPtr<FileSystemStorageHandle, WeakPtrFactoryInitialization::Eager>, public Identified<WebCore::FileSystemHandleIdentifier> {
+    WTF_MAKE_TZONE_ALLOCATED(FileSystemStorageHandle);
 public:
     enum class Type : uint8_t { File, Directory, Any };
-    static std::unique_ptr<FileSystemStorageHandle> create(FileSystemStorageManager&, Type, String&& path, String&& name);
+    static RefPtr<FileSystemStorageHandle> create(FileSystemStorageManager&, Type, String&& path, String&& name);
 
     const String& path() const { return m_path; }
     Type type() const { return m_type; }
@@ -75,10 +73,15 @@ public:
     std::optional<FileSystemStorageError> closeSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier);
     std::optional<WebCore::FileSystemSyncAccessHandleIdentifier> activeSyncAccessHandle();
 
+    std::optional<FileSystemStorageError> createWritable(bool keepExistingData);
+    std::optional<FileSystemStorageError> closeWritable(WebCore::FileSystemWriteCloseReason);
+    std::optional<FileSystemStorageError> executeCommandForWritable(WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError);
+
 private:
     FileSystemStorageHandle(FileSystemStorageManager&, Type, String&& path, String&& name);
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> requestCreateHandle(IPC::Connection::UniqueID, Type, String&& name, bool createIfNecessary);
     bool isActiveSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier);
+    std::optional<FileSystemStorageError> executeCommandForWritableInternal(WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError);
 
     WeakPtr<FileSystemStorageManager> m_manager;
     Type m_type;
@@ -89,6 +92,8 @@ private:
         uint64_t capacity { 0 };
     };
     std::optional<SyncAccessHandleInfo> m_activeSyncAccessHandle;
+    // FIXME: Support multiple writable streams.
+    WebCore::FileHandle m_activeWritableFile;
 };
 
 } // namespace WebKit

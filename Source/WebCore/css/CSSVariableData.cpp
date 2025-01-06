@@ -35,6 +35,7 @@
 #include "CSSValuePool.h"
 #include "RenderStyle.h"
 #include <wtf/text/AtomStringHash.h>
+#include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 
@@ -48,8 +49,7 @@ template<typename CharacterType> void CSSVariableData::updateBackingStringsInTok
         if (!token.hasStringBacking() || token.isBackedByStringLiteral())
             continue;
         unsigned length = token.value().length();
-        token.updateCharacters(currentOffset.first(length));
-        currentOffset = currentOffset.subspan(length);
+        token.updateCharacters(consumeSpan(currentOffset, length));
     }
     ASSERT(currentOffset.empty());
 }

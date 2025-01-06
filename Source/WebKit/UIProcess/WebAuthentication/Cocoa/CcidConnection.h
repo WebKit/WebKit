@@ -27,10 +27,9 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
-#include <wtf/WeakPtr.h>
 
 OBJC_CLASS TKSmartCard;
 
@@ -39,7 +38,7 @@ namespace WebKit {
 class CcidService;
 using DataReceivedCallback = Function<void(Vector<uint8_t>&&)>;
 
-class CcidConnection : public RefCounted<CcidConnection>, public CanMakeWeakPtr<CcidConnection> {
+class CcidConnection : public RefCountedAndCanMakeWeakPtr<CcidConnection> {
 public:
     static Ref<CcidConnection> create(RetainPtr<TKSmartCard>&&, CcidService&);
     ~CcidConnection();

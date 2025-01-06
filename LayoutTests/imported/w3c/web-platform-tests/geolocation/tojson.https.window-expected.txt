@@ -1,0 +1,3 @@
+
+PASS Test toJSON() in GeolocationPosition and GeolocationCoordinates.
+

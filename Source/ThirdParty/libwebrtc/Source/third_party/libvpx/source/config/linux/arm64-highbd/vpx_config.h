@@ -38,8 +38,12 @@
 #endif
 #if defined(__APPLE__)
 #define HAVE_NEON_I8MM 0
+#define HAVE_SVE 0
+#define HAVE_SVE2 0
 #else
 #define HAVE_NEON_I8MM 1
+#define HAVE_SVE 1
+#define HAVE_SVE2 1
 #endif
 #define HAVE_MIPS32 0
 #define HAVE_DSPR2 0

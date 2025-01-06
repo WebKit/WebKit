@@ -26,13 +26,14 @@
 #pragma once
 
 #include "RenderTreeBuilder.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class RenderBoxModelObject;
 
 class RenderTreeBuilder::Continuation {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Continuation);
 public:
     Continuation(RenderTreeBuilder&);
 

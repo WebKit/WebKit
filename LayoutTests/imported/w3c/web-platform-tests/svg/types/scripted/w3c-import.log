@@ -53,6 +53,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getBBox-01.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getBBox-02.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getBBox-03.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getBBox-04.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getBBox-05.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getScreenCTM.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-cap.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-ch.html
@@ -61,7 +64,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-px-with-context.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-px.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-rem.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-rlh.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-viewport.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-zoom.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLengthList-appendItem.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLengthList-appendItemFromClearedList.html

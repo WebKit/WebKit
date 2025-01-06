@@ -266,6 +266,7 @@ extern "C" {
 #define SSL3_RT_ALERT 21
 #define SSL3_RT_HANDSHAKE 22
 #define SSL3_RT_APPLICATION_DATA 23
+#define SSL3_RT_ACK 26
 
 // Pseudo content type for SSL/TLS header info
 #define SSL3_RT_HEADER 0x100

@@ -26,9 +26,10 @@
 #include "config.h"
 #include "Logging.h"
 
-#include <wtf/text/WTFString.h>
-
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+#include <span>
+#include <wtf/text/MakeString.h>
 
 namespace PAL {
 

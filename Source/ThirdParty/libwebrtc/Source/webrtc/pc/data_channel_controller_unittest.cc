@@ -12,6 +12,7 @@
 
 #include <memory>
 
+#include "api/priority.h"
 #include "pc/peer_connection_internal.h"
 #include "pc/sctp_data_channel.h"
 #include "pc/test/mock_peer_connection_internal.h"
@@ -27,11 +28,14 @@ namespace {
 using ::testing::NiceMock;
 using ::testing::Return;
 
-class MockDataChannelTransport : public webrtc::DataChannelTransportInterface {
+class MockDataChannelTransport : public DataChannelTransportInterface {
  public:
   ~MockDataChannelTransport() override {}
 
-  MOCK_METHOD(RTCError, OpenChannel, (int channel_id), (override));
+  MOCK_METHOD(RTCError,
+              OpenChannel,
+              (int channel_id, PriorityValue priority),
+              (override));
   MOCK_METHOD(RTCError,
               SendData,
               (int channel_id,
@@ -41,6 +45,15 @@ class MockDataChannelTransport : public webrtc::DataChannelTransportInterface {
   MOCK_METHOD(RTCError, CloseChannel, (int channel_id), (override));
   MOCK_METHOD(void, SetDataSink, (DataChannelSink * sink), (override));
   MOCK_METHOD(bool, IsReadyToSend, (), (const, override));
+  MOCK_METHOD(size_t, buffered_amount, (int channel_id), (const, override));
+  MOCK_METHOD(size_t,
+              buffered_amount_low_threshold,
+              (int channel_id),
+              (const, override));
+  MOCK_METHOD(void,
+              SetBufferedAmountLowThreshold,
+              (int channel_id, size_t bytes),
+              (override));
 };
 
 // Convenience class for tests to ensure that shutdown methods for DCC
@@ -146,8 +159,8 @@ TEST_F(DataChannelControllerTest, MaxChannels) {
   int channel_id = 0;
 
   ON_CALL(*pc_, GetSctpSslRole_n).WillByDefault([&]() {
-    return absl::optional<rtc::SSLRole>((channel_id & 1) ? rtc::SSL_SERVER
-                                                         : rtc::SSL_CLIENT);
+    return std::optional<rtc::SSLRole>((channel_id & 1) ? rtc::SSL_SERVER
+                                                        : rtc::SSL_CLIENT);
   });
 
   DataChannelControllerForTest dcc(pc_.get(), &transport);
@@ -165,6 +178,20 @@ TEST_F(DataChannelControllerTest, MaxChannels) {
       EXPECT_TRUE(ret.ok());
     }
   }
+}
+
+TEST_F(DataChannelControllerTest, BufferedAmountIncludesFromTransport) {
+  NiceMock<MockDataChannelTransport> transport;
+  EXPECT_CALL(transport, buffered_amount(0)).WillOnce(Return(4711));
+  ON_CALL(*pc_, GetSctpSslRole_n).WillByDefault([&]() {
+    return rtc::SSL_CLIENT;
+  });
+
+  DataChannelControllerForTest dcc(pc_.get(), &transport);
+  auto dc = dcc.InternalCreateDataChannelWithProxy(
+                   "label", InternalDataChannelInit(DataChannelInit()))
+                .MoveValue();
+  EXPECT_EQ(dc->buffered_amount(), 4711u);
 }
 
 // Test that while a data channel is in the `kClosing` state, its StreamId does

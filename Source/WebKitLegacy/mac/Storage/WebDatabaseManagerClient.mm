@@ -31,6 +31,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/WebCoreThread.h>
@@ -96,7 +97,7 @@ WebDatabaseManagerClient::~WebDatabaseManagerClient()
 }
 
 class DidModifyOriginData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DidModifyOriginData);
 public:
     static void dispatchToMainThread(WebDatabaseManagerClient& client, const SecurityOriginData& origin)
     {

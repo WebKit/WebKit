@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,6 +64,7 @@
 #include <wtf/Scope.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(DATA_DETECTION)
 #include "DataDetection.h"
@@ -260,19 +261,19 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
         if (!mediaElement)
             return nullptr;
 
-        Ref shadowRoot = mediaElement->ensureUserAgentShadowRoot();
-        RefPtr controlsHost = mediaElement->mediaControlsHost();
-        if (!controlsHost) {
-            ASSERT_NOT_REACHED();
+        RefPtr shadowRoot = mediaElement->userAgentShadowRoot();
+        if (!shadowRoot)
             return nullptr;
-        }
+
+        RefPtr controlsHost = mediaElement->mediaControlsHost();
+        if (!controlsHost)
+            return nullptr;
 
         auto& containerClass = controlsHost->mediaControlsContainerClassName();
-        for (auto& child : childrenOfType<HTMLDivElement>(shadowRoot.get())) {
-            if (child.hasClassName(containerClass))
-                return &child;
+        for (Ref child : childrenOfType<HTMLDivElement>(*shadowRoot)) {
+            if (child->hasClassName(containerClass))
+                return &child.get();
         }
-        ASSERT_NOT_REACHED();
         return nullptr;
     })();
 #endif // ENABLE(MODERN_MEDIA_CONTROLS)
@@ -287,9 +288,9 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                 containerForImageOverlay = mediaControlsContainer;
             else
                 containerForImageOverlay = shadowRoot;
-            for (auto& child : childrenOfType<HTMLDivElement>(*containerForImageOverlay)) {
-                if (child.getIdAttribute() == imageOverlayElementIdentifier()) {
-                    elements.root = &child;
+            for (Ref child : childrenOfType<HTMLDivElement>(*containerForImageOverlay)) {
+                if (child->getIdAttribute() == imageOverlayElementIdentifier()) {
+                    elements.root = &child.get();
                     hadExistingElements = true;
                     continue;
                 }
@@ -299,26 +300,25 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
 
     bool canUseExistingElements = false;
     if (elements.root) {
-        for (auto& childElement : childrenOfType<HTMLDivElement>(*elements.root)) {
-            if (!childElement.hasClass())
+        for (Ref childElement : childrenOfType<HTMLDivElement>(*elements.root)) {
+            if (!childElement->hasClass())
                 continue;
 
-            auto& classes = childElement.classList();
-            if (classes.contains(imageOverlayDataDetectorClass())) {
-                elements.dataDetectors.append(childElement);
-                continue;
-            }
-
-            if (classes.contains(imageOverlayBlockClass())) {
-                elements.blocks.append(childElement);
+            if (childElement->hasClassName(imageOverlayDataDetectorClass())) {
+                elements.dataDetectors.append(childElement.get());
                 continue;
             }
 
-            ASSERT(classes.contains(imageOverlayLineClass()));
+            if (childElement->hasClassName(imageOverlayBlockClass())) {
+                elements.blocks.append(childElement.get());
+                continue;
+            }
+
+            ASSERT(childElement->hasClassName(imageOverlayLineClass()));
             Vector<Ref<HTMLElement>> lineChildren;
-            for (auto& text : childrenOfType<HTMLDivElement>(childElement))
-                lineChildren.append(text);
-            elements.lines.append({ childElement, WTFMove(lineChildren), childrenOfType<HTMLBRElement>(childElement).first() });
+            for (Ref text : childrenOfType<HTMLDivElement>(childElement.get()))
+                lineChildren.append(text.get());
+            elements.lines.append({ childElement.get(), WTFMove(lineChildren), childrenOfType<HTMLBRElement>(childElement.get()).first() });
         }
 
         canUseExistingElements = ([&] {
@@ -352,11 +352,11 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
             for (size_t index = 0; index < result.blocks.size(); ++index) {
                 auto textContentByLine = result.blocks[index].text.split(newlineCharacter);
                 size_t lineIndex = 0;
-                for (auto& text : childrenOfType<Text>(elements.blocks[index])) {
+                for (Ref text : childrenOfType<Text>(elements.blocks[index])) {
                     if (textContentByLine.size() <= lineIndex)
                         return false;
 
-                    if (StringView(textContentByLine[lineIndex++]).trim(deprecatedIsSpaceOrNewline) != StringView(text.wholeText()).trim(deprecatedIsSpaceOrNewline))
+                    if (StringView(textContentByLine[lineIndex++]).trim(deprecatedIsSpaceOrNewline) != StringView(text->wholeText()).trim(deprecatedIsSpaceOrNewline))
                         return false;
                 }
             }

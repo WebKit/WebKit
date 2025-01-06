@@ -375,7 +375,8 @@ void vpx_fdct16x16_avx2(const int16_t *input, tran_low_t *output, int stride) {
     transpose_16bit_16x16_avx2(buf0, buf1);
 
     if (pass == 0) {
-      store_buffer_16bit_to_32bit_w16_avx2(buf1, out0, width, height);
+      store_buffer_16bit_to_32bit_w16_avx2(buf1, (tran_low_t *)out0, width,
+                                           height);
     } else {
       store_buffer_16bit_to_32bit_w16_avx2(buf1, out1, width, height);
     }

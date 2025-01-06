@@ -242,12 +242,10 @@ class MonomorphizeTraverser final : public TIntermTraverser
   public:
     explicit MonomorphizeTraverser(TCompiler *compiler,
                                    TSymbolTable *symbolTable,
-                                   const ShCompileOptions &compileOptions,
                                    UnsupportedFunctionArgsBitSet unsupportedFunctionArgs,
                                    FunctionMap *functionMap)
         : TIntermTraverser(true, false, false, symbolTable),
           mCompiler(compiler),
-          mCompileOptions(compileOptions),
           mUnsupportedFunctionArgs(unsupportedFunctionArgs),
           mFunctionMap(functionMap)
     {}
@@ -341,16 +339,6 @@ class MonomorphizeTraverser final : public TIntermTraverser
             }
         }
 
-        if (mUnsupportedFunctionArgs[UnsupportedFunctionArgs::SamplerCubeEmulation])
-        {
-            // Monomorphize if the opaque uniform is a samplerCube and ES2's cube sampling emulation
-            // is requested.
-            if (type.isSamplerCube() && mCompileOptions.emulateSeamfulCubeMapSampling)
-            {
-                return true;
-            }
-        }
-
         if (mUnsupportedFunctionArgs[UnsupportedFunctionArgs::Image])
         {
             if (type.isImage())
@@ -434,7 +422,6 @@ class MonomorphizeTraverser final : public TIntermTraverser
     }
 
     TCompiler *mCompiler;
-    const ShCompileOptions &mCompileOptions;
     UnsupportedFunctionArgsBitSet mUnsupportedFunctionArgs;
     bool mAnyMonomorphized = false;
 
@@ -554,7 +541,6 @@ void SortDeclarations(TIntermBlock *root)
 bool MonomorphizeUnsupportedFunctionsImpl(TCompiler *compiler,
                                           TIntermBlock *root,
                                           TSymbolTable *symbolTable,
-                                          const ShCompileOptions &compileOptions,
                                           UnsupportedFunctionArgsBitSet unsupportedFunctionArgs)
 {
     // First, sort out the declarations such that all non-function declarations are placed before
@@ -567,8 +553,8 @@ bool MonomorphizeUnsupportedFunctionsImpl(TCompiler *compiler,
         FunctionMap functionMap;
         InitializeFunctionMap(root, &functionMap);
 
-        MonomorphizeTraverser monomorphizer(compiler, symbolTable, compileOptions,
-                                            unsupportedFunctionArgs, &functionMap);
+        MonomorphizeTraverser monomorphizer(compiler, symbolTable, unsupportedFunctionArgs,
+                                            &functionMap);
         root->traverse(&monomorphizer);
 
         if (!monomorphizer.getAnyMonomorphized())
@@ -597,15 +583,14 @@ bool MonomorphizeUnsupportedFunctionsImpl(TCompiler *compiler,
 bool MonomorphizeUnsupportedFunctions(TCompiler *compiler,
                                       TIntermBlock *root,
                                       TSymbolTable *symbolTable,
-                                      const ShCompileOptions &compileOptions,
                                       UnsupportedFunctionArgsBitSet unsupportedFunctionArgs)
 {
     // This function actually applies multiple transformation, and the AST may not be valid until
     // the transformations are entirely done.  Some validation is momentarily disabled.
     bool enableValidateFunctionCall = compiler->disableValidateFunctionCall();
 
-    bool result = MonomorphizeUnsupportedFunctionsImpl(compiler, root, symbolTable, compileOptions,
-                                                       unsupportedFunctionArgs);
+    bool result =
+        MonomorphizeUnsupportedFunctionsImpl(compiler, root, symbolTable, unsupportedFunctionArgs);
 
     compiler->restoreValidateFunctionCall(enableValidateFunctionCall);
     return result && compiler->validateAST(root);

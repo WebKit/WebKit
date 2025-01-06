@@ -37,12 +37,12 @@
 #import "LocalFrameView.h"
 #import "Page.h"
 #import "PlatformMouseEvent.h"
-#import "RuntimeApplicationChecks.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Ref.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 @interface NSWindow (WebWindowDetails)
 - (BOOL)_needsToResetDragMargins;
@@ -65,8 +65,8 @@ static void safeRemoveFromSuperview(NSView *view)
     // If the view is the first responder, then set the window's first responder to nil so
     // we don't leave the window pointing to a view that's no longer in it.
     NSWindow *window = [view window];
-    NSResponder *firstResponder = [window firstResponder];
-    if ([firstResponder isKindOfClass:[NSView class]] && [(NSView *)firstResponder isDescendantOf:view])
+    auto *firstResponderView = dynamic_objc_cast<NSView>([window firstResponder]);
+    if ([firstResponderView isDescendantOf:view])
         [window makeFirstResponder:nil];
 
     // Suppress the resetting of drag margins since we know we can't affect them.
@@ -190,7 +190,7 @@ void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPoli
     if (view.layer) {
 #if PLATFORM(MAC)
         // However, Quicken Essentials has a plug-in that depends on drawing to update the layer (see <rdar://problem/15221231>).
-        if (!MacApplication::isQuickenEssentials())
+        if (!WTF::MacApplication::isQuickenEssentials())
 #endif
         return;
     }
@@ -219,8 +219,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSView *innerView = platformWidget();
     NSScrollView *scrollView = 0;
     if ([innerView conformsToProtocol:@protocol(WebCoreFrameScrollView)]) {
-        ASSERT([innerView isKindOfClass:[NSScrollView class]]);
-        NSScrollView *scrollView = static_cast<NSScrollView *>(innerView);
+        NSScrollView *scrollView = checked_objc_cast<NSScrollView>(innerView);
         // -copiesOnScroll will return NO whenever the content view is not fully opaque.
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([scrollView drawsBackground] && ![[scrollView contentView] copiesOnScroll])

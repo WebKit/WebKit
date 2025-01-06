@@ -50,7 +50,7 @@ public:
     virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
     {
         WKBundlePageResourceLoadClientV0 resourceLoadClient;
-        memset(&resourceLoadClient, 0, sizeof(resourceLoadClient));
+        zeroBytes(resourceLoadClient);
         
         resourceLoadClient.base.version = 0;
         resourceLoadClient.willSendRequestForFrame = willSendRequestForFrame;

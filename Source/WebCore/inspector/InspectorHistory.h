@@ -31,16 +31,17 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class InspectorHistory final {
+    WTF_MAKE_TZONE_ALLOCATED(InspectorHistory);
     WTF_MAKE_NONCOPYABLE(InspectorHistory);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     class Action {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Action);
     public:
         virtual ~Action() = default;
 

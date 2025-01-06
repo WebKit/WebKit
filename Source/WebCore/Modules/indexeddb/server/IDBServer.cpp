@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,9 +36,13 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBBackingStore);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBServer);
 
 IDBServer::IDBServer(const String& databaseDirectoryPath, SpaceRequester&& spaceRequester, Lock& lock)
     : m_spaceRequester(WTFMove(spaceRequester))
@@ -139,7 +143,11 @@ void IDBServer::openDatabase(const IDBOpenRequestData& requestData)
 
     auto& uniqueIDBDatabase = getOrCreateUniqueIDBDatabase(requestData.databaseIdentifier());
 
-    auto connection = m_connectionMap.get(requestData.requestIdentifier().connectionIdentifier());
+    auto connectionIdentifier = requestData.requestIdentifier().connectionIdentifier();
+    if (!connectionIdentifier)
+        return;
+
+    auto connection = m_connectionMap.get(*connectionIdentifier);
     if (!connection) {
         // If the connection back to the client is gone, there's no way to open the database as
         // well as no way to message back failure.
@@ -155,7 +163,11 @@ void IDBServer::deleteDatabase(const IDBOpenRequestData& requestData)
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto connection = m_connectionMap.get(requestData.requestIdentifier().connectionIdentifier());
+    auto connectionIdentifier = requestData.requestIdentifier().connectionIdentifier();
+    if (!connectionIdentifier)
+        return;
+
+    auto connection = m_connectionMap.get(*connectionIdentifier);
     if (!connection) {
         // If the connection back to the client is gone, there's no way to delete the database as
         // well as no way to message back failure.
@@ -220,7 +232,7 @@ void IDBServer::deleteObjectStore(const IDBRequestData& requestData, const Strin
     transaction->deleteObjectStore(requestData, objectStoreName);
 }
 
-void IDBServer::renameObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& newName)
+void IDBServer::renameObjectStore(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
 {
     LOG(IndexedDB, "IDBServer::renameObjectStore");
     ASSERT(!isMainThread());
@@ -234,7 +246,7 @@ void IDBServer::renameObjectStore(const IDBRequestData& requestData, uint64_t ob
     transaction->renameObjectStore(requestData, objectStoreIdentifier, newName);
 }
 
-void IDBServer::clearObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier)
+void IDBServer::clearObjectStore(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier)
 {
     LOG(IndexedDB, "IDBServer::clearObjectStore");
     ASSERT(!isMainThread());
@@ -261,7 +273,7 @@ void IDBServer::createIndex(const IDBRequestData& requestData, const IDBIndexInf
     transaction->createIndex(requestData, info);
 }
 
-void IDBServer::deleteIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& indexName)
+void IDBServer::deleteIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
 {
     LOG(IndexedDB, "IDBServer::deleteIndex");
     ASSERT(!isMainThread());
@@ -275,7 +287,7 @@ void IDBServer::deleteIndex(const IDBRequestData& requestData, uint64_t objectSt
     transaction->deleteIndex(requestData, objectStoreIdentifier, indexName);
 }
 
-void IDBServer::renameIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+void IDBServer::renameIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const String& newName)
 {
     LOG(IndexedDB, "IDBServer::renameIndex");
     ASSERT(!isMainThread());

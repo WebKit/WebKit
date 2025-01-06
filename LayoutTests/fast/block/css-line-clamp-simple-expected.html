@@ -1,0 +1,28 @@
+<style>
+.container {
+  font-size: 12px;
+}
+</style>
+<pre><b>line-clamp</b> is the shorthand of <i><b>max-lines</b> (where to clamp)</i>, <i><b>block-ellipsis</b> (what to put at break)</i> and <i><b>continue</b> (whether we should stop rendering after break)</i>
+</pre>
+<div class="container">1<br>2&#x2026;</div>
+<pre><b>line-clamp: 2;</b> -clamp at the second line with ellipsis and don't show content after</pre>
+<div class="container">1<br>2<br>3<br>4!</div>
+<pre><b>line-clamp: 4 '!';</b> -clamp at the forth line with ! and don't show content after</pre>
+<div class="container">1<br>2&#x2026;<br>3<br>4&#x2026;</div>
+<pre><b>line-clamp: 4 and max-lines: 1 on 'nested'</b>-notice the double clamping</pre>
+<pre>
+
+longhands
+</pre>
+<div class="container">1<br>2<br>3<br>4<br>5?</div>
+<pre>
+<b>max-lines: 5
+block-ellipsis: '?'
+continue: discard</b>
+</pre>
+<div class="container">1<br>2?<br>3<br>4<br>5<br>6</div>
+<pre><b>max-lines: 2 
+block-ellipsis: '?'
+continue: auto</b>
+</pre>

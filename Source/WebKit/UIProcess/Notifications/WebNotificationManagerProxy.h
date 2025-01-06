@@ -63,6 +63,9 @@ public:
     static Ref<WebNotificationManagerProxy> create(WebProcessPool*);
 
     static WebNotificationManagerProxy& sharedServiceWorkerManager();
+    static Ref<WebNotificationManagerProxy> protectedSharedServiceWorkerManager();
+
+    virtual ~WebNotificationManagerProxy();
 
     void setProvider(std::unique_ptr<API::NotificationProvider>&&);
     HashMap<String, bool> notificationPermissions();

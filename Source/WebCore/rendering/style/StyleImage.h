@@ -26,7 +26,7 @@
 #include "CSSValue.h"
 #include "FloatSize.h"
 #include "Image.h"
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakPtr.h>
@@ -44,7 +44,7 @@ struct ResourceLoaderOptions;
 
 typedef const void* WrappedImagePtr;
 
-class StyleImage : public RefCounted<StyleImage>, public CanMakeWeakPtr<StyleImage> {
+class StyleImage : public RefCountedAndCanMakeWeakPtr<StyleImage> {
 public:
     virtual ~StyleImage() = default;
 

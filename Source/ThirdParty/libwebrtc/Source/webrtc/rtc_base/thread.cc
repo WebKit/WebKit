@@ -456,8 +456,8 @@ absl::AnyInvocable<void() &&> Thread::Get(int cmsWait) {
 }
 
 void Thread::PostTaskImpl(absl::AnyInvocable<void() &&> task,
-                          const PostTaskTraits& traits,
-                          const webrtc::Location& location) {
+                          const PostTaskTraits& /* traits */,
+                          const webrtc::Location& /* location */) {
   if (IsQuitting()) {
     return;
   }
@@ -475,8 +475,8 @@ void Thread::PostTaskImpl(absl::AnyInvocable<void() &&> task,
 
 void Thread::PostDelayedTaskImpl(absl::AnyInvocable<void() &&> task,
                                  webrtc::TimeDelta delay,
-                                 const PostDelayedTaskTraits& traits,
-                                 const webrtc::Location& location) {
+                                 const PostDelayedTaskTraits& /* traits */,
+                                 const webrtc::Location& /* location */) {
   if (IsQuitting()) {
     return;
   }
@@ -724,7 +724,7 @@ void Thread::Stop() {
 }
 
 void Thread::BlockingCallImpl(rtc::FunctionView<void()> functor,
-                              const webrtc::Location& location) {
+                              const webrtc::Location& /* location */) {
   TRACE_EVENT0("webrtc", "Thread::BlockingCall");
 
   RTC_DCHECK(!IsQuitting());
@@ -858,8 +858,9 @@ bool Thread::ProcessMessages(int cmsLoop) {
   }
 }
 
-bool Thread::WrapCurrentWithThreadManager(ThreadManager* thread_manager,
-                                          bool need_synchronize_access) {
+bool Thread::WrapCurrentWithThreadManager(
+    ThreadManager* thread_manager,
+    [[maybe_unused]] bool need_synchronize_access) {
   RTC_DCHECK(!IsRunning());
 
 #if defined(WEBRTC_WIN)

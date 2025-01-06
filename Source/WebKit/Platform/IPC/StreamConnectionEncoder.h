@@ -45,9 +45,8 @@ public:
     static constexpr size_t messageAlignment = alignof(MessageName);
     static constexpr bool isIPCEncoder = true;
 
-    StreamConnectionEncoder(MessageName messageName, uint8_t* stream, size_t streamCapacity)
+    StreamConnectionEncoder(MessageName messageName, std::span<uint8_t> stream)
         : m_buffer(stream)
-        , m_bufferCapacity(streamCapacity)
     {
         *this << messageName;
     }
@@ -58,15 +57,14 @@ public:
     bool encodeSpan(std::span<T, Extent> span)
     {
         auto bytes = asBytes(span);
-        size_t bufferPointer = static_cast<size_t>(reinterpret_cast<intptr_t>(m_buffer + m_encodedSize));
-        size_t newBufferPointer = roundUpToMultipleOf<alignof(T)>(bufferPointer);
+        auto bufferPointer = reinterpret_cast<uintptr_t>(m_buffer.data()) + m_encodedSize;
+        auto newBufferPointer = roundUpToMultipleOf<alignof(T)>(bufferPointer);
         if (newBufferPointer < bufferPointer)
             return false;
-        intptr_t alignedSize = m_encodedSize + (newBufferPointer - bufferPointer);
+        auto alignedSize = m_encodedSize + (newBufferPointer - bufferPointer);
         if (!reserve(alignedSize, bytes.size()))
             return false;
-        uint8_t* buffer = m_buffer + alignedSize;
-        memcpy(buffer, bytes.data(), bytes.size());
+        memcpySpan(m_buffer.subspan(alignedSize), bytes);
         m_encodedSize = alignedSize + bytes.size();
         return true;
     }
@@ -75,7 +73,7 @@ public:
     bool encodeObject(const T& object)
     {
         static_assert(std::is_trivially_copyable_v<T>);
-        return encodeSpan(std::span(std::addressof(object), 1));
+        return encodeSpan(singleElementSpan(object));
     }
 
     template<typename T>
@@ -86,20 +84,19 @@ public:
     }
 
     size_t size() const { ASSERT(isValid()); return m_encodedSize; }
-    bool isValid() const { return m_bufferCapacity; }
+    bool isValid() const { return !!m_buffer.data(); }
     operator bool() const { return isValid(); }
 private:
     bool reserve(size_t alignedSize, size_t additionalSize)
     {
         size_t size = alignedSize + additionalSize;
-        if (size < alignedSize || size > m_bufferCapacity) {
-            m_bufferCapacity = 0;
+        if (size < alignedSize || size > m_buffer.size()) {
+            m_buffer = { };
             return false;
         }
         return true;
     }
-    uint8_t* m_buffer;
-    size_t m_bufferCapacity;
+    std::span<uint8_t> m_buffer;
     size_t m_encodedSize { 0 };
 };
 

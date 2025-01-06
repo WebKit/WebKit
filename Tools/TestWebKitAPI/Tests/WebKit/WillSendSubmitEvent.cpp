@@ -69,7 +69,7 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
 static void setInjectedBundleClient(WKContextRef context)
 {
     WKContextInjectedBundleClientV0 injectedBundleClient;
-    memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+    zeroBytes(injectedBundleClient);
 
     injectedBundleClient.base.version = 0;
     injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;

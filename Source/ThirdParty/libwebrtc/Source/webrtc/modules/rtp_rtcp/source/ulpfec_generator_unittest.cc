@@ -15,6 +15,8 @@
 #include <utility>
 #include <vector>
 
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/fec_test_helper.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
@@ -50,11 +52,11 @@ void VerifyHeader(uint16_t seq_num,
 class UlpfecGeneratorTest : public ::testing::Test {
  protected:
   UlpfecGeneratorTest()
-      : fake_clock_(1),
-        ulpfec_generator_(kRedPayloadType, kFecPayloadType, &fake_clock_),
+      : env_(CreateEnvironment(std::make_unique<SimulatedClock>(1))),
+        ulpfec_generator_(env_, kRedPayloadType, kFecPayloadType),
         packet_generator_(kMediaSsrc) {}
 
-  SimulatedClock fake_clock_;
+  const Environment env_;
   UlpfecGenerator ulpfec_generator_;
   AugmentedPacketGenerator packet_generator_;
 };

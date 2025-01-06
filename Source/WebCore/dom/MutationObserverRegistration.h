@@ -34,6 +34,7 @@
 #include "MutationObserver.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
@@ -56,7 +57,7 @@ namespace WebCore {
 class QualifiedName;
 
 class MutationObserverRegistration : public CanMakeWeakPtr<MutationObserverRegistration> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MutationObserverRegistration);
 public:
     MutationObserverRegistration(MutationObserver&, Node&, MutationObserverOptions, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter);
     ~MutationObserverRegistration();

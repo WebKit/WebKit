@@ -70,17 +70,20 @@
 #include "JSGPUUncapturedErrorEvent.h"
 #include "JSGPUValidationError.h"
 #include "RequestAnimationFrameCallback.h"
+#include "WebGPUXRBinding.h"
+#include "XRGPUBinding.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(GPUDevice);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GPUDevice);
 
 GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing, String&& queueLabel)
     : ActiveDOMObject { scriptExecutionContext }
     , m_lostPromise(makeUniqueRef<LostPromise>())
     , m_backing(WTFMove(backing))
-    , m_queue(GPUQueue::create(Ref { m_backing->queue() }))
+    , m_queue(GPUQueue::create(Ref { m_backing->queue() }, this->backing()))
     , m_autoPipelineLayout(createAutoPipelineLayout())
 {
     m_queue->setLabel(WTFMove(queueLabel));
@@ -148,6 +151,11 @@ GPUDevice::LostPromise& GPUDevice::lost()
     });
 
     return m_lostPromise;
+}
+
+RefPtr<WebGPU::XRBinding> GPUDevice::createXRBinding(const WebXRSession&)
+{
+    return m_backing->createXRBinding();
 }
 
 ExceptionOr<Ref<GPUBuffer>> GPUDevice::createBuffer(const GPUBufferDescriptor& bufferDescriptor)
@@ -294,6 +302,9 @@ GPUExternalTexture* GPUDevice::externalTextureForDescriptor(const GPUExternalTex
         if (!videoElement->get())
             return nullptr;
         HTMLVideoElement& v = *videoElement->get();
+        if (m_previouslyImportedExternalTexture.first.get() == &v)
+            return m_previouslyImportedExternalTexture.second.get();
+
         auto it = m_videoElementToExternalTextureMap.find(v);
         if (it != m_videoElementToExternalTextureMap.end())
             return it->value.get();
@@ -303,6 +314,24 @@ GPUExternalTexture* GPUDevice::externalTextureForDescriptor(const GPUExternalTex
 
 class GPUDeviceVideoFrameRequestCallback final : public VideoFrameRequestCallback {
 public:
+    static Ref<GPUDeviceVideoFrameRequestCallback> create(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, GPUDevice& gpuDevice, ScriptExecutionContext* scriptExecutionContext)
+    {
+        return adoptRef(*new GPUDeviceVideoFrameRequestCallback(externalTexture, videoElement, gpuDevice, scriptExecutionContext));
+    }
+
+    ~GPUDeviceVideoFrameRequestCallback() final { }
+
+private:
+    GPUDeviceVideoFrameRequestCallback(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, GPUDevice& gpuDevice, ScriptExecutionContext* scriptExecutionContext)
+        : VideoFrameRequestCallback(scriptExecutionContext)
+        , m_externalTexture(externalTexture)
+        , m_videoElement(videoElement)
+        , m_gpuDevice(gpuDevice)
+    {
+    }
+
+    bool hasCallback() const final { return true; }
+
     CallbackResult<void> handleEvent(double, const VideoFrameMetadata&) override
     {
         if (!m_videoElement)
@@ -316,19 +345,10 @@ public:
             m_externalTexture->destroy();
         return { };
     }
-    static Ref<GPUDeviceVideoFrameRequestCallback> create(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, GPUDevice& gpuDevice, ScriptExecutionContext* scriptExecutionContext)
-    {
-        return adoptRef(*new GPUDeviceVideoFrameRequestCallback(externalTexture, videoElement, gpuDevice, scriptExecutionContext));
-    }
 
-    ~GPUDeviceVideoFrameRequestCallback() final { }
-private:
-    GPUDeviceVideoFrameRequestCallback(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, GPUDevice& gpuDevice, ScriptExecutionContext* scriptExecutionContext)
-        : VideoFrameRequestCallback(scriptExecutionContext)
-        , m_externalTexture(externalTexture)
-        , m_videoElement(videoElement)
-        , m_gpuDevice(gpuDevice)
+    CallbackResult<void> handleEventRethrowingException(double now, const VideoFrameMetadata& metadata) override
     {
+        return handleEvent(now, metadata);
     }
 
     Ref<GPUExternalTexture> m_externalTexture;
@@ -339,7 +359,7 @@ private:
 
 ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUExternalTextureDescriptor& externalTextureDescriptor)
 {
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
     if (RefPtr externalTexture = externalTextureForDescriptor(externalTextureDescriptor)) {
         externalTexture->undestroy();
 #if ENABLE(WEB_CODECS)
@@ -348,7 +368,10 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUE
         auto& videoElement = externalTextureDescriptor.source;
 #endif
         m_videoElementToExternalTextureMap.remove(*videoElement.get());
-        return externalTexture.releaseNonNull();
+        if (auto optionalMediaIdentifier = externalTextureDescriptor.mediaIdentifier()) {
+            m_backing->updateExternalTexture(externalTexture->backing(), *optionalMediaIdentifier);
+            return externalTexture.releaseNonNull();
+        }
     }
 #endif
     RefPtr texture = m_backing->importExternalTexture(externalTextureDescriptor.convertToBacking());
@@ -363,6 +386,8 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUE
 #endif
         WeakPtr<HTMLVideoElement> videoElementPtr = videoElement->get();
         m_videoElementToExternalTextureMap.set(*videoElementPtr, externalTexture.get());
+        m_previouslyImportedExternalTexture.first = *videoElement;
+        m_previouslyImportedExternalTexture.second = externalTexture.ptr();
         videoElementPtr->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTexture.get(), *videoElementPtr, *this, scriptExecutionContext()));
         queueTaskKeepingObjectAlive(*this, TaskSource::WebGPU, [protectedThis = Ref { *this }, videoElementPtr, externalTextureRef = externalTexture]() {
             if (!videoElementPtr)
@@ -414,10 +439,29 @@ ExceptionOr<Ref<GPUPipelineLayout>> GPUDevice::createPipelineLayout(const GPUPip
 
 ExceptionOr<Ref<GPUBindGroup>> GPUDevice::createBindGroup(const GPUBindGroupDescriptor& bindGroupDescriptor)
 {
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+    bool hasExternalTexture = false;
+    auto* externalTexture = bindGroupDescriptor.externalTextureMatches(m_lastCreatedExternalTextureBindGroup.first, hasExternalTexture);
+    if (auto externalTextureValue = externalTexture ? externalTexture->get() : nullptr) {
+        if (m_lastCreatedExternalTextureBindGroup.second->updateExternalTextures(*externalTextureValue)) {
+            RefPtr bindGroup = m_lastCreatedExternalTextureBindGroup.second.get();
+            return bindGroup.releaseNonNull();
+        }
+    }
+#endif
+
     RefPtr group = m_backing->createBindGroup(bindGroupDescriptor.convertToBacking());
     if (!group)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createBindGroup: Unable to make bind group."_s };
-    return GPUBindGroup::create(group.releaseNonNull());
+    auto result = GPUBindGroup::create(group.releaseNonNull());
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+    if (hasExternalTexture) {
+        m_lastCreatedExternalTextureBindGroup.first = bindGroupDescriptor.entries;
+        m_lastCreatedExternalTextureBindGroup.second = result.ptr();
+    }
+#endif
+
+    return result;
 }
 
 ExceptionOr<Ref<GPUShaderModule>> GPUDevice::createShaderModule(const GPUShaderModuleDescriptor& shaderModuleDescriptor)
@@ -517,7 +561,7 @@ ExceptionOr<Ref<GPUCommandEncoder>> GPUDevice::createCommandEncoder(const std::o
     RefPtr encoder = m_backing->createCommandEncoder(convertToBacking(commandEncoderDescriptor));
     if (!encoder)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createCommandEncoder: Unable to make command encoder."_s };
-    return GPUCommandEncoder::create(encoder.releaseNonNull());
+    return GPUCommandEncoder::create(encoder.releaseNonNull(), m_backing.get());
 }
 
 ExceptionOr<Ref<GPURenderBundleEncoder>> GPUDevice::createRenderBundleEncoder(const GPURenderBundleEncoderDescriptor& renderBundleEncoderDescriptor)

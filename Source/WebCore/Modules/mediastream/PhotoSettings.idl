@@ -26,7 +26,8 @@
 
 [
     Conditional=MEDIA_STREAM,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary PhotoSettings {
     FillLightMode   fillLightMode;
     double          imageHeight;

@@ -75,7 +75,7 @@ class RequestBufferImpl : public RequestBuffer {
 
 // static
 std::unique_ptr<RequestBuffer> RequestBuffer::New() {
-  return std::unique_ptr<RequestBuffer>(new RequestBufferImpl);
+  return std::make_unique<RequestBufferImpl>();
 }
 
 static bool ReadAll(int fd, void *in_data, size_t data_len) {
@@ -344,6 +344,22 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
         "algorithm": "ACVP-AES-GCM",
         "revision": "1.0",
         "direction": ["encrypt", "decrypt"],
+        "keyLen": [128, 256],
+        "payloadLen": [{
+          "min": 0, "max": 65536, "increment": 8
+        }],
+        "aadLen": [{
+          "min": 0, "max": 65536, "increment": 8
+        }],
+        "tagLen": [32, 64, 96, 104, 112, 120, 128],
+        "ivLen": [96],
+        "ivGen": "internal",
+        "ivGenMode": "8.2.2"
+      },
+      {
+        "algorithm": "ACVP-AES-GCM",
+        "revision": "1.0",
+        "direction": ["encrypt", "decrypt"],
         "keyLen": [128, 192, 256],
         "payloadLen": [{
           "min": 0, "max": 65536, "increment": 8
@@ -495,7 +511,7 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
       {
         "algorithm": "ECDSA",
         "mode": "keyGen",
-        "revision": "1.0",
+        "revision": "FIPS186-5",
         "curve": [
           "P-224",
           "P-256",
@@ -509,7 +525,7 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
       {
         "algorithm": "ECDSA",
         "mode": "keyVer",
-        "revision": "1.0",
+        "revision": "FIPS186-5",
         "curve": [
           "P-224",
           "P-256",
@@ -520,7 +536,7 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
       {
         "algorithm": "ECDSA",
         "mode": "sigGen",
-        "revision": "1.0",
+        "revision": "FIPS186-5",
         "capabilities": [{
           "curve": [
             "P-224",
@@ -540,7 +556,7 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
       {
         "algorithm": "ECDSA",
         "mode": "sigVer",
-        "revision": "1.0",
+        "revision": "FIPS186-5",
         "capabilities": [{
           "curve": [
             "P-224",
@@ -549,7 +565,6 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
             "P-521"
           ],
           "hashAlg": [
-            "SHA-1",
             "SHA2-224",
             "SHA2-256",
             "SHA2-384",
@@ -561,27 +576,27 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
       {
         "algorithm": "RSA",
         "mode": "keyGen",
-        "revision": "FIPS186-4",
+        "revision": "FIPS186-5",
         "infoGeneratedByServer": true,
         "pubExpMode": "fixed",
         "fixedPubExp": "010001",
         "keyFormat": "standard",
         "capabilities": [{
-          "randPQ": "B.3.3",
+          "randPQ": "probable",
           "properties": [{
             "modulo": 2048,
             "primeTest": [
-              "tblC2"
+              "2powSecStr"
             ]
           },{
             "modulo": 3072,
             "primeTest": [
-              "tblC2"
+              "2powSecStr"
             ]
           },{
             "modulo": 4096,
             "primeTest": [
-              "tblC2"
+              "2powSecStr"
             ]
           }]
         }]
@@ -589,7 +604,7 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
       {
         "algorithm": "RSA",
         "mode": "sigGen",
-        "revision": "FIPS186-4",
+        "revision": "FIPS186-5",
         "capabilities": [{
           "sigType": "pkcs1v1.5",
           "properties": [{
@@ -635,6 +650,7 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
         },{
           "sigType": "pss",
           "properties": [{
+            "maskFunction": ["mgf1"],
             "modulo": 2048,
             "hashPair": [{
               "hashAlg": "SHA2-224",
@@ -656,6 +672,7 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
         },{
           "sigType": "pss",
           "properties": [{
+            "maskFunction": ["mgf1"],
             "modulo": 3072,
             "hashPair": [{
               "hashAlg": "SHA2-224",
@@ -677,6 +694,7 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
         },{
           "sigType": "pss",
           "properties": [{
+            "maskFunction": ["mgf1"],
             "modulo": 4096,
             "hashPair": [{
               "hashAlg": "SHA2-224",
@@ -700,28 +718,12 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
       {
         "algorithm": "RSA",
         "mode": "sigVer",
-        "revision": "FIPS186-4",
+        "revision": "FIPS186-5",
         "pubExpMode": "fixed",
         "fixedPubExp": "010001",
         "capabilities": [{
           "sigType": "pkcs1v1.5",
           "properties": [{
-            "modulo": 1024,
-            "hashPair": [{
-              "hashAlg": "SHA2-224"
-            }, {
-              "hashAlg": "SHA2-256"
-            }, {
-              "hashAlg": "SHA2-384"
-            }, {
-              "hashAlg": "SHA2-512"
-            }, {
-              "hashAlg": "SHA-1"
-            }]
-          }]
-        },{
-          "sigType": "pkcs1v1.5",
-          "properties": [{
             "modulo": 2048,
             "hashPair": [{
               "hashAlg": "SHA2-224"
@@ -731,8 +733,6 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
               "hashAlg": "SHA2-384"
             }, {
               "hashAlg": "SHA2-512"
-            }, {
-              "hashAlg": "SHA-1"
             }]
           }]
         },{
@@ -747,8 +747,6 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
               "hashAlg": "SHA2-384"
             }, {
               "hashAlg": "SHA2-512"
-            }, {
-              "hashAlg": "SHA-1"
             }]
           }]
         },{
@@ -763,34 +761,12 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
               "hashAlg": "SHA2-384"
             }, {
               "hashAlg": "SHA2-512"
-            }, {
-              "hashAlg": "SHA-1"
             }]
           }]
         },{
           "sigType": "pss",
           "properties": [{
-            "modulo": 1024,
-            "hashPair": [{
-              "hashAlg": "SHA2-224",
-              "saltLen": 28
-            }, {
-              "hashAlg": "SHA2-256",
-              "saltLen": 32
-            }, {
-              "hashAlg": "SHA2-384",
-              "saltLen": 48
-            }, {
-              "hashAlg": "SHA2-512/256",
-              "saltLen": 32
-            }, {
-              "hashAlg": "SHA-1",
-              "saltLen": 20
-            }]
-          }]
-        },{
-          "sigType": "pss",
-          "properties": [{
+            "maskFunction": ["mgf1"],
             "modulo": 2048,
             "hashPair": [{
               "hashAlg": "SHA2-224",
@@ -807,14 +783,12 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
             }, {
               "hashAlg": "SHA2-512/256",
               "saltLen": 32
-            }, {
-              "hashAlg": "SHA-1",
-              "saltLen": 20
             }]
           }]
         },{
           "sigType": "pss",
           "properties": [{
+            "maskFunction": ["mgf1"],
             "modulo": 3072,
             "hashPair": [{
               "hashAlg": "SHA2-224",
@@ -831,14 +805,12 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
             }, {
               "hashAlg": "SHA2-512/256",
               "saltLen": 32
-            }, {
-              "hashAlg": "SHA-1",
-              "saltLen": 20
             }]
           }]
         },{
           "sigType": "pss",
           "properties": [{
+            "maskFunction": ["mgf1"],
             "modulo": 4096,
             "hashPair": [{
               "hashAlg": "SHA2-224",
@@ -855,9 +827,6 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
             }, {
               "hashAlg": "SHA2-512/256",
               "saltLen": 32
-            }, {
-              "hashAlg": "SHA-1",
-              "saltLen": 20
             }]
           }]
         }]
@@ -1148,13 +1117,12 @@ static bool AES_CTR(const Span<const uint8_t> args[], ReplyCallback write_reply)
 
 static bool AESGCMSetup(EVP_AEAD_CTX *ctx, Span<const uint8_t> tag_len_span,
                         Span<const uint8_t> key) {
-  uint32_t tag_len_32;
-  if (tag_len_span.size() != sizeof(tag_len_32)) {
+  if (tag_len_span.size() != sizeof(uint32_t)) {
     LOG_ERROR("Tag size value is %u bytes, not an uint32_t\n",
               static_cast<unsigned>(tag_len_span.size()));
     return false;
   }
-  memcpy(&tag_len_32, tag_len_span.data(), sizeof(tag_len_32));
+  const uint32_t tag_len_32 = CRYPTO_load_u32_le(tag_len_span.data());
 
   const EVP_AEAD *aead;
   switch (key.size()) {
@@ -1168,12 +1136,48 @@ static bool AESGCMSetup(EVP_AEAD_CTX *ctx, Span<const uint8_t> tag_len_span,
       aead = EVP_aead_aes_256_gcm();
       break;
     default:
-      LOG_ERROR("Bad AES-GCM key length %u\n", static_cast<unsigned>(key.size()));
+      LOG_ERROR("Bad AES-GCM key length %u\n",
+                static_cast<unsigned>(key.size()));
       return false;
   }
 
   if (!EVP_AEAD_CTX_init(ctx, aead, key.data(), key.size(), tag_len_32,
                          nullptr)) {
+    LOG_ERROR("Failed to setup AES-GCM with tag length %u\n",
+              static_cast<unsigned>(tag_len_32));
+    return false;
+  }
+
+  return true;
+}
+
+static bool AESGCMRandNonceSetup(EVP_AEAD_CTX *ctx,
+                                 Span<const uint8_t> tag_len_span,
+                                 Span<const uint8_t> key) {
+  if (tag_len_span.size() != sizeof(uint32_t)) {
+    LOG_ERROR("Tag size value is %u bytes, not an uint32_t\n",
+              static_cast<unsigned>(tag_len_span.size()));
+    return false;
+  }
+  const uint32_t tag_len_32 = CRYPTO_load_u32_le(tag_len_span.data());
+
+  const EVP_AEAD *aead;
+  switch (key.size()) {
+    case 16:
+      aead = EVP_aead_aes_128_gcm_randnonce();
+      break;
+    case 32:
+      aead = EVP_aead_aes_256_gcm_randnonce();
+      break;
+    default:
+      LOG_ERROR("Bad AES-GCM key length %u\n",
+                static_cast<unsigned>(key.size()));
+      return false;
+  }
+
+  constexpr size_t kNonceLength = 12;
+  if (!EVP_AEAD_CTX_init(ctx, aead, key.data(), key.size(),
+                         tag_len_32 + kNonceLength, nullptr)) {
     LOG_ERROR("Failed to setup AES-GCM with tag length %u\n",
               static_cast<unsigned>(tag_len_32));
     return false;
@@ -2123,6 +2127,8 @@ static constexpr struct {
     {"AES-CTR/decrypt", 4, AES_CTR},
     {"AES-GCM/seal", 5, AEADSeal<AESGCMSetup>},
     {"AES-GCM/open", 5, AEADOpen<AESGCMSetup>},
+    {"AES-GCM-randnonce/seal", 5, AEADSeal<AESGCMRandNonceSetup>},
+    {"AES-GCM-randnonce/open", 5, AEADOpen<AESGCMRandNonceSetup>},
     {"AES-KW/seal", 5, AESKeyWrapSeal},
     {"AES-KW/open", 5, AESKeyWrapOpen},
     {"AES-KWP/seal", 5, AESPaddedKeyWrapSeal},

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -65,9 +65,10 @@ static void update_sharpness(loop_filter_info_n *lfi, int sharpness_lvl) {
   }
 }
 
-uint8_t av1_get_filter_level(const AV1_COMMON *cm,
-                             const loop_filter_info_n *lfi_n, const int dir_idx,
-                             int plane, const MB_MODE_INFO *mbmi) {
+static uint8_t get_filter_level(const AV1_COMMON *cm,
+                                const loop_filter_info_n *lfi_n,
+                                const int dir_idx, int plane,
+                                const MB_MODE_INFO *mbmi) {
   const int segment_id = mbmi->segment_id;
   if (cm->delta_q_info.delta_lf_present_flag) {
     int8_t delta_lf;
@@ -266,7 +267,7 @@ static TX_SIZE set_lpf_parameters(
     // prepare outer edge parameters. deblock the edge if it's an edge of a TU
     {
       const uint32_t curr_level =
-          av1_get_filter_level(cm, &cm->lf_info, edge_dir, plane, mbmi);
+          get_filter_level(cm, &cm->lf_info, edge_dir, plane, mbmi);
       const int curr_skipped = mbmi->skip_txfm && is_inter_block(mbmi);
       uint32_t level = curr_level;
       if (coord) {
@@ -281,7 +282,7 @@ static TX_SIZE set_lpf_parameters(
               xd, mi_prev, pv_row, pv_col, plane, scale_horz, scale_vert);
 
           const uint32_t pv_lvl =
-              av1_get_filter_level(cm, &cm->lf_info, edge_dir, plane, mi_prev);
+              get_filter_level(cm, &cm->lf_info, edge_dir, plane, mi_prev);
 
           const int pv_skip_txfm =
               mi_prev->skip_txfm && is_inter_block(mi_prev);
@@ -689,10 +690,10 @@ static AOM_FORCE_INLINE void set_one_param_for_line_luma(
     }
     assert(mi_prev);
     uint8_t level =
-        av1_get_filter_level(cm, &cm->lf_info, edge_dir, AOM_PLANE_Y, mbmi);
+        get_filter_level(cm, &cm->lf_info, edge_dir, AOM_PLANE_Y, mbmi);
     if (!level) {
-      level = av1_get_filter_level(cm, &cm->lf_info, edge_dir, AOM_PLANE_Y,
-                                   mi_prev);
+      level =
+          get_filter_level(cm, &cm->lf_info, edge_dir, AOM_PLANE_Y, mi_prev);
     }
 
     const int32_t pu_edge = mi_prev != mbmi;
@@ -723,7 +724,7 @@ static AOM_FORCE_INLINE void set_one_param_for_line_luma(
 }
 
 // Similar to set_lpf_parameters, but does so one row/col at a time to reduce
-// calls to \ref get_transform_size and \ref av1_get_filter_level
+// calls to \ref get_transform_size and \ref get_filter_level
 static AOM_FORCE_INLINE void set_lpf_parameters_for_line_luma(
     AV1_DEBLOCKING_PARAMETERS *const params_buf, TX_SIZE *tx_buf,
     const AV1_COMMON *const cm, const MACROBLOCKD *const xd,
@@ -822,18 +823,17 @@ static AOM_FORCE_INLINE void set_one_param_for_line_chroma(
       *min_dim = is_vert ? tx_size_high[pv_ts] : tx_size_wide[pv_ts];
     }
 
-    uint8_t level =
-        av1_get_filter_level(cm, &cm->lf_info, edge_dir, plane, mbmi);
+    uint8_t level = get_filter_level(cm, &cm->lf_info, edge_dir, plane, mbmi);
     if (!level) {
-      level = av1_get_filter_level(cm, &cm->lf_info, edge_dir, plane, mi_prev);
+      level = get_filter_level(cm, &cm->lf_info, edge_dir, plane, mi_prev);
     }
 #ifndef NDEBUG
     if (joint_filter_chroma) {
       uint8_t v_level =
-          av1_get_filter_level(cm, &cm->lf_info, edge_dir, AOM_PLANE_V, mbmi);
+          get_filter_level(cm, &cm->lf_info, edge_dir, AOM_PLANE_V, mbmi);
       if (!v_level) {
-        v_level = av1_get_filter_level(cm, &cm->lf_info, edge_dir, AOM_PLANE_V,
-                                       mi_prev);
+        v_level =
+            get_filter_level(cm, &cm->lf_info, edge_dir, AOM_PLANE_V, mi_prev);
       }
       assert(level == v_level);
     }
@@ -903,10 +903,10 @@ static AOM_FORCE_INLINE void set_lpf_parameters_for_line_chroma(
   }
 }
 
-static AOM_INLINE void filter_vert(uint8_t *dst, int dst_stride,
-                                   const AV1_DEBLOCKING_PARAMETERS *params,
-                                   const SequenceHeader *seq_params,
-                                   USE_FILTER_TYPE use_filter_type) {
+static inline void filter_vert(uint8_t *dst, int dst_stride,
+                               const AV1_DEBLOCKING_PARAMETERS *params,
+                               const SequenceHeader *seq_params,
+                               USE_FILTER_TYPE use_filter_type) {
   const loop_filter_thresh *limits = params->lfthr;
 #if CONFIG_AV1_HIGHBITDEPTH
   const int use_highbitdepth = seq_params->use_highbitdepth;
@@ -1109,10 +1109,11 @@ static AOM_INLINE void filter_vert(uint8_t *dst, int dst_stride,
 #endif  // !CONFIG_AV1_HIGHBITDEPTH
 }
 
-static AOM_INLINE void filter_vert_chroma(
-    uint8_t *u_dst, uint8_t *v_dst, int dst_stride,
-    const AV1_DEBLOCKING_PARAMETERS *params, const SequenceHeader *seq_params,
-    USE_FILTER_TYPE use_filter_type) {
+static inline void filter_vert_chroma(uint8_t *u_dst, uint8_t *v_dst,
+                                      int dst_stride,
+                                      const AV1_DEBLOCKING_PARAMETERS *params,
+                                      const SequenceHeader *seq_params,
+                                      USE_FILTER_TYPE use_filter_type) {
   const loop_filter_thresh *u_limits = params->lfthr;
   const loop_filter_thresh *v_limits = params->lfthr;
 #if CONFIG_AV1_HIGHBITDEPTH
@@ -1504,10 +1505,10 @@ void av1_filter_block_plane_vert_opt_chroma(
   }
 }
 
-static AOM_INLINE void filter_horz(uint8_t *dst, int dst_stride,
-                                   const AV1_DEBLOCKING_PARAMETERS *params,
-                                   const SequenceHeader *seq_params,
-                                   USE_FILTER_TYPE use_filter_type) {
+static inline void filter_horz(uint8_t *dst, int dst_stride,
+                               const AV1_DEBLOCKING_PARAMETERS *params,
+                               const SequenceHeader *seq_params,
+                               USE_FILTER_TYPE use_filter_type) {
   const loop_filter_thresh *limits = params->lfthr;
 #if CONFIG_AV1_HIGHBITDEPTH
   const int use_highbitdepth = seq_params->use_highbitdepth;
@@ -1710,10 +1711,11 @@ static AOM_INLINE void filter_horz(uint8_t *dst, int dst_stride,
 #endif  // !CONFIG_AV1_HIGHBITDEPTH
 }
 
-static AOM_INLINE void filter_horz_chroma(
-    uint8_t *u_dst, uint8_t *v_dst, int dst_stride,
-    const AV1_DEBLOCKING_PARAMETERS *params, const SequenceHeader *seq_params,
-    USE_FILTER_TYPE use_filter_type) {
+static inline void filter_horz_chroma(uint8_t *u_dst, uint8_t *v_dst,
+                                      int dst_stride,
+                                      const AV1_DEBLOCKING_PARAMETERS *params,
+                                      const SequenceHeader *seq_params,
+                                      USE_FILTER_TYPE use_filter_type) {
   const loop_filter_thresh *u_limits = params->lfthr;
   const loop_filter_thresh *v_limits = params->lfthr;
 #if CONFIG_AV1_HIGHBITDEPTH

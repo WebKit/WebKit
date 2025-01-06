@@ -1,0 +1,8 @@
+This tests that text with full-size-kana returns the untransformed text to Accessibility APIs.
+
+AX String: じゅう must read the same as じゅう not じゆう.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+じゆう must read the same as じゅう not じゆう.

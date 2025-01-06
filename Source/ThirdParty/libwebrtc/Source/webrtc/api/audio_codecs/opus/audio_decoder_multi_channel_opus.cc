@@ -11,16 +11,20 @@
 #include "api/audio_codecs/opus/audio_decoder_multi_channel_opus.h"
 
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
-#include "absl/strings/match.h"
+#include "api/audio_codecs/audio_codec_pair_id.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/audio_codecs/opus/audio_decoder_multi_channel_opus_config.h"
+#include "api/field_trials_view.h"
 #include "modules/audio_coding/codecs/opus/audio_decoder_multi_channel_opus_impl.h"
 
 namespace webrtc {
 
-absl::optional<AudioDecoderMultiChannelOpusConfig>
+std::optional<AudioDecoderMultiChannelOpusConfig>
 AudioDecoderMultiChannelOpus::SdpToConfig(const SdpAudioFormat& format) {
   return AudioDecoderMultiChannelOpusImpl::SdpToConfig(format);
 }
@@ -64,8 +68,8 @@ void AudioDecoderMultiChannelOpus::AppendSupportedDecoders(
 
 std::unique_ptr<AudioDecoder> AudioDecoderMultiChannelOpus::MakeAudioDecoder(
     AudioDecoderMultiChannelOpusConfig config,
-    absl::optional<AudioCodecPairId> /*codec_pair_id*/,
-    const FieldTrialsView* field_trials) {
+    std::optional<AudioCodecPairId> /*codec_pair_id*/,
+    const FieldTrialsView* /* field_trials */) {
   return AudioDecoderMultiChannelOpusImpl::MakeAudioDecoder(config);
 }
 }  // namespace webrtc

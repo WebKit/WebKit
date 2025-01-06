@@ -5,7 +5,6 @@
   <style> canvas { border:solid #000 } </style>
   <script>
    if (window.testRunner) {
-     testRunner.dumpAsText(true);
      testRunner.waitUntilDone();
    }
    window.onload = function(){
@@ -19,25 +18,21 @@
     	p = ctx.createPattern(i, "repeat");
     	ctx.fillStyle = p;
     	ctx.translate(10, 10);
-    	ctx.strokeRect(0, 0, 150, 150);
     	ctx.fillRect(0, 0, 150, 150);
     
     	px = ctx.createPattern(i, "repeat-x");
     	ctx.fillStyle = px;
     	ctx.translate(0, 160);
-    	ctx.strokeRect(0, 0, 150, 150);
     	ctx.fillRect(0, 0, 150, 150);
     
     	pn = ctx.createPattern(i, "no-repeat");
     	ctx.fillStyle = pn;
     	ctx.translate(160, 0);
-    	ctx.strokeRect(0, 0, 150, 150);
     	ctx.fillRect(0, 0, 150, 150);
     
     	py = ctx.createPattern(i, "repeat-y");
     	ctx.fillStyle = py;
     	ctx.translate(0, -160);
-    	ctx.strokeRect(0, 0, 150, 150);
     	ctx.fillRect(0, 0, 150, 150);
     	
     	if (window.testRunner)

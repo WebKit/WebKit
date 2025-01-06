@@ -26,12 +26,15 @@
 #pragma once
 
 #include "RenderTreeBuilder.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class RenderTreeBuilder::Inline {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Inline);
 public:
+    static RenderBoxModelObject* continuationBefore(RenderInline& parent, RenderObject* beforeChild);
+
     Inline(RenderTreeBuilder&);
 
     void attach(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);

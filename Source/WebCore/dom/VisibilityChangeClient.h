@@ -25,20 +25,15 @@
 
 #pragma once
 
-#include <wtf/WeakPtr.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 class VisibilityChangeClient;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::VisibilityChangeClient> : std::true_type { };
-}
-
 namespace WebCore {
 
-class VisibilityChangeClient : public CanMakeWeakPtr<VisibilityChangeClient> {
+class VisibilityChangeClient : public AbstractRefCountedAndCanMakeWeakPtr<VisibilityChangeClient> {
 public:
     virtual ~VisibilityChangeClient() = default;
 

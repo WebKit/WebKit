@@ -14,6 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/support/F-exif-chunk-early.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/support/F-exif-early.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/support/F-exif-late.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/support/F-rotated.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/support/F-upright.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/support/cursor-8-llo.jpg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/support/exif-orientation-1-ul-pre-rotated.jpg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/support/exif-orientation-1-ul.jpg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/support/exif-orientation-2-ur-pre-rotated.jpg
@@ -32,3 +38,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/support/exif-orientation-8-llo.jpg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/support/exif-orientation-9-u-pre-rotated.jpg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/support/exif-orientation-9-u.jpg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/support/svg-with-image-rotated.svg

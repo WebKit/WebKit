@@ -31,7 +31,6 @@
 #include "FrameInfoData.h"
 #include "GeolocationIdentifier.h"
 #include "MessageSenderInlines.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -41,9 +40,12 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GeolocationPermissionRequestManager);
 
 GeolocationPermissionRequestManager::GeolocationPermissionRequestManager(WebPage& page)
     : m_page(page)
@@ -51,6 +53,11 @@ GeolocationPermissionRequestManager::GeolocationPermissionRequestManager(WebPage
 }
 
 GeolocationPermissionRequestManager::~GeolocationPermissionRequestManager() = default;
+
+Ref<WebPage> GeolocationPermissionRequestManager::protectedPage() const
+{
+    return m_page.get();
+}
 
 void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation& geolocation)
 {
@@ -70,20 +77,18 @@ void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation
     auto webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
-    m_page.send(Messages::WebPageProxy::RequestGeolocationPermissionForFrame(geolocationID, webFrame->info()));
+    protectedPage()->send(Messages::WebPageProxy::RequestGeolocationPermissionForFrame(geolocationID, webFrame->info()));
 }
 
 void GeolocationPermissionRequestManager::revokeAuthorizationToken(const String& authorizationToken)
 {
-    m_page.send(Messages::WebPageProxy::RevokeGeolocationAuthorizationToken(authorizationToken));
+    protectedPage()->send(Messages::WebPageProxy::RevokeGeolocationAuthorizationToken(authorizationToken));
 }
 
 void GeolocationPermissionRequestManager::cancelRequestForGeolocation(Geolocation& geolocation)
 {
-    GeolocationIdentifier geolocationID = m_geolocationToIDMap.take(&geolocation);
-    if (!geolocationID)
-        return;
-    m_idToGeolocationMap.remove(geolocationID);
+    if (auto geolocationID = m_geolocationToIDMap.takeOptional(geolocation))
+        m_idToGeolocationMap.remove(*geolocationID);
 }
 
 void GeolocationPermissionRequestManager::didReceiveGeolocationPermissionDecision(GeolocationIdentifier geolocationID, const String& authorizationToken)
@@ -94,6 +99,16 @@ void GeolocationPermissionRequestManager::didReceiveGeolocationPermissionDecisio
     m_geolocationToIDMap.remove(geolocation.get());
 
     geolocation->setIsAllowed(!authorizationToken.isNull(), authorizationToken);
+}
+
+void GeolocationPermissionRequestManager::ref() const
+{
+    m_page->ref();
+}
+
+void GeolocationPermissionRequestManager::deref() const
+{
+    m_page->deref();
 }
 
 } // namespace WebKit

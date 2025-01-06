@@ -18,18 +18,18 @@ body {
 
 </style>
 <script>
-function test()
+async function test()
 {
     if (window.testRunner) {
         testRunner.waitUntilDone();
         testRunner.dumpAsText(true);
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
     }
 
-    window.setTimeout(function() {
+    window.setTimeout(async function() {
         document.scrollingElement.scrollTop = 2000;
         if (window.testRunner) {
-            testRunner.displayAndTrackRepaints();
+            await testRunner.displayAndTrackRepaints();
             testRunner.notifyDone();
         }
     }, 0);

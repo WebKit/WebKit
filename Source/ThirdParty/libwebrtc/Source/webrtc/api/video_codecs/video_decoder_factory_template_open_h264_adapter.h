@@ -14,6 +14,8 @@
 #include <memory>
 #include <vector>
 
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_decoder.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
 
 namespace webrtc {
@@ -30,7 +32,7 @@ struct OpenH264DecoderTemplateAdapter {
   }
 
   static std::unique_ptr<VideoDecoder> CreateDecoder(
-      const SdpVideoFormat& format) {
+      const SdpVideoFormat& /* format */) {
 #if defined(WEBRTC_USE_H264)
 
     return H264Decoder::Create();

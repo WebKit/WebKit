@@ -60,8 +60,10 @@ bool ValidateIdenticalPriority(const egl::ContextMap &contexts, egl::ContextPrio
 // Set to true will log bufferpool stats into INFO stream
 #define ANGLE_ENABLE_BUFFER_POOL_STATS_LOGGING false
 
-ShareGroupVk::ShareGroupVk(const egl::ShareGroupState &state)
+ShareGroupVk::ShareGroupVk(const egl::ShareGroupState &state, vk::Renderer *renderer)
     : ShareGroupImpl(state),
+      mRenderer(renderer),
+      mCurrentFrameCount(0),
       mContextsPriority(egl::ContextPriority::InvalidEnum),
       mIsContextsPriorityLocked(false),
       mLastMonolithicPipelineJobTime(0)
@@ -137,10 +139,9 @@ angle::Result ShareGroupVk::updateContextsPriority(ContextVk *contextVk,
 
     {
         vk::ScopedQueueSerialIndex index;
-        vk::Renderer *renderer = contextVk->getRenderer();
-        ANGLE_TRY(renderer->allocateScopedQueueSerialIndex(&index));
-        ANGLE_TRY(renderer->submitPriorityDependency(contextVk, protectionTypes, mContextsPriority,
-                                                     newPriority, index.get()));
+        ANGLE_TRY(mRenderer->allocateScopedQueueSerialIndex(&index));
+        ANGLE_TRY(mRenderer->submitPriorityDependency(contextVk, protectionTypes, mContextsPriority,
+                                                      newPriority, index.get()));
     }
 
     for (auto context : getContexts())
@@ -158,7 +159,8 @@ angle::Result ShareGroupVk::updateContextsPriority(ContextVk *contextVk,
 void ShareGroupVk::onDestroy(const egl::Display *display)
 {
     DisplayVk *displayVk   = vk::GetImpl(display);
-    vk::Renderer *renderer = displayVk->getRenderer();
+
+    mRefCountedEventsGarbageRecycler.destroy(mRenderer);
 
     for (std::unique_ptr<vk::BufferPool> &pool : mDefaultBufferPools)
     {
@@ -167,18 +169,18 @@ void ShareGroupVk::onDestroy(const egl::Display *display)
             // If any context uses display texture share group, it is expected that a
             // BufferBlock may still in used by textures that outlived ShareGroup.  The
             // non-empty BufferBlock will be put into Renderer's orphan list instead.
-            pool->destroy(renderer, mState.hasAnyContextWithDisplayTextureShareGroup());
+            pool->destroy(mRenderer, mState.hasAnyContextWithDisplayTextureShareGroup());
         }
     }
 
-    mPipelineLayoutCache.destroy(renderer);
-    mDescriptorSetLayoutCache.destroy(renderer);
+    mPipelineLayoutCache.destroy(mRenderer);
+    mDescriptorSetLayoutCache.destroy(mRenderer);
 
-    mMetaDescriptorPools[DescriptorSetIndex::UniformsAndXfb].destroy(renderer);
-    mMetaDescriptorPools[DescriptorSetIndex::Texture].destroy(renderer);
-    mMetaDescriptorPools[DescriptorSetIndex::ShaderResource].destroy(renderer);
+    mMetaDescriptorPools[DescriptorSetIndex::UniformsAndXfb].destroy(mRenderer);
+    mMetaDescriptorPools[DescriptorSetIndex::Texture].destroy(mRenderer);
+    mMetaDescriptorPools[DescriptorSetIndex::ShaderResource].destroy(mRenderer);
 
-    mFramebufferCache.destroy(renderer);
+    mFramebufferCache.destroy(mRenderer);
     resetPrevTexture();
 
     mVertexInputGraphicsPipelineCache.destroy(displayVk);
@@ -219,14 +221,14 @@ angle::Result ShareGroupVk::scheduleMonolithicPipelineCreationTask(
     const vk::RenderPass *compatibleRenderPass = nullptr;
     // Pull in a compatible RenderPass to be used by the task.  This is done at the last minute,
     // just before the task is scheduled, to minimize the time this reference to the render pass
-    // cache is held.  If the render pass cache needs to be cleared, the main thread will wait for
-    // the job to complete.
+    // cache is held.  If the render pass cache needs to be cleared, the main thread will wait
+    // for the job to complete.
     ANGLE_TRY(contextVk->getCompatibleRenderPass(taskOut->getTask()->getRenderPassDesc(),
                                                  &compatibleRenderPass));
     taskOut->setRenderPass(compatibleRenderPass);
 
     mMonolithicPipelineCreationEvent =
-        contextVk->getRenderer()->getGlobalOps()->postMultiThreadWorkerTask(taskOut->getTask());
+        mRenderer->getGlobalOps()->postMultiThreadWorkerTask(taskOut->getTask());
 
     taskOut->onSchedule(mMonolithicPipelineCreationEvent);
 
@@ -285,22 +287,34 @@ void TextureUpload::onTextureRelease(TextureVk *textureVk)
     }
 }
 
-vk::BufferPool *ShareGroupVk::getDefaultBufferPool(vk::Renderer *renderer,
-                                                   VkDeviceSize size,
+void ShareGroupVk::onFramebufferBoundary()
+{
+    if (isDueForBufferPoolPrune())
+    {
+        pruneDefaultBufferPools();
+    }
+
+    // Always clean up event garbage and destroy the excessive free list at frame boundary.
+    cleanupRefCountedEventGarbage();
+
+    mCurrentFrameCount++;
+}
+
+vk::BufferPool *ShareGroupVk::getDefaultBufferPool(VkDeviceSize size,
                                                    uint32_t memoryTypeIndex,
                                                    BufferUsageType usageType)
 {
     if (!mDefaultBufferPools[memoryTypeIndex])
     {
-        const vk::Allocator &allocator = renderer->getAllocator();
-        VkBufferUsageFlags usageFlags  = GetDefaultBufferUsageFlags(renderer);
+        const vk::Allocator &allocator = mRenderer->getAllocator();
+        VkBufferUsageFlags usageFlags  = GetDefaultBufferUsageFlags(mRenderer);
 
         VkMemoryPropertyFlags memoryPropertyFlags;
         allocator.getMemoryTypeProperties(memoryTypeIndex, &memoryPropertyFlags);
 
         std::unique_ptr<vk::BufferPool> pool  = std::make_unique<vk::BufferPool>();
         vma::VirtualBlockCreateFlags vmaFlags = vma::VirtualBlockCreateFlagBits::GENERAL;
-        pool->initWithFlags(renderer, vmaFlags, usageFlags, 0, memoryTypeIndex,
+        pool->initWithFlags(mRenderer, vmaFlags, usageFlags, 0, memoryTypeIndex,
                             memoryPropertyFlags);
         mDefaultBufferPools[memoryTypeIndex] = std::move(pool);
     }
@@ -308,12 +322,12 @@ vk::BufferPool *ShareGroupVk::getDefaultBufferPool(vk::Renderer *renderer,
     return mDefaultBufferPools[memoryTypeIndex].get();
 }
 
-void ShareGroupVk::pruneDefaultBufferPools(vk::Renderer *renderer)
+void ShareGroupVk::pruneDefaultBufferPools()
 {
     mLastPruneTime = angle::GetCurrentSystemTime();
 
     // Bail out if no suballocation have been destroyed since last prune.
-    if (renderer->getSuballocationDestroyedSize() == 0)
+    if (mRenderer->getSuballocationDestroyedSize() == 0)
     {
         return;
     }
@@ -322,18 +336,18 @@ void ShareGroupVk::pruneDefaultBufferPools(vk::Renderer *renderer)
     {
         if (pool)
         {
-            pool->pruneEmptyBuffers(renderer);
+            pool->pruneEmptyBuffers(mRenderer);
         }
     }
 
-    renderer->onBufferPoolPrune();
+    mRenderer->onBufferPoolPrune();
 
 #if ANGLE_ENABLE_BUFFER_POOL_STATS_LOGGING
     logBufferPools();
 #endif
 }
 
-bool ShareGroupVk::isDueForBufferPoolPrune(vk::Renderer *renderer)
+bool ShareGroupVk::isDueForBufferPoolPrune()
 {
     // Ensure we periodically prune to maintain the heuristic information
     double timeElapsed = angle::GetCurrentSystemTime() - mLastPruneTime;
@@ -344,7 +358,7 @@ bool ShareGroupVk::isDueForBufferPoolPrune(vk::Renderer *renderer)
 
     // If we have destroyed a lot of memory, also prune to ensure memory gets freed as soon as
     // possible
-    if (renderer->getSuballocationDestroyedSize() >= kMaxTotalEmptyBufferBytes)
+    if (mRenderer->getSuballocationDestroyedSize() >= kMaxTotalEmptyBufferBytes)
     {
         return true;
     }

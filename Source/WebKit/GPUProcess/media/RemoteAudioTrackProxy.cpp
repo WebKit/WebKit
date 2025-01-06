@@ -34,8 +34,11 @@
 #include "GPUConnectionToWebProcess.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteMediaPlayerProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioTrackProxy);
 
 using namespace WebCore;
 
@@ -49,36 +52,37 @@ RemoteAudioTrackProxy::RemoteAudioTrackProxy(GPUConnectionToWebProcess& connecti
         ensureOnMainThread(WTFMove(task));
     }, *this);
 
-    connectionToWebProcess.connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteAudioTrack(configuration()), m_mediaPlayerIdentifier);
+    connectionToWebProcess.protectedConnection()->send(Messages::MediaPlayerPrivateRemote::AddRemoteAudioTrack(configuration()), m_mediaPlayerIdentifier);
 }
 
 RemoteAudioTrackProxy::~RemoteAudioTrackProxy()
 {
-    m_trackPrivate->removeClient(m_clientId);
+    Ref { m_trackPrivate }->removeClient(m_clientId);
 }
 
 AudioTrackPrivateRemoteConfiguration RemoteAudioTrackProxy::configuration()
 {
+    Ref trackPrivate = m_trackPrivate;
     return {
         {
-            m_trackPrivate->id(),
-            m_trackPrivate->label(),
-            m_trackPrivate->language(),
-            m_trackPrivate->startTimeVariance(),
-            m_trackPrivate->trackIndex(),
+            trackPrivate->id(),
+            trackPrivate->label(),
+            trackPrivate->language(),
+            trackPrivate->startTimeVariance(),
+            trackPrivate->trackIndex(),
         },
-        m_trackPrivate->enabled(),
-        m_trackPrivate->kind(),
-        m_trackPrivate->configuration(),
+        trackPrivate->enabled(),
+        trackPrivate->kind(),
+        trackPrivate->configuration(),
     };
 }
 
 void RemoteAudioTrackProxy::configurationChanged()
 {
-    auto connection = m_connectionToWebProcess.get();
+    RefPtr connection = m_connectionToWebProcess.get();
     if (!connection)
         return;
-    connection->connection().send(Messages::MediaPlayerPrivateRemote::RemoteAudioTrackConfigurationChanged(std::exchange(m_id, m_trackPrivate->id()), configuration()), m_mediaPlayerIdentifier);
+    connection->protectedConnection()->send(Messages::MediaPlayerPrivateRemote::RemoteAudioTrackConfigurationChanged(std::exchange(m_id, m_trackPrivate->id()), configuration()), m_mediaPlayerIdentifier);
 }
 
 void RemoteAudioTrackProxy::willRemove()

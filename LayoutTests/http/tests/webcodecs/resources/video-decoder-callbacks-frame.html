@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const videoDecoder = new VideoDecoder({
+    output: _ => {},
+    error: _ => {},
+});
+
+onload = () => parent.postMessage("iframeLoaded");
+</script>
+</body>
+</html>

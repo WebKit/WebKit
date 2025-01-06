@@ -1,0 +1,18 @@
+
+PASS Parse with -apple-system-blur-material-ultra-thin
+PASS Parse with -apple-system-blur-material-thin
+PASS Parse with -apple-system-blur-material
+PASS Parse with -apple-system-blur-material-thick
+PASS Parse with -apple-system-blur-material-chrome
+PASS Parse with -apple-system-vibrancy-label
+PASS Parse with -apple-system-vibrancy-secondary-label
+PASS Parse with -apple-system-vibrancy-tertiary-label
+PASS Parse with -apple-system-vibrancy-quaternary-label
+PASS Parse with -apple-system-vibrancy-fill
+PASS Parse with -apple-system-vibrancy-secondary-fill
+PASS Parse with -apple-system-vibrancy-tertiary-fill
+PASS Parse with -apple-system-vibrancy-separator
+PASS -apple-visual-effect does not accept invalid values
+PASS -apple-visual-effect does not accept keywords for other properties
+PASS -apple-visual-effect does not accept function syntax
+

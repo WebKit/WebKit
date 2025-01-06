@@ -34,11 +34,14 @@
 #include "PageOverlayController.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollbarTheme.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 static const Seconds fadeAnimationDuration { 200_ms };
 static const double fadeAnimationFrameRate = 30;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageOverlay);
 
 static PageOverlay::PageOverlayID generatePageOverlayID()
 {

@@ -4,22 +4,30 @@ Text Marker: [Length: 5]
 	START: AXRole: AXStaticText
 	END: AXRole: AXStaticText
 
-Text Marker Range Attributed Text: AXFont - {
+Text Marker Range Attributed Text: Attributes in range {0, 5}:
+AXFont: {
     AXFontFamily = Helvetica;
     AXFontName = Helvetica;
     AXFontSize = 11;
-}, Hello
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Hello
 
 Inserting 'world'
 Text Marker: [Length: 11]
 	START: AXRole: AXStaticText
 	END: AXRole: AXStaticText
 
-Text Marker Range Attributed Text: AXFont - {
+Text Marker Range Attributed Text: Attributes in range {0, 11}:
+AXFont: {
     AXFontFamily = Helvetica;
     AXFontName = Helvetica;
     AXFontSize = 11;
-}, Hello world
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Hello world
 
 
 PASS successfullyParsed is true

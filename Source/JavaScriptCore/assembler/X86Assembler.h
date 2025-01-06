@@ -3891,7 +3891,7 @@ public:
     
     static bool isInt3(void* address)
     {
-        uint8_t candidateInstruction = *reinterpret_cast<uint8_t*>(address);
+        uint8_t candidateInstruction = *static_cast<uint8_t*>(address);
         return candidateInstruction == OP_INT3;
     }
 
@@ -6037,8 +6037,8 @@ public:
         ASSERT(from.isSet());
         ASSERT(to.isSet());
 
-        char* code = reinterpret_cast<char*>(m_formatter.data());
-        ASSERT(!WTF::unalignedLoad<int32_t>(bitwise_cast<int32_t*>(code + from.offset()) - 1));
+        char* code = static_cast<char*>(m_formatter.data());
+        ASSERT(!WTF::unalignedLoad<int32_t>(std::bit_cast<int32_t*>(code + from.offset()) - 1));
         setRel32(code + from.offset(), code + to.offset());
     }
     
@@ -6046,21 +6046,21 @@ public:
     {
         ASSERT(from.isSet());
 
-        setRel32(reinterpret_cast<char*>(code) + from.offset(), to);
+        setRel32(static_cast<char*>(code) + from.offset(), to);
     }
 
     static void linkCall(void* code, AssemblerLabel from, void* to)
     {
         ASSERT(from.isSet());
 
-        setRel32(reinterpret_cast<char*>(code) + from.offset(), to);
+        setRel32(static_cast<char*>(code) + from.offset(), to);
     }
 
     static void linkPointer(void* code, AssemblerLabel where, void* value)
     {
         ASSERT(where.isSet());
 
-        setPointer(reinterpret_cast<char*>(code) + where.offset(), value);
+        setPointer(static_cast<char*>(code) + where.offset(), value);
     }
 
     static void relinkJump(void* from, void* to)
@@ -6085,7 +6085,7 @@ public:
     
     static void* readPointer(void* where)
     {
-        return WTF::unalignedLoad<void*>(bitwise_cast<void**>(where) - 1);
+        return WTF::unalignedLoad<void*>(std::bit_cast<void**>(where) - 1);
     }
 
     static void replaceWithHlt(void* instructionStart)
@@ -6100,8 +6100,8 @@ public:
 
     static void replaceWithJump(void* instructionStart, void* to)
     {
-        uint8_t* ptr = bitwise_cast<uint8_t*>(instructionStart);
-        uint8_t* dstPtr = bitwise_cast<uint8_t*>(to);
+        uint8_t* ptr = std::bit_cast<uint8_t*>(instructionStart);
+        uint8_t* dstPtr = std::bit_cast<uint8_t*>(to);
         intptr_t distance = (intptr_t)(dstPtr - (ptr + 5));
 #if ENABLE(MPROTECT_RX_TO_RWX)
         uint8_t buffer[5];
@@ -6138,8 +6138,8 @@ public:
         constexpr unsigned instructionSize = 10; // REX.W MOV IMM64
         constexpr int rexBytes = 1;
         constexpr int opcodeBytes = 1;
-        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
-        
+        uint8_t* ptr = static_cast<uint8_t*>(instructionStart);
+
         union {
             uint64_t asWord;
             uint8_t asBytes[8];
@@ -6168,8 +6168,8 @@ public:
         constexpr unsigned instructionSize = 6; // REX MOV IMM32
         constexpr int rexBytes = 1;
         constexpr int opcodeBytes = 1;
-        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
-        
+        uint8_t* ptr = static_cast<uint8_t*>(instructionStart);
+
         union {
             uint32_t asWord;
             uint8_t asBytes[4];
@@ -6194,7 +6194,7 @@ public:
         constexpr int opcodeBytes = 1;
         constexpr int modRMBytes = 1;
         ASSERT(opcodeBytes + modRMBytes <= maxJumpReplacementSize());
-        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
+        uint8_t* ptr = static_cast<uint8_t*>(instructionStart);
         union {
             uint32_t asWord;
             uint8_t asBytes[4];
@@ -6220,7 +6220,7 @@ public:
         constexpr int opcodeBytes = 1;
         constexpr int modRMBytes = 1;
         ASSERT(opcodeBytes + modRMBytes <= maxJumpReplacementSize());
-        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
+        uint8_t* ptr = static_cast<uint8_t*>(instructionStart);
         union {
             uint32_t asWord;
             uint8_t asBytes[4];
@@ -6291,7 +6291,7 @@ public:
             {0x66, 0x2e, 0x0f, 0x1f, 0x84, 0x00, 0x00, 0x02, 0x00, 0x00}
         };
 
-        uint8_t* where = reinterpret_cast<uint8_t*>(base);
+        uint8_t* where = static_cast<uint8_t*>(base);
         while (size) {
             unsigned nopSize = static_cast<unsigned>(std::min<size_t>(size, 15));
             unsigned numPrefixes = nopSize <= 10 ? 0 : nopSize - 10;
@@ -6322,27 +6322,27 @@ private:
     static void setPointer(void* where, void* value)
     {
 #if ENABLE(MPROTECT_RX_TO_RWX)
-        performJITMemcpy(bitwise_cast<void**>(where) - 1, &value, sizeof(void*));
+        performJITMemcpy(std::bit_cast<void**>(where) - 1, &value, sizeof(void*));
 #else
-        WTF::unalignedStore<void*>(bitwise_cast<void**>(where) - 1, value);
+        WTF::unalignedStore<void*>(std::bit_cast<void**>(where) - 1, value);
 #endif
     }
 
     static void setInt32(void* where, int32_t value)
     {
 #if ENABLE(MPROTECT_RX_TO_RWX)
-        performJITMemcpy(bitwise_cast<int32_t*>(where) - 1, &value, sizeof(int32_t));
+        performJITMemcpy(std::bit_cast<int32_t*>(where) - 1, &value, sizeof(int32_t));
 #else
-        WTF::unalignedStore<int32_t>(bitwise_cast<int32_t*>(where) - 1, value);
+        WTF::unalignedStore<int32_t>(std::bit_cast<int32_t*>(where) - 1, value);
 #endif
     }
     
     static void setInt8(void* where, int8_t value)
     {
 #if ENABLE(MPROTECT_RX_TO_RWX)
-        performJITMemcpy(bitwise_cast<int8_t*>(where) - 1, &value, sizeof(int8_t));
+        performJITMemcpy(std::bit_cast<int8_t*>(where) - 1, &value, sizeof(int8_t));
 #else
-        WTF::unalignedStore<int8_t>(bitwise_cast<int8_t*>(where) - 1, value);
+        WTF::unalignedStore<int8_t>(std::bit_cast<int8_t*>(where) - 1, value);
 #endif
     }
 

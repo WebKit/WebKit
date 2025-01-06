@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,7 +12,7 @@
 #include <emmintrin.h>
 #include <immintrin.h>
 
-#include "config/aom_dsp_rtcd.h"
+#include "config/av1_rtcd.h"
 
 #include "aom_dsp/aom_dsp_common.h"
 #include "aom_dsp/aom_filter.h"
@@ -24,7 +24,7 @@
 
 #include "av1/common/convolve.h"
 
-static INLINE __m256i unpack_weights_avx2(ConvolveParams *conv_params) {
+static inline __m256i unpack_weights_avx2(ConvolveParams *conv_params) {
   const int w0 = conv_params->fwd_offset;
   const int w1 = conv_params->bck_offset;
   const __m256i wt0 = _mm256_set1_epi16((int16_t)w0);
@@ -33,7 +33,7 @@ static INLINE __m256i unpack_weights_avx2(ConvolveParams *conv_params) {
   return wt;
 }
 
-static INLINE __m256i load_line2_avx2(const void *a, const void *b) {
+static inline __m256i load_line2_avx2(const void *a, const void *b) {
   return _mm256_permute2x128_si256(
       _mm256_castsi128_si256(_mm_loadu_si128((__m128i *)a)),
       _mm256_castsi128_si256(_mm_loadu_si128((__m128i *)b)), 0x20);
@@ -820,7 +820,7 @@ void av1_dist_wtd_convolve_2d_avx2(const uint8_t *src, int src_stride,
   } while (0)
 
 #define LEFT_SHIFT (2 * FILTER_BITS - 3 - 7)
-static AOM_INLINE void av1_dist_wtd_convolve_2d_no_avg_copy_avx2(
+static inline void av1_dist_wtd_convolve_2d_no_avg_copy_avx2(
     const uint8_t *src, int src_stride, CONV_BUF_TYPE *dst, int dst_stride,
     int w, int h, const __m256i offset_const) {
   int i = h;

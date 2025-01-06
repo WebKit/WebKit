@@ -32,6 +32,7 @@
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <glib/gi18n-lib.h>
 #include <pal/SessionID.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -57,11 +58,17 @@ enum {
 };
 
 class CookieStoreObserver : public API::HTTPCookieStoreObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CookieStoreObserver);
 public:
+    static RefPtr<CookieStoreObserver> create(Function<void()>&& callback)
+    {
+        return adoptRef(new CookieStoreObserver(WTFMove(callback)));
+    }
+
+private:
     CookieStoreObserver(Function<void()>&& callback)
         : m_callback(WTFMove(callback)) { }
-private:
+
     void cookiesDidChange(API::HTTPCookieStore&) final
     {
         m_callback();
@@ -90,10 +97,10 @@ struct _WebKitCookieManagerPrivate {
 
     WebKitWebsiteDataManager* dataManager;
 
-    std::unique_ptr<CookieStoreObserver> m_observer;
+    RefPtr<CookieStoreObserver> m_observer;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitCookieManager, webkit_cookie_manager, G_TYPE_OBJECT, GObject)
 
@@ -161,7 +168,7 @@ WebKitCookieManager* webkitCookieManagerCreate(WebKitWebsiteDataManager* dataMan
 {
     WebKitCookieManager* manager = WEBKIT_COOKIE_MANAGER(g_object_new(WEBKIT_TYPE_COOKIE_MANAGER, nullptr));
     manager->priv->dataManager = dataManager;
-    manager->priv->m_observer = makeUnique<CookieStoreObserver>([manager] {
+    manager->priv->m_observer = CookieStoreObserver::create([manager] {
         g_signal_emit(manager, signals[CHANGED], 0);
     });
     manager->priv->cookieStore().registerObserver(*manager->priv->m_observer);
@@ -196,8 +203,8 @@ void webkit_cookie_manager_set_persistent_storage(WebKitCookieManager* manager, 
     if (sessionID.isEphemeral())
         return;
 
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager);
-    websiteDataStore.setCookiePersistentStorage(String::fromUTF8(filename), toSoupCookiePersistentStorageType(storage));
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager);
+    websiteDataStore->setCookiePersistentStorage(String::fromUTF8(filename), toSoupCookiePersistentStorageType(storage));
 }
 
 /**
@@ -216,8 +223,8 @@ void webkit_cookie_manager_set_accept_policy(WebKitCookieManager* manager, WebKi
 {
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager);
-    websiteDataStore.setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager);
+    websiteDataStore->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
 }
 
 /**

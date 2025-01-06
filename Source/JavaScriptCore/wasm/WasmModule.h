@@ -27,6 +27,10 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "WasmCalleeGroup.h"
 #include "WasmJS.h"
 #include "WasmMemory.h"
@@ -39,6 +43,7 @@
 namespace JSC {
 
 class VM;
+class JSWebAssemblyInstance;
 
 namespace Wasm {
 
@@ -65,7 +70,7 @@ public:
         return adoptRef(*new Module(plan));
     }
 
-    Wasm::TypeIndex typeIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const;
+    Wasm::TypeIndex typeIndexFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace) const;
     const Wasm::ModuleInformation& moduleInformation() const { return m_moduleInformation.get(); }
 
     Ref<CalleeGroup> compileSync(VM&, MemoryMode);
@@ -77,7 +82,7 @@ public:
 
     void copyInitialCalleeGroupToAllMemoryModes(MemoryMode);
 
-    CodePtr<WasmEntryPtrTag> importFunctionStub(size_t importFunctionNum) { return m_wasmToJSExitStubs[importFunctionNum].code(); }
+    CodePtr<WasmEntryPtrTag> importFunctionStub(FunctionSpaceIndex importFunctionNum) { return m_wasmToJSExitStubs[importFunctionNum].code(); }
 
 private:
     Ref<CalleeGroup> getOrCreateCalleeGroup(VM&, MemoryMode);
@@ -93,5 +98,7 @@ private:
 };
 
 } } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

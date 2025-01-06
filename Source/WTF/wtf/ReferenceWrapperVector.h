@@ -50,15 +50,20 @@ public:
 
     friend bool operator==(const Iterator&, const Iterator&) = default;
 
-    Iterator& operator++()
+    WTF_UNSAFE_BUFFER_USAGE Iterator& operator++()
     {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         ++m_iterator;
         return *this;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
-    Iterator& operator--()
+
+    WTF_UNSAFE_BUFFER_USAGE Iterator& operator--()
     {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         --m_iterator;
         return *this;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
 private:
@@ -86,15 +91,20 @@ public:
 
     friend bool operator==(const Iterator&, const Iterator&) = default;
 
-    Iterator& operator++()
+    WTF_UNSAFE_BUFFER_USAGE Iterator& operator++()
     {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         ++m_iterator;
         return *this;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
-    Iterator& operator--()
+
+    WTF_UNSAFE_BUFFER_USAGE Iterator& operator--()
     {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         --m_iterator;
         return *this;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
 private:

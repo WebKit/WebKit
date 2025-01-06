@@ -36,6 +36,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -61,7 +62,8 @@ public:
 };
 
 class PlatformMediaResourceLoader : public ThreadSafeRefCounted<PlatformMediaResourceLoader, WTF::DestructionThread::Main> {
-    WTF_MAKE_NONCOPYABLE(PlatformMediaResourceLoader); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PlatformMediaResourceLoader);
+    WTF_MAKE_NONCOPYABLE(PlatformMediaResourceLoader);
 public:
     enum LoadOption {
         BufferData = 1 << 0,
@@ -74,7 +76,7 @@ public:
     virtual void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&&) = 0;
 
     // Can be called on any threads. Return the function dispatcher on which the PlaftormMediaResource and PlatformMediaResourceClient must be be called on.
-    virtual Ref<RefCountedSerialFunctionDispatcher> targetDispatcher() { return MainThreadDispatcher::singleton(); }
+    virtual Ref<GuaranteedSerialFunctionDispatcher> targetDispatcher() { return MainThreadDispatcher::singleton(); }
     // requestResource will be called on the main thread, the PlatformMediaResource object is to be used on targetDispatcher().
     virtual RefPtr<PlatformMediaResource> requestResource(ResourceRequest&&, LoadOptions) = 0;
 
@@ -83,7 +85,8 @@ protected:
 };
 
 class PlatformMediaResource : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PlatformMediaResource> {
-    WTF_MAKE_NONCOPYABLE(PlatformMediaResource); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PlatformMediaResource);
+    WTF_MAKE_NONCOPYABLE(PlatformMediaResource);
 public:
     // Called on the main thread.
     PlatformMediaResource() = default;

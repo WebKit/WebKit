@@ -34,37 +34,37 @@
 namespace WebCore {
     
 CSSFunctionValue::CSSFunctionValue(CSSValueID name, CSSValueListBuilder arguments)
-    : CSSValueContainingVector(FunctionClass, CommaSeparator, WTFMove(arguments))
+    : CSSValueContainingVector(ClassType::Function, CommaSeparator, WTFMove(arguments))
     , m_name(name)
 {
 }
 
 CSSFunctionValue::CSSFunctionValue(CSSValueID name)
-    : CSSValueContainingVector(FunctionClass, CommaSeparator)
+    : CSSValueContainingVector(ClassType::Function, CommaSeparator)
     , m_name(name)
 {
 }
 
 CSSFunctionValue::CSSFunctionValue(CSSValueID name, Ref<CSSValue> argument)
-    : CSSValueContainingVector(FunctionClass, CommaSeparator, WTFMove(argument))
+    : CSSValueContainingVector(ClassType::Function, CommaSeparator, WTFMove(argument))
     , m_name(name)
 {
 }
 
 CSSFunctionValue::CSSFunctionValue(CSSValueID name, Ref<CSSValue> argument1, Ref<CSSValue> argument2)
-    : CSSValueContainingVector(FunctionClass, CommaSeparator, WTFMove(argument1), WTFMove(argument2))
+    : CSSValueContainingVector(ClassType::Function, CommaSeparator, WTFMove(argument1), WTFMove(argument2))
     , m_name(name)
 {
 }
 
 CSSFunctionValue::CSSFunctionValue(CSSValueID name, Ref<CSSValue> argument1, Ref<CSSValue> argument2, Ref<CSSValue> argument3)
-    : CSSValueContainingVector(FunctionClass, CommaSeparator, WTFMove(argument1), WTFMove(argument2), WTFMove(argument3))
+    : CSSValueContainingVector(ClassType::Function, CommaSeparator, WTFMove(argument1), WTFMove(argument2), WTFMove(argument3))
     , m_name(name)
 {
 }
 
 CSSFunctionValue::CSSFunctionValue(CSSValueID name, Ref<CSSValue> argument1, Ref<CSSValue> argument2, Ref<CSSValue> argument3, Ref<CSSValue> argument4)
-    : CSSValueContainingVector(FunctionClass, CommaSeparator, WTFMove(argument1), WTFMove(argument2), WTFMove(argument3), WTFMove(argument4))
+    : CSSValueContainingVector(ClassType::Function, CommaSeparator, WTFMove(argument1), WTFMove(argument2), WTFMove(argument3), WTFMove(argument4))
     , m_name(name)
 {
 }

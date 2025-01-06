@@ -32,14 +32,10 @@
 #include <WebCore/ThreadableWebSocketChannel.h>
 #include <WebCore/WebSocketDeflateFramer.h>
 #include <WebCore/WebSocketFrame.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 class WebSocketTask;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSocketTask> : std::true_type { };
 }
 
 namespace WebCore {
@@ -55,8 +51,9 @@ namespace WebKit {
 class NetworkSocketChannel;
 struct SessionSet;
 
-class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public WebCore::CurlStream::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public CanMakeCheckedPtr<WebSocketTask>, public WebCore::CurlStream::Client {
+    WTF_MAKE_TZONE_ALLOCATED(WebSocketTask);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebSocketTask);
 public:
     WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&);
     virtual ~WebSocketTask();
@@ -89,6 +86,8 @@ private:
     void didReceiveData(WebCore::CurlStreamID, const WebCore::SharedBuffer&) final;
     void didFail(WebCore::CurlStreamID, CURLcode, WebCore::CertificateInfo&&) final;
 
+    Ref<NetworkSocketChannel> protectedChannel() const;
+
     void tryServerTrustEvaluation(WebCore::AuthenticationChallenge&&, String&&);
 
     bool appendReceivedBuffer(const WebCore::SharedBuffer&);
@@ -107,7 +106,7 @@ private:
     bool isStreamInvalidated() { return m_streamID == WebCore::invalidCurlStreamID; }
     void destructStream();
 
-    NetworkSocketChannel& m_channel;
+    WeakRef<NetworkSocketChannel> m_channel;
     WebPageProxyIdentifier m_webProxyPageID;
     WebCore::ResourceRequest m_request;
     String m_protocol;

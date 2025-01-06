@@ -10,6 +10,7 @@
 #ifndef CALL_RTP_STREAM_RECEIVER_CONTROLLER_INTERFACE_H_
 #define CALL_RTP_STREAM_RECEIVER_CONTROLLER_INTERFACE_H_
 
+#include <cstdint>
 #include <memory>
 
 #include "call/rtp_packet_sink_interface.h"

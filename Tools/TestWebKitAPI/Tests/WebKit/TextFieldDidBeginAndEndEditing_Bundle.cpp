@@ -61,7 +61,7 @@ TextFieldDidBeginAndEndEditingEventsTest::TextFieldDidBeginAndEndEditingEventsTe
 void TextFieldDidBeginAndEndEditingEventsTest::didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
 {
     WKBundlePageFormClientV2 formClient;
-    memset(&formClient, 0, sizeof(formClient));
+    zeroBytes(formClient);
 
     formClient.base.version = 2;
     formClient.base.clientInfo = this;

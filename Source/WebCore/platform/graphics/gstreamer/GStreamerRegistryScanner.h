@@ -102,8 +102,9 @@ public:
         GRefPtr<GstElementFactory> factory;
     };
 
-    CodecLookupResult isCodecSupported(Configuration, const String& codec, bool usingHardware = false) const;
-    MediaPlayerEnums::SupportsType isContentTypeSupported(Configuration, const ContentType&, const Vector<ContentType>& contentTypesRequiringHardwareSupport) const;
+    enum class CaseSensitiveCodecName : bool { No, Yes };
+    CodecLookupResult isCodecSupported(Configuration, const String& codec, bool usingHardware = false, CaseSensitiveCodecName = CaseSensitiveCodecName::Yes) const;
+    MediaPlayerEnums::SupportsType isContentTypeSupported(Configuration, const ContentType&, const Vector<ContentType>& contentTypesRequiringHardwareSupport, CaseSensitiveCodecName = CaseSensitiveCodecName::Yes) const;
     bool areAllCodecsSupported(Configuration, const Vector<String>& codecs, bool shouldCheckForHardwareUse = false) const;
 
     CodecLookupResult areCapsSupported(Configuration, const GRefPtr<GstCaps>&, bool shouldCheckForHardwareUse) const;
@@ -113,6 +114,7 @@ public:
     RTCRtpCapabilities videoRtpCapabilities(Configuration);
     Vector<RTCRtpCapabilities::HeaderExtensionCapability> audioRtpExtensions();
     Vector<RTCRtpCapabilities::HeaderExtensionCapability> videoRtpExtensions();
+    RegistryLookupResult isRtpPacketizerSupported(const String& encoding);
 #endif
 
 protected:
@@ -139,7 +141,7 @@ protected:
         GList* factory(Type) const;
 
         enum class CheckHardwareClassifier : bool { No, Yes };
-        RegistryLookupResult hasElementForMediaType(Type, const char* capsString, CheckHardwareClassifier = CheckHardwareClassifier::No, std::optional<Vector<String>> disallowedList = std::nullopt) const;
+        RegistryLookupResult hasElementForMediaType(Type, const ASCIILiteral& capsString, CheckHardwareClassifier = CheckHardwareClassifier::No, std::optional<Vector<String>> disallowedList = std::nullopt) const;
         RegistryLookupResult hasElementForCaps(Type, const GRefPtr<GstCaps>&, CheckHardwareClassifier = CheckHardwareClassifier::No, std::optional<Vector<String>> disallowedList = std::nullopt) const;
 
         GList* audioDecoderFactories { nullptr };
@@ -162,9 +164,9 @@ protected:
 
     struct GstCapsWebKitMapping {
         ElementFactories::Type elementType;
-        const char* capsString;
-        Vector<AtomString> webkitMimeTypes;
-        Vector<AtomString> webkitCodecPatterns;
+        ASCIILiteral capsString;
+        Vector<ASCIILiteral> webkitMIMETypes;
+        Vector<ASCIILiteral> webkitCodecPatterns;
     };
     void fillMimeTypeSetFromCapsMapping(const ElementFactories&, const Vector<GstCapsWebKitMapping>&);
 
@@ -172,7 +174,7 @@ private:
     CodecLookupResult isAVC1CodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
     CodecLookupResult isHEVCCodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
 
-    const char* configurationNameForLogging(Configuration) const;
+    ASCIILiteral configurationNameForLogging(Configuration) const;
     bool supportsFeatures(const String& features) const;
 
 #if USE(GSTREAMER_WEBRTC)
@@ -180,23 +182,23 @@ private:
     void fillVideoRtpCapabilities(Configuration, RTCRtpCapabilities&);
 
 #define WEBRTC_EXPERIMENTS_HDREXT "http://www.webrtc.org/experiments/rtp-hdrext/"
-    Vector<const char*> m_commonRtpExtensions {
-        "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01",
-        WEBRTC_EXPERIMENTS_HDREXT "abs-send-time",
-        GST_RTP_HDREXT_BASE "sdes:mid",
-        GST_RTP_HDREXT_BASE "sdes:repaired-rtp-stream-id",
-        GST_RTP_HDREXT_BASE "sdes:rtp-stream-id",
-        GST_RTP_HDREXT_BASE "toffset"
+    Vector<ASCIILiteral> m_commonRtpExtensions {
+        "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"_s,
+        WEBRTC_EXPERIMENTS_HDREXT "abs-send-time"_s,
+        GST_RTP_HDREXT_BASE "sdes:mid"_s,
+        GST_RTP_HDREXT_BASE "sdes:repaired-rtp-stream-id"_s,
+        GST_RTP_HDREXT_BASE "sdes:rtp-stream-id"_s,
+        GST_RTP_HDREXT_BASE "toffset"_s
     };
-    Vector<const char*> m_allAudioRtpExtensions {
-        GST_RTP_HDREXT_BASE "ssrc-audio-level"
+    Vector<ASCIILiteral> m_allAudioRtpExtensions {
+        GST_RTP_HDREXT_BASE "ssrc-audio-level"_s
     };
-    Vector<const char*> m_allVideoRtpExtensions {
-        WEBRTC_EXPERIMENTS_HDREXT "color-space",
-        WEBRTC_EXPERIMENTS_HDREXT "playout-delay",
-        WEBRTC_EXPERIMENTS_HDREXT "video-content-type",
-        WEBRTC_EXPERIMENTS_HDREXT "video-timing",
-        "urn:3gpp:video-orientation"
+    Vector<ASCIILiteral> m_allVideoRtpExtensions {
+        WEBRTC_EXPERIMENTS_HDREXT "color-space"_s,
+        WEBRTC_EXPERIMENTS_HDREXT "playout-delay"_s,
+        WEBRTC_EXPERIMENTS_HDREXT "video-content-type"_s,
+        WEBRTC_EXPERIMENTS_HDREXT "video-timing"_s,
+        "urn:3gpp:video-orientation"_s
     };
 #undef WEBRTC_EXPERIMENTS_HDREXT
 
@@ -206,9 +208,9 @@ private:
 
     bool m_isMediaSource { false };
     HashSet<String> m_decoderMimeTypeSet;
-    HashMap<AtomString, RegistryLookupResult> m_decoderCodecMap;
+    UncheckedKeyHashMap<String, RegistryLookupResult> m_decoderCodecMap;
     HashSet<String> m_encoderMimeTypeSet;
-    HashMap<AtomString, RegistryLookupResult> m_encoderCodecMap;
+    UncheckedKeyHashMap<String, RegistryLookupResult> m_encoderCodecMap;
 };
 
 } // namespace WebCore

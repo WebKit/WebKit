@@ -3,6 +3,7 @@ global:
   jsc_*;
   webkit_*;
   extern "C++" {
+    "WebKit::GPUProcessMain(int, char**)";
     "WebKit::NetworkProcessMain(int, char**)";
     "WebKit::WebProcessExtensionManager::initialize(WebKit::InjectedBundle*, API::Object*)";
     "WebKit::WebProcessExtensionManager::singleton()";

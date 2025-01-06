@@ -49,14 +49,15 @@ sub get_notifications {
             'latest_ver' => $branch->{'att'}->{'vid'},
             'status'     => $branch->{'att'}->{'status'},
             'url'        => $branch->{'att'}->{'url'},
-            'date'       => $branch->{'att'}->{'date'}
+            'date'       => $branch->{'att'}->{'date'},
+            'eos_date'   => exists($branch->{'att'}->{'eos-date'}) ? $branch->{'att'}->{'eos-date'} : undef,
         };
         push(@releases, $release);
     }
 
     # On which branch is the current installation running?
     my @current_version =
-        (BUGZILLA_VERSION =~ m/^(\d+)\.(\d+)(?:(rc|\.)(\d+))?\+?$/);
+        (BUGZILLA_VERSION =~ m/^(\d+)\.(\d+)(?:\.(\d+))?(?:(rc|\.)(\d+))?\+?$/);
 
     my @release;
     if (Bugzilla->params->{'upgrade_notification'} eq 'development_snapshot') {
@@ -68,17 +69,60 @@ sub get_notifications {
         }
     }
     elsif (Bugzilla->params->{'upgrade_notification'} eq 'latest_stable_release') {
+        # We want the latest stable version for the current branch.
+        # If we are running a development snapshot, we won't match anything.
+        # This is the 5.0.4 branch and it won't branch again so just hardcode this.
+        my $branch_version = '5.0.4';
+        
+        # We do a string comparison instead of a numerical one, because
+        # e.g. 2.2 == 2.20, but 2.2 ne 2.20 (and 2.2 is indeed much older).
+        @release = grep {$_->{'branch_ver'} eq $branch_version} @releases;
+        
+        # If the branch has an end-of-support date listed, we should
+        # strongly suggest to upgrade to the latest stable release
+        # available.
+        if (scalar(@release) && $release[0]->{'status'} ne 'closed'
+            && defined($release[0]->{'eos_date'})) {
+            my $eos_date = $release[0]->{'eos_date'};
+            @release = grep {$_->{'status'} eq 'stable'} @releases;
+            return {'data' => $release[0],
+                    'branch_version' => $branch_version,
+                    'eos_date' => $eos_date};
+        };
+        
+        # If the branch is now closed, we should strongly suggest
+        # to upgrade to the latest stable release available.
+        if (scalar(@release) && $release[0]->{'status'} eq 'closed') {
+            @release = grep {$_->{'status'} eq 'stable'} @releases;
+            return {'data' => $release[0], 'deprecated' => $branch_version};
+        }
+        
+        # If we get here, then we want to recommend the lastest stable
+        # release without any other messages.
         @release = grep {$_->{'status'} eq 'stable'} @releases;
     }
     elsif (Bugzilla->params->{'upgrade_notification'} eq 'stable_branch_release') {
         # We want the latest stable version for the current branch.
         # If we are running a development snapshot, we won't match anything.
-        my $branch_version = $current_version[0] . '.' . $current_version[1];
-
+        # This is the 5.0.4 branch and it won't branch again so just hardcode this.
+        my $branch_version = '5.0.4';
+        
         # We do a string comparison instead of a numerical one, because
         # e.g. 2.2 == 2.20, but 2.2 ne 2.20 (and 2.2 is indeed much older).
         @release = grep {$_->{'branch_ver'} eq $branch_version} @releases;
 
+        # If the branch has an end-of-support date listed, we should
+        # strongly suggest to upgrade to the latest stable release
+        # available.
+        if (scalar(@release) && $release[0]->{'status'} ne 'closed'
+            && defined($release[0]->{'eos_date'})) {
+            my $eos_date = $release[0]->{'eos_date'};
+            @release = grep {$_->{'status'} eq 'stable'} @releases;
+            return {'data' => $release[0],
+                    'branch_version' => $branch_version,
+                    'eos_date' => $eos_date};
+        };
+        
         # If the branch is now closed, we should strongly suggest
         # to upgrade to the latest stable release available.
         if (scalar(@release) && $release[0]->{'status'} eq 'closed') {
@@ -97,12 +141,12 @@ sub get_notifications {
     # Only notify the administrator if the latest version available
     # is newer than the current one.
     my @new_version =
-        ($release[0]->{'latest_ver'} =~ m/^(\d+)\.(\d+)(?:(rc|\.)(\d+))?\+?$/);
+        ($release[0]->{'latest_ver'} =~ m/^(\d+)\.(\d+)(?:\.(\d+))?(?:(rc|\.)(\d+))?\+?$/);
 
     # We convert release candidates 'rc' to integers (rc ? 0 : 1) in order
     # to compare versions easily.
-    $current_version[2] = ($current_version[2] && $current_version[2] eq 'rc') ? 0 : 1;
-    $new_version[2] = ($new_version[2] && $new_version[2] eq 'rc') ? 0 : 1;
+    @current_version = map { s/^(?:rc|)$/0/; s/^\.$/1/; $_; } @current_version;
+    @new_version = map { s/^(?:rc|)$/0/; s/^\.$/1/; $_; } @new_version;
 
     my $is_newer = _compare_versions(\@current_version, \@new_version);
     return ($is_newer == 1) ? {'data' => $release[0]} : undef;

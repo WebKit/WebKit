@@ -30,7 +30,7 @@ typedef (double or CSSNumericValue) CSSNumberish;
     EnabledBySetting=CSSTypedOMColorEnabled,
     Exposed=(Window,Worker,PaintWorklet/*,LayoutWorklet*/),
     JSGenerateToNativeObject,
-] interface CSSHWB : CSSColorValue {
+] interface CSSHWB : CSSOMColorValue {
     constructor(CSSNumericValue h, CSSNumberish w, CSSNumberish b, optional CSSNumberish alpha = 1.0);
     attribute CSSNumericValue h;
     attribute CSSNumberish w;

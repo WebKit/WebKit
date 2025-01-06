@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="test-content">
+    <p contenteditable="true" id="text">The quick brown <span id="target1">fox</span> jumps over the lazy dog.</p>
+    <p contenteditable="true" id="text2">TEXT2: <span id="target2">The</span> quick brown  <span id="target3">fox</span> jumps over the <span id="target4">lazy</span> dog.</p>
+</div>
+
+<script>
+var output = "Tests that a Select text operation returns the text for the provided marker ranges.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var text, operationResult;
+    setTimeout(async function() {
+        // Validate that the expected string is returned for a single range.
+        text = accessibilityController.accessibleElementById("text");
+        var markers = [await selectElementTextById("target1")];
+        await waitForNotification(text, "AXSelectedTextChanged", () => {
+            operationResult = text.performTextOperation("TextOperationSelect", markers, null, /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "1");
+        output += expect("operationResult[0]", "'fox'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: The quick brown fox jumps over the lazy dog.'"); // Stays unmodified
+
+        // Validate that the expected strings are returned for multiple ranges.
+        text = accessibilityController.accessibleElementById("text2");
+        markers = [await selectElementTextById("target4"), await selectElementTextById("target3"), await selectElementTextById("target2")];
+        await waitForNotification(text, "AXSelectedTextChanged", () => {
+            operationResult = text.performTextOperation("TextOperationSelect", markers, "[Replaced string]", /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "3");
+        output += expect("operationResult[0]", "'lazy'");
+        output += expect("operationResult[1]", "'fox'");
+        output += expect("operationResult[2]", "'The'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT2: The quick brown fox jumps over the lazy dog.'"); // Stays unmodified
+
+        document.getElementById("test-content").remove();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

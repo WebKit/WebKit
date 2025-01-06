@@ -13,9 +13,7 @@ let offsetTimeZones = {
     '+13:00': 'Etc/GMT-13',
     '-07:00': 'Etc/GMT+7',
     '-12': 'Etc/GMT+12',
-    '−0900': 'Etc/GMT+9',
-    '−10:00': 'Etc/GMT+10',
-    '−0500': 'Etc/GMT+5',
+    '-0900': 'Etc/GMT+9',
 };
 let date = new Date('1995-12-17T03:24:56Z');
 Object.entries(offsetTimeZones).forEach(([offsetZone, gmtZone]) => {

@@ -56,10 +56,10 @@ class CubeMapTextureTest : public ANGLETest<>
 // face.
 TEST_P(CubeMapTextureTest, RenderToFacesConsecutively)
 {
-    // TODO: Diagnose and fix. http://anglebug.com/2954
+    // TODO: Diagnose and fix. http://anglebug.com/42261648
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsWindows());
 
-    // http://anglebug.com/3145
+    // http://anglebug.com/42261821
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsFuchsia());
 
     const GLfloat faceColors[] = {
@@ -117,7 +117,7 @@ TEST_P(CubeMapTextureTest, RenderToFacesConsecutively)
 
 void CubeMapTextureTest::runSampleCoordinateTransformTest(const char *shader, const bool useES3)
 {
-    // Fails to compile the shader.  anglebug.com/3776
+    // Fails to compile the shader.  anglebug.com/42262420
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
 
     constexpr GLsizei kCubeFaceCount            = 6;
@@ -232,7 +232,7 @@ void CubeMapTextureTest::runSampleCoordinateTransformTest(const char *shader, co
 // within each face.  See section 3.7.5 of GLES2.0 (Cube Map Texture Selection).
 TEST_P(CubeMapTextureTest, SampleCoordinateTransform)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D9());
     // Create a program that samples from 6x4 directions of the cubemap, draw and verify that the
     // colors match the right color from |faceColors|.

@@ -41,6 +41,8 @@ extern const NSTimeInterval RBSProcessTimeLimitationNone;
 
 #else
 
+#import <mach/message.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RBSAttribute : NSObject
@@ -105,6 +107,8 @@ extern const NSTimeInterval RBSProcessTimeLimitationNone;
 @property (nonatomic, readonly, assign) pid_t pid;
 @property (nonatomic, readonly, strong) RBSProcessState *currentState;
 @property (nonatomic, readonly, strong) RBSProcessLimitations *activeLimitations;
+@property (nonatomic, readonly, strong, nullable) RBSProcessHandle *hostProcess;
+@property (nonatomic, readonly, assign) audit_token_t auditToken;
 @end
 
 @interface RBSProcessStateUpdate : NSObject

@@ -21,12 +21,14 @@
 #pragma once
 
 #include "FEDropShadow.h"
+#include <wtf/TZoneMalloc.h>
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
 
 class SVGFEDropShadowElement final : public SVGFilterPrimitiveStandardAttributes {
-    WTF_MAKE_ISO_ALLOCATED(SVGFEDropShadowElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEDropShadowElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEDropShadowElement);
 public:
     static Ref<SVGFEDropShadowElement> create(const QualifiedName&, Document&);
     
@@ -44,10 +46,10 @@ public:
     SVGAnimatedNumber& stdDeviationXAnimated() { return m_stdDeviationX; }
     SVGAnimatedNumber& stdDeviationYAnimated() { return m_stdDeviationY; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEDropShadowElement, SVGFilterPrimitiveStandardAttributes>;
+
 private:
     SVGFEDropShadowElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEDropShadowElement, SVGFilterPrimitiveStandardAttributes>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

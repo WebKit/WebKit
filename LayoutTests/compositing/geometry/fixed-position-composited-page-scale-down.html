@@ -13,15 +13,21 @@
 }
 </style>
 <script>
-  if (window.internals) {
-    window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
-    window.internals.setPageScaleFactor(0.5, 0, 0);
-  }
   if (window.testRunner)
-    testRunner.dumpAsText(true);
+      window.testRunner.waitUntilDone();
+  async function runTest() {
+    if (window.internals) {
+        window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+    }
+    if (window.testRunner) {
+        await window.testRunner.setPageScaleFactor(0.5, 0, 0);
+        testRunner.dumpAsText(true);
+        testRunner.notifyDone();
+    }
+  }
 </script>
 </head>
-<body style="width:2000px;height:2000px;">
+<body style="width:2000px;height:2000px;" onload="runTest()">
 <div class="fixed-no-z-index">TEST</div><br>
 <div class="fixed-with-z-index">TEST</div>
 </body>

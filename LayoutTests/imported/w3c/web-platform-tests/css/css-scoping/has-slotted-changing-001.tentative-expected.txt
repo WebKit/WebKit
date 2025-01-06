@@ -1,0 +1,7 @@
+
+FAIL empty node is blue assert_equals: expected "rgb(0, 0, 255)" but got "rgb(0, 255, 0)"
+FAIL setting innerHTML to whitespace invalidates and becomes green, then empty string becomes blue assert_equals: expected "rgb(0, 0, 255)" but got "rgb(0, 255, 0)"
+FAIL calling replaceChildren invalidates and becomes green, emptying with replaceChildren becomes blue assert_equals: expected "rgb(0, 0, 255)" but got "rgb(0, 255, 0)"
+PASS calling append invalidates and becomes green
+FAIL calling replaceChildren(textnode) invalidates and becomes green assert_equals: expected "rgb(0, 0, 255)" but got "rgb(0, 255, 0)"
+

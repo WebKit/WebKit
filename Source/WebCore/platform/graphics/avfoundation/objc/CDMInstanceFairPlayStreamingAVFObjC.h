@@ -86,15 +86,13 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;
-    virtual const void* logIdentifier() const = 0;
+    virtual uint64_t logIdentifier() const = 0;
 #endif
 };
 
 class CDMInstanceFairPlayStreamingAVFObjC final : public CDMInstance, public AVContentKeySessionDelegateClient, public CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC> {
 public:
-    using CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC>::weakPtrFactory;
-    using CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC>::WeakValueType;
-    using CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC>::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC>);
 
     CDMInstanceFairPlayStreamingAVFObjC(const CDMPrivateFairPlayStreaming&);
     virtual ~CDMInstanceFairPlayStreamingAVFObjC() = default;
@@ -153,9 +151,9 @@ public:
     void attachContentKeyToSample(const MediaSampleAVFObjC&);
 
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
+    void setLogIdentifier(uint64_t logIdentifier) final { m_logIdentifier = logIdentifier; }
     const Logger& logger() const { return m_logger; };
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "CDMInstanceFairPlayStreamingAVFObjC"_s; }
 #endif
 
@@ -173,7 +171,7 @@ private:
     WeakHashSet<KeyStatusesChangedObserver> m_keyStatusChangedObservers;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier { nullptr };
+    uint64_t m_logIdentifier { 0 };
 #endif
 };
 
@@ -182,12 +180,10 @@ class CDMInstanceSessionFairPlayStreamingAVFObjC final
     , public AVContentKeySessionDelegateClient
     , private ContentKeyGroupDataSource {
 public:
-    using AVContentKeySessionDelegateClient::weakPtrFactory;
-    using AVContentKeySessionDelegateClient::WeakValueType;
-    using AVContentKeySessionDelegateClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(AVContentKeySessionDelegateClient);
 
     CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
-    virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC() = default;
+    virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC();
 
     // CDMInstanceSession
     void requestLicense(LicenseType, KeyGroupingStrategy, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
@@ -253,16 +249,16 @@ private:
     bool requestMatchesRenewingRequest(AVContentKeyRequest *);
 
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
+    void setLogIdentifier(uint64_t logIdentifier) final { m_logIdentifier = logIdentifier; }
     const Logger& logger() const { return m_logger; };
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "CDMInstanceSessionFairPlayStreamingAVFObjC"_s; }
 #endif
 
     // ContentKeyGroupDataSource
     Vector<RetainPtr<AVContentKey>> contentKeyGroupDataSourceKeys() const final;
 #if !RELEASE_LOG_DISABLED
-    const void* contentKeyGroupDataSourceLogIdentifier() const final;
+    uint64_t contentKeyGroupDataSourceLogIdentifier() const final;
     const Logger& contentKeyGroupDataSourceLogger() const final;
     WTFLogChannel& contentKeyGroupDataSourceLogChannel() const final;
 #endif // !RELEASE_LOG_DISABLED
@@ -292,7 +288,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier { nullptr };
+    uint64_t m_logIdentifier { 0 };
 #endif
 };
 

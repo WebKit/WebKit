@@ -33,6 +33,7 @@
 #import "GraphicsContext.h"
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -92,6 +93,8 @@ static RetainPtr<CGPDFPageRef> applePayLogoForStyle(ApplePayLogoStyle style)
     ASSERT_NOT_REACHED();
     return nullptr;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ApplePayLogoSystemImage);
 
 void ApplePayLogoSystemImage::draw(GraphicsContext& context, const FloatRect& destinationRect) const
 {

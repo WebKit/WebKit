@@ -41,6 +41,11 @@ namespace AirEmitShuffleInternal {
 static constexpr bool verbose = false;
 }
 
+enum ScratchMode {
+    FreezeScratch,
+    UpdateScratch,
+};
+
 template<typename Functor>
 Tmp findPossibleScratch(Code& code, Bank bank, const Functor& functor) {
     for (Reg reg : code.regsInPriorityOrder(bank)) {
@@ -167,7 +172,7 @@ Vector<Inst> emitShuffle(
 
     // We interpret these as Moves that should be executed backwards. All shifts are keyed by their
     // starting source.
-    HashMap<Arg, Vector<ShufflePair>> shifts;
+    UncheckedKeyHashMap<Arg, Vector<ShufflePair>> shifts;
 
     // We interpret these as Swaps over src()'s that should be executed backwards, i.e. for a list
     // of size 3 we would do "Swap list[1].src(), list[2].src(); Swap list[0].src(), list[1].src()".
@@ -177,7 +182,7 @@ Vector<Inst> emitShuffle(
     Vector<Rotate> rotates;
 
     {
-        HashMap<Arg, Vector<ShufflePair>> mapping;
+        UncheckedKeyHashMap<Arg, Vector<ShufflePair>> mapping;
         for (const ShufflePair& pair : pairs)
             mapping.add(pair.src(), Vector<ShufflePair>()).iterator->value.append(pair);
 
@@ -193,7 +198,7 @@ Vector<Inst> emitShuffle(
             GraphNodeWorklist<Arg> worklist;
             worklist.push(originalSrc);
             while (Arg src = worklist.pop()) {
-                HashMap<Arg, Vector<ShufflePair>>::iterator iter = mapping.find(src);
+                UncheckedKeyHashMap<Arg, Vector<ShufflePair>>::iterator iter = mapping.find(src);
                 if (iter == mapping.end()) {
                     // With a shift it's possible that we previously built the tail of this shift.
                     // See if that's the case now.
@@ -246,7 +251,7 @@ Vector<Inst> emitShuffle(
                 else {
                     // This is the slow path. The rotate has fringe.
                     
-                    HashMap<Arg, ShufflePair> dstMapping;
+                    UncheckedKeyHashMap<Arg, ShufflePair> dstMapping;
                     for (const ShufflePair& pair : currentPairs)
                         dstMapping.add(pair.dst(), pair);
 
@@ -359,7 +364,7 @@ Vector<Inst> emitShuffle(
         result.append(Inst(move, origin, pair.src(), pair.dst()));
     };
 
-    auto handleShift = [&] (Vector<ShufflePair>& shift) {
+    auto handleShift = [&] (Vector<ShufflePair>& shift, ScratchMode scratchMode) {
         // FIXME: We could optimize the spill behavior of the shifter by checking if any of the
         // shifts need spills. If they do, then we could try to get a register out here. Note that
         // this may fail where the current strategy succeeds: out here we need a register that does
@@ -372,7 +377,7 @@ Vector<Inst> emitShuffle(
             handleShiftPair(shift[i], 0);
 
         Arg lastDst = shift.last().dst();
-        if (lastDst.isTmp()) {
+        if (scratchMode == UpdateScratch && lastDst.isTmp()) {
             for (Arg& scratch : scratches) {
                 ASSERT(scratch != lastDst);
                 if (!scratch.isTmp()) {
@@ -390,7 +395,7 @@ Vector<Inst> emitShuffle(
     for (auto& entry : shifts) {
         Vector<ShufflePair>& shift = entry.value;
         if (shift.last().dst().isTmp())
-            handleShift(shift);
+            handleShift(shift, UpdateScratch);
         commitResult();
     }
 
@@ -398,15 +403,20 @@ Vector<Inst> emitShuffle(
     for (auto& entry : shifts) {
         Vector<ShufflePair>& shift = entry.value;
         if (!shift.last().dst().isTmp())
-            handleShift(shift);
+            handleShift(shift, UpdateScratch);
         commitResult();
     }
+
+    // From now on, we cannot use new shift destinations as scratches.
+    // The final order of these operations after all of the reversing is:
+    // [Fringe, Rotate]*, [Shift]*
+    // A fringe's last destination should not be clobbered.
 
     for (Rotate& rotate : rotates) {
         if (!rotate.fringe.isEmpty()) {
             // Make sure we do the fringe first! This won't clobber any of the registers that are
             // part of the rotation.
-            handleShift(rotate.fringe);
+            handleShift(rotate.fringe, FreezeScratch);
         }
         
         bool canSwap = false;

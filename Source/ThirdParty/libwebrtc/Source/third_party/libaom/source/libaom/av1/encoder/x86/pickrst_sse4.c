@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -10,7 +10,7 @@
  */
 
 #include <assert.h>
-#include <emmintrin.h>
+#include <smmintrin.h>
 #include "aom_dsp/x86/mem_sse2.h"
 #include "aom_dsp/x86/synonyms.h"
 
@@ -18,7 +18,7 @@
 #include "av1/common/restoration.h"
 #include "av1/encoder/pickrst.h"
 
-static INLINE void acc_stat_sse41(int32_t *dst, const uint8_t *src,
+static inline void acc_stat_sse41(int32_t *dst, const uint8_t *src,
                                   const __m128i *shuffle, const __m128i *kl) {
   const __m128i s = _mm_shuffle_epi8(xx_loadu_128(src), *shuffle);
   const __m128i d0 = _mm_madd_epi16(*kl, _mm_cvtepu8_epi16(s));
@@ -32,7 +32,7 @@ static INLINE void acc_stat_sse41(int32_t *dst, const uint8_t *src,
   xx_storeu_128(dst + 4, r1);
 }
 
-static INLINE void acc_stat_win7_one_line_sse4_1(
+static inline void acc_stat_win7_one_line_sse4_1(
     const uint8_t *dgd, const uint8_t *src, int h_start, int h_end,
     int dgd_stride, const __m128i *shuffle, int32_t *sumX,
     int32_t sumY[WIENER_WIN][WIENER_WIN], int32_t M_int[WIENER_WIN][WIENER_WIN],
@@ -105,7 +105,7 @@ static INLINE void acc_stat_win7_one_line_sse4_1(
   }
 }
 
-static INLINE void compute_stats_win7_opt_sse4_1(
+static inline void compute_stats_win7_opt_sse4_1(
     const uint8_t *dgd, const uint8_t *src, int h_start, int h_end, int v_start,
     int v_end, int dgd_stride, int src_stride, int64_t *M, int64_t *H,
     int use_downsampled_wiener_stats) {
@@ -194,7 +194,7 @@ static INLINE void compute_stats_win7_opt_sse4_1(
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE void acc_stat_highbd_sse41(int64_t *dst, const uint16_t *dgd,
+static inline void acc_stat_highbd_sse41(int64_t *dst, const uint16_t *dgd,
                                          const __m128i *shuffle,
                                          const __m128i *dgd_ijkl) {
   // Load 256 bits from dgd in two chunks
@@ -234,7 +234,7 @@ static INLINE void acc_stat_highbd_sse41(int64_t *dst, const uint16_t *dgd,
   xx_storeu_128(dst + 6, rhh);
 }
 
-static INLINE void acc_stat_highbd_win7_one_line_sse4_1(
+static inline void acc_stat_highbd_win7_one_line_sse4_1(
     const uint16_t *dgd, const uint16_t *src, int h_start, int h_end,
     int dgd_stride, const __m128i *shuffle, int32_t *sumX,
     int32_t sumY[WIENER_WIN][WIENER_WIN], int64_t M_int[WIENER_WIN][WIENER_WIN],
@@ -324,7 +324,7 @@ static INLINE void acc_stat_highbd_win7_one_line_sse4_1(
   }
 }
 
-static INLINE void compute_stats_highbd_win7_opt_sse4_1(
+static inline void compute_stats_highbd_win7_opt_sse4_1(
     const uint8_t *dgd8, const uint8_t *src8, int h_start, int h_end,
     int v_start, int v_end, int dgd_stride, int src_stride, int64_t *M,
     int64_t *H, aom_bit_depth_t bit_depth) {
@@ -382,7 +382,7 @@ static INLINE void compute_stats_highbd_win7_opt_sse4_1(
   }
 }
 
-static INLINE void acc_stat_highbd_win5_one_line_sse4_1(
+static inline void acc_stat_highbd_win5_one_line_sse4_1(
     const uint16_t *dgd, const uint16_t *src, int h_start, int h_end,
     int dgd_stride, const __m128i *shuffle, int32_t *sumX,
     int32_t sumY[WIENER_WIN_CHROMA][WIENER_WIN_CHROMA],
@@ -465,7 +465,7 @@ static INLINE void acc_stat_highbd_win5_one_line_sse4_1(
   }
 }
 
-static INLINE void compute_stats_highbd_win5_opt_sse4_1(
+static inline void compute_stats_highbd_win5_opt_sse4_1(
     const uint8_t *dgd8, const uint8_t *src8, int h_start, int h_end,
     int v_start, int v_end, int dgd_stride, int src_stride, int64_t *M,
     int64_t *H, aom_bit_depth_t bit_depth) {
@@ -524,26 +524,32 @@ static INLINE void compute_stats_highbd_win5_opt_sse4_1(
 }
 
 void av1_compute_stats_highbd_sse4_1(int wiener_win, const uint8_t *dgd8,
-                                     const uint8_t *src8, int h_start,
-                                     int h_end, int v_start, int v_end,
-                                     int dgd_stride, int src_stride, int64_t *M,
-                                     int64_t *H, aom_bit_depth_t bit_depth) {
+                                     const uint8_t *src8, int16_t *dgd_avg,
+                                     int16_t *src_avg, int h_start, int h_end,
+                                     int v_start, int v_end, int dgd_stride,
+                                     int src_stride, int64_t *M, int64_t *H,
+                                     aom_bit_depth_t bit_depth) {
   if (wiener_win == WIENER_WIN) {
+    (void)dgd_avg;
+    (void)src_avg;
     compute_stats_highbd_win7_opt_sse4_1(dgd8, src8, h_start, h_end, v_start,
                                          v_end, dgd_stride, src_stride, M, H,
                                          bit_depth);
   } else if (wiener_win == WIENER_WIN_CHROMA) {
+    (void)dgd_avg;
+    (void)src_avg;
     compute_stats_highbd_win5_opt_sse4_1(dgd8, src8, h_start, h_end, v_start,
                                          v_end, dgd_stride, src_stride, M, H,
                                          bit_depth);
   } else {
-    av1_compute_stats_highbd_c(wiener_win, dgd8, src8, h_start, h_end, v_start,
-                               v_end, dgd_stride, src_stride, M, H, bit_depth);
+    av1_compute_stats_highbd_c(wiener_win, dgd8, src8, dgd_avg, src_avg,
+                               h_start, h_end, v_start, v_end, dgd_stride,
+                               src_stride, M, H, bit_depth);
   }
 }
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
-static INLINE void acc_stat_win5_one_line_sse4_1(
+static inline void acc_stat_win5_one_line_sse4_1(
     const uint8_t *dgd, const uint8_t *src, int h_start, int h_end,
     int dgd_stride, const __m128i *shuffle, int32_t *sumX,
     int32_t sumY[WIENER_WIN_CHROMA][WIENER_WIN_CHROMA],
@@ -613,7 +619,7 @@ static INLINE void acc_stat_win5_one_line_sse4_1(
   }
 }
 
-static INLINE void compute_stats_win5_opt_sse4_1(
+static inline void compute_stats_win5_opt_sse4_1(
     const uint8_t *dgd, const uint8_t *src, int h_start, int h_end, int v_start,
     int v_end, int dgd_stride, int src_stride, int64_t *M, int64_t *H,
     int use_downsampled_wiener_stats) {
@@ -724,8 +730,9 @@ void av1_compute_stats_sse4_1(int wiener_win, const uint8_t *dgd,
   }
 }
 
-static INLINE __m128i pair_set_epi16(int a, int b) {
-  return _mm_set1_epi32((int32_t)(((uint16_t)(a)) | (((uint32_t)(b)) << 16)));
+static inline __m128i pair_set_epi16(int a, int b) {
+  return _mm_set1_epi32(
+      (int32_t)(((uint16_t)(a)) | (((uint32_t)(uint16_t)(b)) << 16)));
 }
 
 int64_t av1_lowbd_pixel_proj_error_sse4_1(
@@ -853,7 +860,7 @@ int64_t av1_lowbd_pixel_proj_error_sse4_1(
 
 // When params->r[0] > 0 and params->r[1] > 0. In this case all elements of
 // C and H need to be computed.
-static AOM_INLINE void calc_proj_params_r0_r1_sse4_1(
+static inline void calc_proj_params_r0_r1_sse4_1(
     const uint8_t *src8, int width, int height, int src_stride,
     const uint8_t *dat8, int dat_stride, int32_t *flt0, int flt0_stride,
     int32_t *flt1, int flt1_stride, int64_t H[2][2], int64_t C[2]) {
@@ -940,10 +947,12 @@ static AOM_INLINE void calc_proj_params_r0_r1_sse4_1(
 
 // When only params->r[0] > 0. In this case only H[0][0] and C[0] are
 // non-zero and need to be computed.
-static AOM_INLINE void calc_proj_params_r0_sse4_1(
-    const uint8_t *src8, int width, int height, int src_stride,
-    const uint8_t *dat8, int dat_stride, int32_t *flt0, int flt0_stride,
-    int64_t H[2][2], int64_t C[2]) {
+static inline void calc_proj_params_r0_sse4_1(const uint8_t *src8, int width,
+                                              int height, int src_stride,
+                                              const uint8_t *dat8,
+                                              int dat_stride, int32_t *flt0,
+                                              int flt0_stride, int64_t H[2][2],
+                                              int64_t C[2]) {
   const int size = width * height;
   const uint8_t *src = src8;
   const uint8_t *dat = dat8;
@@ -992,10 +1001,12 @@ static AOM_INLINE void calc_proj_params_r0_sse4_1(
 
 // When only params->r[1] > 0. In this case only H[1][1] and C[1] are
 // non-zero and need to be computed.
-static AOM_INLINE void calc_proj_params_r1_sse4_1(
-    const uint8_t *src8, int width, int height, int src_stride,
-    const uint8_t *dat8, int dat_stride, int32_t *flt1, int flt1_stride,
-    int64_t H[2][2], int64_t C[2]) {
+static inline void calc_proj_params_r1_sse4_1(const uint8_t *src8, int width,
+                                              int height, int src_stride,
+                                              const uint8_t *dat8,
+                                              int dat_stride, int32_t *flt1,
+                                              int flt1_stride, int64_t H[2][2],
+                                              int64_t C[2]) {
   const int size = width * height;
   const uint8_t *src = src8;
   const uint8_t *dat = dat8;
@@ -1063,7 +1074,8 @@ void av1_calc_proj_params_sse4_1(const uint8_t *src8, int width, int height,
   }
 }
 
-static AOM_INLINE void calc_proj_params_r0_r1_high_bd_sse4_1(
+#if CONFIG_AV1_HIGHBITDEPTH
+static inline void calc_proj_params_r0_r1_high_bd_sse4_1(
     const uint8_t *src8, int width, int height, int src_stride,
     const uint8_t *dat8, int dat_stride, int32_t *flt0, int flt0_stride,
     int32_t *flt1, int flt1_stride, int64_t H[2][2], int64_t C[2]) {
@@ -1150,7 +1162,7 @@ static AOM_INLINE void calc_proj_params_r0_r1_high_bd_sse4_1(
 
 // When only params->r[0] > 0. In this case only H[0][0] and C[0] are
 // non-zero and need to be computed.
-static AOM_INLINE void calc_proj_params_r0_high_bd_sse4_1(
+static inline void calc_proj_params_r0_high_bd_sse4_1(
     const uint8_t *src8, int width, int height, int src_stride,
     const uint8_t *dat8, int dat_stride, int32_t *flt0, int flt0_stride,
     int64_t H[2][2], int64_t C[2]) {
@@ -1202,7 +1214,7 @@ static AOM_INLINE void calc_proj_params_r0_high_bd_sse4_1(
 
 // When only params->r[1] > 0. In this case only H[1][1] and C[1] are
 // non-zero and need to be computed.
-static AOM_INLINE void calc_proj_params_r1_high_bd_sse4_1(
+static inline void calc_proj_params_r1_high_bd_sse4_1(
     const uint8_t *src8, int width, int height, int src_stride,
     const uint8_t *dat8, int dat_stride, int32_t *flt1, int flt1_stride,
     int64_t H[2][2], int64_t C[2]) {
@@ -1274,7 +1286,6 @@ void av1_calc_proj_params_high_bd_sse4_1(const uint8_t *src8, int width,
   }
 }
 
-#if CONFIG_AV1_HIGHBITDEPTH
 int64_t av1_highbd_pixel_proj_error_sse4_1(
     const uint8_t *src8, int width, int height, int src_stride,
     const uint8_t *dat8, int dat_stride, int32_t *flt0, int flt0_stride,

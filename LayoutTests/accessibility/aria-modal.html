@@ -75,12 +75,12 @@
             debug("Dialog is displaying and aria-hidden=true")
             shouldBeTrue("backgroundAccessible()");
 
-            // Set aria-hidden=false.
-            document.getElementById("box").setAttribute("aria-hidden", "false");
+            // Unset aria hidden.
+            document.getElementById("box").removeAttribute("aria-hidden");
             await waitFor(() => {
                 return !backgroundAccessible();
             });
-            debug("Dialog is displaying and aria-hidden=false");
+            debug("Dialog is displaying and removed aria-hidden");
             shouldBeFalse("backgroundAccessible()");
 
             // Set opacity to 0 which should make the dialog invisible.

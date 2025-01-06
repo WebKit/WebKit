@@ -10,17 +10,17 @@
 
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_raw.h"
 
+#include <optional>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer.h"
 #include "rtc_base/copy_on_write_buffer.h"
 
 namespace webrtc {
 
-absl::optional<VideoRtpDepacketizer::ParsedRtpPayload>
+std::optional<VideoRtpDepacketizer::ParsedRtpPayload>
 VideoRtpDepacketizerRaw::Parse(rtc::CopyOnWriteBuffer rtp_payload) {
-  absl::optional<ParsedRtpPayload> parsed(absl::in_place);
+  std::optional<ParsedRtpPayload> parsed(std::in_place);
   parsed->video_payload = std::move(rtp_payload);
   return parsed;
 }

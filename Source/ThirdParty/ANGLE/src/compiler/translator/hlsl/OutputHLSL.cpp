@@ -766,8 +766,7 @@ void OutputHLSL::header(TInfoSinkBase &out,
         writeReferencedVaryings(out);
         out << "\n";
 
-        if ((IsDesktopGLSpec(mShaderSpec) && mShaderVersion >= 130) ||
-            (!IsDesktopGLSpec(mShaderSpec) && mShaderVersion >= 300))
+        if (mShaderVersion >= 300)
         {
             for (const auto &outputVariable : mReferencedOutputVariables)
             {
@@ -883,7 +882,7 @@ void OutputHLSL::header(TInfoSinkBase &out,
                    "\n";
         }
 
-        if (mOutputType == SH_HLSL_4_1_OUTPUT || mOutputType == SH_HLSL_4_0_FL9_3_OUTPUT)
+        if (mOutputType == SH_HLSL_4_1_OUTPUT)
         {
             out << "cbuffer DriverConstants : register(b1)\n"
                    "{\n";
@@ -1063,7 +1062,7 @@ void OutputHLSL::header(TInfoSinkBase &out,
                    "\n";
         }
 
-        if (mOutputType == SH_HLSL_4_1_OUTPUT || mOutputType == SH_HLSL_4_0_FL9_3_OUTPUT)
+        if (mOutputType == SH_HLSL_4_1_OUTPUT)
         {
             out << "cbuffer DriverConstants : register(b1)\n"
                    "{\n";
@@ -2478,7 +2477,7 @@ bool OutputHLSL::visitDeclaration(Visit visit, TIntermDeclaration *node)
                     // Temporarily disable shadred memory initialization. It is very slow for D3D11
                     // drivers to compile a compute shader if we add code to initialize a
                     // groupshared array variable with a large array size. And maybe produce
-                    // incorrect result. See http://anglebug.com/3226.
+                    // incorrect result. See http://anglebug.com/40644676.
                     if (declarator->getQualifier() != EvqShared)
                     {
                         out << " = " + zeroInitializer(symbol->getType());
@@ -2621,12 +2620,6 @@ bool OutputHLSL::visitAggregate(Visit visit, TIntermAggregate *node)
             for (TIntermSequence::iterator arg = arguments->begin(); arg != arguments->end(); arg++)
             {
                 TIntermTyped *typedArg = (*arg)->getAsTyped();
-                if (mOutputType == SH_HLSL_4_0_FL9_3_OUTPUT && IsSampler(typedArg->getBasicType()))
-                {
-                    out << "texture_";
-                    (*arg)->traverse(this);
-                    out << ", sampler_";
-                }
 
                 (*arg)->traverse(this);
 
@@ -2641,17 +2634,9 @@ bool OutputHLSL::visitAggregate(Visit visit, TIntermAggregate *node)
                                                  nullptr, mSymbolTable);
                     for (const TVariable *sampler : samplerSymbols)
                     {
-                        if (mOutputType == SH_HLSL_4_0_FL9_3_OUTPUT)
-                        {
-                            out << ", texture_" << sampler->name();
-                            out << ", sampler_" << sampler->name();
-                        }
-                        else
-                        {
-                            // In case of HLSL 4.1+, this symbol is the sampler index, and in case
-                            // of D3D9, it's the sampler variable.
-                            out << ", " << sampler->name();
-                        }
+                        // In case of HLSL 4.1+, this symbol is the sampler index, and in case
+                        // of D3D9, it's the sampler variable.
+                        out << ", " << sampler->name();
                     }
                 }
 
@@ -3458,14 +3443,6 @@ void OutputHLSL::writeParameter(const TVariable *param, TInfoSinkBase &out)
             out << "const uint " << nameStr << ArrayString(type);
             return;
         }
-        if (mOutputType == SH_HLSL_4_0_FL9_3_OUTPUT)
-        {
-            out << QualifierString(qualifier) << " " << TextureString(type.getBasicType())
-                << " texture_" << nameStr << ArrayString(type) << ", " << QualifierString(qualifier)
-                << " " << SamplerString(type.getBasicType()) << " sampler_" << nameStr
-                << ArrayString(type);
-            return;
-        }
     }
 
     // If the parameter is an atomic counter, we need to add an extra parameter to keep track of the
@@ -3497,15 +3474,6 @@ void OutputHLSL::writeParameter(const TVariable *param, TInfoSinkBase &out)
             if (mOutputType == SH_HLSL_4_1_OUTPUT)
             {
                 out << ", const uint " << sampler->name() << ArrayString(samplerType);
-            }
-            else if (mOutputType == SH_HLSL_4_0_FL9_3_OUTPUT)
-            {
-                ASSERT(IsSampler(samplerType.getBasicType()));
-                out << ", " << QualifierString(qualifier) << " "
-                    << TextureString(samplerType.getBasicType()) << " texture_" << sampler->name()
-                    << ArrayString(samplerType) << ", " << QualifierString(qualifier) << " "
-                    << SamplerString(samplerType.getBasicType()) << " sampler_" << sampler->name()
-                    << ArrayString(samplerType);
             }
             else
             {

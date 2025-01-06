@@ -29,6 +29,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/ASCIILiteral.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if USE(SYSTEM_MALLOC)
 #define GIGACAGE_ENABLED 0
 
@@ -51,18 +53,6 @@ inline void addPrimitiveDisableCallback(void (*)(void*), void*) { }
 inline void removePrimitiveDisableCallback(void (*)(void*), void*) { }
 
 inline void forbidDisablingPrimitiveGigacage() { }
-
-ALWAYS_INLINE ASCIILiteral name(Kind kind)
-{
-    switch (kind) {
-    case Primitive:
-        return "Primitive"_s;
-    case NumberOfKinds:
-        break;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
 
 ALWAYS_INLINE bool contains(const void*) { return false; }
 ALWAYS_INLINE bool disablingPrimitiveGigacageIsForbidden() { return false; }
@@ -119,4 +109,4 @@ WTF_EXPORT_PRIVATE void* mallocArray(Kind, size_t numElements, size_t elementSiz
 
 } // namespace Gigacage
 
-
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

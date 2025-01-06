@@ -46,13 +46,14 @@ public:
     InlineInvalidation(InlineDamage&, const InlineItemList&, const InlineDisplay::Content&);
 
     bool rootStyleWillChange(const ElementBox& formattingContextRoot, const RenderStyle& newStyle);
-    bool styleWillChange(const Box&, const RenderStyle& newStyle);
+    bool styleWillChange(const Box&, const RenderStyle& newStyle, StyleDifference);
 
     bool textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset = { });
     bool textWillBeRemoved(const InlineTextBox&, std::optional<size_t> offset = { });
 
     bool inlineLevelBoxInserted(const Box&);
     bool inlineLevelBoxWillBeRemoved(const Box&);
+    bool inlineLevelBoxContentWillChange(const Box&);
 
     bool restartForPagination(size_t lineIndex, LayoutUnit pageTopAdjustment);
 

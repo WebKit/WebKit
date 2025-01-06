@@ -10,8 +10,8 @@ microphone signal. These effects are required for VoIP calling and some
 examples include echo cancellation (AEC), noise suppression (NS) and
 automatic gain control (AGC).
 
-The API for APM resides in [`/modules/audio_processing/include`][https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/modules/audio_processing/include].
-APM is created using the [`AudioProcessingBuilder`][https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/modules/audio_processing/include/audio_processing.h]
+The API for APM resides in [`/api/audio/audio_processing.h`][https://webrtc.googlesource.com/src/+/refs/heads/main/api/audio/audio_processing.h].
+APM is created using the [`BuiltinAudioProcessingBuilder`][https://webrtc.googlesource.com/src/+/refs/heads/main/api/audio/builtin_audio_processing_builder.h]
 builder that allows it to be customized and configured.
 
 Some specific aspects of APM include that:

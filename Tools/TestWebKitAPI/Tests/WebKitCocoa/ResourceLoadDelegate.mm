@@ -56,7 +56,7 @@ TEST(ResourceLoadDelegate, Basic)
         requestFromDelegate = request;
     }];
 
-    RetainPtr<NSURLRequest> requestLoaded = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr<NSURLRequest> requestLoaded = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView loadRequest:requestLoaded.get()];
     TestWebKitAPI::Util::run(&done);
     
@@ -307,8 +307,10 @@ TEST(ResourceLoadDelegate, LoadInfo)
     checkFrames(7, sub, main, _WKResourceLoadInfoResourceTypeFetch);
     checkFrames(8, sub, main, _WKResourceLoadInfoResourceTypeFetch);
 
+    String requestClass = NSStringFromClass([otherParameters[0] class]);
+
     EXPECT_EQ(otherParameters.size(), 12ull);
-    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[0] class]), "NSMutableURLRequest");
+    EXPECT_TRUE(requestClass == "NSURLRequest"_s || requestClass == "NSMutableURLRequest"_s);
     EXPECT_WK_STREQ([otherParameters[0] URL].path, "/");
     EXPECT_WK_STREQ(NSStringFromClass([otherParameters[1] class]), "NSHTTPURLResponse");
     EXPECT_WK_STREQ([otherParameters[1] URL].path, "/");

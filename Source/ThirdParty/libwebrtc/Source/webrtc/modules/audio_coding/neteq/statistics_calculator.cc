@@ -112,7 +112,7 @@ void StatisticsCalculator::PeriodicUmaAverage::Reset() {
   counter_ = 0;
 }
 
-StatisticsCalculator::StatisticsCalculator()
+StatisticsCalculator::StatisticsCalculator(TickTimer* tick_timer)
     : preemptive_samples_(0),
       accelerate_samples_(0),
       expanded_speech_samples_(0),
@@ -129,7 +129,13 @@ StatisticsCalculator::StatisticsCalculator()
                            1000),
       buffer_full_counter_("WebRTC.Audio.JitterBufferFullPerMinute",
                            60000,  // 60 seconds report interval.
-                           100) {}
+                           100),
+      expand_uma_logger_("WebRTC.Audio.ExpandRatePercent",
+                         10,  // Report once every 10 s.
+                         tick_timer),
+      speech_expand_uma_logger_("WebRTC.Audio.SpeechExpandRatePercent",
+                                10,  // Report once every 10 s.
+                                tick_timer) {}
 
 StatisticsCalculator::~StatisticsCalculator() = default;
 
@@ -149,6 +155,9 @@ void StatisticsCalculator::ResetMcu() {
 
 void StatisticsCalculator::ExpandedVoiceSamples(size_t num_samples,
                                                 bool is_new_concealment_event) {
+  if (!decoded_output_played_) {
+    return;
+  }
   expanded_speech_samples_ += num_samples;
   ConcealedSamplesCorrection(rtc::dchecked_cast<int>(num_samples), true);
   lifetime_stats_.concealment_events += is_new_concealment_event;
@@ -156,18 +165,27 @@ void StatisticsCalculator::ExpandedVoiceSamples(size_t num_samples,
 
 void StatisticsCalculator::ExpandedNoiseSamples(size_t num_samples,
                                                 bool is_new_concealment_event) {
+  if (!decoded_output_played_) {
+    return;
+  }
   expanded_noise_samples_ += num_samples;
   ConcealedSamplesCorrection(rtc::dchecked_cast<int>(num_samples), false);
   lifetime_stats_.concealment_events += is_new_concealment_event;
 }
 
 void StatisticsCalculator::ExpandedVoiceSamplesCorrection(int num_samples) {
+  if (!decoded_output_played_) {
+    return;
+  }
   expanded_speech_samples_ =
       AddIntToSizeTWithLowerCap(num_samples, expanded_speech_samples_);
   ConcealedSamplesCorrection(num_samples, true);
 }
 
 void StatisticsCalculator::ExpandedNoiseSamplesCorrection(int num_samples) {
+  if (!decoded_output_played_) {
+    return;
+  }
   expanded_noise_samples_ =
       AddIntToSizeTWithLowerCap(num_samples, expanded_noise_samples_);
   ConcealedSamplesCorrection(num_samples, false);
@@ -178,6 +196,9 @@ void StatisticsCalculator::DecodedOutputPlayed() {
 }
 
 void StatisticsCalculator::EndExpandEvent(int fs_hz) {
+  if (!decoded_output_played_) {
+    return;
+  }
   RTC_DCHECK_GE(lifetime_stats_.concealed_samples,
                 concealed_samples_at_event_end_);
   const int event_duration_ms =
@@ -195,6 +216,9 @@ void StatisticsCalculator::EndExpandEvent(int fs_hz) {
 
 void StatisticsCalculator::ConcealedSamplesCorrection(int num_samples,
                                                       bool is_voice) {
+  if (!decoded_output_played_) {
+    return;
+  }
   if (num_samples < 0) {
     // Store negative correction to subtract from future positive additions.
     // See also the function comment in the header file.
@@ -220,18 +244,27 @@ void StatisticsCalculator::ConcealedSamplesCorrection(int num_samples,
 }
 
 void StatisticsCalculator::PreemptiveExpandedSamples(size_t num_samples) {
+  if (!decoded_output_played_) {
+    return;
+  }
   preemptive_samples_ += num_samples;
   operations_and_state_.preemptive_samples += num_samples;
   lifetime_stats_.inserted_samples_for_deceleration += num_samples;
 }
 
 void StatisticsCalculator::AcceleratedSamples(size_t num_samples) {
+  if (!decoded_output_played_) {
+    return;
+  }
   accelerate_samples_ += num_samples;
   operations_and_state_.accelerate_samples += num_samples;
   lifetime_stats_.removed_samples_for_acceleration += num_samples;
 }
 
 void StatisticsCalculator::GeneratedNoiseSamples(size_t num_samples) {
+  if (!decoded_output_played_) {
+    return;
+  }
   lifetime_stats_.generated_noise_samples += num_samples;
 }
 
@@ -249,6 +282,9 @@ void StatisticsCalculator::SecondaryPacketsReceived(size_t num_packets) {
 }
 
 void StatisticsCalculator::IncreaseCounter(size_t num_samples, int fs_hz) {
+  if (!decoded_output_played_) {
+    return;
+  }
   const int time_step_ms =
       rtc::CheckedDivExact(static_cast<int>(1000 * num_samples), fs_hz);
   delayed_packet_outage_counter_.AdvanceClock(time_step_ms);
@@ -260,19 +296,31 @@ void StatisticsCalculator::IncreaseCounter(size_t num_samples, int fs_hz) {
     timestamps_since_last_report_ = 0;
   }
   lifetime_stats_.total_samples_received += num_samples;
+  expand_uma_logger_.UpdateSampleCounter(lifetime_stats_.concealed_samples,
+                                         fs_hz);
+  uint64_t speech_concealed_samples = 0;
+  if (lifetime_stats_.concealed_samples >
+      lifetime_stats_.silent_concealed_samples) {
+    speech_concealed_samples = lifetime_stats_.concealed_samples -
+                               lifetime_stats_.silent_concealed_samples;
+  }
+  speech_expand_uma_logger_.UpdateSampleCounter(speech_concealed_samples,
+                                                fs_hz);
 }
 
-void StatisticsCalculator::JitterBufferDelay(
-    size_t num_samples,
-    uint64_t waiting_time_ms,
-    uint64_t target_delay_ms,
-    uint64_t unlimited_target_delay_ms) {
+void StatisticsCalculator::JitterBufferDelay(size_t num_samples,
+                                             uint64_t waiting_time_ms,
+                                             uint64_t target_delay_ms,
+                                             uint64_t unlimited_target_delay_ms,
+                                             uint64_t processing_delay_us) {
   lifetime_stats_.jitter_buffer_delay_ms += waiting_time_ms * num_samples;
   lifetime_stats_.jitter_buffer_target_delay_ms +=
       target_delay_ms * num_samples;
   lifetime_stats_.jitter_buffer_minimum_delay_ms +=
       unlimited_target_delay_ms * num_samples;
   lifetime_stats_.jitter_buffer_emitted_count += num_samples;
+  lifetime_stats_.total_processing_delay_us +=
+      num_samples * processing_delay_us;
 }
 
 void StatisticsCalculator::SecondaryDecodedSamples(int num_samples) {

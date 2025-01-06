@@ -6,25 +6,27 @@
                 var res = document.getElementById('res');
                 res.innerHTML = res.innerHTML + msg + "<br>";
             }
-            function test()
+            async function test()
             {
                 var slider = document.getElementById('slider');
                 if (window.testRunner) {
                     testRunner.dumpAsText();
-                    eventSender.mouseMoveTo(slider.offsetLeft + 7, slider.offsetTop + 7);
-                    eventSender.mouseDown();
+                    testRunner.waitUntilDone();
+                    await eventSender.asyncMouseMoveTo(slider.offsetLeft + 7, slider.offsetTop + 7);
+                    await eventSender.asyncMouseDown();
                     log(slider.value)
-                    eventSender.mouseMoveTo(slider.offsetLeft + 50, slider.offsetTop + 50);
-                    eventSender.mouseUp();
+                    await eventSender.asyncMouseMoveTo(slider.offsetLeft + 50, slider.offsetTop + 50);
+                    await eventSender.asyncMouseUp();
                     log(slider.value)
 
                     // Try to click outside the slider thumb and drag.
-                    eventSender.mouseMoveTo(slider.offsetLeft + 10, slider.offsetTop + 10);
-                    eventSender.mouseDown();
+                    await eventSender.asyncMouseMoveTo(slider.offsetLeft + 10, slider.offsetTop + 10);
+                    await eventSender.asyncMouseDown();
                     log(slider.value)
-                    eventSender.mouseMoveTo(slider.offsetLeft + 30, slider.offsetTop + 30);
-                    eventSender.mouseUp();
+                    await eventSender.asyncMouseMoveTo(slider.offsetLeft + 30, slider.offsetTop + 30);
+                    await eventSender.asyncMouseUp();
                     log(slider.value)
+                    testRunner.notifyDone();
                 }
             }
         </script>

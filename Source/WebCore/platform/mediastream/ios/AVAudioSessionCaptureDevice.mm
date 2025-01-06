@@ -30,22 +30,49 @@
 
 #import <AVFoundation/AVAudioSession.h>
 
+#import <pal/cocoa/AVFoundationSoftLink.h>
+
 namespace WebCore {
 
-AVAudioSessionCaptureDevice AVAudioSessionCaptureDevice::create(AVAudioSessionPortDescription* deviceInput, AVAudioSessionPortDescription *defaultInput)
+AVAudioSessionCaptureDevice AVAudioSessionCaptureDevice::createInput(AVAudioSessionPortDescription* deviceInput, AVAudioSessionPortDescription *defaultInput)
 {
-    return AVAudioSessionCaptureDevice(deviceInput, defaultInput);
+    return AVAudioSessionCaptureDevice(deviceInput, defaultInput, CaptureDevice::DeviceType::Microphone);
 }
 
-AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(AVAudioSessionPortDescription *deviceInput, AVAudioSessionPortDescription *defaultInput)
-    : CaptureDevice(deviceInput.UID, CaptureDevice::DeviceType::Microphone, deviceInput.portName)
+AVAudioSessionCaptureDevice AVAudioSessionCaptureDevice::createOutput(AVAudioSessionPortDescription *deviceOutput, AVAudioSessionPortDescription *defaultOutput)
+{
+    return AVAudioSessionCaptureDevice(deviceOutput, defaultOutput, CaptureDevice::DeviceType::Speaker);
+}
+
+AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(AVAudioSessionPortDescription *device, AVAudioSessionPortDescription *defaultDevice, CaptureDevice::DeviceType deviceType)
+    : CaptureDevice(device.UID, deviceType, device.portName)
+    , m_description(device)
 {
     setEnabled(true);
-    setIsDefault(defaultInput && [defaultInput.UID isEqualToString:deviceInput.UID]);
+    setIsDefault(defaultDevice && [defaultDevice.UID isEqualToString:device.UID]);
 }
 
-AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId, bool isEnabled, bool isDefault, bool isMock)
+bool AVAudioSessionCaptureDevice::isBuiltin() const
+{
+    if (type() == CaptureDevice::DeviceType::Microphone)
+        return [m_description portType] == AVAudioSessionPortBuiltInMic;
+
+    return [m_description portType] == AVAudioSessionPortBuiltInReceiver || [m_description portType] == AVAudioSessionPortBuiltInSpeaker;
+}
+
+bool AVAudioSessionCaptureDevice::isLineInOrOut() const
+{
+    return [m_description portType] == (type() == CaptureDevice::DeviceType::Microphone ? AVAudioSessionPortLineIn : AVAudioSessionPortLineOut);
+}
+
+bool AVAudioSessionCaptureDevice::isHeadset() const
+{
+    return [m_description portType] == (type() == CaptureDevice::DeviceType::Microphone ? AVAudioSessionPortHeadsetMic : AVAudioSessionPortHeadphones);
+}
+
+AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId, bool isEnabled, bool isDefault, bool isMock, RetainPtr<AVAudioSessionPortDescription>&& description)
     : CaptureDevice(persistentId, type, label, groupId, isEnabled, isDefault, isMock)
+    , m_description(WTFMove(description))
 {
 }
 
@@ -59,6 +86,7 @@ AVAudioSessionCaptureDevice AVAudioSessionCaptureDevice::isolatedCopy() &&
         m_enabled,
         m_default,
         m_isMockDevice,
+        WTFMove(m_description)
     };
 }
 

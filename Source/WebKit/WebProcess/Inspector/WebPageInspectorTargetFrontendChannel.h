@@ -27,6 +27,8 @@
 
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -34,7 +36,7 @@ namespace WebKit {
 class WebPage;
 
 class WebPageInspectorTargetFrontendChannel final : public Inspector::FrontendChannel {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPageInspectorTargetFrontendChannel);
     WTF_MAKE_NONCOPYABLE(WebPageInspectorTargetFrontendChannel);
 public:
     WebPageInspectorTargetFrontendChannel(WebPage&, const String& targetId, Inspector::FrontendChannel::ConnectionType);
@@ -44,7 +46,7 @@ private:
     ConnectionType connectionType() const override { return m_connectionType; }
     void sendMessageToFrontend(const String& message) override;
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
     String m_targetId;
     Inspector::FrontendChannel::ConnectionType m_connectionType { Inspector::FrontendChannel::ConnectionType::Remote };
 };

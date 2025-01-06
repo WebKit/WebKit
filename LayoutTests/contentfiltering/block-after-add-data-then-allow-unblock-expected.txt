@@ -30,6 +30,8 @@ Frame: '<!--frame1-->'
 PASS
 
 ============== Back Forward List ==============
-curr->  (file test):contentfiltering/block-after-add-data-then-allow-unblock.html  **nav target**
+        (file test):contentfiltering/block-after-add-data-then-allow-unblock.html
+            about:blank (in frame "<!--frame1-->")
+curr->  (file test):contentfiltering/block-after-add-data-then-allow-unblock.html
             (file test):contentfiltering/resources/pass.html (in frame "<!--frame1-->")
 ===============================================

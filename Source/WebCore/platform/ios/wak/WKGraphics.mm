@@ -31,6 +31,8 @@
 #import "WebCoreThreadInternal.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 static inline void _FillRectsUsingOperation(CGContextRef context, const CGRect* rects, int count, CGCompositeOperation op)
 {
     int i;
@@ -70,5 +72,7 @@ CGContextRef WKGetCurrentGraphicsContext(void)
     WebThreadContext* threadContext =  WebThreadCurrentContext();
     return threadContext->currentCGContext;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(IOS_FAMILY)

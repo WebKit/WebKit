@@ -28,11 +28,11 @@
 
 #include "HTMLNames.h"
 #include "HTMLTextFormControlElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextPlaceholderElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextPlaceholderElement);
 
 Ref<TextPlaceholderElement> TextPlaceholderElement::create(Document& document, const LayoutSize& size)
 {
@@ -43,10 +43,11 @@ TextPlaceholderElement::TextPlaceholderElement(Document& document, const LayoutS
     : HTMLDivElement { HTMLNames::divTag, document }
 {
     // FIXME: Move to User Agent stylesheet. See <https://webkit.org/b/208745>.
-    setInlineStyleProperty(CSSPropertyDisplay, size.width() ? CSSValueInlineBlock : CSSValueBlock, false);
-    setInlineStyleProperty(CSSPropertyVerticalAlign, CSSValueTop, false);
-    setInlineStyleProperty(CSSPropertyVisibility, CSSValueHidden, true);
-    setInlineStyleProperty(CSSPropertyWidth, size.width(), CSSUnitType::CSS_PX);
+    setInlineStyleProperty(CSSPropertyDisplay, size.width() ? CSSValueInlineBlock : CSSValueBlock);
+    setInlineStyleProperty(CSSPropertyVerticalAlign, CSSValueTop);
+    setInlineStyleProperty(CSSPropertyVisibility, CSSValueHidden, IsImportant::Yes);
+    if (size.width())
+        setInlineStyleProperty(CSSPropertyWidth, size.width(), CSSUnitType::CSS_PX);
     setInlineStyleProperty(CSSPropertyHeight, size.height(), CSSUnitType::CSS_PX);
 }
 

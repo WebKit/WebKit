@@ -33,6 +33,7 @@
 #include "PlatformTimeRanges.h"
 #include "ProcessIdentity.h"
 #include <optional>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/CompletionHandler.h>
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -43,16 +44,15 @@ namespace WebCore {
 
 class VideoFrame;
 
-class MediaPlayerPrivateInterface {
+// MediaPlayerPrivateInterface subclasses should be ref-counted, but each subclass may choose whether
+// to be RefCounted or ThreadSafeRefCounted. Therefore, each subclass must implement a pair of
+// virtual ref()/deref() methods. See NullMediaPlayerPrivate for an example.
+class MediaPlayerPrivateInterface : public AbstractRefCounted {
 public:
     WEBCORE_EXPORT MediaPlayerPrivateInterface();
     WEBCORE_EXPORT virtual ~MediaPlayerPrivateInterface();
 
-    // MediaPlayerPrivateInterface subclasses should be ref-counted, but each subclass may choose whether
-    // to be RefCounted or ThreadSafeRefCounted. Therefore, each subclass must implement a pair of
-    // virtual ref()/deref() methods. See NullMediaPlayerPrivate for an example.
-    virtual void ref() = 0;
-    virtual void deref() = 0;
+    virtual constexpr MediaPlayerType mediaPlayerType() const = 0;
 
     virtual void load(const String&) { }
     virtual void load(const URL& url, const ContentType&, const String&) { load(url.string()); }
@@ -150,7 +150,7 @@ public:
     virtual void setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm) { }
 
     // Indicates whether playback is currently paused indefinitely: such as having been paused
-    // explictly by the HTMLMediaElement or through remote media playback control.
+    // explicitly by the HTMLMediaElement or through remote media playback control.
     // This excludes video potentially playing but having stalled.
     virtual bool paused() const = 0;
 
@@ -190,12 +190,6 @@ public:
     virtual void paint(GraphicsContext&, const FloatRect&) = 0;
 
     virtual void paintCurrentFrameInContext(GraphicsContext& c, const FloatRect& r) { paint(c, r); }
-#if !USE(AVFOUNDATION)
-    virtual bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) { return false; }
-#endif
-#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    virtual void willBeAskedToPaintGL() { }
-#endif
 
     virtual RefPtr<VideoFrame> videoFrameForCurrentTime();
     virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
@@ -264,7 +258,7 @@ public:
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    virtual std::unique_ptr<LegacyCDMSession> createSession(const String&, LegacyCDMSessionClient&) { return nullptr; }
+    virtual RefPtr<LegacyCDMSession> createSession(const String&, LegacyCDMSessionClient&) { return nullptr; }
     virtual void setCDM(LegacyCDM*) { }
     virtual void setCDMSession(LegacyCDMSession*) { }
     virtual void keyAdded() { }
@@ -323,6 +317,7 @@ public:
 
 #if USE(AVFOUNDATION)
     virtual AVPlayer *objCAVFoundationAVPlayer() const { return nullptr; }
+    virtual void setDecompressionSessionPreferences(bool, bool) { }
 #endif
 
     virtual bool performTaskAtTime(Function<void()>&&, const MediaTime&) { return false; }
@@ -333,7 +328,7 @@ public:
 
     virtual void audioOutputDeviceChanged() { }
 
-    virtual MediaPlayerIdentifier identifier() const { return { }; }
+    virtual std::optional<MediaPlayerIdentifier> identifier() const { return std::nullopt; }
 
     virtual bool supportsPlayAtHostTime() const { return false; }
     virtual bool supportsPauseAtHostTime() const { return false; }
@@ -352,6 +347,8 @@ public:
 
     virtual void renderVideoWillBeDestroyed() { }
 
+    virtual void mediaPlayerWillBeDestroyed() { }
+
     virtual void isLoopingChanged() { }
 
     virtual void setShouldCheckHardwareSupport(bool value) { m_shouldCheckHardwareSupport = value; }
@@ -367,6 +364,10 @@ public:
 #endif
 
     virtual void isInFullscreenOrPictureInPictureChanged(bool) { }
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    virtual bool supportsLinearMediaPlayer() const { return false; }
+#endif
 
 protected:
     mutable PlatformTimeRanges m_seekable;

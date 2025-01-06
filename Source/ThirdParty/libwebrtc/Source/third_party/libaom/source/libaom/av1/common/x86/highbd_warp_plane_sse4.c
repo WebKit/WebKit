@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -32,7 +32,7 @@ static const uint8_t highbd_shuffle_alpha0_mask3[16] = { 12, 13, 14, 15, 12, 13,
                                                          14, 15, 12, 13, 14, 15,
                                                          12, 13, 14, 15 };
 
-static INLINE void highbd_prepare_horizontal_filter_coeff(int alpha, int sx,
+static inline void highbd_prepare_horizontal_filter_coeff(int alpha, int sx,
                                                           __m128i *coeff) {
   // Filter even-index pixels
   const __m128i tmp_0 =
@@ -91,7 +91,7 @@ static INLINE void highbd_prepare_horizontal_filter_coeff(int alpha, int sx,
   coeff[7] = _mm_unpackhi_epi64(tmp_13, tmp_15);
 }
 
-static INLINE void highbd_prepare_horizontal_filter_coeff_alpha0(
+static inline void highbd_prepare_horizontal_filter_coeff_alpha0(
     int sx, __m128i *coeff) {
   // Filter coeff
   const __m128i tmp_0 = _mm_loadu_si128(
@@ -112,7 +112,7 @@ static INLINE void highbd_prepare_horizontal_filter_coeff_alpha0(
   coeff[7] = coeff[6];
 }
 
-static INLINE void highbd_filter_src_pixels(
+static inline void highbd_filter_src_pixels(
     const __m128i *src, const __m128i *src2, __m128i *tmp, __m128i *coeff,
     const int offset_bits_horiz, const int reduce_bits_horiz, int k) {
   const __m128i src_1 = *src;
@@ -154,7 +154,7 @@ static INLINE void highbd_filter_src_pixels(
   tmp[k + 7] = _mm_packs_epi32(res_even, res_odd);
 }
 
-static INLINE void highbd_horiz_filter(const __m128i *src, const __m128i *src2,
+static inline void highbd_horiz_filter(const __m128i *src, const __m128i *src2,
                                        __m128i *tmp, int sx, int alpha, int k,
                                        const int offset_bits_horiz,
                                        const int reduce_bits_horiz) {
@@ -164,7 +164,7 @@ static INLINE void highbd_horiz_filter(const __m128i *src, const __m128i *src2,
                            reduce_bits_horiz, k);
 }
 
-static INLINE void highbd_warp_horizontal_filter_alpha0_beta0(
+static inline void highbd_warp_horizontal_filter_alpha0_beta0(
     const uint16_t *ref, __m128i *tmp, int stride, int32_t ix4, int32_t iy4,
     int32_t sx4, int alpha, int beta, int p_height, int height, int i,
     const int offset_bits_horiz, const int reduce_bits_horiz) {
@@ -192,7 +192,7 @@ static INLINE void highbd_warp_horizontal_filter_alpha0_beta0(
   }
 }
 
-static INLINE void highbd_warp_horizontal_filter_alpha0(
+static inline void highbd_warp_horizontal_filter_alpha0(
     const uint16_t *ref, __m128i *tmp, int stride, int32_t ix4, int32_t iy4,
     int32_t sx4, int alpha, int beta, int p_height, int height, int i,
     const int offset_bits_horiz, const int reduce_bits_horiz) {
@@ -219,7 +219,7 @@ static INLINE void highbd_warp_horizontal_filter_alpha0(
   }
 }
 
-static INLINE void highbd_warp_horizontal_filter_beta0(
+static inline void highbd_warp_horizontal_filter_beta0(
     const uint16_t *ref, __m128i *tmp, int stride, int32_t ix4, int32_t iy4,
     int32_t sx4, int alpha, int beta, int p_height, int height, int i,
     const int offset_bits_horiz, const int reduce_bits_horiz) {
@@ -245,7 +245,7 @@ static INLINE void highbd_warp_horizontal_filter_beta0(
   }
 }
 
-static INLINE void highbd_warp_horizontal_filter(
+static inline void highbd_warp_horizontal_filter(
     const uint16_t *ref, __m128i *tmp, int stride, int32_t ix4, int32_t iy4,
     int32_t sx4, int alpha, int beta, int p_height, int height, int i,
     const int offset_bits_horiz, const int reduce_bits_horiz) {
@@ -269,7 +269,7 @@ static INLINE void highbd_warp_horizontal_filter(
   }
 }
 
-static INLINE void highbd_prepare_warp_horizontal_filter(
+static inline void highbd_prepare_warp_horizontal_filter(
     const uint16_t *ref, __m128i *tmp, int stride, int32_t ix4, int32_t iy4,
     int32_t sx4, int alpha, int beta, int p_height, int height, int i,
     const int offset_bits_horiz, const int reduce_bits_horiz) {
@@ -302,9 +302,7 @@ void av1_highbd_warp_affine_sse4_1(const int32_t *mat, const uint16_t *ref,
                                    int16_t beta, int16_t gamma, int16_t delta) {
   __m128i tmp[15];
   int i, j, k;
-  const int reduce_bits_horiz =
-      conv_params->round_0 +
-      AOMMAX(bd + FILTER_BITS - conv_params->round_0 - 14, 0);
+  const int reduce_bits_horiz = conv_params->round_0;
   const int reduce_bits_vert = conv_params->is_compound
                                    ? conv_params->round_1
                                    : 2 * FILTER_BITS - reduce_bits_horiz;
@@ -312,6 +310,10 @@ void av1_highbd_warp_affine_sse4_1(const int32_t *mat, const uint16_t *ref,
   assert(IMPLIES(conv_params->is_compound, conv_params->dst != NULL));
   assert(!(bd == 12 && reduce_bits_horiz < 5));
   assert(IMPLIES(conv_params->do_average, conv_params->is_compound));
+
+  // Check that, even with 12-bit input, the intermediate values will fit
+  // into an unsigned 16-bit intermediate array.
+  assert(bd + FILTER_BITS + 2 - conv_params->round_0 <= 16);
 
   const int offset_bits_vert = bd + 2 * FILTER_BITS - reduce_bits_horiz;
   const __m128i clip_pixel =

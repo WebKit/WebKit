@@ -8,8 +8,15 @@
 #ifndef SkSVGUse_DEFINED
 #define SkSVGUse_DEFINED
 
+#include "include/core/SkPath.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkRefCnt.h"
+#include "include/private/base/SkAPI.h"
+#include "modules/svg/include/SkSVGNode.h"
 #include "modules/svg/include/SkSVGTransformableNode.h"
 #include "modules/svg/include/SkSVGTypes.h"
+
+class SkSVGRenderContext;
 
 /**
  * Implements support for <use> (reference) elements.
@@ -29,7 +36,7 @@ protected:
     bool onPrepareToRender(SkSVGRenderContext*) const override;
     void onRender(const SkSVGRenderContext&) const override;
     SkPath onAsPath(const SkSVGRenderContext&) const override;
-    SkRect onObjectBoundingBox(const SkSVGRenderContext&) const override;
+    SkRect onTransformableObjectBoundingBox(const SkSVGRenderContext&) const override;
 
 private:
     SkSVGUse();

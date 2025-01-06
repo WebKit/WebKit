@@ -79,6 +79,7 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
             (["JavaScriptCore", "WebKit"], (self.model().framework.name, "%sProtocolObjects.h" % self.protocol_name())),
             (["JavaScriptCore", "WebKit"], ("JavaScriptCore", "inspector/InspectorBackendDispatcher.h")),
             (["JavaScriptCore", "WebKit"], ("WTF", "wtf/Expected.h")),
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/text/MakeString.h")),
             (["JavaScriptCore", "WebKit"], ("WTF", "wtf/text/WTFString.h")),
             (["JavaScriptCore", "WebKit"], ("std", "tuple")),
         ]

@@ -36,7 +36,7 @@ TEST(StreamConnectionBufferTests, CreateWorks)
     auto buffer = IPC::StreamClientConnectionBuffer::create(8);
     ASSERT_TRUE(buffer.has_value());
     auto& b = *buffer;
-    EXPECT_NE(b.data(), nullptr);
+    EXPECT_NE(b.span().data(), nullptr);
     EXPECT_EQ(b.dataSize(), 256u);
     {
         auto server = IPC::StreamServerConnectionBuffer::map(b.createHandle());
@@ -46,7 +46,7 @@ TEST(StreamConnectionBufferTests, CreateWorks)
     auto buffer2 = IPC::StreamClientConnectionBuffer::create(24);
     ASSERT_TRUE(buffer2.has_value());
     auto& b2 = *buffer2;
-    EXPECT_NE(b2.data(), nullptr);
+    EXPECT_NE(b2.span().data(), nullptr);
     EXPECT_EQ(b2.dataSize(), 16777216u);
     {
         auto server = IPC::StreamServerConnectionBuffer::map(b2.createHandle());

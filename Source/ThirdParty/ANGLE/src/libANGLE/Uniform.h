@@ -13,6 +13,7 @@
 #include "angle_gl.h"
 #include "common/MemoryBuffer.h"
 #include "common/debug.h"
+#include "common/uniform_type_info_autogen.h"
 #include "common/utilities.h"
 #include "compiler/translator/blocklayout.h"
 #include "libANGLE/angletypes.h"
@@ -100,7 +101,7 @@ struct LinkedUniform
     bool isAtomicCounter() const { return IsAtomicCounterType(getType()); }
     bool isInDefaultBlock() const { return pod.bufferIndex == -1; }
     size_t getElementSize() const { return getUniformTypeInfo().externalSize; }
-    GLint getElementComponents() const { return getUniformTypeInfo().componentCount; }
+    GLint getElementComponents() const { return GetUniformElementComponents(pod.typeIndex); }
 
     bool isTexelFetchStaticUse() const { return pod.flagBits.texelFetchStaticUse; }
     bool isFragmentInOut() const { return pod.flagBits.isFragmentInOut; }

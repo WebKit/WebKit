@@ -3,6 +3,6 @@ This page appends an iframe after onload. That iframe should *not* result in a n
 
 
 ============== Back Forward List ==============
-curr->  (file test):fast/loader/dynamic-iframe-extra-back-forward-item.html  **nav target**
+curr->  (file test):fast/loader/dynamic-iframe-extra-back-forward-item.html
             (file test):fast/loader/resources/notify-done.html (in frame "<!--frame1-->")
 ===============================================

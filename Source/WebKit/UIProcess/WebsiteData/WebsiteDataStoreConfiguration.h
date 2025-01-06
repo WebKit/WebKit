@@ -46,6 +46,7 @@ public:
     enum class ShouldInitializePaths : bool { No, Yes };
     static Ref<WebsiteDataStoreConfiguration> create(IsPersistent isPersistent) { return adoptRef(*new WebsiteDataStoreConfiguration(isPersistent, ShouldInitializePaths::Yes)); }
     WebsiteDataStoreConfiguration(IsPersistent, ShouldInitializePaths = ShouldInitializePaths::Yes);
+    WebsiteDataStoreConfiguration(const String& baseCacheDirectory, const String& baseDataDirectory);
 
 #if PLATFORM(COCOA)
     static Ref<WebsiteDataStoreConfiguration> create(const WTF::UUID& identifier) { return adoptRef(*new WebsiteDataStoreConfiguration(identifier)); }
@@ -208,8 +209,6 @@ public:
     bool allLoadsBlockedByDeviceManagementRestrictionsForTesting() const { return m_allLoadsBlockedByDeviceManagementRestrictionsForTesting; }
     void setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(bool blocked) { m_allLoadsBlockedByDeviceManagementRestrictionsForTesting = blocked; }
 
-    bool webPushDaemonUsesMockBundlesForTesting() const { return m_webPushDaemonUsesMockBundlesForTesting; }
-    void setWebPushDaemonUsesMockBundlesForTesting(bool usesMockBundles) { m_webPushDaemonUsesMockBundlesForTesting = usesMockBundles; }
     WebPushD::WebPushDaemonConnectionConfiguration webPushDaemonConnectionConfiguration() const;
 
     const String& dataConnectionServiceType() const { return m_dataConnectionServiceType; }
@@ -278,7 +277,6 @@ public:
     const Directories& directories() const { return m_directories; }
 
 private:
-    WebsiteDataStoreConfiguration(const String& baseCacheDirectory, const String& baseDataDirectory);
     static Ref<WebsiteDataStoreConfiguration> create(IsPersistent isPersistent, ShouldInitializePaths shouldInitializePaths) { return adoptRef(*new WebsiteDataStoreConfiguration(isPersistent, shouldInitializePaths)); }
 
     void initializePaths();
@@ -309,7 +307,6 @@ private:
     URL m_httpsProxy;
     bool m_deviceManagementRestrictionsEnabled { false };
     bool m_allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
-    bool m_webPushDaemonUsesMockBundlesForTesting { false };
     bool m_allowsCellularAccess { true };
     bool m_legacyTLSEnabled { true };
     bool m_fastServerTrustEvaluationEnabled { false };

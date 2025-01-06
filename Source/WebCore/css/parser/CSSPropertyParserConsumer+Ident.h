@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSValuePool.h"
 #include <optional>
 #include <wtf/RefPtr.h>
 
@@ -98,6 +100,18 @@ std::optional<typename Map::ValueType> peekIdentUsingMapping(CSSParserTokenRange
         return std::make_optional(*value);
     return std::nullopt;
 }
+
+// MARK: <custom-ident>
+// https://drafts.csswg.org/css-values/#custom-idents
+
+String consumeCustomIdentRaw(CSSParserTokenRange&, bool shouldLowercase = false);
+RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange&, bool shouldLowercase = false);
+
+// MARK: <dashed-ident>
+// https://drafts.csswg.org/css-values/#dashed-idents
+
+String consumeDashedIdentRaw(CSSParserTokenRange&, bool shouldLowercase = false);
+RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange&, bool shouldLowercase = false);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

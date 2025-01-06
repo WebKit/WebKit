@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -41,29 +41,6 @@ struct EncodeFrameParams;
  * \remark No return value but this function updates group data structures.
  */
 void av1_gop_setup_structure(struct AV1_COMP *cpi);
-
-/*!\brief Distributes bits to frames in a group
- *
- *\ingroup rate_control
- *
- * This function decides on the allocation of bits between the different
- * frames and types of frame in a GF/ARF group.
- *
- * \param[in]   cpi           Top - level encoder instance structure
- * \param[in]   rc            Rate control data
- * \param[in]   gf_group      GF/ARF group data structure
- * \param[in]   is_key_frame  Indicates if the first frame in the group is
- *                            also a key frame.
- * \param[in]   use_arf       Are ARF frames enabled or is this a GF only
- *                            uni-directional group.
- * \param[in]   gf_group_bits Bits available to be allocated.
- *
- * \remark No return but updates the rate control and group data structures
- *         to reflect the allocation of bits.
- */
-void av1_gop_bit_allocation(const AV1_COMP *cpi, RATE_CONTROL *const rc,
-                            GF_GROUP *gf_group, int is_key_frame, int use_arf,
-                            int64_t gf_group_bits);
 
 /*!\brief Check whether a frame in the GOP is a forward key frame
  *

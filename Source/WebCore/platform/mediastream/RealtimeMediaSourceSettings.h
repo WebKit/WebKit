@@ -75,14 +75,15 @@ public:
         Zoom = 1 << 14,
         Torch = 1 << 15,
         BackgroundBlur = 1 << 16,
+        PowerEfficient = 1 << 17,
     };
 
-    static constexpr OptionSet<Flag> allFlags() { return { Width, Height, FrameRate, FacingMode, Volume, SampleRate, SampleSize, EchoCancellation, DeviceId, GroupId, Label, DisplaySurface, LogicalSurface, WhiteBalanceMode, Zoom, Torch, BackgroundBlur }; }
+    static constexpr OptionSet<Flag> allFlags() { return { Width, Height, FrameRate, FacingMode, Volume, SampleRate, SampleSize, EchoCancellation, DeviceId, GroupId, Label, DisplaySurface, LogicalSurface, WhiteBalanceMode, Zoom, Torch, BackgroundBlur, PowerEfficient }; }
 
     WEBCORE_EXPORT OptionSet<RealtimeMediaSourceSettings::Flag> difference(const RealtimeMediaSourceSettings&) const;
 
     RealtimeMediaSourceSettings() = default;
-    RealtimeMediaSourceSettings(uint32_t width, uint32_t height, float frameRate, VideoFacingMode facingMode, double volume, uint32_t sampleRate, uint32_t sampleSize, bool echoCancellation, String&& deviceId, String&& groupId, String&& label, DisplaySurfaceType displaySurface, bool logicalSurface, MeteringMode whiteBalanceMode, double zoom, bool torch, bool backgroundBlur, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+    RealtimeMediaSourceSettings(uint32_t width, uint32_t height, float frameRate, VideoFacingMode facingMode, double volume, uint32_t sampleRate, uint32_t sampleSize, bool echoCancellation, String&& deviceId, String&& groupId, String&& label, DisplaySurfaceType displaySurface, bool logicalSurface, MeteringMode whiteBalanceMode, double zoom, bool torch, bool backgroundBlur, bool powerEfficient, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
         : m_width(width)
         , m_height(height)
         , m_frameRate(frameRate)
@@ -100,6 +101,7 @@ public:
         , m_zoom(zoom)
         , m_torch(torch)
         , m_backgroundBlur(backgroundBlur)
+        , m_powerEfficient(powerEfficient)
         , m_supportedConstraints(WTFMove(supportedConstraints))
     {
     }
@@ -170,6 +172,10 @@ public:
     bool backgroundBlur() const { return m_backgroundBlur; }
     void setBackgroundBlur(bool backgroundBlur) { m_backgroundBlur = backgroundBlur; }
 
+    bool supportsPowerEfficient() const { return m_supportedConstraints.supportsPowerEfficient(); }
+    bool powerEfficient() const { return m_powerEfficient; }
+    void setPowerEfficient(bool value) { m_powerEfficient = value; }
+
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& supportedConstraints) { m_supportedConstraints = supportedConstraints; }
 
@@ -201,6 +207,7 @@ private:
     double m_zoom { 1.0 };
     bool m_torch { false };
     bool m_backgroundBlur { false };
+    bool m_powerEfficient { false };
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };

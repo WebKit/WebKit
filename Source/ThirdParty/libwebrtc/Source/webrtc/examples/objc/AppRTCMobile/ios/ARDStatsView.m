@@ -20,7 +20,8 @@
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
-  if (self = [super initWithFrame:frame]) {
+  self = [super initWithFrame:frame];
+  if (self) {
     _statsLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     _statsLabel.numberOfLines = 0;
     _statsLabel.font = [UIFont fontWithName:@"Roboto" size:12];

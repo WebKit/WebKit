@@ -43,8 +43,7 @@ Advanced Search
 ===============
 
 The Advanced Search page is used to produce a list of all bugs fitting
-exact criteria. `You can play with it on
-Landfill <http://landfill.bugzilla.org/bugzilla-tip/query.cgi?format=advanced>`_.
+exact criteria.
 
 Advanced Search has controls for selecting different possible
 values for all of the fields in a bug, as described above. For some

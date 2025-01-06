@@ -2,6 +2,6 @@
 
 
 
-FAIL PreventDefaulting form onsubmit should allow submit() to succeed assert_equals: expected "v6" but got "v7"
-FAIL PreventDefaulting form onsubmit should allow submit() to succeed and the second submit() which is invalid should not supersede first one assert_equals: expected "v2" but got "v4"
+PASS PreventDefaulting form onsubmit should allow submit() to succeed
+PASS PreventDefaulting form onsubmit should allow submit() to succeed and the second submit() which is invalid should not supersede first one
 

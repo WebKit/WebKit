@@ -34,10 +34,10 @@ AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 0}
+AXElementBusy: 0
 AXURL: LayoutTests/accessibility/mac/document-links.html#Link1
 AXAccessKey: (null)
 AXLinkRelationshipType:
-AXElementBusy: 0
 AXPath: <AXLink>
 
 ------------
@@ -72,10 +72,10 @@ AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 0}
+AXElementBusy: 0
 AXURL: LayoutTests/accessibility/mac/document-links.html#Link2
 AXAccessKey: (null)
 AXLinkRelationshipType:
-AXElementBusy: 0
 AXPath: <AXLink>
 
 ------------
@@ -110,10 +110,10 @@ AXFocusableAncestor: <AXLink: 'Link3'>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 5}
+AXElementBusy: 0
 AXURL: LayoutTests/accessibility/mac/document-links.html#Link3
 AXAccessKey: (null)
 AXLinkRelationshipType:
-AXElementBusy: 0
 
 ------------
 AXHasDocumentRoleAncestor: 0
@@ -147,10 +147,10 @@ AXFocusableAncestor: <AXLink: 'Link4'>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 5}
+AXElementBusy: 0
 AXURL: LayoutTests/accessibility/mac/document-links.html#Link4
 AXAccessKey: (null)
 AXLinkRelationshipType:
-AXElementBusy: 0
 
 ------------
 

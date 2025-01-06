@@ -18,6 +18,8 @@ includes: [propertyHelper.js]
 
 assert.sameValue(ArrayBuffer.prototype.constructor, ArrayBuffer);
 
-verifyNotEnumerable(ArrayBuffer.prototype, "constructor");
-verifyWritable(ArrayBuffer.prototype, "constructor");
-verifyConfigurable(ArrayBuffer.prototype, "constructor");
+verifyProperty(ArrayBuffer.prototype, "constructor", {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

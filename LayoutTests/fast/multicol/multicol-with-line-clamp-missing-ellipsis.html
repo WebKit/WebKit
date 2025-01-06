@@ -1,0 +1,20 @@
+<style>
+.column-box {
+  column-count: 2;
+}
+
+.line-clamp-box {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+</style>
+<!-- PASS if ellipsis show up -->
+<div class="column-box">
+  <div class="line-clamp-box">
+    first<br>
+    second
+  </div>
+</div>
+

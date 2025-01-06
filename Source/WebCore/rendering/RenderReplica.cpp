@@ -32,12 +32,12 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderReplica);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderReplica);
 
 RenderReplica::RenderReplica(Document& document, RenderStyle&& style)
     : RenderBox(Type::Replica, document, WTFMove(style))
@@ -46,8 +46,8 @@ RenderReplica::RenderReplica(Document& document, RenderStyle&& style)
     // renderers being replicated, so they always report that they are inline, non-replaced.
     // However, we need transforms to be applied to replicas for reflections, so have to pass
     // the if (!isInline() || isReplaced()) check before setHasTransform().
-    // FIXME: Is the comment above obsolete? Can't find a check of isReplacedOrInlineBlock guarding setHasTransform any more.
-    setReplacedOrInlineBlock(true);
+    // FIXME: Is the comment above obsolete? Can't find a check of isReplacedOrAtomicInline guarding setHasTransform any more.
+    setReplacedOrAtomicInline(true);
 }
 
 RenderReplica::~RenderReplica() = default;

@@ -61,7 +61,7 @@ class StringUtils(unittest.TestCase):
         self.assertEqual(string_utils.pluralize(2, 'mouse', 'mice'), '2 mice')
 
     def test_list(self):
-        self.assertEqual(string_utils.join(['integer', 'string', 'float']), 'integer, string and float')
+        self.assertEqual(string_utils.join(['integer', 'string', 'float']), 'integer, string, and float')
         self.assertEqual(string_utils.join(['integer', 'string']), 'integer and string')
         self.assertEqual(string_utils.join(['integer']), 'integer')
         self.assertEqual(string_utils.join([]), 'Nothing')
@@ -69,6 +69,7 @@ class StringUtils(unittest.TestCase):
 
     def test_split(self):
         self.assertEqual(string_utils.split('integer, string and float'), ['integer', 'string', 'float'])
+        self.assertEqual(string_utils.split('integer, string, and float'), ['integer', 'string', 'float'])
         self.assertEqual(string_utils.split('integer or string and float'), ['integer', 'string', 'float'])
         self.assertEqual(string_utils.split('integer and string'), ['integer', 'string'])
         self.assertEqual(string_utils.split('integer'), ['integer'])

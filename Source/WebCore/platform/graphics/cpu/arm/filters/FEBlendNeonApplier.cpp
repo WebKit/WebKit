@@ -34,8 +34,11 @@
 #include "FEBlend.h"
 #include "PixelBuffer.h"
 #include <arm_neon.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FELightingNeonParallelApplier);
 
 class FEBlendUtilitiesNEON {
 public:

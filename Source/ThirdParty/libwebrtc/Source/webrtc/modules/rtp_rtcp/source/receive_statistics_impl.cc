@@ -17,7 +17,7 @@
 #include <vector>
 
 #include "api/units/time_delta.h"
-#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
@@ -41,14 +41,12 @@ TimeDelta UnixEpochDelta(Clock& clock) {
 
 StreamStatistician::~StreamStatistician() {}
 
-StreamStatisticianImpl::StreamStatisticianImpl(uint32_t ssrc,
-                                               Clock* clock,
-                                               int max_reordering_threshold)
+StreamStatisticianImpl::StreamStatisticianImpl(uint32_t ssrc, Clock* clock)
     : ssrc_(ssrc),
       clock_(clock),
       delta_internal_unix_epoch_(UnixEpochDelta(*clock_)),
       incoming_bitrate_(/*max_window_size=*/kStatisticsProcessInterval),
-      max_reordering_threshold_(max_reordering_threshold),
+      max_reordering_threshold_(kDefaultMaxReorderingThreshold),
       enable_retransmit_detection_(false),
       cumulative_loss_is_capped_(false),
       jitter_q4_(0),
@@ -72,7 +70,7 @@ bool StreamStatisticianImpl::UpdateOutOfOrder(const RtpPacketReceived& packet,
     --cumulative_loss_;
 
     uint16_t expected_sequence_number = *received_seq_out_of_order_ + 1;
-    received_seq_out_of_order_ = absl::nullopt;
+    received_seq_out_of_order_ = std::nullopt;
     if (packet.SequenceNumber() == expected_sequence_number) {
       // Ignore sequence number gap caused by stream restart for packet loss
       // calculation, by setting received_seq_max_ to the sequence number just
@@ -159,16 +157,15 @@ void StreamStatisticianImpl::UpdateJitter(const RtpPacketReceived& packet,
   int32_t time_diff_samples =
       receive_diff_rtp - (packet.Timestamp() - last_received_timestamp_);
 
-  time_diff_samples = std::abs(time_diff_samples);
-
   ReviseFrequencyAndJitter(packet.payload_type_frequency());
 
   // lib_jingle sometimes deliver crazy jumps in TS for the same stream.
   // If this happens, don't update jitter value. Use 5 secs video frequency
   // as the threshold.
-  if (time_diff_samples < 450000) {
+  if (time_diff_samples < 5 * kVideoPayloadTypeFrequency &&
+      time_diff_samples > -5 * kVideoPayloadTypeFrequency) {
     // Note we calculate in Q4 to avoid using float.
-    int32_t jitter_diff_q4 = (time_diff_samples << 4) - jitter_q4_;
+    int32_t jitter_diff_q4 = (std::abs(time_diff_samples) << 4) - jitter_q4_;
     jitter_q4_ += ((jitter_diff_q4 + 8) >> 4);
   }
 }
@@ -282,20 +279,15 @@ void StreamStatisticianImpl::MaybeAppendReportBlockAndReset(
   // Only for report blocks in RTCP SR and RR.
   last_report_cumulative_loss_ = cumulative_loss_;
   last_report_seq_max_ = received_seq_max_;
-  BWE_TEST_LOGGING_PLOT_WITH_SSRC(1, "cumulative_loss_pkts", now.ms(),
-                                  cumulative_loss_, ssrc_);
-  BWE_TEST_LOGGING_PLOT_WITH_SSRC(1, "received_seq_max_pkts", now.ms(),
-                                  (received_seq_max_ - received_seq_first_),
-                                  ssrc_);
 }
 
-absl::optional<int> StreamStatisticianImpl::GetFractionLostInPercent() const {
+std::optional<int> StreamStatisticianImpl::GetFractionLostInPercent() const {
   if (!ReceivedRtpPacket()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   int64_t expected_packets = 1 + received_seq_max_ - received_seq_first_;
   if (expected_packets <= 0) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   if (cumulative_loss_ <= 0) {
     return 0;
@@ -340,18 +332,16 @@ bool StreamStatisticianImpl::IsRetransmitOfOldPacket(
 
 std::unique_ptr<ReceiveStatistics> ReceiveStatistics::Create(Clock* clock) {
   return std::make_unique<ReceiveStatisticsLocked>(
-      clock, [](uint32_t ssrc, Clock* clock, int max_reordering_threshold) {
-        return std::make_unique<StreamStatisticianLocked>(
-            ssrc, clock, max_reordering_threshold);
+      clock, [](uint32_t ssrc, Clock* clock) {
+        return std::make_unique<StreamStatisticianLocked>(ssrc, clock);
       });
 }
 
 std::unique_ptr<ReceiveStatistics> ReceiveStatistics::CreateThreadCompatible(
     Clock* clock) {
   return std::make_unique<ReceiveStatisticsImpl>(
-      clock, [](uint32_t ssrc, Clock* clock, int max_reordering_threshold) {
-        return std::make_unique<StreamStatisticianImpl>(
-            ssrc, clock, max_reordering_threshold);
+      clock, [](uint32_t ssrc, Clock* clock) {
+        return std::make_unique<StreamStatisticianImpl>(ssrc, clock);
       });
 }
 
@@ -359,12 +349,10 @@ ReceiveStatisticsImpl::ReceiveStatisticsImpl(
     Clock* clock,
     std::function<std::unique_ptr<StreamStatisticianImplInterface>(
         uint32_t ssrc,
-        Clock* clock,
-        int max_reordering_threshold)> stream_statistician_factory)
+        Clock* clock)> stream_statistician_factory)
     : clock_(clock),
       stream_statistician_factory_(std::move(stream_statistician_factory)),
-      last_returned_ssrc_idx_(0),
-      max_reordering_threshold_(kDefaultMaxReorderingThreshold) {}
+      last_returned_ssrc_idx_(0) {}
 
 void ReceiveStatisticsImpl::OnRtpPacket(const RtpPacketReceived& packet) {
   // StreamStatisticianImpl instance is created once and only destroyed when
@@ -386,19 +374,10 @@ StreamStatisticianImplInterface* ReceiveStatisticsImpl::GetOrCreateStatistician(
     uint32_t ssrc) {
   std::unique_ptr<StreamStatisticianImplInterface>& impl = statisticians_[ssrc];
   if (impl == nullptr) {  // new element
-    impl =
-        stream_statistician_factory_(ssrc, clock_, max_reordering_threshold_);
+    impl = stream_statistician_factory_(ssrc, clock_);
     all_ssrcs_.push_back(ssrc);
   }
   return impl.get();
-}
-
-void ReceiveStatisticsImpl::SetMaxReorderingThreshold(
-    int max_reordering_threshold) {
-  max_reordering_threshold_ = max_reordering_threshold;
-  for (auto& statistician : statisticians_) {
-    statistician.second->SetMaxReorderingThreshold(max_reordering_threshold);
-  }
 }
 
 void ReceiveStatisticsImpl::SetMaxReorderingThreshold(

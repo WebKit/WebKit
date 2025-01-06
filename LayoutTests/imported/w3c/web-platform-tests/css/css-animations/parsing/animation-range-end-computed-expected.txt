@@ -1,29 +1,29 @@
 
-FAIL Property animation-range-end value 'initial' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'normal' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'cover 0%' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'cover 100%' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'COVER 0%' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'COVER 100%' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'cover 120%' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value '0' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value '120%' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value '120px' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'cover 42%' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'cover -42%' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'contain 42%' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'exit 42%' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'exit calc(41% + 1%)' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'exit-crossing 42%' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'exit 1%, cover 2%, contain 0%' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'exit 1%, cover 2%, contain 100%' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'entry 42px' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'entry-crossing 42px' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'contain calc(10% + 10px)' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'entry 1em' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'exit calc(1em + 10px)' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'cover' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'contain' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'entry' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range-end value 'exit' assert_true: animation-range-end doesn't seem to be supported in the computed style expected true got false
+PASS Property animation-range-end value 'initial'
+PASS Property animation-range-end value 'normal'
+PASS Property animation-range-end value 'cover 0%'
+PASS Property animation-range-end value 'cover 100%'
+PASS Property animation-range-end value 'COVER 0%'
+PASS Property animation-range-end value 'COVER 100%'
+PASS Property animation-range-end value 'cover 120%'
+PASS Property animation-range-end value '0'
+PASS Property animation-range-end value '120%'
+PASS Property animation-range-end value '120px'
+PASS Property animation-range-end value 'cover 42%'
+PASS Property animation-range-end value 'cover -42%'
+PASS Property animation-range-end value 'contain 42%'
+PASS Property animation-range-end value 'exit 42%'
+PASS Property animation-range-end value 'exit calc(41% + 1%)'
+PASS Property animation-range-end value 'exit-crossing 42%'
+PASS Property animation-range-end value 'exit 1%, cover 2%, contain 0%'
+PASS Property animation-range-end value 'exit 1%, cover 2%, contain 100%'
+PASS Property animation-range-end value 'entry 42px'
+PASS Property animation-range-end value 'entry-crossing 42px'
+PASS Property animation-range-end value 'contain calc(10% + 10px)'
+PASS Property animation-range-end value 'entry 1em'
+PASS Property animation-range-end value 'exit calc(1em + 10px)'
+PASS Property animation-range-end value 'cover'
+PASS Property animation-range-end value 'contain'
+PASS Property animation-range-end value 'entry'
+PASS Property animation-range-end value 'exit'
 

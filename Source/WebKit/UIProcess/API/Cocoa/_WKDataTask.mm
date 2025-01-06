@@ -37,8 +37,11 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 class WKDataTaskClient final : public API::DataTaskClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WKDataTaskClient);
 public:
     static Ref<WKDataTaskClient> create(id <_WKDataTaskDelegate> delegate) { return adoptRef(*new WKDataTaskClient(delegate)); }
 private:
@@ -93,7 +96,7 @@ private:
     {
         if (!m_delegate || !m_respondsToDidReceiveData)
             return;
-        [m_delegate dataTask:wrapper(task) didReceiveData:adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]).get()];
+        [m_delegate dataTask:wrapper(task) didReceiveData:toNSData(data).get()];
     }
 
     void didCompleteWithError(API::DataTask& task, WebCore::ResourceError&& error) const final

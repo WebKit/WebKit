@@ -87,14 +87,14 @@ void PlatformCALayerRemoteTiledBacking::setAcceleratesDrawing(bool acceleratesDr
     m_tileController->setAcceleratesDrawing(acceleratesDrawing);
 }
 
-bool PlatformCALayerRemoteTiledBacking::wantsDeepColorBackingStore() const
+ContentsFormat PlatformCALayerRemoteTiledBacking::contentsFormat() const
 {
-    return m_tileController->wantsDeepColorBackingStore();
+    return m_tileController->contentsFormat();
 }
 
-void PlatformCALayerRemoteTiledBacking::setWantsDeepColorBackingStore(bool wantsDeepColorBackingStore)
+void PlatformCALayerRemoteTiledBacking::setContentsFormat(ContentsFormat contentsFormat)
 {
-    m_tileController->setWantsDeepColorBackingStore(wantsDeepColorBackingStore);
+    m_tileController->setContentsFormat(contentsFormat);
 }
 
 float PlatformCALayerRemoteTiledBacking::contentsScale() const

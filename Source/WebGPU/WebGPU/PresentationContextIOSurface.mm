@@ -30,10 +30,13 @@
 #import "Texture.h"
 #import "TextureView.h"
 #import <wtf/FastMalloc.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/IOTypesSPI.h>
 
 namespace WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PresentationContextIOSurface);
 
 Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGPUSurfaceDescriptor& surfaceDescriptor, const Instance& instance)
 {
@@ -81,26 +84,31 @@ void PresentationContextIOSurface::renderBuffersWereRecreated(NSArray<IOSurface 
 void PresentationContextIOSurface::onSubmittedWorkScheduled(Function<void()>&& completionHandler)
 {
     if (m_device)
-        m_device->getQueue().onSubmittedWorkScheduled(WTFMove(completionHandler));
+        m_device->protectedQueue()->onSubmittedWorkScheduled(WTFMove(completionHandler));
     else
         completionHandler();
 }
 
-RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint32_t bufferIndex)
+RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat)
 {
-    auto* device = m_device.get();
+    isIOSurfaceSupportedFormat = false;
+    RefPtr device = m_device.get();
     if (!device || bufferIndex >= m_renderBuffers.size())
         return nullptr;
 
     auto& renderBuffer = m_renderBuffers[bufferIndex];
-    auto* texture = renderBuffer.luminanceClampTexture.get() ? renderBuffer.luminanceClampTexture.get() : renderBuffer.texture.ptr();
-    if (!texture)
+    WeakPtr texture = renderBuffer.luminanceClampTexture.get() ? renderBuffer.luminanceClampTexture.get() : renderBuffer.texture.ptr();
+    if (!texture || !texture->waitForCommandBufferCompletion())
         return nullptr;
 
-    texture->waitForCommandBufferCompletion();
-    id<MTLTexture> mtlTexture = texture->texture();
-    if (!mtlTexture || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm)
+    if (!texture.get())
         return nullptr;
+
+    id<MTLTexture> mtlTexture = texture->texture();
+    if (!mtlTexture || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm_sRGB) {
+        isIOSurfaceSupportedFormat = true;
+        return nullptr;
+    }
 
     bool fp16 = mtlTexture.pixelFormat == MTLPixelFormatRGBA16Float;
     CFStringRef colorSpaceName = kCGColorSpaceSRGB;
@@ -146,7 +154,6 @@ static void generateAValidationError(Device& device, NSString* message, bool gen
 void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChainDescriptor& descriptor)
 {
     m_renderBuffers.clear();
-    m_currentIndex = 0;
     m_invalidTexture = Texture::createInvalid(device);
 
     if (descriptor.nextInChain)
@@ -182,11 +189,16 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         descriptor.viewFormats.size() ? &descriptor.viewFormats[0] : &effectiveFormat,
     };
     m_colorSpace = descriptor.colorSpace;
+    m_toneMappingMode = descriptor.toneMappingMode;
     m_alphaMode = descriptor.compositeAlphaMode;
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(effectiveFormat) width:width height:height mipmapped:NO];
     textureDescriptor.usage = Texture::usage(descriptor.usage, effectiveFormat);
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if ENABLE(WEBGPU_BY_DEFAULT)
     textureDescriptor.storageMode = device.hasUnifiedMemory() ? MTLStorageModeShared : MTLStorageModeManaged;
+#else
+    textureDescriptor.storageMode = MTLStorageModeManaged;
+#endif
 #else
     textureDescriptor.storageMode = MTLStorageModeShared;
 #endif
@@ -217,7 +229,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         }
     }
 
-    Vector viewFormats(std::span { wgpuTextureDescriptor.viewFormats, wgpuTextureDescriptor.viewFormatCount });
+    Vector viewFormats(wgpuTextureDescriptor.viewFormatsSpan());
     if (NSString *error = device.errorValidatingTextureCreation(wgpuTextureDescriptor, viewFormats)) {
         generateAValidationError(device, error, reportValidationErrors);
         return;
@@ -229,7 +241,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     }
 
     textureDescriptor.usage |= MTLTextureUsageRenderTarget;
-    bool needsLuminanceClampFunction = textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float;
+    bool needsLuminanceClampFunction = textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float && m_toneMappingMode == WGPUToneMappingMode_Standard;
     auto existingUsage = textureDescriptor.usage;
     for (IOSurface *iosurface in m_ioSurfaces) {
         RefPtr<Texture> parentLuminanceClampTexture;
@@ -300,29 +312,29 @@ void PresentationContextIOSurface::unconfigure()
 {
     m_ioSurfaces = nil;
     m_renderBuffers.clear();
-    m_currentIndex = 0;
     m_device = nullptr;
 }
 
-void PresentationContextIOSurface::present()
+void PresentationContextIOSurface::present(uint32_t currentIndex)
 {
-    if (m_ioSurfaces.count != m_renderBuffers.size())
+    RefPtr device = m_device;
+    if (m_ioSurfaces.count != m_renderBuffers.size() || currentIndex >= m_renderBuffers.size() || !device)
         return;
 
-    auto& textureRefPtr = m_renderBuffers[m_currentIndex].luminanceClampTexture;
-    if (Texture* texturePtr = textureRefPtr.get(); texturePtr && m_computePipelineState) {
+    Ref deviceQueue = device->getQueue();
+
+    if (auto texture = m_renderBuffers[currentIndex].luminanceClampTexture; texture && m_computePipelineState) {
         MTLCommandBufferDescriptor *descriptor = [MTLCommandBufferDescriptor new];
-        descriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
-        id<MTLCommandBuffer> commandBuffer = m_device->getQueue().commandBufferWithDescriptor(descriptor).first;
+        id<MTLCommandBuffer> commandBuffer = deviceQueue->commandBufferWithDescriptor(descriptor);
         MTLComputePassDescriptor* computeDescriptor = [MTLComputePassDescriptor new];
         computeDescriptor.dispatchType = MTLDispatchTypeSerial;
 
         id<MTLComputeCommandEncoder> computeEncoder = [commandBuffer computeCommandEncoderWithDescriptor:computeDescriptor];
-        m_device->getQueue().setEncoderForBuffer(commandBuffer, computeEncoder);
+        deviceQueue->setEncoderForBuffer(commandBuffer, computeEncoder);
         [computeEncoder setComputePipelineState:m_computePipelineState];
-        id<MTLTexture> inputTexture = texturePtr->texture();
+        id<MTLTexture> inputTexture = texture->texture();
         [computeEncoder setTexture:inputTexture atIndex:0];
-        [computeEncoder setTexture:m_renderBuffers[m_currentIndex].texture->texture() atIndex:1];
+        [computeEncoder setTexture:m_renderBuffers[currentIndex].texture->texture() atIndex:1];
         auto threadgroupSize = MTLSizeMake(16, 16, 1);
 
         MTLSize threadgroupCount;
@@ -330,27 +342,25 @@ void PresentationContextIOSurface::present()
         threadgroupCount.height = (inputTexture.height + threadgroupSize.height - 1) / threadgroupSize.height;
         threadgroupCount.depth = 1;
         [computeEncoder dispatchThreadgroups:threadgroupCount threadsPerThreadgroup:threadgroupSize];
-        m_device->getQueue().endEncoding(computeEncoder, commandBuffer);
-        m_device->getQueue().commitMTLCommandBuffer(commandBuffer);
+        deviceQueue->endEncoding(computeEncoder, commandBuffer);
+        deviceQueue->commitMTLCommandBuffer(commandBuffer);
     }
-
-    m_currentIndex = (m_currentIndex + 1) % m_renderBuffers.size();
 }
 
-Texture* PresentationContextIOSurface::getCurrentTexture()
+Texture* PresentationContextIOSurface::getCurrentTexture(uint32_t currentIndex)
 {
-    if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= m_currentIndex) {
-        if (m_device.get())
-            m_device->generateAValidationError("GPUCanvasContext is not configured correctly"_s);
+    if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= currentIndex) {
+        if (RefPtr device = m_device)
+            device->generateAValidationError("GPUCanvasContext is not configured correctly"_s);
         return m_invalidTexture.get();
     }
 
-    auto& texturePtr = m_renderBuffers[m_currentIndex].luminanceClampTexture;
+    auto& texturePtr = m_renderBuffers[currentIndex].luminanceClampTexture;
     if (texturePtr.get()) {
         texturePtr->recreateIfNeeded();
         return texturePtr.get();
     }
-    auto& texture = m_renderBuffers[m_currentIndex].texture;
+    auto& texture = m_renderBuffers[currentIndex].texture;
     texture->recreateIfNeeded();
     texture->setPreviouslyCleared(0, 0, false);
     return texture.ptr();

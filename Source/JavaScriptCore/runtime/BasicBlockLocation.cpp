@@ -96,7 +96,7 @@ void BasicBlockLocation::emitExecuteCode(CCallHelpers& jit, MacroAssembler::Regi
     static_assert(sizeof(size_t) == 4, "Assuming size_t is 32 bits on 32 bit platforms.");
     jit.load32(&m_executionCount, scratch);
     CCallHelpers::Jump done = jit.branchAdd32(CCallHelpers::Zero, scratch, CCallHelpers::TrustedImm32(1), scratch);
-    jit.store32(scratch, bitwise_cast<void*>(&m_executionCount));
+    jit.store32(scratch, std::bit_cast<void*>(&m_executionCount));
     done.link(&jit);
 }
 #endif // USE(JSVALUE64)

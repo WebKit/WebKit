@@ -27,6 +27,7 @@
 
 #include "RegistrableDomain.h"
 #include "Supplementable.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -70,7 +71,7 @@ struct RequestStorageAccessResult {
 const unsigned maxNumberOfTimesExplicitlyDeniedStorageAccess = 2;
 
 class DocumentStorageAccess final : public Supplement<Document>, public CanMakeWeakPtr<DocumentStorageAccess> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DocumentStorageAccess);
 public:
     explicit DocumentStorageAccess(Document&);
     ~DocumentStorageAccess();

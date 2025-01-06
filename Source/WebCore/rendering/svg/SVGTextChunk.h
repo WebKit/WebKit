@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "InlineIteratorSVGTextBox.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
@@ -27,6 +28,9 @@ namespace WebCore {
 
 class AffineTransform;
 class SVGInlineTextBox;
+
+using SVGChunkTransformMap = UncheckedKeyHashMap<InlineIterator::SVGTextBox::Key, AffineTransform>;
+using SVGTextFragmentMap = UncheckedKeyHashMap<InlineIterator::SVGTextBox::Key, Vector<SVGTextFragment>>;
 
 // A SVGTextChunk describes a range of SVGTextFragments, see the SVG spec definition of a "text chunk".
 class SVGTextChunk {
@@ -41,16 +45,16 @@ public:
         LengthAdjustSpacingAndGlyphs = 1 << 6
     };
 
-    SVGTextChunk(const Vector<SVGInlineTextBox*>&, unsigned first, unsigned limit);
+    SVGTextChunk(const Vector<InlineIterator::SVGTextBoxIterator>&, unsigned first, unsigned limit, SVGTextFragmentMap&);
 
     unsigned totalCharacters() const;
     float totalLength() const;
     float totalAnchorShift() const;
-    void layout(HashMap<SVGInlineTextBox*, AffineTransform>&) const;
+    void layout(SVGChunkTransformMap&) const;
 
 private:
     void processTextAnchorCorrection() const;
-    void buildBoxTransformations(HashMap<SVGInlineTextBox*, AffineTransform>&) const;
+    void buildBoxTransformations(SVGChunkTransformMap&) const;
     void processTextLengthSpacingCorrection() const;
 
     bool isVerticalText() const { return m_chunkStyle & VerticalText; }
@@ -61,11 +65,18 @@ private:
     bool hasLengthAdjustSpacing() const { return m_chunkStyle & LengthAdjustSpacing; }
     bool hasLengthAdjustSpacingAndGlyphs() const { return m_chunkStyle & LengthAdjustSpacingAndGlyphs; }
 
-    bool boxSpacingAndGlyphsTransform(const SVGInlineTextBox*, AffineTransform&) const;
+    bool boxSpacingAndGlyphsTransform(const Vector<SVGTextFragment>&, AffineTransform&) const;
+
+    Vector<SVGTextFragment>& fragments(InlineIterator::SVGTextBoxIterator);
+    const Vector<SVGTextFragment>& fragments(InlineIterator::SVGTextBoxIterator) const;
 
 private:
     // Contains all SVGInlineTextBoxes this chunk spans.
-    Vector<SVGInlineTextBox*> m_boxes;
+    struct BoxAndFragments {
+        InlineIterator::SVGTextBoxIterator box;
+        Vector<SVGTextFragment>& fragments;
+    };
+    Vector<BoxAndFragments> m_boxes;
 
     unsigned m_chunkStyle { DefaultStyle };
     float m_desiredTextLength { 0 };

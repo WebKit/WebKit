@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 class InjectedBundle;
@@ -39,7 +40,7 @@ class Object;
 namespace InjectedBundle {
 
 class Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Client);
 public:
     virtual ~Client() = default;
 

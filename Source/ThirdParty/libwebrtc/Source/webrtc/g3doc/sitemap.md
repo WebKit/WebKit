@@ -43,7 +43,8 @@
     *   [Logging](/logging/g3doc/rtc_event_log.md)
 *   Testing
     *   Media Quality and performance
-        *   [PeerConnection Framework](/test/pc/e2e/g3doc/index.md)
+        *   PeerConnection Framework
+            *   [Overview](/test/pc/e2e/g3doc/index.md)
             *   [Architecture](/test/pc/e2e/g3doc/architecture.md)
             *   [Video analyzer](/test/pc/e2e/g3doc/default_video_quality_analyzer.md)
         *   Call framework

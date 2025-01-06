@@ -37,6 +37,10 @@
 
 namespace WebCore {
 
+namespace CSS {
+struct Range;
+}
+
 class CSSValue;
 
 struct CSSParserContext;
@@ -51,11 +55,11 @@ public:
     static bool isKeywordValidForStyleProperty(CSSPropertyID, CSSValueID, const CSSParserContext&);
 
     // Parses numeric and named colors.
-    static std::optional<SRGBA<uint8_t>> parseSimpleColor(StringView, bool strict = false);
+    static WEBCORE_EXPORT std::optional<SRGBA<uint8_t>> parseSimpleColor(StringView, bool strict = false);
     static std::optional<SRGBA<uint8_t>> parseHexColor(StringView); // Hex colors of length 3, 4, 6, or 8, without leading "#".
     static std::optional<SRGBA<uint8_t>> parseNamedColor(StringView);
 
-    static bool isSimpleLengthPropertyID(CSSPropertyID, bool& acceptsNegativeNumbers);
+    static bool isSimpleLengthPropertyID(CSSPropertyID, CSS::Range&);
 };
 
 } // namespace WebCore

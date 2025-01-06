@@ -33,12 +33,13 @@
 #include "WCTileGrid.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/TransformState.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 class WCTiledBacking final : public TiledBacking {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WCTiledBacking);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WCTiledBacking);
 public:
     WCTiledBacking(GraphicsLayerWC& owner)
@@ -59,9 +60,12 @@ public:
             if (!tile.hasDirtyRect())
                 continue;
             repainted = true;
+            float deviceScaleFactor = m_owner.deviceScaleFactor();
             auto& dirtyRect = tile.dirtyRect();
-            tileUpdate.dirtyRect = dirtyRect;
-            auto image = m_owner.createImageBuffer(dirtyRect.size());
+            IntRect scaledDirtyRect = dirtyRect;
+            scaledDirtyRect.scale(deviceScaleFactor);
+            tileUpdate.dirtyRect = scaledDirtyRect;
+            auto image = m_owner.createImageBuffer(dirtyRect.size(), deviceScaleFactor);
             auto& context = image->context();
             context.translate(-dirtyRect.x(), -dirtyRect.y());
             m_owner.paintGraphicsLayerContents(context, dirtyRect);
@@ -92,6 +96,9 @@ public:
 
     // TiledBacking override
     void setClient(TiledBackingClient*) final { }
+    PlatformLayerIdentifier layerIdentifier() const final { return *m_owner.primaryLayerID(); }
+    TileGridIdentifier primaryGridIdentifier() const final { return TileGridIdentifier { 0 }; }
+    std::optional<TileGridIdentifier> secondaryGridIdentifier() const final { return { }; }
     void setVisibleRect(const FloatRect&) final { }
     FloatRect visibleRect() const final { return { }; };
     void setLayoutViewportRect(std::optional<FloatRect>) final { }
@@ -160,7 +167,7 @@ GraphicsLayerWC::~GraphicsLayerWC()
         m_observer->graphicsLayerRemoved(*this);
 }
 
-PlatformLayerIdentifier GraphicsLayerWC::primaryLayerID() const
+std::optional<PlatformLayerIdentifier> GraphicsLayerWC::primaryLayerID() const
 {
     return m_layerID;
 }
@@ -520,6 +527,8 @@ void GraphicsLayerWC::noteLayerPropertyChanged(OptionSet<WCLayerChange> flags, S
         return;
     bool needsFlush = !m_uncommittedChanges;
     m_uncommittedChanges.add(flags);
+    if (m_isFlushing)
+        return;
     if (needsFlush && scheduleFlush == ScheduleFlush)
         client().notifyFlushRequired(this);
 }
@@ -538,12 +547,13 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
 {
     if (!m_uncommittedChanges)
         return;
-    WCLayerUpdateInfo update;
-    update.id = primaryLayerID();
-    update.changes = std::exchange(m_uncommittedChanges, { });
+    WCLayerUpdateInfo update {
+        .id = *primaryLayerID(),
+        .changes = std::exchange(m_uncommittedChanges, { })
+    };
     if (update.changes & WCLayerChange::Children) {
         update.children = WTF::map(children(), [](auto& layer) {
-            return layer->primaryLayerID();
+            return *layer->primaryLayerID();
         });
     }
     if (update.changes & WCLayerChange::MaskLayer) {
@@ -584,6 +594,7 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
         update.background.color = backgroundColor();
         if (drawsContent() && contentsAreVisible()) {
             update.background.hasBackingStore = true;
+            update.background.backingStoreSize = WebCore::expandedIntSize(size() * deviceScaleFactor());
             if (m_tiledBacking->paintAndFlush(update)) {
                 incrementRepaintCount();
                 update.changes.add(WCLayerChange::RepaintCount);
@@ -632,9 +643,9 @@ TiledBacking* GraphicsLayerWC::tiledBacking() const
     return m_tiledBacking->tiledBacking();
 }
 
-RefPtr<WebCore::ImageBuffer> GraphicsLayerWC::createImageBuffer(WebCore::FloatSize size)
+RefPtr<WebCore::ImageBuffer> GraphicsLayerWC::createImageBuffer(WebCore::FloatSize size, float deviceScaleFactor)
 {
-    return m_observer->createImageBuffer(size);
+    return m_observer->createImageBuffer(size, deviceScaleFactor);
 }
 
 static inline bool accumulatesTransform(const GraphicsLayerWC& layer)
@@ -728,6 +739,7 @@ GraphicsLayerWC::VisibleAndCoverageRects GraphicsLayerWC::computeVisibleAndCover
 void GraphicsLayerWC::recursiveCommitChanges(const TransformState& state)
 {
     TransformState localState = state;
+    SetForScope<bool> scopedIsFlushing(m_isFlushing, true);
 
     bool accumulateTransform = accumulatesTransform(*this);
     VisibleAndCoverageRects rects = computeVisibleAndCoverageRect(localState, accumulateTransform);

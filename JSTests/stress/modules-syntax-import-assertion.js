@@ -1,5 +1,3 @@
-//@requireOptions("--useImportAttributes=true")
-
 var list = [
     String.raw`import v from "mod"`,
     String.raw`import * as ns from "mod"`,

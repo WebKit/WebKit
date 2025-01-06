@@ -4,14 +4,16 @@
     <div style="height: 100px;">target</div>
     <div style="height: 1000px;"></div>
     <script>
-        if (window.testRunner && window.internals) {
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
             testRunner.dumpAsText();
-            window.internals.setPageScaleFactor(2, 0, 0);
+            window.testRunner.setPageScaleFactor(2, 0, 0).then(() => {
+                document.execCommand("FindString", false, "target");
+                var scrollTop = document.scrollingElement.scrollTop;
+                var expectedScrollTop = 864;
+                document.getElementById("result").innerText = scrollTop === expectedScrollTop ? "PASS" : "FAIL: document.scrollingElement.scrollTop was " + scrollTop + ", should be " + expectedScrollTop;
+                testRunner.notifyDone();
+            });
         }
-
-        document.execCommand("FindString", false, "target");
-        var scrollTop = document.scrollingElement.scrollTop;
-        var expectedScrollTop = 864;
-        document.getElementById("result").innerText = scrollTop === expectedScrollTop ? "PASS" : "FAIL: document.scrollingElement.scrollTop was " + scrollTop + ", should be " + expectedScrollTop;
     </script>
 </body>

@@ -24,8 +24,10 @@
 
 namespace dcsctp {
 namespace {
+using ::testing::ElementsAre;
 using ::testing::MockFunction;
 using ::testing::NiceMock;
+using ::testing::Property;
 
 class InterleavedReassemblyStreamsTest : public testing::Test {
  protected:
@@ -150,5 +152,62 @@ TEST_F(InterleavedReassemblyStreamsTest,
   EXPECT_EQ(streams.HandleForwardTsn(tsn(4), skipped), 8u);
 }
 
+TEST_F(InterleavedReassemblyStreamsTest, CanReassembleFastPathUnordered) {
+  NiceMock<MockFunction<ReassemblyStreams::OnAssembledMessage>> on_assembled;
+
+  {
+    testing::InSequence s;
+    EXPECT_CALL(on_assembled,
+                Call(ElementsAre(tsn(1)),
+                     Property(&DcSctpMessage::payload, ElementsAre(1))));
+    EXPECT_CALL(on_assembled,
+                Call(ElementsAre(tsn(3)),
+                     Property(&DcSctpMessage::payload, ElementsAre(3))));
+    EXPECT_CALL(on_assembled,
+                Call(ElementsAre(tsn(2)),
+                     Property(&DcSctpMessage::payload, ElementsAre(2))));
+    EXPECT_CALL(on_assembled,
+                Call(ElementsAre(tsn(4)),
+                     Property(&DcSctpMessage::payload, ElementsAre(4))));
+  }
+
+  InterleavedReassemblyStreams streams("", on_assembled.AsStdFunction());
+
+  EXPECT_EQ(streams.Add(tsn(1), gen_.Unordered({1}, "BE")), 0);
+  EXPECT_EQ(streams.Add(tsn(3), gen_.Unordered({3}, "BE")), 0);
+  EXPECT_EQ(streams.Add(tsn(2), gen_.Unordered({2}, "BE")), 0);
+  EXPECT_EQ(streams.Add(tsn(4), gen_.Unordered({4}, "BE")), 0);
+}
+
+TEST_F(InterleavedReassemblyStreamsTest, CanReassembleFastPathOrdered) {
+  NiceMock<MockFunction<ReassemblyStreams::OnAssembledMessage>> on_assembled;
+
+  {
+    testing::InSequence s;
+    EXPECT_CALL(on_assembled,
+                Call(ElementsAre(tsn(1)),
+                     Property(&DcSctpMessage::payload, ElementsAre(1))));
+    EXPECT_CALL(on_assembled,
+                Call(ElementsAre(tsn(2)),
+                     Property(&DcSctpMessage::payload, ElementsAre(2))));
+    EXPECT_CALL(on_assembled,
+                Call(ElementsAre(tsn(3)),
+                     Property(&DcSctpMessage::payload, ElementsAre(3))));
+    EXPECT_CALL(on_assembled,
+                Call(ElementsAre(tsn(4)),
+                     Property(&DcSctpMessage::payload, ElementsAre(4))));
+  }
+
+  InterleavedReassemblyStreams streams("", on_assembled.AsStdFunction());
+
+  Data data1 = gen_.Ordered({1}, "BE");
+  Data data2 = gen_.Ordered({2}, "BE");
+  Data data3 = gen_.Ordered({3}, "BE");
+  Data data4 = gen_.Ordered({4}, "BE");
+  EXPECT_EQ(streams.Add(tsn(1), std::move(data1)), 0);
+  EXPECT_EQ(streams.Add(tsn(3), std::move(data3)), 1);
+  EXPECT_EQ(streams.Add(tsn(2), std::move(data2)), -1);
+  EXPECT_EQ(streams.Add(tsn(4), std::move(data4)), 0);
+}
 }  // namespace
 }  // namespace dcsctp

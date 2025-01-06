@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebPrintOperationGtk.h"
 
-#include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -41,20 +40,30 @@
 #include <WebCore/ResourceError.h>
 #include <gtk/gtk.h>
 #include <memory>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GUniquePtr.h>
 
 #if USE(CAIRO)
 #include <WebCore/GraphicsContextCairo.h>
+#include <cairo.h>
+#ifdef CAIRO_HAS_PDF_SURFACE
 #include <cairo-pdf.h>
+#endif
+#ifdef CAIRO_HAS_PS_SURFACE
 #include <cairo-ps.h>
+#endif
+#ifdef CAIRO_HAS_SVG_SURFACE
 #include <cairo-svg.h>
+#endif
 #elif USE(SKIA)
 #include <WebCore/GraphicsContextSkia.h>
 #include <skia/docs/SkPDFDocument.h>
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPrintOperationGtk);
 
 WebPrintOperationGtk::PrintPagesData::PrintPagesData(WebPrintOperationGtk* printOperation)
     : printOperation(printOperation)
@@ -71,6 +80,7 @@ WebPrintOperationGtk::PrintPagesData::PrintPagesData(WebPrintOperationGtk* print
     }
 
     if (printOperation->m_pagesToPrint == GTK_PRINT_PAGES_RANGES) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
         Vector<GtkPageRange> pageRanges;
         GtkPageRange* ranges = printOperation->m_pageRanges;
         size_t rangesCount = printOperation->m_pageRangesCount;
@@ -93,7 +103,7 @@ WebPrintOperationGtk::PrintPagesData::PrintPagesData(WebPrintOperationGtk* print
             for (int j = pageRanges[i].start; j <= pageRanges[i].end; ++j)
                 pages.append(j);
         }
-
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     } else {
         for (int i = 0; i < printOperation->pageCount(); ++i)
             pages.append(i);
@@ -220,11 +230,16 @@ void WebPrintOperationGtk::startPrint(WebCore::PrintContext* printContext, Compl
     double width = gtk_paper_size_get_width(paperSize, GTK_UNIT_POINTS);
     double height = gtk_paper_size_get_height(paperSize, GTK_UNIT_POINTS);
     RefPtr<cairo_surface_t> surface;
-    if (!g_strcmp0(outputFormat, "pdf"))
+    if (!g_strcmp0(outputFormat, "pdf")) {
+#ifdef CAIRO_HAS_PDF_SURFACE
         surface = adoptRef(cairo_pdf_surface_create_for_stream(writeCairoStream, this, width, height));
-    else if (!g_strcmp0(outputFormat, "ps"))
+#endif
+    } else if (!g_strcmp0(outputFormat, "ps")) {
+#ifdef CAIRO_HAS_PS_SURFACE
         surface = adoptRef(cairo_ps_surface_create_for_stream(writeCairoStream, this, width, height));
-    else if (!g_strcmp0(outputFormat, "svg")) {
+#endif
+    } else if (!g_strcmp0(outputFormat, "svg")) {
+#ifdef CAIRO_HAS_SVG_SURFACE
         surface = adoptRef(cairo_svg_surface_create_for_stream(writeCairoStream, this, width, height));
 
         const cairo_svg_version_t* versions;
@@ -232,6 +247,7 @@ void WebPrintOperationGtk::startPrint(WebCore::PrintContext* printContext, Compl
         cairo_svg_get_versions(&versions, &versionsCount);
         if (versionsCount)
             cairo_svg_surface_restrict_to_version(surface.get(), versions[versionsCount - 1]);
+#endif
     }
 
     auto lpi = gtk_print_settings_get_printer_lpi(m_printSettings.get());
@@ -275,6 +291,7 @@ void WebPrintOperationGtk::startPage(cairo_t* cr)
     cairo_surface_t* surface = cairo_get_target(cr);
     cairo_surface_type_t surfaceType = cairo_surface_get_type(surface);
     if (surfaceType == CAIRO_SURFACE_TYPE_PS) {
+#ifdef CAIRO_HAS_PS_SURFACE
         cairo_ps_surface_set_size(surface, width, height);
         cairo_ps_surface_dsc_begin_page_setup(surface);
 
@@ -288,7 +305,9 @@ void WebPrintOperationGtk::startPage(cairo_t* cr)
             cairo_ps_surface_dsc_comment(surface, "%%PageOrientation: Landscape");
             break;
         }
+#endif
     } else if (surfaceType == CAIRO_SURFACE_TYPE_PDF) {
+#ifdef CAIRO_HAS_PDF_SURFACE
         switch (gtk_page_setup_get_orientation(m_pageSetup.get())) {
         case GTK_PAGE_ORIENTATION_PORTRAIT:
         case GTK_PAGE_ORIENTATION_REVERSE_PORTRAIT:
@@ -299,6 +318,7 @@ void WebPrintOperationGtk::startPage(cairo_t* cr)
             cairo_pdf_surface_set_size(surface, height, width);
             break;
         }
+#endif
     }
 }
 

@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if canImport(MarketplaceKit)
+#if os(iOS) && !os(visionOS) && canImport(MarketplaceKit)
 
 import Foundation
 import OSLog
@@ -38,11 +38,7 @@ public final class MarketplaceKitWrapper : NSObject {
     public static func requestAppInstallation(topOrigin: URL, url: URL, completionHandler: @escaping (Error?) -> Void) {
         Task { @MainActor in
             do {
-#if canImport(MarketplaceKit, _version: "1.4.77.2")
                 try await AppLibrary.current.requestAppInstallationFromBrowser(for: url, referrer: topOrigin)
-#else
-                try await AppLibrary.current.requestAppInstallation(with: LinkMetadata(referrer: topOrigin, url: url))
-#endif
                 logger.debug("WKMarketplaceKit.requestAppInstallation with top origin \(topOrigin, privacy: .sensitive) for \(url, privacy: .sensitive) succeeded")
                 completionHandler(nil);
             } catch {

@@ -39,6 +39,7 @@
 #include <WebCore/SourceBufferPrivateClient.h>
 #include <wtf/Locker.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
@@ -50,6 +51,8 @@ extern WTFLogChannel LogMedia;
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceBufferPrivateRemote);
 
 WorkQueue& SourceBufferPrivateRemote::queue()
 {
@@ -77,17 +80,16 @@ void SourceBufferPrivateRemote::ensureWeakOnDispatcher(Function<void()>&& functi
     ensureOnDispatcher(WTFMove(weakWrapper));
 }
 
-Ref<SourceBufferPrivateRemote> SourceBufferPrivateRemote::create(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, MediaSourcePrivateRemote& mediaSourcePrivate, const MediaPlayerPrivateRemote& mediaPlayerPrivate)
+Ref<SourceBufferPrivateRemote> SourceBufferPrivateRemote::create(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, MediaSourcePrivateRemote& mediaSourcePrivate)
 {
-    return adoptRef(*new SourceBufferPrivateRemote(gpuProcessConnection, remoteSourceBufferIdentifier, mediaSourcePrivate, mediaPlayerPrivate));
+    return adoptRef(*new SourceBufferPrivateRemote(gpuProcessConnection, remoteSourceBufferIdentifier, mediaSourcePrivate));
 }
 
-SourceBufferPrivateRemote::SourceBufferPrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, MediaSourcePrivateRemote& mediaSourcePrivate, const MediaPlayerPrivateRemote& mediaPlayerPrivate)
+SourceBufferPrivateRemote::SourceBufferPrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, MediaSourcePrivateRemote& mediaSourcePrivate)
     : SourceBufferPrivate(mediaSourcePrivate, queue())
     , m_gpuProcessConnection(gpuProcessConnection)
     , m_receiver(MessageReceiver::create(*this))
     , m_remoteSourceBufferIdentifier(remoteSourceBufferIdentifier)
-    , m_mediaPlayerPrivate(mediaPlayerPrivate)
 #if !RELEASE_LOG_DISABLED
     , m_logger(mediaSourcePrivate.logger())
     , m_logIdentifier(mediaSourcePrivate.nextSourceBufferLogIdentifier())
@@ -214,11 +216,7 @@ Ref<MediaPromise> SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& 
         if (!gpuProcessConnection || !isGPURunning())
             return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
-        return sendWithPromisedReply(Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime))->whenSettled(m_dispatcher, [] (auto&& result) mutable {
-                if (!result)
-                    return MediaPromise::createAndReject(PlatformMediaError::IPCError);
-                return MediaPromise::createAndResolve();
-            });
+        return sendWithPromisedReply<MediaPromiseConverter>(Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime));
     });
 }
 
@@ -370,7 +368,7 @@ Ref<GenericPromise> SourceBufferPrivateRemote::setMaximumBufferSize(size_t size)
     GenericPromise::AutoRejectProducer producer;
     Ref promise = producer.promise();
     ensureWeakOnDispatcher([this, size, producer = WTFMove(producer)]() mutable {
-        m_gpuProcessConnection.get()->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::SetMaximumBufferSize(size), m_remoteSourceBufferIdentifier)->chainTo(WTFMove(producer));
+        sendWithPromisedReply(Messages::RemoteSourceBufferProxy::SetMaximumBufferSize(size))->chainTo(WTFMove(producer));
     });
     return promise;
 }
@@ -382,9 +380,7 @@ Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivateRemote::computeS
         if (!gpuProcessConnection || !isGPURunning())
             return ComputeSeekPromise::createAndReject(PlatformMediaError::IPCError);
 
-        return sendWithPromisedReply(Messages::RemoteSourceBufferProxy::ComputeSeekTime(target))->whenSettled(m_dispatcher, [](auto&& result) {
-            return result ? ComputeSeekPromise::createAndSettle(*result) : ComputeSeekPromise::createAndReject(PlatformMediaError::IPCError);
-        });
+        return sendWithPromisedReply<MediaPromiseConverter>(Messages::RemoteSourceBufferProxy::ComputeSeekTime(target));
     });
 }
 
@@ -407,13 +403,9 @@ Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivateRemote::bufferedSamp
     return invokeAsync(m_dispatcher, [protectedThis = Ref { *this }, this, trackID]() -> Ref<SamplesPromise> {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!gpuProcessConnection || !isGPURunning())
-            return SamplesPromise::createAndResolve(Vector<String> { });
+            return SamplesPromise::createAndReject(PlatformMediaError::IPCError);
 
-        return sendWithPromisedReply(Messages::RemoteSourceBufferProxy::BufferedSamplesForTrackId(trackID))->whenSettled(m_dispatcher, [](auto&& result) {
-            if (!result)
-                return SamplesPromise::createAndResolve(Vector<String> { });
-            return SamplesPromise::createAndSettle(WTFMove(*result));
-        });
+        return sendWithPromisedReply<MediaPromiseConverter>(Messages::RemoteSourceBufferProxy::BufferedSamplesForTrackId(trackID));
     });
 }
 
@@ -422,13 +414,9 @@ Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivateRemote::enqueuedSamp
     return invokeAsync(m_dispatcher, [protectedThis = Ref { *this }, this, trackID]() -> Ref<SamplesPromise> {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!gpuProcessConnection || !isGPURunning())
-            return SamplesPromise::createAndResolve(Vector<String> { });
+            return SamplesPromise::createAndReject(PlatformMediaError::IPCError);
 
-        return sendWithPromisedReply(Messages::RemoteSourceBufferProxy::EnqueuedSamplesForTrackID(trackID))->whenSettled(m_dispatcher, [](auto&& result) {
-            if (!result)
-                return SamplesPromise::createAndResolve(Vector<String> { });
-            return SamplesPromise::createAndSettle(WTFMove(*result));
-        });
+        return sendWithPromisedReply<MediaPromiseConverter>(Messages::RemoteSourceBufferProxy::EnqueuedSamplesForTrackID(trackID));
     });
 }
 
@@ -460,38 +448,11 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidReceiveIn
 
     ASSERT(parent);
 
-    RefPtr mediaPlayer = parent->m_mediaPlayerPrivate.get();
+    RefPtr mediaPlayer = parent->player();
     if (!mediaPlayer)
         return completionHandler(makeUnexpected(WebCore::PlatformMediaError::SourceRemoved));
 
-    SourceBufferPrivateClient::InitializationSegment segment;
-    segment.duration = segmentInfo.duration;
-
-    segment.audioTracks = WTF::map(segmentInfo.audioTracks, [&](auto& audioTrack) {
-        SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info {
-            RemoteMediaDescription::create(audioTrack.description),
-            mediaPlayer->audioTrackPrivateRemote(audioTrack.id)
-        };
-        return info;
-    });
-
-    segment.videoTracks = WTF::map(segmentInfo.videoTracks, [&](auto& videoTrack) {
-        SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info {
-            RemoteMediaDescription::create(videoTrack.description),
-            mediaPlayer->videoTrackPrivateRemote(videoTrack.id)
-        };
-        return info;
-    });
-
-    segment.textTracks = WTF::map(segmentInfo.textTracks, [&](auto& textTrack) {
-        SourceBufferPrivateClient::InitializationSegment::TextTrackInformation info {
-            RemoteMediaDescription::create(textTrack.description),
-            mediaPlayer->textTrackPrivateRemote(textTrack.id)
-        };
-        return info;
-    });
-
-    client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(parent->queue(), WTFMove(completionHandler));
+    client->sourceBufferPrivateDidReceiveInitializationSegment(createInitializationSegment(*mediaPlayer, WTFMove(segmentInfo)))->whenSettled(parent->queue(), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateEvictionDataChanged(SourceBufferEvictionData&& evictionData)
@@ -548,18 +509,58 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidReceiveRe
         client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
 }
 
-void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateShuttingDown(CompletionHandler<void()>&& completionHandler)
+void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidAttach(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&& completionHandler)
 {
-    assertIsCurrent(MediaSourcePrivateRemote::queue());
+    assertIsCurrent(SourceBufferPrivateRemote::queue());
 
-    if (RefPtr parent = m_parent.get())
-        parent->m_shutdown = true;
-    completionHandler();
+    RefPtr parent = m_parent.get();
+    auto client = this->client();
+    if (!client)
+        return completionHandler(makeUnexpected(WebCore::PlatformMediaError::SourceRemoved));
+
+    ASSERT(parent);
+
+    RefPtr mediaPlayer = parent->player();
+    if (!mediaPlayer)
+        return completionHandler(makeUnexpected(WebCore::PlatformMediaError::SourceRemoved));
+
+    client->sourceBufferPrivateDidAttach(createInitializationSegment(*mediaPlayer, WTFMove(segmentInfo)))->whenSettled(parent->queue(), WTFMove(completionHandler));
+}
+
+SourceBufferPrivateClient::InitializationSegment SourceBufferPrivateRemote::MessageReceiver::createInitializationSegment(MediaPlayerPrivateRemote& mediaPlayer, InitializationSegmentInfo&& segmentInfo) const
+{
+    SourceBufferPrivateClient::InitializationSegment segment;
+    segment.duration = segmentInfo.duration;
+
+    segment.audioTracks = WTF::map(segmentInfo.audioTracks, [&](auto& audioTrack) {
+        SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info {
+            RemoteMediaDescription::create(audioTrack.description),
+            mediaPlayer.audioTrackPrivateRemote(audioTrack.id)
+        };
+        return info;
+    });
+
+    segment.videoTracks = WTF::map(segmentInfo.videoTracks, [&](auto& videoTrack) {
+        SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info {
+            RemoteMediaDescription::create(videoTrack.description),
+            mediaPlayer.videoTrackPrivateRemote(videoTrack.id)
+        };
+        return info;
+    });
+
+    segment.textTracks = WTF::map(segmentInfo.textTracks, [&](auto& textTrack) {
+        SourceBufferPrivateClient::InitializationSegment::TextTrackInformation info {
+            RemoteMediaDescription::create(textTrack.description),
+            mediaPlayer.textTrackPrivateRemote(textTrack.id)
+        };
+        return info;
+    });
+
+    return segment;
 }
 
 uint64_t SourceBufferPrivateRemote::totalTrackBufferSizeInBytes() const
 {
-//    assertIsHeld(m_lock);
     return m_evictionData.contentSize;
 }
 
@@ -614,6 +615,35 @@ bool SourceBufferPrivateRemote::canAppend(uint64_t requiredSize) const
     Locker locker { m_lock };
 
     return SourceBufferPrivate::canAppend(requiredSize);
+}
+
+RefPtr<MediaPlayerPrivateRemote> SourceBufferPrivateRemote::player() const
+{
+    if (RefPtr mediaSource = m_mediaSource.get())
+        return downcast<MediaPlayerPrivateRemote>(mediaSource->player());
+    return nullptr;
+}
+
+void SourceBufferPrivateRemote::detach()
+{
+    ensureOnDispatcher([protectedThis = Ref { *this }, this]() {
+        auto gpuProcessConnection = m_gpuProcessConnection.get();
+        if (!gpuProcessConnection || !isGPURunning())
+            return;
+
+        gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::Detach(), m_remoteSourceBufferIdentifier);
+    });
+}
+
+void SourceBufferPrivateRemote::attach()
+{
+    ensureOnDispatcher([protectedThis = Ref { *this }, this]() {
+        auto gpuProcessConnection = m_gpuProcessConnection.get();
+        if (!gpuProcessConnection || !isGPURunning())
+            return;
+
+        gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::Attach(), m_remoteSourceBufferIdentifier);
+    });
 }
 
 #if !RELEASE_LOG_DISABLED

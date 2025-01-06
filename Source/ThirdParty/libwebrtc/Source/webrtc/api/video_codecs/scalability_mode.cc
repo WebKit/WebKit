@@ -10,6 +10,7 @@
 
 #include "api/video_codecs/scalability_mode.h"
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

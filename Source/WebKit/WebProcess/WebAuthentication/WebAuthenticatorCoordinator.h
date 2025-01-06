@@ -29,12 +29,15 @@
 
 #include <WebCore/AuthenticatorCoordinatorClient.h>
 #include <WebCore/FrameIdentifier.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class WebAuthenticatorCoordinator final : public WebCore::AuthenticatorCoordinatorClient {
+    WTF_MAKE_TZONE_ALLOCATED(WebAuthenticatorCoordinator);
 public:
     explicit WebAuthenticatorCoordinator(WebPage&);
 
@@ -47,7 +50,9 @@ private:
     void getClientCapabilities(const WebCore::SecurityOrigin&, WebCore::CapabilitiesCompletionHandler&&) final;
     void cancel(CompletionHandler<void()>&&) final;
 
-    WebPage& m_webPage;
+    Ref<WebPage> protectedPage() const;
+
+    WeakRef<WebPage> m_webPage;
 };
 
 } // namespace WebKit

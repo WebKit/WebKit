@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSNumericValue.h"
+#include "Length.h"
 #include "ScrollTimeline.h"
 #include "ViewTimelineOptions.h"
 #include <wtf/Ref.h>
@@ -33,37 +34,64 @@
 
 namespace WebCore {
 
-class CSSViewValue;
+namespace Style {
+class BuilderState;
+}
+
 class Element;
+
+struct TimelineRange;
 
 struct ViewTimelineInsets {
     std::optional<Length> start;
     std::optional<Length> end;
-    bool operator==(const auto& other) const { return start == other.start && end == other.end; }
+    bool operator==(const ViewTimelineInsets&) const = default;
 };
 
 class ViewTimeline final : public ScrollTimeline {
 public:
     static Ref<ViewTimeline> create(ViewTimelineOptions&& = { });
     static Ref<ViewTimeline> create(const AtomString&, ScrollAxis, ViewTimelineInsets&&);
-    static Ref<ViewTimeline> createFromCSSValue(const CSSViewValue&);
 
     Element* subject() const { return m_subject.get(); }
-    const CSSNumericValue& startOffset() const { return m_startOffset.get(); }
-    const CSSNumericValue& endOffset() const { return m_endOffset.get(); }
+    void setSubject(const Element*);
+
     const ViewTimelineInsets& insets() const { return m_insets; }
+    void setInsets(ViewTimelineInsets&& insets) { m_insets = WTFMove(insets); }
+
+    Ref<CSSNumericValue> startOffset();
+    Ref<CSSNumericValue> endOffset();
+
+    AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
+    AnimationTimelinesController* controller() const override;
+
+    RenderBox* sourceScrollerRenderer() const;
+    Element* source() const override;
+    TimelineRange defaultRange() const final;
 
 private:
+    ScrollTimeline::Data computeTimelineData() const final;
+    std::pair<WebAnimationTime, WebAnimationTime> intervalForAttachmentRange(const TimelineRange&) const final;
+
     explicit ViewTimeline(ViewTimelineOptions&& = { });
     explicit ViewTimeline(const AtomString&, ScrollAxis, ViewTimelineInsets&&);
 
-    Ref<CSSValue> toCSSValue() const final;
     bool isViewTimeline() const final { return true; }
 
+    struct CurrentTimeData {
+        float scrollOffset { 0 };
+        float scrollContainerSize { 0 };
+        float subjectOffset { 0 };
+        float subjectSize { 0 };
+        float insetStart { 0 };
+        float insetEnd { 0 };
+    };
+
+    void cacheCurrentTime();
+
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_subject;
-    Ref<CSSNumericValue> m_startOffset;
-    Ref<CSSNumericValue> m_endOffset;
     ViewTimelineInsets m_insets;
+    CurrentTimeData m_cachedCurrentTimeData { };
 };
 
 } // namespace WebCore

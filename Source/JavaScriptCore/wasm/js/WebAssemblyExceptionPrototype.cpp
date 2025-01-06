@@ -33,6 +33,7 @@
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyTag.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyExceptionProtoFuncGetArg);
@@ -111,7 +112,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyExceptionProtoFuncGetArg, (JSGlobalObject* g
     if (UNLIKELY(!tag))
         return throwVMTypeError(globalObject, throwScope, formatMessage("First argument must be a WebAssembly.Tag"_s));
 
-    uint32_t index = toNonWrappingUint32(globalObject, callFrame->argument(1));
+    uint32_t index = toNonWrappingUint32(globalObject, callFrame->argument(1), ErrorType::RangeError);
     RETURN_IF_EXCEPTION(throwScope, { });
 
     if (UNLIKELY(jsException->tag() != tag->tag()))

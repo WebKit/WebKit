@@ -32,12 +32,12 @@
 #if USE(CAIRO)
 
 #include "ImageBufferCairoSurfaceBackend.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ImageBufferCairoImageSurfaceBackend : public ImageBufferCairoSurfaceBackend {
-    WTF_MAKE_ISO_ALLOCATED(ImageBufferCairoImageSurfaceBackend);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferCairoImageSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferCairoImageSurfaceBackend);
 public:
     static IntSize calculateSafeBackendSize(const Parameters&);

@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "AXRemoteFrame.h"
 #import "AccessibilityRenderObject.h"
 #import "EventNames.h"
 #import "HTMLInputElement.h"
@@ -36,8 +37,17 @@
 #import "RenderObject.h"
 #import "WAKView.h"
 #import "WebAccessibilityObjectWrapperIOS.h"
+#import <pal/spi/ios/AXRuntimeSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
+#import <wtf/text/WTFString.h>
+
+#if !PLATFORM(MACCATALYST)
+SOFT_LINK_CLASS_OPTIONAL(AXRuntime, AXRemoteElement);
+#endif
 
 SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenBlockquoteLevel, NSString *);
 #define AccessibilityTokenBlockquoteLevel getUIAccessibilityTokenBlockquoteLevel()
@@ -155,7 +165,7 @@ void AccessibilityObject::setLastPresentedTextPrediction(Node& previousCompositi
         if (wordStart)
             previousCompositionNodeText = previousCompositionNodeText.substring(wordStart);
 
-        m_lastPresentedTextPredictionComplete = { previousCompositionNodeText + m_lastPresentedTextPrediction.text, wordStart };
+        m_lastPresentedTextPredictionComplete = { makeString(previousCompositionNodeText, m_lastPresentedTextPrediction.text), wordStart };
 
         // Reset last presented prediction since a candidate was accepted.
         m_lastPresentedTextPrediction.reset();
@@ -168,6 +178,49 @@ void AccessibilityObject::setLastPresentedTextPrediction(Node& previousCompositi
     UNUSED_PARAM(location);
     UNUSED_PARAM(handlingAcceptedCandidate);
 #endif // HAVE (INLINE_PREDICTIONS)
+}
+
+#if !PLATFORM(MACCATALYST)
+
+static RetainPtr<NSDictionary> unarchivedTokenForData(RetainPtr<NSData> tokenData)
+{
+    NSError *error = nil;
+    return [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithObjects:[NSDictionary class], [NSNumber class], [NSString class], nil] fromData:tokenData.get() error:&error];
+}
+
+#endif
+
+Vector<uint8_t> AXRemoteFrame::generateRemoteToken() const
+{
+    if (RetainPtr data = Accessibility::newAccessibilityRemoteToken([[NSUUID UUID] UUIDString]))
+        return makeVector(data.get());
+    return { };
+}
+
+void AXRemoteFrame::initializePlatformElementWithRemoteToken(std::span<const uint8_t> token, int processIdentifier)
+{
+#if !PLATFORM(MACCATALYST)
+    m_processIdentifier = processIdentifier;
+
+    RetainPtr nsToken = toNSData(token);
+    NSDictionary *tokenDictionary = nsToken ? unarchivedTokenForData(nsToken).get() : nil;
+    if (!tokenDictionary)
+        return;
+
+    NSString *uuid = [tokenDictionary objectForKey:@"ax-uuid"];
+    AXRemoteElement *remoteElement = [allocAXRemoteElementInstance() initWithUUID:uuid andRemotePid:processIdentifier andContextId:0];
+    remoteElement.onClientSide = YES;
+    RefPtr parent = parentObjectUnignored();
+    remoteElement.accessibilityContainer = parent ?  parent->wrapper() : nil;
+
+    m_remoteFramePlatformElement = adoptNS(remoteElement);
+
+    if (CheckedPtr cache = axObjectCache())
+        cache->onRemoteFrameInitialized(*this);
+#else
+    UNUSED_PARAM(token);
+    UNUSED_PARAM(processIdentifier);
+#endif // !PLATFORM(MACCATALYST)
 }
 
 // NSAttributedString support.
@@ -271,10 +324,10 @@ static void attributedStringSetCompositionAttributes(NSMutableAttributedString *
 #endif // HAVE(INLINE_PREDICTIONS)
 }
 
-RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text, const SimpleRange&, AXCoreObject::SpellCheck)
+RetainPtr<NSAttributedString> attributedStringCreate(Node& node, StringView text, const SimpleRange&, AXCoreObject::SpellCheck)
 {
     // Skip invisible text.
-    auto* renderer = node->renderer();
+    CheckedPtr renderer = node.renderer();
     if (!renderer)
         return nil;
 
@@ -282,12 +335,23 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text
     NSRange range = NSMakeRange(0, [result length]);
 
     // Set attributes.
-    attributeStringSetStyle(result.get(), renderer, range);
-    attributeStringSetBlockquoteLevel(result.get(), renderer, range);
-    attributeStringSetLanguage(result.get(), renderer, range);
-    attributedStringSetCompositionAttributes(result.get(), renderer);
+    attributeStringSetStyle(result.get(), renderer.get(), range);
+    attributeStringSetBlockquoteLevel(result.get(), renderer.get(), range);
+    attributeStringSetLanguage(result.get(), renderer.get(), range);
+    attributedStringSetCompositionAttributes(result.get(), renderer.get());
 
     return result;
+}
+
+namespace Accessibility {
+
+RetainPtr<NSData> newAccessibilityRemoteToken(NSString *uuidString)
+{
+    if (!uuidString)
+        return nil;
+    return [NSKeyedArchiver archivedDataWithRootObject:@{ @"ax-pid" : @(getpid()), @"ax-uuid" : uuidString, @"ax-register" : @YES } requiringSecureCoding:YES error:nullptr];
+}
+
 }
 
 } // WebCore

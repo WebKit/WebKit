@@ -26,11 +26,11 @@
 #include "config.h"
 #include "ContentVisibilityAutoStateChangeEvent.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ContentVisibilityAutoStateChangeEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ContentVisibilityAutoStateChangeEvent);
 
 ContentVisibilityAutoStateChangeEvent::ContentVisibilityAutoStateChangeEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::ContentVisibilityAutoStateChangeEvent, type, initializer, isTrusted)

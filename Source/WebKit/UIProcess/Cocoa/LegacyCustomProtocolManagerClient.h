@@ -29,6 +29,7 @@
 #import "LegacyCustomProtocolID.h"
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WKCustomProtocolLoader;
 
@@ -41,6 +42,7 @@ namespace WebKit {
 class LegacyCustomProtocolManagerProxy;
 
 class LegacyCustomProtocolManagerClient final : public API::CustomProtocolManagerClient {
+    WTF_MAKE_TZONE_ALLOCATED(LegacyCustomProtocolManagerClient);
 public:
     void startLoading(LegacyCustomProtocolManagerProxy&, LegacyCustomProtocolID, const WebCore::ResourceRequest&) final;
     void stopLoading(LegacyCustomProtocolManagerProxy&, LegacyCustomProtocolID) final;

@@ -53,6 +53,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/MediaTime.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/Vector.h>
 #import <wtf/cf/TypeCastsCF.h>
 
@@ -310,6 +311,8 @@ ImageDecoderAVFObjCSample* toSample(Iterator iter)
 }
 
 #pragma mark - ImageDecoderAVFObjC
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageDecoderAVFObjC);
 
 RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption, ProcessIdentity resourceOwner)
 {
@@ -636,9 +639,9 @@ PlatformImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subs
             if (!rawBlockBuffer)
                 return nullptr;
 
-            if (noErr != PAL::CMSampleBufferSetDataBuffer(cursorSample->sampleBuffer(), rawBlockBuffer))
+            auto blockBuffer = adoptCF(rawBlockBuffer);
+            if (noErr != PAL::CMSampleBufferSetDataBuffer(cursorSample->sampleBuffer(), blockBuffer.get()))
                 return nullptr;
-            CFRelease(rawBlockBuffer);
 
             PAL::CMRemoveAttachment(cursorSample->sampleBuffer(), PAL::kCMSampleBufferAttachmentKey_SampleReferenceByteOffset);
             PAL::CMRemoveAttachment(cursorSample->sampleBuffer(), PAL::kCMSampleBufferAttachmentKey_SampleReferenceURL);

@@ -60,10 +60,11 @@ void ICOImageDecoder::setData(const FragmentedSharedBuffer& data, bool allDataRe
 
     ScalableImageDecoder::setData(data, allDataReceived);
 
-    for (BMPReaders::iterator i(m_bmpReaders.begin()); i != m_bmpReaders.end(); ++i) {
-        if (*i)
-            (*i)->setData(*m_data);
+    for (auto& reader : m_bmpReaders) {
+        if (reader)
+            reader->setData(*m_data);
     }
+
     for (size_t i = 0; i < m_pngDecoders.size(); ++i)
         setDataForPNGDecoderAtIndex(i);
 }
@@ -248,13 +249,13 @@ bool ICOImageDecoder::processDirectoryEntries()
     ASSERT(m_decodedOffset == sizeOfDirectory);
     if ((m_decodedOffset > m_data->size()) || ((m_data->size() - m_decodedOffset) < (m_dirEntries.size() * sizeOfDirEntry)))
         return false;
-    for (IconDirectoryEntries::iterator i(m_dirEntries.begin()); i != m_dirEntries.end(); ++i)
-        *i = readDirectoryEntry();  // Updates m_decodedOffset.
+    for (auto& entry : m_dirEntries)
+        entry = readDirectoryEntry(); // Updates m_decodedOffset.
 
     // Make sure the specified image offsets are past the end of the directory
     // entries.
-    for (IconDirectoryEntries::iterator i(m_dirEntries.begin()); i != m_dirEntries.end(); ++i) {
-        if (i->m_imageOffset < m_decodedOffset)
+    for (auto& entry : m_dirEntries) {
+        if (entry.m_imageOffset < m_decodedOffset)
             return setFailed();
     }
 
@@ -317,7 +318,7 @@ ICOImageDecoder::ImageType ICOImageDecoder::imageTypeAtIndex(size_t index)
     const uint32_t imageOffset = m_dirEntries[index].m_imageOffset;
     if ((imageOffset > m_data->size()) || ((m_data->size() - imageOffset) < 4))
         return Unknown;
-    return equalSpans(m_data->span().subspan(imageOffset, 4), std::span { "\x89PNG", 4 }) ? PNG : BMP;
+    return spanHasPrefix(m_data->span().subspan(imageOffset), unsafeMakeSpan("\x89PNG", 4)) ? PNG : BMP;
 }
 
 }

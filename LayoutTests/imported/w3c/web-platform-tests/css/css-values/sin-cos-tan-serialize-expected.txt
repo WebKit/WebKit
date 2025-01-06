@@ -1,100 +1,272 @@
 
-PASS 'scale(cos(0))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(calc(cos(0)))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(sin(0))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(calc(sin(0)))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(tan(0))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(calc(tan(0)))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(calc(sin(0) + 0.5))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(calc(calc(sin(0) + 0.5)))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(calc(sin(0) + cos(0) + tan(0)))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(calc(calc(sin(0) + cos(0) + tan(0))))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(calc(cos(0) + 0.5))' as a specified value should serialize as 'scale(calc(1.5))'.
-PASS 'scale(calc(calc(cos(0) + 0.5)))' as a specified value should serialize as 'scale(calc(1.5))'.
-PASS 'scale(calc(tan(0) + 0.5))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(calc(calc(tan(0) + 0.5)))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(cos(0deg))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(calc(cos(0deg)))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(sin(0deg))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(calc(sin(0deg)))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(tan(0deg))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(calc(tan(0deg)))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(sin(30deg))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(calc(sin(30deg)))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(sin(0.523599))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(calc(sin(0.523599)))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(sin(0.523599rad))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(calc(sin(0.523599rad)))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(sin(33.333333grad))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(calc(sin(33.333333grad)))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(sin(0.08333333turn))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(calc(sin(0.08333333turn)))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(cos(60deg))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(calc(cos(60deg)))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(cos(66.66666666grad))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(calc(cos(66.66666666grad)))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(cos(1.047197551))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(calc(cos(1.047197551)))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(cos(1.047197551rad))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(calc(cos(1.047197551rad)))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(cos(0.16666666666turn))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(calc(cos(0.16666666666turn)))' as a specified value should serialize as 'scale(calc(0.5))'.
-PASS 'scale(tan(45deg))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(calc(tan(45deg)))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(tan(50grad))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(calc(tan(50grad)))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(tan(0.78539816))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(calc(tan(0.78539816)))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(tan(0.78539816rad))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(calc(tan(0.78539816rad)))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(tan(0.125turn))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(calc(tan(0.125turn)))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(tan(90deg))' as a specified value should serialize as 'scale(calc(infinity))'.
-PASS 'scale(calc(tan(90deg)))' as a specified value should serialize as 'scale(calc(infinity))'.
-PASS 'scale(tan(-90deg))' as a specified value should serialize as 'scale(calc(-infinity))'.
-PASS 'scale(calc(tan(-90deg)))' as a specified value should serialize as 'scale(calc(-infinity))'.
-PASS 'scale(sin(180deg))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(calc(sin(180deg)))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(cos(180deg))' as a specified value should serialize as 'scale(calc(-1))'.
-PASS 'scale(calc(cos(180deg)))' as a specified value should serialize as 'scale(calc(-1))'.
-PASS 'scale(tan(180deg))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(calc(tan(180deg)))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(sin(270deg))' as a specified value should serialize as 'scale(calc(-1))'.
-PASS 'scale(calc(sin(270deg)))' as a specified value should serialize as 'scale(calc(-1))'.
-PASS 'scale(cos(270deg))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(calc(cos(270deg)))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(tan(270deg))' as a specified value should serialize as 'scale(calc(-infinity))'.
-PASS 'scale(calc(tan(270deg)))' as a specified value should serialize as 'scale(calc(-infinity))'.
-PASS 'scale(sin(-180deg))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(calc(sin(-180deg)))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(cos(-180deg))' as a specified value should serialize as 'scale(calc(-1))'.
-PASS 'scale(calc(cos(-180deg)))' as a specified value should serialize as 'scale(calc(-1))'.
-PASS 'scale(tan(-180deg))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(calc(tan(-180deg)))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(sin(-270deg))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(calc(sin(-270deg)))' as a specified value should serialize as 'scale(calc(1))'.
-PASS 'scale(cos(-270deg))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(calc(cos(-270deg)))' as a specified value should serialize as 'scale(calc(0))'.
-PASS 'scale(tan(-270deg))' as a specified value should serialize as 'scale(calc(infinity))'.
-PASS 'scale(calc(tan(-270deg)))' as a specified value should serialize as 'scale(calc(infinity))'.
-PASS 'scale(calc(sin(30deg) + cos(60deg) + tan(45deg)))' as a specified value should serialize as 'scale(calc(2))'.
-PASS 'scale(calc(calc(sin(30deg) + cos(60deg) + tan(45deg))))' as a specified value should serialize as 'scale(calc(2))'.
-PASS 'scale(calc(sin(infinity)))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(calc(sin(infinity))))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(cos(infinity)))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(calc(cos(infinity))))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(tan(infinity)))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(calc(tan(infinity))))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(sin(-infinity)))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(calc(sin(-infinity))))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(cos(-infinity)))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(calc(cos(-infinity))))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(tan(-infinity)))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(calc(tan(-infinity))))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(sin(NaN)))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(calc(sin(NaN))))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(cos(NaN)))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(calc(cos(NaN))))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(tan(NaN)))' as a specified value should serialize as 'scale(calc(NaN))'.
-PASS 'scale(calc(calc(tan(NaN))))' as a specified value should serialize as 'scale(calc(NaN))'.
+PASS cos(0) should be specified-value-equivalent to calc(1)
+PASS cos(0) should be computed-value-equivalent to 1
+PASS cos(0) should be used-value-equivalent to 1
+PASS calc(cos(0)) should be specified-value-equivalent to calc(1)
+PASS calc(cos(0)) should be computed-value-equivalent to 1
+PASS calc(cos(0)) should be used-value-equivalent to 1
+PASS sin(0) should be specified-value-equivalent to calc(0)
+PASS sin(0) should be computed-value-equivalent to 0
+PASS sin(0) should be used-value-equivalent to 0
+PASS calc(sin(0)) should be specified-value-equivalent to calc(0)
+PASS calc(sin(0)) should be computed-value-equivalent to 0
+PASS calc(sin(0)) should be used-value-equivalent to 0
+PASS tan(0) should be specified-value-equivalent to calc(0)
+PASS tan(0) should be computed-value-equivalent to 0
+PASS tan(0) should be used-value-equivalent to 0
+PASS calc(tan(0)) should be specified-value-equivalent to calc(0)
+PASS calc(tan(0)) should be computed-value-equivalent to 0
+PASS calc(tan(0)) should be used-value-equivalent to 0
+PASS calc(sin(0) + 0.5) should be specified-value-equivalent to calc(0.5)
+PASS calc(sin(0) + 0.5) should be computed-value-equivalent to 0.5
+PASS calc(sin(0) + 0.5) should be used-value-equivalent to 0.5
+PASS calc(calc(sin(0) + 0.5)) should be specified-value-equivalent to calc(0.5)
+PASS calc(calc(sin(0) + 0.5)) should be computed-value-equivalent to 0.5
+PASS calc(calc(sin(0) + 0.5)) should be used-value-equivalent to 0.5
+PASS calc(sin(0) + cos(0) + tan(0)) should be specified-value-equivalent to calc(1)
+PASS calc(sin(0) + cos(0) + tan(0)) should be computed-value-equivalent to 1
+PASS calc(sin(0) + cos(0) + tan(0)) should be used-value-equivalent to 1
+PASS calc(calc(sin(0) + cos(0) + tan(0))) should be specified-value-equivalent to calc(1)
+PASS calc(calc(sin(0) + cos(0) + tan(0))) should be computed-value-equivalent to 1
+PASS calc(calc(sin(0) + cos(0) + tan(0))) should be used-value-equivalent to 1
+PASS calc(cos(0) + 0.5) should be specified-value-equivalent to calc(1.5)
+PASS calc(cos(0) + 0.5) should be computed-value-equivalent to 1.5
+PASS calc(cos(0) + 0.5) should be used-value-equivalent to 1.5
+PASS calc(calc(cos(0) + 0.5)) should be specified-value-equivalent to calc(1.5)
+PASS calc(calc(cos(0) + 0.5)) should be computed-value-equivalent to 1.5
+PASS calc(calc(cos(0) + 0.5)) should be used-value-equivalent to 1.5
+PASS calc(tan(0) + 0.5) should be specified-value-equivalent to calc(0.5)
+PASS calc(tan(0) + 0.5) should be computed-value-equivalent to 0.5
+PASS calc(tan(0) + 0.5) should be used-value-equivalent to 0.5
+PASS calc(calc(tan(0) + 0.5)) should be specified-value-equivalent to calc(0.5)
+PASS calc(calc(tan(0) + 0.5)) should be computed-value-equivalent to 0.5
+PASS calc(calc(tan(0) + 0.5)) should be used-value-equivalent to 0.5
+PASS cos(0deg) should be specified-value-equivalent to calc(1)
+PASS cos(0deg) should be computed-value-equivalent to 1
+PASS cos(0deg) should be used-value-equivalent to 1
+PASS calc(cos(0deg)) should be specified-value-equivalent to calc(1)
+PASS calc(cos(0deg)) should be computed-value-equivalent to 1
+PASS calc(cos(0deg)) should be used-value-equivalent to 1
+PASS sin(0deg) should be specified-value-equivalent to calc(0)
+PASS sin(0deg) should be computed-value-equivalent to 0
+PASS sin(0deg) should be used-value-equivalent to 0
+PASS calc(sin(0deg)) should be specified-value-equivalent to calc(0)
+PASS calc(sin(0deg)) should be computed-value-equivalent to 0
+PASS calc(sin(0deg)) should be used-value-equivalent to 0
+PASS tan(0deg) should be specified-value-equivalent to calc(0)
+PASS tan(0deg) should be computed-value-equivalent to 0
+PASS tan(0deg) should be used-value-equivalent to 0
+PASS calc(tan(0deg)) should be specified-value-equivalent to calc(0)
+PASS calc(tan(0deg)) should be computed-value-equivalent to 0
+PASS calc(tan(0deg)) should be used-value-equivalent to 0
+PASS sin(30deg) should be specified-value-equivalent to calc(0.5)
+PASS sin(30deg) should be computed-value-equivalent to 0.5
+PASS sin(30deg) should be used-value-equivalent to 0.5
+PASS calc(sin(30deg)) should be specified-value-equivalent to calc(0.5)
+PASS calc(sin(30deg)) should be computed-value-equivalent to 0.5
+PASS calc(sin(30deg)) should be used-value-equivalent to 0.5
+PASS sin(0.523599) should be specified-value-equivalent to calc(0.5)
+PASS sin(0.523599) should be computed-value-equivalent to 0.5
+PASS sin(0.523599) should be used-value-equivalent to 0.5
+PASS calc(sin(0.523599)) should be specified-value-equivalent to calc(0.5)
+PASS calc(sin(0.523599)) should be computed-value-equivalent to 0.5
+PASS calc(sin(0.523599)) should be used-value-equivalent to 0.5
+PASS sin(0.523599rad) should be specified-value-equivalent to calc(0.5)
+PASS sin(0.523599rad) should be computed-value-equivalent to 0.5
+PASS sin(0.523599rad) should be used-value-equivalent to 0.5
+PASS calc(sin(0.523599rad)) should be specified-value-equivalent to calc(0.5)
+PASS calc(sin(0.523599rad)) should be computed-value-equivalent to 0.5
+PASS calc(sin(0.523599rad)) should be used-value-equivalent to 0.5
+PASS sin(33.333333grad) should be specified-value-equivalent to calc(0.5)
+PASS sin(33.333333grad) should be computed-value-equivalent to 0.5
+PASS sin(33.333333grad) should be used-value-equivalent to 0.5
+PASS calc(sin(33.333333grad)) should be specified-value-equivalent to calc(0.5)
+PASS calc(sin(33.333333grad)) should be computed-value-equivalent to 0.5
+PASS calc(sin(33.333333grad)) should be used-value-equivalent to 0.5
+PASS sin(0.08333333turn) should be specified-value-equivalent to calc(0.5)
+PASS sin(0.08333333turn) should be computed-value-equivalent to 0.5
+PASS sin(0.08333333turn) should be used-value-equivalent to 0.5
+PASS calc(sin(0.08333333turn)) should be specified-value-equivalent to calc(0.5)
+PASS calc(sin(0.08333333turn)) should be computed-value-equivalent to 0.5
+PASS calc(sin(0.08333333turn)) should be used-value-equivalent to 0.5
+PASS cos(60deg) should be specified-value-equivalent to calc(0.5)
+PASS cos(60deg) should be computed-value-equivalent to 0.5
+PASS cos(60deg) should be used-value-equivalent to 0.5
+PASS calc(cos(60deg)) should be specified-value-equivalent to calc(0.5)
+PASS calc(cos(60deg)) should be computed-value-equivalent to 0.5
+PASS calc(cos(60deg)) should be used-value-equivalent to 0.5
+PASS cos(66.66666666grad) should be specified-value-equivalent to calc(0.5)
+PASS cos(66.66666666grad) should be computed-value-equivalent to 0.5
+PASS cos(66.66666666grad) should be used-value-equivalent to 0.5
+PASS calc(cos(66.66666666grad)) should be specified-value-equivalent to calc(0.5)
+PASS calc(cos(66.66666666grad)) should be computed-value-equivalent to 0.5
+PASS calc(cos(66.66666666grad)) should be used-value-equivalent to 0.5
+PASS cos(1.047197551) should be specified-value-equivalent to calc(0.5)
+PASS cos(1.047197551) should be computed-value-equivalent to 0.5
+PASS cos(1.047197551) should be used-value-equivalent to 0.5
+PASS calc(cos(1.047197551)) should be specified-value-equivalent to calc(0.5)
+PASS calc(cos(1.047197551)) should be computed-value-equivalent to 0.5
+PASS calc(cos(1.047197551)) should be used-value-equivalent to 0.5
+PASS cos(1.047197551rad) should be specified-value-equivalent to calc(0.5)
+PASS cos(1.047197551rad) should be computed-value-equivalent to 0.5
+PASS cos(1.047197551rad) should be used-value-equivalent to 0.5
+PASS calc(cos(1.047197551rad)) should be specified-value-equivalent to calc(0.5)
+PASS calc(cos(1.047197551rad)) should be computed-value-equivalent to 0.5
+PASS calc(cos(1.047197551rad)) should be used-value-equivalent to 0.5
+PASS cos(0.16666666666turn) should be specified-value-equivalent to calc(0.5)
+PASS cos(0.16666666666turn) should be computed-value-equivalent to 0.5
+PASS cos(0.16666666666turn) should be used-value-equivalent to 0.5
+PASS calc(cos(0.16666666666turn)) should be specified-value-equivalent to calc(0.5)
+PASS calc(cos(0.16666666666turn)) should be computed-value-equivalent to 0.5
+PASS calc(cos(0.16666666666turn)) should be used-value-equivalent to 0.5
+PASS tan(45deg) should be specified-value-equivalent to calc(1)
+PASS tan(45deg) should be computed-value-equivalent to 1
+PASS tan(45deg) should be used-value-equivalent to 1
+PASS calc(tan(45deg)) should be specified-value-equivalent to calc(1)
+PASS calc(tan(45deg)) should be computed-value-equivalent to 1
+PASS calc(tan(45deg)) should be used-value-equivalent to 1
+PASS tan(50grad) should be specified-value-equivalent to calc(1)
+PASS tan(50grad) should be computed-value-equivalent to 1
+PASS tan(50grad) should be used-value-equivalent to 1
+PASS calc(tan(50grad)) should be specified-value-equivalent to calc(1)
+PASS calc(tan(50grad)) should be computed-value-equivalent to 1
+PASS calc(tan(50grad)) should be used-value-equivalent to 1
+PASS tan(0.78539816) should be specified-value-equivalent to calc(1)
+PASS tan(0.78539816) should be computed-value-equivalent to 1
+PASS tan(0.78539816) should be used-value-equivalent to 1
+PASS calc(tan(0.78539816)) should be specified-value-equivalent to calc(1)
+PASS calc(tan(0.78539816)) should be computed-value-equivalent to 1
+PASS calc(tan(0.78539816)) should be used-value-equivalent to 1
+PASS tan(0.78539816rad) should be specified-value-equivalent to calc(1)
+PASS tan(0.78539816rad) should be computed-value-equivalent to 1
+PASS tan(0.78539816rad) should be used-value-equivalent to 1
+PASS calc(tan(0.78539816rad)) should be specified-value-equivalent to calc(1)
+PASS calc(tan(0.78539816rad)) should be computed-value-equivalent to 1
+PASS calc(tan(0.78539816rad)) should be used-value-equivalent to 1
+PASS tan(0.125turn) should be specified-value-equivalent to calc(1)
+PASS tan(0.125turn) should be computed-value-equivalent to 1
+PASS tan(0.125turn) should be used-value-equivalent to 1
+PASS calc(tan(0.125turn)) should be specified-value-equivalent to calc(1)
+PASS calc(tan(0.125turn)) should be computed-value-equivalent to 1
+PASS calc(tan(0.125turn)) should be used-value-equivalent to 1
+PASS sin(180deg) should be specified-value-equivalent to calc(0)
+PASS sin(180deg) should be computed-value-equivalent to 0
+PASS sin(180deg) should be used-value-equivalent to 0
+PASS calc(sin(180deg)) should be specified-value-equivalent to calc(0)
+PASS calc(sin(180deg)) should be computed-value-equivalent to 0
+PASS calc(sin(180deg)) should be used-value-equivalent to 0
+PASS cos(180deg) should be specified-value-equivalent to calc(-1)
+PASS cos(180deg) should be computed-value-equivalent to -1
+PASS cos(180deg) should be used-value-equivalent to -1
+PASS calc(cos(180deg)) should be specified-value-equivalent to calc(-1)
+PASS calc(cos(180deg)) should be computed-value-equivalent to -1
+PASS calc(cos(180deg)) should be used-value-equivalent to -1
+PASS tan(180deg) should be specified-value-equivalent to calc(0)
+PASS tan(180deg) should be computed-value-equivalent to 0
+PASS tan(180deg) should be used-value-equivalent to 0
+PASS calc(tan(180deg)) should be specified-value-equivalent to calc(0)
+PASS calc(tan(180deg)) should be computed-value-equivalent to 0
+PASS calc(tan(180deg)) should be used-value-equivalent to 0
+PASS sin(270deg) should be specified-value-equivalent to calc(-1)
+PASS sin(270deg) should be computed-value-equivalent to -1
+PASS sin(270deg) should be used-value-equivalent to -1
+PASS calc(sin(270deg)) should be specified-value-equivalent to calc(-1)
+PASS calc(sin(270deg)) should be computed-value-equivalent to -1
+PASS calc(sin(270deg)) should be used-value-equivalent to -1
+PASS cos(270deg) should be specified-value-equivalent to calc(0)
+PASS cos(270deg) should be computed-value-equivalent to 0
+PASS cos(270deg) should be used-value-equivalent to 0
+PASS calc(cos(270deg)) should be specified-value-equivalent to calc(0)
+PASS calc(cos(270deg)) should be computed-value-equivalent to 0
+PASS calc(cos(270deg)) should be used-value-equivalent to 0
+PASS sin(-180deg) should be specified-value-equivalent to calc(0)
+PASS sin(-180deg) should be computed-value-equivalent to 0
+PASS sin(-180deg) should be used-value-equivalent to 0
+PASS calc(sin(-180deg)) should be specified-value-equivalent to calc(0)
+PASS calc(sin(-180deg)) should be computed-value-equivalent to 0
+PASS calc(sin(-180deg)) should be used-value-equivalent to 0
+PASS cos(-180deg) should be specified-value-equivalent to calc(-1)
+PASS cos(-180deg) should be computed-value-equivalent to -1
+PASS cos(-180deg) should be used-value-equivalent to -1
+PASS calc(cos(-180deg)) should be specified-value-equivalent to calc(-1)
+PASS calc(cos(-180deg)) should be computed-value-equivalent to -1
+PASS calc(cos(-180deg)) should be used-value-equivalent to -1
+PASS tan(-180deg) should be specified-value-equivalent to calc(0)
+PASS tan(-180deg) should be computed-value-equivalent to 0
+PASS tan(-180deg) should be used-value-equivalent to 0
+PASS calc(tan(-180deg)) should be specified-value-equivalent to calc(0)
+PASS calc(tan(-180deg)) should be computed-value-equivalent to 0
+PASS calc(tan(-180deg)) should be used-value-equivalent to 0
+PASS sin(-270deg) should be specified-value-equivalent to calc(1)
+PASS sin(-270deg) should be computed-value-equivalent to 1
+PASS sin(-270deg) should be used-value-equivalent to 1
+PASS calc(sin(-270deg)) should be specified-value-equivalent to calc(1)
+PASS calc(sin(-270deg)) should be computed-value-equivalent to 1
+PASS calc(sin(-270deg)) should be used-value-equivalent to 1
+PASS cos(-270deg) should be specified-value-equivalent to calc(0)
+PASS cos(-270deg) should be computed-value-equivalent to 0
+PASS cos(-270deg) should be used-value-equivalent to 0
+PASS calc(cos(-270deg)) should be specified-value-equivalent to calc(0)
+PASS calc(cos(-270deg)) should be computed-value-equivalent to 0
+PASS calc(cos(-270deg)) should be used-value-equivalent to 0
+PASS calc(sin(30deg) + cos(60deg) + tan(45deg)) should be specified-value-equivalent to calc(2)
+PASS calc(sin(30deg) + cos(60deg) + tan(45deg)) should be computed-value-equivalent to 2
+PASS calc(sin(30deg) + cos(60deg) + tan(45deg)) should be used-value-equivalent to 2
+PASS calc(calc(sin(30deg) + cos(60deg) + tan(45deg))) should be specified-value-equivalent to calc(2)
+PASS calc(calc(sin(30deg) + cos(60deg) + tan(45deg))) should be computed-value-equivalent to 2
+PASS calc(calc(sin(30deg) + cos(60deg) + tan(45deg))) should be used-value-equivalent to 2
+PASS calc(sin(infinity)) should be specified-value-equivalent to calc(NaN)
+PASS calc(sin(infinity)) should be computed-value-equivalent to 0
+PASS calc(sin(infinity)) should be used-value-equivalent to 0
+PASS calc(calc(sin(infinity))) should be specified-value-equivalent to calc(NaN)
+PASS calc(calc(sin(infinity))) should be computed-value-equivalent to 0
+PASS calc(calc(sin(infinity))) should be used-value-equivalent to 0
+PASS calc(cos(infinity)) should be specified-value-equivalent to calc(NaN)
+PASS calc(cos(infinity)) should be computed-value-equivalent to 0
+PASS calc(cos(infinity)) should be used-value-equivalent to 0
+PASS calc(calc(cos(infinity))) should be specified-value-equivalent to calc(NaN)
+PASS calc(calc(cos(infinity))) should be computed-value-equivalent to 0
+PASS calc(calc(cos(infinity))) should be used-value-equivalent to 0
+PASS calc(tan(infinity)) should be specified-value-equivalent to calc(NaN)
+PASS calc(tan(infinity)) should be computed-value-equivalent to 0
+PASS calc(tan(infinity)) should be used-value-equivalent to 0
+PASS calc(calc(tan(infinity))) should be specified-value-equivalent to calc(NaN)
+PASS calc(calc(tan(infinity))) should be computed-value-equivalent to 0
+PASS calc(calc(tan(infinity))) should be used-value-equivalent to 0
+PASS calc(sin(-infinity)) should be specified-value-equivalent to calc(NaN)
+PASS calc(sin(-infinity)) should be computed-value-equivalent to 0
+PASS calc(sin(-infinity)) should be used-value-equivalent to 0
+PASS calc(calc(sin(-infinity))) should be specified-value-equivalent to calc(NaN)
+PASS calc(calc(sin(-infinity))) should be computed-value-equivalent to 0
+PASS calc(calc(sin(-infinity))) should be used-value-equivalent to 0
+PASS calc(cos(-infinity)) should be specified-value-equivalent to calc(NaN)
+PASS calc(cos(-infinity)) should be computed-value-equivalent to 0
+PASS calc(cos(-infinity)) should be used-value-equivalent to 0
+PASS calc(calc(cos(-infinity))) should be specified-value-equivalent to calc(NaN)
+PASS calc(calc(cos(-infinity))) should be computed-value-equivalent to 0
+PASS calc(calc(cos(-infinity))) should be used-value-equivalent to 0
+PASS calc(tan(-infinity)) should be specified-value-equivalent to calc(NaN)
+PASS calc(tan(-infinity)) should be computed-value-equivalent to 0
+PASS calc(tan(-infinity)) should be used-value-equivalent to 0
+PASS calc(calc(tan(-infinity))) should be specified-value-equivalent to calc(NaN)
+PASS calc(calc(tan(-infinity))) should be computed-value-equivalent to 0
+PASS calc(calc(tan(-infinity))) should be used-value-equivalent to 0
+PASS calc(sin(NaN)) should be specified-value-equivalent to calc(NaN)
+PASS calc(sin(NaN)) should be computed-value-equivalent to 0
+PASS calc(sin(NaN)) should be used-value-equivalent to 0
+PASS calc(calc(sin(NaN))) should be specified-value-equivalent to calc(NaN)
+PASS calc(calc(sin(NaN))) should be computed-value-equivalent to 0
+PASS calc(calc(sin(NaN))) should be used-value-equivalent to 0
+PASS calc(cos(NaN)) should be specified-value-equivalent to calc(NaN)
+PASS calc(cos(NaN)) should be computed-value-equivalent to 0
+PASS calc(cos(NaN)) should be used-value-equivalent to 0
+PASS calc(calc(cos(NaN))) should be specified-value-equivalent to calc(NaN)
+PASS calc(calc(cos(NaN))) should be computed-value-equivalent to 0
+PASS calc(calc(cos(NaN))) should be used-value-equivalent to 0
+PASS calc(tan(NaN)) should be specified-value-equivalent to calc(NaN)
+PASS calc(tan(NaN)) should be computed-value-equivalent to 0
+PASS calc(tan(NaN)) should be used-value-equivalent to 0
+PASS calc(calc(tan(NaN))) should be specified-value-equivalent to calc(NaN)
+PASS calc(calc(tan(NaN))) should be computed-value-equivalent to 0
+PASS calc(calc(tan(NaN))) should be used-value-equivalent to 0
 

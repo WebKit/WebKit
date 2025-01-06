@@ -37,6 +37,7 @@
 #include <wtf/PrintStream.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GThreadSafeWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -56,7 +57,7 @@ using namespace WebCore;
 #define LOW_QUEUE_FACTOR_THRESHOLD 0.2
 
 class CachedResourceStreamingClient final : public PlatformMediaResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CachedResourceStreamingClient);
     WTF_MAKE_NONCOPYABLE(CachedResourceStreamingClient);
 public:
     CachedResourceStreamingClient(WebKitWebSrc*, ResourceRequest&&, unsigned requestNumber);
@@ -260,7 +261,7 @@ enum class ResetType {
     Hard
 };
 
-static void webkitWebSrcReset(WebKitWebSrc* src, DataMutexLocker<WebKitWebSrcPrivate::StreamingMembers>& members, ResetType resetType)
+static void webkitWebSrcReset([[maybe_unused]] WebKitWebSrc* src, DataMutexLocker<WebKitWebSrcPrivate::StreamingMembers>& members, ResetType resetType)
 {
     GST_DEBUG_OBJECT(src, "Resetting internal state");
     gst_adapter_clear(members->adapter.get());
@@ -418,7 +419,7 @@ static void restartLoaderIfNeeded(WebKitWebSrc* src, DataMutexLocker<WebKitWebSr
 }
 
 
-static void stopLoaderIfNeeded(WebKitWebSrc* src, DataMutexLocker<WebKitWebSrcPrivate::StreamingMembers>& members)
+static void stopLoaderIfNeeded([[maybe_unused]] WebKitWebSrc* src, DataMutexLocker<WebKitWebSrcPrivate::StreamingMembers>& members)
 {
     ASSERT(isMainThread());
 
@@ -572,7 +573,7 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
     return GST_FLOW_EOS;
 }
 
-static bool webKitWebSrcSetExtraHeader(GQuark fieldId, const GValue* value, gpointer userData)
+static bool webKitWebSrcSetExtraHeader(StringView fieldId, const GValue* value, ResourceRequest& request)
 {
     GUniquePtr<gchar> fieldContent;
 
@@ -586,41 +587,10 @@ static bool webKitWebSrcSetExtraHeader(GQuark fieldId, const GValue* value, gpoi
             fieldContent.reset(g_value_dup_string(&dest));
     }
 
-    const gchar* fieldName = g_quark_to_string(fieldId);
-    if (!fieldContent.get()) {
-        GST_ERROR("extra-headers field '%s' contains no value or can't be converted to a string", fieldName);
-        return false;
-    }
-
-    GST_DEBUG("Appending extra header: \"%s: %s\"", fieldName, fieldContent.get());
-    ResourceRequest* request = static_cast<ResourceRequest*>(userData);
-    request->setHTTPHeaderField(String::fromLatin1(fieldName), String::fromLatin1(fieldContent.get()));
+    auto field = fieldId.toStringWithoutCopying();
+    GST_DEBUG("Appending extra header: \"%s: %s\"", field.ascii().data(), fieldContent.get());
+    request.setHTTPHeaderField(field, String::fromLatin1(fieldContent.get()));
     return true;
-}
-
-static gboolean webKitWebSrcProcessExtraHeaders(GQuark fieldId, const GValue* value, gpointer userData)
-{
-    if (G_VALUE_TYPE(value) == GST_TYPE_ARRAY) {
-        unsigned size = gst_value_array_get_size(value);
-
-        for (unsigned i = 0; i < size; i++) {
-            if (!webKitWebSrcSetExtraHeader(fieldId, gst_value_array_get_value(value, i), userData))
-                return FALSE;
-        }
-        return TRUE;
-    }
-
-    if (G_VALUE_TYPE(value) == GST_TYPE_LIST) {
-        unsigned size = gst_value_list_get_size(value);
-
-        for (unsigned i = 0; i < size; i++) {
-            if (!webKitWebSrcSetExtraHeader(fieldId, gst_value_list_get_value(value, i), userData))
-                return FALSE;
-        }
-        return TRUE;
-    }
-
-    return webKitWebSrcSetExtraHeader(fieldId, value, userData);
 }
 
 static gboolean webKitWebSrcStart(GstBaseSrc* baseSrc)
@@ -685,8 +655,32 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
     if (!priv->keepAlive)
         request.setHTTPHeaderField(HTTPHeaderName::Connection, "close"_s);
 
-    if (priv->extraHeaders)
-        gst_structure_foreach(priv->extraHeaders.get(), webKitWebSrcProcessExtraHeaders, &request);
+    if (priv->extraHeaders) {
+        gstStructureForeach(priv->extraHeaders.get(), [&](auto id, auto value) -> bool {
+            auto fieldId = gstIdToString(id);
+            if (G_VALUE_TYPE(value) == GST_TYPE_ARRAY) {
+                unsigned size = gst_value_array_get_size(value);
+
+                for (unsigned i = 0; i < size; i++) {
+                    if (!webKitWebSrcSetExtraHeader(fieldId, gst_value_array_get_value(value, i), request))
+                        return FALSE;
+                }
+                return TRUE;
+            }
+
+            if (G_VALUE_TYPE(value) == GST_TYPE_LIST) {
+                unsigned size = gst_value_list_get_size(value);
+
+                for (unsigned i = 0; i < size; i++) {
+                    if (!webKitWebSrcSetExtraHeader(fieldId, gst_value_list_get_value(value, i), request))
+                        return FALSE;
+                }
+                return TRUE;
+            }
+
+            return webKitWebSrcSetExtraHeader(fieldId, value, request);
+        });
+    }
 
     // We always request Icecast/Shoutcast metadata, just in case ...
     request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1"_s);
@@ -748,11 +742,11 @@ static gboolean webKitWebSrcIsSeekable(GstBaseSrc* baseSrc)
 
 static gboolean webKitWebSrcDoSeek(GstBaseSrc* baseSrc, GstSegment* segment)
 {
-    // This function is mutually exclusive with create(). It's only called when we're transitioning to >=PAUSED and
-    // between flushes. In any case, basesrc holds the STREAM_LOCK, so we know create() is not running.
+    // This function is mutually exclusive with create(). It's only called when we're transitioning to >=PAUSED,
+    // continuing seamless looping, or between flushes. In any case, basesrc holds the STREAM_LOCK, so we know create() is not running.
     // Also, both webKitWebSrcUnLock() and webKitWebSrcUnLockStop() are guaranteed to be called *before* this function.
     // [See gst_base_src_perform_seek()].
-    ASSERT(GST_ELEMENT(baseSrc)->current_state < GST_STATE_PAUSED || GST_PAD_IS_FLUSHING(baseSrc->srcpad));
+    ASSERT(GST_ELEMENT(baseSrc)->current_state < GST_STATE_PAUSED || GST_ELEMENT(baseSrc)->current_state == GST_STATE_PLAYING || GST_PAD_IS_FLUSHING(baseSrc->srcpad));
 
     // Except for the initial seek, this function is only called if isSeekable() returns true.
     ASSERT(GST_ELEMENT(baseSrc)->current_state < GST_STATE_PAUSED || webKitWebSrcIsSeekable(baseSrc));
@@ -886,12 +880,8 @@ static GstURIType webKitWebSrcUriGetType(GType)
 
 const gchar* const* webKitWebSrcGetProtocols(GType)
 {
-    static const char* protocols[4];
-    protocols[0] = "http";
-    protocols[1] = "https";
-    protocols[2] = "blob";
-    protocols[3] = nullptr;
-    return protocols;
+    static std::array<const char*, 4> protocols { "http", "https", "blob" };
+    return protocols.data();
 }
 
 static URL convertPlaybinURI(const char* uriString)
@@ -946,11 +936,10 @@ static void webKitWebSrcUriHandlerInit(gpointer gIface, gpointer)
     iface->set_uri = webKitWebSrcSetUri;
 }
 
-void webKitWebSrcSetResourceLoader(WebKitWebSrc* src, const RefPtr<WebCore::PlatformMediaResourceLoader>& loader)
+void webKitWebSrcSetResourceLoader(WebKitWebSrc* src, WebCore::PlatformMediaResourceLoader& loader)
 {
-    ASSERT(loader);
     DataMutexLocker members { src->priv->dataMutex };
-    members->loader = loader;
+    members->loader = &loader;
 }
 
 void webKitWebSrcSetReferrer(WebKitWebSrc* src, const String& referrer)
@@ -1164,9 +1153,11 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const S
     // sending time from the receiving time, it is better to ignore it.
     if (!members->downloadStartTime.isNaN()) {
         members->totalDownloadedBytes += data.size();
+#ifndef GST_DISABLE_GST_DEBUG
         double timeSinceStart = (WallTime::now() - members->downloadStartTime).seconds();
         GST_TRACE_OBJECT(src.get(), "R%u: downloaded %" G_GUINT64_FORMAT " bytes in %f seconds =~ %1.0f bytes/second", m_requestNumber, members->totalDownloadedBytes, timeSinceStart
             , timeSinceStart ? members->totalDownloadedBytes / timeSinceStart : 0);
+#endif
     } else {
         members->downloadStartTime = WallTime::now();
     }

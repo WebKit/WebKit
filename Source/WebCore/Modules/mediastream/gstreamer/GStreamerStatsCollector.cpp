@@ -31,129 +31,89 @@
 #undef GST_USE_UNSTABLE_API
 
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/WTFGType.h>
 
-GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
-#define GST_CAT_DEFAULT webkit_webrtc_endpoint_debug
+GST_DEBUG_CATEGORY(webkit_webrtc_stats_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_stats_debug
 
 namespace WebCore {
 
-static inline void fillRTCStats(RTCStatsReport::Stats& stats, const GstStructure* structure)
+RTCStatsReport::Stats::Stats(Type type, const GstStructure* structure)
+    : type(type)
+    , id(gstStructureGetString(structure, "id"_s).toString())
 {
-    double timestamp;
-    if (gst_structure_get_double(structure, "timestamp", &timestamp))
-        stats.timestamp = timestamp;
-    stats.id = String::fromLatin1(gst_structure_get_string(structure, "id"));
+    if (auto value = gstStructureGet<double>(structure, "timestamp"_s))
+        timestamp = Seconds::fromMicroseconds(*value).milliseconds();
 }
 
-static inline void fillRTCRTPStreamStats(RTCStatsReport::RtpStreamStats& stats, const GstStructure* structure)
+RTCStatsReport::RtpStreamStats::RtpStreamStats(Type type, const GstStructure* structure)
+    : Stats(type, structure)
+    , kind(gstStructureGetString(structure, "kind"_s).toString())
+    , transportId(gstStructureGetString(structure, "transport-id"_s).toString())
+    , codecId(gstStructureGetString(structure, "codec-id"_s).toString())
 {
-    fillRTCStats(stats, structure);
-
-    stats.transportId = String::fromLatin1(gst_structure_get_string(structure, "transport-id"));
-    stats.codecId = String::fromLatin1(gst_structure_get_string(structure, "codec-id"));
-
-    unsigned value;
-    if (gst_structure_get_uint(structure, "ssrc", &value))
-        stats.ssrc = value;
-
-    if (const char* kind = gst_structure_get_string(structure, "kind"))
-        stats.kind = String::fromLatin1(kind);
+    if (auto value = gstStructureGet<unsigned>(structure, "ssrc"_s))
+        ssrc = *value;
 }
 
-static inline void fillSentRTPStreamStats(RTCStatsReport::SentRtpStreamStats& stats, const GstStructure* structure)
+RTCStatsReport::SentRtpStreamStats::SentRtpStreamStats(Type type, const GstStructure* structure)
+    : RtpStreamStats(type, structure)
 {
-    fillRTCRTPStreamStats(stats, structure);
-
-    uint64_t value;
-    if (gst_structure_get_uint64(structure, "packets-sent", &value))
-        stats.packetsSent = value;
-    if (gst_structure_get_uint64(structure, "bytes-sent", &value))
-        stats.bytesSent = value;
+    packetsSent = gstStructureGet<uint64_t>(structure, "packets-sent"_s);
+    bytesSent = gstStructureGet<uint64_t>(structure, "bytes-sent"_s);
 }
 
-static inline void fillRTCCodecStats(RTCStatsReport::CodecStats& stats, const GstStructure* structure)
+RTCStatsReport::CodecStats::CodecStats(const GstStructure* structure)
+    : Stats(Type::Codec, structure)
+    , mimeType(gstStructureGetString(structure, "mime-type"_s).toString())
+    , sdpFmtpLine(gstStructureGetString(structure, "sdp-fmtp-line"_s).toString())
 {
-    fillRTCStats(stats, structure);
+    clockRate = gstStructureGet<unsigned>(structure, "clock-rate"_s);
+    channels = gstStructureGet<unsigned>(structure, "channels"_s);
 
-    unsigned value;
-    if (gst_structure_get_uint(structure, "payload-type", &value))
-        stats.payloadType = value;
-    if (gst_structure_get_uint(structure, "clock-rate", &value))
-        stats.clockRate = value;
-    if (gst_structure_get_uint(structure, "channels", &value))
-        stats.channels = value;
-
-    if (const char* sdpFmtpLine = gst_structure_get_string(structure, "sdp-fmtp-line"))
-        stats.sdpFmtpLine = String::fromLatin1(sdpFmtpLine);
-
-    if (const char* mimeType = gst_structure_get_string(structure, "mime-type"))
-        stats.mimeType = String::fromLatin1(mimeType);
+    if (auto value = gstStructureGet<unsigned>(structure, "payload-type"_s))
+        payloadType = *value;
 
     // FIXME:
     // stats.implementation =
 }
 
-static inline void fillReceivedRTPStreamStats(RTCStatsReport::ReceivedRtpStreamStats& stats, const GstStructure* structure)
+RTCStatsReport::ReceivedRtpStreamStats::ReceivedRtpStreamStats(Type type, const GstStructure* structure)
+    : RtpStreamStats(type, structure)
 {
-    fillRTCRTPStreamStats(stats, structure);
+    GUniqueOutPtr<GstStructure> rtpSourceStats;
+    gst_structure_get(structure, "gst-rtpsource-stats", GST_TYPE_STRUCTURE, &rtpSourceStats.outPtr(), nullptr);
 
-    GstStructure* rtpSourceStats;
-    gst_structure_get(structure, "gst-rtpsource-stats", GST_TYPE_STRUCTURE, &rtpSourceStats, nullptr);
-
-    uint64_t packetsReceived;
-    if (gst_structure_get_uint64(rtpSourceStats, "packets-received", &packetsReceived))
-        stats.packetsReceived = packetsReceived;
+    if (rtpSourceStats)
+        packetsReceived = gstStructureGet<uint64_t>(rtpSourceStats.get(), "packets-received"_s);
 
 #if GST_CHECK_VERSION(1, 22, 0)
-    int64_t packetsLost;
-    if (gst_structure_get_int64(structure, "packets-lost", &packetsLost))
-        stats.packetsLost = packetsLost;
+    packetsLost = gstStructureGet<int64_t>(structure, "packets-lost"_s);
 #else
-    unsigned packetsLost;
-    if (gst_structure_get_uint(structure, "packets-lost", &packetsLost))
-        stats.packetsLost = packetsLost;
+    packetsLost = gstStructureGet<unsigned>(structure, "packets-lost"_s);
 #endif
 
-    double jitter;
-    if (gst_structure_get_double(structure, "jitter", &jitter))
-        stats.jitter = jitter;
+    jitter = gstStructureGet<double>(structure, "jitter"_s);
 }
 
-static inline void fillRemoteInboundRTPStreamStats(RTCStatsReport::RemoteInboundRtpStreamStats& stats, const GstStructure* structure, const GstStructure* additionalStats)
+RTCStatsReport::RemoteInboundRtpStreamStats::RemoteInboundRtpStreamStats(const GstStructure* structure)
+    : ReceivedRtpStreamStats(Type::RemoteInboundRtp, structure)
+    , localId(gstStructureGetString(structure, "local-id"_s).toString())
 {
-    fillReceivedRTPStreamStats(stats, structure);
-
-    UNUSED_PARAM(additionalStats);
-
-    double roundTripTime;
-    if (gst_structure_get_double(structure, "round-trip-time", &roundTripTime))
-        stats.roundTripTime = roundTripTime;
-
-    if (const char* localId = gst_structure_get_string(structure, "local-id"))
-        stats.localId = String::fromLatin1(localId);
-
-    double fractionLost;
-    if (gst_structure_get_double(structure, "fraction-lost", &fractionLost))
-        stats.fractionLost = fractionLost;
+    roundTripTime = gstStructureGet<double>(structure, "round-trip-time"_s);
+    fractionLost = gstStructureGet<double>(structure, "fraction-lost"_s);
 
     // FIXME:
     // stats.reportsReceived
     // stats.roundTripTimeMeasurements
 }
 
-static inline void fillRemoteOutboundRTPStreamStats(RTCStatsReport::RemoteOutboundRtpStreamStats& stats, const GstStructure* structure, const GstStructure* additionalStats)
+RTCStatsReport::RemoteOutboundRtpStreamStats::RemoteOutboundRtpStreamStats(const GstStructure* structure)
+    : SentRtpStreamStats(Type::RemoteOutboundRtp, structure)
+    , localId(gstStructureGetString(structure, "local-id"_s).toString())
 {
-    UNUSED_PARAM(additionalStats);
-
-    fillSentRTPStreamStats(stats, structure);
-
-    double value;
-    if (gst_structure_get_double(structure, "remote-timestamp", &value))
-        stats.remoteTimestamp = value;
-
-    if (const char* localId = gst_structure_get_string(structure, "local-id"))
-        stats.localId = String::fromLatin1(localId);
+    remoteTimestamp = gstStructureGet<double>(structure, "remote-timestamp"_s);
 
     // FIXME:
     // stats.roundTripTime
@@ -162,53 +122,25 @@ static inline void fillRemoteOutboundRTPStreamStats(RTCStatsReport::RemoteOutbou
     // stats.roundTripTimeMeasurements
 }
 
-static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRtpStreamStats& stats, const GstStructure* structure, const GstStructure* additionalStats)
+RTCStatsReport::InboundRtpStreamStats::InboundRtpStreamStats(const GstStructure* structure)
+    : ReceivedRtpStreamStats(Type::InboundRtp, structure)
 {
-    fillReceivedRTPStreamStats(stats, structure);
+    bytesReceived = gstStructureGet<uint64_t>(structure, "bytes-received"_s);
+    packetsDiscarded = gstStructureGet<uint64_t>(structure, "packets-discarded"_s);
+    packetsDuplicated = gstStructureGet<uint64_t>(structure, "packets-duplicated"_s);
+    firCount = gstStructureGet<unsigned>(structure, "fir-count"_s);
+    pliCount = gstStructureGet<unsigned>(structure, "pli-count"_s);
+    nackCount = gstStructureGet<unsigned>(structure, "nack-count"_s);
 
-    uint64_t value;
-    if (gst_structure_get_uint64(structure, "bytes-received", &value))
-        stats.bytesReceived = value;
+    decoderImplementation = "GStreamer"_s;
 
-    if (gst_structure_get_uint64(structure, "packets-discarded", &value))
-        stats.packetsDiscarded = value;
+    framesDecoded = gstStructureGet<uint64_t>(structure, "frames-decoded"_s);
+    framesDropped = gstStructureGet<uint64_t>(structure, "frames-dropped"_s);
+    frameWidth = gstStructureGet<unsigned>(structure, "frame-width"_s);
+    frameHeight = gstStructureGet<unsigned>(structure, "frame-height"_s);
 
-    if (gst_structure_get_uint64(structure, "packets-duplicated", &value))
-        stats.packetsDuplicated = value;
-
-    unsigned firCount;
-    if (gst_structure_get_uint(structure, "fir-count", &firCount))
-        stats.firCount = firCount;
-
-    unsigned pliCount;
-    if (gst_structure_get_uint(structure, "pli-count", &pliCount))
-        stats.pliCount = pliCount;
-
-    unsigned nackCount;
-    if (gst_structure_get_uint(structure, "nack-count", &nackCount))
-        stats.nackCount = nackCount;
-
-    uint64_t bytesReceived;
-    if (gst_structure_get_uint64(structure, "bytes-received", &bytesReceived))
-        stats.bytesReceived = bytesReceived;
-
-    stats.decoderImplementation = "GStreamer"_s;
-
-    if (!additionalStats)
-        return;
-
-    if (gst_structure_get_uint64(additionalStats, "frames-decoded", &value))
-        stats.framesDecoded = value;
-
-    if (gst_structure_get_uint64(additionalStats, "frames-dropped", &value))
-        stats.framesDropped = value;
-
-    unsigned size;
-    if (gst_structure_get_uint(additionalStats, "frame-width", &size))
-        stats.frameWidth = size;
-
-    if (gst_structure_get_uint(additionalStats, "frame-height", &size))
-        stats.frameHeight = size;
+    if (auto identifier = gstStructureGetString(structure, "track-identifier"_s))
+        trackIdentifier = identifier.toString();
 
     // FIXME:
     // stats.fractionLost =
@@ -222,59 +154,40 @@ static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRtpStreamSta
     // stats.gapDiscardRate =
 }
 
-static inline void fillOutboundRTPStreamStats(RTCStatsReport::OutboundRtpStreamStats& stats, const GstStructure* structure, const GstStructure* additionalStats)
+RTCStatsReport::OutboundRtpStreamStats::OutboundRtpStreamStats(const GstStructure* structure)
+    : SentRtpStreamStats(Type::OutboundRtp, structure)
+    , remoteId(gstStructureGetString(structure, "remote-id"_s).toString())
 {
-    fillSentRTPStreamStats(stats, structure);
+    firCount = gstStructureGet<unsigned>(structure, "fir-count"_s);
+    pliCount = gstStructureGet<unsigned>(structure, "pli-count"_s);
+    nackCount = gstStructureGet<unsigned>(structure, "nack-count"_s);
 
-    unsigned firCount;
-    if (gst_structure_get_uint(structure, "fir-count", &firCount))
-        stats.firCount = firCount;
+    framesSent = gstStructureGet<uint64_t>(structure, "frames-sent"_s);
+    framesEncoded = gstStructureGet<uint64_t>(structure, "frames-encoded"_s);
+    targetBitrate = gstStructureGet<double>(structure, "target-bitrate"_s);
+    frameWidth = gstStructureGet<unsigned>(structure, "frame-width"_s);
+    frameHeight = gstStructureGet<unsigned>(structure, "frame-height"_s);
+    framesPerSecond = gstStructureGet<double>(structure, "frames-per-second"_s);
 
-    unsigned pliCount;
-    if (gst_structure_get_uint(structure, "pli-count", &pliCount))
-        stats.pliCount = pliCount;
-
-    unsigned nackCount;
-    if (gst_structure_get_uint(structure, "nack-count", &nackCount))
-        stats.nackCount = nackCount;
-
-    if (const char* remoteId = gst_structure_get_string(structure, "remote-id"))
-        stats.remoteId = String::fromLatin1(remoteId);
-
-    if (!additionalStats)
-        return;
-
-    uint64_t value;
-    if (gst_structure_get_uint64(additionalStats, "frames-sent", &value))
-        stats.framesSent = value;
-    if (gst_structure_get_uint64(additionalStats, "frames-encoded", &value))
-        stats.framesEncoded = value;
-
-    double bitrate;
-    if (gst_structure_get_double(additionalStats, "bitrate", &bitrate))
-        stats.targetBitrate = bitrate;
+    if (auto midValue = gstStructureGetString(structure, "mid"_s))
+        mid = midValue.toString();
+    if (auto ridValue = gstStructureGetString(structure, "rid"_s))
+        rid = ridValue.toString();
 }
 
-static inline void fillRTCPeerConnectionStats(RTCStatsReport::PeerConnectionStats& stats, const GstStructure* structure)
+RTCStatsReport::PeerConnectionStats::PeerConnectionStats(const GstStructure* structure)
+    : Stats(Type::PeerConnection, structure)
 {
-    fillRTCStats(stats, structure);
-
-    int value;
-    if (gst_structure_get_int(structure, "data-channels-opened", &value))
-        stats.dataChannelsOpened = value;
-    if (gst_structure_get_int(structure, "data-channels-closed", &value))
-        stats.dataChannelsClosed = value;
+    dataChannelsOpened = gstStructureGet<int>(structure, "data-channels-opened"_s);
+    dataChannelsClosed = gstStructureGet<int>(structure, "data-channels-closed"_s);
 }
 
-static inline void fillRTCTransportStats(RTCStatsReport::TransportStats& stats, const GstStructure* structure)
+RTCStatsReport::TransportStats::TransportStats(const GstStructure* structure)
+    : Stats(Type::Transport, structure)
+    , selectedCandidatePairId(gstStructureGetString(structure, "selected-candidate-pair-id"_s).toString())
 {
-    fillRTCStats(stats, structure);
-
-    if (const char* selectedCandidatePairId = gst_structure_get_string(structure, "selected-candidate-pair-id"))
-        stats.selectedCandidatePairId = String::fromLatin1(selectedCandidatePairId);
-
     // FIXME: This field is required, GstWebRTC doesn't provide it, so hard-code a value here.
-    stats.dtlsState = RTCDtlsTransportState::Connected;
+    dtlsState = RTCDtlsTransportState::Connected;
 
     // FIXME
     // stats.bytesSent =
@@ -287,7 +200,7 @@ static inline void fillRTCTransportStats(RTCStatsReport::TransportStats& stats, 
     // stats.srtpCipher =
 }
 
-static inline RTCIceCandidateType iceCandidateType(const String& type)
+static inline RTCIceCandidateType iceCandidateType(StringView type)
 {
     if (type == "host"_s)
         return RTCIceCandidateType::Host;
@@ -301,39 +214,28 @@ static inline RTCIceCandidateType iceCandidateType(const String& type)
     return RTCIceCandidateType::Host;
 }
 
-static inline void fillRTCCandidateStats(RTCStatsReport::IceCandidateStats& stats, GstWebRTCStatsType statsType, const GstStructure* structure)
+RTCStatsReport::IceCandidateStats::IceCandidateStats(GstWebRTCStatsType statsType, const GstStructure* structure)
+    : Stats(statsType == GST_WEBRTC_STATS_REMOTE_CANDIDATE ? Type::RemoteCandidate : Type::LocalCandidate, structure)
+    , transportId(gstStructureGetString(structure, "transport-id"_s).toString())
+    , address(gstStructureGetString(structure, "address"_s).toString())
+    , protocol(gstStructureGetString(structure, "protocol"_s).toString())
+    , url(gstStructureGetString(structure, "url"_s).toString())
 {
-    stats.type = statsType == GST_WEBRTC_STATS_REMOTE_CANDIDATE ? RTCStatsReport::Type::RemoteCandidate : RTCStatsReport::Type::LocalCandidate;
+    port = gstStructureGet<unsigned>(structure, "port"_s);
+    priority = gstStructureGet<unsigned>(structure, "priority"_s);
 
-    fillRTCStats(stats, structure);
-
-    stats.transportId = String::fromLatin1(gst_structure_get_string(structure, "transport-id"));
-    stats.address = String::fromLatin1(gst_structure_get_string(structure, "address"));
-    stats.protocol = String::fromLatin1(gst_structure_get_string(structure, "protocol"));
-    stats.url = String::fromLatin1(gst_structure_get_string(structure, "url"));
-
-    unsigned port;
-    if (gst_structure_get_uint(structure, "port", &port))
-        stats.port = port;
-
-    unsigned priority;
-    if (gst_structure_get_uint(structure, "priority", &priority))
-        stats.priority = priority;
-
-    auto candidateType = String::fromLatin1(gst_structure_get_string(structure, "candidate-type"));
-    stats.candidateType = iceCandidateType(candidateType);
+    if (auto value = gstStructureGetString(structure, "candidate-type"_s))
+        candidateType = iceCandidateType(value);
 }
 
-static inline void fillRTCCandidatePairStats(RTCStatsReport::IceCandidatePairStats& stats, const GstStructure* structure)
+RTCStatsReport::IceCandidatePairStats::IceCandidatePairStats(const GstStructure* structure)
+    : Stats(Type::CandidatePair, structure)
+    , localCandidateId(gstStructureGetString(structure, "local-candidate-id"_s).toString())
+    , remoteCandidateId(gstStructureGetString(structure, "remote-candidate-id"_s).toString())
 {
-    fillRTCStats(stats, structure);
-
-    stats.localCandidateId = String::fromLatin1(gst_structure_get_string(structure, "local-candidate-id"));
-    stats.remoteCandidateId = String::fromLatin1(gst_structure_get_string(structure, "remote-candidate-id"));
-
     // FIXME
     // stats.transportId =
-    stats.state = RTCStatsReport::IceCandidatePairState::Succeeded;
+    state = RTCStatsReport::IceCandidatePairState::Succeeded;
     // stats.priority =
     // stats.nominated =
     // stats.writable =
@@ -357,18 +259,16 @@ static inline void fillRTCCandidatePairStats(RTCStatsReport::IceCandidatePairSta
 }
 
 struct ReportHolder : public ThreadSafeRefCounted<ReportHolder> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ReportHolder);
     WTF_MAKE_NONCOPYABLE(ReportHolder);
 public:
-    ReportHolder(DOMMapAdapter* adapter, const GstStructure* additionalStats)
-        : adapter(adapter)
-        , additionalStats(additionalStats) { }
+    ReportHolder(DOMMapAdapter* adapter)
+        : adapter(adapter) { }
 
     DOMMapAdapter* adapter;
-    const GstStructure* additionalStats;
 };
 
-static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userData)
+static gboolean fillReportCallback(const GValue* value, Ref<ReportHolder>& reportHolder)
 {
     if (!GST_VALUE_HOLDS_STRUCTURE(value))
         return TRUE;
@@ -378,38 +278,34 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
     if (!gst_structure_get(structure, "type", GST_TYPE_WEBRTC_STATS_TYPE, &statsType, nullptr))
         return TRUE;
 
-    auto* reportHolder = reinterpret_cast<ReportHolder*>(userData);
-    DOMMapAdapter& report = *reportHolder->adapter;
-    const auto* additionalStats = reportHolder->additionalStats;
+    if (UNLIKELY(!reportHolder->adapter))
+        return TRUE;
+
+    auto& report = *reportHolder->adapter;
 
     switch (statsType) {
     case GST_WEBRTC_STATS_CODEC: {
-        RTCStatsReport::CodecStats stats;
-        fillRTCCodecStats(stats, structure);
+        RTCStatsReport::CodecStats stats(structure);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::CodecStats>>(stats.id, WTFMove(stats));
         break;
     }
     case GST_WEBRTC_STATS_INBOUND_RTP: {
-        RTCStatsReport::InboundRtpStreamStats stats;
-        fillInboundRTPStreamStats(stats, structure, additionalStats);
+        RTCStatsReport::InboundRtpStreamStats stats(structure);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::InboundRtpStreamStats>>(stats.id, WTFMove(stats));
         break;
     }
     case GST_WEBRTC_STATS_OUTBOUND_RTP: {
-        RTCStatsReport::OutboundRtpStreamStats stats;
-        fillOutboundRTPStreamStats(stats, structure, additionalStats);
+        RTCStatsReport::OutboundRtpStreamStats stats(structure);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::OutboundRtpStreamStats>>(stats.id, WTFMove(stats));
         break;
     }
     case GST_WEBRTC_STATS_REMOTE_INBOUND_RTP: {
-        RTCStatsReport::RemoteInboundRtpStreamStats stats;
-        fillRemoteInboundRTPStreamStats(stats, structure, additionalStats);
+        RTCStatsReport::RemoteInboundRtpStreamStats stats(structure);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::RemoteInboundRtpStreamStats>>(stats.id, WTFMove(stats));
         break;
     }
     case GST_WEBRTC_STATS_REMOTE_OUTBOUND_RTP: {
-        RTCStatsReport::RemoteOutboundRtpStreamStats stats;
-        fillRemoteOutboundRTPStreamStats(stats, structure, additionalStats);
+        RTCStatsReport::RemoteOutboundRtpStreamStats stats(structure);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::RemoteOutboundRtpStreamStats>>(stats.id, WTFMove(stats));
         break;
     }
@@ -417,14 +313,12 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
         // Deprecated stats: csrc.
         break;
     case GST_WEBRTC_STATS_PEER_CONNECTION: {
-        RTCStatsReport::PeerConnectionStats stats;
-        fillRTCPeerConnectionStats(stats, structure);
+        RTCStatsReport::PeerConnectionStats stats(structure);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::PeerConnectionStats>>(stats.id, WTFMove(stats));
         break;
     }
     case GST_WEBRTC_STATS_TRANSPORT: {
-        RTCStatsReport::TransportStats stats;
-        fillRTCTransportStats(stats, structure);
+        RTCStatsReport::TransportStats stats(structure);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::TransportStats>>(stats.id, WTFMove(stats));
         break;
     }
@@ -437,15 +331,13 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
     case GST_WEBRTC_STATS_LOCAL_CANDIDATE:
     case GST_WEBRTC_STATS_REMOTE_CANDIDATE:
         if (webkitGstCheckVersion(1, 22, 0)) {
-            RTCStatsReport::IceCandidateStats stats;
-            fillRTCCandidateStats(stats, statsType, structure);
+            RTCStatsReport::IceCandidateStats stats(statsType, structure);
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::IceCandidateStats>>(stats.id, WTFMove(stats));
         }
         break;
     case GST_WEBRTC_STATS_CANDIDATE_PAIR:
         if (webkitGstCheckVersion(1, 22, 0)) {
-            RTCStatsReport::IceCandidatePairStats stats;
-            fillRTCCandidatePairStats(stats, structure);
+            RTCStatsReport::IceCandidatePairStats stats(structure);
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::IceCandidatePairStats>>(stats.id, WTFMove(stats));
         }
         break;
@@ -459,13 +351,19 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
 
 struct CallbackHolder {
     GStreamerStatsCollector::CollectorCallback callback;
-    GUniquePtr<GstStructure> additionalStats;
+    GStreamerStatsCollector::PreprocessCallback preprocessCallback;
+    GRefPtr<GstPad> pad;
 };
 
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(CallbackHolder)
 
-void GStreamerStatsCollector::getStats(CollectorCallback&& callback, GstPad* pad, const GstStructure* additionalStats)
+void GStreamerStatsCollector::getStats(CollectorCallback&& callback, const GRefPtr<GstPad>& pad, PreprocessCallback&& preprocessCallback)
 {
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_stats_debug, "webkitwebrtcstats", 0, "WebKit WebRTC Stats");
+    });
+
     if (!m_webrtcBin) {
         callback(nullptr);
         return;
@@ -473,9 +371,9 @@ void GStreamerStatsCollector::getStats(CollectorCallback&& callback, GstPad* pad
 
     auto* holder = createCallbackHolder();
     holder->callback = WTFMove(callback);
-    if (additionalStats)
-        holder->additionalStats.reset(gst_structure_copy(additionalStats));
-    g_signal_emit_by_name(m_webrtcBin.get(), "get-stats", pad, gst_promise_new_with_change_func([](GstPromise* rawPromise, gpointer userData) {
+    holder->preprocessCallback = WTFMove(preprocessCallback);
+    holder->pad = pad;
+    g_signal_emit_by_name(m_webrtcBin.get(), "get-stats", pad.get(), gst_promise_new_with_change_func([](GstPromise* rawPromise, gpointer userData) mutable {
         auto promise = adoptGRef(rawPromise);
         auto* holder = static_cast<CallbackHolder*>(userData);
         if (gst_promise_wait(promise.get()) != GST_PROMISE_RESULT_REPLIED) {
@@ -497,15 +395,15 @@ void GStreamerStatsCollector::getStats(CollectorCallback&& callback, GstPad* pad
             return;
         }
 
-        callOnMainThreadAndWait([promise = WTFMove(promise), holder] {
-            // Hold an additional ref to the promise because it is asynchronously used from the JS bindings.
-            GUniquePtr<GstStructure> additionalStats;
-            if (holder->additionalStats)
-                additionalStats.reset(gst_structure_copy(holder->additionalStats.get()));
-            holder->callback(RTCStatsReport::create([promise = GRefPtr<GstPromise>(promise.get()), additionalStats = WTFMove(additionalStats)](auto& mapAdapter) {
-                const auto* stats = gst_promise_get_reply(promise.get());
-                auto holder = adoptRef(*new ReportHolder(&mapAdapter, additionalStats.get()));
-                gst_structure_foreach(stats, fillReportCallback, holder.ptr());
+        callOnMainThreadAndWait([holder, stats] {
+            auto preprocessedStats = holder->preprocessCallback(holder->pad, stats);
+            if (!preprocessedStats)
+                return;
+            holder->callback(RTCStatsReport::create([stats = WTFMove(preprocessedStats)](auto& mapAdapter) mutable {
+                auto holder = adoptRef(*new ReportHolder(&mapAdapter));
+                gstStructureForeach(stats.get(), [&](auto, const auto value) -> bool {
+                    return fillReportCallback(value, holder);
+                });
             }));
         });
     }, holder, reinterpret_cast<GDestroyNotify>(destroyCallbackHolder)));

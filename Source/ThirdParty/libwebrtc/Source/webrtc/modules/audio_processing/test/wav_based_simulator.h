@@ -13,7 +13,10 @@
 
 #include <vector>
 
+#include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
+#include "api/audio/audio_processing.h"
+#include "api/scoped_refptr.h"
 #include "modules/audio_processing/test/audio_processing_simulator.h"
 
 namespace webrtc {
@@ -22,9 +25,9 @@ namespace test {
 // Used to perform an audio processing simulation from wav files.
 class WavBasedSimulator final : public AudioProcessingSimulator {
  public:
-  WavBasedSimulator(const SimulationSettings& settings,
-                    rtc::scoped_refptr<AudioProcessing> audio_processing,
-                    std::unique_ptr<AudioProcessingBuilder> ap_builder);
+  WavBasedSimulator(
+      const SimulationSettings& settings,
+      absl::Nonnull<scoped_refptr<AudioProcessing>> audio_processing);
 
   WavBasedSimulator() = delete;
   WavBasedSimulator(const WavBasedSimulator&) = delete;

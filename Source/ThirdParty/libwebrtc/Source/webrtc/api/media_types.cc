@@ -10,6 +10,8 @@
 
 #include "api/media_types.h"
 
+#include <string>
+
 #include "rtc_base/checks.h"
 
 namespace cricket {

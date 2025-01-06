@@ -162,7 +162,8 @@ TEST(TypeCastsCocoa, checked_objc_cast)
 
 TEST(TypeCastsCocoa, dynamic_objc_cast)
 {
-    EXPECT_EQ(nil, dynamic_objc_cast<NSString>(nil));
+    NSObject *obj = nil;
+    EXPECT_EQ(nil, dynamic_objc_cast<NSString>(obj));
 
     @autoreleasepool {
         auto objectNS = adoptNS<id>([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);

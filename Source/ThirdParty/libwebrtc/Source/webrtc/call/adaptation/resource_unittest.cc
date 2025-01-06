@@ -36,7 +36,7 @@ TEST_F(ResourceTest, RegisteringListenerReceivesCallbacks) {
   fake_resource_->SetResourceListener(&resource_listener);
   EXPECT_CALL(resource_listener, OnResourceUsageStateMeasured(_, _))
       .Times(1)
-      .WillOnce([](rtc::scoped_refptr<Resource> resource,
+      .WillOnce([](rtc::scoped_refptr<Resource> /* resource */,
                    ResourceUsageState usage_state) {
         EXPECT_EQ(ResourceUsageState::kOveruse, usage_state);
       });

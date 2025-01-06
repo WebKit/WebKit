@@ -28,7 +28,7 @@
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPIDevToolsPanels {
 
-    [RaisesException, ImplementedAs=createPanel, NeedsPage] void create([CannotBeEmpty] DOMString title, [CannotBeEmpty] DOMString iconPath, [CannotBeEmpty] DOMString pagePath, [Optional, CallbackHandler] function callback);
+    [RaisesException, ImplementedAs=createPanel, NeedsPageIdentifier] void create([CannotBeEmpty] DOMString title, [CannotBeEmpty] DOMString iconPath, [CannotBeEmpty] DOMString pagePath, [Optional, CallbackHandler] function callback);
 
     readonly attribute DOMString themeName;
     readonly attribute WebExtensionAPIEvent onThemeChanged;

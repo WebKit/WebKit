@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x98
   RenderBlock {html} at (0,0) size 800x98
     RenderBody {body} at (8,8) size 784x82
-      RenderTable {table} at (0,0) size 784x82 [border: (1px outset #808080)]
+      RenderTable {table} at (0,0) size 784x82 [border: (1px outset #000000)]
         RenderTableSection (anonymous) at (1,1) size 782x80
           RenderTableRow {tr} at (0,2) size 782x76
-            RenderTableCell {td} at (2,2) size 389x76 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,2) size 389x76 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 385x72
                 text run at (2,2) width 213: "This cell text should be justified "
                 text run at (214,2) width 173: "which means that the right"
@@ -15,6 +15,6 @@ layer at (0,0) size 800x98
                 text run at (2,38) width 294: "content becomes (except the last line which "
                 text run at (295,38) width 92: "should be left"
                 text run at (2,56) width 53: "aligned)"
-            RenderTableCell {td} at (392,29) size 389x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (392,29) size 389x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,29) size 231x18
                 text run at (2,2) width 231: "This cell text should be left justified"

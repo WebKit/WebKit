@@ -28,11 +28,12 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUConvertToBackingContext.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
 
 class DowncastConvertToBackingContext final : public ConvertToBackingContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DowncastConvertToBackingContext);
 public:
     static Ref<DowncastConvertToBackingContext> create()
     {
@@ -65,6 +66,10 @@ public:
     WGPUTexture convertToBacking(const Texture&) final;
     WGPUTextureView convertToBacking(const TextureView&) final;
     CompositorIntegrationImpl& convertToBacking(CompositorIntegration&) final;
+    WGPUXRBinding convertToBacking(const XRBinding&) final;
+    WGPUXRProjectionLayer convertToBacking(const XRProjectionLayer&) final;
+    WGPUXRSubImage convertToBacking(const XRSubImage&) final;
+    WGPUXRView convertToBacking(const XRView&) final;
 
 private:
     DowncastConvertToBackingContext() = default;

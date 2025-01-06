@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc.  All rights reserved.
  * Copyright (C) 2013 Google Inc.  All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
@@ -33,6 +33,7 @@
 namespace PAL {
 
 class ClockGeneric final : public Clock {
+    WTF_MAKE_TZONE_ALLOCATED(ClockGeneric);
 public:
     ClockGeneric();
 

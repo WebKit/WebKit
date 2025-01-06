@@ -26,14 +26,13 @@
 #include "config.h"
 #include "NetworkResourceLoadParameters.h"
 
-#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 using namespace WebCore;
 
 NetworkResourceLoadParameters::NetworkResourceLoadParameters(
     NetworkLoadParameters&& networkLoadParameters
-    , WebCore::ResourceLoaderIdentifier identifier
+    , std::optional<WebCore::ResourceLoaderIdentifier> identifier
     , RefPtr<WebCore::FormData>&& httpBody
     , std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensionIfHttpBody
     , std::optional<SandboxExtension::Handle>&& sandboxExtensionIflocalFile
@@ -55,11 +54,12 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
     , URL&& documentURL
     , bool isCrossOriginOpenerPolicyEnabled
     , bool isClearSiteDataHeaderEnabled
+    , bool isClearSiteDataExecutionContextEnabled
     , bool isDisplayingInitialEmptyDocument
     , WebCore::SandboxFlags effectiveSandboxFlags
     , URL&& openerURL
     , WebCore::CrossOriginOpenerPolicy&& sourceCrossOriginOpenerPolicy
-    , uint64_t navigationID
+    , std::optional<WebCore::NavigationIdentifier> navigationID
     , std::optional<WebCore::NavigationRequester>&& navigationRequester
     , WebCore::ServiceWorkersMode serviceWorkersMode
     , std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier
@@ -94,6 +94,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
         , documentURL(WTFMove(documentURL))
         , isCrossOriginOpenerPolicyEnabled(isCrossOriginOpenerPolicyEnabled)
         , isClearSiteDataHeaderEnabled(isClearSiteDataHeaderEnabled)
+        , isClearSiteDataExecutionContextEnabled(isClearSiteDataExecutionContextEnabled)
         , isDisplayingInitialEmptyDocument(isDisplayingInitialEmptyDocument)
         , effectiveSandboxFlags(effectiveSandboxFlags)
         , openerURL(WTFMove(openerURL))

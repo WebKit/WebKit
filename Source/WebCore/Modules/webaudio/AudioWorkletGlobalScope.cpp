@@ -43,11 +43,12 @@
 #include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/JSLock.h>
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AudioWorkletGlobalScope);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioWorkletGlobalScope);
 
 RefPtr<AudioWorkletGlobalScope> AudioWorkletGlobalScope::tryCreate(AudioWorkletThread& thread, const WorkletParameters& parameters)
 {
@@ -143,6 +144,10 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
         return nullptr;
 
     JSC::JSObject* jsConstructor = constructor->callbackData()->callback();
+    ASSERT(jsConstructor);
+    if (!jsConstructor)
+        return nullptr;
+
     auto* globalObject = constructor->callbackData()->globalObject();
     JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -191,10 +196,9 @@ AudioWorkletThread& AudioWorkletGlobalScope::thread() const
 void AudioWorkletGlobalScope::handlePreRenderTasks()
 {
     // This makes sure that we only drain the MicroTask queue after each render quantum.
-    // It is only safe to grab the lock if we are on the context thread. We might get called on
-    // another thread if audio rendering started before the audio worklet got started.
-    if (isContextThread())
-        m_delayMicrotaskDrainingDuringRendering = script()->vm().drainMicrotaskDelayScope();
+    // It is only safe to grab the lock if we are on the context thread.
+    RELEASE_ASSERT(isContextThread());
+    m_delayMicrotaskDrainingDuringRendering = script()->vm().drainMicrotaskDelayScope();
 }
 
 void AudioWorkletGlobalScope::handlePostRenderTasks(size_t currentFrame)

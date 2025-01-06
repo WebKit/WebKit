@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include <X11/Xlib.h>
 #include <gtk/gtk.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GRefPtr.h>
 
 #if USE(GTK4)
@@ -41,6 +42,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PointerLockManagerX11);
 
 PointerLockManagerX11::PointerLockManagerX11(WebPageProxy& webPage, const FloatPoint& position, const FloatPoint& globalPosition, WebMouseEventButton button, unsigned short buttons, OptionSet<WebEventModifier> modifiers)
     : PointerLockManager(webPage, position, globalPosition, button, buttons, modifiers)
@@ -65,6 +68,7 @@ bool PointerLockManagerX11::lock()
     auto xCursor = gdk_x11_cursor_get_xcursor(cursor.get());
 #endif
     int eventMask = PointerMotionMask | ButtonReleaseMask | ButtonPressMask | EnterWindowMask | LeaveWindowMask;
+    XUngrabPointer(xDisplay, 0);
     return XGrabPointer(xDisplay, window, true, eventMask, GrabModeAsync, GrabModeAsync, window, xCursor, 0) == GrabSuccess;
 }
 
@@ -78,13 +82,16 @@ bool PointerLockManagerX11::unlock()
 
 void PointerLockManagerX11::didReceiveMotionEvent(const FloatPoint& point)
 {
-    if (point == m_initialPoint)
+    auto delta = IntSize(point - m_initialPoint);
+    if (delta.isZero())
         return;
 
-    handleMotion(point - m_initialPoint);
-
+    handleMotion(delta);
     auto* display = GDK_DISPLAY_XDISPLAY(gtk_widget_get_display(m_webPage.viewWidget()));
-    XWarpPointer(display, None, XRootWindow(display, 0), 0, 0, 0, 0, m_initialPoint.x(), m_initialPoint.y());
+    float scaleFactor = m_webPage.deviceScaleFactor();
+    IntSize warp = delta;
+    warp.scale(-scaleFactor);
+    XWarpPointer(display, None, None, 0, 0, 0, 0, warp.width(), warp.height());
 }
 
 } // namespace WebKit

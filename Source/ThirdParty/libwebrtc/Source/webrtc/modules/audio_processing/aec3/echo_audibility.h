@@ -13,7 +13,8 @@
 
 #include <stddef.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/array_view.h"
 #include "modules/audio_processing/aec3/block_buffer.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
@@ -73,7 +74,7 @@ class EchoAudibility {
   // values.
   bool IsRenderTooLow(const BlockBuffer& block_buffer);
 
-  absl::optional<int> render_spectrum_write_prev_;
+  std::optional<int> render_spectrum_write_prev_;
   int render_block_write_prev_;
   bool non_zero_render_seen_;
   const bool use_render_stationarity_at_init_;

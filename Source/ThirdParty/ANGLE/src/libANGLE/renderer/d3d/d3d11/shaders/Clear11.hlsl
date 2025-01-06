@@ -40,12 +40,6 @@ void VS_Multiview_Clear(in uint id : SV_VertexID,
     outLayerID = instanceID;
 }
 
-void VS_Clear_FL9( in float4 inPosition : POSITION,
-                   out float4 outPosition : SV_POSITION)
-{
-    outPosition = inPosition;
-}
-
 // Geometry shader for clearing multiview layered textures
 struct GS_INPUT
 {
@@ -97,15 +91,6 @@ cbuffer DepthOnlyData : register(b0)
 }
 
 // Pixel Shader Output Structs
-struct PS_OutputFloat_FL9
-{
-    float4 color0 : SV_TARGET0;
-    float4 color1 : SV_TARGET1;
-    float4 color2 : SV_TARGET2;
-    float4 color3 : SV_TARGET3;
-    float  depth  : SV_DEPTH;
-};
-
 struct PS_OutputFloat1
 {
     float4 color0 : SV_TARGET0;
@@ -340,17 +325,6 @@ struct PS_OutputDepth
 };
 
 // Pixel Shaders
-PS_OutputFloat_FL9 PS_ClearFloat_FL9(in float4 inPosition : SV_POSITION)
-{
-    PS_OutputFloat_FL9 outData;
-    outData.color0 = color_Float;
-    outData.color1 = color_Float;
-    outData.color2 = color_Float;
-    outData.color3 = color_Float;
-    outData.depth  = zValueF_Float;
-    return outData;
-}
-
 PS_OutputFloat1 PS_ClearFloat1(in float4 inPosition : SV_POSITION)
 {
     PS_OutputFloat1 outData;

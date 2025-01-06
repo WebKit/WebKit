@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -148,7 +148,7 @@ void aom_blend_a64_vmask_sse4_1(uint8_t *dst, uint32_t dst_stride,
 // Implementation - No sub-sampling
 //////////////////////////////////////////////////////////////////////////////
 
-static INLINE void blend_a64_vmask_bn_w4_sse4_1(
+static inline void blend_a64_vmask_bn_w4_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const uint16_t *src0,
     uint32_t src0_stride, const uint16_t *src1, uint32_t src1_stride,
     const uint8_t *mask, int h, blend_unit_fn blend) {
@@ -191,7 +191,7 @@ static void blend_a64_vmask_b12_w4_sse4_1(uint16_t *dst, uint32_t dst_stride,
                                src1_stride, mask, h, blend_4_b12);
 }
 
-static INLINE void blend_a64_vmask_bn_w8n_sse4_1(
+static inline void blend_a64_vmask_bn_w8n_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const uint16_t *src0,
     uint32_t src0_stride, const uint16_t *src1, uint32_t src1_stride,
     const uint8_t *mask, int w, int h, blend_unit_fn blend) {

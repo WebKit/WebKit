@@ -34,6 +34,8 @@
 #include <wtf/ProcessID.h>
 #include <mutex>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 // Setting DATA_LOG_TO_FILE to 1 will cause logs to be sent to the filename
 // specified in the WTF_DATA_LOG_FILENAME envvar.
 #define DATA_LOG_TO_FILE 0
@@ -45,9 +47,12 @@
 // above to always use the fallback filename.
 #define DATA_LOG_IGNORE_ENV_VAR 0
 
-static_assert(!(DATA_LOG_TO_FILE && DATA_LOG_TO_DARWIN_TEMP_DIR), "Set at most one data-log file target");
-#if OS(WINDOWS)
-static_assert(!DATA_LOG_TO_DARWIN_TEMP_DIR, "Cannot log to Darwin temp dir on Windows");
+#if DATA_LOG_TO_FILE && DATA_LOG_TO_DARWIN_TEMP_DIR
+#error "Set at most one data-log file target"
+#endif
+
+#if OS(WINDOWS) && DATA_LOG_TO_DARWIN_TEMP_DIR
+#error "Cannot log to Darwin temp dir on Windows"
 #endif
 
 // Note that we will append ".<pid>.txt" where <pid> is the PID.
@@ -207,3 +212,4 @@ void dataLogFString(const char* str)
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

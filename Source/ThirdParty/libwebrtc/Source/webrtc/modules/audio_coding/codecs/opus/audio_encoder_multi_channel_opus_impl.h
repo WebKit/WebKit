@@ -11,16 +11,21 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_OPUS_AUDIO_ENCODER_MULTI_CHANNEL_OPUS_IMPL_H_
 #define MODULES_AUDIO_CODING_CODECS_OPUS_AUDIO_ENCODER_MULTI_CHANNEL_OPUS_IMPL_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
+#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/opus/audio_encoder_multi_channel_opus_config.h"
 #include "api/units/time_delta.h"
 #include "modules/audio_coding/codecs/opus/opus_interface.h"
+#include "rtc_base/buffer.h"
 
 namespace webrtc {
 
@@ -40,7 +45,7 @@ class AudioEncoderMultiChannelOpusImpl final : public AudioEncoder {
 
   // Static interface for use by BuiltinAudioEncoderFactory.
   static constexpr const char* GetPayloadName() { return "multiopus"; }
-  static absl::optional<AudioCodecInfo> QueryAudioEncoder(
+  static std::optional<AudioCodecInfo> QueryAudioEncoder(
       const SdpAudioFormat& format);
 
   int SampleRateHz() const override;
@@ -50,7 +55,7 @@ class AudioEncoderMultiChannelOpusImpl final : public AudioEncoder {
   int GetTargetBitrate() const override;
 
   void Reset() override;
-  absl::optional<std::pair<TimeDelta, TimeDelta>> GetFrameLengthRange()
+  std::optional<std::pair<TimeDelta, TimeDelta>> GetFrameLengthRange()
       const override;
 
  protected:
@@ -59,7 +64,7 @@ class AudioEncoderMultiChannelOpusImpl final : public AudioEncoder {
                          rtc::Buffer* encoded) override;
 
  private:
-  static absl::optional<AudioEncoderMultiChannelOpusConfig> SdpToConfig(
+  static std::optional<AudioEncoderMultiChannelOpusConfig> SdpToConfig(
       const SdpAudioFormat& format);
   static AudioCodecInfo QueryAudioEncoder(
       const AudioEncoderMultiChannelOpusConfig& config);

@@ -42,6 +42,7 @@
 @property (nonatomic, strong) NSImage *draggedImage;
 @property (nonatomic, weak) id draggingSource;
 @property (nonatomic, readonly) NSArray<NSFilePromiseReceiver *> *filePromiseReceivers;
+@property (nonatomic, readonly) id localContext;
 
 @end
 

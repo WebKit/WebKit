@@ -125,7 +125,7 @@ TEST_P(AlignmentAdjusterTest, AlignmentAppliedToAllLayers) {
   VideoEncoder::EncoderInfo info =
       GetEncoderInfo(kRequestedAlignment, kApplyAlignmentToAllLayers);
   int alignment = AlignmentAdjuster::GetAlignmentAndMaybeAdjustScaleFactors(
-      info, &config, absl::nullopt);
+      info, &config, std::nullopt);
   EXPECT_EQ(alignment, kAdjustedAlignment);
 
   // Verify adjusted scale factors.
@@ -150,7 +150,7 @@ TEST_P(AlignmentAdjusterTest, AlignmentNotAppliedToAllLayers) {
   VideoEncoder::EncoderInfo info =
       GetEncoderInfo(kRequestedAlignment, kApplyAlignmentToAllLayers);
   int alignment = AlignmentAdjuster::GetAlignmentAndMaybeAdjustScaleFactors(
-      info, &config, absl::nullopt);
+      info, &config, std::nullopt);
   EXPECT_EQ(alignment, kRequestedAlignment);
 
   // Verify that scale factors are not adjusted.
@@ -175,7 +175,7 @@ TEST_P(AlignmentAdjusterTestTwoLayers, AlignmentAppliedToAllLayers) {
   VideoEncoder::EncoderInfo info =
       GetEncoderInfo(kRequestedAlignment, kApplyAlignmentToAllLayers);
   int alignment = AlignmentAdjuster::GetAlignmentAndMaybeAdjustScaleFactors(
-      info, &config, absl::optional<size_t>(kMaxLayers));
+      info, &config, std::optional<size_t>(kMaxLayers));
   EXPECT_EQ(alignment, kAdjustedAlignment);
 
   // Verify adjusted scale factors.

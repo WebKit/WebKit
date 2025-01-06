@@ -8,11 +8,17 @@
 #ifndef SkPicturePriv_DEFINED
 #define SkPicturePriv_DEFINED
 
+#include "include/core/SkFourByteTag.h"
 #include "include/core/SkPicture.h"
+#include "include/core/SkRefCnt.h"
 
+#include <atomic>
+#include <cstdint>
+
+class SkBigPicture;
 class SkReadBuffer;
-class SkWriteBuffer;
 class SkStream;
+class SkWriteBuffer;
 struct SkPictInfo;
 
 class SkPicturePriv {
@@ -115,6 +121,8 @@ public:
     // V102: Convolution image filter uses ::Crop to apply tile mode
     // V103: Remove deprecated per-image filter crop rect
     // v104: SaveLayer supports multiple image filters
+    // v105: Unclamped matrix color filter
+    // v106: SaveLayer supports custom backdrop tile modes
 
     enum Version {
         kPictureShaderFilterParam_Version   = 82,
@@ -140,6 +148,8 @@ public:
         kConvolutionImageFilterTilingUpdate = 102,
         kRemoveDeprecatedCropRect           = 103,
         kMultipleFiltersOnSaveLayer         = 104,
+        kUnclampedMatrixColorFilter         = 105,
+        kSaveLayerBackdropTileMode          = 106,
 
         // Only SKPs within the min/current picture version range (inclusive) can be read.
         //
@@ -164,7 +174,7 @@ public:
         //
         // Contact the Infra Gardener if the above steps do not work for you.
         kMin_Version     = kPictureShaderFilterParam_Version,
-        kCurrent_Version = kMultipleFiltersOnSaveLayer
+        kCurrent_Version = kSaveLayerBackdropTileMode
     };
 };
 

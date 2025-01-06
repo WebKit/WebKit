@@ -50,7 +50,7 @@ class ReceiverReport : public RtcpPacket {
               PacketReadyCallback callback) const override;
 
  private:
-  static const size_t kRrBaseLength = 4;
+  static constexpr size_t kRrBaseLength = 4;
 
   std::vector<ReportBlock> report_blocks_;
 };

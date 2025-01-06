@@ -145,15 +145,15 @@ bool ReplaceShaderStorageDeclaration(const std::vector<ShaderStorageBlock> &shad
         {
             for (unsigned int arrayIndex = 0; arrayIndex < ssbo.arraySize; arrayIndex++)
             {
-                out << "RWByteAddressBuffer "
-                    << "dx_" << name << "_" << arrayIndex << ": register(u"
-                    << uavRegister + arrayIndex << ");\n";
+                out << "RWByteAddressBuffer ";
+                out << "dx_" << name << "_" << arrayIndex << ": register(u";
+                out << uavRegister + arrayIndex << ");\n";
             }
         }
         else
         {
-            out << "RWByteAddressBuffer "
-                << "_" << name << ": register(u" << uavRegister << ");\n";
+            out << "RWByteAddressBuffer ";
+            out << "_" << name << ": register(u" << uavRegister << ");\n";
         }
     }
     if (out.str().empty())
@@ -190,31 +190,10 @@ std::string DynamicHLSL::GenerateVertexShaderForInputLayout(
     std::ostringstream initStream;
 
     structStream << "struct VS_INPUT\n"
-                 << "{\n";
+                    "{\n";
 
     int semanticIndex       = 0;
     unsigned int inputIndex = 0;
-
-    // If gl_PointSize is used in the shader then pointsprites rendering is expected.
-    // If the renderer does not support Geometry shaders then Instanced PointSprite emulation
-    // must be used.
-    bool usesPointSize = sourceShader.find("GL_USES_POINT_SIZE") != std::string::npos;
-    bool useInstancedPointSpriteEmulation =
-        usesPointSize && renderer->getFeatures().useInstancedPointSpriteEmulation.enabled;
-
-    // Instanced PointSprite emulation requires additional entries in the
-    // VS_INPUT structure to support the vertices that make up the quad vertices.
-    // These values must be in sync with the cooresponding values added during inputlayout creation
-    // in InputLayoutCache::applyVertexBuffers().
-    //
-    // The additional entries must appear first in the VS_INPUT layout because
-    // Windows Phone 8 era devices require per vertex data to physically come
-    // before per instance data in the shader.
-    if (useInstancedPointSpriteEmulation)
-    {
-        structStream << "    float3 spriteVertexPos : SPRITEPOSITION0;\n"
-                     << "    float2 spriteTexCoord : SPRITETEXCOORD0;\n";
-    }
 
     for (size_t attributeIndex = 0; attributeIndex < shaderAttributes.size(); ++attributeIndex)
     {
@@ -456,8 +435,8 @@ void DynamicHLSL::GenerateVaryingLinkHLSL(RendererD3D *renderer,
                                           std::ostringstream &hlslStream)
 {
     ASSERT(builtins.dxPosition.enabled);
-    hlslStream << "{\n"
-               << "    float4 dx_Position : " << builtins.dxPosition.str() << ";\n";
+    hlslStream << "{\n";
+    hlslStream << "    float4 dx_Position : " << builtins.dxPosition.str() << ";\n";
 
     if (builtins.glPosition.enabled)
     {
@@ -594,10 +573,6 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
     // usesViewScale() isn't supported in the D3D9 renderer
     ASSERT(shaderModel >= 4 || !programMetadata.usesViewScale());
 
-    bool useInstancedPointSpriteEmulation =
-        programMetadata.usesPointSize() &&
-        renderer->getFeatures().useInstancedPointSpriteEmulation.enabled;
-
     // Validation done in the compiler
     ASSERT(!fragmentShaderD3D || !fragmentShaderD3D->usesFragColor ||
            !fragmentShaderD3D->usesFragData);
@@ -607,16 +582,6 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
     const auto &vertexBuiltins = builtinsD3D[gl::ShaderType::Vertex];
     GenerateVaryingLinkHLSL(renderer, varyingPacking, vertexBuiltins, builtinsD3D.usesPointSize(),
                             vertexStream);
-
-    // Instanced PointSprite emulation requires additional entries originally generated in the
-    // GeometryShader HLSL. These include pointsize clamp values.
-    if (useInstancedPointSpriteEmulation)
-    {
-        vertexStream << "static float minPointSize = " << static_cast<int>(caps.minAliasedPointSize)
-                     << ".0f;\n"
-                     << "static float maxPointSize = " << static_cast<int>(caps.maxAliasedPointSize)
-                     << ".0f;\n";
-    }
 
     std::ostringstream vertexGenerateOutput;
     vertexGenerateOutput << "VS_OUTPUT generateOutput(VS_INPUT input)\n"
@@ -825,56 +790,18 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
         vertexGenerateOutput << ";\n";
     }
 
-    // Instanced PointSprite emulation requires additional entries to calculate
-    // the final output vertex positions of the quad that represents each sprite.
-    if (useInstancedPointSpriteEmulation)
-    {
-        vertexGenerateOutput
-            << "\n"
-            << "    gl_PointSize = clamp(gl_PointSize, minPointSize, maxPointSize);\n";
-
-        vertexGenerateOutput
-            << "    output.dx_Position.x += (input.spriteVertexPos.x * gl_PointSize / "
-               "(dx_ViewCoords.x*2)) * output.dx_Position.w;";
-
-        if (programMetadata.usesViewScale())
-        {
-            // Multiply by ViewScale to invert the rendering when appropriate
-            vertexGenerateOutput
-                << "    output.dx_Position.y += (-dx_ViewScale.y * "
-                   "input.spriteVertexPos.y * gl_PointSize / (dx_ViewCoords.y*2)) * "
-                   "output.dx_Position.w;";
-        }
-        else
-        {
-            vertexGenerateOutput
-                << "    output.dx_Position.y += (input.spriteVertexPos.y * gl_PointSize / "
-                   "(dx_ViewCoords.y*2)) * output.dx_Position.w;";
-        }
-
-        vertexGenerateOutput
-            << "    output.dx_Position.z += input.spriteVertexPos.z * output.dx_Position.w;\n";
-
-        if (programMetadata.usesPointCoord())
-        {
-            vertexGenerateOutput << "\n"
-                                 << "    output.gl_PointCoord = input.spriteTexCoord;\n";
-        }
-    }
-
     // Renderers that enable instanced pointsprite emulation require the vertex shader output member
     // gl_PointCoord to be set to a default value if used without gl_PointSize. 0.5,0.5 is the same
     // default value used in the generated pixel shader.
     if (programMetadata.usesInsertedPointCoordValue())
     {
-        ASSERT(!useInstancedPointSpriteEmulation);
         vertexGenerateOutput << "\n"
-                             << "    output.gl_PointCoord = float2(0.5, 0.5);\n";
+                                "    output.gl_PointCoord = float2(0.5, 0.5);\n";
     }
 
     vertexGenerateOutput << "\n"
-                         << "    return output;\n"
-                         << "}";
+                            "    return output;\n"
+                            "}";
 
     if (vertexShader)
     {
@@ -977,9 +904,17 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
             }
         }
 
-        pixelPrologue << "    gl_FragCoord.z = (input.gl_FragCoord.z * rhw) * dx_DepthFront.x + "
-                         "dx_DepthFront.y;\n"
-                      << "    gl_FragCoord.w = rhw;\n";
+        if (shaderModel >= 4 && renderer->getShaderModelSuffix() == "")
+        {
+            pixelPrologue << "    gl_FragCoord.z = input.dx_Position.z;\n";
+        }
+        else
+        {
+            pixelPrologue
+                << "    gl_FragCoord.z = (input.gl_FragCoord.z * rhw) * dx_DepthFront.x + "
+                   "dx_DepthFront.y;\n";
+        }
+        pixelPrologue << "    gl_FragCoord.w = rhw;\n";
     }
 
     if (pixelBuiltins.glPointCoord.enabled && shaderModel >= 3)
@@ -1220,7 +1155,7 @@ std::string DynamicHLSL::GenerateGeometryShaderPreamble(RendererD3D *renderer,
     GenerateVaryingLinkHLSL(renderer, varyingPacking, vertexBuiltins, builtinsD3D.usesPointSize(),
                             preambleStream);
     preambleStream << "\n"
-                   << "struct GS_OUTPUT\n";
+                      "struct GS_OUTPUT\n";
     GenerateVaryingLinkHLSL(renderer, varyingPacking, builtinsD3D[gl::ShaderType::Geometry],
                             builtinsD3D.usesPointSize(), preambleStream);
     preambleStream

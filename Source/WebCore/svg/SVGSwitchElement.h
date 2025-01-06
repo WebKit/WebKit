@@ -22,18 +22,20 @@
 #pragma once
 
 #include "SVGGraphicsElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGSwitchElement final : public SVGGraphicsElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGSwitchElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGSwitchElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGSwitchElement);
 public:
     static Ref<SVGSwitchElement> create(const QualifiedName&, Document&);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSwitchElement, SVGGraphicsElement>;
+
 private:
     SVGSwitchElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSwitchElement, SVGGraphicsElement>;
 
     bool isValid() const final { return SVGTests::isValid(); }
 

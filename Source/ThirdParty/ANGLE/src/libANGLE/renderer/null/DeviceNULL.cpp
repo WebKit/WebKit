@@ -29,11 +29,6 @@ egl::Error DeviceNULL::getAttribute(const egl::Display *display, EGLint attribut
     return egl::EglBadAccess();
 }
 
-EGLint DeviceNULL::getType()
-{
-    return 0;
-}
-
 void DeviceNULL::generateExtensions(egl::DeviceExtensions *outExtensions) const {}
 
 }  // namespace rx

@@ -317,6 +317,7 @@ template<typename U> struct Bar { };
 ```cpp
 template <typename T> T foo();
 template <typename U> struct Bar { };
+```
 
 [](#spacing-braced-init) When initializing an object, place a space before the leading brace as well as between the braces and their content.
 
@@ -570,6 +571,34 @@ for ( ; current; current = current->next) { }
 
 ```cpp
 for ( ; current; current = current->next);
+```
+
+[](#empty-braces-space) Any empty braces should contain a space.
+
+###### Right:
+
+```cpp
+void f() { }
+struct Unit { };
+union Unit { };
+class Unit { };
+enum Unit { };
+int x { };
+auto a = [] { };
+while (true) { }
+```
+
+###### Wrong:
+
+```cpp
+void f() {}
+struct Unit {};
+union Unit {};
+class Unit {};
+enum Unit {};
+int x {};
+auto a = [] {};
+while (true) {}
 ```
 
 ### Null, false and zero

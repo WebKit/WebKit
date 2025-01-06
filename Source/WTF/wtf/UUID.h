@@ -34,6 +34,8 @@
 #include <wtf/HexNumber.h>
 #include <wtf/Int128.h>
 #include <wtf/SHA1.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/StringConcatenate.h>
 #include <wtf/text/WTFString.h>
 
 #ifdef __OBJC__
@@ -73,7 +75,13 @@ public:
 
     explicit UUID(std::span<const uint8_t, 16> span)
     {
-        memcpy(&m_data, span.data(), 16);
+        memcpySpan(asMutableByteSpan(m_data), span);
+    }
+
+    explicit UUID(std::span<const uint8_t> span)
+    {
+        RELEASE_ASSERT(span.size() == 16);
+        memcpySpan(asMutableByteSpan(m_data), span);
     }
 
     explicit constexpr UUID(UInt128 data)
@@ -87,9 +95,9 @@ public:
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isHashTableDeletedValue());
     }
 
-    std::span<const uint8_t, 16> span() const
+    std::span<const uint8_t, 16> span() const LIFETIME_BOUND
     {
-        return std::span<const uint8_t, 16> { reinterpret_cast<const uint8_t*>(&m_data), 16 };
+        return asByteSpan<UInt128, 16>(m_data);
     }
 
     friend bool operator==(const UUID&, const UUID&) = default;
@@ -104,10 +112,11 @@ public:
     {
     }
 
-    bool isHashTableDeletedValue() const { return m_data == deletedValue; }
+    constexpr bool isHashTableDeletedValue() const { return m_data == deletedValue; }
+    constexpr bool isHashTableEmptyValue() const { return m_data == emptyValue; }
     WTF_EXPORT_PRIVATE String toString() const;
 
-    operator bool() const { return !!m_data; }
+    constexpr operator bool() const { return !!m_data; }
     bool isValid() const { return m_data != emptyValue && m_data != deletedValue; }
 
     UInt128 data() const { return m_data; }
@@ -142,6 +151,7 @@ struct UUIDHash {
 
 template<> struct HashTraits<UUID> : GenericHashTraits<UUID> {
     static UUID emptyValue() { return UUID { HashTableEmptyValue }; }
+    static bool isEmptyValue(const UUID& value) { return value.isHashTableEmptyValue(); }
     static void constructDeletedValue(UUID& slot) { slot = UUID { HashTableDeletedValue }; }
     static bool isDeletedValue(const UUID& value) { return value.isHashTableDeletedValue(); }
 };
@@ -201,7 +211,7 @@ public:
     bool is8Bit() const { return true; }
 
     template<typename CharacterType>
-    void writeTo(CharacterType* destination) const
+    void writeTo(std::span<CharacterType> destination) const
     {
         handle([&](auto&&... adapters) {
             stringTypeAdapterAccumulator(destination, std::forward<decltype(adapters)>(adapters)...);

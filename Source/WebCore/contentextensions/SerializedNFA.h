@@ -29,6 +29,7 @@
 
 #include "ImmutableNFA.h"
 #include <wtf/FileSystem.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 namespace ContentExtensions {
@@ -43,27 +44,21 @@ public:
     template<typename T>
     class Range {
     public:
-        Range(const T* begin, size_t size)
-            : m_begin(begin)
-            , m_size(size) { }
-        const T* begin() const { return m_begin; }
-        const T* end() const { return m_begin + m_size; }
-        size_t size() const { return m_size; }
-        const T* pointerAt(size_t i) const
-        {
-            RELEASE_ASSERT(i < m_size);
-            return begin() + i;
-        }
+        Range(std::span<const T> span)
+            : m_span(span)
+        { }
+        const T* begin() const { return std::to_address(m_span.begin()); }
+        const T* end() const { return std::to_address(m_span.end()); }
+        size_t size() const { return m_span.size(); }
+        const T* pointerAt(size_t i) const { return &m_span[i]; }
         T valueAt(size_t i) const
         {
-            RELEASE_ASSERT(i < m_size);
             T value;
-            memcpy(&value, begin() + i, sizeof(T));
+            memcpySpan(singleElementSpan(value), m_span.subspan(i, 1));
             return value;
         }
     private:
-        const T* m_begin { nullptr };
-        size_t m_size { 0 };
+        std::span<const T> m_span;
     };
 
     const Range<ImmutableNFANode> nodes() const;
@@ -186,7 +181,7 @@ private:
     SerializedNFA(FileSystem::MappedFileData&&, Metadata&&);
 
     template<typename T>
-    const T* pointerAtOffsetInFile(size_t) const;
+    std::span<const T> spanAtOffsetInFile(size_t offset, size_t length) const;
     
     FileSystem::MappedFileData m_file;
     Metadata m_metadata;

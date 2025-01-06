@@ -30,8 +30,11 @@
 
 #include "RemoteBufferMessages.h"
 #include "WebGPUConvertToBackingContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBufferProxy);
 
 RemoteBufferProxy::RemoteBufferProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool mappedAtCreation)
     : m_backing(identifier)
@@ -63,7 +66,7 @@ static bool offsetOrSizeExceedsBounds(size_t dataSize, WebCore::WebGPU::Size64 o
     return offset >= dataSize || (requestedSize.has_value() && requestedSize.value() + offset > dataSize);
 }
 
-void RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, Function<void(MappedRange)>&& callback)
+void RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, Function<void(std::span<uint8_t>)>&& callback)
 {
     // FIXME: Implement error handling.
     auto sendResult = sendSync(Messages::RemoteBuffer::GetMappedRange(offset, size));
@@ -74,20 +77,26 @@ void RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::opti
         return;
     }
 
-    callback({ data->data() + offset, static_cast<size_t>(size.value_or(data->size() - offset)) });
+    callback(data->mutableSpan().subspan(offset));
 }
 
-auto RemoteBufferProxy::getBufferContents() -> MappedRange
+std::span<uint8_t> RemoteBufferProxy::getBufferContents()
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void RemoteBufferProxy::copy(Vector<uint8_t>&& data, size_t offset)
+void RemoteBufferProxy::copyFrom(std::span<const uint8_t> span, size_t offset)
 {
     if (!m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
         return;
 
-    auto sendResult = send(Messages::RemoteBuffer::Copy(WTFMove(data), offset));
+    auto sharedMemory = WebCore::SharedMemory::copySpan(span);
+    std::optional<WebCore::SharedMemoryHandle> handle;
+    if (sharedMemory)
+        handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
+    auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::Copy(WTFMove(handle), offset), [sharedMemory = sharedMemory.copyRef(), handleHasValue = handle.has_value()](auto) mutable {
+        RELEASE_ASSERT(sharedMemory.get() || !handleHasValue);
+    });
     UNUSED_VARIABLE(sendResult);
 }
 

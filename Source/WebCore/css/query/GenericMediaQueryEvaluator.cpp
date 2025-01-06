@@ -39,14 +39,14 @@ static std::optional<LayoutUnit> computeLength(const CSSValue* value, const CSST
         return { };
 
     if (primitiveValue->isNumberOrInteger()) {
-        if (primitiveValue->doubleValue())
+        if (primitiveValue->resolveAsNumber(conversionData))
             return { };
         return 0_lu;
     }
 
     if (!primitiveValue->isLength())
         return { };
-    return primitiveValue->computeLength<LayoutUnit>(conversionData);
+    return primitiveValue->resolveAsLength<LayoutUnit>(conversionData);
 }
 
 template<typename T>
@@ -83,12 +83,12 @@ static EvaluationResult evaluateLengthComparison(LayoutUnit size, const std::opt
     return toEvaluationResult(compare(comparison->op, left, right));
 };
 
-static EvaluationResult evaluateNumberComparison(double number, const std::optional<Comparison>& comparison, Side side)
+static EvaluationResult evaluateNumberComparison(double number, const std::optional<Comparison>& comparison, Side side, const CSSToLengthConversionData& conversionData)
 {
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->doubleValue();
+    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->resolveAsNumber(conversionData);
 
     auto left = side == Side::Left ? expressionNumber : number;
     auto right = side == Side::Left ? number : expressionNumber;
@@ -96,12 +96,12 @@ static EvaluationResult evaluateNumberComparison(double number, const std::optio
     return toEvaluationResult(compare(comparison->op, left, right));
 };
 
-static EvaluationResult evaluateIntegerComparison(int number, const std::optional<Comparison>& comparison, Side side)
+static EvaluationResult evaluateIntegerComparison(int number, const std::optional<Comparison>& comparison, Side side, const CSSToLengthConversionData& conversionData)
 {
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->intValue();
+    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->resolveAsInteger(conversionData);
 
     auto left = side == Side::Left ? expressionNumber : number;
     auto right = side == Side::Left ? number : expressionNumber;
@@ -109,12 +109,12 @@ static EvaluationResult evaluateIntegerComparison(int number, const std::optiona
     return toEvaluationResult(compare(comparison->op, left, right));
 };
 
-static EvaluationResult evaluateResolutionComparison(float resolution, const std::optional<Comparison>& comparison, Side side)
+static EvaluationResult evaluateResolutionComparison(float resolution, const std::optional<Comparison>& comparison, Side side, const CSSToLengthConversionData& conversionData)
 {
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionResolution = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->floatValue(CSSUnitType::CSS_DPPX);
+    auto expressionResolution = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->resolveAsResolution<float>(conversionData);
 
     auto left = side == Side::Left ? expressionResolution : resolution;
     auto right = side == Side::Left ? resolution : expressionResolution;
@@ -133,7 +133,7 @@ EvaluationResult evaluateLengthFeature(const Feature& feature, LayoutUnit length
     return leftResult & rightResult;
 };
 
-static EvaluationResult evaluateRatioComparison(FloatSize size, const std::optional<Comparison>& comparison, Side side)
+static EvaluationResult evaluateRatioComparison(FloatSize size, const std::optional<Comparison>& comparison, Side side, const CSSToLengthConversionData&)
 {
     if (!comparison)
         return EvaluationResult::True;
@@ -154,24 +154,24 @@ static EvaluationResult evaluateRatioComparison(FloatSize size, const std::optio
     return toEvaluationResult(compare(comparison->op, left, right));
 };
 
-EvaluationResult evaluateRatioFeature(const Feature& feature, FloatSize size)
+EvaluationResult evaluateRatioFeature(const Feature& feature, FloatSize size, const CSSToLengthConversionData& conversionData)
 {
     if (!feature.leftComparison && !feature.rightComparison)
         return toEvaluationResult(size.width());
 
-    auto leftResult = evaluateRatioComparison(size, feature.leftComparison, Side::Left);
-    auto rightResult = evaluateRatioComparison(size, feature.rightComparison, Side::Right);
+    auto leftResult = evaluateRatioComparison(size, feature.leftComparison, Side::Left, conversionData);
+    auto rightResult = evaluateRatioComparison(size, feature.rightComparison, Side::Right, conversionData);
 
     return leftResult & rightResult;
 }
 
-EvaluationResult evaluateBooleanFeature(const Feature& feature, bool currentValue)
+EvaluationResult evaluateBooleanFeature(const Feature& feature, bool currentValue, const CSSToLengthConversionData& conversionData)
 {
     if (!feature.rightComparison)
         return toEvaluationResult(currentValue);
 
     Ref value = downcast<CSSPrimitiveValue>(*feature.rightComparison->value);
-    auto expectedValue = value->intValue();
+    auto expectedValue = value->resolveAsInteger(conversionData);
 
     if (expectedValue && expectedValue != 1)
         return EvaluationResult::Unknown;
@@ -179,40 +179,40 @@ EvaluationResult evaluateBooleanFeature(const Feature& feature, bool currentValu
     return toEvaluationResult(expectedValue == currentValue);
 }
 
-EvaluationResult evaluateIntegerFeature(const Feature& feature, int currentValue)
+EvaluationResult evaluateIntegerFeature(const Feature& feature, int currentValue, const CSSToLengthConversionData& conversionData)
 {
     if (!feature.leftComparison && !feature.rightComparison)
         return toEvaluationResult(!!currentValue);
 
-    auto leftResult = evaluateIntegerComparison(currentValue, feature.leftComparison, Side::Left);
-    auto rightResult = evaluateIntegerComparison(currentValue, feature.rightComparison, Side::Right);
+    auto leftResult = evaluateIntegerComparison(currentValue, feature.leftComparison, Side::Left, conversionData);
+    auto rightResult = evaluateIntegerComparison(currentValue, feature.rightComparison, Side::Right, conversionData);
 
     return leftResult & rightResult;
 }
 
-EvaluationResult evaluateNumberFeature(const Feature& feature, double currentValue)
+EvaluationResult evaluateNumberFeature(const Feature& feature, double currentValue, const CSSToLengthConversionData& conversionData)
 {
     if (!feature.leftComparison && !feature.rightComparison)
         return toEvaluationResult(!!currentValue);
 
-    auto leftResult = evaluateNumberComparison(currentValue, feature.leftComparison, Side::Left);
-    auto rightResult = evaluateNumberComparison(currentValue, feature.rightComparison, Side::Right);
+    auto leftResult = evaluateNumberComparison(currentValue, feature.leftComparison, Side::Left, conversionData);
+    auto rightResult = evaluateNumberComparison(currentValue, feature.rightComparison, Side::Right, conversionData);
 
     return leftResult & rightResult;
 }
 
-EvaluationResult evaluateResolutionFeature(const Feature& feature, float currentValue)
+EvaluationResult evaluateResolutionFeature(const Feature& feature, float currentValue, const CSSToLengthConversionData& conversionData)
 {
     if (!feature.leftComparison && !feature.rightComparison)
         return toEvaluationResult(!!currentValue);
 
-    auto leftResult = evaluateResolutionComparison(currentValue, feature.leftComparison, Side::Left);
-    auto rightResult = evaluateResolutionComparison(currentValue, feature.rightComparison, Side::Right);
+    auto leftResult = evaluateResolutionComparison(currentValue, feature.leftComparison, Side::Left, conversionData);
+    auto rightResult = evaluateResolutionComparison(currentValue, feature.rightComparison, Side::Right, conversionData);
 
     return leftResult & rightResult;
 }
 
-EvaluationResult evaluateIdentifierFeature(const Feature& feature, CSSValueID currentValue)
+EvaluationResult evaluateIdentifierFeature(const Feature& feature, CSSValueID currentValue, const CSSToLengthConversionData&)
 {
     if (!feature.rightComparison)
         return toEvaluationResult(currentValue != CSSValueNone && currentValue != CSSValueNoPreference);
@@ -221,5 +221,5 @@ EvaluationResult evaluateIdentifierFeature(const Feature& feature, CSSValueID cu
     return toEvaluationResult(value.valueID() == currentValue);
 }
 
-}
-}
+} // namespace MQ
+} // namespace WebCore

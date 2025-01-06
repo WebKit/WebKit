@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "test/codec_factory.h"
 #include "test/ivf_video_source.h"
 

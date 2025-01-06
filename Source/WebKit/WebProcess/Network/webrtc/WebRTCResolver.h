@@ -29,7 +29,10 @@
 
 #include "LibWebRTCResolverIdentifier.h"
 #include "RTCNetwork.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -40,18 +43,21 @@ namespace WebKit {
 
 class LibWebRTCSocketFactory;
 
-class WebRTCResolver {
-    WTF_MAKE_FAST_ALLOCATED;
+class WebRTCResolver : public RefCounted<WebRTCResolver> {
+    WTF_MAKE_TZONE_ALLOCATED(WebRTCResolver);
 public:
-    WebRTCResolver(LibWebRTCSocketFactory&, LibWebRTCResolverIdentifier);
+    static Ref<WebRTCResolver> create(LibWebRTCSocketFactory&, LibWebRTCResolverIdentifier);
+    ~WebRTCResolver();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
+    WebRTCResolver(LibWebRTCSocketFactory&, LibWebRTCResolverIdentifier);
+
     void setResolvedAddress(const Vector<RTCNetwork::IPAddress>&);
     void resolvedAddressError(int);
 
-    LibWebRTCSocketFactory& m_socketFactory;
+    CheckedRef<LibWebRTCSocketFactory> m_socketFactory;
     LibWebRTCResolverIdentifier m_identifier;
 };
 

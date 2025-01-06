@@ -33,11 +33,7 @@ assert.throws(RangeError, () => yearmonth.add(duration, { overflow: 2 }), "numbe
 assert.throws(RangeError, () => yearmonth.add(duration, { overflow: 2n }), "bigint");
 assert.throws(RangeError, () => yearmonth.add(duration, { overflow: {} }), "plain object");
 
-// toString property is read once by Calendar.dateAdd() and then once again by
-// calendar.yearMonthFromFields().
 const expected = [
-  "get overflow.toString",
-  "call overflow.toString",
   "get overflow.toString",
   "call overflow.toString",
 ];

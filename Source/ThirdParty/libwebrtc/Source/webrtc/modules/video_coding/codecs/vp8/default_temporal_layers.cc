@@ -22,7 +22,6 @@
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 DefaultTemporalLayers::PendingFrame::PendingFrame() = default;
@@ -141,78 +140,33 @@ DefaultTemporalLayers::GetDependencyInfo(size_t num_layers) {
       // that the 'alt' buffer reference is effectively the last keyframe.
       // TL0 also references and updates the 'last' buffer.
       // TL1 also references 'last' and references and updates 'golden'.
-      if (!field_trial::IsDisabled("WebRTC-UseShortVP8TL2Pattern")) {
-        // Shortened 4-frame pattern:
-        //   1---1   1---1 ...
-        //  /   /   /   /
-        // 0---0---0---0 ...
-        return {{"SS", {kReferenceAndUpdate, kNone, kNone}},
-                {"-S", {kReference, kUpdate, kNone}},
-                {"SR", {kReferenceAndUpdate, kNone, kNone}},
-                {"-D", {kReference, kReference, kNone, kFreezeEntropy}}};
-      } else {
-        // "Default" 8-frame pattern:
-        //   1---1---1---1   1---1---1---1 ...
-        //  /   /   /   /   /   /   /   /
-        // 0---0---0---0---0---0---0---0 ...
-        return {{"SS", {kReferenceAndUpdate, kNone, kNone}},
-                {"-S", {kReference, kUpdate, kNone}},
-                {"SR", {kReferenceAndUpdate, kNone, kNone}},
-                {"-R", {kReference, kReferenceAndUpdate, kNone}},
-                {"SR", {kReferenceAndUpdate, kNone, kNone}},
-                {"-R", {kReference, kReferenceAndUpdate, kNone}},
-                {"SR", {kReferenceAndUpdate, kNone, kNone}},
-                {"-D", {kReference, kReference, kNone, kFreezeEntropy}}};
-      }
+      //   1---1   1---1 ...
+      //  /   /   /   /
+      // 0---0---0---0 ...
+      return {{"SS", {kReferenceAndUpdate, kNone, kNone}},
+              {"-S", {kReference, kUpdate, kNone}},
+              {"SR", {kReferenceAndUpdate, kNone, kNone}},
+              {"-D", {kReference, kReference, kNone, kFreezeEntropy}}};
     case 3:
-      if (field_trial::IsEnabled("WebRTC-UseShortVP8TL3Pattern")) {
-        // This field trial is intended to check if it is worth using a shorter
-        // temporal pattern, trading some coding efficiency for less risk of
-        // dropped frames.
-        // The coding efficiency will decrease somewhat since the higher layer
-        // state is more volatile, but it will be offset slightly by updating
-        // the altref buffer with TL2 frames, instead of just referencing lower
-        // layers.
-        // If a frame is dropped in a higher layer, the jitter
-        // buffer on the receive side won't be able to decode any higher layer
-        // frame until the next sync frame. So we expect a noticeable decrease
-        // in frame drops on links with high packet loss.
-
-        // TL0 references and updates the 'last' buffer.
-        // TL1  references 'last' and references and updates 'golden'.
-        // TL2 references both 'last' & 'golden' and references and updates
-        // 'arf'.
-        //     2-------2       2-------2       2
-        //    /     __/       /     __/       /
-        //   /   __1         /   __1         /
-        //  /___/           /___/           /
-        // 0---------------0---------------0-----
-        // 0   1   2   3   4   5   6   7   8   9 ...
-        return {{"SSS", {kReferenceAndUpdate, kNone, kNone}},
-                {"--S", {kReference, kNone, kUpdate}},
-                {"-DR", {kReference, kUpdate, kNone}},
-                {"--D", {kReference, kReference, kReference, kFreezeEntropy}}};
-      } else {
-        // All layers can reference but not update the 'alt' buffer, this means
-        // that the 'alt' buffer reference is effectively the last keyframe.
-        // TL0 also references and updates the 'last' buffer.
-        // TL1 also references 'last' and references and updates 'golden'.
-        // TL2 references both 'last' and 'golden' but updates no buffer.
-        //     2     __2  _____2     __2       2
-        //    /     /____/    /     /         /
-        //   /     1---------/-----1         /
-        //  /_____/         /_____/         /
-        // 0---------------0---------------0-----
-        // 0   1   2   3   4   5   6   7   8   9 ...
-        return {{"SSS", {kReferenceAndUpdate, kNone, kNone}},
-                {"--D", {kReference, kNone, kNone, kFreezeEntropy}},
-                {"-SS", {kReference, kUpdate, kNone}},
-                {"--D", {kReference, kReference, kNone, kFreezeEntropy}},
-                {"SRR", {kReferenceAndUpdate, kNone, kNone}},
-                {"--D", {kReference, kReference, kNone, kFreezeEntropy}},
-                {"-DS", {kReference, kReferenceAndUpdate, kNone}},
-                {"--D", {kReference, kReference, kNone, kFreezeEntropy}}};
-      }
+      // All layers can reference but not update the 'alt' buffer, this means
+      // that the 'alt' buffer reference is effectively the last keyframe.
+      // TL0 also references and updates the 'last' buffer.
+      // TL1 also references 'last' and references and updates 'golden'.
+      // TL2 references both 'last' and 'golden' but updates no buffer.
+      //     2     __2  _____2     __2       2
+      //    /     /____/    /     /         /
+      //   /     1---------/-----1         /
+      //  /_____/         /_____/         /
+      // 0---------------0---------------0-----
+      // 0   1   2   3   4   5   6   7   8   9 ...
+      return {{"SSS", {kReferenceAndUpdate, kNone, kNone}},
+              {"--D", {kReference, kNone, kNone, kFreezeEntropy}},
+              {"-SS", {kReference, kUpdate, kNone}},
+              {"--D", {kReference, kReference, kNone, kFreezeEntropy}},
+              {"SRR", {kReferenceAndUpdate, kNone, kNone}},
+              {"--D", {kReference, kReference, kNone, kFreezeEntropy}},
+              {"-DS", {kReference, kReferenceAndUpdate, kNone}},
+              {"--D", {kReference, kReference, kNone, kFreezeEntropy}}};
     case 4:
       // TL0 references and updates only the 'last' buffer.
       // TL1 references 'last' and updates and references 'golden'.
@@ -662,23 +616,14 @@ FrameDependencyStructure DefaultTemporalLayers::GetTemplateStructure(
       return template_structure;
     }
     case 3: {
-      if (field_trial::IsEnabled("WebRTC-UseShortVP8TL3Pattern")) {
-        template_structure.templates.resize(5);
-        template_structure.templates[0].T(0).Dtis("SSS");
-        template_structure.templates[1].T(0).Dtis("SSS").FrameDiffs({4});
-        template_structure.templates[2].T(1).Dtis("-DR").FrameDiffs({2});
-        template_structure.templates[3].T(2).Dtis("--S").FrameDiffs({1});
-        template_structure.templates[4].T(2).Dtis("--D").FrameDiffs({2, 1});
-      } else {
-        template_structure.templates.resize(7);
-        template_structure.templates[0].T(0).Dtis("SSS");
-        template_structure.templates[1].T(0).Dtis("SSS").FrameDiffs({4});
-        template_structure.templates[2].T(0).Dtis("SRR").FrameDiffs({4});
-        template_structure.templates[3].T(1).Dtis("-SS").FrameDiffs({2});
-        template_structure.templates[4].T(1).Dtis("-DS").FrameDiffs({4, 2});
-        template_structure.templates[5].T(2).Dtis("--D").FrameDiffs({1});
-        template_structure.templates[6].T(2).Dtis("--D").FrameDiffs({3, 1});
-      }
+      template_structure.templates.resize(7);
+      template_structure.templates[0].T(0).Dtis("SSS");
+      template_structure.templates[1].T(0).Dtis("SSS").FrameDiffs({4});
+      template_structure.templates[2].T(0).Dtis("SRR").FrameDiffs({4});
+      template_structure.templates[3].T(1).Dtis("-SS").FrameDiffs({2});
+      template_structure.templates[4].T(1).Dtis("-DS").FrameDiffs({4, 2});
+      template_structure.templates[5].T(2).Dtis("--D").FrameDiffs({1});
+      template_structure.templates[6].T(2).Dtis("--D").FrameDiffs({3, 1});
       return template_structure;
     }
     case 4: {
@@ -708,17 +653,9 @@ std::vector<std::set<uint8_t>> GetTemporalDependencies(
     case 1:
       return {{0}};
     case 2:
-      if (!field_trial::IsDisabled("WebRTC-UseShortVP8TL2Pattern")) {
-        return {{2}, {0}, {0}, {1, 2}};
-      } else {
-        return {{6}, {0}, {0}, {1, 2}, {2}, {3, 4}, {4}, {5, 6}};
-      }
+      return {{2}, {0}, {0}, {1, 2}};
     case 3:
-      if (field_trial::IsEnabled("WebRTC-UseShortVP8TL3Pattern")) {
-        return {{0}, {0}, {0}, {0, 1, 2}};
-      } else {
-        return {{4}, {0}, {0}, {0, 2}, {0}, {2, 4}, {2, 4}, {4, 6}};
-      }
+      return {{4}, {0}, {0}, {0, 2}, {0}, {2, 4}, {2, 4}, {4, 6}};
     case 4:
       return {{8},    {0},         {0},         {0, 2},
               {0},    {0, 2, 4},   {0, 2, 4},   {0, 4, 6},

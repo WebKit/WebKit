@@ -38,7 +38,7 @@ class FrameDecodeTiming {
     Timestamp render_time;
   };
 
-  absl::optional<FrameSchedule> OnFrameBufferUpdated(
+  std::optional<FrameSchedule> OnFrameBufferUpdated(
       uint32_t next_temporal_unit_rtp,
       uint32_t last_temporal_unit_rtp,
       TimeDelta max_wait_for_frame,

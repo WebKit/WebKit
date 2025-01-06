@@ -32,12 +32,15 @@
 #include "LegacyCDMSession.h"
 #include "ContentType.h"
 #include "MediaPlayer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include <wtf/SoftLinking.h>
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMPrivateMediaPlayer);
 
 bool CDMPrivateMediaPlayer::supportsKeySystem(const String& keySystem)
 {
@@ -49,18 +52,29 @@ bool CDMPrivateMediaPlayer::supportsKeySystemAndMimeType(const String& keySystem
     return MediaPlayer::supportsKeySystem(keySystem, mimeType);
 }
 
-bool CDMPrivateMediaPlayer::supportsMIMEType(const String& mimeType)
+bool CDMPrivateMediaPlayer::supportsMIMEType(const String& mimeType) const
 {
     return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
 }
 
-std::unique_ptr<LegacyCDMSession> CDMPrivateMediaPlayer::createSession(LegacyCDMSessionClient& client)
+RefPtr<LegacyCDMSession> CDMPrivateMediaPlayer::createSession(LegacyCDMSessionClient& client)
 {
-    auto mediaPlayer = m_cdm->mediaPlayer();
+    Ref cdm = m_cdm.get();
+    auto mediaPlayer = cdm->mediaPlayer();
     if (!mediaPlayer)
         return nullptr;
 
-    return mediaPlayer->createSession(m_cdm->keySystem(), client);
+    return mediaPlayer->createSession(cdm->keySystem(), client);
+}
+
+void CDMPrivateMediaPlayer::ref() const
+{
+    m_cdm->ref();
+}
+
+void CDMPrivateMediaPlayer::deref() const
+{
+    m_cdm->deref();
 }
 
 }

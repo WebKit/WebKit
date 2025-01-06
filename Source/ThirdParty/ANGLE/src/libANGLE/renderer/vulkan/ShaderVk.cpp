@@ -41,6 +41,11 @@ std::shared_ptr<ShaderTranslateTask> ShaderVk::compile(const gl::Context *contex
         }
     }
 
+    if (contextVk->getFeatures().supportsSPIRV14.enabled)
+    {
+        options->emitSPIRV14 = true;
+    }
+
     if (contextVk->getFeatures().retainSPIRVDebugInfo.enabled)
     {
         options->outputDebugInfo = true;
@@ -63,11 +68,6 @@ std::shared_ptr<ShaderTranslateTask> ShaderVk::compile(const gl::Context *contex
     if (contextVk->getFeatures().emulateAdvancedBlendEquations.enabled)
     {
         options->addAdvancedBlendEquationsEmulation = true;
-    }
-
-    if (contextVk->emulateSeamfulCubeMapSampling())
-    {
-        options->emulateSeamfulCubeMapSampling = true;
     }
 
     if (!contextVk->getFeatures().enablePrecisionQualifiers.enabled)
@@ -131,7 +131,23 @@ std::shared_ptr<ShaderTranslateTask> ShaderVk::compile(const gl::Context *contex
         options->avoidOpSelectWithMismatchingRelaxedPrecision = true;
     }
 
+    if (contextVk->getFeatures().wrapSwitchInIfTrue.enabled)
+    {
+        options->wrapSwitchInIfTrue = true;
+    }
+
+    if (contextVk->getFeatures().emulateR32fImageAtomicExchange.enabled)
+    {
+        options->emulateR32fImageAtomicExchange = true;
+    }
+
     // The Vulkan backend needs no post-processing of the translated shader.
+    return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTask);
+}
+
+std::shared_ptr<ShaderTranslateTask> ShaderVk::load(const gl::Context *context,
+                                                    gl::BinaryInputStream *stream)
+{
     return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTask);
 }
 
@@ -209,7 +225,7 @@ std::string ShaderVk::getDebugInfo() const
     }
 
     blob << R"(
-Paste the following SPIR-V binary in https://www.khronos.org/spir/visualizer/
+Paste the following SPIR-V binary in https://www.khronos.org/spir/visualizer/ or pass to a recent build of `spirv-dis` (optionally with `--comment --nested-indent`)
 
 Setting the environment variable ANGLE_FEATURE_OVERRIDES_ENABLED=retainSPIRVDebugInfo will retain debug info
 

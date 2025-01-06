@@ -28,7 +28,7 @@
 #include "ServiceWorkerRegistrationKey.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -47,7 +47,7 @@ struct BackgroundFetchRequest;
 struct ExceptionData;
 struct RetrieveRecordsOptions;
 
-class BackgroundFetchStore : public RefCounted<BackgroundFetchStore>, public CanMakeWeakPtr<BackgroundFetchStore> {
+class BackgroundFetchStore : public RefCountedAndCanMakeWeakPtr<BackgroundFetchStore> {
 public:
     virtual ~BackgroundFetchStore() = default;
 

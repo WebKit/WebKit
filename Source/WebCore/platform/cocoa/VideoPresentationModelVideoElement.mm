@@ -80,6 +80,8 @@ void VideoPresentationModelVideoElement::cleanVideoListeners()
         return;
     for (auto& eventName : observedEventNames())
         m_videoElement->removeEventListener(eventName, m_videoListener, false);
+    for (auto& eventName : documentObservedEventNames())
+        m_videoElement->document().removeEventListener(eventName, m_videoListener, false);
 }
 
 void VideoPresentationModelVideoElement::setVideoElement(HTMLVideoElement* videoElement)
@@ -102,6 +104,8 @@ void VideoPresentationModelVideoElement::setVideoElement(HTMLVideoElement* video
         for (auto& eventName : observedEventNames())
             m_videoElement->addEventListener(eventName, m_videoListener, false);
         m_isListening = true;
+        for (auto& eventName : documentObservedEventNames())
+            m_videoElement->document().addEventListener(eventName, m_videoListener, false);
     }
 
     updateForEventName(eventNameAll());
@@ -119,6 +123,9 @@ void VideoPresentationModelVideoElement::updateForEventName(const WTF::AtomStrin
         setHasVideo(m_videoElement);
         setVideoDimensions(m_videoElement ? FloatSize(m_videoElement->videoWidth(), m_videoElement->videoHeight()) : FloatSize());
     }
+
+    if (all || eventName == eventNames().visibilitychangeEvent)
+        documentVisibilityChanged();
 
     if (all
         || eventName == eventNames().loadedmetadataEvent || eventName == eventNames().loadstartEvent) {
@@ -139,6 +146,24 @@ void VideoPresentationModelVideoElement::updateForEventName(const WTF::AtomStrin
             return std::nullopt;
         }());
     }
+}
+
+void VideoPresentationModelVideoElement::documentVisibilityChanged()
+{
+    RefPtr videoElement = m_videoElement;
+
+    if (!videoElement)
+        return;
+
+    bool isDocumentVisible = !videoElement->document().hidden();
+
+    if (isDocumentVisible == m_documentIsVisible)
+        return;
+
+    m_documentIsVisible = isDocumentVisible;
+
+    for (auto& client : copyToVector(m_clients))
+        client->documentVisibilityChanged(m_documentIsVisible);
 }
 
 void VideoPresentationModelVideoElement::willExitFullscreen()
@@ -194,13 +219,18 @@ void VideoPresentationModelVideoElement::waitForPreparedForInlineThen(WTF::Funct
 
 void VideoPresentationModelVideoElement::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, mode, ", finishedWithMedia: ", finishedWithMedia);
-    if (m_videoElement)
-        m_videoElement->setPresentationMode(HTMLVideoElement::toPresentationMode(mode));
+    RefPtr videoElement = m_videoElement;
+    if (!videoElement)
+        return;
 
-    if (m_videoElement && finishedWithMedia && mode == MediaPlayer::VideoFullscreenModeNone) {
-        if (m_videoElement->document().isMediaDocument()) {
-            if (auto* window = m_videoElement->document().domWindow())
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, mode, ", finishedWithMedia: ", finishedWithMedia);
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, &videoElement->document());
+
+    videoElement->setPresentationMode(HTMLVideoElement::toPresentationMode(mode));
+
+    if (finishedWithMedia && mode == MediaPlayer::VideoFullscreenModeNone) {
+        if (videoElement->document().isMediaDocument()) {
+            if (auto* window = videoElement->document().domWindow())
                 window->history().back();
         }
     }
@@ -242,6 +272,12 @@ void VideoPresentationModelVideoElement::setVideoLayerGravity(MediaPlayer::Video
 std::span<const AtomString> VideoPresentationModelVideoElement::observedEventNames()
 {
     static NeverDestroyed names = std::array { eventNames().resizeEvent, eventNames().loadstartEvent, eventNames().loadedmetadataEvent };
+    return names.get();
+}
+
+std::span<const AtomString> VideoPresentationModelVideoElement::documentObservedEventNames()
+{
+    static NeverDestroyed names = std::array { eventNames().visibilitychangeEvent };
     return names.get();
 }
 
@@ -374,12 +410,12 @@ const Logger* VideoPresentationModelVideoElement::loggerPtr() const
     return m_videoElement ? &m_videoElement->logger() : nullptr;
 }
 
-const void* VideoPresentationModelVideoElement::logIdentifier() const
+uint64_t VideoPresentationModelVideoElement::logIdentifier() const
 {
-    return m_videoElement ? m_videoElement->logIdentifier() : nullptr;
+    return m_videoElement ? m_videoElement->logIdentifier() : 0;
 }
 
-const void* VideoPresentationModelVideoElement::nextChildIdentifier() const
+uint64_t VideoPresentationModelVideoElement::nextChildIdentifier() const
 {
     return LoggerHelper::childLogIdentifier(logIdentifier(), ++m_childIdentifierSeed);
 }

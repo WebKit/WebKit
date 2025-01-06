@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
@@ -39,7 +40,7 @@ class Expression;
 class NodeSet;
 
 class Step {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Step);
 public:
     enum Axis {
         AncestorAxis, AncestorOrSelfAxis, AttributeAxis,
@@ -50,7 +51,7 @@ public:
     };
 
     class NodeTest {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(NodeTest);
     public:
         enum Kind { TextNodeTest, CommentNodeTest, ProcessingInstructionNodeTest, AnyNodeTest, NameTest };
 

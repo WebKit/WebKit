@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<main id="main">
+    <div>
+        on <a id="link" title="Foo bar baz" href="#url1">date</a>
+    </div>
+    <table id="table">
+        <thead>
+            <tr>
+                <th><button id="button1">A</button></th>
+                <th><button id="button2">B</button></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>ThirdCell</td>
+                <td>FourthCell</td>
+            </tr>
+        </tbody>
+    </table>
+    <div id="container"></div>
+    <div id="foo" style="display: none">Last text</div>
+</main>
+<script>
+var output = "This test ensures that the accessiblity tree doesn't become broken when accessible children change in the middle of servicing an AT request.\n\n";
+
+// This test must *never* be flaky. If there is a bug in the implementation, it will fail only sometimes. If this test
+// becomes flaky, that should be taken very seriously. It's possible to very reliably reproduce the bug this test covers
+// with VoiceOver by using the tipsy jQuery library (https://github.com/CreativeDream/jquery.tipsy). Add that JS to a
+// <script src="tipsy.js">, import jQuery in a <script src="jquery.js">, add this to the webpage: 
+//
+// $("#link").tipsy({ duration: 10, trigger: "focus" });
+//
+// and then move VoiceOver focus back and forth between the link and the table ("Foo bar baz" should appear and disappear
+// on the webpage as you do). If the implementation bug is present, the table content will become completely inaccessible,
+// because the accessibility tree becomes broken.
+// FIXME: In the future, we should consider adding this VoiceOver test to a manual-tests folder (https://bugs.webkit.org/show_bug.cgi?id=277821)
+
+setInterval(() => {
+    let randomString = "";
+    const characters = "ABCDEPXYZabcdef89";
+    while (randomString.length < 3)
+        randomString += characters.charAt(Math.floor(Math.random() * characters.length));
+
+    // Cause constant children changed events to ensure the accessibility tree is always processing updates.
+    document.getElementById("container").innerHTML = `<div>${randomString}</div>`;
+}, 0);
+
+var axTable = window.accessibilityController ? accessibilityController.accessibleElementById("table") : null;
+setInterval(() => {
+    if (window.accessibilityController) {
+        // `scrollToMakeVisible()` is intentionally used here, as it is processed asynchronously (it uses
+        // AccessibilityUIElement::executeOnAXThread and not executeOnAXThreadAndWait), making it possible
+        // for the accessibility thread to process queued tree updates (`AXIsolatedTree::applyPendingChanges`) while the
+        // main-thread is in the middle of queuing tree updates (`AXIsolatedTree::updateChildren`).
+        axTable.scrollToMakeVisible();
+    }
+}, 0);
+
+var root;
+var searchResult;
+var showTextContainer = true;
+var traversalCounter = 0;
+function traverse() {
+    traversalCounter++;
+    output += `TRAVERSAL ${traversalCounter}\n\n`;
+
+    let searchOutput = "";
+    let tableCount = 0;
+    let cellCount = 0;
+    let rowCount = 0;
+    let buttonCount = 0;
+    let foundThirdCellText = false;
+    let foundFourthCellText = false;
+
+    while (true) {
+        searchResult = root.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+
+        const role = searchResult.role;
+        const roleLowerCase = role.toLowerCase();
+        if (roleLowerCase.includes("table"))
+            tableCount++;
+        else if (roleLowerCase.includes("cell"))
+            cellCount++;
+        else if (roleLowerCase.includes("row"))
+            rowCount++;
+        else if (roleLowerCase.includes("button"))
+            buttonCount++;
+
+        const id = searchResult.domIdentifier;
+        let resultDescription = `${id ? `#${id} ` : ""}${role}`;
+        if (role.includes("StaticText")) {
+            const textValue = ` ${accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue}`;
+            if (textValue.includes("ThirdCell"))
+                foundThirdCellText = true;
+            else if (textValue.includes("FourthCell"))
+                foundFourthCellText = true;
+
+            resultDescription += textValue;
+        }
+        searchOutput += `\n{${resultDescription}}\n`;
+    }
+
+    // Every traversal must include these elements. If not, it's very likely the accessibility tree is broken.
+    if (tableCount != 1 || cellCount != 4 || rowCount != 2 || buttonCount != 2 || !foundThirdCellText || !foundFourthCellText) {
+        output += `FAIL: Did not find expected elements. Table count: ${tableCount}, cell count: ${cellCount}, rowCount: ${rowCount}, buttonCount: ${buttonCount}, foundThirdCellText: ${foundThirdCellText}, foundFourthCellText: ${foundFourthCellText}`;
+        output += searchOutput;
+    }
+
+    // Trigger some more children changed events.
+    if (showTextContainer)
+        document.getElementById("foo").style.display = "block";
+    else
+        document.getElementById("foo").style.display = "none";
+    showTextContainer = !showTextContainer;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    root = accessibilityController.rootElement.childAtIndex(0);
+
+    setTimeout(async function() {
+        for (let i = 0; i < 6; i++) {
+            traverse();
+            await sleep(5);
+        }
+
+        document.getElementById("main").style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

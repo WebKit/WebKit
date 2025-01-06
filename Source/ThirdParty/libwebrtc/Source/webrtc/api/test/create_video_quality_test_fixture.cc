@@ -13,6 +13,8 @@
 #include <memory>
 #include <utility>
 
+#include "api/fec_controller.h"
+#include "api/test/video_quality_test_fixture.h"
 #include "video/video_quality_test.h"
 
 namespace webrtc {

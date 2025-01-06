@@ -16,6 +16,7 @@
 #include <utility>
 
 #include "absl/strings/string_view.h"
+#include "api/environment/environment.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -71,16 +72,16 @@ RtpHeaderExtensionMap RegisterSupportedExtensions(
 }  // namespace
 
 FlexfecSender::FlexfecSender(
+    const Environment& env,
     int payload_type,
     uint32_t ssrc,
     uint32_t protected_media_ssrc,
     absl::string_view mid,
     const std::vector<RtpExtension>& rtp_header_extensions,
     rtc::ArrayView<const RtpExtensionSize> extension_sizes,
-    const RtpState* rtp_state,
-    Clock* clock)
-    : clock_(clock),
-      random_(clock_->TimeInMicroseconds()),
+    const RtpState* rtp_state)
+    : env_(env),
+      random_(env_.clock().TimeInMicroseconds()),
       payload_type_(payload_type),
       // Reset RTP state if this is not the first time we are operating.
       // Otherwise, randomize the initial timestamp offset and RTP sequence
@@ -93,8 +94,8 @@ FlexfecSender::FlexfecSender(
       seq_num_(rtp_state ? rtp_state->sequence_number
                          : random_.Rand(1, kMaxInitRtpSeqNumber)),
       ulpfec_generator_(
-          ForwardErrorCorrection::CreateFlexfec(ssrc, protected_media_ssrc),
-          clock_),
+          env_,
+          ForwardErrorCorrection::CreateFlexfec(ssrc, protected_media_ssrc)),
       rtp_header_extension_map_(
           RegisterSupportedExtensions(rtp_header_extensions)),
       header_extensions_size_(
@@ -141,10 +142,10 @@ std::vector<std::unique_ptr<RtpPacketToSend>> FlexfecSender::GetFecPackets() {
     fec_packet_to_send->SetTimestamp(
         timestamp_offset_ +
         static_cast<uint32_t>(kMsToRtpTimestamp *
-                              clock_->TimeInMilliseconds()));
+                              env_.clock().TimeInMilliseconds()));
     // Set "capture time" so that the TransmissionOffset header extension
     // can be set by the RTPSender.
-    fec_packet_to_send->set_capture_time(clock_->CurrentTime());
+    fec_packet_to_send->set_capture_time(env_.clock().CurrentTime());
     fec_packet_to_send->SetSsrc(ssrc_);
     // Reserve extensions, if registered. These will be set by the RTPSender.
     fec_packet_to_send->ReserveExtension<AbsoluteSendTime>();
@@ -169,7 +170,7 @@ std::vector<std::unique_ptr<RtpPacketToSend>> FlexfecSender::GetFecPackets() {
     ulpfec_generator_.ResetState();
   }
 
-  Timestamp now = clock_->CurrentTime();
+  Timestamp now = env_.clock().CurrentTime();
   if (!fec_packets_to_send.empty() &&
       now - last_generated_packet_ > kPacketLogInterval) {
     RTC_LOG(LS_VERBOSE) << "Generated " << fec_packets_to_send.size()
@@ -191,10 +192,11 @@ size_t FlexfecSender::MaxPacketOverhead() const {
 
 DataRate FlexfecSender::CurrentFecRate() const {
   MutexLock lock(&mutex_);
-  return fec_bitrate_.Rate(clock_->CurrentTime()).value_or(DataRate::Zero());
+  return fec_bitrate_.Rate(env_.clock().CurrentTime())
+      .value_or(DataRate::Zero());
 }
 
-absl::optional<RtpState> FlexfecSender::GetRtpState() {
+std::optional<RtpState> FlexfecSender::GetRtpState() {
   RtpState rtp_state;
   rtp_state.sequence_number = seq_num_;
   rtp_state.start_timestamp = timestamp_offset_;

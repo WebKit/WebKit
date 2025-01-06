@@ -35,9 +35,12 @@
 #include "RenderStyleInlines.h"
 #include "SimpleRange.h"
 #include "WindRule.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EventRegionContext);
 
 EventRegionContext::EventRegionContext(EventRegion& eventRegion)
     : m_eventRegion(eventRegion)
@@ -62,7 +65,7 @@ void EventRegionContext::unite(const FloatRoundedRect& roundedRect, RenderObject
     auto region = transformAndClipIfNeeded(approximateAsRegion(roundedRect), [](auto affineTransform, auto region) {
         return affineTransform.mapRegion(region);
     });
-    m_eventRegion.unite(region, style, overrideUserModifyIsEditable);
+    m_eventRegion.unite(region, renderer, style, overrideUserModifyIsEditable);
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     auto rect = roundedRect.rect();
@@ -147,9 +150,9 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
         }
 
         if (interactionRegion->type == InteractionRegion::Type::Guard) {
-            if (m_elementGuardRects.contains(rectForTracking))
+            if (m_guardRects.contains(rectForTracking))
                 return;
-            m_elementGuardRects.add(rectForTracking);
+            m_guardRects.set(rectForTracking, Inflated::No);
 
             m_interactionRegions.append(*interactionRegion);
             return;
@@ -165,25 +168,30 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
         if (defaultContentHint && shouldConsolidateInteractionRegion(renderer, rectForTracking, interactionRegion->elementIdentifier))
             return;
 
-        m_interactionRectsAndContentHints.add(rectForTracking, interactionRegion->contentHint);
-
-        auto discoveredIterator = m_discoveredRegionsByElement.find(interactionRegion->elementIdentifier);
-        if (discoveredIterator != m_discoveredRegionsByElement.end()) {
-            discoveredIterator->value.append(*interactionRegion);
-            return;
+        // This region might be a container we can remove later.
+        bool hasNoVisualBorders = !renderer.hasVisibleBoxDecorations();
+        if (hasNoVisualBorders) {
+            if (auto* renderElement = dynamicDowncast<RenderElement>(renderer))
+                m_containerRemovalCandidates.add(renderElement->element()->identifier());
         }
 
-        Vector<InteractionRegion, 1> discoveredRegions;
-        discoveredRegions.append(*interactionRegion);
-        m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, discoveredRegions);
+        m_interactionRectsAndContentHints.add(rectForTracking, interactionRegion->contentHint);
+
+        auto discoveredAddResult = m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, Vector<InteractionRegion>());
+        discoveredAddResult.iterator->value.append(*interactionRegion);
+        if (!discoveredAddResult.isNewEntry)
+            return;
 
         auto guardRect = guardRectForRegionBounds(*interactionRegion);
         if (guardRect) {
-            m_interactionRegions.append({
-                InteractionRegion::Type::Guard,
-                interactionRegion->elementIdentifier,
-                guardRect.value()
-            });
+            auto result = m_guardRects.add(enclosingIntRect(guardRect.value()), Inflated::Yes);
+            if (result.isNewEntry) {
+                m_interactionRegions.append({
+                    InteractionRegion::Type::Guard,
+                    interactionRegion->elementIdentifier,
+                    guardRect.value()
+                });
+            }
         }
 
         m_interactionRegions.append(*interactionRegion);
@@ -213,8 +221,12 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& render
 
         auto& ancestorBounds = discoveredIterator->value.first().rectInLayerCoordinates;
 
+        constexpr float looseContainmentMargin = 3.0;
+        FloatRect ancestorBoundsForLooseContainmentCheck = ancestorBounds;
+        ancestorBoundsForLooseContainmentCheck.inflate(looseContainmentMargin);
+
         // The ancestor's InteractionRegion does not contain ours, we don't consolidate and stop the search.
-        if (!ancestorBounds.contains(bounds))
+        if (!ancestorBoundsForLooseContainmentCheck.contains(bounds))
             return false;
 
         constexpr auto maxMargin = 50;
@@ -239,12 +251,6 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& render
             return true;
         }
 
-        // We can't consolidate this region but it might be a container we can remove later.
-        if (hasNoVisualBorders) {
-            if (auto* renderElement = dynamicDowncast<RenderElement>(renderer))
-                m_containerRemovalCandidates.add(renderElement->element()->identifier());
-        }
-
         // We found a region nested inside a container candidate for removal, flag it for removal.
         if (m_containerRemovalCandidates.contains(ancestorElementIdentifier)) {
             m_containerRemovalCandidates.remove(ancestorElementIdentifier);
@@ -255,6 +261,24 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& render
     }
 
     return false;
+}
+
+void EventRegionContext::convertGuardContainersToInterationIfNeeded(float minimumCornerRadius)
+{
+    for (auto& region : m_interactionRegions) {
+        if (region.type != InteractionRegion::Type::Guard)
+            continue;
+
+        if (!m_discoveredRegionsByElement.contains(region.elementIdentifier)) {
+            auto rectForTracking = enclosingIntRect(region.rectInLayerCoordinates);
+            auto result = m_interactionRectsAndContentHints.add(rectForTracking, region.contentHint);
+            if (result.isNewEntry) {
+                region.type = InteractionRegion::Type::Interaction;
+                region.cornerRadius = minimumCornerRadius;
+                m_discoveredRegionsByElement.add(region.elementIdentifier, Vector<InteractionRegion>({ region }));
+            }
+        }
+    }
 }
 
 void EventRegionContext::shrinkWrapInteractionRegions()
@@ -329,7 +353,8 @@ void EventRegionContext::removeSuperfluousInteractionRegions()
             return m_containersToRemove.contains(region.elementIdentifier);
 
         auto guardRect = enclosingIntRect(region.rectInLayerCoordinates);
-        if (m_elementGuardRects.contains(guardRect))
+        auto guardIterator = m_guardRects.find(guardRect);
+        if (guardIterator != m_guardRects.end() && guardIterator->value == Inflated::No)
             return false;
         for (const auto& interactionRect : m_interactionRectsAndContentHints.keys()) {
             auto intersection = interactionRect;
@@ -357,8 +382,9 @@ void EventRegionContext::removeSuperfluousInteractionRegions()
     });
 }
 
-void EventRegionContext::copyInteractionRegionsToEventRegion()
+void EventRegionContext::copyInteractionRegionsToEventRegion(float minimumCornerRadius)
 {
+    convertGuardContainersToInterationIfNeeded(minimumCornerRadius);
     removeSuperfluousInteractionRegions();
     shrinkWrapInteractionRegions();
     m_eventRegion.appendInteractionRegions(m_interactionRegions);
@@ -382,6 +408,9 @@ EventRegion::EventRegion(Region&& region
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     , Vector<WebCore::InteractionRegion> interactionRegions
 #endif
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    , WebCore::Region scrollOverlayRegion
+#endif
     )
     : m_region(WTFMove(region))
 #if ENABLE(TOUCH_ACTION_REGIONS)
@@ -397,12 +426,15 @@ EventRegion::EventRegion(Region&& region
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     , m_interactionRegions(WTFMove(interactionRegions))
 #endif
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    , m_scrollOverlayRegion(WTFMove(scrollOverlayRegion))
+#endif
 {
 }
 
-void EventRegion::unite(const Region& region, const RenderStyle& style, bool overrideUserModifyIsEditable)
+void EventRegion::unite(const Region& region, RenderObject& renderer, const RenderStyle& style, bool overrideUserModifyIsEditable)
 {
-    if (style.usedPointerEvents() == PointerEvents::None)
+    if (renderer.usedPointerEvents() == PointerEvents::None)
         return;
 
     m_region.unite(region);
@@ -424,7 +456,11 @@ void EventRegion::unite(const Region& region, const RenderStyle& style, bool ove
     UNUSED_PARAM(overrideUserModifyIsEditable);
 #endif
 
-#if !ENABLE(TOUCH_ACTION_REGIONS) && !ENABLE(WHEEL_EVENT_REGIONS) && !ENABLE(EDITABLE_REGION)
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    uniteScrollOverlayRegion(region, style);
+#endif
+
+#if !ENABLE(TOUCH_ACTION_REGIONS) && !ENABLE(WHEEL_EVENT_REGIONS) && !ENABLE(EDITABLE_REGION) &&!ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     UNUSED_PARAM(style);
 #endif
 }
@@ -543,6 +579,14 @@ OptionSet<TouchAction> EventRegion::touchActionsForPoint(const IntPoint& point) 
         return { TouchAction::Auto };
 
     return actions;
+}
+#endif
+
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+void EventRegion::uniteScrollOverlayRegion(const Region& region, const RenderStyle& style)
+{
+    if (style.hasAutoSpecifiedZIndex() || style.specifiedZIndex() > 0)
+        m_scrollOverlayRegion.unite(region);
 }
 #endif
 

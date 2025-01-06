@@ -44,6 +44,8 @@
 #include <wtf/SmallSet.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 { namespace Air {
 
 namespace {
@@ -485,7 +487,7 @@ protected:
 
     using IndexTypeSet = SmallSet<IndexType, IntHash<IndexType>>;
 
-    HashMap<IndexType, IndexTypeSet, DefaultHash<IndexType>, WTF::UnsignedWithZeroKeyHashTraits<IndexType>> m_biases;
+    UncheckedKeyHashMap<IndexType, IndexTypeSet, DefaultHash<IndexType>, WTF::UnsignedWithZeroKeyHashTraits<IndexType>> m_biases;
 
     // Instead of keeping track of the move instructions, we just keep their operands around and use the index
     // in the vector as the "identifier" for the move.
@@ -1967,16 +1969,22 @@ private:
                 // complete register allocation. So, we record this before starting.
                 bool mayBeCoalescable = allocator.mayBeCoalescable(inst);
 
-                // Move32 is cheaper if we know that it's equivalent to a Move in x86_64. It's
-                // equivalent if the destination's high bits are not observable or if the source's high
-                // bits are all zero. Note that we don't have the opposite optimization for other
-                // architectures, which may prefer Move over Move32, because Move is canonical already.
                 if constexpr (isX86_64()) {
-                    if (bank == GP && inst.kind.opcode == Move
-                        && inst.args[0].isTmp() && inst.args[1].isTmp()) {
-                        if (m_tmpWidth.useWidth(inst.args[1].tmp()) <= Width32
-                            || m_tmpWidth.defWidth(inst.args[0].tmp()) <= Width32)
+                    // Move32 is cheaper if we know that it's equivalent to a Move in x86_64. It's
+                    // equivalent if the destination's high bits are not observable or if the source's high
+                    // bits are all zero.
+                    if (bank == GP && inst.kind.opcode == Move && inst.args[0].isTmp() && inst.args[1].isTmp()) {
+                        if (m_tmpWidth.useWidth(inst.args[1].tmp()) <= Width32 || m_tmpWidth.defWidth(inst.args[0].tmp()) <= Width32)
                             inst.kind.opcode = Move32;
+                    }
+                }
+                if constexpr (isARM64()) {
+                    // On the other hand, on ARM64, Move is cheaper than Move32. We would like to use Move instead of Move32.
+                    // Move32 on ARM64 is explicitly selected in B3LowerToAir for ZExt32 for example. But using ZDef information
+                    // here can optimize it from Move32 to Move.
+                    if (bank == GP && inst.kind.opcode == Move32 && inst.args[0].isTmp() && inst.args[1].isTmp()) {
+                        if (m_tmpWidth.defWidth(inst.args[0].tmp()) <= Width32)
+                            inst.kind.opcode = Move;
                     }
                 }
 
@@ -2022,7 +2030,7 @@ private:
     template<Bank bank, typename AllocatorType>
     void addSpillAndFill(const AllocatorType& allocator, BitVector& unspillableTmps)
     {
-        HashMap<Tmp, StackSlot*> stackSlots;
+        UncheckedKeyHashMap<Tmp, StackSlot*> stackSlots;
         for (Tmp tmp : allocator.spilledTmps()) {
             // All the spilled values become unspillable.
             dataLogLnIf(traceDebug, "Add unspillable tmp due to spill: ", tmp);
@@ -2202,6 +2210,7 @@ private:
                         break;
                     }
 
+                    auto oldTmp = tmp;
                     auto newTmp = m_code.newTmp(bank);
                     dataLogLnIf(traceDebug, "Add unspillable tmp since we introduce it during spill (2): ", tmp, " -> ", newTmp);
                     tmp = newTmp;
@@ -2211,10 +2220,33 @@ private:
                         return;
 
                     Arg arg = Arg::stack(stackSlotEntry->value);
-                    if (Arg::isAnyUse(role))
-                        insertionSet.insert(instIndex, move, inst.origin, arg, tmp);
-                    if (Arg::isAnyDef(role))
+                    if (Arg::isAnyUse(role)) {
+                        auto tryRematerialize = [&]() {
+                            if constexpr (bank == GP) {
+                                auto oldIndex = AbsoluteTmpMapper<bank>::absoluteIndex(oldTmp);
+                                if (m_useCounts.isConstDef<bank>(oldIndex)) {
+                                    int64_t value = m_useCounts.constant<bank>(oldIndex);
+                                    if (Arg::isValidImmForm(value) && isValidForm(Move, Arg::Imm, Arg::Tmp)) {
+                                        insertionSet.insert(instIndex, Move, inst.origin, Arg::imm(value), tmp);
+                                        return true;
+                                    }
+                                    if (isValidForm(Move, Arg::BigImm, Arg::Tmp)) {
+                                        insertionSet.insert(instIndex, Move, inst.origin, Arg::bigImm(value), tmp);
+                                        return true;
+                                    }
+                                }
+                            }
+                            return false;
+                        };
+
+                        if (!tryRematerialize())
+                            insertionSet.insert(instIndex, move, inst.origin, arg, tmp);
+                    }
+
+                    if (Arg::isAnyDef(role)) {
+                        // FIXME: When nobody is using admitsStack's spill result, we can also skip def.
                         insertionSet.insert(instIndex + 1, move, inst.origin, tmp, arg);
+                    }
                 });
             }
             insertionSet.execute(block);
@@ -2247,5 +2279,7 @@ void allocateRegistersByGraphColoring(Code& code)
 }
 
 } } } // namespace JSC::B3::Air
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(B3_JIT)

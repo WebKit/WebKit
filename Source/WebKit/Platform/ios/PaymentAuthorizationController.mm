@@ -29,8 +29,9 @@
 #if USE(PASSKIT) && PLATFORM(IOS_FAMILY)
 
 #import "WKPaymentAuthorizationDelegate.h"
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+
 #import <pal/cocoa/PassKitSoftLink.h>
 
 @interface WKPaymentAuthorizationControllerDelegate : WKPaymentAuthorizationDelegate <PKPaymentAuthorizationControllerDelegate, PKPaymentAuthorizationControllerPrivateDelegate>
@@ -39,13 +40,16 @@
 
 @end
 
-@implementation WKPaymentAuthorizationControllerDelegate
+@implementation WKPaymentAuthorizationControllerDelegate {
+    __weak UIWindow *_presentingWindow;
+}
 
 - (instancetype)initWithRequest:(PKPaymentRequest *)request presenter:(WebKit::PaymentAuthorizationPresenter&)presenter
 {
     if (!(self = [super _initWithRequest:request presenter:presenter]))
         return nil;
 
+    _presentingWindow = presenter.checkedClient()->presentingWindowForPaymentAuthorization(presenter);
     return self;
 }
 
@@ -87,7 +91,7 @@
 
 - (UIWindow *)presentationWindowForPaymentAuthorizationController:(PKPaymentAuthorizationController *)controller
 {
-    return nil;
+    return _presentingWindow;
 }
 
 #if HAVE(PASSKIT_COUPON_CODE)
@@ -122,7 +126,7 @@
 - (NSString *)presentationSceneBundleIdentifierForPaymentAuthorizationController:(PKPaymentAuthorizationController *)controller
 {
     if (!_presenter)
-        return WebCore::applicationBundleIdentifier();
+        return applicationBundleIdentifier();
     return nsStringNilIfEmpty(_presenter->bundleIdentifier());
 }
 #endif
@@ -130,6 +134,11 @@
 @end
 
 namespace WebKit {
+
+Ref<PaymentAuthorizationController> PaymentAuthorizationController::create(PaymentAuthorizationPresenter::Client& client, PKPaymentRequest *request)
+{
+    return adoptRef(*new PaymentAuthorizationController(client, request));
+}
 
 PaymentAuthorizationController::PaymentAuthorizationController(PaymentAuthorizationPresenter::Client& client, PKPaymentRequest *request)
     : PaymentAuthorizationPresenter(client)

@@ -36,7 +36,6 @@
 #include "LibWebRTCAudioModule.h"
 #include "Logging.h"
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
-#include <wtf/FastMalloc.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 

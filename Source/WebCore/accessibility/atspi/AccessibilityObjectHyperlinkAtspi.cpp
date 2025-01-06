@@ -84,7 +84,7 @@ unsigned AccessibilityObjectAtspi::offsetInParent() const
     int index = -1;
     const auto& children = parent->children();
     for (const auto& child : children) {
-        if (child->accessibilityIsIgnored())
+        if (child->isIgnored())
             continue;
 
         auto* wrapper = child->wrapper();

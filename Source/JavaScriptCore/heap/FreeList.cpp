@@ -41,7 +41,7 @@ void FreeList::clear()
 {
     m_intervalStart = nullptr;
     m_intervalEnd = nullptr;
-    m_nextInterval = bitwise_cast<FreeCell*>(static_cast<uintptr_t>(1));
+    m_nextInterval = std::bit_cast<FreeCell*>(static_cast<uintptr_t>(1));
     m_secret = 0;
     m_originalSize = 0;
 }
@@ -56,24 +56,6 @@ void FreeList::initialize(FreeCell* start, uint64_t secret, unsigned bytes)
     m_nextInterval = start;
     FreeCell::advance(m_secret, m_nextInterval, m_intervalStart, m_intervalEnd);
     m_originalSize = bytes;
-}
-
-bool FreeList::contains(HeapCell* target) const
-{
-    char* targetPtr = bitwise_cast<char*>(target);
-    if (m_intervalStart <= targetPtr && targetPtr < m_intervalEnd)
-        return true;
-
-    FreeCell* candidate = nextInterval();
-    while (!isSentinel(candidate)) {
-        char* start;
-        char* end;
-        FreeCell::advance(m_secret, candidate, start, end);
-        if (start <= targetPtr && targetPtr < end)
-            return true;
-    }
-
-    return false;
 }
 
 void FreeList::dump(PrintStream& out) const

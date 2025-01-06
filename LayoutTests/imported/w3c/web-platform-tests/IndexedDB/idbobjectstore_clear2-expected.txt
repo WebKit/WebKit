@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.clear() - clear removes all records from an index
-

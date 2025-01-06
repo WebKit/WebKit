@@ -82,6 +82,13 @@ class FramebufferState final : angle::NonCopyable
     const FramebufferAttachment *getDepthStencilAttachment() const;
     const FramebufferAttachment *getReadPixelsAttachment(GLenum readFormat) const;
 
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+    // GL_WEBKIT_explicit_resolve_target
+    const FramebufferAttachment *getColorResolveAttachment(size_t colorAttachment) const;
+    const FramebufferAttachment *getDepthResolveAttachment() const;
+    const FramebufferAttachment *getStencilResolveAttachment() const;
+#endif
+
     const DrawBuffersVector<GLenum> &getDrawBufferStates() const { return mDrawBufferStates; }
     DrawBufferMask getEnabledDrawBuffers() const { return mEnabledDrawBuffers; }
     GLenum getReadBufferState() const { return mReadBufferState; }
@@ -111,6 +118,7 @@ class FramebufferState final : angle::NonCopyable
 
     bool hasDepth() const;
     bool hasStencil() const;
+    GLuint getStencilBitCount() const;
 
     bool hasExternalTextureAttachment() const;
     bool hasYUVAttachment() const;
@@ -161,6 +169,13 @@ class FramebufferState final : angle::NonCopyable
     DrawBuffersVector<FramebufferAttachment> mColorAttachments;
     FramebufferAttachment mDepthAttachment;
     FramebufferAttachment mStencilAttachment;
+
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+    // GL_WEBKIT_explicit_resolve_target;
+    DrawBuffersVector<FramebufferAttachment> mColorResolveAttachments;
+    FramebufferAttachment mDepthResolveAttachment;
+    FramebufferAttachment mStencilResolveAttachment;
+#endif
 
     // Tracks all the color buffers attached to this FramebufferDesc
     DrawBufferMask mColorAttachmentsMask;
@@ -244,6 +259,16 @@ class Framebuffer final : public angle::ObserverInterface,
                                 GLint baseViewIndex);
     void resetAttachment(const Context *context, GLenum binding);
 
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+    // GL_WEBKIT_explicit_resolve_target
+    void setAttachmentResolve(const Context *context,
+                              GLenum type,
+                              GLenum binding,
+                              const ImageIndex &textureIndex,
+                              FramebufferAttachmentObject *resource);
+    void resetAttachmentResolve(const Context *context, GLenum binding);
+#endif
+
     bool detachTexture(Context *context, TextureID texture);
     bool detachRenderbuffer(Context *context, RenderbufferID renderbuffer);
 
@@ -258,9 +283,16 @@ class Framebuffer final : public angle::ObserverInterface,
     const FramebufferAttachment *getFirstColorAttachment() const;
     const FramebufferAttachment *getFirstNonNullAttachment() const;
 
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+    // GL_WEBKIT_explicit_resolve_target
+    const FramebufferAttachment *getColorResolveAttachment(size_t colorAttachment) const;
+    const FramebufferAttachment *getDepthResolveAttachment() const;
+    const FramebufferAttachment *getStencilResolveAttachment() const;
+#endif
+
     const DrawBuffersVector<FramebufferAttachment> &getColorAttachments() const
     {
-        return mState.mColorAttachments;
+        return mState.getColorAttachments();
     }
 
     const FramebufferState &getState() const { return mState; }
@@ -285,14 +317,13 @@ class Framebuffer final : public angle::ObserverInterface,
     GLenum getReadBufferState() const;
     void setReadBuffer(GLenum buffer);
 
-    size_t getNumColorAttachments() const;
-    bool hasDepth() const;
-    bool hasStencil() const;
+    size_t getNumColorAttachments() const { return mState.mColorAttachments.size(); }
+    bool hasDepth() const { return mState.hasDepth(); }
+    bool hasStencil() const { return mState.hasStencil(); }
+    GLuint getStencilBitCount() const { return mState.getStencilBitCount(); }
 
-    bool hasExternalTextureAttachment() const;
-    bool hasYUVAttachment() const;
-
-    bool usingExtendedDrawBuffers() const;
+    bool hasExternalTextureAttachment() const { return mState.hasExternalTextureAttachment(); }
+    bool hasYUVAttachment() const { return mState.hasYUVAttachment(); }
 
     // This method calls checkStatus.
     int getSamples(const Context *context) const;
@@ -520,6 +551,18 @@ class Framebuffer final : public angle::ObserverInterface,
                           GLuint baseViewIndex,
                           bool isMultiview,
                           GLsizei samples);
+
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+    // GL_WEBKIT_explicit_resolve_target
+    void updateAttachmentResolve(const Context *context,
+                                 FramebufferAttachment *attachment,
+                                 size_t dirtyBit,
+                                 angle::ObserverBinding *onDirtyBinding,
+                                 GLenum type,
+                                 GLenum binding,
+                                 const ImageIndex &textureIndex,
+                                 FramebufferAttachmentObject *resource);
+#endif
 
     void markAttachmentsInitialized(const DrawBufferMask &color, bool depth, bool stencil);
 

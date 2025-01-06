@@ -46,6 +46,8 @@ public:
 private:
     RTCDataChannelRemoteManagerProxy();
 
+    Ref<WorkQueue> protectedQueue();
+
     // IPC::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 

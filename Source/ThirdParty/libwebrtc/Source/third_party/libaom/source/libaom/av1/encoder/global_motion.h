@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -14,8 +14,8 @@
 
 #include "aom/aom_integer.h"
 #include "aom_dsp/flow_estimation/flow_estimation.h"
-#include "aom_scale/yv12config.h"
-#include "aom_util/aom_thread.h"
+#include "aom_util/aom_pthread.h"
+#include "av1/encoder/enc_enums.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,11 +57,11 @@ typedef struct {
   // next_frame_to_process[i] will hold the count of next reference frame to be
   // processed in the direction 'i'.
   int8_t next_frame_to_process[MAX_DIRECTIONS];
-} JobInfo;
+} GlobalMotionJobInfo;
 
 typedef struct {
   // Data related to assigning jobs for global motion multi-threading.
-  JobInfo job_info;
+  GlobalMotionJobInfo job_info;
 
 #if CONFIG_MULTITHREAD
   // Mutex lock used while dispatching jobs.
@@ -97,57 +97,12 @@ void av1_compute_feature_segmentation_map(uint8_t *segment_map, int width,
                                           int height, int *inliers,
                                           int num_inliers);
 
-extern const int error_measure_lut[513];
-
-static INLINE int error_measure(int err) {
-  return error_measure_lut[256 + err];
-}
-
-#if CONFIG_AV1_HIGHBITDEPTH
-static INLINE int highbd_error_measure(int err, int bd) {
-  const int b = bd - 8;
-  const int bmask = (1 << b) - 1;
-  const int v = (1 << b);
-
-  // Split error into two parts and do an interpolated table lookup
-  // To compute the table index and interpolation value, we want to calculate
-  // the quotient and remainder of err / 2^b. But it is very important that
-  // the division must round down, and the remainder must be positive,
-  // ie. in the range [0, 2^b).
-  //
-  // In C, the >> and & operators do what we want, but the / and % operators
-  // give the wrong results for negative inputs. So we must use >> and & here.
-  //
-  // For example, if bd == 10 and err == -5, compare the results:
-  //       (-5) >> 2 = -2, (-5) & 3 =  3
-  //   vs. (-5) / 4  = -1, (-5) % 4 = -1
-  const int e1 = err >> b;
-  const int e2 = err & bmask;
-  return error_measure_lut[256 + e1] * (v - e2) +
-         error_measure_lut[257 + e1] * e2;
-}
-#endif  // CONFIG_AV1_HIGHBITDEPTH
-
-// Returns the error between the frame described by 'ref' and the frame
-// described by 'dst'.
-int64_t av1_frame_error(int use_hbd, int bd, const uint8_t *ref, int stride,
-                        uint8_t *dst, int p_width, int p_height, int p_stride);
-
 int64_t av1_segmented_frame_error(int use_hbd, int bd, const uint8_t *ref,
                                   int ref_stride, uint8_t *dst, int dst_stride,
                                   int p_width, int p_height,
                                   uint8_t *segment_map, int segment_map_stride);
 
-// Returns the error between the result of applying motion 'wm' to the frame
-// described by 'ref' and the frame described by 'dst'.
-int64_t av1_warp_error(WarpedMotionParams *wm, int use_hbd, int bd,
-                       const uint8_t *ref, int ref_width, int ref_height,
-                       int ref_stride, uint8_t *dst, int dst_stride, int p_col,
-                       int p_row, int p_width, int p_height, int subsampling_x,
-                       int subsampling_y, int64_t best_error,
-                       uint8_t *segment_map, int segment_map_stride);
-
-// Returns the av1_warp_error between "dst" and the result of applying the
+// Returns the warp error between "dst" and the result of applying the
 // motion params that result from fine-tuning "wm" to "ref". Note that "wm" is
 // modified in place.
 int64_t av1_refine_integerized_param(

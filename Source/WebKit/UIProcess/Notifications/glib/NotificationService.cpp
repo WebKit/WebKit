@@ -39,22 +39,24 @@
 #include <wtf/SafeStrerror.h>
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
+#include <wtf/glib/Application.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/Sandbox.h>
 #include <wtf/text/CString.h>
 
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #if USE(CAIRO)
 #include <WebCore/RefPtrCairo.h>
 #include <cairo.h>
 #elif USE(SKIA)
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkPixmap.h>
-IGNORE_CLANG_WARNINGS_END
 #include <skia/core/SkStream.h>
 #include <skia/encode/SkPngEncoder.h>
 #endif
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #if PLATFORM(GTK)
 #include <WebCore/GtkVersioning.h>
@@ -63,6 +65,15 @@ IGNORE_CLANG_WARNINGS_END
 #if HAVE(GDESKTOPAPPINFO)
 #include <gio/gdesktopappinfo.h>
 #endif
+
+namespace WebKit {
+class IconCache;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::IconCache> : std::true_type { };
+}
 
 namespace WebKit {
 
@@ -111,7 +122,7 @@ private:
 #endif
 
 class IconCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(IconCache);
 public:
     IconCache()
         : m_timer(RunLoop::main(), this, &IconCache::timerFired)
@@ -294,6 +305,8 @@ static IconCache& iconCache()
     return *cache;
 }
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NotificationService);
+
 NotificationService& NotificationService::singleton()
 {
     static std::once_flag onceFlag;
@@ -361,14 +374,13 @@ void NotificationService::processCapabilities(GVariant* variant)
     }
 }
 
-static const char* applicationIcon(const char* applicationID)
+static const char* applicationIcon()
 {
     static std::optional<CString> appIcon;
 #if HAVE(GDESKTOPAPPINFO)
     if (!appIcon) {
-        appIcon = [applicationID]() -> CString {
-            if (!applicationID)
-                return { };
+        appIcon = []() -> CString {
+            const char* applicationID = WTF::applicationID().data();
 
 #if PLATFORM(GTK)
             if (auto* iconTheme = gtk_icon_theme_get_for_display(gdk_display_get_default())) {
@@ -413,7 +425,7 @@ bool NotificationService::showNotification(const WebNotification& notification, 
         if (tag.isEmpty())
             return Notification();
 
-        WebNotificationIdentifier notificationID;
+        std::optional<WebNotificationIdentifier> notificationID;
         for (const auto& it : m_notifications) {
             if (it.value.tag == tag) {
                 notificationID = it.key;
@@ -421,7 +433,7 @@ bool NotificationService::showNotification(const WebNotification& notification, 
             }
         }
 
-        return notificationID ? m_notifications.take(notificationID) : Notification({ 0, { }, tag, { } });
+        return notificationID ? m_notifications.take(*notificationID) : Notification({ 0, { }, tag, { } });
     };
 
     auto addResult = m_notifications.add(notification.identifier(), findNotificationByTag(notification.tag()));
@@ -458,14 +470,9 @@ bool NotificationService::showNotification(const WebNotification& notification, 
             g_variant_builder_add(&actionsBuilder, "s", _("Acknowledge"));
         }
 
-        const char* applicationID = nullptr;
-        if (auto* app = g_application_get_default())
-            applicationID = g_application_get_application_id(app);
-
         GVariantBuilder hintsBuilder;
         g_variant_builder_init(&hintsBuilder, G_VARIANT_TYPE("a{sv}"));
-        if (applicationID)
-            g_variant_builder_add(&hintsBuilder, "{sv}", "desktop-entry", g_variant_new_string(applicationID));
+        g_variant_builder_add(&hintsBuilder, "{sv}", "desktop-entry", g_variant_new_string(WTF::applicationID().data()));
         if (m_capabilities.contains(Capabilities::Persistence) && notification.isPersistentNotification())
             g_variant_builder_add(&hintsBuilder, "{sv}", "resident", g_variant_new_boolean(TRUE));
         if (resources && m_capabilities.contains(Capabilities::IconStatic)) {
@@ -481,7 +488,7 @@ bool NotificationService::showNotification(const WebNotification& notification, 
         if (m_capabilities.contains(Capabilities::Body))
             body = notification.body().utf8();
 
-        const char* appIcon = applicationIcon(applicationID);
+        const char* appIcon = applicationIcon();
 
         g_dbus_proxy_call(m_proxy.get(), "Notify", g_variant_new(
             "(susssasa{sv}i)",
@@ -549,24 +556,24 @@ void NotificationService::setNotificationID(WebNotificationIdentifier webNotific
     it->value.id = notificationID;
 }
 
-WebNotificationIdentifier NotificationService::findNotification(uint32_t notificationID)
+std::optional<WebNotificationIdentifier> NotificationService::findNotification(uint32_t notificationID)
 {
     for (const auto& it : m_notifications) {
         if (it.value.id == notificationID)
             return it.key;
     }
 
-    return  { };
+    return std::nullopt;
 }
 
-WebNotificationIdentifier NotificationService::findNotification(const String& notificationID)
+std::optional<WebNotificationIdentifier> NotificationService::findNotification(const String& notificationID)
 {
     for (const auto& it : m_notifications) {
         if (it.value.portalID == notificationID)
             return it.key;
     }
 
-    return { };
+    return std::nullopt;
 }
 
 void NotificationService::handleSignal(GDBusProxy* proxy, char*, char* signal, GVariant* parameters, NotificationService* service)
@@ -582,8 +589,8 @@ void NotificationService::handleSignal(GDBusProxy* proxy, char*, char* signal, G
             g_variant_get(parameters, "(&s&s@av)", &id, &action, nullptr);
             if (!g_strcmp0(action, "default")) {
                 if (auto notificationID = service->findNotification(String::fromUTF8(id))) {
-                    service->didClickNotification(notificationID);
-                    service->didCloseNotification(notificationID);
+                    service->didClickNotification(*notificationID);
+                    service->didCloseNotification(*notificationID);
                 }
             }
         } else {
@@ -596,24 +603,24 @@ void NotificationService::handleSignal(GDBusProxy* proxy, char*, char* signal, G
     }
 }
 
-void NotificationService::didClickNotification(WebNotificationIdentifier notificationID)
+void NotificationService::didClickNotification(std::optional<WebNotificationIdentifier> notificationID)
 {
     if (!notificationID)
         return;
 
     for (auto* observer : m_observers)
-        observer->didClickNotification(notificationID);
+        observer->didClickNotification(*notificationID);
 }
 
-void NotificationService::didCloseNotification(WebNotificationIdentifier notificationID)
+void NotificationService::didCloseNotification(std::optional<WebNotificationIdentifier> notificationID)
 {
     if (!notificationID)
         return;
 
     for (auto* observer : m_observers)
-        observer->didCloseNotification(notificationID);
+        observer->didCloseNotification(*notificationID);
 
-    auto notification = m_notifications.take(notificationID);
+    auto notification = m_notifications.take(*notificationID);
     if (!notification.iconURL.isEmpty())
         iconCache().unuseIcon(notification.iconURL);
 }

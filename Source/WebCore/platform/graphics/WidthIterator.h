@@ -23,9 +23,10 @@
 #define WidthIterator_h
 
 #include "GlyphBuffer.h"
-#include "TextDirection.h"
+#include "WritingMode.h"
 #include <unicode/umachine.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ struct SmallCapsState;
 using CharactersTreatedAsSpace = Vector<OriginalAdvancesForCharacterTreatedAsSpace, 64>;
 
 struct WidthIterator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WidthIterator);
 public:
     WidthIterator(const FontCascade&, const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
 

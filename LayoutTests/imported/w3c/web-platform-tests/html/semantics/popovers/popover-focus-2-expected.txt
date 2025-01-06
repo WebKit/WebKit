@@ -3,8 +3,8 @@ Invoker  after
 Show popover
 Toggle popover Other focusable element
 
-FAIL Popover focus navigation assert_true: popover1 should be invoked by invoker1 expected true got false
-FAIL Circular reference tab navigation assert_equals: circular reference: Step 1 (backwards) expected Element node <button id="circular0" popovertarget="popover4" tabindex=... but got Element node <button id="button4" tabindex="0">Button4</button>
+PASS Popover focus navigation
+PASS Circular reference tab navigation
 PASS Popover focus returns when popover is hidden by invoker
 PASS Popover focus only returns to invoker when focus is within the popover
 

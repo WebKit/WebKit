@@ -33,7 +33,7 @@ static bool testFinished;
 
 static NSURL *testURL()
 {
-    static RetainPtr<NSURL> url = [[NSBundle mainBundle] URLForResource:@"WillPerformClientRedirectToURLCrash" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    static RetainPtr<NSURL> url = [NSBundle.test_resourcesBundle URLForResource:@"WillPerformClientRedirectToURLCrash" withExtension:@"html"];
     return url.get();
 }
 

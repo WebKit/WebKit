@@ -29,46 +29,24 @@
 
 #include "Element.h"
 #include "ElementData.h"
-#include <wtf/UnalignedAccess.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-// Do comparisons 8 bytes-at-a-time on architectures where it's safe.
-#if (CPU(X86_64) || CPU(ARM64)) && !ASAN_ENABLED
-ALWAYS_INLINE bool equalAttributes(const uint8_t* a, const uint8_t* b, unsigned bytes)
-{
-    unsigned length = bytes >> 3;
-    for (unsigned i = 0; i != length; ++i) {
-        if (WTF::unalignedLoad<uint64_t>(a) != WTF::unalignedLoad<uint64_t>(b))
-            return false;
-
-        a += sizeof(uint64_t);
-        b += sizeof(uint64_t);
-    }
-
-    ASSERT(!(bytes & 4));
-    ASSERT(!(bytes & 2));
-    ASSERT(!(bytes & 1));
-
-    return true;
-}
-#else
-ALWAYS_INLINE bool equalAttributes(const uint8_t* a, const uint8_t* b, unsigned bytes)
-{
-    return !memcmp(a, b, bytes);
-}
-#endif
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentSharedObjectPool);
 
 struct DocumentSharedObjectPool::ShareableElementDataHash {
     static unsigned hash(const Ref<ShareableElementData>& data)
     {
-        return computeHash(std::span<const Attribute> { data->m_attributeArray, data->length() });
+        return computeHash(data->span());
     }
     static bool equal(const Ref<ShareableElementData>& a, const Ref<ShareableElementData>& b)
     {
-        if (a->length() != b->length())
-            return false;
-        return equalAttributes(reinterpret_cast<const uint8_t*>(a->m_attributeArray), reinterpret_cast<const uint8_t*>(b->m_attributeArray), a->length() * sizeof(Attribute));
+        // We need to disable type checking because std::has_unique_object_representations_v<Attribute>
+        // return false. Attribute contains pointers but memcmp() is safe because those pointers were
+        // atomized.
+        return equalSpans<WTF::IgnoreTypeChecks::Yes>(a->span(), b->span());
     }
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
@@ -81,9 +59,10 @@ struct AttributeSpanTranslator {
 
     static bool equal(const Ref<ShareableElementData>& a, std::span<const Attribute> b)
     {
-        if (a->length() != b.size())
-            return false;
-        return equalAttributes(reinterpret_cast<const uint8_t*>(a->m_attributeArray), reinterpret_cast<const uint8_t*>(b.data()), b.size() * sizeof(Attribute));
+        // We need to disable type checking because std::has_unique_object_representations_v<Attribute>
+        // return false. Attribute contains pointers but memcmp() is safe because those pointers were
+        // atomized.
+        return equalSpans<WTF::IgnoreTypeChecks::Yes>(a->span(), b);
     }
 
     static void translate(Ref<ShareableElementData>& location, std::span<const Attribute> attributes, unsigned /*hash*/)

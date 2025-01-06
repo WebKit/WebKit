@@ -16,23 +16,25 @@
 #include <vector>
 
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
+#include "api/environment/environment_factory.h"
 #include "modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
 #include "modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
 #include "modules/audio_coding/codecs/g722/audio_decoder_g722.h"
 #include "modules/audio_coding/codecs/g722/audio_encoder_g722.h"
-#include "modules/audio_coding/codecs/ilbc/audio_decoder_ilbc.h"
-#include "modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.h"
 #include "modules/audio_coding/codecs/opus/audio_decoder_opus.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_decoder_pcm16b.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
 #include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
 #include "rtc_base/system/arch.h"
+#include "test/explicit_key_value_config.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
 namespace {
+
+using test::ExplicitKeyValueConfig;
 
 constexpr int kOverheadBytesPerPacket = 50;
 
@@ -309,40 +311,6 @@ class AudioDecoderPcm16BTest : public AudioDecoderTest {
   }
 };
 
-class AudioDecoderIlbcTest : public AudioDecoderTest {
- protected:
-  AudioDecoderIlbcTest() : AudioDecoderTest() {
-    codec_input_rate_hz_ = 8000;
-    frame_size_ = 240;
-    data_length_ = 10 * frame_size_;
-    decoder_ = new AudioDecoderIlbcImpl;
-    RTC_DCHECK(decoder_);
-    AudioEncoderIlbcConfig config;
-    config.frame_size_ms = 30;
-    audio_encoder_.reset(new AudioEncoderIlbcImpl(config, payload_type_));
-  }
-
-  // Overload the default test since iLBC's function WebRtcIlbcfix_NetEqPlc does
-  // not return any data. It simply resets a few states and returns 0.
-  void DecodePlcTest() {
-    InitEncoder();
-    std::unique_ptr<int16_t[]> input(new int16_t[frame_size_]);
-    ASSERT_TRUE(
-        input_audio_.Read(frame_size_, codec_input_rate_hz_, input.get()));
-    rtc::Buffer encoded;
-    size_t enc_len = EncodeFrame(input.get(), frame_size_, &encoded);
-    AudioDecoder::SpeechType speech_type;
-    decoder_->Reset();
-    std::unique_ptr<int16_t[]> output(new int16_t[frame_size_ * channels_]);
-    size_t dec_len = decoder_->Decode(
-        encoded.data(), enc_len, codec_input_rate_hz_,
-        frame_size_ * channels_ * sizeof(int16_t), output.get(), &speech_type);
-    EXPECT_EQ(frame_size_, dec_len);
-    // Simply call DecodePlc and verify that we get 0 as return value.
-    EXPECT_EQ(0U, decoder_->DecodePlc(1, output.get()));
-  }
-};
-
 class AudioDecoderG722Test : public AudioDecoderTest {
  protected:
   AudioDecoderG722Test() : AudioDecoderTest() {
@@ -383,8 +351,8 @@ class AudioDecoderOpusTest
     codec_input_rate_hz_ = opus_sample_rate_hz_;
     frame_size_ = rtc::CheckedDivExact(opus_sample_rate_hz_, 100);
     data_length_ = 10 * frame_size_;
-    decoder_ =
-        new AudioDecoderOpusImpl(opus_num_channels_, opus_sample_rate_hz_);
+    decoder_ = new AudioDecoderOpusImpl(
+        ExplicitKeyValueConfig(""), opus_num_channels_, opus_sample_rate_hz_);
     AudioEncoderOpusConfig config;
     config.frame_size_ms = 10;
     config.sample_rate_hz = opus_sample_rate_hz_;
@@ -392,7 +360,8 @@ class AudioDecoderOpusTest
     config.application = opus_num_channels_ == 1
                              ? AudioEncoderOpusConfig::ApplicationMode::kVoip
                              : AudioEncoderOpusConfig::ApplicationMode::kAudio;
-    audio_encoder_ = AudioEncoderOpus::MakeAudioEncoder(config, payload_type_);
+    audio_encoder_ = AudioEncoderOpus::MakeAudioEncoder(
+        CreateEnvironment(), config, {.payload_type = payload_type_});
     audio_encoder_->OnReceivedOverhead(kOverheadBytesPerPacket);
   }
   const int opus_sample_rate_hz_{std::get<0>(GetParam())};
@@ -414,7 +383,7 @@ TEST_F(AudioDecoderPcmUTest, EncodeDecode) {
 
 namespace {
 int SetAndGetTargetBitrate(AudioEncoder* audio_encoder, int rate) {
-  audio_encoder->OnReceivedUplinkBandwidth(rate, absl::nullopt);
+  audio_encoder->OnReceivedUplinkBandwidth(rate, std::nullopt);
   return audio_encoder->GetTargetBitrate();
 }
 void TestSetAndGetTargetBitratesWithFixedCodec(AudioEncoder* audio_encoder,
@@ -455,21 +424,12 @@ TEST_F(AudioDecoderPcm16BTest, SetTargetBitrate) {
                                             codec_input_rate_hz_ * 16);
 }
 
-TEST_F(AudioDecoderIlbcTest, EncodeDecode) {
-  int tolerance = 6808;
-  double mse = 2.13e6;
-  int delay = 80;  // Delay from input to output.
-  EncodeDecodeTest(500, tolerance, mse, delay);
-  ReInitTest();
-  EXPECT_TRUE(decoder_->HasDecodePlc());
-  DecodePlcTest();
-}
-
-TEST_F(AudioDecoderIlbcTest, SetTargetBitrate) {
-  TestSetAndGetTargetBitratesWithFixedCodec(audio_encoder_.get(), 13333);
-}
-
+// TODO(bugs.webrtc.org/345525069): Either fix/enable or remove G722.
+#if defined(__has_feature) && __has_feature(undefined_behavior_sanitizer)
+TEST_F(AudioDecoderG722Test, DISABLED_EncodeDecode) {
+#else
 TEST_F(AudioDecoderG722Test, EncodeDecode) {
+#endif
   int tolerance = 6176;
   double mse = 238630.0;
   int delay = 22;  // Delay from input to output.
@@ -482,7 +442,12 @@ TEST_F(AudioDecoderG722Test, SetTargetBitrate) {
   TestSetAndGetTargetBitratesWithFixedCodec(audio_encoder_.get(), 64000);
 }
 
+// TODO(bugs.webrtc.org/345525069): Either fix/enable or remove G722.
+#if defined(__has_feature) && __has_feature(undefined_behavior_sanitizer)
+TEST_F(AudioDecoderG722StereoTest, DISABLED_EncodeDecode) {
+#else
 TEST_F(AudioDecoderG722StereoTest, EncodeDecode) {
+#endif
   int tolerance = 6176;
   int channel_diff_tolerance = 0;
   double mse = 238630.0;

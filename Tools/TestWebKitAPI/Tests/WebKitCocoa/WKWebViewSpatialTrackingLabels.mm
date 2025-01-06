@@ -46,13 +46,9 @@ TEST(WKWebView, DefaultSTSLabel)
     };
 
     auto testDefaultSTSLabelEventually = [&](auto test) {
-        int tries = 0;
-        do {
-            if (test(getDefaultSTSLabel()))
-                break;
-
-            TestWebKitAPI::Util::runFor(0.1_s);
-        } while (++tries <= 100);
+        TestWebKitAPI::Util::waitFor([&] {
+            return test(getDefaultSTSLabel());
+        });
     };
 
     testDefaultSTSLabelEventually([](auto* label) { return ![label isEqualToString:@""]; });

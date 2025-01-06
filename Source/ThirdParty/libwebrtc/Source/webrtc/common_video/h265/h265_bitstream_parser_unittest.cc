@@ -105,7 +105,7 @@ TEST(H265BitstreamParserTest, ReportsNoQpWithOnlyParsedPpsAndSpsSlices) {
 TEST(H265BitstreamParserTest, ReportsLastSliceQpForImageSlices) {
   H265BitstreamParser h265_parser;
   h265_parser.ParseBitstream(kH265BitstreamChunk);
-  absl::optional<int> qp = h265_parser.GetLastSliceQp();
+  std::optional<int> qp = h265_parser.GetLastSliceQp();
   ASSERT_TRUE(qp.has_value());
   EXPECT_EQ(34, *qp);
 
@@ -119,16 +119,16 @@ TEST(H265BitstreamParserTest, ReportsLastSliceQpForImageSlices) {
 TEST(H265BitstreamParserTest, ReportsLastSliceQpFromShortTermReferenceSlices) {
   H265BitstreamParser h265_parser;
   h265_parser.ParseBitstream(kH265SliceStrChunk);
-  absl::optional<int> qp = h265_parser.GetLastSliceQp();
+  std::optional<int> qp = h265_parser.GetLastSliceQp();
   ASSERT_TRUE(qp.has_value());
   EXPECT_EQ(33, *qp);
 }
 
 TEST(H265BitstreamParserTest, PpsIdFromSlice) {
   H265BitstreamParser h265_parser;
-  absl::optional<uint32_t> pps_id =
-      h265_parser.ParsePpsIdFromSliceSegmentLayerRbsp(
-          kH265SliceChunk, sizeof(kH265SliceChunk), H265::NaluType::kTrailR);
+  std::optional<uint32_t> pps_id =
+      h265_parser.ParsePpsIdFromSliceSegmentLayerRbsp(kH265SliceChunk,
+                                                      H265::NaluType::kTrailR);
   ASSERT_TRUE(pps_id);
   EXPECT_EQ(1u, *pps_id);
 }
@@ -136,7 +136,7 @@ TEST(H265BitstreamParserTest, PpsIdFromSlice) {
 TEST(H265BitstreamParserTest, ReportsLastSliceQpInvalidQPSlices) {
   H265BitstreamParser h265_parser;
   h265_parser.ParseBitstream(kH265BitstreamInvalidQPChunk);
-  absl::optional<int> qp = h265_parser.GetLastSliceQp();
+  std::optional<int> qp = h265_parser.GetLastSliceQp();
   ASSERT_FALSE(qp.has_value());
 
   h265_parser.ParseBitstream(kH265BitstreamInvalidQPChunk52);

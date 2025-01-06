@@ -91,7 +91,7 @@ class BuildRequest extends DataModelObject {
 
     buildId() { return this._buildId; }
     createdAt() { return this._createdAt; }
-    async findBuildRequestWithSameRoots()
+    async findBuildRequestWithSameRoots(scheduledRequestIdList = [])
     {
         if (!this.isBuild())
             return null;
@@ -121,7 +121,7 @@ class BuildRequest extends DataModelObject {
                     continue;
                 if (buildRequest.hasCompleted())
                     return buildRequest;
-                if (buildRequest.isScheduled()
+                if ((buildRequest.isScheduled() || scheduledRequestIdList.includes(+buildRequest.id()))
                     && (!scheduledBuildRequest || buildRequest.createdAt() < scheduledBuildRequest.createdAt())) {
                     scheduledBuildRequest = buildRequest;
                 }

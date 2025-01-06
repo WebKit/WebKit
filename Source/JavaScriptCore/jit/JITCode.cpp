@@ -31,6 +31,8 @@
 
 #include <wtf/PrintStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DirectJITCode);
@@ -42,9 +44,7 @@ JITCode::JITCode(JITType jitType, CodePtr<JSEntryPtrTag> code, ShareAttribute sh
 {
 }
 
-JITCode::~JITCode()
-{
-}
+JITCode::~JITCode() = default;
 
 ASCIILiteral JITCode::typeName(JITType jitType)
 {
@@ -242,9 +242,7 @@ DirectJITCode::DirectJITCode(JITCode::CodeRef<JSEntryPtrTag> ref, CodePtr<JSEntr
     ASSERT(m_withArityCheck);
 }
 
-DirectJITCode::~DirectJITCode()
-{
-}
+DirectJITCode::~DirectJITCode() = default;
 
 void DirectJITCode::initializeCodeRefForDFG(JITCode::CodeRef<JSEntryPtrTag> ref, CodePtr<JSEntryPtrTag> withArityCheck)
 {
@@ -281,9 +279,7 @@ NativeJITCode::NativeJITCode(CodeRef<JSEntryPtrTag> ref, JITType jitType, Intrin
     m_intrinsic = intrinsic;
 }
 
-NativeJITCode::~NativeJITCode()
-{
-}
+NativeJITCode::~NativeJITCode() = default;
 
 CodePtr<JSEntryPtrTag> NativeJITCode::addressForCall(ArityCheckMode arity)
 {
@@ -316,3 +312,4 @@ void printInternal(PrintStream& out, JSC::JITType type)
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

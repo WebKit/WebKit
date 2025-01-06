@@ -86,6 +86,7 @@ enum Token
     kConfigGalaxyA54,
     kConfigGalaxyS22,
     kConfigGalaxyS23,
+    kConfigGalaxyS24,
     kConfigGalaxyQualcomm,
     kConfigFindX6,
     kConfigPineapple,
@@ -176,7 +177,8 @@ constexpr TokenInfo kTokenData[kNumberOfTokens] = {
     {"mac", GPUTestConfig::kConditionMac},
     {"ios", GPUTestConfig::kConditionIOS},
     {"linux", GPUTestConfig::kConditionLinux},
-    {"chromeos", GPUTestConfig::kConditionNone},  // https://anglebug.com/3363 CrOS not supported
+    {"chromeos",
+     GPUTestConfig::kConditionNone},  // https://anglebug.com/42262032 CrOS not supported
     {"android", GPUTestConfig::kConditionAndroid},
     {"nvidia", GPUTestConfig::kConditionNVIDIA},
     {"amd", GPUTestConfig::kConditionAMD},
@@ -205,6 +207,7 @@ constexpr TokenInfo kTokenData[kNumberOfTokens] = {
     {"galaxya54", GPUTestConfig::kConditionGalaxyA54},
     {"galaxys22", GPUTestConfig::kConditionGalaxyS22},
     {"galaxys23", GPUTestConfig::kConditionGalaxyS23},
+    {"galaxys24", GPUTestConfig::kConditionGalaxyS24},
     {"galaxyqualcomm", GPUTestConfig::kConditionGalaxyQualcomm},
     {"findx6", GPUTestConfig::kConditionFindX6},
     {"pineapple", GPUTestConfig::kConditionPineapple},
@@ -537,6 +540,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
             case kConfigGalaxyA54:
             case kConfigGalaxyS22:
             case kConfigGalaxyS23:
+            case kConfigGalaxyS24:
             case kConfigGalaxyQualcomm:
             case kConfigFindX6:
             case kConfigPineapple:

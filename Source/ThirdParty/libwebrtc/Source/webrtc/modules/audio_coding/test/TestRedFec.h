@@ -16,8 +16,10 @@
 
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
+#include "api/environment/environment.h"
+#include "api/neteq/neteq.h"
 #include "common_audio/vad/include/vad.h"
-#include "modules/audio_coding/acm2/acm_receiver.h"
+#include "modules/audio_coding/acm2/acm_resampler.h"
 #include "modules/audio_coding/test/Channel.h"
 #include "modules/audio_coding/test/PCMFile.h"
 #include "test/scoped_key_value_config.h"
@@ -34,16 +36,18 @@ class TestRedFec final {
  private:
   void RegisterSendCodec(const std::unique_ptr<AudioCodingModule>& acm,
                          const SdpAudioFormat& codec_format,
-                         absl::optional<Vad::Aggressiveness> vad_mode,
+                         std::optional<Vad::Aggressiveness> vad_mode,
                          bool use_red);
   void Run();
   void OpenOutFile(int16_t testNumber);
 
   test::ScopedKeyValueConfig field_trials_;
+  const Environment env_;
   const rtc::scoped_refptr<AudioEncoderFactory> encoder_factory_;
   const rtc::scoped_refptr<AudioDecoderFactory> decoder_factory_;
   std::unique_ptr<AudioCodingModule> _acmA;
-  std::unique_ptr<acm2::AcmReceiver> _acm_receiver;
+  std::unique_ptr<NetEq> _neteq;
+  acm2::ResamplerHelper _resampler_helper;
 
   Channel* _channelA2B;
 

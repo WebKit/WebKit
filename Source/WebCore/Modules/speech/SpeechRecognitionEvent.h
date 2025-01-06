@@ -32,7 +32,7 @@ namespace WebCore {
 class SpeechRecognitionResultList;
 
 class SpeechRecognitionEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(SpeechRecognitionEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SpeechRecognitionEvent);
 public:
     struct Init : EventInit {
         uint64_t resultIndex;
@@ -41,6 +41,8 @@ public:
 
     static Ref<SpeechRecognitionEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     static Ref<SpeechRecognitionEvent> create(const AtomString&, uint64_t resultIndex, RefPtr<SpeechRecognitionResultList>&&);
+
+    virtual ~SpeechRecognitionEvent();
 
     uint64_t resultIndex() const { return m_resultIndex; }
     SpeechRecognitionResultList* results() const { return m_results.get(); }

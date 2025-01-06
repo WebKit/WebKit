@@ -10,7 +10,11 @@
 
 #include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
 
+#include <cstdint>
+#include <memory>
+
 #include "absl/memory/memory.h"
+#include "api/rtc_event_log/rtc_event.h"
 
 namespace webrtc {
 

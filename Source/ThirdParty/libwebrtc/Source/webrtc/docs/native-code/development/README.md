@@ -98,12 +98,7 @@ configuration untouched (stored in the args.gn file), do:
 $ gn clean out/Default
 ```
 
-To build the fuzzers residing in the [test/fuzzers][fuzzers] directory, use
-```
-$ gn gen out/fuzzers --args='use_libfuzzer=true optimize_for_fuzzing=true'
-```
-Depending on the fuzzer additional arguments like `is_asan`, `is_msan` or `is_ubsan_security`
-might be required.
+To build the fuzzers residing in the [test/fuzzers][fuzzers-dir] directory, read the instructions at the [fuzzers][fuzzers] page.
 
 See the [GN][gn-doc] documentation for all available options. There are also more
 platform specific tips on the [Android][webrtc-android-development] and
@@ -294,4 +289,5 @@ Target name `turnserver`. Used for unit tests.
 [rfc-5766]: https://tools.ietf.org/html/rfc5766
 [m80-log]: https://webrtc.googlesource.com/src/+log/branch-heads/3987
 [m80]: https://webrtc.googlesource.com/src/+/branch-heads/3987
-[fuzzers]: https://webrtc.googlesource.com/src/+/main/test/fuzzers/
+[fuzzers-dir]: https://webrtc.googlesource.com/src/+/main/test/fuzzers/
+[fuzzers]: https://webrtc.googlesource.com/src/+/main/docs/native-code/development/fuzzers/

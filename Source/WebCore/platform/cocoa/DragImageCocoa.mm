@@ -52,6 +52,8 @@
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(LinkPresentation)
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 IntSize dragImageSize(RetainPtr<NSImage> image)
@@ -334,5 +336,7 @@ DragImageRef createDragImageForColor(const Color& color, const FloatRect&, float
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

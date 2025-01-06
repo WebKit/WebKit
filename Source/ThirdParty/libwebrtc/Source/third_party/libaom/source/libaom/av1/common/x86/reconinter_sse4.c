@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,8 +15,9 @@
 #include "aom/aom_integer.h"
 #include "aom_dsp/blend.h"
 #include "av1/common/blockd.h"
+#include "config/av1_rtcd.h"
 
-static INLINE __m128i calc_mask(const __m128i mask_base, const __m128i s0,
+static inline __m128i calc_mask(const __m128i mask_base, const __m128i s0,
                                 const __m128i s1) {
   const __m128i diff = _mm_abs_epi16(_mm_sub_epi16(s0, s1));
   return _mm_abs_epi16(_mm_add_epi16(mask_base, _mm_srli_epi16(diff, 4)));

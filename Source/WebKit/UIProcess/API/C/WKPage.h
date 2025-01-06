@@ -136,8 +136,6 @@ WK_EXPORT void WKPageSetCustomTextEncodingName(WKPageRef page, WKStringRef encod
 
 WK_EXPORT void WKPageTerminate(WKPageRef page);
 
-WK_EXPORT void WKPageResetProcessState(WKPageRef pageRef);
-
 WK_EXPORT WKStringRef WKPageGetSessionHistoryURLValueType(void);
 WK_EXPORT WKStringRef WKPageGetSessionBackForwardListItemValueType(void);
 
@@ -152,7 +150,10 @@ WK_EXPORT WKTypeRef WKPageCopySessionState(WKPageRef page, void* context, WKPage
 WK_EXPORT void WKPageRestoreFromSessionState(WKPageRef page, WKTypeRef sessionState);
 
 WK_EXPORT double WKPageGetBackingScaleFactor(WKPageRef page);
+
 WK_EXPORT void WKPageSetCustomBackingScaleFactor(WKPageRef page, double customScaleFactor);
+typedef void (*WKPageSetCustomBackingScaleFactorFunction)(void* functionContext);
+WK_EXPORT void WKPageSetCustomBackingScaleFactorWithCallback(WKPageRef page, double customScaleFactor, void* context, WKPageSetCustomBackingScaleFactorFunction completionHandler);
 WK_EXPORT void WKPageClearWheelEventTestMonitor(WKPageRef page);
 
 WK_EXPORT bool WKPageSupportsTextZoom(WKPageRef page);
@@ -234,12 +235,8 @@ WK_EXPORT void WKPageSetPageNavigationClient(WKPageRef page, const WKPageNavigat
 
 WK_EXPORT void WKPageSetPageStateClient(WKPageRef page, WKPageStateClientBase* client);
 
-typedef void (*WKPageRunJavaScriptFunction)(WKSerializedScriptValueRef, WKErrorRef, void*);
-WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void* context, WKPageRunJavaScriptFunction function);
-#ifdef __BLOCKS__
-typedef void (^WKPageRunJavaScriptBlock)(WKSerializedScriptValueRef, WKErrorRef);
-WK_EXPORT void WKPageRunJavaScriptInMainFrame_b(WKPageRef page, WKStringRef script, WKPageRunJavaScriptBlock block);
-#endif
+typedef void (*WKPageEvaluateJavaScriptFunction)(WKTypeRef, WKErrorRef, void*);
+WK_EXPORT void WKPageEvaluateJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void* context, WKPageEvaluateJavaScriptFunction function);
 
 typedef void (*WKPageGetSourceForFrameFunction)(WKStringRef, WKErrorRef, void*);
 WK_EXPORT void WKPageGetSourceForFrame(WKPageRef page, WKFrameRef frame, void* context, WKPageGetSourceForFrameFunction function);

@@ -22,18 +22,20 @@
 #pragma once
 
 #include "SVGGraphicsElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGDefsElement final : public SVGGraphicsElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGDefsElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGDefsElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGDefsElement);
 public:
     static Ref<SVGDefsElement> create(const QualifiedName&, Document&);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGDefsElement, SVGGraphicsElement>;
+
 private:
     SVGDefsElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGDefsElement, SVGGraphicsElement>;
 
     bool isValid() const final;
     bool supportsFocus() const final { return false; }

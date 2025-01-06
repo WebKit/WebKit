@@ -27,7 +27,7 @@ namespace WebCore {
 class HTMLMeterElement;
 
 class RenderMeter final : public RenderBlockFlow {
-    WTF_MAKE_ISO_ALLOCATED(RenderMeter);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMeter);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMeter);
 public:
     RenderMeter(HTMLElement&, RenderStyle&&);

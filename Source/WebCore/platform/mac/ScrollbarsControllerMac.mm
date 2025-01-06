@@ -42,9 +42,13 @@
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NakedPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollbarsController);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollbarsControllerMac);
 
 static ScrollbarThemeMac* macScrollbarTheme()
 {
@@ -862,7 +866,6 @@ void ScrollbarsControllerMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar
     if (!painter)
         return;
 
-    ASSERT(m_horizontalScrollerImpDelegate);
     [m_horizontalScrollerImpDelegate invalidate];
     m_horizontalScrollerImpDelegate = nullptr;
 
@@ -931,23 +934,8 @@ void ScrollbarsControllerMac::notifyContentAreaScrolled(const FloatSize& delta)
         sendContentAreaScrolledSoon(delta);
 }
 
-void ScrollbarsControllerMac::updateScrollerStyle()
+void ScrollbarsControllerMac::updateScrollerImps()
 {
-    if ([m_scrollerImpPair overlayScrollerStateIsLocked]) {
-        m_needsScrollerStyleUpdate = true;
-        return;
-    }
-
-    auto* macTheme = macScrollbarTheme();
-    if (!macTheme) {
-        m_needsScrollerStyleUpdate = false;
-        return;
-    }
-    
-    macTheme->usesOverlayScrollbarsChanged();
-
-    NSScrollerStyle newStyle = [m_scrollerImpPair scrollerStyle];
-
     Scrollbar* verticalScrollbar = scrollableArea().verticalScrollbar();
     if (verticalScrollbar && !verticalScrollbar->isCustomScrollbar()) {
         verticalScrollbar->invalidate();
@@ -967,6 +955,26 @@ void ScrollbarsControllerMac::updateScrollerStyle()
         horizontalScrollbarMac->createScrollerImp(WTFMove(oldHorizontalPainter));
         [m_scrollerImpPair setHorizontalScrollerImp:horizontalScrollbarMac->scrollerImp()];
     }
+}
+
+void ScrollbarsControllerMac::updateScrollerStyle()
+{
+    if ([m_scrollerImpPair overlayScrollerStateIsLocked]) {
+        m_needsScrollerStyleUpdate = true;
+        return;
+    }
+
+    auto* macTheme = macScrollbarTheme();
+    if (!macTheme) {
+        m_needsScrollerStyleUpdate = false;
+        return;
+    }
+
+    macTheme->usesOverlayScrollbarsChanged();
+
+    NSScrollerStyle newStyle = [m_scrollerImpPair scrollerStyle];
+
+    updateScrollerImps();
 
     // The different scrollbar styles have different thicknesses, so we must re-set the
     // frameRect to the new thickness, and the re-layout below will ensure the position
@@ -1030,6 +1038,12 @@ void ScrollbarsControllerMac::sendContentAreaScrolled(const FloatSize& delta)
     [m_scrollerImpPair contentAreaScrolledInDirection:NSMakePoint(delta.width(), delta.height())];
 }
 
+void ScrollbarsControllerMac::scrollbarWidthChanged(WebCore::ScrollbarWidth)
+{
+    updateScrollbarsThickness();
+    updateScrollerImps();
+}
+
 static String scrollbarState(Scrollbar* scrollbar)
 {
     if (!scrollbar)
@@ -1056,6 +1070,9 @@ static String scrollbarState(Scrollbar* scrollbar)
 
     if (scrollerImp.userInterfaceLayoutDirection == NSUserInterfaceLayoutDirectionRightToLeft)
         result.append(",RTL"_s);
+
+    if (scrollerImp.controlSize != NSControlSizeRegular)
+        result.append(",thin"_s);
 
     return result.toString();
 }

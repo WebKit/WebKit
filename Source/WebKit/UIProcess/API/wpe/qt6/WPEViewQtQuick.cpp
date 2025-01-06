@@ -74,19 +74,14 @@ static void wpeViewQtQuickDispose(GObject* object)
     G_OBJECT_CLASS(wpe_view_qtquick_parent_class)->dispose(object);
 }
 
-static gboolean wpeViewQtQuickRenderBuffer(WPEView* view, WPEBuffer* buffer, GError**)
+static gboolean wpeViewQtQuickRenderBuffer(WPEView* view, WPEBuffer* buffer, const WPERectangle*, guint, GError**)
 {
+    // TODO: Add support for damage rects.
     auto* priv = WPE_VIEW_QTQUICK(view)->priv;
     priv->pendingBuffer = buffer;
     priv->bufferUpdateRequested = true;
 
     priv->wpeQtView->triggerUpdateScene();
-    return TRUE;
-}
-
-static gboolean wpeViewQtQuickResize(WPEView* view, int width, int height)
-{
-    wpe_view_resized(view, width, height);
     return TRUE;
 }
 
@@ -97,7 +92,6 @@ static void wpe_view_qtquick_class_init(WPEViewQtQuickClass* viewQtQuickClass)
 
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewQtQuickClass);
     viewClass->render_buffer = wpeViewQtQuickRenderBuffer;
-    viewClass->resize = wpeViewQtQuickResize;
 }
 
 WPEView* wpe_view_qtquick_new(WPEDisplayQtQuick* display)

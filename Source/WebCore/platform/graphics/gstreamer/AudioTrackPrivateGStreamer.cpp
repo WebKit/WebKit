@@ -56,6 +56,14 @@ AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPl
     installUpdateConfigurationHandlers();
 }
 
+AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, TrackID trackId)
+    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, WTFMove(pad), trackId)
+    , m_player(WTFMove(player))
+{
+    ensureDebugCategoryInitialized();
+    installUpdateConfigurationHandlers();
+}
+
 AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GstStream* stream)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, stream)
     , m_player(WTFMove(player))
@@ -70,7 +78,7 @@ AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPl
     updateConfigurationFromTags(WTFMove(tags));
 }
 
-void AudioTrackPrivateGStreamer::capsChanged(const String& streamId, GRefPtr<GstCaps>&& caps)
+void AudioTrackPrivateGStreamer::capsChanged(TrackID streamId, GRefPtr<GstCaps>&& caps)
 {
     ASSERT(isMainThread());
     updateConfigurationFromCaps(WTFMove(caps));
@@ -132,12 +140,11 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
 #endif
 
     if (areEncryptedCaps(caps.get())) {
-        int sampleRate, numberOfChannels;
         const auto* structure = gst_caps_get_structure(caps.get(), 0);
-        if (gst_structure_get_int(structure, "rate", &sampleRate))
-            configuration.sampleRate = sampleRate;
-        if (gst_structure_get_int(structure, "channels", &numberOfChannels))
-            configuration.numberOfChannels = numberOfChannels;
+        if (auto sampleRate = gstStructureGet<int>(structure, "rate"_s))
+            configuration.sampleRate = *sampleRate;
+        if (auto numberOfChannels = gstStructureGet<int>(structure, "channels"_s))
+            configuration.numberOfChannels = *numberOfChannels;
         return;
     }
 

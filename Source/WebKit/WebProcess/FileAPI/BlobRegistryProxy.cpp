@@ -28,7 +28,6 @@
 
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/CrossOriginOpenerPolicy.h>

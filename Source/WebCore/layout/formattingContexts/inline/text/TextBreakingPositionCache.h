@@ -29,14 +29,14 @@
 #include "SecurityOriginData.h"
 #include "TextBreakingPositionContext.h"
 #include "Timer.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 namespace Layout {
 
 class TextBreakingPositionCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextBreakingPositionCache);
 public:
     static constexpr size_t minimumRequiredTextLengthForContentBreakCache = 5;
     static constexpr size_t minimumRequiredContentBreaks = 3;
@@ -56,7 +56,7 @@ private:
     void evict();
 
 private:
-    using TextBreakingPositionMap = HashMap<Key, List>;
+    using TextBreakingPositionMap = UncheckedKeyHashMap<Key, List>;
     TextBreakingPositionMap m_breakingPositionMap;
     size_t m_cachedContentSize { 0 };
     Timer m_delayedEvictionTimer;

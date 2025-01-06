@@ -1,4 +1,5 @@
-hello hello
+hello
+hello
 
 PASS display:none animating to display:inline should be inline for the whole animation.
 PASS A CSS variable of display:none animating to display:inline should be inline for the whole animation.

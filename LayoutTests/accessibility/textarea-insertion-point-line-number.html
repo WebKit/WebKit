@@ -35,7 +35,7 @@ if (window.accessibilityController) {
         for (currentLine = 0; currentLine < 3; currentLine++) {
             area1.selectionStart = currentLine * 7;
             area1.selectionEnd = currentLine * 7;
-            output += expect("area1AXUIElement.insertionPointLineNumber", "currentLine");
+            output += await expectAsync("area1AXUIElement.insertionPointLineNumber", "currentLine");
         }
 
         // area2 is an empty textarea so the insertion point line number should be 0.

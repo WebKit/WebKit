@@ -14,25 +14,29 @@
 
 #include <cstdio>
 #include <memory>
+#include <numeric>
+#include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/strings/match.h"
-#include "absl/types/optional.h"
+#include "api/environment/environment.h"
 #include "api/fec_controller_override.h"
-#include "api/transport/field_trial_based_config.h"
-#include "api/video/i420_buffer.h"
-#include "api/video/video_bitrate_allocation.h"
+#include "api/field_trials_view.h"
+#include "api/scoped_refptr.h"
+#include "api/video/video_codec_type.h"
 #include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
+#include "api/video/video_frame_type.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
-#include "media/base/video_common.h"
 #include "modules/video_coding/include/video_error_codes.h"
+#include "modules/video_coding/include/video_error_codes_utils.h"
 #include "modules/video_coding/utility/simulcast_utility.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
@@ -79,14 +83,14 @@ struct ForcedFallbackParams {
 const char kVp8ForceFallbackEncoderFieldTrial[] =
     "WebRTC-VP8-Forced-Fallback-Encoder-v2";
 
-absl::optional<ForcedFallbackParams> ParseFallbackParamsFromFieldTrials(
+std::optional<ForcedFallbackParams> ParseFallbackParamsFromFieldTrials(
+    const FieldTrialsView& field_trials,
     const VideoEncoder& main_encoder) {
   // Ignore WebRTC-VP8-Forced-Fallback-Encoder-v2 if
   // WebRTC-Video-EncoderFallbackSettings is present.
   FieldTrialOptional<int> resolution_threshold_px("resolution_threshold_px");
-  ParseFieldTrial(
-      {&resolution_threshold_px},
-      FieldTrialBasedConfig().Lookup("WebRTC-Video-EncoderFallbackSettings"));
+  ParseFieldTrial({&resolution_threshold_px},
+                  field_trials.Lookup("WebRTC-Video-EncoderFallbackSettings"));
   if (resolution_threshold_px) {
     ForcedFallbackParams params;
     params.enable_resolution_based_switch = true;
@@ -95,9 +99,9 @@ absl::optional<ForcedFallbackParams> ParseFallbackParamsFromFieldTrials(
   }
 
   const std::string field_trial =
-      webrtc::field_trial::FindFullName(kVp8ForceFallbackEncoderFieldTrial);
+      field_trials.Lookup(kVp8ForceFallbackEncoderFieldTrial);
   if (!absl::StartsWith(field_trial, "Enabled")) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   int max_pixels_lower_bound =
@@ -111,23 +115,24 @@ absl::optional<ForcedFallbackParams> ParseFallbackParamsFromFieldTrials(
              &params.max_pixels, &min_bps) != 3) {
     RTC_LOG(LS_WARNING)
         << "Invalid number of forced fallback parameters provided.";
-    return absl::nullopt;
+    return std::nullopt;
   } else if (params.min_pixels <= 0 ||
              params.max_pixels < max_pixels_lower_bound ||
              params.max_pixels < params.min_pixels || min_bps <= 0) {
     RTC_LOG(LS_WARNING) << "Invalid forced fallback parameter value provided.";
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   params.vp8_specific_resolution_switch = true;
   return params;
 }
 
-absl::optional<ForcedFallbackParams> GetForcedFallbackParams(
+std::optional<ForcedFallbackParams> GetForcedFallbackParams(
+    const FieldTrialsView& field_trials,
     bool prefer_temporal_support,
     const VideoEncoder& main_encoder) {
-  absl::optional<ForcedFallbackParams> params =
-      ParseFallbackParamsFromFieldTrials(main_encoder);
+  std::optional<ForcedFallbackParams> params =
+      ParseFallbackParamsFromFieldTrials(field_trials, main_encoder);
   if (prefer_temporal_support) {
     if (!params.has_value()) {
       params.emplace();
@@ -140,6 +145,7 @@ absl::optional<ForcedFallbackParams> GetForcedFallbackParams(
 class VideoEncoderSoftwareFallbackWrapper final : public VideoEncoder {
  public:
   VideoEncoderSoftwareFallbackWrapper(
+      const FieldTrialsView& field_trials,
       std::unique_ptr<webrtc::VideoEncoder> sw_encoder,
       std::unique_ptr<webrtc::VideoEncoder> hw_encoder,
       bool prefer_temporal_support);
@@ -197,15 +203,15 @@ class VideoEncoderSoftwareFallbackWrapper final : public VideoEncoder {
   // Settings used in the last InitEncode call and used if a dynamic fallback to
   // software is required.
   VideoCodec codec_settings_;
-  absl::optional<VideoEncoder::Settings> encoder_settings_;
+  std::optional<VideoEncoder::Settings> encoder_settings_;
 
   // The last rate control settings, if set.
-  absl::optional<RateControlParameters> rate_control_parameters_;
+  std::optional<RateControlParameters> rate_control_parameters_;
 
   // The last channel parameters set.
-  absl::optional<float> packet_loss_;
-  absl::optional<int64_t> rtt_;
-  absl::optional<LossNotification> loss_notification_;
+  std::optional<float> packet_loss_;
+  std::optional<int64_t> rtt_;
+  std::optional<LossNotification> loss_notification_;
 
   enum class EncoderState {
     kUninitialized,
@@ -220,12 +226,13 @@ class VideoEncoderSoftwareFallbackWrapper final : public VideoEncoder {
 
   EncodedImageCallback* callback_;
 
-  const absl::optional<ForcedFallbackParams> fallback_params_;
+  const std::optional<ForcedFallbackParams> fallback_params_;
   int32_t EncodeWithMainEncoder(const VideoFrame& frame,
                                 const std::vector<VideoFrameType>* frame_types);
 };
 
 VideoEncoderSoftwareFallbackWrapper::VideoEncoderSoftwareFallbackWrapper(
+    const FieldTrialsView& field_trials,
     std::unique_ptr<webrtc::VideoEncoder> sw_encoder,
     std::unique_ptr<webrtc::VideoEncoder> hw_encoder,
     bool prefer_temporal_support)
@@ -233,8 +240,9 @@ VideoEncoderSoftwareFallbackWrapper::VideoEncoderSoftwareFallbackWrapper(
       encoder_(std::move(hw_encoder)),
       fallback_encoder_(std::move(sw_encoder)),
       callback_(nullptr),
-      fallback_params_(
-          GetForcedFallbackParams(prefer_temporal_support, *encoder_)) {
+      fallback_params_(GetForcedFallbackParams(field_trials,
+                                               prefer_temporal_support,
+                                               *encoder_)) {
   RTC_DCHECK(fallback_encoder_);
 }
 
@@ -264,14 +272,17 @@ void VideoEncoderSoftwareFallbackWrapper::PrimeEncoder(
 }
 
 bool VideoEncoderSoftwareFallbackWrapper::InitFallbackEncoder(bool is_forced) {
-  RTC_LOG(LS_WARNING) << "Encoder falling back to software encoding.";
+  RTC_LOG(LS_WARNING) << "[VESFW] " << __func__
+                      << "(is_forced=" << (is_forced ? "true" : "false") << ")";
 
   RTC_DCHECK(encoder_settings_.has_value());
   const int ret = fallback_encoder_->InitEncode(&codec_settings_,
                                                 encoder_settings_.value());
 
   if (ret != WEBRTC_VIDEO_CODEC_OK) {
-    RTC_LOG(LS_ERROR) << "Failed to initialize software-encoder fallback.";
+    RTC_LOG(LS_ERROR)
+        << "[VESFW] software-encoder fallback initialization failed with"
+        << " error code: " << WebRtcVideoCodecErrorToString(ret);
     fallback_encoder_->Release();
     return false;
   }
@@ -305,12 +316,18 @@ void VideoEncoderSoftwareFallbackWrapper::SetFecControllerOverride(
 int32_t VideoEncoderSoftwareFallbackWrapper::InitEncode(
     const VideoCodec* codec_settings,
     const VideoEncoder::Settings& settings) {
+  RTC_LOG(LS_INFO) << "[VESFW] " << __func__
+                   << "(codec=" << codec_settings->ToString()
+                   << ", settings={number_of_cores: "
+                   << settings.number_of_cores
+                   << ", max_payload_size: " << settings.max_payload_size
+                   << "})";
   // Store settings, in case we need to dynamically switch to the fallback
   // encoder after a failed Encode call.
   codec_settings_ = *codec_settings;
   encoder_settings_ = settings;
   // Clear stored rate/channel parameters.
-  rate_control_parameters_ = absl::nullopt;
+  rate_control_parameters_ = std::nullopt;
 
   RTC_DCHECK_EQ(encoder_state_, EncoderState::kUninitialized)
       << "InitEncode() should never be called on an active instance!";
@@ -327,6 +344,11 @@ int32_t VideoEncoderSoftwareFallbackWrapper::InitEncode(
     PrimeEncoder(current_encoder());
     return ret;
   }
+  if (ret == WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED) {
+    return ret;
+  }
+  RTC_LOG(LS_WARNING) << "[VESFW] Hardware encoder initialization failed with"
+                      << " error code: " << WebRtcVideoCodecErrorToString(ret);
 
   // Try to instantiate software codec.
   if (InitFallbackEncoder(/*is_forced=*/false)) {
@@ -335,6 +357,8 @@ int32_t VideoEncoderSoftwareFallbackWrapper::InitEncode(
   }
 
   // Software encoder failed too, use original return code.
+  RTC_LOG(LS_WARNING)
+      << "[VESFW] Software fallback encoder initialization also failed.";
   encoder_state_ = EncoderState::kUninitialized;
   return ret;
 }
@@ -439,9 +463,9 @@ VideoEncoder::EncoderInfo VideoEncoderSoftwareFallbackWrapper::GetEncoderInfo()
   EncoderInfo info =
       IsFallbackActive() ? fallback_encoder_info : default_encoder_info;
 
-  info.requested_resolution_alignment = cricket::LeastCommonMultiple(
-      fallback_encoder_info.requested_resolution_alignment,
-      default_encoder_info.requested_resolution_alignment);
+  info.requested_resolution_alignment =
+      std::lcm(fallback_encoder_info.requested_resolution_alignment,
+               default_encoder_info.requested_resolution_alignment);
   info.apply_alignment_to_all_simulcast_layers =
       fallback_encoder_info.apply_alignment_to_all_simulcast_layers ||
       default_encoder_info.apply_alignment_to_all_simulcast_layers;
@@ -523,11 +547,12 @@ bool VideoEncoderSoftwareFallbackWrapper::TryInitForcedFallbackEncoder() {
 }  // namespace
 
 std::unique_ptr<VideoEncoder> CreateVideoEncoderSoftwareFallbackWrapper(
+    const Environment& env,
     std::unique_ptr<VideoEncoder> sw_fallback_encoder,
     std::unique_ptr<VideoEncoder> hw_encoder,
     bool prefer_temporal_support) {
   return std::make_unique<VideoEncoderSoftwareFallbackWrapper>(
-      std::move(sw_fallback_encoder), std::move(hw_encoder),
+      env.field_trials(), std::move(sw_fallback_encoder), std::move(hw_encoder),
       prefer_temporal_support);
 }
 

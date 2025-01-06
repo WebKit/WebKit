@@ -90,7 +90,7 @@ TEST(WebKit, OpenAndCloseWindow)
 
     [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"open-and-close-window" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"open-and-close-window" withExtension:@"html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&isDone);
@@ -153,7 +153,7 @@ TEST(WebKit, OpenAndCloseWindowAsync)
 
     [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"open-and-close-window" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"open-and-close-window" withExtension:@"html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&isDone);
@@ -172,7 +172,7 @@ TEST(WebKit, OpenAsyncWithNil)
 
     [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"open-and-close-window" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"open-and-close-window" withExtension:@"html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&isDone);
@@ -191,7 +191,7 @@ TEST(WebKit, OpenAsyncWithNil)
 //
 //    [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
 //
-//    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"open-and-close-window" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+//    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"open-and-close-window" withExtension:@"html"]];
 //    [webView loadRequest:request];
 //
 //    TestWebKitAPI::Util::run(&isDone);
@@ -409,7 +409,7 @@ TEST(WebKit, OpenWindowThenDocumentOpen)
     [webView setUIDelegate:uiDelegate.get()];
     [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"open-window-then-write-to-it" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"open-window-then-write-to-it" withExtension:@"html"]];
     [webView loadRequest:request];
 
     while (!openedWebView)
@@ -432,7 +432,7 @@ TEST(WebKit, OpenFileURLWithHost)
     [webView setUIDelegate:uiDelegate.get()];
     [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"open-window-with-file-url-with-host" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"open-window-with-file-url-with-host" withExtension:@"html"]];
     [webView loadRequest:request];
 
     while (![[[webView URL] absoluteString] hasSuffix:@"#test"])

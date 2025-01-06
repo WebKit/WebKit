@@ -3,8 +3,8 @@ PASS getFileHandle(create=false) rejects for non-existing files
 PASS getFileHandle(create=true) creates an empty file for non-existing files
 PASS getFileHandle(create=true) creates an empty file with all valid ASCII characters in the name
 PASS getFileHandle(create=true) creates an empty file with non-ASCII characters in the name
-FAIL getFileHandle(create=false) returns existing files promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL getFileHandle(create=true) returns existing files without erasing promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL getFileHandle(create=false) returns existing files promise_test: Unhandled rejection with value: object "TypeError: writer.write is not a function. (In 'writer.write(new Blob([contents]))', 'writer.write' is undefined)"
+FAIL getFileHandle(create=true) returns existing files without erasing promise_test: Unhandled rejection with value: object "TypeError: writer.write is not a function. (In 'writer.write(new Blob([contents]))', 'writer.write' is undefined)"
 PASS getFileHandle(create=false) when a directory already exists with the same name
 PASS getFileHandle(create=true) when a directory already exists with the same name
 PASS getFileHandle() with empty name

@@ -1,0 +1,42 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- This is new test added with the accessibilityThreadTextApisEnabled effort. After accessibilityThreadTextApisEnabled is enabled by default, we should move it into LayoutTests/accessibility/mac. -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<h1 id="h1">Foo</h1>
+<div id="aria-heading" role="heading" aria-level="1">Bar</div>
+
+<script>
+var output = "This test ensures we represent AXHeadingLevel in attributed strings.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var fooText = accessibilityController.accessibleElementById("h1").childAtIndex(0);
+    var markerRange = fooText.textMarkerRangeForElement(fooText);
+    output += expect("fooText.attributedStringForTextMarkerRangeContainsAttribute('AXHeadingLevel', markerRange)", "true");
+
+    var barText = accessibilityController.accessibleElementById("aria-heading").childAtIndex(0);
+    markerRange = barText.textMarkerRangeForElement(barText);
+    output += expect("barText.attributedStringForTextMarkerRangeContainsAttribute('AXHeadingLevel', markerRange)", "true");
+
+    document.getElementById("aria-heading").removeAttribute("role");
+    setTimeout(async function() {
+        await waitFor(() => {
+            markerRange = barText.textMarkerRangeForElement(barText);
+            return !barText.attributedStringForTextMarkerRangeContainsAttribute('AXHeadingLevel', markerRange);
+        });
+        output += "PASS: AXHeadingLevel is not present after dynamic role attribute change.\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

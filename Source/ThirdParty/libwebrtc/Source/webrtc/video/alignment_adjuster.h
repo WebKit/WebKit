@@ -34,7 +34,7 @@ class AlignmentAdjuster {
   static int GetAlignmentAndMaybeAdjustScaleFactors(
       const VideoEncoder::EncoderInfo& info,
       VideoEncoderConfig* config,
-      absl::optional<size_t> max_layers);
+      std::optional<size_t> max_layers);
 };
 
 }  // namespace webrtc

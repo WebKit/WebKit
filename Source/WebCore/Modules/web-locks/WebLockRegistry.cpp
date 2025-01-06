@@ -31,8 +31,8 @@
 #include "WebLockManagerSnapshot.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RobinHoodHashMap.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -56,7 +56,7 @@ void WebLockRegistry::setSharedRegistry(Ref<WebLockRegistry>&& registry)
     sharedRegistry() = WTFMove(registry);
 }
 
-class LocalWebLockRegistry::PerOriginRegistry : public RefCounted<PerOriginRegistry>, public CanMakeWeakPtr<PerOriginRegistry> {
+class LocalWebLockRegistry::PerOriginRegistry : public RefCountedAndCanMakeWeakPtr<PerOriginRegistry> {
 public:
     static Ref<PerOriginRegistry> create(LocalWebLockRegistry&, PAL::SessionID, const ClientOrigin&);
     ~PerOriginRegistry();

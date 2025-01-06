@@ -16,17 +16,17 @@
 #include <utility>
 #include <vector>
 
-#include "api/task_queue/default_task_queue_factory.h"
+#include "api/audio/audio_processing_statistics.h"
+#include "api/environment/environment_factory.h"
 #include "api/test/mock_frame_encryptor.h"
 #include "audio/audio_state.h"
 #include "audio/conversion.h"
 #include "audio/mock_voe_channel_proxy.h"
+#include "call/test/mock_bitrate_allocator.h"
 #include "call/test/mock_rtp_transport_controller_send.h"
-#include "logging/rtc_event_log/mock/mock_rtc_event_log.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_mixer/audio_mixer_impl.h"
 #include "modules/audio_mixer/sine_wave_generator.h"
-#include "modules/audio_processing/include/audio_processing_statistics.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
 #include "modules/rtp_rtcp/mocks/mock_network_link_rtcp_observer.h"
 #include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
@@ -51,6 +51,7 @@ using ::testing::Ne;
 using ::testing::NiceMock;
 using ::testing::Return;
 using ::testing::StrEq;
+using ::testing::WithArg;
 
 static const float kTolerance = 0.0001f;
 
@@ -100,21 +101,19 @@ class MockLimitObserver : public BitrateAllocator::LimitObserver {
 };
 
 std::unique_ptr<MockAudioEncoder> SetupAudioEncoderMock(
-    int payload_type,
     const SdpAudioFormat& format) {
   for (const auto& spec : kCodecSpecs) {
     if (format == spec.format) {
-      std::unique_ptr<MockAudioEncoder> encoder(
-          new ::testing::NiceMock<MockAudioEncoder>());
-      ON_CALL(*encoder.get(), SampleRateHz())
+      auto encoder = std::make_unique<NiceMock<MockAudioEncoder>>();
+      ON_CALL(*encoder, SampleRateHz)
           .WillByDefault(Return(spec.info.sample_rate_hz));
-      ON_CALL(*encoder.get(), NumChannels())
+      ON_CALL(*encoder, NumChannels)
           .WillByDefault(Return(spec.info.num_channels));
-      ON_CALL(*encoder.get(), RtpTimestampRateHz())
+      ON_CALL(*encoder, RtpTimestampRateHz)
           .WillByDefault(Return(spec.format.clockrate_hz));
-      ON_CALL(*encoder.get(), GetFrameLengthRange())
-          .WillByDefault(Return(absl::optional<std::pair<TimeDelta, TimeDelta>>{
-              {TimeDelta::Millis(20), TimeDelta::Millis(120)}}));
+      ON_CALL(*encoder, GetFrameLengthRange)
+          .WillByDefault(Return(
+              std::make_pair(TimeDelta::Millis(20), TimeDelta::Millis(120))));
       return encoder;
     }
   }
@@ -124,25 +123,20 @@ std::unique_ptr<MockAudioEncoder> SetupAudioEncoderMock(
 rtc::scoped_refptr<MockAudioEncoderFactory> SetupEncoderFactoryMock() {
   rtc::scoped_refptr<MockAudioEncoderFactory> factory =
       rtc::make_ref_counted<MockAudioEncoderFactory>();
-  ON_CALL(*factory.get(), GetSupportedEncoders())
+  ON_CALL(*factory, GetSupportedEncoders)
       .WillByDefault(Return(std::vector<AudioCodecSpec>(
           std::begin(kCodecSpecs), std::end(kCodecSpecs))));
-  ON_CALL(*factory.get(), QueryAudioEncoder(_))
-      .WillByDefault(Invoke(
-          [](const SdpAudioFormat& format) -> absl::optional<AudioCodecInfo> {
+  ON_CALL(*factory, QueryAudioEncoder)
+      .WillByDefault(
+          [](const SdpAudioFormat& format) -> std::optional<AudioCodecInfo> {
             for (const auto& spec : kCodecSpecs) {
               if (format == spec.format) {
                 return spec.info;
               }
             }
-            return absl::nullopt;
-          }));
-  ON_CALL(*factory.get(), MakeAudioEncoderMock(_, _, _, _))
-      .WillByDefault(Invoke([](int payload_type, const SdpAudioFormat& format,
-                               absl::optional<AudioCodecPairId> codec_pair_id,
-                               std::unique_ptr<AudioEncoder>* return_value) {
-        *return_value = SetupAudioEncoderMock(payload_type, format);
-      }));
+            return std::nullopt;
+          });
+  ON_CALL(*factory, Create).WillByDefault(WithArg<1>(&SetupAudioEncoderMock));
   return factory;
 }
 
@@ -155,7 +149,6 @@ struct ConfigHelper {
             use_null_audio_processing
                 ? nullptr
                 : rtc::make_ref_counted<NiceMock<MockAudioProcessing>>()),
-        bitrate_allocator_(&limit_observer_),
         audio_encoder_(nullptr) {
     using ::testing::Invoke;
 
@@ -186,13 +179,12 @@ struct ConfigHelper {
   }
 
   std::unique_ptr<internal::AudioSendStream> CreateAudioSendStream() {
-    return std::unique_ptr<internal::AudioSendStream>(
-        new internal::AudioSendStream(
-            time_controller_.GetClock(), stream_config_, audio_state_,
-            time_controller_.GetTaskQueueFactory(), &rtp_transport_,
-            &bitrate_allocator_, &event_log_, absl::nullopt,
-            std::unique_ptr<voe::ChannelSendInterface>(channel_send_),
-            field_trials));
+    return std::make_unique<internal::AudioSendStream>(
+        CreateEnvironment(&field_trials, time_controller_.GetClock(),
+                          time_controller_.GetTaskQueueFactory()),
+        stream_config_, audio_state_, &rtp_transport_, &bitrate_allocator_,
+        std::nullopt,
+        std::unique_ptr<voe::ChannelSendInterface>(channel_send_));
   }
 
   AudioSendStream::Config& config() { return stream_config_; }
@@ -203,6 +195,7 @@ struct ConfigHelper {
   MockRtpRtcpInterface* rtp_rtcp() { return &rtp_rtcp_; }
   MockChannelSend* channel_send() { return channel_send_; }
   RtpTransportControllerSendInterface* transport() { return &rtp_transport_; }
+  MockBitrateAllocator* bitrate_allocator() { return &bitrate_allocator_; }
 
   static void AddBweToConfig(AudioSendStream::Config* config) {
     config->rtp.extensions.push_back(RtpExtension(
@@ -242,11 +235,12 @@ struct ConfigHelper {
   void SetupMockForSetupSendCodec(bool expect_set_encoder_call) {
     if (expect_set_encoder_call) {
       EXPECT_CALL(*channel_send_, SetEncoder)
-          .WillOnce(
-              [this](int payload_type, std::unique_ptr<AudioEncoder> encoder) {
-                this->audio_encoder_ = std::move(encoder);
-                return true;
-              });
+          .WillOnce([this](int /* payload_type */,
+                           const SdpAudioFormat& /* format */,
+                           std::unique_ptr<AudioEncoder> encoder) {
+            this->audio_encoder_ = std::move(encoder);
+            return true;
+          });
     }
   }
 
@@ -324,11 +318,10 @@ struct ConfigHelper {
   rtc::scoped_refptr<MockAudioProcessing> audio_processing_;
   AudioProcessingStats audio_processing_stats_;
   ::testing::StrictMock<MockNetworkLinkRtcpObserver> rtcp_observer_;
-  ::testing::NiceMock<MockRtcEventLog> event_log_;
   ::testing::NiceMock<MockRtpTransportControllerSend> rtp_transport_;
   ::testing::NiceMock<MockRtpRtcpInterface> rtp_rtcp_;
   ::testing::NiceMock<MockLimitObserver> limit_observer_;
-  BitrateAllocator bitrate_allocator_;
+  ::testing::NiceMock<MockBitrateAllocator> bitrate_allocator_;
   std::unique_ptr<AudioEncoder> audio_encoder_;
 };
 
@@ -520,19 +513,17 @@ TEST(AudioSendStreamTest, SendCodecAppliesAudioNetworkAdaptor) {
 
     helper.config().audio_network_adaptor_config = kAnaConfigString;
 
-    EXPECT_CALL(helper.mock_encoder_factory(), MakeAudioEncoderMock(_, _, _, _))
-        .WillOnce(Invoke([&kAnaConfigString, &kAnaReconfigString](
-                             int payload_type, const SdpAudioFormat& format,
-                             absl::optional<AudioCodecPairId> codec_pair_id,
-                             std::unique_ptr<AudioEncoder>* return_value) {
-          auto mock_encoder = SetupAudioEncoderMock(payload_type, format);
+    EXPECT_CALL(helper.mock_encoder_factory(), Create)
+        .WillOnce(WithArg<1>([&kAnaConfigString, &kAnaReconfigString](
+                                 const SdpAudioFormat& format) {
+          auto mock_encoder = SetupAudioEncoderMock(format);
           EXPECT_CALL(*mock_encoder,
                       EnableAudioNetworkAdaptor(StrEq(kAnaConfigString), _))
               .WillOnce(Return(true));
           EXPECT_CALL(*mock_encoder,
                       EnableAudioNetworkAdaptor(StrEq(kAnaReconfigString), _))
               .WillOnce(Return(true));
-          *return_value = std::move(mock_encoder);
+          return mock_encoder;
         }));
 
     auto send_stream = helper.CreateAudioSendStream();
@@ -551,29 +542,26 @@ TEST(AudioSendStreamTest, AudioNetworkAdaptorReceivesOverhead) {
         AudioSendStream::Config::SendCodecSpec(0, kOpusFormat);
     const std::string kAnaConfigString = "abcde";
 
-    EXPECT_CALL(helper.mock_encoder_factory(), MakeAudioEncoderMock(_, _, _, _))
-        .WillOnce(Invoke(
-            [&kAnaConfigString](int payload_type, const SdpAudioFormat& format,
-                                absl::optional<AudioCodecPairId> codec_pair_id,
-                                std::unique_ptr<AudioEncoder>* return_value) {
-              auto mock_encoder = SetupAudioEncoderMock(payload_type, format);
+    EXPECT_CALL(helper.mock_encoder_factory(), Create)
+        .WillOnce(
+            WithArg<1>([&kAnaConfigString](const SdpAudioFormat& format) {
+              auto mock_encoder = SetupAudioEncoderMock(format);
               InSequence s;
               EXPECT_CALL(
                   *mock_encoder,
-                  OnReceivedOverhead(Eq(kOverheadPerPacket.bytes<size_t>())))
-                  .Times(2);
+                  OnReceivedOverhead(Eq(kOverheadPerPacket.bytes<size_t>())));
               EXPECT_CALL(*mock_encoder,
                           EnableAudioNetworkAdaptor(StrEq(kAnaConfigString), _))
                   .WillOnce(Return(true));
               // Note: Overhead is received AFTER ANA has been enabled.
               EXPECT_CALL(
                   *mock_encoder,
-                  OnReceivedOverhead(Eq(kOverheadPerPacket.bytes<size_t>())))
-                  .WillOnce(Return());
-              *return_value = std::move(mock_encoder);
+                  OnReceivedOverhead(Eq(kOverheadPerPacket.bytes<size_t>())));
+              return mock_encoder;
             }));
     EXPECT_CALL(*helper.rtp_rtcp(), ExpectedPerPacketOverhead)
         .WillRepeatedly(Return(kOverheadPerPacket.bytes<size_t>()));
+    EXPECT_CALL(*helper.channel_send(), RegisterPacketOverhead);
 
     auto send_stream = helper.CreateAudioSendStream();
 
@@ -594,7 +582,8 @@ TEST(AudioSendStreamTest, SendCodecCanApplyVad) {
     helper.config().send_codec_spec->cng_payload_type = 105;
     std::unique_ptr<AudioEncoder> stolen_encoder;
     EXPECT_CALL(*helper.channel_send(), SetEncoder)
-        .WillOnce([&stolen_encoder](int payload_type,
+        .WillOnce([&stolen_encoder](int /* payload_type */,
+                                    const SdpAudioFormat& /* format */,
                                     std::unique_ptr<AudioEncoder> encoder) {
           stolen_encoder = std::move(encoder);
           return true;
@@ -685,6 +674,7 @@ TEST(AudioSendStreamTest, SSBweWithOverhead) {
                                       "WebRTC-Audio-LegacyOverhead/Disabled/");
     EXPECT_CALL(*helper.rtp_rtcp(), ExpectedPerPacketOverhead)
         .WillRepeatedly(Return(kOverheadPerPacket.bytes<size_t>()));
+    EXPECT_CALL(*helper.channel_send(), RegisterPacketOverhead);
     auto send_stream = helper.CreateAudioSendStream();
     const DataRate bitrate =
         DataRate::BitsPerSec(helper.config().max_bitrate_bps) +
@@ -707,6 +697,7 @@ TEST(AudioSendStreamTest, SSBweWithOverheadMinRespected) {
         "WebRTC-Audio-Allocation/min:6kbps,max:64kbps/");
     EXPECT_CALL(*helper.rtp_rtcp(), ExpectedPerPacketOverhead)
         .WillRepeatedly(Return(kOverheadPerPacket.bytes<size_t>()));
+    EXPECT_CALL(*helper.channel_send(), RegisterPacketOverhead);
     auto send_stream = helper.CreateAudioSendStream();
     const DataRate bitrate = DataRate::KilobitsPerSec(6) + kMinOverheadRate;
     EXPECT_CALL(*helper.channel_send(),
@@ -727,6 +718,7 @@ TEST(AudioSendStreamTest, SSBweWithOverheadMaxRespected) {
         "WebRTC-Audio-Allocation/min:6kbps,max:64kbps/");
     EXPECT_CALL(*helper.rtp_rtcp(), ExpectedPerPacketOverhead)
         .WillRepeatedly(Return(kOverheadPerPacket.bytes<size_t>()));
+    EXPECT_CALL(*helper.channel_send(), RegisterPacketOverhead);
     auto send_stream = helper.CreateAudioSendStream();
     const DataRate bitrate = DataRate::KilobitsPerSec(64) + kMaxOverheadRate;
     EXPECT_CALL(*helper.channel_send(),
@@ -809,6 +801,7 @@ TEST(AudioSendStreamTest, OnTransportOverheadChanged) {
 
     // CallEncoder will be called on overhead change.
     EXPECT_CALL(*helper.channel_send(), CallEncoder);
+    EXPECT_CALL(*helper.channel_send(), RegisterPacketOverhead);
 
     const size_t transport_overhead_per_packet_bytes = 333;
     send_stream->SetTransportOverhead(transport_overhead_per_packet_bytes);
@@ -823,6 +816,8 @@ TEST(AudioSendStreamTest, DoesntCallEncoderWhenOverheadUnchanged) {
     ConfigHelper helper(false, true, use_null_audio_processing);
     auto send_stream = helper.CreateAudioSendStream();
     auto new_config = helper.config();
+
+    EXPECT_CALL(*helper.channel_send(), RegisterPacketOverhead).Times(2);
 
     // CallEncoder will be called on overhead change.
     EXPECT_CALL(*helper.channel_send(), CallEncoder);
@@ -845,8 +840,8 @@ TEST(AudioSendStreamTest, AudioOverheadChanged) {
     const size_t audio_overhead_per_packet_bytes = 555;
     EXPECT_CALL(*helper.rtp_rtcp(), ExpectedPerPacketOverhead)
         .WillRepeatedly(Return(audio_overhead_per_packet_bytes));
+    EXPECT_CALL(*helper.channel_send(), RegisterPacketOverhead).Times(2);
     auto send_stream = helper.CreateAudioSendStream();
-    auto new_config = helper.config();
 
     BitrateAllocationUpdate update;
     update.target_bitrate =
@@ -860,6 +855,8 @@ TEST(AudioSendStreamTest, AudioOverheadChanged) {
 
     EXPECT_CALL(*helper.rtp_rtcp(), ExpectedPerPacketOverhead)
         .WillRepeatedly(Return(audio_overhead_per_packet_bytes + 20));
+    // RTP overhead can only change in response to RTCP or configuration change.
+    send_stream->Reconfigure(helper.config(), nullptr);
     EXPECT_CALL(*helper.channel_send(), OnBitrateAllocation);
     send_stream->OnBitrateUpdated(update);
 
@@ -874,6 +871,7 @@ TEST(AudioSendStreamTest, OnAudioAndTransportOverheadChanged) {
     const size_t audio_overhead_per_packet_bytes = 555;
     EXPECT_CALL(*helper.rtp_rtcp(), ExpectedPerPacketOverhead)
         .WillRepeatedly(Return(audio_overhead_per_packet_bytes));
+    EXPECT_CALL(*helper.channel_send(), RegisterPacketOverhead).Times(2);
     auto send_stream = helper.CreateAudioSendStream();
     auto new_config = helper.config();
 
@@ -923,5 +921,77 @@ TEST(AudioSendStreamTest, ReconfigureWithFrameEncryptor) {
     send_stream->Reconfigure(new_config, nullptr);
   }
 }
+
+TEST(AudioSendStreamTest, DefaultsHonorsPriorityBitrate) {
+  ConfigHelper helper(true, true, true);
+  ScopedKeyValueConfig field_trials(helper.field_trials,
+                                    "WebRTC-Audio-Allocation/prio_rate:20/");
+  auto send_stream = helper.CreateAudioSendStream();
+  EXPECT_CALL(*helper.bitrate_allocator(), AddObserver(send_stream.get(), _))
+      .WillOnce(Invoke(
+          [&](BitrateAllocatorObserver*, MediaStreamAllocationConfig config) {
+            EXPECT_EQ(config.priority_bitrate_bps, 20000);
+          }));
+  EXPECT_CALL(*helper.channel_send(), StartSend());
+  send_stream->Start();
+  EXPECT_CALL(*helper.channel_send(), StopSend());
+  send_stream->Stop();
+}
+
+TEST(AudioSendStreamTest, DefaultsToContributeUnusedBitrate) {
+  ConfigHelper helper(true, true, true);
+  auto send_stream = helper.CreateAudioSendStream();
+  EXPECT_CALL(
+      *helper.bitrate_allocator(),
+      AddObserver(send_stream.get(),
+                  Field(&MediaStreamAllocationConfig::rate_elasticity,
+                        TrackRateElasticity::kCanContributeUnusedRate)));
+  EXPECT_CALL(*helper.channel_send(), StartSend());
+  send_stream->Start();
+  EXPECT_CALL(*helper.channel_send(), StopSend());
+  send_stream->Stop();
+}
+
+TEST(AudioSendStreamTest, OverridesPriorityBitrate) {
+  ConfigHelper helper(true, true, true);
+  ScopedKeyValueConfig field_trials(helper.field_trials,
+                                    "WebRTC-Audio-Allocation/prio_rate:20/"
+                                    "WebRTC-Audio-PriorityBitrate/Disabled/");
+  auto send_stream = helper.CreateAudioSendStream();
+  EXPECT_CALL(*helper.bitrate_allocator(), AddObserver(send_stream.get(), _))
+      .WillOnce(Invoke(
+          [&](BitrateAllocatorObserver*, MediaStreamAllocationConfig config) {
+            EXPECT_EQ(config.priority_bitrate_bps, 0);
+          }));
+  EXPECT_CALL(*helper.channel_send(), StartSend());
+  send_stream->Start();
+  EXPECT_CALL(*helper.channel_send(), StopSend());
+  send_stream->Stop();
+}
+
+TEST(AudioSendStreamTest, UseEncoderBitrateRange) {
+  ConfigHelper helper(true, true, true);
+  std::pair<DataRate, DataRate> bitrate_range{DataRate::BitsPerSec(5000),
+                                              DataRate::BitsPerSec(10000)};
+  EXPECT_CALL(helper.mock_encoder_factory(), Create)
+      .WillOnce(WithArg<1>([&](const SdpAudioFormat& format) {
+        auto mock_encoder = SetupAudioEncoderMock(format);
+        EXPECT_CALL(*mock_encoder, GetBitrateRange)
+            .WillRepeatedly(Return(bitrate_range));
+        return mock_encoder;
+      }));
+  auto send_stream = helper.CreateAudioSendStream();
+  EXPECT_CALL(*helper.bitrate_allocator(), AddObserver(send_stream.get(), _))
+      .WillOnce(Invoke(
+          [&](BitrateAllocatorObserver*, MediaStreamAllocationConfig config) {
+            EXPECT_EQ(config.min_bitrate_bps, bitrate_range.first.bps());
+            EXPECT_EQ(config.max_bitrate_bps, bitrate_range.second.bps());
+          }));
+  EXPECT_CALL(*helper.channel_send(), StartSend());
+  send_stream->Start();
+  EXPECT_CALL(*helper.channel_send(), StopSend());
+  send_stream->Stop();
+}
+
 }  // namespace test
 }  // namespace webrtc

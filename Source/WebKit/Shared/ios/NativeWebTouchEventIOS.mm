@@ -92,17 +92,18 @@ static CGFloat radiusForTouchPoint(const WKTouchPoint& touchPoint)
 #if ENABLE(FIXED_IOS_TOUCH_POINT_RADIUS)
     return 12.1;
 #else
-    return touchPoint.majorRadiusInScreenCoordinates;
+    return touchPoint.majorRadiusInWindowCoordinates;
 #endif
 }
 
-Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const WKTouchEvent& event)
+Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoints(const WKTouchEvent& event)
 {
     return event.touchPoints.map([](auto& touchPoint) {
         unsigned identifier = touchPoint.identifier;
-        WebCore::IntPoint location = positionForCGPoint(touchPoint.locationInDocumentCoordinates);
+        auto locationInRootView = positionForCGPoint(touchPoint.locationInRootViewCoordinates);
+        auto locationInViewport = positionForCGPoint(touchPoint.locationInViewport);
         WebPlatformTouchPoint::State phase = convertTouchPhase(touchPoint.phase);
-        WebPlatformTouchPoint platformTouchPoint = WebPlatformTouchPoint(identifier, location, phase);
+        WebPlatformTouchPoint platformTouchPoint = WebPlatformTouchPoint(identifier, locationInRootView, locationInViewport, phase);
 #if ENABLE(IOS_TOUCH_EVENTS)
         auto radius = radiusForTouchPoint(touchPoint);
         platformTouchPoint.setRadiusX(radius);
@@ -118,11 +119,27 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const WK
     });
 }
 
+Vector<WebTouchEvent> NativeWebTouchEvent::extractCoalescedWebTouchEvents(const WKTouchEvent& event, UIKeyModifierFlags flags)
+{
+    return event.coalescedEvents.map([&](auto& event) -> WebTouchEvent {
+        return NativeWebTouchEvent { event, flags };
+    });
+}
+
+Vector<WebTouchEvent> NativeWebTouchEvent::extractPredictedWebTouchEvents(const WKTouchEvent& event, UIKeyModifierFlags flags)
+{
+    return event.predictedEvents.map([&](auto& event) -> WebTouchEvent {
+        return NativeWebTouchEvent { event, flags };
+    });
+}
+
 NativeWebTouchEvent::NativeWebTouchEvent(const WKTouchEvent& event, UIKeyModifierFlags flags)
     : WebTouchEvent(
         { webEventTypeForWKTouchEventType(event.type), webEventModifierFlags(flags), WallTime::fromRawSeconds(event.timestamp) },
-        extractWebTouchPoint(event),
-        positionForCGPoint(event.locationInDocumentCoordinates),
+        extractWebTouchPoints(event),
+        extractCoalescedWebTouchEvents(event, flags),
+        extractPredictedWebTouchEvents(event, flags),
+        positionForCGPoint(event.locationInRootViewCoordinates),
         event.isPotentialTap,
         event.inJavaScriptGesture,
         event.scale,

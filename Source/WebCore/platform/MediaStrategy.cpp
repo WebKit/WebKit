@@ -79,4 +79,12 @@ void MediaStrategy::addMockMediaSourceEngine()
 }
 #endif
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
+std::unique_ptr<MediaRecorderPrivateWriter> MediaStrategy::createMediaRecorderPrivateWriter(const String&, MediaRecorderPrivateWriterListener&) const
+{
+    return nullptr;
+}
+
+#endif
+
 }

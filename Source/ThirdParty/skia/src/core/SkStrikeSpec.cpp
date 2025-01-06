@@ -8,7 +8,6 @@
 #include "src/core/SkStrikeSpec.h"
 
 #include "include/core/SkFont.h"
-#include "include/core/SkFontTypes.h"
 #include "include/core/SkMatrix.h"
 #include "include/core/SkPaint.h"
 #include "include/core/SkPathEffect.h"
@@ -131,27 +130,6 @@ SkString SkStrikeSpec::dump() const {
     return fAutoDescriptor.getDesc()->dumpRec();
 }
 
-SkStrikeSpec SkStrikeSpec::MakePDFVector(const SkTypeface& typeface, int* size) {
-    SkFont font;
-    font.setHinting(SkFontHinting::kNone);
-    font.setEdging(SkFont::Edging::kAlias);
-    font.setTypeface(sk_ref_sp(&typeface));
-    int unitsPerEm = typeface.getUnitsPerEm();
-    if (unitsPerEm <= 0) {
-        unitsPerEm = 1024;
-    }
-    if (size) {
-        *size = unitsPerEm;
-    }
-    font.setSize((SkScalar)unitsPerEm);
-
-    return SkStrikeSpec(font,
-                        SkPaint(),
-                        SkSurfaceProps(),
-                        SkScalerContextFlags::kFakeGammaAndBoostContrast,
-                        SkMatrix::I());
-}
-
 SkStrikeSpec::SkStrikeSpec(const SkFont& font, const SkPaint& paint,
                            const SkSurfaceProps& surfaceProps,
                            SkScalerContextFlags scalerContextFlags,
@@ -173,12 +151,10 @@ sk_sp<sktext::StrikeForGPU> SkStrikeSpec::findOrCreateScopedStrike(
 }
 
 sk_sp<SkStrike> SkStrikeSpec::findOrCreateStrike() const {
-    SkScalerContextEffects effects{fPathEffect.get(), fMaskFilter.get()};
     return SkStrikeCache::GlobalStrikeCache()->findOrCreateStrike(*this);
 }
 
 sk_sp<SkStrike> SkStrikeSpec::findOrCreateStrike(SkStrikeCache* cache) const {
-    SkScalerContextEffects effects{fPathEffect.get(), fMaskFilter.get()};
     return cache->findOrCreateStrike(*this);
 }
 

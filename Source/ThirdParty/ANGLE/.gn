@@ -44,15 +44,14 @@ default_args = {
   # Saves on importing extra dependencies and ANGLE doesn't use JS.
   enable_js_protobuf = false
 
-  # Saves on importing extra dependencies and ANGLE doesn't use Rust.
-  enable_rust = false
-
   # Disable location tags in isolates.
   tests_have_location_tags = false
 
   # Use base level API level 29 support for AHardwareBuffer ANGLE tests.
   android32_ndk_api_level = 29
   android64_ndk_api_level = 29
+
+  vma_vulkan_headers_dir = "//third_party/vulkan-headers/src"
 }
 
 no_check_targets = [ "third_party/dawn/*" ]

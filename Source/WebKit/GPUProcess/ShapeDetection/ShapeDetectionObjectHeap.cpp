@@ -30,9 +30,13 @@
 
 #include "RemoteBarcodeDetector.h"
 #include "RemoteFaceDetector.h"
+#include "RemoteRenderingBackend.h"
 #include "RemoteTextDetector.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::ShapeDetection {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ObjectHeap);
 
 ObjectHeap::ObjectHeap() = default;
 

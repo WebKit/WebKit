@@ -1,0 +1,4 @@
+
+PASS Registered color with light color-scheme and light-dark()
+PASS Registered color with dark color-scheme and light-dark()
+

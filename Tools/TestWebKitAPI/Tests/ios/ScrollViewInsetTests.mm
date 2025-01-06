@@ -175,7 +175,7 @@ TEST(ScrollViewInsetTests, RestoreInitialContentOffsetAfterCrash)
     CGPoint initialContentOffset = [webView scrollView].contentOffset;
     __block CGPoint contentOffsetAfterCrash = CGPointZero;
     __block bool done = false;
-    [delegate setWebContentProcessDidTerminate:^(WKWebView *webView) {
+    [delegate setWebContentProcessDidTerminate:^(WKWebView *webView, _WKProcessTerminationReason) {
         contentOffsetAfterCrash = webView.scrollView.contentOffset;
         done = true;
     }];
@@ -196,7 +196,7 @@ TEST(ScrollViewInsetTests, RestoreInitialContentOffsetAfterCrashWithAsyncPolicyD
     [webView scrollView].contentInset = UIEdgeInsetsMake(400, 0, 0, 0);
     [webView setNavigationDelegate:delegate.get()];
     delegate->_navigationComplete = false;
-    NSURL *testResourceURL = [[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"];
+    NSURL *testResourceURL = NSBundle.test_resourcesBundle.resourceURL;
     [webView loadHTMLString:veryTallDocumentMarkup baseURL:testResourceURL];
     Util::run(&delegate->_navigationComplete);
 
@@ -228,7 +228,7 @@ TEST(ScrollViewInsetTests, RestoreContentOffsetAfterBackWithInsetChange)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, viewHeight)]);
     [webView scrollView].contentInset = UIEdgeInsetsMake(100, 0, 0, 0);
 
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"scrollable-page" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"scrollable-page" withExtension:@"html"];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView _test_waitForDidFinishNavigation];
     [webView waitForNextPresentationUpdate];
@@ -240,7 +240,7 @@ TEST(ScrollViewInsetTests, RestoreContentOffsetAfterBackWithInsetChange)
     EXPECT_EQ(0, contentOffsetAfterScrolling.x);
     EXPECT_EQ(1000, contentOffsetAfterScrolling.y);
 
-    RetainPtr<NSURL> secondPageURL = [[NSBundle mainBundle] URLForResource:@"composited" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> secondPageURL = [NSBundle.test_resourcesBundle URLForResource:@"composited" withExtension:@"html"];
     [webView loadRequest:[NSURLRequest requestWithURL:secondPageURL.get()]];
     [webView _test_waitForDidFinishNavigation];
     [webView waitForNextPresentationUpdate];

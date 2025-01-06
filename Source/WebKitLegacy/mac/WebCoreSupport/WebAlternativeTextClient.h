@@ -25,11 +25,12 @@
 
 #import "CorrectionPanel.h"
 #import <WebCore/AlternativeTextClient.h>
+#import <wtf/TZoneMalloc.h>
 
 @class WebView;
 
 class WebAlternativeTextClient : public WebCore::AlternativeTextClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebAlternativeTextClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebAlternativeTextClient);
 public:
     explicit WebAlternativeTextClient(WebView *);

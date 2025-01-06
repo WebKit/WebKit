@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class WheelEvent final : public MouseEvent {
-    WTF_MAKE_ISO_ALLOCATED(WheelEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WheelEvent);
 public:
     static constexpr int TickMultiplier = 120;
 

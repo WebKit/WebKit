@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class DOMTokenList;
+class ExpectIdTargetObserver;
 class HTMLLinkElement;
 class Page;
 struct MediaQueryParserContext;
@@ -45,11 +46,10 @@ template<typename T, typename Counter> class EventSender;
 using LinkEventSender = EventSender<HTMLLinkElement, WeakPtrImplWithEventTargetData>;
 
 class HTMLLinkElement final : public HTMLElement, public CachedStyleSheetClient, public LinkLoaderClient {
-    WTF_MAKE_ISO_ALLOCATED(HTMLLinkElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLLinkElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLLinkElement);
 public:
-    using HTMLElement::weakPtrFactory;
-    using HTMLElement::WeakValueType;
-    using HTMLElement::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
     static Ref<HTMLLinkElement> create(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLLinkElement();
@@ -82,6 +82,7 @@ public:
     static void dispatchPendingLoadEvents(Page*);
 
     WEBCORE_EXPORT DOMTokenList& relList();
+    WEBCORE_EXPORT DOMTokenList& blocking();
 
 #if ENABLE(APPLICATION_MANIFEST)
     bool isApplicationManifest() const { return m_relAttribute.isApplicationManifest; }
@@ -97,6 +98,8 @@ public:
     String fetchPriorityForBindings() const;
     RequestPriority fetchPriorityHint() const;
 
+    void processInternalResourceLink(HTMLAnchorElement* = nullptr);
+
 private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
@@ -105,6 +108,10 @@ private:
     static void processCallback(Node*);
     void clearSheet();
 
+    void potentiallyBlockRendering();
+    void unblockRendering();
+    bool isImplicitlyPotentiallyRenderBlocking() const;
+
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
@@ -112,7 +119,7 @@ private:
     void initializeStyleSheet(Ref<StyleSheetContents>&&, const CachedCSSStyleSheet&, MediaQueryParserContext);
 
     // from CachedResourceClient
-    void setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet*) final;
+    void setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet*) final;
     bool sheetLoaded() final;
     void notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred) final;
     void startLoadingDynamicSheet() final;
@@ -134,7 +141,7 @@ private:
 
     String debugDescription() const final;
 
-    enum PendingSheetType : uint8_t { Unknown, ActiveSheet, InactiveSheet };
+    enum class PendingSheetType : uint8_t { Unknown, Active, Inactive };
     void addPendingSheet(PendingSheetType);
 
     void removePendingSheet();
@@ -155,6 +162,8 @@ private:
     URL m_url;
     std::unique_ptr<DOMTokenList> m_sizes;
     std::unique_ptr<DOMTokenList> m_relList;
+    std::unique_ptr<DOMTokenList> m_blockingList;
+    std::unique_ptr<ExpectIdTargetObserver> m_expectIdTargetObserver;
     DisabledState m_disabledState;
     LinkRelAttribute m_relAttribute;
     bool m_loading : 1;
@@ -162,6 +171,7 @@ private:
     bool m_loadedResource : 1;
     bool m_isHandlingBeforeLoad : 1;
     bool m_allowPrefetchLoadAndErrorForTesting : 1;
+    bool m_isRenderBlocking : 1 { false };
     PendingSheetType m_pendingSheetType;
 };
 

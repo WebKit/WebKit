@@ -36,9 +36,13 @@ class WebExtensionAPILocalization : public WebExtensionAPIObject, public JSWebEx
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPILocalization, localization, i18n);
 
 public:
+#if PLATFORM(COCOA)
     NSString *getMessage(NSString* messageName, id substitutions);
     NSString *getUILanguage();
+#endif
     void getAcceptLanguages(Ref<WebExtensionCallbackHandler>&&);
+    void getPreferredSystemLanguages(Ref<WebExtensionCallbackHandler>&&);
+    void getSystemUILanguage(Ref<WebExtensionCallbackHandler>&&);
 };
 
 } // namespace WebKit

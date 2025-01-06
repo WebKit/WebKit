@@ -18,14 +18,15 @@
 #include "include/core/SkSamplingOptions.h"
 #include "include/core/SkShader.h"
 #include "include/core/SkSurface.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/private/base/SkAssert.h"
+#include "include/private/base/SkMacros.h"
 #include "src/core/SkDevice.h"
 #include "src/core/SkMatrixPriv.h"
 #include "src/gpu/ganesh/ClipStack.h"
 #include "src/gpu/ganesh/GrColorInfo.h"
 #include "src/gpu/ganesh/GrSurfaceProxyView.h"
-#include "src/text/gpu/SDFTControl.h"
+#include "src/text/gpu/SubRunControl.h"
 
 #include <cstddef>
 #include <memory>
@@ -304,14 +305,14 @@ private:
         kIsOpaque  = 1 << 1,  //!< Hint from client that rendering to this device will be
         //   opaque even if the config supports alpha.
     };
-    GR_DECL_BITFIELD_CLASS_OPS_FRIENDS(DeviceFlags);
+    SK_DECL_BITFIELD_CLASS_OPS_FRIENDS(DeviceFlags);
 
     static SkImageInfo MakeInfo(SurfaceContext*,  DeviceFlags);
     static bool CheckAlphaTypeAndGetFlags(SkAlphaType, InitContents, DeviceFlags*);
 
     sk_sp<GrRecordingContext> fContext;
 
-    const sktext::gpu::SDFTControl fSDFTControl;
+    const sktext::gpu::SubRunControl fSubRunControl;
 
     std::unique_ptr<SurfaceDrawContext> fSurfaceDrawContext;
 
@@ -363,7 +364,7 @@ private:
     friend class skgpu::TiledTextureUtils;   // for access to clip()
 };
 
-GR_MAKE_BITFIELD_CLASS_OPS(Device::DeviceFlags)
+SK_MAKE_BITFIELD_CLASS_OPS(Device::DeviceFlags)
 
 }  // namespace skgpu::ganesh
 

@@ -26,8 +26,8 @@
 #include "config.h"
 #include "ApplicationCacheManifestParser.h"
 
-#include "ParsingUtilities.h"
 #include "TextResourceDecoder.h"
+#include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
@@ -67,10 +67,12 @@ template<typename CharacterType> static URL makeManifestURL(const URL& manifestU
     return url;
 }
 
-template<typename CharacterType> static constexpr CharacterType cacheManifestIdentifier[] = { 'C', 'A', 'C', 'H', 'E', ' ', 'M', 'A', 'N', 'I', 'F', 'E', 'S', 'T' };
-template<typename CharacterType> static constexpr CharacterType cacheModeIdentifier[] = { 'C', 'A', 'C', 'H', 'E' };
-template<typename CharacterType> static constexpr CharacterType fallbackModeIdentifier[] = { 'F', 'A', 'L', 'L', 'B', 'A', 'C', 'K' };
-template<typename CharacterType> static constexpr CharacterType networkModeIdentifier[] = { 'N', 'E', 'T', 'W', 'O', 'R', 'K' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 14> cacheManifestIdentifier { 'C', 'A', 'C', 'H', 'E', ' ', 'M', 'A', 'N', 'I', 'F', 'E', 'S', 'T' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 5> cacheModeIdentifier { 'C', 'A', 'C', 'H', 'E' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 8> fallbackModeIdentifier { 'F', 'A', 'L', 'L', 'B', 'A', 'C', 'K' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 7> networkModeIdentifier { 'N', 'E', 'T', 'W', 'O', 'R', 'K' };
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& manifestURL, const String& manifestMIMEType, std::span<const uint8_t> data)
 {
@@ -78,7 +80,7 @@ std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL&
     bool allowFallbackNamespaceOutsideManifestPath = equalLettersIgnoringASCIICase(manifestMIMEType, cacheManifestMIMEType);
     auto manifestPath = WebCore::manifestPath(manifestURL);
 
-    auto manifestString = TextResourceDecoder::create(cacheManifestMIMEType, "UTF-8")->decodeAndFlush(data);
+    auto manifestString = TextResourceDecoder::create(cacheManifestMIMEType, "UTF-8"_s)->decodeAndFlush(data);
 
     return readCharactersForParsing(manifestString, [&]<typename CharacterType> (StringParsingBuffer<CharacterType> buffer) -> std::optional<ApplicationCacheManifest> {
         ApplicationCacheManifest manifest;
@@ -87,7 +89,7 @@ std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL&
         // Look for the magic signature: "^\xFEFF?CACHE MANIFEST[ \t]?" (the BOM is removed by TextResourceDecoder).
         // Example: "CACHE MANIFEST #comment" is a valid signature.
         // Example: "CACHE MANIFEST;V2" is not.
-        if (!skipCharactersExactly(buffer, cacheManifestIdentifier<CharacterType>))
+        if (!skipCharactersExactly(buffer, std::span { cacheManifestIdentifier<CharacterType> }))
             return std::nullopt;
     
         if (buffer.hasCharactersRemaining() && !isManifestWhitespaceOrNewline(*buffer))
@@ -120,15 +122,15 @@ std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL&
             StringParsingBuffer lineBuffer(std::span(lineStart, lineEnd + 1));
 
             if (lineBuffer[lineBuffer.lengthRemaining() - 1] == ':') {
-                if (skipCharactersExactly(lineBuffer, cacheModeIdentifier<CharacterType>) && lineBuffer.lengthRemaining() == 1) {
+                if (skipCharactersExactly(lineBuffer, std::span { cacheModeIdentifier<CharacterType> }) && lineBuffer.lengthRemaining() == 1) {
                     mode = ApplicationCacheParserMode::Explicit;
                     continue;
                 }
-                if (skipCharactersExactly(lineBuffer, fallbackModeIdentifier<CharacterType>) && lineBuffer.lengthRemaining() == 1) {
+                if (skipCharactersExactly(lineBuffer, std::span { fallbackModeIdentifier<CharacterType> }) && lineBuffer.lengthRemaining() == 1) {
                     mode = ApplicationCacheParserMode::Fallback;
                     continue;
                 }
-                if (skipCharactersExactly(lineBuffer, networkModeIdentifier<CharacterType>) && lineBuffer.lengthRemaining() == 1) {
+                if (skipCharactersExactly(lineBuffer, std::span { networkModeIdentifier<CharacterType> }) && lineBuffer.lengthRemaining() == 1) {
                     mode = ApplicationCacheParserMode::OnlineAllowlist;
                     continue;
                 }
@@ -230,5 +232,7 @@ std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL&
         return manifest;
     });
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 }

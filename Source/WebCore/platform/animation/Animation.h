@@ -30,6 +30,7 @@
 #include "ScopedName.h"
 #include "ScrollTimeline.h"
 #include "TimingFunction.h"
+#include "ViewTimeline.h"
 #include "WebAnimationTypes.h"
 
 namespace WebCore {
@@ -53,6 +54,8 @@ public:
     bool isTimingFunctionSet() const { return m_timingFunctionSet; }
     bool isCompositeOperationSet() const { return m_compositeOperationSet; }
     bool isAllowsDiscreteTransitionsSet() const { return m_allowsDiscreteTransitionsSet; }
+    bool isRangeStartSet() const { return m_rangeStartSet; }
+    bool isRangeEndSet() const { return m_rangeEndSet; }
 
     // Flags this to be the special "none" animation (animation-name: none)
     bool isNoneAnimation() const { return m_isNone; }
@@ -67,12 +70,13 @@ public:
             && !m_nameSet && !m_playStateSet && !m_iterationCountSet
             && !m_delaySet && !m_timingFunctionSet && !m_propertySet
             && !m_isNone && !m_compositeOperationSet && !m_timelineSet
-            && !m_allowsDiscreteTransitionsSet;
+            && !m_allowsDiscreteTransitionsSet && !m_rangeStartSet
+            && !m_rangeEndSet;
     }
 
     bool isEmptyOrZeroDuration() const
     {
-        return isEmpty() || (m_duration == 0 && m_delay <= 0);
+        return isEmpty() || ((!m_duration || !*m_duration) && m_delay <= 0);
     }
 
     void clearDelay() { m_delaySet = false; m_delayFilled = false; }
@@ -87,6 +91,8 @@ public:
     void clearTimingFunction() { m_timingFunctionSet = false; m_timingFunctionFilled = false; }
     void clearCompositeOperation() { m_compositeOperationSet = false; m_compositeOperationFilled = false; }
     void clearAllowsDiscreteTransitions() { m_allowsDiscreteTransitionsSet = false; m_allowsDiscreteTransitionsFilled = false; }
+    void clearRangeStart() { m_rangeStartSet = false; m_rangeStartFilled = false; }
+    void clearRangeEnd() { m_rangeEndSet = false; m_rangeEndFilled = false; }
 
     void clearAll()
     {
@@ -102,6 +108,8 @@ public:
         clearTimingFunction();
         clearCompositeOperation();
         clearAllowsDiscreteTransitions();
+        clearRangeStart();
+        clearRangeEnd();
     }
 
     double delay() const { return m_delay; }
@@ -127,14 +135,24 @@ public:
     };
 
     enum class TimelineKeyword : bool { None, Auto };
-    using Timeline = std::variant<TimelineKeyword, AtomString, Ref<ScrollTimeline>>;
+    struct AnonymousScrollTimeline {
+        Scroller scroller;
+        ScrollAxis axis;
+        bool operator==(const AnonymousScrollTimeline& o) const { return scroller == o.scroller && axis == o.axis; }
+    };
+    struct AnonymousViewTimeline {
+        ScrollAxis axis;
+        ViewTimelineInsets insets;
+        bool operator==(const AnonymousViewTimeline& o) const { return axis == o.axis && insets == o.insets; }
+    };
+    using Timeline = std::variant<TimelineKeyword, AtomString, AnonymousScrollTimeline, AnonymousViewTimeline>;
 
     Direction direction() const { return static_cast<Direction>(m_direction); }
     bool directionIsForwards() const { return direction() == Direction::Normal || direction() == Direction::Alternate; }
 
     AnimationFillMode fillMode() const { return static_cast<AnimationFillMode>(m_fillMode); }
 
-    double duration() const { return m_duration; }
+    MarkableDouble duration() const { return m_duration; }
     double playbackRate() const { return m_playbackRate; }
 
     static constexpr double IterationCountInfinite = -1;
@@ -145,10 +163,13 @@ public:
     const Timeline& timeline() const { return m_timeline; }
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     TimingFunction* defaultTimingFunctionForKeyframes() const { return m_defaultTimingFunctionForKeyframes.get(); }
+    const SingleTimelineRange rangeStart() const { return m_range.start; }
+    const SingleTimelineRange rangeEnd() const { return m_range.end; }
+    const TimelineRange range() const { return m_range; }
 
     void setDelay(double c) { m_delay = c; m_delaySet = true; }
     void setDirection(Direction d) { m_direction = static_cast<unsigned>(d); m_directionSet = true; }
-    void setDuration(double d) { ASSERT(d >= 0); m_duration = d; m_durationSet = true; }
+    void setDuration(MarkableDouble d) { ASSERT(!d || *d >= 0); m_duration = d; m_durationSet = true; }
     void setPlaybackRate(double d) { m_playbackRate = d; }
     void setFillMode(AnimationFillMode f) { m_fillMode = static_cast<unsigned>(f); m_fillModeSet = true; }
     void setIterationCount(double c) { m_iterationCount = c; m_iterationCountSet = true; }
@@ -162,12 +183,15 @@ public:
     void setTimeline(Timeline timeline) { m_timeline = timeline; m_timelineSet = true; }
     void setTimingFunction(RefPtr<TimingFunction>&& function) { m_timingFunction = WTFMove(function); m_timingFunctionSet = true; }
     void setDefaultTimingFunctionForKeyframes(RefPtr<TimingFunction>&& function) { m_defaultTimingFunctionForKeyframes = WTFMove(function); }
+    void setRangeStart(SingleTimelineRange range) { m_range.start = range; m_rangeStartSet = true; }
+    void setRangeEnd(SingleTimelineRange range) { m_range.end = range; m_rangeEndSet = true; }
+    void setRange(TimelineRange range) { setRangeStart(range.start); setRangeEnd(range.end); }
 
     void setIsNoneAnimation(bool n) { m_isNone = n; }
 
     void fillDelay(double delay) { setDelay(delay); m_delayFilled = true; }
     void fillDirection(Direction direction) { setDirection(direction); m_directionFilled = true; }
-    void fillDuration(double duration) { setDuration(duration); m_durationFilled = true; }
+    void fillDuration(MarkableDouble duration) { setDuration(duration); m_durationFilled = true; }
     void fillFillMode(AnimationFillMode fillMode) { setFillMode(fillMode); m_fillModeFilled = true; }
     void fillIterationCount(double iterationCount) { setIterationCount(iterationCount); m_iterationCountFilled = true; }
     void fillPlayState(AnimationPlayState playState) { setPlayState(playState); m_playStateFilled = true; }
@@ -176,6 +200,8 @@ public:
     void fillTimingFunction(RefPtr<TimingFunction>&& timingFunction) { setTimingFunction(WTFMove(timingFunction)); m_timingFunctionFilled = true; }
     void fillCompositeOperation(CompositeOperation compositeOperation) { setCompositeOperation(compositeOperation); m_compositeOperationFilled = true; }
     void fillAllowsDiscreteTransitions(bool allowsDiscreteTransitionsFilled) { setAllowsDiscreteTransitions(allowsDiscreteTransitionsFilled); m_allowsDiscreteTransitionsFilled = true; }
+    void fillRangeStart(SingleTimelineRange range) { m_range.start = range; m_rangeStartFilled = true; }
+    void fillRangeEnd(SingleTimelineRange range) { m_range.end = range; m_rangeEndFilled = true; }
 
     bool isDelayFilled() const { return m_delayFilled; }
     bool isDirectionFilled() const { return m_directionFilled; }
@@ -188,6 +214,9 @@ public:
     bool isTimingFunctionFilled() const { return m_timingFunctionFilled; }
     bool isCompositeOperationFilled() const { return m_compositeOperationFilled; }
     bool isAllowsDiscreteTransitionsFilled() const { return m_allowsDiscreteTransitionsFilled; }
+    bool isRangeStartFilled() const { return m_rangeStartFilled; }
+    bool isRangeEndFilled() const { return m_rangeEndFilled; }
+    bool isRangeFilled() const { return isRangeStartFilled() || isRangeEndFilled(); }
 
     // return true if all members of this class match (excluding m_next)
     bool animationsMatch(const Animation&, bool matchProperties = true) const;
@@ -214,11 +243,12 @@ private:
     Style::ScopedName m_name;
     double m_iterationCount;
     double m_delay;
-    double m_duration;
+    MarkableDouble m_duration;
     double m_playbackRate { 1 };
     Timeline m_timeline;
     RefPtr<TimingFunction> m_timingFunction;
     RefPtr<TimingFunction> m_defaultTimingFunctionForKeyframes;
+    TimelineRange m_range;
 
     unsigned m_direction : 2; // Direction
     unsigned m_fillMode : 2; // AnimationFillMode
@@ -238,6 +268,8 @@ private:
     bool m_timingFunctionSet : 1;
     bool m_compositeOperationSet : 1;
     bool m_allowsDiscreteTransitionsSet : 1;
+    bool m_rangeStartSet : 1;
+    bool m_rangeEndSet : 1;
 
     bool m_isNone : 1;
 
@@ -252,11 +284,13 @@ private:
     bool m_timingFunctionFilled : 1;
     bool m_compositeOperationFilled : 1;
     bool m_allowsDiscreteTransitionsFilled : 1;
+    bool m_rangeStartFilled : 1;
+    bool m_rangeEndFilled : 1;
 
 public:
     static double initialDelay() { return 0; }
     static Direction initialDirection() { return Direction::Normal; }
-    static double initialDuration() { return 0; }
+    static MarkableDouble initialDuration() { return std::nullopt; }
     static AnimationFillMode initialFillMode() { return AnimationFillMode::None; }
     static double initialIterationCount() { return 1.0; }
     static const Style::ScopedName& initialName();
@@ -266,11 +300,17 @@ public:
     static Timeline initialTimeline() { return TimelineKeyword::Auto; }
     static Ref<TimingFunction> initialTimingFunction() { return CubicBezierTimingFunction::create(); }
     static bool initialAllowsDiscreteTransitions() { return false; }
+    static TimelineRange initialRange() { return { }; }
+    static SingleTimelineRange initialRangeStart() { return { }; }
+    static SingleTimelineRange initialRangeEnd() { return { }; }
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationPlayState);
 WTF::TextStream& operator<<(WTF::TextStream&, Animation::TransitionProperty);
 WTF::TextStream& operator<<(WTF::TextStream&, Animation::Direction);
+WTF::TextStream& operator<<(WTF::TextStream&, Animation::TimelineKeyword);
+WTF::TextStream& operator<<(WTF::TextStream&, const Animation::AnonymousScrollTimeline&);
+WTF::TextStream& operator<<(WTF::TextStream&, const Animation::AnonymousViewTimeline&);
 WTF::TextStream& operator<<(WTF::TextStream&, const Animation::Timeline&);
 WTF::TextStream& operator<<(WTF::TextStream&, const Animation&);
 

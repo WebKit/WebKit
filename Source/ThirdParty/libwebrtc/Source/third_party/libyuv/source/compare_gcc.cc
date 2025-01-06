@@ -21,13 +21,15 @@ extern "C" {
 // This module is for GCC x86 and x64.
 #if !defined(LIBYUV_DISABLE_X86) && (defined(__x86_64__) || defined(__i386__))
 
+// "memory" clobber prevents the reads from being removed
+
 #if defined(__x86_64__)
 uint32_t HammingDistance_SSE42(const uint8_t* src_a,
                                const uint8_t* src_b,
                                int count) {
-  uint64_t diff = 0u;
+  uint64_t diff;
 
-  asm volatile(
+      asm volatile (
       "xor         %3,%3                         \n"
       "xor         %%r8,%%r8                     \n"
       "xor         %%r9,%%r9                     \n"
@@ -63,9 +65,9 @@ uint32_t HammingDistance_SSE42(const uint8_t* src_a,
       : "+r"(src_a),  // %0
         "+r"(src_b),  // %1
         "+r"(count),  // %2
-        "=r"(diff)    // %3
+        "=&r"(diff)   // %3
       :
-      : "memory", "cc", "rcx", "rdx", "rsi", "rdi", "r8", "r9", "r10");
+      : "cc", "memory", "rcx", "rdx", "rsi", "rdi", "r8", "r9", "r10");
 
   return (uint32_t)(diff);
 }
@@ -75,7 +77,7 @@ uint32_t HammingDistance_SSE42(const uint8_t* src_a,
                                int count) {
   uint32_t diff = 0u;
 
-  asm volatile(
+  asm volatile (
       // Process 16 bytes per loop.
       LABELALIGN
       "1:                                        \n"
@@ -104,7 +106,7 @@ uint32_t HammingDistance_SSE42(const uint8_t* src_a,
         "+r"(count),  // %2
         "+r"(diff)    // %3
       :
-      : "memory", "cc", "ecx", "edx");
+      : "cc", "memory", "ecx", "edx");
 
   return diff;
 }
@@ -117,9 +119,9 @@ static const vec8 kBitCount = {0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4};
 uint32_t HammingDistance_SSSE3(const uint8_t* src_a,
                                const uint8_t* src_b,
                                int count) {
-  uint32_t diff = 0u;
+  uint32_t diff;
 
-  asm volatile(
+  asm volatile (
       "movdqa      %4,%%xmm2                     \n"
       "movdqa      %5,%%xmm3                     \n"
       "pxor        %%xmm0,%%xmm0                 \n"
@@ -166,7 +168,7 @@ uint32_t HammingDistance_SSSE3(const uint8_t* src_a,
         "=r"(diff)         // %3
       : "m"(kNibbleMask),  // %4
         "m"(kBitCount)     // %5
-      : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
+      : "cc", "memory", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
 
   return diff;
@@ -176,9 +178,9 @@ uint32_t HammingDistance_SSSE3(const uint8_t* src_a,
 uint32_t HammingDistance_AVX2(const uint8_t* src_a,
                               const uint8_t* src_b,
                               int count) {
-  uint32_t diff = 0u;
+  uint32_t diff;
 
-  asm volatile(
+      asm volatile (
       "vbroadcastf128 %4,%%ymm2                  \n"
       "vbroadcastf128 %5,%%ymm3                  \n"
       "vpxor       %%ymm0,%%ymm0,%%ymm0          \n"
@@ -214,7 +216,7 @@ uint32_t HammingDistance_AVX2(const uint8_t* src_a,
       "vpaddd      %%ymm1,%%ymm0,%%ymm0          \n"
       "vpermq      $0xaa,%%ymm0,%%ymm1           \n"
       "vpaddd      %%ymm1,%%ymm0,%%ymm0          \n"
-      "vmovd       %%xmm0, %3                    \n"
+      "vmovd       %%xmm0,%3                     \n"
       "vzeroupper                                \n"
       : "+r"(src_a),       // %0
         "+r"(src_b),       // %1
@@ -222,7 +224,7 @@ uint32_t HammingDistance_AVX2(const uint8_t* src_a,
         "=r"(diff)         // %3
       : "m"(kNibbleMask),  // %4
         "m"(kBitCount)     // %5
-      : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6");
+      : "cc", "memory", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6");
 
   return diff;
 }
@@ -232,7 +234,7 @@ uint32_t SumSquareError_SSE2(const uint8_t* src_a,
                              const uint8_t* src_b,
                              int count) {
   uint32_t sse;
-  asm volatile(
+      asm volatile (
       "pxor        %%xmm0,%%xmm0                 \n"
       "pxor        %%xmm5,%%xmm5                 \n"
 
@@ -261,13 +263,12 @@ uint32_t SumSquareError_SSE2(const uint8_t* src_a,
       "pshufd      $0x1,%%xmm0,%%xmm1            \n"
       "paddd       %%xmm1,%%xmm0                 \n"
       "movd        %%xmm0,%3                     \n"
-
       : "+r"(src_a),  // %0
         "+r"(src_b),  // %1
         "+r"(count),  // %2
-        "=g"(sse)     // %3
-        ::"memory",
-        "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm5");
+        "=r"(sse)     // %3
+      :
+      : "cc", "memory", "xmm0", "xmm1", "xmm2", "xmm3", "xmm5");
   return sse;
 }
 
@@ -299,7 +300,7 @@ static const uvec32 kHashMul3 = {
 
 uint32_t HashDjb2_SSE41(const uint8_t* src, int count, uint32_t seed) {
   uint32_t hash;
-  asm volatile(
+      asm volatile (
       "movd        %2,%%xmm0                     \n"
       "pxor        %%xmm7,%%xmm7                 \n"
       "movdqa      %4,%%xmm6                     \n"
@@ -341,13 +342,13 @@ uint32_t HashDjb2_SSE41(const uint8_t* src, int count, uint32_t seed) {
       : "+r"(src),        // %0
         "+r"(count),      // %1
         "+rm"(seed),      // %2
-        "=g"(hash)        // %3
+        "=r"(hash)        // %3
       : "m"(kHash16x33),  // %4
         "m"(kHashMul0),   // %5
         "m"(kHashMul1),   // %6
         "m"(kHashMul2),   // %7
         "m"(kHashMul3)    // %8
-      : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
+      : "cc", "memory", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
   return hash;
 }

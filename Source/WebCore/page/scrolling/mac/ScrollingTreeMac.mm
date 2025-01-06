@@ -99,10 +99,10 @@ static bool layerEventRegionContainsPoint(CALayer *layer, CGPoint localPoint)
     return eventRegion && eventRegion->contains(roundedIntPoint(originRelativePoint));
 }
 
-static ScrollingNodeID scrollingNodeIDForLayer(CALayer *layer)
+static std::optional<ScrollingNodeID> scrollingNodeIDForLayer(CALayer *layer)
 {
     auto platformCALayer = PlatformCALayer::platformCALayerForLayer((__bridge void*)layer);
-    return platformCALayer ? platformCALayer->scrollingNodeID() : ScrollingNodeID { };
+    return platformCALayer ? platformCALayer->scrollingNodeID() : std::nullopt;
 }
 
 static bool isScrolledBy(const ScrollingTree& tree, ScrollingNodeID scrollingNodeID, CALayer *hitLayer)
@@ -168,7 +168,7 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
                 if (!is<ScrollingTreeScrollingNode>(scrollingNode))
                     return nullptr;
                 ASSERT(frontmostInteractiveLayer);
-                if (isScrolledBy(*this, nodeID, frontmostInteractiveLayer.get())) {
+                if (isScrolledBy(*this, *nodeID, frontmostInteractiveLayer.get())) {
                     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found scrolling node " << nodeID);
                     return scrollingNode;
                 }

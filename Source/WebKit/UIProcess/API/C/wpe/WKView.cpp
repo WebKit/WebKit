@@ -30,24 +30,21 @@
 #include "APIPageConfiguration.h"
 #include "PageClientImpl.h"
 #include "WKAPICast.h"
-#include "WPEWebView.h"
+#include "WPEWebViewLegacy.h"
+#include "WPEWebViewPlatform.h"
 
 using namespace WebKit;
 
 #if ENABLE(WPE_PLATFORM)
 WKViewRef WKViewCreate(WPEDisplay* display, WKPageConfigurationRef configuration)
 {
-    return toAPI(WKWPE::View::create(nullptr, display, *toImpl(configuration)));
+    return toAPI(&WKWPE::ViewPlatform::create(display, *toImpl(configuration)).leakRef());
 }
 #endif
 
 WKViewRef WKViewCreateDeprecated(struct wpe_view_backend* backend, WKPageConfigurationRef configuration)
 {
-#if ENABLE(WPE_PLATFORM)
-    return toAPI(WKWPE::View::create(backend, nullptr, *toImpl(configuration)));
-#else
-    return toAPI(WKWPE::View::create(backend, *toImpl(configuration)));
-#endif
+    return toAPI(&WKWPE::ViewLegacy::create(backend, *toImpl(configuration)).leakRef());
 }
 
 WKPageRef WKViewGetPage(WKViewRef view)

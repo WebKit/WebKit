@@ -35,8 +35,11 @@
 
 #include "LocalDOMWindow.h"
 #include "Page.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalDOMWindowSpeechSynthesis);
 
 LocalDOMWindowSpeechSynthesis::LocalDOMWindowSpeechSynthesis(DOMWindow* window)
     : LocalDOMWindowProperty(dynamicDowncast<LocalDOMWindow>(window))
@@ -60,7 +63,7 @@ LocalDOMWindowSpeechSynthesis* LocalDOMWindowSpeechSynthesis::from(DOMWindow* wi
     if (!supplement) {
         auto newSupplement = makeUnique<LocalDOMWindowSpeechSynthesis>(window);
         supplement = newSupplement.get();
-        provideTo(dynamicDowncast<LocalDOMWindow>(window), supplementName(), WTFMove(newSupplement));
+        provideTo(localWindow.get(), supplementName(), WTFMove(newSupplement));
     }
     return supplement;
 }

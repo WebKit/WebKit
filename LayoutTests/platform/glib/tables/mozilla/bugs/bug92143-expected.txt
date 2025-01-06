@@ -5,10 +5,10 @@ layer at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
       RenderBlock (anonymous) at (0,0) size 784x18
         RenderBR {BR} at (0,0) size 0x17
-      RenderTable {TABLE} at (0,18) size 637x22 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,18) size 637x22 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 635x20
           RenderTableRow {TR} at (0,0) size 635x20
-            RenderTableCell {TD} at (0,0) size 635x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 635x20 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 633x17
                 text run at (1,1) width 328: "Hotmail's Junk Mail spreading effort just got better! "
                 text run at (328,1) width 306: "Now you can choose from 3 levels of junk mail!"
@@ -19,10 +19,10 @@ layer at (0,0) size 800x585
           text run at (0,36) width 433: "the next table must overrun the visible part of the view (width=2400)"
         RenderBR {BR} at (433,36) size 0x17
         RenderBR {BR} at (0,54) size 0x17
-      RenderTable {TABLE} at (0,112) size 6368x22 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,112) size 6368x22 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 6366x20
           RenderTableRow {TR} at (0,0) size 6366x20
-            RenderTableCell {TD} at (0,0) size 6366x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 6366x20 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 6364x17
                 text run at (1,1) width 328: "Hotmail's Junk Mail spreading effort just got better! "
                 text run at (328,1) width 310: "Now you can choose from 3 levels of junk mail! "

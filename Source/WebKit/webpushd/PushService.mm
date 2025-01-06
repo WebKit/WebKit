@@ -34,30 +34,32 @@
 #import <WebCore/PushMessageCrypto.h>
 #import <WebCore/SecurityOrigin.h>
 #import <notify.h>
+#import <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/CallbackAggregator.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
+#import <wtf/text/MakeString.h>
 
 #if HAVE(MOBILE_KEY_BAG)
 #import <pal/spi/ios/MobileKeyBagSPI.h>
+#endif
+
+#if PLATFORM(IOS) || PLATFORM(VISION)
+#import "UIKitSPI.h"
 #endif
 
 namespace WebPushD {
 using namespace WebKit;
 using namespace WebCore;
 
-static void updateTopicLists(PushServiceConnection& connection, PushDatabase& database, CompletionHandler<void()> completionHandler)
-{
-    database.getTopics([&connection, completionHandler = WTFMove(completionHandler)](auto&& topics) mutable {
-        PushServiceConnection::TopicLists topicLists;
-        topicLists.enabledTopics = WTFMove(topics.enabledTopics);
-        topicLists.ignoredTopics = WTFMove(topics.ignoredTopics);
-        connection.setTopicLists(WTFMove(topicLists));
-        completionHandler();
-    });
-}
+// The system has a limited number of push topics available. We don't want to monopolize all topics
+// for ourselves, so let's limit ourselves to a reasonable amount of topics.
+static constexpr size_t maxTopicCount = 64;
 
 #if HAVE(APPLE_PUSH_SERVICE_URL_TOKEN_SUPPORT)
 
@@ -122,33 +124,32 @@ static void performAfterFirstUnlock(Function<void()>&& function)
 
 #endif
 
-void PushService::create(const String& incomingPushServiceName, const String& databasePath, IncomingPushMessageHandler&& messageHandler, CompletionHandler<void(std::unique_ptr<PushService>&&)>&& creationHandler)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PushService);
+
+void PushService::create(const String& incomingPushServiceName, const String& databasePath, IncomingPushMessageHandler&& messageHandler, CompletionHandler<void(RefPtr<PushService>&&)>&& creationHandler)
 {
     auto transaction = adoptOSObject(os_transaction_create("com.apple.webkit.webpushd.push-service-init"));
 
     // Create the connection ASAP so that we bootstrap_check_in to the service in a timely manner.
-    auto connection = makeUniqueRef<ApplePushServiceConnection>(incomingPushServiceName);
+    auto connection = ApplePushServiceConnection::create(incomingPushServiceName);
 
     performAfterFirstUnlock([databasePath, transaction = WTFMove(transaction), connection = WTFMove(connection), messageHandler = WTFMove(messageHandler), creationHandler = WTFMove(creationHandler)]() mutable {
         PushDatabase::create(databasePath, [transaction, connection = WTFMove(connection), messageHandler = WTFMove(messageHandler), creationHandler = WTFMove(creationHandler)](auto&& databaseResult) mutable {
             if (!databaseResult) {
                 RELEASE_LOG_ERROR(Push, "Push service initialization failed with database error");
-                creationHandler(std::unique_ptr<PushService>());
+                creationHandler(nullptr);
                 return;
             }
 
-            auto database = makeUniqueRefFromNonNullUniquePtr(WTFMove(databaseResult));
-            UniqueRef<PushService> service(*new PushService(WTFMove(connection), WTFMove(database), WTFMove(messageHandler)));
-
-            auto& connectionRef = service->connection();
-            auto& databaseRef = service->database();
+            Ref service = adoptRef(*new PushService(WTFMove(connection), databaseResult.releaseNonNull(), WTFMove(messageHandler)));
 
             // Only provide the service object back to the caller after we've synced the topic lists in
             // the database with the PushServiceConnection/APSConnection. This ensures that we won't
             // service any calls to subscribe/unsubscribe/etc. until after the topic lists are up to
             // date, which APSConnection cares about.
-            updateTopicLists(connectionRef, databaseRef, [transaction, service = WTFMove(service), creationHandler = WTFMove(creationHandler)]() mutable {
-                creationHandler(service.moveToUniquePtr());
+            auto& serviceRef = service.get();
+            serviceRef.updateTopicLists([transaction, service = WTFMove(service), creationHandler = WTFMove(creationHandler)]() mutable {
+                creationHandler(WTFMove(service));
             });
         });
     });
@@ -156,40 +157,43 @@ void PushService::create(const String& incomingPushServiceName, const String& da
 
 #else
 
-void PushService::create(const String&, const String&, IncomingPushMessageHandler&&, CompletionHandler<void(std::unique_ptr<PushService>&&)>&& creationHandler)
+void PushService::create(const String&, const String&, IncomingPushMessageHandler&&, CompletionHandler<void(RefPtr<PushService>&&)>&& creationHandler)
 {
-    creationHandler(std::unique_ptr<PushService>());
+    creationHandler(nullptr);
 }
 
 #endif // HAVE(APPLE_PUSH_SERVICE_URL_TOKEN_SUPPORT)
 
-void PushService::createMockService(IncomingPushMessageHandler&& messageHandler, CompletionHandler<void(std::unique_ptr<PushService>&&)>&& creationHandler)
+void PushService::createMockService(IncomingPushMessageHandler&& messageHandler, CompletionHandler<void(RefPtr<PushService>&&)>&& creationHandler)
 {
     PushDatabase::create(SQLiteDatabase::inMemoryPath(), [messageHandler = WTFMove(messageHandler), creationHandler = WTFMove(creationHandler)](auto&& databaseResult) mutable {
         if (!databaseResult) {
-            creationHandler(std::unique_ptr<PushService>());
+            creationHandler(nullptr);
             return;
         }
 
-        auto connection = makeUniqueRef<MockPushServiceConnection>();
-        auto database = makeUniqueRefFromNonNullUniquePtr(WTFMove(databaseResult));
-        creationHandler(std::unique_ptr<PushService>(new PushService(WTFMove(connection), WTFMove(database), WTFMove(messageHandler))));
+        auto connection = MockPushServiceConnection::create();
+        creationHandler(adoptRef(*new PushService(WTFMove(connection), databaseResult.releaseNonNull(), WTFMove(messageHandler))));
     });
 }
 
-PushService::PushService(UniqueRef<PushServiceConnection>&& pushServiceConnection, UniqueRef<PushDatabase>&& pushDatabase, IncomingPushMessageHandler&& incomingPushMessageHandler)
+PushService::PushService(Ref<PushServiceConnection>&& pushServiceConnection, Ref<PushDatabase>&& pushDatabase, IncomingPushMessageHandler&& incomingPushMessageHandler)
     : m_connection(WTFMove(pushServiceConnection))
     , m_database(WTFMove(pushDatabase))
     , m_incomingPushMessageHandler(WTFMove(incomingPushMessageHandler))
 {
     RELEASE_ASSERT(m_incomingPushMessageHandler);
+    relaxAdoptionRequirement();
 
-    m_connection->startListeningForPublicToken([this](auto&& token) {
-        didReceivePublicToken(WTFMove(token));
+    Ref connection = m_connection;
+    connection->startListeningForPublicToken([weakThis = WeakPtr { *this }](auto&& token) mutable {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->didReceivePublicToken(WTFMove(token));
     });
 
-    m_connection->startListeningForPushMessages([this](NSString *topic, NSDictionary *userInfo) {
-        didReceivePushMessage(topic, userInfo);
+    connection->startListeningForPushMessages([weakThis = WeakPtr { *this }](NSString *topic, NSDictionary *userInfo) mutable {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->didReceivePushMessage(topic, userInfo);
     });
 }
 
@@ -207,8 +211,7 @@ static PushSubscriptionData makePushSubscriptionFromRecord(PushRecord&& record)
     };
 }
 
-class PushServiceRequest {
-    WTF_MAKE_FAST_ALLOCATED;
+class PushServiceRequest : public AbstractRefCountedAndCanMakeWeakPtr<PushServiceRequest> {
 public:
     virtual ~PushServiceRequest() = default;
 
@@ -223,22 +226,31 @@ public:
 
 protected:
     PushServiceRequest(PushService& service, const PushSubscriptionSetIdentifier& identifier, const String& scope)
-        : m_service(service)
+        : m_identifier(identifier)
+        , m_scope(scope)
+        , m_service(service)
         , m_connection(service.connection())
         , m_database(service.database())
-        , m_identifier(identifier)
-        , m_scope(scope)
     {
     }
 
+    PushService& service() const { return m_service.get(); }
+    Ref<PushService> protectedService() const { return m_service.get(); }
+    PushServiceConnection& connection() const { return m_connection.get(); }
+    Ref<PushServiceConnection> protectedConnection() const { return m_connection.get(); }
+    PushDatabase& database() const { return m_database.get(); }
+    Ref<PushDatabase> protectedDatabase() const { return m_database.get(); }
+
     virtual void finish() = 0;
 
-    PushService& m_service;
-    PushServiceConnection& m_connection;
-    PushDatabase& m_database;
     PushSubscriptionSetIdentifier m_identifier;
     String m_scope;
     CompletionHandler<void(PushServiceRequest&)> m_completionHandler;
+
+private:
+    WeakRef<PushService> m_service;
+    WeakRef<PushServiceConnection> m_connection;
+    WeakRef<PushDatabase> m_database;
 };
 
 template<typename ResultType>
@@ -295,15 +307,25 @@ private:
     OSObjectPtr<os_transaction_t> m_transaction;
 };
 
-class GetSubscriptionRequest : public PushServiceRequestImpl<std::optional<WebCore::PushSubscriptionData>> {
+class GetSubscriptionRequest final : public PushServiceRequestImpl<std::optional<WebCore::PushSubscriptionData>>, public RefCounted<GetSubscriptionRequest> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GetSubscriptionRequest);
 public:
-    GetSubscriptionRequest(PushService&, const PushSubscriptionSetIdentifier&, const String& scope, ResultHandler&&);
+    static Ref<GetSubscriptionRequest> create(PushService& service, const PushSubscriptionSetIdentifier& identifier, const String& scope, ResultHandler&& resultHandler)
+    {
+        return adoptRef(*new GetSubscriptionRequest(service, identifier, scope, WTFMove(resultHandler)));
+    }
+
     virtual ~GetSubscriptionRequest() = default;
 
-protected:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
+    GetSubscriptionRequest(PushService&, const PushSubscriptionSetIdentifier&, const String& scope, ResultHandler&&);
+
     ASCIILiteral description() const final { return "GetSubscriptionRequest"_s; }
     void startInternal() final;
-    void finish() final { m_service.didCompleteGetSubscriptionRequest(*this); }
+    void finish() final { protectedService()->didCompleteGetSubscriptionRequest(*this); }
 };
 
 GetSubscriptionRequest::GetSubscriptionRequest(PushService& service, const PushSubscriptionSetIdentifier& identifier, const String& scope, ResultHandler&& resultHandler)
@@ -314,27 +336,40 @@ GetSubscriptionRequest::GetSubscriptionRequest(PushService& service, const PushS
 // Implements the webpushd side of PushManager.getSubscription.
 void GetSubscriptionRequest::startInternal()
 {
-    m_database.getRecordBySubscriptionSetAndScope(m_identifier, m_scope, [this](auto&& result) mutable {
+    protectedDatabase()->getRecordBySubscriptionSetAndScope(m_identifier, m_scope, [weakThis = WeakPtr { *this }](auto&& result) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
         if (!result) {
-            fulfill(std::optional<WebCore::PushSubscriptionData> { });
+            protectedThis->fulfill(std::optional<WebCore::PushSubscriptionData> { });
             return;
         }
 
-        fulfill(makePushSubscriptionFromRecord(WTFMove(*result)));
+        protectedThis->fulfill(makePushSubscriptionFromRecord(WTFMove(*result)));
     });
 }
 
-class SubscribeRequest : public PushServiceRequestImpl<WebCore::PushSubscriptionData> {
+class SubscribeRequest final : public PushServiceRequestImpl<WebCore::PushSubscriptionData>, public RefCounted<SubscribeRequest> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SubscribeRequest);
 public:
-    SubscribeRequest(PushService&, const PushSubscriptionSetIdentifier&, const String& scope, const Vector<uint8_t>& vapidPublicKey, ResultHandler&&);
+    static Ref<SubscribeRequest> create(PushService& service, const PushSubscriptionSetIdentifier& identifier, const String& scope, const Vector<uint8_t>& vapidPublicKey, ResultHandler&& resultHandler)
+    {
+        return adoptRef(*new SubscribeRequest(service, identifier, scope, vapidPublicKey, WTFMove(resultHandler)));
+    }
+
     virtual ~SubscribeRequest() = default;
 
-protected:
-    ASCIILiteral description() const final { return "SubscribeRequest"_s; }
-    void startInternal() final { startImpl(IsRetry::No); }
-    void finish() final { m_service.didCompleteSubscribeRequest(*this); }
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
+    SubscribeRequest(PushService&, const PushSubscriptionSetIdentifier&, const String& scope, const Vector<uint8_t>& vapidPublicKey, ResultHandler&&);
+
+    ASCIILiteral description() const final { return "SubscribeRequest"_s; }
+    void startInternal() final { startImpl(IsRetry::No); }
+    void finish() final { protectedService()->didCompleteSubscribeRequest(*this); }
+
     enum class IsRetry : bool { No, Yes };
     void startImpl(IsRetry);
     void attemptToRecoverFromTopicAlreadyInFilterError(String&&);
@@ -350,56 +385,70 @@ SubscribeRequest::SubscribeRequest(PushService& service, const PushSubscriptionS
 // Implements the webpushd side of PushManager.subscribe().
 void SubscribeRequest::startImpl(IsRetry isRetry)
 {
-    m_database.getRecordBySubscriptionSetAndScope(m_identifier, m_scope, [this, isRetry](auto&& result) mutable {
+    protectedDatabase()->getRecordBySubscriptionSetAndScope(m_identifier, m_scope, [weakThis = WeakPtr { *this }, isRetry](auto&& result) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
         if (result) {
-            if (m_vapidPublicKey != result->serverVAPIDPublicKey)
-                reject(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "Provided applicationServerKey does not match the key in the existing subscription."_s });
+            if (protectedThis->m_vapidPublicKey != result->serverVAPIDPublicKey)
+                protectedThis->reject(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "Provided applicationServerKey does not match the key in the existing subscription."_s });
             else
-                fulfill(makePushSubscriptionFromRecord(WTFMove(*result)));
+                protectedThis->fulfill(makePushSubscriptionFromRecord(WTFMove(*result)));
             return;
         }
 
-        auto topic = makePushTopic(m_identifier, m_scope);
-        m_connection.subscribe(topic, m_vapidPublicKey, [this, isRetry, topic](NSString *endpoint, NSError *error) mutable {
+        auto topic = makePushTopic(protectedThis->m_identifier, protectedThis->m_scope);
+        protectedThis->protectedConnection()->subscribe(topic, protectedThis->m_vapidPublicKey, [weakThis, isRetry, topic](NSString *endpoint, NSError *error) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
             if (error) {
 #if !HAVE(APPLE_PUSH_SERVICE_URL_TOKEN_SUPPORT)
                 UNUSED_PARAM(isRetry);
 #else
                 // FIXME: use pointer comparison once APSURLTokenErrorDomain is externed.
                 if (isRetry == IsRetry::No && [error.domain isEqualToString:@"APSURLTokenErrorDomain"] && error.code == APSURLTokenErrorCodeTopicAlreadyInFilter) {
-                    attemptToRecoverFromTopicAlreadyInFilterError(WTFMove(topic));
+                    protectedThis->attemptToRecoverFromTopicAlreadyInFilterError(WTFMove(topic));
                     return;
                 }
 #endif
 
-                RELEASE_LOG_ERROR(Push, "PushManager.subscribe(%{public}s, scope: %{sensitive}s) failed with domain: %{public}s code: %lld)", m_identifier.debugDescription().utf8().data(), m_scope.utf8().data(), error.domain.UTF8String, static_cast<int64_t>(error.code));
-                reject(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "Failed due to internal service error"_s });
+                RELEASE_LOG_ERROR(Push, "PushManager.subscribe(%{public}s, scope: %{sensitive}s) failed with domain: %{public}s code: %lld)", protectedThis->m_identifier.debugDescription().utf8().data(), protectedThis->m_scope.utf8().data(), error.domain.UTF8String, static_cast<int64_t>(error.code));
+                protectedThis->reject(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "Failed due to internal service error"_s });
                 return;
             }
 
-            auto clientKeys = m_service.connection().generateClientKeys();
+            auto clientKeys = protectedThis->service().protectedConnection()->generateClientKeys();
+            IGNORE_CLANG_WARNINGS_BEGIN("missing-designated-field-initializers")
             PushRecord record {
-                .subscriptionSetIdentifier = m_identifier,
-                .securityOrigin = SecurityOrigin::createFromString(m_scope)->data().toString(),
-                .scope = m_scope,
+                .subscriptionSetIdentifier = protectedThis->m_identifier,
+                .securityOrigin = SecurityOrigin::createFromString(protectedThis->m_scope)->data().toString(),
+                .scope = protectedThis->m_scope,
                 .endpoint = endpoint,
                 .topic = WTFMove(topic),
-                .serverVAPIDPublicKey = m_vapidPublicKey,
+                .serverVAPIDPublicKey = protectedThis->m_vapidPublicKey,
                 .clientPublicKey = WTFMove(clientKeys.clientP256DHKeyPair.publicKey),
                 .clientPrivateKey = WTFMove(clientKeys.clientP256DHKeyPair.privateKey),
                 .sharedAuthSecret = WTFMove(clientKeys.sharedAuthSecret)
             };
+            IGNORE_CLANG_WARNINGS_END
 
-            m_database.insertRecord(record, [this](auto&& result) mutable {
+            protectedThis->protectedDatabase()->insertRecord(record, [weakThis](auto&& result) mutable {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return;
+
                 if (!result) {
-                    RELEASE_LOG_ERROR(Push, "PushManager.subscribe(%{public}s, scope: %{sensitive}s) failed with database error", m_identifier.debugDescription().utf8().data(), m_scope.utf8().data());
-                    reject(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "Failed due to internal database error"_s });
+                    RELEASE_LOG_ERROR(Push, "PushManager.subscribe(%{public}s, scope: %{sensitive}s) failed with database error", protectedThis->m_identifier.debugDescription().utf8().data(), protectedThis->m_scope.utf8().data());
+                    protectedThis->reject(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "Failed due to internal database error"_s });
                     return;
                 }
 
-                // FIXME: support partial topic list updates.
-                updateTopicLists(m_connection, m_database, [this, record = WTFMove(*result)]() mutable {
-                    fulfill(makePushSubscriptionFromRecord(WTFMove(record)));
+                protectedThis->protectedService()->updateTopicLists([weakThis, record = WTFMove(*result)]() mutable {
+                    if (RefPtr protectedThis = weakThis.get())
+                        protectedThis->fulfill(makePushSubscriptionFromRecord(WTFMove(record)));
                 });
             });
         });
@@ -412,32 +461,46 @@ void SubscribeRequest::attemptToRecoverFromTopicAlreadyInFilterError(String&& to
 #if !HAVE(APPLE_PUSH_SERVICE_URL_TOKEN_SUPPORT)
     UNUSED_PARAM(topic);
 #else
-    WorkQueue::main().dispatch([this, topic = WTFMove(topic)]() mutable {
+    WorkQueue::main().dispatch([this, weakThis = WeakPtr { *this }, topic = WTFMove(topic)]() mutable {
+        if (!weakThis)
+            return;
+
         // This takes ownership of the paused topic and tells apsd to forget about the topic.
-        auto originalTopics = m_connection.ignoredTopics();
+        Ref connection = this->connection();
+        auto originalTopics = connection->ignoredTopics();
         auto augmentedTopics = originalTopics;
         augmentedTopics.append(topic);
-        m_connection.setIgnoredTopics(WTFMove(augmentedTopics));
-        m_connection.setIgnoredTopics(WTFMove(originalTopics));
+        connection->setIgnoredTopics(WTFMove(augmentedTopics));
+        connection->setIgnoredTopics(WTFMove(originalTopics));
 
-        WorkQueue::main().dispatch([this]() mutable {
-            startImpl(IsRetry::Yes);
+        WorkQueue::main().dispatch([weakThis = WTFMove(weakThis)]() mutable {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->startImpl(IsRetry::Yes);
         });
     });
 #endif
 }
 
-class UnsubscribeRequest : public PushServiceRequestImpl<bool> {
+class UnsubscribeRequest final : public PushServiceRequestImpl<bool>, public RefCounted<UnsubscribeRequest> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(UnsubscribeRequest);
 public:
-    UnsubscribeRequest(PushService&, const PushSubscriptionSetIdentifier&, const String& scope, std::optional<PushSubscriptionIdentifier>, ResultHandler&&);
+    static Ref<UnsubscribeRequest> create(PushService& service, const PushSubscriptionSetIdentifier& identifier, const String& scope, std::optional<PushSubscriptionIdentifier> subscriptionIdentifier, ResultHandler&& resultHandler)
+    {
+        return adoptRef(*new UnsubscribeRequest(service, identifier, scope, subscriptionIdentifier, WTFMove(resultHandler)));
+    }
+
     virtual ~UnsubscribeRequest() = default;
 
-protected:
-    ASCIILiteral description() const final { return "UnsubscribeRequest"_s; }
-    void startInternal() final;
-    void finish() final { m_service.didCompleteUnsubscribeRequest(*this); }
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
+    UnsubscribeRequest(PushService&, const PushSubscriptionSetIdentifier&, const String& scope, std::optional<PushSubscriptionIdentifier>, ResultHandler&&);
+
+    ASCIILiteral description() const final { return "UnsubscribeRequest"_s; }
+    void startInternal() final;
+    void finish() final { protectedService()->didCompleteUnsubscribeRequest(*this); }
+
     std::optional<PushSubscriptionIdentifier> m_subscriptionIdentifier;
 };
 
@@ -450,26 +513,39 @@ UnsubscribeRequest::UnsubscribeRequest(PushService& service, const PushSubscript
 // Implements the webpushd side of PushSubscription.unsubscribe.
 void UnsubscribeRequest::startInternal()
 {
-    m_database.getRecordBySubscriptionSetAndScope(m_identifier, m_scope, [this](auto&& result) mutable {
-        if (!result || (m_subscriptionIdentifier && *m_subscriptionIdentifier != result->identifier)) {
-            fulfill(false);
+    protectedDatabase()->getRecordBySubscriptionSetAndScope(m_identifier, m_scope, [weakThis = WeakPtr { *this }](auto&& result) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        if (!result || (protectedThis->m_subscriptionIdentifier && *protectedThis->m_subscriptionIdentifier != result->identifier)) {
+            protectedThis->fulfill(false);
             return;
         }
         
-        m_database.removeRecordByIdentifier(result->identifier, [this, serverVAPIDPublicKey = result->serverVAPIDPublicKey](bool removed) mutable {
+        protectedThis->protectedDatabase()->removeRecordByIdentifier(*result->identifier, [weakThis = WTFMove(weakThis), serverVAPIDPublicKey = result->serverVAPIDPublicKey](bool removed) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
             if (!removed) {
-                fulfill(false);
+                protectedThis->fulfill(false);
                 return;
             }
 
             // FIXME: support partial topic list updates.
-            updateTopicLists(m_connection, m_database, [this]() mutable {
-                fulfill(true);
+            protectedThis->protectedService()->updateTopicLists([weakThis]() mutable {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->fulfill(true);
             });
 
-            auto topic = makePushTopic(m_identifier, m_scope);
-            m_connection.unsubscribe(topic, serverVAPIDPublicKey, [this](bool unsubscribed, NSError *error) mutable {
-                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "PushSubscription.unsubscribe(%{public}s scope: %{sensitive}s) failed with domain: %{public}s code: %lld)", m_identifier.debugDescription().utf8().data(), m_scope.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
+            auto topic = makePushTopic(protectedThis->m_identifier, protectedThis->m_scope);
+            protectedThis->protectedConnection()->unsubscribe(topic, serverVAPIDPublicKey, [weakThis = WTFMove(weakThis)](bool unsubscribed, NSError *error) mutable {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return;
+
+                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "PushSubscription.unsubscribe(%{public}s scope: %{sensitive}s) failed with domain: %{public}s code: %lld)", protectedThis->m_identifier.debugDescription().utf8().data(), protectedThis->m_scope.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
             });
         });
     });
@@ -478,20 +554,19 @@ void UnsubscribeRequest::startInternal()
 // Only allow one request per (bundleIdentifier, dataStoreIdentifier, scope) to proceed at once. For
 // instance, if a given page calls PushManager.subscribe() twice in a row, the second subscribe call
 // won't start until the first one completes.
-void PushService::enqueuePushServiceRequest(PushServiceRequestMap& map, std::unique_ptr<PushServiceRequest>&& request)
+void PushService::enqueuePushServiceRequest(PushServiceRequestMap& map, Ref<PushServiceRequest>&& request)
 {
     auto addResult = map.ensure(request->key(), []() {
-        return Deque<std::unique_ptr<PushServiceRequest>> { };
+        return Deque<Ref<PushServiceRequest>> { };
     });
 
-    auto addedRequest = request.get();
     auto& queue = addResult.iterator->value;
 
-    RELEASE_LOG(Push, "Enqueuing PushServiceRequest %p (current queue size: %zu)", request.get(), queue.size());
-    queue.append(WTFMove(request));
+    RELEASE_LOG(Push, "Enqueuing PushServiceRequest %p (current queue size: %zu)", request.ptr(), queue.size());
+    queue.append(request);
 
     if (addResult.isNewEntry)
-        addedRequest->start();
+        request->start();
 }
 
 void PushService::finishedPushServiceRequest(PushServiceRequestMap& map, PushServiceRequest& request)
@@ -502,16 +577,16 @@ void PushService::finishedPushServiceRequest(PushServiceRequestMap& map, PushSer
     auto& requestQueue = requestQueueIt->value;
     RELEASE_ASSERT(requestQueue.size() > 0);
     auto currentRequest = requestQueue.takeFirst();
-    RELEASE_ASSERT(currentRequest.get() == &request);
+    RELEASE_ASSERT(currentRequest.ptr() == &request);
 
-    PushServiceRequest* nextRequest = nullptr;
+    RefPtr<PushServiceRequest> nextRequest;
     if (!requestQueue.size())
         map.remove(requestQueueIt);
     else
-        nextRequest = requestQueue.first().get();
+        nextRequest = requestQueue.first().copyRef();
 
     // Even if there's no next request to start, hold on to currentRequest until the next turn of the run loop since we're in the middle of executing the finish() member function of currentRequest.
-    WorkQueue::main().dispatch([currentRequest = WTFMove(currentRequest), nextRequest] {
+    WorkQueue::main().dispatch([currentRequest = WTFMove(currentRequest), nextRequest = WTFMove(nextRequest)] {
         if (nextRequest)
             nextRequest->start();
     });
@@ -525,7 +600,7 @@ void PushService::getSubscription(const PushSubscriptionSetIdentifier& identifie
         return;
     }
 
-    enqueuePushServiceRequest(m_getSubscriptionRequests, makeUnique<GetSubscriptionRequest>(*this, identifier, scope, WTFMove(completionHandler)));
+    enqueuePushServiceRequest(m_getSubscriptionRequests, GetSubscriptionRequest::create(*this, identifier, scope, WTFMove(completionHandler)));
 }
 
 void PushService::didCompleteGetSubscriptionRequest(GetSubscriptionRequest& request)
@@ -541,7 +616,12 @@ void PushService::subscribe(const PushSubscriptionSetIdentifier& identifier, con
         return;
     }
 
-    enqueuePushServiceRequest(m_subscribeRequests, makeUnique<SubscribeRequest>(*this, identifier, scope, vapidPublicKey, WTFMove(completionHandler)));
+    if (m_topicCount >= maxTopicCount) {
+        RELEASE_LOG_ERROR(Push, "Subscribe request from %{public}s and scope %{sensitive}s failed: reached max push topic count", identifier.debugDescription().ascii().data(), scope.ascii().data());
+        return completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "Reached maximum push subscription count"_s }));
+    }
+
+    enqueuePushServiceRequest(m_subscribeRequests, SubscribeRequest::create(*this, identifier, scope, vapidPublicKey, WTFMove(completionHandler)));
 }
 
 void PushService::didCompleteSubscribeRequest(SubscribeRequest& request)
@@ -557,7 +637,7 @@ void PushService::unsubscribe(const PushSubscriptionSetIdentifier& identifier, c
         return;
     }
 
-    enqueuePushServiceRequest(m_unsubscribeRequests, makeUnique<UnsubscribeRequest>(*this, identifier, scope, subscriptionIdentifier, WTFMove(completionHandler)));
+    enqueuePushServiceRequest(m_unsubscribeRequests, UnsubscribeRequest::create(*this, identifier, scope, subscriptionIdentifier, WTFMove(completionHandler)));
 }
 
 void PushService::didCompleteUnsubscribeRequest(UnsubscribeRequest& request)
@@ -573,7 +653,11 @@ void PushService::incrementSilentPushCount(const PushSubscriptionSetIdentifier& 
         return;
     }
 
-    m_database->incrementSilentPushCount(identifier, securityOrigin, [this, identifier, securityOrigin, handler = WTFMove(handler)](unsigned silentPushCount) mutable {
+    protectedDatabase()->incrementSilentPushCount(identifier, securityOrigin, [weakThis = WeakPtr { *this }, identifier, securityOrigin, handler = WTFMove(handler)](unsigned silentPushCount) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return handler(0);
+
         if (silentPushCount < WebKit::WebPushD::maxSilentPushCount) {
             handler(silentPushCount);
             return;
@@ -581,7 +665,7 @@ void PushService::incrementSilentPushCount(const PushSubscriptionSetIdentifier& 
 
         RELEASE_LOG(Push, "Removing all subscriptions associated with %{public}s %{sensitive}s since it processed %u silent pushes", identifier.debugDescription().utf8().data(), securityOrigin.utf8().data(), silentPushCount);
 
-        removeRecordsImpl(identifier, securityOrigin, [handler = WTFMove(handler), silentPushCount](auto&&) mutable {
+        protectedThis->removeRecordsImpl(identifier, securityOrigin, [handler = WTFMove(handler), silentPushCount](auto&&) mutable {
             handler(silentPushCount);
         });
     });
@@ -594,10 +678,11 @@ void PushService::setPushesEnabledForSubscriptionSetAndOrigin(const PushSubscrip
         return handler();
     }
 
-    m_database->setPushesEnabledForOrigin(identifier, securityOrigin, enabled, [this, handler = WTFMove(handler)](bool recordsChanged) mutable {
-        if (!recordsChanged)
+    protectedDatabase()->setPushesEnabledForOrigin(identifier, securityOrigin, enabled, [weakThis = WeakPtr { *this }, handler = WTFMove(handler)](bool recordsChanged) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !recordsChanged)
             return handler();
-        updateTopicLists(m_connection, m_database, WTFMove(handler));
+        protectedThis->updateTopicLists(WTFMove(handler));
     });
 }
 
@@ -621,22 +706,117 @@ void PushService::removeRecordsImpl(const PushSubscriptionSetIdentifier& identif
         return;
     }
 
-    auto removedRecordsHandler = [this, identifier, securityOrigin, handler = WTFMove(handler)](Vector<RemovedPushRecord>&& removedRecords) mutable {
+    auto removedRecordsHandler = [weakThis = WeakPtr { *this }, identifier, securityOrigin, handler = WTFMove(handler)](Vector<RemovedPushRecord>&& removedRecords) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return handler(removedRecords.size());
+
+        Ref connection = protectedThis->connection();
         for (auto& record : removedRecords) {
-            m_connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
+            connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
                 RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "removeRecordsImpl couldn't remove subscription for topic %{sensitive}s: %{public}s code: %lld)", topic.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
             });
         }
 
-        updateTopicLists(m_connection, m_database, [count = removedRecords.size(), handler = WTFMove(handler)]() mutable {
+        protectedThis->updateTopicLists([count = removedRecords.size(), handler = WTFMove(handler)]() mutable {
             handler(count);
         });
     };
 
     if (securityOrigin)
-        m_database->removeRecordsBySubscriptionSetAndSecurityOrigin(identifier, *securityOrigin, WTFMove(removedRecordsHandler));
+        protectedDatabase()->removeRecordsBySubscriptionSetAndSecurityOrigin(identifier, *securityOrigin, WTFMove(removedRecordsHandler));
     else
-        m_database->removeRecordsBySubscriptionSet(identifier, WTFMove(removedRecordsHandler));
+        protectedDatabase()->removeRecordsBySubscriptionSet(identifier, WTFMove(removedRecordsHandler));
+}
+
+void PushService::removeRecordsForBundleIdentifierAndDataStore(const String& bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, CompletionHandler<void(unsigned)>&& handler)
+{
+    RELEASE_LOG(Push, "Removing push subscriptions associated with %{public}s | ds: %{public}s", bundleIdentifier.utf8().data(), dataStoreIdentifier ? dataStoreIdentifier->toString().ascii().data() : "default");
+    protectedDatabase()->removeRecordsByBundleIdentifierAndDataStore(bundleIdentifier, dataStoreIdentifier, [weakThis = WeakPtr { *this }, handler = WTFMove(handler)](auto&& removedRecords) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return handler(removedRecords.size());
+
+        Ref connection = protectedThis->connection();
+        for (auto& record : removedRecords) {
+            connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
+                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "removeRecordsImpl couldn't remove subscription for topic %{sensitive}s: %{public}s code: %lld)", topic.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
+            });
+        }
+
+        protectedThis->updateTopicLists([count = removedRecords.size(), handler = WTFMove(handler)]() mutable {
+            handler(count);
+        });
+    });
+}
+
+#if PLATFORM(IOS)
+
+void PushService::updateSubscriptionSetState(const String& allowedBundleIdentifier, const HashSet<String>& installedWebClipIdentifiers, CompletionHandler<void()>&& completionHandler)
+{
+    protectedDatabase()->getPushSubscriptionSetRecords([weakThis = WeakPtr { *this }, allowedBundleIdentifier, installedWebClipIdentifiers, completionHandler = WTFMove(completionHandler)](auto&& records) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return completionHandler();
+
+        HashSet<PushSubscriptionSetIdentifier> identifiersToRemove;
+
+        for (const auto& record : records) {
+            auto bundleIdentifier = record.identifier.bundleIdentifier;
+            auto webClipIdentifier = record.identifier.pushPartition;
+            if (bundleIdentifier != allowedBundleIdentifier || !installedWebClipIdentifiers.contains(webClipIdentifier))
+                identifiersToRemove.add(record.identifier);
+        }
+
+        if (identifiersToRemove.isEmpty()) {
+            RELEASE_LOG(Push, "All push subscriptions are associated with existing web clips");
+            return completionHandler();
+        }
+
+        Ref aggregator = MainRunLoopCallbackAggregator::create([weakThis, completionHandler = WTFMove(completionHandler)]() mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return completionHandler();
+
+            // Set the APS topics filter again so that the topics we just unsubscribed from are no longer in the filter.
+            protectedThis->updateTopicLists(WTFMove(completionHandler));
+        });
+
+        Ref database = protectedThis->m_database;
+        for (const auto& identifier : identifiersToRemove) {
+            RELEASE_LOG(Push, "No web clip matching push subscription set identifier %{public}s; removing", identifier.debugDescription().utf8().data());
+            database->removeRecordsBySubscriptionSet(identifier, [weakThis, aggregator](auto&& records) {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return;
+
+                Ref connection = protectedThis->connection();
+                for (auto& record : records) {
+                    connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
+                        RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "couldn't remove subscription for topic %{sensitive}s: %{public}s code: %lld)", topic.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
+                    });
+                }
+            });
+        }
+    });
+}
+
+#endif
+
+void PushService::updateTopicLists(CompletionHandler<void()>&& completionHandler)
+{
+    protectedDatabase()->getTopics([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](auto&& topics) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return completionHandler();
+
+        PushServiceConnection::TopicLists topicLists;
+        topicLists.enabledTopics = WTFMove(topics.enabledTopics);
+        topicLists.ignoredTopics = WTFMove(topics.ignoredTopics);
+        protectedThis->protectedConnection()->setTopicLists(WTFMove(topicLists));
+        protectedThis->m_topicCount = topicLists.enabledTopics.size() + topicLists.ignoredTopics.size();
+        completionHandler();
+    });
 }
 
 enum class ContentEncoding {
@@ -722,19 +902,23 @@ static std::optional<RawPushMessage> makeRawPushMessage(NSString *topic, NSDicti
 
 void PushService::setPublicTokenForTesting(Vector<uint8_t>&& token)
 {
-    m_connection->setPublicTokenForTesting(WTFMove(token));
+    protectedConnection()->setPublicTokenForTesting(WTFMove(token));
 }
 
 void PushService::didReceivePublicToken(Vector<uint8_t>&& token)
 {
-    m_database->updatePublicToken(token, [this](auto result) mutable {
+    protectedDatabase()->updatePublicToken(token, [weakThis = WeakPtr { *this }](auto result) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
         if (result == PushDatabase::PublicTokenChanged::No) {
             RELEASE_LOG(Push, "Received expected public token");
             return;
         }
 
         RELEASE_LOG_ERROR(Push, "Public token changed; invalidated all existing push subscriptions");
-        updateTopicLists(m_connection, m_database, []() { });
+        protectedThis->updateTopicLists([]() { });
     });
 }
 
@@ -746,7 +930,11 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
     if (!messageResult)
         return;
 
-    m_database->getRecordByTopic(topic, [this, message = WTFMove(*messageResult), completionHandler = WTFMove(completionHandler), transaction = WTFMove(transaction)](auto&& recordResult) mutable {
+    protectedDatabase()->getRecordByTopic(topic, [weakThis = WeakPtr { *this }, message = WTFMove(*messageResult), completionHandler = WTFMove(completionHandler), transaction = WTFMove(transaction)](auto&& recordResult) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return completionHandler();
+
         if (!recordResult) {
             RELEASE_LOG_ERROR(Push, "Dropping incoming push sent to unknown topic: %{sensitive}s", message.topic.utf8().data());
             completionHandler();
@@ -755,7 +943,7 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
         auto record = WTFMove(*recordResult);
 
         if (message.encoding == ContentEncoding::Empty) {
-            m_incomingPushMessageHandler(record.subscriptionSetIdentifier, WebKit::WebPushMessage { { }, record.subscriptionSetIdentifier.pushPartition, URL { record.scope }, { } });
+            protectedThis->m_incomingPushMessageHandler(record.subscriptionSetIdentifier, WebKit::WebPushMessage { { }, record.subscriptionSetIdentifier.pushPartition, URL { record.scope }, { } });
             completionHandler();
             return;
         }
@@ -779,7 +967,7 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
 
         RELEASE_LOG(Push, "Decoded incoming push message for %{public}s %{sensitive}s", record.subscriptionSetIdentifier.debugDescription().utf8().data(), record.scope.utf8().data());
 
-        m_incomingPushMessageHandler(record.subscriptionSetIdentifier, WebKit::WebPushMessage { WTFMove(*decryptedPayload), record.subscriptionSetIdentifier.pushPartition, URL { record.scope }, { } });
+        protectedThis->m_incomingPushMessageHandler(record.subscriptionSetIdentifier, WebKit::WebPushMessage { WTFMove(*decryptedPayload), record.subscriptionSetIdentifier.pushPartition, URL { record.scope }, { } });
         completionHandler();
     });
 }

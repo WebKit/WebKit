@@ -73,7 +73,7 @@ public:
     inline ElementType* last() const;
 
 private:
-    const ContainerNode& m_root;
+    CheckedRef<const ContainerNode> m_root;
 };
 
 template<typename ElementType> class InclusiveElementDescendantRange {
@@ -88,7 +88,7 @@ public:
     inline ElementType* last() const;
 
 private:
-    const ContainerNode& m_root;
+    CheckedRef<const ContainerNode> m_root;
 };
 
 template<typename ElementType> class DoubleElementDescendantRange {
@@ -135,7 +135,7 @@ public:
     inline ElementType* first() const;
 
 private:
-    const ContainerNode& m_root;
+    CheckedRef<const ContainerNode> m_root;
 };
 
 // ElementDescendantIterator

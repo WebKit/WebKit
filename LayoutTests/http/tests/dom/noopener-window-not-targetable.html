@@ -16,8 +16,13 @@ onload = function() {
         w = open("/navigation/resources/otherpage.html", "foo"); // Should create a new window.
         shouldBeEqualToString("w.location.href", "about:blank");
         w.onload = function() {
-            if (window.testRunner)
-                shouldBe("testRunner.windowCount()", "3");
+            if (window.testRunner) {
+                if (testRunner.isWebKit2) {
+                    shouldBe("testRunner.windowCount()", "2");
+                } else {
+                    shouldBe("testRunner.windowCount()", "3");
+                }
+            }
             finishJSTest();
         }
     }, 100);

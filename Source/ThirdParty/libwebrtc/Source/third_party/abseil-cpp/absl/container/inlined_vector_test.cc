@@ -304,6 +304,86 @@ TEST(UniquePtr, MoveAssign) {
   }
 }
 
+// Swapping containers of unique pointers should work fine, with no
+// leaks, despite the fact that unique pointers are trivially relocatable but
+// not trivially destructible.
+// TODO(absl-team): Using unique_ptr here is technically correct, but
+// a trivially relocatable struct would be less semantically confusing.
+TEST(UniquePtr, Swap) {
+  for (size_t size1 = 0; size1 < 5; ++size1) {
+    for (size_t size2 = 0; size2 < 5; ++size2) {
+      absl::InlinedVector<std::unique_ptr<size_t>, 2> a;
+      absl::InlinedVector<std::unique_ptr<size_t>, 2> b;
+      for (size_t i = 0; i < size1; ++i) {
+        a.push_back(std::make_unique<size_t>(i + 10));
+      }
+      for (size_t i = 0; i < size2; ++i) {
+        b.push_back(std::make_unique<size_t>(i + 20));
+      }
+      a.swap(b);
+      ASSERT_THAT(a, SizeIs(size2));
+      ASSERT_THAT(b, SizeIs(size1));
+      for (size_t i = 0; i < a.size(); ++i) {
+        ASSERT_THAT(a[i], Pointee(i + 20));
+      }
+      for (size_t i = 0; i < b.size(); ++i) {
+        ASSERT_THAT(b[i], Pointee(i + 10));
+      }
+    }
+  }
+}
+
+// Erasing from a container of unique pointers should work fine, with no
+// leaks, despite the fact that unique pointers are trivially relocatable but
+// not trivially destructible.
+// TODO(absl-team): Using unique_ptr here is technically correct, but
+// a trivially relocatable struct would be less semantically confusing.
+TEST(UniquePtr, EraseSingle) {
+  for (size_t size = 4; size < 16; ++size) {
+    absl::InlinedVector<std::unique_ptr<size_t>, 8> a;
+    for (size_t i = 0; i < size; ++i) {
+      a.push_back(std::make_unique<size_t>(i));
+    }
+    a.erase(a.begin());
+    ASSERT_THAT(a, SizeIs(size - 1));
+    for (size_t i = 0; i < size - 1; ++i) {
+      ASSERT_THAT(a[i], Pointee(i + 1));
+    }
+    a.erase(a.begin() + 2);
+    ASSERT_THAT(a, SizeIs(size - 2));
+    ASSERT_THAT(a[0], Pointee(1));
+    ASSERT_THAT(a[1], Pointee(2));
+    for (size_t i = 2; i < size - 2; ++i) {
+      ASSERT_THAT(a[i], Pointee(i + 2));
+    }
+  }
+}
+
+// Erasing from a container of unique pointers should work fine, with no
+// leaks, despite the fact that unique pointers are trivially relocatable but
+// not trivially destructible.
+// TODO(absl-team): Using unique_ptr here is technically correct, but
+// a trivially relocatable struct would be less semantically confusing.
+TEST(UniquePtr, EraseMulti) {
+  for (size_t size = 5; size < 16; ++size) {
+    absl::InlinedVector<std::unique_ptr<size_t>, 8> a;
+    for (size_t i = 0; i < size; ++i) {
+      a.push_back(std::make_unique<size_t>(i));
+    }
+    a.erase(a.begin(), a.begin() + 2);
+    ASSERT_THAT(a, SizeIs(size - 2));
+    for (size_t i = 0; i < size - 2; ++i) {
+      ASSERT_THAT(a[i], Pointee(i + 2));
+    }
+    a.erase(a.begin() + 1, a.begin() + 3);
+    ASSERT_THAT(a, SizeIs(size - 4));
+    ASSERT_THAT(a[0], Pointee(2));
+    for (size_t i = 1; i < size - 4; ++i) {
+      ASSERT_THAT(a[i], Pointee(i + 4));
+    }
+  }
+}
+
 // At the end of this test loop, the elements between [erase_begin, erase_end)
 // should have reference counts == 0, and all others elements should have
 // reference counts == 1.
@@ -783,7 +863,9 @@ TEST(OverheadTest, Storage) {
   // The union should be absorbing some of the allocation bookkeeping overhead
   // in the larger vectors, leaving only the size_ field as overhead.
 
-  struct T { void* val; };
+  struct T {
+    void* val;
+  };
   size_t expected_overhead = sizeof(T);
 
   EXPECT_EQ((2 * expected_overhead),
@@ -1108,6 +1190,7 @@ TYPED_TEST_P(InstanceTest, CountConstructorsDestructorsOnCopyConstruction) {
     tracker.ResetCopiesMovesSwaps();
     {  // Copy constructor should create 'len' more instances.
       InstanceVec v_copy(v);
+      EXPECT_EQ(v_copy.size(), v.size());
       EXPECT_EQ(tracker.instances(), len + len);
       EXPECT_EQ(tracker.copies(), len);
       EXPECT_EQ(tracker.moves(), 0);
@@ -1135,6 +1218,7 @@ TYPED_TEST_P(InstanceTest, CountConstructorsDestructorsOnMoveConstruction) {
     tracker.ResetCopiesMovesSwaps();
     {
       InstanceVec v_copy(std::move(v));
+      EXPECT_EQ(v_copy.size(), len);
       if (static_cast<size_t>(len) > inlined_capacity) {
         // Allocation is moved as a whole.
         EXPECT_EQ(tracker.instances(), len);
@@ -1683,12 +1767,12 @@ TEST(AllocatorSupportTest, CountAllocations) {
 
     int64_t allocated2 = 0;
     MyAlloc alloc2(&allocated2);
-    AllocVec v2(v, alloc2);
+    ABSL_ATTRIBUTE_UNUSED AllocVec v2(v, alloc2);
     EXPECT_THAT(allocated2, Eq(0));
 
     int64_t allocated3 = 0;
     MyAlloc alloc3(&allocated3);
-    AllocVec v3(std::move(v), alloc3);
+    ABSL_ATTRIBUTE_UNUSED AllocVec v3(std::move(v), alloc3);
     EXPECT_THAT(allocated3, Eq(0));
   }
   EXPECT_THAT(allocated, 0);

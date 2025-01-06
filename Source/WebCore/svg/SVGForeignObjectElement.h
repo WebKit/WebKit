@@ -22,11 +22,13 @@
 #include "SVGGraphicsElement.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGForeignObjectElement final : public SVGGraphicsElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGForeignObjectElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGForeignObjectElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGForeignObjectElement);
 public:
     static Ref<SVGForeignObjectElement> create(const QualifiedName&, Document&);
 
@@ -40,10 +42,10 @@ public:
     SVGAnimatedLength& widthAnimated() { return m_width; }
     SVGAnimatedLength& heightAnimated() { return m_height; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGForeignObjectElement, SVGGraphicsElement>;
+
 private:
     SVGForeignObjectElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGForeignObjectElement, SVGGraphicsElement>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

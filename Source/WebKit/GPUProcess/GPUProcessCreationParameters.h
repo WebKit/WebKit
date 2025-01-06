@@ -47,10 +47,9 @@ struct GPUProcessCreationParameters {
     SandboxExtension::Handle launchServicesExtensionHandle;
 #endif
 #endif
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    bool sampleBufferContentKeySessionSupportEnabled { false };
+#if USE(MODERN_AVCONTENTKEYSESSION)
+    bool shouldUseModernAVContentKeySession { false };
 #endif
-    ProcessID parentPID;
 
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
     SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
@@ -72,6 +71,10 @@ struct GPUProcessCreationParameters {
     String renderDeviceFile;
 #endif
     Vector<String> overrideLanguages;
+#if PLATFORM(COCOA)
+    bool enableMetalDebugDeviceForTesting { false };
+    bool enableMetalShaderValidationForTesting { false };
+#endif
 };
 
 } // namespace WebKit

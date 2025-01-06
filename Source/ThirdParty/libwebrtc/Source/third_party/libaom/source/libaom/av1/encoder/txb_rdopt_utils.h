@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -36,7 +36,7 @@ static const int const_term = (1 << AV1_PROB_COST_SHIFT);
 
 static const int loge_par = ((14427 << AV1_PROB_COST_SHIFT) + 5000) / 10000;
 
-static INLINE int get_dqv(const int16_t *dequant, int coeff_idx,
+static inline int get_dqv(const int16_t *dequant, int coeff_idx,
                           const qm_val_t *iqmatrix) {
   int dqv = dequant[!!coeff_idx];
   if (iqmatrix != NULL)
@@ -45,7 +45,7 @@ static INLINE int get_dqv(const int16_t *dequant, int coeff_idx,
   return dqv;
 }
 
-static INLINE int64_t get_coeff_dist(tran_low_t tcoeff, tran_low_t dqcoeff,
+static inline int64_t get_coeff_dist(tran_low_t tcoeff, tran_low_t dqcoeff,
                                      int shift, const qm_val_t *qmatrix,
                                      int coeff_idx) {
   int64_t diff = (tcoeff - dqcoeff) * (1 << shift);
@@ -82,7 +82,7 @@ static int get_eob_cost(int eob, const LV_MAP_EOB_COST *txb_eob_costs,
   return eob_cost;
 }
 
-static INLINE int get_golomb_cost(int abs_qc) {
+static inline int get_golomb_cost(int abs_qc) {
   if (abs_qc >= 1 + NUM_BASE_LEVELS + COEFF_BASE_RANGE) {
     const int r = abs_qc - COEFF_BASE_RANGE - NUM_BASE_LEVELS;
     const int length = get_msb(r) + 1;
@@ -91,12 +91,12 @@ static INLINE int get_golomb_cost(int abs_qc) {
   return 0;
 }
 
-static INLINE int get_br_cost(tran_low_t level, const int *coeff_lps) {
+static inline int get_br_cost(tran_low_t level, const int *coeff_lps) {
   const int base_range = AOMMIN(level - 1 - NUM_BASE_LEVELS, COEFF_BASE_RANGE);
   return coeff_lps[base_range] + get_golomb_cost(level);
 }
 
-static INLINE int get_br_cost_with_diff(tran_low_t level, const int *coeff_lps,
+static inline int get_br_cost_with_diff(tran_low_t level, const int *coeff_lps,
                                         int *diff) {
   const int base_range = AOMMIN(level - 1 - NUM_BASE_LEVELS, COEFF_BASE_RANGE);
   int golomb_bits = 0;
@@ -142,7 +142,7 @@ static AOM_FORCE_INLINE int get_two_coeff_cost_simple(
   return cost;
 }
 
-static INLINE int get_coeff_cost_eob(int ci, tran_low_t abs_qc, int sign,
+static inline int get_coeff_cost_eob(int ci, tran_low_t abs_qc, int sign,
                                      int coeff_ctx, int dc_sign_ctx,
                                      const LV_MAP_COEFF_COST *txb_costs,
                                      int bhl, TX_CLASS tx_class) {
@@ -163,7 +163,7 @@ static INLINE int get_coeff_cost_eob(int ci, tran_low_t abs_qc, int sign,
   return cost;
 }
 
-static INLINE int get_coeff_cost_general(int is_last, int ci, tran_low_t abs_qc,
+static inline int get_coeff_cost_general(int is_last, int ci, tran_low_t abs_qc,
                                          int sign, int coeff_ctx,
                                          int dc_sign_ctx,
                                          const LV_MAP_COEFF_COST *txb_costs,
@@ -193,7 +193,7 @@ static INLINE int get_coeff_cost_general(int is_last, int ci, tran_low_t abs_qc,
   return cost;
 }
 
-static INLINE void get_qc_dqc_low(tran_low_t abs_qc, int sign, int dqv,
+static inline void get_qc_dqc_low(tran_low_t abs_qc, int sign, int dqv,
                                   int shift, tran_low_t *qc_low,
                                   tran_low_t *dqc_low) {
   tran_low_t abs_qc_low = abs_qc - 1;
@@ -204,7 +204,7 @@ static INLINE void get_qc_dqc_low(tran_low_t abs_qc, int sign, int dqv,
   assert((sign ? -abs_dqc_low : abs_dqc_low) == *dqc_low);
 }
 
-static INLINE void update_coeff_eob_fast(int *eob, int shift,
+static inline void update_coeff_eob_fast(int *eob, int shift,
                                          const int16_t *dequant_ptr,
                                          const int16_t *scan,
                                          const tran_low_t *coeff_ptr,

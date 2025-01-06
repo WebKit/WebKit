@@ -23,6 +23,7 @@
 
 #include "SVGGraphicsElement.h"
 #include "SVGUnitTypes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -31,7 +32,8 @@ class RenderObject;
 enum class RepaintRectCalculation : bool;
 
 class SVGClipPathElement final : public SVGGraphicsElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGClipPathElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGClipPathElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGClipPathElement);
 public:
     static Ref<SVGClipPathElement> create(const QualifiedName&, Document&);
 
@@ -42,10 +44,10 @@ public:
 
     FloatRect calculateClipContentRepaintRect(RepaintRectCalculation);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGClipPathElement, SVGGraphicsElement>;
+
 private:
     SVGClipPathElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGClipPathElement, SVGGraphicsElement>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

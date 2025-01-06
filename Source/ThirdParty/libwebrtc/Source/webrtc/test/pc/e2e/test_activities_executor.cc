@@ -48,7 +48,7 @@ void TestActivitiesExecutor::Stop() {
 
 void TestActivitiesExecutor::ScheduleActivity(
     TimeDelta initial_delay_since_start,
-    absl::optional<TimeDelta> interval,
+    std::optional<TimeDelta> interval,
     std::function<void(TimeDelta)> func) {
   RTC_CHECK(initial_delay_since_start.IsFinite() &&
             initial_delay_since_start >= TimeDelta::Zero());
@@ -112,7 +112,7 @@ Timestamp TestActivitiesExecutor::Now() const {
 
 TestActivitiesExecutor::ScheduledActivity::ScheduledActivity(
     TimeDelta initial_delay_since_start,
-    absl::optional<TimeDelta> interval,
+    std::optional<TimeDelta> interval,
     std::function<void(TimeDelta)> func)
     : initial_delay_since_start(initial_delay_since_start),
       interval(interval),

@@ -69,6 +69,7 @@
 #include <openssl/sha.h>
 #include <openssl/span.h>
 
+#include "../internal.h"
 #include "../test/file_test.h"
 #include "../test/test_util.h"
 #include "../test/wycheproof_util.h"
@@ -210,7 +211,8 @@ static void TestCipherAPI(const EVP_CIPHER *cipher, Operation op, bool padding,
   if (is_aead) {
     ASSERT_LE(iv.size(), size_t{INT_MAX});
     ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IVLEN,
-                                    static_cast<int>(iv.size()), 0));
+                                    static_cast<int>(iv.size()), nullptr));
+    ASSERT_EQ(EVP_CIPHER_CTX_iv_length(ctx.get()), iv.size());
   } else {
     ASSERT_EQ(iv.size(), EVP_CIPHER_CTX_iv_length(ctx.get()));
   }
@@ -687,4 +689,327 @@ TEST(CipherTest, GetCipher) {
   cipher = EVP_get_cipherbyname("3des");
   ASSERT_TRUE(cipher);
   EXPECT_EQ(NID_des_ede3_cbc, EVP_CIPHER_nid(cipher));
+}
+
+// Test the AES-GCM EVP_CIPHER's internal IV management APIs. OpenSSH uses these
+// APIs.
+TEST(CipherTest, GCMIncrementingIV) {
+  const EVP_CIPHER *kCipher = EVP_aes_128_gcm();
+  static const uint8_t kKey[16] = {0, 1, 2,  3,  4,  5,  6,  7,
+                                   8, 9, 10, 11, 12, 13, 14, 15};
+  static const uint8_t kInput[] = {'h', 'e', 'l', 'l', 'o'};
+
+  auto expect_iv = [&](EVP_CIPHER_CTX *ctx, bssl::Span<const uint8_t> iv,
+                       bool enc) {
+    // Make a reference ciphertext.
+    bssl::ScopedEVP_CIPHER_CTX ref;
+    ASSERT_TRUE(EVP_EncryptInit_ex(ref.get(), kCipher, /*impl=*/nullptr,
+                                   kKey, /*iv=*/nullptr));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ref.get(), EVP_CTRL_AEAD_SET_IVLEN,
+                                    static_cast<int>(iv.size()), nullptr));
+    ASSERT_TRUE(EVP_EncryptInit_ex(ref.get(), /*cipher=*/nullptr,
+                                   /*impl=*/nullptr, /*key=*/nullptr,
+                                   iv.data()));
+    uint8_t ciphertext[sizeof(kInput)];
+    int ciphertext_len;
+    ASSERT_TRUE(EVP_EncryptUpdate(ref.get(), ciphertext, &ciphertext_len,
+                                  kInput, sizeof(kInput)));
+    int extra_len;
+    ASSERT_TRUE(EVP_EncryptFinal_ex(ref.get(), nullptr, &extra_len));
+    ASSERT_EQ(extra_len, 0);
+    uint8_t tag[16];
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ref.get(), EVP_CTRL_AEAD_GET_TAG,
+                                    sizeof(tag), tag));
+
+    if (enc) {
+      uint8_t actual[sizeof(kInput)];
+      int actual_len;
+      ASSERT_TRUE(
+          EVP_EncryptUpdate(ctx, actual, &actual_len, kInput, sizeof(kInput)));
+      ASSERT_TRUE(EVP_EncryptFinal_ex(ctx, nullptr, &extra_len));
+      ASSERT_EQ(extra_len, 0);
+      EXPECT_EQ(Bytes(actual, actual_len), Bytes(ciphertext, ciphertext_len));
+      uint8_t actual_tag[16];
+      ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_GET_TAG,
+                                      sizeof(actual_tag), actual_tag));
+      EXPECT_EQ(Bytes(actual_tag), Bytes(tag));
+    } else {
+      ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_TAG, sizeof(tag),
+                                      const_cast<uint8_t *>(tag)));
+      uint8_t actual[sizeof(kInput)];
+      int actual_len;
+      ASSERT_TRUE(EVP_DecryptUpdate(ctx, actual, &actual_len, ciphertext,
+                                    sizeof(ciphertext)));
+      ASSERT_TRUE(EVP_DecryptFinal_ex(ctx, nullptr, &extra_len));
+      ASSERT_EQ(extra_len, 0);
+      EXPECT_EQ(Bytes(actual, actual_len), Bytes(kInput));
+    }
+  };
+
+  {
+    // Passing in a fixed IV length of -1 sets the whole IV, but then configures
+    // |EVP_CIPHER_CTX| to increment the bottom 8 bytes of the IV.
+    static const uint8_t kIV1[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+    static const uint8_t kIV2[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13};
+    static const uint8_t kIV3[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14};
+    static const uint8_t kIV4[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 15};
+
+    bssl::ScopedEVP_CIPHER_CTX ctx;
+    ASSERT_TRUE(EVP_EncryptInit_ex(ctx.get(), kCipher, /*impl=*/nullptr, kKey,
+                                   /*iv=*/nullptr));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, -1,
+                                    const_cast<uint8_t *>(kIV1)));
+
+    // EVP_CTRL_GCM_IV_GEN both configures and returns the IV.
+    uint8_t iv[12];
+    ASSERT_TRUE(
+        EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN, sizeof(iv), iv));
+    EXPECT_EQ(Bytes(iv), Bytes(kIV1));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV1, /*enc=*/true));
+
+    // Continuing to run EVP_CTRL_GCM_IV_GEN should increment the IV.
+    ASSERT_TRUE(
+        EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN, sizeof(iv), iv));
+    EXPECT_EQ(Bytes(iv), Bytes(kIV2));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV2, /*enc=*/true));
+
+    // Passing in a shorter length outputs the suffix portion.
+    uint8_t suffix[8];
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN,
+                                    sizeof(suffix), suffix));
+    EXPECT_EQ(Bytes(suffix),
+              Bytes(bssl::MakeConstSpan(kIV3).last(sizeof(suffix))));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV3, /*enc=*/true));
+
+    // A length of -1 returns the whole IV.
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN, -1, iv));
+    EXPECT_EQ(Bytes(iv), Bytes(kIV4));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV4, /*enc=*/true));
+  }
+
+  {
+    // Similar to the above, but for decrypting.
+    static const uint8_t kIV1[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+    static const uint8_t kIV2[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13};
+
+    bssl::ScopedEVP_CIPHER_CTX ctx;
+    ASSERT_TRUE(EVP_DecryptInit_ex(ctx.get(), kCipher, /*impl=*/nullptr, kKey,
+                                   /*iv=*/nullptr));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, -1,
+                                    const_cast<uint8_t *>(kIV1)));
+
+    uint8_t iv[12];
+    ASSERT_TRUE(
+        EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN, sizeof(iv), iv));
+    EXPECT_EQ(Bytes(iv), Bytes(kIV1));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV1, /*enc=*/false));
+
+    ASSERT_TRUE(
+        EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN, sizeof(iv), iv));
+    EXPECT_EQ(Bytes(iv), Bytes(kIV2));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV2, /*enc=*/false));
+  }
+
+  {
+    // Test that only the bottom 8 bytes are used as a counter.
+    static const uint8_t kIV1[12] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                     0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+    static const uint8_t kIV2[12] = {0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
+                                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    static const uint8_t kIV3[12] = {0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
+                                     0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
+
+    bssl::ScopedEVP_CIPHER_CTX ctx;
+    ASSERT_TRUE(EVP_EncryptInit_ex(ctx.get(), kCipher, /*impl=*/nullptr, kKey,
+                                   /*iv=*/nullptr));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, -1,
+                                    const_cast<uint8_t *>(kIV1)));
+
+    uint8_t iv[12];
+    ASSERT_TRUE(
+        EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN, sizeof(iv), iv));
+    EXPECT_EQ(Bytes(iv), Bytes(kIV1));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV1, /*enc=*/true));
+
+    ASSERT_TRUE(
+        EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN, sizeof(iv), iv));
+    EXPECT_EQ(Bytes(iv), Bytes(kIV2));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV2, /*enc=*/true));
+
+    ASSERT_TRUE(
+        EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN, sizeof(iv), iv));
+    EXPECT_EQ(Bytes(iv), Bytes(kIV3));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV3, /*enc=*/true));
+  }
+
+  {
+    // Test with a longer IV length.
+    static const uint8_t kIV1[16] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                     0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                     0xff, 0xff, 0xff, 0xff};
+    static const uint8_t kIV2[16] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                     0xff, 0xff, 0x00, 0x00, 0x00, 0x00,
+                                     0x00, 0x00, 0x00, 0x00};
+    static const uint8_t kIV3[16] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                     0xff, 0xff, 0x00, 0x00, 0x00, 0x00,
+                                     0x00, 0x00, 0x00, 0x01};
+
+    bssl::ScopedEVP_CIPHER_CTX ctx;
+    ASSERT_TRUE(EVP_EncryptInit_ex(ctx.get(), kCipher, /*impl=*/nullptr, kKey,
+                                   /*iv=*/nullptr));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IVLEN,
+                                    sizeof(kIV1), nullptr));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, -1,
+                                    const_cast<uint8_t *>(kIV1)));
+
+    uint8_t iv[16];
+    ASSERT_TRUE(
+        EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN, sizeof(iv), iv));
+    EXPECT_EQ(Bytes(iv), Bytes(kIV1));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV1, /*enc=*/true));
+
+    ASSERT_TRUE(
+        EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN, sizeof(iv), iv));
+    EXPECT_EQ(Bytes(iv), Bytes(kIV2));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV2, /*enc=*/true));
+
+    ASSERT_TRUE(
+        EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN, sizeof(iv), iv));
+    EXPECT_EQ(Bytes(iv), Bytes(kIV3));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV3, /*enc=*/true));
+  }
+
+  {
+    // When decrypting, callers are expected to configure the fixed half and
+    // invocation half separately. The two will get stitched together into the
+    // final IV.
+    const uint8_t kIV[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+
+    bssl::ScopedEVP_CIPHER_CTX ctx;
+    ASSERT_TRUE(EVP_DecryptInit_ex(ctx.get(), kCipher, /*impl=*/nullptr, kKey,
+                                   /*iv=*/nullptr));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 4,
+                                    const_cast<uint8_t *>(kIV)));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_SET_IV_INV, 8,
+                                    const_cast<uint8_t *>(kIV + 4)));
+    // EVP_CTRL_GCM_SET_IV_INV is sufficient to configure the IV. There is no
+    // need to call EVP_CTRL_GCM_IV_GEN.
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV, /*enc=*/false));
+  }
+
+  {
+    // Stitching together a decryption IV that exceeds the standard IV length.
+    const uint8_t kIV[16] = {1, 2,  3,  4,  5,  6,  7,  8,
+                             9, 10, 11, 12, 13, 14, 15, 16};
+
+    bssl::ScopedEVP_CIPHER_CTX ctx;
+    ASSERT_TRUE(EVP_DecryptInit_ex(ctx.get(), kCipher, /*impl=*/nullptr, kKey,
+                                   /*iv=*/nullptr));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IVLEN,
+                                    sizeof(kIV), nullptr));
+
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 4,
+                                    const_cast<uint8_t *>(kIV)));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_SET_IV_INV, 12,
+                                    const_cast<uint8_t *>(kIV + 4)));
+    // EVP_CTRL_GCM_SET_IV_INV is sufficient to configure the IV. There is no
+    // need to call EVP_CTRL_GCM_IV_GEN.
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), kIV, /*enc=*/false));
+  }
+
+  {
+    // Fixed IVs must be at least 4 bytes and admit at least an 8 byte counter.
+    const uint8_t kIV[16] = {1, 2,  3,  4,  5,  6,  7,  8,
+                             9, 10, 11, 12, 13, 14, 15, 16};
+
+    bssl::ScopedEVP_CIPHER_CTX ctx;
+    ASSERT_TRUE(EVP_DecryptInit_ex(ctx.get(), kCipher, /*impl=*/nullptr, kKey,
+                                   /*iv=*/nullptr));
+
+    // This means the default IV length only allows a 4/8 split.
+    EXPECT_FALSE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 0,
+                                     const_cast<uint8_t *>(kIV)));
+    EXPECT_FALSE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 3,
+                                     const_cast<uint8_t *>(kIV)));
+    EXPECT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 4,
+                                    const_cast<uint8_t *>(kIV)));
+    EXPECT_FALSE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 5,
+                                     const_cast<uint8_t *>(kIV)));
+    EXPECT_FALSE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 16,
+                                     const_cast<uint8_t *>(kIV)));
+
+    // A longer IV allows a wider range.
+    ASSERT_TRUE(
+        EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IVLEN, 16, nullptr));
+    EXPECT_FALSE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 0,
+                                     const_cast<uint8_t *>(kIV)));
+    EXPECT_FALSE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 3,
+                                     const_cast<uint8_t *>(kIV)));
+    EXPECT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 4,
+                                    const_cast<uint8_t *>(kIV)));
+    EXPECT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 6,
+                                    const_cast<uint8_t *>(kIV)));
+    EXPECT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 8,
+                                    const_cast<uint8_t *>(kIV)));
+    EXPECT_FALSE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 9,
+                                     const_cast<uint8_t *>(kIV)));
+    EXPECT_FALSE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED, 16,
+                                     const_cast<uint8_t *>(kIV)));
+  }
+
+  {
+    // When encrypting, setting a fixed IV randomizes the counter portion.
+    const uint8_t kFixedIV[4] = {1, 2, 3, 4};
+    bssl::ScopedEVP_CIPHER_CTX ctx;
+    ASSERT_TRUE(EVP_EncryptInit_ex(ctx.get(), kCipher, /*impl=*/nullptr, kKey,
+                                   /*iv=*/nullptr));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED,
+                                    sizeof(kFixedIV),
+                                    const_cast<uint8_t *>(kFixedIV)));
+    uint8_t counter[8];
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN,
+                                    sizeof(counter), counter));
+
+    uint8_t iv[12];
+    memcpy(iv, kFixedIV, sizeof(kFixedIV));
+    memcpy(iv + sizeof(kFixedIV), counter, sizeof(counter));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), iv, /*enc=*/true));
+
+    // The counter continues to act as a counter.
+    uint8_t counter2[8];
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN,
+                                    sizeof(counter2), counter2));
+    EXPECT_EQ(CRYPTO_load_u64_be(counter2), CRYPTO_load_u64_be(counter) + 1);
+    memcpy(iv + sizeof(kFixedIV), counter2, sizeof(counter2));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), iv, /*enc=*/true));
+  }
+
+    {
+    // Same as above, but with a larger IV.
+    const uint8_t kFixedIV[8] = {1, 2, 3, 4, 5, 6, 7, 8};
+    bssl::ScopedEVP_CIPHER_CTX ctx;
+    ASSERT_TRUE(EVP_EncryptInit_ex(ctx.get(), kCipher, /*impl=*/nullptr, kKey,
+                                   /*iv=*/nullptr));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IVLEN,
+                                    sizeof(kFixedIV) + 8, nullptr));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IV_FIXED,
+                                    sizeof(kFixedIV),
+                                    const_cast<uint8_t *>(kFixedIV)));
+    uint8_t counter[8];
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN,
+                                    sizeof(counter), counter));
+
+    uint8_t iv[16];
+    memcpy(iv, kFixedIV, sizeof(kFixedIV));
+    memcpy(iv + sizeof(kFixedIV), counter, sizeof(counter));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), iv, /*enc=*/true));
+
+    // The counter continues to act as a counter.
+    uint8_t counter2[8];
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_IV_GEN,
+                                    sizeof(counter2), counter2));
+    EXPECT_EQ(CRYPTO_load_u64_be(counter2), CRYPTO_load_u64_be(counter) + 1);
+    memcpy(iv + sizeof(kFixedIV), counter2, sizeof(counter2));
+    ASSERT_NO_FATAL_FAILURE(expect_iv(ctx.get(), iv, /*enc=*/true));
+  }
 }

@@ -44,7 +44,9 @@ PASS Ignore setting of unhandledrejection window event handlers on windowless bo
 PASS Return null when getting the unload event handler of a windowless body
 PASS Ignore setting of unload window event handlers on windowless body
 PASS abort is unaffected on a windowless body
-FAIL auxclick is unaffected on a windowless body assert_equals: expected (object) null but got (undefined) undefined
+PASS auxclick is unaffected on a windowless body
+PASS beforeinput is unaffected on a windowless body
+PASS beforetoggle is unaffected on a windowless body
 PASS cancel is unaffected on a windowless body
 PASS canplay is unaffected on a windowless body
 PASS canplaythrough is unaffected on a windowless body
@@ -105,9 +107,6 @@ PASS webkitanimationiteration is unaffected on a windowless body
 PASS webkitanimationstart is unaffected on a windowless body
 PASS webkittransitionend is unaffected on a windowless body
 PASS wheel is unaffected on a windowless body
-PASS copy is unaffected on a windowless body
-PASS cut is unaffected on a windowless body
-PASS paste is unaffected on a windowless body
 PASS Return null when getting the blur event handler of a windowless frameset
 PASS Ignore setting of blur window event handlers on windowless frameset
 PASS Return null when getting the error event handler of a windowless frameset
@@ -153,7 +152,9 @@ PASS Ignore setting of unhandledrejection window event handlers on windowless fr
 PASS Return null when getting the unload event handler of a windowless frameset
 PASS Ignore setting of unload window event handlers on windowless frameset
 PASS abort is unaffected on a windowless frameset
-FAIL auxclick is unaffected on a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
+PASS auxclick is unaffected on a windowless frameset
+PASS beforeinput is unaffected on a windowless frameset
+PASS beforetoggle is unaffected on a windowless frameset
 PASS cancel is unaffected on a windowless frameset
 PASS canplay is unaffected on a windowless frameset
 PASS canplaythrough is unaffected on a windowless frameset
@@ -214,7 +215,4 @@ PASS webkitanimationiteration is unaffected on a windowless frameset
 PASS webkitanimationstart is unaffected on a windowless frameset
 PASS webkittransitionend is unaffected on a windowless frameset
 PASS wheel is unaffected on a windowless frameset
-PASS copy is unaffected on a windowless frameset
-PASS cut is unaffected on a windowless frameset
-PASS paste is unaffected on a windowless frameset
 

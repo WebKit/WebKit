@@ -103,7 +103,7 @@ TEST_F(XMLParsing, WebCoreDoesNotBreakLibxml2)
     xmlSetExternalEntityLoader(origEntityLoader);
 
     // Parse an XML document in libxml2.
-    NSString *resourceURL = [[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"xml" subdirectory:@"TestWebKitAPI.resources"] path];
+    NSString *resourceURL = [[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"xml"] path];
     xmlParserCtxtPtr ctxt = xmlNewParserCtxt();
     EXPECT_TRUE(!!ctxt);
     xmlDocPtr doc = xmlCtxtReadFile(ctxt, resourceURL.UTF8String, nullptr, XML_PARSE_NONET);

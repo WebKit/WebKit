@@ -36,16 +36,8 @@
 #include <wtf/Identified.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class StorageAreaMap;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::StorageAreaMap> : std::true_type { };
-}
 
 namespace WebCore {
 class SecurityOrigin;
@@ -58,11 +50,18 @@ namespace WebKit {
 class StorageAreaImpl;
 class StorageNamespaceImpl;
 
-class StorageAreaMap final : public IPC::MessageReceiver, public Identified<StorageAreaMapIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+class StorageAreaMap final : public RefCounted<StorageAreaMap>, public IPC::MessageReceiver, public Identified<StorageAreaMapIdentifier> {
+    WTF_MAKE_TZONE_ALLOCATED(StorageAreaMap);
 public:
-    StorageAreaMap(StorageNamespaceImpl&, Ref<const WebCore::SecurityOrigin>&&);
+    static Ref<StorageAreaMap> create(StorageNamespaceImpl& storageNamespace, Ref<const WebCore::SecurityOrigin>&& securityOrigin)
+    {
+        return adoptRef(*new StorageAreaMap(storageNamespace, WTFMove(securityOrigin)));
+    }
+
     ~StorageAreaMap();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     WebCore::StorageType type() const { return m_type; }
 
@@ -85,6 +84,8 @@ public:
     void decrementUseCount();
 
 private:
+    StorageAreaMap(StorageNamespaceImpl&, Ref<const WebCore::SecurityOrigin>&&);
+
     void didSetItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
     void didRemoveItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
     void didClear(uint64_t mapSeed);
@@ -106,10 +107,12 @@ private:
     enum class SendMode : bool { Async, Sync };
     void sendConnectMessage(SendMode);
     void connectSync();
-    void didConnect(StorageAreaIdentifier, HashMap<String, String>&&, uint64_t messageIdentifier);
+    void didConnect(std::optional<StorageAreaIdentifier>, HashMap<String, String>&&, uint64_t messageIdentifier);
+
+    Ref<StorageNamespaceImpl> protectedNamespace() const;
 
     uint64_t m_lastHandledMessageIdentifier { 0 };
-    StorageNamespaceImpl& m_namespace;
+    WeakRef<StorageNamespaceImpl> m_namespace;
     Ref<const WebCore::SecurityOrigin> m_securityOrigin;
     std::unique_ptr<WebCore::StorageMap> m_map;
     std::optional<StorageAreaIdentifier> m_remoteAreaIdentifier;

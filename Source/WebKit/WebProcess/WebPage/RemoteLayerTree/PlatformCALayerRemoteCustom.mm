@@ -38,6 +38,10 @@
 #import <WebCore/WebLayer.h>
 #import <wtf/RetainPtr.h>
 
+#if ENABLE(MODEL_PROCESS)
+#import <WebCore/ModelContext.h>
+#endif
+
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebKit {
@@ -52,12 +56,14 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(PlatformLayer *pl
     return WTFMove(layer);
 }
 
-Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(LayerHostingContextID hostedContextIdentifier, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+#if ENABLE(MODEL_PROCESS)
+Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(Ref<WebCore::ModelContext> modelContext, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
-    auto layer = adoptRef(*new PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType::LayerTypeCustom, hostedContextIdentifier, owner, context));
+    auto layer = adoptRef(*new PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType::LayerTypeCustom, modelContext, owner, context));
     context.layerDidEnterContext(layer.get(), layer->layerType());
     return WTFMove(layer);
 }
+#endif
 
 #if HAVE(AVKIT)
 Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(WebCore::HTMLVideoElement& videoElement, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
@@ -80,12 +86,24 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(HTMLVideoElement& video
     m_hasVideo = true;
 }
 
+#if ENABLE(MODEL_PROCESS)
+PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType layerType, Ref<WebCore::ModelContext> modelContext, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+    : PlatformCALayerRemoteCustom(layerType, modelContext->modelContentsLayerHostingContextIdentifier().toRawValue(), owner, context)
+{
+    m_modelContext = modelContext.ptr();
+}
+#endif
+
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(LayerType layerType, PlatformLayer * customLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
     : PlatformCALayerRemote(layerType, owner, context)
 {
     switch (context.layerHostingMode()) {
     case LayerHostingMode::InProcess:
+#if HAVE(HOSTED_CORE_ANIMATION)
         m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::singleton().compositingRenderServerPort());
+#else
+        RELEASE_ASSERT_NOT_REACHED();
+#endif
         break;
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
     case LayerHostingMode::OutOfProcess:
@@ -124,6 +142,14 @@ void PlatformCALayerRemoteCustom::populateCreationProperties(RemoteLayerTreeTran
 {
     PlatformCALayerRemote::populateCreationProperties(properties, context, type);
     ASSERT(std::holds_alternative<RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData>(properties.additionalData));
+
+#if ENABLE(MODEL_PROCESS)
+    if (m_modelContext) {
+        properties.additionalData = *m_modelContext;
+        return;
+    }
+#endif
+
     properties.additionalData = RemoteLayerTreeTransaction::LayerCreationProperties::CustomData {
         .hostingContextID = hostingContextID(),
         .hostingDeviceScaleFactor = context.deviceScaleFactor(),

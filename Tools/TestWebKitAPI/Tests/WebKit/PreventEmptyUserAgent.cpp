@@ -38,22 +38,15 @@ namespace TestWebKitAPI {
 
 static bool testDone;
 
-static void didRunJavaScript(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* context)
+static void didRunJavaScript(WKTypeRef result, WKErrorRef error, void* context)
 {
     EXPECT_EQ(reinterpret_cast<void*>(0x1234578), context);
-    EXPECT_NOT_NULL(resultSerializedScriptValue);
-
-    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
-    JSValueRef scriptValue = WKSerializedScriptValueDeserialize(resultSerializedScriptValue, scriptContext, 0);
-    EXPECT_TRUE(JSValueIsString(scriptContext, scriptValue));
+    EXPECT_NOT_NULL(result);
+    EXPECT_EQ(WKGetTypeID(result), WKStringGetTypeID());
 
     // Make sure that the result of navigator.userAgent isn't empty, even if we set the custom
     // user agent to the empty string.
-    JSStringRef scriptString = JSValueToStringCopy(scriptContext, scriptValue, 0);
-    EXPECT_GT(JSStringGetLength(scriptString), 0u);
-
-    JSStringRelease(scriptString);
-    JSGlobalContextRelease(scriptContext);
+    EXPECT_GT(WKStringGetLength((WKStringRef)result), 0u);
 
     testDone = true;
 }
@@ -65,7 +58,7 @@ TEST(WebKit, PreventEmptyUserAgent)
 
     WKPageSetCustomUserAgent(webView.page(), WKStringCreateWithUTF8CString(""));
     WKRetainPtr<WKStringRef> javaScriptString = adoptWK(WKStringCreateWithUTF8CString("navigator.userAgent"));
-    WKPageRunJavaScriptInMainFrame(webView.page(), javaScriptString.get(), reinterpret_cast<void*>(0x1234578), didRunJavaScript);
+    WKPageEvaluateJavaScriptInMainFrame(webView.page(), javaScriptString.get(), reinterpret_cast<void*>(0x1234578), didRunJavaScript);
 
     Util::run(&testDone);
 }

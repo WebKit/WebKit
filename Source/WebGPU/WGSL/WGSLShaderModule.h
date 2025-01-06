@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@
 namespace WGSL {
 
 class ShaderModule {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ShaderModule);
 public:
     explicit ShaderModule(const String& source)
         : ShaderModule(source, { })
@@ -142,6 +142,9 @@ public:
     void setUsesPackedVec3() { m_usesPackedVec3 = true; }
     void clearUsesPackedVec3() { m_usesPackedVec3 = false; }
 
+    bool usesMin() const { return m_usesMin; }
+    void setUsesMin() { m_usesMin = true; }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
@@ -165,7 +168,7 @@ public:
     std::enable_if_t<sizeof(CurrentType) < sizeof(ReplacementType) || std::is_same_v<ReplacementType, AST::Expression>, void> replace(CurrentType& current, ReplacementType& replacement)
     {
         m_replacements.append([&current, currentCopy = current]() mutable {
-            bitwise_cast<AST::IdentityExpression*>(&current)->~IdentityExpression();
+            std::bit_cast<AST::IdentityExpression*>(&current)->~IdentityExpression();
             new (&current) CurrentType(WTFMove(currentCopy));
         });
 
@@ -177,12 +180,12 @@ public:
     std::enable_if_t<sizeof(CurrentType) >= sizeof(ReplacementType) && !std::is_same_v<ReplacementType, AST::Expression>, void> replace(CurrentType& current, ReplacementType& replacement)
     {
         m_replacements.append([&current, currentCopy = current]() mutable {
-            bitwise_cast<ReplacementType*>(&current)->~ReplacementType();
-            new (bitwise_cast<void*>(&current)) CurrentType(WTFMove(currentCopy));
+            std::bit_cast<ReplacementType*>(&current)->~ReplacementType();
+            new (std::bit_cast<void*>(&current)) CurrentType(WTFMove(currentCopy));
         });
 
         current.~CurrentType();
-        new (bitwise_cast<void*>(&current)) ReplacementType(replacement);
+        new (std::bit_cast<void*>(&current)) ReplacementType(replacement);
     }
 
     template<typename T, size_t size>
@@ -247,11 +250,18 @@ public:
         vector.clear();
     }
 
-    void revertReplacements()
+    size_t currentReplacementSize() const
     {
-        for (int i = m_replacements.size() - 1; i >= 0; --i)
+        return m_replacements.size();
+    }
+
+    void revertReplacements(size_t limit)
+    {
+        if (m_replacements.size() == limit)
+            return;
+        for (size_t i = m_replacements.size() - 1; i >= limit; --i)
             m_replacements[i]();
-        m_replacements.clear();
+        m_replacements.shrinkCapacity(limit);
     }
 
     OptionSet<Extension>& enabledExtensions() { return m_enabledExtensions; }
@@ -265,6 +275,15 @@ public:
         m_pipelineOverrideIds.add(idValue);
     }
     bool hasFeature(const String& featureName) const { return m_configuration.supportedFeatures.contains(featureName); }
+
+    template<typename Validator>
+    void addOverrideValidation(AST::Expression& expression, Validator&& validator)
+    {
+        auto result = m_overrideValidations.add(&expression, Vector<Function<std::optional<String>(const ConstantValue&)>> { });
+        result.iterator->value.append(WTFMove(validator));
+    }
+
+    std::optional<Error> validateOverrides(const HashMap<String, ConstantValue>&);
 
 private:
     String m_source;
@@ -291,6 +310,7 @@ private:
     bool m_usesDot4U8Packed { false };
     bool m_usesExtractBits { false };
     bool m_usesPackedVec3 { false };
+    bool m_usesMin { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;
@@ -301,6 +321,7 @@ private:
     std::optional<CallGraph> m_callGraph;
     Vector<std::function<void()>> m_replacements;
     HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_pipelineOverrideIds;
+    HashMap<const AST::Expression*, Vector<Function<std::optional<String>(const ConstantValue&)>>> m_overrideValidations;
 };
 
 } // namespace WGSL

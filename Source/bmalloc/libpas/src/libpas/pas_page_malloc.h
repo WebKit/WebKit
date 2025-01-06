@@ -60,7 +60,7 @@ static inline size_t pas_page_malloc_alignment_shift(void)
 
 PAS_API pas_aligned_allocation_result
 pas_page_malloc_try_allocate_without_deallocating_padding(
-    size_t size, pas_alignment alignment);
+    size_t size, pas_alignment alignment, bool may_contain_small_or_medium);
 
 PAS_API void pas_page_malloc_deallocate(void* base, size_t size);
 

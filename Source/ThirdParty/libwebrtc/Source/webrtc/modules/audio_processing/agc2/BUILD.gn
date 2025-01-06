@@ -23,9 +23,9 @@ rtc_library("speech_level_estimator") {
 
   deps = [
     ":common",
-    "..:api",
     "..:apm_logging",
     "../../../api:array_view",
+    "../../../api/audio:audio_processing",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../../../rtc_base:safe_minmax",
@@ -48,9 +48,9 @@ rtc_library("adaptive_digital_gain_controller") {
   deps = [
     ":common",
     ":gain_applier",
-    "..:api",
     "..:apm_logging",
-    "..:audio_frame_view",
+    "../../../api/audio:audio_frame_api",
+    "../../../api/audio:audio_processing",
     "../../../common_audio",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
@@ -81,8 +81,6 @@ rtc_library("saturation_protector") {
     "../../../rtc_base:safe_compare",
     "../../../rtc_base:safe_minmax",
   ]
-
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("biquad_filter") {
@@ -112,15 +110,13 @@ rtc_library("clipping_predictor") {
 
   deps = [
     ":gain_map",
-    "..:api",
     "..:audio_frame_view",
+    "../../../api/audio:audio_processing",
     "../../../common_audio",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../../../rtc_base:safe_minmax",
   ]
-
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_source_set("common") {
@@ -150,6 +146,7 @@ rtc_library("fixed_digital") {
     "..:apm_logging",
     "..:audio_frame_view",
     "../../../api:array_view",
+    "../../../api/audio:audio_frame_api",
     "../../../common_audio",
     "../../../rtc_base:checks",
     "../../../rtc_base:gtest_prod",
@@ -157,8 +154,8 @@ rtc_library("fixed_digital") {
     "../../../rtc_base:safe_minmax",
     "../../../rtc_base:stringutils",
     "../../../system_wrappers:metrics",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 rtc_library("gain_applier") {
@@ -175,7 +172,7 @@ rtc_library("gain_applier") {
   deps = [
     ":common",
     "..:audio_frame_view",
-    "../../../api:array_view",
+    "../../../api/audio:audio_frame_api",
     "../../../rtc_base:safe_minmax",
   ]
 }
@@ -209,10 +206,10 @@ rtc_library("input_volume_controller") {
     ":clipping_predictor",
     ":gain_map",
     ":input_volume_stats_reporter",
-    "..:api",
     "..:audio_buffer",
     "..:audio_frame_view",
     "../../../api:array_view",
+    "../../../api/audio:audio_processing",
     "../../../rtc_base:checks",
     "../../../rtc_base:checks",
     "../../../rtc_base:gtest_prod",
@@ -222,8 +219,6 @@ rtc_library("input_volume_controller") {
     "../../../system_wrappers:field_trial",
     "../../../system_wrappers:metrics",
   ]
-
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("noise_level_estimator") {
@@ -234,8 +229,7 @@ rtc_library("noise_level_estimator") {
   deps = [
     ":biquad_filter",
     "..:apm_logging",
-    "..:audio_frame_view",
-    "../../../api:array_view",
+    "../../../api/audio:audio_frame_api",
     "../../../rtc_base:checks",
     "../../../system_wrappers",
   ]
@@ -268,8 +262,7 @@ rtc_library("vad_wrapper") {
   deps = [
     ":common",
     ":cpu_features",
-    "..:audio_frame_view",
-    "../../../api:array_view",
+    "../../../api/audio:audio_frame_api",
     "../../../common_audio",
     "../../../rtc_base:checks",
     "rnn_vad",
@@ -303,8 +296,8 @@ rtc_library("speech_level_estimator_unittest") {
   deps = [
     ":common",
     ":speech_level_estimator",
-    "..:api",
     "..:apm_logging",
+    "../../../api/audio:audio_processing",
     "../../../rtc_base:gunit_helpers",
     "../../../test:test_support",
   ]
@@ -320,9 +313,9 @@ rtc_library("adaptive_digital_gain_controller_unittest") {
     ":adaptive_digital_gain_controller",
     ":common",
     ":test_utils",
-    "..:api",
     "..:apm_logging",
     "..:audio_frame_view",
+    "../../../api/audio:audio_processing",
     "../../../common_audio",
     "../../../rtc_base:gunit_helpers",
     "../../../test:test_support",
@@ -337,7 +330,7 @@ rtc_library("gain_applier_unittest") {
   deps = [
     ":gain_applier",
     ":test_utils",
-    "..:audio_frame_view",
+    "../../../api/audio:audio_frame_api",
     "../../../rtc_base:gunit_helpers",
     "../../../test:test_support",
   ]
@@ -391,6 +384,7 @@ rtc_library("fixed_digital_unittests") {
     "..:apm_logging",
     "..:audio_frame_view",
     "../../../api:array_view",
+    "../../../api/audio:audio_frame_api",
     "../../../common_audio",
     "../../../rtc_base:checks",
     "../../../rtc_base:gunit_helpers",
@@ -413,7 +407,6 @@ rtc_library("input_volume_controller_unittests") {
     ":clipping_predictor",
     ":gain_map",
     ":input_volume_controller",
-    "..:api",
     "../../../api:array_view",
     "../../../rtc_base:checks",
     "../../../rtc_base:random",
@@ -426,8 +419,6 @@ rtc_library("input_volume_controller_unittests") {
     "../../../test:test_support",
     "//testing/gtest",
   ]
-
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("noise_estimator_unittests") {
@@ -439,9 +430,8 @@ rtc_library("noise_estimator_unittests") {
     ":noise_level_estimator",
     ":test_utils",
     "..:apm_logging",
-    "..:audio_frame_view",
-    "../../../api:array_view",
     "../../../api:function_view",
+    "../../../api/audio:audio_frame_api",
     "../../../rtc_base:checks",
     "../../../rtc_base:gunit_helpers",
   ]
@@ -453,7 +443,7 @@ rtc_library("vad_wrapper_unittests") {
   deps = [
     ":common",
     ":vad_wrapper",
-    "..:audio_frame_view",
+    "../../../api/audio:audio_frame_api",
     "../../../rtc_base:checks",
     "../../../rtc_base:gunit_helpers",
     "../../../rtc_base:safe_compare",
@@ -475,6 +465,7 @@ rtc_library("test_utils") {
   ]
   deps = [
     "..:audio_frame_view",
+    "../../../api/audio:audio_frame_api",
     "../../../rtc_base:checks",
     "../../../rtc_base:random",
   ]
@@ -491,10 +482,7 @@ rtc_library("input_volume_stats_reporter") {
     "../../../rtc_base:safe_minmax",
     "../../../rtc_base:stringutils",
     "../../../system_wrappers:metrics",
-  ]
-  absl_deps = [
-    "//third_party/abseil-cpp/absl/strings",
-    "//third_party/abseil-cpp/absl/types:optional",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }
 
@@ -506,6 +494,6 @@ rtc_library("input_volume_stats_reporter_unittests") {
     "../../../rtc_base:stringutils",
     "../../../system_wrappers:metrics",
     "../../../test:test_support",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }

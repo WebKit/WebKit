@@ -9,22 +9,32 @@
 #define SkSVGRenderContext_DEFINED
 
 #include "include/core/SkFontMgr.h"
+#include "include/core/SkFourByteTag.h"
 #include "include/core/SkM44.h"
-#include "include/core/SkPaint.h"
 #include "include/core/SkPath.h"
 #include "include/core/SkRect.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkScalar.h"
 #include "include/core/SkSize.h"
 #include "include/core/SkTypes.h"
-#include "modules/skresources/include/SkResources.h"
 #include "modules/skshaper/include/SkShaper.h"
 #include "modules/skshaper/include/SkShaper_factory.h"
 #include "modules/svg/include/SkSVGAttribute.h"
 #include "modules/svg/include/SkSVGIDMapper.h"
+#include "modules/svg/include/SkSVGNode.h"
+#include "modules/svg/include/SkSVGTypes.h"
 #include "src/base/SkTLazy.h"
 #include "src/core/SkTHash.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <utility>
+
 class SkCanvas;
-class SkSVGLength;
+class SkPaint;
+class SkString;
+namespace skresources { class ResourceProvider; }
 
 class SK_API SkSVGLengthContext {
 public:
@@ -160,6 +170,8 @@ public:
     SkRect resolveOBBRect(const SkSVGLength& x, const SkSVGLength& y,
                           const SkSVGLength& w, const SkSVGLength& h,
                           SkSVGObjectBoundingBoxUnits) const;
+
+    const OBBScope& currentOBBScope() const { return fOBBScope; }
 
     std::unique_ptr<SkShaper> makeShaper() const {
         SkASSERT(fTextShapingFactory);

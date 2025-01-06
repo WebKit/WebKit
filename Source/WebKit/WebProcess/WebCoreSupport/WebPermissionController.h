@@ -49,6 +49,9 @@ public:
     static Ref<WebPermissionController> create(WebProcess&);
     ~WebPermissionController();
 
+    void ref() const final { WebCore::PermissionController::ref(); }
+    void deref() const final { WebCore::PermissionController::deref(); }
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -56,7 +59,7 @@ private:
     explicit WebPermissionController(WebProcess&);
 
     // WebCore::PermissionController
-    void query(WebCore::ClientOrigin&&, WebCore::PermissionDescriptor, const SingleThreadWeakPtr<WebCore::Page>&, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
+    void query(WebCore::ClientOrigin&&, WebCore::PermissionDescriptor, const WeakPtr<WebCore::Page>&, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
     void addObserver(WebCore::PermissionObserver&) final;
     void removeObserver(WebCore::PermissionObserver&) final;
     void permissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&) final;

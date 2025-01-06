@@ -64,12 +64,12 @@ FFTFrame::~FFTFrame()
     ASSERT_NOT_REACHED();
 }
 
-void FFTFrame::doFFT(const float* data)
+void FFTFrame::doFFT(std::span<const float> data)
 {
     ASSERT_NOT_REACHED();
 }
 
-void FFTFrame::doInverseFFT(float* data)
+void FFTFrame::doInverseFFT(std::span<float> data)
 {
     ASSERT_NOT_REACHED();
 }

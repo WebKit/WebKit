@@ -64,7 +64,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
             weight = std::max(std::min(weight, static_cast<float>(weightValue->maximum)), static_cast<float>(weightValue->minimum));
         applyVariation({ { 'w', 'g', 'h', 't' } }, weight);
 
-        float width = description.stretch();
+        float width = description.width();
         if (auto widthValue = fontCreationContext.fontFaceCapabilities().width)
             width = std::max(std::min(width, static_cast<float>(widthValue->maximum)), static_cast<float>(widthValue->minimum));
         applyVariation({ { 'w', 'd', 't', 'h' } }, width);
@@ -94,7 +94,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 
     auto size = description.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     auto features = FontCache::computeFeatures(description, fontCreationContext);
-    FontPlatformData platformData(WTFMove(typeface), size, bold, italic, description.orientation(), description.widthVariant(), description.textRenderingMode(), WTFMove(features));
+    FontPlatformData platformData(WTFMove(typeface), size, bold, italic, description.orientation(), description.widthVariant(), description.textRenderingMode(), WTFMove(features), this);
     platformData.updateSizeWithFontSizeAdjust(description.fontSizeAdjust(), description.computedSize());
     return platformData;
 }
@@ -138,6 +138,20 @@ bool FontCustomPlatformData::supportsTechnology(const FontTechnology&)
     // FIXME: define supported technologies for this platform (webkit.org/b/256310).
     notImplemented();
     return true;
+}
+
+std::optional<Ref<FontCustomPlatformData>> FontCustomPlatformData::tryMakeFromSerializationData(FontCustomPlatformSerializedData&& data, bool)
+{
+    RefPtr fontCustomPlatformData = FontCustomPlatformData::create(WTFMove(data.fontFaceData), data.itemInCollection);
+    if (!fontCustomPlatformData)
+        return std::nullopt;
+    fontCustomPlatformData->m_renderingResourceIdentifier = data.renderingResourceIdentifier;
+    return fontCustomPlatformData.releaseNonNull();
+}
+
+FontCustomPlatformSerializedData FontCustomPlatformData::serializedData() const
+{
+    return FontCustomPlatformSerializedData { creationData.fontFaceData, creationData.itemInCollection, m_renderingResourceIdentifier };
 }
 
 }

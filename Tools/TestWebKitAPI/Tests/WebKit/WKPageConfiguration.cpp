@@ -41,7 +41,9 @@ TEST(WebKit, WKPageConfigurationEmpty)
     ASSERT_NOT_NULL(WKPageConfigurationGetContext(configuration.get()));
     ASSERT_NOT_NULL(WKPageConfigurationGetUserContentController(configuration.get()));
     ASSERT_NOT_NULL(WKPageConfigurationGetPreferences(configuration.get()));
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     ASSERT_NULL(WKPageConfigurationGetRelatedPage(configuration.get()));
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 static bool didFinishLoad;
@@ -54,7 +56,7 @@ static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const voi
 static void setPageLoaderClient(WKPageRef page)
 {
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
 
     loaderClient.base.version = 0;
     loaderClient.didFinishNavigation = didFinishNavigation;

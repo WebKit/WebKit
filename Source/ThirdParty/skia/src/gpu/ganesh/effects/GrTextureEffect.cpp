@@ -10,7 +10,7 @@
 #include "include/core/SkSize.h"
 #include "include/core/SkString.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkMath.h"
@@ -852,7 +852,7 @@ std::unique_ptr<GrFragmentProcessor> GrTextureEffect::clone() const {
 }
 
 GR_DEFINE_FRAGMENT_PROCESSOR_TEST(GrTextureEffect)
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 std::unique_ptr<GrFragmentProcessor> GrTextureEffect::TestCreate(GrProcessorTestData* testData) {
     auto [view, ct, at] = testData->randomView();
     Wrap wrapModes[2];

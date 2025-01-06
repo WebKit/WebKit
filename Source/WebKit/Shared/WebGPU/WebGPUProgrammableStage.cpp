@@ -37,20 +37,18 @@ namespace WebKit::WebGPU {
 
 std::optional<ProgrammableStage> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ProgrammableStage& programmableStage)
 {
-    auto module = convertToBacking(programmableStage.module);
-    if (!module)
-        return std::nullopt;
+    auto module = convertToBacking(programmableStage.protectedModule().get());
 
     return { { module, programmableStage.entryPoint, programmableStage.constants } };
 }
 
 std::optional<WebCore::WebGPU::ProgrammableStage> ConvertFromBackingContext::convertFromBacking(const ProgrammableStage& programmableStage)
 {
-    auto* module = convertShaderModuleFromBacking(programmableStage.module);
-    if (!module)
+    WeakPtr shaderModule = convertShaderModuleFromBacking(programmableStage.module);
+    if (!shaderModule)
         return std::nullopt;
 
-    return { { *module, programmableStage.entryPoint, programmableStage.constants } };
+    return { { *shaderModule, programmableStage.entryPoint, programmableStage.constants } };
 }
 
 } // namespace WebKit

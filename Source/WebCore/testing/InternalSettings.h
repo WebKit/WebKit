@@ -89,7 +89,6 @@ public:
     ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
 
     bool vp9DecoderEnabled() const;
-    bool mediaSourceInlinePaintingEnabled() const;
 
     ExceptionOr<void> setShouldManageAudioSessionCategory(bool);
 
@@ -165,7 +164,7 @@ private:
         bool m_shouldDeactivateAudioSession;
     };
 
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
     Backup m_backup;
 };
 

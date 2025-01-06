@@ -11,8 +11,8 @@
 #include "video/frame_decode_timing.h"
 
 #include <algorithm>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/logging.h"
 
@@ -25,7 +25,7 @@ FrameDecodeTiming::FrameDecodeTiming(Clock* clock,
   RTC_DCHECK(timing_);
 }
 
-absl::optional<FrameDecodeTiming::FrameSchedule>
+std::optional<FrameDecodeTiming::FrameSchedule>
 FrameDecodeTiming::OnFrameBufferUpdated(uint32_t next_temporal_unit_rtp,
                                         uint32_t last_temporal_unit_rtp,
                                         TimeDelta max_wait_for_frame,
@@ -44,7 +44,7 @@ FrameDecodeTiming::OnFrameBufferUpdated(uint32_t next_temporal_unit_rtp,
     RTC_DLOG(LS_VERBOSE) << "Fast-forwarded frame " << next_temporal_unit_rtp
                          << " render time " << render_time << " with delay "
                          << max_wait;
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   max_wait.Clamp(TimeDelta::Zero(), max_wait_for_frame);

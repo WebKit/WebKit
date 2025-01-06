@@ -33,6 +33,9 @@
 #define ZYDIS_SHAREDTYPES_H
 
 #include "ZycoreTypes.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #ifdef __cplusplus
 extern "C" {
@@ -480,5 +483,7 @@ typedef enum ZydisOpcodeMap_
 #ifdef __cplusplus
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ZYDIS_SHAREDTYPES_H */

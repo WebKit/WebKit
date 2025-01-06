@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+[contenteditable] {
+    width: 300px;
+    height: 100px;
+    border: solid 1px black;
+    display: grid;
+}
+</style>
+</head>
+<body>
+<div contenteditable></div>
+<p>This test passes if showing inline predictions when typing in the above container don't cause a crash.</p>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    document.querySelector("[contenteditable]").focus();
+    document.execCommand("InsertText", true, "To whom it");
+
+    await UIHelper.setInlinePrediction("To whom it may concern", 10);
+    await UIHelper.ensurePresentationUpdate();
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

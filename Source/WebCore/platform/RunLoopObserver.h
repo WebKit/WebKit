@@ -29,6 +29,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(CF)
 using PlatformRunLoopObserver = struct __CFRunLoopObserver*;
@@ -41,7 +42,8 @@ using PlatformRunLoop = void*;
 namespace WebCore {
 
 class RunLoopObserver {
-    WTF_MAKE_NONCOPYABLE(RunLoopObserver); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RunLoopObserver, WEBCORE_EXPORT);
+    WTF_MAKE_NONCOPYABLE(RunLoopObserver);
 public:
     using RunLoopObserverCallback = Function<void()>;
 

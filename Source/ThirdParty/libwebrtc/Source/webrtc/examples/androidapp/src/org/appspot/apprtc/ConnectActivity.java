@@ -360,7 +360,7 @@ public class ConnectActivity extends Activity {
 
     // roomId is random for loopback.
     if (loopback) {
-      roomId = Integer.toString((new Random()).nextInt(100000000));
+      roomId = Integer.toString(new Random().nextInt(100000000));
     }
 
     String roomUrl = sharedPref.getString(

@@ -50,7 +50,6 @@ WK_EXPORT int WKBundlePageNumberForElementById(WKBundleRef bundle, WKBundleFrame
 WK_EXPORT WKStringRef WKBundlePageSizeAndMarginsInPixels(WKBundleRef bundle, WKBundleFrameRef frameRef, int, int, int, int, int, int, int);
 WK_EXPORT bool WKBundleIsPageBoxVisible(WKBundleRef bundle, WKBundleFrameRef frameRef, int);
 WK_EXPORT void WKBundleSetUserStyleSheetLocationForTesting(WKBundleRef bundle, WKStringRef location);
-WK_EXPORT void WKBundleSetWebNotificationPermission(WKBundleRef bundle, WKBundlePageRef page, WKStringRef originStringRef, bool allowed);
 WK_EXPORT void WKBundleRemoveAllWebNotificationPermissions(WKBundleRef bundle, WKBundlePageRef page);
 WK_EXPORT WKDataRef WKBundleCopyWebNotificationID(WKBundleRef bundle, JSContextRef context, JSValueRef notification);
 WK_EXPORT WKDataRef WKBundleCreateWKDataFromUInt8Array(WKBundleRef bundle, JSContextRef context, JSValueRef data);
@@ -70,12 +69,14 @@ WK_EXPORT bool WKBundleIsProcessingUserGesture(WKBundleRef bundle);
 
 WK_EXPORT void WKBundleSetTabKeyCyclesThroughElements(WKBundleRef bundle, WKBundlePageRef page, bool enabled);
 
-WK_EXPORT void WKBundleClearResourceLoadStatistics(WKBundleRef);
-WK_EXPORT bool WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef);
+WK_EXPORT void WKBundleClearResourceLoadStatistics(WKBundleRef bundle);
+
+typedef void (*NotifyObserverCallback)(void* functionContext);
+WK_EXPORT void WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef bundle, void* context, NotifyObserverCallback callback);
 
 WK_EXPORT void WKBundleExtendClassesForParameterCoder(WKBundleRef bundle, WKArrayRef classes);
 
-WK_EXPORT void WKBundleReleaseMemory(WKBundleRef);
+WK_EXPORT void WKBundleReleaseMemory(WKBundleRef bundle);
 
 #ifdef __cplusplus
 }

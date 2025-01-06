@@ -35,11 +35,11 @@ pas_enumerable_range_list pas_enumerable_page_malloc_page_list;
 
 pas_aligned_allocation_result
 pas_enumerable_page_malloc_try_allocate_without_deallocating_padding(
-    size_t size, pas_alignment alignment)
+    size_t size, pas_alignment alignment, bool may_contain_small_or_medium)
 {
     pas_aligned_allocation_result result;
 
-    result = pas_page_malloc_try_allocate_without_deallocating_padding(size, alignment);
+    result = pas_page_malloc_try_allocate_without_deallocating_padding(size, alignment, may_contain_small_or_medium);
 
     if (result.result) {
         pas_enumerable_range_list_append(

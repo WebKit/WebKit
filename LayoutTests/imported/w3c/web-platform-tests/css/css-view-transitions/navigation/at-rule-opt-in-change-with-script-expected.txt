@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT View Transitions: @view-transition opt-in programmatically. Test timed out
+PASS View Transitions: @view-transition opt-in programmatically.
 

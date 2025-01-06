@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,16 @@
 #include "Utilities.h"
 #include "WTFTestUtilities.h"
 
+#if USE(APPKIT)
+OBJC_CLASS NSImage;
+using CocoaImage = NSImage;
+using CocoaColor = NSColor;
+#else
+OBJC_CLASS UIImage;
+using CocoaImage = UIImage;
+using CocoaColor = UIColor;
+#endif
+
 #ifdef __OBJC__
 
 @class TestWebExtensionTab;
@@ -40,13 +50,13 @@
 
 @interface TestWebExtensionManager : NSObject
 
-- (instancetype)initForExtension:(_WKWebExtension *)extension;
-- (instancetype)initForExtension:(_WKWebExtension *)extension extensionControllerConfiguration:(_WKWebExtensionControllerConfiguration *)configuration;
+- (instancetype)initForExtension:(WKWebExtension *)extension;
+- (instancetype)initForExtension:(WKWebExtension *)extension extensionControllerConfiguration:(WKWebExtensionControllerConfiguration *)configuration;
 
-@property (nonatomic, strong) _WKWebExtension *extension;
-@property (nonatomic, strong) _WKWebExtensionContext *context;
-@property (nonatomic, strong) _WKWebExtensionController *controller;
-@property (nonatomic, weak) id <_WKWebExtensionControllerDelegate> controllerDelegate;
+@property (nonatomic, strong) WKWebExtension *extension;
+@property (nonatomic, strong) WKWebExtensionContext *context;
+@property (nonatomic, strong) WKWebExtensionController *controller;
+@property (nonatomic, weak) id <WKWebExtensionControllerDelegate> controllerDelegate;
 
 @property (nonatomic, readonly, strong) TestWebExtensionsDelegate *internalDelegate;
 @property (nonatomic, readonly, strong) TestWebExtensionWindow *defaultWindow;
@@ -60,46 +70,50 @@
 
 @property (nonatomic, readonly, strong) NSString *yieldMessage;
 
+- (void)sendTestMessage:(NSString *)message;
+- (void)sendTestMessage:(NSString *)message withArgument:(id)argument;
+
 - (void)load;
 - (void)run;
 - (void)runForTimeInterval:(NSTimeInterval)interval;
+- (id)runUntilTestMessage:(NSString *)message;
 - (void)loadAndRun;
 - (void)done;
 
 @end
 
-@interface TestWebExtensionTab : NSObject <_WKWebExtensionTab>
+@interface TestWebExtensionTab : NSObject <WKWebExtensionTab>
 
-- (instancetype)initWithWindow:(TestWebExtensionWindow *)window extensionController:(_WKWebExtensionController *)extensionController NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithWindow:(TestWebExtensionWindow *)window extensionController:(WKWebExtensionController *)extensionController NS_DESIGNATED_INITIALIZER;
 
 - (void)assignWindow:(TestWebExtensionWindow *)window;
 
 @property (nonatomic, weak) TestWebExtensionWindow *window;
-@property (nonatomic, strong) WKWebView *mainWebView;
+@property (nonatomic, strong) WKWebView *webView;
 
-- (void)changeWebViewIfNeededForURL:(NSURL *)url forExtensionContext:(_WKWebExtensionContext *)context;
+- (void)changeWebViewIfNeededForURL:(NSURL *)url forExtensionContext:(WKWebExtensionContext *)context;
 
 @property (nonatomic, weak) TestWebExtensionTab *parentTab;
 
+@property (nonatomic) bool shouldBypassPermissions;
 @property (nonatomic, getter=isPinned) bool pinned;
 @property (nonatomic, getter=isMuted) bool muted;
 @property (nonatomic, getter=isSelected) bool selected;
 @property (nonatomic, getter=isShowingReaderMode) bool showingReaderMode;
 
-@property (nonatomic, copy) void (^toggleReaderMode)(void);
-@property (nonatomic, copy) NSLocale *(^detectWebpageLocale)(void);
+@property (nonatomic, copy) void (^setReaderModeShowing)(BOOL);
+@property (nonatomic, copy) NSLocale *(^webpageLocale)(void);
 
-@property (nonatomic, copy) void (^reload)(void);
-@property (nonatomic, copy) void (^reloadFromOrigin)(void);
+@property (nonatomic, copy) void (^reload)(BOOL);
 @property (nonatomic, copy) void (^goBack)(void);
 @property (nonatomic, copy) void (^goForward)(void);
-@property (nonatomic, copy) void (^duplicate)(_WKWebExtensionTabCreationOptions *, void (^completionHandler)(TestWebExtensionTab *, NSError *));
+@property (nonatomic, copy) void (^duplicate)(WKWebExtensionTabConfiguration *, void (^completionHandler)(TestWebExtensionTab *, NSError *));
 
 @end
 
-@interface TestWebExtensionWindow : NSObject <_WKWebExtensionWindow>
+@interface TestWebExtensionWindow : NSObject <WKWebExtensionWindow>
 
-- (instancetype)initWithExtensionController:(_WKWebExtensionController *)extensionController usesPrivateBrowsing:(BOOL)usesPrivateBrowsing NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithExtensionController:(WKWebExtensionController *)extensionController usesPrivateBrowsing:(BOOL)usesPrivateBrowsing NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, copy) NSArray<TestWebExtensionTab *> *tabs;
 @property (nonatomic, strong) TestWebExtensionTab * activeTab;
@@ -115,8 +129,8 @@
 - (void)replaceTab:(TestWebExtensionTab *)oldTab withTab:(TestWebExtensionTab *)newTab;
 - (void)moveTab:(TestWebExtensionTab *)oldTab toIndex:(NSUInteger)newIndex;
 
-@property (nonatomic) _WKWebExtensionWindowState windowState;
-@property (nonatomic) _WKWebExtensionWindowType windowType;
+@property (nonatomic) WKWebExtensionWindowState windowState;
+@property (nonatomic) WKWebExtensionWindowType windowType;
 
 @property (nonatomic) CGRect frame;
 @property (nonatomic) CGRect screenFrame;
@@ -146,12 +160,22 @@ inline NSString *constructJSArrayOfStrings(NSArray *elements) { return [NSString
 
 NSData *makePNGData(CGSize, SEL colorSelector);
 
+void runScriptWithUserGesture(const String&, WKWebView *);
+
+enum class Appearance { Light, Dark };
+
+void performWithAppearance(Appearance, void (^block)(void));
+
+CocoaColor *pixelColor(CocoaImage *, CGPoint = CGPointZero);
+CocoaColor *toSRGBColor(CocoaColor *);
+bool compareColors(CocoaColor *, CocoaColor *);
+
 #endif
 
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(_WKWebExtension *, _WKWebExtensionControllerConfiguration * = nil);
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources, _WKWebExtensionControllerConfiguration * = nil);
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *resources, _WKWebExtensionControllerConfiguration * = nil);
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSURL *baseURL, _WKWebExtensionControllerConfiguration * = nil);
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(WKWebExtension *, WKWebExtensionControllerConfiguration * = nil);
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration * = nil);
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *resources, WKWebExtensionControllerConfiguration * = nil);
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSURL *baseURL, WKWebExtensionControllerConfiguration * = nil);
 
 } // namespace TestWebKitAPI::Util
 

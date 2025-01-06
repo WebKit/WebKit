@@ -32,10 +32,12 @@
 #include "HTMLFormElement.h"
 #include "NodeRareData.h"
 #include "ValidationMessage.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FormAssociatedCustomElement);
 
 using namespace HTMLNames;
 

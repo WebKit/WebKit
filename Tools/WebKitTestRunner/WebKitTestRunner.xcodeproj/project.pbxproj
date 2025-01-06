@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -24,6 +24,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				E3D8A94E2CC69CAF006B43E3 /* PBXTargetDependency */,
 				A115CCBC1B9D76C400E89159 /* PBXTargetDependency */,
 				A115CCBA1B9D76BF00E89159 /* PBXTargetDependency */,
 			);
@@ -79,7 +80,7 @@
 		29A8FCCB145EF02E009045A6 /* JSAccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EE1144CDE6789815EE5 /* JSAccessibilityTextMarker.cpp */; };
 		29A8FCDD145F0337009045A6 /* JSAccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */; };
 		29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */; };
-		29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */; };
+		29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeCocoa.mm */; };
 		2D058E0922E2EE2200E4C145 /* UIScriptControllerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D058E0822E2EE2200E4C145 /* UIScriptControllerCocoa.h */; };
 		2D058E0B22E2EF6D00E4C145 /* UIScriptControllerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D058E0A22E2EF6D00E4C145 /* UIScriptControllerMac.h */; };
 		2DB6187E1D7D58D400978D19 /* CoreGraphicsTestSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB6187D1D7D58D400978D19 /* CoreGraphicsTestSPI.h */; };
@@ -162,6 +163,10 @@
 		E132AA3A17CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3817CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm */; };
 		E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */; };
 		E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */; };
+		E372BC362C08E29C006DFE67 /* NetworkingExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC352C08E29C006DFE67 /* NetworkingExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E372BC382C08EB01006DFE67 /* GPUExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC372C08EB01006DFE67 /* GPUExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E372BC3A2C08F323006DFE67 /* WebContentExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC392C08F323006DFE67 /* WebContentExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E3D8A94C2CC4B003006B43E3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E17D422CC4447B0077C3AE /* main.cpp */; };
 		F4010B7E24DA205300A876E2 /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4010B7C24DA204800A876E2 /* PoseAsClass.mm */; };
 		F415C22C27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h in Headers */ = {isa = PBXBuildFile; fileRef = F415C22A27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h */; };
 		F415C23527AF5B390028F505 /* UIPasteboardConsistencyEnforcer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F415C22B27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.mm */; };
@@ -173,6 +178,23 @@
 		F4C3578C20E8444600FA0748 /* LayoutTestSpellChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */; };
 		F4FED324235823A3003C139C /* NSPasteboardAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FED3222358215E003C139C /* NSPasteboardAdditions.mm */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		E372BC2C2C08C74A006DFE67 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.appex";
+			fileType = pattern.proxy;
+			inputFiles = (
+				"$(SRCROOT)/Scripts/install-extensions-rule.sh",
+			);
+			isEditable = 1;
+			outputFiles = (
+				"$(BUILT_PRODUCTS_DIR)/$(EXTENSIONS_FOLDER_PATH)/$(INPUT_FILE_NAME)",
+			);
+			script = "\"${SCRIPT_INPUT_FILE_0}\"\n";
+		};
+/* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
 		A115CCB91B9D76BF00E89159 /* PBXContainerItemProxy */ = {
@@ -217,6 +239,20 @@
 			remoteGlobalIDString = BC952D7711F3BF5D003398B4;
 			remoteInfo = "Derived Sources";
 		};
+		E30604EF2CCB2B920033AC72 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2EE52CDF1890A9A80010ED21;
+			remoteInfo = WebKitTestRunnerApp;
+		};
+		E3D8A94D2CC69CAF006B43E3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E3D8A9332CC4AFB3006B43E3;
+			remoteInfo = WebKitEligibilityUtil;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -229,6 +265,19 @@
 				2E34C90018B68808000067BB /* WebKitTestRunnerInjectedBundle.bundle in Copy Plug-Ins */,
 			);
 			name = "Copy Plug-Ins";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E372BC342C08E22D006DFE67 /* Embed Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				E372BC382C08EB01006DFE67 /* GPUExtension.appex in Embed Extensions */,
+				E372BC362C08E29C006DFE67 /* NetworkingExtension.appex in Embed Extensions */,
+				E372BC3A2C08F323006DFE67 /* WebContentExtension.appex in Embed Extensions */,
+			);
+			name = "Embed Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -293,7 +342,7 @@
 		29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTextMarkerRange.cpp; sourceTree = "<group>"; };
 		29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAccessibilityTextMarkerRange.cpp; sourceTree = "<group>"; };
 		29A8FCE1345E7021006AA5A7 /* JSAccessibilityTextMarkerRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAccessibilityTextMarkerRange.h; sourceTree = "<group>"; };
-		29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTextMarkerRangeMac.mm; sourceTree = "<group>"; };
+		29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTextMarkerRangeCocoa.mm; sourceTree = "<group>"; };
 		2D058E0822E2EE2200E4C145 /* UIScriptControllerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIScriptControllerCocoa.h; sourceTree = "<group>"; };
 		2D058E0A22E2EF6D00E4C145 /* UIScriptControllerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIScriptControllerMac.h; sourceTree = "<group>"; };
 		2D0BEE1722EAD1360092B738 /* UIScriptControllerIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIScriptControllerIOS.h; sourceTree = "<group>"; };
@@ -442,6 +491,13 @@
 		E1BA671D1742DA5A00C20251 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerPasteboard.mm; sourceTree = "<group>"; };
 		E1C642C517CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerPasteboard.h; sourceTree = "<group>"; };
+		E372BC352C08E29C006DFE67 /* NetworkingExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = NetworkingExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E372BC372C08EB01006DFE67 /* GPUExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = GPUExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E372BC392C08F323006DFE67 /* WebContentExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = WebContentExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3C2C0312C34DEFC000C7F2E /* WebKitTestRunnerApp-iOS-simulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WebKitTestRunnerApp-iOS-simulator.entitlements"; sourceTree = "<group>"; };
+		E3D8A94A2CC4AFB3006B43E3 /* WebKitEligibilityUtil */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebKitEligibilityUtil; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3E17D422CC4447B0077C3AE /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		E3E17D472CC49D440077C3AE /* WebKitEligibilityUtil.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitEligibilityUtil.xcconfig; sourceTree = "<group>"; };
 		F4010B7C24DA204800A876E2 /* PoseAsClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PoseAsClass.mm; path = ../TestRunnerShared/cocoa/PoseAsClass.mm; sourceTree = "<group>"; };
 		F4010B7D24DA204800A876E2 /* PoseAsClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoseAsClass.h; path = ../TestRunnerShared/cocoa/PoseAsClass.h; sourceTree = "<group>"; };
 		F415C22A27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIPasteboardConsistencyEnforcer.h; sourceTree = "<group>"; };
@@ -497,12 +553,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E3D8A9412CC4AFB3006B43E3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		08FB7794FE84155DC02AAC07 /* WebKitTestRunner */ = {
 			isa = PBXGroup;
 			children = (
+				E3E17D412CC4445D0077C3AE /* WebKitEligibilityUtil */,
+				E372BC392C08F323006DFE67 /* WebContentExtension.appex */,
+				E372BC372C08EB01006DFE67 /* GPUExtension.appex */,
+				E372BC352C08E29C006DFE67 /* NetworkingExtension.appex */,
 				49AEEF692407278200C87E4C /* Info.plist */,
 				BC952EC511F3C10F003398B4 /* DerivedSources.make */,
 				2EE52CEA1890A9A80010ED21 /* WebKitTestRunnerApp-Info.plist */,
@@ -639,6 +706,7 @@
 			children = (
 				299E2AA41E3DEE140065DC30 /* AccessibilityCommonCocoa.h */,
 				29210EAB144CACB200835BB6 /* AccessibilityCommonCocoa.mm */,
+				29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeCocoa.mm */,
 				65EB859F11EC67CC0034D300 /* ActivateFontsCocoa.mm */,
 				0FEB909E1905A776000FDBF3 /* InjectedBundlePageCocoa.mm */,
 			);
@@ -672,6 +740,7 @@
 				A18510271B9ADE4800744AEB /* libWebKitTestRunner.a */,
 				2EE52CE01890A9A80010ED21 /* WebKitTestRunnerApp.app */,
 				BC25186211D15D54002EBC01 /* WebKitTestRunnerInjectedBundle.bundle */,
+				E3D8A94A2CC4AFB3006B43E3 /* WebKitEligibilityUtil */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -777,7 +846,6 @@
 			isa = PBXGroup;
 			children = (
 				8034C6611487636400AC32E9 /* AccessibilityControllerMac.mm */,
-				29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */,
 				29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */,
 				BC8DAD771316D7B900EC96FC /* InjectedBundleMac.mm */,
 			);
@@ -901,8 +969,10 @@
 				0F2109C7189C650D00F879A3 /* BaseTarget.xcconfig */,
 				BC793427118F7DAF005EA8E2 /* DebugRelease.xcconfig */,
 				BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */,
+				E3E17D472CC49D440077C3AE /* WebKitEligibilityUtil.xcconfig */,
 				57A0062C22976E4D00AD08BD /* WebKitTestRunner.entitlements */,
 				A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */,
+				E3C2C0312C34DEFC000C7F2E /* WebKitTestRunnerApp-iOS-simulator.entitlements */,
 				9B0D132E2036D346008FC8FB /* WebKitTestRunnerApp-iOS.entitlements */,
 				311183AA212B1AC70077BCE0 /* WebKitTestRunnerApp-watchOS.entitlements */,
 				A18510391B9ADFF800744AEB /* WebKitTestRunnerApp.xcconfig */,
@@ -971,6 +1041,14 @@
 			name = Shared;
 			sourceTree = "<group>";
 		};
+		E3E17D412CC4445D0077C3AE /* WebKitEligibilityUtil */ = {
+			isa = PBXGroup;
+			children = (
+				E3E17D422CC4447B0077C3AE /* main.cpp */,
+			);
+			path = WebKitEligibilityUtil;
+			sourceTree = "<group>";
+		};
 		F4B6C31620E84369008AC225 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -1037,8 +1115,10 @@
 				2EE52CDD1890A9A80010ED21 /* Frameworks */,
 				2EE52CDE1890A9A80010ED21 /* Resources */,
 				CEC209031D36E36A00261596 /* Copy Plug-Ins */,
+				E372BC342C08E22D006DFE67 /* Embed Extensions */,
 			);
 			buildRules = (
+				E372BC2C2C08C74A006DFE67 /* PBXBuildRule */,
 			);
 			dependencies = (
 				A18510361B9ADE6D00744AEB /* PBXTargetDependency */,
@@ -1103,6 +1183,24 @@
 			productReference = BC25186211D15D54002EBC01 /* WebKitTestRunnerInjectedBundle.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
+		E3D8A9332CC4AFB3006B43E3 /* WebKitEligibilityUtil */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E3D8A9462CC4AFB3006B43E3 /* Build configuration list for PBXNativeTarget "WebKitEligibilityUtil" */;
+			buildPhases = (
+				E3D8A9362CC4AFB3006B43E3 /* Sources */,
+				E3D8A9412CC4AFB3006B43E3 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E30604F02CCB2B920033AC72 /* PBXTargetDependency */,
+			);
+			name = WebKitEligibilityUtil;
+			productInstallPath = "$(HOME)/bin";
+			productName = WebKitTestRunner;
+			productReference = E3D8A94A2CC4AFB3006B43E3 /* WebKitEligibilityUtil */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1142,6 +1240,7 @@
 				BC952D7711F3BF5D003398B4 /* Derived Sources */,
 				A18510261B9ADE4800744AEB /* WebKitTestRunner (Library) */,
 				5325BDD921DFF4F500A0DEE1 /* Apply Configuration to XCFileLists */,
+				E3D8A9332CC4AFB3006B43E3 /* WebKitEligibilityUtil */,
 			);
 		};
 /* End PBXProject section */
@@ -1330,7 +1429,7 @@
 				2E63ED8B1891AD7E002A7AFC /* AccessibilityTextMarkerIOS.mm in Sources */,
 				29210EB5144CACD500835BB5 /* AccessibilityTextMarkerMac.mm in Sources */,
 				29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */,
-				29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */,
+				29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeCocoa.mm in Sources */,
 				29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */,
 				2E63EDA11891B291002A7AFC /* AccessibilityUIElementIOS.mm in Sources */,
 				29210EDA144CC3EA00835BB5 /* AccessibilityUIElementMac.mm in Sources */,
@@ -1359,6 +1458,14 @@
 				C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */,
 				5664A49A14326384008881BE /* TextInputController.cpp in Sources */,
 				93C78823250C6C2E00C0AA24 /* WPTFunctions.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3D8A9362CC4AFB3006B43E3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3D8A94C2CC4B003006B43E3 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1394,6 +1501,16 @@
 			isa = PBXTargetDependency;
 			target = BC952D7711F3BF5D003398B4 /* Derived Sources */;
 			targetProxy = BC952ED611F3C38B003398B4 /* PBXContainerItemProxy */;
+		};
+		E30604F02CCB2B920033AC72 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2EE52CDF1890A9A80010ED21 /* WebKitTestRunnerApp */;
+			targetProxy = E30604EF2CCB2B920033AC72 /* PBXContainerItemProxy */;
+		};
+		E3D8A94E2CC69CAF006B43E3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E3D8A9332CC4AFB3006B43E3 /* WebKitEligibilityUtil */;
+			targetProxy = E3D8A94D2CC69CAF006B43E3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1586,6 +1703,27 @@
 			};
 			name = Release;
 		};
+		E3D8A9472CC4AFB3006B43E3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E3E17D472CC49D440077C3AE /* WebKitEligibilityUtil.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		E3D8A9482CC4AFB3006B43E3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E3E17D472CC49D440077C3AE /* WebKitEligibilityUtil.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		E3D8A9492CC4AFB3006B43E3 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E3E17D472CC49D440077C3AE /* WebKitEligibilityUtil.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1665,6 +1803,16 @@
 				BC952D7811F3BF5E003398B4 /* Debug */,
 				BC952D7911F3BF5E003398B4 /* Release */,
 				BC646D70136A3A8700B35DED /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		E3D8A9462CC4AFB3006B43E3 /* Build configuration list for PBXNativeTarget "WebKitEligibilityUtil" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3D8A9472CC4AFB3006B43E3 /* Debug */,
+				E3D8A9482CC4AFB3006B43E3 /* Release */,
+				E3D8A9492CC4AFB3006B43E3 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

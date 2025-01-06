@@ -14,7 +14,6 @@ PORTS_SRCS-yes += vpx_ports.mk
 PORTS_SRCS-yes += bitops.h
 PORTS_SRCS-yes += compiler_attributes.h
 PORTS_SRCS-yes += mem.h
-PORTS_SRCS-yes += msvc.h
 PORTS_SRCS-yes += static_assert.h
 PORTS_SRCS-yes += system_state.h
 PORTS_SRCS-yes += vpx_timer.h

@@ -26,7 +26,11 @@
 #include "config.h"
 #include <wtf/glib/Sandbox.h>
 
-#include <glib.h>
+#include <gio/gio.h>
+#include <wtf/FileSystem.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/text/CString.h>
 
 namespace WTF {
 
@@ -76,6 +80,15 @@ bool isInsideSnap()
     return returnValue;
 }
 
+bool shouldUseBubblewrap()
+{
+#if ENABLE(BUBBLEWRAP_SANDBOX)
+    return !isInsideFlatpak() && !isInsideSnap() && !isInsideUnsupportedContainer();
+#else
+    return false;
+#endif
+}
+
 bool shouldUsePortal()
 {
     static bool returnValue = []() -> bool {
@@ -85,15 +98,39 @@ bool shouldUsePortal()
     return returnValue;
 }
 
-String& sandboxedAccessibilityBusAddress()
+bool checkFlatpakPortalVersion(int version)
 {
-    static String accessibilityBusAddress;
-    return accessibilityBusAddress;
+    static int flatpakPortalVersion = -1;
+    static std::once_flag onceFlag;
+
+    std::call_once(onceFlag, [] {
+        GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SESSION, G_DBUS_PROXY_FLAGS_NONE, nullptr, "org.freedesktop.portal.Flatpak", "/org/freedesktop/portal/Flatpak", "org.freedesktop.portal.Flatpak", nullptr, nullptr));
+        if (!proxy)
+            return;
+        GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_get_cached_property(proxy.get(), "version"));
+        if (!result)
+            return;
+        flatpakPortalVersion = g_variant_get_uint32(result.get());
+    });
+
+    return flatpakPortalVersion != -1 && flatpakPortalVersion >= version;
 }
 
-void setSandboxedAccessibilityBusAddress(String&& address)
+const CString& sandboxedUserRuntimeDirectory()
 {
-    sandboxedAccessibilityBusAddress() = address;
+    static LazyNeverDestroyed<CString> userRuntimeDirectory;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+#if PLATFORM(GTK)
+        static constexpr ASCIILiteral baseDirectory = "webkitgtk"_s;
+#elif PLATFORM(WPE)
+        static constexpr ASCIILiteral baseDirectory = "wpe"_s;
+#else
+        static constexpr ASCIILiteral baseDirectory = "javascriptcore"_s;
+#endif
+        userRuntimeDirectory.construct(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_runtime_dir()), baseDirectory).utf8());
+    });
+    return userRuntimeDirectory.get();
 }
 
 } // namespace WTF

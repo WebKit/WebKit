@@ -13,8 +13,8 @@ the-input = input value goes here
 submitwithpost = Submit with POST
 
 ============== Back Forward List ==============
-        http://127.0.0.1:8000/navigation/post-frames.html  **nav target**
+        http://127.0.0.1:8000/navigation/post-frames.html
             http://127.0.0.1:8000/navigation/resources/page-that-posts.html (in frame "<!--frame1-->")
 curr->  http://127.0.0.1:8000/navigation/post-frames.html
-            http://127.0.0.1:8000/navigation/resources/form-target.pl (in frame "<!--frame1-->")  **nav target**
+            http://127.0.0.1:8000/navigation/resources/form-target.pl (in frame "<!--frame1-->")
 ===============================================

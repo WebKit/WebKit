@@ -26,6 +26,8 @@
 #import "config.h"
 #import "_WKTargetedElementRequestInternal.h"
 
+#import <WebCore/WebCoreObjCExtras.h>
+
 @implementation _WKTargetedElementRequest {
     RetainPtr<NSString> _searchText;
 }
@@ -48,7 +50,7 @@
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<API::TargetedElementRequest>(self, API::TargetedElementRequest { });
+    API::Object::constructInWrapper<API::TargetedElementRequest>(self);
     return self;
 }
 

@@ -8,6 +8,8 @@
 #include <vector>
 
 #include "test_utils/ANGLETest.h"
+#include "test_utils/gl_raii.h"
+#include "util/OSWindow.h"
 
 using namespace angle;
 
@@ -27,7 +29,7 @@ class EGLDisplayTest : public ANGLETest<>
                                   EGL_RENDERABLE_TYPE,
                                   EGL_OPENGL_ES2_BIT,
                                   EGL_SURFACE_TYPE,
-                                  EGL_PBUFFER_BIT,
+                                  EGL_PBUFFER_BIT | EGL_WINDOW_BIT,
                                   EGL_NONE};
         EGLConfig config       = EGL_NO_CONFIG_KHR;
         EGLint count           = 0;
@@ -106,6 +108,43 @@ TEST_P(EGLDisplayTest, InitializeTerminateInitialize)
     EXPECT_EGL_TRUE(eglInitialize(display, nullptr, nullptr) != EGL_FALSE);
 }
 
+// Tests that an EGLDisplay can be re-initialized after it was used to draw into a window surface.
+TEST_P(EGLDisplayTest, InitializeDrawSwapTerminateLoop)
+{
+    constexpr int kLoopCount = 2;
+    constexpr EGLint kWidth  = 64;
+    constexpr EGLint kHeight = 64;
+
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("LockSurfaceTest", kWidth, kHeight);
+
+    EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+
+    for (int i = 0; i < kLoopCount; ++i)
+    {
+        EXPECT_EGL_TRUE(eglInitialize(display, nullptr, nullptr) != EGL_FALSE);
+
+        EGLConfig config   = chooseConfig(display);
+        EGLContext context = createContext(display, config);
+        EGLSurface surface =
+            eglCreateWindowSurface(display, config, osWindow->getNativeWindow(), nullptr);
+        EXPECT_NE(surface, EGL_NO_SURFACE);
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(display, surface, surface, context));
+
+        ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+        drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
+
+        EXPECT_EGL_TRUE(eglSwapBuffers(display, surface));
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+        EXPECT_EGL_TRUE(eglTerminate(display) != EGL_FALSE);
+    }
+
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
+}
+
 // Tests current Context leaking when call eglTerminate() while it is current.
 TEST_P(EGLDisplayTest, ContextLeakAfterTerminate)
 {
@@ -137,8 +176,10 @@ TEST_P(EGLDisplayTest, ContextLeakAfterTerminate)
 ANGLE_INSTANTIATE_TEST(EGLDisplayTest,
                        WithNoFixture(ES2_D3D9()),
                        WithNoFixture(ES2_D3D11()),
+                       WithNoFixture(ES2_METAL()),
                        WithNoFixture(ES2_OPENGL()),
                        WithNoFixture(ES2_VULKAN()),
                        WithNoFixture(ES3_D3D11()),
+                       WithNoFixture(ES3_METAL()),
                        WithNoFixture(ES3_OPENGL()),
                        WithNoFixture(ES3_VULKAN()));

@@ -33,7 +33,6 @@ rtc_library("video_capture_module") {
     "../../api/video:video_frame",
     "../../api/video:video_rtp_headers",
     "../../common_video",
-    "../../media:rtc_media_base",
     "../../rtc_base:event_tracer",
     "../../rtc_base:logging",
     "../../rtc_base:macromagic",
@@ -44,9 +43,10 @@ rtc_library("video_capture_module") {
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/system:rtc_export",
     "../../system_wrappers",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
     "//third_party/libyuv",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 if (!build_with_chromium || is_linux || is_chromeos) {
@@ -56,6 +56,7 @@ if (!build_with_chromium || is_linux || is_chromeos) {
       ":video_capture_module",
       "../../api:scoped_refptr",
       "../../api:sequence_checker",
+      "../../media:video_common",
       "../../rtc_base:checks",
       "../../rtc_base:logging",
       "../../rtc_base:macromagic",
@@ -80,7 +81,10 @@ if (!build_with_chromium || is_linux || is_chromeos) {
         "linux/video_capture_v4l2.cc",
         "linux/video_capture_v4l2.h",
       ]
-      deps += [ "../../media:rtc_media_base" ]
+      deps += [
+        "../../media:rtc_media_base",
+        "../../rtc_base:sanitizer",
+      ]
 
       if (rtc_use_pipewire) {
         sources += [
@@ -178,6 +182,7 @@ if (!build_with_chromium || is_linux || is_chromeos) {
         "../../api/video:video_frame",
         "../../api/video:video_rtp_headers",
         "../../common_video",
+        "../../rtc_base:gunit_helpers",
         "../../rtc_base:timeutils",
         "../../rtc_base/synchronization:mutex",
         "../../system_wrappers",

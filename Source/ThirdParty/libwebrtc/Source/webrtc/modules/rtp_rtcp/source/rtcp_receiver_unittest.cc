@@ -10,22 +10,37 @@
 
 #include "modules/rtp_rtcp/source/rtcp_receiver.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <set>
+#include <string>
 #include <utility>
+#include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/environment/environment_factory.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_bitrate_allocator.h"
+#include "api/video/video_codec_constants.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
+#include "modules/rtp_rtcp/include/rtcp_statistics.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/mocks/mock_network_link_rtcp_observer.h"
+#include "modules/rtp_rtcp/mocks/mock_network_state_estimator_observer.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
-#include "modules/rtp_rtcp/source/rtcp_packet.h"
+#include "modules/rtp_rtcp/source/ntp_time_util.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/app.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/compound_packet.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/congestion_control_feedback.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/extended_reports.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/fir.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/nack.h"
@@ -33,15 +48,20 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/rapid_resync_request.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/remb.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/remote_estimate.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/rtpfb.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/sdes.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmbr.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
-#include "modules/rtp_rtcp/source/time_util.h"
+#include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "rtc_base/arraysize.h"
-#include "rtc_base/fake_clock.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/random.h"
+#include "rtc_base/time_utils.h"
+#include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
+#include "test/explicit_key_value_config.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -64,6 +84,7 @@ using ::testing::SizeIs;
 using ::testing::StrEq;
 using ::testing::StrictMock;
 using ::testing::UnorderedElementsAre;
+using ::webrtc::test::ExplicitKeyValueConfig;
 
 class MockRtcpPacketTypeCounterObserver : public RtcpPacketTypeCounterObserver {
  public:
@@ -140,9 +161,8 @@ constexpr TimeDelta kEpsilon = TimeDelta::Millis(1);
 }  // namespace
 
 struct ReceiverMocks {
-  ReceiverMocks() : clock(1335900000) {}
-
-  SimulatedClock clock;
+  SimulatedClock clock{1335900000};
+  std::string field_trials;
   // Callbacks to packet_type_counter_observer are frequent but most of the time
   // are not interesting.
   NiceMock<MockRtcpPacketTypeCounterObserver> packet_type_counter_observer;
@@ -151,28 +171,32 @@ struct ReceiverMocks {
   StrictMock<MockVideoBitrateAllocationObserver> bitrate_allocation_observer;
   StrictMock<MockModuleRtpRtcp> rtp_rtcp_impl;
   NiceMock<MockNetworkLinkRtcpObserver> network_link_rtcp_observer;
+  NiceMock<MockNetworkStateEstimateObserver> network_state_estimate_observer;
+
+  RtpRtcpInterface::Configuration config = {
+      .receiver_only = false,
+      .intra_frame_callback = &intra_frame_observer,
+      .rtcp_loss_notification_observer = &rtcp_loss_notification_observer,
+      .network_link_rtcp_observer = &network_link_rtcp_observer,
+      .network_state_estimate_observer = &network_state_estimate_observer,
+      .bitrate_allocation_observer = &bitrate_allocation_observer,
+      .rtcp_packet_type_counter_observer = &packet_type_counter_observer,
+      .rtcp_report_interval_ms = kRtcpIntervalMs,
+      .local_media_ssrc = kReceiverMainSsrc,
+      .rtx_send_ssrc = kReceiverExtraSsrc};
 };
 
-RtpRtcpInterface::Configuration DefaultConfiguration(ReceiverMocks* mocks) {
-  RtpRtcpInterface::Configuration config;
-  config.clock = &mocks->clock;
-  config.receiver_only = false;
-  config.rtcp_packet_type_counter_observer =
-      &mocks->packet_type_counter_observer;
-  config.network_link_rtcp_observer = &mocks->network_link_rtcp_observer;
-  config.intra_frame_callback = &mocks->intra_frame_observer;
-  config.rtcp_loss_notification_observer =
-      &mocks->rtcp_loss_notification_observer;
-  config.bitrate_allocation_observer = &mocks->bitrate_allocation_observer;
-  config.rtcp_report_interval_ms = kRtcpIntervalMs;
-  config.local_media_ssrc = kReceiverMainSsrc;
-  config.rtx_send_ssrc = kReceiverExtraSsrc;
-  return config;
+RTCPReceiver Create(ReceiverMocks& mocks) {
+  return RTCPReceiver(
+      CreateEnvironment(
+          &mocks.clock,
+          std::make_unique<test::ExplicitKeyValueConfig>(mocks.field_trials)),
+      mocks.config, &mocks.rtp_rtcp_impl);
 }
 
 TEST(RtcpReceiverTest, BrokenPacketIsIgnored) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
 
   const uint8_t bad_packet[] = {0, 0, 0, 0};
   EXPECT_CALL(mocks.packet_type_counter_observer, RtcpPacketTypesCounterUpdated)
@@ -182,7 +206,7 @@ TEST(RtcpReceiverTest, BrokenPacketIsIgnored) {
 
 TEST(RtcpReceiverTest, InvalidFeedbackPacketIsIgnored) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
 
   // Too short feedback packet.
   const uint8_t bad_packet[] = {0x81, rtcp::Rtpfb::kPacketType, 0, 0};
@@ -194,7 +218,7 @@ TEST(RtcpReceiverTest, InvalidFeedbackPacketIsIgnored) {
 
 TEST(RtcpReceiverTest, InjectSrPacket) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   EXPECT_FALSE(receiver.GetSenderReportStats());
@@ -210,7 +234,7 @@ TEST(RtcpReceiverTest, InjectSrPacket) {
 
 TEST(RtcpReceiverTest, InjectSrPacketFromUnknownSender) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::SenderReport sr;
@@ -227,14 +251,14 @@ TEST(RtcpReceiverTest, InjectSrPacketFromUnknownSender) {
 
 TEST(RtcpReceiverTest, InjectSrPacketCalculatesRTT) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const TimeDelta kRtt = TimeDelta::Millis(123);
   const uint32_t kDelayNtp = 0x4321;
   const TimeDelta kDelay = CompactNtpRttToTimeDelta(kDelayNtp);
 
-  EXPECT_EQ(receiver.LastRtt(), absl::nullopt);
+  EXPECT_EQ(receiver.LastRtt(), std::nullopt);
 
   uint32_t sent_ntp = CompactNtp(mocks.clock.CurrentNtpTime());
   mocks.clock.AdvanceTime(kRtt + kDelay);
@@ -256,14 +280,14 @@ TEST(RtcpReceiverTest, InjectSrPacketCalculatesRTT) {
 
 TEST(RtcpReceiverTest, InjectSrPacketCalculatesNegativeRTTAsOneMs) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const TimeDelta kRtt = TimeDelta::Millis(-13);
   const uint32_t kDelayNtp = 0x4321;
   const TimeDelta kDelay = CompactNtpRttToTimeDelta(kDelayNtp);
 
-  EXPECT_EQ(receiver.LastRtt(), absl::nullopt);
+  EXPECT_EQ(receiver.LastRtt(), std::nullopt);
 
   uint32_t sent_ntp = CompactNtp(mocks.clock.CurrentNtpTime());
   mocks.clock.AdvanceTime(kRtt + kDelay);
@@ -286,7 +310,7 @@ TEST(RtcpReceiverTest, InjectSrPacketCalculatesNegativeRTTAsOneMs) {
 
 TEST(RtcpReceiverTest, TwoReportBlocksWithLastOneWithoutLastSrCalculatesRtt) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const TimeDelta kRtt = TimeDelta::Millis(125);
@@ -314,7 +338,7 @@ TEST(RtcpReceiverTest, TwoReportBlocksWithLastOneWithoutLastSrCalculatesRtt) {
 
 TEST(RtcpReceiverTest, InjectRrPacket) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::ReceiverReport rr;
@@ -328,7 +352,7 @@ TEST(RtcpReceiverTest, InjectRrPacket) {
 
 TEST(RtcpReceiverTest, InjectRrPacketWithReportBlockNotToUsIgnored) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::ReportBlock rb;
@@ -347,7 +371,7 @@ TEST(RtcpReceiverTest, InjectRrPacketWithReportBlockNotToUsIgnored) {
 
 TEST(RtcpReceiverTest, InjectRrPacketWithOneReportBlock) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   Timestamp now = mocks.clock.CurrentTime();
@@ -368,7 +392,7 @@ TEST(RtcpReceiverTest, InjectRrPacketWithOneReportBlock) {
 
 TEST(RtcpReceiverTest, InjectSrPacketWithOneReportBlock) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   Timestamp now = mocks.clock.CurrentTime();
@@ -392,7 +416,7 @@ TEST(RtcpReceiverTest, InjectRrPacketWithTwoReportBlocks) {
   const uint32_t kCumLost[] = {13, 555};
   const uint8_t kFracLost[] = {20, 11};
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   Timestamp now = mocks.clock.CurrentTime();
@@ -470,7 +494,7 @@ TEST(RtcpReceiverTest,
   const int32_t kCumLost[] = {13, 555};
   const uint8_t kFracLost[] = {20, 11};
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::ReportBlock rb1;
@@ -522,7 +546,7 @@ TEST(RtcpReceiverTest,
 
 TEST(RtcpReceiverTest, NotifiesNetworkLinkObserverOnReportBlocks) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::ReportBlock rb1;
@@ -556,14 +580,13 @@ TEST(RtcpReceiverTest, GetRtt) {
   const uint32_t kSentCompactNtp = 0x1234;
   const uint32_t kDelayCompactNtp = 0x222;
   ReceiverMocks mocks;
-  RtpRtcpInterface::Configuration config = DefaultConfiguration(&mocks);
-  config.network_link_rtcp_observer = &mocks.network_link_rtcp_observer;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.network_link_rtcp_observer = &mocks.network_link_rtcp_observer;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   // No report block received.
-  EXPECT_EQ(receiver.LastRtt(), absl::nullopt);
-  EXPECT_EQ(receiver.AverageRtt(), absl::nullopt);
+  EXPECT_EQ(receiver.LastRtt(), std::nullopt);
+  EXPECT_EQ(receiver.AverageRtt(), std::nullopt);
 
   rtcp::ReportBlock rb;
   rb.SetMediaSsrc(kReceiverMainSsrc);
@@ -581,14 +604,14 @@ TEST(RtcpReceiverTest, GetRtt) {
   receiver.IncomingPacket(rr.Build());
 
   EXPECT_EQ(receiver.LastReceivedReportBlockMs(), now.ms());
-  EXPECT_NE(receiver.LastRtt(), absl::nullopt);
-  EXPECT_NE(receiver.AverageRtt(), absl::nullopt);
+  EXPECT_NE(receiver.LastRtt(), std::nullopt);
+  EXPECT_NE(receiver.AverageRtt(), std::nullopt);
 }
 
 // App packets are ignored.
 TEST(RtcpReceiverTest, InjectApp) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::App app;
@@ -603,9 +626,8 @@ TEST(RtcpReceiverTest, InjectApp) {
 TEST(RtcpReceiverTest, InjectSdesWithOneChunk) {
   ReceiverMocks mocks;
   MockCnameCallbackImpl callback;
-  RtpRtcpInterface::Configuration config = DefaultConfiguration(&mocks);
-  config.rtcp_cname_callback = &callback;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.rtcp_cname_callback = &callback;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const char kCname[] = "alice@host";
@@ -618,7 +640,7 @@ TEST(RtcpReceiverTest, InjectSdesWithOneChunk) {
 
 TEST(RtcpReceiverTest, InjectByePacketRemovesReportBlocks) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::ReportBlock rb1;
@@ -652,7 +674,7 @@ TEST(RtcpReceiverTest, InjectByePacketRemovesReportBlocks) {
 
 TEST(RtcpReceiverTest, InjectByePacketRemovesReferenceTimeInfo) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::ExtendedReports xr;
@@ -671,7 +693,7 @@ TEST(RtcpReceiverTest, InjectByePacketRemovesReferenceTimeInfo) {
 
 TEST(RtcpReceiverTest, InjectPliPacket) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::Pli pli;
@@ -688,7 +710,7 @@ TEST(RtcpReceiverTest, InjectPliPacket) {
 
 TEST(RtcpReceiverTest, PliPacketNotToUsIgnored) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::Pli pli;
@@ -704,7 +726,7 @@ TEST(RtcpReceiverTest, PliPacketNotToUsIgnored) {
 
 TEST(RtcpReceiverTest, InjectFirPacket) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::Fir fir;
@@ -721,7 +743,7 @@ TEST(RtcpReceiverTest, InjectFirPacket) {
 
 TEST(RtcpReceiverTest, FirPacketNotToUsIgnored) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::Fir fir;
@@ -733,7 +755,7 @@ TEST(RtcpReceiverTest, FirPacketNotToUsIgnored) {
 
 TEST(RtcpReceiverTest, ExtendedReportsPacketWithZeroReportBlocksIgnored) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::ExtendedReports xr;
@@ -744,7 +766,7 @@ TEST(RtcpReceiverTest, ExtendedReportsPacketWithZeroReportBlocksIgnored) {
 
 TEST(RtcpReceiverTest, InjectExtendedReportsReceiverReferenceTimePacket) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const NtpTime kNtp(0x10203, 0x40506);
@@ -769,10 +791,9 @@ TEST(RtcpReceiverTest, InjectExtendedReportsReceiverReferenceTimePacket) {
 
 TEST(RtcpReceiverTest, ExtendedReportsDlrrPacketNotToUsIgnored) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
   // Allow calculate rtt using dlrr/rrtr, simulating media receiver side.
-  config.non_sender_rtt_measurement = true;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = true;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::ExtendedReports xr;
@@ -791,9 +812,8 @@ TEST(RtcpReceiverTest, ExtendedReportsDlrrPacketNotToUsIgnored) {
 
 TEST(RtcpReceiverTest, InjectExtendedReportsDlrrPacketWithSubBlock) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
-  config.non_sender_rtt_measurement = true;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = true;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const uint32_t kLastRR = 0x12345;
@@ -819,9 +839,8 @@ TEST(RtcpReceiverTest, InjectExtendedReportsDlrrPacketWithSubBlock) {
 
 TEST(RtcpReceiverTest, InjectExtendedReportsDlrrPacketWithMultipleSubBlocks) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
-  config.non_sender_rtt_measurement = true;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = true;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const uint32_t kLastRR = 0x12345;
@@ -848,9 +867,8 @@ TEST(RtcpReceiverTest, InjectExtendedReportsDlrrPacketWithMultipleSubBlocks) {
 
 TEST(RtcpReceiverTest, InjectExtendedReportsPacketWithMultipleReportBlocks) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
-  config.non_sender_rtt_measurement = true;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = true;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::Rrtr rrtr;
@@ -869,9 +887,8 @@ TEST(RtcpReceiverTest, InjectExtendedReportsPacketWithMultipleReportBlocks) {
 
 TEST(RtcpReceiverTest, InjectExtendedReportsPacketWithUnknownReportBlock) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
-  config.non_sender_rtt_measurement = true;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = true;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::Rrtr rrtr;
@@ -901,9 +918,8 @@ TEST(RtcpReceiverTest, InjectExtendedReportsPacketWithUnknownReportBlock) {
 
 TEST(RtcpReceiverTest, TestExtendedReportsRrRttInitiallyFalse) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
-  config.non_sender_rtt_measurement = true;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = true;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   EXPECT_FALSE(receiver.GetAndResetXrRrRtt());
@@ -916,9 +932,8 @@ TEST(RtcpReceiverTest, TestExtendedReportsRrRttInitiallyFalse) {
 
 TEST(RtcpReceiverTest, RttCalculatedAfterExtendedReportsDlrr) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
-  config.non_sender_rtt_measurement = true;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = true;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   Random rand(0x0123456789abcdef);
@@ -948,9 +963,8 @@ TEST(RtcpReceiverTest, RttCalculatedAfterExtendedReportsDlrr) {
 // the config struct.
 TEST(RtcpReceiverTest, SetterEnablesReceiverRtt) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
-  config.non_sender_rtt_measurement = false;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = false;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
   receiver.SetNonSenderRttMeasurement(true);
 
@@ -981,9 +995,8 @@ TEST(RtcpReceiverTest, SetterEnablesReceiverRtt) {
 // the config struct.
 TEST(RtcpReceiverTest, DoesntCalculateRttOnReceivedDlrr) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
-  config.non_sender_rtt_measurement = true;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = true;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
   receiver.SetNonSenderRttMeasurement(false);
 
@@ -1012,9 +1025,8 @@ TEST(RtcpReceiverTest, DoesntCalculateRttOnReceivedDlrr) {
 
 TEST(RtcpReceiverTest, XrDlrrCalculatesNegativeRttAsOneMillisecond) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
-  config.non_sender_rtt_measurement = true;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = true;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   Random rand(0x0123456789abcdef);
@@ -1043,9 +1055,8 @@ TEST(RtcpReceiverTest, XrDlrrCalculatesNegativeRttAsOneMillisecond) {
 // Test receiver RTT stats with multiple measurements.
 TEST(RtcpReceiverTest, ReceiverRttWithMultipleMeasurements) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
-  config.non_sender_rtt_measurement = true;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = true;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   Random rand(0x0123456789abcdef);
@@ -1098,9 +1109,8 @@ TEST(RtcpReceiverTest, ReceiverRttWithMultipleMeasurements) {
 // https://www.w3.org/TR/webrtc-stats/#dom-rtcremoteoutboundrtpstreamstats-roundtriptime.
 TEST(RtcpReceiverTest, ReceiverRttResetOnSrWithoutXr) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
-  config.non_sender_rtt_measurement = true;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = true;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   Random rand(0x0123456789abcdef);
@@ -1142,9 +1152,8 @@ TEST(RtcpReceiverTest, ReceiverRttResetOnSrWithoutXr) {
 // https://www.w3.org/TR/webrtc-stats/#dom-rtcremoteoutboundrtpstreamstats-roundtriptime.
 TEST(RtcpReceiverTest, ReceiverRttResetOnDlrrWithZeroTimestamp) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
-  config.non_sender_rtt_measurement = true;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = true;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   Random rand(0x0123456789abcdef);
@@ -1181,9 +1190,8 @@ TEST(RtcpReceiverTest, ReceiverRttResetOnDlrrWithZeroTimestamp) {
 // Check that the receiver RTT works correctly when the remote SSRC changes.
 TEST(RtcpReceiverTest, ReceiverRttWithMultipleRemoteSsrcs) {
   ReceiverMocks mocks;
-  auto config = DefaultConfiguration(&mocks);
-  config.non_sender_rtt_measurement = false;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.non_sender_rtt_measurement = false;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
   receiver.SetNonSenderRttMeasurement(true);
 
@@ -1235,7 +1243,7 @@ TEST(RtcpReceiverTest, ReceiverRttWithMultipleRemoteSsrcs) {
 
 TEST(RtcpReceiverTest, ConsumeReceivedXrReferenceTimeInfoInitiallyEmpty) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   EXPECT_THAT(receiver.ConsumeReceivedXrReferenceTimeInfo(), IsEmpty());
@@ -1243,7 +1251,7 @@ TEST(RtcpReceiverTest, ConsumeReceivedXrReferenceTimeInfoInitiallyEmpty) {
 
 TEST(RtcpReceiverTest, ConsumeReceivedXrReferenceTimeInfo) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const NtpTime kNtp(0x10203, 0x40506);
@@ -1270,7 +1278,7 @@ TEST(RtcpReceiverTest, ConsumeReceivedXrReferenceTimeInfo) {
 TEST(RtcpReceiverTest,
      ReceivedRrtrFromSameSsrcUpdatesReceivedReferenceTimeInfo) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const NtpTime kNtp1(0x10203, 0x40506);
@@ -1300,7 +1308,7 @@ TEST(RtcpReceiverTest,
 
 TEST(RtcpReceiverTest, StoresLastReceivedRrtrPerSsrc) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const size_t kNumBufferedReports = 1;
@@ -1332,7 +1340,7 @@ TEST(RtcpReceiverTest, StoresLastReceivedRrtrPerSsrc) {
 
 TEST(RtcpReceiverTest, ReceiveReportTimeout) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const uint16_t kSequenceNumber = 1234;
@@ -1404,7 +1412,7 @@ TEST(RtcpReceiverTest, ReceiveReportTimeout) {
 
 TEST(RtcpReceiverTest, TmmbrReceivedWithNoIncomingPacket) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   EXPECT_THAT(receiver.TmmbrReceived(), IsEmpty());
@@ -1412,7 +1420,7 @@ TEST(RtcpReceiverTest, TmmbrReceivedWithNoIncomingPacket) {
 
 TEST(RtcpReceiverTest, TmmbrPacketAccepted) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const DataRate kBitrate = DataRate::BitsPerSec(30'000);
@@ -1440,7 +1448,7 @@ TEST(RtcpReceiverTest, TmmbrPacketAccepted) {
 
 TEST(RtcpReceiverTest, TmmbrPacketNotForUsIgnored) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const uint32_t kBitrateBps = 30000;
@@ -1464,7 +1472,7 @@ TEST(RtcpReceiverTest, TmmbrPacketNotForUsIgnored) {
 
 TEST(RtcpReceiverTest, TmmbrPacketZeroRateIgnored) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   auto tmmbr = std::make_unique<rtcp::Tmmbr>();
@@ -1486,7 +1494,7 @@ TEST(RtcpReceiverTest, TmmbrPacketZeroRateIgnored) {
 
 TEST(RtcpReceiverTest, TmmbrThreeConstraintsTimeOut) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   // Inject 3 packets "from" kSenderSsrc, kSenderSsrc+1, kSenderSsrc+2.
@@ -1528,17 +1536,15 @@ TEST(RtcpReceiverTest,
      VerifyBlockAndTimestampObtainedFromReportBlockDataObserver) {
   ReceiverMocks mocks;
   MockReportBlockDataObserverImpl observer;
-  RtpRtcpInterface::Configuration config = DefaultConfiguration(&mocks);
-  config.report_block_data_observer = &observer;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.report_block_data_observer = &observer;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const uint8_t kFractionLoss = 3;
   const uint32_t kCumulativeLoss = 7;
   const uint32_t kJitter = 9;
   const uint16_t kSequenceNumber = 1234;
-  const int64_t kNtpNowMs =
-      mocks.clock.CurrentNtpInMilliseconds() - rtc::kNtpJan1970Millisecs;
+  const Timestamp kUtcNow = Clock::NtpToUtc(mocks.clock.CurrentNtpTime());
 
   rtcp::ReportBlock rtcp_block;
   rtcp_block.SetMediaSsrc(kReceiverMainSsrc);
@@ -1559,8 +1565,7 @@ TEST(RtcpReceiverTest,
         EXPECT_EQ(rtcp_block.extended_high_seq_num(),
                   report_block.extended_highest_sequence_number());
         EXPECT_EQ(rtcp_block.jitter(), report_block.jitter());
-        EXPECT_EQ(report_block.report_block_timestamp_utc(),
-                  Timestamp::Millis(kNtpNowMs));
+        EXPECT_EQ(report_block.report_block_timestamp_utc(), kUtcNow);
         // No RTT is calculated in this test.
         EXPECT_EQ(0u, report_block.num_rtts());
       });
@@ -1571,9 +1576,8 @@ TEST(RtcpReceiverTest,
 TEST(RtcpReceiverTest, VerifyRttObtainedFromReportBlockDataObserver) {
   ReceiverMocks mocks;
   MockReportBlockDataObserverImpl observer;
-  RtpRtcpInterface::Configuration config = DefaultConfiguration(&mocks);
-  config.report_block_data_observer = &observer;
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  mocks.config.report_block_data_observer = &observer;
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   // To avoid issues with rounding due to different way to represent time units,
@@ -1617,7 +1621,7 @@ TEST(RtcpReceiverTest, VerifyRttObtainedFromReportBlockDataObserver) {
 
 TEST(RtcpReceiverTest, GetReportBlockDataAfterOneReportBlock) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const uint16_t kSequenceNumber = 1234;
@@ -1641,7 +1645,7 @@ TEST(RtcpReceiverTest, GetReportBlockDataAfterOneReportBlock) {
 
 TEST(RtcpReceiverTest, GetReportBlockDataAfterTwoReportBlocksOfSameSsrc) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const uint16_t kSequenceNumber1 = 1234;
@@ -1679,7 +1683,7 @@ TEST(RtcpReceiverTest, GetReportBlockDataAfterTwoReportBlocksOfSameSsrc) {
 
 TEST(RtcpReceiverTest, GetReportBlockDataAfterTwoReportBlocksOfDifferentSsrcs) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const uint16_t kSequenceNumber1 = 1234;
@@ -1719,12 +1723,11 @@ TEST(RtcpReceiverTest, GetReportBlockDataAfterTwoReportBlocksOfDifferentSsrcs) {
 
 TEST(RtcpReceiverTest, NotifiesNetworkLinkObserverOnTransportFeedback) {
   ReceiverMocks mocks;
-  RtpRtcpInterface::Configuration config = DefaultConfiguration(&mocks);
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::TransportFeedback packet;
-  packet.SetMediaSsrc(config.local_media_ssrc);
+  packet.SetMediaSsrc(mocks.config.local_media_ssrc);
   packet.SetSenderSsrc(kSenderSsrc);
   packet.SetBase(123, Timestamp::Millis(1));
   packet.AddReceivedPacket(123, Timestamp::Millis(1));
@@ -1740,15 +1743,108 @@ TEST(RtcpReceiverTest, NotifiesNetworkLinkObserverOnTransportFeedback) {
   receiver.IncomingPacket(packet.Build());
 }
 
+TEST(RtcpReceiverTest, NotifiesNetworkLinkObserverOnCongestionControlFeedback) {
+  ReceiverMocks mocks;
+  mocks.field_trials = "WebRTC-RFC8888CongestionControlFeedback/Enabled/";
+  RTCPReceiver receiver = Create(mocks);
+  receiver.SetRemoteSSRC(kSenderSsrc);
+
+  rtcp::CongestionControlFeedback packet({{
+                                             .ssrc = 123,
+                                             .sequence_number = 1,
+                                         }},
+                                         /*report_timestamp_compact_ntp=*/324);
+  packet.SetSenderSsrc(kSenderSsrc);
+
+  EXPECT_CALL(
+      mocks.network_link_rtcp_observer,
+      OnCongestionControlFeedback(
+          mocks.clock.CurrentTime(),
+          Property(&rtcp::CongestionControlFeedback::packets, SizeIs(1))));
+  receiver.IncomingPacket(packet.Build());
+}
+
+TEST(RtcpReceiverTest,
+     NotifiesNetworkStateEstimateObserverOnRemoteNetworkEstimate) {
+  ReceiverMocks mocks;
+  RTCPReceiver receiver = Create(mocks);
+  receiver.SetRemoteSSRC(kSenderSsrc);
+
+  NetworkStateEstimate estimate;
+  estimate.link_capacity_lower = DataRate::BitsPerSec(1000);
+  estimate.link_capacity_upper = DataRate::BitsPerSec(10000);
+  rtcp::RemoteEstimate remote_estimate;
+  remote_estimate.SetEstimate(estimate);
+
+  EXPECT_CALL(mocks.network_state_estimate_observer,
+              OnRemoteNetworkEstimate(
+                  AllOf(Field(&NetworkStateEstimate::link_capacity_lower,
+                              DataRate::BitsPerSec(1000)),
+                        Field(&NetworkStateEstimate::link_capacity_upper,
+                              DataRate::BitsPerSec(10000)))));
+
+  receiver.IncomingPacket(remote_estimate.Build());
+}
+
+TEST(RtcpReceiverTest,
+     NotifiesNetworkStateEstimateObserverBeforeNetworkLinkObserver) {
+  ReceiverMocks mocks;
+  RTCPReceiver receiver = Create(mocks);
+  receiver.SetRemoteSSRC(kSenderSsrc);
+
+  NetworkStateEstimate estimate;
+  estimate.link_capacity_lower = DataRate::BitsPerSec(1000);
+  estimate.link_capacity_upper = DataRate::BitsPerSec(10000);
+  std::unique_ptr<rtcp::RemoteEstimate> remote_estimate =
+      std::make_unique<rtcp::RemoteEstimate>();
+  remote_estimate->SetEstimate(estimate);
+  std::unique_ptr<rtcp::TransportFeedback> feedback_packet =
+      std::make_unique<rtcp::TransportFeedback>();
+  feedback_packet->SetMediaSsrc(mocks.config.local_media_ssrc);
+  feedback_packet->SetSenderSsrc(kSenderSsrc);
+  feedback_packet->SetBase(123, Timestamp::Millis(1));
+  feedback_packet->AddReceivedPacket(123, Timestamp::Millis(1));
+  rtcp::CompoundPacket compound;
+  compound.Append(std::move(remote_estimate));
+  compound.Append(std::move(feedback_packet));
+
+  InSequence s;
+  EXPECT_CALL(mocks.network_state_estimate_observer, OnRemoteNetworkEstimate);
+  EXPECT_CALL(mocks.network_link_rtcp_observer, OnTransportFeedback);
+  receiver.IncomingPacket(compound.Build());
+}
+
+TEST(RtcpReceiverTest, HandlesInvalidCongestionControlFeedback) {
+  ReceiverMocks mocks;
+  mocks.field_trials = "WebRTC-RFC8888CongestionControlFeedback/Enabled/";
+  RTCPReceiver receiver = Create(mocks);
+  receiver.SetRemoteSSRC(kSenderSsrc);
+
+  rtcp::CongestionControlFeedback packet({{
+                                             .ssrc = 123,
+                                             .sequence_number = 1,
+                                         }},
+                                         /*report_timestamp_compact_ntp=*/324);
+  packet.SetSenderSsrc(kSenderSsrc);
+  rtc::Buffer built_packet = packet.Build();
+  // Modify the CongestionControlFeedback packet so that it is invalid.
+  const size_t kNumReportsOffset = 14;
+  ByteWriter<uint16_t>::WriteBigEndian(&built_packet.data()[kNumReportsOffset],
+                                       42);
+
+  EXPECT_CALL(mocks.network_link_rtcp_observer, OnCongestionControlFeedback)
+      .Times(0);
+  receiver.IncomingPacket(built_packet);
+}
+
 TEST(RtcpReceiverTest,
      NotifiesNetworkLinkObserverOnTransportFeedbackOnRtxSsrc) {
   ReceiverMocks mocks;
-  RtpRtcpInterface::Configuration config = DefaultConfiguration(&mocks);
-  RTCPReceiver receiver(config, &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::TransportFeedback packet;
-  packet.SetMediaSsrc(*config.rtx_send_ssrc);
+  packet.SetMediaSsrc(*mocks.config.rtx_send_ssrc);
   packet.SetSenderSsrc(kSenderSsrc);
   packet.SetBase(1, Timestamp::Millis(1));
   packet.AddReceivedPacket(1, Timestamp::Millis(1));
@@ -1760,7 +1856,7 @@ TEST(RtcpReceiverTest,
 TEST(RtcpReceiverTest,
      DoesNotNotifyNetworkLinkObserverOnTransportFeedbackForUnregistedSsrc) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::TransportFeedback packet;
@@ -1775,7 +1871,7 @@ TEST(RtcpReceiverTest,
 
 TEST(RtcpReceiverTest, NotifiesNetworkLinkObserverOnRemb) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::Remb remb;
@@ -1790,7 +1886,7 @@ TEST(RtcpReceiverTest, NotifiesNetworkLinkObserverOnRemb) {
 
 TEST(RtcpReceiverTest, HandlesInvalidTransportFeedback) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   // Send a compound packet with a TransportFeedback followed by something else.
@@ -1824,7 +1920,7 @@ TEST(RtcpReceiverTest, HandlesInvalidTransportFeedback) {
 
 TEST(RtcpReceiverTest, Nack) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const uint16_t kNackList1[] = {1, 2, 3, 5};
@@ -1879,7 +1975,7 @@ TEST(RtcpReceiverTest, Nack) {
 
 TEST(RtcpReceiverTest, NackNotForUsIgnored) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   const uint16_t kNackList1[] = {1, 2, 3, 5};
@@ -1898,7 +1994,7 @@ TEST(RtcpReceiverTest, NackNotForUsIgnored) {
 
 TEST(RtcpReceiverTest, ForceSenderReport) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   rtcp::RapidResyncRequest rr;
@@ -1911,7 +2007,7 @@ TEST(RtcpReceiverTest, ForceSenderReport) {
 
 TEST(RtcpReceiverTest, ReceivesTargetBitrate) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   VideoBitrateAllocation expected_allocation;
@@ -1945,7 +2041,7 @@ TEST(RtcpReceiverTest, ReceivesTargetBitrate) {
 
 TEST(RtcpReceiverTest, HandlesIncorrectTargetBitrate) {
   ReceiverMocks mocks;
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   VideoBitrateAllocation expected_allocation;
@@ -1968,7 +2064,7 @@ TEST(RtcpReceiverTest, HandlesIncorrectTargetBitrate) {
 TEST(RtcpReceiverTest, ChangeLocalMediaSsrc) {
   ReceiverMocks mocks;
   // Construct a receiver with `kReceiverMainSsrc` (default) local media ssrc.
-  RTCPReceiver receiver(DefaultConfiguration(&mocks), &mocks.rtp_rtcp_impl);
+  RTCPReceiver receiver = Create(mocks);
   receiver.SetRemoteSSRC(kSenderSsrc);
 
   constexpr uint32_t kSecondarySsrc = kReceiverMainSsrc + 1;

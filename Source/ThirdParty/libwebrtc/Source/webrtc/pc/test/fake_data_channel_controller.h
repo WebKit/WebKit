@@ -15,6 +15,7 @@
 #include <string>
 #include <utility>
 
+#include "api/priority.h"
 #include "pc/sctp_data_channel.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/weak_ptr.h"
@@ -59,8 +60,8 @@ class FakeDataChannelController
                   std::move(my_weak_ptr), std::string(label),
                   transport_available_, init, signaling_thread_,
                   network_thread_);
-          if (transport_available_ && channel->sid_n().HasValue()) {
-            AddSctpDataStream(channel->sid_n());
+          if (transport_available_ && channel->sid_n().has_value()) {
+            AddSctpDataStream(*channel->sid_n(), channel->priority());
           }
           if (ready_to_send_) {
             network_thread_->PostTask([channel = channel] {
@@ -95,9 +96,9 @@ class FakeDataChannelController
     return webrtc::RTCError::OK();
   }
 
-  void AddSctpDataStream(webrtc::StreamId sid) override {
+  void AddSctpDataStream(webrtc::StreamId sid,
+                         webrtc::PriorityValue priority) override {
     RTC_DCHECK_RUN_ON(network_thread_);
-    RTC_CHECK(sid.HasValue());
     if (!transport_available_) {
       return;
     }
@@ -106,7 +107,6 @@ class FakeDataChannelController
 
   void RemoveSctpDataStream(webrtc::StreamId sid) override {
     RTC_DCHECK_RUN_ON(network_thread_);
-    RTC_CHECK(sid.HasValue());
     known_stream_ids_.erase(sid);
     // Unlike the real SCTP transport, act like the closing procedure finished
     // instantly.
@@ -129,6 +129,13 @@ class FakeDataChannelController
       connected_channels_.erase(data_channel);
     }
   }
+
+  size_t buffered_amount(webrtc::StreamId sid) const override { return 0; }
+  size_t buffered_amount_low_threshold(webrtc::StreamId sid) const override {
+    return 0;
+  }
+  void SetBufferedAmountLowThreshold(webrtc::StreamId sid,
+                                     size_t bytes) override {}
 
   // Set true to emulate the SCTP stream being blocked by congestion control.
   void set_send_blocked(bool blocked) {

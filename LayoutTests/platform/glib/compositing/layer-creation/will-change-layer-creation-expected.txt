@@ -28,7 +28,7 @@ background, clip-path, position, z-index, -webkit-mask
         (GraphicsLayer
           (offsetFromRenderer width=469 height=0)
           (position 477.00 8.00)
-          (bounds 82.00 17.00)
+          (bounds 83.00 17.00)
           (drawsContent 1)
         )
         (GraphicsLayer

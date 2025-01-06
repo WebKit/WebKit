@@ -40,8 +40,6 @@ TemporalHelpers.assertDuration(Temporal.Duration.from("+P1D"),
    0, 0, 0, 1, 0, 0, 0, 0, 0, 0);
 TemporalHelpers.assertDuration(Temporal.Duration.from("-P1D"),
    0, 0, 0, -1, 0, 0, 0, 0, 0, 0);
-TemporalHelpers.assertDuration(Temporal.Duration.from("\u2212P1D"),
-   0, 0, 0, -1, 0, 0, 0, 0, 0, 0);
 TemporalHelpers.assertDuration(Temporal.Duration.from("-P1Y1M1W1DT1H1M1.123456789S"),
    -1, -1, -1, -1, -1, -1, -1, -123, -456, -789);
 TemporalHelpers.assertDuration(Temporal.Duration.from("PT100M"),

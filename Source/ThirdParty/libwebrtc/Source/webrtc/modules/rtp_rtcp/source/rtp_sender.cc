@@ -11,29 +11,39 @@
 #include "modules/rtp_rtcp/source/rtp_sender.h"
 
 #include <algorithm>
-#include <limits>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
-#include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
-#include "api/rtc_event_log/rtc_event_log.h"
+#include "api/environment/environment.h"
+#include "api/rtp_headers.h"
+#include "api/rtp_packet_sender.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/rtc_event_rtp_packet_outgoing.h"
-#include "modules/rtp_rtcp/include/rtp_cvo.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/corruption_detection_extension.h"
 #include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor_extension.h"
+#include "modules/rtp_rtcp/source/rtp_header_extension_size.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet_history.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
-#include "modules/rtp_rtcp/source/time_util.h"
+#include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/rate_limiter.h"
-#include "rtc_base/time_utils.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -81,6 +91,7 @@ constexpr RtpExtensionSize kVideoExtensionSizes[] = {
     CreateMaxExtensionSize<RtpStreamId>(),
     CreateMaxExtensionSize<RepairedRtpStreamId>(),
     CreateMaxExtensionSize<RtpMid>(),
+    CreateMaxExtensionSize<CorruptionDetectionExtension>(),
     {RtpGenericFrameDescriptorExtension00::kId,
      RtpGenericFrameDescriptorExtension00::kMaxSizeBytes},
 };
@@ -89,7 +100,7 @@ constexpr RtpExtensionSize kVideoExtensionSizes[] = {
 constexpr RtpExtensionSize kAudioExtensionSizes[] = {
     CreateExtensionSize<AbsoluteSendTime>(),
     CreateExtensionSize<AbsoluteCaptureTimeExtension>(),
-    CreateExtensionSize<AudioLevel>(),
+    CreateExtensionSize<AudioLevelExtension>(),
     CreateExtensionSize<InbandComfortNoiseExtension>(),
     CreateExtensionSize<TransmissionOffset>(),
     CreateExtensionSize<TransportSequenceNumber>(),
@@ -123,6 +134,7 @@ bool IsNonVolatile(RTPExtensionType type) {
     case kRtpExtensionVideoTiming:
     case kRtpExtensionColorSpace:
     case kRtpExtensionVideoFrameTrackingId:
+    case kRtpExtensionCorruptionDetection:
       return false;
     case kRtpExtensionNone:
     case kRtpExtensionNumberOfExtensions:
@@ -141,16 +153,17 @@ bool HasBweExtension(const RtpHeaderExtensionMap& extensions_map) {
 
 }  // namespace
 
-RTPSender::RTPSender(const RtpRtcpInterface::Configuration& config,
+RTPSender::RTPSender(const Environment& env,
+                     const RtpRtcpInterface::Configuration& config,
                      RtpPacketHistory* packet_history,
                      RtpPacketSender* packet_sender)
-    : clock_(config.clock),
+    : clock_(&env.clock()),
       random_(clock_->TimeInMicroseconds()),
       audio_configured_(config.audio),
       ssrc_(config.local_media_ssrc),
       rtx_ssrc_(config.rtx_send_ssrc),
       flexfec_ssrc_(config.fec_generator ? config.fec_generator->FecSsrc()
-                                         : absl::nullopt),
+                                         : std::nullopt),
       packet_history_(packet_history),
       paced_sender_(packet_sender),
       sending_media_(true),                   // Default to sending media.
@@ -291,6 +304,7 @@ int32_t RTPSender::ReSendPacket(uint16_t packet_id) {
             if (retransmit_packet) {
               retransmit_packet->set_retransmitted_sequence_number(
                   stored_packet.SequenceNumber());
+              retransmit_packet->set_original_ssrc(stored_packet.Ssrc());
             }
             return retransmit_packet;
           });
@@ -426,6 +440,17 @@ std::vector<std::unique_ptr<RtpPacketToSend>> RTPSender::GeneratePadding(
         break;
       }
       padding_packet->SetSsrc(ssrc_);
+
+      if (always_send_mid_and_rid_ || !ssrc_has_acked_) {
+        // These are no-ops if the corresponding header extension is not
+        // registered.
+        if (!mid_.empty()) {
+          padding_packet->SetExtension<RtpMid>(mid_);
+        }
+        if (!rid_.empty()) {
+          padding_packet->SetExtension<RtpStreamId>(rid_);
+        }
+      }
     } else {
       // Without abs-send-time or transport sequence number a media packet
       // must be sent before padding so that the timestamps used for
@@ -441,17 +466,20 @@ std::vector<std::unique_ptr<RtpPacketToSend>> RTPSender::GeneratePadding(
       RTC_DCHECK(!rtx_payload_type_map_.empty());
       padding_packet->SetSsrc(*rtx_ssrc_);
       padding_packet->SetPayloadType(rtx_payload_type_map_.begin()->second);
+
+      if (always_send_mid_and_rid_ || !rtx_ssrc_has_acked_) {
+        if (!mid_.empty()) {
+          padding_packet->SetExtension<RtpMid>(mid_);
+        }
+        if (!rid_.empty()) {
+          padding_packet->SetExtension<RepairedRtpStreamId>(rid_);
+        }
+      }
     }
 
-    if (rtp_header_extension_map_.IsRegistered(TransportSequenceNumber::kId)) {
-      padding_packet->ReserveExtension<TransportSequenceNumber>();
-    }
-    if (rtp_header_extension_map_.IsRegistered(TransmissionOffset::kId)) {
-      padding_packet->ReserveExtension<TransmissionOffset>();
-    }
-    if (rtp_header_extension_map_.IsRegistered(AbsoluteSendTime::kId)) {
-      padding_packet->ReserveExtension<AbsoluteSendTime>();
-    }
+    padding_packet->ReserveExtension<TransportSequenceNumber>();
+    padding_packet->ReserveExtension<TransmissionOffset>();
+    padding_packet->ReserveExtension<AbsoluteSendTime>();
 
     padding_packet->SetPadding(padding_bytes_in_packet);
     bytes_left -= std::min(bytes_left, padding_bytes_in_packet);

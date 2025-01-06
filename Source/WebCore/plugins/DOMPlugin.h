@@ -21,7 +21,7 @@
 
 #include "PluginData.h"
 #include "ScriptWrappable.h"
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -30,8 +30,8 @@ namespace WebCore {
 class DOMMimeType;
 class Navigator;
 
-class DOMPlugin final : public ScriptWrappable, public RefCounted<DOMPlugin>, public CanMakeWeakPtr<DOMPlugin> {
-    WTF_MAKE_ISO_ALLOCATED(DOMPlugin);
+class DOMPlugin final : public RefCountedAndCanMakeWeakPtr<DOMPlugin>, public ScriptWrappable {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DOMPlugin);
 public:
     static Ref<DOMPlugin> create(Navigator&, const PluginInfo&);
     ~DOMPlugin();

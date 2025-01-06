@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,6 +34,8 @@
 #pragma once
 
 #include <wtf/dragonbox/dragonbox.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -137,24 +139,26 @@ typedef WTF::double_conversion::StringBuilder StringBuilder;
 template<class Float>
 void ToExponential(Float value, StringBuilder* result_builder)
 {
-    ASSERT((std::is_same<Float, double>::value) || (std::is_same<Float, float>::value));
+    static_assert(std::is_same_v<Float, double> || std::is_same_v<Float, float>);
     constexpr size_t buffer_length = 1 + (std::is_same<Float, float>::value ? to_exponential_max_string_length<ieee754_binary32>() : to_exponential_max_string_length<ieee754_binary64>());
     char buffer[buffer_length];
-    detail::to_chars<Mode::ToExponential>(value, buffer);
-    result_builder->AddString(buffer);
+    auto* cursor = detail::to_chars_n<Mode::ToExponential>(value, buffer);
+    result_builder->AddSubstring(buffer, cursor - buffer);
 }
 
 // See `ToShortest` in double-conversion.h for detailed definitons.
 template<class Float>
 void ToShortest(Float value, StringBuilder* result_builder)
 {
-    ASSERT((std::is_same<Float, double>::value) || (std::is_same<Float, float>::value));
+    static_assert(std::is_same_v<Float, double> || std::is_same_v<Float, float>);
     constexpr size_t buffer_length = 1 + (std::is_same<Float, float>::value ? max_string_length<ieee754_binary32>() : max_string_length<ieee754_binary64>());
     char buffer[buffer_length];
-    detail::to_chars<Mode::ToShortest>(value, buffer);
-    result_builder->AddString(buffer);
+    auto* cursor = detail::to_chars_n<Mode::ToShortest>(value, buffer);
+    result_builder->AddSubstring(buffer, cursor - buffer);
 }
 
 } // namespace dragonbox
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

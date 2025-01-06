@@ -35,6 +35,7 @@
 #include <WebCore/ShareableBitmap.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -44,9 +45,10 @@ class SharedBufferReference;
 
 namespace WebKit {
 class GPUConnectionToWebProcess;
+struct SharedPreferencesForWebProcess;
 
-class RemoteImageDecoderAVFProxy : private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+class RemoteImageDecoderAVFProxy : public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteImageDecoderAVFProxy);
 public:
     explicit RemoteImageDecoderAVFProxy(GPUConnectionToWebProcess&);
     virtual ~RemoteImageDecoderAVFProxy() = default;
@@ -56,6 +58,11 @@ public:
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     bool allowsExitUnderMemoryPressure() const;
+
+    void ref() const final;
+    void deref() const final;
+
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
     void createDecoder(const IPC::SharedBufferReference&, const String& mimeType, CompletionHandler<void(std::optional<WebCore::ImageDecoderIdentifier>&&)>&&);

@@ -25,9 +25,12 @@
 
 #include "BinaryPropertyList.h"
 
+#include <algorithm>
 #include <limits>
+#include <span>
 #include <wtf/HashMap.h>
 #include <wtf/Hasher.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
 static const size_t headerSize = 8;
@@ -377,36 +380,35 @@ private:
     const int m_objectReferenceSize;
     const size_t m_offsetTableStart;
     const int m_offsetSize;
-    const size_t m_bufferSize;
-    UInt8* const m_buffer;
+    std::span<UInt8> m_buffer;
 
-    UInt8* m_currentByte;
+    size_t m_currentByteIndex { 0 };
     ObjectReference m_currentObjectReference;
-    UInt8* m_currentAggregateBufferByte;
+    size_t m_currentAggregateBufferByteIndex { 0 };
 };
 
 inline void BinaryPropertyListSerializer::appendByte(unsigned char byte)
 {
-    *m_currentByte++ = byte;
-    ASSERT(m_currentByte <= m_currentAggregateBufferByte);
+    m_buffer[m_currentByteIndex++] = byte;
+    ASSERT(m_currentByteIndex <= m_currentAggregateBufferByteIndex);
 }
 
 inline void BinaryPropertyListSerializer::appendByte(unsigned byte)
 {
-    *m_currentByte++ = byte;
-    ASSERT(m_currentByte <= m_currentAggregateBufferByte);
+    m_buffer[m_currentByteIndex++] = byte;
+    ASSERT(m_currentByteIndex <= m_currentAggregateBufferByteIndex);
 }
 
 inline void BinaryPropertyListSerializer::appendByte(unsigned long byte)
 {
-    *m_currentByte++ = byte;
-    ASSERT(m_currentByte <= m_currentAggregateBufferByte);
+    m_buffer[m_currentByteIndex++] = byte;
+    ASSERT(m_currentByteIndex <= m_currentAggregateBufferByteIndex);
 }
 
 inline void BinaryPropertyListSerializer::appendByte(int byte)
 {
-    *m_currentByte++ = byte;
-    ASSERT(m_currentByte <= m_currentAggregateBufferByte);
+    m_buffer[m_currentByteIndex++] = byte;
+    ASSERT(m_currentByteIndex <= m_currentAggregateBufferByteIndex);
 }
 
 static int bytesNeeded(size_t count)
@@ -418,7 +420,7 @@ static int bytesNeeded(size_t count)
     return bytesNeeded;
 }
 
-static inline void storeLength(UInt8* destination, size_t length)
+static inline void storeLength(std::span<UInt8> destination, size_t length)
 {
 #ifdef __LP64__
     destination[0] = length >> 56;
@@ -438,14 +440,11 @@ static inline void storeLength(UInt8* destination, size_t length)
 }
 
 // Like memmove, but reverses the bytes.
-static void moveAndReverseBytes(UInt8* destination, const UInt8* source, size_t length)
+static void moveAndReverseBytes(std::span<UInt8> destination, std::span<const UInt8> source)
 {
-    ASSERT(length);
-    memmove(destination, source, length);
-    UInt8* start = destination;
-    UInt8* end = destination + length;
-    while (end - start > 1)
-        std::swap(*start++, *--end);
+    ASSERT(!source.empty());
+    memmoveSpan(destination, source);
+    std::ranges::reverse(destination.first(source.size()));
 }
 
 // The serializer uses a single buffer for the property list.
@@ -483,10 +482,10 @@ BinaryPropertyListSerializer::BinaryPropertyListSerializer(BinaryPropertyListWri
     , m_objectReferenceSize(bytesNeeded(m_plan.objectCount()))
     , m_offsetTableStart(headerSize + m_plan.byteCount() + m_plan.objectReferenceCount() * m_objectReferenceSize)
     , m_offsetSize(bytesNeeded(m_offsetTableStart))
-    , m_bufferSize(m_offsetTableStart + m_plan.objectCount() * m_offsetSize + trailerSize)
-    , m_buffer(client.buffer(m_bufferSize))
     , m_currentObjectReference(0)
 {
+    auto bufferSize = m_offsetTableStart + m_plan.objectCount() * m_offsetSize + trailerSize;
+    m_buffer = unsafeMakeSpan(client.buffer(bufferSize), bufferSize);
     ASSERT(m_objectReferenceSize > 0);
     ASSERT(m_offsetSize > 0);
 
@@ -498,28 +497,28 @@ BinaryPropertyListSerializer::BinaryPropertyListSerializer(BinaryPropertyListWri
     ASSERT(m_offsetSize <= 4);
 #endif
 
-    if (!m_buffer)
+    if (!m_buffer.data())
         return;
 
     // Write objects and offset table.
-    m_currentByte = m_buffer + headerSize;
-    m_currentAggregateBufferByte = m_buffer + m_offsetTableStart;
+    m_currentByteIndex = headerSize;
+    m_currentAggregateBufferByteIndex = m_offsetTableStart;
     client.writeObjects(*this);
     ASSERT(m_currentObjectReference == m_plan.objectCount());
-    ASSERT(m_currentAggregateBufferByte == m_buffer + m_offsetTableStart);
-    ASSERT(m_currentByte == m_buffer + m_offsetTableStart);
+    ASSERT(m_currentAggregateBufferByteIndex == m_offsetTableStart);
+    ASSERT(m_currentByteIndex == m_offsetTableStart);
 
     // Write header.
-    memcpy(m_buffer, "bplist00", headerSize);
+    memcpySpan(m_buffer, "bplist00"_span);
 
     // Write trailer.
-    UInt8* trailer = m_buffer + m_bufferSize - trailerSize;
-    memset(trailer, 0, 6);
+    std::span<UInt8> trailer = m_buffer.last(trailerSize);
+    zeroSpan(trailer.first(6));
     trailer[6] = m_offsetSize;
     trailer[7] = m_objectReferenceSize;
-    storeLength(trailer + 8, m_plan.objectCount());
-    storeLength(trailer + 16, m_plan.objectCount() - 1);
-    storeLength(trailer + 24, m_offsetTableStart);
+    storeLength(trailer.subspan(8), m_plan.objectCount());
+    storeLength(trailer.subspan(16), m_plan.objectCount() - 1);
+    storeLength(trailer.subspan(24), m_offsetTableStart);
 }
 
 void BinaryPropertyListSerializer::writeBooleanTrue()
@@ -585,14 +584,14 @@ void BinaryPropertyListSerializer::writeUniqueString(const String& string)
 
 size_t BinaryPropertyListSerializer::writeArrayStart()
 {
-    return m_currentAggregateBufferByte - m_buffer;
+    return m_currentAggregateBufferByteIndex;
 }
 
 void BinaryPropertyListSerializer::writeArrayEnd(size_t savedAggregateBufferOffset)
 {
     ObjectReference reference = m_currentObjectReference;
     startObject();
-    size_t aggregateBufferByteCount = savedAggregateBufferOffset - (m_currentAggregateBufferByte - m_buffer);
+    size_t aggregateBufferByteCount = savedAggregateBufferOffset - m_currentAggregateBufferByteIndex;
     ASSERT(aggregateBufferByteCount);
     ASSERT(!(aggregateBufferByteCount % m_objectReferenceSize));
     size_t size = aggregateBufferByteCount / m_objectReferenceSize;
@@ -602,11 +601,11 @@ void BinaryPropertyListSerializer::writeArrayEnd(size_t savedAggregateBufferOffs
         appendByte(arrayWithSeparateLengthMarkerByte);
         appendInteger(size);
     }
-    m_currentAggregateBufferByte = m_buffer + savedAggregateBufferOffset;
-    ASSERT(m_currentByte <= m_currentAggregateBufferByte);
-    moveAndReverseBytes(m_currentByte, m_currentAggregateBufferByte - aggregateBufferByteCount, aggregateBufferByteCount);
-    m_currentByte += aggregateBufferByteCount;
-    ASSERT(m_currentByte <= m_currentAggregateBufferByte);
+    m_currentAggregateBufferByteIndex = savedAggregateBufferOffset;
+    ASSERT(m_currentByteIndex <= m_currentAggregateBufferByteIndex);
+    moveAndReverseBytes(m_buffer.subspan(m_currentByteIndex), m_buffer.subspan(m_currentAggregateBufferByteIndex - aggregateBufferByteCount, aggregateBufferByteCount));
+    m_currentByteIndex += aggregateBufferByteCount;
+    ASSERT(m_currentByteIndex <= m_currentAggregateBufferByteIndex);
     if (m_currentObjectReference < m_plan.objectCount())
         addAggregateObjectReference(reference);
     else
@@ -615,14 +614,14 @@ void BinaryPropertyListSerializer::writeArrayEnd(size_t savedAggregateBufferOffs
 
 size_t BinaryPropertyListSerializer::writeDictionaryStart()
 {
-    return m_currentAggregateBufferByte - m_buffer;
+    return m_currentAggregateBufferByteIndex;
 }
 
 void BinaryPropertyListSerializer::writeDictionaryEnd(size_t savedAggregateBufferOffset)
 {
     ObjectReference reference = m_currentObjectReference;
     startObject();
-    size_t aggregateBufferByteCount = savedAggregateBufferOffset - (m_currentAggregateBufferByte - m_buffer);
+    size_t aggregateBufferByteCount = savedAggregateBufferOffset - m_currentAggregateBufferByteIndex;
     ASSERT(aggregateBufferByteCount);
     ASSERT(!(aggregateBufferByteCount % (m_objectReferenceSize * 2)));
     size_t size = aggregateBufferByteCount / (m_objectReferenceSize * 2);
@@ -632,11 +631,11 @@ void BinaryPropertyListSerializer::writeDictionaryEnd(size_t savedAggregateBuffe
         appendByte(dictionaryWithSeparateLengthMarkerByte);
         appendInteger(size);
     }
-    m_currentAggregateBufferByte = m_buffer + savedAggregateBufferOffset;
-    ASSERT(m_currentByte <= m_currentAggregateBufferByte);
-    moveAndReverseBytes(m_currentByte, m_currentAggregateBufferByte - aggregateBufferByteCount, aggregateBufferByteCount);
-    m_currentByte += aggregateBufferByteCount;
-    ASSERT(m_currentByte <= m_currentAggregateBufferByte);
+    m_currentAggregateBufferByteIndex = savedAggregateBufferOffset;
+    ASSERT(m_currentByteIndex <= m_currentAggregateBufferByteIndex);
+    moveAndReverseBytes(m_buffer.subspan(m_currentByteIndex), m_buffer.subspan(m_currentAggregateBufferByteIndex - aggregateBufferByteCount, aggregateBufferByteCount));
+    m_currentByteIndex += aggregateBufferByteCount;
+    ASSERT(m_currentByteIndex <= m_currentAggregateBufferByteIndex);
     if (m_currentObjectReference != m_plan.objectCount())
         addAggregateObjectReference(reference);
     else
@@ -775,9 +774,9 @@ void BinaryPropertyListSerializer::startObject()
 {
     ObjectReference reference = m_currentObjectReference++;
 
-    size_t offset = m_currentByte - m_buffer;
+    size_t offset = m_currentByteIndex;
 
-    UInt8* offsetTableEntry = m_buffer + m_offsetTableStart + reference * m_offsetSize + m_offsetSize;
+    UInt8* offsetTableEntry = m_buffer.data() + m_offsetTableStart + reference * m_offsetSize + m_offsetSize;
     switch (m_offsetSize) {
 #ifdef __LP64__
     case 8:
@@ -812,31 +811,31 @@ void BinaryPropertyListSerializer::addAggregateObjectReference(ObjectReference r
     switch (m_objectReferenceSize) {
 #ifdef __LP64__
     case 8:
-        *--m_currentAggregateBufferByte = reference >> 56;
+        m_buffer[--m_currentAggregateBufferByteIndex] = reference >> 56;
         FALLTHROUGH;
     case 7:
-        *--m_currentAggregateBufferByte = reference >> 48;
+        m_buffer[--m_currentAggregateBufferByteIndex] = reference >> 48;
         FALLTHROUGH;
     case 6:
-        *--m_currentAggregateBufferByte = reference >> 40;
+        m_buffer[--m_currentAggregateBufferByteIndex] = reference >> 40;
         FALLTHROUGH;
     case 5:
-        *--m_currentAggregateBufferByte = reference >> 32;
+        m_buffer[--m_currentAggregateBufferByteIndex] = reference >> 32;
         FALLTHROUGH;
 #endif
     case 4:
-        *--m_currentAggregateBufferByte = reference >> 24;
+        m_buffer[--m_currentAggregateBufferByteIndex] = reference >> 24;
         FALLTHROUGH;
     case 3:
-        *--m_currentAggregateBufferByte = reference >> 16;
+        m_buffer[--m_currentAggregateBufferByteIndex] = reference >> 16;
         FALLTHROUGH;
     case 2:
-        *--m_currentAggregateBufferByte = reference >> 8;
+        m_buffer[--m_currentAggregateBufferByteIndex] = reference >> 8;
         FALLTHROUGH;
     case 1:
-        *--m_currentAggregateBufferByte = reference;
+        m_buffer[--m_currentAggregateBufferByteIndex] = reference;
     }
-    ASSERT(m_currentByte <= m_currentAggregateBufferByte);
+    ASSERT(m_currentByteIndex <= m_currentAggregateBufferByteIndex);
 }
 
 void BinaryPropertyListWriter::writePropertyList()

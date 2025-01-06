@@ -14,8 +14,8 @@
 
 #include <string>
 
+#include "api/field_trials_view.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 namespace {
@@ -24,26 +24,27 @@ constexpr int kMinSetting = 0;
 constexpr int kMaxSetting = 5;
 }  // namespace
 
-absl::optional<int> NormalizeSimulcastSizeExperiment::GetBase2Exponent() {
-  if (!webrtc::field_trial::IsEnabled(kFieldTrial))
-    return absl::nullopt;
+std::optional<int> NormalizeSimulcastSizeExperiment::GetBase2Exponent(
+    const FieldTrialsView& field_trials) {
+  if (!field_trials.IsEnabled(kFieldTrial))
+    return std::nullopt;
 
-  const std::string group = webrtc::field_trial::FindFullName(kFieldTrial);
+  const std::string group = field_trials.Lookup(kFieldTrial);
   if (group.empty())
-    return absl::nullopt;
+    return std::nullopt;
 
   int exponent;
   if (sscanf(group.c_str(), "Enabled-%d", &exponent) != 1) {
     RTC_LOG(LS_WARNING) << "No parameter provided.";
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   if (exponent < kMinSetting || exponent > kMaxSetting) {
     RTC_LOG(LS_WARNING) << "Unsupported exp value provided, value ignored.";
-    return absl::nullopt;
+    return std::nullopt;
   }
 
-  return absl::optional<int>(exponent);
+  return std::optional<int>(exponent);
 }
 
 }  // namespace webrtc

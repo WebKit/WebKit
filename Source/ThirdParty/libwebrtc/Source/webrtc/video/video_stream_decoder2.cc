@@ -10,6 +10,13 @@
 
 #include "video/video_stream_decoder2.h"
 
+#include <cstdint>
+#include <optional>
+
+#include "api/units/time_delta.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
 #include "api/video_codecs/video_decoder.h"
 #include "modules/video_coding/video_receiver2.h"
 #include "rtc_base/checks.h"
@@ -44,13 +51,26 @@ VideoStreamDecoder::~VideoStreamDecoder() {
 // thread may have held the lock when calling VideoDecoder::Decode, Reset, or
 // Release. Acquiring the same lock in the path of decode callback can deadlock.
 int32_t VideoStreamDecoder::FrameToRender(VideoFrame& video_frame,
-                                          absl::optional<uint8_t> qp,
+                                          std::optional<uint8_t> qp,
                                           TimeDelta decode_time,
                                           VideoContentType content_type,
                                           VideoFrameType frame_type) {
-  receive_stats_callback_->OnDecodedFrame(video_frame, qp, decode_time,
-                                          content_type, frame_type);
-  incoming_video_stream_->OnFrame(video_frame);
+  return OnFrameToRender({.video_frame = video_frame,
+                          .qp = qp,
+                          .decode_time = decode_time,
+                          .content_type = content_type,
+                          .frame_type = frame_type});
+}
+int32_t VideoStreamDecoder::OnFrameToRender(
+    const struct FrameToRender& arguments) {
+  receive_stats_callback_->OnDecodedFrame(
+      arguments.video_frame, arguments.qp, arguments.decode_time,
+      arguments.content_type, arguments.frame_type);
+  if (arguments.corruption_score.has_value()) {
+    receive_stats_callback_->OnCorruptionScore(*arguments.corruption_score,
+                                               arguments.content_type);
+  }
+  incoming_video_stream_->OnFrame(arguments.video_frame);
   return 0;
 }
 

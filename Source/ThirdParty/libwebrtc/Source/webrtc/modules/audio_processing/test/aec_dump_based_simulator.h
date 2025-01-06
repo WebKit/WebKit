@@ -11,19 +11,22 @@
 #ifndef MODULES_AUDIO_PROCESSING_TEST_AEC_DUMP_BASED_SIMULATOR_H_
 #define MODULES_AUDIO_PROCESSING_TEST_AEC_DUMP_BASED_SIMULATOR_H_
 
+#include <cstdio>
 #include <fstream>
-#include <string>
+#include <memory>
 
+#include "absl/base/nullability.h"
+#include "api/audio/audio_processing.h"
+#include "api/scoped_refptr.h"
+#include "common_audio/channel_buffer.h"
 #include "modules/audio_processing/test/audio_processing_simulator.h"
-#include "rtc_base/ignore_wundef.h"
+#include "modules/audio_processing/test/test_utils.h"
 
-RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/modules/audio_processing/debug.pb.h"
 #else
 #include "modules/audio_processing/debug.pb.h"
 #endif
-RTC_POP_IGNORING_WUNDEF()
 
 namespace webrtc {
 namespace test {
@@ -31,9 +34,9 @@ namespace test {
 // Used to perform an audio processing simulation from an aec dump.
 class AecDumpBasedSimulator final : public AudioProcessingSimulator {
  public:
-  AecDumpBasedSimulator(const SimulationSettings& settings,
-                        rtc::scoped_refptr<AudioProcessing> audio_processing,
-                        std::unique_ptr<AudioProcessingBuilder> ap_builder);
+  AecDumpBasedSimulator(
+      const SimulationSettings& settings,
+      absl::Nonnull<scoped_refptr<AudioProcessing>> audio_processing);
 
   AecDumpBasedSimulator() = delete;
   AecDumpBasedSimulator(const AecDumpBasedSimulator&) = delete;

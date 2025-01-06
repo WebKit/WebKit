@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -43,7 +43,7 @@ extern "C" {
 #define av1_zero(dest) memset(&(dest), 0, sizeof(dest))
 #define av1_zero_array(dest, n) memset(dest, 0, n * sizeof(*(dest)))
 
-static INLINE int get_unsigned_bits(unsigned int num_values) {
+static inline int get_unsigned_bits(unsigned int num_values) {
   return num_values > 0 ? get_msb(num_values) + 1 : 0;
 }
 

@@ -34,6 +34,7 @@
 #include "ElementInlines.h"
 #include "ElementRareData.h"
 #include "FontCascade.h"
+#include "HTMLAttachmentElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -52,6 +53,7 @@
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderImage.h"
 #include "RenderIterator.h"
 #include "RenderTableCell.h"
@@ -66,7 +68,11 @@
 #include "VisibleUnits.h"
 #include <unicode/unorm2.h>
 #include <wtf/Function.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -78,6 +84,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextIterator);
 
 using namespace WTF::Unicode;
 using namespace HTMLNames;
@@ -351,7 +359,7 @@ static Node* firstNode(const BoundaryPoint& point)
 TextIterator::TextIterator(const SimpleRange& range, TextIteratorBehaviors behaviors)
     : m_behaviors(behaviors)
 {
-    ASSERT(!m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters) || !m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForImagesOnly));
+    ASSERT(!m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters) || !m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForImages));
 
     range.start.protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
@@ -430,7 +438,7 @@ static inline bool hasDisplayContents(Node& node)
 
 static bool isRendererVisible(const RenderObject* renderer, TextIteratorBehaviors behaviors)
 {
-    return renderer && !(renderer->style().usedUserSelect() == UserSelect::None && behaviors.contains(TextIteratorBehavior::IgnoresUserSelectNone));
+    return renderer && !renderer->isSkippedContent() && !(renderer->style().usedUserSelect() == UserSelect::None && behaviors.contains(TextIteratorBehavior::IgnoresUserSelectNone));
 }
 
 void TextIterator::advance()
@@ -481,9 +489,9 @@ void TextIterator::advance()
             if (!isRendererVisible(renderer.get(), m_behaviors)) {
                 m_handledNode = true;
                 m_handledChildren = !hasDisplayContents(*protectedCurrentNode()) && !renderer;
-            } else if (is<Element>(m_currentNode.get()) && renderer->isSkippedContentRoot()) {
+            } else if (auto* renderElement = dynamicDowncast<RenderElement>(renderer.get()); renderElement && isSkippedContentRoot(*renderElement))
                 m_handledChildren = true;
-            } else {
+            else {
                 // handle current node according to its type
                 if (renderer->isRenderText() && m_currentNode->isTextNode())
                     m_handledNode = handleTextNode();
@@ -779,8 +787,13 @@ bool TextIterator::handleReplacedElement()
         if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters))
             return true;
 
-        if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForImagesOnly) && is<HTMLImageElement>(m_currentNode.get()))
+        if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForImages) && is<HTMLImageElement>(m_currentNode.get()))
             return true;
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+        if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForAttachments) && is<HTMLAttachmentElement>(m_currentNode.get()))
+            return true;
+#endif
 
         return false;
     }();
@@ -1150,8 +1163,10 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
     ASSERT(textEndOffset >= 0);
     ASSERT(textStartOffset <= textEndOffset);
 
+    bool shouldIgnoreFullSizeKana = m_behaviors.contains(TextIteratorBehavior::IgnoresFullSizeKana) && renderer.style().textTransform().contains(TextTransform::FullSizeKana);
+
     // FIXME: This probably yields the wrong offsets when text-transform: lowercase turns a single character into two characters.
-    String string = m_behaviors.contains(TextIteratorBehavior::EmitsOriginalText) ? renderer.originalText()
+    String string = m_behaviors.contains(TextIteratorBehavior::EmitsOriginalText) || shouldIgnoreFullSizeKana ? renderer.originalText()
         : (m_behaviors.contains(TextIteratorBehavior::EmitsTextsWithoutTranscoding) ? renderer.textWithoutConvertingBackslashToYenSymbol() : renderer.text());
 
     ASSERT(m_behaviors.contains(TextIteratorBehavior::EmitsOriginalText) || string.length() >= static_cast<unsigned>(textEndOffset));
@@ -1984,7 +1999,7 @@ static bool isNonLatin1Separator(char32_t character)
 
 static inline bool isSeparator(char32_t character)
 {
-    static constexpr bool latin1SeparatorTable[256] = {
+    static constexpr std::array<bool, 256> latin1SeparatorTable {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // space ! " # $ % & ' ( ) * + , - . /
@@ -2092,7 +2107,7 @@ inline size_t SearchBuffer::append(StringView text)
         m_prefixLength = 0;
         m_atBreak = false;
     } else if (m_buffer.size() == m_buffer.capacity()) {
-        memcpy(m_buffer.data(), m_buffer.data() + m_buffer.size() - m_overlap, m_overlap * sizeof(UChar));
+        memcpySpan(m_buffer.mutableSpan(), m_buffer.span().last(m_overlap));
         m_prefixLength -= std::min(m_prefixLength, m_buffer.size() - m_overlap);
         m_buffer.shrink(m_overlap);
     }
@@ -2156,51 +2171,46 @@ inline bool SearchBuffer::isBadMatch(const UChar* match, size_t matchLength) con
     // creating a new one each time.
     normalizeCharacters(match, matchLength, m_normalizedMatch);
 
-    const UChar* a = m_normalizedTarget.begin();
-    const UChar* aEnd = m_normalizedTarget.end();
-
-    const UChar* b = m_normalizedMatch.begin();
-    const UChar* bEnd = m_normalizedMatch.end();
+    auto a = m_normalizedTarget.span();
+    auto b = m_normalizedMatch.span();
 
     while (true) {
         // Skip runs of non-kana-letter characters. This is necessary so we can
         // correctly handle strings where the target and match have different-length
         // runs of characters that match, while still double checking the correctness
         // of matches of kana letters with other kana letters.
-        while (a != aEnd && !isKanaLetter(*a))
-            ++a;
-        while (b != bEnd && !isKanaLetter(*b))
-            ++b;
+        skipUntil<isKanaLetter>(a);
+        skipUntil<isKanaLetter>(b);
 
         // If we reached the end of either the target or the match, we should have
         // reached the end of both; both should have the same number of kana letters.
-        if (a == aEnd || b == bEnd) {
-            ASSERT(a == aEnd);
-            ASSERT(b == bEnd);
+        if (a.empty() || b.empty()) {
+            ASSERT(a.empty());
+            ASSERT(b.empty());
             return false;
         }
 
         // Check for differences in the kana letter character itself.
-        if (isSmallKanaLetter(*a) != isSmallKanaLetter(*b))
+        if (isSmallKanaLetter(a.front()) != isSmallKanaLetter(b.front()))
             return true;
-        if (composedVoicedSoundMark(*a) != composedVoicedSoundMark(*b))
+        if (composedVoicedSoundMark(a.front()) != composedVoicedSoundMark(b.front()))
             return true;
-        ++a;
-        ++b;
+        skip(a, 1);
+        skip(b, 1);
 
         // Check for differences in combining voiced sound marks found after the letter.
         while (1) {
-            if (!(a != aEnd && isCombiningVoicedSoundMark(*a))) {
-                if (b != bEnd && isCombiningVoicedSoundMark(*b))
+            if (!(!a.empty() && isCombiningVoicedSoundMark(a.front()))) {
+                if (!b.empty() && isCombiningVoicedSoundMark(b.front()))
                     return true;
                 break;
             }
-            if (!(b != bEnd && isCombiningVoicedSoundMark(*b)))
+            if (!(!b.empty() && isCombiningVoicedSoundMark(b.front())))
                 return true;
-            if (*a != *b)
+            if (a.front() != b.front())
                 return true;
-            ++a;
-            ++b;
+            skip(a, 1);
+            skip(b, 1);
         }
     }
 }
@@ -2226,11 +2236,12 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
     int size = m_buffer.size();
     int offset = start;
     char32_t firstCharacter;
-    U16_GET(m_buffer.data(), 0, offset, size, firstCharacter);
+    auto buffer = m_buffer.span();
+    U16_GET(buffer, 0, offset, size, firstCharacter);
 
     if (m_options.contains(FindOption::TreatMedialCapitalAsWordStart)) {
         char32_t previousCharacter;
-        U16_PREV(m_buffer.data(), 0, offset, previousCharacter);
+        U16_PREV(buffer, 0, offset, previousCharacter);
 
         if (isSeparator(firstCharacter)) {
             // The start of a separator run is a word start (".org" in "webkit.org").
@@ -2243,10 +2254,10 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
             // The last character of an uppercase run followed by a non-separator, non-digit
             // is a word start ("Request" in "XMLHTTPRequest").
             offset = start;
-            U16_FWD_1(m_buffer.data(), offset, size);
+            U16_FWD_1(buffer, offset, size);
             char32_t nextCharacter = 0;
             if (offset < size)
-                U16_GET(m_buffer.data(), 0, offset, size, nextCharacter);
+                U16_GET(buffer, 0, offset, size, nextCharacter);
             if (!isASCIIUpper(nextCharacter) && !isASCIIDigit(nextCharacter) && !isSeparator(nextCharacter))
                 return true;
         } else if (isASCIIDigit(firstCharacter)) {
@@ -2267,7 +2278,7 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
 
     size_t wordBreakSearchStart = start + length;
     while (wordBreakSearchStart > start)
-        wordBreakSearchStart = findNextWordFromIndex(m_buffer.span(), wordBreakSearchStart, false /* backwards */);
+        wordBreakSearchStart = findNextWordFromIndex(buffer, wordBreakSearchStart, false /* backwards */);
     return wordBreakSearchStart == start;
 }
 
@@ -2309,11 +2320,11 @@ nextMatch:
             // Ensure that there is sufficient context before matchStart the next time around for
             // determining if it is at a word boundary.
             unsigned wordBoundaryContextStart = matchStart;
-            U16_BACK_1(m_buffer.data(), 0, wordBoundaryContextStart);
+            U16_BACK_1(m_buffer.span(), 0, wordBoundaryContextStart);
             wordBoundaryContextStart = startOfLastWordBoundaryContext(m_buffer.subspan(0, wordBoundaryContextStart));
             overlap = std::min(size - 1, std::max(overlap, size - wordBoundaryContextStart));
         }
-        memcpy(m_buffer.data(), m_buffer.data() + size - overlap, overlap * sizeof(UChar));
+        memcpySpan(m_buffer.mutableSpan(), m_buffer.span().last(overlap));
         m_prefixLength -= std::min(m_prefixLength, size - overlap);
         m_buffer.shrink(overlap);
         return 0;
@@ -2323,7 +2334,7 @@ nextMatch:
     ASSERT_WITH_SECURITY_IMPLICATION(matchStart + matchedLength <= size);
 
     // If this match is "bad", move on to the next match.
-    if (isBadMatch(m_buffer.data() + matchStart, matchedLength)
+    if (isBadMatch(m_buffer.subspan(matchStart).data(), matchedLength)
         || (m_options.contains(FindOption::AtWordStarts) && !isWordStartMatch(matchStart, matchedLength))
         || (m_options.contains(FindOption::AtWordEnds) && !isWordEndMatch(matchStart, matchedLength))) {
         matchStart = usearch_next(searcher, &status);
@@ -2332,7 +2343,7 @@ nextMatch:
     }
 
     size_t newSize = size - (matchStart + 1);
-    memmove(m_buffer.data(), m_buffer.data() + matchStart + 1, newSize * sizeof(UChar));
+    memmoveSpan(m_buffer.mutableSpan(), m_buffer.subspan(matchStart + 1, newSize));
     m_prefixLength -= std::min<size_t>(m_prefixLength, matchStart + 1);
     m_buffer.shrink(newSize);
 
@@ -2531,9 +2542,12 @@ SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange range
 
 // --------
 
-bool hasAnyPlainText(const SimpleRange& range, TextIteratorBehaviors behaviors)
+bool hasAnyPlainText(const SimpleRange& range, TextIteratorBehaviors behaviors, IgnoreCollapsedRanges ignoreCollapsedRanges)
 {
     for (TextIterator iterator { range, behaviors }; !iterator.atEnd(); iterator.advance()) {
+        if (ignoreCollapsedRanges == IgnoreCollapsedRanges::Yes && iterator.range().collapsed())
+            continue;
+
         if (!iterator.text().isEmpty())
             return true;
     }

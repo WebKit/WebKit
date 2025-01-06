@@ -61,8 +61,12 @@ text, foreignObject {
     display: block
 }
 
-text, tspan, textPath {
-   white-space: nowrap
+text {
+    white-space: nowrap;
+}
+
+tspan, textPath {
+    white-space: inherit;
 }
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY

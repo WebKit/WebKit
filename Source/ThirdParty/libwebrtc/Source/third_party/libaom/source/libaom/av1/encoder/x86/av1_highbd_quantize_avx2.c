@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,20 +16,20 @@
 #include "aom/aom_integer.h"
 #include "aom_dsp/aom_dsp_common.h"
 
-static INLINE void init_one_qp(const __m128i *p, __m256i *qp) {
+static inline void init_one_qp(const __m128i *p, __m256i *qp) {
   const __m128i zero = _mm_setzero_si128();
   const __m128i dc = _mm_unpacklo_epi16(*p, zero);
   const __m128i ac = _mm_unpackhi_epi16(*p, zero);
   *qp = _mm256_insertf128_si256(_mm256_castsi128_si256(dc), ac, 1);
 }
 
-static INLINE void update_qp(__m256i *qp) {
+static inline void update_qp(__m256i *qp) {
   qp[0] = _mm256_permute2x128_si256(qp[0], qp[0], 0x11);
   qp[1] = _mm256_permute2x128_si256(qp[1], qp[1], 0x11);
   qp[2] = _mm256_permute2x128_si256(qp[2], qp[2], 0x11);
 }
 
-static INLINE void init_qp(const int16_t *round_ptr, const int16_t *quant_ptr,
+static inline void init_qp(const int16_t *round_ptr, const int16_t *quant_ptr,
                            const int16_t *dequant_ptr, int log_scale,
                            __m256i *qp) {
   __m128i round = _mm_loadu_si128((const __m128i *)round_ptr);
@@ -45,7 +45,7 @@ static INLINE void init_qp(const int16_t *round_ptr, const int16_t *quant_ptr,
   init_one_qp(&dequant, &qp[2]);
 }
 
-static INLINE void quantize(const __m256i *qp, __m256i *c,
+static inline void quantize(const __m256i *qp, __m256i *c,
                             const int16_t *iscan_ptr, int log_scale,
                             tran_low_t *qcoeff, tran_low_t *dqcoeff,
                             __m256i *eob) {

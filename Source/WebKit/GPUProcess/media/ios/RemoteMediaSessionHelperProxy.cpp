@@ -32,10 +32,12 @@
 #include "GPUConnectionToWebProcess.h"
 #include "MediaPlaybackTargetContextSerialized.h"
 #include "RemoteMediaSessionHelperMessages.h"
-#include "WebCoreArgumentCoders.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionHelperProxy);
 
 RemoteMediaSessionHelperProxy::RemoteMediaSessionHelperProxy(GPUConnectionToWebProcess& gpuConnection)
     : m_gpuConnection(gpuConnection)
@@ -47,6 +49,16 @@ RemoteMediaSessionHelperProxy::~RemoteMediaSessionHelperProxy()
 {
     stopMonitoringWirelessRoutes();
     MediaSessionHelper::sharedHelper().removeClient(*this);
+}
+
+void RemoteMediaSessionHelperProxy::ref() const
+{
+    m_gpuConnection.get()->ref();
+}
+
+void RemoteMediaSessionHelperProxy::deref() const
+{
+    m_gpuConnection.get()->deref();
 }
 
 void RemoteMediaSessionHelperProxy::startMonitoringWirelessRoutes()
@@ -67,10 +79,10 @@ void RemoteMediaSessionHelperProxy::stopMonitoringWirelessRoutes()
     MediaSessionHelper::sharedHelper().stopMonitoringWirelessRoutes();
 }
 
-void RemoteMediaSessionHelperProxy::providePresentingApplicationPID(int pid)
+void RemoteMediaSessionHelperProxy::providePresentingApplicationPID(int pid, MediaSessionHelper::ShouldOverride shouldOverride)
 {
     m_presentingApplicationPID = pid;
-    MediaSessionHelper::sharedHelper().providePresentingApplicationPID(pid);
+    MediaSessionHelper::sharedHelper().providePresentingApplicationPID(pid, shouldOverride);
 }
 
 void RemoteMediaSessionHelperProxy::overridePresentingApplicationPIDIfNeeded()
@@ -131,6 +143,14 @@ void RemoteMediaSessionHelperProxy::activeAudioRouteSupportsSpatialPlaybackDidCh
 {
     if (auto connection = m_gpuConnection.get())
         connection->connection().send(Messages::RemoteMediaSessionHelper::ActiveAudioRouteSupportsSpatialPlaybackDidChange(supportsSpatialPlayback), { });
+}
+
+std::optional<SharedPreferencesForWebProcess> RemoteMediaSessionHelperProxy::sharedPreferencesForWebProcess() const
+{
+    if (RefPtr gpuConnectionToWebProcess = m_gpuConnection.get())
+        return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
 }
 
 }

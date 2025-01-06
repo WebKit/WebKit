@@ -58,13 +58,31 @@ FileSystemSyncAccessHandle::~FileSystemSyncAccessHandle()
     closeInternal(ShouldNotifyBackend::Yes);
 }
 
+// https://fs.spec.whatwg.org/#dom-filesystemsyncaccesshandle-truncate
 ExceptionOr<void> FileSystemSyncAccessHandle::truncate(unsigned long long size)
 {
     if (m_isClosed)
         return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_s };
 
-    bool succeeded = FileSystem::truncateFile(m_file.handle(), size);
-    return succeeded ? ExceptionOr<void> { } : Exception { ExceptionCode::InvalidStateError, "Failed to truncate file"_s };
+    auto oldSize = FileSystem::fileSize(m_file.handle());
+    if (!oldSize)
+        return Exception { ExceptionCode::InvalidStateError, "Failed to get current size"_s };
+
+    if (size > *oldSize && !requestSpaceForNewSize(size))
+        return Exception { ExceptionCode::QuotaExceededError };
+
+    auto oldOffset = FileSystem::seekFile(m_file.handle(), 0, FileSystem::FileSeekOrigin::Current);
+    if (oldOffset < 0)
+        return Exception { ExceptionCode::InvalidStateError, "Failed to get current offset"_s };
+
+    if (FileSystem::truncateFile(m_file.handle(), size)) {
+        if (static_cast<uint64_t>(oldOffset) > size)
+            FileSystem::seekFile(m_file.handle(), size, FileSystem::FileSeekOrigin::Beginning);
+
+        return { };
+    }
+
+    return Exception { ExceptionCode::InvalidStateError, "Failed to truncate file"_s };
 }
 
 ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::getSize()
@@ -118,7 +136,7 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::read(BufferSource&& 
             return Exception { ExceptionCode::InvalidStateError, "Failed to read at offset"_s };
     }
 
-    int result = FileSystem::readFromFile(m_file.handle(), buffer.mutableData(), buffer.length());
+    int result = FileSystem::readFromFile(m_file.handle(), buffer.mutableSpan());
     if (result == -1)
         return Exception { ExceptionCode::InvalidStateError, "Failed to read from file"_s };
 
@@ -162,13 +180,8 @@ void FileSystemSyncAccessHandle::invalidate()
     closeInternal(ShouldNotifyBackend::No);
 }
 
-bool FileSystemSyncAccessHandle::requestSpaceForWrite(uint64_t writeOffset, uint64_t writeLength)
+bool FileSystemSyncAccessHandle::requestSpaceForNewSize(uint64_t newSize)
 {
-    CheckedUint64 newSize = writeOffset;
-    newSize += writeLength;
-    if (newSize.hasOverflowed())
-        return false;
-
     if (newSize <= m_capacity)
         return true;
 
@@ -177,6 +190,16 @@ bool FileSystemSyncAccessHandle::requestSpaceForWrite(uint64_t writeOffset, uint
         m_capacity = *newCapacity;
 
     return newSize <= m_capacity;
+}
+
+bool FileSystemSyncAccessHandle::requestSpaceForWrite(uint64_t writeOffset, uint64_t writeLength)
+{
+    CheckedUint64 newSize = writeOffset;
+    newSize += writeLength;
+    if (newSize.hasOverflowed())
+        return false;
+
+    return requestSpaceForNewSize(newSize);
 }
 
 } // namespace WebCore

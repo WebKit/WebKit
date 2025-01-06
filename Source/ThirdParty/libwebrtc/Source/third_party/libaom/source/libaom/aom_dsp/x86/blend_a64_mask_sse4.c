@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -428,7 +428,7 @@ void aom_blend_a64_mask_sse4_1(uint8_t *dst, uint32_t dst_stride,
 // No sub-sampling
 //////////////////////////////////////////////////////////////////////////////
 
-static INLINE void blend_a64_mask_bn_w4_sse4_1(
+static inline void blend_a64_mask_bn_w4_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const uint16_t *src0,
     uint32_t src0_stride, const uint16_t *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h, blend_unit_fn blend) {
@@ -468,7 +468,7 @@ static void blend_a64_mask_b12_w4_sse4_1(
                               src1_stride, mask, mask_stride, h, blend_4_b12);
 }
 
-static INLINE void blend_a64_mask_bn_w8n_sse4_1(
+static inline void blend_a64_mask_bn_w8n_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const uint16_t *src0,
     uint32_t src0_stride, const uint16_t *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int w, int h,
@@ -515,7 +515,7 @@ static void blend_a64_mask_b12_w8n_sse4_1(
 // Horizontal sub-sampling
 //////////////////////////////////////////////////////////////////////////////
 
-static INLINE void blend_a64_mask_bn_sx_w4_sse4_1(
+static inline void blend_a64_mask_bn_sx_w4_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const uint16_t *src0,
     uint32_t src0_stride, const uint16_t *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h, blend_unit_fn blend) {
@@ -561,7 +561,7 @@ static void blend_a64_mask_b12_sx_w4_sse4_1(
                                  blend_4_b12);
 }
 
-static INLINE void blend_a64_mask_bn_sx_w8n_sse4_1(
+static inline void blend_a64_mask_bn_sx_w8n_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const uint16_t *src0,
     uint32_t src0_stride, const uint16_t *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int w, int h,
@@ -612,7 +612,7 @@ static void blend_a64_mask_b12_sx_w8n_sse4_1(
 // Vertical sub-sampling
 //////////////////////////////////////////////////////////////////////////////
 
-static INLINE void blend_a64_mask_bn_sy_w4_sse4_1(
+static inline void blend_a64_mask_bn_sy_w4_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const uint16_t *src0,
     uint32_t src0_stride, const uint16_t *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h, blend_unit_fn blend) {
@@ -657,7 +657,7 @@ static void blend_a64_mask_b12_sy_w4_sse4_1(
                                  blend_4_b12);
 }
 
-static INLINE void blend_a64_mask_bn_sy_w8n_sse4_1(
+static inline void blend_a64_mask_bn_sy_w8n_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const uint16_t *src0,
     uint32_t src0_stride, const uint16_t *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int w, int h,
@@ -707,7 +707,7 @@ static void blend_a64_mask_b12_sy_w8n_sse4_1(
 // Horizontal and Vertical sub-sampling
 //////////////////////////////////////////////////////////////////////////////
 
-static INLINE void blend_a64_mask_bn_sx_sy_w4_sse4_1(
+static inline void blend_a64_mask_bn_sx_sy_w4_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const uint16_t *src0,
     uint32_t src0_stride, const uint16_t *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h, blend_unit_fn blend) {
@@ -758,7 +758,7 @@ static void blend_a64_mask_b12_sx_sy_w4_sse4_1(
                                     blend_4_b12);
 }
 
-static INLINE void blend_a64_mask_bn_sx_sy_w8n_sse4_1(
+static inline void blend_a64_mask_bn_sx_sy_w8n_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const uint16_t *src0,
     uint32_t src0_stride, const uint16_t *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int w, int h,
@@ -872,7 +872,7 @@ void aom_highbd_blend_a64_mask_sse4_1(uint8_t *dst_8, uint32_t dst_stride,
 }
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
-static INLINE void blend_a64_d16_mask_w16_sse41(
+static inline void blend_a64_d16_mask_w16_sse41(
     uint8_t *dst, const CONV_BUF_TYPE *src0, const CONV_BUF_TYPE *src1,
     const __m128i *m0, const __m128i *m1, const __m128i *v_round_offset,
     const __m128i *v_maxval, int shift) {
@@ -901,7 +901,7 @@ static INLINE void blend_a64_d16_mask_w16_sse41(
   _mm_storeu_si128((__m128i *)(dst), res);
 }
 
-static INLINE void lowbd_blend_a64_d16_mask_subw0_subh0_w16_sse4_1(
+static inline void lowbd_blend_a64_d16_mask_subw0_subh0_w16_sse4_1(
     uint8_t *dst, uint32_t dst_stride, const CONV_BUF_TYPE *src0,
     uint32_t src0_stride, const CONV_BUF_TYPE *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h, int w,
@@ -923,7 +923,7 @@ static INLINE void lowbd_blend_a64_d16_mask_subw0_subh0_w16_sse4_1(
   }
 }
 
-static INLINE void lowbd_blend_a64_d16_mask_subw1_subh1_w16_sse4_1(
+static inline void lowbd_blend_a64_d16_mask_subw1_subh1_w16_sse4_1(
     uint8_t *dst, uint32_t dst_stride, const CONV_BUF_TYPE *src0,
     uint32_t src0_stride, const CONV_BUF_TYPE *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h, int w,
@@ -955,7 +955,7 @@ static INLINE void lowbd_blend_a64_d16_mask_subw1_subh1_w16_sse4_1(
   }
 }
 
-static INLINE void lowbd_blend_a64_d16_mask_subw1_subh0_w16_sse4_1(
+static inline void lowbd_blend_a64_d16_mask_subw1_subh0_w16_sse4_1(
     uint8_t *dst, uint32_t dst_stride, const CONV_BUF_TYPE *src0,
     uint32_t src0_stride, const CONV_BUF_TYPE *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h, int w,
@@ -982,7 +982,7 @@ static INLINE void lowbd_blend_a64_d16_mask_subw1_subh0_w16_sse4_1(
   }
 }
 
-static INLINE void lowbd_blend_a64_d16_mask_subw0_subh1_w16_sse4_1(
+static inline void lowbd_blend_a64_d16_mask_subw0_subh1_w16_sse4_1(
     uint8_t *dst, uint32_t dst_stride, const CONV_BUF_TYPE *src0,
     uint32_t src0_stride, const CONV_BUF_TYPE *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h, int w,
@@ -1113,21 +1113,19 @@ void aom_lowbd_blend_a64_d16_mask_sse4_1(
 // aom_highbd_blend_a64_d16_mask_sse4_1()
 //////////////////////////////////////////////////////////////////////////////
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE void highbd_blend_a64_d16_mask_w4_sse4_1(
+static inline void highbd_blend_a64_d16_mask_w4_sse4_1(
     uint16_t *dst, int dst_stride, const CONV_BUF_TYPE *src0, int src0_stride,
     const CONV_BUF_TYPE *src1, int src1_stride, const __m128i *mask0a,
     const __m128i *mask0b, const __m128i *round_offset, int shift,
     const __m128i *clip_low, const __m128i *clip_high,
     const __m128i *mask_max) {
   // Load 4 pixels from each of 4 rows from each source
-  const __m128i s0a =
-      _mm_set_epi64x(*(int64_t *)src0, *(int64_t *)(src0 + src0_stride));
-  const __m128i s0b = _mm_set_epi64x(*(int64_t *)(src0 + 2 * src0_stride),
-                                     *(int64_t *)(src0 + 3 * src0_stride));
-  const __m128i s1a =
-      _mm_set_epi64x(*(int64_t *)(src1), *(int64_t *)(src1 + src1_stride));
-  const __m128i s1b = _mm_set_epi64x(*(int64_t *)(src1 + 2 * src1_stride),
-                                     *(int64_t *)(src1 + 3 * src1_stride));
+  const __m128i s0a = xx_loadu_2x64(src0, src0 + src0_stride);
+  const __m128i s0b =
+      xx_loadu_2x64(src0 + 2 * src0_stride, src0 + 3 * src0_stride);
+  const __m128i s1a = xx_loadu_2x64(src1, src1 + src1_stride);
+  const __m128i s1b =
+      xx_loadu_2x64(src1 + 2 * src1_stride, src1 + 3 * src1_stride);
 
   // Generate the inverse masks
   const __m128i mask1a = _mm_sub_epi16(*mask_max, *mask0a);
@@ -1180,7 +1178,7 @@ static INLINE void highbd_blend_a64_d16_mask_w4_sse4_1(
   xx_storel_64(dst + 3 * dst_stride, clipb);
 }
 
-static INLINE void highbd_blend_a64_d16_mask_subw0_subh0_w4_sse4_1(
+static inline void highbd_blend_a64_d16_mask_subw0_subh0_w4_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const CONV_BUF_TYPE *src0,
     uint32_t src0_stride, const CONV_BUF_TYPE *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h,
@@ -1206,7 +1204,7 @@ static INLINE void highbd_blend_a64_d16_mask_subw0_subh0_w4_sse4_1(
   } while (h -= 4);
 }
 
-static INLINE void highbd_blend_a64_d16_mask_subw1_subh1_w4_sse4_1(
+static inline void highbd_blend_a64_d16_mask_subw1_subh1_w4_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const CONV_BUF_TYPE *src0,
     uint32_t src0_stride, const CONV_BUF_TYPE *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h,
@@ -1242,7 +1240,7 @@ static INLINE void highbd_blend_a64_d16_mask_subw1_subh1_w4_sse4_1(
   } while (h -= 4);
 }
 
-static INLINE void highbd_blend_a64_d16_mask_w8_sse4_1(
+static inline void highbd_blend_a64_d16_mask_w8_sse4_1(
     uint16_t *dst, int dst_stride, const CONV_BUF_TYPE *src0, int src0_stride,
     const CONV_BUF_TYPE *src1, int src1_stride, const __m128i *mask0a,
     const __m128i *mask0b, const __m128i *round_offset, int shift,
@@ -1305,7 +1303,7 @@ static INLINE void highbd_blend_a64_d16_mask_w8_sse4_1(
   xx_storeu_128(dst + dst_stride, clipb);
 }
 
-static INLINE void highbd_blend_a64_d16_mask_subw0_subh0_w8_sse4_1(
+static inline void highbd_blend_a64_d16_mask_subw0_subh0_w8_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const CONV_BUF_TYPE *src0,
     uint32_t src0_stride, const CONV_BUF_TYPE *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h,
@@ -1325,7 +1323,7 @@ static INLINE void highbd_blend_a64_d16_mask_subw0_subh0_w8_sse4_1(
   } while (h -= 2);
 }
 
-static INLINE void highbd_blend_a64_d16_mask_subw1_subh1_w8_sse4_1(
+static inline void highbd_blend_a64_d16_mask_subw1_subh1_w8_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const CONV_BUF_TYPE *src0,
     uint32_t src0_stride, const CONV_BUF_TYPE *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h,
@@ -1356,7 +1354,7 @@ static INLINE void highbd_blend_a64_d16_mask_subw1_subh1_w8_sse4_1(
   } while (h -= 2);
 }
 
-static INLINE void highbd_blend_a64_d16_mask_w16_sse4_1(
+static inline void highbd_blend_a64_d16_mask_w16_sse4_1(
     uint16_t *dst, const CONV_BUF_TYPE *src0, const CONV_BUF_TYPE *src1,
     const __m128i *round_offset, int shift, const __m128i *mask0l,
     const __m128i *mask0h, const __m128i *clip_low, const __m128i *clip_high,
@@ -1421,7 +1419,7 @@ static INLINE void highbd_blend_a64_d16_mask_w16_sse4_1(
   xx_storeu_128(dst + 8, cliph);
 }
 
-static INLINE void highbd_blend_a64_d16_mask_subw0_subh0_w16_sse4_1(
+static inline void highbd_blend_a64_d16_mask_subw0_subh0_w16_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const CONV_BUF_TYPE *src0,
     uint32_t src0_stride, const CONV_BUF_TYPE *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h, int w,
@@ -1445,7 +1443,7 @@ static INLINE void highbd_blend_a64_d16_mask_subw0_subh0_w16_sse4_1(
   }
 }
 
-static INLINE void highbd_blend_a64_d16_mask_subw1_subh1_w16_sse4_1(
+static inline void highbd_blend_a64_d16_mask_subw1_subh1_w16_sse4_1(
     uint16_t *dst, uint32_t dst_stride, const CONV_BUF_TYPE *src0,
     uint32_t src0_stride, const CONV_BUF_TYPE *src1, uint32_t src1_stride,
     const uint8_t *mask, uint32_t mask_stride, int h, int w,

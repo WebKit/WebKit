@@ -42,6 +42,7 @@
 #include <WebCore/WebAuthenticationConstants.h>
 #include <WebCore/WebAuthenticationUtils.h>
 #include <pal/crypto/CryptoDigest.h>
+#include <wtf/StdLibExtras.h>
 
 namespace TestWebKitAPI {
 using namespace WebCore;
@@ -74,8 +75,7 @@ TEST(CtapPinTest, TestValidateAndConvertToUTF8)
 TEST(CtapPinTest, TestSetPinRequest)
 {
     // Generate an EC key pair as the peer key.
-    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits, WebCore::UseCryptoKit::No);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -127,13 +127,11 @@ TEST(CtapPinTest, TestSetPinRequest)
     EXPECT_NE(xIt, coseKey.end());
     const auto& yIt = coseKey.find(CBORValue(COSE::y));
     EXPECT_NE(yIt, coseKey.end());
-    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
-    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits, WebCore::UseCryptoKit::No);
+    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits);
     EXPECT_TRUE(cosePublicKey);
 
     // Check the encrypted Pin.
-    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
-    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey, WebCore::UseCryptoKit::No);
+    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey);
     EXPECT_TRUE(sharedKeyResult);
 
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
@@ -149,9 +147,9 @@ TEST(CtapPinTest, TestSetPinRequest)
     EXPECT_FALSE(newPinEncResult.hasException());
     auto newPinEnc = newPinEncResult.releaseReturnValue();
 
-    const uint8_t expectedNewPinEnc[] = { 0x31, 0x32, 0x33, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    constexpr std::array<uint8_t, 64> expectedNewPinEnc { 0x31, 0x32, 0x33, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     EXPECT_EQ(newPinEnc.size(), 64u);
-    EXPECT_EQ(memcmp(newPinEnc.data(), expectedNewPinEnc, newPinEnc.size()), 0);
+    EXPECT_TRUE(equalSpans(newPinEnc.span(), std::span { expectedNewPinEnc }));
 
     String pin2 = "123"_s;
     auto request2 = SetPinRequest::tryCreate(pin2, downcast<CryptoKeyEC>(*keyPair.publicKey));
@@ -166,7 +164,7 @@ TEST(CtapPinTest, TestRetriesRequest)
 {
     auto result = encodeAsCBOR(RetriesRequest { });
     EXPECT_EQ(result.size(), sizeof(TestData::kCtapClientPinRetries));
-    EXPECT_EQ(memcmp(result.data(), TestData::kCtapClientPinRetries, result.size()), 0);
+    EXPECT_TRUE(equalSpans(result.span(), std::span { TestData::kCtapClientPinRetries }));
 }
 
 TEST(CtapPinTest, TestRetriesResponse)
@@ -175,19 +173,19 @@ TEST(CtapPinTest, TestRetriesResponse)
     auto result = RetriesResponse::parse({ });
     EXPECT_FALSE(result);
 
-    const uint8_t testData1[] = { 0x05 }; // wrong response code
-    result = RetriesResponse::parse(convertBytesToVector(testData1, sizeof(testData1)));
+    constexpr std::array<uint8_t, 1> testData1 { 0x05 }; // wrong response code
+    result = RetriesResponse::parse(std::span { testData1 });
     EXPECT_FALSE(result);
 
-    const uint8_t testData2[] = { 0x00, 0x00 }; // wrong CBOR map
-    result = RetriesResponse::parse(convertBytesToVector(testData2, sizeof(testData2)));
+    constexpr std::array<uint8_t, 2> testData2 { 0x00, 0x00 }; // wrong CBOR map
+    result = RetriesResponse::parse(std::span { testData2 });
     EXPECT_FALSE(result);
 
-    result = RetriesResponse::parse(convertBytesToVector(TestData::kCtapClientPinTokenResponse, sizeof(TestData::kCtapClientPinTokenResponse))); // wrong response
+    result = RetriesResponse::parse(std::span { TestData::kCtapClientPinTokenResponse }); // wrong response
     EXPECT_FALSE(result);
 
     // Success cases
-    result = RetriesResponse::parse(convertBytesToVector(TestData::kCtapClientPinRetriesResponse, sizeof(TestData::kCtapClientPinRetriesResponse)));
+    result = RetriesResponse::parse(std::span { TestData::kCtapClientPinRetriesResponse });
     EXPECT_TRUE(result);
     EXPECT_EQ(result->retries, 8u);
 }
@@ -196,7 +194,7 @@ TEST(CtapPinTest, TestKeyAgreementRequest)
 {
     auto result = encodeAsCBOR(KeyAgreementRequest { });
     EXPECT_EQ(result.size(), sizeof(TestData::kCtapClientPinKeyAgreement));
-    EXPECT_EQ(memcmp(result.data(), TestData::kCtapClientPinKeyAgreement, result.size()), 0);
+    EXPECT_TRUE(equalSpans(result.span(), std::span { TestData::kCtapClientPinKeyAgreement }));
 }
 
 TEST(CtapPinTest, TestKeyAgreementResponse)
@@ -205,21 +203,21 @@ TEST(CtapPinTest, TestKeyAgreementResponse)
     auto result = KeyAgreementResponse::parse({ });
     EXPECT_FALSE(result);
 
-    const uint8_t testData1[] = { 0x05 }; // wrong response code
-    result = KeyAgreementResponse::parse(convertBytesToVector(testData1, sizeof(testData1)));
+    constexpr std::array<uint8_t, 1> testData1 { 0x05 }; // wrong response code
+    result = KeyAgreementResponse::parse(std::span { testData1 });
     EXPECT_FALSE(result);
 
-    const uint8_t testData2[] = { 0x00, 0x00 }; // wrong CBOR map
-    result = KeyAgreementResponse::parse(convertBytesToVector(testData2, sizeof(testData2)));
+    constexpr std::array<uint8_t, 2> testData2 { 0x00, 0x00 }; // wrong CBOR map
+    result = KeyAgreementResponse::parse(std::span { testData2 });
     EXPECT_FALSE(result);
 
-    result = KeyAgreementResponse::parse(convertBytesToVector(TestData::kCtapClientPinTokenResponse, sizeof(TestData::kCtapClientPinTokenResponse))); // wrong response
+    result = KeyAgreementResponse::parse(std::span { TestData::kCtapClientPinTokenResponse }); // wrong response
     EXPECT_FALSE(result);
 
 // FIXME: When can we enable this for non-Cocoa platforms?
 // FIXME: Can we enable this for watchOS and tvOS?
 #if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
-    result = KeyAgreementResponse::parse(convertBytesToVector(TestData::kCtapClientPinInvalidKeyAgreementResponse, sizeof(TestData::kCtapClientPinInvalidKeyAgreementResponse))); // The point is not on the curve.
+    result = KeyAgreementResponse::parse(std::span { TestData::kCtapClientPinInvalidKeyAgreementResponse }); // The point is not on the curve.
     EXPECT_FALSE(result);
 #endif
 
@@ -250,24 +248,22 @@ TEST(CtapPinTest, TestKeyAgreementResponse)
     EXPECT_FALSE(coseResult);
 
     // Success cases
-    result = KeyAgreementResponse::parse(convertBytesToVector(TestData::kCtapClientPinKeyAgreementResponse, sizeof(TestData::kCtapClientPinKeyAgreementResponse)));
+    result = KeyAgreementResponse::parse(std::span { TestData::kCtapClientPinKeyAgreementResponse });
     EXPECT_TRUE(result);
-    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
-    auto exportedRawKey = result->peerKey->exportRaw(WebCore::UseCryptoKit::No);
+    auto exportedRawKey = result->peerKey->exportRaw();
     EXPECT_FALSE(exportedRawKey.hasException());
     Vector<uint8_t> expectedRawKey;
     expectedRawKey.reserveCapacity(65);
     expectedRawKey.append(0x04);
-    expectedRawKey.append(std::span { TestData::kCtapClientPinKeyAgreementResponse + 14, 32 }); // X
-    expectedRawKey.append(std::span { TestData::kCtapClientPinKeyAgreementResponse + 49, 32 }); // Y
+    expectedRawKey.append(std::span { TestData::kCtapClientPinKeyAgreementResponse }.subspan(14, 32)); // X
+    expectedRawKey.append(std::span { TestData::kCtapClientPinKeyAgreementResponse }.subspan(49, 32)); // Y
     EXPECT_TRUE(exportedRawKey.returnValue() == expectedRawKey);
 }
 
 TEST(CtapPinTest, TestTokenRequest)
 {
     // Generate an EC key pair as the peer key.
-    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits, WebCore::UseCryptoKit::No);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -319,13 +315,11 @@ TEST(CtapPinTest, TestTokenRequest)
     EXPECT_NE(xIt, coseKey.end());
     const auto& yIt = coseKey.find(CBORValue(COSE::y));
     EXPECT_NE(yIt, coseKey.end());
-    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
-    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits, WebCore::UseCryptoKit::No);
+    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits);
     EXPECT_TRUE(cosePublicKey);
 
     // Check the encrypted Pin.
-    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
-    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey, WebCore::UseCryptoKit::No);
+    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey);
     EXPECT_TRUE(sharedKeyResult);
 
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
@@ -340,62 +334,62 @@ TEST(CtapPinTest, TestTokenRequest)
     auto pinHashResult = CryptoAlgorithmAESCBC::platformDecrypt({ }, *aesKey, it6->second.getByteString(), CryptoAlgorithmAESCBC::Padding::No);
     EXPECT_FALSE(pinHashResult.hasException());
     auto pinHash = pinHashResult.releaseReturnValue();
-    const uint8_t expectedPinHash[] = { 0x03, 0xac, 0x67, 0x42, 0x16, 0xf3, 0xe1, 0x5c, 0x76, 0x1e, 0xe1, 0xa5, 0xe2, 0x55, 0xf0, 0x67 };
+    constexpr std::array<uint8_t, 16> expectedPinHash { 0x03, 0xac, 0x67, 0x42, 0x16, 0xf3, 0xe1, 0x5c, 0x76, 0x1e, 0xe1, 0xa5, 0xe2, 0x55, 0xf0, 0x67 };
     EXPECT_EQ(pinHash.size(), 16u);
-    EXPECT_EQ(memcmp(pinHash.data(), expectedPinHash, pinHash.size()), 0);
+    EXPECT_TRUE(equalSpans(pinHash.span(), std::span { expectedPinHash }));
 }
 
 TEST(CtapPinTest, TestTokenResponse)
 {
-    const uint8_t sharedKeyData[] = {
+    constexpr std::array<uint8_t, 32> sharedKeyData {
         0x29, 0x9E, 0x65, 0xB8, 0xE7, 0x71, 0xB8, 0x1D,
         0xB1, 0xC4, 0x8D, 0xBE, 0xCE, 0x50, 0x2A, 0x84,
         0x05, 0x44, 0x7F, 0x46, 0x2D, 0xE6, 0x81, 0xFA,
         0xEF, 0x0A, 0x6C, 0x67, 0xA7, 0x2B, 0xB5, 0x0F, };
-    auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, convertBytesToVector(sharedKeyData, sizeof(sharedKeyData)), true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
+    auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, std::span { sharedKeyData }, true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
     ASSERT_TRUE(sharedKey);
 
     // Failure cases
     auto result = TokenResponse::parse(*sharedKey, { });
     EXPECT_FALSE(result);
 
-    const uint8_t testData1[] = { 0x05 }; // wrong response code
-    result = TokenResponse::parse(*sharedKey, convertBytesToVector(testData1, sizeof(testData1)));
+    constexpr std::array<uint8_t, 1> testData1 { 0x05 }; // wrong response code
+    result = TokenResponse::parse(*sharedKey, std::span { testData1 });
     EXPECT_FALSE(result);
 
-    const uint8_t testData2[] = { 0x00, 0x00 }; // wrong CBOR map
-    result = TokenResponse::parse(*sharedKey, convertBytesToVector(testData2, sizeof(testData2)));
+    constexpr std::array<uint8_t, 2> testData2 { 0x00, 0x00 }; // wrong CBOR map
+    result = TokenResponse::parse(*sharedKey, std::span { testData2 });
     EXPECT_FALSE(result);
 
-    result = TokenResponse::parse(*sharedKey, convertBytesToVector(TestData::kCtapClientPinKeyAgreementResponse, sizeof(TestData::kCtapClientPinKeyAgreementResponse))); // wrong response
+    result = TokenResponse::parse(*sharedKey, std::span { TestData::kCtapClientPinKeyAgreementResponse }); // wrong response
     EXPECT_FALSE(result);
 
     // Success cases
-    result = TokenResponse::parse(*sharedKey, convertBytesToVector(TestData::kCtapClientPinTokenResponse, sizeof(TestData::kCtapClientPinTokenResponse)));
+    result = TokenResponse::parse(*sharedKey, std::span { TestData::kCtapClientPinTokenResponse });
     EXPECT_TRUE(result);
-    const uint8_t expectedToken[] = { 0x03, 0xac, 0x67, 0x42, 0x16, 0xf3, 0xe1, 0x5c, 0x76, 0x1e, 0xe1, 0xa5, 0xe2, 0x55, 0xf0, 0x67 };
+    constexpr std::array<uint8_t, 16> expectedToken { 0x03, 0xac, 0x67, 0x42, 0x16, 0xf3, 0xe1, 0x5c, 0x76, 0x1e, 0xe1, 0xa5, 0xe2, 0x55, 0xf0, 0x67 };
     EXPECT_EQ(result->token().size(), 16u);
-    EXPECT_EQ(memcmp(result->token().data(), expectedToken, result->token().size()), 0);
+    EXPECT_TRUE(equalSpans(result->token().span(), std::span { expectedToken }));
 }
 
 TEST(CtapPinTest, TestPinAuth)
 {
     // 1. Generate the token.
-    const uint8_t sharedKeyData[] = {
+    constexpr std::array<uint8_t, 32> sharedKeyData {
         0x29, 0x9E, 0x65, 0xB8, 0xE7, 0x71, 0xB8, 0x1D,
         0xB1, 0xC4, 0x8D, 0xBE, 0xCE, 0x50, 0x2A, 0x84,
         0x05, 0x44, 0x7F, 0x46, 0x2D, 0xE6, 0x81, 0xFA,
         0xEF, 0x0A, 0x6C, 0x67, 0xA7, 0x2B, 0xB5, 0x0F, };
-    auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, convertBytesToVector(sharedKeyData, sizeof(sharedKeyData)), true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
+    auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, std::span { sharedKeyData }, true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
     ASSERT_TRUE(sharedKey);
-    auto result = TokenResponse::parse(*sharedKey, convertBytesToVector(TestData::kCtapClientPinTokenResponse, sizeof(TestData::kCtapClientPinTokenResponse)));
+    auto result = TokenResponse::parse(*sharedKey, std::span { TestData::kCtapClientPinTokenResponse });
     ASSERT_TRUE(result);
 
     // 2. Generate the pinAuth.
-    auto pinAuth = result->pinAuth(convertBytesToVector(sharedKeyData, sizeof(sharedKeyData))); // sharedKeyData pretends to be clientDataHash
-    const uint8_t expectedPinAuth[] = { 0x0b, 0xec, 0x9d, 0xba, 0x69, 0xb0, 0x0f, 0x45, 0x0b, 0xec, 0x66, 0xb4, 0x75, 0x7f, 0x93, 0x85 };
+    auto pinAuth = result->pinAuth(std::span { sharedKeyData }); // sharedKeyData pretends to be clientDataHash
+    constexpr std::array<uint8_t, 16> expectedPinAuth { 0x0b, 0xec, 0x9d, 0xba, 0x69, 0xb0, 0x0f, 0x45, 0x0b, 0xec, 0x66, 0xb4, 0x75, 0x7f, 0x93, 0x85 };
     EXPECT_EQ(pinAuth.size(), 16u);
-    EXPECT_EQ(memcmp(pinAuth.data(), expectedPinAuth, pinAuth.size()), 0);
+    EXPECT_TRUE(equalSpans(pinAuth.span(), std::span { expectedPinAuth }));
 }
 
 } // namespace TestWebKitAPI

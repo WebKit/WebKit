@@ -20,7 +20,7 @@ PASS testComputedStyle("object-position: left 10px top 15px;") is "10px 15px"
 PASS testComputedStyle("object-position: right 10px bottom 15px;") is "calc(100% - 10px) calc(100% - 15px)"
 PASS testComputedStyle("object-position: bottom 20% right -20px;") is "calc(100% + 20px) 80%"
 PASS testComputedStyle("object-position: calc(100% - 20px) calc(100% - 10%)") is "calc(100% - 20px) 90%"
-PASS testComputedStyle("object-position: right calc(100% - 20px) bottom calc(100% - 10%)") is "calc(100% - (100% - 20px)) 10%"
+PASS testComputedStyle("object-position: right calc(100% - 20px) bottom calc(100% - 10%)") is "calc(0% + 20px) 10%"
 PASS successfullyParsed is true
 
 TEST COMPLETE

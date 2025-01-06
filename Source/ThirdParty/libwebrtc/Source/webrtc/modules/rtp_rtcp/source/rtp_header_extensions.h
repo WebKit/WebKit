@@ -27,6 +27,14 @@
 #include "api/video/video_rotation.h"
 #include "api/video/video_timing.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "system_wrappers/include/ntp_time.h"
+
+// This file contains class definitions for reading/writing each RTP header
+// extension. Each class must be defined such that it is compatible with being
+// an argument to the templated RtpPacket::GetExtension and
+// RtpPacketToSend::SetExtension methods. New header extensions must have class
+// names ending with "Extension", for the purpose of avoiding collisions with
+// RTP extension information exposed in the public API of WebRTC.
 
 namespace webrtc {
 
@@ -49,6 +57,11 @@ class AbsoluteSendTime {
     RTC_DCHECK_GE(time6x18, 0);
     RTC_DCHECK_LT(time6x18, 1 << 24);
     return static_cast<uint32_t>(time6x18);
+  }
+
+  static uint32_t To24Bits(NtpTime ntp_time) {
+    uint64_t ntp_time32x32 = static_cast<uint64_t>(ntp_time);
+    return (ntp_time32x32 >> 14) & 0x00FF'FFFF;
   }
 
   static constexpr Timestamp ToTimestamp(uint32_t time_24bits) {
@@ -75,23 +88,20 @@ class AbsoluteCaptureTimeExtension {
                     const AbsoluteCaptureTime& extension);
 };
 
-class AudioLevel {
+class AudioLevelExtension {
  public:
+  using value_type = AudioLevel;
   static constexpr RTPExtensionType kId = kRtpExtensionAudioLevel;
   static constexpr uint8_t kValueSizeBytes = 1;
   static constexpr absl::string_view Uri() {
     return RtpExtension::kAudioLevelUri;
   }
 
-  static bool Parse(rtc::ArrayView<const uint8_t> data,
-                    bool* voice_activity,
-                    uint8_t* audio_level);
-  static size_t ValueSize(bool voice_activity, uint8_t audio_level) {
+  static bool Parse(rtc::ArrayView<const uint8_t> data, AudioLevel* extension);
+  static size_t ValueSize(const AudioLevel& extension) {
     return kValueSizeBytes;
   }
-  static bool Write(rtc::ArrayView<uint8_t> data,
-                    bool voice_activity,
-                    uint8_t audio_level);
+  static bool Write(rtc::ArrayView<uint8_t> data, const AudioLevel& extension);
 };
 
 class CsrcAudioLevel {
@@ -153,16 +163,16 @@ class TransportSequenceNumberV2 {
 
   static bool Parse(rtc::ArrayView<const uint8_t> data,
                     uint16_t* transport_sequence_number,
-                    absl::optional<FeedbackRequest>* feedback_request);
+                    std::optional<FeedbackRequest>* feedback_request);
   static size_t ValueSize(
       uint16_t /*transport_sequence_number*/,
-      const absl::optional<FeedbackRequest>& feedback_request) {
+      const std::optional<FeedbackRequest>& feedback_request) {
     return feedback_request ? kValueSizeBytes
                             : kValueSizeBytesWithoutFeedbackRequest;
   }
   static bool Write(rtc::ArrayView<uint8_t> data,
                     uint16_t transport_sequence_number,
-                    const absl::optional<FeedbackRequest>& feedback_request);
+                    const std::optional<FeedbackRequest>& feedback_request);
 
  private:
   static constexpr uint16_t kIncludeTimestampsBit = 1 << 15;
@@ -334,7 +344,7 @@ class RtpMid : public BaseRtpStringExtension {
 
 class InbandComfortNoiseExtension {
  public:
-  using value_type = absl::optional<uint8_t>;
+  using value_type = std::optional<uint8_t>;
 
   static constexpr RTPExtensionType kId = kRtpExtensionInbandComfortNoise;
   static constexpr uint8_t kValueSizeBytes = 1;
@@ -343,12 +353,11 @@ class InbandComfortNoiseExtension {
   static constexpr absl::string_view Uri() { return kUri; }
 
   static bool Parse(rtc::ArrayView<const uint8_t> data,
-                    absl::optional<uint8_t>* level);
-  static size_t ValueSize(absl::optional<uint8_t> level) {
+                    std::optional<uint8_t>* level);
+  static size_t ValueSize(std::optional<uint8_t> level) {
     return kValueSizeBytes;
   }
-  static bool Write(rtc::ArrayView<uint8_t> data,
-                    absl::optional<uint8_t> level);
+  static bool Write(rtc::ArrayView<uint8_t> data, std::optional<uint8_t> level);
 };
 
 class VideoFrameTrackingIdExtension {

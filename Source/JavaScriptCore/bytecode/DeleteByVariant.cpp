@@ -44,7 +44,7 @@ DeleteByVariant::DeleteByVariant(CacheableIdentifier identifier, bool result, St
         ASSERT(newStructure);
 }
 
-DeleteByVariant::~DeleteByVariant() { }
+DeleteByVariant::~DeleteByVariant() = default;
 
 DeleteByVariant::DeleteByVariant(const DeleteByVariant& other)
 {

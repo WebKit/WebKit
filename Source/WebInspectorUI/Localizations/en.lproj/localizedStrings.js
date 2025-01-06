@@ -101,6 +101,7 @@ localizedStrings["(local override)"] = "(local override)";
 localizedStrings["(many)"] = "(many)";
 localizedStrings["(memory)"] = "(memory)";
 localizedStrings["(multiple)"] = "(multiple)";
+localizedStrings["(passthrough)"] = "(passthrough)";
 localizedStrings["(program)"] = "(program)";
 localizedStrings["(service worker)"] = "(service worker)";
 localizedStrings["(uninitialized)"] = "(uninitialized)";
@@ -581,7 +582,7 @@ localizedStrings["Disable Rule"] = "Disable Rule";
 localizedStrings["Disable all breakpoints (%s)"] = "Disable all breakpoints (%s)";
 localizedStrings["Disable cross-origin restrictions"] = "Disable cross-origin restrictions";
 localizedStrings["Disable paint flashing"] = "Disable paint flashing";
-localizedStrings["Disable site-specific hacks"] = "Disable site-specific hacks";
+localizedStrings["Disable site-specific quirks"] = "Disable site-specific quirks";
 localizedStrings["Disabled"] = "Disabled";
 /* Property value for `font-variant-ligatures: no-common-ligatures`. */
 localizedStrings["Disabled Common @ Font Details Sidebar Property Value"] = "Disabled Common";
@@ -1190,6 +1191,8 @@ localizedStrings["Observer Callback"] = "Observer Callback";
 localizedStrings["Observer Handlers:"] = "Observer Handlers:";
 localizedStrings["Observers:"] = "Observers:";
 localizedStrings["Off"] = "Off";
+/* Label indicating that an input of type switch is off. */
+localizedStrings["Off @ Switch State"] = "Off";
 /* Label for a preference that is turned off. */
 localizedStrings["Off @ User Preferences Overrides"] = "Off";
 /* Input label for the x-axis of the offset of a CSS box shadow */
@@ -1198,6 +1201,8 @@ localizedStrings["Offset X @ Box Shadow Editor"] = "Offset X";
 localizedStrings["Offset Y @ Box Shadow Editor"] = "Offset Y";
 /* Property value for `font-variant-numeric: oldstyle-nums`. */
 localizedStrings["Old-Style Numerals @ Font Details Sidebar Property Value"] = "Old-Style Numerals";
+/* Label indicating that an input of type switch is on. */
+localizedStrings["On @ Switch State"] = "On";
 /* Label for a preference that is turned on. */
 localizedStrings["On @ User Preferences Overrides"] = "On";
 localizedStrings["Once"] = "Once";
@@ -1258,6 +1263,7 @@ localizedStrings["Paints"] = "Paints";
 localizedStrings["Paints @ Column title"] = "Paints";
 localizedStrings["Parent"] = "Parent";
 localizedStrings["Partial Garbage Collection"] = "Partial Garbage Collection";
+localizedStrings["Partition Key"] = "Partition Key";
 /* Title of icon indicating that the selected audit passed with no issues. */
 localizedStrings["Pass @ Audit Tab - Test Case"] = "Pass";
 localizedStrings["Passive"] = "Passive";
@@ -1612,6 +1618,7 @@ localizedStrings["Sort Descending"] = "Sort Descending";
 localizedStrings["Source"] = "Source";
 /* Title for Source row in Media Sidebar */
 localizedStrings["Source @ Media Sidebar"] = "Source";
+localizedStrings["Source Map \u0022%s\u0022 has %s"] = "Source Map \u0022%s\u0022 has %s";
 localizedStrings["Source Map loading errors"] = "Source Map loading errors";
 localizedStrings["Source Maps:"] = "Source Maps:";
 localizedStrings["Sources"] = "Sources";
@@ -2041,8 +2048,12 @@ localizedStrings["for changes to take effect"] = "for changes to take effect";
 localizedStrings["image @ Network Tab Resource Type Column Value"] = "image";
 localizedStrings["invalid HAR"] = "invalid HAR";
 localizedStrings["invalid JSON"] = "invalid JSON";
+/* Error message template when failing to parse a JS source map. */
+localizedStrings["invalid \u0022%s\u0022 @ Source Map"] = "invalid \u0022%s\u0022";
 localizedStrings["key"] = "key";
 localizedStrings["line "] = "line ";
+/* Error when a JS source map is missing a starting newline. */
+localizedStrings["missing newline @ Source Map"] = "missing newline";
 /* Placeholder text indicating that no directory has been selected. */
 localizedStrings["no directory selected @ Local Override Popover"] = "no directory selected";
 /* Placeholder text indicating that no file has been selected. */

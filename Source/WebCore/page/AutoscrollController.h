@@ -27,6 +27,8 @@
 
 #include "IntPoint.h"
 #include "Timer.h"
+#include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WallTime.h>
 
 namespace WebCore {
@@ -53,8 +55,9 @@ enum class AutoscrollType : uint8_t {
 constexpr Seconds autoscrollInterval { 50_ms };
 
 // AutscrollController handles autoscroll and pan scroll for EventHandler.
-class AutoscrollController {
-    WTF_MAKE_FAST_ALLOCATED;
+class AutoscrollController final : public CanMakeCheckedPtr<AutoscrollController> {
+    WTF_MAKE_TZONE_ALLOCATED(AutoscrollController);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AutoscrollController);
 public:
     AutoscrollController();
     RenderBox* autoscrollRenderer() const;

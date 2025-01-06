@@ -28,5 +28,47 @@ specific_include_rules = {
   ],
   "call_perf_tests\.cc": [
     "+media/engine",
+  ],
+  "simulated_network\.h": [
+    "+test/network/simulated_network.h",
+  ],
+  "rtp_payload_params\.cc": [
+    "+common_video/generic_frame_descriptor",
+  ],
+  "rtp_payload_params\.h": [
+    "+common_video/generic_frame_descriptor",
+  ],
+  "rtp_payload_params_unittest\.cc": [
+    "+common_video/generic_frame_descriptor",
+  ],
+  "rtp_video_sender\.cc": [
+    "+common_video/frame_counts.h",
+    "+common_video/generic_frame_descriptor",
+  ],
+  "rtp_video_sender.h": [
+    "+common_video/frame_counts.h",
+  ],
+  "rtp_video_sender_unittest.cc": [
+    "+common_video/frame_counts.h",
+    "+common_video/generic_frame_descriptor",
+  ],
+  "payload_type\.h": [
+    "+media/base/codec.h",
+  ],
+  "payload_type_picker\.h": [
+    "+media/base/codec.h",
+    "+media/base/media_constants.h",
+  ],
+  "payload_type_picker\.cc": [
+    "+media/base/codec.h",
+    "+media/base/codec_comparators.h",
+    "+media/base/media_constants.h",
+  ],
+  "payload_type_picker_unittest\.cc": [
+    "+media/base/codec.h",
+    "+media/base/media_constants.h",
+  ],
+  "call\.cc": [
+    "+media/base/codec.h",
   ]
 }

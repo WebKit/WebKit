@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,151 +38,617 @@ namespace TestWebKitAPI {
 
 static auto *webRequestManifest = @{ @"manifest_version": @2, @"permissions": @[ @"webRequest" ], @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @YES } };
 
-TEST(WKWebExtensionAPIWebRequest, EventListenerTest)
+TEST(WKWebExtensionAPIWebRequest, EventListenerRegistration)
 {
     auto *backgroundScript = Util::constructScript(@[
-        // Setup
         @"function listener() { browser.test.notifyFail('This listener should not have been called') }",
         @"browser.test.assertFalse(browser.webRequest.onCompleted.hasListener(listener), 'Should not have listener')",
 
-        // Test
         @"browser.webRequest.onCompleted.addListener(listener)",
         @"browser.test.assertTrue(browser.webRequest.onCompleted.hasListener(listener), 'Should have listener')",
+
         @"browser.webRequest.onCompleted.removeListener(listener)",
         @"browser.test.assertFalse(browser.webRequest.onCompleted.hasListener(listener), 'Should not have listener')",
 
-        // Finish
         @"browser.test.notifyPass()"
     ]);
 
     Util::loadAndRunExtension(webRequestManifest, @{ @"background.js": backgroundScript });
 }
 
-TEST(WKWebExtensionAPIWebRequest, EventFiringTest)
+TEST(WKWebExtensionAPIWebRequest, BeforeRequestEvent)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *backgroundScript = Util::constructScript(@[
-        // Setup
-        @"function passListener(details) {",
+        @"browser.webRequest.onBeforeRequest.addListener((details) => {",
+        @"  browser.test.assertEq(typeof details?.tabId, 'number', 'details.tabId should be')",
+        @"  browser.test.assertEq(details?.frameId, 0, 'details.frameId should be')",
+        @"  browser.test.assertEq(details?.parentFrameId, -1, 'details.parentFrameId should be')",
 
-        // This event was fired on a main frame load, so the frameId should be 0 and we shouldn't have a parent frame.
-        @"  browser.test.assertEq(details.frameId, 0)",
-        @"  browser.test.assertEq(details.parentFrameId, -1)",
+        @"  browser.test.assertEq(typeof details?.documentId, 'string', 'details.documentId should be')",
+        @"  browser.test.assertEq(details?.documentId?.length, 36, 'details.documentId.length should be')",
+
+        @"  browser.test.assertTrue(details?.url?.includes('http://localhost'), 'details.url should include http://localhost')",
+        @"  browser.test.assertEq(details?.method, 'GET', 'details.method should be')",
+        @"  browser.test.assertEq(details?.type, 'main_frame', 'details.type should be')",
 
         @"  browser.test.notifyPass()",
-        @"}",
+        @"})",
 
-        // The passListener firing will consider the test passed.
-        @"browser.webRequest.onCompleted.addListener(passListener)",
-
-        // Yield after creating the listener so we can load a tab.
         @"browser.test.yield('Load Tab')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    // Grant the webRequest permission.
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
 
     auto *urlRequest = server.requestWithLocalhost();
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
 
-TEST(WKWebExtensionAPIWebRequest, AllowedFilterTest)
+TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventForSubresource)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<img src='/image.png'>"_s } },
+        { "/image.png"_s, { { { "Content-Type"_s, "image/png"_s } }, "..."_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webRequest.onBeforeRequest.addListener((details) => {",
+        @"  if (details?.type !== 'image')",
+        @"    return",
+
+        @"  browser.test.assertEq(typeof details?.tabId, 'number', 'details.tabId should be')",
+        @"  browser.test.assertEq(details?.frameId, 0, 'details.frameId should be')",
+        @"  browser.test.assertEq(details?.parentFrameId, -1, 'details.parentFrameId should be')",
+
+        @"  browser.test.assertEq(typeof details?.documentId, 'string', 'details.documentId should be')",
+        @"  browser.test.assertEq(details?.documentId?.length, 36, 'details.documentId.length should be')",
+
+        @"  browser.test.assertTrue(details?.url?.includes('/image.png'), 'details.url should include /image.png')",
+        @"  browser.test.assertEq(details?.method, 'GET', 'details.method should be')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, HeadersReceivedEvent)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *backgroundScript = Util::constructScript(@[
-        // Setup
+        @"browser.webRequest.onHeadersReceived.addListener((details) => {",
+        @"  browser.test.assertEq(typeof details?.tabId, 'number', 'details.tabId should be')",
+        @"  browser.test.assertEq(details?.frameId, 0, 'details.frameId should be')",
+        @"  browser.test.assertEq(details?.parentFrameId, -1, 'details.parentFrameId should be')",
+
+        @"  browser.test.assertEq(typeof details?.documentId, 'string', 'details.documentId should be')",
+        @"  browser.test.assertEq(details?.documentId?.length, 36, 'details.documentId.length should be')",
+
+        @"  browser.test.assertTrue(details?.url?.includes('http://localhost'), 'details.url should include http://localhost')",
+        @"  browser.test.assertEq(details?.method, 'GET', 'details.method should be')",
+        @"  browser.test.assertEq(details?.type, 'main_frame', 'details.type should be')",
+
+        @"  browser.test.assertEq(details?.statusCode, 200, 'details.statusCode should be')",
+
+        @"  browser.test.assertTrue(Array.isArray(details?.responseHeaders), 'details.responseHeaders should be an array')",
+        @"  browser.test.assertTrue(details?.responseHeaders?.some((header) => header.name === 'Content-Type' && header.value === 'text/html'), 'details.responseHeaders should include Content-Type: text/html')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, HeadersReceivedEventForSubresource)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<img src='/image.png'>"_s } },
+        { "/image.png"_s, { { { "Content-Type"_s, "image/png"_s }, { "Cache-Control"_s, "no-cache"_s } }, "..."_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webRequest.onHeadersReceived.addListener((details) => {",
+        @"  if (details?.type !== 'image')",
+        @"    return",
+
+        @"  browser.test.assertEq(typeof details?.tabId, 'number', 'details.tabId should be')",
+        @"  browser.test.assertEq(details?.frameId, 0, 'details.frameId should be')",
+        @"  browser.test.assertEq(details?.parentFrameId, -1, 'details.parentFrameId should be')",
+
+        @"  browser.test.assertEq(typeof details?.documentId, 'string', 'details.documentId should be')",
+        @"  browser.test.assertEq(details?.documentId?.length, 36, 'details.documentId.length should be')",
+
+        @"  browser.test.assertTrue(details?.url?.includes('/image.png'), 'details.url should include /image.png')",
+        @"  browser.test.assertEq(details?.method, 'GET', 'details.method should be')",
+
+        @"  browser.test.assertEq(details?.statusCode, 200, 'details.statusCode should be')",
+
+        @"  browser.test.assertTrue(Array.isArray(details?.responseHeaders), 'details.responseHeaders should be an array')",
+        @"  browser.test.assertTrue(details?.responseHeaders?.some((header) => header.name === 'Content-Type' && header.value === 'image/png'), 'details.responseHeaders should include Content-Type: image/png')",
+        @"  browser.test.assertTrue(details?.responseHeaders?.some((header) => header.name === 'Cache-Control' && header.value === 'no-cache'), 'details.responseHeaders should include Cache-Control: no-cache')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, ErrorOccurredEvent)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<img src='nonexistent.png' />"_s } },
+        { "/nonexistent.png"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingResponse } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webRequest.onErrorOccurred.addListener((details) => {",
+        @"  browser.test.assertEq(typeof details?.tabId, 'number', 'details.tabId should be')",
+        @"  browser.test.assertEq(details?.frameId, 0, 'details.frameId should be')",
+        @"  browser.test.assertEq(details?.parentFrameId, -1, 'details.parentFrameId should be')",
+
+        @"  browser.test.assertEq(typeof details?.documentId, 'string', 'details.documentId should be')",
+        @"  browser.test.assertEq(details?.documentId?.length, 36, 'details.documentId.length should be')",
+
+        @"  browser.test.assertTrue(details?.url?.includes('http://localhost'), 'details.url should include http://localhost')",
+        @"  browser.test.assertEq(details?.method, 'GET', 'details.method should be')",
+        @"  browser.test.assertEq(details?.type, 'image', 'details.type should be')",
+
+        @"  browser.test.assertEq(typeof details?.error, 'string', 'details.error should be a string')",
+        @"  browser.test.assertTrue(details?.error?.length > 0, 'details.error should not be empty')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, RedirectOccurredEvent)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { 301, {{ "Location"_s, "/target.html"_s }}, "redirecting..."_s } },
+        { "/target.html"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    });
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webRequest.onBeforeRedirect.addListener((details) => {",
+        @"  browser.test.assertEq(typeof details?.tabId, 'number', 'details.tabId should be')",
+        @"  browser.test.assertEq(details?.frameId, 0, 'details.frameId should be')",
+        @"  browser.test.assertEq(details?.parentFrameId, -1, 'details.parentFrameId should be')",
+
+        @"  browser.test.assertEq(typeof details?.documentId, 'string', 'details.documentId should be')",
+        @"  browser.test.assertEq(details?.documentId?.length, 36, 'details.documentId.length should be')",
+
+        @"  browser.test.assertTrue(details?.url?.includes('http://localhost'), 'details.url should include http://localhost')",
+        @"  browser.test.assertEq(details?.method, 'GET', 'details.method should be')",
+        @"  browser.test.assertEq(details?.type, 'main_frame', 'details.type should be')",
+
+        @"  browser.test.assertTrue(details?.redirectUrl?.includes('/target.html'), 'details.redirectUrl should include /target.html')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, RedirectOccurredEventForSubresource)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<img src='/redirecting.png' />"_s } },
+        { "/redirecting.png"_s, { 301, {{ "Location"_s, "/final.png"_s }}, "redirecting..."_s } },
+        { "/final.png"_s, { { { "Content-Type"_s, "image/png"_s } }, "..."_s } },
+    });
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webRequest.onBeforeRedirect.addListener((details) => {",
+        @"  if (details?.type !== 'image')",
+        @"    return",
+
+        @"  browser.test.assertEq(typeof details?.tabId, 'number', 'details.tabId should be')",
+        @"  browser.test.assertEq(details?.frameId, 0, 'details.frameId should be')",
+        @"  browser.test.assertEq(details?.parentFrameId, -1, 'details.parentFrameId should be')",
+
+        @"  browser.test.assertEq(typeof details?.documentId, 'string', 'details.documentId should be')",
+        @"  browser.test.assertEq(details?.documentId?.length, 36, 'details.documentId.length should be')",
+
+        @"  browser.test.assertTrue(details?.url?.includes('/redirecting.png'), 'details.url should include /redirecting.png')",
+        @"  browser.test.assertEq(details?.method, 'GET', 'details.method should be')",
+
+        @"  browser.test.assertTrue(details?.redirectUrl?.includes('/final.png'), 'details.redirectUrl should include /final.png')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, ResponseStartedEvent)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webRequest.onResponseStarted.addListener((details) => {",
+        @"  browser.test.assertEq(typeof details?.tabId, 'number', 'details.tabId should be')",
+        @"  browser.test.assertEq(details?.frameId, 0, 'details.frameId should be')",
+        @"  browser.test.assertEq(details?.parentFrameId, -1, 'details.parentFrameId should be')",
+
+        @"  browser.test.assertEq(typeof details?.documentId, 'string', 'details.documentId should be')",
+        @"  browser.test.assertEq(details?.documentId?.length, 36, 'details.documentId.length should be')",
+
+        @"  browser.test.assertTrue(details?.url?.includes('http://localhost'), 'details.url should include http://localhost')",
+        @"  browser.test.assertEq(details?.method, 'GET', 'details.method should be')",
+        @"  browser.test.assertEq(details?.type, 'main_frame', 'details.type should be')",
+
+        @"  browser.test.assertEq(details?.statusCode, 200, 'details.statusCode should be')",
+
+        @"  browser.test.assertTrue(Array.isArray(details?.responseHeaders), 'details.responseHeaders should be an array')",
+        @"  browser.test.assertTrue(details?.responseHeaders?.some((header) => header.name === 'Content-Type' && header.value === 'text/html'), 'details.responseHeaders should include Content-Type: text/html')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, ResponseStartedEventForSubresource)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<img src='/image.png'>"_s } },
+        { "/image.png"_s, { { { "Content-Type"_s, "image/png"_s } }, "..."_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webRequest.onResponseStarted.addListener((details) => {",
+        @"  if (details?.type !== 'image')",
+        @"    return",
+
+        @"  browser.test.assertEq(typeof details?.tabId, 'number', 'details.tabId should be')",
+        @"  browser.test.assertEq(details?.frameId, 0, 'details.frameId should be')",
+        @"  browser.test.assertEq(details?.parentFrameId, -1, 'details.parentFrameId should be')",
+
+        @"  browser.test.assertEq(typeof details?.documentId, 'string', 'details.documentId should be')",
+        @"  browser.test.assertEq(details?.documentId?.length, 36, 'details.documentId.length should be')",
+
+        @"  browser.test.assertTrue(details?.url?.includes('/image.png'), 'details.url should include /image.png')",
+        @"  browser.test.assertEq(details?.method, 'GET', 'details.method should be')",
+        @"  browser.test.assertEq(details?.type, 'image', 'details.type should be')",
+
+        @"  browser.test.assertEq(details?.statusCode, 200, 'details.statusCode should be')",
+
+        @"  browser.test.assertTrue(Array.isArray(details?.responseHeaders), 'details.responseHeaders should be an array')",
+        @"  browser.test.assertTrue(details?.responseHeaders?.some((header) => header.name === 'Content-Type' && header.value === 'image/png'), 'details.responseHeaders should include Content-Type: image/png')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, CompletedEvent)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webRequest.onCompleted.addListener((details) => {",
+        @"  browser.test.assertEq(typeof details?.tabId, 'number', 'details.tabId should be')",
+        @"  browser.test.assertEq(details?.frameId, 0, 'details.frameId should be')",
+        @"  browser.test.assertEq(details?.parentFrameId, -1, 'details.parentFrameId should be')",
+
+        @"  browser.test.assertEq(typeof details?.documentId, 'string', 'details.documentId should be')",
+        @"  browser.test.assertEq(details?.documentId?.length, 36, 'details.documentId.length should be')",
+
+        @"  browser.test.assertTrue(details?.url?.includes('http://localhost'), 'details.url should include http://localhost')",
+        @"  browser.test.assertEq(details?.method, 'GET', 'details.method should be')",
+        @"  browser.test.assertEq(details?.type, 'main_frame', 'details.type should be')",
+
+        @"  browser.test.assertEq(details?.statusCode, 200, 'details.statusCode should be')",
+
+        @"  browser.test.assertTrue(Array.isArray(details?.responseHeaders), 'details.responseHeaders should be an array')",
+        @"  browser.test.assertTrue(details?.responseHeaders?.some((header) => header.name === 'Content-Type' && header.value === 'text/html'), 'details.responseHeaders should include Content-Type: text/html')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, CompletedEventForSubresource)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<img src='/image.png'>"_s } },
+        { "/image.png"_s, { { { "Content-Type"_s, "image/png"_s } }, "..."_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webRequest.onCompleted.addListener((details) => {",
+        @"  if (details?.type !== 'image')",
+        @"    return",
+
+        @"  browser.test.assertEq(typeof details?.tabId, 'number', 'details.tabId should be')",
+        @"  browser.test.assertEq(details?.frameId, 0, 'details.frameId should be')",
+        @"  browser.test.assertEq(details?.parentFrameId, -1, 'details.parentFrameId should be')",
+
+        @"  browser.test.assertEq(typeof details?.documentId, 'string', 'details.documentId should be')",
+        @"  browser.test.assertEq(details?.documentId?.length, 36, 'details.documentId.length should be')",
+
+        @"  browser.test.assertTrue(details?.url?.includes('/image.png'), 'details.url should include /image.png')",
+        @"  browser.test.assertEq(details?.method, 'GET', 'details.method should be')",
+        @"  browser.test.assertEq(details?.type, 'image', 'details.type should be')",
+
+        @"  browser.test.assertEq(details?.statusCode, 200, 'details.statusCode should be')",
+
+        @"  browser.test.assertTrue(Array.isArray(details?.responseHeaders), 'details.responseHeaders should be an array')",
+        @"  browser.test.assertTrue(details?.responseHeaders?.some((header) => header.name === 'Content-Type' && header.value === 'image/png'), 'details.responseHeaders should include Content-Type: image/png')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, AllowedFilter)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
         @"function passListener() { browser.test.notifyPass() }",
 
-        // The passListener firing will consider the test passed.
         @"browser.webRequest.onCompleted.addListener(passListener, { 'urls': [ '*://*.localhost/*' ] })",
 
-        // Yield after creating the listener so we can load a tab.
         @"browser.test.yield('Load Tab')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Grant the webRequest permission.
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
 
     auto *urlRequest = server.requestWithLocalhost();
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
 
-TEST(WKWebExtensionAPIWebRequest, DeniedFilterTest)
+TEST(WKWebExtensionAPIWebRequest, DeniedFilter)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *backgroundScript = Util::constructScript(@[
-        // Setup
         @"function passListener() { browser.test.notifyPass() }",
         @"function failListener() { browser.test.notifyFail('This listener should not have been called') }",
 
-        // The passListener firing (but not the failListener) will consider the test passed.
         @"browser.webRequest.onCompleted.addListener(failListener, { 'urls': [ '*://*.example.com/*' ] })",
         @"browser.webRequest.onCompleted.addListener(passListener)",
 
-        // Yield after creating the listener so we can load a tab.
         @"browser.test.yield('Load Tab')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Grant the webRequest permission.
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
 
     auto *urlRequest = server.requestWithLocalhost();
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
 
-TEST(WKWebExtensionAPIWebRequest, AllEventsFiredTest)
+TEST(WKWebExtensionAPIWebRequest, AllEventsFired)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *backgroundScript = Util::constructScript(@[
-        // Setup
         @"let beforeRequestFired = false",
         @"let beforeSendHeadersFired = false",
         @"let sendHeadersFired = false",
@@ -201,102 +667,126 @@ TEST(WKWebExtensionAPIWebRequest, AllEventsFiredTest)
         @"  browser.test.assertTrue(sendHeadersFired)",
         @"  browser.test.assertTrue(headersReceivedFired)",
         @"  browser.test.assertTrue(responseStartedFired)",
+
         @"  browser.test.notifyPass()",
         @"}",
 
         @"browser.webRequest.onCompleted.addListener(completedHandler)",
 
-        // Yield after creating the listener so we can load a tab.
         @"browser.test.yield('Load Tab')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Grant the webRequest permission.
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
 
     auto *urlRequest = server.requestWithLocalhost();
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
 
-TEST(WKWebExtensionAPIWebRequest, ErrorOccurred)
+TEST(WKWebExtensionAPIWebRequest, DocumentIdAcrossEvents)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<img src='nonexistent.png' />"_s } },
-        { "/nonexistent.png"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingResponse } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *backgroundScript = Util::constructScript(@[
-        // Setup
-        @"function passListener() { browser.test.notifyPass() }",
+        @"let documentId = null",
 
-        @"browser.webRequest.onErrorOccurred.addListener(passListener)",
+        @"browser.webRequest.onBeforeRequest.addListener((details) => {",
+        @"  browser.test.assertEq(documentId, null, 'documentId should be')",
 
-        // Yield after creating the listener so we can load a tab.
+        @"  browser.test.assertEq(typeof details?.documentId, 'string', 'details.documentId should be')",
+        @"  browser.test.assertEq(details?.documentId?.length, 36, 'details.documentId.length should be')",
+
+        @"  documentId = details?.documentId",
+        @"})",
+
+        @"browser.webRequest.onBeforeSendHeaders.addListener((details) => {",
+        @"  browser.test.assertEq(documentId, details?.documentId, 'details.documentId should stay consistent in onBeforeSendHeaders')",
+        @"})",
+
+        @"browser.webRequest.onSendHeaders.addListener((details) => {",
+        @"  browser.test.assertEq(documentId, details?.documentId, 'details.documentId should stay consistent in onSendHeaders')",
+        @"})",
+
+        @"browser.webRequest.onHeadersReceived.addListener((details) => {",
+        @"  browser.test.assertEq(documentId, details?.documentId, 'details.documentId should stay consistent in onHeadersReceived')",
+        @"})",
+
+        @"browser.webRequest.onResponseStarted.addListener((details) => {",
+        @"  browser.test.assertEq(documentId, details?.documentId, 'details.documentId should stay consistent in onResponseStarted')",
+        @"})",
+
+        @"browser.webRequest.onCompleted.addListener((details) => {",
+        @"  browser.test.assertEq(documentId, details?.documentId, 'details.documentId should stay consistent in onCompleted')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
         @"browser.test.yield('Load Tab')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    // Grant the webRequest permission.
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
 
     auto *urlRequest = server.requestWithLocalhost();
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
 
-TEST(WKWebExtensionAPIWebRequest, RedirectOccurred)
+TEST(WKWebExtensionAPIWebRequest, RemoveListenerDuringEvent)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { 301, {{ "Location"_s, "/target.html"_s }}, "redirecting..."_s } },
-        { "/target.html"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
-    });
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *backgroundScript = Util::constructScript(@[
-        // Setup
-        @"function passListener() { browser.test.notifyPass() }",
+        @"function requestListener() {",
+        @"  browser.webRequest.onCompleted.removeListener(requestListener)",
+        @"  browser.test.assertFalse(browser.webRequest.onCompleted.hasListener(requestListener), 'Listener should be removed')",
+        @"}",
 
-        @"browser.webRequest.onBeforeRedirect.addListener(passListener)",
+        @"browser.webRequest.onCompleted.addListener(requestListener)",
+        @"browser.webRequest.onCompleted.addListener(() => browser.test.notifyPass())",
 
-        // Yield after creating the listener so we can load a tab.
+        @"browser.test.assertTrue(browser.webRequest.onCompleted.hasListener(requestListener), 'Listener should be registered')",
+
         @"browser.test.yield('Load Tab')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    // Grant the webRequest permission.
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
 
     auto *urlRequest = server.requestWithLocalhost();
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -356,8 +846,7 @@ TEST(WKWebExtensionAPIWebRequest, Initialization)
     } outErrorMessage:&error];
     EXPECT_NULL(filter);
 
-    // FIXME: We shouldn't be generating an error message with two periods.
-    EXPECT_NS_EQUAL(error, @"The 'urls' value is invalid, because '$' is an invalid match pattern. \"$\" cannot be parsed because it doesn't have a scheme..");
+    EXPECT_NS_EQUAL(error, @"The 'urls' value is invalid, because '$' is an invalid match pattern. \"$\" cannot be parsed because it doesn't have a scheme.");
 }
 
 static _WKWebExtensionWebRequestFilter *filterWithDictionary(NSDictionary *dictionary)

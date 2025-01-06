@@ -41,6 +41,7 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/mac/PIPSPI.h>
 #import <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 
@@ -376,6 +377,8 @@ enum class PIPState {
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoPresentationInterfaceMac);
+
 VideoPresentationInterfaceMac::VideoPresentationInterfaceMac(PlaybackSessionInterfaceMac& playbackSessionInterface)
     : m_playbackSessionInterface(playbackSessionInterface)
 {
@@ -556,8 +559,28 @@ void VideoPresentationInterfaceMac::requestHideAndExitPiP()
     if (!model)
         return;
 
-    model->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
-    model->willExitPictureInPicture();
+    if (m_documentIsVisible) {
+        model->requestFullscreenMode(m_mode & ~HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+        model->willExitPictureInPicture();
+    } else {
+        auto callback = [this, model] () {
+            model->requestFullscreenMode(m_mode & ~HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+            model->willExitPictureInPicture();
+        };
+        setDocumentBecameVisibleCallback(WTFMove(callback));
+    }
+
+}
+
+void VideoPresentationInterfaceMac::documentVisibilityChanged(bool isDocumentVisible)
+{
+    bool documentWasVisible = m_documentIsVisible;
+    m_documentIsVisible = isDocumentVisible;
+
+    if (!documentWasVisible && m_documentIsVisible && m_documentBecameVisibleCallback) {
+        m_documentBecameVisibleCallback();
+        m_documentBecameVisibleCallback = nullptr;
+    }
 }
 
 #if !LOG_DISABLED
@@ -605,7 +628,7 @@ bool VideoPresentationInterfaceMac::isPlayingVideoInEnhancedFullscreen() const
 }
 
 #if !RELEASE_LOG_DISABLED
-const void* VideoPresentationInterfaceMac::logIdentifier() const
+uint64_t VideoPresentationInterfaceMac::logIdentifier() const
 {
     return m_playbackSessionInterface->logIdentifier();
 }

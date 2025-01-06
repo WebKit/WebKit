@@ -37,7 +37,8 @@
 #include "pas_log.h"
 #include <stdio.h>
 
-static const unsigned verbose = 0;
+static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_LARGE_HEAPS);
+static const unsigned verbosity = 0;
 
 #define BOOTSTRAP_FREE_LIST_CAPACITY 4
 static pas_large_free bootstrap_free_list[BOOTSTRAP_FREE_LIST_CAPACITY];
@@ -421,7 +422,7 @@ static void fix_free_list_if_necessary(pas_simple_large_free_heap* heap,
     
     new_capacity = PAS_MAX(heap->free_list_size << 1, PAS_BOOTSTRAP_FREE_LIST_MINIMUM_SIZE);
     
-    if (verbose >= 2)
+    if (verbose && verbosity >= 2)
         printf("Allocating new free list with new_capacity = %zu:\n", new_capacity);
     new_free_list = (void*)try_allocate_without_fixing(
         heap,
@@ -456,7 +457,7 @@ static void fix_free_list_if_necessary(pas_simple_large_free_heap* heap,
             config);
     }
 
-    if (verbose >= 2) {
+    if (verbose && verbosity >= 2) {
         printf("Fixed:\n");
         dump_free_list(heap);
     }

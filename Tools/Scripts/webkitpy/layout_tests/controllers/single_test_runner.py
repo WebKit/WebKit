@@ -256,6 +256,12 @@ class SingleTestRunner(object):
                 port.baseline_version_dir(device_type=device_type),
                 fs.dirname(self._test_name),
             )
+        elif self._options.add_baselines_to_platform:
+            # Whatever was passed.
+            output_dir = fs.join(
+                self._options.add_baselines_to_platform,
+                fs.dirname(self._test_name),
+            )
         elif rebaselining:
             # The directory containing the existing baseline or the generic path.
             output_dir = fs.dirname(
@@ -282,6 +288,48 @@ class SingleTestRunner(object):
         )
 
         output_path = fs.join(output_dir, output_basename)
+
+        if not self._options.add_redundant_platform_results:
+            baseline_search_path = [
+                fs.join(p, fs.dirname(self._test_name))
+                for p in (
+                    port.baseline_search_path(device_type=device_type)
+                    + [port.layout_tests_dir()]
+                )
+            ]
+            seen_output_dir = False
+            abs_output_dir = fs.abspath(output_dir)
+            for path in baseline_search_path:
+                if fs.abspath(path) == abs_output_dir:
+                    seen_output_dir = True
+                    continue
+
+                if not seen_output_dir:
+                    continue
+
+                candidate = fs.join(path, output_basename)
+                if fs.isfile(candidate):
+                    if (
+                        fs.getsize(candidate) == len(data)
+                        and fs.read_binary_file(candidate) == data
+                    ):
+                        _log.info(
+                            'Skipping writing redundant expected result "{}" due to existing "{}"'.format(
+                                port.relative_test_filename(output_path),
+                                port.relative_test_filename(candidate),
+                            )
+                        )
+
+                        if fs.exists(output_path):
+                            _log.info(
+                                'Removing existing expected result "{}"'.format(
+                                    port.relative_test_filename(output_path),
+                                )
+                            )
+                            fs.remove(output_path)
+                        return
+                    break
+
         _log.info('Writing new expected result "%s"' % port.relative_test_filename(output_path))
         fs.maybe_make_directory(output_dir)
         fs.write_binary_file(output_path, data)
@@ -398,13 +446,15 @@ class SingleTestRunner(object):
         if test_output.image is None:
             # The driver is misbehaving, kill it so the error doesn't propagate to subsequent tests
             self._driver.stop()
-            return TestResult(
+            test_result = TestResult(
                 self._test_input,
                 self._handle_error(test_output) + [test_failures.FailureReftestNoImagesGenerated(self._test_name)],
                 test_output.test_time,
                 test_output.has_stderr(),
                 pid=test_output.pid,
             )
+            test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, test_output, None, test_result.failures)
+            return test_result
 
         total_test_time = 0
         reference_output = None

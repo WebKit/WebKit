@@ -37,14 +37,14 @@
 #include "SVGPathData.h"
 #include "SVGPathElement.h"
 #include "SVGPathUtilities.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGAnimateMotionElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGAnimateMotionElement);
     
 using namespace SVGNames;
 
@@ -289,8 +289,7 @@ std::optional<float> SVGAnimateMotionElement::calculateDistance(const String& fr
     auto to = parsePoint(toString);
     if (!to)
         return { };
-    auto diff = *to - *from;
-    return std::hypot(diff.width(), diff.height());
+    return (*to - *from).diagonalLength();
 }
 
 void SVGAnimateMotionElement::updateAnimationMode()

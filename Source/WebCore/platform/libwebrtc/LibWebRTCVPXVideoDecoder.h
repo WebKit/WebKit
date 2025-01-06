@@ -28,7 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include "VideoDecoder.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -36,7 +36,7 @@ namespace WebCore {
 class LibWebRTCVPXInternalVideoDecoder;
 
 class LibWebRTCVPXVideoDecoder : public VideoDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCVPXVideoDecoder);
 public:
     enum class Type {
         VP8,
@@ -46,14 +46,15 @@ public:
         AV1
 #endif
     };
-    static void create(Type, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(Type, const Config&, CreateCallback&&, OutputCallback&&);
 
-    LibWebRTCVPXVideoDecoder(Type, const Config&, OutputCallback&&, PostTaskCallback&&);
     ~LibWebRTCVPXVideoDecoder();
 
 private:
-    void decode(EncodedFrame&&, DecodeCallback&&) final;
-    void flush(Function<void()>&&) final;
+    LibWebRTCVPXVideoDecoder(Type, const Config&, OutputCallback&&);
+
+    Ref<DecodePromise> decode(EncodedFrame&&) final;
+    Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
 

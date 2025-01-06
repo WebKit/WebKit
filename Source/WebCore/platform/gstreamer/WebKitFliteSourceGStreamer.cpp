@@ -19,7 +19,7 @@
 #include "config.h"
 #include "WebKitFliteSourceGStreamer.h"
 
-#if ENABLE(SPEECH_SYNTHESIS) && USE(GSTREAMER)
+#if USE(FLITE) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
 #include "GUniquePtrFlite.h"
@@ -89,12 +89,14 @@ WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitFliteSrc, webkit_flite_src, GST_TYPE_BASE_SRC
 
 // To add more voices, add voice register functions here.
 using VoiceRegisterFunction = Function<cst_voice*(const char*)>;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
 static VoiceRegisterFunction voiceRegisterFunctions[] = {
     register_cmu_us_kal,
     register_cmu_us_slt,
     register_cmu_us_rms,
     register_cmu_us_awb,
 };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void webkitFliteSrcReset(WebKitFliteSrc* src)
 {
@@ -162,10 +164,12 @@ static GstFlowReturn webkitFliteSrcCreate(GstBaseSrc* baseSource, guint64 offset
         gsize bufferSize = priv->info.channels * sizeof(gint16) * wave->num_samples;
         GRefPtr<GstBuffer> buf = adoptGRef(gst_buffer_new_allocate(nullptr, bufferSize, nullptr));
         GstMappedBuffer map(buf, GST_MAP_WRITE);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         gint16* data = reinterpret_cast<gint16*>(map.data());
         memset(data, 0, bufferSize);
         for (int i = 0; i < wave->num_samples; i++)
             data[i * priv->info.channels] = wave->samples[i];
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         gst_adapter_push(members->adapter.get(), buf.leakRef());
     }
@@ -272,4 +276,4 @@ void webKitFliteSrcSetUtterance(WebKitFliteSrc* src, const PlatformSpeechSynthes
 
 #undef GST_CAT_DEFAULT
 
-#endif // ENABLE(SPEECH_SYNTHESIS) && USE(GSTREAMER)
+#endif // USE(FLITE) && USE(GSTREAMER)

@@ -54,7 +54,8 @@ inline bool TextRun::operator==(const TextRun& other) const
         && m_direction == other.m_direction
         && m_directionalOverride == other.m_directionalOverride
         && m_characterScanForCodePath == other.m_characterScanForCodePath
-        && m_disableSpacing == other.m_disableSpacing;
+        && m_disableSpacing == other.m_disableSpacing
+        && m_textSpacingState == other.m_textSpacingState;
 }
 
 struct TextRunHash {

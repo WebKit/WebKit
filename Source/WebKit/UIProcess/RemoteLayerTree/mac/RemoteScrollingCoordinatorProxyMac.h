@@ -29,15 +29,7 @@
 
 #include "RemoteLayerTreeEventDispatcher.h"
 #include "RemoteScrollingCoordinatorProxy.h"
-
-namespace WebKit {
-class RemoteScrollingCoordinatorProxyMac;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteScrollingCoordinatorProxyMac> : std::true_type { };
-}
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -46,6 +38,8 @@ class RemoteLayerTreeEventDispatcher;
 #endif
 
 class RemoteScrollingCoordinatorProxyMac final : public RemoteScrollingCoordinatorProxy {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteScrollingCoordinatorProxyMac);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteScrollingCoordinatorProxyMac);
 public:
     explicit RemoteScrollingCoordinatorProxyMac(WebPageProxy&);
     ~RemoteScrollingCoordinatorProxyMac();

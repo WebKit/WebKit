@@ -122,7 +122,12 @@ function testExpectedEventually(testFuncString, expected, comparison, timeout)
     return testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, null, false);
 }
 
-function testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, work, silent = false)
+function testExpectedEventuallyIgnoringError(testFuncString, expected, comparison, timeout)
+{
+    return testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, null, false, true);
+}
+
+function testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, work, silent = false, errorallowed = false)
 {
     return new Promise(async resolve => {
         var success;
@@ -144,9 +149,17 @@ function testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected
                 if (work)
                     work();
             } catch (ex) {
-                consoleWrite(ex);
-                resolve();
-                return;
+                if (errorallowed) {
+                    await sleepFor(1);
+                    timeSlept++;
+                    if (work)
+                        work();
+                }
+                else {
+                    consoleWrite(ex);
+                    resolve();
+                    return;
+                }
             }
         }
         reportExpected(success, testFuncString, comparison, expected, observed, "AFTER TIMEOUT");

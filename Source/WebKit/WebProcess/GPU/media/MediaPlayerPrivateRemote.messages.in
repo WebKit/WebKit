@@ -23,7 +23,11 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
-messages -> MediaPlayerPrivateRemote NotRefCounted {
+[
+    DispatchedFrom=GPU,
+    DispatchedTo=WebContent
+]
+messages -> MediaPlayerPrivateRemote {
     NetworkStateChanged(struct WebKit::RemoteMediaPlayerState state)
     ReadyStateChanged(struct WebKit::RemoteMediaPlayerState state, enum:uint8_t WebCore::MediaPlayerReadyState readyStat)
     FirstVideoFrameAvailable()
@@ -36,7 +40,7 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     PlaybackStateChanged(bool paused, struct WebKit::MediaTimeUpdateData timeData)
     EngineFailedToLoad(int64_t platformErrorCode)
     UpdateCachedState(struct WebKit::RemoteMediaPlayerState state)
-    UpdatePlaybackQualityMetrics(struct WebCore::VideoPlaybackQualityMetrics metrics);
+    UpdatePlaybackQualityMetrics(struct WebCore::VideoPlaybackQualityMetrics metrics)
     CharacteristicChanged(struct WebKit::RemoteMediaPlayerState state)
     SizeChanged(WebCore::FloatSize naturalSize)
     RenderingModeChanged()
@@ -70,7 +74,7 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     UpdateGenericCue(WebCore::TrackID trackID, struct WebCore::GenericCueData cue)
     RemoveGenericCue(WebCore::TrackID trackID, struct WebCore::GenericCueData cue)
 
-    RequestResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, enum:uint8_t WebCore::PlatformMediaResourceLoader::LoadOptions options)
+    RequestResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, WebCore::PlatformMediaResourceLoader::LoadOptions options)
     RemoveResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
     SendH2Ping(URL url) -> (Expected<Seconds, WebCore::ResourceError> result)
     ResourceNotSupported()

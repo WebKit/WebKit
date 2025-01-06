@@ -1,0 +1,357 @@
+
+-----------------------------------------------------
+EXPRESSION: new FinalizationRegistry((a) => {})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "FinalizationRegistry",
+  "_preview": {
+    "_type": "object",
+    "_description": "FinalizationRegistry",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "live",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 0,
+          "_properties": [],
+          "_entries": null
+        },
+        "_internal": true
+      },
+      {
+        "_name": "dead",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 0,
+          "_properties": [],
+          "_entries": null
+        },
+        "_internal": true
+      }
+    ],
+    "_entries": null
+  }
+}
+{
+  "_name": "cleanupCallback",
+  "_value": {
+    "_type": "function",
+    "_objectId": "<filtered>",
+    "_description": "(a) => {}"
+  },
+  "_hasValue": true,
+  "_writable": false,
+  "_configurable": false,
+  "_enumerable": false,
+  "_own": true,
+  "_wasThrown": false,
+  "_nativeGetterValue": false,
+  "_private": false,
+  "_internal": true
+}
+{
+  "_name": "live",
+  "_value": {
+    "_type": "object",
+    "_subtype": "array",
+    "_objectId": "<filtered>",
+    "_description": "Array",
+    "_size": 0,
+    "_preview": {
+      "_type": "object",
+      "_subtype": "array",
+      "_description": "Array",
+      "_lossless": true,
+      "_overflow": false,
+      "_size": 0,
+      "_properties": [],
+      "_entries": null
+    }
+  },
+  "_hasValue": true,
+  "_writable": false,
+  "_configurable": false,
+  "_enumerable": false,
+  "_own": true,
+  "_wasThrown": false,
+  "_nativeGetterValue": false,
+  "_private": false,
+  "_internal": true
+}
+{
+  "_name": "dead",
+  "_value": {
+    "_type": "object",
+    "_subtype": "array",
+    "_objectId": "<filtered>",
+    "_description": "Array",
+    "_size": 0,
+    "_preview": {
+      "_type": "object",
+      "_subtype": "array",
+      "_description": "Array",
+      "_lossless": true,
+      "_overflow": false,
+      "_size": 0,
+      "_properties": [],
+      "_entries": null
+    }
+  },
+  "_hasValue": true,
+  "_writable": false,
+  "_configurable": false,
+  "_enumerable": false,
+  "_own": true,
+  "_wasThrown": false,
+  "_nativeGetterValue": false,
+  "_private": false,
+  "_internal": true
+}
+
+-----------------------------------------------------
+EXPRESSION: var finalizationRegistry = new FinalizationRegistry((b) => {}); finalizationRegistry.register(live1, heldValue1); finalizationRegistry.register(live2, heldValue1, unregisterToken1); finalizationRegistry
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "FinalizationRegistry",
+  "_preview": {
+    "_type": "object",
+    "_description": "FinalizationRegistry",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "live",
+        "_type": "object",
+        "_subtype": "array",
+        "_value": "Array",
+        "_internal": true
+      },
+      {
+        "_name": "dead",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 0,
+          "_properties": [],
+          "_entries": null
+        },
+        "_internal": true
+      }
+    ],
+    "_entries": null
+  }
+}
+{
+  "_name": "cleanupCallback",
+  "_value": {
+    "_type": "function",
+    "_objectId": "<filtered>",
+    "_description": "(b) => {}"
+  },
+  "_hasValue": true,
+  "_writable": false,
+  "_configurable": false,
+  "_enumerable": false,
+  "_own": true,
+  "_wasThrown": false,
+  "_nativeGetterValue": false,
+  "_private": false,
+  "_internal": true
+}
+{
+  "_name": "live",
+  "_value": {
+    "_type": "object",
+    "_subtype": "array",
+    "_objectId": "<filtered>",
+    "_description": "Array",
+    "_size": 2,
+    "_preview": {
+      "_type": "object",
+      "_subtype": "array",
+      "_description": "Array",
+      "_lossless": true,
+      "_overflow": false,
+      "_size": 2,
+      "_properties": [
+        {
+          "_name": "0",
+          "_type": "object",
+          "_valuePreview": {
+            "_type": "object",
+            "_description": "Object",
+            "_lossless": true,
+            "_overflow": false,
+            "_properties": [
+              {
+                "_name": "target",
+                "_type": "object",
+                "_valuePreview": {
+                  "_type": "object",
+                  "_description": "Object",
+                  "_lossless": true,
+                  "_overflow": false,
+                  "_properties": [
+                    {
+                      "_name": "live",
+                      "_type": "number",
+                      "_value": "1"
+                    }
+                  ],
+                  "_entries": null
+                }
+              },
+              {
+                "_name": "heldValue",
+                "_type": "object",
+                "_valuePreview": {
+                  "_type": "object",
+                  "_description": "Object",
+                  "_lossless": true,
+                  "_overflow": false,
+                  "_properties": [
+                    {
+                      "_name": "heldValue",
+                      "_type": "number",
+                      "_value": "1"
+                    }
+                  ],
+                  "_entries": null
+                }
+              }
+            ],
+            "_entries": null
+          }
+        },
+        {
+          "_name": "1",
+          "_type": "object",
+          "_valuePreview": {
+            "_type": "object",
+            "_description": "Object",
+            "_lossless": true,
+            "_overflow": false,
+            "_properties": [
+              {
+                "_name": "target",
+                "_type": "object",
+                "_valuePreview": {
+                  "_type": "object",
+                  "_description": "Object",
+                  "_lossless": true,
+                  "_overflow": false,
+                  "_properties": [
+                    {
+                      "_name": "live",
+                      "_type": "number",
+                      "_value": "2"
+                    }
+                  ],
+                  "_entries": null
+                }
+              },
+              {
+                "_name": "heldValue",
+                "_type": "object",
+                "_valuePreview": {
+                  "_type": "object",
+                  "_description": "Object",
+                  "_lossless": true,
+                  "_overflow": false,
+                  "_properties": [
+                    {
+                      "_name": "heldValue",
+                      "_type": "number",
+                      "_value": "1"
+                    }
+                  ],
+                  "_entries": null
+                }
+              },
+              {
+                "_name": "unregisterToken",
+                "_type": "object",
+                "_valuePreview": {
+                  "_type": "object",
+                  "_description": "Object",
+                  "_lossless": true,
+                  "_overflow": false,
+                  "_properties": [
+                    {
+                      "_name": "unregisterToken",
+                      "_type": "number",
+                      "_value": "1"
+                    }
+                  ],
+                  "_entries": null
+                }
+              }
+            ],
+            "_entries": null
+          }
+        }
+      ],
+      "_entries": null
+    }
+  },
+  "_hasValue": true,
+  "_writable": false,
+  "_configurable": false,
+  "_enumerable": false,
+  "_own": true,
+  "_wasThrown": false,
+  "_nativeGetterValue": false,
+  "_private": false,
+  "_internal": true
+}
+{
+  "_name": "dead",
+  "_value": {
+    "_type": "object",
+    "_subtype": "array",
+    "_objectId": "<filtered>",
+    "_description": "Array",
+    "_size": 0,
+    "_preview": {
+      "_type": "object",
+      "_subtype": "array",
+      "_description": "Array",
+      "_lossless": true,
+      "_overflow": false,
+      "_size": 0,
+      "_properties": [],
+      "_entries": null
+    }
+  },
+  "_hasValue": true,
+  "_writable": false,
+  "_configurable": false,
+  "_enumerable": false,
+  "_own": true,
+  "_wasThrown": false,
+  "_nativeGetterValue": false,
+  "_private": false,
+  "_internal": true
+}
+

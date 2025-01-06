@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import <WebKit/WKWebExtensionDataType.h>
 
-#import <WebKit/WKFoundation.h>
-
-/*! @abstract Constants for specifying data types for a @link WKWebExtensionContext @/link. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-typedef NSString * _WKWebExtensionDataType NS_TYPED_EXTENSIBLE_ENUM NS_SWIFT_NAME(_WKWebExtension.DataType);
-
-/*! @abstract Specifies local storage, including `browser.storage.local`. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN _WKWebExtensionDataType const _WKWebExtensionDataTypeLocal;
-
-/*! @abstract Specifies session storage, including `browser.storage.session`. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN _WKWebExtensionDataType const _WKWebExtensionDataTypeSession;
-
-/*! @abstract Specifies synchronized storage, including `browser.storage.sync`. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN _WKWebExtensionDataType const _WKWebExtensionDataTypeSync;
+#define _WKWebExtensionDataType WKWebExtensionDataType
+#define _WKWebExtensionDataTypeLocal WKWebExtensionDataTypeLocal
+#define _WKWebExtensionDataTypeSession WKWebExtensionDataTypeSession
+#define _WKWebExtensionDataTypeSync WKWebExtensionDataTypeSynchronized

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "PlatformContentFilter.h"
 #include <wtf/Compiler.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 OBJC_CLASS NSData;
@@ -36,6 +37,7 @@ OBJC_CLASS WebFilterEvaluator;
 namespace WebCore {
 
 class ParentalControlsContentFilter final : public PlatformContentFilter {
+    WTF_MAKE_TZONE_ALLOCATED(ParentalControlsContentFilter);
     friend UniqueRef<ParentalControlsContentFilter> WTF::makeUniqueRefWithoutFastMallocCheck<ParentalControlsContentFilter>();
 
 public:
@@ -50,10 +52,6 @@ public:
     ContentFilterUnblockHandler unblockHandler() const override;
 #endif
     
-#if PLATFORM(IOS) || PLATFORM(VISION)
-    WEBCORE_EXPORT static void setHasConsumedSandboxExtension(bool);
-#endif
-
 private:
     static bool enabled();
 
@@ -62,16 +60,6 @@ private:
 
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
     RetainPtr<NSData> m_replacementData;
-
-#if PLATFORM(IOS) || PLATFORM(VISION)
-    enum class SandboxExtensionState : uint8_t {
-        Consumed,
-        NotConsumed,
-        NotSet
-    };
-
-    WEBCORE_EXPORT static SandboxExtensionState m_sandboxExtensionState;
-#endif
 };
     
 } // namespace WebCore

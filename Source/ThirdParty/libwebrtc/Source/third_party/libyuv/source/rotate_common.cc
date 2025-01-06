@@ -36,6 +36,16 @@ void TransposeWx8_C(const uint8_t* src,
   }
 }
 
+void TransposeWx16_C(const uint8_t* src,
+                     int src_stride,
+                     uint8_t* dst,
+                     int dst_stride,
+                     int width) {
+  TransposeWx8_C(src, src_stride, dst, dst_stride, width);
+  TransposeWx8_C((src + 8 * src_stride), src_stride, (dst + 8), dst_stride,
+                 width);
+}
+
 void TransposeUVWx8_C(const uint8_t* src,
                       int src_stride,
                       uint8_t* dst_a,
@@ -117,37 +127,6 @@ void TransposeWx8_16_C(const uint16_t* src,
     dst[7] = src[7 * src_stride];
     ++src;
     dst += dst_stride;
-  }
-}
-
-void TransposeUVWx8_16_C(const uint16_t* src,
-                         int src_stride,
-                         uint16_t* dst_a,
-                         int dst_stride_a,
-                         uint16_t* dst_b,
-                         int dst_stride_b,
-                         int width) {
-  int i;
-  for (i = 0; i < width; ++i) {
-    dst_a[0] = src[0 * src_stride + 0];
-    dst_b[0] = src[0 * src_stride + 1];
-    dst_a[1] = src[1 * src_stride + 0];
-    dst_b[1] = src[1 * src_stride + 1];
-    dst_a[2] = src[2 * src_stride + 0];
-    dst_b[2] = src[2 * src_stride + 1];
-    dst_a[3] = src[3 * src_stride + 0];
-    dst_b[3] = src[3 * src_stride + 1];
-    dst_a[4] = src[4 * src_stride + 0];
-    dst_b[4] = src[4 * src_stride + 1];
-    dst_a[5] = src[5 * src_stride + 0];
-    dst_b[5] = src[5 * src_stride + 1];
-    dst_a[6] = src[6 * src_stride + 0];
-    dst_b[6] = src[6 * src_stride + 1];
-    dst_a[7] = src[7 * src_stride + 0];
-    dst_b[7] = src[7 * src_stride + 1];
-    src += 2;
-    dst_a += dst_stride_a;
-    dst_b += dst_stride_b;
   }
 }
 

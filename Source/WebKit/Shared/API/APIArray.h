@@ -50,6 +50,7 @@ private:
 
 public:
     static Ref<Array> create();
+    static Ref<Array> createWithCapacity(size_t);
     static Ref<Array> create(Vector<RefPtr<Object>>&&);
     static Ref<Array> createStringArray(const Vector<WTF::String>&);
     static Ref<Array> createStringArray(const std::span<const WTF::String>);
@@ -87,7 +88,7 @@ public:
     }
 
     template<typename T, typename MatchFunction>
-    unsigned removeAllOfTypeMatching(const MatchFunction& matchFunction)
+    unsigned removeAllOfTypeMatching(NOESCAPE const MatchFunction& matchFunction)
     {
         return m_elements.removeAllMatching([&] (const RefPtr<Object>& object) -> bool {
             if (object->type() != T::APIType)

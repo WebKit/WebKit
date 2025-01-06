@@ -30,6 +30,7 @@
 #import <Security/SecKeychainItem.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cf/VectorCF.h>
 
 namespace WebKit {
 
@@ -77,8 +78,7 @@ public:
         if (!m_persistentRef)
             return { };
 
-        CFDataRef data = m_persistentRef.get();
-        return { CFDataGetBytePtr(data), static_cast<size_t>(CFDataGetLength(data)) };
+        return span(m_persistentRef.get());
     }
 
 private:

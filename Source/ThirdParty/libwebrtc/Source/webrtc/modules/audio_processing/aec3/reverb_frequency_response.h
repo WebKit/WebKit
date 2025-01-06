@@ -12,9 +12,9 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_REVERB_FREQUENCY_RESPONSE_H_
 
 #include <array>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 
@@ -31,7 +31,7 @@ class ReverbFrequencyResponse {
   void Update(const std::vector<std::array<float, kFftLengthBy2Plus1>>&
                   frequency_response,
               int filter_delay_blocks,
-              const absl::optional<float>& linear_filter_quality,
+              const std::optional<float>& linear_filter_quality,
               bool stationary_block);
 
   // Returns the estimated frequency response for the reverb.

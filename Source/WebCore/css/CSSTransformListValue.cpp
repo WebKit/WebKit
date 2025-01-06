@@ -34,12 +34,12 @@
 namespace WebCore {
 
 CSSTransformListValue::CSSTransformListValue(CSSValueListBuilder builder)
-    : CSSValueContainingVector(TransformListClass, SpaceSeparator, WTFMove(builder))
+    : CSSValueContainingVector(ClassType::TransformList, SpaceSeparator, WTFMove(builder))
 {
 }
 
 CSSTransformListValue::CSSTransformListValue(Ref<CSSValue> value)
-    : CSSValueContainingVector(TransformListClass, SpaceSeparator, WTFMove(value))
+    : CSSValueContainingVector(ClassType::TransformList, SpaceSeparator, WTFMove(value))
 {
 }
 

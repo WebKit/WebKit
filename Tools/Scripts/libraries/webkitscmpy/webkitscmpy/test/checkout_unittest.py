@@ -129,7 +129,7 @@ Reviewed by NOBODY (OOPS!).
                 reviews=[dict(user=dict(login='rreviewer'), state='CHANGES_REQUESTED')],
                 draft=False,
             )]
-            repo.commits['eng/example'] = [
+            repo.commits['remotes/tcontributor/eng/example'] = [
                 repo.commits[repo.default_branch][2],
                 Commit(
                     hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
@@ -142,6 +142,49 @@ Reviewed by NOBODY (OOPS!).
 
             self.assertEqual(0, program.main(
                 args=('checkout', 'PR-1'),
+                path=self.path,
+            ))
+
+            self.assertEqual('a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd', local.Git(self.path).commit().hash)
+
+    def test_checkout_specific_remote(self):
+        with OutputCapture(), mocks.remote.GitHub() as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+            repo.edit_config('remote.webkit.url', 'https://github.com/WebKit/WebKit')
+            repo.commits['remotes/webkit/eng/example'] = [
+                repo.commits[repo.default_branch][2],
+                Commit(
+                    hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
+                    identifier='3.1@eng/example',
+                    timestamp=int(time.time()) - 60,
+                    author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
+                    message='To Be Committed\n\nReviewed by NOBODY (OOPS!).\n',
+                )
+            ]
+
+            self.assertEqual(0, program.main(
+                args=('checkout', 'webkit:eng/example'),
+                path=self.path,
+            ))
+
+            self.assertEqual('a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd', local.Git(self.path).commit().hash)
+
+    def test_checkout_ambiguous_remote(self):
+        with mocks.remote.GitHub() as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+            repo.edit_config('remote.webkit.url', 'https://github.com/WebKit/WebKit')
+            repo.edit_config('remote.webkit-integration.url', 'https://github.com/WebKit/WebKit')
+            repo.commits['remotes/webkit-integration/eng/example'] = [
+                repo.commits[repo.default_branch][2],
+                Commit(
+                    hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
+                    identifier='3.1@eng/example',
+                    timestamp=int(time.time()) - 60,
+                    author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
+                    message='To Be Committed\n\nReviewed by NOBODY (OOPS!).\n',
+                )
+            ]
+
+            self.assertEqual(0, program.main(
+                args=('checkout', 'webkit:eng/example'),
                 path=self.path,
             ))
 

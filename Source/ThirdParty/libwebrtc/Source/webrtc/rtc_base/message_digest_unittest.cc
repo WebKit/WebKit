@@ -10,6 +10,9 @@
 
 #include "rtc_base/message_digest.h"
 
+#include <openssl/evp.h>
+#include <openssl/sha.h>
+
 #include "absl/strings/string_view.h"
 #include "rtc_base/string_encode.h"
 #include "test/gtest.h"
@@ -48,13 +51,13 @@ TEST(MessageDigestTest, TestSha1Digest) {
                 "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"));
 
   // Test the raw buffer versions of the APIs; also check output buffer size.
-  char output[20];
-  EXPECT_EQ(sizeof(output),
-            ComputeDigest(DIGEST_SHA_1, "abc", 3, output, sizeof(output)));
+  char output[EVP_MAX_MD_SIZE];
+  EXPECT_EQ(static_cast<size_t>(SHA_DIGEST_LENGTH),
+            ComputeDigest(DIGEST_SHA_1, "abc", 3, output, SHA_DIGEST_LENGTH));
   EXPECT_EQ("a9993e364706816aba3e25717850c26c9cd0d89d",
-            hex_encode(absl::string_view(output, sizeof(output))));
-  EXPECT_EQ(0U,
-            ComputeDigest(DIGEST_SHA_1, "abc", 3, output, sizeof(output) - 1));
+            hex_encode(absl::string_view(output, SHA_DIGEST_LENGTH)));
+  EXPECT_EQ(
+      0U, ComputeDigest(DIGEST_SHA_1, "abc", 3, output, SHA_DIGEST_LENGTH - 1));
 }
 
 // Test that we fail properly if a bad digest algorithm is specified.
@@ -136,15 +139,57 @@ TEST(MessageDigestTest, TestSha1Hmac) {
   // Test the raw buffer versions of the APIs; also check output buffer size.
   std::string key(20, '\x0b');
   std::string input("Hi There");
-  char output[20];
-  EXPECT_EQ(sizeof(output),
+  char output[EVP_MAX_MD_SIZE];
+  EXPECT_EQ(static_cast<size_t>(SHA_DIGEST_LENGTH),
             ComputeHmac(DIGEST_SHA_1, key.c_str(), key.size(), input.c_str(),
-                        input.size(), output, sizeof(output)));
+                        input.size(), output, SHA_DIGEST_LENGTH));
   EXPECT_EQ("b617318655057264e28bc0b6fb378c8ef146be00",
-            hex_encode(absl::string_view(output, sizeof(output))));
+            hex_encode(absl::string_view(output, SHA_DIGEST_LENGTH)));
   EXPECT_EQ(0U,
             ComputeHmac(DIGEST_SHA_1, key.c_str(), key.size(), input.c_str(),
-                        input.size(), output, sizeof(output) - 1));
+                        input.size(), output, SHA_DIGEST_LENGTH - 1));
+}
+
+// Test vectors from RFC 4231.
+// https://datatracker.ietf.org/doc/html/rfc4231#section-4.2
+TEST(MessageDigestTest, TestSha2Hmac) {
+  std::string key(20, '\x0b');
+  std::string input("Hi There");
+  char output[EVP_MAX_MD_SIZE];
+
+  EXPECT_EQ(
+      "896fb1128abbdf196832107cd49df33f"
+      "47b4b1169912ba4f53684b22",
+      ComputeHmac(DIGEST_SHA_224, key, input));
+  EXPECT_EQ(
+      "b0344c61d8db38535ca8afceaf0bf12b"
+      "881dc200c9833da726e9376c2e32cff7",
+      ComputeHmac(DIGEST_SHA_256, key, input));
+
+  // Test the raw buffer versions of the APIs; also check output buffer size.
+  // SHA-224
+  EXPECT_EQ(static_cast<size_t>(SHA224_DIGEST_LENGTH),
+            ComputeHmac(DIGEST_SHA_224, key.c_str(), key.size(), input.c_str(),
+                        input.size(), output, SHA224_DIGEST_LENGTH));
+  EXPECT_EQ(
+      "896fb1128abbdf196832107cd49df33f"
+      "47b4b1169912ba4f53684b22",
+      hex_encode(absl::string_view(output, SHA224_DIGEST_LENGTH)));
+  EXPECT_EQ(0U,
+            ComputeHmac(DIGEST_SHA_224, key.c_str(), key.size(), input.c_str(),
+                        input.size(), output, SHA224_DIGEST_LENGTH - 1));
+
+  // SHA-256
+  EXPECT_EQ(static_cast<size_t>(SHA256_DIGEST_LENGTH),
+            ComputeHmac(DIGEST_SHA_256, key.c_str(), key.size(), input.c_str(),
+                        input.size(), output, SHA256_DIGEST_LENGTH));
+  EXPECT_EQ(
+      "b0344c61d8db38535ca8afceaf0bf12b"
+      "881dc200c9833da726e9376c2e32cff7",
+      hex_encode(absl::string_view(output, SHA256_DIGEST_LENGTH)));
+  EXPECT_EQ(0U,
+            ComputeHmac(DIGEST_SHA_256, key.c_str(), key.size(), input.c_str(),
+                        input.size(), output, SHA256_DIGEST_LENGTH - 1));
 }
 
 TEST(MessageDigestTest, TestBadHmac) {

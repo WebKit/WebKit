@@ -27,6 +27,7 @@
 
 #import "APIDownloadClient.h"
 #import "WKFoundation.h"
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
 @protocol _WKDownloadDelegate;
@@ -39,7 +40,7 @@ class ResourceResponse;
 namespace WebKit {
 
 class LegacyDownloadClient final : public API::DownloadClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LegacyDownloadClient);
 public:
     explicit LegacyDownloadClient(id <_WKDownloadDelegate>);
     

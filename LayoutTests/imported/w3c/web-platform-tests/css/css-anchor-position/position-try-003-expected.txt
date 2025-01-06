@@ -1,0 +1,11 @@
+
+FAIL .anchored 1 assert_equals:
+<div class="anchored exceeds-end" data-offset-x="22" data-offset-y="11"></div>
+offsetLeft expected 22 but got 0
+FAIL .anchored 2 assert_equals:
+<div class="anchored ltr vlr exceeds-start" data-offset-x="22" data-offset-y="11"></div>
+offsetLeft expected 22 but got 150
+FAIL .anchored 3 assert_equals:
+<div class="anchored exceeds-size" data-offset-x="22" data-offset-y="11"></div>
+offsetLeft expected 22 but got 0
+

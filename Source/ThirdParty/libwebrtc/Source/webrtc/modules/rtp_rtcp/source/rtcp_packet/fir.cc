@@ -17,7 +17,6 @@
 
 namespace webrtc {
 namespace rtcp {
-constexpr uint8_t Fir::kFeedbackMessageType;
 // RFC 4585: Feedback format.
 // Common packet format:
 //

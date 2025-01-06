@@ -1,0 +1,23 @@
+<html>
+<head>
+<script>
+    window.onload = () => {
+      if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.setBackingScaleFactor(2, () => setTimeout(() => testRunner.notifyDone(), 0));
+      }
+    }
+</script>
+<style>
+    #foo {
+        width:100px;
+        height:100px;
+        background-image: linear-gradient(green, white);
+    }
+</style>
+</head>
+
+<body>
+    <div id=foo></div>
+</body>
+</html>

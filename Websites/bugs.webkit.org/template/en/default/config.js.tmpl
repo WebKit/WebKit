@@ -64,7 +64,7 @@ var [% cf.name FILTER js %] = [ [% FOREACH x = cf.legal_values %]'[% x.name FILT
 // =======================
 //
 // It is not necessary to list all products and components here.
-// Instead, you can define a "blacklist" for some commonly used words
+// Instead, you can define a "blocklist" for some commonly used words
 // or word fragments that occur in a product or component name
 // but should _not_ trigger product/component search.
 
@@ -84,7 +84,7 @@ var target_milestone = new Object();
 // Product and Component Exceptions
 // ================================
 //
-// A blacklist for some commonly used words or word fragments 
+// A blocklist for some commonly used words or word fragments
 // that occur in a product or component name but should *not*
 // trigger product/component search in QuickSearch.
 

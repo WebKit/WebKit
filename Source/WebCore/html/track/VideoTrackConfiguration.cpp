@@ -29,8 +29,11 @@
 #if ENABLE(VIDEO)
 
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoTrackConfiguration);
 
 Ref<JSON::Object> VideoTrackConfiguration::toJSON() const
 {
@@ -41,6 +44,7 @@ Ref<JSON::Object> VideoTrackConfiguration::toJSON() const
     json->setObject("colorSpace"_s, colorSpace()->toJSON());
     json->setDouble("framerate"_s, framerate());
     json->setInteger("bitrate"_s, bitrate());
+    json->setBoolean("isSpatial"_s, !!spatialVideoMetadata());
     return json;
 }
 

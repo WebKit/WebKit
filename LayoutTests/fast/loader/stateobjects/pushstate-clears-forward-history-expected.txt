@@ -5,7 +5,7 @@ main frame - has 1 onunload handler(s)
 You should NOT see an active forward button.
 
 ============== Back Forward List ==============
-        (file test):fast/loader/stateobjects/pushstate-clears-forward-history.html  **nav target**
-        (file test):fast/loader/stateobjects/pushstate-clears-forward-history.html?a  **nav target**
-curr->  (file test):fast/loader/stateobjects/pushstate-clears-forward-history.html?a  **nav target**
+        (file test):fast/loader/stateobjects/pushstate-clears-forward-history.html
+        (file test):fast/loader/stateobjects/pushstate-clears-forward-history.html?a
+curr->  (file test):fast/loader/stateobjects/pushstate-clears-forward-history.html?a
 ===============================================

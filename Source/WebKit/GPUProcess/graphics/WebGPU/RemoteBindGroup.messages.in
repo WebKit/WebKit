@@ -23,9 +23,15 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteBindGroup NotRefCounted Stream {
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU,
+    EnabledBy=WebGPUEnabled
+]
+messages -> RemoteBindGroup Stream {
     void Destruct()
     void SetLabel(String label)
+    void UpdateExternalTextures(WebKit::WebGPUIdentifier externalTextureIdentifier) -> (bool success) Synchronous
 }
 
 #endif

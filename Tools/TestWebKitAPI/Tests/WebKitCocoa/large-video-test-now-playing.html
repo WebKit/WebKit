@@ -64,6 +64,15 @@
             });
         }
 
+        function loadSubframe() {
+            const frame = document.createElement("iframe");
+            frame.addEventListener("load", () => {
+                window.webkit.messageHandlers.testHandler.postMessage("subframeLoaded");
+            });
+            frame.src = "simple.html";
+            document.body.appendChild(frame);
+        }
+
     </script>
 </head>
 <body>

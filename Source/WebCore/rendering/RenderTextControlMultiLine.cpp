@@ -32,11 +32,11 @@
 #include "ShadowRoot.h"
 #include "StyleInheritedData.h"
 #include "TextControlInnerElements.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControlMultiLine);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextControlMultiLine);
 
 RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, RenderStyle&& style)
     : RenderTextControl(Type::TextControlMultiLine, element, WTFMove(style))
@@ -44,10 +44,8 @@ RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& elem
     ASSERT(isRenderTextControlMultiLine());
 }
 
-RenderTextControlMultiLine::~RenderTextControlMultiLine()
-{
-    // Do not add any code here. Add it to willBeDestroyed() instead.
-}
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderTextControlMultiLine::~RenderTextControlMultiLine() = default;
 
 HTMLTextAreaElement& RenderTextControlMultiLine::textAreaElement() const
 {
@@ -86,7 +84,7 @@ LayoutUnit RenderTextControlMultiLine::preferredContentLogicalWidth(float charWi
 {
     float width = ceilf(charWidth * textAreaElement().cols());
 
-    auto overflow = style().isHorizontalWritingMode() ? style().overflowY() : style().overflowX();
+    auto overflow = writingMode().isHorizontal() ? style().overflowY() : style().overflowX();
 
     // We are able to have a vertical scrollbar if the overflow style is scroll or auto
     if ((overflow == Overflow::Scroll) || (overflow == Overflow::Auto))

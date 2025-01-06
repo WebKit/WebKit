@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -47,30 +47,30 @@ static const TX_CLASS tx_type_to_class[TX_TYPES] = {
   TX_CLASS_HORIZ,  // H_FLIPADST
 };
 
-static INLINE int get_txb_bhl(TX_SIZE tx_size) {
+static inline int get_txb_bhl(TX_SIZE tx_size) {
   tx_size = av1_get_adjusted_tx_size(tx_size);
   return tx_size_high_log2[tx_size];
 }
 
-static INLINE int get_txb_wide(TX_SIZE tx_size) {
+static inline int get_txb_wide(TX_SIZE tx_size) {
   tx_size = av1_get_adjusted_tx_size(tx_size);
   return tx_size_wide[tx_size];
 }
 
-static INLINE int get_txb_high(TX_SIZE tx_size) {
+static inline int get_txb_high(TX_SIZE tx_size) {
   tx_size = av1_get_adjusted_tx_size(tx_size);
   return tx_size_high[tx_size];
 }
 
-static INLINE uint8_t *set_levels(uint8_t *const levels_buf, const int height) {
+static inline uint8_t *set_levels(uint8_t *const levels_buf, const int height) {
   return levels_buf + TX_PAD_TOP * (height + TX_PAD_HOR);
 }
 
-static INLINE int get_padded_idx(const int idx, const int bhl) {
+static inline int get_padded_idx(const int idx, const int bhl) {
   return idx + ((idx >> bhl) << TX_PAD_HOR_LOG2);
 }
 
-static INLINE int get_br_ctx_2d(const uint8_t *const levels,
+static inline int get_br_ctx_2d(const uint8_t *const levels,
                                 const int c,  // raster order
                                 const int bhl) {
   assert(c > 0);
@@ -226,14 +226,14 @@ static AOM_FORCE_INLINE int get_nz_map_ctx_from_stats(
 typedef aom_cdf_prob (*base_cdf_arr)[CDF_SIZE(4)];
 typedef aom_cdf_prob (*br_cdf_arr)[CDF_SIZE(BR_CDF_SIZE)];
 
-static INLINE int get_lower_levels_ctx_eob(int bhl, int width, int scan_idx) {
+static inline int get_lower_levels_ctx_eob(int bhl, int width, int scan_idx) {
   if (scan_idx == 0) return 0;
   if (scan_idx <= (width << bhl) / 8) return 1;
   if (scan_idx <= (width << bhl) / 4) return 2;
   return 3;
 }
 
-static INLINE int get_lower_levels_ctx_2d(const uint8_t *levels, int coeff_idx,
+static inline int get_lower_levels_ctx_2d(const uint8_t *levels, int coeff_idx,
                                           int bhl, TX_SIZE tx_size) {
   assert(coeff_idx > 0);
   int mag;
@@ -257,7 +257,7 @@ static AOM_FORCE_INLINE int get_lower_levels_ctx(const uint8_t *levels,
   return get_nz_map_ctx_from_stats(stats, coeff_idx, bhl, tx_size, tx_class);
 }
 
-static INLINE int get_lower_levels_ctx_general(int is_last, int scan_idx,
+static inline int get_lower_levels_ctx_general(int is_last, int scan_idx,
                                                int bhl, int width,
                                                const uint8_t *levels,
                                                int coeff_idx, TX_SIZE tx_size,
@@ -271,7 +271,7 @@ static INLINE int get_lower_levels_ctx_general(int is_last, int scan_idx,
   return get_lower_levels_ctx(levels, coeff_idx, bhl, tx_size, tx_class);
 }
 
-static INLINE void set_dc_sign(int *cul_level, int dc_val) {
+static inline void set_dc_sign(int *cul_level, int dc_val) {
   if (dc_val < 0)
     *cul_level |= 1 << COEFF_CONTEXT_BITS;
   else if (dc_val > 0)
@@ -443,7 +443,7 @@ SPECIALIZE_GET_TXB_CTX(32, 32)
 
 // Wrapper for get_txb_ctx that calls the specialized version of get_txb_ctc_*
 // so that the compiler can compile away the while loops.
-static INLINE void get_txb_ctx(const BLOCK_SIZE plane_bsize,
+static inline void get_txb_ctx(const BLOCK_SIZE plane_bsize,
                                const TX_SIZE tx_size, const int plane,
                                const ENTROPY_CONTEXT *const a,
                                const ENTROPY_CONTEXT *const l,

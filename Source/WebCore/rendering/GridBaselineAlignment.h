@@ -53,9 +53,9 @@ public:
 
     // Returns the baseline offset of a particular item, based on the max-ascent for its associated
     // baseline-sharing group
-    LayoutUnit baselineOffsetForChild(ItemPosition, unsigned sharedContext, const RenderBox&, GridAxis) const;
+    LayoutUnit baselineOffsetForGridItem(ItemPosition, unsigned sharedContext, const RenderBox&, GridAxis) const;
 
-    // Sets the Grid Container's writing-mode so that we can avoid the dependecy of the LayoutGrid class for
+    // Sets the Grid Container's writing mode so that we can avoid the dependecy of the LayoutGrid class for
     // determining whether a grid item is orthogonal or not.
     void setWritingMode(WritingMode writingMode) { m_writingMode = writingMode; };
 
@@ -63,20 +63,20 @@ public:
     void clear(GridAxis);
 
 private:
-    const BaselineGroup& baselineGroupForChild(ItemPosition, unsigned sharedContext, const RenderBox&, GridAxis) const;
-    LayoutUnit marginOverForChild(const RenderBox&, GridAxis) const;
-    LayoutUnit marginUnderForChild(const RenderBox&, GridAxis) const;
-    LayoutUnit logicalAscentForChild(const RenderBox&, GridAxis, ItemPosition) const;
-    LayoutUnit ascentForChild(const RenderBox&, GridAxis, ItemPosition) const;
-    LayoutUnit descentForChild(const RenderBox&, LayoutUnit, GridAxis, ExtraMarginsFromSubgrids) const;
-    bool isDescentBaselineForChild(const RenderBox&, GridAxis) const;
+    const BaselineGroup& baselineGroupForGridItem(ItemPosition, unsigned sharedContext, const RenderBox&, GridAxis) const;
+    LayoutUnit marginOverForGridItem(const RenderBox&, GridAxis) const;
+    LayoutUnit marginUnderForGridItem(const RenderBox&, GridAxis) const;
+    LayoutUnit logicalAscentForGridItem(const RenderBox&, GridAxis, ItemPosition) const;
+    LayoutUnit ascentForGridItem(const RenderBox&, GridAxis, ItemPosition) const;
+    LayoutUnit descentForGridItem(const RenderBox&, LayoutUnit, GridAxis, ExtraMarginsFromSubgrids) const;
+    bool isDescentBaselineForGridItem(const RenderBox&, GridAxis) const;
     bool isVerticalAlignmentContext(GridAxis) const;
-    bool isOrthogonalChildForBaseline(const RenderBox&) const;
-    bool isParallelToAlignmentAxisForChild(const RenderBox&, GridAxis) const;
+    bool isOrthogonalGridItemForBaseline(const RenderBox&) const;
+    bool isParallelToAlignmentAxisForGridItem(const RenderBox&, GridAxis) const;
 
-    typedef HashMap<unsigned, std::unique_ptr<BaselineAlignmentState>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BaselineAlignmentStateMap;
+    typedef UncheckedKeyHashMap<unsigned, std::unique_ptr<BaselineAlignmentState>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BaselineAlignmentStateMap;
 
-    // Grid Container's WritingMode, used to determine grid item's orthogonality.
+    // Grid Container's writing mode, used to determine grid item's orthogonality.
     WritingMode m_writingMode;
     BaselineAlignmentStateMap m_rowAxisBaselineAlignmentStates;
     BaselineAlignmentStateMap m_colAxisBaselineAlignmentStates;

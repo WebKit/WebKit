@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (226,27) size 110x10 [border: (4px dotted #000000)] [r=0 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (5,-45) size 100x10 [bgcolor=#90EE90]
                 RenderBlock {DIV} at (0,0) size 50x100 [bgcolor=#87CEEB]
-      RenderTable {TABLE} at (0,214) size 322x60 [border: (2px none #808080)]
+      RenderTable {TABLE} at (0,214) size 322x60 [border: (2px none #000000)]
         RenderTableSection {TBODY} at (2,2) size 318x56
           RenderTableRow {TR} at (0,0) size 318x56
             RenderTableCell {TD} at (0,0) size 106x56 [border: (2px dotted #000000)] [r=0 c=0 rs=1 cs=1]

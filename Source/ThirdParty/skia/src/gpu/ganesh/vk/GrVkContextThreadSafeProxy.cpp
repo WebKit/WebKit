@@ -8,7 +8,7 @@
 
 #include "include/core/SkRefCnt.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "src/gpu/ganesh/vk/GrVkCaps.h"
 
 class GrCaps;
@@ -31,6 +31,6 @@ bool GrVkContextThreadSafeProxy::isValidCharacterizationForVulkan(
 
     const GrVkCaps* vkCaps = (const GrVkCaps*)caps.get();
 
-    // The potection status of the characterization and the context need to match
+    // The protection status of the characterization and the context need to match
     return isProtected == GrProtected(vkCaps->supportsProtectedContent());
 }

@@ -30,8 +30,11 @@
 
 #import <Foundation/Foundation.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCPresentationIntent);
 
 CoreIPCPresentationIntent::CoreIPCPresentationIntent(NSPresentationIntent *intent)
     : m_intentKind(intent.intentKind)

@@ -19,11 +19,11 @@
 #include <deque>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <set>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/video_codecs/vp8_frame_config.h"
 #include "api/video_codecs/vp8_temporal_layers.h"
 #include "modules/video_coding/codecs/vp8/include/temporal_layers_checker.h"
@@ -124,7 +124,7 @@ class DefaultTemporalLayers final : public Vp8FrameBufferController {
 
   uint8_t pattern_idx_;
   // Updated cumulative bitrates, per temporal layer.
-  absl::optional<std::vector<uint32_t>> new_bitrates_bps_;
+  std::optional<std::vector<uint32_t>> new_bitrates_bps_;
 
   // Status for each pending frame, in
   std::deque<PendingFrame> pending_frames_;

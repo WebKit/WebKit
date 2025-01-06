@@ -27,17 +27,8 @@
 
 #if ENABLE(IPC_TESTING_API)
 
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/OptionSet.h>
-#include <wtf/WeakPtr.h>
-
-namespace IPC {
-class MessageObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<IPC::MessageObserver> : std::true_type { };
-}
 
 namespace IPC {
 
@@ -46,7 +37,7 @@ class Encoder;
 
 enum class SendOption : uint8_t;
 
-class MessageObserver : public CanMakeWeakPtr<MessageObserver> {
+class MessageObserver : public AbstractRefCountedAndCanMakeWeakPtr<MessageObserver> {
 public:
     virtual ~MessageObserver() = default;
     virtual void willSendMessage(const Encoder&, OptionSet<SendOption>) = 0;

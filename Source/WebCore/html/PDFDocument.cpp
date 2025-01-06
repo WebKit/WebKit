@@ -46,12 +46,11 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include <JavaScriptCore/ObjectConstructor.h>
-#include <wtf/IsoMallocInlines.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PDFDocument);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PDFDocument);
 
 using namespace HTMLNames;
 
@@ -137,6 +136,8 @@ PDFDocument::PDFDocument(LocalFrame& frame, const URL& url)
 {
 }
 
+PDFDocument::~PDFDocument() = default;
+
 Ref<DocumentParser> PDFDocument::createParser()
 {
     return PDFDocumentParser::create(*this);
@@ -147,13 +148,12 @@ void PDFDocument::createDocumentStructure()
     // Description of parameters:
     // - Empty `?file=` parameter prevents default pdf from loading.
     auto viewerURL = "webkit-pdfjs-viewer://pdfjs/web/viewer.html?file="_s;
-    auto rootElement = HTMLHtmlElement::create(*this);
+    Ref rootElement = HTMLHtmlElement::create(*this);
     appendChild(rootElement);
-    rootElement->insertedByParser();
 
     frame()->injectUserScripts(UserScriptInjectionTime::DocumentStart);
 
-    auto body = HTMLBodyElement::create(*this);
+    Ref body = HTMLBodyElement::create(*this);
     body->setAttribute(styleAttr, "margin: 0px;height: 100vh;"_s);
     rootElement->appendChild(body);
 
@@ -239,7 +239,7 @@ void PDFDocument::injectStyleAndContentScript()
 
     auto* contentDocument = m_iframe->contentDocument();
     ASSERT(contentDocument->head());
-    auto link = HTMLLinkElement::create(HTMLNames::linkTag, *contentDocument, false);
+    Ref link = HTMLLinkElement::create(HTMLNames::linkTag, *contentDocument, false);
     link->setAttribute(relAttr, "stylesheet"_s);
 #if PLATFORM(COCOA)
     link->setAttribute(hrefAttr, "webkit-pdfjs-viewer://pdfjs/extras/cocoa/style.css"_s);

@@ -45,9 +45,9 @@ list(APPEND TestRunnerInjectedBundle_SOURCES
     InjectedBundle/atspi/AccessibilityNotificationHandler.cpp
     InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp
 
-    InjectedBundle/gtk/ActivateFontsGtk.cpp
+    InjectedBundle/glib/ActivateFontsGlib.cpp
+
     InjectedBundle/gtk/InjectedBundleGtk.cpp
-    InjectedBundle/gtk/InjectedBundleUtilities.cpp
     InjectedBundle/gtk/TestRunnerGtk.cpp
 )
 
@@ -55,6 +55,7 @@ list(APPEND TestRunnerInjectedBundle_INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/Source
     ${GLIB_INCLUDE_DIRS}
     ${WebKitTestRunner_DIR}/InjectedBundle/atspi
+    ${WebKitTestRunner_DIR}/InjectedBundle/glib
     ${WebKitTestRunner_DIR}/InjectedBundle/gtk
 )
 

@@ -29,6 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "AccessibilityTextMarkerRange.h"
 #import "AccessibilityUIElement.h"
 #import <JavaScriptCore/JSRetainPtr.h>
 
@@ -50,6 +51,6 @@ namespace WTR {
 
 Class webAccessibilityObjectWrapperClass();
 JSValueRef makeValueRefForValue(JSContextRef, id value);
-extern NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRef, AccessibilityUIElement *startElement, bool isDirectionNext, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
+extern NSDictionary *searchPredicateForSearchCriteria(JSContextRef, AccessibilityUIElement* startElement, AccessibilityTextMarkerRange* startRange, bool forward, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
 
 };

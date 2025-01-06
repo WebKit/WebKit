@@ -69,7 +69,7 @@ public:
 
     ExceptionOr<void> copyTo(BufferSource&&);
 
-    const uint8_t* data() const { return m_storage->data().buffer.data(); }
+    std::span<const uint8_t> span() const { return m_storage->data().buffer.span(); }
     WebCodecsEncodedVideoChunkStorage& storage() { return m_storage.get(); }
 
 private:

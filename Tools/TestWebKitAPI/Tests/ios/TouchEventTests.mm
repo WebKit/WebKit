@@ -36,7 +36,7 @@
 #import <wtf/RetainPtr.h>
 
 @interface UIView (WKContentView)
-- (void)_touchEventsRecognized:(WKTouchEventsGestureRecognizer *)gestureRecognizer;
+- (void)_touchEventsRecognized;
 @end
 
 static WKWebView *globalWebView = nil;
@@ -70,33 +70,13 @@ static Class touchEventsGestureRecognizerClass()
     return result;
 }
 
-@interface WKWebView (TouchEventTests)
-@property (nonatomic, readonly) WKTouchEventsGestureRecognizer *touchEventGestureRecognizer;
-@end
-
-@implementation WKWebView (TouchEventTests)
-
-- (WKTouchEventsGestureRecognizer *)touchEventGestureRecognizer
-{
-    for (UIGestureRecognizer *gestureRecognizer in self.textInputContentView.gestureRecognizers) {
-        if ([gestureRecognizer isKindOfClass:touchEventsGestureRecognizerClass()])
-            return (WKTouchEventsGestureRecognizer *)gestureRecognizer;
-    }
-    return nil;
-}
-
-@end
-
 namespace TestWebKitAPI {
 
 static WebKit::WKTouchPoint globalTouchPoint { CGPointZero, CGPointZero, 100, UITouchPhaseBegan, 1, 0, 0, 0, WebKit::WKTouchPointType::Direct };
-static WebKit::WKTouchEvent globalTouchEvent { WebKit::WKTouchEventType::Begin, CACurrentMediaTime(), CGPointZero, CGPointZero, 1, 0, false, { globalTouchPoint }, true };
+static WebKit::WKTouchEvent globalTouchEvent { WebKit::WKTouchEventType::Begin, CACurrentMediaTime(), CGPointZero, 1, 0, false, { globalTouchPoint }, { }, { }, true };
 static void updateSimulatedTouchEvent(CGPoint location, UITouchPhase phase)
 {
-    globalTouchPoint.locationInScreenCoordinates = location;
-    globalTouchPoint.locationInDocumentCoordinates = location;
-    globalTouchEvent.locationInScreenCoordinates = location;
-    globalTouchEvent.locationInDocumentCoordinates = location;
+    globalTouchEvent.locationInRootViewCoordinates = location;
     globalTouchPoint.phase = phase;
     switch (phase) {
     case UITouchPhaseBegan:
@@ -125,26 +105,26 @@ TEST(TouchEventTests, DestroyWebViewWhileHandlingTouchEnd)
 {
     InstanceMethodSwizzler lastTouchEventSwizzler { touchEventsGestureRecognizerClass(), @selector(lastTouchEvent), reinterpret_cast<IMP>(simulatedTouchEvent) };
     @autoreleasepool {
-        auto messageHandler = adoptNS([TouchEventScriptMessageHandler new]);
-        auto controller = adoptNS([[WKUserContentController alloc] init]);
+        RetainPtr messageHandler = adoptNS([TouchEventScriptMessageHandler new]);
+        RetainPtr controller = adoptNS([[WKUserContentController alloc] init]);
         [controller addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
 
-        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         [configuration setUserContentController:controller.get()];
 
         globalWebView = [[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()];
-        auto hostWindow = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+        RetainPtr hostWindow = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
         [hostWindow setHidden:NO];
         [hostWindow addSubview:globalWebView];
 
-        [globalWebView loadRequest:[NSURLRequest requestWithURL:[NSBundle.mainBundle URLForResource:@"active-touch-events" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+        [globalWebView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"active-touch-events" withExtension:@"html"]]];
         [globalWebView _test_waitForDidFinishNavigation];
 
         updateSimulatedTouchEvent(CGPointMake(100, 100), UITouchPhaseBegan);
-        [[globalWebView textInputContentView] _touchEventsRecognized:globalWebView.touchEventGestureRecognizer];
+        [[globalWebView textInputContentView] _touchEventsRecognized];
 
         updateSimulatedTouchEvent(CGPointMake(100, 100), UITouchPhaseEnded);
-        [[globalWebView textInputContentView] _touchEventsRecognized:globalWebView.touchEventGestureRecognizer];
+        [[globalWebView textInputContentView] _touchEventsRecognized];
     }
 
     __block bool done = false;

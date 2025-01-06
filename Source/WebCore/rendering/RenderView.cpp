@@ -35,6 +35,7 @@
 #include "ImageQualityController.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutInitialContainingBlock.h"
+#include "LayoutIntegrationFormattingContextLayout.h"
 #include "LayoutState.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
@@ -49,9 +50,9 @@
 #include "RenderGeometryMap.h"
 #include "RenderImage.h"
 #include "RenderIterator.h"
-#include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerInlines.h"
 #include "RenderLayoutState.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
@@ -67,19 +68,19 @@
 #include "Settings.h"
 #include "StyleInheritedData.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderView);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderView);
 
 RenderView::RenderView(Document& document, RenderStyle&& style)
     : RenderBlockFlow(Type::View, document, WTFMove(style))
     , m_frameView(*document.view())
     , m_initialContainingBlock(makeUniqueRef<Layout::InitialContainingBlock>(RenderStyle::clone(this->style())))
-    , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock, Layout::LayoutState::Type::Primary))
+    , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock, Layout::LayoutState::Type::Primary, LayoutIntegration::layoutWithFormattingContextForBox, LayoutIntegration::formattingContextRootLogicalWidthForType, LayoutIntegration::formattingContextRootLogicalHeightForType))
     , m_selection(*this)
 {
     // FIXME: We should find a way to enforce this at compile time.
@@ -109,11 +110,14 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
-    bool writingModeChanged = oldStyle && style().writingMode() != oldStyle->writingMode();
-    bool directionChanged = oldStyle && style().direction() != oldStyle->direction();
+    if (!oldStyle)
+        return;
+
+    bool writingModeChanged = writingMode().computedWritingMode() != oldStyle->writingMode().computedWritingMode();
+    bool directionChanged = writingMode().bidiDirection() != oldStyle->writingMode().bidiDirection();
 
     if ((writingModeChanged || directionChanged) && multiColumnFlow()) {
-        if (frameView().pagination().mode != Pagination::Mode::Unpaginated)
+        if (protectedFrameView()->pagination().mode != Pagination::Mode::Unpaginated)
             updateColumnProgressionFromStyle(style());
         updateStylesForColumnChildren(oldStyle);
     }
@@ -129,7 +133,7 @@ RenderBox::LogicalExtentComputedValues RenderView::computeLogicalHeight(LayoutUn
 
 inline int RenderView::viewLogicalWidth() const
 {
-    return style().isHorizontalWritingMode() ? viewWidth() : viewHeight();
+    return writingMode().isHorizontal() ? viewWidth() : viewHeight();
 }
 
 void RenderView::updateLogicalWidth()
@@ -144,12 +148,13 @@ LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType) const
     if (multiColumnFlow() && multiColumnFlow()->firstMultiColumnSet())
         return multiColumnFlow()->firstMultiColumnSet()->computedColumnHeight();
 
+    Ref frameView = this->frameView();
 #if PLATFORM(IOS_FAMILY)
     // Workaround for <rdar://problem/7166808>.
-    if (document().isPluginDocument() && frameView().useFixedLayout())
-        return frameView().fixedLayoutSize().height();
+    if (document().isPluginDocument() && frameView->useFixedLayout())
+        return frameView->fixedLayoutSize().height();
 #endif
-    return isHorizontalWritingMode() ? frameView().layoutSize().height() : frameView().layoutSize().width();
+    return isHorizontalWritingMode() ? frameView->layoutSize().height() : frameView->layoutSize().width();
 }
 
 bool RenderView::isChildAllowed(const RenderObject& child, const RenderStyle&) const
@@ -201,7 +206,6 @@ void RenderView::layout()
 #ifndef NDEBUG
     frameView().layoutContext().checkLayoutState();
 #endif
-    clearNeedsLayout();
 }
 
 void RenderView::updateQuirksMode()
@@ -221,7 +225,7 @@ LayoutUnit RenderView::pageOrViewLogicalHeight() const
         return m_pageLogicalSize->height();
     
     if (multiColumnFlow() && !style().hasInlineColumnAxis()) {
-        if (int pageLength = frameView().pagination().pageLength)
+        if (int pageLength = protectedFrameView()->pagination().pageLength)
             return pageLength;
     }
 
@@ -230,34 +234,34 @@ LayoutUnit RenderView::pageOrViewLogicalHeight() const
 
 LayoutUnit RenderView::clientLogicalWidthForFixedPosition() const
 {
-    // FIXME: If the FrameView's fixedVisibleContentRect() is not empty, perhaps it should be consulted here too?
-    if (frameView().fixedElementsLayoutRelativeToFrame())
-        return LayoutUnit((isHorizontalWritingMode() ? frameView().visibleWidth() : frameView().visibleHeight()) / frameView().frame().frameScaleFactor());
+    Ref frameView = this->frameView();
+    if (frameView->fixedElementsLayoutRelativeToFrame())
+        return LayoutUnit((isHorizontalWritingMode() ? frameView->visibleWidth() : frameView->visibleHeight()) / frameView->frame().frameScaleFactor());
 
 #if PLATFORM(IOS_FAMILY)
-    if (frameView().useCustomFixedPositionLayoutRect())
-        return isHorizontalWritingMode() ? frameView().customFixedPositionLayoutRect().width() : frameView().customFixedPositionLayoutRect().height();
+    if (frameView->useCustomFixedPositionLayoutRect())
+        return isHorizontalWritingMode() ? frameView->customFixedPositionLayoutRect().width() : frameView->customFixedPositionLayoutRect().height();
 #endif
 
     if (settings().visualViewportEnabled())
-        return isHorizontalWritingMode() ? frameView().layoutViewportRect().width() : frameView().layoutViewportRect().height();
+        return isHorizontalWritingMode() ? frameView->layoutViewportRect().width() : frameView->layoutViewportRect().height();
 
     return clientLogicalWidth();
 }
 
 LayoutUnit RenderView::clientLogicalHeightForFixedPosition() const
 {
-    // FIXME: If the FrameView's fixedVisibleContentRect() is not empty, perhaps it should be consulted here too?
-    if (frameView().fixedElementsLayoutRelativeToFrame())
-        return LayoutUnit((isHorizontalWritingMode() ? frameView().visibleHeight() : frameView().visibleWidth()) / frameView().frame().frameScaleFactor());
+    Ref frameView = this->frameView();
+    if (frameView->fixedElementsLayoutRelativeToFrame())
+        return LayoutUnit((isHorizontalWritingMode() ? frameView->visibleHeight() : frameView->visibleWidth()) / frameView->frame().frameScaleFactor());
 
 #if PLATFORM(IOS_FAMILY)
-    if (frameView().useCustomFixedPositionLayoutRect())
-        return isHorizontalWritingMode() ? frameView().customFixedPositionLayoutRect().height() : frameView().customFixedPositionLayoutRect().width();
+    if (frameView->useCustomFixedPositionLayoutRect())
+        return isHorizontalWritingMode() ? frameView->customFixedPositionLayoutRect().height() : frameView->customFixedPositionLayoutRect().width();
 #endif
 
     if (settings().visualViewportEnabled())
-        return isHorizontalWritingMode() ? frameView().layoutViewportRect().height() : frameView().layoutViewportRect().width();
+        return isHorizontalWritingMode() ? frameView->layoutViewportRect().height() : frameView->layoutViewportRect().width();
 
     return clientLogicalHeight();
 }
@@ -270,7 +274,7 @@ void RenderView::mapLocalToContainer(const RenderLayerModelObject* ancestorConta
     ASSERT_UNUSED(wasFixed, !wasFixed || *wasFixed == (mode.contains(IsFixed)));
 
     if (mode.contains(IsFixed))
-        transformState.move(toLayoutSize(frameView().scrollPositionRespectingCustomFixedPosition()));
+        transformState.move(toLayoutSize(protectedFrameView()->scrollPositionRespectingCustomFixedPosition()));
 
     if (!ancestorContainer && mode.contains(UseTransforms) && shouldUseTransformFromContainer(nullptr)) {
         TransformationMatrix t;
@@ -285,7 +289,7 @@ const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObj
     // then we should have found it by now.
     ASSERT_ARG(ancestorToStopAt, !ancestorToStopAt || ancestorToStopAt == this);
 
-    LayoutPoint scrollPosition = frameView().scrollPositionRespectingCustomFixedPosition();
+    LayoutPoint scrollPosition = protectedFrameView()->scrollPositionRespectingCustomFixedPosition();
 
     if (!ancestorToStopAt && shouldUseTransformFromContainer(nullptr)) {
         TransformationMatrix t;
@@ -306,19 +310,19 @@ void RenderView::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, Tra
     }
 
     if (mode & IsFixed)
-        transformState.move(toLayoutSize(frameView().scrollPositionRespectingCustomFixedPosition()));
+        transformState.move(toLayoutSize(protectedFrameView()->scrollPositionRespectingCustomFixedPosition()));
 }
 
 bool RenderView::requiresColumns(int) const
 {
-    return frameView().pagination().mode != Pagination::Mode::Unpaginated;
+    return protectedFrameView()->pagination().mode != Pagination::Mode::Unpaginated;
 }
 
 void RenderView::computeColumnCountAndWidth()
 {
     int columnWidth = contentLogicalWidth();
     if (style().hasInlineColumnAxis()) {
-        if (int pageLength = frameView().pagination().pageLength)
+        if (int pageLength = protectedFrameView()->pagination().pageLength)
             columnWidth = pageLength;
     }
     setComputedColumnCountAndWidth(1, columnWidth);
@@ -332,8 +336,9 @@ void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     ASSERT(LayoutPoint(IntPoint(paintOffset.x(), paintOffset.y())) == paintOffset);
 
     // This avoids painting garbage between columns if there is a column gap.
-    if (frameView().pagination().mode != Pagination::Mode::Unpaginated && paintInfo.shouldPaintWithinRoot(*this))
-        paintInfo.context().fillRect(paintInfo.rect, frameView().baseBackgroundColor());
+    Ref frameView = this->frameView();
+    if (frameView->pagination().mode != Pagination::Mode::Unpaginated && paintInfo.shouldPaintWithinRoot(*this))
+        paintInfo.context().fillRect(paintInfo.rect, frameView->baseBackgroundColor());
 
     paintObject(paintInfo, paintOffset);
 }
@@ -376,7 +381,7 @@ static inline bool rendererObscuresBackground(const RenderElement& rootElement)
     if (rootElement.isComposited())
         return false;
 
-    if (rootElement.hasClipPath() && rootElement.isRenderSVGRoot())
+    if (rootElement.hasClipPath() && rootElement.isRenderOrLegacyRenderSVGRoot())
         return false;
 
     auto* rendererForBackground = rootElement.view().rendererForRootBackground();
@@ -402,13 +407,13 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     for (HTMLFrameOwnerElement* element = document().ownerElement(); element && element->renderer(); element = element->document().ownerElement()) {
         RenderLayer* layer = element->renderer()->enclosingLayer();
         if (layer->cannotBlitToWindow()) {
-            frameView().setCannotBlitToWindow();
+            protectedFrameView()->setCannotBlitToWindow();
             break;
         }
 
         if (auto* compositingLayer = layer->enclosingCompositingLayerForRepaint().layer) {
             if (!compositingLayer->backing()->paintsIntoWindow()) {
-                frameView().setCannotBlitToWindow();
+                protectedFrameView()->setCannotBlitToWindow();
                 break;
             }
         }
@@ -447,11 +452,12 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     // since iframes/frames with no background in the child document should show the parent's background.
     // We use the base background color unless the backgroundShouldExtendBeyondPage setting is set,
     // in which case we use the document's background color.
-    if (frameView().isTransparent()) // FIXME: This needs to be dynamic. We should be able to go back to blitting if we ever stop being transparent.
-        frameView().setCannotBlitToWindow(); // The parent must show behind the child.
+    Ref frameView = this->frameView();
+    if (frameView->isTransparent()) // FIXME: This needs to be dynamic. We should be able to go back to blitting if we ever stop being transparent.
+        frameView->setCannotBlitToWindow(); // The parent must show behind the child.
     else {
-        const Color& documentBackgroundColor = frameView().documentBackgroundColor();
-        const Color& backgroundColor = (shouldPropagateBackgroundPaintingToInitialContainingBlock && settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView().baseBackgroundColor();
+        const Color& documentBackgroundColor = frameView->documentBackgroundColor();
+        const Color& backgroundColor = (shouldPropagateBackgroundPaintingToInitialContainingBlock && settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView->baseBackgroundColor();
         if (backgroundColor.isVisible()) {
             CompositeOperator previousOperator = paintInfo.context().compositeOperation();
             paintInfo.context().setCompositeOperation(CompositeOperator::Copy);
@@ -510,17 +516,17 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
         // that the coordinate system is mapped appropriately between the iframe's contents
         // and the Renderer that contains the iframe. This transformation must account for a
         // left scrollbar (if one exists).
-        LocalFrameView& frameView = this->frameView();
-        if (frameView.shouldPlaceVerticalScrollbarOnLeft() && frameView.verticalScrollbar())
-            adjustedRect.move(LayoutSize(frameView.verticalScrollbar()->occupiedWidth(), 0));
+        Ref frameView = this->frameView();
+        if (frameView->shouldPlaceVerticalScrollbarOnLeft() && frameView->verticalScrollbar())
+            adjustedRect.move(LayoutSize(frameView->verticalScrollbar()->occupiedWidth(), 0));
 
         ownerBox->repaintRectangle(adjustedRect);
         return;
     }
 
-    frameView().addTrackedRepaintRect(snapRectToDevicePixels(repaintRect, document().deviceScaleFactor()));
+    protectedFrameView()->addTrackedRepaintRect(snapRectToDevicePixels(repaintRect, document().deviceScaleFactor()));
     if (!m_accumulatedRepaintRegion) {
-        frameView().repaintContentRectangle(enclosingRect);
+        protectedFrameView()->repaintContentRectangle(enclosingRect);
         return;
     }
     m_accumulatedRepaintRegion->unite(enclosingRect);
@@ -537,7 +543,7 @@ void RenderView::flushAccumulatedRepaintRegion() const
     ASSERT(m_accumulatedRepaintRegion);
     auto repaintRects = m_accumulatedRepaintRegion->rects();
     for (auto& rect : repaintRects)
-        frameView().repaintContentRectangle(rect);
+        protectedFrameView()->repaintContentRectangle(rect);
     m_accumulatedRepaintRegion = nullptr;
 }
 
@@ -560,14 +566,14 @@ auto RenderView::computeVisibleRectsInContainer(const RepaintRects& rects, const
         return rects;
 
     auto adjustedRects = rects;
-    if (style().isFlippedBlocksWritingMode()) {
+    if (writingMode().isBlockFlipped()) {
         // We have to flip by hand since the view's logical height has not been determined.  We
         // can use the viewport width and height.
-        adjustedRects.flipForWritingMode(LayoutSize(viewWidth(), viewHeight()), style().isHorizontalWritingMode());
+        adjustedRects.flipForWritingMode(LayoutSize(viewWidth(), viewHeight()), writingMode().isHorizontal());
     }
 
     if (context.hasPositionFixedDescendant)
-        adjustedRects.moveBy(frameView().scrollPositionRespectingCustomFixedPosition());
+        adjustedRects.moveBy(protectedFrameView()->scrollPositionRespectingCustomFixedPosition());
 
     // Apply our transform if we have one (because of full page zooming).
     if (!container && hasLayer() && layer()->transform())
@@ -581,7 +587,7 @@ bool RenderView::isScrollableOrRubberbandableBox() const
     // The main frame might be allowed to rubber-band even if there is no content to scroll to. This is unique to
     // the main frame; subframes and overflow areas have to have content that can be scrolled to in order to rubber-band.
     LocalFrameView::Scrollability defineScrollable = frame().ownerElement() ? LocalFrameView::Scrollability::Scrollable : LocalFrameView::Scrollability::ScrollableOrRubberbandable;
-    return frameView().isScrollable(defineScrollable);
+    return protectedFrameView()->isScrollable(defineScrollable);
 }
 
 void RenderView::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -606,14 +612,14 @@ bool RenderView::shouldUsePrintingLayout() const
 {
     if (!printing())
         return false;
-    return frameView().frame().shouldUsePrintingLayout();
+    return protectedFrameView()->frame().shouldUsePrintingLayout();
 }
 
 LayoutRect RenderView::viewRect() const
 {
     if (shouldUsePrintingLayout())
         return LayoutRect(LayoutPoint(), size());
-    return frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
+    return protectedFrameView()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
 }
 
 IntRect RenderView::unscaledDocumentRect() const
@@ -637,10 +643,10 @@ bool RenderView::shouldPaintBaseBackground() const
     auto* ownerElement = document.ownerElement();
 
     // Fill with a base color if we're the root document.
-    if (!ownerElement)
+    if (frameView.frame().isMainFrame())
         return !frameView.isTransparent();
 
-    if (ownerElement->hasTagName(HTMLNames::frameTag))
+    if (ownerElement && ownerElement->hasTagName(HTMLNames::frameTag))
         return true;
 
     // Locate the <body> element using the DOM. This is easier than trying
@@ -657,7 +663,7 @@ bool RenderView::shouldPaintBaseBackground() const
     if (is<HTMLFrameSetElement>(*body))
         return true;
 
-    auto* frameRenderer = ownerElement->renderer();
+    auto* frameRenderer = ownerElement ? ownerElement->renderer() : nullptr;
     if (!frameRenderer)
         return false;
 
@@ -694,8 +700,9 @@ LayoutRect RenderView::unextendedBackgroundRect() const
 LayoutRect RenderView::backgroundRect() const
 {
     // FIXME: New columns care about this?
-    if (frameView().hasExtendedBackgroundRectForPainting())
-        return frameView().extendedBackgroundRectForPainting();
+    Ref frameView = this->frameView();
+    if (frameView->hasExtendedBackgroundRectForPainting())
+        return frameView->extendedBackgroundRectForPainting();
 
     return unextendedBackgroundRect();
 }
@@ -712,8 +719,9 @@ int RenderView::viewHeight() const
 {
     int height = 0;
     if (!shouldUsePrintingLayout()) {
-        height = frameView().layoutHeight();
-        height = frameView().useFixedLayout() ? ceilf(style().usedZoom() * float(height)) : height;
+        Ref frameView = this->frameView();
+        height = frameView->layoutHeight();
+        height = frameView->useFixedLayout() ? ceilf(style().usedZoom() * float(height)) : height;
     }
     return height;
 }
@@ -722,15 +730,16 @@ int RenderView::viewWidth() const
 {
     int width = 0;
     if (!shouldUsePrintingLayout()) {
-        width = frameView().layoutWidth();
-        width = frameView().useFixedLayout() ? ceilf(style().usedZoom() * float(width)) : width;
+        Ref frameView = this->frameView();
+        width = frameView->layoutWidth();
+        width = frameView->useFixedLayout() ? ceilf(style().usedZoom() * float(width)) : width;
     }
     return width;
 }
 
 int RenderView::viewLogicalHeight() const
 {
-    int height = style().isHorizontalWritingMode() ? viewHeight() : viewWidth();
+    int height = writingMode().isHorizontal() ? viewHeight() : viewWidth();
     return height;
 }
 
@@ -744,27 +753,27 @@ void RenderView::setPageLogicalSize(LayoutSize size)
 
 float RenderView::zoomFactor() const
 {
-    return frameView().frame().pageZoomFactor();
+    return protectedFrameView()->frame().pageZoomFactor();
 }
 
 FloatSize RenderView::sizeForCSSSmallViewportUnits() const
 {
-    return frameView().sizeForCSSSmallViewportUnits();
+    return protectedFrameView()->sizeForCSSSmallViewportUnits();
 }
 
 FloatSize RenderView::sizeForCSSLargeViewportUnits() const
 {
-    return frameView().sizeForCSSLargeViewportUnits();
+    return protectedFrameView()->sizeForCSSLargeViewportUnits();
 }
 
 FloatSize RenderView::sizeForCSSDynamicViewportUnits() const
 {
-    return frameView().sizeForCSSDynamicViewportUnits();
+    return protectedFrameView()->sizeForCSSDynamicViewportUnits();
 }
 
 FloatSize RenderView::sizeForCSSDefaultViewportUnits() const
 {
-    return frameView().sizeForCSSDefaultViewportUnits();
+    return protectedFrameView()->sizeForCSSDefaultViewportUnits();
 }
 
 Node* RenderView::nodeForHitTest() const
@@ -772,7 +781,7 @@ Node* RenderView::nodeForHitTest() const
     return document().documentElement();
 }
 
-void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)
+void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& point) const
 {
     if (result.innerNode())
         return;
@@ -1061,24 +1070,6 @@ unsigned RenderView::pageCount() const
     return 0;
 }
 
-void RenderView::layerChildrenChangedDuringStyleChange(RenderLayer& layer)
-{
-    if (!m_styleChangeLayerMutationRoot) {
-        m_styleChangeLayerMutationRoot = layer;
-        return;
-    }
-
-    RenderLayer* commonAncestor = m_styleChangeLayerMutationRoot->commonAncestorWithLayer(layer);
-    m_styleChangeLayerMutationRoot = commonAncestor;
-}
-
-RenderLayer* RenderView::takeStyleChangeLayerTreeMutationRoot()
-{
-    auto* result = m_styleChangeLayerMutationRoot.get();
-    m_styleChangeLayerMutationRoot.clear();
-    return result;
-}
-
 void RenderView::registerBoxWithScrollSnapPositions(const RenderBox& box)
 {
     m_boxesWithScrollSnapPositions.add(box);
@@ -1099,6 +1090,16 @@ void RenderView::unregisterContainerQueryBox(const RenderBox& box)
     m_containerQueryBoxes.remove(box);
 }
 
+void RenderView::registerAnchor(const RenderBoxModelObject& renderer)
+{
+    m_anchors.add(renderer);
+}
+
+void RenderView::unregisterAnchor(const RenderBoxModelObject& renderer)
+{
+    m_anchors.remove(renderer);
+}
+
 void RenderView::addCounterNeedingUpdate(RenderCounter& renderer)
 {
     m_countersNeedingUpdate.add(renderer);
@@ -1117,6 +1118,21 @@ SingleThreadWeakPtr<RenderElement> RenderView::viewTransitionRoot() const
 void RenderView::setViewTransitionRoot(RenderElement& renderer)
 {
     m_viewTransitionRoot = renderer;
+}
+
+void RenderView::addViewTransitionGroup(const AtomString& name, RenderElement& group)
+{
+    m_viewTransitionGroups.set(name, &group);
+}
+
+void RenderView::removeViewTransitionGroup(const AtomString& name)
+{
+    m_viewTransitionGroups.remove(name);
+}
+
+RenderElement* RenderView::viewTransitionGroupForName(const AtomString& name)
+{
+    return m_viewTransitionGroups.get(name).get();
 }
 
 } // namespace WebCore

@@ -1624,21 +1624,21 @@ public:
 
     static void repatchPointer(void* where, void* valuePtr)
     {
-        uint32_t* location = reinterpret_cast<uint32_t*>(where);
+        uint32_t* location = static_cast<uint32_t*>(where);
         PatchPointerImpl::apply(location, valuePtr);
         cacheFlush(location, sizeof(uint32_t) * 8);
     }
 
     static void relinkJump(void* from, void* to)
     {
-        uint32_t* location = reinterpret_cast<uint32_t*>(from);
+        uint32_t* location = static_cast<uint32_t*>(from);
         LinkJumpImpl::apply(location, to);
         cacheFlush(location, sizeof(uint32_t) * 2);
     }
 
     static void relinkCall(void* from, void* to)
     {
-        uint32_t* location = reinterpret_cast<uint32_t*>(from);
+        uint32_t* location = static_cast<uint32_t*>(from);
         LinkCallImpl::apply(location, to);
         cacheFlush(location, sizeof(uint32_t) * 2);
     }
@@ -1650,14 +1650,14 @@ public:
 
     static void replaceWithVMHalt(void* where)
     {
-        uint32_t* location = reinterpret_cast<uint32_t*>(where);
+        uint32_t* location = static_cast<uint32_t*>(where);
         location[0] = RISCV64Instructions::SD::construct(RISCV64Registers::zero, RISCV64Registers::zero, SImmediate::v<SImmediate, 0>());
         cacheFlush(location, sizeof(uint32_t));
     }
 
     static void replaceWithJump(void* from, void* to)
     {
-        uint32_t* location = reinterpret_cast<uint32_t*>(from);
+        uint32_t* location = static_cast<uint32_t*>(from);
         intptr_t offset = uintptr_t(to) - uintptr_t(from);
 
         if (JImmediate::isValid(offset)) {
@@ -1682,14 +1682,14 @@ public:
 
     static void revertJumpReplacementToPatch(void* from, void* valuePtr)
     {
-        uint32_t* location = reinterpret_cast<uint32_t*>(from);
+        uint32_t* location = static_cast<uint32_t*>(from);
         PatchPointerImpl::apply(location, RISCV64Registers::x30, valuePtr);
         cacheFlush(location, sizeof(uint32_t) * 8);
     }
 
     static void* readCallTarget(void* from)
     {
-        uint32_t* location = reinterpret_cast<uint32_t*>(from);
+        uint32_t* location = static_cast<uint32_t*>(from);
         return PatchPointerImpl::read(location);
     }
 
@@ -1698,13 +1698,13 @@ public:
     static void cacheFlush(void* code, size_t size)
     {
         intptr_t end = reinterpret_cast<intptr_t>(code) + size;
-        __builtin___clear_cache(reinterpret_cast<char*>(code), reinterpret_cast<char*>(end));
+        __builtin___clear_cache(static_cast<char*>(code), reinterpret_cast<char*>(end));
     }
 
     template<MachineCodeCopyMode copy>
     static void fillNops(void* base, size_t size)
     {
-        uint32_t* ptr = reinterpret_cast<uint32_t*>(base);
+        uint32_t* ptr = static_cast<uint32_t*>(base);
         RELEASE_ASSERT(roundUpToMultipleOf<sizeof(uint32_t)>(ptr) == ptr);
         RELEASE_ASSERT(!(size % sizeof(uint32_t)));
 

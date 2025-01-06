@@ -10,6 +10,8 @@
 
 #include "logging/rtc_event_log/encoder/optional_blob_encoding.h"
 
+#include <cstdint>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -70,7 +72,7 @@ TEST(OptionalBlobEncoding, AllBlobsPresent) {
 }
 
 TEST(OptionalBlobEncoding, SomeBlobsPresent) {
-  std::string encoded = EncodeOptionalBlobs({"a", absl::nullopt, "c"});
+  std::string encoded = EncodeOptionalBlobs({"a", std::nullopt, "c"});
   std::string expected = BitBuilder()
                              .Bit(0)
                              .Bit(1)
@@ -85,12 +87,12 @@ TEST(OptionalBlobEncoding, SomeBlobsPresent) {
 
 TEST(OptionalBlobEncoding, NoBlobsPresent) {
   std::string encoded =
-      EncodeOptionalBlobs({absl::nullopt, absl::nullopt, absl::nullopt});
+      EncodeOptionalBlobs({std::nullopt, std::nullopt, std::nullopt});
   EXPECT_THAT(encoded, IsEmpty());
 }
 
 TEST(OptionalBlobEncoding, EmptyBlobsPresent) {
-  std::string encoded = EncodeOptionalBlobs({absl::nullopt, "", absl::nullopt});
+  std::string encoded = EncodeOptionalBlobs({std::nullopt, "", std::nullopt});
   std::string expected = BitBuilder()
                              .Bit(0)
                              .Bit(0)
@@ -146,13 +148,12 @@ TEST(OptionalBlobDecoding, SomeBlobsPresent) {
                             .Bytes({0x01, 'c'})
                             .AsString();
   auto decoded = DecodeOptionalBlobs(encoded, 3);
-  EXPECT_THAT(decoded, ElementsAre("a", absl::nullopt, "c"));
+  EXPECT_THAT(decoded, ElementsAre("a", std::nullopt, "c"));
 }
 
 TEST(OptionalBlobDecoding, NoBlobsPresent) {
   auto decoded = DecodeOptionalBlobs("", 3);
-  EXPECT_THAT(decoded,
-              ElementsAre(absl::nullopt, absl::nullopt, absl::nullopt));
+  EXPECT_THAT(decoded, ElementsAre(std::nullopt, std::nullopt, std::nullopt));
 }
 
 TEST(OptionalBlobDecoding, EmptyBlobsPresent) {
@@ -165,7 +166,7 @@ TEST(OptionalBlobDecoding, EmptyBlobsPresent) {
                             .Bytes({0x0})
                             .AsString();
   auto decoded = DecodeOptionalBlobs(encoded, 3);
-  EXPECT_THAT(decoded, ElementsAre(absl::nullopt, "", absl::nullopt));
+  EXPECT_THAT(decoded, ElementsAre(std::nullopt, "", std::nullopt));
 }
 
 TEST(OptionalBlobDecoding, ZeroBlobs) {

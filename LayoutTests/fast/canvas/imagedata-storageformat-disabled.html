@@ -1,0 +1,36 @@
+<!-- webkit-test-runner [ CanvasPixelFormatEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that ImageDataSettings with CanvasPixelFormatEnabled=false ignores storageFormat.");
+
+var canvas = document.createElement("canvas");
+canvas.width = 10;
+canvas.height = 10;
+var context = canvas.getContext("2d");
+
+var created_imageData_uint8 = context.createImageData(1, 1, { storageFormat: "uint8" });
+shouldBe('created_imageData_uint8.data.constructor', 'Uint8ClampedArray');
+
+var gotten_imageData_uint8 = context.getImageData(0, 0, 1, 1, { storageFormat: "uint8" });
+shouldBe('gotten_imageData_uint8.data.constructor', 'Uint8ClampedArray');
+
+var created_imageData_float16 = context.createImageData(1, 1, { storageFormat: "float16" });
+shouldBe('created_imageData_float16.data.constructor', 'Uint8ClampedArray');
+
+var gotten_imageData_float16 = context.getImageData(0, 0, 1, 1, { storageFormat: "float16" });
+shouldBe('gotten_imageData_float16.data.constructor', 'Uint8ClampedArray');
+
+var created_imageData_foo = context.createImageData(1, 1, { storageFormat: "foo" });
+shouldBe('created_imageData_foo.data.constructor', 'Uint8ClampedArray');
+
+var gotten_imageData_foo = context.getImageData(0, 0, 1, 1, { storageFormat: "foo" });
+shouldBe('gotten_imageData_foo.data.constructor', 'Uint8ClampedArray');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

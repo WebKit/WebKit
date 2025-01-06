@@ -27,7 +27,6 @@
 #include "StreamConnectionBuffer.h"
 
 #include "Decoder.h"
-#include "WebCoreArgumentCoders.h"
 
 namespace IPC {
 
@@ -50,12 +49,7 @@ StreamConnectionBuffer::Handle StreamConnectionBuffer::createHandle()
 
 std::span<uint8_t> StreamConnectionBuffer::headerForTesting()
 {
-    return { static_cast<uint8_t*>(m_sharedMemory->data()), headerSize() };
-}
-
-std::span<uint8_t> StreamConnectionBuffer::dataForTesting()
-{
-    return { data(), m_sharedMemory->size() - headerSize() };
+    return m_sharedMemory->mutableSpan().first(headerSize());
 }
 
 }

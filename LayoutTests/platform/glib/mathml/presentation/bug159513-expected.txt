@@ -1,62 +1,62 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x111
-  RenderBlock {HTML} at (0,0) size 800x112
-    RenderBody {BODY} at (8,16) size 784x88
+layer at (0,0) size 800x110
+  RenderBlock {HTML} at (0,0) size 800x111
+    RenderBody {BODY} at (8,16) size 784x87
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 261x17
           text run at (0,0) width 261: "Test passes if horizontal operators stretch."
-      RenderBlock (anonymous) at (0,34) size 784x54
-        RenderMathMLMath {math} at (0,12) size 60x37
-          RenderMathMLUnderOver {mover} at (0,0) size 60x37
-            RenderMathMLSpace {mspace} at (0,6) size 60x31 [bgcolor=#008000]
-            RenderMathMLOperator {mo} at (7,1) size 46x6
-              RenderBlock (anonymous) at (0,0) size 13x18
-                RenderText {#text} at (0,-67) size 13x158
-                  text run at (0,-67) width 13: "^"
-        RenderText {#text} at (60,34) size 4x17
-          text run at (60,34) width 4: " "
-        RenderMathMLMath {math} at (64,18) size 60x36
+      RenderBlock (anonymous) at (0,34) size 784x53
+        RenderMathMLMath {math} at (0,10) size 60x38
+          RenderMathMLUnderOver {mover} at (0,0) size 60x38
+            RenderMathMLSpace {mspace} at (0,7) size 60x31 [bgcolor=#008000]
+            RenderMathMLOperator {mo} at (8,1) size 44x7
+              RenderBlock (anonymous) at (0,0) size 13x17
+                RenderText {#text} at (0,-64) size 13x151
+                  text run at (0,-64) width 13: "^"
+        RenderText {#text} at (60,33) size 4x17
+          text run at (60,33) width 4: " "
+        RenderMathMLMath {math} at (64,17) size 60x36
           RenderMathMLUnderOver {munder} at (0,0) size 60x36
             RenderMathMLSpace {mspace} at (0,0) size 60x30 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (0,30) size 60x4
               RenderBlock (anonymous) at (0,0) size 8x4
-                RenderText {#text} at (0,-85) size 8x158
-                  text run at (0,-85) width 8: "_"
-        RenderText {#text} at (124,34) size 4x17
-          text run at (124,34) width 4: " "
-        RenderMathMLMath {math} at (128,10) size 60x39
+                RenderText {#text} at (0,-81) size 8x151
+                  text run at (0,-81) width 8: "_"
+        RenderText {#text} at (124,33) size 4x17
+          text run at (124,33) width 4: " "
+        RenderMathMLMath {math} at (128,9) size 60x39
           RenderMathMLUnderOver {mover} at (0,0) size 60x39
             RenderMathMLSpace {mspace} at (0,8) size 60x31 [bgcolor=#008000]
-            RenderMathMLOperator {mo} at (7,1) size 46x8
-              RenderBlock (anonymous) at (0,0) size 13x8
-                RenderText {#text} at (0,-77) size 13x158
-                  text run at (0,-77) width 13: "~"
-        RenderText {#text} at (188,34) size 4x17
-          text run at (188,34) width 4: " "
-        RenderMathMLMath {math} at (192,0) size 60x49
-          RenderMathMLUnderOver {mover} at (0,0) size 60x49
-            RenderMathMLSpace {mspace} at (0,18) size 60x31 [bgcolor=#008000]
-            RenderMathMLOperator {mo} at (0,1) size 60x18
-              RenderBlock (anonymous) at (0,0) size 12x15
-                RenderText {#text} at (0,-70) size 12x158
-                  text run at (0,-70) width 12: "\x{AF}"
-        RenderText {#text} at (252,34) size 4x17
-          text run at (252,34) width 4: " "
-        RenderMathMLMath {math} at (256,12) size 60x37
+            RenderMathMLOperator {mo} at (8,1) size 44x8
+              RenderBlock (anonymous) at (0,0) size 13x7
+                RenderText {#text} at (0,-74) size 13x151
+                  text run at (0,-74) width 13: "~"
+        RenderText {#text} at (188,33) size 4x17
+          text run at (188,33) width 4: " "
+        RenderMathMLMath {math} at (192,0) size 60x48
+          RenderMathMLUnderOver {mover} at (0,0) size 60x48
+            RenderMathMLSpace {mspace} at (0,17) size 60x31 [bgcolor=#008000]
+            RenderMathMLOperator {mo} at (0,1) size 60x17
+              RenderBlock (anonymous) at (0,0) size 11x15
+                RenderText {#text} at (0,-66) size 11x151
+                  text run at (0,-66) width 11: "\x{AF}"
+        RenderText {#text} at (252,33) size 4x17
+          text run at (252,33) width 4: " "
+        RenderMathMLMath {math} at (256,10) size 60x38
+          RenderMathMLUnderOver {mover} at (0,0) size 60x38
+            RenderMathMLSpace {mspace} at (0,7) size 60x31 [bgcolor=#008000]
+            RenderMathMLOperator {mo} at (8,1) size 44x7
+              RenderBlock (anonymous) at (0,0) size 11x16
+                RenderText {#text} at (0,-65) size 11x151
+                  text run at (0,-65) width 11: "\x{2C6}"
+        RenderText {#text} at (316,33) size 4x17
+          text run at (316,33) width 4: " "
+        RenderMathMLMath {math} at (320,11) size 60x37
           RenderMathMLUnderOver {mover} at (0,0) size 60x37
             RenderMathMLSpace {mspace} at (0,6) size 60x31 [bgcolor=#008000]
-            RenderMathMLOperator {mo} at (7,1) size 46x6
-              RenderBlock (anonymous) at (0,0) size 12x17
-                RenderText {#text} at (0,-68) size 12x158
-                  text run at (0,-68) width 12: "\x{2C6}"
-        RenderText {#text} at (316,34) size 4x17
-          text run at (316,34) width 4: " "
-        RenderMathMLMath {math} at (320,12) size 60x37
-          RenderMathMLUnderOver {mover} at (0,0) size 60x37
-            RenderMathMLSpace {mspace} at (0,6) size 60x31 [bgcolor=#008000]
-            RenderMathMLOperator {mo} at (7,1) size 46x6
-              RenderBlock (anonymous) at (0,0) size 12x17
-                RenderText {#text} at (0,-68) size 12x158
-                  text run at (0,-68) width 12: "\x{2C7}"
+            RenderMathMLOperator {mo} at (8,1) size 44x6
+              RenderBlock (anonymous) at (0,0) size 11x16
+                RenderText {#text} at (0,-65) size 11x151
+                  text run at (0,-65) width 11: "\x{2C7}"
         RenderText {#text} at (0,0) size 0x0

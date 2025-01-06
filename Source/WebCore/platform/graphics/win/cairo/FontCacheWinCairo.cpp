@@ -38,7 +38,7 @@ GDIObject<HFONT> createGDIFont(const AtomString&, LONG, bool, int);
 LONG toGDIFontWeight(FontSelectionValue);
 bool isGDIFontWeightBold(LONG);
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext&)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext&, OptionSet<FontLookupOptions> options)
 {
     LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
     auto hfont = createGDIFont(family, weight, isItalic(fontDescription.italic()),
@@ -50,8 +50,10 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     LOGFONT logFont;
     GetObject(hfont.get(), sizeof(LOGFONT), &logFont);
 
-    bool synthesizeBold = isGDIFontWeightBold(weight) && !isGDIFontWeightBold(logFont.lfWeight);
-    bool synthesizeItalic = isItalic(fontDescription.italic()) && !logFont.lfItalic;
+    bool synthesizeBold = !options.contains(FontLookupOptions::DisallowBoldSynthesis)
+        && isGDIFontWeightBold(weight) && !isGDIFontWeightBold(logFont.lfWeight);
+    bool synthesizeItalic = !options.contains(FontLookupOptions::DisallowObliqueSynthesis)
+        && isItalic(fontDescription.italic()) && !logFont.lfItalic;
 
     auto result = makeUnique<FontPlatformData>(WTFMove(hfont), fontDescription.computedSize(), synthesizeBold, synthesizeItalic);
 

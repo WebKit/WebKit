@@ -68,17 +68,18 @@ typedef struct {
         switch (arguments.header_placement_mode) { \
         case pas_page_header_at_head_of_page: { \
             uintptr_t ptr = (uintptr_t)boundary; \
-            PAS_PROFILE(PAGE_HEADER, ptr); \
+            PAS_PROFILE(PAGE_BASE_FROM_BOUNDARY, ptr); \
             return (pas_page_base*)ptr; \
         } \
         \
         case pas_page_header_in_table: { \
-            pas_page_base* page_base; \
+            uintptr_t page_base; \
             \
-            page_base = pas_page_header_table_get_for_boundary( \
+            page_base = (uintptr_t)pas_page_header_table_get_for_boundary( \
                 arguments.header_table, config.page_size, boundary); \
             PAS_TESTING_ASSERT(page_base); \
-            return page_base; \
+            PAS_PROFILE(PAGE_BASE_FROM_TABLE, page_base); \
+            return (pas_page_base*)page_base; \
         } } \
         \
         PAS_ASSERT(!"Should not be reached"); \

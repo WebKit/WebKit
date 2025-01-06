@@ -26,6 +26,7 @@
 #include "config.h"
 #include "KeyedDecoderGlib.h"
 
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -49,9 +50,9 @@ KeyedDecoderGlib::~KeyedDecoderGlib()
     ASSERT(m_arrayIndexStack.isEmpty());
 }
 
-HashMap<String, GRefPtr<GVariant>> KeyedDecoderGlib::dictionaryFromGVariant(GVariant* variant)
+UncheckedKeyHashMap<String, GRefPtr<GVariant>> KeyedDecoderGlib::dictionaryFromGVariant(GVariant* variant)
 {
-    HashMap<String, GRefPtr<GVariant>> dictionary;
+    UncheckedKeyHashMap<String, GRefPtr<GVariant>> dictionary;
     GVariantIter iter;
     g_variant_iter_init(&iter, variant);
     const char* key;
@@ -69,7 +70,7 @@ bool KeyedDecoderGlib::decodeBytes(const String& key, std::span<const uint8_t>& 
     if (!value)
         return false;
 
-    bytes = { static_cast<const uint8_t*>(g_variant_get_data(value.get())), g_variant_get_size(value.get()) };
+    bytes = span(value);
     return true;
 }
 

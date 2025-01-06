@@ -38,14 +38,19 @@
 #import "MockRealtimeMediaSourceCenter.h"
 #import "NotImplemented.h"
 #import "RealtimeMediaSourceSettings.h"
+#import "SpanCoreAudio.h"
 #import "WebAudioBufferList.h"
 #import "WebAudioSourceProviderCocoa.h"
 #import <AVFoundation/AVAudioBuffer.h>
 #import <AudioToolbox/AudioConverter.h>
 #import <CoreAudio/CoreAudioTypes.h>
-#include <wtf/RunLoop.h>
-#include <wtf/Vector.h>
-#include <wtf/WorkQueue.h>
+#import <wtf/IndexedRange.h>
+#import <wtf/RunLoop.h>
+#import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
+#import <wtf/Vector.h>
+#import <wtf/WorkQueue.h>
+#import <wtf/ZippedRange.h>
 
 #import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -57,44 +62,34 @@ static inline size_t alignTo16Bytes(size_t size)
     return (size + 15) & ~15;
 }
 
-static const double Tau = 2 * M_PI;
-static const double BipBopDuration = 0.07;
-static const double BipBopVolume = 0.5;
-static const double BipFrequency = 1500;
-static const double BopFrequency = 500;
-static const double HumFrequency = 150;
-static const double HumVolume = 0.1;
-static const double NoiseFrequency = 3000;
-static const double NoiseVolume = 0.05;
+static constexpr double Tau = 2 * M_PI;
+static constexpr double BipBopDuration = 0.07;
+static constexpr double BipBopVolume = 0.5;
+static constexpr double BipFrequency = 1500;
+static constexpr double BopFrequency = 500;
+static constexpr double HumFrequency = 150;
+static constexpr double HumVolume = 0.1;
+static constexpr double NoiseFrequency = 3000;
+static constexpr double NoiseVolume = 0.05;
 
 template <typename AudioSampleType>
-static void writeHum(float amplitude, float frequency, float sampleRate, AudioSampleType *p, uint64_t count)
+static void addHum(float amplitude, float frequency, float sampleRate, uint64_t start, std::span<AudioSampleType> p)
 {
     float humPeriod = sampleRate / frequency;
-    for (uint64_t i = 0; i < count; ++i)
-        *p++ = amplitude * sin(i * Tau / humPeriod);
-}
-
-template <typename AudioSampleType>
-static void addHum(float amplitude, float frequency, float sampleRate, uint64_t start, AudioSampleType *p, uint64_t count)
-{
-    float humPeriod = sampleRate / frequency;
-    for (uint64_t i = start, end = start + count; i < end; ++i) {
-        AudioSampleType a = amplitude * sin(i * Tau / humPeriod);
-        a += *p;
-        *p++ = a;
+    for (auto [i, pValue] : indexedRange(p)) {
+        AudioSampleType a = amplitude * sin((start + i) * Tau / humPeriod);
+        pValue += a;
     }
 }
 
-CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
+CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
 {
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
     ASSERT(device);
     if (!device)
         return CaptureSourceOrError({ "No mock microphone device"_s , MediaAccessDenialReason::PermissionDenied });
 
-    MockAudioSharedUnit::singleton().setCaptureDevice(String { deviceID }, 0);
-    return CoreAudioCaptureSource::createForTesting(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), constraints, MockAudioSharedUnit::singleton(), pageIdentifier);
+    return CoreAudioCaptureSource::createForTesting(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), constraints, pageIdentifier);
 }
 
 class MockAudioSharedInternalUnitState : public ThreadSafeRefCounted<MockAudioSharedInternalUnitState> {
@@ -109,7 +104,7 @@ private:
 };
 
 class MockAudioSharedInternalUnit :  public CoreAudioSharedUnit::InternalUnit {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MockAudioSharedInternalUnit);
 public:
     explicit MockAudioSharedInternalUnit(bool enableEchoCancellation);
     ~MockAudioSharedInternalUnit();
@@ -126,6 +121,8 @@ private:
     OSStatus defaultOutputDevice(uint32_t*) final;
     void delaySamples(Seconds) final;
     Seconds verifyCaptureInterval(bool) const final { return 1_s; }
+    bool setVoiceActivityDetection(bool) final;
+    bool canRenderAudio() const final { return false; }
 
     int sampleRate() const { return m_streamFormat.mSampleRate; }
     void tick();
@@ -133,6 +130,8 @@ private:
     void generateSampleBuffers(MonotonicTime);
     void emitSampleBuffers(uint32_t frameCount);
     void reconfigure();
+
+    void voiceDetected();
 
     static Seconds renderInterval() { return 20_ms; }
 
@@ -150,7 +149,10 @@ private:
     bool m_hasAudioUnit { false };
     Ref<MockAudioSharedInternalUnitState> m_internalState;
     bool m_enableEchoCancellation { true };
+    bool m_isOutputMuted { false };
+    bool m_voiceActivityDetectionEnabled { false };
     RunLoop::Timer m_timer;
+    RunLoop::Timer m_voiceDetectionTimer;
     MonotonicTime m_lastRenderTime { MonotonicTime::nan() };
     MonotonicTime m_delayUntil;
 
@@ -162,20 +164,22 @@ private:
 };
 
 static bool s_shouldIncreaseBufferSize;
-CoreAudioSharedUnit& MockAudioSharedUnit::singleton()
+void MockAudioSharedUnit::enable()
 {
-    static NeverDestroyed<CoreAudioSharedUnit> unit;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] () {
-        s_shouldIncreaseBufferSize = false;
-        unit->setSampleRateRange({ 44100, 96000 });
-        unit->setInternalUnitCreationCallback([](bool enableEchoCancellation) {
-            UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<MockAudioSharedInternalUnit>(enableEchoCancellation);
-            return result;
-        });
-        unit->setInternalUnitGetSampleRateCallback([] { return 44100; });
+    s_shouldIncreaseBufferSize = false;
+    CoreAudioSharedUnit::singleton().setSampleRateRange({ 44100, 96000 });
+    CoreAudioSharedUnit::singleton().setInternalUnitCreationCallback([](bool enableEchoCancellation) {
+        UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<MockAudioSharedInternalUnit>(enableEchoCancellation);
+        return result;
     });
-    return unit;
+    CoreAudioSharedUnit::singleton().setInternalUnitGetSampleRateCallback([] { return 44100; });
+}
+
+void MockAudioSharedUnit::disable()
+{
+    CoreAudioSharedUnit::singleton().setSampleRateRange({ 8000, 96000 });
+    CoreAudioSharedUnit::singleton().setInternalUnitCreationCallback({ });
+    CoreAudioSharedUnit::singleton().setInternalUnitGetSampleRateCallback({ });
 }
 
 void MockAudioSharedUnit::increaseBufferSize()
@@ -199,6 +203,7 @@ MockAudioSharedInternalUnit::MockAudioSharedInternalUnit(bool enableEchoCancella
     : m_internalState(MockAudioSharedInternalUnitState::create())
     , m_enableEchoCancellation(enableEchoCancellation)
     , m_timer(RunLoop::current(), [this] { this->start(); })
+    , m_voiceDetectionTimer(RunLoop::current(), [this] { this->voiceDetected(); })
     , m_workQueue(WorkQueue::create("MockAudioSharedInternalUnit Capture Queue"_s, WorkQueue::QOS::UserInteractive))
 {
     m_streamFormat = m_outputStreamFormat = createAudioFormat(44100, 2);
@@ -255,6 +260,23 @@ void MockAudioSharedInternalUnit::delaySamples(Seconds delta)
     m_timer.startOneShot(delta);
 }
 
+bool MockAudioSharedInternalUnit::setVoiceActivityDetection(bool shouldEnable)
+{
+    m_voiceActivityDetectionEnabled = shouldEnable;
+    if (!m_voiceActivityDetectionEnabled || !m_isOutputMuted)
+        m_voiceDetectionTimer.stop();
+    else
+        m_voiceDetectionTimer.startRepeating(100_ms);
+
+    return true;
+}
+
+void MockAudioSharedInternalUnit::voiceDetected()
+{
+    CoreAudioSharedUnit::singleton().voiceActivityDetected();
+    CoreAudioSharedUnit::singleton().disableVoiceActivityThrottleTimerForTesting();
+}
+
 void MockAudioSharedInternalUnit::reconfigure()
 {
     ASSERT(!isMainThread());
@@ -279,10 +301,10 @@ void MockAudioSharedInternalUnit::reconfigure()
     size_t bipStart = 0;
     size_t bopStart = rate;
 
-    addHum(BipBopVolume, BipFrequency, rate, 0, m_bipBopBuffer.data() + bipStart, bipBopSampleCount);
-    addHum(BipBopVolume, BopFrequency, rate, 0, m_bipBopBuffer.data() + bopStart, bipBopSampleCount);
+    addHum(BipBopVolume, BipFrequency, rate, 0, m_bipBopBuffer.mutableSpan().subspan(bipStart, bipBopSampleCount));
+    addHum(BipBopVolume, BopFrequency, rate, 0, m_bipBopBuffer.mutableSpan().subspan(bopStart, bipBopSampleCount));
     if (!m_enableEchoCancellation)
-        addHum(NoiseVolume, NoiseFrequency, rate, 0, m_bipBopBuffer.data(), sampleCount);
+        addHum(NoiseVolume, NoiseFrequency, rate, 0, m_bipBopBuffer.mutableSpan().first(sampleCount));
 }
 
 void MockAudioSharedInternalUnit::emitSampleBuffers(uint32_t frameCount)
@@ -298,7 +320,7 @@ void MockAudioSharedInternalUnit::emitSampleBuffers(uint32_t frameCount)
     AudioUnitRenderActionFlags ioActionFlags = 0;
     
     AudioTimeStamp timeStamp;
-    memset(&timeStamp, 0, sizeof(AudioTimeStamp));
+    zeroBytes(timeStamp);
     timeStamp.mSampleTime = sampleTime;
     timeStamp.mHostTime = static_cast<UInt64>(sampleTime);
 
@@ -339,8 +361,9 @@ void MockAudioSharedInternalUnit::generateSampleBuffers(MonotonicTime renderTime
         uint32_t bipBopCount = std::min(frameCount, bipBopRemain);
         for (auto& audioBuffer : m_audioBufferList->buffers()) {
             audioBuffer.mDataByteSize = frameCount * m_streamFormat.mBytesPerFrame;
-            memcpy(audioBuffer.mData, &m_bipBopBuffer[bipBopStart], sizeof(Float32) * bipBopCount);
-            addHum(HumVolume, HumFrequency, sampleRate(), m_samplesRendered, static_cast<float*>(audioBuffer.mData), bipBopCount);
+            auto audioBufferSpan = mutableSpan<float>(audioBuffer);
+            memcpySpan(audioBufferSpan, m_bipBopBuffer.subspan(bipBopStart, bipBopCount));
+            addHum(HumVolume, HumFrequency, sampleRate(), m_samplesRendered, mutableSpan<float>(audioBuffer).first(bipBopCount));
         }
         emitSampleBuffers(bipBopCount);
         m_samplesRendered += bipBopCount;
@@ -351,27 +374,26 @@ void MockAudioSharedInternalUnit::generateSampleBuffers(MonotonicTime renderTime
 
 OSStatus MockAudioSharedInternalUnit::render(AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32, UInt32 frameCount, AudioBufferList* buffer)
 {
+    auto destinationBuffers = span(*buffer);
     if (s_shouldIncreaseBufferSize) {
         auto copySize = frameCount * m_streamFormat.mBytesPerPacket;
-        if (buffer->mNumberBuffers && copySize <= buffer->mBuffers[0].mDataByteSize)
+        if (buffer->mNumberBuffers && copySize <= destinationBuffers[0].mDataByteSize)
             s_shouldIncreaseBufferSize = false;
         // We still return an error in case s_shouldIncreaseBufferSize is false since we do not have enough data to write.
         return kAudio_ParamError;
     }
 
-    auto* sourceBuffer = m_audioBufferList->list();
-    if (buffer->mNumberBuffers > sourceBuffer->mNumberBuffers)
+    auto sourceBuffers = span(*m_audioBufferList->list());
+    if (destinationBuffers.size() > sourceBuffers.size())
         return kAudio_ParamError;
 
+    sourceBuffers = sourceBuffers.first(destinationBuffers.size());
     auto copySize = frameCount * m_streamFormat.mBytesPerPacket;
-    for (uint32_t i = 0; i < buffer->mNumberBuffers; i++) {
-        ASSERT(copySize <= sourceBuffer->mBuffers[i].mDataByteSize);
-        if (copySize > buffer->mBuffers[i].mDataByteSize)
+    for (auto [sourceBuffer, destinationBuffer] : zippedRange(sourceBuffers, destinationBuffers)) {
+        ASSERT(copySize <= sourceBuffer.mDataByteSize);
+        if (copySize > destinationBuffer.mDataByteSize)
             return kAudio_ParamError;
-
-        auto* source = static_cast<uint8_t*>(sourceBuffer->mBuffers[i].mData);
-        auto* destination = static_cast<uint8_t*>(buffer->mBuffers[i].mData);
-        memcpy(destination, source, copySize);
+        memcpySpan(mutableSpan<uint8_t>(destinationBuffer), span<uint8_t>(sourceBuffer).first(copySize));
     }
 
     return 0;
@@ -397,11 +419,16 @@ OSStatus MockAudioSharedInternalUnit::set(AudioUnitPropertyID property, AudioUni
     }
     if (property == kAudioOutputUnitProperty_CurrentDevice) {
         ASSERT(!*static_cast<const uint32_t*>(value));
-        auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(MockAudioSharedUnit::singleton().persistentIDForTesting());
+        auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(CoreAudioSharedUnit::singleton().persistentIDForTesting());
         if (!device)
             return -1;
 
         m_streamFormat.mSampleRate = m_outputStreamFormat.mSampleRate = std::get<MockMicrophoneProperties>(device->properties).defaultSampleRate;
+        return 0;
+    }
+    if (property == kAUVoiceIOProperty_MuteOutput) {
+        m_isOutputMuted = *static_cast<const bool*>(value);
+        setVoiceActivityDetection(m_voiceActivityDetectionEnabled);
         return 0;
     }
     

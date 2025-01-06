@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -168,7 +168,11 @@ public:
 
     JSValue get() const
     {
+#if USE(JSVALUE64) || !ENABLE(CONCURRENT_JS)
+        return JSValue::decode(m_value);
+#else
         return JSValue::decodeConcurrent(&m_value);
+#endif
     }
     void clear() { m_value = JSValue::encode(JSValue()); }
     void setUndefined() { m_value = JSValue::encode(jsUndefined()); }
@@ -182,11 +186,11 @@ public:
     
     JSValue* slot() const
     { 
-        return bitwise_cast<JSValue*>(&m_value);
+        return std::bit_cast<JSValue*>(&m_value);
     }
     
-    int32_t* tagPointer() { return &bitwise_cast<EncodedValueDescriptor*>(&m_value)->asBits.tag; }
-    int32_t* payloadPointer() { return &bitwise_cast<EncodedValueDescriptor*>(&m_value)->asBits.payload; }
+    int32_t* tagPointer() { return &std::bit_cast<EncodedValueDescriptor*>(&m_value)->asBits.tag; }
+    int32_t* payloadPointer() { return &std::bit_cast<EncodedValueDescriptor*>(&m_value)->asBits.payload; }
     
     explicit operator bool() const { return !!get(); }
     bool operator!() const { return !get(); } 
@@ -197,7 +201,7 @@ private:
 
 template <typename T, typename Traits = WriteBarrierTraitsSelect<T>>
 class WriteBarrier : public WriteBarrierBase<T, Traits> {
-    WTF_MAKE_TZONE_ALLOCATED(WriteBarrier);
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(WriteBarrier);
 public:
     WriteBarrier()
     {
@@ -227,11 +231,19 @@ public:
     }
 };
 
+#define TZONE_TEMPLATE_PARAMS template <typename T, typename Traits>
+#define TZONE_TYPE WriteBarrier<T, Traits>
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS();
+
+#undef TZONE_TEMPLATE_PARAMS
+#undef TZONE_TYPE
+
 enum UndefinedWriteBarrierTagType { UndefinedWriteBarrierTag };
 enum NullWriteBarrierTagType { NullWriteBarrierTag };
 template <>
 class WriteBarrier<Unknown, RawValueTraits<Unknown>> : public WriteBarrierBase<Unknown, RawValueTraits<Unknown>> {
-    WTF_MAKE_TZONE_ALLOCATED(WriteBarrier);
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(WriteBarrier);
 public:
     WriteBarrier()
     {

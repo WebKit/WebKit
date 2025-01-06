@@ -32,8 +32,10 @@
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
 #include <wtf/PageBlock.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 
@@ -45,6 +47,8 @@ static bool shouldUseFileMapping(uint64_t fileSize)
 {
     return fileSize >= pageSize();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchStoreManager);
 
 String BackgroundFetchStoreManager::createNewStorageIdentifier()
 {
@@ -181,7 +185,7 @@ void BackgroundFetchStoreManager::storeFetchAfterQuotaCheck(const String& identi
     auto filePath = FileSystem::pathByAppendingComponents(m_path, { identifier });
     m_ioQueue->dispatch([queue = Ref { m_taskQueue }, filePath = WTFMove(filePath).isolatedCopy(), responseBodyIndexToClear, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
         // FIXME: Cover the case of partial write.
-        auto writtenSize = FileSystem::overwriteEntireFile(filePath, { data.data(), data.size() });
+        auto writtenSize = FileSystem::overwriteEntireFile(filePath, data);
         auto result = static_cast<size_t>(writtenSize) == data.size() ? StoreResult::OK : StoreResult::InternalError;
         if (result == StoreResult::OK && responseBodyIndexToClear)
             FileSystem::deleteFile(makeString(filePath, '-', *responseBodyIndexToClear));

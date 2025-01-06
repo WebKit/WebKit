@@ -50,7 +50,7 @@ void ClippingPredictorLevelBuffer::Push(Level level) {
 }
 
 // TODO(bugs.webrtc.org/12774): Optimize partial computation for long buffers.
-absl::optional<ClippingPredictorLevelBuffer::Level>
+std::optional<ClippingPredictorLevelBuffer::Level>
 ClippingPredictorLevelBuffer::ComputePartialMetrics(int delay,
                                                     int num_items) const {
   RTC_DCHECK_GE(delay, 0);
@@ -59,7 +59,7 @@ ClippingPredictorLevelBuffer::ComputePartialMetrics(int delay,
   RTC_DCHECK_LE(num_items, Capacity());
   RTC_DCHECK_LE(delay + num_items, Capacity());
   if (delay + num_items > Size()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   float sum = 0.0f;
   float max = 0.0f;
@@ -71,7 +71,7 @@ ClippingPredictorLevelBuffer::ComputePartialMetrics(int delay,
     sum += data_[idx].average;
     max = std::fmax(data_[idx].max, max);
   }
-  return absl::optional<Level>({sum / static_cast<float>(num_items), max});
+  return std::optional<Level>({sum / static_cast<float>(num_items), max});
 }
 
 }  // namespace webrtc

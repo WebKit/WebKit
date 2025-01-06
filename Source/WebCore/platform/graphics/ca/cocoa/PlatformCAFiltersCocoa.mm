@@ -32,8 +32,9 @@
 #import <QuartzCore/QuartzCore.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -326,19 +327,20 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             const auto& blurOperation = downcast<BlurFilterOperation>(filterOperation);
             CAFilter *filter = [CAFilter filterWithType:kCAFilterGaussianBlur];
             [filter setValue:[NSNumber numberWithFloat:floatValueForLength(blurOperation.stdDeviation(), 0)] forKey:@"inputRadius"];
-            if ([layer isKindOfClass:[CABackdropLayer class]]) {
+            if (is_objc<CABackdropLayer>(layer)) {
+#if PLATFORM(VISION)
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=275965
+                UNUSED_PARAM(backdropIsOpaque);
+                [filter setValue:@YES forKey:@"inputNormalizeEdgesTransparent"];
+#else
                 // If the backdrop is displayed inside a transparent web view over
                 // a material background, we need `normalizeEdgesTransparent`
                 // in order to render correctly.
                 if (backdropIsOpaque)
                     [filter setValue:@YES forKey:@"inputNormalizeEdges"];
-                else {
-#if PLATFORM(VISION)
-                    [filter setValue:@YES forKey:@"inputNormalizeEdgesTransparent"];
-#else
+                else
                     [filter setValue:@YES forKey:@"inputHardEdges"];
 #endif
-                }
             }
             [filter setName:filterName];
             return filter;
@@ -553,10 +555,16 @@ void PlatformCAFilters::setBlendingFiltersOnLayer(PlatformLayer* layer, const Bl
         filter = [CAFilter filterWithType:kCAFilterPlusL];
         break;
     case BlendMode::Hue:
+        filter = [CAFilter filterWithType:kCAFilterHueBlendMode];
+        break;
     case BlendMode::Saturation:
+        filter = [CAFilter filterWithType:kCAFilterSaturationBlendMode];
+        break;
     case BlendMode::Color:
+        filter = [CAFilter filterWithType:kCAFilterColorBlendMode];
+        break;
     case BlendMode::Luminosity:
-        // FIXME: CA does't support non-separable blend modes on compositing filters.
+        filter = [CAFilter filterWithType:kCAFilterLuminosityBlendMode];
         break;
     default:
         ASSERT_NOT_REACHED();

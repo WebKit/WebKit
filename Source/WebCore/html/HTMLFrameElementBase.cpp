@@ -40,12 +40,12 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFrameElementBase);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLFrameElementBase);
 
 using namespace HTMLNames;
 
@@ -123,9 +123,11 @@ void HTMLFrameElementBase::attributeChanged(const QualifiedName& name, const Ato
         if (newValue.isNull())
             setLocation(attributeWithoutSynchronization(srcAttr).string().trim(isASCIIWhitespace));
         else
-            setLocation("about:srcdoc"_s);
+            setLocation(aboutSrcDocURL().string());
     } else if (name == srcAttr && !hasAttributeWithoutSynchronization(srcdocAttr))
         setLocation(newValue.string().trim(isASCIIWhitespace));
+    else if (name == scrollingAttr && contentFrame())
+        protectedContentFrame()->updateScrollingMode();
     else
         HTMLFrameOwnerElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
@@ -179,6 +181,9 @@ void HTMLFrameElementBase::didAttachRenderers()
 void HTMLFrameElementBase::setLocation(const String& str)
 {
     if (document().settings().needsAcrobatFrameReloadingQuirk() && m_frameURL == str)
+        return;
+
+    if (!SubframeLoadingDisabler::canLoadFrame(*this))
         return;
 
     m_frameURL = AtomString(str);

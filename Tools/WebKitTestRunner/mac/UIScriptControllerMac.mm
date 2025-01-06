@@ -49,6 +49,7 @@
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WTR {
 
@@ -84,6 +85,11 @@ void UIScriptControllerMac::zoomToScale(double scale, JSValueRef callback)
 double UIScriptControllerMac::zoomScale() const
 {
     return webView().magnification;
+}
+
+double UIScriptControllerMac::minimumZoomScale() const
+{
+    return webView().minimumMagnification;
 }
 
 void UIScriptControllerMac::simulateAccessibilitySettingsChangeNotification(JSValueRef callback)

@@ -26,7 +26,8 @@
 @synthesize capturer = _capturer;
 
 - (instancetype)init {
-  if (self = [super init]) {
+  self = [super init];
+  if (self) {
     _callbackLogger = [[RTC_OBJC_TYPE(RTCCallbackLogger) alloc] init];
     os_log_t rtc_os_log = os_log_create("com.google.AppRTCMobile", "RTCLog");
     [_callbackLogger start:^(NSString *logMessage) {

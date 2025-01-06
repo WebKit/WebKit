@@ -27,6 +27,7 @@
 #include "DragActions.h"
 #include "DragImage.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ class Pasteboard;
 class ScriptExecutionContext;
 enum class WebContentReadingPolicy : bool;
 
-class DataTransfer : public RefCounted<DataTransfer>, public CanMakeWeakPtr<DataTransfer> {
+class DataTransfer : public RefCountedAndCanMakeWeakPtr<DataTransfer> {
 public:
     // https://html.spec.whatwg.org/multipage/dnd.html#drag-data-store-mode
     enum class StoreMode { Invalid, ReadWrite, Readonly, Protected };
@@ -61,8 +62,8 @@ public:
     void setEffectAllowed(const String&);
 
     DataTransferItemList& items(Document&);
-    Vector<String> types() const;
-    Vector<String> typesForItemList() const;
+    Vector<String> types(Document&) const;
+    Vector<String> typesForItemList(Document&) const;
 
     FileList& files(Document*) const;
     FileList& files(Document&) const;
@@ -84,7 +85,7 @@ public:
     bool canWriteData() const;
 
     bool hasFileOfType(const String&);
-    bool hasStringOfType(const String&);
+    bool hasStringOfType(Document&, const String&);
 
     Pasteboard& pasteboard() { return *m_pasteboard; }
     void commitToPasteboard(Pasteboard&);
@@ -137,7 +138,7 @@ private:
     bool shouldSuppressGetAndSetDataToAvoidExposingFilePaths() const;
 
     enum class AddFilesType : bool { No, Yes };
-    Vector<String> types(AddFilesType) const;
+    Vector<String> types(Document&, AddFilesType) const;
     Vector<Ref<File>> filesFromPasteboardAndItemList(ScriptExecutionContext*) const;
 
     String m_originIdentifier;

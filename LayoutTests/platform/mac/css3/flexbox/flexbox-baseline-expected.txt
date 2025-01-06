@@ -82,8 +82,8 @@ layer at (0,0) size 800x496
       RenderText {#text} at (125,5) size 62x18
         text run at (125,5) width 62: " after text"
     RenderBlock {DIV} at (0,370) size 800x42
-      RenderText {#text} at (0,23) size 73x18
-        text run at (0,23) width 73: "before text "
+      RenderText {#text} at (0,5) size 73x18
+        text run at (0,5) width 73: "before text "
       RenderFlexibleBox {DIV} at (72,5) size 54x36 [bgcolor=#D3D3D3]
         RenderBlock {DIV} at (0,18) size 53x18
           RenderText {#text} at (0,0) size 53x18
@@ -91,8 +91,8 @@ layer at (0,0) size 800x496
         RenderBlock {DIV} at (0,0) size 53x18
           RenderText {#text} at (0,0) size 39x18
             text run at (0,0) width 39: "above"
-      RenderText {#text} at (125,23) size 62x18
-        text run at (125,23) width 62: " after text"
+      RenderText {#text} at (125,5) size 62x18
+        text run at (125,5) width 62: " after text"
     RenderBlock {DIV} at (0,411) size 800x46
       RenderText {#text} at (0,11) size 188x18
         text run at (0,11) width 188: "should align with the middle "
@@ -107,8 +107,8 @@ layer at (0,0) size 800x496
       RenderFlexibleBox {DIV} at (187,5) size 31x30 [bgcolor=#D3D3D3]
       RenderText {#text} at (217,21) size 127x18
         text run at (217,21) width 127: " of the grey flexbox"
-layer at (400,0) size 360x417
-  RenderBlock (positioned) {DIV} at (400,0) size 360x417
+layer at (400,0) size 360x401
+  RenderBlock (positioned) {DIV} at (400,0) size 360x401
     RenderBlock {DIV} at (0,0) size 360x53
       RenderText {#text} at (0,35) size 73x18
         text run at (0,35) width 73: "before text "
@@ -158,20 +158,20 @@ layer at (400,0) size 360x417
               text run at (0,0) width 53: "baseline"
       RenderText {#text} at (125,10) size 62x18
         text run at (125,10) width 62: " after text"
-    RenderTable {TABLE} at (0,188) size 246x70 [bgcolor=#D3D3D3]
-      RenderTableSection {TBODY} at (0,0) size 246x70
-        RenderTableRow {TR} at (0,2) size 246x66
-          RenderTableCell {TD} at (2,48) size 48x20 [r=0 c=0 rs=1 cs=1]
-            RenderText {#text} at (1,47) size 46x18
+    RenderTable {TABLE} at (0,188) size 246x54 [bgcolor=#D3D3D3]
+      RenderTableSection {TBODY} at (0,0) size 246x54
+        RenderTableRow {TR} at (0,2) size 246x50
+          RenderTableCell {TD} at (2,32) size 48x20 [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (1,31) size 46x18
               text run at (1,1) width 46: "bottom"
-          RenderTableCell {TD} at (51,30) size 55x20 [r=0 c=1 rs=1 cs=1]
-            RenderText {#text} at (1,29) size 53x18
+          RenderTableCell {TD} at (51,12) size 55x20 [r=0 c=1 rs=1 cs=1]
+            RenderText {#text} at (1,11) size 53x18
               text run at (1,1) width 53: "baseline"
           RenderTableCell {TD} at (107,2) size 24x20 [r=0 c=2 rs=1 cs=1]
             RenderText {#text} at (1,1) size 21x18
               text run at (1,1) width 21: "top"
-          RenderTableCell {TD} at (132,20) size 55x48 [r=0 c=3 rs=1 cs=1]
-            RenderFlexibleBox {DIV} at (1,29) size 53x36 [bgcolor=#808080]
+          RenderTableCell {TD} at (132,2) size 55x48 [r=0 c=3 rs=1 cs=1]
+            RenderFlexibleBox {DIV} at (1,11) size 53x36 [bgcolor=#808080]
               RenderBlock {DIV} at (0,0) size 53x18
                 RenderText {#text} at (0,0) size 53x18
                   text run at (0,0) width 53: "baseline"
@@ -186,7 +186,7 @@ layer at (400,0) size 360x417
               RenderBlock {DIV} at (0,0) size 53x18
                 RenderText {#text} at (0,0) size 39x18
                   text run at (0,0) width 39: "above"
-    RenderTable {TABLE} at (0,263) size 289x84 [bgcolor=#D3D3D3]
+    RenderTable {TABLE} at (0,247) size 289x84 [bgcolor=#D3D3D3]
       RenderTableSection {TBODY} at (0,0) size 289x84
         RenderTableRow {TR} at (0,2) size 289x80
           RenderTableCell {TD} at (2,61) size 48x21 [r=0 c=0 rs=1 cs=1]
@@ -206,13 +206,13 @@ layer at (400,0) size 360x417
               RenderBlock {DIV} at (114,0) size 39x68
                 RenderText {#text} at (0,0) size 39x18
                   text run at (0,0) width 39: "above"
-    RenderBlock {DIV} at (0,346) size 360x71
+    RenderBlock {DIV} at (0,330) size 360x71
       RenderText {#text} at (0,20) size 73x18
         text run at (0,20) width 73: "before text "
       RenderFlexibleBox {DIV} at (72,5) size 180x65 [bgcolor=#D3D3D3]
       RenderText {#text} at (251,20) size 62x18
         text run at (251,20) width 62: " after text"
-layer at (473,352) size 179x65 backgroundClip at (473,352) size 178x65 clip at (473,352) size 163x65 scrollY 4 scrollHeight 69
+layer at (473,336) size 179x65 backgroundClip at (473,336) size 178x65 clip at (473,336) size 163x65 scrollY 4 scrollHeight 69
   RenderBlock {DIV} at (0,0) size 179x65
     RenderText {#text} at (0,15) size 157x18
       text run at (0,15) width 157: "The baseline is based on"

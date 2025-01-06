@@ -28,7 +28,7 @@ namespace WebCore {
 class SVGGraphicsElement;
 
 class RenderSVGTransformableContainer final : public RenderSVGContainer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGTransformableContainer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGTransformableContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGTransformableContainer);
 public:
     RenderSVGTransformableContainer(SVGGraphicsElement&, RenderStyle&&);

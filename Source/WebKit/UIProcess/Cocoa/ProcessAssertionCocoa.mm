@@ -89,7 +89,7 @@ static bool processHasActiveRunTimeLimitation()
     std::atomic<bool> _backgroundTaskWasInvalidated;
     ThreadSafeWeakHashSet<ProcessAndUIAssertion> _assertionsNeedingBackgroundTask;
     dispatch_block_t _pendingTaskReleaseTask;
-    std::unique_ptr<WebKit::ProcessStateMonitor> m_processStateMonitor;
+    RefPtr<WebKit::ProcessStateMonitor> m_processStateMonitor;
 }
 
 + (WKProcessAssertionBackgroundTaskManager *)shared
@@ -257,8 +257,8 @@ static bool processHasActiveRunTimeLimitation()
 #if PLATFORM(IOS_FAMILY)
         WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend();
 #endif
-        if (m_processStateMonitor)
-            m_processStateMonitor->processWillBeSuspendedImmediately();
+        if (RefPtr processStateMonitor = m_processStateMonitor)
+            processStateMonitor->processWillBeSuspendedImmediately();
     }
 
     [_backgroundTask removeObserver:self];
@@ -274,7 +274,7 @@ static bool processHasActiveRunTimeLimitation()
     }
 
     if (!m_processStateMonitor) {
-        m_processStateMonitor = makeUnique<WebKit::ProcessStateMonitor>([](bool suspended) {
+        m_processStateMonitor = WebKit::ProcessStateMonitor::create([](bool suspended) {
             for (auto& processPool : WebKit::WebProcessPool::allProcessPools())
                 processPool->setProcessesShouldSuspend(suspended);
         });

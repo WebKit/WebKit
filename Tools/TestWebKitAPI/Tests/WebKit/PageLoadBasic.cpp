@@ -112,7 +112,7 @@ TEST(WebKit, PageLoadBasic)
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
 
     loaderClient.base.version = 0;
     loaderClient.base.clientInfo = &state;
@@ -167,7 +167,7 @@ TEST(WebKit, PageLoadTwiceAndReload)
     static unsigned loadsCount = 0;
 
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
     loaderClient.base.version = 0;
     loaderClient.base.clientInfo = nullptr;
     loaderClient.didFailProvisionalNavigation = [](WKPageRef page, WKNavigationRef, WKErrorRef error, WKTypeRef userData, const void *clientInfo) {

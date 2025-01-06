@@ -26,9 +26,10 @@
 #pragma once
 
 #include "Supplementable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +39,7 @@ class Navigator;
 struct RequestCookieConsentOptions;
 
 class NavigatorCookieConsent final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorCookieConsent);
 public:
     explicit NavigatorCookieConsent(Navigator& navigator)
         : m_navigator(navigator)
@@ -53,7 +54,7 @@ private:
 
     void requestCookieConsent(RequestCookieConsentOptions&&, Ref<DeferredPromise>&&);
 
-    Navigator& m_navigator;
+    CheckedRef<Navigator> m_navigator;
 };
 
 } // namespace WebCore

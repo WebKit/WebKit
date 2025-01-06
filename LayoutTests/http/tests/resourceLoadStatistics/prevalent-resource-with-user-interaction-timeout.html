@@ -10,6 +10,19 @@
 <script>
     const hostUnderTest = "127.0.0.1:8000";
     const statisticsUrl = "http://" + hostUnderTest + "/temp";
+    
+    async function processStatistics() {
+        await testRunner.statisticsProcessStatisticsAndDataRecords()
+
+        if (document.cookie !== "")
+            testFailed("Cookie not deleted: " + document.cookie);
+        else
+            testPassed("Cookie deleted.");
+        setEnableFeature(false, function() {
+            testRunner.notifyDone();
+        });
+    }
+    
     function runTestRunnerTest() {
         if (document.cookie !== "")
             testFailed("document.cookie not empty.");
@@ -26,21 +39,12 @@
                 if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
                     testFailed("Host did not get logged for user interaction.");
 
-                testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
-                    if (document.cookie !== "")
-                        testFailed("Cookie not deleted: " + document.cookie);
-                    else
-                        testPassed("Cookie deleted.");
-                    setEnableFeature(false, function() {
-                        testRunner.notifyDone();
-                    });
-                });
                 testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
                 testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
                 testRunner.setStatisticsTimeToLiveUserInteraction(0);
 
                 // This is to ensure the timeout we're testing.
-                setTimeout("testRunner.statisticsProcessStatisticsAndDataRecords()", 1000);
+                setTimeout(processStatistics, 1000);
             });
         });
     }
@@ -49,7 +53,7 @@
         testRunner.waitUntilDone();
         setEnableFeature(true, function() {
             runTestRunnerTest();
-         });
+        });
     }
 </script>
 </body>

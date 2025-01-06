@@ -68,11 +68,19 @@ struct MockTestMessageWithAsyncReply1 {
     using Promise = WTF::NativePromise<uint64_t, IPC::Error>;
 };
 
-class MockConnectionClient final : public IPC::Connection::Client {
+class MockConnectionClient final : public IPC::Connection::Client, public RefCounted<MockConnectionClient> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MockConnectionClient);
 public:
-    ~MockConnectionClient()
+    static Ref<MockConnectionClient> create()
     {
+        return adoptRef(*new MockConnectionClient);
     }
+
+    ~MockConnectionClient() = default;
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     Vector<MessageInfo> takeMessages()
     {
@@ -119,8 +127,17 @@ public:
         m_continueWaitForMessage = true;
     }
 
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override
+    // Handler contract as IPC::MessageReceiver::didReceiveSyncMessage: false on invalid message, may adopt encoder,
+    // decoder used only during the call, if encoder not adopted it will be submitted.
+    void setSyncMessageHandler(Function<bool(IPC::Decoder&, UniqueRef<IPC::Encoder>&)>&& handler)
     {
+        m_syncMessageHandler = WTFMove(handler);
+    }
+
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) override
+    {
+        if (m_syncMessageHandler)
+            return m_syncMessageHandler(decoder, encoder);
         return false;
     }
 
@@ -129,17 +146,20 @@ public:
         m_didClose = true;
     }
 
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName message) override
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName message, int32_t) override
     {
         m_didReceiveInvalidMessage = message;
     }
 
 private:
+    MockConnectionClient() = default;
+
     bool m_didClose { false };
     std::optional<IPC::MessageName> m_didReceiveInvalidMessage;
     Deque<MessageInfo> m_messages;
     bool m_continueWaitForMessage { false };
     Function<bool(IPC::Decoder&)> m_asyncMessageHandler;
+    Function<bool(IPC::Decoder&, UniqueRef<IPC::Encoder>&)> m_syncMessageHandler;
 };
 
 enum class ConnectionTestDirection {
@@ -216,7 +236,7 @@ protected:
 
     struct {
         RefPtr<IPC::Connection> connection;
-        MockConnectionClient client;
+        Ref<MockConnectionClient> client = MockConnectionClient::create();
     } m_connections[2];
 };
 

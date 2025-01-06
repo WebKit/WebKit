@@ -10,6 +10,7 @@
 
 #include "modules/video_coding/rtp_vp8_ref_finder.h"
 
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -92,7 +93,8 @@ class Frame {
         kVideoRotation_0,
         VideoContentType::UNSPECIFIED,
         video_header,
-        /*color_space=*/absl::nullopt,
+        /*color_space=*/std::nullopt,
+        /*frame_instrumentation_data=*/std::nullopt,
         RtpPacketInfos(),
         EncodedImageBuffer::Create(/*size=*/0));
     // clang-format on
@@ -100,9 +102,9 @@ class Frame {
 
  private:
   bool is_keyframe_ = false;
-  absl::optional<int> picture_id_;
-  absl::optional<int> temporal_id_;
-  absl::optional<int> tl0_idx_;
+  std::optional<int> picture_id_;
+  std::optional<int> temporal_id_;
+  std::optional<int> tl0_idx_;
   bool sync = false;
 };
 

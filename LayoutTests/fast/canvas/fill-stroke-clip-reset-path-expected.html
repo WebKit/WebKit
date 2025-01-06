@@ -1,0 +1,25 @@
+<html>
+<head>
+<script>
+function testOne(operation)
+{
+    var context = document.getElementById(operation).getContext('2d');
+
+    context.fillStyle = "green";
+    context.fillRect(0, 0, 1000, 1000);
+}
+function test()
+{
+    testOne("fill");
+    testOne("stroke");
+    testOne("clip");
+}
+</script>
+</head>
+<body onload="test()">
+<p>All three of these small canvases should be green, not red.</p>
+<canvas id="fill" width="20" height="20"></canvas>
+<canvas id="stroke" width="20" height="20"></canvas>
+<canvas id="clip" width="20" height="20"></canvas>
+</body>
+</html>

@@ -22,6 +22,7 @@
 
 #include "GetterSetter.h"
 #include "StructureInlines.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 
@@ -31,7 +32,7 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObje
     JSObject* getter = nullptr;
     if (value.hasGetter()) {
         if (value.attributes() & PropertyAttribute::Builtin)
-            getter = JSFunction::create(vm, value.builtinAccessorGetterGenerator()(vm), globalObject);
+            getter = JSFunction::create(vm, globalObject, value.builtinAccessorGetterGenerator()(vm), globalObject);
         else {
             String getterName = tryMakeString("get "_s, String(*propertyName.publicName()));
             if (!getterName)

@@ -20,8 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-webkit_platform_headers: "CoreIPCSkData.h"
+#if USE(SKIA)
 
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCSkData {
+additional_forward_declaration: class SkData;
+headers: "CoreIPCSkData.h"
+[Wrapper=WebKit::CoreIPCSkData, CreateUsing=create, AdditionalEncoder=StreamConnectionEncoder] class sk_sp<SkData> {
     std::span<const uint8_t> dataReference();
 }
+
+#endif // USE(SKIA)

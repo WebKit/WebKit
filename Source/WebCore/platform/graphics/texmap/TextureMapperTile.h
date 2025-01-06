@@ -22,6 +22,7 @@
 #include "FloatRect.h"
 #include "Image.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -30,7 +31,7 @@ class GraphicsLayer;
 class TextureMapper;
 
 class TextureMapperTile {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextureMapperTile);
 public:
     RefPtr<BitmapTexture> texture() const;
     inline FloatRect rect() const { return m_rect; }

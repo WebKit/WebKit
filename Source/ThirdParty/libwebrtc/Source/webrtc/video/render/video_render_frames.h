@@ -15,8 +15,8 @@
 #include <stdint.h>
 
 #include <list>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/video/video_frame.h"
 
 namespace webrtc {
@@ -32,7 +32,7 @@ class VideoRenderFrames {
   int32_t AddFrame(VideoFrame&& new_frame);
 
   // Get a frame for rendering, or false if it's not time to render.
-  absl::optional<VideoFrame> FrameToRender();
+  std::optional<VideoFrame> FrameToRender();
 
   // Returns the number of ms to next frame to render
   uint32_t TimeToNextFrameRelease();

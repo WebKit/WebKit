@@ -25,8 +25,6 @@
 #include "FFTFrame.h"
 
 #include "VectorMath.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/StdLibExtras.h>
 
 namespace {
 
@@ -52,8 +50,8 @@ FFTFrame::FFTFrame(unsigned fftSize)
     , m_imagData(unpackedFFTDataSize(m_FFTSize))
 {
     int fftLength = gst_fft_next_fast_length(m_FFTSize);
-    m_fft = gst_fft_f32_new(fftLength, FALSE);
-    m_inverseFft = gst_fft_f32_new(fftLength, TRUE);
+    m_fft.reset(gst_fft_f32_new(fftLength, FALSE));
+    m_inverseFft.reset(gst_fft_f32_new(fftLength, TRUE));
 }
 
 // Creates a blank/empty frame (interpolate() must later be called).
@@ -62,8 +60,8 @@ FFTFrame::FFTFrame()
     , m_log2FFTSize(0)
 {
     int fftLength = gst_fft_next_fast_length(m_FFTSize);
-    m_fft = gst_fft_f32_new(fftLength, FALSE);
-    m_inverseFft = gst_fft_f32_new(fftLength, TRUE);
+    m_fft.reset(gst_fft_f32_new(fftLength, FALSE));
+    m_inverseFft.reset(gst_fft_f32_new(fftLength, TRUE));
 }
 
 // Copy constructor.
@@ -75,8 +73,8 @@ FFTFrame::FFTFrame(const FFTFrame& frame)
     , m_imagData(unpackedFFTDataSize(frame.m_FFTSize))
 {
     int fftLength = gst_fft_next_fast_length(m_FFTSize);
-    m_fft = gst_fft_f32_new(fftLength, FALSE);
-    m_inverseFft = gst_fft_f32_new(fftLength, TRUE);
+    m_fft.reset(gst_fft_f32_new(fftLength, FALSE));
+    m_inverseFft.reset(gst_fft_f32_new(fftLength, TRUE));
 
     // Copy/setup frame data.
     memcpy(realData().data(), frame.realData().data(), sizeof(float) * realData().size());
@@ -87,45 +85,39 @@ void FFTFrame::initialize()
 {
 }
 
-FFTFrame::~FFTFrame()
+FFTFrame::~FFTFrame() = default;
+
+void FFTFrame::doFFT(std::span<const float> data)
 {
-    if (!m_fft)
-        return;
+    gst_fft_f32_fft(m_fft.get(), data.data(), m_complexData.get());
 
-    gst_fft_f32_free(m_fft);
-    m_fft = 0;
-
-    gst_fft_f32_free(m_inverseFft);
-    m_inverseFft = 0;
-}
-
-void FFTFrame::doFFT(const float* data)
-{
-    gst_fft_f32_fft(m_fft, data, m_complexData.get());
-
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     float* imagData = m_imagData.data();
     float* realData = m_realData.data();
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     for (unsigned i = 0; i < unpackedFFTDataSize(m_FFTSize); ++i) {
         imagData[i] = m_complexData[i].i;
         realData[i] = m_complexData[i].r;
     }
 }
 
-void FFTFrame::doInverseFFT(float* data)
+void FFTFrame::doInverseFFT(std::span<float> data)
 {
     //  Merge the real and imaginary vectors to complex vector.
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     float* realData = m_realData.data();
     float* imagData = m_imagData.data();
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     for (size_t i = 0; i < unpackedFFTDataSize(m_FFTSize); ++i) {
         m_complexData[i].i = imagData[i];
         m_complexData[i].r = realData[i];
     }
 
-    gst_fft_f32_inverse_fft(m_inverseFft, m_complexData.get(), data);
+    gst_fft_f32_inverse_fft(m_inverseFft.get(), m_complexData.get(), data.data());
 
     // Scale so that a forward then inverse FFT yields exactly the original data.
-    VectorMath::multiplyByScalar(data, 1.0 / m_FFTSize, data, m_FFTSize);
+    VectorMath::multiplyByScalar(data.first(m_FFTSize), 1.0 / m_FFTSize, data);
 }
 
 int FFTFrame::minFFTSize()

@@ -16,13 +16,13 @@ addEventListener("contextmenu", () => {
     finishJSTest();
 });
 
-function onLoad() {
+async function onLoad() {
     let frame = document.getElementById("frame");
     let x = frame.offsetParent.offsetLeft + frame.offsetLeft + frame.offsetWidth / 2;
     let y = frame.offsetParent.offsetTop + frame.offsetTop + frame.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown(2);
-    eventSender.mouseUp(2);
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseDown(2);
+    await eventSender.asyncMouseUp(2);
 }
 </script>
 <iframe onload="onLoad()" id="frame" src="http://localhost:8000/site-isolation/mouse-events/resources/context-menu-event-listener.html"></iframe>

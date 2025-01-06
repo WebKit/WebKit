@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+  p {
+    /* equivalent to calc((1px ** 16) ** 8 / 1px), where ** is the exponent operator */
+    width: calc(
+      (1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px *
+        (1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px *
+          (1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px *
+            (1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px *
+              (1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px *
+                (1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px *
+                  (1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px *
+                    (1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px * 1px /
+                      (1px))))))))));
+  }
+  </style>
+</head>
+
+<body>
+  <p>This test passes if it does not crash</p>
+  <script>
+    if (window.testRunner)
+      window.testRunner.dumpAsText();
+  </script>
+</body>
+
+</html>

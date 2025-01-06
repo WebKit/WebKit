@@ -34,5 +34,8 @@ ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_ = NO;
 ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_NO = NO;
 ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_YES = $(ENTITLEMENTS_REQUIRED);
 
+// For simulator builds, entitlements are added to a special __entitlements section on the binary rather than the signature.
+CODE_SIGN_ENTITLEMENTS[sdk=*simulator] = Resources/ios/ModelService-embedded-simulator.entitlements
+
 SKIP_INSTALL = YES;
 SKIP_INSTALL[sdk=xr*] = NO;

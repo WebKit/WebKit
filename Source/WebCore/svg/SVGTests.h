@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2010 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,13 +21,13 @@
 
 #pragma once
 
-#include "QualifiedName.h"
-#include "SVGStringList.h"
-#include <wtf/Forward.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
+class QualifiedName;
 class SVGElement;
 class SVGStringList;
 class WeakPtrImplWithEventTargetData;
@@ -38,16 +38,15 @@ class SVGPropertyOwnerRegistry;
 class SVGTests;
 
 class SVGConditionalProcessingAttributes {
-    WTF_MAKE_NONCOPYABLE(SVGConditionalProcessingAttributes); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SVGConditionalProcessingAttributes);
+    WTF_MAKE_NONCOPYABLE(SVGConditionalProcessingAttributes);
 public:
     SVGConditionalProcessingAttributes(SVGElement& contextElement);
 
-    SVGStringList& requiredFeatures() { return m_requiredFeatures; }
     SVGStringList& requiredExtensions() { return m_requiredExtensions; }
     SVGStringList& systemLanguage() { return m_systemLanguage; }
 
 private:
-    Ref<SVGStringList> m_requiredFeatures;
     Ref<SVGStringList> m_requiredExtensions;
     Ref<SVGStringList> m_systemLanguage;
 };
@@ -56,29 +55,25 @@ class SVGTests {
     WTF_MAKE_NONCOPYABLE(SVGTests);
 public:
     static bool hasExtension(const String&);
-    bool isValid() const;
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTests>;
 
-    void parseAttribute(const QualifiedName&, const AtomString&);
-    void svgAttributeChanged(const QualifiedName&);
-
     static void addSupportedAttributes(MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName>&);
-
-    WEBCORE_EXPORT static bool hasFeatureForLegacyBindings(const String& feature, const String& version);
 
     SVGConditionalProcessingAttributes& conditionalProcessingAttributes();
     SVGConditionalProcessingAttributes* conditionalProcessingAttributesIfExists() const;
 
     // These methods are called from DOM through the super classes.
-    SVGStringList& requiredFeatures() { return conditionalProcessingAttributes().requiredFeatures(); }
-    Ref<SVGStringList> protectedRequiredFeatures();
     SVGStringList& requiredExtensions() { return conditionalProcessingAttributes().requiredExtensions(); }
     Ref<SVGStringList> protectedRequiredExtensions();
     SVGStringList& systemLanguage() { return conditionalProcessingAttributes().systemLanguage(); }
     Ref<SVGStringList> protectedSystemLanguage();
 
 protected:
+    bool isValid() const;
+
+    void parseAttribute(const QualifiedName&, const AtomString&);
+    void svgAttributeChanged(const QualifiedName&);
+
     SVGTests(SVGElement* contextElement);
 
 private:

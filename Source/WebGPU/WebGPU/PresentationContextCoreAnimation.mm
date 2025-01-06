@@ -29,6 +29,7 @@
 #import "APIConversions.h"
 #import "Texture.h"
 #import "TextureView.h"
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebGPU {
@@ -41,6 +42,8 @@ static CAMetalLayer *layerFromSurfaceDescriptor(const WGPUSurfaceDescriptor& des
     CAMetalLayer *layer = bridge_id_cast(metalDescriptor.layer);
     return layer;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PresentationContextCoreAnimation);
 
 PresentationContextCoreAnimation::PresentationContextCoreAnimation(const WGPUSurfaceDescriptor& descriptor)
     : m_layer(layerFromSurfaceDescriptor(descriptor))
@@ -123,7 +126,7 @@ auto PresentationContextCoreAnimation::Configuration::generateCurrentFrameState(
     return { currentDrawable, texture.ptr(), textureView.ptr() };
 }
 
-void PresentationContextCoreAnimation::present()
+void PresentationContextCoreAnimation::present(uint32_t)
 {
     if (!m_configuration)
         return;
@@ -136,7 +139,7 @@ void PresentationContextCoreAnimation::present()
     m_configuration->currentFrameState = std::nullopt;
 }
 
-Texture* PresentationContextCoreAnimation::getCurrentTexture()
+Texture* PresentationContextCoreAnimation::getCurrentTexture(uint32_t)
 {
     if (!m_configuration)
         return nullptr;

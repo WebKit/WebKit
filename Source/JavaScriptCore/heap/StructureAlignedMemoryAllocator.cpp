@@ -108,8 +108,9 @@ public:
             // If we can't find a free block then `freeIndex == m_usedBlocks.bitCount()` and this set will grow the bit vector.
             m_usedBlocks.set(freeIndex);
         }
-
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         auto* block = reinterpret_cast<uint8_t*>(g_jscConfig.startOfStructureHeap) + freeIndex * MarkedBlock::blockSize;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         commitBlock(block);
         return block;
     }
@@ -127,7 +128,7 @@ public:
 
     static void commitBlock(void* block)
     {
-#if OS(UNIX) && ASSERT_ENABLED
+#if OS(UNIX) && !PLATFORM(PLAYSTATION) && ASSERT_ENABLED
         constexpr bool readable = true;
         constexpr bool writable = true;
         OSAllocator::protect(block, MarkedBlock::blockSize, readable, writable);
@@ -140,7 +141,7 @@ public:
 
     static void decommitBlock(void* block)
     {
-#if OS(UNIX) && ASSERT_ENABLED
+#if OS(UNIX) && !PLATFORM(PLAYSTATION) && ASSERT_ENABLED
         constexpr bool readable = false;
         constexpr bool writable = false;
         OSAllocator::protect(block, MarkedBlock::blockSize, readable, writable);
@@ -164,10 +165,6 @@ void StructureAlignedMemoryAllocator::initializeStructureAddressSpace()
 
 void* StructureAlignedMemoryAllocator::tryMallocBlock()
 {
-    static std::once_flag s_onceFlag;
-    std::call_once(s_onceFlag, [] {
-        initializeStructureAddressSpace();
-    });
     return s_structureMemoryManager->tryMallocStructureBlock();
 }
 
@@ -219,4 +216,3 @@ void StructureAlignedMemoryAllocator::decommitBlock(void* block)
 #endif // CPU(ADDRESS64)
 
 } // namespace JSC
-

@@ -11,10 +11,10 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <type_traits>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
@@ -31,11 +31,11 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 constexpr int ShutdownCompleteChunk::kType;
 
-absl::optional<ShutdownCompleteChunk> ShutdownCompleteChunk::Parse(
+std::optional<ShutdownCompleteChunk> ShutdownCompleteChunk::Parse(
     rtc::ArrayView<const uint8_t> data) {
-  absl::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
+  std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   uint8_t flags = reader->Load8<1>();
   bool tag_reflected = (flags & (1 << kFlagsBitT)) != 0;

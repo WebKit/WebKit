@@ -63,12 +63,14 @@ static NSString * const UsePaginatedModePreferenceKey = @"UsePaginatedMode";
 static NSString * const LargeImageAsyncDecodingEnabledPreferenceKey = @"LargeImageAsyncDecodingEnabled";
 static NSString * const AnimatedImageAsyncDecodingEnabledPreferenceKey = @"AnimatedImageAsyncDecodingEnabled";
 static NSString * const AppleColorFilterEnabledPreferenceKey = @"AppleColorFilterEnabled";
+static NSString * const SiteSpecificQuirksModeEnabledPreferenceKey = @"SiteSpecificQuirksModeEnabled";
 static NSString * const PunchOutWhiteBackgroundsInDarkModePreferenceKey = @"PunchOutWhiteBackgroundsInDarkMode";
 static NSString * const UseSystemAppearancePreferenceKey = @"UseSystemAppearance";
 static NSString * const DataDetectorsEnabledPreferenceKey = @"DataDetectorsEnabled";
 static NSString * const UseMockCaptureDevicesPreferenceKey = @"UseMockCaptureDevices";
 static NSString * const AttachmentElementEnabledPreferenceKey = @"AttachmentElementEnabled";
 static NSString * const AdvancedPrivacyProtectionsPreferenceKey = @"AdvancedPrivacyProtectionsEnabled";
+static NSString * const AllowsContentJavascriptPreferenceKey = @"AllowsContentJavascript";
 
 static NSString * const SiteIsolationOverlayPreferenceKey = @"SiteIsolationOverlayEnabled";
 
@@ -106,8 +108,10 @@ typedef NS_ENUM(NSInteger, AttachmentElementEnabledMenuItemTag) {
         AcceleratedDrawingEnabledPreferenceKey,
         LargeImageAsyncDecodingEnabledPreferenceKey,
         AnimatedImageAsyncDecodingEnabledPreferenceKey,
+        SiteSpecificQuirksModeEnabledPreferenceKey,
         WebViewFillsWindowKey,
         ResourceLoadStatisticsEnabledPreferenceKey,
+        AllowsContentJavascriptPreferenceKey,
     ];
 
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -189,6 +193,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Enable Large Image Async Decoding", @selector(toggleLargeImageAsyncDecodingEnabled:));
     addItem(@"Enable Animated Image Async Decoding", @selector(toggleAnimatedImageAsyncDecodingEnabled:));
     addItem(@"Enable color-filter", @selector(toggleAppleColorFilterEnabled:));
+    addItem(@"Enable site-specific quirks", @selector(toggleSiteSpecificQuirksModeEnabled:));
     addItem(@"Punch Out White Backgrounds in Dark Mode", @selector(togglePunchOutWhiteBackgroundsInDarkMode:));
     addItem(@"Use System Appearance", @selector(toggleUseSystemAppearance:));
     addItem(@"Enable Data Detectors", @selector(toggleDataDetectorsEnabled:));
@@ -210,6 +215,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Load All Site Icons Per-Page", @selector(toggleLoadsAllSiteIcons:));
     addItem(@"Use GameController.framework on macOS (Restart required)", @selector(toggleUsesGameControllerFramework:));
     addItem(@"Disable network cache speculative revalidation", @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:));
+    addItem(@"Allow JavaScript from web content to run", @selector(toggleAllowsContentJavascript:));
     indent = NO;
 
     NSMenu *debugOverlaysMenu = addSubmenu(@"Debug Overlays");
@@ -375,6 +381,8 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self animatedImageAsyncDecodingEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleAppleColorFilterEnabled:))
         [menuItem setState:[self appleColorFilterEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleSiteSpecificQuirksModeEnabled:))
+        [menuItem setState:[self siteSpecificQuirksModeEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(togglePunchOutWhiteBackgroundsInDarkMode:))
         [menuItem setState:[self punchOutWhiteBackgroundsInDarkMode] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseSystemAppearance:))
@@ -385,6 +393,8 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self useMockCaptureDevices] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleAdvancedPrivacyProtections:))
         [menuItem setState:[self advancedPrivacyProtectionsEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleAllowsContentJavascript:))
+        [menuItem setState:[self allowsContentJavascript] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleReserveSpaceForBanners:))
         [menuItem setState:[self isSpaceReservedForBanners] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleShowTiledScrollingIndicator:))
@@ -667,6 +677,16 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     return [[NSUserDefaults standardUserDefaults] boolForKey:AppleColorFilterEnabledPreferenceKey];
 }
 
+- (void)toggleSiteSpecificQuirksModeEnabled:(id)sender
+{
+    [self _toggleBooleanDefault:SiteSpecificQuirksModeEnabledPreferenceKey];
+}
+
+- (BOOL)siteSpecificQuirksModeEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:SiteSpecificQuirksModeEnabledPreferenceKey];
+}
+
 - (void)togglePunchOutWhiteBackgroundsInDarkMode:(id)sender
 {
     [self _toggleBooleanDefault:PunchOutWhiteBackgroundsInDarkModePreferenceKey];
@@ -715,6 +735,16 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 - (BOOL)advancedPrivacyProtectionsEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:AdvancedPrivacyProtectionsPreferenceKey];
+}
+
+- (void)toggleAllowsContentJavascript:(id)sender
+{
+    [self _toggleBooleanDefault:AllowsContentJavascriptPreferenceKey];
+}
+
+- (BOOL)allowsContentJavascript
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:AllowsContentJavascriptPreferenceKey];
 }
 
 - (BOOL)nonFastScrollableRegionOverlayVisible

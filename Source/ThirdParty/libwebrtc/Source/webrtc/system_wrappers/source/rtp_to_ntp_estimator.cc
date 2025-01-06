@@ -116,7 +116,7 @@ RtpToNtpEstimator::UpdateResult RtpToNtpEstimator::UpdateMeasurements(
     RTC_LOG(LS_WARNING) << "Multiple consecutively invalid RTCP SR reports, "
                            "clearing measurements.";
     measurements_.clear();
-    params_ = absl::nullopt;
+    params_ = std::nullopt;
   }
   consecutive_invalid_samples_ = 0;
 

@@ -30,6 +30,7 @@
 // For testing only.
 - (void)_removeAllContentRuleLists;
 - (void)_invalidateContentRuleListVersionForIdentifier:(NSString *)identifier;
+- (void)_corruptContentRuleListForIdentifier:(NSString *)identifier usingCurrentVersion:(BOOL)usingCurrentVersion;
 - (void)_getContentRuleListSourceForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSString *))completionHandler;
 
 + (instancetype)defaultStoreWithLegacyFilename;

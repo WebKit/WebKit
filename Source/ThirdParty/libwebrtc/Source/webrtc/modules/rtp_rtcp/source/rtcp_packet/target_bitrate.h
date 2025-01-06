@@ -24,7 +24,7 @@ class TargetBitrate {
   // TODO(sprang): This block type is just a place holder. We need to get an
   //               id assigned by IANA.
   static constexpr uint8_t kBlockType = 42;
-  static const size_t kBitrateItemSizeBytes;
+  static constexpr size_t kBitrateItemSizeBytes = 4;
 
   struct BitrateItem {
     BitrateItem();

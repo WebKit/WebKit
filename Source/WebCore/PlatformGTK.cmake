@@ -40,6 +40,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mediastream/gstreamer"
     "${WEBCORE_DIR}/platform/mock/mediasource"
     "${WEBCORE_DIR}/platform/network/glib"
+    "${WEBCORE_DIR}/platform/video-codecs"
     "${WEBCORE_DIR}/platform/text/gtk"
 )
 
@@ -50,7 +51,9 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/atspi/AccessibilityRootAtspi.h
 
     platform/glib/ApplicationGLib.h
+    platform/glib/SystemSettings.h
 
+    platform/graphics/egl/PlatformDisplayDefault.h
     platform/graphics/egl/PlatformDisplaySurfaceless.h
 
     platform/graphics/gbm/GBMVersioning.h
@@ -59,7 +62,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/gtk/GdkCairoUtilities.h
     platform/graphics/gtk/GdkSkiaUtilities.h
 
-    platform/graphics/x11/PlatformDisplayX11.h
     platform/graphics/x11/XErrorTrapper.h
 
     platform/gtk/GRefPtrGtk.h
@@ -71,8 +73,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/text/enchant/TextCheckerEnchant.h
 )
-
-set(CSS_VALUE_PLATFORM_DEFINES "HAVE_OS_DARK_MODE_SUPPORT=1")
 
 list(APPEND WebCore_LIBRARIES
     ${ENCHANT_LIBRARIES}
@@ -117,15 +117,6 @@ endif ()
 
 if (ENABLE_BUBBLEWRAP_SANDBOX)
     list(APPEND WebCore_LIBRARIES Libseccomp::Libseccomp)
-endif ()
-
-if (ENABLE_SPEECH_SYNTHESIS)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${Flite_INCLUDE_DIRS}
-    )
-    list(APPEND WebCore_LIBRARIES
-        ${Flite_LIBRARIES}
-    )
 endif ()
 
 if (USE_SKIA)

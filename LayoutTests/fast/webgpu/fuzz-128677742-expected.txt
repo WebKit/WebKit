@@ -3,6 +3,6 @@ PASS successfullyParsed is true
 TEST COMPLETE
 0
 validation error:
-buffer length is 4 which is less than required bufferSize of 4294967295
+buffer length(4) minus offset(0), (resourceOffset(0) + dynamicOffset(0)), is less than required bufferSize(4294967295)
 done
 

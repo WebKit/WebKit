@@ -60,6 +60,44 @@ SOFT_LINK_CLASS(UIKit, UIPhysicalKeyboardEvent)
 @property (nonatomic, assign, setter=_setModifierFlags:) NSInteger _modifierFlags;
 @end
 
+@interface UIScrollView (WebKitTestRunner)
+- (CGRect)_wtr_visibleBoundsInCoordinateSpace:(id<UICoordinateSpace>)coordinateSpace;
+@end
+
+@implementation UIScrollView (WebKitTestRunner)
+
+- (CGRect)_wtr_visibleBoundsInCoordinateSpace:(id<UICoordinateSpace>)coordinateSpace
+{
+    auto scrollOffset = self.contentOffset;
+    auto scrollSize = self.bounds.size;
+    auto visibleRect = CGRectMake(scrollOffset.x, scrollOffset.y, scrollSize.width, scrollSize.height);
+    return [self convertRect:visibleRect toCoordinateSpace:coordinateSpace];
+}
+
+@end
+
+@interface UIView (WebKitTestRunner)
+- (UIView *)_wtr_frontmostViewAtPoint:(CGPoint)point;
+@end
+
+@implementation UIView (WebKitTestRunner)
+
+- (UIView *)_wtr_frontmostViewAtPoint:(CGPoint)point
+{
+    if (self.hidden || !self.alpha)
+        return nil;
+
+    for (UIView *subview in self.subviews.reverseObjectEnumerator) {
+        CGPoint convertedPoint = [subview convertPoint:point fromView:self];
+        if (RetainPtr frontmostView = [subview _wtr_frontmostViewAtPoint:convertedPoint])
+            return frontmostView.get();
+    }
+
+    return [self.layer.presentationLayer containsPoint:point] ? self : nil;
+}
+
+@end
+
 namespace WTR {
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
@@ -74,16 +112,6 @@ static bool isHiddenOrHasHiddenAncestor(UIView *view)
 }
 
 #endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
-
-static BOOL returnYes()
-{
-    return YES;
-}
-
-static BOOL returnNo()
-{
-    return NO;
-}
 
 static NSDictionary *toNSDictionary(CGRect rect)
 {
@@ -831,7 +859,20 @@ bool UIScriptControllerIOS::hasInputSession() const
     return webView().isInteractingWithFormControl;
 }
 
-void UIScriptControllerIOS::applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef callback)
+void UIScriptControllerIOS::selectWordForReplacement()
+{
+#if USE(BROWSERENGINEKIT)
+    if (auto asyncInput = asyncTextInput()) {
+        [asyncInput selectWordForReplacement];
+        return;
+    }
+#endif // USE(BROWSERENGINEKIT)
+
+    auto contentView = static_cast<id<UIWKInteractionViewProtocol>>(platformContentView());
+    [contentView selectWordForReplacement];
+}
+
+void UIScriptControllerIOS::applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef callback, bool underline)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
@@ -843,13 +884,14 @@ void UIScriptControllerIOS::applyAutocorrection(JSStringRef newString, JSStringR
                     m_context->asyncTaskComplete(callbackID);
             }).get());
         });
-        [asyncInput replaceText:toWTFString(oldString) withText:toWTFString(newString) options:0 completionHandler:completionWrapper.get()];
+        auto options = underline ? BETextReplacementOptionsAddUnderline : BETextReplacementOptionsNone;
+        [asyncInput replaceText:toWTFString(oldString) withText:toWTFString(newString) options:options completionHandler:completionWrapper.get()];
         return;
     }
 #endif // USE(BROWSERENGINEKIT)
 
     auto contentView = static_cast<id<UIWKInteractionViewProtocol>>(platformContentView());
-    [contentView applyAutocorrection:toWTFString(newString) toString:toWTFString(oldString) shouldUnderline:NO withCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID](UIWKAutocorrectionRects *) {
+    [contentView applyAutocorrection:toWTFString(newString) toString:toWTFString(oldString) shouldUnderline:underline withCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID](UIWKAutocorrectionRects *) {
         dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
             // applyAutocorrection can call its completion handler synchronously,
             // which makes UIScriptController unhappy (see bug 172884).
@@ -896,57 +938,63 @@ JSObjectRef UIScriptControllerIOS::contentVisibleRect() const
     return m_context->objectFromRect(rect);
 }
 
-void UIScriptControllerIOS::clipSelectionViewRectToContentView(CGRect& rect) const
+CGRect UIScriptControllerIOS::selectionViewBoundsClippedToContentView(UIView *view, std::optional<CGRect>&& rectInView) const
 {
     auto contentView = platformContentView();
+    auto rect = [view convertRect:rectInView.value_or(view.bounds) toView:contentView];
     rect = CGRectIntersection(contentView.bounds, rect);
+
+    for (RetainPtr parent = [view superview]; parent; parent = [parent superview]) {
+        RetainPtr scroller = dynamic_objc_cast<UIScrollView>(parent.get());
+        if (!scroller)
+            continue;
+
+        if (scroller == webView().scrollView)
+            break;
+
+        CGRect visibleRectInContentView = [scroller _wtr_visibleBoundsInCoordinateSpace:contentView];
+        rect = CGRectIntersection(visibleRectInContentView, rect);
+    }
 
 #if USE(BROWSERENGINEKIT)
     if (auto asyncInput = asyncTextInput()) {
         auto selectionClipRect = asyncInput.selectionClipRect;
         if (!CGRectIsNull(selectionClipRect))
             rect = CGRectIntersection(selectionClipRect, rect);
-        return;
+        return rect;
     }
 #endif
 
     auto selectionClipRect = [(UIView <UITextInputInternal> *)contentView _selectionClipRect];
     if (!CGRectIsNull(selectionClipRect))
         rect = CGRectIntersection(selectionClipRect, rect);
+    return rect;
 }
 
 JSObjectRef UIScriptControllerIOS::selectionStartGrabberViewRect() const
 {
-    UIView *contentView = platformContentView();
     UIView *handleView = nil;
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (auto view = textSelectionDisplayInteraction().handleViews.firstObject; !isHiddenOrHasHiddenAncestor(view))
         handleView = view;
-#else
-    handleView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.startGrabber"];
 #endif
 
-    auto frameInContentViewCoordinates = [handleView convertRect:handleView.bounds toView:contentView];
-    clipSelectionViewRectToContentView(frameInContentViewCoordinates);
+    auto frameInContentViewCoordinates = selectionViewBoundsClippedToContentView(handleView);
     auto jsContext = m_context->jsContext();
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
 }
 
 JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewRect() const
 {
-    UIView *contentView = platformContentView();
     UIView *handleView = nil;
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (auto view = textSelectionDisplayInteraction().handleViews.lastObject; !isHiddenOrHasHiddenAncestor(view))
         handleView = view;
-#else
-    handleView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.endGrabber"];
 #endif
 
-    auto frameInContentViewCoordinates = [handleView convertRect:handleView.bounds toView:contentView];
-    clipSelectionViewRectToContentView(frameInContentViewCoordinates);
+    auto frameInContentViewCoordinates = selectionViewBoundsClippedToContentView(handleView);
     auto jsContext = m_context->jsContext();
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
 }
@@ -973,8 +1021,7 @@ JSObjectRef UIScriptControllerIOS::selectionCaretViewRect(id<UICoordinateSpace> 
         caretView = view;
 #endif
 
-    auto contentRect = CGRectIntersection([caretView convertRect:caretView.bounds toView:contentView], contentView.bounds);
-    clipSelectionViewRectToContentView(contentRect);
+    auto contentRect = selectionViewBoundsClippedToContentView(caretView);
     if (coordinateSpace != contentView)
         contentRect = [coordinateSpace convertRect:contentRect fromCoordinateSpace:contentView];
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(contentRect) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
@@ -1007,8 +1054,7 @@ JSObjectRef UIScriptControllerIOS::selectionRangeViewRects() const
 #endif
 
     for (UITextSelectionRect *textRectInfo in textRectInfoArray) {
-        auto rangeRectInContentViewCoordinates = [rangeView convertRect:textRectInfo.rect toView:contentView];
-        clipSelectionViewRectToContentView(rangeRectInContentViewCoordinates);
+        auto rangeRectInContentViewCoordinates = selectionViewBoundsClippedToContentView(rangeView, textRectInfo.rect);
         [rectsAsDictionaries addObject:toNSDictionary(CGRectIntersection(rangeRectInContentViewCoordinates, contentView.bounds))];
     }
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:rectsAsDictionaries.get() inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
@@ -1400,6 +1446,11 @@ bool UIScriptControllerIOS::keyboardIsAutomaticallyShifted() const
     return UIKeyboardImpl.activeInstance.isAutoShifted;
 }
 
+unsigned UIScriptControllerIOS::keyboardUpdateForChangedSelectionCount() const
+{
+    return TestController::singleton().keyboardUpdateForChangedSelectionCount();
+}
+
 unsigned UIScriptControllerIOS::keyboardWillHideCount() const
 {
     return static_cast<unsigned>(webView().keyboardWillHideCount);
@@ -1463,7 +1514,7 @@ JSObjectRef UIScriptControllerIOS::calendarType() const
 void UIScriptControllerIOS::setHardwareKeyboardAttached(bool attached)
 {
     GSEventSetHardwareKeyboardAttached(attached, 0);
-    method_setImplementation(class_getClassMethod([UIKeyboard class], @selector(isInHardwareKeyboardMode)), reinterpret_cast<IMP>(attached ? returnYes : returnNo));
+    TestController::singleton().setIsInHardwareKeyboardMode(attached);
 }
 
 void UIScriptControllerIOS::setAllowsViewportShrinkToFit(bool allows)
@@ -1559,8 +1610,9 @@ void UIScriptControllerIOS::setInlinePrediction(JSStringRef text, unsigned start
     NSString *plainText = text->string().substring(startIndex);
     auto attributedText = adoptNS([[NSAttributedString alloc] initWithString:plainText attributes:@{
         NSBackgroundColorAttributeName : UIColor.clearColor,
-        NSForegroundColorAttributeName : UIColor.grayColor,
+        NSForegroundColorAttributeName : UIColor.systemGrayColor,
     }]);
+
     [UIKeyboardImpl.activeInstance setInlineCompletionAsMarkedText:attributedText.get() selectedRange:NSMakeRange(0, 0) inputString:plainText searchString:@""];
 }
 
@@ -1605,6 +1657,20 @@ UITextSelectionDisplayInteraction *UIScriptControllerIOS::textSelectionDisplayIn
 }
 
 #endif
+
+
+JSRetainPtr<JSStringRef> UIScriptControllerIOS::scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID, bool isVertical) const
+{
+    return adopt(JSStringCreateWithCFString((CFStringRef) [webView() _scrollbarState:scrollingNodeID processID:processID isVertical:isVertical]));
+}
+
+JSRetainPtr<JSStringRef> UIScriptControllerIOS::frontmostViewAtPoint(int x, int y)
+{
+    if (RetainPtr view = [platformContentView() _wtr_frontmostViewAtPoint:CGPointMake(x, y)])
+        return adopt(JSStringCreateWithUTF8CString(class_getName([view class])));
+
+    return nil;
+}
 
 }
 

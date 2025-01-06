@@ -1,0 +1,9 @@
+
+PASS e.style['view-transition-group'] = "default" should not set the property value
+PASS e.style['view-transition-group'] = "foo none" should not set the property value
+PASS e.style['view-transition-group'] = "#fff" should not set the property value
+PASS e.style['view-transition-group'] = "12px" should not set the property value
+PASS e.style['view-transition-group'] = "foo 12px" should not set the property value
+PASS e.style['view-transition-group'] = "12em" should not set the property value
+PASS e.style['view-transition-group'] = "12%" should not set the property value
+

@@ -8,20 +8,22 @@ PASS e.style.cssText = grid: auto-flow auto / 100px 100px; grid-template-areas: 
 PASS e.style.cssText = grid: 30px 40px / 50px 60px; grid-auto-flow: column should set grid
 PASS e.style.cssText = grid: 30px 40px / 50px 60px; grid-auto-flow: column should set grid-auto-flow
 PASS e.style.cssText = grid: 30px 40px / 50px 60px; grid-auto-flow: column should set grid-template
-PASS cssText ('grid-auto-columns: auto; grid-auto-rows: auto; grid-auto-flow: column; grid-template: 30px 40px / 50px 60px;') must contain 'grid-template: 30px 40px / 50px 60px;'
-PASS cssText ('grid-auto-columns: auto; grid-auto-rows: auto; grid-auto-flow: column; grid-template: 30px 40px / 50px 60px;') must contain 'grid-auto-rows: auto;'
-PASS cssText ('grid-auto-columns: auto; grid-auto-rows: auto; grid-auto-flow: column; grid-template: 30px 40px / 50px 60px;') must contain 'grid-auto-columns: auto;'
-PASS cssText ('grid-auto-columns: auto; grid-auto-rows: auto; grid-auto-flow: column; grid-template: 30px 40px / 50px 60px;') must contain 'grid-auto-flow: column;'
+PASS cssText ('grid: 30px 40px / 50px 60px; grid-auto-flow: column') must contain 'grid-template: 30px 40px / 50px 60px;' in its serialization
+PASS cssText ('grid: 30px 40px / 50px 60px; grid-auto-flow: column') must contain 'grid-auto-rows: auto;' in its serialization
+PASS cssText ('grid: 30px 40px / 50px 60px; grid-auto-flow: column') must contain 'grid-auto-columns: auto;' in its serialization
+PASS cssText ('grid: 30px 40px / 50px 60px; grid-auto-flow: column') must contain 'grid-auto-flow: column;' in its serialization
 PASS e.style.cssText = grid: auto-flow / 10px; grid-template-rows: 20px should set grid
 PASS e.style.cssText = grid: auto-flow / 10px; grid-template-rows: 20px should set grid-template
-PASS cssText ('grid: 20px / 10px;') must contain 'grid: 20px / 10px;'
+PASS cssText ('grid: auto-flow / 10px; grid-template-rows: 20px') must contain 'grid: 20px / 10px;' in its serialization
 PASS e.style.cssText = grid: auto-flow 1px / 2px; grid-auto-flow: inherit should set grid
 PASS e.style.cssText = grid: 1px / 2px; grid-auto-flow: row should set grid
+PASS e.style.cssText = grid: none / 2px; grid-auto-flow: row should set grid
 PASS e.style.cssText = grid: 1px / 2px; grid-auto-columns: auto should set grid
 PASS e.style.cssText = grid: 1px / 2px; grid-auto-rows: auto should set grid
 PASS e.style.cssText = grid: 1px / auto-flow 2px; grid-auto-rows: auto should set grid
 PASS e.style.cssText = grid: 1px / auto-flow; grid-auto-columns: auto should set grid
 PASS e.style.cssText = grid: auto-flow 1px / 2px; grid-auto-columns: auto should set grid
+PASS e.style.cssText = grid: auto-flow 1px / none; grid-auto-columns: auto should set grid
 PASS e.style.cssText = grid: auto-flow dense / 2px; grid-auto-rows: auto should set grid
 PASS e.style.cssText = grid: auto-flow 1px / 2px; grid-auto-columns: 3px should set grid
 PASS e.style.cssText = grid: auto-flow 1px / 2px; grid-auto-columns: 3px should set grid-auto-columns

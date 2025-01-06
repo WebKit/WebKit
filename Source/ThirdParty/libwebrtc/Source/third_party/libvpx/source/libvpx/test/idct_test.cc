@@ -11,7 +11,7 @@
 #include "./vpx_config.h"
 #include "./vp8_rtcd.h"
 
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "test/buffer.h"
 #include "test/clear_system_state.h"

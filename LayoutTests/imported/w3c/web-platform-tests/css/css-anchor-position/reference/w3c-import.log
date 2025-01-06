@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-position-circular-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-chained-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-chained-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-chained-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-chained-fallback-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-composited-scrolling-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-fixedpos-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-fixedpos-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-nested-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-to-sticky-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-to-sticky-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-to-sticky-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-update-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-update-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-vlr-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-vrl-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/sticky-anchor-position-invalid-ref.html

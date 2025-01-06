@@ -21,8 +21,8 @@
 
 #pragma once
 
-#include "ParsingUtilities.h"
 #include <wtf/Forward.h>
+#include <wtf/text/ParsingUtilities.h>
 
 typedef std::pair<char32_t, char32_t> UnicodeRange;
 typedef Vector<UnicodeRange> UnicodeRanges;

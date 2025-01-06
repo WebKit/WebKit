@@ -1,0 +1,10 @@
+ABC
+ABC
+ABC
+ABC
+
+FAIL vertical-rl assert_equals: expected 100 but got 110
+FAIL vertical-lr assert_equals: expected 100 but got 110
+FAIL sideways-rl assert_equals: expected 100 but got 110
+FAIL sideways-lr assert_equals: expected 100 but got 90
+

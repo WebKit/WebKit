@@ -16,8 +16,7 @@
 #endif
 
 #include <limits>
-
-#include "absl/types/optional.h"
+#include <optional>
 
 namespace webrtc {
 

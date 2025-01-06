@@ -27,11 +27,12 @@
 
 #include <WebCore/SWRegistrationDatabase.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class ServiceWorkerStorageManager {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerStorageManager);
 public:
     explicit ServiceWorkerStorageManager(const String& path);
 

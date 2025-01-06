@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 struct WebKit::FileSystemSyncAccessHandleInfo {
-    WebCore::FileSystemSyncAccessHandleIdentifier identifier;
+    Markable<WebCore::FileSystemSyncAccessHandleIdentifier> identifier;
     IPC::SharedFileHandle handle;
     uint64_t capacity;
 }

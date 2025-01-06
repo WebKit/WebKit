@@ -28,8 +28,10 @@
 #if USE(SKIA)
 
 #include "GraphicsContext.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/effects/SkDashPathEffect.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
@@ -52,9 +54,9 @@ public:
     void setMiterLimit(float) final;
 
     using GraphicsContext::fillRect;
-    void fillRect(const FloatRect&) final;
+    void fillRect(const FloatRect&, RequiresClipToRect = RequiresClipToRect::Yes) final;
     void fillRect(const FloatRect&, const Color&) final;
-    void fillRect(const FloatRect&, Gradient&, const AffineTransform&) final;
+    void fillRect(const FloatRect&, Gradient&, const AffineTransform&, RequiresClipToRect = RequiresClipToRect::Yes) final;
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final;
     void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) final;
     void fillPath(const Path&) final;
@@ -64,6 +66,7 @@ public:
 
     void drawNativeImageInternal(NativeImage&, const FloatRect&, const FloatRect&, ImagePaintingOptions) final;
     void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions) final;
+    void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&) final;
 
     void drawRect(const FloatRect&, float) final;
     void drawLine(const FloatPoint&, const FloatPoint&) final;
@@ -86,6 +89,7 @@ public:
     AffineTransform getCTM(GraphicsContext::IncludeDeviceScale) const final;
 
     void beginTransparencyLayer(float) final;
+    void beginTransparencyLayer(CompositeOperator, BlendMode) final;
     void endTransparencyLayer() final;
 
     void resetClip() final;
@@ -98,17 +102,25 @@ public:
 
     RenderingMode renderingMode() const final;
 
-    enum class ShadowStyle : uint8_t { Outset, Inset };
-    sk_sp<SkImageFilter> createDropShadowFilterIfNeeded(ShadowStyle) const;
-
     SkPaint createFillPaint() const;
     SkPaint createStrokePaint() const;
+
+    void drawSkiaText(const sk_sp<SkTextBlob>&, SkScalar, SkScalar, bool, bool);
+
+private:
+    bool makeGLContextCurrentIfNeeded() const;
 
     void setupFillSource(SkPaint&) const;
     void setupStrokeSource(SkPaint&) const;
 
-private:
-    bool makeGLContextCurrentIfNeeded() const;
+    enum class ShadowStyle : uint8_t { Outset, Inset };
+    sk_sp<SkImageFilter> createDropShadowFilterIfNeeded(ShadowStyle) const;
+    bool drawOutsetShadow(SkPaint&, Function<void(const SkPaint&)>&&);
+
+    void drawSkiaRect(const SkRect&, SkPaint&);
+    void drawSkiaPath(const SkPath&, SkPaint&);
+    void drawSkiaImage(const sk_sp<SkImage>&, const IntSize&, const FloatRect&, const FloatRect&, ImagePaintingOptions);
+    void drawSkiaPattern(const sk_sp<SkImage>&, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ImagePaintingOptions);
 
     class SkiaState {
     public:
@@ -122,12 +134,17 @@ private:
         } m_stroke;
     };
 
+    struct LayerState {
+        std::optional<CompositeMode> compositeMode;
+    };
+
     SkCanvas& m_canvas;
     RenderingMode m_renderingMode { RenderingMode::Accelerated };
     RenderingPurpose m_renderingPurpose { RenderingPurpose::Unspecified };
     CompletionHandler<void()> m_destroyNotify;
     SkiaState m_skiaState;
     Vector<SkiaState, 1> m_skiaStateStack;
+    Vector<LayerState, 1> m_layerStateStack;
     const DestinationColorSpace m_colorSpace;
 };
 

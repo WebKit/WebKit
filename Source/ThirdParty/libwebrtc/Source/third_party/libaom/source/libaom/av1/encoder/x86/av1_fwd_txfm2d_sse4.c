@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -19,7 +19,7 @@
 #include "av1/encoder/x86/av1_txfm1d_sse4.h"
 #include "av1/encoder/x86/av1_fwd_txfm_sse2.h"
 
-static INLINE void int16_array_with_stride_to_int32_array_without_stride(
+static inline void int16_array_with_stride_to_int32_array_without_stride(
     const int16_t *input, int stride, int32_t *output, int txfm1d_size) {
   int r, c;
   for (r = 0; r < txfm1d_size; r++) {
@@ -29,7 +29,7 @@ static INLINE void int16_array_with_stride_to_int32_array_without_stride(
   }
 }
 
-static INLINE void store_output_32bit_w8(int32_t *const out,
+static inline void store_output_32bit_w8(int32_t *const out,
                                          const __m128i *const in1,
                                          const __m128i *const in2,
                                          const int stride, const int out_size) {
@@ -73,7 +73,7 @@ static void idtx32x32_sse4_1(__m128i *input, __m128i *output,
   }
 }
 
-static INLINE TxfmFuncSSE2 fwd_txfm_type_to_func(TXFM_TYPE txfm_type) {
+static inline TxfmFuncSSE2 fwd_txfm_type_to_func(TXFM_TYPE txfm_type) {
   switch (txfm_type) {
     case TXFM_TYPE_DCT32: return fdct32_sse4_1;
     case TXFM_TYPE_DCT64: return fdct64_new_sse4_1;
@@ -83,7 +83,7 @@ static INLINE TxfmFuncSSE2 fwd_txfm_type_to_func(TXFM_TYPE txfm_type) {
   return NULL;
 }
 
-static INLINE void fwd_txfm2d_sse4_1(const int16_t *input, int32_t *output,
+static inline void fwd_txfm2d_sse4_1(const int16_t *input, int32_t *output,
                                      const int stride,
                                      const TXFM_2D_FLIP_CFG *cfg,
                                      int32_t *txfm_buf) {
@@ -117,7 +117,7 @@ static INLINE void fwd_txfm2d_sse4_1(const int16_t *input, int32_t *output,
   av1_round_shift_array_32_sse4_1(out_128, out_128, txfm2d_size_128, -shift[2]);
 }
 
-static INLINE void fwd_txfm2d_64x64_sse4_1(const int16_t *input,
+static inline void fwd_txfm2d_64x64_sse4_1(const int16_t *input,
                                            int32_t *output, const int stride,
                                            const TXFM_2D_FLIP_CFG *cfg,
                                            int32_t *txfm_buf) {

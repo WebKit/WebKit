@@ -9,11 +9,11 @@
  */
 #include "modules/video_coding/svc/scalability_structure_full_svc.h"
 
+#include <optional>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -142,7 +142,7 @@ ScalabilityStructureFullSvc::NextFrameConfig(bool restart) {
   }
   FramePattern current_pattern = NextPattern();
 
-  absl::optional<int> spatial_dependency_buffer_id;
+  std::optional<int> spatial_dependency_buffer_id;
   switch (current_pattern) {
     case kDeltaT0:
     case kKey:

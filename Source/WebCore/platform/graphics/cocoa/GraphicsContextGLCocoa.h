@@ -32,10 +32,6 @@
 #include "ProcessIdentity.h"
 #include <array>
 
-#if PLATFORM(MAC)
-#include "ScopedHighPerformanceGPURequest.h"
-#endif
-
 #if ENABLE(MEDIA_STREAM)
 #include <memory>
 #endif
@@ -91,6 +87,11 @@ public:
 
 #if ENABLE(WEBXR)
     bool enableRequiredWebXRExtensions() final;
+
+    // GL_EXT_discard_framebuffer
+    void framebufferDiscard(GCGLenum, std::span<const GCGLenum>) final;
+    // GL_WEBKIT_explicit_resolve_target
+    void framebufferResolveRenderbuffer(GCGLenum, GCGLenum, GCGLenum, PlatformGLObject) final;
 #endif
 
     void waitUntilWorkScheduled();
@@ -98,24 +99,16 @@ public:
     // GraphicsContextGLANGLE overrides.
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 #if ENABLE(VIDEO)
-    bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
-#endif
-#if ENABLE(VIDEO)
-    GraphicsContextGLCV* asCV() final;
+    bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) final;
 #endif
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
 #endif
     RefPtr<PixelBuffer> readCompositedResults() final;
-    void setContextVisibility(bool) final;
     void setDrawingBufferColorSpace(const DestinationColorSpace&) final;
     void prepareForDisplay() override;
 
     void withBufferAsNativeImage(SurfaceBuffer, Function<void(NativeImage&)>) override;
-
-#if PLATFORM(MAC)
-    void updateContextOnDisplayReconfiguration();
-#endif
 
     // Prepares current frame for display. The `finishedSignal` will be invoked once the frame has finished rendering.
     void prepareForDisplayWithFinishedSignal(Function<void()> finishedSignal);
@@ -150,16 +143,14 @@ protected:
 #if ENABLE(WEBXR)
     bool enableRequiredWebXRExtensionsImpl();
 #endif
-
+#if ENABLE(VIDEO)
+    GraphicsContextGLCV* cvContext();
+#endif
 
     ProcessIdentity m_resourceOwner;
     DestinationColorSpace m_drawingBufferColorSpace;
 #if ENABLE(VIDEO)
     std::unique_ptr<GraphicsContextGLCVCocoa> m_cv;
-#endif
-#if PLATFORM(MAC)
-    bool m_switchesGPUOnDisplayReconfiguration { false };
-    ScopedHighPerformanceGPURequest m_highPerformanceGPURequest;
 #endif
 #if ENABLE(MEDIA_STREAM)
     std::unique_ptr<ImageRotationSessionVT> m_mediaSampleRotationSession;

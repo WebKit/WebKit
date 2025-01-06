@@ -67,14 +67,14 @@ TEST(WebKit2, ProvisionalURLAfterWillSendRequestCallback)
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("ProvisionalURLAfterWillSendRequestCallbackTest"));
 
     WKContextInjectedBundleClientV0 injectedBundleClient;
-    memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+    zeroBytes(injectedBundleClient);
     injectedBundleClient.base.version = 0;
     WKContextSetInjectedBundleClient(context.get(), &injectedBundleClient.base);
 
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 navigationClient;
-    memset(&navigationClient, 0, sizeof(navigationClient));
+    zeroBytes(navigationClient);
 
     navigationClient.base.version = 0;
     navigationClient.didCommitNavigation = didCommitNavigationCallback;

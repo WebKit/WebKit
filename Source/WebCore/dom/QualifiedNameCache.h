@@ -34,6 +34,7 @@
 #include "XMLNames.h"
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(MATHML)
 #include "MathMLNames.h"
@@ -45,7 +46,7 @@ enum class NodeName : uint16_t;
 namespace WebCore {
 
 class QualifiedNameCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(QualifiedNameCache);
 public:
     QualifiedNameCache() = default;
 

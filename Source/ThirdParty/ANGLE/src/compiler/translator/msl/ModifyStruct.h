@@ -12,9 +12,9 @@
 #include <unordered_set>
 
 #include "compiler/translator/Compiler.h"
+#include "compiler/translator/Name.h"
 #include "compiler/translator/msl/IdGen.h"
 #include "compiler/translator/msl/Layout.h"
-#include "compiler/translator/msl/Name.h"
 #include "compiler/translator/msl/ProgramPrelude.h"
 #include "compiler/translator/msl/SymbolEnv.h"
 

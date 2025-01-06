@@ -42,6 +42,7 @@
 #import "WebNSAttributedStringExtras.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
+#import <wtf/MallocSpan.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
@@ -739,39 +740,42 @@ Vector<String> Pasteboard::readFilePaths()
 }
 
 #if ENABLE(DRAG_SUPPORT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static void flipImageSpec(CoreDragImageSpec* imageSpec)
 {
-    unsigned char* tempRow = (unsigned char*)fastMalloc(imageSpec->bytesPerRow);
+    auto tempRow = MallocSpan<uint8_t>::malloc(imageSpec->bytesPerRow);
     int planes = imageSpec->isPlanar ? imageSpec->samplesPerPixel : 1;
 
     for (int p = 0; p < planes; ++p) {
-        unsigned char* topRow = const_cast<unsigned char*>(imageSpec->data[p]);
-        unsigned char* botRow = topRow + (imageSpec->pixelsHigh - 1) * imageSpec->bytesPerRow;
+        auto* topRow = const_cast<uint8_t*>(imageSpec->data[p]);
+        auto* botRow = topRow + (imageSpec->pixelsHigh - 1) * imageSpec->bytesPerRow;
         for (int i = 0; i < imageSpec->pixelsHigh / 2; ++i, topRow += imageSpec->bytesPerRow, botRow -= imageSpec->bytesPerRow) {
-            bcopy(topRow, tempRow, imageSpec->bytesPerRow);
-            bcopy(botRow, topRow, imageSpec->bytesPerRow);
-            bcopy(tempRow, botRow, imageSpec->bytesPerRow);
+            auto topRowSpan = unsafeMakeSpan(topRow, imageSpec->bytesPerRow);
+            auto botRowSpan = unsafeMakeSpan(botRow, imageSpec->bytesPerRow);
+            memmoveSpan(tempRow.mutableSpan(), topRowSpan);
+            memmoveSpan(topRowSpan, botRowSpan);
+            memmoveSpan(botRowSpan, tempRow.span());
         }
     }
-
-    fastFree(tempRow);
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void setDragImageImpl(NSImage *image, NSPoint offset)
 {
     bool flipImage;
     NSSize imageSize = image.size;
     CGRect imageRect = CGRectMake(0, 0, imageSize.width, imageSize.height);
-    NSImageRep *imageRep = [image bestRepresentationForRect:NSRectFromCGRect(imageRect) context:nil hints:nil];
+    NSRect convertedRect = NSRectFromCGRect(imageRect);
+    NSImageRep *imageRep = [image bestRepresentationForRect:convertedRect context:nil hints:nil];
     RetainPtr<NSBitmapImageRep> bitmapImage;
     if (!imageRep || ![imageRep isKindOfClass:[NSBitmapImageRep class]] || !NSEqualSizes(imageRep.size, imageSize)) {
         [image lockFocus];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        bitmapImage = adoptNS([[NSBitmapImageRep alloc] initWithFocusedViewRect:*(NSRect*)&imageRect]);
+        bitmapImage = adoptNS([[NSBitmapImageRep alloc] initWithFocusedViewRect:convertedRect]);
 ALLOW_DEPRECATED_DECLARATIONS_END
         [image unlockFocus];
-        
-        // we may have to flip the bits we just read if the image was flipped since it means the cache was also
+
+        // We may have to flip the bits we just read if the image was flipped since it means the cache was also
         // and CoreDragSetImage can't take a transform for rendering.
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         flipImage = image.isFlipped;

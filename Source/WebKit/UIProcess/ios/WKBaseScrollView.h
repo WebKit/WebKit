@@ -40,6 +40,7 @@
 
 @protocol WKBaseScrollViewDelegate <NSObject>
 
+- (BOOL)shouldAllowPanGestureRecognizerToReceiveTouchesInScrollView:(WKBaseScrollView *)scrollView;
 - (UIAxis)axesToPreventScrollingForPanGestureInScrollView:(WKBaseScrollView *)scrollView;
 
 @end
@@ -54,7 +55,7 @@
 @property (nonatomic, readonly, getter=overlayRegionsForTesting) HashSet<WebCore::IntRect>& overlayRegionRects;
 
 - (BOOL)_hasEnoughContentForOverlayRegions;
-- (void)_updateOverlayRegionRects:(HashSet<WebCore::IntRect>&)overlayRegions;
+- (void)_updateOverlayRegionRects:(const HashSet<WebCore::IntRect>&)overlayRegions;
 - (void)_updateOverlayRegionsBehavior:(BOOL)selected;
 #endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 

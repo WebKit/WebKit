@@ -21,18 +21,20 @@
 			event.stopPropagation();
 			event.preventDefault();
 		}
-		window.onload = function()
+		window.onload = async function()
 		{
 			var elem = document.getElementById("click_area");
             elem.addEventListener('dblclick', handler, false);
             
             if (window.testRunner) {
                 testRunner.dumpAsText();
-                eventSender.mouseMoveTo(50,50);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
-                eventSender.mouseDown();
-                eventSender.mouseUp();
+                testRunner.waitUntilDone();
+                await eventSender.asyncMouseMoveTo(50,50);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
+                testRunner.notifyDone();
             }
 		}
 	</script>

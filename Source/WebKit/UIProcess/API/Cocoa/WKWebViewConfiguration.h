@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKPreferences;
 @class WKProcessPool;
 @class WKUserContentController;
+@class WKWebExtensionController;
 @class WKWebpagePreferences;
 @class WKWebsiteDataStore;
 
@@ -115,6 +116,10 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! @abstract The user content controller to associate with the web view.
 */
 @property (nonatomic, strong) WKUserContentController *userContentController;
+
+/*! @abstract The web extension controller to associate with the web view.
+*/
+@property (nullable, nonatomic, strong) WKWebExtensionController *webExtensionController WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*! @abstract The website data store to be used by the web view.
  */
@@ -221,8 +226,22 @@ on the system setting.
  */
 - (nullable id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
-#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
-#import <WebKitAdditions/WKWebViewConfigurationAdditions.h>
+/*! @abstract A Boolean value indicating whether insertion of adaptive image glyphs is allowed.
+    @discussion The default value is `NO`. If `NO`, adaptive image glyphs are inserted as regular
+    images. If `YES`, they are inserted with the full adaptive sizing behavior.
+    */
+@property (nonatomic) BOOL supportsAdaptiveImageGlyph WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
+
+#if (TARGET_OS_IOS && __IPHONE_OS_VERSION_MAX_ALLOWED >= 180000) || (defined(TARGET_OS_VISION) && TARGET_OS_VISION && __has_include(<GameKit/GKReleaseState.h>))
+/*! @abstract The preferred behavior of Writing Tools.
+    @discussion The default behavior is equivalent to `UIWritingToolsBehaviorLimited`.
+    */
+@property (nonatomic) UIWritingToolsBehavior writingToolsBehavior WK_API_AVAILABLE(ios(18.0), visionos(WK_XROS_TBA));
+#elif TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 150000
+/*! @abstract The preferred behavior of Writing Tools.
+    @discussion The default behavior is equivalent to `NSWritingToolsBehaviorLimited`.
+    */
+@property (nonatomic) NSWritingToolsBehavior writingToolsBehavior WK_API_AVAILABLE(macos(15.0));
 #endif
 
 @end

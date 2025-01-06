@@ -29,6 +29,8 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "JSWebExtensionWrappable.h"
+#include "WebFrame.h"
+#include "WebPage.h"
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSWeakObjectMapRefPrivate.h>
 
@@ -126,6 +128,19 @@ void JSWebExtensionWrapper::finalize(JSObjectRef object)
         JSObjectSetPrivate(object, nullptr);
         wrappable->deref();
     }
+}
+
+RefPtr<WebFrame> toWebFrame(JSContextRef context)
+{
+    ASSERT(context);
+    return WebFrame::frameForContext(JSContextGetGlobalContext(context));
+}
+
+RefPtr<WebPage> toWebPage(JSContextRef context)
+{
+    ASSERT(context);
+    auto frame = toWebFrame(context);
+    return frame ? frame->page() : nullptr;
 }
 
 } // namespace WebKit

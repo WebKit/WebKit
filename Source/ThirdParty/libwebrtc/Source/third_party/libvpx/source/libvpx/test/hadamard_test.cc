@@ -10,13 +10,14 @@
 
 #include <algorithm>
 
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "./vpx_dsp_rtcd.h"
 #include "vpx_ports/vpx_timer.h"
 
 #include "test/acm_random.h"
 #include "test/register_state_check.h"
+#include "vpx_config.h"
 
 namespace {
 

@@ -29,6 +29,10 @@
 #include "RenderStyleConstants.h"
 #include <wtf/RefCounted.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 // CSS3 Multi Column Layout
@@ -42,6 +46,10 @@ public:
     
     bool operator==(const StyleMultiColData&) const;
 
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleMultiColData&) const;
+#endif
+
     unsigned short ruleWidth() const
     {
         if (rule.style() == BorderStyle::None || rule.style() == BorderStyle::Hidden)
@@ -52,7 +60,7 @@ public:
     float width { 0 };
     unsigned short count;
     BorderValue rule;
-    StyleColor visitedLinkColumnRuleColor;
+    Style::Color visitedLinkColumnRuleColor;
 
     bool autoWidth : 1;
     bool autoCount : 1;

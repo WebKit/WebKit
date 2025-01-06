@@ -60,6 +60,9 @@ public:
     static Ref<WebGeolocationManagerProxy> create(WebProcessPool*);
     ~WebGeolocationManagerProxy();
 
+    void ref() const final { API::ObjectImpl<API::Object::Type::GeolocationManager>::ref(); }
+    void deref() const final { API::ObjectImpl<API::Object::Type::GeolocationManager>::deref(); }
+
     void setProvider(std::unique_ptr<API::GeolocationProvider>&&);
 
     void providerDidChangePosition(WebGeolocationPosition*);
@@ -72,6 +75,7 @@ public:
     using API::Object::deref;
 
     void webProcessIsGoingAway(WebProcessProxy&);
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&) const;
 
 private:
     explicit WebGeolocationManagerProxy(WebProcessPool*);

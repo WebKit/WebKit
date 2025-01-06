@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,12 +35,15 @@
 #include "CSSLayerStatementRule.h"
 #include "CSSMediaRule.h"
 #include "CSSNamespaceRule.h"
+#include "CSSNestedDeclarations.h"
 #include "CSSPageRule.h"
+#include "CSSPositionTryRule.h"
 #include "CSSPropertyRule.h"
 #include "CSSScopeRule.h"
 #include "CSSStartingStyleRule.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
+#include "CSSViewTransitionRule.h"
 #include "MediaList.h"
 #include "MutableStyleProperties.h"
 #include "StyleProperties.h"
@@ -87,6 +90,8 @@ template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRule>(*this));
     case StyleRuleType::StyleWithNesting:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleWithNesting>(*this));
+    case StyleRuleType::NestedDeclarations:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleNestedDeclarations>(*this));
     case StyleRuleType::Page:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRulePage>(*this));
     case StyleRuleType::FontFace:
@@ -124,6 +129,10 @@ template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleScope>(*this));
     case StyleRuleType::StartingStyle:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleStartingStyle>(*this));
+    case StyleRuleType::ViewTransition:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleViewTransition>(*this));
+    case StyleRuleType::PositionTry:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRulePositionTry>(*this));
     case StyleRuleType::Margin:
         break;
     case StyleRuleType::Unknown:
@@ -166,6 +175,9 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
         },
         [&](StyleRuleWithNesting& rule) -> Ref<CSSRule> {
             return CSSStyleRule::create(rule, parentSheet);
+        },
+        [&](StyleRuleNestedDeclarations& rule) -> Ref<CSSRule> {
+            return CSSNestedDeclarations::create(rule, parentSheet);
         },
         [&](StyleRulePage& rule) -> Ref<CSSRule> {
             return CSSPageRule::create(rule, parentSheet);
@@ -216,6 +228,12 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
         },
         [&](StyleRuleStartingStyle& rule) -> Ref<CSSRule> {
             return CSSStartingStyleRule::create(rule, parentSheet);
+        },
+        [&](StyleRuleViewTransition& rule) -> Ref<CSSRule> {
+            return CSSViewTransitionRule::create(rule, parentSheet);
+        },
+        [&](StyleRulePositionTry& rule) -> Ref<CSSRule> {
+            return CSSPositionTryRule::create(rule, parentSheet);
         },
         [](StyleRuleCharset&) -> Ref<CSSRule> {
             RELEASE_ASSERT_NOT_REACHED();
@@ -323,11 +341,28 @@ Vector<Ref<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCompo
     return rules;
 }
 
+String StyleRule::debugDescription() const
+{
+    StringBuilder builder;
+    builder.append("StyleRule ["_s, m_properties->asText(), ']');
+    return builder.toString();
+}
+
 StyleRuleWithNesting::~StyleRuleWithNesting() = default;
 
 Ref<StyleRuleWithNesting> StyleRuleWithNesting::copy() const
 {
     return adoptRef(*new StyleRuleWithNesting(*this));
+}
+
+String StyleRuleWithNesting::debugDescription() const
+{
+    StringBuilder builder;
+    builder.append("StyleRuleWithNesting ["_s, properties().asText(), " "_s);
+    for (const auto& rule : m_nestedRules)
+        builder.append(rule->debugDescription());
+    builder.append(']');
+    return builder.toString();
 }
 
 StyleRuleWithNesting::StyleRuleWithNesting(const StyleRuleWithNesting& other)
@@ -363,35 +398,17 @@ StyleRuleWithNesting::StyleRuleWithNesting(Ref<StyleProperties>&& properties, bo
     setType(StyleRuleType::StyleWithNesting);
 }
 
-StyleRulePage::StyleRulePage(Ref<StyleProperties>&& properties, CSSSelectorList&& selectors)
-    : StyleRuleBase(StyleRuleType::Page)
-    , m_properties(WTFMove(properties))
-    , m_selectorList(WTFMove(selectors))
+StyleRuleNestedDeclarations::StyleRuleNestedDeclarations(Ref<StyleProperties>&& properties)
+    : StyleRule(WTFMove(properties), false, { })
 {
+    setType(StyleRuleType::NestedDeclarations);
 }
 
-StyleRulePage::StyleRulePage(const StyleRulePage& o)
-    : StyleRuleBase(o)
-    , m_properties(o.m_properties->mutableCopy())
-    , m_selectorList(o.m_selectorList)
+String StyleRuleNestedDeclarations::debugDescription() const
 {
-}
-
-StyleRulePage::~StyleRulePage() = default;
-
-Ref<StyleRulePage> StyleRulePage::create(Ref<StyleProperties>&& properties, CSSSelectorList&& selectors)
-{
-    return adoptRef(*new StyleRulePage(WTFMove(properties), WTFMove(selectors)));
-}
-
-MutableStyleProperties& StyleRulePage::mutableProperties()
-{
-    if (auto* mutableProperties = dynamicDowncast<MutableStyleProperties>(m_properties.get()))
-        return *mutableProperties;
-    Ref mutableProperties = m_properties->mutableCopy();
-    auto& mutablePropertiesRef = mutableProperties.get();
-    m_properties = WTFMove(mutableProperties);
-    return mutablePropertiesRef;
+    StringBuilder builder;
+    builder.append("StyleRuleNestedDeclarations ["_s, properties().asText(), ']');
+    return builder.toString();
 }
 
 StyleRuleFontFace::StyleRuleFontFace(Ref<StyleProperties>&& properties)
@@ -477,6 +494,47 @@ void StyleRuleGroup::wrapperRemoveRule(unsigned index)
     m_childRules.remove(index);
 }
 
+String StyleRuleGroup::debugDescription() const
+{
+    StringBuilder builder;
+    builder.append("StyleRuleGroup ["_s);
+    for (const auto& rule : m_childRules)
+        builder.append(rule->debugDescription());
+    builder.append(']');
+    return builder.toString();
+}
+
+StyleRulePage::~StyleRulePage() = default;
+
+StyleRulePage::StyleRulePage(Ref<StyleProperties>&& properties, CSSSelectorList&& selectors)
+    : StyleRuleGroup(StyleRuleType::Page, { })
+    , m_properties(WTFMove(properties))
+    , m_selectorList(WTFMove(selectors))
+{
+}
+
+StyleRulePage::StyleRulePage(const StyleRulePage& other)
+    : StyleRuleGroup(other)
+    , m_properties(other.m_properties->mutableCopy())
+    , m_selectorList(other.m_selectorList)
+{
+}
+
+Ref<StyleRulePage> StyleRulePage::create(Ref<StyleProperties>&& properties, CSSSelectorList&& selectors)
+{
+    return adoptRef(*new StyleRulePage(WTFMove(properties), WTFMove(selectors)));
+}
+
+MutableStyleProperties& StyleRulePage::mutableProperties()
+{
+    if (auto* mutableProperties = dynamicDowncast<MutableStyleProperties>(m_properties.get()))
+        return *mutableProperties;
+    Ref mutableProperties = m_properties->mutableCopy();
+    auto& mutablePropertiesRef = mutableProperties.get();
+    m_properties = WTFMove(mutableProperties);
+    return mutablePropertiesRef;
+}
+
 StyleRuleMedia::StyleRuleMedia(MQ::MediaQueryList&& mediaQueries, Vector<Ref<StyleRuleBase>>&& rules)
     : StyleRuleGroup(StyleRuleType::Media, WTFMove(rules))
     , m_mediaQueries(WTFMove(mediaQueries))
@@ -497,6 +555,13 @@ Ref<StyleRuleMedia> StyleRuleMedia::create(MQ::MediaQueryList&& mediaQueries, Ve
 Ref<StyleRuleMedia> StyleRuleMedia::copy() const
 {
     return adoptRef(*new StyleRuleMedia(*this));
+}
+
+String StyleRuleMedia::debugDescription() const
+{
+    StringBuilder builder;
+    builder.append("StyleRuleMedia ["_s, StyleRuleGroup::debugDescription(), ']');
+    return builder.toString();
 }
 
 StyleRuleSupports::StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<Ref<StyleRuleBase>>&& rules)
@@ -611,6 +676,22 @@ StyleRuleNamespace::StyleRuleNamespace(const AtomString& prefix, const AtomStrin
 Ref<StyleRuleNamespace> StyleRuleNamespace::create(const AtomString& prefix, const AtomString& uri)
 {
     return adoptRef(*new StyleRuleNamespace(prefix, uri));
+}
+
+String StyleRuleBase::debugDescription() const
+{
+    return visitDerived([]<typename RuleType> (const RuleType& rule) -> String {
+        // FIXME: implement debugDescription() for all classes which inherit StyleRuleBase.
+        if constexpr (std::is_same_v<decltype(&RuleType::debugDescription), decltype(&StyleRuleBase::debugDescription)>)
+            return "StyleRuleBase"_s;
+        return rule.debugDescription();
+    });
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const StyleRuleBase& rule)
+{
+    ts << rule.debugDescription();
+    return ts;
 }
 
 } // namespace WebCore

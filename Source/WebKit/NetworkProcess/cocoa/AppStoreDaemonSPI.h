@@ -60,4 +60,17 @@ typedef NS_ENUM(NSInteger, ASDInstallWebAttributionContext) {
 NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+// FIXME: Move these to the !USE(APPLE_INTERNAL_SDK) section once rdar://137446922 is complete.
+#if HAVE(AD_ATTRIBUTION_KIT_PRIVATE_BROWSING)
+NS_ASSUME_NONNULL_BEGIN
+@interface ASDInstallWebAttributionService (Staging_for_137446922)
+- (void)removeInstallWebAttributionParamsFromPrivateBrowsingSessionId:(NSUUID *)sessionId completionHandler:(nullable void (^)(NSError *__nullable error))completionHandler;
+@end
+@interface ASDInstallWebAttributionParamsConfig (Staging_for_137446922)
+@property (nullable, nonatomic, strong) NSUUID *privateBrowsingSessionId;
+@end
+NS_ASSUME_NONNULL_END
+#endif // HAVE(AD_ATTRIBUTION_KIT_PRIVATE_BROWSING)
+
 #endif // HAVE(SKADNETWORK_v4)

@@ -30,10 +30,15 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 using namespace JSC;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IdentifierRep);
 
 typedef HashSet<IdentifierRep*> IdentifierSet;
 
@@ -43,7 +48,7 @@ static IdentifierSet& identifierSet()
     return identifierSet;
 }
     
-typedef HashMap<int, IdentifierRep*> IntIdentifierMap;
+using IntIdentifierMap = HashMap<int, IdentifierRep*>;
 
 static IntIdentifierMap& intIdentifierMap()
 {
@@ -77,7 +82,7 @@ IdentifierRep* IdentifierRep::get(int intID)
     return result.iterator->value;
 }
 
-typedef HashMap<RefPtr<StringImpl>, IdentifierRep*> StringIdentifierMap;
+using StringIdentifierMap = HashMap<RefPtr<StringImpl>, IdentifierRep*>;
 
 static StringIdentifierMap& stringIdentifierMap()
 {
@@ -109,3 +114,5 @@ bool IdentifierRep::isValid(IdentifierRep* identifier)
 }
     
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

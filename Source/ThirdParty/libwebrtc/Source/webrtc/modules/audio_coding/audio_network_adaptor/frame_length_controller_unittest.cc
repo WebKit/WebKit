@@ -124,9 +124,9 @@ CreateChangeCriteriaFor40msAnd60ms() {
 
 void UpdateNetworkMetrics(
     FrameLengthController* controller,
-    const absl::optional<int>& uplink_bandwidth_bps,
-    const absl::optional<float>& uplink_packet_loss_fraction,
-    const absl::optional<size_t>& overhead_bytes_per_packet) {
+    const std::optional<int>& uplink_bandwidth_bps,
+    const std::optional<float>& uplink_packet_loss_fraction,
+    const std::optional<size_t>& overhead_bytes_per_packet) {
   // UpdateNetworkMetrics can accept multiple network metric updates at once.
   // However, currently, the most used case is to update one metric at a time.
   // To reflect this fact, we separate the calls.
@@ -160,14 +160,14 @@ TEST(FrameLengthControllerTest, DecreaseTo20MsOnHighUplinkBandwidth) {
   auto controller = CreateController(CreateChangeCriteriaFor20msAnd60ms(),
                                      kDefaultEncoderFrameLengthsMs, 60);
   UpdateNetworkMetrics(controller.get(), kFl60msTo20msBandwidthBps,
-                       absl::nullopt, kOverheadBytesPerPacket);
+                       std::nullopt, kOverheadBytesPerPacket);
   CheckDecision(controller.get(), 20);
 }
 
 TEST(FrameLengthControllerTest, DecreaseTo20MsOnHighUplinkPacketLossFraction) {
   auto controller = CreateController(CreateChangeCriteriaFor20msAnd60ms(),
                                      kDefaultEncoderFrameLengthsMs, 60);
-  UpdateNetworkMetrics(controller.get(), absl::nullopt,
+  UpdateNetworkMetrics(controller.get(), std::nullopt,
                        kFlDecreasingPacketLossFraction,
                        kOverheadBytesPerPacket);
   CheckDecision(controller.get(), 20);
@@ -200,7 +200,7 @@ TEST(FrameLengthControllerTest, DecreaseTo40MsOnHighUplinkBandwidth) {
   auto controller = CreateController(CreateChangeCriteriaFor40msAnd60ms(),
                                      kDefaultEncoderFrameLengthsMs, 40);
   UpdateNetworkMetrics(controller.get(), kFl60msTo40msBandwidthBps,
-                       absl::nullopt, kOverheadBytesPerPacket);
+                       std::nullopt, kOverheadBytesPerPacket);
   CheckDecision(controller.get(), 40);
 }
 
@@ -316,11 +316,11 @@ TEST(FrameLengthControllerTest, From120MsTo20MsOnHighUplinkBandwidth) {
                                      kDefaultEncoderFrameLengthsMs, 120);
   // It takes two steps for frame length to go from 120ms to 20ms.
   UpdateNetworkMetrics(controller.get(), kFl60msTo20msBandwidthBps,
-                       absl::nullopt, kOverheadBytesPerPacket);
+                       std::nullopt, kOverheadBytesPerPacket);
   CheckDecision(controller.get(), 60);
 
   UpdateNetworkMetrics(controller.get(), kFl60msTo20msBandwidthBps,
-                       absl::nullopt, kOverheadBytesPerPacket);
+                       std::nullopt, kOverheadBytesPerPacket);
   CheckDecision(controller.get(), 20);
 }
 
@@ -328,12 +328,12 @@ TEST(FrameLengthControllerTest, From120MsTo20MsOnHighUplinkPacketLossFraction) {
   auto controller = CreateController(CreateChangeCriteriaFor20ms60msAnd120ms(),
                                      kDefaultEncoderFrameLengthsMs, 120);
   // It takes two steps for frame length to go from 120ms to 20ms.
-  UpdateNetworkMetrics(controller.get(), absl::nullopt,
+  UpdateNetworkMetrics(controller.get(), std::nullopt,
                        kFlDecreasingPacketLossFraction,
                        kOverheadBytesPerPacket);
   CheckDecision(controller.get(), 60);
 
-  UpdateNetworkMetrics(controller.get(), absl::nullopt,
+  UpdateNetworkMetrics(controller.get(), std::nullopt,
                        kFlDecreasingPacketLossFraction,
                        kOverheadBytesPerPacket);
   CheckDecision(controller.get(), 20);

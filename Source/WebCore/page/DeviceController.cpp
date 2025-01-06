@@ -29,8 +29,11 @@
 
 #include "DeviceClient.h"
 #include "Document.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceController);
 
 DeviceController::DeviceController(DeviceClient& client)
     : m_client(client)

@@ -1,0 +1,20 @@
+<style>
+.clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-family: Monospace;
+  font-size: 12px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+</style>
+<div class="clamp">
+  <div>first line followed by out-of-flow content. PASS if green line below shows.<br><div style="position: absolute"></div></div>
+  <div style="color: green">PASS if this is visible and trailing ellipsis shows<br>third line</div>
+</div>
+
+<div class="clamp">
+  <div>first line followed by non-contentful inline content. PASS if green line below shows.<br><span></span></div>
+  <div style="color: green">PASS if this is visible and trailing ellipsis shows<br>third line</div>
+</div>

@@ -445,8 +445,8 @@ static WKNumberPadKey alternateKeyAtPosition(WKNumberPadButtonPosition position)
     _keypad = adoptNS([[UIView alloc] init]);
     [_keypad setUserInteractionEnabled:YES];
 
-    CGFloat xAnchors[] = { 0.0, 0.5, 1.0 };
-    CGFloat yAnchors[] = { 0.0, 0.5, 0.5, 1.0 };
+    auto xAnchors = std::to_array<CGFloat>({ 0.0, 0.5, 1.0 });
+    auto yAnchors = std::to_array<CGFloat>({ 0.0, 0.5, 0.5, 1.0 });
 
     for (unsigned x = 0; x < 3; ++x) {
         for (unsigned y = 0; y < 4; ++y) {

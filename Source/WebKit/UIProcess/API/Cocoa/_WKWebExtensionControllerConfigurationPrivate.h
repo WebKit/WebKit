@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,32 +24,3 @@
  */
 
 #import <WebKit/_WKWebExtensionControllerConfiguration.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface _WKWebExtensionControllerConfiguration ()
-
-/*!
- @abstract Returns a new configuration that is persistent and uses a temporary directory.
- @discussion This method creates a configuration for a `WKWebExtensionController` that is persistent during the session
- and uses a temporary directory for storage. This is ideal for scenarios that require temporary data persistence, such as testing.
- Each instance is created with a unique temporary directory.
-*/
-+ (instancetype)_temporaryConfiguration;
-
-/*!
- @abstract A Boolean value indicating if this configuration uses a temporary directory.
- @discussion This property indicates whether the configuration is persistent, with data stored in a temporary directory.
-*/
-@property (nonatomic, readonly, getter=_isTemporary) BOOL _temporary;
-
-/*!
- @abstract The file path to the storage directory, if applicable.
- @discussion This property contains the file path to the storage directory used by the configuration. It is `nil` for non-persistent
- configurations. For persistent configurations, it provides the path where data is stored, which may be a temporary directory.
-*/
-@property (nonatomic, nullable, copy, setter=_setStorageDirectoryPath:) NSString *_storageDirectoryPath;
-
-@end
-
-NS_ASSUME_NONNULL_END

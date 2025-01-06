@@ -12,8 +12,8 @@
 #define API_VIDEO_CODECS_VIDEO_ENCODER_SOFTWARE_FALLBACK_WRAPPER_H_
 
 #include <memory>
-#include <utility>
 
+#include "api/environment/environment.h"
 #include "api/video_codecs/video_encoder.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -27,20 +27,10 @@ namespace webrtc {
 // fallback should be forced even if the encoder otherwise works.
 RTC_EXPORT std::unique_ptr<VideoEncoder>
 CreateVideoEncoderSoftwareFallbackWrapper(
+    const Environment& env,
     std::unique_ptr<VideoEncoder> sw_fallback_encoder,
     std::unique_ptr<VideoEncoder> hw_encoder,
     bool prefer_temporal_support);
-
-// Default fallback for call-sites not yet updated with
-// `prefer_temporal_support`.
-// TODO(sprang): Remove when usage is gone.
-RTC_EXPORT inline std::unique_ptr<VideoEncoder>
-CreateVideoEncoderSoftwareFallbackWrapper(
-    std::unique_ptr<VideoEncoder> sw_fallback_encoder,
-    std::unique_ptr<VideoEncoder> hw_encoder) {
-  return CreateVideoEncoderSoftwareFallbackWrapper(
-      std::move(sw_fallback_encoder), std::move(hw_encoder), false);
-}
 
 }  // namespace webrtc
 

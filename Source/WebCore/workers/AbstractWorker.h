@@ -40,7 +40,7 @@ struct FetchOptions;
 struct WorkerOptions;
 
 class AbstractWorker : public RefCounted<AbstractWorker>, public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(AbstractWorker);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AbstractWorker);
 public:
     using RefCounted::ref;
     using RefCounted::deref;

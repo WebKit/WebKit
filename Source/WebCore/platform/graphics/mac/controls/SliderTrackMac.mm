@@ -31,8 +31,11 @@
 #import "ColorSpaceCG.h"
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SliderTrackMac);
 
 SliderTrackMac::SliderTrackMac(SliderTrackPart& part, ControlFactoryMac& controlFactory)
     : ControlMac(part, controlFactory)
@@ -59,15 +62,16 @@ FloatRect SliderTrackMac::rectForBounds(const FloatRect& bounds, const ControlSt
     return rect;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static void trackGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
 {
-    static const float dark[4] = { 0.0f, 0.0f, 0.0f, 0.678f };
-    static const float light[4] = { 0.0f, 0.0f, 0.0f, 0.13f };
+    static constexpr std::array dark { 0.0f, 0.0f, 0.0f, 0.678f };
+    static constexpr std::array light { 0.0f, 0.0f, 0.0f, 0.13f };
     float a = inData[0];
-    int i = 0;
-    for (i = 0; i < 4; i++)
+    for (size_t i = 0; i < 4; ++i)
         outData[i] = (1.0f - a) * dark[i] + a * light[i];
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void SliderTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float, const ControlStyle& style)
 {

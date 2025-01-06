@@ -22,6 +22,26 @@
 #include "test/test_util.h"
 
 
+// C and C++ have two forms of unspecified behavior: undefined behavior and
+// implementation-defined behavior.
+//
+// Programs that exhibit undefined behavior are invalid. Compilers are
+// permitted to, and often do, arbitrarily miscompile them. BoringSSL thus aims
+// to avoid undefined behavior.
+//
+// Implementation-defined behavior is left up to the compiler to define (or
+// leave undefined). These are often platform-specific details, such as how big
+// |int| is or how |uintN_t| is implemented. Programs that depend on
+// implementation-defined behavior are not necessarily invalid, merely less
+// portable. A compiler that provides some implementation-defined behavior is
+// not permitted to miscompile code that depends on it.
+//
+// C allows a much wider range of platform behaviors than would be practical
+// for us to support, so we make some assumptions on implementation-defined
+// behavior. Platforms that violate those assumptions are not supported. This
+// file aims to document and test these assumptions, so that platforms outside
+// our scope are flagged.
+
 template <typename T>
 static void CheckRepresentation(T value) {
   SCOPED_TRACE(value);

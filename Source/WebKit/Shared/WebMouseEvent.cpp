@@ -26,18 +26,17 @@
 #include "config.h"
 #include "WebMouseEvent.h"
 
-#include "WebCoreArgumentCoders.h"
 #include <WebCore/NavigationAction.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 #if PLATFORM(MAC)
-WebMouseEvent::WebMouseEvent(WebEvent&& event, WebMouseEventButton button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, int eventNumber, int menuType, GestureWasCancelled gestureWasCancelled, const IntPoint& unadjustedMovementDelta)
+WebMouseEvent::WebMouseEvent(WebEvent&& event, WebMouseEventButton button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, int eventNumber, int menuType, GestureWasCancelled gestureWasCancelled, const IntPoint& unadjustedMovementDelta, const Vector<WebMouseEvent>& coalescedEvents, const Vector<WebMouseEvent>& predictedEvents)
 #elif PLATFORM(GTK)
-WebMouseEvent::WebMouseEvent(WebEvent&& event, WebMouseEventButton button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, PlatformMouseEvent::IsTouch isTouchEvent, WebCore::PointerID pointerId, const String& pointerType, GestureWasCancelled gestureWasCancelled, const IntPoint& unadjustedMovementDelta)
+WebMouseEvent::WebMouseEvent(WebEvent&& event, WebMouseEventButton button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, PlatformMouseEvent::IsTouch isTouchEvent, WebCore::PointerID pointerId, const String& pointerType, GestureWasCancelled gestureWasCancelled, const IntPoint& unadjustedMovementDelta, const Vector<WebMouseEvent>& coalescedEvents, const Vector<WebMouseEvent>& predictedEvents)
 #else
-WebMouseEvent::WebMouseEvent(WebEvent&& event, WebMouseEventButton button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, WebCore::PointerID pointerId, const String& pointerType, GestureWasCancelled gestureWasCancelled, const IntPoint& unadjustedMovementDelta)
+WebMouseEvent::WebMouseEvent(WebEvent&& event, WebMouseEventButton button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, WebCore::PointerID pointerId, const String& pointerType, GestureWasCancelled gestureWasCancelled, const IntPoint& unadjustedMovementDelta, const Vector<WebMouseEvent>& coalescedEvents, const Vector<WebMouseEvent>& predictedEvents)
 #endif
     : WebEvent(WTFMove(event))
     , m_button(button)
@@ -62,6 +61,8 @@ WebMouseEvent::WebMouseEvent(WebEvent&& event, WebMouseEventButton button, unsig
     , m_pointerType(pointerType)
 #endif
     , m_gestureWasCancelled(gestureWasCancelled)
+    , m_coalescedEvents(coalescedEvents)
+    , m_predictedEvents(predictedEvents)
 {
     ASSERT(isMouseEventType(type()));
 }
@@ -74,8 +75,27 @@ bool WebMouseEvent::isMouseEventType(WebEventType type)
 WebMouseEventButton mouseButton(const WebCore::NavigationAction& navigationAction)
 {
     auto& mouseEventData = navigationAction.mouseEventData();
-    if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
-        return static_cast<WebMouseEventButton>(mouseEventData->button);
+    if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted) {
+        switch (mouseEventData->button) {
+        case MouseButton::None:
+            return WebMouseEventButton::None;
+
+        case MouseButton::Left:
+            return WebMouseEventButton::Left;
+
+        case MouseButton::Middle:
+            return WebMouseEventButton::Middle;
+
+        case MouseButton::Right:
+            return WebMouseEventButton::Right;
+
+        case MouseButton::Other:
+        case MouseButton::PointerHasNotChanged: {
+            ASSERT_NOT_REACHED();
+            return WebMouseEventButton::Left;
+        }
+        }
+    }
     return WebMouseEventButton::None;
 }
 

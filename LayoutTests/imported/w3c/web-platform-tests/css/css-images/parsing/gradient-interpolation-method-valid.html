@@ -16,35 +16,22 @@
 
 const LINEAR_GRADIENT_SPECIFIERS = [
     { input: '30deg' },
-    { input: '0', output: '0deg' }, // unitless 0 special case
-    { input: 'to left' },
     { input: 'to right bottom' },
-    { input: 'to bottom right', output: 'to right bottom' },
 ];
 
 const RADIAL_GRADIENT_SPECIFIERS = [
     { input: '50px' },
-    { input: '50px at left top' },
-    { input: 'circle 50px', output: '50px' },
-    { input: 'circle 50px at left', output: '50px at left center' },
-    { input: '50px 50%' },
     { input: 'ellipse 50% 40em', output: '50% 40em' },
     { input: 'at right center' },
 ];
 
 const CONIC_GRADIENT_SPECIFIERS = [
     { input: 'from 30deg' },
-    { input: 'from 30deg at left', output: 'from 30deg at left center' },
-    { input: 'at left', output: 'at left center' },
-    { input: 'from 30deg at center 10%' },
-    { input: 'at center 10%' },
-    { input: 'from 30deg at right 20% top 30%' },
-    { input: 'at right 20% top 30%' },
-    { input: 'from 30deg at left 10px top 50em' },
     { input: 'at left 10px top 50em' },
 ];
 
 const legacy_stops = "red, blue"
+const legacy_stops_with_hint = "red, 50%, blue"
 const non_legacy_stops = "color(srgb 1 0 0), blue"
 
 function test_gradients_no_specified_interpolation_method(gradientFunction, specifiers, stops)
@@ -72,13 +59,15 @@ function test_gradients(gradientFunction, colorInterpolationMethod, colorInterpo
 function test_gradient_with_interpolation_method(gradientFunction, colorInterpolationMethod, colorInterpolationMethodResult, specifiers, stops) {
     const colorInterpolationMethodResultForLegacyStops = (colorInterpolationMethodResult == "srgb") ? "" : colorInterpolationMethodResult;
     test_gradients(gradientFunction, colorInterpolationMethod, colorInterpolationMethodResultForLegacyStops, specifiers, legacy_stops)
+    test_gradients(gradientFunction, colorInterpolationMethod, colorInterpolationMethodResultForLegacyStops, specifiers, legacy_stops_with_hint)
 
     const colorInterpolationMethodResultForNonLegacyStops = (colorInterpolationMethodResult == "oklab") ? "" : colorInterpolationMethodResult;
     test_gradients(gradientFunction, colorInterpolationMethod, colorInterpolationMethodResultForNonLegacyStops, specifiers, non_legacy_stops)
 }
 
-function test_each_interpolation_method(gradientFunction, specifiers) {    
+function test_each_interpolation_method(gradientFunction, specifiers) {
     test_gradients_no_specified_interpolation_method(gradientFunction, specifiers, legacy_stops)
+    test_gradients_no_specified_interpolation_method(gradientFunction, specifiers, legacy_stops_with_hint)
     test_gradients_no_specified_interpolation_method(gradientFunction, specifiers, non_legacy_stops)
 
     for (const colorSpace of [ "lab", "oklab", "srgb", "srgb-linear", "xyz", "xyz-d50", "xyz-d65" ]) {

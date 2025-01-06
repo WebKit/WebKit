@@ -50,6 +50,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator(VM&);
 
 MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunk(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForClosure(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunk(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunkForClosure(VM&);
 
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailCall(VM&);
@@ -90,6 +92,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> toIntegerOrInfinityThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> toLengthThunkGenerator(VM&);
+#if CPU(ARM64)
+MacroAssemblerCodeRef<JITThunkPtrTag> maxThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> minThunkGenerator(VM&);
+#endif
 
 #if USE(JSVALUE64)
 MacroAssemblerCodeRef<JITThunkPtrTag> objectIsThunkGenerator(VM&);

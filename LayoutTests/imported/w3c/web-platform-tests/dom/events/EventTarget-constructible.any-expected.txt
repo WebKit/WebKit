@@ -1,4 +1,5 @@
 
 PASS A constructed EventTarget can be used as expected
+PASS A constructed EventTarget implements dispatch correctly
 PASS EventTarget can be subclassed
 

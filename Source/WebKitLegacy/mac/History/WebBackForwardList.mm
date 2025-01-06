@@ -133,8 +133,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 - (void)addItem:(WebHistoryItem *)entry
 {
     ASSERT(entry);
-    if (auto* mainFrame = core([core(self)->webView() mainFrame]))
-        core(self)->addItem(mainFrame->frameID(), *core(entry));
+    core(self)->addItem(*core(entry));
     
     // Since the assumed contract with WebBackForwardList is that it retains its WebHistoryItems,
     // the following line prevents a whole class of problems where a history item will be created in
@@ -176,10 +175,8 @@ constexpr auto WebBackForwardListDictionaryCurrentKey = @"current";
     auto& list = *core(self);
 
     list.setCapacity([[dictionary objectForKey:WebBackForwardListDictionaryCapacityKey] unsignedIntValue]);
-    if (auto* mainFrame = core([core(self)->webView() mainFrame])) {
-        for (NSDictionary *itemDictionary in [dictionary objectForKey:WebBackForwardListDictionaryEntriesKey])
-            list.addItem(mainFrame->frameID(), *core(adoptNS([[WebHistoryItem alloc] initFromDictionaryRepresentation:itemDictionary]).get()));
-    }
+    for (NSDictionary *itemDictionary in [dictionary objectForKey:WebBackForwardListDictionaryEntriesKey])
+        list.addItem(*core(adoptNS([[WebHistoryItem alloc] initFromDictionaryRepresentation:itemDictionary]).get()));
 
     unsigned currentIndex = [[dictionary objectForKey:WebBackForwardListDictionaryCurrentKey] unsignedIntValue];
     size_t listSize = list.entries().size();
@@ -335,7 +332,10 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (WebHistoryItem *)itemAtIndex:(int)index
 {
-    return retainPtr(kit(core(self)->itemAtIndex(index).get())).autorelease();
+    if (auto* mainFrame = core([core(self)->webView() mainFrame]))
+        return retainPtr(kit(core(self)->itemAtIndex(index, mainFrame->frameID()).get())).autorelease();
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 @end

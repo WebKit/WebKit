@@ -28,6 +28,7 @@
 
 #include "LibWebRTCMacros.h"
 #include "RTCSctpTransportBackend.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -44,7 +45,7 @@ class SctpTransportInterface;
 namespace WebCore {
 class LibWebRTCSctpTransportBackendObserver;
 class LibWebRTCSctpTransportBackend final : public RTCSctpTransportBackend, public CanMakeWeakPtr<LibWebRTCSctpTransportBackend> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCSctpTransportBackend);
 public:
     explicit LibWebRTCSctpTransportBackend(rtc::scoped_refptr<webrtc::SctpTransportInterface>&&, rtc::scoped_refptr<webrtc::DtlsTransportInterface>&&);
     ~LibWebRTCSctpTransportBackend();

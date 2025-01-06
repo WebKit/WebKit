@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+            if (window.internals)
+                internals.settings.setInvisibleAutoplayNotPermitted(true);
+
+            async function runTest()
+            {
+                video = document.createElement('video');
+                video.muted = true;
+                video.autoplay = true;
+
+                consoleWrite('');
+                consoleWrite('** setting video.src');
+                video.src = findMediaFile('video', 'content/test');
+                await Promise.all([
+                    waitFor(video, 'play'),
+                    shouldResolve(video.play()),
+                ]);
+            }
+
+            window.addEventListener('load', event => {
+                runTest().then(endTest).catch(failTest);
+            });
+        </script>
+    </head>
+
+    <body>
+        <p>Test that "invisible autoplay not allowed restriction" does not pause media after an explicit call to play().</p>
+    </body>
+</html>

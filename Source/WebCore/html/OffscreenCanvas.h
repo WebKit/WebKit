@@ -35,12 +35,12 @@
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
 #include "ImageBuffer.h"
-#include "ImageBufferPipe.h"
 #include "IntSize.h"
 #include "ScriptWrappable.h"
 #include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -74,39 +74,32 @@ using OffscreenRenderingContext = std::variant<
     RefPtr<OffscreenCanvasRenderingContext2D>
 >;
 
-class OffscreenCanvasPlaceholderData;
+class PlaceholderRenderingContext;
+class PlaceholderRenderingContextSource;
 
 class DetachedOffscreenCanvas {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DetachedOffscreenCanvas, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(DetachedOffscreenCanvas);
-    WTF_MAKE_FAST_ALLOCATED;
     friend class OffscreenCanvas;
 
 public:
-    DetachedOffscreenCanvas(std::unique_ptr<SerializedImageBuffer>, const IntSize&, bool originClean, RefPtr<OffscreenCanvasPlaceholderData>);
+    DetachedOffscreenCanvas(const IntSize&, bool originClean, RefPtr<PlaceholderRenderingContextSource>&&);
     WEBCORE_EXPORT ~DetachedOffscreenCanvas();
-
-    RefPtr<ImageBuffer> takeImageBuffer(ScriptExecutionContext&);
     const IntSize& size() const { return m_size; }
     bool originClean() const { return m_originClean; }
-    size_t memoryCost() const
-    {
-        auto* buffer = m_buffer.get();
-        if (buffer)
-            return buffer->memoryCost();
-        return 0;
-    }
-    RefPtr<OffscreenCanvasPlaceholderData> takePlaceholderData();
+    RefPtr<PlaceholderRenderingContextSource> takePlaceholderSource();
 
 private:
-    std::unique_ptr<SerializedImageBuffer> m_buffer;
-    RefPtr<OffscreenCanvasPlaceholderData> m_placeholderData;
+    RefPtr<PlaceholderRenderingContextSource> m_placeholderSource;
     IntSize m_size;
     bool m_originClean;
 };
 
 class OffscreenCanvas final : public ActiveDOMObject, public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(OffscreenCanvas, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(OffscreenCanvas, WEBCORE_EXPORT);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     struct ImageEncodeOptions {
         String type = "image/png"_s;
@@ -125,7 +118,7 @@ public:
 
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, unsigned width, unsigned height);
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, std::unique_ptr<DetachedOffscreenCanvas>&&);
-    static Ref<OffscreenCanvas> create(ScriptExecutionContext&, HTMLCanvasElement& placeholder);
+    static Ref<OffscreenCanvas> create(ScriptExecutionContext&, PlaceholderRenderingContext&);
     WEBCORE_EXPORT virtual ~OffscreenCanvas();
 
     void setWidth(unsigned);
@@ -146,8 +139,6 @@ public:
     Image* copiedImage() const final;
     void clearCopiedImage() const final;
 
-    bool hasCreatedImageBuffer() const final { return m_hasCreatedImageBuffer; }
-
     SecurityOrigin* securityOrigin() const final;
 
     bool canDetach() const;
@@ -159,12 +150,8 @@ public:
     void dispatchEvent(Event&) final;
     bool isDetached() const { return m_detached; };
 
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
 private:
-    OffscreenCanvas(ScriptExecutionContext&, IntSize, RefPtr<OffscreenCanvasPlaceholderData>);
+    OffscreenCanvas(ScriptExecutionContext&, IntSize, RefPtr<PlaceholderRenderingContextSource>&&);
 
     bool isOffscreenCanvas() const final { return true; }
 
@@ -181,16 +168,13 @@ private:
     void setSize(const IntSize&) final;
 
     void createImageBuffer() const final;
-    std::unique_ptr<SerializedImageBuffer> takeImageBuffer() const;
 
     void reset();
     void scheduleCommitToPlaceholderCanvas();
 
     std::unique_ptr<CanvasRenderingContext> m_context;
-    RefPtr<OffscreenCanvasPlaceholderData> m_placeholderData;
+    RefPtr<PlaceholderRenderingContextSource> m_placeholderSource;
     mutable RefPtr<Image> m_copiedImage;
-    // m_hasCreatedImageBuffer means we tried to malloc the buffer. We didn't necessarily get it.
-    mutable bool m_hasCreatedImageBuffer { false };
     bool m_detached { false };
     bool m_hasScheduledCommit { false };
 

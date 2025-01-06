@@ -276,6 +276,7 @@ void fulfillPromiseWithJSON(Ref<DeferredPromise>&& promise, const String& data)
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&& promise, ArrayBuffer* arrayBuffer)
 {
     if (!arrayBuffer) {
+        JSLockHolder lock(promise->globalObject()->vm());
         promise->reject<IDLAny>(createOutOfMemoryError(promise->globalObject()));
         return;
     }
@@ -290,6 +291,7 @@ void fulfillPromiseWithArrayBufferFromSpan(Ref<DeferredPromise>&& promise, std::
 void fulfillPromiseWithUint8Array(Ref<DeferredPromise>&& promise, Uint8Array* bytes)
 {
     if (!bytes) {
+        JSLockHolder lock(promise->globalObject()->vm());
         promise->reject<IDLAny>(createOutOfMemoryError(promise->globalObject()));
         return;
     }
@@ -325,5 +327,19 @@ void DeferredPromise::handleUncaughtException(CatchScope& scope, JSDOMGlobalObje
     handleTerminationExceptionIfNeeded(scope, lexicalGlobalObject);
     reportException(&lexicalGlobalObject, exception);
 };
+
+std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(Document& document)
+{
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(document.globalObject());
+    return createPromiseAndWrapper(globalObject);
+}
+
+std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(JSDOMGlobalObject& globalObject)
+{
+    JSC::JSLockHolder lock(globalObject.vm());
+    RefPtr deferredPromise = DeferredPromise::create(globalObject);
+    Ref domPromise = DOMPromise::create(globalObject, *JSC::jsCast<JSC::JSPromise*>(deferredPromise->promise()));
+    return { WTFMove(domPromise), deferredPromise.releaseNonNull() };
+}
 
 } // namespace WebCore

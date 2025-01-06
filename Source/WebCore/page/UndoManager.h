@@ -27,18 +27,18 @@
 
 #include "Document.h"
 #include "ExceptionOr.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class UndoItem;
 
-class UndoManager : public RefCounted<UndoManager>, public CanMakeWeakPtr<UndoManager> {
-    WTF_MAKE_ISO_ALLOCATED(UndoManager);
+class UndoManager : public RefCountedAndCanMakeWeakPtr<UndoManager> {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(UndoManager);
 public:
     static Ref<UndoManager> create(Document& document)
     {

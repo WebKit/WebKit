@@ -28,6 +28,14 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <wtf/RetainPtr.h>
 
+#if PLATFORM(IOS_FAMILY)
+@interface WKPreferences (TabFocusesLinks)
+
+@property (nonatomic) BOOL tabFocusesLinks;
+
+@end
+#endif
+
 template<typename T>
 RetainPtr<T> encodeAndDecode(T* t)
 {
@@ -50,11 +58,11 @@ TEST(Coding, WKPreferences)
     [a setMinimumFontSize:10];
     [a setJavaScriptEnabled:NO];
     [a setShouldPrintBackgrounds:YES];
+    [a setTabFocusesLinks:YES];
 #if PLATFORM(IOS_FAMILY)
     [a setJavaScriptCanOpenWindowsAutomatically:YES];
 #else
     [a setJavaScriptCanOpenWindowsAutomatically:NO];
-    [a setTabFocusesLinks:YES];
 #endif
 
     auto b = encodeAndDecode(a.get());
@@ -63,10 +71,7 @@ TEST(Coding, WKPreferences)
     EXPECT_EQ([a javaScriptEnabled], [b javaScriptEnabled]);
     EXPECT_EQ([a javaScriptCanOpenWindowsAutomatically], [b javaScriptCanOpenWindowsAutomatically]);
     EXPECT_EQ([a shouldPrintBackgrounds], [b shouldPrintBackgrounds]);
-
-#if PLATFORM(MAC)
     EXPECT_EQ([a tabFocusesLinks], [b tabFocusesLinks]);
-#endif
 }
 
 TEST(Coding, WKProcessPool_Shared)

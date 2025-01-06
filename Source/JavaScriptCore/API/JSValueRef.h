@@ -55,7 +55,7 @@ typedef enum {
     kJSTypeString,
     kJSTypeObject,
     kJSTypeSymbol JSC_API_AVAILABLE(macos(10.15), ios(13.0)),
-    kJSTypeBigInt JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA))
+    kJSTypeBigInt JSC_API_AVAILABLE(macos(15.0), ios(18.0))
 } JSType;
 
 /*!
@@ -105,7 +105,7 @@ JSC_CF_ENUM(JSRelationCondition,
     kJSRelationConditionEqual,
     kJSRelationConditionGreaterThan,
     kJSRelationConditionLessThan
-) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 #ifdef __cplusplus
 extern "C" {
@@ -182,7 +182,7 @@ JSC_ASSUME_NONNULL_BEGIN
 @param value    The JSValue to test.
 @result         true if value's type is the BigInt type, otherwise false.
 */
-JS_EXPORT bool JSValueIsBigInt(JSContextRef ctx, JSValueRef value) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT bool JSValueIsBigInt(JSContextRef ctx, JSValueRef value) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 JSC_ASSUME_NONNULL_END
 
 /*!
@@ -278,7 +278,7 @@ JSC_ASSUME_NONNULL_BEGIN
     @result           A value of JSRelationCondition, a kJSRelationConditionUndefined is returned if an exception is thrown.
     @discussion       The result is computed by comparing the results of JavaScript's `==`, `<`, and `>` operators. If either `left` or `right` is (or would coerce to) `NaN` in JavaScript, then the result is kJSRelationConditionUndefined.
 */
-JS_EXPORT JSRelationCondition JSValueCompare(JSContextRef ctx, JSValueRef left, JSValueRef right, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT JSRelationCondition JSValueCompare(JSContextRef ctx, JSValueRef left, JSValueRef right, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
     @function
@@ -290,7 +290,7 @@ JS_EXPORT JSRelationCondition JSValueCompare(JSContextRef ctx, JSValueRef left, 
     @result           A value of JSRelationCondition, a kJSRelationConditionUndefined is returned if an exception is thrown.
     @discussion       `left` is converted to an integer according to the rules specified by the JavaScript language then compared with `right`.
 */
-JS_EXPORT JSRelationCondition JSValueCompareInt64(JSContextRef ctx, JSValueRef left, int64_t right, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT JSRelationCondition JSValueCompareInt64(JSContextRef ctx, JSValueRef left, int64_t right, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
     @function
@@ -302,7 +302,7 @@ JS_EXPORT JSRelationCondition JSValueCompareInt64(JSContextRef ctx, JSValueRef l
     @result           A value of JSRelationCondition, a kJSRelationConditionUndefined is returned if an exception is thrown.
     @discussion       `left` is converted to an integer according to the rules specified by the JavaScript language then compared with `right`.
 */
-JS_EXPORT JSRelationCondition JSValueCompareUInt64(JSContextRef ctx, JSValueRef left, uint64_t right, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT JSRelationCondition JSValueCompareUInt64(JSContextRef ctx, JSValueRef left, uint64_t right, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
     @function
@@ -314,7 +314,7 @@ JS_EXPORT JSRelationCondition JSValueCompareUInt64(JSContextRef ctx, JSValueRef 
     @result           A value of JSRelationCondition, a kJSRelationConditionUndefined is returned if an exception is thrown.
     @discussion       `left` is converted to a double according to the rules specified by the JavaScript language then compared with `right`.
 */
-JS_EXPORT JSRelationCondition JSValueCompareDouble(JSContextRef ctx, JSValueRef left, double right, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT JSRelationCondition JSValueCompareDouble(JSContextRef ctx, JSValueRef left, double right, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 JSC_ASSUME_NONNULL_END
 
 /* Creating values */
@@ -382,7 +382,7 @@ JSC_ASSUME_NONNULL_BEGIN
     @result           A BigInt JSValue of the value, or NULL if an exception is thrown.
     @discussion       If the value is not an integer, an exception is thrown.
 */
-JS_EXPORT JSValueRef JSBigIntCreateWithDouble(JSContextRef ctx, double value, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT JSValueRef JSBigIntCreateWithDouble(JSContextRef ctx, double value, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
     @function
@@ -392,7 +392,7 @@ JS_EXPORT JSValueRef JSBigIntCreateWithDouble(JSContextRef ctx, double value, JS
     @param exception  A pointer to a JSValueRef in which to store an exception, if any. To reliable detect exception, initialize this to null before the call. Pass NULL if you do not care to store an exception.
     @result           A BigInt JSValue of the integer, or NULL if an exception is thrown.
 */
-JS_EXPORT JSValueRef JSBigIntCreateWithInt64(JSContextRef ctx, int64_t integer, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT JSValueRef JSBigIntCreateWithInt64(JSContextRef ctx, int64_t integer, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
     @function
@@ -402,7 +402,7 @@ JS_EXPORT JSValueRef JSBigIntCreateWithInt64(JSContextRef ctx, int64_t integer, 
     @param exception  A pointer to a JSValueRef in which to store an exception, if any. To reliable detect exception, initialize this to null before the call. Pass NULL if you do not care to store an exception.
     @result           A BigInt JSValue of the integer, or NULL if an exception is thrown.
 */
-JS_EXPORT JSValueRef JSBigIntCreateWithUInt64(JSContextRef ctx, uint64_t integer, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT JSValueRef JSBigIntCreateWithUInt64(JSContextRef ctx, uint64_t integer, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
     @function
@@ -413,7 +413,7 @@ JS_EXPORT JSValueRef JSBigIntCreateWithUInt64(JSContextRef ctx, uint64_t integer
     @result           A BigInt JSValue of the string, or NULL if an exception is thrown.
     @discussion       This is equivalent to calling the `BigInt` constructor from JavaScript with a string argument.
 */
-JS_EXPORT JSValueRef JSBigIntCreateWithString(JSContextRef ctx, JSStringRef string, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT JSValueRef JSBigIntCreateWithString(JSContextRef ctx, JSStringRef string, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 JSC_ASSUME_NONNULL_END
 
 /* Converting to and from JSON formatted strings */
@@ -470,7 +470,7 @@ JSC_ASSUME_NONNULL_BEGIN
     @result           An int32_t with the result of conversion, or 0 if an exception is thrown. Since 0 is valid value, `exception` must be checked after the call.
     @discussion       The JSValue is converted to an integer according to the rules specified by the JavaScript language. If the value is a BigInt, then the JSValue is truncated to an int32_t.
 */
-JS_EXPORT int32_t JSValueToInt32(JSContextRef ctx, JSValueRef value, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT int32_t JSValueToInt32(JSContextRef ctx, JSValueRef value, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
     @function
@@ -481,7 +481,7 @@ JS_EXPORT int32_t JSValueToInt32(JSContextRef ctx, JSValueRef value, JSC_NULLABL
     @result           A uint32_t with the result of conversion, or 0 if an exception is thrown. Since 0 is valid value, `exception` must be checked after the call.
     @discussion       The JSValue is converted to an integer according to the rules specified by the JavaScript language. If the value is a BigInt, then the JSValue is truncated to a uint32_t.
 */
-JS_EXPORT uint32_t JSValueToUInt32(JSContextRef ctx, JSValueRef value, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT uint32_t JSValueToUInt32(JSContextRef ctx, JSValueRef value, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
     @function
@@ -492,7 +492,7 @@ JS_EXPORT uint32_t JSValueToUInt32(JSContextRef ctx, JSValueRef value, JSC_NULLA
     @result           An int64_t with the result of conversion, or 0 if an exception is thrown. Since 0 is valid value, `exception` must be checked after the call.
     @discussion       The JSValue is converted to an integer according to the rules specified by the JavaScript language. If the value is a BigInt, then the JSValue is truncated to an int64_t.
 */
-JS_EXPORT int64_t JSValueToInt64(JSContextRef ctx, JSValueRef value, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT int64_t JSValueToInt64(JSContextRef ctx, JSValueRef value, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
     @function
@@ -503,7 +503,7 @@ JS_EXPORT int64_t JSValueToInt64(JSContextRef ctx, JSValueRef value, JSC_NULLABL
     @result           A uint64_t with the result of conversion, or 0 if an exception is thrown. Since 0 is valid value, `exception` must be checked after the call.
     @discussion       The JSValue is converted to an integer according to the rules specified by the JavaScript language. If the value is a BigInt, then the JSValue is truncated to a uint64_t.
 */
-JS_EXPORT uint64_t JSValueToUInt64(JSContextRef ctx, JSValueRef value, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT uint64_t JSValueToUInt64(JSContextRef ctx, JSValueRef value, JSC_NULLABLE JSValueRef* JSC_NULLABLE exception) JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 JSC_ASSUME_NONNULL_END
 
 /*!

@@ -7,7 +7,7 @@ description: relativeTo property bag with offset property is rejected if offset 
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const instance = new Temporal.Duration(1, 0, 0, 0, 24);
 
 const badOffsets = [

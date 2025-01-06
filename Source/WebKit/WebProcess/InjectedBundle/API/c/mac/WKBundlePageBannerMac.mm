@@ -32,6 +32,7 @@
 #import "PageBanner.h"
 #import "WKAPICast.h"
 #import "WKBundleAPICast.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace API {
 template<> struct ClientTraits<WKBundlePageBannerClientBase> {
@@ -43,7 +44,7 @@ namespace WebKit {
 using namespace WebCore;
 
 class PageBannerClientImpl : API::Client<WKBundlePageBannerClientBase>, public PageBanner::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PageBannerClientImpl);
 public:
     explicit PageBannerClientImpl(WKBundlePageBannerClientBase* client)
     {

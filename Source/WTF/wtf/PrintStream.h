@@ -30,6 +30,7 @@
 #include <span>
 #include <stdarg.h>
 #include <tuple>
+#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/FixedWidthDouble.h>
@@ -54,8 +55,8 @@ inline const char* boolForPrinting(const std::optional<bool>& value)
 class PrintStream {
     WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(PrintStream);
 public:
-    PrintStream();
-    virtual ~PrintStream();
+    WTF_EXPORT_PRIVATE PrintStream();
+    WTF_EXPORT_PRIVATE virtual ~PrintStream();
 
     WTF_EXPORT_PRIVATE void printf(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
     WTF_EXPORT_PRIVATE void printfVariableFormat(const char* format, ...);
@@ -63,7 +64,7 @@ public:
 
     // Typically a no-op for many subclasses of PrintStream, this is a hint that
     // the implementation should flush its buffers if it had not done so already.
-    virtual void flush();
+    WTF_EXPORT_PRIVATE virtual void flush();
     
     template<typename Func>
     void atomically(const Func& func)
@@ -112,8 +113,8 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const CString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const String&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const AtomString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const StringImpl*);
-inline void printInternal(PrintStream& out, const AtomStringImpl* value) { printInternal(out, bitwise_cast<const StringImpl*>(value)); }
-inline void printInternal(PrintStream& out, const UniquedStringImpl* value) { printInternal(out, bitwise_cast<const StringImpl*>(value)); }
+inline void printInternal(PrintStream& out, const AtomStringImpl* value) { printInternal(out, std::bit_cast<const StringImpl*>(value)); }
+inline void printInternal(PrintStream& out, const UniquedStringImpl* value) { printInternal(out, std::bit_cast<const StringImpl*>(value)); }
 inline void printInternal(PrintStream& out, const UniquedStringImpl& value) { printInternal(out, &value); }
 inline void printInternal(PrintStream& out, char* value) { printInternal(out, static_cast<const char*>(value)); }
 inline void printInternal(PrintStream& out, CString& value) { printInternal(out, static_cast<const CString&>(value)); }
@@ -141,8 +142,78 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, RawHex);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, RawPointer);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, FixedWidthDouble);
 
+template<typename... Values>
+class ConditionalDump {
+public:
+    explicit ConditionalDump(bool shouldPrint, const Values&... values)
+        : m_shouldPrint(shouldPrint)
+        , m_values(values...)
+    { }
+
+    void dump(PrintStream& out) const
+    {
+        if (!m_shouldPrint)
+            return;
+        std::apply([&] (const auto&... values) {
+            out.print(values...);
+        }, m_values);
+    }
+
+private:
+    bool m_shouldPrint;
+    std::tuple<const Values&...> m_values;
+};
+
+template<typename Enum>
+requires (std::is_enum_v<std::decay_t<Enum>>)
+void printInternal(PrintStream& out, Enum e)
+{
+    out.print(StringView(enumName(e)));
+}
+
+template<typename Enum>
+class ScopedEnumDump {
+public:
+    ScopedEnumDump(Enum e)
+        : m_e(e)
+    { }
+
+    void dump(PrintStream& out) const
+    {
+        out.print(StringView(enumTypeName<Enum>()), "::", m_e);
+    }
+private:
+    Enum m_e;
+};
+
+// This is meant for use where you want a default value if
+// the value is not in the enum e.g. garbage or corrupted.
+template<typename Enum>
+class EnumDumpWithDefault {
+public:
+    EnumDumpWithDefault(Enum e, const char* defaultString)
+        : m_e(e)
+        , m_default(defaultString)
+    { }
+
+    void dump(PrintStream& out) const
+    {
+        if (auto str = enumName(m_e); !str.empty())
+            out.print(StringView(str));
+        else
+            out.print(m_default);
+    }
+private:
+    Enum m_e;
+    const char* m_default;
+};
+
 template<typename T>
-void printInternal(PrintStream& out, const T& value)
+concept Dumpable = requires(PrintStream& out, const T& value) {
+    { value.dump(out) };
+};
+
+void printInternal(PrintStream& out, const Dumpable auto& value)
 {
     value.dump(out);
 }
@@ -361,6 +432,9 @@ void printInternal(PrintStream& out, const std::optional<T>& value)
 } // namespace WTF
 
 using WTF::boolForPrinting;
+using WTF::ConditionalDump;
+using WTF::ScopedEnumDump;
+using WTF::EnumDumpWithDefault;
 using WTF::CharacterDump;
 using WTF::PointerDump;
 using WTF::PrintStream;

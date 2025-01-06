@@ -30,7 +30,6 @@
 import optparse
 import os
 import re
-import sys
 
 header = """/*
 * Copyright (C) 2016 Apple Inc. All rights reserved.
@@ -77,10 +76,7 @@ def openOrExit(path, mode):
         dirname = os.path.dirname(path)
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
-        if sys.version_info.major >= 3:
-            return open(path, mode, encoding="UTF-8")
-        else:
-            return open(path, mode)
+        return open(path, mode, encoding="UTF-8")
     except IOError as e:
         print("I/O error opening {0}, ({1}): {2}".format(path, e.errno, e.strerror))
         exit(1)

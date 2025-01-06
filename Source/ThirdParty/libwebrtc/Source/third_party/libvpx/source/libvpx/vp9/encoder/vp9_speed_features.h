@@ -306,7 +306,7 @@ typedef struct SPEED_FEATURES {
   // Turned off when (row_mt_bit_exact == 1 && adaptive_rd_thresh_row_mt == 0).
   int adaptive_rd_thresh;
 
-  // Flag to use adaptive_rd_thresh when row-mt it enabled, only for non-rd
+  // Flag to use adaptive_rd_thresh when row-mt is enabled, only for non-rd
   // pickmode.
   int adaptive_rd_thresh_row_mt;
 
@@ -364,7 +364,7 @@ typedef struct SPEED_FEATURES {
 
   PARTITION_SEARCH_TYPE partition_search_type;
 
-  // Used if partition_search_type = FIXED_SIZE_PARTITION
+  // Used if partition_search_type = FIXED_PARTITION
   BLOCK_SIZE always_this_block_size;
 
   // Skip rectangular partition test when partition type none gives better

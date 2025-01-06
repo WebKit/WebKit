@@ -1,13 +1,13 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 
-
-Harness Error (TIMEOUT), message = null
+Harness Error (FAIL), message = Unhandled rejection
 
 PASS Invalid values for focusReset throw
-TIMEOUT Does not reset the focus when no navigate handler is present Test timed out
-NOTRUN Resets the focus when no focusReset option is provided
-NOTRUN Resets the focus when focusReset is explicitly set to undefined
-NOTRUN Resets the focus when no focusReset option is provided (nontrivial fulfilled promise)
-NOTRUN Resets the focus when no focusReset option is provided (rejected promise)
-NOTRUN Resets the focus when focusReset is explicitly set to 'after-transition'
-NOTRUN Does not reset the focus when focusReset is set to 'manual'
+PASS Does not reset the focus when no navigate handler is present
+PASS Resets the focus when no focusReset option is provided
+PASS Resets the focus when focusReset is explicitly set to undefined
+PASS Resets the focus when no focusReset option is provided (nontrivial fulfilled promise)
+PASS Resets the focus when no focusReset option is provided (rejected promise)
+PASS Resets the focus when focusReset is explicitly set to 'after-transition'
+PASS Does not reset the focus when focusReset is set to 'manual'
 

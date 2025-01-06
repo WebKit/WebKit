@@ -25,13 +25,7 @@
 
 import logging
 import re
-
-try:
-    from importlib.util import source_from_cache
-except ImportError:  # Python 2
-    def source_from_cache(path):
-        return path[:-1]
-
+from importlib.util import source_from_cache
 
 _log = logging.getLogger(__name__)
 

@@ -4,7 +4,7 @@ headers: "HeaderWithoutCondition"
 
 #if ENABLE(TEST_FEATURE)
 headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
-[AdditionalEncoder=OtherEncoder, CustomHeader] struct Namespace::Subnamespace::StructName {
+[AdditionalEncoder=OtherEncoder, CustomHeader, DebugDecodingFailure] struct Namespace::Subnamespace::StructName {
     FirstMemberType firstMemberName
     #if ENABLE(SECOND_MEMBER)
     SecondMemberType secondMemberName;
@@ -248,6 +248,10 @@ webkit_secure_coding NSSomeFoundationType {
     OptionalDictionaryKey: Dictionary?
 }
 
+[SupportWKKeyedCoder] webkit_secure_coding class NSSomeOtherFoundationType {
+    DictionaryKey: Dictionary
+}
+
 #if ENABLE(DATA_DETECTION)
 # Test a comment
 secure_coding_headers: <pal/cocoa/DataDetectorsCoreSoftLink.h>
@@ -275,6 +279,13 @@ additional_forward_declaration: typedef struct __CFBar * CFBarRef
 
 #if USE(CFSTRING)
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFString()] CFStringRef wrapped by WTF::String {
+}
+#endif
+
+#if USE(SKIA)
+[Wrapper=CoreIPCSkFooBar, AdditionalEncoder=OtherEncoder] class SkFooBar {
+    int foo();
+    double bar();
 }
 #endif
 
@@ -335,3 +346,10 @@ header: <WebCore/ScrollbarTrackCornerSystemImageMac.h>
 PKPaymentMethod wrapped by CoreIPCPKPaymentMethod
 #endif
 NSNull wrapped by CoreIPCNull
+
+[CustomHeader] class WebCore::RectEdges<bool> {
+    bool top();
+    bool right();
+    bool bottom();
+    bool left();
+}

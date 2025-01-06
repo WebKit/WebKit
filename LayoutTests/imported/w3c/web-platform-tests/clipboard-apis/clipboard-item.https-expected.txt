@@ -1,9 +1,9 @@
 
 PASS ClipboardItem({string, Blob}) succeeds with different types
 PASS ClipboardItem() succeeds with empty options
-FAIL ClipboardItem({}) fails with empty dictionary input assert_throws_js: function "() => {new ClipboardItem({});}" did not throw
-FAIL ClipboardItem(Blob) fails assert_throws_js: function "() => {new ClipboardItem(blob);}" did not throw
-FAIL ClipboardItem() fails with null input assert_throws_js: function "() => {new ClipboardItem(null);}" did not throw
+PASS ClipboardItem({}) fails with empty dictionary input
+PASS ClipboardItem(Blob) fails
+PASS ClipboardItem() fails with null input
 PASS ClipboardItem() fails with no input
 PASS types() returns correct values
 PASS getType(DOMString valid type) succeeds with correct output
@@ -11,4 +11,20 @@ PASS getType(DOMString invalid type) succeeds with correct output
 PASS getType(DOMString type) rejects correctly when querying for missing type
 PASS getType(DOMString valid type) converts DOMString to Blob
 PASS getType(DOMString invalid type) converts DOMString to Blob
+PASS supports(text/plain) returns true
+PASS supports(text/html) returns true
+PASS supports(image/png) returns true
+PASS supports(text/uri-list) returns true
+FAIL supports(image/svg+xml) returns true assert_equals: expected true but got false
+FAIL supports(web foo/bar) returns true assert_equals: expected true but got false
+FAIL supports(web text/html) returns true assert_equals: expected true but got false
+PASS supports(web ) returns false
+PASS supports(web) returns false
+PASS supports(web foo) returns false
+PASS supports(foo/bar) returns false
+PASS supports(weB text/html) returns false
+PASS supports( web text/html) returns false
+PASS supports(not a/real type) returns false
+PASS supports() returns false
+PASS supports( ) returns false
 

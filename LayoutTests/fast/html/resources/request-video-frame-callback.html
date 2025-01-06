@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<video id="vid" src="images/blue.png"></video>
+<script>
+vid.requestVideoFrameCallback((now, _) => {
+    let d = document;
+    let p = d.createElement("p");
+    p.innerText = `[${now}]: This shouldn't cause leaks.`;
+    d.body.appendChild(p);
+});
+
+onload = () => parent.postMessage("iframeLoaded");
+</script>
+</body>
+</html>

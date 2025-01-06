@@ -30,8 +30,10 @@
 #include "WebGPUDevice.h"
 #include "WebGPUPtr.h"
 #include "WebGPUQueueImpl.h"
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
 
@@ -39,7 +41,7 @@ class ConvertToBackingContext;
 enum class DeviceLostReason : uint8_t;
 
 class DeviceImpl final : public Device {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DeviceImpl);
 public:
     static Ref<DeviceImpl> create(WebGPUPtr<WGPUDevice>&& device, Ref<SupportedFeatures>&& features, Ref<SupportedLimits>&& limits, ConvertToBackingContext& convertToBackingContext)
     {
@@ -65,10 +67,12 @@ private:
 
     void destroy() final;
 
+    RefPtr<XRBinding> createXRBinding() final;
     RefPtr<Buffer> createBuffer(const BufferDescriptor&) final;
     RefPtr<Texture> createTexture(const TextureDescriptor&) final;
     RefPtr<Sampler> createSampler(const SamplerDescriptor&) final;
     RefPtr<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) final;
+    void updateExternalTexture(const WebCore::WebGPU::ExternalTexture&, const WebCore::MediaPlayerIdentifier&) final;
 
     RefPtr<BindGroupLayout> createBindGroupLayout(const BindGroupLayoutDescriptor&) final;
     RefPtr<PipelineLayout> createPipelineLayout(const PipelineLayoutDescriptor&) final;
@@ -91,6 +95,12 @@ private:
     void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) final;
 
     void setLabelInternal(const String&) final;
+    void pauseAllErrorReporting(bool pause) final;
+
+    [[noreturn]] Ref<CommandEncoder> invalidCommandEncoder() final;
+    [[noreturn]] Ref<CommandBuffer> invalidCommandBuffer() final;
+    [[noreturn]] Ref<RenderPassEncoder> invalidRenderPassEncoder() final;
+    [[noreturn]] Ref<ComputePassEncoder> invalidComputePassEncoder() final;
 
     WebGPUPtr<WGPUDevice> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

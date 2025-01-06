@@ -19,6 +19,7 @@
 #include "absl/strings/string_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/video_codec_constants.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -32,7 +33,7 @@ struct CodecBufferUsage {
   bool updated = false;
 };
 
-struct GenericFrameInfo : public FrameDependencyTemplate {
+struct RTC_EXPORT GenericFrameInfo : public FrameDependencyTemplate {
   class Builder;
 
   GenericFrameInfo();

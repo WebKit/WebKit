@@ -28,6 +28,8 @@
 #include "ArrayBuffer.h"
 #include "ArrayBufferView.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 template<typename Adaptor>
@@ -47,7 +49,10 @@ public:
     static RefPtr<GenericTypedArrayView> tryCreateUninitialized(size_t length);
     
     typename Adaptor::Type* data() const { return static_cast<typename Adaptor::Type*>(baseAddress()); }
-    
+
+    std::span<const typename Adaptor::Type> typedSpan() const { return unsafeMakeSpan(data(), length()); }
+    std::span<typename Adaptor::Type> typedMutableSpan() { return unsafeMakeSpan(data(), length()); }
+
     bool set(GenericTypedArrayView<Adaptor>* array, size_t offset)
     {
         return setImpl(array, offset * sizeof(typename Adaptor::Type));
@@ -118,3 +123,5 @@ private:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -147,7 +147,7 @@ static const tran_high_t sinpi_4_9 = 15212;
 static const tran_high_t Sqrt2 = 23170;
 static const tran_high_t InvSqrt2 = 11585;
 
-static INLINE tran_high_t fdct_round_shift(tran_high_t input) {
+static inline tran_high_t fdct_round_shift(tran_high_t input) {
   tran_high_t rv = ROUND_POWER_OF_TWO(input, DCT_CONST_BITS);
   return rv;
 }

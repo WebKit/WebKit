@@ -41,14 +41,21 @@
 #import "PageGroup.h"
 #import "TextTrackList.h"
 #import "TimeRanges.h"
+#import "VideoTrack.h"
+#import "VideoTrackConfiguration.h"
+#import "VideoTrackList.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionModelMediaElement);
+
 PlaybackSessionModelMediaElement::PlaybackSessionModelMediaElement()
     : EventListener(EventListener::CPPEventListenerType)
+    , m_soundStageSize { AudioSessionSoundStageSize::Automatic }
 {
 }
 
@@ -58,8 +65,11 @@ PlaybackSessionModelMediaElement::~PlaybackSessionModelMediaElement()
 
 void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaElement)
 {
-    if (m_mediaElement == mediaElement) {
-        if (m_mediaElement) {
+    RefPtr oldMediaElement = m_mediaElement;
+    RefPtr newMediaElement = mediaElement;
+
+    if (oldMediaElement == newMediaElement) {
+        if (oldMediaElement) {
             for (auto& client : m_clients)
                 client->isPictureInPictureSupportedChanged(isPictureInPictureSupported());
         }
@@ -68,16 +78,16 @@ void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaEl
 
     auto& events = eventNames();
 
-    if (m_mediaElement && m_isListening) {
+    if (oldMediaElement && m_isListening) {
         for (auto& eventName : observedEventNames())
-            m_mediaElement->removeEventListener(eventName, *this, false);
-        if (auto* audioTracks = m_mediaElement->audioTracks()) {
+            oldMediaElement->removeEventListener(eventName, *this, false);
+        if (auto* audioTracks = oldMediaElement->audioTracks()) {
             audioTracks->removeEventListener(events.addtrackEvent, *this, false);
             audioTracks->removeEventListener(events.changeEvent, *this, false);
             audioTracks->removeEventListener(events.removetrackEvent, *this, false);
         }
 
-        if (auto* textTracks = m_mediaElement->audioTracks()) {
+        if (auto* textTracks = oldMediaElement->audioTracks()) {
             textTracks->removeEventListener(events.addtrackEvent, *this, false);
             textTracks->removeEventListener(events.changeEvent, *this, false);
             textTracks->removeEventListener(events.removetrackEvent, *this, false);
@@ -85,21 +95,21 @@ void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaEl
     }
     m_isListening = false;
 
-    if (m_mediaElement)
-        m_mediaElement->resetPlaybackSessionState();
+    if (oldMediaElement)
+        oldMediaElement->resetPlaybackSessionState();
 
-    m_mediaElement = mediaElement;
+    m_mediaElement = newMediaElement;
 
-    if (m_mediaElement) {
+    if (newMediaElement) {
         for (auto& eventName : observedEventNames())
-            m_mediaElement->addEventListener(eventName, *this, false);
+            newMediaElement->addEventListener(eventName, *this, false);
 
-        auto& audioTracks = m_mediaElement->ensureAudioTracks();
+        auto& audioTracks = newMediaElement->ensureAudioTracks();
         audioTracks.addEventListener(events.addtrackEvent, *this, false);
         audioTracks.addEventListener(events.changeEvent, *this, false);
         audioTracks.addEventListener(events.removetrackEvent, *this, false);
 
-        auto& textTracks = m_mediaElement->ensureTextTracks();
+        auto& textTracks = newMediaElement->ensureTextTracks();
         textTracks.addEventListener(events.addtrackEvent, *this, false);
         textTracks.addEventListener(events.changeEvent, *this, false);
         textTracks.addEventListener(events.removetrackEvent, *this, false);
@@ -246,79 +256,80 @@ void PlaybackSessionModelMediaElement::removeClient(PlaybackSessionModelClient& 
 
 void PlaybackSessionModelMediaElement::play()
 {
-    if (m_mediaElement)
-        m_mediaElement->play();
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->play();
 }
 
 void PlaybackSessionModelMediaElement::pause()
 {
-    if (m_mediaElement)
-        m_mediaElement->pause();
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->pause();
 }
 
 void PlaybackSessionModelMediaElement::togglePlayState()
 {
-    if (m_mediaElement)
-        m_mediaElement->togglePlayState();
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->togglePlayState();
 }
 
 void PlaybackSessionModelMediaElement::beginScrubbing()
 {
-    if (m_mediaElement)
-        m_mediaElement->beginScrubbing();
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->beginScrubbing();
 }
 
 void PlaybackSessionModelMediaElement::endScrubbing()
 {
-    if (m_mediaElement)
-        m_mediaElement->endScrubbing();
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->endScrubbing();
 }
 
 void PlaybackSessionModelMediaElement::seekToTime(double time, double toleranceBefore, double toleranceAfter)
 {
-    if (m_mediaElement)
-        m_mediaElement->setCurrentTimeWithTolerance(time, toleranceBefore, toleranceAfter);
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->setCurrentTimeWithTolerance(time, toleranceBefore, toleranceAfter);
 }
 
 void PlaybackSessionModelMediaElement::fastSeek(double time)
 {
-    if (m_mediaElement)
-        m_mediaElement->fastSeek(time);
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->fastSeek(time);
 }
 
 void PlaybackSessionModelMediaElement::beginScanningForward()
 {
-    if (m_mediaElement)
-        m_mediaElement->beginScanning(MediaControllerInterface::Forward);
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->beginScanning(MediaControllerInterface::Forward);
 }
 
 void PlaybackSessionModelMediaElement::beginScanningBackward()
 {
-    if (m_mediaElement)
-        m_mediaElement->beginScanning(MediaControllerInterface::Backward);
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->beginScanning(MediaControllerInterface::Backward);
 }
 
 void PlaybackSessionModelMediaElement::endScanning()
 {
-    if (m_mediaElement)
-        m_mediaElement->endScanning();
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->endScanning();
 }
 
 void PlaybackSessionModelMediaElement::setDefaultPlaybackRate(double defaultPlaybackRate)
 {
-    if (m_mediaElement)
-        m_mediaElement->setDefaultPlaybackRate(defaultPlaybackRate);
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->setDefaultPlaybackRate(defaultPlaybackRate);
 }
 
 void PlaybackSessionModelMediaElement::setPlaybackRate(double playbackRate)
 {
-    if (m_mediaElement)
-        m_mediaElement->setPlaybackRate(playbackRate);
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->setPlaybackRate(playbackRate);
 }
 
 void PlaybackSessionModelMediaElement::selectAudioMediaOption(uint64_t selectedAudioIndex)
 {
-    if (!m_mediaElement)
+    RefPtr mediaElement = m_mediaElement;
+    if (!mediaElement)
         return;
 
     for (size_t i = 0, size = m_audioTracksForMenu.size(); i < size; ++i)
@@ -327,7 +338,8 @@ void PlaybackSessionModelMediaElement::selectAudioMediaOption(uint64_t selectedA
 
 void PlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t index)
 {
-    if (!m_mediaElement)
+    RefPtr mediaElement = m_mediaElement;
+    if (!mediaElement)
         return;
 
     TextTrack* textTrack;
@@ -336,13 +348,13 @@ void PlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t index)
     else
         textTrack = &TextTrack::captionMenuOffItem();
 
-    m_mediaElement->setSelectedTextTrack(textTrack);
+    mediaElement->setSelectedTextTrack(textTrack);
 }
 
 void PlaybackSessionModelMediaElement::togglePictureInPicture()
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    auto* element = dynamicDowncast<HTMLVideoElement>(*m_mediaElement);
+    RefPtr element = dynamicDowncast<HTMLVideoElement>(m_mediaElement);
     ASSERT(element);
     if (!element)
         return;
@@ -354,10 +366,25 @@ void PlaybackSessionModelMediaElement::togglePictureInPicture()
 #endif
 }
 
-void PlaybackSessionModelMediaElement::toggleInWindowFullscreen()
+void PlaybackSessionModelMediaElement::enterInWindowFullscreen()
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    auto* element = dynamicDowncast<HTMLVideoElement>(*m_mediaElement);
+    RefPtr element = dynamicDowncast<HTMLVideoElement>(m_mediaElement);
+    ASSERT(element);
+    if (!element)
+        return;
+
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, &element->document() };
+
+    if (element->fullscreenMode() != MediaPlayerEnums::VideoFullscreenModeInWindow)
+        element->setPresentationModeIgnoringPermissionsPolicy(HTMLVideoElement::VideoPresentationMode::InWindow);
+#endif
+}
+
+void PlaybackSessionModelMediaElement::exitInWindowFullscreen()
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    RefPtr element = dynamicDowncast<HTMLVideoElement>(m_mediaElement);
     ASSERT(element);
     if (!element)
         return;
@@ -366,28 +393,28 @@ void PlaybackSessionModelMediaElement::toggleInWindowFullscreen()
 
     if (element->fullscreenMode() == MediaPlayerEnums::VideoFullscreenModeInWindow)
         element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
-    else
-        element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::InWindow);
 #endif
 }
 
 void PlaybackSessionModelMediaElement::enterFullscreen()
 {
-    RefPtr element = dynamicDowncast<HTMLVideoElement>(*m_mediaElement);
+    RefPtr element = dynamicDowncast<HTMLVideoElement>(m_mediaElement);
     ASSERT(element);
     if (!element)
         return;
 
-    element->webkitEnterFullscreen();
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, &element->document() };
+    element->enterFullscreenIgnoringPermissionsPolicy();
 }
 
 void PlaybackSessionModelMediaElement::exitFullscreen()
 {
-    RefPtr element = dynamicDowncast<HTMLVideoElement>(*m_mediaElement);
+    RefPtr element = dynamicDowncast<HTMLVideoElement>(m_mediaElement);
     ASSERT(element);
     if (!element)
         return;
 
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, &element->document() };
     element->webkitExitFullscreen();
 }
 
@@ -398,59 +425,60 @@ void PlaybackSessionModelMediaElement::toggleMuted()
 
 void PlaybackSessionModelMediaElement::setMuted(bool muted)
 {
-    if (m_mediaElement)
-        m_mediaElement->setMuted(muted);
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->setMuted(muted);
 }
 
 void PlaybackSessionModelMediaElement::setVolume(double volume)
 {
-    if (m_mediaElement)
-        m_mediaElement->setVolume(volume);
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->setVolume(volume);
 }
 
 void PlaybackSessionModelMediaElement::setPlayingOnSecondScreen(bool value)
 {
-    if (m_mediaElement)
-        m_mediaElement->setPlayingOnSecondScreen(value);
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->setPlayingOnSecondScreen(value);
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
 const String& PlaybackSessionModelMediaElement::spatialTrackingLabel() const
 {
-    if (m_mediaElement)
-        return m_mediaElement->spatialTrackingLabel();
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->spatialTrackingLabel();
     return emptyString();
 }
 
 void PlaybackSessionModelMediaElement::setSpatialTrackingLabel(const String& spatialTrackingLabel)
 {
-    if (m_mediaElement)
-        m_mediaElement->setSpatialTrackingLabel(spatialTrackingLabel);
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->setSpatialTrackingLabel(spatialTrackingLabel);
 }
 #endif
 
 void PlaybackSessionModelMediaElement::sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
-    if (m_mediaElement)
-        m_mediaElement->mediaSession().didReceiveRemoteControlCommand(command, argument);
+    if (RefPtr mediaElement = m_mediaElement)
+        mediaElement->mediaSession().didReceiveRemoteControlCommand(command, argument);
 }
 
 void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
 {
-    if (!m_mediaElement)
+    RefPtr mediaElement = m_mediaElement;
+    if (!mediaElement)
         return;
 
-    if (!m_mediaElement->document().page())
+    if (!mediaElement->document().page())
         return;
 
-    auto& captionPreferences = m_mediaElement->document().page()->group().ensureCaptionPreferences();
-    auto* textTracks = m_mediaElement->textTracks();
+    auto& captionPreferences = mediaElement->document().page()->group().ensureCaptionPreferences();
+    auto* textTracks = mediaElement->textTracks();
     if (textTracks && textTracks->length())
         m_legibleTracksForMenu = captionPreferences.sortedTrackListForMenu(textTracks, { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
     else
         m_legibleTracksForMenu.clear();
 
-    auto* audioTracks = m_mediaElement->audioTracks();
+    auto* audioTracks = mediaElement->audioTracks();
     if (audioTracks && audioTracks->length() > 1)
         m_audioTracksForMenu = captionPreferences.sortedTrackListForMenu(audioTracks);
     else
@@ -465,6 +493,17 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
         client->audioMediaSelectionOptionsChanged(audioOptions, audioIndex);
         client->legibleMediaSelectionOptionsChanged(legibleOptions, legibleIndex);
     }
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    RefPtr videoTracks = mediaElement->videoTracks();
+    auto* selectedItem = videoTracks ? videoTracks->selectedItem() : nullptr;
+    auto spatialVideoMetadata = selectedItem ? selectedItem->configuration().spatialVideoMetadata() : std::nullopt;
+    if (spatialVideoMetadata != m_spatialVideoMetadata) {
+        for (auto& client : m_clients)
+            client->spatialVideoMetadataChanged(spatialVideoMetadata);
+        m_spatialVideoMetadata = WTFMove(spatialVideoMetadata);
+    }
+#endif
 }
 
 void PlaybackSessionModelMediaElement::updateMediaSelectionIndices()
@@ -480,10 +519,11 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionIndices()
 
 double PlaybackSessionModelMediaElement::playbackStartedTime() const
 {
-    if (!m_mediaElement)
+    RefPtr mediaElement = m_mediaElement;
+    if (!mediaElement)
         return 0;
 
-    return m_mediaElement->playbackStartedTime();
+    return mediaElement->playbackStartedTime();
 }
 
 const Vector<AtomString>& PlaybackSessionModelMediaElement::observedEventNames()
@@ -513,65 +553,88 @@ const AtomString&  PlaybackSessionModelMediaElement::eventNameAll()
 
 double PlaybackSessionModelMediaElement::duration() const
 {
-    return m_mediaElement ? m_mediaElement->duration() : 0;
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->duration();
+    return 0;
 }
 
 double PlaybackSessionModelMediaElement::currentTime() const
 {
-    return m_mediaElement ? m_mediaElement->currentTime() : 0;
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->currentTime();
+    return 0;
 }
 
 double PlaybackSessionModelMediaElement::bufferedTime() const
 {
-    return m_mediaElement ? m_mediaElement->maxBufferedTime() : 0;
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->maxBufferedTime();
+    return 0;
 }
 
 bool PlaybackSessionModelMediaElement::isPlaying() const
 {
-    return m_mediaElement ? !m_mediaElement->paused() : false;
+    if (RefPtr mediaElement = m_mediaElement)
+        return !mediaElement->paused();
+    return false;
 }
 
 bool PlaybackSessionModelMediaElement::isStalled() const
 {
-    return m_mediaElement && m_mediaElement->readyState() <= HTMLMediaElement::HAVE_CURRENT_DATA;
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->readyState() <= HTMLMediaElement::HAVE_CURRENT_DATA;
+    return false;
 }
 
 double PlaybackSessionModelMediaElement::defaultPlaybackRate() const
 {
-    return m_mediaElement ? m_mediaElement->defaultPlaybackRate() : 0;
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->defaultPlaybackRate();
+    return 0;
 }
 
 double PlaybackSessionModelMediaElement::playbackRate() const
 {
-    return m_mediaElement ? m_mediaElement->playbackRate() : 0;
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->playbackRate();
+    return 0;
 }
 
 Ref<TimeRanges> PlaybackSessionModelMediaElement::seekableRanges() const
 {
-    return m_mediaElement && m_mediaElement->supportsSeeking() ? m_mediaElement->seekable() : TimeRanges::create();
+    if (RefPtr mediaElement = m_mediaElement; mediaElement && mediaElement->supportsSeeking())
+        return mediaElement->seekable();
+    return TimeRanges::create();
 }
 
 double PlaybackSessionModelMediaElement::seekableTimeRangesLastModifiedTime() const
 {
-    return m_mediaElement ? m_mediaElement->seekableTimeRangesLastModifiedTime() : 0;
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->seekableTimeRangesLastModifiedTime();
+    return 0;
 }
 
 double PlaybackSessionModelMediaElement::liveUpdateInterval() const
 {
-    return m_mediaElement ? m_mediaElement->liveUpdateInterval() : 0;
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->liveUpdateInterval();
+    return 0;
 }
     
 bool PlaybackSessionModelMediaElement::canPlayFastReverse() const
 {
-    return m_mediaElement ? m_mediaElement->minFastReverseRate() < 0.0 : false;
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->minFastReverseRate() < 0.0;
+    return false;
 }
 
 Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::audioMediaSelectionOptions() const
 {
-    if (!m_mediaElement || !m_mediaElement->document().page())
+    RefPtr mediaElement = m_mediaElement;
+    if (!mediaElement || !mediaElement->document().page())
         return { };
 
-    auto& captionPreferences = m_mediaElement->document().page()->group().ensureCaptionPreferences();
+    auto& captionPreferences = mediaElement->document().page()->group().ensureCaptionPreferences();
     return m_audioTracksForMenu.map([&](auto& audioTrack) {
         return captionPreferences.mediaSelectionOptionForTrack(audioTrack.get());
     });
@@ -590,10 +653,11 @@ Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::legibleMediaSelec
 {
     Vector<MediaSelectionOption> legibleOptions;
 
-    if (!m_mediaElement || !m_mediaElement->document().page())
+    RefPtr mediaElement = m_mediaElement;
+    if (!mediaElement || !mediaElement->document().page())
         return { };
 
-    auto& captionPreferences = m_mediaElement->document().page()->group().ensureCaptionPreferences();
+    auto& captionPreferences = mediaElement->document().page()->group().ensureCaptionPreferences();
     return m_legibleTracksForMenu.map([&](auto& track) {
         return captionPreferences.mediaSelectionOptionForTrack(track.get());
     });
@@ -601,7 +665,8 @@ Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::legibleMediaSelec
 
 uint64_t PlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
 {
-    auto host = m_mediaElement ? m_mediaElement->mediaControlsHost() : nullptr;
+    RefPtr mediaElement = m_mediaElement;
+    auto host = mediaElement ? mediaElement->mediaControlsHost() : nullptr;
     if (!host)
         return std::numeric_limits<uint64_t>::max();
 
@@ -635,15 +700,18 @@ uint64_t PlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
 
 bool PlaybackSessionModelMediaElement::externalPlaybackEnabled() const
 {
-    return m_mediaElement && m_mediaElement->webkitCurrentPlaybackTargetIsWireless();
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->webkitCurrentPlaybackTargetIsWireless();
+    return false;
 }
 
 PlaybackSessionModel::ExternalPlaybackTargetType PlaybackSessionModelMediaElement::externalPlaybackTargetType() const
 {
-    if (!m_mediaElement || !m_mediaElement->mediaControlsHost())
+    RefPtr mediaElement = m_mediaElement;
+    if (!mediaElement || !mediaElement->mediaControlsHost())
         return ExternalPlaybackTargetType::TargetTypeNone;
 
-    switch (m_mediaElement->mediaControlsHost()->externalDeviceType()) {
+    switch (mediaElement->mediaControlsHost()->externalDeviceType()) {
     default:
         ASSERT_NOT_REACHED();
         return ExternalPlaybackTargetType::TargetTypeNone;
@@ -658,60 +726,73 @@ PlaybackSessionModel::ExternalPlaybackTargetType PlaybackSessionModelMediaElemen
 
 String PlaybackSessionModelMediaElement::externalPlaybackLocalizedDeviceName() const
 {
-    if (m_mediaElement && m_mediaElement->mediaControlsHost())
-        return m_mediaElement->mediaControlsHost()->externalDeviceDisplayName();
+    if (RefPtr mediaElement = m_mediaElement; mediaElement && mediaElement->mediaControlsHost())
+        return mediaElement->mediaControlsHost()->externalDeviceDisplayName();
     return emptyString();
 }
 
 bool PlaybackSessionModelMediaElement::wirelessVideoPlaybackDisabled() const
 {
-    return m_mediaElement && m_mediaElement->mediaSession().wirelessVideoPlaybackDisabled();
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->mediaSession().wirelessVideoPlaybackDisabled();
+    return false;
 }
 
 bool PlaybackSessionModelMediaElement::isMuted() const
 {
-    return m_mediaElement ? m_mediaElement->muted() : false;
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->muted();
+    return false;
 }
 
 double PlaybackSessionModelMediaElement::volume() const
 {
-    return m_mediaElement ? m_mediaElement->volume() : 0;
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->volume();
+    return 0;
 }
 
 bool PlaybackSessionModelMediaElement::isPictureInPictureSupported() const
 {
-    return m_mediaElement ? m_mediaElement->isVideo() : false;
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->isVideo();
+    return false;
 }
 
 bool PlaybackSessionModelMediaElement::isPictureInPictureActive() const
 {
-    if (!m_mediaElement)
+    RefPtr mediaElement = m_mediaElement;
+    if (!mediaElement)
         return false;
 
-    return (m_mediaElement->fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture;
+    return (mediaElement->fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture;
 }
 
 bool PlaybackSessionModelMediaElement::isInWindowFullscreenActive() const
 {
-    if (!m_mediaElement)
+    RefPtr mediaElement = m_mediaElement;
+    if (!mediaElement)
         return false;
 
-    return (m_mediaElement->fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModeInWindow) == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
+    return (mediaElement->fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModeInWindow) == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
 }
 
 #if !RELEASE_LOG_DISABLED
-const void* PlaybackSessionModelMediaElement::logIdentifier() const
+uint64_t PlaybackSessionModelMediaElement::logIdentifier() const
 {
-    return m_mediaElement ? m_mediaElement->logIdentifier() : nullptr;
+    if (RefPtr mediaElement = m_mediaElement)
+        return mediaElement->logIdentifier();
+    return 0;
 }
 
 const Logger* PlaybackSessionModelMediaElement::loggerPtr() const
 {
-    return m_mediaElement ? &m_mediaElement->logger() : nullptr;
+    if (RefPtr mediaElement = m_mediaElement)
+        return &mediaElement->logger();
+    return nullptr;
 }
 #endif
 
+} // namespace WebCore
 
-}
-
-#endif
+#endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

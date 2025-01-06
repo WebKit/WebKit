@@ -32,11 +32,6 @@ class VisionLayoutTraits extends LayoutTraits
         return VisionInlineMediaControls;
     }
 
-    overridenSupportingObjectClasses()
-    {
-        return null;
-    }
-
     resourceDirectory()
     {
         return "iOS";

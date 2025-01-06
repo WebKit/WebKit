@@ -31,6 +31,8 @@
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 class PrintStream;
@@ -59,7 +61,7 @@ public:
     
     uint32_t word(size_t index) const
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(index < fastBitVectorArrayLength(numBits()));
+        RELEASE_ASSERT(index < fastBitVectorArrayLength(numBits()));
         return m_words[index];
     }
     
@@ -99,7 +101,7 @@ public:
         if (arrayLength() != other.arrayLength())
             setEqualsSlow(other);
         else {
-            memcpy(m_words, other.m_words, arrayLength() * sizeof(uint32_t));
+            memcpySpan(wordsSpan(), other.wordsSpan());
             m_numBits = other.m_numBits;
         }
         return *this;
@@ -114,18 +116,18 @@ public:
     
     void setAll()
     {
-        memset(m_words, 255, arrayLength() * sizeof(uint32_t));
+        memsetSpan(wordsSpan(), 255);
     }
     
     void clearAll()
     {
-        memset(m_words, 0, arrayLength() * sizeof(uint32_t));
+        zeroSpan(wordsSpan());
     }
     
     void set(const FastBitVectorWordOwner& other)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(m_numBits == other.m_numBits);
-        memcpy(m_words, other.m_words, arrayLength() * sizeof(uint32_t));
+        memcpySpan(wordsSpan(), other.wordsSpan());
     }
     
     size_t numBits() const
@@ -147,18 +149,21 @@ public:
     
     uint32_t word(size_t index) const
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(index < arrayLength());
+        RELEASE_ASSERT(index < arrayLength());
         return m_words[index];
     }
     
     uint32_t& word(size_t index)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(index < arrayLength());
+        RELEASE_ASSERT(index < arrayLength());
         return m_words[index];
     }
     
     const uint32_t* words() const { return m_words; }
     uint32_t* words() { return m_words; }
+
+    std::span<uint32_t> wordsSpan() { return unsafeMakeSpan(m_words, arrayLength()); }
+    std::span<const uint32_t> wordsSpan() const { return unsafeMakeSpan(m_words, arrayLength()); }
 
 private:
     WTF_EXPORT_PRIVATE void setEqualsSlow(const FastBitVectorWordOwner& other);
@@ -567,7 +572,7 @@ public:
     
     FastBitReference at(size_t index)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(index < numBits());
+        RELEASE_ASSERT(index < numBits());
         return FastBitReference(&m_words.word(index >> 5), 1 << (index & 31));
     }
     
@@ -603,3 +608,5 @@ public:
 
 using WTF::FastBitReference;
 using WTF::FastBitVector;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

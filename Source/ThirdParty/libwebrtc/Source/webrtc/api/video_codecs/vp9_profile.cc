@@ -11,8 +11,11 @@
 #include "api/video_codecs/vp9_profile.h"
 
 #include <map>
+#include <optional>
+#include <string>
 #include <utility>
 
+#include "api/rtp_parameters.h"
 #include "rtc_base/string_to_number.h"
 
 namespace webrtc {
@@ -34,10 +37,10 @@ std::string VP9ProfileToString(VP9Profile profile) {
   return "0";
 }
 
-absl::optional<VP9Profile> StringToVP9Profile(const std::string& str) {
-  const absl::optional<int> i = rtc::StringToNumber<int>(str);
+std::optional<VP9Profile> StringToVP9Profile(const std::string& str) {
+  const std::optional<int> i = rtc::StringToNumber<int>(str);
   if (!i.has_value())
-    return absl::nullopt;
+    return std::nullopt;
 
   switch (i.value()) {
     case 0:
@@ -49,12 +52,12 @@ absl::optional<VP9Profile> StringToVP9Profile(const std::string& str) {
     case 3:
       return VP9Profile::kProfile3;
     default:
-      return absl::nullopt;
+      return std::nullopt;
   }
 }
 
-absl::optional<VP9Profile> ParseSdpForVP9Profile(
-    const SdpVideoFormat::Parameters& params) {
+std::optional<VP9Profile> ParseSdpForVP9Profile(
+    const CodecParameterMap& params) {
   const auto profile_it = params.find(kVP9FmtpProfileId);
   if (profile_it == params.end())
     return VP9Profile::kProfile0;
@@ -62,10 +65,10 @@ absl::optional<VP9Profile> ParseSdpForVP9Profile(
   return StringToVP9Profile(profile_str);
 }
 
-bool VP9IsSameProfile(const SdpVideoFormat::Parameters& params1,
-                      const SdpVideoFormat::Parameters& params2) {
-  const absl::optional<VP9Profile> profile = ParseSdpForVP9Profile(params1);
-  const absl::optional<VP9Profile> other_profile =
+bool VP9IsSameProfile(const CodecParameterMap& params1,
+                      const CodecParameterMap& params2) {
+  const std::optional<VP9Profile> profile = ParseSdpForVP9Profile(params1);
+  const std::optional<VP9Profile> other_profile =
       ParseSdpForVP9Profile(params2);
   return profile && other_profile && profile == other_profile;
 }

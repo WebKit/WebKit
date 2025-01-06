@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -80,7 +80,7 @@ void cfl_load_dc_pred(MACROBLOCKD *const xd, uint8_t *dst, int dst_stride,
 // Due to frame boundary issues, it is possible that the total area covered by
 // chroma exceeds that of luma. When this happens, we fill the missing pixels by
 // repeating the last columns and/or rows.
-static INLINE void cfl_pad(CFL_CTX *cfl, int width, int height) {
+static inline void cfl_pad(CFL_CTX *cfl, int width, int height) {
   const int diff_width = width - cfl->buf_width;
   const int diff_height = height - cfl->buf_height;
 
@@ -134,7 +134,7 @@ static void subtract_average_c(const uint16_t *src, int16_t *dst, int width,
 
 CFL_SUB_AVG_FN(c)
 
-static INLINE int cfl_idx_to_alpha(uint8_t alpha_idx, int8_t joint_sign,
+static inline int cfl_idx_to_alpha(uint8_t alpha_idx, int8_t joint_sign,
                                    CFL_PRED_TYPE pred_type) {
   const int alpha_sign = (pred_type == CFL_PRED_U) ? CFL_SIGN_U(joint_sign)
                                                    : CFL_SIGN_V(joint_sign);
@@ -144,7 +144,7 @@ static INLINE int cfl_idx_to_alpha(uint8_t alpha_idx, int8_t joint_sign,
   return (alpha_sign == CFL_SIGN_POS) ? abs_alpha_q3 + 1 : -abs_alpha_q3 - 1;
 }
 
-static INLINE void cfl_predict_lbd_c(const int16_t *ac_buf_q3, uint8_t *dst,
+static inline void cfl_predict_lbd_c(const int16_t *ac_buf_q3, uint8_t *dst,
                                      int dst_stride, int alpha_q3, int width,
                                      int height) {
   for (int j = 0; j < height; j++) {
@@ -159,8 +159,9 @@ static INLINE void cfl_predict_lbd_c(const int16_t *ac_buf_q3, uint8_t *dst,
 CFL_PREDICT_FN(c, lbd)
 
 #if CONFIG_AV1_HIGHBITDEPTH
-void cfl_predict_hbd_c(const int16_t *ac_buf_q3, uint16_t *dst, int dst_stride,
-                       int alpha_q3, int bit_depth, int width, int height) {
+static inline void cfl_predict_hbd_c(const int16_t *ac_buf_q3, uint16_t *dst,
+                                     int dst_stride, int alpha_q3,
+                                     int bit_depth, int width, int height) {
   for (int j = 0; j < height; j++) {
     for (int i = 0; i < width; i++) {
       dst[i] = clip_pixel_highbd(
@@ -298,7 +299,7 @@ static void cfl_luma_subsampling_444_hbd_c(const uint16_t *input,
 CFL_GET_SUBSAMPLE_FUNCTION(c)
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE cfl_subsample_hbd_fn cfl_subsampling_hbd(TX_SIZE tx_size,
+static inline cfl_subsample_hbd_fn cfl_subsampling_hbd(TX_SIZE tx_size,
                                                        int sub_x, int sub_y) {
   if (sub_x == 1) {
     if (sub_y == 1) {
@@ -310,7 +311,7 @@ static INLINE cfl_subsample_hbd_fn cfl_subsampling_hbd(TX_SIZE tx_size,
 }
 #endif
 
-static INLINE cfl_subsample_lbd_fn cfl_subsampling_lbd(TX_SIZE tx_size,
+static inline cfl_subsample_lbd_fn cfl_subsampling_lbd(TX_SIZE tx_size,
                                                        int sub_x, int sub_y) {
   if (sub_x == 1) {
     if (sub_y == 1) {
@@ -370,7 +371,7 @@ static void cfl_store(CFL_CTX *cfl, const uint8_t *input, int input_stride,
 
 // Adjust the row and column of blocks smaller than 8X8, as chroma-referenced
 // and non-chroma-referenced blocks are stored together in the CfL buffer.
-static INLINE void sub8x8_adjust_offset(const CFL_CTX *cfl, int mi_row,
+static inline void sub8x8_adjust_offset(const CFL_CTX *cfl, int mi_row,
                                         int mi_col, int *row_out,
                                         int *col_out) {
   // Increment row index for bottom: 8x4, 16x4 or both bottom 4x4s.
@@ -401,7 +402,7 @@ void cfl_store_tx(MACROBLOCKD *const xd, int row, int col, TX_SIZE tx_size,
   cfl_store(cfl, dst, pd->dst.stride, row, col, tx_size, is_cur_buf_hbd(xd));
 }
 
-static INLINE int max_intra_block_width(const MACROBLOCKD *xd,
+static inline int max_intra_block_width(const MACROBLOCKD *xd,
                                         BLOCK_SIZE plane_bsize, int plane,
                                         TX_SIZE tx_size) {
   const int max_blocks_wide = max_block_wide(xd, plane_bsize, plane)
@@ -409,7 +410,7 @@ static INLINE int max_intra_block_width(const MACROBLOCKD *xd,
   return ALIGN_POWER_OF_TWO(max_blocks_wide, tx_size_wide_log2[tx_size]);
 }
 
-static INLINE int max_intra_block_height(const MACROBLOCKD *xd,
+static inline int max_intra_block_height(const MACROBLOCKD *xd,
                                          BLOCK_SIZE plane_bsize, int plane,
                                          TX_SIZE tx_size) {
   const int max_blocks_high = max_block_high(xd, plane_bsize, plane)

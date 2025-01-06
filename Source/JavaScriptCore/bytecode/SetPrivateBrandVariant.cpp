@@ -37,7 +37,7 @@ SetPrivateBrandVariant::SetPrivateBrandVariant(CacheableIdentifier identifier, S
     , m_identifier(WTFMove(identifier))
 { }
 
-SetPrivateBrandVariant::~SetPrivateBrandVariant() { }
+SetPrivateBrandVariant::~SetPrivateBrandVariant() = default;
 
 bool SetPrivateBrandVariant::attemptToMerge(const SetPrivateBrandVariant& other)
 {

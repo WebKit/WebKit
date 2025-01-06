@@ -2,7 +2,7 @@
  * The default style sheet used to render HTML.
  *
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,9 +25,7 @@
 
 html {
     display: block;
-#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
     color: CanvasText;
-#endif
 }
 
 /* children of the <head> element all have display:none as below */
@@ -101,7 +99,6 @@ center {
 hr {
     display: block;
     overflow: hidden;
-    unicode-bidi: isolate;
     color: gray;
     margin-block-start: 0.5em;
     margin-block-end: 0.5em;
@@ -111,8 +108,9 @@ hr {
     border-width: 1px;
 }
 
+/* FIXME: webkit.org/b/230083 - Remove `-webkit-` from below.  */
 abbr[title], acronym[title] {
-    text-decoration: dotted underline;
+    -webkit-text-decoration: dotted underline;
 }
 
 /* ::backdrop */
@@ -277,7 +275,6 @@ table {
     display: table;
     border-collapse: separate;
     border-spacing: 2px;
-    border-color: gray;
     text-indent: initial;
     box-sizing: border-box;
 }
@@ -462,12 +459,8 @@ textarea,
 #endif
 input {
     appearance: auto;
-#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
     color: CanvasText;
     background-color: Canvas;
-#else
-    background-color: white;
-#endif
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border-radius: 5px;
     border: 1px solid -apple-system-secondary-label;
@@ -483,7 +476,6 @@ input {
     cursor: auto;
 }
 
-#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
 @media (prefers-dark-interface) {
     input {
         background-color: transparent;
@@ -493,7 +485,6 @@ input {
         background-image: url('data:image/svg+xml,<svg width="22" height="12" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" xml:space="preserve"><path fill="rgb(55,55,55)" d="M19.36,12.64L19.36,12.64c-0.88-0.88-0.88-2.3,0-3.18l4.6-4.6c0.88-0.88,2.3-0.88,3.18,0l0,0c0.88,0.88,0.88,2.3,0,3.18l-4.6,4.6C21.66,13.52,20.24,13.52,19.36,12.64z"><animate attributeName="fill" begin="0s" dur="1s" values="rgb(201,201,201);rgb(55,55,55)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(76,76,76)" d="M20.75,16L20.75,16c0-1.24,1.01-2.25,2.25-2.25l6.5,0c1.24,0,2.25,1.01,2.25,2.25v0c0,1.24-1.01,2.25-2.25,2.25l-6.5,0C21.76,18.25,20.75,17.24,20.75,16z"><animate attributeName="fill" begin="0.125s" dur="1s" values="rgb(201,201,201);rgb(55,55,55)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(97,97,97)" d="M27.14,27.14L27.14,27.14c-0.88,0.88-2.3,0.88-3.18,0l-4.6-4.6c-0.88-0.88-0.88-2.3,0-3.18l0,0c0.88-0.88,2.3-0.88,3.18,0l4.6,4.6C28.02,24.83,28.02,26.26,27.14,27.14z"><animate attributeName="fill" begin="0.25s" dur="1s" values="rgb(201,201,201);rgb(55,55,55)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(118,118,118)" d="M16,31.75L16,31.75c-1.24,0-2.25-1.01-2.25-2.25l0-6.5c0-1.24,1.01-2.25,2.25-2.25h0c1.24,0,2.25,1.01,2.25,2.25l0,6.5C18.25,30.74,17.24,31.75,16,31.75z"><animate attributeName="fill" begin="0.375s" dur="1s" values="rgb(201,201,201);rgb(55,55,55)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(138,138,138)" d="M4.86,27.14L4.86,27.14c-0.88-0.88-0.88-2.3,0-3.18l4.6-4.6c0.88-0.88,2.3-0.88,3.18,0l0,0c0.88,0.88,0.88,2.3,0,3.18l-4.6,4.6C7.17,28.02,5.74,28.02,4.86,27.14z"><animate attributeName="fill" begin="0.5s" dur="1s" values="rgb(201,201,201);rgb(55,55,55)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(159,159,159)" d="M0.25,16L0.25,16c0-1.24,1.01-2.25,2.25-2.25l6.5,0c1.24,0,2.25,1.01,2.25,2.25v0c0,1.24-1.01,2.25-2.25,2.25l-6.5,0C1.26,18.25,0.25,17.24,0.25,16z"><animate attributeName="fill" begin="0.625s" dur="1s" values="rgb(201,201,201);rgb(55,55,55)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(180,180,180)" d="M12.64,12.64L12.64,12.64c-0.88,0.88-2.3,0.88-3.18,0l-4.6-4.6c-0.88-0.88-0.88-2.3,0-3.18l0,0c0.88-0.88,2.3-0.88,3.18,0l4.6,4.6C13.52,10.34,13.52,11.76,12.64,12.64z"><animate attributeName="fill" begin="0.75s" dur="1s" values="rgb(201,201,201);rgb(55,55,55)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(201,201,201)" d="M16,11.25L16,11.25c-1.24,0-2.25-1.01-2.25-2.25l0-6.5c0-1.24,1.01-2.25,2.25-2.25h0c1.24,0,2.25,1.01,2.25,2.25l0,6.5C18.25,10.24,17.24,11.25,16,11.25z"><animate attributeName="fill" begin="0.875s" dur="1s" values="rgb(201,201,201);rgb(55,55,55)" calcMode="linear" repeatCount="indefinite" /></path></svg>');
     }
 }
-#endif
 
 input[type="search"] {
     box-sizing: border-box;
@@ -791,12 +782,8 @@ input::-webkit-list-button {
 textarea {
     appearance: auto;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
     color: CanvasText;
     background-color: Canvas;
-#else
-    background-color: white;
-#endif
     border: 1px solid;
     -webkit-rtl-ordering: logical;
     -webkit-user-select: text;
@@ -1121,13 +1108,8 @@ select {
 #else
     border-radius: 5px;
     border: 1px solid;
-#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
     color: CanvasText;
     background-color: Canvas;
-#else
-    color: black;
-    background-color: white;
-#endif /* defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT */
 #endif
     align-items: center;
     white-space: pre;
@@ -1392,6 +1374,22 @@ ruby > :not(rb, rbc, ruby) {
     white-space: nowrap;
 }
 
+/* https://html.spec.whatwg.org/#the-details-and-summary-elements */
+
+details, summary {
+    display: block;
+}
+
+details > summary:first-of-type {
+    display: list-item;
+    counter-increment: list-item 0;
+    list-style: disclosure-closed inside;
+}
+
+details[open] > summary:first-of-type {
+    list-style-type: disclosure-open;
+}
+
 /* other elements */
 
 frameset, frame {
@@ -1406,29 +1404,18 @@ iframe {
     border: 2px inset;
 }
 
-details {
-    display: block;
-}
-
-summary {
-    display: block;
-}
-
-summary::-webkit-details-marker {
-    display: inline-block;
-    width: 0.66em;
-    height: 0.66em;
-    margin-inline-end: 0.4em;
-}
-
-bdi, output {
-    unicode-bidi: isolate;
+address, blockquote, center, div, figure, figcaption, footer, form, header, hr,
+legend, listing, main, p, plaintext, pre, summary, xmp, article, aside, h1, h2,
+h3, h4, h5, h6, hgroup, nav, section, search, table, caption, colgroup, col,
+thead, tbody, tfoot, tr, td, th, dir, dd, dl, dt, menu, ol, ul, li, bdi, output,
+[dir=ltr i], [dir=rtl i], [dir=auto i] {
+    unicode-bidi: isolate; 
 }
 
 input[type=tel i]:dir(ltr) { direction: ltr; }
 
-bdo {
-    unicode-bidi: bidi-override;
+bdo, bdo[dir] {
+    unicode-bidi: isolate-override;
 }
 
 slot {
@@ -1471,4 +1458,23 @@ embed, object, img {
 /* https://drafts.csswg.org/css-text-decor-4/#text-decoration-skipping */
 ins, del {
     text-decoration-skip: none;
+}
+
+/* https://drafts.csswg.org/css-text-decor-4/#default-stylesheet */
+/* set language-appropriate default emphasis mark position */
+:root:lang(zh), [lang|=zh] {
+    text-emphasis-position: under right;
+}
+[lang|=ja], [lang|=ko] {
+    text-emphasis-position: over right;
+}
+
+/* set language-appropriate default underline position */
+:root:lang(ja), [lang|=ja],
+:root:lang(mn), [lang|=mn],
+:root:lang(ko), [lang|=ko] {
+    text-underline-position: right;
+}
+:root:lang(zh), [lang|=zh] {
+    text-underline-position: left;
 }

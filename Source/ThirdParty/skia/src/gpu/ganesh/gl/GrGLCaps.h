@@ -9,9 +9,9 @@
 #ifndef GrGLCaps_DEFINED
 #define GrGLCaps_DEFINED
 
-#include "include/gpu/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
 #include "include/gpu/ganesh/gl/GrGLBackendSurface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkTArray.h"
 #include "include/private/base/SkTDArray.h"
@@ -134,6 +134,12 @@ public:
         kBaseLevel,
         kBasePlusMaxLevel,
         kBasePlusSync
+    };
+
+    enum class TimerQueryType {
+        kNone,
+        kRegular,
+        kDisjoint,
     };
 
     /**
@@ -334,6 +340,9 @@ public:
     /// How is GrGLsync implemented?
     FenceType fenceType() const { return fFenceType; }
 
+    /// What type of timer queries are supported
+    TimerQueryType timerQueryType() const { return fTimerQueryType; }
+
     /// How are multi draws implemented (if at all)?
     MultiDrawType multiDrawType() const { return fMultiDrawType; }
 
@@ -360,6 +369,9 @@ public:
 
     /// Is there support for ES2 compatability?
     bool ES2CompatibilitySupport() const { return fES2CompatibilitySupport; }
+
+    // Should OpenGL Protectedness handling be Vulkan-like
+    bool strictProtectedness() const { return fStrictProtectedness; }
 
     /// Is there support for glDrawRangeElements?
     bool drawRangeElementsSupport() const { return fDrawRangeElementsSupport; }
@@ -525,7 +537,7 @@ public:
                            const GrProgramInfo&,
                            ProgramDescOverrideFlags) const override;
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     GrGLStandard standard() const { return fStandard; }
 
     std::vector<GrTest::TestFormatColorTypeCombination> getTestingCombinations() const override;
@@ -601,6 +613,7 @@ private:
     MapBufferType        fMapBufferType        = kNone_MapBufferType;
     TransferBufferType   fTransferBufferType   = TransferBufferType::kNone;
     FenceType            fFenceType            = FenceType::kNone;
+    TimerQueryType       fTimerQueryType       = TimerQueryType::kNone;
     MultiDrawType        fMultiDrawType        = MultiDrawType::kNone;
     RegenerateMipmapType fRegenerateMipmapType = RegenerateMipmapType::kBaseLevel;
 
@@ -610,6 +623,7 @@ private:
     bool fVertexArrayObjectSupport : 1;
     bool fDebugSupport : 1;
     bool fES2CompatibilitySupport : 1;
+    bool fStrictProtectedness     : 1;
     bool fDrawRangeElementsSupport : 1;
     bool fBaseVertexBaseInstanceSupport : 1;
     bool fIsCoreProfile : 1;
@@ -802,12 +816,10 @@ private:
 
         bool fHaveQueriedImplementationReadSupport = false;
 
-        enum {
-            // This indicates that a stencil format has not yet been determined for the config.
-            kUnknown_StencilIndex = -1,
-            // This indicates that there is no supported stencil format for the config.
-            kUnsupported_StencilFormatIndex = -2
-        };
+        // This indicates that a stencil format has not yet been determined for the config.
+        static constexpr int kUnknown_StencilIndex = -1;
+        // This indicates that there is no supported stencil format for the config.
+        static constexpr int kUnsupported_StencilFormatIndex = -2;
 
         // Index fStencilFormats.
         int fStencilFormatIndex = kUnknown_StencilIndex;

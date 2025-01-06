@@ -69,7 +69,7 @@ void CryptoAlgorithmAESKW::generateKey(const CryptoAlgorithmParameters& paramete
     callback(WTFMove(result));
 }
 
-void CryptoAlgorithmAESKW::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit)
+void CryptoAlgorithmAESKW::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     using namespace CryptoAlgorithmAESKWInternal;
 
@@ -109,7 +109,7 @@ void CryptoAlgorithmAESKW::importKey(CryptoKeyFormat format, KeyData&& data, con
     callback(*result);
 }
 
-void CryptoAlgorithmAESKW::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit)
+void CryptoAlgorithmAESKW::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     using namespace CryptoAlgorithmAESKWInternal;
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());
@@ -150,13 +150,13 @@ void CryptoAlgorithmAESKW::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& ke
     callback(format, WTFMove(result));
 }
 
-void CryptoAlgorithmAESKW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit useCryptoKit)
+void CryptoAlgorithmAESKW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     if (data.size() % 8) {
         exceptionCallback(ExceptionCode::OperationError);
         return;
     }
-    auto result = platformWrapKey(downcast<CryptoKeyAES>(key.get()), WTFMove(data), useCryptoKit);
+    auto result = platformWrapKey(downcast<CryptoKeyAES>(key.get()), WTFMove(data));
     if (result.hasException()) {
         exceptionCallback(result.releaseException().code());
         return;
@@ -165,9 +165,9 @@ void CryptoAlgorithmAESKW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data,
     callback(result.releaseReturnValue());
 }
 
-void CryptoAlgorithmAESKW::unwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit useCryptoKit)
+void CryptoAlgorithmAESKW::unwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    auto result = platformUnwrapKey(downcast<CryptoKeyAES>(key.get()), WTFMove(data), useCryptoKit);
+    auto result = platformUnwrapKey(downcast<CryptoKeyAES>(key.get()), WTFMove(data));
     if (result.hasException()) {
         exceptionCallback(result.releaseException().code());
         return;
@@ -176,7 +176,7 @@ void CryptoAlgorithmAESKW::unwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& dat
     callback(result.releaseReturnValue());
 }
 
-ExceptionOr<size_t> CryptoAlgorithmAESKW::getKeyLength(const CryptoAlgorithmParameters& parameters)
+ExceptionOr<std::optional<size_t>> CryptoAlgorithmAESKW::getKeyLength(const CryptoAlgorithmParameters& parameters)
 {
     return CryptoKeyAES::getKeyLength(parameters);
 }

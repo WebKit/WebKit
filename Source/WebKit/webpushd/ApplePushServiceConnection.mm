@@ -29,6 +29,7 @@
 #if HAVE(APPLE_PUSH_SERVICE_URL_TOKEN_SUPPORT)
 
 #import <wtf/BlockPtr.h>
+#import <wtf/WeakPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @interface _WKAPSConnectionDelegate : NSObject<APSConnectionDelegate> {
@@ -81,8 +82,7 @@ ApplePushServiceConnection::~ApplePushServiceConnection()
 
 static RetainPtr<APSURLTokenInfo> makeTokenInfo(const String& topic, const Vector<uint8_t>& vapidPublicKey)
 {
-    auto serverPublicKey = adoptNS([[NSData alloc] initWithBytes:vapidPublicKey.data() length:vapidPublicKey.size()]);
-    return adoptNS([[APSURLTokenInfo alloc] initWithTopic:topic vapidPublicKey:serverPublicKey.get()]);
+    return adoptNS([[APSURLTokenInfo alloc] initWithTopic:topic vapidPublicKey:toNSData(vapidPublicKey).get()]);
 }
 
 void ApplePushServiceConnection::subscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&& subscribeHandler)

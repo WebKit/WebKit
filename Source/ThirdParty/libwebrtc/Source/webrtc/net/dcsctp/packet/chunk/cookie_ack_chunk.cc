@@ -11,9 +11,9 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 
 namespace dcsctp {
@@ -27,10 +27,10 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 constexpr int CookieAckChunk::kType;
 
-absl::optional<CookieAckChunk> CookieAckChunk::Parse(
+std::optional<CookieAckChunk> CookieAckChunk::Parse(
     rtc::ArrayView<const uint8_t> data) {
   if (!ParseTLV(data).has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return CookieAckChunk();
 }

@@ -10,11 +10,21 @@
 
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
 
+#include <memory>
+#include <optional>
+#include <vector>
+
+#include "api/audio_codecs/audio_codec_pair_id.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_encoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/audio_codecs/opus/audio_encoder_opus_config.h"
 #include "modules/audio_coding/codecs/opus/audio_encoder_opus.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
-absl::optional<AudioEncoderOpusConfig> AudioEncoderOpus::SdpToConfig(
+std::optional<AudioEncoderOpusConfig> AudioEncoderOpus::SdpToConfig(
     const SdpAudioFormat& format) {
   return AudioEncoderOpusImpl::SdpToConfig(format);
 }
@@ -30,15 +40,15 @@ AudioCodecInfo AudioEncoderOpus::QueryAudioEncoder(
 }
 
 std::unique_ptr<AudioEncoder> AudioEncoderOpus::MakeAudioEncoder(
+    const Environment& env,
     const AudioEncoderOpusConfig& config,
-    int payload_type,
-    absl::optional<AudioCodecPairId> /*codec_pair_id*/,
-    const FieldTrialsView* field_trials) {
+    const AudioEncoderFactory::Options& options) {
   if (!config.IsOk()) {
     RTC_DCHECK_NOTREACHED();
     return nullptr;
   }
-  return AudioEncoderOpusImpl::MakeAudioEncoder(config, payload_type);
+  return std::make_unique<AudioEncoderOpusImpl>(env, config,
+                                                options.payload_type);
 }
 
 }  // namespace webrtc

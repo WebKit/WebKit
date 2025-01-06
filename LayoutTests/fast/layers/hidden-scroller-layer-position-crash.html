@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html>
+<body onload="runTest()">
+
+  <p>This test should not crash.</p>
+
+  <div id="scroller" style="overflow:hidden; width:200px; height:200px; visibility: hidden">
+    <div style="height: 250px; background: red; position: relative"></div>
+    <div style="height: 1000px; background: blue"></div>
+  </div>
+
+  <div id="sibling" style="width: 200px; height: 200px; position: relative; background: red"></div>
+
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+
+    function runTest() {
+      document.getElementById("scroller").scrollTop = 200;
+      document.getElementById("sibling").style.backgroundColor = "green";
+   }
+  </script>
+</body>
+</html>

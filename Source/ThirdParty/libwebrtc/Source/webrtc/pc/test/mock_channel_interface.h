@@ -56,6 +56,10 @@ class MockChannelInterface : public cricket::ChannelInterface {
               SetFirstPacketReceivedCallback,
               (std::function<void()>),
               (override));
+  MOCK_METHOD(void,
+              SetFirstPacketSentCallback,
+              (std::function<void()>),
+              (override));
   MOCK_METHOD(bool,
               SetLocalContent,
               (const cricket::MediaContentDescription*,

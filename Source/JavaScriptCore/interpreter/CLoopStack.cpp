@@ -38,6 +38,8 @@
 #include "Options.h"
 #include <wtf/Lock.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static size_t committedBytesCount = 0;
@@ -164,5 +166,7 @@ size_t CLoopStack::committedByteCount()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(C_LOOP)

@@ -29,6 +29,7 @@
 
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceCenter.h"
+#include "Timer.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -41,11 +42,6 @@ namespace WebCore {
 class BaseAudioSharedUnit;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::BaseAudioSharedUnit> : std::true_type { };
-}
-
 namespace WebCore {
 
 class AudioStreamDescription;
@@ -53,14 +49,16 @@ class CaptureDevice;
 class CoreAudioCaptureSource;
 class PlatformAudioData;
 
-class BaseAudioSharedUnit : public RealtimeMediaSourceCenterObserver {
+class BaseAudioSharedUnit : public RefCounted<BaseAudioSharedUnit>, public RealtimeMediaSourceCenterObserver {
 public:
-    BaseAudioSharedUnit();
     virtual ~BaseAudioSharedUnit();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void startProducingData();
     void stopProducingData();
-    void reconfigure();
+    WEBCORE_EXPORT void reconfigure();
     virtual bool isProducingData() const = 0;
 
     virtual void delaySamples(Seconds) { }
@@ -86,12 +84,11 @@ public:
     void clearClients();
 
     virtual bool hasAudioUnit() const = 0;
-    void setCaptureDevice(String&&, uint32_t);
+    void setCaptureDevice(String&&, uint32_t, bool isDefault);
 
     virtual LongCapabilityRange sampleRateCapacities() const = 0;
     virtual int actualSampleRate() const { return sampleRate(); }
 
-    void whenAudioCaptureUnitIsNotRunning(Function<void()>&&);
     bool isRenderingAudio() const { return m_isRenderingAudio; }
     bool hasClients() const { return !m_clients.isEmptyIgnoringNullReferences(); }
 
@@ -99,7 +96,11 @@ public:
 
     void handleNewCurrentMicrophoneDevice(CaptureDevice&&);
 
+    uint32_t captureDeviceID() const { return m_capturingDevice ? m_capturingDevice->second : 0; }
+
 protected:
+    BaseAudioSharedUnit();
+
     void forEachClient(const Function<void(CoreAudioCaptureSource&)>&) const;
     void captureFailed();
     void continueStartProducingData();
@@ -116,7 +117,6 @@ protected:
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/);
 
     const String& persistentID() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
-    uint32_t captureDeviceID() const { return m_capturingDevice ? m_capturingDevice->second : 0; }
 
     void setIsRenderingAudio(bool);
 
@@ -129,8 +129,20 @@ protected:
     virtual void validateOutputDevice(uint32_t /* currentOutputDeviceID */) { }
     virtual bool migrateToNewDefaultDevice(const CaptureDevice&) { return false; }
 
+    void setVoiceActivityListenerCallback(Function<void()>&& callback) { m_voiceActivityCallback = WTFMove(callback); }
+    bool hasVoiceActivityListenerCallback() const { return !!m_voiceActivityCallback; }
+    void voiceActivityDetected();
+
+    void disableVoiceActivityThrottleTimerForTesting() { m_voiceActivityThrottleTimer.stop(); }
+    void stopRunning();
+
+    bool isCapturingWithDefaultMicrophone() const { return m_isCapturingWithDefaultMicrophone; }
+
 private:
     OSStatus startUnit();
+    bool shouldContinueRunning() const { return m_producingCount || m_isRenderingAudio || hasClients(); }
+
+    virtual void willChangeCaptureDevice() { };
 
     // RealtimeMediaSourceCenterObserver
     void devicesChanged() final;
@@ -154,7 +166,8 @@ private:
 
     bool m_isCapturingWithDefaultMicrophone { false };
     bool m_isProducingMicrophoneSamples { true };
-    Vector<Function<void()>> m_whenNotRunningCallbacks;
+    Function<void()> m_voiceActivityCallback;
+    Timer m_voiceActivityThrottleTimer;
 };
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include <WebCore/FloatRect.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WKContentView;
 OBJC_CLASS UIScrollView;
@@ -38,12 +39,15 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class SmartMagnificationController : private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+class SmartMagnificationController : private IPC::MessageReceiver, public RefCounted<SmartMagnificationController> {
+    WTF_MAKE_TZONE_ALLOCATED(SmartMagnificationController);
     WTF_MAKE_NONCOPYABLE(SmartMagnificationController);
 public:
-    SmartMagnificationController(WKContentView *);
+    static Ref<SmartMagnificationController> create(WKContentView *);
     ~SmartMagnificationController();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void handleSmartMagnificationGesture(WebCore::FloatPoint origin);
     void handleResetMagnificationGesture(WebCore::FloatPoint origin);
@@ -51,6 +55,8 @@ public:
     double zoomFactorForTargetRect(WebCore::FloatRect targetRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale);
 
 private:
+    explicit SmartMagnificationController(WKContentView *);
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
@@ -58,7 +64,7 @@ private:
     void scrollToRect(WebCore::FloatPoint origin, WebCore::FloatRect targetRect);
     std::tuple<WebCore::FloatRect, double, double> smartMagnificationTargetRectAndZoomScales(WebCore::FloatRect targetRect, double minimumScale, double maximumScale, bool addMagnificationPadding);
 
-    WebPageProxy& m_webPageProxy;
+    WeakPtr<WebPageProxy> m_webPageProxy;
     WKContentView *m_contentView;
 };
     

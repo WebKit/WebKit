@@ -1,0 +1,70 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/LICENSE
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/README
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-ascii.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-basic-bold.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-basic-bolditalic.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-basic-italic.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-basic-regular.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-fallback.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-familyname-bold.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-familyname-funkyA.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-familyname-funkyB.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-familyname-funkyC.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-familyname.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-verify.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-100.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-1479-w1.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-1479-w4.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-1479-w7.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-1479-w9.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-15-w1.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-15-w5.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-200.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-24-w2.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-24-w4.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-2569-w2.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-2569-w5.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-2569-w6.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-2569-w9.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-258-w2.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-258-w5.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-258-w8.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-300.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-3589-w3.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-3589-w5.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-3589-w8.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-3589-w9.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-400.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-47-w4.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-47-w7.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-500.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-600.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-700.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-800.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-900.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-full-w1.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-full-w2.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-full-w3.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-full-w4.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-full-w5.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-full-w6.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-full-w7.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-full-w8.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights-full-w9.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CSSTest/csstest-weights.ttf

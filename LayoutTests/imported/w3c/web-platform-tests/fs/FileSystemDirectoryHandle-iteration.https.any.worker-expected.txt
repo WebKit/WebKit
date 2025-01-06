@@ -1,8 +1,8 @@
 
-FAIL returning early from an iteration doesn't crash promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL @@asyncIterator: full iteration works promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL entries: full iteration works promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL values: full iteration works promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL keys: full iteration works promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL iteration while iterator gets garbage collected promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL returning early from an iteration doesn't crash promise_test: Unhandled rejection with value: object "TypeError: writer.write is not a function. (In 'writer.write(new Blob([contents]))', 'writer.write' is undefined)"
+FAIL @@asyncIterator: full iteration works promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL entries: full iteration works promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL values: full iteration works promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL keys: full iteration works promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL iteration while iterator gets garbage collected promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
 

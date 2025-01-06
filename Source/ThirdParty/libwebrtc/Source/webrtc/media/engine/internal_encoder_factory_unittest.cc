@@ -10,6 +10,7 @@
 
 #include "media/engine/internal_encoder_factory.h"
 
+#include "api/environment/environment_factory.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/vp9_profile.h"
@@ -33,6 +34,8 @@ constexpr bool kH264Enabled = true;
 #else
 constexpr bool kH264Enabled = false;
 #endif
+constexpr bool kH265Enabled = false;
+
 constexpr VideoEncoderFactory::CodecSupport kSupported = {
     /*is_supported=*/true, /*is_power_efficient=*/false};
 constexpr VideoEncoderFactory::CodecSupport kUnsupported = {
@@ -46,7 +49,7 @@ MATCHER_P(Support, expected, "") {
 TEST(InternalEncoderFactoryTest, Vp8) {
   InternalEncoderFactory factory;
   std::unique_ptr<VideoEncoder> encoder =
-      factory.CreateVideoEncoder(SdpVideoFormat(cricket::kVp8CodecName));
+      factory.Create(CreateEnvironment(), SdpVideoFormat::VP8());
   EXPECT_TRUE(encoder);
 }
 
@@ -54,9 +57,7 @@ TEST(InternalEncoderFactoryTest, Vp9Profile0) {
   InternalEncoderFactory factory;
   if (kVp9Enabled) {
     std::unique_ptr<VideoEncoder> encoder =
-        factory.CreateVideoEncoder(SdpVideoFormat(
-            cricket::kVp9CodecName,
-            {{kVP9FmtpProfileId, VP9ProfileToString(VP9Profile::kProfile0)}}));
+        factory.Create(CreateEnvironment(), SdpVideoFormat::VP9Profile0());
     EXPECT_TRUE(encoder);
   } else {
     EXPECT_THAT(
@@ -69,7 +70,7 @@ TEST(InternalEncoderFactoryTest, H264) {
   InternalEncoderFactory factory;
   if (kH264Enabled) {
     std::unique_ptr<VideoEncoder> encoder =
-        factory.CreateVideoEncoder(SdpVideoFormat(cricket::kH264CodecName));
+        factory.Create(CreateEnvironment(), SdpVideoFormat::H264());
     EXPECT_TRUE(encoder);
   } else {
     EXPECT_THAT(
@@ -78,28 +79,34 @@ TEST(InternalEncoderFactoryTest, H264) {
   }
 }
 
+// At current stage H.265 is not supported by internal encoder factory.
+TEST(InternalEncoderFactoryTest, H265IsNotEnabled) {
+  InternalEncoderFactory factory;
+  std::unique_ptr<VideoEncoder> encoder = factory.Create(
+      CreateEnvironment(), SdpVideoFormat(cricket::kH265CodecName));
+  EXPECT_EQ(static_cast<bool>(encoder), kH265Enabled);
+  EXPECT_THAT(
+      factory.GetSupportedFormats(),
+      Not(Contains(Field(&SdpVideoFormat::name, cricket::kH265CodecName))));
+}
+
 TEST(InternalEncoderFactoryTest, QueryCodecSupportWithScalabilityMode) {
   InternalEncoderFactory factory;
   // VP8 and VP9 supported for singles spatial layers.
-  EXPECT_THAT(
-      factory.QueryCodecSupport(SdpVideoFormat(cricket::kVp8CodecName), "L1T2"),
-      Support(kSupported));
-  EXPECT_THAT(
-      factory.QueryCodecSupport(SdpVideoFormat(cricket::kVp9CodecName), "L1T3"),
-      Support(kVp9Enabled ? kSupported : kUnsupported));
+  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat::VP8(), "L1T2"),
+              Support(kSupported));
+  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat::VP9Profile0(), "L1T3"),
+              Support(kVp9Enabled ? kSupported : kUnsupported));
 
   // VP9 support for spatial layers.
-  EXPECT_THAT(
-      factory.QueryCodecSupport(SdpVideoFormat(cricket::kVp9CodecName), "L3T3"),
-      Support(kVp9Enabled ? kSupported : kUnsupported));
+  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat::VP9Profile0(), "L3T3"),
+              Support(kVp9Enabled ? kSupported : kUnsupported));
 
   // Invalid scalability modes even though VP8 and H264 are supported.
-  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat(cricket::kH264CodecName),
-                                        "L2T2"),
+  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat::H264(), "L2T2"),
               Support(kUnsupported));
-  EXPECT_THAT(
-      factory.QueryCodecSupport(SdpVideoFormat(cricket::kVp8CodecName), "L3T3"),
-      Support(kUnsupported));
+  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat::VP8(), "L3T3"),
+              Support(kUnsupported));
 }
 
 #if defined(RTC_USE_LIBAOM_AV1_ENCODER)
@@ -108,31 +115,30 @@ TEST(InternalEncoderFactoryTest, Av1) {
   EXPECT_THAT(factory.GetSupportedFormats(),
               Contains(Field(&SdpVideoFormat::name, cricket::kAv1CodecName)));
   EXPECT_TRUE(
-      factory.CreateVideoEncoder(SdpVideoFormat(cricket::kAv1CodecName)));
+      factory.Create(CreateEnvironment(), SdpVideoFormat::AV1Profile0()));
 }
 
 TEST(InternalEncoderFactoryTest, QueryCodecSupportNoScalabilityModeAv1) {
   InternalEncoderFactory factory;
-  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat(cricket::kAv1CodecName),
-                                        /*scalability_mode=*/absl::nullopt),
+  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat::AV1Profile0(),
+                                        /*scalability_mode=*/std::nullopt),
               Support(kSupported));
 }
 
 TEST(InternalEncoderFactoryTest, QueryCodecSupportNoScalabilityMode) {
   InternalEncoderFactory factory;
-  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat(cricket::kVp8CodecName),
-                                        /*scalability_mode=*/absl::nullopt),
+  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat::VP8(),
+                                        /*scalability_mode=*/std::nullopt),
               Support(kSupported));
-  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat(cricket::kVp9CodecName),
-                                        /*scalability_mode=*/absl::nullopt),
+  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat::VP9Profile0(),
+                                        /*scalability_mode=*/std::nullopt),
               Support(kVp9Enabled ? kSupported : kUnsupported));
 }
 
 TEST(InternalEncoderFactoryTest, QueryCodecSupportWithScalabilityModeAv1) {
   InternalEncoderFactory factory;
-  EXPECT_THAT(
-      factory.QueryCodecSupport(SdpVideoFormat(cricket::kAv1CodecName), "L2T1"),
-      Support(kSupported));
+  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat::AV1Profile0(), "L2T1"),
+              Support(kSupported));
 }
 #endif  // defined(RTC_USE_LIBAOM_AV1_ENCODER)
 

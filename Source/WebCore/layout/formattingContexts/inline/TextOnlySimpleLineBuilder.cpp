@@ -309,7 +309,7 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleOverflowingTextContent(
     if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep) {
         auto& committedRuns = candidateContent.runs();
         for (auto& run : committedRuns)
-            m_line.appendTextFast(downcast<InlineTextItem>(run.inlineItem), run.style, run.logicalWidth);
+            m_line.appendTextFast(downcast<InlineTextItem>(run.inlineItem), run.style, run.contentWidth());
         if (m_line.hasContentOrListMarker())
             m_wrapOpportunityList.append(&committedRuns.last().inlineItem);
         return { lineBreakingResult.isEndOfLine, committedRuns.size() };
@@ -336,13 +336,13 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleOverflowingTextContent(
             auto& runs = candidateContent.runs();
             for (size_t index = 0; index < trailingRunIndex; ++index) {
                 auto& run = runs[index];
-                m_line.appendTextFast(downcast<InlineTextItem>(run.inlineItem), run.style, run.logicalWidth);
+                m_line.appendTextFast(downcast<InlineTextItem>(run.inlineItem), run.style, run.contentWidth());
             }
 
             auto committedInlineItemCount = trailingRunIndex + 1;
             auto& trailingRun = runs[trailingRunIndex];
             if (!lineBreakingResult.partialTrailingContent->partialRun) {
-                m_line.appendTextFast(downcast<InlineTextItem>(trailingRun.inlineItem), trailingRun.style, trailingRun.logicalWidth);
+                m_line.appendTextFast(downcast<InlineTextItem>(trailingRun.inlineItem), trailingRun.style, trailingRun.contentWidth());
                 if (auto hyphenWidth = lineBreakingResult.partialTrailingContent->hyphenWidth)
                     m_line.addTrailingHyphen(*hyphenWidth);
                 return { InlineContentBreaker::IsEndOfLine::Yes, committedInlineItemCount };
@@ -436,15 +436,16 @@ size_t TextOnlySimpleLineBuilder::revertToLastNonOverflowingItem(const RenderSty
 
 InlineLayoutUnit TextOnlySimpleLineBuilder::availableWidth() const
 {
+    auto epsilon = intrinsicWidthMode() == IntrinsicWidthMode::Minimum ? 0.f : LayoutUnit::epsilon();
     auto contentLogicalRight = m_line.contentLogicalRight();
-    return (m_lineLogicalRect.width() + LayoutUnit::epsilon()) - (!std::isnan(contentLogicalRight) ? contentLogicalRight : 0.f);
+    return (m_lineLogicalRect.width() + epsilon) - (!std::isnan(contentLogicalRight) ? contentLogicalRight : 0.f);
 }
 
 bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByContent(const InlineContentCache::InlineItems& inlineItems, const PlacedFloats& placedFloats)
 {
     if (inlineItems.isEmpty())
         return false;
-    if (!inlineItems.hasTextAndLineBreakOnlyContent() || inlineItems.hasInlineBoxes() || inlineItems.requiresVisualReordering())
+    if (!inlineItems.hasTextAndLineBreakOnlyContent() || inlineItems.hasInlineBoxes() || inlineItems.requiresVisualReordering() || inlineItems.hasTextAutospace())
         return false;
     if (!placedFloats.isEmpty())
         return false;
@@ -456,7 +457,7 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(const
 {
     if (style.fontCascade().wordSpacing())
         return false;
-    if (!style.isLeftToRightDirection())
+    if (style.writingMode().isBidiRTL())
         return false;
     if (style.wordBreak() == WordBreak::AutoPhrase)
         return false;
@@ -470,7 +471,7 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(const
         return false;
     if (style.hyphenationLimitLines() != RenderStyle::initialHyphenationLimitLines())
         return false;
-    if (style.textWrapMode() == TextWrapMode::Wrap && style.textWrapStyle() == TextWrapStyle::Balance)
+    if (style.textWrapMode() == TextWrapMode::Wrap && (style.textWrapStyle() == TextWrapStyle::Balance || style.textWrapStyle() == TextWrapStyle::Pretty))
         return false;
     if (style.lineAlign() != LineAlign::None || style.lineSnap() != LineSnap::None)
         return false;

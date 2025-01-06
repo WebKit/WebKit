@@ -30,7 +30,6 @@
 
 #import "MessageSenderInlines.h"
 #import "PasteboardTypes.h"
-#import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import <WebCore/CachedImage.h>

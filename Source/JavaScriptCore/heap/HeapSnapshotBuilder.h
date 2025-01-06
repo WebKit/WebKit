@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/OverflowPolicy.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
@@ -108,7 +109,7 @@ class JS_EXPORT_PRIVATE HeapSnapshotBuilder final : public HeapAnalyzer {
 public:
     enum SnapshotType { InspectorSnapshot, GCDebuggingSnapshot };
 
-    HeapSnapshotBuilder(HeapProfiler&, SnapshotType = SnapshotType::InspectorSnapshot);
+    HeapSnapshotBuilder(HeapProfiler&, SnapshotType = SnapshotType::InspectorSnapshot, OverflowPolicy = OverflowPolicy::CrashOnOverflow);
     ~HeapSnapshotBuilder() final;
 
     static void resetNextAvailableObjectIdentifier();
@@ -132,6 +133,8 @@ public:
     String json();
     String json(Function<bool (const HeapSnapshotNode&)> allowNodeCallback);
 
+    bool hasOverflowed() const { return m_hasOverflowed; }
+
 private:
     static NodeIdentifier nextAvailableObjectIdentifier;
     static NodeIdentifier getNextObjectIdentifier();
@@ -148,15 +151,17 @@ private:
     };
     
     HeapProfiler& m_profiler;
+    OverflowPolicy m_overflowPolicy;
+    bool m_hasOverflowed { false };
 
     // SlotVisitors run in parallel.
     Lock m_buildingNodeMutex;
     std::unique_ptr<HeapSnapshot> m_snapshot;
     Lock m_buildingEdgeMutex;
     Vector<HeapSnapshotEdge> m_edges;
-    HashMap<JSCell*, RootData> m_rootData;
-    HashMap<JSCell*, void*> m_wrappedObjectPointers;
-    HashMap<JSCell*, String> m_cellLabels;
+    UncheckedKeyHashMap<JSCell*, RootData> m_rootData;
+    UncheckedKeyHashMap<JSCell*, void*> m_wrappedObjectPointers;
+    UncheckedKeyHashMap<JSCell*, String> m_cellLabels;
     HashSet<JSCell*> m_appendedCells;
     SnapshotType m_snapshotType;
 };

@@ -45,50 +45,50 @@ inline std::optional<FontSelectionValue> fontWeightValue(CSSValueID value)
     }
 }
 
-inline std::optional<CSSValueID> fontStretchKeyword(FontSelectionValue stretch)
+inline std::optional<CSSValueID> fontWidthKeyword(FontSelectionValue width)
 {
-    if (stretch == ultraCondensedStretchValue())
+    if (width == ultraCondensedWidthValue())
         return CSSValueUltraCondensed;
-    if (stretch == extraCondensedStretchValue())
+    if (width == extraCondensedWidthValue())
         return CSSValueExtraCondensed;
-    if (stretch == condensedStretchValue())
+    if (width == condensedWidthValue())
         return CSSValueCondensed;
-    if (stretch == semiCondensedStretchValue())
+    if (width == semiCondensedWidthValue())
         return CSSValueSemiCondensed;
-    if (stretch == normalStretchValue())
+    if (width == normalWidthValue())
         return CSSValueNormal;
-    if (stretch == semiExpandedStretchValue())
+    if (width == semiExpandedWidthValue())
         return CSSValueSemiExpanded;
-    if (stretch == expandedStretchValue())
+    if (width == expandedWidthValue())
         return CSSValueExpanded;
-    if (stretch == extraExpandedStretchValue())
+    if (width == extraExpandedWidthValue())
         return CSSValueExtraExpanded;
-    if (stretch == ultraExpandedStretchValue())
+    if (width == ultraExpandedWidthValue())
         return CSSValueUltraExpanded;
     return std::nullopt;
 }
 
-inline std::optional<FontSelectionValue> fontStretchValue(CSSValueID value)
+inline std::optional<FontSelectionValue> fontWidthValue(CSSValueID value)
 {
     switch (value) {
     case CSSValueUltraCondensed:
-        return ultraCondensedStretchValue();
+        return ultraCondensedWidthValue();
     case CSSValueExtraCondensed:
-        return extraCondensedStretchValue();
+        return extraCondensedWidthValue();
     case CSSValueCondensed:
-        return condensedStretchValue();
+        return condensedWidthValue();
     case CSSValueSemiCondensed:
-        return semiCondensedStretchValue();
+        return semiCondensedWidthValue();
     case CSSValueNormal:
-        return normalStretchValue();
+        return normalWidthValue();
     case CSSValueSemiExpanded:
-        return semiExpandedStretchValue();
+        return semiExpandedWidthValue();
     case CSSValueExpanded:
-        return expandedStretchValue();
+        return expandedWidthValue();
     case CSSValueExtraExpanded:
-        return extraExpandedStretchValue();
+        return extraExpandedWidthValue();
     case CSSValueUltraExpanded:
-        return ultraExpandedStretchValue();
+        return ultraExpandedWidthValue();
     default:
         return std::nullopt;
     }
@@ -96,7 +96,7 @@ inline std::optional<FontSelectionValue> fontStretchValue(CSSValueID value)
 
 inline std::optional<CSSValueID> fontStyleKeyword(std::optional<FontSelectionValue> style, FontStyleAxis axis)
 {
-    if (!style || style.value() == normalItalicValue())
+    if (!style)
         return CSSValueNormal;
     if (style.value() == italicValue())
         return axis == FontStyleAxis::ital ? CSSValueItalic : CSSValueOblique;

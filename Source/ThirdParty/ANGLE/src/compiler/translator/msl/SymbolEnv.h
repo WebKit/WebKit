@@ -10,8 +10,8 @@
 #include <unordered_set>
 
 #include "compiler/translator/Compiler.h"
+#include "compiler/translator/Name.h"
 #include "compiler/translator/Types.h"
-#include "compiler/translator/msl/Name.h"
 #include "compiler/translator/msl/Reference.h"
 
 namespace sh

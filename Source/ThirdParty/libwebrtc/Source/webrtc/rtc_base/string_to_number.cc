@@ -20,9 +20,9 @@
 namespace rtc {
 namespace string_to_number_internal {
 
-absl::optional<signed_type> ParseSigned(absl::string_view str, int base) {
+std::optional<signed_type> ParseSigned(absl::string_view str, int base) {
   if (str.empty())
-    return absl::nullopt;
+    return std::nullopt;
 
   if (isdigit(static_cast<unsigned char>(str[0])) || str[0] == '-') {
     std::string str_str(str);
@@ -35,12 +35,12 @@ absl::optional<signed_type> ParseSigned(absl::string_view str, int base) {
       return value;
     }
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
-absl::optional<unsigned_type> ParseUnsigned(absl::string_view str, int base) {
+std::optional<unsigned_type> ParseUnsigned(absl::string_view str, int base) {
   if (str.empty())
-    return absl::nullopt;
+    return std::nullopt;
 
   if (isdigit(static_cast<unsigned char>(str[0])) || str[0] == '-') {
     std::string str_str(str);
@@ -58,7 +58,7 @@ absl::optional<unsigned_type> ParseUnsigned(absl::string_view str, int base) {
       return value;
     }
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 template <typename T>
@@ -80,12 +80,12 @@ inline long double StrToT(const char* str, char** str_end) {
 }
 
 template <typename T>
-absl::optional<T> ParseFloatingPoint(absl::string_view str) {
+std::optional<T> ParseFloatingPoint(absl::string_view str) {
   if (str.empty())
-    return absl::nullopt;
+    return std::nullopt;
 
   if (str[0] == '\0')
-    return absl::nullopt;
+    return std::nullopt;
   std::string str_str(str);
   char* end = nullptr;
   errno = 0;
@@ -93,12 +93,12 @@ absl::optional<T> ParseFloatingPoint(absl::string_view str) {
   if (end == str_str.c_str() + str_str.size() && errno == 0) {
     return value;
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
-template absl::optional<float> ParseFloatingPoint(absl::string_view str);
-template absl::optional<double> ParseFloatingPoint(absl::string_view str);
-template absl::optional<long double> ParseFloatingPoint(absl::string_view str);
+template std::optional<float> ParseFloatingPoint(absl::string_view str);
+template std::optional<double> ParseFloatingPoint(absl::string_view str);
+template std::optional<long double> ParseFloatingPoint(absl::string_view str);
 
 }  // namespace string_to_number_internal
 }  // namespace rtc

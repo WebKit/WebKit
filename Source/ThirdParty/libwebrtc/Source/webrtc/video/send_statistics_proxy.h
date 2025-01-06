@@ -167,7 +167,7 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
     bool is_active = false;
     int on_off_events = 0;
     int64_t elapsed_ms = 0;
-    absl::optional<int64_t> last_update_ms;
+    std::optional<int64_t> last_update_ms;
     const int max_frame_diff_ms = 2000;
   };
   struct FallbackEncoderInfoDisabled {
@@ -218,8 +218,8 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   struct MaskedAdaptationCounts {
-    absl::optional<int> resolution_adaptations = absl::nullopt;
-    absl::optional<int> num_framerate_reductions = absl::nullopt;
+    std::optional<int> resolution_adaptations = std::nullopt;
+    std::optional<int> num_framerate_reductions = std::nullopt;
   };
 
   struct Adaptations {
@@ -275,8 +275,8 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
   void UpdateAdaptationStats() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
   void TryUpdateInitialQualityResolutionAdaptUp(
-      absl::optional<int> old_quality_downscales,
-      absl::optional<int> updated_quality_downscales)
+      std::optional<int> old_quality_downscales,
+      std::optional<int> updated_quality_downscales)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   void UpdateEncoderFallbackStats(const CodecSpecificInfo* codec_info,
@@ -291,8 +291,8 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
   Clock* const clock_;
   const std::string payload_name_;
   const RtpConfig rtp_config_;
-  const absl::optional<int> fallback_max_pixels_;
-  const absl::optional<int> fallback_max_pixels_disabled_;
+  const std::optional<int> fallback_max_pixels_;
+  const std::optional<int> fallback_max_pixels_disabled_;
   mutable Mutex mutex_;
   VideoEncoderConfig::ContentType content_type_ RTC_GUARDED_BY(mutex_);
   const int64_t start_ms_;
@@ -305,7 +305,7 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
   // Trackers mapped by ssrc.
   std::map<uint32_t, Trackers> trackers_ RTC_GUARDED_BY(mutex_);
 
-  absl::optional<int64_t> last_outlier_timestamp_ RTC_GUARDED_BY(mutex_);
+  std::optional<int64_t> last_outlier_timestamp_ RTC_GUARDED_BY(mutex_);
 
   int last_num_spatial_layers_ RTC_GUARDED_BY(mutex_);
   int last_num_simulcast_streams_ RTC_GUARDED_BY(mutex_);
@@ -324,7 +324,7 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
   };
   // Stores the last change in encoder implementation in an optional, so that
   // the event can be consumed.
-  absl::optional<EncoderChangeEvent> encoder_changed_;
+  std::optional<EncoderChangeEvent> encoder_changed_;
 
   // Contains stats used for UMA histograms. These stats will be reset if
   // content type changes between real-time video and screenshare, since these

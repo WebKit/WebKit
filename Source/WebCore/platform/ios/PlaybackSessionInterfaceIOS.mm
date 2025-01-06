@@ -35,6 +35,7 @@
 #import <AVFoundation/AVTime.h>
 #import <wtf/LoggerHelper.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
@@ -42,6 +43,8 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionInterfaceIOS);
 
 PlaybackSessionInterfaceIOS::PlaybackSessionInterfaceIOS(PlaybackSessionModel& model)
     : m_playbackSessionModel(&model)
@@ -114,9 +117,9 @@ void PlaybackSessionInterfaceIOS::stopObservingNowPlayingMetadata()
 }
 
 #if !RELEASE_LOG_DISABLED
-const void* PlaybackSessionInterfaceIOS::logIdentifier() const
+uint64_t PlaybackSessionInterfaceIOS::logIdentifier() const
 {
-    return m_playbackSessionModel ? m_playbackSessionModel->logIdentifier() : nullptr;
+    return m_playbackSessionModel ? m_playbackSessionModel->logIdentifier() : 0;
 }
 
 const Logger* PlaybackSessionInterfaceIOS::loggerPtr() const
@@ -129,24 +132,24 @@ WTFLogChannel& PlaybackSessionInterfaceIOS::logChannel() const
     return LogMedia;
 }
 
-uint32_t PlaybackSessionInterfaceIOS::ptrCount() const
+uint32_t PlaybackSessionInterfaceIOS::checkedPtrCount() const
 {
-    return CanMakeCheckedPtr::ptrCount();
+    return CanMakeCheckedPtr::checkedPtrCount();
 }
 
-uint32_t PlaybackSessionInterfaceIOS::ptrCountWithoutThreadCheck() const
+uint32_t PlaybackSessionInterfaceIOS::checkedPtrCountWithoutThreadCheck() const
 {
-    return CanMakeCheckedPtr::ptrCountWithoutThreadCheck();
+    return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck();
 }
 
-void PlaybackSessionInterfaceIOS::incrementPtrCount() const
+void PlaybackSessionInterfaceIOS::incrementCheckedPtrCount() const
 {
-    CanMakeCheckedPtr::incrementPtrCount();
+    CanMakeCheckedPtr::incrementCheckedPtrCount();
 }
 
-void PlaybackSessionInterfaceIOS::decrementPtrCount() const
+void PlaybackSessionInterfaceIOS::decrementCheckedPtrCount() const
 {
-    CanMakeCheckedPtr::decrementPtrCount();
+    CanMakeCheckedPtr::decrementCheckedPtrCount();
 }
 
 #endif

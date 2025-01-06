@@ -1,20 +1,31 @@
 
 TESTS = \
-    TestWithSuperclass \
+    TestWithCVPixelBuffer \
+    TestWithDeferSendingOption \
+    TestWithDispatchedFromAndTo \
+    TestWithEnabledBy \
+    TestWithEnabledByAndConjunction \
+    TestWithEnabledByOrConjunction \
+    TestWithIfMessage \
+    TestWithImageData \
     TestWithLegacyReceiver \
+    TestWithMultiLineExtendedAttributes \
     TestWithoutAttributes \
     TestWithoutUsingIPCConnection \
-    TestWithIfMessage \
     TestWithSemaphore \
-    TestWithImageData \
     TestWithStream \
     TestWithStreamBatched \
     TestWithStreamBuffer \
-    TestWithCVPixelBuffer \
     TestWithStreamServerConnectionHandle \
-    TestWithEnabledIf \
+    TestWithSuperclass \
+    TestWithSuperclassAndWantsAsyncDispatch \
+    TestWithSuperclassAndWantsDispatch \
+    TestWithValidator \
+    TestWithWantsAsyncDispatch \
+    TestWithWantsDispatch \
+    TestWithWantsDispatchNoSyncMessages \
 #
 
 all:
-	python3 ../../generate-serializers.py cpp DIRECTORY ./ TestSerializedType.serialization.in
+	python3 ../../generate-serializers.py cpp TestSerializedType.serialization.in
 	python3 ../../generate-message-receiver.py . $(TESTS)

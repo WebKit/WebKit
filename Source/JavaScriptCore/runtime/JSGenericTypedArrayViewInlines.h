@@ -35,7 +35,9 @@
 #include "TypeError.h"
 #include "TypedArrays.h"
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -284,7 +286,7 @@ bool JSGenericTypedArrayView<Adaptor>::setFromTypedArray(JSGlobalObject* globalO
             return false;
 
         RELEASE_ASSERT(JSC::elementSize(Adaptor::typeValue) == JSC::elementSize(other->type()));
-        memmove(typedVector() + offset, bitwise_cast<typename Adaptor::Type*>(other->vector()) + objectOffset, length * elementSize);
+        memmove(typedVector() + offset, std::bit_cast<typename Adaptor::Type*>(other->vector()) + objectOffset, length * elementSize);
         return true;
     };
 
@@ -320,6 +322,9 @@ bool JSGenericTypedArrayView<Adaptor>::setFromTypedArray(JSGlobalObject* globalO
     case TypeUint32:
         RELEASE_AND_RETURN(scope, setWithSpecificType<Uint32Adaptor>(
             globalObject, offset, jsCast<JSUint32Array*>(object), objectOffset, length, type));
+    case TypeFloat16:
+        RELEASE_AND_RETURN(scope, setWithSpecificType<Float16Adaptor>(
+            globalObject, offset, jsCast<JSFloat16Array*>(object), objectOffset, length, type));
     case TypeFloat32:
         RELEASE_AND_RETURN(scope, setWithSpecificType<Float32Adaptor>(
             globalObject, offset, jsCast<JSFloat32Array*>(object), objectOffset, length, type));
@@ -355,15 +360,15 @@ void JSGenericTypedArrayView<Adaptor>::copyFromInt32ShapeArray(size_t offset, JS
     // 1. int32_t -> uint32_t conversion does not change any bit representation. So we can simply copy them.
     // 2. Hole is represented as JSEmpty in Int32Shape, which lower 32bits is zero. And we expect 0 for undefined, thus this copying simply works.
     if constexpr (Adaptor::typeValue == TypeUint8 || Adaptor::typeValue == TypeInt8) {
-        WTF::copyElements(bitwise_cast<uint8_t*>(typedVector() + offset), bitwise_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
+        WTF::copyElements(std::bit_cast<uint8_t*>(typedVector() + offset), std::bit_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
         return;
     }
     if constexpr (Adaptor::typeValue == TypeUint16 || Adaptor::typeValue == TypeInt16) {
-        WTF::copyElements(bitwise_cast<uint16_t*>(typedVector() + offset), bitwise_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
+        WTF::copyElements(std::bit_cast<uint16_t*>(typedVector() + offset), std::bit_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
         return;
     }
     if constexpr (Adaptor::typeValue == TypeUint32 || Adaptor::typeValue == TypeInt32) {
-        WTF::copyElements(bitwise_cast<uint32_t*>(typedVector() + offset), bitwise_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
+        WTF::copyElements(std::bit_cast<uint32_t*>(typedVector() + offset), std::bit_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
         return;
     }
     for (size_t i = 0; i < length; ++i) {
@@ -768,12 +773,12 @@ template<typename Adaptor> inline size_t JSGenericTypedArrayView<Adaptor>::byteL
 
 template<typename Adaptor> inline const typename Adaptor::Type* JSGenericTypedArrayView<Adaptor>::typedVector() const
 {
-    return bitwise_cast<const typename Adaptor::Type*>(vector());
+    return std::bit_cast<const typename Adaptor::Type*>(vector());
 }
 
 template<typename Adaptor> inline typename Adaptor::Type* JSGenericTypedArrayView<Adaptor>::typedVector()
 {
-    return bitwise_cast<typename Adaptor::Type*>(vector());
+    return std::bit_cast<typename Adaptor::Type*>(vector());
 }
 
 template<typename Adaptor> inline bool JSGenericTypedArrayView<Adaptor>::inBounds(size_t i) const
@@ -877,6 +882,9 @@ template<typename Adaptor> inline auto JSGenericTypedArrayView<Adaptor>::sort() 
     }
 
     switch (Adaptor::typeValue) {
+    case TypeFloat16:
+        sortFloat<int16_t>(array, array + length);
+        break;
     case TypeFloat32:
         sortFloat<int32_t>(array, array + length);
         break;
@@ -934,6 +942,8 @@ inline GCClient::IsoSubspace* JSGenericTypedArrayView<Adaptor>::subspaceFor(VM& 
         return vm.uint16ArraySpace<access>();
     case TypeUint32:
         return vm.uint32ArraySpace<access>();
+    case TypeFloat16:
+        return vm.float16ArraySpace<access>();
     case TypeFloat32:
         return vm.float32ArraySpace<access>();
     case TypeFloat64:
@@ -1003,4 +1013,17 @@ template<typename PassedAdaptor> inline Structure* JSGenericResizableOrGrowableS
     return Structure::create(vm, globalObject, prototype, TypeInfo(typeForTypedArrayType(Base::Adaptor::typeValue), StructureFlags), info(), NonArray);
 }
 
+template<typename PassedAdaptor> inline bool JSGenericResizableOrGrowableSharedTypedArrayView<PassedAdaptor>::preventExtensions(JSObject* cell, JSGlobalObject* globalObject)
+{
+    // https://tc39.es/ecma262/#sec-typedarray-preventextensions
+    auto* object = jsCast<JSGenericResizableOrGrowableSharedTypedArrayView<PassedAdaptor>*>(cell);
+    if (object->isAutoLength())
+        return false;
+    if (object->isResizableNonShared())
+        return false;
+    return Base::preventExtensions(object, globalObject);
+}
+
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

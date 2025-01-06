@@ -27,11 +27,12 @@
 #include "CSSCanvasValue.h"
 
 #include "StyleCanvasImage.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 CSSCanvasValue::CSSCanvasValue(String&& name)
-    : CSSValue { CanvasClass }
+    : CSSValue { ClassType::Canvas }
     , m_name { WTFMove(name) }
 {
 }
@@ -48,7 +49,7 @@ bool CSSCanvasValue::equals(const CSSCanvasValue& other) const
     return m_name == other.m_name;
 }
 
-RefPtr<StyleImage> CSSCanvasValue::createStyleImage(Style::BuilderState&) const
+RefPtr<StyleImage> CSSCanvasValue::createStyleImage(const Style::BuilderState&) const
 {
     if (m_cachedStyleImage)
         return m_cachedStyleImage;

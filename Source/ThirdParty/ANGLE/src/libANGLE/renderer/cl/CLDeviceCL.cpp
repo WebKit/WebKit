@@ -109,17 +109,10 @@ CLDeviceImpl::Info CLDeviceCL::createInfo(cl::DeviceType type) const
     }
     std::string extensionStr(valString.data());
 
-    // TODO(jplate) Remove workaround after bug is fixed http://anglebug.com/6053
+    // TODO(jplate) Remove workaround after bug is fixed http://anglebug.com/42264583
     if (info.versionStr.compare(0u, 15u, "OpenCL 3.0 CUDA", 15u) == 0)
     {
         extensionStr.append(" cl_khr_depth_images cl_khr_image2d_from_buffer");
-    }
-
-    // Limit version number to supported version
-    if (info.versionStr[7] != '1')
-    {
-        info.versionStr[7] = '1';
-        info.versionStr[9] = '2';
     }
 
     info.version = ExtractCLVersion(info.versionStr);

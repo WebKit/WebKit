@@ -10,17 +10,21 @@
 
 #include "logging/rtc_event_log/encoder/optional_blob_encoding.h"
 
+#include <cstddef>
 #include <cstdint>
+#include <optional>
+#include <string>
+#include <vector>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/bit_buffer.h"
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace webrtc {
 
 std::string EncodeOptionalBlobs(
-    const std::vector<absl::optional<std::string>>& blobs) {
+    const std::vector<std::optional<std::string>>& blobs) {
   if (blobs.empty()) {
     return {};
   }
@@ -75,10 +79,10 @@ std::string EncodeOptionalBlobs(
   return std::string(buffer.data(), buffer.data() + bytes_written);
 }
 
-std::vector<absl::optional<std::string>> DecodeOptionalBlobs(
+std::vector<std::optional<std::string>> DecodeOptionalBlobs(
     absl::string_view encoded_blobs,
     size_t num_of_blobs) {
-  std::vector<absl::optional<std::string>> res(num_of_blobs);
+  std::vector<std::optional<std::string>> res(num_of_blobs);
   if (encoded_blobs.empty() || num_of_blobs == 0) {
     return res;
   }

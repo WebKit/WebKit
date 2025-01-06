@@ -22,13 +22,13 @@
 //   };
 //
 //   void some_function() {
-//     scoped_refptr<MyFoo> foo = new MyFoo();
+//     scoped_refptr<MyFoo> foo = make_ref_counted<MyFoo>();
 //     foo->Method(param);
 //     // `foo` is released when this function returns
 //   }
 //
 //   void some_other_function() {
-//     scoped_refptr<MyFoo> foo = new MyFoo();
+//     scoped_refptr<MyFoo> foo = make_ref_counted<MyFoo>();
 //     ...
 //     foo = nullptr;  // explicitly releases `foo`
 //     ...
@@ -41,7 +41,7 @@
 // references between the two objects, like so:
 //
 //   {
-//     scoped_refptr<MyFoo> a = new MyFoo();
+//     scoped_refptr<MyFoo> a = make_ref_counted<MyFoo>();
 //     scoped_refptr<MyFoo> b;
 //
 //     b.swap(a);
@@ -52,7 +52,7 @@
 // object, simply use the assignment operator:
 //
 //   {
-//     scoped_refptr<MyFoo> a = new MyFoo();
+//     scoped_refptr<MyFoo> a = make_ref_counted<MyFoo>();
 //     scoped_refptr<MyFoo> b;
 //
 //     b = a;
@@ -63,20 +63,23 @@
 #ifndef API_SCOPED_REFPTR_H_
 #define API_SCOPED_REFPTR_H_
 
-#include <memory>
+#include <cstddef>
 #include <utility>
 
-namespace rtc {
+#include "absl/base/nullability.h"
+
+namespace webrtc {
 
 template <class T>
-class scoped_refptr {
+class ABSL_NULLABILITY_COMPATIBLE scoped_refptr {
  public:
-  typedef T element_type;
+  using absl_nullability_compatible = void;
+  using element_type = T;
 
   scoped_refptr() : ptr_(nullptr) {}
   scoped_refptr(std::nullptr_t) : ptr_(nullptr) {}  // NOLINT(runtime/explicit)
 
-  explicit scoped_refptr(T* p) : ptr_(p) {
+  explicit scoped_refptr(absl::Nullable<T*> p) : ptr_(p) {
     if (ptr_)
       ptr_->AddRef();
   }
@@ -119,7 +122,7 @@ class scoped_refptr {
     return retVal;
   }
 
-  scoped_refptr<T>& operator=(T* p) {
+  scoped_refptr<T>& operator=(absl::Nullable<T*> p) {
     // AddRef first so that self assignment should work
     if (p)
       p->AddRef();
@@ -149,7 +152,7 @@ class scoped_refptr {
     return *this;
   }
 
-  void swap(T** pp) noexcept {
+  void swap(absl::Nonnull<T**> pp) noexcept {
     T* p = ptr_;
     ptr_ = *pp;
     *pp = p;
@@ -162,61 +165,65 @@ class scoped_refptr {
 };
 
 template <typename T, typename U>
-bool operator==(const rtc::scoped_refptr<T>& a,
-                const rtc::scoped_refptr<U>& b) {
+bool operator==(const scoped_refptr<T>& a, const scoped_refptr<U>& b) {
   return a.get() == b.get();
 }
 template <typename T, typename U>
-bool operator!=(const rtc::scoped_refptr<T>& a,
-                const rtc::scoped_refptr<U>& b) {
+bool operator!=(const scoped_refptr<T>& a, const scoped_refptr<U>& b) {
   return !(a == b);
 }
 
 template <typename T>
-bool operator==(const rtc::scoped_refptr<T>& a, std::nullptr_t) {
+bool operator==(const scoped_refptr<T>& a, std::nullptr_t) {
   return a.get() == nullptr;
 }
 
 template <typename T>
-bool operator!=(const rtc::scoped_refptr<T>& a, std::nullptr_t) {
+bool operator!=(const scoped_refptr<T>& a, std::nullptr_t) {
   return !(a == nullptr);
 }
 
 template <typename T>
-bool operator==(std::nullptr_t, const rtc::scoped_refptr<T>& a) {
+bool operator==(std::nullptr_t, const scoped_refptr<T>& a) {
   return a.get() == nullptr;
 }
 
 template <typename T>
-bool operator!=(std::nullptr_t, const rtc::scoped_refptr<T>& a) {
+bool operator!=(std::nullptr_t, const scoped_refptr<T>& a) {
   return !(a == nullptr);
 }
 
 // Comparison with raw pointer.
 template <typename T, typename U>
-bool operator==(const rtc::scoped_refptr<T>& a, const U* b) {
+bool operator==(const scoped_refptr<T>& a, const U* b) {
   return a.get() == b;
 }
 template <typename T, typename U>
-bool operator!=(const rtc::scoped_refptr<T>& a, const U* b) {
+bool operator!=(const scoped_refptr<T>& a, const U* b) {
   return !(a == b);
 }
 
 template <typename T, typename U>
-bool operator==(const T* a, const rtc::scoped_refptr<U>& b) {
+bool operator==(const T* a, const scoped_refptr<U>& b) {
   return a == b.get();
 }
 template <typename T, typename U>
-bool operator!=(const T* a, const rtc::scoped_refptr<U>& b) {
+bool operator!=(const T* a, const scoped_refptr<U>& b) {
   return !(a == b);
 }
 
 // Ordered comparison, needed for use as a std::map key.
 template <typename T, typename U>
-bool operator<(const rtc::scoped_refptr<T>& a, const rtc::scoped_refptr<U>& b) {
+bool operator<(const scoped_refptr<T>& a, const scoped_refptr<U>& b) {
   return a.get() < b.get();
 }
 
+}  // namespace webrtc
+
+namespace rtc {
+// Backwards compatible alias.
+// TODO: bugs.webrtc.org/42225969 - Deprecate and remove.
+using ::webrtc::scoped_refptr;
 }  // namespace rtc
 
 #endif  // API_SCOPED_REFPTR_H_

@@ -29,20 +29,13 @@
 
 #include "DrawingAreaProxy.h"
 #include "LayerTreeContext.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 #if !PLATFORM(WPE)
 #include "BackingStore.h"
 #endif
-
-namespace WebKit {
-class DrawingAreaProxyCoordinatedGraphics;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::DrawingAreaProxyCoordinatedGraphics> : std::true_type { };
-}
 
 namespace WebCore {
 class Region;
@@ -50,10 +43,16 @@ class Region;
 
 namespace WebKit {
 
-class DrawingAreaProxyCoordinatedGraphics final : public DrawingAreaProxy {
+class DrawingAreaProxyCoordinatedGraphics final : public DrawingAreaProxy, public RefCounted<DrawingAreaProxyCoordinatedGraphics> {
+    WTF_MAKE_TZONE_ALLOCATED(DrawingAreaProxyCoordinatedGraphics);
+    WTF_MAKE_NONCOPYABLE(DrawingAreaProxyCoordinatedGraphics);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DrawingAreaProxyCoordinatedGraphics);
 public:
-    DrawingAreaProxyCoordinatedGraphics(WebPageProxy&, WebProcessProxy&);
+    static Ref<DrawingAreaProxyCoordinatedGraphics> create(WebPageProxy&, WebProcessProxy&);
     virtual ~DrawingAreaProxyCoordinatedGraphics();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 #if !PLATFORM(WPE)
     void paint(PlatformPaintContextPtr, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
@@ -65,9 +64,11 @@ public:
     void dispatchAfterEnsuringDrawing(CompletionHandler<void()>&&);
 
 private:
+    DrawingAreaProxyCoordinatedGraphics(WebPageProxy&, WebProcessProxy&);
+
     // DrawingAreaProxy
     void sizeDidChange() override;
-    void deviceScaleFactorDidChange() override;
+    void deviceScaleFactorDidChange(CompletionHandler<void()>&&) override;
     void setBackingStoreIsDiscardable(bool) override;
 
 #if HAVE(DISPLAY_LINK)
@@ -84,6 +85,7 @@ private:
     void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
     void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, UpdateInfo&&) override;
     void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
+    void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::AsyncReplyID>&&) override;
 
     bool shouldSendWheelEventsToEventDispatcher() const override { return true; }
 
@@ -103,7 +105,8 @@ private:
 #endif
 
     class DrawingMonitor {
-        WTF_MAKE_NONCOPYABLE(DrawingMonitor); WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(DrawingMonitor);
+        WTF_MAKE_NONCOPYABLE(DrawingMonitor);
     public:
         DrawingMonitor(WebPageProxy&);
         ~DrawingMonitor();
@@ -137,5 +140,10 @@ private:
 };
 
 } // namespace WebKit
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::DrawingAreaProxyCoordinatedGraphics::DrawingMonitor> : std::true_type { };
+}
 
 SPECIALIZE_TYPE_TRAITS_DRAWING_AREA_PROXY(DrawingAreaProxyCoordinatedGraphics, DrawingAreaType::CoordinatedGraphics)

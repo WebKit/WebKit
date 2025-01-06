@@ -26,12 +26,12 @@
 #include "config.h"
 #include "CORPViolationReportBody.h"
 
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CORPViolationReportBody);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CORPViolationReportBody);
 
 Ref<CORPViolationReportBody> CORPViolationReportBody::create(COEPDisposition disposition, const URL& blockedURL, FetchOptions::Destination destination)
 {

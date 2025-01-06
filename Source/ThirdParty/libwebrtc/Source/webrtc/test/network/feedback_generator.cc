@@ -12,13 +12,14 @@
 #include "absl/memory/memory.h"
 #include "api/transport/network_types.h"
 #include "rtc_base/checks.h"
+#include "test/network/network_emulation_manager.h"
 
 namespace webrtc {
 
 FeedbackGeneratorImpl::FeedbackGeneratorImpl(
     FeedbackGeneratorImpl::Config config)
     : conf_(config),
-      net_(TimeMode::kSimulated, EmulatedNetworkStatsGatheringMode::kDefault),
+      net_({.time_mode = TimeMode::kSimulated}),
       send_link_{new SimulatedNetwork(conf_.send_link)},
       ret_link_{new SimulatedNetwork(conf_.return_link)},
       route_(this,
@@ -62,7 +63,8 @@ void FeedbackGeneratorImpl::SetReturnConfig(
 }
 
 void FeedbackGeneratorImpl::SetSendLinkCapacity(DataRate capacity) {
-  conf_.send_link.link_capacity_kbps = capacity.kbps<int>();
+  conf_.send_link.link_capacity = capacity;
+  conf_.send_link.link_capacity_kbps = capacity.kbps_or(0);
   send_link_->SetConfig(conf_.send_link);
 }
 

@@ -10,8 +10,12 @@
 
 #include "api/test/fake_frame_decryptor.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <vector>
 
+#include "api/array_view.h"
+#include "api/media_types.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -21,9 +25,9 @@ FakeFrameDecryptor::FakeFrameDecryptor(uint8_t fake_key,
     : fake_key_(fake_key), expected_postfix_byte_(expected_postfix_byte) {}
 
 FakeFrameDecryptor::Result FakeFrameDecryptor::Decrypt(
-    cricket::MediaType media_type,
-    const std::vector<uint32_t>& csrcs,
-    rtc::ArrayView<const uint8_t> additional_data,
+    cricket::MediaType /* media_type */,
+    const std::vector<uint32_t>& /* csrcs */,
+    rtc::ArrayView<const uint8_t> /* additional_data */,
     rtc::ArrayView<const uint8_t> encrypted_frame,
     rtc::ArrayView<uint8_t> frame) {
   if (fail_decryption_) {
@@ -43,7 +47,7 @@ FakeFrameDecryptor::Result FakeFrameDecryptor::Decrypt(
 }
 
 size_t FakeFrameDecryptor::GetMaxPlaintextByteSize(
-    cricket::MediaType media_type,
+    cricket::MediaType /* media_type */,
     size_t encrypted_frame_size) {
   return encrypted_frame_size - 1;
 }

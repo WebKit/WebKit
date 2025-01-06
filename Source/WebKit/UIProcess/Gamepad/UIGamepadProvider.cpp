@@ -28,6 +28,7 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "APIPageConfiguration.h"
 #include "GamepadData.h"
 #include "UIGamepad.h"
 #include "WebPageProxy.h"
@@ -62,12 +63,31 @@ UIGamepadProvider::~UIGamepadProvider()
 void UIGamepadProvider::gamepadSyncTimerFired()
 {
     RefPtr webPageProxy = platformWebPageProxyForGamepadInput();
-    if (!webPageProxy || !m_processPoolsUsingGamepads.contains(webPageProxy->process().processPool()))
+    if (!webPageProxy || !m_processPoolsUsingGamepads.contains(webPageProxy->configuration().processPool()))
         return;
 
     webPageProxy->gamepadActivity(snapshotGamepads(), m_shouldMakeGamepadsVisibleOnSync ? EventMakesGamepadsVisible::Yes : EventMakesGamepadsVisible::No);
+
+#if PLATFORM(VISION)
+    webPageProxy->setGamepadsConnected(isAnyGamepadConnected());
+#endif
+
     m_shouldMakeGamepadsVisibleOnSync = false;
 }
+
+#if PLATFORM(VISION)
+bool UIGamepadProvider::isAnyGamepadConnected() const
+{
+    bool anyGamepadConnected = false;
+    for (auto& gamepad : m_gamepads) {
+        if (gamepad) {
+            anyGamepadConnected = true;
+            break;
+        }
+    }
+    return anyGamepadConnected;
+}
+#endif
 
 void UIGamepadProvider::scheduleGamepadStateSync()
 {
@@ -149,11 +169,15 @@ void UIGamepadProvider::processPoolStoppedUsingGamepads(WebProcessPool& pool)
 
 void UIGamepadProvider::viewBecameActive(WebPageProxy& page)
 {
-    if (!m_processPoolsUsingGamepads.contains(page.process().processPool()))
+    if (!m_processPoolsUsingGamepads.contains(page.configuration().processPool()))
         return;
 
     if (!m_isMonitoringGamepads)
         startMonitoringGamepads();
+
+#if PLATFORM(VISION)
+    page.setGamepadsConnected(isAnyGamepadConnected());
+#endif
 
     if (platformWebPageProxyForGamepadInput())
         platformStartMonitoringInput();
@@ -161,6 +185,10 @@ void UIGamepadProvider::viewBecameActive(WebPageProxy& page)
 
 void UIGamepadProvider::viewBecameInactive(WebPageProxy& page)
 {
+#if PLATFORM(VISION)
+    page.setGamepadsConnected(false);
+#endif
+
     RefPtr pageForGamepadInput = platformWebPageProxyForGamepadInput();
     if (pageForGamepadInput == &page)
         platformStopMonitoringInput();

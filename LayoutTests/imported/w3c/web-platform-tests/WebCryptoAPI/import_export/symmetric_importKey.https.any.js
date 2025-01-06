@@ -1,5 +1,6 @@
 // META: title=WebCryptoAPI: importKey() for symmetric keys
 // META: timeout=long
+// META: script=../util/helpers.js
 
 // Test importKey and exportKey for non-PKC algorithms. Only "happy paths" are
 // currently tested - those where the operation should succeed.
@@ -40,22 +41,27 @@
         }
 
         rawKeyData.forEach(function(keyData) {
-            // Generate all combinations of valid usages for testing
-            allValidUsages(vector.legalUsages, []).forEach(function(usages) {
-                // Try each legal value of the extractable parameter
-                vector.extractable.forEach(function(extractable) {
-                    vector.formats.forEach(function(format) {
-                        var data = keyData;
-                        if (format === "jwk") {
-                            data = jwkData(keyData, algorithm);
-                        }
+            // Try each legal value of the extractable parameter
+            vector.extractable.forEach(function(extractable) {
+                vector.formats.forEach(function(format) {
+                    var data = keyData;
+                    if (format === "jwk") {
+                        data = jwkData(keyData, algorithm);
+                    }
+                    // Generate all combinations of valid usages for testing
+                    allValidUsages(vector.legalUsages).forEach(function(usages) {
                         testFormat(format, algorithm, data, keyData.length * 8, usages, extractable);
                     });
+                    testEmptyUsages(format, algorithm, data, keyData.length * 8, extractable);
                 });
             });
 
         });
     });
+
+    function hasLength(algorithm) {
+        return algorithm.name === 'HMAC' || algorithm.name.startsWith('AES');
+    }
 
     // Test importKey with a given key format and other parameters. If
     // extrable is true, export the key and verify that it matches the input.
@@ -64,6 +70,7 @@
             return subtle.importKey(format, keyData, algorithm, extractable, usages).
             then(function(key) {
                 assert_equals(key.constructor, CryptoKey, "Imported a CryptoKey object");
+                assert_goodCryptoKey(key, hasLength(key.algorithm) ? { length: keySize, ...algorithm } : algorithm, extractable, usages, 'secret');
                 if (!extractable) {
                     return;
                 }
@@ -82,6 +89,20 @@
                 assert_unreached("Threw an unexpected error: " + err.toString());
             });
         }, "Good parameters: " + keySize.toString() + " bits " + parameterString(format, keyData, algorithm, extractable, usages));
+    }
+
+    // Test importKey with a given key format and other parameters but with empty usages.
+    // Should fail with SyntaxError
+    function testEmptyUsages(format, algorithm, keyData, keySize, extractable) {
+        const usages = [];
+        promise_test(function(test) {
+            return subtle.importKey(format, keyData, algorithm, extractable, usages).
+            then(function(key) {
+                assert_unreached("importKey succeeded but should have failed with SyntaxError");
+            }, function(err) {
+                assert_equals(err.name, "SyntaxError", "Should throw correct error, not " + err.name + ": " + err.message);
+            });
+        }, "Empty Usages: " + keySize.toString() + " bits " + parameterString(format, keyData, algorithm, extractable, usages));
     }
 
 
@@ -150,46 +171,6 @@
         var base64String = btoa(binaryString);
 
         return base64String.replace(/=/g, "");
-    }
-
-    // Want to test every valid combination of usages. Start by creating a list
-    // of all non-empty subsets to possible usages.
-    function allNonemptySubsetsOf(arr) {
-        var results = [];
-        var firstElement;
-        var remainingElements;
-
-        for(var i=0; i<arr.length; i++) {
-            firstElement = arr[i];
-            remainingElements = arr.slice(i+1);
-            results.push([firstElement]);
-
-            if (remainingElements.length > 0) {
-                allNonemptySubsetsOf(remainingElements).forEach(function(combination) {
-                    combination.push(firstElement);
-                    results.push(combination);
-                });
-            }
-        }
-
-        return results;
-    }
-
-    // Return a list of all valid usage combinations, given the possible ones
-    // and the ones that are required for a particular operation.
-    function allValidUsages(possibleUsages, requiredUsages) {
-        var allUsages = [];
-
-        allNonemptySubsetsOf(possibleUsages).forEach(function(usage) {
-            for (var i=0; i<requiredUsages.length; i++) {
-                if (!usage.includes(requiredUsages[i])) {
-                    return;
-                }
-            }
-            allUsages.push(usage);
-        });
-
-        return allUsages;
     }
 
     // Convert method parameters to a string to uniquely name each test

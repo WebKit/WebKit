@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NavigationHistoryEntry.h"
 
+#include "EventNames.h"
 #include "FrameLoader.h"
 #include "HistoryController.h"
 #include "JSDOMGlobalObject.h"
@@ -34,17 +35,40 @@
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
 
-NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem)
-    : ContextDestructionObserver(context)
-    , m_id(WTF::UUID::createVersion4())
+NavigationHistoryEntry::NavigationHistoryEntry(Navigation& navigation, const DocumentState& originalDocumentState, Ref<HistoryItem>&& historyItem, String urlString, WTF::UUID key, RefPtr<SerializedScriptValue>&& state, WTF::UUID id)
+    : ActiveDOMObject(navigation.protectedScriptExecutionContext().get())
+    , m_navigation(navigation)
+    , m_urlString(urlString)
+    , m_key(key)
+    , m_id(id)
+    , m_state(state)
     , m_associatedHistoryItem(WTFMove(historyItem))
+    , m_originalDocumentState(originalDocumentState)
 {
+}
+
+Ref<NavigationHistoryEntry> NavigationHistoryEntry::create(Navigation& navigation, Ref<HistoryItem>&& historyItem)
+{
+    Ref entry = adoptRef(*new NavigationHistoryEntry(navigation, DocumentState::fromContext(navigation.protectedScriptExecutionContext().get()), WTFMove(historyItem), historyItem->urlString(), historyItem->uuidIdentifier()));
+    entry->suspendIfNeeded();
+    return entry;
+}
+
+Ref<NavigationHistoryEntry> NavigationHistoryEntry::create(Navigation& navigation, const NavigationHistoryEntry& other)
+{
+    Ref historyItem = other.m_associatedHistoryItem;
+    RefPtr state = historyItem->navigationAPIStateObject();
+    if (!state)
+        state = other.m_state;
+    Ref entry = adoptRef(*new NavigationHistoryEntry(navigation, DocumentState::fromContext(other.scriptExecutionContext()), WTFMove(historyItem), other.m_urlString, other.m_key, WTFMove(state), other.m_id));
+    entry->suspendIfNeeded();
+    return entry;
 }
 
 ScriptExecutionContext* NavigationHistoryEntry::scriptExecutionContext() const
@@ -57,12 +81,20 @@ enum EventTargetInterfaceType NavigationHistoryEntry::eventTargetInterface() con
     return EventTargetInterfaceType::NavigationHistoryEntry;
 }
 
+void NavigationHistoryEntry::eventListenersDidChange()
+{
+    m_hasDisposeEventListener = hasEventListeners(eventNames().disposeEvent);
+}
+
 const String& NavigationHistoryEntry::url() const
 {
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
         return nullString();
-    return m_associatedHistoryItem->urlString();
+    // https://html.spec.whatwg.org/#dom-navigationhistoryentry-url (Step 4)
+    if (document->identifier() != m_originalDocumentState.identifier && (m_originalDocumentState.referrerPolicy == ReferrerPolicy::NoReferrer || m_originalDocumentState.referrerPolicy == ReferrerPolicy::Origin))
+        return nullString();
+    return m_urlString;
 }
 
 String NavigationHistoryEntry::key() const
@@ -70,7 +102,7 @@ String NavigationHistoryEntry::key() const
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
         return nullString();
-    return m_associatedHistoryItem->uuidIdentifier().toString();
+    return m_key.toString();
 }
 
 String NavigationHistoryEntry::id() const
@@ -97,7 +129,7 @@ bool NavigationHistoryEntry::sameDocument() const
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
         return false;
-    RefPtr currentItem = document->frame()->checkedHistory()->currentItem();
+    RefPtr currentItem = document->frame() ? document->frame()->loader().history().currentItem() : nullptr;
     if (!currentItem)
         return false;
     return currentItem->documentSequenceNumber() == m_associatedHistoryItem->documentSequenceNumber();
@@ -109,16 +141,35 @@ JSC::JSValue NavigationHistoryEntry::getState(JSDOMGlobalObject& globalObject) c
     if (!document || !document->isFullyActive())
         return JSC::jsUndefined();
 
-    auto stateObject = m_associatedHistoryItem->navigationAPIStateObject();
-    if (!stateObject)
+    if (!m_state)
         return JSC::jsUndefined();
 
-    return stateObject->deserialize(globalObject, &globalObject, SerializationErrorMode::Throwing);
+    return m_state->deserialize(globalObject, &globalObject, SerializationErrorMode::Throwing);
 }
 
 void NavigationHistoryEntry::setState(RefPtr<SerializedScriptValue>&& state)
 {
+    m_state = state;
     m_associatedHistoryItem->setNavigationAPIStateObject(WTFMove(state));
+}
+
+auto NavigationHistoryEntry::DocumentState::fromContext(ScriptExecutionContext* context) -> DocumentState
+{
+    if (!context)
+        return { };
+    return { context->identifier(), context->referrerPolicy() };
+}
+
+bool NavigationHistoryEntry::virtualHasPendingActivity() const
+{
+    return m_hasDisposeEventListener && !m_hasDispatchedDisposeEvent && m_navigation;
+}
+
+void NavigationHistoryEntry::dispatchDisposeEvent()
+{
+    ASSERT(!m_hasDispatchedDisposeEvent);
+    dispatchEvent(Event::create(eventNames().disposeEvent, { }, Event::IsTrusted::Yes));
+    m_hasDispatchedDisposeEvent = true;
 }
 
 } // namespace WebCore

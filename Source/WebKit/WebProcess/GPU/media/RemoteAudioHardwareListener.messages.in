@@ -25,6 +25,10 @@
 
 #if ENABLE(GPU_PROCESS)
 
+[
+    DispatchedFrom=GPU,
+    DispatchedTo=WebContent
+]
 messages -> RemoteAudioHardwareListener {
     AudioHardwareDidBecomeActive()
     AudioHardwareDidBecomeInactive()

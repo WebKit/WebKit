@@ -16,13 +16,17 @@
 #include <atomic>
 #include <list>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
+#include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/audio/audio_processing.h"
+#include "api/audio/audio_processing_statistics.h"
 #include "api/function_view.h"
+#include "api/task_queue/task_queue_base.h"
 #include "modules/audio_processing/aec3/echo_canceller3.h"
 #include "modules/audio_processing/agc/agc_manager_direct.h"
 #include "modules/audio_processing/agc/gain_control.h"
@@ -35,15 +39,10 @@
 #include "modules/audio_processing/high_pass_filter.h"
 #include "modules/audio_processing/include/aec_dump.h"
 #include "modules/audio_processing/include/audio_frame_proxies.h"
-#include "modules/audio_processing/include/audio_processing.h"
-#include "modules/audio_processing/include/audio_processing_statistics.h"
 #include "modules/audio_processing/ns/noise_suppressor.h"
-#include "modules/audio_processing/optionally_built_submodule_creators.h"
 #include "modules/audio_processing/render_queue_item_verifier.h"
 #include "modules/audio_processing/rms_level.h"
-#include "modules/audio_processing/transient/transient_suppressor.h"
 #include "rtc_base/gtest_prod_util.h"
-#include "rtc_base/ignore_wundef.h"
 #include "rtc_base/swap_queue.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
@@ -72,12 +71,14 @@ class AudioProcessingImpl : public AudioProcessing {
   int Initialize() override;
   int Initialize(const ProcessingConfig& processing_config) override;
   void ApplyConfig(const AudioProcessing::Config& config) override;
-  bool CreateAndAttachAecDump(absl::string_view file_name,
-                              int64_t max_log_size_bytes,
-                              rtc::TaskQueue* worker_queue) override;
-  bool CreateAndAttachAecDump(FILE* handle,
-                              int64_t max_log_size_bytes,
-                              rtc::TaskQueue* worker_queue) override;
+  bool CreateAndAttachAecDump(
+      absl::string_view file_name,
+      int64_t max_log_size_bytes,
+      absl::Nonnull<TaskQueueBase*> worker_queue) override;
+  bool CreateAndAttachAecDump(
+      FILE* handle,
+      int64_t max_log_size_bytes,
+      absl::Nonnull<TaskQueueBase*> worker_queue) override;
   // TODO(webrtc:5298) Deprecated variant.
   void AttachAecDump(std::unique_ptr<AecDump> aec_dump) override;
   void DetachAecDump() override;
@@ -129,7 +130,7 @@ class AudioProcessingImpl : public AudioProcessing {
   size_t num_reverse_channels() const override;
   int stream_delay_ms() const override;
 
-  AudioProcessingStats GetStatistics(bool has_remote_tracks) override {
+  AudioProcessingStats GetStatistics(bool /* has_remote_tracks */) override {
     return GetStatistics();
   }
   AudioProcessingStats GetStatistics() override {
@@ -154,23 +155,11 @@ class AudioProcessingImpl : public AudioProcessing {
   FRIEND_TEST_ALL_PREFIXES(ApmConfiguration, DefaultBehavior);
   FRIEND_TEST_ALL_PREFIXES(ApmConfiguration, ValidConfigBehavior);
   FRIEND_TEST_ALL_PREFIXES(ApmConfiguration, InValidConfigBehavior);
-  FRIEND_TEST_ALL_PREFIXES(ApmWithSubmodulesExcludedTest,
-                           ToggleTransientSuppressor);
-  FRIEND_TEST_ALL_PREFIXES(ApmWithSubmodulesExcludedTest,
-                           ReinitializeTransientSuppressor);
-  FRIEND_TEST_ALL_PREFIXES(ApmWithSubmodulesExcludedTest,
-                           BitexactWithDisabledModules);
-  FRIEND_TEST_ALL_PREFIXES(
-      AudioProcessingImplGainController2FieldTrialParametrizedTest,
-      ConfigAdjustedWhenExperimentEnabled);
 
   void set_stream_analog_level_locked(int level)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
   void UpdateRecommendedInputVolumeLocked()
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
-
-  void OverrideSubmoduleCreationForTesting(
-      const ApmSubmoduleCreationOverrides& overrides);
 
   // Class providing thread-safe message pipe functionality for
   // `runtime_settings_`.
@@ -190,49 +179,6 @@ class AudioProcessingImpl : public AudioProcessing {
   const std::unique_ptr<ApmDataDumper> data_dumper_;
   static std::atomic<int> instance_count_;
   const bool use_setup_specific_default_aec3_config_;
-
-  // Parameters for the "GainController2" experiment which determines whether
-  // the following APM sub-modules are created and, if so, their configurations:
-  // AGC2 (`gain_controller2`), AGC1 (`gain_control`, `agc_manager`) and TS
-  // (`transient_suppressor`).
-  // TODO(bugs.webrtc.org/7494): Remove when the "WebRTC-Audio-GainController2"
-  // field trial is removed.
-  struct GainController2ExperimentParams {
-    struct Agc2Config {
-      InputVolumeController::Config input_volume_controller;
-      AudioProcessing::Config::GainController2::AdaptiveDigital
-          adaptive_digital_controller;
-    };
-    // When `agc2_config` is specified, all gain control switches to AGC2 and
-    // the configuration is overridden.
-    absl::optional<Agc2Config> agc2_config;
-    // When true, the transient suppressor submodule is never created regardless
-    // of the APM configuration.
-    bool disallow_transient_suppressor_usage;
-  };
-  // Specified when the "WebRTC-Audio-GainController2" field trial is specified.
-  // TODO(bugs.webrtc.org/7494): Remove when the "WebRTC-Audio-GainController2"
-  // field trial is removed.
-  const absl::optional<GainController2ExperimentParams>
-      gain_controller2_experiment_params_;
-
-  // Parses the "WebRTC-Audio-GainController2" field trial. If disabled, returns
-  // an unspecified value.
-  static absl::optional<GainController2ExperimentParams>
-  GetGainController2ExperimentParams();
-
-  // When `experiment_params` is specified, returns an APM configuration
-  // modified according to the experiment parameters. Otherwise returns
-  // `config`.
-  static AudioProcessing::Config AdjustConfig(
-      const AudioProcessing::Config& config,
-      const absl::optional<GainController2ExperimentParams>& experiment_params);
-  // Returns true if the APM VAD sub-module should be used.
-  static bool UseApmVadSubModule(
-      const AudioProcessing::Config& config,
-      const absl::optional<GainController2ExperimentParams>& experiment_params);
-
-  TransientSuppressor::VadMode transient_suppressor_vad_mode_;
 
   SwapQueue<RuntimeSetting> capture_runtime_settings_;
   SwapQueue<RuntimeSetting> render_runtime_settings_;
@@ -254,10 +200,8 @@ class AudioProcessingImpl : public AudioProcessing {
                 bool noise_suppressor_enabled,
                 bool adaptive_gain_controller_enabled,
                 bool gain_controller2_enabled,
-                bool voice_activity_detector_enabled,
                 bool gain_adjustment_enabled,
-                bool echo_controller_enabled,
-                bool transient_suppressor_enabled);
+                bool echo_controller_enabled);
     bool CaptureMultiBandSubModulesActive() const;
     bool CaptureMultiBandProcessingPresent() const;
     bool CaptureMultiBandProcessingActive(bool ec_processing_active) const;
@@ -276,11 +220,9 @@ class AudioProcessingImpl : public AudioProcessing {
     bool mobile_echo_controller_enabled_ = false;
     bool noise_suppressor_enabled_ = false;
     bool adaptive_gain_controller_enabled_ = false;
-    bool voice_activity_detector_enabled_ = false;
     bool gain_controller2_enabled_ = false;
     bool gain_adjustment_enabled_ = false;
     bool echo_controller_enabled_ = false;
-    bool transient_suppressor_enabled_ = false;
     bool first_update_ = true;
   };
 
@@ -317,18 +259,9 @@ class AudioProcessingImpl : public AudioProcessing {
   void InitializeHighPassFilter(bool forced_reset)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
   void InitializeGainController1() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
-  void InitializeTransientSuppressor()
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
   // Initializes the `GainController2` sub-module. If the sub-module is enabled,
   // recreates it.
   void InitializeGainController2() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
-  // Initializes the `VoiceActivityDetectorWrapper` sub-module. If the
-  // sub-module is enabled, recreates it. Call `InitializeGainController2()`
-  // first.
-  // TODO(bugs.webrtc.org/13663): Remove if TS is removed otherwise remove call
-  // order requirement - i.e., decouple from `InitializeGainController2()`.
-  void InitializeVoiceActivityDetector()
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
   void InitializeNoiseSuppressor() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
   void InitializeCaptureLevelsAdjuster()
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
@@ -423,10 +356,6 @@ class AudioProcessingImpl : public AudioProcessing {
   // Struct containing the Config specifying the behavior of APM.
   AudioProcessing::Config config_;
 
-  // Overrides for testing the exclusion of some submodules from the build.
-  ApmSubmoduleCreationOverrides submodule_creation_overrides_
-      RTC_GUARDED_BY(mutex_capture_);
-
   // Class containing information about what submodules are active.
   SubmoduleStates submodule_states_;
 
@@ -448,12 +377,10 @@ class AudioProcessingImpl : public AudioProcessing {
     std::unique_ptr<AgcManagerDirect> agc_manager;
     std::unique_ptr<GainControlImpl> gain_control;
     std::unique_ptr<GainController2> gain_controller2;
-    std::unique_ptr<VoiceActivityDetectorWrapper> voice_activity_detector;
     std::unique_ptr<HighPassFilter> high_pass_filter;
     std::unique_ptr<EchoControl> echo_controller;
     std::unique_ptr<EchoControlMobileImpl> echo_control_mobile;
     std::unique_ptr<NoiseSuppressor> noise_suppressor;
-    std::unique_ptr<TransientSuppressor> transient_suppressor;
     std::unique_ptr<CaptureLevelsAdjuster> capture_levels_adjuster;
   } submodules_;
 
@@ -479,19 +406,16 @@ class AudioProcessingImpl : public AudioProcessing {
     ApmConstants(bool multi_channel_render_support,
                  bool multi_channel_capture_support,
                  bool enforce_split_band_hpf,
-                 bool minimize_processing_for_unused_output,
-                 bool transient_suppressor_forced_off)
+                 bool minimize_processing_for_unused_output)
         : multi_channel_render_support(multi_channel_render_support),
           multi_channel_capture_support(multi_channel_capture_support),
           enforce_split_band_hpf(enforce_split_band_hpf),
           minimize_processing_for_unused_output(
-              minimize_processing_for_unused_output),
-          transient_suppressor_forced_off(transient_suppressor_forced_off) {}
+              minimize_processing_for_unused_output) {}
     bool multi_channel_render_support;
     bool multi_channel_capture_support;
     bool enforce_split_band_hpf;
     bool minimize_processing_for_unused_output;
-    bool transient_suppressor_forced_off;
   } constants_;
 
   struct ApmCaptureState {
@@ -516,12 +440,12 @@ class AudioProcessingImpl : public AudioProcessing {
     AudioProcessingStats stats;
     // Input volume applied on the audio input device when the audio is
     // acquired. Unspecified when unknown.
-    absl::optional<int> applied_input_volume;
+    std::optional<int> applied_input_volume;
     bool applied_input_volume_changed;
     // Recommended input volume to apply on the audio input device the next time
     // that audio is acquired. Unspecified when no input volume can be
     // recommended.
-    absl::optional<int> recommended_input_volume;
+    std::optional<int> recommended_input_volume;
   } capture_ RTC_GUARDED_BY(mutex_capture_);
 
   struct ApmCaptureNonLockedState {

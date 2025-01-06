@@ -19,8 +19,25 @@ struct TestOptions {
     TestOptions& operator=(const TestOptions&) = default;
     TestOptions& operator=(TestOptions&&) = default;
 
+    bool hasDawnOptions() const {
+#if defined(SK_DAWN)
+        return fDisableTintSymbolRenaming ||
+               fNeverYieldToWebGPU ||
+               fUseTintIR ||
+               fUseWGPUTextureView;
+#else
+        return false;
+#endif
+    }
+
     skgpu::graphite::ContextOptions fContextOptions = {};
+
+#if defined(SK_DAWN)
+    bool fDisableTintSymbolRenaming = false;
     bool fNeverYieldToWebGPU = false;
+    bool fUseTintIR = false;
+    bool fUseWGPUTextureView = false;
+#endif
 };
 
 }  // namespace skiatest::graphite

@@ -94,13 +94,13 @@ struct default_float_traits {
     // valid bit pattern, so this function must be assumed to be noexcept.
     static constexpr T carrier_to_float(carrier_uint u) noexcept
     {
-        return bitwise_cast<T>(u);
+        return std::bit_cast<T>(u);
     }
 
     // Same as above.
     static constexpr carrier_uint float_to_carrier(T x) noexcept
     {
-        return bitwise_cast<carrier_uint>(x);
+        return std::bit_cast<carrier_uint>(x);
     }
 
     // Extract exponent bits from a bit pattern.

@@ -30,7 +30,7 @@
 #include "JSDOMPromiseDeferredForward.h"
 #include "ServiceWorkerIdentifier.h"
 #include <JavaScriptCore/Forward.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
@@ -43,7 +43,7 @@ class ServiceWorkerClient;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
-class WEBCORE_TESTSUPPORT_EXPORT ServiceWorkerInternals : public RefCounted<ServiceWorkerInternals>, public CanMakeWeakPtr<ServiceWorkerInternals> {
+class WEBCORE_TESTSUPPORT_EXPORT ServiceWorkerInternals : public RefCountedAndCanMakeWeakPtr<ServiceWorkerInternals> {
 public:
     static Ref<ServiceWorkerInternals> create(ServiceWorkerGlobalScope& globalScope, ServiceWorkerIdentifier identifier) { return adoptRef(*new ServiceWorkerInternals { globalScope, identifier }); }
     ~ServiceWorkerInternals();

@@ -31,13 +31,14 @@
 #include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
 
 class ConvertToBackingContext;
 
 class BufferImpl final : public Buffer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BufferImpl);
 public:
     static Ref<BufferImpl> create(WebGPUPtr<WGPUBuffer>&& buffer, ConvertToBackingContext& convertToBackingContext)
     {
@@ -59,10 +60,10 @@ private:
     WGPUBuffer backing() const { return m_backing.get(); }
 
     void mapAsync(MapModeFlags, Size64 offset, std::optional<Size64> sizeForMap, CompletionHandler<void(bool)>&&) final;
-    void getMappedRange(Size64 offset, std::optional<Size64>, Function<void(MappedRange)>&&) final;
-    MappedRange getBufferContents() final;
+    void getMappedRange(Size64 offset, std::optional<Size64>, Function<void(std::span<uint8_t>)>&&) final;
+    std::span<uint8_t> getBufferContents() final;
     void unmap() final;
-    void copy(Vector<uint8_t>&&, size_t) final;
+    void copyFrom(std::span<const uint8_t>, size_t offset) final;
 
     void destroy() final;
 

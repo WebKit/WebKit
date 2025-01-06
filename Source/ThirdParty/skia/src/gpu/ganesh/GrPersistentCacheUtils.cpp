@@ -7,10 +7,14 @@
 
 #include "src/gpu/ganesh/GrPersistentCacheUtils.h"
 
+#include "include/private/base/SkTo.h"
+#include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/core/SkReadBuffer.h"
 #include "src/core/SkWriteBuffer.h"
 #include "src/sksl/SkSLProgramSettings.h"
-#include "src/sksl/SkSLString.h"
+
+#include <algorithm>
+#include <cstddef>
 
 namespace GrPersistentCacheUtils {
 
@@ -55,7 +59,7 @@ sk_sp<SkData> PackCachedShaders(SkFourByteTag shaderType,
             writer.writeBool(meta->fSettings->fForceNoRTFlip);
             writer.writeBool(meta->fSettings->fFragColorIsInOut);
             writer.writeBool(meta->fSettings->fForceHighPrecision);
-            writer.writeBool(meta->fSettings->fUsePushConstants);
+            writer.writeBool(meta->fSettings->fUseVulkanPushConstantsForGaneshRTAdjust);
         }
 
         writer.writeInt(meta->fAttributeNames.size());
@@ -102,10 +106,10 @@ bool UnpackCachedShaders(SkReadBuffer* reader,
         SkASSERT(meta->fSettings != nullptr);
 
         if (reader->readBool()) {
-            meta->fSettings->fForceNoRTFlip      = reader->readBool();
-            meta->fSettings->fFragColorIsInOut   = reader->readBool();
-            meta->fSettings->fForceHighPrecision = reader->readBool();
-            meta->fSettings->fUsePushConstants   = reader->readBool();
+            meta->fSettings->fForceNoRTFlip                             = reader->readBool();
+            meta->fSettings->fFragColorIsInOut                          = reader->readBool();
+            meta->fSettings->fForceHighPrecision                        = reader->readBool();
+            meta->fSettings->fUseVulkanPushConstantsForGaneshRTAdjust   = reader->readBool();
         }
 
         meta->fAttributeNames.resize(reader->readInt());

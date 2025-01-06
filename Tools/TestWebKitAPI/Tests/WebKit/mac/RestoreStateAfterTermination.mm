@@ -79,14 +79,14 @@ TEST(WebKit, RestoreStateAfterTermination)
     [window.get().contentView addSubview:webView.platformView()];
 
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
     loaderClient.base.version = 0;
     loaderClient.didFinishNavigation = didFinishLoad;
     loaderClient.webProcessDidCrash = didCrash;
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKPageUIClientV0 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
+    zeroBytes(uiClient);
     uiClient.base.version = 0;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     WKPageSetPageUIClient(webView.page(), &uiClient.base);

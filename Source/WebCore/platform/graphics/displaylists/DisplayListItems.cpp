@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -226,7 +226,7 @@ void ClipOutRoundedRect::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("rect", rect());
 }
 
-void ClipToImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imageBuffer) const
+void ClipToImageBuffer::apply(GraphicsContext& context, ImageBuffer& imageBuffer) const
 {
     context.clipToImageBuffer(imageBuffer, m_destinationRect);
 }
@@ -294,15 +294,15 @@ DrawGlyphs::DrawGlyphs(RenderingResourceIdentifier fontIdentifier, PositionedGly
 {
 }
 
-DrawGlyphs::DrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
+DrawGlyphs::DrawGlyphs(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
     : m_fontIdentifier(font.renderingResourceIdentifier())
-    , m_positionedGlyphs { Vector(std::span { glyphs, count }), Vector(std::span { advances, count }), localAnchor, smoothingMode }
+    , m_positionedGlyphs { Vector(glyphs), Vector(advances), localAnchor, smoothingMode }
 {
 }
 
 void DrawGlyphs::apply(GraphicsContext& context, const Font& font) const
 {
-    return context.drawGlyphs(font, m_positionedGlyphs.glyphs.data(), m_positionedGlyphs.advances.data(), m_positionedGlyphs.glyphs.size(), anchorPoint(), m_positionedGlyphs.smoothingMode);
+    return context.drawGlyphs(font, m_positionedGlyphs.glyphs.span(), m_positionedGlyphs.advances.span(), anchorPoint(), m_positionedGlyphs.smoothingMode);
 }
 
 void DrawGlyphs::dump(TextStream& ts, OptionSet<AsTextFlag>) const
@@ -339,9 +339,9 @@ DrawDisplayListItems::DrawDisplayListItems(Vector<Item>&& items, const FloatPoin
 {
 }
 
-void DrawDisplayListItems::apply(GraphicsContext& context, const ResourceHeap& resourceHeap) const
+void DrawDisplayListItems::apply(GraphicsContext& context, const ResourceHeap& resourceHeap, ControlFactory& controlFactory) const
 {
-    context.drawDisplayListItems(m_items, resourceHeap, m_destination);
+    context.drawDisplayListItems(m_items, resourceHeap, controlFactory, m_destination);
 }
 
 NO_RETURN_DUE_TO_ASSERT void DrawDisplayListItems::apply(GraphicsContext&) const
@@ -355,7 +355,7 @@ void DrawDisplayListItems::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("destination", destination());
 }
 
-void DrawImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imageBuffer) const
+void DrawImageBuffer::apply(GraphicsContext& context, ImageBuffer& imageBuffer) const
 {
     context.drawImageBuffer(imageBuffer, m_destinationRect, m_srcRect, m_options);
 }
@@ -451,9 +451,8 @@ void DrawLine::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("point-2", point2());
 }
 
-DrawLinesForText::DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, const DashArray& widths, float thickness, bool printing, bool doubleLines, StrokeStyle style)
-    : m_blockLocation(blockLocation)
-    , m_localAnchor(localAnchor)
+DrawLinesForText::DrawLinesForText(const FloatPoint& point, const DashArray& widths, float thickness, bool printing, bool doubleLines, StrokeStyle style)
+    : m_point(point)
     , m_widths(widths)
     , m_thickness(thickness)
     , m_printing(printing)
@@ -464,13 +463,11 @@ DrawLinesForText::DrawLinesForText(const FloatPoint& blockLocation, const FloatS
 
 void DrawLinesForText::apply(GraphicsContext& context) const
 {
-    context.drawLinesForText(point(), m_thickness, m_widths, m_printing, m_doubleLines, m_style);
+    context.drawLinesForText(m_point, m_thickness, m_widths, m_printing, m_doubleLines, m_style);
 }
 
 void DrawLinesForText::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
-    ts.dumpProperty("block-location", blockLocation());
-    ts.dumpProperty("local-anchor", localAnchor());
     ts.dumpProperty("point", point());
     ts.dumpProperty("thickness", thickness());
     ts.dumpProperty("double", doubleLines());
@@ -536,12 +533,13 @@ void DrawFocusRingRects::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 
 void FillRect::apply(GraphicsContext& context) const
 {
-    context.fillRect(m_rect);
+    context.fillRect(m_rect, m_requiresClipToRect);
 }
 
 void FillRect::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
     ts.dumpProperty("rect", rect());
+    ts.dumpProperty("requiresClipToRect", m_requiresClipToRect == GraphicsContext::RequiresClipToRect::Yes);
 }
 
 void FillRectWithColor::apply(GraphicsContext& context) const
@@ -574,21 +572,23 @@ void FillRectWithGradient::apply(GraphicsContext& context) const
 
 void FillRectWithGradient::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
-    // FIXME: log gradient.
     ts.dumpProperty("rect", rect());
+    ts.dumpProperty("gradient", m_gradient);
 }
 
-FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, GraphicsContext::RequiresClipToRect requiresClipToRect)
     : m_rect(rect)
     , m_gradient(gradient)
     , m_gradientSpaceTransform(gradientSpaceTransform)
+    , m_requiresClipToRect(requiresClipToRect)
 {
 }
 
-FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(FloatRect&& rect, Ref<Gradient>&& gradient, AffineTransform&& gradientSpaceTransform)
+FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(FloatRect&& rect, Ref<Gradient>&& gradient, AffineTransform&& gradientSpaceTransform, GraphicsContext::RequiresClipToRect requiresClipToRect)
     : m_rect(WTFMove(rect))
     , m_gradient(WTFMove(gradient))
     , m_gradientSpaceTransform(WTFMove(gradientSpaceTransform))
+    , m_requiresClipToRect(requiresClipToRect)
 {
 }
 
@@ -602,6 +602,7 @@ void FillRectWithGradientAndSpaceTransform::dump(TextStream& ts, OptionSet<AsTex
     // FIXME: log gradient.
     ts.dumpProperty("rect", rect());
     ts.dumpProperty("gradient-space-transform", gradientSpaceTransform());
+    ts.dumpProperty("requiresClipToRect", m_requiresClipToRect == GraphicsContext::RequiresClipToRect::Yes);
 }
 
 void FillCompositedRect::apply(GraphicsContext& context) const
@@ -725,24 +726,6 @@ void FillEllipse::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("rect", rect());
 }
 
-#if ENABLE(VIDEO)
-PaintFrameForMedia::PaintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
-    : m_identifier(identifier)
-    , m_destination(destination)
-{
-}
-
-NO_RETURN_DUE_TO_ASSERT void PaintFrameForMedia::apply(GraphicsContext&) const
-{
-    ASSERT_NOT_REACHED();
-}
-
-void PaintFrameForMedia::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("destination", destination());
-}
-#endif
-
 void StrokeRect::apply(GraphicsContext& context) const
 {
     context.strokeRect(m_rect, m_lineWidth);
@@ -864,9 +847,11 @@ DrawControlPart::DrawControlPart(ControlPart& part, const FloatRoundedRect& bord
 {
 }
 
-void DrawControlPart::apply(GraphicsContext& context) const
+void DrawControlPart::apply(GraphicsContext& context, ControlFactory& controlFactory) const
 {
+    m_part->setOverrideControlFactory(&controlFactory);
     context.drawControlPart(m_part, m_borderRect, m_deviceScaleFactor, m_style);
+    m_part->setOverrideControlFactory(nullptr);
 }
 
 void DrawControlPart::dump(TextStream& ts, OptionSet<AsTextFlag>) const
@@ -882,9 +867,20 @@ void BeginTransparencyLayer::apply(GraphicsContext& context) const
     context.beginTransparencyLayer(m_opacity);
 }
 
+void BeginTransparencyLayerWithCompositeMode::apply(GraphicsContext& context) const
+{
+    context.beginTransparencyLayer(m_compositeMode.operation, m_compositeMode.blendMode);
+}
+
 void BeginTransparencyLayer::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
     ts.dumpProperty("opacity", opacity());
+}
+
+void BeginTransparencyLayerWithCompositeMode::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts.dumpProperty("composite-operator", compositeMode().operation);
+    ts.dumpProperty("blend-mode", compositeMode().blendMode);
 }
 
 void EndTransparencyLayer::apply(GraphicsContext& context) const
@@ -914,6 +910,21 @@ void ApplyDeviceScaleFactor::apply(GraphicsContext& context) const
 void ApplyDeviceScaleFactor::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
     ts.dumpProperty("scale-factor", scaleFactor());
+}
+
+void BeginPage::apply(GraphicsContext& context) const
+{
+    context.beginPage(m_pageSize);
+}
+
+void BeginPage::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts.dumpProperty("page-size", pageSize());
+}
+
+void EndPage::apply(GraphicsContext& context) const
+{
+    context.endPage();
 }
 
 } // namespace DisplayList

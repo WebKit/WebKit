@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #import "TestWebExtensionsDelegate.h"
 #import "WebExtensionUtilities.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace TestWebKitAPI {
 
@@ -100,10 +101,10 @@ TEST(WKWebExtensionAPIMenus, Errors)
         @"browser.test.assertThrows(() => browser.menus.create({ visible: 'bad', title: 'Test' }), /'visible' is expected to be a boolean, but a string was provided/i)",
         @"browser.test.assertThrows(() => browser.menus.create({ enabled: 'bad', title: 'Test' }), /'enabled' is expected to be a boolean, but a string was provided/i)",
 
-        @"browser.test.assertThrows(() => browser.menus.create({ icons: 123, title: 'Test' }), /'icons' is expected to be a string or an object, but a number was provided/i)",
+        @"browser.test.assertThrows(() => browser.menus.create({ icons: 123, title: 'Test' }), /'icons' is expected to be a string or an object or null, but a number was provided/i)",
         @"browser.test.assertThrows(() => browser.menus.create({ icons: { 16: 123 }, title: 'Test' }), /'icons\\[16]' value is invalid, because a string is expected, but a number was provided/i)",
         @"browser.test.assertThrows(() => browser.menus.create({ icons: { '16': 123 }, title: 'Test' }), /'icons\\[16]' value is invalid, because a string is expected, but a number was provided/i)",
-        @"browser.test.assertThrows(() => browser.menus.create({ icons: { '1.2': 'test.png' }, title: 'Test' }), /'icons' value is invalid, because '1.2' in not a valid dimension/i)",
+        @"browser.test.assertThrows(() => browser.menus.create({ icons: { '1.2': 'test.png' }, title: 'Test' }), /'icons' value is invalid, because '1.2' is not a valid dimension/i)",
 
         @"browser.test.assertThrows(() => browser.menus.create({ onclick: 'bad', title: 'Test' }), /'onclick' is expected to be a value, but a string was provided/i)",
         @"browser.test.assertThrows(() => browser.menus.create({ onclick: { }, title: 'Test' }), /'onclick' is expected to be a value, but an object was provided/i)",
@@ -228,11 +229,11 @@ TEST(WKWebExtensionAPIMenus, ActionMenus)
     auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
 
     // Reset activeTab, WKWebExtensionAPIMenus.ActionMenusWithActiveTab tests that.
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusUnknown forPermission:_WKWebExtensionPermissionActiveTab];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusUnknown forPermission:WKWebExtensionPermissionActiveTab];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
     [manager runForTimeInterval:1];
 
     auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
@@ -307,7 +308,7 @@ TEST(WKWebExtensionAPIMenus, ActionMenusWithActiveTab)
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<title>Test</title>"_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
     [manager runForTimeInterval:1];
 
     auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
@@ -556,7 +557,7 @@ TEST(WKWebExtensionAPIMenus, TabMenus)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
     [manager runForTimeInterval:1];
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
@@ -751,6 +752,432 @@ TEST(WKWebExtensionAPIMenus, MenuItemPropertiesUpdate)
 
     [manager run];
 }
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+TEST(WKWebExtensionAPIMenus, MenuItemWithIconVariants)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertSafe(() => browser.menus.create({",
+        @"  id: 'menu-item-with-icon-variants',",
+        @"  title: 'Menu Item with Icon Variants',",
+        @"  icon_variants: [",
+        @"    { 16: 'icon-dark-16.png', 'color_schemes': [ 'dark' ] },",
+        @"    { 16: 'icon-light-16.png', 'color_schemes': [ 'light' ] }",
+        @"  ],",
+        @"  contexts: [ 'action' ]",
+        @"}))",
+
+        @"browser.test.yield('Menus Created')",
+    ]);
+
+    auto *darkIcon16 = Util::makePNGData(CGSizeMake(16, 16), @selector(whiteColor));
+    auto *lightIcon16 = Util::makePNGData(CGSizeMake(16, 16), @selector(blackColor));
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"icon-dark-16.png": darkIcon16,
+        @"icon-light-16.png": lightIcon16,
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
+    auto *menuItems = action.menuItems;
+
+    EXPECT_EQ(menuItems.count, 1lu);
+
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with Icon Variants");
+
+#if USE(APPKIT)
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(16, 16)));
+#else
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(20, 20)));
+#endif
+
+    Util::performWithAppearance(Util::Appearance::Dark, ^{
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor whiteColor]));
+    });
+
+    Util::performWithAppearance(Util::Appearance::Light, ^{
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor blackColor]));
+    });
+}
+
+TEST(WKWebExtensionAPIMenus, MenuItemWithImageDataVariants)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const createImageData = (size, color) => {",
+        @"  const context = new OffscreenCanvas(size, size).getContext('2d')",
+        @"  context.fillStyle = color",
+        @"  context.fillRect(0, 0, size, size)",
+
+        @"  return context.getImageData(0, 0, size, size)",
+        @"}",
+
+        @"const darkImageData = createImageData(16, 'white')",
+        @"const lightImageData = createImageData(16, 'black')",
+
+        @"browser.test.assertSafe(() => browser.menus.create({",
+        @"  id: 'menu-item-with-image-data-variants',",
+        @"  title: 'Menu Item with ImageData Variants',",
+        @"  icon_variants: [",
+        @"    { 16: darkImageData, 'color_schemes': [ 'dark' ] },",
+        @"    { 16: lightImageData, 'color_schemes': [ 'light' ] }",
+        @"  ],",
+        @"  contexts: [ 'action' ]",
+        @"}))",
+
+        @"browser.test.yield('Menus Created')",
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
+    auto *menuItems = action.menuItems;
+
+    EXPECT_EQ(menuItems.count, 1lu);
+
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with ImageData Variants");
+
+#if USE(APPKIT)
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(16, 16)));
+#else
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(20, 20)));
+#endif
+
+    Util::performWithAppearance(Util::Appearance::Dark, ^{
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor whiteColor]));
+    });
+
+    Util::performWithAppearance(Util::Appearance::Light, ^{
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor blackColor]));
+    });
+}
+
+TEST(WKWebExtensionAPIMenus, MenuItemWithWithNoValidVariants)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const createImageData = (size, color) => {",
+        @"  const context = new OffscreenCanvas(size, size).getContext('2d')",
+        @"  context.fillStyle = color",
+        @"  context.fillRect(0, 0, size, size)",
+
+        @"  return context.getImageData(0, 0, size, size)",
+        @"}",
+
+        @"const validImageData = createImageData(16, 'white')",
+
+        @"await browser.test.assertThrows(() => browser.menus.create({",
+        @"    id: 'submenu-item-invalid-dimension',",
+        @"    parentId: 'top-level-item',",
+        @"    title: 'Submenu with Invalid Dimension Key',",
+        @"    icon_variants: [",
+        @"      { 'sixteen': validImageData, 'color_schemes': [ 'light' ] }",
+        @"    ],",
+        @"    contexts: [ 'action' ]",
+        @"}), /'icon_variants\\[0\\]' value is invalid, because 'sixteen' is not a valid dimension/)",
+
+        @"await browser.test.assertThrows(() => browser.menus.create({",
+        @"    id: 'submenu-item-invalid-color-scheme',",
+        @"    parentId: 'top-level-item',",
+        @"    title: 'Submenu with Invalid Color Scheme',",
+        @"    icon_variants: [",
+        @"      { '16': validImageData, 'color_schemes': [ 'bad' ] }",
+        @"    ],",
+        @"    contexts: [ 'action' ]",
+        @"}), /'icon_variants\\[0\\]\\['color_schemes'\\]' value is invalid, because it must specify either 'light' or 'dark'/)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+    };
+
+    Util::loadAndRunExtension(menusManifest, resources);
+}
+
+TEST(WKWebExtensionAPIMenus, MenuItemWithMixedValidAndInvalidIconVariants)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const createImageData = (size, color) => {",
+        @"  const context = new OffscreenCanvas(size, size).getContext('2d')",
+        @"  context.fillStyle = color",
+        @"  context.fillRect(0, 0, size, size)",
+
+        @"  return context.getImageData(0, 0, size, size)",
+        @"}",
+
+        @"const validImageData = createImageData(16, 'black')",
+        @"const invalidImageData = createImageData(16, 'white')",
+
+        @"browser.test.assertSafe(() => browser.menus.create({",
+        @"  id: 'menu-item-mixed',",
+        @"  title: 'Menu Item with Mixed Variants',",
+        @"  icon_variants: [",
+        @"    { 'sixteen': invalidImageData, 'color_schemes': [ 'dark' ] },",
+        @"    { '16': validImageData, 'color_schemes': [ 'light' ] }",
+        @"  ],",
+        @"  contexts: [ 'action' ]",
+        @"}))",
+
+        @"browser.test.yield('Menus Created')",
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
+    auto *menuItems = action.menuItems;
+
+    EXPECT_EQ(menuItems.count, 1lu);
+
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with Mixed Variants");
+
+#if USE(APPKIT)
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(16, 16)));
+#else
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(20, 20)));
+#endif
+
+    Util::performWithAppearance(Util::Appearance::Light, ^{
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor blackColor]));
+    });
+
+    Util::performWithAppearance(Util::Appearance::Dark, ^{
+        // Should still be black, as light variant is used.
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor blackColor]));
+    });
+}
+
+TEST(WKWebExtensionAPIMenus, MenuItemWithAnySizeVariantAndSVGDataURL)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const whiteSVGData = 'data:image/svg+xml;base64,' + btoa(`",
+        @"  <svg width=\"100\" height=\"100\" xmlns=\"http://www.w3.org/2000/svg\">",
+        @"    <rect width=\"100\" height=\"100\" fill=\"white\" />",
+        @"  </svg>`)",
+
+        @"const blackSVGData = 'data:image/svg+xml;base64,' + btoa(`",
+        @"  <svg width=\"100\" height=\"100\" xmlns=\"http://www.w3.org/2000/svg\">",
+        @"    <rect width=\"100\" height=\"100\" fill=\"black\" />",
+        @"  </svg>`)",
+
+        @"browser.test.assertSafe(() => browser.menus.create({",
+        @"  id: 'menu-item-with-svg-variants',",
+        @"  title: 'Menu Item with SVG Icon Variants',",
+        @"  icon_variants: [",
+        @"    { any: whiteSVGData, 'color_schemes': [ 'dark' ] },",
+        @"    { any: blackSVGData, 'color_schemes': [ 'light' ] }",
+        @"  ],",
+        @"  contexts: [ 'all' ]",
+        @"}))",
+
+        @"browser.test.yield('Menus Created')"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
+    auto *menuItems = action.menuItems;
+
+    EXPECT_EQ(menuItems.count, 1lu);
+
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with SVG Icon Variants");
+
+#if USE(APPKIT)
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(16, 16)));
+#else
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(20, 20)));
+#endif
+
+    Util::performWithAppearance(Util::Appearance::Dark, ^{
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor whiteColor]));
+    });
+
+    Util::performWithAppearance(Util::Appearance::Light, ^{
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor blackColor]));
+    });
+}
+
+TEST(WKWebExtensionAPIMenus, UpdateMenuItemWithIconVariants)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertSafe(() => browser.menus.create({",
+        @"  id: 'menu-item-without-icon-variants',",
+        @"  title: 'Menu Item without Icon Variants',",
+        @"  contexts: [ 'action' ]",
+        @"}))",
+
+        @"browser.test.assertSafe(() => browser.menus.update('menu-item-without-icon-variants', {",
+        @"  title: 'Menu Item with Icon Variants',",
+        @"  icon_variants: [",
+        @"    { 16: 'icon-dark-16.png', 'color_schemes': [ 'dark' ] },",
+        @"    { 16: 'icon-light-16.png', 'color_schemes': [ 'light' ] }",
+        @"  ]",
+        @"}))",
+
+        @"browser.test.yield('Menus Updated')",
+    ]);
+
+    auto *darkIcon16 = Util::makePNGData(CGSizeMake(16, 16), @selector(whiteColor));
+    auto *lightIcon16 = Util::makePNGData(CGSizeMake(16, 16), @selector(blackColor));
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"icon-dark-16.png": darkIcon16,
+        @"icon-light-16.png": lightIcon16,
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Updated");
+
+    auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
+    auto *menuItems = action.menuItems;
+
+    EXPECT_EQ(menuItems.count, 1lu);
+
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with Icon Variants");
+
+#if USE(APPKIT)
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(16, 16)));
+#else
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(20, 20)));
+#endif
+
+    Util::performWithAppearance(Util::Appearance::Dark, ^{
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor whiteColor]));
+    });
+
+    Util::performWithAppearance(Util::Appearance::Light, ^{
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor blackColor]));
+    });
+}
+
+TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithNull)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertSafe(() => browser.menus.create({",
+        @"  id: 'menu-item-with-icon-variants',",
+        @"  title: 'Menu Item with Icon Variants',",
+        @"  icon_variants: [",
+        @"    { 16: 'icon-dark-16.png', 'color_schemes': [ 'dark' ] },",
+        @"    { 16: 'icon-light-16.png', 'color_schemes': [ 'light' ] }",
+        @"  ],",
+        @"  contexts: [ 'action' ]",
+        @"}))",
+
+        @"browser.test.assertSafe(() => browser.menus.update('menu-item-with-icon-variants', {",
+        @"  icon_variants: null,",
+        @"  title: 'Menu Item without Icon Variants'",
+        @"}))",
+
+        @"browser.test.yield('Menus Updated')",
+    ]);
+
+    auto *darkIcon16 = Util::makePNGData(CGSizeMake(16, 16), @selector(whiteColor));
+    auto *lightIcon16 = Util::makePNGData(CGSizeMake(16, 16), @selector(blackColor));
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"icon-dark-16.png": darkIcon16,
+        @"icon-light-16.png": lightIcon16,
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Updated");
+
+    auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
+    auto *menuItems = action.menuItems;
+
+    EXPECT_EQ(menuItems.count, 1lu);
+
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item without Icon Variants");
+
+    // Icon should be null after clearing.
+    EXPECT_NULL(menuItem.image);
+}
+
+TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithEmpty)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertSafe(() => browser.menus.create({",
+        @"  id: 'menu-item-with-icon-variants',",
+        @"  title: 'Menu Item with Icon Variants',",
+        @"  icon_variants: [",
+        @"    { 16: 'icon-dark-16.png', 'color_schemes': [ 'dark' ] },",
+        @"    { 16: 'icon-light-16.png', 'color_schemes': [ 'light' ] }",
+        @"  ],",
+        @"  contexts: [ 'action' ]",
+        @"}))",
+
+        @"browser.test.assertSafe(() => browser.menus.update('menu-item-with-icon-variants', {",
+        @"  icon_variants: [ ],",
+        @"  title: 'Menu Item without Icon Variants'",
+        @"}))",
+
+        @"browser.test.yield('Menus Updated')",
+    ]);
+
+    auto *darkIcon16 = Util::makePNGData(CGSizeMake(16, 16), @selector(whiteColor));
+    auto *lightIcon16 = Util::makePNGData(CGSizeMake(16, 16), @selector(blackColor));
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"icon-dark-16.png": darkIcon16,
+        @"icon-light-16.png": lightIcon16,
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Updated");
+
+    auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
+    auto *menuItems = action.menuItems;
+
+    EXPECT_EQ(menuItems.count, 1lu);
+
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item without Icon Variants");
+
+    // Icon should be null after clearing.
+    EXPECT_NULL(menuItem.image);
+}
+#endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
 
 TEST(WKWebExtensionAPIMenus, ToggleCheckboxMenuItems)
 {
@@ -1121,15 +1548,15 @@ TEST(WKWebExtensionAPIMenus, MacContextMenuItems)
     EXPECT_FALSE([manager.get().context hasActiveUserGestureInTab:manager.get().defaultTab]);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get()._webExtensionController = manager.get().controller;
+    configuration.get().webExtensionController = manager.get().controller;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1207,12 +1634,12 @@ TEST(WKWebExtensionAPIMenus, MacActiveTabContextMenuItems)
     EXPECT_FALSE([manager.get().context hasActiveUserGestureInTab:manager.get().defaultTab]);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get()._webExtensionController = manager.get().controller;
+    configuration.get().webExtensionController = manager.get().controller;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:server.requestWithLocalhost()];
     [webView waitForNextPresentationUpdate];
@@ -1303,15 +1730,15 @@ TEST(WKWebExtensionAPIMenus, MacURLPatternContextMenuItems)
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get()._webExtensionController = manager.get().controller;
+    configuration.get().webExtensionController = manager.get().controller;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1387,15 +1814,15 @@ TEST(WKWebExtensionAPIMenus, MacSelectionContextMenuItems)
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get()._webExtensionController = manager.get().controller;
+    configuration.get().webExtensionController = manager.get().controller;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1472,15 +1899,15 @@ TEST(WKWebExtensionAPIMenus, MacLinkContextMenuItems)
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get()._webExtensionController = manager.get().controller;
+    configuration.get().webExtensionController = manager.get().controller;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1556,15 +1983,15 @@ TEST(WKWebExtensionAPIMenus, MacImageContextMenuItems)
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get()._webExtensionController = manager.get().controller;
+    configuration.get().webExtensionController = manager.get().controller;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1640,15 +2067,15 @@ TEST(WKWebExtensionAPIMenus, MacVideoContextMenuItems)
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get()._webExtensionController = manager.get().controller;
+    configuration.get().webExtensionController = manager.get().controller;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1724,15 +2151,15 @@ TEST(WKWebExtensionAPIMenus, MacAudioContextMenuItems)
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get()._webExtensionController = manager.get().controller;
+    configuration.get().webExtensionController = manager.get().controller;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1804,15 +2231,15 @@ TEST(WKWebExtensionAPIMenus, MacEditableContextMenuItems)
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get()._webExtensionController = manager.get().controller;
+    configuration.get().webExtensionController = manager.get().controller;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1887,16 +2314,16 @@ TEST(WKWebExtensionAPIMenus, MacFrameContextMenuItems)
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.requestWithLocalhost("/frame.html"_s).URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.requestWithLocalhost("/frame.html"_s).URL];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get()._webExtensionController = manager.get().controller;
+    configuration.get().webExtensionController = manager.get().controller;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1932,10 +2359,10 @@ TEST(WKWebExtensionAPIMenus, ClickedMenuItemAndPermissionsRequest)
         @"}, () => browser.test.yield('Menu Item Created'))"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:menusManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:menusManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+    manager.get().internalDelegate.promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
         EXPECT_EQ(requestedPermissions.count, 1lu);
         EXPECT_TRUE([requestedPermissions isEqualToSet:[NSSet setWithObject:@"menus"]]);
         callback(requestedPermissions, nil);

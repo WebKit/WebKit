@@ -28,7 +28,8 @@ class MeterValueElement;
 class RenderMeter;
 
 class HTMLMeterElement final : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLMeterElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLMeterElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLMeterElement);
 public:
     static Ref<HTMLMeterElement> create(const QualifiedName&, Document&);
 
@@ -60,6 +61,8 @@ public:
     GaugeRegion gaugeRegion() const;
 
     bool canContainRangeEndPoint() const final { return false; }
+
+    bool isDevolvableWidget() const override { return true; }
 
 private:
     HTMLMeterElement(const QualifiedName&, Document&);

@@ -6,10 +6,34 @@ include_rules = [
 ]
 
 specific_include_rules = {
+  "checks.h": [
+    "+absl/strings/has_absl_stringify.h",
+  ],
   "protobuf_utils.h": [
     "+third_party/protobuf",
   ],
   "gunit\.h": [
     "+testing/base/public/gunit.h"
+  ],
+  "trace_categories\.h": [
+    "+third_party/perfetto",
+  ],
+  "event_tracer\.cc": [
+    "+third_party/perfetto",
+  ],
+  "logging.h": [
+    "+absl/strings/has_absl_stringify.h",
+  ],
+  "trace_event\.h": [
+    "+third_party/perfetto",
+  ],
+  "openssl_adapter.cc": [
+    "+openssl",
+  ],
+  "openssl_stream_adapter.cc": [
+    "+openssl",
+  ],
+  "openssl_stream_adapter.h": [
+    "+openssl",
   ],
 }

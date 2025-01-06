@@ -9,39 +9,39 @@ layer at (0,0) size 800x600
           text run at (508,0) width 257: "the rows: note that it is the first row that"
           text run at (20,18) width 206: "defines the width (which would "
           text run at (225,18) width 267: "be right if this were table-layout: fixed ;-)"
-      RenderTable {TABLE} at (0,52) size 800x39 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,52) size 800x39 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 798x37
           RenderTableRow {TR} at (0,0) size 798x17
-            RenderTableCell {TD} at (0,7) size 17x3 [bgcolor=#666666] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,7) size 17x3 [bgcolor=#666666] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,8) size 15x1
-            RenderTableCell {TD} at (17,0) size 764x17 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (17,0) size 764x17 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 110x15
-            RenderTableCell {TD} at (781,7) size 17x3 [bgcolor=#666666] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (781,7) size 17x3 [bgcolor=#666666] [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,8) size 15x1
           RenderTableRow {TR} at (0,17) size 798x20
-            RenderTableCell {TD} at (0,25) size 17x4 [bgcolor=#666666] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,25) size 17x4 [bgcolor=#666666] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,9) size 15x2
-            RenderTableCell {TD} at (17,17) size 764x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (17,17) size 764x20 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 24x18
                 text run at (1,1) width 24: "that"
-            RenderTableCell {TD} at (781,25) size 17x4 [bgcolor=#666666] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (781,25) size 17x4 [bgcolor=#666666] [border: (1px inset #000000)] [r=1 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,9) size 15x2
       RenderBlock (anonymous) at (0,91) size 800x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderTable {TABLE} at (0,109) size 800x39 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,109) size 800x39 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 798x37
           RenderTableRow {TR} at (0,0) size 798x20
-            RenderTableCell {TD} at (0,8) size 17x4 [bgcolor=#666666] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,8) size 17x4 [bgcolor=#666666] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,9) size 15x2
-            RenderTableCell {TD} at (17,0) size 764x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (17,0) size 764x20 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 24x18
                 text run at (1,1) width 24: "that"
-            RenderTableCell {TD} at (781,8) size 17x4 [bgcolor=#666666] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (781,8) size 17x4 [bgcolor=#666666] [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,9) size 15x2
           RenderTableRow {TR} at (0,20) size 798x17
-            RenderTableCell {TD} at (0,27) size 17x3 [bgcolor=#666666] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,27) size 17x3 [bgcolor=#666666] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,8) size 15x1
-            RenderTableCell {TD} at (17,20) size 764x17 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (17,20) size 764x17 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 110x15
-            RenderTableCell {TD} at (781,27) size 17x3 [bgcolor=#666666] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (781,27) size 17x3 [bgcolor=#666666] [border: (1px inset #000000)] [r=1 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,8) size 15x1

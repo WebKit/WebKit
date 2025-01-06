@@ -12,9 +12,9 @@
 #define API_VIDEO_VIDEO_SOURCE_INTERFACE_H_
 
 #include <limits>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/video/video_sink_interface.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -50,7 +50,7 @@ struct RTC_EXPORT VideoSinkWants {
   // have improved after an earlier downgrade. The source should select the
   // closest resolution to this pixel count, but if max_pixel_count is set, it
   // still sets the absolute upper bound.
-  absl::optional<int> target_pixel_count;
+  std::optional<int> target_pixel_count;
   // Tells the source the maximum framerate the sink wants.
   int max_framerate_fps = std::numeric_limits<int>::max();
 
@@ -82,8 +82,9 @@ struct RTC_EXPORT VideoSinkWants {
   // should only be used as a hint when constructing the webrtc::VideoFrame.
   std::vector<FrameSize> resolutions;
 
-  // This is the resolution requested by the user using RtpEncodingParameters.
-  absl::optional<FrameSize> requested_resolution;
+  // This is the resolution requested by the user using RtpEncodingParameters,
+  // which is the maximum `scale_resolution_down_by` value of any encoding.
+  std::optional<FrameSize> requested_resolution;
 
   // `is_active` : Is this VideoSinkWants from an encoder that is encoding any
   // layer. IF YES, it will affect how the VideoAdapter will choose to
@@ -96,13 +97,13 @@ struct RTC_EXPORT VideoSinkWants {
   // that aggregates several VideoSinkWants (and sends them to
   // AdaptedVideoTrackSource).
   struct Aggregates {
-    // `active_without_requested_resolution` is set by VideoBroadcaster
+    // `any_active_without_requested_resolution` is set by VideoBroadcaster
     // when aggregating sink wants if there exists any sink (encoder) that is
     // active but has not set the `requested_resolution`, i.e is relying on
     // OnOutputFormatRequest to handle encode resolution.
     bool any_active_without_requested_resolution = false;
   };
-  absl::optional<Aggregates> aggregates;
+  std::optional<Aggregates> aggregates;
 };
 
 inline bool operator==(const VideoSinkWants::FrameSize& a,

@@ -52,8 +52,8 @@ struct FakeAsyncAudioProcessingHelper {
     FakeTaskQueueFactory() = default;
     ~FakeTaskQueueFactory() override = default;
     std::unique_ptr<TaskQueueBase, TaskQueueDeleter> CreateTaskQueue(
-        absl::string_view name,
-        Priority priority) const override {
+        absl::string_view /* name */,
+        Priority /* priority */) const override {
       return std::unique_ptr<webrtc::TaskQueueBase, webrtc::TaskQueueDeleter>(
           new FakeTaskQueue());
     }

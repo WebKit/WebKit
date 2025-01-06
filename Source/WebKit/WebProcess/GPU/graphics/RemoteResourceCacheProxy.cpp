@@ -101,7 +101,7 @@ void RemoteResourceCacheProxy::recordDecomposedGlyphsUse(DecomposedGlyphs& decom
 {
     if (m_renderingResources.add(decomposedGlyphs.renderingResourceIdentifier(), decomposedGlyphs).isNewEntry) {
         decomposedGlyphs.addObserver(*this);
-        m_remoteRenderingBackendProxy.cacheDecomposedGlyphs(decomposedGlyphs);
+        m_remoteRenderingBackendProxy->cacheDecomposedGlyphs(decomposedGlyphs);
     }
 }
 
@@ -109,7 +109,7 @@ void RemoteResourceCacheProxy::recordGradientUse(Gradient& gradient)
 {
     if (m_renderingResources.add(gradient.renderingResourceIdentifier(), gradient).isNewEntry) {
         gradient.addObserver(*this);
-        m_remoteRenderingBackendProxy.cacheGradient(gradient);
+        m_remoteRenderingBackendProxy->cacheGradient(gradient);
     }
 }
 
@@ -117,7 +117,7 @@ void RemoteResourceCacheProxy::recordFilterUse(Filter& filter)
 {
     if (m_renderingResources.add(filter.renderingResourceIdentifier(), filter).isNewEntry) {
         filter.addObserver(*this);
-        m_remoteRenderingBackendProxy.cacheFilter(filter);
+        m_remoteRenderingBackendProxy->cacheFilter(filter);
     }
 }
 
@@ -158,7 +158,7 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
         image.replaceBackend(makeUniqueRefFromNonNullUniquePtr(WTFMove(newBackend)));
 
     // Tell the GPU process to cache this resource.
-    m_remoteRenderingBackendProxy.cacheNativeImage(WTFMove(*handle), identifier);
+    m_remoteRenderingBackendProxy->cacheNativeImage(WTFMove(*handle), identifier);
 }
 
 void RemoteResourceCacheProxy::recordFontUse(Font& font)
@@ -170,7 +170,7 @@ void RemoteResourceCacheProxy::recordFontUse(Font& font)
 
     if (result.isNewEntry) {
         auto renderingResourceIdentifier = font.platformData().customPlatformData() ? std::optional(font.platformData().customPlatformData()->m_renderingResourceIdentifier) : std::nullopt;
-        m_remoteRenderingBackendProxy.cacheFont(font.attributes(), font.platformData().attributes(), renderingResourceIdentifier);
+        m_remoteRenderingBackendProxy->cacheFont(font.attributes(), font.platformData().attributes(), renderingResourceIdentifier);
         ++m_numberOfFontsUsedInCurrentRenderingUpdate;
         return;
     }
@@ -187,7 +187,7 @@ void RemoteResourceCacheProxy::recordFontCustomPlatformDataUse(const FontCustomP
     auto result = m_fontCustomPlatformDatas.add(customPlatformData.m_renderingResourceIdentifier, m_renderingUpdateID);
 
     if (result.isNewEntry) {
-        m_remoteRenderingBackendProxy.cacheFontCustomPlatformData(customPlatformData);
+        m_remoteRenderingBackendProxy->cacheFontCustomPlatformData(customPlatformData);
         ++m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate;
         return;
     }
@@ -203,7 +203,7 @@ void RemoteResourceCacheProxy::releaseRenderingResource(RenderingResourceIdentif
 {
     bool removed = m_renderingResources.remove(renderingResourceIdentifier);
     RELEASE_ASSERT(removed);
-    m_remoteRenderingBackendProxy.releaseRenderingResource(renderingResourceIdentifier);
+    m_remoteRenderingBackendProxy->releaseRenderingResource(renderingResourceIdentifier);
 }
 
 void RemoteResourceCacheProxy::clearRenderingResourceMap()
@@ -269,7 +269,7 @@ void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
         for (auto& item : m_fonts) {
             if (renderingUpdateID - item.value >= minimumRenderingUpdateCountToKeepFontAlive) {
                 toRemove.add(item.key);
-                m_remoteRenderingBackendProxy.releaseRenderingResource(item.key);
+                m_remoteRenderingBackendProxy->releaseRenderingResource(item.key);
             }
         }
 
@@ -286,7 +286,7 @@ void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
         for (auto& item : m_fontCustomPlatformDatas) {
             if (renderingUpdateID - item.value >= minimumRenderingUpdateCountToKeepFontAlive) {
                 toRemove.add(item.key);
-                m_remoteRenderingBackendProxy.releaseRenderingResource(item.key);
+                m_remoteRenderingBackendProxy->releaseRenderingResource(item.key);
             }
         }
 
@@ -311,7 +311,7 @@ void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
         auto protectedImageBuffer = weakImageBuffer.get();
         if (!protectedImageBuffer)
             continue;
-        m_remoteRenderingBackendProxy.createRemoteImageBuffer(*protectedImageBuffer);
+        m_remoteRenderingBackendProxy->createRemoteImageBuffer(*protectedImageBuffer);
     }
 
     clearRenderingResourceMap();
@@ -325,13 +325,13 @@ void RemoteResourceCacheProxy::releaseMemory()
     clearFontMap();
     clearFontCustomPlatformDataMap();
 
-    m_remoteRenderingBackendProxy.releaseAllDrawingResources();
+    m_remoteRenderingBackendProxy->releaseAllDrawingResources();
 }
 
 void RemoteResourceCacheProxy::releaseAllImageResources()
 {
     clearNativeImageMap();
-    m_remoteRenderingBackendProxy.releaseAllImageResources();
+    m_remoteRenderingBackendProxy->releaseAllImageResources();
 }
 
 

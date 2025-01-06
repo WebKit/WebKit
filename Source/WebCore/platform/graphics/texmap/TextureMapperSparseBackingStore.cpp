@@ -27,10 +27,15 @@
 
 #include "config.h"
 #include "TextureMapperSparseBackingStore.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(GRAPHICS_LAYER_WC)
+#include "IntRect.h"
+#include "TextureMapper.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureMapperSparseBackingStore);
 
 void TextureMapperSparseBackingStore::setSize(const IntSize& size)
 {

@@ -34,18 +34,20 @@
 #include <wtf/HashMap.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
 
 class LegacyInlineTextBox;
+struct PaintInfo;
 
 namespace InlineDisplay {
 struct Box;
 }
 
 class GlyphDisplayListCacheEntry : public RefCounted<GlyphDisplayListCacheEntry>, public CanMakeSingleThreadWeakPtr<GlyphDisplayListCacheEntry> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GlyphDisplayListCacheEntry);
     friend struct GlyphDisplayListCacheKeyTranslator;
     friend void add(Hasher&, const GlyphDisplayListCacheEntry&);
 public:
@@ -100,7 +102,7 @@ struct GlyphDisplayListCacheEntryHash {
 };
 
 class GlyphDisplayListCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GlyphDisplayListCache);
     friend class GlyphDisplayListCacheEntry;
 public:
     GlyphDisplayListCache() = default;
@@ -131,8 +133,7 @@ private:
     template<typename LayoutRun> DisplayList::DisplayList* getIfExistsImpl(const LayoutRun&);
     void remove(const void* run);
 
-    HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
-    HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForFrequentlyPaintedLayoutRun;
+    UncheckedKeyHashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
     HashSet<SingleThreadWeakRef<GlyphDisplayListCacheEntry>> m_entries;
     bool m_forceUseGlyphDisplayListForTesting { false };
 };

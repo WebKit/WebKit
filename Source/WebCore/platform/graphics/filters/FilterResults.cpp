@@ -27,8 +27,11 @@
 #include "FilterResults.h"
 
 #include "ImageBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FilterResults);
 
 FilterResults::FilterResults(std::unique_ptr<ImageBufferAllocator>&& allocator)
     : m_allocator(allocator ? WTFMove(allocator) : makeUnique<ImageBufferAllocator>())

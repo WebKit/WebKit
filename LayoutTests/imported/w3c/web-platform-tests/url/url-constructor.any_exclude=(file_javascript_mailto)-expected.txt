@@ -331,7 +331,6 @@ PASS Parsing: <sc::a@example.net> without base
 PASS Parsing: <wow:%NBD> without base
 PASS Parsing: <wow:%1G> without base
 PASS Parsing: <wow:￿> without base
-PASS Parsing: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> without base
 PASS Parsing: <sc://a\0b/> without base
 PASS Parsing: <sc://a b/> without base
 PASS Parsing: <sc://a<b> without base
@@ -686,6 +685,19 @@ PASS Parsing: <stun://test:test> without base
 PASS Parsing: <stun://[:1]> without base
 PASS Parsing: <w://x:0> without base
 PASS Parsing: <west://x:0> without base
+PASS Parsing: <android://x:0/a> without base
+PASS Parsing: <drivefs://x:0/a> without base
+PASS Parsing: <chromeos-steam://x:0/a> without base
+PASS Parsing: <steam://x:0/a> without base
+PASS Parsing: <materialized-view://x:0/a> without base
+PASS Parsing: <android-app://x:0> without base
+PASS Parsing: <chrome-distiller://x:0> without base
+PASS Parsing: <chrome-extension://x:0> without base
+PASS Parsing: <chrome-native://x:0> without base
+PASS Parsing: <chrome-resource://x:0> without base
+PASS Parsing: <chrome-search://x:0> without base
+PASS Parsing: <fuchsia-dir://x:0> without base
+PASS Parsing: <isolated-app://x:0> without base
 PASS Parsing: <///test> against <http://example.org/>
 PASS Parsing: <///\//\//test> against <http://example.org/>
 PASS Parsing: <///example.org/path> against <http://example.org/>
@@ -694,4 +706,12 @@ PASS Parsing: <///example.org/../../> against <http://example.org/>
 PASS Parsing: <///example.org/../path/../../> against <http://example.org/>
 PASS Parsing: <///example.org/../path/../../path> against <http://example.org/>
 PASS Parsing: </\/\//example.org/../path> against <http://example.org/>
+PASS Parsing: <non-special:\\opaque> without base
+PASS Parsing: <non-special:\\opaque/path> without base
+PASS Parsing: <non-special:\\opaque\path> without base
+PASS Parsing: <non-special:\/opaque> without base
+PASS Parsing: <non-special:/\path> without base
+PASS Parsing: <non-special://host\a> without base
+PASS Parsing: <non-special://host/a\b> without base
+PASS Parsing: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> without base
 

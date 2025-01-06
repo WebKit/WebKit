@@ -76,6 +76,8 @@ private:
         ScrollbarHoverState&&,
         ScrollbarEnabledState&&,
         UserInterfaceLayoutDirection,
+        ScrollbarWidth,
+        bool useDarkAppearanceForScrollbars,
         RequestedKeyboardScrollData&&
     );
 

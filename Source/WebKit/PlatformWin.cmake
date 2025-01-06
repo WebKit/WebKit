@@ -18,7 +18,6 @@ list(APPEND WebKit_SOURCES
 
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 
-    Platform/IPC/win/ArgumentCodersWin.cpp
     Platform/IPC/win/ConnectionWin.cpp
     Platform/IPC/win/IPCSemaphoreWin.cpp
 
@@ -32,7 +31,6 @@ list(APPEND WebKit_SOURCES
     Shared/win/NativeWebMouseEventWin.cpp
     Shared/win/NativeWebTouchEventWin.cpp
     Shared/win/NativeWebWheelEventWin.cpp
-    Shared/win/WebCoreArgumentCodersWin.cpp
     Shared/win/WebEventFactory.cpp
 
     UIProcess/API/C/WKViewportAttributes.cpp
@@ -76,7 +74,6 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/WebPage/AcceleratedSurface.cpp
 
-    WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
     WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 
     WebProcess/WebPage/win/WebPageWin.cpp
@@ -87,14 +84,16 @@ list(APPEND WebKit_SOURCES
     win/WebKitDLL.cpp
 )
 
+list(APPEND WebKit_SERIALIZATION_IN_FILES
+    Shared/win/WTFArgumentCodersWin.serialization.in
+)
+
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Platform/IPC/win"
     "${WEBKIT_DIR}/Platform/classifier"
     "${WEBKIT_DIR}/Platform/generic"
     "${WEBKIT_DIR}/PluginProcess/win"
     "${WEBKIT_DIR}/Shared/API/c/win"
-    "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
-    "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/win"
     "${WEBKIT_DIR}/UIProcess/API/C/win"
     "${WEBKIT_DIR}/UIProcess/API/cpp/win"
@@ -125,14 +124,20 @@ list(APPEND WebKit_PRIVATE_LIBRARIES
 
 list(APPEND WebProcess_SOURCES
     WebProcess/EntryPoint/win/WebProcessMain.cpp
+
+    win/WebKit.manifest
 )
 
 list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/win/NetworkProcessMain.cpp
+
+    win/WebKit.manifest
 )
 
 list(APPEND GPUProcess_SOURCES
     GPUProcess/EntryPoint/win/GPUProcessMain.cpp
+
+    win/WebKit.manifest
 )
 
 if (ENABLE_REMOTE_INSPECTOR)
@@ -149,15 +154,7 @@ if (ENABLE_REMOTE_INSPECTOR)
 endif ()
 
 if (USE_CAIRO)
-    list(APPEND WebKit_SOURCES
-        Shared/API/c/cairo/WKImageCairo.cpp
-
-        UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
-    )
-    list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
-        "${WEBKIT_DIR}/UIProcess/API/C/cairo"
-    )
-    list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
-        Shared/API/c/cairo/WKImageCairo.h
-    )
+    include(Platform/Cairo.cmake)
+elseif (USE_SKIA)
+    include(Platform/Skia.cmake)
 endif ()

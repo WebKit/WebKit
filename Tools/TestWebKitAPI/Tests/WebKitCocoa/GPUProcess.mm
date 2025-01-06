@@ -25,10 +25,10 @@
 
 #import "config.h"
 
-#import "EnableUISideCompositingScope.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "UISideCompositingScope.h"
 #import "UserMediaCaptureUIDelegate.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
@@ -165,7 +165,8 @@ TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
     kill(gpuProcessPID, 9);
 
     // The WebView's WebProcess should get killed this time.
-    [webView _test_waitForWebContentProcessDidTerminate];
+    auto crashReason = [webView _test_waitForWebContentProcessDidTerminate];
+    EXPECT_EQ(crashReason, _WKProcessTerminationReasonExceededSharedProcessCrashLimit);
 
     EXPECT_EQ(0, [webView _webProcessIdentifier]);
 
@@ -226,7 +227,7 @@ TEST(GPUProcess, GPUProcessForDOMRenderingCarriesOverFromRelatedPage)
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
         return;
 
-    EnableUISideCompositingScope enableUISideCompositing;
+    UISideCompositingScope scope { UISideCompositingState::Enabled };
 
     RetainPtr<WKWebViewConfiguration> configuration;
     RetainPtr<TestWKWebView> originalWebView;
@@ -243,7 +244,9 @@ TEST(GPUProcess, GPUProcessForDOMRenderingCarriesOverFromRelatedPage)
         auto newPreferences = adoptNS([[configuration preferences] copy]);
         WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)newPreferences.get(), false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
         [configuration setPreferences:newPreferences.get()];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [configuration _setRelatedWebView:originalWebView.get()];
+        ALLOW_DEPRECATED_DECLARATIONS_END
 
         newWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
         [newWebView synchronouslyLoadTestPageNamed:@"simple"];
@@ -735,7 +738,12 @@ TEST(GPUProcess, ExitsUnderMemoryPressureGetUserMediaAudioCase)
 }
 #endif
 
+// FIXME when rdar://142288846 is resolved.
+#if PLATFORM(IOS)
+TEST(GPUProcess, DISABLED_ExitsUnderMemoryPressureGetUserMediaVideoCase)
+#else
 TEST(GPUProcess, ExitsUnderMemoryPressureGetUserMediaVideoCase)
+#endif
 {
     runMemoryPressureExitTest([](WKWebView *webView) {
         auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
@@ -753,7 +761,12 @@ TEST(GPUProcess, ExitsUnderMemoryPressureGetUserMediaVideoCase)
     });
 }
 
+// FIXME when rdar://141566093 is resolved.
+#if PLATFORM(IOS)
+TEST(GPUProcess, DISABLED_ExitsUnderMemoryPressureWebRTCCase)
+#else
 TEST(GPUProcess, ExitsUnderMemoryPressureWebRTCCase)
+#endif
 {
     runMemoryPressureExitTest([](WKWebView *webView) {
         auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
@@ -878,7 +891,7 @@ TEST(GPUProcess, ValidateWebAudioMediaProcessingAssertion)
     EXPECT_TRUE([configuration.get().processPool _hasAudibleMediaActivity]);
 }
 
-#if ENABLE(ENABLE_GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
 TEST(GPUProcess, ReuseBetweenProcessPools)
 {
     auto loadBlankViewAndWaitForGPUProcess = []() -> pid_t {
@@ -906,6 +919,6 @@ TEST(GPUProcess, ReuseBetweenProcessPools)
 
     EXPECT_EQ(firstGPUProcessPID, secondGPUProcessPID);
 }
-#endif // ENABLE(ENABLE_GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
+#endif // ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
 
 } // namespace TestWebKitAPI

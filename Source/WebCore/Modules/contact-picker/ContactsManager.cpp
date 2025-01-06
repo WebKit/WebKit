@@ -39,12 +39,12 @@
 #include "Page.h"
 #include "UserGestureIndicator.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ContactsManager);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ContactsManager);
 
 Ref<ContactsManager> ContactsManager::create(Navigator& navigator)
 {

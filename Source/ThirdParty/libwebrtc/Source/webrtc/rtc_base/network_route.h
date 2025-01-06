@@ -88,6 +88,7 @@ struct NetworkRoute {
   }
 
   bool operator==(const NetworkRoute& other) const;
+  bool operator!=(const NetworkRoute& other) { return !operator==(other); }
 };
 
 }  // namespace rtc

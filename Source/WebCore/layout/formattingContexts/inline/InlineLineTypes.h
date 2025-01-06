@@ -32,12 +32,20 @@ namespace Layout {
 
 class InlineItem;
 
-enum class LineEndingEllipsisPolicy : uint8_t {
-    NoEllipsis,
+using InlineBoxBoundaryTextSpacings = WTF::HashMap<size_t, float, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>;
+using TrimmableTextSpacings = InlineBoxBoundaryTextSpacings;
+
+struct TextSpacingContext {
+    // InlineBoxBoundaryTextSpacings maps inline item indexes to spacing. It serves to identify start boxes that mark spacing between boxes boundaries. If we have start box with an entry here, this means that we have to add spacing between this start box and the previous box. We need to account for it during layout and to reproduce such spacing among 2 boxes during display. Therefore, this serve for identifying spacing between box boundaries such that we can both: add these spacing into layout/display and trim this spacing during line breaking if needed.
+    InlineBoxBoundaryTextSpacings inlineBoxBoundaryTextSpacings;
+    // TrimmableTextSpacings map inline item indexes to spacing. Text content can be split into multiple different inline text items. This structure serves to identify spacing that was added to a text item because of its adjacency to another text item. Ex: if we have 2 text items A and B, and the last character of A and the first character of B require spacing to be added between them. This spacing is always added as a leading spacing to B. However, during line breaking, if B gets placed on a different line as A, they are no longer adjacent and we must trim such spacing. We don't use this map for actually adding the spacing, just for trimming it. Therefore this maps serves only to identify trimmable spacing between text runs. Maybe this can be called TrimmableTextSpacingBetweenTextItems or something.
+    TrimmableTextSpacings trimmableTextSpacings;
+};
+
+enum class LineEndingTruncationPolicy : uint8_t {
+    NoTruncation,
     WhenContentOverflowsInInlineDirection,
-    WhenContentOverflowsInBlockDirection,
-    // FIXME: This should be used when we realize the last line of this IFC is where the content is truncated (sibling IFC has more lines).
-    Always
+    WhenContentOverflowsInBlockDirection
 };
 
 struct ExpansionInfo {

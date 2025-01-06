@@ -587,8 +587,13 @@ The command line for libaom does allow 1 Pass VBR, but this has not been
 properly optimised and behaves much like 1 pass CBR in most regards, with bits
 allocated to frames by the following functions:
 
-- \ref av1_calc_iframe_target_size_one_pass_vbr()
-- \ref av1_calc_pframe_target_size_one_pass_vbr()
+- \ref av1_calc_iframe_target_size_one_pass_vbr(
+           const struct AV1_COMP *const cpi)
+       "av1_calc_iframe_target_size_one_pass_vbr()"
+- \ref av1_calc_pframe_target_size_one_pass_vbr(
+           const struct AV1_COMP *const cpi,
+           FRAME_UPDATE_TYPE frame_update_type)
+       "av1_calc_pframe_target_size_one_pass_vbr()"
 
 \subsubsection architecture_enc_2pass_vbr 2 Pass VBR Encoding
 
@@ -701,7 +706,10 @@ time, for the two pass encoding pipeline are:
 
 - \ref rc_pick_q_and_bounds()
     - \ref get_q()
-        - \ref av1_rc_regulate_q()
+        - \ref av1_rc_regulate_q(
+                   const struct AV1_COMP *cpi, int target_bits_per_frame,
+                   int active_best_quality, int active_worst_quality,
+                   int width, int height) "av1_rc_regulate_q()"
         - \ref get_rate_correction_factor()
         - \ref set_rate_correction_factor()
         - \ref find_closest_qindex_by_rate()
@@ -1299,7 +1307,7 @@ to estimate the entropy cost of a transform block. Note that
 Related functions:
 - \ref av1_cost_coeffs_txb()
 - \ref av1_cost_coeffs_txb_laplacian()
-- \ref av1_cost_coeffs_txb_estimate()
+- av1_cost_coeffs_txb_estimate() (see av1/encoder/txb_rdopt.c)
 
 \paragraph architecture_entropy_coef_opt Quantized level optimization
 Beside computing entropy cost, the encoder also uses \ref av1_optimize_txb()
@@ -1312,6 +1320,34 @@ Related functions:
 - \ref av1_optimize_txb()
 
 All the related functions are listed in \ref coefficient_coding.
+
+\section architecture_simd SIMD usage
+
+In order to efficiently encode video on modern platforms, it is necessary to
+implement optimized versions of many core encoding and decoding functions using
+architecture-specific SIMD instructions.
+
+Functions which have optimized implementations will have multiple variants
+in the code, each suffixed with the name of the appropriate instruction set.
+There will additionally be an `_c` version, which acts as a reference
+implementation which the SIMD variants can be tested against.
+
+As different machines with the same nominal architecture may support different
+subsets of SIMD instructions, we have dynamic CPU detection logic which chooses
+the appropriate functions to use at run time. This process is handled by
+`build/cmake/rtcd.pl`, with function definitions in the files
+`*_rtcd_defs.pl` elsewhere in the codebase.
+
+Currently SIMD is supported on the following platforms:
+
+- x86: Requires SSE4.1 or above
+
+- Arm: Requires Neon (Armv7-A and above)
+
+We aim to provide implementations of all performance-critical functions which
+are compatible with the instruction sets listed above. Additional SIMD
+extensions (e.g. AVX on x86, SVE on Arm) are also used to provide even
+greater performance where available.
 
 */
 

@@ -71,13 +71,13 @@ VideoSourceRestrictions VideoSourceSinkController::restrictions() const {
   return restrictions_;
 }
 
-absl::optional<size_t> VideoSourceSinkController::pixels_per_frame_upper_limit()
+std::optional<size_t> VideoSourceSinkController::pixels_per_frame_upper_limit()
     const {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   return pixels_per_frame_upper_limit_;
 }
 
-absl::optional<double> VideoSourceSinkController::frame_rate_upper_limit()
+std::optional<double> VideoSourceSinkController::frame_rate_upper_limit()
     const {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   return frame_rate_upper_limit_;
@@ -104,10 +104,10 @@ bool VideoSourceSinkController::active() const {
   return active_;
 }
 
-absl::optional<rtc::VideoSinkWants::FrameSize>
-VideoSourceSinkController::requested_resolution() const {
+std::optional<rtc::VideoSinkWants::FrameSize>
+VideoSourceSinkController::scale_resolution_down_to() const {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  return requested_resolution_;
+  return scale_resolution_down_to_;
 }
 
 void VideoSourceSinkController::SetRestrictions(
@@ -117,13 +117,13 @@ void VideoSourceSinkController::SetRestrictions(
 }
 
 void VideoSourceSinkController::SetPixelsPerFrameUpperLimit(
-    absl::optional<size_t> pixels_per_frame_upper_limit) {
+    std::optional<size_t> pixels_per_frame_upper_limit) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   pixels_per_frame_upper_limit_ = std::move(pixels_per_frame_upper_limit);
 }
 
 void VideoSourceSinkController::SetFrameRateUpperLimit(
-    absl::optional<double> frame_rate_upper_limit) {
+    std::optional<double> frame_rate_upper_limit) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   frame_rate_upper_limit_ = std::move(frame_rate_upper_limit);
 }
@@ -150,10 +150,10 @@ void VideoSourceSinkController::SetActive(bool active) {
   active_ = active;
 }
 
-void VideoSourceSinkController::SetRequestedResolution(
-    absl::optional<rtc::VideoSinkWants::FrameSize> requested_resolution) {
+void VideoSourceSinkController::SetScaleResolutionDownTo(
+    std::optional<rtc::VideoSinkWants::FrameSize> scale_resolution_down_to) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  requested_resolution_ = std::move(requested_resolution);
+  scale_resolution_down_to_ = std::move(scale_resolution_down_to);
 }
 
 // RTC_EXCLUSIVE_LOCKS_REQUIRED(sequence_checker_)
@@ -167,9 +167,9 @@ rtc::VideoSinkWants VideoSourceSinkController::CurrentSettingsToSinkWants()
           std::numeric_limits<int>::max()));
   wants.target_pixel_count =
       restrictions_.target_pixels_per_frame().has_value()
-          ? absl::optional<int>(rtc::dchecked_cast<int>(
+          ? std::optional<int>(rtc::dchecked_cast<int>(
                 restrictions_.target_pixels_per_frame().value()))
-          : absl::nullopt;
+          : std::nullopt;
   wants.max_framerate_fps =
       restrictions_.max_frame_rate().has_value()
           ? static_cast<int>(restrictions_.max_frame_rate().value())
@@ -186,7 +186,7 @@ rtc::VideoSinkWants VideoSourceSinkController::CurrentSettingsToSinkWants()
                    : std::numeric_limits<int>::max());
   wants.resolutions = resolutions_;
   wants.is_active = active_;
-  wants.requested_resolution = requested_resolution_;
+  wants.requested_resolution = scale_resolution_down_to_;
   return wants;
 }
 

@@ -40,10 +40,11 @@ class Animation;
 class RenderStyle;
 
 class CSSTransition final : public StyleOriginatedAnimation {
-    WTF_MAKE_ISO_ALLOCATED(CSSTransition);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSTransition);
 public:
     static Ref<CSSTransition> create(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
-    ~CSSTransition() = default;
+
+    virtual ~CSSTransition();
 
     const AtomString transitionProperty() const;
     AnimatableCSSProperty property() const { return m_property; }
@@ -58,7 +59,7 @@ private:
     CSSTransition(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
     Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) final;
-    void resolve(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds>) final;
+    OptionSet<AnimationImpact> resolve(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds>) final;
     void animationDidFinish() final;
     bool isCSSTransition() const final { return true; }
 

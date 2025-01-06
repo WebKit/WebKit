@@ -31,17 +31,20 @@ namespace WebCore {
 namespace Layout {
 
 struct ConstraintsForInlineContent : public ConstraintsForInFlowContent {
-    ConstraintsForInlineContent(const ConstraintsForInFlowContent&, LayoutUnit visualLeft);
+    ConstraintsForInlineContent(const ConstraintsForInFlowContent&, LayoutUnit visualLeft, LayoutSize containerRenderSize);
 
     LayoutUnit visualLeft() const { return m_visualLeft; }
+    LayoutSize containerRenderSize() const { return m_containerRenderSize; }
 
 private:
     LayoutUnit m_visualLeft;
+    LayoutSize m_containerRenderSize;
 };
 
-inline ConstraintsForInlineContent::ConstraintsForInlineContent(const ConstraintsForInFlowContent& genericContraints, LayoutUnit visualLeft)
+inline ConstraintsForInlineContent::ConstraintsForInlineContent(const ConstraintsForInFlowContent& genericContraints, LayoutUnit visualLeft, LayoutSize containerRenderSize)
     : ConstraintsForInFlowContent(genericContraints.horizontal(), genericContraints.logicalTop(), InlineContent)
     , m_visualLeft(visualLeft)
+    , m_containerRenderSize(containerRenderSize)
 {
 }
 

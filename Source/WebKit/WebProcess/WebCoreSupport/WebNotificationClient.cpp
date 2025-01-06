@@ -32,12 +32,16 @@
 #include "WebNotificationManager.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/NotificationData.h>
 #include <WebCore/Page.h>
 #include <WebCore/ScriptExecutionContext.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebNotificationClient);
 
 WebNotificationClient::WebNotificationClient(WebPage* page)
     : m_page(page)
@@ -91,15 +95,25 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext& context, P
     ASSERT(isMainRunLoop());
     ASSERT(m_page);
 
-    if (!context.isDocument() || WebProcess::singleton().sessionID().isEphemeral())
+    if (!isMainRunLoop() || !context.isDocument() || WebProcess::singleton().sessionID().isEphemeral())
         return permissionHandler(NotificationClient::Permission::Denied);
 
-    auto* securityOrigin = context.securityOrigin();
+    RefPtr securityOrigin = context.securityOrigin();
     if (!securityOrigin)
         return permissionHandler(NotificationClient::Permission::Denied);
 
     // Add origin to list of origins that have requested permission to use the Notifications API.
     m_notificationPermissionRequesters.add(securityOrigin->data());
+
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
+        auto handler = [permissionHandler = WTFMove(permissionHandler)](bool granted) mutable {
+            permissionHandler(granted ? NotificationPermission::Granted : NotificationPermission::Denied);
+        };
+        WebProcess::singleton().supplement<WebNotificationManager>()->requestPermission(WebCore::SecurityOriginData { securityOrigin->data() }, RefPtr { m_page.get() }, WTFMove(handler));
+        return;
+    }
+#endif
 
     Ref { *m_page }->notificationPermissionRequestManager()->startRequest(securityOrigin->data(), WTFMove(permissionHandler));
 }
@@ -109,7 +123,7 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
     if (!context || (!context->isDocument() && !context->isServiceWorkerGlobalScope()))
         return NotificationClient::Permission::Denied;
 
-    auto* origin = context->securityOrigin();
+    RefPtr origin = context->securityOrigin();
     if (!origin)
         return NotificationClient::Permission::Denied;
 

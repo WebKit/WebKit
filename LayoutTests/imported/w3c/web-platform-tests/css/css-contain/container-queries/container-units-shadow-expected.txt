@@ -1,4 +1,0 @@
-
-PASS Direct slotted child queries shadow-including ancestors
-PASS Nondirect slotted child queries shadow-including ancestors
-

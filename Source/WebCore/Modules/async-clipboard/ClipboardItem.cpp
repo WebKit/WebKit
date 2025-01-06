@@ -30,6 +30,7 @@
 #include "Clipboard.h"
 #include "ClipboardItemBindingsDataSource.h"
 #include "ClipboardItemPasteboardDataSource.h"
+#include "CommonAtomStrings.h"
 #include "Navigator.h"
 #include "PasteboardCustomData.h"
 #include "PasteboardItemInfo.h"
@@ -58,6 +59,10 @@ static ClipboardItem::PresentationStyle clipboardItemPresentationStyle(const Pas
     return ClipboardItem::PresentationStyle::Unspecified;
 }
 
+// FIXME: Custom format starts with `"web "`("web" followed by U+0020 SPACE) prefix
+// and suffix (after stripping out `"web "`) passes the parsing a MIME type check.
+// https://w3c.github.io/clipboard-apis/#optional-data-types
+// https://webkit.org/b/280664
 ClipboardItem::ClipboardItem(Vector<KeyValuePair<String, Ref<DOMPromise>>>&& items, const Options& options)
     : m_dataSource(makeUnique<ClipboardItemBindingsDataSource>(*this, WTFMove(items)))
     , m_presentationStyle(options.presentationStyle)
@@ -72,8 +77,10 @@ ClipboardItem::ClipboardItem(Clipboard& clipboard, const PasteboardItemInfo& inf
 {
 }
 
-Ref<ClipboardItem> ClipboardItem::create(Vector<KeyValuePair<String, Ref<DOMPromise>>>&& data, const Options& options)
+ExceptionOr<Ref<ClipboardItem>> ClipboardItem::create(Vector<KeyValuePair<String, Ref<DOMPromise>>>&& data, const Options& options)
 {
+    if (data.isEmpty())
+        return Exception { ExceptionCode::TypeError, "ClipboardItem() can not be an empty array: {}"_s };
     return adoptRef(*new ClipboardItem(WTFMove(data), options));
 }
 
@@ -90,6 +97,22 @@ Vector<String> ClipboardItem::types() const
 void ClipboardItem::getType(const String& type, Ref<DeferredPromise>&& promise)
 {
     m_dataSource->getType(type, WTFMove(promise));
+}
+
+bool ClipboardItem::supports(const String& type)
+{
+    // FIXME: Custom format starts with `"web "`("web" followed by U+0020 SPACE) prefix
+    // and suffix (after stripping out `"web "`) passes the parsing a MIME type check.
+    // https://webkit.org/b/280664
+    // FIXME: add type == "image/svg+xml"_s when we have sanitized copy/paste for SVG data
+    // https://webkit.org/b/280726
+    if (type == textPlainContentTypeAtom()
+        || type == textHTMLContentTypeAtom()
+        || type == "image/png"_s
+        || type == "text/uri-list"_s) {
+        return true;
+        }
+    return false;
 }
 
 void ClipboardItem::collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&& completion)

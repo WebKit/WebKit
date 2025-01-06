@@ -12,7 +12,7 @@
 #include <platform/PlatformMethods.h>
 #include "common/base/anglebase/trace_event/trace_event.h"
 
-// TODO: Pass platform directly to these methods. http://anglebug.com/1892
+// TODO: Pass platform directly to these methods. http://anglebug.com/42260698
 #define ANGLE_TRACE_EVENT_BEGIN(CATEGORY, EVENT, ...) \
     TRACE_EVENT_BEGIN(ANGLEPlatformCurrent(), CATEGORY, EVENT, ##__VA_ARGS__)
 

@@ -47,6 +47,7 @@ namespace WebCore {
 
 class RenderBlockFlow;
 class RenderObject;
+struct SVGTextFragment;
 
 namespace Layout {
 class Box;
@@ -98,18 +99,23 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
     std::optional<size_t> firstBoxIndexForLayoutBox(const Layout::Box&) const;
     const Vector<size_t>& nonRootInlineBoxIndexesForLayoutBox(const Layout::Box&) const;
 
+    const Vector<SVGTextFragment>& svgTextFragments(size_t boxIndex) const;
+    Vector<Vector<SVGTextFragment>>& svgTextFragmentsForBoxes() { return m_svgTextFragmentsForBoxes; }
+
     void releaseCaches();
 
 private:
     CheckedPtr<const LineLayout> m_lineLayout;
 
     InlineDisplay::Content m_displayContent;
-    using FirstBoxIndexCache = HashMap<CheckedRef<const Layout::Box>, size_t>;
+    using FirstBoxIndexCache = UncheckedKeyHashMap<CheckedRef<const Layout::Box>, size_t>;
     mutable std::unique_ptr<FirstBoxIndexCache> m_firstBoxIndexCache;
 
-    using InlineBoxIndexCache = HashMap<CheckedRef<const Layout::Box>, Vector<size_t>>;
+    using InlineBoxIndexCache = UncheckedKeyHashMap<CheckedRef<const Layout::Box>, Vector<size_t>>;
     mutable std::unique_ptr<InlineBoxIndexCache> m_inlineBoxIndexCache;
     bool m_hasVisualOverflow { false };
+
+    Vector<Vector<SVGTextFragment>> m_svgTextFragmentsForBoxes;
 };
 
 template<typename Function> void InlineContent::traverseNonRootInlineBoxes(const Layout::Box& layoutBox, Function&& function)

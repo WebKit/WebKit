@@ -1,9 +1,18 @@
 set_property(DIRECTORY . PROPERTY FOLDER "skia")
 
 # Skia dependencies not used directly in WebKit.
-find_package(Freetype 2.9.0 REQUIRED)
-find_package(Fontconfig 2.13.0 REQUIRED)
-find_package(WebP REQUIRED COMPONENTS mux)
+if (NOT WIN32 AND NOT PLAYSTATION)
+    find_package(Freetype 2.9.0 REQUIRED)
+    find_package(Fontconfig 2.13.0 REQUIRED)
+endif ()
+
+if (USE_SKIA_ENCODERS)
+    find_package(WebP REQUIRED COMPONENTS mux)
+endif ()
+
+if (ANDROID)
+    find_package(EXPAT REQUIRED)
+endif ()
 
 #
 # SKIA_ROOT_DIR may point to a checkout from the upstream Skia repository,
@@ -81,14 +90,16 @@ if (DEVELOPER_MODE AND (SKIA_ROOT_DIR OR NOT "$ENV{SKIA_ROOT_DIR}" STREQUAL ""))
         INTERFACE_COMPILE_DEFINITIONS "${SKIA_COMPILE_DEFINITIONS}"
     )
 
-    target_link_libraries(Skia INTERFACE
-        Epoxy::Epoxy
-        Fontconfig::Fontconfig
-        Freetype::Freetype
-        JPEG::JPEG
-        PNG::PNG
-        WebP::mux
-    )
+    if (NOT WIN32)
+        target_link_libraries(Skia INTERFACE
+            Epoxy::Epoxy
+            Fontconfig::Fontconfig
+            Freetype::Freetype
+            JPEG::JPEG
+            PNG::PNG
+            WebP::mux
+        )
+    endif ()
 
     add_custom_target(Skia_headers_symlink
         COMMAND ${CMAKE_COMMAND} -E create_symlink
@@ -107,6 +118,8 @@ if (DEVELOPER_MODE AND (SKIA_ROOT_DIR OR NOT "$ENV{SKIA_ROOT_DIR}" STREQUAL ""))
         "skia_use_egl=true + skia_use_epoxy_egl=true. Expect malfunctions "
         "otherwise at runtime!"
     )
+
+    add_library(Skia::Skia ALIAS Skia)
     return ()
 endif ()
 
@@ -130,7 +143,6 @@ add_library(Skia STATIC
     src/base/SkQuads.cpp
     src/base/SkSafeMath.cpp
     src/base/SkSemaphore.cpp
-    src/base/SkSharedMutex.cpp
     src/base/SkSpinlock.cpp
     src/base/SkTDArray.cpp
     src/base/SkTSearch.cpp
@@ -144,6 +156,7 @@ add_library(Skia STATIC
     src/codec/SkColorPalette.cpp
     src/codec/SkEncodedInfo.cpp
     src/codec/SkExif.cpp
+    src/codec/SkGainmapInfo.cpp
     src/codec/SkImageGenerator_FromEncoded.cpp
     src/codec/SkJpegCodec.cpp
     src/codec/SkJpegDecoderMgr.cpp
@@ -154,6 +167,8 @@ add_library(Skia STATIC
     src/codec/SkParseEncodedOrigin.cpp
     src/codec/SkPixmapUtils.cpp
     src/codec/SkPngCodec.cpp
+    src/codec/SkPngCodecBase.cpp
+    src/codec/SkPngCompositeChunkReader.cpp
     src/codec/SkSampler.cpp
     src/codec/SkSwizzler.cpp
     src/codec/SkTiffUtility.cpp
@@ -184,6 +199,7 @@ add_library(Skia STATIC
     src/core/SkBlitter_A8.cpp
     src/core/SkBlitter_ARGB32.cpp
     src/core/SkBlitter_Sprite.cpp
+    src/core/SkBlurEngine.cpp
     src/core/SkBlurMask.cpp
     src/core/SkBlurMaskFilterImpl.cpp
     src/core/SkCachedData.cpp
@@ -356,12 +372,12 @@ add_library(Skia STATIC
     src/gpu/BlurUtils.cpp
     src/gpu/DataUtils.cpp
     src/gpu/DitherUtils.cpp
-    src/gpu/PipelineUtils.cpp
     src/gpu/RectanizerPow2.cpp
     src/gpu/RectanizerSkyline.cpp
     src/gpu/ResourceKey.cpp
     src/gpu/ShaderErrorHandler.cpp
     src/gpu/SkBackingFit.cpp
+    src/gpu/SkSLToBackend.cpp
     src/gpu/Swizzle.cpp
     src/gpu/TiledTextureUtils.cpp
 
@@ -523,7 +539,6 @@ add_library(Skia STATIC
     src/gpu/ganesh/gl/GrGLVertexArray.cpp
     src/gpu/ganesh/gl/builders/GrGLProgramBuilder.cpp
     src/gpu/ganesh/gl/builders/GrGLShaderStringBuilder.cpp
-    src/gpu/ganesh/gl/epoxy/GrGLMakeEpoxyEGLInterface.cpp
     src/gpu/ganesh/glsl/GrGLSLBlend.cpp
     src/gpu/ganesh/glsl/GrGLSLFragmentShaderBuilder.cpp
     src/gpu/ganesh/glsl/GrGLSLProgramBuilder.cpp
@@ -648,13 +663,6 @@ add_library(Skia STATIC
     src/effects/imagefilters/SkRuntimeImageFilter.cpp
     src/effects/imagefilters/SkShaderImageFilter.cpp
 
-    src/encode/SkEncoder.cpp
-    src/encode/SkICC.cpp
-    src/encode/SkJPEGWriteUtility.cpp
-    src/encode/SkJpegEncoderImpl.cpp
-    src/encode/SkPngEncoderImpl.cpp
-    src/encode/SkWebpEncoderImpl.cpp
-
     src/pathops/SkAddIntersections.cpp
     src/pathops/SkDConicLineIntersection.cpp
     src/pathops/SkDCubicLineIntersection.cpp
@@ -735,13 +743,13 @@ add_library(Skia STATIC
     src/text/gpu/DistanceFieldAdjustTable.cpp
     src/text/gpu/GlyphVector.cpp
     src/text/gpu/SDFMaskFilter.cpp
-    src/text/gpu/SDFTControl.cpp
     src/text/gpu/SkChromeRemoteGlyphCache.cpp
     src/text/gpu/Slug.cpp
     src/text/gpu/SlugImpl.cpp
     src/text/gpu/StrikeCache.cpp
     src/text/gpu/SubRunAllocator.cpp
     src/text/gpu/SubRunContainer.cpp
+    src/text/gpu/SubRunControl.cpp
     src/text/gpu/TextBlob.cpp
     src/text/gpu/TextBlobRedrawCoordinator.cpp
     src/text/gpu/VertexFiller.cpp
@@ -757,6 +765,8 @@ add_library(Skia STATIC
     src/sksl/SkSLIntrinsicList.cpp
     src/sksl/SkSLLexer.cpp
     src/sksl/SkSLMangler.cpp
+    src/sksl/SkSLModule.cpp
+    src/sksl/SkSLModuleDataDefault.cpp
     src/sksl/SkSLModuleLoader.cpp
     src/sksl/SkSLOperator.cpp
     src/sksl/SkSLOutputStream.cpp
@@ -768,6 +778,7 @@ add_library(Skia STATIC
     src/sksl/SkSLUtil.cpp
     src/sksl/analysis/SkSLCanExitWithoutReturningValue.cpp
     src/sksl/analysis/SkSLCheckProgramStructure.cpp
+    src/sksl/analysis/SkSLCheckSymbolTableCorrectness.cpp
     src/sksl/analysis/SkSLFinalizationChecks.cpp
     src/sksl/analysis/SkSLGetLoopControlFlowInfo.cpp
     src/sksl/analysis/SkSLGetLoopUnrollInfo.cpp
@@ -779,6 +790,7 @@ add_library(Skia STATIC
     src/sksl/analysis/SkSLIsTrivialExpression.cpp
     src/sksl/analysis/SkSLProgramUsage.cpp
     src/sksl/analysis/SkSLReturnsInputAlpha.cpp
+    src/sksl/analysis/SkSLSpecialization.cpp
     src/sksl/analysis/SkSLSwitchCaseContainsExit.cpp
     src/sksl/analysis/SkSLSymbolTableStackBuilder.cpp
     src/sksl/codegen/SkSLGLSLCodeGenerator.cpp
@@ -787,7 +799,6 @@ add_library(Skia STATIC
     src/sksl/codegen/SkSLRasterPipelineBuilder.cpp
     src/sksl/codegen/SkSLRasterPipelineCodeGenerator.cpp
     src/sksl/codegen/SkSLSPIRVCodeGenerator.cpp
-    src/sksl/codegen/SkSLSPIRVtoHLSL.cpp
     src/sksl/codegen/SkSLWGSLCodeGenerator.cpp
     src/sksl/ir/SkSLBinaryExpression.cpp
     src/sksl/ir/SkSLBlock.cpp
@@ -842,6 +853,7 @@ add_library(Skia STATIC
     src/sksl/transform/SkSLEliminateDeadGlobalVariables.cpp
     src/sksl/transform/SkSLEliminateDeadLocalVariables.cpp
     src/sksl/transform/SkSLEliminateEmptyStatements.cpp
+    src/sksl/transform/SkSLEliminateUnnecessaryBraces.cpp
     src/sksl/transform/SkSLEliminateUnreachableCode.cpp
     src/sksl/transform/SkSLFindAndDeclareBuiltinFunctions.cpp
     src/sksl/transform/SkSLFindAndDeclareBuiltinStructs.cpp
@@ -849,6 +861,7 @@ add_library(Skia STATIC
     src/sksl/transform/SkSLHoistSwitchVarDeclarationsAtTopLevel.cpp
     src/sksl/transform/SkSLRenamePrivateSymbols.cpp
     src/sksl/transform/SkSLReplaceConstVarsWithLiterals.cpp
+    src/sksl/transform/SkSLReplaceSplatCastsWithSwizzles.cpp
     src/sksl/transform/SkSLRewriteIndexedSwizzle.cpp
 
     src/utils/SkCharToGlyphCache.cpp
@@ -859,6 +872,7 @@ add_library(Skia STATIC
     src/utils/SkJSONWriter.cpp
     src/utils/SkMatrix22.cpp
     src/utils/SkNWayCanvas.cpp
+    src/utils/SkParse.cpp
     src/utils/SkPatchUtils.cpp
     src/utils/SkPolyUtils.cpp
     src/utils/SkShaderUtils.cpp
@@ -868,16 +882,9 @@ add_library(Skia STATIC
     src/opts/SkOpts_hsw.cpp
     src/opts/SkOpts_skx.cpp
 
-    src/ports/SkDebug_stdio.cpp
-    src/ports/SkFontConfigInterface.cpp
-    src/ports/SkFontConfigInterface_direct.cpp
-    src/ports/SkFontConfigInterface_direct_factory.cpp
-    src/ports/SkFontHost_FreeType.cpp
-    src/ports/SkFontHost_FreeType_common.cpp
-    src/ports/SkFontMgr_fontconfig.cpp
     src/ports/SkGlobalInitialization_default.cpp
     src/ports/SkImageGenerator_skia.cpp
-    src/ports/SkOSFile_posix.cpp
+    src/ports/SkMemory_malloc.cpp
     src/ports/SkOSFile_stdio.cpp
 
     src/sfnt/SkOTTable_name.cpp
@@ -889,27 +896,164 @@ add_library(Skia STATIC
     modules/skcms/src/skcms_TransformSkx.cc
 )
 
-if (USE_SYSTEM_MALLOC)
-    target_sources(Skia PRIVATE src/ports/SkMemory_malloc.cpp)
-else ()
-    # Using WTF headers needs including Source/WTF/config.h first, and
-    # in turn that needs cmakeconfig.h from the top build directory, so
-    # arrange the include directories accordingly.
-    target_sources(Skia PRIVATE ${WEBCORE_DIR}/platform/skia/SkiaAllocatorFastMalloc.cpp)
-    set_property(
-        SOURCE ${WEBCORE_DIR}/platform/skia/SkiaAllocatorFastMalloc.cpp
-        APPEND PROPERTY INCLUDE_DIRECTORIES ${WTF_DIR} ${CMAKE_BINARY_DIR}
+if (ANDROID)
+    target_sources(Skia PRIVATE
+        src/ports/SkDebug_android.cpp
+        src/ports/SkFontMgr_android.cpp
+        src/ports/SkFontMgr_android_parser.cpp
     )
-    target_link_libraries(Skia PRIVATE WebKit::WTF)
+    target_link_libraries(Skia PRIVATE
+        EXPAT::EXPAT
+    )
+elseif (WIN32)
+    target_sources(Skia PRIVATE
+        src/ports/SkDebug_win.cpp
+        src/ports/SkFontHost_win.cpp
+        src/ports/SkFontMgr_win_dw.cpp
+        src/ports/SkOSFile_win.cpp
+        src/ports/SkScalerContext_win_dw.cpp
+        src/ports/SkTypeface_win_dw.cpp
+        src/utils/win/SkDWrite.cpp
+        src/utils/win/SkDWriteFontFileStream.cpp
+        src/utils/win/SkDWriteGeometrySink.cpp
+    )
+else ()
+    target_sources(Skia PRIVATE
+        src/ports/SkDebug_stdio.cpp
+        src/ports/SkFontConfigInterface.cpp
+        src/ports/SkFontConfigInterface_direct.cpp
+        src/ports/SkFontConfigInterface_direct_factory.cpp
+        src/ports/SkFontHost_FreeType.cpp
+        src/ports/SkFontHost_FreeType_common.cpp
+        src/ports/SkFontMgr_fontconfig.cpp
+        src/ports/SkOSFile_posix.cpp
+        src/ports/SkTypeface_proxy.cpp
+    )
+    target_link_libraries(Skia PRIVATE
+        Fontconfig::Fontconfig
+        Freetype::Freetype
+    )
 endif ()
 
+if (USE_LIBEPOXY)
+    target_sources(Skia PRIVATE src/gpu/ganesh/gl/epoxy/GrGLMakeEpoxyEGLInterface.cpp)
+    target_link_libraries(Skia PRIVATE Epoxy::Epoxy)
+else ()
+    target_sources(Skia PRIVATE src/gpu/ganesh/gl/egl/GrGLMakeNativeInterface_egl.cpp)
+    target_sources(Skia PRIVATE src/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.cpp)
+    if (USE_ANGLE_EGL)
+        target_link_libraries(Skia PRIVATE ANGLE::EGL)
+    else ()
+        target_link_libraries(Skia PRIVATE ${EGL_LIBRARIES})
+    endif ()
+endif ()
+
+if (USE_SKIA_ENCODERS)
+    target_sources(Skia PRIVATE
+        src/encode/SkEncoder.cpp
+        src/encode/SkICC.cpp
+        src/encode/SkJPEGWriteUtility.cpp
+        src/encode/SkJpegEncoderImpl.cpp
+        src/encode/SkPngEncoderBase.cpp
+        src/encode/SkPngEncoderImpl.cpp
+        src/encode/SkWebpEncoderImpl.cpp
+    )
+    target_link_libraries(Skia PRIVATE WebP::mux)
+else ()
+    target_sources(Skia PRIVATE
+        src/encode/SkPngEncoder_none.cpp
+        src/encode/SkJpegEncoder_none.cpp
+        src/encode/SkWebpEncoder_none.cpp
+    )
+endif ()
+
+if (USE_SKIA_OPENTYPE_SVG)
+    find_package(EXPAT)
+    if (NOT EXPAT_FOUND)
+        message(FATAL_ERROR "Expat is required by USE_SKIA_OPENTYPE_SVG")
+    endif ()
+
+    target_link_libraries(Skia PRIVATE
+        EXPAT::EXPAT
+        HarfBuzz::HarfBuzz
+    )
+    target_compile_definitions(Skia PRIVATE
+        SK_ENABLE_SVG
+
+        SK_DISABLE_LEGACY_SKSHAPER_FUNCTIONS
+
+        SK_SHAPER_HARFBUZZ_AVAILABLE
+        SK_SHAPER_PRIMITIVE_AVAILABLE
+    )
+    target_sources(Skia PRIVATE
+        src/base/SkBase64.cpp
+
+        src/effects/SkColorMatrix.cpp
+
+        src/utils/SkOSPath.cpp
+        src/utils/SkParseColor.cpp
+        src/utils/SkParsePath.cpp
+
+        src/xml/SkDOM.cpp
+        src/xml/SkXMLParser.cpp
+
+        modules/skresources/src/SkAnimCodecPlayer.cpp
+        modules/skresources/src/SkResources.cpp
+
+        modules/skshaper/src/SkShaper.cpp
+        modules/skshaper/src/SkShaper_factory.cpp
+        modules/skshaper/src/SkShaper_harfbuzz.cpp
+        modules/skshaper/src/SkShaper_primitive.cpp
+
+        modules/svg/src/SkSVGAttribute.cpp
+        modules/svg/src/SkSVGAttributeParser.cpp
+        modules/svg/src/SkSVGCircle.cpp
+        modules/svg/src/SkSVGClipPath.cpp
+        modules/svg/src/SkSVGContainer.cpp
+        modules/svg/src/SkSVGDOM.cpp
+        modules/svg/src/SkSVGEllipse.cpp
+        modules/svg/src/SkSVGFe.cpp
+        modules/svg/src/SkSVGFeBlend.cpp
+        modules/svg/src/SkSVGFeColorMatrix.cpp
+        modules/svg/src/SkSVGFeComponentTransfer.cpp
+        modules/svg/src/SkSVGFeComposite.cpp
+        modules/svg/src/SkSVGFeDisplacementMap.cpp
+        modules/svg/src/SkSVGFeFlood.cpp
+        modules/svg/src/SkSVGFeGaussianBlur.cpp
+        modules/svg/src/SkSVGFeImage.cpp
+        modules/svg/src/SkSVGFeLightSource.cpp
+        modules/svg/src/SkSVGFeLighting.cpp
+        modules/svg/src/SkSVGFeMerge.cpp
+        modules/svg/src/SkSVGFeMorphology.cpp
+        modules/svg/src/SkSVGFeOffset.cpp
+        modules/svg/src/SkSVGFeTurbulence.cpp
+        modules/svg/src/SkSVGFilter.cpp
+        modules/svg/src/SkSVGFilterContext.cpp
+        modules/svg/src/SkSVGGradient.cpp
+        modules/svg/src/SkSVGImage.cpp
+        modules/svg/src/SkSVGLine.cpp
+        modules/svg/src/SkSVGLinearGradient.cpp
+        modules/svg/src/SkSVGMask.cpp
+        modules/svg/src/SkSVGNode.cpp
+        modules/svg/src/SkSVGOpenTypeSVGDecoder.cpp
+        modules/svg/src/SkSVGPath.cpp
+        modules/svg/src/SkSVGPattern.cpp
+        modules/svg/src/SkSVGPoly.cpp
+        modules/svg/src/SkSVGRadialGradient.cpp
+        modules/svg/src/SkSVGRect.cpp
+        modules/svg/src/SkSVGRenderContext.cpp
+        modules/svg/src/SkSVGSVG.cpp
+        modules/svg/src/SkSVGShape.cpp
+        modules/svg/src/SkSVGStop.cpp
+        modules/svg/src/SkSVGText.cpp
+        modules/svg/src/SkSVGTransformableNode.cpp
+        modules/svg/src/SkSVGUse.cpp
+    )
+endif ()
+    
 target_link_libraries(Skia PRIVATE
-    Epoxy::Epoxy
-    Fontconfig::Fontconfig
-    Freetype::Freetype
     JPEG::JPEG
     PNG::PNG
-    WebP::mux
 )
 
 WEBKIT_ADD_TARGET_CXX_FLAGS(Skia
@@ -921,21 +1065,36 @@ WEBKIT_ADD_TARGET_CXX_FLAGS(Skia
     -Wno-dangling-reference
     -Wno-deprecated
     -Wno-psabi
+    -Wno-redundant-move
     -Wno-suggest-attribute=format
     -Wno-undef
     -Wno-uninitialized
     -Wno-unused-parameter
 )
 
+if (WIN32)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(Skia -Wno-unused-variable)
+endif ()
+
 target_include_directories(Skia
-    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
-    INTERFACE "${Skia_FRAMEWORK_HEADERS_DIR}"
+    PUBLIC
+        "${CMAKE_CURRENT_SOURCE_DIR}"
+    INTERFACE
+        "${Skia_FRAMEWORK_HEADERS_DIR}/top"
+        "${Skia_FRAMEWORK_HEADERS_DIR}/mod"
 )
 
-file(MAKE_DIRECTORY "${Skia_FRAMEWORK_HEADERS_DIR}")
+file(MAKE_DIRECTORY "${Skia_FRAMEWORK_HEADERS_DIR}/top")
 file(CREATE_LINK
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    "${Skia_FRAMEWORK_HEADERS_DIR}/skia"
+    "${Skia_FRAMEWORK_HEADERS_DIR}/top/skia"
+    SYMBOLIC
+)
+
+file(MAKE_DIRECTORY "${Skia_FRAMEWORK_HEADERS_DIR}/mod/skia/modules")
+file(CREATE_LINK
+    "${CMAKE_CURRENT_SOURCE_DIR}/modules/svg/include"
+    "${Skia_FRAMEWORK_HEADERS_DIR}/mod/skia/modules/svg"
     SYMBOLIC
 )
 
@@ -946,6 +1105,12 @@ target_compile_definitions(Skia PRIVATE
 
     SK_GAMMA_APPLY_TO_A8
 )
+
+# SK_DEBUG enables consistency checks. Most of the time this will not be
+# useful to develop WebKit, but provide a toggle that developers may flip
+# nevertheless to help catch incorrect Skia API uses when desired.
+option(SKIA_DEBUG "Enable internal Skia consistency checks" OFF)
+mark_as_advanced(SKIA_DEBUG)
 
 target_compile_definitions(Skia PUBLIC
     SK_DISABLE_LEGACY_GL_MAKE_NATIVE_INTERFACE
@@ -959,10 +1124,7 @@ target_compile_definitions(Skia PUBLIC
 
     SK_R32_SHIFT=16
 
-    # Use SK_RELEASE for all build types, even "Debug". The alternative
-    # is SK_DEBUG, which enables consistency checks useful to develop
-    # Skia itself, but not so much for WebKit development.
-    SK_RELEASE
+    $<IF:$<BOOL:${SKIA_DEBUG}>,SK_DEBUG,SK_RELEASE>
 )
 
 #
@@ -996,10 +1158,11 @@ target_compile_definitions(Skia PUBLIC
     SK_ASSUME_WEBGL=0
 )
 
-#
-# FIXME: Support options other than FreeType + FontConfig
-#
-target_compile_definitions(Skia PRIVATE SK_TYPEFACE_FACTORY_FREETYPE)
+if (WIN32)
+    target_compile_definitions(Skia PRIVATE SK_TYPEFACE_FACTORY_DIRECTWRITE)
+else ()
+    target_compile_definitions(Skia PRIVATE SK_TYPEFACE_FACTORY_FREETYPE)
+endif ()
 
 #
 # The SkCMS module includes AVX/SSE optimizations, which may need additional
@@ -1043,3 +1206,5 @@ if (Skia_SkCMS_SKX_OPTS)
 else ()
     target_compile_definitions(Skia PRIVATE SKCMS_DISABLE_SKX)
 endif ()
+
+add_library(Skia::Skia ALIAS Skia)

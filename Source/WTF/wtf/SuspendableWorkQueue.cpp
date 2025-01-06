@@ -156,7 +156,7 @@ void SuspendableWorkQueue::suspendIfNeeded()
     suspendFunction();
     invokeAllSuspensionCompletionHandlers();
 
-    while (m_state != State::Running)
+    while (m_state == State::Suspended)
         m_suspensionCondition.wait(m_suspensionLock);
 
     RELEASE_LOG_IF(m_shouldLog, SuspendableWorkQueue, "%p - SuspendableWorkQueue::suspendIfNeeded end suspension", this);

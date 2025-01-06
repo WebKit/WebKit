@@ -113,9 +113,9 @@ class NetworkMonitorInterface {
   // Bind a socket to an interface specified by ip address and/or interface
   // name. Only implemented on Android.
   virtual NetworkBindingResult BindSocketToNetwork(
-      int socket_fd,
-      const IPAddress& address,
-      absl::string_view interface_name) {
+      int /* socket_fd */,
+      const IPAddress& /* address */,
+      absl::string_view /* interface_name */) {
     return NetworkBindingResult::NOT_IMPLEMENTED;
   }
 

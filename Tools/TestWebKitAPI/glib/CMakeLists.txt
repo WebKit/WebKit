@@ -109,6 +109,7 @@ set(WebKitGLibAPITests_DEFINITIONS
     WEBKIT_SRC_DIR="${CMAKE_SOURCE_DIR}"
     WEBKIT_TEST_WEB_PROCESS_EXTENSIONS_DIR="${TEST_LIBRARY_DIR}"
     WEBKIT_INJECTED_BUNDLE_PATH="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+    WEBKIT_INSPECTOR_RESOURCES_PATH="${CMAKE_BINARY_DIR}/share"
     WEBKIT_TEST_RESOURCES_DIR="${TEST_RESOURCES_DIR}"
 )
 
@@ -121,6 +122,27 @@ target_link_libraries(WebKitGLibAPITestsCore ${WebKitGLibAPITestsCore_LIBRARIES}
 
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebKitGLibAPITestsCore -Wno-unused-parameter)
+endif ()
+
+if (ENABLE_WPE_PLATFORM)
+    add_executable(TestWPESettings
+        ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/TestMain.cpp
+        ${TOOLS_DIR}/TestWebKitAPI/Tests/WPEPlatform/TestSettings.cpp
+    )
+    target_link_libraries(TestWPESettings
+        ${WebKitGLibAPITest_LIBRARIES}
+        WPEPlatform-${WPE_API_VERSION}
+    )
+    target_include_directories(TestWPESettings PRIVATE
+        ${WebKitGLibAPITests_INCLUDE_DIRECTORIES}
+        ${WPEPlatform_DERIVED_SOURCES_DIR}
+        ${WEBKIT_DIR}/WPEPlatform
+    )
+    target_compile_definitions(TestWPESettings PRIVATE ${WebKitGLibAPITests_DEFINITIONS})
+    set_target_properties(TestWPESettings PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/WPEPlatform)
+    if (COMPILER_IS_GCC_OR_CLANG)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(TestWPESettings -Wno-unused-parameter)
+    endif ()
 endif ()
 
 GLIB_COMPILE_RESOURCES(
@@ -139,6 +161,7 @@ ADD_WK2_TEST_WEB_PROCESS_EXTENSION(WebProcessTest ${WebKitGLibAPIWebProcessTests
 ADD_WK2_TEST(TestAuthentication ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp)
 ADD_WK2_TEST(TestAutomationSession ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp)
 ADD_WK2_TEST(TestBackForwardList ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestBackForwardList.cpp)
+ADD_WK2_TEST(TestConsoleMessage ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestConsoleMessage.cpp)
 ADD_WK2_TEST(TestCookieManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp)
 ADD_WK2_TEST(TestDownloads ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp)
 ADD_WK2_TEST(TestWebKitFindController ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitFindController.cpp)
@@ -165,10 +188,12 @@ ADD_WK2_TEST(TestDOMElement ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestDOME
 ADD_WK2_TEST(TestGeolocationManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestGeolocationManager.cpp)
 ADD_WK2_TEST(TestInputMethodContext ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestInputMethodContext.cpp)
 
+if (ENABLE_WK_WEB_EXTENSIONS)
+    ADD_WK2_TEST(TestWebKitWebExtensionMatchPattern ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebExtensionMatchPattern.cpp)
+endif ()
+
 if (ENABLE_2022_GLIB_API)
     ADD_WK2_TEST(TestWebKitNetworkSession ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitNetworkSession.cpp)
-else ()
-    ADD_WK2_TEST(TestConsoleMessage ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestConsoleMessage.cpp)
 endif ()
 
 macro(ADD_WPE_QT_TEST test_name)

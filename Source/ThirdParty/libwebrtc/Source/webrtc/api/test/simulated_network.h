@@ -14,13 +14,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <deque>
-#include <queue>
+#include <functional>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
-#include "rtc_base/random.h"
-#include "rtc_base/thread_annotations.h"
+#include "absl/functional/any_invocable.h"
+#include "api/units/data_rate.h"
 
 namespace webrtc {
 
@@ -58,10 +57,13 @@ struct BuiltInNetworkBehaviorConfig {
   int queue_delay_ms = 0;
   // Standard deviation of the extra delay.
   int delay_standard_deviation_ms = 0;
-  // Link capacity in kbps.
+  // Link capacity in kbps. 0 is treated as infinite capacity.
+  // Deprecated, please use link_capacity instead.
+  // TODO(bugs.webrtc.org/14525): Remove once all usage has migrated.
   int link_capacity_kbps = 0;
-  // Random packet loss.
-  int loss_percent = 0;
+  DataRate link_capacity = DataRate::Infinity();
+  // Random packet loss, range 0 to 100.
+  double loss_percent = 0.;
   // If packets are allowed to be reordered.
   bool allow_reordering = false;
   // The average length of a burst of lost packets.
@@ -114,7 +116,15 @@ class NetworkBehaviorInterface {
   // possible that no packet will be delivered by that time (e.g. in case of
   // random extra delay), in such case this method should be called again to get
   // the updated estimated delivery time.
-  virtual absl::optional<int64_t> NextDeliveryTimeUs() const = 0;
+  virtual std::optional<int64_t> NextDeliveryTimeUs() const = 0;
+  // Registers a callback that should be triggered by an implementation if the
+  // next NextDeliveryTimeUs() has changed between a call to NextDeliveryTimeUs
+  // and DequeueDeliverablePackets.
+  // The intended usage is to invoke NextDeliveryTimeUs and reschedule the
+  // DequeueDeliverablePackets call when network parameters (such as link
+  // capacity) changes.
+  virtual void RegisterDeliveryTimeChangedCallback(
+      absl::AnyInvocable<void()> /* callback */) {}
   virtual ~NetworkBehaviorInterface() = default;
 };
 

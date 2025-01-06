@@ -1,5 +1,7 @@
 /*
  * Copyright (C) Research In Motion Limited 2010-11. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,12 +37,6 @@ void SVGTextLayoutAttributes::clear()
 {
     m_characterDataMap.clear();
     m_textMetricsValues.resize(0);
-}
-
-float SVGTextLayoutAttributes::emptyValue()
-{
-    static float s_emptyValue = std::numeric_limits<float>::max() - 1;
-    return s_emptyValue;
 }
 
 RenderSVGInlineText& SVGTextLayoutAttributes::context() { return m_context.get(); }

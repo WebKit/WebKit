@@ -75,8 +75,8 @@ class SSLAdapter : public AsyncSocketAdapter {
   virtual void SetAlpnProtocols(const std::vector<std::string>& protos) = 0;
   virtual void SetEllipticCurves(const std::vector<std::string>& curves) = 0;
 
-  // Do DTLS or TLS (default is TLS, if unspecified)
-  virtual void SetMode(SSLMode mode) = 0;
+  [[deprecated("Only TLS is supported by the adapter")]] virtual void SetMode(
+      SSLMode mode) = 0;
   // Specify a custom certificate verifier for SSL.
   virtual void SetCertVerifier(SSLCertificateVerifier* ssl_cert_verifier) = 0;
 

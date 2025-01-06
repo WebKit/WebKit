@@ -35,15 +35,19 @@
 #include "VectorMath.h"
 #include <algorithm>
 #include <math.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioChannel);
 
 void AudioChannel::scale(float scale)
 {
     if (isSilent())
         return;
 
-    VectorMath::multiplyByScalar(data(), scale, mutableData(), length());
+    VectorMath::multiplyByScalar(span(), scale, mutableSpan());
 }
 
 void AudioChannel::copyFrom(const AudioChannel* sourceChannel)
@@ -55,7 +59,7 @@ void AudioChannel::copyFrom(const AudioChannel* sourceChannel)
         zero();
         return;
     }
-    memcpy(mutableData(), sourceChannel->data(), sizeof(float) * length());
+    memcpySpan(mutableSpan(), sourceChannel->span().first(length()));
 }
 
 void AudioChannel::copyFromRange(const AudioChannel* sourceChannel, unsigned startFrame, unsigned endFrame)
@@ -76,16 +80,16 @@ void AudioChannel::copyFromRange(const AudioChannel* sourceChannel, unsigned sta
     if (!isRangeLengthSafe)
         return;
 
-    const float* source = sourceChannel->data();
-    float* destination = mutableData();
+    auto source = sourceChannel->span();
+    auto destination = mutableSpan();
 
     if (sourceChannel->isSilent()) {
         if (rangeLength == length())
             zero();
         else
-            memset(destination, 0, sizeof(float) * rangeLength);
+            zeroSpan(destination.first(rangeLength));
     } else
-        memcpy(destination, source + startFrame, sizeof(float) * rangeLength);
+        memcpySpan(destination, source.subspan(startFrame, rangeLength));
 }
 
 void AudioChannel::sumFrom(const AudioChannel* sourceChannel)
@@ -101,7 +105,7 @@ void AudioChannel::sumFrom(const AudioChannel* sourceChannel)
     if (isSilent())
         copyFrom(sourceChannel);
     else
-        VectorMath::add(data(), sourceChannel->data(), mutableData(), length());
+        VectorMath::add(span(), sourceChannel->span().first(length()), mutableSpan());
 }
 
 float AudioChannel::maxAbsValue() const
@@ -109,7 +113,7 @@ float AudioChannel::maxAbsValue() const
     if (isSilent())
         return 0;
 
-    return VectorMath::maximumMagnitude(data(), length());
+    return VectorMath::maximumMagnitude(span());
 }
 
 } // WebCore

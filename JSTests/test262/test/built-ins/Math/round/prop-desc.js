@@ -12,6 +12,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(Math, "round");
-verifyWritable(Math, "round");
-verifyConfigurable(Math, "round");
+verifyProperty(Math, "round", {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

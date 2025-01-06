@@ -10,15 +10,14 @@
 
 #include "api/video_codecs/sdp_video_format.h"
 
-#include <stdint.h>
-
+#include "api/rtp_parameters.h"
 #include "media/base/media_constants.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
 typedef SdpVideoFormat Sdp;
-typedef SdpVideoFormat::Parameters Params;
+typedef CodecParameterMap Params;
 
 TEST(SdpVideoFormatTest, SameCodecNameNoParameters) {
   EXPECT_TRUE(Sdp("H264").IsSameCodec(Sdp("h264")));
@@ -93,7 +92,7 @@ TEST(SdpVideoFormatTest, SameCodecNameDifferentParameters) {
   EXPECT_FALSE(Sdp("H265").IsSameCodec(Sdp(
       "H265",
       Params{{"profile-id", "1"}, {"tier-flag", "1"}, {"level-id", "93"}})));
-  EXPECT_FALSE(Sdp("H265").IsSameCodec(Sdp(
+  EXPECT_TRUE(Sdp("H265").IsSameCodec(Sdp(
       "H265",
       Params{{"profile-id", "1"}, {"tier-flag", "0"}, {"level-id", "90"}})));
   EXPECT_FALSE(
@@ -108,7 +107,7 @@ TEST(SdpVideoFormatTest, SameCodecNameDifferentParameters) {
           .IsSameCodec(Sdp("H265", Params{{"profile-id", "1"},
                                           {"tier-flag", "0"},
                                           {"level-id", "120"}})));
-  EXPECT_FALSE(
+  EXPECT_TRUE(
       Sdp("H265",
           Params{{"profile-id", "1"}, {"tier-flag", "0"}, {"level-id", "93"}})
           .IsSameCodec(Sdp("H265", Params{{"profile-id", "1"},

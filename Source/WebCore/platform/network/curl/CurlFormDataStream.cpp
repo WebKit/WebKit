@@ -146,7 +146,7 @@ std::optional<size_t> CurlFormDataStream::readFromFile(const FormDataElement::En
         return std::nullopt;
     }
 
-    auto readBytes = FileSystem::readFromFile(m_fileHandle, buffer, size);
+    auto readBytes = FileSystem::readFromFile(m_fileHandle, { byteCast<uint8_t>(buffer), size });
     if (readBytes < 0) {
         LOG(Network, "Curl - Failed while trying to read %s for upload\n", fileData.filename.utf8().data());
         FileSystem::closeFile(m_fileHandle);

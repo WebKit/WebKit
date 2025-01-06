@@ -371,7 +371,7 @@ rx::SwapChainD3D *SurfaceD3D::getSwapChain() const
     return mSwapChain;
 }
 
-void SurfaceD3D::setSwapInterval(EGLint interval)
+void SurfaceD3D::setSwapInterval(const egl::Display *display, EGLint interval)
 {
     if (mSwapInterval == interval)
     {

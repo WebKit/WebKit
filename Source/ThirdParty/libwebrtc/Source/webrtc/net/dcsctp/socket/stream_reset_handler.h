@@ -12,14 +12,15 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/functional/bind_front.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/units/time_delta.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/chunk/reconfig_chunk.h"
 #include "net/dcsctp/packet/parameter/incoming_ssn_reset_request_parameter.h"
@@ -80,7 +81,7 @@ class StreamResetHandler {
         reconfig_timer_(timer_manager->CreateTimer(
             "re-config",
             absl::bind_front(&StreamResetHandler::OnReconfigTimerExpiry, this),
-            TimerOptions(DurationMs(0)))),
+            TimerOptions(webrtc::TimeDelta::Zero()))),
         next_outgoing_req_seq_nbr_(
             handover_state
                 ? ReconfigRequestSN(handover_state->tx.next_reset_req_sn)
@@ -102,10 +103,10 @@ class StreamResetHandler {
   void ResetStreams(rtc::ArrayView<const StreamID> outgoing_streams);
 
   // Creates a Reset Streams request that must be sent if returned. Will start
-  // the reconfig timer. Will return absl::nullopt if there is no need to
+  // the reconfig timer. Will return std::nullopt if there is no need to
   // create a request (no streams to reset) or if there already is an ongoing
   // stream reset request that hasn't completed yet.
-  absl::optional<ReConfigChunk> MakeStreamResetRequest();
+  std::optional<ReConfigChunk> MakeStreamResetRequest();
 
   // Called when handling and incoming RE-CONFIG chunk.
   void HandleReConfig(ReConfigChunk chunk);
@@ -123,7 +124,7 @@ class StreamResetHandler {
   class CurrentRequest {
    public:
     CurrentRequest(TSN sender_last_assigned_tsn, std::vector<StreamID> streams)
-        : req_seq_nbr_(absl::nullopt),
+        : req_seq_nbr_(std::nullopt),
           sender_last_assigned_tsn_(sender_last_assigned_tsn),
           streams_(std::move(streams)) {}
 
@@ -151,7 +152,7 @@ class StreamResetHandler {
     // If the receiver can't apply the request yet (and answered "In Progress"),
     // this will be called to prepare the request to be retransmitted at a later
     // time.
-    void PrepareRetransmission() { req_seq_nbr_ = absl::nullopt; }
+    void PrepareRetransmission() { req_seq_nbr_ = std::nullopt; }
 
     // If the request hasn't been sent yet, this assigns it a request number.
     void PrepareToSend(ReconfigRequestSN new_req_seq_nbr) {
@@ -163,7 +164,7 @@ class StreamResetHandler {
     // has been prepared, but has not yet been sent. This is typically used when
     // the peer responded "in progress" and the same request (but a different
     // request number) must be sent again.
-    absl::optional<ReconfigRequestSN> req_seq_nbr_;
+    std::optional<ReconfigRequestSN> req_seq_nbr_;
     // The sender's (that's us) last assigned TSN, from the retransmission
     // queue.
     TSN sender_last_assigned_tsn_;
@@ -175,9 +176,9 @@ class StreamResetHandler {
   bool Validate(const ReConfigChunk& chunk);
 
   // Processes a stream stream reconfiguration chunk and may either return
-  // absl::nullopt (on protocol errors), or a list of responses - either 0, 1
+  // std::nullopt (on protocol errors), or a list of responses - either 0, 1
   // or 2.
-  absl::optional<std::vector<ReconfigurationResponseParameter>> Process(
+  std::optional<std::vector<ReconfigurationResponseParameter>> Process(
       const ReConfigChunk& chunk);
 
   // Creates the actual RE-CONFIG chunk. A request (which set `current_request`)
@@ -211,7 +212,7 @@ class StreamResetHandler {
   void HandleResponse(const ParameterDescriptor& descriptor);
 
   // Expiration handler for the Reconfig timer.
-  absl::optional<DurationMs> OnReconfigTimerExpiry();
+  webrtc::TimeDelta OnReconfigTimerExpiry();
 
   const absl::string_view log_prefix_;
   Context* ctx_;
@@ -225,7 +226,7 @@ class StreamResetHandler {
   ReconfigRequestSN next_outgoing_req_seq_nbr_;
 
   // The current stream request operation.
-  absl::optional<CurrentRequest> current_request_;
+  std::optional<CurrentRequest> current_request_;
 
   // For incoming requests - last processed request sequence number.
   UnwrappedReconfigRequestSn last_processed_req_seq_nbr_;

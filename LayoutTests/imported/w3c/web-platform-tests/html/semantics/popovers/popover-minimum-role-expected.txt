@@ -1,0 +1,5 @@
+Div
+
+FAIL If specified on an element with an implicit role of generic, then the element's role instead maps to group. assert_equals: Closed popover: role is generic expected (string) "generic" but got (undefined) undefined
+FAIL Dynamic changes to popover attribute should change the role. assert_equals: Without popover attribute, role is generic expected (string) "generic" but got (undefined) undefined
+

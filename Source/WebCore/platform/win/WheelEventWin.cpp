@@ -64,7 +64,7 @@ static int horizontalScrollChars()
     return scrollChars;
 }
 
-static int verticalScrollLines()
+static unsigned verticalScrollLines()
 {
     static ULONG scrollLines;
     if (!scrollLines && !SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &scrollLines, 0))
@@ -101,7 +101,7 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, 
     } else {
         m_deltaX = 0;
         m_deltaY = delta;
-        int verticalMultiplier = verticalScrollLines();
+        unsigned verticalMultiplier = verticalScrollLines();
         m_granularity = (verticalMultiplier == WHEEL_PAGESCROLL) ? ScrollByPageWheelEvent : ScrollByPixelWheelEvent;
         if (m_granularity == ScrollByPixelWheelEvent)
             m_deltaY *= static_cast<float>(verticalMultiplier) * cScrollbarPixelsPerLine;

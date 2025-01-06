@@ -41,7 +41,7 @@ class FlaskTestCase(unittest.TestCase):
 
     @classmethod
     def driver(cls):
-        if cls._cached_driver:
+        if not int(os.environ.get('selenium', '0')) or cls._cached_driver:
             return cls._driver
 
         try:

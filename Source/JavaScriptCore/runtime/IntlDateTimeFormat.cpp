@@ -37,20 +37,19 @@
 #include <unicode/ucal.h>
 #include <unicode/uenum.h>
 #include <wtf/Range.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
-#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
 #include <unicode/uformattedvalue.h>
 #ifdef U_HIDE_DRAFT_API
 #undef U_HIDE_DRAFT_API
 #endif
-#endif // HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
 #include <unicode/udateintervalformat.h>
-#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
 #define U_HIDE_DRAFT_API 1
-#endif // HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -159,7 +158,7 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExte
         int32_t nameLength;
         while (const char* availableName = uenum_next(calendars, &nameLength, &status)) {
             ASSERT(U_SUCCESS(status));
-            String calendar = String({ availableName, static_cast<size_t>(nameLength) });
+            String calendar = String(unsafeMakeSpan(availableName, static_cast<size_t>(nameLength)));
             keyLocaleData.append(calendar);
             // Adding "islamicc" candidate for backward compatibility.
             if (calendar == "islamic-civil"_s)
@@ -680,7 +679,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             throwRangeError(globalObject, scope, "calendar is not a well-formed calendar value"_s);
             return;
         }
-        localeOptions[static_cast<unsigned>(RelevantExtensionKey::Ca)] = calendar;
+        localeOptions[static_cast<unsigned>(RelevantExtensionKey::Ca)] = calendar.convertToASCIILowercase();
     }
 
     String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
@@ -722,6 +721,9 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             m_calendar = WTFMove(mapped.value());
         else
             m_calendar = WTFMove(calendar);
+        // Handling "islamicc" candidate for backward compatibility.
+        if (m_calendar == "islamicc"_s)
+            m_calendar = "islamic-civil"_s;
     }
 
     hourCycle = parseHourCycle(resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Hc)]);
@@ -1444,8 +1446,6 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
     return m_dateIntervalFormat.get();
 }
 
-#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
-
 static std::unique_ptr<UFormattedDateInterval, ICUDeleter<udtitvfmt_closeResult>> formattedValueFromDateRange(UDateIntervalFormat& dateIntervalFormat, UDateFormat& dateFormat, double startDate, double endDate, UErrorCode& status)
 {
     auto result = std::unique_ptr<UFormattedDateInterval, ICUDeleter<udtitvfmt_closeResult>>(udtitvfmt_openResult(&status));
@@ -1524,8 +1524,6 @@ static bool dateFieldsPracticallyEqual(const UFormattedValue* formattedValue, UE
     return !hasSpan;
 }
 
-#endif // HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
-
 JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double startDate, double endDate)
 {
     ASSERT(m_dateFormat);
@@ -1544,7 +1542,6 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double sta
     auto* dateIntervalFormat = createDateIntervalFormatIfNecessary(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
     UErrorCode status = U_ZERO_ERROR;
     auto result = formattedValueFromDateRange(*dateIntervalFormat, *m_dateFormat, startDate, endDate, status);
     if (U_FAILURE(status)) {
@@ -1582,17 +1579,6 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double sta
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
 
     return jsString(vm, String(WTFMove(buffer)));
-#else
-    Vector<UChar, 32> buffer;
-    auto status = callBufferProducingFunction(udtitvfmt_format, dateIntervalFormat, startDate, endDate, buffer, nullptr);
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-        return { };
-    }
-    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
-
-    return jsString(vm, String(WTFMove(buffer)));
-#endif
 }
 
 JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, double startDate, double endDate)
@@ -1602,7 +1588,6 @@ JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, dou
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
     // http://tc39.es/proposal-intl-DateTimeFormat-formatRange/#sec-partitiondatetimerangepattern
     startDate = timeClip(startDate);
     endDate = timeClip(endDate);
@@ -1806,13 +1791,9 @@ JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, dou
     }
 
     return parts;
-#else
-    UNUSED_PARAM(startDate);
-    UNUSED_PARAM(endDate);
-    throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-    return { };
-#endif
 }
 
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -55,26 +55,27 @@ static NSInteger const kARDAppEngineClientErrorBadResponse = -1;
   RTCLog(@"Joining room:%@ on room server.", roomId);
   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:roomURL];
   request.HTTPMethod = @"POST";
-  [NSURLConnection sendAsyncRequest:request
-                  completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                    if (error) {
-                      if (completionHandler) {
-                        completionHandler(nil, error);
-                      }
-                      return;
-                    }
-                    ARDJoinResponse *joinResponse = [ARDJoinResponse responseFromJSONData:data];
-                    if (!joinResponse) {
-                      if (completionHandler) {
-                        NSError *error = [[self class] badResponseError];
-                        completionHandler(nil, error);
-                      }
-                      return;
-                    }
-                    if (completionHandler) {
-                      completionHandler(joinResponse, nil);
-                    }
-                  }];
+  [NSURLConnection
+       sendAsyncRequest:request
+      completionHandler:^(NSURLResponse *response __unused, NSData *data, NSError *error) {
+        if (error) {
+          if (completionHandler) {
+            completionHandler(nil, error);
+          }
+          return;
+        }
+        ARDJoinResponse *joinResponse = [ARDJoinResponse responseFromJSONData:data];
+        if (!joinResponse) {
+          if (completionHandler) {
+            NSError *error = [[self class] badResponseError];
+            completionHandler(nil, error);
+          }
+          return;
+        }
+        if (completionHandler) {
+          completionHandler(joinResponse, nil);
+        }
+      }];
 }
 
 - (void)sendMessage:(ARDSignalingMessage *)message
@@ -95,29 +96,27 @@ static NSInteger const kARDAppEngineClientErrorBadResponse = -1;
   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
   request.HTTPMethod = @"POST";
   request.HTTPBody = data;
-  [NSURLConnection sendAsyncRequest:request
-                  completionHandler:^(NSURLResponse *response,
-                                      NSData *data,
-                                      NSError *error) {
-    if (error) {
-      if (completionHandler) {
-        completionHandler(nil, error);
-      }
-      return;
-    }
-    ARDMessageResponse *messageResponse =
-        [ARDMessageResponse responseFromJSONData:data];
-    if (!messageResponse) {
-      if (completionHandler) {
-        NSError *error = [[self class] badResponseError];
-        completionHandler(nil, error);
-      }
-      return;
-    }
-    if (completionHandler) {
-      completionHandler(messageResponse, nil);
-    }
-  }];
+  [NSURLConnection
+       sendAsyncRequest:request
+      completionHandler:^(NSURLResponse *response __unused, NSData *data, NSError *error) {
+        if (error) {
+          if (completionHandler) {
+            completionHandler(nil, error);
+          }
+          return;
+        }
+        ARDMessageResponse *messageResponse = [ARDMessageResponse responseFromJSONData:data];
+        if (!messageResponse) {
+          if (completionHandler) {
+            NSError *error = [[self class] badResponseError];
+            completionHandler(nil, error);
+          }
+          return;
+        }
+        if (completionHandler) {
+          completionHandler(messageResponse, nil);
+        }
+      }];
 }
 
 - (void)leaveRoomWithRoomId:(NSString *)roomId
@@ -138,13 +137,14 @@ static NSInteger const kARDAppEngineClientErrorBadResponse = -1;
   // We want a synchronous request so that we know that we've left the room on
   // room server before we do any further work.
   dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-  [NSURLConnection sendAsyncRequest:request
-                  completionHandler:^(NSURLResponse *response, NSData *data, NSError *e) {
-                    if (e) {
-                      error = e;
-                    }
-                    dispatch_semaphore_signal(sem);
-                  }];
+  [NSURLConnection
+       sendAsyncRequest:request
+      completionHandler:^(NSURLResponse *response __unused, NSData *data __unused, NSError *e) {
+        if (e) {
+          error = e;
+        }
+        dispatch_semaphore_signal(sem);
+      }];
 
   dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
   if (error) {

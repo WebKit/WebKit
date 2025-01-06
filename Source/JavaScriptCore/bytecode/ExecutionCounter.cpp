@@ -213,8 +213,5 @@ void ExecutionCounter<countingVariant>::dump(PrintStream& out) const
 template class ExecutionCounter<CountingForBaseline>;
 template class ExecutionCounter<CountingForUpperTiers>;
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(BaselineExecutionCounter);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(UpperTierExecutionCounter);
-
 } // namespace JSC
 

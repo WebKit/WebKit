@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -243,14 +243,14 @@ typedef struct {
 #endif  // CONFIG_COLLECT_PARTITION_STATS
 } PartitionSearchState;
 
-static AOM_INLINE void av1_disable_square_split_partition(
+static inline void av1_disable_square_split_partition(
     PartitionSearchState *part_state) {
   part_state->do_square_split = 0;
 }
 
 // Disables all possible rectangular splits. This includes PARTITION_AB4 as they
 // depend on the corresponding partition_rect_allowed.
-static AOM_INLINE void av1_disable_rect_partitions(
+static inline void av1_disable_rect_partitions(
     PartitionSearchState *part_state) {
   part_state->do_rectangular_split = 0;
   part_state->partition_rect_allowed[HORZ] = 0;
@@ -258,25 +258,23 @@ static AOM_INLINE void av1_disable_rect_partitions(
 }
 
 // Disables all possible splits so that only PARTITION_NONE *might* be allowed.
-static AOM_INLINE void av1_disable_all_splits(
-    PartitionSearchState *part_state) {
+static inline void av1_disable_all_splits(PartitionSearchState *part_state) {
   av1_disable_square_split_partition(part_state);
   av1_disable_rect_partitions(part_state);
 }
 
-static AOM_INLINE void av1_set_square_split_only(
-    PartitionSearchState *part_state) {
+static inline void av1_set_square_split_only(PartitionSearchState *part_state) {
   part_state->partition_none_allowed = 0;
   part_state->do_square_split = 1;
   av1_disable_rect_partitions(part_state);
 }
 
-static AOM_INLINE bool av1_blk_has_rows_and_cols(
+static inline bool av1_blk_has_rows_and_cols(
     const PartitionBlkParams *blk_params) {
   return blk_params->has_rows && blk_params->has_cols;
 }
 
-static AOM_INLINE bool av1_is_whole_blk_in_frame(
+static inline bool av1_is_whole_blk_in_frame(
     const PartitionBlkParams *blk_params,
     const CommonModeInfoParams *mi_params) {
   const int mi_row = blk_params->mi_row, mi_col = blk_params->mi_col;
@@ -285,9 +283,9 @@ static AOM_INLINE bool av1_is_whole_blk_in_frame(
          mi_col + mi_size_wide[bsize] <= mi_params->mi_cols;
 }
 
-static AOM_INLINE void update_filter_type_cdf(const MACROBLOCKD *xd,
-                                              const MB_MODE_INFO *mbmi,
-                                              int dual_filter) {
+static inline void update_filter_type_cdf(const MACROBLOCKD *xd,
+                                          const MB_MODE_INFO *mbmi,
+                                          int dual_filter) {
   for (int dir = 0; dir < 2; ++dir) {
     if (dir && !dual_filter) break;
     const int ctx = av1_get_pred_context_switchable_interp(xd, dir);
@@ -297,8 +295,8 @@ static AOM_INLINE void update_filter_type_cdf(const MACROBLOCKD *xd,
   }
 }
 
-static AOM_INLINE int set_rdmult(const AV1_COMP *const cpi,
-                                 const MACROBLOCK *const x, int segment_id) {
+static inline int set_rdmult(const AV1_COMP *const cpi,
+                             const MACROBLOCK *const x, int segment_id) {
   const AV1_COMMON *const cm = &cpi->common;
   const GF_GROUP *const gf_group = &cpi->ppi->gf_group;
   const CommonQuantParams *quant_params = &cm->quant_params;
@@ -322,13 +320,13 @@ static AOM_INLINE int set_rdmult(const AV1_COMP *const cpi,
       cpi->oxcf.q_cfg.use_fixed_qp_offsets, is_stat_consumption_stage(cpi));
 }
 
-static AOM_INLINE int do_split_check(BLOCK_SIZE bsize) {
+static inline int do_split_check(BLOCK_SIZE bsize) {
   return (bsize == BLOCK_16X16 || bsize == BLOCK_32X32);
 }
 
 #if !CONFIG_REALTIME_ONLY
-static AOM_INLINE const FIRSTPASS_STATS *read_one_frame_stats(const TWO_PASS *p,
-                                                              int frm) {
+static inline const FIRSTPASS_STATS *read_one_frame_stats(const TWO_PASS *p,
+                                                          int frm) {
   assert(frm >= 0);
   if (frm < 0 ||
       p->stats_buf_ctx->stats_in_start + frm > p->stats_buf_ctx->stats_in_end) {
@@ -358,10 +356,6 @@ int av1_get_q_for_hdr(AV1_COMP *const cpi, MACROBLOCK *const x,
 int av1_get_cb_rdmult(const AV1_COMP *const cpi, MACROBLOCK *const x,
                       const BLOCK_SIZE bsize, const int mi_row,
                       const int mi_col);
-
-int av1_get_hier_tpl_rdmult(const AV1_COMP *const cpi, MACROBLOCK *const x,
-                            const BLOCK_SIZE bsize, const int mi_row,
-                            const int mi_col, int orig_rdmult);
 #endif  // !CONFIG_REALTIME_ONLY
 
 void av1_set_ssim_rdmult(const AV1_COMP *const cpi, int *errorperbit,
@@ -432,8 +426,7 @@ void av1_set_cost_upd_freq(AV1_COMP *cpi, ThreadData *td,
 
 void av1_dealloc_src_diff_buf(struct macroblock *mb, int num_planes);
 
-static AOM_INLINE void av1_dealloc_mb_data(struct macroblock *mb,
-                                           int num_planes) {
+static inline void av1_dealloc_mb_data(struct macroblock *mb, int num_planes) {
   aom_free(mb->txfm_search_info.mb_rd_record);
   mb->txfm_search_info.mb_rd_record = NULL;
 
@@ -452,8 +445,8 @@ static AOM_INLINE void av1_dealloc_mb_data(struct macroblock *mb,
   mb->dqcoeff_buf = NULL;
 }
 
-static AOM_INLINE void allocate_winner_mode_stats(const AV1_COMP *cpi,
-                                                  struct macroblock *mb) {
+static inline void allocate_winner_mode_stats(const AV1_COMP *cpi,
+                                              struct macroblock *mb) {
   const SPEED_FEATURES *sf = &cpi->sf;
   // The winner_mode_stats buffer is not required in these cases.
   if (is_stat_generation_stage(cpi) ||
@@ -471,8 +464,8 @@ static AOM_INLINE void allocate_winner_mode_stats(const AV1_COMP *cpi,
 
 void av1_alloc_src_diff_buf(const struct AV1Common *cm, struct macroblock *mb);
 
-static AOM_INLINE void av1_alloc_mb_data(const AV1_COMP *cpi,
-                                         struct macroblock *mb) {
+static inline void av1_alloc_mb_data(const AV1_COMP *cpi,
+                                     struct macroblock *mb) {
   const AV1_COMMON *cm = &cpi->common;
   const SPEED_FEATURES *sf = &cpi->sf;
   if (!sf->rt_sf.use_nonrd_pick_mode) {
@@ -504,7 +497,7 @@ static AOM_INLINE void av1_alloc_mb_data(const AV1_COMP *cpi,
 
 // This function will compute the number of reference frames to be disabled
 // based on selective_ref_frame speed feature.
-static AOM_INLINE unsigned int get_num_refs_to_disable(
+static inline unsigned int get_num_refs_to_disable(
     const AV1_COMP *cpi, const int *ref_frame_flags,
     const unsigned int *ref_display_order_hint,
     unsigned int cur_frame_display_index) {
@@ -538,7 +531,7 @@ static AOM_INLINE unsigned int get_num_refs_to_disable(
   return num_refs_to_disable;
 }
 
-static INLINE int get_max_allowed_ref_frames(
+static inline int get_max_allowed_ref_frames(
     const AV1_COMP *cpi, const int *ref_frame_flags,
     const unsigned int *ref_display_order_hint,
     unsigned int cur_frame_display_index) {
@@ -553,7 +546,7 @@ static INLINE int get_max_allowed_ref_frames(
 
 // Enforce the number of references for each arbitrary frame based on user
 // options and speed.
-static AOM_INLINE void enforce_max_ref_frames(
+static inline void enforce_max_ref_frames(
     AV1_COMP *cpi, int *ref_frame_flags,
     const unsigned int *ref_display_order_hint,
     unsigned int cur_frame_display_index) {

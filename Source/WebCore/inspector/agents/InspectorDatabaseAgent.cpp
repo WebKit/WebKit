@@ -47,6 +47,7 @@
 #include "VoidCallback.h"
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -54,6 +55,8 @@ namespace WebCore {
 using namespace Inspector;
 
 using ExecuteSQLCallback = Inspector::DatabaseBackendDispatcherHandler::ExecuteSQLCallback;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDatabaseAgent);
 
 namespace {
 
@@ -72,6 +75,8 @@ public:
     {
         return adoptRef(*new StatementCallback(context, WTFMove(requestCallback)));
     }
+
+    bool hasCallback() const final { return true; }
 
 private:
     StatementCallback(ScriptExecutionContext* context, Ref<ExecuteSQLCallback>&& requestCallback)
@@ -101,6 +106,11 @@ private:
         return { };
     }
 
+    CallbackResult<void> handleEventRethrowingException(SQLTransaction& transaction, SQLResultSet& resultSet) final
+    {
+        return handleEvent(transaction, resultSet);
+    }
+
     Ref<ExecuteSQLCallback> m_requestCallback;
 };
 
@@ -110,6 +120,8 @@ public:
     {
         return adoptRef(*new StatementErrorCallback(context, WTFMove(requestCallback)));
     }
+
+    bool hasCallback() const final { return true; }
 
 private:
     StatementErrorCallback(ScriptExecutionContext* context, Ref<ExecuteSQLCallback>&& requestCallback)
@@ -124,6 +136,11 @@ private:
         return true;
     }
 
+    CallbackResult<bool> handleEventRethrowingException(SQLTransaction& transaction, SQLError& error) final
+    {
+        return handleEvent(transaction, error);
+    }
+
     Ref<ExecuteSQLCallback> m_requestCallback;
 };
 
@@ -133,6 +150,8 @@ public:
     {
         return adoptRef(*new TransactionCallback(context, sqlStatement, WTFMove(requestCallback)));
     }
+
+    bool hasCallback() const final { return true; }
 
 private:
     TransactionCallback(ScriptExecutionContext* context, const String& sqlStatement, Ref<ExecuteSQLCallback>&& requestCallback)
@@ -153,6 +172,11 @@ private:
         return { };
     }
 
+    CallbackResult<void> handleEventRethrowingException(SQLTransaction& transaction) final
+    {
+        return handleEvent(transaction);
+    }
+
     String m_sqlStatement;
     Ref<ExecuteSQLCallback> m_requestCallback;
 };
@@ -163,6 +187,8 @@ public:
     {
         return adoptRef(*new TransactionErrorCallback(context, WTFMove(requestCallback)));
     }
+
+    bool hasCallback() const final { return true; }
 
 private:
     TransactionErrorCallback(ScriptExecutionContext* context, Ref<ExecuteSQLCallback>&& requestCallback)
@@ -177,6 +203,11 @@ private:
         return { };
     }
 
+    CallbackResult<void> handleEventRethrowingException(SQLError& error) final
+    {
+        return handleEvent(error);
+    }
+
     Ref<ExecuteSQLCallback> m_requestCallback;
 };
 
@@ -188,6 +219,9 @@ public:
     }
 
     CallbackResult<void> handleEvent() final { return { }; }
+    CallbackResult<void> handleEventRethrowingException() final { return { }; }
+
+    bool hasCallback() const final { return true; }
 
 private:
     TransactionSuccessCallback(ScriptExecutionContext* context)

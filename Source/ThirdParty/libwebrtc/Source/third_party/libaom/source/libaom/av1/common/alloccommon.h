@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -50,8 +50,10 @@ void av1_alloc_cdef_buffers(struct AV1Common *const cm,
 void av1_free_cdef_buffers(struct AV1Common *const cm,
                            struct AV1CdefWorker **cdef_worker,
                            struct AV1CdefSyncData *cdef_sync);
+#if !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 void av1_alloc_restoration_buffers(struct AV1Common *cm, bool is_sgr_enabled);
 void av1_free_restoration_buffers(struct AV1Common *cm);
+#endif  // !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 
 int av1_alloc_state_buffers(struct AV1Common *cm, int width, int height);
 void av1_free_state_buffers(struct AV1Common *cm);

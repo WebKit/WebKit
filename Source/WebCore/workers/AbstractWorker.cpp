@@ -36,11 +36,11 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WorkerOptions.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AbstractWorker);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AbstractWorker);
 
 FetchOptions AbstractWorker::workerFetchOptions(const WorkerOptions& options, FetchOptions::Destination destination)
 {
@@ -65,7 +65,7 @@ ExceptionOr<URL> AbstractWorker::resolveURL(const String& url)
     if (!scriptURL.isValid())
         return Exception { ExceptionCode::SyntaxError };
 
-    if (!context.securityOrigin()->canRequest(scriptURL, OriginAccessPatternsForWebProcess::singleton()) && !scriptURL.protocolIsData())
+    if (!context.protectedSecurityOrigin()->canRequest(scriptURL, OriginAccessPatternsForWebProcess::singleton()) && !scriptURL.protocolIsData())
         return Exception { ExceptionCode::SecurityError };
 
     ASSERT(context.contentSecurityPolicy());

@@ -33,8 +33,11 @@
 #include "ContentType.h"
 #include "MediaPlayer.h"
 #include "PlatformMediaResourceLoader.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyCDMPrivateClearKey);
 
 bool LegacyCDMPrivateClearKey::supportsKeySystem(const String& keySystem)
 {
@@ -54,14 +57,24 @@ bool LegacyCDMPrivateClearKey::supportsKeySystemAndMimeType(const String& keySys
     return MediaPlayer::supportsKeySystem(keySystem, mimeType);
 }
 
-bool LegacyCDMPrivateClearKey::supportsMIMEType(const String& mimeType)
+bool LegacyCDMPrivateClearKey::supportsMIMEType(const String& mimeType) const
 {
     return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
 }
 
-std::unique_ptr<LegacyCDMSession> LegacyCDMPrivateClearKey::createSession(LegacyCDMSessionClient& client)
+RefPtr<LegacyCDMSession> LegacyCDMPrivateClearKey::createSession(LegacyCDMSessionClient& client)
 {
-    return makeUnique<CDMSessionClearKey>(client);
+    return CDMSessionClearKey::create(client);
+}
+
+void LegacyCDMPrivateClearKey::ref() const
+{
+    m_cdm->ref();
+}
+
+void LegacyCDMPrivateClearKey::deref() const
+{
+    m_cdm->deref();
 }
 
 }

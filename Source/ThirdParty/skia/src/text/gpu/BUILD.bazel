@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 GPU_FILES = [
     "DistanceFieldAdjustTable.cpp",
@@ -16,8 +14,6 @@ GPU_FILES = [
     "GlyphVector.h",
     "SDFMaskFilter.cpp",
     "SDFMaskFilter.h",
-    "SDFTControl.cpp",
-    "SDFTControl.h",
     "Slug.cpp",
     "SlugImpl.cpp",
     "SlugImpl.h",
@@ -28,6 +24,8 @@ GPU_FILES = [
     "SubRunAllocator.h",
     "SubRunContainer.cpp",
     "SubRunContainer.h",
+    "SubRunControl.cpp",
+    "SubRunControl.h",
     "TextBlob.cpp",
     "TextBlob.h",
     "TextBlobRedrawCoordinator.cpp",
@@ -39,22 +37,8 @@ GPU_FILES = [
 split_srcs_and_hdrs(
     name = "gpu",
     files = GPU_FILES,
-)
-
-skia_filegroup(
-    name = "srcs",
-    srcs = [":gpu_srcs"],
     visibility = [
-        "//src:__pkg__",
         "//src/gpu/ganesh:__pkg__",
-    ],
-)
-
-skia_filegroup(
-    name = "private_hdrs",
-    srcs = [":gpu_hdrs"],
-    visibility = [
-        "//src:__pkg__",
-        "//src/gpu/ganesh:__pkg__",
+        "//src/gpu/graphite:__pkg__",
     ],
 )

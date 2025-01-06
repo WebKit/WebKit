@@ -34,11 +34,11 @@
 
 #import "CocoaHelpers.h"
 #import "ResourceLoadInfo.h"
+#import "WKWebExtensionMatchPattern.h"
 #import "WebExtensionTabIdentifier.h"
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
 #import "_WKResourceLoadInfo.h"
-#import "_WKWebExtensionMatchPattern.h"
 
 using namespace WebKit;
 
@@ -48,7 +48,7 @@ static NSString *typesKey = @"types";
 static NSString *tabIdKey = @"tabId";
 static NSString *windowIdKey = @"windowId";
 
-_WKWebExtensionWebRequestResourceType _WKWebExtensionWebRequestResourceTypeFromResourceLoadInfo(const ResourceLoadInfo& resourceLoadInfo)
+_WKWebExtensionWebRequestResourceType toWebExtensionWebRequestResourceType(const ResourceLoadInfo& resourceLoadInfo)
 {
     switch (resourceLoadInfo.type) {
     case ResourceLoadInfo::Type::Document:
@@ -89,7 +89,7 @@ _WKWebExtensionWebRequestResourceType _WKWebExtensionWebRequestResourceTypeFromR
 @implementation _WKWebExtensionWebRequestFilter {
     std::optional<WebExtensionTabIdentifier> _tabID;
     std::optional<WebExtensionWindowIdentifier> _windowID;
-    NSArray<_WKWebExtensionMatchPattern *> *_urlPatterns;
+    NSArray<WKWebExtensionMatchPattern *> *_urlPatterns;
     NSSet<NSNumber *> *_types;
 }
 
@@ -120,21 +120,22 @@ _WKWebExtensionWebRequestResourceType _WKWebExtensionWebRequestResourceTypeFromR
     return self;
 }
 
-static NSArray<_WKWebExtensionMatchPattern *> *toMatchPatterns(NSArray<NSString *> *value, NSString **outErrorMessage)
+static NSArray<WKWebExtensionMatchPattern *> *toMatchPatterns(NSArray<NSString *> *value, NSString **outErrorMessage)
 {
     if (!value.count)
         return nil;
 
     NSError *error;
 
-    NSMutableArray<_WKWebExtensionMatchPattern *> *patterns = [[NSMutableArray alloc] init];
+    NSMutableArray<WKWebExtensionMatchPattern *> *patterns = [[NSMutableArray alloc] init];
     for (NSString *rawPattern in value) {
-        _WKWebExtensionMatchPattern *pattern = [[_WKWebExtensionMatchPattern alloc] initWithString:rawPattern error:&error];
+        WKWebExtensionMatchPattern *pattern = [[WKWebExtensionMatchPattern alloc] initWithString:rawPattern error:&error];
         if (!pattern) {
             if (outErrorMessage)
-                *outErrorMessage = toErrorString(nil, urlsKey, @"'%@' is an invalid match pattern. %@", rawPattern, error.userInfo[NSDebugDescriptionErrorKey]);
+                *outErrorMessage = toErrorString(nil, urlsKey, @"'%@' is an invalid match pattern. %@", rawPattern, error.localizedDescription);
             return nil;
         }
+
         [patterns addObject:pattern];
     }
 
@@ -227,7 +228,7 @@ static std::optional<WebExtensionWindowIdentifier> toWindowID(NSNumber *rawValue
 
     if (_urlPatterns) {
         BOOL hasURLMatch = NO;
-        for (_WKWebExtensionMatchPattern *pattern in _urlPatterns) {
+        for (WKWebExtensionMatchPattern *pattern in _urlPatterns) {
             if ([pattern matchesURL:URL]) {
                 hasURLMatch = YES;
                 break;
@@ -263,7 +264,7 @@ static std::optional<WebExtensionWindowIdentifier> toWindowID(NSNumber *rawValue
     return NO;
 }
 
-_WKWebExtensionWebRequestResourceType _WKWebExtensionWebRequestResourceTypeFromResourceLoadInfo(const WebKit::ResourceLoadInfo&)
+_WKWebExtensionWebRequestResourceType toWebExtensionWebRequestResourceType(const WebKit::ResourceLoadInfo&)
 {
     return _WKWebExtensionWebRequestResourceTypeOther;
 }

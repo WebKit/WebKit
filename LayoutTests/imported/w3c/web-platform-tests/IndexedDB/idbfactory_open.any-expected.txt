@@ -1,0 +1,31 @@
+
+PASS IDBFactory.open() - request has no source
+PASS IDBFactory.open() - database 'name' and 'version' are correctly set
+PASS IDBFactory.open() - no version opens current database
+PASS IDBFactory.open() - new database has default version
+PASS IDBFactory.open() - new database is empty
+PASS IDBFactory.open() - open database with a lower version than current
+PASS IDBFactory.open() - open database with a higher version than current
+PASS IDBFactory.open() - error in version change transaction aborts open
+PASS Calling open() with version argument -1 should throw TypeError.
+PASS Calling open() with version argument -0.5 should throw TypeError.
+PASS Calling open() with version argument 0 should throw TypeError.
+PASS Calling open() with version argument 0.5 should throw TypeError.
+PASS Calling open() with version argument 0.8 should throw TypeError.
+PASS Calling open() with version argument 9007199254740992 should throw TypeError.
+PASS Calling open() with version argument NaN should throw TypeError.
+PASS Calling open() with version argument Infinity should throw TypeError.
+PASS Calling open() with version argument -Infinity should throw TypeError.
+PASS Calling open() with version argument "foo" should throw TypeError.
+PASS Calling open() with version argument null should throw TypeError.
+PASS Calling open() with version argument false should throw TypeError.
+PASS Calling open() with version argument object should throw TypeError.
+PASS Calling open() with version argument object (second) should throw TypeError.
+PASS Calling open() with version argument object (third) should throw TypeError.
+PASS Calling open() with version argument 1.5 should not throw.
+PASS Calling open() with version argument 9007199254740991 should not throw.
+PASS Calling open() with version argument undefined should not throw.
+PASS IDBFactory.open() - error in upgradeneeded resets db
+PASS IDBFactory.open() - second open's transaction is available to get objectStores
+PASS IDBFactory.open() - upgradeneeded gets VersionChangeEvent
+

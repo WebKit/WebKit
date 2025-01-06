@@ -25,12 +25,18 @@
 
 #include "HTMLMetaCharsetParser.h"
 #include "HTMLNames.h"
+#include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include <pal/text/TextCodec.h>
 #include <pal/text/TextEncoding.h>
 #include <pal/text/TextEncodingDetector.h>
 #include <pal/text/TextEncodingRegistry.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/ParsingUtilities.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -70,12 +76,9 @@ static int find(const uint8_t* subject, size_t subjectLength, const char* target
     return -1;
 }
 
-static PAL::TextEncoding findTextEncoding(const uint8_t* encodingName, int length)
+static PAL::TextEncoding findTextEncoding(std::span<const LChar> encodingName)
 {
-    Vector<char, 64> buffer(length + 1);
-    memcpy(buffer.data(), encodingName, length);
-    buffer[length] = '\0';
-    return buffer.data();
+    return StringView { encodingName };
 }
 
 class KanjiCode {
@@ -329,7 +332,7 @@ static inline bool shouldPrependBOM(std::span<const uint8_t> data)
 // https://encoding.spec.whatwg.org/#utf-8-decode
 String TextResourceDecoder::textFromUTF8(std::span<const uint8_t> data)
 {
-    auto decoder = TextResourceDecoder::create("text/plain"_s, "UTF-8");
+    auto decoder = TextResourceDecoder::create("text/plain"_s, "UTF-8"_s);
     if (shouldPrependBOM(data)) {
         constexpr std::array<uint8_t, 3> bom = { 0xEF, 0xBB, 0xBF };
         decoder->decode(bom);
@@ -349,7 +352,7 @@ void TextResourceDecoder::setEncoding(const PAL::TextEncoding& encoding, Encodin
     // When encoding comes from meta tag (i.e. it cannot be XML files sent via XHR),
     // treat x-user-defined as windows-1252 (bug 18270)
     if (source == EncodingFromMetaTag && equalLettersIgnoringASCIICase(encoding.name(), "x-user-defined"_s))
-        m_encoding = "windows-1252";
+        m_encoding = "windows-1252"_s;
     else if (source == EncodingFromMetaTag || source == EncodingFromXMLHeader || source == EncodingFromCSSCharset)        
         m_encoding = encoding.closestByteBasedEquivalent();
     else
@@ -457,33 +460,31 @@ bool TextResourceDecoder::checkForCSSCharset(std::span<const uint8_t> data, bool
 
     size_t oldSize = m_buffer.size();
     m_buffer.grow(oldSize + data.size());
-    memcpy(m_buffer.data() + oldSize, data.data(), data.size());
+    memcpySpan(m_buffer.mutableSpan().subspan(oldSize), data);
 
     movedDataToBuffer = true;
 
     if (m_buffer.size() <= 13) // strlen('@charset "x";') == 13
         return false;
 
-    const uint8_t* dataStart = m_buffer.data();
-    const uint8_t* dataEnd = dataStart + m_buffer.size();
+    data = m_buffer.span();
 
-    if (bytesEqual(dataStart, '@', 'c', 'h', 'a', 'r', 's', 'e', 't', ' ', '"')) {
-        dataStart += 10;
-        const uint8_t* pos = dataStart;
+    if (skipCharactersExactly(data, "@charset \""_span)) {
+        size_t index = 0;
+        while (index < data.size() && data[index] != '"')
+            ++index;
 
-        while (pos < dataEnd && *pos != '"')
-            ++pos;
-        if (pos == dataEnd)
+        if (index == data.size())
             return false;
 
-        int encodingNameLength = pos - dataStart;
+        auto encodingName = data.first(index);
         
-        ++pos;
-        if (pos == dataEnd)
+        ++index;
+        if (index == data.size())
             return false;
 
-        if (*pos == ';')
-            setEncoding(findTextEncoding(dataStart, encodingNameLength), EncodingFromCSSCharset);
+        if (data[index] == ';')
+            setEncoding(findTextEncoding(encodingName), EncodingFromCSSCharset);
     }
 
     m_checkedForCSSCharset = true;
@@ -502,7 +503,7 @@ bool TextResourceDecoder::checkForHeadCharset(std::span<const uint8_t> data, boo
 
     size_t oldSize = m_buffer.size();
     m_buffer.grow(oldSize + data.size());
-    memcpy(m_buffer.data() + oldSize, data.data(), data.size());
+    memcpySpan(m_buffer.mutableSpan().subspan(oldSize), data);
 
     movedDataToBuffer = true;
 
@@ -510,31 +511,32 @@ bool TextResourceDecoder::checkForHeadCharset(std::span<const uint8_t> data, boo
     if (m_charsetParser)
         return checkForMetaCharset(data);
 
-    const uint8_t* ptr = m_buffer.data();
-    const uint8_t* pEnd = ptr + m_buffer.size();
+    auto bufferData = m_buffer.span();
 
     // Is there enough data available to check for XML declaration?
-    if (m_buffer.size() < 8)
+    if (bufferData.size() < 8)
         return false;
 
     // Handle XML declaration, which can have encoding in it. This encoding is honored even for HTML documents.
     // It is an error for an XML declaration not to be at the start of an XML document, and it is ignored in HTML documents in such case.
-    if (bytesEqual(ptr, '<', '?', 'x', 'm', 'l')) {
-        const uint8_t* xmlDeclarationEnd = ptr;
-        while (xmlDeclarationEnd != pEnd && *xmlDeclarationEnd != '>')
-            ++xmlDeclarationEnd;
-        if (xmlDeclarationEnd == pEnd)
+    static constexpr std::array<uint8_t, 5> xmlPrefix { '<', '?', 'x', 'm', 'l' };
+    static constexpr std::array<uint8_t, 6> xmlPrefixLittleEndian { '<', 0, '?', 0, 'x', 0 };
+    static constexpr std::array<uint8_t, 6> xmlPrefixBigEndian { 0, '<', 0, '?', 0, 'x' };
+    if (spanHasPrefix(bufferData, std::span { xmlPrefix })) {
+        auto xmlDeclarationEnd = bufferData;
+        skipUntil(xmlDeclarationEnd, '>');
+        if (xmlDeclarationEnd.empty())
             return false;
         // No need for +1, because we have an extra "?" to lose at the end of XML declaration.
         int len = 0;
-        int pos = findXMLEncoding(ptr, xmlDeclarationEnd - ptr, len);
+        int pos = findXMLEncoding(bufferData.data(), xmlDeclarationEnd.data() - bufferData.data(), len);
         if (pos != -1)
-            setEncoding(findTextEncoding(ptr + pos, len), EncodingFromXMLHeader);
+            setEncoding(findTextEncoding(bufferData.subspan(pos, len)), EncodingFromXMLHeader);
         // continue looking for a charset - it may be specified in an HTTP-Equiv meta
-    } else if (bytesEqual(ptr, '<', 0, '?', 0, 'x', 0)) {
+    } else if (spanHasPrefix(bufferData, std::span { xmlPrefixLittleEndian })) {
         setEncoding(PAL::UTF16LittleEndianEncoding(), AutoDetectedEncoding);
         return true;
-    } else if (bytesEqual(ptr, 0, '<', 0, '?', 0, 'x')) {
+    } else if (spanHasPrefix(bufferData, std::span { xmlPrefixBigEndian })) {
         setEncoding(PAL::UTF16BigEndianEncoding(), AutoDetectedEncoding);
         return true;
     }
@@ -562,13 +564,13 @@ void TextResourceDecoder::detectJapaneseEncoding(std::span<const uint8_t> data)
 {
     switch (KanjiCode::judge(data)) {
         case KanjiCode::JIS:
-            setEncoding("ISO-2022-JP", AutoDetectedEncoding);
+            setEncoding("ISO-2022-JP"_s, AutoDetectedEncoding);
             break;
         case KanjiCode::EUC:
-            setEncoding("EUC-JP", AutoDetectedEncoding);
+            setEncoding("EUC-JP"_s, AutoDetectedEncoding);
             break;
         case KanjiCode::SJIS:
-            setEncoding("Shift_JIS", AutoDetectedEncoding);
+            setEncoding("Shift_JIS"_s, AutoDetectedEncoding);
             break;
         case KanjiCode::ASCII:
         case KanjiCode::UTF16:
@@ -630,7 +632,7 @@ String TextResourceDecoder::decode(std::span<const uint8_t> data)
     if (!movedDataToBuffer) {
         size_t oldSize = m_buffer.size();
         m_buffer.grow(oldSize + data.size());
-        memcpy(m_buffer.data() + oldSize, data.data(), data.size());
+        memcpySpan(m_buffer.mutableSpan().subspan(oldSize), data);
     }
 
     String result = m_codec->decode(m_buffer.subspan(lengthOfBOM), false, m_contentType == XML && !m_useLenientXMLDecoding, m_sawError);
@@ -662,8 +664,11 @@ String TextResourceDecoder::flush()
 
 String TextResourceDecoder::decodeAndFlush(std::span<const uint8_t> data)
 {
-    String decoded = decode(data);
-    return decoded + flush();
+    auto decoded = decode(data);
+    auto result = tryMakeString(decoded, flush());
+    if (result.isNull())
+        RELEASE_LOG_ERROR(TextDecoding, "TextResourceDecoder::decodeAndFlush() failed, size too large (%zu)", data.size());
+    return result;
 }
 
 const PAL::TextEncoding* TextResourceDecoder::encodingForURLParsing()
@@ -679,3 +684,5 @@ const PAL::TextEncoding* TextResourceDecoder::encodingForURLParsing()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

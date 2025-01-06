@@ -60,18 +60,19 @@ struct CompressedShaderBlob
 {shader_tables_cpp}
 
 angle::Result GetShader(Context *context,
-                        RefCounted<ShaderModule> *shaders,
+                        ShaderModulePtr shaders[],
                         const CompressedShaderBlob *compressedShaderBlobs,
                         size_t shadersCount,
                         uint32_t shaderFlags,
-                        RefCounted<ShaderModule> **shaderOut)
+                        ShaderModulePtr *shaderOut)
 {{
     ASSERT(shaderFlags < shadersCount);
-    RefCounted<ShaderModule> &shader = shaders[shaderFlags];
-    *shaderOut                          = &shader;
+    ShaderModulePtr &shader = shaders[shaderFlags];
 
-    if (shader.get().valid())
+    if (shader)
     {{
+        ASSERT(shader->valid());
+        *shaderOut = shader;
         return angle::Result::Continue;
     }}
 
@@ -93,7 +94,12 @@ angle::Result GetShader(Context *context,
         return angle::Result::Stop;
     }}
 
-    return InitShaderModule(context, &shader.get(), shaderCode.data(), shaderCode.size() * 4);
+    ANGLE_TRY(InitShaderModule(context, &shader, shaderCode.data(), shaderCode.size() * 4));
+
+    ASSERT(shader);
+    ASSERT(shader->valid());
+    *shaderOut = shader;
+    return angle::Result::Continue;
 }}
 }}  // anonymous namespace
 
@@ -594,7 +600,7 @@ def get_shader_table_h(shader_and_variation):
 
     table_name = get_variation_table_name(shader_file, 'm')
 
-    table = 'RefCounted<ShaderModule> %s[' % table_name
+    table = 'ShaderModulePtr %s[' % table_name
 
     namespace_name = "InternalShader::" + get_namespace_name(shader_file)
 
@@ -645,7 +651,7 @@ def get_get_function_h(shader_and_variation):
     function_name = get_var_name(os.path.basename(shader_file), 'get')
 
     definition = 'angle::Result %s' % function_name
-    definition += '(Context *context, uint32_t shaderFlags, RefCounted<ShaderModule> **shaderOut);'
+    definition += '(Context *context, uint32_t shaderFlags, ShaderModulePtr *shaderOut);'
 
     return definition
 
@@ -660,7 +666,7 @@ def get_get_function_cpp(shader_and_variation):
     constant_table_name = get_variation_table_name(shader_file)
 
     definition = 'angle::Result ShaderLibrary::%s' % function_name
-    definition += '(Context *context, uint32_t shaderFlags, RefCounted<ShaderModule> **shaderOut)\n{\n'
+    definition += '(Context *context, uint32_t shaderFlags, ShaderModulePtr *shaderOut)\n{\n'
     definition += 'return GetShader(context, %s, %s, ArraySize(%s), shaderFlags, shaderOut);\n}\n' % (
         member_table_name, constant_table_name, constant_table_name)
 
@@ -672,8 +678,8 @@ def get_destroy_call(shader_and_variation):
 
     table_name = get_variation_table_name(shader_file, 'm')
 
-    destroy = 'for (RefCounted<ShaderModule> &shader : %s)\n' % table_name
-    destroy += '{\nshader.get().destroy(device);\n}'
+    destroy = 'for (ShaderModulePtr &shader : %s)\n' % table_name
+    destroy += '{\nif(shader)\n{shader->destroy(device);\n}\n}'
     return destroy
 
 

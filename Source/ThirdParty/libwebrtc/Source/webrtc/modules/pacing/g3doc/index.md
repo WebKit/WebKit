@@ -157,7 +157,7 @@ Several methods are used to gather statistics in pacer state:
 *   `ExpectedQueueTime()` total bytes in the queue divided by the send rate.
 
 [RTPSender]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/modules/rtp_rtcp/source/rtp_sender.h;drc=77ee8542dd35d5143b5788ddf47fb7cdb96eb08e
-[RtpPacketSender]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/modules/rtp_rtcp/include/rtp_packet_sender.h;drc=ea55b0872f14faab23a4e5dbcb6956369c8ed5dc
+[RtpPacketSender]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/api/rtp_packet_sender.h;drc=ea55b0872f14faab23a4e5dbcb6956369c8ed5dc
 [RtpPacketPacer]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/modules/pacing/rtp_packet_pacer.h;drc=e7bc3a347760023dd4840cf6ebdd1e6c8592f4d7
 [PacketRouter]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/modules/pacing/packet_router.h;drc=3d2210876e31d0bb5c7de88b27fd02ceb1f4e03e
 [TaskQueuePacedSender]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/modules/pacing/task_queue_paced_sender.h;drc=5051693ada61bc7b78855c6fb3fa87a0394fa813

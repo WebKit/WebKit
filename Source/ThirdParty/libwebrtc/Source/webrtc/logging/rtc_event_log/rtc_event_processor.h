@@ -13,12 +13,13 @@
 
 #include <stdint.h>
 
-#include <algorithm>
+#include <functional>
 #include <memory>
-#include <utility>
+#include <optional>
+#include <type_traits>
 #include <vector>
 
-#include "api/function_view.h"
+#include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "logging/rtc_event_log/rtc_event_processor_order.h"
 #include "rtc_base/checks.h"
 
@@ -41,7 +42,7 @@ class ProcessableEventListInterface {
   virtual bool IsEmpty() const = 0;
   virtual int64_t GetNextTime() const = 0;
   virtual int GetTypeOrder() const = 0;
-  virtual absl::optional<uint16_t> GetTransportSeqNum() const = 0;
+  virtual std::optional<uint16_t> GetTransportSeqNum() const = 0;
   virtual int GetInsertionOrder() const = 0;
 };
 
@@ -54,7 +55,7 @@ class ProcessableEventList : public ProcessableEventListInterface {
                        Iterator end,
                        std::function<void(const T&)> f,
                        int type_order,
-                       std::function<absl::optional<uint16_t>(const T&)>
+                       std::function<std::optional<uint16_t>(const T&)>
                            transport_seq_num_accessor,
                        int insertion_order)
       : begin_(begin),
@@ -79,7 +80,7 @@ class ProcessableEventList : public ProcessableEventListInterface {
 
   int GetTypeOrder() const override { return type_order_; }
 
-  absl::optional<uint16_t> GetTransportSeqNum() const override {
+  std::optional<uint16_t> GetTransportSeqNum() const override {
     RTC_DCHECK(!IsEmpty());
     return transport_seq_num_accessor_(*begin_);
   }
@@ -91,7 +92,7 @@ class ProcessableEventList : public ProcessableEventListInterface {
   Iterator end_;
   std::function<void(const T&)> f_;
   int type_order_;
-  std::function<absl::optional<uint16_t>(const T&)> transport_seq_num_accessor_;
+  std::function<std::optional<uint16_t>(const T&)> transport_seq_num_accessor_;
   int insertion_order_;
 };
 
@@ -151,7 +152,7 @@ class RtcEventProcessor {
       const Iterable& iterable,
       std::function<void(const typename Iterable::value_type&)> handler,
       int type_order,
-      std::function<absl::optional<uint16_t>(
+      std::function<std::optional<uint16_t>(
           const typename Iterable::value_type&)> transport_seq_num_accessor,
       int insertion_order) {
     if (iterable.begin() == iterable.end())

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -17,12 +17,12 @@
 #include "aom_dsp/x86/sum_squares_sse2.h"
 #include "config/aom_dsp_rtcd.h"
 
-static INLINE __m128i xx_loadh_64(__m128i a, const void *b) {
+static inline __m128i xx_loadh_64(__m128i a, const void *b) {
   const __m128d ad = _mm_castsi128_pd(a);
   return _mm_castpd_si128(_mm_loadh_pd(ad, (double *)b));
 }
 
-static INLINE uint64_t xx_cvtsi128_si64(__m128i a) {
+static inline uint64_t xx_cvtsi128_si64(__m128i a) {
 #if AOM_ARCH_X86_64
   return (uint64_t)_mm_cvtsi128_si64(a);
 #else
@@ -34,7 +34,7 @@ static INLINE uint64_t xx_cvtsi128_si64(__m128i a) {
 #endif
 }
 
-static INLINE __m128i sum_squares_i16_4x4_sse2(const int16_t *src, int stride) {
+static inline __m128i sum_squares_i16_4x4_sse2(const int16_t *src, int stride) {
   const __m128i v_val_0_w = xx_loadl_64(src + 0 * stride);
   const __m128i v_val_2_w = xx_loadl_64(src + 2 * stride);
   const __m128i v_val_01_w = xx_loadh_64(v_val_0_w, src + 1 * stride);
@@ -84,7 +84,7 @@ uint64_t aom_sum_squares_2d_i16_4xn_sse2(const int16_t *src, int stride,
     src += stride << 2;
     r += 4;
   } while (r < height);
-  const __m128i v_zext_mask_q = xx_set1_64_from_32i(~0);
+  const __m128i v_zext_mask_q = _mm_set1_epi64x(~0u);
   __m128i v_acc_64 = _mm_add_epi64(_mm_srli_epi64(v_acc_q, 32),
                                    _mm_and_si128(v_acc_q, v_zext_mask_q));
   v_acc_64 = _mm_add_epi64(v_acc_64, _mm_srli_si128(v_acc_64, 8));
@@ -116,7 +116,7 @@ aom_sum_squares_2d_i16_nxn_sse2(const int16_t *src, int stride, int width,
                                 int height) {
   int r = 0;
 
-  const __m128i v_zext_mask_q = xx_set1_64_from_32i(~0);
+  const __m128i v_zext_mask_q = _mm_set1_epi64x(~0u);
   __m128i v_acc_q = _mm_setzero_si128();
 
   do {
@@ -254,7 +254,7 @@ uint64_t aom_sum_sse_2d_i16_sse2(const int16_t *src, int src_stride, int width,
 //////////////////////////////////////////////////////////////////////////////
 
 static uint64_t aom_sum_squares_i16_64n_sse2(const int16_t *src, uint32_t n) {
-  const __m128i v_zext_mask_q = xx_set1_64_from_32i(~0);
+  const __m128i v_zext_mask_q = _mm_set1_epi64x(~0u);
   __m128i v_acc0_q = _mm_setzero_si128();
   __m128i v_acc1_q = _mm_setzero_si128();
 
@@ -315,7 +315,7 @@ uint64_t aom_sum_squares_i16_sse2(const int16_t *src, uint32_t n) {
 }
 
 // Accumulate sum of 16-bit elements in the vector
-static AOM_INLINE int32_t mm_accumulate_epi16(__m128i vec_a) {
+static inline int32_t mm_accumulate_epi16(__m128i vec_a) {
   __m128i vtmp = _mm_srli_si128(vec_a, 8);
   vec_a = _mm_add_epi16(vec_a, vtmp);
   vtmp = _mm_srli_si128(vec_a, 4);
@@ -326,7 +326,7 @@ static AOM_INLINE int32_t mm_accumulate_epi16(__m128i vec_a) {
 }
 
 // Accumulate sum of 32-bit elements in the vector
-static AOM_INLINE int32_t mm_accumulate_epi32(__m128i vec_a) {
+static inline int32_t mm_accumulate_epi32(__m128i vec_a) {
   __m128i vtmp = _mm_srli_si128(vec_a, 8);
   vec_a = _mm_add_epi32(vec_a, vtmp);
   vtmp = _mm_srli_si128(vec_a, 4);
@@ -408,6 +408,7 @@ uint64_t aom_var_2d_u8_sse2(uint8_t *src, int src_stride, int width,
   return (ss - s * s / (width * height));
 }
 
+#if CONFIG_AV1_HIGHBITDEPTH
 uint64_t aom_var_2d_u16_sse2(uint8_t *src, int src_stride, int width,
                              int height) {
   uint16_t *srcp1 = CONVERT_TO_SHORTPTR(src), *srcp;
@@ -476,3 +477,4 @@ uint64_t aom_var_2d_u16_sse2(uint8_t *src, int src_stride, int width,
   }
   return (ss - s * s / (width * height));
 }
+#endif  // CONFIG_AV1_HIGHBITDEPTH

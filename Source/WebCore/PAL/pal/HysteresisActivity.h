@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,17 +30,17 @@
 
 namespace PAL {
 
-static const Seconds defaultHysteresisDuration { 5_s };
+static constexpr Seconds defaultHysteresisDuration { 5_s };
 
 enum class HysteresisState : bool { Started, Stopped };
 
 class HysteresisActivity {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HysteresisActivity, PAL_EXPORT);
 public:
     explicit HysteresisActivity(Function<void(HysteresisState)>&& callback = [](HysteresisState) { }, Seconds hysteresisSeconds = defaultHysteresisDuration)
         : m_callback(WTFMove(callback))
         , m_hysteresisSeconds(hysteresisSeconds)
-        , m_timer(RunLoop::main(), this, &HysteresisActivity::hysteresisTimerFired)
+        , m_timer(RunLoop::main(), [this] { m_callback(HysteresisState::Stopped); })
     {
     }
 
@@ -93,12 +93,6 @@ public:
     }
     
 private:
-    void hysteresisTimerFired()
-    {
-        m_timer.stop();
-        m_callback(HysteresisState::Stopped);
-    }
-
     Function<void(HysteresisState)> m_callback;
     Seconds m_hysteresisSeconds;
     RunLoop::Timer m_timer;

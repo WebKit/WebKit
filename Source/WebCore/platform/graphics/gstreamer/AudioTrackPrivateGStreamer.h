@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "AudioTrackPrivate.h"
+#include "MediaPlayerPrivateGStreamer.h"
 #include "TrackPrivateBaseGStreamer.h"
 
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -40,6 +41,11 @@ public:
     static Ref<AudioTrackPrivateGStreamer> create(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent = true)
     {
         return adoptRef(*new AudioTrackPrivateGStreamer(WTFMove(player), index, WTFMove(pad), shouldHandleStreamStartEvent));
+    }
+
+    static Ref<AudioTrackPrivateGStreamer> create(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, TrackID trackId)
+    {
+        return adoptRef(*new AudioTrackPrivateGStreamer(WTFMove(player), index, WTFMove(pad), trackId));
     }
 
     static Ref<AudioTrackPrivateGStreamer> create(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GstStream* stream)
@@ -56,8 +62,17 @@ public:
 
     int trackIndex() const final { return m_index; }
 
-    TrackID id() const final { return m_trackID.value_or(m_index); }
-    std::optional<AtomString> trackUID() const final { return m_stringId; }
+    TrackID id() const final { return m_trackID.value_or(m_id); }
+    std::optional<AtomString> trackUID() const final
+    {
+        auto player = m_player.get();
+
+        if (player && player->isMediaStreamPlayer())
+            return m_gstStreamId;
+
+        return std::nullopt;
+    }
+
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
 
@@ -67,10 +82,11 @@ protected:
     void updateConfigurationFromTags(GRefPtr<GstTagList>&&) final;
 
     void tagsChanged(GRefPtr<GstTagList>&& tags) final { updateConfigurationFromTags(WTFMove(tags)); }
-    void capsChanged(const String& streamId, GRefPtr<GstCaps>&&) final;
+    void capsChanged(TrackID streamId, GRefPtr<GstCaps>&&) final;
 
 private:
     AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
+    AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GRefPtr<GstPad>&&, TrackID);
     AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GstStream*);
 
     ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer> m_player;

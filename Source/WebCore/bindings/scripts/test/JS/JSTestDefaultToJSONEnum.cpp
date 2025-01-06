@@ -27,12 +27,13 @@
 #include <wtf/SortedArrayMap.h>
 
 
+
 namespace WebCore {
 using namespace JSC;
 
 String convertEnumerationToString(TestDefaultToJSONEnum enumerationValue)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 2> values {
         MAKE_STATIC_STRING_IMPL("EnumValue1"),
         MAKE_STATIC_STRING_IMPL("EnumValue2"),
     };
@@ -49,9 +50,9 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestDefaultToJSONEnum enumer
 
 template<> std::optional<TestDefaultToJSONEnum> parseEnumerationFromString<TestDefaultToJSONEnum>(const String& stringValue)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestDefaultToJSONEnum> mappings[] = {
-        { "EnumValue1", TestDefaultToJSONEnum::EnumValue1 },
-        { "EnumValue2", TestDefaultToJSONEnum::EnumValue2 },
+    static constexpr std::array<std::pair<ComparableASCIILiteral, TestDefaultToJSONEnum>, 2> mappings {
+        std::pair<ComparableASCIILiteral, TestDefaultToJSONEnum> { "EnumValue1"_s, TestDefaultToJSONEnum::EnumValue1 },
+        std::pair<ComparableASCIILiteral, TestDefaultToJSONEnum> { "EnumValue2"_s, TestDefaultToJSONEnum::EnumValue2 },
     };
     static constexpr SortedArrayMap enumerationMapping { mappings };
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
@@ -70,3 +71,4 @@ template<> ASCIILiteral expectedEnumerationValues<TestDefaultToJSONEnum>()
 }
 
 } // namespace WebCore
+

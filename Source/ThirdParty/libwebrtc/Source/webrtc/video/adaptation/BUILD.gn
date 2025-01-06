@@ -22,8 +22,6 @@ rtc_library("video_adaptation") {
     "overuse_frame_detector.h",
     "pixel_limit_resource.cc",
     "pixel_limit_resource.h",
-    "quality_rampup_experiment_helper.cc",
-    "quality_rampup_experiment_helper.h",
     "quality_scaler_resource.cc",
     "quality_scaler_resource.h",
     "video_stream_encoder_resource.cc",
@@ -38,6 +36,7 @@ rtc_library("video_adaptation") {
     "../../api:scoped_refptr",
     "../../api:sequence_checker",
     "../../api/adaptation:resource_adaptation_api",
+    "../../api/environment",
     "../../api/task_queue:task_queue",
     "../../api/units:data_rate",
     "../../api/units:time_delta",
@@ -60,20 +59,15 @@ rtc_library("video_adaptation") {
     "../../rtc_base:timeutils",
     "../../rtc_base/experiments:balanced_degradation_settings",
     "../../rtc_base/experiments:field_trial_parser",
-    "../../rtc_base/experiments:quality_rampup_experiment",
     "../../rtc_base/experiments:quality_scaler_settings",
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/system:no_unique_address",
     "../../rtc_base/task_utils:repeating_task",
-    "../../system_wrappers:field_trial",
     "../../system_wrappers:system_wrappers",
     "../../video:video_stream_encoder_interface",
     "../../video/config:encoder_config",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/base:core_headers",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -92,6 +86,8 @@ if (rtc_include_tests) {
       ":video_adaptation",
       "../../api:field_trials_view",
       "../../api:scoped_refptr",
+      "../../api/environment",
+      "../../api/environment:environment_factory",
       "../../api/task_queue:task_queue",
       "../../api/units:time_delta",
       "../../api/units:timestamp",
@@ -111,15 +107,10 @@ if (rtc_include_tests) {
       "../../rtc_base:rtc_numerics",
       "../../rtc_base:task_queue_for_test",
       "../../rtc_base:threading",
-      "../../test:field_trial",
       "../../test:rtc_expect_death",
-      "../../test:scoped_key_value_config",
       "../../test:test_support",
       "../../test/time_controller:time_controller",
-    ]
-    absl_deps = [
       "//third_party/abseil-cpp/absl/functional:any_invocable",
-      "//third_party/abseil-cpp/absl/types:optional",
     ]
   }
 }

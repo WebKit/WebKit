@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,11 +32,11 @@
 namespace WebCore {
 
 class RTCRtpSFrameTransformErrorEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(RTCRtpSFrameTransformErrorEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCRtpSFrameTransformErrorEvent);
 public:
     virtual ~RTCRtpSFrameTransformErrorEvent();
 
-    enum Type { Authentication, KeyID, Other, Syntax };
+    enum Type { Authentication, KeyID, Syntax };
 
     struct Init : EventInit {
         Type errorType;

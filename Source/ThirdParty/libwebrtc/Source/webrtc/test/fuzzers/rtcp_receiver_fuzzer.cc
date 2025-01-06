@@ -7,11 +7,19 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+
+#include "api/array_view.h"
+#include "api/environment/environment_factory.h"
+#include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
 #include "modules/rtp_rtcp/source/rtcp_receiver.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
-#include "rtc_base/checks.h"
 #include "system_wrappers/include/clock.h"
+#include "test/explicit_key_value_config.h"
 
 namespace webrtc {
 namespace {
@@ -37,16 +45,17 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   if (size > kMaxInputLenBytes) {
     return;
   }
-
+  test::ExplicitKeyValueConfig field_trials(
+      "WebRTC-RFC8888CongestionControlFeedback/Enabled/");
   NullModuleRtpRtcp rtp_rtcp_module;
   SimulatedClock clock(1234);
 
   RtpRtcpInterface::Configuration config;
-  config.clock = &clock;
   config.rtcp_report_interval_ms = kRtcpIntervalMs;
   config.local_media_ssrc = 1;
 
-  RTCPReceiver receiver(config, &rtp_rtcp_module);
+  RTCPReceiver receiver(CreateEnvironment(&clock, &field_trials), config,
+                        &rtp_rtcp_module);
 
   receiver.IncomingPacket(rtc::MakeArrayView(data, size));
 }

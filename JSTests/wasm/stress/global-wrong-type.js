@@ -10,4 +10,4 @@ assert.throws(() => {
     new WebAssembly.Global({
         value: 'anyfunc'
     }, {});
-}, TypeError, `Funcref must be an exported wasm function`);
+}, TypeError, `Argument value did not match the reference type`);

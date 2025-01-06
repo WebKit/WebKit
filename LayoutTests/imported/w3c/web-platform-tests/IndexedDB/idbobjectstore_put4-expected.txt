@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.put() - put where an index has unique:true specified
-

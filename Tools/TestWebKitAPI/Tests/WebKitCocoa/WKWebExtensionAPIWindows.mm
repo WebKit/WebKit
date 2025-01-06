@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,9 @@
 
 #import "TestWebExtensionsDelegate.h"
 #import "WebExtensionUtilities.h"
-#import <WebKit/_WKWebExtensionWindowCreationOptions.h>
+#import <WebKit/WKWebExtensionWindowConfiguration.h>
 
-@interface DummyWebExtensionWindow : NSObject <_WKWebExtensionWindow>
+@interface DummyWebExtensionWindow : NSObject <WKWebExtensionWindow>
 @end
 
 @implementation DummyWebExtensionWindow
@@ -140,7 +140,7 @@ TEST(WKWebExtensionAPIWindows, GetCurrentFromOptionsPage)
         @"options.js": optionsScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager load];
@@ -156,7 +156,39 @@ TEST(WKWebExtensionAPIWindows, GetCurrentFromOptionsPage)
     EXPECT_NOT_NULL(defaultTab);
 
     [defaultTab changeWebViewIfNeededForURL:optionsPageURL forExtensionContext:manager.get().context];
-    [defaultTab.mainWebView loadRequest:[NSURLRequest requestWithURL:optionsPageURL]];
+    [defaultTab.webView loadRequest:[NSURLRequest requestWithURL:optionsPageURL]];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWindows, GetCurrentWindowAfterTabMove)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const initialWindow = await browser.windows.getCurrent()",
+        @"browser.test.assertEq(typeof initialWindow, 'object', 'Initial window should be an object')",
+        @"browser.test.assertEq(typeof initialWindow.id, 'number', 'Initial window ID should be a number')",
+
+        @"browser.tabs.onAttached.addListener(async (tabId, attachInfo) => {",
+        @"  const currentWindowAfterMove = await browser.windows.getCurrent()",
+        @"  browser.test.assertEq(currentWindowAfterMove.id, initialWindow.id, 'Current window ID should remain the initial window')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Move Tab')",
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *newTab = [manager.get().defaultWindow openNewTab];
+    auto *newWindow = [manager openNewWindow];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Move Tab");
+
+    [newWindow moveTab:newTab toIndex:0];
 
     [manager run];
 }
@@ -181,14 +213,62 @@ TEST(WKWebExtensionAPIWindows, GetLastFocused)
         @"browser.test.notifyPass();"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.focusedWindow = ^id<_WKWebExtensionWindow>(_WKWebExtensionContext *) {
+    manager.get().internalDelegate.focusedWindow = ^id<WKWebExtensionWindow>(WKWebExtensionContext *) {
         return nil;
     };
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIWindows, GetLastFocusedWithPrivateAccess)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const lastFocusedWindow = await browser.windows.getLastFocused()",
+
+        @"browser.test.assertEq(typeof lastFocusedWindow, 'object', 'Last focused window should be an object')",
+        @"browser.test.assertTrue(lastFocusedWindow.incognito, 'Last focused window should be incognito')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().context.hasAccessToPrivateData = YES;
+
+    [manager load];
+
+    auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
+    [manager focusWindow:privateWindow];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWindows, GetLastFocusedWithoutPrivateAccess)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const lastFocusedWindow = await browser.windows.getLastFocused()",
+
+        @"browser.test.assertEq(typeof lastFocusedWindow, 'object', 'Last focused window should be an object')",
+        @"browser.test.assertFalse(lastFocusedWindow.incognito, 'Last focused window should not be incognito')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().context.hasAccessToPrivateData = NO;
+
+    [manager load];
+
+    auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
+    [manager focusWindow:privateWindow];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIWindows, GetAll)
@@ -214,10 +294,10 @@ TEST(WKWebExtensionAPIWindows, GetAll)
         @"browser.test.notifyPass();"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    EXPECT_FALSE(manager.get().context.hasAccessInPrivateBrowsing);
+    EXPECT_FALSE(manager.get().context.hasAccessToPrivateData);
 
     [manager openNewWindowUsingPrivateBrowsing:YES];
 
@@ -264,10 +344,10 @@ TEST(WKWebExtensionAPIWindows, GetAllWithPrivateAccess)
         @"browser.test.notifyPass();"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().context.hasAccessInPrivateBrowsing = YES;
+    manager.get().context.hasAccessToPrivateData = YES;
 
     auto *windowTwo = [manager openNewWindowUsingPrivateBrowsing:YES];
 
@@ -277,8 +357,8 @@ TEST(WKWebExtensionAPIWindows, GetAllWithPrivateAccess)
 #else
     windowTwo.frame = CGRectMake(110, 75, 300, 700);
 #endif
-    windowTwo.windowState = _WKWebExtensionWindowStateMinimized;
-    windowTwo.windowType = _WKWebExtensionWindowTypePopup;
+    windowTwo.windowState = WKWebExtensionWindowStateMinimized;
+    windowTwo.windowType = WKWebExtensionWindowTypePopup;
 
     [manager loadAndRun];
 }
@@ -307,7 +387,7 @@ TEST(WKWebExtensionAPIWindows, CreatedEvent)
         @"browser.test.yield('Open Window');"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager loadAndRun];
@@ -342,7 +422,7 @@ TEST(WKWebExtensionAPIWindows, FocusChangedEvent)
         @"browser.test.yield('Focus Window');"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *windowOne = manager.get().defaultWindow;
@@ -381,7 +461,7 @@ TEST(WKWebExtensionAPIWindows, RemovedEvent)
         @"browser.test.yield('Close Window');"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager load];
@@ -392,6 +472,33 @@ TEST(WKWebExtensionAPIWindows, RemovedEvent)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Close Window");
 
     [manager closeWindow:manager.get().defaultWindow];
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWindows, RemoveListenerDuringEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"function windowListener() {",
+        @"  browser.windows.onCreated.removeListener(windowListener)",
+        @"  browser.test.assertFalse(browser.windows.onCreated.hasListener(windowListener), 'Listener should be removed')",
+        @"}",
+
+        @"browser.windows.onCreated.addListener(windowListener)",
+        @"browser.windows.onCreated.addListener(() => browser.test.notifyPass())",
+
+        @"browser.test.assertTrue(browser.windows.onCreated.hasListener(windowListener), 'Listener should be registered')",
+
+        @"browser.test.yield('Open Window')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Open Window");
+
+    [manager openNewWindow];
     [manager run];
 }
 
@@ -426,32 +533,32 @@ TEST(WKWebExtensionAPIWindows, Create)
         @"browser.test.notifyPass();"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
 
-    manager.get().internalDelegate.openNewWindow = ^(_WKWebExtensionWindowCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionWindow>, NSError *)) {
-        EXPECT_EQ(options.desiredFrame.origin.x, 300);
-        EXPECT_EQ(options.desiredFrame.size.height, 400);
-        EXPECT_TRUE(std::isnan(options.desiredFrame.origin.y));
-        EXPECT_TRUE(std::isnan(options.desiredFrame.size.width));
+    manager.get().internalDelegate.openNewWindow = ^(WKWebExtensionWindowConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
+        EXPECT_EQ(configuration.frame.origin.x, 300);
+        EXPECT_EQ(configuration.frame.size.height, 400);
+        EXPECT_TRUE(std::isnan(configuration.frame.origin.y));
+        EXPECT_TRUE(std::isnan(configuration.frame.size.width));
 
-        EXPECT_TRUE(options.shouldFocus);
-        EXPECT_FALSE(options.shouldUsePrivateBrowsing);
+        EXPECT_TRUE(configuration.shouldBeFocused);
+        EXPECT_FALSE(configuration.shouldBePrivate);
 
-        EXPECT_EQ(options.desiredWindowType, _WKWebExtensionWindowTypePopup);
-        EXPECT_EQ(options.desiredWindowState, _WKWebExtensionWindowStateNormal);
+        EXPECT_EQ(configuration.windowType, WKWebExtensionWindowTypePopup);
+        EXPECT_EQ(configuration.windowState, WKWebExtensionWindowStateNormal);
 
-        EXPECT_EQ(options.desiredTabs.count, 0lu);
+        EXPECT_EQ(configuration.tabs.count, 0lu);
 
-        EXPECT_EQ(options.desiredURLs.count, 1lu);
-        EXPECT_NS_EQUAL(options.desiredURLs.firstObject, [NSURL URLWithString:@"http://example.com/"]);
+        EXPECT_EQ(configuration.tabURLs.count, 1lu);
+        EXPECT_NS_EQUAL(configuration.tabURLs.firstObject, [NSURL URLWithString:@"http://example.com/"]);
 
-        originalOpenNewWindow(options, context, completionHandler);
+        originalOpenNewWindow(configuration, context, completionHandler);
     };
 
-    EXPECT_FALSE(manager.get().context.hasAccessInPrivateBrowsing);
+    EXPECT_FALSE(manager.get().context.hasAccessToPrivateData);
     EXPECT_EQ(manager.get().windows.count, 1lu);
 
     [manager loadAndRun];
@@ -471,16 +578,16 @@ TEST(WKWebExtensionAPIWindows, CreateWithRelativeURL)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript, @"test.html": @"Hello world!" }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript, @"test.html": @"Hello world!" }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
 
-    manager.get().internalDelegate.openNewWindow = ^(_WKWebExtensionWindowCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionWindow>, NSError *)) {
-        EXPECT_EQ(options.desiredURLs.count, 1lu);
-        EXPECT_NS_EQUAL(options.desiredURLs.firstObject, [NSURL URLWithString:@"test.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+    manager.get().internalDelegate.openNewWindow = ^(WKWebExtensionWindowConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
+        EXPECT_EQ(configuration.tabURLs.count, 1lu);
+        EXPECT_NS_EQUAL(configuration.tabURLs.firstObject, [NSURL URLWithString:@"test.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
 
-        originalOpenNewWindow(options, context, completionHandler);
+        originalOpenNewWindow(configuration, context, completionHandler);
     };
 
     EXPECT_EQ(manager.get().windows.count, 1lu);
@@ -502,17 +609,17 @@ TEST(WKWebExtensionAPIWindows, CreateWithRelativeURLs)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript, @"one.html": @"Hello one!", @"two.html": @"Hello two!" }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript, @"one.html": @"Hello one!", @"two.html": @"Hello two!" }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
 
-    manager.get().internalDelegate.openNewWindow = ^(_WKWebExtensionWindowCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionWindow>, NSError *)) {
-        EXPECT_EQ(options.desiredURLs.count, 2lu);
-        EXPECT_NS_EQUAL(options.desiredURLs.firstObject, [NSURL URLWithString:@"one.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
-        EXPECT_NS_EQUAL(options.desiredURLs.lastObject, [NSURL URLWithString:@"two.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+    manager.get().internalDelegate.openNewWindow = ^(WKWebExtensionWindowConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
+        EXPECT_EQ(configuration.tabURLs.count, 2lu);
+        EXPECT_NS_EQUAL(configuration.tabURLs.firstObject, [NSURL URLWithString:@"one.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+        EXPECT_NS_EQUAL(configuration.tabURLs.lastObject, [NSURL URLWithString:@"two.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
 
-        originalOpenNewWindow(options, context, completionHandler);
+        originalOpenNewWindow(configuration, context, completionHandler);
     };
 
     EXPECT_EQ(manager.get().windows.count, 1lu);
@@ -540,10 +647,10 @@ TEST(WKWebExtensionAPIWindows, CreateIncognitoWithoutPrivateAccess)
         @"browser.test.notifyPass();"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    EXPECT_FALSE(manager.get().context.hasAccessInPrivateBrowsing);
+    EXPECT_FALSE(manager.get().context.hasAccessToPrivateData);
     EXPECT_EQ(manager.get().windows.count, 1lu);
 
     [manager loadAndRun];
@@ -577,10 +684,10 @@ TEST(WKWebExtensionAPIWindows, CreateIncognitoWithPrivateAccess)
         @"browser.test.notifyPass();"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().context.hasAccessInPrivateBrowsing = YES;
+    manager.get().context.hasAccessToPrivateData = YES;
 
     EXPECT_EQ(manager.get().windows.count, 1lu);
 
@@ -662,7 +769,7 @@ TEST(WKWebExtensionAPIWindows, RemoveUnsupported)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     manager.get().context.unsupportedAPIs = [NSSet setWithObject:@"browser.windows.remove"];

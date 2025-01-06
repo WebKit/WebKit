@@ -23,6 +23,7 @@
 #include <WebKitSettingsPrivate.h>
 #include <wtf/HashSet.h>
 #include <wtf/RunLoop.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/StringHash.h>
 
@@ -56,7 +57,7 @@ public:
             , m_fullscreen(false)
         {
 #if PLATFORM(GTK)
-            memset(&m_geometry, 0, sizeof(GdkRectangle));
+            zeroBytes(m_geometry);
 #endif
         }
 

@@ -38,7 +38,11 @@ namespace WebKit {
 
 class RTCDataChannelRemoteManager final : private IPC::MessageReceiver {
 public:
-    static RTCDataChannelRemoteManager& sharedManager();
+    static RTCDataChannelRemoteManager& singleton();
+
+    // Do nothing since this is a singleton.
+    void ref() const { }
+    void deref() const { }
 
     WebCore::RTCDataChannelRemoteHandlerConnection& remoteHandlerConnection();
     bool connectToRemoteSource(WebCore::RTCDataChannelIdentifier source, WebCore::RTCDataChannelIdentifier handler);
@@ -68,7 +72,7 @@ private:
     public:
         static Ref<RemoteHandlerConnection> create(Ref<WorkQueue>&&);
 
-        void connectToSource(WebCore::RTCDataChannelRemoteHandler&, WebCore::ScriptExecutionContextIdentifier, WebCore::RTCDataChannelIdentifier, WebCore::RTCDataChannelIdentifier) final;
+        void connectToSource(WebCore::RTCDataChannelRemoteHandler&, std::optional<WebCore::ScriptExecutionContextIdentifier>, WebCore::RTCDataChannelIdentifier, WebCore::RTCDataChannelIdentifier) final;
         void sendData(WebCore::RTCDataChannelIdentifier, bool isRaw, std::span<const uint8_t>) final;
         void close(WebCore::RTCDataChannelIdentifier) final;
 
@@ -97,7 +101,7 @@ private:
 
     struct RemoteHandler {
         WeakPtr<WebCore::RTCDataChannelRemoteHandler> handler;
-        WebCore::ScriptExecutionContextIdentifier contextIdentifier;
+        Markable<WebCore::ScriptExecutionContextIdentifier> contextIdentifier;
     };
 
     Ref<WorkQueue> m_queue;

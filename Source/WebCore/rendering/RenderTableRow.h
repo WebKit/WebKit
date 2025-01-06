@@ -32,7 +32,7 @@ static const unsigned unsetRowIndex = 0x7FFFFFFF;
 static const unsigned maxRowIndex = 0x7FFFFFFE; // 2,147,483,646
 
 class RenderTableRow final : public RenderBox {
-    WTF_MAKE_ISO_ALLOCATED(RenderTableRow);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderTableRow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableRow);
 public:
     RenderTableRow(Element&, RenderStyle&&);
@@ -77,6 +77,7 @@ private:
 
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
     RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const override;
+    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { }
 
     bool requiresLayer() const final;
     void paint(PaintInfo&, const LayoutPoint&) override;

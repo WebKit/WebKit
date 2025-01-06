@@ -11,8 +11,8 @@
 #include "test/fuzzers/audio_decoder_fuzzer.h"
 
 #include <limits>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "rtc_base/checks.h"

@@ -11,7 +11,8 @@
 #include "include/gpu/graphite/ContextOptions.h"
 #include "include/gpu/graphite/vk/VulkanGraphiteUtils.h"
 #include "include/gpu/vk/VulkanExtensions.h"
-#include "include/private/gpu/graphite/ContextOptionsPriv.h"
+#include "include/gpu/vk/VulkanMemoryAllocator.h"
+#include "src/gpu/graphite/ContextOptionsPriv.h"
 #include "tools/gpu/ContextType.h"
 #include "tools/gpu/vk/VkTestUtils.h"
 #include "tools/graphite/TestOptions.h"
@@ -95,7 +96,7 @@ skgpu::ContextType VulkanTestContext::contextType() {
 
 std::unique_ptr<skgpu::graphite::Context> VulkanTestContext::makeContext(
         const TestOptions& options) {
-    SkASSERT(!options.fNeverYieldToWebGPU);
+    SkASSERT(!options.hasDawnOptions());
     skgpu::graphite::ContextOptions revisedContextOptions(options.fContextOptions);
     skgpu::graphite::ContextOptionsPriv contextOptionsPriv;
     if (!options.fContextOptions.fOptionsPriv) {
@@ -103,7 +104,7 @@ std::unique_ptr<skgpu::graphite::Context> VulkanTestContext::makeContext(
     }
     // Needed to make synchronous readPixels work
     revisedContextOptions.fOptionsPriv->fStoreContextRefInRecorder = true;
-
+    SkASSERT(fVulkan.fMemoryAllocator);
     return skgpu::graphite::ContextFactory::MakeVulkan(fVulkan, revisedContextOptions);
 }
 

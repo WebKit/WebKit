@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,7 +94,7 @@ bool ContentFilter::continueAfterWillSendRequest(ResourceRequest& request, const
 {
     Ref protectedClient { m_client.get() };
 
-    LOG(ContentFiltering, "ContentFilter received request for <%s> with redirect response from <%s>.\n", request.url().string().ascii().data(), redirectResponse.url().string().ascii().data());
+    LOG(ContentFiltering, "ContentFilter received request for <%{sensitive}s> with redirect response from <%{sensitive}s>.\n", request.url().string().ascii().data(), redirectResponse.url().string().ascii().data());
 #if !LOG_DISABLED
     ResourceRequest originalRequest { request };
 #endif
@@ -106,7 +106,7 @@ bool ContentFilter::continueAfterWillSendRequest(ResourceRequest& request, const
         request = ResourceRequest();
 #if !LOG_DISABLED
     if (request != originalRequest)
-        LOG(ContentFiltering, "ContentFilter changed request url to <%s>.\n", originalRequest.url().string().ascii().data());
+        LOG(ContentFiltering, "ContentFilter changed request url to <%{sensitive}s>.\n", originalRequest.url().string().ascii().data());
 #endif
     return !request.isNull();
 }
@@ -145,7 +145,7 @@ bool ContentFilter::continueAfterResponseReceived(const ResourceResponse& respon
     Ref protectedClient { m_client.get() };
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter received response from <%s>.\n", response.url().string().ascii().data());
+        LOG(ContentFiltering, "ContentFilter received response from <%{sensitive}s>.\n", response.url().string().ascii().data());
         forEachContentFilterUntilBlocked([&response](PlatformContentFilter& contentFilter) {
             contentFilter.responseReceived(response);
         });
@@ -362,6 +362,14 @@ void ContentFilter::deliverStoredResourceData()
         deliverResourceData(*buffer.buffer, buffer.encodedDataLength);
     m_buffers.clear();
 }
+
+#if HAVE(AUDIT_TOKEN)
+void ContentFilter::setHostProcessAuditToken(const std::optional<audit_token_t>& token)
+{
+    for (auto& contentFilter : m_contentFilters)
+        contentFilter->setHostProcessAuditToken(token);
+}
+#endif
 
 } // namespace WebCore
 

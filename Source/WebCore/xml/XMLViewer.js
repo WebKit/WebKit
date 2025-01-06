@@ -77,7 +77,6 @@ function sourceXMLLoaded()
     for (var i = 0; i < nodeParentPairs.length; i++)
         processNode(nodeParentPairs[i].parentElement, nodeParentPairs[i].node);
 
-    drawArrows();
     initButtons();
 
     if (typeof(onAfterWebkitXMLViewerLoaded) == 'function')
@@ -211,15 +210,9 @@ function processText(parentElement, node)
 }
 
 // Processing utils.
-
-function trim(value)
-{
-    return value.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-}
-
 function isShort(value)
 {
-    return trim(value).length <= 50;
+    return value.trim().length <= 50;
 }
 
 // Tree rendering.
@@ -291,7 +284,7 @@ function createComment(commentString)
 function createText(value)
 {
     var text = createHTMLElement('span');
-    text.textContent = trim(value);
+    text.textContent = value.trim();
     text.classList.add('text');
     return text;
 }
@@ -353,33 +346,6 @@ function createAttribute(attributeNode)
     attribute.appendChild(attributeValue);
     attribute.appendChild(textAfter);
     return attribute;
-}
-
-// Tree behaviour.
-
-function drawArrows()
-{
-    var ctx = document.getCSSCanvasContext("2d", "arrowRight", 10, 11);
-
-    ctx.fillStyle = "rgb(90,90,90)";
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0, 8);
-    ctx.lineTo(7, 4);
-    ctx.lineTo(0, 0);
-    ctx.fill();
-    ctx.closePath();
-
-    var ctx = document.getCSSCanvasContext("2d", "arrowDown", 10, 10);
-
-    ctx.fillStyle = "rgb(90,90,90)";
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(8, 0);
-    ctx.lineTo(4, 7);
-    ctx.lineTo(0, 0);
-    ctx.fill();
-    ctx.closePath();
 }
 
 function expandFunction(sectionId)

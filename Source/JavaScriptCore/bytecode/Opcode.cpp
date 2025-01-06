@@ -38,6 +38,8 @@
 #include <wtf/DataLog.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const unsigned opcodeLengths[] = {
@@ -253,3 +255,5 @@ void printInternal(PrintStream& out, OpcodeID opcode)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

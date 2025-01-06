@@ -29,6 +29,10 @@
 
 #if ENABLE(WEB_CODECS)
 
+#if USE(AVFOUNDATION)
+#include "AudioDecoderCocoa.h"
+#endif
+
 #if USE(GSTREAMER)
 #include "AudioDecoderGStreamer.h"
 #include "GStreamerRegistryScanner.h"
@@ -54,24 +58,32 @@ bool AudioDecoder::isCodecSupported(const StringView& codec)
 #if USE(GSTREAMER)
     auto& scanner = GStreamerRegistryScanner::singleton();
     result = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codec.toString());
+#elif USE(AVFOUNDATION)
+    result = !!AudioDecoderCocoa::isCodecSupported(codec);
 #endif
 
     return result;
 }
 
-void AudioDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
+Ref<AudioDecoder::CreatePromise> AudioDecoder::create(const String& codecName, const Config& config, OutputCallback&& outputCallback)
 {
 #if USE(GSTREAMER)
-    GStreamerAudioDecoder::create(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
-    return;
+    CreatePromise::Producer producer;
+    Ref promise = producer.promise();
+    CreateCallback callback = [producer = WTFMove(producer)] (auto&& result) mutable {
+        producer.settle(WTFMove(result));
+    };
+    GStreamerAudioDecoder::create(codecName, config, WTFMove(callback), WTFMove(outputCallback));
+    return promise;
+#elif USE(AVFOUNDATION)
+    return AudioDecoderCocoa::create(codecName, config, WTFMove(outputCallback));
 #else
     UNUSED_PARAM(codecName);
     UNUSED_PARAM(config);
     UNUSED_PARAM(outputCallback);
-    UNUSED_PARAM(postCallback);
-#endif
 
-    callback(makeUnexpected("Not supported"_s));
+    return CreatePromise::createAndReject("Not supported"_s));
+#endif
 }
 
 AudioDecoder::AudioDecoder() = default;

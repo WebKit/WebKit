@@ -86,6 +86,7 @@
     NSInteger _numberOfValidItemsForDrop;
 }
 @property (nonatomic) NSPoint lastMousePosition;
+@property (nonatomic, readonly) id localContext;
 @end
 
 @implementation DragInfo
@@ -206,13 +207,18 @@ IGNORE_WARNINGS_END
 {
 }
 
+- (id)localContext
+{
+    return nil;
+}
+
 @end
 
 namespace TestWebKitAPI {
 
 static NSImage *getTestImage()
 {
-    return adoptNS([[NSImage alloc] initWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]]).autorelease();
+    return adoptNS([[NSImage alloc] initWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]]).autorelease();
 }
 
 static WebView *webViewAfterPerformingDragOperation(NSPasteboard *pasteboard)
@@ -233,7 +239,7 @@ static WebView *webViewAfterPerformingDragOperation(NSPasteboard *pasteboard)
         EXPECT_TRUE([destination performDragOperation:info.get()]);
         isDone = true;
     }]];
-    [[destination mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"full-page-contenteditable" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[destination mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"full-page-contenteditable" withExtension:@"html"]]];
 
     TestWebKitAPI::Util::run(&isDone);
     return destination.get();

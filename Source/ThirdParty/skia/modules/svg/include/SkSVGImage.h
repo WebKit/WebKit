@@ -8,8 +8,17 @@
 #ifndef SkSVGImage_DEFINED
 #define SkSVGImage_DEFINED
 
+#include "include/core/SkImage.h"
+#include "include/core/SkPath.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkRefCnt.h"
+#include "include/private/base/SkAPI.h"
+#include "include/private/base/SkDebug.h"
+#include "modules/svg/include/SkSVGNode.h"
 #include "modules/svg/include/SkSVGTransformableNode.h"
 #include "modules/svg/include/SkSVGTypes.h"
+
+class SkSVGRenderContext;
 
 namespace skresources {
 class ResourceProvider;
@@ -22,13 +31,13 @@ public:
     }
 
     void appendChild(sk_sp<SkSVGNode>) override {
-        SkDebugf("cannot append child nodes to this element.\n");
+        SkDEBUGF("cannot append child nodes to this element.\n");
     }
 
     bool onPrepareToRender(SkSVGRenderContext*) const override;
     void onRender(const SkSVGRenderContext&) const override;
     SkPath onAsPath(const SkSVGRenderContext&) const override;
-    SkRect onObjectBoundingBox(const SkSVGRenderContext&) const override;
+    SkRect onTransformableObjectBoundingBox(const SkSVGRenderContext&) const override;
 
     struct ImageInfo {
         sk_sp<SkImage> fImage;

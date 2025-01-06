@@ -78,8 +78,8 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
-    void setLogger(Ref<const Logger>&&, const void*);
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
+    void setLogger(Ref<const Logger>&&, uint64_t);
 #endif
 
     static constexpr float EquivalentToMaxVolume = 0.95;
@@ -125,7 +125,7 @@ private:
     bool m_isInNeedOfMoreData { false };
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    uint64_t m_logIdentifier { 0 };
 #endif
 };
 

@@ -1139,14 +1139,6 @@ private:
     */
     SkPath& addOval(const SkRect& oval, SkPathDirection dir, unsigned start);
 
-    /** Experimental, subject to change or removal.
-
-        Adds an "open" oval to SkPath. This follows canvas2D semantics: The oval is not
-        a separate contour. If the path was empty, then kMove_Verb is appended. Otherwise,
-        kLine_Verb is appended. Four kConic_Verbs are appended. kClose_Verb is not appended.
-    */
-    SkPath& addOpenOval(const SkRect& oval, SkPathDirection dir, unsigned start);
-
     /** Adds circle centered at (x, y) of size radius to SkPath, appending kMove_Verb,
         four kConic_Verb, and kClose_Verb. Circle begins at: (x + radius, y), continuing
         clockwise if dir is kCW_Direction, and counterclockwise if dir is kCCW_Direction.
@@ -1836,7 +1828,6 @@ private:
 
     size_t writeToMemoryAsRRect(void* buffer) const;
     size_t readAsRRect(const void*, size_t);
-    size_t readFromMemory_EQ4Or5(const void*, size_t);
 
     friend class Iter;
     friend class SkPathPriv;
@@ -1918,7 +1909,7 @@ private:
     void shrinkToFit();
 
     // Creates a new Path after the supplied arguments have been validated by
-    // sk_path_analyze_verbs().
+    // SkPathPriv::AnalyzeVerbs().
     static SkPath MakeInternal(const SkPathVerbAnalysis& analsis,
                                const SkPoint points[],
                                const uint8_t verbs[],

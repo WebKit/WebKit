@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "FontCascade.h"
 #include "LegacyInlineIterator.h"
 #include "LineInfo.h"
 #include <wtf/Vector.h>

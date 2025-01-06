@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,8 @@ namespace Daemon {
 void Connection::send(xpc_object_t message) const
 {
     ASSERT(RunLoop::isMain());
+    initializeConnectionIfNeeded();
+
     ASSERT(m_connection.get());
     ASSERT(xpc_get_type(message) == XPC_TYPE_DICTIONARY);
     xpc_connection_send_message(m_connection.get(), message);
@@ -62,7 +64,7 @@ void ConnectionToMachService<Traits>::initializeConnectionIfNeeded() const
 {
     if (m_connection)
         return;
-    m_connection = adoptNS(xpc_connection_create_mach_service(m_machServiceName.data(), dispatch_get_main_queue(), 0));
+    m_connection = adoptOSObject(xpc_connection_create_mach_service(m_machServiceName.data(), dispatch_get_main_queue(), 0));
     xpc_connection_set_event_handler(m_connection.get(), [weakThis = WeakPtr { *this }](xpc_object_t event) {
         if (!weakThis)
             return;
@@ -107,15 +109,13 @@ void ConnectionToMachService<Traits>::sendWithReply(typename Traits::MessageType
             ASSERT_NOT_REACHED();
             return completionHandler({ });
         }
-        size_t dataSize { 0 };
-        const void* data = xpc_dictionary_get_data(reply, Traits::protocolEncodedMessageKey, &dataSize);
-        completionHandler(Vector(std::span { static_cast<const uint8_t*>(data), dataSize }));
+        completionHandler(xpc_dictionary_get_data_span(reply, Traits::protocolEncodedMessageKey));
     });
 }
 
 template class ConnectionToMachService<PCM::ConnectionTraits>;
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 template class ConnectionToMachService<WebPushD::ConnectionTraits>;
 #endif
 

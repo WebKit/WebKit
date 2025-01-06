@@ -16,7 +16,6 @@
 #include "vpx/vpx_codec.h"
 #include "vpx/vpx_image.h"
 #include "vpx/vpx_integer.h"
-#include "vpx_ports/msvc.h"
 
 #if CONFIG_ENCODERS
 #include "./y4minput.h"
@@ -32,7 +31,12 @@ typedef int64_t FileOffset;
 #define fseeko fseeko64
 #define ftello ftello64
 typedef off64_t FileOffset;
-#elif CONFIG_OS_SUPPORT
+#elif CONFIG_OS_SUPPORT &&                                                  \
+    !(defined(__ANDROID__) && __ANDROID_API__ < 24 && !defined(__LP64__) && \
+      defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64)
+/* POSIX.1 has fseeko and ftello. fseeko and ftello are not available before
+ * Android API level 24. See
+ * https://android.googlesource.com/platform/bionic/+/main/docs/32-bit-abi.md */
 #include <sys/types.h> /* NOLINT */
 typedef off_t FileOffset;
 /* Use 32-bit file operations in WebM file format when building ARM

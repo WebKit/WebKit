@@ -36,6 +36,7 @@ public:
     virtual void close() = 0;
     virtual void setICECandidateFiltering(bool) = 0;
     virtual void unregisterMDNSNames() = 0;
+    virtual const String& interfaceNameForTesting() const = 0;
 };
 
 } // namespace WebCore

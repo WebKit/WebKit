@@ -49,8 +49,8 @@
 
 namespace WebCore {
 
-void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const GlyphBufferGlyph* glyphs,
-    const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& point,
+void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::span<const GlyphBufferGlyph> glyphs,
+    std::span<const GlyphBufferAdvance> advances, const FloatPoint& point,
     FontSmoothingMode fontSmoothingMode)
 {
     if (!font.platformData().size())
@@ -58,10 +58,10 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
 
     auto xOffset = point.x();
     Vector<cairo_glyph_t> cairoGlyphs;
-    cairoGlyphs.reserveInitialCapacity(numGlyphs);
+    cairoGlyphs.reserveInitialCapacity(glyphs.size());
     {
         auto yOffset = point.y();
-        for (size_t i = 0; i < numGlyphs; ++i) {
+        for (size_t i = 0; i < glyphs.size(); ++i) {
             bool append = true;
 #if PLATFORM(WIN)
             // GlyphBuffer::makeGlyphInvisible expects 0xFFFF glyph is invisible. However, DirectWrite shows a blank square for it.

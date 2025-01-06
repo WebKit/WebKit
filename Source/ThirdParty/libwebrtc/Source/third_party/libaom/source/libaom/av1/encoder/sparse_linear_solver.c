@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -187,7 +187,7 @@ void av1_constant_multiply_sparse_matrix(SPARSE_MTX *sm, double c) {
   }
 }
 
-static INLINE void free_solver_local_buf(double *buf1, double *buf2,
+static inline void free_solver_local_buf(double *buf1, double *buf2,
                                          double *buf3, double *buf4,
                                          double *buf5, double *buf6,
                                          double *buf7) {

@@ -40,6 +40,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 
 @interface _WKMockMediaSessionCoordinator : NSObject <_WKMediaSessionCoordinator>
@@ -373,7 +374,12 @@ private:
     RetainPtr<NSMutableArray> _messageHandlers;
 };
 
+// rdar://136550811
+#if PLATFORM(MAC)
+TEST_F(MediaSessionCoordinatorTest, DISABLED_JoinAndLeave)
+#else
 TEST_F(MediaSessionCoordinatorTest, JoinAndLeave)
+#endif
 {
     loadPageAndBecomeReady("media-remote"_s);
     listenForPromiseMessages({ "join"_s });
@@ -420,7 +426,12 @@ TEST_F(MediaSessionCoordinatorTest, JoinAndLeave)
     EXPECT_STREQ("", coordinator().lastMethodCalled.UTF8String);
 }
 
+// rdar://136550811
+#if PLATFORM(MAC)
+TEST_F(MediaSessionCoordinatorTest, DISABLED_StateChanges)
+#else
 TEST_F(MediaSessionCoordinatorTest, StateChanges)
+#endif
 {
     loadPageAndBecomeReady("media-remote"_s);
 
@@ -476,7 +487,12 @@ TEST_F(MediaSessionCoordinatorTest, StateChanges)
     EXPECT_STREQ("closed", [state UTF8String]);
 }
 
+// rdar://136550811
+#if PLATFORM(MAC)
+TEST_F(MediaSessionCoordinatorTest, DISABLED_CoordinatorMethodCallbacks)
+#else
 TEST_F(MediaSessionCoordinatorTest, CoordinatorMethodCallbacks)
+#endif
 {
     loadPageAndBecomeReady("media-remote"_s);
 
@@ -507,7 +523,12 @@ TEST_F(MediaSessionCoordinatorTest, CoordinatorMethodCallbacks)
     }
 }
 
+// rdar://136550811
+#if PLATFORM(MAC)
+TEST_F(MediaSessionCoordinatorTest, DISABLED_CallSessionMethods)
+#else
 TEST_F(MediaSessionCoordinatorTest, CallSessionMethods)
+#endif
 {
     loadPageAndBecomeReady("media-remote"_s);
     listenForSessionHandlerMessages({ "play"_s, "pause"_s, "seekto"_s, "nexttrack"_s });
@@ -551,7 +572,12 @@ TEST_F(MediaSessionCoordinatorTest, CallSessionMethods)
     EXPECT_STREQ("setSessionTrack", lastMethodCalled.utf8().data());
 }
 
+// rdar://136550811
+#if PLATFORM(MAC)
+TEST_F(MediaSessionCoordinatorTest, DISABLED_JoinAndPrivateLeave)
+#else
 TEST_F(MediaSessionCoordinatorTest, JoinAndPrivateLeave)
+#endif
 {
     loadPageAndBecomeReady("media-remote"_s);
     listenForPromiseMessages({ "join"_s });

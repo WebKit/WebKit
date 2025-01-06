@@ -10,6 +10,13 @@
 
 #include "api/units/data_rate.h"
 
+#include <cstdint>
+#include <limits>
+
+#include "api/units/data_size.h"
+#include "api/units/frequency.h"
+#include "api/units/time_delta.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "test/gtest.h"
 

@@ -23,13 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformSpeechSynthesizer_h
-#define PlatformSpeechSynthesizer_h
+#pragma once
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include "PlatformSpeechSynthesisVoice.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
@@ -39,12 +39,16 @@ OBJC_CLASS WebSpeechSynthesisWrapper;
 
 namespace WebCore {
 
+#if USE(SPIEL)
+class SpielSpeechWrapper;
+#endif
+
 enum class SpeechBoundary : uint8_t {
     SpeechWordBoundary,
     SpeechSentenceBoundary
 };
 
-#if USE(GSTREAMER)
+#if USE(FLITE) && USE(GSTREAMER)
 class GstSpeechSynthesisWrapper;
 #endif
 class PlatformSpeechSynthesisUtterance;
@@ -63,7 +67,7 @@ protected:
 };
 
 class WEBCORE_EXPORT PlatformSpeechSynthesizer : public RefCounted<PlatformSpeechSynthesizer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlatformSpeechSynthesizer, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<PlatformSpeechSynthesizer> create(PlatformSpeechSynthesizerClient&);
 
@@ -94,13 +98,13 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<WebSpeechSynthesisWrapper> m_platformSpeechWrapper;
-#elif USE(GSTREAMER)
-    std::unique_ptr<GstSpeechSynthesisWrapper> m_platformSpeechWrapper { nullptr };
+#elif USE(FLITE) && USE(GSTREAMER)
+    std::unique_ptr<GstSpeechSynthesisWrapper> m_platformSpeechWrapper;
+#elif USE(SPIEL)
+    std::unique_ptr<SpielSpeechWrapper> m_platformSpeechWrapper;
 #endif
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)
-
-#endif // PlatformSpeechSynthesizer_h

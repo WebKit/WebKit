@@ -12,8 +12,7 @@
 #define MEDIA_BASE_AUDIO_SOURCE_H_
 
 #include <cstddef>
-
-#include "absl/types/optional.h"
+#include <optional>
 
 namespace cricket {
 
@@ -31,7 +30,7 @@ class AudioSource {
         int sample_rate,
         size_t number_of_channels,
         size_t number_of_frames,
-        absl::optional<int64_t> absolute_capture_timestamp_ms) = 0;
+        std::optional<int64_t> absolute_capture_timestamp_ms) = 0;
 
     // Called when the AudioSource is going away.
     virtual void OnClose() = 0;

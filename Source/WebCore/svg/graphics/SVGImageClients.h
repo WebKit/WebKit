@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,15 @@
 #pragma once
 
 #include "EmptyClients.h"
+#include "ImageObserver.h"
 #include "SVGImage.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class SVGImageChromeClient final : public EmptyChromeClient {
-    WTF_MAKE_NONCOPYABLE(SVGImageChromeClient); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SVGImageChromeClient);
+    WTF_MAKE_NONCOPYABLE(SVGImageChromeClient);
 public:
     SVGImageChromeClient(SVGImage* image)
         : m_image(image)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -23,7 +23,7 @@ DECLARE_ALIGNED(16, static const uint8_t, dot_prod_permute_tbl[48]) = {
   8, 9, 10, 11, 9, 10, 11, 12, 10, 11, 12, 13, 11, 12, 13, 14
 };
 
-static INLINE int16x4_t convolve4_4_2d_h(uint8x16_t samples,
+static inline int16x4_t convolve4_4_2d_h(uint8x16_t samples,
                                          const int8x8_t x_filter,
                                          const int32x4_t correction,
                                          const uint8x16_t range_limit,
@@ -43,7 +43,7 @@ static INLINE int16x4_t convolve4_4_2d_h(uint8x16_t samples,
   return vshrn_n_s32(sum, ROUND0_BITS - 1);
 }
 
-static INLINE int16x8_t convolve8_8_2d_h(uint8x16_t samples,
+static inline int16x8_t convolve8_8_2d_h(uint8x16_t samples,
                                          const int8x8_t x_filter,
                                          const int32x4_t correction,
                                          const uint8x16_t range_limit,
@@ -76,21 +76,19 @@ static INLINE int16x8_t convolve8_8_2d_h(uint8x16_t samples,
                       vshrn_n_s32(sum[1], ROUND0_BITS - 1));
 }
 
-static INLINE void dist_wtd_convolve_2d_horiz_neon_dotprod(
+static inline void dist_wtd_convolve_2d_horiz_neon_dotprod(
     const uint8_t *src, int src_stride, int16_t *im_block, const int im_stride,
     const int16_t *x_filter_ptr, const int im_h, int w) {
   const int bd = 8;
-  const int32_t horiz_const = (1 << (bd + FILTER_BITS - 2));
   // Dot product constants and other shims.
   const int16x8_t x_filter_s16 = vld1q_s16(x_filter_ptr);
-  const int32_t correction_s32 =
-      vaddlvq_s16(vshlq_n_s16(x_filter_s16, FILTER_BITS - 1));
-  // Fold horiz_const into the dot-product filter correction constant. The
-  // additional shim of 1 << ((ROUND0_BITS - 1) - 1) enables us to use non-
-  // rounding shifts - which are generally faster than rounding shifts on
-  // modern CPUs. (The extra -1 is needed because we halved the filter values.)
-  const int32x4_t correction = vdupq_n_s32(correction_s32 + horiz_const +
-                                           (1 << ((ROUND0_BITS - 1) - 1)));
+  // This shim of 1 << (ROUND0_BITS - 1) enables us to use non-rounding shifts
+  // - which are generally faster than rounding shifts on modern CPUs.
+  const int32_t horiz_const =
+      ((1 << (bd + FILTER_BITS - 1)) + (1 << (ROUND0_BITS - 1)));
+  // Halve the total because we will halve the filter values.
+  const int32x4_t correction =
+      vdupq_n_s32(((128 << FILTER_BITS) + horiz_const) / 2);
   const uint8x16_t range_limit = vdupq_n_u8(128);
 
   const uint8_t *src_ptr = src;
@@ -257,7 +255,7 @@ void av1_dist_wtd_convolve_2d_neon_dotprod(
   }
 }
 
-static INLINE uint16x4_t convolve4_4_x(uint8x16_t samples,
+static inline uint16x4_t convolve4_4_x(uint8x16_t samples,
                                        const int8x8_t x_filter,
                                        const int32x4_t correction,
                                        const uint8x16_t range_limit,
@@ -277,7 +275,7 @@ static INLINE uint16x4_t convolve4_4_x(uint8x16_t samples,
   return vreinterpret_u16_s16(vshrn_n_s32(sum, ROUND0_BITS - 1));
 }
 
-static INLINE uint16x8_t convolve8_8_x(uint8x16_t samples,
+static inline uint16x8_t convolve8_8_x(uint8x16_t samples,
                                        const int8x8_t x_filter,
                                        const int32x4_t correction,
                                        const uint8x16_t range_limit,
@@ -311,7 +309,7 @@ static INLINE uint16x8_t convolve8_8_x(uint8x16_t samples,
   return vreinterpretq_u16_s16(res);
 }
 
-static INLINE void dist_wtd_convolve_x_dist_wtd_avg_neon_dotprod(
+static inline void dist_wtd_convolve_x_dist_wtd_avg_neon_dotprod(
     const uint8_t *src, int src_stride, uint8_t *dst8, int dst8_stride, int w,
     int h, const InterpFilterParams *filter_params_x, const int subpel_x_qn,
     ConvolveParams *conv_params) {
@@ -334,15 +332,14 @@ static INLINE void dist_wtd_convolve_x_dist_wtd_avg_neon_dotprod(
 
   // Dot-product constants and other shims.
   const uint8x16_t range_limit = vdupq_n_u8(128);
-  const int32_t correction_s32 =
-      vaddlvq_s16(vshlq_n_s16(x_filter_s16, FILTER_BITS - 1));
   // Fold round_offset into the dot-product filter correction constant. The
-  // additional shim of 1 << ((ROUND0_BITS - 1) - 1) enables us to use non-
-  // rounding shifts - which are generally faster than rounding shifts on
-  // modern CPUs. (The extra -1 is needed because we halved the filter values.)
+  // additional shim of 1 << (ROUND0_BITS - 1) enables us to use non-rounding
+  // shifts - which are generally faster than rounding shifts on modern CPUs.
+  // Halve the total because we will halve the filter values.
   int32x4_t correction =
-      vdupq_n_s32(correction_s32 + (round_offset << (ROUND0_BITS - 1)) +
-                  (1 << ((ROUND0_BITS - 1) - 1)));
+      vdupq_n_s32(((128 << FILTER_BITS) + (round_offset << ROUND0_BITS) +
+                   (1 << (ROUND0_BITS - 1))) /
+                  2);
 
   const int horiz_offset = filter_params_x->taps / 2 - 1;
   const uint8_t *src_ptr = src - horiz_offset;
@@ -380,10 +377,8 @@ static INLINE void dist_wtd_convolve_x_dist_wtd_avg_neon_dotprod(
       compute_dist_wtd_avg_4x4(dd0, dd1, dd2, dd3, d0, d1, d2, d3, fwd_offset,
                                bck_offset, round_offset_vec, &d01_u8, &d23_u8);
 
-      store_u8_4x1(dst8_ptr + 0 * dst8_stride, d01_u8, 0);
-      store_u8_4x1(dst8_ptr + 1 * dst8_stride, d01_u8, 1);
-      store_u8_4x1(dst8_ptr + 2 * dst8_stride, d23_u8, 0);
-      store_u8_4x1(dst8_ptr + 3 * dst8_stride, d23_u8, 1);
+      store_u8x4_strided_x2(dst8_ptr + 0 * dst8_stride, dst8_stride, d01_u8);
+      store_u8x4_strided_x2(dst8_ptr + 2 * dst8_stride, dst8_stride, d23_u8);
 
       src_ptr += 4 * src_stride;
       dst_ptr += 4 * dst_stride;
@@ -437,7 +432,7 @@ static INLINE void dist_wtd_convolve_x_dist_wtd_avg_neon_dotprod(
   }
 }
 
-static INLINE void dist_wtd_convolve_x_avg_neon_dotprod(
+static inline void dist_wtd_convolve_x_avg_neon_dotprod(
     const uint8_t *src, int src_stride, uint8_t *dst8, int dst8_stride, int w,
     int h, const InterpFilterParams *filter_params_x, const int subpel_x_qn,
     ConvolveParams *conv_params) {
@@ -457,15 +452,14 @@ static INLINE void dist_wtd_convolve_x_avg_neon_dotprod(
 
   // Dot-product constants and other shims.
   const uint8x16_t range_limit = vdupq_n_u8(128);
-  const int32_t correction_s32 =
-      vaddlvq_s16(vshlq_n_s16(x_filter_s16, FILTER_BITS - 1));
   // Fold round_offset into the dot-product filter correction constant. The
-  // additional shim of 1 << ((ROUND0_BITS - 1) - 1) enables us to use non-
-  // rounding shifts - which are generally faster than rounding shifts on
-  // modern CPUs. (The extra -1 is needed because we halved the filter values.)
+  // additional shim of 1 << (ROUND0_BITS - 1) enables us to use non-rounding
+  // shifts - which are generally faster than rounding shifts on modern CPUs.
+  // Halve the total because we will halve the filter values.
   int32x4_t correction =
-      vdupq_n_s32(correction_s32 + (round_offset << (ROUND0_BITS - 1)) +
-                  (1 << ((ROUND0_BITS - 1) - 1)));
+      vdupq_n_s32(((128 << FILTER_BITS) + (round_offset << ROUND0_BITS) +
+                   (1 << (ROUND0_BITS - 1))) /
+                  2);
 
   const int horiz_offset = filter_params_x->taps / 2 - 1;
   const uint8_t *src_ptr = src - horiz_offset;
@@ -503,10 +497,8 @@ static INLINE void dist_wtd_convolve_x_avg_neon_dotprod(
       compute_basic_avg_4x4(dd0, dd1, dd2, dd3, d0, d1, d2, d3,
                             round_offset_vec, &d01_u8, &d23_u8);
 
-      store_u8_4x1(dst8_ptr + 0 * dst8_stride, d01_u8, 0);
-      store_u8_4x1(dst8_ptr + 1 * dst8_stride, d01_u8, 1);
-      store_u8_4x1(dst8_ptr + 2 * dst8_stride, d23_u8, 0);
-      store_u8_4x1(dst8_ptr + 3 * dst8_stride, d23_u8, 1);
+      store_u8x4_strided_x2(dst8_ptr + 0 * dst8_stride, dst8_stride, d01_u8);
+      store_u8x4_strided_x2(dst8_ptr + 2 * dst8_stride, dst8_stride, d23_u8);
 
       src_ptr += 4 * src_stride;
       dst_ptr += 4 * dst_stride;
@@ -559,7 +551,7 @@ static INLINE void dist_wtd_convolve_x_avg_neon_dotprod(
   }
 }
 
-static INLINE void dist_wtd_convolve_x_neon_dotprod(
+static inline void dist_wtd_convolve_x_neon_dotprod(
     const uint8_t *src, int src_stride, int w, int h,
     const InterpFilterParams *filter_params_x, const int subpel_x_qn,
     ConvolveParams *conv_params) {
@@ -578,15 +570,14 @@ static INLINE void dist_wtd_convolve_x_neon_dotprod(
 
   // Dot-product constants and other shims.
   const uint8x16_t range_limit = vdupq_n_u8(128);
-  const int32_t correction_s32 =
-      vaddlvq_s16(vshlq_n_s16(x_filter_s16, FILTER_BITS - 1));
   // Fold round_offset into the dot-product filter correction constant. The
-  // additional shim of 1 << ((ROUND0_BITS - 1) - 1) enables us to use non-
-  // rounding shifts - which are generally faster than rounding shifts on
-  // modern CPUs. (The extra -1 is needed because we halved the filter values.)
+  // additional shim of 1 << (ROUND0_BITS - 1) enables us to use non-rounding
+  // shifts - which are generally faster than rounding shifts on modern CPUs.
+  // Halve the total because we will halve the vilter values.
   int32x4_t correction =
-      vdupq_n_s32(correction_s32 + (round_offset << (ROUND0_BITS - 1)) +
-                  (1 << ((ROUND0_BITS - 1) - 1)));
+      vdupq_n_s32(((128 << FILTER_BITS) + (round_offset << ROUND0_BITS) +
+                   (1 << (ROUND0_BITS - 1))) /
+                  2);
 
   const int horiz_offset = filter_params_x->taps / 2 - 1;
   const uint8_t *src_ptr = src - horiz_offset;

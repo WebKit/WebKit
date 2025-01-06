@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import <Foundation/Foundation.h>
 #import <objc/runtime.h>
+
 #if PLATFORM(MAC)
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #endif // PLATFORM(MAC)

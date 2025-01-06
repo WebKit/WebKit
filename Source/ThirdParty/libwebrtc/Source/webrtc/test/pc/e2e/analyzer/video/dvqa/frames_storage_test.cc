@@ -40,7 +40,7 @@ VideoFrame Create2x2Frame(uint16_t frame_id) {
 }
 
 void AssertHasFrame(FramesStorage& storage, uint16_t frame_id) {
-  absl::optional<VideoFrame> frame = storage.Get(frame_id);
+  std::optional<VideoFrame> frame = storage.Get(frame_id);
   ASSERT_TRUE(frame.has_value()) << "Frame " << frame_id << " wasn't found";
   EXPECT_EQ(frame->id(), frame_id);
 }

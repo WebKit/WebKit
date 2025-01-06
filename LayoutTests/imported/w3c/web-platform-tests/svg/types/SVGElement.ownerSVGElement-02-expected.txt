@@ -1,0 +1,4 @@
+
+PASS root svg element
+PASS non-svg child of root svg element
+

@@ -2,19 +2,19 @@
 PASS Simple audio encoding
 PASS Test reset during flush
 PASS Encode audio with negative timestamp
-FAIL Channel number variation: 1 assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Channel number variation: 2 assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Sample rate variation: 3000 assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Sample rate variation: 13000 assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Sample rate variation: 23000 assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Sample rate variation: 33000 assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Sample rate variation: 43000 assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Sample rate variation: 53000 assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Sample rate variation: 63000 assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Sample rate variation: 73000 assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Sample rate variation: 83000 assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Sample rate variation: 93000 assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Encoding and decoding assert_true: expected true got false
+PASS Channel number variation: 1
+PASS Channel number variation: 2
+PASS Sample rate variation: 3000
+PASS Sample rate variation: 13000
+PASS Sample rate variation: 23000
+PASS Sample rate variation: 33000
+PASS Sample rate variation: 43000
+PASS Sample rate variation: 53000
+PASS Sample rate variation: 63000
+PASS Sample rate variation: 73000
+PASS Sample rate variation: 83000
+PASS Sample rate variation: 93000
+PASS Encoding and decoding
 PASS Emit decoder config and extra data.
 PASS encodeQueueSize test
 PASS Test encoding Opus with additional parameters: Empty Opus config

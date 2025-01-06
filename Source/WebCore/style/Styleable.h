@@ -40,6 +40,10 @@ class RenderElement;
 class RenderStyle;
 class WebAnimation;
 
+namespace Style {
+enum class IsInDisplayNoneTree : bool;
+}
+
 struct Styleable {
     Element& element;
     std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier;
@@ -81,6 +85,7 @@ struct Styleable {
     bool hasRunningAcceleratedAnimations() const;
 
     bool capturedInViewTransition() const;
+    void setCapturedInViewTransition(AtomString);
 
     KeyframeEffectStack* keyframeEffectStack() const
     {
@@ -187,8 +192,10 @@ struct Styleable {
 
     void removeStyleOriginatedAnimationFromListsForOwningElement(WebAnimation&) const;
 
-    void updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const Style::ResolutionContext&, WeakStyleOriginatedAnimations&) const;
+    void updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const Style::ResolutionContext&, WeakStyleOriginatedAnimations&, Style::IsInDisplayNoneTree) const;
     void updateCSSTransitions(const RenderStyle& currentStyle, const RenderStyle& newStyle, WeakStyleOriginatedAnimations&) const;
+    void updateCSSScrollTimelines(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle) const;
+    void updateCSSViewTimelines(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle) const;
 };
 
 class WeakStyleable {

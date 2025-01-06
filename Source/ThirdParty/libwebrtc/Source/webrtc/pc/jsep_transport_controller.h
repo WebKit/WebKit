@@ -16,16 +16,17 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
 #include "absl/functional/any_invocable.h"
-#include "absl/types/optional.h"
+#include "absl/strings/string_view.h"
 #include "api/async_dns_resolver.h"
 #include "api/candidate.h"
 #include "api/crypto/crypto_options.h"
+#include "api/environment/environment.h"
 #include "api/ice_transport_factory.h"
 #include "api/ice_transport_interface.h"
 #include "api/jsep.h"
@@ -36,7 +37,10 @@
 #include "api/sequence_checker.h"
 #include "api/transport/data_channel_transport_interface.h"
 #include "api/transport/sctp_transport_factory_interface.h"
-#include "media/sctp/sctp_transport_internal.h"
+#include "call/payload_type.h"
+#include "call/payload_type_picker.h"
+#include "media/base/codec.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "p2p/base/dtls_transport.h"
 #include "p2p/base/dtls_transport_factory.h"
 #include "p2p/base/dtls_transport_internal.h"
@@ -58,9 +62,7 @@
 #include "pc/srtp_transport.h"
 #include "pc/transport_stats.h"
 #include "rtc_base/callback_list.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
-#include "rtc_base/helpers.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_stream_adapter.h"
@@ -75,7 +77,8 @@ class PacketTransportInternal;
 
 namespace webrtc {
 
-class JsepTransportController : public sigslot::has_slots<> {
+class JsepTransportController : public PayloadTypeSuggester,
+                                public sigslot::has_slots<> {
  public:
   // Used when the RtpTransport/DtlsTransport of the m= section is changed
   // because the section is rejected or BUNDLE is enabled.
@@ -112,7 +115,7 @@ class JsepTransportController : public sigslot::has_slots<> {
     rtc::SSLProtocolVersion ssl_max_version = rtc::SSL_PROTOCOL_DTLS_12;
     // `crypto_options` is used to determine if created DTLS transports
     // negotiate GCM crypto suites or not.
-    webrtc::CryptoOptions crypto_options;
+    CryptoOptions crypto_options;
     PeerConnectionInterface::BundlePolicy bundle_policy =
         PeerConnectionInterface::kBundlePolicyBalanced;
     PeerConnectionInterface::RtcpMuxPolicy rtcp_mux_policy =
@@ -120,7 +123,7 @@ class JsepTransportController : public sigslot::has_slots<> {
     bool disable_encryption = false;
     bool enable_external_auth = false;
     // Used to inject the ICE/DTLS transports created externally.
-    webrtc::IceTransportFactory* ice_transport_factory = nullptr;
+    IceTransportFactory* ice_transport_factory = nullptr;
     cricket::DtlsTransportFactory* dtls_transport_factory = nullptr;
     Observer* transport_observer = nullptr;
     // Must be provided and valid for the lifetime of the
@@ -138,9 +141,6 @@ class JsepTransportController : public sigslot::has_slots<> {
     // Factory for SCTP transports.
     SctpTransportFactoryInterface* sctp_factory = nullptr;
     std::function<void(rtc::SSLHandshakeError)> on_dtls_handshake_error_;
-
-    // Field trials.
-    const webrtc::FieldTrialsView* field_trials;
   };
 
   // The ICE related events are fired on the `network_thread`.
@@ -148,9 +148,11 @@ class JsepTransportController : public sigslot::has_slots<> {
   // and destruction of the JsepTransportController must occur on the
   // `network_thread`.
   JsepTransportController(
+      const Environment& env,
       rtc::Thread* network_thread,
       cricket::PortAllocator* port_allocator,
       AsyncDnsResolverFactoryInterface* async_dns_resolver_factory,
+      PayloadTypePicker& payload_type_picker,
       Config config);
   virtual ~JsepTransportController();
 
@@ -161,11 +163,24 @@ class JsepTransportController : public sigslot::has_slots<> {
   // level, creating/destroying transport objects as needed and updating their
   // properties. This includes RTP, DTLS, and ICE (but not SCTP). At least not
   // yet? May make sense to in the future.
+  //
+  // `local_desc` must always be valid. If a remote description has previously
+  // been set via a call to `SetRemoteDescription()` then `remote_desc` should
+  // point to that description object in order to keep the current local and
+  // remote session descriptions in sync.
   RTCError SetLocalDescription(SdpType type,
-                               const cricket::SessionDescription* description);
+                               const cricket::SessionDescription* local_desc,
+                               const cricket::SessionDescription* remote_desc);
 
+  // Call to apply a remote description (See `SetLocalDescription()` for local).
+  //
+  // `remote_desc` must always be valid. If a local description has previously
+  // been set via a call to `SetLocalDescription()` then `local_desc` should
+  // point to that description object in order to keep the current local and
+  // remote session descriptions in sync.
   RTCError SetRemoteDescription(SdpType type,
-                                const cricket::SessionDescription* description);
+                                const cricket::SessionDescription* local_desc,
+                                const cricket::SessionDescription* remote_desc);
 
   // Get transports to be used for the provided `mid`. If bundling is enabled,
   // calling GetRtpTransport for multiple MIDs may yield the same object.
@@ -174,7 +189,7 @@ class JsepTransportController : public sigslot::has_slots<> {
   const cricket::DtlsTransportInternal* GetRtcpDtlsTransport(
       const std::string& mid) const;
   // Gets the externally sharable version of the DtlsTransport.
-  rtc::scoped_refptr<webrtc::DtlsTransport> LookupDtlsTransportByMid(
+  rtc::scoped_refptr<DtlsTransport> LookupDtlsTransportByMid(
       const std::string& mid);
   rtc::scoped_refptr<SctpTransport> GetSctpTransport(
       const std::string& mid) const;
@@ -220,12 +235,19 @@ class JsepTransportController : public sigslot::has_slots<> {
   std::unique_ptr<rtc::SSLCertChain> GetRemoteSSLCertChain(
       const std::string& mid) const;
   // Get negotiated role, if one has been negotiated.
-  absl::optional<rtc::SSLRole> GetDtlsRole(const std::string& mid) const;
+  std::optional<rtc::SSLRole> GetDtlsRole(const std::string& mid) const;
 
-  // TODO(deadbeef): GetStats isn't const because all the way down to
-  // OpenSSLStreamAdapter, GetSslCipherSuite and GetDtlsSrtpCryptoSuite are not
-  // const. Fix this.
-  bool GetStats(const std::string& mid, cricket::TransportStats* stats);
+  // Suggest a payload type for a given codec on a given media section.
+  // Media section is indicated by MID.
+  // The function will either return a PT already in use on the connection
+  // or a newly suggested one.
+  RTCErrorOr<PayloadType> SuggestPayloadType(const std::string& mid,
+                                             cricket::Codec codec) override;
+  RTCError AddLocalMapping(const std::string& mid,
+                           PayloadType payload_type,
+                           const cricket::Codec& codec) override;
+
+  bool GetStats(const std::string& mid, cricket::TransportStats* stats) const;
 
   bool initial_offerer() const { return initial_offerer_ && *initial_offerer_; }
 
@@ -325,14 +347,23 @@ class JsepTransportController : public sigslot::has_slots<> {
   CallbackList<const cricket::CandidatePairChangeEvent&>
       signal_ice_candidate_pair_changed_ RTC_GUARDED_BY(network_thread_);
 
+  // Called from SetLocalDescription and SetRemoteDescription.
+  // When `local` is true, local_desc must be valid. Similarly when
+  // `local` is false, remote_desc must be valid. The description counterpart
+  // to the one that's being applied, may be nullptr but when it's supplied
+  // the counterpart description's content groups will  be kept up to date for
+  // `type == SdpType::kAnswer`.
   RTCError ApplyDescription_n(bool local,
                               SdpType type,
-                              const cricket::SessionDescription* description)
+                              const cricket::SessionDescription* local_desc,
+                              const cricket::SessionDescription* remote_desc)
       RTC_RUN_ON(network_thread_);
   RTCError ValidateAndMaybeUpdateBundleGroups(
       bool local,
       SdpType type,
-      const cricket::SessionDescription* description);
+      const cricket::SessionDescription* local_desc,
+      const cricket::SessionDescription* remote_desc)
+      RTC_RUN_ON(network_thread_);
   RTCError ValidateContent(const cricket::ContentInfo& content_info);
 
   void HandleRejectedContent(const cricket::ContentInfo& content_info)
@@ -399,19 +430,19 @@ class JsepTransportController : public sigslot::has_slots<> {
   std::unique_ptr<cricket::DtlsTransportInternal> CreateDtlsTransport(
       const cricket::ContentInfo& content_info,
       cricket::IceTransportInternal* ice);
-  rtc::scoped_refptr<webrtc::IceTransportInterface> CreateIceTransport(
+  rtc::scoped_refptr<IceTransportInterface> CreateIceTransport(
       const std::string& transport_name,
       bool rtcp);
 
-  std::unique_ptr<webrtc::RtpTransport> CreateUnencryptedRtpTransport(
+  std::unique_ptr<RtpTransport> CreateUnencryptedRtpTransport(
       const std::string& transport_name,
       rtc::PacketTransportInternal* rtp_packet_transport,
       rtc::PacketTransportInternal* rtcp_packet_transport);
-  std::unique_ptr<webrtc::SrtpTransport> CreateSdesTransport(
+  std::unique_ptr<SrtpTransport> CreateSdesTransport(
       const std::string& transport_name,
       cricket::DtlsTransportInternal* rtp_dtls_transport,
       cricket::DtlsTransportInternal* rtcp_dtls_transport);
-  std::unique_ptr<webrtc::DtlsSrtpTransport> CreateDtlsSrtpTransport(
+  std::unique_ptr<DtlsSrtpTransport> CreateDtlsSrtpTransport(
       const std::string& transport_name,
       cricket::DtlsTransportInternal* rtp_dtls_transport,
       cricket::DtlsTransportInternal* rtcp_dtls_transport);
@@ -453,7 +484,7 @@ class JsepTransportController : public sigslot::has_slots<> {
   void OnRtcpPacketReceived_n(rtc::CopyOnWriteBuffer* packet,
                               int64_t packet_time_us)
       RTC_RUN_ON(network_thread_);
-  void OnUnDemuxableRtpPacketReceived_n(const webrtc::RtpPacketReceived& packet)
+  void OnUnDemuxableRtpPacketReceived_n(const RtpPacketReceived& packet)
       RTC_RUN_ON(network_thread_);
 
   void OnDtlsHandshakeError(rtc::SSLHandshakeError error);
@@ -461,6 +492,7 @@ class JsepTransportController : public sigslot::has_slots<> {
   bool OnTransportChanged(const std::string& mid,
                           cricket::JsepTransport* transport);
 
+  const Environment env_;
   rtc::Thread* const network_thread_ = nullptr;
   cricket::PortAllocator* const port_allocator_ = nullptr;
   AsyncDnsResolverFactoryInterface* const async_dns_resolver_factory_ = nullptr;
@@ -481,16 +513,15 @@ class JsepTransportController : public sigslot::has_slots<> {
   const Config config_;
   bool active_reset_srtp_params_ RTC_GUARDED_BY(network_thread_);
 
-  const cricket::SessionDescription* local_desc_ = nullptr;
-  const cricket::SessionDescription* remote_desc_ = nullptr;
-  absl::optional<bool> initial_offerer_;
+  std::optional<bool> initial_offerer_;
 
   cricket::IceConfig ice_config_;
   cricket::IceRole ice_role_ = cricket::ICEROLE_CONTROLLING;
-  uint64_t ice_tiebreaker_ = rtc::CreateRandomId64();
   rtc::scoped_refptr<rtc::RTCCertificate> certificate_;
 
   BundleManager bundles_;
+  // Reference to the SdpOfferAnswerHandler's payload type picker.
+  PayloadTypePicker& payload_type_picker_;
 };
 
 }  // namespace webrtc

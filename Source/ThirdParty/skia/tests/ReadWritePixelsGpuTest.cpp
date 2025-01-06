@@ -28,10 +28,10 @@
 #include "include/core/SkTypes.h"
 #include "include/effects/SkGradientShader.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrRecordingContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/ganesh/SkImageGanesh.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "include/private/base/SkTArray.h"
@@ -48,6 +48,7 @@
 #include "src/gpu/ganesh/GrPixmap.h"
 #include "src/gpu/ganesh/GrSamplerState.h"
 #include "src/gpu/ganesh/GrSurfaceProxy.h"
+#include "src/gpu/ganesh/GrUtil.h"
 #include "src/gpu/ganesh/SurfaceContext.h"
 #include "src/gpu/ganesh/SurfaceFillContext.h"
 #include "src/gpu/ganesh/effects/GrTextureEffect.h"
@@ -97,6 +98,7 @@ static constexpr int min_rgb_channel_bits(SkColorType ct) {
         case kGray_8_SkColorType:             return 8;   // counting gray as "rgb"
         case kRGBA_F16Norm_SkColorType:       return 10;  // just counting the mantissa
         case kRGBA_F16_SkColorType:           return 10;  // just counting the mantissa
+        case kRGB_F16F16F16x_SkColorType:     return 10;
         case kRGBA_F32_SkColorType:           return 23;  // just counting the mantissa
         case kR16G16B16A16_unorm_SkColorType: return 16;
         case kR8_unorm_SkColorType:           return 8;
@@ -129,6 +131,7 @@ static constexpr int alpha_channel_bits(SkColorType ct) {
         case kGray_8_SkColorType:             return 0;
         case kRGBA_F16Norm_SkColorType:       return 10;  // just counting the mantissa
         case kRGBA_F16_SkColorType:           return 10;  // just counting the mantissa
+        case kRGB_F16F16F16x_SkColorType:     return 0;
         case kRGBA_F32_SkColorType:           return 23;  // just counting the mantissa
         case kR16G16B16A16_unorm_SkColorType: return 16;
         case kR8_unorm_SkColorType:           return 0;
@@ -337,7 +340,7 @@ static void gpu_read_pixels_test_driver(skiatest::Reporter* reporter,
         } else if (!rules.fUncontainedRectSucceeds && !surfBounds.contains(rect)) {
             REPORTER_ASSERT(reporter, result != Result::kSuccess);
         } else if (result == Result::kFail) {
-            // TODO: Support RGB/BGR 101010x, BGRA 1010102 on the GPU.
+            // TODO: Support BGR 101010x, BGRA 1010102, on the GPU.
             if (SkColorTypeToGrColorType(readCT) != GrColorType::kUnknown) {
                 ERRORF(reporter,
                        "Read failed. %sSrc CT: %s, Src AT: %s Read CT: %s, Read AT: %s, "
@@ -373,17 +376,17 @@ static void gpu_read_pixels_test_driver(skiatest::Reporter* reporter,
                 numer += 1;
             }
             int rgbBits = std::min({min_rgb_channel_bits(readCT), min_rgb_channel_bits(srcCT), 8});
-            float tol = numer / (1 << rgbBits);
+            float tol = (rgbBits == 0) ? 1.f : numer / ((1 << rgbBits) - 1);
             // Swiftshader is producing alpha errors with 16-bit UNORM. We choose to always allow
             // a small tolerance:
-            float alphaTol = 1.f / (1 << 10);
+            float alphaTol = 1.f / ((1 << 10) - 1);
             if (readAT != kOpaque_SkAlphaType && srcAT != kOpaque_SkAlphaType) {
                 // Alpha can also get squashed down to 8 bits going through an intermediate
                 // color format.
                 const int alphaBits = std::min({alpha_channel_bits(readCT),
                                                 alpha_channel_bits(srcCT),
                                                 8});
-                alphaTol = 2.f / (1 << alphaBits);
+                alphaTol = (alphaBits == 0) ? 1.f : 2.f / ((1 << alphaBits) - 1);
             }
 
             const float tols[4] = {tol, tol, tol, alphaTol};
@@ -797,7 +800,7 @@ static void image_async_read_pixels(GrRenderable renderable,
 DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(ImageAsyncReadPixels_NonRenderable_TopLeft,
                                        reporter,
                                        ctxInfo,
-                                       CtsEnforcement::kApiLevel_T) {
+                                       CtsEnforcement::kApiLevel_V) {
     image_async_read_pixels(GrRenderable::kNo, GrSurfaceOrigin::kTopLeft_GrSurfaceOrigin,
                             reporter, ctxInfo);
 }
@@ -805,7 +808,7 @@ DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(ImageAsyncReadPixels_NonRenderable_TopLef
 DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(ImageAsyncReadPixels_NonRenderable_BottomLeft,
                                        reporter,
                                        ctxInfo,
-                                       CtsEnforcement::kApiLevel_T) {
+                                       CtsEnforcement::kApiLevel_V) {
     image_async_read_pixels(GrRenderable::kNo, GrSurfaceOrigin::kBottomLeft_GrSurfaceOrigin,
                             reporter, ctxInfo);
 }
@@ -813,7 +816,7 @@ DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(ImageAsyncReadPixels_NonRenderable_Bottom
 DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(ImageAsyncReadPixels_Renderable_TopLeft,
                                        reporter,
                                        ctxInfo,
-                                       CtsEnforcement::kApiLevel_T) {
+                                       CtsEnforcement::kApiLevel_V) {
     image_async_read_pixels(GrRenderable::kYes, GrSurfaceOrigin::kTopLeft_GrSurfaceOrigin,
                             reporter, ctxInfo);
 }
@@ -821,7 +824,7 @@ DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(ImageAsyncReadPixels_Renderable_TopLeft,
 DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(ImageAsyncReadPixels_Renderable_BottomLeft,
                                        reporter,
                                        ctxInfo,
-                                       CtsEnforcement::kApiLevel_T) {
+                                       CtsEnforcement::kApiLevel_V) {
     image_async_read_pixels(GrRenderable::kYes, GrSurfaceOrigin::kBottomLeft_GrSurfaceOrigin,
                             reporter, ctxInfo);
 }
@@ -1007,7 +1010,7 @@ static void gpu_write_pixels_test_driver(skiatest::Reporter* reporter,
         } else if (result == Result::kExcusedFailure) {
             return result;
         } else if (result == Result::kFail) {
-            // TODO: Support RGB/BGR 101010x, BGRA 1010102 on the GPU.
+            // TODO: Support BGR 101010x, BGRA 1010102 on the GPU.
             if (SkColorTypeToGrColorType(writeCT) != GrColorType::kUnknown) {
                 ERRORF(reporter,
                        "Write failed. Write CT: %s, Write AT: %s Dst CT: %s, Dst AT: %s, "
@@ -1039,7 +1042,7 @@ static void gpu_write_pixels_test_driver(skiatest::Reporter* reporter,
         // Sometimes wider types go through 8bit unorm intermediates because of API
         // restrictions.
         int rgbBits = std::min({min_rgb_channel_bits(writeCT), min_rgb_channel_bits(dstCT), 8});
-        float tol = 2.f/(1 << rgbBits);
+        float tol = (rgbBits == 0) ? 1.f : 2.f / ((1 << rgbBits) - 1);
         float alphaTol = 0;
         if (writeAT != kOpaque_SkAlphaType && dstAT != kOpaque_SkAlphaType) {
             // Alpha can also get squashed down to 8 bits going through an intermediate
@@ -1047,7 +1050,7 @@ static void gpu_write_pixels_test_driver(skiatest::Reporter* reporter,
             const int alphaBits = std::min({alpha_channel_bits(writeCT),
                                             alpha_channel_bits(dstCT),
                                             8});
-            alphaTol = 2.f/(1 << alphaBits);
+            alphaTol = (alphaBits == 0) ? 1.f : 2.f / ((1 << alphaBits) - 1);
         }
 
         const float tols[4] = {tol, tol, tol, alphaTol};

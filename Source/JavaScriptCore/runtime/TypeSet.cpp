@@ -28,6 +28,7 @@
 
 #include "HeapInlines.h"
 #include "InspectorProtocolObjects.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/Vector.h>
@@ -160,7 +161,7 @@ String TypeSet::displayName() const
         if (doesTypeConformTo(TypeObject))
             return ctorName;
         if (doesTypeConformTo(TypeObject | TypeNull | TypeUndefined))
-            return ctorName + '?';
+            return makeString(ctorName, '?');
     }
 
     // The order of these checks are important. For example, if a value is only a function, it conforms to TypeFunction, but it also conforms to TypeFunction | TypeNull.

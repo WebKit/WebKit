@@ -23,6 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+[
+    ExceptionForEnabledBy,
+    DispatchedFrom=WebContent,
+    DispatchedTo=UI
+]
 messages -> WebUserContentControllerProxy {
 DidPostMessage(WebKit::WebPageProxyIdentifier pageID, struct WebKit::FrameInfoData frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, std::span<const uint8_t> message) -> (std::span<const uint8_t> resultValue, String errorMessage)
 }

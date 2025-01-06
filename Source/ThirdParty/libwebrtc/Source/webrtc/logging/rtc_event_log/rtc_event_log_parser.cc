@@ -16,26 +16,77 @@
 #include <algorithm>
 #include <limits>
 #include <map>
+#include <optional>
+#include <set>
+#include <string>
+#include <tuple>
 #include <utility>
+#include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
-#include "api/network_state_predictor.h"
+#include "api/candidate.h"
+#include "api/dtls_transport_interface.h"
+#include "api/rtc_event_log/rtc_event.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
+#include "api/transport/bandwidth_usage.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_codec_type.h"
 #include "logging/rtc_event_log/dependency_descriptor_encoder_decoder.h"
 #include "logging/rtc_event_log/encoder/blob_encoding.h"
 #include "logging/rtc_event_log/encoder/delta_encoding.h"
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder_common.h"
 #include "logging/rtc_event_log/encoder/var_int.h"
 #include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
+#include "logging/rtc_event_log/events/rtc_event_alr_state.h"
+#include "logging/rtc_event_log/events/rtc_event_audio_network_adaptation.h"
+#include "logging/rtc_event_log/events/rtc_event_audio_playout.h"
+#include "logging/rtc_event_log/events/rtc_event_audio_receive_stream_config.h"
+#include "logging/rtc_event_log/events/rtc_event_audio_send_stream_config.h"
+#include "logging/rtc_event_log/events/rtc_event_begin_log.h"
+#include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
+#include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
+#include "logging/rtc_event_log/events/rtc_event_dtls_transport_state.h"
+#include "logging/rtc_event_log/events/rtc_event_dtls_writable_state.h"
+#include "logging/rtc_event_log/events/rtc_event_end_log.h"
+#include "logging/rtc_event_log/events/rtc_event_frame_decoded.h"
+#include "logging/rtc_event_log/events/rtc_event_generic_ack_received.h"
+#include "logging/rtc_event_log/events/rtc_event_generic_packet_received.h"
+#include "logging/rtc_event_log/events/rtc_event_generic_packet_sent.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
+#include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
+#include "logging/rtc_event_log/events/rtc_event_remote_estimate.h"
+#include "logging/rtc_event_log/events/rtc_event_route_change.h"
+#include "logging/rtc_event_log/events/rtc_event_rtcp_packet_incoming.h"
+#include "logging/rtc_event_log/events/rtc_event_rtcp_packet_outgoing.h"
+#include "logging/rtc_event_log/events/rtc_event_rtp_packet_incoming.h"
+#include "logging/rtc_event_log/events/rtc_event_rtp_packet_outgoing.h"
+#include "logging/rtc_event_log/events/rtc_event_video_receive_stream_config.h"
+#include "logging/rtc_event_log/events/rtc_event_video_send_stream_config.h"
+#include "logging/rtc_event_log/rtc_event_log.pb.h"
+#include "logging/rtc_event_log/rtc_event_log2.pb.h"
 #include "logging/rtc_event_log/rtc_event_processor.h"
-#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
+#include "logging/rtc_event_log/rtc_stream_config.h"
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 #include "modules/rtp_rtcp/include/rtp_cvo.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/extended_reports.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/fir.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/nack.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/pli.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/psfb.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
 #include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
@@ -53,7 +104,7 @@ using webrtc_event_logging::ToUnsigned;
 namespace webrtc {
 
 namespace {
-constexpr int64_t kMaxLogSize = 250000000;
+constexpr size_t kMaxLogSize = 250000000;
 
 constexpr size_t kIpv4Overhead = 20;
 constexpr size_t kIpv6Overhead = 40;
@@ -163,22 +214,29 @@ IceCandidatePairConfigType GetRuntimeIceCandidatePairConfigType(
   return IceCandidatePairConfigType::kAdded;
 }
 
-IceCandidateType GetRuntimeIceCandidateType(
-    rtclog::IceCandidatePairConfig::IceCandidateType type) {
-  switch (type) {
+// Converts a log type (proto based) to a matching `IceCandidateType` value
+// and checks for validity of the log type (since the enums aren't a perfect
+// match).
+bool GetRuntimeIceCandidateType(
+    rtclog::IceCandidatePairConfig::IceCandidateType log_type,
+    IceCandidateType& parsed_type) {
+  switch (log_type) {
     case rtclog::IceCandidatePairConfig::LOCAL:
-      return IceCandidateType::kLocal;
+      parsed_type = IceCandidateType::kHost;
+      break;
     case rtclog::IceCandidatePairConfig::STUN:
-      return IceCandidateType::kStun;
+      parsed_type = IceCandidateType::kSrflx;
+      break;
     case rtclog::IceCandidatePairConfig::PRFLX:
-      return IceCandidateType::kPrflx;
+      parsed_type = IceCandidateType::kPrflx;
+      break;
     case rtclog::IceCandidatePairConfig::RELAY:
-      return IceCandidateType::kRelay;
-    case rtclog::IceCandidatePairConfig::UNKNOWN_CANDIDATE_TYPE:
-      return IceCandidateType::kUnknown;
+      parsed_type = IceCandidateType::kRelay;
+      break;
+    default:
+      return false;
   }
-  RTC_DCHECK_NOTREACHED();
-  return IceCandidateType::kUnknown;
+  return true;
 }
 
 IceCandidatePairProtocol GetRuntimeIceCandidatePairProtocol(
@@ -264,12 +322,11 @@ VideoCodecType GetRuntimeCodecType(rtclog2::FrameDecodedEvents::Codec codec) {
     case rtclog2::FrameDecodedEvents::CODEC_H265:
       return VideoCodecType::kVideoCodecH265;
     case rtclog2::FrameDecodedEvents::CODEC_UNKNOWN:
-      RTC_LOG(LS_ERROR) << "Unknown codec type. Assuming "
-                           "VideoCodecType::kVideoCodecMultiplex";
-      return VideoCodecType::kVideoCodecMultiplex;
+      RTC_LOG(LS_ERROR) << "Unknown codec type. Returning generic.";
+      return VideoCodecType::kVideoCodecGeneric;
   }
   RTC_DCHECK_NOTREACHED();
-  return VideoCodecType::kVideoCodecMultiplex;
+  return VideoCodecType::kVideoCodecGeneric;
 }
 
 ParsedRtcEventLog::ParseStatus GetHeaderExtensions(
@@ -320,45 +377,68 @@ ParsedRtcEventLog::ParseStatus StoreRtpPackets(
   // Base event
   {
     RTPHeader header;
-    header.markerBit = rtc::checked_cast<bool>(proto.marker());
-    header.payloadType = rtc::checked_cast<uint8_t>(proto.payload_type());
-    header.sequenceNumber =
-        rtc::checked_cast<uint16_t>(proto.sequence_number());
-    header.timestamp = rtc::checked_cast<uint32_t>(proto.rtp_timestamp());
-    header.ssrc = rtc::checked_cast<uint32_t>(proto.ssrc());
+    RTC_PARSE_CHECK_OR_RETURN(
+        rtc::IsValueInRangeForNumericType<bool>(proto.marker()));
+    header.markerBit = static_cast<bool>(proto.marker());
+    RTC_PARSE_CHECK_OR_RETURN(
+        rtc::IsValueInRangeForNumericType<uint8_t>(proto.payload_type()));
+    header.payloadType = static_cast<uint8_t>(proto.payload_type());
+
+    RTC_PARSE_CHECK_OR_RETURN(
+        rtc::IsValueInRangeForNumericType<uint16_t>(proto.sequence_number()));
+    header.sequenceNumber = static_cast<uint16_t>(proto.sequence_number());
+    RTC_PARSE_CHECK_OR_RETURN(
+        rtc::IsValueInRangeForNumericType<uint32_t>(proto.rtp_timestamp()));
+    header.timestamp = static_cast<uint32_t>(proto.rtp_timestamp());
+    RTC_PARSE_CHECK_OR_RETURN(
+        rtc::IsValueInRangeForNumericType<uint32_t>(proto.ssrc()));
+    header.ssrc = static_cast<uint32_t>(proto.ssrc());
     header.numCSRCs = 0;  // TODO(terelius): Implement CSRC.
-    header.paddingLength = rtc::checked_cast<size_t>(proto.padding_size());
-    header.headerLength = rtc::checked_cast<size_t>(proto.header_size());
+    RTC_PARSE_CHECK_OR_RETURN(
+        rtc::IsValueInRangeForNumericType<size_t>(proto.padding_size()));
+    header.paddingLength = static_cast<size_t>(proto.padding_size());
+    RTC_PARSE_CHECK_OR_RETURN(
+        rtc::IsValueInRangeForNumericType<size_t>(proto.header_size()));
+    header.headerLength = static_cast<size_t>(proto.header_size());
     // TODO(terelius): Should we implement payload_type_frequency?
     if (proto.has_transport_sequence_number()) {
       header.extension.hasTransportSequenceNumber = true;
+      RTC_PARSE_CHECK_OR_RETURN(rtc::IsValueInRangeForNumericType<uint16_t>(
+          proto.transport_sequence_number()));
       header.extension.transportSequenceNumber =
-          rtc::checked_cast<uint16_t>(proto.transport_sequence_number());
+          static_cast<uint16_t>(proto.transport_sequence_number());
     }
     if (proto.has_transmission_time_offset()) {
       header.extension.hasTransmissionTimeOffset = true;
+      RTC_PARSE_CHECK_OR_RETURN(rtc::IsValueInRangeForNumericType<int32_t>(
+          proto.transmission_time_offset()));
       header.extension.transmissionTimeOffset =
-          rtc::checked_cast<int32_t>(proto.transmission_time_offset());
+          static_cast<int32_t>(proto.transmission_time_offset());
     }
     if (proto.has_absolute_send_time()) {
       header.extension.hasAbsoluteSendTime = true;
+      RTC_PARSE_CHECK_OR_RETURN(rtc::IsValueInRangeForNumericType<uint32_t>(
+          proto.absolute_send_time()));
       header.extension.absoluteSendTime =
-          rtc::checked_cast<uint32_t>(proto.absolute_send_time());
+          static_cast<uint32_t>(proto.absolute_send_time());
     }
     if (proto.has_video_rotation()) {
       header.extension.hasVideoRotation = true;
+      RTC_PARSE_CHECK_OR_RETURN(
+          rtc::IsValueInRangeForNumericType<uint8_t>(proto.video_rotation()));
       header.extension.videoRotation = ConvertCVOByteToVideoRotation(
-          rtc::checked_cast<uint8_t>(proto.video_rotation()));
+          static_cast<uint8_t>(proto.video_rotation()));
     }
     if (proto.has_audio_level()) {
       RTC_PARSE_CHECK_OR_RETURN(proto.has_voice_activity());
-      header.extension.hasAudioLevel = true;
-      header.extension.voiceActivity =
-          rtc::checked_cast<bool>(proto.voice_activity());
-      const uint8_t audio_level =
-          rtc::checked_cast<uint8_t>(proto.audio_level());
-      RTC_PARSE_CHECK_OR_RETURN_LE(audio_level, 0x7Fu);
-      header.extension.audioLevel = audio_level;
+      RTC_PARSE_CHECK_OR_RETURN(
+          rtc::IsValueInRangeForNumericType<bool>(proto.voice_activity()));
+      bool voice_activity = static_cast<bool>(proto.voice_activity());
+      RTC_PARSE_CHECK_OR_RETURN(
+          rtc::IsValueInRangeForNumericType<int>(proto.audio_level()));
+      int audio_level = static_cast<int>(proto.audio_level());
+      RTC_PARSE_CHECK_OR_RETURN_LE(audio_level, 0x7F);
+      header.extension.set_audio_level(AudioLevel(voice_activity, audio_level));
     } else {
       RTC_PARSE_CHECK_OR_RETURN(!proto.has_voice_activity());
     }
@@ -377,59 +457,59 @@ ParsedRtcEventLog::ParseStatus StoreRtpPackets(
   }
 
   // timestamp_ms (event)
-  std::vector<absl::optional<uint64_t>> timestamp_ms_values =
+  std::vector<std::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // marker (RTP base)
-  std::vector<absl::optional<uint64_t>> marker_values =
+  std::vector<std::optional<uint64_t>> marker_values =
       DecodeDeltas(proto.marker_deltas(), proto.marker(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(marker_values.size(), number_of_deltas);
 
   // payload_type (RTP base)
-  std::vector<absl::optional<uint64_t>> payload_type_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> payload_type_values = DecodeDeltas(
       proto.payload_type_deltas(), proto.payload_type(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(payload_type_values.size(), number_of_deltas);
 
   // sequence_number (RTP base)
-  std::vector<absl::optional<uint64_t>> sequence_number_values =
+  std::vector<std::optional<uint64_t>> sequence_number_values =
       DecodeDeltas(proto.sequence_number_deltas(), proto.sequence_number(),
                    number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(sequence_number_values.size(), number_of_deltas);
 
   // rtp_timestamp (RTP base)
-  std::vector<absl::optional<uint64_t>> rtp_timestamp_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> rtp_timestamp_values = DecodeDeltas(
       proto.rtp_timestamp_deltas(), proto.rtp_timestamp(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(rtp_timestamp_values.size(), number_of_deltas);
 
   // ssrc (RTP base)
-  std::vector<absl::optional<uint64_t>> ssrc_values =
+  std::vector<std::optional<uint64_t>> ssrc_values =
       DecodeDeltas(proto.ssrc_deltas(), proto.ssrc(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(ssrc_values.size(), number_of_deltas);
 
   // payload_size (RTP base)
-  std::vector<absl::optional<uint64_t>> payload_size_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> payload_size_values = DecodeDeltas(
       proto.payload_size_deltas(), proto.payload_size(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(payload_size_values.size(), number_of_deltas);
 
   // header_size (RTP base)
-  std::vector<absl::optional<uint64_t>> header_size_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> header_size_values = DecodeDeltas(
       proto.header_size_deltas(), proto.header_size(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(header_size_values.size(), number_of_deltas);
 
   // padding_size (RTP base)
-  std::vector<absl::optional<uint64_t>> padding_size_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> padding_size_values = DecodeDeltas(
       proto.padding_size_deltas(), proto.padding_size(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(padding_size_values.size(), number_of_deltas);
 
   // transport_sequence_number (RTP extension)
-  std::vector<absl::optional<uint64_t>> transport_sequence_number_values;
+  std::vector<std::optional<uint64_t>> transport_sequence_number_values;
   {
-    const absl::optional<uint64_t> base_transport_sequence_number =
+    const std::optional<uint64_t> base_transport_sequence_number =
         proto.has_transport_sequence_number()
             ? proto.transport_sequence_number()
-            : absl::optional<uint64_t>();
+            : std::optional<uint64_t>();
     transport_sequence_number_values =
         DecodeDeltas(proto.transport_sequence_number_deltas(),
                      base_transport_sequence_number, number_of_deltas);
@@ -438,12 +518,12 @@ ParsedRtcEventLog::ParseStatus StoreRtpPackets(
   }
 
   // transmission_time_offset (RTP extension)
-  std::vector<absl::optional<uint64_t>> transmission_time_offset_values;
+  std::vector<std::optional<uint64_t>> transmission_time_offset_values;
   {
-    const absl::optional<uint64_t> unsigned_base_transmission_time_offset =
+    const std::optional<uint64_t> unsigned_base_transmission_time_offset =
         proto.has_transmission_time_offset()
             ? ToUnsigned(proto.transmission_time_offset())
-            : absl::optional<uint64_t>();
+            : std::optional<uint64_t>();
     transmission_time_offset_values =
         DecodeDeltas(proto.transmission_time_offset_deltas(),
                      unsigned_base_transmission_time_offset, number_of_deltas);
@@ -452,11 +532,11 @@ ParsedRtcEventLog::ParseStatus StoreRtpPackets(
   }
 
   // absolute_send_time (RTP extension)
-  std::vector<absl::optional<uint64_t>> absolute_send_time_values;
+  std::vector<std::optional<uint64_t>> absolute_send_time_values;
   {
-    const absl::optional<uint64_t> base_absolute_send_time =
+    const std::optional<uint64_t> base_absolute_send_time =
         proto.has_absolute_send_time() ? proto.absolute_send_time()
-                                       : absl::optional<uint64_t>();
+                                       : std::optional<uint64_t>();
     absolute_send_time_values =
         DecodeDeltas(proto.absolute_send_time_deltas(), base_absolute_send_time,
                      number_of_deltas);
@@ -465,11 +545,11 @@ ParsedRtcEventLog::ParseStatus StoreRtpPackets(
   }
 
   // video_rotation (RTP extension)
-  std::vector<absl::optional<uint64_t>> video_rotation_values;
+  std::vector<std::optional<uint64_t>> video_rotation_values;
   {
-    const absl::optional<uint64_t> base_video_rotation =
+    const std::optional<uint64_t> base_video_rotation =
         proto.has_video_rotation() ? proto.video_rotation()
-                                   : absl::optional<uint64_t>();
+                                   : std::optional<uint64_t>();
     video_rotation_values = DecodeDeltas(proto.video_rotation_deltas(),
                                          base_video_rotation, number_of_deltas);
     RTC_PARSE_CHECK_OR_RETURN_EQ(video_rotation_values.size(),
@@ -477,22 +557,22 @@ ParsedRtcEventLog::ParseStatus StoreRtpPackets(
   }
 
   // audio_level (RTP extension)
-  std::vector<absl::optional<uint64_t>> audio_level_values;
+  std::vector<std::optional<uint64_t>> audio_level_values;
   {
-    const absl::optional<uint64_t> base_audio_level =
+    const std::optional<uint64_t> base_audio_level =
         proto.has_audio_level() ? proto.audio_level()
-                                : absl::optional<uint64_t>();
+                                : std::optional<uint64_t>();
     audio_level_values = DecodeDeltas(proto.audio_level_deltas(),
                                       base_audio_level, number_of_deltas);
     RTC_PARSE_CHECK_OR_RETURN_EQ(audio_level_values.size(), number_of_deltas);
   }
 
   // voice_activity (RTP extension)
-  std::vector<absl::optional<uint64_t>> voice_activity_values;
+  std::vector<std::optional<uint64_t>> voice_activity_values;
   {
-    const absl::optional<uint64_t> base_voice_activity =
+    const std::optional<uint64_t> base_voice_activity =
         proto.has_voice_activity() ? proto.voice_activity()
-                                   : absl::optional<uint64_t>();
+                                   : std::optional<uint64_t>();
     voice_activity_values = DecodeDeltas(proto.voice_activity_deltas(),
                                          base_voice_activity, number_of_deltas);
     RTC_PARSE_CHECK_OR_RETURN_EQ(voice_activity_values.size(),
@@ -516,21 +596,36 @@ ParsedRtcEventLog::ParseStatus StoreRtpPackets(
         ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
 
     RTPHeader header;
-    header.markerBit = rtc::checked_cast<bool>(*marker_values[i]);
-    header.payloadType = rtc::checked_cast<uint8_t>(*payload_type_values[i]);
-    header.sequenceNumber =
-        rtc::checked_cast<uint16_t>(*sequence_number_values[i]);
-    header.timestamp = rtc::checked_cast<uint32_t>(*rtp_timestamp_values[i]);
-    header.ssrc = rtc::checked_cast<uint32_t>(*ssrc_values[i]);
+    RTC_PARSE_CHECK_OR_RETURN(
+        rtc::IsValueInRangeForNumericType<bool>(*marker_values[i]));
+    header.markerBit = static_cast<bool>(*marker_values[i]);
+    RTC_PARSE_CHECK_OR_RETURN(
+        rtc::IsValueInRangeForNumericType<uint8_t>(*payload_type_values[i]));
+    header.payloadType = static_cast<uint8_t>(*payload_type_values[i]);
+    RTC_PARSE_CHECK_OR_RETURN(rtc::IsValueInRangeForNumericType<uint16_t>(
+        *sequence_number_values[i]));
+    header.sequenceNumber = static_cast<uint16_t>(*sequence_number_values[i]);
+    RTC_PARSE_CHECK_OR_RETURN(
+        rtc::IsValueInRangeForNumericType<uint32_t>(*rtp_timestamp_values[i]));
+    header.timestamp = static_cast<uint32_t>(*rtp_timestamp_values[i]);
+    RTC_PARSE_CHECK_OR_RETURN(
+        rtc::IsValueInRangeForNumericType<uint32_t>(*ssrc_values[i]));
+    header.ssrc = static_cast<uint32_t>(*ssrc_values[i]);
     header.numCSRCs = 0;  // TODO(terelius): Implement CSRC.
-    header.paddingLength = rtc::checked_cast<size_t>(*padding_size_values[i]);
-    header.headerLength = rtc::checked_cast<size_t>(*header_size_values[i]);
+    RTC_PARSE_CHECK_OR_RETURN(
+        rtc::IsValueInRangeForNumericType<size_t>(*padding_size_values[i]));
+    header.paddingLength = static_cast<size_t>(*padding_size_values[i]);
+    RTC_PARSE_CHECK_OR_RETURN(
+        rtc::IsValueInRangeForNumericType<size_t>(*header_size_values[i]));
+    header.headerLength = static_cast<size_t>(*header_size_values[i]);
     // TODO(terelius): Should we implement payload_type_frequency?
     if (transport_sequence_number_values.size() > i &&
         transport_sequence_number_values[i].has_value()) {
       header.extension.hasTransportSequenceNumber = true;
-      header.extension.transportSequenceNumber = rtc::checked_cast<uint16_t>(
-          transport_sequence_number_values[i].value());
+      RTC_PARSE_CHECK_OR_RETURN(rtc::IsValueInRangeForNumericType<uint16_t>(
+          transport_sequence_number_values[i].value()));
+      header.extension.transportSequenceNumber =
+          static_cast<uint16_t>(transport_sequence_number_values[i].value());
     }
     if (transmission_time_offset_values.size() > i &&
         transmission_time_offset_values[i].has_value()) {
@@ -544,25 +639,30 @@ ParsedRtcEventLog::ParseStatus StoreRtpPackets(
     if (absolute_send_time_values.size() > i &&
         absolute_send_time_values[i].has_value()) {
       header.extension.hasAbsoluteSendTime = true;
+      RTC_PARSE_CHECK_OR_RETURN(rtc::IsValueInRangeForNumericType<uint32_t>(
+          absolute_send_time_values[i].value()));
       header.extension.absoluteSendTime =
-          rtc::checked_cast<uint32_t>(absolute_send_time_values[i].value());
+          static_cast<uint32_t>(absolute_send_time_values[i].value());
     }
     if (video_rotation_values.size() > i &&
         video_rotation_values[i].has_value()) {
       header.extension.hasVideoRotation = true;
+      RTC_PARSE_CHECK_OR_RETURN(rtc::IsValueInRangeForNumericType<uint8_t>(
+          video_rotation_values[i].value()));
       header.extension.videoRotation = ConvertCVOByteToVideoRotation(
-          rtc::checked_cast<uint8_t>(video_rotation_values[i].value()));
+          static_cast<uint8_t>(video_rotation_values[i].value()));
     }
     if (audio_level_values.size() > i && audio_level_values[i].has_value()) {
       RTC_PARSE_CHECK_OR_RETURN(voice_activity_values.size() > i &&
                                 voice_activity_values[i].has_value());
-      header.extension.hasAudioLevel = true;
-      header.extension.voiceActivity =
-          rtc::checked_cast<bool>(voice_activity_values[i].value());
-      const uint8_t audio_level =
-          rtc::checked_cast<uint8_t>(audio_level_values[i].value());
-      RTC_PARSE_CHECK_OR_RETURN_LE(audio_level, 0x7Fu);
-      header.extension.audioLevel = audio_level;
+      RTC_PARSE_CHECK_OR_RETURN(rtc::IsValueInRangeForNumericType<bool>(
+          voice_activity_values[i].value()));
+      bool voice_activity = static_cast<bool>(voice_activity_values[i].value());
+      RTC_PARSE_CHECK_OR_RETURN(rtc::IsValueInRangeForNumericType<int>(
+          audio_level_values[i].value()));
+      int audio_level = static_cast<int>(audio_level_values[i].value());
+      RTC_PARSE_CHECK_OR_RETURN_LE(audio_level, 0x7F);
+      header.extension.set_audio_level(AudioLevel(voice_activity, audio_level));
     } else {
       RTC_PARSE_CHECK_OR_RETURN(voice_activity_values.size() <= i ||
                                 !voice_activity_values[i].has_value());
@@ -607,7 +707,7 @@ ParsedRtcEventLog::ParseStatus StoreRtcpPackets(
   }
 
   // timestamp_ms
-  std::vector<absl::optional<uint64_t>> timestamp_ms_values =
+  std::vector<std::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
@@ -806,18 +906,39 @@ IceCandidateType GetRuntimeIceCandidateType(
     rtclog2::IceCandidatePairConfig::IceCandidateType type) {
   switch (type) {
     case rtclog2::IceCandidatePairConfig::LOCAL:
-      return IceCandidateType::kLocal;
+      return IceCandidateType::kHost;
     case rtclog2::IceCandidatePairConfig::STUN:
-      return IceCandidateType::kStun;
+      return IceCandidateType::kSrflx;
     case rtclog2::IceCandidatePairConfig::PRFLX:
       return IceCandidateType::kPrflx;
     case rtclog2::IceCandidatePairConfig::RELAY:
       return IceCandidateType::kRelay;
-    case rtclog2::IceCandidatePairConfig::UNKNOWN_CANDIDATE_TYPE:
-      return IceCandidateType::kUnknown;
+    default:
+      RTC_DCHECK_NOTREACHED();
+      return IceCandidateType::kHost;
   }
-  RTC_DCHECK_NOTREACHED();
-  return IceCandidateType::kUnknown;
+}
+
+bool GetRuntimeIceCandidateType(
+    rtclog2::IceCandidatePairConfig::IceCandidateType log_type,
+    IceCandidateType& parsed_type) {
+  switch (log_type) {
+    case rtclog2::IceCandidatePairConfig::LOCAL:
+      parsed_type = IceCandidateType::kHost;
+      break;
+    case rtclog2::IceCandidatePairConfig::STUN:
+      parsed_type = IceCandidateType::kSrflx;
+      break;
+    case rtclog2::IceCandidatePairConfig::PRFLX:
+      parsed_type = IceCandidateType::kPrflx;
+      break;
+    case rtclog2::IceCandidatePairConfig::RELAY:
+      parsed_type = IceCandidateType::kRelay;
+      break;
+    default:
+      return false;
+  }
+  return true;
 }
 
 IceCandidatePairProtocol GetRuntimeIceCandidatePairProtocol(
@@ -1008,7 +1129,7 @@ ParsedRtcEventLog::GetDefaultHeaderExtensionMap() {
   constexpr int kDependencyDescriptorDefaultId = 9;
 
   webrtc::RtpHeaderExtensionMap default_map(/*extmap_allow_mixed=*/true);
-  default_map.Register<AudioLevel>(kAudioLevelDefaultId);
+  default_map.Register<AudioLevelExtension>(kAudioLevelDefaultId);
   default_map.Register<TransmissionOffset>(kTimestampOffsetDefaultId);
   default_map.Register<AbsoluteSendTime>(kAbsSendTimeDefaultId);
   default_map.Register<VideoOrientation>(kVideoRotationDefaultId);
@@ -1105,17 +1226,17 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::ParseFile(
   }
 
   // Compute file size.
-  long signed_filesize = file.FileSize();  // NOLINT(runtime/int)
-  RTC_PARSE_CHECK_OR_RETURN_GE(signed_filesize, 0);
-  RTC_PARSE_CHECK_OR_RETURN_LE(signed_filesize, kMaxLogSize);
-  size_t filesize = rtc::checked_cast<size_t>(signed_filesize);
+  std::optional<size_t> file_size = file.FileSize();
+  RTC_PARSE_CHECK_OR_RETURN(file_size.has_value());
+  RTC_PARSE_CHECK_OR_RETURN_GE(*file_size, 0u);
+  RTC_PARSE_CHECK_OR_RETURN_LE(*file_size, kMaxLogSize);
 
   // Read file into memory.
-  std::string buffer(filesize, '\0');
+  std::string buffer(*file_size, '\0');
   size_t bytes_read = file.Read(&buffer[0], buffer.size());
-  if (bytes_read != filesize) {
+  if (bytes_read != *file_size) {
     RTC_LOG(LS_WARNING) << "Failed to read file " << filename;
-    RTC_PARSE_CHECK_OR_RETURN_EQ(bytes_read, filesize);
+    RTC_PARSE_CHECK_OR_RETURN_EQ(bytes_read, *file_size);
   }
 
   return ParseStream(buffer);
@@ -1710,8 +1831,7 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreParsedLegacyEvent(
     case rtclog::Event::AUDIO_NETWORK_ADAPTATION_EVENT: {
       auto status_or_value = GetAudioNetworkAdaptation(event);
       RTC_RETURN_IF_ERROR(status_or_value.status());
-      LoggedAudioNetworkAdaptationEvent ana_event = status_or_value.value();
-      audio_network_adaptation_events_.push_back(ana_event);
+      audio_network_adaptation_events_.push_back(status_or_value.value());
       break;
     }
     case rtclog::Event::BWE_PROBE_CLUSTER_CREATED_EVENT: {
@@ -2142,8 +2262,8 @@ ParsedRtcEventLog::GetIceCandidatePairConfig(
   RTC_PARSE_CHECK_OR_RETURN(config.has_candidate_pair_id());
   res.candidate_pair_id = config.candidate_pair_id();
   RTC_PARSE_CHECK_OR_RETURN(config.has_local_candidate_type());
-  res.local_candidate_type =
-      GetRuntimeIceCandidateType(config.local_candidate_type());
+  RTC_PARSE_CHECK_OR_RETURN(GetRuntimeIceCandidateType(
+      config.local_candidate_type(), res.local_candidate_type));
   RTC_PARSE_CHECK_OR_RETURN(config.has_local_relay_protocol());
   res.local_relay_protocol =
       GetRuntimeIceCandidatePairProtocol(config.local_relay_protocol());
@@ -2154,8 +2274,8 @@ ParsedRtcEventLog::GetIceCandidatePairConfig(
   res.local_address_family =
       GetRuntimeIceCandidatePairAddressFamily(config.local_address_family());
   RTC_PARSE_CHECK_OR_RETURN(config.has_remote_candidate_type());
-  res.remote_candidate_type =
-      GetRuntimeIceCandidateType(config.remote_candidate_type());
+  RTC_PARSE_CHECK_OR_RETURN(GetRuntimeIceCandidateType(
+      config.remote_candidate_type(), res.remote_candidate_type));
   RTC_PARSE_CHECK_OR_RETURN(config.has_remote_address_family());
   res.remote_address_family =
       GetRuntimeIceCandidatePairAddressFamily(config.remote_address_family());
@@ -2242,13 +2362,13 @@ std::vector<InferredRouteChangeEvent> ParsedRtcEventLog::GetRouteChanges()
       if (candidate.remote_address_family ==
           IceCandidatePairAddressFamily::kIpv6)
         route.send_overhead += kIpv6Overhead - kIpv4Overhead;
-      if (candidate.remote_candidate_type != IceCandidateType::kLocal)
+      if (candidate.remote_candidate_type != IceCandidateType::kHost)
         route.send_overhead += kStunOverhead;
       route.return_overhead = kUdpOverhead + kSrtpOverhead + kIpv4Overhead;
       if (candidate.remote_address_family ==
           IceCandidatePairAddressFamily::kIpv6)
         route.return_overhead += kIpv6Overhead - kIpv4Overhead;
-      if (candidate.remote_candidate_type != IceCandidateType::kLocal)
+      if (candidate.remote_candidate_type != IceCandidateType::kHost)
         route.return_overhead += kStunOverhead;
       route_changes.push_back(route);
     }
@@ -2320,10 +2440,11 @@ std::vector<LoggedPacketInfo> ParsedRtcEventLog::GetPacketInfos(
       int64_t unwrapped_seq_num =
           seq_num_unwrapper.Unwrap(logged.transport_seq_no);
       if (indices.find(unwrapped_seq_num) != indices.end()) {
-        auto prev = packets[indices[unwrapped_seq_num]];
+        Timestamp prev_log_packet_time =
+            packets[indices[unwrapped_seq_num]].log_packet_time;
         RTC_LOG(LS_WARNING)
             << "Repeated sent packet sequence number: " << unwrapped_seq_num
-            << " Packet time:" << prev.log_packet_time.seconds() << "s vs "
+            << " Packet time:" << prev_log_packet_time.seconds() << "s vs "
             << logged.log_packet_time.seconds()
             << "s at:" << rtp.log_time_ms() / 1000;
       }
@@ -2465,7 +2586,7 @@ std::vector<LoggedIceEvent> ParsedRtcEventLog::GetIceEvents() const {
   return log_events;
 }
 
-const std::vector<MatchedSendArrivalTimes> GetNetworkTrace(
+std::vector<MatchedSendArrivalTimes> GetNetworkTrace(
     const ParsedRtcEventLog& parsed_log) {
   std::vector<MatchedSendArrivalTimes> rtp_rtcp_matched;
   for (auto& packet :
@@ -2612,14 +2733,14 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreRemoteEstimateEvent(
   LoggedRemoteEstimateEvent base_event;
   base_event.timestamp = Timestamp::Millis(proto.timestamp_ms());
 
-  absl::optional<uint64_t> base_link_capacity_lower_kbps;
+  std::optional<uint64_t> base_link_capacity_lower_kbps;
   if (proto.has_link_capacity_lower_kbps()) {
     base_link_capacity_lower_kbps = proto.link_capacity_lower_kbps();
     base_event.link_capacity_lower =
         DataRate::KilobitsPerSec(proto.link_capacity_lower_kbps());
   }
 
-  absl::optional<uint64_t> base_link_capacity_upper_kbps;
+  std::optional<uint64_t> base_link_capacity_upper_kbps;
   if (proto.has_link_capacity_upper_kbps()) {
     base_link_capacity_upper_kbps = proto.link_capacity_upper_kbps();
     base_event.link_capacity_upper =
@@ -2686,13 +2807,13 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreAudioPlayoutEvent(
   }
 
   // timestamp_ms
-  std::vector<absl::optional<uint64_t>> timestamp_ms_values =
+  std::vector<std::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // local_ssrc
-  std::vector<absl::optional<uint64_t>> local_ssrc_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> local_ssrc_values = DecodeDeltas(
       proto.local_ssrc_deltas(), proto.local_ssrc(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(local_ssrc_values.size(), number_of_deltas);
 
@@ -2733,18 +2854,18 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreNetEqSetMinimumDelay(
   }
 
   // timestamp_ms
-  std::vector<absl::optional<uint64_t>> timestamp_ms_values =
+  std::vector<std::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // remote_ssrc
-  std::vector<absl::optional<uint64_t>> remote_ssrc_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> remote_ssrc_values = DecodeDeltas(
       proto.remote_ssrc_deltas(), proto.remote_ssrc(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(remote_ssrc_values.size(), number_of_deltas);
 
   // minimum_delay_ms
-  std::vector<absl::optional<uint64_t>> minimum_delay_ms_values =
+  std::vector<std::optional<uint64_t>> minimum_delay_ms_values =
       DecodeDeltas(proto.minimum_delay_ms_deltas(),
                    ToUnsigned(proto.minimum_delay_ms()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(minimum_delay_ms_values.size(),
@@ -2837,23 +2958,23 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreBweLossBasedUpdate(
   }
 
   // timestamp_ms
-  std::vector<absl::optional<uint64_t>> timestamp_ms_values =
+  std::vector<std::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // bitrate_bps
-  std::vector<absl::optional<uint64_t>> bitrate_bps_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> bitrate_bps_values = DecodeDeltas(
       proto.bitrate_bps_deltas(), proto.bitrate_bps(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(bitrate_bps_values.size(), number_of_deltas);
 
   // fraction_loss
-  std::vector<absl::optional<uint64_t>> fraction_loss_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> fraction_loss_values = DecodeDeltas(
       proto.fraction_loss_deltas(), proto.fraction_loss(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(fraction_loss_values.size(), number_of_deltas);
 
   // total_packets
-  std::vector<absl::optional<uint64_t>> total_packets_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> total_packets_values = DecodeDeltas(
       proto.total_packets_deltas(), proto.total_packets(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(total_packets_values.size(), number_of_deltas);
 
@@ -2907,18 +3028,18 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreBweDelayBasedUpdate(
   }
 
   // timestamp_ms
-  std::vector<absl::optional<uint64_t>> timestamp_ms_values =
+  std::vector<std::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // bitrate_bps
-  std::vector<absl::optional<uint64_t>> bitrate_bps_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> bitrate_bps_values = DecodeDeltas(
       proto.bitrate_bps_deltas(), proto.bitrate_bps(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(bitrate_bps_values.size(), number_of_deltas);
 
   // detector_state
-  std::vector<absl::optional<uint64_t>> detector_state_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> detector_state_values = DecodeDeltas(
       proto.detector_state_deltas(),
       static_cast<uint64_t>(proto.detector_state()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(detector_state_values.size(), number_of_deltas);
@@ -3030,40 +3151,40 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreFrameDecodedEvents(
   }
 
   // timestamp_ms
-  std::vector<absl::optional<uint64_t>> timestamp_ms_values =
+  std::vector<std::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // SSRC
-  std::vector<absl::optional<uint64_t>> ssrc_values =
+  std::vector<std::optional<uint64_t>> ssrc_values =
       DecodeDeltas(proto.ssrc_deltas(), proto.ssrc(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(ssrc_values.size(), number_of_deltas);
 
   // render_time_ms
-  std::vector<absl::optional<uint64_t>> render_time_ms_values =
+  std::vector<std::optional<uint64_t>> render_time_ms_values =
       DecodeDeltas(proto.render_time_ms_deltas(),
                    ToUnsigned(proto.render_time_ms()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(render_time_ms_values.size(), number_of_deltas);
 
   // width
-  std::vector<absl::optional<uint64_t>> width_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> width_values = DecodeDeltas(
       proto.width_deltas(), ToUnsigned(proto.width()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(width_values.size(), number_of_deltas);
 
   // height
-  std::vector<absl::optional<uint64_t>> height_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> height_values = DecodeDeltas(
       proto.height_deltas(), ToUnsigned(proto.height()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(height_values.size(), number_of_deltas);
 
   // codec
-  std::vector<absl::optional<uint64_t>> codec_values =
+  std::vector<std::optional<uint64_t>> codec_values =
       DecodeDeltas(proto.codec_deltas(), static_cast<uint64_t>(proto.codec()),
                    number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(codec_values.size(), number_of_deltas);
 
   // qp
-  std::vector<absl::optional<uint64_t>> qp_values =
+  std::vector<std::optional<uint64_t>> qp_values =
       DecodeDeltas(proto.qp_deltas(), proto.qp(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(qp_values.size(), number_of_deltas);
 
@@ -3114,7 +3235,7 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreGenericAckReceivedEvent(
   RTC_PARSE_CHECK_OR_RETURN(proto.has_acked_packet_number());
   // receive_acked_packet_time_ms is optional.
 
-  absl::optional<int64_t> base_receive_acked_packet_time_ms;
+  std::optional<int64_t> base_receive_acked_packet_time_ms;
   if (proto.has_receive_acked_packet_time_ms()) {
     base_receive_acked_packet_time_ms = proto.receive_acked_packet_time_ms();
   }
@@ -3129,31 +3250,31 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreGenericAckReceivedEvent(
   }
 
   // timestamp_ms
-  std::vector<absl::optional<uint64_t>> timestamp_ms_values =
+  std::vector<std::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // packet_number
-  std::vector<absl::optional<uint64_t>> packet_number_values =
+  std::vector<std::optional<uint64_t>> packet_number_values =
       DecodeDeltas(proto.packet_number_deltas(),
                    ToUnsigned(proto.packet_number()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(packet_number_values.size(), number_of_deltas);
 
   // acked_packet_number
-  std::vector<absl::optional<uint64_t>> acked_packet_number_values =
+  std::vector<std::optional<uint64_t>> acked_packet_number_values =
       DecodeDeltas(proto.acked_packet_number_deltas(),
                    ToUnsigned(proto.acked_packet_number()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(acked_packet_number_values.size(),
                                number_of_deltas);
 
   // optional receive_acked_packet_time_ms
-  const absl::optional<uint64_t> unsigned_receive_acked_packet_time_ms_base =
+  const std::optional<uint64_t> unsigned_receive_acked_packet_time_ms_base =
       proto.has_receive_acked_packet_time_ms()
-          ? absl::optional<uint64_t>(
+          ? std::optional<uint64_t>(
                 ToUnsigned(proto.receive_acked_packet_time_ms()))
-          : absl::optional<uint64_t>();
-  std::vector<absl::optional<uint64_t>> receive_acked_packet_time_ms_values =
+          : std::optional<uint64_t>();
+  std::vector<std::optional<uint64_t>> receive_acked_packet_time_ms_values =
       DecodeDeltas(proto.receive_acked_packet_time_ms_deltas(),
                    unsigned_receive_acked_packet_time_ms_base,
                    number_of_deltas);
@@ -3170,7 +3291,7 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreGenericAckReceivedEvent(
     int64_t acked_packet_number;
     RTC_PARSE_CHECK_OR_RETURN(
         ToSigned(acked_packet_number_values[i].value(), &acked_packet_number));
-    absl::optional<int64_t> receive_acked_packet_time_ms;
+    std::optional<int64_t> receive_acked_packet_time_ms;
 
     if (receive_acked_packet_time_ms_values[i].has_value()) {
       int64_t value;
@@ -3208,27 +3329,27 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreGenericPacketSentEvent(
   }
 
   // timestamp_ms
-  std::vector<absl::optional<uint64_t>> timestamp_ms_values =
+  std::vector<std::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // packet_number
-  std::vector<absl::optional<uint64_t>> packet_number_values =
+  std::vector<std::optional<uint64_t>> packet_number_values =
       DecodeDeltas(proto.packet_number_deltas(),
                    ToUnsigned(proto.packet_number()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(packet_number_values.size(), number_of_deltas);
 
-  std::vector<absl::optional<uint64_t>> overhead_length_values =
+  std::vector<std::optional<uint64_t>> overhead_length_values =
       DecodeDeltas(proto.overhead_length_deltas(), proto.overhead_length(),
                    number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(overhead_length_values.size(), number_of_deltas);
 
-  std::vector<absl::optional<uint64_t>> payload_length_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> payload_length_values = DecodeDeltas(
       proto.payload_length_deltas(), proto.payload_length(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(payload_length_values.size(), number_of_deltas);
 
-  std::vector<absl::optional<uint64_t>> padding_length_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> padding_length_values = DecodeDeltas(
       proto.padding_length_deltas(), proto.padding_length(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(padding_length_values.size(), number_of_deltas);
 
@@ -3271,18 +3392,18 @@ ParsedRtcEventLog::StoreGenericPacketReceivedEvent(
   }
 
   // timestamp_ms
-  std::vector<absl::optional<uint64_t>> timestamp_ms_values =
+  std::vector<std::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // packet_number
-  std::vector<absl::optional<uint64_t>> packet_number_values =
+  std::vector<std::optional<uint64_t>> packet_number_values =
       DecodeDeltas(proto.packet_number_deltas(),
                    ToUnsigned(proto.packet_number()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(packet_number_values.size(), number_of_deltas);
 
-  std::vector<absl::optional<uint64_t>> packet_length_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> packet_length_values = DecodeDeltas(
       proto.packet_length_deltas(), proto.packet_length(), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(packet_length_values.size(), number_of_deltas);
 
@@ -3344,54 +3465,54 @@ ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
   }
 
   // timestamp_ms
-  std::vector<absl::optional<uint64_t>> timestamp_ms_values =
+  std::vector<std::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // bitrate_bps
-  const absl::optional<uint64_t> unsigned_base_bitrate_bps =
+  const std::optional<uint64_t> unsigned_base_bitrate_bps =
       proto.has_bitrate_bps()
-          ? absl::optional<uint64_t>(ToUnsigned(proto.bitrate_bps()))
-          : absl::optional<uint64_t>();
-  std::vector<absl::optional<uint64_t>> bitrate_bps_values = DecodeDeltas(
+          ? std::optional<uint64_t>(ToUnsigned(proto.bitrate_bps()))
+          : std::optional<uint64_t>();
+  std::vector<std::optional<uint64_t>> bitrate_bps_values = DecodeDeltas(
       proto.bitrate_bps_deltas(), unsigned_base_bitrate_bps, number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(bitrate_bps_values.size(), number_of_deltas);
 
   // frame_length_ms
-  const absl::optional<uint64_t> unsigned_base_frame_length_ms =
+  const std::optional<uint64_t> unsigned_base_frame_length_ms =
       proto.has_frame_length_ms()
-          ? absl::optional<uint64_t>(ToUnsigned(proto.frame_length_ms()))
-          : absl::optional<uint64_t>();
-  std::vector<absl::optional<uint64_t>> frame_length_ms_values =
+          ? std::optional<uint64_t>(ToUnsigned(proto.frame_length_ms()))
+          : std::optional<uint64_t>();
+  std::vector<std::optional<uint64_t>> frame_length_ms_values =
       DecodeDeltas(proto.frame_length_ms_deltas(),
                    unsigned_base_frame_length_ms, number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(frame_length_ms_values.size(), number_of_deltas);
 
   // uplink_packet_loss_fraction
-  const absl::optional<uint64_t> uplink_packet_loss_fraction =
+  const std::optional<uint64_t> uplink_packet_loss_fraction =
       proto.has_uplink_packet_loss_fraction()
-          ? absl::optional<uint64_t>(proto.uplink_packet_loss_fraction())
-          : absl::optional<uint64_t>();
-  std::vector<absl::optional<uint64_t>> uplink_packet_loss_fraction_values =
+          ? std::optional<uint64_t>(proto.uplink_packet_loss_fraction())
+          : std::optional<uint64_t>();
+  std::vector<std::optional<uint64_t>> uplink_packet_loss_fraction_values =
       DecodeDeltas(proto.uplink_packet_loss_fraction_deltas(),
                    uplink_packet_loss_fraction, number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(uplink_packet_loss_fraction_values.size(),
                                number_of_deltas);
 
   // enable_fec
-  const absl::optional<uint64_t> enable_fec =
-      proto.has_enable_fec() ? absl::optional<uint64_t>(proto.enable_fec())
-                             : absl::optional<uint64_t>();
-  std::vector<absl::optional<uint64_t>> enable_fec_values =
+  const std::optional<uint64_t> enable_fec =
+      proto.has_enable_fec() ? std::optional<uint64_t>(proto.enable_fec())
+                             : std::optional<uint64_t>();
+  std::vector<std::optional<uint64_t>> enable_fec_values =
       DecodeDeltas(proto.enable_fec_deltas(), enable_fec, number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(enable_fec_values.size(), number_of_deltas);
 
   // enable_dtx
-  const absl::optional<uint64_t> enable_dtx =
-      proto.has_enable_dtx() ? absl::optional<uint64_t>(proto.enable_dtx())
-                             : absl::optional<uint64_t>();
-  std::vector<absl::optional<uint64_t>> enable_dtx_values =
+  const std::optional<uint64_t> enable_dtx =
+      proto.has_enable_dtx() ? std::optional<uint64_t>(proto.enable_dtx())
+                             : std::optional<uint64_t>();
+  std::vector<std::optional<uint64_t>> enable_dtx_values =
       DecodeDeltas(proto.enable_dtx_deltas(), enable_dtx, number_of_deltas);
   RTC_PARSE_CHECK_OR_RETURN_EQ(enable_dtx_values.size(), number_of_deltas);
 
@@ -3401,12 +3522,12 @@ ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
   // We likewise shift the base event down by one, to get the same base as
   // encoding had, but then shift all of the values (except the base) back up
   // to their original value.
-  absl::optional<uint64_t> shifted_base_num_channels;
+  std::optional<uint64_t> shifted_base_num_channels;
   if (proto.has_num_channels()) {
     shifted_base_num_channels =
-        absl::optional<uint64_t>(proto.num_channels() - 1);
+        std::optional<uint64_t>(proto.num_channels() - 1);
   }
-  std::vector<absl::optional<uint64_t>> num_channels_values = DecodeDeltas(
+  std::vector<std::optional<uint64_t>> num_channels_values = DecodeDeltas(
       proto.num_channels_deltas(), shifted_base_num_channels, number_of_deltas);
   for (size_t i = 0; i < num_channels_values.size(); ++i) {
     if (num_channels_values[i].has_value()) {
@@ -3437,23 +3558,30 @@ ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
     }
     if (uplink_packet_loss_fraction_values[i].has_value()) {
       float uplink_packet_loss_fraction2;
+      RTC_PARSE_CHECK_OR_RETURN(rtc::IsValueInRangeForNumericType<uint32_t>(
+          uplink_packet_loss_fraction_values[i].value()));
       RTC_PARSE_CHECK_OR_RETURN(ParsePacketLossFractionFromProtoFormat(
-          rtc::checked_cast<uint32_t>(
-              uplink_packet_loss_fraction_values[i].value()),
+          static_cast<uint32_t>(uplink_packet_loss_fraction_values[i].value()),
           &uplink_packet_loss_fraction2));
       runtime_config.uplink_packet_loss_fraction = uplink_packet_loss_fraction2;
     }
     if (enable_fec_values[i].has_value()) {
+      RTC_PARSE_CHECK_OR_RETURN(rtc::IsValueInRangeForNumericType<bool>(
+          enable_fec_values[i].value()));
       runtime_config.enable_fec =
-          rtc::checked_cast<bool>(enable_fec_values[i].value());
+          static_cast<bool>(enable_fec_values[i].value());
     }
     if (enable_dtx_values[i].has_value()) {
+      RTC_PARSE_CHECK_OR_RETURN(rtc::IsValueInRangeForNumericType<bool>(
+          enable_dtx_values[i].value()));
       runtime_config.enable_dtx =
-          rtc::checked_cast<bool>(enable_dtx_values[i].value());
+          static_cast<bool>(enable_dtx_values[i].value());
     }
     if (num_channels_values[i].has_value()) {
+      RTC_PARSE_CHECK_OR_RETURN(rtc::IsValueInRangeForNumericType<size_t>(
+          num_channels_values[i].value()));
       runtime_config.num_channels =
-          rtc::checked_cast<size_t>(num_channels_values[i].value());
+          static_cast<size_t>(num_channels_values[i].value());
     }
     audio_network_adaptation_events_.emplace_back(
         Timestamp::Millis(timestamp_ms), runtime_config);
@@ -3498,8 +3626,8 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreIceCandidatePairConfig(
   RTC_PARSE_CHECK_OR_RETURN(proto.has_candidate_pair_id());
   ice_config.candidate_pair_id = proto.candidate_pair_id();
   RTC_PARSE_CHECK_OR_RETURN(proto.has_local_candidate_type());
-  ice_config.local_candidate_type =
-      GetRuntimeIceCandidateType(proto.local_candidate_type());
+  RTC_PARSE_CHECK_OR_RETURN(GetRuntimeIceCandidateType(
+      proto.local_candidate_type(), ice_config.local_candidate_type));
   RTC_PARSE_CHECK_OR_RETURN(proto.has_local_relay_protocol());
   ice_config.local_relay_protocol =
       GetRuntimeIceCandidatePairProtocol(proto.local_relay_protocol());
@@ -3510,8 +3638,8 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreIceCandidatePairConfig(
   ice_config.local_address_family =
       GetRuntimeIceCandidatePairAddressFamily(proto.local_address_family());
   RTC_PARSE_CHECK_OR_RETURN(proto.has_remote_candidate_type());
-  ice_config.remote_candidate_type =
-      GetRuntimeIceCandidateType(proto.remote_candidate_type());
+  RTC_PARSE_CHECK_OR_RETURN(GetRuntimeIceCandidateType(
+      proto.remote_candidate_type(), ice_config.remote_candidate_type));
   RTC_PARSE_CHECK_OR_RETURN(proto.has_remote_address_family());
   ice_config.remote_address_family =
       GetRuntimeIceCandidatePairAddressFamily(proto.remote_address_family());

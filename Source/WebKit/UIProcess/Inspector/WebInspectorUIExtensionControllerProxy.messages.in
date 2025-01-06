@@ -22,6 +22,11 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
+[
+    ExceptionForEnabledBy,
+    DispatchedFrom=WebContent,
+    DispatchedTo=UI
+]
 messages -> WebInspectorUIExtensionControllerProxy {
     DidShowExtensionTab(String extensionID, String extensionTabID, WebCore::FrameIdentifier frameID)
     DidHideExtensionTab(String extensionID, String extensionTabID)

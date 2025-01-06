@@ -37,6 +37,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 
@@ -64,7 +65,7 @@ static int horizontalScrollChars()
     return scrollChars;
 }
 
-static int verticalScrollLines()
+static unsigned verticalScrollLines()
 {
     static ULONG scrollLines;
     if (!scrollLines && !::SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &scrollLines, 0))
@@ -332,7 +333,7 @@ static String keyIdentifierFromEvent(WPARAM wparam, WebEventType type)
     }
 }
 
-WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView)
+WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView, float deviceScaleFactor)
 {
     WebEventType type;
     WebMouseEventButton button = WebMouseEventButton::None;
@@ -391,24 +392,31 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPAR
         type = WebEventType::KeyDown;
     }
 
-    POINT position = point(lParam);
-    POINT globalPosition = position;
-    ::ClientToScreen(hWnd, &globalPosition);
+    POINT positionPoint = point(lParam);
+    POINT globalPositionPoint = positionPoint;
+    ::ClientToScreen(hWnd, &globalPositionPoint);
+    IntPoint globalPosition(globalPositionPoint);
+    globalPosition.scale(1 / deviceScaleFactor);
+    IntPoint position = positionPoint;
+    position.scale(1 / deviceScaleFactor);
 
     double timestamp = ::GetTickCount() * 0.001; // ::GetTickCount returns milliseconds (Chrome uses GetMessageTime() / 1000.0)
 
-    int clickCount = WebKit::clickCount(type, button, position, timestamp);
+    int clickCount = WebKit::clickCount(type, button, positionPoint, timestamp);
     auto modifiers = modifiersForEvent(wParam);
     auto buttons = buttonsForEvent(wParam);
 
     return WebMouseEvent( { type, modifiers, WallTime::now() }, button, buttons, position, globalPosition, 0, 0, 0, clickCount, didActivateWebView);
 }
 
-WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, float deviceScaleFactor)
 {
-    POINT globalPosition = point(lParam);
-    POINT position = globalPosition;
-    ::ScreenToClient(hWnd, &position);
+    POINT positionPoint = point(lParam);
+    IntPoint globalPosition = positionPoint;
+    ::ScreenToClient(hWnd, &positionPoint);
+    globalPosition.scale(1 / deviceScaleFactor);
+    IntPoint position = positionPoint;
+    position.scale(1 / deviceScaleFactor);
 
     WebWheelEvent::Granularity granularity = WebWheelEvent::ScrollByPixelWheelEvent;
 
@@ -436,7 +444,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPAR
     } else {
         deltaX = 0;
         deltaY = delta;
-        int verticalMultiplier = verticalScrollLines();
+        unsigned verticalMultiplier = verticalScrollLines();
         if (verticalMultiplier == WHEEL_PAGESCROLL)
             granularity = WebWheelEvent::ScrollByPageWheelEvent;
         else {

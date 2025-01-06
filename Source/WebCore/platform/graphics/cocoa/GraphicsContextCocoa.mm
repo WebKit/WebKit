@@ -31,7 +31,7 @@
 #import "GraphicsContextCG.h"
 #import "IOSurface.h"
 #import "IntRect.h"
-#import <pal/spi/cf/CoreTextSPI.h>
+#import <CoreText/CoreText.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
@@ -39,7 +39,7 @@
 #import <wtf/StdLibExtras.h>
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-#include "MultiRepresentationHEICMetrics.h"
+#import "MultiRepresentationHEICMetrics.h"
 #endif
 
 #if USE(APPKIT)
@@ -49,6 +49,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "Color.h"
 #import "WKGraphics.h"
+#import <UIKit/UIKit.h>
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #endif
@@ -63,15 +64,37 @@ namespace WebCore {
 // NSColor, NSBezierPath, and NSGraphicsContext calls do not raise exceptions
 // so we don't block exceptions.
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/GraphicsContextCocoaAdditions.mm>
-#else
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-ImageDrawResult GraphicsContext::drawMultiRepresentationHEIC(Image&, const Font&, const FloatRect&, ImagePaintingOptions)
+
+ImageDrawResult GraphicsContext::drawMultiRepresentationHEIC(Image& image, const Font& font, const FloatRect& destination, ImagePaintingOptions options)
 {
-    return ImageDrawResult::DidNothing;
+    RetainPtr multiRepresentationHEIC = image.adapter().multiRepresentationHEIC();
+    if (!multiRepresentationHEIC)
+        return ImageDrawResult::DidNothing;
+
+    RefPtr imageBuffer = createScaledImageBuffer(destination.size(), scaleFactor(), DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated, RenderingMethod::Local);
+    if (!imageBuffer)
+        return ImageDrawResult::DidNothing;
+
+    CGContextRef cgContext = imageBuffer->context().platformContext();
+
+    CGContextScaleCTM(cgContext, 1, -1);
+    CGContextTranslateCTM(cgContext, 0, -destination.height());
+
+    // FIXME (rdar://123044459): This needs to account for vertical writing modes.
+    CGContextSetTextPosition(cgContext, 0, font.metricsForMultiRepresentationHEIC().descent);
+
+    CTFontDrawImageFromAdaptiveImageProviderAtPoint(font.getCTFont(), multiRepresentationHEIC.get(), CGContextGetTextPosition(cgContext), cgContext);
+
+    auto orientation = options.orientation();
+    if (orientation == ImageOrientation::Orientation::FromImage)
+        orientation = image.orientation();
+
+    drawImageBuffer(*imageBuffer, destination, { options, orientation });
+
+    return ImageDrawResult::DidDraw;
 }
-#endif
+
 #endif
 
 void GraphicsContextCG::drawFocusRing(const Path& path, float, const Color& color)
@@ -193,36 +216,6 @@ void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, Documen
     }
 #endif
     WebCore::drawDotsForDocumentMarker(this->platformContext(), rect, style);
-}
-
-void GraphicsContextCG::convertToDestinationColorSpaceIfNeeded(RetainPtr<CGImageRef>& image)
-{
-#if HAVE(CORE_ANIMATION_FIX_FOR_RADAR_93560567)
-    UNUSED_PARAM(image);
-#else
-    if (!CGColorSpaceUsesITUR_2100TF(CGImageGetColorSpace(image.get())))
-        return;
-
-    auto context = platformContext();
-
-    auto destinationSurface = CGIOSurfaceContextGetSurface(context);
-    if (!destinationSurface)
-        return;
-
-    auto destinationColorSpace = CGIOSurfaceContextGetColorSpace(context);
-    if (!destinationColorSpace)
-        return;
-
-    auto surface = IOSurface::createFromSurface(destinationSurface, DestinationColorSpace(destinationColorSpace));
-
-    auto width = CGImageGetWidth(image.get());
-    auto height = CGImageGetHeight(image.get());
-
-    auto bitmapContext = surface->createCompatibleBitmap(width, height);
-    CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, width, height), image.get());
-
-    image = adoptCF(CGBitmapContextCreateImage(bitmapContext.get()));
-#endif
 }
 
 } // namespace WebCore

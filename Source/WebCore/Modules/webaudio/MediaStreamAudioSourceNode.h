@@ -40,7 +40,7 @@ class MultiChannelResampler;
 class WebAudioSourceProvider;
 
 class MediaStreamAudioSourceNode final : public AudioNode, public AudioSourceProviderClient {
-    WTF_MAKE_ISO_ALLOCATED(MediaStreamAudioSourceNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaStreamAudioSourceNode);
 public:
     static ExceptionOr<Ref<MediaStreamAudioSourceNode>> create(BaseAudioContext&, MediaStreamAudioSourceOptions&&);
 

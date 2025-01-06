@@ -28,6 +28,7 @@
 
 #include "ContentSecurityPolicyDirective.h"
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ namespace WebCore {
 class ContentSecurityPolicyDirectiveList;
 
 class ContentSecurityPolicyMediaListDirective : public ContentSecurityPolicyDirective {
+    WTF_MAKE_TZONE_ALLOCATED(ContentSecurityPolicyMediaListDirective);
 public:
     ContentSecurityPolicyMediaListDirective(const ContentSecurityPolicyDirectiveList&, const String& name, const String& value);
 

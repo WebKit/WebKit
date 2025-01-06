@@ -12,22 +12,21 @@ rtc_library("timer") {
   deps = [
     "../../../api:array_view",
     "../../../api/task_queue:task_queue",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
     "../../../rtc_base:checks",
     "../../../rtc_base:strong_alias",
     "../../../rtc_base/containers:flat_map",
     "../../../rtc_base/containers:flat_set",
     "../public:socket",
     "../public:types",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
   sources = [
     "fake_timeout.h",
     "timer.cc",
     "timer.h",
-  ]
-  absl_deps = [
-    "//third_party/abseil-cpp/absl/memory",
-    "//third_party/abseil-cpp/absl/strings",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -37,6 +36,7 @@ rtc_library("task_queue_timeout") {
     "../../../api/task_queue:pending_task_safety_flag",
     "../../../api/task_queue:task_queue",
     "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../public:socket",
@@ -59,6 +59,7 @@ if (rtc_include_tests) {
       "../../../api:array_view",
       "../../../api/task_queue:task_queue",
       "../../../api/task_queue/test:mock_task_queue_base",
+      "../../../api/units:time_delta",
       "../../../rtc_base:checks",
       "../../../rtc_base:gunit_helpers",
       "../../../test:test_support",
@@ -69,6 +70,5 @@ if (rtc_include_tests) {
       "task_queue_timeout_test.cc",
       "timer_test.cc",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
   }
 }

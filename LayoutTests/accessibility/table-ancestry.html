@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div role="button" id="button3">c</div>
+
+<div role="grid">
+    <div role="row">
+        <div role="gridcell">
+            <div role="button" id="button1">a</div>
+        </div>
+    </div>
+</div>
+
+<table border=1>
+    <tr>
+        <td>
+            <div role="button" id="button2">b</div>
+        </td>
+        <td>
+            <button>1</button>
+        </td>
+    </tr>
+</table>
+
+<script>
+var output = "This tests that objects in various kinds of tables report they are in the table.\n\n";
+
+if (window.accessibilityController) {
+    output += expect("accessibilityController.accessibleElementById('button1').isInTable", "true");
+    output += expect("accessibilityController.accessibleElementById('button2').isInTable", "true");
+    output += expect("accessibilityController.accessibleElementById('button3').isInTable", "false");
+    debug(output);
+}
+</script>
+</body>
+</html>
+

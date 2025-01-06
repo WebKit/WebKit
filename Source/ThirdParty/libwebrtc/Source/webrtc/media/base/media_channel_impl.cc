@@ -71,18 +71,6 @@ int MediaChannelUtil::GetRtpSendTimeExtnId() const {
   return -1;
 }
 
-void MediaChannelUtil::SetFrameEncryptor(
-    uint32_t ssrc,
-    rtc::scoped_refptr<FrameEncryptorInterface> frame_encryptor) {
-  // Placeholder should be pure virtual once internal supports it.
-}
-
-void MediaChannelUtil::SetFrameDecryptor(
-    uint32_t ssrc,
-    rtc::scoped_refptr<FrameDecryptorInterface> frame_decryptor) {
-  // Placeholder should be pure virtual once internal supports it.
-}
-
 bool MediaChannelUtil::SendPacket(rtc::CopyOnWriteBuffer* packet,
                                   const rtc::PacketOptions& options) {
   return transport_.DoSendPacket(packet, false, options);
@@ -114,14 +102,6 @@ bool MediaChannelUtil::ExtmapAllowMixed() const {
 bool MediaChannelUtil::HasNetworkInterface() const {
   return transport_.HasNetworkInterface();
 }
-
-void MediaChannelUtil::SetEncoderToPacketizerFrameTransformer(
-    uint32_t ssrc,
-    rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) {}
-
-void MediaChannelUtil::SetDepacketizerToDecoderFrameTransformer(
-    uint32_t ssrc,
-    rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) {}
 
 bool MediaChannelUtil::DscpEnabled() const {
   return transport_.DscpEnabled();
@@ -227,6 +207,7 @@ bool MediaChannelUtil::TransportForMediaChannels::SendRtp(
        included_in_allocation = options.included_in_allocation,
        batchable = options.batchable,
        last_packet_in_batch = options.last_packet_in_batch,
+       is_media = options.is_media,
        packet = rtc::CopyOnWriteBuffer(packet, kMaxRtpPacketLen)]() mutable {
         rtc::PacketOptions rtc_options;
         rtc_options.packet_id = packet_id;
@@ -237,6 +218,7 @@ bool MediaChannelUtil::TransportForMediaChannels::SendRtp(
             included_in_feedback;
         rtc_options.info_signaled_after_sent.included_in_allocation =
             included_in_allocation;
+        rtc_options.info_signaled_after_sent.is_media = is_media;
         rtc_options.batchable = batchable;
         rtc_options.last_packet_in_batch = last_packet_in_batch;
         DoSendPacket(&packet, false, rtc_options);

@@ -28,9 +28,19 @@
 
 #include "TextCodecICU.h"
 #include <mutex>
+#include <wtf/StdLibExtras.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace PAL {
+
+static void ucnv_toUnicode_span(UConverter* converter, std::span<UChar> target, std::span<const uint8_t> source, int32_t* offsets, UBool flush, UErrorCode& error)
+{
+    auto* targetStart = target.data();
+    auto* targetEnd = std::to_address(target.end());
+    auto* sourceStart = byteCast<char>(source.data());
+    auto* sourceEnd = byteCast<char>(std::to_address(source.end()));
+    ucnv_toUnicode(converter, &targetStart, targetEnd, &sourceStart, sourceEnd, offsets, flush, &error);
+}
 
 #if ASSERT_ENABLED
 // From https://encoding.spec.whatwg.org/index-jis0208.txt
@@ -1071,16 +1081,13 @@ const std::array<std::pair<uint16_t, UChar>, 7724>& jis0208()
         ASSERT(!error);
 
         constexpr size_t range = 94;
-        uint8_t icuInput[2];
+        std::array<uint8_t, 2> icuInput;
         UChar icuOutput;
         for (size_t i = 0; i < range; i++) {
             for (size_t j = 0; j < range; j++) {
                 icuInput[0] = 0xA1 + i;
                 icuInput[1] = 0xA1 + j;
-
-                UChar* output = &icuOutput;
-                const char* input = byteCast<char>(&icuInput[0]);
-                ucnv_toUnicode(icuConverter.get(), &output, output + 1, &input, input + sizeof(icuInput), nullptr, true, &error);
+                ucnv_toUnicode_span(icuConverter.get(), singleElementSpan(icuOutput), std::span { icuInput }, nullptr, true, error);
                 ASSERT(!error);
                 if (icuOutput != 0xFFFD) {
                     uint16_t pointer = i * range + j;
@@ -1876,17 +1883,14 @@ const std::array<std::pair<uint16_t, UChar>, 6067>& jis0212()
         ASSERT(!error);
 
         constexpr size_t range = 94;
-        uint8_t icuInput[3];
+        std::array<uint8_t, 3> icuInput;
         UChar icuOutput;
         for (size_t i = 0; i < range; i++) {
             for (size_t j = 0; j < range; j++) {
                 icuInput[0] = 0x8F;
                 icuInput[1] = 0xA1 + i;
                 icuInput[2] = 0xA1 + j;
-
-                UChar* output = &icuOutput;
-                const char* input = byteCast<char>(&icuInput[0]);
-                ucnv_toUnicode(icuConverter.get(), &output, output + 1, &input, input + sizeof(icuInput), nullptr, true, &error);
+                ucnv_toUnicode_span(icuConverter.get(), singleElementSpan(icuOutput), std::span { icuInput }, nullptr, true, error);
                 ASSERT(!error);
                 if (icuOutput != 0xFFFD) {
                     uint16_t pointer = i * range + j;
@@ -4886,7 +4890,7 @@ const std::array<std::pair<uint16_t, char32_t>, 18590>& big5()
         auto icuConverter = ICUConverterPtr { ucnv_open("Big-5", &error) };
         ASSERT(!error);
 
-        uint8_t icuInput[2];
+        std::array<uint8_t, 2> icuInput;
         UChar icuOutput;
 
         // These are the ranges from https://encoding.spec.whatwg.org/index-big5.txt that have valid pointers.
@@ -4908,9 +4912,7 @@ const std::array<std::pair<uint16_t, char32_t>, 18590>& big5()
                 uint8_t offset = trail < 0x3F ? 0x40 : 0x62;
                 icuInput[0] = lead;
                 icuInput[1] = trail + offset;
-                UChar* output = &icuOutput;
-                const char* input = byteCast<char>(&icuInput[0]);
-                ucnv_toUnicode(icuConverter.get(), &output, output + 1, &input, input + sizeof(icuInput), nullptr, true, &error);
+                ucnv_toUnicode_span(icuConverter.get(), singleElementSpan(icuOutput), std::span { icuInput }, nullptr, true, error);
                 ASSERT(!error);
                 (*array)[arrayIndex++] = { pointer, icuOutput };
             }
@@ -4918,7 +4920,7 @@ const std::array<std::pair<uint16_t, char32_t>, 18590>& big5()
         
         for (auto& pair : big5Extras) {
             auto range = std::equal_range(array->begin(), array->end(), pair, CompareFirst { });
-            ASSERT(range.first + 1 == range.second);
+            ASSERT(range.second - range.first == 1);
             range.first->second = pair.second;
         }
         
@@ -7077,11 +7079,9 @@ const std::array<std::pair<uint16_t, UChar>, 17048>& eucKR()
         ASSERT(U_SUCCESS(error));
         auto getPair = [icuConverter = WTFMove(icuConverter)] (uint16_t pointer) -> std::optional<std::pair<uint16_t, UChar>> {
             std::array<uint8_t, 2> icuInput { static_cast<uint8_t>(pointer / 190u + 0x81), static_cast<uint8_t>(pointer % 190u + 0x41) };
-            const char* input = byteCast<char>(icuInput.data());
-            UChar icuOutput[2];
-            UChar* output = icuOutput;
+            std::array<UChar, 2> icuOutput;
             UErrorCode error = U_ZERO_ERROR;
-            ucnv_toUnicode(icuConverter.get(), &output, output + 2, &input, input + sizeof(icuInput), nullptr, true, &error);
+            ucnv_toUnicode_span(icuConverter.get(), std::span { icuOutput }, std::span { icuInput }, nullptr, true, error);
             if (icuOutput[0] == 0xFFFD)
                 return std::nullopt;
             return { { pointer, icuOutput[0] } };
@@ -8613,15 +8613,14 @@ const std::array<UChar, 23940>& gb18030()
         array = new std::array<UChar, 23940>;
         UErrorCode error = U_ZERO_ERROR;
         auto icuConverter = ICUConverterPtr { ucnv_open("gb18030", &error) };
-        for (size_t pointer = 0; pointer < 23940; pointer++) {
-            uint8_t icuInput[2];
-            icuInput[0] = pointer / 190 + 0x81;
-            icuInput[1] = pointer % 190;
+        for (size_t pointer = 0; pointer < 23940; ++pointer) {
+            std::array icuInput {
+                static_cast<uint8_t>(pointer / 190 + 0x81),
+                static_cast<uint8_t>(pointer % 190)
+            };
             icuInput[1] += (icuInput[1] < 0x3F) ? 0x40 : 0x41;
             UChar icuOutput { 0 };
-            UChar* output = &icuOutput;
-            const char* input = byteCast<char>(&icuInput[0]);
-            ucnv_toUnicode(icuConverter.get(), &output, output + 1, &input, input + sizeof(icuInput), nullptr, true, &error);
+            ucnv_toUnicode_span(icuConverter.get(), singleElementSpan(icuOutput), std::span { icuInput }, nullptr, true, error);
             ASSERT(!error);
             ASSERT(icuOutput != 0xFFFD);
             (*array)[pointer] = icuOutput;

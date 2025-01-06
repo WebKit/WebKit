@@ -323,13 +323,15 @@ TEST_FACTOR(3, 1, 3)
 #define TEST_SCALETO(name, width, height)         \
   TEST_SCALETO1(, name, width, height, None, 0)   \
   TEST_SCALETO1(, name, width, height, Linear, 3) \
-  TEST_SCALETO1(, name, width, height, Bilinear, 3)
+  TEST_SCALETO1(, name, width, height, Bilinear, 3) \
+  TEST_SCALETO1(, name, width, height, Box, 3)
 #else
 #if defined(ENABLE_FULL_TESTS)
 #define TEST_SCALETO(name, width, height)                  \
   TEST_SCALETO1(DISABLED_, name, width, height, None, 0)   \
   TEST_SCALETO1(DISABLED_, name, width, height, Linear, 3) \
-  TEST_SCALETO1(DISABLED_, name, width, height, Bilinear, 3)
+  TEST_SCALETO1(DISABLED_, name, width, height, Bilinear, 3) \
+  TEST_SCALETO1(DISABLED_, name, width, height, Box, 3)
 #else
 #define TEST_SCALETO(name, width, height) \
   TEST_SCALETO1(DISABLED_, name, width, height, Bilinear, 3)
@@ -340,6 +342,7 @@ TEST_SCALETO(ARGBScale, 1, 1)
 TEST_SCALETO(ARGBScale, 569, 480)
 TEST_SCALETO(ARGBScale, 640, 360)
 #ifndef DISABLE_SLOW_TESTS
+TEST_SCALETO(ARGBScale, 50, 1)
 TEST_SCALETO(ARGBScale, 256, 144) /* 128x72 * 2 */
 TEST_SCALETO(ARGBScale, 320, 240)
 TEST_SCALETO(ARGBScale, 1280, 720)
@@ -369,26 +372,25 @@ TEST_SCALESWAPXY1(ARGBScale, Bilinear, 0)
 
 // Scale with YUV conversion to ARGB and clipping.
 // TODO(fbarchard): Add fourcc support.  All 4 ARGB formats is easy to support.
-LIBYUV_API
-int YUVToARGBScaleReference2(const uint8_t* src_y,
-                             int src_stride_y,
-                             const uint8_t* src_u,
-                             int src_stride_u,
-                             const uint8_t* src_v,
-                             int src_stride_v,
-                             uint32_t /* src_fourcc */,
-                             int src_width,
-                             int src_height,
-                             uint8_t* dst_argb,
-                             int dst_stride_argb,
-                             uint32_t /* dst_fourcc */,
-                             int dst_width,
-                             int dst_height,
-                             int clip_x,
-                             int clip_y,
-                             int clip_width,
-                             int clip_height,
-                             enum FilterMode filtering) {
+static int YUVToARGBScaleReference2(const uint8_t* src_y,
+                                    int src_stride_y,
+                                    const uint8_t* src_u,
+                                    int src_stride_u,
+                                    const uint8_t* src_v,
+                                    int src_stride_v,
+                                    uint32_t /* src_fourcc */,
+                                    int src_width,
+                                    int src_height,
+                                    uint8_t* dst_argb,
+                                    int dst_stride_argb,
+                                    uint32_t /* dst_fourcc */,
+                                    int dst_width,
+                                    int dst_height,
+                                    int clip_x,
+                                    int clip_y,
+                                    int clip_width,
+                                    int clip_height,
+                                    enum FilterMode filtering) {
   uint8_t* argb_buffer =
       static_cast<uint8_t*>(malloc(src_width * src_height * 4));
   int r;

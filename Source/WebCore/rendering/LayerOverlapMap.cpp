@@ -27,6 +27,7 @@
 #include "LayerOverlapMap.h"
 #include "Logging.h"
 #include "RenderLayer.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -72,7 +73,7 @@ static TextStream& operator<<(TextStream& ts, const RectList& rectList)
 // Checking for overlap involves finding the node for the clipping layer enclosing the given layer (or the root),
 // and comparing against the bounds of earlier siblings.
 class OverlapMapContainer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(OverlapMapContainer);
 public:
     OverlapMapContainer(const RenderLayer& rootLayer, const RenderLayer& scopeLayer)
         : m_rootScope(rootLayer)

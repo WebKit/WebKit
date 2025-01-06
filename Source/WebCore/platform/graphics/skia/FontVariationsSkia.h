@@ -26,7 +26,9 @@
 #pragma once
 
 #include "FontDescription.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN // GLib / Win port
 #include <skia/core/SkTypeface.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
@@ -43,7 +45,7 @@ struct FontVariationDefaults {
     float maximumValue;
 };
 
-typedef HashMap<FontTag, FontVariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits> FontVariationDefaultsMap;
+typedef UncheckedKeyHashMap<FontTag, FontVariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits> FontVariationDefaultsMap;
 FontVariationDefaultsMap defaultFontVariationValues(const SkTypeface&);
 
 } // namespace WebCore

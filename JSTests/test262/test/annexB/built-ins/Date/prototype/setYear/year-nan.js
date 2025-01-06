@@ -15,19 +15,19 @@ features: [Symbol]
 
 var date;
 
-date = new Date();
+date = new Date(0);
 assert.sameValue(date.setYear(), NaN, 'return value (no argument)');
 assert.sameValue(
   date.valueOf(), NaN, '[[DateValue]] internal slot (no argument)'
 );
 
-date = new Date();
+date = new Date(0);
 assert.sameValue(date.setYear(NaN), NaN, 'return value (literal NaN)');
 assert.sameValue(
   date.valueOf(), NaN, '[[DateValue]] internal slot (literal NaN)'
 );
 
-date = new Date();
+date = new Date(0);
 assert.sameValue(
   date.setYear('not a number'), NaN, 'return value (NaN from ToNumber)'
 );

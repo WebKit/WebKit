@@ -18,6 +18,8 @@ var StringIteratorProto = Object.getPrototypeOf(''[Symbol.iterator]());
 
 assert.sameValue(StringIteratorProto[Symbol.toStringTag], 'String Iterator');
 
-verifyNotEnumerable(StringIteratorProto, Symbol.toStringTag);
-verifyNotWritable(StringIteratorProto, Symbol.toStringTag);
-verifyConfigurable(StringIteratorProto, Symbol.toStringTag);
+verifyProperty(StringIteratorProto, Symbol.toStringTag, {
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

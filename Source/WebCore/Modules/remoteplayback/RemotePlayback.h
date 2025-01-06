@@ -48,8 +48,11 @@ class RemotePlayback final
     , public ActiveDOMObject
     , public EventTarget
 {
-    WTF_MAKE_ISO_ALLOCATED(RemotePlayback);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RemotePlayback);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<RemotePlayback> create(HTMLMediaElement&);
     ~RemotePlayback();
 
@@ -72,10 +75,6 @@ public:
 
     void invalidate();
 
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     WebCoreOpaqueRoot opaqueRootConcurrently() const;
     Node* ownerNode() const;
 
@@ -92,14 +91,17 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    // ActiveDOMObject
+    void stop() final;
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger.get(); }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     WTFLogChannel& logChannel() const;
     ASCIILiteral logClassName() const { return "RemotePlayback"_s; }
 
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier { nullptr };
+    uint64_t m_logIdentifier { 0 };
 #endif
 
     WeakPtr<HTMLMediaElement> m_mediaElement;

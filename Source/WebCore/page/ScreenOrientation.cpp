@@ -37,11 +37,11 @@
 #include "LocalDOMWindow.h"
 #include "Page.h"
 #include "VisibilityState.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ScreenOrientation);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ScreenOrientation);
 
 Ref<ScreenOrientation> ScreenOrientation::create(Document* document)
 {

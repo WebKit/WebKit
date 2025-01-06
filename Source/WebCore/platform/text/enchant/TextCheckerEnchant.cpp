@@ -25,11 +25,14 @@
 #include <unicode/ubrk.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCheckerEnchant);
 
 TextCheckerEnchant& TextCheckerEnchant::singleton()
 {
@@ -114,7 +117,6 @@ Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
     auto utf8Word = word.utf8();
     for (auto& dictionary : m_enchantDictionaries) {
         size_t numberOfSuggestions;
-        size_t i;
 
         char** suggestions = enchant_dict_suggest(dictionary.get(), utf8Word.data(), utf8Word.length(), &numberOfSuggestions);
         if (numberOfSuggestions <= 0)
@@ -123,8 +125,8 @@ Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
         if (numberOfSuggestions > maximumNumberOfSuggestions)
             numberOfSuggestions = maximumNumberOfSuggestions;
 
-        for (i = 0; i < numberOfSuggestions; i++)
-            guesses.append(String::fromUTF8(suggestions[i]));
+        for (const auto suggestion : unsafeMakeSpan(suggestions, numberOfSuggestions))
+            guesses.append(String::fromUTF8(suggestion));
 
         enchant_dict_free_string_list(dictionary.get(), suggestions);
     }

@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+           function with_iframe(url) {
+               return new Promise(function(resolve) {
+                   var frame = document.createElement('iframe');
+                   frame.className = 'test-iframe';
+                   frame.src = url;
+                   frame.onload = function() { resolve(frame); };
+                   document.body.appendChild(frame);
+               });
+           }
+
+            let firstDeviceId;
+            promise_test(async () => {
+                const iframe1 = await with_iframe("/");
+                const iframe2 = await with_iframe("/");
+
+                let stream1, stream2, stream3;
+                let promise1, promise2, promise3;
+                internals.withUserGesture(() => {
+                    promise1 = iframe1.contentWindow.navigator.mediaDevices.getDisplayMedia({ video: true}).then(s => stream1 = s);
+                });
+                internals.withUserGesture(() => {
+                    promise2 = iframe2.contentWindow.navigator.mediaDevices.getDisplayMedia({ video: true}).then(s => stream2 = s);
+                });
+                internals.withUserGesture(() => {
+                    promise3 = iframe1.contentWindow.navigator.mediaDevices.getDisplayMedia({ video: true}).then(s => stream3 = s);
+                });
+
+                await promise1;
+                await promise2;
+                await promise3;
+
+                assert_not_equals(stream1.getVideoTracks()[0].getSettings().deviceId, stream2.getVideoTracks()[0].getSettings().deviceId);
+                assert_equals(stream1.getVideoTracks()[0].getSettings().deviceId, stream3.getVideoTracks()[0].getSettings().deviceId);
+            }, "check deviceId persistency");
+        </script>
+    </body>
+</html>

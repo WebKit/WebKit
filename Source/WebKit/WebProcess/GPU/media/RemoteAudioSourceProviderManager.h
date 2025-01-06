@@ -35,6 +35,7 @@
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/SharedMemory.h>
 #include <WebCore/WebAudioBufferList.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -61,7 +62,7 @@ private:
     void setConnection(IPC::Connection*);
 
     class RemoteAudio {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(RemoteAudio);
     public:
         explicit RemoteAudio(Ref<RemoteAudioSourceProvider>&&);
 

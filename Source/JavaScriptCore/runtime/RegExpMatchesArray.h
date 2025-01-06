@@ -61,7 +61,7 @@ ALWAYS_INLINE JSArray* tryCreateUninitializedRegExpMatchesArray(ObjectInitializa
 }
 
 ALWAYS_INLINE JSArray* createRegExpMatchesArray(
-    VM& vm, JSGlobalObject* globalObject, JSString* input, const String& inputValue,
+    VM& vm, JSGlobalObject* globalObject, JSString* input, StringView inputValue,
     RegExp* regExp, unsigned startOffset, MatchResult& result)
 {
     if constexpr (validateDFGDoesGC)
@@ -236,7 +236,7 @@ inline JSArray* createRegExpMatchesArray(JSGlobalObject* globalObject, JSString*
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     MatchResult ignoredResult;
-    auto input = string->value(globalObject);
+    auto input = string->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, createRegExpMatchesArray(vm, globalObject, string, input, regExp, startOffset, ignoredResult));

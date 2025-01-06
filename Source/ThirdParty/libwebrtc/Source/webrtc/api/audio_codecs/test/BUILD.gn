@@ -21,17 +21,18 @@ if (rtc_include_tests) {
     ]
     deps = [
       "..:audio_codecs_api",
+      "../..:make_ref_counted",
+      "../..:scoped_refptr",
       "../../../test:audio_codec_mocks",
-      "../../../test:scoped_key_value_config",
       "../../../test:test_support",
+      "../../environment",
+      "../../environment:environment_factory",
       "../L16:audio_decoder_L16",
       "../L16:audio_encoder_L16",
       "../g711:audio_decoder_g711",
       "../g711:audio_encoder_g711",
       "../g722:audio_decoder_g722",
       "../g722:audio_encoder_g722",
-      "../ilbc:audio_decoder_ilbc",
-      "../ilbc:audio_encoder_ilbc",
       "../opus:audio_decoder_opus",
       "../opus:audio_encoder_opus",
     ]

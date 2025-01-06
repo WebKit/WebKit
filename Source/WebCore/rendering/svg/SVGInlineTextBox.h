@@ -23,19 +23,15 @@
 #pragma once
 
 #include "LegacyInlineTextBox.h"
-#include "LegacyRenderSVGResource.h"
-#include "RenderSVGResourcePaintServer.h"
-#include "SVGTextFragment.h"
 
 namespace WebCore {
 
-class LegacyRenderSVGResource;
 class RenderSVGInlineText;
-class SVGPaintServerHandling;
 class SVGRootInlineBox;
+struct SVGTextFragment;
 
 class SVGInlineTextBox final : public LegacyInlineTextBox {
-    WTF_MAKE_ISO_ALLOCATED(SVGInlineTextBox);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGInlineTextBox);
 public:
     explicit SVGInlineTextBox(RenderSVGInlineText&);
 
@@ -44,56 +40,23 @@ public:
     float virtualLogicalHeight() const override { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }
 
-    void paintSelectionBackground(PaintInfo&);
-    void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
-    LayoutRect localSelectionRect(unsigned startPosition, unsigned endPosition) const override;
-
     bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
 
     FloatRect calculateBoundaries() const;
 
-    void clearTextFragments() { m_textFragments.clear(); }
-    Vector<SVGTextFragment>& textFragments() { return m_textFragments; }
     const Vector<SVGTextFragment>& textFragments() const { return m_textFragments; }
+    void setTextFragments(Vector<SVGTextFragment>&&);
 
     void dirtyOwnLineBoxes() override;
     void dirtyLineBoxes() override;
-
-    bool startsNewTextChunk() const { return m_startsNewTextChunk; }
-    void setStartsNewTextChunk(bool newTextChunk) { m_startsNewTextChunk = newTextChunk; }
-
-    int offsetForPositionInFragment(const SVGTextFragment&, float position) const;
-    FloatRect selectionRectForTextFragment(const SVGTextFragment&, unsigned fragmentStartPosition, unsigned fragmentEndPosition, const RenderStyle&) const;
-    
-    OptionSet<RenderSVGResourceMode> paintingResourceMode() const { return OptionSet<RenderSVGResourceMode>::fromRaw(m_legacyPaintingResourceMode); }
-    void setPaintingResourceMode(OptionSet<RenderSVGResourceMode> mode) { m_legacyPaintingResourceMode = mode.toRaw(); }
 
     inline SVGInlineTextBox* nextTextBox() const;
     
 private:
     bool isSVGInlineTextBox() const override { return true; }
 
-    TextRun constructTextRun(const RenderStyle&, const SVGTextFragment&) const;
-
-    bool acquirePaintingResource(SVGPaintServerHandling&, float scalingFactor, RenderBoxModelObject&, const RenderStyle&);
-    void releasePaintingResource(SVGPaintServerHandling&);
-
-    bool acquireLegacyPaintingResource(GraphicsContext*&, float scalingFactor, RenderBoxModelObject&, const RenderStyle&);
-    void releaseLegacyPaintingResource(GraphicsContext*&, const Path*);
-
-    void paintDecoration(GraphicsContext&, OptionSet<TextDecorationLine>, const SVGTextFragment&);
-    void paintDecorationWithStyle(GraphicsContext&, OptionSet<TextDecorationLine>, const SVGTextFragment&, RenderBoxModelObject& decorationRenderer);
-    void paintTextWithShadows(GraphicsContext&, const RenderStyle&, TextRun&, const SVGTextFragment&, unsigned startPosition, unsigned endPosition);
-    void paintText(GraphicsContext&, const RenderStyle&, const RenderStyle& selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
-
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
-
 private:
     float m_logicalHeight { 0 };
-    unsigned m_legacyPaintingResourceMode : 4; // RenderSVGResourceMode
-    unsigned m_startsNewTextChunk : 1;
-    LegacyRenderSVGResource* m_legacyPaintingResource { nullptr };
-    SVGPaintServerOrColor m_paintServerOrColor { };
 
     Vector<SVGTextFragment> m_textFragments;
 };

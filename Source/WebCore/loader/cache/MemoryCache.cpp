@@ -551,7 +551,7 @@ void MemoryCache::removeResourcesWithOrigin(const SecurityOrigin& origin, const 
                 continue;
             }
             auto resourceOrigin = SecurityOrigin::create(resource.url());
-            if (resourceOrigin->equal(&origin))
+            if (resourceOrigin->equal(origin))
                 resourcesWithOrigin.append(resource);
         }
     }
@@ -700,10 +700,10 @@ void MemoryCache::removeRequestFromSessionCaches(ScriptExecutionContext& context
         return;
     }
 
-    auto& memoryCache = MemoryCache::singleton();
-    for (auto& resources : memoryCache.m_sessionResources) {
-        if (CachedResourceHandle resource = memoryCache.resourceForRequestImpl(request, *resources.value))
-            memoryCache.remove(*resource);
+    Ref memoryCache = MemoryCache::singleton();
+    for (auto& resources : memoryCache->m_sessionResources) {
+        if (CachedResourceHandle resource = memoryCache->resourceForRequestImpl(request, *resources.value))
+            memoryCache->remove(*resource);
     }
 }
 

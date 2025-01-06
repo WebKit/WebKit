@@ -145,21 +145,64 @@ static NSDictionary *convertRequestBodyToWebExtensionFormat(NSData *requestBody)
     return dictionary;
 }
 
-static NSMutableDictionary *webRequestDetailsForResourceLoad(const ResourceLoadInfo& resourceLoad)
+static NSString *toWebAPI(ResourceLoadInfo::Type type)
 {
-    return [@{
-        @"frameId": resourceLoad.parentFrameID ? @(toWebAPI(toWebExtensionFrameIdentifier(resourceLoad.frameID.value()))) : @(toWebAPI(WebExtensionFrameConstants::MainFrameIdentifier)),
-        @"parentFrameId": resourceLoad.parentFrameID ? @(toWebAPI(toWebExtensionFrameIdentifier(resourceLoad.parentFrameID.value()))) : @(toWebAPI(WebExtensionFrameConstants::NoneIdentifier)),
+    switch (type) {
+    case ResourceLoadInfo::Type::ApplicationManifest:
+        return @"web_manifest";
+    case ResourceLoadInfo::Type::Beacon:
+        return @"beacon";
+    case ResourceLoadInfo::Type::CSPReport:
+        return @"csp_report";
+    case ResourceLoadInfo::Type::Document:
+        return @"main_frame";
+    case ResourceLoadInfo::Type::Font:
+        return @"font";
+    case ResourceLoadInfo::Type::Image:
+        return @"image";
+    case ResourceLoadInfo::Type::Media:
+        return @"media";
+    case ResourceLoadInfo::Type::Object:
+        return @"object";
+    case ResourceLoadInfo::Type::Ping:
+        return @"ping";
+    case ResourceLoadInfo::Type::Script:
+        return @"script";
+    case ResourceLoadInfo::Type::Stylesheet:
+        return @"stylesheet";
+    case ResourceLoadInfo::Type::Fetch:
+    case ResourceLoadInfo::Type::XMLHTTPRequest:
+        return @"xmlhttprequest";
+    case ResourceLoadInfo::Type::XSLT:
+        return @"xslt";
+    case ResourceLoadInfo::Type::Other:
+    default:
+        return @"other";
+    }
+}
+
+static NSMutableDictionary *webRequestDetailsForResourceLoad(const ResourceLoadInfo& resourceLoad, WebExtensionTabIdentifier tabIdentifier)
+{
+    NSMutableDictionary *result = [@{
+        @"frameId": resourceLoad.parentFrameID ? @(toWebAPI(toWebExtensionFrameIdentifier(resourceLoad.frameID))) : @(toWebAPI(WebExtensionFrameConstants::MainFrameIdentifier)),
+        @"parentFrameId": resourceLoad.parentFrameID ? @(toWebAPI(toWebExtensionFrameIdentifier(resourceLoad.parentFrameID))) : @(toWebAPI(WebExtensionFrameConstants::NoneIdentifier)),
         @"requestId": [NSString stringWithFormat:@"%llu", resourceLoad.resourceLoadID.toUInt64()],
         @"timeStamp": @(floor(resourceLoad.eventTimestamp.approximateWallTime().secondsSinceEpoch().milliseconds())),
         @"url": resourceLoad.originalURL.string(),
+        @"tabId": @(toWebAPI(tabIdentifier)),
+        @"type": toWebAPI(resourceLoad.type),
         @"method": resourceLoad.originalHTTPMethod,
     } mutableCopy];
+
+    if (resourceLoad.documentID)
+        result[@"documentId"] = resourceLoad.documentID.value().toString();
+
+    return result;
 }
 
 static NSArray *convertHeaderFieldsToWebExtensionFormat(const WebCore::HTTPHeaderMap& headerMap)
 {
-    NSMutableArray *convertedHeaderFields = [NSMutableArray arrayWithCapacity:headerMap.size()];
+    auto *convertedHeaderFields = [NSMutableArray arrayWithCapacity:headerMap.size()];
     for (auto header : headerMap) {
         [convertedHeaderFields addObject:@{
             @"name": header.key,
@@ -174,14 +217,11 @@ static NSArray *convertHeaderFieldsToWebExtensionFormat(const WebCore::HTTPHeade
 
 static NSMutableDictionary *headersReceivedDetails(const ResourceLoadInfo& resourceLoad, WebExtensionTabIdentifier tabID, const WebCore::ResourceResponse& response)
 {
-    NSMutableDictionary *details = webRequestDetailsForResourceLoad(resourceLoad);
-    details[@"tabId"] = @(toWebAPI(tabID));
+    auto *details = webRequestDetailsForResourceLoad(resourceLoad, tabID);
 
-    NSURLResponse *urlResponse = response.nsURLResponse();
-    if (urlResponse && [urlResponse isKindOfClass:NSHTTPURLResponse.class]) {
-        NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *)urlResponse;
+    if (auto *httpResponse = dynamic_objc_cast<NSHTTPURLResponse>(response.nsURLResponse())) {
         [details addEntriesFromDictionary:@{
-            @"statusLine": (__bridge_transfer NSString *)CFHTTPMessageCopyResponseStatusLine(CFURLResponseGetHTTPResponse([urlResponse _CFURLResponse])),
+            @"statusLine": bridge_id_cast(CFHTTPMessageCopyResponseStatusLine(CFURLResponseGetHTTPResponse(httpResponse._CFURLResponse))),
             // FIXME: <rdar://problem/59922101> responseHeaders (here and elsewhere) and all other optional members should check the options object.
             @"responseHeaders": convertHeaderFieldsToWebExtensionFormat(response.httpHeaderFields()),
             @"statusCode": @(httpResponse.statusCode),
@@ -195,12 +235,11 @@ static NSMutableDictionary *headersReceivedDetails(const ResourceLoadInfo& resou
 
 void WebExtensionContextProxy::resourceLoadDidSendRequest(WebExtensionTabIdentifier tabID, WebExtensionWindowIdentifier windowID, const WebCore::ResourceRequest& request, const ResourceLoadInfo& resourceLoad)
 {
-    NSMutableDictionary *details = webRequestDetailsForResourceLoad(resourceLoad);
-    details[@"tabId"] = @(toWebAPI(tabID));
+    auto *details = webRequestDetailsForResourceLoad(resourceLoad, tabID);
 
     // FIXME: <rdar://problem/59922101> Chrome documentation says this about requestBody:
     // Only provided if extraInfoSpec contains 'requestBody'.
-    if (NSData *requestBody = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody).HTTPBody)
+    if (auto *requestBody = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody).HTTPBody)
         details[@"requestBody"] = convertRequestBodyToWebExtensionFormat(requestBody);
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
@@ -220,7 +259,7 @@ void WebExtensionContextProxy::resourceLoadDidSendRequest(WebExtensionTabIdentif
 
 void WebExtensionContextProxy::resourceLoadDidPerformHTTPRedirection(WebExtensionTabIdentifier tabID, WebExtensionWindowIdentifier windowID, const WebCore::ResourceResponse& response, const ResourceLoadInfo& resourceLoad, const WebCore::ResourceRequest& newRequest)
 {
-    NSMutableDictionary *details = headersReceivedDetails(resourceLoad, tabID, response);
+    auto *details = headersReceivedDetails(resourceLoad, tabID, response);
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         auto& webRequestObject = namespaceObject.webRequest();
@@ -237,19 +276,17 @@ void WebExtensionContextProxy::resourceLoadDidPerformHTTPRedirection(WebExtensio
 
 void WebExtensionContextProxy::resourceLoadDidReceiveChallenge(WebExtensionTabIdentifier tabID, WebExtensionWindowIdentifier windowID, const WebCore::AuthenticationChallenge& webCoreChallenge, const ResourceLoadInfo& resourceLoad)
 {
-    NSURLAuthenticationChallenge *challenge = webCoreChallenge.nsURLAuthenticationChallenge();
-    NSURLResponse *response = challenge.failureResponse;
-    if (!response || ![response isKindOfClass:NSHTTPURLResponse.class])
+    auto *challenge = webCoreChallenge.nsURLAuthenticationChallenge();
+    auto *httpResponse = dynamic_objc_cast<NSHTTPURLResponse>(challenge.failureResponse);
+    if (!httpResponse)
         return;
 
-    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
     // Firefox only calls onAuthRequired when the status code is 401 or 407.
     // See https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onAuthRequired
     if (httpResponse.statusCode != httpStatus401Unauthorized && httpResponse.statusCode != httpStatus407ProxyAuthenticationRequired)
         return;
 
-    NSMutableDictionary<NSString *, id> *details = webRequestDetailsForResourceLoad(resourceLoad);
-    [details addEntriesFromDictionary:headersReceivedDetails(resourceLoad, tabID, webCoreChallenge.failureResponse())];
+    auto *details = headersReceivedDetails(resourceLoad, tabID, webCoreChallenge.failureResponse());
     [details addEntriesFromDictionary:@{
         @"scheme": [challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodHTTPDigest] ? @"digest" : @"basic",
         @"challenger": @{
@@ -259,7 +296,7 @@ void WebExtensionContextProxy::resourceLoadDidReceiveChallenge(WebExtensionTabId
         @"isProxy": @(challenge.protectionSpace.isProxy),
     }];
 
-    if (NSString *realm = challenge.protectionSpace.realm)
+    if (auto *realm = challenge.protectionSpace.realm)
         details[@"realm"] = realm;
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
@@ -270,7 +307,7 @@ void WebExtensionContextProxy::resourceLoadDidReceiveChallenge(WebExtensionTabId
 
 void WebExtensionContextProxy::resourceLoadDidReceiveResponse(WebExtensionTabIdentifier tabID, WebExtensionWindowIdentifier windowID, const WebCore::ResourceResponse& response, const ResourceLoadInfo& resourceLoad)
 {
-    NSMutableDictionary *details = headersReceivedDetails(resourceLoad, tabID, response);
+    auto *details = headersReceivedDetails(resourceLoad, tabID, response);
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         auto& webRequestObject = namespaceObject.webRequest();
@@ -281,7 +318,7 @@ void WebExtensionContextProxy::resourceLoadDidReceiveResponse(WebExtensionTabIde
 
 void WebExtensionContextProxy::resourceLoadDidCompleteWithError(WebExtensionTabIdentifier tabID, WebExtensionWindowIdentifier windowID, const WebCore::ResourceResponse& response, const WebCore::ResourceError& error, const ResourceLoadInfo& resourceLoad)
 {
-    NSMutableDictionary *details = webRequestDetailsForResourceLoad(resourceLoad);
+    auto *details = webRequestDetailsForResourceLoad(resourceLoad, tabID);
 
     if (!error.isNull()) {
         [details addEntriesFromDictionary:@{

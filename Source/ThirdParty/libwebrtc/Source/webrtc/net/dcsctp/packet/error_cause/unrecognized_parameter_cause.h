@@ -41,7 +41,7 @@ class UnrecognizedParametersCause
       : unrecognized_parameters_(unrecognized_parameters.begin(),
                                  unrecognized_parameters.end()) {}
 
-  static absl::optional<UnrecognizedParametersCause> Parse(
+  static std::optional<UnrecognizedParametersCause> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

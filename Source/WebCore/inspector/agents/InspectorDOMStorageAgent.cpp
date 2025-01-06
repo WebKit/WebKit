@@ -48,11 +48,14 @@
 #include "VoidCallback.h"
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDOMStorageAgent);
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(PageAgentContext& context)
     : InspectorAgentBase("DOMStorage"_s, context)
@@ -195,13 +198,13 @@ void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, con
 
 RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(Inspector::Protocol::ErrorString& errorString, Ref<JSON::Object>&& storageId, LocalFrame*& targetFrame)
 {
-    auto securityOrigin = storageId->getString(Inspector::Protocol::DOMStorage::StorageId::securityOriginKey);
+    auto securityOrigin = storageId->getString("securityOrigin"_s);
     if (!securityOrigin) {
         errorString = "Missing securityOrigin in given storageId"_s;
         return nullptr;
     }
 
-    auto isLocalStorage = storageId->getBoolean(Inspector::Protocol::DOMStorage::StorageId::isLocalStorageKey);
+    auto isLocalStorage = storageId->getBoolean("isLocalStorage"_s);
     if (!isLocalStorage) {
         errorString = "Missing isLocalStorage in given storageId"_s;
         return nullptr;

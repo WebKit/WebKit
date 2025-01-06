@@ -132,10 +132,6 @@ You can pass the `-q/--quiet` flag to get mb to be silent unless there is an
 error, and pass the `-v/--verbose` flag to get mb to log all of the files
 that are read and written, and all the commands that are run.
 
-If the build config will use the Goma distributed-build system, you can pass
-the path to your Goma client in the `-g/--goma-dir` flag, and it will be
-incorporated into the appropriate flags for GYP or GN as needed.
-
 If gen ends up using GYP, the path must have a valid GYP configuration as the
 last component of the path (i.e., specify `//out/Release_x64`, not `//out`).
 The gyp script defaults to `//build/gyp_chromium`, but can be overridden with
@@ -248,8 +244,8 @@ For example, if you had:
   }
   'mixins': {
     'bot': {
-      'gyp_defines': 'use_goma=1 dcheck_always_on=0',
-      'gn_args': 'use_goma=true dcheck_always_on=false',
+      'gyp_defines': 'use_remoteexec=1 dcheck_always_on=0',
+      'gn_args': 'use_remoteexec=true dcheck_always_on=false',
     },
     'debug': {
       'gn_args': 'is_debug=true',
@@ -276,7 +272,7 @@ For example, if you had:
 
 and you ran `mb gen -c linux_release_trybot //out/Release`, it would
 translate into a call to `gyp_chromium -G Release` with `GYP_DEFINES` set to
-`"use_goma=true dcheck_always_on=false dcheck_always_on=true"`.
+`"use_remoteexec=true dcheck_always_on=false dcheck_always_on=true"`.
 
 (From that you can see that mb is intentionally dumb and does not
 attempt to de-dup the flags, it lets gyp do that).

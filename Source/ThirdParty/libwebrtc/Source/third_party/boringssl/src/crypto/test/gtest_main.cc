@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <openssl/rand.h>
@@ -31,7 +32,7 @@
 
 
 int main(int argc, char **argv) {
-  testing::InitGoogleTest(&argc, argv);
+  testing::InitGoogleMock(&argc, argv);
   bssl::SetupGoogleTest();
 
   bool unwind_tests = true;

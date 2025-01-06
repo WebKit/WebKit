@@ -119,7 +119,7 @@ static ApplePayPaymentContact convert(unsigned version, PKContact *contact)
 
     ApplePayPaymentContact result;
 
-    result.phoneNumber = contact.phoneNumber.stringValue;
+    result.phoneNumber = static_cast<CNPhoneNumber *>(contact.phoneNumber).stringValue;
     result.emailAddress = contact.emailAddress;
 
     NSPersonNameComponents *name = contact.name;

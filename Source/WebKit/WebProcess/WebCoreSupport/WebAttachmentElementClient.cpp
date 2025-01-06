@@ -25,12 +25,15 @@
 
 #include "config.h"
 #include "WebAttachmentElementClient.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 #include "WebPage.h"
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebAttachmentElementClient);
 
 WebAttachmentElementClient::WebAttachmentElementClient(WebPage& page)
     : m_page(page)
@@ -39,7 +42,7 @@ WebAttachmentElementClient::WebAttachmentElementClient(WebPage& page)
 
 void WebAttachmentElementClient::requestAttachmentIcon(const String& identifier, const WebCore::FloatSize& size)
 {
-    m_page.requestAttachmentIcon(identifier, size);
+    Ref { m_page.get() }->requestAttachmentIcon(identifier, size);
 }
 
 } // namespace WebKit

@@ -35,11 +35,11 @@
 #include <pal/HysteresisActivity.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
@@ -65,8 +65,11 @@ class RemoteLayerTreeEventDispatcherDisplayLinkClient;
 
 // This class exists to act as a threadsafe DisplayLink::Client client, allowing RemoteScrollingCoordinatorProxyMac to
 // be main-thread only. It's the UI-process analogue of WebPage/EventDispatcher.
-class RemoteLayerTreeEventDispatcher : public ThreadSafeRefCounted<RemoteLayerTreeEventDispatcher>, public MomentumEventDispatcher::Client {
-    WTF_MAKE_FAST_ALLOCATED();
+class RemoteLayerTreeEventDispatcher
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteLayerTreeEventDispatcher>
+    , public MomentumEventDispatcher::Client {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeEventDispatcher);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerTreeEventDispatcher);
     friend class RemoteLayerTreeEventDispatcherDisplayLinkClient;
 public:
     static Ref<RemoteLayerTreeEventDispatcher> create(RemoteScrollingCoordinatorProxyMac&, WebCore::PageIdentifier);
@@ -135,6 +138,13 @@ private:
 
     void waitForRenderingUpdateCompletionOrTimeout() WTF_REQUIRES_LOCK(m_scrollingTreeLock);
 
+    void startFingerDownSignpostInterval();
+    void endFingerDownSignpostInterval();
+    void startMomentumSignpostInterval();
+    void endMomentumSignpostInterval();
+
+    void didStartRubberbanding();
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     void handleSyntheticWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
     void startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID);
@@ -158,6 +168,9 @@ private:
     std::unique_ptr<RemoteLayerTreeEventDispatcherDisplayLinkClient> m_displayLinkClient;
     std::optional<DisplayLinkObserverID> m_displayRefreshObserverID;
     PAL::HysteresisActivity m_wheelEventActivityHysteresis;
+
+    std::atomic<bool> m_fingerDownIntervalIsActive = false;
+    std::atomic<bool> m_momentumIntervalIsActive = false;
 
     enum class SynchronizationState : uint8_t {
         Idle,

@@ -22,8 +22,8 @@ void TransceiverStableState::set_newly_created() {
 }
 
 void TransceiverStableState::SetMSectionIfUnset(
-    absl::optional<std::string> mid,
-    absl::optional<size_t> mline_index) {
+    std::optional<std::string> mid,
+    std::optional<size_t> mline_index) {
   if (!has_m_section_) {
     mid_ = mid;
     mline_index_ = mline_index;

@@ -26,13 +26,13 @@
 #pragma once
 
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::WebGPU {
 
-class QuerySet : public RefCounted<QuerySet>, public CanMakeWeakPtr<QuerySet> {
+class QuerySet : public RefCountedAndCanMakeWeakPtr<QuerySet> {
 public:
     virtual ~QuerySet() = default;
 

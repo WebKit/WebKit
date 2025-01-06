@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,12 +20,12 @@
 extern "C" {
 #endif
 
-static INLINE __m256i pair_set_w16_epi16(int16_t a, int16_t b) {
+static inline __m256i pair_set_w16_epi16(int16_t a, int16_t b) {
   return _mm256_set1_epi32(
-      (int32_t)(((uint16_t)(a)) | (((uint32_t)(b)) << 16)));
+      (int32_t)(((uint16_t)(a)) | (((uint32_t)(uint16_t)(b)) << 16)));
 }
 
-static INLINE void btf_16_w16_avx2(const __m256i w0, const __m256i w1,
+static inline void btf_16_w16_avx2(const __m256i w0, const __m256i w1,
                                    __m256i *in0, __m256i *in1, const __m256i _r,
                                    const int32_t cos_bit) {
   __m256i t0 = _mm256_unpacklo_epi16(*in0, *in1);
@@ -49,21 +49,21 @@ static INLINE void btf_16_w16_avx2(const __m256i w0, const __m256i w1,
   *in1 = _mm256_packs_epi32(d0, d1);
 }
 
-static INLINE void btf_16_adds_subs_avx2(__m256i *in0, __m256i *in1) {
+static inline void btf_16_adds_subs_avx2(__m256i *in0, __m256i *in1) {
   const __m256i _in0 = *in0;
   const __m256i _in1 = *in1;
   *in0 = _mm256_adds_epi16(_in0, _in1);
   *in1 = _mm256_subs_epi16(_in0, _in1);
 }
 
-static INLINE void btf_32_add_sub_avx2(__m256i *in0, __m256i *in1) {
+static inline void btf_32_add_sub_avx2(__m256i *in0, __m256i *in1) {
   const __m256i _in0 = *in0;
   const __m256i _in1 = *in1;
   *in0 = _mm256_add_epi32(_in0, _in1);
   *in1 = _mm256_sub_epi32(_in0, _in1);
 }
 
-static INLINE void btf_16_adds_subs_out_avx2(__m256i *out0, __m256i *out1,
+static inline void btf_16_adds_subs_out_avx2(__m256i *out0, __m256i *out1,
                                              __m256i in0, __m256i in1) {
   const __m256i _in0 = in0;
   const __m256i _in1 = in1;
@@ -71,7 +71,7 @@ static INLINE void btf_16_adds_subs_out_avx2(__m256i *out0, __m256i *out1,
   *out1 = _mm256_subs_epi16(_in0, _in1);
 }
 
-static INLINE void btf_32_add_sub_out_avx2(__m256i *out0, __m256i *out1,
+static inline void btf_32_add_sub_out_avx2(__m256i *out0, __m256i *out1,
                                            __m256i in0, __m256i in1) {
   const __m256i _in0 = in0;
   const __m256i _in1 = in1;
@@ -79,11 +79,11 @@ static INLINE void btf_32_add_sub_out_avx2(__m256i *out0, __m256i *out1,
   *out1 = _mm256_sub_epi32(_in0, _in1);
 }
 
-static INLINE __m256i load_16bit_to_16bit_avx2(const int16_t *a) {
+static inline __m256i load_16bit_to_16bit_avx2(const int16_t *a) {
   return _mm256_load_si256((const __m256i *)a);
 }
 
-static INLINE void load_buffer_16bit_to_16bit_avx2(const int16_t *in,
+static inline void load_buffer_16bit_to_16bit_avx2(const int16_t *in,
                                                    int stride, __m256i *out,
                                                    int out_size) {
   for (int i = 0; i < out_size; ++i) {
@@ -91,7 +91,7 @@ static INLINE void load_buffer_16bit_to_16bit_avx2(const int16_t *in,
   }
 }
 
-static INLINE void load_buffer_16bit_to_16bit_flip_avx2(const int16_t *in,
+static inline void load_buffer_16bit_to_16bit_flip_avx2(const int16_t *in,
                                                         int stride,
                                                         __m256i *out,
                                                         int out_size) {
@@ -100,13 +100,13 @@ static INLINE void load_buffer_16bit_to_16bit_flip_avx2(const int16_t *in,
   }
 }
 
-static INLINE __m256i load_32bit_to_16bit_w16_avx2(const int32_t *a) {
+static inline __m256i load_32bit_to_16bit_w16_avx2(const int32_t *a) {
   const __m256i a_low = _mm256_lddqu_si256((const __m256i *)a);
   const __m256i b = _mm256_packs_epi32(a_low, *(const __m256i *)(a + 8));
   return _mm256_permute4x64_epi64(b, 0xD8);
 }
 
-static INLINE void load_buffer_32bit_to_16bit_w16_avx2(const int32_t *in,
+static inline void load_buffer_32bit_to_16bit_w16_avx2(const int32_t *in,
                                                        int stride, __m256i *out,
                                                        int out_size) {
   for (int i = 0; i < out_size; ++i) {
@@ -114,7 +114,7 @@ static INLINE void load_buffer_32bit_to_16bit_w16_avx2(const int32_t *in,
   }
 }
 
-static INLINE void transpose2_8x8_avx2(const __m256i *const in,
+static inline void transpose2_8x8_avx2(const __m256i *const in,
                                        __m256i *const out) {
   __m256i t[16], u[16];
   // (1st, 2nd) ==> (lo, hi)
@@ -154,7 +154,7 @@ static INLINE void transpose2_8x8_avx2(const __m256i *const in,
   }
 }
 
-static INLINE void transpose_16bit_16x16_avx2(const __m256i *const in,
+static inline void transpose_16bit_16x16_avx2(const __m256i *const in,
                                               __m256i *const out) {
   __m256i t[16];
 
@@ -195,7 +195,7 @@ static INLINE void transpose_16bit_16x16_avx2(const __m256i *const in,
   transpose2_8x8_avx2(&t[8], &out[8]);
 }
 
-static INLINE void transpose_16bit_16x8_avx2(const __m256i *const in,
+static inline void transpose_16bit_16x8_avx2(const __m256i *const in,
                                              __m256i *const out) {
   const __m256i a0 = _mm256_unpacklo_epi16(in[0], in[1]);
   const __m256i a1 = _mm256_unpacklo_epi16(in[2], in[3]);
@@ -225,13 +225,13 @@ static INLINE void transpose_16bit_16x8_avx2(const __m256i *const in,
   out[7] = _mm256_unpackhi_epi64(b6, b7);
 }
 
-static INLINE void flip_buf_avx2(__m256i *in, __m256i *out, int size) {
+static inline void flip_buf_avx2(__m256i *in, __m256i *out, int size) {
   for (int i = 0; i < size; ++i) {
     out[size - i - 1] = in[i];
   }
 }
 
-static INLINE void round_shift_16bit_w16_avx2(__m256i *in, int size, int bit) {
+static inline void round_shift_16bit_w16_avx2(__m256i *in, int size, int bit) {
   if (bit < 0) {
     bit = -bit;
     __m256i round = _mm256_set1_epi16(1 << (bit - 1));
@@ -246,14 +246,14 @@ static INLINE void round_shift_16bit_w16_avx2(__m256i *in, int size, int bit) {
   }
 }
 
-static INLINE __m256i round_shift_32_avx2(__m256i vec, int bit) {
+static inline __m256i round_shift_32_avx2(__m256i vec, int bit) {
   __m256i tmp, round;
   round = _mm256_set1_epi32(1 << (bit - 1));
   tmp = _mm256_add_epi32(vec, round);
   return _mm256_srai_epi32(tmp, bit);
 }
 
-static INLINE void round_shift_array_32_avx2(__m256i *input, __m256i *output,
+static inline void round_shift_array_32_avx2(__m256i *input, __m256i *output,
                                              const int size, const int bit) {
   if (bit > 0) {
     int i;
@@ -268,7 +268,7 @@ static INLINE void round_shift_array_32_avx2(__m256i *input, __m256i *output,
   }
 }
 
-static INLINE void round_shift_rect_array_32_avx2(__m256i *input,
+static inline void round_shift_rect_array_32_avx2(__m256i *input,
                                                   __m256i *output,
                                                   const int size, const int bit,
                                                   const int val) {
@@ -290,14 +290,14 @@ static INLINE void round_shift_rect_array_32_avx2(__m256i *input,
   }
 }
 
-static INLINE __m256i scale_round_avx2(const __m256i a, const int scale) {
+static inline __m256i scale_round_avx2(const __m256i a, const int scale) {
   const __m256i scale_rounding =
       pair_set_w16_epi16(scale, 1 << (NewSqrt2Bits - 1));
   const __m256i b = _mm256_madd_epi16(a, scale_rounding);
   return _mm256_srai_epi32(b, NewSqrt2Bits);
 }
 
-static INLINE void store_rect_16bit_to_32bit_w8_avx2(const __m256i a,
+static inline void store_rect_16bit_to_32bit_w8_avx2(const __m256i a,
                                                      int32_t *const b) {
   const __m256i one = _mm256_set1_epi16(1);
   const __m256i a_lo = _mm256_unpacklo_epi16(a, one);
@@ -310,7 +310,7 @@ static INLINE void store_rect_16bit_to_32bit_w8_avx2(const __m256i a,
   _mm256_store_si256((__m256i *)(b + 64), temp);
 }
 
-static INLINE void store_rect_buffer_16bit_to_32bit_w8_avx2(
+static inline void store_rect_buffer_16bit_to_32bit_w8_avx2(
     const __m256i *const in, int32_t *const out, const int stride,
     const int out_size) {
   for (int i = 0; i < out_size; ++i) {
@@ -318,7 +318,7 @@ static INLINE void store_rect_buffer_16bit_to_32bit_w8_avx2(
   }
 }
 
-static INLINE void pack_reg(const __m128i *in1, const __m128i *in2,
+static inline void pack_reg(const __m128i *in1, const __m128i *in2,
                             __m256i *out) {
   out[0] = _mm256_insertf128_si256(_mm256_castsi128_si256(in1[0]), in2[0], 0x1);
   out[1] = _mm256_insertf128_si256(_mm256_castsi128_si256(in1[1]), in2[1], 0x1);
@@ -330,7 +330,7 @@ static INLINE void pack_reg(const __m128i *in1, const __m128i *in2,
   out[7] = _mm256_insertf128_si256(_mm256_castsi128_si256(in1[7]), in2[7], 0x1);
 }
 
-static INLINE void extract_reg(const __m256i *in, __m128i *out1) {
+static inline void extract_reg(const __m256i *in, __m128i *out1) {
   out1[0] = _mm256_castsi256_si128(in[0]);
   out1[1] = _mm256_castsi256_si128(in[1]);
   out1[2] = _mm256_castsi256_si128(in[2]);

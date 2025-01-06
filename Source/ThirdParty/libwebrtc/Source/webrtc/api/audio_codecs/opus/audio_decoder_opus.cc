@@ -10,12 +10,19 @@
 
 #include "api/audio_codecs/opus/audio_decoder_opus.h"
 
+#include <map>
 #include <memory>
+#include <optional>
+#include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/match.h"
+#include "api/audio_codecs/audio_codec_pair_id.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_format.h"
 #include "modules/audio_coding/codecs/opus/audio_decoder_opus.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -31,9 +38,9 @@ bool AudioDecoderOpus::Config::IsOk() const {
   return true;
 }
 
-absl::optional<AudioDecoderOpus::Config> AudioDecoderOpus::SdpToConfig(
+std::optional<AudioDecoderOpus::Config> AudioDecoderOpus::SdpToConfig(
     const SdpAudioFormat& format) {
-  const auto num_channels = [&]() -> absl::optional<int> {
+  const auto num_channels = [&]() -> std::optional<int> {
     auto stereo = format.parameters.find("stereo");
     if (stereo != format.parameters.end()) {
       if (stereo->second == "0") {
@@ -41,7 +48,7 @@ absl::optional<AudioDecoderOpus::Config> AudioDecoderOpus::SdpToConfig(
       } else if (stereo->second == "1") {
         return 2;
       } else {
-        return absl::nullopt;  // Bad stereo parameter.
+        return std::nullopt;  // Bad stereo parameter.
       }
     }
     return 1;  // Default to mono.
@@ -53,11 +60,11 @@ absl::optional<AudioDecoderOpus::Config> AudioDecoderOpus::SdpToConfig(
     config.num_channels = *num_channels;
     if (!config.IsOk()) {
       RTC_DCHECK_NOTREACHED();
-      return absl::nullopt;
+      return std::nullopt;
     }
     return config;
   } else {
-    return absl::nullopt;
+    return std::nullopt;
   }
 }
 
@@ -72,15 +79,14 @@ void AudioDecoderOpus::AppendSupportedDecoders(
 }
 
 std::unique_ptr<AudioDecoder> AudioDecoderOpus::MakeAudioDecoder(
-    Config config,
-    absl::optional<AudioCodecPairId> /*codec_pair_id*/,
-    const FieldTrialsView* field_trials) {
+    const Environment& env,
+    Config config) {
   if (!config.IsOk()) {
     RTC_DCHECK_NOTREACHED();
     return nullptr;
   }
-  return std::make_unique<AudioDecoderOpusImpl>(config.num_channels,
-                                                config.sample_rate_hz);
+  return std::make_unique<AudioDecoderOpusImpl>(
+      env.field_trials(), config.num_channels, config.sample_rate_hz);
 }
 
 }  // namespace webrtc

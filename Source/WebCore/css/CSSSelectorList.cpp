@@ -29,9 +29,12 @@
 
 #include "CommonAtomStrings.h"
 #include "MutableCSSSelector.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSSelectorList);
 
 CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
 {
@@ -82,6 +85,7 @@ CSSSelectorList::CSSSelectorList(MutableCSSSelectorList&& selectorVector)
     m_selectorArray[arrayIndex - 1].setLastInSelectorList();
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 unsigned CSSSelectorList::componentCount() const
 {
     if (!m_selectorArray)
@@ -105,6 +109,7 @@ unsigned CSSSelectorList::listSize() const
     }
     return size;
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 String CSSSelectorList::selectorsText() const
 {
@@ -115,12 +120,7 @@ String CSSSelectorList::selectorsText() const
 
 void CSSSelectorList::buildSelectorsText(StringBuilder& stringBuilder) const
 {
-    const CSSSelector* firstSubselector = first();
-    for (const CSSSelector* subSelector = firstSubselector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-        if (subSelector != firstSubselector)
-            stringBuilder.append(", "_s);
-        stringBuilder.append(subSelector->selectorText());
-    }
+    stringBuilder.append(interleave(*this, [](auto& subSelector) { return subSelector.selectorText(); }, ", "_s));
 }
 
 template <typename Functor>

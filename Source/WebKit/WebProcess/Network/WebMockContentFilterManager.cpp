@@ -30,7 +30,6 @@
 
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/MockContentFilterManager.h>
 #include <WebCore/MockContentFilterSettings.h>
@@ -51,7 +50,7 @@ void WebMockContentFilterManager::startObservingSettings()
 
 void WebMockContentFilterManager::mockContentFilterSettingsChanged(WebCore::MockContentFilterSettings& settings)
 {
-    if (auto connection = WebProcess::singleton().existingNetworkProcessConnection())
+    if (RefPtr connection = WebProcess::singleton().existingNetworkProcessConnection())
         connection->connection().send(Messages::NetworkConnectionToWebProcess::InstallMockContentFilter(settings), 0);
 }
 

@@ -27,8 +27,11 @@
 
 #if ENABLE(WEBGL)
 #include "WebGLDefaultFramebuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGLDefaultFramebuffer);
 
 std::unique_ptr<WebGLDefaultFramebuffer> WebGLDefaultFramebuffer::create(WebGLRenderingContextBase& context, IntSize size)
 {
@@ -40,7 +43,7 @@ std::unique_ptr<WebGLDefaultFramebuffer> WebGLDefaultFramebuffer::create(WebGLRe
 WebGLDefaultFramebuffer::WebGLDefaultFramebuffer(WebGLRenderingContextBase& context)
     : m_context(context)
 {
-    auto attributes = m_context.protectedGraphicsContextGL()->contextAttributes();
+    auto attributes = context.protectedGraphicsContextGL()->contextAttributes();
     m_hasStencil = attributes.stencil;
     m_hasDepth = attributes.depth;
     if (!attributes.preserveDrawingBuffer) {
@@ -52,9 +55,14 @@ WebGLDefaultFramebuffer::WebGLDefaultFramebuffer(WebGLRenderingContextBase& cont
     }
 }
 
+IntSize WebGLDefaultFramebuffer::size() const
+{
+    return m_context->protectedGraphicsContextGL()->getInternalFramebufferSize();
+}
+
 void WebGLDefaultFramebuffer::reshape(IntSize size)
 {
-    m_context.protectedGraphicsContextGL()->reshape(size.width(), size.height());
+    m_context->protectedGraphicsContextGL()->reshape(size.width(), size.height());
 }
 
 void WebGLDefaultFramebuffer::markBuffersClear(GCGLbitfield clearBuffers)

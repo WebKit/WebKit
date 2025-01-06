@@ -49,14 +49,19 @@ enum class LinkTimeConstant : int32_t;
     macro(getPrototypeOf) \
     macro(getPromiseInternalField) \
     macro(getGeneratorInternalField) \
+    macro(getIteratorHelperInternalField) \
+    macro(getAsyncFromSyncIteratorInternalField) \
     macro(getAsyncGeneratorInternalField) \
     macro(getAbstractModuleRecordInternalField) \
     macro(getArrayIteratorInternalField) \
     macro(getStringIteratorInternalField) \
     macro(getMapIteratorInternalField) \
     macro(getSetIteratorInternalField) \
+    macro(getRegExpStringIteratorInternalField) \
     macro(getProxyInternalField) \
+    macro(getWrapForValidIteratorInternalField) \
     macro(idWithProfile) \
+    macro(isAsyncFromSyncIterator) \
     macro(isObject) \
     macro(isCallable) \
     macro(isConstructor) \
@@ -64,6 +69,7 @@ enum class LinkTimeConstant : int32_t;
     macro(isProxyObject) \
     macro(isDerivedArray) \
     macro(isGenerator) \
+    macro(isIteratorHelper) \
     macro(isAsyncGenerator) \
     macro(isPromise) \
     macro(isRegExpObject) \
@@ -75,6 +81,8 @@ enum class LinkTimeConstant : int32_t;
     macro(isMapIterator) \
     macro(isSetIterator) \
     macro(isUndefinedOrNull) \
+    macro(isWrapForValidIterator) \
+    macro(isRegExpStringIterator) \
     macro(tailCallForwardArguments) \
     macro(throwTypeError) \
     macro(throwRangeError) \
@@ -93,6 +101,7 @@ enum class LinkTimeConstant : int32_t;
     macro(putStringIteratorInternalField) \
     macro(putMapIteratorInternalField) \
     macro(putSetIteratorInternalField) \
+    macro(putRegExpStringIteratorInternalField) \
     macro(superSamplerBegin) \
     macro(superSamplerEnd) \
     macro(toNumber) \
@@ -105,6 +114,9 @@ enum class LinkTimeConstant : int32_t;
     macro(newArrayWithSize) \
     macro(newArrayWithSpecies) \
     macro(newPromise) \
+    macro(iteratorGenericClose) \
+    macro(iteratorGenericNext) \
+    macro(ifAbruptCloseIterator) \
     macro(createPromise) \
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \
@@ -148,12 +160,19 @@ enum class LinkTimeConstant : int32_t;
     macro(GeneratorResumeModeReturn) \
     macro(GeneratorStateCompleted) \
     macro(GeneratorStateExecuting) \
+    macro(GeneratorStateInit) \
+    macro(iteratorHelperFieldGenerator) \
+    macro(iteratorHelperFieldUnderlyingIterator) \
     macro(arrayIteratorFieldIndex) \
     macro(arrayIteratorFieldIteratedObject) \
     macro(arrayIteratorFieldKind) \
-    macro(mapIteratorFieldMapBucket) \
+    macro(mapIteratorFieldEntry) \
+    macro(mapIteratorFieldIteratedObject) \
+    macro(mapIteratorFieldStorage) \
     macro(mapIteratorFieldKind) \
-    macro(setIteratorFieldSetBucket) \
+    macro(setIteratorFieldEntry) \
+    macro(setIteratorFieldIteratedObject) \
+    macro(setIteratorFieldStorage) \
     macro(setIteratorFieldKind) \
     macro(stringIteratorFieldIndex) \
     macro(stringIteratorFieldIteratedString) \
@@ -168,11 +187,20 @@ enum class LinkTimeConstant : int32_t;
     macro(AsyncGeneratorSuspendReasonYield) \
     macro(AsyncGeneratorSuspendReasonAwait) \
     macro(AsyncGeneratorSuspendReasonNone) \
+    macro(asyncFromSyncIteratorFieldSyncIterator) \
+    macro(asyncFromSyncIteratorFieldNextMethod) \
     macro(abstractModuleRecordFieldState) \
+    macro(wrapForValidIteratorFieldIteratedIterator) \
+    macro(wrapForValidIteratorFieldIteratedNextMethod) \
+    macro(regExpStringIteratorFieldRegExp) \
+    macro(regExpStringIteratorFieldString) \
+    macro(regExpStringIteratorFieldGlobal) \
+    macro(regExpStringIteratorFieldFullUnicode) \
+    macro(regExpStringIteratorFieldDone) \
+
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_CUSTOM_EACH_NAME(macro) \
-    macro(sentinelMapBucket) \
-    macro(sentinelSetBucket) \
+    macro(orderedHashTableSentinel)
 
 class BytecodeIntrinsicRegistry {
     WTF_MAKE_NONCOPYABLE(BytecodeIntrinsicRegistry);

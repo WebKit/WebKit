@@ -21,11 +21,12 @@
 
 #include "WebKitURISchemeRequest.h"
 #include "WebKitWebContext.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebKitProtocolHandler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebKitProtocolHandler);
 public:
     explicit WebKitProtocolHandler(WebKitWebContext*);
     ~WebKitProtocolHandler() = default;

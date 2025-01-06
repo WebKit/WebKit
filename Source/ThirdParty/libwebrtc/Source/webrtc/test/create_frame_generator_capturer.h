@@ -11,10 +11,10 @@
 #define TEST_CREATE_FRAME_GENERATOR_CAPTURER_H_
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/units/time_delta.h"
@@ -26,13 +26,13 @@ namespace test {
 
 namespace frame_gen_cap_impl {
 template <typename T>
-class AutoOpt : public absl::optional<T> {
+class AutoOpt : public std::optional<T> {
  public:
-  using absl::optional<T>::optional;
+  using std::optional<T>::optional;
   T* operator->() {
-    if (!absl::optional<T>::has_value())
+    if (!std::optional<T>::has_value())
       this->emplace(T());
-    return absl::optional<T>::operator->();
+    return std::optional<T>::operator->();
   }
 };
 }  // namespace frame_gen_cap_impl
@@ -67,8 +67,8 @@ struct FrameGeneratorCapturerConfig {
     TimeDelta change_interval = TimeDelta::Seconds(10);
     struct Crop {
       TimeDelta scroll_duration = TimeDelta::Seconds(0);
-      absl::optional<int> width;
-      absl::optional<int> height;
+      std::optional<int> width;
+      std::optional<int> height;
     } crop;
     int width = 1850;
     int height = 1110;

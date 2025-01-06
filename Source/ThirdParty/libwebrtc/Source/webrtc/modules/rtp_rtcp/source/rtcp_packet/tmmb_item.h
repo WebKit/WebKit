@@ -21,7 +21,7 @@ namespace rtcp {
 // Used both by TMMBR and TMMBN rtcp packets.
 class TmmbItem {
  public:
-  static const size_t kLength = 8;
+  static constexpr size_t kLength = 8;
 
   TmmbItem() : ssrc_(0), bitrate_bps_(0), packet_overhead_(0) {}
   TmmbItem(uint32_t ssrc, uint64_t bitrate_bps, uint16_t overhead);

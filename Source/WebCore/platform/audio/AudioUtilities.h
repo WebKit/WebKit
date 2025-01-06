@@ -64,7 +64,7 @@ inline float decibelsToLinear(float decibels)
     return powf(10, 0.05f * decibels);
 }
 
-void applyNoise(float* values, size_t numberOfElementsToProcess, float standardDeviation);
+void applyNoise(std::span<float> values, float standardDeviation);
 
 } // AudioUtilites
 

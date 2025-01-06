@@ -52,7 +52,7 @@ size_t GetMaxNaluSizeBytes(const EncodedImage& encoded_frame,
     return 0;
 
   std::vector<webrtc::H264::NaluIndex> nalu_indices =
-      webrtc::H264::FindNaluIndices(encoded_frame.data(), encoded_frame.size());
+      webrtc::H264::FindNaluIndices(encoded_frame);
 
   RTC_CHECK(!nalu_indices.empty());
 
@@ -135,7 +135,8 @@ void CalculateFrameQuality(const I420BufferInterface& ref_buffer,
 
 }  // namespace
 
-VideoProcessor::VideoProcessor(webrtc::VideoEncoder* encoder,
+VideoProcessor::VideoProcessor(const Environment& env,
+                               webrtc::VideoEncoder* encoder,
                                VideoDecoderList* decoders,
                                FrameReader* input_frame_reader,
                                const VideoCodecTestFixture::Config& config,
@@ -150,9 +151,9 @@ VideoProcessor::VideoProcessor(webrtc::VideoEncoder* encoder,
       stats_(stats),
       encoder_(encoder),
       decoders_(decoders),
-      bitrate_allocator_(
-          CreateBuiltinVideoBitrateAllocatorFactory()
-              ->CreateVideoBitrateAllocator(config_.codec_settings)),
+      bitrate_allocator_(CreateBuiltinVideoBitrateAllocatorFactory()->Create(
+          env,
+          config_.codec_settings)),
       encode_callback_(this),
       input_frame_reader_(input_frame_reader),
       merged_encoded_frames_(num_simulcast_or_spatial_layers_),
@@ -254,7 +255,7 @@ void VideoProcessor::ProcessFrame() {
   VideoFrame input_frame =
       VideoFrame::Builder()
           .set_video_frame_buffer(buffer)
-          .set_timestamp_rtp(static_cast<uint32_t>(timestamp))
+          .set_rtp_timestamp(static_cast<uint32_t>(timestamp))
           .set_timestamp_ms(static_cast<int64_t>(timestamp / kMsToRtpTimestamp))
           .set_rotation(webrtc::kVideoRotation_0)
           .build();
@@ -352,7 +353,7 @@ int32_t VideoProcessor::VideoProcessorDecodeCompleteCallback::Decoded(
                           .set_timestamp_us(image.timestamp_us())
                           .set_id(image.id())
                           .build();
-    copy.set_timestamp(image.timestamp());
+    copy.set_rtp_timestamp(image.rtp_timestamp());
 
     task_queue_->PostTask([this, copy]() {
       video_processor_->FrameDecoded(copy, simulcast_svc_idx_);
@@ -555,7 +556,7 @@ void VideoProcessor::FrameDecoded(const VideoFrame& decoded_frame,
   const int64_t decode_stop_ns = rtc::TimeNanos();
 
   FrameStatistics* frame_stat =
-      stats_->GetFrameWithTimestamp(decoded_frame.timestamp(), spatial_idx);
+      stats_->GetFrameWithTimestamp(decoded_frame.rtp_timestamp(), spatial_idx);
   const size_t frame_number = frame_stat->frame_number;
 
   if (!first_decoded_frame_[spatial_idx]) {

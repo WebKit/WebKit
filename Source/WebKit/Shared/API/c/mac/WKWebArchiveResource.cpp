@@ -48,12 +48,12 @@ WKDataRef WKWebArchiveResourceCopyData(WKWebArchiveResourceRef webArchiveResourc
 
 WKURLRef WKWebArchiveResourceCopyURL(WKWebArchiveResourceRef webArchiveResourceRef)
 {
-    return WebKit::toCopiedURLAPI(WebKit::toImpl(webArchiveResourceRef)->URL());
+    return WebKit::toCopiedURLAPI(WebKit::toImpl(webArchiveResourceRef)->url());
 }
 
 WKStringRef WKWebArchiveResourceCopyMIMEType(WKWebArchiveResourceRef webArchiveResourceRef)
 {
-    return WebKit::toCopiedAPI(WebKit::toImpl(webArchiveResourceRef)->MIMEType());
+    return WebKit::toCopiedAPI(WebKit::toImpl(webArchiveResourceRef)->mimeType());
 }
 
 WKStringRef WKWebArchiveResourceCopyTextEncoding(WKWebArchiveResourceRef webArchiveResourceRef)

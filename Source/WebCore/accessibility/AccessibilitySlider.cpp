@@ -42,14 +42,14 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-AccessibilitySlider::AccessibilitySlider(RenderObject& renderer)
-    : AccessibilityRenderObject(renderer)
+AccessibilitySlider::AccessibilitySlider(AXID axID, RenderObject& renderer)
+    : AccessibilityRenderObject(axID, renderer)
 {
 }
 
-Ref<AccessibilitySlider> AccessibilitySlider::create(RenderObject& renderer)
+Ref<AccessibilitySlider> AccessibilitySlider::create(AXID axID, RenderObject& renderer)
 {
-    return adoptRef(*new AccessibilitySlider(renderer));
+    return adoptRef(*new AccessibilitySlider(axID, renderer));
 }
 
 AccessibilityOrientation AccessibilitySlider::orientation() const
@@ -99,10 +99,10 @@ void AccessibilitySlider::addChildren()
 
     // Before actually adding the value indicator to the hierarchy,
     // allow the platform to make a final decision about it.
-    if (thumb->accessibilityIsIgnored())
+    if (thumb->isIgnored())
         cache->remove(thumb->objectID());
     else
-        addChild(thumb.ptr());
+        addChild(thumb.get());
 }
 
 AccessibilityObject* AccessibilitySlider::elementAccessibilityHitTest(const IntPoint& point) const
@@ -154,13 +154,14 @@ HTMLInputElement* AccessibilitySlider::inputElement() const
 }
 
 
-AccessibilitySliderThumb::AccessibilitySliderThumb()
+AccessibilitySliderThumb::AccessibilitySliderThumb(AXID axID)
+    : AccessibilityMockObject(axID)
 {
 }
 
-Ref<AccessibilitySliderThumb> AccessibilitySliderThumb::create()
+Ref<AccessibilitySliderThumb> AccessibilitySliderThumb::create(AXID axID)
 {
-    return adoptRef(*new AccessibilitySliderThumb());
+    return adoptRef(*new AccessibilitySliderThumb(axID));
 }
     
 LayoutRect AccessibilitySliderThumb::elementRect() const
@@ -176,9 +177,9 @@ LayoutRect AccessibilitySliderThumb::elementRect() const
     return LayoutRect();
 }
 
-bool AccessibilitySliderThumb::computeAccessibilityIsIgnored() const
+bool AccessibilitySliderThumb::computeIsIgnored() const
 {
-    return accessibilityIsIgnoredByDefault();
+    return isIgnoredByDefault();
 }
 
 } // namespace WebCore

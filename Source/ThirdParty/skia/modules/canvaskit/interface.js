@@ -779,6 +779,11 @@ CanvasKit.onRuntimeInitialized = function() {
     return copyIRectFromWasm(_scratchIRect, outputRect);
   };
 
+  CanvasKit.Canvas.prototype.quickReject = function(rect) {
+    var rPtr = copyRectToWasm(rect);
+    return this._quickReject(rPtr);
+  };
+
   // getLocalToDevice returns a 4x4 matrix.
   CanvasKit.Canvas.prototype.getLocalToDevice = function() {
     // _getLocalToDevice will copy the values into the pointer.
@@ -811,11 +816,11 @@ CanvasKit.onRuntimeInitialized = function() {
     return readPixels(this, srcX, srcY, imageInfo, destMallocObj, bytesPerRow);
   };
 
-  CanvasKit.Canvas.prototype.saveLayer = function(paint, boundsRect, backdrop, flags) {
+  CanvasKit.Canvas.prototype.saveLayer = function (paint, boundsRect, backdrop, flags, backdropTileMode) {
     // bPtr will be 0 (nullptr) if boundsRect is undefined/null.
     var bPtr = copyRectToWasm(boundsRect);
     // These or clauses help emscripten, which does not deal with undefined well.
-    return this._saveLayer(paint || null, bPtr, backdrop || null, flags || 0);
+    return this._saveLayer(paint || null, bPtr, backdrop || null, flags || 0, backdropTileMode || CanvasKit.TileMode.Clamp);
   };
 
   // pixels should be a Uint8Array or a plain JS array.

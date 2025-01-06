@@ -36,12 +36,12 @@ void AnalyzingVideoSinksHelper::AddConfig(absl::string_view sender_peer_name,
   }
 }
 
-absl::optional<std::pair<std::string, VideoConfig>>
+std::optional<std::pair<std::string, VideoConfig>>
 AnalyzingVideoSinksHelper::GetPeerAndConfig(absl::string_view stream_label) {
   MutexLock lock(&mutex_);
   auto it = video_configs_.find(std::string(stream_label));
   if (it == video_configs_.end()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return it->second;
 }

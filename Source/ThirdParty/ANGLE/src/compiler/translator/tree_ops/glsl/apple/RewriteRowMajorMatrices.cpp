@@ -107,7 +107,7 @@ TIntermSymbol *CopyToTempVariable(TSymbolTable *symbolTable,
                                   TIntermTyped *node,
                                   TIntermSequence *prependStatements)
 {
-    TVariable *temp              = CreateTempVariable(symbolTable, &node->getType());
+    TVariable *temp              = CreateTempVariable(symbolTable, &node->getType(), EvqTemporary);
     TIntermDeclaration *tempDecl = CreateTempInitDeclarationNode(temp, node);
     prependStatements->push_back(tempDecl);
 
@@ -854,7 +854,7 @@ class RewriteRowMajorMatricesTraverser : public TIntermTraverser
         //     temp = (x = 2)
         //     if (x == 1 && a.b[temp].etc.M = transpose(value))
         //
-        // See http://anglebug.com/3829.
+        // See http://anglebug.com/42262472.
         //
         TIntermTyped *baseExpression =
             new TIntermSymbol(mInterfaceBlockMap->at(&symbol->variable()));
@@ -925,7 +925,8 @@ class RewriteRowMajorMatricesTraverser : public TIntermTraverser
                 secondaryIndices = indices;
 
                 // Indices after this point are not interesting.  There can't actually be any other
-                // index nodes other than desktop GLSL's swizzles on scalars, like M[1][2].yyy.
+                // index nodes.  Unlike desktop GLSL, ESSL does not support swizzles on scalars
+                // (like M[1][2].yyy).
                 ++accessorIndex;
                 break;
             }
@@ -1051,8 +1052,8 @@ class RewriteRowMajorMatricesTraverser : public TIntermTraverser
                 //
                 // In either case, use that temp value as the value to assign to |baseExpression|.
 
-                TVariable *temp =
-                    CreateTempVariable(mSymbolTable, &originalExpression->getAsTyped()->getType());
+                TVariable *temp = CreateTempVariable(
+                    mSymbolTable, &originalExpression->getAsTyped()->getType(), EvqTemporary);
                 TIntermDeclaration *tempDecl = nullptr;
 
                 valueExpression = new TIntermSymbol(temp);

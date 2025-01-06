@@ -26,9 +26,14 @@
 #include "config.h"
 #include "VelocityData.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HistoricalVelocityData);
 
 VelocityData HistoricalVelocityData::velocityForNewData(FloatPoint newPosition, double scale, MonotonicTime timestamp)
 {
@@ -83,3 +88,5 @@ TextStream& operator<<(TextStream& ts, const VelocityData& velocityData)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

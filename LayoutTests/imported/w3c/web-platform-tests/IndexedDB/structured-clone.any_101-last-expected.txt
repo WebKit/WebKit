@@ -1,8 +1,9 @@
 
-FAIL TypeError: TypeError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL TypeError: TypeError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL URIError: URIError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL URIError: URIError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS SyntaxError: SyntaxError: ghi
+PASS TypeError: TypeError
+PASS TypeError: TypeError: ghi
+PASS URIError: URIError
+PASS URIError: URIError: ghi
 PASS Array:
 PASS Array: 1,2,3
 PASS Array: foo,bar,,,,,,,,,true,false,,,,,,,,,123,456,,,,,,,,,

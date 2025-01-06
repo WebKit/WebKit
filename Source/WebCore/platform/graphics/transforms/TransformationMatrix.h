@@ -32,8 +32,8 @@
 #include "Quaternion.h"
 #include <array>
 #include <string.h> //for memcpy
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(CA)
 typedef struct CATransform3D CATransform3D;
@@ -73,42 +73,42 @@ class FloatQuad;
 #endif
 
 class TransformationMatrix {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TransformationMatrix, WEBCORE_EXPORT);
 public:
 
 #if (PLATFORM(IOS_FAMILY) && CPU(ARM_THUMB2)) || defined(TRANSFORMATION_MATRIX_USE_X86_64_SSE2)
-    typedef double Matrix4[4][4] __attribute__((aligned (16)));
+    typedef std::array<std::array<double, 4>, 4> Matrix4 __attribute__((aligned (16)));
 #else
-    typedef double Matrix4[4][4];
+    typedef std::array<std::array<double, 4>, 4> Matrix4;
 #endif
 
     constexpr TransformationMatrix()
-        : m_matrix {
+        : m_matrix { {
             { 1, 0, 0, 0 },
             { 0, 1, 0, 0 },
             { 0, 0, 1, 0 },
             { 0, 0, 0, 1 },
-        }
+        } }
     {
     }
 
     constexpr TransformationMatrix(double a, double b, double c, double d, double e, double f)
-        : m_matrix {
+        : m_matrix { {
             { a, b, 0, 0 },
             { c, d, 0, 0 },
             { 0, 0, 1, 0 },
             { e, f, 0, 1 },
-        }
+        } }
     {
     }
 
     constexpr TransformationMatrix(double tx, double ty)
-        : m_matrix {
+        : m_matrix { {
             { 1, 0, 0, 0 },
             { 0, 1, 0, 0 },
             { 0, 0, 1, 0 },
             { tx, ty, 0, 1 },
-        }
+        } }
     {
     }
 
@@ -117,12 +117,12 @@ public:
         double m21, double m22, double m23, double m24,
         double m31, double m32, double m33, double m34,
         double m41, double m42, double m43, double m44)
-        : m_matrix {
+        : m_matrix { {
             { m11, m12, m13, m14 },
             { m21, m22, m23, m24 },
             { m31, m32, m33, m34 },
             { m41, m42, m43, m44 },
-        }
+        } }
     {
     }
 
@@ -432,13 +432,15 @@ public:
     TransformationMatrix to2dTransform() const;
     
     using FloatMatrix4 = std::array<float, 16>;
-    FloatMatrix4 toColumnMajorFloatArray() const;
+    WEBCORE_EXPORT FloatMatrix4 toColumnMajorFloatArray() const;
 
     // A local-space layer is implicitly defined at the z = 0 plane, with its front side
     // facing the positive z-axis (i.e. a camera looking along the negative z-axis sees
     // the front side of the layer). This function checks if the transformed layer's back
     // face would be visible to a camera looking along the negative z-axis in the target space.
     bool isBackFaceVisible() const;
+
+    TransformationMatrix transpose() const;
 
 private:
     // multiply passed 2D point by matrix (assume z=0)

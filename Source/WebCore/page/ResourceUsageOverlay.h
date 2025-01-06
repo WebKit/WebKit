@@ -31,7 +31,10 @@
 #include "IntRect.h"
 #include "PageOverlay.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
 #include "PlatformCALayer.h"
@@ -47,11 +50,11 @@ class FloatRect;
 class IntPoint;
 class IntRect;
 
-class ResourceUsageOverlay final : public PageOverlayClient {
-    WTF_MAKE_FAST_ALLOCATED;
+class ResourceUsageOverlay final : public PageOverlayClient, public RefCounted<ResourceUsageOverlay>, public CanMakeWeakPtr<ResourceUsageOverlay> {
+    WTF_MAKE_TZONE_ALLOCATED(ResourceUsageOverlay);
     WTF_MAKE_NONCOPYABLE(ResourceUsageOverlay);
 public:
-    explicit ResourceUsageOverlay(Page&);
+    static Ref<ResourceUsageOverlay> create(Page&);
     ~ResourceUsageOverlay();
 
     PageOverlay& overlay() { return *m_overlay; }
@@ -64,6 +67,8 @@ public:
     static const int normalHeight = 180;
 
 private:
+    explicit ResourceUsageOverlay(Page&);
+
     void willMoveToPage(PageOverlay&, Page*) override { }
     void didMoveToPage(PageOverlay&, Page*) override { }
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect&) override { }
@@ -75,7 +80,7 @@ private:
     void platformInitialize();
     void platformDestroy();
 
-    Page& m_page;
+    WeakPtr<Page> m_page;
     RefPtr<PageOverlay> m_overlay;
     bool m_dragging { false };
     IntPoint m_dragPoint;

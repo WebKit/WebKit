@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,9 +16,10 @@
 #include "aom_dsp/aom_dsp_common.h"
 #include "aom_dsp/aom_filter.h"
 #include "aom_dsp/x86/convolve_common_intrin.h"
+#include "aom_dsp/x86/synonyms.h"
 #include "av1/common/convolve.h"
 
-static INLINE void prepare_coeffs(const InterpFilterParams *const filter_params,
+static inline void prepare_coeffs(const InterpFilterParams *const filter_params,
                                   const int subpel_q4,
                                   __m128i *const coeffs /* [4] */) {
   const int16_t *const y_filter = av1_get_interp_filter_subpel_kernel(
@@ -35,7 +36,7 @@ static INLINE void prepare_coeffs(const InterpFilterParams *const filter_params,
   coeffs[3] = _mm_unpackhi_epi64(tmp_1, tmp_1);  // coeffs 6 7 6 7 6 7 6 7
 }
 
-static INLINE __m128i convolve(const __m128i *const s,
+static inline __m128i convolve(const __m128i *const s,
                                const __m128i *const coeffs) {
   const __m128i d0 = _mm_madd_epi16(s[0], coeffs[0]);
   const __m128i d1 = _mm_madd_epi16(s[1], coeffs[1]);
@@ -45,7 +46,7 @@ static INLINE __m128i convolve(const __m128i *const s,
   return d;
 }
 
-static INLINE __m128i convolve_lo_x(const __m128i *const s,
+static inline __m128i convolve_lo_x(const __m128i *const s,
                                     const __m128i *const coeffs) {
   __m128i ss[4];
   ss[0] = _mm_unpacklo_epi8(s[0], _mm_setzero_si128());
@@ -55,7 +56,7 @@ static INLINE __m128i convolve_lo_x(const __m128i *const s,
   return convolve(ss, coeffs);
 }
 
-static INLINE __m128i convolve_lo_y(const __m128i *const s,
+static inline __m128i convolve_lo_y(const __m128i *const s,
                                     const __m128i *const coeffs) {
   __m128i ss[4];
   ss[0] = _mm_unpacklo_epi8(s[0], _mm_setzero_si128());
@@ -65,7 +66,7 @@ static INLINE __m128i convolve_lo_y(const __m128i *const s,
   return convolve(ss, coeffs);
 }
 
-static INLINE __m128i convolve_hi_y(const __m128i *const s,
+static inline __m128i convolve_hi_y(const __m128i *const s,
                                     const __m128i *const coeffs) {
   __m128i ss[4];
   ss[0] = _mm_unpackhi_epi8(s[0], _mm_setzero_si128());
@@ -75,10 +76,10 @@ static INLINE __m128i convolve_hi_y(const __m128i *const s,
   return convolve(ss, coeffs);
 }
 
-void av1_convolve_y_sr_12tap_sse2(const uint8_t *src, int src_stride,
-                                  uint8_t *dst, int dst_stride, int w, int h,
-                                  const InterpFilterParams *filter_params_y,
-                                  int subpel_y_qn) {
+static void convolve_y_sr_12tap_sse2(const uint8_t *src, int src_stride,
+                                     uint8_t *dst, int dst_stride, int w, int h,
+                                     const InterpFilterParams *filter_params_y,
+                                     int subpel_y_qn) {
   const int fo_vert = filter_params_y->taps / 2 - 1;
   const uint8_t *src_ptr = src - fo_vert * src_stride;
   const __m128i round_const = _mm_set1_epi32((1 << FILTER_BITS) >> 1);
@@ -185,8 +186,8 @@ void av1_convolve_y_sr_sse2(const uint8_t *src, int src_stride, uint8_t *dst,
       av1_convolve_y_sr_c(src, src_stride, dst, dst_stride, w, h,
                           filter_params_y, subpel_y_qn);
     } else {
-      av1_convolve_y_sr_12tap_sse2(src, src_stride, dst, dst_stride, w, h,
-                                   filter_params_y, subpel_y_qn);
+      convolve_y_sr_12tap_sse2(src, src_stride, dst, dst_stride, w, h,
+                               filter_params_y, subpel_y_qn);
     }
   } else {
     const int fo_vert = filter_params_y->taps / 2 - 1;
@@ -200,31 +201,23 @@ void av1_convolve_y_sr_sse2(const uint8_t *src, int src_stride, uint8_t *dst,
     if (w <= 4) {
       __m128i s[8], src6, res, res_round, res16;
       int res_int;
-      src6 = _mm_cvtsi32_si128(*(int *)(src_ptr + 6 * src_stride));
-      s[0] = _mm_unpacklo_epi8(
-          _mm_cvtsi32_si128(*(int *)(src_ptr + 0 * src_stride)),
-          _mm_cvtsi32_si128(*(int *)(src_ptr + 1 * src_stride)));
-      s[1] = _mm_unpacklo_epi8(
-          _mm_cvtsi32_si128(*(int *)(src_ptr + 1 * src_stride)),
-          _mm_cvtsi32_si128(*(int *)(src_ptr + 2 * src_stride)));
-      s[2] = _mm_unpacklo_epi8(
-          _mm_cvtsi32_si128(*(int *)(src_ptr + 2 * src_stride)),
-          _mm_cvtsi32_si128(*(int *)(src_ptr + 3 * src_stride)));
-      s[3] = _mm_unpacklo_epi8(
-          _mm_cvtsi32_si128(*(int *)(src_ptr + 3 * src_stride)),
-          _mm_cvtsi32_si128(*(int *)(src_ptr + 4 * src_stride)));
-      s[4] = _mm_unpacklo_epi8(
-          _mm_cvtsi32_si128(*(int *)(src_ptr + 4 * src_stride)),
-          _mm_cvtsi32_si128(*(int *)(src_ptr + 5 * src_stride)));
-      s[5] = _mm_unpacklo_epi8(
-          _mm_cvtsi32_si128(*(int *)(src_ptr + 5 * src_stride)), src6);
+      s[0] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 0 * src_stride),
+                               xx_loadl_32(src_ptr + 1 * src_stride));
+      s[1] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 1 * src_stride),
+                               xx_loadl_32(src_ptr + 2 * src_stride));
+      s[2] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 2 * src_stride),
+                               xx_loadl_32(src_ptr + 3 * src_stride));
+      s[3] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 3 * src_stride),
+                               xx_loadl_32(src_ptr + 4 * src_stride));
+      s[4] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 4 * src_stride),
+                               xx_loadl_32(src_ptr + 5 * src_stride));
+      src6 = xx_loadl_32(src_ptr + 6 * src_stride);
+      s[5] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 5 * src_stride), src6);
 
       do {
-        s[6] = _mm_unpacklo_epi8(
-            src6, _mm_cvtsi32_si128(*(int *)(src_ptr + 7 * src_stride)));
-        src6 = _mm_cvtsi32_si128(*(int *)(src_ptr + 8 * src_stride));
-        s[7] = _mm_unpacklo_epi8(
-            _mm_cvtsi32_si128(*(int *)(src_ptr + 7 * src_stride)), src6);
+        s[6] = _mm_unpacklo_epi8(src6, xx_loadl_32(src_ptr + 7 * src_stride));
+        src6 = xx_loadl_32(src_ptr + 8 * src_stride);
+        s[7] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 7 * src_stride), src6);
 
         res = convolve_lo_y(s + 0, coeffs);
         res_round = _mm_sra_epi32(_mm_add_epi32(res, round_const), round_shift);
@@ -337,11 +330,11 @@ void av1_convolve_y_sr_sse2(const uint8_t *src, int src_stride, uint8_t *dst,
   }
 }
 
-void av1_convolve_x_sr_12tap_sse2(const uint8_t *src, int src_stride,
-                                  uint8_t *dst, int dst_stride, int w, int h,
-                                  const InterpFilterParams *filter_params_x,
-                                  int subpel_x_qn,
-                                  ConvolveParams *conv_params) {
+static void convolve_x_sr_12tap_sse2(const uint8_t *src, int src_stride,
+                                     uint8_t *dst, int dst_stride, int w, int h,
+                                     const InterpFilterParams *filter_params_x,
+                                     int subpel_x_qn,
+                                     ConvolveParams *conv_params) {
   const int fo_horiz = filter_params_x->taps / 2 - 1;
   const uint8_t *src_ptr = src - fo_horiz;
   const int bits = FILTER_BITS - conv_params->round_0;
@@ -402,8 +395,8 @@ void av1_convolve_x_sr_sse2(const uint8_t *src, int src_stride, uint8_t *dst,
       av1_convolve_x_sr_c(src, src_stride, dst, dst_stride, w, h,
                           filter_params_x, subpel_x_qn, conv_params);
     } else {
-      av1_convolve_x_sr_12tap_sse2(src, src_stride, dst, dst_stride, w, h,
-                                   filter_params_x, subpel_x_qn, conv_params);
+      convolve_x_sr_12tap_sse2(src, src_stride, dst, dst_stride, w, h,
+                               filter_params_x, subpel_x_qn, conv_params);
     }
   } else {
     const int fo_horiz = filter_params_x->taps / 2 - 1;

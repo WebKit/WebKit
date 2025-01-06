@@ -29,6 +29,7 @@
 #include "ScrollExtents.h"
 #include "ScrollTypes.h"
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ class FloatPoint;
 class FloatSize;
 
 class ScrollingMomentumCalculator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingMomentumCalculator);
 public:
     WEBCORE_EXPORT static void setPlatformMomentumScrollingPredictionEnabled(bool);
 
@@ -84,7 +85,7 @@ private:
 
     float m_snapAnimationCurveMagnitude { 0 };
     float m_snapAnimationDecayFactor { 0 };
-    FloatSize m_snapAnimationCurveCoefficients[4] { };
+    std::array<FloatSize, 4> m_snapAnimationCurveCoefficients = { };
     bool m_forceLinearAnimationCurve { false };
     bool m_momentumCalculatorRequiresInitialization { true };
 };

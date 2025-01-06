@@ -54,7 +54,7 @@ class SackChunk : public Chunk, public TLVTrait<SackChunkConfig> {
         a_rwnd_(a_rwnd),
         gap_ack_blocks_(std::move(gap_ack_blocks)),
         duplicate_tsns_(std::move(duplicate_tsns)) {}
-  static absl::optional<SackChunk> Parse(rtc::ArrayView<const uint8_t> data);
+  static std::optional<SackChunk> Parse(rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

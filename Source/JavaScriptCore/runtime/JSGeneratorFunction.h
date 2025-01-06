@@ -47,9 +47,10 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    static JSGeneratorFunction* create(VM&, FunctionExecutable*, JSScope*);
-    static JSGeneratorFunction* create(VM&, FunctionExecutable*, JSScope*, Structure*);
-    static JSGeneratorFunction* createWithInvalidatedReallocationWatchpoint(VM&, FunctionExecutable*, JSScope*);
+    static JSGeneratorFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
+    static JSGeneratorFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
+    static JSGeneratorFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
+    static JSGeneratorFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
 
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {

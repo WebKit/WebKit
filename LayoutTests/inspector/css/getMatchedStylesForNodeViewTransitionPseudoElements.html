@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function startViewTransition()
+{
+    document.startViewTransition(() => {
+        document.querySelector("#change").classList.add("changed");
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getMatchedStyleForNode.ViewTransitionPseudoElements");
+
+    function addTestCase({name, description, selector, domNodeStylesHandler})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(domNodeStyles, `Should find CSS Styles for DOM Node.`);
+                await domNodeStyles.refreshIfNeeded();
+
+                await domNodeStylesHandler(domNodeStyles);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.ViewTransitionPseudoElements.Root",
+        description: "A dialog should have both the User Agent and authored `::backdrop` rules.",
+        selector: "html",
+        async domNodeStylesHandler(styles) {
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransition), "Expected no rules entry for selector `*::view-transition` before starting the view transition.");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransitionGroup), "Expected no rules entry for selector `*::view-transition-group()` before starting the view transition.");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransitionImagePair), "Expected no rules entry for selector `*::view-transition-image-pair()` before starting the view transition.");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransitionOld), "Expected no rules entry for selector `*::view-transition-old()` before starting the view transition.");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransitionNew), "Expected no rules entry for selector `*::view-transition-new()` before starting the view transition.");
+
+            await InspectorTest.evaluateInPage(`startViewTransition()`);
+            await styles.refresh();
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.ViewTransition).matchedRules.length, 2, "Expected entry for selector `*::view-transition` after starting the view transition.");
+
+            // FIXME: These should use the correct values when adding support for named pseudo-elements. We'll also want to test different names individually. (webkit.org/b/283951)
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.ViewTransitionGroup), undefined, "No crash");
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.ViewTransitionImagePair), undefined, "No crash");
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.ViewTransitionOld), undefined, "No crash");
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.ViewTransitionNew), undefined, "No crash");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.ViewTransitionPseudoElements.Div",
+        description: "A non-dialog should have no `::backdrop` rules.",
+        selector: "#test-div",
+        async domNodeStylesHandler(styles) {
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransition), "Expected no rules entry for selector `*::view-transition` on non-root element.");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransitionGroup), "Expected no rules entry for selector `*::view-transition-group()` on non-root element.");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransitionImagePair), "Expected no rules entry for selector `*::view-transition-image-pair()` on non-root element.");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransitionOld), "Expected no rules entry for selector `*::view-transition-old()` on non-root element.");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransitionNew), "Expected no rules entry for selector `*::view-transition-new()` on non-root element.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    ::view-transition {
+        background-color: red;
+    }
+
+    ::view-transition-group(*) {
+        color: orange;
+    }
+
+    ::view-transition-group(root) {
+        background-color: red;
+    }
+
+    ::view-transition-group(other-name) {
+        background-color: red;
+    }
+
+    ::view-transition-group(other-name-2) {
+        background-color: red;
+    }
+
+    ::view-transition-group(non-existant-name) {
+        color: blue;
+    }
+
+    ::view-transition-image-pair(root) {
+        background-color: red;
+    }
+
+    ::view-transition-image-pair(other-name) {
+        background-color: red;
+    }
+
+    ::view-transition-image-pair(other-name-2) {
+        background-color: red;
+    }
+
+    ::view-transition-image-pair(non-existant-name) {
+        color: blue;
+    }
+
+    ::view-transition-old(root) {
+        background-color: red;
+        animation-play-state: paused;
+        animation-duration: 30s;
+    }
+
+    ::view-transition-old(other-name) {
+        background-color: red;
+    }
+
+    ::view-transition-old(other-name-2) {
+        background-color: red;
+    }
+
+    ::view-transition-old(non-existant-name) {
+        color: blue;
+    }
+
+    ::view-transition-new(root) {
+        background-color: red;
+    }
+
+    ::view-transition-new(other-name) {
+        background-color: red;
+    }
+
+    ::view-transition-new(other-name-2) {
+        background-color: red;
+    }
+
+    ::view-transition-new(non-existant-name) {
+        color: blue;
+    }
+
+    #change.changed {
+        background-color: green;
+    }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.getMatchedStyleForNode command and the view transition pseudo-elements.</p>
+    <div id="other-name" style="view-transition-name: other-name;"></div>
+    <div id="other-name-2" style="view-transition-name: other-name-2;"></div>
+    <div id="change"></div>
+    <div id="test-div"></div>
+</body>
+</html>

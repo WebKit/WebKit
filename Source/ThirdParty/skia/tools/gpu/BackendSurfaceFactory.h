@@ -12,7 +12,7 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSize.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/private/SkColorData.h"
 
 class GrDirectContext;
@@ -73,6 +73,8 @@ sk_sp<SkSurface> MakeBackendTextureSurface(skgpu::graphite::Recorder*,
                                            skgpu::Mipmapped = skgpu::Mipmapped::kNo,
                                            skgpu::Protected = skgpu::Protected::kNo,
                                            const SkSurfaceProps* = nullptr);
+
+#if defined(SK_DAWN)
 /*
  * Variation that wraps a WGPUTextureView. Only supported on Dawn backend.
  */
@@ -81,6 +83,8 @@ sk_sp<SkSurface> MakeBackendTextureViewSurface(skgpu::graphite::Recorder*,
                                                skgpu::Mipmapped = skgpu::Mipmapped::kNo,
                                                skgpu::Protected = skgpu::Protected::kNo,
                                                const SkSurfaceProps* = nullptr);
+#endif // SK_DAWN
+
 #endif  // SK_GRAPHITE
 
 }  // namespace sk_gpu_test

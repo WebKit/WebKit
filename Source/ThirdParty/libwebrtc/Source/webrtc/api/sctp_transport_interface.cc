@@ -10,7 +10,11 @@
 
 #include "api/sctp_transport_interface.h"
 
+#include <optional>
 #include <utility>
+
+#include "api/dtls_transport_interface.h"
+#include "api/scoped_refptr.h"
 
 namespace webrtc {
 
@@ -20,8 +24,8 @@ SctpTransportInformation::SctpTransportInformation(SctpTransportState state)
 SctpTransportInformation::SctpTransportInformation(
     SctpTransportState state,
     rtc::scoped_refptr<DtlsTransportInterface> dtls_transport,
-    absl::optional<double> max_message_size,
-    absl::optional<int> max_channels)
+    std::optional<double> max_message_size,
+    std::optional<int> max_channels)
     : state_(state),
       dtls_transport_(std::move(dtls_transport)),
       max_message_size_(max_message_size),

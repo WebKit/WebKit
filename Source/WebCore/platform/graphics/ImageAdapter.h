@@ -25,16 +25,12 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebMultiRepresentationHEICAttachmentDeclarationsAdditions.h>
-#endif
-
 #if USE(APPKIT)
 OBJC_CLASS NSImage;
 #endif
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-OBJC_CLASS WebMultiRepresentationHEICAttachment;
+OBJC_CLASS NSAdaptiveImageGlyph;
 #endif
 
 #if USE(CG)
@@ -55,9 +51,9 @@ typedef SIZE* LPSIZE;
 typedef struct HBITMAP__ *HBITMAP;
 #endif
 
-#include <wtf/FastMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 
@@ -72,7 +68,7 @@ class IntSize;
 class NativeImage;
 
 class ImageAdapter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ImageAdapter);
 public:
     ImageAdapter(Image& image)
         : m_image(image)
@@ -94,7 +90,7 @@ public:
 #endif
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    WebMultiRepresentationHEICAttachment *multiRepresentationHEIC();
+    NSAdaptiveImageGlyph *multiRepresentationHEIC();
 #endif
 
 #if PLATFORM(GTK)
@@ -129,7 +125,7 @@ private:
     mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for all the frames. Only built lazily if someone queries for one.
 #endif
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    mutable RetainPtr<WebMultiRepresentationHEICAttachment> m_multiRepHEIC;
+    mutable RetainPtr<NSAdaptiveImageGlyph> m_multiRepHEIC;
 #endif
 };
 

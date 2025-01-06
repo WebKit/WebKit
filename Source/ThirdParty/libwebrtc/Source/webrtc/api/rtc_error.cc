@@ -11,6 +11,7 @@
 #include "api/rtc_error.h"
 
 #include <iterator>
+#include <string>
 
 #include "absl/strings/string_view.h"
 

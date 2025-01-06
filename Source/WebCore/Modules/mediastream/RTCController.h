@@ -26,16 +26,12 @@
 
 #include "EventTarget.h"
 #include "SecurityOrigin.h"
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 class RTCController;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::RTCController> : std::true_type { };
 }
 
 namespace WebCore {
@@ -48,9 +44,13 @@ class WeakPtrImplWithEventTargetData;
 class LibWebRTCLogSink;
 #endif
 
-class RTCController : public CanMakeWeakPtr<RTCController> {
+#if USE(GSTREAMER_WEBRTC)
+class GStreamerWebRTCLogSink;
+#endif
+
+class RTCController : public RefCountedAndCanMakeWeakPtr<RTCController> {
 public:
-    RTCController();
+    static Ref<RTCController> create() { return adoptRef(*new RTCController); }
 
 #if ENABLE(WEB_RTC)
     ~RTCController();
@@ -67,12 +67,16 @@ public:
     using LogCallback = Function<void(String&& logType, String&& logMessage, String&& logLevel, RefPtr<RTCPeerConnection>&&)>;
     void startGatheringLogs(Document&, LogCallback&&);
     void stopGatheringLogs();
+#endif
 
 private:
+    RTCController();
+
+#if ENABLE(WEB_RTC)
     void startGatheringStatLogs(RTCPeerConnection&);
     bool shouldDisableICECandidateFiltering(Document&);
 
-    void stopLoggingLibWebRTCLogs();
+    void stopLoggingWebRTCLogs();
 
     struct PeerConnectionOrigin {
         Ref<SecurityOrigin> topOrigin;
@@ -86,6 +90,9 @@ private:
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_gatheringLogsDocument;
 #if USE(LIBWEBRTC)
     std::unique_ptr<LibWebRTCLogSink> m_logSink;
+#endif
+#if USE(GSTREAMER_WEBRTC)
+    std::unique_ptr<GStreamerWebRTCLogSink> m_logSink;
 #endif
 #endif // ENABLE(WEB_RTC)
 };

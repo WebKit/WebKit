@@ -47,7 +47,7 @@ public:
     // FIXME: Reimplement the test using async NSTextInputClient interface.
     virtual void didLoadURL(WKWebView *wkView) { }
 
-    virtual NSURL *url() const { return [[NSBundle mainBundle] URLForResource:@"attributedStringCustomFont" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
+    virtual NSURL *url() const { return [NSBundle.test_resourcesBundle URLForResource:@"attributedStringCustomFont" withExtension:@"html"]; }
 };
 
 template <typename View>
@@ -71,7 +71,7 @@ public:
     // FIXME: Reimplement the test using async NSTextInputClient interface.
     virtual void didLoadURL(WKWebView *wkView) { }
 
-    virtual NSURL *url() const { return [[NSBundle mainBundle] URLForResource:@"attributedStringStrikethrough" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
+    virtual NSURL *url() const { return [NSBundle.test_resourcesBundle URLForResource:@"attributedStringStrikethrough" withExtension:@"html"]; }
 };
 
 template <typename View>
@@ -99,7 +99,7 @@ public:
     virtual void didLoadURL(WebView *webView) { runSyncTest(webView); }
     virtual void didLoadURL(WKWebView *wkView) { }
 
-    virtual NSURL *url() const { return [[NSBundle mainBundle] URLForResource:@"attributedStringNewlineAtEndOfDocument" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
+    virtual NSURL *url() const { return [NSBundle.test_resourcesBundle URLForResource:@"attributedStringNewlineAtEndOfDocument" withExtension:@"html"]; }
 };
 
 template <typename View>

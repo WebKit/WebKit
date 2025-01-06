@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,20 +28,15 @@
 
 #if USE(CG)
 
-#include "BitmapImage.h"
-#include "GraphicsContextCG.h"
-#include "ImageBufferUtilitiesCG.h"
 #include "IntRect.h"
-#include "PixelBuffer.h"
-#include "RuntimeApplicationChecks.h"
 #include <CoreGraphics/CoreGraphics.h>
-#include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
 class ThreadSafeImageBufferFlusherCG : public ThreadSafeImageBufferFlusher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ThreadSafeImageBufferFlusherCG);
 public:
     ThreadSafeImageBufferFlusherCG(CGContextRef context)
         : m_context(context)
@@ -57,6 +52,14 @@ private:
     RetainPtr<CGContextRef> m_context;
 };
 
+ImageBufferCGBackend::ImageBufferCGBackend(const Parameters& parameters, std::unique_ptr<GraphicsContextCG>&& context)
+    : ImageBufferBackend(parameters)
+    , m_context(WTFMove(context))
+{
+}
+
+ImageBufferCGBackend::~ImageBufferCGBackend() = default;
+
 unsigned ImageBufferCGBackend::calculateBytesPerRow(const IntSize& backendSize)
 {
     ASSERT(!backendSize.isEmpty());
@@ -67,8 +70,6 @@ std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBufferCGBackend::createFlushe
 {
     return makeUnique<ThreadSafeImageBufferFlusherCG>(context().platformContext());
 }
-
-ImageBufferCGBackend::~ImageBufferCGBackend() = default;
 
 void ImageBufferCGBackend::applyBaseTransform(GraphicsContextCG& context) const
 {

@@ -38,12 +38,15 @@
 #include "CSSLayerStatementRule.h"
 #include "CSSMediaRule.h"
 #include "CSSNamespaceRule.h"
+#include "CSSNestedDeclarations.h"
 #include "CSSPageRule.h"
+#include "CSSPositionTryRule.h"
 #include "CSSPropertyRule.h"
 #include "CSSScopeRule.h"
 #include "CSSStartingStyleRule.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
+#include "CSSViewTransitionRule.h"
 #include "JSCSSContainerRule.h"
 #include "JSCSSCounterStyleRule.h"
 #include "JSCSSFontFaceRule.h"
@@ -56,12 +59,15 @@
 #include "JSCSSLayerStatementRule.h"
 #include "JSCSSMediaRule.h"
 #include "JSCSSNamespaceRule.h"
+#include "JSCSSNestedDeclarations.h"
 #include "JSCSSPageRule.h"
+#include "JSCSSPositionTryRule.h"
 #include "JSCSSPropertyRule.h"
 #include "JSCSSScopeRule.h"
 #include "JSCSSStartingStyleRule.h"
 #include "JSCSSStyleRule.h"
 #include "JSCSSSupportsRule.h"
+#include "JSCSSViewTransitionRule.h"
 #include "JSNode.h"
 #include "JSStyleSheetCustom.h"
 #include "WebCoreOpaqueRootInlines.h"
@@ -85,6 +91,8 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
         return createWrapper<CSSStyleRule>(globalObject, WTFMove(rule));
     case StyleRuleType::StyleWithNesting:
         return createWrapper<CSSStyleRule>(globalObject, WTFMove(rule));
+    case StyleRuleType::NestedDeclarations:
+        return createWrapper<CSSNestedDeclarations>(globalObject, WTFMove(rule));
     case StyleRuleType::Media:
         return createWrapper<CSSMediaRule>(globalObject, WTFMove(rule));
     case StyleRuleType::FontFace:
@@ -119,6 +127,10 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
         return createWrapper<CSSScopeRule>(globalObject, WTFMove(rule));
     case StyleRuleType::StartingStyle:
         return createWrapper<CSSStartingStyleRule>(globalObject, WTFMove(rule));
+    case StyleRuleType::ViewTransition:
+        return createWrapper<CSSViewTransitionRule>(globalObject, WTFMove(rule));
+    case StyleRuleType::PositionTry:
+        return createWrapper<CSSPositionTryRule>(globalObject, WTFMove(rule));
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Margin:

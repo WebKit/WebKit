@@ -17,9 +17,9 @@
 #include <cstdlib>
 #include <functional>
 #include <map>
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
@@ -132,7 +132,7 @@ void TriageHelper::AnalyzeTransmissionGaps(const ParsedRtcEventLog& parsed_log,
     for (const LoggedRtpPacket& rtp_packet : stream.packet_view)
       rtp_in_direction.emplace(rtp_packet.log_time_us(), &rtp_packet);
   }
-  absl::optional<int64_t> last_rtp_time;
+  std::optional<int64_t> last_rtp_time;
   for (const auto& kv : rtp_in_direction) {
     int64_t timestamp = kv.first;
     if (timestamp > segment_end_us) {
@@ -148,7 +148,7 @@ void TriageHelper::AnalyzeTransmissionGaps(const ParsedRtcEventLog& parsed_log,
     last_rtp_time.emplace(timestamp);
   }
 
-  absl::optional<int64_t> last_rtcp_time;
+  std::optional<int64_t> last_rtcp_time;
   if (direction == kIncomingPacket) {
     for (const auto& rtcp : parsed_log.incoming_rtcp_packets()) {
       if (rtcp.log_time_us() > segment_end_us) {

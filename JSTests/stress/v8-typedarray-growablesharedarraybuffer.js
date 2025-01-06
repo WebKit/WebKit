@@ -1,9 +1,8 @@
-//@ requireOptions("--useResizableArrayBuffer=1")
 // Copyright 2021 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Flags: --harmony-rab-gsab --allow-natives-syntax --harmony-array-find-last
+// Flags: --allow-natives-syntax --harmony-array-find-last --js-float16array
 
 "use strict";
 
@@ -3879,7 +3878,7 @@ SortCallbackGrows(ArraySortHelper);
   }
   // Freezing zero-length TAs doesn't throw.
   for (let ctor of ctors) {
-    const gsab = CreateResizableArrayBuffer(4 * ctor.BYTES_PER_ELEMENT,
+    const gsab = CreateGrowableSharedArrayBuffer(4 * ctor.BYTES_PER_ELEMENT,
                                            8 * ctor.BYTES_PER_ELEMENT);
     const fixedLength = new ctor(gsab, 0, 0);
     const fixedLengthWithOffset = new ctor(
@@ -3890,7 +3889,7 @@ SortCallbackGrows(ArraySortHelper);
 
     Object.freeze(fixedLength);
     Object.freeze(fixedLengthWithOffset);
-    Object.freeze(lengthTrackingWithOffset);
+    assertThrows(() => { Object.freeze(lengthTrackingWithOffset); }, TypeError);
   }
 })();
 
@@ -3995,4 +3994,35 @@ SortCallbackGrows(ArraySortHelper);
     assertThrows(() => { targetCtor.from(lengthTrackingWithOffset); },
                  TypeError);
   });
+})();
+
+(function ArrayBufferSizeNotMultipleOfElementSize() {
+  // The buffer size is a prime, not multiple of anything.
+  const gsab = CreateGrowableSharedArrayBuffer(11, 20);
+  for (let ctor of ctors) {
+    if (ctor.BYTES_PER_ELEMENT == 1) continue;
+
+    // This should not throw.
+    new ctor(gsab);
+  }
+})();
+
+(function SetValueToNumberResizesToInBounds() {
+  for (let ctor of ctors) {
+    const gsab = CreateGrowableSharedArrayBuffer(0,
+                                                 1 * ctor.BYTES_PER_ELEMENT);
+    const lengthTracking = new ctor(gsab, 0);
+
+    const evil = { valueOf: () => {
+      // Grow so that `lengthTracking` is no longer OOB.
+      gsab.grow(1 * ctor.BYTES_PER_ELEMENT);
+      if (IsBigIntTypedArray(lengthTracking)) {
+        return 2n;
+      }
+      return 2;
+    }};
+
+    lengthTracking[0] = evil;
+    assertEquals([2], ToNumbers(lengthTracking));
+  }
 })();

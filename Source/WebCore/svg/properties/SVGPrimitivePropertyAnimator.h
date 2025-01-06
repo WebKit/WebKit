@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@ namespace WebCore {
 
 template<typename PropertyType, typename AnimationFunction>
 class SVGPrimitivePropertyAnimator : public SVGPropertyAnimator<AnimationFunction> {
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(SVGPrimitivePropertyAnimator);
     using Base = SVGPropertyAnimator<AnimationFunction>;
     using ValuePropertyType = SVGValueProperty<PropertyType>;
     using Base::Base;
@@ -74,5 +75,13 @@ public:
 protected:
     Ref<ValuePropertyType> m_property;
 };
-    
+
+#define TZONE_TEMPLATE_PARAMS template<typename PropertyType, typename AnimationFunction>
+#define TZONE_TYPE SVGPrimitivePropertyAnimator<PropertyType, AnimationFunction>
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS();
+
+#undef TZONE_TEMPLATE_PARAMS
+#undef TZONE_TYPE
+
 } // namespace WebCore

@@ -28,7 +28,7 @@
             "description": [
                 "Disable support for GL_OES_get_program_binary"
             ],
-            "issue": "http://anglebug.com/5007"
+            "issue": "http://anglebug.com/42263580"
         },
         {
             "name": "disable_draw_buffers_indexed",
@@ -36,7 +36,7 @@
             "description": [
                 "Disable support for OES_draw_buffers_indexed and EXT_draw_buffers_indexed"
             ],
-            "issue": "http://anglebug.com/7724"
+            "issue": "http://anglebug.com/42266194"
         },
         {
             "name": "disable_anisotropic_filtering",
@@ -65,7 +65,7 @@
             "description": [
                 "Force depth attachment initialization on clear ops"
             ],
-            "issue": "https://anglebug.com/7246"
+            "issue": "https://anglebug.com/42265720"
         },
         {
             "name": "enable_capture_limits",
@@ -73,7 +73,7 @@
             "description": [
                 "Set the context limits like frame capturing was enabled"
             ],
-            "issue": "http://anglebug.com/5750"
+            "issue": "http://anglebug.com/42264287"
         },
         {
             "name": "force_robust_resource_init",
@@ -81,7 +81,7 @@
             "description": [
                 "Force-enable robust resource init"
             ],
-            "issue": "http://anglebug.com/6041"
+            "issue": "http://anglebug.com/42264571"
         },
         {
             "name": "force_init_shader_variables",
@@ -96,7 +96,7 @@
             "description": [
                 "Even if FrameCapture is enabled, enable GL_OES_get_program_binary"
             ],
-            "issue": "http://anglebug.com/5658"
+            "issue": "http://anglebug.com/42264193"
         },
         {
             "name": "force_gl_error_checking",
@@ -112,7 +112,7 @@
             "description": [
                 "Emulate ANGLE_shader_pixel_local_storage using shader images"
             ],
-            "issue": "http://anglebug.com/7279"
+            "issue": "http://anglebug.com/40096838"
         },
         {
             "name": "cache_compiled_shader",
@@ -120,7 +120,7 @@
             "description": [
                 "Enable to cache compiled shaders"
             ],
-            "issue": "http://anglebug.com/7036"
+            "issue": "http://anglebug.com/42265509"
         },
         {
             "name": "dump_shader_source",
@@ -128,7 +128,7 @@
             "description": [
                 "Write shader source to temp directory"
             ],
-            "issue": "http://anglebug.com/7760"
+            "issue": "http://anglebug.com/42266231"
         },
         {
             "name": "enable_shader_substitution",
@@ -136,7 +136,7 @@
             "description": [
                 "Check the filesystem for shaders to use instead of those provided through glShaderSource"
             ],
-            "issue": "http://anglebug.com/7761"
+            "issue": "http://anglebug.com/42266232"
         },
         {
             "name": "disable_program_caching",
@@ -152,7 +152,7 @@
             "description": [
                 "Write translated shaders to temp directory"
             ],
-            "issue": "http://anglebug.com/8280"
+            "issue": "http://anglebug.com/40644912"
         },
         {
             "name": "enable_translated_shader_substitution",
@@ -160,7 +160,7 @@
             "description": [
                 "Check the filesystem for translated shaders to use instead of the shader translator's"
             ],
-            "issue": "http://anglebug.com/8280"
+            "issue": "http://anglebug.com/40644912"
         },
         {
             "name": "compile_job_is_thread_safe",
@@ -168,7 +168,7 @@
             "description": [
                 "If false, parts of the compile job cannot be parallelized"
             ],
-            "issue": "http://anglebug.com/8297"
+            "issue": "http://anglebug.com/41488637"
         },
         {
             "name": "link_job_is_thread_safe",
@@ -176,7 +176,7 @@
             "description": [
                 "If false, parts of the link job cannot be parallelized"
             ],
-            "issue": "http://anglebug.com/8297"
+            "issue": "http://anglebug.com/41488637"
         },
         {
             "name": "always_run_link_sub_jobs_threaded",
@@ -184,7 +184,7 @@
             "description": [
                 "If true, sub tasks of the link job are always threaded, regardless of GL_KHR_parallel_shader_compile"
             ],
-            "issue": "http://anglebug.com/8417"
+            "issue": "http://anglebug.com/42266842"
         },
         {
             "name": "uncurrent_egl_surface_upon_surface_destroy",
@@ -201,6 +201,30 @@
                 "Force the minimum GL_MAX_VERTEX_ATTRIBS that the context's client version allows."
             ],
             "issue": ""
+        },
+        {
+            "name": "force_flush_after_drawcall_using_shadowmap",
+            "category": "Workarounds",
+            "description": [
+                "Force flush after drawcall use shadow map for intel device."
+            ],
+            "issue": "https://issuetracker.google.com/349489248"
+        },
+        {
+            "name": "reject_webgl_shaders_with_undefined_behavior",
+            "category": "Workarounds",
+            "description": [
+                "Attempts to detect undefined behavior when in WebGL mode and reject shaders if any detected."
+            ],
+            "issue": "http://crbug.com/350528343"
+        },
+        {
+            "name": "always_enable_emulated_multidraw_extensions",
+            "category": "Workarounds",
+            "description": [
+                "Enable multi-draw and base vertex base instance extensions for non-WebGL contexts if they are emulated."
+            ],
+            "issue": "http://anglebug.com/355645824"
         }
     ]
 }

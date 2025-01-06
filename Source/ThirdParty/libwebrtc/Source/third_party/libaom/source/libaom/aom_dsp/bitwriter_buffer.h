@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -28,8 +28,6 @@ int aom_wb_is_byte_aligned(const struct aom_write_bit_buffer *wb);
 uint32_t aom_wb_bytes_written(const struct aom_write_bit_buffer *wb);
 
 void aom_wb_write_bit(struct aom_write_bit_buffer *wb, int bit);
-
-void aom_wb_overwrite_bit(struct aom_write_bit_buffer *wb, int bit);
 
 void aom_wb_write_literal(struct aom_write_bit_buffer *wb, int data, int bits);
 

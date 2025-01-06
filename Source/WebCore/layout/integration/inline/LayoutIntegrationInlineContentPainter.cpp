@@ -37,12 +37,12 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-InlineContentPainter::InlineContentPainter(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const RenderInline* layerRenderer, const InlineContent& inlineContent, const BoxTree& boxTree)
+InlineContentPainter::InlineContentPainter(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const RenderInline* inlineBoxWithLayer, const InlineContent& inlineContent, const RenderBlockFlow& root)
     : m_paintInfo(paintInfo)
     , m_paintOffset(paintOffset)
-    , m_layerRenderer(layerRenderer)
+    , m_inlineBoxWithLayer(inlineBoxWithLayer)
     , m_inlineContent(inlineContent)
-    , m_boxTree(boxTree)
+    , m_root(root)
 {
     m_damageRect = m_paintInfo.rect;
     m_damageRect.moveBy(-m_paintOffset);
@@ -50,7 +50,7 @@ InlineContentPainter::InlineContentPainter(PaintInfo& paintInfo, const LayoutPoi
 
 void InlineContentPainter::paintEllipsis(size_t lineIndex)
 {
-    if (m_paintInfo.phase != PaintPhase::Foreground || root().style().usedVisibility() != Visibility::Visible)
+    if ((m_paintInfo.phase != PaintPhase::Foreground && m_paintInfo.phase != PaintPhase::TextClip) || root().style().usedVisibility() != Visibility::Visible)
         return;
 
     auto lineBox = InlineIterator::LineBox { InlineIterator::LineBoxIteratorModernPath { m_inlineContent, lineIndex } };
@@ -93,11 +93,11 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
         if (!hasVisibleDamage)
             return;
 
-        ModernTextBoxPainter { m_inlineContent, box, m_paintInfo, m_paintOffset }.paint();
+        TextBoxPainter { m_inlineContent, box, box.style(), m_paintInfo, m_paintOffset }.paint();
         return;
     }
 
-    if (auto* renderer = dynamicDowncast<RenderBox>(box.layoutBox().rendererForIntegration()); renderer && renderer->isReplacedOrInlineBlock()) {
+    if (auto* renderer = dynamicDowncast<RenderBox>(box.layoutBox().rendererForIntegration()); renderer && renderer->isReplacedOrAtomicInline()) {
         if (m_paintInfo.shouldPaintWithinRoot(*renderer)) {
             // FIXME: Painting should not require a non-const renderer.
             const_cast<RenderBox*>(renderer)->paintAsInlineBlock(m_paintInfo, flippedContentOffsetIfNeeded(*renderer));
@@ -107,8 +107,20 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
 
 void InlineContentPainter::paint()
 {
-    auto layerPaintScope = LayerPaintScope { m_boxTree, m_layerRenderer };
+    auto layerPaintScope = LayerPaintScope { m_inlineBoxWithLayer };
     auto lastBoxLineIndex = std::optional<size_t> { };
+
+    auto paintLineEndingEllipsisIfApplicable = [&](std::optional<size_t> currentLineIndex) {
+        // Since line ending ellipsis belongs to the line structure but we don't have the concept of painting the line itself
+        // let's paint it when we are either at the end of the content or finished painting a line with ellipsis.
+        // While normally ellipsis is on the last line, -webkit-line-clamp can make us put ellipsis on any line.
+        if (m_inlineBoxWithLayer) {
+            // Line ending ellipsis is never on the inline box (with layer).
+            return;
+        }
+        if (lastBoxLineIndex && (!currentLineIndex || *lastBoxLineIndex != currentLineIndex))
+            paintEllipsis(*lastBoxLineIndex);
+    };
 
     for (auto& box : m_inlineContent.boxesForRect(m_damageRect)) {
         auto shouldPaintBoxForPhase = [&] {
@@ -127,18 +139,12 @@ void InlineContentPainter::paint()
         };
 
         if (shouldPaintBoxForPhase() && layerPaintScope.includes(box)) {
-            auto finishedPaintingLine = lastBoxLineIndex && *lastBoxLineIndex != box.lineIndex();
-            if (finishedPaintingLine) {
-                // Paint the ellipsis as the line item on the previous line.
-                paintEllipsis(*lastBoxLineIndex);
-            }
+            paintLineEndingEllipsisIfApplicable(box.lineIndex());
             paintDisplayBox(box);
         }
         lastBoxLineIndex = box.lineIndex();
     }
-
-    if (lastBoxLineIndex)
-        paintEllipsis(*lastBoxLineIndex);
+    paintLineEndingEllipsisIfApplicable({ });
 
     for (auto& renderInline : m_outlineObjects)
         renderInline.paintOutline(m_paintInfo, m_paintOffset);
@@ -146,14 +152,18 @@ void InlineContentPainter::paint()
 
 LayoutPoint InlineContentPainter::flippedContentOffsetIfNeeded(const RenderBox& childRenderer) const
 {
-    if (root().style().isFlippedBlocksWritingMode())
+    if (root().writingMode().isBlockFlipped())
         return root().flipForWritingModeForChild(childRenderer, m_paintOffset);
     return m_paintOffset;
 }
 
-LayerPaintScope::LayerPaintScope(const BoxTree& boxTree, const RenderInline* layerRenderer)
-    : m_boxTree(boxTree)
-    , m_layerInlineBox(layerRenderer ? layerRenderer->layoutBox() : nullptr)
+const RenderBlock& InlineContentPainter::root() const
+{
+    return m_root;
+}
+
+LayerPaintScope::LayerPaintScope(const RenderInline* inlineBoxWithLayer)
+    : m_inlineBoxWithLayer(inlineBoxWithLayer ? inlineBoxWithLayer->layoutBox() : nullptr)
 {
 }
 
@@ -173,9 +183,9 @@ bool LayerPaintScope::includes(const InlineDisplay::Box& box)
         return false;
     };
 
-    if (m_layerInlineBox == &box.layoutBox())
+    if (m_inlineBoxWithLayer == &box.layoutBox())
         return true;
-    if (m_layerInlineBox && !isInside(box, *m_layerInlineBox))
+    if (m_inlineBoxWithLayer && !isInside(box, *m_inlineBoxWithLayer))
         return false;
     if (m_currentExcludedInlineBox && isInside(box, *m_currentExcludedInlineBox))
         return false;

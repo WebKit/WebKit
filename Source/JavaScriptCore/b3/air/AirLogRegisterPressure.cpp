@@ -59,7 +59,7 @@ void logRegisterPressure(Code& code)
             Inst::forEachDefWithExtraClobberedRegs<Reg>(
                 prevInst, &inst,
                 [&] (Reg reg, Arg::Role, Bank, Width width, PreservedWidth) {
-                    ASSERT(width <= Width64 || Options::useWebAssemblySIMD());
+                    ASSERT(width <= Width64 || Options::useWasmSIMD());
                     set.add(reg, width);
                 });
 

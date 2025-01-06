@@ -35,25 +35,28 @@
 @property (nonatomic, copy) void (^decidePolicyForNavigationResponse)(WKNavigationResponse *, void (^)(WKNavigationResponsePolicy));
 @property (nonatomic, copy) void (^didFailProvisionalNavigation)(WKWebView *, WKNavigation *, NSError *);
 @property (nonatomic, copy) void (^didFailProvisionalLoadWithRequestInFrameWithError)(WKWebView *, NSURLRequest *, WKFrameInfo *, NSError *);
+@property (nonatomic, copy) void (^didFailProvisionalLoadInSubframeWithError)(WKWebView *, WKFrameInfo *, NSError *);
 @property (nonatomic, copy) void (^didStartProvisionalNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^didCommitNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^didCommitLoadWithRequestInFrame)(WKWebView *, NSURLRequest *, WKFrameInfo *);
 @property (nonatomic, copy) void (^didFinishNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^didSameDocumentNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^renderingProgressDidChange)(WKWebView *, _WKRenderingProgressEvents);
-@property (nonatomic, copy) void (^webContentProcessDidTerminate)(WKWebView *);
+@property (nonatomic, copy) void (^webContentProcessDidTerminate)(WKWebView *, _WKProcessTerminationReason);
 @property (nonatomic, copy) void (^didReceiveAuthenticationChallenge)(WKWebView *, NSURLAuthenticationChallenge *, void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *));
 @property (nonatomic, copy) void (^contentRuleListPerformedAction)(WKWebView *, NSString *, _WKContentRuleListAction *, NSURL *);
 @property (nonatomic, copy) void (^didChangeLookalikeCharactersFromURL)(WKWebView *, NSURL *, NSURL *);
 @property (nonatomic, copy) void (^didPromptForStorageAccess)(WKWebView *, NSString *, NSString *, BOOL);
 @property (nonatomic, copy) void (^navigationActionDidBecomeDownload)(WKNavigationAction *, WKDownload *);
 @property (nonatomic, copy) void (^navigationResponseDidBecomeDownload)(WKNavigationResponse *, WKDownload *);
+@property (nonatomic, copy) void (^didGeneratePageLoadTiming)(_WKPageLoadTiming *);
 
 - (void)allowAnyTLSCertificate;
 - (void)waitForDidStartProvisionalNavigation;
 - (void)waitForDidFinishNavigation;
 - (void)waitForDidFinishNavigationWithPreferences:(WKWebpagePreferences *)preferences;
 - (void)waitForDidSameDocumentNavigation;
+- (_WKProcessTerminationReason)waitForWebContentProcessDidTerminate;
 - (NSError *)waitForDidFailProvisionalNavigation;
 
 @end
@@ -66,5 +69,5 @@
 - (void)_test_waitForDidFinishNavigationWithoutPresentationUpdate;
 - (void)_test_waitForDidFinishNavigationWhileIgnoringSSLErrors;
 - (void)_test_waitForDidFailProvisionalNavigation;
-- (void)_test_waitForWebContentProcessDidTerminate;
+- (_WKProcessTerminationReason)_test_waitForWebContentProcessDidTerminate;
 @end

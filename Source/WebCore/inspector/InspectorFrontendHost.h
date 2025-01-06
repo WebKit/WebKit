@@ -187,7 +187,7 @@ private:
     WEBCORE_EXPORT InspectorFrontendHost(InspectorFrontendClient*, Page* frontendPage);
 
     InspectorFrontendClient* m_client;
-    SingleThreadWeakPtr<Page> m_frontendPage;
+    WeakPtr<Page> m_frontendPage;
 #if ENABLE(CONTEXT_MENUS)
     FrontendMenuProvider* m_menuProvider;
 #endif

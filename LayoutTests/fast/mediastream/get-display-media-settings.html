@@ -8,19 +8,19 @@
         <script src="resources/getDisplayMedia-utils.js"></script>
     </head>
     <body>
-
         <script>
             promise_test(async () => {
                 stream = await callGetDisplayMedia({ video: true });
                 const settings = stream.getVideoTracks()[0].getSettings();
+                const capabilities = stream.getVideoTracks()[0].getCapabilities();
 
                 assert_equals(settings.height, 1080);
                 assert_equals(settings.width, 1920);
                 assert_equals(settings.frameRate, 30);
                 assert_true(typeof settings.deviceId === 'string', true);
-
+                assert_true(typeof capabilities.deviceId === 'string', true);
+                assert_equals(capabilities.deviceId, settings.deviceId);
             }, "check settings");
-
         </script>
     </body>
 </html>

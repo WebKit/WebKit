@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -95,14 +95,14 @@ void av1_tokenize_color_map(const MACROBLOCK *const x, int plane,
                             COLOR_MAP_TYPE type, int allow_update_cdf,
                             struct FRAME_COUNTS *counts);
 
-static INLINE int av1_get_tx_eob(const struct segmentation *seg, int segment_id,
+static inline int av1_get_tx_eob(const struct segmentation *seg, int segment_id,
                                  TX_SIZE tx_size) {
   const int eob_max = av1_get_max_eob(tx_size);
   return segfeature_active(seg, segment_id, SEG_LVL_SKIP) ? 0 : eob_max;
 }
 
 // Token buffer is only used for palette tokens.
-static INLINE unsigned int get_token_alloc(int mb_rows, int mb_cols,
+static inline unsigned int get_token_alloc(int mb_rows, int mb_cols,
                                            int sb_size_log2,
                                            const int num_planes) {
   // Calculate the maximum number of max superblocks in the image.
@@ -119,8 +119,8 @@ static INLINE unsigned int get_token_alloc(int mb_rows, int mb_cols,
 }
 
 // Allocate memory for token related info.
-static AOM_INLINE void alloc_token_info(AV1_COMMON *cm, TokenInfo *token_info,
-                                        unsigned int tokens_required) {
+static inline void alloc_token_info(AV1_COMMON *cm, TokenInfo *token_info,
+                                    unsigned int tokens_required) {
   int sb_rows =
       CEIL_POWER_OF_TWO(cm->mi_params.mi_rows, cm->seq_params->mib_size_log2);
   token_info->tokens_allocated = tokens_required;
@@ -136,13 +136,13 @@ static AOM_INLINE void alloc_token_info(AV1_COMMON *cm, TokenInfo *token_info,
 }
 
 // Check if memory allocation has been done for token related info.
-static AOM_INLINE bool is_token_info_allocated(const TokenInfo *token_info) {
+static inline bool is_token_info_allocated(const TokenInfo *token_info) {
   return ((token_info->tile_tok[0][0] != NULL) &&
           (token_info->tplist[0][0] != NULL));
 }
 
 // Free memory from token related variables.
-static AOM_INLINE void free_token_info(TokenInfo *token_info) {
+static inline void free_token_info(TokenInfo *token_info) {
   aom_free(token_info->tile_tok[0][0]);
   token_info->tile_tok[0][0] = NULL;
 

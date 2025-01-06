@@ -48,6 +48,8 @@
 #include "SparseArrayValueMap.h"
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace DOMJIT {
 class Signature;
@@ -818,11 +820,11 @@ public:
     bool hasInlineStorage() const { return structure()->hasInlineStorage(); }
     ConstPropertyStorage inlineStorageUnsafe() const
     {
-        return bitwise_cast<ConstPropertyStorage>(this + 1);
+        return std::bit_cast<ConstPropertyStorage>(this + 1);
     }
     PropertyStorage inlineStorageUnsafe()
     {
-        return bitwise_cast<PropertyStorage>(this + 1);
+        return std::bit_cast<PropertyStorage>(this + 1);
     }
     ConstPropertyStorage inlineStorage() const
     {
@@ -1030,9 +1032,12 @@ public:
         if (isCopyOnWrite(indexingMode()))
             convertFromCopyOnWrite(vm);
     }
-        
-    static size_t offsetOfInlineStorage();
-        
+
+    static constexpr size_t offsetOfInlineStorage()
+    {
+        return sizeof(JSObject);
+    }
+
     static constexpr ptrdiff_t butterflyOffset()
     {
         return OBJECT_OFFSETOF(JSObject, m_butterfly);
@@ -1151,6 +1156,7 @@ protected:
     ArrayStorage* convertContiguousToArrayStorage(VM&, TransitionKind);
     ArrayStorage* convertContiguousToArrayStorage(VM&);
 
+    void convertToIndexingTypeIfNeeded(VM&, IndexingType);
         
     ArrayStorage* ensureArrayStorageExistsAndEnterDictionaryIndexingMode(VM&);
         
@@ -1360,11 +1366,6 @@ inline JSFinalObject* JSFinalObject::createWithButterfly(VM& vm, Structure* stru
 inline JSFinalObject* JSFinalObject::create(VM& vm, Structure* structure)
 {
     return createWithButterfly(vm, structure, nullptr);
-}
-
-inline size_t JSObject::offsetOfInlineStorage()
-{
-    return sizeof(JSObject);
 }
 
 inline bool JSObject::isGlobalObject() const
@@ -1712,7 +1713,7 @@ inline int indexRelativeToBase(PropertyOffset offset)
 {
     if (isOutOfLineOffset(offset))
         return offsetInOutOfLineStorage(offset) + Butterfly::indexOfPropertyStorage();
-    ASSERT(!(JSObject::offsetOfInlineStorage() % sizeof(EncodedJSValue)));
+    static_assert(!(JSObject::offsetOfInlineStorage() % sizeof(EncodedJSValue)));
     return JSObject::offsetOfInlineStorage() / sizeof(EncodedJSValue) + offsetInInlineStorage(offset);
 }
 
@@ -1751,6 +1752,8 @@ bool validateAndApplyPropertyDescriptor(JSGlobalObject*, JSObject*, PropertyName
 
 JS_EXPORT_PRIVATE NEVER_INLINE bool ordinarySetSlow(JSGlobalObject*, JSObject*, PropertyName, JSValue, JSValue receiver, bool shouldThrow);
 JS_EXPORT_PRIVATE NEVER_INLINE bool ordinarySetWithOwnDescriptor(JSGlobalObject*, JSObject*, PropertyName, JSValue, JSValue receiver, PropertyDescriptor&& ownDescriptor, bool shouldThrow);
+
+bool setterThatIgnoresPrototypeProperties(JSGlobalObject*, JSValue thisValue, JSObject* homeObject, PropertyName, JSValue, bool shouldThrow);
 
 // Helper for defining native functions, if you're not using a static hash table.
 // Use this macro from within finishCreation() methods in prototypes. This assumes
@@ -1811,3 +1814,5 @@ JS_EXPORT_PRIVATE NEVER_INLINE bool ordinarySetWithOwnDescriptor(JSGlobalObject*
     static_assert(DerivedClass::destroy == BaseClass::destroy);
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

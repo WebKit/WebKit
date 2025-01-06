@@ -22,10 +22,13 @@
 
 #if ENABLE(MODEL_PROCESS)
 
+[ExceptionForEnabledBy]
 messages -> ModelProcessModelPlayer {
     DidCreateLayer(WebCore::LayerHostingContextIdentifier identifier)
-    DidFinishLoading()
+    DidFinishLoading(WebCore::FloatPoint3D center, WebCore::FloatPoint3D extents)
     DidUpdateEntityTransform(WebCore::TransformationMatrix transform)
+    DidUpdateAnimationPlaybackState(bool isPaused, double playbackRate, Seconds duration, Seconds currentTime, MonotonicTime clockTimestamp)
+    DidFinishEnvironmentMapLoading(bool succeeded)
 }
 
 #endif // ENABLE(MODEL_PROCESS)

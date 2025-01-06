@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WebSpeechRecognizerTaskMock : WebSpeechRecognizerTask {
 @private
-    WebCore::SpeechRecognitionConnectionClientIdentifier _identifier;
+    Markable<WebCore::SpeechRecognitionConnectionClientIdentifier> _identifier;
     BlockPtr<void(const WebCore::SpeechRecognitionUpdate&)> _delegateCallback;
     bool _doMultipleRecognitions;
     bool _hasSentSpeechStart;

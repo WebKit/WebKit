@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -41,14 +41,18 @@
 #include "SVGImageElement.h"
 #include "SecurityOrigin.h"
 #include <wtf/HashSet.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
+
+#if USE(SKIA)
+#include "CanvasRenderingContext2DBase.h"
+#endif
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CanvasRenderingContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CanvasRenderingContext);
 
 Lock CanvasRenderingContext::s_instancesLock;
 
@@ -63,8 +67,9 @@ Lock& CanvasRenderingContext::instancesLock()
     return s_instancesLock;
 }
 
-CanvasRenderingContext::CanvasRenderingContext(CanvasBase& canvas)
+CanvasRenderingContext::CanvasRenderingContext(CanvasBase& canvas, Type type)
     : m_canvas(canvas)
+    , m_type(type)
 {
     Locker locker { instancesLock() };
     instances().add(this);
@@ -98,6 +103,15 @@ bool CanvasRenderingContext::isSurfaceBufferTransparentBlack(SurfaceBuffer) cons
     return false;
 }
 
+bool CanvasRenderingContext::delegatesDisplay() const
+{
+#if USE(SKIA)
+    if (auto* context2D = dynamicDowncast<CanvasRenderingContext2DBase>(*this))
+        return context2D->isAccelerated();
+#endif
+    return isPlaceholder() || isGPUBased();
+}
+
 RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext::layerContentsDisplayDelegate()
 {
     return nullptr;
@@ -108,9 +122,15 @@ void CanvasRenderingContext::setContentsToLayer(GraphicsLayer& layer)
     layer.setContentsDisplayDelegate(layerContentsDisplayDelegate(), GraphicsLayer::ContentsLayerPurpose::Canvas);
 }
 
-PixelFormat CanvasRenderingContext::pixelFormat() const
+RefPtr<ImageBuffer> CanvasRenderingContext::transferToImageBuffer()
 {
-    return PixelFormat::BGRA8;
+    ASSERT_NOT_REACHED(); // Implemented and called only for offscreen capable contexts.
+    return nullptr;
+}
+
+ImageBufferPixelFormat CanvasRenderingContext::pixelFormat() const
+{
+    return ImageBufferPixelFormat::BGRA8;
 }
 
 DestinationColorSpace CanvasRenderingContext::colorSpace() const

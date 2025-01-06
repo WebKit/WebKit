@@ -27,6 +27,8 @@
 #include "config.h"
 #include "WebPageProxy.h"
 
+#include "DrawingAreaMessages.h"
+#include "DrawingAreaProxy.h"
 #include "InputMethodState.h"
 #include "MessageSenderInlines.h"
 #include "PageClientImpl.h"
@@ -38,6 +40,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/PlatformEvent.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/Sandbox.h>
 
@@ -49,14 +52,14 @@ void WebPageProxy::platformInitialize()
 
 GtkWidget* WebPageProxy::viewWidget()
 {
-    return static_cast<PageClientImpl&>(pageClient()).viewWidget();
+    RefPtr pageClient = this->pageClient();
+    return pageClient ? static_cast<PageClientImpl&>(*pageClient).viewWidget() : nullptr;
 }
 
 void WebPageProxy::bindAccessibilityTree(const String& plugID)
 {
 #if USE(GTK4)
-    // FIXME(273245): Make a11y work under Flatpak.
-    if (!isInsideFlatpak())
+    if (!isInsideFlatpak() || checkFlatpakPortalVersion(7))
         webkitWebViewBaseSetPlugID(WEBKIT_WEB_VIEW_BASE(viewWidget()), plugID);
 #else
     auto* accessible = gtk_widget_get_accessible(viewWidget());
@@ -71,7 +74,8 @@ void WebPageProxy::didUpdateEditorState(const EditorState&, const EditorState& n
         return;
     if (newEditorState.selectionIsRange)
         WebPasteboardProxy::singleton().setPrimarySelectionOwner(focusedFrame());
-    pageClient().selectionDidChange();
+    if (RefPtr pageClient = this->pageClient())
+        pageClient->selectionDidChange();
 }
 
 void WebPageProxy::setInputMethodState(std::optional<InputMethodState>&& state)
@@ -86,7 +90,11 @@ void WebPageProxy::showEmojiPicker(const WebCore::IntRect& caretRect, Completion
 
 void WebPageProxy::showValidationMessage(const WebCore::IntRect& anchorClientRect, const String& message)
 {
-    m_validationBubble = pageClient().createValidationBubble(message, { m_preferences->minimumFontSize() });
+    RefPtr pageClient = this->pageClient();
+    if (!pageClient)
+        return;
+
+    m_validationBubble = pageClient->createValidationBubble(message, { m_preferences->minimumFontSize() });
     m_validationBubble->showRelativeTo(anchorClientRect);
 }
 
@@ -107,12 +115,11 @@ void WebPageProxy::sendMessageToWebView(UserMessage&& message)
 
 void WebPageProxy::accentColorDidChange()
 {
-    if (!hasRunningProcess())
+    if (!hasRunningProcess() || !pageClient())
         return;
 
-    WebCore::Color accentColor = pageClient().accentColor();
-
-    send(Messages::WebPage::SetAccentColor(accentColor));
+    auto accentColor = pageClient()->accentColor();
+    legacyMainFrameProcess().send(Messages::WebPage::SetAccentColor(accentColor), webPageIDInMainFrameProcess());
 }
 
 OptionSet<WebCore::PlatformEvent::Modifier> WebPageProxy::currentStateOfModifierKeys()
@@ -148,7 +155,16 @@ void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& c
         return;
     }
 
-    webkitWebViewBaseCallAfterNextPresentationUpdate(WEBKIT_WEB_VIEW_BASE(viewWidget()), WTFMove(callback));
+    Ref aggregator = CallbackAggregator::create([weakThis = WeakPtr { *this }, callback = WTFMove(callback)]() mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return callback();
+        webkitWebViewBaseCallAfterNextPresentationUpdate(WEBKIT_WEB_VIEW_BASE(protectedThis->viewWidget()), WTFMove(callback));
+    });
+    auto drawingAreaIdentifier = m_drawingArea->identifier();
+    forEachWebContentProcess([&] (auto& process, auto) {
+        process.sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [aggregator] { }, drawingAreaIdentifier);
+    });
 }
 
 } // namespace WebKit

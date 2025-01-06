@@ -83,7 +83,7 @@ class StateChangeTestES31 : public StateChangeTest
 // Ensure that CopyTexImage2D syncs framebuffer changes.
 TEST_P(StateChangeTest, CopyTexImage2DSync)
 {
-    // TODO(geofflang): Fix on Linux AMD drivers (http://anglebug.com/1291)
+    // TODO(geofflang): Fix on Linux AMD drivers (http://anglebug.com/42260302)
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
     glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
@@ -184,7 +184,7 @@ TEST_P(StateChangeTest, FramebufferIncompleteWithTexStorage)
 // Test that caching works when color attachments change with CompressedTexImage2D.
 TEST_P(StateChangeTestES3, FramebufferIncompleteWithCompressedTex)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/3853
+    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
 
     glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
@@ -419,9 +419,9 @@ void main (void)
 TEST_P(StateChangeTestES3, DrawPausedXfbThenNonXfbLines)
 {
     // glTransformFeedbackVaryings for program2 returns GL_INVALID_OPERATION on both Linux and
-    // windows.  http://anglebug.com/4265
+    // windows.  http://anglebug.com/42262893
     ANGLE_SKIP_TEST_IF(IsIntel() && IsOpenGL());
-    // http://anglebug.com/5388
+    // http://anglebug.com/42263928
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
 
     std::vector<std::string> tfVaryings = {"gl_Position"};
@@ -1175,11 +1175,8 @@ void main()
 // Tests that changing an active program invalidates the sampler metadata properly.
 TEST_P(StateChangeTestES3, SamplerMetadataUpdateOnSetProgram)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
-    // TODO(anglebug.com/5491) Appears as though there's something wrong with textureSize on iOS
-    // unrelated to switching programs.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
     GLVertexArray vertexArray;
     glBindVertexArray(vertexArray);
 
@@ -1387,7 +1384,7 @@ class StateChangeTestWebGL2 : public ANGLETest<StateChangeTestWebGL2Params>
 //    MTL_DEBUG_LAYER_VALIDATE_UNRETAINED_RESOURCES=4 \
 //    angle_end2end_tests ...
 //
-// See anglebug.com/6923.
+// See anglebug.com/42265402.
 
 TEST_P(StateChangeTestWebGL2, InvalidateThenDrawFBO)
 {
@@ -1519,7 +1516,7 @@ TEST_P(LineLoopStateChangeTest, DrawElementsThenDrawArrays)
 // Draw line loop using a drawArrays followed by an hourglass with drawElements.
 TEST_P(LineLoopStateChangeTest, DrawArraysThenDrawElements)
 {
-    // http://anglebug.com/2856: Seems to fail on older drivers and pass on newer.
+    // http://anglebug.com/40644657: Seems to fail on older drivers and pass on newer.
     // Tested failing on 18.3.3 and passing on 18.9.2.
     ANGLE_SKIP_TEST_IF(IsAMD() && IsVulkan() && IsWindows());
 
@@ -1788,6 +1785,24 @@ void main()
 }
 )";
 
+constexpr char kSimpleVertexShaderForPoints[] = R"(attribute vec2 position;
+attribute vec4 color;
+varying vec4 vColor;
+void main()
+{
+    gl_Position = vec4(position, 0, 1);
+    gl_PointSize = 1.0;
+    vColor = color;
+}
+)";
+
+constexpr char kZeroVertexShaderForPoints[] = R"(void main()
+{
+    gl_Position = vec4(0);
+    gl_PointSize = 1.0;
+}
+)";
+
 constexpr char kSimpleFragmentShader[] = R"(precision mediump float;
 varying vec4 vColor;
 void main()
@@ -1825,7 +1840,7 @@ void SimpleStateChangeTest::simpleDrawWithColor(const GLColor &color)
 // frame.
 TEST_P(SimpleStateChangeTest, DrawArraysThenDrawElements)
 {
-    // http://anglebug.com/4121
+    // http://anglebug.com/40644706
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGLES());
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
@@ -2229,7 +2244,7 @@ TEST_P(SimpleStateChangeTest, DrawElementsUBYTEX2ThenDrawElementsUSHORT)
 // verify all the rendering results are the same.
 TEST_P(SimpleStateChangeTest, DrawRepeatUnalignedVboChange)
 {
-    // http://anglebug.com/4470
+    // http://anglebug.com/42263089
     ANGLE_SKIP_TEST_IF(isSwiftshader() && (IsWindows() || IsLinux()));
 
     const int kRepeat = 2;
@@ -2260,7 +2275,7 @@ TEST_P(SimpleStateChangeTest, DrawRepeatUnalignedVboChange)
     bindTextureToFbo(framebuffer, framebufferTexture);
 
     // set up program
-    ANGLE_GL_PROGRAM(program, kSimpleVertexShader, kSimpleFragmentShader);
+    ANGLE_GL_PROGRAM(program, kSimpleVertexShaderForPoints, kSimpleFragmentShader);
     glUseProgram(program);
     GLuint colorAttrLocation = glGetAttribLocation(program, "color");
     glEnableVertexAttribArray(colorAttrLocation);
@@ -2738,7 +2753,7 @@ void SimpleStateChangeTest::updateTextureBoundToFramebufferHelper(UpdateFunc upd
 // Tests that TexSubImage updates are flushed before rendering.
 TEST_P(SimpleStateChangeTest, TexSubImageOnTextureBoundToFrambuffer)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
     auto updateFunc = [](GLenum textureBinding, GLTexture *tex, GLint x, GLint y,
                          const GLColor &color) {
@@ -2782,7 +2797,7 @@ TEST_P(SimpleStateChangeTest, CopyTexSubImageOnTextureBoundToFrambuffer)
 // target.
 TEST_P(SimpleStateChangeTestES3, ReadFramebufferDrawFramebufferDifferentAttachments)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     GLRenderbuffer drawColorBuffer;
@@ -2960,7 +2975,7 @@ TEST_P(SimpleStateChangeTestES3, InvalidateThenGenerateMipmapsThenBlend)
 // Tests that invalidate then upload works
 TEST_P(SimpleStateChangeTestES3, InvalidateThenUploadThenBlend)
 {
-    // http://anglebug.com/4870
+    // http://anglebug.com/42263445
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     // Create the framebuffer that will be invalidated
@@ -2996,7 +3011,7 @@ TEST_P(SimpleStateChangeTestES3, InvalidateThenUploadThenBlend)
 // Tests that invalidate then sub upload works
 TEST_P(SimpleStateChangeTestES3, InvalidateThenSubUploadThenBlend)
 {
-    // http://anglebug.com/4870
+    // http://anglebug.com/42263445
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     // Create the framebuffer that will be invalidated
@@ -3034,7 +3049,7 @@ TEST_P(SimpleStateChangeTestES31, InvalidateThenStorageWriteThenBlend)
 {
     // Fails on AMD OpenGL Windows. This configuration isn't maintained.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsOpenGL());
-    // http://anglebug.com/5387
+    // http://anglebug.com/42263927
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
 
     constexpr char kCS[] = R"(#version 310 es
@@ -3060,6 +3075,9 @@ void main()
     glDispatchCompute(1, 1, 1);
     EXPECT_GL_NO_ERROR();
 
+    // Needs explicit barrier between compute shader write to FBO access.
+    glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
+
     // Create the framebuffer that will be invalidated
     GLFramebuffer drawFBO;
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFBO);
@@ -3077,10 +3095,14 @@ void main()
     glInvalidateFramebuffer(GL_DRAW_FRAMEBUFFER, 1, &invalidateAttachment);
     EXPECT_GL_NO_ERROR();
 
+    // Issue a memory barrier before writing to the image again.
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
     // Write to it with a compute shader
     glDispatchCompute(1, 1, 1);
     EXPECT_GL_NO_ERROR();
 
+    // Needs explicit barrier between compute shader write to FBO access.
     glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
 
     // Blend into the framebuffer, then verify that the framebuffer should have had cyan.
@@ -3124,6 +3146,9 @@ void main()
     glDispatchCompute(1, 1, 1);
     EXPECT_GL_NO_ERROR();
 
+    // Needs explicit barrier between compute shader write to FBO access.
+    glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
+
     // Create the framebuffer that will be invalidated
     GLFramebuffer drawFBO;
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFBO);
@@ -3141,10 +3166,14 @@ void main()
     glInvalidateFramebuffer(GL_DRAW_FRAMEBUFFER, 1, &invalidateAttachment);
     EXPECT_GL_NO_ERROR();
 
+    // Issue a memory barrier before writing to the image again.
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
     // Write to it with a compute shader
     glDispatchCompute(1, 1, 1);
     EXPECT_GL_NO_ERROR();
 
+    // Needs explicit barrier between compute shader write to FBO access.
     glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
 
     // Blend into the framebuffer, then verify that the framebuffer should have had cyan.
@@ -3520,7 +3549,7 @@ TEST_P(SimpleStateChangeTest, RedefineFramebufferTexture)
 // Trips a bug in the Vulkan back-end where a Texture wouldn't transition correctly.
 TEST_P(SimpleStateChangeTest, DrawAndClearTextureRepeatedly)
 {
-    // Fails on 431.02 driver. http://anglebug.com/3748
+    // Fails on 431.02 driver. http://anglebug.com/40644697
     ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsVulkan());
 
     // Fails on AMD OpenGL Windows. This configuration isn't maintained.
@@ -4012,7 +4041,7 @@ TEST_P(SimpleStateChangeTest, ChangeFramebufferSizeBetweenTwoDraws)
 // Tries to relink a program in use and use it again to draw something else.
 TEST_P(SimpleStateChangeTest, RelinkProgram)
 {
-    // http://anglebug.com/4121
+    // http://anglebug.com/40644706
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGLES());
     const GLuint program = glCreateProgram();
 
@@ -4367,7 +4396,7 @@ void main()
 // reordered w.r.t the calls.
 TEST_P(SimpleStateChangeTestES31, DrawWithImageTextureThenDrawAgain)
 {
-    // http://anglebug.com/5593
+    // http://anglebug.com/42264124
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     GLint maxFragmentImageUniforms;
@@ -4460,9 +4489,9 @@ void main()
 // draw call works correctly.  This requires a barrier in between the draw calls.
 TEST_P(SimpleStateChangeTestES31, DrawWithTextureThenDrawWithImage)
 {
-    // http://anglebug.com/5593
+    // http://anglebug.com/42264124
     ANGLE_SKIP_TEST_IF(IsD3D11());
-    // http://anglebug.com/5686
+    // http://anglebug.com/42264222
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsDesktopOpenGL());
 
     GLint maxFragmentImageUniforms;
@@ -4889,7 +4918,7 @@ void main()
 // call works correctly.  This requires an implicit barrier in between the calls.
 TEST_P(SimpleStateChangeTestES31, DrawThenSampleWithCompute)
 {
-    // TODO(anglebug.com/5649): Test is failing since it was introduced on Linux AMD GLES
+    // TODO(anglebug.com/42264185): Test is failing since it was introduced on Linux AMD GLES
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsLinux());
 
     constexpr GLsizei kSize = 1;
@@ -4964,7 +4993,7 @@ void main()
 // In the Vulkan backend, the clear is deferred and should be flushed correctly.
 TEST_P(SimpleStateChangeTestES31, ClearThenSampleWithCompute)
 {
-    // http://anglebug.com/5687
+    // http://anglebug.com/42264223
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
 
     constexpr GLsizei kSize = 1;
@@ -5040,7 +5069,7 @@ void main()
 // it in a dispatch call works correctly.  This requires an implicit barrier in between the calls.
 TEST_P(SimpleStateChangeTestES31, TransformFeedbackThenReadWithCompute)
 {
-    // http://anglebug.com/5687
+    // http://anglebug.com/42264223
     ANGLE_SKIP_TEST_IF(IsAMD() && IsVulkan());
 
     constexpr GLsizei kBufferSize = sizeof(float) * 4 * 6;
@@ -5260,6 +5289,79 @@ TEST_P(SimpleStateChangeTestComputeES31, DispatchImageTextureAThenTextureBThenTe
     glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
     EXPECT_PIXEL_RECT_EQ(0, 0, 2, 2, GLColor::cyan);
     ASSERT_GL_NO_ERROR();
+}
+
+// Tests that glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT) after draw works, where the render
+// pass is marked as closed.
+TEST_P(SimpleStateChangeTestES31, DrawThenChangeFBOThenStorageWrite)
+{
+    // Create a framebuffer for the purpose of switching FBOs
+    GLTexture clearColor;
+    glBindTexture(GL_TEXTURE_2D, clearColor);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+
+    GLFramebuffer clearFBO;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, clearFBO);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, clearColor, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1) in;
+layout (rgba8, binding = 1) writeonly uniform highp image2D dstImage;
+void main()
+{
+    imageStore(dstImage, ivec2(gl_GlobalInvocationID.xy), vec4(0.0f, 1.0f, 1.0f, 1.0f));
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    glUseProgram(program);
+    EXPECT_GL_NO_ERROR();
+
+    // Create the framebuffer texture
+    GLTexture renderTarget;
+    glBindTexture(GL_TEXTURE_2D, renderTarget);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+    glBindImageTexture(1, renderTarget, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+
+    // Write to the texture with compute once.  In the Vulkan backend, this will make sure the image
+    // is already created with STORAGE usage and avoids recreate later.
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
+
+    // Create the framebuffer for this texture
+    GLFramebuffer drawFBO;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFBO);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTarget,
+                           0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw to this framebuffer to start a render pass
+    ANGLE_GL_PROGRAM(drawProgram, essl31_shaders::vs::Simple(), essl31_shaders::fs::Red());
+    drawQuad(drawProgram, essl31_shaders::PositionAttrib(), 0.5f);
+
+    // Change framebuffers and do a clear, making sure the old render pass is marked as closed.  In
+    // the Vulkan backend, the clear is stashed, so the render pass is kept in the hopes of reviving
+    // it later.
+
+    glBindFramebuffer(GL_FRAMEBUFFER, clearFBO);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Issue a memory barrier before writing to the original image again.
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+    // Write to it with a compute shader
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
+
+    // Bind the original framebuffer and verify that the compute shader wrote the correct value.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFBO);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
 }
 
 // Copied from SimpleStateChangeTestComputeES31::DeleteImageTextureInUse
@@ -5587,7 +5689,7 @@ TEST_P(ValidationStateChangeTest, MapImmutablePersistentBufferThenVAPAndDraw)
 // Tests that changing a vertex binding with glVertexAttribDivisor updates the mapped buffer check.
 TEST_P(ValidationStateChangeTestES31, MapBufferAndDrawWithDivisor)
 {
-    // Seems to trigger a GL error in some edge cases. http://anglebug.com/2755
+    // Seems to trigger a GL error in some edge cases. http://anglebug.com/42261462
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsNVIDIA());
 
     // Initialize program and set up state.
@@ -5922,7 +6024,7 @@ TEST_P(WebGL2ValidationStateChangeTest, DrawFramebufferNegativeAPI)
 // Tests various state change effects on draw framebuffer validation with MRT.
 TEST_P(WebGL2ValidationStateChangeTest, MultiAttachmentDrawFramebufferNegativeAPI)
 {
-    // Crashes on 64-bit Android.  http://anglebug.com/3878
+    // Crashes on 64-bit Android.  http://anglebug.com/42262522
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
 
     // Set up a program that writes to two outputs: one int and one float.
@@ -6163,7 +6265,7 @@ void main()
 // Tests negative API state change cases with Transform Feedback bindings.
 TEST_P(WebGL2ValidationStateChangeTest, TransformFeedbackNegativeAPI)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     constexpr char kFS[] = R"(#version 300 es
@@ -6268,7 +6370,7 @@ void main()
 TEST_P(WebGL2ValidationStateChangeTest, SamplerFormatCache)
 {
     // Crashes in depth data upload due to lack of support for GL_UNSIGNED_INT data when
-    // DEPTH_COMPONENT24 is emulated with D32_S8X24.  http://anglebug.com/3880
+    // DEPTH_COMPONENT24 is emulated with D32_S8X24.  http://anglebug.com/42262525
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsWindows() && IsAMD());
 
     constexpr char kFS[] = R"(#version 300 es
@@ -6745,7 +6847,7 @@ TEST_P(SimpleStateChangeTest, FboLateCullFaceBackCWState)
 // binding back to the previous buffer.
 TEST_P(SimpleStateChangeTest, RebindTranslatedAttribute)
 {
-    // http://anglebug.com/5379
+    // http://anglebug.com/42263918
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsVulkan());
 
     constexpr char kVS[] = R"(attribute vec4 a_position;
@@ -7063,7 +7165,7 @@ TEST_P(SimpleStateChangeTestES3, BindingSameBuffer)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_STATIC_DRAW);
 
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Zero(), essl1_shaders::fs::Red());
+    ANGLE_GL_PROGRAM(program, kZeroVertexShaderForPoints, essl1_shaders::fs::Red());
     glUseProgram(program);
 
     glDrawElements(GL_POINTS, 4, GL_UNSIGNED_SHORT, 0);
@@ -7409,7 +7511,7 @@ TEST_P(RobustBufferAccessWebGL2ValidationStateChangeTest, BindZeroSizeBufferThen
     // SwiftShader does not currently support robustness.
     ANGLE_SKIP_TEST_IF(isSwiftshader());
 
-    // http://anglebug.com/4872
+    // http://anglebug.com/42263447
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
 
     // no intent to follow up on this failure.
@@ -7423,9 +7525,6 @@ TEST_P(RobustBufferAccessWebGL2ValidationStateChangeTest, BindZeroSizeBufferThen
 
     // Mali does not support robustness now.
     ANGLE_SKIP_TEST_IF(IsARM());
-
-    // TODO(anglebug.com/5491)
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     std::vector<GLubyte> data(48, 1);
 
@@ -8056,22 +8155,6 @@ TEST_P(SimpleStateChangeTestES3, InvalidateFramebufferShouldntInvalidateReadFram
     EXPECT_GL_NO_ERROR();
 }
 
-// Covers situations where vertex conversion could read out of bounds.
-TEST_P(SimpleStateChangeTestES3, OutOfBoundsByteAttribute)
-{
-    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
-    glUseProgram(testProgram);
-
-    GLBuffer buffer;
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 2, nullptr, GL_STREAM_COPY);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_BYTE, false, 0xff, reinterpret_cast<const void *>(0xfe));
-
-    glDrawArraysInstanced(GL_TRIANGLE_STRIP, 1, 10, 1000);
-}
-
 // Test that respecifies a buffer after we start XFB.
 TEST_P(SimpleStateChangeTestES3, RespecifyBufferAfterBeginTransformFeedback)
 {
@@ -8450,9 +8533,12 @@ TEST_P(SimpleStateChangeTestES3, DeleteDoubleBoundBufferAndVertexArray)
 // Tests state change for glLineWidth.
 TEST_P(StateChangeTestES3, LineWidth)
 {
+    // According to the spec, the minimum value for the line width range limits is one.
     GLfloat range[2] = {1};
     glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, range);
     EXPECT_GL_NO_ERROR();
+    EXPECT_GE(range[0], 1.0f);
+    EXPECT_GE(range[1], 1.0f);
 
     ANGLE_SKIP_TEST_IF(range[1] < 5.0);
 
@@ -10042,6 +10128,29 @@ TEST_P(StateChangeTestES3, PrimitiveRestart)
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests that primitive restart for patches can be queried when tessellation shaders are available,
+// and that its value is independent of whether primitive restart is enabled.
+TEST_P(StateChangeTestES31, PrimitiveRestartForPatchQuery)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
+
+    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+    GLint primitiveRestartForPatchesWhenEnabled = -1;
+    glGetIntegerv(GL_PRIMITIVE_RESTART_FOR_PATCHES_SUPPORTED,
+                  &primitiveRestartForPatchesWhenEnabled);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_GE(primitiveRestartForPatchesWhenEnabled, 0);
+
+    glDisable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+    GLint primitiveRestartForPatchesWhenDisabled = -1;
+    glGetIntegerv(GL_PRIMITIVE_RESTART_FOR_PATCHES_SUPPORTED,
+                  &primitiveRestartForPatchesWhenDisabled);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_GE(primitiveRestartForPatchesWhenDisabled, 0);
+
+    EXPECT_EQ(primitiveRestartForPatchesWhenEnabled, primitiveRestartForPatchesWhenDisabled);
+}
+
 // Tests state change for GL_COLOR_LOGIC_OP and glLogicOp.
 TEST_P(StateChangeTestES3, LogicOp)
 {
@@ -10242,7 +10351,7 @@ TEST_P(SimpleStateChangeTestES3, MultiviewAndQueries)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_OVR_multiview"));
 
-    ANGLE_GL_PROGRAM(prog, essl1_shaders::vs::Zero(), essl1_shaders::fs::Red());
+    ANGLE_GL_PROGRAM(prog, kZeroVertexShaderForPoints, essl1_shaders::fs::Red());
     glUseProgram(prog);
 
     const int PRE_QUERY_CNT = 63;
@@ -11040,6 +11149,81 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests that viewport changes within a render pass are correct. WebGPU sets a default viewport,
+// cover the omission of setViewport in the backend.
+TEST_P(StateChangeTest, ViewportChangeWithinRenderPass)
+{
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorLoc = glGetUniformLocation(program, essl1_shaders::ColorUniform());
+
+    glViewport(0, 0, 10, 10);
+    glUniform4f(colorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    glViewport(0, 0, getWindowWidth(), getWindowHeight());  // "default" size
+    glUniform4f(colorLoc, 0.0f, 1.0f, 0.0f, 1.0f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    // Verify that the first draw is covered by the second "full" draw
+    EXPECT_PIXEL_COLOR_EQ(5, 5, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(12, 12, GLColor::green);
+
+    // Go the other way, start with a full size viewport and change it to 10x10 for the second draw
+    glViewport(0, 0, getWindowWidth(), getWindowHeight());  // "default" size
+    glUniform4f(colorLoc, 0.0f, 0.0f, 1.0f, 1.0f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    glViewport(0, 0, 10, 10);
+    glUniform4f(colorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    // Verify that the first draw is covered by the second "full" draw
+    EXPECT_PIXEL_COLOR_EQ(5, 5, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(12, 12, GLColor::blue);
+}
+
+// Tests that scissor changes within a render pass are correct. WebGPU sets a default scissor, cover
+// the omission of setScissorRect in the backend.
+TEST_P(StateChangeTest, ScissortChangeWithinRenderPass)
+{
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_SCISSOR_TEST);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorLoc = glGetUniformLocation(program, essl1_shaders::ColorUniform());
+
+    glScissor(0, 0, 10, 10);
+    glUniform4f(colorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    glScissor(0, 0, getWindowWidth(), getWindowHeight());  // "default" size
+    glUniform4f(colorLoc, 0.0f, 1.0f, 0.0f, 1.0f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    // Verify that the first draw is covered by the second "full" draw
+    EXPECT_PIXEL_COLOR_EQ(5, 5, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(12, 12, GLColor::green);
+
+    // Go the other way, start with a full size scissor and change it to 10x10 for the second draw
+    glScissor(0, 0, getWindowWidth(), getWindowHeight());  // "default" size
+    glUniform4f(colorLoc, 0.0f, 0.0f, 1.0f, 1.0f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    glScissor(0, 0, 10, 10);
+    glUniform4f(colorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    // Verify that the first draw is covered by the second "full" draw
+    EXPECT_PIXEL_COLOR_EQ(5, 5, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(12, 12, GLColor::blue);
+}
+
 }  // anonymous namespace
 
 ANGLE_INSTANTIATE_TEST_ES2(StateChangeTest);
@@ -11055,6 +11239,9 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
         .disable(Feature::SupportsExtendedDynamicState)
         .disable(Feature::SupportsExtendedDynamicState2),
     ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES3_VULKAN()
+        .disable(Feature::SupportsExtendedDynamicState2)
+        .disable(Feature::SupportsGraphicsPipelineLibrary),
     ES3_VULKAN().disable(Feature::UseVertexInputBindingStrideDynamicState),
     ES3_VULKAN().disable(Feature::UsePrimitiveRestartEnableDynamicState));
 
@@ -11066,6 +11253,9 @@ ANGLE_INSTANTIATE_TEST_ES31_AND(
         .disable(Feature::SupportsExtendedDynamicState)
         .disable(Feature::SupportsExtendedDynamicState2),
     ES31_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES31_VULKAN()
+        .disable(Feature::SupportsExtendedDynamicState2)
+        .disable(Feature::SupportsGraphicsPipelineLibrary),
     ES31_VULKAN().disable(Feature::UseVertexInputBindingStrideDynamicState),
     ES31_VULKAN().disable(Feature::UsePrimitiveRestartEnableDynamicState));
 

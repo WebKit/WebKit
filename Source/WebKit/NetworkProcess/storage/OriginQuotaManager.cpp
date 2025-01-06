@@ -27,10 +27,13 @@
 #include "OriginQuotaManager.h"
 
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 static constexpr double defaultReportedQuotaIncreaseFactor = 2.0;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OriginQuotaManager);
 
 Ref<OriginQuotaManager> OriginQuotaManager::create(Parameters&& parameters, GetUsageFunction&& getUsageFunction)
 {
@@ -62,7 +65,7 @@ uint64_t OriginQuotaManager::usage()
 
 void OriginQuotaManager::requestSpace(uint64_t spaceRequested, RequestCallback&& callback)
 {
-    m_requests.append(OriginQuotaManager::Request { spaceRequested, WTFMove(callback), QuotaIncreaseRequestIdentifier { } });
+    m_requests.append(OriginQuotaManager::Request { spaceRequested, WTFMove(callback), std::nullopt });
     handleRequests();
 }
 
@@ -88,7 +91,7 @@ void OriginQuotaManager::handleRequests()
         }
     
         m_currentRequest->identifier = QuotaIncreaseRequestIdentifier::generate();
-        m_increaseQuotaFunction(m_currentRequest->identifier, m_quota, *m_usage, m_currentRequest->spaceRequested);
+        m_increaseQuotaFunction(*m_currentRequest->identifier, m_quota, *m_usage, m_currentRequest->spaceRequested);
     }
 }
 

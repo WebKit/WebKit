@@ -62,34 +62,87 @@
 #include <openssl/mem.h>
 
 #include "../bytestring/internal.h"
-#include "../fipsmodule/ec/internal.h"
+#include "../fipsmodule/ecdsa/internal.h"
 #include "../internal.h"
 
 
+static ECDSA_SIG *ecdsa_sig_from_fixed(const EC_KEY *key, const uint8_t *in,
+                                       size_t len) {
+  const EC_GROUP *group = EC_KEY_get0_group(key);
+  if (group == NULL) {
+    OPENSSL_PUT_ERROR(ECDSA, ERR_R_PASSED_NULL_PARAMETER);
+    return NULL;
+  }
+  size_t scalar_len = BN_num_bytes(EC_GROUP_get0_order(group));
+  if (len != 2 * scalar_len) {
+    OPENSSL_PUT_ERROR(ECDSA, ECDSA_R_BAD_SIGNATURE);
+    return NULL;
+  }
+  ECDSA_SIG *ret = ECDSA_SIG_new();
+  if (ret == NULL ||
+      !BN_bin2bn(in, scalar_len, ret->r) ||
+      !BN_bin2bn(in + scalar_len, scalar_len, ret->s)) {
+    ECDSA_SIG_free(ret);
+    return NULL;
+  }
+  return ret;
+}
+
+static int ecdsa_sig_to_fixed(const EC_KEY *key, uint8_t *out, size_t *out_len,
+                              size_t max_out, const ECDSA_SIG *sig) {
+  const EC_GROUP *group = EC_KEY_get0_group(key);
+  if (group == NULL) {
+    OPENSSL_PUT_ERROR(ECDSA, ERR_R_PASSED_NULL_PARAMETER);
+    return 0;
+  }
+  size_t scalar_len = BN_num_bytes(EC_GROUP_get0_order(group));
+  if (max_out < 2 * scalar_len) {
+    OPENSSL_PUT_ERROR(EC, EC_R_BUFFER_TOO_SMALL);
+    return 0;
+  }
+  if (BN_is_negative(sig->r) ||
+      !BN_bn2bin_padded(out, scalar_len, sig->r) ||
+      BN_is_negative(sig->s) ||
+      !BN_bn2bin_padded(out + scalar_len, scalar_len, sig->s)) {
+    OPENSSL_PUT_ERROR(ECDSA, ECDSA_R_BAD_SIGNATURE);
+    return 0;
+  }
+  *out_len = 2 * scalar_len;
+  return 1;
+}
+
 int ECDSA_sign(int type, const uint8_t *digest, size_t digest_len, uint8_t *sig,
-               unsigned int *sig_len, const EC_KEY *eckey) {
+               unsigned int *out_sig_len, const EC_KEY *eckey) {
   if (eckey->ecdsa_meth && eckey->ecdsa_meth->sign) {
-    return eckey->ecdsa_meth->sign(digest, digest_len, sig, sig_len,
+    return eckey->ecdsa_meth->sign(digest, digest_len, sig, out_sig_len,
                                    (EC_KEY*) eckey /* cast away const */);
   }
 
-  int ret = 0;
-  ECDSA_SIG *s = ECDSA_do_sign(digest, digest_len, eckey);
-  if (s == NULL) {
-    *sig_len = 0;
-    goto err;
+  *out_sig_len = 0;
+  uint8_t fixed[ECDSA_MAX_FIXED_LEN];
+  size_t fixed_len;
+  if (!ecdsa_sign_fixed(digest, digest_len, fixed, &fixed_len, sizeof(fixed),
+                        eckey)) {
+    return 0;
   }
 
+  // TODO(davidben): We can actually do better and go straight from the DER
+  // format to the fixed-width format without a malloc.
+  ECDSA_SIG *s = ecdsa_sig_from_fixed(eckey, fixed, fixed_len);
+  if (s == NULL) {
+    return 0;
+  }
+
+  int ret = 0;
   CBB cbb;
   CBB_init_fixed(&cbb, sig, ECDSA_size(eckey));
   size_t len;
   if (!ECDSA_SIG_marshal(&cbb, s) ||
       !CBB_finish(&cbb, NULL, &len)) {
     OPENSSL_PUT_ERROR(ECDSA, ECDSA_R_ENCODE_ERROR);
-    *sig_len = 0;
     goto err;
   }
-  *sig_len = (unsigned)len;
+  *out_sig_len = (unsigned)len;
   ret = 1;
 
 err:
@@ -99,12 +152,13 @@ err:
 
 int ECDSA_verify(int type, const uint8_t *digest, size_t digest_len,
                  const uint8_t *sig, size_t sig_len, const EC_KEY *eckey) {
-  ECDSA_SIG *s;
+  // Decode the ECDSA signature.
+  //
+  // TODO(davidben): We can actually do better and go straight from the DER
+  // format to the fixed-width format without a malloc.
   int ret = 0;
   uint8_t *der = NULL;
-
-  // Decode the ECDSA signature.
-  s = ECDSA_SIG_from_bytes(sig, sig_len);
+  ECDSA_SIG *s = ECDSA_SIG_from_bytes(sig, sig_len);
   if (s == NULL) {
     goto err;
   }
@@ -118,7 +172,10 @@ int ECDSA_verify(int type, const uint8_t *digest, size_t digest_len,
     goto err;
   }
 
-  ret = ECDSA_do_verify(digest, digest_len, s, eckey);
+  uint8_t fixed[ECDSA_MAX_FIXED_LEN];
+  size_t fixed_len;
+  ret = ecdsa_sig_to_fixed(eckey, fixed, &fixed_len, sizeof(fixed), s) &&
+        ecdsa_verify_fixed(digest, digest_len, fixed, fixed_len, eckey);
 
 err:
   OPENSSL_free(der);
@@ -145,6 +202,95 @@ size_t ECDSA_size(const EC_KEY *key) {
   }
 
   return ECDSA_SIG_max_len(group_order_size);
+}
+
+ECDSA_SIG *ECDSA_SIG_new(void) {
+  ECDSA_SIG *sig = OPENSSL_malloc(sizeof(ECDSA_SIG));
+  if (sig == NULL) {
+    return NULL;
+  }
+  sig->r = BN_new();
+  sig->s = BN_new();
+  if (sig->r == NULL || sig->s == NULL) {
+    ECDSA_SIG_free(sig);
+    return NULL;
+  }
+  return sig;
+}
+
+void ECDSA_SIG_free(ECDSA_SIG *sig) {
+  if (sig == NULL) {
+    return;
+  }
+
+  BN_free(sig->r);
+  BN_free(sig->s);
+  OPENSSL_free(sig);
+}
+
+const BIGNUM *ECDSA_SIG_get0_r(const ECDSA_SIG *sig) {
+  return sig->r;
+}
+
+const BIGNUM *ECDSA_SIG_get0_s(const ECDSA_SIG *sig) {
+  return sig->s;
+}
+
+void ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **out_r,
+                    const BIGNUM **out_s) {
+  if (out_r != NULL) {
+    *out_r = sig->r;
+  }
+  if (out_s != NULL) {
+    *out_s = sig->s;
+  }
+}
+
+int ECDSA_SIG_set0(ECDSA_SIG *sig, BIGNUM *r, BIGNUM *s) {
+  if (r == NULL || s == NULL) {
+    return 0;
+  }
+  BN_free(sig->r);
+  BN_free(sig->s);
+  sig->r = r;
+  sig->s = s;
+  return 1;
+}
+
+int ECDSA_do_verify(const uint8_t *digest, size_t digest_len,
+                    const ECDSA_SIG *sig, const EC_KEY *eckey) {
+  uint8_t fixed[ECDSA_MAX_FIXED_LEN];
+  size_t fixed_len;
+  return ecdsa_sig_to_fixed(eckey, fixed, &fixed_len, sizeof(fixed), sig) &&
+         ecdsa_verify_fixed(digest, digest_len, fixed, fixed_len, eckey);
+}
+
+// This function is only exported for testing and is not called in production
+// code.
+ECDSA_SIG *ECDSA_sign_with_nonce_and_leak_private_key_for_testing(
+    const uint8_t *digest, size_t digest_len, const EC_KEY *eckey,
+    const uint8_t *nonce, size_t nonce_len) {
+  uint8_t sig[ECDSA_MAX_FIXED_LEN];
+  size_t sig_len;
+  if (!ecdsa_sign_fixed_with_nonce_for_known_answer_test(
+          digest, digest_len, sig, &sig_len, sizeof(sig), eckey, nonce,
+          nonce_len)) {
+    return NULL;
+  }
+
+  return ecdsa_sig_from_fixed(eckey, sig, sig_len);
+}
+
+ECDSA_SIG *ECDSA_do_sign(const uint8_t *digest, size_t digest_len,
+                         const EC_KEY *eckey) {
+  uint8_t sig[ECDSA_MAX_FIXED_LEN];
+  size_t sig_len;
+  if (!ecdsa_sign_fixed(digest, digest_len, sig, &sig_len, sizeof(sig),
+                        eckey)) {
+    return NULL;
+  }
+
+  return ecdsa_sig_from_fixed(eckey, sig, sig_len);
 }
 
 ECDSA_SIG *ECDSA_SIG_parse(CBS *cbs) {

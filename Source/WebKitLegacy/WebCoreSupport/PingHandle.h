@@ -34,31 +34,56 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 
 // This class triggers asynchronous loads independent of the networking context staying alive (i.e., auditing pingbacks).
 // The object just needs to live long enough to ensure the message was actually sent.
 // As soon as any callback is received from the ResourceHandle, this class will cancel the load and delete itself.
 
-class PingHandle final : private WebCore::ResourceHandleClient {
-    WTF_MAKE_NONCOPYABLE(PingHandle); WTF_MAKE_FAST_ALLOCATED;
+class PingHandle final : public RefCounted<PingHandle>, private WebCore::ResourceHandleClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PingHandle);
+    WTF_MAKE_NONCOPYABLE(PingHandle);
 public:
-    PingHandle(WebCore::NetworkingContext* networkingContext, const WebCore::ResourceRequest& request, bool shouldUseCredentialStorage, bool shouldFollowRedirects, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler)
+    static void start(WebCore::NetworkingContext* networkingContext, const WebCore::ResourceRequest& request, bool shouldUseCredentialStorage, bool shouldFollowRedirects, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler)
+    {
+        Ref handle = adoptRef(*new PingHandle(request, shouldUseCredentialStorage, shouldFollowRedirects));
+        handle->start(networkingContext, [handle, completionHandler = WTFMove(completionHandler)](const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) mutable {
+            completionHandler(error, response);
+        });
+    }
+
+    virtual ~PingHandle()
+    {
+        ASSERT(!m_completionHandler);
+        if (m_handle) {
+            ASSERT(m_handle->client() == this);
+            m_handle->clearClient();
+            m_handle->cancel();
+        }
+    }
+
+private:
+    PingHandle(const WebCore::ResourceRequest& request, bool shouldUseCredentialStorage, bool shouldFollowRedirects)
         : m_currentRequest(request)
         , m_timeoutTimer(*this, &PingHandle::timeoutTimerFired)
         , m_shouldUseCredentialStorage(shouldUseCredentialStorage)
         , m_shouldFollowRedirects(shouldFollowRedirects)
-        , m_completionHandler(WTFMove(completionHandler))
     {
+    }
+
+    void start(WebCore::NetworkingContext* networkingContext, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler)
+    {
+        m_completionHandler = WTFMove(completionHandler);
         bool defersLoading = false;
         bool shouldContentSniff = false;
-        m_handle = WebCore::ResourceHandle::create(networkingContext, request, this, defersLoading, shouldContentSniff, WebCore::ContentEncodingSniffingPolicy::Default, nullptr, false);
+        m_handle = WebCore::ResourceHandle::create(networkingContext, m_currentRequest, this, defersLoading, shouldContentSniff, WebCore::ContentEncodingSniffingPolicy::Default, nullptr, false);
 
         // If the server never responds, this object will hang around forever.
         // Set a very generous timeout, just in case.
         m_timeoutTimer.startOneShot(60000_s);
     }
 
-private:
     void willSendRequestAsync(WebCore::ResourceHandle*, WebCore::ResourceRequest&& request, WebCore::ResourceResponse&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) final
     {
         m_currentRequest = WTFMove(request);
@@ -91,17 +116,6 @@ private:
     {
         if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
             completionHandler(error, response);
-        delete this;
-    }
-
-    virtual ~PingHandle()
-    {
-        ASSERT(!m_completionHandler);
-        if (m_handle) {
-            ASSERT(m_handle->client() == this);
-            m_handle->clearClient();
-            m_handle->cancel();
-        }
     }
 
     RefPtr<WebCore::ResourceHandle> m_handle;

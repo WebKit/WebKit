@@ -14,9 +14,9 @@
 #include <stddef.h>
 
 #include <map>
+#include <optional>
 #include <set>
 
-#include "absl/types/optional.h"
 #include "modules/audio_coding/audio_network_adaptor/controller.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 
@@ -77,11 +77,11 @@ class FrameLengthController final : public Controller {
 
   std::set<int>::const_iterator frame_length_ms_;
 
-  absl::optional<int> uplink_bandwidth_bps_;
+  std::optional<int> uplink_bandwidth_bps_;
 
-  absl::optional<float> uplink_packet_loss_fraction_;
+  std::optional<float> uplink_packet_loss_fraction_;
 
-  absl::optional<size_t> overhead_bytes_per_packet_;
+  std::optional<size_t> overhead_bytes_per_packet_;
 
   // True if the previous frame length decision was an increase, otherwise
   // false.

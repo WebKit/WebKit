@@ -42,8 +42,11 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentStorageAccess);
 
 DocumentStorageAccess::DocumentStorageAccess(Document& document)
     : m_document(document)
@@ -88,7 +91,7 @@ std::optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
     if (frame->isMainFrame())
         return true;
 
-    if (securityOrigin->equal(&document->topOrigin()))
+    if (securityOrigin->equal(document->topOrigin()))
         return true;
 
     if (!frame->page())
@@ -157,11 +160,11 @@ std::optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAcc
     if (frame->isMainFrame())
         return StorageAccessQuickResult::Grant;
 
-    if (securityOrigin.equal(&document->topOrigin()))
+    if (securityOrigin.equal(document->topOrigin()))
         return StorageAccessQuickResult::Grant;
 
     // If there is a sandbox, it has to allow the storage access API to be called.
-    if (document->sandboxFlags() != SandboxNone && document->isSandboxed(SandboxStorageAccessByUserActivation))
+    if (!document->sandboxFlags().isEmpty() && document->isSandboxed(SandboxFlag::StorageAccessByUserActivation))
         return StorageAccessQuickResult::Reject;
 
     RegistrableDomain domain { securityOrigin.data() };

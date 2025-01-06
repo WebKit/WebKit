@@ -12,10 +12,10 @@
 #define CALL_ADAPTATION_VIDEO_STREAM_ADAPTER_H_
 
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "absl/types/variant.h"
 #include "api/adaptation/resource.h"
 #include "api/field_trials_view.h"
@@ -165,7 +165,7 @@ class VideoStreamAdapter {
     VideoAdaptationCounters counters;
   };
 
-  static absl::optional<uint32_t> GetSingleActiveLayerPixels(
+  static std::optional<uint32_t> GetSingleActiveLayerPixels(
       const VideoCodec& codec);
 
  private:
@@ -249,7 +249,7 @@ class VideoStreamAdapter {
     const bool pixels_increased;
     const int frame_size_pixels;
   };
-  absl::optional<AwaitingFrameSizeChange> awaiting_frame_size_change_
+  std::optional<AwaitingFrameSizeChange> awaiting_frame_size_change_
       RTC_GUARDED_BY(&sequence_checker_);
   // The previous restrictions value. Starts as unrestricted.
   VideoSourceRestrictions last_video_source_restrictions_

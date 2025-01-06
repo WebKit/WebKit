@@ -38,9 +38,7 @@ CompiledBytecode::CompiledBytecode(const OriginStack& origin, const CString& des
 {
 }
 
-CompiledBytecode::~CompiledBytecode()
-{
-}
+CompiledBytecode::~CompiledBytecode() = default;
 
 Ref<JSON::Value> CompiledBytecode::toJSON(Dumper& dumper) const
 {

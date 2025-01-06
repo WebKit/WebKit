@@ -147,12 +147,10 @@ ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallL
             }
             case CallLinkInfo::Mode::Monomorphic:
             case CallLinkInfo::Mode::Polymorphic: {
-#if ENABLE(JIT)
-                if (kind == CodeForCall && callLinkInfo->allowStubs()) {
+                if (kind == CodeForCall) {
                     linkPolymorphicCall(vm, owner, calleeFrame, *callLinkInfo, CallVariant(internalFunction));
                     break;
                 }
-#endif
                 callLinkInfo->setVirtualCall(vm);
                 break;
             }
@@ -212,12 +210,10 @@ ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallL
     }
     case CallLinkInfo::Mode::Monomorphic:
     case CallLinkInfo::Mode::Polymorphic: {
-#if ENABLE(JIT)
-        if (kind == CodeForCall && callLinkInfo->allowStubs()) {
+        if (kind == CodeForCall) {
             linkPolymorphicCall(vm, owner, calleeFrame, *callLinkInfo, CallVariant(callee));
             break;
         }
-#endif
         callLinkInfo->setVirtualCall(vm);
         break;
     }

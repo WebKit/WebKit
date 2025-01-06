@@ -1,4 +1,5 @@
 
-PASS Property block-step-insert value 'margin'
-PASS Property block-step-insert value 'padding'
+PASS Property block-step-insert value 'margin-box'
+PASS Property block-step-insert value 'padding-box'
+PASS Property block-step-insert value 'content-box'
 

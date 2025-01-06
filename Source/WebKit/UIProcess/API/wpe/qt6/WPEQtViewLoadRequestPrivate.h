@@ -26,13 +26,16 @@
 
 class WPEQtViewLoadRequestPrivate {
 public:
-    WPEQtViewLoadRequestPrivate() { }
-    WPEQtViewLoadRequestPrivate(const QUrl& url, WPEQtView::LoadStatus status, const QString& errorString)
+    explicit WPEQtViewLoadRequestPrivate(const QUrl& url, WPEQtView::LoadStatus status, const QString& errorString)
         : m_url(url)
         , m_status(status)
         , m_errorString(errorString)
-    { }
-    ~WPEQtViewLoadRequestPrivate() { }
+    {
+    }
+
+    ~WPEQtViewLoadRequestPrivate()
+    {
+    }
 
     QUrl m_url;
     WPEQtView::LoadStatus m_status;

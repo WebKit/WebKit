@@ -7,13 +7,13 @@
 
         function doTest()
         {
-            requestAnimationFrame(() => {
-                if (window.internals)
-                    internals.setTopContentInset(50);
+            requestAnimationFrame(async () => {
+                if (window.testRunner)
+                    await testRunner.setTopContentInset(50);
 
-                requestAnimationFrame(() => {
-                    if (window.internals)
-                        internals.setTopContentInset(0);
+                requestAnimationFrame(async () => {
+                    if (window.testRunner)
+                        await testRunner.setTopContentInset(0);
 
                     if (window.testRunner)
                         testRunner.notifyDone();

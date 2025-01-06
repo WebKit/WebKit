@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -28,7 +28,7 @@
 
 // Apply all filter taps to the given 7 packed 16-bit values, keeping the 8th
 // at zero to preserve the sum.
-static INLINE void filter_4x2_sse4_1(uint8_t *dst, const ptrdiff_t stride,
+static inline void filter_4x2_sse4_1(uint8_t *dst, const ptrdiff_t stride,
                                      const __m128i *pixels,
                                      const __m128i *taps_0_1,
                                      const __m128i *taps_2_3,
@@ -56,7 +56,7 @@ static INLINE void filter_4x2_sse4_1(uint8_t *dst, const ptrdiff_t stride,
 // 4xH transform sizes are given special treatment because xx_loadl_64 goes out
 // of bounds and every block involves the left column. This implementation
 // loads TL from the top row for the first block, so it is not
-static INLINE void filter_4xh(uint8_t *dest, ptrdiff_t stride,
+static inline void filter_4xh(uint8_t *dest, ptrdiff_t stride,
                               const uint8_t *const top_ptr,
                               const uint8_t *const left_ptr, int mode,
                               const int height) {
@@ -208,7 +208,7 @@ static INLINE void filter_4xh(uint8_t *dest, ptrdiff_t stride,
   }
 }
 
-static INLINE void filter_intra_predictor_sse4_1(void *const dest,
+static inline void filter_intra_predictor_sse4_1(void *const dest,
                                                  ptrdiff_t stride,
                                                  const void *const top_row,
                                                  const void *const left_column,

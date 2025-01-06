@@ -35,8 +35,11 @@
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
 #include "Page.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceLogging);
 
 #if !RELEASE_LOG_DISABLED
 static ASCIILiteral toString(PerformanceLogging::PointOfInterest poi)

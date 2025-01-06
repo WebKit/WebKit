@@ -11,7 +11,7 @@
 #ifndef API_METRONOME_METRONOME_H_
 #define API_METRONOME_METRONOME_H_
 
-#include "api/task_queue/task_queue_base.h"
+#include "absl/functional/any_invocable.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -36,7 +36,8 @@ class RTC_EXPORT Metronome {
   // executed on the same sequence as they were requested on. There are no
   // features for cancellation. When that's needed, use e.g. ScopedTaskSafety
   // from the client.
-  virtual void RequestCallOnNextTick(absl::AnyInvocable<void() &&> callback) {}
+  virtual void RequestCallOnNextTick(
+      absl::AnyInvocable<void() &&> /* callback */) {}
 
   // Returns the current tick period of the metronome.
   virtual TimeDelta TickPeriod() const = 0;

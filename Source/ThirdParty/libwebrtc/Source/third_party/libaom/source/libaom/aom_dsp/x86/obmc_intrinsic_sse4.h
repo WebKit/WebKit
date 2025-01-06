@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,8 +15,9 @@
 #include <smmintrin.h>
 
 #include "aom_dsp/x86/obmc_intrinsic_ssse3.h"
+#include "aom_dsp/x86/synonyms.h"
 
-static INLINE void obmc_variance_w4(const uint8_t *pre, const int pre_stride,
+static inline void obmc_variance_w4(const uint8_t *pre, const int pre_stride,
                                     const int32_t *wsrc, const int32_t *mask,
                                     unsigned int *const sse, int *const sum,
                                     const int h) {
@@ -28,7 +29,7 @@ static INLINE void obmc_variance_w4(const uint8_t *pre, const int pre_stride,
   assert(IS_POWER_OF_TWO(h));
 
   do {
-    const __m128i v_p_b = _mm_cvtsi32_si128(*(const int *)(pre + n));
+    const __m128i v_p_b = xx_loadl_32(pre + n);
     const __m128i v_m_d = _mm_load_si128((const __m128i *)(mask + n));
     const __m128i v_w_d = _mm_load_si128((const __m128i *)(wsrc + n));
 

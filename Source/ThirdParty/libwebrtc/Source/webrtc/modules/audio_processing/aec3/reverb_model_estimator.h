@@ -15,9 +15,9 @@
 #if defined(WEBRTC_WEBKIT_BUILD)
 #include <memory>
 #endif
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"  // kFftLengthBy2Plus1
@@ -40,7 +40,7 @@ class ReverbModelEstimator {
       rtc::ArrayView<const std::vector<float>> impulse_responses,
       rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
           frequency_responses,
-      rtc::ArrayView<const absl::optional<float>> linear_filter_qualities,
+      rtc::ArrayView<const std::optional<float>> linear_filter_qualities,
       rtc::ArrayView<const int> filter_delays_blocks,
       const std::vector<bool>& usable_linear_estimates,
       bool stationary_block);

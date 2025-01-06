@@ -1,7 +1,9 @@
 <html>
 <head>
 <script>
-function testRects()
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
+async function testRects()
 {
     if (!window.testRunner ||  !window.internals)
         return;
@@ -12,7 +14,7 @@ function testRects()
     var rectList = range.getClientRects();
     var rect = rectList[0];
    
-    window.internals.setPageScaleFactor(2, 0, 0);
+    await window.testRunner.setPageScaleFactor(2, 0, 0);
     var scaledRange = document.createRange();
     scaledRange.selectNode(document.getElementById('div'));
     var scaledRectList = scaledRange.getClientRects();
@@ -26,6 +28,7 @@ function testRects()
         result.innerHTML = "Pass";
     else
         result.innerHTML = "Fail";
+    testRunner.notifyDone();
     
 }
 </script>

@@ -17,11 +17,11 @@ DEPS = [
 
 def RunSteps(api):
   api.vars.setup()
-  checkout_root = api.vars.cache_dir.join('work')
-  out_dir = checkout_root.join(
+  checkout_root = api.vars.cache_dir.joinpath('work')
+  out_dir = checkout_root.joinpath(
       'skia', 'out', api.vars.builder_name, api.vars.configuration)
   api.build(checkout_root=checkout_root, out_dir=out_dir)
-  dst = api.vars.swarming_out_dir.join('out', api.vars.configuration)
+  dst = api.vars.swarming_out_dir.joinpath('out', api.vars.configuration)
   api.build.copy_build_products(out_dir=out_dir, dst=dst)
   api.run.check_failure()
 
@@ -34,6 +34,7 @@ TEST_BUILDERS = [
   'Build-Debian10-Clang-arm64-Debug-Android_FrameworkWorkarounds',
   'Build-Debian10-Clang-arm64-Debug-Android_Graphite_Native_Vulkan',
   'Build-Debian10-Clang-arm64-Debug-Android_HWASAN',
+  'Build-Debian10-Clang-arm64-Release-Android_Graphite_Dawn_GLES',
   'Build-Debian10-Clang-arm64-Release-Android_Graphite_Dawn_Vulkan',
   'Build-Debian10-Clang-arm64-Release-Android_Wuffs',
   'Build-Debian10-Clang-x86_64-Debug-ASAN_Graphite_Native_Vulkan',
@@ -58,6 +59,7 @@ TEST_BUILDERS = [
   'Build-Debian10-Clang-x86_64-Release-CMake',
   'Build-Debian10-Clang-x86_64-Release-Fast',
   'Build-Debian10-Clang-x86_64-Release-NoDEPS',
+  'Build-Debian10-Clang-x86_64-Release-RustPNG',
   'Build-Debian10-Clang-x86_64-Release-Static',
   'Build-Debian10-Clang-x86_64-Release-SwiftShader',
   'Build-Debian10-Clang-x86_64-Release-Vulkan',
@@ -83,7 +85,7 @@ TEST_BUILDERS = [
   'Build-Mac-Clang-arm64-Release-Graphite_Native_Metal',
   'Build-Mac-Clang-arm64-Release-Graphite_Native_Dawn_Metal',
   'Build-Mac-Clang-x86_64-Release-Graphite_Native_Metal_Vello',
-  'Build-Mac-Xcode11.4.1-arm64-Debug-iOS',
+  'Build-Mac-Clang-arm64-Debug-iOS_iOS12',
   'Build-Mac-Clang-x86_64-Debug-ASAN',
   'Build-Mac-Clang-x86_64-Debug-Metal',
   'Build-Win-Clang-arm64-Release-Android',

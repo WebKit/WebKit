@@ -24,7 +24,7 @@ headers: "ArgumentCoders.h"
 
 enum class WebCore::UserInterfaceLayoutDirection : bool;
 
-[RValue] struct WebKit::WebPageCreationParameters {
+[RValue, DebugDecodingFailure] struct WebKit::WebPageCreationParameters {
     WebCore::IntSize viewSize;
 
     OptionSet<WebCore::ActivityState> activityState;
@@ -62,9 +62,6 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     double gapBetweenPages;
 
     String userAgent;
-
-    bool itemStatesWereRestoredByAPIRequest;
-    Vector<WebKit::BackForwardListItemState> itemStates;
 
     WebKit::VisitedLinkTableIdentifier visitedLinkTableID;
     bool canRunBeforeUnloadConfirmPanel;
@@ -109,7 +106,6 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
 #if PLATFORM(MAC)
     std::optional<WebCore::DestinationColorSpace> colorSpace;
-    bool useSystemAppearance;
     bool useFormSemanticContext;
     int headerBannerHeight;
     int footerBannerHeight;
@@ -118,7 +114,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #if ENABLE(META_VIEWPORT)
     bool ignoresViewportScaleLimits;
     WebCore::FloatSize viewportConfigurationViewLayoutSize;
-    double viewportConfigurationLayoutSizeScaleFactor;
+    double viewportConfigurationLayoutSizeScaleFactorFromClient;
     double viewportConfigurationMinimumEffectiveDeviceWidth;
     WebCore::FloatSize viewportConfigurationViewSize;
     std::optional<WebCore::ViewportArguments> overrideViewportArguments;
@@ -146,6 +142,9 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #endif
 #if HAVE(STATIC_FONT_REGISTRY)
     Vector<WebKit::SandboxExtensionHandle> fontMachExtensionHandles;
+#endif
+#if HAVE(HOSTED_CORE_ANIMATION)
+    MachSendRight acceleratedCompositingPort;
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor;
@@ -217,7 +216,6 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #endif
     bool shouldEnableVP8Decoder;
     bool shouldEnableVP9Decoder;
-    bool shouldEnableVP9SWDecoder;
 #if ENABLE(APP_BOUND_DOMAINS)
     bool limitsNavigationsToAppBoundDomains;
 #endif
@@ -244,9 +242,12 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension;
 
-    std::optional<WebKit::SubframeProcessPageParameters> subframeProcessPageParameters;
-    std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
-    std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
+    std::optional<WebKit::RemotePageParameters> remotePageParameters;
+    WebCore::FrameIdentifier mainFrameIdentifier;
+    String openedMainFrameName;
+    std::optional<WebCore::FrameIdentifier> mainFrameOpenerIdentifier;
+    WebCore::SandboxFlags initialSandboxFlags;
+    std::optional<WebCore::WindowFeatures> windowFeatures;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData;
@@ -257,12 +258,22 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     WebKit::SandboxExtensionHandle machBootstrapHandle;
 #endif
 
-#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#if USE(GBM)
     Vector<WebKit::DMABufRendererBufferFormat> preferredBufferFormats;
+#endif
+#endif
+
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+    WebCore::ShouldRequireExplicitConsentForGamepadAccess gamepadAccessRequiresExplicitConsent;
+#endif
+
+#if HAVE(AUDIT_TOKEN)
+    std::optional<WebKit::CoreIPCAuditToken> presentingApplicationAuditToken;
 #endif
 }
 
-[Nested] struct WebKit::SubframeProcessPageParameters {
+[Nested] struct WebKit::RemotePageParameters {
     URL initialMainDocumentURL;
     WebKit::FrameTreeCreationParameters frameTreeParameters;
     std::optional<WebKit::WebsitePoliciesData> websitePoliciesData;

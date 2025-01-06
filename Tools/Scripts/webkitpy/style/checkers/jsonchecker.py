@@ -25,10 +25,7 @@
 import json
 import os
 import re
-import sys
 from collections import defaultdict
-
-import six
 
 
 class JSONChecker(object):
@@ -372,12 +369,14 @@ class JSONCSSPropertiesChecker(JSONChecker):
         keys_and_validators = {
             'aliases': self.validate_array,
             'auto-functions': self.validate_boolean,
+            'cascade-alias': self.validate_string,
             'color-property': self.validate_boolean,
             'comment': self.validate_string,
             'computable': self.validate_boolean,
             'conditional-converter': self.validate_string,
             'converter': self.validate_string,
             'custom': self.validate_string,
+            'disables-native-appearance': self.validate_boolean,
             'enable-if': self.validate_string,
             'fast-path-inherited': self.validate_boolean,
             'fill-layer-property': self.validate_boolean,
@@ -414,7 +413,6 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'skip-builder': self.validate_boolean,
             'skip-codegen': self.validate_boolean,
             'skip-parser': self.validate_boolean,
-            'synonym': self.validate_string,
             'svg': self.validate_boolean,
             'visited-link-color-support': self.validate_boolean,
         }
@@ -449,15 +447,9 @@ class JSONImportExpectationsChecker(JSONChecker):
         # strings. Thus, iterating over non-overlapping matches of this regex will give
         # all strings, and it can be applied on a per line basis as strings cannot
         # contain line breaks.
-        if sys.maxunicode == 0xFFFF:
-            # Python 2 (sometimes, depending on configuration)
-            json_string_re = re.compile(
-                u'"(?:[\\x20-\\x21\\x23-\\x5B\\x5D-\uFFFF]|\\\\(?:[\\x22\\x5C\\x2F\\x08\\x0C\\x0A\\x0D\\x09]|u[0-9a-fA-F]{4}))*"'
-            )
-        else:
-            json_string_re = re.compile(
-                u'"(?:[\\x20-\\x21\\x23-\\x5B\\x5D-\U0010FFFF]|\\\\(?:[\\x22\\x5C\\x2F\\x08\\x0C\\x0A\\x0D\\x09]|u[0-9a-fA-F]{4}))*"'
-            )
+        json_string_re = re.compile(
+            u'"(?:[\\x20-\\x21\\x23-\\x5B\\x5D-\U0010FFFF]|\\\\(?:[\\x22\\x5C\\x2F\\x08\\x0C\\x0A\\x0D\\x09]|u[0-9a-fA-F]{4}))*"'
+        )
 
         string_to_lines = defaultdict(set)
         for i, line in enumerate(lines):
@@ -475,7 +467,7 @@ class JSONImportExpectationsChecker(JSONChecker):
             valid = True
 
             # This is an assert because JSON requires it, and thus should be infallible.
-            assert isinstance(key, six.text_type)
+            assert isinstance(key, str)
 
             if key != "web-platform-tests" and not key.startswith(
                 "web-platform-tests/"

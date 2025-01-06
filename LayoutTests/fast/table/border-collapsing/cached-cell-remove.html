@@ -7,12 +7,13 @@ Here we remove cell, expect that cache is invalidated and paint produces expecte
         <title></title>
         <link rel="stylesheet" href="resources/cached.css">
         <script type="text/javascript">
-            function test() {
+            async function test() {
                 document.body.offsetTop;
-                if (window.testRunner)
-                    testRunner.displayAndTrackRepaints();
+                testRunner?.waitUntilDone();
+                await testRunner?.displayAndTrackRepaints();
                 barCell = document.getElementById("bar");
                 document.getElementById("row").removeChild(barCell);
+                testRunner?.notifyDone();
             }
         </script>
     </head>

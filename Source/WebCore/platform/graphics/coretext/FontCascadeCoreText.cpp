@@ -30,11 +30,14 @@
 #include "GraphicsContext.h"
 #include "LayoutRect.h"
 #include "Logging.h"
-#include "RuntimeApplicationChecks.h"
+#include "RenderStyle.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
+#include <wtf/RuntimeApplicationChecks.h>
 
 #include <pal/spi/cf/CoreTextSPI.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -107,7 +110,7 @@ AffineTransform computeVerticalTextMatrix(const Font& font, const AffineTransfor
     return computeBaseVerticalTextMatrix(previousTextMatrix);
 }
 
-static void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef context, const CGSize* advances, unsigned count, const FloatPoint& point)
+static void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef context, std::span<const CGSize> advances, const FloatPoint& point)
 {
     // Keep this in sync as the inverse of `DrawGlyphsRecorder::recordDrawGlyphs`.
     // The input positions are in the context's coordinate system, without the text matrix.
@@ -120,14 +123,14 @@ static void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positio
     // positions we need to deliver to CT = inverse(text matrix) * input positions
     CGAffineTransform matrix = CGAffineTransformInvert(CGContextGetTextMatrix(context));
     positions[0] = CGPointApplyAffineTransform(point, matrix);
-    for (unsigned i = 1; i < count; ++i) {
+    for (size_t i = 1; i < advances.size(); ++i) {
         CGSize advance = CGSizeApplyAffineTransform(advances[i - 1], matrix);
         positions[i].x = positions[i - 1].x + advance.width;
         positions[i].y = positions[i - 1].y + advance.height;
     }
 }
 
-static void fillVectorWithVerticalGlyphPositions(Vector<CGPoint, 256>& positions, const CGSize translations[], const CGSize advances[], unsigned count, const FloatPoint& point, float ascentDelta, CGAffineTransform textMatrix)
+static void fillVectorWithVerticalGlyphPositions(Vector<CGPoint, 256>& positions, std::span<const CGSize> translations, std::span<const CGSize> advances, const FloatPoint& point, float ascentDelta, CGAffineTransform textMatrix)
 {
     // Keep this function in sync as the inverse of `DrawGlyphsRecorder::recordDrawGlyphs`.
 
@@ -241,7 +244,7 @@ static void fillVectorWithVerticalGlyphPositions(Vector<CGPoint, 256>& positions
 
     static const auto constantSyntheticTextMatrixOmittingOblique = computeBaseVerticalTextMatrix(computeBaseOverallTextMatrix(std::nullopt)); // See fillVectorWithVerticalGlyphPositions(), which describes what this is.
 
-    for (unsigned i = 0; i < count; ++i) {
+    for (unsigned i = 0; i < translations.size(); ++i) {
         // The "translations" parameter is in the "synthetic-oblique-less text coordinate system" and we want to add it to the position in the user
         // coordinate system. Luckily, the text matrix (or, at least the version of the text matrix that doesn't include synthetic oblique) does exactly
         // this. So, we just create the synthetic-oblique-less text matrix, and run the translation through it. This gives us the translation in user
@@ -260,25 +263,25 @@ static void fillVectorWithVerticalGlyphPositions(Vector<CGPoint, 256>& positions
     }
 }
 
-static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, unsigned count, const AffineTransform& textMatrix)
+static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CGContextRef context, std::span<const CGGlyph> glyphs, std::span<const CGSize> advances, const AffineTransform& textMatrix)
 {
-    if (!count)
+    if (glyphs.empty())
         return;
 
     const FontPlatformData& platformData = font.platformData();
-    Vector<CGPoint, 256> positions(count);
+    Vector<CGPoint, 256> positions(glyphs.size());
     if (platformData.orientation() == FontOrientation::Vertical) {
         ScopedTextMatrix savedMatrix(computeVerticalTextMatrix(font, textMatrix), context);
 
-        Vector<CGSize, 256> translations(count);
-        CTFontGetVerticalTranslationsForGlyphs(platformData.ctFont(), glyphs, translations.data(), count);
+        Vector<CGSize, 256> translations(glyphs.size());
+        CTFontGetVerticalTranslationsForGlyphs(platformData.ctFont(), glyphs.data(), translations.data(), glyphs.size());
 
         auto ascentDelta = font.fontMetrics().ascent(IdeographicBaseline) - font.fontMetrics().ascent();
-        fillVectorWithVerticalGlyphPositions(positions, translations.data(), advances, count, point, ascentDelta, CGContextGetTextMatrix(context));
-        CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
+        fillVectorWithVerticalGlyphPositions(positions, translations, advances, point, ascentDelta, CGContextGetTextMatrix(context));
+        CTFontDrawGlyphs(platformData.ctFont(), glyphs.data(), positions.data(), glyphs.size(), context);
     } else {
-        fillVectorWithHorizontalGlyphPositions(positions, context, advances, count, point);
-        CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
+        fillVectorWithHorizontalGlyphPositions(positions, context, advances, point);
+        CTFontDrawGlyphs(platformData.ctFont(), glyphs.data(), positions.data(), glyphs.size(), context);
     }
 }
 
@@ -296,13 +299,13 @@ static void setCGFontRenderingMode(GraphicsContext& context)
     CGContextSetShouldSubpixelQuantizeFonts(cgContext, doSubpixelQuantization);
 }
 
-void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode smoothingMode)
+void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& anchorPoint, FontSmoothingMode smoothingMode)
 {
     const auto& platformData = font.platformData();
     if (!platformData.size())
         return;
 
-    if (isInGPUProcess() && font.hasAnyComplexColorFormatGlyphs(glyphs, numGlyphs)) {
+    if (isInGPUProcess() && font.hasAnyComplexColorFormatGlyphs(glyphs)) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -368,19 +371,19 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         Color fillColor = context.fillColor();
         Color shadowFillColor = shadow->color.colorWithAlphaMultipliedBy(fillColor.alphaAsFloat());
         context.setFillColor(shadowFillColor);
-        float shadowTextX = point.x() + shadow->offset.width();
-        // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
-        float shadowTextY = point.y() + shadow->offset.height() * (context.shadowsIgnoreTransforms() ? -1 : 1);
-        showGlyphsWithAdvances(FloatPoint(shadowTextX, shadowTextY), font, cgContext, glyphs, advances, numGlyphs, textMatrix);
-        if (syntheticBoldOffset)
-            showGlyphsWithAdvances(FloatPoint(shadowTextX + syntheticBoldOffset, shadowTextY), font, cgContext, glyphs, advances, numGlyphs, textMatrix);
+        auto shadowTextOffset = point + context.platformShadowOffset(shadow->offset);
+        showGlyphsWithAdvances(shadowTextOffset, font, cgContext, glyphs, advances, textMatrix);
+        if (syntheticBoldOffset) {
+            shadowTextOffset.move(syntheticBoldOffset, 0);
+            showGlyphsWithAdvances(shadowTextOffset, font, cgContext, glyphs, advances, textMatrix);
+        }
         context.setFillColor(fillColor);
     }
 
-    showGlyphsWithAdvances(point, font, cgContext, glyphs, advances, numGlyphs, textMatrix);
+    showGlyphsWithAdvances(point, font, cgContext, glyphs, advances, textMatrix);
 
     if (syntheticBoldOffset)
-        showGlyphsWithAdvances(FloatPoint(point.x() + syntheticBoldOffset, point.y()), font, cgContext, glyphs, advances, numGlyphs, textMatrix);
+        showGlyphsWithAdvances(FloatPoint(point.x() + syntheticBoldOffset, point.y()), font, cgContext, glyphs, advances, textMatrix);
 
     if (hasSimpleShadow)
         context.setDropShadow(*shadow);
@@ -397,10 +400,10 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
 bool FontCascade::primaryFontIsSystemFont() const
 {
     const auto& fontData = primaryFont();
-    return isSystemFont(fontData.platformData().ctFont());
+    return isSystemFont(fontData.getCTFont());
 }
 
-const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
+RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
     auto codePoints = stringView.codePoints();
     auto codePointsIterator = codePoints.begin();
@@ -422,7 +425,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
 
     for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
         auto& fontRanges = fallbackRangesAt(i);
-        if (fontRanges.isGeneric() && isPrivateUseAreaCharacter(baseCharacter))
+        if (fontRanges.isGenericFontFamily() && isPrivateUseAreaCharacter(baseCharacter))
             continue;
         const Font* font = fontRanges.fontForCharacter(baseCharacter);
         if (!font)
@@ -458,7 +461,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
     if (!triedBaseCharacterFont && baseCharacterGlyphData.font && baseCharacterGlyphData.font->canRenderCombiningCharacterSequence(stringView))
         return baseCharacterGlyphData.font.get();
 
-    return Font::systemFallback();
+    return Font::createSystemFallbackFontPlaceholder();
 }
 
 ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariantEmoji, char32_t character)
@@ -514,4 +517,12 @@ ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariant
     }
 }
 
+bool FontCascade::canUseGlyphDisplayList(const RenderStyle& style)
+{
+    // CoreText won't call the drawImage delegate for glyphs that are invisible, even if they have an associated shadow applied to its graphic context. This would result in a glyph display list without the invisible glyph which is drawn as image and we would not draw its associated shadow. Therefore, we won't use a display list for runs that are invisible and have an associated shadow.
+    return !(style.textShadow() && !style.color().isVisible());
+}
+
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -60,5 +60,5 @@ FAIL table 13 assert_equals:
     <tr><td>vertical!</td>
   </tr></tbody>
 </table>
-offsetTop expected 100 but got 22
+offsetTop expected 100 but got 40
 

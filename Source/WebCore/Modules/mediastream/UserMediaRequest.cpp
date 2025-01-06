@@ -44,6 +44,9 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
+#include "MediaDevices.h"
+#include "Navigator.h"
+#include "NavigatorMediaDevices.h"
 #include "PermissionsPolicy.h"
 #include "PlatformMediaSessionManager.h"
 #include "RealtimeMediaSourceCenter.h"
@@ -72,8 +75,8 @@ UserMediaRequest::UserMediaRequest(Document& document, MediaStreamRequest&& requ
 
 UserMediaRequest::~UserMediaRequest()
 {
-    if (m_allowCompletionHandler)
-        m_allowCompletionHandler();
+    if (auto completionHandler = std::exchange(m_allowCompletionHandler, { }))
+        completionHandler();
 }
 
 SecurityOrigin* UserMediaRequest::userMediaDocumentOrigin() const
@@ -136,7 +139,9 @@ void UserMediaRequest::start()
         break;
     }
 
-    PlatformMediaSessionManager::sharedManager().prepareToSendUserMediaPermissionRequest();
+    ASSERT(document.page());
+    if (RefPtr page = document.protectedPage())
+        PlatformMediaSessionManager::singleton().prepareToSendUserMediaPermissionRequestForPage(*page);
     controller->requestUserMediaAccess(*this);
 }
 
@@ -153,6 +158,13 @@ static inline bool isMediaStreamCorrectlyStarted(const MediaStream& stream)
 void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, MediaDeviceHashSalts&& deviceIdentifierHashSalt, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? audioDevice.persistentId().utf8().data() : "", videoDevice ? videoDevice.persistentId().utf8().data() : "");
+
+    Ref document = downcast<Document>(*scriptExecutionContext());
+    RefPtr localWindow = document->protectedWindow();
+    RefPtr mediaDevices = localWindow ? NavigatorMediaDevices::mediaDevices(localWindow->protectedNavigator()) : nullptr;
+    if (mediaDevices)
+        mediaDevices->willStartMediaCapture(!!audioDevice, !!videoDevice);
+
     m_allowCompletionHandler = WTFMove(completionHandler);
     queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this, audioDevice = WTFMove(audioDevice), videoDevice = WTFMove(videoDevice), deviceIdentifierHashSalt = WTFMove(deviceIdentifierHashSalt)]() mutable {
         auto callback = [this, protector = makePendingActivity(*this)](auto privateStreamOrError) mutable {
@@ -265,8 +277,8 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
 
 void UserMediaRequest::stop()
 {
-    auto& document = downcast<Document>(*scriptExecutionContext());
-    if (auto* controller = UserMediaController::from(document.page()))
+    Ref document = downcast<Document>(*scriptExecutionContext());
+    if (auto* controller = UserMediaController::from(document->page()))
         controller->cancelUserMediaAccessRequest(*this);
 }
 

@@ -32,12 +32,12 @@ namespace WebCore {
 
 Ref<ByteArrayPixelBuffer> ByteArrayPixelBuffer::create(const PixelBufferFormat& format, const IntSize& size, JSC::Uint8ClampedArray& data)
 {
+    ASSERT(format.pixelFormat == PixelFormat::RGBA8 || format.pixelFormat == PixelFormat::BGRA8);
     return adoptRef(*new ByteArrayPixelBuffer(format, size, { data }));
 }
 
 std::optional<Ref<ByteArrayPixelBuffer>> ByteArrayPixelBuffer::create(const PixelBufferFormat& format, const IntSize& size, std::span<const uint8_t> data)
 {
-    // FIXME: Support non-8 bit formats.
     if (!(format.pixelFormat == PixelFormat::RGBA8 || format.pixelFormat == PixelFormat::BGRA8)) {
         ASSERT_NOT_REACHED();
         return std::nullopt;
@@ -67,6 +67,11 @@ RefPtr<ByteArrayPixelBuffer> ByteArrayPixelBuffer::tryCreate(const PixelBufferFo
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));
 
+    if (!(format.pixelFormat == PixelFormat::RGBA8 || format.pixelFormat == PixelFormat::BGRA8)) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
     auto bufferSize = computeBufferSize(format.pixelFormat, size);
     if (bufferSize.hasOverflowed())
         return nullptr;
@@ -81,6 +86,11 @@ RefPtr<ByteArrayPixelBuffer> ByteArrayPixelBuffer::tryCreate(const PixelBufferFo
 RefPtr<ByteArrayPixelBuffer> ByteArrayPixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::ArrayBuffer>&& arrayBuffer)
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));
+
+    if (!(format.pixelFormat == PixelFormat::RGBA8 || format.pixelFormat == PixelFormat::BGRA8)) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 
     auto bufferSize = computeBufferSize(format.pixelFormat, size);
     if (bufferSize.hasOverflowed())
@@ -105,8 +115,9 @@ RefPtr<PixelBuffer> ByteArrayPixelBuffer::createScratchPixelBuffer(const IntSize
 
 std::span<const uint8_t> ByteArrayPixelBuffer::span() const
 {
-    ASSERT(m_data->byteLength() == (m_size.area() * 4));
-    return m_data->span();
+    Ref data = m_data;
+    ASSERT(data->byteLength() == (m_size.area() * 4));
+    return data->span();
 }
 
 } // namespace WebCore

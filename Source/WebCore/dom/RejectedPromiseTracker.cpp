@@ -46,10 +46,13 @@
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
 #include <JavaScriptCore/WeakInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RejectedPromiseTracker);
 
 class UnhandledPromise {
     WTF_MAKE_NONCOPYABLE(UnhandledPromise);
@@ -88,10 +91,8 @@ RejectedPromiseTracker::~RejectedPromiseTracker() = default;
 
 static RefPtr<ScriptCallStack> createScriptCallStackFromReason(JSGlobalObject& lexicalGlobalObject, JSValue reason)
 {
-    VM& vm = lexicalGlobalObject.vm();
-
     // Always capture a stack from the exception if this rejection was an exception.
-    if (auto* exception = vm.lastException()) {
+    if (auto* exception = lexicalGlobalObject.vm().lastException()) {
         if (exception->value() == reason)
             return createScriptCallStackFromException(&lexicalGlobalObject, exception);
     }

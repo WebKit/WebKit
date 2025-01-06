@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -241,7 +241,7 @@ static void cfl_luma_subsampling_444_hbd_avx2(const uint16_t *input,
 CFL_GET_SUBSAMPLE_FUNCTION_AVX2(444, hbd)
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
-static INLINE __m256i predict_unclipped(const __m256i *input, __m256i alpha_q12,
+static inline __m256i predict_unclipped(const __m256i *input, __m256i alpha_q12,
                                         __m256i alpha_sign, __m256i dc_q0) {
   __m256i ac_q3 = _mm256_loadu_si256(input);
   __m256i ac_sign = _mm256_sign_epi16(alpha_sign, ac_q3);
@@ -251,7 +251,7 @@ static INLINE __m256i predict_unclipped(const __m256i *input, __m256i alpha_q12,
   return _mm256_add_epi16(scaled_luma_q0, dc_q0);
 }
 
-static INLINE void cfl_predict_lbd_avx2(const int16_t *pred_buf_q3,
+static inline void cfl_predict_lbd_avx2(const int16_t *pred_buf_q3,
                                         uint8_t *dst, int dst_stride,
                                         int alpha_q3, int width, int height) {
   (void)width;
@@ -313,7 +313,7 @@ static __m256i highbd_clamp_epi16(__m256i u, __m256i zero, __m256i max) {
   return _mm256_max_epi16(_mm256_min_epi16(u, max), zero);
 }
 
-static INLINE void cfl_predict_hbd_avx2(const int16_t *pred_buf_q3,
+static inline void cfl_predict_hbd_avx2(const int16_t *pred_buf_q3,
                                         uint16_t *dst, int dst_stride,
                                         int alpha_q3, int bd, int width,
                                         int height) {
@@ -379,7 +379,7 @@ cfl_predict_hbd_fn cfl_get_predict_hbd_fn_avx2(TX_SIZE tx_size) {
 
 // Returns a vector where all the (32-bits) elements are the sum of all the
 // lanes in a.
-static INLINE __m256i fill_sum_epi32(__m256i a) {
+static inline __m256i fill_sum_epi32(__m256i a) {
   // Given that a == [A, B, C, D, E, F, G, H]
   a = _mm256_hadd_epi32(a, a);
   // Given that A' == A + B, C' == C + D, E' == E + F, G' == G + H
@@ -394,12 +394,12 @@ static INLINE __m256i fill_sum_epi32(__m256i a) {
   // a == [A''', A''', A''', A''', A''', A''', A''', A''']
 }
 
-static INLINE __m256i _mm256_addl_epi16(__m256i a) {
+static inline __m256i _mm256_addl_epi16(__m256i a) {
   return _mm256_add_epi32(_mm256_unpacklo_epi16(a, _mm256_setzero_si256()),
                           _mm256_unpackhi_epi16(a, _mm256_setzero_si256()));
 }
 
-static INLINE void subtract_average_avx2(const uint16_t *src_ptr,
+static inline void subtract_average_avx2(const uint16_t *src_ptr,
                                          int16_t *dst_ptr, int width,
                                          int height, int round_offset,
                                          int num_pel_log2) {

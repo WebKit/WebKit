@@ -27,17 +27,28 @@
 #include "SampleBufferDisplayLayerManager.h"
 
 #include "Decoder.h"
+#include "GPUProcessConnection.h"
 #include <WebCore/IntSize.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SampleBufferDisplayLayerManager);
+
+SampleBufferDisplayLayerManager::SampleBufferDisplayLayerManager(GPUProcessConnection& gpuProcessConnection)
+    : m_gpuProcessConnection(gpuProcessConnection)
+{
+}
+
 void SampleBufferDisplayLayerManager::didReceiveLayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (auto* layer = m_layers.get(ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID())).get())
-        layer->didReceiveMessage(connection, decoder);
+    if (ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        if (auto* layer = m_layers.get(ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID())).get())
+            layer->didReceiveMessage(connection, decoder);
+    }
 }
 
 RefPtr<WebCore::SampleBufferDisplayLayer> SampleBufferDisplayLayerManager::createLayer(WebCore::SampleBufferDisplayLayerClient& client)
@@ -57,6 +68,16 @@ void SampleBufferDisplayLayerManager::removeLayer(SampleBufferDisplayLayer& laye
 {
     ASSERT(m_layers.contains(layer.identifier()));
     m_layers.remove(layer.identifier());
+}
+
+void SampleBufferDisplayLayerManager::ref() const
+{
+    m_gpuProcessConnection.get()->ref();
+}
+
+void SampleBufferDisplayLayerManager::deref() const
+{
+    m_gpuProcessConnection.get()->deref();
 }
 
 }

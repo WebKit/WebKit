@@ -28,16 +28,8 @@
 #include "DownloadID.h"
 #include "NetworkDataTask.h"
 #include "NetworkLoadParameters.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebKit {
-class NetworkLoad;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkLoad> : std::true_type { };
-}
 
 namespace WebCore {
 class AuthenticationChallenge;
@@ -49,11 +41,22 @@ class NetworkLoadClient;
 class NetworkLoadScheduler;
 class NetworkProcess;
 
-class NetworkLoad final : public NetworkDataTaskClient {
-    WTF_MAKE_FAST_ALLOCATED;
+class NetworkLoad final : public RefCounted<NetworkLoad>, public NetworkDataTaskClient {
+    WTF_MAKE_TZONE_ALLOCATED(NetworkLoad);
 public:
-    NetworkLoad(NetworkLoadClient&, NetworkLoadParameters&&, NetworkSession&);
-    NetworkLoad(NetworkLoadClient&, NetworkSession&, const Function<RefPtr<NetworkDataTask>(NetworkDataTaskClient&)>&);
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    static Ref<NetworkLoad> create(NetworkLoadClient& networkLoadClient, NetworkLoadParameters&& networkLoadParameters, NetworkSession& networkSession)
+    {
+        return adoptRef(*new NetworkLoad(networkLoadClient, WTFMove(networkLoadParameters), networkSession));
+    }
+
+    static Ref<NetworkLoad> create(NetworkLoadClient& networkLoadClient, NetworkSession& networkSession, const Function<RefPtr<NetworkDataTask>(NetworkDataTaskClient&)>& createTask)
+    {
+        return adoptRef(*new NetworkLoad(networkLoadClient, networkSession, createTask));
+    }
+
     ~NetworkLoad();
 
     void start();
@@ -74,7 +77,7 @@ public:
     void setPendingDownloadID(DownloadID);
     void setSuggestedFilename(const String&);
     void setPendingDownload(PendingDownload&);
-    DownloadID pendingDownloadID() { return m_task->pendingDownloadID(); }
+    std::optional<DownloadID> pendingDownloadID() { return protectedTask()->pendingDownloadID(); }
 
     bool shouldCaptureExtraNetworkLoadMetrics() const final;
 
@@ -82,8 +85,14 @@ public:
     void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
 
     void setTimingAllowFailedFlag();
+    std::optional<WebCore::FrameIdentifier> webFrameID() const;
+    std::optional<WebCore::PageIdentifier> webPageID() const;
+    Ref<NetworkProcess> networkProcess();
 
 private:
+    NetworkLoad(NetworkLoadClient&, NetworkLoadParameters&&, NetworkSession&);
+    NetworkLoad(NetworkLoadClient&, NetworkSession&, const Function<RefPtr<NetworkDataTask>(NetworkDataTaskClient&)>&);
+
     // NetworkDataTaskClient
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
     void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) final;
@@ -97,6 +106,8 @@ private:
     void wasBlockedByRestrictions() final;
     void wasBlockedByDisabledFTP() final;
     void didNegotiateModernTLS(const URL&) final;
+
+    RefPtr<NetworkDataTask> protectedTask();
 
     void notifyDidReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&&);
 

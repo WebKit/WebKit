@@ -109,7 +109,7 @@ RTCError IceParameters::Validate() const {
   return RTCError::OK();
 }
 
-absl::optional<ConnectionRole> StringToConnectionRole(
+std::optional<ConnectionRole> StringToConnectionRole(
     absl::string_view role_str) {
   const char* const roles[] = {
       CONNECTIONROLE_ACTIVE_STR, CONNECTIONROLE_PASSIVE_STR,
@@ -120,7 +120,7 @@ absl::optional<ConnectionRole> StringToConnectionRole(
       return static_cast<ConnectionRole>(CONNECTIONROLE_ACTIVE + i);
     }
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 bool ConnectionRoleToString(const ConnectionRole& role, std::string* role_str) {

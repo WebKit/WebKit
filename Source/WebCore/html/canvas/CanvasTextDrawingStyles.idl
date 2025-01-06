@@ -30,4 +30,6 @@ interface mixin CanvasTextDrawingStyles {
     attribute CanvasTextAlign textAlign; // (default: "start")
     attribute CanvasTextBaseline textBaseline; // (default: "alphabetic")
     attribute CanvasDirection direction; // (default: "inherit")
+    attribute DOMString letterSpacing; // (default: "0px")
+    attribute DOMString wordSpacing; // (default: "0px")
 };

@@ -23,7 +23,6 @@
 """Unit tests for python.py."""
 
 import os
-import sys
 import unittest
 
 from webkitpy.style.checkers.python import PythonChecker
@@ -59,8 +58,6 @@ class PythonCheckerTest(unittest.TestCase):
 
         # FIXME: https://bugs.webkit.org/show_bug.cgi?id=204133
         expected_errors = [(4, "pep8/W291", 5, "trailing whitespace")]
-        if sys.version_info < (3, 0):
-            expected_errors.append((4, "pylint/E0602", 5, "Undefined variable 'error'"))
 
         self.assertEqual(errors, expected_errors)
 

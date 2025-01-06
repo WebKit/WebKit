@@ -29,12 +29,19 @@ typedef struct vpx_writer {
   unsigned int lowvalue;
   unsigned int range;
   int count;
+  // Whether there has been an error.
+  int error;
+  // We maintain the invariant that pos <= size, i.e., we never write beyond
+  // the end of the buffer. If pos would be incremented to be greater than
+  // size, leave pos unchanged and set error to 1.
   unsigned int pos;
+  unsigned int size;
   uint8_t *buffer;
 } vpx_writer;
 
-void vpx_start_encode(vpx_writer *br, uint8_t *source);
-void vpx_stop_encode(vpx_writer *br);
+void vpx_start_encode(vpx_writer *br, uint8_t *source, size_t size);
+// Returns 0 on success and returns -1 in case of error.
+int vpx_stop_encode(vpx_writer *br);
 
 static INLINE VPX_NO_UNSIGNED_SHIFT_CHECK void vpx_write(vpx_writer *br,
                                                          int bit,
@@ -77,18 +84,25 @@ static INLINE VPX_NO_UNSIGNED_SHIFT_CHECK void vpx_write(vpx_writer *br,
   if (count >= 0) {
     int offset = shift - count;
 
-    if ((lowvalue << (offset - 1)) & 0x80000000) {
-      int x = br->pos - 1;
+    if (!br->error) {
+      if ((lowvalue << (offset - 1)) & 0x80000000) {
+        int x = (int)br->pos - 1;
 
-      while (x >= 0 && br->buffer[x] == 0xff) {
-        br->buffer[x] = 0;
-        x--;
+        while (x >= 0 && br->buffer[x] == 0xff) {
+          br->buffer[x] = 0;
+          x--;
+        }
+
+        // TODO(wtc): How to prove x >= 0?
+        br->buffer[x] += 1;
       }
 
-      br->buffer[x] += 1;
+      if (br->pos < br->size) {
+        br->buffer[br->pos++] = (lowvalue >> (24 - offset)) & 0xff;
+      } else {
+        br->error = 1;
+      }
     }
-
-    br->buffer[br->pos++] = (lowvalue >> (24 - offset)) & 0xff;
     lowvalue <<= offset;
     shift = count;
     lowvalue &= 0xffffff;

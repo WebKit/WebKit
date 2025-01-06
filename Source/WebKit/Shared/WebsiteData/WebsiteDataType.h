@@ -53,3 +53,35 @@ enum class WebsiteDataType : uint32_t {
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraitsForPersistence<WebKit::WebsiteDataType> {
+    using values = EnumValues<
+        WebKit::WebsiteDataType,
+        WebKit::WebsiteDataType::Cookies,
+        WebKit::WebsiteDataType::DiskCache,
+        WebKit::WebsiteDataType::MemoryCache,
+        WebKit::WebsiteDataType::OfflineWebApplicationCache,
+        WebKit::WebsiteDataType::SessionStorage,
+        WebKit::WebsiteDataType::LocalStorage,
+        WebKit::WebsiteDataType::WebSQLDatabases,
+        WebKit::WebsiteDataType::IndexedDBDatabases,
+        WebKit::WebsiteDataType::MediaKeys,
+        WebKit::WebsiteDataType::HSTSCache,
+        WebKit::WebsiteDataType::SearchFieldRecentSearches,
+        WebKit::WebsiteDataType::ResourceLoadStatistics,
+        WebKit::WebsiteDataType::Credentials,
+        WebKit::WebsiteDataType::ServiceWorkerRegistrations,
+        WebKit::WebsiteDataType::DOMCache,
+        WebKit::WebsiteDataType::DeviceIdHashSalt,
+        WebKit::WebsiteDataType::PrivateClickMeasurements,
+#if HAVE(ALTERNATIVE_SERVICE)
+        WebKit::WebsiteDataType::AlternativeServices,
+#endif
+        WebKit::WebsiteDataType::FileSystem,
+        WebKit::WebsiteDataType::BackgroundFetchStorage
+    >;
+};
+
+} // namespace WTF

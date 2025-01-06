@@ -31,6 +31,7 @@
 
 #include <WebCore/GStreamerCodecUtilities.h>
 #include <WebCore/GStreamerCommon.h>
+#include <wtf/text/MakeString.h>
 
 using namespace WebCore;
 
@@ -49,20 +50,63 @@ void GStreamerTest::TearDownTestSuite()
     gst_deinit();
 }
 
+TEST_F(GStreamerTest, gstStructureGetters)
+{
+    GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, -5, "int64-val", G_TYPE_INT64, -10, "uint-val", G_TYPE_UINT, 5, "uint64-val", G_TYPE_UINT64, 18014398509481982, "double-val", G_TYPE_DOUBLE, 1.0, "bool-val", G_TYPE_BOOLEAN, TRUE, "str-val", G_TYPE_STRING, "hello-world", nullptr));
+    ASSERT_EQ(gstStructureGet<int>(structure.get(), "int-val"_s), -5);
+    ASSERT_TRUE(!gstStructureGet<int>(structure.get(), "int-val-noexist"_s).has_value());
+    ASSERT_EQ(gstStructureGet<int64_t>(structure.get(), "int64-val"_s), -10);
+    ASSERT_TRUE(!gstStructureGet<int64_t>(structure.get(), "int64-val-noexist"_s).has_value());
+    ASSERT_EQ(gstStructureGet<unsigned>(structure.get(), "uint-val"_s), 5);
+    ASSERT_TRUE(!gstStructureGet<unsigned>(structure.get(), "uint-val-noexist"_s).has_value());
+    ASSERT_EQ(gstStructureGet<uint64_t>(structure.get(), "uint64-val"_s), 18014398509481982);
+    ASSERT_TRUE(!gstStructureGet<uint64_t>(structure.get(), "uint64-val-noexist"_s).has_value());
+    ASSERT_EQ(gstStructureGet<double>(structure.get(), "double-val"_s), 1.0);
+    ASSERT_TRUE(!gstStructureGet<double>(structure.get(), "double-val-noexist"_s).has_value());
+    ASSERT_EQ(gstStructureGet<bool>(structure.get(), "bool-val"_s), true);
+    ASSERT_TRUE(!gstStructureGet<bool>(structure.get(), "bool-val-noexist"_s).has_value());
+    ASSERT_EQ(gstStructureGetString(structure.get(), "str-val"_s), "hello-world"_s);
+    ASSERT_TRUE(!gstStructureGetString(structure.get(), "str-val-noexist"_s));
+    ASSERT_EQ(gstStructureGetName(structure.get()), "foo"_s);
+
+    // webkit.org/b/276224
+    auto emptyIntOpt = gstStructureGet<int>(structure.get(), "int-val-noexist2"_s);
+    if (emptyIntOpt && *emptyIntOpt > 0)
+        FAIL() << "emptyIntOpt should be empty, but has value " << *emptyIntOpt;
+
+    GUniquePtr<GstStructure> arrays(gst_structure_new_from_string("bar, empty-array=(GstStructure) <>, struct-array=(GstStructure) <[s1, a=2], [s2, b=3]>"_s));
+    GUniquePtr<GstStructure> s1(gst_structure_new_from_string("s1, a=2"_s));
+    GUniquePtr<GstStructure> s2(gst_structure_new_from_string("s2, b=3"_s));
+    ASSERT_TRUE(gstStructureGetArray<const GstStructure*>(arrays.get(), "empty-array"_s).isEmpty());
+
+    Vector<const GstStructure*> structArray(gstStructureGetArray<const GstStructure*>(arrays.get(), "struct-array"_s));
+    ASSERT_TRUE(gst_structure_is_equal(structArray.at(0), s1.get()));
+    ASSERT_TRUE(gst_structure_is_equal(structArray.at(1), s2.get()));
+    ASSERT_EQ(structArray.size(), 2);
+}
+
 TEST_F(GStreamerTest, gstStructureJSONSerializing)
 {
-    GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, 5, "str-val", G_TYPE_STRING, "foo", "bool-val", G_TYPE_BOOLEAN, TRUE, nullptr));
+    GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, 5, "str-val", G_TYPE_STRING, "foo", "bool-val", G_TYPE_BOOLEAN, TRUE, "uint64-val", G_TYPE_UINT64, 18014398509481982, "uint-val", G_TYPE_UINT, 2147483648, "int64-val", G_TYPE_INT64, 666, nullptr));
     auto jsonString = gstStructureToJSONString(structure.get());
-    ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1}"_s);
+    ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1,\"uint64-val\":{\"$biguint\":\"18014398509481982\"},\"uint-val\":2147483648,\"int64-val\":{\"$bigint\":\"666\"}}"_s);
 
     GUniquePtr<GstStructure> innerStructure(gst_structure_new("bar", "boo", G_TYPE_BOOLEAN, FALSE, "double-val", G_TYPE_DOUBLE, 2.42, nullptr));
     gst_structure_set(structure.get(), "inner", GST_TYPE_STRUCTURE, innerStructure.get(), nullptr);
     jsonString = gstStructureToJSONString(structure.get());
-    ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1,\"inner\":{\"boo\":0,\"double-val\":2.42}}"_s);
+    ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1,\"uint64-val\":{\"$biguint\":\"18014398509481982\"},\"uint-val\":2147483648,\"int64-val\":{\"$bigint\":\"666\"},\"inner\":{\"boo\":0,\"double-val\":2.42}}"_s);
 
     GUniquePtr<GstStructure> structureWithList(gst_structure_new_from_string("foo, words=(string){ hello, world }"));
     jsonString = gstStructureToJSONString(structureWithList.get());
     ASSERT_EQ(jsonString, "{\"words\":[\"hello\",\"world\"]}"_s);
+}
+
+TEST_F(GStreamerTest, streamIdParsing)
+{
+    ASSERT_EQ(parseStreamId("bec5903f-df6d-4773-85bb-05be65fc1bb8"_s), 0x85bb05be65fc1bb8);
+    ASSERT_EQ(parseStreamId("647a4b9b3856ef43869870dc9e8b490e7c76512c47f9cfa7e9cf236fb9d9693d/001"_s), 1);
+    ASSERT_EQ(parseStreamId("123"_s), 123);
+    ASSERT_TRUE(!parseStreamId("foo"_s).has_value());
 }
 
 TEST_F(GStreamerTest, hevcProfileParsing)

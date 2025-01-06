@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,11 @@
 #import "WKNSURLAuthenticationChallenge.h"
 #import "_WKResourceLoadDelegate.h"
 #import "_WKResourceLoadInfoInternal.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceLoadDelegate);
 
 ResourceLoadDelegate::ResourceLoadDelegate(WKWebView *webView)
     : m_webView(webView)
@@ -67,6 +70,8 @@ void ResourceLoadDelegate::setDelegate(id <_WKResourceLoadDelegate> delegate)
     m_delegateMethods.didCompleteWithError = [delegate respondsToSelector:@selector(webView:resourceLoad:didCompleteWithError:response:)];
 }
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceLoadDelegate::ResourceLoadClient);
+
 ResourceLoadDelegate::ResourceLoadClient::ResourceLoadClient(ResourceLoadDelegate& delegate)
     : m_resourceLoadDelegate(delegate)
 {
@@ -76,62 +81,62 @@ ResourceLoadDelegate::ResourceLoadClient::~ResourceLoadClient() = default;
 
 void ResourceLoadDelegate::ResourceLoadClient::didSendRequest(WebKit::ResourceLoadInfo&& loadInfo, WebCore::ResourceRequest&& request) const
 {
-    if (!m_resourceLoadDelegate.m_delegateMethods.didSendRequest)
+    if (!m_resourceLoadDelegate->m_delegateMethods.didSendRequest)
         return;
 
-    auto delegate = m_resourceLoadDelegate.m_delegate.get();
+    auto delegate = m_resourceLoadDelegate->m_delegate.get();
     if (!delegate)
         return;
 
-    [delegate webView:m_resourceLoadDelegate.m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didSendRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)];
+    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didSendRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)];
 }
 
 void ResourceLoadDelegate::ResourceLoadClient::didPerformHTTPRedirection(WebKit::ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response, WebCore::ResourceRequest&& request) const
 {
-    if (!m_resourceLoadDelegate.m_delegateMethods.didPerformHTTPRedirection)
+    if (!m_resourceLoadDelegate->m_delegateMethods.didPerformHTTPRedirection)
         return;
 
-    auto delegate = m_resourceLoadDelegate.m_delegate.get();
+    auto delegate = m_resourceLoadDelegate->m_delegate.get();
     if (!delegate)
         return;
 
-    [delegate webView:m_resourceLoadDelegate.m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didPerformHTTPRedirection:response.nsURLResponse() newRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)];
+    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didPerformHTTPRedirection:response.nsURLResponse() newRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)];
 }
 
 void ResourceLoadDelegate::ResourceLoadClient::didReceiveChallenge(WebKit::ResourceLoadInfo&& loadInfo, WebCore::AuthenticationChallenge&& challenge) const
 {
-    if (!m_resourceLoadDelegate.m_delegateMethods.didReceiveChallenge)
+    if (!m_resourceLoadDelegate->m_delegateMethods.didReceiveChallenge)
         return;
 
-    auto delegate = m_resourceLoadDelegate.m_delegate.get();
+    auto delegate = m_resourceLoadDelegate->m_delegate.get();
     if (!delegate)
         return;
 
-    [delegate webView:m_resourceLoadDelegate.m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didReceiveChallenge:mac(challenge)];
+    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didReceiveChallenge:mac(challenge)];
 }
 
 void ResourceLoadDelegate::ResourceLoadClient::didReceiveResponse(WebKit::ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response) const
 {
-    if (!m_resourceLoadDelegate.m_delegateMethods.didReceiveResponse)
+    if (!m_resourceLoadDelegate->m_delegateMethods.didReceiveResponse)
         return;
 
-    auto delegate = m_resourceLoadDelegate.m_delegate.get();
+    auto delegate = m_resourceLoadDelegate->m_delegate.get();
     if (!delegate)
         return;
 
-    [delegate webView:m_resourceLoadDelegate.m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didReceiveResponse:response.nsURLResponse()];
+    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didReceiveResponse:response.nsURLResponse()];
 }
 
 void ResourceLoadDelegate::ResourceLoadClient::didCompleteWithError(WebKit::ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error) const
 {
-    if (!m_resourceLoadDelegate.m_delegateMethods.didCompleteWithError)
+    if (!m_resourceLoadDelegate->m_delegateMethods.didCompleteWithError)
         return;
 
-    auto delegate = m_resourceLoadDelegate.m_delegate.get();
+    auto delegate = m_resourceLoadDelegate->m_delegate.get();
     if (!delegate)
         return;
 
-    [delegate webView:m_resourceLoadDelegate.m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didCompleteWithError:error.nsError() response:response.nsURLResponse()];
+    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didCompleteWithError:error.nsError() response:response.nsURLResponse()];
 }
 
 } // namespace WebKit

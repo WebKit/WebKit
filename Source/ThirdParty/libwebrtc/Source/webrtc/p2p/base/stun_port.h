@@ -22,6 +22,7 @@
 #include "p2p/base/port.h"
 #include "p2p/base/stun_request.h"
 #include "rtc_base/async_packet_socket.h"
+#include "rtc_base/network/received_packet.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace cricket {
@@ -35,46 +36,76 @@ static const int HIGH_COST_PORT_KEEPALIVE_LIFETIME = 2 * 60 * 1000;
 class RTC_EXPORT UDPPort : public Port {
  public:
   static std::unique_ptr<UDPPort> Create(
-      rtc::Thread* thread,
-      rtc::PacketSocketFactory* factory,
-      const rtc::Network* network,
+      const PortParametersRef& args,
       rtc::AsyncPacketSocket* socket,
-      absl::string_view username,
-      absl::string_view password,
       bool emit_local_for_anyaddress,
-      absl::optional<int> stun_keepalive_interval,
-      const webrtc::FieldTrialsView* field_trials = nullptr) {
+      std::optional<int> stun_keepalive_interval) {
     // Using `new` to access a non-public constructor.
-    auto port = absl::WrapUnique(
-        new UDPPort(thread, LOCAL_PORT_TYPE, factory, network, socket, username,
-                    password, emit_local_for_anyaddress, field_trials));
+    auto port =
+        absl::WrapUnique(new UDPPort(args, webrtc::IceCandidateType::kHost,
+                                     socket, emit_local_for_anyaddress));
     port->set_stun_keepalive_delay(stun_keepalive_interval);
     if (!port->Init()) {
       return nullptr;
     }
     return port;
   }
+  [[deprecated("Pass arguments using PortParametersRef")]] static std::
+      unique_ptr<UDPPort>
+      Create(webrtc::TaskQueueBase* thread,
+             rtc::PacketSocketFactory* factory,
+             const rtc::Network* network,
+             rtc::AsyncPacketSocket* socket,
+             absl::string_view username,
+             absl::string_view password,
+             bool emit_local_for_anyaddress,
+             std::optional<int> stun_keepalive_interval,
+             const webrtc::FieldTrialsView* field_trials = nullptr) {
+    return Create({.network_thread = thread,
+                   .socket_factory = factory,
+                   .network = network,
+                   .ice_username_fragment = username,
+                   .ice_password = password,
+                   .field_trials = field_trials},
+                  socket, emit_local_for_anyaddress, stun_keepalive_interval);
+  }
 
   static std::unique_ptr<UDPPort> Create(
-      rtc::Thread* thread,
-      rtc::PacketSocketFactory* factory,
-      const rtc::Network* network,
+      const PortParametersRef& args,
       uint16_t min_port,
       uint16_t max_port,
-      absl::string_view username,
-      absl::string_view password,
       bool emit_local_for_anyaddress,
-      absl::optional<int> stun_keepalive_interval,
-      const webrtc::FieldTrialsView* field_trials = nullptr) {
+      std::optional<int> stun_keepalive_interval) {
     // Using `new` to access a non-public constructor.
-    auto port = absl::WrapUnique(new UDPPort(
-        thread, LOCAL_PORT_TYPE, factory, network, min_port, max_port, username,
-        password, emit_local_for_anyaddress, field_trials));
+    auto port = absl::WrapUnique(
+        new UDPPort(args, webrtc::IceCandidateType::kHost, min_port, max_port,
+                    emit_local_for_anyaddress));
     port->set_stun_keepalive_delay(stun_keepalive_interval);
     if (!port->Init()) {
       return nullptr;
     }
     return port;
+  }
+  [[deprecated("Pass arguments using PortParametersRef")]] static std::
+      unique_ptr<UDPPort>
+      Create(webrtc::TaskQueueBase* thread,
+             rtc::PacketSocketFactory* factory,
+             const rtc::Network* network,
+             uint16_t min_port,
+             uint16_t max_port,
+             absl::string_view username,
+             absl::string_view password,
+             bool emit_local_for_anyaddress,
+             std::optional<int> stun_keepalive_interval,
+             const webrtc::FieldTrialsView* field_trials = nullptr) {
+    return Create({.network_thread = thread,
+                   .socket_factory = factory,
+                   .network = network,
+                   .ice_username_fragment = username,
+                   .ice_password = password,
+                   .field_trials = field_trials},
+                  min_port, max_port, emit_local_for_anyaddress,
+                  stun_keepalive_interval);
   }
 
   ~UDPPort() override;
@@ -97,17 +128,14 @@ class RTC_EXPORT UDPPort : public Port {
   int GetError() override;
 
   bool HandleIncomingPacket(rtc::AsyncPacketSocket* socket,
-                            const char* data,
-                            size_t size,
-                            const rtc::SocketAddress& remote_addr,
-                            int64_t packet_time_us) override;
+                            const rtc::ReceivedPacket& packet) override;
 
   bool SupportsProtocol(absl::string_view protocol) const override;
   ProtocolType GetProtocol() const override;
 
-  void GetStunStats(absl::optional<StunStats>* stats) override;
+  void GetStunStats(std::optional<StunStats>* stats) override;
 
-  void set_stun_keepalive_delay(const absl::optional<int>& delay);
+  void set_stun_keepalive_delay(const std::optional<int>& delay);
   int stun_keepalive_delay() const { return stun_keepalive_delay_; }
 
   // Visible for testing.
@@ -119,27 +147,15 @@ class RTC_EXPORT UDPPort : public Port {
   StunRequestManager& request_manager() { return request_manager_; }
 
  protected:
-  UDPPort(rtc::Thread* thread,
-          absl::string_view type,
-          rtc::PacketSocketFactory* factory,
-          const rtc::Network* network,
+  UDPPort(const PortParametersRef& args,
+          webrtc::IceCandidateType type,
+          rtc::AsyncPacketSocket* socket,
+          bool emit_local_for_anyaddress);
+  UDPPort(const PortParametersRef& args,
+          webrtc::IceCandidateType type,
           uint16_t min_port,
           uint16_t max_port,
-          absl::string_view username,
-          absl::string_view password,
-          bool emit_local_for_anyaddress,
-          const webrtc::FieldTrialsView* field_trials);
-
-  UDPPort(rtc::Thread* thread,
-          absl::string_view type,
-          rtc::PacketSocketFactory* factory,
-          const rtc::Network* network,
-          rtc::AsyncPacketSocket* socket,
-          absl::string_view username,
-          absl::string_view password,
-          bool emit_local_for_anyaddress,
-          const webrtc::FieldTrialsView* field_trials);
-
+          bool emit_local_for_anyaddress);
   bool Init();
 
   int SendTo(const void* data,
@@ -158,10 +174,7 @@ class RTC_EXPORT UDPPort : public Port {
   void PostAddAddress(bool is_final) override;
 
   void OnReadPacket(rtc::AsyncPacketSocket* socket,
-                    const char* data,
-                    size_t size,
-                    const rtc::SocketAddress& remote_addr,
-                    const int64_t& packet_time_us);
+                    const rtc::ReceivedPacket& packet);
 
   void OnSentPacket(rtc::AsyncPacketSocket* socket,
                     const rtc::SentPacket& sent_packet) override;
@@ -273,29 +286,30 @@ class RTC_EXPORT UDPPort : public Port {
 class StunPort : public UDPPort {
  public:
   static std::unique_ptr<StunPort> Create(
-      rtc::Thread* thread,
-      rtc::PacketSocketFactory* factory,
-      const rtc::Network* network,
+      const PortParametersRef& args,
       uint16_t min_port,
       uint16_t max_port,
-      absl::string_view username,
-      absl::string_view password,
       const ServerAddresses& servers,
-      absl::optional<int> stun_keepalive_interval,
-      const webrtc::FieldTrialsView* field_trials);
-
+      std::optional<int> stun_keepalive_interval);
+  [[deprecated("Pass arguments using PortParametersRef")]] static std::
+      unique_ptr<StunPort>
+      Create(webrtc::TaskQueueBase* thread,
+             rtc::PacketSocketFactory* factory,
+             const rtc::Network* network,
+             uint16_t min_port,
+             uint16_t max_port,
+             absl::string_view username,
+             absl::string_view password,
+             const ServerAddresses& servers,
+             std::optional<int> stun_keepalive_interval,
+             const webrtc::FieldTrialsView* field_trials);
   void PrepareAddress() override;
 
  protected:
-  StunPort(rtc::Thread* thread,
-           rtc::PacketSocketFactory* factory,
-           const rtc::Network* network,
+  StunPort(const PortParametersRef& args,
            uint16_t min_port,
            uint16_t max_port,
-           absl::string_view username,
-           absl::string_view password,
-           const ServerAddresses& servers,
-           const webrtc::FieldTrialsView* field_trials);
+           const ServerAddresses& servers);
 };
 
 }  // namespace cricket

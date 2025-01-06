@@ -31,6 +31,7 @@
 #include <WebCore/PlatformImage.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(CAIRO) || PLATFORM(GTK)
 #include <WebCore/RefPtrCairo.h>
@@ -51,12 +52,14 @@ struct UpdateInfo;
 #if USE(CAIRO) || PLATFORM(GTK)
 typedef struct _cairo cairo_t;
 using PlatformPaintContextPtr = cairo_t*;
+#elif PLATFORM(WIN)
+using PlatformPaintContextPtr = HDC;
 #elif USE(SKIA)
 using PlatformPaintContextPtr = SkCanvas*;
 #endif
 
 class BackingStore {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(BackingStore);
     WTF_MAKE_NONCOPYABLE(BackingStore);
 public:
     BackingStore(const WebCore::IntSize&, float deviceScaleFactor);

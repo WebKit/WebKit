@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
+#include <wtf/Compiler.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

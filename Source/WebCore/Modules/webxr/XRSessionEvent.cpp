@@ -28,12 +28,12 @@
 
 #if ENABLE(WEBXR)
 
-#include <wtf/IsoMallocInlines.h>
 #include "WebXRSession.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(XRSessionEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XRSessionEvent);
 
 Ref<XRSessionEvent> XRSessionEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
 {

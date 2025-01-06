@@ -25,6 +25,9 @@ function validateEnterBug(theform) {
     var description = theform.comment;
     var attach_data = theform.data;
     var attach_desc = theform.description;
+    var submitbug = document.getElementById('submitbug');
+    
+    submitbug.disabled = true;
 
     var current_errors = YAHOO.util.Dom.getElementsByClassName(
         'validation_error_text', null, theform);
@@ -70,6 +73,7 @@ function validateEnterBug(theform) {
 
     if (focus_me) {
         focus_me.focus();
+        submitbug.disabled = false;
         return false;
     }
 

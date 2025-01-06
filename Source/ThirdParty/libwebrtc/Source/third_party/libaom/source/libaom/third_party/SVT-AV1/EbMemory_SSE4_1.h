@@ -18,19 +18,20 @@
 #include "config/aom_config.h"
 
 #include "aom/aom_integer.h"
+#include "aom_dsp/x86/mem_sse2.h"
 
-static INLINE __m128i load8bit_4x2_sse4_1(const void *const src,
+static inline __m128i load8bit_4x2_sse4_1(const void *const src,
                                           const ptrdiff_t strideInByte) {
-  const __m128i s = _mm_cvtsi32_si128(*(int32_t *)((uint8_t *)src));
-  return _mm_insert_epi32(s, *(int32_t *)((uint8_t *)src + strideInByte), 1);
+  const __m128i s = _mm_cvtsi32_si128(loadu_int32(src));
+  return _mm_insert_epi32(s, loadu_int32((uint8_t *)src + strideInByte), 1);
 }
 
-static INLINE __m128i load_u8_4x2_sse4_1(const uint8_t *const src,
+static inline __m128i load_u8_4x2_sse4_1(const uint8_t *const src,
                                          const ptrdiff_t stride) {
   return load8bit_4x2_sse4_1(src, sizeof(*src) * stride);
 }
 
-static INLINE __m128i load_u16_2x2_sse4_1(const uint16_t *const src,
+static inline __m128i load_u16_2x2_sse4_1(const uint16_t *const src,
                                           const ptrdiff_t stride) {
   return load8bit_4x2_sse4_1(src, sizeof(*src) * stride);
 }

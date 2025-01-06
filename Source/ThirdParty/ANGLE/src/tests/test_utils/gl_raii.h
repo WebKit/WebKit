@@ -141,6 +141,11 @@ class GLQueryEXT : public GLWrapper
     GLQueryEXT() : GLWrapper(&glGenQueriesEXT, &glDeleteQueriesEXT) {}
 };
 using GLQuery = GLQueryEXT;
+class GLPerfMonitor : public GLWrapper
+{
+  public:
+    GLPerfMonitor() : GLWrapper(&glGenPerfMonitorsAMD, (GLDelete *)&glDeletePerfMonitorsAMD) {}
+};
 
 class GLShader : angle::NonCopyable
 {

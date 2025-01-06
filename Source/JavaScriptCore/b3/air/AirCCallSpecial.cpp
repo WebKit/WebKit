@@ -44,9 +44,7 @@ CCallSpecial::CCallSpecial(bool isSIMDContext)
     m_clobberedRegs.remove(FPRInfo::returnValueFPR);
 }
 
-CCallSpecial::~CCallSpecial()
-{
-}
+CCallSpecial::~CCallSpecial() = default;
 
 void CCallSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
 {

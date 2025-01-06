@@ -40,7 +40,24 @@
 
     [Reflect] attribute boolean interactive;
 
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, CEReactions=NotNeeded] readonly attribute DOMPointReadOnly boundingBoxCenter;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, CEReactions=NotNeeded] readonly attribute DOMPointReadOnly boundingBoxExtents;
+
     [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, CEReactions=NotNeeded] attribute DOMMatrixReadOnly entityTransform;
+
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, Reflect] attribute boolean autoplay;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, Reflect] attribute boolean loop;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] attribute double playbackRate;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] readonly attribute double duration;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] readonly attribute boolean paused;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] Promise<undefined> play();
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] Promise<undefined> pause();
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] attribute double currentTime;
+
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, CEReactions=NotNeeded, Reflect, URL] attribute USVString environmentMap;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] readonly attribute Promise<undefined> environmentMapReady;
+
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled&ModelNoPortalAttributeEnabled, Reflect] attribute boolean noportal;
 
     undefined enterFullscreen();
 

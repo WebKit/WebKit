@@ -30,8 +30,11 @@
 
 #include "LibWebRTCNetwork.h"
 #include "WebProcess.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCDnsResolverFactory);
 
 std::unique_ptr<webrtc::AsyncDnsResolverInterface> LibWebRTCDnsResolverFactory::CreateAndResolve(const rtc::SocketAddress& address, absl::AnyInvocable<void()> callback)
 {

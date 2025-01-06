@@ -88,8 +88,7 @@ static void append_rtadjust_fixup_to_vertex_main(const Context& context,
 std::unique_ptr<FunctionDefinition> FunctionDefinition::Convert(const Context& context,
                                                                 Position pos,
                                                                 const FunctionDeclaration& function,
-                                                                std::unique_ptr<Statement> body,
-                                                                bool builtin) {
+                                                                std::unique_ptr<Statement> body) {
     class Finalizer : public ProgramWriter {
     public:
         Finalizer(const Context& context, const FunctionDeclaration& function, Position pos)
@@ -108,7 +107,11 @@ std::unique_ptr<FunctionDefinition> FunctionDefinition::Convert(const Context& c
 
         void addLocalVariable(const Variable* var, Position pos) {
             if (var->type().isOrContainsUnsizedArray()) {
-                fContext.fErrors->error(pos, "unsized arrays are not permitted here");
+                if (var->storage() != Variable::Storage::kParameter) {
+                    fContext.fErrors->error(pos, "unsized arrays are not permitted here");
+                }
+                // Number of slots does not apply to unsized arrays since they are
+                // dynamically sized.
                 return;
             }
             // We count the number of slots used, but don't consider the precision of the base type.
@@ -313,24 +316,23 @@ std::unique_ptr<FunctionDefinition> FunctionDefinition::Convert(const Context& c
     // We don't allow modules to define actual functions with intrinsic names. (Those should be
     // reserved for actual intrinsics.)
     if (function.isIntrinsic()) {
-        context.fErrors->error(function.fPosition, "Intrinsic function '" +
-                                                   std::string(function.name()) +
-                                                   "' should not have a definition");
+        context.fErrors->error(pos, "intrinsic function '" + std::string(function.name()) +
+                                    "' should not have a definition");
         return nullptr;
     }
 
     // A function body must always be a braced block. (The parser should enforce this already, but
     // we rely on it, so it's best to be certain.)
     if (!body || !body->is<Block>() || !body->as<Block>().isScope()) {
-        context.fErrors->error(function.fPosition, "function body '" + function.description() +
-                                                   "' must be a braced block");
+        context.fErrors->error(pos, "function body '" + function.description() +
+                                    "' must be a braced block");
         return nullptr;
     }
 
     // A function can't have more than one definition.
     if (function.definition()) {
-        context.fErrors->error(function.fPosition, "function '" + function.description() +
-                                                   "' was already defined");
+        context.fErrors->error(pos, "function '" + function.description() +
+                                    "' was already defined");
         return nullptr;
     }
 
@@ -346,19 +348,18 @@ std::unique_ptr<FunctionDefinition> FunctionDefinition::Convert(const Context& c
                                                 "' can exit without returning a value");
     }
 
-    return FunctionDefinition::Make(context, pos, function, std::move(body), builtin);
+    return FunctionDefinition::Make(context, pos, function, std::move(body));
 }
 
-std::unique_ptr<FunctionDefinition> FunctionDefinition::Make(const Context&,
+std::unique_ptr<FunctionDefinition> FunctionDefinition::Make(const Context& context,
                                                              Position pos,
                                                              const FunctionDeclaration& function,
-                                                             std::unique_ptr<Statement> body,
-                                                             bool builtin) {
+                                                             std::unique_ptr<Statement> body) {
     SkASSERT(!function.isIntrinsic());
     SkASSERT(body && body->as<Block>().isScope());
     SkASSERT(!function.definition());
 
-    return std::make_unique<FunctionDefinition>(pos, &function, builtin, std::move(body));
+    return std::make_unique<FunctionDefinition>(pos, &function, std::move(body));
 }
 
 }  // namespace SkSL

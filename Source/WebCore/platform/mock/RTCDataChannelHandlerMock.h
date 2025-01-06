@@ -29,16 +29,17 @@
 
 #include "RTCDataChannelHandler.h"
 #include "TimerEventBasedMock.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class RTCDataChannelHandlerMock final : public RTCDataChannelHandler, public TimerEventBasedMock {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RTCDataChannelHandlerMock);
 public:
     RTCDataChannelHandlerMock(const String&, const RTCDataChannelInit&);
 
 private:
-    void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
+    void setClient(RTCDataChannelHandlerClient&, std::optional<ScriptExecutionContextIdentifier>) final;
 
     bool sendStringData(const CString&) final;
     bool sendRawData(std::span<const uint8_t>) final;

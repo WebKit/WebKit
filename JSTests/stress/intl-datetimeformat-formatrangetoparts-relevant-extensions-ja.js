@@ -388,29 +388,27 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
             {"type":"literal","value":"分","source":"shared"},
         ],
     ]);
-    if ($vm.icuVersion() > 66) {
-        shouldBeParts(fmt5.formatRangeToParts(date1, date8), [
-            {"type":"year","value":"07","source":"startRange"},
-            {"type":"literal","value":"/","source":"startRange"},
-            {"type":"month","value":"1","source":"startRange"},
-            {"type":"literal","value":"/","source":"startRange"},
-            {"type":"day","value":"10","source":"startRange"},
-            {"type":"literal","value":" ","source":"startRange"},
-            {"type":"hour","value":"10","source":"startRange"},
-            {"type":"literal","value":":","source":"startRange"},
-            {"type":"minute","value":"00","source":"startRange"},
-            {"type":"literal","value":"～","source":"shared"},
-            {"type":"year","value":"07","source":"endRange"},
-            {"type":"literal","value":"/","source":"endRange"},
-            {"type":"month","value":"1","source":"endRange"},
-            {"type":"literal","value":"/","source":"endRange"},
-            {"type":"day","value":"11","source":"endRange"},
-            {"type":"literal","value":" ","source":"endRange"},
-            {"type":"hour","value":"24","source":"endRange"},
-            {"type":"literal","value":":","source":"endRange"},
-            {"type":"minute","value":"00","source":"endRange"},
-        ]);
-    }
+    shouldBeParts(fmt5.formatRangeToParts(date1, date8), [
+        {"type":"year","value":"07","source":"startRange"},
+        {"type":"literal","value":"/","source":"startRange"},
+        {"type":"month","value":"1","source":"startRange"},
+        {"type":"literal","value":"/","source":"startRange"},
+        {"type":"day","value":"10","source":"startRange"},
+        {"type":"literal","value":" ","source":"startRange"},
+        {"type":"hour","value":"10","source":"startRange"},
+        {"type":"literal","value":":","source":"startRange"},
+        {"type":"minute","value":"00","source":"startRange"},
+        {"type":"literal","value":"～","source":"shared"},
+        {"type":"year","value":"07","source":"endRange"},
+        {"type":"literal","value":"/","source":"endRange"},
+        {"type":"month","value":"1","source":"endRange"},
+        {"type":"literal","value":"/","source":"endRange"},
+        {"type":"day","value":"11","source":"endRange"},
+        {"type":"literal","value":" ","source":"endRange"},
+        {"type":"hour","value":"24","source":"endRange"},
+        {"type":"literal","value":":","source":"endRange"},
+        {"type":"minute","value":"00","source":"endRange"},
+    ]);
 
     let fmt6 = new Intl.DateTimeFormat("ja", {
         year: '2-digit',
@@ -840,31 +838,29 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    if ($vm.icuVersion() > 66) {
-        shouldBeParts(fmt8.formatRangeToParts(date1, date8), [
-            {"type":"year","value":"07","source":"startRange"},
-            {"type":"literal","value":"/","source":"startRange"},
-            {"type":"month","value":"1","source":"startRange"},
-            {"type":"literal","value":"/","source":"startRange"},
-            {"type":"day","value":"10","source":"startRange"},
-            {"type":"literal","value":" ","source":"startRange"},
-            {"type":"dayPeriod","value":"午前","source":"startRange"},
-            {"type":"hour","value":"10","source":"startRange"},
-            {"type":"literal","value":":","source":"startRange"},
-            {"type":"minute","value":"00","source":"startRange"},
-            {"type":"literal","value":"～","source":"shared"},
-            {"type":"year","value":"07","source":"endRange"},
-            {"type":"literal","value":"/","source":"endRange"},
-            {"type":"month","value":"1","source":"endRange"},
-            {"type":"literal","value":"/","source":"endRange"},
-            {"type":"day","value":"11","source":"endRange"},
-            {"type":"literal","value":" ","source":"endRange"},
-            {"type":"dayPeriod","value":"午前","source":"endRange"},
-            {"type":"hour","value":"12","source":"endRange"},
-            {"type":"literal","value":":","source":"endRange"},
-            {"type":"minute","value":"00","source":"endRange"},
-        ]);
-    }
+    shouldBeParts(fmt8.formatRangeToParts(date1, date8), [
+        {"type":"year","value":"07","source":"startRange"},
+        {"type":"literal","value":"/","source":"startRange"},
+        {"type":"month","value":"1","source":"startRange"},
+        {"type":"literal","value":"/","source":"startRange"},
+        {"type":"day","value":"10","source":"startRange"},
+        {"type":"literal","value":" ","source":"startRange"},
+        {"type":"dayPeriod","value":"午前","source":"startRange"},
+        {"type":"hour","value":"10","source":"startRange"},
+        {"type":"literal","value":":","source":"startRange"},
+        {"type":"minute","value":"00","source":"startRange"},
+        {"type":"literal","value":"～","source":"shared"},
+        {"type":"year","value":"07","source":"endRange"},
+        {"type":"literal","value":"/","source":"endRange"},
+        {"type":"month","value":"1","source":"endRange"},
+        {"type":"literal","value":"/","source":"endRange"},
+        {"type":"day","value":"11","source":"endRange"},
+        {"type":"literal","value":" ","source":"endRange"},
+        {"type":"dayPeriod","value":"午前","source":"endRange"},
+        {"type":"hour","value":"12","source":"endRange"},
+        {"type":"literal","value":":","source":"endRange"},
+        {"type":"minute","value":"00","source":"endRange"},
+    ]);
 
     // "hc" + hour 2-digit
     let fmt9 = new Intl.DateTimeFormat("ja", {
@@ -1031,29 +1027,27 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
             {"type":"literal","value":"分","source":"shared"},
         ]
     ]);
-    if ($vm.icuVersion() > 66) {
-        shouldBeParts(fmt9.formatRangeToParts(date1, date8), [
-            {"type":"year","value":"07","source":"startRange"},
-            {"type":"literal","value":"/","source":"startRange"},
-            {"type":"month","value":"1","source":"startRange"},
-            {"type":"literal","value":"/","source":"startRange"},
-            {"type":"day","value":"10","source":"startRange"},
-            {"type":"literal","value":" ","source":"startRange"},
-            {"type":"hour","value":"10","source":"startRange"},
-            {"type":"literal","value":":","source":"startRange"},
-            {"type":"minute","value":"00","source":"startRange"},
-            {"type":"literal","value":"～","source":"shared"},
-            {"type":"year","value":"07","source":"endRange"},
-            {"type":"literal","value":"/","source":"endRange"},
-            {"type":"month","value":"1","source":"endRange"},
-            {"type":"literal","value":"/","source":"endRange"},
-            {"type":"day","value":"11","source":"endRange"},
-            {"type":"literal","value":" ","source":"endRange"},
-            {"type":"hour","value":"24","source":"endRange"},
-            {"type":"literal","value":":","source":"endRange"},
-            {"type":"minute","value":"00","source":"endRange"},
-        ]);
-    }
+    shouldBeParts(fmt9.formatRangeToParts(date1, date8), [
+        {"type":"year","value":"07","source":"startRange"},
+        {"type":"literal","value":"/","source":"startRange"},
+        {"type":"month","value":"1","source":"startRange"},
+        {"type":"literal","value":"/","source":"startRange"},
+        {"type":"day","value":"10","source":"startRange"},
+        {"type":"literal","value":" ","source":"startRange"},
+        {"type":"hour","value":"10","source":"startRange"},
+        {"type":"literal","value":":","source":"startRange"},
+        {"type":"minute","value":"00","source":"startRange"},
+        {"type":"literal","value":"～","source":"shared"},
+        {"type":"year","value":"07","source":"endRange"},
+        {"type":"literal","value":"/","source":"endRange"},
+        {"type":"month","value":"1","source":"endRange"},
+        {"type":"literal","value":"/","source":"endRange"},
+        {"type":"day","value":"11","source":"endRange"},
+        {"type":"literal","value":" ","source":"endRange"},
+        {"type":"hour","value":"24","source":"endRange"},
+        {"type":"literal","value":":","source":"endRange"},
+        {"type":"minute","value":"00","source":"endRange"},
+    ]);
 
     let fmt10 = new Intl.DateTimeFormat("ja", {
         year: '2-digit',
@@ -1483,31 +1477,29 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    if ($vm.icuVersion() > 66) {
-        shouldBeParts(fmt12.formatRangeToParts(date1, date8), [
-            {"type":"year","value":"07","source":"startRange"},
-            {"type":"literal","value":"/","source":"startRange"},
-            {"type":"month","value":"1","source":"startRange"},
-            {"type":"literal","value":"/","source":"startRange"},
-            {"type":"day","value":"10","source":"startRange"},
-            {"type":"literal","value":" ","source":"startRange"},
-            {"type":"dayPeriod","value":"午前","source":"startRange"},
-            {"type":"hour","value":"10","source":"startRange"},
-            {"type":"literal","value":":","source":"startRange"},
-            {"type":"minute","value":"00","source":"startRange"},
-            {"type":"literal","value":"～","source":"shared"},
-            {"type":"year","value":"07","source":"endRange"},
-            {"type":"literal","value":"/","source":"endRange"},
-            {"type":"month","value":"1","source":"endRange"},
-            {"type":"literal","value":"/","source":"endRange"},
-            {"type":"day","value":"11","source":"endRange"},
-            {"type":"literal","value":" ","source":"endRange"},
-            {"type":"dayPeriod","value":"午前","source":"endRange"},
-            {"type":"hour","value":"12","source":"endRange"},
-            {"type":"literal","value":":","source":"endRange"},
-            {"type":"minute","value":"00","source":"endRange"},
-        ]);
-    }
+    shouldBeParts(fmt12.formatRangeToParts(date1, date8), [
+        {"type":"year","value":"07","source":"startRange"},
+        {"type":"literal","value":"/","source":"startRange"},
+        {"type":"month","value":"1","source":"startRange"},
+        {"type":"literal","value":"/","source":"startRange"},
+        {"type":"day","value":"10","source":"startRange"},
+        {"type":"literal","value":" ","source":"startRange"},
+        {"type":"dayPeriod","value":"午前","source":"startRange"},
+        {"type":"hour","value":"10","source":"startRange"},
+        {"type":"literal","value":":","source":"startRange"},
+        {"type":"minute","value":"00","source":"startRange"},
+        {"type":"literal","value":"～","source":"shared"},
+        {"type":"year","value":"07","source":"endRange"},
+        {"type":"literal","value":"/","source":"endRange"},
+        {"type":"month","value":"1","source":"endRange"},
+        {"type":"literal","value":"/","source":"endRange"},
+        {"type":"day","value":"11","source":"endRange"},
+        {"type":"literal","value":" ","source":"endRange"},
+        {"type":"dayPeriod","value":"午前","source":"endRange"},
+        {"type":"hour","value":"12","source":"endRange"},
+        {"type":"literal","value":":","source":"endRange"},
+        {"type":"minute","value":"00","source":"endRange"},
+    ]);
 
     // "hc" + hour12.
     let fmt13 = new Intl.DateTimeFormat("ja", {

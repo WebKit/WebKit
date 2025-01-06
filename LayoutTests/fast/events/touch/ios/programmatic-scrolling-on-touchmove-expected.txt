@@ -1,0 +1,10 @@
+PASS pageYOffset is > 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+To manually run this test, swipe up to scroll down; scrolling should not be jittery.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+

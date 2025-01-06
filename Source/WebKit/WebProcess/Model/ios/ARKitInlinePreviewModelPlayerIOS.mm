@@ -66,7 +66,7 @@ ARKitInlinePreviewModelPlayerIOS* ARKitInlinePreviewModelPlayerIOS::modelPlayerF
         if (&page != modelPlayer.page())
             continue;
 
-        if (modelPlayer.client()->platformLayerID() != layerID)
+        if (modelPlayer.client()->modelContentsLayerID() != layerID)
             continue;
 
         return &modelPlayer;
@@ -92,8 +92,8 @@ std::optional<ModelIdentifier> ARKitInlinePreviewModelPlayerIOS::modelIdentifier
     if (!client())
         return { };
 
-    if (auto layerId = client()->platformLayerID())
-        return { { layerId } };
+    if (auto layerId = client()->modelContentsLayerID())
+        return { { *layerId } };
 
     return { };
 }

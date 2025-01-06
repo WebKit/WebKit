@@ -48,6 +48,8 @@ function groupBy(items, callback)
         @@iterator: function () { return iterator; }
     };
     for (var item of wrapper) {
+        if (k >= @MAX_SAFE_INTEGER)
+            @throwTypeError("The number of iterations exceeds 2**53 - 1");
         var key = callback.@call(@undefined, item, k);
         var group = groups.@get(key);
         if (!group) {

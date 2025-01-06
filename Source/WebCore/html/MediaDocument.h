@@ -32,7 +32,8 @@
 namespace WebCore {
 
 class MediaDocument final : public HTMLDocument {
-    WTF_MAKE_ISO_ALLOCATED(MediaDocument);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaDocument);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaDocument);
 public:
     static Ref<MediaDocument> create(LocalFrame* frame, const Settings& settings, const URL& url)
     {

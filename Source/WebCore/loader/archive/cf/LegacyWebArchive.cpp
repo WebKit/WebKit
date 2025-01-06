@@ -61,8 +61,9 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/URLHash.h>
 #include <wtf/URLParser.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -109,10 +110,16 @@ static String getFileNameFromURIComponent(StringView input)
     return result.toString();
 }
 
-static String generateValidFileName(const URL& url, const HashSet<String>& existingFileNames)
+static String generateValidFileName(const URL& url, const HashSet<String>& existingFileNames, const String& extension = { })
 {
+    String suffix = extension.isEmpty() ? emptyString() : makeString('.', extension);
     auto extractedFileName = getFileNameFromURIComponent(url.lastPathComponent());
+    if (extractedFileName.endsWith(suffix))
+        extractedFileName = extractedFileName.left(extractedFileName.length() - suffix.length());
     auto fileName = extractedFileName.isEmpty() ? String::fromLatin1(defaultFileName) : extractedFileName;
+
+    RELEASE_ASSERT(suffix.length() < maxFileNameSizeInBytes);
+    unsigned maxUniqueFileNameLength = maxFileNameSizeInBytes - suffix.length();
     String uniqueFileName;
 
     unsigned count = 0;
@@ -120,8 +127,9 @@ static String generateValidFileName(const URL& url, const HashSet<String>& exist
         uniqueFileName = fileName;
         if (count)
             uniqueFileName = makeString(fileName, '-', count);
-        if (uniqueFileName.sizeInBytes() > maxFileNameSizeInBytes)
-            uniqueFileName = uniqueFileName.substring(fileName.sizeInBytes() - maxFileNameSizeInBytes, maxFileNameSizeInBytes);
+        if (uniqueFileName.sizeInBytes() > maxUniqueFileNameLength)
+            uniqueFileName = uniqueFileName.right(maxUniqueFileNameLength);
+        uniqueFileName = makeString(uniqueFileName, suffix);
         ++count;
     } while (existingFileNames.contains(uniqueFileName));
 
@@ -499,14 +507,14 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Loca
     String markupString = serializeFragment(node, SerializedNodes::SubtreeIncludingNode, &nodeList, ResolveURLs::No, std::nullopt, SerializeShadowRoots::AllForInterchange, { }, markupExclusionRules);
     auto nodeType = node.nodeType();
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
-        markupString = documentTypeString(node.document()) + markupString;
+        markupString = makeString(documentTypeString(node.document()), markupString);
 
     return create(markupString, *frame, WTFMove(nodeList), WTFMove(frameFilter), markupExclusionRules, mainResourceFilePath);
 }
 
 RefPtr<LegacyWebArchive> LegacyWebArchive::create(LocalFrame& frame)
 {
-    auto* documentLoader = frame.loader().documentLoader();
+    RefPtr documentLoader = frame.loader().documentLoader();
     if (!documentLoader)
         return nullptr;
 
@@ -535,7 +543,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const SimpleRange& range)
 
     // FIXME: This is always "for interchange". Is that right?
     Vector<Ref<Node>> nodeList;
-    String markupString = documentTypeString(document) + serializePreservingVisualAppearance(range, &nodeList, AnnotateForInterchange::Yes);
+    auto markupString = makeString(documentTypeString(document), serializePreservingVisualAppearance(range, &nodeList, AnnotateForInterchange::Yes));
     return create(markupString, *frame, WTFMove(nodeList), nullptr);
 }
 
@@ -576,7 +584,7 @@ static void addSubresourcesForAttachmentElementsIfNecessary(LocalFrame& frame, c
 
 #endif
 
-static HashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIfNecessary(LocalFrame& frame, const String& subresourcesDirectoryName, HashSet<String>& uniqueFileNames, HashMap<String, String>& uniqueSubresources, Vector<Ref<ArchiveResource>>& subresources)
+static UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIfNecessary(LocalFrame& frame, const String& subresourcesDirectoryName, HashSet<String>& uniqueFileNames, UncheckedKeyHashMap<String, String>& uniqueSubresources, Vector<Ref<ArchiveResource>>& subresources)
 {
     if (subresourcesDirectoryName.isEmpty())
         return { };
@@ -585,8 +593,8 @@ static HashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIf
     if (!document)
         return { };
 
-    HashMap<RefPtr<CSSStyleSheet>, String> uniqueCSSStyleSheets;
-    HashMap<RefPtr<CSSStyleSheet>, String> relativeUniqueCSSStyleSheets;
+    UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String> uniqueCSSStyleSheets;
+    UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String> relativeUniqueCSSStyleSheets;
     Ref documentStyleSheets = document->styleSheets();
     for (unsigned index = 0; index < documentStyleSheets->length(); ++index) {
         RefPtr cssStyleSheet = dynamicDowncast<CSSStyleSheet>(documentStyleSheets->item(index));
@@ -623,7 +631,8 @@ static HashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIf
                 subresources.remove(index);
             }
 
-            String subresourceFileName = generateValidFileName(url, uniqueFileNames);
+            auto extension = MIMETypeRegistry::preferredExtensionForMIMEType(cssContentTypeAtom());
+            String subresourceFileName = generateValidFileName(url, uniqueFileNames, extension);
             uniqueFileNames.add(subresourceFileName);
             addResult.iterator->value = FileSystem::pathByAppendingComponent(subresourcesDirectoryName, subresourceFileName);
             relativeUniqueCSSStyleSheets.add(currentCSSStyleSheet, subresourceFileName);
@@ -631,7 +640,7 @@ static HashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIf
     }
 
     auto frameName = frame.tree().uniqueName();
-    HashMap<String, String> relativeUniqueSubresources;
+    UncheckedKeyHashMap<String, String> relativeUniqueSubresources;
     for (auto& [urlString, path] : uniqueSubresources) {
         // The style sheet files are stored in the same directory as other subresources.
         relativeUniqueSubresources.add(urlString, FileSystem::lastComponentOfPathIgnoringTrailingSlash(path));
@@ -662,7 +671,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
 
     Vector<Ref<LegacyWebArchive>> subframeArchives;
     Vector<Ref<ArchiveResource>> subresources;
-    HashMap<String, String> uniqueSubresources;
+    UncheckedKeyHashMap<String, String> uniqueSubresources;
     HashSet<String> uniqueFileNames;
     String subresourcesDirectoryName = mainFrameFilePath.isNull() ? String { } : makeString(mainFrameFilePath, "_files"_s);
 
@@ -689,7 +698,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
             node->getCandidateSubresourceURLs(subresourceURLs);
 
             ASSERT(frame.loader().documentLoader());
-            auto& documentLoader = *frame.loader().documentLoader();
+            Ref documentLoader = *frame.loader().documentLoader();
 
             for (auto& subresourceURL : subresourceURLs) {
                 if (uniqueSubresources.contains(subresourceURL.string()))
@@ -700,7 +709,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
                     continue;
 
                 auto addResult = uniqueSubresources.add(subresourceURL.string(), emptyString());
-                RefPtr<ArchiveResource> resource = documentLoader.subresource(subresourceURL);
+                auto resource = documentLoader->subresource(subresourceURL);
                 if (!resource) {
                     ResourceRequest request(subresourceURL);
                     request.setDomainForCachePartition(frame.document()->domainForCachePartition());
@@ -735,7 +744,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
 
     // If we are archiving the entire page, add any link icons that we have data for.
     if (!nodes.isEmpty() && nodes[0]->isDocumentNode()) {
-        auto* documentLoader = frame.loader().documentLoader();
+        RefPtr documentLoader = frame.loader().documentLoader();
         ASSERT(documentLoader);
         for (auto& icon : documentLoader->linkIcons()) {
             if (auto resource = documentLoader->subresource(icon.url))

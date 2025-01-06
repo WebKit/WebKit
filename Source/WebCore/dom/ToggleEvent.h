@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class ToggleEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(ToggleEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ToggleEvent);
 public:
     struct Init : EventInit {
         String oldState;

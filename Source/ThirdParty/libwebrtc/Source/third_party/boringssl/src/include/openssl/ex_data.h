@@ -129,10 +129,10 @@ typedef struct crypto_ex_data_st CRYPTO_EX_DATA;
 
 
 // Type-specific functions.
-//
-// Each type that supports ex_data provides three functions:
 
 #if 0  // Sample
+
+// Each type that supports ex_data provides three functions:
 
 // TYPE_get_ex_new_index allocates a new index for |TYPE|. An optional
 // |free_func| argument may be provided which is called when the owning object
@@ -153,6 +153,18 @@ OPENSSL_EXPORT int TYPE_set_ex_data(TYPE *t, int index, void *arg);
 // previous call to |TYPE_get_ex_new_index|.
 OPENSSL_EXPORT void *TYPE_get_ex_data(const TYPE *t, int index);
 
+// Some types additionally preallocate index zero, with all callbacks set to
+// NULL. Applications that do not need the general ex_data machinery may use
+// this instead.
+
+// TYPE_set_app_data sets |t|'s application data pointer to |arg|. It returns
+// one on success and zero on error.
+OPENSSL_EXPORT int TYPE_set_app_data(TYPE *t, void *arg);
+
+// TYPE_get_app_data returns the application data pointer for |t|, or NULL if no
+// such pointer exists.
+OPENSSL_EXPORT void *TYPE_get_app_data(const TYPE *t);
+
 #endif  // Sample
 
 
@@ -163,10 +175,11 @@ OPENSSL_EXPORT void *TYPE_get_ex_data(const TYPE *t, int index);
 // callback has been passed to |SSL_get_ex_new_index| then it may be called each
 // time an |SSL*| is destroyed.
 //
-// The callback is passed the new object (i.e. the |SSL*|) in |parent|. The
-// arguments |argl| and |argp| contain opaque values that were given to
-// |CRYPTO_get_ex_new_index|. The callback should return one on success, but
-// the value is ignored.
+// The callback is passed the to-be-destroyed object (i.e. the |SSL*|) in
+// |parent|. As |parent| will shortly be destroyed, callers must not perform
+// operations that would increment its reference count, pass ownership, or
+// assume the object outlives the function call. The arguments |argl| and |argp|
+// contain opaque values that were given to |CRYPTO_get_ex_new_index_ex|.
 //
 // This callback may be called with a NULL value for |ptr| if |parent| has no
 // value set for this index. However, the callbacks may also be skipped entirely

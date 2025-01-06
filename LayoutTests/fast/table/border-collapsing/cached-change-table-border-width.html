@@ -7,11 +7,12 @@ Here we change table border width, expect that cache is invalidated and paint pr
         <title></title>
         <link rel="stylesheet" href="resources/cached.css">
         <script type="text/javascript">
-            function test() {
+            async function test() {
                 document.body.offsetTop;
-                if (window.testRunner)
-                    testRunner.displayAndTrackRepaints();
+                testRunner?.waitUntilDone();
+                await testRunner?.displayAndTrackRepaints();
                 document.getElementById("tbl").style.borderWidth = "4px";
+                testRunner?.notifyDone();
             }
         </script>
     </head>

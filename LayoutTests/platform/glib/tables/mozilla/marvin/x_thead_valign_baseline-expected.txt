@@ -6,10 +6,10 @@ layer at (0,0) size 800x351
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 209x17
           text run at (0,0) width 209: "THEAD VALIGN=BASELINE"
-      RenderTable {table} at (0,34) size 784x293 [border: (1px outset #808080)]
+      RenderTable {table} at (0,34) size 784x293 [border: (1px outset #000000)]
         RenderTableSection {thead} at (1,1) size 782x243
           RenderTableRow {tr} at (0,2) size 782x239
-            RenderTableCell {td} at (2,25) size 214x94 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,25) size 214x94 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,25) size 206x89
                 text run at (2,2) width 204: "Compare the baseline of the first"
                 text run at (2,20) width 139: "line of text in this cell "
@@ -18,7 +18,7 @@ layer at (0,0) size 800x351
                 text run at (2,56) width 115: "the next cell: they "
                 text run at (117,56) width 61: "should be"
                 text run at (2,74) width 108: "vertically aligned"
-            RenderTableCell {td} at (217,2) size 564x239 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (217,2) size 564x239 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,3) size 532x233
                 text run at (2,3) width 524: "Compare the baseline of the first"
                 text run at (2,50) width 70: "line "
@@ -28,17 +28,17 @@ layer at (0,0) size 800x351
                 text run at (2,191) width 279: "vertically aligned"
         RenderTableSection {tfoot} at (1,268) size 782x24
           RenderTableRow {tr} at (0,0) size 782x22
-            RenderTableCell {td} at (2,0) size 214x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,0) size 214x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 53x17
                 text run at (2,2) width 53: "TFOOT"
-            RenderTableCell {td} at (217,0) size 564x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (217,0) size 564x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 53x17
                 text run at (2,2) width 53: "TFOOT"
         RenderTableSection {tbody} at (1,244) size 782x24
           RenderTableRow {tr} at (0,0) size 782x22
-            RenderTableCell {td} at (2,0) size 214x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,0) size 214x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x17
                 text run at (2,2) width 57: "TBODY"
-            RenderTableCell {td} at (217,0) size 564x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (217,0) size 564x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x17
                 text run at (2,2) width 57: "TBODY"

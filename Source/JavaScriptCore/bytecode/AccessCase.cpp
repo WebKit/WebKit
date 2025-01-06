@@ -43,7 +43,6 @@
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
 #include "ModuleNamespaceAccessCase.h"
-#include "ProxyObjectAccessCase.h"
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
 #include "StructureStubInfo.h"
@@ -81,12 +80,11 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
-    case ProxyObjectHas:
+    case Replace:
+    case ProxyObjectIn:
     case ProxyObjectLoad:
     case ProxyObjectStore:
-    case Replace:
     case InstanceOfMegamorphic:
-    case IndexedProxyObjectLoad:
     case IndexedMegamorphicLoad:
     case IndexedMegamorphicStore:
     case IndexedMegamorphicIn:
@@ -103,6 +101,7 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case IndexedTypedArrayUint16Load:
     case IndexedTypedArrayInt32Load:
     case IndexedTypedArrayUint32Load:
+    case IndexedTypedArrayFloat16Load:
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedResizableTypedArrayInt8Load:
@@ -112,6 +111,7 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case IndexedResizableTypedArrayUint16Load:
     case IndexedResizableTypedArrayInt32Load:
     case IndexedResizableTypedArrayUint32Load:
+    case IndexedResizableTypedArrayFloat16Load:
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedStringLoad:
@@ -127,6 +127,7 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case IndexedTypedArrayUint16Store:
     case IndexedTypedArrayInt32Store:
     case IndexedTypedArrayUint32Store:
+    case IndexedTypedArrayFloat16Store:
     case IndexedTypedArrayFloat32Store:
     case IndexedTypedArrayFloat64Store:
     case IndexedResizableTypedArrayInt8Store:
@@ -136,6 +137,7 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case IndexedResizableTypedArrayUint16Store:
     case IndexedResizableTypedArrayInt32Store:
     case IndexedResizableTypedArrayUint32Store:
+    case IndexedResizableTypedArrayFloat16Store:
     case IndexedResizableTypedArrayFloat32Store:
     case IndexedResizableTypedArrayFloat64Store:
     case IndexedInt32InHit:
@@ -144,26 +146,31 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case IndexedArrayStorageInHit:
     case IndexedScopedArgumentsInHit:
     case IndexedDirectArgumentsInHit:
-    case IndexedTypedArrayInt8InHit:
-    case IndexedTypedArrayUint8InHit:
-    case IndexedTypedArrayUint8ClampedInHit:
-    case IndexedTypedArrayInt16InHit:
-    case IndexedTypedArrayUint16InHit:
-    case IndexedTypedArrayInt32InHit:
-    case IndexedTypedArrayUint32InHit:
-    case IndexedTypedArrayFloat32InHit:
-    case IndexedTypedArrayFloat64InHit:
-    case IndexedResizableTypedArrayInt8InHit:
-    case IndexedResizableTypedArrayUint8InHit:
-    case IndexedResizableTypedArrayUint8ClampedInHit:
-    case IndexedResizableTypedArrayInt16InHit:
-    case IndexedResizableTypedArrayUint16InHit:
-    case IndexedResizableTypedArrayInt32InHit:
-    case IndexedResizableTypedArrayUint32InHit:
-    case IndexedResizableTypedArrayFloat32InHit:
-    case IndexedResizableTypedArrayFloat64InHit:
+    case IndexedTypedArrayInt8In:
+    case IndexedTypedArrayUint8In:
+    case IndexedTypedArrayUint8ClampedIn:
+    case IndexedTypedArrayInt16In:
+    case IndexedTypedArrayUint16In:
+    case IndexedTypedArrayInt32In:
+    case IndexedTypedArrayUint32In:
+    case IndexedTypedArrayFloat16In:
+    case IndexedTypedArrayFloat32In:
+    case IndexedTypedArrayFloat64In:
+    case IndexedResizableTypedArrayInt8In:
+    case IndexedResizableTypedArrayUint8In:
+    case IndexedResizableTypedArrayUint8ClampedIn:
+    case IndexedResizableTypedArrayInt16In:
+    case IndexedResizableTypedArrayUint16In:
+    case IndexedResizableTypedArrayInt32In:
+    case IndexedResizableTypedArrayUint32In:
+    case IndexedResizableTypedArrayFloat16In:
+    case IndexedResizableTypedArrayFloat32In:
+    case IndexedResizableTypedArrayFloat64In:
     case IndexedStringInHit:
     case IndexedNoIndexingInMiss:
+    case IndexedProxyObjectIn:
+    case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
         RELEASE_ASSERT(!prototypeAccessChain);
         break;
     case Load:
@@ -332,16 +339,18 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
-    case ProxyObjectHas:
+    case ProxyObjectIn:
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfMegamorphic:
+    case IndexedProxyObjectIn:
     case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
+    case IndexedMegamorphicIn:
     case IndexedMegamorphicLoad:
     case IndexedMegamorphicStore:
-    case IndexedMegamorphicIn:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
@@ -355,6 +364,7 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case IndexedTypedArrayUint16Load:
     case IndexedTypedArrayInt32Load:
     case IndexedTypedArrayUint32Load:
+    case IndexedTypedArrayFloat16Load:
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedResizableTypedArrayInt8Load:
@@ -364,6 +374,7 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case IndexedResizableTypedArrayUint16Load:
     case IndexedResizableTypedArrayInt32Load:
     case IndexedResizableTypedArrayUint32Load:
+    case IndexedResizableTypedArrayFloat16Load:
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedStringLoad:
@@ -378,6 +389,7 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case IndexedTypedArrayUint16Store:
     case IndexedTypedArrayInt32Store:
     case IndexedTypedArrayUint32Store:
+    case IndexedTypedArrayFloat16Store:
     case IndexedTypedArrayFloat32Store:
     case IndexedTypedArrayFloat64Store:
     case IndexedResizableTypedArrayInt8Store:
@@ -387,6 +399,7 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case IndexedResizableTypedArrayUint16Store:
     case IndexedResizableTypedArrayInt32Store:
     case IndexedResizableTypedArrayUint32Store:
+    case IndexedResizableTypedArrayFloat16Store:
     case IndexedResizableTypedArrayFloat32Store:
     case IndexedResizableTypedArrayFloat64Store:
     case IndexedInt32InHit:
@@ -395,24 +408,26 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case IndexedArrayStorageInHit:
     case IndexedScopedArgumentsInHit:
     case IndexedDirectArgumentsInHit:
-    case IndexedTypedArrayInt8InHit:
-    case IndexedTypedArrayUint8InHit:
-    case IndexedTypedArrayUint8ClampedInHit:
-    case IndexedTypedArrayInt16InHit:
-    case IndexedTypedArrayUint16InHit:
-    case IndexedTypedArrayInt32InHit:
-    case IndexedTypedArrayUint32InHit:
-    case IndexedTypedArrayFloat32InHit:
-    case IndexedTypedArrayFloat64InHit:
-    case IndexedResizableTypedArrayInt8InHit:
-    case IndexedResizableTypedArrayUint8InHit:
-    case IndexedResizableTypedArrayUint8ClampedInHit:
-    case IndexedResizableTypedArrayInt16InHit:
-    case IndexedResizableTypedArrayUint16InHit:
-    case IndexedResizableTypedArrayInt32InHit:
-    case IndexedResizableTypedArrayUint32InHit:
-    case IndexedResizableTypedArrayFloat32InHit:
-    case IndexedResizableTypedArrayFloat64InHit:
+    case IndexedTypedArrayInt8In:
+    case IndexedTypedArrayUint8In:
+    case IndexedTypedArrayUint8ClampedIn:
+    case IndexedTypedArrayInt16In:
+    case IndexedTypedArrayUint16In:
+    case IndexedTypedArrayInt32In:
+    case IndexedTypedArrayUint32In:
+    case IndexedTypedArrayFloat16In:
+    case IndexedTypedArrayFloat32In:
+    case IndexedTypedArrayFloat64In:
+    case IndexedResizableTypedArrayInt8In:
+    case IndexedResizableTypedArrayUint8In:
+    case IndexedResizableTypedArrayUint8ClampedIn:
+    case IndexedResizableTypedArrayInt16In:
+    case IndexedResizableTypedArrayUint16In:
+    case IndexedResizableTypedArrayInt32In:
+    case IndexedResizableTypedArrayUint32In:
+    case IndexedResizableTypedArrayFloat16In:
+    case IndexedResizableTypedArrayFloat32In:
+    case IndexedResizableTypedArrayFloat64In:
     case IndexedStringInHit:
         return false;
     case Load:
@@ -470,7 +485,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
-    case ProxyObjectHas:
+    case ProxyObjectIn:
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case CheckPrivateBrand:
@@ -479,10 +494,12 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfMegamorphic:
+    case IndexedProxyObjectIn:
     case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
+    case IndexedMegamorphicIn:
     case IndexedMegamorphicLoad:
     case IndexedMegamorphicStore:
-    case IndexedMegamorphicIn:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
@@ -496,6 +513,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case IndexedTypedArrayUint16Load:
     case IndexedTypedArrayInt32Load:
     case IndexedTypedArrayUint32Load:
+    case IndexedTypedArrayFloat16Load:
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedResizableTypedArrayInt8Load:
@@ -505,6 +523,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case IndexedResizableTypedArrayUint16Load:
     case IndexedResizableTypedArrayInt32Load:
     case IndexedResizableTypedArrayUint32Load:
+    case IndexedResizableTypedArrayFloat16Load:
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedStringLoad:
@@ -520,6 +539,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case IndexedTypedArrayUint16Store:
     case IndexedTypedArrayInt32Store:
     case IndexedTypedArrayUint32Store:
+    case IndexedTypedArrayFloat16Store:
     case IndexedTypedArrayFloat32Store:
     case IndexedTypedArrayFloat64Store:
     case IndexedResizableTypedArrayInt8Store:
@@ -529,6 +549,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case IndexedResizableTypedArrayUint16Store:
     case IndexedResizableTypedArrayInt32Store:
     case IndexedResizableTypedArrayUint32Store:
+    case IndexedResizableTypedArrayFloat16Store:
     case IndexedResizableTypedArrayFloat32Store:
     case IndexedResizableTypedArrayFloat64Store:
     case IndexedInt32InHit:
@@ -537,24 +558,26 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case IndexedArrayStorageInHit:
     case IndexedScopedArgumentsInHit:
     case IndexedDirectArgumentsInHit:
-    case IndexedTypedArrayInt8InHit:
-    case IndexedTypedArrayUint8InHit:
-    case IndexedTypedArrayUint8ClampedInHit:
-    case IndexedTypedArrayInt16InHit:
-    case IndexedTypedArrayUint16InHit:
-    case IndexedTypedArrayInt32InHit:
-    case IndexedTypedArrayUint32InHit:
-    case IndexedTypedArrayFloat32InHit:
-    case IndexedTypedArrayFloat64InHit:
-    case IndexedResizableTypedArrayInt8InHit:
-    case IndexedResizableTypedArrayUint8InHit:
-    case IndexedResizableTypedArrayUint8ClampedInHit:
-    case IndexedResizableTypedArrayInt16InHit:
-    case IndexedResizableTypedArrayUint16InHit:
-    case IndexedResizableTypedArrayInt32InHit:
-    case IndexedResizableTypedArrayUint32InHit:
-    case IndexedResizableTypedArrayFloat32InHit:
-    case IndexedResizableTypedArrayFloat64InHit:
+    case IndexedTypedArrayInt8In:
+    case IndexedTypedArrayUint8In:
+    case IndexedTypedArrayUint8ClampedIn:
+    case IndexedTypedArrayInt16In:
+    case IndexedTypedArrayUint16In:
+    case IndexedTypedArrayInt32In:
+    case IndexedTypedArrayUint32In:
+    case IndexedTypedArrayFloat16In:
+    case IndexedTypedArrayFloat32In:
+    case IndexedTypedArrayFloat64In:
+    case IndexedResizableTypedArrayInt8In:
+    case IndexedResizableTypedArrayUint8In:
+    case IndexedResizableTypedArrayUint8ClampedIn:
+    case IndexedResizableTypedArrayInt16In:
+    case IndexedResizableTypedArrayUint16In:
+    case IndexedResizableTypedArrayInt32In:
+    case IndexedResizableTypedArrayUint32In:
+    case IndexedResizableTypedArrayFloat16In:
+    case IndexedResizableTypedArrayFloat32In:
+    case IndexedResizableTypedArrayFloat64In:
     case IndexedStringInHit:
     case IndexedNoIndexingInMiss:
         return false;
@@ -590,7 +613,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
-    case ProxyObjectHas:
+    case ProxyObjectIn:
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case InstanceOfHit:
@@ -598,10 +621,12 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case InstanceOfMegamorphic:
     case CheckPrivateBrand:
     case SetPrivateBrand:
+    case IndexedProxyObjectIn:
     case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
+    case IndexedMegamorphicIn:
     case IndexedMegamorphicLoad:
     case IndexedMegamorphicStore:
-    case IndexedMegamorphicIn:
         return false;
     case IndexedInt32Load:
     case IndexedDoubleLoad:
@@ -616,6 +641,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case IndexedTypedArrayUint16Load:
     case IndexedTypedArrayInt32Load:
     case IndexedTypedArrayUint32Load:
+    case IndexedTypedArrayFloat16Load:
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedResizableTypedArrayInt8Load:
@@ -625,6 +651,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case IndexedResizableTypedArrayUint16Load:
     case IndexedResizableTypedArrayInt32Load:
     case IndexedResizableTypedArrayUint32Load:
+    case IndexedResizableTypedArrayFloat16Load:
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedStringLoad:
@@ -640,6 +667,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case IndexedTypedArrayUint16Store:
     case IndexedTypedArrayInt32Store:
     case IndexedTypedArrayUint32Store:
+    case IndexedTypedArrayFloat16Store:
     case IndexedTypedArrayFloat32Store:
     case IndexedTypedArrayFloat64Store:
     case IndexedResizableTypedArrayInt8Store:
@@ -649,6 +677,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case IndexedResizableTypedArrayUint16Store:
     case IndexedResizableTypedArrayInt32Store:
     case IndexedResizableTypedArrayUint32Store:
+    case IndexedResizableTypedArrayFloat16Store:
     case IndexedResizableTypedArrayFloat32Store:
     case IndexedResizableTypedArrayFloat64Store:
     case IndexedInt32InHit:
@@ -657,24 +686,26 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case IndexedArrayStorageInHit:
     case IndexedScopedArgumentsInHit:
     case IndexedDirectArgumentsInHit:
-    case IndexedTypedArrayInt8InHit:
-    case IndexedTypedArrayUint8InHit:
-    case IndexedTypedArrayUint8ClampedInHit:
-    case IndexedTypedArrayInt16InHit:
-    case IndexedTypedArrayUint16InHit:
-    case IndexedTypedArrayInt32InHit:
-    case IndexedTypedArrayUint32InHit:
-    case IndexedTypedArrayFloat32InHit:
-    case IndexedTypedArrayFloat64InHit:
-    case IndexedResizableTypedArrayInt8InHit:
-    case IndexedResizableTypedArrayUint8InHit:
-    case IndexedResizableTypedArrayUint8ClampedInHit:
-    case IndexedResizableTypedArrayInt16InHit:
-    case IndexedResizableTypedArrayUint16InHit:
-    case IndexedResizableTypedArrayInt32InHit:
-    case IndexedResizableTypedArrayUint32InHit:
-    case IndexedResizableTypedArrayFloat32InHit:
-    case IndexedResizableTypedArrayFloat64InHit:
+    case IndexedTypedArrayInt8In:
+    case IndexedTypedArrayUint8In:
+    case IndexedTypedArrayUint8ClampedIn:
+    case IndexedTypedArrayInt16In:
+    case IndexedTypedArrayUint16In:
+    case IndexedTypedArrayInt32In:
+    case IndexedTypedArrayUint32In:
+    case IndexedTypedArrayFloat16In:
+    case IndexedTypedArrayFloat32In:
+    case IndexedTypedArrayFloat64In:
+    case IndexedResizableTypedArrayInt8In:
+    case IndexedResizableTypedArrayUint8In:
+    case IndexedResizableTypedArrayUint8ClampedIn:
+    case IndexedResizableTypedArrayInt16In:
+    case IndexedResizableTypedArrayUint16In:
+    case IndexedResizableTypedArrayInt32In:
+    case IndexedResizableTypedArrayUint32In:
+    case IndexedResizableTypedArrayFloat16In:
+    case IndexedResizableTypedArrayFloat32In:
+    case IndexedResizableTypedArrayFloat64In:
     case IndexedStringInHit:
     case IndexedNoIndexingInMiss:
         return true;
@@ -719,12 +750,6 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
             functor(accessCase.moduleEnvironment());
         break;
     }
-    case ProxyObjectHas:
-    case ProxyObjectLoad:
-    case ProxyObjectStore:
-    case IndexedProxyObjectLoad: {
-        break;
-    }
     case InstanceOfHit:
     case InstanceOfMiss:
         if (as<InstanceOfAccessCase>().prototype())
@@ -751,6 +776,9 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
+    case ProxyObjectIn:
+    case ProxyObjectLoad:
+    case ProxyObjectStore:
     case InstanceOfMegamorphic:
     case IndexedMegamorphicLoad:
     case IndexedMegamorphicStore:
@@ -768,6 +796,7 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case IndexedTypedArrayUint16Load:
     case IndexedTypedArrayInt32Load:
     case IndexedTypedArrayUint32Load:
+    case IndexedTypedArrayFloat16Load:
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedResizableTypedArrayInt8Load:
@@ -777,6 +806,7 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case IndexedResizableTypedArrayUint16Load:
     case IndexedResizableTypedArrayInt32Load:
     case IndexedResizableTypedArrayUint32Load:
+    case IndexedResizableTypedArrayFloat16Load:
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedStringLoad:
@@ -792,6 +822,7 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case IndexedTypedArrayUint16Store:
     case IndexedTypedArrayInt32Store:
     case IndexedTypedArrayUint32Store:
+    case IndexedTypedArrayFloat16Store:
     case IndexedTypedArrayFloat32Store:
     case IndexedTypedArrayFloat64Store:
     case IndexedResizableTypedArrayInt8Store:
@@ -801,6 +832,7 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case IndexedResizableTypedArrayUint16Store:
     case IndexedResizableTypedArrayInt32Store:
     case IndexedResizableTypedArrayUint32Store:
+    case IndexedResizableTypedArrayFloat16Store:
     case IndexedResizableTypedArrayFloat32Store:
     case IndexedResizableTypedArrayFloat64Store:
     case IndexedInt32InHit:
@@ -809,26 +841,31 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case IndexedArrayStorageInHit:
     case IndexedScopedArgumentsInHit:
     case IndexedDirectArgumentsInHit:
-    case IndexedTypedArrayInt8InHit:
-    case IndexedTypedArrayUint8InHit:
-    case IndexedTypedArrayUint8ClampedInHit:
-    case IndexedTypedArrayInt16InHit:
-    case IndexedTypedArrayUint16InHit:
-    case IndexedTypedArrayInt32InHit:
-    case IndexedTypedArrayUint32InHit:
-    case IndexedTypedArrayFloat32InHit:
-    case IndexedTypedArrayFloat64InHit:
-    case IndexedResizableTypedArrayInt8InHit:
-    case IndexedResizableTypedArrayUint8InHit:
-    case IndexedResizableTypedArrayUint8ClampedInHit:
-    case IndexedResizableTypedArrayInt16InHit:
-    case IndexedResizableTypedArrayUint16InHit:
-    case IndexedResizableTypedArrayInt32InHit:
-    case IndexedResizableTypedArrayUint32InHit:
-    case IndexedResizableTypedArrayFloat32InHit:
-    case IndexedResizableTypedArrayFloat64InHit:
+    case IndexedTypedArrayInt8In:
+    case IndexedTypedArrayUint8In:
+    case IndexedTypedArrayUint8ClampedIn:
+    case IndexedTypedArrayInt16In:
+    case IndexedTypedArrayUint16In:
+    case IndexedTypedArrayInt32In:
+    case IndexedTypedArrayUint32In:
+    case IndexedTypedArrayFloat16In:
+    case IndexedTypedArrayFloat32In:
+    case IndexedTypedArrayFloat64In:
+    case IndexedResizableTypedArrayInt8In:
+    case IndexedResizableTypedArrayUint8In:
+    case IndexedResizableTypedArrayUint8ClampedIn:
+    case IndexedResizableTypedArrayInt16In:
+    case IndexedResizableTypedArrayUint16In:
+    case IndexedResizableTypedArrayInt32In:
+    case IndexedResizableTypedArrayUint32In:
+    case IndexedResizableTypedArrayFloat16In:
+    case IndexedResizableTypedArrayFloat32In:
+    case IndexedResizableTypedArrayFloat64In:
     case IndexedStringInHit:
     case IndexedNoIndexingInMiss:
+    case IndexedProxyObjectIn:
+    case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
         break;
     }
 }
@@ -846,10 +883,12 @@ bool AccessCase::doesCalls(VM&) const
     case CustomAccessorGetter:
     case CustomValueSetter:
     case CustomAccessorSetter:
-    case ProxyObjectHas:
+    case ProxyObjectIn:
     case ProxyObjectLoad:
     case ProxyObjectStore:
+    case IndexedProxyObjectIn:
     case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
     case StoreMegamorphic:
     case IndexedMegamorphicStore:
         doesCalls = true;
@@ -893,6 +932,7 @@ bool AccessCase::doesCalls(VM&) const
     case IndexedTypedArrayUint16Load:
     case IndexedTypedArrayInt32Load:
     case IndexedTypedArrayUint32Load:
+    case IndexedTypedArrayFloat16Load:
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedResizableTypedArrayInt8Load:
@@ -902,6 +942,7 @@ bool AccessCase::doesCalls(VM&) const
     case IndexedResizableTypedArrayUint16Load:
     case IndexedResizableTypedArrayInt32Load:
     case IndexedResizableTypedArrayUint32Load:
+    case IndexedResizableTypedArrayFloat16Load:
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedStringLoad:
@@ -917,6 +958,7 @@ bool AccessCase::doesCalls(VM&) const
     case IndexedTypedArrayUint16Store:
     case IndexedTypedArrayInt32Store:
     case IndexedTypedArrayUint32Store:
+    case IndexedTypedArrayFloat16Store:
     case IndexedTypedArrayFloat32Store:
     case IndexedTypedArrayFloat64Store:
     case IndexedResizableTypedArrayInt8Store:
@@ -926,6 +968,7 @@ bool AccessCase::doesCalls(VM&) const
     case IndexedResizableTypedArrayUint16Store:
     case IndexedResizableTypedArrayInt32Store:
     case IndexedResizableTypedArrayUint32Store:
+    case IndexedResizableTypedArrayFloat16Store:
     case IndexedResizableTypedArrayFloat32Store:
     case IndexedResizableTypedArrayFloat64Store:
     case IndexedInt32InHit:
@@ -934,24 +977,26 @@ bool AccessCase::doesCalls(VM&) const
     case IndexedArrayStorageInHit:
     case IndexedScopedArgumentsInHit:
     case IndexedDirectArgumentsInHit:
-    case IndexedTypedArrayInt8InHit:
-    case IndexedTypedArrayUint8InHit:
-    case IndexedTypedArrayUint8ClampedInHit:
-    case IndexedTypedArrayInt16InHit:
-    case IndexedTypedArrayUint16InHit:
-    case IndexedTypedArrayInt32InHit:
-    case IndexedTypedArrayUint32InHit:
-    case IndexedTypedArrayFloat32InHit:
-    case IndexedTypedArrayFloat64InHit:
-    case IndexedResizableTypedArrayInt8InHit:
-    case IndexedResizableTypedArrayUint8InHit:
-    case IndexedResizableTypedArrayUint8ClampedInHit:
-    case IndexedResizableTypedArrayInt16InHit:
-    case IndexedResizableTypedArrayUint16InHit:
-    case IndexedResizableTypedArrayInt32InHit:
-    case IndexedResizableTypedArrayUint32InHit:
-    case IndexedResizableTypedArrayFloat32InHit:
-    case IndexedResizableTypedArrayFloat64InHit:
+    case IndexedTypedArrayInt8In:
+    case IndexedTypedArrayUint8In:
+    case IndexedTypedArrayUint8ClampedIn:
+    case IndexedTypedArrayInt16In:
+    case IndexedTypedArrayUint16In:
+    case IndexedTypedArrayInt32In:
+    case IndexedTypedArrayUint32In:
+    case IndexedTypedArrayFloat16In:
+    case IndexedTypedArrayFloat32In:
+    case IndexedTypedArrayFloat64In:
+    case IndexedResizableTypedArrayInt8In:
+    case IndexedResizableTypedArrayUint8In:
+    case IndexedResizableTypedArrayUint8ClampedIn:
+    case IndexedResizableTypedArrayInt16In:
+    case IndexedResizableTypedArrayUint16In:
+    case IndexedResizableTypedArrayInt32In:
+    case IndexedResizableTypedArrayUint32In:
+    case IndexedResizableTypedArrayFloat16In:
+    case IndexedResizableTypedArrayFloat32In:
+    case IndexedResizableTypedArrayFloat64In:
     case IndexedStringInHit:
     case IndexedNoIndexingInMiss:
         doesCalls = false;
@@ -1032,6 +1077,7 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case IndexedTypedArrayUint16Load:
     case IndexedTypedArrayInt32Load:
     case IndexedTypedArrayUint32Load:
+    case IndexedTypedArrayFloat16Load:
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedResizableTypedArrayInt8Load:
@@ -1041,6 +1087,7 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case IndexedResizableTypedArrayUint16Load:
     case IndexedResizableTypedArrayInt32Load:
     case IndexedResizableTypedArrayUint32Load:
+    case IndexedResizableTypedArrayFloat16Load:
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedStringLoad:
@@ -1055,6 +1102,7 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case IndexedTypedArrayUint16Store:
     case IndexedTypedArrayInt32Store:
     case IndexedTypedArrayUint32Store:
+    case IndexedTypedArrayFloat16Store:
     case IndexedTypedArrayFloat32Store:
     case IndexedTypedArrayFloat64Store:
     case IndexedResizableTypedArrayInt8Store:
@@ -1064,36 +1112,41 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case IndexedResizableTypedArrayUint16Store:
     case IndexedResizableTypedArrayInt32Store:
     case IndexedResizableTypedArrayUint32Store:
+    case IndexedResizableTypedArrayFloat16Store:
     case IndexedResizableTypedArrayFloat32Store:
     case IndexedResizableTypedArrayFloat64Store:
-    case ProxyObjectHas:
+    case ProxyObjectIn:
     case ProxyObjectLoad:
     case ProxyObjectStore:
+    case IndexedProxyObjectIn:
     case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
     case IndexedInt32InHit:
     case IndexedDoubleInHit:
     case IndexedContiguousInHit:
     case IndexedArrayStorageInHit:
     case IndexedScopedArgumentsInHit:
     case IndexedDirectArgumentsInHit:
-    case IndexedTypedArrayInt8InHit:
-    case IndexedTypedArrayUint8InHit:
-    case IndexedTypedArrayUint8ClampedInHit:
-    case IndexedTypedArrayInt16InHit:
-    case IndexedTypedArrayUint16InHit:
-    case IndexedTypedArrayInt32InHit:
-    case IndexedTypedArrayUint32InHit:
-    case IndexedTypedArrayFloat32InHit:
-    case IndexedTypedArrayFloat64InHit:
-    case IndexedResizableTypedArrayInt8InHit:
-    case IndexedResizableTypedArrayUint8InHit:
-    case IndexedResizableTypedArrayUint8ClampedInHit:
-    case IndexedResizableTypedArrayInt16InHit:
-    case IndexedResizableTypedArrayUint16InHit:
-    case IndexedResizableTypedArrayInt32InHit:
-    case IndexedResizableTypedArrayUint32InHit:
-    case IndexedResizableTypedArrayFloat32InHit:
-    case IndexedResizableTypedArrayFloat64InHit:
+    case IndexedTypedArrayInt8In:
+    case IndexedTypedArrayUint8In:
+    case IndexedTypedArrayUint8ClampedIn:
+    case IndexedTypedArrayInt16In:
+    case IndexedTypedArrayUint16In:
+    case IndexedTypedArrayInt32In:
+    case IndexedTypedArrayUint32In:
+    case IndexedTypedArrayFloat16In:
+    case IndexedTypedArrayFloat32In:
+    case IndexedTypedArrayFloat64In:
+    case IndexedResizableTypedArrayInt8In:
+    case IndexedResizableTypedArrayUint8In:
+    case IndexedResizableTypedArrayUint8ClampedIn:
+    case IndexedResizableTypedArrayInt16In:
+    case IndexedResizableTypedArrayUint16In:
+    case IndexedResizableTypedArrayInt32In:
+    case IndexedResizableTypedArrayUint32In:
+    case IndexedResizableTypedArrayFloat16In:
+    case IndexedResizableTypedArrayFloat32In:
+    case IndexedResizableTypedArrayFloat64In:
     case IndexedStringInHit:
         return other.type() == type();
 
@@ -1280,6 +1333,7 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case IndexedTypedArrayUint16Load:
     case IndexedTypedArrayInt32Load:
     case IndexedTypedArrayUint32Load:
+    case IndexedTypedArrayFloat16Load:
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedResizableTypedArrayInt8Load:
@@ -1289,6 +1343,7 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case IndexedResizableTypedArrayUint16Load:
     case IndexedResizableTypedArrayInt32Load:
     case IndexedResizableTypedArrayUint32Load:
+    case IndexedResizableTypedArrayFloat16Load:
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedInt32Store:
@@ -1302,6 +1357,7 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case IndexedTypedArrayUint16Store:
     case IndexedTypedArrayInt32Store:
     case IndexedTypedArrayUint32Store:
+    case IndexedTypedArrayFloat16Store:
     case IndexedTypedArrayFloat32Store:
     case IndexedTypedArrayFloat64Store:
     case IndexedResizableTypedArrayInt8Store:
@@ -1311,6 +1367,7 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case IndexedResizableTypedArrayUint16Store:
     case IndexedResizableTypedArrayInt32Store:
     case IndexedResizableTypedArrayUint32Store:
+    case IndexedResizableTypedArrayFloat16Store:
     case IndexedResizableTypedArrayFloat32Store:
     case IndexedResizableTypedArrayFloat64Store:
     case IndexedStringLoad:
@@ -1321,27 +1378,35 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case IndexedArrayStorageInHit:
     case IndexedScopedArgumentsInHit:
     case IndexedDirectArgumentsInHit:
-    case IndexedTypedArrayInt8InHit:
-    case IndexedTypedArrayUint8InHit:
-    case IndexedTypedArrayUint8ClampedInHit:
-    case IndexedTypedArrayInt16InHit:
-    case IndexedTypedArrayUint16InHit:
-    case IndexedTypedArrayInt32InHit:
-    case IndexedTypedArrayUint32InHit:
-    case IndexedTypedArrayFloat32InHit:
-    case IndexedTypedArrayFloat64InHit:
-    case IndexedResizableTypedArrayInt8InHit:
-    case IndexedResizableTypedArrayUint8InHit:
-    case IndexedResizableTypedArrayUint8ClampedInHit:
-    case IndexedResizableTypedArrayInt16InHit:
-    case IndexedResizableTypedArrayUint16InHit:
-    case IndexedResizableTypedArrayInt32InHit:
-    case IndexedResizableTypedArrayUint32InHit:
-    case IndexedResizableTypedArrayFloat32InHit:
-    case IndexedResizableTypedArrayFloat64InHit:
+    case IndexedTypedArrayInt8In:
+    case IndexedTypedArrayUint8In:
+    case IndexedTypedArrayUint8ClampedIn:
+    case IndexedTypedArrayInt16In:
+    case IndexedTypedArrayUint16In:
+    case IndexedTypedArrayInt32In:
+    case IndexedTypedArrayUint32In:
+    case IndexedTypedArrayFloat16In:
+    case IndexedTypedArrayFloat32In:
+    case IndexedTypedArrayFloat64In:
+    case IndexedResizableTypedArrayInt8In:
+    case IndexedResizableTypedArrayUint8In:
+    case IndexedResizableTypedArrayUint8ClampedIn:
+    case IndexedResizableTypedArrayInt16In:
+    case IndexedResizableTypedArrayUint16In:
+    case IndexedResizableTypedArrayInt32In:
+    case IndexedResizableTypedArrayUint32In:
+    case IndexedResizableTypedArrayFloat16In:
+    case IndexedResizableTypedArrayFloat32In:
+    case IndexedResizableTypedArrayFloat64In:
     case IndexedStringInHit:
     case IndexedNoIndexingInMiss:
     case InstanceOfMegamorphic:
+    case ProxyObjectIn:
+    case ProxyObjectLoad:
+    case ProxyObjectStore:
+    case IndexedProxyObjectIn:
+    case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
         func(static_cast<AccessCase*>(this));
         break;
 
@@ -1371,13 +1436,6 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case InstanceOfHit:
     case InstanceOfMiss:
         func(static_cast<InstanceOfAccessCase*>(this));
-        break;
-
-    case ProxyObjectHas:
-    case ProxyObjectLoad:
-    case ProxyObjectStore:
-    case IndexedProxyObjectLoad:
-        func(static_cast<ProxyObjectAccessCase*>(this));
         break;
     }
 }
@@ -1434,6 +1492,9 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case GetGetter:
     case InHit:
     case InMiss:
+    case ProxyObjectIn:
+    case ProxyObjectLoad:
+    case ProxyObjectStore:
     case ArrayLength:
     case StringLength:
     case DirectArgumentsLength:
@@ -1456,6 +1517,7 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case IndexedTypedArrayUint16Load:
     case IndexedTypedArrayInt32Load:
     case IndexedTypedArrayUint32Load:
+    case IndexedTypedArrayFloat16Load:
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedResizableTypedArrayInt8Load:
@@ -1465,6 +1527,7 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case IndexedResizableTypedArrayUint16Load:
     case IndexedResizableTypedArrayInt32Load:
     case IndexedResizableTypedArrayUint32Load:
+    case IndexedResizableTypedArrayFloat16Load:
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedInt32Store:
@@ -1478,6 +1541,7 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case IndexedTypedArrayUint16Store:
     case IndexedTypedArrayInt32Store:
     case IndexedTypedArrayUint32Store:
+    case IndexedTypedArrayFloat16Store:
     case IndexedTypedArrayFloat32Store:
     case IndexedTypedArrayFloat64Store:
     case IndexedResizableTypedArrayInt8Store:
@@ -1487,6 +1551,7 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case IndexedResizableTypedArrayUint16Store:
     case IndexedResizableTypedArrayInt32Store:
     case IndexedResizableTypedArrayUint32Store:
+    case IndexedResizableTypedArrayFloat16Store:
     case IndexedResizableTypedArrayFloat32Store:
     case IndexedResizableTypedArrayFloat64Store:
     case IndexedStringLoad:
@@ -1497,27 +1562,32 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case IndexedArrayStorageInHit:
     case IndexedScopedArgumentsInHit:
     case IndexedDirectArgumentsInHit:
-    case IndexedTypedArrayInt8InHit:
-    case IndexedTypedArrayUint8InHit:
-    case IndexedTypedArrayUint8ClampedInHit:
-    case IndexedTypedArrayInt16InHit:
-    case IndexedTypedArrayUint16InHit:
-    case IndexedTypedArrayInt32InHit:
-    case IndexedTypedArrayUint32InHit:
-    case IndexedTypedArrayFloat32InHit:
-    case IndexedTypedArrayFloat64InHit:
-    case IndexedResizableTypedArrayInt8InHit:
-    case IndexedResizableTypedArrayUint8InHit:
-    case IndexedResizableTypedArrayUint8ClampedInHit:
-    case IndexedResizableTypedArrayInt16InHit:
-    case IndexedResizableTypedArrayUint16InHit:
-    case IndexedResizableTypedArrayInt32InHit:
-    case IndexedResizableTypedArrayUint32InHit:
-    case IndexedResizableTypedArrayFloat32InHit:
-    case IndexedResizableTypedArrayFloat64InHit:
+    case IndexedTypedArrayInt8In:
+    case IndexedTypedArrayUint8In:
+    case IndexedTypedArrayUint8ClampedIn:
+    case IndexedTypedArrayInt16In:
+    case IndexedTypedArrayUint16In:
+    case IndexedTypedArrayInt32In:
+    case IndexedTypedArrayUint32In:
+    case IndexedTypedArrayFloat16In:
+    case IndexedTypedArrayFloat32In:
+    case IndexedTypedArrayFloat64In:
+    case IndexedResizableTypedArrayInt8In:
+    case IndexedResizableTypedArrayUint8In:
+    case IndexedResizableTypedArrayUint8ClampedIn:
+    case IndexedResizableTypedArrayInt16In:
+    case IndexedResizableTypedArrayUint16In:
+    case IndexedResizableTypedArrayInt32In:
+    case IndexedResizableTypedArrayUint32In:
+    case IndexedResizableTypedArrayFloat16In:
+    case IndexedResizableTypedArrayFloat32In:
+    case IndexedResizableTypedArrayFloat64In:
     case IndexedStringInHit:
     case IndexedNoIndexingInMiss:
     case InstanceOfMegamorphic:
+    case IndexedProxyObjectIn:
+    case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
         return true;
 
     case CustomValueGetter:
@@ -1531,12 +1601,7 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
 
     case Getter:
     case Setter:
-    case ProxyObjectHas:
-    case ProxyObjectLoad:
-    case ProxyObjectStore:
-    case IndexedProxyObjectLoad: {
         return true;
-    }
 
     case IntrinsicGetter: {
         auto& lhsd = lhs.as<IntrinsicGetterAccessCase>();

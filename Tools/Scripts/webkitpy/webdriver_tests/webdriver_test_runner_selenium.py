@@ -23,12 +23,15 @@
 import logging
 import os
 
+from webkitcorepy import AutoInstall, Package, Version
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.webdriver_tests.webdriver_selenium_executor import WebDriverSeleniumExecutor
 from webkitpy.webdriver_tests.webdriver_test_result import WebDriverTestResult
 
 _log = logging.getLogger(__name__)
 
+# Package required by Selenium for BiDi tests
+AutoInstall.register(Package('websocket', Version(1, 8, 0), pypi_name='websocket-client'))
 
 class WebDriverTestRunnerSelenium(object):
 

@@ -28,6 +28,7 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
@@ -154,37 +155,111 @@ TEST_F(WKContentRuleListStoreTest, NonExistingIdentifierLookup)
 TEST_F(WKContentRuleListStoreTest, VersionMismatch)
 {
     __block bool doneCompiling = false;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error)
-    {
-        
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
-        
+
         doneCompiling = true;
     }];
+
     TestWebKitAPI::Util::run(&doneCompiling);
 
     [[WKContentRuleListStore defaultStore] _invalidateContentRuleListVersionForIdentifier:@"TestRuleList"];
-    
+
     __block bool doneLookingUp = false;
-    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error)
-    {
-        
+    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error) {
+        EXPECT_NOT_NULL(filter);
+        EXPECT_NULL(error);
+
+        doneLookingUp = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneLookingUp);
+
+    __block bool doneGettingSource = false;
+    [[WKContentRuleListStore defaultStore] _getContentRuleListSourceForIdentifier:@"TestRuleList" completionHandler:^(NSString* source) {
+        EXPECT_NOT_NULL(source);
+        EXPECT_NS_EQUAL(source, basicFilter);
+
+        doneGettingSource = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneGettingSource);
+}
+
+TEST_F(WKContentRuleListStoreTest, CorruptHeaderEmpty)
+{
+    __block bool doneCompiling = false;
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
+        EXPECT_NOT_NULL(filter);
+        EXPECT_NULL(error);
+
+        doneCompiling = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneCompiling);
+
+    [[WKContentRuleListStore defaultStore] _corruptContentRuleListForIdentifier:@"TestRuleList" usingCurrentVersion:NO];
+
+    __block bool doneLookingUp = false;
+    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NULL(filter);
         EXPECT_NOT_NULL(error);
         checkDomain(error);
         EXPECT_EQ(error.code, WKErrorContentRuleListStoreVersionMismatch);
-        EXPECT_STREQ("Rule list lookup failed: Version of file does not match version of interpreter.", [[error helpAnchor] UTF8String]);
-        
+        EXPECT_NS_EQUAL(error.helpAnchor, @"Rule list lookup failed: Version of file does not match version of interpreter.");
+
         doneLookingUp = true;
     }];
+
     TestWebKitAPI::Util::run(&doneLookingUp);
 
     __block bool doneGettingSource = false;
     [[WKContentRuleListStore defaultStore] _getContentRuleListSourceForIdentifier:@"TestRuleList" completionHandler:^(NSString* source) {
         EXPECT_NULL(source);
+
         doneGettingSource = true;
     }];
+
+    TestWebKitAPI::Util::run(&doneGettingSource);
+}
+
+TEST_F(WKContentRuleListStoreTest, CorruptHeaderRandom)
+{
+    __block bool doneCompiling = false;
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error)
+    {
+        EXPECT_NOT_NULL(filter);
+        EXPECT_NULL(error);
+
+        doneCompiling = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneCompiling);
+
+    [[WKContentRuleListStore defaultStore] _corruptContentRuleListForIdentifier:@"TestRuleList" usingCurrentVersion:YES];
+
+    __block bool doneLookingUp = false;
+    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error)
+    {
+        EXPECT_NULL(filter);
+        EXPECT_NOT_NULL(error);
+        checkDomain(error);
+        EXPECT_EQ(error.code, WKErrorContentRuleListStoreLookUpFailed);
+        EXPECT_NS_EQUAL(error.helpAnchor, @"Rule list lookup failed: Unspecified error during lookup.");
+
+        doneLookingUp = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneLookingUp);
+
+    __block bool doneGettingSource = false;
+    [[WKContentRuleListStore defaultStore] _getContentRuleListSourceForIdentifier:@"TestRuleList" completionHandler:^(NSString* source) {
+        EXPECT_NULL(source);
+
+        doneGettingSource = true;
+    }];
+
     TestWebKitAPI::Util::run(&doneGettingSource);
 }
 
@@ -460,7 +535,7 @@ TEST_F(WKContentRuleListStoreTest, AddRemove)
     auto delegate = adoptNS([[ContentRuleListDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"contentBlockerCheck" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"contentBlockerCheck" withExtension:@"html"]];
     alertCount = 0;
     receivedAlert = false;
     [webView loadRequest:request];

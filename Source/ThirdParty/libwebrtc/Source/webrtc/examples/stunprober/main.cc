@@ -18,7 +18,7 @@
 #include "absl/flags/parse.h"
 #include "p2p/base/basic_packet_socket_factory.h"
 #include "p2p/stunprober/stun_prober.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/network.h"
 #include "rtc_base/physical_socket_server.h"

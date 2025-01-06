@@ -36,7 +36,7 @@
             };
         }
 
-        function doTest()
+        async function doTest()
         {
             document.scrollingElement.scrollTop = mainFrameScrollOffset;
             if (document.scrollingElement.scrollTop != mainFrameScrollOffset)
@@ -47,14 +47,14 @@
             var startPoint = getDragStart();
             if (window.eventSender) {
                 eventSender.dragMode = false;
-                eventSender.mouseMoveTo(startPoint.x, startPoint.y);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(startPoint.x, startPoint.y);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
             }
             setTimeout(autoscrollTestPart1, 0);
         }
 
-        function autoscrollTestPart1()
+        async function autoscrollTestPart1()
         {
             var mainDocumentTop = document.scrollingElement.scrollTop;
             if (mainDocumentTop != mainFrameScrollOffset)
@@ -63,17 +63,17 @@
             if (window.eventSender) {
                 var startPoint = getDragStart();
                 eventSender.dragMode = false;
-                eventSender.mouseMoveTo(startPoint.x, startPoint.y);
-                eventSender.mouseDown();
-                eventSender.mouseMoveTo(startPoint.x + 10, startPoint.y);
+                await eventSender.asyncMouseMoveTo(startPoint.x, startPoint.y);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseMoveTo(startPoint.x + 10, startPoint.y);
             }
             setTimeout(autoscrollTestPart2, 100);
         }
 
-        function autoscrollTestPart2()
+        async function autoscrollTestPart2()
         {
             if (window.eventSender)
-                eventSender.mouseUp();
+                await eventSender.asyncMouseUp();
 
             var mainDocumentTop = document.scrollingElement.scrollTop;
             if (mainDocumentTop == mainFrameScrollOffset)

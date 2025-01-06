@@ -11,7 +11,7 @@ PASS cx presentation attribute supported on a relevant element
 PASS cy presentation attribute supported on a relevant element
 PASS direction presentation attribute supported on a relevant element
 PASS display presentation attribute supported on a relevant element
-FAIL d presentation attribute supported on a relevant element assert_true: Presentation attribute d="M0,0 L1,1" should be supported on path element expected true got false
+PASS d presentation attribute supported on a relevant element
 PASS dominant-baseline presentation attribute supported on a relevant element
 PASS fill presentation attribute supported on a relevant element
 PASS fill-opacity presentation attribute supported on a relevant element

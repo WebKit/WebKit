@@ -27,10 +27,12 @@
 #pragma once
 
 #include "SpeechRecognitionProvider.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class DummySpeechRecognitionProvider final : public SpeechRecognitionProvider {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DummySpeechRecognitionProvider);
 public:
     class DummySpeechRecognitionConnection final : public SpeechRecognitionConnection {
     public:

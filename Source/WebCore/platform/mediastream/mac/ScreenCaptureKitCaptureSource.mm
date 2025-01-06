@@ -178,7 +178,7 @@ bool ScreenCaptureKitCaptureSource::isAvailable()
     return PAL::isScreenCaptureKitFrameworkAvailable();
 }
 
-Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, CaptureSourceError> ScreenCaptureKitCaptureSource::create(const CaptureDevice& device, const MediaConstraints*)
+Expected<uint32_t, CaptureSourceError> ScreenCaptureKitCaptureSource::computeDeviceID(const CaptureDevice& device)
 {
     ASSERT(device.type() == CaptureDevice::DeviceType::Screen || device.type() == CaptureDevice::DeviceType::Window);
 
@@ -186,11 +186,11 @@ Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, CaptureSourceError> Scr
     if (!deviceID)
         return makeUnexpected(CaptureSourceError { "Invalid display device ID"_s, MediaAccessDenialReason::PermissionDenied });
 
-    return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<ScreenCaptureKitCaptureSource>(device, deviceID.value()));
+    return *deviceID;
 }
 
-ScreenCaptureKitCaptureSource::ScreenCaptureKitCaptureSource(const CaptureDevice& device, uint32_t deviceID)
-    : DisplayCaptureSourceCocoa::Capturer()
+ScreenCaptureKitCaptureSource::ScreenCaptureKitCaptureSource(CapturerObserver& observer, const CaptureDevice& device, uint32_t deviceID)
+    : DisplayCaptureSourceCocoa::Capturer(observer)
     , m_captureDevice(device)
     , m_deviceID(deviceID)
 {
@@ -202,11 +202,45 @@ ScreenCaptureKitCaptureSource::~ScreenCaptureKitCaptureSource()
         ScreenCaptureKitSharingSessionManager::singleton().cancelPendingSessionForDevice(m_captureDevice);
 
     clearSharingSession();
+
+    if (auto callback = std::exchange(m_whenReadyCallback, { })) {
+        callOnMainRunLoop([callback = WTFMove(callback)]() mutable {
+            callback({ "Source no longer needed"_s , MediaAccessDenialReason::InvalidAccess });
+        });
+    }
+}
+
+void ScreenCaptureKitCaptureSource::whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback)
+{
+    if (m_didReceiveVideoFrame) {
+        callback({ });
+        return;
+    }
+
+    if (m_isRunning) {
+        m_whenReadyCallback = WTFMove(callback);
+        return;
+    }
+
+    // We start to get the first frame. The frame size allows to finalize initialization of the source settings.
+    m_whenReadyCallback = [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (auto&& result) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis) {
+            callback(WTFMove(result));
+            return;
+        }
+        protectedThis->stopInternal([callback = WTFMove(callback), result = WTFMove(result)] () mutable {
+            callback(WTFMove(result));
+        });
+    };
+
+    start();
 }
 
 bool ScreenCaptureKitCaptureSource::start()
 {
     ASSERT(isAvailable());
+    ASSERT(!m_whenReadyCallback || !m_isRunning);
 
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
@@ -219,18 +253,25 @@ bool ScreenCaptureKitCaptureSource::start()
     return m_isRunning;
 }
 
-void ScreenCaptureKitCaptureSource::stop()
+void ScreenCaptureKitCaptureSource::stopInternal(CompletionHandler<void()>&& callback)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     m_isRunning = false;
-    if (!contentStream())
+    if (!contentStream()) {
+        callback();
         return;
+    }
 
-    auto stopHandler = makeBlockPtr([weakThis = WeakPtr { *this }] (NSError *error) mutable {
-        callOnMainRunLoop([weakThis = WTFMove(weakThis), error = RetainPtr { error }]() mutable {
-            if (weakThis && error)
-                weakThis->sessionFailedWithError(WTFMove(error), "-[SCStream stopCaptureWithCompletionHandler:] failed"_s);
+    auto stopHandler = makeBlockPtr([weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (NSError *error) mutable {
+        callOnMainRunLoop([weakThis = WTFMove(weakThis), error = RetainPtr { error }, callback = WTFMove(callback)]() mutable {
+            callback();
+
+            if (!error)
+                return;
+
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->sessionFailedWithError(WTFMove(error), "-[SCStream stopCaptureWithCompletionHandler:] failed"_s);
         });
     });
     [contentStream() stopCaptureWithCompletionHandler:stopHandler.get()];
@@ -307,8 +348,8 @@ void ScreenCaptureKitCaptureSource::sessionFilterDidChange(SCContentFilter* cont
                 return;
 
             callOnMainRunLoop([weakThis = WTFMove(weakThis), error = RetainPtr { error }]() mutable {
-                if (weakThis)
-                    weakThis->sessionFailedWithError(WTFMove(error), "-[SCStream updateContentFilter:completionHandler:] failed"_s);
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->sessionFailedWithError(WTFMove(error), "-[SCStream updateContentFilter:completionHandler:] failed"_s);
             });
         });
 
@@ -431,7 +472,8 @@ void ScreenCaptureKitCaptureSource::startContentStream()
 
     auto completionHandler = makeBlockPtr([this, weakThis = WeakPtr { *this }, identifier = LOGIDENTIFIER] (NSError *error) mutable {
         callOnMainRunLoop([this, weakThis = WTFMove(weakThis), error = RetainPtr { error }, identifier]() mutable {
-            if (!weakThis)
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
 
             if (error) {
@@ -480,7 +522,7 @@ void ScreenCaptureKitCaptureSource::updateStreamConfiguration()
             return;
 
         callOnMainRunLoop([weakThis = WTFMove(weakThis), error = RetainPtr { error }]() mutable {
-            if (weakThis)
+            if (RefPtr protectedThis = weakThis.get())
                 weakThis->sessionFailedWithError(WTFMove(error), "-[SCStream updateConfiguration:completionHandler:] failed"_s);
         });
     });
@@ -576,9 +618,12 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     if (contentScale && contentScale != 1)
         scaledContentRect.scale(1 / contentScale);
 
+    auto areSizesRoughlyEqual = [] (auto sizeA, auto sizeB) {
+        return std::fabs(sizeA.width() - sizeB.width()) < 2 && std::abs(sizeA.height() - sizeB.height()) < 2;
+    };
     // FIXME: for now we will rely on cropping to handle large presenter overlay.
     // We might further want to reduce calling updateStreamConfiguration once we crop when user is resizing.
-    if (m_contentSize != scaledContentRect.size() && !shouldDisallowReconfiguration) {
+    if (!shouldDisallowReconfiguration && !areSizesRoughlyEqual(m_contentSize, scaledContentRect.size())) {
         m_contentSize = scaledContentRect.size();
         m_streamConfiguration = nullptr;
         updateStreamConfiguration();
@@ -586,7 +631,7 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
 
     auto intrinsicSize = FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get()), true, true));
 
-    if (contentRect.size() != intrinsicSize) {
+    if (!areSizesRoughlyEqual(contentRect.size(), intrinsicSize)) {
         if (!m_transferSession)
             m_transferSession = ImageTransferSessionVT::create(preferedPixelBufferFormat());
 
@@ -600,6 +645,12 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     if (!m_intrinsicSize || *m_intrinsicSize != IntSize(intrinsicSize)) {
         m_intrinsicSize = IntSize(intrinsicSize);
         configurationChanged();
+    }
+
+    if (!m_didReceiveVideoFrame) {
+        m_didReceiveVideoFrame = true;
+        if (m_whenReadyCallback)
+            m_whenReadyCallback({ });
     }
 }
 

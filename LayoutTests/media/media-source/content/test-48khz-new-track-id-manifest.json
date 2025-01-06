@@ -4,16 +4,16 @@
 	"init": { "offset": 0, "size": 624 },
 	"duration": 10.0906,
 	"media": [ 
-		{ "offset": 624,   "size": 1308, "timestamp": 0, "duration": 1.0027},
-		{ "offset": 1932,  "size": 1491, "timestamp": 1.0027, "duration": 1.0027},
-		{ "offset": 3423,  "size": 1341, "timestamp": 2.0053, "duration": 1.0027},
-		{ "offset": 4764,  "size": 1563, "timestamp": 3.008, "duration": 0.9813},
-		{ "offset": 6327,  "size": 1425, "timestamp": 3.9893, "duration": 1.0027},
-		{ "offset": 7752,  "size": 1770, "timestamp": 4.992, "duration": 1.0027},
-		{ "offset": 9522,  "size": 1910, "timestamp": 5.9947, "duration": 1.0027},
-		{ "offset": 11432, "size": 1887, "timestamp": 6.9973, "duration": 1.0027},
-		{ "offset": 13319, "size": 1919, "timestamp": 8, "duration": 1.0027},
-		{ "offset": 15238, "size": 1892, "timestamp": 9.0027, "duration": 1.0027},
-		{ "offset": 17130, "size": 1231, "timestamp": 10.0053, "duration": 0.0853}
+		{ "offset": 624,   "size": 1132, "timestamp": 0, "duration": 1.0027},
+		{ "offset": 1756,  "size": 1315, "timestamp": 1.0027, "duration": 1.0027},
+		{ "offset": 3071,  "size": 1165, "timestamp": 2.0053, "duration": 1.0027},
+		{ "offset": 4236,  "size": 1391, "timestamp": 3.008, "duration": 0.9813},
+		{ "offset": 5627,  "size": 1249, "timestamp": 3.9893, "duration": 1.0027},
+		{ "offset": 6876,  "size": 1594, "timestamp": 4.992, "duration": 1.0027},
+		{ "offset": 8470,  "size": 1734, "timestamp": 5.9947, "duration": 1.0027},
+		{ "offset": 10204, "size": 1711, "timestamp": 6.9973, "duration": 1.0027},
+		{ "offset": 11915, "size": 1743, "timestamp": 8, "duration": 1.0027},
+		{ "offset": 13658, "size": 1716, "timestamp": 9.0027, "duration": 1.0027},
+		{ "offset": 15374, "size": 1227, "timestamp": 10.0053, "duration": 0.0853}
 	]
 }

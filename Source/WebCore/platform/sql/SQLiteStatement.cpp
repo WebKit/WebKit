@@ -33,6 +33,7 @@
 #include <variant>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringView.h>
 
 // SQLite 3.6.16 makes sqlite3_prepare_v2 automatically retry preparing the statement
@@ -42,6 +43,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLiteStatement);
 
 SQLiteStatement::SQLiteStatement(SQLiteDatabase& db, sqlite3_stmt* statement)
     : m_database(db)
@@ -110,11 +113,11 @@ int SQLiteStatement::bindBlob(int index, const String& text)
     UChar anyCharacter = 0;
     std::span<const UChar> characters;
     if (text.isEmpty() && !text.isNull())
-        characters = span(anyCharacter);
+        characters = unsafeMakeSpan(&anyCharacter, 0);
     else
         characters = upconvertedCharacters.span();
 
-    return bindBlob(index, asBytes(characters));
+    return bindBlob(index, spanReinterpretCast<const uint8_t>(characters));
 }
 
 int SQLiteStatement::bindText(int index, StringView text)
@@ -215,7 +218,7 @@ SQLValue SQLiteStatement::columnValue(int col)
         return sqlite3_value_double(value);
     case SQLITE_BLOB: // SQLValue and JS don't represent blobs, so use TEXT -case
     case SQLITE_TEXT:
-        return String::fromUTF8(std::span(sqlite3_value_text(value), sqlite3_value_bytes(value)));
+        return String::fromUTF8(unsafeMakeSpan(sqlite3_value_text(value), sqlite3_value_bytes(value)));
     case SQLITE_NULL:
         return nullptr;
     default:
@@ -233,7 +236,7 @@ String SQLiteStatement::columnText(int col)
         return String();
     if (columnCount() <= col)
         return String();
-    return String::fromUTF8(std::span(sqlite3_column_text(m_statement, col), sqlite3_column_bytes(m_statement, col)));
+    return String::fromUTF8(unsafeMakeSpan(sqlite3_column_text(m_statement, col), sqlite3_column_bytes(m_statement, col)));
 }
     
 double SQLiteStatement::columnDouble(int col)
@@ -276,7 +279,7 @@ String SQLiteStatement::columnBlobAsString(int col)
     if (columnCount() <= col)
         return String();
 
-    const void* blob = sqlite3_column_blob(m_statement, col);
+    auto* blob = static_cast<const UChar*>(sqlite3_column_blob(m_statement, col));
     if (!blob)
         return emptyString();
 
@@ -285,7 +288,7 @@ String SQLiteStatement::columnBlobAsString(int col)
         return String();
 
     ASSERT(!(size % sizeof(UChar)));
-    return StringImpl::create8BitIfPossible({ static_cast<const UChar*>(blob), size / sizeof(UChar) });
+    return StringImpl::create8BitIfPossible(unsafeMakeSpan(blob, size / sizeof(UChar)));
 }
 
 Vector<uint8_t> SQLiteStatement::columnBlob(int col)
@@ -303,7 +306,7 @@ std::span<const uint8_t> SQLiteStatement::columnBlobAsSpan(int col)
     if (columnCount() <= col)
         return { };
 
-    const void* blob = sqlite3_column_blob(m_statement, col);
+    auto* blob = static_cast<const uint8_t*>(sqlite3_column_blob(m_statement, col));
     if (!blob)
         return { };
 
@@ -311,7 +314,7 @@ std::span<const uint8_t> SQLiteStatement::columnBlobAsSpan(int col)
     if (blobSize <= 0)
         return { };
 
-    return { static_cast<const uint8_t*>(blob), static_cast<size_t>(blobSize) };
+    return unsafeMakeSpan(blob, blobSize);
 }
 
 bool SQLiteStatement::hasStartedStepping()

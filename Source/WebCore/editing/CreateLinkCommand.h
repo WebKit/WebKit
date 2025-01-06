@@ -36,8 +36,6 @@ public:
         return adoptRef(*new CreateLinkCommand(WTFMove(document), linkURL));
     }
 
-    bool isCreateLinkCommand() const override { return true; }
-
 private:
     CreateLinkCommand(Ref<Document>&&, const String& linkURL);
 

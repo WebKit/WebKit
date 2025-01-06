@@ -28,6 +28,8 @@
 #include "GenericArguments.h"
 #include "JSCInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 template<typename Type>
@@ -335,3 +337,5 @@ void GenericArguments<Type>::copyToArguments(JSGlobalObject* globalObject, JSVal
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -11,11 +11,12 @@
 #ifndef API_SCTP_TRANSPORT_INTERFACE_H_
 #define API_SCTP_TRANSPORT_INTERFACE_H_
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/dtls_transport_interface.h"
-#include "api/rtc_error.h"
+#include "api/ref_count.h"
 #include "api/scoped_refptr.h"
-#include "rtc_base/ref_count.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -41,22 +42,22 @@ class RTC_EXPORT SctpTransportInformation {
   SctpTransportInformation(
       SctpTransportState state,
       rtc::scoped_refptr<DtlsTransportInterface> dtls_transport,
-      absl::optional<double> max_message_size,
-      absl::optional<int> max_channels);
+      std::optional<double> max_message_size,
+      std::optional<int> max_channels);
   ~SctpTransportInformation();
   // The DTLS transport that supports this SCTP transport.
   rtc::scoped_refptr<DtlsTransportInterface> dtls_transport() const {
     return dtls_transport_;
   }
   SctpTransportState state() const { return state_; }
-  absl::optional<double> MaxMessageSize() const { return max_message_size_; }
-  absl::optional<int> MaxChannels() const { return max_channels_; }
+  std::optional<double> MaxMessageSize() const { return max_message_size_; }
+  std::optional<int> MaxChannels() const { return max_channels_; }
 
  private:
-  SctpTransportState state_ { SctpTransportState::kNew }; // WEBRTC_WEBKIT_BUILD
+  SctpTransportState state_ = SctpTransportState::kNew;
   rtc::scoped_refptr<DtlsTransportInterface> dtls_transport_;
-  absl::optional<double> max_message_size_;
-  absl::optional<int> max_channels_;
+  std::optional<double> max_message_size_;
+  std::optional<int> max_channels_;
 };
 
 class SctpTransportObserverInterface {
@@ -75,7 +76,7 @@ class SctpTransportObserverInterface {
 // accessed on that thread, except for functions explicitly marked otherwise.
 // References can be held by other threads, and destruction can therefore
 // be initiated by other threads.
-class SctpTransportInterface : public rtc::RefCountInterface {
+class SctpTransportInterface : public webrtc::RefCountInterface {
  public:
   // This function can be called from other threads.
   virtual rtc::scoped_refptr<DtlsTransportInterface> dtls_transport() const = 0;

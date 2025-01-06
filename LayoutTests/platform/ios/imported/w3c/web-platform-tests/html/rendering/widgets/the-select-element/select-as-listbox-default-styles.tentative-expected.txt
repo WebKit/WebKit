@@ -38,7 +38,6 @@ FAIL <select multiple=""><option>1 - font-size assert_equals: expected "16px" bu
 FAIL <select multiple=""><option>1 - font-family assert_equals: expected "-webkit-standard" but got "system-ui"
 PASS <select multiple=""><option>1 - writing-mode
 PASS <select multiple=""><option>1 - scrollbar-width
-PASS <select multiple=""><option>1 - overflow
 PASS <select multiple=""><option>1 - vertical-align
 PASS <select multiple=""><option>1 - user-select
 PASS <select multiple=""><option>1 - page-break-inside

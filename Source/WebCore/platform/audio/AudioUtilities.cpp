@@ -28,6 +28,7 @@
 
 #include "AudioUtilities.h"
 #include <random>
+#include <wtf/HashFunctions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/WeakRandomNumber.h>
 
@@ -77,7 +78,7 @@ size_t timeToSampleFrame(double time, double sampleRate, SampleFrameRounding rou
     return static_cast<size_t>(frame);
 }
 
-void applyNoise(float* values, size_t numberOfElementsToProcess, float standardDeviation)
+void applyNoise(std::span<float> values, float standardDeviation)
 {
     std::random_device device;
     std::mt19937 generator(device());
@@ -93,11 +94,11 @@ void applyNoise(float* values, size_t numberOfElementsToProcess, float standardD
     std::array<float, maximumTableSize> multipliers;
     multipliers.fill(std::numeric_limits<float>::infinity());
 
-    for (size_t i = 0; i < numberOfElementsToProcess; ++i) {
-        auto& multiplier = multipliers[DefaultHash<double>::hash(values[i]) % tableSize];
+    for (auto& value : values) {
+        auto& multiplier = multipliers[DefaultHash<double>::hash(value) % tableSize];
         if (std::isinf(multiplier))
             multiplier = distribution(generator);
-        values[i] *= multiplier;
+        value *= multiplier;
     }
 }
 

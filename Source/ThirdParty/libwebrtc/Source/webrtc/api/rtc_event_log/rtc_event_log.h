@@ -18,7 +18,6 @@
 
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/rtc_event_log_output.h"
-#include "api/task_queue/task_queue_factory.h"
 
 namespace webrtc {
 
@@ -61,7 +60,7 @@ class RtcEventLogNull final : public RtcEventLog {
   bool StartLogging(std::unique_ptr<RtcEventLogOutput> output,
                     int64_t output_period_ms) override;
   void StopLogging() override {}
-  void Log(std::unique_ptr<RtcEvent> event) override {}
+  void Log(std::unique_ptr<RtcEvent> /* event */) override {}
 };
 
 }  // namespace webrtc

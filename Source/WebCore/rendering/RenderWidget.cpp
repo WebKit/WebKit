@@ -34,22 +34,23 @@
 #include "RemoteFrameView.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderEmbeddedObject.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderView.h"
 #include "SecurityOrigin.h"
-#include <wtf/IsoMallocInlines.h>
-#include <wtf/StackStats.h>
 #include <wtf/Ref.h>
+#include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderWidget);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderWidget);
 
-static HashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>& widgetRendererMap()
+static UncheckedKeyHashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>& widgetRendererMap()
 {
-    static NeverDestroyed<HashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>> staticWidgetRendererMap;
+    static NeverDestroyed<UncheckedKeyHashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>> staticWidgetRendererMap;
     return staticWidgetRendererMap;
 }
 
@@ -103,7 +104,7 @@ RenderWidget::RenderWidget(Type type, HTMLFrameOwnerElement& element, RenderStyl
 
 void RenderWidget::willBeDestroyed()
 {
-    if (AXObjectCache* cache = document().existingAXObjectCache()) {
+    if (CheckedPtr cache = document().existingAXObjectCache()) {
         cache->childrenChanged(this->parent());
         cache->remove(this);
     }
@@ -162,7 +163,7 @@ bool RenderWidget::updateWidgetGeometry()
 
     LayoutRect contentBox = contentBoxRect();
     LayoutRect absoluteContentBox(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
-    if (m_widget->isLocalFrameView()) {
+    if (is<FrameView>(m_widget)) {
         contentBox.setLocation(absoluteContentBox.location());
         return setWidgetGeometry(contentBox);
     }
@@ -174,6 +175,9 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
 {
     if (widget == m_widget)
         return;
+
+    if (is<RemoteFrameView>(m_widget) != is<RemoteFrameView>(widget))
+        frameOwnerElement().scheduleInvalidateStyleAndLayerComposition();
 
     if (m_widget) {
         moveWidgetToParentSoon(*m_widget, nullptr);
@@ -201,13 +205,13 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
                 m_widget->show();
                 repaint();
             }
-            if (auto* cache = document().existingAXObjectCache())
+            if (CheckedPtr cache = document().existingAXObjectCache())
                 cache->onWidgetVisibilityChanged(*this);
         }
         moveWidgetToParentSoon(*m_widget, &view().frameView());
     }
-    
-    if (auto* cache = document().existingAXObjectCache())
+
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->childrenChanged(this);
 }
 
@@ -228,7 +232,7 @@ void RenderWidget::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         else
             m_widget->show();
 
-        if (auto* cache = document().existingAXObjectCache())
+        if (CheckedPtr cache = document().existingAXObjectCache())
             cache->onWidgetVisibilityChanged(*this);
     }
 }
@@ -237,7 +241,7 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
 {
     if (paintInfo.requireSecurityOriginAccessForWidgets) {
         if (auto contentDocument = frameOwnerElement().contentDocument()) {
-            if (!document().securityOrigin().isSameOriginDomain(contentDocument->securityOrigin()))
+            if (!document().protectedSecurityOrigin()->isSameOriginDomain(contentDocument->securityOrigin()))
                 return;
         }
     }
@@ -327,12 +331,10 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
         // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
         paintInfo.context().save();
-        FloatRoundedRect roundedInnerRect = FloatRoundedRect(style().getRoundedInnerBorderFor(borderRect,
-            paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true));
-        BackgroundPainter::clipRoundedInnerRect(paintInfo.context(), borderRect, roundedInnerRect);
+        clipToContentBoxShape(paintInfo.context(), adjustedPaintOffset, document().deviceScaleFactor());
     }
 
-    if (m_widget && !isSkippedContentRoot())
+    if (m_widget && !isSkippedContentRoot(*this))
         paintContents(paintInfo, paintOffset);
 
     if (style().hasBorderRadius())
@@ -385,7 +387,8 @@ RenderWidget::ChildWidgetState RenderWidget::updateWidgetPosition()
 
 IntRect RenderWidget::windowClipRect() const
 {
-    return intersection(view().frameView().contentsToWindow(m_clipRect), view().frameView().windowClipRect());
+    Ref frameView = view().frameView();
+    return intersection(frameView->contentsToWindow(m_clipRect), frameView->windowClipRect());
 }
 
 void RenderWidget::setSelectionState(HighlightState state)
@@ -471,7 +474,7 @@ RenderBox* RenderWidget::embeddedContentBox() const
 {
     if (!is<RenderEmbeddedObject>(this))
         return nullptr;
-    auto* frameView = dynamicDowncast<LocalFrameView>(widget());
+    RefPtr frameView = dynamicDowncast<LocalFrameView>(widget());
     return frameView ? frameView->embeddedContentBox() : nullptr;
 }
 

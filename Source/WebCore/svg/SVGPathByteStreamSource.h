@@ -22,6 +22,8 @@
 #include "FloatPoint.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathSource.h"
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/ParsingUtilities.h>
 
 namespace WebCore {
 
@@ -35,15 +37,15 @@ private:
     SVGPathSegType nextCommand(SVGPathSegType) final;
 
     std::optional<SVGPathSegType> parseSVGSegmentType() final;
-    std::optional<MoveToSegment> parseMoveToSegment() final;
-    std::optional<LineToSegment> parseLineToSegment() final;
-    std::optional<LineToHorizontalSegment> parseLineToHorizontalSegment() final;
-    std::optional<LineToVerticalSegment> parseLineToVerticalSegment() final;
-    std::optional<CurveToCubicSegment> parseCurveToCubicSegment() final;
-    std::optional<CurveToCubicSmoothSegment> parseCurveToCubicSmoothSegment() final;
-    std::optional<CurveToQuadraticSegment> parseCurveToQuadraticSegment() final;
-    std::optional<CurveToQuadraticSmoothSegment> parseCurveToQuadraticSmoothSegment() final;
-    std::optional<ArcToSegment> parseArcToSegment() final;
+    std::optional<MoveToSegment> parseMoveToSegment(FloatPoint) final;
+    std::optional<LineToSegment> parseLineToSegment(FloatPoint) final;
+    std::optional<LineToHorizontalSegment> parseLineToHorizontalSegment(FloatPoint) final;
+    std::optional<LineToVerticalSegment> parseLineToVerticalSegment(FloatPoint) final;
+    std::optional<CurveToCubicSegment> parseCurveToCubicSegment(FloatPoint) final;
+    std::optional<CurveToCubicSmoothSegment> parseCurveToCubicSmoothSegment(FloatPoint) final;
+    std::optional<CurveToQuadraticSegment> parseCurveToQuadraticSegment(FloatPoint) final;
+    std::optional<CurveToQuadraticSmoothSegment> parseCurveToQuadraticSmoothSegment(FloatPoint) final;
+    std::optional<ArcToSegment> parseArcToSegment(FloatPoint) final;
 
 #if COMPILER(MSVC)
 #pragma warning(disable: 4701)
@@ -53,10 +55,7 @@ private:
     {
         DataType data;
         size_t dataSize = sizeof(DataType);
-
-        ASSERT_WITH_SECURITY_IMPLICATION(m_streamCurrent + dataSize <= m_streamEnd);
-        memcpy(&data, m_streamCurrent, dataSize);
-        m_streamCurrent += dataSize;
+        memcpySpan(asMutableByteSpan(data), consumeSpan(m_streamCurrent, dataSize));
         return data;
     }
 
@@ -81,8 +80,7 @@ private:
         return readType<FloatPoint>();
     }
 
-    SVGPathByteStream::DataIterator m_streamCurrent;
-    SVGPathByteStream::DataIterator m_streamEnd;
+    std::span<const uint8_t> m_streamCurrent;
 };
 
 } // namespace WebCore

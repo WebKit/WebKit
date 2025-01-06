@@ -4,7 +4,7 @@
 
 import("//third_party/OpenCL-CTS/gn/angle_ocl_cts.gni")
 
-ocl_cts_binary("cl_khr_semaphore") {
+ocl_cts_source_set("cl_khr_semaphore") {
   include_dirs = [ "$angle_root/third_party/OpenCL-CTS/src/test_conformance/extensions/cl_khr_semaphore" ]
   sources = [
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/extensions/cl_khr_semaphore/main.cpp",

@@ -44,7 +44,9 @@
 #import "WebExtensionMenuItemParameters.h"
 #import "WebExtensionTabParameters.h"
 #import "WebExtensionUtilities.h"
+#import "WebFrame.h"
 #import "WebProcess.h"
+#import <WebCore/LocalFrame.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 static NSString * const checkedKey = @"checked";
@@ -60,6 +62,10 @@ static NSString * const targetURLPatternsKey = @"targetUrlPatterns";
 static NSString * const titleKey = @"title";
 static NSString * const typeKey = @"type";
 static NSString * const visibleKey = @"visible";
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+static NSString * const iconVariantsKey = @"icon_variants";
+#endif
 
 static NSString * const normalKey = @"normal";
 static NSString * const checkboxKey = @"checkbox";
@@ -96,7 +102,7 @@ static id toMenuIdentifierWebAPI(const String& identifier)
     return identifier;
 }
 
-bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, NSDictionary *properties, std::optional<WebExtensionMenuItemParameters>& outParameters, RefPtr<WebExtensionCallbackHandler>& outClickCallback, NSString **outExceptionString)
+bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, NSDictionary *properties, const URL& baseURL, std::optional<WebExtensionMenuItemParameters>& outParameters, RefPtr<WebExtensionCallbackHandler>& outClickCallback, NSString **outExceptionString)
 {
     static NSArray<NSString *> *requiredKeys = @[
         titleKey,
@@ -108,7 +114,10 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
         contextsKey: @[ NSString.class ],
         documentURLPatternsKey: @[ NSString.class ],
         enabledKey: @YES.class,
-        iconsKey: [NSOrderedSet orderedSetWithObjects:NSString.class, NSDictionary.class, nil],
+        iconsKey: [NSOrderedSet orderedSetWithObjects:NSString.class, NSDictionary.class, NSNull.class, nil],
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        iconVariantsKey: [NSOrderedSet orderedSetWithObjects:@[ NSDictionary.class ], NSNull.class, nil],
+#endif
         idKey: [NSOrderedSet orderedSetWithObjects:NSString.class, NSNumber.class, nil],
         onclickKey: JSValue.class,
         parentIdKey: [NSOrderedSet orderedSetWithObjects:NSString.class, NSNumber.class, nil],
@@ -248,25 +257,39 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
 
     NSDictionary *iconDictionary;
 
-    if (NSString *iconPath = objectForKey<NSString>(properties, iconsKey))
-        iconDictionary = @{ @"16": iconPath };
+    if (auto *iconPath = objectForKey<NSString>(properties, iconsKey))
+        iconDictionary = @{ @"16": WebExtensionAPIAction::parseIconPath(iconPath, baseURL) };
 
-    if (NSDictionary *iconPaths = objectForKey<NSDictionary>(properties, iconsKey)) {
-        for (NSString *key in iconPaths) {
-            if (!WebExtensionAPIAction::isValidDimensionKey(key)) {
-                *outExceptionString = toErrorString(nil, iconsKey, @"'%@' in not a valid dimension", key);
-                return false;
-            }
-
-            if (!validateObject(iconPaths[key], [NSString stringWithFormat:@"%@[%@]", iconsKey, key], NSString.class, outExceptionString))
-                return false;
-        }
-
-        iconDictionary = iconPaths;
+    if (auto *iconPaths = objectForKey<NSDictionary>(properties, iconsKey)) {
+        iconDictionary = WebExtensionAPIAction::parseIconPathsDictionary(iconPaths, baseURL, false, iconsKey, outExceptionString);
+        if (!iconDictionary)
+            return false;
     }
 
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    NSArray *iconVariants;
+    if (auto *variants = objectForKey<NSArray>(properties, iconVariantsKey, false)) {
+        iconVariants = WebExtensionAPIAction::parseIconVariants(variants, baseURL, iconVariantsKey, outExceptionString);
+        if (!iconVariants)
+            return false;
+    }
+
+    // Icon variants takes precedence over the old icons key, even if empty.
+    if (iconVariants || iconDictionary.count)
+        parameters.iconsJSON = encodeJSONString(iconVariants ?: iconDictionary, JSONOptions::FragmentsAllowed);
+#else
     if (iconDictionary.count)
-        parameters.iconDictionaryJSON = encodeJSONString(iconDictionary);
+        parameters.iconsJSON = encodeJSONString(iconDictionary);
+#endif
+
+    // An explicit null icon variants or icons will clear the current icon.
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (properties[iconVariantsKey] && objectForKey<NSNull>(properties, iconVariantsKey))
+        parameters.iconsJSON = emptyString();
+    else
+#endif
+    if (properties[iconsKey] && objectForKey<NSNull>(properties, iconsKey))
+        parameters.iconsJSON = emptyString();
 
     if (NSString *command = properties[commandKey]) {
         if (!command.length) {
@@ -291,15 +314,15 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
     return true;
 }
 
-id WebExtensionAPIMenus::createMenu(WebPage& page, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+id WebExtensionAPIMenus::createMenu(WebPage& page, WebFrame& frame, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus/create
 
-    m_pageProxyIdentifier = page.webPageProxyIdentifier();
+    m_frameIdentifier = frame.frameID();
 
     std::optional<WebExtensionMenuItemParameters> parameters;
     RefPtr<WebExtensionCallbackHandler> clickCallback;
-    if (!parseCreateAndUpdateProperties(ForUpdate::No, properties, parameters, clickCallback, outExceptionString))
+    if (!parseCreateAndUpdateProperties(ForUpdate::No, properties, frame.url(), parameters, clickCallback, outExceptionString))
         return nil;
 
     if (parameters.value().identifier.isEmpty())
@@ -313,7 +336,7 @@ id WebExtensionAPIMenus::createMenu(WebPage& page, NSDictionary *properties, Ref
 
         if (clickCallback) {
             if (m_clickHandlerMap.isEmpty())
-                WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(m_pageProxyIdentifier, WebExtensionEventListenerType::MenusOnClicked, contentWorldType()), extensionContext().identifier());
+                WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(*m_frameIdentifier, WebExtensionEventListenerType::MenusOnClicked, contentWorldType()), extensionContext().identifier());
 
             m_clickHandlerMap.set(identifier, clickCallback.releaseNonNull());
         }
@@ -324,18 +347,18 @@ id WebExtensionAPIMenus::createMenu(WebPage& page, NSDictionary *properties, Ref
     return toMenuIdentifierWebAPI(parameters.value().identifier);
 }
 
-void WebExtensionAPIMenus::update(WebPage& page, id identifier, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIMenus::update(WebPage& page, WebFrame& frame, id identifier, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus/update
 
-    m_pageProxyIdentifier = page.webPageProxyIdentifier();
+    m_frameIdentifier = frame.frameID();
 
     if (!validateObject(identifier, @"identifier", [NSOrderedSet orderedSetWithObjects:NSString.class, NSNumber.class, nil], outExceptionString))
         return;
 
     std::optional<WebExtensionMenuItemParameters> parameters;
     RefPtr<WebExtensionCallbackHandler> clickCallback;
-    if (!parseCreateAndUpdateProperties(ForUpdate::Yes, properties, parameters, clickCallback, outExceptionString))
+    if (!parseCreateAndUpdateProperties(ForUpdate::Yes, properties, frame.url(), parameters, clickCallback, outExceptionString))
         return;
 
     if (NSNumber *identifierNumber = dynamic_objc_cast<NSNumber>(identifier))
@@ -358,7 +381,7 @@ void WebExtensionAPIMenus::update(WebPage& page, id identifier, NSDictionary *pr
 
             if (clickCallback) {
                 if (m_clickHandlerMap.isEmpty())
-                    WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(m_pageProxyIdentifier, WebExtensionEventListenerType::MenusOnClicked, contentWorldType()), extensionContext().identifier());
+                    WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(*m_frameIdentifier, WebExtensionEventListenerType::MenusOnClicked, contentWorldType()), extensionContext().identifier());
 
                 m_clickHandlerMap.set(newIdentifier, clickCallback.releaseNonNull());
             }
@@ -387,7 +410,7 @@ void WebExtensionAPIMenus::remove(id identifier, Ref<WebExtensionCallbackHandler
         m_clickHandlerMap.remove(identifier);
 
         if (m_clickHandlerMap.isEmpty())
-            WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(m_pageProxyIdentifier, WebExtensionEventListenerType::MenusOnClicked, contentWorldType(), 1), extensionContext().identifier());
+            WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(*m_frameIdentifier, WebExtensionEventListenerType::MenusOnClicked, contentWorldType(), 1), extensionContext().identifier());
 
         callback->call();
     }, extensionContext().identifier());
@@ -406,7 +429,7 @@ void WebExtensionAPIMenus::removeAll(Ref<WebExtensionCallbackHandler>&& callback
         if (!m_clickHandlerMap.isEmpty()) {
             m_clickHandlerMap.clear();
 
-            WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(m_pageProxyIdentifier, WebExtensionEventListenerType::MenusOnClicked, contentWorldType(), 1), extensionContext().identifier());
+            WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(*m_frameIdentifier, WebExtensionEventListenerType::MenusOnClicked, contentWorldType(), 1), extensionContext().identifier());
         }
 
         callback->call();

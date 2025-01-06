@@ -14,6 +14,7 @@
 #include "include/core/SkStream.h"
 #include "include/core/SkTypeface.h"
 #include "include/private/base/SkOnce.h"
+#include "include/private/base/SkTArray.h"
 #include "src/core/SkAdvancedTypefaceMetrics.h"
 #include "src/core/SkScalerContext.h"
 #include "src/ports/fontations/src/ffi.rs.h"
@@ -24,28 +25,6 @@ class SkStreamAsset;
 class SkFontationsScalerContext;
 
 namespace sk_fontations {
-
-/** Implementation of PathWrapper FFI C++ interface which allows Rust to call back
- * into C++ without exposing Skia types on the interface, see skpath_bridge.h. */
-class PathGeometrySink : public fontations_ffi::PathWrapper {
-public:
-    /* From fontations_ffi::PathWrapper. */
-    void move_to(float x, float y) override;
-    void line_to(float x, float y) override;
-    void quad_to(float cx0, float cy0, float x, float y) override;
-    void curve_to(float cx0, float cy0, float cx1, float cy1, float x, float y) override;
-    void close() override;
-
-    SkPath into_inner() &&;
-
-private:
-    void going_to(SkPoint point);
-    bool current_is_not(SkPoint);
-
-    SkPath fPath;
-    bool fStarted{false};
-    SkPoint fCurrent{0, 0};
-};
 
 /** Implementation of AxisWrapper FFI C++ interface, allowing Rust to call back into
  * C++ for populating variable axis availability information, see skpath_bridge.h. */
@@ -68,12 +47,13 @@ public:
     ColorPainter() = delete;
     ColorPainter(SkFontationsScalerContext& scaler_context,
                  SkCanvas& canvas,
-                 SkSpan<SkColor> palette,
+                 SkSpan<const SkColor> palette,
                  SkColor foregroundColor,
                  bool antialias,
                  uint16_t upem);
 
     // fontations_ffi::ColorPainter interface.
+    virtual bool is_bounds_mode() override { return false; }
     virtual void push_transform(const fontations_ffi::Transform& transform) override;
     virtual void pop_transform() override;
     virtual void push_clip_glyph(uint16_t glyph_id) override;
@@ -133,7 +113,7 @@ private:
                                SkMatrix* = nullptr);
     SkFontationsScalerContext& fScalerContext;
     SkCanvas& fCanvas;
-    SkSpan<SkColor> fPalette;
+    SkSpan<const SkColor> fPalette;
     SkColor fForegroundColor;
     bool fAntialias;
     uint16_t fUpem;
@@ -150,6 +130,7 @@ public:
     SkRect getBoundingBox();
 
     // fontations_ffi::ColorPainter interface.
+    virtual bool is_bounds_mode() override { return true; }
     virtual void push_transform(const fontations_ffi::Transform& transform) override;
     virtual void pop_transform() override;
     virtual void push_clip_glyph(uint16_t glyph_id) override;
@@ -192,8 +173,7 @@ public:
 
 private:
     SkFontationsScalerContext& fScalerContext;
-    SkMatrix fCurrentTransform;
-    SkMatrix fStackTopTransformInverse;
+    skia_private::STArray<4, SkMatrix> fMatrixStack;
 
     uint16_t fUpem;
     SkRect fBounds;
@@ -219,8 +199,8 @@ public:
         return *fBridgeNormalizedCoords;
     }
     const fontations_ffi::BridgeOutlineCollection& getOutlines() { return *fOutlines; }
-    SkSpan<SkColor> getPalette() {
-        return SkSpan<SkColor>(reinterpret_cast<SkColor*>(fPalette.data()), fPalette.size());
+    SkSpan<const SkColor> getPalette() const {
+        return SkSpan(reinterpret_cast<const SkColor*>(fPalette.data()), fPalette.size());
     }
 
     static constexpr SkTypeface::FactoryId FactoryId = SkSetFourByteTag('f', 'n', 't', 'a');
@@ -233,6 +213,10 @@ protected:
     sk_sp<SkTypeface> onMakeClone(const SkFontArguments& args) const override;
     std::unique_ptr<SkScalerContext> onCreateScalerContext(const SkScalerContextEffects& effects,
                                                            const SkDescriptor* desc) const override;
+    std::unique_ptr<SkScalerContext> onCreateScalerContextAsProxyTypeface(
+            const SkScalerContextEffects&,
+            const SkDescriptor*,
+            sk_sp<SkTypeface>) const override;
     void onFilterRec(SkScalerContextRec*) const override;
     std::unique_ptr<SkAdvancedTypefaceMetrics> onGetAdvancedMetrics() const override;
     void onGetFontDescriptor(SkFontDescriptor*, bool*) const override;

@@ -82,14 +82,9 @@ void UnrealizedCoreTextFont::addAttributesForOpticalSizing(CFMutableDictionaryRe
     WTF::switchOn(opticalSizingType, [&](OpticalSizingTypes::None) {
         CFDictionarySetValue(attributes, kCTFontOpticalSizeAttribute, CFSTR("none"));
     }, [&](OpticalSizingTypes::JustVariation) {
-#if USE(VARIABLE_OPTICAL_SIZING)
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=252592 We should never be enabling just the opsz variation without also enabling trak.
         // We should delete this and use the OpticalSizingType::Everything path instead.
         variationsToBeApplied.set({ { 'o', 'p', 's', 'z' } }, size);
-#else
-        UNUSED_PARAM(variationsToBeApplied);
-        UNUSED_PARAM(size);
-#endif
     }, [&](const OpticalSizingTypes::Everything& everything) {
         if (everything.opticalSizingValue) {
             auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &everything.opticalSizingValue.value()));
@@ -101,7 +96,7 @@ void UnrealizedCoreTextFont::addAttributesForOpticalSizing(CFMutableDictionaryRe
 
 static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontFeature& feature)
 {
-    auto featureKey = adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(feature.tag().data()), feature.tag().size() * sizeof(FontTag::value_type), kCFStringEncodingASCII, false));
+    auto featureKey = adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, byteCast<UInt8>(feature.tag().data()), feature.tag().size() * sizeof(FontTag::value_type), kCFStringEncodingASCII, false));
     int rawFeatureValue = feature.value();
     auto featureValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawFeatureValue));
     CFTypeRef featureDictionaryKeys[] = { kCTFontOpenTypeFeatureTag, kCTFontOpenTypeFeatureValue };

@@ -405,6 +405,22 @@
     _processPoolConfiguration->setMemoryFootprintNotificationThresholds(WTFMove(sizes));
 }
 
+- (BOOL)suspendsWebProcessesAggressivelyOnMemoryPressure
+{
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+    return _processPoolConfiguration->suspendsWebProcessesAggressivelyOnMemoryPressure();
+#else
+    return NO;
+#endif
+}
+
+- (void)setSuspendsWebProcessesAggressivelyOnMemoryPressure:(BOOL)enabled
+{
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+    _processPoolConfiguration->setSuspendsWebProcessesAggressivelyOnMemoryPressure(enabled);
+#endif
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

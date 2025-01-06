@@ -30,6 +30,7 @@
 #import "WebPushToolConnection.h"
 #import <optional>
 #import <wtf/MainThread.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WTFProcess.h>
 
 #if HAVE(OS_LAUNCHD_JOB) && (PLATFORM(MAC) || PLATFORM(IOS))
@@ -41,23 +42,32 @@ static void printUsageAndTerminate(NSString *message)
 {
     fprintf(stderr, "%s\n\n", message.UTF8String);
 
-    fprintf(stderr, "Usage: webpushtool [options]\n");
+    fprintf(stderr, "Usage: webpushtool [options] verb [verb_args]\n");
     fprintf(stderr, "\n");
+    fprintf(stderr, "options is one or more of:\n");
     fprintf(stderr, "  --development\n");
     fprintf(stderr, "    Connects to mach service \"org.webkit.webpushtestdaemon.service\" (Default)\n");
     fprintf(stderr, "  --production\n");
     fprintf(stderr, "    Connects to mach service \"com.apple.webkit.webpushd.service\"\n");
+    fprintf(stderr, "  --bundleIdentifier <bundleIdentifier>\n");
+    fprintf(stderr, "    Sets connection config to use bundle identifier <bundleIdentifier>.\n");
+    fprintf(stderr, "  --pushPartition <partition>\n");
+    fprintf(stderr, "    Sets connection config to use push partition <partition>.\n");
+    fprintf(stderr, "\n");
+    fprintf(stderr, "verb is one of:\n");
 #if HAVE(OS_LAUNCHD_JOB)
-    fprintf(stderr, "  --host\n");
+    fprintf(stderr, "  host\n");
     fprintf(stderr, "    Dynamically registers the service with launchd so it is visible to other applications\n");
     fprintf(stderr, "    The service name of the registration depends on either the --development or --production option chosen\n");
 #endif
-    fprintf(stderr, "  --streamDebugMessages\n");
+    fprintf(stderr, "  streamDebugMessages\n");
     fprintf(stderr, "    Stream debug messages from webpushd\n");
-    fprintf(stderr, "  --reconnect\n");
-    fprintf(stderr, "    Reconnect after connection is lost\n");
-    fprintf(stderr, "  --push <target app identifier> <partition string> <registration URL> <message>\n");
-    fprintf(stderr, "    Inject a test push message to the target app, push partition, and registration URL\n");
+    fprintf(stderr, "  injectPushMessage <scope URL> <message>\n");
+    fprintf(stderr, "    Inject a test push message <message> to the provided --bundleIdentifier and --pushPartition with service worker scope <scope URL>\n");
+    fprintf(stderr, "  getPushPermissionState <scope URL>\n");
+    fprintf(stderr, "    Gets the permission state for the given service worker scope.\n");
+    fprintf(stderr, "  requestPushPermission <scope URL>\n");
+    fprintf(stderr, "    Requests permission state for the given service worker scope.\n");
     fprintf(stderr, "\n");
 
     exitProcess(-1);
@@ -65,14 +75,6 @@ static void printUsageAndTerminate(NSString *message)
 
 static std::unique_ptr<PushMessageForTesting> pushMessageFromArguments(NSEnumerator<NSString *> *enumerator)
 {
-    NSString *appIdentifier = [enumerator nextObject];
-    if (!appIdentifier)
-        return nullptr;
-
-    NSString *pushPartition = [enumerator nextObject];
-    if (!pushPartition)
-        return nullptr;
-
     NSString *registrationString = [enumerator nextObject];
     if (!registrationString)
         return nullptr;
@@ -86,9 +88,9 @@ static std::unique_ptr<PushMessageForTesting> pushMessageFromArguments(NSEnumera
         return nullptr;
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    PushMessageForTesting pushMessage = { appIdentifier, pushPartition, registrationURL, message, WebKit::WebPushD::PushMessageDisposition::Legacy, std::nullopt };
+    PushMessageForTesting pushMessage = { { }, { }, registrationURL, message, WebKit::WebPushD::PushMessageDisposition::Legacy, std::nullopt };
 #else
-    PushMessageForTesting pushMessage = { appIdentifier, pushPartition, registrationURL, message, WebKit::WebPushD::PushMessageDisposition::Legacy };
+    PushMessageForTesting pushMessage = { { }, { }, registrationURL, message, WebKit::WebPushD::PushMessageDisposition::Legacy };
 #endif
 
     return makeUniqueWithoutFastMallocCheck<PushMessageForTesting>(WTFMove(pushMessage));
@@ -152,15 +154,86 @@ static bool registerDaemonWithLaunchD(WebPushTool::PreferTestService preferTestS
 
 namespace WebKit {
 
+class WebPushToolVerb {
+public:
+    virtual ~WebPushToolVerb() = default;
+    virtual void run(WebPushTool::Connection&) = 0;
+    virtual void done() { CFRunLoopStop(CFRunLoopGetMain()); }
+};
+
+class InjectPushMessageVerb : public WebPushToolVerb {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(InjectPushMessageVerb);
+public:
+    InjectPushMessageVerb(PushMessageForTesting&& message)
+        : m_pushMessage(WTFMove(message)) { }
+    ~InjectPushMessageVerb() = default;
+
+    void run(WebPushTool::Connection& connection) override
+    {
+        auto pushMessage = m_pushMessage;
+        pushMessage.targetAppCodeSigningIdentifier = connection.bundleIdentifier();
+        pushMessage.pushPartitionString = connection.pushPartition();
+
+        connection.sendPushMessage(WTFMove(pushMessage), [this, bundleIdentifier = connection.bundleIdentifier(), webClipIdentifier = connection.pushPartition()](String error) mutable {
+            if (error.isEmpty())
+                printf("Successfully injected push message %s for [bundleID = %s, webClipIdentifier = %s, scope = %s]\n", m_pushMessage.payload.utf8().data(), bundleIdentifier.utf8().data(), webClipIdentifier.utf8().data(), m_pushMessage.registrationURL.string().utf8().data());
+            else
+                printf("Injected push message with error: %s\n", error.utf8().data());
+            done();
+        });
+    }
+
+private:
+    PushMessageForTesting m_pushMessage;
+};
+
+class GetPushPermissionStateVerb : public WebPushToolVerb {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GetPushPermissionStateVerb);
+public:
+    GetPushPermissionStateVerb(const String& scope)
+        : m_scope(scope) { }
+    ~GetPushPermissionStateVerb() = default;
+
+    void run(WebPushTool::Connection& connection) override
+    {
+        connection.getPushPermissionState(m_scope, [this](WebCore::PushPermissionState state) mutable {
+            printf("Got push permission status: %u\n", static_cast<unsigned>(state));
+            done();
+        });
+    }
+
+private:
+    String m_scope;
+};
+
+class RequestPushPermissionVerb : public WebPushToolVerb {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RequestPushPermissionVerb);
+public:
+    RequestPushPermissionVerb(const String& scope)
+        : m_scope(scope) { }
+    ~RequestPushPermissionVerb() = default;
+
+    void run(WebPushTool::Connection& connection) override
+    {
+        connection.requestPushPermission(m_scope, [this](bool granted) mutable {
+            printf("Requested push permission with result: %d\n", granted);
+            done();
+        });
+    }
+
+private:
+    String m_scope;
+};
+
 int WebPushToolMain(int, char **)
 {
     WTF::initializeMainThread();
 
     auto preferTestService = WebPushTool::PreferTestService::Yes;
-    auto reconnect = WebPushTool::Reconnect::No;
     bool host = false;
-    std::optional<WebPushTool::Action> action;
-    std::unique_ptr<PushMessageForTesting> pushMessage;
+    std::unique_ptr<WebPushToolVerb> verb;
+    RetainPtr<NSString> bundleIdentifier = @"com.apple.WebKit.TestWebKitAPI";
+    RetainPtr<NSString> pushPartition;
 
     @autoreleasepool {
         NSArray *arguments = [[NSProcessInfo processInfo] arguments];
@@ -174,16 +247,25 @@ int WebPushToolMain(int, char **)
                 preferTestService = WebPushTool::PreferTestService::No;
             else if ([argument isEqualToString:@"--development"])
                 preferTestService = WebPushTool::PreferTestService::Yes;
-            else if ([argument isEqualToString:@"--streamDebugMessages"])
-                action = WebPushTool::Action::StreamDebugMessages;
-            else if ([argument isEqualToString:@"--reconnect"])
-                reconnect = WebPushTool::Reconnect::Yes;
-            else if ([argument isEqualToString:@"--host"])
+            else if ([argument isEqualToString:@"--bundleIdentifier"])
+                bundleIdentifier = [enumerator nextObject];
+            else if ([argument isEqualToString:@"--pushPartition"])
+                pushPartition = [enumerator nextObject];
+            else if ([argument isEqualToString:@"host"])
                 host = true;
-            else if ([argument isEqualToString:@"--push"]) {
-                pushMessage = pushMessageFromArguments(enumerator);
+            else if ([argument isEqualToString:@"streamDebugMessages"])
+                execl("/usr/bin/log", "log", "stream", "--debug", "--info", "--process", "webpushd");
+            else if ([argument isEqualToString:@"injectPushMessage"]) {
+                auto pushMessage = pushMessageFromArguments(enumerator);
                 if (!pushMessage)
                     printUsageAndTerminate([NSString stringWithFormat:@"Invalid push arguments specified"]);
+                verb = makeUnique<InjectPushMessageVerb>(WTFMove(*pushMessage));
+            } else if ([argument isEqualToString:@"getPushPermissionState"]) {
+                String scope { [enumerator nextObject] };
+                verb = makeUnique<GetPushPermissionStateVerb>(scope);
+            } else if ([argument isEqualToString:@"requestPushPermission"]) {
+                String scope { [enumerator nextObject] };
+                verb = makeUnique<RequestPushPermissionVerb>(scope);
             } else
                 printUsageAndTerminate([NSString stringWithFormat:@"Invalid option provided: %@", argument]);
 
@@ -191,17 +273,22 @@ int WebPushToolMain(int, char **)
         }
     }
 
-    if (!action && !pushMessage)
-        printUsageAndTerminate(@"No action provided");
+    if (host) {
+        if (!registerDaemonWithLaunchD(preferTestService)) {
+            NSLog(@"Failed to register webpushd with launchd");
+            exit(1);
+        }
 
-    if (host && !registerDaemonWithLaunchD(preferTestService))
-        printUsageAndTerminate(@"Unable to install plist to host the service");
+        NSLog(@"Registered webpushd with launchd");
+        exit(0);
+    }
 
-    auto connection = WebPushTool::Connection::create(action, preferTestService, reconnect);
-    if (pushMessage)
-        connection->setPushMessage(WTFMove(pushMessage));
+    if (!verb)
+        printUsageAndTerminate(@"Nothing to do");
 
+    auto connection = WebPushTool::Connection::create(preferTestService, bundleIdentifier.get(), pushPartition.get());
     connection->connectToService(host ? WebPushTool::WaitForServiceToExist::No : WebPushTool::WaitForServiceToExist::Yes);
+    verb->run(connection.get());
 
     CFRunLoopRun();
     return 0;

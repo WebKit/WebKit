@@ -321,7 +321,7 @@ TEST(ImageAnalysisTests, ImageAnalysisWithTransparentImages)
 
 static RetainPtr<CGImageRef> iconImage()
 {
-    auto iconPath = [NSBundle.mainBundle pathForResource:@"icon" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"];
+    auto iconPath = [NSBundle.test_resourcesBundle pathForResource:@"icon" ofType:@"png"];
 #if PLATFORM(IOS_FAMILY)
     return [UIImage imageWithContentsOfFile:iconPath].CGImage;
 #else

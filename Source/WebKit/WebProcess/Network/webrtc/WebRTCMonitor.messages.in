@@ -22,7 +22,11 @@
 
 #if USE(LIBWEBRTC)
 
-messages -> WebRTCMonitor NotRefCounted {
+[
+    DispatchedFrom=Networking,
+    DispatchedTo=WebContent
+]
+messages -> WebRTCMonitor {
     void NetworksChanged(Vector<WebKit::RTCNetwork> networks, WebKit::RTC::Network::IPAddress defaultIPV4Address, WebKit::RTC::Network::IPAddress defaultIPV6Address)
 }
 

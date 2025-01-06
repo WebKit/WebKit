@@ -9,12 +9,12 @@
  */
 
 #include <iostream>
+#include <optional>
 #include <string>
 
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
 #include "modules/audio_coding/neteq/tools/neteq_test_factory.h"
 #include "rtc_base/strings/string_builder.h"
@@ -36,7 +36,6 @@ ABSL_FLAG(std::string,
           " will assign the group Enable to field trial WebRTC-FooFeature.");
 ABSL_FLAG(int, pcmu, TestConfig::default_pcmu(), "RTP payload type for PCM-u");
 ABSL_FLAG(int, pcma, TestConfig::default_pcma(), "RTP payload type for PCM-a");
-ABSL_FLAG(int, ilbc, TestConfig::default_ilbc(), "RTP payload type for iLBC");
 ABSL_FLAG(int, isac, TestConfig::default_isac(), "RTP payload type for iSAC");
 ABSL_FLAG(int,
           isac_swb,
@@ -212,7 +211,6 @@ void PrintCodecMappingEntry(absl::string_view codec, int flag) {
 void PrintCodecMapping() {
   PrintCodecMappingEntry("PCM-u", absl::GetFlag(FLAGS_pcmu));
   PrintCodecMappingEntry("PCM-a", absl::GetFlag(FLAGS_pcma));
-  PrintCodecMappingEntry("iLBC", absl::GetFlag(FLAGS_ilbc));
   PrintCodecMappingEntry("iSAC", absl::GetFlag(FLAGS_isac));
   PrintCodecMappingEntry("iSAC-swb (32 kHz)", absl::GetFlag(FLAGS_isac_swb));
   PrintCodecMappingEntry("Opus", absl::GetFlag(FLAGS_opus));
@@ -262,13 +260,13 @@ bool ValidateOutputFilesOptions(bool textlog,
   return true;
 }
 
-absl::optional<std::string> CreateOptionalOutputFileName(
+std::optional<std::string> CreateOptionalOutputFileName(
     bool output_requested,
     absl::string_view basename,
     absl::string_view output_audio_filename,
     absl::string_view suffix) {
   if (!output_requested) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   if (!basename.empty()) {
     // Override the automatic assignment.
@@ -283,7 +281,7 @@ absl::optional<std::string> CreateOptionalOutputFileName(
     return sb.str();
   }
   std::cout << "Error: invalid text log file parameters.";
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 }  // namespace
@@ -314,7 +312,6 @@ int main(int argc, char* argv[]) {
       output_files_base_name, output_audio_filename));
   RTC_CHECK(ValidatePayloadType(absl::GetFlag(FLAGS_pcmu)));
   RTC_CHECK(ValidatePayloadType(absl::GetFlag(FLAGS_pcma)));
-  RTC_CHECK(ValidatePayloadType(absl::GetFlag(FLAGS_ilbc)));
   RTC_CHECK(ValidatePayloadType(absl::GetFlag(FLAGS_isac)));
   RTC_CHECK(ValidatePayloadType(absl::GetFlag(FLAGS_isac_swb)));
   RTC_CHECK(ValidatePayloadType(absl::GetFlag(FLAGS_opus)));
@@ -348,7 +345,6 @@ int main(int argc, char* argv[]) {
   webrtc::test::NetEqTestFactory::Config config;
   config.pcmu = absl::GetFlag(FLAGS_pcmu);
   config.pcma = absl::GetFlag(FLAGS_pcma);
-  config.ilbc = absl::GetFlag(FLAGS_ilbc);
   config.isac = absl::GetFlag(FLAGS_isac);
   config.isac_swb = absl::GetFlag(FLAGS_isac_swb);
   config.opus = absl::GetFlag(FLAGS_opus);
@@ -394,7 +390,7 @@ int main(int argc, char* argv[]) {
     uint32_t ssrc;
     RTC_CHECK(ParseSsrc(absl::GetFlag(FLAGS_ssrc), &ssrc))
         << "Flag verification has failed.";
-    config.ssrc_filter = absl::make_optional(ssrc);
+    config.ssrc_filter = std::make_optional(ssrc);
   }
 
   std::unique_ptr<webrtc::test::NetEqTest> test =

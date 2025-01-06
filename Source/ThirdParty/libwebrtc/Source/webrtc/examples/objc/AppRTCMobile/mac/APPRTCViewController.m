@@ -72,7 +72,8 @@ static NSUInteger const kBottomViewHeight = 200;
 #pragma mark - Private
 
 - (instancetype)initWithFrame:(NSRect)frame {
-  if (self = [super initWithFrame:frame]) {
+  self = [super initWithFrame:frame];
+  if (self) {
     [self setupViews];
   }
   return self;

@@ -66,11 +66,12 @@ class VersionNameMap(object):
                 'Monterey': Version(12, 0),
                 'Ventura': Version(13, 0),
                 'Sonoma': Version(14, 0),
+                'Sequoia': Version(15, 0),
             },
-            'ios': self._automap_to_major_version('iOS', minimum=Version(10), maximum=Version(17)),
-            'tvos': self._automap_to_major_version('tvOS', minimum=Version(10), maximum=Version(17)),
-            'watchos': self._automap_to_major_version('watchOS', minimum=Version(1), maximum=Version(10)),
-            'visionos': self._automap_to_major_version('visionOS', minimum=Version(1), maximum=Version(1)),
+            'ios': self._automap_to_major_version('iOS', minimum=Version(10), maximum=Version(18)),
+            'tvos': self._automap_to_major_version('tvOS', minimum=Version(10), maximum=Version(18)),
+            'watchos': self._automap_to_major_version('watchOS', minimum=Version(1), maximum=Version(11)),
+            'visionos': self._automap_to_major_version('visionOS', minimum=Version(1), maximum=Version(2)),
             'win': {
                 'Win10': Version(10),
                 '8.1': Version(6, 3),
@@ -84,10 +85,6 @@ class VersionNameMap(object):
             # but otherwise shouldn't contain any useful key-value pairs.
             'linux': {},
         }
-
-        # wincairo uses the same versions as Windows
-        self.mapping[PUBLIC_TABLE]['wincairo'] = self.mapping[PUBLIC_TABLE]['win']
-
 
     @classmethod
     def _automap_to_major_version(cls, prefix, minimum=Version(1), maximum=Version(1)):

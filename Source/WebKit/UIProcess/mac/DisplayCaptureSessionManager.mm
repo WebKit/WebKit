@@ -28,13 +28,13 @@
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
+#import "APIPageConfiguration.h"
 #import "Logging.h"
 #import "MediaPermissionUtilities.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import "WebProcess.h"
 #import "WebProcessPool.h"
-#import <WebCore/CGDisplayStreamScreenCaptureSource.h>
 #import <WebCore/CaptureDeviceManager.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MockRealtimeMediaSourceCenter.h>
@@ -214,7 +214,7 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
             return;
         }
 
-        Ref gpuProcess = page.process().processPool().ensureGPUProcess();
+        Ref gpuProcess = page.configuration().processPool().ensureGPUProcess();
         gpuProcess->updateSandboxAccess(false, false, true);
         gpuProcess->promptForGetDisplayMedia(toScreenCaptureKitPromptType(promptType), WTFMove(completionHandler));
         return;
@@ -241,12 +241,6 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
         else
             showWindowPicker(origin, WTFMove(completionHandler));
     });
-
-#elif PLATFORM(MAC)
-
-    // There is no picker on systems without ScreenCaptureKit, so share the main screen.
-    completionHandler(WebCore::CGDisplayStreamScreenCaptureSource::screenCaptureDeviceForMainDisplay());
-
 #endif
 }
 
@@ -263,7 +257,7 @@ void DisplayCaptureSessionManager::cancelGetDisplayMediaPrompt(WebPageProxy& pag
         return;
     }
 
-    auto gpuProcess = page.process().processPool().gpuProcess();
+    auto gpuProcess = page.configuration().processPool().gpuProcess();
     if (!gpuProcess)
         return;
 

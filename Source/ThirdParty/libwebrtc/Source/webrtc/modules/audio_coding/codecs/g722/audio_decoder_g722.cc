@@ -57,10 +57,15 @@ std::vector<AudioDecoder::ParseResult> AudioDecoderG722Impl::ParsePayload(
                                                  timestamp, 8, 16);
 }
 
-int AudioDecoderG722Impl::PacketDuration(const uint8_t* encoded,
+int AudioDecoderG722Impl::PacketDuration(const uint8_t* /* encoded */,
                                          size_t encoded_len) const {
   // 1/2 encoded byte per sample per channel.
   return static_cast<int>(2 * encoded_len / Channels());
+}
+
+int AudioDecoderG722Impl::PacketDurationRedundant(const uint8_t* encoded,
+                                                  size_t encoded_len) const {
+  return PacketDuration(encoded, encoded_len);
 }
 
 int AudioDecoderG722Impl::SampleRateHz() const {
@@ -120,7 +125,7 @@ int AudioDecoderG722StereoImpl::DecodeInternal(const uint8_t* encoded,
   return static_cast<int>(ret);
 }
 
-int AudioDecoderG722StereoImpl::PacketDuration(const uint8_t* encoded,
+int AudioDecoderG722StereoImpl::PacketDuration(const uint8_t* /* encoded */,
                                                size_t encoded_len) const {
   // 1/2 encoded byte per sample per channel. Make sure the length represents
   // an equal number of bytes per channel. Otherwise, we cannot de-interleave

@@ -10,20 +10,24 @@
 
 #include "rtc_base/async_udp_socket.h"
 
+#include <cstddef>
+#include <memory>
+#include <optional>
 
+#include "api/sequence_checker.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/async_packet_socket.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/network/received_packet.h"
 #include "rtc_base/network/sent_packet.h"
+#include "rtc_base/socket.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/socket_factory.h"
 #include "rtc_base/time_utils.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace rtc {
-
-// Returns true if the experiement "WebRTC-SCM-Timestamp" is explicitly
-// disabled.
-static bool IsScmTimeStampExperimentDisabled() {
-  return webrtc::field_trial::IsDisabled("WebRTC-SCM-Timestamp");
-}
 
 AsyncUDPSocket* AsyncUDPSocket::Create(Socket* socket,
                                        const SocketAddress& bind_address) {
@@ -63,7 +67,7 @@ int AsyncUDPSocket::Send(const void* pv,
                          const rtc::PacketOptions& options) {
   rtc::SentPacket sent_packet(options.packet_id, rtc::TimeMillis(),
                               options.info_signaled_after_sent);
-  CopySocketInformationToPacketInfo(cb, *this, false, &sent_packet.info);
+  CopySocketInformationToPacketInfo(cb, *this, &sent_packet.info);
   int ret = socket_->Send(pv, cb);
   SignalSentPacket(this, sent_packet);
   return ret;
@@ -75,7 +79,16 @@ int AsyncUDPSocket::SendTo(const void* pv,
                            const rtc::PacketOptions& options) {
   rtc::SentPacket sent_packet(options.packet_id, rtc::TimeMillis(),
                               options.info_signaled_after_sent);
-  CopySocketInformationToPacketInfo(cb, *this, true, &sent_packet.info);
+  CopySocketInformationToPacketInfo(cb, *this, &sent_packet.info);
+  if (has_set_ect1_options_ != options.ecn_1) {
+    // It is unclear what is most efficient, setting options on every sent
+    // packet or when changed. Potentially, can separate send sockets be used?
+    // This is the easier implementation.
+    if (socket_->SetOption(Socket::Option::OPT_SEND_ECN,
+                           options.ecn_1 ? 1 : 0) == 0) {
+      has_set_ect1_options_ = options.ecn_1;
+    }
+  }
   int ret = socket_->SendTo(pv, cb, addr);
   SignalSentPacket(this, sent_packet);
   return ret;
@@ -109,10 +122,8 @@ void AsyncUDPSocket::OnReadEvent(Socket* socket) {
   RTC_DCHECK(socket_.get() == socket);
   RTC_DCHECK_RUN_ON(&sequence_checker_);
 
-  SocketAddress remote_addr;
-  int64_t timestamp = -1;
-  int len = socket_->RecvFrom(buf_, BUF_SIZE, &remote_addr, &timestamp);
-
+  Socket::ReceiveBuffer receive_buffer(buffer_);
+  int len = socket_->RecvFrom(receive_buffer);
   if (len < 0) {
     // An error here typically means we got an ICMP error in response to our
     // send datagram, indicating the remote address was unreachable.
@@ -123,21 +134,25 @@ void AsyncUDPSocket::OnReadEvent(Socket* socket) {
                      << "] receive failed with error " << socket_->GetError();
     return;
   }
-  if (timestamp == -1) {
-    // Timestamp from socket is not available.
-    timestamp = TimeMicros();
-  } else {
-    if (!socket_time_offset_) {
-      socket_time_offset_ =
-          !IsScmTimeStampExperimentDisabled() ? TimeMicros() - timestamp : 0;
-    }
-    timestamp += *socket_time_offset_;
+  if (len == 0) {
+    // Spurios wakeup.
+    return;
   }
 
-  // TODO: Make sure that we got all of the packet.
-  // If we did not, then we should resize our buffer to be large enough.
-  SignalReadPacket(this, buf_, static_cast<size_t>(len), remote_addr,
-                   timestamp);
+  if (!receive_buffer.arrival_time) {
+    // Timestamp from socket is not available.
+    receive_buffer.arrival_time = webrtc::Timestamp::Micros(rtc::TimeMicros());
+  } else {
+    if (!socket_time_offset_) {
+      // Estimate timestamp offset from first packet arrival time.
+      socket_time_offset_ = webrtc::Timestamp::Micros(rtc::TimeMicros()) -
+                            *receive_buffer.arrival_time;
+    }
+    *receive_buffer.arrival_time += *socket_time_offset_;
+  }
+  NotifyPacketReceived(
+      ReceivedPacket(receive_buffer.payload, receive_buffer.source_address,
+                     receive_buffer.arrival_time, receive_buffer.ecn));
 }
 
 void AsyncUDPSocket::OnWriteEvent(Socket* socket) {

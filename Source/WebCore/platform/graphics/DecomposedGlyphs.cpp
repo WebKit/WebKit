@@ -26,11 +26,15 @@
 #include "config.h"
 #include "DecomposedGlyphs.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
 
-Ref<DecomposedGlyphs> DecomposedGlyphs::create(const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode, RenderingResourceIdentifier renderingResourceIdentifier)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DecomposedGlyphs);
+
+Ref<DecomposedGlyphs> DecomposedGlyphs::create(std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode mode, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    return adoptRef(*new DecomposedGlyphs({ Vector(std::span { glyphs, count }), Vector(std::span { advances, count }), localAnchor, mode }, renderingResourceIdentifier));
+    return adoptRef(*new DecomposedGlyphs({ Vector(glyphs), Vector(advances), localAnchor, mode }, renderingResourceIdentifier));
 }
 
 Ref<DecomposedGlyphs> DecomposedGlyphs::create(PositionedGlyphs&& positionedGlyphs, RenderingResourceIdentifier renderingResourceIdentifier)

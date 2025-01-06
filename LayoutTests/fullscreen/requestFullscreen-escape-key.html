@@ -1,28 +1,24 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../resources/js-test.js"></script>
+<div id="result"></div>
 <script>
-description("Tests that pressing the Escape key cannot be used as user interaction to enter fullscreen.");
-jsTestIsAsync = true;
-
-window.onkeydown = function(e) {
-    debug("keydown - Requesting fullscreen");
-    document.body.webkitRequestFullscreen();
-
-    setTimeout(function() {
-        shouldBeNull("document.webkitFullscreenElement");
-        finishJSTest();
-    }, 0);
-}
-
-onload = function() {
-    shouldBeTrue("document.webkitFullscreenEnabled");
-
-    debug("Pressing Escape key....");
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    addEventListener("keydown", (e) => {
+        const promise = document.documentElement.requestFullscreen().then(() => {
+            result.textContent = "FAIL - Fullscreen through Escape key was allowed.";
+            testRunner.notifyDone();
+        }, () => {
+            result.textContent = "PASS - Fullscreen through Escape key was rejected.";
+            testRunner.notifyDone();
+        });
+        e.preventDefault();
+    });
     if (window.eventSender)
         eventSender.keyDown("escape");
-};
 </script>
 </body>
 </html>

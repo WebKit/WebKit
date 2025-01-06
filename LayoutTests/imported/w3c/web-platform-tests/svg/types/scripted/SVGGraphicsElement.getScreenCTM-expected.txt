@@ -1,0 +1,10 @@
+
+PASS <svg> should give correct screen CTM for transform:translate(...) on ancestor elem, combined with margin on <body>
+PASS <rect> should give correct screen CTM for transform:translate(...) on ancestor elem, combined with margin on <body>
+FAIL <svg> should give correct screen CTM for transform:scale(2,1) on ancestor assert_equals: CTM component a expected 2 but got 1
+FAIL <svg> should give correct screen CTM for transform:scale(0.5) on self assert_equals: CTM component a expected 0.5 but got 1
+PASS <svg> should give correct screen CTM with many forms of offsets on ancestor and self
+PASS <svg> should give identity screen CTM with friendly rotations on ancestor and self that add up to 360deg
+FAIL <svg> should give correct screen CTM with many forms of offsets on self, and rotated self assert_equals: CTM component a expected -1 but got 1
+FAIL <svg> should give correct screen CTM with many forms of offsets on self, and rotated ancestor assert_equals: CTM component a expected -1 but got 1
+

@@ -21,7 +21,8 @@
 #error "Must define either WEBRTC_WIN or WEBRTC_POSIX."
 #endif
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "rtc_base/checks.h"
 #include "rtc_base/synchronization/yield_policy.h"
 #include "rtc_base/system/warn_current_thread_is_deadlocked.h"
@@ -148,27 +149,26 @@ bool Event::Wait(TimeDelta give_up_after, TimeDelta warn_after) {
   // Instant when we'll log a warning message (because we've been waiting so
   // long it might be a bug), but not yet give up waiting. nullopt if we
   // shouldn't log a warning.
-  const absl::optional<timespec> warn_ts =
-      warn_after >= give_up_after
-          ? absl::nullopt
-          : absl::make_optional(GetTimespec(warn_after));
+  const std::optional<timespec> warn_ts =
+      warn_after >= give_up_after ? std::nullopt
+                                  : std::make_optional(GetTimespec(warn_after));
 
   // Instant when we'll stop waiting and return an error. nullopt if we should
   // never give up.
-  const absl::optional<timespec> give_up_ts =
+  const std::optional<timespec> give_up_ts =
       give_up_after.IsPlusInfinity()
-          ? absl::nullopt
-          : absl::make_optional(GetTimespec(give_up_after));
+          ? std::nullopt
+          : std::make_optional(GetTimespec(give_up_after));
 
   ScopedYieldPolicy::YieldExecution();
   pthread_mutex_lock(&event_mutex_);
 
   // Wait for `event_cond_` to trigger and `event_status_` to be set, with the
   // given timeout (or without a timeout if none is given).
-  const auto wait = [&](const absl::optional<timespec> timeout_ts) {
+  const auto wait = [&](const std::optional<timespec> timeout_ts) {
     int error = 0;
     while (!event_status_ && error == 0) {
-      if (timeout_ts == absl::nullopt) {
+      if (timeout_ts == std::nullopt) {
         error = pthread_cond_wait(&event_cond_, &event_mutex_);
       } else {
 #if USE_PTHREAD_COND_TIMEDWAIT_MONOTONIC_NP
@@ -184,7 +184,7 @@ bool Event::Wait(TimeDelta give_up_after, TimeDelta warn_after) {
   };
 
   int error;
-  if (warn_ts == absl::nullopt) {
+  if (warn_ts == std::nullopt) {
     error = wait(give_up_ts);
   } else {
     error = wait(warn_ts);

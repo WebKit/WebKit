@@ -40,16 +40,14 @@ std::optional<RenderPassTimestampWrites> ConvertToBackingContext::convertToBacki
     if (!renderPassTimestampWrite.querySet)
         return std::nullopt;
 
-    auto querySet = convertToBacking(*renderPassTimestampWrite.querySet);
-    if (!querySet)
-        return std::nullopt;
+    auto querySet = convertToBacking(*renderPassTimestampWrite.protectedQuerySet());
 
     return { { querySet, renderPassTimestampWrite.beginningOfPassWriteIndex, renderPassTimestampWrite.endOfPassWriteIndex } };
 }
 
 std::optional<WebCore::WebGPU::RenderPassTimestampWrites> ConvertFromBackingContext::convertFromBacking(const RenderPassTimestampWrites& renderPassTimestampWrite)
 {
-    auto* querySet = convertQuerySetFromBacking(renderPassTimestampWrite.querySet);
+    WeakPtr querySet = convertQuerySetFromBacking(renderPassTimestampWrite.querySet);
     if (!querySet)
         return std::nullopt;
 

@@ -14,11 +14,9 @@
 #include <memory>
 #include <vector>
 
-#ifdef WEBRTC_WEBKIT_BUILD
-#include "common_video/h264/h264_common.h"
-#endif
 #include "common_video/h265/h265_inline.h"
 #include "rtc_base/buffer.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -58,16 +56,17 @@ enum NaluType : uint8_t {
   kAud = 35,
   kPrefixSei = 39,
   kSuffixSei = 40,
-  kAP = 48,
-  kFU = 49
+  // Aggregation packets, refer to section 4.4.2 in RFC 7798.
+  kAp = 48,
+  // Fragmentation units, refer to section 4.4.3 in RFC 7798.
+  kFu = 49,
+  // PACI packets, refer to section 4.4.4 in RFC 7798.
+  kPaci = 50
 };
 
-// Slice type definition. See table 7-7 of the H265 spec
+// Slice type definition. See table 7-7 of the H.265 spec
 enum SliceType : uint8_t { kB = 0, kP = 1, kI = 2 };
 
-#ifdef WEBRTC_WEBKIT_BUILD
-using NaluIndex = H264::NaluIndex;
-#else
 struct NaluIndex {
   // Start index of NALU, including start sequence.
   size_t start_offset = 0;
@@ -76,23 +75,21 @@ struct NaluIndex {
   // Length of NALU payload, in bytes, counting from payload_start_offset.
   size_t payload_size = 0;
 };
-#endif
 
 // Returns a vector of the NALU indices in the given buffer.
-#ifdef WEBRTC_WEBKIT_BUILD
+RTC_EXPORT std::vector<NaluIndex> FindNaluIndices(
+    rtc::ArrayView<const uint8_t> buffer);
+
+// TODO: bugs.webrtc.org/42225170 - Deprecate.
 inline std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
                                               size_t buffer_size) {
-  return H264::FindNaluIndices(buffer, buffer_size);
+  return FindNaluIndices(rtc::MakeArrayView(buffer, buffer_size));
 }
-#else
-std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
-                                       size_t buffer_size);
-#endif
 
 // Get the NAL type from the header byte immediately following start sequence.
-NaluType ParseNaluType(uint8_t data);
+RTC_EXPORT NaluType ParseNaluType(uint8_t data);
 
-// Methods for parsing and writing RBSP. See section 7.4.2 of the H265 spec.
+// Methods for parsing and writing RBSP. See section 7.4.2 of the H.265 spec.
 //
 // The following sequences are illegal, and need to be escaped when encoding:
 // 00 00 00 -> 00 00 03 00
@@ -106,12 +103,24 @@ NaluType ParseNaluType(uint8_t data);
 // the 03 emulation byte.
 
 // Parse the given data and remove any emulation byte escaping.
-std::vector<uint8_t> ParseRbsp(const uint8_t* data, size_t length);
+std::vector<uint8_t> ParseRbsp(rtc::ArrayView<const uint8_t> data);
+
+// TODO: bugs.webrtc.org/42225170 - Deprecate.
+inline std::vector<uint8_t> ParseRbsp(const uint8_t* data, size_t length) {
+  return ParseRbsp(rtc::MakeArrayView(data, length));
+}
 
 // Write the given data to the destination buffer, inserting and emulation
 // bytes in order to escape any data the could be interpreted as a start
 // sequence.
-void WriteRbsp(const uint8_t* bytes, size_t length, rtc::Buffer* destination);
+void WriteRbsp(rtc::ArrayView<const uint8_t> bytes, rtc::Buffer* destination);
+
+// TODO: bugs.webrtc.org/42225170 -  Deprecate.
+inline void WriteRbsp(const uint8_t* bytes,
+                      size_t length,
+                      rtc::Buffer* destination) {
+  WriteRbsp(rtc::MakeArrayView(bytes, length), destination);
+}
 
 uint32_t Log2Ceiling(uint32_t value);
 

@@ -31,10 +31,6 @@
 #import "WKBrowserEngineDefinitions.h"
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/UnifiedTextReplacementAdditions.h>
-#endif
-
 @interface WKExtendedTextInputTraits : NSObject
 #if USE(BROWSERENGINEKIT)
     <BEExtendedTextInputTraits>
@@ -62,10 +58,6 @@
 @property (nonatomic, strong) UIColor *insertionPointColor;
 @property (nonatomic, strong) UIColor *selectionHandleColor;
 @property (nonatomic, strong) UIColor *selectionHighlightColor;
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKExtendedTextInputTraitsAdditions.h>
-#endif
 
 - (void)setSelectionColorsToMatchTintColor:(UIColor *)tintColor;
 - (void)restoreDefaultValues;

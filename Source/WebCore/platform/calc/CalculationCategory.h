@@ -28,21 +28,23 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+namespace Calculation {
 
-// FIXME: Find a way to unify this with CSSPrimitiveValue::UnitCategory?
-enum class CalculationCategory : uint8_t {
+enum class Category : uint8_t {
+    Integer,
     Number,
+    Percentage,
     Length,
-    Percent,
-    PercentNumber,
-    PercentLength,
     Angle,
+    AnglePercentage,
     Time,
     Frequency,
     Resolution,
-    Other
+    Flex,
+    LengthPercentage
 };
 
-TextStream& operator<<(TextStream&, CalculationCategory);
+TextStream& operator<<(TextStream&, Category);
 
-}
+} // namespace Calculation
+} // namespace WebCore

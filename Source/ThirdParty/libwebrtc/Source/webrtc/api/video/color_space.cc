@@ -10,6 +10,12 @@
 
 #include "api/video/color_space.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+#include <string>
+
+#include "api/video/hdr_metadata.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
@@ -95,8 +101,8 @@ ColorSpace::ColorSpace(PrimaryID primaries,
       range_(range),
       chroma_siting_horizontal_(chroma_siting_horz),
       chroma_siting_vertical_(chroma_siting_vert),
-      hdr_metadata_(hdr_metadata ? absl::make_optional(*hdr_metadata)
-                                 : absl::nullopt) {}
+      hdr_metadata_(hdr_metadata ? std::make_optional(*hdr_metadata)
+                                 : std::nullopt) {}
 
 ColorSpace::PrimaryID ColorSpace::primaries() const {
   return primaries_;
@@ -257,7 +263,7 @@ bool ColorSpace::set_chroma_siting_vertical_from_uint8(uint8_t enum_value) {
 
 void ColorSpace::set_hdr_metadata(const HdrMetadata* hdr_metadata) {
   hdr_metadata_ =
-      hdr_metadata ? absl::make_optional(*hdr_metadata) : absl::nullopt;
+      hdr_metadata ? std::make_optional(*hdr_metadata) : std::nullopt;
 }
 
 }  // namespace webrtc

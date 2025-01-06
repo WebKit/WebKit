@@ -33,6 +33,7 @@ from .clean import Clean, DeletePRBranches
 from .clone import Clone
 from .command import Command
 from .commit import Commit
+from .conflict import Conflict
 from .squash import Squash
 from .checkout import Checkout
 from .classify import Classify
@@ -93,7 +94,7 @@ def main(
 
     programs = [
         Blame, Branch, Canonicalize, Checkout,
-        Clean, Clone, Find, Info, Land, Log, Pull,
+        Clean, Clone, Conflict, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Review, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
         Pickable, CherryPick, Trace, Track, Show, Publish,
@@ -108,10 +109,9 @@ def main(
             help = filtered_call(program.help, classifier=provisional_classifier)
         else:
             help = program.help
-        kwargs = dict(help=help)
-        if sys.version_info > (3, 0):
-            kwargs['aliases'] = program.aliases
-        subparser = subparsers.add_parser(program.name, **kwargs)
+        subparser = subparsers.add_parser(
+            program.name, help=help, aliases=program.aliases
+        )
         subparser.set_defaults(main=program.main)
         subparser.set_defaults(program=program.name)
         subparser.set_defaults(aliases=program.aliases)

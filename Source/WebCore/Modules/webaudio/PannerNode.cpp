@@ -37,12 +37,12 @@
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
 #include "ScriptExecutionContext.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PannerNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PannerNode);
 
 static void fixNANs(double &x)
 {
@@ -168,16 +168,17 @@ void PannerNode::processOnlyAudioParams(size_t framesToProcess)
         return;
 
     Locker locker { AdoptLock, m_processLock };
-    float values[AudioUtilities::renderQuantumSize];
+    std::array<float, AudioUtilities::renderQuantumSize> values;
     ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
 
-    m_positionX->calculateSampleAccurateValues(values, framesToProcess);
-    m_positionY->calculateSampleAccurateValues(values, framesToProcess);
-    m_positionZ->calculateSampleAccurateValues(values, framesToProcess);
+    auto valuesSpan = std::span { values }.first(framesToProcess);
+    m_positionX->calculateSampleAccurateValues(valuesSpan);
+    m_positionY->calculateSampleAccurateValues(valuesSpan);
+    m_positionZ->calculateSampleAccurateValues(valuesSpan);
 
-    m_orientationX->calculateSampleAccurateValues(values, framesToProcess);
-    m_orientationY->calculateSampleAccurateValues(values, framesToProcess);
-    m_orientationZ->calculateSampleAccurateValues(values, framesToProcess);
+    m_orientationX->calculateSampleAccurateValues(valuesSpan);
+    m_orientationY->calculateSampleAccurateValues(valuesSpan);
+    m_orientationZ->calculateSampleAccurateValues(valuesSpan);
 
     listener().updateValuesIfNeeded(framesToProcess);
 }
@@ -186,38 +187,38 @@ void PannerNode::processSampleAccurateValues(AudioBus* destination, const AudioB
 {
     // Get the sample accurate values from all of the AudioParams, including the
     // values from the AudioListener.
-    float pannerX[AudioUtilities::renderQuantumSize];
-    float pannerY[AudioUtilities::renderQuantumSize];
-    float pannerZ[AudioUtilities::renderQuantumSize];
+    std::array<float, AudioUtilities::renderQuantumSize> pannerX;
+    std::array<float, AudioUtilities::renderQuantumSize> pannerY;
+    std::array<float, AudioUtilities::renderQuantumSize> pannerZ;
 
-    float orientationX[AudioUtilities::renderQuantumSize];
-    float orientationY[AudioUtilities::renderQuantumSize];
-    float orientationZ[AudioUtilities::renderQuantumSize];
+    std::array<float, AudioUtilities::renderQuantumSize> orientationX;
+    std::array<float, AudioUtilities::renderQuantumSize> orientationY;
+    std::array<float, AudioUtilities::renderQuantumSize> orientationZ;
 
-    m_positionX->calculateSampleAccurateValues(pannerX, framesToProcess);
-    m_positionY->calculateSampleAccurateValues(pannerY, framesToProcess);
-    m_positionZ->calculateSampleAccurateValues(pannerZ, framesToProcess);
-    m_orientationX->calculateSampleAccurateValues(orientationX, framesToProcess);
-    m_orientationY->calculateSampleAccurateValues(orientationY, framesToProcess);
-    m_orientationZ->calculateSampleAccurateValues(orientationZ, framesToProcess);
+    m_positionX->calculateSampleAccurateValues(std::span { pannerX }.first(framesToProcess));
+    m_positionY->calculateSampleAccurateValues(std::span { pannerY }.first(framesToProcess));
+    m_positionZ->calculateSampleAccurateValues(std::span { pannerZ }.first(framesToProcess));
+    m_orientationX->calculateSampleAccurateValues(std::span { orientationX }.first(framesToProcess));
+    m_orientationY->calculateSampleAccurateValues(std::span { orientationY }.first(framesToProcess));
+    m_orientationZ->calculateSampleAccurateValues(std::span { orientationZ }.first(framesToProcess));
 
     // Get the automation values from the listener.
-    const float* listenerX = listener().positionXValues(AudioUtilities::renderQuantumSize);
-    const float* listenerY = listener().positionYValues(AudioUtilities::renderQuantumSize);
-    const float* listenerZ = listener().positionZValues(AudioUtilities::renderQuantumSize);
+    auto listenerX = listener().positionXValues(AudioUtilities::renderQuantumSize);
+    auto listenerY = listener().positionYValues(AudioUtilities::renderQuantumSize);
+    auto listenerZ = listener().positionZValues(AudioUtilities::renderQuantumSize);
 
-    const float* forwardX = listener().forwardXValues(AudioUtilities::renderQuantumSize);
-    const float* forwardY = listener().forwardYValues(AudioUtilities::renderQuantumSize);
-    const float* forwardZ = listener().forwardZValues(AudioUtilities::renderQuantumSize);
+    auto forwardX = listener().forwardXValues(AudioUtilities::renderQuantumSize);
+    auto forwardY = listener().forwardYValues(AudioUtilities::renderQuantumSize);
+    auto forwardZ = listener().forwardZValues(AudioUtilities::renderQuantumSize);
 
-    const float* upX = listener().upXValues(AudioUtilities::renderQuantumSize);
-    const float* upY = listener().upYValues(AudioUtilities::renderQuantumSize);
-    const float* upZ = listener().upZValues(AudioUtilities::renderQuantumSize);
+    auto upX = listener().upXValues(AudioUtilities::renderQuantumSize);
+    auto upY = listener().upYValues(AudioUtilities::renderQuantumSize);
+    auto upZ = listener().upZValues(AudioUtilities::renderQuantumSize);
 
     // Compute the azimuth, elevation, and total gains for each position.
-    double azimuth[AudioUtilities::renderQuantumSize];
-    double elevation[AudioUtilities::renderQuantumSize];
-    float totalGain[AudioUtilities::renderQuantumSize];
+    std::array<double, AudioUtilities::renderQuantumSize> azimuth;
+    std::array<double, AudioUtilities::renderQuantumSize> elevation;
+    std::array<float, AudioUtilities::renderQuantumSize> totalGain;
 
     for (size_t k = 0; k < framesToProcess; ++k) {
         FloatPoint3D pannerPosition(pannerX[k], pannerY[k], pannerZ[k]);
@@ -234,8 +235,8 @@ void PannerNode::processSampleAccurateValues(AudioBus* destination, const AudioB
         totalGain[k] = calculateDistanceConeGain(pannerPosition, orientation, listenerPosition, m_distanceEffect, m_coneEffect);
     }
 
-    m_panner->panWithSampleAccurateValues(azimuth, elevation, source, destination, framesToProcess);
-    destination->copyWithSampleAccurateGainValuesFrom(*destination, totalGain, framesToProcess);
+    m_panner->panWithSampleAccurateValues(std::span { azimuth }, std::span { elevation }, source, destination, framesToProcess);
+    destination->copyWithSampleAccurateGainValuesFrom(*destination, std::span { totalGain }.first(framesToProcess));
 }
 
 bool PannerNode::hasSampleAccurateValues() const

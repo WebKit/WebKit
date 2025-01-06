@@ -1,48 +1,89 @@
 Tests that AttributedStrings are retrieved properly from line ranges within a contenteditable with children.
 
-All text in the contenteditable: "AXFont - {
+All text in the contenteditable: "Attributes in range {0, 22}:
+AXFont: {
     AXFontFamily = Times;
     AXFontName = "Times-Roman";
     AXFontSize = 16;
-}, AXFont - {
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Attributes in range {22, 8}:
+AXFont: {
     AXFontFamily = Times;
     AXFontName = "Times-Roman";
     AXFontSize = 16;
-}, AXFont - {
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0.933333 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+AXUnderline: YES
+AXUnderlineColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0.933333 1 )
+Attributes in range {30, 12}:
+AXFont: {
     AXFontFamily = Times;
     AXFontName = "Times-Roman";
     AXFontSize = 16;
-}, AXFont - {
-    AXFontFamily = Times;
-    AXFontName = "Times-Roman";
-    AXFontSize = 16;
-}, First line.
-Some text click me more text.
-Another line."
-First line: "AXFont - {
-    AXFontFamily = Times;
-    AXFontName = "Times-Roman";
-    AXFontSize = 16;
-}, First line."
-Second line: "AXFont - {
-    AXFontFamily = Times;
-    AXFontName = "Times-Roman";
-    AXFontSize = 16;
-}, AXFont - {
-    AXFontFamily = Times;
-    AXFontName = "Times-Roman";
-    AXFontSize = 16;
-}, AXFont - {
-    AXFontFamily = Times;
-    AXFontName = "Times-Roman";
-    AXFontSize = 16;
-}, Some text click me more text."
-third line: "AXFont - {
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Attributes in range {42, 13}:
+AXFont: {
     AXFontFamily = Times;
     AXFontItalic = 1;
     AXFontName = "Times-Italic";
     AXFontSize = 16;
-}, Another line."
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+First line.
+Some text click me more text.
+Another line."
+First line: "Attributes in range {0, 11}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+First line."
+Second line: "Attributes in range {0, 10}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Attributes in range {10, 8}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0.933333 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+AXUnderline: YES
+AXUnderlineColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0.933333 1 )
+Attributes in range {18, 11}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Some text click me more text."
+third line: "Attributes in range {0, 13}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontItalic = 1;
+    AXFontName = "Times-Italic";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Another line."
 
 PASS successfullyParsed is true
 

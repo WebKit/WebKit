@@ -20,6 +20,7 @@
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/async_udp_socket.h"
@@ -231,6 +232,15 @@ void SocketTest::TestUdpSocketRecvTimestampUseRtcEpochIPv4() {
 void SocketTest::TestUdpSocketRecvTimestampUseRtcEpochIPv6() {
   MAYBE_SKIP_IPV6;
   UdpSocketRecvTimestampUseRtcEpoch(kIPv6Loopback);
+}
+
+void SocketTest::TestSocketSendRecvWithEcnIPV4() {
+  SocketSendRecvWithEcn(kIPv4Loopback);
+}
+
+void SocketTest::TestSocketSendRecvWithEcnIPV6() {
+  MAYBE_SKIP_IPV6;
+  SocketSendRecvWithEcn(kIPv6Loopback);
 }
 
 // For unbound sockets, GetLocalAddress / GetRemoteAddress return AF_UNSPEC
@@ -1078,6 +1088,56 @@ void SocketTest::GetSetOptionsInternal(const IPAddress& loopback) {
   ASSERT_NE(-1, socket->SetOption(Socket::OPT_DSCP, desired_dscp));
   ASSERT_NE(-1, socket->GetOption(Socket::OPT_DSCP, &current_dscp));
   ASSERT_EQ(desired_dscp, current_dscp);
+
+  int current_send_esn, desired_send_esn = 1;
+  ASSERT_NE(-1, socket->GetOption(Socket::OPT_SEND_ECN, &current_send_esn));
+  ASSERT_NE(-1, socket->SetOption(Socket::OPT_SEND_ECN, desired_send_esn));
+  ASSERT_NE(-1, socket->GetOption(Socket::OPT_SEND_ECN, &current_send_esn));
+  ASSERT_EQ(current_send_esn, desired_send_esn);
+
+  int current_recv_esn, desired_recv_esn = 1;
+  ASSERT_NE(-1, socket->GetOption(Socket::OPT_RECV_ECN, &current_recv_esn));
+  ASSERT_NE(-1, socket->SetOption(Socket::OPT_RECV_ECN, desired_recv_esn));
+  ASSERT_NE(-1, socket->GetOption(Socket::OPT_RECV_ECN, &current_recv_esn));
+  ASSERT_EQ(current_recv_esn, desired_recv_esn);
+#endif
+
+  // Prepare on TCP specific options.
+  socket.reset(socket_factory_->CreateSocket(loopback.family(), SOCK_STREAM));
+  socket->Bind(SocketAddress(loopback, 0));
+
+  // Check that we can set NODELAY on a TCP socket.
+  ASSERT_NE(-1, socket->SetOption(Socket::OPT_NODELAY, desired_nd));
+  ASSERT_NE(-1, socket->GetOption(Socket::OPT_NODELAY, &current_nd));
+  ASSERT_NE(0, current_nd);
+
+  // Check TCP Keep Alive settings.
+  int current_kl, desired_kl = 1;
+  ASSERT_NE(-1, socket->SetOption(Socket::OPT_KEEPALIVE, desired_kl));
+  ASSERT_NE(-1, socket->GetOption(Socket::OPT_KEEPALIVE, &current_kl));
+  ASSERT_NE(0, current_kl);
+
+  int current_kl_cnt, desired_kl_cnt = 3;
+  ASSERT_NE(-1, socket->SetOption(Socket::OPT_TCP_KEEPCNT, desired_kl_cnt));
+  ASSERT_NE(-1, socket->GetOption(Socket::OPT_TCP_KEEPCNT, &current_kl_cnt));
+  ASSERT_EQ(desired_kl_cnt, current_kl_cnt);
+
+  int current_kl_idle, desired_kl_idle = 2;
+  ASSERT_NE(-1, socket->SetOption(Socket::OPT_TCP_KEEPIDLE, desired_kl_idle));
+  ASSERT_NE(-1, socket->GetOption(Socket::OPT_TCP_KEEPIDLE, &current_kl_idle));
+  ASSERT_EQ(desired_kl_idle, current_kl_idle);
+
+  int current_kl_intvl, desired_kl_intvl = 2;
+  ASSERT_NE(-1, socket->SetOption(Socket::OPT_TCP_KEEPINTVL, desired_kl_intvl));
+  ASSERT_NE(-1,
+            socket->GetOption(Socket::OPT_TCP_KEEPINTVL, &current_kl_intvl));
+  ASSERT_EQ(desired_kl_intvl, current_kl_intvl);
+
+#if defined(WEBRTC_LINUX) || defined(WEBRTC_ANDROID)
+  int current_ut, desired_ut = 10;
+  ASSERT_NE(-1, socket->SetOption(Socket::OPT_TCP_USER_TIMEOUT, desired_ut));
+  ASSERT_NE(-1, socket->GetOption(Socket::OPT_TCP_USER_TIMEOUT, &current_ut));
+  ASSERT_EQ(desired_ut, current_ut);
 #endif
 }
 
@@ -1092,11 +1152,11 @@ void SocketTest::SocketRecvTimestamp(const IPAddress& loopback) {
   int64_t send_time_1 = TimeMicros();
   socket->SendTo("foo", 3, address);
 
-  int64_t recv_timestamp_1;
   // Wait until data is available.
   EXPECT_TRUE_WAIT(sink.Check(socket.get(), SSE_READ), kTimeout);
-  char buffer[3];
-  ASSERT_GT(socket->RecvFrom(buffer, 3, nullptr, &recv_timestamp_1), 0);
+  rtc::Buffer buffer;
+  Socket::ReceiveBuffer receive_buffer_1(buffer);
+  ASSERT_GT(socket->RecvFrom(receive_buffer_1), 0);
 
   const int64_t kTimeBetweenPacketsMs = 100;
   Thread::SleepMs(kTimeBetweenPacketsMs);
@@ -1105,11 +1165,12 @@ void SocketTest::SocketRecvTimestamp(const IPAddress& loopback) {
   socket->SendTo("bar", 3, address);
   // Wait until data is available.
   EXPECT_TRUE_WAIT(sink.Check(socket.get(), SSE_READ), kTimeout);
-  int64_t recv_timestamp_2;
-  ASSERT_GT(socket->RecvFrom(buffer, 3, nullptr, &recv_timestamp_2), 0);
+  Socket::ReceiveBuffer receive_buffer_2(buffer);
+  ASSERT_GT(socket->RecvFrom(receive_buffer_2), 0);
 
   int64_t system_time_diff = send_time_2 - send_time_1;
-  int64_t recv_timestamp_diff = recv_timestamp_2 - recv_timestamp_1;
+  int64_t recv_timestamp_diff =
+      receive_buffer_2.arrival_time->us() - receive_buffer_1.arrival_time->us();
   // Compare against the system time at the point of sending, because
   // SleepMs may not sleep for exactly the requested time.
   EXPECT_NEAR(system_time_diff, recv_timestamp_diff, 10000);
@@ -1132,13 +1193,50 @@ void SocketTest::UdpSocketRecvTimestampUseRtcEpoch(const IPAddress& loopback) {
   client2->SendTo("foo", 3, address);
   std::unique_ptr<TestClient::Packet> packet_1 = client1->NextPacket(10000);
   ASSERT_TRUE(packet_1 != nullptr);
-  EXPECT_NEAR(packet_1->packet_time_us, rtc::TimeMicros(), 1000'000);
+  EXPECT_NEAR(packet_1->packet_time->us(), rtc::TimeMicros(), 1000'000);
 
   Thread::SleepMs(100);
   client2->SendTo("bar", 3, address);
   std::unique_ptr<TestClient::Packet> packet_2 = client1->NextPacket(10000);
   ASSERT_TRUE(packet_2 != nullptr);
-  EXPECT_GT(packet_2->packet_time_us, packet_1->packet_time_us);
-  EXPECT_NEAR(packet_2->packet_time_us, rtc::TimeMicros(), 1000'000);
+  EXPECT_GT(packet_2->packet_time->us(), packet_1->packet_time->us());
+  EXPECT_NEAR(packet_2->packet_time->us(), rtc::TimeMicros(), 1000'000);
 }
+
+void SocketTest::SocketSendRecvWithEcn(const IPAddress& loopback) {
+  StreamSink sink;
+  std::unique_ptr<Socket> socket(
+      socket_factory_->CreateSocket(loopback.family(), SOCK_DGRAM));
+  EXPECT_EQ(0, socket->Bind(SocketAddress(loopback, 0)));
+  SocketAddress address = socket->GetLocalAddress();
+  sink.Monitor(socket.get());
+  rtc::Buffer buffer;
+  Socket::ReceiveBuffer receive_buffer(buffer);
+
+  socket->SendTo("foo", 3, address);
+  EXPECT_TRUE_WAIT(sink.Check(socket.get(), SSE_READ), kTimeout);
+  ASSERT_GT(socket->RecvFrom(receive_buffer), 0);
+  EXPECT_EQ(receive_buffer.ecn, EcnMarking::kNotEct);
+
+  socket->SetOption(Socket::OPT_SEND_ECN, 1);  // Ect(1)
+  socket->SetOption(Socket::OPT_RECV_ECN, 1);
+
+  socket->SendTo("bar", 3, address);
+  EXPECT_TRUE_WAIT(sink.Check(socket.get(), SSE_READ), kTimeout);
+  ASSERT_GT(socket->RecvFrom(receive_buffer), 0);
+  EXPECT_EQ(receive_buffer.ecn, EcnMarking::kEct1);
+
+  socket->SetOption(Socket::OPT_SEND_ECN, 2);  // Ect(0)
+  socket->SendTo("bar", 3, address);
+  EXPECT_TRUE_WAIT(sink.Check(socket.get(), SSE_READ), kTimeout);
+  ASSERT_GT(socket->RecvFrom(receive_buffer), 0);
+  EXPECT_EQ(receive_buffer.ecn, EcnMarking::kEct0);
+
+  socket->SetOption(Socket::OPT_SEND_ECN, 3);  // Ce
+  socket->SendTo("bar", 3, address);
+  EXPECT_TRUE_WAIT(sink.Check(socket.get(), SSE_READ), kTimeout);
+  ASSERT_GT(socket->RecvFrom(receive_buffer), 0);
+  EXPECT_EQ(receive_buffer.ecn, EcnMarking::kCe);
+}
+
 }  // namespace rtc

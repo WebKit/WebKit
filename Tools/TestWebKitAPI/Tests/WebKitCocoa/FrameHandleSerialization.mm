@@ -29,6 +29,7 @@
 #import <WebKit/WKBundlePageUIClient.h>
 #import <WebKit/WKWebProcessPlugIn.h>
 #import <WebKit/WKWebProcessPlugInBrowserContextControllerPrivate.h>
+#import <wtf/StdLibExtras.h>
 
 void mouseDidMoveOverElement(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef* userData, const void* clientInfo)
 {
@@ -43,7 +44,7 @@ void mouseDidMoveOverElement(WKBundlePageRef page, WKBundleHitTestResultRef hitT
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
 {
     WKBundlePageUIClientV0 client;
-    memset(&client, 0, sizeof(client));
+    zeroBytes(client);
     client.mouseDidMoveOverElement = mouseDidMoveOverElement;
     WKBundlePageSetUIClient([browserContextController _bundlePageRef], &client.base);
 }

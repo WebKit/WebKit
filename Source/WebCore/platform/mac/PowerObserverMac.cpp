@@ -27,8 +27,11 @@
 
 #if PLATFORM(MAC)
 #import "PowerObserverMac.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PowerObserver);
 
 PowerObserver::PowerObserver(Function<void()>&& powerOnHander)
     : m_powerOnHander(WTFMove(powerOnHander))

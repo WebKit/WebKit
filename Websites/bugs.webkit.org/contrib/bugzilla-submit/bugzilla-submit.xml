@@ -201,12 +201,12 @@ password field is the right password.  The URL in the machine field
 must be enclosed in double quotes.</para>
 
 <para>For example, if your Bugzilla instance is at
-"http://landfill.bugzilla.org/bztest/", and your login and password
+"https://bugzilla.example.org/bztest/", and your login and password
 there are "john@doe.com" and "foo", respectively, your
 <filename>.netrc</filename> entry should look something like:</para>
 
 <screen>
-    machine "http://landfill.bugzilla.org/bztest/"
+    machine "https://bugzilla.example.org/bztest/"
     login john@doe.com
     password foo
 

@@ -28,9 +28,12 @@
 #include "WebSWOriginTable.h"
 
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSWOriginTable);
 
 bool WebSWOriginTable::contains(const SecurityOriginData& origin) const
 {

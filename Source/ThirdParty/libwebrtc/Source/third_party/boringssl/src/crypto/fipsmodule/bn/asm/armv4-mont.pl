@@ -111,37 +111,13 @@ $code=<<___;
 .code	32
 #endif
 
-#if __ARM_MAX_ARCH__>=7
-.align	5
-.LOPENSSL_armcap:
-.word	OPENSSL_armcap_P-.Lbn_mul_mont
-#endif
-
-.global	bn_mul_mont
-.type	bn_mul_mont,%function
+.global	bn_mul_mont_nohw
+.type	bn_mul_mont_nohw,%function
 
 .align	5
-bn_mul_mont:
-.Lbn_mul_mont:
+bn_mul_mont_nohw:
 	ldr	ip,[sp,#4]		@ load num
 	stmdb	sp!,{r0,r2}		@ sp points at argument block
-#if __ARM_MAX_ARCH__>=7
-	tst	ip,#7
-	bne	.Lialu
-	adr	r0,.Lbn_mul_mont
-	ldr	r2,.LOPENSSL_armcap
-	ldr	r0,[r0,r2]
-#ifdef	__APPLE__
-	ldr	r0,[r0]
-#endif
-	tst	r0,#ARMV7_NEON		@ NEON available?
-	ldmia	sp, {r0,r2}
-	beq	.Lialu
-	add	sp,sp,#8
-	b	bn_mul8x_mont_neon
-.align	4
-.Lialu:
-#endif
 	cmp	ip,#2
 	mov	$num,ip			@ load num
 #ifdef	__thumb2__
@@ -285,14 +261,14 @@ bn_mul_mont:
 	add	sp,sp,#2*4		@ skip over {r0,r2}
 	mov	r0,#1
 .Labrt:
-#if __ARM_ARCH__>=5
+#if __ARM_ARCH>=5
 	ret				@ bx lr
 #else
 	tst	lr,#1
 	moveq	pc,lr			@ be binary compatible with V4, yet
 	bx	lr			@ interoperable with Thumb ISA:-)
 #endif
-.size	bn_mul_mont,.-bn_mul_mont
+.size	bn_mul_mont_nohw,.-bn_mul_mont_nohw
 ___
 {
 my ($A0,$A1,$A2,$A3)=map("d$_",(0..3));
@@ -311,6 +287,7 @@ $code.=<<___;
 .arch	armv7-a
 .fpu	neon
 
+.global	bn_mul8x_mont_neon
 .type	bn_mul8x_mont_neon,%function
 .align	5
 bn_mul8x_mont_neon:
@@ -744,11 +721,6 @@ ___
 }
 $code.=<<___;
 .asciz	"Montgomery multiplication for ARMv4/NEON, CRYPTOGAMS by <appro\@openssl.org>"
-.align	2
-#if __ARM_MAX_ARCH__>=7
-.comm	OPENSSL_armcap_P,4,4
-.hidden	OPENSSL_armcap_P
-#endif
 ___
 
 foreach (split("\n",$code)) {

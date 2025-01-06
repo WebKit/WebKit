@@ -8,6 +8,8 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(this, "DataView");
-verifyWritable(this, "DataView");
-verifyConfigurable(this, "DataView");
+verifyProperty(this, "DataView", {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

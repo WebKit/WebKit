@@ -37,13 +37,12 @@ class ErrorCallback;
 class FileSystemEntryCallback;
 
 class FileSystemEntry : public ScriptWrappable, public ActiveDOMObject, public RefCounted<FileSystemEntry> {
-    WTF_MAKE_ISO_ALLOCATED(FileSystemEntry);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FileSystemEntry);
 public:
-    virtual ~FileSystemEntry();
-
-    // ActiveDOMObject.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+
+    virtual ~FileSystemEntry();
 
     virtual bool isFile() const { return false; }
     virtual bool isDirectory() const { return false; }

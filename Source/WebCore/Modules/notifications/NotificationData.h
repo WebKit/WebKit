@@ -50,7 +50,7 @@ struct NotificationData {
 
     bool isPersistent() const { return !serviceWorkerRegistrationURL.isNull(); }
 
-    URL defaultActionURL;
+    URL navigateURL;
     String title;
     String body;
     String iconURL;
@@ -59,9 +59,9 @@ struct NotificationData {
     WebCore::NotificationDirection direction;
     String originString;
     URL serviceWorkerRegistrationURL;
-    WTF::UUID notificationID;
-    ScriptExecutionContextIdentifier contextIdentifier;
-    PAL::SessionID sourceSession;
+    WTF::UUID notificationID { WTF::UUID::createVersion4() };
+    std::optional<ScriptExecutionContextIdentifier> contextIdentifier;
+    PAL::SessionID sourceSession { PAL::SessionID::defaultSessionID() };
     MonotonicTime creationTime;
     Vector<uint8_t> data;
     std::optional<bool> silent;

@@ -101,7 +101,7 @@ public:
     // Return the viewport for eye in Screen Space
     IntRect drawViewport(PlatformXR::Eye) const;
 
-    void startFrame(const PlatformXR::FrameData::LayerData&);
+    void startFrame(PlatformXR::FrameData::LayerData&);
     void endFrame();
     bool usesLayeredMode() const;
 
@@ -116,11 +116,15 @@ private:
     bool setupFramebuffer(GraphicsContextGL&, const PlatformXR::FrameData::LayerSetupData&);
     const std::array<WebXRExternalAttachments, 2>* reusableDisplayAttachments(const PlatformXR::FrameData::ExternalTextureData&) const;
     void bindCompositorTexturesForDisplay(GraphicsContextGL&, const PlatformXR::FrameData::LayerData&);
+    const std::array<WebXRExternalAttachments, 2>* reusableDisplayAttachmentsAtIndex(size_t);
     void releaseDisplayAttachmentsAtIndex(size_t);
 #endif
     void allocateRenderbufferStorage(GraphicsContextGL&, GCGLOwnedRenderbuffer&, GCGLsizei, GCGLenum, IntSize);
     void allocateAttachments(GraphicsContextGL&, WebXRAttachments&, GCGLsizei, IntSize);
     void bindAttachments(GraphicsContextGL&, WebXRAttachments&);
+#if PLATFORM(COCOA)
+    void bindResolveAttachments(GraphicsContextGL&, WebXRAttachments&);
+#endif
     void resolveMSAAFramebuffer(GraphicsContextGL&);
     void blitShared(GraphicsContextGL&);
     void blitSharedToLayered(GraphicsContextGL&);
@@ -148,6 +152,7 @@ private:
     MachSendRight m_completionSyncEvent;
     uint64_t m_renderingFrameIndex { ~0u };
     bool m_usingFoveation { false };
+    bool m_blitDepth { false };
 #else
     PlatformGLObject m_colorTexture;
 #endif

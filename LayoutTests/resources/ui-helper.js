@@ -206,6 +206,18 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static roundToDevicePixel(value)
+    {
+        return Math.round(value * devicePixelRatio) / devicePixelRatio;
+    }
+
+    static roundRectToDevicePixel(rect)
+    {
+        return Object.fromEntries(Object.keys(rect).map(key => {
+            return [key, this.roundToDevicePixel(rect[key])];
+        }));
+    }
+
     static tapAt(x, y, modifiers=[])
     {
         console.assert(this.isIOSFamily());
@@ -905,12 +917,12 @@ window.UIHelper = class UIHelper {
     static scrollbarState(scroller, isVertical)
     {
         var internalFunctions = scroller ? scroller.ownerDocument.defaultView.internals : internals;
-        if (!this.isWebKit2() || this.isIOSFamily())
+        if (!this.isWebKit2())
             return Promise.resolve();
 
-            if (internals.isUsingUISideCompositing() && (!scroller || scroller.nodeName != "SELECT")) {
-                var scrollingNodeID = internalFunctions.scrollingNodeIDForNode(scroller);
-                return new Promise(resolve => {
+        if (internals.isUsingUISideCompositing() && (!scroller || scroller.nodeName != "SELECT")) {
+            var scrollingNodeID = internalFunctions.scrollingNodeIDForNode(scroller);
+            return new Promise(resolve => {
                 testRunner.runUIScript(`(function() {
                     uiController.doAfterNextStablePresentationUpdate(function() {
                         uiController.uiScriptComplete(uiController.scrollbarStateForScrollingNodeID(${scrollingNodeID[0]}, ${scrollingNodeID[1]}, ${isVertical}));
@@ -980,6 +992,34 @@ window.UIHelper = class UIHelper {
                 resolve(JSON.parse(jsonString));
             });
         });
+    }
+
+    static async isSelectionVisuallyContiguous()
+    {
+        const rects = await this.getUISelectionViewRects();
+        if (!rects?.length)
+            return false;
+
+        rects.sort((a, b) => {
+            if (a.top < b.top)
+                return -1;
+            if (a.top > b.top)
+                return 1;
+            return a.left < b.left ? -1 : (a.left > b.left ? 1 : 0);
+        });
+
+        for (let i = 1; i < rects.length; ++i) {
+            const previousRect = rects[i - 1];
+            const rect = rects[i];
+
+            if (previousRect.top !== rect.top)
+                continue;
+
+            if (previousRect.left + previousRect.width < rect.left)
+                return false;
+        }
+
+        return true;
     }
 
     static getSelectionStartGrabberViewRect()
@@ -1294,13 +1334,21 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
     }
 
-    static applyAutocorrection(newText, oldText)
+    static selectWordForReplacement()
+    {
+        if (!this.isWebKit2())
+            return;
+
+        return new Promise(resolve => testRunner.runUIScript("uiController.selectWordForReplacement()", resolve));
+    }
+
+    static applyAutocorrection(newText, oldText, underline)
     {
         if (!this.isWebKit2())
             return;
 
         const [escapedNewText, escapedOldText] = [newText.replace(/`/g, "\\`"), oldText.replace(/`/g, "\\`")];
-        const uiScript = `uiController.applyAutocorrection(\`${escapedNewText}\`, \`${escapedOldText}\`, () => uiController.uiScriptComplete())`;
+        const uiScript = `uiController.applyAutocorrection(\`${escapedNewText}\`, \`${escapedOldText}\`, () => uiController.uiScriptComplete(), ${underline})`;
         return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
     }
 
@@ -1962,7 +2010,8 @@ window.UIHelper = class UIHelper {
 
     static async longPressElement(element)
     {
-        return this.longPressAtPoint(element.offsetLeft + element.offsetWidth / 2, element.offsetTop + element.offsetHeight / 2);
+        const { x, y } = this.midPointOfRect(element.getBoundingClientRect());
+        return this.longPressAtPoint(x, y);
     }
 
     static async longPressAtPoint(x, y)
@@ -2180,7 +2229,7 @@ window.UIHelper = class UIHelper {
 
         return new Promise(resolve => {
             testRunner.runUIScript(`(() => {
-                uiController.adjustVisibilityForFrontmostTarget(${x}, ${y}, result => uiController.uiScriptComplete(result));
+                uiController.adjustVisibilityForFrontmostTarget(${x}, ${y}, result => uiController.uiScriptComplete(result || ""));
             })()`, resolve);
         });
     }
@@ -2191,6 +2240,31 @@ window.UIHelper = class UIHelper {
 
         return new Promise(resolve => {
             testRunner.runUIScript("uiController.resetVisibilityAdjustments(result => uiController.uiScriptComplete(result));", resolve);
+        });
+    }
+
+    static async waitForPDFFadeIn()
+    {
+        const pdfFadeInDelay = 250;
+        await new Promise(resolve => setTimeout(resolve, pdfFadeInDelay));
+        await new Promise(requestAnimationFrame);
+    }
+
+    static async frontmostViewAtPoint(x, y) {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`uiController.frontmostViewAtPoint(${x}, ${y})`, resolve);
+        });
+    }
+
+    static async keyboardUpdateForChangedSelectionCount() {
+        if (!this.isWebKit2())
+            return 0;
+
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.keyboardUpdateForChangedSelectionCount", resolve);
         });
     }
 }

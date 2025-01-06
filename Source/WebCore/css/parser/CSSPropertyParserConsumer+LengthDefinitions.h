@@ -24,43 +24,30 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
-#include <optional>
-#include <wtf/Brigand.h>
 
 namespace WebCore {
-
-class CSSCalcSymbolsAllowed;
-class CSSParserTokenRange;
-
 namespace CSSPropertyParserHelpers {
 
-std::optional<LengthRaw> validatedRange(LengthRaw, CSSPropertyParserOptions);
+struct LengthValidator {
+    static constexpr std::optional<CSS::LengthUnit> validate(CSSUnitType unitType, CSSPropertyParserOptions options)
+    {
+        if (unitType == CSSUnitType::CSS_QUIRKY_EM && !isUASheetBehavior(options.parserMode))
+            return std::nullopt;
+        return CSS::UnitTraits<CSS::LengthUnit>::validate(unitType);
+    }
 
-struct LengthKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<LengthRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    template<auto R> static bool isValid(CSS::LengthRaw<R> raw, CSSPropertyParserOptions)
+    {
+        // Values other than 0 and +/-∞ are not supported for <length> numeric ranges currently.
+        return isValidNonCanonicalizableDimensionValue(raw);
+    }
 };
 
-struct LengthKnownTokenTypeDimensionConsumer {
-    static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<LengthRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-struct LengthKnownTokenTypeNumberConsumer {
-    static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<LengthRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-template<> struct ConsumerDefinition<LengthRaw> {
-    using type = brigand::list<LengthRaw, UnevaluatedCalc<LengthRaw>>;
-
-    using FunctionToken = LengthKnownTokenTypeFunctionConsumer;
-    using DimensionToken = LengthKnownTokenTypeDimensionConsumer;
-    using NumberToken = LengthKnownTokenTypeNumberConsumer;
+template<auto R> struct ConsumerDefinition<CSS::Length<R>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Length<R>>;
+    using DimensionToken = DimensionConsumer<CSS::Length<R>, LengthValidator>;
+    using NumberToken = NumberConsumerForUnitlessValues<CSS::Length<R>, LengthValidator, CSS::LengthUnit::Px>;
 };
 
 } // namespace CSSPropertyParserHelpers

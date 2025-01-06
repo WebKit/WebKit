@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "SpeechRecognitionCaptureSource.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
 #include "CaptureDeviceManager.h"
@@ -33,6 +34,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionCaptureSource);
 
 void SpeechRecognitionCaptureSource::mute()
 {

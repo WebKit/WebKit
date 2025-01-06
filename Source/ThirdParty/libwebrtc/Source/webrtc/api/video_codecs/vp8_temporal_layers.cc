@@ -10,9 +10,17 @@
 
 #include "api/video_codecs/vp8_temporal_layers.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
 #include <utility>
+#include <vector>
 
 #include "absl/algorithm/container.h"
+#include "api/fec_controller_override.h"
+#include "api/video_codecs/video_encoder.h"
+#include "api/video_codecs/vp8_frame_buffer_controller.h"
+#include "api/video_codecs/vp8_frame_config.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

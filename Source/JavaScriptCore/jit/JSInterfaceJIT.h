@@ -38,7 +38,7 @@
 
 namespace JSC {
     class JSInterfaceJIT : public CCallHelpers, public GPRInfo, public JSRInfo, public FPRInfo {
-        WTF_MAKE_TZONE_ALLOCATED(JSInterfaceJIT);
+        WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(JSInterfaceJIT);
     public:
 
         JSInterfaceJIT(VM* vm = nullptr, CodeBlock* codeBlock = nullptr)

@@ -1,0 +1,9 @@
+This test ensures we represent expanded text in attributed strings.
+
+PASS: abbrText.attributedStringForTextMarkerRangeContainsAttribute('AXExpandedTextValue', markerRange) === true
+PASS: acronymText.attributedStringForTextMarkerRangeContainsAttribute('AXExpandedTextValue', markerRange) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo Bar

@@ -119,12 +119,8 @@ func (m *mockQUICTransport) read() (recordType, []byte, error) {
 	}
 }
 
-func (m *mockQUICTransport) readRecord(want recordType) (recordType, *block, error) {
-	typ, contents, err := m.read()
-	if err != nil {
-		return 0, nil, err
-	}
-	return typ, &block{contents, 0, nil}, nil
+func (m *mockQUICTransport) readRecord(want recordType) (recordType, []byte, error) {
+	return m.read()
 }
 
 func (m *mockQUICTransport) writeRecord(typ recordType, data []byte) (int, error) {

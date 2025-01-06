@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,12 +33,12 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WKWebExtensionControllerDelegatePrivate.h"
+#import "WKWebExtensionWindowConfigurationInternal.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
-#import "_WKWebExtensionControllerDelegatePrivate.h"
-#import "_WKWebExtensionWindowCreationOptionsInternal.h"
 #import <wtf/BlockPtr.h>
 
 namespace WebKit {
@@ -47,8 +47,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
 {
     static NSString * const apiName = @"windows.create()";
 
-    auto delegate = extensionController()->delegate();
-    if (![delegate respondsToSelector:@selector(webExtensionController:openNewWindowWithOptions:forExtensionContext:completionHandler:)]) {
+    if (!canOpenNewWindow()) {
         completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
     }
@@ -56,11 +55,11 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
     static constexpr CGFloat NaN = std::numeric_limits<CGFloat>::quiet_NaN();
     static constexpr CGRect CGRectNaN = { { NaN, NaN }, { NaN, NaN } };
 
-    auto *creationOptions = [[_WKWebExtensionWindowCreationOptions alloc] _init];
-    creationOptions.desiredWindowType = toAPI(creationParameters.type.value_or(WebExtensionWindow::Type::Normal));
-    creationOptions.desiredWindowState = toAPI(creationParameters.state.value_or(WebExtensionWindow::State::Normal));
-    creationOptions.shouldFocus = creationParameters.focused.value_or(true);
-    creationOptions.shouldUsePrivateBrowsing = creationParameters.privateBrowsing.value_or(false);
+    auto *configuration = [[WKWebExtensionWindowConfiguration alloc] _init];
+    configuration.windowType = toAPI(creationParameters.type.value_or(WebExtensionWindow::Type::Normal));
+    configuration.windowState = toAPI(creationParameters.state.value_or(WebExtensionWindow::State::Normal));
+    configuration.shouldBeFocused = creationParameters.focused.value_or(true);
+    configuration.shouldBePrivate = creationParameters.privateBrowsing.value_or(false);
 
     if (creationParameters.frame) {
         CGRect desiredFrame = creationParameters.frame.value();
@@ -76,12 +75,12 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
             desiredFrame.origin.y = screenFrame.size.height + screenFrame.origin.y - desiredFrame.size.height - desiredFrame.origin.y;
 #endif
 
-        creationOptions.desiredFrame = desiredFrame;
+        configuration.frame = desiredFrame;
     } else
-        creationOptions.desiredFrame = CGRectNaN;
+        configuration.frame = CGRectNaN;
 
     NSMutableArray<NSURL *> *urls = [NSMutableArray array];
-    NSMutableArray<id<_WKWebExtensionTab>> *tabs = [NSMutableArray array];
+    NSMutableArray<id<WKWebExtensionTab>> *tabs = [NSMutableArray array];
 
     if (creationParameters.tabs) {
         for (auto& tabParameters : creationParameters.tabs.value()) {
@@ -98,10 +97,15 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
         }
     }
 
-    creationOptions.desiredURLs = [urls copy];
-    creationOptions.desiredTabs = [tabs copy];
+    configuration.tabURLs = [urls copy];
+    configuration.tabs = [tabs copy];
 
-    [delegate webExtensionController:extensionController()->wrapper() openNewWindowWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionWindow> newWindow, NSError *error) mutable {
+    RefPtr extensionController = this->extensionController();
+    if (!extensionController) {
+        completionHandler(toWebExtensionError(apiName, nil, @"No extensionController"));
+        return;
+    }
+    [extensionController->delegate() webExtensionController:extensionController->wrapper() openNewWindowUsingConfiguration:configuration forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionWindow> newWindow, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for open new window: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
@@ -113,10 +117,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
             return;
         }
 
-        THROW_UNLESS([newWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)], @"Object returned by webExtensionController:openNewWindowWithOptions:forExtensionContext:completionHandler: does not conform to the _WKWebExtensionWindow protocol");
-
         RefPtr window = getOrCreateWindow(newWindow);
-
         completionHandler(window->extensionHasAccess() ? std::optional(window->parameters()) : std::nullopt);
     }).get()];
 }
@@ -210,31 +211,31 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
         return;
     }
 
-    auto updateState = [&](CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
-        if (!updateParameters.state || updateParameters.state == window->state()) {
+    auto updateState = [](WebExtensionWindow& window, const WebExtensionWindowParameters& updateParameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
+        if (!updateParameters.state || updateParameters.state == window.state()) {
             stepCompletionHandler({ });
             return;
         }
 
-        window->setState(updateParameters.state.value(), WTFMove(stepCompletionHandler));
+        window.setState(updateParameters.state.value(), WTFMove(stepCompletionHandler));
     };
 
-    auto updateFocus = [&](CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
+    auto updateFocus = [](WebExtensionWindow& window, const WebExtensionWindowParameters& updateParameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
         if (!updateParameters.focused || !updateParameters.focused.value()) {
             stepCompletionHandler({ });
             return;
         }
 
-        window->focus(WTFMove(stepCompletionHandler));
+        window.focus(WTFMove(stepCompletionHandler));
     };
 
-    auto updateFrame = [&](CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
-        if (!updateParameters.frame || window->state() != WebExtensionWindow::State::Normal) {
+    auto updateFrame = [](WebExtensionWindow& window, const WebExtensionWindowParameters& updateParameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
+        if (!updateParameters.frame || window.state() != WebExtensionWindow::State::Normal) {
             stepCompletionHandler({ });
             return;
         }
 
-        CGRect currentFrame = window->frame();
+        CGRect currentFrame = window.frame();
         if (CGRectIsNull(currentFrame)) {
             stepCompletionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'top', 'left', 'width', and 'height'"));
             return;
@@ -252,7 +253,7 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
         // On macOS, window coordinates originate from the bottom-left of the main screen. When working with
         // multi-screen setups, the screen's frame defines this origin. However, Web Extensions expect window
         // coordinates with the origin in the top-left corner.
-        CGRect screenFrame = window->screenFrame();
+        CGRect screenFrame = window.screenFrame();
         if (CGRectIsEmpty(screenFrame)) {
             stepCompletionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'top', 'left', 'width', and 'height'"));
             return;
@@ -283,7 +284,7 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
             return;
         }
 
-        window->setFrame(desiredFrame, WTFMove(stepCompletionHandler));
+        window.setFrame(desiredFrame, WTFMove(stepCompletionHandler));
     };
 
     // Frame can only be updated if state is Normal.
@@ -292,19 +293,19 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
         updateParameters.state = WebExtensionWindow::State::Normal;
     }
 
-    updateState([&](Expected<void, WebExtensionError>&& stateResult) {
+    updateState(*window, updateParameters, [window = Ref { *window }, updateParameters = WTFMove(updateParameters), updateFocus = WTFMove(updateFocus), updateFrame = WTFMove(updateFrame), completionHandler = WTFMove(completionHandler)](Expected<void, WebExtensionError>&& stateResult) mutable {
         if (!stateResult) {
             completionHandler(makeUnexpected(stateResult.error()));
             return;
         }
 
-        updateFocus([&](Expected<void, WebExtensionError>&& focusResult) {
+        updateFocus(window, updateParameters, [window, updateParameters = WTFMove(updateParameters), updateFrame = WTFMove(updateFrame), completionHandler = WTFMove(completionHandler)](Expected<void, WebExtensionError>&& focusResult) mutable {
             if (!focusResult) {
                 completionHandler(makeUnexpected(focusResult.error()));
                 return;
             }
 
-            updateFrame([&](Expected<void, WebExtensionError>&& frameResult) {
+            updateFrame(window, updateParameters, [window, completionHandler = WTFMove(completionHandler)](Expected<void, WebExtensionError>&& frameResult) mutable {
                 if (!frameResult) {
                     completionHandler(makeUnexpected(frameResult.error()));
                     return;

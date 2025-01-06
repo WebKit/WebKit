@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -57,7 +57,7 @@ static const uint8_t g_shuffle_stats_highbd_data[32] = {
   0, 1, 2, 3, 2, 3, 4, 5, 4, 5, 6, 7, 6, 7, 8, 9,
 };
 
-static INLINE uint8_t find_average(const uint8_t *src, int h_start, int h_end,
+static inline uint8_t find_average(const uint8_t *src, int h_start, int h_end,
                                    int v_start, int v_end, int stride) {
   uint64_t sum = 0;
   for (int i = v_start; i < v_end; i++) {
@@ -70,7 +70,7 @@ static INLINE uint8_t find_average(const uint8_t *src, int h_start, int h_end,
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE uint16_t find_average_highbd(const uint16_t *src, int h_start,
+static inline uint16_t find_average_highbd(const uint16_t *src, int h_start,
                                            int h_end, int v_start, int v_end,
                                            int stride) {
   uint64_t sum = 0;

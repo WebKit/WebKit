@@ -27,7 +27,10 @@
 #include "PixelBuffer.h"
 
 #include <JavaScriptCore/TypedArrayInlines.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/TextStream.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -36,6 +39,9 @@ bool PixelBuffer::supportedPixelFormat(PixelFormat pixelFormat)
     switch (pixelFormat) {
     case PixelFormat::RGBA8:
     case PixelFormat::BGRA8:
+#if HAVE(HDR_SUPPORT)
+    case PixelFormat::RGBA16F:
+#endif
         return true;
 
     case PixelFormat::BGRX8:
@@ -48,15 +54,44 @@ bool PixelBuffer::supportedPixelFormat(PixelFormat pixelFormat)
     return false;
 }
 
+static CheckedUint32 mustFitInInt32(CheckedUint32 uint32)
+{
+    if (!uint32.hasOverflowed() && !isInBounds<int32_t>(uint32.value()))
+        uint32.overflowed();
+    return uint32;
+}
+
+static CheckedUint32 computeRawPixelCount(const IntSize& size)
+{
+    return CheckedUint32 { size.width() } * size.height();
+}
+
+static CheckedUint32 computeRawPixelComponentCount(PixelFormat pixelFormat, const IntSize& size)
+{
+    ASSERT_UNUSED(pixelFormat, PixelBuffer::supportedPixelFormat(pixelFormat));
+    constexpr unsigned componentsPerPixel = 4;
+    return computeRawPixelCount(size) * componentsPerPixel;
+}
+
+CheckedUint32 PixelBuffer::computePixelCount(const IntSize& size)
+{
+    return mustFitInInt32(computeRawPixelCount(size));
+}
+
+CheckedUint32 PixelBuffer::computePixelComponentCount(PixelFormat pixelFormat, const IntSize& size)
+{
+    return mustFitInInt32(computeRawPixelComponentCount(pixelFormat, size));
+}
+
 CheckedUint32 PixelBuffer::computeBufferSize(PixelFormat pixelFormat, const IntSize& size)
 {
-    ASSERT_UNUSED(pixelFormat, supportedPixelFormat(pixelFormat));
-    constexpr unsigned bytesPerPixel = 4;
-    auto bufferSize = CheckedUint32 { size.width() } * size.height() * bytesPerPixel;
-    if (!bufferSize.hasOverflowed() && bufferSize.value() > std::numeric_limits<int32_t>::max())
-        bufferSize.overflowed();
-    return bufferSize;
-
+    // FIXME: Implement a better way to deal with sizes of diffferent formats.
+    unsigned bytesPerPixelComponent =
+#if HAVE(HDR_SUPPORT)
+        (pixelFormat == PixelFormat::RGBA16F) ? 2 :
+#endif
+        1;
+    return mustFitInInt32(computeRawPixelComponentCount(pixelFormat, size) * bytesPerPixelComponent);
 }
 
 PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, std::span<uint8_t> bytes)
@@ -74,7 +109,7 @@ bool PixelBuffer::setRange(std::span<const uint8_t> data, size_t byteOffset)
     if (!isSumSmallerThanOrEqual(byteOffset, data.size(), m_bytes.size()))
         return false;
 
-    memmove(m_bytes.data() + byteOffset, data.data(), data.size());
+    memmoveSpan(m_bytes.subspan(byteOffset), data);
     return true;
 }
 
@@ -83,7 +118,7 @@ bool PixelBuffer::zeroRange(size_t byteOffset, size_t rangeByteLength)
     if (!isSumSmallerThanOrEqual(byteOffset, rangeByteLength, m_bytes.size()))
         return false;
 
-    memset(m_bytes.data() + byteOffset, 0, rangeByteLength);
+    zeroSpan(m_bytes.subspan(byteOffset, rangeByteLength));
     return true;
 }
 
@@ -100,3 +135,5 @@ void PixelBuffer::set(size_t index, double value)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

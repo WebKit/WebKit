@@ -1,0 +1,8 @@
+`
+
+PASS getBoundingClientRect for elements with css zoom
+PASS getBoundingClientRect for elements with css zoom 1
+FAIL getBoundingClientRect for elements with css zoom 2 assert_equals: x4 zoom left expected 8 but got 2
+FAIL getBoundingClientRect for elements with css zoom 3 assert_equals: nested zoom left expected 8 but got 1
+FAIL getBoundingClientRect for elements with css zoom 4 assert_equals: transform and zoom left expected 8 but got 2
+

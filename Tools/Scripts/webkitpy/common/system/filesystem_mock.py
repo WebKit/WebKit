@@ -30,7 +30,6 @@ import errno
 import hashlib
 import os
 import re
-import sys
 
 from webkitcorepy import UnicodeIO, string_utils
 
@@ -474,16 +473,14 @@ class ScanDirMock(object):
                 else:
                     yield DirEntryMock(fs, f)
 
-    if sys.version_info >= (3, 6):
+    def __enter__(self):
+        return self
 
-        def __enter__(self):
-            return self
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
 
-        def __exit__(self, exc_type, exc_value, traceback):
-            self.close()
-
-        def close(self):
-            pass
+    def close(self):
+        pass
 
 
 class DirEntryMock(object):

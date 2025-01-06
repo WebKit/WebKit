@@ -67,7 +67,7 @@ static String& styleSpanClassString()
 
 bool isLegacyAppleStyleSpan(const Node* node)
 {
-    auto* spanElement = dynamicDowncast<HTMLSpanElement>(node);
+    RefPtr spanElement = dynamicDowncast<HTMLSpanElement>(node);
     return spanElement && spanElement->attributeWithoutSynchronization(classAttr) == styleSpanClassString();
 }
 
@@ -89,19 +89,19 @@ static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement& element, Sho
 
 bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element& element)
 {
-    auto* spanElement = dynamicDowncast<HTMLSpanElement>(element);
+    RefPtr spanElement = dynamicDowncast<HTMLSpanElement>(element);
     return spanElement && hasNoAttributeOrOnlyStyleAttribute(*spanElement, AllowNonEmptyStyleAttribute);
 }
 
 static inline bool isSpanWithoutAttributesOrUnstyledStyleSpan(const Element& element)
 {
-    auto* spanElement = dynamicDowncast<HTMLSpanElement>(element);
+    RefPtr spanElement = dynamicDowncast<HTMLSpanElement>(element);
     return spanElement && hasNoAttributeOrOnlyStyleAttribute(*spanElement, StyleAttributeShouldBeEmpty);
 }
 
 bool isEmptyFontTag(const Element* element, ShouldStyleAttributeBeEmpty shouldStyleAttributeBeEmpty)
 {
-    auto* fontElement = dynamicDowncast<HTMLFontElement>(element);
+    RefPtr fontElement = dynamicDowncast<HTMLFontElement>(element);
     return fontElement && hasNoAttributeOrOnlyStyleAttribute(*fontElement, shouldStyleAttributeBeEmpty);
 }
 
@@ -255,7 +255,7 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
                     block = newBlock;
             }
             ASSERT(!block || is<Element>(*block));
-            if (auto* htmlBlock = dynamicDowncast<HTMLElement>(block.get())) {
+            if (RefPtr htmlBlock = dynamicDowncast<HTMLElement>(block.get())) {
                 removeCSSStyle(style, *htmlBlock);
                 if (!m_removeOnly)
                     addBlockStyle(styleChange, *htmlBlock);
@@ -368,7 +368,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
 
     // Store away font size before making any changes to the document.
     // This ensures that changes to one node won't effect another.
-    HashMap<Ref<Node>, float> startingFontSizes;
+    UncheckedKeyHashMap<Ref<Node>, float> startingFontSizes;
     for (auto node = startNode; node != beyondEnd; node = NodeTraversal::next(*node)) {
         RELEASE_ASSERT(node);
         startingFontSizes.set(*node, computedFontSize(node.get()));
@@ -414,7 +414,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
             currentFontSize = computedFontSize(node.get());
         }
         if (currentFontSize != desiredFontSize) {
-            inlineStyle->setProperty(CSSPropertyFontSize, CSSPrimitiveValue::create(desiredFontSize, CSSUnitType::CSS_PX), false);
+            inlineStyle->setProperty(CSSPropertyFontSize, CSSPrimitiveValue::create(desiredFontSize, CSSUnitType::CSS_PX));
             setNodeAttribute(*element, styleAttr, inlineStyle->asTextAtom());
         }
         if (inlineStyle->isEmpty()) {
@@ -432,7 +432,7 @@ static ContainerNode* dummySpanAncestorForNode(Node* node)
 {
     RefPtr<Node> currentNode = node;
     while (currentNode) {
-        auto* element = dynamicDowncast<Element>(*currentNode);
+        RefPtr element = dynamicDowncast<Element>(*currentNode);
         if (element && isStyleSpanOrSpanWithOnlyStyleAttribute(*element))
             break;
         currentNode = currentNode->parentNode();
@@ -451,12 +451,12 @@ void ApplyStyleCommand::cleanupUnstyledAppleStyleSpans(ContainerNode* dummySpanA
     // all the children of the dummy's parent
 
     Vector<Ref<Element>> toRemove;
-    for (auto& child : childrenOfType<Element>(*dummySpanAncestor)) {
+    for (Ref child : childrenOfType<Element>(*dummySpanAncestor)) {
         if (isSpanWithoutAttributesOrUnstyledStyleSpan(child))
             toRemove.append(child);
     }
 
-    for (auto& element : toRemove)
+    for (Ref element : toRemove)
         removeNodePreservingChildren(element.get());
 }
 
@@ -518,11 +518,11 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
 
     for (RefPtr<Node> ancestor = node->parentNode(), parent; ancestor != block && ancestor != unsplitAncestor; ancestor = parent) {
         parent = ancestor->parentNode();
-        auto* element = dynamicDowncast<StyledElement>(*ancestor);
+        RefPtr element = dynamicDowncast<StyledElement>(*ancestor);
         if (!element)
             continue;
 
-        int unicodeBidi = valueID(ComputedStyleExtractor(element).propertyValue(CSSPropertyUnicodeBidi).get());
+        int unicodeBidi = valueID(ComputedStyleExtractor(element.get()).propertyValue(CSSPropertyUnicodeBidi).get());
         if (!unicodeBidi || unicodeBidi == CSSValueNormal)
             continue;
 
@@ -563,7 +563,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
-    auto document = protectedDocument();
+    Ref document = protectedDocument();
     document->updateLayoutIgnorePendingStylesheets();
 
     // adjust to the positions we want to use for applying style
@@ -770,7 +770,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle& style, Node& s
     if (m_removeOnly)
         return;
 
-    auto document = protectedDocument();
+    Ref document = protectedDocument();
     document->updateLayoutIgnorePendingStylesheets();
 
     Vector<InlineRunToApplyStyle> runs;
@@ -1106,7 +1106,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle& style, const Position& s
     // Move it to the next deep quivalent position to avoid removing the style from this node.
     // e.g. if pushDownStart was at Position("hello", 5) in <b>hello<div>world</div></b>, we want Position("world", 0) instead.
     RefPtr pushDownStartContainer { pushDownStart.containerNode() };
-    if (auto* text = dynamicDowncast<Text>(pushDownStartContainer.get()); text && static_cast<unsigned>(pushDownStart.computeOffsetInContainerNode()) == text->length())
+    if (RefPtr text = dynamicDowncast<Text>(pushDownStartContainer.get()); text && static_cast<unsigned>(pushDownStart.computeOffsetInContainerNode()) == text->length())
         pushDownStart = nextVisuallyDistinctCandidate(pushDownStart);
     // If pushDownEnd is at the start of a text node, then this node is not fully selected.
     // Move it to the previous deep equivalent position to avoid removing the style from this node.
@@ -1367,7 +1367,7 @@ bool ApplyStyleCommand::surroundNodeRangeWithElement(Node& startNode, Node& endN
             mergeIdenticalElements(element, *nextElement);
     }
 
-    if (auto* previousSiblingElement = dynamicDowncast<Element>(previousSibling.get()); previousSiblingElement && previousSiblingElement->hasEditableStyle()) {
+    if (RefPtr previousSiblingElement = dynamicDowncast<Element>(previousSibling.get()); previousSiblingElement && previousSiblingElement->hasEditableStyle()) {
         RefPtr mergedElementNode { previousSibling->nextSibling() };
         ASSERT(mergedElementNode);
         if (mergedElementNode->hasEditableStyle()) {
@@ -1445,7 +1445,7 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
             if (!canHaveChildrenForEditing(*startNode))
                 break;
         }
-        auto* startNodeFirstChild = startNode->firstChild();
+        RefPtr startNodeFirstChild = startNode->firstChild();
         if (!startNodeFirstChild)
             break;
         endNode = startNode->lastChild();
@@ -1473,10 +1473,10 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
         }
     }
 
-    if (auto styleToMerge = styleChange.cssStyle()) {
+    if (RefPtr styleToMerge = styleChange.cssStyle()) {
         if (styleContainer) {
-            if (auto existingStyle = styleContainer->inlineStyle()) {
-                auto inlineStyle = EditingStyle::create(existingStyle);
+            if (RefPtr existingStyle = styleContainer->inlineStyle()) {
+                Ref inlineStyle = EditingStyle::create(existingStyle.get());
                 inlineStyle->overrideWithStyle(*styleToMerge);
                 setNodeAttribute(*styleContainer, styleAttr, inlineStyle->style()->asTextAtom());
             } else
@@ -1517,7 +1517,7 @@ float ApplyStyleCommand::computedFontSize(Node* node)
     auto value = ComputedStyleExtractor(node).propertyValue(CSSPropertyFontSize);
     if (!value)
         return 0;
-    return downcast<CSSPrimitiveValue>(*value).floatValue(CSSUnitType::CSS_PX);
+    return downcast<CSSPrimitiveValue>(*value).resolveAsLengthDeprecated();
 }
 
 void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, const Position& end)
@@ -1529,7 +1529,7 @@ void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, co
     Position newEnd = end;
 
     Vector<Ref<Text>> textNodes;
-    for (Text* textNode = TextNodeTraversal::firstChild(*node); textNode; textNode = TextNodeTraversal::nextSibling(*textNode))
+    for (RefPtr textNode = TextNodeTraversal::firstChild(*node); textNode; textNode = TextNodeTraversal::nextSibling(*textNode))
         textNodes.append(*textNode);
 
     for (auto& childText : textNodes) {

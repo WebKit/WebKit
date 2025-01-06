@@ -28,6 +28,8 @@
 #include "Capabilities.h"
 #include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
+#include <wtf/Observer.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
@@ -37,24 +39,45 @@ typedef struct _GSubprocess GSubprocess;
 #include <JavaScriptCore/RemoteInspectorConnectionClient.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+
+#if PLATFORM(WIN)
+#include <wtf/win/Win32Handle.h>
+#endif
 #endif
 
 namespace WebDriver {
 
 struct ConnectToBrowserAsyncData;
 
-class SessionHost
+#if ENABLE(WEBDRIVER_BIDI)
+class BiDiEventHandler : public CanMakeWeakPtr<BiDiEventHandler>, public RefCounted<BiDiEventHandler> {
+public:
+    virtual ~BiDiEventHandler() = default;
+    virtual void dispatchEvent(RefPtr<JSON::Object>&&) = 0;
+};
+#endif
+
+class SessionHost final
+    : public RefCounted<SessionHost>
 #if USE(INSPECTOR_SOCKET_SERVER)
-    : public Inspector::RemoteInspectorConnectionClient
+    , public Inspector::RemoteInspectorConnectionClient
 #endif
 {
     WTF_MAKE_FAST_ALLOCATED(SessionHost);
 public:
-    explicit SessionHost(Capabilities&& capabilities)
-        : m_capabilities(WTFMove(capabilities))
+
+    static Ref<SessionHost> create(Capabilities&& capabilities)
     {
+        return adoptRef(*new SessionHost(WTFMove(capabilities)));
     }
+
     ~SessionHost();
+
+#if ENABLE(WEBDRIVER_BIDI)
+    using BrowserTerminatedObserver = WTF::Observer<void(const String&)>;
+    static void addBrowserTerminatedObserver(const BrowserTerminatedObserver&);
+    static void removeBrowserTerminatedObserver(const BrowserTerminatedObserver&);
+#endif
 
     void setHostAddress(const String& ip, uint16_t port) { m_targetIp = ip; m_targetPort = port; }
     bool isConnected() const;
@@ -65,13 +88,25 @@ public:
     void connectToBrowser(Function<void (std::optional<String> error)>&&);
     void startAutomationSession(Function<void (bool, std::optional<String>)>&&);
 
+    bool isRemoteBrowser() const;
+
     struct CommandResponse {
         RefPtr<JSON::Object> responseObject;
         bool isError { false };
     };
     long sendCommandToBackend(const String&, RefPtr<JSON::Object>&& parameters, Function<void (CommandResponse&&)>&&);
 
+#if ENABLE(WEBDRIVER_BIDI)
+    void addEventHandler(WeakPtr<BiDiEventHandler>&& handler) { m_eventHandler = WTFMove(handler); }
+#endif
+
 private:
+
+    explicit SessionHost(Capabilities&& capabilities)
+        : m_capabilities(WTFMove(capabilities))
+    {
+    }
+
     struct Target {
         uint64_t id { 0 };
         CString name;
@@ -81,6 +116,9 @@ private:
     void inspectorDisconnected();
     void sendMessageToBackend(const String&);
     void dispatchMessage(const String&);
+#if ENABLE(WEBDRIVER_BIDI)
+    void dispatchEvent(RefPtr<JSON::Object>&&);
+#endif
 
 #if USE(GLIB)
     static const SocketConnection::MessageHandlers& messageHandlers();
@@ -114,18 +152,25 @@ private:
 
     HashMap<long, Function<void (CommandResponse&&)>> m_commandRequests;
 
+#if ENABLE(WEBDRIVER_BIDI)
+    WeakPtr<BiDiEventHandler> m_eventHandler;
+#endif
+
     String m_targetIp;
     uint16_t m_targetPort { 0 };
+    bool m_isRemoteBrowser { false };
 
 #if USE(GLIB)
     Function<void (bool, std::optional<String>)> m_startSessionCompletionHandler;
     GRefPtr<GSubprocess> m_browser;
     RefPtr<SocketConnection> m_socketConnection;
     GRefPtr<GCancellable> m_cancellable;
-    bool m_isRemoteBrowser { false };
 #elif USE(INSPECTOR_SOCKET_SERVER)
     Function<void(bool, std::optional<String>)> m_startSessionCompletionHandler;
     std::optional<Inspector::ConnectionID> m_clientID;
+#if PLATFORM(WIN)
+    WTF::Win32Handle m_browserHandle;
+#endif
 #endif
 };
 

@@ -45,8 +45,12 @@
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerThreadableLoader.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerScriptLoader);
 
 static Lock workerScriptLoaderControlledCallbackMapLock;
 static void accessWorkerScriptLoaderMap(CompletionHandler<void(HashMap<ScriptExecutionContextIdentifier, Ref<WorkerScriptLoader::ServiceWorkerDataManager>>&)>&& callback)
@@ -64,7 +68,7 @@ WorkerScriptLoader::WorkerScriptLoader()
 WorkerScriptLoader::~WorkerScriptLoader()
 {
     if (m_didAddToWorkerScriptLoaderMap)
-        accessWorkerScriptLoaderMap([clientIdentifier = m_clientIdentifier](auto& map) { map.remove(clientIdentifier); });
+        accessWorkerScriptLoaderMap([clientIdentifier = *m_clientIdentifier](auto& map) { map.remove(clientIdentifier); });
 }
 
 std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, Source source, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
@@ -124,7 +128,7 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
     return std::nullopt;
 }
 
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, Source source, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client, String&& taskMode, ScriptExecutionContextIdentifier clientIdentifier)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, Source source, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client, String&& taskMode, std::optional<ScriptExecutionContextIdentifier> clientIdentifier)
 {
     m_client = &client;
     m_url = scriptRequest.url();
@@ -155,8 +159,8 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
         ASSERT(m_destination == FetchOptions::Destination::Worker || m_destination == FetchOptions::Destination::Sharedworker);
         m_topOriginForServiceWorkerRegistration = SecurityOriginData { scriptExecutionContext.topOrigin().data() };
         options.clientIdentifier = scriptExecutionContext.identifier().object();
-        options.resultingClientIdentifier = clientIdentifier.object();
-        m_serviceWorkerDataManager = ServiceWorkerDataManager::create(clientIdentifier);
+        options.resultingClientIdentifier = clientIdentifier->object();
+        m_serviceWorkerDataManager = ServiceWorkerDataManager::create(*clientIdentifier);
         m_context = scriptExecutionContext;
 
         // In case of blob URLs, we reuse the context controlling service worker.
@@ -164,7 +168,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
             setControllingServiceWorker(ServiceWorkerData { scriptExecutionContext.activeServiceWorker()->data() });
         else {
             accessWorkerScriptLoaderMap([this](auto& map) mutable {
-                map.add(m_clientIdentifier, *m_serviceWorkerDataManager);
+                map.add(*m_clientIdentifier, *m_serviceWorkerDataManager);
             });
             m_didAddToWorkerScriptLoaderMap = true;
         }
@@ -231,7 +235,7 @@ ResourceError WorkerScriptLoader::validateWorkerResponse(const ResourceResponse&
     return { };
 }
 
-void WorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
+void WorkerScriptLoader::didReceiveResponse(ScriptExecutionContextIdentifier mainContext, std::optional<ResourceLoaderIdentifier> identifier, const ResourceResponse& response)
 {
     m_error = validateWorkerResponse(response, m_source, m_destination);
     if (!m_error.isNull()) {
@@ -254,7 +258,7 @@ void WorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier,
         m_isMatchingServiceWorkerRegistration = true;
         auto* worker = dynamicDowncast<WorkerGlobalScope>(*m_context);
         auto& swConnection = worker ? static_cast<SWClientConnection&>(worker->swClientConnection()) : ServiceWorkerProvider::singleton().serviceWorkerConnection();
-        swConnection.matchRegistration(WTFMove(*m_topOriginForServiceWorkerRegistration), response.url(), [this, protectedThis = Ref { *this }, response, identifier](auto&& registrationData) mutable {
+        swConnection.matchRegistration(WTFMove(*m_topOriginForServiceWorkerRegistration), response.url(), [this, protectedThis = Ref { *this }, response, mainContext, identifier](auto&& registrationData) mutable {
             m_isMatchingServiceWorkerRegistration = false;
             if (registrationData && registrationData->activeWorker)
                 setControllingServiceWorker(WTFMove(*registrationData->activeWorker));
@@ -262,15 +266,15 @@ void WorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier,
             if (!m_client)
                 return;
 
-            m_client->didReceiveResponse(identifier, response);
+            m_client->didReceiveResponse(mainContext, identifier, response);
             if (m_client && m_finishing)
-                m_client->notifyFinished();
+                m_client->notifyFinished(mainContext);
         });
         return;
     }
 
     if (m_client)
-        m_client->didReceiveResponse(identifier, response);
+        m_client->didReceiveResponse(mainContext, identifier, response);
 }
 
 void WorkerScriptLoader::didReceiveData(const SharedBuffer& buffer)
@@ -286,7 +290,7 @@ void WorkerScriptLoader::didReceiveData(const SharedBuffer& buffer)
 #endif
 
     if (!m_decoder)
-        m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8");
+        m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8"_s);
 
     if (buffer.isEmpty())
         return;
@@ -294,10 +298,10 @@ void WorkerScriptLoader::didReceiveData(const SharedBuffer& buffer)
     m_script.append(m_decoder->decode(buffer.span()));
 }
 
-void WorkerScriptLoader::didFinishLoading(ResourceLoaderIdentifier identifier, const NetworkLoadMetrics&)
+void WorkerScriptLoader::didFinishLoading(ScriptExecutionContextIdentifier mainContext, std::optional<ResourceLoaderIdentifier> identifier, const NetworkLoadMetrics&)
 {
     if (m_failed) {
-        notifyError();
+        notifyError(mainContext);
         return;
     }
 
@@ -305,24 +309,24 @@ void WorkerScriptLoader::didFinishLoading(ResourceLoaderIdentifier identifier, c
         m_script.append(m_decoder->flush());
 
     m_identifier = identifier;
-    notifyFinished();
+    notifyFinished(mainContext);
 }
 
-void WorkerScriptLoader::didFail(const ResourceError& error)
+void WorkerScriptLoader::didFail(std::optional<ScriptExecutionContextIdentifier> mainContext, const ResourceError& error)
 {
     m_error = error;
-    notifyError();
+    notifyError(mainContext);
 }
 
-void WorkerScriptLoader::notifyError()
+void WorkerScriptLoader::notifyError(std::optional<ScriptExecutionContextIdentifier> mainContext)
 {
     m_failed = true;
     if (m_error.isNull())
         m_error = { errorDomainWebKitInternal, 0, url(), "Failed to load script"_s, ResourceError::Type::General };
-    notifyFinished();
+    notifyFinished(mainContext);
 }
 
-void WorkerScriptLoader::notifyFinished()
+void WorkerScriptLoader::notifyFinished(std::optional<ScriptExecutionContextIdentifier> mainContext)
 {
     m_threadableLoader = nullptr;
     if (!m_client || m_finishing)
@@ -332,7 +336,7 @@ void WorkerScriptLoader::notifyFinished()
     if (m_isMatchingServiceWorkerRegistration)
         return;
 
-    m_client->notifyFinished();
+    m_client->notifyFinished(mainContext);
 }
 
 void WorkerScriptLoader::cancel()

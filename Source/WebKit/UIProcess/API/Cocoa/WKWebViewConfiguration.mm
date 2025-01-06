@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,20 +28,23 @@
 
 #import "APIPageConfiguration.h"
 #import "CSPExtensionUtilities.h"
+#import "PlatformWritingToolsUtilities.h"
 #import "WKDataDetectorTypesInternal.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKUserContentControllerInternal.h"
 #import "WKWebViewContentProviderRegistry.h"
+#import "WKWebViewInternal.h"
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebKit2Initialize.h"
+#import "WebPageProxy.h"
 #import "WebPreferencesDefinitions.h"
 #import "WebURLSchemeHandlerCocoa.h"
 #import "_WKApplicationManifestInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/WKProcessPool.h>
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKUserContentController.h>
@@ -59,7 +62,12 @@
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-#import "_WKWebExtensionControllerInternal.h"
+#import "WKWebExtensionControllerInternal.h"
+#import "_WKWebExtensionController.h"
+#endif
+
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+#import <WebCore/ShouldRequireExplicitConsentForGamepadAccess.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -125,60 +133,6 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 - (BOOL)allowsInlinePredictions
 {
     return _pageConfiguration->allowsInlinePredictions();
-}
-
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-
-static _WKUnifiedTextReplacementBehavior convertToPlatformBehavior(WebKit::WebUnifiedTextReplacementBehavior behavior)
-{
-    switch (behavior) {
-    case WebKit::WebUnifiedTextReplacementBehavior::None:
-        return _WKUnifiedTextReplacementBehaviorNone;
-
-    case WebKit::WebUnifiedTextReplacementBehavior::Default:
-        return _WKUnifiedTextReplacementBehaviorDefault;
-
-    case WebKit::WebUnifiedTextReplacementBehavior::Limited:
-        return _WKUnifiedTextReplacementBehaviorLimited;
-
-    case WebKit::WebUnifiedTextReplacementBehavior::Complete:
-        return _WKUnifiedTextReplacementBehaviorComplete;
-    }
-}
-
-static WebKit::WebUnifiedTextReplacementBehavior convertToWebBehavior(_WKUnifiedTextReplacementBehavior behavior)
-{
-    switch (behavior) {
-    case _WKUnifiedTextReplacementBehaviorNone:
-        return WebKit::WebUnifiedTextReplacementBehavior::None;
-
-    case _WKUnifiedTextReplacementBehaviorDefault:
-        return WebKit::WebUnifiedTextReplacementBehavior::Default;
-
-    case _WKUnifiedTextReplacementBehaviorLimited:
-        return WebKit::WebUnifiedTextReplacementBehavior::Limited;
-
-    case _WKUnifiedTextReplacementBehaviorComplete:
-        return WebKit::WebUnifiedTextReplacementBehavior::Complete;
-    }
-}
-
-#endif
-
-- (void)_setUnifiedTextReplacementBehavior:(_WKUnifiedTextReplacementBehavior)behavior
-{
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    _pageConfiguration->setUnifiedTextReplacementBehavior(convertToWebBehavior(behavior));
-#endif
-}
-
-- (_WKUnifiedTextReplacementBehavior)_unifiedTextReplacementBehavior
-{
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    return convertToPlatformBehavior(_pageConfiguration->unifiedTextReplacementBehavior());
-#else
-    return _WKUnifiedTextReplacementBehaviorNone;
-#endif
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -299,6 +253,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [coder encodeBool:self._scrollToTextFragmentIndicatorEnabled forKey:@"scrollToTextFragmentIndicatorEnabled"];
     [coder encodeBool:self._scrollToTextFragmentMarkingEnabled forKey:@"scrollToTextFragmentMarkingEnabled"];
     [coder encodeBool:self._multiRepresentationHEICInsertionEnabled forKey:@"multiRepresentationHEICInsertionEnabled"];
+#if PLATFORM(VISION)
+    [coder encodeBool:self._gamepadAccessRequiresExplicitConsent forKey:@"gamepadAccessRequiresExplicitConsent"];
+    [coder encodeBool:self._cssTransformStyleSeparatedEnabled forKey:@"cssTransformStyleSeparatedEnabled"];
+#endif
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder
@@ -346,6 +304,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     self._scrollToTextFragmentIndicatorEnabled = [coder decodeBoolForKey:@"scrollToTextFragmentIndicatorEnabled"];
     self._scrollToTextFragmentMarkingEnabled = [coder decodeBoolForKey:@"scrollToTextFragmentMarkingEnabled"];
     self._multiRepresentationHEICInsertionEnabled = [coder decodeBoolForKey:@"multiRepresentationHEICInsertionEnabled"];
+#if PLATFORM(VISION)
+    self._gamepadAccessRequiresExplicitConsent = [coder decodeBoolForKey:@"gamepadAccessRequiresExplicitConsent"];
+    self._cssTransformStyleSeparatedEnabled = [coder decodeBoolForKey:@"cssTransformStyleSeparatedEnabled"];
+#endif
 
     return self;
 }
@@ -424,7 +386,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
-- (_WKWebExtensionController *)_strongWebExtensionController
+- (WKWebExtensionController *)_strongWebExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
     return wrapper(_pageConfiguration->webExtensionController());
@@ -433,23 +395,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
-- (_WKWebExtensionController *)_webExtensionController
-{
-#if ENABLE(WK_WEB_EXTENSIONS)
-    return self._weakWebExtensionController ?: self._strongWebExtensionController;
-#else
-    return nil;
-#endif
-}
-
-- (void)_setWebExtensionController:(_WKWebExtensionController *)webExtensionController
-{
-#if ENABLE(WK_WEB_EXTENSIONS)
-    _pageConfiguration->setWebExtensionController(webExtensionController ? &webExtensionController._webExtensionController : nullptr);
-#endif
-}
-
-- (_WKWebExtensionController *)_weakWebExtensionController
+- (WKWebExtensionController *)_weakWebExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
     return wrapper(_pageConfiguration->weakWebExtensionController());
@@ -458,10 +404,42 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
-- (void)_setWeakWebExtensionController:(_WKWebExtensionController *)webExtensionController
+- (void)_setWeakWebExtensionController:(WKWebExtensionController *)webExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
     _pageConfiguration->setWeakWebExtensionController(webExtensionController ? &webExtensionController._webExtensionController : nullptr);
+#endif
+}
+
+- (WKWebExtensionController *)webExtensionController
+{
+#if ENABLE(WK_WEB_EXTENSIONS)
+    return self._weakWebExtensionController ?: self._strongWebExtensionController;
+#else
+    return nil;
+#endif
+}
+
+- (void)setWebExtensionController:(WKWebExtensionController *)webExtensionController
+{
+#if ENABLE(WK_WEB_EXTENSIONS)
+    _pageConfiguration->setWebExtensionController(webExtensionController ? &webExtensionController._webExtensionController : nullptr);
+#endif
+}
+
+- (_WKWebExtensionController *)_webExtensionController
+{
+#if ENABLE(WK_WEB_EXTENSIONS)
+    return (_WKWebExtensionController *)self.webExtensionController;
+#else
+    return nil;
+#endif
+}
+
+- (void)_setWebExtensionController:(_WKWebExtensionController *)webExtensionController
+{
+#if ENABLE(WK_WEB_EXTENSIONS)
+    self.webExtensionController = webExtensionController;
 #endif
 }
 
@@ -587,6 +565,18 @@ static NSString *defaultApplicationNameForUserAgent()
     return static_cast<WebKit::WebURLSchemeHandlerCocoa*>(handler.get())->apiHandler();
 }
 
++ (BOOL)_isValidCustomScheme:(NSString *)urlScheme
+{
+    if ([WKWebView handlesURLScheme:urlScheme])
+        return NO;
+
+    auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(String(urlScheme));
+    if (!canonicalScheme)
+        return NO;
+
+    return YES;
+}
+
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)limitsNavigationsToAppBoundDomains
 {
@@ -599,9 +589,29 @@ static NSString *defaultApplicationNameForUserAgent()
 }
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewConfigurationAdditions.mm>
-#endif
+#if ENABLE(WRITING_TOOLS)
+
+- (void)setSupportsAdaptiveImageGlyph:(BOOL)supportsAdaptiveImageGlyph
+{
+    [self _setMultiRepresentationHEICInsertionEnabled:supportsAdaptiveImageGlyph];
+}
+
+- (BOOL)supportsAdaptiveImageGlyph
+{
+    return [self _multiRepresentationHEICInsertionEnabled];
+}
+
+- (void)setWritingToolsBehavior:(PlatformWritingToolsBehavior)writingToolsBehavior
+{
+    _pageConfiguration->setWritingToolsBehavior(WebKit::convertToWebWritingToolsBehavior(writingToolsBehavior));
+}
+
+- (PlatformWritingToolsBehavior)writingToolsBehavior
+{
+    return WebKit::convertToPlatformWritingToolsBehavior(_pageConfiguration->writingToolsBehavior());
+}
+
+#endif // ENABLE(WRITING_TOOLS)
 
 #pragma mark WKObject protocol implementation
 
@@ -616,6 +626,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (WKWebView *)_relatedWebView
 {
+    // FIXME: Remove when rdar://134318457, rdar://134318538 and rdar://125369363 are complete.
     if (RefPtr page = _pageConfiguration->relatedPage())
         return page->cocoaView().autorelease();
     return nil;
@@ -1410,11 +1421,11 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setShouldRelaxThirdPartyCookieBlocking:(BOOL)relax
 {
-    bool allowed = WebCore::applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s;
+    bool allowed = applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s;
 #if PLATFORM(MAC)
-    allowed |= WebCore::MacApplication::isSafari();
+    allowed |= WTF::MacApplication::isSafari();
 #elif PLATFORM(IOS_FAMILY)
-    allowed |= WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isSafariViewService();
+    allowed |= WTF::IOSApplication::isMobileSafari() || WTF::IOSApplication::isSafariViewService();
 #endif
 #if ENABLE(WK_WEB_EXTENSIONS)
     allowed |= _pageConfiguration->requiredWebExtensionBaseURL().isValid();
@@ -1505,6 +1516,40 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     return NO;
 #endif
 }
+
+#if PLATFORM(VISION)
+- (BOOL)_gamepadAccessRequiresExplicitConsent
+{
+#if ENABLE(GAMEPAD)
+    return _pageConfiguration->gamepadAccessRequiresExplicitConsent() == WebCore::ShouldRequireExplicitConsentForGamepadAccess::Yes;
+#else
+    return NO;
+#endif
+}
+
+- (void)_setGamepadAccessRequiresExplicitConsent:(BOOL)gamepadAccessRequiresExplicitConsent
+{
+#if ENABLE(GAMEPAD)
+    _pageConfiguration->setGamepadAccessRequiresExplicitConsent(gamepadAccessRequiresExplicitConsent ? WebCore::ShouldRequireExplicitConsentForGamepadAccess::Yes : WebCore::ShouldRequireExplicitConsentForGamepadAccess::No);
+#endif
+}
+
+- (BOOL)_cssTransformStyleSeparatedEnabled
+{
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    return _pageConfiguration->cssTransformStyleSeparatedEnabled();
+#else
+    return NO;
+#endif
+}
+- (void)_setCSSTransformStyleSeparatedEnabled:(BOOL)enabled
+{
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    _pageConfiguration->setCSSTransformStyleSeparatedEnabled(enabled);
+#endif
+}
+
+#endif // PLATFORM(VISION)
 
 @end
 

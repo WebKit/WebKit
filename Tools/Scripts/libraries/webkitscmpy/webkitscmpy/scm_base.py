@@ -25,7 +25,6 @@ import re
 import sys
 import time
 
-from datetime import datetime
 from logging import NullHandler
 from webkitscmpy import Commit, Contributor, CommitClassifier, log
 from webkitcorepy import string_utils
@@ -37,18 +36,14 @@ class ScmBase(object):
 
     # Projects can define for themselves what constitutes a development vs a production branch,
     # the following idioms seem common enough to be shared.
-    DEV_BRANCHES = re.compile(r'.*[(eng)(dev)(bug)]/.+')
-    PROD_BRANCHES = re.compile(r'\S+-[\d+\.]+-branch')
+    DEV_BRANCHES = re.compile(r'^(.+/)?((eng)|(dev)|(bug)|(integration))/.+')
+    PROD_BRANCHES = re.compile(r'^[^-/]+-[\d+\.]+-branch')
     GIT_SVN_REVISION = re.compile(r'^git-svn-id: \S+:\/\/.+@(?P<revision>\d+) .+-.+-.+-.+', flags=re.MULTILINE)
     DEFAULT_BRANCHES = ['main', 'master', 'trunk']
 
     @classmethod
     def gmtoffset(cls):
-        if sys.version_info >= (3, 0):
-            return int(time.localtime().tm_gmtoff * 100 / (60 * 60))
-
-        ts = time.time()
-        return int((datetime.fromtimestamp(ts) - datetime.utcfromtimestamp(ts)).total_seconds() * 100 / (60 * 60))
+        return int(time.localtime().tm_gmtoff * 100 / (60 * 60))
 
     def __init__(self, dev_branches=None, prod_branches=None, contributors=None, id=None, classifier=None):
         self.dev_branches = dev_branches or self.DEV_BRANCHES

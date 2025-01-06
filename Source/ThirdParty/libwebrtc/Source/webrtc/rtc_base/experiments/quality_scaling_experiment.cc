@@ -32,14 +32,14 @@ constexpr char kDefaultQualityScalingSetttings[] =
     "Enabled-29,95,149,205,24,37,26,36,0.9995,0.9999,1";
 #endif
 
-absl::optional<VideoEncoder::QpThresholds> GetThresholds(int low,
-                                                         int high,
-                                                         int max) {
+std::optional<VideoEncoder::QpThresholds> GetThresholds(int low,
+                                                        int high,
+                                                        int max) {
   if (low < kMinQp || high > max || high < low)
-    return absl::nullopt;
+    return std::nullopt;
 
   RTC_LOG(LS_INFO) << "QP thresholds: low: " << low << ", high: " << high;
-  return absl::optional<VideoEncoder::QpThresholds>(
+  return std::optional<VideoEncoder::QpThresholds>(
       VideoEncoder::QpThresholds(low, high));
 }
 }  // namespace
@@ -52,7 +52,7 @@ bool QualityScalingExperiment::Enabled(const FieldTrialsView& field_trials) {
 #endif
 }
 
-absl::optional<QualityScalingExperiment::Settings>
+std::optional<QualityScalingExperiment::Settings>
 QualityScalingExperiment::ParseSettings(const FieldTrialsView& field_trials) {
   std::string group = field_trials.Lookup(kFieldTrial);
   // TODO(http://crbug.com/webrtc/12401): Completely remove the experiment code
@@ -67,17 +67,17 @@ QualityScalingExperiment::ParseSettings(const FieldTrialsView& field_trials) {
              &s.h264_high, &s.generic_low, &s.generic_high, &s.alpha_high,
              &s.alpha_low, &s.drop) != 11) {
     RTC_LOG(LS_WARNING) << "Invalid number of parameters provided.";
-    return absl::nullopt;
+    return std::nullopt;
   }
   return s;
 }
 
-absl::optional<VideoEncoder::QpThresholds>
+std::optional<VideoEncoder::QpThresholds>
 QualityScalingExperiment::GetQpThresholds(VideoCodecType codec_type,
                                           const FieldTrialsView& field_trials) {
   const auto settings = ParseSettings(field_trials);
   if (!settings)
-    return absl::nullopt;
+    return std::nullopt;
 
   switch (codec_type) {
     case kVideoCodecVP8:
@@ -92,7 +92,7 @@ QualityScalingExperiment::GetQpThresholds(VideoCodecType codec_type,
       return GetThresholds(settings->generic_low, settings->generic_high,
                            kMaxGenericQp);
     default:
-      return absl::nullopt;
+      return std::nullopt;
   }
 }
 

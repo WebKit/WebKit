@@ -28,7 +28,7 @@
     ReturnsPromiseWhenCallbackIsOmitted
 ] interface WebExtensionAPIWebPageRuntime {
 
-    [RaisesException, NeedsFrame, ProcessArgumentsLeftToRight] void sendMessage(DOMString extensionId, [Serialization=JSON] any message, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
-    [RaisesException, NeedsFrame, NeedsScriptContext] WebExtensionAPIPort connect(DOMString extensionId, [Optional, NSDictionary] any options);
+    [RaisesException, NeedsPage, NeedsFrame, ProcessArgumentsLeftToRight] void sendMessage(DOMString extensionId, [Serialization=JSON] any message, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPage, NeedsFrame, NeedsScriptContext] WebExtensionAPIPort connect(DOMString extensionId, [Optional, NSDictionary] any options);
 
 };

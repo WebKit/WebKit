@@ -1,15 +1,16 @@
 <html>
 <head>
 <script>
-function testRects()
+async function testRects()
 {
     if (!window.testRunner || !window.internals)
         return;
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     
     var div = document.getElementById("div");
     var rect = div.getBoundingClientRect();
-    window.internals.setPageScaleFactor(2, 0, 0);
+    await window.testRunner.setPageScaleFactor(2, 0, 0);
     var scaledRect = div.getBoundingClientRect();
 
     var result = document.getElementById("result");
@@ -20,6 +21,7 @@ function testRects()
         result.innerHTML = "Pass";
     else
         result.innerHTML = "Fail";
+    testRunner.notifyDone();
     
 }
 </script>

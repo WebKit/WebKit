@@ -11,7 +11,9 @@
 #ifndef LOGGING_RTC_EVENT_LOG_EVENTS_FIXED_LENGTH_ENCODING_PARAMETERS_V3_H_
 #define LOGGING_RTC_EVENT_LOG_EVENTS_FIXED_LENGTH_ENCODING_PARAMETERS_V3_H_
 
-#include "absl/types/optional.h"
+#include <cstdint>
+#include <optional>
+
 #include "api/array_view.h"
 #include "logging/rtc_event_log/events/rtc_event_field_extraction.h"
 
@@ -23,7 +25,6 @@ class FixedLengthEncodingParametersV3 final {
  public:
   static bool ValidParameters(uint64_t delta_bit_width,
                               bool signed_deltas,
-                              bool values_optional,
                               uint64_t value_bit_width) {
     return (1 <= delta_bit_width && delta_bit_width <= 64 &&
             1 <= value_bit_width && value_bit_width <= 64 &&
@@ -36,7 +37,7 @@ class FixedLengthEncodingParametersV3 final {
       rtc::ArrayView<const uint64_t> values,
       uint64_t value_bit_width,
       bool values_optional);
-  static absl::optional<FixedLengthEncodingParametersV3> ParseDeltaHeader(
+  static std::optional<FixedLengthEncodingParametersV3> ParseDeltaHeader(
       uint64_t header,
       uint64_t value_bit_width);
 

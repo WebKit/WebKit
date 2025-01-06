@@ -38,7 +38,9 @@ class ReportBlockData {
   // The fraction of RTP data packets from 'source_ssrc()' lost since the
   // previous report block was sent.
   // Fraction loss in range [0.0, 1.0].
-  float fraction_lost() const { return fraction_lost_raw() / 256.0; }
+  float fraction_lost() const {
+    return static_cast<float>(fraction_lost_raw()) / 256.0f;
+  }
 
   // Fraction loss as was written in the raw packet: range is [0, 255] where 0
   // represents no loss, and 255 represents 99.6% loss (255/256 * 100%).
@@ -70,9 +72,14 @@ class ReportBlockData {
   TimeDelta jitter(int rtp_clock_rate_hz) const;
 
   // Time in utc epoch (Jan 1st, 1970) the report block was received.
+  // TODO: bugs.webrtc.org/370535296 - Remove the utc timestamp when linked
+  // issue is fixed.
   Timestamp report_block_timestamp_utc() const {
     return report_block_timestamp_utc_;
   }
+
+  // Monotonic time when the report block was received.
+  Timestamp report_block_timestamp() const { return report_block_timestamp_; }
 
   // Round Trip Time measurments for given (sender_ssrc, source_ssrc) pair.
   // Min, max, sum, number of measurements are since beginning of the call.
@@ -89,13 +96,19 @@ class ReportBlockData {
     extended_highest_sequence_number_ = sn;
   }
   void set_jitter(uint32_t jitter) { jitter_ = jitter; }
+  // TODO: bugs.webrtc.org/370535296 - Remove the utc timestamp when linked
+  // issue is fixed.
   void set_report_block_timestamp_utc(Timestamp arrival_time) {
     report_block_timestamp_utc_ = arrival_time;
+  }
+  void set_report_block_timestamp(Timestamp arrival_time) {
+    report_block_timestamp_ = arrival_time;
   }
 
   void SetReportBlock(uint32_t sender_ssrc,
                       const rtcp::ReportBlock& report_block,
-                      Timestamp report_block_timestamp_utc);
+                      Timestamp report_block_timestamp_utc,
+                      Timestamp report_block_timestamp);
   void AddRoundTripTimeSample(TimeDelta rtt);
 
  private:
@@ -105,7 +118,10 @@ class ReportBlockData {
   int32_t cumulative_lost_ = 0;
   uint32_t extended_highest_sequence_number_ = 0;
   uint32_t jitter_ = 0;
+  // TODO: bugs.webrtc.org/370535296 - Remove the utc timestamp when linked
+  // issue is fixed.
   Timestamp report_block_timestamp_utc_ = Timestamp::Zero();
+  Timestamp report_block_timestamp_ = Timestamp::Zero();
   TimeDelta last_rtt_ = TimeDelta::Zero();
   TimeDelta sum_rtt_ = TimeDelta::Zero();
   size_t num_rtts_ = 0;

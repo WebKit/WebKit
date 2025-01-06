@@ -29,12 +29,13 @@
 #include "InlineRect.h"
 #include "TextRun.h"
 #include "TextUtil.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace InlineDisplay {
 
 class Line {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Line);
 public:
     struct EnclosingTopAndBottom {
         // This values encloses the root inline box and any other inline level box's border box.
@@ -74,13 +75,6 @@ public:
     bool isHorizontal() const { return m_isHorizontal; }
     bool isLeftToRightInlineDirection() const { return m_isLeftToRightDirection; }
 
-    bool isTruncatedInBlockDirection() const { return m_isTruncatedInBlockDirection; }
-
-    bool hasEllipsis() const { return m_ellipsisVisualRect.has_value(); }
-    std::optional<FloatRect> ellipsisVisualRect() const { return m_ellipsisVisualRect; }
-    // FIXME: This should not be part of Line.
-    TextRun ellipsisText() const { return TextRun { Layout::TextUtil::ellipsisTextRun(isHorizontal()) }; }
-
     float contentLogicalLeft() const { return m_contentLogicalLeft; }
     // This is "visual" left in inline direction (it is still considered logical as there's no flip for writing mode).
     float contentLogicalLeftIgnoringInlineDirection() const { return m_contentLogicalLeftIgnoringInlineDirection; }
@@ -92,7 +86,18 @@ public:
     bool isFirstAfterPageBreak() const { return m_isFirstAfterPageBreak; }
 
     void moveInBlockDirection(float offset, bool isHorizontalWritingMode);
-    void setEllipsisVisualRect(const FloatRect& ellipsisVisualRect) { m_ellipsisVisualRect = ellipsisVisualRect; }
+    struct Ellipsis {
+        enum class Type : uint8_t { Inline, Block };
+        Type type { Type::Inline };
+        // This is visual rect ignoring block direction.
+        FloatRect visualRect;
+        AtomString text;
+    };
+    void setEllipsis(const Ellipsis& ellipsis) { m_ellipsis = ellipsis; }
+    std::optional<Ellipsis> ellipsis() const { return m_ellipsis; }
+    bool hasEllipsis() const { return !!m_ellipsis; }
+
+    bool isFullyTruncatedInBlockDirection() const { return m_isFullyTruncatedInBlockDirection; }
 
     bool hasContentAfterEllipsisBox() const { return m_hasContentAfterEllipsisBox; }
     void setHasContentAfterEllipsisBox() { m_hasContentAfterEllipsisBox = true; }
@@ -102,6 +107,7 @@ public:
     void setIsFirstAfterPageBreak() { m_isFirstAfterPageBreak = true; }
     void setInkOverflow(const FloatRect inkOverflowRect) { m_inkOverflow = inkOverflowRect; }
     void setScrollableOverflow(const FloatRect scrollableOverflow) { m_scrollableOverflow = scrollableOverflow; }
+    void setLineBoxRectForSVGText(const FloatRect&);
 
 private:
     // FIXME: Move these to a side structure.
@@ -129,10 +135,9 @@ private:
     bool m_isLeftToRightDirection : 1 { true };
     bool m_isHorizontal : 1 { true };
     bool m_isFirstAfterPageBreak : 1 { false };
-    bool m_isTruncatedInBlockDirection : 1 { false };
+    bool m_isFullyTruncatedInBlockDirection : 1 { false };
     bool m_hasContentAfterEllipsisBox : 1 { false };
-    // This is visual rect ignoring block direction.
-    std::optional<FloatRect> m_ellipsisVisualRect { };
+    std::optional<Ellipsis> m_ellipsis { };
 };
 
 inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float alignmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection)
@@ -147,7 +152,7 @@ inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxR
     , m_baselineType(baselineType)
     , m_isLeftToRightDirection(isLeftToRightDirection)
     , m_isHorizontal(isHorizontal)
-    , m_isTruncatedInBlockDirection(isTruncatedInBlockDirection)
+    , m_isFullyTruncatedInBlockDirection(isTruncatedInBlockDirection)
 {
 }
 
@@ -164,8 +169,8 @@ inline void Line::moveInBlockDirection(float offset, bool isHorizontalWritingMod
     m_scrollableOverflow.move(physicalOffset);
     m_contentOverflow.move(physicalOffset);
     m_inkOverflow.move(physicalOffset);
-    if (m_ellipsisVisualRect.has_value())
-        m_ellipsisVisualRect->move(physicalOffset);
+    if (m_ellipsis)
+        m_ellipsis->visualRect.move(physicalOffset);
 
     m_lineBoxLogicalRect.move({ { }, offset });
     m_enclosingLogicalTopAndBottom.top += offset;
@@ -174,16 +179,27 @@ inline void Line::moveInBlockDirection(float offset, bool isHorizontalWritingMod
 
 inline FloatRect Line::visibleRectIgnoringBlockDirection() const
 {
-    if (m_isTruncatedInBlockDirection)
+    if (m_isFullyTruncatedInBlockDirection)
         return { };
     if (!hasEllipsis() || hasContentAfterEllipsisBox())
         return m_inkOverflow;
     if (m_isLeftToRightDirection) {
-        auto visibleLineBoxRight = std::min(m_lineBoxRect.maxX(), m_ellipsisVisualRect->maxX());
+        auto visibleLineBoxRight = std::min(m_lineBoxRect.maxX(), m_ellipsis->visualRect.maxX());
         return { m_lineBoxRect.location(), FloatPoint { visibleLineBoxRight, m_lineBoxRect.maxY() } };
     }
-    auto visibleLineBoxLeft = std::max(m_lineBoxRect.x(), m_ellipsisVisualRect->x());
+    auto visibleLineBoxLeft = std::max(m_lineBoxRect.x(), m_ellipsis->visualRect.x());
     return { FloatPoint { visibleLineBoxLeft, m_lineBoxRect.y() }, FloatPoint { m_lineBoxRect.maxX(), m_lineBoxRect.maxY() } };
+}
+
+inline void Line::setLineBoxRectForSVGText(const FloatRect& rect)
+{
+    m_lineBoxRect = rect;
+    m_scrollableOverflow = rect;
+    m_contentOverflow = rect;
+    m_inkOverflow = rect;
+    m_lineBoxLogicalRect = m_isHorizontal ? rect : rect.transposedRect();
+    m_enclosingLogicalTopAndBottom.top = m_lineBoxLogicalRect.y();
+    m_enclosingLogicalTopAndBottom.bottom = m_lineBoxLogicalRect.maxY();
 }
 
 }

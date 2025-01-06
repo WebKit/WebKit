@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Timer.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -34,8 +35,10 @@ namespace WebCore {
 class Page;
 class WeakPtrImplWithEventTargetData;
 
-template<typename T, typename WeakPtrImpl> class EventSender {
-    WTF_MAKE_NONCOPYABLE(EventSender); WTF_MAKE_FAST_ALLOCATED;
+template<typename T, typename WeakPtrImpl> class EventSender : public CanMakeCheckedPtr<EventSender<T, WeakPtrImpl>> {
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(EventSender);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventSender);
+    WTF_MAKE_NONCOPYABLE(EventSender);
 public:
     EventSender();
 
@@ -63,6 +66,15 @@ private:
     Vector<DispatchTask> m_dispatchSoonList;
     Vector<DispatchTask> m_dispatchingList;
 };
+
+#define TZONE_TEMPLATE_PARAMS template<typename T, typename WeakPtrImpl>
+#define TZONE_TYPE EventSender<T, WeakPtrImpl>
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS();
+
+#undef TZONE_TEMPLATE_PARAMS
+#undef TZONE_TYPE
+
 
 template<typename T, typename WeakPtrImpl> EventSender<T, WeakPtrImpl>::EventSender()
     : m_timer(*this, &EventSender::timerFired)

@@ -14,12 +14,12 @@
 #include <atomic>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/adaptation/resource.h"
 #include "api/field_trials_view.h"
 #include "api/rtp_parameters.h"
@@ -46,7 +46,6 @@
 #include "video/adaptation/encode_usage_resource.h"
 #include "video/adaptation/overuse_frame_detector.h"
 #include "video/adaptation/pixel_limit_resource.h"
-#include "video/adaptation/quality_rampup_experiment_helper.h"
 #include "video/adaptation/quality_scaler_resource.h"
 #include "video/adaptation/video_stream_encoder_resource.h"
 #include "video/config/video_encoder_config.h"
@@ -70,8 +69,7 @@ extern const int kDefaultInputPixelsHeight;
 // ResourceAdaptationProcessor code such as the initial frame dropping.
 class VideoStreamEncoderResourceManager
     : public VideoSourceRestrictionsListener,
-      public ResourceLimitationsListener,
-      public QualityRampUpExperimentListener {
+      public ResourceLimitationsListener {
  public:
   VideoStreamEncoderResourceManager(
       VideoStreamInputStateProvider* input_state_provider,
@@ -121,7 +119,7 @@ class VideoStreamEncoderResourceManager
                        int64_t time_when_first_seen_us);
   void OnEncodeCompleted(const EncodedImage& encoded_image,
                          int64_t time_sent_in_us,
-                         absl::optional<int> encode_duration_us,
+                         std::optional<int> encode_duration_us,
                          DataSize frame_size);
   void OnFrameDropped(EncodedImageCallback::DropReason reason);
 
@@ -134,8 +132,8 @@ class VideoStreamEncoderResourceManager
   // If true, the VideoStreamEncoder should execute its logic to maybe drop
   // frames based on size and bitrate.
   bool DropInitialFrames() const;
-  absl::optional<uint32_t> SingleActiveStreamPixels() const;
-  absl::optional<uint32_t> UseBandwidthAllocationBps() const;
+  std::optional<uint32_t> SingleActiveStreamPixels() const;
+  std::optional<uint32_t> UseBandwidthAllocationBps() const;
 
   // VideoSourceRestrictionsListener implementation.
   // Updates `video_source_restrictions_`.
@@ -148,9 +146,6 @@ class VideoStreamEncoderResourceManager
       rtc::scoped_refptr<Resource> resource,
       const std::map<rtc::scoped_refptr<Resource>, VideoAdaptationCounters>&
           resource_limitations) override;
-
-  // QualityRampUpExperimentListener implementation.
-  void OnQualityRampUp() override;
 
   static bool IsSimulcastOrMultipleSpatialLayers(
       const VideoEncoderConfig& encoder_config,
@@ -171,7 +166,7 @@ class VideoStreamEncoderResourceManager
 
   // Use nullopt to disable quality scaling.
   void UpdateQualityScalerSettings(
-      absl::optional<VideoEncoder::QpThresholds> qp_thresholds);
+      std::optional<VideoEncoder::QpThresholds> qp_thresholds);
 
   void UpdateBandwidthQualityScalerSettings(
       bool bandwidth_quality_scaling_allowed,
@@ -219,13 +214,11 @@ class VideoStreamEncoderResourceManager
   const bool quality_scaling_experiment_enabled_ RTC_GUARDED_BY(encoder_queue_);
   const bool pixel_limit_resource_experiment_enabled_
       RTC_GUARDED_BY(encoder_queue_);
-  absl::optional<uint32_t> encoder_target_bitrate_bps_
+  std::optional<uint32_t> encoder_target_bitrate_bps_
       RTC_GUARDED_BY(encoder_queue_);
-  absl::optional<VideoEncoder::RateControlParameters> encoder_rates_
+  std::optional<VideoEncoder::RateControlParameters> encoder_rates_
       RTC_GUARDED_BY(encoder_queue_);
-  std::unique_ptr<QualityRampUpExperimentHelper> quality_rampup_experiment_
-      RTC_GUARDED_BY(encoder_queue_);
-  absl::optional<EncoderSettings> encoder_settings_
+  std::optional<EncoderSettings> encoder_settings_
       RTC_GUARDED_BY(encoder_queue_);
 
   // Ties a resource to a reason for statistical reporting. This AdaptReason is

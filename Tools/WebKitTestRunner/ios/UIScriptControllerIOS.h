@@ -111,7 +111,8 @@ private:
     void keyboardAccessoryBarPrevious() override;
     bool isShowingKeyboard() const override;
     bool hasInputSession() const override;
-    void applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef) override;
+    void selectWordForReplacement() override;
+    void applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef, bool) override;
     double minimumZoomScale() const override;
     double maximumZoomScale() const override;
     std::optional<bool> stableStateOverride() const override;
@@ -148,6 +149,7 @@ private:
     void toggleCapsLock(JSValueRef) override;
     unsigned keyboardWillHideCount() const override;
     bool keyboardIsAutomaticallyShifted() const override;
+    unsigned keyboardUpdateForChangedSelectionCount() const final;
     bool isAnimatingDragCancel() const override;
     JSRetainPtr<JSStringRef> selectionCaretBackgroundColor() const override;
     JSObjectRef tapHighlightViewRect() const override;
@@ -186,6 +188,8 @@ private:
     void presentFindNavigator() override;
     void dismissFindNavigator() override;
 
+    JSRetainPtr<JSStringRef> frontmostViewAtPoint(int, int) final;
+
     void waitForModalTransitionToFinish() const;
     void waitForSingleTapToReset() const;
     WebCore::FloatRect rectForMenuAction(CFStringRef) const;
@@ -204,7 +208,9 @@ private:
 
     int64_t pasteboardChangeCount() const final;
 
-    void clipSelectionViewRectToContentView(CGRect&) const;
+    CGRect selectionViewBoundsClippedToContentView(UIView *, std::optional<CGRect>&& = std::nullopt) const;
+
+    JSRetainPtr<JSStringRef> scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID, bool) const override;
 
 #if USE(BROWSERENGINEKIT)
     id<BETextInput> asyncTextInput() const;

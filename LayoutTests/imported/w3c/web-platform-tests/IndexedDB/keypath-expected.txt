@@ -17,5 +17,6 @@ PASS Keypath - [['x'], 'y'] (stringifies)
 PASS Keypath - ['x', {toString->'y'}] (stringifies)
 PASS Keypath - name,type
 PASS Keypath - name,type.name
+PASS Keypath - list with 1 field
 PASS Keypath - array loop -> stringify becomes ['']
 

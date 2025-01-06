@@ -72,9 +72,15 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     void onColorDraw(ContextVk *contextVk,
                      uint32_t framebufferLayerCount,
                      vk::PackedAttachmentIndex index);
-    void onColorResolve(ContextVk *contextVk, uint32_t framebufferLayerCount);
+    void onColorResolve(ContextVk *contextVk,
+                        uint32_t framebufferLayerCount,
+                        size_t readColorIndexGL,
+                        const vk::ImageView &view);
     void onDepthStencilDraw(ContextVk *contextVk, uint32_t framebufferLayerCount);
-    void onDepthStencilResolve(ContextVk *contextVk, uint32_t framebufferLayerCount);
+    void onDepthStencilResolve(ContextVk *contextVk,
+                               uint32_t framebufferLayerCount,
+                               VkImageAspectFlags aspects,
+                               const vk::ImageView &view);
 
     vk::ImageHelper &getImageForRenderPass();
     const vk::ImageHelper &getImageForRenderPass() const;
@@ -92,6 +98,15 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
                                              const vk::ImageView **imageViewOut) const;
     angle::Result getResolveImageView(vk::Context *context,
                                       const vk::ImageView **imageViewOut) const;
+    angle::Result getDepthOrStencilImageView(vk::Context *context,
+                                             VkImageAspectFlagBits aspect,
+                                             const vk::ImageView **imageViewOut) const;
+    angle::Result getDepthOrStencilImageViewForCopy(vk::Context *context,
+                                                    VkImageAspectFlagBits aspect,
+                                                    const vk::ImageView **imageViewOut) const;
+    angle::Result getResolveDepthOrStencilImageView(vk::Context *context,
+                                                    VkImageAspectFlagBits aspect,
+                                                    const vk::ImageView **imageViewOut) const;
 
     // For 3D textures, the 2D view created for render target is invalid to read from.  The
     // following will return a view to the whole image (for all types, including 3D and 2DArray).
@@ -105,6 +120,7 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     gl::Extents getExtents() const;
     gl::Extents getRotatedExtents() const;
     gl::LevelIndex getLevelIndex() const { return mLevelIndexGL; }
+    gl::LevelIndex getLevelIndexForImage(const vk::ImageHelper &image) const;
     uint32_t getLayerIndex() const { return mLayerIndex; }
     uint32_t getLayerCount() const { return mLayerCount; }
     bool is3DImage() const { return getOwnerOfData()->getType() == VK_IMAGE_TYPE_3D; }
@@ -146,20 +162,61 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
 
     void onNewFramebuffer(const vk::SharedFramebufferCacheKey &sharedFramebufferCacheKey)
     {
-        ASSERT(!mFramebufferCacheManager.containsKey(sharedFramebufferCacheKey));
         mFramebufferCacheManager.addKey(sharedFramebufferCacheKey);
     }
-    void release(ContextVk *contextVk) { mFramebufferCacheManager.releaseKeys(contextVk); }
-    void destroy(vk::Renderer *renderer) { mFramebufferCacheManager.destroyKeys(renderer); }
+    void releaseFramebuffers(ContextVk *contextVk)
+    {
+        mFramebufferCacheManager.releaseKeys(contextVk);
+    }
+    // Releases framebuffers and resets Image and ImageView pointers, while keeping other
+    // members intact, in order to allow |updateSwapchainImage| call later.
+    void releaseImageAndViews(ContextVk *contextVk)
+    {
+        releaseFramebuffers(contextVk);
+        invalidateImageAndViews();
+    }
+    // Releases framebuffers and resets all members to the initial state.
+    void destroy(vk::Renderer *renderer)
+    {
+        mFramebufferCacheManager.destroyKeys(renderer);
+        reset();
+    }
+
+    // Helpers to update rendertarget colorspace
+    void updateWriteColorspace(gl::SrgbWriteControlMode srgbWriteControlMode)
+    {
+        ASSERT(mImage && mImage->valid() && mImageViews);
+        mImageViews->updateSrgbWiteControlMode(*mImage, srgbWriteControlMode);
+    }
+    bool hasColorspaceOverrideForRead() const
+    {
+        ASSERT(mImage && mImage->valid() && mImageViews);
+        return mImageViews->hasColorspaceOverrideForRead(*mImage);
+    }
+    bool hasColorspaceOverrideForWrite() const
+    {
+        ASSERT(mImage && mImage->valid() && mImageViews);
+        return mImageViews->hasColorspaceOverrideForWrite(*mImage);
+    }
+    angle::FormatID getColorspaceOverrideFormatForWrite(angle::FormatID format) const
+    {
+        ASSERT(mImage && mImage->valid() && mImageViews);
+        return mImageViews->getColorspaceOverrideFormatForWrite(format);
+    }
 
   private:
+    void invalidateImageAndViews();
     void reset();
 
     angle::Result getImageViewImpl(vk::Context *context,
                                    const vk::ImageHelper &image,
-                                   gl::SrgbWriteControlMode mode,
                                    vk::ImageViewHelper *imageViews,
                                    const vk::ImageView **imageViewOut) const;
+    angle::Result getDepthOrStencilImageViewImpl(vk::Context *context,
+                                                 const vk::ImageHelper &image,
+                                                 vk::ImageViewHelper *imageViews,
+                                                 VkImageAspectFlagBits aspect,
+                                                 const vk::ImageView **imageViewOut) const;
 
     vk::ImageOrBufferViewSubresourceSerial getSubresourceSerialImpl(
         vk::ImageViewHelper *imageViews) const;
@@ -183,11 +240,17 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
 
     UniqueSerial mImageSiblingSerial;
 
-    // Which subresource of the image is used as render target.  For single-layer render targets,
-    // |mLayerIndex| will contain the layer index and |mLayerCount| will be 1.  For layered render
-    // targets, |mLayerIndex| will be 0 and |mLayerCount| will be the number of layers in the image
-    // (or level depth, if image is 3D).  Note that blit and other functions that read or write to
-    // the render target always use layer 0, so this works out for users of |getLayerIndex()|.
+    // Which subresource of the image is used as render target.
+    //
+    // |mLevelIndexGL| applies to the level index of mImage unless there is a resolve attachment,
+    // in which case |mLevelIndexGL| applies to the mResolveImage since mImage is always
+    // single-level.
+    //
+    // For single-layer render targets, |mLayerIndex| will contain the layer index and |mLayerCount|
+    // will be 1.  For layered render targets, |mLayerIndex| will be 0 and |mLayerCount| will be the
+    // number of layers in the image (or level depth, if image is 3D).  Note that blit and other
+    // functions that read or write to the render target always use layer 0, so this works out for
+    // users of |getLayerIndex()|.
     gl::LevelIndex mLevelIndexGL;
     uint32_t mLayerIndex;
     uint32_t mLayerCount;

@@ -1,0 +1,24 @@
+CONSOLE MESSAGE: validation error
+CONSOLE MESSAGE: Failed to compile the shader source, generated metal:
+#include <metal_stdlib>
+#include <metal_types>
+
+using namespace metal;
+
+struct __ArgumentBufferT_0 {
+    texture1d<float, access::sample> global0 [[id(0)]];
+};
+
+[[fragment]] vec<float, 4> function1(constant __ArgumentBufferT_0& __ArgumentBuffer_0 [[buffer(0)]])
+{
+    texture1d<float, access::sample> global0 = __ArgumentBuffer_0.global0;
+    (void)(global0.get_width(1));
+    return vec<float, 4>(0., 0., 0., 0.);
+}
+
+
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584

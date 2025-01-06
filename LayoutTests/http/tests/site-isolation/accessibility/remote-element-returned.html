@@ -1,0 +1,32 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<style>
+</style>
+</head>
+<body id="body">
+
+<iframe id="iframe" onload="runTest()" src="http://localhost:8000/site-isolation/resources/iframe.html"></iframe>
+
+<script>
+var output = "This test ensures that a remote element is present in the AX tree.\n\n";
+
+function runTest() {
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        setTimeout(async function() {
+            // Traverse ScrollView -> WebArea -> ScrollView (of iframe) -> Remote Frame
+            await waitFor(() => accessibilityController.rootElement.childAtIndex(0).childAtIndex(0).childAtIndexWithRemoteElement(0).isRemoteFrame);
+            output += `Remote frame exists\n`;
+            
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+}
+</script>
+</body>
+</html>
+

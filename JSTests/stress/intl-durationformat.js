@@ -1,5 +1,3 @@
-//@ requireOptions("--useIntlDurationFormat=1")
-
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error(`expected ${expected} but got ${actual}`);
@@ -90,9 +88,7 @@ function test() {
         // Canonicalizes tags.
         shouldBe(
             JSON.stringify(Intl.DurationFormat.supportedLocalesOf('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')),
-            $vm.icuVersion() >= 67
-                ? '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
-                : '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-x-reserved"]'
+            '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
         );
         // Throws on problems with length, get, or toString.
         shouldThrow(() => Intl.DurationFormat.supportedLocalesOf(Object.create(null, { length: { get() { throw new Error(); } } })), Error);
@@ -170,7 +166,7 @@ function test() {
         shouldThrow(() => df.format(null), TypeError);
         shouldThrow(() => df.format(undefined), TypeError);
         shouldThrow(() => df.format([null]), TypeError);
-        shouldBe(JSON.stringify(df.resolvedOptions()), `{"locale":"en","style":"long","years":"long","yearsDisplay":"auto","months":"long","monthsDisplay":"auto","weeks":"long","weeksDisplay":"auto","days":"long","daysDisplay":"auto","hours":"long","hoursDisplay":"auto","minutes":"long","minutesDisplay":"auto","seconds":"long","secondsDisplay":"auto","milliseconds":"long","millisecondsDisplay":"auto","microseconds":"long","microsecondsDisplay":"auto","nanoseconds":"long","nanosecondsDisplay":"auto","numberingSystem":"latn"}`);
+        shouldBe(JSON.stringify(df.resolvedOptions()), `{"locale":"en","numberingSystem":"latn","style":"long","years":"long","yearsDisplay":"auto","months":"long","monthsDisplay":"auto","weeks":"long","weeksDisplay":"auto","days":"long","daysDisplay":"auto","hours":"long","hoursDisplay":"auto","minutes":"long","minutesDisplay":"auto","seconds":"long","secondsDisplay":"auto","milliseconds":"long","millisecondsDisplay":"auto","microseconds":"long","microsecondsDisplay":"auto","nanoseconds":"long","nanosecondsDisplay":"auto"}`);
         shouldBe(JSON.stringify(Reflect.getOwnPropertyDescriptor(Intl.DurationFormat.prototype, Symbol.toStringTag)), `{"value":"Intl.DurationFormat","writable":false,"enumerable":false,"configurable":true}`);
     }
     {

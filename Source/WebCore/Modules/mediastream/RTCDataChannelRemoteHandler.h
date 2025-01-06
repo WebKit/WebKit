@@ -29,9 +29,9 @@
 #include "RTCDataChannelHandler.h"
 #include "RTCDataChannelIdentifier.h"
 #include "RTCDataChannelState.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -51,7 +51,7 @@ class RTCError;
 class FragmentedSharedBuffer;
 
 class RTCDataChannelRemoteHandler final : public RTCDataChannelHandler, public CanMakeWeakPtr<RTCDataChannelRemoteHandler> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RTCDataChannelRemoteHandler);
 public:
     static std::unique_ptr<RTCDataChannelRemoteHandler> create(RTCDataChannelIdentifier, RefPtr<RTCDataChannelRemoteHandlerConnection>&&);
     RTCDataChannelRemoteHandler(RTCDataChannelIdentifier, Ref<RTCDataChannelRemoteHandlerConnection>&&);
@@ -69,13 +69,13 @@ public:
 
 private:
     // RTCDataChannelHandler
-    void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
+    void setClient(RTCDataChannelHandlerClient&, std::optional<ScriptExecutionContextIdentifier>) final;
     bool sendStringData(const CString&) final;
     bool sendRawData(std::span<const uint8_t>) final;
     void close() final;
 
     RTCDataChannelIdentifier m_remoteIdentifier;
-    RTCDataChannelIdentifier m_localIdentifier;
+    Markable<RTCDataChannelIdentifier> m_localIdentifier;
 
     RTCDataChannelHandlerClient* m_client { nullptr };
     Ref<RTCDataChannelRemoteHandlerConnection> m_connection;

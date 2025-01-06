@@ -47,7 +47,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static WorkQueue& remoteVideoFrameObjectHeapQueue()
+static WorkQueue& remoteVideoFrameObjectHeapQueueSingleton()
 {
     static NeverDestroyed queue = WorkQueue::create("org.webkit.RemoteVideoFrameObjectHeap"_s, WorkQueue::QOS::UserInteractive);
     return queue.get();
@@ -55,8 +55,8 @@ static WorkQueue& remoteVideoFrameObjectHeapQueue()
 
 Ref<RemoteVideoFrameObjectHeap> RemoteVideoFrameObjectHeap::create(Ref<IPC::Connection>&& connection)
 {
-    auto heap = adoptRef(*new RemoteVideoFrameObjectHeap(WTFMove(connection)));
-    heap->m_connection->addWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeap::messageReceiverName(), remoteVideoFrameObjectHeapQueue(), heap);
+    Ref heap = adoptRef(*new RemoteVideoFrameObjectHeap(WTFMove(connection)));
+    heap->protectedConnection()->addWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeap::messageReceiverName(), remoteVideoFrameObjectHeapQueueSingleton(), heap);
     return heap;
 }
 
@@ -78,7 +78,7 @@ void RemoteVideoFrameObjectHeap::close()
         return;
 
     m_isClosed = true;
-    m_connection->removeWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeap::messageReceiverName());
+    protectedConnection()->removeWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeap::messageReceiverName());
 
 #if PLATFORM(COCOA)
     m_sharedVideoFrameWriter.disable();
@@ -102,32 +102,34 @@ RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::add(Ref<WebCore::V
 
 void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReference&& write)
 {
-    assertIsCurrent(remoteVideoFrameObjectHeapQueue());
+    assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
     m_heap.remove(WTFMove(write));
 }
 
 #if PLATFORM(COCOA)
 void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReference&& read, bool canSendIOSurface)
 {
-    assertIsCurrent(remoteVideoFrameObjectHeapQueue());
+    assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
 
     auto identifier = read.identifier();
     auto videoFrame = get(WTFMove(read));
 
     std::optional<SharedVideoFrame::Buffer> buffer;
+    Ref connection = m_connection;
+
     if (videoFrame) {
         buffer = m_sharedVideoFrameWriter.writeBuffer(videoFrame->pixelBuffer(),
-            [&](auto& semaphore) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameSemaphore { semaphore }, 0); },
-            [&](SharedMemory::Handle&& handle) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameMemory { WTFMove(handle) }, 0); },
+            [&](auto& semaphore) { connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameSemaphore { semaphore }, 0); },
+            [&](SharedMemory::Handle&& handle) { connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameMemory { WTFMove(handle) }, 0); },
             canSendIOSurface);
         // FIXME: We should ASSERT(result) once we support enough pixel buffer types.
     }
-    m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewVideoFrameBuffer { identifier, WTFMove(buffer) }, 0);
+    connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewVideoFrameBuffer { identifier, WTFMove(buffer) }, 0);
 }
 
 void RemoteVideoFrameObjectHeap::pixelBuffer(RemoteVideoFrameReadReference&& read, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&& completionHandler)
 {
-    assertIsCurrent(remoteVideoFrameObjectHeapQueue());
+    assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
 
     auto videoFrame = get(WTFMove(read));
     if (!videoFrame) {
@@ -147,13 +149,15 @@ void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVid
     auto scope = makeScopeExit([&callback, &destinationColorSpace] { callback(destinationColorSpace); });
 
     RefPtr<VideoFrame> frame;
+    Ref connection = m_connection;
+
     if (std::holds_alternative<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer))
         frame = get(WTFMove(std::get<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer)));
     else
         frame = m_sharedVideoFrameReader.read(WTFMove(sharedVideoFrame));
 
     if (!frame) {
-        m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { { } }, 0);
+        connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { { } }, 0);
         return;
     }
 
@@ -168,7 +172,7 @@ void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVid
         auto convertedBuffer = m_pixelBufferConformer->convert(buffer.get());
         if (!convertedBuffer) {
             RELEASE_LOG_ERROR(WebRTC, "RemoteVideoFrameObjectHeap::convertFrameBuffer conformer failed");
-            m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { { } }, 0);
+            connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { { } }, 0);
             return;
         }
         buffer = WTFMove(convertedBuffer);
@@ -176,10 +180,10 @@ void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVid
 
     bool canSendIOSurface = false;
     auto result = m_sharedVideoFrameWriter.writeBuffer(buffer.get(),
-        [&](auto& semaphore) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameSemaphore { semaphore }, 0); },
-        [&](auto&& handle) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameMemory { WTFMove(handle) }, 0); },
+        [&](auto& semaphore) { connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameSemaphore { semaphore }, 0); },
+        [&](auto&& handle) { connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameMemory { WTFMove(handle) }, 0); },
         canSendIOSurface);
-    m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { WTFMove(result) }, 0);
+    connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { WTFMove(result) }, 0);
 }
 
 void RemoteVideoFrameObjectHeap::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)

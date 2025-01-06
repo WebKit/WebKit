@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let texture = device.createTexture({
+        size: { width: 21 },
+        format: 'depth32float',
+        usage: GPUTextureUsage.TEXTURE_BINDING
+    });
+    let textureView = texture.createView();
+    let commandEncoder = device.createCommandEncoder();
+    texture.destroy();
+    commandEncoder.beginRenderPass({
+        colorAttachments: [],
+        depthStencilAttachment: {
+            view: textureView
+        },
+    });
+    await device.queue.onSubmittedWorkDone();
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.waitUntilDone();
+run();
+</script>

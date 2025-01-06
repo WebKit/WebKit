@@ -14,6 +14,7 @@
 #ifndef API_JSEP_SESSION_DESCRIPTION_H_
 #define API_JSEP_SESSION_DESCRIPTION_H_
 
+#include <cstddef>
 #include <memory>
 #include <string>
 #include <vector>

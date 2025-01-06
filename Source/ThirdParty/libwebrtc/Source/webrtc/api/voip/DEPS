@@ -1,8 +1,4 @@
 specific_include_rules = {
-  ".*\.h": [
-    "+third_party/absl/types/optional.h",
-  ],
-
   "voip_engine_factory.h": [
     "+modules/audio_device/include/audio_device.h",
     "+modules/audio_processing/include/audio_processing.h",

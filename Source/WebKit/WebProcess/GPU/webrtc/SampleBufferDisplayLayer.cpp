@@ -36,7 +36,6 @@
 #include "RemoteSampleBufferDisplayLayerMessages.h"
 #include "RemoteVideoFrameProxy.h"
 #include "SampleBufferDisplayLayerManager.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 
 namespace WebKit {
@@ -60,7 +59,7 @@ SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManag
 
 void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool shouldMaintainAspectRatio, CompletionHandler<void(bool)>&& callback)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { identifier(), hideRootLayer, size, shouldMaintainAspectRatio }, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { identifier(), hideRootLayer, size, shouldMaintainAspectRatio, canShowWhileLocked() }, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
         if (!weakThis)
             return callback(false);
         m_hostingContextID = contextId;
@@ -79,8 +78,8 @@ void SampleBufferDisplayLayer::setLogIdentifier(String&& logIdentifier)
 SampleBufferDisplayLayer::~SampleBufferDisplayLayer()
 {
     m_connection->send(Messages::RemoteSampleBufferDisplayLayerManager::ReleaseLayer { identifier() }, 0);
-    if (m_manager)
-        m_manager->removeLayer(*this);
+    if (RefPtr manager = m_manager.get())
+        manager->removeLayer(*this);
 }
 
 bool SampleBufferDisplayLayer::didFail() const
@@ -158,16 +157,15 @@ PlatformLayer* SampleBufferDisplayLayer::rootLayer()
 void SampleBufferDisplayLayer::setDidFail(bool value)
 {
     m_didFail = value;
-    if (m_client && m_didFail)
-        m_client->sampleBufferDisplayLayerStatusDidFail();
+    RefPtr client = m_client.get();
+    if (client && m_didFail)
+        client->sampleBufferDisplayLayerStatusDidFail();
 }
 
 void SampleBufferDisplayLayer::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
     m_sharedVideoFrameWriter.disable();
-    m_didFail = true;
-    if (m_client)
-        m_client->sampleBufferDisplayLayerStatusDidFail();
+    setDidFail(true);
 }
 
 void SampleBufferDisplayLayer::setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio)

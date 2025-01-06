@@ -25,7 +25,8 @@
 namespace WebCore {
 
 class HTMLBDIElement final : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLBDIElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLBDIElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLBDIElement);
 public:
     static Ref<HTMLBDIElement> create(const QualifiedName&, Document&);
 

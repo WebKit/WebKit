@@ -23,9 +23,12 @@
 #include "WebFrameProxy.h"
 #include "WebKitWebResourcePrivate.h"
 #include "WebKitWebViewPrivate.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebKitWebResourceLoadManager);
 
 WebKitWebResourceLoadManager::WebKitWebResourceLoadManager(WebKitWebView* webView)
     : m_webView(webView)
@@ -43,7 +46,7 @@ WebKitWebResourceLoadManager::~WebKitWebResourceLoadManager()
 
 void WebKitWebResourceLoadManager::didInitiateLoad(ResourceLoaderIdentifier resourceID, FrameIdentifier frameID, ResourceRequest&& request)
 {
-    auto* frame = WebFrameProxy::webFrame(frameID);
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return;
 

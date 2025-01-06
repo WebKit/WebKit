@@ -39,13 +39,13 @@
 #include "RenderMathMLBlockInlines.h"
 #include "RenderMathMLMenclose.h"
 #include "RenderMathMLOperator.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 static const UChar gRadicalCharacter = 0x221A;
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLRoot);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLRoot);
 
 RenderMathMLRoot::RenderMathMLRoot(MathMLRootElement& element, RenderStyle&& style)
     : RenderMathMLRow(Type::MathMLRoot, element, WTFMove(style))
@@ -75,25 +75,25 @@ bool RenderMathMLRoot::isValid() const
         return true;
 
     ASSERT(rootType() == RootType::RootWithIndex);
-    auto* child = firstChildBox();
+    auto* child = firstInFlowChildBox();
     if (!child)
         return false;
-    child = child->nextSiblingBox();
-    return child && !child->nextSiblingBox();
+    child = child->nextInFlowSiblingBox();
+    return child && !child->nextInFlowSiblingBox();
 }
 
 RenderBox& RenderMathMLRoot::getBase() const
 {
     ASSERT(isValid());
     ASSERT(rootType() == RootType::RootWithIndex);
-    return *firstChildBox();
+    return *firstInFlowChildBox();
 }
 
 RenderBox& RenderMathMLRoot::getIndex() const
 {
     ASSERT(isValid());
     ASSERT(rootType() == RootType::RootWithIndex);
-    return *firstChildBox()->nextSiblingBox();
+    return *firstInFlowChildBox()->nextInFlowSiblingBox();
 }
 
 void RenderMathMLRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -102,13 +102,11 @@ void RenderMathMLRoot::styleDidChange(StyleDifference diff, const RenderStyle* o
     m_radicalOperator.reset(style());
 }
 
-RenderMathMLRoot::HorizontalParameters RenderMathMLRoot::horizontalParameters()
+RenderMathMLRoot::HorizontalParameters RenderMathMLRoot::horizontalParameters(LayoutUnit indexWidth)
 {
-    HorizontalParameters parameters;
-
     // Square roots do not require horizontal parameters.
-    if (rootType() == RootType::SquareRoot)
-        return parameters;
+    ASSERT(rootType() == RootType::RootWithIndex);
+    HorizontalParameters parameters;
 
     // We try and read constants to draw the radical from the OpenType MATH and use fallback values otherwise.
     const Ref primaryFont = style().fontCascade().primaryFont();
@@ -121,6 +119,9 @@ RenderMathMLRoot::HorizontalParameters RenderMathMLRoot::horizontalParameters()
         parameters.kernBeforeDegree = 5 * style().fontCascade().size() / 18;
         parameters.kernAfterDegree = -10 * style().fontCascade().size() / 18;
     }
+    // Apply clamping from https://w3c.github.io/mathml-core/#root-with-index
+    parameters.kernBeforeDegree = std::max<LayoutUnit>(0, parameters.kernBeforeDegree);
+    parameters.kernAfterDegree = std::max<LayoutUnit>(-indexWidth, parameters.kernAfterDegree);
     return parameters;
 }
 
@@ -160,34 +161,39 @@ void RenderMathMLRoot::computePreferredLogicalWidths()
     ASSERT(preferredLogicalWidthsDirty());
 
     if (!isValid()) {
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
-        setPreferredLogicalWidthsDirty(false);
+        RenderMathMLRow::computePreferredLogicalWidths();
         return;
     }
 
-    LayoutUnit preferredWidth;
+    LayoutUnit preferredWidth = 0;
     if (rootType() == RootType::SquareRoot) {
         preferredWidth += m_radicalOperator.maxPreferredWidth();
-        setPreferredLogicalWidthsDirty(true);
-        RenderMathMLRow::computePreferredLogicalWidths();
-        preferredWidth += m_maxPreferredLogicalWidth;
+        preferredWidth += preferredLogicalWidthOfRowItems();
     } else {
         ASSERT(rootType() == RootType::RootWithIndex);
-        auto horizontal = horizontalParameters();
+        LayoutUnit indexPreferredWidth = getIndex().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(getIndex());
+        auto horizontal = horizontalParameters(indexPreferredWidth);
         preferredWidth += horizontal.kernBeforeDegree;
-        preferredWidth += getIndex().maxPreferredLogicalWidth();
+        preferredWidth += indexPreferredWidth;
         preferredWidth += horizontal.kernAfterDegree;
         preferredWidth += m_radicalOperator.maxPreferredWidth();
-        preferredWidth += getBase().maxPreferredLogicalWidth();
+        preferredWidth += getBase().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(getBase());
     }
-
     m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredWidth;
+
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth);
+    applySizeToMathContent(LayoutPhase::CalculatePreferredLogicalWidth, sizes);
+
+    adjustPreferredLogicalWidthsForBorderAndPadding();
+
     setPreferredLogicalWidthsDirty(false);
 }
 
 void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
+
+    insertPositionedChildrenIntoContainingBlock();
 
     if (!relayoutChildren && simplifiedLayout())
         return;
@@ -196,27 +202,30 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
     m_baseWidth = 0;
 
     if (!isValid()) {
-        layoutInvalidMarkup(relayoutChildren);
+        RenderMathMLRow::layoutBlock(relayoutChildren);
         return;
     }
+
+    layoutFloatingChildren();
 
     // We layout the children, determine the vertical metrics of the base and set the logical width.
     // Note: Per the MathML specification, the children of <msqrt> are wrapped in an inferred <mrow>, which is the desired base.
     LayoutUnit baseAscent, baseDescent;
     recomputeLogicalWidth();
+    computeAndSetBlockDirectionMarginsOfChildren();
     if (rootType() == RootType::SquareRoot) {
         stretchVerticalOperatorsAndLayoutChildren();
         getContentBoundingBox(m_baseWidth, baseAscent, baseDescent);
         layoutRowItems(m_baseWidth, baseAscent);
     } else {
         getBase().layoutIfNeeded();
-        m_baseWidth = getBase().logicalWidth();
-        baseAscent = ascentForChild(getBase());
-        baseDescent = getBase().logicalHeight() - baseAscent;
+        m_baseWidth = getBase().logicalWidth() + getBase().marginLogicalWidth();
+        baseAscent = ascentForChild(getBase()) + getBase().marginBefore();
+        baseDescent = getBase().logicalHeight() + getBase().marginLogicalHeight() - baseAscent;
         getIndex().layoutIfNeeded();
     }
 
-    auto horizontal = horizontalParameters();
+    HorizontalParameters horizontal;
     auto vertical = verticalParameters();
 
     // Stretch the radical operator to cover the base height.
@@ -234,14 +243,16 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
         setLogicalWidth(m_radicalOperator.width() + m_baseWidth);
     else {
         ASSERT(rootType() == RootType::RootWithIndex);
-        setLogicalWidth(horizontal.kernBeforeDegree + getIndex().logicalWidth() + horizontal.kernAfterDegree + m_radicalOperator.width() + m_baseWidth);
+        LayoutUnit indexWidth = getIndex().logicalWidth() + getIndex().marginLogicalWidth();
+        horizontal = horizontalParameters(indexWidth);
+        setLogicalWidth(horizontal.kernBeforeDegree + indexWidth + horizontal.kernAfterDegree + m_radicalOperator.width() + m_baseWidth);
     }
 
     // For <mroot>, we update the metrics to take into account the index.
     LayoutUnit indexAscent, indexDescent;
     if (rootType() == RootType::RootWithIndex) {
-        indexAscent = ascentForChild(getIndex());
-        indexDescent = getIndex().logicalHeight() - indexAscent;
+        indexAscent = ascentForChild(getIndex()) + getIndex().marginBefore();
+        indexDescent = getIndex().logicalHeight() + getIndex().marginLogicalHeight() - indexAscent;
         ascent = std::max<LayoutUnit>(radicalAscent, indexBottomRaise + indexDescent + indexAscent - descent);
     }
 
@@ -249,19 +260,26 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
     m_radicalOperatorTop = ascent - radicalAscent + vertical.extraAscender;
     LayoutUnit horizontalOffset = m_radicalOperator.width();
     if (rootType() == RootType::RootWithIndex)
-        horizontalOffset += horizontal.kernBeforeDegree + getIndex().logicalWidth() + horizontal.kernAfterDegree;
-    LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset, m_baseWidth), ascent - baseAscent);
+        horizontalOffset += horizontal.kernBeforeDegree + getIndex().logicalWidth() + getIndex().marginLogicalWidth() + horizontal.kernAfterDegree;
     if (rootType() == RootType::SquareRoot) {
-        for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
+        LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset, m_baseWidth), ascent - baseAscent);
+        for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
             child->setLocation(child->location() + baseLocation);
     } else {
         ASSERT(rootType() == RootType::RootWithIndex);
+        LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset + getBase().marginStart(), getBase()), ascent - baseAscent + getBase().marginBefore());
         getBase().setLocation(baseLocation);
-        LayoutPoint indexLocation(mirrorIfNeeded(horizontal.kernBeforeDegree, getIndex()), ascent + descent - indexBottomRaise - indexDescent - indexAscent);
+        LayoutPoint indexLocation(mirrorIfNeeded(horizontal.kernBeforeDegree + getIndex().marginStart(), getIndex()), ascent + descent - indexBottomRaise - indexDescent - indexAscent + getIndex().marginBefore());
         getIndex().setLocation(indexLocation);
     }
 
     setLogicalHeight(ascent + descent);
+
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::Layout);
+    auto shift = applySizeToMathContent(LayoutPhase::Layout, sizes);
+    shiftInFlowChildren(shift, 0);
+
+    adjustLayoutForBorderAndPadding();
 
     layoutPositionedObjects(relayoutChildren);
 
@@ -279,10 +297,11 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 
     // We draw the radical operator.
     LayoutPoint radicalOperatorTopLeft = paintOffset + location();
-    LayoutUnit horizontalOffset;
+    LayoutUnit horizontalOffset = borderAndPaddingStart();
     if (rootType() == RootType::RootWithIndex) {
-        auto horizontal = horizontalParameters();
-        horizontalOffset = horizontal.kernBeforeDegree + getIndex().logicalWidth() + horizontal.kernAfterDegree;
+        LayoutUnit indexWidth = getIndex().logicalWidth() + getIndex().marginLogicalWidth();
+        auto horizontal = horizontalParameters(indexWidth);
+        horizontalOffset += horizontal.kernBeforeDegree + indexWidth + horizontal.kernAfterDegree;
     }
     radicalOperatorTopLeft.move(mirrorIfNeeded(horizontalOffset, m_radicalOperator.width()), m_radicalOperatorTop);
     m_radicalOperator.paint(style(), info, radicalOperatorTopLeft);

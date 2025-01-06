@@ -53,6 +53,14 @@ static constexpr bool fullGPUProcessEnabledValue = false;
 #endif
 #endif
 
+#if ENABLE(UNIFIED_PDF)
+#if ENABLE(UNIFIED_PDF_FOR_TESTING)
+static constexpr bool unifiedPDFEnabledValue = true;
+#else
+static constexpr bool unifiedPDFEnabledValue = false;
+#endif
+#endif
+
 #if PLATFORM(MAC)
 static constexpr bool eventHandlerDrivenSmoothKeyboardScrollingEnabledValue = true;
 #else
@@ -93,12 +101,16 @@ const TestFeatures& TestOptions::defaults()
             { "DataTransferItemsEnabled", true },
             { "DeveloperExtrasEnabled", true },
             { "DirectoryUploadEnabled", true },
+            { "EncryptedMediaAPIEnabled", true },
             { "EventHandlerDrivenSmoothKeyboardScrollingEnabled", eventHandlerDrivenSmoothKeyboardScrollingEnabledValue },
             { "ExposeSpeakersEnabled", true },
             { "FullScreenEnabled", true },
             { "GenericCueAPIEnabled", false },
             { "HiddenPageCSSAnimationSuspensionEnabled", false },
             { "HiddenPageDOMTimerThrottlingEnabled", false },
+#if ENABLE(CONTENT_EXTENSIONS)
+            { "IFrameResourceMonitoringEnabled", true },
+#endif
             { "InlineMediaPlaybackRequiresPlaysInlineAttribute", false },
             { "InputTypeDateEnabled", true },
             { "InputTypeDateTimeLocalEnabled", true },
@@ -108,6 +120,7 @@ const TestFeatures& TestOptions::defaults()
             { "JavaScriptCanAccessClipboard", true },
             { "JavaScriptCanOpenWindowsAutomatically", true },
             { "LargeImageAsyncDecodingEnabled", false },
+            { "MediaCapabilitiesEnabled", true },
             { "MediaDevicesEnabled", true },
             { "MediaPreloadingEnabled", true },
             { "MediaSourceEnabled", mediaSourceEnabledValue },
@@ -119,6 +132,7 @@ const TestFeatures& TestOptions::defaults()
             { "NeedsStorageAccessFromFileURLsQuirk", false },
             { "PageVisibilityBasedProcessSuppressionEnabled", false },
             { "PeerConnectionVideoScalingAdaptationDisabled", true },
+            { "PerElementSpeakerSelectionEnabled", true },
             { "PDFJSViewerEnabled", false },
             { "PushAPIEnabled", true },
             { "RequiresUserGestureForAudioPlayback", false },
@@ -130,12 +144,11 @@ const TestFeatures& TestOptions::defaults()
             { "TabsToLinks", false },
             { "TextAutosizingEnabled", false },
             { "TextAutosizingUsesIdempotentMode", false },
-            { "UnifiedPDFEnabled", false },
+#if ENABLE(UNIFIED_PDF)
+            { "UnifiedPDFEnabled", unifiedPDFEnabledValue },
+#endif
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
-#if ENABLE(WEBGL) && PLATFORM(COCOA)
-            { "WebGLUsingMetal", true },
-#endif
 #if ENABLE(WEBGL)
             { "WebGLDraftExtensionsEnabled", true },
 #endif
@@ -172,6 +185,7 @@ const TestFeatures& TestOptions::defaults()
             { "findInteractionEnabled", false },
             { "ignoreSynchronousMessagingTimeouts", false },
             { "ignoresViewportScaleLimits", false },
+            { "ignoreWebProcessTermination", false },
             { "isAppBoundWebView", false },
             { "isAppInitiated", true },
             { "advancedPrivacyProtectionsEnabled", false },
@@ -195,6 +209,10 @@ const TestFeatures& TestOptions::defaults()
             { "showsScrollIndicators", true },
             { "longPressActionsEnabled", true },
             { "enhancedWindowingEnabled", false },
+            { "textExtractionEnabled", false },
+            { "useHardwareKeyboardMode", false },
+            { "enableMetalDebugDevice", false },
+            { "enableMetalShaderValidation", false },
         };
         features.doubleTestRunnerFeatures = {
             { "contentInset.top", 0 },
@@ -243,6 +261,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "findInteractionEnabled", TestHeaderKeyType::BoolTestRunner },
         { "ignoreSynchronousMessagingTimeouts", TestHeaderKeyType::BoolTestRunner },
         { "ignoresViewportScaleLimits", TestHeaderKeyType::BoolTestRunner },
+        { "ignoreWebProcessTermination", TestHeaderKeyType::BoolTestRunner },
         { "isAppBoundWebView", TestHeaderKeyType::BoolTestRunner },
         { "isAppInitiated", TestHeaderKeyType::BoolTestRunner },
         { "advancedPrivacyProtectionsEnabled", TestHeaderKeyType::BoolTestRunner },
@@ -265,7 +284,11 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "showsScrollIndicators", TestHeaderKeyType::BoolTestRunner },
         { "longPressActionsEnabled", TestHeaderKeyType::BoolTestRunner },
         { "enhancedWindowingEnabled", TestHeaderKeyType::BoolTestRunner },
-    
+        { "textExtractionEnabled", TestHeaderKeyType::BoolTestRunner },
+        { "useHardwareKeyboardMode", TestHeaderKeyType::BoolTestRunner },
+        { "enableMetalDebugDevice", TestHeaderKeyType::BoolTestRunner },
+        { "enableMetalShaderValidation", TestHeaderKeyType::BoolTestRunner },
+
         { "contentInset.top", TestHeaderKeyType::DoubleTestRunner },
         { "obscuredInset.top", TestHeaderKeyType::DoubleTestRunner },
         { "horizontalSystemMinimumLayoutMargin", TestHeaderKeyType::DoubleTestRunner },

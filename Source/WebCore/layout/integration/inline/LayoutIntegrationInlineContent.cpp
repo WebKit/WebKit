@@ -29,6 +29,7 @@
 #include "InlineIteratorBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderStyleInlines.h"
+#include "SVGTextFragment.h"
 #include "TextPainter.h"
 
 namespace WebCore {
@@ -54,15 +55,15 @@ IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const Layou
     auto& boxes = m_displayContent.boxes;
 
     // FIXME: Do the flips.
-    if (formattingContextRoot().style().isFlippedBlocksWritingMode())
-        return { &boxes.first(), &boxes.last() + 1 };
+    if (formattingContextRoot().writingMode().isBlockFlipped())
+        return { boxes.begin(), boxes.end() };
 
     if (lines.first().inkOverflow().maxY() > rect.y() && lines.last().inkOverflow().y() < rect.maxY())
-        return { &boxes.first(), &boxes.last() + 1 };
+        return { boxes.begin(), boxes.end() };
 
     // The optimization below relies on line paint bounds not exeeding those of the neighboring lines
     if (hasMultilinePaintOverlap)
-        return { &boxes.first(), &boxes.last() + 1 };
+        return { boxes.begin(), boxes.end() };
 
     auto height = lines.last().lineBoxBottom() - lines.first().lineBoxTop();
     auto averageLineHeight = height / lines.size();
@@ -85,9 +86,10 @@ IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const Layou
     }
 
     auto firstBox = lines[startLine].firstBoxIndex();
-    auto lastBox = lines[endLine].firstBoxIndex() + lines[endLine].boxCount() - 1;
+    auto lastBox = lines[endLine].firstBoxIndex() + lines[endLine].boxCount();
 
-    return { &boxes[firstBox], &boxes[lastBox] + 1 };
+    auto boxSpan = boxes.subspan(firstBox, lastBox - firstBox);
+    return { std::to_address(boxSpan.begin()), std::to_address(boxSpan.end()) };
 }
 
 const RenderBlockFlow& InlineContent::formattingContextRoot() const
@@ -167,6 +169,12 @@ const Vector<size_t>& InlineContent::nonRootInlineBoxIndexesForLayoutBox(const L
     return it->value;
 }
 
+const Vector<SVGTextFragment>& InlineContent::svgTextFragments(size_t index) const
+{
+    RELEASE_ASSERT(m_svgTextFragmentsForBoxes.size() > index);
+    return m_svgTextFragmentsForBoxes[index];
+}
+
 void InlineContent::releaseCaches()
 {
     m_firstBoxIndexCache = { };
@@ -181,4 +189,3 @@ void InlineContent::shrinkToFit()
 
 }
 }
-

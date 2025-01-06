@@ -34,6 +34,8 @@
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/StringPrintStream.h>
+#include <wtf/SystemTracing.h>
 
 namespace JSC { namespace Wasm {
 
@@ -62,13 +64,14 @@ void Plan::runCompletionTasks()
     m_completed.notifyAll();
 }
 
-void Plan::addCompletionTask(VM& vm, CompletionTask&& task)
+bool Plan::addCompletionTaskIfNecessary(VM& vm, CompletionTask&& task)
 {
     Locker locker { m_lock };
-    if (!isComplete())
+    if (!isComplete()) {
         m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
-    else
-        task->run(*this);
+        return true;
+    }
+    return false;
 }
 
 void Plan::waitForCompletion()
@@ -113,17 +116,53 @@ bool Plan::tryRemoveContextAndCancelIfLast(VM& vm)
     return false;
 }
 
-void Plan::fail(String&& errorMessage)
+void Plan::fail(String&& errorMessage, Error error)
 {
     if (failed())
         return;
     ASSERT(errorMessage);
     dataLogLnIf(WasmPlanInternal::verbose, "failing with message: ", errorMessage);
     m_errorMessage = WTFMove(errorMessage);
+    m_error = error;
     complete();
 }
 
-Plan::~Plan() { }
+Plan::~Plan() = default;
+
+CString Plan::signpostMessage(CompilationMode compilationMode, uint32_t functionIndexSpace) const
+{
+    CString signpostMessage;
+    const FunctionData& function = m_moduleInformation->functions[functionIndexSpace - m_moduleInformation->importFunctionTypeIndices.size()];
+    StringPrintStream stream;
+    stream.print(compilationMode, " ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))), " instructions size = ", function.data.size());
+    return stream.toCString();
+}
+
+void Plan::beginCompilerSignpost(CompilationMode compilationMode, uint32_t functionIndexSpace) const
+{
+    if (UNLIKELY(Options::useCompilerSignpost())) {
+        auto message = signpostMessage(compilationMode, functionIndexSpace);
+        WTFBeginSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, message.data() ? message.data() : "(nullptr)");
+    }
+}
+
+void Plan::beginCompilerSignpost(const Callee& callee) const
+{
+    beginCompilerSignpost(callee.compilationMode(), callee.index());
+}
+
+void Plan::endCompilerSignpost(CompilationMode compilationMode, uint32_t functionIndexSpace) const
+{
+    if (UNLIKELY(Options::useCompilerSignpost())) {
+        auto message = signpostMessage(compilationMode, functionIndexSpace);
+        WTFEndSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, message.data() ? message.data() : "(nullptr)");
+    }
+}
+
+void Plan::endCompilerSignpost(const Callee& callee) const
+{
+    endCompilerSignpost(callee.compilationMode(), callee.index());
+}
 
 } } // namespace JSC::Wasm
 

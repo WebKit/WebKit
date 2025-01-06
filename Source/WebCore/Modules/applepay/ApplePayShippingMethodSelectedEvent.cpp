@@ -28,12 +28,12 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePayShippingMethodSelectedEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ApplePayShippingMethodSelectedEvent);
 
 ApplePayShippingMethodSelectedEvent::ApplePayShippingMethodSelectedEvent(const AtomString& type, const ApplePayShippingMethod& shippingMethod)
     : Event(EventInterfaceType::ApplePayShippingMethodSelectedEvent, type, CanBubble::No, IsCancelable::No)

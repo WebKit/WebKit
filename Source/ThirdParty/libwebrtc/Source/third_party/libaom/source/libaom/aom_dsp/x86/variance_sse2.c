@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,6 +20,7 @@
 #include "aom_dsp/x86/synonyms.h"
 #include "aom_ports/mem.h"
 
+#if !CONFIG_REALTIME_ONLY
 unsigned int aom_get_mb_ss_sse2(const int16_t *src) {
   __m128i vsum = _mm_setzero_si128();
   int i;
@@ -34,39 +35,40 @@ unsigned int aom_get_mb_ss_sse2(const int16_t *src) {
   vsum = _mm_add_epi32(vsum, _mm_srli_si128(vsum, 4));
   return (unsigned int)_mm_cvtsi128_si32(vsum);
 }
+#endif  // !CONFIG_REALTIME_ONLY
 
-static INLINE __m128i load4x2_sse2(const uint8_t *const p, const int stride) {
+static inline __m128i load4x2_sse2(const uint8_t *const p, const int stride) {
   const __m128i p0 = _mm_cvtsi32_si128(loadu_int32(p + 0 * stride));
   const __m128i p1 = _mm_cvtsi32_si128(loadu_int32(p + 1 * stride));
   return _mm_unpacklo_epi8(_mm_unpacklo_epi32(p0, p1), _mm_setzero_si128());
 }
 
-static INLINE __m128i load8_8to16_sse2(const uint8_t *const p) {
+static inline __m128i load8_8to16_sse2(const uint8_t *const p) {
   const __m128i p0 = _mm_loadl_epi64((const __m128i *)p);
   return _mm_unpacklo_epi8(p0, _mm_setzero_si128());
 }
 
-static INLINE void load16_8to16_sse2(const uint8_t *const p, __m128i *out) {
+static inline void load16_8to16_sse2(const uint8_t *const p, __m128i *out) {
   const __m128i p0 = _mm_loadu_si128((const __m128i *)p);
   out[0] = _mm_unpacklo_epi8(p0, _mm_setzero_si128());  // lower 8 values
   out[1] = _mm_unpackhi_epi8(p0, _mm_setzero_si128());  // upper 8 values
 }
 
 // Accumulate 4 32bit numbers in val to 1 32bit number
-static INLINE unsigned int add32x4_sse2(__m128i val) {
+static inline unsigned int add32x4_sse2(__m128i val) {
   val = _mm_add_epi32(val, _mm_srli_si128(val, 8));
   val = _mm_add_epi32(val, _mm_srli_si128(val, 4));
   return (unsigned int)_mm_cvtsi128_si32(val);
 }
 
 // Accumulate 8 16bit in sum to 4 32bit number
-static INLINE __m128i sum_to_32bit_sse2(const __m128i sum) {
+static inline __m128i sum_to_32bit_sse2(const __m128i sum) {
   const __m128i sum_lo = _mm_srai_epi32(_mm_unpacklo_epi16(sum, sum), 16);
   const __m128i sum_hi = _mm_srai_epi32(_mm_unpackhi_epi16(sum, sum), 16);
   return _mm_add_epi32(sum_lo, sum_hi);
 }
 
-static INLINE void variance_kernel_sse2(const __m128i src, const __m128i ref,
+static inline void variance_kernel_sse2(const __m128i src, const __m128i ref,
                                         __m128i *const sse,
                                         __m128i *const sum) {
   const __m128i diff = _mm_sub_epi16(src, ref);
@@ -77,7 +79,7 @@ static INLINE void variance_kernel_sse2(const __m128i src, const __m128i ref,
 // Can handle 128 pixels' diff sum (such as 8x16 or 16x8)
 // Slightly faster than variance_final_256_pel_sse2()
 // diff sum of 128 pixels can still fit in 16bit integer
-static INLINE void variance_final_128_pel_sse2(__m128i vsse, __m128i vsum,
+static inline void variance_final_128_pel_sse2(__m128i vsse, __m128i vsum,
                                                unsigned int *const sse,
                                                int *const sum) {
   *sse = add32x4_sse2(vsse);
@@ -89,7 +91,7 @@ static INLINE void variance_final_128_pel_sse2(__m128i vsse, __m128i vsum,
 }
 
 // Can handle 256 pixels' diff sum (such as 16x16)
-static INLINE void variance_final_256_pel_sse2(__m128i vsse, __m128i vsum,
+static inline void variance_final_256_pel_sse2(__m128i vsse, __m128i vsum,
                                                unsigned int *const sse,
                                                int *const sum) {
   *sse = add32x4_sse2(vsse);
@@ -101,7 +103,7 @@ static INLINE void variance_final_256_pel_sse2(__m128i vsse, __m128i vsum,
 }
 
 // Can handle 512 pixels' diff sum (such as 16x32 or 32x16)
-static INLINE void variance_final_512_pel_sse2(__m128i vsse, __m128i vsum,
+static inline void variance_final_512_pel_sse2(__m128i vsse, __m128i vsum,
                                                unsigned int *const sse,
                                                int *const sum) {
   *sse = add32x4_sse2(vsse);
@@ -113,7 +115,7 @@ static INLINE void variance_final_512_pel_sse2(__m128i vsse, __m128i vsum,
 }
 
 // Can handle 1024 pixels' diff sum (such as 32x32)
-static INLINE void variance_final_1024_pel_sse2(__m128i vsse, __m128i vsum,
+static inline void variance_final_1024_pel_sse2(__m128i vsse, __m128i vsum,
                                                 unsigned int *const sse,
                                                 int *const sum) {
   *sse = add32x4_sse2(vsse);
@@ -122,7 +124,7 @@ static INLINE void variance_final_1024_pel_sse2(__m128i vsse, __m128i vsum,
   *sum = (int)add32x4_sse2(vsum);
 }
 
-static INLINE void variance4_sse2(const uint8_t *src, const int src_stride,
+static inline void variance4_sse2(const uint8_t *src, const int src_stride,
                                   const uint8_t *ref, const int ref_stride,
                                   const int h, __m128i *const sse,
                                   __m128i *const sum) {
@@ -139,7 +141,7 @@ static INLINE void variance4_sse2(const uint8_t *src, const int src_stride,
   }
 }
 
-static INLINE void variance8_sse2(const uint8_t *src, const int src_stride,
+static inline void variance8_sse2(const uint8_t *src, const int src_stride,
                                   const uint8_t *ref, const int ref_stride,
                                   const int h, __m128i *const sse,
                                   __m128i *const sum) {
@@ -156,7 +158,7 @@ static INLINE void variance8_sse2(const uint8_t *src, const int src_stride,
   }
 }
 
-static INLINE void variance16_kernel_sse2(const uint8_t *const src,
+static inline void variance16_kernel_sse2(const uint8_t *const src,
                                           const uint8_t *const ref,
                                           __m128i *const sse,
                                           __m128i *const sum) {
@@ -172,7 +174,7 @@ static INLINE void variance16_kernel_sse2(const uint8_t *const src,
   variance_kernel_sse2(src1, ref1, sse, sum);
 }
 
-static INLINE void variance16_sse2(const uint8_t *src, const int src_stride,
+static inline void variance16_sse2(const uint8_t *src, const int src_stride,
                                    const uint8_t *ref, const int ref_stride,
                                    const int h, __m128i *const sse,
                                    __m128i *const sum) {
@@ -186,7 +188,7 @@ static INLINE void variance16_sse2(const uint8_t *src, const int src_stride,
   }
 }
 
-static INLINE void variance32_sse2(const uint8_t *src, const int src_stride,
+static inline void variance32_sse2(const uint8_t *src, const int src_stride,
                                    const uint8_t *ref, const int ref_stride,
                                    const int h, __m128i *const sse,
                                    __m128i *const sum) {
@@ -202,7 +204,7 @@ static INLINE void variance32_sse2(const uint8_t *src, const int src_stride,
   }
 }
 
-static INLINE void variance64_sse2(const uint8_t *src, const int src_stride,
+static inline void variance64_sse2(const uint8_t *src, const int src_stride,
                                    const uint8_t *ref, const int ref_stride,
                                    const int h, __m128i *const sse,
                                    __m128i *const sum) {
@@ -219,7 +221,7 @@ static INLINE void variance64_sse2(const uint8_t *src, const int src_stride,
   }
 }
 
-static INLINE void variance128_sse2(const uint8_t *src, const int src_stride,
+static inline void variance128_sse2(const uint8_t *src, const int src_stride,
                                     const uint8_t *ref, const int ref_stride,
                                     const int h, __m128i *const sse,
                                     __m128i *const sum) {
@@ -321,7 +323,6 @@ void aom_get_var_sse_sum_16x16_dual_sse2(const uint8_t *src_ptr, int src_stride,
 
 AOM_VAR_NO_LOOP_SSE2(4, 4, 4, 128)
 AOM_VAR_NO_LOOP_SSE2(4, 8, 5, 128)
-AOM_VAR_NO_LOOP_SSE2(4, 16, 6, 128)
 
 AOM_VAR_NO_LOOP_SSE2(8, 4, 5, 128)
 AOM_VAR_NO_LOOP_SSE2(8, 8, 6, 128)
@@ -331,13 +332,14 @@ AOM_VAR_NO_LOOP_SSE2(16, 8, 7, 128)
 AOM_VAR_NO_LOOP_SSE2(16, 16, 8, 256)
 AOM_VAR_NO_LOOP_SSE2(16, 32, 9, 512)
 
-AOM_VAR_NO_LOOP_SSE2(32, 8, 8, 256)
 AOM_VAR_NO_LOOP_SSE2(32, 16, 9, 512)
 AOM_VAR_NO_LOOP_SSE2(32, 32, 10, 1024)
 
 #if !CONFIG_REALTIME_ONLY
+AOM_VAR_NO_LOOP_SSE2(4, 16, 6, 128)
 AOM_VAR_NO_LOOP_SSE2(16, 4, 6, 128)
 AOM_VAR_NO_LOOP_SSE2(8, 32, 8, 256)
+AOM_VAR_NO_LOOP_SSE2(32, 8, 8, 256)
 AOM_VAR_NO_LOOP_SSE2(16, 64, 10, 1024)
 #endif
 
@@ -403,201 +405,8 @@ unsigned int aom_mse16x16_sse2(const uint8_t *src, int src_stride,
   return *sse;
 }
 
-// The 2 unused parameters are place holders for PIC enabled build.
-// These definitions are for functions defined in subpel_variance.asm
-#define DECL(w, opt)                                                           \
-  int aom_sub_pixel_variance##w##xh_##opt(                                     \
-      const uint8_t *src, ptrdiff_t src_stride, int x_offset, int y_offset,    \
-      const uint8_t *dst, ptrdiff_t dst_stride, int height, unsigned int *sse, \
-      void *unused0, void *unused)
-#define DECLS(opt) \
-  DECL(4, opt);    \
-  DECL(8, opt);    \
-  DECL(16, opt)
-
-DECLS(sse2);
-DECLS(ssse3);
-#undef DECLS
-#undef DECL
-
-#define FN(w, h, wf, wlog2, hlog2, opt, cast_prod, cast)                      \
-  unsigned int aom_sub_pixel_variance##w##x##h##_##opt(                       \
-      const uint8_t *src, int src_stride, int x_offset, int y_offset,         \
-      const uint8_t *dst, int dst_stride, unsigned int *sse_ptr) {            \
-    /*Avoid overflow in helper by capping height.*/                           \
-    const int hf = AOMMIN(h, 64);                                             \
-    unsigned int sse = 0;                                                     \
-    int se = 0;                                                               \
-    for (int i = 0; i < (w / wf); ++i) {                                      \
-      const uint8_t *src_ptr = src;                                           \
-      const uint8_t *dst_ptr = dst;                                           \
-      for (int j = 0; j < (h / hf); ++j) {                                    \
-        unsigned int sse2;                                                    \
-        const int se2 = aom_sub_pixel_variance##wf##xh_##opt(                 \
-            src_ptr, src_stride, x_offset, y_offset, dst_ptr, dst_stride, hf, \
-            &sse2, NULL, NULL);                                               \
-        dst_ptr += hf * dst_stride;                                           \
-        src_ptr += hf * src_stride;                                           \
-        se += se2;                                                            \
-        sse += sse2;                                                          \
-      }                                                                       \
-      src += wf;                                                              \
-      dst += wf;                                                              \
-    }                                                                         \
-    *sse_ptr = sse;                                                           \
-    return sse - (unsigned int)(cast_prod(cast se * se) >> (wlog2 + hlog2));  \
-  }
-
-#if !CONFIG_REALTIME_ONLY
-#define FNS(opt)                                    \
-  FN(128, 128, 16, 7, 7, opt, (int64_t), (int64_t)) \
-  FN(128, 64, 16, 7, 6, opt, (int64_t), (int64_t))  \
-  FN(64, 128, 16, 6, 7, opt, (int64_t), (int64_t))  \
-  FN(64, 64, 16, 6, 6, opt, (int64_t), (int64_t))   \
-  FN(64, 32, 16, 6, 5, opt, (int64_t), (int64_t))   \
-  FN(32, 64, 16, 5, 6, opt, (int64_t), (int64_t))   \
-  FN(32, 32, 16, 5, 5, opt, (int64_t), (int64_t))   \
-  FN(32, 16, 16, 5, 4, opt, (int64_t), (int64_t))   \
-  FN(16, 32, 16, 4, 5, opt, (int64_t), (int64_t))   \
-  FN(16, 16, 16, 4, 4, opt, (uint32_t), (int64_t))  \
-  FN(16, 8, 16, 4, 3, opt, (int32_t), (int32_t))    \
-  FN(8, 16, 8, 3, 4, opt, (int32_t), (int32_t))     \
-  FN(8, 8, 8, 3, 3, opt, (int32_t), (int32_t))      \
-  FN(8, 4, 8, 3, 2, opt, (int32_t), (int32_t))      \
-  FN(4, 8, 4, 2, 3, opt, (int32_t), (int32_t))      \
-  FN(4, 4, 4, 2, 2, opt, (int32_t), (int32_t))      \
-  FN(4, 16, 4, 2, 4, opt, (int32_t), (int32_t))     \
-  FN(16, 4, 16, 4, 2, opt, (int32_t), (int32_t))    \
-  FN(8, 32, 8, 3, 5, opt, (uint32_t), (int64_t))    \
-  FN(32, 8, 16, 5, 3, opt, (uint32_t), (int64_t))   \
-  FN(16, 64, 16, 4, 6, opt, (int64_t), (int64_t))   \
-  FN(64, 16, 16, 6, 4, opt, (int64_t), (int64_t))
-#else
-#define FNS(opt)                                    \
-  FN(128, 128, 16, 7, 7, opt, (int64_t), (int64_t)) \
-  FN(128, 64, 16, 7, 6, opt, (int64_t), (int64_t))  \
-  FN(64, 128, 16, 6, 7, opt, (int64_t), (int64_t))  \
-  FN(64, 64, 16, 6, 6, opt, (int64_t), (int64_t))   \
-  FN(64, 32, 16, 6, 5, opt, (int64_t), (int64_t))   \
-  FN(32, 64, 16, 5, 6, opt, (int64_t), (int64_t))   \
-  FN(32, 32, 16, 5, 5, opt, (int64_t), (int64_t))   \
-  FN(32, 16, 16, 5, 4, opt, (int64_t), (int64_t))   \
-  FN(16, 32, 16, 4, 5, opt, (int64_t), (int64_t))   \
-  FN(16, 16, 16, 4, 4, opt, (uint32_t), (int64_t))  \
-  FN(16, 8, 16, 4, 3, opt, (int32_t), (int32_t))    \
-  FN(8, 16, 8, 3, 4, opt, (int32_t), (int32_t))     \
-  FN(8, 8, 8, 3, 3, opt, (int32_t), (int32_t))      \
-  FN(8, 4, 8, 3, 2, opt, (int32_t), (int32_t))      \
-  FN(4, 8, 4, 2, 3, opt, (int32_t), (int32_t))      \
-  FN(4, 4, 4, 2, 2, opt, (int32_t), (int32_t))
-#endif
-
-FNS(sse2)
-FNS(ssse3)
-
-#undef FNS
-#undef FN
-
-// The 2 unused parameters are place holders for PIC enabled build.
-#define DECL(w, opt)                                                        \
-  int aom_sub_pixel_avg_variance##w##xh_##opt(                              \
-      const uint8_t *src, ptrdiff_t src_stride, int x_offset, int y_offset, \
-      const uint8_t *dst, ptrdiff_t dst_stride, const uint8_t *sec,         \
-      ptrdiff_t sec_stride, int height, unsigned int *sse, void *unused0,   \
-      void *unused)
-#define DECLS(opt) \
-  DECL(4, opt);    \
-  DECL(8, opt);    \
-  DECL(16, opt)
-
-DECLS(sse2);
-DECLS(ssse3);
-#undef DECL
-#undef DECLS
-
-#define FN(w, h, wf, wlog2, hlog2, opt, cast_prod, cast)                     \
-  unsigned int aom_sub_pixel_avg_variance##w##x##h##_##opt(                  \
-      const uint8_t *src, int src_stride, int x_offset, int y_offset,        \
-      const uint8_t *dst, int dst_stride, unsigned int *sse_ptr,             \
-      const uint8_t *sec) {                                                  \
-    /*Avoid overflow in helper by capping height.*/                          \
-    const int hf = AOMMIN(h, 64);                                            \
-    unsigned int sse = 0;                                                    \
-    int se = 0;                                                              \
-    for (int i = 0; i < (w / wf); ++i) {                                     \
-      const uint8_t *src_ptr = src;                                          \
-      const uint8_t *dst_ptr = dst;                                          \
-      const uint8_t *sec_ptr = sec;                                          \
-      for (int j = 0; j < (h / hf); ++j) {                                   \
-        unsigned int sse2;                                                   \
-        const int se2 = aom_sub_pixel_avg_variance##wf##xh_##opt(            \
-            src_ptr, src_stride, x_offset, y_offset, dst_ptr, dst_stride,    \
-            sec_ptr, w, hf, &sse2, NULL, NULL);                              \
-        dst_ptr += hf * dst_stride;                                          \
-        src_ptr += hf * src_stride;                                          \
-        sec_ptr += hf * w;                                                   \
-        se += se2;                                                           \
-        sse += sse2;                                                         \
-      }                                                                      \
-      src += wf;                                                             \
-      dst += wf;                                                             \
-      sec += wf;                                                             \
-    }                                                                        \
-    *sse_ptr = sse;                                                          \
-    return sse - (unsigned int)(cast_prod(cast se * se) >> (wlog2 + hlog2)); \
-  }
-
-#if !CONFIG_REALTIME_ONLY
-#define FNS(opt)                                    \
-  FN(128, 128, 16, 7, 7, opt, (int64_t), (int64_t)) \
-  FN(128, 64, 16, 7, 6, opt, (int64_t), (int64_t))  \
-  FN(64, 128, 16, 6, 7, opt, (int64_t), (int64_t))  \
-  FN(64, 64, 16, 6, 6, opt, (int64_t), (int64_t))   \
-  FN(64, 32, 16, 6, 5, opt, (int64_t), (int64_t))   \
-  FN(32, 64, 16, 5, 6, opt, (int64_t), (int64_t))   \
-  FN(32, 32, 16, 5, 5, opt, (int64_t), (int64_t))   \
-  FN(32, 16, 16, 5, 4, opt, (int64_t), (int64_t))   \
-  FN(16, 32, 16, 4, 5, opt, (int64_t), (int64_t))   \
-  FN(16, 16, 16, 4, 4, opt, (uint32_t), (int64_t))  \
-  FN(16, 8, 16, 4, 3, opt, (uint32_t), (int32_t))   \
-  FN(8, 16, 8, 3, 4, opt, (uint32_t), (int32_t))    \
-  FN(8, 8, 8, 3, 3, opt, (uint32_t), (int32_t))     \
-  FN(8, 4, 8, 3, 2, opt, (uint32_t), (int32_t))     \
-  FN(4, 8, 4, 2, 3, opt, (uint32_t), (int32_t))     \
-  FN(4, 4, 4, 2, 2, opt, (uint32_t), (int32_t))     \
-  FN(4, 16, 4, 2, 4, opt, (int32_t), (int32_t))     \
-  FN(16, 4, 16, 4, 2, opt, (int32_t), (int32_t))    \
-  FN(8, 32, 8, 3, 5, opt, (uint32_t), (int64_t))    \
-  FN(32, 8, 16, 5, 3, opt, (uint32_t), (int64_t))   \
-  FN(16, 64, 16, 4, 6, opt, (int64_t), (int64_t))   \
-  FN(64, 16, 16, 6, 4, opt, (int64_t), (int64_t))
-#else
-#define FNS(opt)                                    \
-  FN(128, 128, 16, 7, 7, opt, (int64_t), (int64_t)) \
-  FN(128, 64, 16, 7, 6, opt, (int64_t), (int64_t))  \
-  FN(64, 128, 16, 6, 7, opt, (int64_t), (int64_t))  \
-  FN(64, 64, 16, 6, 6, opt, (int64_t), (int64_t))   \
-  FN(64, 32, 16, 6, 5, opt, (int64_t), (int64_t))   \
-  FN(32, 64, 16, 5, 6, opt, (int64_t), (int64_t))   \
-  FN(32, 32, 16, 5, 5, opt, (int64_t), (int64_t))   \
-  FN(32, 16, 16, 5, 4, opt, (int64_t), (int64_t))   \
-  FN(16, 32, 16, 4, 5, opt, (int64_t), (int64_t))   \
-  FN(16, 16, 16, 4, 4, opt, (uint32_t), (int64_t))  \
-  FN(16, 8, 16, 4, 3, opt, (uint32_t), (int32_t))   \
-  FN(8, 16, 8, 3, 4, opt, (uint32_t), (int32_t))    \
-  FN(8, 8, 8, 3, 3, opt, (uint32_t), (int32_t))     \
-  FN(8, 4, 8, 3, 2, opt, (uint32_t), (int32_t))     \
-  FN(4, 8, 4, 2, 3, opt, (uint32_t), (int32_t))     \
-  FN(4, 4, 4, 2, 2, opt, (uint32_t), (int32_t))
-#endif
-
-FNS(sse2)
-FNS(ssse3)
-
-#undef FNS
-#undef FN
-
-static INLINE __m128i highbd_comp_mask_pred_line_sse2(const __m128i s0,
+#if CONFIG_AV1_HIGHBITDEPTH
+static inline __m128i highbd_comp_mask_pred_line_sse2(const __m128i s0,
                                                       const __m128i s1,
                                                       const __m128i a) {
   const __m128i alpha_max = _mm_set1_epi16((1 << AOM_BLEND_A64_ROUND_BITS));
@@ -709,9 +518,10 @@ void aom_highbd_comp_mask_pred_sse2(uint8_t *comp_pred8, const uint8_t *pred8,
     } while (i < height);
   }
 }
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 
-uint64_t aom_mse_4xh_16bit_sse2(uint8_t *dst, int dstride, uint16_t *src,
-                                int sstride, int h) {
+static uint64_t mse_4xh_16bit_sse2(uint8_t *dst, int dstride, uint16_t *src,
+                                   int sstride, int h) {
   uint64_t sum = 0;
   __m128i dst0_8x8, dst1_8x8, dst_16x8;
   __m128i src0_16x4, src1_16x4, src_16x8;
@@ -744,8 +554,8 @@ uint64_t aom_mse_4xh_16bit_sse2(uint8_t *dst, int dstride, uint16_t *src,
   return sum;
 }
 
-uint64_t aom_mse_8xh_16bit_sse2(uint8_t *dst, int dstride, uint16_t *src,
-                                int sstride, int h) {
+static uint64_t mse_8xh_16bit_sse2(uint8_t *dst, int dstride, uint16_t *src,
+                                   int sstride, int h) {
   uint64_t sum = 0;
   __m128i dst_8x8, dst_16x8;
   __m128i src_16x8;
@@ -781,8 +591,8 @@ uint64_t aom_mse_wxh_16bit_sse2(uint8_t *dst, int dstride, uint16_t *src,
   assert((w == 8 || w == 4) && (h == 8 || h == 4) &&
          "w=8/4 and h=8/4 must satisfy");
   switch (w) {
-    case 4: return aom_mse_4xh_16bit_sse2(dst, dstride, src, sstride, h);
-    case 8: return aom_mse_8xh_16bit_sse2(dst, dstride, src, sstride, h);
+    case 4: return mse_4xh_16bit_sse2(dst, dstride, src, sstride, h);
+    case 8: return mse_8xh_16bit_sse2(dst, dstride, src, sstride, h);
     default: assert(0 && "unsupported width"); return -1;
   }
 }

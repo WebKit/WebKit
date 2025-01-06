@@ -84,10 +84,15 @@ class VertexArrayState final : angle::NonCopyable
 
     VertexArrayBufferBindingMask getBufferBindingMask() const { return mBufferBindingMask; }
 
+    VertexArrayID id() const { return mId; }
+
+    bool isDefault() const;
+
   private:
     void updateCachedMutableOrNonPersistentArrayBuffers(size_t index);
 
     friend class VertexArray;
+    VertexArrayID mId;
     std::string mLabel;
     std::vector<VertexAttribute> mVertexAttributes;
     SubjectBindingPointer<Buffer> mElementArrayBuffer;

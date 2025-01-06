@@ -20,6 +20,8 @@ def initDataDirectories(dataDirectories):
     dataDirectories.append(os.path.join("data", "gles31"))
     dataDirectories.append(os.path.join("external", "graphicsfuzz", "data", "gles3"))
     dataDirectories.append(
+        os.path.join("external", "openglcts", "data", "gl_cts", "data", "common"))
+    dataDirectories.append(
         os.path.join("external", "openglcts", "data", "gl_cts", "data", "gles3"))
     dataDirectories.append(
         os.path.join("external", "openglcts", "data", "gl_cts", "data", "gles31"))

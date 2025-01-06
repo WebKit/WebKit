@@ -34,10 +34,10 @@ AXFocusableAncestor: <AXLink: 'Delicious cake'>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 0}
+AXElementBusy: 0
 AXURL: http://www.wowhead.com/?item=33924
 AXAccessKey: (null)
 AXLinkRelationshipType:
-AXElementBusy: 0
 
 
 Child 0:
@@ -72,10 +72,10 @@ AXFocusableAncestor: <AXImage>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 0}
+AXElementBusy: 0
 AXImageOverlayElements: (null)
 AXEmbeddedImageDescription:
 AXURL: LayoutTests/accessibility/resources/cake.png
-AXElementBusy: 0
 
 
 

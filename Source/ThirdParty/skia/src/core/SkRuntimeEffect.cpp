@@ -59,6 +59,7 @@
 #include "src/sksl/ir/SkSLVarDeclarations.h"
 #include "src/sksl/ir/SkSLVariable.h"
 #include "src/sksl/tracing/SkSLDebugTracePriv.h"
+#include "src/sksl/transform/SkSLTransform.h"
 
 #include <algorithm>
 
@@ -227,6 +228,11 @@ const SkSL::RP::Program* SkRuntimeEffect::getRPProgram(SkSL::DebugTracePriv* deb
             SkSL::Compiler compiler;
             fBaseProgram->fConfig->fSettings.fInlineThreshold = SkSL::kDefaultInlineThreshold;
             compiler.runInliner(*fBaseProgram);
+
+            // After inlining, the program is likely to have dead functions left behind.
+            while (SkSL::Transform::EliminateDeadFunctions(*fBaseProgram)) {
+                // Removing dead functions may cause more functions to become unreferenced.
+            }
         }
 
         SkSL::DebugTracePriv tempDebugTrace;
@@ -959,29 +965,14 @@ void SkRuntimeEffect::RegisterFlattenables() {
     SkFlattenable::Register("SkRTShader", SkRuntimeShader::CreateProc);
 }
 
-SkRuntimeShaderBuilder::SkRuntimeShaderBuilder(sk_sp<SkRuntimeEffect> effect)
-        : SkRuntimeEffectBuilder(std::move(effect)) {}
-
-SkRuntimeShaderBuilder::~SkRuntimeShaderBuilder() = default;
-
-sk_sp<SkShader> SkRuntimeShaderBuilder::makeShader(const SkMatrix* localMatrix) const {
+sk_sp<SkShader> SkRuntimeEffectBuilder::makeShader(const SkMatrix* localMatrix) const {
     return this->effect()->makeShader(this->uniforms(), this->children(), localMatrix);
 }
 
-SkRuntimeBlendBuilder::SkRuntimeBlendBuilder(sk_sp<SkRuntimeEffect> effect)
-        : SkRuntimeEffectBuilder(std::move(effect)) {}
-
-SkRuntimeBlendBuilder::~SkRuntimeBlendBuilder() = default;
-
-sk_sp<SkBlender> SkRuntimeBlendBuilder::makeBlender() const {
+sk_sp<SkBlender> SkRuntimeEffectBuilder::makeBlender() const {
     return this->effect()->makeBlender(this->uniforms(), this->children());
 }
 
-SkRuntimeColorFilterBuilder::SkRuntimeColorFilterBuilder(sk_sp<SkRuntimeEffect> effect)
-        : SkRuntimeEffectBuilder(std::move(effect)) {}
-
-SkRuntimeColorFilterBuilder::~SkRuntimeColorFilterBuilder() = default;
-
-sk_sp<SkColorFilter> SkRuntimeColorFilterBuilder::makeColorFilter() const {
+sk_sp<SkColorFilter> SkRuntimeEffectBuilder::makeColorFilter() const {
     return this->effect()->makeColorFilter(this->uniforms(), this->children());
 }

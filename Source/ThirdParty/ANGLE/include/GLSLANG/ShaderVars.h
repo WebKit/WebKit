@@ -257,7 +257,7 @@ struct ShaderVariable
     int flattenedOffsetInParentArrays;
 };
 
-// TODO: anglebug.com/3899
+// TODO: anglebug.com/42262544
 // For backwards compatibility for other codebases (e.g., chromium/src/gpu/command_buffer/service)
 using Uniform             = ShaderVariable;
 using Attribute           = ShaderVariable;

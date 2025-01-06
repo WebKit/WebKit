@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if HAVE(APPLE_THERMAL_MITIGATION_SUPPORT)
@@ -45,7 +46,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ThermalMitig
 namespace WebCore {
 
 class ThermalMitigationNotifier : public CanMakeWeakPtr<ThermalMitigationNotifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ThermalMitigationNotifier, WEBCORE_EXPORT);
 public:
     using ThermalMitigationChangeCallback = Function<void(bool thermalMitigationEnabled)>;
     WEBCORE_EXPORT explicit ThermalMitigationNotifier(ThermalMitigationChangeCallback&&);

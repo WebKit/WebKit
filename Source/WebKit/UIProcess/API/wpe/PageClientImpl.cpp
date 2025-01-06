@@ -32,7 +32,8 @@
 #include "NativeWebTouchEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "TouchGestureController.h"
-#include "WPEWebView.h"
+#include "WPEWebViewLegacy.h"
+#include "WPEWebViewPlatform.h"
 #include "WebContextMenuProxy.h"
 #include "WebContextMenuProxyWPE.h"
 #include "WebKitPopupMenu.h"
@@ -40,12 +41,20 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/NotImplemented.h>
+#include <wpe/wpe.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(ATK)
 #include <atk/atk.h>
 #endif
 
+#if ENABLE(WPE_PLATFORM)
+#include <wpe/wpe-platform.h>
+#endif
+
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageClientImpl);
 
 PageClientImpl::PageClientImpl(WKWPE::View& view)
     : m_view(view)
@@ -73,9 +82,9 @@ UnixFileDescriptor PageClientImpl::hostFileDescriptor()
     return UnixFileDescriptor { wpe_view_backend_get_renderer_host_fd(m_view.backend()), UnixFileDescriptor::Adopt };
 }
 
-std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& webProcessProxy)
+Ref<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& webProcessProxy)
 {
-    return makeUnique<DrawingAreaProxyCoordinatedGraphics>(m_view.page(), webProcessProxy);
+    return DrawingAreaProxyCoordinatedGraphics::create(m_view.page(), webProcessProxy);
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region&)
@@ -155,10 +164,6 @@ void PageClientImpl::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
         setCursor(WebCore::noneCursor());
 }
 
-void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttributes&)
-{
-}
-
 void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo)
 {
 }
@@ -213,15 +218,29 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 #if ENABLE(TOUCH_EVENTS)
 void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& touchEvent, bool wasEventHandled)
 {
-    if (wasEventHandled)
+    if (wasEventHandled) {
+#if ENABLE(WPE_PLATFORM)
+        // If the touch event was handled, we must interrupt any gesture detection sequence ongoing so that gestures
+        // are not detected by engine itself.
+        if (!m_view.wpeView())
+            return;
+        if (auto* gestureController = wpe_view_get_gesture_controller(m_view.wpeView()))
+            wpe_gesture_controller_cancel(gestureController);
+#endif
         return;
+    }
+
+#if ENABLE(WPE_PLATFORM)
+    if (m_view.wpeView())
+        return;
+#endif
 
     const struct wpe_input_touch_event_raw* touchPoint = touchEvent.nativeFallbackTouchPoint();
     if (touchPoint->type == wpe_input_touch_event_type_null)
         return;
 
     auto& page = m_view.page();
-    auto& touchGestureController = m_view.touchGestureController();
+    auto& touchGestureController = static_cast<WKWPE::ViewLegacy&>(m_view).touchGestureController();
 
     auto generatedEvent = touchGestureController.handleEvent(touchPoint);
     WTF::switchOn(generatedEvent,
@@ -275,7 +294,8 @@ Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& pa
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& context)
 {
 #if ENABLE(WPE_PLATFORM)
-    m_view.updateAcceleratedSurface(context.contextID);
+    if (m_view.wpeView())
+        static_cast<WKWPE::ViewPlatform&>(m_view).updateAcceleratedSurface(context.contextID);
 #else
     UNUSED_PARAM(context);
 #endif
@@ -284,14 +304,16 @@ void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& con
 void PageClientImpl::exitAcceleratedCompositingMode()
 {
 #if ENABLE(WPE_PLATFORM)
-    m_view.updateAcceleratedSurface(0);
+    if (m_view.wpeView())
+        static_cast<WKWPE::ViewPlatform&>(m_view).updateAcceleratedSurface(0);
 #endif
 }
 
 void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& context)
 {
 #if ENABLE(WPE_PLATFORM)
-    m_view.updateAcceleratedSurface(context.contextID);
+    if (m_view.wpeView())
+        static_cast<WKWPE::ViewPlatform&>(m_view).updateAcceleratedSurface(context.contextID);
 #endif
 }
 
@@ -389,14 +411,14 @@ void PageClientImpl::enterFullScreen()
     m_view.willEnterFullScreen();
 #if ENABLE(WPE_PLATFORM)
     if (m_view.wpeView()) {
-        m_view.enterFullScreen();
+        static_cast<WKWPE::ViewPlatform&>(m_view).enterFullScreen();
         return;
     }
 #endif
 
     WebFullScreenManagerProxy* fullScreenManagerProxy = m_view.page().fullScreenManager();
     if (fullScreenManagerProxy) {
-        if (!m_view.setFullScreen(true))
+        if (!static_cast<WKWPE::ViewLegacy&>(m_view).setFullScreen(true))
             fullScreenManagerProxy->didExitFullScreen();
     }
 }
@@ -409,14 +431,14 @@ void PageClientImpl::exitFullScreen()
     m_view.willExitFullScreen();
 #if ENABLE(WPE_PLATFORM)
     if (m_view.wpeView()) {
-        m_view.exitFullScreen();
+        static_cast<WKWPE::ViewPlatform&>(m_view).exitFullScreen();
         return;
     }
 #endif
 
     WebFullScreenManagerProxy* fullScreenManagerProxy = m_view.page().fullScreenManager();
     if (fullScreenManagerProxy) {
-        if (!m_view.setFullScreen(false))
+        if (!static_cast<WKWPE::ViewLegacy&>(m_view).setFullScreen(false))
             fullScreenManagerProxy->didEnterFullScreen();
     }
 }
@@ -433,7 +455,7 @@ void PageClientImpl::beganExitFullScreen(const WebCore::IntRect& /* initialFrame
 
 #endif // ENABLE(FULLSCREEN_API)
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
     completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }

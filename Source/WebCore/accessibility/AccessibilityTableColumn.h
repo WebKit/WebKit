@@ -36,26 +36,23 @@ class RenderTableSection;
 
 class AccessibilityTableColumn final : public AccessibilityMockObject {
 public:
-    static Ref<AccessibilityTableColumn> create();
+    static Ref<AccessibilityTableColumn> create(AXID);
     virtual ~AccessibilityTableColumn();
-
-    AXCoreObject* columnHeader() override;
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::Column; }
 
     void setColumnIndex(unsigned);
-    unsigned columnIndex() const override { return m_columnIndex; }
+    unsigned columnIndex() const final { return m_columnIndex; }
 
-    void addChildren() override;
-    void setParent(AccessibilityObject*) override;
-    
-    LayoutRect elementRect() const override;
-    
+    void addChildren() final;
+    void setParent(AccessibilityObject*) final;
+
+    LayoutRect elementRect() const final;
+
 private:
-    AccessibilityTableColumn();
+    explicit AccessibilityTableColumn(AXID);
     
-    bool computeAccessibilityIsIgnored() const override;
-    bool isTableColumn() const override { return true; }
+    bool computeIsIgnored() const final;
 
     bool isAccessibilityTableColumnInstance() const final { return true; }
     unsigned m_columnIndex;

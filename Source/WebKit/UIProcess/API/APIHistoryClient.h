@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 class WebPageProxy;
@@ -35,7 +36,7 @@ struct WebNavigationDataStore;
 namespace API {
 
 class HistoryClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(HistoryClient);
 public:
     virtual ~HistoryClient() { }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -401,7 +401,7 @@ void av1_dec_row_mt_dealloc(AV1DecRowMTSync *dec_row_mt_sync);
 
 void av1_dec_free_cb_buf(AV1Decoder *pbi);
 
-static INLINE void decrease_ref_count(RefCntBuffer *const buf,
+static inline void decrease_ref_count(RefCntBuffer *const buf,
                                       BufferPool *const pool) {
   if (buf != NULL) {
     --buf->ref_count;
@@ -422,7 +422,7 @@ static INLINE void decrease_ref_count(RefCntBuffer *const buf,
 }
 
 #define ACCT_STR __func__
-static INLINE int av1_read_uniform(aom_reader *r, int n) {
+static inline int av1_read_uniform(aom_reader *r, int n) {
   const int l = get_unsigned_bits(n);
   const int m = (1 << l) - n;
   const int v = aom_read_literal(r, l - 1, ACCT_STR);

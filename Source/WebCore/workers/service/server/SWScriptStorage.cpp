@@ -32,9 +32,12 @@
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/MainThread.h>
 #include <wtf/PageBlock.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SWScriptStorage);
 
 static bool shouldUseFileMapping(uint64_t fileSize)
 {

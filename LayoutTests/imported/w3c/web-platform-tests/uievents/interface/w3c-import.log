@@ -16,3 +16,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/interface/README.md
 /LayoutTests/imported/w3c/web-platform-tests/uievents/interface/click-event.htm
+/LayoutTests/imported/w3c/web-platform-tests/uievents/interface/keyboard-accesskey-click-event.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/interface/keyboard-click-event.html

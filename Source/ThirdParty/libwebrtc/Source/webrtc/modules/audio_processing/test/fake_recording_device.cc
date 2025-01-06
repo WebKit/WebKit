@@ -12,8 +12,8 @@
 
 #include <algorithm>
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "modules/audio_processing/agc2/gain_map_internal.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -45,7 +45,7 @@ class FakeRecordingDeviceWorker {
   // Mic level to simulate.
   int mic_level_;
   // Optional mic level to undo.
-  absl::optional<int> undo_mic_level_;
+  std::optional<int> undo_mic_level_;
 };
 
 namespace {
@@ -57,8 +57,8 @@ class FakeRecordingDeviceIdentity final : public FakeRecordingDeviceWorker {
   explicit FakeRecordingDeviceIdentity(const int initial_mic_level)
       : FakeRecordingDeviceWorker(initial_mic_level) {}
   ~FakeRecordingDeviceIdentity() override = default;
-  void ModifyBufferInt16(rtc::ArrayView<int16_t> buffer) override {}
-  void ModifyBufferFloat(ChannelBuffer<float>* buffer) override {}
+  void ModifyBufferInt16(rtc::ArrayView<int16_t> /* buffer */) override {}
+  void ModifyBufferFloat(ChannelBuffer<float>* /* buffer */) override {}
 };
 
 // Linear fake recording device. The gain curve is a linear function mapping the
@@ -94,7 +94,7 @@ class FakeRecordingDeviceLinear final : public FakeRecordingDeviceWorker {
   }
 };
 
-float ComputeAgcLinearFactor(const absl::optional<int>& undo_mic_level,
+float ComputeAgcLinearFactor(const std::optional<int>& undo_mic_level,
                              int mic_level) {
   // If an undo level is specified, virtually restore the unmodified
   // microphone level; otherwise simulate the mic gain only.

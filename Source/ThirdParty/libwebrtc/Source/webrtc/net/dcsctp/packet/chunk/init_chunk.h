@@ -51,7 +51,7 @@ class InitChunk : public Chunk, public TLVTrait<InitChunkConfig> {
   InitChunk(InitChunk&& other) = default;
   InitChunk& operator=(InitChunk&& other) = default;
 
-  static absl::optional<InitChunk> Parse(rtc::ArrayView<const uint8_t> data);
+  static std::optional<InitChunk> Parse(rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

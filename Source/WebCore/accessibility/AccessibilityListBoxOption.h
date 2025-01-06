@@ -37,21 +37,20 @@ class HTMLSelectElement;
 
 class AccessibilityListBoxOption final : public AccessibilityNodeObject {
 public:
-    static Ref<AccessibilityListBoxOption> create(HTMLElement&);
+    static Ref<AccessibilityListBoxOption> create(AXID, HTMLElement&);
     virtual ~AccessibilityListBoxOption();
 
     bool isSelected() const final;
     void setSelected(bool) final;
 
 private:
-    explicit AccessibilityListBoxOption(HTMLElement&);
+    explicit AccessibilityListBoxOption(AXID, HTMLElement&);
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::ListBoxOption; }
     bool isEnabled() const final;
     bool isSelectedOptionActive() const final;
     String stringValue() const final;
     Element* actionElement() const final;
-    Node* node() const final;
     bool canSetSelectedAttribute() const final;
 
     LayoutRect elementRect() const final;
@@ -63,7 +62,7 @@ private:
     int listBoxOptionIndex() const;
     IntRect listBoxOptionRect() const;
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
-    bool computeAccessibilityIsIgnored() const final;
+    bool computeIsIgnored() const final;
 };
 
 } // namespace WebCore 

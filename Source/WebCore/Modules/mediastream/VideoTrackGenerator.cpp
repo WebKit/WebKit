@@ -34,11 +34,11 @@
 #include "WritableStream.h"
 #include "WritableStreamSink.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(VideoTrackGenerator);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(VideoTrackGenerator);
 
 ExceptionOr<Ref<VideoTrackGenerator>> VideoTrackGenerator::create(ScriptExecutionContext& context)
 {
@@ -58,8 +58,7 @@ ExceptionOr<Ref<VideoTrackGenerator>> VideoTrackGenerator::create(ScriptExecutio
     });
 
     auto logger = Logger::create(&context);
-    if (auto sessionID = context.sessionID())
-        logger->setEnabled(&context, sessionID->isAlwaysOnLoggingAllowed());
+    logger->setEnabled(&context, context.isAlwaysOnLoggingAllowed());
 
     auto privateTrack = MediaStreamTrackPrivate::create(WTFMove(logger), WTFMove(source), [identifier = context.identifier()](Function<void()>&& task) {
         ScriptExecutionContext::postTaskTo(identifier, [task = WTFMove(task)] (auto&) mutable {

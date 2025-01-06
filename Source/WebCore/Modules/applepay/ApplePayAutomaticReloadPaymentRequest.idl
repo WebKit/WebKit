@@ -27,6 +27,7 @@
     Conditional=APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary ApplePayAutomaticReloadPaymentRequest {
     required DOMString paymentDescription;
     required ApplePayLineItem automaticReloadBilling; // must be `paymentTiming: "automaticReload"`

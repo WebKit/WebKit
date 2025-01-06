@@ -26,17 +26,25 @@ function hasMenuItemContainingTitle(items, titleToQuery)
     return false;
 }
 
-let paragraph = document.querySelector("p");
-let boundingRect = paragraph.getBoundingClientRect();
+onload = async () => {
+    if (!window.testRunner)
+        return;
 
-eventSender.mouseMoveTo(boundingRect.left + boundingRect.width / 2, boundingRect.top + boundingRect.height / 2);
-items = eventSender.contextClick();
+    testRunner.waitUntilDone();
 
-document.getElementById("has-look-up").textContent = hasMenuItemContainingTitle(items, "Look Up");
-document.getElementById("has-translate").textContent = hasMenuItemContainingTitle(items, "Translate");
-document.getElementById("has-search").textContent = hasMenuItemContainingTitle(items, "Search the Web");
+    let paragraph = document.querySelector("p");
+    let boundingRect = paragraph.getBoundingClientRect();
 
-paragraph.remove();
+    await eventSender.asyncMouseMoveTo(boundingRect.left + boundingRect.width / 2, boundingRect.top + boundingRect.height / 2);
+    items = eventSender.contextClick();
+
+    document.getElementById("has-look-up").textContent = hasMenuItemContainingTitle(items, "Look Up");
+    document.getElementById("has-translate").textContent = hasMenuItemContainingTitle(items, "Translate");
+    document.getElementById("has-search").textContent = hasMenuItemContainingTitle(items, "Search the Web");
+
+    paragraph.remove();
+    testRunner.notifyDone();
+}
 </script>
 </body>
 </html>

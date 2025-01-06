@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -203,11 +203,6 @@ String Internals::encodedPreferenceValue(const String& domain, const String& key
     id value = [userDefaults objectForKey:key];
     auto data = retainPtr([NSKeyedArchiver archivedDataWithRootObject:value requiringSecureCoding:YES error:nullptr]);
     return [data base64EncodedStringWithOptions:0];
-}
-
-String Internals::getUTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI)
-{
-    return UTIFromTag(tagClass, tag, conformingToUTI);
 }
 
 bool Internals::isRemoteUIAppForAccessibility()

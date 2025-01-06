@@ -40,16 +40,15 @@ class WorkerOrWorkletScriptController;
 class WorkerOrWorkletThread;
 
 enum class AdvancedPrivacyProtections : uint16_t;
+enum class NoiseInjectionPolicy : uint8_t;
 
 class WorkerOrWorkletGlobalScope : public RefCounted<WorkerOrWorkletGlobalScope>, public ScriptExecutionContext, public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(WorkerOrWorkletGlobalScope);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WorkerOrWorkletGlobalScope);
     WTF_MAKE_NONCOPYABLE(WorkerOrWorkletGlobalScope);
 public:
     virtual ~WorkerOrWorkletGlobalScope();
 
-    using ScriptExecutionContext::weakPtrFactory;
-    using ScriptExecutionContext::WeakValueType;
-    using ScriptExecutionContext::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(ScriptExecutionContext);
 
     bool isClosing() const { return m_isClosing; }
     WorkerOrWorkletThread* workerOrWorkletThread() const { return m_thread; }
@@ -58,6 +57,7 @@ public:
     void clearScript();
 
     JSC::VM& vm() final;
+    JSC::VM* vmIfExists() const final;
     WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
 
     ScriptModuleLoader& moduleLoader() { return *m_moduleLoader; }
@@ -76,8 +76,6 @@ public:
 
     using RefCounted::ref;
     using RefCounted::deref;
-    using RefCounted::refAllowingPartiallyDestroyed;
-    using RefCounted::derefAllowingPartiallyDestroyed;
 
     virtual void suspend() { }
     virtual void resume() { }
@@ -85,10 +83,11 @@ public:
     virtual FetchOptions::Destination destination() const = 0;
     ReferrerPolicy referrerPolicy() const final { return m_referrerPolicy; }
     std::optional<uint64_t> noiseInjectionHashSalt() const final { return m_noiseInjectionHashSalt; }
+    OptionSet<NoiseInjectionPolicy> noiseInjectionPolicies() const final;
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final { return m_advancedPrivacyProtections; }
 
 protected:
-    WorkerOrWorkletGlobalScope(WorkerThreadType, PAL::SessionID, Ref<JSC::VM>&&, ReferrerPolicy, WorkerOrWorkletThread*, std::optional<uint64_t>, OptionSet<AdvancedPrivacyProtections>, ScriptExecutionContextIdentifier = { });
+    WorkerOrWorkletGlobalScope(WorkerThreadType, PAL::SessionID, Ref<JSC::VM>&&, ReferrerPolicy, WorkerOrWorkletThread*, std::optional<uint64_t>, OptionSet<AdvancedPrivacyProtections>, std::optional<ScriptExecutionContextIdentifier> = std::nullopt);
 
     // ScriptExecutionContext.
     bool isJSExecutionForbidden() const final;

@@ -67,7 +67,6 @@ enum class RequestKey : uint8_t {
     kPinAuth = 4,
     kNewPinEnc = 5,
     kPinHashEnc = 6,
-    kPinUvAuthParam = 7,
 };
 
 // ResponseKey enumerates the keys in the top-level CBOR map for all PIN
@@ -138,6 +137,7 @@ struct SetPinRequest {
 public:
     WEBCORE_EXPORT const WebCore::CryptoKeyAES& sharedKey() const;
     WEBCORE_EXPORT static std::optional<SetPinRequest> tryCreate(const String& newPin, const WebCore::CryptoKeyEC&);
+    WEBCORE_EXPORT const Vector<uint8_t>& pinAuth() const;
 
     friend Vector<uint8_t> encodeAsCBOR(const SetPinRequest&);
 

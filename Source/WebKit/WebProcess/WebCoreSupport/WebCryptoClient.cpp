@@ -30,8 +30,13 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include <WebCore/SerializedCryptoKeyWrap.h>
+#include <WebCore/WrappedCryptoKey.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCryptoClient);
 
 std::optional<Vector<uint8_t>> WebCryptoClient::wrapCryptoKey(const Vector<uint8_t>& key) const
 {
@@ -46,15 +51,32 @@ std::optional<Vector<uint8_t>> WebCryptoClient::wrapCryptoKey(const Vector<uint8
     return wrappedKey;
 }
 
-std::optional<Vector<uint8_t>> WebCryptoClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey) const
+std::optional<Vector<uint8_t>> WebCryptoClient::serializeAndWrapCryptoKey(WebCore::CryptoKeyData&& keyData) const
 {
     if (m_pageIdentifier) {
-        auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::UnwrapCryptoKey(wrappedKey), *m_pageIdentifier);
+        auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::SerializeAndWrapCryptoKey(WTFMove(keyData)), *m_pageIdentifier);
+        auto [wrappedKey] = sendResult.takeReplyOr(std::nullopt);
+        return wrappedKey;
+    }
+    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::SerializeAndWrapCryptoKey(WTFMove(keyData)), 0);
+
+    auto [wrappedKey] = sendResult.takeReplyOr(std::nullopt);
+    return wrappedKey;
+}
+
+std::optional<Vector<uint8_t>> WebCryptoClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey) const
+{
+    auto deserializedKey = WebCore::readSerializedCryptoKey(wrappedKey);
+    if (!deserializedKey)
+        return std::nullopt;
+
+    if (m_pageIdentifier) {
+        auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::UnwrapCryptoKey(*deserializedKey), *m_pageIdentifier);
         auto [unwrappedKey] = sendResult.takeReplyOr(std::nullopt);
         return unwrappedKey;
     }
 
-    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::UnwrapCryptoKey(wrappedKey), 0);
+    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::UnwrapCryptoKey(*deserializedKey), 0);
     auto [unwrappedKey] = sendResult.takeReplyOr(std::nullopt);
     return unwrappedKey;
 }

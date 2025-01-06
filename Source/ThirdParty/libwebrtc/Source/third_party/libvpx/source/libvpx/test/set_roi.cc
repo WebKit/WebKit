@@ -15,7 +15,7 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "test/acm_random.h"
 #include "vp8/encoder/onyx_int.h"
 #include "vpx/vpx_integer.h"

@@ -28,14 +28,14 @@
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
 #include "SVGStopElement.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
     
 using namespace SVGNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGGradientStop);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGGradientStop);
 
 RenderSVGGradientStop::RenderSVGGradientStop(SVGStopElement& element, RenderStyle&& style)
     : RenderElement(Type::SVGGradientStop, element, WTFMove(style), { }, { })

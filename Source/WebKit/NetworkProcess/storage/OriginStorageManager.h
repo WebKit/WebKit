@@ -28,15 +28,11 @@
 #include "Connection.h"
 #include "OriginQuotaManager.h"
 #include "WebsiteDataType.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 class OriginStorageManager;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::OriginStorageManager> : std::true_type { };
 }
 
 namespace WebCore {
@@ -61,8 +57,9 @@ class StorageAreaRegistry;
 enum class UnifiedOriginStorageLevel : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
-class OriginStorageManager : public CanMakeWeakPtr<OriginStorageManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+class OriginStorageManager final : public CanMakeWeakPtr<OriginStorageManager>, public CanMakeThreadSafeCheckedPtr<OriginStorageManager> {
+    WTF_MAKE_TZONE_ALLOCATED(OriginStorageManager);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(OriginStorageManager);
 public:
     static String originFileIdentifier();
 
@@ -73,6 +70,7 @@ public:
     WebCore::StorageEstimate estimate();
     const String& path() const { return m_path; }
     OriginQuotaManager& quotaManager();
+    Ref<OriginQuotaManager> protectedQuotaManager();
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&);
     FileSystemStorageManager* existingFileSystemStorageManager();
     LocalStorageManager& localStorageManager(StorageAreaRegistry&);
@@ -82,6 +80,7 @@ public:
     IDBStorageManager& idbStorageManager(IDBStorageRegistry&);
     IDBStorageManager* existingIDBStorageManager();
     CacheStorageManager& cacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, Ref<WorkQueue>&&);
+    Ref<CacheStorageManager> protectedCacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, Ref<WorkQueue>&&);
     CacheStorageManager* existingCacheStorageManager();
     BackgroundFetchStoreManager& backgroundFetchManager(Ref<WTF::WorkQueue>&&);
     ServiceWorkerStorageManager& serviceWorkerStorageManager();

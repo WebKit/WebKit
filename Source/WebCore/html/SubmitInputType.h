@@ -31,10 +31,12 @@
 #pragma once
 
 #include "BaseButtonInputType.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SubmitInputType final : public BaseButtonInputType {
+    WTF_MAKE_TZONE_ALLOCATED(SubmitInputType);
 public:
     static Ref<SubmitInputType> create(HTMLInputElement& element)
     {

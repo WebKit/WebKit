@@ -191,7 +191,7 @@ public:
     auto end() const { return m_keys.end(); }
 
 protected:
-    HashMap<KeyIDType, RefPtr<T>> m_keys;
+    UncheckedKeyHashMap<KeyIDType, RefPtr<T>> m_keys;
 
 private:
     KeyStoreIDType m_id;

@@ -10,10 +10,15 @@
 
 #include "api/audio_codecs/audio_decoder.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <utility>
+#include <vector>
 
 #include "api/array_view.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/sanitizer.h"
 #include "rtc_base/trace_event.h"
@@ -32,14 +37,14 @@ class OldStyleEncodedFrame final : public AudioDecoder::EncodedAudioFrame {
     return ret < 0 ? 0 : static_cast<size_t>(ret);
   }
 
-  absl::optional<DecodeResult> Decode(
+  std::optional<DecodeResult> Decode(
       rtc::ArrayView<int16_t> decoded) const override {
     auto speech_type = AudioDecoder::kSpeech;
     const int ret = decoder_->Decode(
         payload_.data(), payload_.size(), decoder_->SampleRateHz(),
         decoded.size() * sizeof(int16_t), decoded.data(), &speech_type);
-    return ret < 0 ? absl::nullopt
-                   : absl::optional<DecodeResult>(
+    return ret < 0 ? std::nullopt
+                   : std::optional<DecodeResult>(
                          {static_cast<size_t>(ret), speech_type});
   }
 
@@ -125,7 +130,8 @@ bool AudioDecoder::HasDecodePlc() const {
   return false;
 }
 
-size_t AudioDecoder::DecodePlc(size_t num_frames, int16_t* decoded) {
+size_t AudioDecoder::DecodePlc(size_t /* num_frames */,
+                               int16_t* /* decoded */) {
   return 0;
 }
 
@@ -137,18 +143,18 @@ int AudioDecoder::ErrorCode() {
   return 0;
 }
 
-int AudioDecoder::PacketDuration(const uint8_t* encoded,
-                                 size_t encoded_len) const {
+int AudioDecoder::PacketDuration(const uint8_t* /* encoded */,
+                                 size_t /* encoded_len */) const {
   return kNotImplemented;
 }
 
-int AudioDecoder::PacketDurationRedundant(const uint8_t* encoded,
-                                          size_t encoded_len) const {
+int AudioDecoder::PacketDurationRedundant(const uint8_t* /* encoded */,
+                                          size_t /* encoded_len */) const {
   return kNotImplemented;
 }
 
-bool AudioDecoder::PacketHasFec(const uint8_t* encoded,
-                                size_t encoded_len) const {
+bool AudioDecoder::PacketHasFec(const uint8_t* /* encoded */,
+                                size_t /* encoded_len */) const {
   return false;
 }
 

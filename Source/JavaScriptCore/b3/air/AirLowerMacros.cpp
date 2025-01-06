@@ -37,6 +37,8 @@
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 { namespace Air {
 
 void lowerMacros(Code& code)
@@ -68,7 +70,7 @@ void lowerMacros(Code& code)
                 };
                 for (unsigned i = 1; i < value->numChildren(); ++i) {
                     Value* child = value->child(i);
-                    for (unsigned j = 0; j < cCallArgumentRegisterCount(child); j++)
+                    for (unsigned j = 0; j < cCallArgumentRegisterCount(child->type()); j++)
                         addNextPair(cCallArgumentRegisterWidth(child->type()));
                 }
                 ASSERT(offset = inst.args.size());
@@ -424,7 +426,8 @@ void lowerMacros(Code& code)
 
             switch (inst.kind.opcode) {
             case ColdCCall:
-                if (code.optLevel() < 2)
+                // FIXME: ARM can't currently handle ColdCCalls.
+                if (code.optLevel() < 2 || isARM_THUMB2())
                     handleCall();
                 break;
             case CCall:
@@ -467,5 +470,6 @@ void lowerMacros(Code& code)
 
 } } } // namespace JSC::B3::Air
 
-#endif // ENABLE(B3_JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(B3_JIT)

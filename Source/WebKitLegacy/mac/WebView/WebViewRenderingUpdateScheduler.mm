@@ -28,24 +28,42 @@
 
 #import "WebViewInternal.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/WebCoreThread.h>
 #import <WebCore/WebCoreThreadInternal.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebViewRenderingUpdateScheduler);
 
 WebViewRenderingUpdateScheduler::WebViewRenderingUpdateScheduler(WebView* webView)
     : m_webView(webView)
 {
+    ASSERT(isMainThread());
     ASSERT_ARG(webView, webView);
 
-    m_renderingUpdateRunLoopObserver = makeUnique<WebCore::RunLoopObserver>(WebCore::RunLoopObserver::WellKnownOrder::RenderingUpdate, [this] {
-        this->renderingUpdateRunLoopObserverCallback();
+    m_renderingUpdateRunLoopObserver = makeUnique<WebCore::RunLoopObserver>(WebCore::RunLoopObserver::WellKnownOrder::RenderingUpdate, [weakThis = WeakPtr { this }] {
+#if PLATFORM(IOS_FAMILY)
+        // Normally the layer flush callback happens before the web lock auto-unlock observer runs.
+        // However if the flush is rescheduled from the callback it may get pushed past it, to the next cycle.
+        WebThreadLock();
+#endif
+        CheckedPtr checkedThis = weakThis.get();
+        if (!checkedThis)
+            return;
+        checkedThis->renderingUpdateRunLoopObserverCallback();
     });
 
-    m_postRenderingUpdateRunLoopObserver = makeUnique<WebCore::RunLoopObserver>(WebCore::RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [this] {
-        this->postRenderingUpdateCallback();
+    m_postRenderingUpdateRunLoopObserver = makeUnique<WebCore::RunLoopObserver>(WebCore::RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [weakThis = WeakPtr { this }] {
+#if PLATFORM(IOS_FAMILY)
+        WebThreadLock();
+#endif
+        CheckedPtr checkedThis = weakThis.get();
+        if (!checkedThis)
+            return;
+        checkedThis->postRenderingUpdateCallback();
     });
 }
 
@@ -61,6 +79,7 @@ void WebViewRenderingUpdateScheduler::scheduleRenderingUpdate()
 
 void WebViewRenderingUpdateScheduler::invalidate()
 {
+    ASSERT(isMainThread());
     m_webView = nullptr;
     m_renderingUpdateRunLoopObserver->invalidate();
     m_postRenderingUpdateRunLoopObserver->invalidate();
@@ -96,12 +115,6 @@ void WebViewRenderingUpdateScheduler::registerCACommitHandlers()
 
 void WebViewRenderingUpdateScheduler::renderingUpdateRunLoopObserverCallback()
 {
-#if PLATFORM(IOS_FAMILY)
-    // Normally the layer flush callback happens before the web lock auto-unlock observer runs.
-    // However if the flush is rescheduled from the callback it may get pushed past it, to the next cycle.
-    WebThreadLock();
-#endif
-
     SetForScope insideCallbackScope(m_insideCallback, true);
     m_rescheduledInsideCallback = false;
 

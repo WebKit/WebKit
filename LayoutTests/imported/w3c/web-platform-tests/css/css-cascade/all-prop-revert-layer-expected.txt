@@ -12,6 +12,8 @@ PASS animation-fill-mode
 PASS animation-iteration-count
 PASS animation-name
 PASS animation-play-state
+PASS animation-range-end
+PASS animation-range-start
 PASS animation-timeline
 PASS animation-timing-function
 PASS appearance
@@ -132,7 +134,6 @@ PASS font-optical-sizing
 PASS font-palette
 PASS font-size
 PASS font-size-adjust
-PASS font-stretch
 PASS font-style
 PASS font-synthesis-small-caps
 PASS font-synthesis-style
@@ -146,6 +147,7 @@ PASS font-variant-numeric
 PASS font-variant-position
 PASS font-variation-settings
 PASS font-weight
+PASS font-width
 PASS glyph-orientation-horizontal
 PASS glyph-orientation-vertical
 PASS grid-auto-columns
@@ -174,7 +176,6 @@ PASS isolation
 PASS justify-content
 PASS justify-items
 PASS justify-self
-PASS kerning
 PASS left
 PASS letter-spacing
 PASS lighting-color
@@ -256,6 +257,8 @@ PASS resize
 PASS right
 PASS rotate
 PASS row-gap
+PASS ruby-align
+PASS ruby-position
 PASS rx
 PASS ry
 PASS scale
@@ -325,6 +328,7 @@ PASS text-underline-offset
 PASS text-underline-position
 PASS text-wrap-mode
 PASS text-wrap-style
+PASS timeline-scope
 PASS top
 PASS touch-action
 PASS transform

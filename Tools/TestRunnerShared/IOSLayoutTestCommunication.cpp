@@ -32,6 +32,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wtf/Assertions.h>
+#include <wtf/StdLibExtras.h>
 
 static int stdinSocket;
 static int stdoutSocket;
@@ -57,7 +58,7 @@ void setUpIOSLayoutTestCommunication()
 
     struct hostent* host = gethostbyname("127.0.0.1");
     struct sockaddr_in serverAddress;
-    memset((char*) &serverAddress, 0, sizeof(serverAddress));
+    zeroBytes(serverAddress);
     serverAddress.sin_family = AF_INET;
     memcpy(
         (char*)&serverAddress.sin_addr.s_addr,

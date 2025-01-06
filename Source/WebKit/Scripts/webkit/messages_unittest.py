@@ -41,19 +41,30 @@ tests_directory = os.path.join(module_directory, 'tests')
 reset_results = False
 
 _test_receiver_names = [
-    'TestWithSuperclass',
+    'TestWithCVPixelBuffer',
+    'TestWithDeferSendingOption',
+    'TestWithDispatchedFromAndTo',
+    'TestWithEnabledBy',
+    'TestWithEnabledByAndConjunction',
+    'TestWithEnabledByOrConjunction',
+    'TestWithIfMessage',
+    'TestWithImageData',
     'TestWithLegacyReceiver',
+    'TestWithMultiLineExtendedAttributes',
     'TestWithoutAttributes',
     'TestWithoutUsingIPCConnection',
-    'TestWithIfMessage',
     'TestWithSemaphore',
-    'TestWithImageData',
     'TestWithStream',
     'TestWithStreamBatched',
     'TestWithStreamBuffer',
-    'TestWithCVPixelBuffer',
     'TestWithStreamServerConnectionHandle',
-    'TestWithEnabledIf',
+    'TestWithSuperclass',
+    'TestWithSuperclassAndWantsAsyncDispatch',
+    'TestWithSuperclassAndWantsDispatch',
+    'TestWithValidator',
+    'TestWithWantsAsyncDispatch',
+    'TestWithWantsDispatch',
+    'TestWithWantsDispatchNoSyncMessages',
 ]
 
 

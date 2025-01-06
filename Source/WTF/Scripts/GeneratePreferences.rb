@@ -90,6 +90,10 @@ class Preference
   attr_accessor :hidden
   attr_accessor :defaultValues
   attr_accessor :exposed
+  attr_accessor :sharedPreferenceForWebProcess
+  attr_accessor :richJavaScript
+  attr_accessor :mediaPlaybackRelated
+  attr_accessor :inspectorOverride
 
   def initialize(name, opts, frontend)
     @name = name
@@ -114,6 +118,10 @@ class Preference
     @hidden = opts["hidden"] || false
     @defaultValues = opts["defaultValue"][frontend]
     @exposed = !opts["exposed"] || opts["exposed"].include?(frontend)
+    @sharedPreferenceForWebProcess = opts["sharedPreferenceForWebProcess"] || false
+    @richJavaScript = opts["richJavaScript"] || false
+    @mediaPlaybackRelated = opts["mediaPlaybackRelated"] || false
+    @inspectorOverride = opts["inspectorOverride"]
   end
 
   def nameLower
@@ -168,6 +176,10 @@ class Preference
       else
         "API::FeatureCategory::" + @category.capitalize
       end
+  end
+
+  def hasInspectorOverride?
+    @inspectorOverride == true
   end
 
   # WebKitLegacy specific helpers.
@@ -249,6 +261,8 @@ class Preferences
     @preferences.sort_by! { |p| p.humanReadableName.empty? ? p.name : p.humanReadableName }
     @exposedPreferences = @preferences.select { |p| p.exposed }
     @exposedFeatures = @exposedPreferences.select { |p| p.type == "bool" }
+    @sharedPreferencesForWebProcess = @exposedFeatures.select { |p| p.type == "bool" && p.sharedPreferenceForWebProcess }
+    @inspectorOverridePreferences = @preferences.select { |p| p.hasInspectorOverride? }
 
     @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }
     @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreBinding == "DeprecatedGlobalSettings" }
@@ -257,7 +271,7 @@ class Preferences
   end
 
   # Corresponds to WebFeatureCategory enum cases.
-  CATEGORIES = %w{ animation css dom html javascript media networking privacy security }
+  CATEGORIES = %w{ animation css dom extensions html javascript media networking privacy security }
 
   def initializeParsedPreferences(parsedPreferences)
     result = []

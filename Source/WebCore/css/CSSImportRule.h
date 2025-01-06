@@ -53,7 +53,7 @@ private:
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Import; }
     String cssText() const final;
-    String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const final;
+    String cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>&, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>&) const final;
     void reattach(StyleRuleBase&) final;
     void getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>&) final;
 

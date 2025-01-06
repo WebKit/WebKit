@@ -11,6 +11,7 @@
 #include "logging/rtc_event_log/events/rtc_event_field_extraction.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <limits>
 
 #include "rtc_base/checks.h"

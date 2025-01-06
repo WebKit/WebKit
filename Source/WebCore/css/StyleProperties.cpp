@@ -23,12 +23,13 @@
 #include "config.h"
 #include "StyleProperties.h"
 
+#include "CSSColorValue.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSParser.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
-#include "CSSPropertyParserHelpers.h"
+#include "CSSPropertyParserConsumer+Font.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Color.h"
@@ -37,6 +38,7 @@
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
 #include <bitset>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 #ifndef NDEBUG
@@ -68,7 +70,7 @@ String serializeLonghandValue(CSSPropertyID property, const CSSValue& value)
         // FIXME: Handle this when creating the CSSValue for opacity, to be consistent with other CSS value serialization quirks.
         // Opacity percentage values serialize as a fraction in the range 0-1, not "%".
         if (auto* primitive = dynamicDowncast<CSSPrimitiveValue>(value); primitive && primitive->isPercentage())
-            return makeString(primitive->doubleValue() / 100);
+            return makeString(primitive->resolveAsPercentageDeprecated() / 100);
         break;
     default:
         break;
@@ -107,7 +109,8 @@ std::optional<Color> StyleProperties::propertyAsColor(CSSPropertyID property) co
     auto value = getPropertyCSSValue(property);
     if (!value)
         return std::nullopt;
-    return value->isColor() ? value->color()
+    return value->isColor()
+        ? CSSColorValue::absoluteColor(*value)
         : CSSParser::parseColorWithoutContext(WebCore::serializeLonghandValue(property, *value));
 }
 
@@ -255,9 +258,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     case CSSPropertyGridRow:
     case CSSPropertyMaskPosition:
     case CSSPropertyOffset:
-    case CSSPropertyPlaceContent:
-    case CSSPropertyPlaceItems:
-    case CSSPropertyPlaceSelf:
     case CSSPropertyTextEmphasis:
     case CSSPropertyWebkitTextStroke:
         return false;
@@ -366,7 +366,7 @@ bool StyleProperties::mayDependOnBaseURL() const
     return false;
 }
 
-void StyleProperties::setReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+void StyleProperties::setReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>& replacementURLStrings)
 {
     for (auto property : *this)
         property.value()->setReplacementURLForSubresources(replacementURLStrings);
@@ -395,7 +395,7 @@ Ref<MutableStyleProperties> StyleProperties::copyProperties(std::span<const CSSP
 {
     auto vector = WTF::compactMap(properties, [&](auto& property) -> std::optional<CSSProperty> {
         if (auto value = getPropertyCSSValue(property))
-            return CSSProperty(property, WTFMove(value), false);
+            return CSSProperty(property, WTFMove(value));
         return std::nullopt;
     });
     return MutableStyleProperties::create(WTFMove(vector));
@@ -413,7 +413,7 @@ CSSStyleDeclaration& MutableStyleProperties::ensureCSSStyleDeclaration()
         ASSERT(!m_cssomWrapper->parentElement());
         return *m_cssomWrapper;
     }
-    m_cssomWrapper = makeUnique<PropertySetCSSStyleDeclaration>(*this);
+    m_cssomWrapper = makeUniqueWithoutRefCountedCheck<PropertySetCSSStyleDeclaration>(*this);
     return *m_cssomWrapper;
 }
 

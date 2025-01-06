@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
 
 namespace WebCore {

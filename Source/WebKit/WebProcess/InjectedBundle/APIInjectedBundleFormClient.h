@@ -27,6 +27,7 @@
 #define APIInjectedBundleFormClient_h
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 class Element;
@@ -47,7 +48,7 @@ class Object;
 namespace InjectedBundle {
 
 class FormClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FormClient);
 public:
     virtual ~FormClient() { }
 

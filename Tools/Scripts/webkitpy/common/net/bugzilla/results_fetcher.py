@@ -63,8 +63,8 @@ def _platform_name_for_bot(bot_name):
         return "mac-wk2"
     if "mac" in name and not name.endswith("-wk2"):
         return "mac-wk1"
-    if "simulator" in name:
-        return "ios-wk2"
+    if "simulator" in name and name.startswith("ios"):
+        return "ios"
     if "win-future" in name:
         return "win"
     if "gtk" in name:

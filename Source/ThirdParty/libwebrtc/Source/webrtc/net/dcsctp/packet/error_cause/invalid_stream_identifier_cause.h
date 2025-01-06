@@ -39,7 +39,7 @@ class InvalidStreamIdentifierCause
   explicit InvalidStreamIdentifierCause(StreamID stream_id)
       : stream_id_(stream_id) {}
 
-  static absl::optional<InvalidStreamIdentifierCause> Parse(
+  static std::optional<InvalidStreamIdentifierCause> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

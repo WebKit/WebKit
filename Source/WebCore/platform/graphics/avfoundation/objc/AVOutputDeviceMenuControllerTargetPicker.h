@@ -28,6 +28,7 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #include "AVPlaybackTargetPicker.h"
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVOutputDeviceMenuController;
 OBJC_CLASS WebAVOutputDeviceMenuControllerHelper;
@@ -44,7 +45,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AVOutputDevi
 namespace WebCore {
 
 class AVOutputDeviceMenuControllerTargetPicker final : public AVPlaybackTargetPicker {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AVOutputDeviceMenuControllerTargetPicker);
     WTF_MAKE_NONCOPYABLE(AVOutputDeviceMenuControllerTargetPicker);
 public:
     explicit AVOutputDeviceMenuControllerTargetPicker(AVPlaybackTargetPickerClient&);

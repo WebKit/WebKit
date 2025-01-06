@@ -106,7 +106,7 @@ public class Logging {
   // output. On Android, the output will be directed to Logcat.
   // Note: this function starts collecting the output of the RTC_LOG() macros.
   // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
-  @SuppressWarnings("NoSynchronizedMethodCheck")
+  @SuppressWarnings({"EnumOrdinal", "NoSynchronizedMethodCheck"})
   public static synchronized void enableLogToDebugOutput(Severity severity) {
     if (loggable != null) {
       throw new IllegalStateException(
@@ -117,6 +117,7 @@ public class Logging {
     loggingEnabled = true;
   }
 
+  @SuppressWarnings("EnumOrdinal")
   public static void log(Severity severity, String tag, String message) {
     if (tag == null || message == null) {
       throw new IllegalArgumentException("Logging tag or message may not be null.");

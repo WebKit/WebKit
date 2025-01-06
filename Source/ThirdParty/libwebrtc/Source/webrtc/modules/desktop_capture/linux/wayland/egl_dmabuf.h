@@ -16,10 +16,10 @@
 #include <gbm.h>
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "modules/desktop_capture/desktop_geometry.h"
 
 namespace webrtc {
@@ -66,7 +66,7 @@ class EglDmaBuf {
   GLuint texture_ = 0;
   EGLStruct egl_;
 
-  absl::optional<std::string> GetRenderNode();
+  std::optional<std::string> GetRenderNode();
 };
 
 }  // namespace webrtc

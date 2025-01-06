@@ -35,7 +35,7 @@
 #include "RenderTheme.h"
 #include "RenderTreeBuilder.h"
 #include "StyleInheritedData.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "RenderThemeIOS.h"
@@ -45,7 +45,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderButton);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderButton);
 
 RenderButton::RenderButton(HTMLFormControlElement& element, RenderStyle&& style)
     : RenderFlexibleBox(Type::Button, element, WTFMove(style))
@@ -77,10 +77,10 @@ void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
     updateAnonymousChildStyle(m_inner->mutableStyle());
 
     if (m_inner && m_inner->layoutBox()) {
-        if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_inner); inlineFormattingContextRoot && inlineFormattingContextRoot->modernLineLayout())
-            inlineFormattingContextRoot->modernLineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, inlineFormattingContextRoot->style());
+        if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_inner); inlineFormattingContextRoot && inlineFormattingContextRoot->inlineLayout())
+            inlineFormattingContextRoot->inlineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, inlineFormattingContextRoot->style());
         if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_inner))
-            lineLayout->styleWillChange(*m_inner, m_inner->style());
+            lineLayout->styleWillChange(*m_inner, m_inner->style(), StyleDifference::Layout);
         LayoutIntegration::LineLayout::updateStyle(*m_inner);
         for (auto& child : childrenOfType<RenderText>(*m_inner))
             LayoutIntegration::LineLayout::updateStyle(child);
@@ -108,6 +108,7 @@ void RenderButton::updateAnonymousChildStyle(RenderStyle& childStyle) const
     childStyle.setFlexWrap(style().flexWrap());
     childStyle.setAlignItems(style().alignItems());
     childStyle.setAlignContent(style().alignContent());
+    childStyle.setTextBoxTrim(style().textBoxTrim());
 }
 
 void RenderButton::updateFromElement()

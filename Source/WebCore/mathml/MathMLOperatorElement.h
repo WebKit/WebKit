@@ -33,7 +33,8 @@
 namespace WebCore {
 
 class MathMLOperatorElement final : public MathMLTokenElement {
-    WTF_MAKE_ISO_ALLOCATED(MathMLOperatorElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MathMLOperatorElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLOperatorElement);
 public:
     static Ref<MathMLOperatorElement> create(const QualifiedName& tagName, Document&);
     struct OperatorChar {

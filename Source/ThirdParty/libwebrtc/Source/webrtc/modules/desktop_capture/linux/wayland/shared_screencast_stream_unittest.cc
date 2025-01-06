@@ -55,6 +55,9 @@ class PipeWireStreamTest : public ::testing::Test,
   MOCK_METHOD(void, OnCursorShapeChanged, (), (override));
   MOCK_METHOD(void, OnDesktopFrameChanged, (), (override));
   MOCK_METHOD(void, OnFailedToProcessBuffer, (), (override));
+  MOCK_METHOD(void, OnBufferCorruptedMetadata, (), (override));
+  MOCK_METHOD(void, OnBufferCorruptedData, (), (override));
+  MOCK_METHOD(void, OnEmptyBuffer, (), (override));
   MOCK_METHOD(void, OnStreamConfigured, (), (override));
   MOCK_METHOD(void, OnFrameRateChanged, (uint32_t), (override));
 
@@ -103,8 +106,9 @@ TEST_F(PipeWireStreamTest, TestPipeWire) {
   waitStartStreamingEvent.Wait(kShortWait);
 
   rtc::Event frameRetrievedEvent;
-  EXPECT_CALL(*this, OnFrameRecorded).Times(3);
+  EXPECT_CALL(*this, OnFrameRecorded).Times(6);
   EXPECT_CALL(*this, OnDesktopFrameChanged)
+      .Times(3)
       .WillRepeatedly([&frameRetrievedEvent] { frameRetrievedEvent.Set(); });
 
   // Record a frame in FakePipeWireStream
@@ -155,6 +159,34 @@ TEST_F(PipeWireStreamTest, TestPipeWire) {
   // First frame should be now overwritten with blue color
   frameRetrievedEvent.Wait(kShortWait);
   EXPECT_EQ(RgbaColor(frame->data()), blue_color);
+
+  // Check we don't process faulty buffers
+  rtc::Event corruptedMetadataFrameEvent;
+  EXPECT_CALL(*this, OnBufferCorruptedMetadata)
+      .WillOnce([&corruptedMetadataFrameEvent] {
+        corruptedMetadataFrameEvent.Set();
+      });
+
+  test_screencast_stream_provider_->RecordFrame(
+      blue_color, TestScreenCastStreamProvider::CorruptedMetadata);
+  corruptedMetadataFrameEvent.Wait(kShortWait);
+
+  rtc::Event corruptedDataFrameEvent;
+  EXPECT_CALL(*this, OnBufferCorruptedData)
+      .WillOnce([&corruptedDataFrameEvent] { corruptedDataFrameEvent.Set(); });
+
+  test_screencast_stream_provider_->RecordFrame(
+      blue_color, TestScreenCastStreamProvider::CorruptedData);
+  corruptedDataFrameEvent.Wait(kShortWait);
+
+  rtc::Event emptyFrameEvent;
+  EXPECT_CALL(*this, OnEmptyBuffer).WillOnce([&emptyFrameEvent] {
+    emptyFrameEvent.Set();
+  });
+
+  test_screencast_stream_provider_->RecordFrame(
+      blue_color, TestScreenCastStreamProvider::EmptyData);
+  emptyFrameEvent.Wait(kShortWait);
 
   // Update stream parameters.
   EXPECT_CALL(*this, OnFrameRateChanged(0))

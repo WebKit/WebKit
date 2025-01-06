@@ -31,11 +31,12 @@
 #include "WCContentBuffer.h"
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 class WCContentBufferManager::ProcessInfo {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WCContentBufferManager);
 public:
     ProcessInfo(WCContentBufferManager& manager, WebCore::ProcessIdentifier processIdentifier)
         : m_manager(manager)

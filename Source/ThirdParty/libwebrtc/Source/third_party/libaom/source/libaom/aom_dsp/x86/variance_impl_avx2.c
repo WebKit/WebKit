@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -168,7 +168,7 @@ DECLARE_ALIGNED(32, static const uint8_t, bilinear_filters_avx2[512]) = {
 // binary size by optimizing the loops more carefully without duplicating the
 // codes with a macro.
 #define MAKE_SUB_PIXEL_VAR_32XH(height, log2height)                           \
-  static AOM_INLINE int aom_sub_pixel_variance32x##height##_imp_avx2(         \
+  static inline int aom_sub_pixel_variance32x##height##_imp_avx2(             \
       const uint8_t *src, int src_stride, int x_offset, int y_offset,         \
       const uint8_t *dst, int dst_stride, unsigned int *sse) {                \
     __m256i src_reg, dst_reg, exp_src_lo, exp_src_hi, exp_dst_lo, exp_dst_hi; \
@@ -648,7 +648,7 @@ MAKE_SUB_PIXEL_VAR_16XH(4, 2)
 #endif
 
 #define MAKE_SUB_PIXEL_AVG_VAR_32XH(height, log2height)                       \
-  int aom_sub_pixel_avg_variance32x##height##_imp_avx2(                       \
+  static int sub_pixel_avg_variance32x##height##_imp_avx2(                    \
       const uint8_t *src, int src_stride, int x_offset, int y_offset,         \
       const uint8_t *dst, int dst_stride, const uint8_t *sec, int sec_stride, \
       unsigned int *sse) {                                                    \
@@ -876,7 +876,7 @@ MAKE_SUB_PIXEL_VAR_16XH(4, 2)
       const uint8_t *src, int src_stride, int x_offset, int y_offset,         \
       const uint8_t *dst, int dst_stride, unsigned int *sse,                  \
       const uint8_t *sec_ptr) {                                               \
-    const int sum = aom_sub_pixel_avg_variance32x##height##_imp_avx2(         \
+    const int sum = sub_pixel_avg_variance32x##height##_imp_avx2(             \
         src, src_stride, x_offset, y_offset, dst, dst_stride, sec_ptr, 32,    \
         sse);                                                                 \
     return *sse - (unsigned int)(((int64_t)sum * sum) >> (5 + log2height));   \
@@ -899,7 +899,7 @@ MAKE_SUB_PIXEL_AVG_VAR_32XH(16, 4)
       const uint8_t *sec_ptr = sec;                                       \
       for (int j = 0; j < (h / hf); ++j) {                                \
         unsigned int sse2;                                                \
-        const int se2 = aom_sub_pixel_avg_variance##wf##x##hf##_imp_avx2( \
+        const int se2 = sub_pixel_avg_variance##wf##x##hf##_imp_avx2(     \
             src_ptr, src_stride, x_offset, y_offset, dst_ptr, dst_stride, \
             sec_ptr, w, &sse2);                                           \
         dst_ptr += hf * dst_stride;                                       \

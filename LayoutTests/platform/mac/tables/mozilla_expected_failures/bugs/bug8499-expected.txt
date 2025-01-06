@@ -12,18 +12,18 @@ layer at (0,0) size 800x600
           text run at (347,36) width 115: "original 'flavour'.)"
       RenderBlock (anonymous) at (0,70) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderTable {TABLE} at (0,88) size 786x140 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,88) size 786x140 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 784x138
           RenderTableRow {TR} at (0,2) size 784x134
-            RenderTableCell {TD} at (2,2) size 780x134 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 776x130 [border: (1px outset #808080)]
+            RenderTableCell {TD} at (2,2) size 780x134 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 776x130 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 774x128
                   RenderTableRow {TR} at (0,2) size 774x68
-                    RenderTableCell {TD} at (2,2) size 770x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (378,2) size 13x12 [border: (2px outset #808080)]
+                    RenderTableCell {TD} at (2,2) size 770x68 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (378,2) size 13x12 [border: (2px outset #000000)]
                         RenderTableSection {TBODY} at (2,2) size 8x8
                           RenderTableRow {TR} at (0,2) size 8x4
-                            RenderTableCell {TD} at (2,2) size 4x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                            RenderTableCell {TD} at (2,2) size 4x4 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                               RenderInline {APPLET} at (0,0) size 0x0
                                 RenderText {#text} at (0,0) size 0x0
                                 RenderText {#text} at (0,0) size 0x0
@@ -35,31 +35,31 @@ layer at (0,0) size 800x600
                           text run at (0,18) width 145: "beach. The view from "
                           text run at (144,18) width 389: "decorated with antique and contemporary furniture and rugs."
                   RenderTableRow {TR} at (0,72) size 774x54
-                    RenderTableCell {TD} at (2,72) size 770x54 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (2,2) size 766x50 [border: (1px outset #808080)]
+                    RenderTableCell {TD} at (2,72) size 770x54 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 766x50 [border: (1px outset #000000)]
                         RenderTableSection {TBODY} at (1,1) size 764x48
                           RenderTableRow {TR} at (0,0) size 764x48
-                            RenderTableCell {TD} at (0,9) size 308x30 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                            RenderTableCell {TD} at (0,9) size 308x30 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                               RenderText {#text} at (6,15) size 296x18
                                 text run at (6,6) width 138: "99 Rates in Drahmas "
                                 text run at (143,6) width 125: "Per Person on H/B "
                                 text run at (267,6) width 35: "Basis"
-                            RenderTableCell {TD} at (307,0) size 100x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                            RenderTableCell {TD} at (307,0) size 100x48 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                               RenderText {#text} at (6,6) size 87x18
                                 text run at (6,6) width 87: "27/03 - 30/04"
                               RenderBR {BR} at (92,6) size 1x18
                               RenderText {#text} at (6,24) size 87x18
                                 text run at (6,24) width 87: "16/10 - 31/10"
-                            RenderTableCell {TD} at (406,9) size 178x30 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                            RenderTableCell {TD} at (406,9) size 178x30 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
                               RenderText {#text} at (6,15) size 165x18
                                 text run at (6,6) width 165: "01/5- 21/5 & 2/10 - 15/10"
-                            RenderTableCell {TD} at (583,0) size 91x48 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+                            RenderTableCell {TD} at (583,0) size 91x48 [border: (1px inset #000000)] [r=0 c=3 rs=1 cs=1]
                               RenderText {#text} at (6,6) size 79x18
                                 text run at (6,6) width 79: "22/5 - 16/07"
                               RenderBR {BR} at (84,6) size 1x18
                               RenderText {#text} at (6,24) size 79x18
                                 text run at (6,24) width 79: "28/8 - 01/10"
-                            RenderTableCell {TD} at (673,9) size 91x30 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+                            RenderTableCell {TD} at (673,9) size 91x30 [border: (1px inset #000000)] [r=0 c=4 rs=1 cs=1]
                               RenderText {#text} at (6,15) size 79x18
                                 text run at (6,6) width 79: "17/07 - 27/8"
       RenderBlock (anonymous) at (0,228) size 784x18
@@ -70,18 +70,18 @@ layer at (0,0) size 800x600
           text run at (424,0) width 122: "Table lays out OK."
       RenderBlock (anonymous) at (0,296) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderTable {TABLE} at (0,314) size 786x158 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,314) size 786x158 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 784x156
           RenderTableRow {TR} at (0,2) size 784x152
-            RenderTableCell {TD} at (2,2) size 780x152 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 776x148 [border: (1px outset #808080)]
+            RenderTableCell {TD} at (2,2) size 780x152 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 776x148 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 774x146
                   RenderTableRow {TR} at (0,2) size 774x86
-                    RenderTableCell {TD} at (2,2) size 770x86 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (329,2) size 112x30 [border: (2px outset #808080)]
+                    RenderTableCell {TD} at (2,2) size 770x86 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (329,2) size 112x30 [border: (2px outset #000000)]
                         RenderTableSection {TBODY} at (2,2) size 108x26
                           RenderTableRow {TR} at (0,2) size 108x22
-                            RenderTableCell {TD} at (2,2) size 104x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                            RenderTableCell {TD} at (2,2) size 104x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 100x18
                                 text run at (2,2) width 100: "applet was here"
                       RenderBlock {P} at (2,48) size 766x36
@@ -91,30 +91,30 @@ layer at (0,0) size 800x600
                           text run at (0,18) width 145: "beach. The view from "
                           text run at (144,18) width 389: "decorated with antique and contemporary furniture and rugs."
                   RenderTableRow {TR} at (0,90) size 774x54
-                    RenderTableCell {TD} at (2,90) size 770x54 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (2,2) size 766x50 [border: (1px outset #808080)]
+                    RenderTableCell {TD} at (2,90) size 770x54 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 766x50 [border: (1px outset #000000)]
                         RenderTableSection {TBODY} at (1,1) size 764x48
                           RenderTableRow {TR} at (0,0) size 764x48
-                            RenderTableCell {TD} at (0,9) size 308x30 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                            RenderTableCell {TD} at (0,9) size 308x30 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                               RenderText {#text} at (6,15) size 296x18
                                 text run at (6,6) width 138: "99 Rates in Drahmas "
                                 text run at (143,6) width 125: "Per Person on H/B "
                                 text run at (267,6) width 35: "Basis"
-                            RenderTableCell {TD} at (307,0) size 100x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                            RenderTableCell {TD} at (307,0) size 100x48 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                               RenderText {#text} at (6,6) size 87x18
                                 text run at (6,6) width 87: "27/03 - 30/04"
                               RenderBR {BR} at (92,6) size 1x18
                               RenderText {#text} at (6,24) size 87x18
                                 text run at (6,24) width 87: "16/10 - 31/10"
-                            RenderTableCell {TD} at (406,9) size 178x30 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                            RenderTableCell {TD} at (406,9) size 178x30 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
                               RenderText {#text} at (6,15) size 165x18
                                 text run at (6,6) width 165: "01/5- 21/5 & 2/10 - 15/10"
-                            RenderTableCell {TD} at (583,0) size 91x48 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+                            RenderTableCell {TD} at (583,0) size 91x48 [border: (1px inset #000000)] [r=0 c=3 rs=1 cs=1]
                               RenderText {#text} at (6,6) size 79x18
                                 text run at (6,6) width 79: "22/5 - 16/07"
                               RenderBR {BR} at (84,6) size 1x18
                               RenderText {#text} at (6,24) size 79x18
                                 text run at (6,24) width 79: "28/8 - 01/10"
-                            RenderTableCell {TD} at (673,9) size 91x30 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+                            RenderTableCell {TD} at (673,9) size 91x30 [border: (1px inset #000000)] [r=0 c=4 rs=1 cs=1]
                               RenderText {#text} at (6,15) size 79x18
                                 text run at (6,6) width 79: "17/07 - 27/8"

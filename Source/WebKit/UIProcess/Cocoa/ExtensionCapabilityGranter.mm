@@ -38,6 +38,7 @@
 #import <wtf/CrossThreadCopier.h>
 #import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #define GRANTER_RELEASE_LOG(envID, fmt, ...) RELEASE_LOG(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, envID.utf8().data(), ##__VA_ARGS__)
 #define GRANTER_RELEASE_LOG_ERROR(envID, fmt, ...) RELEASE_LOG_ERROR(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, envID.utf8().data(), ##__VA_ARGS__)
@@ -142,9 +143,11 @@ static bool finalizeGrant(ExtensionCapabilityGranter& granter, const String& env
     return false;
 }
 
-UniqueRef<ExtensionCapabilityGranter> ExtensionCapabilityGranter::create(ExtensionCapabilityGranterClient& client)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ExtensionCapabilityGranter);
+
+RefPtr<ExtensionCapabilityGranter> ExtensionCapabilityGranter::create(ExtensionCapabilityGranterClient& client)
 {
-    return makeUniqueRef<ExtensionCapabilityGranter>(client);
+    return adoptRef(new ExtensionCapabilityGranter(client));
 }
 
 ExtensionCapabilityGranter::ExtensionCapabilityGranter(ExtensionCapabilityGranterClient& client)
@@ -186,7 +189,9 @@ void ExtensionCapabilityGranter::grant(const ExtensionCapability& capability)
             gpuProcessGrant.setPlatformGrant(WTFMove(result->gpuProcessGrant));
             webProcessGrant.setPlatformGrant(WTFMove(result->webProcessGrant));
         }
-        if (!weakThis) {
+        RefPtr protectedThis = weakThis.get();
+        RefPtr client = protectedThis ? m_client.ptr() : nullptr;
+        if (!client) {
             invalidateGrants(Vector<ExtensionCapabilityGrant>::from(WTFMove(gpuProcessGrant), WTFMove(webProcessGrant)));
             return;
         }
@@ -225,11 +230,13 @@ void ExtensionCapabilityGranter::revoke(const ExtensionCapability& capability)
 
     String environmentIdentifier = capability.environmentIdentifier();
 
-    if (RefPtr gpuProcess = m_client->gpuProcessForCapabilityGranter(*this))
-        grants.append(gpuProcess->extensionCapabilityGrants().take(environmentIdentifier));
+    if (RefPtr client = m_client.ptr()) {
+        if (RefPtr gpuProcess = m_client->gpuProcessForCapabilityGranter(*this))
+            grants.append(gpuProcess->extensionCapabilityGrants().take(environmentIdentifier));
 
-    if (RefPtr webProcess = m_client->webProcessForCapabilityGranter(*this, environmentIdentifier))
-        grants.append(webProcess->extensionCapabilityGrants().take(environmentIdentifier));
+        if (RefPtr webProcess = m_client->webProcessForCapabilityGranter(*this, environmentIdentifier))
+            grants.append(webProcess->extensionCapabilityGrants().take(environmentIdentifier));
+    }
 
     invalidateGrants(WTFMove(grants));
 }

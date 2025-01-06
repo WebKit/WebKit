@@ -27,6 +27,7 @@
 #include "SVGSMILElement.h"
 #include "SVGTests.h"
 #include "UnitBezier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,15 +39,16 @@ class TimeContainer;
 enum AnimatedPropertyValueType { RegularPropertyValue, CurrentColorValue, InheritValue };
 
 class SVGAnimationElement : public SVGSMILElement, public SVGTests {
-    WTF_MAKE_ISO_ALLOCATED(SVGAnimationElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGAnimationElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAnimationElement);
 public:
     ExceptionOr<float> getStartTime() const;
     float getCurrentTime() const;
     ExceptionOr<float> getSimpleDuration() const;
 
-    void beginElement();
+    void beginElement() { beginElementAt(0); }
     void beginElementAt(float offset);
-    void endElement();
+    void endElement() { endElementAt(0); }
     void endElementAt(float offset);
 
     static bool isTargetAttributeCSSProperty(SVGElement*, const QualifiedName&);
@@ -79,10 +81,10 @@ public:
     enum class AttributeType : uint8_t { CSS, XML, Auto };
     AttributeType attributeType() const { return m_attributeType; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAnimationElement, SVGElement, SVGTests>;
+
 protected:
     SVGAnimationElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAnimationElement, SVGElement, SVGTests>;
 
     virtual void resetAnimation();
 

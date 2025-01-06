@@ -1,5 +1,5 @@
 
 FAIL .target 1 assert_equals:
 <div class="target" popover="" anchor="anchor1" data-expected-height="50"></div>
-height expected 50 but got 0
+height expected 50 but got 20
 

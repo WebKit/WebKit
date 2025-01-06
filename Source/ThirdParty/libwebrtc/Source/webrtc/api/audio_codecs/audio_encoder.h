@@ -11,15 +11,19 @@
 #ifndef API_AUDIO_CODECS_AUDIO_ENCODER_H_
 #define API_AUDIO_CODECS_AUDIO_ENCODER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/base/attributes.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/call/bitrate_allocation.h"
+#include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/buffer.h"
 
@@ -35,30 +39,30 @@ struct ANAStats {
   // Number of actions taken by the ANA bitrate controller since the start of
   // the call. If this value is not set, it indicates that the bitrate
   // controller is disabled.
-  absl::optional<uint32_t> bitrate_action_counter;
+  std::optional<uint32_t> bitrate_action_counter;
   // Number of actions taken by the ANA channel controller since the start of
   // the call. If this value is not set, it indicates that the channel
   // controller is disabled.
-  absl::optional<uint32_t> channel_action_counter;
+  std::optional<uint32_t> channel_action_counter;
   // Number of actions taken by the ANA DTX controller since the start of the
   // call. If this value is not set, it indicates that the DTX controller is
   // disabled.
-  absl::optional<uint32_t> dtx_action_counter;
+  std::optional<uint32_t> dtx_action_counter;
   // Number of actions taken by the ANA FEC controller since the start of the
   // call. If this value is not set, it indicates that the FEC controller is
   // disabled.
-  absl::optional<uint32_t> fec_action_counter;
+  std::optional<uint32_t> fec_action_counter;
   // Number of times the ANA frame length controller decided to increase the
   // frame length since the start of the call. If this value is not set, it
   // indicates that the frame length controller is disabled.
-  absl::optional<uint32_t> frame_length_increase_counter;
+  std::optional<uint32_t> frame_length_increase_counter;
   // Number of times the ANA frame length controller decided to decrease the
   // frame length since the start of the call. If this value is not set, it
   // indicates that the frame length controller is disabled.
-  absl::optional<uint32_t> frame_length_decrease_counter;
+  std::optional<uint32_t> frame_length_decrease_counter;
   // The uplink packet loss fractions as set by the ANA FEC controller. If this
   // value is not set, it indicates that the ANA FEC controller is not active.
-  absl::optional<float> uplink_packet_loss_fraction;
+  std::optional<float> uplink_packet_loss_fraction;
 };
 
 // This is the interface class for encoders in AudioCoding module. Each codec
@@ -219,7 +223,7 @@ class AudioEncoder {
   // Provides target audio bitrate and corresponding probing interval of
   // the bandwidth estimator to this encoder to allow it to adapt.
   virtual void OnReceivedUplinkBandwidth(int target_audio_bitrate_bps,
-                                         absl::optional<int64_t> bwe_period_ms);
+                                         std::optional<int64_t> bwe_period_ms);
 
   // Provides target audio bitrate and corresponding probing interval of
   // the bandwidth estimator to this encoder to allow it to adapt.
@@ -240,11 +244,18 @@ class AudioEncoder {
   // Get statistics related to audio network adaptation.
   virtual ANAStats GetANAStats() const;
 
-  // The range of frame lengths that are supported or nullopt if there's no sch
-  // information. This is used to calculated the full bitrate range, including
-  // overhead.
-  virtual absl::optional<std::pair<TimeDelta, TimeDelta>> GetFrameLengthRange()
+  // The range of frame lengths that are supported or nullopt if there's no such
+  // information. This is used together with the bitrate range to calculate the
+  // full bitrate range, including overhead.
+  virtual std::optional<std::pair<TimeDelta, TimeDelta>> GetFrameLengthRange()
       const = 0;
+
+  // The range of payload bitrates that are supported. This is used together
+  // with the frame length range to calculate the full bitrate range, including
+  // overhead.
+  virtual std::optional<std::pair<DataRate, DataRate>> GetBitrateRange() const {
+    return std::nullopt;
+  }
 
   // The maximum number of audio channels supported by WebRTC encoders.
   static constexpr int kMaxNumberOfChannels = 24;

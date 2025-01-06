@@ -246,7 +246,10 @@ template <>
 void WriteParamValueReplay<ParamType::TGLsizeiPointer>(std::ostream &os,
                                                        const CallCapture &call,
                                                        GLsizei *value);
-
+template <>
+void WriteParamValueReplay<ParamType::TGLuintPointer>(std::ostream &os,
+                                                      const CallCapture &call,
+                                                      GLuint *value);
 template <>
 void WriteParamValueReplay<ParamType::TGLuintConstPointer>(std::ostream &os,
                                                            const CallCapture &call,
@@ -389,7 +392,12 @@ void WriteParamValueReplay<ParamType::TEGLClientBuffer>(std::ostream &os,
 template <>
 void WriteParamValueReplay<ParamType::TEGLAttribPointer>(std::ostream &os,
                                                          const CallCapture &call,
-                                                         const EGLAttrib *value);
+                                                         EGLAttrib *value);
+
+template <>
+void WriteParamValueReplay<ParamType::TEGLAttribConstPointer>(std::ostream &os,
+                                                              const CallCapture &call,
+                                                              const EGLAttrib *value);
 
 template <>
 void WriteParamValueReplay<ParamType::TEGLintPointer>(std::ostream &os,
@@ -420,6 +428,16 @@ template <>
 void WriteParamValueReplay<ParamType::TEGLTimeKHR>(std::ostream &os,
                                                    const CallCapture &call,
                                                    EGLTimeKHR value);
+
+template <>
+void WriteParamValueReplay<ParamType::TGLGETBLOBPROCANGLE>(std::ostream &os,
+                                                           const CallCapture &call,
+                                                           GLGETBLOBPROCANGLE value);
+
+template <>
+void WriteParamValueReplay<ParamType::TGLSETBLOBPROCANGLE>(std::ostream &os,
+                                                           const CallCapture &call,
+                                                           GLSETBLOBPROCANGLE value);
 
 // General fallback for any unspecific type.
 template <ParamType ParamT, typename T>

@@ -1,5 +1,5 @@
 <!-- go/cmark -->
-<!--* freshness: {owner: 'henrika' reviewed: '2021-04-12'} *-->
+<!--* freshness: {owner: 'henrika' reviewed: '2024-09-02'} *-->
 
 # Audio Device Module (ADM)
 

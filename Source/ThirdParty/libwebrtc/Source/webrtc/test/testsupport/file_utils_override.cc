@@ -19,7 +19,6 @@
 #include <windows.h>
 
 #include <algorithm>
-#include <codecvt>
 #include <locale>
 
 #include "Shlwapi.h"
@@ -41,8 +40,9 @@
 #include "test/testsupport/mac_file_utils.h"
 #endif
 
+#include <optional>
+
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/string_utils.h"
@@ -81,7 +81,7 @@ const absl::string_view kResourcesDirName = "resources";
 
 // Finds the WebRTC src dir.
 // The returned path always ends with a path separator.
-absl::optional<std::string> ProjectRootPath() {
+std::optional<std::string> ProjectRootPath() {
 #if defined(WEBRTC_ANDROID)
   return std::string(kAndroidChromiumTestsRoot);
 #elif defined WEBRTC_IOS
@@ -103,7 +103,7 @@ absl::optional<std::string> ProjectRootPath() {
   ssize_t count = ::readlink("/proc/self/exe", buf, arraysize(buf));
   if (count <= 0) {
     RTC_DCHECK_NOTREACHED() << "Unable to resolve /proc/self/exe.";
-    return absl::nullopt;
+    return std::nullopt;
   }
   // On POSIX, tests execute in out/Whatever, so src is two levels up.
   std::string exe_dir = DirName(absl::string_view(buf, count));
@@ -113,7 +113,7 @@ absl::optional<std::string> ProjectRootPath() {
   wchar_t buf[MAX_PATH];
   buf[0] = 0;
   if (GetModuleFileNameW(NULL, buf, MAX_PATH) == 0)
-    return absl::nullopt;
+    return std::nullopt;
 
   std::string exe_path = rtc::ToUtf8(std::wstring(buf));
   std::string exe_dir = DirName(exe_path);
@@ -129,7 +129,7 @@ std::string OutputPath() {
 #elif defined(WEBRTC_FUCHSIA)
   return std::string(kFuchsiaTempWritableDir);
 #else
-  absl::optional<std::string> path_opt = ProjectRootPath();
+  std::optional<std::string> path_opt = ProjectRootPath();
   RTC_DCHECK(path_opt);
   std::string path = *path_opt + "out";
   if (!CreateDir(path)) {
@@ -157,7 +157,7 @@ std::string ResourcePath(absl::string_view name, absl::string_view extension) {
 #if defined(WEBRTC_IOS)
   return IOSResourcePath(name, extension);
 #else
-  absl::optional<std::string> path_opt = ProjectRootPath();
+  std::optional<std::string> path_opt = ProjectRootPath();
   RTC_DCHECK(path_opt);
   rtc::StringBuilder os(*path_opt);
   os << kResourcesDirName << kPathDelimiter << name << "." << extension;

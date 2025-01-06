@@ -11,14 +11,16 @@
 #include "api/video_codecs/av1_profile.h"
 
 #include <map>
+#include <optional>
+#include <string>
 #include <utility>
 
+#include "absl/strings/string_view.h"
+#include "api/rtp_parameters.h"
+#include "media/base/media_constants.h"
 #include "rtc_base/string_to_number.h"
 
 namespace webrtc {
-
-// Parameter name in the format parameter map for AV1 video.
-const char kAV1FmtpProfile[] = "profile";
 
 absl::string_view AV1ProfileToString(AV1Profile profile) {
   switch (profile) {
@@ -32,10 +34,10 @@ absl::string_view AV1ProfileToString(AV1Profile profile) {
   return "0";
 }
 
-absl::optional<AV1Profile> StringToAV1Profile(absl::string_view str) {
-  const absl::optional<int> i = rtc::StringToNumber<int>(str);
+std::optional<AV1Profile> StringToAV1Profile(absl::string_view str) {
+  const std::optional<int> i = rtc::StringToNumber<int>(str);
   if (!i.has_value())
-    return absl::nullopt;
+    return std::nullopt;
 
   switch (i.value()) {
     case 0:
@@ -45,23 +47,23 @@ absl::optional<AV1Profile> StringToAV1Profile(absl::string_view str) {
     case 2:
       return AV1Profile::kProfile2;
     default:
-      return absl::nullopt;
+      return std::nullopt;
   }
 }
 
-absl::optional<AV1Profile> ParseSdpForAV1Profile(
-    const SdpVideoFormat::Parameters& params) {
-  const auto profile_it = params.find(kAV1FmtpProfile);
+std::optional<AV1Profile> ParseSdpForAV1Profile(
+    const CodecParameterMap& params) {
+  const auto profile_it = params.find(cricket::kAv1FmtpProfile);
   if (profile_it == params.end())
     return AV1Profile::kProfile0;
   const std::string& profile_str = profile_it->second;
   return StringToAV1Profile(profile_str);
 }
 
-bool AV1IsSameProfile(const SdpVideoFormat::Parameters& params1,
-                      const SdpVideoFormat::Parameters& params2) {
-  const absl::optional<AV1Profile> profile = ParseSdpForAV1Profile(params1);
-  const absl::optional<AV1Profile> other_profile =
+bool AV1IsSameProfile(const CodecParameterMap& params1,
+                      const CodecParameterMap& params2) {
+  const std::optional<AV1Profile> profile = ParseSdpForAV1Profile(params1);
+  const std::optional<AV1Profile> other_profile =
       ParseSdpForAV1Profile(params2);
   return profile && other_profile && profile == other_profile;
 }

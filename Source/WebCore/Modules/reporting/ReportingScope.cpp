@@ -36,12 +36,12 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "TestReportBody.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ReportingScope);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ReportingScope);
 
 Ref<ReportingScope> ReportingScope::create(ScriptExecutionContext& scriptExecutionContext)
 {
@@ -79,6 +79,13 @@ void ReportingScope::clearReports()
 {
     m_queuedReports.clear();
     m_queuedReportTypeCounts.clear();
+}
+
+bool ReportingScope::containsObserver(const ReportingObserver& observer) const
+{
+    return m_reportingObservers.containsIf([&observer](auto& item) {
+        return item.ptr() == &observer;
+    });
 }
 
 void ReportingScope::notifyReportObservers(Ref<Report>&& report)

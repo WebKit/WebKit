@@ -20,9 +20,9 @@ void LoggingDelayVariationCalculator::Insert(
     uint32_t rtp_timestamp,
     Timestamp arrival_time,
     DataSize size,
-    absl::optional<int> spatial_layer,
-    absl::optional<int> temporal_layer,
-    absl::optional<VideoFrameType> frame_type) {
+    std::optional<int> spatial_layer,
+    std::optional<int> temporal_layer,
+    std::optional<VideoFrameType> frame_type) {
   calc_.Insert(rtp_timestamp, arrival_time, size, spatial_layer, temporal_layer,
                frame_type);
 }

@@ -71,6 +71,16 @@ enum class PlatformXR::XRTargetRayMode : uint8_t {
     TransientPointer,
 };
 
+[Nested] struct PlatformXR::DepthRange {
+    float near;
+    float far;
+};
+
+header: <WebCore/PlatformXR.h>
+[CustomHeader] struct PlatformXR::RequestData {
+    PlatformXR::DepthRange depthRange;
+};
+
 [Nested] struct PlatformXR::FrameData::FloatQuaternion {
     float x;
     float y;
@@ -103,8 +113,9 @@ enum class PlatformXR::XRTargetRayMode : uint8_t {
 #if PLATFORM(COCOA)
 [Nested] struct PlatformXR::FrameData::RateMapDescription {
     WebCore::IntSize screenSize;
-    std::array<std::span<const float>, 2> horizontalSamples;
-    std::span<const float> verticalSamples;
+    Vector<float> horizontalSamplesLeft;
+    Vector<float> horizontalSamplesRight;
+    Vector<float> verticalSamples;
 };
 
 [Nested, RValue] struct PlatformXR::FrameData::LayerSetupData {
@@ -131,6 +142,7 @@ enum class PlatformXR::XRTargetRayMode : uint8_t {
     std::optional<PlatformXR::FrameData::LayerSetupData> layerSetup;
     uint64_t renderingFrameIndex;
     std::optional<PlatformXR::FrameData::ExternalTextureData> textureData;
+    bool requestDepth;
 #else
     WebCore::IntSize framebufferSize;
     PlatformGLObject opaqueTexture;
@@ -163,7 +175,7 @@ enum class PlatformXR::XRTargetRayMode : uint8_t {
 
 [Nested] struct PlatformXR::FrameData::InputSource {
     int handle;
-    PlatformXR::XRHandedness handeness;
+    PlatformXR::XRHandedness handedness;
     PlatformXR::XRTargetRayMode targetRayMode;
     Vector<String> profiles;
     PlatformXR::FrameData::InputSourcePose pointerOrigin;

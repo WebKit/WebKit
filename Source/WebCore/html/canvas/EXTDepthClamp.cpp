@@ -28,11 +28,11 @@
 #if ENABLE(WEBGL)
 #include "EXTDepthClamp.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(EXTDepthClamp);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EXTDepthClamp);
 
 EXTDepthClamp::EXTDepthClamp(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::EXTDepthClamp)

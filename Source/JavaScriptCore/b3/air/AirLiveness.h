@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 template<typename Adapter>
 class Liveness : public WTF::Liveness<Adapter> {
-    WTF_MAKE_TZONE_ALLOCATED(Liveness);
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(Liveness);
 public:
     Liveness(Code& code)
         : WTF::Liveness<Adapter>(code.cfg(), code)
@@ -47,6 +47,8 @@ public:
         WTF::Liveness<Adapter>::compute();
     }
 };
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename Adapter>, Liveness<Adapter>);
 
 template<Bank bank, Arg::Temperature minimumTemperature = Arg::Cold>
 using TmpLiveness = Liveness<TmpLivenessAdapter<bank, minimumTemperature>>;

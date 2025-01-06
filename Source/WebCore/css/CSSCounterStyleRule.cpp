@@ -28,12 +28,14 @@
 
 #include "CSSCounterStyleDescriptors.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserConsumer+CounterStyles.h"
 #include "CSSStyleSheet.h"
 #include "CSSTokenizer.h"
 #include "CSSValuePair.h"
 #include "MutableStyleProperties.h"
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -78,6 +80,8 @@ CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(const CSSValue* syst
         return CSSCounterStyleDescriptors::System::Additive;
     case CSSValueInternalDisclosureClosed:
         return CSSCounterStyleDescriptors::System::DisclosureClosed;
+    case CSSValueInternalDisclosureOpen:
+        return CSSCounterStyleDescriptors::System::DisclosureOpen;
     case CSSValueInternalSimplifiedChineseInformal:
         return CSSCounterStyleDescriptors::System::SimplifiedChineseInformal;
     case CSSValueInternalSimplifiedChineseFormal:

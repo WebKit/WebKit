@@ -28,8 +28,10 @@
 
 #include "CommonVM.h"
 #include "GCController.h"
+#include "IdleCallbackController.h"
 #include "Page.h"
 #include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 #include <wtf/DataLog.h>
 #include <wtf/SystemTracing.h>
 
@@ -52,7 +54,10 @@ void OpportunisticTaskScheduler::rescheduleIfNeeded(MonotonicTime deadline)
     if (page->isWaitingForLoadToFinish() || !page->isVisibleAndActive())
         return;
 
-    if (!m_mayHavePendingIdleCallbacks && !page->settings().opportunisticSweepingAndGarbageCollectionEnabled())
+    auto hasIdleCallbacks = page->findMatchingLocalDocument([](const Document& document) {
+        return document.hasPendingIdleCallback();
+    });
+    if (!hasIdleCallbacks && !page->settings().opportunisticSweepingAndGarbageCollectionEnabled())
         return;
 
     m_runloopCountAfterBeingScheduled = 0;
@@ -126,14 +131,7 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
     };
 
     auto deadline = std::exchange(m_currentDeadline, MonotonicTime { });
-    if (std::exchange(m_mayHavePendingIdleCallbacks, false)) {
-        auto weakPage = m_page;
-        page->opportunisticallyRunIdleCallbacks();
-        if (UNLIKELY(!weakPage)) {
-            dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: page gets destroyed", " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
-            return;
-        }
-    }
+    page->opportunisticallyRunIdleCallbacks(deadline);
 
     if (!page->settings().opportunisticSweepingAndGarbageCollectionEnabled()) {
         dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: opportunistic sweep and GC is not enabled", " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
@@ -155,7 +153,7 @@ ImminentlyScheduledWorkScope::~ImminentlyScheduledWorkScope()
         m_scheduler->m_imminentlyScheduledWorkCount--;
 }
 
-static bool isBusyForTimerBasedGC()
+static bool isBusyForTimerBasedGC(JSC::VM& vm)
 {
     bool isVisibleAndActive = false;
     bool hasPendingTasks = false;
@@ -166,6 +164,8 @@ static bool isBusyForTimerBasedGC()
         if (page.isWaitingForLoadToFinish())
             hasPendingTasks = true;
         if (page.opportunisticTaskScheduler().hasImminentlyScheduledWork())
+            hasPendingTasks = true;
+        if (vm.deferredWorkTimer->hasImminentlyScheduledWork())
             hasPendingTasks = true;
         if (page.settings().opportunisticSweepingAndGarbageCollectionEnabled())
             opportunisticSweepingAndGarbageCollectionEnabled = true;
@@ -194,7 +194,7 @@ void OpportunisticTaskScheduler::FullGCActivityCallback::doCollection(JSC::VM& v
     constexpr Seconds delay { 100_ms };
     constexpr unsigned deferCountThreshold = 3;
 
-    if (isBusyForTimerBasedGC()) {
+    if (isBusyForTimerBasedGC(vm)) {
         if (!m_version || m_version != vm.heap.objectSpace().markingVersion()) {
             m_version = vm.heap.objectSpace().markingVersion();
             m_deferCount = 0;
@@ -203,7 +203,8 @@ void OpportunisticTaskScheduler::FullGCActivityCallback::doCollection(JSC::VM& v
             return;
         }
 
-        if (++m_deferCount < deferCountThreshold) {
+        // deferredWorkTimer->hasImminentlyScheduledWork() typically means a wasm compilation is happening right now so we REALLY don't want to GC now.
+        if (++m_deferCount < deferCountThreshold || vm.deferredWorkTimer->hasImminentlyScheduledWork()) {
             m_delay = delay;
             setTimeUntilFire(delay);
             return;
@@ -237,7 +238,7 @@ void OpportunisticTaskScheduler::EdenGCActivityCallback::doCollection(JSC::VM& v
     constexpr Seconds delay { 10_ms };
     constexpr unsigned deferCountThreshold = 5;
 
-    if (isBusyForTimerBasedGC()) {
+    if (isBusyForTimerBasedGC(vm)) {
         if (!m_version || m_version != vm.heap.objectSpace().edenVersion()) {
             m_version = vm.heap.objectSpace().edenVersion();
             m_deferCount = 0;
@@ -246,7 +247,8 @@ void OpportunisticTaskScheduler::EdenGCActivityCallback::doCollection(JSC::VM& v
             return;
         }
 
-        if (++m_deferCount < deferCountThreshold) {
+        // deferredWorkTimer->hasImminentlyScheduledWork() typically means a wasm compilation is happening right now so we REALLY don't want to GC now.
+        if (++m_deferCount < deferCountThreshold || vm.deferredWorkTimer->hasImminentlyScheduledWork()) {
             m_delay = delay;
             setTimeUntilFire(delay);
             return;

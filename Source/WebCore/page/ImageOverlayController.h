@@ -29,6 +29,7 @@
 #include "LayoutRect.h"
 #include "PageOverlay.h"
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -58,7 +59,7 @@ class ImageOverlayController final : private PageOverlayClient
     , DataDetectorHighlightClient
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ImageOverlayController);
 public:
     explicit ImageOverlayController(Page&);
 
@@ -104,7 +105,7 @@ private:
     RefPtr<Page> protectedPage() const;
     RefPtr<PageOverlay> protectedOverlay() const { return m_overlay; }
 
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
     RefPtr<PageOverlay> m_overlay;
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_hostElementForSelection;
     Vector<FloatQuad> m_selectionQuads;

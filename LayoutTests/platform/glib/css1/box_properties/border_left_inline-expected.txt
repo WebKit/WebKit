@@ -30,18 +30,18 @@ layer at (0,0) size 800x600
           text run at (515,18) width 244: ", which should have a thin solid purple"
           text run at (0,36) width 73: "left border. "
           text run at (72,36) width 430: "The line-height of the parent element should not change on any line."
-      RenderTable {TABLE} at (0,195) size 784x90 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,195) size 784x90 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x88
           RenderTableRow {TR} at (0,0) size 782x26
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x17
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x62
-            RenderTableCell {TD} at (0,44) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,44) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,22) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x62 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 770x62 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (24,4) size 742x54 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 696x35
                   text run at (0,0) width 696: "This paragraph has a background color of silver and a 20-pixel left margin, and it contains inline elements with"

@@ -41,7 +41,9 @@ struct WebExtensionTabParameters {
 
     std::optional<WebExtensionWindowIdentifier> windowIdentifier;
     std::optional<size_t> index;
+#if PLATFORM(COCOA)
     std::optional<CGSize> size;
+#endif
 
     std::optional<WebExtensionTabIdentifier> parentTabIdentifier;
 

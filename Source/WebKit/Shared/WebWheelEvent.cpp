@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebWheelEvent.h"
 
-#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 

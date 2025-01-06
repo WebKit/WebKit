@@ -11,8 +11,8 @@
 #include "rtc_base/rtc_certificate_generator.h"
 
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/make_ref_counted.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/gunit.h"
@@ -73,18 +73,18 @@ class RTCCertificateGeneratorTest : public ::testing::Test {
 
 TEST_F(RTCCertificateGeneratorTest, GenerateECDSA) {
   EXPECT_TRUE(RTCCertificateGenerator::GenerateCertificate(KeyParams::ECDSA(),
-                                                           absl::nullopt));
+                                                           std::nullopt));
 }
 
 TEST_F(RTCCertificateGeneratorTest, GenerateRSA) {
   EXPECT_TRUE(RTCCertificateGenerator::GenerateCertificate(KeyParams::RSA(),
-                                                           absl::nullopt));
+                                                           std::nullopt));
 }
 
 TEST_F(RTCCertificateGeneratorTest, GenerateAsyncECDSA) {
   EXPECT_FALSE(fixture_.certificate());
   fixture_.generator()->GenerateCertificateAsync(
-      KeyParams::ECDSA(), absl::nullopt, fixture_.OnGenerated());
+      KeyParams::ECDSA(), std::nullopt, fixture_.OnGenerated());
   // Until generation has completed, the certificate is null. Since this is an
   // async call, generation must not have completed until we process messages
   // posted to this thread (which is done by `EXPECT_TRUE_WAIT`).
@@ -126,9 +126,9 @@ TEST_F(RTCCertificateGeneratorTest, GenerateWithInvalidParamsShouldFail) {
   EXPECT_FALSE(invalid_params.IsValid());
 
   EXPECT_FALSE(RTCCertificateGenerator::GenerateCertificate(invalid_params,
-                                                            absl::nullopt));
+                                                            std::nullopt));
 
-  fixture_.generator()->GenerateCertificateAsync(invalid_params, absl::nullopt,
+  fixture_.generator()->GenerateCertificateAsync(invalid_params, std::nullopt,
                                                  fixture_.OnGenerated());
   EXPECT_TRUE_WAIT(fixture_.GenerateAsyncCompleted(), kGenerationTimeoutMs);
   EXPECT_FALSE(fixture_.certificate());

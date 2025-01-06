@@ -31,11 +31,11 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "TimeRanges.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(BufferedChangeEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BufferedChangeEvent);
 
 BufferedChangeEvent::BufferedChangeEvent(RefPtr<TimeRanges>&& added, RefPtr<TimeRanges>&& removed)
     : Event(EventInterfaceType::BufferedChangeEvent, eventNames().bufferedchangeEvent, CanBubble::No, IsCancelable::No)

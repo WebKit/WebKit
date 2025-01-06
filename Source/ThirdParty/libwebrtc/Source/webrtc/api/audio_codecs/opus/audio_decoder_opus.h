@@ -12,13 +12,13 @@
 #define API_AUDIO_CODECS_OPUS_AUDIO_DECODER_OPUS_H_
 
 #include <memory>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "api/audio_codecs/audio_format.h"
-#include "api/field_trials_view.h"
+#include "api/environment/environment.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -31,12 +31,17 @@ struct RTC_EXPORT AudioDecoderOpus {
     int sample_rate_hz = 48000;
     int num_channels = 1;
   };
-  static absl::optional<Config> SdpToConfig(const SdpAudioFormat& audio_format);
+  static std::optional<Config> SdpToConfig(const SdpAudioFormat& audio_format);
   static void AppendSupportedDecoders(std::vector<AudioCodecSpec>* specs);
+
+  static std::unique_ptr<AudioDecoder> MakeAudioDecoder(const Environment& env,
+                                                        Config config);
   static std::unique_ptr<AudioDecoder> MakeAudioDecoder(
+      const Environment& env,
       Config config,
-      absl::optional<AudioCodecPairId> codec_pair_id = absl::nullopt,
-      const FieldTrialsView* field_trials = nullptr);
+      std::optional<AudioCodecPairId> /*codec_pair_id*/) {
+    return MakeAudioDecoder(env, config);
+  }
 };
 
 }  // namespace webrtc

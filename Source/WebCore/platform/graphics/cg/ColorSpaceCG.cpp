@@ -155,7 +155,7 @@ std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef colorSpace)
 {
     // First test for the four most common spaces, sRGB, Extended sRGB, DisplayP3 and Linear sRGB, and then test
     // the reset in alphabetical order.
-    // FIXME: Consider using a HashMap (with CFHash based keys) rather than the linear set of tests.
+    // FIXME: Consider using a UncheckedKeyHashMap (with CFHash based keys) rather than the linear set of tests.
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, sRGBColorSpaceRef()))
         return ColorSpace::SRGB;

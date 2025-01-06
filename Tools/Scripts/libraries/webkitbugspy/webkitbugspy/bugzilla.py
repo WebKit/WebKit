@@ -33,10 +33,7 @@ from .radar import Tracker as RadarTracker
 from datetime import datetime
 from webkitbugspy import User, log
 
-if sys.version_info > (3, 0):
-    from html.parser import HTMLParser
-else:
-    from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 
 requests = webkitcorepy.CallByNeed(lambda: __import__('requests'))
 
@@ -563,9 +560,21 @@ class Tracker(GenericTracker):
 
         return result
 
+    def valid_keywords(self):
+        response = self.session.get(
+            '{}/rest/field/bug/{}{}'.format(self.url, 'keywords', self._login_arguments(required=False)),
+            timeout=self.timeout,
+        )
+        if response.status_code // 100 == 4 and self._logins_left:
+            self._logins_left -= 1
+        if response.status_code // 100 != 2:
+            sys.stderr.write("Failed to retrieve keywords list'\n")
+            return []
+        return [value.get('name', '') for value in response.json().get('fields')[0].get('values', [])]
+
     def create(
         self, title, description,
-        project=None, component=None, version=None, assign=True,
+        project=None, component=None, version=None, assign=True, keywords=None
     ):
         if not title:
             raise ValueError('Must define title to create bug')
@@ -602,6 +611,11 @@ class Tracker(GenericTracker):
         if version not in self.projects[project]['versions']:
             raise ValueError("'{}' is not a recognized version for '{}'".format(version, project))
 
+        keywords = keywords or []
+        for keyword in keywords:
+            if keyword not in self.valid_keywords():
+                raise ValueError(f"'{keyword}' is not a valid keyword for '{project}'")
+
         params = dict(
             summary=title,
             description=description,
@@ -611,6 +625,8 @@ class Tracker(GenericTracker):
         )
         if assign:
             params['assigned_to'] = self.me().username
+        if keywords:
+            params['keywords'] = keywords
 
         response = None
         try:
@@ -651,15 +667,21 @@ class Tracker(GenericTracker):
             if user_to_cc:
                 keyword_to_add = 'InRadar'
             elif comment_to_make:
+                tracked_bug = issue.references[0] if issue.references else '?'
                 sys.stderr.write("{} already CCed '{}' and tracking a different bug\n".format(
                     self.radar_importer.name,
-                    issue.references[0] if issue.references else '?',
+                    tracked_bug,
                 ))
                 response = webkitcorepy.Terminal.choose(
-                    'Double-check you have the correct bug. Would you like to continue?', options=('Yes', 'No'), default='Yes',
+                    f'Double-check you have the correct bug ({issue.link}).\nWould you like to overwrite {tracked_bug.link} with {radar.link}?',
+                    options=('Yes', 'Skip CC', 'Exit'), default='Exit',
                 )
+                if response == 'Skip CC':
+                    print(f'Skipping CC for {issue.link}')
+                    return None
                 if response == 'No':
                     raise ValueError('Radar is tracking a different bug')
+                user_to_cc = True  # Ensure that the user override is respected even if 'InRadar' is applied
 
         did_modify_cc = False
         if user_to_cc or keyword_to_add:

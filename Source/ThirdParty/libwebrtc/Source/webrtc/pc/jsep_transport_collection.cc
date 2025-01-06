@@ -306,6 +306,9 @@ void JsepTransportCollection::CommitTransports() {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   stable_mid_to_transport_ = mid_to_transport_;
   DestroyUnusedTransports();
+  for (auto& transport : jsep_transports_by_name_) {
+    transport.second->CommitPayloadTypes();
+  }
   RTC_DCHECK(IsConsistent());
 }
 

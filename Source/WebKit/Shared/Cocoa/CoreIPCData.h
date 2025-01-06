@@ -29,6 +29,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/cf/VectorCF.h>
 #include <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
@@ -48,8 +49,8 @@ public:
     {
     }
 
-    CoreIPCData(std::span<const uint8_t> data)
-        : m_cfData(adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size())))
+    CoreIPCData(std::optional<std::span<const uint8_t>> data)
+        : m_cfData(data ? toCFData(*data) : nullptr)
     {
     }
 
@@ -58,9 +59,11 @@ public:
         return m_cfData;
     }
 
-    std::span<const uint8_t> dataReference() const
+    std::optional<std::span<const uint8_t>> dataReference() const
     {
-        return { CFDataGetBytePtr(m_cfData.get()), static_cast<size_t>(CFDataGetLength(m_cfData.get())) };
+        if (!m_cfData)
+            return std::nullopt;
+        return span(m_cfData.get());
     }
 
     RetainPtr<id> toID() const

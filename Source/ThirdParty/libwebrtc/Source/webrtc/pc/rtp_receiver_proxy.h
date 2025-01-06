@@ -11,10 +11,19 @@
 #ifndef PC_RTP_RECEIVER_PROXY_H_
 #define PC_RTP_RECEIVER_PROXY_H_
 
+#include <optional>
 #include <string>
 #include <vector>
 
+#include "api/crypto/frame_decryptor_interface.h"
+#include "api/dtls_transport_interface.h"
+#include "api/frame_transformer_interface.h"
+#include "api/media_stream_interface.h"
+#include "api/media_types.h"
+#include "api/rtp_parameters.h"
 #include "api/rtp_receiver_interface.h"
+#include "api/scoped_refptr.h"
+#include "api/transport/rtp/rtp_source.h"
 #include "pc/proxy.h"
 
 namespace webrtc {
@@ -35,7 +44,7 @@ PROXY_SECONDARY_CONSTMETHOD0(RtpParameters, GetParameters)
 PROXY_METHOD1(void, SetObserver, RtpReceiverObserverInterface*)
 PROXY_SECONDARY_METHOD1(void,
                         SetJitterBufferMinimumDelay,
-                        absl::optional<double>)
+                        std::optional<double>)
 PROXY_SECONDARY_CONSTMETHOD0(std::vector<RtpSource>, GetSources)
 // TODO(bugs.webrtc.org/12772): Remove.
 PROXY_SECONDARY_METHOD1(void,
@@ -45,7 +54,7 @@ PROXY_SECONDARY_METHOD1(void,
 PROXY_SECONDARY_CONSTMETHOD0(rtc::scoped_refptr<FrameDecryptorInterface>,
                              GetFrameDecryptor)
 PROXY_SECONDARY_METHOD1(void,
-                        SetDepacketizerToDecoderFrameTransformer,
+                        SetFrameTransformer,
                         rtc::scoped_refptr<FrameTransformerInterface>)
 #if defined(WEBRTC_WEBKIT_BUILD)
 PROXY_METHOD0(void, GenerateKeyFrame)

@@ -23,6 +23,8 @@
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGResourceClipper.h"
+#include "RenderView.h"
+#include "SVGGraphicsElement.h"
 
 namespace WebCore {
 
@@ -35,6 +37,11 @@ inline bool RenderLayer::isTransparent() const { return renderer().isTransparent
 inline bool RenderLayer::overlapBoundsIncludeChildren() const { return hasFilter() && renderer().style().filter().hasFilterThatMovesPixels(); }
 inline bool RenderLayer::preserves3D() const { return renderer().style().preserves3D(); }
 inline int RenderLayer::zIndex() const { return renderer().style().usedZIndex(); }
+
+#if HAVE(CORE_MATERIAL)
+inline bool RenderLayer::hasAppleVisualEffect() const { return renderer().hasAppleVisualEffect(); }
+inline bool RenderLayer::hasAppleVisualEffectRequiringBackdropFilter() const { return renderer().hasAppleVisualEffectRequiringBackdropFilter(); }
+#endif
 
 inline bool RenderLayer::hasBlendMode() const { return renderer().hasBlendMode(); } // FIXME: Why ask the renderer this given we have m_blendMode?
 
@@ -72,6 +79,23 @@ inline bool RenderLayer::hasNonOpacityTransparency() const
 inline RenderSVGHiddenContainer* RenderLayer::enclosingSVGHiddenOrResourceContainer() const
 {
     return m_enclosingSVGHiddenOrResourceContainer.get();
+}
+
+inline const LayoutPoint& RenderLayer::location() const
+{
+    ASSERT(!renderer().view().frameView().layerAccessPrevented());
+    return m_topLeft;
+}
+
+inline const IntSize& RenderLayer::size() const
+{
+    ASSERT(!renderer().view().frameView().layerAccessPrevented());
+    return m_layerSize;
+}
+
+inline LayoutRect RenderLayer::rect() const
+{
+    return LayoutRect(location(), size());
 }
 
 } // namespace WebCore

@@ -33,6 +33,7 @@
 #include "ScrollerMac.h"
 #include "ScrollingStateScrollingNode.h"
 #include <wtf/RecursiveLockAdapter.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 OBJC_CLASS NSScrollerImp;
@@ -48,7 +49,7 @@ namespace WebCore {
 
 // Controls a pair of NSScrollerImps via a pair of ScrollerMac. The NSScrollerImps need to remain internal to this class.
 class ScrollerPairMac : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollerPairMac> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollerPairMac);
     friend class ScrollerMac;
 public:
     void init();
@@ -112,6 +113,10 @@ public:
 
     bool mouseInContentArea() const { return m_mouseInContentArea; }
 
+    void setUseDarkAppearance(bool);
+
+    void setScrollbarWidth(ScrollbarWidth);
+
 private:
     ScrollerPairMac(ScrollingTreeScrollingNode&);
 
@@ -130,8 +135,10 @@ private:
     RetainPtr<NSScrollerImpPair> m_scrollerImpPair;
     RetainPtr<WebScrollerImpPairDelegateMac> m_scrollerImpPairDelegate;
 
+    ScrollbarWidth m_scrollbarWidth { ScrollbarWidth::Auto };
     std::atomic<bool> m_usingPresentationValues { false };
     std::atomic<ScrollbarStyle> m_scrollbarStyle { ScrollbarStyle::AlwaysVisible };
+    bool m_useDarkAppearance { false };
     bool m_inLiveResize { false };
     bool m_mouseInContentArea { false };
 };

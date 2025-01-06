@@ -12,8 +12,8 @@
 
 #include <memory>
 
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/gunit.h"
 
@@ -152,7 +152,7 @@ TEST(GainController2SpeechLevelEstimator, ConvergenceSpeedAfterConfidence) {
                   level_estimator.initial_speech_level_dbfs);
   ASSERT_TRUE(level_estimator.estimator->is_confident());
   // After confidence.
-  constexpr float kConvergenceTimeAfterConfidenceNumFrames = 600;  // 6 seconds.
+  constexpr float kConvergenceTimeAfterConfidenceNumFrames = 700;  // 7 seconds.
   static_assert(
       kConvergenceTimeAfterConfidenceNumFrames > kNumFramesToConfidence, "");
   RunOnConstantLevel(

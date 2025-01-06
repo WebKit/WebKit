@@ -2,11 +2,11 @@
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2013-2014 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,16 +40,16 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGStringList.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGAnimationElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGAnimationElement);
 
 SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document& document)
     : SVGSMILElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -247,31 +247,19 @@ ExceptionOr<float> SVGAnimationElement::getSimpleDuration() const
         return Exception { ExceptionCode::NotSupportedError, "The simple duration is not determined on the given element."_s };
     return narrowPrecisionToFloat(simpleDuration.value());
 }    
-    
-void SVGAnimationElement::beginElement()
-{
-    beginElementAt(0);
-}
 
 void SVGAnimationElement::beginElementAt(float offset)
 {
-    if (!std::isfinite(offset))
-        return;
-    SMILTime elapsed = this->elapsed();
-    addBeginTime(elapsed, elapsed + offset, SMILTimeWithOrigin::ScriptOrigin);
-}
-
-void SVGAnimationElement::endElement()
-{
-    endElementAt(0);
+    ASSERT(std::isfinite(offset));
+    addInstanceTime(Begin, elapsed() + offset, SMILTimeWithOrigin::ScriptOrigin);
 }
 
 void SVGAnimationElement::endElementAt(float offset)
 {
-    if (!std::isfinite(offset))
+    ASSERT(std::isfinite(offset));
+    if (activeState() == Inactive)
         return;
-    SMILTime elapsed = this->elapsed();
-    addEndTime(elapsed, elapsed + offset, SMILTimeWithOrigin::ScriptOrigin);
+    addInstanceTime(End, elapsed() + offset, SMILTimeWithOrigin::ScriptOrigin);
 }
 
 void SVGAnimationElement::updateAnimationMode()
@@ -378,7 +366,7 @@ void SVGAnimationElement::calculateKeyTimesForCalcModePaced()
         totalDistance += *distance;
         keyTimesForPaced.append(*distance);
     }
-    if (!totalDistance)
+    if (!std::isfinite(totalDistance) || !totalDistance)
         return;
 
     // Normalize.

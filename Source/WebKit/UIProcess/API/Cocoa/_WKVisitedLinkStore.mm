@@ -47,7 +47,7 @@
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKVisitedLinkStore.class, self))
         return;
 
-    _visitedLinkStore->~VisitedLinkStore();
+    Ref { *_visitedLinkStore }->~VisitedLinkStore();
 
     [super dealloc];
 }
@@ -56,31 +56,31 @@
 {
     auto linkHash = WebCore::computeSharedStringHash(URL.absoluteString);
 
-    _visitedLinkStore->addVisitedLinkHash(linkHash);
+    Ref { *_visitedLinkStore }->addVisitedLinkHash(linkHash);
 }
 
 - (void)addVisitedLinkWithString:(NSString *)string
 {
-    _visitedLinkStore->addVisitedLinkHash(WebCore::computeSharedStringHash(string));
+    Ref { *_visitedLinkStore }->addVisitedLinkHash(WebCore::computeSharedStringHash(string));
 }
 
 - (void)removeAll
 {
-    _visitedLinkStore->removeAll();
+    Ref { *_visitedLinkStore }->removeAll();
 }
 
 - (BOOL)containsVisitedLinkWithURL:(NSURL *)URL
 {
     auto linkHash = WebCore::computeSharedStringHash(URL.absoluteString);
 
-    return _visitedLinkStore->containsVisitedLinkHash(linkHash);
+    return Ref { *_visitedLinkStore }->containsVisitedLinkHash(linkHash);
 }
 
 - (void)removeVisitedLinkWithURL:(NSURL *)URL
 {
     auto linkHash = WebCore::computeSharedStringHash(URL.absoluteString);
 
-    _visitedLinkStore->removeVisitedLinkHash(linkHash);
+    Ref { *_visitedLinkStore }->removeVisitedLinkHash(linkHash);
 }
 
 #pragma mark WKObject protocol implementation

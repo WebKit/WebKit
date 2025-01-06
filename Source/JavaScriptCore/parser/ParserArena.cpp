@@ -31,6 +31,9 @@
 #include "JSCInlines.h"
 #include "Nodes.h"
 #include "VMTrapsInlines.h"
+#include <wtf/text/MakeString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -124,3 +127,5 @@ const Identifier& IdentifierArena::makePrivateIdentifier(VM& vm, ASCIILiteral pr
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

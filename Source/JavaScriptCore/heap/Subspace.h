@@ -48,6 +48,7 @@ public:
     JS_EXPORT_PRIVATE virtual ~Subspace();
 
     const char* name() const { return m_name.data(); }
+    unsigned nameHash() const { return m_name.hash(); } // FIXME: rdar://139998916
     MarkedSpace& space() const { return m_space; }
 
     CellAttributes attributes() const;
@@ -99,6 +100,7 @@ public:
     virtual void didBeginSweepingToFreeList(MarkedBlock::Handle*);
 
     bool isIsoSubspace() const { return m_isIsoSubspace; }
+    bool isPreciseOnly() const { return m_isPreciseOnly; }
 
 protected:
     Subspace(CString name, Heap&);
@@ -115,7 +117,8 @@ protected:
     SentinelLinkedList<PreciseAllocation, BasicRawSentinelNode<PreciseAllocation>> m_preciseAllocations;
 
     bool m_isIsoSubspace { false };
-    uint8_t m_remainingLowerTierCellCount { 0 };
+    bool m_isPreciseOnly { false };
+    uint8_t m_remainingLowerTierPreciseCount { 0 }; // Lower tier is a precise allocation but we use the term lower to avoid confusion with precise-only.
 
     Subspace* m_nextSubspaceInAlignedMemoryAllocator { nullptr };
 

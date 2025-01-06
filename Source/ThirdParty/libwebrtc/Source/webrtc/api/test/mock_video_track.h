@@ -15,6 +15,9 @@
 
 #include "api/media_stream_interface.h"
 #include "api/scoped_refptr.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video/video_source_interface.h"
 #include "rtc_base/ref_counted_object.h"
 #include "test/gmock.h"
 

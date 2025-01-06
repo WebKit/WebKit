@@ -18,6 +18,7 @@
 
 #include "api/field_trials_view.h"
 #include "api/network_state_predictor.h"
+#include "api/transport/bandwidth_usage.h"
 #include "modules/congestion_controller/goog_cc/delay_increase_detector_interface.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
 
@@ -90,7 +91,7 @@ class TrendlineEstimator : public DelayIncreaseDetectorInterface {
   friend class GoogCcStatePrinter;
   void Detect(double trend, double ts_delta, int64_t now_ms);
 
-  void UpdateThreshold(double modified_offset, int64_t now_ms);
+  void UpdateThreshold(double modified_trend, int64_t now_ms);
 
   // Parameters.
   TrendlineEstimatorSettings settings_;

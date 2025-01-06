@@ -159,9 +159,8 @@ EditAction EditCommand::editingAction() const
 
 static RefPtr<EditCommandComposition> compositionIfPossible(EditCommand& command)
 {
-    if (!command.isCompositeEditCommand())
-        return nullptr;
-    return static_cast<CompositeEditCommand&>(command).composition();
+    auto* compositeCommand = dynamicDowncast<CompositeEditCommand>(command);
+    return compositeCommand ? compositeCommand->composition() : nullptr;
 }
 
 bool EditCommand::isEditingTextAreaOrTextInput() const

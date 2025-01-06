@@ -1,3 +1,4 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ RespondToThermalPressureAggressively=true ] -->
 <html>
     <head>
         <script src='media-file.js'></script>
@@ -50,6 +51,7 @@
                 testExpected('usage.isVideoAndRequiresUserGestureForVideoRateChange', true);
                 testExpected('usage.isAudioAndRequiresUserGestureForAudioRateChange', false);
                 testExpected('usage.isVideoAndRequiresUserGestureForVideoDueToLowPowerMode', false);
+                testExpected('usage.isVideoAndRequiresUserGestureForVideoDueToAggressiveThermalMitigation', false);
                 testExpected('usage.noUserGestureRequired', false);
                 testExpected('usage.requiresPlaybackAndIsNotPlaying', false);
                 testExpected('usage.hasEverNotifiedAboutPlaying', false);

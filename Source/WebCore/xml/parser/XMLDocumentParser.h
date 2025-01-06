@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "LocalFrameView.h"
 #include "ParserContentPolicy.h"
 #include "PendingScriptClient.h"
 #include "ScriptableDocumentParser.h"
@@ -33,6 +34,7 @@
 #include <libxml/xmlstring.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CString.h>
 
@@ -42,7 +44,6 @@ class ContainerNode;
 class CachedResourceLoader;
 class DocumentFragment;
 class Element;
-class LocalFrameView;
 class PendingCallbacks;
 class Text;
 
@@ -63,12 +64,13 @@ private:
 };
 
 class XMLDocumentParser final : public ScriptableDocumentParser, public PendingScriptClient, public CanMakeCheckedPtr<XMLDocumentParser> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(XMLDocumentParser);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(XMLDocumentParser);
 public:
-    static Ref<XMLDocumentParser> create(Document& document, LocalFrameView* view, OptionSet<ParserContentPolicy> policy = DefaultParserContentPolicy)
+    enum class IsInFrameView : bool { No, Yes };
+    static Ref<XMLDocumentParser> create(Document& document, IsInFrameView isInFrameView, OptionSet<ParserContentPolicy> policy = DefaultParserContentPolicy)
     {
-        return adoptRef(*new XMLDocumentParser(document, view, policy));
+        return adoptRef(*new XMLDocumentParser(document, isInFrameView, policy));
     }
     static Ref<XMLDocumentParser> create(DocumentFragment& fragment, HashMap<AtomString, AtomString>&& prefixToNamespaceMap, const AtomString& defaultNamespaceURI, OptionSet<ParserContentPolicy> parserContentPolicy)
     {
@@ -92,14 +94,14 @@ public:
     static bool supportsXMLVersion(const String&);
 
 private:
-    explicit XMLDocumentParser(Document&, LocalFrameView*, OptionSet<ParserContentPolicy>);
+    explicit XMLDocumentParser(Document&, IsInFrameView, OptionSet<ParserContentPolicy>);
     XMLDocumentParser(DocumentFragment&, HashMap<AtomString, AtomString>&&, const AtomString&, OptionSet<ParserContentPolicy>);
 
     // CheckedPtr interface
-    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
-    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     void insert(SegmentedString&&) final;
     void append(RefPtr<StringImpl>&&) final;
@@ -153,7 +155,7 @@ private:
 
     xmlParserCtxtPtr context() const { return m_context ? m_context->context() : nullptr; };
 
-    LocalFrameView* m_view { nullptr };
+    IsInFrameView m_isInFrameView { IsInFrameView::No };
 
     SegmentedString m_originalSourceForTransform;
 
@@ -161,8 +163,8 @@ private:
     std::unique_ptr<PendingCallbacks> m_pendingCallbacks;
     Vector<xmlChar> m_bufferedText;
 
-    ContainerNode* m_currentNode { nullptr };
-    Vector<ContainerNode*> m_currentNodeStack;
+    CheckedPtr<ContainerNode> m_currentNode;
+    Vector<CheckedPtr<ContainerNode>> m_currentNodeStack;
 
     RefPtr<Text> m_leafTextNode;
 

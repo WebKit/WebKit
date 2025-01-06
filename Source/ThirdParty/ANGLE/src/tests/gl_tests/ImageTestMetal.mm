@@ -1122,17 +1122,23 @@ class ImageClearTestMetal : public ImageTestMetal
         {
             EXPECT_PIXEL_32F_EQ(bufferSize / 2, bufferSize / 2, 1.0f, 1.0f, 1.0f, 1.0f);
         }
+        else if (format == MTLPixelFormatR16Unorm)
+        {
+            EXPECT_PIXEL_16_NEAR(bufferSize / 2, bufferSize / 2, 65535, 0, 0, 65535, 0);
+        }
+        else if (format == MTLPixelFormatRG16Unorm)
+        {
+            EXPECT_PIXEL_16_NEAR(bufferSize / 2, bufferSize / 2, 65535, 65535, 0, 65535, 0);
+        }
         else
         {
             GLuint readColor[4] = {0, 0, 0, 255};
             switch (format)
             {
                 case MTLPixelFormatR8Unorm:
-                case MTLPixelFormatR16Unorm:
                     readColor[0] = 255;
                     break;
                 case MTLPixelFormatRG8Unorm:
-                case MTLPixelFormatRG16Unorm:
                     readColor[0] = readColor[1] = 255;
                     break;
                 case MTLPixelFormatRGBA8Unorm:

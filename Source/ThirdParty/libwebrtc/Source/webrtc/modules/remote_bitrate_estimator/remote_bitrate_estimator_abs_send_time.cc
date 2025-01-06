@@ -16,7 +16,8 @@
 #include <memory>
 #include <utility>
 
-#include "api/transport/field_trial_based_config.h"
+#include "absl/base/nullability.h"
+#include "api/environment/environment.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
@@ -88,11 +89,9 @@ void RemoteBitrateEstimatorAbsSendTime::MaybeAddCluster(
 }
 
 RemoteBitrateEstimatorAbsSendTime::RemoteBitrateEstimatorAbsSendTime(
-    RemoteBitrateObserver* observer,
-    Clock* clock)
-    : clock_(clock), observer_(observer), remote_rate_(field_trials_) {
-  RTC_DCHECK(clock_);
-  RTC_DCHECK(observer_);
+    const Environment& env,
+    absl::Nonnull<RemoteBitrateObserver*> observer)
+    : env_(env), observer_(observer), remote_rate_(env_.field_trials()) {
   RTC_LOG(LS_INFO) << "RemoteBitrateEstimatorAbsSendTime: Instantiating.";
 }
 
@@ -225,12 +224,12 @@ void RemoteBitrateEstimatorAbsSendTime::IncomingPacket(
   Timestamp send_time =
       Timestamp::Millis(static_cast<int64_t>(timestamp) * kTimestampToMs);
 
-  Timestamp now = clock_->CurrentTime();
+  Timestamp now = env_.clock().CurrentTime();
   // TODO(holmer): SSRCs are only needed for REMB, should be broken out from
   // here.
 
   // Check if incoming bitrate estimate is valid, and if it needs to be reset.
-  absl::optional<DataRate> incoming_bitrate =
+  std::optional<DataRate> incoming_bitrate =
       incoming_bitrate_.Rate(arrival_time);
   if (incoming_bitrate) {
     incoming_bitrate_initialized_ = true;
@@ -303,7 +302,7 @@ void RemoteBitrateEstimatorAbsSendTime::IncomingPacket(
             remote_rate_.GetFeedbackInterval().ms()) {
       update_estimate = true;
     } else if (detector_.State() == BandwidthUsage::kBwOverusing) {
-      absl::optional<DataRate> incoming_rate =
+      std::optional<DataRate> incoming_rate =
           incoming_bitrate_.Rate(arrival_time);
       if (incoming_rate.has_value() &&
           remote_rate_.TimeToReduceFurther(now, *incoming_rate)) {

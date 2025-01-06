@@ -31,8 +31,11 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMResourceClient);
 
 RefPtr<WebMResourceClient> WebMResourceClient::create(WebMResourceClientParent& parent, PlatformMediaResourceLoader& loader, ResourceRequest&& request)
 {
@@ -58,6 +61,14 @@ void WebMResourceClient::stop()
 
     auto resource = WTFMove(m_resource);
     resource->shutdown();
+}
+
+void WebMResourceClient::responseReceived(PlatformMediaResource&, const ResourceResponse& response, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
+{
+    RefPtr parent = m_parent.get();
+    if (parent)
+        parent->dataLengthReceived(response.expectedContentLength());
+    completionHandler(parent ? ShouldContinuePolicyCheck::Yes : ShouldContinuePolicyCheck::No);
 }
 
 void WebMResourceClient::dataReceived(PlatformMediaResource&, const SharedBuffer& buffer)

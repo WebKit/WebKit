@@ -47,8 +47,10 @@
 #include "TemporalTimeZoneConstructor.h"
 #include "TemporalTimeZonePrototype.h"
 #include <wtf/Int128.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -515,7 +517,7 @@ static double doubleNumberOption(JSGlobalObject* globalObject, JSObject* options
     RETURN_IF_EXCEPTION(scope, 0);
 
     if (std::isnan(doubleValue)) {
-        throwRangeError(globalObject, scope, *property.publicName() + " is NaN"_s);
+        throwRangeError(globalObject, scope, makeString(property.publicName(), " is NaN"_s));
         return 0;
     }
 
@@ -686,3 +688,5 @@ void rejectObjectWithCalendarOrTimeZone(JSGlobalObject* globalObject, JSObject* 
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

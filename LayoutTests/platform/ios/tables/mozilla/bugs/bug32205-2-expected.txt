@@ -54,14 +54,14 @@ layer at (0,0) size 800x1347
             RenderText {#text} at (171,40) size 313x19
               text run at (171,40) width 313: "(i.e. table height - height of other rows+borders)"
           RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,356) size 90x200 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,356) size 90x200 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 88x198
           RenderTableRow {TR} at (0,2) size 88x24
-            RenderTableCell {TD} at (2,2) size 84x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 84x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 53x19
                 text run at (2,2) width 53: "title line"
           RenderTableRow {TR} at (0,28) size 88x168
-            RenderTableCell {TD} at (2,100) size 84x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,100) size 84x24 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,74) size 80x19
                 text run at (2,2) width 80: "rest of space"
       RenderBlock {P} at (0,572) size 784x20
@@ -79,14 +79,14 @@ layer at (0,0) size 800x1347
         RenderBR {BR} at (84,20) size 1x19
         RenderText {#text} at (0,40) size 118x19
           text run at (0,40) width 118: "Second Row : 199"
-      RenderTable {TABLE} at (0,720) size 90x231 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,720) size 90x231 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 88x229
           RenderTableRow {TR} at (0,2) size 88x24
-            RenderTableCell {TD} at (2,2) size 84x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 84x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 53x19
                 text run at (2,2) width 53: "title line"
           RenderTableRow {TR} at (0,28) size 88x199
-            RenderTableCell {TD} at (2,115) size 84x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,115) size 84x25 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,89) size 80x20
                 text run at (2,2) width 80: "rest of space"
       RenderBlock {P} at (0,967) size 784x20
@@ -106,10 +106,10 @@ layer at (0,0) size 800x1347
           text run at (498,0) width 224: "This contains a DIV whose style is"
           text run at (0,20) width 248: "height:100%. It ought to fill the entire "
           text run at (247,20) width 36: "table."
-      RenderTable {TABLE} at (0,1131) size 308x200 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,1131) size 308x200 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 306x198
           RenderTableRow {TR} at (0,2) size 306x194
-            RenderTableCell {TD} at (2,2) size 302x194 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 302x194 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 298x190 [bgcolor=#FF0000]
                 RenderText {#text} at (0,0) size 298x19
                   text run at (0,0) width 298: "A 100% div inside a row of unspecified height"

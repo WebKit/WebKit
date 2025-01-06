@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2013 The Chromium Authors. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,6 +31,7 @@
 
 #if ENABLE(INPUT_TYPE_COLOR) && USE(APPKIT)
 
+#import "ColorControlSupportsAlpha.h"
 #import "WebColorPicker.h"
 #import <WebCore/IntRect.h>
 #import <wtf/RetainPtr.h>
@@ -45,7 +46,7 @@ class WebColorPickerMac;
 }
 
 @protocol WKColorPickerUIMac <NSObject>
-- (void)setAndShowPicker:(WebKit::WebColorPickerMac*)picker withColor:(NSColor *)color suggestions:(Vector<WebCore::Color>&&)suggestions;
+- (void)setAndShowPicker:(WebKit::WebColorPickerMac*)picker withColor:(NSColor *)color supportsAlpha:(WebKit::ColorControlSupportsAlpha)supportsAlpha suggestions:(Vector<WebCore::Color>&&)suggestions;
 - (void)invalidate;
 - (void)setColor:(NSColor *)color;
 - (void)didChooseColor:(id)sender;
@@ -55,7 +56,7 @@ namespace WebKit {
     
 class WebColorPickerMac final : public WebColorPicker {
 public:        
-    static Ref<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, Vector<WebCore::Color>&&, NSView *);
+    static Ref<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, WebKit::ColorControlSupportsAlpha, Vector<WebCore::Color>&&, NSView *);
     virtual ~WebColorPickerMac();
 
     void endPicker() final;
@@ -65,8 +66,9 @@ public:
     void didChooseColor(const WebCore::Color&);
 
 private:
-    WebColorPickerMac(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, Vector<WebCore::Color>&&, NSView *);
+    WebColorPickerMac(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, WebKit::ColorControlSupportsAlpha, Vector<WebCore::Color>&&, NSView *);
     RetainPtr<NSObject<WKColorPickerUIMac> > m_colorPickerUI;
+    WebKit::ColorControlSupportsAlpha m_supportsAlpha { WebKit::ColorControlSupportsAlpha::No };
     Vector<WebCore::Color> m_suggestions;
 };
 

@@ -27,12 +27,14 @@
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGPropertyOwnerRegistry.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class AffineTransform;
 
 class SVGFitToViewBox {
+    WTF_MAKE_TZONE_ALLOCATED(SVGFitToViewBox);
     WTF_MAKE_NONCOPYABLE(SVGFitToViewBox);
 public:
     static AffineTransform viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatioValue&, float viewWidth, float viewHeight);

@@ -22,11 +22,11 @@
 #include "SVGMetadataElement.h"
 
 #include "SVGNames.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGMetadataElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGMetadataElement);
 
 inline SVGMetadataElement::SVGMetadataElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

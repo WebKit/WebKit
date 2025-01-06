@@ -205,6 +205,7 @@ public:
     // Designed to be a fast check to rule out if we might need handling, and we need to ensure needHandling on the slow path.
     ALWAYS_INLINE bool maybeNeedHandling() const { return m_trapBits.loadRelaxed(); }
     void* trapBitsAddress() { return &m_trapBits; }
+    static constexpr ptrdiff_t offsetOfTrapsBits() { return OBJECT_OFFSETOF(VMTraps, m_trapBits); }
 
     enum class DeferAction {
         DeferForAWhile,

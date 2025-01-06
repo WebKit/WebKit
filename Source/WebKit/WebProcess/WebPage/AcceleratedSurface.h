@@ -25,26 +25,30 @@
 
 #pragma once
 
+#include <WebCore/Damage.h>
 #include <WebCore/IntSize.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WTF {
 class RunLoop;
 }
 
+namespace WebCore {
+class Region;
+}
+
 namespace WebKit {
 
+class ThreadedCompositor;
 class WebPage;
 
 class AcceleratedSurface {
-    WTF_MAKE_NONCOPYABLE(AcceleratedSurface); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(AcceleratedSurface);
+    WTF_MAKE_TZONE_ALLOCATED(AcceleratedSurface);
 public:
-    class Client {
-    public:
-        virtual void frameComplete() = 0;
-    };
-
-    static std::unique_ptr<AcceleratedSurface> create(WebPage&, Client&);
+    static std::unique_ptr<AcceleratedSurface> create(ThreadedCompositor&, WebPage&, Function<void()>&& frameCompleteHandler);
     virtual ~AcceleratedSurface() = default;
 
     virtual uint64_t window() const { ASSERT_NOT_REACHED(); return 0; }
@@ -53,12 +57,15 @@ public:
     virtual void clientResize(const WebCore::IntSize&) { };
     virtual bool shouldPaintMirrored() const { return false; }
 
-    virtual void initialize() { }
     virtual void didCreateGLContext() { }
     virtual void willDestroyGLContext() { }
     virtual void finalize() { }
     virtual void willRenderFrame() { }
     virtual void didRenderFrame() { }
+
+#if ENABLE(DAMAGE_TRACKING)
+    virtual const WebCore::Damage& addDamage(const WebCore::Damage&) { return WebCore::Damage::invalid(); };
+#endif
 
     virtual void didCreateCompositingRunLoop(WTF::RunLoop&) { }
     virtual void willDestroyCompositingRunLoop() { }
@@ -70,13 +77,16 @@ public:
     virtual void visibilityDidChange(bool) { }
     virtual bool backgroundColorDidChange();
 
+    const WebCore::IntSize& size() const { return m_size; }
     void clearIfNeeded();
 
 protected:
-    AcceleratedSurface(WebPage&, Client&);
+    AcceleratedSurface(WebPage&, Function<void()>&& frameCompleteHandler);
 
-    WebPage& m_webPage;
-    Client& m_client;
+    void frameComplete() const;
+
+    WeakRef<WebPage> m_webPage;
+    Function<void()> m_frameCompleteHandler;
     WebCore::IntSize m_size;
     std::atomic<bool> m_isOpaque { true };
 };

@@ -28,7 +28,7 @@ namespace WebCore {
 
 class DeprecatedCSSOMRGBColor final : public RefCounted<DeprecatedCSSOMRGBColor> {
 public:
-    static Ref<DeprecatedCSSOMRGBColor> create(CSSStyleDeclaration& owner, const Color& color)
+    static Ref<DeprecatedCSSOMRGBColor> create(CSSStyleDeclaration& owner, const WebCore::Color& color)
     {
         return adoptRef(*new DeprecatedCSSOMRGBColor(owner, color));
     }
@@ -46,7 +46,7 @@ private:
         return DeprecatedCSSOMPrimitiveValue::create(CSSPrimitiveValue::create(number), owner);
     }
 
-    DeprecatedCSSOMRGBColor(CSSStyleDeclaration& owner, const Color& color)
+    DeprecatedCSSOMRGBColor(CSSStyleDeclaration& owner, const WebCore::Color& color)
         : m_color(color.toColorTypeLossy<SRGBA<uint8_t>>().resolved())
         , m_red(createWrapper(owner, m_color.red))
         , m_green(createWrapper(owner, m_color.green))

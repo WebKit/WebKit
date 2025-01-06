@@ -44,7 +44,7 @@ pas_segregated_partial_view_create(
     pas_segregated_size_directory* directory,
     size_t index)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_segregated_partial_view* result;
 
@@ -86,7 +86,7 @@ void pas_segregated_partial_view_note_eligibility(
     pas_segregated_partial_view* view,
     pas_segregated_page* page)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     if (page->lock_ptr)
         pas_lock_assert_held(page->lock_ptr);
     PAS_ASSERT(!view->eligibility_has_been_noted);
@@ -109,7 +109,7 @@ void pas_segregated_partial_view_set_is_in_use_for_allocation(
     pas_segregated_shared_view* shared_view,
     pas_segregated_shared_handle* shared_handle)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_segregated_shared_page_directory* shared_page_directory;
     size_t index;

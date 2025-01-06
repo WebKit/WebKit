@@ -30,6 +30,7 @@
 #include "RTCPriorityType.h"
 
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_data_channel_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_data_channel_debug
@@ -47,6 +48,8 @@ GST_DEBUG_CATEGORY(webkit_webrtc_data_channel_debug);
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerDataChannelHandler);
 
 GUniquePtr<GstStructure> GStreamerDataChannelHandler::fromRTCDataChannelInit(const RTCDataChannelInit& options)
 {
@@ -153,7 +156,7 @@ String GStreamerDataChannelHandler::label() const
     return String::fromUTF8(label.get());
 }
 
-void GStreamerDataChannelHandler::setClient(RTCDataChannelHandlerClient& client, ScriptExecutionContextIdentifier contextIdentifier)
+void GStreamerDataChannelHandler::setClient(RTCDataChannelHandlerClient& client, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
 {
     Locker locker { m_clientLock };
     ASSERT(!m_client);
@@ -255,12 +258,19 @@ bool GStreamerDataChannelHandler::checkState()
 
     GstWebRTCDataChannelState channelState;
     g_object_get(m_channel.get(), "ready-state", &channelState, nullptr);
+    if (!channelState) {
+        DC_DEBUG("Data-channel ready-state hasn't been set yet.");
+        return false;
+    }
 
     RTCDataChannelState state;
     switch (channelState) {
 #if !GST_CHECK_VERSION(1, 22, 0)
-    // Removed in https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/2099.
+    // Removed in https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/2099. In
+    // GStreamer < 1.22 GST_WEBRTC_DATA_CHANNEL_STATE_NEW had the 0 value. We keep this case only to
+    // avoid adding a default case.
     case GST_WEBRTC_DATA_CHANNEL_STATE_NEW:
+        break;
 #endif
     case GST_WEBRTC_DATA_CHANNEL_STATE_CONNECTING:
         state = RTCDataChannelState::Connecting;
@@ -344,8 +354,7 @@ void GStreamerDataChannelHandler::bufferedAmountChanged()
 
 void GStreamerDataChannelHandler::onMessageData(GBytes* bytes)
 {
-    auto size = g_bytes_get_size(bytes);
-    DC_DEBUG("Incoming data of size: %zu", size);
+    DC_DEBUG("Incoming data of size: %zu", g_bytes_get_size(bytes));
     Locker locker { m_clientLock };
 
     if (!m_client) {
@@ -424,7 +433,7 @@ void GStreamerDataChannelHandler::postTask(Function<void()>&& function)
         callOnMainThread(WTFMove(function));
         return;
     }
-    ScriptExecutionContext::postTaskTo(m_contextIdentifier, WTFMove(function));
+    ScriptExecutionContext::postTaskTo(*m_contextIdentifier, WTFMove(function));
 }
 
 #undef GST_CAT_DEFAULT

@@ -28,8 +28,11 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "LegacyCDMSession.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -38,26 +41,26 @@ class LegacyCDM;
 class CDMPrivateInterface;
 class MediaPlayer;
 
-using CreateCDM = Function<std::unique_ptr<CDMPrivateInterface>(LegacyCDM*)>;
+using CreateCDM = Function<std::unique_ptr<CDMPrivateInterface>(LegacyCDM&)>;
 using CDMSupportsKeySystem = Function<bool(const String&)>;
 using CDMSupportsKeySystemAndMimeType = Function<bool(const String&, const String&)>;
 
-class LegacyCDMClient {
+class LegacyCDMClient : public CanMakeCheckedPtr<LegacyCDMClient> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyCDMClient);
 public:
     virtual ~LegacyCDMClient() = default;
 
     virtual RefPtr<MediaPlayer> cdmMediaPlayer(const LegacyCDM*) const = 0;
 };
 
-class WEBCORE_EXPORT LegacyCDM final {
-    WTF_MAKE_FAST_ALLOCATED;
+class WEBCORE_EXPORT LegacyCDM final : public RefCountedAndCanMakeWeakPtr<LegacyCDM> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LegacyCDM, WEBCORE_EXPORT);
 public:
-    explicit LegacyCDM(const String& keySystem);
-
     enum CDMErrorCode { NoError, UnknownError, ClientError, ServiceError, OutputError, HardwareChangeError, DomainError };
     static bool supportsKeySystem(const String&);
     static bool keySystemSupportsMimeType(const String& keySystem, const String& mimeType);
-    static std::unique_ptr<LegacyCDM> create(const String& keySystem);
+    static RefPtr<LegacyCDM> create(const String& keySystem);
     static void registerCDMFactory(CreateCDM&&, CDMSupportsKeySystem&&, CDMSupportsKeySystemAndMimeType&&);
     ~LegacyCDM();
 
@@ -65,20 +68,23 @@ public:
     static void clearFactories();
 
     bool supportsMIMEType(const String&) const;
-    std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient&);
+    RefPtr<LegacyCDMSession> createSession(LegacyCDMSessionClient&);
 
     const String& keySystem() const { return m_keySystem; }
 
-    LegacyCDMClient* client() const { return m_client; }
+    LegacyCDMClient* client() const { return m_client.get(); }
     void setClient(LegacyCDMClient* client) { m_client = client; }
 
     RefPtr<MediaPlayer> mediaPlayer() const;
     CDMPrivateInterface* cdmPrivate() const { return m_private.get(); }
+    RefPtr<CDMPrivateInterface> protectedCDMPrivate() const;
 
 private:
+    explicit LegacyCDM(const String& keySystem);
+
     String m_keySystem;
+    CheckedPtr<LegacyCDMClient> m_client;
     std::unique_ptr<CDMPrivateInterface> m_private;
-    LegacyCDMClient* m_client;
 };
 
 }

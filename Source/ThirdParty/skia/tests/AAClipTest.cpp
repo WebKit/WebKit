@@ -30,6 +30,7 @@
 #include <cstdint>
 #include <cstring>
 #include <initializer_list>
+#include <limits>
 #include <string>
 
 static bool operator==(const SkMask& a, const SkMask& b) {
@@ -168,8 +169,7 @@ static void setRgnToPath(SkRegion* rgn, const SkPath& path) {
     rgn->setPath(path, SkRegion(ir));
 }
 
-// aaclip.setRegion should create idential masks to the region
-static void test_rgn(skiatest::Reporter* reporter) {
+DEF_TEST(AAClip_setPath_RandomRegion_MatchesSkRegion, reporter) {
     SkRandom rand;
     for (int i = 0; i < 1000; i++) {
         SkRegion rgn;
@@ -204,7 +204,7 @@ static void icubicTo(SkPath& path, int x0, int y0, int x1, int y1, int x2, int y
                  SkIntToScalar(x2), SkIntToScalar(y2));
 }
 
-static void test_path_bounds(skiatest::Reporter* reporter) {
+DEF_TEST(AAClip_setPath_ClipBoundsMatchExpectations, reporter) {
     SkPath path;
     SkAAClip clip;
     const int height = 40;
@@ -230,7 +230,7 @@ static void test_path_bounds(skiatest::Reporter* reporter) {
     REPORTER_ASSERT(reporter, teardrop_height == clip.getBounds().height());
 }
 
-static void test_empty(skiatest::Reporter* reporter) {
+DEF_TEST(AAClip_BasicFunctionality, reporter) {
     SkAAClip clip;
 
     REPORTER_ASSERT(reporter, clip.isEmpty());
@@ -264,7 +264,7 @@ static void rand_irect(SkIRect* r, int N, SkRandom& rand) {
     r->offset(N - dx, N - dy);
 }
 
-static void test_irect(skiatest::Reporter* reporter) {
+DEF_TEST(AAClip_setRect_RandomRects_MatchesSkRegion, reporter) {
     SkRandom rand;
 
     for (int i = 0; i < 10000; i++) {
@@ -307,7 +307,7 @@ static void test_irect(skiatest::Reporter* reporter) {
     }
 }
 
-static void test_path_with_hole(skiatest::Reporter* reporter) {
+DEF_TEST(AAClip_setPath_PathHasHole_MaskIsCorrect, reporter) {
     static const uint8_t gExpectedImage[] = {
         0xFF, 0xFF, 0xFF, 0xFF,
         0xFF, 0xFF, 0xFF, 0xFF,
@@ -324,9 +324,21 @@ static void test_path_with_hole(skiatest::Reporter* reporter) {
     path.addRect(SkRect::MakeXYWH(0, SkIntToScalar(4),
                                   SkIntToScalar(4), SkIntToScalar(2)));
 
-    for (int i = 0; i < 2; ++i) {
+    {
+        skiatest::ReporterContext context(reporter, "noAA");
         SkAAClip clip;
-        clip.setPath(path, path.getBounds().roundOut(), 1 == i);
+        clip.setPath(path, path.getBounds().roundOut(), false);
+
+        SkMaskBuilder mask;
+        clip.copyToMask(&mask);
+        SkAutoMaskFreeImage freeM(mask.image());
+
+        REPORTER_ASSERT(reporter, expected == mask);
+    }
+    {
+        skiatest::ReporterContext context(reporter, "withAA");
+        SkAAClip clip;
+        clip.setPath(path, path.getBounds().roundOut(), true);
 
         SkMaskBuilder mask;
         clip.copyToMask(&mask);
@@ -336,7 +348,7 @@ static void test_path_with_hole(skiatest::Reporter* reporter) {
     }
 }
 
-static void test_really_a_rect(skiatest::Reporter* reporter) {
+DEF_TEST(AAClip_RRectIsReallyARect_ClipIsRect, reporter) {
     SkRRect rrect;
     rrect.setRectXY(SkRect::MakeWH(100, 100), 5, 5);
 
@@ -383,7 +395,7 @@ static void did_dx_affect(skiatest::Reporter* reporter, const SkScalar dx[],
     }
 }
 
-static void test_nearly_integral(skiatest::Reporter* reporter) {
+DEF_TEST(AAClip_op_NearlyIntegral_GenerateSameRasterClips, reporter) {
     // All of these should generate equivalent rasterclips
 
     static const SkScalar gSafeX[] = {
@@ -397,18 +409,16 @@ static void test_nearly_integral(skiatest::Reporter* reporter) {
     did_dx_affect(reporter, gUnsafeX, std::size(gUnsafeX), true);
 }
 
-static void test_regressions() {
-    // these should not assert in the debug build
+DEF_TEST(AAClip_setPath_AvoidAssertion, reporter) {
+    // Should not assert in the debug build
     // bug was introduced in rev. 3209
-    {
-        SkAAClip clip;
-        SkRect r;
-        r.fLeft = 129.892181f;
-        r.fTop = 10.3999996f;
-        r.fRight = 130.892181f;
-        r.fBottom = 20.3999996f;
-        clip.setPath(SkPath::Rect(r), r.roundOut(), true);
-    }
+    SkAAClip clip;
+    SkRect r;
+    r.fLeft = 129.892181f;
+    r.fTop = 10.3999996f;
+    r.fRight = 130.892181f;
+    r.fBottom = 20.3999996f;
+    REPORTER_ASSERT(reporter, clip.setPath(SkPath::Rect(r), r.roundOut(), true));
 }
 
 // Building aaclip meant aa-scan-convert a path into a huge clip.
@@ -418,31 +428,45 @@ static void test_regressions() {
 //
 // Before the fix, the following code would assert in debug builds.
 //
-static void test_crbug_422693(skiatest::Reporter* reporter) {
+DEF_TEST(AAClip_crbug_422693_AvoidOverflow, reporter) {
     SkRasterClip rc(SkIRect::MakeLTRB(-25000, -25000, 25000, 25000));
     SkPath path;
     path.addCircle(50, 50, 50);
-    rc.op(path, SkMatrix::I(), SkClipOp::kIntersect, true);
+    REPORTER_ASSERT(reporter, rc.op(path, SkMatrix::I(), SkClipOp::kIntersect, true));
 }
 
-static void test_huge(skiatest::Reporter* reporter) {
+DEF_TEST(AAClip_setRect_HugeRect_ReturnsFalse, reporter) {
     SkAAClip clip;
     int big = 0x70000000;
     SkIRect r = { -big, -big, big, big };
     SkASSERT(r.width() < 0 && r.height() < 0);
 
-    clip.setRect(r);
+    REPORTER_ASSERT(reporter, !clip.setRect(r));
 }
 
-DEF_TEST(AAClip, reporter) {
-    test_empty(reporter);
-    test_path_bounds(reporter);
-    test_irect(reporter);
-    test_rgn(reporter);
-    test_path_with_hole(reporter);
-    test_regressions();
-    test_nearly_integral(reporter);
-    test_really_a_rect(reporter);
-    test_crbug_422693(reporter);
-    test_huge(reporter);
+DEF_TEST(AAClip_setPath_LargePathSmallClip_StillBlits, reporter) {
+    // This test verifies the root cause of https://bugzilla.mozilla.org/show_bug.cgi?id=1909796
+    // does not regress.
+    SkAAClip clip;
+
+    // Be advised that 2^31 will get turned into a float...
+    SkPath largePath = SkPath::Rect(SkRect::MakeLTRB(-1000, 10,
+         std::numeric_limits<int32_t>::max(), 20));
+    SkIRect bounds;
+    // ... and then back into an integer, so it won't be 2^31 any more
+    // (e.g. 2147483520). Therefore, we pick the left to be big enough
+    // to make the bounds exceed 31 bits again.
+    largePath.getBounds().roundOut(&bounds);
+    // SkIRect expects to work with 32 bit integers. If the width
+    // or height exceeds 32 bits, isEmpty() returns •true•
+    SkASSERT(bounds.isEmpty());
+    // But the 64 bit version works fine.
+    SkASSERT(!bounds.isEmpty64());
+
+    // Make sure the clip overlaps a little bit
+    SkIRect smallClip = SkIRect::MakeLTRB(5, 5, 15, 15);
+    SkASSERT(bounds.intersect(smallClip));
+
+    REPORTER_ASSERT(reporter, clip.setPath(largePath, smallClip, true));
+    REPORTER_ASSERT(reporter, clip.setPath(largePath, smallClip, false));
 }

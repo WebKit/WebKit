@@ -14,26 +14,8 @@
 #include <utility>
 
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
-
-namespace {
-class NullSmoothingFilter final : public SmoothingFilter {
- public:
-  void AddSample(float sample) override { last_sample_ = sample; }
-
-  absl::optional<float> GetAverage() override { return last_sample_; }
-
-  bool SetTimeConstantMs(int time_constant_ms) override {
-    RTC_DCHECK_NOTREACHED();
-    return false;
-  }
-
- private:
-  absl::optional<float> last_sample_;
-};
-}  // namespace
 
 FecControllerPlrBased::Config::Config(
     bool initial_fec_enabled,
@@ -57,10 +39,7 @@ FecControllerPlrBased::FecControllerPlrBased(
 FecControllerPlrBased::FecControllerPlrBased(const Config& config)
     : FecControllerPlrBased(
           config,
-          webrtc::field_trial::FindFullName("UseTwccPlrForAna") == "Enabled"
-              ? std::unique_ptr<NullSmoothingFilter>(new NullSmoothingFilter())
-              : std::unique_ptr<SmoothingFilter>(
-                    new SmoothingFilterImpl(config.time_constant_ms))) {}
+          std::make_unique<SmoothingFilterImpl>(config.time_constant_ms)) {}
 
 FecControllerPlrBased::~FecControllerPlrBased() = default;
 
@@ -89,7 +68,7 @@ void FecControllerPlrBased::MakeDecision(AudioEncoderRuntimeConfig* config) {
 }
 
 bool FecControllerPlrBased::FecEnablingDecision(
-    const absl::optional<float>& packet_loss) const {
+    const std::optional<float>& packet_loss) const {
   if (!uplink_bandwidth_bps_ || !packet_loss) {
     return false;
   } else {
@@ -100,7 +79,7 @@ bool FecControllerPlrBased::FecEnablingDecision(
 }
 
 bool FecControllerPlrBased::FecDisablingDecision(
-    const absl::optional<float>& packet_loss) const {
+    const std::optional<float>& packet_loss) const {
   if (!uplink_bandwidth_bps_ || !packet_loss) {
     return false;
   } else {

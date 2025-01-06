@@ -29,6 +29,7 @@
 
 #include "RemoteGPURequestAdapterResponse.h"
 #include "RemoteVideoFrameIdentifier.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "StreamConnectionWorkQueue.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
@@ -41,6 +42,7 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
@@ -51,6 +53,7 @@ struct PresentationContextDescriptor;
 }
 
 namespace IPC {
+class Connection;
 class StreamServerConnection;
 }
 
@@ -71,7 +74,7 @@ struct RequestAdapterOptions;
 }
 
 class RemoteGPU final : public IPC::StreamMessageReceiver, public CanMakeWeakPtr<RemoteGPU> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteGPU);
 public:
     static Ref<RemoteGPU> create(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& serverConnection)
     {
@@ -79,6 +82,8 @@ public:
         result->initialize();
         return result;
     }
+
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
 
     virtual ~RemoteGPU();
 
@@ -97,15 +102,21 @@ private:
     RemoteGPU& operator=(const RemoteGPU&) = delete;
     RemoteGPU& operator=(RemoteGPU&&) = delete;
 
+    RefPtr<IPC::Connection> connection() const;
+
     void initialize();
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
+    Ref<IPC::StreamConnectionWorkQueue> protectedWorkQueue() const { return m_workQueue; }
     void workQueueInitialize();
     void workQueueUninitialize();
 
     template<typename T>
     IPC::Error send(T&& message) const
     {
-        return m_streamConnection->send(std::forward<T>(message), m_identifier);
+        // FIXME: Remove this suppression once https://github.com/llvm/llvm-project/pull/119336 is merged.
+IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_BEGIN("alpha.webkit.UncountedCallArgsChecker")
+        return Ref { *m_streamConnection }->send(std::forward<T>(message), m_identifier);
+IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_END
     }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
@@ -119,6 +130,7 @@ private:
     void isValid(WebGPUIdentifier, CompletionHandler<void(bool, bool)>&&);
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
     RefPtr<WebCore::WebGPU::GPU> m_backing WTF_GUARDED_BY_CAPABILITY(workQueue());

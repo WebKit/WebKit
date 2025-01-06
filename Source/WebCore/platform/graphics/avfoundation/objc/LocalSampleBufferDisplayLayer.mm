@@ -41,6 +41,7 @@
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/MonotonicTime.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/TypeCastsCF.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -128,6 +129,8 @@ using namespace WebCore;
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalSampleBufferDisplayLayer);
 
 static void runWithoutAnimations(const WTF::Function<void()>& function)
 {

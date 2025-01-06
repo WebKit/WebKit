@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/change-rotate-property-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/change-rotate-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/change-scale-property-expected.html

@@ -57,7 +57,7 @@ class MediaSourcePrivateGStreamer;
 class SourceBufferPrivateGStreamer final : public SourceBufferPrivate, public CanMakeWeakPtr<SourceBufferPrivateGStreamer> {
 public:
     static bool isContentTypeSupported(const ContentType&);
-    static Ref<SourceBufferPrivateGStreamer> create(MediaSourcePrivateGStreamer&, const ContentType&, MediaPlayerPrivateGStreamerMSE&);
+    static Ref<SourceBufferPrivateGStreamer> create(MediaSourcePrivateGStreamer&, const ContentType&);
     ~SourceBufferPrivateGStreamer();
 
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::GStreamer; }
@@ -81,13 +81,16 @@ public:
 
     ContentType type() const { return m_type; }
 
+    std::optional<TrackID> tryRegisterTrackId(TrackID);
+    bool tryUnregisterTrackId(TrackID);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const override { return "SourceBufferPrivateGStreamer"_s; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
     const Logger& sourceBufferLogger() const final { return m_logger; }
-    const void* sourceBufferLogIdentifier() final { return logIdentifier(); }
+    uint64_t sourceBufferLogIdentifier() final { return logIdentifier(); }
 #endif
 
     size_t platformMaximumBufferSize() const override;
@@ -96,20 +99,22 @@ public:
 private:
     friend class AppendPipeline;
 
-    SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer&, const ContentType&, MediaPlayerPrivateGStreamerMSE&);
+    SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer&, const ContentType&);
+    RefPtr<MediaPlayerPrivateGStreamerMSE> player() const;
 
     void notifyClientWhenReadyForMoreSamples(TrackID) override;
 
+    void detach() final;
+
     bool m_hasBeenRemovedFromMediaSource { false };
     ContentType m_type;
-    MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
     std::unique_ptr<AppendPipeline> m_appendPipeline;
     StdUnorderedMap<TrackID, RefPtr<MediaSourceTrackGStreamer>> m_tracks;
     std::optional<MediaPromise::Producer> m_appendPromise;
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

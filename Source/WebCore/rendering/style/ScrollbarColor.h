@@ -30,22 +30,22 @@
 namespace WebCore {
 
 struct ScrollbarColor {
-    StyleColor thumbColor;
-    StyleColor trackColor;
+    Style::Color thumbColor;
+    Style::Color trackColor;
 
     struct MarkableTraits {
         static bool isEmptyValue(const ScrollbarColor& value)
         {
-            return value.thumbColor.isAbsoluteColor() && !value.thumbColor.absoluteColor().isValid();
+            return Style::Color::MarkableTraits::isEmptyValue(value.thumbColor);
         }
 
         static ScrollbarColor emptyValue()
         {
-            return { Color { }, Color { } };
+            return { Style::Color::MarkableTraits::emptyValue(), Style::Color::MarkableTraits::emptyValue() };
         }
     };
 
-    friend bool operator==(const ScrollbarColor&, const ScrollbarColor&) = default;
+    bool operator==(const ScrollbarColor&) const = default;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollbarColor&);

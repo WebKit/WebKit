@@ -43,6 +43,13 @@ ARKitInlinePreviewModelPlayer::~ARKitInlinePreviewModelPlayer()
 {
 }
 
+#if ENABLE(MODEL_PROCESS)
+WebCore::ModelPlayerIdentifier ARKitInlinePreviewModelPlayer::identifier() const
+{
+    return m_id;
+}
+#endif
+
 void ARKitInlinePreviewModelPlayer::load(WebCore::Model&, WebCore::LayoutSize)
 {
 }

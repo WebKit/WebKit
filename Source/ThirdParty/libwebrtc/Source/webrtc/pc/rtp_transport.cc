@@ -15,7 +15,6 @@
 #include <cstdint>
 #include <utility>
 
-#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "api/units/timestamp.h"
 #include "media/base/rtp_utils.h"
@@ -54,18 +53,21 @@ void RtpTransport::SetRtpPacketTransport(
   }
   if (rtp_packet_transport_) {
     rtp_packet_transport_->SignalReadyToSend.disconnect(this);
-    rtp_packet_transport_->SignalReadPacket.disconnect(this);
+    rtp_packet_transport_->DeregisterReceivedPacketCallback(this);
     rtp_packet_transport_->SignalNetworkRouteChanged.disconnect(this);
     rtp_packet_transport_->SignalWritableState.disconnect(this);
     rtp_packet_transport_->SignalSentPacket.disconnect(this);
     // Reset the network route of the old transport.
-    SendNetworkRouteChanged(absl::optional<rtc::NetworkRoute>());
+    SendNetworkRouteChanged(std::optional<rtc::NetworkRoute>());
   }
   if (new_packet_transport) {
     new_packet_transport->SignalReadyToSend.connect(
         this, &RtpTransport::OnReadyToSend);
-    new_packet_transport->SignalReadPacket.connect(this,
-                                                   &RtpTransport::OnReadPacket);
+    new_packet_transport->RegisterReceivedPacketCallback(
+        this, [&](rtc::PacketTransportInternal* transport,
+                  const rtc::ReceivedPacket& packet) {
+          OnReadPacket(transport, packet);
+        });
     new_packet_transport->SignalNetworkRouteChanged.connect(
         this, &RtpTransport::OnNetworkRouteChanged);
     new_packet_transport->SignalWritableState.connect(
@@ -77,8 +79,6 @@ void RtpTransport::SetRtpPacketTransport(
   }
 
   rtp_packet_transport_ = new_packet_transport;
-  // Assumes the transport is ready to send if it is writable. If we are wrong,
-  // ready to send will be updated the next time we try to send.
   SetReadyToSend(false,
                  rtp_packet_transport_ && rtp_packet_transport_->writable());
 }
@@ -90,18 +90,21 @@ void RtpTransport::SetRtcpPacketTransport(
   }
   if (rtcp_packet_transport_) {
     rtcp_packet_transport_->SignalReadyToSend.disconnect(this);
-    rtcp_packet_transport_->SignalReadPacket.disconnect(this);
+    rtcp_packet_transport_->DeregisterReceivedPacketCallback(this);
     rtcp_packet_transport_->SignalNetworkRouteChanged.disconnect(this);
     rtcp_packet_transport_->SignalWritableState.disconnect(this);
     rtcp_packet_transport_->SignalSentPacket.disconnect(this);
     // Reset the network route of the old transport.
-    SendNetworkRouteChanged(absl::optional<rtc::NetworkRoute>());
+    SendNetworkRouteChanged(std::optional<rtc::NetworkRoute>());
   }
   if (new_packet_transport) {
     new_packet_transport->SignalReadyToSend.connect(
         this, &RtpTransport::OnReadyToSend);
-    new_packet_transport->SignalReadPacket.connect(this,
-                                                   &RtpTransport::OnReadPacket);
+    new_packet_transport->RegisterReceivedPacketCallback(
+        this, [&](rtc::PacketTransportInternal* transport,
+                  const rtc::ReceivedPacket& packet) {
+          OnReadPacket(transport, packet);
+        });
     new_packet_transport->SignalNetworkRouteChanged.connect(
         this, &RtpTransport::OnNetworkRouteChanged);
     new_packet_transport->SignalWritableState.connect(
@@ -113,8 +116,7 @@ void RtpTransport::SetRtcpPacketTransport(
   }
   rtcp_packet_transport_ = new_packet_transport;
 
-  // Assumes the transport is ready to send if it is writable. If we are wrong,
-  // ready to send will be updated the next time we try to send.
+  // Assumes the transport is ready to send if it is writable.
   SetReadyToSend(true,
                  rtcp_packet_transport_ && rtcp_packet_transport_->writable());
 }
@@ -148,9 +150,13 @@ bool RtpTransport::SendPacket(bool rtcp,
   int ret = transport->SendPacket(packet->cdata<char>(), packet->size(),
                                   options, flags);
   if (ret != static_cast<int>(packet->size())) {
-    if (transport->GetError() == ENOTCONN) {
-      RTC_LOG(LS_WARNING) << "Got ENOTCONN from transport.";
-      SetReadyToSend(rtcp, false);
+    if (set_ready_to_send_false_if_send_fail_) {
+      // TODO: webrtc:361124449 - Remove SetReadyToSend if field trial
+      // WebRTC-SetReadyToSendFalseIfSendFail succeed 2024-12-01.
+      if (transport->GetError() == ENOTCONN) {
+        RTC_LOG(LS_WARNING) << "Got ENOTCONN from transport.";
+        SetReadyToSend(rtcp, false);
+      }
     }
     return false;
   }
@@ -180,12 +186,17 @@ bool RtpTransport::UnregisterRtpDemuxerSink(RtpPacketSinkInterface* sink) {
   return true;
 }
 
+flat_set<uint32_t> RtpTransport::GetSsrcsForSink(RtpPacketSinkInterface* sink) {
+  return rtp_demuxer_.GetSsrcsForSink(sink);
+}
+
 void RtpTransport::DemuxPacket(rtc::CopyOnWriteBuffer packet,
-                               int64_t packet_time_us) {
-  webrtc::RtpPacketReceived parsed_packet(
-      &header_extension_map_, packet_time_us == -1
-                                  ? Timestamp::MinusInfinity()
-                                  : Timestamp::Micros(packet_time_us));
+                               webrtc::Timestamp arrival_time,
+                               rtc::EcnMarking ecn) {
+  RtpPacketReceived parsed_packet(&header_extension_map_);
+  parsed_packet.set_arrival_time(arrival_time);
+  parsed_packet.set_ecn(ecn);
+
   if (!parsed_packet.Parse(std::move(packet))) {
     RTC_LOG(LS_ERROR)
         << "Failed to parse the incoming RTP packet before demuxing. Drop it.";
@@ -211,7 +222,7 @@ void RtpTransport::OnReadyToSend(rtc::PacketTransportInternal* transport) {
 }
 
 void RtpTransport::OnNetworkRouteChanged(
-    absl::optional<rtc::NetworkRoute> network_route) {
+    std::optional<rtc::NetworkRoute> network_route) {
   SendNetworkRouteChanged(network_route);
 }
 
@@ -226,48 +237,62 @@ void RtpTransport::OnSentPacket(rtc::PacketTransportInternal* packet_transport,
                                 const rtc::SentPacket& sent_packet) {
   RTC_DCHECK(packet_transport == rtp_packet_transport_ ||
              packet_transport == rtcp_packet_transport_);
+  if (processing_sent_packet_) {
+    TaskQueueBase::Current()->PostTask(SafeTask(
+        safety_.flag(), [this, sent_packet] { SendSentPacket(sent_packet); }));
+    return;
+  }
+  processing_sent_packet_ = true;
   SendSentPacket(sent_packet);
+  processing_sent_packet_ = false;
 }
 
-void RtpTransport::OnRtpPacketReceived(rtc::CopyOnWriteBuffer packet,
-                                       int64_t packet_time_us) {
-  DemuxPacket(packet, packet_time_us);
+void RtpTransport::OnRtpPacketReceived(
+    const rtc::ReceivedPacket& received_packet) {
+  rtc::CopyOnWriteBuffer payload(received_packet.payload());
+  DemuxPacket(
+      payload,
+      received_packet.arrival_time().value_or(Timestamp::MinusInfinity()),
+      received_packet.ecn());
 }
 
-void RtpTransport::OnRtcpPacketReceived(rtc::CopyOnWriteBuffer packet,
-                                        int64_t packet_time_us) {
-  SendRtcpPacketReceived(&packet, packet_time_us);
+void RtpTransport::OnRtcpPacketReceived(
+    const rtc::ReceivedPacket& received_packet) {
+  rtc::CopyOnWriteBuffer payload(received_packet.payload());
+  // TODO(bugs.webrtc.org/15368): Propagate timestamp and maybe received packet
+  // further.
+  SendRtcpPacketReceived(&payload, received_packet.arrival_time()
+                                       ? received_packet.arrival_time()->us()
+                                       : -1);
 }
 
 void RtpTransport::OnReadPacket(rtc::PacketTransportInternal* transport,
-                                const char* data,
-                                size_t len,
-                                const int64_t& packet_time_us,
-                                int flags) {
+                                const rtc::ReceivedPacket& received_packet) {
   TRACE_EVENT0("webrtc", "RtpTransport::OnReadPacket");
 
   // When using RTCP multiplexing we might get RTCP packets on the RTP
   // transport. We check the RTP payload type to determine if it is RTCP.
-  auto array_view = rtc::MakeArrayView(data, len);
-  cricket::RtpPacketType packet_type = cricket::InferRtpPacketType(array_view);
+  cricket::RtpPacketType packet_type =
+      cricket::InferRtpPacketType(received_packet.payload());
   // Filter out the packet that is neither RTP nor RTCP.
   if (packet_type == cricket::RtpPacketType::kUnknown) {
     return;
   }
 
   // Protect ourselves against crazy data.
-  if (!cricket::IsValidRtpPacketSize(packet_type, len)) {
+  if (!cricket::IsValidRtpPacketSize(packet_type,
+                                     received_packet.payload().size())) {
     RTC_LOG(LS_ERROR) << "Dropping incoming "
                       << cricket::RtpPacketTypeToString(packet_type)
-                      << " packet: wrong size=" << len;
+                      << " packet: wrong size="
+                      << received_packet.payload().size();
     return;
   }
 
-  rtc::CopyOnWriteBuffer packet(data, len);
   if (packet_type == cricket::RtpPacketType::kRtcp) {
-    OnRtcpPacketReceived(std::move(packet), packet_time_us);
+    OnRtcpPacketReceived(received_packet);
   } else {
-    OnRtpPacketReceived(std::move(packet), packet_time_us);
+    OnRtpPacketReceived(received_packet);
   }
 }
 

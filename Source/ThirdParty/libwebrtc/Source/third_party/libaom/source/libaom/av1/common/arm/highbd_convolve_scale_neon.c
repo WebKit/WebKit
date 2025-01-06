@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -23,7 +23,7 @@
 #include "av1/common/filter.h"
 #include "av1/common/arm/highbd_convolve_neon.h"
 
-static INLINE void highbd_dist_wtd_comp_avg_neon(
+static inline void highbd_dist_wtd_comp_avg_neon(
     const uint16_t *src_ptr, int src_stride, uint16_t *dst_ptr, int dst_stride,
     int w, int h, ConvolveParams *conv_params, const int round_bits,
     const int offset, const int bd) {
@@ -51,7 +51,7 @@ static INLINE void highbd_dist_wtd_comp_avg_neon(
       d0_u16 = vmin_u16(d0_u16, vget_low_u16(max));
 
       if (w == 2) {
-        store_u16_2x1(dst_ptr, d0_u16, 0);
+        store_u16_2x1(dst_ptr, d0_u16);
       } else {
         vst1_u16(dst_ptr, d0_u16);
       }
@@ -98,7 +98,7 @@ static INLINE void highbd_dist_wtd_comp_avg_neon(
   }
 }
 
-static INLINE void highbd_comp_avg_neon(const uint16_t *src_ptr, int src_stride,
+static inline void highbd_comp_avg_neon(const uint16_t *src_ptr, int src_stride,
                                         uint16_t *dst_ptr, int dst_stride,
                                         int w, int h,
                                         ConvolveParams *conv_params,
@@ -123,7 +123,7 @@ static INLINE void highbd_comp_avg_neon(const uint16_t *src_ptr, int src_stride,
       d0_u16 = vmin_u16(d0_u16, vget_low_u16(max));
 
       if (w == 2) {
-        store_u16_2x1(dst_ptr, d0_u16, 0);
+        store_u16_2x1(dst_ptr, d0_u16);
       } else {
         vst1_u16(dst_ptr, d0_u16);
       }
@@ -167,7 +167,7 @@ static INLINE void highbd_comp_avg_neon(const uint16_t *src_ptr, int src_stride,
   }
 }
 
-static INLINE void highbd_convolve_2d_x_scale_8tap_neon(
+static inline void highbd_convolve_2d_x_scale_8tap_neon(
     const uint16_t *src_ptr, int src_stride, uint16_t *dst_ptr, int dst_stride,
     int w, int h, const int subpel_x_qn, const int x_step_qn,
     const InterpFilterParams *filter_params, ConvolveParams *conv_params,
@@ -260,9 +260,9 @@ static INLINE void highbd_convolve_2d_x_scale_8tap_neon(
           s0, s1, s2, s3, filters_lo, filters_hi, shift_s32, offset_s32);
 
       if (w == 2) {
-        store_u16_2x1(d + 0 * dst_stride, d0, 0);
+        store_u16_2x1(d, d0);
       } else {
-        vst1_u16(d + 0 * dst_stride, d0);
+        vst1_u16(d, d0);
       }
 
       src_ptr += src_stride;
@@ -368,7 +368,7 @@ static INLINE void highbd_convolve_2d_x_scale_8tap_neon(
   }
 }
 
-static INLINE void highbd_convolve_2d_y_scale_8tap_neon(
+static inline void highbd_convolve_2d_y_scale_8tap_neon(
     const uint16_t *src_ptr, int src_stride, uint16_t *dst_ptr, int dst_stride,
     int w, int h, const int subpel_y_qn, const int y_step_qn,
     const InterpFilterParams *filter_params, const int round1_bits,
@@ -398,7 +398,7 @@ static INLINE void highbd_convolve_2d_y_scale_8tap_neon(
           offset_s32, vdupq_n_s32(0));
 
       if (w == 2) {
-        store_u16_2x1(d, d0, 0);
+        store_u16_2x1(d, d0);
       } else {
         vst1_u16(d, d0);
       }
@@ -443,7 +443,7 @@ static INLINE void highbd_convolve_2d_y_scale_8tap_neon(
   }
 }
 
-static INLINE void highbd_convolve_correct_offset_neon(
+static inline void highbd_convolve_correct_offset_neon(
     const uint16_t *src_ptr, int src_stride, uint16_t *dst_ptr, int dst_stride,
     int w, int h, const int round_bits, const int offset, const int bd) {
   const int32x4_t round_shift_s32 = vdupq_n_s32(-round_bits);
@@ -458,7 +458,7 @@ static INLINE void highbd_convolve_correct_offset_neon(
       uint16x4_t d = vqmovun_s32(d0);
       d = vmin_u16(d, vget_low_u16(max));
       if (w == 2) {
-        store_u16_2x1(dst_ptr + y * dst_stride, d, 0);
+        store_u16_2x1(dst_ptr + y * dst_stride, d);
       } else {
         vst1_u16(dst_ptr + y * dst_stride, d);
       }

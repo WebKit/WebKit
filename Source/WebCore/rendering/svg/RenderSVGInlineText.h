@@ -31,7 +31,7 @@ namespace WebCore {
 class SVGInlineTextBox;
 
 class RenderSVGInlineText final : public RenderText {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGInlineText);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGInlineText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInlineText);
 public:
     RenderSVGInlineText(Text&, const String&);
@@ -41,6 +41,7 @@ public:
 
     bool characterStartsNewTextChunk(int position) const;
     SVGTextLayoutAttributes* layoutAttributes() { return &m_layoutAttributes; }
+    const SVGTextLayoutAttributes* layoutAttributes() const { return &m_layoutAttributes; }
 
     // computeScalingFactor() returns the font-size scaling factor, ignoring the text-rendering mode.
     // scalingFactor() takes it into account, and thus returns 1 whenever text-rendering is set to 'geometricPrecision'.
@@ -54,8 +55,6 @@ public:
 
     // Preserves floating point precision for the use in DRT. It knows how to round and does a better job than enclosingIntRect.
     FloatRect floatLinesBoundingBox() const;
-
-    SVGInlineTextBox* firstTextBox() const;
 
 private:
     ASCIILiteral renderName() const override { return "RenderSVGInlineText"_s; }

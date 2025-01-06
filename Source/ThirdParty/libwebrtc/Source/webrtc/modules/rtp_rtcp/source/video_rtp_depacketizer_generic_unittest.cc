@@ -12,7 +12,8 @@
 
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "rtc_base/copy_on_write_buffer.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -28,11 +29,11 @@ TEST(VideoRtpDepacketizerGeneric, NonExtendedHeaderNoFrameId) {
   rtc::CopyOnWriteBuffer rtp_payload(kPayload);
 
   VideoRtpDepacketizerGeneric depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(rtp_payload);
 
   ASSERT_TRUE(parsed);
-  EXPECT_EQ(parsed->video_header.generic, absl::nullopt);
+  EXPECT_EQ(parsed->video_header.generic, std::nullopt);
   EXPECT_THAT(parsed->video_payload, SizeIs(kRtpPayloadSize - 1));
 }
 
@@ -42,7 +43,7 @@ TEST(VideoRtpDepacketizerGeneric, ExtendedHeaderParsesFrameId) {
   rtc::CopyOnWriteBuffer rtp_payload(kPayload);
 
   VideoRtpDepacketizerGeneric depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(rtp_payload);
 
   ASSERT_TRUE(parsed);
@@ -58,7 +59,7 @@ TEST(VideoRtpDepacketizerGeneric, PassRtpPayloadAsVideoPayload) {
   rtc::CopyOnWriteBuffer rtp_payload(kPayload);
 
   VideoRtpDepacketizerGeneric depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(rtp_payload);
 
   ASSERT_TRUE(parsed);

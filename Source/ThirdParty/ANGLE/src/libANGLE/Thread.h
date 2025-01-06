@@ -49,7 +49,7 @@ class Thread : public LabeledObject
                   const LabeledObject *object,
                   const char *message);
 
-    // TODO: Remove egl::Error. http://anglebug.com/3041
+    // TODO: Remove egl::Error. http://anglebug.com/42261727
     void setError(const Error &error, const char *command, const LabeledObject *object);
     EGLint getError() const;
 

@@ -44,7 +44,7 @@ namespace WebCore {
 class SVGElement;
 
 class LegacyRenderSVGModelObject : public RenderElement {
-    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGModelObject);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGModelObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGModelObject);
 public:
     virtual ~LegacyRenderSVGModelObject();

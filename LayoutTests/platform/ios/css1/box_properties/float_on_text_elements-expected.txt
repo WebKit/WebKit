@@ -158,18 +158,18 @@ layer at (0,0) size 800x2992
             text run at (31,120) width 144: "stripe on its right side."
       RenderBlock (anonymous) at (0,1309) size 784x140
         RenderBR {BR} at (588,0) size 0x19
-      RenderTable {TABLE} at (0,1467) size 784x1509 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,1467) size 784x1509 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x1507
           RenderTableRow {TR} at (0,0) size 782x28
-            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 782x1479
-            RenderTableCell {TD} at (0,753) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,753) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,729) size 4x20
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 770x1479 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,28) size 770x1479 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (floating) {P} at (4,4) size 381x40 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 381x39
                   text run at (0,0) width 381: "This paragraph is of class \"one\". It has a width of 50% and"

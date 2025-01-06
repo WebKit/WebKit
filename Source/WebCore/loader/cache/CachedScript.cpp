@@ -29,14 +29,18 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceRequest.h"
-#include "RuntimeApplicationChecks.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 
+#if PLATFORM(MAC)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 
-CachedScript::CachedScript(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
+CachedScript::CachedScript(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, ScriptRequiresTelemetry requiresTelemetry)
     : CachedResource(WTFMove(request), Type::Script, sessionID, cookieJar)
+    , m_requiresTelemetry(requiresTelemetry == ScriptRequiresTelemetry::Yes)
     , m_decoder(TextResourceDecoder::create("text/javascript"_s, request.charset()))
 {
 }
@@ -53,9 +57,9 @@ void CachedScript::setEncoding(const String& chs)
     protectedDecoder()->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
-String CachedScript::encoding() const
+ASCIILiteral CachedScript::encoding() const
 {
-    return String::fromLatin1(protectedDecoder()->encoding().name());
+    return protectedDecoder()->encoding().name();
 }
 
 StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
@@ -153,7 +157,7 @@ bool CachedScript::shouldIgnoreHTTPStatusCodeErrors() const
     // The installer in question tries to load .js file that doesn't exist, causing the server to
     // return a 404 response. Normally, this would trigger an error event to be dispatched, but the
     // installer expects a load event instead so we work around it here.
-    if (MacApplication::isSolidStateNetworksDownloader())
+    if (WTF::MacApplication::isSolidStateNetworksDownloader())
         return true;
 #endif
 

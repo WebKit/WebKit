@@ -18,7 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/README.md
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/capturing_boundary_event_handler_at_ua_shadowdom.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/coalesced_events_attributes.https.html
-/LayoutTests/imported/w3c/web-platform-tests/pointerevents/coalesced_events_attributes_under_load.https.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/coalesced_events_attributes_under_load.https.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/idlharness.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/mouse-pointer-boundary-events-for-shadowdom.html
@@ -28,9 +28,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-will-change-scrollbar.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-will-change.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent-boundary-event-target-when-hover-generates-content-under-pointer.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_appended.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_appended_interleaved.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed_from_slot.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed_interleaved.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_auxclick_is_a_pointerevent.html
@@ -113,6 +115,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_suppress_compat_events_on_click.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_suppress_compat_events_on_drag_mouse.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_tiltX_tiltY_to_azimuth_altitude.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_to_slotted_target.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-auto-css_touch.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-button-none-test_touch.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-illegal.html

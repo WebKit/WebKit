@@ -9,6 +9,7 @@
  */
 
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
+#include "api/environment/environment_factory.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
 #include "api/test/metrics/metric.h"
 #include "modules/audio_coding/neteq/tools/audio_loop.h"
@@ -23,10 +24,11 @@ using ::webrtc::test::GetGlobalMetricsLogger;
 using ::webrtc::test::ImprovementDirection;
 using ::webrtc::test::Unit;
 
-int64_t RunComplexityTest(const AudioEncoderOpusConfig& config) {
+int64_t RunComplexityTest(const Environment& env,
+                          const AudioEncoderOpusConfig& config) {
   // Create encoder.
-  constexpr int payload_type = 17;
-  const auto encoder = AudioEncoderOpus::MakeAudioEncoder(config, payload_type);
+  const auto encoder =
+      AudioEncoderOpus::MakeAudioEncoder(env, config, {.payload_type = 17});
   // Open speech file.
   const std::string kInputFileName =
       webrtc::test::ResourcePath("audio_coding/speech_mono_32_48kHz", "pcm");
@@ -63,16 +65,17 @@ int64_t RunComplexityTest(const AudioEncoderOpusConfig& config) {
 // be higher, since we have explicitly asked for a higher complexity setting at
 // the lower rate.
 TEST(AudioEncoderOpusComplexityAdaptationTest, Adaptation_On) {
+  const Environment env = CreateEnvironment();
   // Create config.
   AudioEncoderOpusConfig config;
   // The limit -- including the hysteresis window -- at which the complexity
   // shuold be increased.
   config.bitrate_bps = 11000 - 1;
   config.low_rate_complexity = 9;
-  int64_t runtime_10999bps = RunComplexityTest(config);
+  int64_t runtime_10999bps = RunComplexityTest(env, config);
 
   config.bitrate_bps = 15500;
-  int64_t runtime_15500bps = RunComplexityTest(config);
+  int64_t runtime_15500bps = RunComplexityTest(env, config);
 
   GetGlobalMetricsLogger()->LogSingleValueMetric(
       "opus_encoding_complexity_ratio", "adaptation_on",
@@ -84,16 +87,17 @@ TEST(AudioEncoderOpusComplexityAdaptationTest, Adaptation_On) {
 // adaptation enabled (neither on desktop, nor on mobile). The expectation is
 // that the resulting ratio is less than 100% at all times.
 TEST(AudioEncoderOpusComplexityAdaptationTest, Adaptation_Off) {
+  const Environment env = CreateEnvironment();
   // Create config.
   AudioEncoderOpusConfig config;
   // The limit -- including the hysteresis window -- at which the complexity
   // shuold be increased (but not in this test since complexity adaptation is
   // disabled).
   config.bitrate_bps = 11000 - 1;
-  int64_t runtime_10999bps = RunComplexityTest(config);
+  int64_t runtime_10999bps = RunComplexityTest(env, config);
 
   config.bitrate_bps = 15500;
-  int64_t runtime_15500bps = RunComplexityTest(config);
+  int64_t runtime_15500bps = RunComplexityTest(env, config);
 
   GetGlobalMetricsLogger()->LogSingleValueMetric(
       "opus_encoding_complexity_ratio", "adaptation_off",

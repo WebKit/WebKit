@@ -30,12 +30,6 @@
 #include "GLContextWrapper.h"
 #include "GraphicsContextGLANGLE.h"
 
-#if USE(NICOSIA)
-namespace Nicosia {
-class GCGLANGLELayer;
-}
-#endif
-
 namespace WebCore {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -44,39 +38,41 @@ class GLFence;
 
 class TextureMapperGCGLPlatformLayer;
 
-class WEBCORE_EXPORT GraphicsContextGLTextureMapperANGLE : public GLContextWrapper, public GraphicsContextGLANGLE {
+class GraphicsContextGLTextureMapperANGLE : public GLContextWrapper, public GraphicsContextGLANGLE {
 public:
-    static RefPtr<GraphicsContextGLTextureMapperANGLE> create(WebCore::GraphicsContextGLAttributes&&);
+    WEBCORE_EXPORT static RefPtr<GraphicsContextGLTextureMapperANGLE> create(WebCore::GraphicsContextGLAttributes&&);
     virtual ~GraphicsContextGLTextureMapperANGLE();
 
     // GraphicsContextGLANGLE overrides.
-    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
+    WEBCORE_EXPORT RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
 #if ENABLE(VIDEO)
-    bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
+    bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
 #endif
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
 #endif
     RefPtr<PixelBuffer> readCompositedResults() final;
 
-    void setContextVisibility(bool) final;
-    bool reshapeDrawingBuffer() final;
-    void prepareForDisplay() final;
+    bool reshapeDrawingBuffer() override;
+    void prepareForDisplay() override;
 #if ENABLE(WEBXR)
     bool addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) final;
     void enableFoveation(GCGLuint) final;
     void disableFoveation() final;
 #endif
 
-private:
-    GraphicsContextGLTextureMapperANGLE(WebCore::GraphicsContextGLAttributes&&);
+protected:
+    explicit GraphicsContextGLTextureMapperANGLE(WebCore::GraphicsContextGLAttributes&&);
 
+    RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
+
+private:
     bool platformInitializeContext() final;
-    bool platformInitialize() final;
+    bool platformInitialize() override;
 
     void swapCompositorTexture();
 
-#if USE(NICOSIA)
+#if USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
     GCGLuint setupCurrentTexture();
 #endif
 
@@ -85,8 +81,6 @@ private:
     bool makeCurrentImpl() override;
     bool unmakeCurrentImpl() override;
 
-    RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
-
     GCGLuint m_compositorTexture { 0 };
     bool m_isCompositorTextureInitialized { false };
 
@@ -94,14 +88,12 @@ private:
     std::unique_ptr<GLFence> m_frameFence;
 #endif
 
-#if USE(NICOSIA)
+#if USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
     GCGLuint m_textureID { 0 };
     GCGLuint m_compositorTextureID { 0 };
+#endif
 
-    std::unique_ptr<Nicosia::GCGLANGLELayer> m_nicosiaLayer;
-
-    friend class Nicosia::GCGLANGLELayer;
-#else
+#if !USE(COORDINATED_GRAPHICS)
     std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
 
     friend class TextureMapperGCGLPlatformLayer;

@@ -32,7 +32,7 @@ class FakeEncodedFrame : public AudioDecoder::EncodedAudioFrame {
 
   size_t Duration() const override { return duration_; }
 
-  absl::optional<DecodeResult> Decode(
+  std::optional<DecodeResult> Decode(
       rtc::ArrayView<int16_t> decoded) const override {
     if (is_dtx_) {
       std::fill_n(decoded.data(), duration_, 0);

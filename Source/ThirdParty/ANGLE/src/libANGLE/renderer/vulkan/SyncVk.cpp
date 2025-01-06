@@ -173,9 +173,6 @@ angle::Result SyncHelper::prepareForClientWait(Context *context,
             RenderPassClosureReason::SyncObjectClientWait));
     }
 
-    // Submit commands if it was deferred on the context that issued the sync object
-    ANGLE_TRY(submitSyncIfDeferred(contextVk, RenderPassClosureReason::SyncObjectClientWait));
-
     *resultOut = VK_INCOMPLETE;
     return angle::Result::Continue;
 }
@@ -261,8 +258,26 @@ angle::Result SyncHelper::getStatus(Context *context, ContextVk *contextVk, bool
     }
     else
     {
-        // Do immediate check in case it actually already finished.
-        ANGLE_TRY(renderer->checkCompletedCommands(context));
+        // Check completed commands once before returning, perhaps the serial is actually already
+        // finished.
+        // We don't call checkCompletedCommandsAndCleanup() to cleanup finished commands immediately
+        // if isAsyncCommandBufferResetAndGarbageCleanupEnabled feature is turned off.
+        // Because when isAsyncCommandBufferResetAndGarbageCleanupEnabled feature is turned off,
+        // vkResetCommandBuffer() is called in cleanup step, and it must take the
+        // CommandPoolAccess::mCmdPoolMutex lock, see details in
+        // CommandPoolAccess::retireFinishedCommands. This means the cleanup step can
+        // be blocked by command buffer recording if another thread calls
+        // CommandPoolAccess::flushRenderPassCommands(), which is against EGL spec when
+        // eglClientWaitSync() should return immediately with timeout == 0.
+        if (renderer->isAsyncCommandBufferResetAndGarbageCleanupEnabled())
+        {
+            ANGLE_TRY(renderer->checkCompletedCommandsAndCleanup(context));
+        }
+        else
+        {
+            ANGLE_TRY(renderer->checkCompletedCommands(context));
+        }
+
         *signaledOut = renderer->hasResourceUseFinished(mUse);
     }
     return angle::Result::Continue;
@@ -272,7 +287,6 @@ angle::Result SyncHelper::submitSyncIfDeferred(ContextVk *contextVk, RenderPassC
 {
     if (contextVk == nullptr)
     {
-        // This is EGLSync case. We always immediately call flushImpl.
         return angle::Result::Continue;
     }
 
@@ -285,8 +299,7 @@ angle::Result SyncHelper::submitSyncIfDeferred(ContextVk *contextVk, RenderPassC
     // render pass before a submission happens for another reason.  If the sync object is being
     // waited on by the current context, the application must have used GL_SYNC_FLUSH_COMMANDS_BIT.
     // However, when waited on by other contexts, the application must have ensured the original
-    // context is flushed.  Due to the deferFlushUntilEndRenderPass feature, a glFlush is not
-    // sufficient to guarantee this.
+    // context is flushed.  Due to deferred flushes, a glFlush is not sufficient to guarantee this.
     //
     // Deferring the submission is restricted to non-EGL sync objects, so it's sufficient to ensure
     // that the contexts in the share group issue their deferred flushes.
@@ -420,8 +433,8 @@ angle::Result SyncHelperNativeFence::initializeWithFd(ContextVk *contextVk, int 
       with the newly created sync object.
     */
     // Flush current pending set of commands providing the fence...
-    ANGLE_TRY(contextVk->flushImpl(nullptr, &mExternalFence,
-                                   RenderPassClosureReason::SyncObjectWithFdInit));
+    ANGLE_TRY(contextVk->flushAndSubmitCommands(nullptr, &mExternalFence,
+                                                RenderPassClosureReason::SyncObjectWithFdInit));
     QueueSerial submitSerial = contextVk->getLastSubmittedQueueSerial();
 
     // exportFd is exporting VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR type handle which
@@ -459,8 +472,8 @@ angle::Result SyncHelperNativeFence::prepareForClientWait(Context *context,
 
     if (flushCommands && contextVk)
     {
-        ANGLE_TRY(
-            contextVk->flushImpl(nullptr, nullptr, RenderPassClosureReason::SyncObjectClientWait));
+        ANGLE_TRY(contextVk->flushAndSubmitCommands(nullptr, nullptr,
+                                                    RenderPassClosureReason::SyncObjectClientWait));
     }
 
     *resultOut = VK_INCOMPLETE;
@@ -668,7 +681,7 @@ egl::Error EGLSyncVk::clientWait(const egl::Display *display,
 
     bool flush = (flags & EGL_SYNC_FLUSH_COMMANDS_BIT_KHR) != 0;
 
-    ContextVk *contextVk = context ? vk::GetImpl(context) : nullptr;
+    ContextVk *contextVk = context != nullptr && flush ? vk::GetImpl(context) : nullptr;
     if (mSyncHelper->clientWait(vk::GetImpl(display), contextVk, flush,
                                 static_cast<uint64_t>(timeout), MapVkResultToEglint,
                                 outResult) == angle::Result::Stop)

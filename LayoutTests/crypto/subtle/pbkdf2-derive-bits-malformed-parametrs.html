@@ -33,7 +33,6 @@ crypto.subtle.importKey("raw", rawKey, "PBKDF2", nonExtractable, ["deriveBits"])
     shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: Symbol(), hash: "sha-1"}, baseKey, 128)');
     // Wrong length
     shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 100000, hash: "sha-1"}, baseKey, null)');
-    shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 100000, hash: "sha-1"}, baseKey, 0)');
     shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 100000, hash: "sha-1"}, baseKey, 5)');
     // Operation Error
     return shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 0, hash: "sha-1"}, baseKey, 128)');

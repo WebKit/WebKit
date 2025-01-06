@@ -32,7 +32,6 @@
 #import "RemoteObjectInvocation.h"
 #import "UIRemoteObjectRegistry.h"
 #import "UserData.h"
-#import "WKConnectionRef.h"
 #import "WKRemoteObject.h"
 #import "WKRemoteObjectCoder.h"
 #import "WKSharedAPICast.h"
@@ -69,7 +68,7 @@ struct PendingReply {
 };
 
 @implementation _WKRemoteObjectRegistry {
-    std::unique_ptr<WebKit::RemoteObjectRegistry> _remoteObjectRegistry;
+    RefPtr<WebKit::RemoteObjectRegistry> _remoteObjectRegistry;
 
     RetainPtr<NSMapTable> _remoteObjectProxies;
     HashMap<String, std::pair<RetainPtr<id>, RetainPtr<_WKRemoteObjectInterface>>> _exportedObjects;
@@ -111,7 +110,7 @@ struct PendingReply {
     if (!(self = [super init]))
         return nil;
 
-    _remoteObjectRegistry = makeUnique<WebKit::WebRemoteObjectRegistry>(self, page.get());
+    _remoteObjectRegistry = WebKit::WebRemoteObjectRegistry::create(self, Ref { page.get() });
 
     return self;
 }
@@ -121,7 +120,7 @@ struct PendingReply {
     if (!(self = [super init]))
         return nil;
 
-    _remoteObjectRegistry = makeUnique<WebKit::UIRemoteObjectRegistry>(self, page.get());
+    _remoteObjectRegistry = WebKit::UIRemoteObjectRegistry::create(self, Ref { page.get() });
 
     return self;
 }
@@ -176,10 +175,11 @@ static uint64_t generateReplyIdentifier()
 
     [encoder encodeObject:invocation forKey:invocationKey];
 
-    if (!_remoteObjectRegistry)
+    RefPtr remoteObjectRegistry = _remoteObjectRegistry;
+    if (!remoteObjectRegistry)
         return;
 
-    _remoteObjectRegistry->sendInvocation(WebKit::RemoteObjectInvocation(interface.identifier, [encoder rootObjectDictionary], WTFMove(replyInfo)));
+    remoteObjectRegistry->sendInvocation(WebKit::RemoteObjectInvocation(interface.identifier, [encoder rootObjectDictionary], WTFMove(replyInfo)));
 }
 
 - (WebKit::RemoteObjectRegistry&)remoteObjectRegistry
@@ -271,10 +271,11 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
                 // FIXME: Instead of not sending anything when the remote object registry is null, we should
                 // keep track of all reply block checkers and invalidate them (sending the unused reply message) in
                 // -[_WKRemoteObjectRegistry _invalidate].
-                if (!m_remoteObjectRegistry->_remoteObjectRegistry)
+                RefPtr remoteObjectRegistry = m_remoteObjectRegistry->_remoteObjectRegistry;
+                if (!remoteObjectRegistry)
                     return;
 
-                m_remoteObjectRegistry->_remoteObjectRegistry->sendUnusedReply(m_replyID);
+                remoteObjectRegistry->sendUnusedReply(m_replyID);
             }
 
             void didCallReplyBlock() { m_didCallReplyBlock = true; }
@@ -296,8 +297,8 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
             auto encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
             [encoder encodeObject:invocation forKey:invocationKey];
 
-            if (remoteObjectRegistry->_remoteObjectRegistry)
-                remoteObjectRegistry->_remoteObjectRegistry->sendReplyBlock(replyID, WebKit::UserData([encoder rootObjectDictionary]));
+            if (RefPtr protectedRemoteObjectRegistry = remoteObjectRegistry->_remoteObjectRegistry)
+                protectedRemoteObjectRegistry->sendReplyBlock(replyID, WebKit::UserData([encoder rootObjectDictionary]));
             checker->didCallReplyBlock();
         });
 
@@ -332,7 +333,7 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
     auto pendingReply = it->value;
     _pendingReplies.remove(it);
 
-    auto decoder = adoptNS([[WKRemoteObjectDecoder alloc] initWithInterface:pendingReply.interface.get() rootObjectDictionary:static_cast<API::Dictionary*>(encodedInvocation.get()) replyToSelector:pendingReply.selector]);
+    auto decoder = adoptNS([[WKRemoteObjectDecoder alloc] initWithInterface:pendingReply.interface.get() rootObjectDictionary:downcast<API::Dictionary>(encodedInvocation.get()) replyToSelector:pendingReply.selector]);
 
     NSInvocation *replyInvocation = [decoder decodeObjectOfClass:[NSInvocation class] forKey:invocationKey];
 

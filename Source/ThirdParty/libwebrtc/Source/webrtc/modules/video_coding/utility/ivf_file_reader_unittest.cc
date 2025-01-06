@@ -78,7 +78,7 @@ class IvfFileReaderTest : public ::testing::Test {
     ASSERT_TRUE(file_writer->Close());
   }
 
-  void ValidateFrame(absl::optional<EncodedImage> frame,
+  void ValidateFrame(std::optional<EncodedImage> frame,
                      int frame_index,
                      bool use_capture_tims_ms,
                      int spatial_layers_count) {

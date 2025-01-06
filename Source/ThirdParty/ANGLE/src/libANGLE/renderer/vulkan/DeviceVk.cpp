@@ -133,11 +133,6 @@ egl::Error DeviceVk::getAttribute(const egl::Display *display, EGLint attribute,
     }
 }
 
-EGLint DeviceVk::getType()
-{
-    return EGL_VULKAN_DEVICE_ANGLE;
-}
-
 void DeviceVk::generateExtensions(egl::DeviceExtensions *outExtensions) const
 {
     outExtensions->deviceVulkan = true;

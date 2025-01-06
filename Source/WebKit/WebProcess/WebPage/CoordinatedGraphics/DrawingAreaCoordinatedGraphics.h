@@ -41,10 +41,16 @@ struct UpdateInfo;
 
 class DrawingAreaCoordinatedGraphics final : public DrawingArea {
 public:
-    DrawingAreaCoordinatedGraphics(WebPage&, const WebPageCreationParameters&);
+    static Ref<DrawingAreaCoordinatedGraphics> create(WebPage& webPage, const WebPageCreationParameters& parameters)
+    {
+        return adoptRef(*new DrawingAreaCoordinatedGraphics(webPage, parameters));
+    }
+
     virtual ~DrawingAreaCoordinatedGraphics();
 
 private:
+    DrawingAreaCoordinatedGraphics(WebPage&, const WebPageCreationParameters&);
+
     // DrawingArea
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const WebCore::IntRect&) override;
@@ -56,12 +62,10 @@ private:
     bool layerTreeStateIsFrozen() const override { return m_layerTreeStateIsFrozen; }
 
     void updatePreferences(const WebPreferencesStore&) override;
-    void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) override;
     void sendEnterAcceleratedCompositingModeIfNeeded() override;
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     void deviceOrPageScaleFactorChanged() override;
-    void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override;
     bool enterAcceleratedCompositingModeIfNeeded() override;
     void backgroundColorDidChange() override;
 #endif
@@ -89,6 +93,11 @@ private:
     void setDeviceScaleFactor(float) override;
     void forceUpdate() override;
     void didDiscardBackingStore() override;
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) override;
+    void dispatchPendingCallbacksAfterEnsuringDrawing() override;
+#endif
 
 #if PLATFORM(GTK)
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
@@ -150,6 +159,10 @@ private:
 #if PLATFORM(GTK)
     bool m_transientZoom { false };
     WebCore::FloatPoint m_transientZoomInitialOrigin;
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    Vector<IPC::AsyncReplyID> m_pendingAfterDrawCallbackIDs;
 #endif
 };
 

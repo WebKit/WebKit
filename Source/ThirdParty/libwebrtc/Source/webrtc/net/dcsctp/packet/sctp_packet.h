@@ -89,8 +89,8 @@ class SctpPacket {
   };
 
   // Parses `data` as an SCTP packet and returns it if it validates.
-  static absl::optional<SctpPacket> Parse(rtc::ArrayView<const uint8_t> data,
-                                          const DcSctpOptions& options);
+  static std::optional<SctpPacket> Parse(rtc::ArrayView<const uint8_t> data,
+                                         const DcSctpOptions& options);
 
   // Returns the SCTP common header.
   const CommonHeader& common_header() const { return common_header_; }

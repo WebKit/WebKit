@@ -10,9 +10,11 @@
 #include "include/core/SkColorSpace.h"
 #include "include/gpu/graphite/Image.h"
 #include "include/gpu/graphite/Recorder.h"
+#include "include/gpu/graphite/Surface.h"
 #include "src/gpu/graphite/Device.h"
 #include "src/gpu/graphite/DrawContext.h"
 #include "src/gpu/graphite/Image_Graphite.h"
+#include "src/gpu/graphite/Image_YUVA_Graphite.h"
 #include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/RecorderPriv.h"
 #include "src/gpu/graphite/Surface_Graphite.h"
@@ -147,6 +149,22 @@ sk_sp<Image> Image_Base::copyImage(Recorder* recorder,
                       budgeted, mipmapped, backingFit, std::move(label));
 }
 
+namespace {
+
+TextureProxy* get_base_proxy_for_label(const Image_Base* baseImage) {
+    if (baseImage->type() == SkImage_Base::Type::kGraphite) {
+        const Image* img = static_cast<const Image*>(baseImage);
+        return img->textureProxyView().proxy();
+    }
+    SkASSERT(baseImage->type() == SkImage_Base::Type::kGraphiteYUVA);
+    // We will end up flattening to RGBA for a YUVA image when we get a subset. We just grab
+    // the label off of the first channel's proxy and use that to be the stand in label.
+    const Image_YUVA* img = static_cast<const Image_YUVA*>(baseImage);
+    return img->proxyView(0).proxy();
+}
+
+} // anonymous namespace
+
 sk_sp<SkImage> Image_Base::onMakeSubset(Recorder* recorder,
                                         const SkIRect& subset,
                                         RequiredProperties requiredProps) const {
@@ -158,6 +176,15 @@ sk_sp<SkImage> Image_Base::onMakeSubset(Recorder* recorder,
         return sk_ref_sp(this);
     }
 
+    TextureProxy* proxy = get_base_proxy_for_label(this);
+    SkASSERT(proxy);
+    std::string label = proxy->label();
+    if (label.empty()) {
+        label = "ImageSubsetTexture";
+    } else {
+        label += "_Subset";
+    }
+
     // The copied image is not considered budgeted because this is a client-invoked API and they
     // will own the image.
     return this->copyImage(recorder,
@@ -165,7 +192,14 @@ sk_sp<SkImage> Image_Base::onMakeSubset(Recorder* recorder,
                            Budgeted::kNo,
                            requiredProps.fMipmapped ? Mipmapped::kYes : Mipmapped::kNo,
                            SkBackingFit::kExact,
-                           "ImageSubsetTexture");
+                           label);
+}
+
+sk_sp<SkSurface> Image_Base::onMakeSurface(Recorder* recorder, const SkImageInfo& info) const {
+    if (!recorder) {
+        return nullptr;
+    }
+    return SkSurfaces::RenderTarget(recorder, info);
 }
 
 sk_sp<SkImage> Image_Base::makeColorTypeAndColorSpace(Recorder* recorder,
@@ -179,6 +213,15 @@ sk_sp<SkImage> Image_Base::makeColorTypeAndColorSpace(Recorder* recorder,
         return sk_ref_sp(this);
     }
 
+    TextureProxy* proxy = get_base_proxy_for_label(this);
+    SkASSERT(proxy);
+    std::string label = proxy->label();
+    if (label.empty()) {
+        label = "ImageMakeCTandCSTexture";
+    } else {
+        label += "_CTandCSConversion";
+    }
+
     // Use CopyAsDraw directly to perform the color space changes. The copied image is not
     // considered budgeted because this is a client-invoked API and they will own the image.
     return CopyAsDraw(recorder,
@@ -188,7 +231,7 @@ sk_sp<SkImage> Image_Base::makeColorTypeAndColorSpace(Recorder* recorder,
                       Budgeted::kNo,
                       requiredProps.fMipmapped ? Mipmapped::kYes : Mipmapped::kNo,
                       SkBackingFit::kExact,
-                      "ImageMakeCTandCSTexture");
+                      label);
 }
 
 // Ganesh APIs are no-ops

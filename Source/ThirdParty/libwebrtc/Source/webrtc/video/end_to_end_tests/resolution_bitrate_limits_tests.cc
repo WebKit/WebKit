@@ -103,13 +103,13 @@ class InitEncodeTest : public test::EndToEndTest,
                        public test::FakeEncoder {
  public:
   struct Bitrate {
-    const absl::optional<DataRate> min;
-    const absl::optional<DataRate> max;
+    const std::optional<DataRate> min;
+    const std::optional<DataRate> max;
   };
   struct TestConfig {
     const bool active;
     const Bitrate bitrate;
-    const absl::optional<ScalabilityMode> scalability_mode;
+    const std::optional<ScalabilityMode> scalability_mode;
   };
   struct Expectation {
     const uint32_t pixels = 0;
@@ -117,15 +117,17 @@ class InitEncodeTest : public test::EndToEndTest,
     const Bitrate ne_bitrate;
   };
 
-  InitEncodeTest(const std::string& payload_name,
+  InitEncodeTest(const Environment& env,
+                 const std::string& payload_name,
                  const std::vector<TestConfig>& configs,
                  const std::vector<Expectation>& expectations)
       : EndToEndTest(test::VideoTestConstants::kDefaultTimeout),
-        FakeEncoder(Clock::GetRealTimeClock()),
+        FakeEncoder(env),
         encoder_factory_(this),
         payload_name_(payload_name),
         configs_(configs),
-        expectations_(expectations) {}
+        expectations_(expectations),
+        encoder_info_override_(env.field_trials()) {}
 
   void OnFrameGeneratorCapturerCreated(
       test::FrameGeneratorCapturer* frame_generator_capturer) override {
@@ -145,17 +147,13 @@ class InitEncodeTest : public test::EndToEndTest,
       VideoSendStream::Config* send_config,
       std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
       VideoEncoderConfig* encoder_config) override {
-    webrtc::VideoEncoder::EncoderInfo encoder_info;
     send_config->encoder_settings.encoder_factory = &encoder_factory_;
     send_config->rtp.payload_name = payload_name_;
     send_config->rtp.payload_type =
         test::VideoTestConstants::kVideoSendPayloadType;
     const VideoCodecType codec_type = PayloadStringToCodecType(payload_name_);
     encoder_config->codec_type = codec_type;
-    encoder_config->video_stream_factory =
-        rtc::make_ref_counted<cricket::EncoderStreamFactory>(
-            payload_name_, /*max qp*/ 0, /*screencast*/ false,
-            /*screenshare enabled*/ false, encoder_info);
+    encoder_config->video_stream_factory = nullptr;
     encoder_config->max_bitrate_bps = -1;
     if (configs_.size() == 1 && configs_[0].bitrate.max)
       encoder_config->max_bitrate_bps = configs_[0].bitrate.max->bps();
@@ -222,7 +220,7 @@ TEST_P(ResolutionBitrateLimitsTest, LimitsApplied) {
       "min_bitrate_bps:32000,"
       "max_bitrate_bps:3333000/");
 
-  InitEncodeTest test(payload_name_, {{.active = true}},
+  InitEncodeTest test(env(), payload_name_, {{.active = true}},
                       // Expectations:
                       {{.pixels = 1280 * 720,
                         .eq_bitrate = {DataRate::KilobitsPerSec(32),
@@ -232,7 +230,7 @@ TEST_P(ResolutionBitrateLimitsTest, LimitsApplied) {
 
 TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
        OneStreamDefaultMaxBitrateAppliedForOneSpatialLayer) {
-  InitEncodeTest test("VP9",
+  InitEncodeTest test(env(), "VP9",
                       {{.active = true,
                         .bitrate = {DataRate::KilobitsPerSec(30),
                                     DataRate::KilobitsPerSec(3000)},
@@ -247,14 +245,14 @@ TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
 TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
        OneStreamSvcMaxBitrateAppliedForTwoSpatialLayers) {
   InitEncodeTest test(
-      "VP9",
+      env(), "VP9",
       {{.active = true,
         .bitrate = {DataRate::KilobitsPerSec(30),
                     DataRate::KilobitsPerSec(3000)},
         .scalability_mode = ScalabilityMode::kL2T1}},
       // Expectations:
       {{.pixels = 1280 * 720,
-        .ne_bitrate = {absl::nullopt, DataRate::KilobitsPerSec(3000)}}});
+        .ne_bitrate = {std::nullopt, DataRate::KilobitsPerSec(3000)}}});
   RunBaseTest(&test);
 }
 TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
@@ -267,7 +265,8 @@ TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
       "max_bitrate_bps:3333000/");
 
   InitEncodeTest test(
-      "VP9", {{.active = true, .scalability_mode = ScalabilityMode::kL1T1}},
+      env(), "VP9",
+      {{.active = true, .scalability_mode = ScalabilityMode::kL1T1}},
       // Expectations:
       {{.pixels = 1280 * 720,
         .eq_bitrate = {DataRate::KilobitsPerSec(32),
@@ -285,7 +284,8 @@ TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
       "max_bitrate_bps:2222000|3333000/");
 
   InitEncodeTest test(
-      "VP9", {{.active = true, .scalability_mode = ScalabilityMode::kL2T1}},
+      env(), "VP9",
+      {{.active = true, .scalability_mode = ScalabilityMode::kL2T1}},
       // Expectations:
       {{.pixels = 640 * 360,
         .ne_bitrate = {DataRate::KilobitsPerSec(31),
@@ -297,7 +297,7 @@ TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
 }
 
 TEST_P(ResolutionBitrateLimitsTest, EncodingsApplied) {
-  InitEncodeTest test(payload_name_,
+  InitEncodeTest test(env(), payload_name_,
                       {{.active = true,
                         .bitrate = {DataRate::KilobitsPerSec(22),
                                     DataRate::KilobitsPerSec(3555)}}},
@@ -316,7 +316,7 @@ TEST_P(ResolutionBitrateLimitsTest, IntersectionApplied) {
       "min_bitrate_bps:32000,"
       "max_bitrate_bps:3333000/");
 
-  InitEncodeTest test(payload_name_,
+  InitEncodeTest test(env(), payload_name_,
                       {{.active = true,
                         .bitrate = {DataRate::KilobitsPerSec(22),
                                     DataRate::KilobitsPerSec(1555)}}},
@@ -335,7 +335,7 @@ TEST_P(ResolutionBitrateLimitsTest, LimitsAppliedMiddleActive) {
       "min_bitrate_bps:21000|32000,"
       "max_bitrate_bps:2222000|3333000/");
 
-  InitEncodeTest test(payload_name_,
+  InitEncodeTest test(env(), payload_name_,
                       {{.active = false}, {.active = true}, {.active = false}},
                       // Expectations:
                       {{.pixels = 640 * 360,
@@ -344,7 +344,7 @@ TEST_P(ResolutionBitrateLimitsTest, LimitsAppliedMiddleActive) {
   RunBaseTest(&test);
 }
 
-TEST_P(ResolutionBitrateLimitsTest, IntersectionAppliedMiddleActive) {
+TEST_P(ResolutionBitrateLimitsTest, EncodingMinBitrateAppliedMiddleActive) {
   webrtc::test::ScopedFieldTrials field_trials(
       "WebRTC-GetEncoderInfoOverride/"
       "frame_size_pixels:230400|921600,"
@@ -352,27 +352,31 @@ TEST_P(ResolutionBitrateLimitsTest, IntersectionAppliedMiddleActive) {
       "min_bitrate_bps:31000|32000,"
       "max_bitrate_bps:2222000|3333000/");
 
-  InitEncodeTest test(payload_name_,
-                      {{.active = false},
+  // Max bitrate: min of encoding and bitrate limits used.
+  InitEncodeTest test(env(), payload_name_,
+                      {{.active = false,
+                        .bitrate = {DataRate::KilobitsPerSec(28),
+                                    DataRate::KilobitsPerSec(1000)}},
                        {.active = true,
-                        .bitrate = {DataRate::KilobitsPerSec(30),
+                        .bitrate = {DataRate::KilobitsPerSec(28),
                                     DataRate::KilobitsPerSec(1555)}},
                        {.active = false}},
                       // Expectations:
                       {{.pixels = 640 * 360,
-                        .eq_bitrate = {DataRate::KilobitsPerSec(31),
+                        .eq_bitrate = {DataRate::KilobitsPerSec(28),
                                        DataRate::KilobitsPerSec(1555)}}});
   RunBaseTest(&test);
 }
 
 TEST_P(ResolutionBitrateLimitsTest, DefaultLimitsAppliedMiddleActive) {
-  const absl::optional<VideoEncoder::ResolutionBitrateLimits>
+  const std::optional<VideoEncoder::ResolutionBitrateLimits>
       kDefaultSinglecastLimits360p =
           EncoderInfoSettings::GetDefaultSinglecastBitrateLimitsForResolution(
               PayloadStringToCodecType(payload_name_), 640 * 360);
 
   InitEncodeTest test(
-      payload_name_, {{.active = false}, {.active = true}, {.active = false}},
+      env(), payload_name_,
+      {{.active = false}, {.active = true}, {.active = false}},
       // Expectations:
       {{.pixels = 640 * 360,
         .eq_bitrate = {
@@ -384,13 +388,13 @@ TEST_P(ResolutionBitrateLimitsTest, DefaultLimitsAppliedMiddleActive) {
 
 TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
        DefaultLimitsAppliedForOneSpatialLayer) {
-  const absl::optional<VideoEncoder::ResolutionBitrateLimits>
+  const std::optional<VideoEncoder::ResolutionBitrateLimits>
       kDefaultSinglecastLimits720p =
           EncoderInfoSettings::GetDefaultSinglecastBitrateLimitsForResolution(
               PayloadStringToCodecType("VP9"), 1280 * 720);
 
   InitEncodeTest test(
-      "VP9",
+      env(), "VP9",
       {{.active = true, .scalability_mode = ScalabilityMode::kL1T3},
        {.active = false}},
       // Expectations:
@@ -410,7 +414,7 @@ TEST_P(ResolutionBitrateLimitsTest, LimitsAppliedHighestActive) {
       "min_bitrate_bps:31000|32000,"
       "max_bitrate_bps:2222000|3333000/");
 
-  InitEncodeTest test(payload_name_,
+  InitEncodeTest test(env(), payload_name_,
                       {{.active = false}, {.active = false}, {.active = true}},
                       // Expectations:
                       {{.pixels = 1280 * 720,
@@ -419,7 +423,7 @@ TEST_P(ResolutionBitrateLimitsTest, LimitsAppliedHighestActive) {
   RunBaseTest(&test);
 }
 
-TEST_P(ResolutionBitrateLimitsTest, IntersectionAppliedHighestActive) {
+TEST_P(ResolutionBitrateLimitsTest, EncodingMinBitrateAppliedHighestActive) {
   webrtc::test::ScopedFieldTrials field_trials(
       "WebRTC-GetEncoderInfoOverride/"
       "frame_size_pixels:230400|921600,"
@@ -427,15 +431,20 @@ TEST_P(ResolutionBitrateLimitsTest, IntersectionAppliedHighestActive) {
       "min_bitrate_bps:31000|32000,"
       "max_bitrate_bps:2222000|3333000/");
 
-  InitEncodeTest test(payload_name_,
-                      {{.active = false},
-                       {.active = false},
+  // Max bitrate: min of encoding and bitrate limits used.
+  InitEncodeTest test(env(), payload_name_,
+                      {{.active = false,
+                        .bitrate = {DataRate::KilobitsPerSec(28),
+                                    DataRate::KilobitsPerSec(500)}},
+                       {.active = false,
+                        .bitrate = {DataRate::KilobitsPerSec(28),
+                                    DataRate::KilobitsPerSec(1000)}},
                        {.active = true,
-                        .bitrate = {DataRate::KilobitsPerSec(30),
+                        .bitrate = {DataRate::KilobitsPerSec(28),
                                     DataRate::KilobitsPerSec(1555)}}},
                       // Expectations:
                       {{.pixels = 1280 * 720,
-                        .eq_bitrate = {DataRate::KilobitsPerSec(32),
+                        .eq_bitrate = {DataRate::KilobitsPerSec(28),
                                        DataRate::KilobitsPerSec(1555)}}});
   RunBaseTest(&test);
 }
@@ -448,7 +457,8 @@ TEST_P(ResolutionBitrateLimitsTest, LimitsNotAppliedLowestActive) {
       "min_bitrate_bps:31000|32000,"
       "max_bitrate_bps:2222000|3333000/");
 
-  InitEncodeTest test(payload_name_, {{.active = true}, {.active = false}},
+  InitEncodeTest test(env(), payload_name_,
+                      {{.active = true}, {.active = false}},
                       // Expectations:
                       {{.pixels = 640 * 360,
                         .ne_bitrate = {DataRate::KilobitsPerSec(31),
@@ -469,7 +479,7 @@ TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
       "max_bitrate_bps:2222000|3333000/");
 
   InitEncodeTest test(
-      "VP9",
+      env(), "VP9",
       {{.active = true, .scalability_mode = ScalabilityMode::kL1T1},
        {.active = false}},
       // Expectations:
@@ -489,7 +499,7 @@ TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
       "max_bitrate_bps:2222000|3333000/");
 
   InitEncodeTest test(
-      "VP9",
+      env(), "VP9",
       {{.active = true, .scalability_mode = ScalabilityMode::kL2T1},
        {.active = false}},
       // Expectations:
@@ -512,7 +522,8 @@ TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
       "max_bitrate_bps:133000/");
 
   InitEncodeTest test(
-      "AV1", {{.active = true, .scalability_mode = ScalabilityMode::kL1T1}},
+      env(), "AV1",
+      {{.active = true, .scalability_mode = ScalabilityMode::kL1T1}},
       // Expectations:
       {{.pixels = 1280 * 720,
         .eq_bitrate = {DataRate::KilobitsPerSec(32),
@@ -521,7 +532,7 @@ TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
 }
 
 TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
-       LimitsAppliedForAv1Simulcast) {
+       LimitsAppliedForAv1SingleSpatialLayer) {
   webrtc::test::ScopedFieldTrials field_trials(
       "WebRTC-GetEncoderInfoOverride/"
       "frame_size_pixels:230400|921600,"
@@ -530,13 +541,36 @@ TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
       "max_bitrate_bps:400000|1200000/");
 
   InitEncodeTest test(
-      "AV1",
+      env(), "AV1",
       {{.active = true, .scalability_mode = ScalabilityMode::kL1T1},
        {.active = false}},
       // Expectations:
       {{.pixels = 1280 * 720,
         .eq_bitrate = {DataRate::KilobitsPerSec(80),
                        DataRate::KilobitsPerSec(1200)}}});
+  RunBaseTest(&test);
+}
+
+TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
+       EncodingMinBitrateAppliedForAv1SingleSpatialLayer) {
+  webrtc::test::ScopedFieldTrials field_trials(
+      "WebRTC-GetEncoderInfoOverride/"
+      "frame_size_pixels:921600,"
+      "min_start_bitrate_bps:0,"
+      "min_bitrate_bps:32000,"
+      "max_bitrate_bps:133000/");
+
+  // Max bitrate: min of encoding and bitrate limits used.
+  InitEncodeTest test(env(), "AV1",
+                      {{.active = true,
+                        .bitrate = {DataRate::KilobitsPerSec(28),
+                                    DataRate::KilobitsPerSec(100)},
+                        .scalability_mode = ScalabilityMode::kL1T1},
+                       {.active = false}},
+                      // Expectations:
+                      {{.pixels = 1280 * 720,
+                        .eq_bitrate = {DataRate::KilobitsPerSec(28),
+                                       DataRate::KilobitsPerSec(100)}}});
   RunBaseTest(&test);
 }
 
@@ -550,7 +584,7 @@ TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
       "max_bitrate_bps:900000|1333000/");
 
   InitEncodeTest test(
-      "AV1",
+      env(), "AV1",
       {{.active = true, .scalability_mode = ScalabilityMode::kL2T1},
        {.active = false}},
       // Expectations:
@@ -571,7 +605,8 @@ TEST_P(ResolutionBitrateLimitsTest, LimitsNotAppliedSimulcast) {
       "min_bitrate_bps:31000|32000,"
       "max_bitrate_bps:2222000|3333000/");
 
-  InitEncodeTest test(payload_name_, {{.active = true}, {.active = true}},
+  InitEncodeTest test(env(), payload_name_,
+                      {{.active = true}, {.active = true}},
                       // Expectations:
                       {{.pixels = 640 * 360,
                         .ne_bitrate = {DataRate::KilobitsPerSec(31),

@@ -12,4 +12,4 @@
 
 #include "vpx_ports/system_state.h"
 
-void vpx_clear_system_state() { _mm_empty(); }
+void vpx_clear_system_state(void) { _mm_empty(); }

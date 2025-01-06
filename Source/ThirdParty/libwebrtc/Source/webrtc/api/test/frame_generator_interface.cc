@@ -10,6 +10,8 @@
 
 #include "api/test/frame_generator_interface.h"
 
+#include "rtc_base/checks.h"
+
 namespace webrtc {
 namespace test {
 

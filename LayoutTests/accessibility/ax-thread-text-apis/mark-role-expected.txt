@@ -1,0 +1,12 @@
+This test makes sure that the mark role exposes the right attributes in the attributed string.
+PASS: highlight1.attributedStringForTextMarkerRangeContainsAttribute('AXHighlight', markerRange) === true
+PASS: highlight2.attributedStringForTextMarkerRangeContainsAttribute('AXHighlight', markerRange) === true
+PASS: AXHighlight is no longer present when role='mark' is removed.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is some
+highlighted
+text.
+This is some highlighted text.

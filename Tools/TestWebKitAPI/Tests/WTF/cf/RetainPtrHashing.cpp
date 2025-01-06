@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,8 @@
 
 #include "config.h"
 
-#include <wtf/HashSet.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
@@ -47,10 +47,12 @@ TEST(RetainPtrHashing, HashSet)
     RetainPtr<CFArrayRef> foo2 = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
     EXPECT_FALSE(set.contains(foo2));
     set.add(foo2);
+    EXPECT_TRUE(set.contains(foo));
     EXPECT_TRUE(set.contains(foo2));
 
     set.remove(foo);
     EXPECT_FALSE(set.contains(foo));
+    EXPECT_TRUE(set.contains(foo2));
 }
 
 TEST(RetainPtrHashing, HashMapKey)
@@ -64,12 +66,15 @@ TEST(RetainPtrHashing, HashMapKey)
     EXPECT_EQ(1, map.get(foo));
 
     RetainPtr<CFArrayRef> foo2 = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
+    EXPECT_TRUE(map.contains(foo));
     EXPECT_FALSE(map.contains(foo2));
     map.add(foo2, 2);
+    EXPECT_EQ(1, map.get(foo));
     EXPECT_EQ(2, map.get(foo2));
 
     map.remove(foo);
     EXPECT_FALSE(map.contains(foo));
+    EXPECT_TRUE(map.contains(foo2));
 }
 
 TEST(RetainPtrHashing, HashMapValue)
@@ -85,6 +90,10 @@ TEST(RetainPtrHashing, HashMapValue)
     RetainPtr<CFArrayRef> foo2 = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
     EXPECT_FALSE(map.contains(2));
     map.add(2, foo2);
+    EXPECT_EQ(foo, map.get(1));
+    EXPECT_EQ(foo2, map.get(2));
+
+    map.remove(1);
     EXPECT_EQ(foo2, map.get(2));
 }
 

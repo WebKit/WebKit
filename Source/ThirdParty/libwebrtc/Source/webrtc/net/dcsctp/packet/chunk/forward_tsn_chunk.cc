@@ -12,11 +12,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
@@ -44,11 +44,11 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 constexpr int ForwardTsnChunk::kType;
 
-absl::optional<ForwardTsnChunk> ForwardTsnChunk::Parse(
+std::optional<ForwardTsnChunk> ForwardTsnChunk::Parse(
     rtc::ArrayView<const uint8_t> data) {
-  absl::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
+  std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   TSN new_cumulative_tsn(reader->Load32<4>());
 
@@ -90,6 +90,6 @@ std::string ForwardTsnChunk::ToString() const {
   for (const auto& skipped : skipped_streams()) {
     sb << ", skip " << skipped.stream_id.value() << ":" << *skipped.ssn;
   }
-  return sb.str();
+  return sb.Release();
 }
 }  // namespace dcsctp

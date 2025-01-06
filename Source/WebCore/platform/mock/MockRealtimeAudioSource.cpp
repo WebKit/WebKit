@@ -53,7 +53,7 @@
 namespace WebCore {
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY) && !USE(GSTREAMER)
-CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier)
+CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier>)
 {
 #ifndef NDEBUG
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
@@ -72,7 +72,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&&
 }
 #endif
 
-MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
+MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
     : RealtimeMediaSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Microphone, WTFMove(name) }, WTFMove(hashSalts), pageIdentifier)
     , m_workQueue(WorkQueue::create("MockRealtimeAudioSource Render Queue"_s))
     , m_timer(RunLoop::current(), this, &MockRealtimeAudioSource::tick)
@@ -145,7 +145,7 @@ void MockRealtimeAudioSource::settingsDidChange(OptionSet<RealtimeMediaSourceSet
 void MockRealtimeAudioSource::startProducingData()
 {
 #if PLATFORM(IOS_FAMILY)
-    PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
+    PlatformMediaSessionManager::singleton().sessionCanProduceAudioChanged();
     ASSERT(AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord);
     ASSERT(AudioSession::sharedSession().mode() == AudioSession::Mode::VideoChat);
 #endif
@@ -194,9 +194,9 @@ void MockRealtimeAudioSource::setIsInterrupted(bool isInterrupted)
     UNUSED_PARAM(isInterrupted);
 #if PLATFORM(COCOA)
     if (isInterrupted)
-        MockAudioSharedUnit::singleton().suspend();
+        CoreAudioSharedUnit::singleton().suspend();
     else
-        MockAudioSharedUnit::singleton().resume();
+        CoreAudioSharedUnit::singleton().resume();
 #elif USE(GSTREAMER)
     for (auto* source : MockRealtimeAudioSourceGStreamer::allMockRealtimeAudioSources())
         source->setInterruptedForTesting(isInterrupted);

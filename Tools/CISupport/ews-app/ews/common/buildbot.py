@@ -48,6 +48,7 @@ class Buildbot():
         'api-mac': 'mac',
         'mac-wk1': 'mac',
         'mac-wk2': 'mac',
+        'mac-intel-wk2': 'mac',
         'mac-wk2-stress': 'mac',
         'mac-debug-wk1': 'mac-debug',
         'mac-AS-debug-wk2': 'mac-AS-debug',
@@ -55,8 +56,9 @@ class Buildbot():
         'gtk-wk2': 'gtk',
         'api-wpe': 'wpe',
         'wpe-wk2': 'wpe',
-        'wincairo-tests': 'wincairo',
+        'win-tests': 'win',
         'jsc-armv7-tests': 'jsc-armv7',
+        'vision-sim': 'vision-wk2',
     }
 
     @classmethod

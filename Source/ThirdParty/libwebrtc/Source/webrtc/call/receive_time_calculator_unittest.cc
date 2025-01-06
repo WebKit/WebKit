@@ -15,9 +15,9 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "rtc_base/random.h"
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"
@@ -50,7 +50,7 @@ class EmulatedClock {
 
  private:
   int64_t clock_us_;
-  absl::optional<int64_t> last_query_us_;
+  std::optional<int64_t> last_query_us_;
   float drift_;
   float accumulated_drift_us_ = 0;
 };
@@ -93,7 +93,7 @@ class EmulatedMonotoneousClock : public EmulatedClock {
 
   bool Stalled() const { return stall_recovery_time_us_ > 0; }
 
-  int64_t GetRemainingStall(int64_t time_us) const {
+  int64_t GetRemainingStall(int64_t /* time_us */) const {
     return stall_recovery_time_us_ > 0 ? stall_recovery_time_us_ - GetClockUs()
                                        : 0;
   }

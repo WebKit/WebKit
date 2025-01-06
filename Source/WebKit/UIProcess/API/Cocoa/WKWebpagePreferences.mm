@@ -77,6 +77,39 @@ WebKit::WebContentMode webContentMode(WKContentMode contentMode)
 
 #endif // PLATFORM(IOS_FAMILY)
 
+WKWebpagePreferencesUpgradeToHTTPSPolicy upgradeToHTTPSPolicy(WebCore::HTTPSByDefaultMode httpsByDefault)
+{
+    switch (httpsByDefault) {
+    case WebCore::HTTPSByDefaultMode::Disabled:
+        return WKWebpagePreferencesUpgradeToHTTPSPolicyKeepAsRequested;
+    case WebCore::HTTPSByDefaultMode::UpgradeWithAutomaticFallback:
+        return WKWebpagePreferencesUpgradeToHTTPSPolicyAutomaticFallbackToHTTP;
+    case WebCore::HTTPSByDefaultMode::UpgradeWithUserMediatedFallback:
+        return WKWebpagePreferencesUpgradeToHTTPSPolicyUserMediatedFallbackToHTTP;
+    case WebCore::HTTPSByDefaultMode::UpgradeAndNoFallback:
+        return WKWebpagePreferencesUpgradeToHTTPSPolicyErrorOnFailure;
+    }
+    ASSERT_NOT_REACHED();
+    return WKWebpagePreferencesUpgradeToHTTPSPolicyKeepAsRequested;
+}
+
+WebCore::HTTPSByDefaultMode httpsByDefaultMode(WKWebpagePreferencesUpgradeToHTTPSPolicy upgradeToHTTPSPolicy)
+{
+    switch (upgradeToHTTPSPolicy) {
+    case WKWebpagePreferencesUpgradeToHTTPSPolicyKeepAsRequested:
+        return WebCore::HTTPSByDefaultMode::Disabled;
+    case WKWebpagePreferencesUpgradeToHTTPSPolicyAutomaticFallbackToHTTP:
+        return WebCore::HTTPSByDefaultMode::UpgradeWithAutomaticFallback;
+    case WKWebpagePreferencesUpgradeToHTTPSPolicyUserMediatedFallbackToHTTP:
+        return WebCore::HTTPSByDefaultMode::UpgradeWithUserMediatedFallback;
+    case WKWebpagePreferencesUpgradeToHTTPSPolicyErrorOnFailure:
+        return WebCore::HTTPSByDefaultMode::UpgradeAndNoFallback;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebCore::HTTPSByDefaultMode::Disabled;
+}
+
 static _WKWebsiteMouseEventPolicy mouseEventPolicy(WebCore::MouseEventPolicy policy)
 {
     switch (policy) {
@@ -364,7 +397,7 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 {
     Vector<WebCore::CustomHeaderFields> vector(fields.count, [fields](size_t i) {
         _WKCustomHeaderFields *element = fields[i];
-        return static_cast<API::CustomHeaderFields&>([element _apiObject]).coreFields();
+        return downcast<API::CustomHeaderFields>([element _apiObject]).coreFields();
     });
     _websitePolicies->setCustomHeaderFields(WTFMove(vector));
 }
@@ -463,7 +496,7 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 {
 #if PLATFORM(IOS_FAMILY)
     // On iOS, the web browser entitlement is required to disable Lockdown mode.
-    if (!enabled && !WTF::processHasEntitlement("com.apple.developer.web-browser"_s))
+    if (!enabled && !WTF::processHasEntitlement("com.apple.developer.web-browser"_s) && !WTF::processHasEntitlement("com.apple.private.allow-ldm-exempt-webview"_s))
         [NSException raise:NSInternalInconsistencyException format:@"The 'com.apple.developer.web-browser' restricted entitlement is required to disable Lockdown mode"];
 #endif
 
@@ -560,12 +593,22 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 #if ENABLE(LOCKDOWN_MODE_API)
 #if PLATFORM(IOS_FAMILY)
     // On iOS, the web browser entitlement is required to disable lockdown mode.
-    if (!lockdownModeEnabled && !WTF::processHasEntitlement("com.apple.developer.web-browser"_s))
+    if (!lockdownModeEnabled && !WTF::processHasEntitlement("com.apple.developer.web-browser"_s) && !WTF::processHasEntitlement("com.apple.private.allow-ldm-exempt-webview"_s))
         [NSException raise:NSInternalInconsistencyException format:@"The 'com.apple.developer.web-browser' restricted entitlement is required to disable lockdown mode"];
 #endif
 
     _websitePolicies->setLockdownModeEnabled(!!lockdownModeEnabled);
 #endif
+}
+
+- (void)setPreferredHTTPSNavigationPolicy:(WKWebpagePreferencesUpgradeToHTTPSPolicy)upgradeToHTTPSPolicy
+{
+    _websitePolicies->setHTTPSByDefault(WebKit::httpsByDefaultMode(upgradeToHTTPSPolicy));
+}
+
+- (WKWebpagePreferencesUpgradeToHTTPSPolicy)preferredHTTPSNavigationPolicy
+{
+    return WebKit::upgradeToHTTPSPolicy(_websitePolicies->httpsByDefaultMode());
 }
 
 - (BOOL)_networkConnectionIntegrityEnabled
@@ -713,6 +756,16 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
             [selectors addObject:selector];
     }
     return selectors.autorelease();
+}
+
+- (BOOL)_pushAndNotificationAPIEnabled
+{
+    return _websitePolicies->pushAndNotificationsEnabledPolicy() == WebKit::WebsitePushAndNotificationsEnabledPolicy::Yes;
+}
+
+- (void)_setPushAndNotificationAPIEnabled:(BOOL)enabled
+{
+    _websitePolicies->setPushAndNotificationsEnabledPolicy(enabled ? WebKit::WebsitePushAndNotificationsEnabledPolicy::Yes : WebKit::WebsitePushAndNotificationsEnabledPolicy::No);
 }
 
 @end

@@ -358,7 +358,7 @@ TEST_P(IndexedPointsTestUInt, VertexWithColorUnsignedIntOffset3)
 }
 
 // TODO(lucferron): Diagnose and fix the UByte tests below for Vulkan.
-// http://anglebug.com/2646
+// http://anglebug.com/42261353
 
 // TODO(geofflang): Figure out why this test fails on Intel OpenGL
 ANGLE_INSTANTIATE_TEST_ES2(IndexedPointsTestUByte);

@@ -2,9 +2,22 @@
 PASS Verify AudioData constructors
 PASS Verify closing and cloning AudioData
 PASS Test we can construct AudioData with a negative timestamp.
-PASS Test conversion of uint8 data to float32
-PASS Test conversion of int16 data to float32
-PASS Test conversion of int32 data to float32
-PASS Test conversion of float32 data to float32
-PASS Test copying out planar and interleaved data
+PASS Test input array is copied on construction
+PASS Test that copyTo throws if copying from interleaved with a non-zero planeIndex
+PASS Test conversion of u8 to u8
+PASS Test conversion of u8 to s16
+PASS Test conversion of u8 to s32
+PASS Test conversion of u8 to f32
+PASS Test conversion of s16 to u8
+PASS Test conversion of s16 to s16
+PASS Test conversion of s16 to s32
+PASS Test conversion of s16 to f32
+PASS Test conversion of s32 to u8
+PASS Test conversion of s32 to s16
+PASS Test conversion of s32 to s32
+PASS Test conversion of s32 to f32
+PASS Test conversion of f32 to u8
+PASS Test conversion of f32 to s16
+PASS Test conversion of f32 to s32
+PASS Test conversion of f32 to f32
 

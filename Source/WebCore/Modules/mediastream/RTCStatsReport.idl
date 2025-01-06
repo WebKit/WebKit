@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,30 +50,35 @@ enum RTCStatsType {
 
 typedef double DOMHighResTimeStamp;
 
-dictionary RTCStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCStats {
     required DOMHighResTimeStamp timestamp;
     required RTCStatsType type;
     required DOMString id;
 
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCRtpStreamStats : RTCStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCRtpStreamStats : RTCStats {
     required unsigned long ssrc;
     required DOMString kind;
     DOMString transportId;
     DOMString codecId;
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCReceivedRtpStreamStats : RTCRtpStreamStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCReceivedRtpStreamStats : RTCRtpStreamStats {
     unsigned long long packetsReceived;
     long long packetsLost;
     double jitter;
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCInboundRtpStreamStats : RTCReceivedRtpStreamStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCInboundRtpStreamStats : RTCReceivedRtpStreamStats {
     required DOMString trackIdentifier;
     DOMString mid;
     DOMString remoteId;
@@ -127,8 +132,9 @@ dictionary RTCInboundRtpStreamStats : RTCReceivedRtpStreamStats {
     unsigned long fecSsrc;
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCRemoteInboundRtpStreamStats : RTCReceivedRtpStreamStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCRemoteInboundRtpStreamStats : RTCReceivedRtpStreamStats {
     DOMString localId;
     double roundTripTime;
     double totalRoundTripTime;
@@ -136,8 +142,9 @@ dictionary RTCRemoteInboundRtpStreamStats : RTCReceivedRtpStreamStats {
     unsigned long long roundTripTimeMeasurements;
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCSentRtpStreamStats : RTCRtpStreamStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCSentRtpStreamStats : RTCRtpStreamStats {
     unsigned long packetsSent;
     unsigned long long bytesSent;
 };
@@ -149,8 +156,9 @@ enum RTCQualityLimitationReason {
     "other"
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCOutboundRtpStreamStats : RTCSentRtpStreamStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCOutboundRtpStreamStats : RTCSentRtpStreamStats {
     DOMString mid;
     DOMString mediaSourceId;
     DOMString remoteId;
@@ -181,8 +189,9 @@ dictionary RTCOutboundRtpStreamStats : RTCSentRtpStreamStats {
     DOMString scalabilityMode;
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCRemoteOutboundRtpStreamStats : RTCSentRtpStreamStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCRemoteOutboundRtpStreamStats : RTCSentRtpStreamStats {
     DOMString localId;
     DOMHighResTimeStamp remoteTimestamp;
     unsigned long long reportsSent;
@@ -196,45 +205,50 @@ enum RTCCodecType {
     "decode"
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCCodecStats : RTCStats {
-    unsigned long payloadType;
-    DOMString transportId;
-    DOMString mimeType;
+// https://w3c.github.io/webrtc-stats/#dom-rtccodecstats
+
+[
+    JSGenerateToJSObject
+] dictionary RTCCodecStats : RTCStats {
+    required unsigned long payloadType;
+    required DOMString transportId;
+    required DOMString mimeType;
     unsigned long clockRate;
     unsigned long channels;
     DOMString sdpFmtpLine;
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCMediaSourceStats : RTCStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCMediaSourceStats : RTCStats {
     required DOMString  trackIdentifier;
     required DOMString  kind;
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCAudioSourceStats : RTCMediaSourceStats {
+// https://w3c.github.io/webrtc-stats/#dom-rtcaudiosourcestats
+
+[
+    JSGenerateToJSObject
+] dictionary RTCAudioSourceStats : RTCMediaSourceStats {
     double audioLevel;
     double totalAudioEnergy;
     double totalSamplesDuration;
     double echoReturnLoss;
     double echoReturnLossEnhancement;
-    double droppedSamplesDuration;
-    unsigned long droppedSamplesEvents;
-    double totalCaptureDelay;
-    unsigned long long totalSamplesCaptured;
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCVideoSourceStats : RTCMediaSourceStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCVideoSourceStats : RTCMediaSourceStats {
     unsigned long width;
     unsigned long height;
     unsigned long frames;
     double framesPerSecond;
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCAudioPlayoutStats : RTCStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCAudioPlayoutStats : RTCStats {
     required DOMString kind;
     double synthesizedSamplesDuration;
     unsigned long synthesizedSamplesEvents;
@@ -243,14 +257,16 @@ dictionary RTCAudioPlayoutStats : RTCStats {
     unsigned long long totalSamplesCount;
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCPeerConnectionStats : RTCStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCPeerConnectionStats : RTCStats {
     unsigned long dataChannelsOpened;
     unsigned long dataChannelsClosed;
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCDataChannelStats : RTCStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCDataChannelStats : RTCStats {
     DOMString label;
     DOMString protocol;
     long dataChannelIdentifier;
@@ -267,8 +283,9 @@ enum RTCDtlsRole {
     "unknown"
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCTransportStats : RTCStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCTransportStats : RTCStats {
     unsigned long long packetsSent;
     unsigned long long packetsReceived;
     unsigned long long bytesSent;
@@ -287,8 +304,9 @@ dictionary RTCTransportStats : RTCStats {
     unsigned long selectedCandidatePairChanges;
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCIceCandidateStats : RTCStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCIceCandidateStats : RTCStats {
     required DOMString transportId;
     DOMString? address;
     long port;
@@ -312,8 +330,9 @@ enum RTCStatsIceCandidatePairState {
     "succeeded"
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCIceCandidatePairStats : RTCStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCIceCandidatePairStats : RTCStats {
     required DOMString transportId;
     required DOMString localCandidateId;
     required DOMString remoteCandidateId;
@@ -338,8 +357,9 @@ dictionary RTCIceCandidatePairStats : RTCStats {
     unsigned long long bytesDiscardedOnSend;
 };
 
-[ JSGenerateToJSObject ]
-dictionary RTCCertificateStats : RTCStats {
+[
+    JSGenerateToJSObject
+] dictionary RTCCertificateStats : RTCStats {
     required DOMString fingerprint;
     required DOMString fingerprintAlgorithm;
     required DOMString base64Certificate;

@@ -56,13 +56,13 @@ float SVGTextChunkBuilder::totalAnchorShift() const
     return anchorShift;
 }
 
-AffineTransform SVGTextChunkBuilder::transformationForTextBox(SVGInlineTextBox* textBox) const
+AffineTransform SVGTextChunkBuilder::transformationForTextBox(InlineIterator::SVGTextBoxIterator textBox) const
 {
-    auto it = m_textBoxTransformations.find(textBox);
+    auto it = m_textBoxTransformations.find(makeKey(*textBox));
     return it == m_textBoxTransformations.end() ? AffineTransform() : it->value;
 }
 
-void SVGTextChunkBuilder::buildTextChunks(const Vector<SVGInlineTextBox*>& lineLayoutBoxes)
+void SVGTextChunkBuilder::buildTextChunks(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes, const HashSet<InlineIterator::SVGTextBox::Key>& chunkStarts, SVGTextFragmentMap& fragmentMap)
 {
     if (lineLayoutBoxes.isEmpty())
         return;
@@ -71,25 +71,25 @@ void SVGTextChunkBuilder::buildTextChunks(const Vector<SVGInlineTextBox*>& lineL
     unsigned first = limit;
 
     for (unsigned i = 0; i < limit; ++i) {
-        if (!lineLayoutBoxes[i]->startsNewTextChunk())
+        if (!chunkStarts.contains(makeKey(*lineLayoutBoxes[i])))
             continue;
 
         if (first == limit)
             first = i;
         else {
             ASSERT_WITH_SECURITY_IMPLICATION(first != i);
-            m_textChunks.append(SVGTextChunk(lineLayoutBoxes, first, i));
+            m_textChunks.append(SVGTextChunk(lineLayoutBoxes, first, i, fragmentMap));
             first = i;
         }
     }
 
     if (first != limit)
-        m_textChunks.append(SVGTextChunk(lineLayoutBoxes, first, limit));
+        m_textChunks.append(SVGTextChunk(lineLayoutBoxes, first, limit, fragmentMap));
 }
 
-void SVGTextChunkBuilder::layoutTextChunks(const Vector<SVGInlineTextBox*>& lineLayoutBoxes)
+void SVGTextChunkBuilder::layoutTextChunks(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes, const HashSet<InlineIterator::SVGTextBox::Key>& chunkStarts, SVGTextFragmentMap& fragmentMap)
 {
-    buildTextChunks(lineLayoutBoxes);
+    buildTextChunks(lineLayoutBoxes, chunkStarts, fragmentMap);
     if (m_textChunks.isEmpty())
         return;
 

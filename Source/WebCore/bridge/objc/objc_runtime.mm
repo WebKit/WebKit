@@ -298,6 +298,7 @@ CallData ObjcFallbackObjectImp::getCallData(JSCell* cell)
         callData.type = CallData::Type::Native;
         callData.native.function = callObjCFallbackObject;
         callData.native.isBoundFunction = false;
+        callData.native.isWasm = false;
     }
 
     return callData;

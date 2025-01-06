@@ -12,11 +12,7 @@ if sys.stdout.isatty() and os.path.exists('/dev/tty'):
 else:
     TTY = None
 
-ENCODING_KWARGS = dict()
-if sys.version_info >= (3, 6):
-    ENCODING_KWARGS = dict(encoding='utf-8')
-
-TOPLEVEL = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], **ENCODING_KWARGS).strip()
+TOPLEVEL = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], encoding='utf-8').strip()
 
 LOCATION = os.path.join(TOPLEVEL, r'{{ location }}')
 SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
@@ -47,10 +43,8 @@ QUIET = -1
 VERBOSE = 1
 VERBOSITY = int(os.environ.get('VERBOSITY', '0'))
 
-SECURITY_LEVELS = { {% for key, value in security_levels.items() %}
-    '{{ key }}': {{ value }},{% endfor %}
-}
-MAX_LEVEL = max(list(SECURITY_LEVELS.values()) + [0])
+SECURITY_LEVELS = {{ security_levels }}
+MAX_LEVEL = max(SECURITY_LEVELS.values(), default=0)
 
 
 def print_error(why):
@@ -125,7 +119,7 @@ def commits_in(from_ref, to_ref):
             command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            **ENCODING_KWARGS
+            encoding='utf-8',
         )
         line = proc.stdout.readline()
         while line:
@@ -140,10 +134,10 @@ def remote_name_mappings():
     a, b = {}, {}
     for line in subprocess.check_output(
         ['git', 'remote', '-v'],
-        **ENCODING_KWARGS
+        encoding='utf-8',
     ).splitlines():
         remote = line.split()
-        if len(remote) < 2:
+        if len(remote) < 2 or remote[1] == 'INVALID':
             continue
         match = REMOTE_RE.match(remote[1])
         if match:
@@ -160,7 +154,7 @@ def remotes_for(commit):
         for line in subprocess.check_output(
             ['git', 'branch', '-r', '--contains', commit],
             stderr=subprocess.STDOUT,
-            **ENCODING_KWARGS
+            encoding='utf-8',
         ).splitlines():
             result.add(line.lstrip().split('/')[0])
         return list(result)
@@ -176,7 +170,7 @@ def branch_for(commit):
         for line in subprocess.check_output(
             ['git', 'branch', '-a', '--contains', commit],
             stderr=subprocess.STDOUT,
-            **ENCODING_KWARGS
+            encoding='utf-8',
         ).splitlines():
             if line[0] == '*':
                 line = line[1:]
@@ -202,7 +196,7 @@ def message_for(commit):
         return None
     return subprocess.check_output(
         ['git', 'log', '--format=%B', '-n', '1', commit],
-        **ENCODING_KWARGS
+        encoding='utf-8',
     )
 
 
@@ -298,11 +292,9 @@ def main(name, remote):
         if not match:
             print_error("'{}' does not conform to a recognized target remote".format(remote))
             return 255
-        name = remote_to_name.get('{}:{}'.format(match.group('host'), match.group('path')), None)
-        if not name:
+        name = remote_to_name.get('{}:{}'.format(match.group('host'), match.group('path')), remote)
+        if name not in name_to_remote:
             print_error("Failed to map '{}' to an existing remote".format(remote))
-            return 1
-
 
     remotes_with = {}
     for from_ref, to_ref in to_push:

@@ -1,4 +1,7 @@
 <!DOCTYPE html>
 <script>
-    new WebSocket('ws://localhost/');
+    w = new WebSocket('ws://localhost/');
+    w.onerror = ()=>{
+        window.parent.postMessage('websocket failed');
+    }
 </script>

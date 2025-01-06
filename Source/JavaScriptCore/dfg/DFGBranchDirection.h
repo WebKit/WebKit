@@ -45,23 +45,6 @@ enum BranchDirection : uint8_t {
     TakeBoth
 };
     
-static inline const char* branchDirectionToString(BranchDirection branchDirection)
-{
-    switch (branchDirection) {
-    case InvalidBranchDirection:
-        return "InvalidBranchDirection";
-    case TakeTrue:
-        return "TakeTrue";
-    case TakeFalse:
-        return "TakeFalse";
-    case TakeBoth:
-        return "TakeBoth";
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-    return "InvalidBranchDirection";
-}
-    
 static inline bool isKnownDirection(BranchDirection branchDirection)
 {
     switch (branchDirection) {
@@ -82,14 +65,5 @@ static inline bool branchCondition(BranchDirection branchDirection)
 }
 
 } } // namespace JSC::DFG
-
-namespace WTF {
-
-inline void printInternal(PrintStream& out, JSC::DFG::BranchDirection direction)
-{
-    out.print(JSC::DFG::branchDirectionToString(direction));
-}
-
-} // namespace WTF
 
 #endif // ENABLE(DFG_JIT)

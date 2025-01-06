@@ -151,7 +151,7 @@ TEST(ScrollViewScrollabilityTests, ScrollableAfterNavigateToPDF)
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ([[webView scrollView] isScrollEnabled], NO);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
     [webView loadRequest:request];
 
     [webView _test_waitForDidFinishNavigation];

@@ -180,6 +180,10 @@ checkModuleSyntaxError(String.raw`
 import { hello, binding as
 `, `SyntaxError: Unexpected end of script:3`);
 
+checkModuleSyntaxError(String.raw`
+import defer * as ns from "mod"
+`, `SyntaxError: Unexpected token '*'. Expected 'from' before imported module name.:2`);
+
 // --------------- export -------------------
 
 checkModuleSyntaxError(String.raw`

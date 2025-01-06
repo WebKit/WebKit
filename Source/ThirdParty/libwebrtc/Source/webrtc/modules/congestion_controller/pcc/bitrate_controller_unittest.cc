@@ -253,7 +253,7 @@ TEST(PccBitrateControllerTest, SlowStartMode) {
       kTargetSendingRate * 2);
   EXPECT_EQ(
       bitrate_controller.ComputeRateUpdateForSlowStartMode(monitor_block[0]),
-      absl::nullopt);
+      std::nullopt);
 }
 
 TEST(PccBitrateControllerTest, StepSizeIncrease) {

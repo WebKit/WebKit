@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "WritingDirection.h"
@@ -167,6 +168,7 @@ public:
     WEBCORE_EXPORT bool hasStyle(CSSPropertyID, const String& value);
     WEBCORE_EXPORT static RefPtr<EditingStyle> styleAtSelectionStart(const VisibleSelection&, bool shouldUseBackgroundColorInEffect = false);
     static WritingDirection textDirectionForSelection(const VisibleSelection&, EditingStyle* typingStyle, bool& hasNestedOrMultipleEmbeddings);
+    static bool isEmbedOrIsolate(CSSValueID unicodeBidi) { return unicodeBidi == CSSValueID::CSSValueIsolate || unicodeBidi == CSSValueID::CSSValueWebkitIsolate || unicodeBidi == CSSValueID::CSSValueEmbed; }
 
     Ref<EditingStyle> inverseTransformColorIfNeeded(Element&);
 
@@ -180,7 +182,7 @@ private:
     EditingStyle(CSSPropertyID, CSSValueID);
     void init(Node*, PropertiesToInclude);
     void removeTextFillAndStrokeColorsIfNeeded(const RenderStyle*);
-    void setProperty(CSSPropertyID, const String& value, bool important = false);
+    void setProperty(CSSPropertyID, const String& value, IsImportant = IsImportant::No);
     void extractFontSizeDelta();
     template<typename T> TriState triStateOfStyle(T& styleToCompare, ShouldIgnoreTextOnlyProperties) const;
     bool conflictsWithInlineStyleOfElement(StyledElement&, RefPtr<MutableStyleProperties>* newInlineStyle, EditingStyle* extractedStyle) const;

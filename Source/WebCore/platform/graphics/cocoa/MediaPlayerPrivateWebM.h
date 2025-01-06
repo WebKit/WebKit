@@ -36,14 +36,17 @@
 #include "WebMResourceClient.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/NativePromise.h>
 #include <wtf/StdUnorderedMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVSampleBufferRenderSynchronizer;
+OBJC_CLASS AVSampleBufferVideoRenderer;
+OBJC_PROTOCOL(WebSampleBufferVideoRendering);
 
 typedef struct __CVBuffer *CVPixelBufferRef;
 
@@ -75,17 +78,22 @@ class MediaPlayerPrivateWebM
     , public WebMResourceClientParent
     , public WebAVSampleBufferListenerClient
     , private LoggerHelper {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateWebM);
 public:
     MediaPlayerPrivateWebM(MediaPlayer*);
     ~MediaPlayerPrivateWebM();
 
-    void ref() final { WebMResourceClientParent::ref(); }
-    void deref() final { WebMResourceClientParent::deref(); }
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::CocoaWebM; }
+
+    void ref() const final { WebMResourceClientParent::ref(); }
+    void deref() const final { WebMResourceClientParent::deref(); }
 
     static void registerMediaEngine(MediaEngineRegistrar);
 private:
+    void setPreload(MediaPlayer::Preload) final;
+    void doPreload();
     void load(const String&) final;
+    bool createResourceClient();
 
 #if ENABLE(MEDIA_SOURCE)
     void load(const URL&, const ContentType&, MediaSourcePrivateClient&) final;
@@ -96,6 +104,7 @@ private:
     
     // WebMResourceClientParent
     friend class WebMResourceClient;
+    void dataLengthReceived(size_t) final;
     void dataReceived(const SharedBuffer&) final;
     void loadFailed(const ResourceError&) final;
     void loadFinished() final;
@@ -107,10 +116,13 @@ private:
     bool supportsPictureInPicture() const final { return true; }
     bool supportsFullscreen() const final { return true; }
 
+    void prepareToPlay() final;
     void play() final;
     void pause() final;
     bool paused() const final;
     bool timeIsProgressing() const final;
+
+    WebSampleBufferVideoRendering *layerOrVideoRenderer() const;
 
     FloatSize naturalSize() const final { return m_naturalSize; }
 
@@ -151,9 +163,6 @@ private:
     bool updateLastImage();
     void paint(GraphicsContext&, const FloatRect&) final;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
-#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    void willBeAskedToPaintGL() final;
-#endif
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
 
@@ -167,11 +176,10 @@ private:
     void setReadyState(MediaPlayer::ReadyState);
     void characteristicsChanged();
 
-    bool shouldEnsureLayer() const;
     void setPresentationSize(const IntSize&) final;
     bool supportsAcceleratedRendering() const final { return true; }
     void acceleratedRenderingStateChanged() final;
-    void updateDisplayLayerAndDecompressionSession();
+    void updateDisplayLayer();
 
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() final;
     void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) final;
@@ -190,9 +198,15 @@ private:
     bool wirelessVideoPlaybackDisabled() const final { return false; }
 #endif
 
+    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
+
     void enqueueSample(Ref<MediaSample>&&, TrackID);
-    void reenqueSamples(TrackID);
-    void reenqueueMediaForTime(TrackBuffer&, TrackID, const MediaTime&);
+    enum class NeedsFlush: bool {
+        No = 0,
+        Yes
+    };
+    void reenqueSamples(TrackID, NeedsFlush = NeedsFlush::Yes);
+    void reenqueueMediaForTime(TrackBuffer&, TrackID, const MediaTime&, NeedsFlush = NeedsFlush::Yes);
     void notifyClientWhenReadyForMoreSamples(TrackID);
 
     void setMinimumUpcomingPresentationTime(TrackID, const MediaTime&);
@@ -222,35 +236,72 @@ private:
 
     void addTrackBuffer(TrackID, RefPtr<MediaDescription>&&);
 
+    bool shouldEnsureLayerOrVideoRenderer() const;
     void ensureLayer();
-    void ensureDecompressionSession();
+    void destroyLayer();
+    void ensureVideoRenderer();
+    void destroyVideoRenderer();
+
+    void ensureLayerOrVideoRenderer(MediaPlayerEnums::NeedsRenderingModeChanged);
+    void destroyLayerOrVideoRendererAndCreateRenderlessVideoMediaSampleRenderer();
+    void configureLayerOrVideoRenderer(WebSampleBufferVideoRendering *);
+
     void addAudioRenderer(TrackID);
     void removeAudioRenderer(TrackID);
-
-    void destroyLayer();
-    void destroyDecompressionSession();
     void destroyAudioRenderer(RetainPtr<AVSampleBufferAudioRenderer>);
     void destroyAudioRenderers();
     void clearTracks();
-        
-    void registerNotifyWhenHasAvailableVideoFrame();
-        
+
+    void configureVideoRenderer(VideoMediaSampleRenderer&);
+    void invalidateVideoRenderer(VideoMediaSampleRenderer&);
+    void setVideoRenderer(WebSampleBufferVideoRendering *);
+    void stageVideoRenderer(WebSampleBufferVideoRendering *);
+
     void startVideoFrameMetadataGathering() final;
     void stopVideoFrameMetadataGathering() final;
     std::optional<VideoFrameMetadata> videoFrameMetadata() final { return std::exchange(m_videoFrameMetadata, { }); }
     void setResourceOwner(const ProcessIdentity& resourceOwner) final { m_resourceOwner = resourceOwner; }
 
-    void checkNewVideoFrameMetadata(CMTime);
+    void checkNewVideoFrameMetadata(const MediaTime& presentationTime, double displayTime);
 
     // WebAVSampleBufferListenerParent
     // Methods are called on the WebMResourceClient's WorkQueue
     void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *) final;
     void audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *) final;
-    void videoRendererReadyForDisplayChanged(WebSampleBufferVideoRendering *, bool isReadyForDisplay) final;
+
+    void setShouldDisableHDR(bool) final;
+    void playerContentBoxRectChanged(const LayoutRect&) final;
+    void setShouldMaintainAspectRatio(bool) final;
+    bool m_shouldMaintainAspectRatio { true };
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    const String& defaultSpatialTrackingLabel() const final;
+    void setDefaultSpatialTrackingLabel(const String&) final;
+    const String& spatialTrackingLabel() const final;
+    void setSpatialTrackingLabel(const String&) final;
+    void updateSpatialTrackingLabel();
+#endif
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    void setVideoTarget(const PlatformVideoTarget&) final;
+#endif
+    void isInFullscreenOrPictureInPictureChanged(bool) final;
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    bool supportsLinearMediaPlayer() const final { return true; }
+#endif
+
+    enum class AcceleratedVideoMode: uint8_t {
+        Layer = 0,
+        StagedVideoRenderer,
+        VideoRenderer,
+        StagedLayer
+    };
+    AcceleratedVideoMode acceleratedVideoMode() const;
 
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const final { return "MediaPlayerPrivateWebM"_s; }
-    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 
     friend class MediaPlayerFactoryWebM;
@@ -259,46 +310,48 @@ private:
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     void maybeFinishLoading();
+    void readyToProcessData();
 
+    URL m_assetURL;
+    MediaPlayer::Preload m_preload { MediaPlayer::Preload::Auto };
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
     RetainPtr<id> m_durationObserver;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
+    MediaTime m_lastPixelBufferPresentationTimeStamp;
     RefPtr<NativeImage> m_lastImage;
     std::unique_ptr<PixelBufferConformerCV> m_rgbConformer;
-    RefPtr<WebCoreDecompressionSession> m_decompressionSession;
     RefPtr<WebMResourceClient> m_resourceClient;
 
     Vector<RefPtr<VideoTrackPrivateWebM>> m_videoTracks;
     Vector<RefPtr<AudioTrackPrivateWebM>> m_audioTracks;
     StdUnorderedMap<TrackID, UniqueRef<TrackBuffer>> m_trackBufferMap;
+    StdUnorderedMap<TrackID, bool> m_readyForMoreSamplesMap;
     PlatformTimeRanges m_buffered;
 
     RefPtr<VideoMediaSampleRenderer> m_videoRenderer;
+    RefPtr<VideoMediaSampleRenderer> m_expiringVideoRenderer;
+
+    RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    RetainPtr<AVSampleBufferVideoRenderer> m_sampleBufferVideoRenderer;
     StdUnorderedMap<TrackID, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
     Ref<SourceBufferParserWebM> m_parser;
     const Ref<WTF::WorkQueue> m_appendQueue;
 
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
-#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    bool m_hasBeenAskedToPaintGL { false };
-#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
     bool m_shouldPlayToTarget { false };
 #endif
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
     std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
-    RetainPtr<id> m_videoFrameMetadataGatheringObserver;
     bool m_isGatheringVideoFrameMetadata { false };
     std::optional<VideoFrameMetadata> m_videoFrameMetadata;
     uint64_t m_lastConvertedSampleCount { 0 };
-    uint64_t m_sampleCount { 0 };
     ProcessIdentity m_resourceOwner;
-    std::unique_ptr<BinarySemaphore> m_hasAvailableVideoFrameSemaphore;
 
     FloatSize m_naturalSize;
     MediaTime m_currentTime;
@@ -306,8 +359,11 @@ private:
     double m_rate { 1 };
 
     bool isEnabledVideoTrackID(TrackID) const;
+    bool hasSelectedVideo() const;
     std::optional<TrackID> m_enabledVideoTrackID;
     std::atomic<uint32_t> m_abortCalled { 0 };
+    size_t m_contentLength { 0 };
+    size_t m_contentReceived { 0 };
     uint32_t m_pendingAppends { 0 };
 #if PLATFORM(IOS_FAMILY)
     bool m_displayLayerWasInterrupted { false };
@@ -318,7 +374,6 @@ private:
     bool m_visible { false };
     mutable bool m_loadingProgressed { false };
     bool m_loadFinished { false };
-    bool m_delayedIdle { false };
     bool m_errored { false };
     bool m_processingInitializationSegment { false };
     Ref<WebAVSampleBufferListener> m_listener;
@@ -327,6 +382,7 @@ private:
     void seekToTarget(const SeekTarget&) final;
     bool seeking() const final;
     void seekInternal();
+    Ref<GenericPromise> seekTo(const MediaTime&);
     void maybeCompleteSeek();
     MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
     bool shouldBePlaying() const;
@@ -342,7 +398,16 @@ private:
         SeekCompleted,
     };
     SeekState m_seekState { SeekCompleted };
+    std::optional<GenericPromise::Producer> m_seekPromise;
     bool m_isSynchronizerSeeking { false };
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    String m_defaultSpatialTrackingLabel;
+    String m_spatialTrackingLabel;
+#endif
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    bool m_usingLinearMediaPlayer { false };
+    RetainPtr<FigVideoTargetRef> m_videoTarget;
+#endif
 };
 
 } // namespace WebCore

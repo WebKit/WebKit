@@ -13,11 +13,12 @@
 #include "./vpx_scale_rtcd.h"
 #include "./vpx_config.h"
 
-#include "vpx/vpx_integer.h"
-
 #include "vp9/common/vp9_blockd.h"
 #include "vp9/common/vp9_reconinter.h"
 #include "vp9/common/vp9_reconintra.h"
+
+#include "vpx/vpx_integer.h"
+#include "vpx_scale/yv12config.h"
 
 #if CONFIG_VP9_HIGHBITDEPTH
 void vp9_highbd_build_inter_predictor(
@@ -158,18 +159,19 @@ static void build_inter_predictors(MACROBLOCKD *xd, int plane, int block,
       // Co-ordinate of containing block to pixel precision.
       const int x_start = (-xd->mb_to_left_edge >> (3 + pd->subsampling_x));
       const int y_start = (-xd->mb_to_top_edge >> (3 + pd->subsampling_y));
+      const YV12_BUFFER_CONFIG *ref_buf = xd->block_refs[ref]->buf;
+      uint8_t *buf_array[] = { ref_buf->y_buffer, ref_buf->u_buffer,
+                               ref_buf->v_buffer };
+      const int stride_array[] = { ref_buf->y_stride, ref_buf->uv_stride,
+                                   ref_buf->uv_stride };
 #if 0  // CONFIG_BETTER_HW_COMPATIBILITY
       assert(xd->mi[0]->sb_type != BLOCK_4X8 &&
              xd->mi[0]->sb_type != BLOCK_8X4);
       assert(mv_q4.row == mv.row * (1 << (1 - pd->subsampling_y)) &&
              mv_q4.col == mv.col * (1 << (1 - pd->subsampling_x)));
 #endif
-      if (plane == 0)
-        pre_buf->buf = xd->block_refs[ref]->buf->y_buffer;
-      else if (plane == 1)
-        pre_buf->buf = xd->block_refs[ref]->buf->u_buffer;
-      else
-        pre_buf->buf = xd->block_refs[ref]->buf->v_buffer;
+      pre_buf->buf = buf_array[plane];
+      pre_buf->stride = stride_array[plane];
 
       pre_buf->buf +=
           scaled_buffer_offset(x_start + x, y_start + y, pre_buf->stride, sf);

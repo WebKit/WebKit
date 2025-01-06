@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,6 +16,7 @@
 
 #include "aom/aom_codec.h"
 #include "aom/aom_external_partition.h"
+#include "config/aom_config.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,21 +35,21 @@ aom_codec_err_t av1_ext_part_create(aom_ext_part_funcs_t funcs,
                                     aom_ext_part_config_t config,
                                     ExtPartController *ext_part_controller);
 
-aom_codec_err_t av1_ext_part_init(ExtPartController *ext_part_controller);
-
 aom_codec_err_t av1_ext_part_delete(ExtPartController *ext_part_controller);
 
 bool av1_ext_part_get_partition_decision(ExtPartController *ext_part_controller,
                                          aom_partition_decision_t *decision);
 
-bool av1_ext_part_send_partition_stats(ExtPartController *ext_part_controller,
-                                       const aom_partition_stats_t *stats);
-
 bool av1_ext_part_send_features(ExtPartController *ext_part_controller,
                                 const aom_partition_features_t *features);
 
+#if CONFIG_PARTITION_SEARCH_ORDER
+bool av1_ext_part_send_partition_stats(ExtPartController *ext_part_controller,
+                                       const aom_partition_stats_t *stats);
+
 aom_ext_part_decision_mode_t av1_get_ext_part_decision_mode(
     const ExtPartController *ext_part_controller);
+#endif  // CONFIG_PARTITION_SEARCH_ORDER
 
 /*!\endcond */
 #ifdef __cplusplus

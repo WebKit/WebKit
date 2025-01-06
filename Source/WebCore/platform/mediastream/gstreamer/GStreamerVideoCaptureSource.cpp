@@ -27,8 +27,8 @@
 
 #include "DisplayCaptureManager.h"
 #include "GStreamerCaptureDeviceManager.h"
-
 #include <gst/app/gstappsink.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -48,7 +48,7 @@ static void initializeVideoCaptureSourceDebugCategory()
 
 class GStreamerVideoCaptureSourceFactory final : public VideoCaptureFactory {
 public:
-    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier) final
+    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier>) final
     {
         return GStreamerVideoCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalts), constraints);
     }
@@ -58,7 +58,7 @@ private:
 
 class GStreamerDisplayCaptureSourceFactory final : public DisplayCaptureFactory {
 public:
-    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier) final
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier>) final
     {
         auto& manager = GStreamerDisplayCaptureDeviceManager::singleton();
         return manager.createDisplayCaptureSource(device, WTFMove(hashSalts), constraints);
@@ -115,7 +115,7 @@ GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, Atom
     m_capturer->addObserver(*this);
 
     auto& singleton = GStreamerVideoCaptureDeviceManager::singleton();
-    singleton.registerCapturer(m_capturer);
+    singleton.registerCapturer(m_capturer.copyRef());
 }
 
 GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(GStreamerCaptureDevice&& device, MediaDeviceHashSalts&& hashSalts)
@@ -127,7 +127,7 @@ GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(GStreamerCaptureDevice&
     m_capturer->addObserver(*this);
 
     auto& singleton = GStreamerVideoCaptureDeviceManager::singleton();
-    singleton.registerCapturer(m_capturer);
+    singleton.registerCapturer(m_capturer.copyRef());
 }
 
 GStreamerVideoCaptureSource::~GStreamerVideoCaptureSource()
@@ -179,6 +179,14 @@ void GStreamerVideoCaptureSource::sourceCapsChanged(const GstCaps* caps)
 void GStreamerVideoCaptureSource::captureEnded()
 {
     m_capturer->stop();
+}
+
+std::pair<GstClockTime, GstClockTime> GStreamerVideoCaptureSource::queryCaptureLatency() const
+{
+    if (!m_capturer)
+        return { GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE };
+
+    return m_capturer->queryLatency();
 }
 
 void GStreamerVideoCaptureSource::startProducingData()
@@ -304,13 +312,13 @@ void GStreamerVideoCaptureSource::generatePresets()
     setSupportedPresets(WTFMove(presets));
 }
 
-void GStreamerVideoCaptureSource::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
+void GStreamerVideoCaptureSource::setSizeFrameRateAndZoom(const VideoPresetConstraints& constraints)
 {
-    RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(width, height, frameRate, zoom);
-    if (!width || !height)
+    RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(constraints);
+    if (!constraints.width || !constraints.height)
         return;
 
-    m_capturer->setSize({ *width, *height });
+    m_capturer->setSize({ *constraints.width, *constraints.height });
 }
 
 #undef GST_CAT_DEFAULT

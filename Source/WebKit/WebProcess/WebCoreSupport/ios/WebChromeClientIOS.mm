@@ -33,7 +33,6 @@
 #import "InteractionInformationRequest.h"
 #import "MessageSenderInlines.h"
 #import "UIKitSPI.h"
-#import "WebCoreArgumentCoders.h"
 #import "WebFrame.h"
 #import "WebIconUtilities.h"
 #import "WebPage.h"
@@ -53,7 +52,7 @@ using namespace WebCore;
 
 void WebChromeClient::didPreventDefaultForEvent()
 {
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page().mainFrame());
+    RefPtr localMainFrame = page().localMainFrame();
     if (!localMainFrame)
         return;
     ContentChangeObserver::didPreventDefaultForEvent(*localMainFrame);

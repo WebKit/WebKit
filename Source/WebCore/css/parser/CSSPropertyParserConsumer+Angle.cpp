@@ -26,104 +26,21 @@
 #include "CSSPropertyParserConsumer+Angle.h"
 #include "CSSPropertyParserConsumer+AngleDefinitions.h"
 
-#include "CSSCalcParser.h"
 #include "CSSCalcSymbolTable.h"
-#include "CSSCalcValue.h"
+#include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
-#include "CSSPropertyParserConsumer+MetaConsumer.h"
-#include "CSSPropertyParserConsumer+PercentDefinitions.h"
-#include "CSSPropertyParserConsumer+RawResolver.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-std::optional<AngleRaw> validatedRange(AngleRaw value, CSSPropertyParserOptions options)
-{
-    if (options.valueRange == ValueRange::NonNegative && value.value < 0)
-        return std::nullopt;
-    return value;
-}
-
-std::optional<UnevaluatedCalc<AngleRaw>> AngleKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
-{
-    auto rangeCopy = range;
-    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Angle, WTFMove(symbolsAllowed), options)) {
-        range = rangeCopy;
-        return {{ value.releaseNonNull() }};
-    }
-    return std::nullopt;
-}
-
-std::optional<AngleRaw> AngleKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
-{
-    ASSERT(range.peek().type() == DimensionToken);
-
-    auto& token = range.peek();
-
-    auto unitType = token.unitType();
-    switch (unitType) {
-    case CSSUnitType::CSS_DEG:
-    case CSSUnitType::CSS_RAD:
-    case CSSUnitType::CSS_GRAD:
-    case CSSUnitType::CSS_TURN:
-        break;
-    default:
-        return std::nullopt;
-    }
-
-    if (auto validatedValue = validatedRange(AngleRaw { unitType, token.numericValue() }, options)) {
-        range.consumeIncludingWhitespace();
-        return validatedValue;
-    }
-
-    return std::nullopt;
-}
-
-std::optional<AngleRaw> AngleKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
-{
-    ASSERT(range.peek().type() == NumberToken);
-
-    auto numericValue = range.peek().numericValue();
-    if (!shouldAcceptUnitlessValue(numericValue, options))
-        return std::nullopt;
-
-    if (auto validatedValue = validatedRange(AngleRaw { CSSUnitType::CSS_DEG, numericValue }, options)) {
-        range.consumeIncludingWhitespace();
-        return validatedValue;
-    }
-
-    return std::nullopt;
-}
-
-// MARK: - Consumer functions
-
-std::optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
+RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange& range, const CSSParserContext& context, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
 {
     const auto options = CSSPropertyParserOptions {
-        .parserMode = parserMode,
+        .parserMode = context.mode,
         .unitless = unitless,
         .unitlessZero = unitlessZero
     };
-    return RawResolver<AngleRaw>::consumeAndResolve(range, { }, { }, options);
-}
-
-RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
-{
-    const auto options = CSSPropertyParserOptions {
-        .parserMode = parserMode,
-        .unitless = unitless,
-        .unitlessZero = unitlessZero
-    };
-    return CSSPrimitiveValueResolver<AngleRaw>::consumeAndResolve(range, { }, { }, options);
-}
-
-RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange& range, CSSParserMode parserMode)
-{
-    const auto options = CSSPropertyParserOptions {
-        .parserMode = parserMode,
-        .unitlessZero = UnitlessZeroQuirk::Allow
-    };
-    return CSSPrimitiveValueResolver<AngleRaw, PercentRaw>::consumeAndResolve(range, { }, { }, options);
+    return CSSPrimitiveValueResolver<CSS::Angle<CSS::All>>::consumeAndResolve(range, context, options);
 }
 
 } // namespace CSSPropertyParserHelpers

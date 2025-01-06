@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
+CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
 {
 #ifndef NDEBUG
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
@@ -52,7 +52,7 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomStri
     return source;
 }
 
-MockRealtimeVideoSourceGStreamer::MockRealtimeVideoSourceGStreamer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
+MockRealtimeVideoSourceGStreamer::MockRealtimeVideoSourceGStreamer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
     : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), pageIdentifier)
 {
     ensureGStreamerInitialized();
@@ -106,6 +106,14 @@ void MockRealtimeVideoSourceGStreamer::captureEnded()
     // devices removal.
 }
 
+std::pair<GstClockTime, GstClockTime> MockRealtimeVideoSourceGStreamer::queryCaptureLatency() const
+{
+    if (!m_capturer)
+        return { GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE };
+
+    return m_capturer->queryLatency();
+}
+
 void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
 {
     RefPtr imageBuffer = this->imageBufferInternal();
@@ -128,14 +136,14 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
     gst_app_src_push_sample(GST_APP_SRC_CAST(m_capturer->source()), videoFrame->sample());
 }
 
-void MockRealtimeVideoSourceGStreamer::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
+void MockRealtimeVideoSourceGStreamer::setSizeFrameRateAndZoom(const VideoPresetConstraints& constraints)
 {
-    MockRealtimeVideoSource::setSizeFrameRateAndZoom(width, height, frameRate, zoom);
+    MockRealtimeVideoSource::setSizeFrameRateAndZoom(constraints);
 
-    if (!width || !height)
+    if (!constraints.width || !constraints.height)
         return;
 
-    m_capturer->setSize({ *width, *height });
+    m_capturer->setSize({ *constraints.width, *constraints.height });
 }
 
 } // namespace WebCore

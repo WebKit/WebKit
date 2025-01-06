@@ -34,6 +34,10 @@
 #include "Utilities.h"
 #include <string>
 
+#if PLATFORM(COCOA) && defined(__OBJC__)
+#import "TestNSBundleExtras.h"
+#endif
+
 #if USE(FOUNDATION)
 OBJC_CLASS NSString;
 OBJC_CLASS NSDictionary;

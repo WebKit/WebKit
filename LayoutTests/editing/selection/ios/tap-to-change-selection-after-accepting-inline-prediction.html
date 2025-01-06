@@ -10,6 +10,12 @@ body, html {
     margin: 0;
 }
 
+#start {
+    width: 100%;
+    height: 120px;
+    border: 1px solid orange;
+}
+
 #target {
     padding: 4px;
     border: 1px solid tomato;
@@ -40,8 +46,10 @@ addEventListener("load", async () => {
     description("This test verifies that you can change an editable selection with a tap gesture after accepting an inline prediction. This test accepts an inline completion, taps the red box below, and verifies that the selection is correctly set. Requires WebKitTestRunner.");
     getSelection().setPosition(document.body, 0);
 
-    await UIHelper.activateAndWaitForInputSessionAt(10, 10);
+    console.log("1. Focusing editor");
+    await UIHelper.activateElementAndWaitForInputSession(document.getElementById("start"));
 
+    console.log("2. Typing in editor");
     for (let character of [..."i want to c"]) {
         await UIHelper.callFunctionAndWaitForEvent(async () => {
             await UIHelper.typeCharacter(character);
@@ -50,17 +58,24 @@ addEventListener("load", async () => {
         await UIHelper.delayFor(100);
     }
 
+    console.log("3. Setting inline prediction");
     await UIHelper.setInlinePrediction("elebrate");
     await UIHelper.ensurePresentationUpdate();
 
+    console.log("4. Accepting inline prediction");
     await UIHelper.acceptInlinePrediction();
     await UIHelper.ensurePresentationUpdate();
 
-    await UIHelper.waitForCondition(() => document.body.textContent.includes("I want to celebrate"));
+    console.log("5. Verifying text content");
+    await UIHelper.waitForCondition(() => document.body.textContent.includes("I want to c"));
 
+    console.log("6. Tapping target element");
     await UIHelper.activateElement(document.getElementById("target"));
+
+    console.log("7. Waiting for caret selection");
     await shouldBecomeEqual("targetContainsCaretSelection()", "true");
 
+    console.log("8. Dismissing keyboard");
     document.body.blur();
     await UIHelper.waitForKeyboardToHide();
 
@@ -69,7 +84,7 @@ addEventListener("load", async () => {
 </script>
 </head>
 <body contenteditable>
-    <div><br></div>
+    <div id="start"><br></div>
     <p id="description"></p>
     <div id="target"><br></div>
 </body>

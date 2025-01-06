@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -23,7 +23,7 @@ static const uint8_t g_blend_a64_mask_shuffle[32] = {
 // Common kernels
 //////////////////////////////////////////////////////////////////////////////
 
-static INLINE __m128i blend_4(const uint8_t *src0, const uint8_t *src1,
+static inline __m128i blend_4(const uint8_t *src0, const uint8_t *src1,
                               const __m128i *v_m0_w, const __m128i *v_m1_w) {
   const __m128i v_s0_b = xx_loadl_32(src0);
   const __m128i v_s1_b = xx_loadl_32(src1);
@@ -38,7 +38,7 @@ static INLINE __m128i blend_4(const uint8_t *src0, const uint8_t *src1,
   return v_res_w;
 }
 
-static INLINE __m128i blend_8(const uint8_t *src0, const uint8_t *src1,
+static inline __m128i blend_8(const uint8_t *src0, const uint8_t *src1,
                               const __m128i *v_m0_w, const __m128i *v_m1_w) {
   const __m128i v_s0_b = xx_loadl_64(src0);
   const __m128i v_s1_b = xx_loadl_64(src1);
@@ -55,7 +55,7 @@ static INLINE __m128i blend_8(const uint8_t *src0, const uint8_t *src1,
   return v_res_w;
 }
 
-static INLINE __m128i blend_4_u8(const uint8_t *src0, const uint8_t *src1,
+static inline __m128i blend_4_u8(const uint8_t *src0, const uint8_t *src1,
                                  const __m128i *v_m0_b, const __m128i *v_m1_b,
                                  const __m128i *rounding) {
   const __m128i v_s0_b = xx_loadl_32(src0);
@@ -69,7 +69,7 @@ static INLINE __m128i blend_4_u8(const uint8_t *src0, const uint8_t *src1,
   return v_res;
 }
 
-static INLINE __m128i blend_8_u8(const uint8_t *src0, const uint8_t *src1,
+static inline __m128i blend_8_u8(const uint8_t *src0, const uint8_t *src1,
                                  const __m128i *v_m0_b, const __m128i *v_m1_b,
                                  const __m128i *rounding) {
   const __m128i v_s0_b = xx_loadl_64(src0);
@@ -83,7 +83,7 @@ static INLINE __m128i blend_8_u8(const uint8_t *src0, const uint8_t *src1,
   return v_res;
 }
 
-static INLINE __m128i blend_16_u8(const uint8_t *src0, const uint8_t *src1,
+static inline __m128i blend_16_u8(const uint8_t *src0, const uint8_t *src1,
                                   const __m128i *v_m0_b, const __m128i *v_m1_b,
                                   const __m128i *rounding) {
   const __m128i v_s0_b = xx_loadu_128(src0);
@@ -103,7 +103,7 @@ static INLINE __m128i blend_16_u8(const uint8_t *src0, const uint8_t *src1,
 typedef __m128i (*blend_unit_fn)(const uint16_t *src0, const uint16_t *src1,
                                  const __m128i v_m0_w, const __m128i v_m1_w);
 
-static INLINE __m128i blend_4_b10(const uint16_t *src0, const uint16_t *src1,
+static inline __m128i blend_4_b10(const uint16_t *src0, const uint16_t *src1,
                                   const __m128i v_m0_w, const __m128i v_m1_w) {
   const __m128i v_s0_w = xx_loadl_64(src0);
   const __m128i v_s1_w = xx_loadl_64(src1);
@@ -118,7 +118,7 @@ static INLINE __m128i blend_4_b10(const uint16_t *src0, const uint16_t *src1,
   return v_res_w;
 }
 
-static INLINE __m128i blend_8_b10(const uint16_t *src0, const uint16_t *src1,
+static inline __m128i blend_8_b10(const uint16_t *src0, const uint16_t *src1,
                                   const __m128i v_m0_w, const __m128i v_m1_w) {
   const __m128i v_s0_w = xx_loadu_128(src0);
   const __m128i v_s1_w = xx_loadu_128(src1);
@@ -133,7 +133,7 @@ static INLINE __m128i blend_8_b10(const uint16_t *src0, const uint16_t *src1,
   return v_res_w;
 }
 
-static INLINE __m128i blend_4_b12(const uint16_t *src0, const uint16_t *src1,
+static inline __m128i blend_4_b12(const uint16_t *src0, const uint16_t *src1,
                                   const __m128i v_m0_w, const __m128i v_m1_w) {
   const __m128i v_s0_w = xx_loadl_64(src0);
   const __m128i v_s1_w = xx_loadl_64(src1);
@@ -158,7 +158,7 @@ static INLINE __m128i blend_4_b12(const uint16_t *src0, const uint16_t *src1,
   return v_res_w;
 }
 
-static INLINE __m128i blend_8_b12(const uint16_t *src0, const uint16_t *src1,
+static inline __m128i blend_8_b12(const uint16_t *src0, const uint16_t *src1,
                                   const __m128i v_m0_w, const __m128i v_m1_w) {
   const __m128i v_s0_w = xx_loadu_128(src0);
   const __m128i v_s1_w = xx_loadu_128(src1);

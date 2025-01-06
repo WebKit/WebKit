@@ -66,7 +66,7 @@ public:
     static void setInjectedBundleClient(WKContextRef context, const void* clientInfo)
     {
         WKContextInjectedBundleClientV1 injectedBundleClient;
-        memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+        zeroBytes(injectedBundleClient);
 
         injectedBundleClient.base.version = 1;
         injectedBundleClient.base.clientInfo = clientInfo;
@@ -78,7 +78,7 @@ public:
     static void setPageLoaderClient(WKPageRef page, const void* clientInfo)
     {
         WKPageNavigationClientV3 loaderClient;
-        memset(&loaderClient, 0, sizeof(loaderClient));
+        zeroBytes(loaderClient);
 
         loaderClient.base.version = 3;
         loaderClient.base.clientInfo = clientInfo;

@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 #if HAVE(APPLE_LOW_POWER_MODE_SUPPORT)
 #include <wtf/RetainPtr.h>
@@ -34,13 +36,16 @@ OBJC_CLASS WebLowPowerModeObserver;
 
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
+extern "C" {
 typedef struct _GPowerProfileMonitor GPowerProfileMonitor;
+};
 #endif
 
 namespace WebCore {
 
-class LowPowerModeNotifier {
-    WTF_MAKE_FAST_ALLOCATED;
+class LowPowerModeNotifier : public CanMakeCheckedPtr<LowPowerModeNotifier> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LowPowerModeNotifier, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LowPowerModeNotifier);
 public:
     using LowPowerModeChangeCallback = Function<void(bool isLowPowerModeEnabled)>;
     WEBCORE_EXPORT explicit LowPowerModeNotifier(LowPowerModeChangeCallback&&);

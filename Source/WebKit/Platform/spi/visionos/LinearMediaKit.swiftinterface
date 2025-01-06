@@ -1,6 +1,7 @@
 // swift-interface-format-version: 1.0
 // swift-module-flags: -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -library-level spi -enable-bare-slash-regex -user-module-version 199.100.12 -module-name LinearMediaKit
 
+import _Concurrency
 import Combine
 import Foundation
 @_spi(RealityKit) @_spi(Private) import RealityFoundation

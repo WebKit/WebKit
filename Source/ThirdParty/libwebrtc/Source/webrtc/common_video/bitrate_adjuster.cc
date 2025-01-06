@@ -67,7 +67,7 @@ uint32_t BitrateAdjuster::GetAdjustedBitrateBps() const {
   return adjusted_bitrate_bps_;
 }
 
-absl::optional<uint32_t> BitrateAdjuster::GetEstimatedBitrateBps() {
+std::optional<uint32_t> BitrateAdjuster::GetEstimatedBitrateBps() {
   MutexLock lock(&mutex_);
   return bitrate_tracker_.Rate(rtc::TimeMillis());
 }

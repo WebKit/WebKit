@@ -36,6 +36,9 @@ public:
     static Ref<WebSharedWorkerObjectConnection> create() { return adoptRef(*new WebSharedWorkerObjectConnection); }
     ~WebSharedWorkerObjectConnection();
 
+    void ref() const final { WebCore::SharedWorkerObjectConnection::ref(); }
+    void deref() const final { WebCore::SharedWorkerObjectConnection::deref(); }
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:

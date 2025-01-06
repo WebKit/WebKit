@@ -108,7 +108,7 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
 
     // Replace the old dFdx() or dFdy() node with the new node that contains the corrected value
     //
-    // Note the following bugs (anglebug.com/7346):
+    // Note the following bugs (anglebug.com/42265816):
     //
     // - Side effects of operand are duplicated with the above
     // - If the direct child of this node is itself dFdx/y, its queueReplacement will not be

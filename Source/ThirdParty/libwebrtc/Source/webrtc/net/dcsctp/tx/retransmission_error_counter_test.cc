@@ -74,7 +74,7 @@ TEST(RetransmissionErrorCounterTest, ClearingCounter) {
 
 TEST(RetransmissionErrorCounterTest, CanBeLimitless) {
   DcSctpOptions options;
-  options.max_retransmissions = absl::nullopt;
+  options.max_retransmissions = std::nullopt;
   RetransmissionErrorCounter counter("log: ", options);
   for (int i = 0; i < 100; ++i) {
     EXPECT_TRUE(counter.Increment("test"));

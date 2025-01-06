@@ -10,11 +10,16 @@
 #include "api/rtp_parameters.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <string>
 #include <tuple>
-#include <utility>
+#include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/rtp_transceiver_direction.h"
+#include "media/base/media_constants.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
@@ -47,6 +52,14 @@ RtcpFeedback::~RtcpFeedback() = default;
 RtpCodec::RtpCodec() = default;
 RtpCodec::RtpCodec(const RtpCodec&) = default;
 RtpCodec::~RtpCodec() = default;
+bool RtpCodec::IsResiliencyCodec() const {
+  return name == cricket::kRtxCodecName || name == cricket::kRedCodecName ||
+         name == cricket::kUlpfecCodecName ||
+         name == cricket::kFlexfecCodecName;
+}
+bool RtpCodec::IsMediaCodec() const {
+  return !IsResiliencyCodec() && name != cricket::kComfortNoiseCodecName;
+}
 RtpCodecCapability::RtpCodecCapability() = default;
 RtpCodecCapability::~RtpCodecCapability() = default;
 
@@ -63,6 +76,15 @@ RtpHeaderExtensionCapability::RtpHeaderExtensionCapability(
     int preferred_id,
     RtpTransceiverDirection direction)
     : uri(uri), preferred_id(preferred_id), direction(direction) {}
+RtpHeaderExtensionCapability::RtpHeaderExtensionCapability(
+    absl::string_view uri,
+    int preferred_id,
+    bool preferred_encrypt,
+    RtpTransceiverDirection direction)
+    : uri(uri),
+      preferred_id(preferred_id),
+      preferred_encrypt(preferred_encrypt),
+      direction(direction) {}
 RtpHeaderExtensionCapability::~RtpHeaderExtensionCapability() = default;
 
 RtpExtension::RtpExtension() = default;
@@ -136,6 +158,7 @@ constexpr char RtpExtension::kRidUri[];
 constexpr char RtpExtension::kRepairedRidUri[];
 constexpr char RtpExtension::kVideoFrameTrackingIdUri[];
 constexpr char RtpExtension::kCsrcAudioLevelsUri[];
+constexpr char RtpExtension::kCorruptionDetectionUri[];
 
 constexpr int RtpExtension::kMinId;
 constexpr int RtpExtension::kMaxId;
@@ -171,7 +194,8 @@ bool RtpExtension::IsSupportedForVideo(absl::string_view uri) {
          uri == webrtc::RtpExtension::kRidUri ||
          uri == webrtc::RtpExtension::kRepairedRidUri ||
          uri == webrtc::RtpExtension::kVideoLayersAllocationUri ||
-         uri == webrtc::RtpExtension::kVideoFrameTrackingIdUri;
+         uri == webrtc::RtpExtension::kVideoFrameTrackingIdUri ||
+         uri == webrtc::RtpExtension::kCorruptionDetectionUri;
 }
 
 bool RtpExtension::IsEncryptionSupported(absl::string_view uri) {

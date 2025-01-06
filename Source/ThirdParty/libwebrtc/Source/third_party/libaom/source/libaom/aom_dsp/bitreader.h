@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -83,7 +83,7 @@ uint32_t aom_reader_tell(const aom_reader *r);
 uint32_t aom_reader_tell_frac(const aom_reader *r);
 
 #if CONFIG_ACCOUNTING
-static INLINE void aom_process_accounting(const aom_reader *r ACCT_STR_PARAM) {
+static inline void aom_process_accounting(const aom_reader *r ACCT_STR_PARAM) {
   if (r->accounting != NULL) {
     uint32_t tell_frac;
     tell_frac = aom_reader_tell_frac(r);
@@ -93,7 +93,7 @@ static INLINE void aom_process_accounting(const aom_reader *r ACCT_STR_PARAM) {
   }
 }
 
-static INLINE void aom_update_symb_counts(const aom_reader *r, int is_binary) {
+static inline void aom_update_symb_counts(const aom_reader *r, int is_binary) {
   if (r->accounting != NULL) {
     r->accounting->syms.num_multi_syms += !is_binary;
     r->accounting->syms.num_binary_syms += !!is_binary;
@@ -101,7 +101,7 @@ static INLINE void aom_update_symb_counts(const aom_reader *r, int is_binary) {
 }
 #endif
 
-static INLINE int aom_read_(aom_reader *r, int prob ACCT_STR_PARAM) {
+static inline int aom_read_(aom_reader *r, int prob ACCT_STR_PARAM) {
   int p = (0x7FFFFF - (prob << 15) + prob) >> 8;
   int bit = od_ec_decode_bool_q15(&r->ec, p);
 
@@ -146,7 +146,7 @@ static INLINE int aom_read_(aom_reader *r, int prob ACCT_STR_PARAM) {
   return bit;
 }
 
-static INLINE int aom_read_bit_(aom_reader *r ACCT_STR_PARAM) {
+static inline int aom_read_bit_(aom_reader *r ACCT_STR_PARAM) {
   int ret;
   ret = aom_read(r, 128, NULL);  // aom_prob_half
 #if CONFIG_ACCOUNTING
@@ -155,7 +155,7 @@ static INLINE int aom_read_bit_(aom_reader *r ACCT_STR_PARAM) {
   return ret;
 }
 
-static INLINE int aom_read_literal_(aom_reader *r, int bits ACCT_STR_PARAM) {
+static inline int aom_read_literal_(aom_reader *r, int bits ACCT_STR_PARAM) {
   int literal = 0, bit;
 
   for (bit = bits - 1; bit >= 0; bit--) literal |= aom_read_bit(r, NULL) << bit;
@@ -165,7 +165,7 @@ static INLINE int aom_read_literal_(aom_reader *r, int bits ACCT_STR_PARAM) {
   return literal;
 }
 
-static INLINE int aom_read_cdf_(aom_reader *r, const aom_cdf_prob *cdf,
+static inline int aom_read_cdf_(aom_reader *r, const aom_cdf_prob *cdf,
                                 int nsymbs ACCT_STR_PARAM) {
   int symb;
   assert(cdf != NULL);
@@ -217,7 +217,7 @@ static INLINE int aom_read_cdf_(aom_reader *r, const aom_cdf_prob *cdf,
   return symb;
 }
 
-static INLINE int aom_read_symbol_(aom_reader *r, aom_cdf_prob *cdf,
+static inline int aom_read_symbol_(aom_reader *r, aom_cdf_prob *cdf,
                                    int nsymbs ACCT_STR_PARAM) {
   int ret;
   ret = aom_read_cdf(r, cdf, nsymbs, ACCT_STR_NAME);

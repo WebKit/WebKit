@@ -1,0 +1,9 @@
+Press Delete (Fn+Backspace for macOS) in each text field below.
+
+
+abc
+
+FAIL textInput: delete selection, <input> assert_equals: expected "ac" but got "abc"
+FAIL textInput: delete selection, <textarea> assert_equals: expected "ac" but got "abc"
+FAIL textInput: delete selection, <div contenteditable="true"> assert_equals: expected "ac" but got "abc"
+

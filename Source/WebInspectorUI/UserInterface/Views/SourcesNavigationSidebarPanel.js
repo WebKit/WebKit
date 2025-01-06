@@ -2119,7 +2119,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             || treeElement instanceof WI.CSSStyleSheetTreeElement) {
             let representedObject = treeElement.representedObject;
 
-            if (representedObject instanceof WI.Script && representedObject.resource)
+            if (representedObject instanceof WI.Script && representedObject.resource && representedObject.target.mainResource !== representedObject)
                 representedObject = representedObject.resource;
 
             if (treeElement.treeOutline !== this._resourcesTreeOutline)

@@ -32,15 +32,11 @@
 #include <wtf/Lock.h>
 #include <wtf/StdUnorderedMap.h>
 
-ALLOW_UNUSED_PARAMETERS_BEGIN
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-ALLOW_COMMA_BEGIN
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
 #include <webrtc/api/frame_transformer_interface.h>
 
-ALLOW_DEPRECATED_DECLARATIONS_END
-ALLOW_UNUSED_PARAMETERS_END
-ALLOW_COMMA_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
@@ -69,7 +65,7 @@ private:
     void UnregisterTransformedFrameCallback() final;
     void UnregisterTransformedFrameSinkCallback(uint32_t ssrc) final;
     void AddRef() const final { ref(); }
-    rtc::RefCountReleaseStatus Release() const final;
+    webrtc::RefCountReleaseStatus Release() const final;
 
     MediaType m_mediaType;
     Side m_side;
@@ -87,10 +83,10 @@ inline LibWebRTCRtpTransformBackend::LibWebRTCRtpTransformBackend(MediaType medi
 {
 }
 
-inline rtc::RefCountReleaseStatus LibWebRTCRtpTransformBackend::Release() const
+inline webrtc::RefCountReleaseStatus LibWebRTCRtpTransformBackend::Release() const
 {
     deref();
-    return rtc::RefCountReleaseStatus::kOtherRefsRemained;
+    return webrtc::RefCountReleaseStatus::kOtherRefsRemained;
 }
 
 } // namespace WebCore

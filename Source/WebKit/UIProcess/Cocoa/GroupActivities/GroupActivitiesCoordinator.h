@@ -30,6 +30,7 @@
 #include "GroupActivitiesSession.h"
 #include "MediaSessionCoordinatorProxyPrivate.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVDelegatingPlaybackCoordinator;
 OBJC_CLASS AVDelegatingPlaybackCoordinatorPlayCommand;
@@ -42,7 +43,7 @@ OBJC_CLASS WKGroupActivitiesCoordinatorDelegate;
 namespace WebKit {
 
 class GroupActivitiesCoordinator final : public MediaSessionCoordinatorProxyPrivate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GroupActivitiesCoordinator);
 public:
     static Ref<GroupActivitiesCoordinator> create(GroupActivitiesSession&);
     ~GroupActivitiesCoordinator();

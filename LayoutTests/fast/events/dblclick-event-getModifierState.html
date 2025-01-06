@@ -40,19 +40,21 @@ function verify() {
     finishJSTest();
 }
 
-if (window.eventSender) {
-    eventSender.leapForward(1000); // drain dblclick timer
+onload = async () => {
+    if (window.eventSender) {
+        eventSender.leapForward(1000); // drain dblclick timer
 
-    eventSender.mouseMoveTo(1, 1);
-    eventSender.mouseMoveTo(target.offsetLeft + target.offsetWidth / 2, target.offsetTop + target.offsetHeight / 2);
+        await eventSender.asyncMouseMoveTo(1, 1);
+        await eventSender.asyncMouseMoveTo(target.offsetLeft + target.offsetWidth / 2, target.offsetTop + target.offsetHeight / 2);
 
-    eventSender.mouseDown(0, ['altKey', 'capsLockKey']);
-    eventSender.mouseUp(0, ['altKey', 'capsLockKey']);
-    eventSender.mouseDown(0, ['altKey', 'capsLockKey']);
-    eventSender.mouseUp(0, ['altKey', 'capsLockKey']);
-} else if (window.testRunner) {
-    testFailed('This test requires eventSender');
-    finishJSTest();
+        await eventSender.asyncMouseDown(0, ['altKey', 'capsLockKey']);
+        await eventSender.asyncMouseUp(0, ['altKey', 'capsLockKey']);
+        await eventSender.asyncMouseDown(0, ['altKey', 'capsLockKey']);
+        await eventSender.asyncMouseUp(0, ['altKey', 'capsLockKey']);
+    } else if (window.testRunner) {
+        testFailed('This test requires eventSender');
+        finishJSTest();
+    } 
 }
 
 </script>

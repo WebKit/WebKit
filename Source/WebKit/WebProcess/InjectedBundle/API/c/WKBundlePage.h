@@ -66,12 +66,11 @@ WK_EXPORT void WKBundlePageSetPolicyClient(WKBundlePageRef page, WKBundlePagePol
 WK_EXPORT void WKBundlePageSetUIClient(WKBundlePageRef page, WKBundlePageUIClientBase* client);
 WK_EXPORT void WKBundlePageSetFullScreenClient(WKBundlePageRef page, WKBundlePageFullScreenClientBase* client);
 
-WK_EXPORT WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef page);
+WK_EXPORT WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef page) WK_C_API_DEPRECATED_WITH_MESSAGE("With site isolation, the main frame is not necessarily local to the current bundle process.");
 WK_EXPORT WKFrameHandleRef WKBundleFrameCreateFrameHandle(WKBundleFrameRef);
 
 WK_EXPORT WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef page) WK_C_API_DEPRECATED;
 WK_EXPORT WKStringRef WKBundlePageDumpHistoryForTesting(WKBundlePageRef page, WKStringRef directory);
-WK_EXPORT void WKBundleClearHistoryForTesting(WKBundlePageRef page);
 
 WK_EXPORT void WKBundlePageInstallPageOverlay(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay);
 WK_EXPORT void WKBundlePageUninstallPageOverlay(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay);

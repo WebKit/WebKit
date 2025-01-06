@@ -1,0 +1,8 @@
+Tests that a keyboard access key to press a button will fire only the click event
+
+Click Me with Shift+Alt+g or on Mac with Control+Option+g  Click Me with Shift+Alt+l or on Mac with Control+Option+l
+
+FAIL Test that the Keyboard generated click does not fire pointer or mouse events for button assert_equals: Click's screenX has default value expected 0 but got -9829
+FAIL Test that the Keyboard generated click does not fire pointer or mouse events for inputbutton assert_equals: Click's screenX has default value expected 0 but got -9498
+FAIL Test that the Keyboard generated click does not fire pointer or mouse events for label assert_equals: Click's screenX has default value expected 0 but got -9615
+

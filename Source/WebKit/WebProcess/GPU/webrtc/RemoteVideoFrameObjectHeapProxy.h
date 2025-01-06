@@ -42,15 +42,17 @@ class GPUProcessConnection;
 class RemoteVideoFrameProxy;
 #endif
 
-// Wrapper around RemoteVideoFrameObjectHeapProxyProcessor that will always be destroeyd on main thread.
+// Wrapper around RemoteVideoFrameObjectHeapProxyProcessor that will always be destroyed on main thread.
 class RemoteVideoFrameObjectHeapProxy : public ThreadSafeRefCounted<RemoteVideoFrameObjectHeapProxy, WTF::DestructionThread::MainRunLoop> {
 public:
     static Ref<RemoteVideoFrameObjectHeapProxy> create(GPUProcessConnection& connection) { return adoptRef(*new RemoteVideoFrameObjectHeapProxy(connection)); }
     ~RemoteVideoFrameObjectHeapProxy() = default;
 
 #if PLATFORM(COCOA)
-    void getVideoFrameBuffer(const RemoteVideoFrameProxy& proxy, bool canUseIOSurface, RemoteVideoFrameObjectHeapProxyProcessor::Callback&& callback) { m_processor->getVideoFrameBuffer(proxy, canUseIOSurface, WTFMove(callback)); }
-    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame& frame)  { return m_processor->getNativeImage(frame); }
+    Ref<RemoteVideoFrameObjectHeapProxyProcessor> protectedProcessor() { return m_processor; }
+
+    void getVideoFrameBuffer(const RemoteVideoFrameProxy& proxy, bool canUseIOSurface, RemoteVideoFrameObjectHeapProxyProcessor::Callback&& callback) { protectedProcessor()->getVideoFrameBuffer(proxy, canUseIOSurface, WTFMove(callback)); }
+    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame& frame) { return protectedProcessor()->getNativeImage(frame); }
 #endif
 
 private:

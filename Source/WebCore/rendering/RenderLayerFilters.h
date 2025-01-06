@@ -34,16 +34,17 @@
 #include "CachedSVGDocumentClient.h"
 #include "FilterRenderingMode.h"
 #include "RenderLayer.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CachedSVGDocument;
 class Element;
 class FilterOperations;
-class FilterTargetSwitcher;
+class GraphicsContextSwitcher;
 
 class RenderLayerFilters final : private CachedSVGDocumentClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RenderLayerFilters);
 public:
     explicit RenderLayerFilters(RenderLayer&);
     virtual ~RenderLayerFilters();
@@ -90,7 +91,7 @@ private:
     FloatRect m_filterRegion;
 
     RefPtr<CSSFilter> m_filter;
-    std::unique_ptr<FilterTargetSwitcher> m_targetSwitcher;
+    std::unique_ptr<GraphicsContextSwitcher> m_targetSwitcher;
 };
 
 } // namespace WebCore

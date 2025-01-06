@@ -316,11 +316,11 @@ class SignalProcessingUtils(object):
       An AudioSegment instance.
     """
         # Handle infinite target SNR.
-        if target_snr == -np.Inf:
+        if target_snr == -np.inf:
             # Return a copy of noise.
             logging.warning('SNR = -Inf, returning noise')
             return cls.Copy(noise)
-        elif target_snr == np.Inf:
+        elif target_snr == np.inf:
             # Return a copy of signal.
             logging.warning('SNR = +Inf, returning signal')
             return cls.Copy(signal)
@@ -328,11 +328,11 @@ class SignalProcessingUtils(object):
         # Check signal and noise power.
         signal_power = float(signal.dBFS)
         noise_power = float(noise.dBFS)
-        if signal_power == -np.Inf:
+        if signal_power == -np.inf:
             logging.error('signal has -Inf power, cannot mix')
             raise exceptions.SignalProcessingException(
                 'cannot mix a signal with -Inf power')
-        if noise_power == -np.Inf:
+        if noise_power == -np.inf:
             logging.error('noise has -Inf power, cannot mix')
             raise exceptions.SignalProcessingException(
                 'cannot mix a signal with -Inf power')

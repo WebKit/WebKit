@@ -891,6 +891,7 @@
 #define GR_GL_ANY_SAMPLES_PASSED             0x8C2F
 #define GR_GL_TIME_ELAPSED                   0x88BF
 #define GR_GL_TIMESTAMP                      0x8E28
+#define GR_GL_GPU_DISJOINT                   0x8FBB
 #define GR_GL_PRIMITIVES_GENERATED           0x8C87
 #define GR_GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN 0x8C88
 
@@ -1154,5 +1155,8 @@
 /** WEBGL_debug_renderer_info */
 #define GR_UNMASKED_VENDOR_WEBGL                            0x9245
 #define GR_UNMASKED_RENDERER_WEBGL                          0x9246
+
+/* GL_ANGLE_client_arrays */
+#define GR_GL_CLIENT_ARRAYS_ANGLE                           0x93AA
 
 #endif

@@ -21,7 +21,6 @@
 // https://html.spec.whatwg.org/multipage/dom.html#htmlelement
 
 [
-    CustomPushEventHandlerScope,
     CustomToJSObject,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window,
@@ -56,9 +55,9 @@
     [CEReactions=Needed, Reflect] attribute boolean inert;
 
     // The popover API
-    [EnabledBySetting=PopoverAttributeEnabled] undefined showPopover();
+    [EnabledBySetting=PopoverAttributeEnabled] undefined showPopover(optional ShowPopoverOptions options = {});
     [EnabledBySetting=PopoverAttributeEnabled] undefined hidePopover();
-    [EnabledBySetting=PopoverAttributeEnabled] boolean togglePopover(optional boolean force);
+    [EnabledBySetting=PopoverAttributeEnabled] boolean togglePopover(optional (TogglePopoverOptions or boolean) options = {});
     [CEReactions=Needed, EnabledBySetting=PopoverAttributeEnabled] attribute [AtomString] DOMString? popover;
 
     // Non-standard: IE extension. May get added to the specification (https://github.com/whatwg/html/issues/668).
@@ -71,6 +70,14 @@
     [CEReactions=Needed, Reflect] attribute DOMString webkitdropzone;
 
     [Conditional=WRITING_SUGGESTIONS, CEReactions=Needed] attribute boolean writingsuggestions;
+};
+
+dictionary ShowPopoverOptions {
+    HTMLElement source;
+};
+
+dictionary TogglePopoverOptions : ShowPopoverOptions {
+    boolean force;
 };
 
 HTMLElement includes GlobalEventHandlers;

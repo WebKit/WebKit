@@ -27,6 +27,9 @@
 
 #if ENABLE(PDF_PLUGIN)
 
+#include "CursorContext.h"
+#include "PDFPluginIdentifier.h"
+#include "WebFoundTextRange.h"
 #include <WebCore/FindOptions.h>
 #include <WebCore/PluginViewBase.h>
 #include <WebCore/ResourceResponse.h>
@@ -34,6 +37,7 @@
 #include <WebCore/TextIndicator.h>
 #include <WebCore/Timer.h>
 #include <memory>
+#include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
 
 OBJC_CLASS NSDictionary;
@@ -43,9 +47,11 @@ OBJC_CLASS PDFSelection;
 namespace WebCore {
 class HTMLPlugInElement;
 class LocalFrame;
+class PlatformMouseEvent;
 class RenderEmbeddedObject;
 class ShareableBitmap;
 class VoidCallback;
+enum class TextGranularity : uint8_t;
 }
 
 namespace WebKit {
@@ -53,6 +59,12 @@ namespace WebKit {
 class PDFPluginBase;
 class WebFrame;
 class WebPage;
+enum class SelectionEndpoint : bool;
+enum class SelectionWasFlipped : bool;
+struct DocumentEditingContextRequest;
+struct DocumentEditingContext;
+struct EditorState;
+struct FrameInfoData;
 struct WebHitTestResultData;
 
 class PluginView final : public WebCore::PluginViewBase {
@@ -86,6 +98,20 @@ public:
     void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin);
     double pageScaleFactor() const;
     void pluginScaleFactorDidChange();
+#if PLATFORM(IOS_FAMILY)
+    void pluginDidInstallPDFDocument(double initialScaleFactor);
+    std::pair<URL, WebCore::FloatRect> linkURLAndBoundsAtPoint(WebCore::FloatPoint pointInRootView) const;
+    std::optional<WebCore::FloatRect> highlightRectForTapAtPoint(WebCore::FloatPoint pointInRootView) const;
+    void handleSyntheticClick(WebCore::PlatformMouseEvent&&);
+    void setSelectionRange(WebCore::FloatPoint pointInRootView, WebCore::TextGranularity);
+    void clearSelection();
+    SelectionWasFlipped moveSelectionEndpoint(WebCore::FloatPoint pointInRootView, SelectionEndpoint);
+    SelectionEndpoint extendInitialSelection(WebCore::FloatPoint pointInRootView, WebCore::TextGranularity);
+    CursorContext cursorContext(WebCore::FloatPoint pointInRootView) const;
+    DocumentEditingContext documentEditingContext(DocumentEditingContextRequest&&) const;
+#endif
+
+    bool populateEditorStateIfNeeded(EditorState&) const;
 
     void topContentInsetDidChange();
 
@@ -100,7 +126,14 @@ public:
     bool drawsFindOverlay() const;
     RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition);
 
+    Vector<WebFoundTextRange::PDFData> findTextMatches(const String& target, WebCore::FindOptions);
+    Vector<WebCore::FloatRect> rectsForTextMatch(const WebFoundTextRange::PDFData&);
+    RefPtr<WebCore::TextIndicator> textIndicatorForTextMatch(const WebFoundTextRange::PDFData&, WebCore::TextIndicatorPresentationTransition);
+    void scrollToRevealTextMatch(const WebFoundTextRange::PDFData&);
+
+    String fullDocumentString() const;
     String selectionString() const;
+    std::pair<String, String> stringsBeforeAndAfterSelection(int characterCount) const;
 
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const;
 
@@ -117,7 +150,15 @@ public:
 
     void windowActivityDidChange();
 
+    void didChangeIsInWindow();
+
     void didSameDocumentNavigationForFrame(WebFrame&);
+
+    PDFPluginIdentifier pdfPluginIdentifier() const;
+
+    void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&&);
+
+    void focusPluginElement();
 
 private:
     PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);
@@ -131,7 +172,6 @@ private:
     void viewVisibilityDidChange();
 
     WebCore::IntRect clipRectInWindowCoordinates() const;
-    void focusPluginElement();
     
     void pendingResourceRequestTimerFired();
 
@@ -160,7 +200,7 @@ private:
 
     WebCore::ScrollableArea* scrollableArea() const final;
     bool usesAsyncScrolling() const final;
-    WebCore::ScrollingNodeID scrollingNodeID() const final;
+    std::optional<WebCore::ScrollingNodeID> scrollingNodeID() const final;
     void willAttachScrollingNode() final;
     void didAttachScrollingNode() final;
 
@@ -207,9 +247,12 @@ private:
     // This snapshot is used to avoid side effects should the plugin run JS during painting.
     RefPtr<WebCore::ShareableBitmap> m_transientPaintingSnapshot;
 
+    bool sendEditingCommandToPDFForTesting(const String& commandName, const String& argument) final;
     void setPDFDisplayModeForTesting(const String&) final;
     Vector<WebCore::FloatRect> pdfAnnotationRectsForTesting() const override;
-    void registerPDFTestCallback(RefPtr<WebCore::VoidCallback> &&) final;
+    void unlockPDFDocumentForTesting(const String& password) final;
+    void setPDFTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, const String& value) final;
+    void registerPDFTestCallback(RefPtr<WebCore::VoidCallback>&&) final;
 };
 
 } // namespace WebKit

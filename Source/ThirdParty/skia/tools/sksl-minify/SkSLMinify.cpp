@@ -5,31 +5,27 @@
  * found in the LICENSE file.
  */
 
-#define SK_OPTS_NS sksl_minify_standalone
-#include "include/core/SkStream.h"
 #include "src/base/SkStringView.h"
-#include "src/core/SkCpu.h"
 #include "src/core/SkOpts.h"
 #include "src/sksl/SkSLCompiler.h"
 #include "src/sksl/SkSLFileOutputStream.h"
 #include "src/sksl/SkSLLexer.h"
+#include "src/sksl/SkSLModule.h"
 #include "src/sksl/SkSLModuleLoader.h"
 #include "src/sksl/SkSLProgramKind.h"
 #include "src/sksl/SkSLProgramSettings.h"
-#include "src/sksl/SkSLStringStream.h"
 #include "src/sksl/SkSLUtil.h"
 #include "src/sksl/ir/SkSLStructDefinition.h"
 #include "src/sksl/ir/SkSLSymbolTable.h"
 #include "src/sksl/transform/SkSLTransform.h"
+#include "src/utils/SkGetExecutablePath.h"
 #include "src/utils/SkOSPath.h"
-#include "tools/SkGetExecutablePath.h"
 #include "tools/skslc/ProcessWorklist.h"
 
 #include <cctype>
 #include <forward_list>
 #include <fstream>
 #include <limits.h>
-#include <optional>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -78,6 +74,16 @@ static bool is_plus_or_minus(char c) {
     return c == '+' || c == '-';
 }
 
+static SkSL::ModuleType module_type_for_path(const char* path) {
+    SkString filename = SkOSPath::Basename(path);
+
+#define M(type) if (filename.equals(#type ".sksl")) { return SkSL::ModuleType::type; }
+    SKSL_MODULE_LIST(M)
+#undef M
+
+    return SkSL::ModuleType::unknown;
+}
+
 static std::forward_list<std::unique_ptr<const SkSL::Module>> compile_module_list(
         SkSpan<const std::string> paths, SkSL::ProgramKind kind) {
     std::forward_list<std::unique_ptr<const SkSL::Module>> modules;
@@ -119,11 +125,12 @@ static std::forward_list<std::unique_ptr<const SkSL::Module>> compile_module_lis
 
         const SkSL::Module* parent = modules.empty() ? SkSL::ModuleLoader::Get().rootModule()
                                                      : modules.front().get();
-        std::unique_ptr<SkSL::Module> m = compiler.compileModule(kind,
-                                                                 modulePath->c_str(),
-                                                                 std::move(moduleSource),
-                                                                 parent,
-                                                                 /*shouldInline=*/false);
+        std::unique_ptr<SkSL::Module> m =
+                compiler.compileModule(kind,
+                                       module_type_for_path(modulePath->c_str()),
+                                       std::move(moduleSource),
+                                       parent,
+                                       /*shouldInline=*/false);
         if (!m) {
             return {};
         }
@@ -237,6 +244,7 @@ static ResultCode process_command(SkSpan<std::string> args) {
     bool isVert = find_boolean_flag(&args, "--vert");
     bool isCompute = find_boolean_flag(&args, "--compute");
     bool isShader = find_boolean_flag(&args, "--shader");
+    bool isPrivateShader = find_boolean_flag(&args, "--privshader");
     bool isColorFilter = find_boolean_flag(&args, "--colorfilter");
     bool isBlender = find_boolean_flag(&args, "--blender");
     bool isMeshFrag = find_boolean_flag(&args, "--meshfrag");
@@ -260,6 +268,8 @@ static ResultCode process_command(SkSpan<std::string> args) {
         gProgramKind = SkSL::ProgramKind::kMeshFragment;
     } else if (isMeshVert) {
         gProgramKind = SkSL::ProgramKind::kMeshVertex;
+    } else if (isPrivateShader) {
+        gProgramKind = SkSL::ProgramKind::kPrivateRuntimeShader;
     } else {
         // Default case, if no option is specified.
         gProgramKind = SkSL::ProgramKind::kRuntimeShader;

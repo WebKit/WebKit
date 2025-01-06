@@ -28,11 +28,13 @@
 #include "Connection.h"
 #include "MessageReceiveQueue.h"
 #include "WorkQueueMessageReceiver.h"
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/WeakRef.h>
 
 namespace IPC {
 
 class FunctionDispatcherQueue final : public MessageReceiveQueue {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunctionDispatcherQueue);
 public:
     FunctionDispatcherQueue(FunctionDispatcher& dispatcher, MessageReceiver& receiver)
         : m_dispatcher(dispatcher)
@@ -43,17 +45,17 @@ public:
 
     void enqueueMessage(Connection& connection, UniqueRef<Decoder>&& message) final
     {
-        m_dispatcher.dispatch([connection = Ref { connection }, message = WTFMove(message), &receiver = m_receiver]() mutable {
+        m_dispatcher.dispatch([connection = Ref { connection }, message = WTFMove(message), receiver = Ref { m_receiver.get() }]() mutable {
             connection->dispatchMessageReceiverMessage(receiver, WTFMove(message));
         });
     }
 private:
     FunctionDispatcher& m_dispatcher;
-    MessageReceiver& m_receiver;
+    WeakRef<MessageReceiver> m_receiver;
 };
 
 class WorkQueueMessageReceiverQueue final : public MessageReceiveQueue {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WorkQueueMessageReceiverQueue);
 public:
     WorkQueueMessageReceiverQueue(WorkQueue& queue, WorkQueueMessageReceiver& receiver)
         : m_queue(queue)

@@ -32,15 +32,15 @@
 #include "Timer.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
     
 class LayerPool final : public CanMakeCheckedPtr<LayerPool> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LayerPool, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LayerPool);
     WTF_MAKE_NONCOPYABLE(LayerPool);
 public:
@@ -71,7 +71,7 @@ private:
 
     static unsigned backingStoreBytesForSize(const IntSize&);
 
-    HashMap<IntSize, LayerList> m_reuseLists;
+    UncheckedKeyHashMap<IntSize, LayerList> m_reuseLists;
     // Ordered by recent use. The last size is the most recently used.
     Vector<IntSize> m_sizesInPruneOrder;
     unsigned m_totalBytes { 0 };

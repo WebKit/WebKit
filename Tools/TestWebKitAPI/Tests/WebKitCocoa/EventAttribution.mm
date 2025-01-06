@@ -50,7 +50,7 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/XPCSPI.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 
 #if HAVE(RSA_BSSA)
 
@@ -121,11 +121,6 @@ static NSURL *exampleURL()
     return [NSURL URLWithString:@"https://example.com/"];
 }
 
-static void clearState()
-{
-    [[NSFileManager defaultManager] removeItemAtURL:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()._resourceLoadStatisticsDirectory error:nil];
-}
-
 static RetainPtr<WKWebViewConfiguration> configurationWithoutUsingDaemon()
 {
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
@@ -142,7 +137,6 @@ static RetainPtr<WKWebView> webViewWithoutUsingDaemon()
 
 void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView, bool setTestAppBundleID = true)
 {
-    clearState();
     [WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:NO];
     bool done = false;
     HTTPServer server([&done, connectionCount = 0] (Connection connection) mutable {
@@ -181,6 +175,12 @@ void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebV
     addAttributionToWebView(webView.get(), server);
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [[webView configuration].websiteDataStore _trustServerForLocalPCMTesting:secTrustFromCertificateChain(@[(id)testCertificate().get()]).get()];
+    // Clear existing data.
+    __block bool cleared = false;
+    [[webView configuration].websiteDataStore removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        cleared = true;
+    }];
+    Util::run(&cleared);
     [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL() completionHandler:^{
         [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
             NSString *html = [NSString stringWithFormat:@"<script>fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'})</script>", serverURL];
@@ -602,7 +602,12 @@ static void setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigatio
 
 const char* expectedSKAdNetworkConsoleMessage = "Submitting potential install attribution for AdamId: 1234567890, adNetworkRegistrableDomain: destination, impressionId: MTIzNDU2Nzg5MDEyMzQ1Ng, sourceWebRegistrableDomain: example.com, version: 3";
 
+// rdar://129248776
+#if defined(NDEBUG)
+TEST(PrivateClickMeasurement, DISABLED_SKAdNetwork)
+#else
 TEST(PrivateClickMeasurement, SKAdNetwork)
+#endif
 {
     Vector<String> consoleMessages;
     auto delegate = adoptNS([TestNavigationDelegate new]);
@@ -616,7 +621,12 @@ TEST(PrivateClickMeasurement, SKAdNetwork)
     EXPECT_WK_STREQ(consoleMessages[0], expectedSKAdNetworkConsoleMessage);
 }
 
+// rdar://129248776
+#if defined(NDEBUG)
+TEST(PrivateClickMeasurement, DISABLED_SKAdNetworkWithoutNavigatingToAppStoreLink)
+#else
 TEST(PrivateClickMeasurement, SKAdNetworkWithoutNavigatingToAppStoreLink)
+#endif
 {
     Vector<String> consoleMessages;
     auto delegate = adoptNS([TestNavigationDelegate new]);

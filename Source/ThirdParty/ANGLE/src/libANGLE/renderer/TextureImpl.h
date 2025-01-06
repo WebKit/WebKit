@@ -174,6 +174,13 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
                                                 const gl::Extents &size,
                                                 bool fixedSampleLocations) = 0;
 
+    virtual angle::Result setStorageAttribs(const gl::Context *context,
+                                            gl::TextureType type,
+                                            size_t levels,
+                                            GLint internalformat,
+                                            const gl::Extents &size,
+                                            const GLint *attribList);
+
     virtual angle::Result setStorageExternalMemory(const gl::Context *context,
                                                    gl::TextureType type,
                                                    size_t levels,
@@ -205,6 +212,18 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
 
     virtual angle::Result generateMipmap(const gl::Context *context) = 0;
 
+    virtual angle::Result clearImage(const gl::Context *context,
+                                     GLint level,
+                                     GLenum format,
+                                     GLenum type,
+                                     const uint8_t *data);
+    virtual angle::Result clearSubImage(const gl::Context *context,
+                                        GLint level,
+                                        const gl::Box &area,
+                                        GLenum format,
+                                        GLenum type,
+                                        const uint8_t *data);
+
     virtual angle::Result setBaseLevel(const gl::Context *context, GLuint baseLevel) = 0;
 
     virtual angle::Result bindTexImage(const gl::Context *context, egl::Surface *surface) = 0;
@@ -217,6 +236,12 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
     virtual GLint getLevelMemorySize(gl::TextureTarget target, GLint level);
 
     virtual GLint getNativeID() const;
+
+    virtual GLint getImageCompressionRate(const gl::Context *context);
+    virtual GLint getFormatSupportedCompressionRates(const gl::Context *context,
+                                                     GLenum internalformat,
+                                                     GLsizei bufSize,
+                                                     GLint *rates);
 
     virtual angle::Result syncState(const gl::Context *context,
                                     const gl::Texture::DirtyBits &dirtyBits,

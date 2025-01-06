@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -35,12 +35,12 @@ void av1_init_lk_params(LK_PARAMS *lk_params) {
 }
 
 // Helper function to determine whether a frame is encoded with high bit-depth.
-static INLINE int is_frame_high_bitdepth(const YV12_BUFFER_CONFIG *frame) {
+static inline int is_frame_high_bitdepth(const YV12_BUFFER_CONFIG *frame) {
   return (frame->flags & YV12_FLAG_HIGHBITDEPTH) ? 1 : 0;
 }
 
 // Helper function to determine whether optical flow method is sparse.
-static INLINE int is_sparse(const OPFL_PARAMS *opfl_params) {
+static inline int is_sparse(const OPFL_PARAMS *opfl_params) {
   return (opfl_params->flags & OPFL_FLAG_SPARSE) ? 1 : 0;
 }
 

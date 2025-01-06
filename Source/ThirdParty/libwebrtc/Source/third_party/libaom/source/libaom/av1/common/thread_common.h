@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,6 +16,7 @@
 
 #include "av1/common/av1_loopfilter.h"
 #include "av1/common/cdef.h"
+#include "aom_util/aom_pthread.h"
 #include "aom_util/aom_thread.h"
 
 #ifdef __cplusplus
@@ -163,10 +164,12 @@ void av1_cdef_copy_sb8_16_lowbd(uint16_t *const dst, int dstride,
                                 const uint8_t *src, int src_voffset,
                                 int src_hoffset, int sstride, int vsize,
                                 int hsize);
+#if CONFIG_AV1_HIGHBITDEPTH
 void av1_cdef_copy_sb8_16_highbd(uint16_t *const dst, int dstride,
                                  const uint8_t *src, int src_voffset,
                                  int src_hoffset, int sstride, int vsize,
                                  int hsize);
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 void av1_alloc_cdef_sync(AV1_COMMON *const cm, AV1CdefSync *cdef_sync,
                          int num_workers);
 void av1_free_cdef_sync(AV1CdefSync *cdef_sync);
@@ -185,6 +188,7 @@ void av1_loop_filter_frame_mt(YV12_BUFFER_CONFIG *frame, struct AV1Common *cm,
                               AVxWorker *workers, int num_workers,
                               AV1LfSync *lf_sync, int lpf_opt_level);
 
+#if !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 void av1_loop_restoration_filter_frame_mt(YV12_BUFFER_CONFIG *frame,
                                           struct AV1Common *cm,
                                           int optimized_lr, AVxWorker *workers,
@@ -194,6 +198,8 @@ void av1_loop_restoration_dealloc(AV1LrSync *lr_sync);
 void av1_loop_restoration_alloc(AV1LrSync *lr_sync, AV1_COMMON *cm,
                                 int num_workers, int num_rows_lr,
                                 int num_planes, int width);
+#endif  // !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
+
 int av1_get_intrabc_extra_top_right_sb_delay(const AV1_COMMON *cm);
 
 void av1_thread_loop_filter_rows(
@@ -226,10 +232,10 @@ static AOM_FORCE_INLINE bool skip_loop_filter_plane(
   return !planes_to_lf[plane];
 }
 
-static AOM_INLINE void enqueue_lf_jobs(AV1LfSync *lf_sync, int start, int stop,
-                                       const int planes_to_lf[MAX_MB_PLANE],
-                                       int lpf_opt_level,
-                                       int num_mis_in_lpf_unit_height) {
+static inline void enqueue_lf_jobs(AV1LfSync *lf_sync, int start, int stop,
+                                   const int planes_to_lf[MAX_MB_PLANE],
+                                   int lpf_opt_level,
+                                   int num_mis_in_lpf_unit_height) {
   int mi_row, plane, dir;
   AV1LfMTInfo *lf_job_queue = lf_sync->job_queue;
   lf_sync->jobs_enqueued = 0;
@@ -256,7 +262,7 @@ static AOM_INLINE void enqueue_lf_jobs(AV1LfSync *lf_sync, int start, int stop,
   }
 }
 
-static AOM_INLINE void loop_filter_frame_mt_init(
+static inline void loop_filter_frame_mt_init(
     AV1_COMMON *cm, int start_mi_row, int end_mi_row,
     const int planes_to_lf[MAX_MB_PLANE], int num_workers, AV1LfSync *lf_sync,
     int lpf_opt_level, int num_mis_in_lpf_unit_height_log2) {
@@ -269,6 +275,7 @@ static AOM_INLINE void loop_filter_frame_mt_init(
     av1_loop_filter_dealloc(lf_sync);
     av1_loop_filter_alloc(lf_sync, cm, sb_rows, cm->width, num_workers);
   }
+  lf_sync->lf_mt_exit = false;
 
   // Initialize cur_sb_col to -1 for all SB rows.
   for (int i = 0; i < MAX_MB_PLANE; i++) {
@@ -280,7 +287,7 @@ static AOM_INLINE void loop_filter_frame_mt_init(
                   lpf_opt_level, (1 << num_mis_in_lpf_unit_height_log2));
 }
 
-static AOM_INLINE AV1LfMTInfo *get_lf_job_info(AV1LfSync *lf_sync) {
+static inline AV1LfMTInfo *get_lf_job_info(AV1LfSync *lf_sync) {
   AV1LfMTInfo *cur_job_info = NULL;
 
 #if CONFIG_MULTITHREAD
@@ -299,10 +306,10 @@ static AOM_INLINE AV1LfMTInfo *get_lf_job_info(AV1LfSync *lf_sync) {
   return cur_job_info;
 }
 
-static AOM_INLINE void loop_filter_data_reset(LFWorkerData *lf_data,
-                                              YV12_BUFFER_CONFIG *frame_buffer,
-                                              struct AV1Common *cm,
-                                              MACROBLOCKD *xd) {
+static inline void loop_filter_data_reset(LFWorkerData *lf_data,
+                                          YV12_BUFFER_CONFIG *frame_buffer,
+                                          struct AV1Common *cm,
+                                          MACROBLOCKD *xd) {
   struct macroblockd_plane *pd = xd->plane;
   lf_data->frame_buffer = frame_buffer;
   lf_data->cm = cm;
@@ -314,15 +321,20 @@ static AOM_INLINE void loop_filter_data_reset(LFWorkerData *lf_data,
   }
 }
 
-static AOM_INLINE int check_planes_to_loop_filter(const struct loopfilter *lf,
-                                                  int *planes_to_lf,
-                                                  int plane_start,
-                                                  int plane_end) {
+static inline void set_planes_to_loop_filter(const struct loopfilter *lf,
+                                             int planes_to_lf[MAX_MB_PLANE],
+                                             int plane_start, int plane_end) {
   // For each luma and chroma plane, whether to filter it or not.
   planes_to_lf[0] = (lf->filter_level[0] || lf->filter_level[1]) &&
                     plane_start <= 0 && 0 < plane_end;
   planes_to_lf[1] = lf->filter_level_u && plane_start <= 1 && 1 < plane_end;
   planes_to_lf[2] = lf->filter_level_v && plane_start <= 2 && 2 < plane_end;
+}
+
+static inline int check_planes_to_loop_filter(const struct loopfilter *lf,
+                                              int planes_to_lf[MAX_MB_PLANE],
+                                              int plane_start, int plane_end) {
+  set_planes_to_loop_filter(lf, planes_to_lf, plane_start, plane_end);
   // If the luma plane is purposely not filtered, neither are the chroma
   // planes.
   if (!planes_to_lf[0] && plane_start <= 0 && 0 < plane_end) return 0;

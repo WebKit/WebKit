@@ -84,7 +84,7 @@ void RateStatistics::Update(int64_t count, int64_t now_ms) {
   ++num_samples_;
 }
 
-absl::optional<int64_t> RateStatistics::Rate(int64_t now_ms) const {
+std::optional<int64_t> RateStatistics::Rate(int64_t now_ms) const {
   // Yeah, this const_cast ain't pretty, but the alternative is to declare most
   // of the members as mutable...
   const_cast<RateStatistics*>(this)->EraseOld(now_ms);
@@ -109,7 +109,7 @@ absl::optional<int64_t> RateStatistics::Rate(int64_t now_ms) const {
       (num_samples_ <= 1 &&
        rtc::SafeLt(active_window_size, current_window_size_ms_)) ||
       overflow_) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   float scale = static_cast<float>(scale_) / active_window_size;
@@ -117,7 +117,7 @@ absl::optional<int64_t> RateStatistics::Rate(int64_t now_ms) const {
 
   // Better return unavailable rate than garbage value (undefined behavior).
   if (result > static_cast<float>(std::numeric_limits<int64_t>::max())) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return rtc::dchecked_cast<int64_t>(result);
 }

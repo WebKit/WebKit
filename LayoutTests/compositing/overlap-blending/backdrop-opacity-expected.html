@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <style type="text/css" media="screen">
+      div {
+        -webkit-box-sizing: border-box;
+        width: 200px;
+        height: 200px;
+      }
+      .solid {
+        position: absolute;
+        background: green;
+      }
+
+      .opacity { opacity: .5; }
+
+      .composited {
+        position: absolute;
+        transform: translateZ(0);
+        filter: invert();
+      }
+      * { margin: 0; padding: 0; }
+
+    </style>
+  </head>
+    <div class="solid opacity">
+      <div class="solid composited"></div>
+    </div>
+</html>

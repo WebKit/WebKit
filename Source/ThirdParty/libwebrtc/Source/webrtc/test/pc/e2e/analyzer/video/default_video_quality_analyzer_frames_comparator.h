@@ -94,23 +94,23 @@ class DefaultVideoQualityAnalyzerFramesComparator {
 
   // `captured` - video frame captured by sender to use for PSNR/SSIM
   //     computation. If `type` is `FrameComparisonType::kRegular` and
-  //     `captured` is `absl::nullopt` comparison is assumed to be overloaded
+  //     `captured` is `std::nullopt` comparison is assumed to be overloaded
   //     due to memory constraints.
   // `rendered` - video frame rendered by receiver to use for PSNR/SSIM
   //     computation. Required only if `type` is
   //     `FrameComparisonType::kRegular`, but can still be omitted if
-  //     `captured` is `absl::nullopt`.
+  //     `captured` is `std::nullopt`.
   void AddComparison(InternalStatsKey stats_key,
-                     absl::optional<VideoFrame> captured,
-                     absl::optional<VideoFrame> rendered,
+                     std::optional<VideoFrame> captured,
+                     std::optional<VideoFrame> rendered,
                      FrameComparisonType type,
                      FrameStats frame_stats);
   // `skipped_between_rendered` - amount of frames dropped on this stream before
   //     last received frame and current frame.
   void AddComparison(InternalStatsKey stats_key,
                      int skipped_between_rendered,
-                     absl::optional<VideoFrame> captured,
-                     absl::optional<VideoFrame> rendered,
+                     std::optional<VideoFrame> captured,
+                     std::optional<VideoFrame> rendered,
                      FrameComparisonType type,
                      FrameStats frame_stats);
 
@@ -127,8 +127,8 @@ class DefaultVideoQualityAnalyzerFramesComparator {
   enum State { kNew, kActive, kStopped };
 
   void AddComparisonInternal(InternalStatsKey stats_key,
-                             absl::optional<VideoFrame> captured,
-                             absl::optional<VideoFrame> rendered,
+                             std::optional<VideoFrame> captured,
+                             std::optional<VideoFrame> rendered,
                              FrameComparisonType type,
                              FrameStats frame_stats)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);

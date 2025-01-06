@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include <wtf/IsoMalloc.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -40,8 +41,8 @@ enum class ContactProperty : uint8_t;
 
 struct ContactsSelectOptions;
 
-class ContactsManager final : public RefCounted<ContactsManager>, public CanMakeWeakPtr<ContactsManager> {
-    WTF_MAKE_ISO_ALLOCATED(ContactsManager);
+class ContactsManager final : public RefCountedAndCanMakeWeakPtr<ContactsManager> {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ContactsManager);
 public:
     static Ref<ContactsManager> create(Navigator&);
     ~ContactsManager();

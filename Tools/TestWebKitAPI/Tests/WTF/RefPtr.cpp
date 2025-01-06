@@ -559,7 +559,7 @@ public:
 
     ~PartiallyDestroyedRefPtrTest()
     {
-        RefPtrAllowingPartiallyDestroyed<PartiallyDestroyedRefPtrTest> protectedThis { this };
+        RefPtr<PartiallyDestroyedRefPtrTest> protectedThis { this };
         protectedThis->m_int = 0;
     }
 
@@ -579,6 +579,46 @@ TEST(WTF_RefPtr, RefPtrAllowingPartiallyDestroyed)
     partiallyDestroyedRefPtrTest = nullptr;
 }
 
+// This test is disabled because it intentionally crashes.
+
+#define TEST_DANGLING_REF_PTR 0
+
+#if TEST_DANGLING_REF_PTR
+
+class DanglingRefPtrTest : public RefCounted<DanglingRefPtrTest> {
+public:
+    static Ref<DanglingRefPtrTest> create()
+    {
+        return adoptRef(*new DanglingRefPtrTest);
+    }
+
+    ~DanglingRefPtrTest()
+    {
+        ref();
+
+        // Create a dummy entry in the log between our two relevant entries.
+        RefPtr partiallyDestroyedRefPtrTest = PartiallyDestroyedRefPtrTest::create();
+        partiallyDestroyedRefPtrTest = nullptr;
+
+        ref();
+    }
+};
+
+TEST(WTF_RefPtr, DanglingRefPtr)
+{
+    // Force the log to wrap around with dummy entries.
+    for (size_t i = 0; i < 1024 + 1; ++i) {
+        RefPtr partiallyDestroyedRefPtrTest = PartiallyDestroyedRefPtrTest::create();
+        partiallyDestroyedRefPtrTest = nullptr;
+    }
+
+    // Then add a real entry.
+    RefPtr danglingRefPtrTest = DanglingRefPtrTest::create();
+    danglingRefPtrTest = nullptr;
+}
+
+#endif
+
 class PartiallyDestroyedRefPtrTestThreadSafe : public ThreadSafeRefCounted<PartiallyDestroyedRefPtrTestThreadSafe> {
 public:
     static Ref<PartiallyDestroyedRefPtrTestThreadSafe> create()
@@ -588,7 +628,7 @@ public:
 
     ~PartiallyDestroyedRefPtrTestThreadSafe()
     {
-        RefPtrAllowingPartiallyDestroyed<PartiallyDestroyedRefPtrTestThreadSafe> protectedThis { this };
+        RefPtr<PartiallyDestroyedRefPtrTestThreadSafe> protectedThis { this };
         protectedThis->m_int = 0;
     }
 
@@ -607,6 +647,46 @@ TEST(WTF_RefPtr, RefPtrAllowingPartiallyDestroyedThreadSafe)
     RefPtr partiallyDestroyedRefPtrTest = PartiallyDestroyedRefPtrTestThreadSafe::create();
     partiallyDestroyedRefPtrTest = nullptr;
 }
+
+// This test is disabled because it intentionally crashes.
+
+#define TEST_DANGLING_REF_PTR_THREAD_SAFE 0
+
+#if TEST_DANGLING_REF_PTR_THREAD_SAFE
+
+class DanglingRefPtrTestThreadSafe : public ThreadSafeRefCounted<DanglingRefPtrTestThreadSafe> {
+public:
+    static Ref<DanglingRefPtrTestThreadSafe> create()
+    {
+        return adoptRef(*new DanglingRefPtrTestThreadSafe);
+    }
+
+    ~DanglingRefPtrTestThreadSafe()
+    {
+        ref();
+
+        // Create a dummy entry in the log between our two relevant entries.
+        RefPtr partiallyDestroyedRefPtrTestThreadSafe = PartiallyDestroyedRefPtrTestThreadSafe::create();
+        partiallyDestroyedRefPtrTestThreadSafe = nullptr;
+
+        ref();
+    }
+};
+
+TEST(WTF_RefPtr, DanglingRefPtrThreadSafe)
+{
+    // Force the log to wrap around with dummy entries.
+    for (size_t i = 0; i < 1024 + 1; ++i) {
+        RefPtr partiallyDestroyedRefPtrTestThreadSafe = PartiallyDestroyedRefPtrTestThreadSafe::create();
+        partiallyDestroyedRefPtrTestThreadSafe = nullptr;
+    }
+
+    // Then add a real entry.
+    RefPtr danglingRefPtrTestThreadSafe = DanglingRefPtrTestThreadSafe::create();
+    danglingRefPtrTestThreadSafe = nullptr;
+}
+
+#endif
 
 // FIXME: Enable these tests once Win platform supports TestWebKitAPI::Util::run
 #if! PLATFORM(WIN)

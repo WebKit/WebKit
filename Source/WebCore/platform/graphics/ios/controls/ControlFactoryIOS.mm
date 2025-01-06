@@ -29,12 +29,15 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "NotImplemented.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-std::unique_ptr<ControlFactory> ControlFactory::createControlFactory()
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ControlFactoryIOS);
+
+RefPtr<ControlFactory> ControlFactory::create()
 {
-    return makeUnique<ControlFactoryIOS>();
+    return adoptRef(new ControlFactoryIOS());
 }
 
 std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformButton(ButtonPart&)

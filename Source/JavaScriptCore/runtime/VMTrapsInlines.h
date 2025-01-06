@@ -31,7 +31,7 @@ namespace JSC {
 
 ALWAYS_INLINE VM& VMTraps::vm() const
 {
-    return *bitwise_cast<VM*>(bitwise_cast<uintptr_t>(this) - OBJECT_OFFSETOF(VM, m_traps));
+    return *std::bit_cast<VM*>(std::bit_cast<uintptr_t>(this) - OBJECT_OFFSETOF(VM, m_traps));
 }
 
 inline void VMTraps::deferTermination(DeferAction deferAction)

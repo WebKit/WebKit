@@ -73,17 +73,17 @@ public:
     bool hasSampleAccurateValues() const;
     bool shouldUseARate() const;
 
-    const float* positionXValues(size_t framesToProcess);
-    const float* positionYValues(size_t framesToProcess);
-    const float* positionZValues(size_t framesToProcess);
+    std::span<const float> positionXValues(size_t framesToProcess);
+    std::span<const float> positionYValues(size_t framesToProcess);
+    std::span<const float> positionZValues(size_t framesToProcess);
 
-    const float* forwardXValues(size_t framesToProcess);
-    const float* forwardYValues(size_t framesToProcess);
-    const float* forwardZValues(size_t framesToProcess);
+    std::span<const float> forwardXValues(size_t framesToProcess);
+    std::span<const float> forwardYValues(size_t framesToProcess);
+    std::span<const float> forwardZValues(size_t framesToProcess);
 
-    const float* upXValues(size_t framesToProcess);
-    const float* upYValues(size_t framesToProcess);
-    const float* upZValues(size_t framesToProcess);
+    std::span<const float> upXValues(size_t framesToProcess);
+    std::span<const float> upYValues(size_t framesToProcess);
+    std::span<const float> upZValues(size_t framesToProcess);
 
     void updateValuesIfNeeded(size_t framesToProcess);
 

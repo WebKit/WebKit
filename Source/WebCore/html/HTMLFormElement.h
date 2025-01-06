@@ -28,7 +28,7 @@
 #include "HTMLElement.h"
 #include "RadioButtonGroups.h"
 #include <memory>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -42,7 +42,8 @@ class HTMLImageElement;
 class ValidatedFormListedElement;
 
 class HTMLFormElement final : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLFormElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLFormElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLFormElement);
 public:
     static Ref<HTMLFormElement> create(Document&);
     static Ref<HTMLFormElement> create(const QualifiedName&, Document&);
@@ -168,7 +169,7 @@ private:
     RefPtr<HTMLFormControlElement> findSubmitButton(HTMLFormControlElement* submitter, bool needButtonActivation);
 
     FormSubmission::Attributes m_attributes;
-    HashMap<AtomString, WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>> m_pastNamesMap;
+    UncheckedKeyHashMap<AtomString, WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>> m_pastNamesMap;
 
     RadioButtonGroups m_radioButtonGroups;
     mutable WeakPtr<HTMLFormControlElement, WeakPtrImplWithEventTargetData> m_defaultButton;

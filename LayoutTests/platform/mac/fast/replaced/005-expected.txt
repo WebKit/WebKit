@@ -3,29 +3,29 @@ layer at (0,0) size 785x680
 layer at (0,0) size 785x680
   RenderBlock {HTML} at (0,0) size 785x680
     RenderBody {BODY} at (8,8) size 769x656
-      RenderTable {TABLE} at (0,0) size 769x214 [border: (2px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 769x214 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 765x210
           RenderTableRow {TR} at (0,0) size 765x210
-            RenderTableCell {TD} at (0,0) size 202x210 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 202x210 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 100x100 [bgcolor=#008000]
               RenderImage {IMG} at (101,1) size 100x100 [bgcolor=#008000]
               RenderBR {BR} at (201,87) size 0x18
               RenderImage {IMG} at (1,105) size 100x100 [bgcolor=#008000]
               RenderImage {IMG} at (101,105) size 100x100 [bgcolor=#008000]
-            RenderTableCell {TD} at (202,95) size 563x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (202,95) size 563x20 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,96) size 25x18
                 text run at (1,1) width 25: "Foo"
-      RenderTable {TABLE} at (0,214) size 769x214 [border: (2px outset #808080)]
+      RenderTable {TABLE} at (0,214) size 769x214 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 765x210
           RenderTableRow {TR} at (0,0) size 765x210
-            RenderTableCell {TD} at (0,0) size 202x210 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 202x210 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderInline {SPAN} at (1,87) size 200x18
                 RenderImage {IMG} at (1,1) size 100x100 [bgcolor=#008000]
                 RenderImage {IMG} at (101,1) size 100x100 [bgcolor=#008000]
               RenderBR {BR} at (201,87) size 0x18
               RenderImage {IMG} at (1,105) size 100x100 [bgcolor=#008000]
               RenderImage {IMG} at (101,105) size 100x100 [bgcolor=#008000]
-            RenderTableCell {TD} at (202,95) size 563x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (202,95) size 563x20 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,96) size 25x18
                 text run at (1,1) width 25: "Foo"
       RenderBlock {P} at (0,444) size 769x212 [border: (2px solid #0000FF)]

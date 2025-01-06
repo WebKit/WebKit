@@ -1269,7 +1269,7 @@ public class PeerConnectionClient {
 
     @Override
     public void onSelectedCandidatePairChanged(CandidatePairChangeEvent event) {
-      Log.d(TAG, "Selected candidate pair changed because: " + event);
+      Log.d(TAG, "Selected candidate pair changed because: " + event.reason);
     }
 
     @Override

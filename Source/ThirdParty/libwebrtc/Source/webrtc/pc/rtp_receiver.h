@@ -17,24 +17,15 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
-#include "api/crypto/frame_decryptor_interface.h"
 #include "api/dtls_transport_interface.h"
 #include "api/media_stream_interface.h"
-#include "api/media_types.h"
-#include "api/rtp_parameters.h"
 #include "api/rtp_receiver_interface.h"
 #include "api/scoped_refptr.h"
-#include "api/video/video_frame.h"
-#include "api/video/video_sink_interface.h"
-#include "api/video/video_source_interface.h"
 #include "media/base/media_channel.h"
-#include "media/base/video_broadcaster.h"
-#include "pc/video_track_source.h"
-#include "rtc_base/thread.h"
 
 namespace webrtc {
 
@@ -68,7 +59,7 @@ class RtpReceiverInternal : public RtpReceiverInterface {
       rtc::scoped_refptr<DtlsTransportInterface> dtls_transport) = 0;
   // This SSRC is used as an identifier for the receiver between the API layer
   // and the WebRtcVideoEngine, WebRtcVoiceEngine layer.
-  virtual absl::optional<uint32_t> ssrc() const = 0;
+  virtual std::optional<uint32_t> ssrc() const = 0;
 
   // Call this to notify the RtpReceiver when the first packet has been received
   // on the corresponding channel.

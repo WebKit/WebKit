@@ -484,7 +484,7 @@ TEST_P(AdaptiveFirFilterMultiChannel, FilterAndAdapt) {
   std::vector<float> y(kBlockSize, 0.f);
   AecState aec_state(EchoCanceller3Config{}, num_capture_channels);
   RenderSignalAnalyzer render_signal_analyzer(config);
-  absl::optional<DelayEstimate> delay_estimate;
+  std::optional<DelayEstimate> delay_estimate;
   std::vector<float> e(kBlockSize, 0.f);
   std::array<float, kFftLength> s_scratch;
   std::vector<SubtractorOutput> output(num_capture_channels);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -50,9 +50,8 @@ void av1_default_coef_probs(AV1_COMMON *cm) {
   av1_copy(cm->fc->eob_flag_cdf1024, av1_default_eob_multi1024_cdfs[index]);
 }
 
-static AOM_INLINE void reset_cdf_symbol_counter(aom_cdf_prob *cdf_ptr,
-                                                int num_cdfs, int cdf_stride,
-                                                int nsymbs) {
+static inline void reset_cdf_symbol_counter(aom_cdf_prob *cdf_ptr, int num_cdfs,
+                                            int cdf_stride, int nsymbs) {
   for (int i = 0; i < num_cdfs; i++) {
     cdf_ptr[i * cdf_stride + nsymbs] = 0;
   }
@@ -69,7 +68,7 @@ static AOM_INLINE void reset_cdf_symbol_counter(aom_cdf_prob *cdf_ptr,
     reset_cdf_symbol_counter(cdf_ptr, num_cdfs, cdf_stride, nsymbs); \
   } while (0)
 
-static AOM_INLINE void reset_nmv_counter(nmv_context *nmv) {
+static inline void reset_nmv_counter(nmv_context *nmv) {
   RESET_CDF_COUNTER(nmv->joints_cdf, 4);
   for (int i = 0; i < 2; i++) {
     RESET_CDF_COUNTER(nmv->comps[i].classes_cdf, MV_CLASSES);

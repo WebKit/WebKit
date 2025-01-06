@@ -34,6 +34,7 @@ template<typename Visitor>
 void RegExpGlobalData::visitAggregateImpl(Visitor& visitor)
 {
     m_cachedResult.visitAggregate(visitor);
+    m_substringGlobalAtomCache.visitAggregate(visitor);
 }
 
 DEFINE_VISIT_AGGREGATE(RegExpGlobalData);

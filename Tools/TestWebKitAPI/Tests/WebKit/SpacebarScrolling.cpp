@@ -53,15 +53,11 @@ static void didNotHandleKeyEventCallback(WKPageRef, WKNativeEventPtr event, cons
 }
 
 
-static void didRunJavascript(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error, void* context)
+static void didRunJavascript(WKTypeRef result, WKErrorRef error, void* context)
 {
-    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
-    JSValueRef jsValue = WKSerializedScriptValueDeserialize(serializedScriptValue, scriptContext, 0);
-    isScrolled = JSValueToBoolean(scriptContext, jsValue);
-
+    EXPECT_EQ(WKGetTypeID(result), WKBooleanGetTypeID());
+    isScrolled = WKBooleanGetValue((WKBooleanRef)result);
     javascriptRun = true;
-
-    JSGlobalContextRelease(scriptContext);
 }
 
 TEST(WebKit, SpacebarScrolling)
@@ -77,7 +73,7 @@ TEST(WebKit, SpacebarScrolling)
     PlatformWebView webView(configuration.get());
 
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
 
     loaderClient.base.version = 0;
     loaderClient.didFinishNavigation = didFinishNavigation;
@@ -85,7 +81,7 @@ TEST(WebKit, SpacebarScrolling)
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKPageUIClientV0 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
+    zeroBytes(uiClient);
 
     uiClient.base.version = 0;
     uiClient.didNotHandleKeyEvent = didNotHandleKeyEventCallback;
@@ -118,7 +114,7 @@ TEST(WebKit, SpacebarScrolling)
 
     while (!isScrolled) {
         javascriptRun = false;
-        WKPageRunJavaScriptInMainFrame(webView.page(), Util::toWK("isDocumentScrolled()").get(), 0, didRunJavascript);
+        WKPageEvaluateJavaScriptInMainFrame(webView.page(), Util::toWK("isDocumentScrolled()").get(), nullptr, didRunJavascript);
         Util::run(&javascriptRun);
     }
 

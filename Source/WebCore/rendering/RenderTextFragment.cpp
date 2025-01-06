@@ -29,11 +29,11 @@
 #include "RenderStyleInlines.h"
 #include "RenderTreeBuilder.h"
 #include "Text.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextFragment);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextFragment);
 
 RenderTextFragment::RenderTextFragment(Text& textNode, const String& text, int startOffset, int length)
     : RenderText(Type::TextFragment, textNode, text.substring(startOffset, length))
@@ -86,14 +86,16 @@ void RenderTextFragment::setTextInternal(const String& newText, bool force)
     ASSERT(!textNode() || textNode()->renderer() == this);
 }
 
-UChar RenderTextFragment::previousCharacter() const
+Vector<UChar> RenderTextFragment::previousCharacter() const
 {
     if (start()) {
         String original = textNode() ? textNode()->data() : contentString();
-        if (!original.isNull() && start() <= original.length())
-            return original[start() - 1];
+        if (!original.isNull() && start() <= original.length()) {
+            Vector<UChar> previous;
+            previous.append(original[start() - 1]);
+            return previous;
+        }
     }
-
     return RenderText::previousCharacter();
 }
 

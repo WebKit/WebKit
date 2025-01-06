@@ -11,18 +11,23 @@
 #ifndef API_TEST_VIDEO_QUALITY_TEST_FIXTURE_H_
 #define API_TEST_VIDEO_QUALITY_TEST_FIXTURE_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "api/fec_controller.h"
 #include "api/media_types.h"
 #include "api/network_state_predictor.h"
+#include "api/rtp_parameters.h"
 #include "api/test/simulated_network.h"
 #include "api/transport/bitrate_settings.h"
 #include "api/transport/network_control.h"
-#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/spatial_layer.h"
+#include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
 #include "video/config/video_encoder_config.h"
@@ -61,7 +66,7 @@ class VideoQualityTestFixtureInterface {
       bool automatic_scaling = false;
       std::string clip_path;  // "Generator" to generate frames instead.
       size_t capture_device_index = 0;
-      SdpVideoFormat::Parameters sdp_params;
+      CodecParameterMap sdp_params;
       double encoder_overshoot_factor = 0.0;
     } video[2];
     struct Audio {
@@ -69,7 +74,7 @@ class VideoQualityTestFixtureInterface {
       bool sync_video = false;
       bool dtx = false;
       bool use_real_adm = false;
-      absl::optional<std::string> ana_config;
+      std::optional<std::string> ana_config;
     } audio;
     struct Screenshare {
       bool enabled = false;
@@ -90,7 +95,7 @@ class VideoQualityTestFixtureInterface {
     // `sender_network` and `receiver_network` in InjectionComponents are
     // non-null. May be nullopt even if `sender_network` and `receiver_network`
     // are null; in that case, a default config will be used.
-    absl::optional<BuiltInNetworkBehaviorConfig> config;
+    std::optional<BuiltInNetworkBehaviorConfig> config;
     struct SS {                          // Spatial scalability.
       std::vector<VideoStream> streams;  // If empty, one stream is assumed.
       size_t selected_stream = 0;

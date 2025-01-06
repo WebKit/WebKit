@@ -50,8 +50,11 @@
 #include "SVGRootInlineBox.h"
 #include "Settings.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyLineLayout);
 
 LegacyLineLayout::LegacyLineLayout(RenderBlockFlow& flow)
     : m_flow(flow)
@@ -147,7 +150,7 @@ LegacyRootInlineBox* LegacyLineLayout::createAndAppendRootInlineBox()
     LegacyRootInlineBox* rootBox = newRootBox.get();
     m_lineBoxes.appendLineBox(WTFMove(newRootBox));
 
-    if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && firstRootBox() == rootBox) {
+    if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && legacyRootBox() == rootBox) {
         if (AXObjectCache* cache = m_flow.document().existingAXObjectCache())
             cache->deferRecomputeIsIgnored(m_flow.element());
     }
@@ -173,9 +176,9 @@ LegacyInlineBox* LegacyLineLayout::createInlineBoxForRenderer(RenderObject* rend
 static inline void dirtyLineBoxesForRenderer(RenderObject& renderer)
 {
     if (CheckedPtr renderText = dynamicDowncast<RenderText>(renderer))
-        renderText->dirtyLineBoxes(true);
+        renderText->dirtyLegacyLineBoxes(true);
     else if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(renderer))
-        renderInline->dirtyLineBoxes(true);
+        renderInline->dirtyLegacyLineBoxes(true);
 }
 
 static bool parentIsConstructedOrHaveNext(LegacyInlineFlowBox* parentBox)
@@ -199,7 +202,7 @@ LegacyInlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const 
         RenderInline* inlineFlow = obj != &m_flow ? &downcast<RenderInline>(*obj) : nullptr;
 
         // Get the last box we made for this render object.
-        parentBox = inlineFlow ? inlineFlow->lastLineBox() : downcast<RenderBlockFlow>(*obj).lastRootBox();
+        parentBox = inlineFlow ? inlineFlow->lastLegacyInlineBox() : downcast<RenderBlockFlow>(*obj).legacyRootBox();
 
         // If this box or its ancestor is constructed then it is from a previous line, and we need
         // to make a new box for our line. If this box or its ancestor is unconstructed but it has
@@ -278,13 +281,11 @@ LegacyRootInlineBox* LegacyLineLayout::constructLine(BidiRunList<BidiRun>& bidiR
 
     // We should have a root inline box. It should be unconstructed and
     // be the last continuation of our line list.
-    ASSERT(lastRootBox() && !lastRootBox()->isConstructed());
+    ASSERT(legacyRootBox() && !legacyRootBox()->isConstructed());
 
     // Now mark the line boxes as being constructed.
-    lastRootBox()->setConstructed();
-
-    // Return the last line.
-    return lastRootBox();
+    legacyRootBox()->setConstructed();
+    return legacyRootBox();
 }
 
 void LegacyLineLayout::removeInlineBox(BidiRun& run, const LegacyRootInlineBox& rootLineBox) const
@@ -381,7 +382,7 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
             determineDirectionality(direction, LegacyInlineIterator(isolatedInline, &isolatedRun.object, 0));
         else {
             ASSERT(unicodeBidi == UnicodeBidi::Isolate || unicodeBidi == UnicodeBidi::IsolateOverride);
-            direction = isolatedInline->style().direction();
+            direction = isolatedInline->writingMode().bidiDirection();
         }
         isolatedResolver.setStatus(BidiStatus(direction, isOverride(unicodeBidi)));
 
@@ -428,22 +429,7 @@ LegacyRootInlineBox* LegacyLineLayout::createLineBoxesFromBidiRuns(unsigned bidi
 
     lineBox->setBidiLevel(bidiLevel);
 
-    bool isSVGRootInlineBox = is<SVGRootInlineBox>(*lineBox);
-    ASSERT(isSVGRootInlineBox);
-
-    // Now we position all of our text runs horizontally.
-
     removeEmptyTextBoxesAndUpdateVisualReordering(lineBox, bidiRuns.firstRun());
-
-    // SVG text layout code computes vertical & horizontal positions on its own.
-    // Note that we still need to execute computeVerticalPositionsForLine() as
-    // it calls LegacyInlineTextBox::positionLineBox(), which tracks whether the box
-    // contains reversed text or not. If we wouldn't do that editing and thus
-    // text selection in RTL boxes would not work as expected.
-    if (isSVGRootInlineBox) {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_flow.isRenderSVGText());
-        downcast<SVGRootInlineBox>(*lineBox).computePerCharacterLayoutInformation();
-    }
 
     GlyphOverflowAndFallbackFontsMap textBoxDataMap;
     lineBox->computeOverflow(lineBox->lineTop(), lineBox->lineBottom(), textBoxDataMap);
@@ -451,17 +437,13 @@ LegacyRootInlineBox* LegacyLineLayout::createLineBoxesFromBidiRuns(unsigned bidi
     return lineBox;
 }
 
-static void repaintSelfPaintInlineBoxes(const LegacyRootInlineBox& firstRootInlineBox, const LegacyRootInlineBox& lastRootInlineBox)
+static void repaintSelfPaintInlineBoxes(const LegacyRootInlineBox& rootInlineBox)
 {
-    for (auto* rootInlineBox = &firstRootInlineBox; rootInlineBox; rootInlineBox = rootInlineBox->nextRootBox()) {
-        if (rootInlineBox->hasSelfPaintInlineBox()) {
-            for (auto* inlineBox = rootInlineBox->firstChild(); inlineBox; inlineBox = inlineBox->nextOnLine()) {
-                if (auto* renderer = dynamicDowncast<RenderLayerModelObject>(inlineBox->renderer()); renderer && renderer->hasSelfPaintingLayer())
-                    renderer->repaint();
-            }
+    if (rootInlineBox.hasSelfPaintInlineBox()) {
+        for (auto* inlineBox = rootInlineBox.firstChild(); inlineBox; inlineBox = inlineBox->nextOnLine()) {
+            if (auto* renderer = dynamicDowncast<RenderLayerModelObject>(inlineBox->renderer()); renderer && renderer->hasSelfPaintingLayer())
+                renderer->repaint();
         }
-        if (rootInlineBox == &lastRootInlineBox)
-            break;
     }
 }
 
@@ -469,7 +451,7 @@ void LegacyLineLayout::layoutRunsAndFloats(bool hasInlineChild)
 {
     m_lineBoxes.deleteLineBoxTree();
 
-    TextDirection direction = style().direction();
+    TextDirection direction = style().writingMode().bidiDirection();
     if (style().unicodeBidi() == UnicodeBidi::Plaintext)
         determineDirectionality(direction, LegacyInlineIterator(&m_flow, firstInlineRendererSkippingEmpty(m_flow), 0));
 
@@ -490,8 +472,8 @@ void LegacyLineLayout::layoutRunsAndFloats(bool hasInlineChild)
     }
 
     layoutRunsAndFloatsInRange(resolver);
-    if (firstRootBox())
-        repaintSelfPaintInlineBoxes(*firstRootBox(), *lastRootBox());
+    if (legacyRootBox())
+        repaintSelfPaintInlineBoxes(*legacyRootBox());
 }
 
 void LegacyLineLayout::layoutRunsAndFloatsInRange(InlineBidiResolver& resolver)
@@ -525,10 +507,10 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(InlineBidiResolver& resolver)
         ASSERT(end != resolver.position());
 
         if (!lineInfo.isEmpty()) {
-            VisualDirectionOverride override = (styleToUse.rtlOrdering() == Order::Visual ? (styleToUse.direction() == TextDirection::LTR ? VisualLeftToRightOverride : VisualRightToLeftOverride) : NoVisualOverride);
+            VisualDirectionOverride override = (styleToUse.rtlOrdering() == Order::Visual ? (styleToUse.writingMode().isBidiLTR() ? VisualLeftToRightOverride : VisualRightToLeftOverride) : NoVisualOverride);
 
             if (styleToUse.unicodeBidi() == UnicodeBidi::Plaintext && !resolver.context()->parent()) {
-                TextDirection direction = styleToUse.direction();
+                TextDirection direction = styleToUse.writingMode().bidiDirection();
                 determineDirectionality(direction, resolver.position());
                 resolver.setStatus(BidiStatus(direction, isOverride(styleToUse.unicodeBidi())));
             }
@@ -579,25 +561,21 @@ void LegacyLineLayout::layoutLineBoxes()
         layoutRunsAndFloats(hasInlineChild);
     }
 
-    if (!firstRootBox() && m_flow.hasLineIfEmpty())
+    if (!legacyRootBox() && m_flow.hasLineIfEmpty())
         m_flow.setLogicalHeight(m_flow.logicalHeight() + m_flow.lineHeight(true, m_flow.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
 }
 
 void LegacyLineLayout::addOverflowFromInlineChildren()
 {
-    for (auto* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-        LayoutRect childVisualOverflowRect = curr->visualOverflowRect(curr->lineTop(), curr->lineBottom());
+    if (auto* rootBox = legacyRootBox()) {
+        LayoutRect childVisualOverflowRect = rootBox->visualOverflowRect(rootBox->lineTop(), rootBox->lineBottom());
         m_flow.addVisualOverflow(childVisualOverflowRect);
     }
 }
 
 size_t LegacyLineLayout::lineCount() const
 {
-    size_t count = 0;
-    for (auto* box = firstRootBox(); box; box = box->nextRootBox())
-        ++count;
-
-    return count;
+    return legacyRootBox() ? 1 : 0;
 }
 
 const RenderStyle& LegacyLineLayout::style() const

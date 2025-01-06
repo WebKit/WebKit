@@ -33,6 +33,8 @@
 #include "LLIntThunks.h"
 #include "Opcode.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace LLInt {
@@ -45,7 +47,7 @@ Opcode g_opcodeMapWide32[numOpcodeIDs + numWasmOpcodeIDs] = { };
 extern "C" void SYSV_ABI llint_entry(void*, void*, void*);
 
 #if ENABLE(WEBASSEMBLY)
-extern "C" void wasm_entry(void*, void*, void*);
+extern "C" void SYSV_ABI wasm_entry(void*, void*, void*);
 #endif // ENABLE(WEBASSEMBLY)
 
 #endif // !ENABLE(C_LOOP)
@@ -55,13 +57,13 @@ extern "C" void vmEntryToJavaScriptTrampoline(void);
 extern "C" void tailCallJSEntryTrampoline(void);
 extern "C" void tailCallJSEntrySlowPathTrampoline(void);
 extern "C" void tailCallWithoutUntagJSEntryTrampoline(void);
-extern "C" void wasmTailCallJSEntrySlowPathTrampoline(void);
+extern "C" void wasmTailCallTrampoline(void);
 extern "C" void exceptionHandlerTrampoline(void);
 extern "C" void returnFromLLIntTrampoline(void);
 #endif
 
 #if ENABLE(CSS_SELECTOR_JIT) && CPU(ARM64E) && !ENABLE(C_LOOP)
-extern "C" void vmEntryToCSSJITAfter(void);
+extern "C" void SYSV_ABI vmEntryToCSSJITAfter(void);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(vmEntryToCSSJITAfter);
 #endif
 
@@ -70,15 +72,15 @@ static void neuterOpcodeMaps()
 {
 #if CPU(ARM64E)
 #define SET_CRASH_TARGET(entry) do { \
-        void* crashTarget = bitwise_cast<void*>(llint_check_vm_entry_permission); \
-        uint64_t address = bitwise_cast<uint64_t>(&entry); \
-        uint64_t newTag = (bitwise_cast<uint64_t>(BytecodePtrTag) << 48) | address; \
+        void* crashTarget = reinterpret_cast<void*>(llint_check_vm_entry_permission); \
+        uint64_t address = std::bit_cast<uint64_t>(&entry); \
+        uint64_t newTag = (std::bit_cast<uint64_t>(BytecodePtrTag) << 48) | address; \
         void* signedTarget = ptrauth_auth_and_resign(crashTarget, ptrauth_key_function_pointer, 0, ptrauth_key_process_dependent_code, newTag); \
-        entry = bitwise_cast<Opcode>(signedTarget); \
+        entry = std::bit_cast<Opcode>(signedTarget); \
     } while (false)
 #else
 #define SET_CRASH_TARGET(entry) do { \
-        entry = bitwise_cast<Opcode>(llint_check_vm_entry_permission); \
+        entry = reinterpret_cast<Opcode>(llint_check_vm_entry_permission); \
     } while (false)
 #endif
     for (unsigned i = 0; i < numOpcodeIDs + numWasmOpcodeIDs; ++i) {
@@ -204,10 +206,18 @@ void initialize()
     {
         static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;
         if (Options::useJIT())
-            codeRef.construct(createWasmTailCallGate(JSEntrySlowPathPtrTag));
+            codeRef.construct(createWasmTailCallGate(WasmEntryPtrTag));
         else
-            codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(CodePtr<NativeToJITGatePtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&wasmTailCallJSEntrySlowPathTrampoline))));
-        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::wasmTailCallJSEntrySlowPathPtrTag)]= codeRef.get().code().taggedPtr();
+            codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(CodePtr<NativeToJITGatePtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&wasmTailCallTrampoline))));
+        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::wasmTailCallWasmEntryPtrTag)]= codeRef.get().code().taggedPtr();
+    }
+    {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;
+        if (Options::useJIT())
+            codeRef.construct(createWasmTailCallGate(WasmEntryPtrTag));
+        else
+            codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(CodePtr<NativeToJITGatePtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&wasmTailCallTrampoline))));
+        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::wasmIPIntTailCallWasmEntryPtrTag)]= codeRef.get().code().taggedPtr();
     }
     {
         static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;
@@ -256,6 +266,12 @@ void initialize()
 #endif // CPU(ARM64E)
 #endif // ENABLE(C_LOOP)
     g_jscConfig.defaultCallThunk = defaultCall().code().taggedPtr();
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        g_jscConfig.arityFixupThunk = arityFixupThunk().code().taggedPtr();
+#endif
 }
 
 } } // namespace JSC::LLInt
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

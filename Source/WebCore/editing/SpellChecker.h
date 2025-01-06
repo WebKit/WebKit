@@ -31,19 +31,13 @@
 #include "TextChecking.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
+#include <wtf/Markable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-class SpellChecker;
-}
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SpellChecker> : std::true_type { };
-}
-
-namespace WebCore {
-
+class Editor;
 class SpellChecker;
 class TextCheckerClient;
 
@@ -77,20 +71,23 @@ private:
 };
 
 class SpellChecker : public CanMakeSingleThreadWeakPtr<SpellChecker> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SpellChecker);
 public:
     friend class SpellCheckRequest;
 
-    explicit SpellChecker(Document&);
+    explicit SpellChecker(Editor&);
     ~SpellChecker();
+
+    void ref() const;
+    void deref() const;
 
     bool isAsynchronousEnabled() const;
     bool isCheckable(const SimpleRange&) const;
 
     void requestCheckingFor(Ref<SpellCheckRequest>&&);
 
-    TextCheckingRequestIdentifier lastRequestIdentifier() const { return m_lastRequestIdentifier; }
-    TextCheckingRequestIdentifier lastProcessedIdentifier() const { return m_lastProcessedIdentifier; }
+    std::optional<TextCheckingRequestIdentifier> lastRequestIdentifier() const { return m_lastRequestIdentifier; }
+    std::optional<TextCheckingRequestIdentifier> lastProcessedIdentifier() const { return m_lastProcessedIdentifier; }
 
 private:
     bool canCheckAsynchronously(const SimpleRange&) const;
@@ -102,11 +99,12 @@ private:
     void didCheckCancel(TextCheckingRequestIdentifier);
     void didCheck(TextCheckingRequestIdentifier, const Vector<TextCheckingResult>&);
 
-    Ref<Document> protectedDocument() const { return m_document.get(); }
+    Document& document() const;
+    Ref<Document> protectedDocument() const;
 
-    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
-    TextCheckingRequestIdentifier m_lastRequestIdentifier;
-    TextCheckingRequestIdentifier m_lastProcessedIdentifier;
+    WeakRef<Editor> m_editor;
+    Markable<TextCheckingRequestIdentifier> m_lastRequestIdentifier;
+    Markable<TextCheckingRequestIdentifier> m_lastProcessedIdentifier;
 
     Timer m_timerToProcessQueuedRequest;
 

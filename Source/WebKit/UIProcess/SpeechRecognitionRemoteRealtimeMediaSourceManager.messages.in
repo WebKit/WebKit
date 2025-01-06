@@ -23,7 +23,12 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-messages -> SpeechRecognitionRemoteRealtimeMediaSourceManager NotRefCounted {
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=UI,
+    EnabledBy=SpeechRecognitionEnabled
+]
+messages -> SpeechRecognitionRemoteRealtimeMediaSourceManager {
     RemoteAudioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier identifier, MediaTime time, uint64_t numberOfFrames)
     RemoteCaptureFailed(WebCore::RealtimeMediaSourceIdentifier identifier)
     RemoteSourceStopped(WebCore::RealtimeMediaSourceIdentifier identifier)

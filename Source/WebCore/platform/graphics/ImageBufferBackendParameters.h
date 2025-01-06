@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DestinationColorSpace.h"
+#include "ImageBufferPixelFormat.h"
 #include "IntSize.h"
 #include "PixelFormat.h"
 #include "RenderingMode.h"
@@ -36,7 +37,7 @@ struct ImageBufferBackendParameters {
     IntSize backendSize;
     float resolutionScale; // Resolution scale is of the ImageBuffer logical size.
     DestinationColorSpace colorSpace;
-    PixelFormat pixelFormat;
+    ImageBufferPixelFormat pixelFormat;
     RenderingPurpose purpose;
 };
 

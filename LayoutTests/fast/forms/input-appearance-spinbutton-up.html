@@ -10,12 +10,16 @@
 <input type=number style="font-size: 18px;" id=number value=0>
 
 <script>
-if (window.eventSender) {
-    var input = document.getElementById('number');
-    eventSender.mouseMoveTo(input.offsetLeft + input.offsetWidth - 8, input.offsetTop + 6);
-    eventSender.mouseDown();
-} else {
-    document.getElementById('console').innerHTML = '<p>Manual test: Press the primary button of the pointing device on the upper button.  Check if the upper button is correctly highlighted.</p>';
+onload = async () => {
+    testRunner?.waitUntilDone();
+    if (window.eventSender) {
+        var input = document.getElementById('number');
+        await eventSender.asyncMouseMoveTo(input.offsetLeft + input.offsetWidth - 8, input.offsetTop + 6);
+        await eventSender.asyncMouseDown();
+    } else {
+        document.getElementById('console').innerHTML = '<p>Manual test: Press the primary button of the pointing device on the upper button.  Check if the upper button is correctly highlighted.</p>';
+    }
+    testRunner?.notifyDone();
 }
 </script>
 </body>

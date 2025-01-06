@@ -49,7 +49,7 @@ class File;
 
 class DataTransferItemList final : public ScriptWrappable, public ContextDestructionObserver, public CanMakeWeakPtr<DataTransferItemList> {
     WTF_MAKE_NONCOPYABLE(DataTransferItemList);
-    WTF_MAKE_ISO_ALLOCATED(DataTransferItemList);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DataTransferItemList);
 public:
     DataTransferItemList(Document&, DataTransfer&);
     ~DataTransferItemList();

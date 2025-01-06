@@ -1,0 +1,704 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+</style>
+</script>
+<script>
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter({});
+let device0 = await adapter0.requestDevice({
+ requiredFeatures: [
+ 'depth32float-stencil8',
+ 'texture-compression-astc',
+ ],
+ requiredLimits: {
+ },
+});
+let bindGroupLayout0 = device0.createBindGroupLayout({
+ entries: [
+ {
+ binding: 290,
+ visibility: GPUShaderStage.COMPUTE,
+ },
+ ],
+});
+let = device0.createTexture({
+ size: {width: 440},
+ format: 'rgba8sint',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let = device0.createBindGroupLayout({
+ entries: [
+ {
+ binding: 13,
+ visibility: GPUShaderStage.VERTEX,
+ },
+ ],
+});
+let = device0.createTexture({
+ size: {width: 1760, depthOrArrayLayers: 1},
+ format: 'rgba32uint',
+ usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+});
+let bindGroupLayout2 = device0.createBindGroupLayout({
+ entries: [
+ {
+ binding: 189,
+ visibility: GPUShaderStage.COMPUTE,
+ },
+ ],
+});
+let = device0.createTexture({
+ size: {width: 56},
+ format: 'rgba32sint',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let bindGroupLayout3 = device0.createBindGroupLayout({entries: [{binding: 309, visibility: GPUShaderStage.VERTEX, externalTexture: {}}]});
+let = device0.createTexture({
+ size: [600],
+ format: 'r32sint',
+ usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+});
+let texture4 = device0.createTexture({
+ size: {width: 1},
+ format: 'depth32float-stencil8',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let texture5 = device0.createTexture({
+ size: {width: 880, depthOrArrayLayers: 1},
+ format: 'astc-5x5-unorm-srgb',
+ usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+let = device0.createTexture({
+ size: [130],
+ format: 'rgba8sint',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let textureView4 = texture4.createView({format: 'depth32float-stencil8', mipLevelCount: 1});
+let pipelineLayout1 = device0.createPipelineLayout({bindGroupLayouts: [bindGroupLayout3]});
+let texture8 = device0.createTexture({
+ size: [3520],
+ format: 'rgba8sint',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let = device0.createSampler({
+});
+try {
+} catch {}
+let pipelineLayout2 = device0.createPipelineLayout({bindGroupLayouts: [bindGroupLayout2]});
+let = device0.createTexture({
+ size: {width: 3520, depthOrArrayLayers: 1},
+ format: 'rg16uint',
+ usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+});
+let = device0.createTexture({
+ size: [260, 1],
+ format: 'rgba32uint',
+ usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+try {
+device0.queue.writeTexture({
+}, /* */
+{offset: 0});
+} catch {}
+let textureView6 = texture8.createView({format: 'rgba8sint', mipLevelCount: 1});
+let = device0.createSampler({
+});
+try {
+} catch {}
+let = device0.createTexture({
+ size: [2, 16],
+ format: 'rg16uint',
+ usage: GPUTextureUsage.RENDER_ATTACHMENT,
+});
+let shaderModule0 = device0.createShaderModule({
+ code: `
+}`,
+});
+let textureView9 = texture5.createView({label: 0});
+let = device0.createBindGroup({
+ layout: bindGroupLayout0,
+ entries: [{binding: 290, resource: textureView6}],
+});
+try {
+gpuCanvasContext0.configure({
+});
+} catch {}
+let = device0.createBindGroupLayout({
+ entries: [
+ {
+ binding: 122,
+ visibility: GPUShaderStage.FRAGMENT,
+ },
+ ],
+});
+let = device0.createTexture({
+ size: {width: 888, depthOrArrayLayers: 1},
+ format: 'astc-12x10-unorm-srgb',
+ usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+});
+let = device0.createShaderModule({
+ code: `
+}`,
+});
+let = device0.createTexture({
+ size: [3520, 1],
+ format: 'astc-8x5-unorm',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let shaderModule4 = device0.createShaderModule({
+ code: `
+fn unconst_u32(v: u32) -> u32 { return v; }
+@group(0) @binding(309) var et3: texture_external;
+struct T0 {
+ f0: array<u32>,
+}
+struct S1 {
+ f0: vec3u,
+}
+struct FragmentOutput2 {
+ @location(0) f0: vec4u,
+}
+fn fn0(a0: array<S1, 2>, a1: mat3x4f) -> mat4x2h {
+ var out: mat4x2h;
+ return out;
+}
+var<workgroup> vw19: array<atomic<i32>, 1>;
+@vertex
+fn vertex3() -> @builtin(position) vec4f {
+ var out = textureLoad(et3, vec2u(unconst_u32(112), unconst_u32(115)));
+ return out;
+}
+@fragment
+fn fragment2() -> FragmentOutput2 {
+ var out: FragmentOutput2;
+ return out;
+}
+fn compute5(a0: S1) {
+}`,
+});
+try {
+} catch {}
+let texture24 = device0.createTexture({
+ size: [19],
+ format: 'rgba16sint',
+ usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+gpuCanvasContext0.configure({
+});
+} catch {}
+try {
+} catch {}
+let = device0.createTexture({
+ size: {width: 1},
+ format: 'astc-10x10-unorm',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let texture26 = device0.createTexture({
+ size: {width: 600, depthOrArrayLayers: 1},
+ mipLevelCount: 3,
+ format: 'rg16uint',
+ usage: GPUTextureUsage.RENDER_ATTACHMENT,
+});
+let = texture24.createView({
+});
+try {
+} catch {}
+let = device0.createTexture({
+ size: [600, 33],
+ format: 'rgb10a2unorm',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createTexture({
+ size: {width: 2310, depthOrArrayLayers: 1},
+ format: 'astc-10x8-unorm-srgb',
+ usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createBindGroup({
+ layout: bindGroupLayout0,
+ entries: [{binding: 6, resource: textureView4}],
+});
+let = device0.createTexture({
+ size: {width: 3520, depthOrArrayLayers: 1},
+ format: 'astc-10x10-unorm',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+let pipeline0 = device0.createRenderPipeline({
+ layout: pipelineLayout1,
+ fragment: {
+ module: shaderModule4,
+ targets: [{format: 'rg16uint', writeMask: GPUColorWrite.ALPHA}],
+},
+ vertex: {module: shaderModule4, constants: []},
+});
+try {
+} catch {}
+try {
+device0.queue.writeTexture({
+}, /* */
+{offset: 27, bytesPerRow: 1571}, {width: 389, depthOrArrayLayers: 0});
+} catch {}
+let = device0.createTexture({
+ size: {width: 1},
+ format: 'rg16uint',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+let commandEncoder14 = device0.createCommandEncoder({label: '\u6375\u0a75\u{1f617}\u045b\u1823\u{1f7f6}\u907a\uf5fe'});
+let = device0.createTexture({
+ size: {width: 1},
+ format: 'astc-4x4-unorm-srgb',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createTexture({
+ size: {width: 78, depthOrArrayLayers: 58},
+ format: 'rgba32sint',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let = device0.createSampler({
+});
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createRenderPipeline({
+ layout: pipelineLayout2,
+ fragment: {
+ module: shaderModule0,
+ targets: [{format: 'rg16uint', writeMask: GPUColorWrite.ALPHA}],
+},
+ vertex: {
+ module: shaderModule0,
+ buffers: [
+ {
+ arrayStride: 244,
+ attributes: [
+ ],
+ },
+ ],
+ },
+});
+let = device0.createShaderModule({
+ code: `
+}`,
+});
+let = device0.createBuffer({
+ size: 3994,
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+let shaderModule6 = device0.createShaderModule({
+ code: `
+}`,
+});
+try {
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+*/
+{
+}, {width: 1, depthOrArrayLayers: 0});
+} catch {}
+let = device0.createTexture({
+ size: [3222, 1],
+ format: [1760, 1],
+ format: 'astc-8x5-unorm',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let textureView21 = texture26.createView({format: 'rg16uint', baseMipLevel: 1, mipLevelCount: 1});
+let = commandEncoder14.beginRenderPass({
+ colorAttachments: [{
+ view: textureView21,
+ loadOp: 'clear',
+ storeOp: 'discard',
+}],
+});
+let = device0.createTexture({
+ size: [1760, 1],
+ format: 'astc-10x5-unorm',
+ usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+let commandEncoder23 = device0.createCommandEncoder({label: '\u7dbb\u{1f77e}\u463d\u6f49\ueabc\u0010\uad5b\u0baf'});
+try {
+} catch {}
+let = device0.createTexture({
+ size: {width: 1},
+ format: 'astc-6x5-unorm-srgb',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+let texture66 = device0.createTexture({
+ size: {width: 16},
+ format: 'rg16uint',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let renderPassEncoder1 = commandEncoder23.beginRenderPass({
+ colorAttachments: [{
+ view: textureView21,
+ loadOp: 'clear',
+ storeOp: 'store',
+}],
+});
+let bindGroupLayout7 = device0.createBindGroupLayout({
+ entries: [
+ {
+ binding: 28,
+ visibility: GPUShaderStage.FRAGMENT,
+ },
+ ],
+});
+let texture69 = device0.createTexture({
+ size: [39, 67],
+ format: 'rg32sint',
+ usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+try {
+commandEncoder28.copyBufferToTexture({
+}, {width: 176, depthOrArrayLayers: 0});
+} catch {}
+let = device0.createRenderPipeline({
+ layout: pipelineLayout2,
+ fragment: {
+ module: shaderModule6,
+ targets: [{
+ format: 'rg16uint',
+}],
+},
+ vertex: {
+ module: shaderModule6,
+ buffers: [
+ {
+ arrayStride: 516,
+ attributes: [
+ ],
+ },
+ ],
+ },
+});
+try {
+} catch {}
+let = device0.createTexture({
+ size: {width: 21},
+ format: 'rgba16float',
+ usage: GPUTextureUsage.RENDER_ATTACHMENT,
+});
+try {
+} catch {}
+try {
+} catch {}
+let bindGroupLayout8 = device0.createBindGroupLayout({
+ entries: [
+ {
+ binding: 285,
+ visibility: GPUShaderStage.VERTEX,
+ },
+ ],
+});
+let = device0.createBindGroup({
+ layout: bindGroupLayout2,
+ entries: [
+ ],
+});
+let = device0.createTexture({
+ size: {width: 16},
+ format: 'r32float',
+ usage: GPUTextureUsage.STORAGE_BINDING,
+});
+try {
+} catch {}
+let = device0.createShaderModule({
+ code: `
+}`,
+});
+try {
+} catch {}
+try {
+} catch {}
+let videoFrame1 = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'RGBX', timestamp: 0, colorSpace: {fullRange: true, transfer: 'pq'} });
+let = device0.createTexture({
+ size: {width: 39, depthOrArrayLayers: 76},
+ format: 'rg16uint',
+ usage: GPUTextureUsage.COPY_DST,
+ vertex: {
+ buffers: [
+ ],
+ },
+});
+let = device0.createTexture({
+ size: {width: 300},
+ format: 'rgba32sint',
+ usage: GPUTextureUsage.STORAGE_BINDING,
+});
+let bindGroupLayout9 = device0.createBindGroupLayout({
+ entries: [
+ {
+ binding: 289,
+ visibility: GPUShaderStage.COMPUTE,
+ },
+ ],
+});
+let = device0.createBindGroup({
+ layout: bindGroupLayout8,
+ entries: [
+ ],
+});
+let buffer19 = device0.createBuffer({size: 16930, usage: GPUBufferUsage.STORAGE});
+let = device0.createTexture({
+ size: {width: 1760, depthOrArrayLayers: 113},
+ format: 'rgba16float',
+ usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+let = device0.createTexture({
+ size: [600, 1],
+ format: 'depth16unorm',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+try {
+gpuCanvasContext0.configure({
+});
+} catch {}
+let = device0.createTexture({
+ size: [78, 1],
+ format: 'rgba32sint',
+ usage: GPUTextureUsage.STORAGE_BINDING,
+});
+try {
+} catch {}
+let = device0.createTexture({
+ size: {width: 1},
+ format: 'bgra8unorm-srgb',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let = texture69.createView({dimension: '2d', baseArrayLayer: 6});
+try {
+} catch {}
+try {
+gpuCanvasContext0.configure({
+});
+} catch {}
+let = device0.createTexture({
+ size: {width: 600, depthOrArrayLayers: 83},
+ format: 'rgba32sint',
+ usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+});
+let = externalTexture0 = device0.importExternalTexture({source: videoFrame1});
+try {
+device0.queue.copyExternalImageToTexture(/*
+*/
+{
+}, {width: 2, depthOrArrayLayers: 0});
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createTexture({
+ size: {width: 28},
+ format: 'rgba16float',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+let = device0.createBindGroup({
+ layout: bindGroupLayout2,
+ entries: [
+ ],
+});
+try {
+} catch {}
+try {
+} catch {}
+let commandEncoder46 = device0.createCommandEncoder({});
+try {
+} catch {}
+let = device0.createTexture({
+ size: [440, 210],
+ format: 'rgba16float',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let = device0.createSampler({
+});
+let = commandEncoder46.beginRenderPass({
+ colorAttachments: [{
+ view: textureView21,
+ loadOp: 'load',
+ storeOp: 'store',
+}],
+});
+try {
+} catch {}
+try {
+} catch {}
+let bindGroup25 = device0.createBindGroup({
+ layout: bindGroupLayout3,
+ entries: [{binding: 309, resource: externalTexture0}],
+});
+try {
+commandEncoder50.copyBufferToTexture({
+}, {width: 50, depthOrArrayLayers: 0});
+} catch {}
+let = device0.createBuffer({
+ size: 13143,
+ usage: GPUBufferUsage.VERTEX,
+});
+let = device0.createTexture({
+ size: [150, 118],
+ format: 'rgba16float',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let = device0.createTexture({
+ size: {width: 39, depthOrArrayLayers: 1},
+ format: 'rgba32sint',
+ usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+try {
+renderPassEncoder1.setPipeline(pipeline0);
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+gpuCanvasContext0.configure({
+});
+} catch {}
+let = device0.createBindGroup({
+  layout: bindGroupLayout7,
+ entries: [{binding: 28, resource: textureView9}],
+});
+let buffer30 = device0.createBuffer({
+  size: 32590,
+  usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.UNIFORM,
+});
+try {
+} catch {}
+try {
+renderPassEncoder1.setBindGroup(0, bindGroup25, new Uint32Array(1410), 363, 0);
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+let bindGroup27 = device0.createBindGroup({
+  layout: bindGroupLayout2,
+  entries: [
+  ],
+});
+try {
+renderPassEncoder1.draw(221, 25, 449_657_573);
+} catch {}
+try {
+} catch {}
+let = texture66.createView({
+});
+let = device0.createTexture({
+ size: {width: 3},
+ format: 'rgba32sint',
+ usage: 'rg32float',
+ usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
+});
+try {
+} catch {}
+try {
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+*/
+{
+}, {width: 0});
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createShaderModule({
+ code: GPUTextureUsage.STORAGE_BINDING,
+});
+try {
+} catch {}
+try {
+renderPassEncoder1.end();
+} catch {}
+try {
+} catch {}
+let commandBuffer4 = commandEncoder23.finish();
+try {
+} catch {}
+let = device0.createBindGroup({
+ layout: bindGroupLayout9,
+ entries: [{binding: 289, resource: {buffer: buffer19, offset: 1972}}],
+});
+try {
+} catch {}
+try {
+device0.queue.submit([commandBuffer4]);
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+*/
+{
+}, {width: 0, depthOrArrayLayers: 0});
+} catch {}
+let = device0.createBindGroup({
+ layout: bindGroupLayout3,
+ entries: [{binding: 309, resource: externalTexture0}],
+});
+try {
+} catch {}
+try {
+device0.queue.writeTexture({
+}, /* */
+{offset: 0});
+} catch {}
+try {
+} catch {}
+let = device0.createBindGroup({
+ entries: [
+ ],
+});
+try {
+} catch {}
+try {
+} catch {}
+}
+onload = async => {
+ try {
+ let = [ window0() ];
+ } catch {
+ if (e instanceof GPUPipelineError) {
+ }
+ }
+};
+</script>

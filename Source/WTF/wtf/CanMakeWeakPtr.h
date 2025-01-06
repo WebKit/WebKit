@@ -39,8 +39,13 @@ public:
     using WeakValueType = typename WeakPtrFactoryType::ObjectType;
     using WeakPtrImplType = typename WeakPtrFactoryType::WeakPtrImplType;
 
-    const WeakPtrFactoryType& weakPtrFactory() const { return m_weakPtrFactory; }
-    WeakPtrFactoryType& weakPtrFactory() { return m_weakPtrFactory; }
+    WeakPtrImplType* weakImplIfExists() const { return m_weakPtrFactory.impl(); }
+    WeakPtrImplType& weakImpl() const
+    {
+        initializeWeakPtrFactory();
+        return *m_weakPtrFactory.impl();
+    }
+    unsigned weakCount() const { return m_weakPtrFactory.weakPtrCount(); }
 
 protected:
     CanMakeWeakPtrBase()
@@ -57,10 +62,13 @@ protected:
 
     CanMakeWeakPtrBase& operator=(const CanMakeWeakPtrBase&) { return *this; }
 
-    void initializeWeakPtrFactory()
+    void initializeWeakPtrFactory() const
     {
-        m_weakPtrFactory.initializeIfNeeded(static_cast<WeakValueType&>(*this));
+        m_weakPtrFactory.initializeIfNeeded(static_cast<const WeakValueType&>(*this));
     }
+
+    const WeakPtrFactoryType& weakPtrFactory() const { return m_weakPtrFactory; }
+    WeakPtrFactoryType& weakPtrFactory() { return m_weakPtrFactory; }
 
 private:
     WeakPtrFactoryType m_weakPtrFactory;

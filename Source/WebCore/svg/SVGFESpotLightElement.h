@@ -25,6 +25,8 @@
 namespace WebCore {
 
 class SVGFESpotLightElement final : public SVGFELightElement {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFESpotLightElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFESpotLightElement);
 public:
     static Ref<SVGFESpotLightElement> create(const QualifiedName&, Document&);
 

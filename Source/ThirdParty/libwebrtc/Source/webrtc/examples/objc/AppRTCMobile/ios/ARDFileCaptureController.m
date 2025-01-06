@@ -22,7 +22,8 @@
 @synthesize fileCapturer = _fileCapturer;
 
 - (instancetype)initWithCapturer:(RTC_OBJC_TYPE(RTCFileVideoCapturer) *)capturer {
-  if (self = [super init]) {
+  self = [super init];
+  if (self) {
     _fileCapturer = capturer;
   }
   return self;

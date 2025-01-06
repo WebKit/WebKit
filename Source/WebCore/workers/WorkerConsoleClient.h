@@ -28,6 +28,7 @@
 #include "WorkerOrWorkletGlobalScope.h"
 #include <JavaScriptCore/ConsoleClient.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class CallFrame;
@@ -38,7 +39,7 @@ using JSC::MessageType;
 namespace WebCore {
 
 class WorkerConsoleClient final : public JSC::ConsoleClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WorkerConsoleClient);
 public:
     explicit WorkerConsoleClient(WorkerOrWorkletGlobalScope&);
     virtual ~WorkerConsoleClient();

@@ -9,17 +9,17 @@
  */
 #include <memory>
 
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "test/codec_factory.h"
 #include "test/register_state_check.h"
 #include "test/video_source.h"
+#include "vpx_config.h"
 
 namespace {
 
 class EncoderWithExpectedError : public ::libvpx_test::Encoder {
  public:
-  EncoderWithExpectedError(vpx_codec_enc_cfg_t cfg,
-                           unsigned long deadline,          // NOLINT
+  EncoderWithExpectedError(vpx_codec_enc_cfg_t cfg, vpx_enc_deadline_t deadline,
                            const unsigned long init_flags,  // NOLINT
                            ::libvpx_test::TwopassStatsStore *stats)
       : ::libvpx_test::Encoder(cfg, deadline, init_flags, stats) {}
@@ -168,6 +168,9 @@ class VP9FrameSizeTestsLarge : public ::libvpx_test::EncoderTest,
 };
 
 TEST_F(VP9FrameSizeTestsLarge, TestInvalidSizes) {
+#ifdef CHROMIUM
+  GTEST_SKIP() << "16K framebuffers are not supported by Chromium's allocator.";
+#else
   ::libvpx_test::RandomVideoSource video;
 
 #if CONFIG_SIZE_LIMIT
@@ -176,9 +179,16 @@ TEST_F(VP9FrameSizeTestsLarge, TestInvalidSizes) {
   expected_res_ = VPX_CODEC_MEM_ERROR;
   ASSERT_NO_FATAL_FAILURE(RunLoop(&video, expected_res_));
 #endif
+
+#endif
 }
 
 TEST_F(VP9FrameSizeTestsLarge, ValidSizes) {
+#ifdef CHROMIUM
+  GTEST_SKIP()
+      << "Under Chromium's configuration the allocator is unable to provide"
+         "the space required for a single frame at the maximum resolution.";
+#else
   ::libvpx_test::RandomVideoSource video;
 
 #if CONFIG_SIZE_LIMIT
@@ -194,7 +204,7 @@ TEST_F(VP9FrameSizeTestsLarge, ValidSizes) {
 // size or almost 1 gig of memory.
 // In total the allocations will exceed 2GiB which may cause a failure with
 // mingw + wine, use a smaller size in that case.
-#if defined(_WIN32) && !defined(_WIN64) || defined(__OS2__)
+#if defined(_WIN32) && !defined(_WIN64)
   video.SetSize(4096, 3072);
 #else
   video.SetSize(4096, 4096);
@@ -203,6 +213,8 @@ TEST_F(VP9FrameSizeTestsLarge, ValidSizes) {
   expected_res_ = VPX_CODEC_OK;
   ASSERT_NO_FATAL_FAILURE(::libvpx_test::EncoderTest::RunLoop(&video));
 #endif
+
+#endif  // defined(CHROMIUM)
 }
 
 TEST_F(VP9FrameSizeTestsLarge, OneByOneVideo) {

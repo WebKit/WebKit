@@ -35,7 +35,8 @@ namespace WebCore {
 class HTMLOptionsCollection;
 
 class HTMLSelectElement : public HTMLFormControlElement, private TypeAheadDataSource {
-    WTF_MAKE_ISO_ALLOCATED(HTMLSelectElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLSelectElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSelectElement);
 public:
     static Ref<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
     static Ref<HTMLSelectElement> create(Document&);
@@ -113,6 +114,8 @@ public:
 
     bool canContainRangeEndPoint() const override { return false; }
     bool shouldSaveAndRestoreFormControlState() const final { return true; }
+
+    bool isDevolvableWidget() const override { return true; }
 
 protected:
     HTMLSelectElement(const QualifiedName&, Document&, HTMLFormElement*);

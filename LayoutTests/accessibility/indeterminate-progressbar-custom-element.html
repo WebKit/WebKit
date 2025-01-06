@@ -1,0 +1,56 @@
+</body>
+</html>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+class CustomProgress extends HTMLElement {
+    static observedAttributes = ["tabindex"];
+
+    constructor() {
+        super();
+        this.internals = this.attachInternals();
+        this.internals.role = "progressbar";
+        this.internals.ariaValueNow = "10";
+        this.internals.ariaValueMin = "0";
+        this.internals.ariaValueMax = "100";
+
+        this.attachShadow({ mode: "open" });
+        const fragment = document.createRange().createContextualFragment("<div></div>");
+        this.shadowRoot.append(fragment.cloneNode(true));
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        this.internals.ariaValueNow = null;
+    }
+}
+customElements.define("custom-progress", CustomProgress);
+</script>
+
+<custom-progress id="progress"></custom-progress>
+
+<script>
+var output = "This test ensures that we properly respect null values set via ElementInternals, e.g. ariaValueNow for role='progressbar' custom elements.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("accessibilityController.accessibleElementById('progress').isIndeterminate", "false");
+
+    // Set an attribute to trigger the attributeChangedCallback.
+    document.getElementById("progress").setAttribute("tabindex", "0");
+    setTimeout(async function() {
+        output += await expectAsync("accessibilityController.accessibleElementById('progress').isIndeterminate", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

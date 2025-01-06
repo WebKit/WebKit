@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -10,7 +10,7 @@
  */
 
 #include <string>
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "aom_dsp/grain_table.h"
 #include "aom/internal/aom_codec_internal.h"
 #include "av1/encoder/grain_test_vectors.h"
@@ -19,6 +19,8 @@
 #include "test/i420_video_source.h"
 #include "test/util.h"
 #include "test/video_source.h"
+
+namespace {
 
 void grain_equal(const aom_film_grain_t *expected,
                  const aom_film_grain_t *actual) {
@@ -72,6 +74,8 @@ void grain_equal(const aom_film_grain_t *expected,
     EXPECT_EQ(expected->cr_offset, actual->cr_offset);
   }
 }
+
+}  // namespace
 
 TEST(FilmGrainTableTest, AddAndLookupSingleSegment) {
   aom_film_grain_table_t table;

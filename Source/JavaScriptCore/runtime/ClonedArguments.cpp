@@ -29,6 +29,8 @@
 #include "InlineCallFrame.h"
 #include "JSCInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ClonedArguments);
@@ -40,10 +42,8 @@ ClonedArguments::ClonedArguments(VM& vm, Structure* structure, Butterfly* butter
 {
 }
 
-ClonedArguments* ClonedArguments::createEmpty(JSGlobalObject* globalObject, Structure* structure, JSFunction* callee, unsigned length, Butterfly* butterfly)
+ClonedArguments* ClonedArguments::createEmpty(VM& vm, JSGlobalObject* nullOrGlobalObjectForOOM, Structure* structure, JSFunction* callee, unsigned length, Butterfly* butterfly)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
     unsigned vectorLength = length;
     if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
         return nullptr;
@@ -52,7 +52,10 @@ ClonedArguments* ClonedArguments::createEmpty(JSGlobalObject* globalObject, Stru
         if (!butterfly) {
             butterfly = tryCreateArrayStorageButterfly(vm, nullptr, structure, length, vectorLength);
             if (UNLIKELY(!butterfly)) {
-                throwOutOfMemoryError(globalObject, scope);
+                if (nullOrGlobalObjectForOOM) {
+                    auto scope = DECLARE_THROW_SCOPE(vm);
+                    throwOutOfMemoryError(nullOrGlobalObjectForOOM, scope);
+                }
                 return nullptr;
             }
             butterfly->arrayStorage()->m_numValuesInVector = vectorLength;
@@ -64,7 +67,10 @@ ClonedArguments* ClonedArguments::createEmpty(JSGlobalObject* globalObject, Stru
             indexingHeader.setPublicLength(length);
             butterfly = Butterfly::tryCreate(vm, nullptr, 0, structure->outOfLineCapacity(), true, indexingHeader, vectorLength * sizeof(EncodedJSValue));
             if (UNLIKELY(!butterfly)) {
-                throwOutOfMemoryError(globalObject, scope);
+                if (nullOrGlobalObjectForOOM) {
+                    auto scope = DECLARE_THROW_SCOPE(vm);
+                    throwOutOfMemoryError(nullOrGlobalObjectForOOM, scope);
+                }
                 return nullptr;
             }
         }
@@ -97,7 +103,7 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(JSGlobalObject* globalOb
     auto createEmptyWithAssert = [&](JSGlobalObject* globalObject, JSFunction* callee, unsigned length) {
         // NB. Some clients might expect that the global object of of this object is the global object
         // of the callee. We don't do this for now, but maybe we should.
-        ClonedArguments* result = ClonedArguments::createEmpty(globalObject, globalObject->clonedArgumentsStructure(), callee, length, nullptr);
+        ClonedArguments* result = ClonedArguments::createEmpty(globalObject->vm(), globalObject, globalObject->clonedArgumentsStructure(), callee, length, nullptr);
         ASSERT(!result || !result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
         return result;
     };
@@ -150,7 +156,7 @@ ClonedArguments* ClonedArguments::createWithMachineFrame(JSGlobalObject* globalO
 
 ClonedArguments* ClonedArguments::createByCopyingFrom(JSGlobalObject* globalObject, Structure* structure, Register* argumentStart, unsigned length, JSFunction* callee, Butterfly* butterfly)
 {
-    ClonedArguments* result = createEmpty(globalObject, structure, callee, length, butterfly);
+    ClonedArguments* result = createEmpty(globalObject->vm(), globalObject, structure, callee, length, butterfly);
     if (!result)
         return result;
     
@@ -357,3 +363,4 @@ bool ClonedArguments::isIteratorProtocolFastAndNonObservable()
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

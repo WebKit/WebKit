@@ -34,7 +34,11 @@
     "nexttrack",
     "skipad",
     "stop",
-    "seekto"
+    "seekto",
+    "togglemicrophone",
+    "togglecamera",
+    "togglescreenshare",
+    "voiceactivity"
 #if defined(ENABLE_MEDIA_SESSION_PLAYLIST) && ENABLE_MEDIA_SESSION_PLAYLIST
     , "settrack"
 #endif

@@ -1,3 +1,4 @@
+Platform/LogClient.cpp
 Platform/LogInitialization.cpp
 Platform/Logging.cpp
 Platform/Module.cpp

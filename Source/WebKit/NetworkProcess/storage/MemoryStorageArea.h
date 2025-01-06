@@ -27,6 +27,7 @@
 
 #include "StorageAreaBase.h"
 #include <WebCore/StorageMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class StorageMap;
@@ -34,21 +35,28 @@ class StorageMap;
 
 namespace WebKit {
 
-class MemoryStorageArea final : public StorageAreaBase {
+class MemoryStorageArea final : public StorageAreaBase, public RefCounted<MemoryStorageArea> {
+    WTF_MAKE_TZONE_ALLOCATED(MemoryStorageArea);
 public:
-    explicit MemoryStorageArea(const WebCore::ClientOrigin&, StorageAreaBase::StorageType = StorageAreaBase::StorageType::Session);
+    static Ref<MemoryStorageArea> create(const WebCore::ClientOrigin&, StorageAreaBase::StorageType = StorageAreaBase::StorageType::Session);
 
-    StorageAreaBase::Type type() const final { return StorageAreaBase::Type::Memory; };
+    StorageAreaBase::Type type() const final { return StorageAreaBase::Type::Memory; }
     bool isEmpty() final;
     void clear() final;
-    std::unique_ptr<MemoryStorageArea> clone() const;
+    Ref<MemoryStorageArea> clone() const;
+
+    // StorageAreaBase
+    HashMap<String, String> allItems() final;
+    Expected<void, StorageError> setItem(std::optional<IPC::Connection::UniqueID>, std::optional<StorageAreaImplIdentifier>, String&& key, String&& value, const String& urlString) final;
     
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
+    explicit MemoryStorageArea(const WebCore::ClientOrigin&, StorageAreaBase::StorageType);
+
     // StorageAreaBase
     StorageAreaBase::StorageType storageType() const final { return m_storageType; }
-    HashMap<String, String> allItems() final;
-    Expected<void, StorageError> setItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, String&& key, String&& value, const String& urlString) final;
     Expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& key, const String& urlString) final;
     Expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& urlString) final;
 

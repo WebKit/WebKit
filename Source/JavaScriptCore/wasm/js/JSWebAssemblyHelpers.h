@@ -39,9 +39,11 @@
 #include "WebAssemblyFunction.h"
 #include "WebAssemblyWrapperFunction.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
-ALWAYS_INLINE uint32_t toNonWrappingUint32(JSGlobalObject* globalObject, JSValue value)
+ALWAYS_INLINE uint32_t toNonWrappingUint32(JSGlobalObject* globalObject, JSValue value, ErrorType errorType = ErrorType::TypeError)
 {
     VM& vm = getVM(globalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -58,7 +60,11 @@ ALWAYS_INLINE uint32_t toNonWrappingUint32(JSGlobalObject* globalObject, JSValue
             return static_cast<uint32_t>(truncedValue);
     }
 
-    throwException(globalObject, throwScope, createTypeError(globalObject, "Expect an integer argument in the range: [0, 2^32 - 1]"_s));
+    constexpr auto message = "Expect an integer argument in the range: [0, 2^32 - 1]"_s;
+    if (errorType == ErrorType::RangeError)
+        throwRangeError(globalObject, throwScope, message);
+    else
+        throwTypeError(globalObject, throwScope, message);
     return { };
 }
 
@@ -157,7 +163,6 @@ ALWAYS_INLINE JSValue defaultValueForReferenceType(const Wasm::Type type)
     ASSERT(Wasm::isRefType(type));
     if (Wasm::isExternref(type))
         return jsUndefined();
-    ASSERT_IMPLIES(!Options::useWebAssemblyTypedFunctionReferences(), Wasm::isFuncref(type));
     return jsNull();
 }
 
@@ -169,16 +174,16 @@ ALWAYS_INLINE JSValue toJSValue(JSGlobalObject* globalObject, const Wasm::Type t
     case Wasm::TypeKind::I32:
         return jsNumber(static_cast<int32_t>(bits));
     case Wasm::TypeKind::F32:
-        return jsNumber(purifyNaN(bitwise_cast<float>(static_cast<int32_t>(bits))));
+        return jsNumber(purifyNaN(std::bit_cast<float>(static_cast<int32_t>(bits))));
     case Wasm::TypeKind::F64:
-        return jsNumber(purifyNaN(bitwise_cast<double>(bits)));
+        return jsNumber(purifyNaN(std::bit_cast<double>(bits)));
     case Wasm::TypeKind::I64:
         return JSBigInt::createFrom(globalObject, static_cast<int64_t>(bits));
     case Wasm::TypeKind::Ref:
     case Wasm::TypeKind::RefNull:
     case Wasm::TypeKind::Externref:
     case Wasm::TypeKind::Funcref:
-        return bitwise_cast<JSValue>(bits);
+        return std::bit_cast<JSValue>(bits);
     case Wasm::TypeKind::V128:
     default:
         break;
@@ -187,7 +192,7 @@ ALWAYS_INLINE JSValue toJSValue(JSGlobalObject* globalObject, const Wasm::Type t
     return JSValue();
 }
 
-ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Type type, JSValue value)
+ALWAYS_INLINE uint64_t toWebAssemblyValue(JSGlobalObject* globalObject, const Wasm::Type type, JSValue value)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -195,11 +200,11 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
     case Wasm::TypeKind::I32:
         RELEASE_AND_RETURN(scope, value.toInt32(globalObject));
     case Wasm::TypeKind::I64:
-        RELEASE_AND_RETURN(scope, bitwise_cast<uint64_t>(value.toBigInt64(globalObject)));
+        RELEASE_AND_RETURN(scope, std::bit_cast<uint64_t>(value.toBigInt64(globalObject)));
     case Wasm::TypeKind::F32:
-        RELEASE_AND_RETURN(scope, bitwise_cast<uint32_t>(value.toFloat(globalObject)));
+        RELEASE_AND_RETURN(scope, std::bit_cast<uint32_t>(value.toFloat(globalObject)));
     case Wasm::TypeKind::F64:
-        RELEASE_AND_RETURN(scope, bitwise_cast<uint64_t>(value.toNumber(globalObject)));
+        RELEASE_AND_RETURN(scope, std::bit_cast<uint64_t>(value.toNumber(globalObject)));
     case Wasm::TypeKind::V128:
         RELEASE_ASSERT_NOT_REACHED();
     case Wasm::TypeKind::Ref:
@@ -209,24 +214,23 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
         if (Wasm::isExternref(type)) {
             if (!type.isNullable() && value.isNull())
                 return throwVMTypeError(globalObject, scope, "Non-null Externref cannot be null"_s);
-        } else if (Wasm::isFuncref(type) || (!Options::useWebAssemblyGC() && isRefWithTypeIndex(type))) {
-            WebAssemblyFunction* wasmFunction = nullptr;
-            WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
-            if (!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && (!type.isNullable() || !value.isNull()))
-                return throwVMTypeError(globalObject, scope, "Funcref must be an exported wasm function"_s);
-            if (isRefWithTypeIndex(type) && !value.isNull()) {
-                Wasm::TypeIndex paramIndex = type.index;
-                Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
-                if (paramIndex != argIndex)
-                    return throwVMTypeError(globalObject, scope, "Argument function did not match the reference type"_s);
-            }
+        } else if (Wasm::isFuncref(type) || (!Options::useWasmGC() && isRefWithTypeIndex(type))) {
+            if (type.isNullable() && value.isNull())
+                break;
+
+            auto* wasmFunction = jsDynamicCast<WebAssemblyFunctionBase*>(value);
+            if (!wasmFunction)
+                return throwVMTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
+
+            if (!isSubtype(wasmFunction->type(), type))
+                return throwVMTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
         } else {
-            ASSERT(Options::useWebAssemblyGC());
+            ASSERT(Options::useWasmGC());
             value = Wasm::internalizeExternref(value);
             if (!Wasm::TypeInformation::castReference(value, type.isNullable(), type.index)) {
                 // FIXME: provide a better error message here
                 // https://bugs.webkit.org/show_bug.cgi?id=247746
-                return throwVMTypeError(globalObject, scope, "Argument value did not match reference type"_s);
+                return throwVMTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
             }
         }
         break;
@@ -238,5 +242,7 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

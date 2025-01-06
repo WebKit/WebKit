@@ -20,14 +20,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-
 
 def filtered_call(function, *args, **kwargs):
-    if sys.version_info > (3, 0):
-        import inspect
-    else:
-        import inspect2 as inspect
+    import inspect
 
     signature_args = inspect.signature(function).parameters.keys()
     filtered_kwargs = {}

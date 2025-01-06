@@ -31,10 +31,13 @@
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include "PixelBufferConversion.h"
+#include <wtf/text/ParsingUtilities.h>
 
 #if HAVE(ARM_NEON_INTRINSICS)
 #include <arm_neon.h>
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -185,13 +188,15 @@ static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
     if (UNLIKELY(size.hasOverflowed() || destinationBytesPerRow.hasOverflowed() || sourceBytesPerRow.hasOverflowed() || destinationOffset.hasOverflowed() || sourceOffset.hasOverflowed()))
         return;
 
-    uint8_t* destinationPixel = destinationPixelBuffer.bytes().data() + destinationOffset.value();
-    const uint8_t* sourcePixel = sourcePixelBuffer.bytes().data() + sourceOffset.value();
+    auto destinationPixel = destinationPixelBuffer.bytes().subspan(destinationOffset.value());
+    auto sourcePixel = sourcePixelBuffer.bytes().subspan(sourceOffset.value());
 
     for (int y = 0; y < sourceRectClipped.height(); ++y) {
-        memcpy(destinationPixel, sourcePixel, size);
-        destinationPixel += destinationBytesPerRow;
-        sourcePixel += sourceBytesPerRow;
+        if (y) {
+            skip(destinationPixel, destinationBytesPerRow);
+            skip(sourcePixel, sourceBytesPerRow);
+        }
+        memcpySpan(destinationPixel, sourcePixel.first(size));
     }
 }
 
@@ -391,3 +396,5 @@ void FilterImage::transformToColorSpace(const DestinationColorSpace& colorSpace)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

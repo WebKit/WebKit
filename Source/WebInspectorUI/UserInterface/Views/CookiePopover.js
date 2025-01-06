@@ -37,6 +37,8 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
         this._expiresInputElement = null;
         this._httpOnlyCheckboxElement = null;
         this._secureCheckboxElement = null;
+        this._partitionedCheckboxElement = null;
+        this._partitionKeyInputElement = null;
         this._sameSiteSelectElement = null;
 
         this._serializedDataWhenShown = null;
@@ -85,6 +87,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
             httpOnly: this._httpOnlyCheckboxElement.checked,
             secure: this._secureCheckboxElement.checked,
             sameSite: this._sameSiteSelectElement.value,
+            partitioned: this._partitionedCheckboxElement.checked,
         };
 
         if (session)
@@ -137,6 +140,8 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
             data.httpOnly = cookie.httpOnly;
             data.secure = cookie.secure;
             data.sameSite = cookie.sameSite;
+            data.partitioned = cookie.partitioned;
+            data.partitionKey = cookie.partitionKey;
         } else {
             let urlComponents = WI.networkManager.mainFrame.mainResource.urlComponents;
             data.name = "";
@@ -148,6 +153,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
             data.httpOnly = false;
             data.secure = false;
             data.sameSite = WI.Cookie.SameSiteType.None;
+            data.partitioned = false;
         }
 
         let popoverContentElement = document.createElement("div");
@@ -224,6 +230,13 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
 
         this._secureCheckboxElement = createInputRow("secure", WI.unlocalizedString("Secure"), "checkbox", data.secure).inputElement;
 
+        this._partitionedCheckboxElement = createInputRow("partitioned", WI.unlocalizedString("Partitioned"), "checkbox", data.partitioned).inputElement;
+        let partitionKeyInputRow = null;
+        if (data.partitionKey) {
+            partitionKeyInputRow = createInputRow("partition-key", WI.UIString("Partition Key"), "text", data.partitionKey);
+            partitionKeyInputRow.inputElement.readOnly = true;
+        }
+
         this._sameSiteSelectElement = document.createElement("select");
         for (let sameSiteType of Object.values(WI.Cookie.SameSiteType)) {
             let optionElement = this._sameSiteSelectElement.appendChild(document.createElement("option"));
@@ -244,6 +257,20 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
         });
 
         toggleExpiresRow();
+
+        if (partitionKeyInputRow) {
+            let togglePartitionKeyInput = () => {
+                partitionKeyInputRow.rowElement.hidden = !this._partitionedCheckboxElement.checked;
+
+                this.update();
+            };
+
+            this._partitionedCheckboxElement.addEventListener("change", (event) => {
+                togglePartitionKeyInput();
+            });
+
+            togglePartitionKeyInput();
+        }
 
         this._serializedDataWhenShown = this.serializedData;
 

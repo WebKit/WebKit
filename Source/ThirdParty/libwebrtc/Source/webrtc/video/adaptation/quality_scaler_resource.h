@@ -12,10 +12,10 @@
 #define VIDEO_ADAPTATION_QUALITY_SCALER_RESOURCE_H_
 
 #include <memory>
+#include <optional>
 #include <queue>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/video_adaptation_reason.h"
@@ -42,7 +42,6 @@ class QualityScalerResource : public VideoStreamEncoderResource,
                             const FieldTrialsView& field_trials);
   void StopCheckForOveruse();
   void SetQpThresholds(VideoEncoder::QpThresholds qp_thresholds);
-  bool QpFastFilterLow();
   void OnEncodeCompleted(const EncodedImage& encoded_image,
                          int64_t time_sent_in_us);
   void OnFrameDropped(EncodedImageCallback::DropReason reason);

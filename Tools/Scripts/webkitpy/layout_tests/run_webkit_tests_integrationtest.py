@@ -1182,7 +1182,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
                 "/tmp/layout-test-results/layout_test_perf_metrics.json",
                 "/tmp/layout-test-results/stats.json",
             },
-            set(file_list),  # On Python 2 dict.keys returns a list, not a set-like object.
+            file_list,
         )
 
     def test_missing_results(self):
@@ -1210,7 +1210,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
                 "/tmp/layout-test-results/layout_test_perf_metrics.json",
                 "/tmp/layout-test-results/stats.json",
             },
-            set(file_list),  # On Python 2 dict.keys returns a list, not a set-like object.
+            file_list,
         )
 
     def test_new_baseline(self):
@@ -1219,7 +1219,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         host = MockHost()
         host.filesystem.clear_written_files()
         details, err, _ = logging_run(
-            ['--pixel-tests', '--new-baseline', 'passes/image.html', 'failures/expected/missing_image.html'],
+            ['--pixel-tests', '--new-baseline', '--add-redundant-platform-results', 'passes/image.html', 'failures/expected/missing_image.html'],
             tests_included=True, host=host, new_results=True)
         file_list = host.filesystem.written_files.keys()
         self.assertEqual(details.exit_code, 0)
@@ -1233,7 +1233,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
                 "/tmp/layout-test-results/layout_test_perf_metrics.json",
                 "/tmp/layout-test-results/stats.json",
             },
-            set(file_list),  # On Python 2 dict.keys returns a list, not a set-like object.
+            file_list,
         )
 
 

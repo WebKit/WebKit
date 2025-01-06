@@ -11,10 +11,11 @@
 #ifndef API_TEST_MOCK_ASYNC_DNS_RESOLVER_H_
 #define API_TEST_MOCK_ASYNC_DNS_RESOLVER_H_
 
-#include <functional>
 #include <memory>
 
+#include "absl/functional/any_invocable.h"
 #include "api/async_dns_resolver.h"
+#include "rtc_base/socket_address.h"
 #include "test/gmock.h"
 
 namespace webrtc {

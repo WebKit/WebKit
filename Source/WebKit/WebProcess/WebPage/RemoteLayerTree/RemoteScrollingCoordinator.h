@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/AsyncScrollingCoordinator.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Decoder;
@@ -42,11 +43,15 @@ class RemoteScrollingCoordinatorTransaction;
 class RemoteScrollingUIState;
 
 class RemoteScrollingCoordinator final : public WebCore::AsyncScrollingCoordinator, public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteScrollingCoordinator);
 public:
     static Ref<RemoteScrollingCoordinator> create(WebPage* page)
     {
         return adoptRef(*new RemoteScrollingCoordinator(page));
     }
+
+    void ref() const final { WebCore::AsyncScrollingCoordinator::ref(); }
+    void deref() const final { WebCore::AsyncScrollingCoordinator::deref(); }
 
     RemoteScrollingCoordinatorTransaction buildTransaction(WebCore::FrameIdentifier);
 
@@ -74,9 +79,9 @@ private:
     bool coordinatesScrollingForFrameView(const WebCore::LocalFrameView&) const override;
     void scheduleTreeStateCommit() override;
 
-    bool isRubberBandInProgress(WebCore::ScrollingNodeID) const final;
-    bool isUserScrollInProgress(WebCore::ScrollingNodeID) const final;
-    bool isScrollSnapInProgress(WebCore::ScrollingNodeID) const final;
+    bool isRubberBandInProgress(std::optional<WebCore::ScrollingNodeID>) const final;
+    bool isUserScrollInProgress(std::optional<WebCore::ScrollingNodeID>) const final;
+    bool isScrollSnapInProgress(std::optional<WebCore::ScrollingNodeID>) const final;
 
     void setScrollPinningBehavior(WebCore::ScrollPinningBehavior) override;
     

@@ -118,7 +118,11 @@ float AutosizeStatus::idempotentTextSize(float specifiedSize, float pageScale)
         return specifiedSize;
 
     // This describes a piecewise curve when the page scale is 2/3.
-    FloatPoint points[] = { {0.0f, 0.0f}, {6.0f, 9.0f}, {14.0f, 17.0f} };
+    static constexpr std::array points = {
+        FloatPoint { 0.0f, 0.0f },
+        FloatPoint { 6.0f, 9.0f },
+        FloatPoint { 14.0f, 17.0f }
+    };
 
     // When the page scale is 1, the curve should be the identity.
     // Linearly interpolate between the curve above and identity based on the page scale.
@@ -133,8 +137,8 @@ float AutosizeStatus::idempotentTextSize(float specifiedSize, float pageScale)
     if (specifiedSize <= 0)
         return 0;
 
-    float result = scalePoint(points[std::size(points) - 1]).y();
-    for (size_t i = 1; i < std::size(points); ++i) {
+    float result = scalePoint(points.back()).y();
+    for (size_t i = 1; i < points.size(); ++i) {
         if (points[i].x() < specifiedSize)
             continue;
         auto leftPoint = scalePoint(points[i - 1]);

@@ -8,13 +8,15 @@
 #include "modules/svg/include/SkSVGUse.h"
 
 #include "include/core/SkCanvas.h"
+#include "include/core/SkScalar.h"
+#include "include/private/base/SkDebug.h"
+#include "modules/svg/include/SkSVGAttributeParser.h"
 #include "modules/svg/include/SkSVGRenderContext.h"
-#include "modules/svg/include/SkSVGValue.h"
 
 SkSVGUse::SkSVGUse() : INHERITED(SkSVGTag::kUse) {}
 
 void SkSVGUse::appendChild(sk_sp<SkSVGNode>) {
-    SkDebugf("cannot append child nodes to this element.\n");
+    SkDEBUGF("cannot append child nodes to this element.\n");
 }
 
 bool SkSVGUse::parseAndSetAttribute(const char* n, const char* v) {
@@ -58,7 +60,7 @@ SkPath SkSVGUse::onAsPath(const SkSVGRenderContext& ctx) const {
     return ref->asPath(ctx);
 }
 
-SkRect SkSVGUse::onObjectBoundingBox(const SkSVGRenderContext& ctx) const {
+SkRect SkSVGUse::onTransformableObjectBoundingBox(const SkSVGRenderContext& ctx) const {
     const auto ref = ctx.findNodeById(fHref);
     if (!ref) {
         return SkRect::MakeEmpty();

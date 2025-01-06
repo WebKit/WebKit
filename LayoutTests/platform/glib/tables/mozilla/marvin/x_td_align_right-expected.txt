@@ -13,10 +13,10 @@ layer at (0,0) size 800x258
         RenderBR {br} at (76,0) size 0x17
         RenderText {#text} at (0,18) size 121x17
           text run at (0,18) width 121: "Table width=100%"
-      RenderTable {table} at (0,86) size 784x28 [border: (1px outset #808080)]
+      RenderTable {table} at (0,86) size 784x28 [border: (1px outset #000000)]
         RenderTableSection (anonymous) at (1,1) size 782x26
           RenderTableRow {tr} at (0,2) size 782x22
-            RenderTableCell {td} at (2,2) size 778x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,2) size 778x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (575,2) size 201x17
                 text run at (575,2) width 201: "Cell text should be right aligned"
       RenderBlock {p} at (0,130) size 784x36
@@ -27,14 +27,14 @@ layer at (0,0) size 800x258
         RenderText {#text} at (0,18) size 424x17
           text run at (0,18) width 399: "No specific table width; text in second row exceeds text in first "
           text run at (399,18) width 25: "row"
-      RenderTable {table} at (0,182) size 566x52 [border: (1px outset #808080)]
+      RenderTable {table} at (0,182) size 566x52 [border: (1px outset #000000)]
         RenderTableSection (anonymous) at (1,1) size 564x50
           RenderTableRow {tr} at (0,2) size 564x22
-            RenderTableCell {td} at (2,2) size 560x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,2) size 560x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (357,2) size 201x17
                 text run at (357,2) width 201: "Cell text should be right aligned"
           RenderTableRow {tr} at (0,26) size 564x22
-            RenderTableCell {td} at (2,26) size 560x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,26) size 560x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 556x17
                 text run at (2,2) width 448: "xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx "
                 text run at (450,2) width 108: "xxx xxx xxx xxx"

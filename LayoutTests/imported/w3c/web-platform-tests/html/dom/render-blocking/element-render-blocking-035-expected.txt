@@ -1,0 +1,3 @@
+
+PASS relative URLs that match this document are OK, regarless of <base>
+

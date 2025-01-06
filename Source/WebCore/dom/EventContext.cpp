@@ -36,8 +36,11 @@
 #include "LocalDOMWindow.h"
 #include "MouseEvent.h"
 #include "TouchEvent.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EventContext);
 
 void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
 {

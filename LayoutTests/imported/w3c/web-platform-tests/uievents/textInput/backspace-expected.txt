@@ -1,0 +1,11 @@
+Press Backspace in each text field below.
+
+
+abc
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT textInput: backspace, <input> Test timed out
+NOTRUN textInput: backspace, <textarea>
+NOTRUN textInput: backspace, <div contenteditable="true">
+

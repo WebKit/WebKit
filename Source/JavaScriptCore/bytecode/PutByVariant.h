@@ -57,13 +57,13 @@ public:
     PutByVariant(const PutByVariant&);
     PutByVariant& operator=(const PutByVariant&);
 
-    static PutByVariant replace(CacheableIdentifier, const StructureSet&, PropertyOffset);
+    static PutByVariant replace(CacheableIdentifier, const StructureSet&, PropertyOffset, bool viaGlobalProxy);
     
     static PutByVariant transition(CacheableIdentifier, const StructureSet& oldStructure, Structure* newStructure, const ObjectPropertyConditionSet&, PropertyOffset);
     
-    static PutByVariant setter(CacheableIdentifier, const StructureSet&, PropertyOffset, const ObjectPropertyConditionSet&, std::unique_ptr<CallLinkStatus>);
+    static PutByVariant setter(CacheableIdentifier, const StructureSet&, PropertyOffset, bool viaGlobalProxy, const ObjectPropertyConditionSet&, std::unique_ptr<CallLinkStatus>);
 
-    static PutByVariant customSetter(CacheableIdentifier, const StructureSet&, const ObjectPropertyConditionSet&, CodePtr<CustomAccessorPtrTag>, std::unique_ptr<DOMAttributeAnnotation>&&);
+    static PutByVariant customSetter(CacheableIdentifier, const StructureSet&, bool viaGlobalProxy, const ObjectPropertyConditionSet&, CodePtr<CustomAccessorPtrTag>, std::unique_ptr<DOMAttributeAnnotation>&&);
 
     static PutByVariant proxy(CacheableIdentifier, const StructureSet&, std::unique_ptr<CallLinkStatus>);
     
@@ -147,6 +147,8 @@ public:
 
     bool overlaps(const PutByVariant& other)
     {
+        if (m_viaGlobalProxy != other.m_viaGlobalProxy)
+            return true;
         if (!!m_identifier != !!other.m_identifier)
             return true;
         if (m_identifier) {
@@ -156,6 +158,8 @@ public:
         return structureSet().overlaps(other.structureSet());
     }
 
+    bool viaGlobalProxy() const { return m_viaGlobalProxy; }
+
     CodePtr<CustomAccessorPtrTag> customAccessorSetter() const { return m_customAccessorSetter; }
     DOMAttributeAnnotation* domAttribute() const { return m_domAttribute.get(); }
 
@@ -163,6 +167,7 @@ private:
     bool attemptToMergeTransitionWithReplace(const PutByVariant& replace);
     
     Kind m_kind;
+    bool m_viaGlobalProxy { false };
     PropertyOffset m_offset { invalidOffset };
     StructureSet m_oldStructure;
     Structure* m_newStructure { nullptr };

@@ -1,0 +1,31 @@
+This test checks write command of FileSystemWritableFileStream
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing input data type: String
+PASS fileContent is "Test case one"
+Testing input data type: ArrayBuffer
+PASS fileContent is "Test case two"
+Testing input data type: Blob
+PASS fileContent is "Test case three"
+Testing input data type: Undefined
+PASS write() failed with error: TypeError
+Testing input data type: Number
+PASS write() failed with error: TypeError
+Testing input data type: Detached ArrayBuffer
+PASS write() failed with error: TypeError
+Testing input data type: WriteParams with String
+PASS fileContent is "Test case four"
+Testing input data type: WriteParams with ArrayBuffer
+PASS fileContent is "Test case five"
+Testing input data type: WriteParams with Blob
+PASS fileContent is "Test case six"
+Testing input data type: WriteParams with position
+PASS fileContent is "\u0000\u0000\u0000\u0000Test case seven"
+Testing input data type: WriteParams with position (overwrite)
+PASS fileContent is "Test CASE EIGHT"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

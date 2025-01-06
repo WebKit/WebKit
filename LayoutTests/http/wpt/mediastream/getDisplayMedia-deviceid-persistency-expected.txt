@@ -1,0 +1,4 @@
+
+
+PASS check deviceId persistency
+

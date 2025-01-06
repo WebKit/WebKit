@@ -153,4 +153,9 @@ using namespace WTR;
 {
 }
 
+- (id)localContext
+{
+    return nil;
+}
+
 @end

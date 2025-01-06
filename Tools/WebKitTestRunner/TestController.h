@@ -206,12 +206,14 @@ public:
 
     bool isCurrentInvocation(TestInvocation* invocation) const { return invocation == m_currentInvocation.get(); }
     TestInvocation* currentInvocation() { return m_currentInvocation.get(); }
+    RefPtr<TestInvocation> protectedCurrentInvocation();
 
     void setShouldDecideNavigationPolicyAfterDelay(bool value) { m_shouldDecideNavigationPolicyAfterDelay = value; }
     void setShouldDecideResponsePolicyAfterDelay(bool value) { m_shouldDecideResponsePolicyAfterDelay = value; }
 
     void setNavigationGesturesEnabled(bool value);
     void setIgnoresViewportScaleLimits(bool);
+    void setUseDarkAppearanceForTesting(bool);
 
     void setShouldDownloadUndisplayableMIMETypes(bool value) { m_shouldDownloadUndisplayableMIMETypes = value; }
     void setShouldAllowDeviceOrientationAndMotionAccess(bool);
@@ -250,9 +252,8 @@ public:
     void platformSetStatisticsCrossSiteLoadWithLinkDecoration(WKStringRef fromHost, WKStringRef toHost, bool wasFiltered, void* context, SetStatisticsCrossSiteLoadWithLinkDecorationCallBack);
 #endif
     void setStatisticsTimeToLiveUserInteraction(double seconds);
-    void statisticsProcessStatisticsAndDataRecords();
+    void statisticsProcessStatisticsAndDataRecords(CompletionHandler<void(WKTypeRef)>&&);
     void statisticsUpdateCookieBlocking(CompletionHandler<void(WKTypeRef)>&&);
-    void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
     void setStatisticsTimeAdvanceForTesting(double);
     void setStatisticsIsRunningTest(bool);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
@@ -263,12 +264,13 @@ public:
     void statisticsClearInMemoryAndPersistentStore(CompletionHandler<void(WKTypeRef)>&&);
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours, CompletionHandler<void(WKTypeRef)>&&);
     void statisticsClearThroughWebsiteDataRemoval(CompletionHandler<void(WKTypeRef)>&&);
-    void statisticsDeleteCookiesForHost(WKStringRef host, bool includeHttpOnlyCookies);
+    void statisticsDeleteCookiesForHost(WKStringRef host, bool includeHttpOnlyCookies, CompletionHandler<void(WKTypeRef)>&&);
     bool isStatisticsHasLocalStorage(WKStringRef hostName);
     void setStatisticsCacheMaxAgeCap(double seconds);
     bool hasStatisticsIsolatedSession(WKStringRef hostName);
     void setStatisticsShouldDowngradeReferrer(bool value, CompletionHandler<void(WKTypeRef)>&&);
-    void setStatisticsShouldBlockThirdPartyCookies(bool value, bool onlyOnSitesWithoutUserInteraction, CompletionHandler<void(WKTypeRef)>&&);
+    enum class ThirdPartyCookieBlockingPolicy { All, AllOnlyOnSitesWithoutUserInteraction, AllExceptPartitioned };
+    void setStatisticsShouldBlockThirdPartyCookies(bool value, ThirdPartyCookieBlockingPolicy, CompletionHandler<void(WKTypeRef)>&&);
     void setStatisticsFirstPartyWebsiteDataRemovalMode(bool value, CompletionHandler<void(WKTypeRef)>&&);
     void setStatisticsToSameSiteStrictCookies(WKStringRef hostName, CompletionHandler<void(WKTypeRef)>&&);
     void setStatisticsFirstPartyHostCNAMEDomain(WKStringRef firstPartyURLString, WKStringRef cnameURLString, CompletionHandler<void(WKTypeRef)>&&);
@@ -288,6 +290,8 @@ public:
     void clearAppPrivacyReportTestingData();
     bool didLoadAppInitiatedRequest();
     bool didLoadNonAppInitiatedRequest();
+
+    void setPageScaleFactor(float scaleFactor, int x, int y, CompletionHandler<void(WKTypeRef)>&&);
 
     void reloadFromOrigin();
 
@@ -338,10 +342,11 @@ public:
     void removeMockMediaDevice(WKStringRef persistentID);
     void setMockMediaDeviceIsEphemeral(WKStringRef, bool);
     void resetMockMediaDevices();
-    void setMockCameraOrientation(uint64_t);
+    void setMockCameraOrientation(uint64_t, WKStringRef);
     bool isMockRealtimeMediaSourceCenterEnabled() const;
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     void triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay);
+    void setCaptureState(bool cameraState, bool microphoneState, bool displayState);
     bool hasAppBoundSession();
 
     void injectUserScript(WKStringRef);
@@ -361,6 +366,9 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void setKeyboardInputModeIdentifier(const String&);
     UIKeyboardInputMode *overriddenKeyboardInputMode() const { return m_overriddenKeyboardInputMode.get(); }
+    void setIsInHardwareKeyboardMode(bool value) { m_isInHardwareKeyboardMode = value; }
+    bool isInHardwareKeyboardMode() const { return m_isInHardwareKeyboardMode; }
+    unsigned keyboardUpdateForChangedSelectionCount() const;
 #endif
 
     void setAllowedMenuActions(const Vector<String>&);
@@ -457,6 +465,7 @@ private:
     void platformDestroy();
     WKContextRef platformAdjustContext(WKContextRef, WKContextConfigurationRef);
     void platformInitializeContext();
+    void platformEnsureGPUProcessConfiguredForOptions(const TestOptions&);
     void platformCreateWebView(WKPageConfigurationRef, const TestOptions&);
     static UniqueRef<PlatformWebView> platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions&);
 
@@ -622,8 +631,10 @@ private:
     static const char* libraryPathForTesting();
     static const char* platformLibraryPathForTesting();
 
+    void setTracksRepaints(bool);
+
     WKRetainPtr<WKURLRef> m_mainResourceURL;
-    std::unique_ptr<TestInvocation> m_currentInvocation;
+    RefPtr<TestInvocation> m_currentInvocation;
 #if PLATFORM(COCOA)
     std::unique_ptr<ClassMethodSwizzler> m_calendarSwizzler;
     std::pair<RetainPtr<NSString>, RetainPtr<NSString>> m_overriddenCalendarAndLocaleIdentifiers;
@@ -668,6 +679,8 @@ private:
     RetainPtr<UIPasteboardConsistencyEnforcer> m_pasteboardConsistencyEnforcer;
     RetainPtr<UIKeyboardInputMode> m_overriddenKeyboardInputMode;
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_presentPopoverSwizzlers;
+    std::unique_ptr<ClassMethodSwizzler> m_hardwareKeyboardModeSwizzler;
+    bool m_isInHardwareKeyboardMode { false };
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)

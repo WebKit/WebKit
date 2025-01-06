@@ -188,11 +188,27 @@ function webcontent_sandbox_entitlements()
     plistbuddy Add :com.apple.private.security.mutable-state-flags:2 string local:WebContentProcessLaunched
     plistbuddy Add :com.apple.private.security.mutable-state-flags:3 string EnableQuickLookSandboxResources
     plistbuddy Add :com.apple.private.security.mutable-state-flags:4 string ParentProcessCanEnableQuickLookStateFlag
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:5 string BlockOpenDirectoryInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:6 string BlockMobileAssetInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:7 string BlockMobileGestaltInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:8 string BlockWebInspectorInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:9 string BlockIconServicesInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:10 string BlockFontServiceInWebContentSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags array
     plistbuddy Add :com.apple.private.security.enable-state-flags:0 string EnableExperimentalSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags:1 string BlockIOKitInWebContentSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags:2 string local:WebContentProcessLaunched
     plistbuddy Add :com.apple.private.security.enable-state-flags:3 string ParentProcessCanEnableQuickLookStateFlag
+    plistbuddy Add :com.apple.private.security.enable-state-flags:4 string BlockOpenDirectoryInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:5 string BlockMobileAssetInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:6 string BlockMobileGestaltInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:7 string BlockWebInspectorInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:8 string BlockIconServicesInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:9 string BlockFontServiceInWebContentSandbox
+}
+
+function extract_notification_names() {
+    perl -nle 'print "$1" if /WK_NOTIFICATION\("([^"]+)"\)/' < "$1"
 }
 
 function notify_entitlements()
@@ -202,107 +218,27 @@ function notify_entitlements()
         plistbuddy Add :com.apple.developer.web-browser-engine.restrict.notifyd bool YES
         plistbuddy Add :com.apple.private.darwin-notification.introspect array
 
-        # Keep in sync with the list in WebProcessPool::registerNotificationObservers.
-        FORWARDED_NOTIFICATIONS=(
-            "_NS_ctasd"
-            "com.apple.CFPreferences._domainsChangedExternally"
-            "com.apple.WebKit.LibraryPathDiagnostics"
-            "com.apple.WebKit.deleteAllCode"
-            "com.apple.WebKit.dumpGCHeap"
-            "com.apple.WebKit.dumpUntrackedMallocs"
-            "com.apple.WebKit.fullGC"
-            "com.apple.WebKit.logMemStats"
-            "com.apple.WebKit.logPageState"
-            "com.apple.WebKit.showAllDocuments"
-            "com.apple.WebKit.showBackForwardCache"
-            "com.apple.WebKit.showGraphicsLayerTree"
-            "com.apple.WebKit.showLayerTree"
-            "com.apple.WebKit.showLayoutTree"
-            "com.apple.WebKit.showMemoryCache"
-            "com.apple.WebKit.showPaintOrderTree"
-            "com.apple.WebKit.showRenderTree"
-            "com.apple.analyticsd.running"
-            "com.apple.coreaudio.list_components"
-            "com.apple.distnote.locale_changed"
-            "com.apple.language.changed"
-            "com.apple.mediaaccessibility.audibleMediaSettingsChanged"
-            "com.apple.mediaaccessibility.captionAppearanceSettingsChanged"
-            "com.apple.powerlog.state_changed"
-            "com.apple.system.logging.prefschanged"
-            "com.apple.system.lowpowermode"
-            "com.apple.system.networkd.settings"
-            "com.apple.system.timezone"
-            "com.apple.webinspectord.automatic_inspection_enabled"
-            "com.apple.webinspectord.available"
-            "com.apple.zoomwindow"
-            "org.WebKit.lowMemory"
-            "org.WebKit.lowMemory.begin"
-            "org.WebKit.lowMemory.end"
-            "org.WebKit.memoryWarning"
-            "org.WebKit.memoryWarning.begin"
-            "org.WebKit.memoryWarning.end"
-        )
+        NOTIFICATION_INDEX=0
 
-        # Keep in sync with the PLATFORM(MAC) list in WebProcessPool::registerNotificationObservers.
-        MACOS_FORWARDED_NOTIFICATIONS=(
-            "com.apple.sessionagent.screenLockUIIsHidden"
-            "com.apple.sessionagent.screenLockUIIsShowing"
-            "com.apple.sessionagent.screenLockUIIsShown"
-            "com.apple.sessionagent.shieldWindowIsShowing"
-            "com.apple.sessionagent.shieldWindowLowered"
-            "com.apple.sessionagent.shieldWindowRaised"
-            "com.apple.system.DirectoryService.InvalidateCache"
-            "com.apple.system.DirectoryService.InvalidateCache.group"
-            "com.apple.system.DirectoryService.InvalidateCache.host"
-            "com.apple.system.DirectoryService.InvalidateCache.service"
-            "com.apple.system.DirectoryService.InvalidateCache.user"
-        )
-
-        # Keep in sync with the !PLATFORM(MAC) list in WebProcessPool::registerNotificationObservers.
-        EMBEDDED_FORWARDED_NOTIFICATIONS=(
-            "com.apple.mobile.usermanagerd.foregrounduser_changed"
-            "com.apple.mobile.keybagd.lock_status"
-            "com.apple.mobile.keybagd.user_changed"
-        )
-
-        # WebContent registers for these notifications but they are only posted in-process.
-        NON_FORWARDED_NOTIFICATIONS=(
-            "com.apple.accessibility.cache.app.ax"
-            "com.apple.accessibility.cache.ax"
-            "com.apple.accessibility.cache.enhance.text.legibility"
-            "com.apple.accessibility.cache.enhance.text.legibilitycom.apple.WebKit.WebContent"
-            "com.apple.accessibility.cache.guided.access"
-            "com.apple.accessibility.cache.guided.access.via.mdm"
-            "com.apple.accessibility.cache.hearing.aid.paired"
-            "com.apple.accessibility.cache.invert.colors"
-            "com.apple.accessibility.cache.invert.colorscom.apple.WebKit.WebContent"
-            "com.apple.accessibility.cache.reduce.motion"
-            "com.apple.accessibility.cache.reduce.motioncom.apple.WebKit.WebContent"
-            "com.apple.accessibility.cache.speech.settings.disabled.by.mc"
-            "com.apple.accessibility.cache.switch.control"
-            "com.apple.accessibility.cache.vot"
-            "com.apple.accessibility.cache.zoom"
-        )
-
-        for NOTIFICATION in ${FORWARDED_NOTIFICATIONS[*]}; do
+        extract_notification_names Resources/cocoa/NotificationAllowList/ForwardedNotifications.def | while read NOTIFICATION; do
             plistbuddy Add :com.apple.private.darwin-notification.introspect:$NOTIFICATION_INDEX string "$NOTIFICATION"
             NOTIFICATION_INDEX=$((NOTIFICATION_INDEX + 1))
         done
 
         if [[ "${WK_PLATFORM_NAME}" == macosx ]]
         then
-            for NOTIFICATION in ${MACOS_FORWARDED_NOTIFICATIONS[*]}; do
+            extract_notification_names Resources/cocoa/NotificationAllowList/MacForwardedNotifications.def | while read NOTIFICATION; do
                 plistbuddy Add :com.apple.private.darwin-notification.introspect:$NOTIFICATION_INDEX string "$NOTIFICATION"
                 NOTIFICATION_INDEX=$((NOTIFICATION_INDEX + 1))
             done
         else
-            for NOTIFICATION in ${EMBEDDED_FORWARDED_NOTIFICATIONS[*]}; do
+            extract_notification_names Resources/cocoa/NotificationAllowList/EmbeddedForwardedNotifications.def | while read NOTIFICATION; do
                 plistbuddy Add :com.apple.private.darwin-notification.introspect:$NOTIFICATION_INDEX string "$NOTIFICATION"
                 NOTIFICATION_INDEX=$((NOTIFICATION_INDEX + 1))
             done
         fi
 
-        for NOTIFICATION in ${NON_FORWARDED_NOTIFICATIONS[*]}; do
+        extract_notification_names Resources/cocoa/NotificationAllowList/NonForwardedNotifications.def | while read NOTIFICATION; do
             plistbuddy Add :com.apple.private.darwin-notification.introspect:$NOTIFICATION_INDEX string "$NOTIFICATION"
             NOTIFICATION_INDEX=$((NOTIFICATION_INDEX + 1))
         done
@@ -352,6 +288,7 @@ function mac_process_webpushd_entitlements()
 {
     plistbuddy Add :com.apple.private.aps-connection-initiate bool YES
     plistbuddy Add :com.apple.private.launchservices.entitledtoaccessothersessions bool YES
+    plistbuddy Add :com.apple.usernotification.notificationschedulerproxy bool YES
 }
 
 # ========================================
@@ -516,7 +453,7 @@ fi
 
 function ios_family_process_webcontent_entitlements()
 {
-    if [[ "${PLATFORM_NAME}" != watchos ]]; then
+    if [[ "${PLATFORM_NAME}" != watchos && "${PLATFORM_NAME}" != appletvos ]]; then
         plistbuddy Add :com.apple.private.verified-jit bool YES
         if [[ "${PLATFORM_NAME}" == iphoneos ]]; then
             if (( $(( ${SDK_VERSION_ACTUAL} )) >= 170400 )); then
@@ -550,6 +487,8 @@ function ios_family_process_webcontent_captiveportal_entitlements()
 
 function ios_family_process_gpu_entitlements()
 {
+    plistbuddy add :application-identifier string "${PRODUCT_BUNDLE_IDENTIFIER}"
+
     plistbuddy Add :com.apple.security.fatal-exceptions array
     plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
 
@@ -559,6 +498,7 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.developer.coremedia.allow-alternate-video-decoder-selection bool YES
     plistbuddy Add :com.apple.mediaremote.set-playback-state bool YES
     plistbuddy Add :com.apple.mediaremote.external-artwork-validation bool YES
+    plistbuddy add :com.apple.mediaremote.ui-control bool YES
     plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES
     plistbuddy Add :com.apple.private.coremedia.extensions.audiorecording.allow bool YES
     plistbuddy Add :com.apple.private.mediaexperience.startrecordinginthebackground.allow bool YES
@@ -621,10 +561,19 @@ function ios_family_process_webpushd_entitlements()
     plistbuddy Add :com.apple.private.launchservices.allowopenwithanyhandler bool YES
     plistbuddy Add :com.apple.springboard.opensensitiveurl bool YES
     plistbuddy Add :com.apple.private.launchservices.canspecifysourceapplication bool YES
+    plistbuddy Add :com.apple.usernotification.notificationschedulerproxy bool YES
+    plistbuddy Add :com.apple.uikitservices.app.value-access bool YES
+    plistbuddy Add :com.apple.private.usernotifications.app-management-domain.proxy string com.apple.WebKit.PushBundles
+    plistbuddy Add :com.apple.frontboard.launchapplications bool YES
+    plistbuddy Add :com.apple.private.security.storage.os_eligibility.readonly bool YES
+    plistbuddy Add :com.apple.security.exception.files.absolute-path.read-only array
+    plistbuddy Add :com.apple.security.exception.files.absolute-path.read-only:0 string /private/var/db/os_eligibility/eligibility.plist
 }
 
 function ios_family_process_network_entitlements()
 {
+    plistbuddy add :application-identifier string "${PRODUCT_BUNDLE_IDENTIFIER}"
+
     plistbuddy Add :com.apple.private.coreservices.canmaplsdatabase bool YES
     plistbuddy Add :com.apple.private.webkit.adattributiond bool YES
     plistbuddy Add :com.apple.private.webkit.webpush bool YES
@@ -662,7 +611,12 @@ fi
 rm -f "${WK_PROCESSED_XCENT_FILE}"
 plistbuddy Clear dict
 
-# Simulator entitlements should be added to Resources/ios/XPCService-ios-simulator.entitlements
+# Simulator entitlements should be added to one or more of:
+#
+#  - Resources/ios/XPCService-embedded-simulator.entitlements
+#  - Shared/AuxiliaryProcessExtensions/GPUProcessExtension.entitlements
+#  - Shared/AuxiliaryProcessExtensions/NetworkingProcessExtension.entitlements
+#  - Shared/AuxiliaryProcessExtensions/WebContentProcessExtension.entitlements
 if [[ "${WK_PLATFORM_NAME}" =~ .*simulator ]]
 then
     exit 0

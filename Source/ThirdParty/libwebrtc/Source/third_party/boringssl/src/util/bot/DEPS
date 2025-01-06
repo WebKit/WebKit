@@ -15,36 +15,52 @@
 vars = {
   'chromium_git': 'https://chromium.googlesource.com',
 
+  'checkout_bazel': False,
   'checkout_clang': False,
+  'checkout_cmake': True,
+  'checkout_go': True,
+  'checkout_fuzzer': False,
+  'checkout_perl': True,
   'checkout_sde': False,
   'checkout_nasm': False,
   'checkout_libcxx': False,
-  'vs_version': '2019',
+  'checkout_riscv64': False,
+  'vs_version': '2022',
 
   # Run the following command to see the latest builds in CIPD:
   #  cipd describe PACKAGE_NAME -version latest
 
+  # infra/3pp/tools/bazel_bootstrap/linux-amd64
+  'bazel_version': 'version:3@7.3.1.1',
   # infra/3pp/tools/cmake/linux-amd64
-  'cmake_version': 'version:2@3.26.3.chromium.7',
+  'cmake_version': 'version:3@3.30.2.chromium.8',
   # infra/3pp/tools/go/linux-amd64
-  'go_version': 'version:2@1.20.4',
+  'go_version': 'version:3@1.22.6',
   # infra/3pp/tools/perl/windows-amd64
   'perl_version': 'version:2@5.32.1.1',
 
   # Update the following from
   # https://chromium.googlesource.com/chromium/src/+/main/DEPS
-  'android_sdk_platform-tools_version': 'RSI3iwryh7URLGRgJHsCvUxj092woTPnKt4pwFcJ6L8C',
-  'android_ndk_revision': '8388a2be5421311dc75c5f937aae13d821a27f3d',
-  'libfuzzer_revision': 'debe7d2d1982e540fbd6bd78604bf001753f9e74',
-  'libcxx_revision': 'f8279b01085b800724f5c5629dc365b9f040dc53',
-  'libcxxabi_revision': 'd5e79e117ce9adfdcfdc5dde56ee8cddd7742854',
-  'ninja_version': 'version:2@1.11.1.chromium.6',
+  'android_sdk_platform-tools_version': 'WihaseZR6cojZbkzIqwGhpTp92ztaGfqq8njBU8eTXYC',
+  'libfuzzer_revision': '758bd21f103a501b362b1ca46fa8fcb692eaa303',
+  'libcxx_revision': 'de70eaccdf8b5e1c3b574f6849db6294626a3a13',
+  'libcxxabi_revision': 'eb6567388e89d9730c76dee71d68ac82e4a1abf6',
+  'ninja_version': 'version:2@1.12.1.chromium.4',
+
+  # The Android NDK cannot be updated until https://crbug.com/boringssl/454 is fixed.
+  # We rely on an older NDK to test building without NEON instructions as the baseline.
+  'android_ndk_revision': 'U0e8L6l52ySjBrUBB82Vdyhsg60vVMqH0ItTW3TRHAQC',
+  'qemu_static_version': 'gYNEUqCr-Tu1C_vBu68YFtN31hjjLe61dnI2AtuyEsYC',
 }
 
 deps = {
   'boringssl/util/bot/android_ndk': {
-    'url': Var('chromium_git') + '/android_ndk.git' + '@' + Var('android_ndk_revision'),
+    'packages': [{
+      'package': 'infra/3pp/tools/android_ndk/linux-amd64',
+      'version': Var('android_ndk_revision'),
+    }],
     'condition': 'checkout_android',
+    'dep_type': 'cipd',
   },
 
   'boringssl/util/bot/android_sdk/public': {
@@ -56,11 +72,21 @@ deps = {
     'dep_type': 'cipd',
   },
 
+  'boringssl/util/bot/bazel': {
+    'packages': [{
+      'package': 'infra/3pp/tools/bazel_bootstrap/${{platform}}',
+      'version': Var('bazel_version'),
+    }],
+    'condition': 'checkout_bazel',
+    'dep_type': 'cipd',
+  },
+
   'boringssl/util/bot/cmake': {
     'packages': [{
       'package': 'infra/3pp/tools/cmake/${{platform}}',
       'version': Var('cmake_version'),
     }],
+    'condition': 'checkout_cmake',
     'dep_type': 'cipd',
   },
 
@@ -69,20 +95,12 @@ deps = {
       'package': 'infra/3pp/tools/go/${{platform}}',
       'version': Var('go_version'),
     }],
-    'dep_type': 'cipd',
-  },
-
-  'boringssl/util/bot/perl-win32': {
-    'packages': [{
-      'package': 'infra/3pp/tools/perl/${{platform}}',
-      'version': Var('perl_version'),
-    }],
-    'condition': 'host_os == "win"',
+    'condition': 'checkout_go',
     'dep_type': 'cipd',
   },
 
   'boringssl/util/bot/libFuzzer': {
-    'url': Var('chromium_git') + '/chromium/llvm-project/compiler-rt/lib/fuzzer.git' +'@' + Var('libfuzzer_revision'),
+    'url': Var('chromium_git') + '/external/github.com/llvm/llvm-project/compiler-rt/lib/fuzzer.git' +'@' + Var('libfuzzer_revision'),
     'condition': 'checkout_fuzzer',
   },
 
@@ -100,7 +118,26 @@ deps = {
       'package': 'infra/3pp/tools/ninja/${{platform}}',
       'version': Var('ninja_version'),
     }],
+    'condition': 'checkout_cmake',
     'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/perl-win32': {
+    'packages': [{
+      'package': 'infra/3pp/tools/perl/${{platform}}',
+      'version': Var('perl_version'),
+    }],
+    'condition': 'host_os == "win" and checkout_perl',
+    'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/qemu-static': {
+      'packages': [{
+          'package': 'infra/3pp/tools/qemu_static/linux-amd64',
+          'version': Var('qemu_static_version')
+      }],
+      'condition': 'checkout_riscv64',
+      'dep_type': 'cipd',
   }
 }
 

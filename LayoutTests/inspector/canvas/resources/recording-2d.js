@@ -400,11 +400,6 @@ function performActions() {
             ctx.roundRect(0, 0, 50, 50, [23]);
             ctx.roundRect(0, 0, 150, 150, [{x: 24, y: 42}]);
         },
-        /* FIXME: Disabled as per webkit.org/b/272591. Should be fully removed if we manage to remove this method.
-        () => {
-            ctx.commit?.();
-        },
-        */
         () => {
             TestPage.dispatchEventToFrontend("LastFrame");
         },

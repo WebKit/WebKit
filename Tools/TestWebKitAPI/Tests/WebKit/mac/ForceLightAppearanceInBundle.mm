@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(DARK_MODE_CSS) && HAVE(OS_DARK_MODE_SUPPORT) && WK_HAVE_C_SPI
+#if ENABLE(DARK_MODE_CSS) && WK_HAVE_C_SPI
 
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
@@ -64,7 +64,7 @@ TEST(WebKit, ForceLightAppearanceInBundle)
     [webView.platformView() setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameDarkAqua]];
 
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
 
     loaderClient.base.version = 0;
     loaderClient.didFinishNavigation = didFinishNavigation;
@@ -72,7 +72,7 @@ TEST(WebKit, ForceLightAppearanceInBundle)
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKContextInjectedBundleClientV0 injectedBundleClient;
-    memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+    zeroBytes(injectedBundleClient);
 
     injectedBundleClient.base.version = 0;
     injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;

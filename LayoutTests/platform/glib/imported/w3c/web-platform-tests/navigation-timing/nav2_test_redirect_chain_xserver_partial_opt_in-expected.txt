@@ -1,0 +1,8 @@
+Description
+
+This test validates the values of the window.performance.getEntriesByType("navigation")[0].redirectCount and the window.performance.getEntriesByType("navigation")[0].redirectStart/End times for a cross-origin server side redirect navigation when the redirect chooses to opt-in.
+
+
+
+PASS Navigation Timing 2 WPT
+

@@ -31,6 +31,7 @@
 #pragma once
 
 #include "UserGestureIndicator.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,8 +40,8 @@ class Document;
 class Page;
 
 class UserGestureEmulationScope {
+    WTF_MAKE_TZONE_ALLOCATED(UserGestureEmulationScope);
     WTF_MAKE_NONCOPYABLE(UserGestureEmulationScope);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     UserGestureEmulationScope(Page&, bool emulateUserGesture, Document* = nullptr);
     ~UserGestureEmulationScope();

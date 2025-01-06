@@ -32,6 +32,7 @@
 #include "Database.h"
 #include "Logging.h"
 #include "SQLTransaction.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -52,6 +53,8 @@ void DatabaseTaskSynchronizer::taskCompleted()
     m_taskCompleted = true;
     m_synchronousCondition.notifyOne();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DatabaseTask);
 
 DatabaseTask::DatabaseTask(Database& database, DatabaseTaskSynchronizer* synchronizer)
     : m_database(database)

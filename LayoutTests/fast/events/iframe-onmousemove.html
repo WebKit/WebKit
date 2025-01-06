@@ -18,7 +18,7 @@ function done()
         testRunner.notifyDone();
 }
 
-function runTest()
+async function runTest()
 {
      if (!window.eventSender)
         return;
@@ -26,7 +26,7 @@ function runTest()
     var frame = document.getElementById("frame");
     var centerX = frame.offsetLeft + frame.offsetWidth / 2;
     var centerY = frame.offsetTop + frame.offsetHeight / 2;
-    eventSender.mouseMoveTo(centerX, centerY);
+    await eventSender.asyncMouseMoveTo(centerX, centerY);
 }
 
 window.onload = runTest;

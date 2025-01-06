@@ -30,17 +30,17 @@ NetEqReplacementInput::NetEqReplacementInput(
   ReplacePacket();
 }
 
-absl::optional<int64_t> NetEqReplacementInput::NextPacketTime() const {
+std::optional<int64_t> NetEqReplacementInput::NextPacketTime() const {
   return packet_
-             ? absl::optional<int64_t>(static_cast<int64_t>(packet_->time_ms))
-             : absl::nullopt;
+             ? std::optional<int64_t>(static_cast<int64_t>(packet_->time_ms))
+             : std::nullopt;
 }
 
-absl::optional<int64_t> NetEqReplacementInput::NextOutputEventTime() const {
+std::optional<int64_t> NetEqReplacementInput::NextOutputEventTime() const {
   return source_->NextOutputEventTime();
 }
 
-absl::optional<NetEqInput::SetMinimumDelayInfo>
+std::optional<NetEqInput::SetMinimumDelayInfo>
 NetEqReplacementInput::NextSetMinimumDelayInfo() const {
   return source_->NextSetMinimumDelayInfo();
 }
@@ -72,7 +72,7 @@ bool NetEqReplacementInput::ended() const {
   return source_->ended();
 }
 
-absl::optional<RTPHeader> NetEqReplacementInput::NextHeader() const {
+std::optional<RTPHeader> NetEqReplacementInput::NextHeader() const {
   return source_->NextHeader();
 }
 
@@ -98,24 +98,26 @@ void NetEqReplacementInput::ReplacePacket() {
     return;
   }
 
-  absl::optional<RTPHeader> next_hdr = source_->NextHeader();
+  std::optional<RTPHeader> next_hdr = source_->NextHeader();
   RTC_DCHECK(next_hdr);
   uint8_t payload[12];
-  RTC_DCHECK_LE(last_frame_size_timestamps_, 120 * 48);
-  uint32_t input_frame_size_timestamps = last_frame_size_timestamps_;
+  constexpr uint32_t kMaxFrameSize = 120 * 48;
   const uint32_t timestamp_diff =
       next_hdr->timestamp - packet_->header.timestamp;
+  uint32_t frame_size = last_frame_size_timestamps_;
+  if (timestamp_diff > 0) {
+    frame_size = std::min(frame_size, timestamp_diff);
+  }
   const bool opus_dtx = packet_->payload.size() <= 2;
   if (next_hdr->sequenceNumber == packet_->header.sequenceNumber + 1 &&
-      timestamp_diff <= 120 * 48 && !opus_dtx) {
-    // Packets are in order and the timestamp diff is less than 5760 samples.
-    // Accept the timestamp diff as a valid frame size.
-    input_frame_size_timestamps = timestamp_diff;
-    last_frame_size_timestamps_ = input_frame_size_timestamps;
+      timestamp_diff <= kMaxFrameSize && timestamp_diff > 0 && !opus_dtx) {
+    // Packets are in order and the timestamp diff is valid.
+    frame_size = timestamp_diff;
+    last_frame_size_timestamps_ = frame_size;
   }
-  RTC_DCHECK_LE(input_frame_size_timestamps, 120 * 48);
-  FakeDecodeFromFile::PrepareEncoded(packet_->header.timestamp,
-                                     input_frame_size_timestamps,
+  RTC_DCHECK_LE(frame_size, kMaxFrameSize);
+  RTC_DCHECK_GT(frame_size, 0);
+  FakeDecodeFromFile::PrepareEncoded(packet_->header.timestamp, frame_size,
                                      packet_->payload.size(), payload);
   packet_->payload.SetData(payload);
   packet_->header.payloadType = replacement_payload_type_;

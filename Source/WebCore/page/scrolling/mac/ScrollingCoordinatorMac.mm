@@ -82,7 +82,7 @@ void ScrollingCoordinatorMac::didCompletePlatformRenderingUpdate()
 
 void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
 {
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page()->mainFrame());
+    RefPtr localMainFrame = page()->localMainFrame();
     if (!localMainFrame)
         return;
 

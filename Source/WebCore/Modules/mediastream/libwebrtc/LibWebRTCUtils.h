@@ -43,6 +43,7 @@ class RTCError;
 
 enum class DtlsTransportState;
 enum class Priority;
+class PriorityValue;
 enum class RTCErrorType;
 enum class RtpTransceiverDirection;
 }
@@ -72,6 +73,7 @@ ExceptionCode toExceptionCode(webrtc::RTCErrorType);
 Exception toException(const webrtc::RTCError&);
 RefPtr<RTCError> toRTCError(const webrtc::RTCError&);
 
+RTCPriorityType toRTCPriorityType(webrtc::PriorityValue);
 RTCPriorityType toRTCPriorityType(webrtc::Priority);
 webrtc::Priority fromRTCPriorityType(RTCPriorityType);
 

@@ -32,9 +32,7 @@
 
 namespace JSC { namespace B3 {
 
-FenceValue::~FenceValue()
-{
-}
+FenceValue::~FenceValue() = default;
 
 FenceValue::FenceValue(Origin origin, HeapRange read, HeapRange write)
     : Value(CheckedOpcode, Fence, Void, Zero, origin)

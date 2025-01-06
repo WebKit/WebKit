@@ -4,13 +4,23 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
+
 #include "modules/svg/include/SkSVGGradient.h"
 
+#include "include/core/SkM44.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkShader.h"  // IWYU pragma: keep
+#include "include/core/SkSize.h"
 #include "include/core/SkTileMode.h"
+#include "include/private/base/SkAssert.h"
+#include "include/private/base/SkDebug.h"
 #include "include/private/base/SkTPin.h"
+#include "modules/svg/include/SkSVGAttributeParser.h"
 #include "modules/svg/include/SkSVGRenderContext.h"
 #include "modules/svg/include/SkSVGStop.h"
-#include "modules/svg/include/SkSVGValue.h"
+
+#include <array>
+#include <cstddef>
 
 bool SkSVGGradient::parseAndSetAttribute(const char* name, const char* value) {
     return INHERITED::parseAndSetAttribute(name, value) ||
@@ -54,7 +64,7 @@ SkColor4f SkSVGGradient::resolveStopColor(const SkSVGRenderContext& ctx,
     const auto& stopOpacity = stop.getStopOpacity();
     // Uninherited presentation attrs should have a concrete value at this point.
     if (!stopColor.isValue() || !stopOpacity.isValue()) {
-        SkDebugf("unhandled: stop-color or stop-opacity has no value\n");
+        SkDEBUGF("unhandled: stop-color or stop-opacity has no value\n");
         return SkColors::kBlack;
     }
 

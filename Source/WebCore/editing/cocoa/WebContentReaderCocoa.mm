@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@
 #import "HTMLIFrameElement.h"
 #import "HTMLImageElement.h"
 #import "HTMLObjectElement.h"
+#import "HTMLPictureElement.h"
 #import "HTMLSourceElement.h"
 #import "LegacyWebArchive.h"
 #import "LocalFrame.h"
@@ -67,6 +68,7 @@
 #import "WebArchiveResourceWebResourceHandler.h"
 #import "WebNSAttributedStringExtras.h"
 #import "markup.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/FileSystem.h>
 #import <wtf/SoftLinking.h>
@@ -221,14 +223,13 @@ static bool shouldReplaceRichContentWithAttachments()
 
 static String mimeTypeFromContentType(const String& contentType)
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (contentType == String(kUTTypeVCard)) {
+    if (contentType == String(UTTypeVCard.identifier)) {
         // CoreServices erroneously reports that "public.vcard" maps to "text/directory", rather
         // than either "text/vcard" or "text/x-vcard". Work around this by special casing the
         // "public.vcard" UTI type. See <rdar://problem/49478229> for more detail.
         return "text/vcard"_s;
     }
-ALLOW_DEPRECATED_DECLARATIONS_END
+
     return isDeclaredUTI(contentType) ? MIMETypeFromUTI(contentType) : contentType;
 }
 
@@ -296,7 +297,7 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
         return;
 
     // FIXME: Handle resources in subframe archives.
-    HashMap<AtomString, Ref<ArchiveResource>> urlToResourceMap;
+    UncheckedKeyHashMap<AtomString, Ref<ArchiveResource>> urlToResourceMap;
     for (auto& subresource : subresources)
         urlToResourceMap.set(AtomString { subresource->url().string() }, subresource.copyRef());
 
@@ -379,6 +380,16 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
         if (!parent)
             continue;
 
+        // If the filename begins with this sentinel value, this means that an existing attachment should be used.
+        // See `HTMLConverter.mm` for more details.
+        if (info.fileName.startsWith(WebContentReader::placeholderAttachmentFilenamePrefix)) {
+            RefPtr document = frame.document();
+            if (RefPtr existingAttachment = document->attachmentForIdentifier({ info.data->span() })) {
+                parent->replaceChild(*existingAttachment.get(), WTFMove(originalElement));
+                continue;
+            }
+        }
+
         auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, fragment.document());
         if (supportsClientSideAttachmentData(frame)) {
             if (RefPtr image = dynamicDowncast<HTMLImageElement>(originalElement); image && contentTypeIsSuitableForInlineImageRepresentation(info.contentType)) {
@@ -407,6 +418,43 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
     UNUSED_PARAM(fragment);
     UNUSED_PARAM(subresources);
 #endif
+}
+
+static void simplifyFragmentForSingleTextAttachment(NSAttributedString *string, DocumentFragment& fragment)
+{
+    auto stringLength = string.length;
+    if (!stringLength || stringLength > 2)
+        return;
+
+    RetainPtr plainText = [string string];
+    if ([plainText characterAtIndex:0] != objectReplacementCharacter)
+        return;
+
+    __block unsigned numberOfTextAttachments = 0;
+    [string enumerateAttribute:NSAttachmentAttributeName inRange:NSMakeRange(0, 1) options:0 usingBlock:^(NSTextAttachment *attachment, NSRange, BOOL *) {
+        if (attachment)
+            numberOfTextAttachments++;
+    }];
+
+    if (numberOfTextAttachments != 1)
+        return;
+
+    if (stringLength == 2 && [plainText characterAtIndex:1] != newlineCharacter)
+        return;
+
+    RefPtr pictureOrImage = [&] -> RefPtr<HTMLElement> {
+        for (Ref element : descendantsOfType<HTMLElement>(fragment)) {
+            if (is<HTMLPictureElement>(element) || is<HTMLImageElement>(element))
+                return WTFMove(element);
+        }
+        return { };
+    }();
+
+    if (!pictureOrImage)
+        return;
+
+    fragment.removeChildren();
+    fragment.appendChild(pictureOrImage.releaseNonNull());
 }
 
 RefPtr<DocumentFragment> createFragment(LocalFrame& frame, NSAttributedString *string, OptionSet<FragmentCreationOptions> fragmentCreationOptions)
@@ -439,7 +487,7 @@ RefPtr<DocumentFragment> createFragment(LocalFrame& frame, NSAttributedString *s
         return WTFMove(fragmentAndResources.fragment);
     }
 
-    HashMap<AtomString, AtomString> blobURLMap;
+    UncheckedKeyHashMap<AtomString, AtomString> blobURLMap;
     for (auto& subresource : fragmentAndResources.resources) {
         auto blob = Blob::create(&document, subresource->data().copyData(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(document, blob);
@@ -447,6 +495,7 @@ RefPtr<DocumentFragment> createFragment(LocalFrame& frame, NSAttributedString *s
     }
 
     replaceSubresourceURLs(*fragmentAndResources.fragment, WTFMove(blobURLMap));
+    simplifyFragmentForSingleTextAttachment(string, *fragmentAndResources.fragment);
     return WTFMove(fragmentAndResources.fragment);
 }
 
@@ -476,12 +525,10 @@ static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buf
 static String sanitizeMarkupWithArchive(LocalFrame& frame, Document& destinationDocument, MarkupAndArchive& markupAndArchive, MSOListQuirks msoListQuirks, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
 {
     Ref page = createPageForSanitizingWebContent();
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
-    if (!localMainFrame)
+    RefPtr stagingDocument = page->localTopDocument();
+    if (!stagingDocument)
         return String();
 
-    Document* stagingDocument = localMainFrame->document();
-    ASSERT(stagingDocument);
     auto fragment = createFragmentFromMarkup(*stagingDocument, markupAndArchive.markup, markupAndArchive.mainResource->url().string(), { });
 
     if (shouldReplaceRichContentWithAttachments()) {
@@ -489,7 +536,7 @@ static String sanitizeMarkupWithArchive(LocalFrame& frame, Document& destination
         return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, msoListQuirks, markupAndArchive.markup);
     }
 
-    HashMap<AtomString, AtomString> blobURLMap;
+    UncheckedKeyHashMap<AtomString, AtomString> blobURLMap;
     for (const Ref<ArchiveResource>& subresource : markupAndArchive.archive->subresources()) {
         auto& subresourceURL = subresource->url();
         if (!shouldReplaceSubresourceURLWithBlobDuringSanitization(subresourceURL))
@@ -544,7 +591,7 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
     Ref frameDocument = *frame->document();
     if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
         m_fragment = createFragmentFromMarkup(frameDocument, result->markup, result->mainResource->url().string(), { });
-        if (DocumentLoader* loader = frame->loader().documentLoader())
+        if (RefPtr loader = frame->loader().documentLoader())
             loader->addAllArchiveResources(result->archive.get());
         return true;
     }
@@ -755,15 +802,13 @@ static Ref<HTMLElement> attachmentForFilePath(LocalFrame& frame, const String& p
     bool isDirectory = fileType == FileSystem::FileType::Directory;
     String contentType = typeForAttachmentElement(explicitContentType);
     if (contentType.isEmpty()) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (isDirectory)
-            contentType = kUTTypeDirectory;
+            contentType = UTTypeDirectory.identifier;
         else {
             contentType = File::contentTypeForFile(path);
             if (contentType.isEmpty())
-                contentType = kUTTypeData;
+                contentType = UTTypeData.identifier;
         }
-ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     std::optional<uint64_t> fileSizeForDisplay;
@@ -864,7 +909,7 @@ bool WebContentReader::readURL(const URL& url, const String& title)
 #endif // PLATFORM(IOS_FAMILY)
 
     auto sanitizedURLString = [&] {
-        if (auto* page = frame->page())
+        if (RefPtr page = frame->page())
             return page->applyLinkDecorationFiltering(url, LinkDecorationFilteringTrigger::Paste);
         return url;
     }().string();

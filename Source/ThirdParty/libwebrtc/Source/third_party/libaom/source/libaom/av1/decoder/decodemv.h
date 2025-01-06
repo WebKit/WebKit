@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -19,6 +19,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+int av1_neg_deinterleave(int diff, int ref, int max);
 
 void av1_read_mode_info(AV1Decoder *const pbi, DecoderCodingBlock *dcb,
                         aom_reader *r, int x_mis, int y_mis);

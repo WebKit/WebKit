@@ -174,8 +174,7 @@ void MockSourceBufferPrivate::didReceiveInitializationSegment(const MockInitiali
     SourceBufferPrivateClient::InitializationSegment segment;
     segment.duration = initBox.duration();
 
-    for (auto it = initBox.tracks().begin(); it != initBox.tracks().end(); ++it) {
-        const MockTrackBox& trackBox = *it;
+    for (auto& trackBox : initBox.tracks()) {
         if (trackBox.kind() == MockTrackBox::Video) {
             SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;
             info.track = MockVideoTrackPrivate::create(trackBox);

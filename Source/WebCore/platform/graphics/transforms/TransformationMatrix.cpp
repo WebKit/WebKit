@@ -36,6 +36,8 @@
 #include <float.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if CPU(X86_64)
@@ -66,10 +68,10 @@ namespace WebCore {
 // | m_matrix[0][2] m_matrix[1][2] m_matrix[2][2] m_matrix[3][2] |
 // | m_matrix[0][3] m_matrix[1][3] m_matrix[2][3] m_matrix[3][3] |
 
-typedef double Vector4[4];
-typedef double Vector3[3];
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TransformationMatrix);
 
-const double SMALL_NUMBER = 1.e-8;
+using Vector4 = std::array<double, 4>;
+using Vector3 = std::array<double, 3>;
 
 const TransformationMatrix TransformationMatrix::identity { };
 
@@ -212,16 +214,15 @@ static bool inverse(const TransformationMatrix::Matrix4& matrix, TransformationM
     // Calculate the 4x4 determinant
     // If the determinant is zero,
     // then the inverse matrix is not unique.
-    double det = determinant4x4(matrix);
-
-    if (std::abs(det) < SMALL_NUMBER)
+    double determinant = determinant4x4(matrix);
+    if (!std::isnormal(determinant))
         return false;
 
     // Scale the adjoint matrix to get the inverse
 
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
-            result[i][j] = result[i][j] / det;
+            result[i][j] = result[i][j] / determinant;
 
     return true;
 }
@@ -240,7 +241,7 @@ static void transposeMatrix4(const TransformationMatrix::Matrix4& a, Transformat
 }
 
 // Multiply a homogeneous point by a matrix and return the transformed point
-static void v4MulPointByMatrix(const Vector4 p, const TransformationMatrix::Matrix4& m, Vector4 result)
+static void v4MulPointByMatrix(const Vector4& p, const TransformationMatrix::Matrix4& m, Vector4& result)
 {
     result[0] = (p[0] * m[0][0]) + (p[1] * m[1][0]) +
                 (p[2] * m[2][0]) + (p[3] * m[3][0]);
@@ -252,12 +253,12 @@ static void v4MulPointByMatrix(const Vector4 p, const TransformationMatrix::Matr
                 (p[2] * m[2][3]) + (p[3] * m[3][3]);
 }
 
-static double v3Length(Vector3 a)
+static double v3Length(const Vector3& a)
 {
     return std::hypot(a[0], a[1], a[2]);
 }
 
-static void v3Scale(Vector3 v, double desiredLength)
+static void v3Scale(Vector3& v, double desiredLength)
 {
     double len = v3Length(v);
     if (len != 0) {
@@ -268,14 +269,14 @@ static void v3Scale(Vector3 v, double desiredLength)
     }
 }
 
-static double v3Dot(const Vector3 a, const Vector3 b)
+static double v3Dot(const Vector3& a, const Vector3& b)
 {
     return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
 }
 
 // Make a linear combination of two vectors and return the result.
 // result = (a * ascl) + (b * bscl)
-static void v3Combine(const Vector3 a, const Vector3 b, Vector3 result, double ascl, double bscl)
+static void v3Combine(const Vector3& a, const Vector3& b, Vector3& result, double ascl, double bscl)
 {
     result[0] = (ascl * a[0]) + (bscl * b[0]);
     result[1] = (ascl * a[1]) + (bscl * b[1]);
@@ -283,7 +284,7 @@ static void v3Combine(const Vector3 a, const Vector3 b, Vector3 result, double a
 }
 
 // Return the cross product result = a cross b */
-static void v3Cross(const Vector3 a, const Vector3 b, Vector3 result)
+static void v3Cross(const Vector3& a, const Vector3& b, Vector3& result)
 {
     result[0] = (a[1] * b[2]) - (a[2] * b[1]);
     result[1] = (a[2] * b[0]) - (a[0] * b[2]);
@@ -355,7 +356,7 @@ static bool decompose2(const TransformationMatrix::Matrix4& matrix, Transformati
 static bool decompose4(const TransformationMatrix::Matrix4& mat, TransformationMatrix::Decomposed4Type& result)
 {
     TransformationMatrix::Matrix4 localMatrix;
-    memcpy(localMatrix, mat, sizeof(TransformationMatrix::Matrix4));
+    memcpySpan(std::span { localMatrix }, std::span { mat });
 
     // Normalize the matrix.
     if (localMatrix[3][3] == 0)
@@ -369,7 +370,7 @@ static bool decompose4(const TransformationMatrix::Matrix4& mat, TransformationM
     // perspectiveMatrix is used to solve for perspective, but it also provides
     // an easy way to test for singularity of the upper 3x3 component.
     TransformationMatrix::Matrix4 perspectiveMatrix;
-    memcpy(perspectiveMatrix, localMatrix, sizeof(TransformationMatrix::Matrix4));
+    memcpySpan(std::span { perspectiveMatrix }, std::span { localMatrix });
     for (i = 0; i < 3; i++)
         perspectiveMatrix[i][3] = 0;
     perspectiveMatrix[3][3] = 1;
@@ -423,7 +424,8 @@ static bool decompose4(const TransformationMatrix::Matrix4& mat, TransformationM
     // stored on column major order and not row major. Using the variable 'row'
     // instead of 'column' in the spec pseudocode has been the source of
     // confusion, specifically in sorting out rotations.
-    Vector3 column[3], pdum3;
+    std::array<Vector3, 3> column;
+    Vector3 pdum3;
 
     // Now get scale and shear.
     for (i = 0; i < 3; i++) {
@@ -1530,7 +1532,7 @@ TransformationMatrix& TransformationMatrix::multiply(const TransformationMatrix&
     tmp[3][3] = (mat.m_matrix[3][0] * m_matrix[0][3] + mat.m_matrix[3][1] * m_matrix[1][3]
                + mat.m_matrix[3][2] * m_matrix[2][3] + mat.m_matrix[3][3] * m_matrix[3][3]);
 
-    memcpy(&m_matrix[0][0], &tmp[0][0], sizeof(Matrix4));
+    memcpySpan(std::span { m_matrix }, std::span { tmp });
 #endif
     return *this;
 }
@@ -1576,7 +1578,7 @@ bool TransformationMatrix::isInvertible() const
     if (type == Type::IdentityOrTranslation)
         return true;
 
-    return std::abs(type == Type::Affine ? (m11() * m22() - m12() * m21()) : WebCore::determinant4x4(m_matrix)) >= SMALL_NUMBER;
+    return std::isnormal(type == Type::Affine ? (m11() * m22() - m12() * m21()) : WebCore::determinant4x4(m_matrix));
 }
 
 std::optional<TransformationMatrix> TransformationMatrix::inverse() const
@@ -1602,7 +1604,7 @@ std::optional<TransformationMatrix> TransformationMatrix::inverse() const
         double e = m41();
         double f = m42();
         double determinant = a * d - b * c;
-        if (std::abs(determinant) < SMALL_NUMBER)
+        if (!std::isnormal(determinant))
             return std::nullopt;
 
         double inverseDeterminant = 1 / determinant;
@@ -1779,7 +1781,7 @@ void TransformationMatrix::blend(const TransformationMatrix& from, double progre
 bool TransformationMatrix::decompose2(Decomposed2Type& decomp) const
 {
     if (isIdentity()) {
-        memset(&decomp, 0, sizeof(decomp));
+        zeroBytes(decomp);
         decomp.scaleX = 1;
         decomp.scaleY = 1;
         decomp.m11 = 1;
@@ -1793,7 +1795,7 @@ bool TransformationMatrix::decompose2(Decomposed2Type& decomp) const
 bool TransformationMatrix::decompose4(Decomposed4Type& decomp) const
 {
     if (isIdentity()) {
-        memset(&decomp, 0, sizeof(decomp));
+        zeroBytes(decomp);
         decomp.perspectiveW = 1;
         decomp.scaleX = 1;
         decomp.scaleY = 1;
@@ -1813,7 +1815,7 @@ void TransformationMatrix::recompose2(const Decomposed2Type& decomp)
     m_matrix[1][0] = decomp.m21;
     m_matrix[1][1] = decomp.m22;
 
-    translate3d(decomp.translateX, decomp.translateY, 0);
+    translateRight(decomp.translateX, decomp.translateY);
     rotate(decomp.angle);
     scale3d(decomp.scaleX, decomp.scaleY, 1);
 }
@@ -1919,13 +1921,20 @@ bool TransformationMatrix::isBackFaceVisible() const
     double determinant = WebCore::determinant4x4(m_matrix);
 
     // If the matrix is not invertible, then we assume its backface is not visible.
-    if (std::abs(determinant) < SMALL_NUMBER)
+    if (!std::isnormal(determinant))
         return false;
 
     double cofactor33 = determinant3x3(m11(), m12(), m14(), m21(), m22(), m24(), m41(), m42(), m44());
     double zComponentOfTransformedNormal = cofactor33 / determinant;
 
     return zComponentOfTransformedNormal < 0;
+}
+
+TransformationMatrix TransformationMatrix::transpose() const
+{
+    TransformationMatrix transpose;
+    transposeMatrix4(m_matrix, transpose.m_matrix);
+    return transpose;
 }
 
 TextStream& operator<<(TextStream& ts, const TransformationMatrix& transform)

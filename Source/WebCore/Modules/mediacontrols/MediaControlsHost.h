@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "HTMLMediaElement.h"
+#include "MediaSession.h"
 #include <variant>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -48,9 +49,16 @@ class TextTrackList;
 class TextTrackRepresentation;
 class VoidCallback;
 
-class MediaControlsHost final : public RefCounted<MediaControlsHost>, public CanMakeWeakPtr<MediaControlsHost> {
+class MediaControlsHost final
+    : public RefCounted<MediaControlsHost>
+#if ENABLE(MEDIA_SESSION)
+    , private MediaSessionObserver
+#endif
+    , public CanMakeWeakPtr<MediaControlsHost> {
     WTF_MAKE_FAST_ALLOCATED(MediaControlsHost);
 public:
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<MediaControlsHost>);
+
     static Ref<MediaControlsHost> create(HTMLMediaElement&);
     ~MediaControlsHost();
 
@@ -85,6 +93,7 @@ public:
     bool supportsSeeking() const;
     bool inWindowFullscreen() const;
     bool supportsRewind() const;
+    bool needsChromeMediaControlsPseudoElement() const;
 
     enum class ForceUpdate : bool { No, Yes };
     void updateCaptionDisplaySizes(ForceUpdate = ForceUpdate::No);
@@ -115,11 +124,28 @@ public:
     std::optional<SourceType> sourceType() const;
 #endif // ENABLE(MODERN_MEDIA_CONTROLS)
 
+    void presentationModeChanged();
+
+#if ENABLE(MEDIA_SESSION)
+    void ensureMediaSessionObserver();
+#endif
+
 private:
     explicit MediaControlsHost(HTMLMediaElement&);
 
+    void savePreviouslySelectedTextTrackIfNecessary();
+    void restorePreviouslySelectedTextTrackIfNecessary();
+
+#if ENABLE(MEDIA_SESSION)
+    RefPtr<MediaSession> mediaSession() const;
+
+    // MediaSessionObserver
+    void metadataChanged(const RefPtr<MediaMetadata>&) final;
+#endif
+
     WeakPtr<HTMLMediaElement> m_mediaElement;
     RefPtr<MediaControlTextTrackContainerElement> m_textTrackContainer;
+    RefPtr<TextTrack> m_previouslySelectedTextTrack;
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     RefPtr<VoidCallback> m_showMediaControlsContextMenuCallback;

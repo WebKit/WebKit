@@ -129,10 +129,14 @@ function buildTestCases(testCases, testType) {
     return results;
 }
 
+function isAbsoluteLength(unit) {
+    return unit == "cm" || unit == "mm" || unit == "Q" || unit == "in" ||
+           unit == "pt" || unit == "pc" || unit == "px";
+}
 
 function buildPositionTests(shape, valid, type, units) {
     var results = new Array();
-    var convert = type.indexOf('computed') != -1 ? true : false;
+    var is_computed = type.indexOf('computed') != -1 ? true : false;
 
     if(Object.prototype.toString.call( units ) === '[object Array]') {
         units.forEach(function(unit) {
@@ -141,26 +145,51 @@ function buildPositionTests(shape, valid, type, units) {
         });
     } else {
         if (valid) {
-            validPositions.forEach(function(test) {
+            var positions = is_computed ? validComputedPositions : validSpecifiedPositions;
+            positions.forEach(function(test) {
                 var testCase = [], testName, actual, expected;
                 // skip if this isn't explicitly testing length units
-                if( !(type.indexOf('lengthUnit') != -1 && test[0].indexOf("u1") == -1)) {
+                if (!(type.indexOf('lengthUnit') != -1 && test[0].indexOf("u1") == -1)) {
                     // actual
                     actual = shape + '(at ' + setUnit(test[0], false, units) +')';
 
+                    let position = test[1];
+                    let convert = is_computed;
+                    if (!is_computed) {
+                      // For specified values.
+                      // Note: "[convert]" tag is used only for the specified
+                      // value.
+                      if (position.includes('[convert]')) {
+                        // We should convert the absolute length into the
+                        // canonical unit in calc(), for specified values.
+                        // e.g.
+                        // 1. "circle(at 1pt 50%)" serializes as
+                        //    "circle(at 1pt 50%)".
+                        // 2. "circle(at calc(1pt) 50%)" serializes as
+                        //    "circle(at calc(1.33px) 50%)".
+                        convert = isAbsoluteLength(units);
+                      }
+                    } else if (test.length == 3) {
+                      // Use the 3rd element as the expected computed value.
+                      position = test[2];
+                    }
+
+                    // Remove the tag if there is.
+                    position = position.replace('[convert] ', '');
+
                     // expected
-                  //  if(convert && shape == 'circle')
-                  //      expected = shape + '(at ' + setUnit(test[1], convert, units) +')';
-                  //  else if(convert && shape == 'ellipse')
-                  //      expected = shape + '(at ' + setUnit(test[1], convert, units) +')';
-                  //  else
-                   expected = shape + '(at ' + setUnit(test[1], convert, units) +')';
+                    //  if(convert && shape == 'circle')
+                    //      expected = shape + '(at ' + setUnit(test[1], convert, units) +')';
+                    //  else if(convert && shape == 'ellipse')
+                    //      expected = shape + '(at ' + setUnit(test[1], convert, units) +')';
+                    //  else
+                    expected = shape + '(at ' + setUnit(position, convert, units) +')';
 
                     // name
                     if (type == 'lengthUnit + inline')
                         testName = 'test unit (inline): ' + units +' - '+ actual;
                     else if (type == 'lengthUnit + computed')
-                         testName = 'test unit (computed): ' + units +' - '+ actual;
+                        testName = 'test unit (computed): ' + units +' - '+ actual;
                     else
                         testName = (actual + ' serializes as ' + expected +' - '+ type);
 
@@ -488,7 +517,100 @@ var validUnits = [
                  ]
 
 /// [actual, expected]
-var validPositions = [
+var validSpecifiedPositions = [
+
+/// [ percent ], [ length ], [ percent | percent ], [ percent | length ], [ length | percent ], [ length | length ]
+    ["50%", "50% center"],
+    ["50u1", "50u1 center"],
+    ["50% 50%", "50% 50%"],
+    ["50% 50u1", "50% 50u1"],
+    ["50u1 50%", "50u1 50%"],
+    ["50u1 50u1", "50u1 50u1"],
+
+///// [ keyword ], [ keyword keyword ] x 5 keywords
+    ["left", "left center"],
+    ["top", "center top"],
+    ["right", "right center"],
+    ["bottom", "center bottom"],
+    ["center", "center center"],
+
+    ["left top", "left top"],
+    ["left bottom", "left bottom"],
+    ["left center", "left center"],
+
+    ["top left", "left top"],
+    ["top right", "right top"],
+    ["top center", "center top"],
+
+    ["right top", "right top"],
+    ["right bottom", "right bottom"],
+    ["right center", "right center"],
+
+    ["bottom left", "left bottom"],
+    ["bottom right", "right bottom"],
+    ["bottom center", "center bottom"],
+
+    ["center top", "center top"],
+    ["center left", "left center"],
+    ["center right", "right center"],
+    ["center bottom", "center bottom"],
+    ["center center", "center center"],
+
+////// [ keyword | percent ], [ keyword | length ], [ percent | keyword ], [ length | keyword ] x 5 keywords
+    ["left 50%", "left 50%"],
+    ["left 50u1", "left 50u1"],
+
+    ["50% top", "50% top"],
+    ["50u1 top", "50u1 top"],
+
+    ["right 80%", "right 80%"],
+    ["right 80u1", "right 80u1"],
+
+    ["70% bottom", "70% bottom"],
+    ["70u1 bottom", "70u1 bottom"],
+
+    ["center 60%", "center 60%"],
+    ["center 60u1", "center 60u1"],
+    ["60% center", "60% center"],
+    ["60u1 center", "60u1 center"],
+
+////// [ keyword percent |  keyword percent], [ keyword percent |  keyword length],
+////// [ keyword length | keyword length],  [ keyword length | keyword percent] x 5 keywords
+    ["left 50% top 50%", "left 50% top 50%"],
+    ["left 50% top 50u1", "left 50% top 50u1"],
+    ["left 50% bottom 70%", "left 50% bottom 70%"],
+    ["left 50% bottom 70u1", "left 50% bottom 70u1"],
+    ["left 50u1 top 50%", "left 50u1 top 50%"],
+    ["left 50u1 top 50u1", "left 50u1 top 50u1"],
+    ["left 50u1 bottom 70%", "left 50u1 bottom 70%"],
+
+    ["top 50% left 50%", "left 50% top 50%"],
+    ["top 50% left 50u1", "left 50u1 top 50%"],
+    ["top 50% right 80%", "right 80% top 50%"],
+    ["top 50% right 80u1", "right 80u1 top 50%"],
+    ["top 50u1 left 50%", "left 50% top 50u1"],
+    ["top 50u1 left 50u1", "left 50u1 top 50u1"],
+    ["top 50u1 right 80%", "right 80% top 50u1"],
+
+    ["bottom 70%  left 50%",    "left 50% bottom 70%"],
+    ["bottom 70%  left 50u1",   "left 50u1 bottom 70%"],
+    ["bottom 70%  right 80%",   "right 80% bottom 70%"],
+    ["bottom 70%  right 80u1",  "right 80u1 bottom 70%"],
+    ["bottom 70u1 left 50%",    "left 50% bottom 70u1"],
+    ["bottom 70u1 right 50%",   "right 50% bottom 70u1"],
+    ["bottom 70u1 right 80u1",  "right 80u1 bottom 70u1"],
+
+    ["right 80% top 50%",      "right 80% top 50%"],
+    ["right 80% top 50u1",     "right 80% top 50u1"],
+    ["right 80% bottom 70%",   "right 80% bottom 70%"],
+    ["right 80% bottom 70u1",  "right 80% bottom 70u1"],
+    ["right 80u1 top 50%",     "right 80u1 top 50%"],
+    ["right 80u1 bottom 70%",  "right 80u1 bottom 70%"],
+    ["right 80u1 bottom 70u1", "right 80u1 bottom 70u1"],
+];
+
+/// [actual, expected]
+var validComputedPositions = [
 
 /// [ percent ], [ length ], [ percent | percent ], [ percent | length ], [ length | percent ], [ length | length ]
     ["50%", "50% 50%"],
@@ -549,39 +671,35 @@ var validPositions = [
 ////// [ keyword length | keyword length],  [ keyword length | keyword percent] x 5 keywords
     ["left 50% top 50%", "50% 50%"],
     ["left 50% top 50u1", "50% 50u1"],
-    ["left 50% bottom 70%", "50% 30%"],
-    ["left 50% bottom 70u1", "left 50% bottom 70u1"],
+    ["left 50% bottom 70%", "50% calc(30%)", "50% 30%"],
+    ["left 50% bottom 70u1", "[convert] 50% calc(100% - 70u1)"],
     ["left 50u1 top 50%", "50u1 50%"],
     ["left 50u1 top 50u1", "50u1 50u1"],
-    ["left 50u1 bottom 70%", "50u1 30%"],
-    ["left 50u1 bottom 70u1", "left 50u1 bottom 70u1"],
+    ["left 50u1 bottom 70%", "50u1 calc(30%)", "50u1 30%"],
 
     ["top 50% left 50%", "50% 50%"],
     ["top 50% left 50u1", "50u1 50%"],
-    ["top 50% right 80%", "20% 50%"],
-    ["top 50% right 80u1", "right 80u1 top 50%"],
+    ["top 50% right 80%", "calc(20%) 50%", "20% 50%"],
+    ["top 50% right 80u1", "[convert] calc(100% - 80u1) 50%"],
     ["top 50u1 left 50%", "50% 50u1"],
     ["top 50u1 left 50u1", "50u1 50u1"],
-    ["top 50u1 right 80%", "20% 50u1"],
-    ["top 50u1 right 80u1", "right 80u1 top 50u1"],
+    ["top 50u1 right 80%", "calc(20%) 50u1", "20% 50u1"],
 
-    ["bottom 70% left 50%", "50% 30%"],
-    ["bottom 70% left 50u1", "50u1 30%"],
-    ["bottom 70% right 80%", "20% 30%"],
-    ["bottom 70% right 80u1", "right 80u1 top 30%"],
-    ["bottom 70u1 left 50%", "left 50% bottom 70u1"],
-    ["bottom 70u1 left 50u1", "left 50u1 bottom 70u1"],
-    ["bottom 70u1 right 80%", "left 20% bottom 70u1"],
-    ["bottom 70u1 right 80u1", "right 80u1 bottom 70u1"],
+    ["bottom 70% left 50%", "50% calc(30%)", "50% 30%"],
+    ["bottom 70% left 50u1", "50u1 calc(30%)", "50u1 30%"],
+    ["bottom 70% right 80%", "calc(20%) calc(30%)", "20% 30%"],
+    ["bottom 70% right 80u1", "[convert] calc(100% - 80u1) calc(30%)", "calc(100% - 80u1) 30%"],
+    ["bottom 70u1 left 50%", "[convert] 50% calc(100% - 70u1)"],
+    ["bottom 70u1 right 50%", "[convert] calc(50%) calc(100% - 70u1)", "50% calc(100% - 70u1)"],
+    ["bottom 70u1 right 80u1", "[convert] calc(100% - 80u1) calc(100% - 70u1)"],
 
-    ["right 80% top 50%", "20% 50%"],
-    ["right 80% top 50u1", "20% 50u1"],
-    ["right 80% bottom 70%", "20% 30%"],
-    ["right 80% bottom 70u1", "left 20% bottom 70u1"],
-    ["right 80u1 top 50%", "right 80u1 top 50%"],
-    ["right 80u1 top 50u1", "right 80u1 top 50u1"],
-    ["right 80u1 bottom 70%", "right 80u1 top 30%"],
-    ["right 80u1 bottom 70u1", "right 80u1 bottom 70u1"],
+    ["right 80% top 50%", "calc(20%) 50%", "20% 50%"],
+    ["right 80% top 50u1", "calc(20%) 50u1", "20% 50u1"],
+    ["right 80% bottom 70%", "calc(20%) calc(30%)", "20% 30%"],
+    ["right 80% bottom 70u1", "[convert] calc(20%) calc(100% - 70u1)", "20% calc(100% - 70u1)"],
+    ["right 80u1 top 50%", "[convert] calc(100% - 80u1) 50%"],
+    ["right 80u1 bottom 70%", "[convert] calc(100% - 80u1) calc(30%)", "calc(100% - 80u1) 30%"],
+    ["right 80u1 bottom 70u1", "[convert] calc(100% - 80u1) calc(100% - 70u1)"],
 ];
 
 var invalidPositions = [

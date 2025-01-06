@@ -27,12 +27,13 @@
 #include "WebKitWebView.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebKit {
 
 class RemoteInspectorProtocolHandler final : public RemoteInspectorObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteInspectorProtocolHandler);
 public:
     explicit RemoteInspectorProtocolHandler(WebKitWebContext* context);
     ~RemoteInspectorProtocolHandler();

@@ -303,6 +303,7 @@ for (let genericBindPointValue of genericBindPointValues) {
   wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "copyBufferSubData with double bound buffer");
   gl.copyBufferSubData(gl.COPY_READ_BUFFER, gl.COPY_WRITE_BUFFER, 0, 0, 1);
   wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "copyBufferSubData with double bound buffer");
+  gl.bindBuffer(gl.COPY_WRITE_BUFFER, null);
 
   debug("<hr/>Test that rejected operations do not change the bound buffer size");
 
@@ -312,7 +313,7 @@ for (let genericBindPointValue of genericBindPointValues) {
 
   gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null);
   gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Uint8Array(16));
-  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "bufferSubData should succeed");
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "bufferSubData should succeed now that not double-bound");
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
   debug("<hr/>Test bufferData family with tf object unbound");

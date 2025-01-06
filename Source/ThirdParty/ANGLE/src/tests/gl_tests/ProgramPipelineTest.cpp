@@ -83,9 +83,9 @@ class ProgramPipelineTest31 : public ProgramPipelineTest
                          const GLfloat positionAttribXYScale);
     GLint getAvailableProgramBinaryFormatCount() const;
 
-    GLuint mVertProg;
-    GLuint mFragProg;
-    GLuint mPipeline;
+    GLuint mVertProg = 0;
+    GLuint mFragProg = 0;
+    GLuint mPipeline = 0;
 };
 
 class ProgramPipelineXFBTest31 : public ProgramPipelineTest31

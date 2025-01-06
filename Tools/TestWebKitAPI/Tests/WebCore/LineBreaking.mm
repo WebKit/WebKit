@@ -29,6 +29,7 @@
 #import "Utilities.h"
 #import <unicode/ubrk.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
@@ -40,11 +41,10 @@ NSString *generateJavaScriptForTest(NSString *testContent, NSString *localeStrin
 Vector<unsigned> breakingLocationsFromICU(const Vector<UInt16>& testString, const String& locale, const String lineBreakValue)
 {
     constexpr int bufferSize = 100;
-    char buffer[bufferSize];
-    memset(buffer, 0, bufferSize);
+    std::array<char, bufferSize> buffer = { };
     auto utf8Locale = locale.utf8();
     ASSERT(utf8Locale.length() < bufferSize);
-    memcpy(buffer, utf8Locale.data(), utf8Locale.length());
+    memcpySpan(std::span { buffer }, utf8Locale.span());
     CString icuValue;
     if (lineBreakValue != "auto"_s)
         icuValue = lineBreakValue.utf8();
@@ -52,7 +52,7 @@ Vector<unsigned> breakingLocationsFromICU(const Vector<UInt16>& testString, cons
     uloc_setKeywordValue("lb", icuValue.data(), buffer, bufferSize, &status);
     ASSERT(U_SUCCESS(status));
 
-    UBreakIterator* iterator = ubrk_open(UBRK_LINE, buffer, reinterpret_cast<const UChar*>(testString.data()), testString.size(), &status);
+    UBreakIterator* iterator = ubrk_open(UBRK_LINE, buffer.data(), reinterpret_cast<const UChar*>(testString.data()), testString.size(), &status);
     ASSERT(U_SUCCESS(status));
     ASSERT(iterator);
 
@@ -75,7 +75,7 @@ static void testAFewStrings(Vector<Vector<UInt16>> testStrings)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"LineBreaking" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"LineBreaking" withExtension:@"html"]]];
     [webView _test_waitForDidFinishNavigation];
 
     for (auto& testCodePoints : testStrings) {

@@ -58,12 +58,12 @@ ALWAYS_INLINE AtomString AtomString::convertASCIICase() const
         }
         return *this;
 SlowPath:
-        LChar localBuffer[localBufferSize];
+        std::array<LChar, localBufferSize> localBuffer;
         for (unsigned i = 0; i < failingIndex; ++i)
             localBuffer[i] = characters[i];
         for (unsigned i = failingIndex; i < length; ++i)
             localBuffer[i] = type == CaseConvertType::Lower ? toASCIILower(characters[i]) : toASCIIUpper(characters[i]);
-        return std::span<const LChar> { localBuffer, length };
+        return std::span<const LChar> { localBuffer }.first(length);
     }
 
     Ref<StringImpl> convertedString = type == CaseConvertType::Lower ? impl->convertToASCIILowercase() : impl->convertToASCIIUppercase();
@@ -108,19 +108,21 @@ AtomString AtomString::number(unsigned long long number)
 AtomString AtomString::number(float number)
 {
     NumberToStringBuffer buffer;
-    return AtomString::fromLatin1(numberToString(number, buffer));
+    auto span = numberToStringAndSize(number, buffer);
+    return AtomString { byteCast<LChar>(span) };
 }
 
 AtomString AtomString::number(double number)
 {
     NumberToStringBuffer buffer;
-    return AtomString::fromLatin1(numberToString(number, buffer));
+    auto span = numberToStringAndSize(number, buffer);
+    return AtomString { byteCast<LChar>(span) };
 }
 
 AtomString AtomString::fromUTF8Internal(std::span<const char> characters)
 {
     ASSERT(!characters.empty());
-    return AtomStringImpl::add(spanReinterpretCast<const char8_t>(characters));
+    return AtomStringImpl::add(byteCast<char8_t>(characters));
 }
 
 #ifndef NDEBUG

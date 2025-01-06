@@ -21,6 +21,7 @@
 
 #include "APIViewClient.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 typedef struct _WebKitWebView WebKitWebView;
 
@@ -40,7 +41,7 @@ struct UserMessage;
 }
 
 class WebKitWebViewClient final : public API::ViewClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebKitWebViewClient);
 public:
     explicit WebKitWebViewClient(WebKitWebView*);
 

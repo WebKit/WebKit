@@ -32,7 +32,7 @@ class DOMMimeType;
 class Navigator;
 
 class DOMMimeTypeArray final : public ScriptWrappable, public RefCounted<DOMMimeTypeArray> {
-    WTF_MAKE_ISO_ALLOCATED(DOMMimeTypeArray);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DOMMimeTypeArray);
 public:
     static Ref<DOMMimeTypeArray> create(Navigator&, Vector<Ref<DOMMimeType>>&& = { });
     ~DOMMimeTypeArray();

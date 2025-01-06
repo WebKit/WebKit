@@ -78,7 +78,11 @@ public:
     ~ConsoleMessageTest()
     {
         g_signal_handlers_disconnect_matched(m_userContentManager.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+#if !ENABLE(2022_GLIB_API)
         webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "console");
+#else
+        webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "console", nullptr);
+#endif
     }
 
     void waitUntilConsoleMessageReceived()

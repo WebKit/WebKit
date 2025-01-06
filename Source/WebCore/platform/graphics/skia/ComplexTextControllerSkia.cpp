@@ -41,16 +41,16 @@ static inline float harfBuzzPositionToFloat(hb_position_t value)
     return static_cast<float>(value) / (1 << 16);
 }
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd)
+ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const Font& font, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
     : m_initialAdvance(0, 0)
     , m_font(font)
     , m_characters(characters)
-    , m_stringLength(stringLength)
     , m_indexBegin(indexBegin)
     , m_indexEnd(indexEnd)
     , m_glyphCount(hb_buffer_get_length(buffer))
     , m_stringLocation(stringLocation)
     , m_isLTR(HB_DIRECTION_IS_FORWARD(hb_buffer_get_direction(buffer)))
+    , m_textAutospaceSize(TextAutospace::textAutospaceSize(font))
 {
     if (!m_glyphCount)
         return;
@@ -60,8 +60,10 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const
     m_glyphOrigins.grow(m_glyphCount);
     m_coreTextIndices.grow(m_glyphCount);
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
     hb_glyph_info_t* glyphInfos = hb_buffer_get_glyph_infos(buffer, nullptr);
     hb_glyph_position_t* glyphPositions = hb_buffer_get_glyph_positions(buffer, nullptr);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     // HarfBuzz returns the shaping result in visual order. We don't need to flip for RTL.
     for (unsigned i = 0; i < m_glyphCount; ++i) {
@@ -152,7 +154,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 {
     if (!font) {
         // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), characters.data(), stringLocation, characters.size(), 0, characters.size(), m_run.ltr()));
+        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), characters, stringLocation, 0, characters.size(), m_run.ltr()));
         return;
     }
 
@@ -202,7 +204,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         hb_buffer_add_utf16(buffer.get(), reinterpret_cast<const uint16_t*>(characters.data()), characters.size(), run.startIndex, run.endIndex - run.startIndex);
 
         hb_shape(hbFont, buffer.get(), featuresData, featuresSize);
-        m_complexTextRuns.append(ComplexTextRun::create(buffer.get(), *font, characters.data(), stringLocation, characters.size(), run.startIndex, run.endIndex));
+        m_complexTextRuns.append(ComplexTextRun::create(buffer.get(), *font, characters, stringLocation, run.startIndex, run.endIndex));
         hb_buffer_reset(buffer.get());
     }
 }

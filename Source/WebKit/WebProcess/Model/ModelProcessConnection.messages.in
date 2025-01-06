@@ -22,6 +22,7 @@
 
 #if ENABLE(MODEL_PROCESS)
 
+[ExceptionForEnabledBy]
 messages -> ModelProcessConnection WantsDispatchMessage {
     DidInitialize(std::optional<WebKit::ModelProcessConnectionInfo> info) CanDispatchOutOfOrder
 }

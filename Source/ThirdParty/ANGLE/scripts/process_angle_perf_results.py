@@ -689,7 +689,7 @@ def _write_perf_data_to_logfile(benchmark_name, output_file, configuration_name,
         if upload_failure:
             logdog_dict[base_benchmark_name]['ref_upload_failed'] = 'True'
     else:
-        # TODO(jmadill): Figure out if we can get a dashboard URL here. http://anglebug.com/6090
+        # TODO(jmadill): Figure out if we can get a dashboard URL here. http://anglebug.com/40096778
         # logdog_dict[base_benchmark_name]['dashboard_url'] = (
         #     upload_results_to_perf_dashboard.GetDashboardUrl(benchmark_name, configuration_name,
         #                                                      RESULTS_URL,

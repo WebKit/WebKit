@@ -37,8 +37,12 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<String> lookupNamespaceURIForBindings(const AtomString& prefix) = 0;
+    virtual CallbackResult<String> lookupNamespaceURIForBindingsRethrowingException(const AtomString& prefix) = 0;
 
     AtomString lookupNamespaceURI(const AtomString& prefix);
+
+private:
+    virtual bool hasCallback() const = 0;
 };
 
 } // namespace WebCore

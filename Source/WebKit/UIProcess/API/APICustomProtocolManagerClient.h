@@ -27,6 +27,7 @@
 
 #include "LegacyCustomProtocolID.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 class LegacyCustomProtocolManagerProxy;
@@ -39,7 +40,7 @@ class ResourceRequest;
 namespace API {
 
 class CustomProtocolManagerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CustomProtocolManagerClient);
 public:
     virtual ~CustomProtocolManagerClient() { }
 

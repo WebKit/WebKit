@@ -1,0 +1,3 @@
+
+FAIL Rules must be the same after serialization round-trip, even with escaped characters assert_equals: expected "@import url(\"abc\") layer(\\{\\});\n@font-feature-values \"abc{}oops\" { }\n@font-palette-values --abc{}oops { }\n@keyframes abc{}oops { \n}\n@layer abc\\;oops\\!;" but got "@import url(\"abc\") layer(\\{\\});\n@font-feature-values \"abc{}oops\" { }\n@font-palette-values --abc { }\noops { }\n@keyframes abc { \n}\noops { }\n@layer abc\\;oops\\!;"
+

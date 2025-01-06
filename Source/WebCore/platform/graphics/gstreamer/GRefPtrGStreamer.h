@@ -30,12 +30,10 @@ typedef struct _WebKitVideoSink WebKitVideoSink;
 struct WebKitWebSrc;
 typedef struct _GstBaseSink GstBaseSink;
 
-#if USE(GSTREAMER_GL)
 typedef struct _GstGLDisplay GstGLDisplay;
 typedef struct _GstGLContext GstGLContext;
 typedef struct _GstEGLImage GstEGLImage;
 typedef struct _GstGLColorConvert GstGLColorConvert;
-#endif
 
 #if USE(GSTREAMER_WEBRTC)
 typedef struct _GstPromise GstPromise;
@@ -177,7 +175,6 @@ template<> GRefPtr<GstTracer> adoptGRef(GstTracer*);
 template<> GstTracer* refGPtr<GstTracer>(GstTracer*);
 template<> void derefGPtr<GstTracer>(GstTracer*);
 
-#if USE(GSTREAMER_GL)
 template<> GRefPtr<GstGLDisplay> adoptGRef(GstGLDisplay* ptr);
 template<> GstGLDisplay* refGPtr<GstGLDisplay>(GstGLDisplay* ptr);
 template<> void derefGPtr<GstGLDisplay>(GstGLDisplay* ptr);
@@ -193,8 +190,6 @@ template<> void derefGPtr<GstEGLImage>(GstEGLImage* ptr);
 template<> GRefPtr<GstGLColorConvert> adoptGRef(GstGLColorConvert* ptr);
 template<> GstGLColorConvert* refGPtr<GstGLColorConvert>(GstGLColorConvert* ptr);
 template<> void derefGPtr<GstGLColorConvert>(GstGLColorConvert* ptr);
-
-#endif
 
 template<> GRefPtr<GstEncodingProfile> adoptGRef(GstEncodingProfile*);
 template<> GstEncodingProfile* refGPtr<GstEncodingProfile>(GstEncodingProfile*);

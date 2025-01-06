@@ -19,5 +19,5 @@ TemporalHelpers.assertPlainYearMonth(ym.with({ month: 1, years: 2020 }), 2019, 1
 
 const withDay = ym.with({ year: 2019, get day() { throw new Test262Error("should not read the day property") } });
 TemporalHelpers.assertPlainYearMonth(withDay, 2019, 10, "M10", "day property");
-assert.sameValue(withDay.getISOFields().isoDay, 1);
-
+const isoDay = Number(withDay.toString({ calendarName: "always" }).split("-")[2].slice(0, 2));
+assert.sameValue(isoDay, 1);

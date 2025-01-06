@@ -28,12 +28,13 @@
 #include "DisplayList.h"
 #include "DisplayListRecorderImpl.h"
 #include "GraphicsContext.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace DisplayList {
 
 class DrawingContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DrawingContext, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT DrawingContext(const FloatSize& logicalSize, const AffineTransform& initialCTM = { }, const DestinationColorSpace& = DestinationColorSpace::SRGB());
     WEBCORE_EXPORT ~DrawingContext();

@@ -38,6 +38,9 @@ public:
     static Ref<VisitedLinkTableController> getOrCreate(VisitedLinkTableIdentifier);
     virtual ~VisitedLinkTableController();
 
+    void ref() const final { WebCore::VisitedLinkStore::ref(); }
+    void deref() const final { WebCore::VisitedLinkStore::deref(); }
+
 private:
     explicit VisitedLinkTableController(VisitedLinkTableIdentifier);
 

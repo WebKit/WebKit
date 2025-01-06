@@ -1,0 +1,5 @@
+
+
+PASS Setup worker
+PASS Make sure a navigation load answered by a synthetic response succeeds even if worker terminates
+

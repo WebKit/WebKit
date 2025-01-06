@@ -123,7 +123,8 @@
                 { "name": "session", "type": "boolean", "description": "True in case of session cookie." },
                 { "name": "httpOnly", "type": "boolean", "description": "True if cookie is http-only." },
                 { "name": "secure", "type": "boolean", "description": "True if cookie is secure." },
-                { "name": "sameSite", "$ref": "CookieSameSitePolicy", "description": "Cookie Same-Site policy." }
+                { "name": "sameSite", "$ref": "CookieSameSitePolicy", "description": "Cookie Same-Site policy." },
+                { "name": "partitionKey", "type": "string", "optional": true, "description": "Cookie partition key. If null and partitioned property is true, then key must be computed." }
             ]
         }
     ],
@@ -191,7 +192,8 @@
             "description": "Sets a new browser cookie with the given name, domain, and path.",
             "targetTypes": ["page"],
             "parameters": [
-                { "name": "cookie", "$ref": "Cookie" }
+                { "name": "cookie", "$ref": "Cookie" },
+                { "name": "shouldPartition", "type": "boolean", "optional": true, "description": "If true, then cookie's partition key should be set." }
             ]
         },
         {

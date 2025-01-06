@@ -48,6 +48,9 @@ private:
 #if ENABLE(MEDIA_SOURCE)
     void enableMockMediaSource() final;
 #endif
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
+    std::unique_ptr<WebCore::MediaRecorderPrivateWriter> createMediaRecorderPrivateWriter(const String&, WebCore::MediaRecorderPrivateWriterListener&) const final;
+#endif
 
 #if ENABLE(GPU_PROCESS)
     std::atomic<bool> m_useGPUProcess { false };

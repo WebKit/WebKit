@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class GamepadEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(GamepadEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(GamepadEvent);
 public:
     ~GamepadEvent() = default;
 

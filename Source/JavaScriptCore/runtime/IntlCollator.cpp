@@ -33,6 +33,7 @@
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include <wtf/HexNumber.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 
@@ -88,7 +89,7 @@ Vector<String> IntlCollator::sortLocaleData(const String& locale, RelevantExtens
             int32_t length = 0;
             while ((pointer = uenum_next(enumeration.get(), &length, &status)) && U_SUCCESS(status)) {
                 // 10.2.3 "The values "standard" and "search" must not be used as elements in any [[sortLocaleData]][locale].co and [[searchLocaleData]][locale].co array."
-                String collation({ pointer, static_cast<size_t>(length) });
+                String collation(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
                 if (collation == "standard"_s || collation == "search"_s)
                     continue;
                 if (auto mapped = mapICUCollationKeywordToBCP47(collation))

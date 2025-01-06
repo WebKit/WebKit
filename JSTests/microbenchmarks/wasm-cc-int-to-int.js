@@ -1,14 +1,12 @@
-//@runDefault("--useWebAssembly=1")
-
-if (typeof WebAssembly == "undefined")
-    $vm.exit();
+//@ skip unless $isWasmPlatform
+//@ runDefaultWasm("--useWasm=1")
 
 var wasm_code;
 try {
-    wasm_code = read('../../JSTests/microbenchmarks/wasm-cc-int-to-int.wasm', 'binary')
+    wasm_code = read('wasm-cc-int-to-int.wasm', 'binary')
 } catch {
     try {
-        wasm_code = read('wasm-cc-int-to-int.wasm', 'binary')
+        wasm_code = read('../../JSTests/microbenchmarks/wasm-cc-int-to-int.wasm', 'binary')
     } catch {
         wasm_code = read('JSTests/microbenchmarks/wasm-cc-int-to-int.wasm', 'binary')
     }

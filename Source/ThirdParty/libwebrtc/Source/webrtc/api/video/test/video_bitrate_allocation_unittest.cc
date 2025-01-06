@@ -10,9 +10,9 @@
 
 #include "api/video/video_bitrate_allocation.h"
 
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -31,7 +31,7 @@ TEST(VideoBitrateAllocation, SimulcastTargetBitrate) {
   layer1_bitrate.SetBitrate(0, 0, 40000);
   layer1_bitrate.SetBitrate(0, 1, 80000);
 
-  std::vector<absl::optional<VideoBitrateAllocation>> layer_allocations =
+  std::vector<std::optional<VideoBitrateAllocation>> layer_allocations =
       bitrate.GetSimulcastAllocations();
 
   EXPECT_EQ(layer0_bitrate, layer_allocations[0]);
@@ -54,7 +54,7 @@ TEST(VideoBitrateAllocation, SimulcastTargetBitrateWithInactiveStream) {
   layer2_bitrate.SetBitrate(0, 0, 40000);
   layer2_bitrate.SetBitrate(0, 1, 80000);
 
-  std::vector<absl::optional<VideoBitrateAllocation>> layer_allocations =
+  std::vector<std::optional<VideoBitrateAllocation>> layer_allocations =
       bitrate.GetSimulcastAllocations();
 
   EXPECT_EQ(layer0_bitrate, layer_allocations[0]);

@@ -176,7 +176,7 @@ class Contributor(object):
         def __iter__(self):
             yielded = set()
             for contributor in self.values():
-                if contributor and contributor.name in yielded:
+                if not contributor or contributor.name in yielded:
                     continue
                 yielded.add(contributor.name)
                 yield contributor

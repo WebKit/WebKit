@@ -92,6 +92,8 @@ public:
     bool listen(const std::optional<String>& host, unsigned port);
     void disconnect();
 
+    const String& visibleHost() const { return m_visibleHost; }
+
 private:
 #if USE(INSPECTOR_SOCKET_SERVER)
     std::optional<ConnectionID> doAccept(RemoteInspectorSocketEndpoint&, PlatformSocketType) final;
@@ -99,6 +101,7 @@ private:
 #endif
 
     HTTPRequestHandler& m_requestHandler;
+    String m_visibleHost;
 
 #if USE(SOUP)
     GRefPtr<SoupServer> m_soupServer;

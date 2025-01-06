@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,19 +20,21 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-headers: "FrameInfoData.h" "WebCoreArgumentCoders.h"
+headers: "FrameInfoData.h"
 
 enum class WebKit::FrameType : bool
 
 struct WebKit::FrameInfoData {
-    bool isMainFrame
-    WebKit::FrameType frameType
-    WebCore::ResourceRequest request
-    WebCore::SecurityOriginData securityOrigin
-    String frameName
-    WebCore::FrameIdentifier frameID
-    std::optional<WebCore::FrameIdentifier> parentFrameID
-    WTF::ProcessID processID
-    bool isFocused
-    bool errorOccurred
+    bool isMainFrame;
+    WebKit::FrameType frameType;
+    WebCore::ResourceRequest request;
+    WebCore::SecurityOriginData securityOrigin;
+    String frameName;
+    Markable<WebCore::FrameIdentifier> frameID;
+    Markable<WebCore::FrameIdentifier> parentFrameID;
+    Markable<WebCore::ScriptExecutionContextIdentifier> documentID;
+    WTF::ProcessID processID;
+    bool isFocused;
+    bool errorOccurred;
+    WebKit::WebFrameMetrics frameMetrics;
 }

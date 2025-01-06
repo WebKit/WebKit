@@ -158,7 +158,7 @@ void DOMWindowExtensionNoCache::didCreatePage(WKBundleRef bundle, WKBundlePageRe
     WKBundlePageAddUserScriptInWorld(page, source.get(), WKBundleScriptWorldCreateWorld(), kWKInjectAtDocumentStart, kWKInjectInAllFrames);
 
     WKBundlePageLoaderClientV7 pageLoaderClient;
-    memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
+    zeroBytes(pageLoaderClient);
 
     pageLoaderClient.base.version = 7;
     pageLoaderClient.base.clientInfo = this;

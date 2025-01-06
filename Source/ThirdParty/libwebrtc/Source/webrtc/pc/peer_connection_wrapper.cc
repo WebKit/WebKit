@@ -12,10 +12,10 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/function_view.h"
 #include "api/set_remote_description_observer_interface.h"
 #include "pc/sdp_utils.h"
@@ -314,7 +314,7 @@ rtc::scoped_refptr<RtpSenderInterface> PeerConnectionWrapper::AddVideoTrack(
 rtc::scoped_refptr<DataChannelInterface>
 PeerConnectionWrapper::CreateDataChannel(
     const std::string& label,
-    const absl::optional<DataChannelInit>& config) {
+    const std::optional<DataChannelInit>& config) {
   const DataChannelInit* config_ptr = config.has_value() ? &(*config) : nullptr;
   auto result = pc()->CreateDataChannelOrError(label, config_ptr);
   if (!result.ok()) {
@@ -339,8 +339,7 @@ bool PeerConnectionWrapper::IsIceConnected() {
   return observer()->ice_connected_;
 }
 
-rtc::scoped_refptr<const webrtc::RTCStatsReport>
-PeerConnectionWrapper::GetStats() {
+rtc::scoped_refptr<const RTCStatsReport> PeerConnectionWrapper::GetStats() {
   auto callback = rtc::make_ref_counted<MockRTCStatsCollectorCallback>();
   pc()->GetStats(callback.get());
   EXPECT_TRUE_WAIT(callback->called(), kDefaultTimeout);

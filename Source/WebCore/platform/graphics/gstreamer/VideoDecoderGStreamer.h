@@ -19,30 +19,29 @@
 
 #pragma once
 
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GRefPtrGStreamer.h"
 #include "VideoDecoder.h"
 
-#include <wtf/FastMalloc.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class GStreamerInternalVideoDecoder;
 
-class GStreamerVideoDecoder : public ThreadSafeRefCounted<GStreamerVideoDecoder>, public VideoDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+class GStreamerVideoDecoder final : public VideoDecoder {
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerVideoDecoder);
 
 public:
-    static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&);
 
-    GStreamerVideoDecoder(const String& codecName, const Config&, OutputCallback&&, PostTaskCallback&&, GRefPtr<GstElement>&&);
+    GStreamerVideoDecoder(const String& codecName, const Config&, OutputCallback&&, GRefPtr<GstElement>&&);
     ~GStreamerVideoDecoder();
 
 private:
-    void decode(EncodedFrame&&, DecodeCallback&&) final;
-    void flush(Function<void()>&&) final;
+    Ref<DecodePromise> decode(EncodedFrame&&) final;
+    Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
 
@@ -51,4 +50,4 @@ private:
 
 }
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

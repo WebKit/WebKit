@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #import "WebExtensionControllerMessages.h"
 #import "WebExtensionControllerProxy.h"
 #import "WebExtensionEventListenerType.h"
+#import "WebPage.h"
 #import "WebProcess.h"
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/ScriptCallStack.h>
@@ -101,6 +102,29 @@ void WebExtensionAPITest::yield(JSContextRef context, NSString *message)
         return;
 
     WebProcess::singleton().send(Messages::WebExtensionController::TestYielded(message, location.first, location.second), webExtensionControllerProxy->identifier());
+}
+
+void WebExtensionAPITest::sendMessage(JSContextRef context, NSString *message, JSValue *argument)
+{
+    auto location = scriptLocation(context);
+
+    RefPtr page = toWebPage(context);
+    if (!page)
+        return;
+
+    RefPtr webExtensionControllerProxy = page->webExtensionControllerProxy();
+    if (!webExtensionControllerProxy)
+        return;
+
+    WebProcess::singleton().send(Messages::WebExtensionController::TestSentMessage(message, argument._toSortedJSONString, location.first, location.second), webExtensionControllerProxy->identifier());
+}
+
+WebExtensionAPIEvent& WebExtensionAPITest::onMessage()
+{
+    if (!m_onMessage)
+        m_onMessage = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TestOnMessage);
+
+    return *m_onMessage;
 }
 
 inline NSString *debugString(JSValue *value)
@@ -334,6 +358,15 @@ JSValue *WebExtensionAPITest::assertSafeResolve(JSContextRef context, JSValue *f
         return result;
 
     return assertResolves(context, result, message);
+}
+
+void WebExtensionContextProxy::dispatchTestMessageEvent(const String& message, const String& argumentJSON)
+{
+    id argument = parseJSON(argumentJSON, JSONOptions::FragmentsAllowed);
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        namespaceObject.test().onMessage().invokeListenersWithArgument(message, argument);
+    });
 }
 
 } // namespace WebKit

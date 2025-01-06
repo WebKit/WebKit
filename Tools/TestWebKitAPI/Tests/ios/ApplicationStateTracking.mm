@@ -65,7 +65,7 @@ TEST(ApplicationStateTracking, WindowDeallocDoesNotPermanentlyFreezeLayerTree)
     [webView waitForNextPresentationUpdate];
 }
 
-#if HAVE(PDFKIT)
+#if USE(PDFKIT_FOR_TESTING)
 
 TEST(ApplicationStateTracking, NavigatingFromPDFDoesNotLeaveWebViewInactive)
 {
@@ -81,7 +81,7 @@ TEST(ApplicationStateTracking, NavigatingFromPDFDoesNotLeaveWebViewInactive)
     [webView waitForNextPresentationUpdate];
 
     RetainPtr fakeURL = [NSURL URLWithString:@"https://bar.com"];
-    RetainPtr pdfData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr pdfData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
     auto response = adoptNS([[NSURLResponse alloc] initWithURL:fakeURL.get() MIMEType:@"application/pdf" expectedContentLength:[pdfData length] textEncodingName:nil]);
     [webView loadSimulatedRequest:[NSURLRequest requestWithURL:fakeURL.get()] response:response.get() responseData:pdfData.get()];
     [delegate waitForDidFinishNavigation];
@@ -93,7 +93,7 @@ TEST(ApplicationStateTracking, NavigatingFromPDFDoesNotLeaveWebViewInactive)
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"internals.isPageActive()"] boolValue]);
 }
 
-#endif // HAVE(PDFKIT)
+#endif // USE(PDFKIT_FOR_TESTING)
 
 } // namespace TestWebKitAPI
 

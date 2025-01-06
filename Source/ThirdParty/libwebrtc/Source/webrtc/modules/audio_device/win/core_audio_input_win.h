@@ -12,9 +12,9 @@
 #define MODULES_AUDIO_DEVICE_WIN_CORE_AUDIO_INPUT_WIN_H_
 
 #include <memory>
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "modules/audio_device/win/audio_device_module_win.h"
 #include "modules/audio_device/win/core_audio_base_win.h"
 
@@ -58,12 +58,12 @@ class CoreAudioInput final : public CoreAudioBase, public AudioInput {
   void ReleaseCOMObjects();
   bool OnDataCallback(uint64_t device_frequency);
   bool OnErrorCallback(ErrorType error);
-  absl::optional<int> EstimateLatencyMillis(uint64_t capture_time_100ns);
+  std::optional<int> EstimateLatencyMillis(uint64_t capture_time_100ns);
   bool HandleStreamDisconnected();
 
   std::unique_ptr<FineAudioBuffer> fine_audio_buffer_;
   Microsoft::WRL::ComPtr<IAudioCaptureClient> audio_capture_client_;
-  absl::optional<double> qpc_to_100ns_;
+  std::optional<double> qpc_to_100ns_;
 };
 
 }  // namespace webrtc_win

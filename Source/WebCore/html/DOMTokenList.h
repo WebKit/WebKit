@@ -27,19 +27,20 @@
 
 #include "Element.h"
 #include <wtf/FixedVector.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DOMTokenList final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DOMTokenList);
 public:
     using IsSupportedTokenFunction = Function<bool(Document&, StringView)>;
     DOMTokenList(Element&, const QualifiedName& attributeName, IsSupportedTokenFunction&& isSupportedToken = { });
 
     inline void associatedAttributeValueChanged();
 
-    void ref() { m_element.ref(); }
-    void deref() { m_element.deref(); }
+    void ref() { m_element->ref(); }
+    void deref() { m_element->deref(); }
 
     unsigned length() const;
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
@@ -54,7 +55,8 @@ public:
     ExceptionOr<bool> replace(const AtomString& token, const AtomString& newToken);
     ExceptionOr<bool> supports(StringView token);
 
-    Element& element() const { return m_element; }
+    Element& element() const { return m_element.get(); }
+    Ref<Element> protectedElement() const { return m_element.get(); }
 
     WEBCORE_EXPORT void setValue(const AtomString&);
     WEBCORE_EXPORT const AtomString& value() const;
@@ -71,7 +73,7 @@ private:
     ExceptionOr<void> addInternal(std::span<const AtomString> tokens);
     ExceptionOr<void> removeInternal(std::span<const AtomString> tokens);
 
-    Element& m_element;
+    CheckedRef<Element> m_element;
     const WebCore::QualifiedName& m_attributeName;
     bool m_inUpdateAssociatedAttributeFromTokens { false };
     bool m_tokensNeedUpdating { true };

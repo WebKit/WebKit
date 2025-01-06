@@ -3,8 +3,17 @@
 <html>
 <head>
 <script src="resources/non-fast-scrollable-region-testing.js"></script>
+<script>
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
+async function runTest() {
+    await runNonFastScrollableRegionTest(2);
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}
+</script>
 </head>
-<body onload="runNonFastScrollableRegionTest(2);">
+<body onload="runTest();">
 <iframe src="data:text/html;charset=utf-8,<html><body style='width:1000px;height:1000px;'></body></html>" style="position:absolute;left:50px;top:50px;width;150px;height:200px;padding:10px;"></iframe>
 </body>
 </html>

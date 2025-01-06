@@ -29,13 +29,20 @@
 
 #if ENABLE(APPLE_PAY)
 
-class WebPaymentCoordinatorClient final : public WebCore::PaymentCoordinatorClient {
-    WTF_MAKE_FAST_ALLOCATED;
+#import <wtf/TZoneMalloc.h>
+
+class WebPaymentCoordinatorClient final : public WebCore::PaymentCoordinatorClient, public RefCounted<WebPaymentCoordinatorClient> {
+    WTF_MAKE_TZONE_ALLOCATED(WebPaymentCoordinatorClient);
 public:
-    WebPaymentCoordinatorClient();
+    static Ref<WebPaymentCoordinatorClient> create();
     ~WebPaymentCoordinatorClient();
 
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
 private:
+    WebPaymentCoordinatorClient();
+
     std::optional<String> validatedPaymentNetwork(const String&) const override;
     bool canMakePayments() override;
     void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&&) override;

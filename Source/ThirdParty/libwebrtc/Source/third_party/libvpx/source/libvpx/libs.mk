@@ -214,6 +214,11 @@ libvpx_srcs.txt:
 	@echo $(CODEC_SRCS) | xargs -n1 echo | LC_ALL=C sort -u > $@
 CLEAN-OBJS += libvpx_srcs.txt
 
+libvpxrc_srcs.txt:
+	@echo "    [CREATE] $@"
+	@echo $(RC_RTC_SRCS) | xargs -n1 echo | LC_ALL=C sort -u > $@
+CLEAN-OBJS += libvpxrc_srcs.txt
+
 # Assembly files that are included, but don't define symbols themselves.
 # Filtered out to avoid Windows build warnings.
 ASM_INCLUDES := \
@@ -313,7 +318,7 @@ $(BUILD_PFX)libvpx_g.a: $(LIBVPX_OBJS)
 # To determine SO_VERSION_{MAJOR,MINOR,PATCH}, calculate c,a,r with current
 # SO_VERSION_* then follow the rules in the link to detemine the new version
 # (c1, a1, r1) and set MAJOR to [c1-a1], MINOR to a1 and PATCH to r1
-SO_VERSION_MAJOR := 8
+SO_VERSION_MAJOR := 9
 SO_VERSION_MINOR := 0
 SO_VERSION_PATCH := 1
 ifeq ($(filter darwin%,$(TGT_OS)),$(TGT_OS))

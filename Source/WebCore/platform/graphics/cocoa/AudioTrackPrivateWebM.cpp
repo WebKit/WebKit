@@ -25,12 +25,15 @@
 
 #include "config.h"
 #include "AudioTrackPrivateWebM.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaSample.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioTrackPrivateWebM);
 
 Ref<AudioTrackPrivateWebM> AudioTrackPrivateWebM::create(webm::TrackEntry&& trackEntry)
 {
@@ -42,6 +45,7 @@ AudioTrackPrivateWebM::AudioTrackPrivateWebM(webm::TrackEntry&& trackEntry)
 {
     if (m_track.is_enabled.is_present())
         setEnabled(m_track.is_enabled.value());
+    updateConfiguration();
 }
 
 TrackID AudioTrackPrivateWebM::id() const

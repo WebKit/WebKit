@@ -1,5 +1,5 @@
 ;
-; Copyright (c) 2016, Alliance for Open Media. All rights reserved
+; Copyright (c) 2016, Alliance for Open Media. All rights reserved.
 ;
 ; This source code is subject to the terms of the BSD 2 Clause License and
 ; the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -50,97 +50,7 @@
 
 SECTION .text
 
-;void ssim_parms_sse2(
-;    unsigned char *s,
-;    int sp,
-;    unsigned char *r,
-;    int rp
-;    uint32_t *sum_s,
-;    uint32_t *sum_r,
-;    uint32_t *sum_sq_s,
-;    uint32_t *sum_sq_r,
-;    uint32_t *sum_sxr);
-;
-; TODO: Use parm passing through structure, probably don't need the pxors
-; ( calling app will initialize to 0 ) could easily fit everything in sse2
-; without too much hastle, and can probably do better estimates with psadw
-; or pavgb At this point this is just meant to be first pass for calculating
-; all the parms needed for 16x16 ssim so we can play with dssim as distortion
-; in mode selection code.
-globalsym(aom_ssim_parms_16x16_sse2)
-sym(aom_ssim_parms_16x16_sse2):
-    push        rbp
-    mov         rbp, rsp
-    SHADOW_ARGS_TO_STACK 9
-    SAVE_XMM 15
-    push        rsi
-    push        rdi
-    ; end prolog
-
-    mov             rsi,        arg(0) ;s
-    mov             rcx,        arg(1) ;sp
-    mov             rdi,        arg(2) ;r
-    mov             rax,        arg(3) ;rp
-
-    pxor            xmm0, xmm0
-    pxor            xmm15,xmm15  ;sum_s
-    pxor            xmm14,xmm14  ;sum_r
-    pxor            xmm13,xmm13  ;sum_sq_s
-    pxor            xmm12,xmm12  ;sum_sq_r
-    pxor            xmm11,xmm11  ;sum_sxr
-
-    mov             rdx, 16      ;row counter
-.NextRow:
-
-    ;grab source and reference pixels
-    movdqu          xmm5, [rsi]
-    movdqu          xmm6, [rdi]
-    movdqa          xmm3, xmm5
-    movdqa          xmm4, xmm6
-    punpckhbw       xmm3, xmm0 ; high_s
-    punpckhbw       xmm4, xmm0 ; high_r
-
-    TABULATE_SSIM
-
-    movdqa          xmm3, xmm5
-    movdqa          xmm4, xmm6
-    punpcklbw       xmm3, xmm0 ; low_s
-    punpcklbw       xmm4, xmm0 ; low_r
-
-    TABULATE_SSIM
-
-    add             rsi, rcx   ; next s row
-    add             rdi, rax   ; next r row
-
-    dec             rdx        ; counter
-    jnz .NextRow
-
-    SUM_ACROSS_W    xmm15
-    SUM_ACROSS_W    xmm14
-    SUM_ACROSS_Q    xmm13
-    SUM_ACROSS_Q    xmm12
-    SUM_ACROSS_Q    xmm11
-
-    mov             rdi,arg(4)
-    movd            [rdi], xmm15;
-    mov             rdi,arg(5)
-    movd            [rdi], xmm14;
-    mov             rdi,arg(6)
-    movd            [rdi], xmm13;
-    mov             rdi,arg(7)
-    movd            [rdi], xmm12;
-    mov             rdi,arg(8)
-    movd            [rdi], xmm11;
-
-    ; begin epilog
-    pop         rdi
-    pop         rsi
-    RESTORE_XMM
-    UNSHADOW_ARGS
-    pop         rbp
-    ret
-
-;void ssim_parms_sse2(
+;void aom_ssim_parms_8x8_sse2(
 ;    unsigned char *s,
 ;    int sp,
 ;    unsigned char *r,

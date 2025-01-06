@@ -21,6 +21,6 @@ features: [Temporal]
 ---*/
 
 TemporalHelpers.checkToTemporalCalendarFastPath((temporalObject) => {
-  const datetime = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321, temporalObject);
+  const datetime = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321);
   datetime.since({ year: 2005, month: 6, day: 2, calendar: temporalObject });
 });

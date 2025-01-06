@@ -53,7 +53,6 @@
 #import <wtf/StdLibExtras.h>
 
 using namespace WebCore;
-using namespace std;
 
 static int comparePageRects(const void *key, const void *array);
 
@@ -273,7 +272,7 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
         _pageRects[i-1].origin.y = size.height;
 
         size.height += boxRect.size.height + PAGE_HEIGHT_INSET;
-        size.width = max(size.width, boxRect.size.width);
+        size.width = std::max(size.width, boxRect.size.width);
     }
     
     size.width += PAGE_WIDTH_INSET * 2.0;

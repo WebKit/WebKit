@@ -95,21 +95,18 @@ void VulkanPipelineCachePerfTest::step()
     vk::PipelineLayout pl;
     vk::PipelineCache pc;
     vk::PipelineCacheAccess spc;
-    vk::RefCounted<vk::ShaderModule> vsRefCounted;
-    vk::RefCounted<vk::ShaderModule> fsRefCounted;
+    vk::ShaderModulePtr vs = vk::ShaderModulePtr::MakeShared();
+    vk::ShaderModulePtr fs = vk::ShaderModulePtr::MakeShared();
     vk::ShaderModuleMap ssm;
     const vk::GraphicsPipelineDesc *desc = nullptr;
     vk::PipelineHelper *result           = nullptr;
 
     // The Vulkan handle types are difficult to cast to without #ifdefs.
-    VkShaderModule vs = (VkShaderModule)1;
-    VkShaderModule fs = (VkShaderModule)2;
+    vs->setHandle((VkShaderModule)1);
+    fs->setHandle((VkShaderModule)2);
 
-    vsRefCounted.get().setHandle(vs);
-    fsRefCounted.get().setHandle(fs);
-
-    ssm[gl::ShaderType::Vertex].set(&vsRefCounted);
-    ssm[gl::ShaderType::Fragment].set(&fsRefCounted);
+    ssm[gl::ShaderType::Vertex]   = vs;
+    ssm[gl::ShaderType::Fragment] = fs;
 
     spc.init(&pc, nullptr);
 
@@ -138,8 +135,8 @@ void VulkanPipelineCachePerfTest::step()
         }
     }
 
-    vsRefCounted.get().setHandle(VK_NULL_HANDLE);
-    fsRefCounted.get().setHandle(VK_NULL_HANDLE);
+    vs->setHandle(VK_NULL_HANDLE);
+    fs->setHandle(VK_NULL_HANDLE);
 }
 
 }  // anonymous namespace

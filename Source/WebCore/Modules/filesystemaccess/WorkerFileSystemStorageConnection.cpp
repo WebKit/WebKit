@@ -313,6 +313,68 @@ void WorkerFileSystemStorageConnection::invalidateAccessHandle(WebCore::FileSyst
         handle->invalidate();
 }
 
+void WorkerFileSystemStorageConnection::createWritable(FileSystemHandleIdentifier identifier, bool keepExistingData, VoidCallback&& callback)
+{
+    if (!m_scope)
+        return callback(Exception { ExceptionCode::InvalidStateError });
+
+    auto callbackIdentifier = CallbackIdentifier::generate();
+    m_voidCallbacks.add(callbackIdentifier, WTFMove(callback));
+
+    callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, keepExistingData]() mutable {
+        auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto&& result) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(WTFMove(result))] (auto& scope) mutable {
+                if (RefPtr connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
+                    connection->completeVoidCallback(callbackIdentifier, WTFMove(result));
+            }, WorkerRunLoop::defaultMode());
+        };
+
+        mainThreadConnection->createWritable(identifier, keepExistingData, WTFMove(mainThreadCallback));
+    });
+}
+
+void WorkerFileSystemStorageConnection::closeWritable(FileSystemHandleIdentifier identifier, FileSystemWriteCloseReason reason, VoidCallback&& callback)
+{
+    if (!m_scope)
+        return callback(Exception { ExceptionCode::InvalidStateError });
+
+    auto callbackIdentifier = CallbackIdentifier::generate();
+    m_voidCallbacks.add(callbackIdentifier, WTFMove(callback));
+
+    callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, reason]() mutable {
+        auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto&& result) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(WTFMove(result))] (auto& scope) mutable {
+                if (RefPtr connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
+                    connection->completeVoidCallback(callbackIdentifier, WTFMove(result));
+            }, WorkerRunLoop::defaultMode());
+        };
+
+        mainThreadConnection->closeWritable(identifier, reason, WTFMove(mainThreadCallback));
+    });
+}
+
+void WorkerFileSystemStorageConnection::executeCommandForWritable(FileSystemHandleIdentifier identifier, FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, VoidCallback&& callback)
+{
+    if (!m_scope)
+        return callback(Exception { ExceptionCode::InvalidStateError });
+
+    auto callbackIdentifier = CallbackIdentifier::generate();
+    m_voidCallbacks.add(callbackIdentifier, WTFMove(callback));
+
+    Vector<uint8_t> bytes;
+    bytes.append(dataBytes);
+    callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, type, position, size, bytes = WTFMove(bytes), hasDataError]() mutable {
+        auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto&& result) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(WTFMove(result))] (auto& scope) mutable {
+                if (RefPtr connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
+                    connection->completeVoidCallback(callbackIdentifier, WTFMove(result));
+            }, WorkerRunLoop::defaultMode());
+        };
+
+        mainThreadConnection->executeCommandForWritable(identifier, type, position, size, bytes.span(), hasDataError, WTFMove(mainThreadCallback));
+    });
+}
+
 void WorkerFileSystemStorageConnection::getHandleNames(FileSystemHandleIdentifier identifier, GetHandleNamesCallback&& callback)
 {
     if (!m_scope)

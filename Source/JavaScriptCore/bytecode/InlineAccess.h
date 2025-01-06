@@ -91,14 +91,14 @@ public:
         return std::max(size, sizeForPropertyAccess());
     }
 
-    static bool generateSelfPropertyAccess(CodeBlock*, StructureStubInfo&, Structure*, PropertyOffset);
-    static bool canGenerateSelfPropertyReplace(CodeBlock*, StructureStubInfo&, PropertyOffset);
-    static bool generateSelfPropertyReplace(CodeBlock*, StructureStubInfo&, Structure*, PropertyOffset);
-    static bool isCacheableArrayLength(CodeBlock*, StructureStubInfo&, JSArray*);
-    static bool isCacheableStringLength(CodeBlock*, StructureStubInfo&);
-    static bool generateArrayLength(CodeBlock*, StructureStubInfo&, JSArray*);
-    static bool generateSelfInAccess(CodeBlock*, StructureStubInfo&, Structure*);
-    static bool generateStringLength(CodeBlock*, StructureStubInfo&);
+    static bool generateSelfPropertyAccess(StructureStubInfo&, Structure*, PropertyOffset);
+    static bool canGenerateSelfPropertyReplace(StructureStubInfo&, PropertyOffset);
+    static bool generateSelfPropertyReplace(StructureStubInfo&, Structure*, PropertyOffset);
+    static bool isCacheableArrayLength(StructureStubInfo&, JSArray*);
+    static bool isCacheableStringLength(StructureStubInfo&);
+    static bool generateArrayLength(StructureStubInfo&, JSArray*);
+    static bool generateSelfInAccess(StructureStubInfo&, Structure*);
+    static bool generateStringLength(StructureStubInfo&);
 
     // This is helpful when determining the size of an IC on
     // various platforms. When adding a new type of IC, implement

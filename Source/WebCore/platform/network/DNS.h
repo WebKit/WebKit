@@ -29,6 +29,7 @@
 #include <variant>
 #include <wtf/Forward.h>
 #include <wtf/HashTraits.h>
+#include <wtf/StdLibExtras.h>
 
 #if OS(WINDOWS)
 #include <winsock2.h>
@@ -55,6 +56,8 @@ public:
         : m_address(WTF::HashTableEmptyValue)
     {
     }
+
+    bool isHashTableEmptyValue() const { return std::holds_alternative<WTF::HashTableEmptyValueType>(m_address); }
 
     WEBCORE_EXPORT IPAddress isolatedCopy() const;
     WEBCORE_EXPORT unsigned matchingNetMaskLength(const IPAddress& other) const;
@@ -86,10 +89,10 @@ public:
         };
 
         if (isIPv4() && other.isIPv4())
-            return comparisonResult(memcmp(&ipv4Address(), &other.ipv4Address(), sizeof(struct in_addr)));
+            return comparisonResult(compareSpans(asByteSpan(ipv4Address()), asByteSpan(other.ipv4Address())));
 
         if (isIPv6() && other.isIPv6())
-            return comparisonResult(memcmp(&ipv6Address(), &other.ipv6Address(), sizeof(struct in6_addr)));
+            return comparisonResult(compareSpans(asByteSpan(ipv6Address()), asByteSpan(other.ipv6Address())));
 
         return ComparisonResult::CannotCompare;
     }
@@ -110,6 +113,7 @@ using DNSCompletionHandler = CompletionHandler<void(DNSAddressesOrError&&)>;
 WEBCORE_EXPORT void prefetchDNS(const String& hostname);
 WEBCORE_EXPORT void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandler&&);
 WEBCORE_EXPORT void stopResolveDNS(uint64_t identifier);
+WEBCORE_EXPORT bool isIPAddressDisallowed(const URL&);
 
 } // namespace WebCore
 
@@ -117,6 +121,7 @@ namespace WTF {
 
 template<> struct HashTraits<WebCore::IPAddress> : GenericHashTraits<WebCore::IPAddress> {
     static WebCore::IPAddress emptyValue() { return WebCore::IPAddress { WTF::HashTableEmptyValue }; }
+    static bool isEmptyValue(const WebCore::IPAddress& value) { return value.isHashTableEmptyValue(); }
 };
 
 } // namespace WTF

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Apple Inc. All rights reserved.
+ * Copyright (c) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SortedArrayMap.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WGSL {
 
@@ -79,11 +79,13 @@ enum class Behavior : uint8_t {
 };
 using Behaviors = OptionSet<Behavior>;
 
-enum class BreakTarget : uint8_t {
-    Switch,
-    Loop,
-    Continuing
-};
+using BreakTarget = std::variant<
+    AST::SwitchStatement*,
+    AST::LoopStatement*,
+    AST::ForStatement*,
+    AST::WhileStatement*,
+    AST::Continuing*
+>;
 
 static ASCIILiteral bindingKindToString(Binding::Kind kind)
 {
@@ -248,6 +250,7 @@ private:
     Vector<Error> m_errors;
     Vector<BreakTarget> m_breakTargetStack;
     HashMap<String, OverloadedDeclaration> m_overloadedOperations;
+    HashMap<String, AST::IdentifierExpression*> m_arrayCountOverrides;
 };
 
 TypeChecker::TypeChecker(ShaderModule& shaderModule)
@@ -405,9 +408,7 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     introduceValue(AST::Identifier::make("write"_s), m_types.accessModeType());
     introduceValue(AST::Identifier::make("read_write"_s), m_types.accessModeType());
 
-    if (m_shaderModule.hasFeature("bgra8unorm-storage"_s))
-        introduceValue(AST::Identifier::make("bgra8unorm"_s), m_types.texelFormatType());
-
+    introduceValue(AST::Identifier::make("bgra8unorm"_s), m_types.texelFormatType());
     introduceValue(AST::Identifier::make("r32float"_s), m_types.texelFormatType());
     introduceValue(AST::Identifier::make("r32sint"_s), m_types.texelFormatType());
     introduceValue(AST::Identifier::make("r32uint"_s), m_types.texelFormatType());
@@ -639,6 +640,8 @@ void TypeChecker::visit(AST::Variable& variable)
 
     if (variable.flavor() != AST::VariableFlavor::Const || result == m_types.bottomType())
         value = nullptr;
+
+    variable.m_storeType = result;
 
     if (variable.flavor() == AST::VariableFlavor::Var) {
         result = m_types.referenceType(*variable.addressSpace(), result, *variable.accessMode());
@@ -1362,6 +1365,10 @@ void TypeChecker::visit(AST::CallExpression& call)
     if (isNamedType || isParameterizedType) {
         auto* result = chooseOverload("initializer"_s, call.span(), &call, targetName, call.arguments(), typeArguments);
         if (result) {
+            target.m_inferredType = result;
+            if (isBottom(result))
+                return;
+
             // FIXME: this will go away once we track used intrinsics properly
             if (targetName == "workgroupUniformLoad"_s)
                 m_shaderModule.setUsesWorkgroupUniformLoad();
@@ -1385,20 +1392,50 @@ void TypeChecker::visit(AST::CallExpression& call)
                 m_shaderModule.setUsesDot4U8Packed();
             else if (targetName == "extractBits"_s)
                 m_shaderModule.setUsesExtractBits();
-            else if (targetName == "textureGather"_s) {
-                auto& component = call.arguments()[0];
-                if (satisfies(component.inferredType(), Constraints::ConcreteInteger)) {
-                    auto& constant = component.constantValue();
-                    if (!constant)
-                        typeError(InferBottom::No, component.span(), "the component argument must be a const-expression"_s);
-                    else {
-                        auto componentValue = constant->integerValue();
-                        if (componentValue < 0 || componentValue > 3)
-                            typeError(InferBottom::No, component.span(), "the component argument must be at least 0 and at most 3. component is "_s, String::number(componentValue));
+            else if (
+                targetName == "textureGather"_s
+                || targetName == "textureGatherCompare"_s
+                || targetName == "textureSample"_s
+                || targetName == "textureSampleBias"_s
+                || targetName == "textureSampleCompare"_s
+                || targetName == "textureSampleCompareLevel"_s
+                || targetName == "textureSampleGrad"_s
+                || targetName == "textureSampleLevel"_s
+            ) {
+                if (targetName == "textureGather"_s) {
+                    auto& component = call.arguments()[0];
+                    if (satisfies(component.inferredType(), Constraints::ConcreteInteger)) {
+                        auto& constant = component.constantValue();
+                        if (!constant)
+                            typeError(InferBottom::No, component.span(), "the component argument must be a const-expression"_s);
+                        else {
+                            auto componentValue = constant->integerValue();
+                            if (componentValue < 0 || componentValue > 3)
+                                typeError(InferBottom::No, component.span(), "the component argument must be at least 0 and at most 3. component is "_s, String::number(componentValue));
+                        }
+                    }
+                }
+
+                auto& lastArg = call.arguments().last();
+                auto* vectorType = std::get_if<Types::Vector>(lastArg.inferredType());
+                if (!vectorType || vectorType->size != 2 || vectorType->element != m_types.i32Type())
+                    return;
+
+                auto& maybeConstant = lastArg.constantValue();
+                if (!maybeConstant.has_value()) {
+                    typeError(InferBottom::No, lastArg.span(), "the offset argument must be a const-expression"_s);
+                    return;
+                }
+
+                auto& vector = std::get<ConstantVector>(*maybeConstant);
+                for (unsigned i = 0; i < 2; ++i) {
+                    auto& i32 = std::get<int32_t>(vector.elements[i]);
+                    if (i32 < -8 || i32 > 7) {
+                        typeError(InferBottom::No, lastArg.span(), "each component of the offset argument must be at least -8 and at most 7. offset component "_s, String::number(i), " is "_s, String::number(i32));
+                        break;
                     }
                 }
             }
-            target.m_inferredType = result;
             return;
         }
 
@@ -1523,9 +1560,13 @@ void TypeChecker::visit(AST::CallExpression& call)
             arguments[i] = *value;
     }
     if (isConstant) {
-        if (argumentCount)
+        if (argumentCount) {
+            // https://www.w3.org/TR/WGSL/#limits
+            constexpr unsigned maximumConstantArraySize = 2047;
+            if (UNLIKELY(argumentCount > maximumConstantArraySize))
+                typeError(InferBottom::No, call.span(), "constant array cannot have more than "_s, String::number(maximumConstantArraySize), " elements"_s);
             setConstantValue(call, result, ConstantArray(WTFMove(arguments)));
-        else
+        } else
             setConstantValue(call, result, zeroValue(result));
     }
 }
@@ -1634,7 +1675,10 @@ void TypeChecker::visit(AST::UnaryExpression& unary)
         auto* type = infer(unary.expression(), Evaluation::Runtime);
         auto* pointer = std::get_if<Types::Pointer>(type);
         if (!pointer) {
-            typeError(unary.span(), "cannot dereference expression of type '"_s, *type, '\'');
+            if (isBottom(type))
+                inferred(type);
+            else
+                typeError(unary.span(), "cannot dereference expression of type '"_s, *type, '\'');
             return;
         }
 
@@ -1725,8 +1769,20 @@ void TypeChecker::visit(AST::ArrayTypeExpression& array)
                 }
             }
             size = { static_cast<unsigned>(elementCount) };
-        } else
-            size = { array.maybeElementCount() };
+        } else {
+            auto* countExpression = array.maybeElementCount();
+            if (auto* identifier = dynamicDowncast<AST::IdentifierExpression>(countExpression)) {
+                auto result = m_arrayCountOverrides.add(identifier->identifier().id(), identifier);
+                countExpression = result.iterator->value;
+            }
+
+            m_shaderModule.addOverrideValidation(*countExpression, [&](const ConstantValue& elementCount) -> std::optional<String> {
+                if (elementCount.integerValue() < 1)
+                    return { "array count must be greater than 0"_s };
+                return std::nullopt;
+            });
+            size = { countExpression };
+        }
     }
 
     inferred(m_types.arrayType(elementType, size));
@@ -1924,9 +1980,10 @@ const Type* TypeChecker::chooseOverload(ASCIILiteral kind, const SourceSpan& spa
             callArguments[i].m_inferredType = overload->parameters[i];
         inferred(overload->result);
 
-        if (expression && it->value.kind == OverloadedDeclaration::Constructor) {
-            if (auto* call = dynamicDowncast<AST::CallExpression>(*expression))
-                call->m_isConstructor = true;
+        if (expression && is<AST::CallExpression>(*expression)) {
+            auto& call = uncheckedDowncast<AST::CallExpression>(*expression);
+            call.m_isConstructor = it->value.kind == OverloadedDeclaration::Constructor;
+            call.m_visibility = it->value.visibility;
         }
 
         unsigned argumentCount = callArguments.size();
@@ -1984,6 +2041,11 @@ const Type* TypeChecker::chooseOverload(ASCIILiteral kind, const SourceSpan& spa
 
 const Type* TypeChecker::infer(AST::Expression& expression, Evaluation evaluation, DiscardResult discardResult)
 {
+    if (evaluation > m_evaluation) {
+        typeError(InferBottom::No, expression.span(), "cannot use "_s, evaluationToString(evaluation), " value in "_s, evaluationToString(m_evaluation), " expression"_s);
+        return m_types.bottomType();
+    }
+
     auto discardResultScope = SetForScope(m_discardResult, discardResult);
     auto evaluationScope = SetForScope(m_evaluation, evaluation);
 
@@ -2021,29 +2083,54 @@ Behaviors TypeChecker::analyze(AST::Statement& statement)
     case AST::NodeKind::BreakStatement:
         if (m_breakTargetStack.isEmpty())
             typeError(InferBottom::No, statement.span(), "break statement must be in a loop or switch case"_s);
-        else if (m_breakTargetStack.last() == BreakTarget::Continuing)
+        else if (std::holds_alternative<AST::Continuing*>(m_breakTargetStack.last()))
             typeError(InferBottom::No, statement.span(), "`break` must not be used to exit from a continuing block. Use `break-if` instead"_s);
         return Behavior::Break;
     case AST::NodeKind::ReturnStatement:
-        if (m_breakTargetStack.contains(BreakTarget::Continuing))
+        if (m_breakTargetStack.containsIf([&](auto& it) { return std::holds_alternative<AST::Continuing*>(it); }))
             typeError(InferBottom::No, statement.span(), "continuing blocks must not contain a return statement"_s);
         return Behavior::Return;
-    case AST::NodeKind::ContinueStatement:
-        if (m_breakTargetStack.isEmpty())
-            typeError(InferBottom::No, statement.span(), "break statement must be in a loop"_s);
-        else {
-            for (int i = m_breakTargetStack.size() - 1; i >= 0; --i) {
-                auto target = m_breakTargetStack[i];
-                if (target == BreakTarget::Continuing)
-                    typeError(InferBottom::No, statement.span(), "continuing blocks must not contain a continue statement"_s);
-                else if (target == BreakTarget::Switch)
-                    continue;
-                else // BreakTarget::Loop
-                    break;
+    case AST::NodeKind::ContinueStatement: {
+        bool hasLoopTarget = false;
+        for (int i = m_breakTargetStack.size() - 1; i >= 0; --i) {
+            auto& target = m_breakTargetStack[i];
+            if (std::holds_alternative<AST::SwitchStatement*>(target))
+                continue;
 
+            hasLoopTarget = true;
+
+            if (std::holds_alternative<AST::Continuing*>(target)) {
+                typeError(InferBottom::No, statement.span(), "continuing blocks must not contain a continue statement"_s);
+                break;
             }
+
+            if (auto** loop = std::get_if<AST::LoopStatement*>(&target)) {
+                if ((*loop)->continuing().has_value()) {
+                    (*loop)->setContainsSwitch();
+                    auto& continueStatement = downcast<AST::ContinueStatement>(statement);
+                    continueStatement.setIsFromSwitchToContinuing();
+                    for (size_t j = i + 1; j < m_breakTargetStack.size(); ++j) {
+                        auto* switchStatement = std::get<AST::SwitchStatement*>(m_breakTargetStack[j]);
+                        if (j == static_cast<size_t>(i + 1))
+                            switchStatement->setIsInsideLoop();
+                        else
+                            switchStatement->setIsNestedInsideLoop();
+                    }
+                }
+                break;
+            }
+
+            ASSERT(std::holds_alternative<AST::ForStatement*>(target) || std::holds_alternative<AST::WhileStatement*>(target));
+            break;
+
+        }
+
+        if (!hasLoopTarget) {
+            typeError(InferBottom::No, statement.span(), "continue statement must be in a loop"_s);
+            return Behavior::Next;
         }
         return Behavior::Continue;
+    }
     case AST::NodeKind::CompoundStatement:
         return analyze(uncheckedDowncast<AST::CompoundStatement>(statement));
     case AST::NodeKind::ForStatement:
@@ -2072,7 +2159,7 @@ Behaviors TypeChecker::analyze(AST::ForStatement& statement)
     if (statement.maybeTest())
         behaviors.add({ Behavior::Next, Behavior::Break });
 
-    m_breakTargetStack.append(BreakTarget::Loop);
+    m_breakTargetStack.append(&statement);
     behaviors.add(analyze(statement.body()));
     m_breakTargetStack.removeLast();
 
@@ -2100,10 +2187,10 @@ Behaviors TypeChecker::analyze(AST::IfStatement& statement)
 
 Behaviors TypeChecker::analyze(AST::LoopStatement& statement)
 {
-    m_breakTargetStack.append(BreakTarget::Loop);
+    m_breakTargetStack.append(&statement);
     auto behaviors = analyzeStatements(statement.body());
     if (auto& continuing = statement.continuing()) {
-        m_breakTargetStack.append(BreakTarget::Continuing);
+        m_breakTargetStack.append(&continuing.value());
         behaviors.add(analyzeStatements(continuing->body));
         m_breakTargetStack.removeLast();
         if (auto* breakIf = continuing->breakIf)
@@ -2124,7 +2211,7 @@ Behaviors TypeChecker::analyze(AST::LoopStatement& statement)
 
 Behaviors TypeChecker::analyze(AST::SwitchStatement& statement)
 {
-    m_breakTargetStack.append(BreakTarget::Switch);
+    m_breakTargetStack.append(&statement);
     auto behaviors = analyze(statement.defaultClause().body);
     for (auto& clause : statement.clauses())
         behaviors.add(analyze(clause.body));
@@ -2140,7 +2227,7 @@ Behaviors TypeChecker::analyze(AST::SwitchStatement& statement)
 Behaviors TypeChecker::analyze(AST::WhileStatement& statement)
 {
     auto behaviors = Behaviors({ Behavior::Next, Behavior::Break });
-    m_breakTargetStack.append(BreakTarget::Loop);
+    m_breakTargetStack.append(&statement);
     behaviors.add(analyze(statement.body()));
     m_breakTargetStack.removeLast();
     behaviors.remove({ Behavior::Break, Behavior::Continue });
@@ -2163,6 +2250,8 @@ Behaviors TypeChecker::analyzeStatements(AST::Statement::List& statements)
 const Type* TypeChecker::check(AST::Expression& expression, Constraint constraint, Evaluation evaluation)
 {
     auto* type = infer(expression, evaluation);
+    if (isBottom(type))
+        return type;
     type = satisfyOrPromote(type, constraint, m_types);
     if (!type)
         return nullptr;

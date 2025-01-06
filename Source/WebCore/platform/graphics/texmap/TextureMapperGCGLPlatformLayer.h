@@ -19,19 +19,20 @@
 
 #pragma once
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(COORDINATED_GRAPHICS)
 
 #include "GraphicsContextGLTextureMapperANGLE.h"
 #include "PlatformLayer.h"
 #include "TextureMapperPlatformLayer.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TextureMapperPlatformLayerProxy;
 
 class TextureMapperGCGLPlatformLayer : public PlatformLayer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextureMapperGCGLPlatformLayer);
 public:
     TextureMapperGCGLPlatformLayer(GraphicsContextGLTextureMapperANGLE&);
     virtual ~TextureMapperGCGLPlatformLayer();
@@ -44,4 +45,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(COORDINATED_GRAPHICS)

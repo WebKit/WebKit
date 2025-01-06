@@ -27,7 +27,9 @@
 #include "config.h"
 #include "HTMLTreeBuilder.h"
 
+#include "CSSTokenizerInputStream.h"
 #include "CommonAtomStrings.h"
+#include "CustomElementRegistry.h"
 #include "DocumentFragment.h"
 #include "HTMLDocument.h"
 #include "HTMLDocumentParser.h"
@@ -51,6 +53,9 @@
 #include "XMLNames.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/ParsingUtilities.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
@@ -59,11 +64,14 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTreeBuilder);
+
 using namespace ElementNames;
 using namespace HTMLNames;
 
-CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElementInterface>&& customElementInterface, const AtomString& name, Vector<Attribute>&& attributes)
+CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElementInterface>&& customElementInterface, Ref<CustomElementRegistry>&& registry, const AtomString& name, Vector<Attribute>&& attributes)
     : elementInterface(WTFMove(customElementInterface))
+    , registry(WTFMove(registry))
     , name(name)
     , attributes(WTFMove(attributes))
 {
@@ -261,11 +269,11 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, HTMLDocument& docum
 #endif
 }
 
-HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, const HTMLParserOptions& options)
+HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, const HTMLParserOptions& options, CustomElementRegistry* registry)
     : m_parser(parser)
     , m_options(options)
     , m_fragmentContext(fragment, contextElement)
-    , m_tree(fragment, parserContentPolicy, options.maximumDOMTreeDepth)
+    , m_tree(fragment, parserContentPolicy, options.maximumDOMTreeDepth, registry)
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
 {
     ASSERT(isMainThread());
@@ -2457,8 +2465,18 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
     auto characters = StringView(string).upconvertedCharacters();
     auto span = characters.span();
 
+    bool shouldCheckElementAncestors = true;
     // While there's a phone number in the rest of the string...
     while (!span.empty() && TelephoneNumberDetector::find(span, &relativeStartPosition, &relativeEndPosition)) {
+        if (std::exchange(shouldCheckElementAncestors, false)) {
+            for (RefPtr ancestor = &m_tree.currentElement(); ancestor; ancestor = ancestor->parentElement()) {
+                if (auto value = ancestor->getAttribute("data-mime-type"_s); value == "text/latex"_s) {
+                    m_tree.insertTextNode(string);
+                    return;
+                }
+            }
+        }
+
         auto scannerPosition = span.data() - characters.span().data();
 
         // The convention in the Data Detectors framework is that the end position is the first character NOT in the phone number
@@ -2472,7 +2490,7 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
         m_tree.insertTextNode(string.substring(scannerPosition, relativeStartPosition));
         insertPhoneNumberLink(string.substring(scannerPosition + relativeStartPosition, relativeEndPosition - relativeStartPosition + 1));
 
-        span = span.subspan(relativeEndPosition + 1);
+        skip(span, relativeEndPosition + 1);
     }
 
     // Append the rest as a text node.
@@ -2512,6 +2530,11 @@ static inline bool disallowTelephoneNumberParsing(const ContainerNode& node)
 
 static inline bool shouldParseTelephoneNumbersInNode(const ContainerNode& node)
 {
+    // FIXME: It seems very wasteful to perform a full ancestor walk to check whether we should create
+    // telephone number links, when parsing every text node in the document. Ideally, we should maintain
+    // the count of elements that disallow telephone number parsing while pushing or popping from the
+    // HTML element stack, so that the check for whether or not we should parse telephone numbers in any
+    // given text node becomes constant time.
     for (const ContainerNode* ancestor = &node; ancestor; ancestor = ancestor->parentNode()) {
         if (disallowTelephoneNumberParsing(*ancestor))
             return false;

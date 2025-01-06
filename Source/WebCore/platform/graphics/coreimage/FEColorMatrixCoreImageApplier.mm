@@ -33,8 +33,13 @@
 #import <CoreImage/CIContext.h>
 #import <CoreImage/CIFilter.h>
 #import <CoreImage/CoreImage.h>
+#import <wtf/TZoneMallocInlines.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEColorMatrixCoreImageApplier);
 
 FEColorMatrixCoreImageApplier::FEColorMatrixCoreImageApplier(const FEColorMatrix& effect)
     : Base(effect)
@@ -110,5 +115,7 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, const FilterImageVector
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CORE_IMAGE)

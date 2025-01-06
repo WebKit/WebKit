@@ -57,7 +57,7 @@ public:
     virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
     {
         WKBundlePageContextMenuClientV0 contextMenuClient;
-        memset(&contextMenuClient, 0, sizeof(contextMenuClient));
+        zeroBytes(contextMenuClient);
 
         contextMenuClient.base.version = 0;
         contextMenuClient.getContextMenuFromDefaultMenu = getContextMenuFromDefaultMenu;

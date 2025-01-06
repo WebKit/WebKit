@@ -21,7 +21,7 @@
 //
 // Example usage:
 //
-// class TestInterface : public rtc::RefCountInterface {
+// class TestInterface : public RefCountInterface {
 //  public:
 //   std::string FooA() = 0;
 //   std::string FooB(bool arg1) const = 0;
@@ -64,30 +64,20 @@
 #include <type_traits>
 #include <utility>
 
+#include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_base.h"
 #include "rtc_base/event.h"
 #include "rtc_base/string_utils.h"
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread.h"
+#include "rtc_base/trace_event.h"
 
 #if !defined(RTC_DISABLE_PROXY_TRACE_EVENTS) && !defined(WEBRTC_CHROMIUM_BUILD)
 #define RTC_DISABLE_PROXY_TRACE_EVENTS
 #endif
 
 namespace webrtc {
-namespace proxy_internal {
-
-// Class for tracing the lifetime of MethodCall::Marshal.
-class ScopedTrace {
- public:
-  explicit ScopedTrace(const char* class_and_method_name);
-  ~ScopedTrace();
-
- private:
-  [[maybe_unused]] const char* const class_and_method_name_;
-};
-}  // namespace proxy_internal
 
 template <typename R>
 class ReturnType {
@@ -334,7 +324,7 @@ class ConstMethodCall {
       rtc::MakeCompileTimeString(proxy_name_)           \
           .Concat(rtc::MakeCompileTimeString("::"))     \
           .Concat(rtc::MakeCompileTimeString(#method)); \
-  proxy_internal::ScopedTrace scoped_trace(class_and_method_name.string)
+  TRACE_EVENT0("webrtc", class_and_method_name.string)
 
 #endif  // if defined(RTC_DISABLE_PROXY_TRACE_EVENTS)
 

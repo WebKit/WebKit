@@ -27,6 +27,9 @@ PASS line-height: "10px" onto "normal"
 PASS line-height: "normal" onto "10px"
 PASS line-height: "10" onto "normal"
 PASS line-height: "normal" onto "10"
+PASS list-style (type: discrete) has testAccumulation function
+PASS list-style: "outside url("http://localhost/test-2") square" onto "inside url("http://localhost/test-1") circle"
+PASS list-style: "inside url("http://localhost/test-1") circle" onto "outside url("http://localhost/test-2") square"
 PASS list-style-image (type: discrete) has testAccumulation function
 PASS list-style-image: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS list-style-image: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
@@ -105,6 +108,9 @@ PASS outline-style: "none" onto "dotted"
 PASS outline-width (type: length) has testAccumulation function
 PASS outline-width: length
 PASS outline-width: length of rem
+PASS overflow (type: discrete) has testAccumulation function
+PASS overflow: "hidden" onto "visible"
+PASS overflow: "visible" onto "hidden"
 PASS overflow-wrap (type: discrete) has testAccumulation function
 PASS overflow-wrap: "break-word" onto "normal"
 PASS overflow-wrap: "normal" onto "break-word"
@@ -133,6 +139,15 @@ PASS perspective-origin (type: position) has testAccumulation function
 PASS perspective-origin: length pair
 PASS perspective-origin: length pair of rem
 PASS perspective-origin: position of percentage
+PASS place-content (type: discrete) has testAccumulation function
+PASS place-content: "end" onto "start"
+PASS place-content: "start" onto "end"
+PASS place-items (type: discrete) has testAccumulation function
+PASS place-items: "end" onto "start"
+PASS place-items: "start" onto "end"
+PASS place-self (type: discrete) has testAccumulation function
+PASS place-self: "end" onto "start"
+PASS place-self: "start" onto "end"
 PASS pointer-events (type: discrete) has testAccumulation function
 PASS pointer-events: "none" onto "fill"
 PASS pointer-events: "fill" onto "none"
@@ -145,6 +160,21 @@ PASS quotes: ""“" "”" "‘" "’"" onto ""‘" "’" "“" "”""
 PASS resize (type: discrete) has testAccumulation function
 PASS resize: "horizontal" onto "both"
 PASS resize: "both" onto "horizontal"
+PASS ruby-align (type: discrete) has testAccumulation function
+PASS ruby-align: "center" onto "start"
+PASS ruby-align: "start" onto "center"
+PASS ruby-position (type: discrete) has testAccumulation function
+PASS ruby-position: "over" onto "under"
+PASS ruby-position: "under" onto "over"
+PASS scroll-snap-align (type: discrete) has testAccumulation function
+PASS scroll-snap-align: "start" onto "none"
+PASS scroll-snap-align: "none" onto "start"
+PASS scroll-snap-stop (type: discrete) has testAccumulation function
+PASS scroll-snap-stop: "always" onto "normal"
+PASS scroll-snap-stop: "normal" onto "always"
+PASS scroll-snap-type (type: discrete) has testAccumulation function
+PASS scroll-snap-type: "x mandatory" onto "none"
+PASS scroll-snap-type: "none" onto "x mandatory"
 PASS scrollbar-color (type: colorPair) has testAccumulation function
 PASS scrollbar-color supports animating as color pair of rgb() with overflowed  from and to values
 PASS scrollbar-color supports animating as color pair of #RGB
@@ -182,6 +212,13 @@ PASS stop-color supports animating as color of hsla()
 PASS stop-opacity (type: opacity) has testAccumulation function
 PASS stop-opacity: [0, 1] number
 PASS stop-opacity: [0, 1] number (clamped)
+PASS stroke-color (type: color) has testAccumulation function
+PASS stroke-color supports animating as color of rgb() with overflowed  from and to values
+PASS stroke-color supports animating as color of #RGB
+PASS stroke-color supports animating as color of hsl()
+PASS stroke-color supports animating as color of #RGBa
+PASS stroke-color supports animating as color of rgba()
+PASS stroke-color supports animating as color of hsla()
 PASS stroke-dasharray (type: dasharray) has testAccumulation function
 PASS stroke-dasharray: dasharray
 PASS stroke-dasharray (type: discrete) has testAccumulation function
@@ -212,7 +249,16 @@ PASS text-anchor: "end" onto "middle"
 PASS text-anchor: "middle" onto "end"
 PASS text-autospace (type: discrete) has testAccumulation function
 PASS text-autospace: "no-autospace" onto "normal"
-FAIL text-autospace: "normal" onto "no-autospace" assert_equals: The value should be normal at 0ms expected "normal" but got "no-autospace"
+PASS text-autospace: "normal" onto "no-autospace"
+PASS text-box-edge (type: discrete) has testAccumulation function
+PASS text-box-edge: "text" onto "auto"
+PASS text-box-edge: "auto" onto "text"
+PASS text-box-trim (type: discrete) has testAccumulation function
+PASS text-box-trim: "trim-start" onto "none"
+PASS text-box-trim: "none" onto "trim-start"
+PASS text-decoration (type: discrete) has testAccumulation function
+PASS text-decoration: "overline" onto "underline"
+PASS text-decoration: "underline" onto "overline"
 PASS text-decoration-color (type: color) has testAccumulation function
 PASS text-decoration-color supports animating as color of rgb() with overflowed  from and to values
 PASS text-decoration-color supports animating as color of #RGB
@@ -223,6 +269,12 @@ PASS text-decoration-color supports animating as color of hsla()
 PASS text-decoration-line (type: discrete) has testAccumulation function
 PASS text-decoration-line: "overline" onto "underline"
 PASS text-decoration-line: "underline" onto "overline"
+PASS text-decoration-skip (type: discrete) has testAccumulation function
+PASS text-decoration-skip: "none" onto "auto"
+PASS text-decoration-skip: "auto" onto "none"
+PASS text-decoration-skip-ink (type: discrete) has testAccumulation function
+PASS text-decoration-skip-ink: "none" onto "auto"
+PASS text-decoration-skip-ink: "auto" onto "none"
 PASS text-decoration-style (type: discrete) has testAccumulation function
 PASS text-decoration-style: "dotted" onto "solid"
 PASS text-decoration-style: "solid" onto "dotted"
@@ -301,6 +353,9 @@ PASS scale
 PASS vector-effect (type: discrete) has testAccumulation function
 PASS vector-effect: "non-scaling-stroke" onto "none"
 PASS vector-effect: "none" onto "non-scaling-stroke"
+PASS view-transition-class (type: discrete) has testAccumulation function
+PASS view-transition-class: "card scale-animation" onto "none"
+PASS view-transition-class: "none" onto "card scale-animation"
 PASS view-transition-name (type: discrete) has testAccumulation function
 PASS view-transition-name: "header" onto "none"
 PASS view-transition-name: "none" onto "header"

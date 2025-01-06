@@ -31,6 +31,7 @@
 #import "APIHitTestResult.h"
 #import "MessageSenderInlines.h"
 #import "WKNSURLExtras.h"
+#import "WebFrameProxy.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebPageProxyMessages.h"
@@ -194,11 +195,10 @@
     // FIXME: We need to be able to cancel this if the gesture recognizer is cancelled.
     // FIXME: Connection can be null if the process is closed; we should clean up better in that case.
     if (_state == WebKit::ImmediateActionState::Pending) {
-        if (auto* connection = RefPtr { _page.get() }->process().connection()) {
-            bool receivedReply = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(RefPtr { _page.get() }->webPageID(), 500_ms) == IPC::Error::NoError;
-            if (!receivedReply)
-                _state = WebKit::ImmediateActionState::TimedOut;
-        }
+        Ref connection = RefPtr { _page.get() }->legacyMainFrameProcess().connection();
+        bool receivedReply = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(RefPtr { _page.get() }->webPageIDInMainFrameProcess(), 500_ms) == IPC::Error::NoError;
+        if (!receivedReply)
+            _state = WebKit::ImmediateActionState::TimedOut;
     }
 
     if (_state != WebKit::ImmediateActionState::Ready) {
@@ -426,13 +426,13 @@
     RefPtr<WebKit::WebPageProxy> page = _page.get();
     WebCore::PageOverlay::PageOverlayID overlayID = _hitTestResultData.platformData.detectedDataOriginatingPageOverlay;
     _currentActionContext = (WKDDActionContext *)[actionContext contextForView:_view altMode:YES interactionStartedHandler:^() {
-        page->send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID));
+        page->legacyMainFrameProcess().send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID), page->webPageIDInMainFrameProcess());
     } interactionChangedHandler:^() {
         if (_hitTestResultData.platformData.detectedDataTextIndicator)
             page->setTextIndicator(_hitTestResultData.platformData.detectedDataTextIndicator->data());
-        page->send(Messages::WebPage::DataDetectorsDidChangeUI(overlayID));
+        page->legacyMainFrameProcess().send(Messages::WebPage::DataDetectorsDidChangeUI(overlayID), page->webPageIDInMainFrameProcess());
     } interactionStoppedHandler:^() {
-        page->send(Messages::WebPage::DataDetectorsDidHideUI(overlayID));
+        page->legacyMainFrameProcess().send(Messages::WebPage::DataDetectorsDidHideUI(overlayID), page->webPageIDInMainFrameProcess());
         [self _clearImmediateActionState];
     }];
 

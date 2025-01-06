@@ -1,0 +1,15 @@
+This test ensures that iframe content is ignored when the iframe has an inert tag.
+
+PASS: iframeWebArea.isIgnored === false
+PASS: iframeButton1.isIgnored === false
+PASS: iframeButton2.isIgnored === false
+
+document.getElementById('iframe1').setAttribute('inert', '');
+PASS: !body.childAtIndex(0) === true
+PASS: !accessibilityController.accessibleElementById('frame-button-1') === true
+PASS: !accessibilityController.accessibleElementById('frame-button-2') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

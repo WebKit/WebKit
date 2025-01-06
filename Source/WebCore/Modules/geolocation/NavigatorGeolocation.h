@@ -23,6 +23,8 @@
 
 #include "LocalDOMWindowProperty.h"
 #include "Supplementable.h"
+#include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -30,7 +32,7 @@ class Geolocation;
 class Navigator;
 
 class NavigatorGeolocation : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorGeolocation);
 public:
     explicit NavigatorGeolocation(Navigator&);
     virtual ~NavigatorGeolocation();
@@ -47,7 +49,7 @@ private:
     static ASCIILiteral supplementName();
 
     mutable RefPtr<Geolocation> m_geolocation;
-    Navigator& m_navigator;
+    CheckedRef<Navigator> m_navigator;
 };
 
 } // namespace WebCore

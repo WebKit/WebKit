@@ -77,6 +77,7 @@ private:
 
         bool didCreateOrDestroyChildRenderer { false };
         RenderObject* previousChildRenderer { nullptr };
+        bool hasPrecedingInFlowChild { false };
 
         Parent(ContainerNode& root);
         Parent(Element&, const Style::ElementUpdate*);
@@ -105,7 +106,7 @@ private:
 
     RenderView& renderView();
 
-    Document& m_document;
+    Ref<Document> m_document;
     std::unique_ptr<Style::Update> m_styleUpdate;
 
     Vector<Parent> m_parentStack;

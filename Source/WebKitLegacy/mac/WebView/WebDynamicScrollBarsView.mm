@@ -33,6 +33,7 @@
 #import <WebCore/LocalFrame.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/PlatformEventFactoryMac.h>
+#import <wtf/StdLibExtras.h>
 
 using namespace WebCore;
 
@@ -109,7 +110,7 @@ static Class customScrollerClass;
         return nil;
 
     _private = new WebDynamicScrollBarsViewPrivate;
-    memset(_private, 0, sizeof(WebDynamicScrollBarsViewPrivate));
+    zeroBytes(*_private);
     return self;
 }
 
@@ -119,7 +120,7 @@ static Class customScrollerClass;
         return nil;
 
     _private = new WebDynamicScrollBarsViewPrivate;
-    memset(_private, 0, sizeof(WebDynamicScrollBarsViewPrivate));
+    zeroBytes(*_private);
     return self;
 }
 

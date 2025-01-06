@@ -29,6 +29,7 @@
 
 #include "AudioDestinationCocoa.h"
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ namespace WebCore {
 class AudioIOCallback;
 
 class MockAudioDestinationCocoa final : public AudioDestinationCocoa {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MockAudioDestinationCocoa, WEBCORE_EXPORT);
 public:
     static Ref<AudioDestination> create(AudioIOCallback& callback, float sampleRate)
     {

@@ -55,7 +55,7 @@ TEST(WebKit, Find)
     PlatformWebView webView(context.get());
     
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
     
     loaderClient.base.version = 0;
     loaderClient.didFinishNavigation = didFinishNavigation;
@@ -63,7 +63,7 @@ TEST(WebKit, Find)
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKPageFindClientV0 findClient;
-    memset(&findClient, 0, sizeof(findClient));
+    zeroBytes(findClient);
 
     findClient.base.version = 0;
     findClient.didCountStringMatches = didCountStringMatches;

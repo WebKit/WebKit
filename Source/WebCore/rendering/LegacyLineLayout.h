@@ -30,6 +30,7 @@
 #include "RenderLineBoxList.h"
 #include "RenderStyleConstants.h"
 #include "TrailingObjects.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -49,7 +50,7 @@ struct WordMeasurement;
 template <class Run> class BidiRunList;
 
 class LegacyLineLayout {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LegacyLineLayout);
 public:
     LegacyLineLayout(RenderBlockFlow&);
     ~LegacyLineLayout();
@@ -57,8 +58,7 @@ public:
     RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
     const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
 
-    LegacyRootInlineBox* firstRootBox() const { return downcast<LegacyRootInlineBox>(m_lineBoxes.firstLineBox()); }
-    LegacyRootInlineBox* lastRootBox() const { return downcast<LegacyRootInlineBox>(m_lineBoxes.lastLineBox()); }
+    LegacyRootInlineBox* legacyRootBox() const { return downcast<LegacyRootInlineBox>(m_lineBoxes.firstLegacyLineBox()); }
 
     void layoutLineBoxes();
 

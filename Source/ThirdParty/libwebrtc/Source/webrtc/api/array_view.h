@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstddef>
 #include <iterator>
 #include <type_traits>
 
@@ -96,7 +97,7 @@ class ArrayViewBase {
   static_assert(Size > 0, "ArrayView size must be variable or non-negative");
 
  public:
-  ArrayViewBase(T* data, size_t size) : data_(data) {}
+  ArrayViewBase(T* data, size_t /* size */) : data_(data) {}
 
   static constexpr size_t size() { return Size; }
   static constexpr bool empty() { return false; }
@@ -113,7 +114,7 @@ class ArrayViewBase {
 template <typename T>
 class ArrayViewBase<T, 0> {
  public:
-  explicit ArrayViewBase(T* data, size_t size) {}
+  explicit ArrayViewBase(T* /* data */, size_t /* size */) {}
 
   static constexpr size_t size() { return 0; }
   static constexpr bool empty() { return true; }

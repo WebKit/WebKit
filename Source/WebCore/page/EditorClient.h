@@ -33,8 +33,8 @@
 #include "TextChecking.h"
 #include "UndoStep.h"
 #include <wtf/CheckedPtr.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -64,7 +64,7 @@ struct GrammarDetail;
 struct SimpleRange;
 
 class EditorClient : public CanMakeWeakPtr<EditorClient>, public CanMakeCheckedPtr<EditorClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(EditorClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EditorClient);
 public:
     virtual ~EditorClient() = default;
@@ -194,7 +194,6 @@ public:
     virtual void updateSpellingUIWithMisspelledWord(const String&) = 0;
     virtual void showSpellingUI(bool show) = 0;
     virtual bool spellingUIIsShowing() = 0;
-    virtual void willSetInputMethodState() = 0;
     virtual void setInputMethodState(Element*) = 0;
 
     // Support for global selections, used on platforms like the X Window System that treat
@@ -207,6 +206,10 @@ public:
 
     virtual void willChangeSelectionForAccessibility() { }
     virtual void didChangeSelectionForAccessibility() { }
+
+#if PLATFORM(IOS_FAMILY)
+    virtual bool shouldDrawVisuallyContiguousBidiSelection() const { return false; }
+#endif
 };
 
 }

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,7 +45,7 @@ public:
 
 template<typename Codebook>
 class SuffixTree {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SuffixTree);
     WTF_MAKE_NONCOPYABLE(SuffixTree)
 public:
     SuffixTree(const String& text, unsigned depth)
@@ -69,7 +70,7 @@ public:
 
 private:
     class Node {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(Node);
     public:
         Node(bool isLeaf = false)
             : m_isLeaf(isLeaf)

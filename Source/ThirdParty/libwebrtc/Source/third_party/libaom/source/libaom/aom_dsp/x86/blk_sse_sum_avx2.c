@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -13,7 +13,7 @@
 
 #include "config/aom_dsp_rtcd.h"
 
-static INLINE void accumulate_sse_sum(__m256i regx_sum, __m256i regx2_sum,
+static inline void accumulate_sse_sum(__m256i regx_sum, __m256i regx2_sum,
                                       int *x_sum, int64_t *x2_sum) {
   __m256i sum_buffer, sse_buffer;
   __m128i out_buffer;
@@ -42,7 +42,7 @@ static INLINE void accumulate_sse_sum(__m256i regx_sum, __m256i regx2_sum,
 #endif
 }
 
-static INLINE void sse_sum_wd4_avx2(const int16_t *data, int stride, int bh,
+static inline void sse_sum_wd4_avx2(const int16_t *data, int stride, int bh,
                                     int *x_sum, int64_t *x2_sum) {
   __m128i row1, row2, row3;
   __m256i regx_sum, regx2_sum, load_pixels, sum_buffer, sse_buffer,
@@ -82,7 +82,7 @@ static INLINE void sse_sum_wd4_avx2(const int16_t *data, int stride, int bh,
   accumulate_sse_sum(regx_sum, regx2_sum, x_sum, x2_sum);
 }
 
-static INLINE void sse_sum_wd8_avx2(const int16_t *data, int stride, int bh,
+static inline void sse_sum_wd8_avx2(const int16_t *data, int stride, int bh,
                                     int *x_sum, int64_t *x2_sum) {
   __m128i load_128bit, load_next_128bit;
   __m256i regx_sum, regx2_sum, load_pixels, sum_buffer, sse_buffer,
@@ -117,7 +117,7 @@ static INLINE void sse_sum_wd8_avx2(const int16_t *data, int stride, int bh,
   accumulate_sse_sum(regx_sum, regx2_sum, x_sum, x2_sum);
 }
 
-static INLINE void sse_sum_wd16_avx2(const int16_t *data, int stride, int bh,
+static inline void sse_sum_wd16_avx2(const int16_t *data, int stride, int bh,
                                      int *x_sum, int64_t *x2_sum,
                                      int loop_count) {
   __m256i regx_sum, regx2_sum, load_pixels, sum_buffer, sse_buffer,

@@ -42,6 +42,22 @@ typedef NS_ENUM(NSInteger, WKContentMode) {
     WKContentModeDesktop
 } WK_API_AVAILABLE(ios(13.0));
 
+/*! @enum WKWebpagePreferencesUpgradeToHTTPSPolicy
+ @abstract A secure navigation policy represents whether or not there is a
+ preference for loading a webpage with https, and how failures should be
+ handled.
+ @constant WKWebpagePreferencesUpgradeToHTTPSPolicyKeepAsRequested             Maintains the current behavior without preferring https
+ @constant WKWebpagePreferencesUpgradeToHTTPSPolicyAutomaticFallbackToHTTP     Upgrades http requests to https, and re-attempts the request with http on failure
+ @constant WKWebpagePreferencesUpgradeToHTTPSPolicyUserMediatedFallbackToHTTP  Upgrades http requests to https, and shows a warning page on failure
+ @constant WKWebpagePreferencesUpgradeToHTTPSPolicyErrorOnFailure              Upgrades http requests to https, and returns an error on failure
+ */
+typedef NS_ENUM(NSInteger, WKWebpagePreferencesUpgradeToHTTPSPolicy) {
+    WKWebpagePreferencesUpgradeToHTTPSPolicyKeepAsRequested,
+    WKWebpagePreferencesUpgradeToHTTPSPolicyAutomaticFallbackToHTTP,
+    WKWebpagePreferencesUpgradeToHTTPSPolicyUserMediatedFallbackToHTTP,
+    WKWebpagePreferencesUpgradeToHTTPSPolicyErrorOnFailure
+} NS_SWIFT_NAME(WKWebpagePreferences.UpgradeToHTTPSPolicy) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 /*! A WKWebpagePreferences object is a collection of properties that
  determine the preferences to use when loading and rendering a page.
  @discussion Contains properties used to determine webpage preferences.
@@ -77,5 +93,14 @@ WK_CLASS_AVAILABLE(macos(10.15), ios(13.0))
  The default value depends on the system setting.
  */
 @property (nonatomic, getter=isLockdownModeEnabled) BOOL lockdownModeEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
+
+/*! @abstract A WKWebpagePreferencesUpgradeToHTTPSPolicy indicating the desired mode
+ used when performing a top-level navigation to a webpage.
+ @discussion The default value is WKWebpagePreferencesUpgradeToHTTPSPolicyKeepAsRequested.
+ The stated preference is ignored on subframe navigation, and it may be ignored based on
+ system configuration. The upgradeKnownHostsToHTTPS property on WKWebViewConfiguration
+ supercedes this policy for known hosts.
+ */
+@property (nonatomic) WKWebpagePreferencesUpgradeToHTTPSPolicy preferredHTTPSNavigationPolicy WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end

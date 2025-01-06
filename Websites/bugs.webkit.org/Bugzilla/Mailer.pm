@@ -21,6 +21,7 @@ use Bugzilla::MIME;
 use Bugzilla::Util;
 use Bugzilla::User;
 
+use Encode qw();
 use Date::Format qw(time2str);
 
 use Email::Sender::Simple qw(sendmail);
@@ -61,6 +62,7 @@ sub generate_email {
                 encoding     => 'quoted-printable',
             },
             body_str => $msg_text,
+            encode_check => Encode::FB_DEFAULT
         )
     );
     if ($templates->{html} && $email_format eq 'html') {
@@ -73,6 +75,7 @@ sub generate_email {
                 encoding     => 'quoted-printable',
             },
             body_str => $msg_html,
+            encode_check => Encode::FB_DEFAULT
         );
     }
 

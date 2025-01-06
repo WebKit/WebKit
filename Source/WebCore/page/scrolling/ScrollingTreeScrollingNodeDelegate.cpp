@@ -26,11 +26,15 @@
 #include "config.h"
 #include "ScrollingTreeScrollingNodeDelegate.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingTreeScrollingNode.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingTreeScrollingNodeDelegate);
 
 ScrollingTreeScrollingNodeDelegate::ScrollingTreeScrollingNodeDelegate(ScrollingTreeScrollingNode& scrollingNode)
     : m_scrollingNode(scrollingNode)
@@ -39,9 +43,9 @@ ScrollingTreeScrollingNodeDelegate::ScrollingTreeScrollingNodeDelegate(Scrolling
 
 ScrollingTreeScrollingNodeDelegate::~ScrollingTreeScrollingNodeDelegate() = default;
 
-ScrollingTree& ScrollingTreeScrollingNodeDelegate::scrollingTree() const
+RefPtr<ScrollingTree> ScrollingTreeScrollingNodeDelegate::scrollingTree() const
 {
-    return m_scrollingNode.scrollingTree();
+    return protectedScrollingNode()->scrollingTree();
 }
 
 FloatPoint ScrollingTreeScrollingNodeDelegate::lastCommittedScrollPosition() const

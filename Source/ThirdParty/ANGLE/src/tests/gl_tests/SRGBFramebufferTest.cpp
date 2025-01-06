@@ -127,7 +127,7 @@ TEST_P(SRGBFramebufferTest, MultipleFramebuffers)
     }
 
     // NVIDIA failures on older drivers
-    // http://anglebug.com/5641
+    // http://anglebug.com/42264177
     ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsOpenGLES());
 
     GLTexture texture;
@@ -209,7 +209,7 @@ TEST_P(SRGBFramebufferTest, NegativeLifetimeTracking)
     }
 
     // NVIDIA failures
-    // http://anglebug.com/5641
+    // http://anglebug.com/42264177
     ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsOpenGLES());
 
     GLTexture texture;
@@ -243,7 +243,7 @@ TEST_P(SRGBFramebufferTest, NegativeLifetimeTracking)
 // Test that glBlitFramebuffer correctly converts colorspaces
 TEST_P(SRGBFramebufferTestES3, BlitFramebuffer)
 {
-    // http://anglebug.com/5790
+    // http://anglebug.com/42264326
     ANGLE_SKIP_TEST_IF(!IsVulkan());
 
     if (!IsGLExtensionEnabled("GL_EXT_sRGB_write_control") ||

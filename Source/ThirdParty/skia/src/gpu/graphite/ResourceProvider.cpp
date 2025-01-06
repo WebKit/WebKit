@@ -54,11 +54,17 @@ ResourceProvider::~ResourceProvider() {
 sk_sp<GraphicsPipeline> ResourceProvider::findOrCreateGraphicsPipeline(
         const RuntimeEffectDictionary* runtimeDict,
         const GraphicsPipelineDesc& pipelineDesc,
-        const RenderPassDesc& renderPassDesc) {
+        const RenderPassDesc& renderPassDesc,
+        SkEnumBitMask<PipelineCreationFlags> pipelineCreationFlags) {
+
     auto globalCache = fSharedContext->globalCache();
     UniqueKey pipelineKey = fSharedContext->caps()->makeGraphicsPipelineKey(pipelineDesc,
                                                                             renderPassDesc);
-    sk_sp<GraphicsPipeline> pipeline = globalCache->findGraphicsPipeline(pipelineKey);
+
+    uint32_t compilationID = 0;
+    sk_sp<GraphicsPipeline> pipeline = globalCache->findGraphicsPipeline(pipelineKey,
+                                                                         pipelineCreationFlags,
+                                                                         &compilationID);
     if (!pipeline) {
         // Haven't encountered this pipeline, so create a new one. Since pipelines are shared
         // across Recorders, we could theoretically create equivalent pipelines on different
@@ -67,9 +73,26 @@ sk_sp<GraphicsPipeline> ResourceProvider::findOrCreateGraphicsPipeline(
         // it allows pipeline creation to be performed without locking the global cache.
         // NOTE: The parameters to TRACE_EVENT are only evaluated inside an if-block when the
         // category is enabled.
-        TRACE_EVENT1("skia.shaders", "createGraphicsPipeline", "desc",
-                     TRACE_STR_COPY(to_str(fSharedContext, pipelineDesc, renderPassDesc).c_str()));
-        pipeline = this->createGraphicsPipeline(runtimeDict, pipelineDesc, renderPassDesc);
+        TRACE_EVENT1_ALWAYS(
+                "skia.shaders", "createGraphicsPipeline", "desc",
+                TRACE_STR_COPY(to_str(fSharedContext, pipelineDesc, renderPassDesc).c_str()));
+
+#if defined(SK_PIPELINE_LIFETIME_LOGGING)
+        bool forPrecompile =
+                SkToBool(pipelineCreationFlags & PipelineCreationFlags::kForPrecompilation);
+
+        static const char* kNames[2] = { "BeginBuildN", "BeginBuildP" };
+        TRACE_EVENT_INSTANT2("skia.gpu",
+                             TRACE_STR_STATIC(kNames[forPrecompile]),
+                             TRACE_EVENT_SCOPE_THREAD,
+                             "key", pipelineKey.hash(),
+                             "compilationID", compilationID);
+#endif
+
+        pipeline = this->createGraphicsPipeline(runtimeDict, pipelineKey,
+                                                pipelineDesc, renderPassDesc,
+                                                pipelineCreationFlags,
+                                                compilationID);
         if (pipeline) {
             // TODO: Should we store a null pipeline if we failed to create one so that subsequent
             // usage immediately sees that the pipeline cannot be created, vs. retrying every time?
@@ -164,19 +187,29 @@ sk_sp<Texture> ResourceProvider::findOrCreateTextureWithKey(SkISize dimensions,
     SkASSERT(key.shareable() == Shareable::kNo || budgeted == skgpu::Budgeted::kYes);
 
     if (Resource* resource = fResourceCache->findAndRefResource(key, budgeted)) {
-        resource->setLabel(label);
+        resource->setLabel(std::move(label));
         return sk_sp<Texture>(static_cast<Texture*>(resource));
     }
 
-    auto tex = this->createTexture(dimensions, info, std::move(label), budgeted);
+    auto tex = this->createTexture(dimensions, info, budgeted);
     if (!tex) {
         return nullptr;
     }
 
     tex->setKey(key);
+    tex->setLabel(std::move(label));
     fResourceCache->insertResource(tex.get());
 
     return tex;
+}
+
+sk_sp<Texture> ResourceProvider::createWrappedTexture(const BackendTexture& backendTexture,
+                                                      std::string_view label) {
+    sk_sp<Texture> texture = this->onCreateWrappedTexture(backendTexture);
+    if (texture) {
+        texture->setLabel(std::move(label));
+    }
+    return texture;
 }
 
 sk_sp<Sampler> ResourceProvider::findOrCreateCompatibleSampler(const SamplerDesc& samplerDesc) {
@@ -233,12 +266,13 @@ sk_sp<Buffer> ResourceProvider::findOrCreateBuffer(size_t size,
         resource->setLabel(std::move(label));
         return sk_sp<Buffer>(static_cast<Buffer*>(resource));
     }
-    auto buffer = this->createBuffer(size, type, accessPattern, std::move(label));
+    auto buffer = this->createBuffer(size, type, accessPattern);
     if (!buffer) {
         return nullptr;
     }
 
     buffer->setKey(key);
+    buffer->setLabel(std::move(label));
     fResourceCache->insertResource(buffer.get());
     return buffer;
 }
@@ -294,6 +328,8 @@ void ResourceProvider::deleteBackendTexture(const BackendTexture& texture) {
 }
 
 void ResourceProvider::freeGpuResources() {
+    this->onFreeGpuResources();
+
     // TODO: Are there Resources that are ref'd by the ResourceProvider or its subclasses that need
     // be released? If we ever find that we're holding things directly on the ResourceProviders we
     // call down into the subclasses to allow them to release things.
@@ -302,6 +338,7 @@ void ResourceProvider::freeGpuResources() {
 }
 
 void ResourceProvider::purgeResourcesNotUsedSince(StdSteadyClock::time_point purgeTime) {
+    this->onPurgeResourcesNotUsedSince(purgeTime);
     fResourceCache->purgeResourcesNotUsedSince(purgeTime);
 }
 

@@ -31,9 +31,9 @@
 namespace WTF {
 
 // Allocate a new buffer, copying in currentCharacters (these may come from either m_string or m_buffer.
-template<typename AllocationCharacterType, typename CurrentCharacterType> void StringBuilder::allocateBuffer(const CurrentCharacterType* currentCharacters, unsigned requiredCapacity)
+template<typename AllocationCharacterType, typename CurrentCharacterType> void StringBuilder::allocateBuffer(std::span<const CurrentCharacterType> currentCharacters, unsigned requiredCapacity)
 {
-    AllocationCharacterType* bufferCharacters;
+    std::span<AllocationCharacterType> bufferCharacters;
     auto buffer = StringImpl::tryCreateUninitialized(requiredCapacity, bufferCharacters);
     if (UNLIKELY(!buffer)) {
         didOverflow();
@@ -41,7 +41,7 @@ template<typename AllocationCharacterType, typename CurrentCharacterType> void S
     }
 
     ASSERT(!hasOverflowed());
-    StringImpl::copyCharacters(bufferCharacters, { currentCharacters, m_length });
+    StringImpl::copyCharacters(bufferCharacters.data(), currentCharacters);
 
     m_buffer = WTFMove(buffer);
     m_string = { };
@@ -64,31 +64,31 @@ template<typename CharacterType> void StringBuilder::reallocateBuffer(unsigned r
         }
     }
 
-    allocateBuffer<CharacterType>(characters<CharacterType>(), requiredCapacity);
+    allocateBuffer<CharacterType>(span<CharacterType>(), requiredCapacity);
 }
 
 // Make 'additionalLength' additional capacity be available in m_buffer, update m_string & m_length to use,
 // that capacity and return a pointer to the newly allocated storage so the caller can write characters there.
 // Returns nullptr if allocation fails, length overflows, or if total capacity is 0 so no buffer is needed.
 // The caller has the responsibility for checking that CharacterType is the type of the existing buffer.
-template<typename CharacterType> CharacterType* StringBuilder::extendBufferForAppending(unsigned requiredLength)
+template<typename CharacterType> std::span<CharacterType> StringBuilder::extendBufferForAppending(unsigned requiredLength)
 {
     if (m_buffer && requiredLength <= m_buffer->length()) {
         m_string = { };
-        return const_cast<CharacterType*>(m_buffer->span<CharacterType>().data()) + std::exchange(m_length, requiredLength);
+        return spanConstCast<CharacterType>(m_buffer->span<CharacterType>().subspan(std::exchange(m_length, requiredLength)));
     }
     return extendBufferForAppendingSlowCase<CharacterType>(requiredLength);
 }
 
 // Shared by the other extendBuffer functions.
-template<typename CharacterType> CharacterType* StringBuilder::extendBufferForAppendingSlowCase(unsigned requiredLength)
+template<typename CharacterType> std::span<CharacterType> StringBuilder::extendBufferForAppendingSlowCase(unsigned requiredLength)
 {
     if (!requiredLength || hasOverflowed())
-        return nullptr;
+        return { };
     reallocateBuffer(expandedCapacity(capacity(), requiredLength));
     if (UNLIKELY(hasOverflowed()))
-        return nullptr;
-    return const_cast<CharacterType*>(m_buffer->span<CharacterType>().data()) + std::exchange(m_length, requiredLength);
+        return { };
+    return spanConstCast<CharacterType>(m_buffer->span<CharacterType>().subspan(std::exchange(m_length, requiredLength)));
 }
 
 } // namespace WTF

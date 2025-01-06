@@ -42,6 +42,7 @@ enum class ThrottlingReason : uint8_t {
     LowPowerMode                    = 1 << 2,
     NonInteractedCrossOriginFrame   = 1 << 3,
     ThermalMitigation               = 1 << 4,
+    AggressiveThermalMitigation     = 1 << 5,
 };
 
 // Allow a little more than 60fps to make sure we can at least hit that frame rate.

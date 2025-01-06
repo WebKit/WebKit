@@ -24,7 +24,6 @@
  */
 
 #import "config.h"
-#import "WebCoreArgumentCoders.h"
 
 #import "ArgumentCodersCocoa.h"
 #import <CoreText/CoreText.h>

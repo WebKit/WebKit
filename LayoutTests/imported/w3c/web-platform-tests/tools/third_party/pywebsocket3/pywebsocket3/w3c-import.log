@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/_stream_exceptions.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/common.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/dispatch.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/extensions.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/http_header_util.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/memorizingfile.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/msgutil.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/request_handler.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/server_util.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/standalone.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/stream.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/util.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/pywebsocket3/websocket_server.py

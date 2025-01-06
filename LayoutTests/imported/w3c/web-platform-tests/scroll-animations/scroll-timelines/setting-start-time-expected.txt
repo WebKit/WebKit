@@ -1,20 +1,16 @@
 
-Harness Error (TIMEOUT), message = null
-
-FAIL Setting the start time to an absolute time value throws exception assert_throws_dom: function "() => {
-    animation.startTime = CSSNumericValue.parse("300");
-  }" did not throw
-FAIL Setting the start time clears the hold time promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Setting the start time clears the hold time when the timeline is inactive promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Setting an unresolved start time sets the hold time promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Setting an unresolved start time sets the hold time to unresolved when the timeline is inactive promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Setting the start time resolves a pending ready promise promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Setting the start time resolves a pending ready promise when the timelineis inactive promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Setting an unresolved start time on a play-pending animation makes it idle assert_equals: Animation is idle expected "idle" but got "paused"
-FAIL Setting the start time updates the finished state promise_test: Unhandled rejection with value: object "TypeError: Type error"
-TIMEOUT Setting the start time on a running animation updates the play state Test timed out
-NOTRUN Setting the start time on a reverse running animation updates the play state
-NOTRUN Setting the start time resolves a pending pause task
-NOTRUN Setting the start time of a play-pending animation applies a pending playback rate
-NOTRUN Setting the start time of a playing animation applies a pending playback rate
+PASS Setting the start time to an absolute time value throws exception
+PASS Setting the start time clears the hold time
+PASS Setting the start time clears the hold time when the timeline is inactive
+PASS Setting an unresolved start time sets the hold time
+PASS Setting an unresolved start time sets the hold time to unresolved when the timeline is inactive
+PASS Setting the start time resolves a pending ready promise
+PASS Setting the start time resolves a pending ready promise when the timelineis inactive
+PASS Setting an unresolved start time on a play-pending animation makes it idle
+PASS Setting the start time updates the finished state
+PASS Setting the start time on a running animation updates the play state
+PASS Setting the start time on a reverse running animation updates the play state
+PASS Setting the start time resolves a pending pause task
+PASS Setting the start time of a play-pending animation applies a pending playback rate
+PASS Setting the start time of a playing animation applies a pending playback rate
 

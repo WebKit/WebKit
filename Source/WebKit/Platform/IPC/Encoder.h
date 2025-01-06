@@ -30,9 +30,17 @@
 #include <WebCore/PlatformExportMacros.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Forward.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/OptionSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+
+#if OS(DARWIN)
+namespace WTF {
+struct Mmap;
+}
+#endif
 
 namespace IPC {
 
@@ -42,7 +50,7 @@ enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t;
 template<typename, typename> struct ArgumentCoder;
 
 class Encoder final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Encoder);
 public:
     Encoder(MessageName, uint64_t destinationID);
     ~Encoder();
@@ -65,9 +73,6 @@ public:
     void setShouldMaintainOrderingWithAsyncMessages();
     bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || isFullySynchronousModeForTesting(); }
     bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
-#if ENABLE(IPC_TESTING_API)
-    void setSyncMessageDeserializationFailure();
-#endif
 
     void wrapForTesting(UniqueRef<Encoder>&&);
 
@@ -87,7 +92,8 @@ public:
         return *this;
     }
 
-    std::span<const uint8_t> span() const { return { m_buffer, m_bufferSize }; }
+    std::span<uint8_t> mutableSpan() { return capacityBuffer().first(m_bufferSize); }
+    std::span<const uint8_t> span() const { return capacityBuffer().first(m_bufferSize); }
 
     void addAttachment(Attachment&&);
     Vector<Attachment> releaseAttachments();
@@ -96,7 +102,10 @@ public:
     static constexpr bool isIPCEncoder = true;
 
 private:
-    uint8_t* grow(size_t alignment, size_t);
+    std::span<uint8_t> grow(size_t alignment, size_t);
+
+    std::span<uint8_t> capacityBuffer();
+    std::span<const uint8_t> capacityBuffer() const;
 
     bool hasAttachments() const;
 
@@ -104,16 +113,19 @@ private:
     const OptionSet<MessageFlags>& messageFlags() const;
     OptionSet<MessageFlags>& messageFlags();
 
+    void freeBufferIfNecessary();
+
     MessageName m_messageName;
     uint64_t m_destinationID;
 
-    uint8_t m_inlineBuffer[512];
+#if OS(DARWIN)
+    MallocSpan<uint8_t, WTF::Mmap> m_outOfLineBuffer;
+#else
+    MallocSpan<uint8_t> m_outOfLineBuffer;
+#endif
+    std::array<uint8_t, 512> m_inlineBuffer;
 
-    uint8_t* m_buffer { m_inlineBuffer };
-    uint8_t* m_bufferPointer { m_inlineBuffer };
-    
     size_t m_bufferSize { 0 };
-    size_t m_bufferCapacity { sizeof(m_inlineBuffer) };
 
     Vector<Attachment> m_attachments;
 };
@@ -125,15 +137,15 @@ inline void Encoder::encodeSpan(std::span<T, Extent> span)
     constexpr size_t alignment = alignof(T);
     ASSERT(!(reinterpret_cast<uintptr_t>(bytes.data()) % alignment));
 
-    uint8_t* buffer = grow(alignment, bytes.size());
-    memcpy(buffer, bytes.data(), bytes.size());
+    auto buffer = grow(alignment, bytes.size());
+    memcpySpan(buffer, bytes);
 }
 
 template<typename T>
 inline void Encoder::encodeObject(const T& object)
 {
     static_assert(std::is_trivially_copyable_v<T>);
-    encodeSpan(std::span(std::addressof(object), 1));
+    encodeSpan(unsafeMakeSpan(std::addressof(object), 1));
 }
 
 } // namespace IPC

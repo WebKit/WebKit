@@ -31,11 +31,11 @@
 
 typedef __m128i xmmi;
 
-static const alignas(16) uint32_t poly1305_x64_sse2_message_mask[4] = {
+alignas(16) static const uint32_t poly1305_x64_sse2_message_mask[4] = {
     (1 << 26) - 1, 0, (1 << 26) - 1, 0};
-static const alignas(16) uint32_t poly1305_x64_sse2_5[4] = {5, 0, 5, 0};
-static const alignas(16) uint32_t poly1305_x64_sse2_1shl128[4] = {
-    (1 << 24), 0, (1 << 24), 0};
+alignas(16) static const uint32_t poly1305_x64_sse2_5[4] = {5, 0, 5, 0};
+alignas(16) static const uint32_t poly1305_x64_sse2_1shl128[4] = {(1 << 24), 0,
+                                                                  (1 << 24), 0};
 
 static inline uint128_t add128(uint128_t a, uint128_t b) { return a + b; }
 
@@ -136,7 +136,8 @@ void CRYPTO_poly1305_init(poly1305_state *state, const uint8_t key[32]) {
 
 static void poly1305_first_block(poly1305_state_internal *st,
                                  const uint8_t *m) {
-  const xmmi MMASK = _mm_load_si128((const xmmi *)poly1305_x64_sse2_message_mask);
+  const xmmi MMASK =
+      _mm_load_si128((const xmmi *)poly1305_x64_sse2_message_mask);
   const xmmi FIVE = _mm_load_si128((const xmmi *)poly1305_x64_sse2_5);
   const xmmi HIBIT = _mm_load_si128((const xmmi *)poly1305_x64_sse2_1shl128);
   xmmi T5, T6;
@@ -181,7 +182,7 @@ static void poly1305_first_block(poly1305_state_internal *st,
     r20 = r20 & 0xfffffffffff;
     r21 += c;
 
-    p->R20.v = _mm_shuffle_epi32(_mm_cvtsi32_si128((uint32_t)(r20)&0x3ffffff),
+    p->R20.v = _mm_shuffle_epi32(_mm_cvtsi32_si128((uint32_t)(r20) & 0x3ffffff),
                                  _MM_SHUFFLE(1, 0, 1, 0));
     p->R21.v = _mm_shuffle_epi32(
         _mm_cvtsi32_si128((uint32_t)((r20 >> 26) | (r21 << 18)) & 0x3ffffff),
@@ -229,7 +230,8 @@ static void poly1305_first_block(poly1305_state_internal *st,
 
 static void poly1305_blocks(poly1305_state_internal *st, const uint8_t *m,
                             size_t bytes) {
-  const xmmi MMASK = _mm_load_si128((const xmmi *)poly1305_x64_sse2_message_mask);
+  const xmmi MMASK =
+      _mm_load_si128((const xmmi *)poly1305_x64_sse2_message_mask);
   const xmmi FIVE = _mm_load_si128((const xmmi *)poly1305_x64_sse2_5);
   const xmmi HIBIT = _mm_load_si128((const xmmi *)poly1305_x64_sse2_1shl128);
 
@@ -419,7 +421,8 @@ static void poly1305_blocks(poly1305_state_internal *st, const uint8_t *m,
 
 static size_t poly1305_combine(poly1305_state_internal *st, const uint8_t *m,
                                size_t bytes) {
-  const xmmi MMASK = _mm_load_si128((const xmmi *)poly1305_x64_sse2_message_mask);
+  const xmmi MMASK =
+      _mm_load_si128((const xmmi *)poly1305_x64_sse2_message_mask);
   const xmmi HIBIT = _mm_load_si128((const xmmi *)poly1305_x64_sse2_1shl128);
   const xmmi FIVE = _mm_load_si128((const xmmi *)poly1305_x64_sse2_5);
 
@@ -547,7 +550,7 @@ static size_t poly1305_combine(poly1305_state_internal *st, const uint8_t *m,
   r1 = ((uint64_t)p->R21.d[3] << 32) | (uint64_t)p->R21.d[1];
   r2 = ((uint64_t)p->R22.d[3] << 32) | (uint64_t)p->R22.d[1];
 
-  p->R20.d[2] = (uint32_t)(r0)&0x3ffffff;
+  p->R20.d[2] = (uint32_t)(r0) & 0x3ffffff;
   p->R21.d[2] = (uint32_t)((r0 >> 26) | (r1 << 18)) & 0x3ffffff;
   p->R22.d[2] = (uint32_t)((r1 >> 8)) & 0x3ffffff;
   p->R23.d[2] = (uint32_t)((r1 >> 34) | (r2 << 10)) & 0x3ffffff;
@@ -838,7 +841,7 @@ poly1305_donna_finish:
   c = (h1 >> 44);
   h1 &= 0xfffffffffff;
   t1 = (t1 >> 24);
-  h2 += (t1)+c;
+  h2 += (t1) + c;
 
   CRYPTO_store_u64_le(mac + 0, ((h0) | (h1 << 44)));
   CRYPTO_store_u64_le(mac + 8, ((h1 >> 20) | (h2 << 24)));

@@ -40,10 +40,18 @@ UniqueRef<T> makeUniqueRefWithoutFastMallocCheck(Args&&... args)
     return UniqueRef<T>(*new T(std::forward<Args>(args)...));
 }
 
+template<class T, class... Args>
+UniqueRef<T> makeUniqueRefWithoutRefCountedCheck(Args&&... args)
+{
+    static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "T should use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
+    return makeUniqueRefWithoutFastMallocCheck<T>(std::forward<Args>(args)...);
+}
+
 template<typename T, class... Args>
 UniqueRef<T> makeUniqueRef(Args&&... args)
 {
-    static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "T sould use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
+    static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "T should use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
+    static_assert(!HasRefPtrMemberFunctions<T>::value, "T should not be RefCounted");
     return makeUniqueRefWithoutFastMallocCheck<T>(std::forward<Args>(args)...);
 }
 
@@ -69,27 +77,19 @@ public:
         ASSERT(m_ref);
     }
 
-    T* ptr() RETURNS_NONNULL { ASSERT(m_ref); return m_ref.get(); }
     T* ptr() const RETURNS_NONNULL { ASSERT(m_ref); return m_ref.get(); }
+    T& get() const { ASSERT(m_ref); return *m_ref; }
 
-    T& get() { ASSERT(m_ref); return *m_ref; }
-    const T& get() const { ASSERT(m_ref); return *m_ref; }
+    T* operator&() const { ASSERT(m_ref); return m_ref.get(); }
+    T* operator->() const { ASSERT(m_ref); return m_ref.get(); }
 
-    T* operator&() { ASSERT(m_ref); return m_ref.get(); }
-    const T* operator&() const { ASSERT(m_ref); return m_ref.get(); }
-
-    T* operator->() { ASSERT(m_ref); return m_ref.get(); }
-    const T* operator->() const { ASSERT(m_ref); return m_ref.get(); }
-    
-    operator T&() { ASSERT(m_ref); return *m_ref; }
-    operator const T&() const { ASSERT(m_ref); return *m_ref; }
-
-    T& operator*() { ASSERT(m_ref); return *m_ref.get(); }
-    const T& operator*() const { ASSERT(m_ref); return *m_ref.get(); }
+    operator T&() const { ASSERT(m_ref); return *m_ref; }
+    T& operator*() const { ASSERT(m_ref); return *m_ref.get(); }
 
     std::unique_ptr<T> moveToUniquePtr() { return WTFMove(m_ref); }
 
     explicit UniqueRef(HashTableEmptyValueType) { }
+    bool isHashTableEmptyValue() const { return !m_ref; }
 
 private:
     template<class U, class... Args> friend UniqueRef<U> makeUniqueRefWithoutFastMallocCheck(Args&&...);
@@ -135,4 +135,5 @@ inline bool is(const UniqueRef<ArgType>& source)
 using WTF::UniqueRef;
 using WTF::makeUniqueRef;
 using WTF::makeUniqueRefWithoutFastMallocCheck;
+using WTF::makeUniqueRefWithoutRefCountedCheck;
 using WTF::makeUniqueRefFromNonNullUniquePtr;

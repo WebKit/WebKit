@@ -65,10 +65,10 @@ AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 0}
+AXElementBusy: 0
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
 AXLinkRelationshipType:
-AXElementBusy: 0
 AXPath: <AXLink>
 
 ------------
@@ -103,10 +103,10 @@ AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 0}
+AXElementBusy: 0
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
 AXLinkRelationshipType:
-AXElementBusy: 0
 AXPath: <AXLink>
 
 ------------

@@ -69,7 +69,7 @@ egl::Error SurfaceNULL::getMscRate(EGLint *numerator, EGLint *denominator)
     return egl::EglBadAccess();
 }
 
-void SurfaceNULL::setSwapInterval(EGLint interval) {}
+void SurfaceNULL::setSwapInterval(const egl::Display *display, EGLint interval) {}
 
 EGLint SurfaceNULL::getWidth() const
 {

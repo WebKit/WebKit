@@ -9,15 +9,29 @@
  */
 #include "test/pc/e2e/test_peer.h"
 
+#include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
+#include "api/jsep.h"
+#include "api/make_ref_counted.h"
+#include "api/peer_connection_interface.h"
+#include "api/rtc_error.h"
 #include "api/scoped_refptr.h"
+#include "api/set_remote_description_observer_interface.h"
+#include "api/stats/rtc_stats_collector_callback.h"
+#include "api/task_queue/pending_task_safety_flag.h"
 #include "api/test/pclf/media_configuration.h"
+#include "api/test/pclf/media_quality_test_params.h"
 #include "api/test/pclf/peer_configurer.h"
-#include "modules/audio_processing/include/audio_processing.h"
+#include "pc/peer_connection_wrapper.h"
+#include "pc/test/mock_peer_connection_observers.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -121,7 +135,6 @@ void TestPeer::Close() {
   signaling_thread_task_safety_->SetNotAlive();
   wrapper_->pc()->Close();
   remote_ice_candidates_.clear();
-  audio_processing_ = nullptr;
   video_sources_.clear();
   wrapper_ = nullptr;
   worker_thread_ = nullptr;
@@ -134,7 +147,6 @@ TestPeer::TestPeer(
     Params params,
     ConfigurableParams configurable_params,
     std::vector<PeerConfigurer::VideoSource> video_sources,
-    rtc::scoped_refptr<AudioProcessing> audio_processing,
     std::unique_ptr<rtc::Thread> worker_thread)
     : params_(std::move(params)),
       configurable_params_(std::move(configurable_params)),
@@ -142,8 +154,7 @@ TestPeer::TestPeer(
       wrapper_(std::make_unique<PeerConnectionWrapper>(std::move(pc_factory),
                                                        std::move(pc),
                                                        std::move(observer))),
-      video_sources_(std::move(video_sources)),
-      audio_processing_(audio_processing) {
+      video_sources_(std::move(video_sources)) {
   signaling_thread_task_safety_ = PendingTaskSafetyFlag::CreateDetached();
 }
 

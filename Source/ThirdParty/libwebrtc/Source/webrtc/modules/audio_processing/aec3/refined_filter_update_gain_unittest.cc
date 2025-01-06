@@ -91,7 +91,7 @@ void RunFilterUpdateTest(int num_blocks_to_process,
       RenderDelayBuffer::Create(config, kSampleRateHz, kNumRenderChannels));
   AecState aec_state(config, kNumCaptureChannels);
   RenderSignalAnalyzer render_signal_analyzer(config);
-  absl::optional<DelayEstimate> delay_estimate;
+  std::optional<DelayEstimate> delay_estimate;
   std::array<float, kFftLength> s_scratch;
   std::array<float, kBlockSize> s;
   FftData S;

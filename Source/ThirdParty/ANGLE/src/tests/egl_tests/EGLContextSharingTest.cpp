@@ -1000,7 +1000,7 @@ TEST_P(EGLContextSharingTestNoFixture, InactiveThreadDoesntPreventCleanup)
 // Test that eglTerminate() with a thread doesn't cause other threads to crash.
 TEST_P(EGLContextSharingTestNoFixture, EglTerminateMultiThreaded)
 {
-    // http://anglebug.com/6208
+    // http://anglebug.com/42264731
     // The following EGL calls led to a crash in eglMakeCurrent():
     //
     // Thread A: eglMakeCurrent(context A)
@@ -1026,7 +1026,7 @@ TEST_P(EGLContextSharingTestNoFixture, EglTerminateMultiThreaded)
 
     // Must be after the eglMakeCurrent() so renderer string is initialized.
     ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
-    // TODO(http://www.anglebug.com/6304): Fails with OpenGL ES backend.
+    // TODO(http://anglebug.com/42264822): Fails with OpenGL ES backend.
     ANGLE_SKIP_TEST_IF(IsOpenGLES());
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
@@ -1144,7 +1144,7 @@ TEST_P(EGLContextSharingTestNoFixture, EglDestoryContextManyTimesSameContext)
 
     // Must be after the eglMakeCurrent() so renderer string is initialized.
     ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
-    // TODO(http://www.anglebug.com/6304): Fails with OpenGL ES backend.
+    // TODO(http://anglebug.com/42264822): Fails with OpenGL ES backend.
     ANGLE_SKIP_TEST_IF(IsOpenGLES());
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
@@ -1282,7 +1282,7 @@ TEST_P(EGLContextSharingTestNoFixture, EglTerminateMultipleTimes)
     EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, mSurface, mSurface, mContexts[1]));
 
     // Must be after the eglMakeCurrent() so renderer string is initialized.
-    // TODO(http://www.anglebug.com/6304): Fails with Mac + OpenGL backend.
+    // TODO(http://anglebug.com/42264822): Fails with Mac + OpenGL backend.
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
@@ -1600,12 +1600,15 @@ ANGLE_INSTANTIATE_TEST(EGLContextSharingTest,
                        ES2_D3D11(),
                        ES3_D3D11(),
                        ES2_METAL(),
+                       ES3_METAL(),
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_VULKAN(),
                        ES3_VULKAN());
 
 ANGLE_INSTANTIATE_TEST(EGLContextSharingTestNoFixture,
+                       WithNoFixture(ES2_METAL()),
+                       WithNoFixture(ES3_METAL()),
                        WithNoFixture(ES2_OPENGLES()),
                        WithNoFixture(ES3_OPENGLES()),
                        WithNoFixture(ES2_OPENGL()),

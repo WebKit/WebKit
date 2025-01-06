@@ -33,6 +33,8 @@
 
 using namespace JSC;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 const JSClassDefinition kJSClassDefinitionEmpty = { 0, 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 
 OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass* protoClass) 
@@ -194,3 +196,5 @@ JSObject* OpaqueJSClass::prototype(JSGlobalObject* globalObject)
     jsClassData.cachedPrototype = Weak<JSObject>(prototype);
     return prototype;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

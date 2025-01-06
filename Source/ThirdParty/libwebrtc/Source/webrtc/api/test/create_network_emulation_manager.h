@@ -13,15 +13,22 @@
 
 #include <memory>
 
+#include "api/field_trials_view.h"
 #include "api/test/network_emulation_manager.h"
 
 namespace webrtc {
 
 // Returns a non-null NetworkEmulationManager instance.
 std::unique_ptr<NetworkEmulationManager> CreateNetworkEmulationManager(
-    TimeMode time_mode = TimeMode::kRealTime,
+    NetworkEmulationManagerConfig config = NetworkEmulationManagerConfig());
+
+[[deprecated("Use version with NetworkEmulationManagerConfig)")]]
+std::unique_ptr<NetworkEmulationManager>
+CreateNetworkEmulationManager(
+    TimeMode time_mode,
     EmulatedNetworkStatsGatheringMode stats_gathering_mode =
-        EmulatedNetworkStatsGatheringMode::kDefault);
+        EmulatedNetworkStatsGatheringMode::kDefault,
+    const FieldTrialsView* field_trials = nullptr);
 
 }  // namespace webrtc
 

@@ -37,13 +37,14 @@
 #include "Timer.h"
 #include "WebCoreInstanceHandle.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 static const int kFullScreenAnimationDuration = 500; // milliseconds 
 
 class FullScreenController::Private : public FullScreenClient  {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Private);
 public:
     Private(FullScreenController* controller, FullScreenControllerClient* client) 
         : m_controller(controller)

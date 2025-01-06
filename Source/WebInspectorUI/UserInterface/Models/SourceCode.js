@@ -161,7 +161,7 @@ WI.SourceCode = class SourceCode extends WI.Object
 
         this._sourceMaps.push(sourceMap);
 
-        this.dispatchEventToListeners(WI.SourceCode.Event.SourceMapAdded);
+        this.dispatchEventToListeners(WI.SourceCode.Event.SourceMapAdded, {sourceMap});
     }
 
     get formatterSourceMap()

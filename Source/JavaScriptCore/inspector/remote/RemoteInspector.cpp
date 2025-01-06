@@ -42,6 +42,10 @@ bool RemoteInspector::startEnabled = true;
 std::atomic<bool> RemoteInspector::needMachSandboxExtension = false;
 #endif
 
+#if !PLATFORM(COCOA)
+RemoteInspector::~RemoteInspector() = default;
+#endif
+
 void RemoteInspector::startDisabled()
 {
     RemoteInspector::startEnabled = false;
@@ -257,9 +261,8 @@ void RemoteInspector::updateHasActiveDebugSession()
     // Legacy iOS WebKit 1 had a notification. This will need to be smarter with WebKit2.
 }
 
-RemoteInspector::Client::~Client()
-{
-}
+RemoteInspector::Client::Client() = default;
+RemoteInspector::Client::~Client() = default;
 
 } // namespace Inspector
 

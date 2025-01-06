@@ -10,34 +10,34 @@
 
 #include "api/test/audioproc_float.h"
 
+#include <memory>
 #include <utility>
 
+#include "absl/base/nullability.h"
+#include "api/audio/audio_processing.h"
+#include "api/audio/builtin_audio_processing_builder.h"
 #include "modules/audio_processing/test/audioproc_float_impl.h"
 
 namespace webrtc {
 namespace test {
 
-int AudioprocFloat(rtc::scoped_refptr<AudioProcessing> audio_processing,
-                   int argc,
-                   char* argv[]) {
-  return AudioprocFloatImpl(std::move(audio_processing), argc, argv);
+int AudioprocFloat(int argc, char* argv[]) {
+  return AudioprocFloatImpl(std::make_unique<BuiltinAudioProcessingBuilder>(),
+                            argc, argv);
 }
 
-int AudioprocFloat(std::unique_ptr<AudioProcessingBuilder> ap_builder,
-                   int argc,
-                   char* argv[]) {
-  return AudioprocFloatImpl(std::move(ap_builder), argc, argv,
-                            /*input_aecdump=*/"",
-                            /*processed_capture_samples=*/nullptr);
+int AudioprocFloat(
+    absl::Nonnull<std::unique_ptr<BuiltinAudioProcessingBuilder>> ap_builder,
+    int argc,
+    char* argv[]) {
+  return AudioprocFloatImpl(std::move(ap_builder), argc, argv);
 }
 
-int AudioprocFloat(std::unique_ptr<AudioProcessingBuilder> ap_builder,
-                   int argc,
-                   char* argv[],
-                   absl::string_view input_aecdump,
-                   std::vector<float>* processed_capture_samples) {
-  return AudioprocFloatImpl(std::move(ap_builder), argc, argv, input_aecdump,
-                            processed_capture_samples);
+int AudioprocFloat(
+    absl::Nonnull<std::unique_ptr<AudioProcessingBuilderInterface>> ap_builder,
+    int argc,
+    char* argv[]) {
+  return AudioprocFloatImpl(std::move(ap_builder), argc, argv);
 }
 
 }  // namespace test

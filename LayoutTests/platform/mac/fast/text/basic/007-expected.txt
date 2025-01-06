@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x42 [border: (2px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 784x42 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 780x38
           RenderTableRow {TR} at (0,0) size 780x38
-            RenderTableCell {TD} at (0,9) size 721x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,9) size 721x20 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,10) size 69x18
                 text run at (1,1) width 69: "A Big Cell"
-            RenderTableCell {TD} at (720,0) size 60x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (720,0) size 60x38 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 35x36
                 text run at (1,1) width 11: "A"
                 text run at (1,19) width 35: "small"
               RenderInline {SPAN} at (35,19) size 24x18
                 RenderText {#text} at (35,19) size 24x18
                   text run at (35,19) width 24: "cell"
-      RenderTable {TABLE} at (0,42) size 784x42 [border: (2px outset #808080)]
+      RenderTable {TABLE} at (0,42) size 784x42 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 780x38
           RenderTableRow {TR} at (0,0) size 780x38
-            RenderTableCell {TD} at (0,9) size 715x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,9) size 715x20 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,10) size 69x18
                 text run at (1,1) width 69: "A Big Cell"
-            RenderTableCell {TD} at (714,0) size 66x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (714,0) size 66x38 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 50x18
                 text run at (1,1) width 50: "A small"
                 text run at (50,1) width 1: " "
@@ -31,13 +31,13 @@ layer at (0,0) size 800x600
                   text run at (1,19) width 24: "cell"
               RenderText {#text} at (24,19) size 41x18
                 text run at (24,19) width 41: "block!"
-      RenderTable {TABLE} at (0,84) size 784x24 [border: (2px outset #808080)]
+      RenderTable {TABLE} at (0,84) size 784x24 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 780x20
           RenderTableRow {TR} at (0,0) size 780x20
-            RenderTableCell {TD} at (0,0) size 706x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 706x20 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 69x18
                 text run at (1,1) width 69: "A Big Cell"
-            RenderTableCell {TD} at (705,0) size 75x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (705,0) size 75x20 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 50x18
                 text run at (1,1) width 50: "A small"
               RenderInline {SPAN} at (50,1) size 24x18

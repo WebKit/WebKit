@@ -109,6 +109,9 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
         case "httpOnly":
             cell.textContent = cookie.httpOnly ? checkmark : zeroWidthSpace;
             break;
+        case "partitioned":
+            cell.textContent = cookie.partitioned ? checkmark : zeroWidthSpace;
+            break;
         case "sameSite":
             cell.textContent = cookie.sameSite === WI.Cookie.SameSiteType.None ? emDash : WI.Cookie.displayNameForSameSiteType(cookie.sameSite);
             break;
@@ -251,6 +254,7 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
             this._responseCookiesTable.addColumn(new WI.TableColumn("value", WI.UIString("Value"), {minWidth: 150, hideable: false}));
             this._responseCookiesTable.addColumn(new WI.TableColumn("domain", WI.unlocalizedString("Domain"), {}));
             this._responseCookiesTable.addColumn(new WI.TableColumn("path", WI.unlocalizedString("Path"), {}));
+            this._responseCookiesTable.addColumn(new WI.TableColumn("partitioned", WI.unlocalizedString("Partitioned"), {}));
             this._responseCookiesTable.addColumn(new WI.TableColumn("expires", WI.unlocalizedString("Expires"), {maxWidth: 150}));
             this._responseCookiesTable.addColumn(new WI.TableColumn("maxAge", WI.unlocalizedString("Max-Age"), {maxWidth: 90, align: "right"}));
             this._responseCookiesTable.addColumn(new WI.TableColumn("secure", WI.unlocalizedString("Secure"), {minWidth: 55, maxWidth: 65, align: "center"}));

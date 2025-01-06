@@ -48,10 +48,9 @@ DRMDeviceManager::~DRMDeviceManager() = default;
 
 static void drmForeachDevice(Function<bool(drmDevice*)>&& functor)
 {
-    drmDevicePtr devices[64];
-    memset(devices, 0, sizeof(devices));
+    std::array<drmDevicePtr, 64> devices = { };
 
-    int numDevices = drmGetDevices2(0, devices, std::size(devices));
+    int numDevices = drmGetDevices2(0, devices.data(), std::size(devices));
     if (numDevices <= 0)
         return;
 
@@ -59,28 +58,30 @@ static void drmForeachDevice(Function<bool(drmDevice*)>&& functor)
         if (!functor(devices[i]))
             break;
     }
-    drmFreeDevices(devices, numDevices);
+    drmFreeDevices(devices.data(), numDevices);
 }
 
 void DRMDeviceManager::initializeMainDevice(const String& deviceFile)
 {
+    RELEASE_ASSERT(isMainThread());
     RELEASE_ASSERT(!m_mainDevice.isInitialized);
     m_mainDevice.isInitialized = true;
     if (deviceFile.isEmpty())
         return;
 
     drmForeachDevice([&](drmDevice* device) {
+        const auto nodes = unsafeMakeSpan(device->nodes, DRM_NODE_MAX);
         for (int i = 0; i < DRM_NODE_MAX; ++i) {
             if (!(device->available_nodes & (1 << i)))
                 continue;
 
-            if (String::fromUTF8(device->nodes[i]) == deviceFile) {
+            if (String::fromUTF8(nodes[i]) == deviceFile) {
                 RELEASE_ASSERT(device->available_nodes & (1 << DRM_NODE_PRIMARY));
                 if (device->available_nodes & (1 << DRM_NODE_RENDER)) {
-                    m_mainDevice.primaryNode = DRMDeviceNode::create(CString { device->nodes[DRM_NODE_PRIMARY] });
-                    m_mainDevice.renderNode = DRMDeviceNode::create(CString { device->nodes[DRM_NODE_RENDER] });
+                    m_mainDevice.primaryNode = DRMDeviceNode::create(CString { nodes[DRM_NODE_PRIMARY] });
+                    m_mainDevice.renderNode = DRMDeviceNode::create(CString { nodes[DRM_NODE_RENDER] });
                 } else
-                    m_mainDevice.primaryNode = DRMDeviceNode::create(CString { device->nodes[DRM_NODE_PRIMARY] });
+                    m_mainDevice.primaryNode = DRMDeviceNode::create(CString { nodes[DRM_NODE_PRIMARY] });
                 return false;
             }
         }
@@ -111,18 +112,29 @@ struct gbm_device* DRMDeviceManager::mainGBMDeviceNode(NodeType nodeType) const
 
 RefPtr<DRMDeviceNode> DRMDeviceManager::deviceNode(const CString& filename)
 {
+    RELEASE_ASSERT(isMainThread());
     RELEASE_ASSERT(m_mainDevice.isInitialized);
 
     if (filename.isNull())
         return nullptr;
 
-    if (m_mainDevice.primaryNode && m_mainDevice.primaryNode->filename() == filename)
-        return m_mainDevice.primaryNode;
+    auto node = [&] -> RefPtr<DRMDeviceNode> {
+        if (m_mainDevice.primaryNode && m_mainDevice.primaryNode->filename() == filename)
+            return m_mainDevice.primaryNode;
 
-    if (m_mainDevice.renderNode && m_mainDevice.renderNode->filename() == filename)
-        return m_mainDevice.renderNode;
+        if (m_mainDevice.renderNode && m_mainDevice.renderNode->filename() == filename)
+            return m_mainDevice.renderNode;
 
-    return DRMDeviceNode::create(CString { filename.data() });
+        return DRMDeviceNode::create(CString { filename.data() });
+    }();
+
+#if USE(GBM)
+    // Make sure GBMDevice is created in the main thread.
+    if (node)
+        node->gbmDevice();
+#endif
+
+    return node;
 }
 
 } // namespace WebCore

@@ -34,17 +34,21 @@
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "RenderButton.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
 #endif
 
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+#include "SpatialImageControls.h"
+#endif
+
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLButtonElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLButtonElement);
 
 using namespace HTMLNames;
 
@@ -136,16 +140,26 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
     if (ImageControlsMac::handleEvent(*this, event))
         return;
 #endif
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    if (SpatialImageControls::handleEvent(*this, event))
+        return;
+#endif
     auto& eventNames = WebCore::eventNames();
     if (event.type() == eventNames.DOMActivateEvent && !isDisabledFormControl()) {
         RefPtr<HTMLFormElement> protectedForm(form());
 
-        if (protectedForm) {
+        if (commandForElement()) {
+            if (m_type != BUTTON && form())
+                return;
+
+            handleCommand();
+
+        } else if (protectedForm) {
             // Update layout before processing form actions in case the style changes
             // the Form or button relationships.
             protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
-            if (auto currentForm = form()) {
+            if (RefPtr currentForm = form()) {
                 if (m_type == SUBMIT)
                     currentForm->submitIfPossible(&event, this);
 
@@ -155,10 +169,11 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
 
             if (m_type == SUBMIT || m_type == RESET)
                 event.setDefaultHandled();
-        } else if (invokeTargetElement()) {
-            handleInvokeAction();
-        } else
-            handlePopoverTargetAction();
+        }
+
+        if (!(protectedForm && m_type == SUBMIT))
+            handlePopoverTargetAction(event.target());
+
     }
 
     if (RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {

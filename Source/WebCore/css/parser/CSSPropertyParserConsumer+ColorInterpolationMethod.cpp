@@ -49,7 +49,7 @@ static std::optional<HueInterpolationMethod> consumeHueInterpolationMethod(CSSPa
     return consumeIdentUsingMapping(range, hueInterpolationMethodMap);
 }
 
-std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParserTokenRange& args)
+std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParserTokenRange& args, const CSSParserContext&)
 {
     // <rectangular-color-space> = srgb | srgb-linear | display-p3 | a98-rgb | prophoto-rgb | rec2020 | lab | oklab | xyz | xyz-d50 | xyz-d65
     // <polar-color-space> = hsl | hwb | lch | oklch

@@ -29,6 +29,9 @@
 #if ENABLE(ZYDIS)
 
 #include "ZydisRegister.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 /* ============================================================================================== */
 /* Register strings                                                                               */
@@ -305,5 +308,7 @@ ZydisRegisterWidth ZydisRegisterClassGetWidth(ZydisMachineMode mode,
 /* ---------------------------------------------------------------------------------------------- */
 
 /* ============================================================================================== */
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ENABLE(ZYDIS) */

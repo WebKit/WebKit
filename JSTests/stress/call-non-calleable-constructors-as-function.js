@@ -31,6 +31,7 @@ test(Int16Array);
 test(Uint16Array);
 test(Int32Array);
 test(Uint32Array);
+test(Float16Array);
 test(Float32Array);
 test(Float64Array);
 
@@ -51,7 +52,7 @@ test(Promise);
 // https://tc39.github.io/ecma262/#sec-proxy-constructor
 test(Proxy);
 
-let expectedNumTests = 34;
+let expectedNumTests = 36;
 if (numTests != expectedNumTests) {
     errors += "Not all tests were run: ran " + numTests + " out of " + expectedNumTests + " \n";
 }

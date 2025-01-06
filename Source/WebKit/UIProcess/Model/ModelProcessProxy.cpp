@@ -34,6 +34,7 @@
 #include "ModelProcessCreationParameters.h"
 #include "ModelProcessMessages.h"
 #include "ModelProcessProxyMessages.h"
+#include "ProcessTerminationReason.h"
 #include "ProvisionalPageProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageMessages.h"
@@ -44,12 +45,13 @@
 #include "WebProcessProxy.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/LogInitialization.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/LogInitialization.h>
 #include <wtf/MachSendRight.h>
+#include <wtf/RuntimeApplicationChecks.h>
+#include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, this->connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 
 namespace WebKit {
 using namespace WebCore;
@@ -59,6 +61,8 @@ static WeakPtr<ModelProcessProxy>& singleton()
     static NeverDestroyed<WeakPtr<ModelProcessProxy>> singleton;
     return singleton;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelProcessProxy);
 
 Ref<ModelProcessProxy> ModelProcessProxy::getOrCreate()
 {
@@ -87,12 +91,21 @@ ModelProcessProxy::ModelProcessProxy()
     parameters.parentPID = getCurrentProcessID();
 
     // Initialize the model process.
-    send(Messages::ModelProcess::InitializeModelProcess(WTFMove(parameters)), 0);
+    sendWithAsyncReply(Messages::ModelProcess::InitializeModelProcess(WTFMove(parameters)), [initializationActivityAndGrant = initializationActivityAndGrant()] () { }, 0);
 
     updateProcessAssertion();
 }
 
 ModelProcessProxy::~ModelProcessProxy() = default;
+
+void ModelProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
+{
+    if (auto process = WebProcessProxy::processForIdentifier(webProcessIdentifier)) {
+        MESSAGE_CHECK(process->sharedPreferencesForWebProcessValue().modelElementEnabled);
+        MESSAGE_CHECK(process->sharedPreferencesForWebProcessValue().modelProcessEnabled);
+        process->requestTermination(ProcessTerminationReason::RequestedByModelProcess);
+    }
+}
 
 void ModelProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
@@ -106,7 +119,7 @@ void ModelProcessProxy::connectionWillOpen(IPC::Connection&)
 
 void ModelProcessProxy::processWillShutDown(IPC::Connection& connection)
 {
-    ASSERT_UNUSED(connection, this->connection() == &connection);
+    ASSERT_UNUSED(connection, &this->connection() == &connection);
 }
 
 void ModelProcessProxy::createModelProcessConnection(WebProcessProxy& webProcessProxy, IPC::Connection::Handle&& connectionIdentifier, ModelProcessConnectionParameters&& parameters)
@@ -121,6 +134,11 @@ void ModelProcessProxy::createModelProcessConnection(WebProcessProxy& webProcess
             return;
         stopResponsivenessTimer();
     }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+void ModelProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProxy& webProcessProxy, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::ModelProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTFMove(sharedPreferencesForWebProcess) }, WTFMove(completionHandler));
 }
 
 void ModelProcessProxy::modelProcessExited(ProcessTerminationReason reason)
@@ -140,6 +158,10 @@ void ModelProcessProxy::modelProcessExited(ProcessTerminationReason reason)
     case ProcessTerminationReason::NavigationSwap:
     case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::RequestedByGPUProcess:
+    case ProcessTerminationReason::RequestedByModelProcess:
+    case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:
+    case ProcessTerminationReason::ModelProcessCrashedTooManyTimes:
+    case ProcessTerminationReason::NonMainFrameWebContentProcessCrash:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -195,7 +217,7 @@ void ModelProcessProxy::didClose(IPC::Connection&)
     modelProcessExited(ProcessTerminationReason::Crash); // May cause |this| to get deleted.
 }
 
-void ModelProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
+void ModelProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName, int32_t)
 {
     logInvalidMessage(connection, messageName);
 
@@ -209,11 +231,13 @@ void ModelProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IP
     didClose(connection);
 }
 
-void ModelProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
+void ModelProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier&& connectionIdentifier)
 {
-    AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
+    bool didTerminate = !connectionIdentifier;
 
-    if (!connectionIdentifier) {
+    AuxiliaryProcessProxy::didFinishLaunching(launcher, WTFMove(connectionIdentifier));
+
+    if (didTerminate) {
         modelProcessExited(ProcessTerminationReason::Crash);
         return;
     }
@@ -240,12 +264,12 @@ void ModelProcessProxy::updateProcessAssertion()
     }
 
     if (hasAnyForegroundWebProcesses) {
-        if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses))
+        if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses.get()))
             m_activityFromWebProcesses = throttler().foregroundActivity("Model for foreground view(s)"_s);
         return;
     }
     if (hasAnyBackgroundWebProcesses) {
-        if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses))
+        if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses.get()))
             m_activityFromWebProcesses = throttler().backgroundActivity("Model for background view(s)"_s);
         return;
     }
@@ -276,7 +300,11 @@ void ModelProcessProxy::didCreateContextForVisibilityPropagation(WebPageProxyIde
         RELEASE_LOG(Process, "ModelProcessProxy::didCreateContextForVisibilityPropagation() No WebPageProxy with this identifier");
         return;
     }
-    if (page->webPageID() == pageID) {
+
+    MESSAGE_CHECK(page->preferences().modelElementEnabled());
+    MESSAGE_CHECK(page->preferences().modelProcessEnabled());
+
+    if (page->webPageIDInMainFrameProcess() == pageID) {
         page->didCreateContextInModelProcessForVisibilityPropagation(contextID);
         return;
     }

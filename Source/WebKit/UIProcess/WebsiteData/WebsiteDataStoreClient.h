@@ -32,6 +32,7 @@
 #include <WebCore/NotificationData.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 enum class WasPrivateRelayed : bool;
@@ -47,7 +48,7 @@ class WebPageProxy;
 class WebsiteDataStore;
 
 class WebsiteDataStoreClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebsiteDataStoreClient);
 public:
     virtual ~WebsiteDataStoreClient() { }
 
@@ -122,9 +123,9 @@ public:
     virtual void didExceedMemoryFootprintThreshold(size_t, const String&, unsigned, Seconds, bool, WebCore::WasPrivateRelayed, CanSuspend)
     {
     }
-    virtual std::optional<Vector<uint8_t>> webCryptoMasterKey()
+    virtual void webCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
     {
-        return std::nullopt;
+        return completionHandler(std::nullopt);
     }
 };
 

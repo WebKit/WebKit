@@ -13,11 +13,12 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
+#include "api/environment/environment.h"
 #include "api/test/video_quality_analyzer_interface.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
@@ -78,8 +79,8 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
     int32_t Decoded(VideoFrame& decodedImage) override;
     int32_t Decoded(VideoFrame& decodedImage, int64_t decode_time_ms) override;
     void Decoded(VideoFrame& decodedImage,
-                 absl::optional<int32_t> decode_time_ms,
-                 absl::optional<uint8_t> qp) override;
+                 std::optional<int32_t> decode_time_ms,
+                 std::optional<uint8_t> qp) override;
 
     int32_t IrrelevantSimulcastStreamDecoded(uint16_t frame_id,
                                              uint32_t timestamp_ms);
@@ -96,8 +97,8 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
   };
 
   void OnFrameDecoded(VideoFrame* frame,
-                      absl::optional<int32_t> decode_time_ms,
-                      absl::optional<uint8_t> qp);
+                      std::optional<int32_t> decode_time_ms,
+                      std::optional<uint8_t> qp);
 
   const std::string peer_name_;
   const std::string implementation_name_;
@@ -113,7 +114,7 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
 
   // Name of the video codec type used. Ex: VP8, VP9, H264 etc.
   std::string codec_name_ RTC_GUARDED_BY(mutex_);
-  std::map<uint32_t, absl::optional<uint16_t>> timestamp_to_frame_id_
+  std::map<uint32_t, std::optional<uint16_t>> timestamp_to_frame_id_
       RTC_GUARDED_BY(mutex_);
   // Stores currently being decoded images by timestamp. Because
   // EncodedImageDataExtractor can create new copy on EncodedImage we need to
@@ -136,8 +137,8 @@ class QualityAnalyzingVideoDecoderFactory : public VideoDecoderFactory {
 
   // Methods of VideoDecoderFactory interface.
   std::vector<SdpVideoFormat> GetSupportedFormats() const override;
-  std::unique_ptr<VideoDecoder> CreateVideoDecoder(
-      const SdpVideoFormat& format) override;
+  std::unique_ptr<VideoDecoder> Create(const Environment& env,
+                                       const SdpVideoFormat& format) override;
 
  private:
   const std::string peer_name_;

@@ -88,6 +88,15 @@ public:
         // representation, this tells us what register B3 picked.
         Register,
 
+#if USE(JSVALUE32_64)
+        // This is only used for BBQ OSR on 32-bits.
+        // LLInt uses 64-bit stack values to represent I64s.
+        // BBQ uses register pairs.
+        // OMG treats I64 values as tuples, and tries to agressively de-structure them. It
+        // should never see this representation, except when tiering up from BBQ.
+        RegisterPair,
+#endif
+
         // As an input representation, this forces a particular register and states that
         // the register is used late. This means that the register is used after the result
         // is defined (i.e, the result will interfere with this as an input).
@@ -103,9 +112,9 @@ public:
         StackArgument,
 
         // As an output representation, this tells us that B3 constant-folded the value.
-        Constant
+        Constant,
     };
-    
+
     ValueRep()
         : m_kind(WarmAny)
     {
@@ -120,7 +129,14 @@ public:
     ValueRep(Kind kind)
         : m_kind(kind)
     {
-        ASSERT(kind == WarmAny || kind == ColdAny || kind == LateColdAny || kind == SomeRegister || kind == SomeRegisterWithClobber || kind == SomeEarlyRegister || kind == SomeLateRegister);
+        ASSERT(kind == WarmAny
+            || kind == ColdAny
+            || kind == LateColdAny
+            || kind == SomeRegister
+            || kind == SomeRegisterWithClobber
+            || kind == SomeEarlyRegister
+            || kind == SomeLateRegister
+        );
     }
 
 #if ENABLE(WEBASSEMBLY)
@@ -147,7 +163,18 @@ public:
             ASSERT_NOT_REACHED();
         }
     }
-#endif
+
+#if USE(JSVALUE32_64)
+    // Only use this for OSR stackmaps.
+    enum OSRValueRepTag { OSRValueRep };
+    ValueRep(OSRValueRepTag, Reg lo, Reg hi)
+    {
+        m_kind = RegisterPair;
+        u.regPair.regLo = lo;
+        u.regPair.regHi = hi;
+    }
+#endif // USE(JSVALUE32_64)
+#endif // ENABLE(WEBASSEMBLY)
 
     static ValueRep reg(Reg reg)
     {
@@ -187,12 +214,12 @@ public:
 
     static ValueRep constantDouble(double value)
     {
-        return ValueRep::constant(bitwise_cast<int64_t>(value));
+        return ValueRep::constant(std::bit_cast<int64_t>(value));
     }
 
     static ValueRep constantFloat(float value)
     {
-        return ValueRep::constant(static_cast<uint64_t>(bitwise_cast<uint32_t>(value)));
+        return ValueRep::constant(static_cast<uint64_t>(std::bit_cast<uint32_t>(value)));
     }
 
     Kind kind() const { return m_kind; }
@@ -221,7 +248,23 @@ public:
     bool isAny() const { return kind() == WarmAny || kind() == ColdAny || kind() == LateColdAny; }
 
     bool isReg() const { return kind() == Register || kind() == LateRegister || kind() == SomeLateRegister; }
-    
+
+#if USE(JSVALUE32_64)
+    bool isRegPair(OSRValueRepTag) const { return kind() == RegisterPair; }
+
+    GPRReg gprLo(OSRValueRepTag) const
+    {
+        ASSERT(isRegPair(OSRValueRep));
+        return u.regPair.regLo.gpr();
+    }
+
+    GPRReg gprHi(OSRValueRepTag) const
+    {
+        ASSERT(isRegPair(OSRValueRep));
+        return u.regPair.regHi.gpr();
+    }
+#endif
+
     Reg reg() const
     {
         ASSERT(isReg());
@@ -260,12 +303,12 @@ public:
 
     double doubleValue() const
     {
-        return bitwise_cast<double>(value());
+        return std::bit_cast<double>(value());
     }
 
     float floatValue() const
     {
-        return bitwise_cast<float>(static_cast<uint32_t>(static_cast<uint64_t>(value())));
+        return std::bit_cast<float>(static_cast<uint32_t>(static_cast<uint64_t>(value())));
     }
 
     ValueRep withOffset(intptr_t offset) const
@@ -312,6 +355,12 @@ private:
         intptr_t offsetFromFP;
         intptr_t offsetFromSP;
         int64_t value;
+
+        struct RegisterPair {
+            Reg regLo;
+            Reg regHi;
+        };
+        RegisterPair regPair;
 
         U()
         {

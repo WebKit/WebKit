@@ -42,8 +42,11 @@
 #include "StyleGradientImage.h"
 #include "StyleNamedImage.h"
 #include "StylePaintImage.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleMultiImage);
 
 StyleMultiImage::StyleMultiImage(Type type)
     : StyleImage { type }

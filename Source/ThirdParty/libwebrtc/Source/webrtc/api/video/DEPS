@@ -5,6 +5,7 @@ specific_include_rules = {
     "+modules/video_coding/include/video_coding_defines.h",
   ],
   "encoded_image\.h" : [
+    "+rtc_base/buffer.h",
     "+rtc_base/ref_count.h",
   ],
 

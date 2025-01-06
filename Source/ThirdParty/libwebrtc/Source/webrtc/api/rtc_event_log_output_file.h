@@ -16,6 +16,7 @@
 
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "api/rtc_event_log_output.h"
 #include "rtc_base/system/file_wrapper.h"
 

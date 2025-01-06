@@ -1,10 +1,10 @@
-layer at (0,0) size 785x1317
+layer at (0,0) size 785x1276
   RenderView at (0,0) size 785x600
-layer at (8,8) size 769x1309
-  RenderBlock {HTML} at (8,8) size 769x1309 [bgcolor=#008000] [border: (16px solid #00FF00)]
-    RenderTable at (16,16) size 737x1277
-      RenderTableSection (anonymous) at (0,0) size 737x1277
-        RenderTableRow (anonymous) at (0,0) size 737x1277
+layer at (8,8) size 769x1268
+  RenderBlock {HTML} at (8,8) size 769x1268 [bgcolor=#008000] [border: (16px solid #00FF00)]
+    RenderTable at (16,16) size 737x1236
+      RenderTableSection (anonymous) at (0,0) size 737x1236
+        RenderTableRow (anonymous) at (0,0) size 737x1236
           RenderTableCell {HEAD} at (0,0) size 132x904 [color=#FFFFFF] [bgcolor=#FF0000] [border: (5px solid #FFFFFF)] [r=0 c=0 rs=1 cs=1]
             RenderBlock {META} at (21,37) size 90x2 [border: (1px dotted #FFFFFF)]
             RenderBlock {META} at (21,55) size 90x2 [border: (1px dotted #FFFFFF)]

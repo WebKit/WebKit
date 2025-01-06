@@ -29,6 +29,7 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 

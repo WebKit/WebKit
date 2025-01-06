@@ -1,5 +1,5 @@
 
-FAIL Animation.timeline returns attached timeline promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'animations[0].timeline')"
+PASS Animation.timeline returns attached timeline
 FAIL Animation.timeline returns null for inactive deferred timeline promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'animating.getAnimations()[0].timeline')"
-FAIL Animation.timeline returns null for inactive (overattached) deferred timeline promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'animating.getAnimations()[0].timeline')"
+FAIL Animation.timeline returns null for inactive (overattached) deferred timeline assert_equals: expected null but got object "[object ScrollTimeline]"
 

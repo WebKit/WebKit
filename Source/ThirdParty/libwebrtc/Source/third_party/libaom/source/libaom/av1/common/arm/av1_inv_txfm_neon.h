@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -116,7 +116,7 @@ static int eob_fill[32] = {
   31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31,
 };
 
-static INLINE void get_eobx_eoby_scan_default(int *eobx, int *eoby,
+static inline void get_eobx_eoby_scan_default(int *eobx, int *eoby,
                                               TX_SIZE tx_size, int eob) {
   if (eob == 1) {
     *eobx = 0;
@@ -131,7 +131,7 @@ static INLINE void get_eobx_eoby_scan_default(int *eobx, int *eoby,
   *eoby = eobxy >> 8;
 }
 
-static INLINE void get_eobx_eoby_scan_v_identity(int *eobx, int *eoby,
+static inline void get_eobx_eoby_scan_v_identity(int *eobx, int *eoby,
                                                  TX_SIZE tx_size, int eob) {
   eob -= 1;
   const int txfm_size_row = tx_size_high[tx_size];
@@ -140,7 +140,7 @@ static INLINE void get_eobx_eoby_scan_v_identity(int *eobx, int *eoby,
   *eoby = (eob >= eoby_max) ? eoby_max : eob_fill[eob];
 }
 
-static INLINE void get_eobx_eoby_scan_h_identity(int *eobx, int *eoby,
+static inline void get_eobx_eoby_scan_h_identity(int *eobx, int *eoby,
                                                  TX_SIZE tx_size, int eob) {
   eob -= 1;
   const int txfm_size_col = tx_size_wide[tx_size];

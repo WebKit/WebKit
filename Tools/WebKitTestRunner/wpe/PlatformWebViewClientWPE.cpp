@@ -46,7 +46,7 @@ PlatformWebViewClientWPE::PlatformWebViewClientWPE(WKPageConfigurationRef config
 {
     m_view = WKViewCreate(m_display.get(), configuration);
     auto* wpeView = WKViewGetView(m_view);
-    wpe_view_resize(wpeView, 800, 600);
+    wpe_toplevel_resize(wpe_view_get_toplevel(wpeView), 800, 600);
     g_signal_connect(wpeView, "buffer-rendered", G_CALLBACK(+[](WPEView*, WPEBuffer* buffer, gpointer userData) {
         auto& view = *static_cast<PlatformWebViewClientWPE*>(userData);
         view.m_buffer = buffer;

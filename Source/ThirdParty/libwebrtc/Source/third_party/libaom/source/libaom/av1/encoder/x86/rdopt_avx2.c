@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -21,7 +21,7 @@
 // We actually use the 4x4 pixels to calculate correlations corresponding to
 // the top-left 3x3 pixels, so this function must be called with 1x1 overlap,
 // moving the window along/down by 3 pixels at a time.
-INLINE static void horver_correlation_4x4(const int16_t *diff, int stride,
+static inline void horver_correlation_4x4(const int16_t *diff, int stride,
                                           __m256i *xy_sum_32,
                                           __m256i *xz_sum_32, __m256i *x_sum_32,
                                           __m256i *x2_sum_32) {

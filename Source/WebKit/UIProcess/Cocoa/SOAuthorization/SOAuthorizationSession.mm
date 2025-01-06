@@ -46,9 +46,11 @@
 #import <WebCore/HTTPParsers.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/SecurityOrigin.h>
-#import <pal/cocoa/AppSSOSoftLink.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+
+#import <pal/cocoa/AppSSOSoftLink.h>
 
 #define AUTHORIZATIONSESSION_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - [InitiatingAction=%s][State=%s] SOAuthorizationSession::" fmt, this, toString(m_action).characters(), stateString().characters(), ##__VA_ARGS__)
 
@@ -106,6 +108,7 @@ SOAuthorizationSession::~SOAuthorizationSession()
 #if PLATFORM(MAC)
     AUTHORIZATIONSESSION_RELEASE_LOG("~SOAuthorizationSession: m_sheetWindow=%p", m_sheetWindow.get());
 #endif
+    m_isInDestructor = true;
 
     if (m_state == State::Active && !!m_soAuthorization)
         [m_soAuthorization cancelAuthorization];
@@ -253,7 +256,8 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
     [m_soAuthorization setAuthorizationOptions:authorizationOptions];
 
 #if PLATFORM(VISION)
-    if (![[m_page->cocoaView() UIDelegate] respondsToSelector:@selector(_presentingViewControllerForWebView:)])
+    // rdar://130904577 - Investigate supporting embedded authorization view controller on visionOS.
+    if (![[m_page->cocoaView() UIDelegate] respondsToSelector:@selector(_presentingViewControllerForWebView:)] || WTF::IOSApplication::isSafariViewService())
         [m_soAuthorization setEnableEmbeddedAuthorizationViewController:NO];
 #endif
 
@@ -448,7 +452,7 @@ void SOAuthorizationSession::dismissViewController()
 
     // This is a workaround for an AppKit issue: <rdar://problem/59125329>.
     // [m_sheetWindow sheetParent] is null if the parent is minimized or the host app is hidden.
-    if (m_page && m_page->platformWindow()) {
+    if (!m_isInDestructor && m_page && m_page->platformWindow()) {
         auto *presentingWindow = m_page->platformWindow();
         if (presentingWindow.miniaturized) {
             AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Page's window is miniaturized. Waiting to dismiss until active.");
@@ -466,7 +470,7 @@ void SOAuthorizationSession::dismissViewController()
         }
     }
 
-    if (NSApp.hidden) {
+    if (!m_isInDestructor && NSApp.hidden) {
         AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Application is hidden. Waiting to dismiss until active.");
         if (m_applicationDidUnhideObserver) {
             AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: [Hidden] Already has an Unhide observer (%p). Deminiaturized observer is %p", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());

@@ -83,7 +83,8 @@ static Expected<Ref<WebExtensionAction>, WebExtensionError> getOrCreateActionWit
 
 bool WebExtensionContext::isActionMessageAllowed()
 {
-    return isLoaded() && (extension().hasAction() || extension().hasBrowserAction() || extension().hasPageAction());
+    Ref extension = *m_extension;
+    return isLoaded() && (extension->hasAction() || extension->hasBrowserAction() || extension->hasPageAction());
 }
 
 void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
@@ -96,7 +97,7 @@ void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentif
         return;
     }
 
-    completionHandler(action.value()->label(WebExtensionAction::FallbackWhenEmpty::No));
+    completionHandler(Ref { action.value() }->label(WebExtensionAction::FallbackWhenEmpty::No));
 }
 
 void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& title, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -109,12 +110,12 @@ void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentif
         return;
     }
 
-    action.value()->setLabel(title);
+    Ref { action.value() }->setLabel(title);
 
     completionHandler({ });
 }
 
-void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& iconDictionaryJSON, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& iconsJSON, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setIcon()";
 
@@ -124,7 +125,21 @@ void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifi
         return;
     }
 
-    action.value()->setIconsDictionary(parseJSON(iconDictionaryJSON));
+    RefPtr parsedIcons = JSON::Value::parseJSON(iconsJSON);
+    Ref webExtensionAction = action.value();
+
+    if (RefPtr object = parsedIcons->asObject())
+        webExtensionAction->setIcons(object);
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    else if (RefPtr array = parsedIcons->asArray())
+        webExtensionAction->setIconVariants(array);
+#endif
+    else {
+        webExtensionAction->setIcons(nullptr);
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        webExtensionAction->setIconVariants(nullptr);
+#endif
+    }
 
     completionHandler({ });
 }
@@ -139,7 +154,7 @@ void WebExtensionContext::actionGetPopup(std::optional<WebExtensionWindowIdentif
         return;
     }
 
-    completionHandler(action.value()->popupPath());
+    completionHandler(Ref { action.value() }->popupPath());
 }
 
 void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& popupPath, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -152,7 +167,7 @@ void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentif
         return;
     }
 
-    action.value()->setPopupPath(popupPath);
+    Ref { action.value() }->setPopupPath(popupPath);
 
     completionHandler({ });
 }
@@ -161,8 +176,13 @@ void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std
 {
     static NSString * const apiName = @"action.openPopup()";
 
-    if (!defaultAction().canProgrammaticallyPresentPopup()) {
+    if (!protectedDefaultAction()->canProgrammaticallyPresentPopup()) {
         completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
+        return;
+    }
+
+    if (extensionController()->isShowingActionPopup()) {
+        completionHandler(toWebExtensionError(apiName, nil, @"another popup is already open"));
         return;
     }
 
@@ -221,7 +241,7 @@ void WebExtensionContext::actionGetBadgeText(std::optional<WebExtensionWindowIde
         return;
     }
 
-    completionHandler(action.value()->badgeText());
+    completionHandler(Ref { action.value() }->badgeText());
 }
 
 void WebExtensionContext::actionSetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& text, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -234,7 +254,7 @@ void WebExtensionContext::actionSetBadgeText(std::optional<WebExtensionWindowIde
         return;
     }
 
-    action.value()->setBadgeText(text);
+    Ref { action.value() }->setBadgeText(text);
 
     completionHandler({ });
 }
@@ -249,7 +269,7 @@ void WebExtensionContext::actionGetEnabled(std::optional<WebExtensionWindowIdent
         return;
     }
 
-    completionHandler(action.value()->isEnabled());
+    completionHandler(Ref { action.value() }->isEnabled());
 }
 
 void WebExtensionContext::actionSetEnabled(std::optional<WebExtensionTabIdentifier> tabIdentifier, bool enabled, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -260,7 +280,7 @@ void WebExtensionContext::actionSetEnabled(std::optional<WebExtensionTabIdentifi
         return;
     }
 
-    action.value()->setEnabled(enabled);
+    Ref { action.value() }->setEnabled(enabled);
 
     completionHandler({ });
 }

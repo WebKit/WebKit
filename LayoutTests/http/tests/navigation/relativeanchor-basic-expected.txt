@@ -34,7 +34,7 @@ to scroll.
 This is an anchor point named "anchor1".
 
 ============== Back Forward List ==============
-        http://127.0.0.1:8000/navigation/relativeanchor-basic.html  **nav target**
-        http://127.0.0.1:8000/navigation/resources/success200.html  **nav target**
-curr->  http://127.0.0.1:8000/navigation/resources/success200.html#anchor1  **nav target**
+        http://127.0.0.1:8000/navigation/relativeanchor-basic.html
+        http://127.0.0.1:8000/navigation/resources/success200.html
+curr->  http://127.0.0.1:8000/navigation/resources/success200.html#anchor1
 ===============================================

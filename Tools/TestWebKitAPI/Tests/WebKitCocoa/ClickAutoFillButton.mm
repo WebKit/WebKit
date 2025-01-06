@@ -37,6 +37,7 @@
 #import <WebKit/WKWebProcessPlugInFrame.h>
 #import <WebKit/WKWebProcessPlugInNodeHandlePrivate.h>
 #import <WebKit/WKWebProcessPlugInScriptWorld.h>
+#import <wtf/StdLibExtras.h>
 
 void didClickAutoFillButton(WKBundlePageRef, WKBundleNodeHandleRef, WKTypeRef* userData, const void *)
 {
@@ -51,7 +52,7 @@ void didClickAutoFillButton(WKBundlePageRef, WKBundleNodeHandleRef, WKTypeRef* u
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
 {
     WKBundlePageUIClientV3 client;
-    memset(&client, 0, sizeof(client));
+    zeroBytes(client);
     client.base.version = 3;
     client.didClickAutoFillButton = didClickAutoFillButton;
     WKBundlePageSetUIClient([browserContextController _bundlePageRef], &client.base);

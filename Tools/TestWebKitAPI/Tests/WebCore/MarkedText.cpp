@@ -63,9 +63,9 @@ std::ostream& operator<<(std::ostream& os, MarkedText::Type type)
     case MarkedText::Type::AppHighlight:
         return os << "AppHighlight";
 #endif
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    case MarkedText::Type::UnifiedTextReplacement:
-        return os << "UnifiedTextReplacement";
+#if ENABLE(WRITING_TOOLS)
+    case MarkedText::Type::WritingToolsTextSuggestion:
+        return os << "WritingToolsTextSuggestion";
 #endif
     case MarkedText::Type::TransparentContent:
         return os << "TransparentContent";
@@ -102,7 +102,7 @@ TEST(MarkedText, SubdivideSimple)
 
 TEST(MarkedText, SubdivideSpellingAndGrammarSimple)
 {
-    RenderedDocumentMarker grammarErrorMarker { DocumentMarker { DocumentMarker::Type::Grammar, { 7, 8 } } };
+    RenderedDocumentMarker grammarErrorMarker { DocumentMarker { DocumentMarkerType::Grammar, { 7, 8 } } };
     Vector<MarkedText> expectedMarkedTexts {
         MarkedText { grammarErrorMarker.startOffset(), grammarErrorMarker.endOffset(), MarkedText::Type::GrammarError, &grammarErrorMarker },
         MarkedText { 22, 32, MarkedText::Type::SpellingError },

@@ -35,16 +35,17 @@
 #include "ProcessingInstruction.h"
 #include "RenderText.h"
 #include "StyleInheritedData.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CharacterData);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CharacterData);
 
 CharacterData::~CharacterData()
 {
-    willBeDeletedFrom(RefAllowingPartiallyDestroyed<Document> { document() });
+    willBeDeletedFrom(Ref<Document> { document() });
 }
 
 static bool canUseSetDataOptimization(const CharacterData& node)
@@ -116,7 +117,7 @@ void CharacterData::parserAppendData(StringView string)
 
 void CharacterData::appendData(const String& data)
 {
-    setDataAndUpdate(m_data + data, m_data.length(), 0, data.length(), UpdateLiveRanges::No);
+    setDataAndUpdate(makeString(m_data, data), m_data.length(), 0, data.length(), UpdateLiveRanges::No);
 }
 
 ExceptionOr<void> CharacterData::insertData(unsigned offset, const String& data)

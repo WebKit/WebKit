@@ -25,38 +25,39 @@
 
 #include "config.h"
 #include "GeolocationPermissionRequestProxy.h"
+#include "WebProcessProxy.h"
 
 #include "GeolocationPermissionRequestManagerProxy.h"
 
 namespace WebKit {
 
-GeolocationPermissionRequestProxy::GeolocationPermissionRequestProxy(GeolocationPermissionRequestManagerProxy* manager, GeolocationIdentifier geolocationID)
+GeolocationPermissionRequestProxy::GeolocationPermissionRequestProxy(GeolocationPermissionRequestManagerProxy& manager, GeolocationIdentifier geolocationID, WebProcessProxy& process)
     : m_manager(manager)
     , m_geolocationID(geolocationID)
+    , m_process(process)
 {
 }
 
 void GeolocationPermissionRequestProxy::allow()
 {
-    if (!m_manager)
-        return;
-
-    m_manager->didReceiveGeolocationPermissionDecision(m_geolocationID, true);
-    m_manager = nullptr;
+    if (RefPtr manager = std::exchange(m_manager, nullptr).get())
+        manager->didReceiveGeolocationPermissionDecision(m_geolocationID, true);
 }
 
 void GeolocationPermissionRequestProxy::deny()
 {
-    if (!m_manager)
-        return;
-    
-    m_manager->didReceiveGeolocationPermissionDecision(m_geolocationID, false);
-    m_manager = nullptr;
+    if (RefPtr manager = std::exchange(m_manager, nullptr).get())
+        manager->didReceiveGeolocationPermissionDecision(m_geolocationID, false);
 }
 
 void GeolocationPermissionRequestProxy::invalidate()
 {
     m_manager = nullptr;
+}
+
+WebProcessProxy* GeolocationPermissionRequestProxy::process() const
+{
+    return m_process.get();
 }
 
 } // namespace WebKit

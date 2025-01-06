@@ -47,8 +47,8 @@ enum Nalu {
   kFuA = 28
 };
 
-static const size_t kNalHeaderSize = 1;
-static const size_t kFuAHeaderSize = 2;
+constexpr size_t kNalHeaderSize = 1;
+constexpr size_t kFuAHeaderSize = 2;
 
 // Creates Buffer that looks like nal unit of given size.
 rtc::Buffer GenerateNalUnit(size_t size) {

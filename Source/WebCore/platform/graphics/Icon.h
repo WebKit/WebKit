@@ -41,6 +41,11 @@ using CocoaImage = UIImage;
 
 #elif PLATFORM(WIN)
 typedef struct HICON__* HICON;
+
+#elif PLATFORM(GTK)
+#include <wtf/glib/GRefPtr.h>
+
+typedef struct _GIcon GIcon;
 #endif
 
 namespace WebCore {
@@ -59,6 +64,12 @@ public:
 
 #if PLATFORM(WIN)
     static Ref<Icon> create(HICON hIcon) { return adoptRef(*new Icon(hIcon)); }
+#endif
+
+#if PLATFORM(GTK)
+    WEBCORE_EXPORT static RefPtr<Icon> create(GIcon*);
+
+    GIcon* icon() const { return m_icon.get(); };
 #endif
 
 #if PLATFORM(COCOA)
@@ -80,6 +91,9 @@ private:
 #elif PLATFORM(WIN)
     Icon(HICON);
     HICON m_hIcon;
+#elif PLATFORM(GTK)
+    explicit Icon(GIcon*);
+    GRefPtr<GIcon> m_icon;
 #endif
 };
 

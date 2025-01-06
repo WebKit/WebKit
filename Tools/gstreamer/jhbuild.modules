@@ -17,16 +17,20 @@
   </metamodule>
 
   <!-- Please use http/https to access repositories to be friendly to users stuck behind firewalls. -->
-  <repository type="tarball" name="gstreamer"
-      href="https://github.com/GStreamer/" />
-  <repository type="tarball" name="github-tarball"
-      href="https://github.com/"/>
+  <!-- Git repositories. -->
+  <repository type="git" name="aomedia.googlesource.com"
+      href="https://aomedia.googlesource.com"/>
   <repository type="git" name="github-ssh"
       href="git@github.com"/>
   <repository type="git" name="github.com"
       href="https://github.com"/>
   <repository type="git" name="chromium.googlesource.com"
       href="https://chromium.googlesource.com/webm/"/>
+  <!-- Tarballs. -->
+  <repository type="tarball" name="gstreamer"
+      href="https://github.com/GStreamer/" />
+  <repository type="tarball" name="github-tarball"
+      href="https://github.com/"/>
   <repository type="tarball" name="aom-releases"
       href="https://storage.googleapis.com/aom-releases/"/>
   <repository type="tarball" name="ffmpeg" href="https://ffmpeg.org/releases/"/>
@@ -48,13 +52,14 @@
     </branch>
   </meson>
 
-  <cmake id="aom" cmakeargs="-DBUILD_SHARED_LIBS=1">
-    <branch repo="aom-releases"
-            module="libaom-${version}.tar.gz"
-            checkoutdir="libaom-${version}"
-            version="3.8.0"
-            hash="sha256:a768d3e54c7f00cd38b01208d1ae52d671be410cfc387ff7881ea71c855f3600">
-       <patch file="fix-aom-build-arm32.patch" strip="1"/>
+  <cmake id="aom" cmakeargs="-DBUILD_SHARED_LIBS=1 -DENABLE_DOCS=OFF -DENABLE_EXAMPLES=OFF -DENABLE_TOOLS=OFF -DENABLE_TESTS=OFF">
+    <pkg-config>libaom.pc</pkg-config>
+    <branch module="aom"
+            repo="aomedia.googlesource.com"
+            version="3.3.0"
+            tag="v3.3.0"
+            checkoutdir="libaom-${version}">
+      <patch file="fix-aom-build-arm32.patch" strip="1"/>
     </branch>
   </cmake>
 
@@ -81,7 +86,6 @@
     <dependencies>
       <dep package="aom"/>
       <dep package="ffmpeg"/>
-      <dep package="graphene"/>
       <dep package="libsrtp"/>
       <dep package="libva"/>
       <dep package="libxkbcommon"/>

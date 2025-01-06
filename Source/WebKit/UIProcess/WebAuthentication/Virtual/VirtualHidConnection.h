@@ -33,23 +33,17 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
-class VirtualHidConnection;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::VirtualHidConnection> : std::true_type { };
-}
-
-namespace WebKit {
 struct VirtualAuthenticatorConfiguration;
 class VirtualAuthenticatorManager;
 
-class VirtualHidConnection final : public CanMakeWeakPtr<VirtualHidConnection>, public HidConnection {
+class VirtualHidConnection final : public HidConnection {
 public:
-    explicit VirtualHidConnection(const String& authenticatorId, const VirtualAuthenticatorConfiguration&, const WeakPtr<VirtualAuthenticatorManager>&);
+    static Ref<VirtualHidConnection> create(const String& authenticatorId, const VirtualAuthenticatorConfiguration&, const WeakPtr<VirtualAuthenticatorManager>&);
+    virtual ~VirtualHidConnection() = default;
 
 private:
+    explicit VirtualHidConnection(const String& authenticatorId, const VirtualAuthenticatorConfiguration&, const WeakPtr<VirtualAuthenticatorManager>&);
+
     void initialize() final;
     void terminate() final;
     DataSent sendSync(const Vector<uint8_t>& data) final;

@@ -73,8 +73,10 @@ void GStreamerQuirkRealtek::configureElement(GstElement* element, const OptionSe
 
 std::optional<bool> GStreamerQuirkRealtek::isHardwareAccelerated(GstElementFactory* factory)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     if (g_str_has_prefix(GST_OBJECT_NAME(factory), "omx"))
         return true;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     return std::nullopt;
 }

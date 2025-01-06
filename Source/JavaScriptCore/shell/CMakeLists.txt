@@ -25,7 +25,6 @@ WEBKIT_EXECUTABLE_DECLARE(jsc)
 if (DEVELOPER_MODE)
     set(testapi_SOURCES
         ../API/tests/CompareAndSwapTest.cpp
-        ../API/tests/CustomGlobalObjectClassTest.c
         ../API/tests/ExecutionTimeLimitTest.cpp
         ../API/tests/FunctionOverridesTest.cpp
         ../API/tests/FunctionToStringTests.cpp
@@ -35,8 +34,11 @@ if (DEVELOPER_MODE)
         ../API/tests/MultithreadedMultiVMExecutionTest.cpp
         ../API/tests/PingPongStackOverflowTest.cpp
         ../API/tests/TypedArrayCTest.cpp
-        ../API/tests/testapi.c
         ../API/tests/testapi.cpp
+    )
+    set(testapi_C_SOURCES
+        ../API/tests/CustomGlobalObjectClassTest.c
+        ../API/tests/testapi.c
     )
     set(testapi_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testapi_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})

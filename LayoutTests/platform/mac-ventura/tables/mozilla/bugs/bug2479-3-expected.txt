@@ -4,8 +4,8 @@ layer at (0,0) size 785x765
   RenderBlock {HTML} at (0,0) size 785x765
     RenderBody {BODY} at (8,21) size 769x728
       RenderBlock {H1} at (0,0) size 769x32
-        RenderText {#text} at (0,0) size 759x32
-          text run at (0,0) width 759: "Generic Table Tests - 1"
+        RenderText {#text} at (0,0) size 757x32
+          text run at (0,0) width 757: "Generic Table Tests - 1"
       RenderBlock {P} at (0,53) size 769x33
         RenderText {#text} at (0,0) size 752x32
           text run at (0,0) width 752: "If you have any comments to make regarding this"
@@ -43,14 +43,14 @@ layer at (0,0) size 785x765
           RenderText {#text} at (0,0) size 736x34
             text run at (480,0) width 256: " table values on"
             text run at (0,18) width 164: "'display'. "
-          RenderInline {STRONG} at (0,18) size 731x49
-            RenderText {#text} at (0,18) size 731x49
-              text run at (163,18) width 545: "If this paragraphs flows without"
-              text run at (0,35) width 731: "any undue breaks, then you should mark your"
-              text run at (0,51) width 663: "browser as not supporting table values!"
+          RenderInline {STRONG} at (0,18) size 708x49
+            RenderText {#text} at (0,18) size 708x49
+              text run at (163,18) width 527: "If this paragraphs flows without"
+              text run at (0,35) width 708: "any undue breaks, then you should mark your"
+              text run at (0,51) width 642: "browser as not supporting table values!"
       RenderBlock {H2} at (0,326) size 769x25
-        RenderText {#text} at (0,0) size 550x24
-          text run at (0,0) width 550: "1. Table -> Table Cell"
+        RenderText {#text} at (0,0) size 543x24
+          text run at (0,0) width 543: "1. Table -> Table Cell"
       RenderBlock {P} at (0,370) size 769x65
         RenderText {#text} at (0,0) size 736x64
           text run at (0,0) width 736: "Below there should be a gray bar, spanning the"
@@ -67,8 +67,8 @@ layer at (0,0) size 785x765
               RenderText {#text} at (347,0) size 81x16
                 text run at (347,0) width 81: "Right"
       RenderBlock {H2} at (0,486) size 769x25
-        RenderText {#text} at (0,0) size 350x24
-          text run at (0,0) width 350: "Submit Results"
+        RenderText {#text} at (0,0) size 346x24
+          text run at (0,0) width 346: "Submit Results"
       RenderBlock {FORM} at (0,530) size 769x36
         RenderBlock {P} at (0,0) size 769x35
           RenderText {#text} at (0,0) size 640x16

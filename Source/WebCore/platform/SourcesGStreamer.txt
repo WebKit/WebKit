@@ -35,6 +35,7 @@ Modules/mediastream/gstreamer/GStreamerRtpTransformBackend.cpp
 Modules/mediastream/gstreamer/GStreamerSctpTransportBackend.cpp
 Modules/mediastream/gstreamer/GStreamerStatsCollector.cpp
 Modules/mediastream/gstreamer/GStreamerWebRTCUtils.cpp
+Modules/mediastream/RTCRtpSFrameTransformerOpenSSL.cpp
 
 Modules/webaudio/MediaStreamAudioSourceGStreamer.cpp
 
@@ -48,14 +49,12 @@ platform/audio/gstreamer/PlatformRawAudioDataGStreamer.cpp
 platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp @no-unify
 
 platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp
-platform/graphics/gstreamer/DMABufVideoSinkGStreamer.cpp @no-unify
 platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp @no-unify
 platform/graphics/gstreamer/GRefPtrGStreamer.cpp
 platform/graphics/gstreamer/GStreamerAudioMixer.cpp
 platform/graphics/gstreamer/GStreamerCommon.cpp
 platform/graphics/gstreamer/GStreamerRegistryScanner.cpp
 platform/graphics/gstreamer/GStreamerSinksWorkarounds.cpp
-platform/graphics/gstreamer/GStreamerVideoFrameHolder.cpp @no-unify
 platform/graphics/gstreamer/GStreamerVideoSinkCommon.cpp
 platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp
 platform/graphics/gstreamer/ImageDecoderGStreamer.cpp
@@ -104,6 +103,7 @@ platform/gstreamer/GStreamerHolePunchQuirkWesteros.cpp
 platform/gstreamer/GStreamerQuirkAmLogic.cpp
 platform/gstreamer/GStreamerQuirkBcmNexus.cpp
 platform/gstreamer/GStreamerQuirkBroadcom.cpp
+platform/gstreamer/GStreamerQuirkBroadcomBase.cpp
 platform/gstreamer/GStreamerQuirkRealtek.cpp
 platform/gstreamer/GStreamerQuirkRialto.cpp
 platform/gstreamer/GStreamerQuirkWesteros.cpp
@@ -126,6 +126,7 @@ platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cp
 
 platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp
 platform/mediastream/gstreamer/GStreamerAudioCapturer.cpp
+platform/mediastream/gstreamer/GStreamerAudioRTPPacketizer.cpp
 platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.cpp
 platform/mediastream/gstreamer/GStreamerCapturer.cpp
 platform/mediastream/gstreamer/GStreamerDTMFSenderBackend.cpp
@@ -134,8 +135,11 @@ platform/mediastream/gstreamer/GStreamerIncomingTrackProcessor.cpp
 platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp @no-unify
 platform/mediastream/gstreamer/GStreamerMockDevice.cpp @no-unify
 platform/mediastream/gstreamer/GStreamerMockDeviceProvider.cpp @no-unify
+platform/mediastream/gstreamer/GStreamerRTPPacketizer.cpp
 platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp
 platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp
+platform/mediastream/gstreamer/GStreamerVideoRTPPacketizer.cpp
+platform/mediastream/gstreamer/GStreamerWebRTCLogSink.cpp
 platform/mediastream/gstreamer/GStreamerWebRTCProvider.cpp
 platform/mediastream/gstreamer/MockDisplayCaptureSourceGStreamer.cpp
 platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.cpp

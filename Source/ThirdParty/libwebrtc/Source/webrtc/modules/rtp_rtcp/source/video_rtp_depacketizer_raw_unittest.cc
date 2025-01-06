@@ -11,8 +11,8 @@
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_raw.h"
 
 #include <cstdint>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "test/gtest.h"
 
@@ -24,7 +24,7 @@ TEST(VideoRtpDepacketizerRaw, PassRtpPayloadAsVideoPayload) {
   rtc::CopyOnWriteBuffer rtp_payload(kPayload);
 
   VideoRtpDepacketizerRaw depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(rtp_payload);
 
   ASSERT_TRUE(parsed);
@@ -39,7 +39,7 @@ TEST(VideoRtpDepacketizerRaw, UsesDefaultValuesForVideoHeader) {
   rtc::CopyOnWriteBuffer rtp_payload(kPayload);
 
   VideoRtpDepacketizerRaw depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(rtp_payload);
 
   ASSERT_TRUE(parsed);

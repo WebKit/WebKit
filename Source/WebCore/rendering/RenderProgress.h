@@ -27,7 +27,7 @@ namespace WebCore {
 class HTMLProgressElement;
 
 class RenderProgress final : public RenderBlockFlow {
-    WTF_MAKE_ISO_ALLOCATED(RenderProgress);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderProgress);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderProgress);
 public:
     RenderProgress(HTMLElement&, RenderStyle&&);

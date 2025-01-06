@@ -23,6 +23,7 @@
 #include <JavaScriptCore/Strong.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -39,9 +40,9 @@ class JSDOMGlobalObject;
 class JSWindowProxy;
 
 class WindowProxy : public RefCounted<WindowProxy> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WindowProxy, WEBCORE_EXPORT);
 public:
-    using ProxyMap = HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSWindowProxy>>;
+    using ProxyMap = UncheckedKeyHashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSWindowProxy>>;
 
     static Ref<WindowProxy> create(Frame& frame)
     {
@@ -56,7 +57,6 @@ public:
 
     void destroyJSWindowProxy(DOMWrapperWorld&);
 
-    ProxyMap::ValuesConstIteratorRange jsWindowProxies() const;
     Vector<JSC::Strong<JSWindowProxy>> jsWindowProxiesAsVector() const;
 
     WEBCORE_EXPORT ProxyMap releaseJSWindowProxies();

@@ -1,0 +1,5 @@
+Anchor 1
+Anchor 2
+
+FAIL the-anchor-attribute-004 assert_equals: Non-HTML elements can use the anchor attribute expected (object) Element node <div id="anchor1">Anchor 1</div> but got (undefined) undefined
+

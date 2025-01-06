@@ -29,6 +29,7 @@
 #include "APIInjectedBundleClient.h"
 #include "WKContextInjectedBundleClient.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace API {
 class Object;
@@ -43,7 +44,7 @@ namespace WebKit {
 class WebProcessPool;
 
 class WebContextInjectedBundleClient : public API::InjectedBundleClient, public API::Client<WKContextInjectedBundleClientBase> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebContextInjectedBundleClient);
 public:
     explicit WebContextInjectedBundleClient(const WKContextInjectedBundleClientBase*);
 

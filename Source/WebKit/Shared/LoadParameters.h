@@ -33,6 +33,8 @@
 #include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/NavigationIdentifier.h>
+#include <WebCore/OwnerPermissionsPolicyData.h>
 #include <WebCore/PublicSuffixStore.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
@@ -40,13 +42,10 @@
 
 OBJC_CLASS NSDictionary;
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebCore {
-using SandboxFlags = int;
+class SharedBuffer;
+enum class SandboxFlag : uint16_t;
+using SandboxFlags = OptionSet<SandboxFlag>;
 }
 
 namespace WebKit {
@@ -54,13 +53,13 @@ namespace WebKit {
 struct LoadParameters {
     WebCore::PublicSuffix publicSuffix;
 
-    uint64_t navigationID { 0 };
+    std::optional<WebCore::NavigationIdentifier> navigationID;
     std::optional<WebCore::FrameIdentifier> frameIdentifier;
 
     WebCore::ResourceRequest request;
     SandboxExtension::Handle sandboxExtensionHandle;
 
-    std::span<const uint8_t> data;
+    RefPtr<WebCore::SharedBuffer> data;
     String MIMEType;
     String encodingName;
 
@@ -77,7 +76,8 @@ struct LoadParameters {
     WebCore::LockBackForwardList lockBackForwardList { WebCore::LockBackForwardList::No };
     WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility { WebCore::SubstituteData::SessionHistoryVisibility::Visible };
     String clientRedirectSourceForHistory;
-    WebCore::SandboxFlags effectiveSandboxFlags { 0 };
+    WebCore::SandboxFlags effectiveSandboxFlags;
+    std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
     std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
     bool isServiceWorkerLoad { false };
@@ -86,8 +86,9 @@ struct LoadParameters {
     std::optional<double> dataDetectionReferenceDate;
 #endif
     bool isRequestFromClientOrUserInput { false };
+    bool isPerformingHTTPFallback { false };
 
-    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+    std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
 };
 
 } // namespace WebKit

@@ -33,6 +33,7 @@
 #import <WebCore/AuthenticatorAssertionResponse.h>
 #import <WebCore/ExceptionData.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/WTFString.h>
@@ -41,6 +42,13 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockLocalConnection);
+
+Ref<MockLocalConnection> MockLocalConnection::create(const WebCore::MockWebAuthenticationConfiguration& configuration)
+{
+    return adoptRef(*new MockLocalConnection(configuration));
+}
 
 MockLocalConnection::MockLocalConnection(const MockWebAuthenticationConfiguration& configuration)
     : m_configuration(configuration)
@@ -139,17 +147,18 @@ void MockLocalConnection::filterResponses(Vector<Ref<AuthenticatorAssertionRespo
     if (preferredCredentialIdBase64.isEmpty())
         return;
 
-    auto itr = responses.begin();
-    for (; itr != responses.end(); ++itr) {
-        auto* rawId = itr->get().rawId();
+    RefPtr<AuthenticatorAssertionResponse> matchingResponse;
+    for (auto& response : responses) {
+        auto* rawId = response->rawId();
         ASSERT(rawId);
         auto rawIdBase64 = base64EncodeToString(rawId->span());
-        if (rawIdBase64 == preferredCredentialIdBase64)
+        if (rawIdBase64 == preferredCredentialIdBase64) {
+            matchingResponse = response.copyRef();
             break;
+        }
     }
-    auto response = itr->copyRef();
     responses.clear();
-    responses.append(WTFMove(response));
+    responses.append(matchingResponse.releaseNonNull());
 }
 
 RetainPtr<NSArray> MockLocalConnection::getExistingCredentials(const String& rpId)

@@ -15,6 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/reporting/resources/README.md
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/comment.js
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/comment.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/reporting/resources/csp-error.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/resources/csp-error.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/reporting/resources/fail.png

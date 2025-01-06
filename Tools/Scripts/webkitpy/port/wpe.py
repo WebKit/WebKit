@@ -61,7 +61,6 @@ class WPEPort(GLibPort):
 
     def setup_environ_for_server(self, server_name=None):
         environment = super(WPEPort, self).setup_environ_for_server(server_name)
-        environment['WEBKIT_NICOSIA_PAINTING_THREADS'] = '0'
         environment['LIBGL_ALWAYS_SOFTWARE'] = '1'
         self._copy_value_from_environ_if_set(environment, 'XR_RUNTIME_JSON')
         self._copy_value_from_environ_if_set(environment, 'BREAKPAD_MINIDUMP_DIR')
@@ -131,7 +130,6 @@ class WPEPort(GLibPort):
         return env
 
     def run_minibrowser(self, args):
-        env = None
         miniBrowser = None
 
         if self.browser_name() == "cog":
@@ -155,6 +153,8 @@ class WPEPort(GLibPort):
         if os.environ.get("WEBKIT_MINI_BROWSER_PREFIX"):
             command = shlex.split(os.environ["WEBKIT_MINI_BROWSER_PREFIX"]) + command
 
+        env, pass_fds = self.setup_sysprof_for_minibrowser()
+
         if self._should_use_jhbuild():
             command = self._jhbuild_wrapper + command
-        return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False, env=self.setup_environ_for_minibrowser())
+        return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False, env=env, pass_fds=pass_fds)

@@ -210,6 +210,12 @@ public:
         return false;
     }
 
+    virtual unsigned keyboardUpdateForChangedSelectionCount() const
+    {
+        notImplemented();
+        return 0;
+    }
+
     virtual bool isAnimatingDragCancel() const
     {
         notImplemented();
@@ -238,7 +244,8 @@ public:
     virtual void keyboardAccessoryBarNext() { notImplemented(); }
     virtual void keyboardAccessoryBarPrevious() { notImplemented(); }
 
-    virtual void applyAutocorrection(JSStringRef, JSStringRef, JSValueRef) { notImplemented(); }
+    virtual void selectWordForReplacement() { notImplemented(); }
+    virtual void applyAutocorrection(JSStringRef, JSStringRef, JSValueRef, bool) { notImplemented(); }
 
     virtual bool isShowingKeyboard() const { notImplemented(); return false; }
     virtual bool hasInputSession() const { notImplemented(); return false; }
@@ -421,6 +428,8 @@ public:
     virtual void requestRenderedTextForFrontmostTarget(int, int, JSValueRef) { notImplemented(); }
     virtual void adjustVisibilityForFrontmostTarget(int, int, JSValueRef) { notImplemented(); }
     virtual void resetVisibilityAdjustments(JSValueRef) { notImplemented(); }
+
+    virtual JSRetainPtr<JSStringRef> frontmostViewAtPoint(int, int) { notImplemented(); return { }; }
 
 protected:
     explicit UIScriptController(UIScriptContext&);

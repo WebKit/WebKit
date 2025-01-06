@@ -165,7 +165,7 @@ void VideoQualityObserver::OnRenderedFrame(
 
       bool was_freeze = false;
       if (render_interframe_delays_.Size() >= kMinFrameSamplesToDetectFreeze) {
-        const absl::optional<int64_t> avg_interframe_delay =
+        const std::optional<int64_t> avg_interframe_delay =
             render_interframe_delays_.GetAverageRoundedDown();
         RTC_DCHECK(avg_interframe_delay);
         was_freeze = interframe_delay_ms >=
@@ -231,12 +231,12 @@ void VideoQualityObserver::OnRenderedFrame(
 }
 
 void VideoQualityObserver::OnDecodedFrame(uint32_t rtp_frame_timestamp,
-                                          absl::optional<uint8_t> qp,
+                                          std::optional<uint8_t> qp,
                                           VideoCodecType codec) {
   if (!qp)
     return;
 
-  absl::optional<int> qp_blocky_threshold;
+  std::optional<int> qp_blocky_threshold;
   // TODO(ilnik): add other codec types when we have QP for them.
   switch (codec) {
     case kVideoCodecVP8:
@@ -246,7 +246,7 @@ void VideoQualityObserver::OnDecodedFrame(uint32_t rtp_frame_timestamp,
       qp_blocky_threshold = kBlockyQpThresholdVp9;
       break;
     default:
-      qp_blocky_threshold = absl::nullopt;
+      qp_blocky_threshold = std::nullopt;
   }
 
   RTC_DCHECK(blocky_frames_.find(rtp_frame_timestamp) == blocky_frames_.end());

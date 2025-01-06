@@ -1,4 +1,4 @@
 
 
-FAIL entries() should be correct after a traversal that navigates multiple browsing contexts assert_equals: expected 2 but got 1
+PASS entries() should be correct after a traversal that navigates multiple browsing contexts
 

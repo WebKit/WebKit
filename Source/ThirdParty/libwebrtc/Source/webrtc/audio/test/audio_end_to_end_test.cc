@@ -15,7 +15,6 @@
 
 #include "api/task_queue/task_queue_base.h"
 #include "call/fake_network_pipe.h"
-#include "call/simulated_network.h"
 #include "modules/audio_device/include/test_audio_device.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/gtest.h"
@@ -56,13 +55,13 @@ AudioEndToEndTest::CreateRenderer() {
 
 void AudioEndToEndTest::OnFakeAudioDevicesCreated(
     AudioDeviceModule* send_audio_device,
-    AudioDeviceModule* recv_audio_device) {
+    AudioDeviceModule* /* recv_audio_device */) {
   send_audio_device_ = send_audio_device;
 }
 
 void AudioEndToEndTest::ModifyAudioConfigs(
     AudioSendStream::Config* send_config,
-    std::vector<AudioReceiveStreamInterface::Config>* receive_configs) {
+    std::vector<AudioReceiveStreamInterface::Config>* /* receive_configs */) {
   // Large bitrate by default.
   const webrtc::SdpAudioFormat kDefaultFormat("opus", 48000, 2,
                                               {{"stereo", "1"}});

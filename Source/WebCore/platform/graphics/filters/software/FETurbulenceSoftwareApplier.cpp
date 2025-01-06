@@ -31,8 +31,11 @@
 #include "PixelBuffer.h"
 #include <wtf/MathExtras.h>
 #include <wtf/ParallelJobs.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FETurbulenceSoftwareApplier);
 
 // The turbulence calculation code is an adapted version of what appears in the SVG 1.1 specification:
 // http://www.w3.org/TR/SVG11/filters.html#feTurbulence
@@ -47,7 +50,7 @@ FETurbulenceSoftwareApplier::PaintingData FETurbulenceSoftwareApplier::initPaint
     if (paintingData.seed > s_randMaximum - 1)
         paintingData.seed = s_randMaximum - 1;
 
-    float* gradient;
+    std::span<float> gradient;
     for (int channel = 0; channel < 4; ++channel) {
         for (int i = 0; i < s_blockSize; ++i) {
             paintingData.latticeSelector[i] = i;
@@ -186,7 +189,7 @@ ColorComponents<float, 4> FETurbulenceSoftwareApplier::noise2D(const PaintingDat
         // b00 = uLatticeSelector[i + by0]
         int b00 = paintingData.latticeSelector[latticeIndex + noiseY.index];
         // q = fGradient[nColorChannel][b00]; u = rx0 * q[0] + ry0 * q[1];
-        const float* q = paintingData.gradient[channel][b00];
+        std::span<const float> q = paintingData.gradient[channel][b00];
         float u = noiseX.fraction * q[0] + noiseY.fraction * q[1];
 
         // b10 = uLatticeSelector[j + by0];
@@ -285,7 +288,7 @@ void FETurbulenceSoftwareApplier::applyPlatformGeneric(const IntRect& filterRegi
             point.setX(point.x() + 1);
             FloatPoint localPoint = point.scaled(inverseScale.width(), inverseScale.height());
             auto values = calculateTurbulenceValueForPoint(paintingData, stitchData, localPoint);
-            pixelBuffer.setRange({ values.components.data(), 4 }, indexOfPixelChannel);
+            pixelBuffer.setRange(std::span { values.components }, indexOfPixelChannel);
             indexOfPixelChannel += 4;
         }
     }

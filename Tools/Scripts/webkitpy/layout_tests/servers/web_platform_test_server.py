@@ -140,8 +140,6 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
 
         # FIXME https://webkit.org/b/222703
         python_interp = sys.executable
-        if sys.version_info < (3, 0):
-            python_interp = 'python3'
 
         wpt_file = self._filesystem.join(self._doc_root_path, "wpt.py")
         self._start_cmd = [python_interp, wpt_file, "serve", "--config", self._config_filename]

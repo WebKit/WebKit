@@ -1,7 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: Buttons attribute on pointerover expected 0 but got 4
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: Buttons attribute on pointerenter expected 0 but got 4
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: Buttons attribute on pointermove expected 0 but got 4
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerdown event Reached unreachable code
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: Buttons attribute on pointerdown expected 2 but got 4
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerover event Reached unreachable code
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerenter event Reached unreachable code
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerdown event Reached unreachable code
@@ -14,8 +11,14 @@ done
 
 Harness Error (FAIL), message = Unhandled rejection: assert_unreached: missing pointermove event Reached unreachable code
 
-FAIL Test pointer events in the main document assert_equals: Buttons attribute on pointerover expected 0 but got 4
+FAIL Test pointer events in the main document assert_equals: Buttons attribute on pointerdown expected 2 but got 4
 FAIL Test pointer events in an iframe assert_unreached: missing pointerover event Reached unreachable code
+PASS mouse pointerover.fromElement value is null
+PASS mouse pointerover.toElement value is null
+PASS mouse pointerenter.fromElement value is null
+PASS mouse pointerenter.toElement value is null
+PASS mouse pointermove.fromElement value is null
+PASS mouse pointermove.toElement value is null
 PASS mouse pointerup.fromElement value is null
 PASS mouse pointerup.toElement value is null
 PASS mouse pointerout.fromElement value is null

@@ -61,11 +61,13 @@
 #include "PaymentMethod.h"
 #include "PaymentRequestUtilities.h"
 #include "PaymentRequestValidator.h"
+#include "ScriptTelemetryCategory.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
 #include <wtf/DateMath.h>
@@ -73,7 +75,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePaySession);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ApplePaySession);
 
 static ExceptionOr<ApplePayLineItem> convertAndValidateTotal(ApplePayLineItem&& lineItem)
 {
@@ -530,7 +532,7 @@ ExceptionOr<bool> ApplePaySession::supportsVersion(Document& document, unsigned 
 static bool shouldDiscloseApplePayCapability(Document& document)
 {
     auto* page = document.page();
-    if (!page || page->usesEphemeralSession())
+    if (!page || page->usesEphemeralSession() || document.requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Payments))
         return false;
 
     return document.settings().applePayCapabilityDisclosureAllowed();

@@ -44,7 +44,7 @@ static void encodeHashSet(KeyedEncoder& encoder, const String& label,  const Str
     if (hashSet.isEmpty())
         return;
 
-    encoder.encodeObjects(label, hashSet.begin(), hashSet.end(), [&key](KeyedEncoder& encoderInner, const RegistrableDomain& domain) {
+    encoder.encodeObjects(label, hashSet, [&key](KeyedEncoder& encoderInner, const RegistrableDomain& domain) {
         encoderInner.encodeString(key, domain.string());
     });
 }
@@ -65,7 +65,7 @@ static void encodeHashSet(KeyedEncoder& encoder, const String& label,  const Str
     if (hashSet.isEmpty())
         return;
 
-    encoder.encodeObjects(label, hashSet.begin(), hashSet.end(), [&key](KeyedEncoder& encoderInner, const String& origin) {
+    encoder.encodeObjects(label, hashSet, [&key](KeyedEncoder& encoderInner, const String& origin) {
         encoderInner.encodeString(key, origin);
     });
 }
@@ -79,7 +79,7 @@ static void encodeCanvasActivityRecord(KeyedEncoder& encoder, const String& labe
 {
     encoder.encodeObject(label, canvasActivityRecord, [] (KeyedEncoder& encoderInner, const CanvasActivityRecord& canvasActivityRecord) {
         encoderInner.encodeBool("wasDataRead"_s, canvasActivityRecord.wasDataRead);
-        encoderInner.encodeObjects("textWritten"_s, canvasActivityRecord.textWritten.begin(), canvasActivityRecord.textWritten.end(), [] (KeyedEncoder& encoderInner2, const String& text) {
+        encoderInner.encodeObjects("textWritten"_s, canvasActivityRecord.textWritten, [] (KeyedEncoder& encoderInner2, const String& text) {
             encoderInner2.encodeString("text"_s, text);
         });
     });

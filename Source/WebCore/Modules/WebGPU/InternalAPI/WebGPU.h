@@ -27,6 +27,7 @@
 
 #include "WebGPURequestAdapterOptions.h"
 #include <optional>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -66,16 +67,18 @@ class Sampler;
 class ShaderModule;
 class Texture;
 class TextureView;
+class XRBinding;
+class XRProjectionLayer;
+class XRSubImage;
+class XRView;
 
 struct PresentationContextDescriptor;
 
-class GPU {
+class GPU : public AbstractRefCounted {
 public:
     virtual ~GPU() = default;
 
     virtual void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 
     virtual RefPtr<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) = 0;
 
@@ -104,6 +107,10 @@ public:
     virtual bool isValid(const ShaderModule&) const = 0;
     virtual bool isValid(const Texture&) const = 0;
     virtual bool isValid(const TextureView&) const = 0;
+    virtual bool isValid(const XRBinding&) const = 0;
+    virtual bool isValid(const XRSubImage&) const = 0;
+    virtual bool isValid(const XRProjectionLayer&) const = 0;
+    virtual bool isValid(const XRView&) const = 0;
 
 protected:
     GPU() = default;

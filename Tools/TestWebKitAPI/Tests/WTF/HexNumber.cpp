@@ -27,6 +27,7 @@
 
 #include "Test.h"
 #include <wtf/HexNumber.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace TestWebKitAPI {
 

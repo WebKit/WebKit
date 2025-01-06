@@ -68,8 +68,10 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URLParser.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -135,7 +137,7 @@ enum {
     N_PROPERTIES,
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 enum {
 #if !ENABLE(2022_GLIB_API)
@@ -177,14 +179,14 @@ private:
             return;
 
         GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(m_context, page, task));
-        auto addResult = m_requests.add({ task.resourceLoaderID(), task.pageProxyID() }, WTFMove(request));
+        auto addResult = m_requests.add({ task.resourceLoaderID(), *task.pageProxyID() }, WTFMove(request));
         ASSERT(addResult.isNewEntry);
         m_callback(addResult.iterator->value.get(), m_userData);
     }
 
     void platformStopTask(WebPageProxy&, WebURLSchemeTask& task) final
     {
-        auto it = m_requests.find({ task.resourceLoaderID(), task.pageProxyID() });
+        auto it = m_requests.find({ task.resourceLoaderID(), *task.pageProxyID() });
         if (it == m_requests.end())
             return;
 
@@ -194,7 +196,7 @@ private:
 
     void platformTaskCompleted(WebURLSchemeTask& task) final
     {
-        m_requests.remove({ task.resourceLoaderID(), task.pageProxyID() });
+        m_requests.remove({ task.resourceLoaderID(), *task.pageProxyID() });
     }
 
     WebKitWebContext* m_context { nullptr };
@@ -206,7 +208,31 @@ private:
 
 typedef HashMap<String, RefPtr<WebKitURISchemeHandler> > URISchemeHandlerMap;
 
-class WebKitAutomationClient;
+#if ENABLE(REMOTE_INSPECTOR)
+class WebKitAutomationClient final : Inspector::RemoteInspector::Client {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebKitAutomationClient);
+public:
+    explicit WebKitAutomationClient(WebKitWebContext* context)
+        : m_webContext(context)
+    {
+        Inspector::RemoteInspector::singleton().setClient(this);
+    }
+
+    ~WebKitAutomationClient()
+    {
+        Inspector::RemoteInspector::singleton().setClient(nullptr);
+    }
+
+private:
+    bool remoteAutomationAllowed() const override { return true; }
+
+    String browserName() const override;
+    String browserVersion() const override;
+    void requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities&) override;
+
+    WebKitWebContext* m_webContext;
+};
+#endif
 
 struct _WebKitWebContextPrivate {
 #if !ENABLE(2022_GLIB_API)
@@ -265,59 +291,40 @@ struct _WebKitWebContextPrivate {
     CString timeZoneOverride;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT, GObject)
 
 std::unique_ptr<WebKitNotificationProvider> s_serviceWorkerNotificationProvider;
 
 #if ENABLE(REMOTE_INSPECTOR)
-class WebKitAutomationClient final : Inspector::RemoteInspector::Client {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit WebKitAutomationClient(WebKitWebContext* context)
-        : m_webContext(context)
-    {
-        Inspector::RemoteInspector::singleton().setClient(this);
-    }
+String WebKitAutomationClient::browserName() const
+{
+    if (!m_webContext->priv->automationSession)
+        return { };
 
-    ~WebKitAutomationClient()
-    {
-        Inspector::RemoteInspector::singleton().setClient(nullptr);
-    }
+    return webkitAutomationSessionGetBrowserName(m_webContext->priv->automationSession.get());
+}
 
-private:
-    bool remoteAutomationAllowed() const override { return true; }
+String WebKitAutomationClient::browserVersion() const
+{
+    if (!m_webContext->priv->automationSession)
+        return { };
 
-    String browserName() const override
-    {
-        if (!m_webContext->priv->automationSession)
-            return { };
+    return webkitAutomationSessionGetBrowserVersion(m_webContext->priv->automationSession.get());
+}
 
-        return webkitAutomationSessionGetBrowserName(m_webContext->priv->automationSession.get());
-    }
-
-    String browserVersion() const override
-    {
-        if (!m_webContext->priv->automationSession)
-            return { };
-
-        return webkitAutomationSessionGetBrowserVersion(m_webContext->priv->automationSession.get());
-    }
-
-    void requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities) override
-    {
-        ASSERT(!m_webContext->priv->automationSession);
-        m_webContext->priv->automationSession = adoptGRef(webkitAutomationSessionCreate(m_webContext, sessionIdentifier.utf8().data(), capabilities));
-        g_signal_emit(m_webContext, signals[AUTOMATION_STARTED], 0, m_webContext->priv->automationSession.get());
-        m_webContext->priv->processPool->setAutomationSession(&webkitAutomationSessionGetSession(m_webContext->priv->automationSession.get()));
-    }
-
-    WebKitWebContext* m_webContext;
-};
+void WebKitAutomationClient::requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
+{
+    ASSERT(!m_webContext->priv->automationSession);
+    m_webContext->priv->automationSession = adoptGRef(webkitAutomationSessionCreate(m_webContext, sessionIdentifier.utf8().data(), capabilities));
+    g_signal_emit(m_webContext, signals[AUTOMATION_STARTED], 0, m_webContext->priv->automationSession.get());
+    m_webContext->priv->processPool->setAutomationSession(&webkitAutomationSessionGetSession(m_webContext->priv->automationSession.get()));
+}
 
 void webkitWebContextWillCloseAutomationSession(WebKitWebContext* webContext)
 {
+    g_signal_emit_by_name(webContext->priv->automationSession.get(), "will-close");
     webContext->priv->processPool->setAutomationSession(nullptr);
     webContext->priv->automationSession = nullptr;
 }
@@ -331,11 +338,9 @@ void webkitWebContextWillCloseAutomationSession(WebKitWebContext* webContext)
 
 static const char* injectedBundleDirectory()
 {
-#if ENABLE(DEVELOPER_MODE)
     const char* bundleDirectory = g_getenv("WEBKIT_INJECTED_BUNDLE_PATH");
     if (bundleDirectory && g_file_test(bundleDirectory, G_FILE_TEST_IS_DIR))
         return bundleDirectory;
-#endif
 
     static const char* injectedBundlePath = PKGLIBDIR G_DIR_SEPARATOR_S "injected-bundle" G_DIR_SEPARATOR_S;
     return injectedBundlePath;
@@ -429,9 +434,11 @@ static void webkitWebContextConstructed(GObject* object)
     API::ProcessPoolConfiguration configuration;
     configuration.setInjectedBundlePath(FileSystem::stringFromFileSystemRepresentation(bundleFilename.get()));
     configuration.setUsesWebProcessCache(true);
-#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
+#if PLATFORM(GTK) && !USE(GTK4)
     configuration.setProcessSwapsOnNavigation(priv->psonEnabled);
+#if USE(CAIRO)
     configuration.setUseSystemAppearanceForScrollbars(priv->useSystemAppearanceForScrollbars);
+#endif
 #else
     configuration.setProcessSwapsOnNavigation(true);
 #endif
@@ -625,7 +632,7 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
-    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
 
 #if !ENABLE(2022_GLIB_API)
     /**
@@ -1448,7 +1455,9 @@ static bool pathIsBlocked(const char* path)
         return true;
 
     GUniquePtr<char*> splitPath(g_strsplit(path, G_DIR_SEPARATOR_S, 3));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE Port
     return blockedPrefixes.contains(splitPath.get()[1]);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**
@@ -1519,7 +1528,7 @@ gboolean webkit_web_context_get_spell_checking_enabled(WebKitWebContext* context
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), FALSE);
 
 #if ENABLE(SPELLCHECK)
-    return TextChecker::state().isContinuousSpellCheckingEnabled;
+    return TextChecker::state().contains(TextCheckerState::ContinuousSpellCheckingEnabled);
 #else
     return false;
 #endif
@@ -1601,8 +1610,8 @@ void webkit_web_context_set_spell_checking_languages(WebKitWebContext* context, 
 
 #if ENABLE(SPELLCHECK)
     Vector<String> spellCheckingLanguages;
-    for (size_t i = 0; languages[i]; ++i)
-        spellCheckingLanguages.append(String::fromUTF8(languages[i]));
+    for (const char* language : span(const_cast<char**>(languages)))
+        spellCheckingLanguages.append(String::fromUTF8(language));
     TextChecker::setSpellCheckingLanguages(spellCheckingLanguages);
 #endif
 }
@@ -1630,13 +1639,15 @@ void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const
     if (!languageList || !g_strv_length(const_cast<char**>(languageList)))
         return;
 
+    auto languagesSpan = span(const_cast<char**>(languageList));
+
     Vector<String> languages;
-    for (size_t i = 0; languageList[i]; ++i) {
+    for (auto language : languagesSpan) {
         // Do not propagate the C locale to WebCore.
-        if (!g_ascii_strcasecmp(languageList[i], "C") || !g_ascii_strcasecmp(languageList[i], "POSIX"))
+        if (!g_ascii_strcasecmp(language, "C") || !g_ascii_strcasecmp(language, "POSIX"))
             languages.append("en-US"_s);
         else
-            languages.append(makeStringByReplacingAll(String::fromUTF8(languageList[i]), '_', '-'));
+            languages.append(makeStringByReplacingAll(String::fromUTF8(language), '_', '-'));
     }
     context->priv->processPool->setOverrideLanguages(WTFMove(languages));
 }
@@ -2032,13 +2043,13 @@ WebProcessPool& webkitWebContextGetProcessPool(WebKitWebContext* context)
 
 void webkitWebContextWebViewCreated(WebKitWebContext* context, WebKitWebView* webView)
 {
-    auto& page = webkitWebViewGetPage(webView);
+    Ref page = webkitWebViewGetPage(webView);
     for (auto& it : context->priv->uriSchemeHandlers) {
         Ref<WebURLSchemeHandler> handler(*it.value);
-        page.setURLSchemeHandlerForScheme(WTFMove(handler), it.key);
+        page->setURLSchemeHandlerForScheme(WTFMove(handler), it.key);
     }
 
-    context->priv->webViews.set(page.identifier(), webView);
+    context->priv->webViews.set(page->identifier(), webView);
 }
 
 void webkitWebContextWebViewDestroyed(WebKitWebContext* context, WebKitWebView* webView)

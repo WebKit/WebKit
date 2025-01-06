@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,6 @@
 #import <JavaScriptCore/InitializeThreading.h>
 #import <JavaScriptCore/JSCConfig.h>
 #import <JavaScriptCore/Options.h>
-#import <JavaScriptCore/RegisterTZoneTypes.h>
 #import <JavaScriptCore/TestRunnerUtils.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/NetworkStorageSession.h>
@@ -102,7 +101,6 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/TZoneMallocInitialization.h>
 #import <wtf/Threading.h>
 #import <wtf/UniqueArray.h>
 #import <wtf/WTFProcess.h>
@@ -110,6 +108,7 @@
 #import <wtf/cocoa/CrashReporter.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
@@ -874,11 +873,13 @@ static void setWebPreferencesForTestOptions(WebPreferences *preferences, const W
         if (enableAllExperimentalFeatures) {
             for (WebFeature *feature in [WebPreferences _experimentalFeatures]) {
                 // FIXME: ShowModalDialogEnabled and NeedsSiteSpecificQuirks are `developer` settings which should not be enabled by default, but are currently lumped in with the other user-visible features. rdar://103648153
-                // FIXME: BeaconAPIEnabled and LocalFileContentSniffingEnabled These are `stable` settings but should be turned off in WebKitLegacy.
+                // FIXME: BeaconAPIEnabled, LocalFileContentSniffingEnabled, and DeclarativeWebPush.
+                //        These are `stable` settings but should be turned off in WebKitLegacy.
                 if (![feature.key isEqualToString:@"ShowModalDialogEnabled"]
                     && ![feature.key isEqualToString:@"NeedsSiteSpecificQuirks"]
                     && ![feature.key isEqualToString:@"BeaconAPIEnabled"]
-                    && ![feature.key isEqualToString:@"LocalFileContentSniffingEnabled"]) {
+                    && ![feature.key isEqualToString:@"LocalFileContentSniffingEnabled"]
+                    && ![feature.key isEqualToString:@"DeclarativeWebPush"]) {
                     [preferences _setEnabled:YES forFeature:feature];
                 }
             }
@@ -1189,6 +1190,7 @@ void dumpRenderTree(int argc, const char *argv[])
     prepareConsistentTestingEnvironment();
     addTestPluginsToPluginSearchPath(argv[0]);
 
+    JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Allow;
     JSC::initialize();
     WTF::initializeMainThread();
     WebCoreTestSupport::populateJITOperations();
@@ -1314,12 +1316,6 @@ void atexitFunction()
 
 int DumpRenderTreeMain(int argc, const char *argv[])
 {
-#if USE(TZONE_MALLOC)
-    WTF_TZONE_INIT(nullptr);
-    JSC::registerTZoneTypes();
-    WTF_TZONE_REGISTRATION_DONE();
-#endif
-
     atexit(atexitFunction);
 
     WTF::setProcessPrivileges(allPrivileges());
@@ -1387,8 +1383,6 @@ static void dumpHistoryItem(WebHistoryItem *item, int indent, BOOL current)
     NSString *target = [item target];
     if (target && [target length] > 0)
         printf(" (in frame \"%s\")", [target UTF8String]);
-    if ([item isTargetItem])
-        printf("  **nav target**");
     putchar('\n');
     NSArray *kids = [item children];
     if (kids) {

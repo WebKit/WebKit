@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -25,7 +25,7 @@
   const __m256 mul1 = _mm256_mul_ps(inputs256, weight1);                    \
   hadd[i] = _mm256_hadd_ps(mul0, mul1);
 
-static INLINE void nn_propagate_8to1(
+static inline void nn_propagate_8to1(
     const float *const inputs, const float *const weights,
     const float *const bias, int num_inputs_to_process, int tot_num_inputs,
     int num_outputs, float *const output_nodes, int is_clip_required) {
@@ -53,7 +53,7 @@ static INLINE void nn_propagate_8to1(
   }
 }
 
-static INLINE void nn_propagate_8to4(
+static inline void nn_propagate_8to4(
     const float *const inputs, const float *const weights,
     const float *const bias, int num_inputs_to_process, int tot_num_inputs,
     int num_outputs, float *const output_nodes, int is_clip_required) {
@@ -83,7 +83,7 @@ static INLINE void nn_propagate_8to4(
   }
 }
 
-static INLINE void nn_propagate_8to8(
+static inline void nn_propagate_8to8(
     const float *const inputs, const float *const weights,
     const float *const bias, int num_inputs_to_process, int tot_num_inputs,
     int num_outputs, float *const output_nodes, int is_clip_required) {
@@ -114,7 +114,7 @@ static INLINE void nn_propagate_8to8(
   }
 }
 
-static INLINE void nn_propagate_input_multiple_of_8(
+static inline void nn_propagate_input_multiple_of_8(
     const float *const inputs, const float *const weights,
     const float *const bias, int num_inputs_to_process, int tot_num_inputs,
     bool is_output_layer, int num_outputs, float *const output_nodes) {

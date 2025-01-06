@@ -31,7 +31,7 @@
 #import "GraphicsLayerClient.h"
 #import "SimpleRange.h"
 #import "Timer.h"
-#import <wtf/RefCounted.h>
+#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakPtr.h>
@@ -65,7 +65,7 @@ public:
     WEBCORE_EXPORT virtual RefPtr<GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&) = 0;
 };
 
-class DataDetectorHighlight : public RefCounted<DataDetectorHighlight>, private GraphicsLayerClient, public CanMakeWeakPtr<DataDetectorHighlight> {
+class DataDetectorHighlight : public RefCountedAndCanMakeWeakPtr<DataDetectorHighlight>, private GraphicsLayerClient {
     WTF_MAKE_NONCOPYABLE(DataDetectorHighlight);
 public:
     static Ref<DataDetectorHighlight> createForSelection(DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
@@ -82,6 +82,7 @@ public:
     DDHighlightRef highlight() const { return m_highlight.get(); }
     const SimpleRange& range() const;
     GraphicsLayer& layer() const { return m_graphicsLayer.get(); }
+    Ref<GraphicsLayer> protectedLayer() const { return layer(); }
 
     enum class Type : uint8_t {
         None = 0,
@@ -98,6 +99,7 @@ public:
 
     WEBCORE_EXPORT void fadeIn();
     WEBCORE_EXPORT void fadeOut();
+    WEBCORE_EXPORT void dismissImmediately();
 
     WEBCORE_EXPORT void setHighlight(DDHighlightRef);
 

@@ -74,7 +74,7 @@ struct Packet {
   // Datagram excluding RTP header and header extension.
   rtc::Buffer payload;
   Priority priority;
-  absl::optional<RtpPacketInfo> packet_info;
+  std::optional<RtpPacketInfo> packet_info;
   std::unique_ptr<TickTimer::Stopwatch> waiting_time;
   std::unique_ptr<AudioDecoder::EncodedAudioFrame> frame;
 

@@ -25,8 +25,16 @@
 
 #include "config.h"
 #include "MemoryStorageArea.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MemoryStorageArea);
+
+Ref<MemoryStorageArea> MemoryStorageArea::create(const WebCore::ClientOrigin& origin, StorageAreaBase::StorageType type)
+{
+    return adoptRef(*new MemoryStorageArea(origin, type));
+}
 
 MemoryStorageArea::MemoryStorageArea(const WebCore::ClientOrigin& origin, StorageAreaBase::StorageType type)
     : StorageAreaBase(WebCore::StorageMap::noQuota, origin)
@@ -51,7 +59,7 @@ HashMap<String, String> MemoryStorageArea::allItems()
     return m_map.items();
 }
 
-Expected<void, StorageError> MemoryStorageArea::setItem(IPC::Connection::UniqueID connection, StorageAreaImplIdentifier storageAreaImplID, String&& key, String&& value, const String& urlString)
+Expected<void, StorageError> MemoryStorageArea::setItem(std::optional<IPC::Connection::UniqueID> connection, std::optional<StorageAreaImplIdentifier> storageAreaImplID, String&& key, String&& value, const String& urlString)
 {
     String oldValue;
     bool hasQuotaError = false;
@@ -59,7 +67,8 @@ Expected<void, StorageError> MemoryStorageArea::setItem(IPC::Connection::UniqueI
     if (hasQuotaError)
         return makeUnexpected(StorageError::QuotaExceeded);
 
-    dispatchEvents(connection, storageAreaImplID, key, oldValue, value, urlString);
+    if (connection && storageAreaImplID)
+        dispatchEvents(*connection, *storageAreaImplID, key, oldValue, value, urlString);
 
     return { };
 }
@@ -84,11 +93,10 @@ Expected<void, StorageError> MemoryStorageArea::clear(IPC::Connection::UniqueID 
     return { };
 }
 
-std::unique_ptr<MemoryStorageArea> MemoryStorageArea::clone() const
+Ref<MemoryStorageArea> MemoryStorageArea::clone() const
 {
-    auto storageArea = makeUnique<MemoryStorageArea>(origin(), m_storageType);
+    Ref storageArea = MemoryStorageArea::create(origin(), m_storageType);
     storageArea->m_map = m_map;
-
     return storageArea;
 }
 

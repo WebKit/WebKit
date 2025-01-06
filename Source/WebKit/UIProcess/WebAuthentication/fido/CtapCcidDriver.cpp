@@ -27,7 +27,7 @@
 #include "CtapCcidDriver.h"
 
 #if ENABLE(WEB_AUTHN)
-
+#include "Logging.h"
 #include <WebCore/ApduCommand.h>
 #include <WebCore/ApduResponse.h>
 #include <wtf/RunLoop.h>
@@ -35,6 +35,11 @@
 namespace WebKit {
 using namespace apdu;
 using namespace fido;
+
+Ref<CtapCcidDriver> CtapCcidDriver::create(Ref<CcidConnection>&& connection, WebCore::AuthenticatorTransport transport)
+{
+    return adoptRef(*new CtapCcidDriver(WTFMove(connection), transport));
+}
 
 CtapCcidDriver::CtapCcidDriver(Ref<CcidConnection>&& connection, WebCore::AuthenticatorTransport transport)
     : CtapDriver(transport)
@@ -46,14 +51,17 @@ void CtapCcidDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callbac
 {
     // For CTAP2, commands follow:
     // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#nfc-command-framing
-    if (protocol() == ProtocolVersion::kCtap) {
+    if (isCtap2Protocol()) {
+
+        if (!isValidSize(data.size()))
+            RELEASE_LOG(WebAuthn, "CtapCcidDriver::transact Sending data larger than maxSize. msgSize=%ld", data.size());
         ApduCommand command;
         command.setCla(kCtapNfcApduCla);
         command.setIns(kCtapNfcApduIns);
         command.setData(WTFMove(data));
         command.setResponseLength(ApduCommand::kApduMaxResponseLength);
         auto ncallback = [callback = WTFMove(callback), this](Vector<uint8_t>&& resp) mutable {
-            auto apduResponse = ApduResponse::createFromMessage(resp);
+            auto apduResponse = ApduResponse::createFromMessage(WTFMove(resp));
             if (!apduResponse) {
                 respondAsync(WTFMove(callback), { });
                 return;

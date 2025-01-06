@@ -34,10 +34,13 @@
 #include "PrivateRelayed.h"
 #include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/NavigationPreloadState.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerNavigationPreloader);
 
 ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader(NetworkSession& session, NetworkLoadParameters&& parameters, const WebCore::NavigationPreloadState& state, bool shouldCaptureExtraNetworkLoadMetric)
     : m_session(session)
@@ -62,7 +65,7 @@ void ServiceWorkerNavigationPreloader::start()
     }
 
     if (m_session->cache()) {
-        NetworkCache::GlobalFrameID globalID { m_parameters.webPageProxyID, m_parameters.webPageID, m_parameters.webFrameID };
+        NetworkCache::GlobalFrameID globalID { *m_parameters.webPageProxyID, *m_parameters.webPageID, *m_parameters.webFrameID };
         m_session->cache()->retrieve(m_parameters.request, globalID, m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections, [this, weakThis = WeakPtr { *this }](auto&& entry, auto&&) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis || m_isCancelled)
@@ -148,7 +151,7 @@ void ServiceWorkerNavigationPreloader::loadFromNetwork()
     if (m_state.enabled)
         m_parameters.request.addHTTPHeaderField(HTTPHeaderName::ServiceWorkerNavigationPreload, m_state.headerValue);
 
-    m_networkLoad = makeUnique<NetworkLoad>(*this, WTFMove(m_parameters), *m_session);
+    m_networkLoad = NetworkLoad::create(*this, WTFMove(m_parameters), *m_session);
     m_networkLoad->start();
 }
 
@@ -164,6 +167,8 @@ void ServiceWorkerNavigationPreloader::willSendRedirectedRequest(ResourceRequest
 void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& response, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
 {
     RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::didReceiveResponse %p", this);
+
+    m_didReceiveResponseOrError = true;
 
     if (response.isRedirection())
         response.setTainting(ResourceResponse::Tainting::Opaqueredirect);
@@ -200,6 +205,7 @@ void ServiceWorkerNavigationPreloader::didFailLoading(const ResourceError& error
 {
     RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::didFailLoading %p", this);
 
+    m_didReceiveResponseOrError = true;
     m_error = error;
     didComplete();
 }
@@ -251,7 +257,8 @@ bool ServiceWorkerNavigationPreloader::convertToDownload(DownloadManager& manage
     if (!m_networkLoad)
         return false;
 
-    manager.convertNetworkLoadToDownload(downloadID, std::exchange(m_networkLoad, nullptr), WTFMove(m_responseCompletionHandler), { }, request, response);
+    auto networkLoad = std::exchange(m_networkLoad, nullptr);
+    manager.convertNetworkLoadToDownload(downloadID, networkLoad.releaseNonNull(), WTFMove(m_responseCompletionHandler), { }, request, response);
     return true;
 }
 

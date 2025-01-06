@@ -33,6 +33,7 @@
 #include "HasOwnPropertyCache.h"
 #include "IndexingType.h"
 #include "JSGlobalObject.h"
+#include "JSGlobalProxy.h"
 #include "JSMap.h"
 #include "JSSet.h"
 #include "JSWeakMap.h"
@@ -44,6 +45,7 @@ namespace JSC { namespace FTL {
 #define FOR_EACH_ABSTRACT_HEAP(macro) \
     macro(typedArrayProperties) \
     macro(JSCellHeaderAndNamedProperties) \
+    macro(OrderedHashTableData) \
 
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
     macro(ArrayBuffer_data, ArrayBuffer::offsetOfData()) \
@@ -117,6 +119,7 @@ namespace JSC { namespace FTL {
     macro(JSGlobalObject_regExpGlobalData_cachedResult_result_start, JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult() + RegExpCachedResult::offsetOfResult() + OBJECT_OFFSETOF(MatchResult, start)) \
     macro(JSGlobalObject_regExpGlobalData_cachedResult_result_end, JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult() + RegExpCachedResult::offsetOfResult() + OBJECT_OFFSETOF(MatchResult, end)) \
     macro(JSGlobalObject_regExpGlobalData_cachedResult_reified, JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult() + RegExpCachedResult::offsetOfReified()) \
+    macro(JSGlobalProxy_target, JSGlobalProxy::targetOffset()) \
     macro(JSObject_butterfly, JSObject::butterflyOffset()) \
     macro(JSPropertyNameEnumerator_cachedInlineCapacity, JSPropertyNameEnumerator::cachedInlineCapacityOffset()) \
     macro(JSPropertyNameEnumerator_cachedPropertyNamesVector, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()) \
@@ -170,16 +173,8 @@ namespace JSC { namespace FTL {
     macro(StructureRareData_cachedPropertyNameEnumeratorAndFlag, StructureRareData::offsetOfCachedPropertyNameEnumeratorAndFlag()) \
     macro(StructureRareData_specialPropertyCache, StructureRareData::offsetOfSpecialPropertyCache()) \
     macro(SpecialPropertyCache_cachedToStringTagValue, SpecialPropertyCache::offsetOfCache(CachedSpecialPropertyKey::ToStringTag) + SpecialPropertyCacheEntry::offsetOfValue()) \
-    macro(HashMapImpl_capacity, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfCapacity()) \
-    macro(HashMapImpl_deleteCount, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfDeleteCount()) \
-    macro(HashMapImpl_keyCount, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfKeyCount()) \
-    macro(HashMapImpl_buffer,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfBuffer()) \
-    macro(HashMapImpl_tail,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfTail()) \
-    macro(HashMapImpl_head,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead()) \
-    macro(HashMapBucket_value, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfValue()) \
-    macro(HashMapBucket_key, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey()) \
-    macro(HashMapBucket_next, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfNext()) \
-    macro(HashMapBucket_prev, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfPrev()) \
+    macro(JSMap_butterfly, (JSMap::offsetOfButterfly())) \
+    macro(JSSet_butterfly, (JSSet::offsetOfButterfly())) \
     macro(VM_heap_barrierThreshold, VM::offsetOfHeapBarrierThreshold()) \
     macro(VM_heap_mutatorShouldBeFenced, VM::offsetOfHeapMutatorShouldBeFenced()) \
     macro(VM_exception, VM::exceptionOffset()) \

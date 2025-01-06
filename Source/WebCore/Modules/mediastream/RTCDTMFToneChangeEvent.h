@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class RTCDTMFToneChangeEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(RTCDTMFToneChangeEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCDTMFToneChangeEvent);
 public:
     virtual ~RTCDTMFToneChangeEvent();
 

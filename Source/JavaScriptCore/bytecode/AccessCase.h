@@ -81,7 +81,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(DirectArgumentsLength) \
     macro(ScopedArgumentsLength) \
     macro(ModuleNamespaceLoad) \
-    macro(ProxyObjectHas) \
+    macro(ProxyObjectIn) \
     macro(ProxyObjectLoad) \
     macro(ProxyObjectStore) \
     macro(InstanceOfHit) \
@@ -104,6 +104,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedTypedArrayUint16Load) \
     macro(IndexedTypedArrayInt32Load) \
     macro(IndexedTypedArrayUint32Load) \
+    macro(IndexedTypedArrayFloat16Load) \
     macro(IndexedTypedArrayFloat32Load) \
     macro(IndexedTypedArrayFloat64Load) \
     macro(IndexedResizableTypedArrayInt8Load) \
@@ -113,10 +114,12 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedResizableTypedArrayUint16Load) \
     macro(IndexedResizableTypedArrayInt32Load) \
     macro(IndexedResizableTypedArrayUint32Load) \
+    macro(IndexedResizableTypedArrayFloat16Load) \
     macro(IndexedResizableTypedArrayFloat32Load) \
     macro(IndexedResizableTypedArrayFloat64Load) \
     macro(IndexedStringLoad) \
     macro(IndexedNoIndexingMiss) \
+    macro(IndexedProxyObjectStore) \
     macro(IndexedMegamorphicStore) \
     macro(IndexedInt32Store) \
     macro(IndexedDoubleStore) \
@@ -129,6 +132,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedTypedArrayUint16Store) \
     macro(IndexedTypedArrayInt32Store) \
     macro(IndexedTypedArrayUint32Store) \
+    macro(IndexedTypedArrayFloat16Store) \
     macro(IndexedTypedArrayFloat32Store) \
     macro(IndexedTypedArrayFloat64Store) \
     macro(IndexedResizableTypedArrayInt8Store) \
@@ -138,6 +142,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedResizableTypedArrayUint16Store) \
     macro(IndexedResizableTypedArrayInt32Store) \
     macro(IndexedResizableTypedArrayUint32Store) \
+    macro(IndexedResizableTypedArrayFloat16Store) \
     macro(IndexedResizableTypedArrayFloat32Store) \
     macro(IndexedResizableTypedArrayFloat64Store) \
     macro(IndexedInt32InHit) \
@@ -146,26 +151,29 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedArrayStorageInHit) \
     macro(IndexedScopedArgumentsInHit) \
     macro(IndexedDirectArgumentsInHit) \
-    macro(IndexedTypedArrayInt8InHit) \
-    macro(IndexedTypedArrayUint8InHit) \
-    macro(IndexedTypedArrayUint8ClampedInHit) \
-    macro(IndexedTypedArrayInt16InHit) \
-    macro(IndexedTypedArrayUint16InHit) \
-    macro(IndexedTypedArrayInt32InHit) \
-    macro(IndexedTypedArrayUint32InHit) \
-    macro(IndexedTypedArrayFloat32InHit) \
-    macro(IndexedTypedArrayFloat64InHit) \
-    macro(IndexedResizableTypedArrayInt8InHit) \
-    macro(IndexedResizableTypedArrayUint8InHit) \
-    macro(IndexedResizableTypedArrayUint8ClampedInHit) \
-    macro(IndexedResizableTypedArrayInt16InHit) \
-    macro(IndexedResizableTypedArrayUint16InHit) \
-    macro(IndexedResizableTypedArrayInt32InHit) \
-    macro(IndexedResizableTypedArrayUint32InHit) \
-    macro(IndexedResizableTypedArrayFloat32InHit) \
-    macro(IndexedResizableTypedArrayFloat64InHit) \
+    macro(IndexedTypedArrayInt8In) \
+    macro(IndexedTypedArrayUint8In) \
+    macro(IndexedTypedArrayUint8ClampedIn) \
+    macro(IndexedTypedArrayInt16In) \
+    macro(IndexedTypedArrayUint16In) \
+    macro(IndexedTypedArrayInt32In) \
+    macro(IndexedTypedArrayUint32In) \
+    macro(IndexedTypedArrayFloat16In) \
+    macro(IndexedTypedArrayFloat32In) \
+    macro(IndexedTypedArrayFloat64In) \
+    macro(IndexedResizableTypedArrayInt8In) \
+    macro(IndexedResizableTypedArrayUint8In) \
+    macro(IndexedResizableTypedArrayUint8ClampedIn) \
+    macro(IndexedResizableTypedArrayInt16In) \
+    macro(IndexedResizableTypedArrayUint16In) \
+    macro(IndexedResizableTypedArrayInt32In) \
+    macro(IndexedResizableTypedArrayUint32In) \
+    macro(IndexedResizableTypedArrayFloat16In) \
+    macro(IndexedResizableTypedArrayFloat32In) \
+    macro(IndexedResizableTypedArrayFloat64In) \
     macro(IndexedStringInHit) \
     macro(IndexedNoIndexingInMiss) \
+    macro(IndexedProxyObjectIn) \
     macro(IndexedMegamorphicIn) \
 
 class AccessCase : public ThreadSafeRefCounted<AccessCase> {

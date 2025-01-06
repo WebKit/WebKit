@@ -53,6 +53,8 @@
 @end
 
 @interface UIView (WebKitInternal)
+- (BOOL)_wk_isAncestorOf:(UIView *)view;
+@property (nonatomic, readonly) UIScrollView *_wk_parentScrollView;
 @property (nonatomic, readonly) UIViewController *_wk_viewControllerForFullScreenPresentation;
 @end
 

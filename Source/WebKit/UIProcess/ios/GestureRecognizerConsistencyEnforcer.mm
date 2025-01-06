@@ -30,8 +30,11 @@
 
 #import "Logging.h"
 #import "WKContentViewInteraction.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GestureRecognizerConsistencyEnforcer);
 
 GestureRecognizerConsistencyEnforcer::GestureRecognizerConsistencyEnforcer(WKContentView *view)
     : m_view(view)
@@ -65,9 +68,6 @@ void GestureRecognizerConsistencyEnforcer::reset()
 
 void GestureRecognizerConsistencyEnforcer::timerFired()
 {
-    if (!m_view)
-        return;
-
     auto strongView = m_view.get();
     auto possibleDeferringGestures = [NSMutableArray<WKDeferringGestureRecognizer *> array];
     for (WKDeferringGestureRecognizer *gesture in [strongView deferringGestures]) {
@@ -86,6 +86,18 @@ void GestureRecognizerConsistencyEnforcer::timerFired()
         [gesture setState:UIGestureRecognizerStateEnded];
 
     RELEASE_LOG_FAULT(ViewGestures, "Touch event gesture recognizer failed to reset after ending gesture deferral: %@", possibleDeferringGestures);
+}
+
+void GestureRecognizerConsistencyEnforcer::ref() const
+{
+    auto strongView = m_view.get();
+    [strongView retain];
+}
+
+void GestureRecognizerConsistencyEnforcer::deref() const
+{
+    auto strongView = m_view.get();
+    [strongView release];
 }
 
 } // namespace WebKit

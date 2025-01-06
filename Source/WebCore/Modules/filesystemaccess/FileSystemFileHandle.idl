@@ -23,7 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/file-system-access/#api-filesystemhandle
+// https://fs.spec.whatwg.org/#api-filesystemhandle
+
+[
+    EnabledBySetting=AccessHandleEnabled&FileSystemWritableStreamEnabled
+] dictionary FileSystemCreateWritableOptions {
+    boolean keepExistingData = false;
+};
 
 [
     EnabledBySetting=FileSystemAccessEnabled,
@@ -32,4 +38,5 @@
 ] interface FileSystemFileHandle : FileSystemHandle {
     Promise<File> getFile();
     [EnabledBySetting=AccessHandleEnabled, Exposed=Worker] Promise<FileSystemSyncAccessHandle> createSyncAccessHandle();
+    [EnabledBySetting=AccessHandleEnabled&FileSystemWritableStreamEnabled] Promise<FileSystemWritableFileStream> createWritable(optional FileSystemCreateWritableOptions options = {});
 };

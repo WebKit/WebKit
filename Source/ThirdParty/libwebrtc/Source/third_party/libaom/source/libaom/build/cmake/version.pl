@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 ##
-## Copyright (c) 2016, Alliance for Open Media. All rights reserved
+## Copyright (c) 2016, Alliance for Open Media. All rights reserved.
 ##
 ## This source code is subject to the terms of the BSD 2 Clause License and
 ## the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -74,7 +74,7 @@ my $version_packed = "((VERSION_MAJOR << 16) | (VERSION_MINOR << 8) | (VERSION_P
 my $year = (localtime)[5] + 1900;
 my $lic_block = << "EOF";
 /*
- * Copyright (c) $year, Alliance for Open Media. All rights reserved
+ * Copyright (c) $year, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -89,6 +89,8 @@ select $version_file;
 if (length($git_desc)) {
   print << "EOF";
 $lic_block
+#ifndef AOM_VERSION_H_
+#define AOM_VERSION_H_
 #define VERSION_MAJOR $version_major
 #define VERSION_MINOR $version_minor
 #define VERSION_PATCH $version_patch
@@ -97,10 +99,13 @@ $lic_block
   $version_packed
 #define VERSION_STRING_NOSP \"$git_desc\"
 #define VERSION_STRING \" $git_desc\"
+#endif  // AOM_VERSION_H_
 EOF
 } else {
   print << "EOF";
 $lic_block
+#ifndef AOM_VERSION_H_
+#define AOM_VERSION_H_
 #define VERSION_MAJOR $version_major
 #define VERSION_MINOR $version_minor
 #define VERSION_PATCH $version_patch
@@ -109,6 +114,7 @@ $lic_block
   $version_packed
 #define VERSION_STRING_NOSP \"v$version_string\"
 #define VERSION_STRING \" v$version_string\"
+#endif  // AOM_VERSION_H_
 EOF
 }
 close($version_file);

@@ -11,9 +11,9 @@
 #define NET_DCSCTP_SOCKET_MOCK_CONTEXT_H_
 
 #include <cstdint>
+#include <optional>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "net/dcsctp/packet/sctp_packet.h"
 #include "net/dcsctp/public/dcsctp_options.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
@@ -40,7 +40,8 @@ class MockContext : public Context {
     ON_CALL(*this, peer_initial_tsn)
         .WillByDefault(testing::Return(PeerInitialTsn()));
     ON_CALL(*this, callbacks).WillByDefault(testing::ReturnRef(callbacks_));
-    ON_CALL(*this, current_rto).WillByDefault(testing::Return(DurationMs(123)));
+    ON_CALL(*this, current_rto)
+        .WillByDefault(testing::Return(webrtc::TimeDelta::Millis(123)));
     ON_CALL(*this, Send).WillByDefault([this](SctpPacket::Builder& builder) {
       callbacks_.SendPacketWithStatus(builder.Build());
     });
@@ -51,8 +52,8 @@ class MockContext : public Context {
   MOCK_METHOD(TSN, peer_initial_tsn, (), (const, override));
   MOCK_METHOD(DcSctpSocketCallbacks&, callbacks, (), (const, override));
 
-  MOCK_METHOD(void, ObserveRTT, (DurationMs rtt_ms), (override));
-  MOCK_METHOD(DurationMs, current_rto, (), (const, override));
+  MOCK_METHOD(void, ObserveRTT, (webrtc::TimeDelta rtt), (override));
+  MOCK_METHOD(webrtc::TimeDelta, current_rto, (), (const, override));
   MOCK_METHOD(bool,
               IncrementTxErrorCounter,
               (absl::string_view reason),

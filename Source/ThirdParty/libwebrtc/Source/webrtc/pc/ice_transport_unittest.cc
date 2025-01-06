@@ -32,7 +32,7 @@ class IceTransportTest : public ::testing::Test {
 
   rtc::SocketServer* socket_server() const { return socket_server_.get(); }
 
-  webrtc::test::ScopedKeyValueConfig field_trials_;
+  test::ScopedKeyValueConfig field_trials_;
 
  private:
   std::unique_ptr<rtc::SocketServer> socket_server_;

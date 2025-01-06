@@ -98,7 +98,7 @@ static std::optional<Vector<uint8_t>> gcryptDerive(gcry_sexp_t baseKeySexp, gcry
     return mpiZeroPrefixedData(xMPI, keySizeInBytes);
 }
 
-std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey, UseCryptoKit)
+std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)
 {
     return gcryptDerive(baseKey.platformKey().get(), publicKey.platformKey().get(), (baseKey.keySizeInBits() + 7) / 8);
 }

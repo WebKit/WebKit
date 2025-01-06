@@ -49,28 +49,22 @@ public:
     void insertCSS(NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void removeCSS(NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void registerContentScripts(NSObject *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void getRegisteredContentScripts(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void updateContentScripts(NSObject *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void unregisterContentScripts(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void registerContentScripts(NSArray *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getRegisteredContentScripts(NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void updateContentScripts(NSArray *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void unregisterContentScripts(NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
 private:
     friend class WebExtensionContext;
 
-    bool hasValidExecutionWorld(NSDictionary *script, NSString **outExceptionString);
+    static bool validateFilter(NSDictionary *filter, NSString **outExceptionString);
 
-    bool validateScript(NSDictionary *, NSString **outExceptionString);
-    bool validateTarget(NSDictionary *, NSString **outExceptionString);
-    bool validateCSS(NSDictionary *, NSString **outExceptionString);
-
-    bool validateRegisteredScripts(NSArray *, FirstTimeRegistration, NSString **outExceptionString);
-    bool validateFilter(NSDictionary *filter, NSString **outExceptionString);
-
-    void parseCSSInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&);
-    void parseTargetInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&, NSString **outExceptionString);
-    void parseScriptInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&, NSString **outExceptionString);
-    static void parseRegisteredContentScripts(NSArray *, FirstTimeRegistration, Vector<WebExtensionRegisteredScriptParameters>&);
-
+    static bool parseStyleLevel(NSDictionary *, NSString *key, std::optional<WebCore::UserStyleLevel>&, NSString **outExceptionString);
+    static bool parseExecutionWorld(NSDictionary *, std::optional<WebExtensionContentWorldType>&, NSString **outExceptionString);
+    static bool parseCSSInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&, NSString **outExceptionString);
+    static bool parseTargetInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&, NSString **outExceptionString);
+    static bool parseScriptInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&, NSString **outExceptionString);
+    static bool parseRegisteredContentScripts(NSArray *, FirstTimeRegistration, Vector<WebExtensionRegisteredScriptParameters>&, NSString **outExceptionString);
 #endif
 };
 

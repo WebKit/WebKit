@@ -30,6 +30,7 @@
 #include "APINotificationProvider.h"
 #include "WKNotificationProvider.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace API {
 template<> struct ClientTraits<WKNotificationProviderBase> {
@@ -44,7 +45,7 @@ class WebNotificationManagerProxy;
 class WebPageProxy;
 
 class WebNotificationProvider : public API::NotificationProvider, public API::Client<WKNotificationProviderBase> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebNotificationProvider);
 public:
     explicit WebNotificationProvider(const WKNotificationProviderBase*);
 

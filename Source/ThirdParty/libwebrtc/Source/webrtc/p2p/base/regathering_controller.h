@@ -74,7 +74,7 @@ class BasicRegatheringController : public sigslot::has_slots<> {
   void OnIceTransportStateChanged(cricket::IceTransportInternal*) {}
   void OnIceTransportWritableState(rtc::PacketTransportInternal*) {}
   void OnIceTransportReceivingState(rtc::PacketTransportInternal*) {}
-  void OnIceTransportNetworkRouteChanged(absl::optional<rtc::NetworkRoute>) {}
+  void OnIceTransportNetworkRouteChanged(std::optional<rtc::NetworkRoute>) {}
   // Schedules delayed and repeated regathering of local candidates on failed
   // networks, where the delay in milliseconds is given by the config. Each
   // repetition is separated by the same delay. When scheduled, all previous

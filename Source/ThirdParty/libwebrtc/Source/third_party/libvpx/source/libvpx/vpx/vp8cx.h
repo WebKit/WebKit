@@ -166,6 +166,7 @@ enum vp8e_enc_control_id {
    *
    * \note Valid range for VP8: -16..16
    * \note Valid range for VP9: -9..9
+   * \note A negative value (-n) is treated as its absolute value (n) in VP9.
    *
    * Supported in codecs: VP8, VP9
    */
@@ -672,6 +673,14 @@ enum vp8e_enc_control_id {
    */
   VP9E_SET_TPL,
 
+  /*!\brief Codec control function to enable key frame temporal filtering.
+   *
+   * Vp9 allows the encoder to run key frame temporal filtering and use it to
+   * improve the compression performance. To enable, set this parameter to be
+   * 1. The default value is set to be 0.
+   */
+  VP9E_SET_KEY_FRAME_FILTERING,
+
   /*!\brief Codec control function to enable postencode frame drop.
    *
    * This will allow encoder to drop frame after it's encoded.
@@ -767,18 +776,6 @@ enum vp8e_enc_control_id {
    *
    */
   VP9E_SET_QUANTIZER_ONE_PASS,
-
-  /*!\brief Codec control to get TPL stats for the current GOP.
-   *
-   * Allocation and free of memory of size MAX_ARF_GOP_SIZE (50) *
-   * sizeof(VpxTplFrameStats) should be done by applications.
-   *
-   * VPX_CODEC_INVALID_PARAM will be returned if the pointer passed in is NULL.
-   *
-   * Supported in codecs: VP9
-   *
-   */
-  VP9E_GET_TPL_STATS,
 };
 
 /*!\brief vpx 1-D scaling mode
@@ -1089,6 +1086,8 @@ VPX_CTRL_USE_TYPE(VP9E_SET_SVC_SPATIAL_LAYER_SYNC,
 #define VPX_CTRL_VP9E_SET_SVC_SPATIAL_LAYER_SYNC
 VPX_CTRL_USE_TYPE(VP9E_SET_TPL, int)
 #define VPX_CTRL_VP9E_SET_TPL
+VPX_CTRL_USE_TYPE(VP9E_SET_KEY_FRAME_FILTERING, int)
+#define VPX_CTRL_VP9E_SET_KEY_FRAME_FILTERING
 VPX_CTRL_USE_TYPE(VP9E_SET_POSTENCODE_DROP, unsigned int)
 #define VPX_CTRL_VP9E_SET_POSTENCODE_DROP
 VPX_CTRL_USE_TYPE(VP9E_SET_DELTA_Q_UV, int)
@@ -1109,8 +1108,6 @@ VPX_CTRL_USE_TYPE(VP8E_SET_RTC_EXTERNAL_RATECTRL, int)
 #define VPX_CTRL_VP8E_SET_RTC_EXTERNAL_RATECTRL
 VPX_CTRL_USE_TYPE(VP9E_SET_QUANTIZER_ONE_PASS, int)
 #define VPX_CTRL_VP9E_SET_QUANTIZER_ONE_PASS
-VPX_CTRL_USE_TYPE(VP9E_GET_TPL_STATS, void *)
-#define VPX_CTRL_VP9E_GET_TPL_STATS
 
 /*!\endcond */
 /*! @} - end defgroup vp8_encoder */

@@ -40,7 +40,7 @@ using ::webrtc::webrtc_pc_e2e::PeerConfigurer;
 
 // Remove files and directories in a directory non-recursively.
 void CleanDir(absl::string_view dir, size_t expected_output_files_count) {
-  absl::optional<std::vector<std::string>> dir_content =
+  std::optional<std::vector<std::string>> dir_content =
       test::ReadDirectory(dir);
   if (expected_output_files_count == 0) {
     ASSERT_FALSE(dir_content.has_value()) << "Empty directory is expected";
@@ -90,7 +90,7 @@ class PeerConnectionE2EQualityTestTest : public Test {
 
 TEST_F(PeerConnectionE2EQualityTestTest, OutputVideoIsDumpedWhenRequested) {
   std::unique_ptr<NetworkEmulationManager> network_emulation =
-      CreateNetworkEmulationManager(TimeMode::kSimulated);
+      CreateNetworkEmulationManager({.time_mode = TimeMode::kSimulated});
   PeerConnectionE2EQualityTest fixture(
       "test_case", *network_emulation->time_controller(),
       /*audio_quality_analyzer=*/nullptr, /*video_quality_analyzer=*/nullptr,

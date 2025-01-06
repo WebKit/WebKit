@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/reference/clip-absolute-positioned-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/reference/clip-full-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/reference/clip-horizontal-stripe-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/reference/clip-no-clipping-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/reference/clip-overflow-hidden-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/reference/clip-rect-bottom-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/reference/clip-rect-left-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/reference/clip-rect-right-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/reference/clip-rect-scroll-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/reference/clip-rect-top-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/reference/clip-vertical-stripe-ref.html

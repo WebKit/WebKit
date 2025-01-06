@@ -29,8 +29,29 @@
 #import "APIConversions.h"
 #import "Device.h"
 #import <cmath>
+#import <wtf/TZoneMallocInlines.h>
+
+@implementation SamplerIdentifier
+- (instancetype)initWithFirst:(uint64_t)first second:(uint64_t)second
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _first = first;
+    _second = second;
+    return self;
+}
+- (instancetype)copyWithZone:(NSZone *)zone
+{
+    return self;
+}
+@end
 
 namespace WebGPU {
+
+NSMutableDictionary<SamplerIdentifier*, id<MTLSamplerState>> *Sampler::cachedSamplerStates = nil;
+NSMutableOrderedSet<SamplerIdentifier*> *Sampler::lastAccessedKeys = nil;
+Lock Sampler::samplerStateLock;
 
 static bool validateCreateSampler(Device& device, const WGPUSamplerDescriptor& descriptor)
 {
@@ -125,18 +146,59 @@ static MTLCompareFunction compareFunction(WGPUCompareFunction compareFunction)
     }
 }
 
-Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
+static uint32_t miscHash(MTLSamplerDescriptor* descriptor)
 {
-    if (descriptor.nextInChain || !isValid())
-        return Sampler::createInvalid(*this);
+    struct MTLSamplerDescriptorHash {
+        union {
+            struct {
+                // Pack this all down for faster equality/hashing.
+                uint32_t minFilter:2;
+                uint32_t magFilter:2;
+                uint32_t mipFilter:2;
+                uint32_t sAddressMode:3;
+                uint32_t tAddressMode:3;
+                uint32_t rAddressMode:3;
+                uint32_t normalizedCoords:1;
+                uint32_t borderColor:2;
+                uint32_t lodAverage:1;
+                uint32_t compareFunction:3;
+                uint32_t supportArgumentBuffers:1;
 
-    // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createsampler
+            };
+            uint32_t miscHash;
+        };
+    };
+    MTLSamplerDescriptorHash h {
+        .minFilter = static_cast<uint32_t>(descriptor.minFilter),
+        .magFilter = static_cast<uint32_t>(descriptor.magFilter),
+        .mipFilter = static_cast<uint32_t>(descriptor.mipFilter),
+        .sAddressMode = static_cast<uint32_t>(descriptor.sAddressMode),
+        .tAddressMode = static_cast<uint32_t>(descriptor.tAddressMode),
+        .rAddressMode = static_cast<uint32_t>(descriptor.rAddressMode),
+        .normalizedCoords = static_cast<uint32_t>(descriptor.normalizedCoordinates),
+        .borderColor = static_cast<uint32_t>(descriptor.borderColor),
+        .lodAverage = static_cast<uint32_t>(descriptor.lodAverage),
+        .compareFunction = static_cast<uint32_t>(descriptor.compareFunction),
+        .supportArgumentBuffers = static_cast<uint32_t>(descriptor.supportArgumentBuffers),
+    };
+    return h.miscHash;
+}
 
-    if (!validateCreateSampler(*this, descriptor)) {
-        generateAValidationError("Validation failure."_s);
-        return Sampler::createInvalid(*this);
-    }
+static uint64_t floatToUint64(float f)
+{
+    return static_cast<uint64_t>(*reinterpret_cast<uint32_t*>(&f));
+}
 
+static std::pair<uint64_t, uint64_t> computeDescriptorHash(MTLSamplerDescriptor* descriptor)
+{
+    std::pair<uint64_t, uint64_t> hash;
+    hash.first = miscHash(descriptor) | (floatToUint64(descriptor.lodMinClamp) << 32);
+    hash.second = floatToUint64(descriptor.lodMaxClamp) | (floatToUint64(descriptor.maxAnisotropy) << 32);
+    return hash;
+}
+
+static MTLSamplerDescriptor *createMetalDescriptorFromDescriptor(const WGPUSamplerDescriptor &descriptor)
+{
     MTLSamplerDescriptor *samplerDescriptor = [MTLSamplerDescriptor new];
 
     samplerDescriptor.sAddressMode = addressMode(descriptor.addressModeU);
@@ -153,21 +215,37 @@ Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
     // https://developer.apple.com/documentation/metal/mtlsamplerdescriptor/1516164-maxanisotropy?language=objc
     // "Values must be between 1 and 16, inclusive."
     samplerDescriptor.maxAnisotropy = std::min<uint16_t>(descriptor.maxAnisotropy, 16);
+    samplerDescriptor.label = descriptor.label;
 
-    samplerDescriptor.label = fromAPI(descriptor.label);
-
-    id<MTLSamplerState> samplerState = [m_device newSamplerStateWithDescriptor:samplerDescriptor];
-    if (!samplerState)
-        return Sampler::createInvalid(*this);
-
-    return Sampler::create(samplerState, descriptor, *this);
+    return samplerDescriptor;
 }
 
-Sampler::Sampler(id<MTLSamplerState> samplerState, const WGPUSamplerDescriptor& descriptor, Device& device)
-    : m_samplerState(samplerState)
+Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
+{
+    if (descriptor.nextInChain || !isValid())
+        return Sampler::createInvalid(*this);
+
+    // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createsampler
+
+    if (!validateCreateSampler(*this, descriptor)) {
+        generateAValidationError("Validation failure."_s);
+        return Sampler::createInvalid(*this);
+    }
+
+    MTLSamplerDescriptor * samplerDescriptor = createMetalDescriptorFromDescriptor(descriptor);
+    auto newDescriptorHash = computeDescriptorHash(samplerDescriptor);
+
+    return Sampler::create([[SamplerIdentifier alloc] initWithFirst:newDescriptorHash.first second:newDescriptorHash.second], descriptor, *this);
+}
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Sampler);
+
+Sampler::Sampler(SamplerIdentifier* samplerIdentifier, const WGPUSamplerDescriptor& descriptor, Device& device)
+    : m_samplerIdentifier(samplerIdentifier)
     , m_descriptor(descriptor)
     , m_device(device)
 {
+    m_cachedSamplerState = samplerState();
 }
 
 Sampler::Sampler(Device& device)
@@ -175,11 +253,68 @@ Sampler::Sampler(Device& device)
 {
 }
 
-Sampler::~Sampler() = default;
-
-void Sampler::setLabel(String&&)
+Sampler::~Sampler()
 {
-    // MTLRenderPipelineState's labels are read-only.
+    if (m_samplerIdentifier) {
+        Locker locker { samplerStateLock };
+        [cachedSamplerStates removeObjectForKey:m_samplerIdentifier];
+        [lastAccessedKeys removeObject:m_samplerIdentifier];
+    }
+}
+
+void Sampler::setLabel(String&& label)
+{
+    m_descriptor.label = label;
+}
+
+bool Sampler::isValid() const
+{
+    return !!m_samplerIdentifier;
+}
+
+id<MTLSamplerState> Sampler::samplerState() const
+{
+    if (!m_samplerIdentifier)
+        return nil;
+
+    Locker locker { samplerStateLock };
+    if (!cachedSamplerStates) {
+        cachedSamplerStates = [NSMutableDictionary dictionary];
+        lastAccessedKeys = [NSMutableOrderedSet orderedSet];
+    }
+
+    id<MTLSamplerState> samplerState = [cachedSamplerStates objectForKey:m_samplerIdentifier];
+    if (samplerState)
+        return samplerState;
+
+    id<MTLDevice> device = m_device->device();
+    if (!device)
+        return nil;
+    if (cachedSamplerStates.count >= device.maxArgumentBufferSamplerCount) {
+        if (!lastAccessedKeys.count)
+            return nil;
+
+        SamplerIdentifier* key = [lastAccessedKeys objectAtIndex:0];
+        if (key)
+            [cachedSamplerStates removeObjectForKey:key];
+        [lastAccessedKeys removeObjectAtIndex:0];
+        ASSERT(cachedSamplerStates.count < device.maxArgumentBufferSamplerCount);
+    }
+
+    samplerState = [device newSamplerStateWithDescriptor:createMetalDescriptorFromDescriptor(m_descriptor)];
+    if (!samplerState)
+        return nil;
+
+    [cachedSamplerStates setObject:samplerState forKey:m_samplerIdentifier];
+    [lastAccessedKeys addObject:m_samplerIdentifier];
+    m_cachedSamplerState = samplerState;
+
+    return samplerState;
+}
+
+id<MTLSamplerState> Sampler::cachedSampler() const
+{
+    return m_cachedSamplerState;
 }
 
 } // namespace WebGPU
@@ -198,5 +333,5 @@ void wgpuSamplerRelease(WGPUSampler sampler)
 
 void wgpuSamplerSetLabel(WGPUSampler sampler, const char* label)
 {
-    WebGPU::fromAPI(sampler).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(sampler)->setLabel(WebGPU::fromAPI(label));
 }

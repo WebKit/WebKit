@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/README.md
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-data-serialization.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-data.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-data.crossOriginIsolated.https.any.js
@@ -69,9 +70,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/serialization.crossAgentCluster.serviceworker.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-aac.mp4
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-alaw.wav
-/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-mulaw.wav
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-opus.ogg
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-pcm-f32.wav
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-pcm-s16.wav
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-pcm-s24.wav
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-pcm-s32.wav
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-pcm-u8.wav
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-ulaw.wav
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-vorbis.ogg
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx.adts
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx.flac
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx.mp3
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/transfering.https.any.js

@@ -32,8 +32,11 @@
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebFormClient);
 
 WebFormClient::WebFormClient(const WKPageFormClientBase* wkClient)
 {

@@ -31,7 +31,8 @@ struct TransportChannelStats {
   int ssl_version_bytes = 0;
   int srtp_crypto_suite = rtc::kSrtpInvalidCryptoSuite;
   int ssl_cipher_suite = rtc::kTlsNullWithNullNull;
-  absl::optional<rtc::SSLRole> dtls_role;
+  std::optional<absl::string_view> tls_cipher_suite_name;
+  std::optional<rtc::SSLRole> dtls_role;
   webrtc::DtlsTransportState dtls_state = webrtc::DtlsTransportState::kNew;
   IceTransportStats ice_transport_stats;
   uint16_t ssl_peer_signature_algorithm = rtc::kSslSignatureAlgorithmUnknown;

@@ -10,6 +10,7 @@
 
 #include "api/neteq/default_neteq_controller_factory.h"
 
+#include "api/environment/environment.h"
 #include "modules/audio_coding/neteq/decision_logic.h"
 
 namespace webrtc {
@@ -17,10 +18,10 @@ namespace webrtc {
 DefaultNetEqControllerFactory::DefaultNetEqControllerFactory() = default;
 DefaultNetEqControllerFactory::~DefaultNetEqControllerFactory() = default;
 
-std::unique_ptr<NetEqController>
-DefaultNetEqControllerFactory::CreateNetEqController(
+std::unique_ptr<NetEqController> DefaultNetEqControllerFactory::Create(
+    const Environment& env,
     const NetEqController::Config& config) const {
-  return std::make_unique<DecisionLogic>(config);
+  return std::make_unique<DecisionLogic>(env, config);
 }
 
 }  // namespace webrtc

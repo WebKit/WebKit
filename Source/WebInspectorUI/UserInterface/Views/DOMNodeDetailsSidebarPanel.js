@@ -109,6 +109,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
             this._accessibilityNodeActiveDescendantRow = new WI.DetailsSectionSimpleRow(WI.UIString("Shared Focus"));
             this._accessibilityNodeBusyRow = new WI.DetailsSectionSimpleRow(WI.UIString("Busy"));
             this._accessibilityNodeCheckedRow = new WI.DetailsSectionSimpleRow(WI.UIString("Checked"));
+            this._accessibilityNodeSwitchStateRow = new WI.DetailsSectionSimpleRow(WI.UIString("State"));
             this._accessibilityNodeChildrenRow = new WI.DetailsSectionSimpleRow(WI.UIString("Children"));
             this._accessibilityNodeControlsRow = new WI.DetailsSectionSimpleRow(WI.UIString("Controls"));
             this._accessibilityNodeCurrentRow = new WI.DetailsSectionSimpleRow(WI.UIString("Current"));
@@ -546,6 +547,19 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
                         checked = WI.UIString("No");
                 }
 
+                let switchState = "";
+                // COMPATIBILITY (macOS 15.0, iOS 18.0): DOM.AccessibilityProperties.switchState did not exist yet.
+                if (InspectorBackend.Enum.DOM.AccessibilityPropertiesSwitchState) {
+                    switch (accessibilityProperties.switchState) {
+                    case InspectorBackend.Enum.DOM.AccessibilityPropertiesSwitchState.On:
+                        switchState = WI.UIString("On", "On @ Switch State", "Label indicating that an input of type switch is on.");
+                        break;
+                    case InspectorBackend.Enum.DOM.AccessibilityPropertiesSwitchState.Off:
+                        switchState = WI.UIString("Off", "Off @ Switch State", "Label indicating that an input of type switch is off.");
+                        break;
+                    }
+                }
+
                 // Accessibility tree children are not a 1:1 mapping with DOM tree children.
                 var childNodeLinkList = linkListForNodeIds(accessibilityProperties.childNodeIds);
                 var controlledNodeLinkList = linkListForNodeIds(accessibilityProperties.controlledNodeIds);
@@ -728,6 +742,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
                 this._accessibilityNodeInvalidRow.value = invalid;
                 this._accessibilityNodeLabelRow.value = label;
                 this._accessibilityNodeLiveRegionStatusRow.value = liveRegionStatusNode || liveRegionStatus;
+                this._accessibilityNodeSwitchStateRow.value = switchState;
 
                 // Row label changes based on whether the value is a delegate node link.
                 this._accessibilityNodeMouseEventRow.label = mouseEventNodeLink ? WI.UIString("Click Listener") : WI.UIString("Clickable");
@@ -777,7 +792,8 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
                     this._accessibilityNodeExpandedRow,
                     this._accessibilityNodePressedRow,
                     this._accessibilityNodeReadonlyRow,
-                    this._accessibilityNodeSelectedRow
+                    this._accessibilityNodeSelectedRow,
+                    this._accessibilityNodeSwitchStateRow,
                 ];
 
                 this._accessibilityEmptyRow.hideEmptyMessage();

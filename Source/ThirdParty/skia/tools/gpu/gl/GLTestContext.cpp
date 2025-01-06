@@ -7,7 +7,7 @@
 
 #include "tools/gpu/gl/GLTestContext.h"
 
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/gl/GrGLDirectContext.h"
 #include "src/gpu/ganesh/gl/GrGLUtil.h"
 #include "tools/gpu/GpuTimer.h"
@@ -195,7 +195,7 @@ void GLTestContext::teardown() {
 
 void GLTestContext::testAbandon() {
     INHERITED::testAbandon();
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     if (fGLInterface) {
         fGLInterface->abandon();
         fOriginalGLInterface->abandon();

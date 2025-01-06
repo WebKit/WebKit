@@ -11,11 +11,10 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_GOOG_CC_ACKNOWLEDGED_BITRATE_ESTIMATOR_INTERFACE_H_
 #define MODULES_CONGESTION_CONTROLLER_GOOG_CC_ACKNOWLEDGED_BITRATE_ESTIMATOR_INTERFACE_H_
 
-
 #include <memory>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
@@ -75,8 +74,8 @@ class AcknowledgedBitrateEstimatorInterface {
 
   virtual void IncomingPacketFeedbackVector(
       const std::vector<PacketResult>& packet_feedback_vector) = 0;
-  virtual absl::optional<DataRate> bitrate() const = 0;
-  virtual absl::optional<DataRate> PeekRate() const = 0;
+  virtual std::optional<DataRate> bitrate() const = 0;
+  virtual std::optional<DataRate> PeekRate() const = 0;
   virtual void SetAlr(bool in_alr) = 0;
   virtual void SetAlrEndedTime(Timestamp alr_ended_time) = 0;
 };

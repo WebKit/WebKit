@@ -26,15 +26,6 @@ Test that restoring actually changes smoothing and not just the attribute value.
 PASS left_of_center_pixel.data[0] is 0
 PASS left_of_center_pixel.data[1] is 0
 PASS left_of_center_pixel.data[2] is 0
-Test that the prefixed attribute mirrors the unprefixed attribute.
-PASS ctx.imageSmoothingEnabled is false
-PASS ctx.webkitImageSmoothingEnabled is false
-PASS ctx.imageSmoothingEnabled is true
-PASS ctx.webkitImageSmoothingEnabled is true
-PASS ctx.imageSmoothingEnabled is false
-PASS ctx.webkitImageSmoothingEnabled is false
-PASS ctx.imageSmoothingEnabled is true
-PASS ctx.webkitImageSmoothingEnabled is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

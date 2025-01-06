@@ -27,7 +27,7 @@
 
 #include "FloatRect.h"
 #include "ImageTypes.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +36,7 @@ class ImageBuffer;
 struct ImagePaintingOptions;
 
 class CachedSubimage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CachedSubimage);
 public:
     static std::unique_ptr<CachedSubimage> create(GraphicsContext&, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect);
     static std::unique_ptr<CachedSubimage> createPixelated(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect);

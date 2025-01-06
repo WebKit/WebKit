@@ -14,13 +14,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/units/timestamp.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_codec_type.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/include/video_codec_interface.h"
-#include "modules/video_coding/include/video_coding_defines.h"
 
 namespace webrtc {
 
@@ -39,7 +39,7 @@ class EncodedFrame : public EncodedImage {
   virtual int64_t ReceivedTime() const { return -1; }
   // Returns a Timestamp from `ReceivedTime`, or nullopt if there is no receive
   // time.
-  absl::optional<webrtc::Timestamp> ReceivedTimestamp() const;
+  std::optional<webrtc::Timestamp> ReceivedTimestamp() const;
 
   // When this frame should be rendered.
   // TODO(bugs.webrtc.org/13756): Use Timestamp instead of int.
@@ -48,7 +48,7 @@ class EncodedFrame : public EncodedImage {
   int64_t RenderTimeMs() const { return _renderTimeMs; }
   // Returns a Timestamp from `RenderTime`, or nullopt if there is no
   // render time.
-  absl::optional<webrtc::Timestamp> RenderTimestamp() const;
+  std::optional<webrtc::Timestamp> RenderTimestamp() const;
 
   // This information is currently needed by the timing calculation class.
   // TODO(philipel): Remove this function when a new timing class has

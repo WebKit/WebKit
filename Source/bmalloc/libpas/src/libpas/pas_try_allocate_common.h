@@ -83,7 +83,7 @@ pas_try_allocate_common_impl_fast(
     size_t alignment,
     pas_allocation_mode allocation_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     pas_allocation_result result;
     result = pas_local_allocator_try_allocate(allocator,
@@ -110,7 +110,7 @@ pas_try_allocate_common_impl_slow(
     pas_allocator_counts* allocator_counts,
     pas_size_lookup_mode size_lookup_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     pas_baseline_allocator_result baseline_allocator_result;
     pas_allocation_result result;
@@ -150,7 +150,33 @@ pas_try_allocate_common_impl_slow(
         cached_index = &((pas_primitive_heap_ref*)heap_ref)->cached_index;
         break;
     }
-    
+
+
+    // Checking PGM allocation is requested for asked size. Consider it as a large heap allocation due to guard pages.
+    if (PAS_UNLIKELY(pas_probabilistic_guard_malloc_can_use && config.pgm_enabled && pas_probabilistic_guard_malloc_should_call_pgm())) {
+
+        if (verbose)
+            pas_log("PGM allocation is requested for asked size.\n");
+
+        pas_physical_memory_transaction transaction;
+        pas_physical_memory_transaction_construct(&transaction);
+
+        do {
+            PAS_ASSERT(!result.did_succeed);
+
+            pas_physical_memory_transaction_begin(&transaction);
+            pas_heap_lock_lock();
+
+            // Call PGM allocation for asked size
+            result = pas_large_heap_try_allocate_pgm(&heap->large_heap, size, alignment, allocation_mode, config.config_ptr, &transaction);
+            pas_heap_lock_unlock();
+        } while (!pas_physical_memory_transaction_end(&transaction));
+
+        pas_scavenger_notify_eligibility_if_needed();
+
+        return pas_msl_malloc_logging(size, result);
+    }
+
     if (verbose)
         pas_log("Asking heap for a directory.\n");
     
@@ -173,10 +199,7 @@ pas_try_allocate_common_impl_slow(
             pas_physical_memory_transaction_begin(&transaction);
             pas_heap_lock_lock();
 
-            if (PAS_UNLIKELY(pas_probabilistic_guard_malloc_can_use && config.pgm_enabled && pas_probabilistic_guard_malloc_should_call_pgm()))
-                result = pas_large_heap_try_allocate_pgm(&heap->large_heap, size, alignment, allocation_mode, config.config_ptr, &transaction);
-            else
-                result = pas_large_heap_try_allocate(&heap->large_heap, size, alignment, allocation_mode, config.config_ptr, &transaction);
+            result = pas_large_heap_try_allocate(&heap->large_heap, size, alignment, allocation_mode, config.config_ptr, &transaction);
             
             pas_heap_lock_unlock();
         } while (!pas_physical_memory_transaction_end(&transaction));
@@ -221,7 +244,7 @@ pas_try_allocate_common_impl(
     pas_allocation_result (*slow)(pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode),
     pas_local_allocator_result allocator_result)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     if (verbose) {
         pas_log("heap_ref = %p allocating size = %zu, alignment = %zu.\n",

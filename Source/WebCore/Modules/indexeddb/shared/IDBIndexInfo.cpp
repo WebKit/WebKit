@@ -27,15 +27,11 @@
 #include "IDBIndexInfo.h"
 
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-IDBIndexInfo::IDBIndexInfo()
-{
-}
-
-IDBIndexInfo::IDBIndexInfo(uint64_t identifier, uint64_t objectStoreIdentifier, const String& name, IDBKeyPath&& keyPath, bool unique, bool multiEntry)
+IDBIndexInfo::IDBIndexInfo(IDBIndexIdentifier identifier, IDBObjectStoreIdentifier objectStoreIdentifier, const String& name, IDBKeyPath&& keyPath, bool unique, bool multiEntry)
     : m_identifier(identifier)
     , m_objectStoreIdentifier(objectStoreIdentifier)
     , m_name(name)

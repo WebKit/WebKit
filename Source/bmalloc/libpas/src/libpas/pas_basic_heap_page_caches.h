@@ -37,6 +37,7 @@ struct pas_basic_heap_page_caches;
 typedef struct pas_basic_heap_page_caches pas_basic_heap_page_caches;
 
 struct pas_basic_heap_page_caches {
+    pas_large_heap_physical_page_sharing_cache megapage_large_heap_cache;
     pas_large_heap_physical_page_sharing_cache large_heap_cache;
     pas_megapage_cache small_exclusive_segregated_megapage_cache;
     pas_shared_page_directory_by_size small_shared_page_directories;
@@ -51,6 +52,7 @@ struct pas_basic_heap_page_caches {
 
 #define PAS_BASIC_HEAP_PAGE_CACHES_INITIALIZER(small_log_shift, medium_log_shift) \
     ((pas_basic_heap_page_caches){ \
+        .megapage_large_heap_cache = PAS_MEGAPAGE_LARGE_FREE_HEAP_PHYSICAL_PAGE_SHARING_CACHE_INITIALIZER, \
         .large_heap_cache = PAS_LARGE_FREE_HEAP_PHYSICAL_PAGE_SHARING_CACHE_INITIALIZER, \
         .small_exclusive_segregated_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER, \
         .small_shared_page_directories = PAS_SHARED_PAGE_DIRECTORY_BY_SIZE_INITIALIZER( \

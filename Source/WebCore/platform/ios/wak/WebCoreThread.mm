@@ -33,10 +33,10 @@
 #import "FloatingPointEnvironment.h"
 #import "GraphicsContextGLANGLE.h"
 #import "Logging.h"
-#import "RuntimeApplicationChecks.h"
 #import "ThreadGlobalData.h"
 #import "WAKWindow.h"
 #import "WKUtilities.h"
+#import "WebCoreHeapSupport.h"
 #import "WebCoreJITOperations.h"
 #import "WebCoreThreadInternal.h"
 #import "WebCoreThreadMessage.h"
@@ -44,7 +44,6 @@
 #import <Foundation/NSInvocation.h>
 #import <JavaScriptCore/InitializeThreading.h>
 #import <JavaScriptCore/JSLock.h>
-#import <libkern/OSAtomic.h>
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
@@ -52,6 +51,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RecursiveLockAdapter.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/ThreadSpecific.h>
 #import <wtf/Threading.h>
 #import <wtf/WorkQueue.h>
@@ -645,6 +645,7 @@ static void* RunWebThread(void*)
     // <rdar://problem/8502487>.
     WTF::initializeWebThread();
     JSC::initialize();
+    WebCore::initializeHeapRefs();
     WebCore::populateJITOperations();
     
     // Make sure that the WebThread and the main thread share the same ThreadGlobalData objects.
@@ -887,6 +888,20 @@ bool WebThreadIsLockedOrDisabled(void)
     return !WebThreadIsEnabled() || WebThreadIsLocked();
 }
 
+bool WebThreadIsLockedOrDisabledInMainOrWebThread(void)
+{
+    if (!WebThreadIsEnabled())
+        return true;
+
+    if (WebThreadIsCurrent())
+        return webThreadLockCount;
+
+    if (pthread_main_np())
+        return mainThreadLockCount;
+
+    return true;
+}
+
 void WebThreadLockPushModal(void)
 {
     if (WebThreadIsCurrent())
@@ -933,8 +948,8 @@ WebThreadContext* WebThreadCurrentContext(void)
 
 void WebThreadEnable(void)
 {
-    RELEASE_ASSERT_WITH_MESSAGE(!WebCore::IOSApplication::isWebProcess(), "The WebProcess should never run a Web Thread");
-    if (WebCore::IOSApplication::isAppleApplication()) {
+    RELEASE_ASSERT_WITH_MESSAGE(!WTF::IOSApplication::isWebProcess(), "The WebProcess should never run a Web Thread");
+    if (WTF::IOSApplication::isAppleApplication()) {
         using WebCore::LogThreading;
         RELEASE_LOG_FAULT(Threading, "WebThread enabled");
     }

@@ -30,11 +30,11 @@
 
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AnalyserNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AnalyserNode);
 
 ExceptionOr<Ref<AnalyserNode>> AnalyserNode::create(BaseAudioContext& context, const AnalyserOptions& options)
 {
@@ -61,7 +61,7 @@ ExceptionOr<Ref<AnalyserNode>> AnalyserNode::create(BaseAudioContext& context, c
 
 AnalyserNode::AnalyserNode(BaseAudioContext& context)
     : AudioBasicInspectorNode(context, NodeTypeAnalyser)
-    , m_analyser { context.noiseInjectionPolicy() }
+    , m_analyser { context.noiseInjectionPolicies() }
 {
     addOutput(1);
     

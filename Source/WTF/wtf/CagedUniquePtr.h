@@ -58,12 +58,14 @@ public:
     template<typename... Arguments>
     static CagedUniquePtr tryCreate(size_t length, Arguments&&... arguments)
     {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         T* result = static_cast<T*>(Gigacage::tryMalloc(kind, sizeof(T) * length));
         if (!result)
             return { };
         while (length--)
             new (result + length) T(arguments...);
         return CagedUniquePtr(result);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     CagedUniquePtr& operator=(CagedUniquePtr&& ptr)

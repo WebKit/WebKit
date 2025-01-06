@@ -4,21 +4,32 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-
 #include "src/gpu/ganesh/GrTestUtils.h"
 
+#if defined(GPU_TEST_UTILS)
+
+#include "include/core/SkAlphaType.h"
 #include "include/core/SkColorSpace.h"
 #include "include/core/SkMatrix.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkPath.h"
 #include "include/core/SkPathBuilder.h"
 #include "include/core/SkRRect.h"
+#include "include/core/SkRect.h"
+#include "include/private/base/SkMacros.h"
+#include "include/private/gpu/ganesh/GrTypesPriv.h"
+#include "src/base/SkRandom.h"
 #include "src/core/SkRectPriv.h"
 #include "src/gpu/ganesh/GrColorInfo.h"
+#include "src/gpu/ganesh/GrColorSpaceXform.h"
 #include "src/gpu/ganesh/GrFPArgs.h"
 #include "src/gpu/ganesh/GrProcessorUnitTest.h"
 #include "src/gpu/ganesh/GrStyle.h"
 #include "src/utils/SkDashPathPriv.h"
 
-#if defined(GR_TEST_UTILS)
+#include <array>
+#include <cstring>
+#include <utility>
 
 static const SkMatrix& test_matrix(SkRandom* random,
                                    bool includeNonPerspective,
@@ -301,7 +312,7 @@ bool TestDashPathEffect::onFilterPath(SkPath* dst, const SkPath& src, SkStrokeRe
                                       fPhase);
 }
 
-SkPathEffect::DashType TestDashPathEffect::onAsADash(DashInfo* info) const {
+SkPathEffectBase::DashType TestDashPathEffect::asADash(DashInfo* info) const {
     if (info) {
         if (info->fCount >= fCount && info->fIntervals) {
             memcpy(info->fIntervals, fIntervals.get(), fCount * sizeof(SkScalar));
@@ -309,7 +320,7 @@ SkPathEffect::DashType TestDashPathEffect::onAsADash(DashInfo* info) const {
         info->fCount = fCount;
         info->fPhase = fPhase;
     }
-    return kDash_DashType;
+    return DashType::kDash;
 }
 
 sk_sp<SkColorSpace> TestColorSpace(SkRandom* random) {

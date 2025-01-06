@@ -28,8 +28,8 @@ void FIPS_service_indicator_update_state(void);
 // stop |FIPS_service_indicator_update_state| from actually updating the service
 // indicator. This is used when a primitive calls a potentially approved
 // primitive to avoid false positives. For example, just because a key
-// generation calls |RAND_bytes| (and thus the approved DRBG) doesn't mean that
-// the key generation operation itself is approved.
+// generation calls |BCM_rand_bytes| (and thus the approved DRBG) doesn't mean
+// that the key generation operation itself is approved.
 //
 // This lock nests: i.e. locking twice is fine so long as each lock is paired
 // with an unlock. If the (64-bit) counter overflows, the process aborts.

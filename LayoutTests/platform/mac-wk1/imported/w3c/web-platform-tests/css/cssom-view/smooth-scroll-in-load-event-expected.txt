@@ -1,0 +1,3 @@
+
+FAIL Smooth scroll in load event handler assert_equals: Should not set scrollLeft immediately expected 0 but got 800
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,56 +32,55 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "WKWebExtensionControllerInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebExtensionController.h"
-#import "WebPageProxy.h"
 #import "WebProcessProxy.h"
-#import "_WKWebExtensionControllerInternal.h"
 #import <wtf/EnumTraits.h>
 
 namespace WebKit {
 
-void WebExtensionContext::addListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType)
+void WebExtensionContext::addListener(WebCore::FrameIdentifier frameIdentifier, WebExtensionEventListenerType listenerType, WebExtensionContentWorldType contentWorldType)
 {
-    RefPtr page = WebProcessProxy::webPage(identifier);
-    if (!page)
+    RefPtr frame = WebFrameProxy::webFrame(frameIdentifier);
+    if (!frame)
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Registered event listener for type %{public}hhu in %{public}@ world", enumToUnderlyingType(type), (NSString *)toDebugString(contentWorldType));
+    RELEASE_LOG_DEBUG(Extensions, "Registered event listener for type %{public}hhu in %{public}@ world", enumToUnderlyingType(listenerType), (NSString *)toDebugString(contentWorldType));
 
-    if (!extension().backgroundContentIsPersistent() && isBackgroundPage(identifier))
-        m_backgroundContentEventListeners.add(type);
+    if (!protectedExtension()->backgroundContentIsPersistent() && isBackgroundPage(frameIdentifier))
+        m_backgroundContentEventListeners.add(listenerType);
 
-    auto result = m_eventListenerPages.add({ type, contentWorldType }, WeakPageCountedSet { });
-    result.iterator->value.add(*page);
+    auto result = m_eventListenerFrames.add({ listenerType, contentWorldType }, WeakFrameCountedSet { });
+    result.iterator->value.add(*frame);
 }
 
-void WebExtensionContext::removeListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType, size_t removedCount)
+void WebExtensionContext::removeListener(WebCore::FrameIdentifier frameIdentifier, WebExtensionEventListenerType listenerType, WebExtensionContentWorldType contentWorldType, size_t removedCount)
 {
     ASSERT(removedCount);
 
-    RefPtr page = WebProcessProxy::webPage(identifier);
-    if (!page)
+    RefPtr frame = WebFrameProxy::webFrame(frameIdentifier);
+    if (!frame)
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Unregistered %{public}zu event listener(s) for type %{public}hhu in %{public}@ world", removedCount, enumToUnderlyingType(type), (NSString *)toDebugString(contentWorldType));
+    RELEASE_LOG_DEBUG(Extensions, "Unregistered %{public}zu event listener(s) for type %{public}hhu in %{public}@ world", removedCount, enumToUnderlyingType(listenerType), (NSString *)toDebugString(contentWorldType));
 
-    if (!extension().backgroundContentIsPersistent() && isBackgroundPage(identifier)) {
+    if (!protectedExtension()->backgroundContentIsPersistent() && isBackgroundPage(frameIdentifier)) {
         for (size_t i = 0; i < removedCount; ++i)
-            m_backgroundContentEventListeners.remove(type);
+            m_backgroundContentEventListeners.remove(listenerType);
     }
 
-    auto iterator = m_eventListenerPages.find({ type, contentWorldType });
-    if (iterator == m_eventListenerPages.end())
+    auto iterator = m_eventListenerFrames.find({ listenerType, contentWorldType });
+    if (iterator == m_eventListenerFrames.end())
         return;
 
     for (size_t i = 0; i < removedCount; ++i)
-        iterator->value.remove(*page);
+        iterator->value.remove(*frame);
 
     if (!iterator->value.isEmptyIgnoringNullReferences())
         return;
 
-    m_eventListenerPages.remove(iterator);
+    m_eventListenerFrames.remove(iterator);
 }
 
 } // namespace WebKit

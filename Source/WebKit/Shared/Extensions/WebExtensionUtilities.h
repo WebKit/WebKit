@@ -27,8 +27,13 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "WebExtensionError.h"
-#import <JavaScriptCore/JSBase.h>
+#include "WebExtensionError.h"
+#include <JavaScriptCore/JSBase.h>
+#include <wtf/Function.h>
+#include <wtf/JSONValues.h>
+#include <wtf/Markable.h>
+#include <wtf/UUID.h>
+#include <wtf/Vector.h>
 
 #ifdef __OBJC__
 #import <wtf/RetainPtr.h>
@@ -36,6 +41,18 @@
 #endif
 
 namespace WebKit {
+
+class WebFrame;
+
+Ref<JSON::Array> filterObjects(const JSON::Array&, WTF::Function<bool(const JSON::Value&)>&& lambda);
+
+Vector<String> makeStringVector(const JSON::Array&);
+
+Vector<double> availableScreenScales();
+double largestDisplayScale();
+
+RefPtr<JSON::Object> jsonWithLowercaseKeys(RefPtr<JSON::Object>);
+RefPtr<JSON::Object> mergeJSON(RefPtr<JSON::Object>, RefPtr<JSON::Object>);
 
 #ifdef __OBJC__
 
@@ -64,6 +81,9 @@ NSString *toErrorString(NSString *callingAPIName, NSString *sourceKey, NSString 
 
 /// Returns an error object that combines the provided information into a single, descriptive message.
 JSObjectRef toJSError(JSContextRef, NSString *callingAPIName, NSString *sourceKey, NSString *underlyingErrorString);
+
+/// Returns a rejected Promise object that combines the provided information into a single, descriptive error message.
+JSObjectRef toJSRejectedPromise(JSContextRef, NSString *callingAPIName, NSString *sourceKey, NSString *underlyingErrorString);
 
 NSString *toWebAPI(NSLocale *);
 
@@ -107,6 +127,8 @@ Unexpected<WebExtensionError> toWebExtensionError(NSString *callingAPIName, NSSt
 }
 
 #endif // __OBJC__
+
+Markable<WTF::UUID> toDocumentIdentifier(WebFrame&);
 
 } // namespace WebKit
 

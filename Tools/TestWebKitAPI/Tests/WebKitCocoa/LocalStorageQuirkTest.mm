@@ -61,7 +61,7 @@ TEST(WKWebView, LocalStorageQuirkEnabled)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"LocalStorageQuirkEnabled" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"LocalStorageQuirkEnabled" withExtension:@"html"]];
     [webView loadRequest:request];
 
     readyToContinue = false;
@@ -84,7 +84,7 @@ TEST(WKWebView, LocalStorageQuirkDisabledAccessPermitted)
     
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"LocalStorageQuirkEnabled" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"LocalStorageQuirkEnabled" withExtension:@"html"]];
     [webView loadRequest:request];
     
     readyToContinue = false;
@@ -107,7 +107,7 @@ TEST(WKWebView, LocalStorageQuirkDisabledAccessDenied)
     
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"LocalStorageQuirkEnabled" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"LocalStorageQuirkEnabled" withExtension:@"html"]];
     [webView loadRequest:request];
     
     readyToContinue = false;

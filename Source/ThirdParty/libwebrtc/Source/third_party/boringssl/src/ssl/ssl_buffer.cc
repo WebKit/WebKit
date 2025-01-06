@@ -172,14 +172,17 @@ int ssl_read_buffer_extend_to(SSL *ssl, size_t len) {
 
   if (SSL_is_dtls(ssl)) {
     static_assert(
-        DTLS1_RT_HEADER_LENGTH + SSL3_RT_MAX_ENCRYPTED_LENGTH <= 0xffff,
+        DTLS1_RT_MAX_HEADER_LENGTH + SSL3_RT_MAX_ENCRYPTED_LENGTH <= 0xffff,
         "DTLS read buffer is too large");
 
     // The |len| parameter is ignored in DTLS.
-    len = DTLS1_RT_HEADER_LENGTH + SSL3_RT_MAX_ENCRYPTED_LENGTH;
+    len = DTLS1_RT_MAX_HEADER_LENGTH + SSL3_RT_MAX_ENCRYPTED_LENGTH;
   }
 
-  if (!ssl->s3->read_buffer.EnsureCap(ssl_record_prefix_len(ssl), len)) {
+  // The DTLS record header can have a variable length, so the |header_len|
+  // value provided for buffer alignment only works if the header is the maximum
+  // length.
+  if (!ssl->s3->read_buffer.EnsureCap(DTLS1_RT_MAX_HEADER_LENGTH, len)) {
     return -1;
   }
 
@@ -252,7 +255,7 @@ static_assert(SSL3_RT_HEADER_LENGTH * 2 +
                   0xffff,
               "maximum TLS write buffer is too large");
 
-static_assert(DTLS1_RT_HEADER_LENGTH + SSL3_RT_SEND_MAX_ENCRYPTED_OVERHEAD +
+static_assert(DTLS1_RT_MAX_HEADER_LENGTH + SSL3_RT_SEND_MAX_ENCRYPTED_OVERHEAD +
                       SSL3_RT_MAX_PLAIN_LENGTH <=
                   0xffff,
               "maximum DTLS write buffer is too large");

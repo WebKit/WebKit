@@ -37,6 +37,13 @@
     void delete##KeyUpper(); \
     Type KeyLower() const;
 
+#define DECLARE_INSPECTOR_OVERRIDE_SETTERS(KeyUpper, KeyLower, Type) \
+    void set##KeyUpper##InspectorOverride(std::optional<Type> inspectorOverride);
+
+#define DECLARE_INSPECTOR_OVERRIDE_STORE(KeyUpper, KeyLower, Type) \
+    std::optional<Type> m_##KeyLower##InspectorOverride;
+
+
 namespace WebKit {
 
 class WebPageProxy;
@@ -60,6 +67,7 @@ public:
 
     // Implemented in generated file WebPreferencesGetterSetters.cpp.
     FOR_EACH_WEBKIT_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
+    FOR_EACH_WEBKIT_PREFERENCE_WITH_INSPECTOR_OVERRIDE(DECLARE_INSPECTOR_OVERRIDE_SETTERS)
 
     static const Vector<RefPtr<API::Object>>& features();
     static const Vector<RefPtr<API::Object>>& experimentalFeatures();
@@ -73,6 +81,8 @@ public:
     // enableAllExperimentalFeatures() should enable settings for testing based on status, or be replaced with an API that WebKitTestRunner can use to enable arbitrary settings.
     void enableAllExperimentalFeatures();
     void resetAllInternalDebugFeatures();
+    void disableRichJavaScriptFeatures();
+    void disableMediaPlaybackRelatedFeatures();
 
     // Exposed for WebKitTestRunner use only.
     void setBoolValueForKey(const String&, bool value, bool ephemeral);
@@ -94,16 +104,16 @@ private:
         explicit UpdateBatch(WebPreferences& preferences)
             : m_preferences(preferences)
         {
-            m_preferences.startBatchingUpdates();
+            m_preferences->startBatchingUpdates();
         }
         
         ~UpdateBatch()
         {
-            m_preferences.endBatchingUpdates();
+            m_preferences->endBatchingUpdates();
         }
         
     private:
-        WebPreferences& m_preferences;
+        Ref<WebPreferences> m_preferences;
     };
 
     void updateStringValueForKey(const String& key, const String& value, bool ephemeral);
@@ -136,6 +146,8 @@ private:
     WeakHashSet<WebPageProxy> m_pages;
     unsigned m_updateBatchCount { 0 };
     bool m_needUpdateAfterBatch { false };
+
+    FOR_EACH_WEBKIT_PREFERENCE_WITH_INSPECTOR_OVERRIDE(DECLARE_INSPECTOR_OVERRIDE_STORE)
 };
 
 } // namespace WebKit

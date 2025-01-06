@@ -27,6 +27,9 @@
 #pragma once
 
 #include <string.h>
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if !HAVE(STRNSTR)
 
@@ -59,3 +62,5 @@ inline const void* memmem(const void* haystack, size_t haystackLength, const voi
 }
 
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

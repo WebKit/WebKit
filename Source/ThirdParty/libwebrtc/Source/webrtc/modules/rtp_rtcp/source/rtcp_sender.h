@@ -11,25 +11,29 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTCP_SENDER_H_
 #define MODULES_RTP_RTCP_SOURCE_RTCP_SENDER_H_
 
+#include <cstddef>
+#include <cstdint>
+#include <functional>
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/call/transport.h"
+#include "api/environment/environment.h"
+#include "api/rtp_headers.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_bitrate_allocation.h"
-#include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_nack_stats.h"
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
-#include "modules/rtp_rtcp/source/rtcp_packet/compound_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/loss_notification.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
@@ -43,7 +47,6 @@
 namespace webrtc {
 
 class RTCPReceiver;
-class RtcEventLog;
 
 class RTCPSender final {
  public:
@@ -59,8 +62,7 @@ class RTCPSender final {
     // SSRCs for media and retransmission, respectively.
     // FlexFec SSRC is fetched from `flexfec_sender`.
     uint32_t local_media_ssrc = 0;
-    // The clock to use to read time. If nullptr then system clock will be used.
-    Clock* clock = nullptr;
+
     // Transport object that will be called when packets are ready to be sent
     // out on the network.
     Transport* outgoing_transport = nullptr;
@@ -79,8 +81,7 @@ class RTCPSender final {
     // have migrated to the callback solution.
     std::function<void(TimeDelta)> schedule_next_rtcp_send_evaluation_function;
 
-    RtcEventLog* event_log = nullptr;
-    absl::optional<TimeDelta> rtcp_report_interval;
+    std::optional<TimeDelta> rtcp_report_interval;
     ReceiveStatisticsProvider* receive_statistics = nullptr;
     RtcpPacketTypeCounterObserver* rtcp_packet_type_counter_observer = nullptr;
   };
@@ -104,13 +105,13 @@ class RTCPSender final {
     RTCPReceiver* receiver;
   };
 
-  explicit RTCPSender(Configuration config);
+  RTCPSender(const Environment& env, Configuration config);
 
   RTCPSender() = delete;
   RTCPSender(const RTCPSender&) = delete;
   RTCPSender& operator=(const RTCPSender&) = delete;
 
-  virtual ~RTCPSender();
+  ~RTCPSender();
 
   RtcpMode Status() const RTC_LOCKS_EXCLUDED(mutex_rtcp_sender_);
   void SetRTCPStatus(RtcpMode method) RTC_LOCKS_EXCLUDED(mutex_rtcp_sender_);
@@ -127,8 +128,8 @@ class RTCPSender final {
       RTC_LOCKS_EXCLUDED(mutex_rtcp_sender_);
 
   void SetLastRtpTime(uint32_t rtp_timestamp,
-                      absl::optional<Timestamp> capture_time,
-                      absl::optional<int8_t> payload_type)
+                      std::optional<Timestamp> capture_time,
+                      std::optional<int8_t> payload_type)
       RTC_LOCKS_EXCLUDED(mutex_rtcp_sender_);
 
   void SetRtpClockRate(int8_t payload_type, int rtp_clock_rate_hz)
@@ -186,7 +187,7 @@ class RTCPSender final {
   class RtcpContext;
   class PacketSender;
 
-  absl::optional<int32_t> ComputeCompoundRTCPPacket(
+  std::optional<int32_t> ComputeCompoundRTCPPacket(
       const FeedbackState& feedback_state,
       RTCPPacketType packet_type,
       int32_t nack_size,
@@ -235,17 +236,16 @@ class RTCPSender final {
   void SetNextRtcpSendEvaluationDuration(TimeDelta duration)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_rtcp_sender_);
 
+  const Environment env_;
   const bool audio_;
   // TODO(bugs.webrtc.org/11581): `mutex_rtcp_sender_` shouldn't be required if
   // we consistently run network related operations on the network thread.
   // This is currently not possible due to callbacks from the process thread in
   // ModuleRtpRtcpImpl2.
   uint32_t ssrc_ RTC_GUARDED_BY(mutex_rtcp_sender_);
-  Clock* const clock_;
   Random random_ RTC_GUARDED_BY(mutex_rtcp_sender_);
   RtcpMode method_ RTC_GUARDED_BY(mutex_rtcp_sender_);
 
-  RtcEventLog* const event_log_;
   Transport* const transport_;
 
   const TimeDelta report_interval_;
@@ -257,12 +257,12 @@ class RTCPSender final {
   mutable Mutex mutex_rtcp_sender_;
   bool sending_ RTC_GUARDED_BY(mutex_rtcp_sender_);
 
-  absl::optional<Timestamp> next_time_to_send_rtcp_
+  std::optional<Timestamp> next_time_to_send_rtcp_
       RTC_GUARDED_BY(mutex_rtcp_sender_);
 
   uint32_t timestamp_offset_ RTC_GUARDED_BY(mutex_rtcp_sender_);
   uint32_t last_rtp_timestamp_ RTC_GUARDED_BY(mutex_rtcp_sender_);
-  absl::optional<Timestamp> last_frame_capture_time_
+  std::optional<Timestamp> last_frame_capture_time_
       RTC_GUARDED_BY(mutex_rtcp_sender_);
   // SSRC that we receive on our RTP channel
   uint32_t remote_ssrc_ RTC_GUARDED_BY(mutex_rtcp_sender_);
@@ -304,7 +304,7 @@ class RTCPSender final {
   std::map<int8_t, int> rtp_clock_rates_khz_ RTC_GUARDED_BY(mutex_rtcp_sender_);
   int8_t last_payload_type_ RTC_GUARDED_BY(mutex_rtcp_sender_);
 
-  absl::optional<VideoBitrateAllocation> CheckAndUpdateLayerStructure(
+  std::optional<VideoBitrateAllocation> CheckAndUpdateLayerStructure(
       const VideoBitrateAllocation& bitrate) const
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_rtcp_sender_);
 

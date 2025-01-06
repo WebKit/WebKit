@@ -53,7 +53,6 @@
 #include "HTMLUListElement.h"
 #include "NodeName.h"
 #include "ParserContentPolicy.h"
-#include "ParsingUtilities.h"
 #include "QualifiedName.h"
 #include "Settings.h"
 #include <span>
@@ -62,6 +61,7 @@
 #include <wtf/WeakRef.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/FastCharacterComparison.h>
+#include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
@@ -230,7 +230,7 @@ public:
     HTMLFastPathResult parseResult() const { return m_parseResult; }
 
 private:
-    Document& m_document; // FIXME: Use a smart pointer.
+    Ref<Document> m_document;
     WeakRef<ContainerNode, WeakPtrImplWithEventTargetData> m_destinationParent;
 
     StringParsingBuffer<CharacterType> m_parsingBuffer;
@@ -305,7 +305,7 @@ private:
 
         struct A : ContainerTag<HTMLAnchorElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::a;
-            static constexpr CharacterType tagNameCharacters[] = { 'a' };
+            static constexpr std::array<CharacterType, 1> tagNameCharacters { 'a' };
 
             static RefPtr<HTMLElement> parseChild(ContainerNode& parent, HTMLFastPathParser& self)
             {
@@ -319,7 +319,7 @@ private:
 
         struct AWithPhrasingContent : ContainsPhrasingContentTag<HTMLAnchorElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::a;
-            static constexpr CharacterType tagNameCharacters[] = { 'a' };
+            static constexpr std::array<CharacterType, 1> tagNameCharacters { 'a' };
 
             static RefPtr<HTMLElement> parseChild(ContainerNode& parent, HTMLFastPathParser& self)
             {
@@ -333,7 +333,7 @@ private:
 
         struct B : ContainsPhrasingContentTag<HTMLElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::b;
-            static constexpr CharacterType tagNameCharacters[] = { 'b' };
+            static constexpr std::array<CharacterType, 1> tagNameCharacters { 'b' };
 
             static Ref<HTMLElement> create(Document& document)
             {
@@ -343,27 +343,27 @@ private:
 
         struct Br : VoidTag<HTMLBRElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::br;
-            static constexpr CharacterType tagNameCharacters[] = { 'b', 'r' };
+            static constexpr std::array<CharacterType, 2> tagNameCharacters { 'b', 'r' };
         };
 
         struct Button : ContainsPhrasingContentTag<HTMLButtonElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::button;
-            static constexpr CharacterType tagNameCharacters[] = { 'b', 'u', 't', 't', 'o', 'n' };
+            static constexpr std::array<CharacterType, 6> tagNameCharacters { 'b', 'u', 't', 't', 'o', 'n' };
         };
 
         struct Div : ContainerTag<HTMLDivElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::div;
-            static constexpr CharacterType tagNameCharacters[] = { 'd', 'i', 'v' };
+            static constexpr std::array<CharacterType, 3> tagNameCharacters { 'd', 'i', 'v' };
         };
 
         struct Body : ContainerTag<HTMLBodyElement, PermittedParents::Special> {
             static constexpr ElementName tagName = ElementNames::HTML::body;
-            static constexpr CharacterType tagNameCharacters[] = { 'b', 'o', 'd', 'y' };
+            static constexpr std::array<CharacterType, 4> tagNameCharacters { 'b', 'o', 'd', 'y' };
         };
 
         struct Footer : ContainerTag<HTMLElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::footer;
-            static constexpr CharacterType tagNameCharacters[] = { 'f', 'o', 'o', 't', 'e', 'r' };
+            static constexpr std::array<CharacterType, 6> tagNameCharacters { 'f', 'o', 'o', 't', 'e', 'r' };
 
             static Ref<HTMLElement> create(Document& document)
             {
@@ -373,7 +373,7 @@ private:
 
         struct I : ContainsPhrasingContentTag<HTMLElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::i;
-            static constexpr CharacterType tagNameCharacters[] = { 'i' };
+            static constexpr std::array<CharacterType, 1> tagNameCharacters { 'i' };
 
             static Ref<HTMLElement> create(Document& document)
             {
@@ -383,7 +383,7 @@ private:
 
         struct Input : VoidTag<HTMLInputElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::input;
-            static constexpr CharacterType tagNameCharacters[] = { 'i', 'n', 'p', 'u', 't' };
+            static constexpr std::array<CharacterType, 5> tagNameCharacters { 'i', 'n', 'p', 'u', 't' };
 
             static Ref<HTMLInputElement> create(Document& document)
             {
@@ -393,17 +393,17 @@ private:
 
         struct Li : ContainerTag<HTMLLIElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::li;
-            static constexpr CharacterType tagNameCharacters[] = { 'l', 'i' };
+            static constexpr std::array<CharacterType, 2> tagNameCharacters { 'l', 'i' };
         };
 
         struct Label : ContainsPhrasingContentTag<HTMLLabelElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::label;
-            static constexpr CharacterType tagNameCharacters[] = { 'l', 'a', 'b', 'e', 'l' };
+            static constexpr std::array<CharacterType, 5> tagNameCharacters { 'l', 'a', 'b', 'e', 'l' };
         };
 
         struct Option : ContainerTag<HTMLOptionElement, PermittedParents::Special> {
             static constexpr ElementName tagName = ElementNames::HTML::option;
-            static constexpr CharacterType tagNameCharacters[] = { 'o', 'p', 't', 'i', 'o', 'n' };
+            static constexpr std::array<CharacterType, 6> tagNameCharacters { 'o', 'p', 't', 'i', 'o', 'n' };
 
             static RefPtr<HTMLElement> parseChild(ContainerNode&, HTMLFastPathParser& self)
             {
@@ -414,7 +414,7 @@ private:
 
         struct Ol : ContainerTag<HTMLOListElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::ol;
-            static constexpr CharacterType tagNameCharacters[] = { 'o', 'l' };
+            static constexpr std::array<CharacterType, 2> tagNameCharacters { 'o', 'l' };
 
             static RefPtr<HTMLElement> parseChild(ContainerNode& parent, HTMLFastPathParser& self)
             {
@@ -424,12 +424,12 @@ private:
 
         struct P : ContainsPhrasingContentTag<HTMLParagraphElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::p;
-            static constexpr CharacterType tagNameCharacters[] = { 'p' };
+            static constexpr std::array<CharacterType, 1> tagNameCharacters { 'p' };
         };
 
         struct Select : ContainerTag<HTMLSelectElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::select;
-            static constexpr CharacterType tagNameCharacters[] = { 's', 'e', 'l', 'e', 'c', 't' };
+            static constexpr std::array<CharacterType, 6> tagNameCharacters { 's', 'e', 'l', 'e', 'c', 't' };
 
             static RefPtr<HTMLElement> parseChild(ContainerNode& parent, HTMLFastPathParser& self)
             {
@@ -439,12 +439,12 @@ private:
 
         struct Span : ContainsPhrasingContentTag<HTMLSpanElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::span;
-            static constexpr CharacterType tagNameCharacters[] = { 's', 'p', 'a', 'n' };
+            static constexpr std::array<CharacterType, 4> tagNameCharacters { 's', 'p', 'a', 'n' };
         };
 
         struct Strong : ContainsPhrasingContentTag<HTMLElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::strong;
-            static constexpr CharacterType tagNameCharacters[] = { 's', 't', 'r', 'o', 'n', 'g' };
+            static constexpr std::array<CharacterType, 6> tagNameCharacters { 's', 't', 'r', 'o', 'n', 'g' };
 
             static Ref<HTMLElement> create(Document& document)
             {
@@ -454,7 +454,7 @@ private:
 
         struct Ul : ContainerTag<HTMLUListElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::ul;
-            static constexpr CharacterType tagNameCharacters[] = { 'u', 'l' };
+            static constexpr std::array<CharacterType, 2> tagNameCharacters { 'u', 'l' };
 
             static RefPtr<HTMLElement> parseChild(ContainerNode& parent, HTMLFastPathParser& self)
             {
@@ -476,67 +476,58 @@ private:
     // `LChar` parser.
     String scanText()
     {
-        auto* start = m_parsingBuffer.position();
-        auto* cursor = start;
-        const auto* end = start + m_parsingBuffer.lengthRemaining();
-        ([&]() ALWAYS_INLINE_LAMBDA {
-            constexpr size_t stride = SIMD::stride<CharacterType>;
-            using UnsignedType = std::make_unsigned_t<CharacterType>;
-            if (static_cast<size_t>(end - cursor) >= stride) {
-                constexpr auto quoteMask = SIMD::splat<UnsignedType>('<');
-                constexpr auto escapeMask = SIMD::splat<UnsignedType>('&');
-                constexpr auto newlineMask = SIMD::splat<UnsignedType>('\r');
-                constexpr auto zeroMask = SIMD::splat<UnsignedType>(0);
+        auto start = m_parsingBuffer.span();
 
-                auto match = [&](auto* cursor) ALWAYS_INLINE_LAMBDA {
-                    auto input = SIMD::load(bitwise_cast<const UnsignedType*>(cursor));
-                    auto quotes = SIMD::equal(input, quoteMask);
-                    auto escapes = SIMD::equal(input, escapeMask);
-                    auto newlines = SIMD::equal(input, newlineMask);
-                    auto zeros = SIMD::equal(input, zeroMask);
-                    auto mask = SIMD::bitOr(zeros, quotes, escapes, newlines);
-                    return SIMD::findFirstNonZeroIndex(mask);
-                };
+        auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
+            return character == '<' || character == '&' || character == '\r' || character == '\0';
+        };
 
-                for (; cursor + (stride - 1) < end; cursor += stride) {
-                    if (auto index = match(cursor)) {
-                        cursor += index.value();
-                        return;
-                    }
-                }
-                if (cursor < end) {
-                    if (auto index = match(end - stride)) {
-                        cursor = end - stride + index.value();
-                        return;
-                    }
-                    cursor = end;
-                }
-                return;
-            }
+        auto vectorEquals8Bit = [&](auto input) ALWAYS_INLINE_LAMBDA {
+            // https://lemire.me/blog/2024/06/08/scan-html-faster-with-simd-instructions-chrome-edition/
+            // By looking up the table via lower 4bit, we can identify the category.
+            // '\0' => 0000 0000
+            // '&'  => 0010 0110
+            // '<'  => 0011 1100
+            // '\r' => 0000 1101
+            constexpr simde_uint8x16_t lowNibbleMask { '\0', 0, 0, 0, 0, 0, '&', 0, 0, 0, 0, 0, '<', '\r', 0, 0 };
+            constexpr simde_uint8x16_t v0f = SIMD::splat8(0x0f);
+            return SIMD::equal(simde_vqtbl1q_u8(lowNibbleMask, SIMD::bitAnd(input, v0f)), input);
+        };
 
-            for (; cursor != end; ++cursor) {
-                auto character = *cursor;
-                if (character == '<' || character == '&' || character == '\r' || character == '\0')
-                    return;
-            }
-        }());
-        m_parsingBuffer.setPosition(cursor);
+        std::span<const CharacterType> cursor;
+        if constexpr (sizeof(CharacterType) == 1) {
+            auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+                return SIMD::findFirstNonZeroIndex(vectorEquals8Bit(input));
+            };
+            auto* it = SIMD::find(start, vectorMatch, scalarMatch);
+            cursor = start.subspan(it - start.data());
+        } else {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+            auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+                constexpr simde_uint8x16_t zeros = SIMD::splat8(0);
+                return SIMD::findFirstNonZeroIndex(SIMD::bitAnd(vectorEquals8Bit(input.val[0]), SIMD::equal(input.val[1], zeros)));
+            };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+            auto* it = SIMD::findInterleaved(start, vectorMatch, scalarMatch);
+            cursor = start.subspan(it - start.data());
+        }
+        m_parsingBuffer.setPosition(cursor.data());
 
-        if (cursor != end) {
-            if (UNLIKELY(*cursor == '\0'))
+        if (!cursor.empty()) {
+            if (UNLIKELY(cursor[0] == '\0'))
                 return didFail(HTMLFastPathResult::FailedContainsNull, String());
 
-            if (*cursor == '&' || *cursor == '\r') {
-                m_parsingBuffer.setPosition(start);
+            if (cursor[0] == '&' || cursor[0] == '\r') {
+                m_parsingBuffer.setPosition(start.data());
                 return scanEscapedText();
             }
         }
 
-        unsigned length = cursor - start;
+        unsigned length = cursor.data() - start.data();
         if (UNLIKELY(length >= Text::defaultLengthLimit))
             return didFail(HTMLFastPathResult::FailedBigText, String());
 
-        return length ? String({ start, length }) : String();
+        return length ? String(start.first(length)) : String();
     }
 
     // Slow-path of `scanText()`, which supports escape sequences by copying to a
@@ -568,13 +559,13 @@ private:
     // Scan a tagName and convert to lowercase if necessary.
     ElementName scanTagName()
     {
-        auto* start = m_parsingBuffer.position();
+        auto start = m_parsingBuffer.span();
         skipWhile<isASCIILower>(m_parsingBuffer);
 
         if (m_parsingBuffer.atEnd() || !isCharAfterTagNameOrAttribute(*m_parsingBuffer)) {
             // Try parsing a case-insensitive tagName.
             m_charBuffer.shrink(0);
-            m_parsingBuffer.setPosition(start);
+            m_parsingBuffer.setPosition(start.data());
             while (m_parsingBuffer.hasCharactersRemaining()) {
                 auto c = *m_parsingBuffer;
                 if (isASCIIUpper(c))
@@ -589,7 +580,7 @@ private:
             skipWhile<isASCIIWhitespace>(m_parsingBuffer);
             return findHTMLElementName(m_charBuffer.span());
         }
-        auto tagName = findHTMLElementName(std::span { start, static_cast<size_t>(m_parsingBuffer.position() - start) });
+        auto tagName = findHTMLElementName(start.first(m_parsingBuffer.position() - start.data()));
         skipWhile<isASCIIWhitespace>(m_parsingBuffer);
         return tagName;
     }
@@ -599,7 +590,7 @@ private:
         // First look for all lower case. This path doesn't require any mapping of
         // input. This path could handle other valid attribute name chars, but they
         // are not as common, so it only looks for lowercase.
-        auto* start = m_parsingBuffer.position();
+        auto start = m_parsingBuffer.span();
         skipWhile<isASCIILower>(m_parsingBuffer);
         if (UNLIKELY(m_parsingBuffer.atEnd()))
             return didFail(HTMLFastPathResult::FailedEndOfInputReached, nullQName());
@@ -608,7 +599,7 @@ private:
         if (UNLIKELY(isValidAttributeNameChar(*m_parsingBuffer))) {
             // At this point name does not contain lowercase. It may contain upper-case,
             // which requires mapping. Assume it does.
-            m_parsingBuffer.setPosition(start);
+            m_parsingBuffer.setPosition(start.data());
             m_charBuffer.shrink(0);
             // isValidAttributeNameChar() returns false if end of input is reached.
             do {
@@ -619,7 +610,7 @@ private:
             } while (m_parsingBuffer.hasCharactersRemaining() && isValidAttributeNameChar(*m_parsingBuffer));
             attributeName = m_charBuffer.span();
         } else
-            attributeName = { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
+            attributeName = start.first(m_parsingBuffer.position() - start.data());
 
         if (attributeName.empty())
             return nullQName();
@@ -635,72 +626,75 @@ private:
     AtomString scanAttributeValue()
     {
         skipWhile<isASCIIWhitespace>(m_parsingBuffer);
-        auto* start = m_parsingBuffer.position();
+        auto start = m_parsingBuffer.span();
         size_t length = 0;
         if (m_parsingBuffer.hasCharactersRemaining() && isQuoteCharacter(*m_parsingBuffer)) {
+            auto quoteStart = start;
             auto quoteChar = m_parsingBuffer.consume();
-            start = m_parsingBuffer.position();
-            auto* cursor = start;
-            const auto* end = start + m_parsingBuffer.lengthRemaining();
-            ([&]() ALWAYS_INLINE_LAMBDA {
-                constexpr size_t stride = SIMD::stride<CharacterType>;
-                using UnsignedType = std::make_unsigned_t<CharacterType>;
-                if (static_cast<size_t>(end - cursor) >= stride) {
-                    const auto quoteMask = SIMD::splat<UnsignedType>(quoteChar);
-                    constexpr auto escapeMask = SIMD::splat<UnsignedType>('&');
-                    constexpr auto newlineMask = SIMD::splat<UnsignedType>('\r');
 
-                    auto match = [&](auto* cursor) ALWAYS_INLINE_LAMBDA {
-                        auto input = SIMD::load(bitwise_cast<const UnsignedType*>(cursor));
-                        auto quotes = SIMD::equal(input, quoteMask);
-                        auto escapes = SIMD::equal(input, escapeMask);
-                        auto newlines = SIMD::equal(input, newlineMask);
-                        auto mask = SIMD::bitOr(quotes, escapes, newlines);
-                        return SIMD::findFirstNonZeroIndex(mask);
+            auto find = [&]<CharacterType quoteChar>(std::span<const CharacterType> span) ALWAYS_INLINE_LAMBDA {
+                auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
+                    return character == quoteChar || character == '&' || character == '\r' || character == '\0';
+                };
+
+                auto vectorEquals8Bit = [&](auto input) ALWAYS_INLINE_LAMBDA {
+                    // https://lemire.me/blog/2024/06/08/scan-html-faster-with-simd-instructions-chrome-edition/
+                    // By looking up the table via lower 4bit, we can identify the category.
+                    // '\0' => 0000 0000
+                    // '&'  => 0010 0110
+                    // '\'' => 0010 0111
+                    // '\r' => 0000 1101
+                    //
+                    // OR
+                    //
+                    // '\0' => 0000 0000
+                    // '"'  => 0010 0010
+                    // '&'  => 0010 0110
+                    // '\r' => 0000 1101
+                    constexpr auto lowNibbleMask  = quoteChar == '\'' ? simde_uint8x16_t { '\0', 0, 0, 0, 0, 0, '&', '\'', 0, 0, 0, 0, 0, '\r', 0, 0 } : simde_uint8x16_t { '\0', 0, '"', 0, 0, 0, '&', 0, 0, 0, 0, 0, 0, '\r', 0, 0 };
+                    constexpr auto v0f = SIMD::splat8(0x0f);
+                    return SIMD::equal(simde_vqtbl1q_u8(lowNibbleMask, SIMD::bitAnd(input, v0f)), input);
+                };
+
+                if constexpr (sizeof(CharacterType) == 1) {
+                    auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+                        return SIMD::findFirstNonZeroIndex(vectorEquals8Bit(input));
                     };
-
-                    for (; cursor + (stride - 1) < end; cursor += stride) {
-                        if (auto index = match(cursor)) {
-                            cursor += index.value();
-                            return;
-                        }
-                    }
-                    if (cursor < end) {
-                        if (auto index = match(end - stride)) {
-                            cursor = end - stride + index.value();
-                            return;
-                        }
-                        cursor = end;
-                    }
-                    return;
+                    auto* it = SIMD::find(span, vectorMatch, scalarMatch);
+                    return span.subspan(it - span.data());
+                } else {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+                    auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+                        constexpr simde_uint8x16_t zeros = SIMD::splat8(0);
+                        return SIMD::findFirstNonZeroIndex(SIMD::bitAnd(vectorEquals8Bit(input.val[0]), SIMD::equal(input.val[1], zeros)));
+                    };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+                    auto* it = SIMD::findInterleaved(span, vectorMatch, scalarMatch);
+                    return span.subspan(it - span.data());
                 }
+            };
 
-                for (; cursor != end; ++cursor) {
-                    auto character = *cursor;
-                    if (character == quoteChar || character == '&' || character == '\r')
-                        return;
-                }
-            }());
-
-            if (UNLIKELY(cursor == end))
+            start = m_parsingBuffer.span();
+            const auto cursor = quoteChar == '\'' ? find.template operator()<'\''>(start) : find.template operator()<'"'>(start);
+            if (UNLIKELY(cursor.empty()))
                 return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, emptyAtom());
 
-            length = cursor - start;
-            if (UNLIKELY(*cursor != quoteChar)) {
-                if (LIKELY(*cursor == '&' || *cursor == '\r')) {
-                    m_parsingBuffer.setPosition(start - 1);
+            length = cursor.data() - start.data();
+            if (UNLIKELY(cursor[0] != quoteChar)) {
+                if (LIKELY(cursor[0] == '&' || cursor[0] == '\r')) {
+                    m_parsingBuffer.setPosition(quoteStart.data());
                     return scanEscapedAttributeValue();
                 }
                 return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, emptyAtom());
             }
-            m_parsingBuffer.setPosition(cursor + 1);
+            m_parsingBuffer.setPosition(cursor.subspan(1).data());
         } else {
             skipWhile<isValidUnquotedAttributeValueChar>(m_parsingBuffer);
-            length = m_parsingBuffer.position() - start;
+            length = m_parsingBuffer.position() - start.data();
             if (UNLIKELY(m_parsingBuffer.atEnd() || !isCharAfterUnquotedAttribute(*m_parsingBuffer)))
                 return didFail(HTMLFastPathResult::FailedParsingUnquotedAttributeValue, emptyAtom());
         }
-        return HTMLNameCache::makeAttributeValue({ start, length });
+        return HTMLNameCache::makeAttributeValue(start.first(length));
     }
 
     // Slow path for scanning an attribute value. Used for special cases such
@@ -733,7 +727,7 @@ private:
         if (UNLIKELY(m_parsingBuffer.atEnd() || m_parsingBuffer.consume() != quoteChar))
             return didFail(HTMLFastPathResult::FailedParsingQuotedEscapedAttributeValue, emptyAtom());
 
-        return HTMLNameCache::makeAttributeValue({ m_ucharBuffer.data(), m_ucharBuffer.size() });
+        return HTMLNameCache::makeAttributeValue(m_ucharBuffer.span());
     }
 
     void scanHTMLCharacterReference(Vector<UChar>& out)
@@ -941,8 +935,8 @@ private:
         ASSERT(*m_parsingBuffer == '/');
         m_parsingBuffer.advance();
 
-        if (UNLIKELY(!skipCharactersExactly(m_parsingBuffer, Tag::tagNameCharacters))) {
-            if (UNLIKELY(!skipLettersExactlyIgnoringASCIICase(m_parsingBuffer, Tag::tagNameCharacters)))
+        if (UNLIKELY(!skipCharactersExactly(m_parsingBuffer, std::span { Tag::tagNameCharacters }))) {
+            if (UNLIKELY(!skipLettersExactlyIgnoringASCIICase(m_parsingBuffer, std::span { Tag::tagNameCharacters })))
                 return didFail(HTMLFastPathResult::FailedEndTagNameMismatch, element);
         }
         skipWhile<isASCIIWhitespace>(m_parsingBuffer);

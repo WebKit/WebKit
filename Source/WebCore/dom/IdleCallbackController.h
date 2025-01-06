@@ -29,6 +29,7 @@
 #include <wtf/Deque.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -46,7 +47,7 @@ class Document;
 class WeakPtrImplWithEventTargetData;
 
 class IdleCallbackController : public CanMakeWeakPtr<IdleCallbackController> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IdleCallbackController);
 
 public:
     IdleCallbackController(Document&);
@@ -58,9 +59,8 @@ public:
     bool isEmpty() const { return m_idleRequestCallbacks.isEmpty() && m_runnableIdleCallbacks.isEmpty(); }
 
 private:
-    void queueTaskToStartIdlePeriod();
     void queueTaskToInvokeIdleCallbacks();
-    void invokeIdleCallbacks();
+    bool invokeIdleCallbacks();
     void invokeIdleCallbackTimeout(unsigned identifier);
 
     unsigned m_idleCallbackIdentifier { 0 };
@@ -68,6 +68,7 @@ private:
     struct IdleRequest {
         unsigned identifier { 0 };
         Ref<IdleRequestCallback> callback;
+        std::optional<MonotonicTime> timeout;
     };
 
     Deque<IdleRequest> m_idleRequestCallbacks;

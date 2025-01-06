@@ -64,10 +64,8 @@
 
 using namespace skia_private;
 
-#if defined(SK_GANESH)
-class SkMesh;
-#endif
 class SkBlender;
+class SkMesh;
 class SkVertices;
 struct SkSamplingOptions;
 
@@ -245,7 +243,7 @@ public:
             , fPatternCount(0)
             , fColorFilterCount(0) {}
 
-    SkString addLinearGradient() {
+    SkString addGradient() {
         return SkStringPrintf("gradient_%u", fGradientCount++);
     }
 
@@ -348,9 +346,10 @@ private:
 
     void addPaint(const SkPaint& paint, const Resources& resources);
 
-    SkString addLinearGradientDef(const SkShaderBase::GradientInfo& info,
-                                  const SkShader* shader,
-                                  const SkMatrix& localMatrix);
+    SkString addGradientDef(SkShaderBase::GradientType,
+                            const SkShaderBase::GradientInfo& info,
+                            const SkShader* shader,
+                            const SkMatrix& localMatrix);
 
     SkXMLWriter*               fWriter;
     ResourceBucket*            fResourceBucket;
@@ -438,17 +437,13 @@ void SkSVGDevice::AutoElement::addGradientShaderResources(const SkShader* shader
                                                           const SkPaint& paint,
                                                           Resources* resources) {
     SkASSERT(shader);
-    if (as_SB(shader)->type() == SkShaderBase::ShaderType::kColor) {
-        auto colorShader = static_cast<const SkColorShader*>(shader);
-        resources->fPaintServer = svg_color(colorShader->color());
-        return;
-    }
 
     SkShaderBase::GradientInfo grInfo;
     const auto gradient_type = as_SB(shader)->asGradient(&grInfo);
 
-    if (gradient_type != SkShaderBase::GradientType::kLinear) {
-        // TODO: other gradient support
+    if (gradient_type != SkShaderBase::GradientType::kLinear &&
+        gradient_type != SkShaderBase::GradientType::kRadial &&
+        gradient_type != SkShaderBase::GradientType::kConical) {
         return;
     }
 
@@ -464,8 +459,8 @@ void SkSVGDevice::AutoElement::addGradientShaderResources(const SkShader* shader
     SkASSERT(grInfo.fColorCount <= grOffsets.count());
 
     SkASSERT(grColors.size() > 0);
-    resources->fPaintServer =
-            SkStringPrintf("url(#%s)", addLinearGradientDef(grInfo, shader, localMatrix).c_str());
+    resources->fPaintServer = SkStringPrintf("url(#%s)",
+            addGradientDef(gradient_type, grInfo, shader, localMatrix).c_str());
 }
 
 void SkSVGDevice::AutoElement::addColorFilterResources(const SkColorFilter& cf,
@@ -613,31 +608,60 @@ void SkSVGDevice::AutoElement::addShaderResources(const SkPaint& paint, Resource
     const SkShader* shader = paint.getShader();
     SkASSERT(shader);
 
-    auto shaderType = as_SB(shader)->type();
-    if (shaderType == SkShaderBase::ShaderType::kColor ||
-        shaderType == SkShaderBase::ShaderType::kGradientBase) {
+    if (as_SB(shader)->type() == SkShaderBase::ShaderType::kColor) {
+        auto colorShader = static_cast<const SkColorShader*>(shader);
+        resources->fPaintServer = svg_color(colorShader->color());
+    } else
+    // Checking the shader type is too restrictive, as it rejects local matrix wrappers.
+    // Wrappers do forward asGradient() though, so we can reach nested gradients this way.
+    if (as_SB(shader)->asGradient() != SkShaderBase::GradientType::kNone) {
         this->addGradientShaderResources(shader, paint, resources);
-    } else if (shader->isAImage()) {
+    } else
+    if (shader->isAImage()) {
         this->addImageShaderResources(shader, paint, resources);
     }
     // TODO: other shader types?
 }
 
-SkString SkSVGDevice::AutoElement::addLinearGradientDef(const SkShaderBase::GradientInfo& info,
-                                                        const SkShader* shader,
-                                                        const SkMatrix& localMatrix) {
+SkString SkSVGDevice::AutoElement::addGradientDef(SkShaderBase::GradientType type,
+                                                  const SkShaderBase::GradientInfo& info,
+                                                  const SkShader* shader,
+                                                  const SkMatrix& localMatrix) {
     SkASSERT(fResourceBucket);
-    SkString id = fResourceBucket->addLinearGradient();
+    SkString id = fResourceBucket->addGradient();
 
+    SkASSERT(type == SkShaderBase::GradientType::kLinear ||
+             type == SkShaderBase::GradientType::kRadial ||
+             type == SkShaderBase::GradientType::kConical);
+
+    const char* elem_name = type == SkShaderBase::GradientType::kLinear ? "linearGradient"
+                                                                        : "radialGradient";
     {
-        AutoElement gradient("linearGradient", fWriter);
+        AutoElement gradient(elem_name, fWriter);
 
         gradient.addAttribute("id", id);
         gradient.addAttribute("gradientUnits", "userSpaceOnUse");
-        gradient.addAttribute("x1", info.fPoint[0].x());
-        gradient.addAttribute("y1", info.fPoint[0].y());
-        gradient.addAttribute("x2", info.fPoint[1].x());
-        gradient.addAttribute("y2", info.fPoint[1].y());
+
+        switch (type) {
+            case SkShaderBase::GradientType::kLinear:
+                gradient.addAttribute("x1", info.fPoint[0].x());
+                gradient.addAttribute("y1", info.fPoint[0].y());
+                gradient.addAttribute("x2", info.fPoint[1].x());
+                gradient.addAttribute("y2", info.fPoint[1].y());
+                break;
+            case SkShaderBase::GradientType::kConical:
+                gradient.addAttribute("fx", info.fPoint[1].x());
+                gradient.addAttribute("fy", info.fPoint[1].y());
+                gradient.addAttribute("fr", info.fRadius[1]);
+                [[fallthrough]];
+            case SkShaderBase::GradientType::kRadial:
+                gradient.addAttribute("cx", info.fPoint[0].x());
+                gradient.addAttribute("cy", info.fPoint[0].y());
+                gradient.addAttribute("r" , info.fRadius[0]);
+                break;
+            default:
+                SkUNREACHABLE;
+        }
 
         if (!localMatrix.isIdentity()) {
             this->addAttribute("gradientTransform", svg_transform(localMatrix));
@@ -883,7 +907,10 @@ void SkSVGDevice::drawPoints(SkCanvas::PointMode mode, size_t count,
     switch (mode) {
             // todo
         case SkCanvas::kPoints_PointMode:
-            // TODO?
+            for (size_t i = 0; i < count; ++i) {
+                path.moveTo(pts[i]);
+                path.lineTo(pts[i]);
+            }
             break;
         case SkCanvas::kLines_PointMode:
             count -= 1;

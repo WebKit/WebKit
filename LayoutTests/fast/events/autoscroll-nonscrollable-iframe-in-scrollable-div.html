@@ -15,7 +15,7 @@
            }
        }
 
-       function autoscrollTestPart1()
+       async function autoscrollTestPart1()
        {
            var iframe = document.getElementById('NoScrolliFrame');
            var iframeDocument = iframe.contentDocument;
@@ -24,17 +24,17 @@
                var x = iframe.offsetLeft + textInIframe.offsetLeft + 7;
                var y = iframe.offsetTop + textInIframe.offsetTop + 7;
                eventSender.dragMode = false;
-               eventSender.mouseMoveTo(x, y);
-               eventSender.mouseDown();
-               eventSender.mouseMoveTo(x + 220, y + 220);
+               await eventSender.asyncMouseMoveTo(x, y);
+               await eventSender.asyncMouseDown();
+               await eventSender.asyncMouseMoveTo(x + 220, y + 220);
            }
            setTimeout(autoscrollTestPart2, 100);
        }
 
-       function autoscrollTestPart2()
+       async function autoscrollTestPart2()
        {
            if (window.eventSender)
-               eventSender.mouseUp();
+               await eventSender.asyncMouseUp();
            var sd = document.getElementById('scrollableDiv');
            if (sd.scrollLeft != 0)
                log("PASSED : the autoscroll has worked !");

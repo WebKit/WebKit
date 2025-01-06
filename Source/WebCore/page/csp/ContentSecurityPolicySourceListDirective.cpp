@@ -29,9 +29,12 @@
 
 #include "ContentSecurityPolicy.h"
 #include "ContentSecurityPolicyDirectiveList.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentSecurityPolicySourceListDirective);
 
 ContentSecurityPolicySourceListDirective::ContentSecurityPolicySourceListDirective(const ContentSecurityPolicyDirectiveList& directiveList, const String& name, const String& value)
     : ContentSecurityPolicyDirective(directiveList, name, value)

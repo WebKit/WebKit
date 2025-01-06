@@ -73,9 +73,9 @@ public:
     static constexpr CPURegister structureIDMask = structureHeapAddressSize - 1;
 #endif
 
-    StructureID() = default;
-    StructureID(StructureID const&) = default;
-    StructureID& operator=(StructureID const&) = default;
+    constexpr StructureID() = default;
+    constexpr StructureID(StructureID const&) = default;
+    constexpr StructureID& operator=(StructureID const&) = default;
 
     StructureID nuke() const { return StructureID(m_bits | nukedStructureIDBit); }
     bool isNuked() const { return m_bits & nukedStructureIDBit; }
@@ -89,11 +89,11 @@ public:
     friend auto operator<=>(const StructureID&, const StructureID&) = default;
     constexpr uint32_t bits() const { return m_bits; }
 
-    StructureID(WTF::HashTableDeletedValueType) : m_bits(nukedStructureIDBit) { }
+    constexpr StructureID(WTF::HashTableDeletedValueType) : m_bits(nukedStructureIDBit) { }
     bool isHashTableDeletedValue() const { return *this == StructureID(WTF::HashTableDeletedValue); }
 
 private:
-    explicit StructureID(uint32_t bits) : m_bits(bits) { }
+    explicit constexpr StructureID(uint32_t bits) : m_bits(bits) { }
 
     uint32_t m_bits { 0 };
 };

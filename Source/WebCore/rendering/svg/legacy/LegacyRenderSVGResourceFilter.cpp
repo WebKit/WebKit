@@ -34,16 +34,16 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FilterData);
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceFilter);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FilterData);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceFilter);
 
 LegacyRenderSVGResourceFilter::LegacyRenderSVGResourceFilter(SVGFilterElement& element, RenderStyle&& style)
-    : LegacyRenderSVGResourceContainer(Type::SVGResourceFilter, element, WTFMove(style))
+    : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceFilter, element, WTFMove(style))
 {
 }
 
@@ -79,7 +79,7 @@ void LegacyRenderSVGResourceFilter::removeClientFromCache(RenderElement& client,
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
+auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
 {
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);
@@ -90,15 +90,15 @@ bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
         FilterData* filterData = m_rendererFilterDataMap.get(renderer);
         if (filterData->state == FilterData::PaintingSource || filterData->state == FilterData::Applying) {
             filterData->state = FilterData::CycleDetected;
-            return false; // Already built, or we're in a cycle, or we're marked for removal. Regardless, just do nothing more now.
+            return { }; // Already built, or we're in a cycle, or we're marked for removal. Regardless, just do nothing more now.
         }
         
         ASSERT(filterData->targetSwitcher);
         if (filterData->targetSwitcher->hasSourceImage())
-            return false;
+            return { };
 
         filterData->targetSwitcher->beginDrawSourceImage(*context);
-        return true;
+        return { ApplyResult::ResourceApplied };
     }
 
     auto addResult = m_rendererFilterDataMap.set(renderer, makeUnique<FilterData>());
@@ -109,14 +109,14 @@ bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement.ptr(), filterElement->filterUnits(), targetBoundingBox);
     if (filterRegion.isEmpty()) {
         m_rendererFilterDataMap.remove(renderer);
-        return false;
+        return { };
     }
 
     // Determine absolute transformation matrix for filter.
     auto absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
     if (!absoluteTransform.isInvertible()) {
         m_rendererFilterDataMap.remove(renderer);
-        return false;
+        return { };
     }
 
     // Eliminate shear of the absolute transformation matrix, to be able to produce unsheared tile images for feTile.
@@ -135,7 +135,7 @@ bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     filterData->filter = SVGFilter::create(filterElement, preferredFilterModes, filterScale, filterRegion, targetBoundingBox, *context, RenderingResourceIdentifier::generate());
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(renderer);
-        return false;
+        return { };
     }
 
     filterData->filter->clampFilterRegionIfNeeded();
@@ -150,10 +150,10 @@ bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
         return makeUnique<FilterResults>();
     });
 
-    filterData->targetSwitcher = FilterTargetSwitcher::create(*context, Ref { *filterData->filter }, filterData->sourceImageRect, colorSpace, &results);
+    filterData->targetSwitcher = GraphicsContextSwitcher::create(*context, filterData->sourceImageRect, colorSpace, filterData->filter, &results);
     if (!filterData->targetSwitcher) {
         m_rendererFilterDataMap.remove(renderer);
-        return false;
+        return { };
     }
     
     // If the sourceImageRect is empty, we have something like <g filter=".."/>.
@@ -161,7 +161,7 @@ bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     if (filterData->sourceImageRect.isEmpty()) {
         ASSERT(m_rendererFilterDataMap.contains(renderer));
         filterData->savedContext = context;
-        return false;
+        return { };
     }
 
     filterData->targetSwitcher->beginDrawSourceImage(*context);
@@ -170,7 +170,7 @@ bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     context = filterData->targetSwitcher->drawingContext(*context);
 
     ASSERT(m_rendererFilterDataMap.contains(renderer));
-    return true;
+    return { ApplyResult::ResourceApplied };
 }
 
 void LegacyRenderSVGResourceFilter::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path*, const RenderElement*)

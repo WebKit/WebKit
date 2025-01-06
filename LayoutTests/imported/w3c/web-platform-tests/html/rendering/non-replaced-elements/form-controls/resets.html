@@ -41,11 +41,16 @@ input[type=submit i], input[type=color i], input[type=search i], select, button 
 input, button {
   display: inline-block;
 }
+input:not([type=image i], [type=range i], [type=checkbox i], [type=radio i]) {
+  overflow: clip;
+  overflow-clip-margin: 0;
+}
 /* in spec prose: */ select, textarea, meter, progress {
   display: inline-block;
 }
 input[type=hidden i] { display: none !important; }
 marquee {
+  overflow: hidden;
   text-align: initial;
 }
 table { display: table; box-sizing: border-box; }
@@ -106,6 +111,8 @@ table {
                 'text-shadow',
                 'text-align',
                 'display',
+                'overflow',
+                'overflow-clip-margin',
                 'box-sizing'];
  runUAStyleTests(props);
 

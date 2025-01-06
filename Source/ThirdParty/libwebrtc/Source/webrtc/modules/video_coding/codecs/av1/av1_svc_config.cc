@@ -39,8 +39,8 @@ int GetLimitedNumSpatialLayers(int width, int height) {
   return std::min(num_layers_fit_horz, num_layers_fit_vert);
 }
 
-absl::optional<ScalabilityMode> BuildScalabilityMode(int num_temporal_layers,
-                                                     int num_spatial_layers) {
+std::optional<ScalabilityMode> BuildScalabilityMode(int num_temporal_layers,
+                                                    int num_spatial_layers) {
   char name[20];
   rtc::SimpleStringBuilder ss(name);
   ss << "L" << num_spatial_layers << "T" << num_temporal_layers;
@@ -56,7 +56,7 @@ absl::InlinedVector<ScalabilityMode, kScalabilityModeCount>
 LibaomAv1EncoderSupportedScalabilityModes() {
   absl::InlinedVector<ScalabilityMode, kScalabilityModeCount> scalability_modes;
   for (ScalabilityMode scalability_mode : kAllScalabilityModes) {
-    if (ScalabilityStructureConfig(scalability_mode) != absl::nullopt) {
+    if (ScalabilityStructureConfig(scalability_mode) != std::nullopt) {
       scalability_modes.push_back(scalability_mode);
     }
   }
@@ -66,7 +66,7 @@ LibaomAv1EncoderSupportedScalabilityModes() {
 bool LibaomAv1EncoderSupportsScalabilityMode(ScalabilityMode scalability_mode) {
   // For libaom AV1, the scalability mode is supported if we can create the
   // scalability structure.
-  return ScalabilityStructureConfig(scalability_mode) != absl::nullopt;
+  return ScalabilityStructureConfig(scalability_mode) != std::nullopt;
 }
 
 bool SetAv1SvcConfig(VideoCodec& video_codec,
@@ -74,7 +74,7 @@ bool SetAv1SvcConfig(VideoCodec& video_codec,
                      int num_spatial_layers) {
   RTC_DCHECK_EQ(video_codec.codecType, kVideoCodecAV1);
 
-  absl::optional<ScalabilityMode> scalability_mode =
+  std::optional<ScalabilityMode> scalability_mode =
       video_codec.GetScalabilityMode();
   if (!scalability_mode.has_value()) {
     scalability_mode =

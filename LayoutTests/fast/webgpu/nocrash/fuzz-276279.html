@@ -1,0 +1,117 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice({
+        requiredLimits: {
+            maxInterStageShaderVariables: 112,
+            maxInterStageShaderComponents: 70
+        }
+    });
+    let videoFrame = new VideoFrame(new ArrayBuffer(6), { codedWidth: 2, codedHeight: 2, format: 'I420', timestamp: 0 });
+    let bindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            { binding: 0, visibility: GPUShaderStage.VERTEX, externalTexture: {} },
+            { binding: 1, visibility: GPUShaderStage.FRAGMENT, externalTexture: {} }
+        ]
+    });
+    let externalTexture = device.importExternalTexture({ source: videoFrame });
+    let shaderModule = device.createShaderModule({ code: `
+        @compute fn k(@builtin(global_invocation_id) l: vec3<u32>, @builtin(local_invocation_id) m : vec3<u32>) {}
+        struct n {
+            @location(15) aa: f16,
+            @location(83) o: vec3<u32>,
+            @location(18) p: vec4<i32>,
+            @location(98) q: vec2<f16>,
+            @location(57) r: vec2<f16>,
+            @location(91) s: vec4<i32>,
+            @location(74) ab: vec3<f16>,
+            @location(19) ac: vec2<i32>,
+            @location(76) t: vec4<f32>,
+            @builtin(sample_index) u: u32,
+            @location(48) v: vec4<f32>,
+            @location(54) ad: f32,
+            @location(7) ae: u32,
+            @location(1) w: vec3<u32>,
+            @location(50) x: vec4<i32>,
+            @location(111) y: vec3<u32>,
+            @builtin(sample_mask) f16: u32,
+            @location(110) z: vec4<u32>
+        }
+        struct af {
+            @location(7) aa: vec3<u32>,
+            @location(0) o: vec2<u32>
+        }
+        @fragment fn ag(@location(3) ah: f32, @location(87) ai: f16, @location(104) aj: i32, @location(95) ak: f32, @builtin(position) al: vec4<f32>, @location(94) am: u32, @location(102) an: vec2<f32>, @builtin(front_facing) ao: bool, @location(96) ap: vec4<f16>, @location(107) aq: vec2<u32>, @location(71) ar: vec4<i32>, a11: n, @location(105) a12: vec3<i32>, @location(49) a13: vec2<f32>, @location(63) a14: vec3<u32>) -> af {
+            return af();
+        }
+        struct VertexOutput0 {
+            @location(57) f158: vec2<f16>,
+            @location(71) f159: vec4<i32>,
+            @location(107) f160: vec2<u32>,
+            @location(98) f161: vec2<f16>,
+            @location(111) f162: vec3<u32>,
+            @location(102) f163: vec2<f32>,
+            @location(19) f164: vec2<i32>,
+            @location(76) f165: vec4<f32>,
+            @location(1) f166: vec3<u32>,
+            @location(48) f167: vec4<f32>,
+            @location(96) f168: vec4<f16>,
+            @location(105) f169: vec3<i32>,
+            @location(110) f170: vec4<u32>,
+            @location(49) f171: vec2<f32>,
+            @location(74) f172: vec3<f16>,
+            @location(63) f173: vec3<u32>,
+            @location(3) f174: f32,
+            @location(94) f175: u32,
+            @location(104) f176: i32,
+            @location(91) f177: vec4<i32>,
+            @location(15) f178: f16,
+            @builtin(position) f179: vec4<f32>,
+            @location(95) f180: f32,
+            @location(87) f181: f16,
+            @location(7) f182: u32,
+            @location(18) f183: vec4<i32>,
+            @location(83) f184: vec3<u32>,
+            @location(54) f185: f32,
+            @location(50) f186: vec4<i32>
+        }
+        @vertex fn vertex0() -> VertexOutput0 {
+            return VertexOutput0();
+        }
+    `});
+    let texture = device.createTexture({ size: [1], dimension: '2d', format: 'rg16uint', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let textureView = texture.createView();
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let renderPipeline = device.createRenderPipeline({
+        layout: pipelineLayout,
+        fragment: {
+            module: shaderModule,
+            targets: [{ format: 'rg16uint', writeMask: GPUColorWrite.ALPHA }]
+        },
+        vertex: {
+            module: shaderModule
+        }
+    });
+    let bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [
+            { binding: 0, resource: externalTexture },
+            { binding: 1, resource: externalTexture },
+        ]
+    });
+    let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: ['rg16uint'] });
+    renderBundleEncoder.setPipeline(renderPipeline);
+    renderBundleEncoder.draw(0);
+    renderBundleEncoder.setBindGroup(0, bindGroup);
+    let renderPassEncoder = device.createCommandEncoder().beginRenderPass({
+        colorAttachments: [{ view: textureView, loadOp: 'load', storeOp: 'store' }]
+    });
+    renderBundleEncoder.finish();
+    let renderBundle = renderBundleEncoder.finish();
+    renderPassEncoder.executeBundles([renderBundle]);
+    await device.queue.onSubmittedWorkDone();
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.waitUntilDone();
+run();
+</script>

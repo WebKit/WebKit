@@ -4,11 +4,11 @@
 <script src="../../resources/js-test-pre.js"></script>
 <script>
     description("Test that animated gif on layer that is scrolled to view starts animating.");
-    function startTrackingRepaints()
+    async function startTrackingRepaints()
     {
         window.internals.startTrackingRepaints();
         document.getElementById('scroller').scrollTop = 800;
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
 
         setTimeout(logRepaints, 200);
     }
@@ -23,9 +23,9 @@
         finishJSTest();
     }
 
-    function test()
+    async function test()
     {
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
         setTimeout(startTrackingRepaints, 200);
     }
 

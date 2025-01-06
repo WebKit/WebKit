@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(COCOA)
+#if PLATFORM(IOS_FAMILY) || HAVE(NSTEXTPLACEHOLDER_RECTS)
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
@@ -38,18 +38,11 @@ class SelectionGeometry;
 #if PLATFORM(IOS_FAMILY)
 @interface WKTextSelectionRect : UITextSelectionRect
 #else
-@interface WKTextSelectionRect : NSObject // FIXME: Change to NSTextSelectionRect after rdar://126379463 lands
+@interface WKTextSelectionRect : NSTextSelectionRect
 #endif
 
 - (instancetype)initWithCGRect:(CGRect)rect;
 - (instancetype)initWithSelectionGeometry:(const WebCore::SelectionGeometry&)selectionGeometry scaleFactor:(CGFloat)scaleFactor;
-
-#if PLATFORM(MAC)
-@property (nonatomic, readonly) NSRect rect;
-@property (nonatomic, readonly) NSWritingDirection writingDirection;
-@property (nonatomic, readonly) BOOL isVertical;
-@property (nonatomic, readonly) NSAffineTransform *transform;
-#endif
 
 @end
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,18 +16,18 @@
 #include "aom/aom_integer.h"
 #include "aom_dsp/aom_dsp_common.h"
 
-static INLINE void write_zero(tran_low_t *qcoeff) {
+static inline void write_zero(tran_low_t *qcoeff) {
   const __m256i zero = _mm256_setzero_si256();
   _mm256_storeu_si256((__m256i *)qcoeff, zero);
   _mm256_storeu_si256((__m256i *)qcoeff + 1, zero);
 }
 
-static INLINE void init_one_qp(const __m128i *p, __m256i *qp) {
+static inline void init_one_qp(const __m128i *p, __m256i *qp) {
   const __m128i ac = _mm_unpackhi_epi64(*p, *p);
   *qp = _mm256_insertf128_si256(_mm256_castsi128_si256(*p), ac, 1);
 }
 
-static INLINE void init_qp(const int16_t *round_ptr, const int16_t *quant_ptr,
+static inline void init_qp(const int16_t *round_ptr, const int16_t *quant_ptr,
                            const int16_t *dequant_ptr, int log_scale,
                            __m256i *thr, __m256i *qp) {
   __m128i round = _mm_loadu_si128((const __m128i *)round_ptr);
@@ -54,20 +54,20 @@ static INLINE void init_qp(const int16_t *round_ptr, const int16_t *quant_ptr,
   *thr = _mm256_sub_epi16(*thr, _mm256_set1_epi16(1));
 }
 
-static INLINE void update_qp(__m256i *thr, __m256i *qp) {
+static inline void update_qp(__m256i *thr, __m256i *qp) {
   qp[0] = _mm256_permute2x128_si256(qp[0], qp[0], 0x11);
   qp[1] = _mm256_permute2x128_si256(qp[1], qp[1], 0x11);
   qp[2] = _mm256_permute2x128_si256(qp[2], qp[2], 0x11);
   *thr = _mm256_permute2x128_si256(*thr, *thr, 0x11);
 }
 
-static INLINE __m256i load_coefficients_avx2(const tran_low_t *coeff_ptr) {
+static inline __m256i load_coefficients_avx2(const tran_low_t *coeff_ptr) {
   const __m256i coeff1 = _mm256_load_si256((__m256i *)coeff_ptr);
   const __m256i coeff2 = _mm256_load_si256((__m256i *)(coeff_ptr + 8));
   return _mm256_packs_epi32(coeff1, coeff2);
 }
 
-static INLINE void store_coefficients_avx2(__m256i coeff_vals,
+static inline void store_coefficients_avx2(__m256i coeff_vals,
                                            tran_low_t *coeff_ptr) {
   __m256i coeff_sign = _mm256_srai_epi16(coeff_vals, 15);
   __m256i coeff_vals_lo = _mm256_unpacklo_epi16(coeff_vals, coeff_sign);
@@ -76,7 +76,7 @@ static INLINE void store_coefficients_avx2(__m256i coeff_vals,
   _mm256_store_si256((__m256i *)(coeff_ptr + 8), coeff_vals_hi);
 }
 
-static INLINE uint16_t quant_gather_eob(__m256i eob) {
+static inline uint16_t quant_gather_eob(__m256i eob) {
   const __m128i eob_lo = _mm256_castsi256_si128(eob);
   const __m128i eob_hi = _mm256_extractf128_si256(eob, 1);
   __m128i eob_s = _mm_max_epi16(eob_lo, eob_hi);
@@ -85,7 +85,7 @@ static INLINE uint16_t quant_gather_eob(__m256i eob) {
   return INT16_MAX - _mm_extract_epi16(eob_s, 0);
 }
 
-static INLINE int16_t accumulate_eob256(__m256i eob256) {
+static inline int16_t accumulate_eob256(__m256i eob256) {
   const __m128i eob_lo = _mm256_castsi256_si128(eob256);
   const __m128i eob_hi = _mm256_extractf128_si256(eob256, 1);
   __m128i eob = _mm_max_epi16(eob_lo, eob_hi);
@@ -331,7 +331,7 @@ void av1_quantize_fp_32x32_avx2(
   *eob_ptr = quant_gather_eob(eob);
 }
 
-static INLINE void quantize_fp_64x64(const __m256i *thr, const __m256i *qp,
+static inline void quantize_fp_64x64(const __m256i *thr, const __m256i *qp,
                                      const tran_low_t *coeff_ptr,
                                      const int16_t *iscan_ptr,
                                      tran_low_t *qcoeff_ptr,

@@ -41,8 +41,12 @@
 
 /Tools/CISupport @aj062 @JonWBedard @ryanhaddad @briannafan
 
-/Tools/Scripts/libraries @JonWBedard @briannafan
-/Tools/Scripts/libraries/webkitscmpy @facetothefate @JonWBedard @briannafan
+/Tools/lldb/ @JonWBedard @gsnedders
+
+/Tools/Scripts/ @JonWBedard @gsnedders
+
+/Tools/Scripts/libraries @JonWBedard @briannafan @gsnedders
+/Tools/Scripts/libraries/webkitscmpy @facetothefate @JonWBedard @briannafan @gsnedders
 
 /Tools/TestWebKitAPI
 /Tools/TestWebKitAPI/Tests/WebKitGLib/ @WebKit/glib-reviewers
@@ -126,10 +130,12 @@
 /LayoutTests/http/tests/paymentrequest @aprotyas @marcoscaceres
 /LayoutTests/http/tests/ssl/applepay @aprotyas
 /LayoutTests/http/tests/ssl/applepay-ams-ui @aprotyas
-/LayoutTests/imported/w3c/web-platform-tests/geolocation-API @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/geolocation @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/payment-request @aprotyas @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/permissions @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/resources @gsnedders
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/tools @gsnedders
 /LayoutTests/imported/w3c/web-platform-tests/web-share @marcoscaceres
 
 # ================================================================================
@@ -177,7 +183,6 @@
 CoordinatedGraphics/ @magomez @zdobersek
 cairo/ @magomez @zdobersek
 coordinated/ @magomez @zdobersek
-nicosia/ @magomez @zdobersek
 skia/ @alexgcastro @carlosgcampos @nikolaszimmermann
 
 # ================================================================================

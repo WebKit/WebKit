@@ -91,8 +91,8 @@ class ScreenshareLayers final : public Vp8FrameBufferController {
   const int number_of_temporal_layers_;
 
   // TODO(eladalon/sprang): These should be made into const-int set in the ctor.
-  absl::optional<int> min_qp_;
-  absl::optional<int> max_qp_;
+  std::optional<int> min_qp_;
+  std::optional<int> max_qp_;
 
   int active_layer_;
   int64_t last_timestamp_;
@@ -105,9 +105,9 @@ class ScreenshareLayers final : public Vp8FrameBufferController {
   std::map<uint32_t, DependencyInfo> pending_frame_configs_;
 
   // Configured max framerate.
-  absl::optional<uint32_t> target_framerate_;
+  std::optional<uint32_t> target_framerate_;
   // Incoming framerate from capturer.
-  absl::optional<uint32_t> capture_framerate_;
+  std::optional<uint32_t> capture_framerate_;
 
   // Tracks what framerate we actually encode, and drops frames on overshoot.
   RateStatistics encode_framerate_;

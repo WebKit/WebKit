@@ -30,6 +30,7 @@ EXPECTED (usage.requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted == '
 EXPECTED (usage.isVideoAndRequiresUserGestureForVideoRateChange == 'true') OK
 EXPECTED (usage.isAudioAndRequiresUserGestureForAudioRateChange == 'false') OK
 EXPECTED (usage.isVideoAndRequiresUserGestureForVideoDueToLowPowerMode == 'false') OK
+EXPECTED (usage.isVideoAndRequiresUserGestureForVideoDueToAggressiveThermalMitigation == 'false') OK
 EXPECTED (usage.noUserGestureRequired == 'false') OK
 EXPECTED (usage.requiresPlaybackAndIsNotPlaying == 'false') OK
 EXPECTED (usage.hasEverNotifiedAboutPlaying == 'false') OK

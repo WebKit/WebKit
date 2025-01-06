@@ -488,6 +488,8 @@ void Parse(BitstreamReader& br,
   // Frame context index.
   frame_info->frame_context_idx = br.ReadBits(2);
 
+  frame_info->loop_filter_params_offset_bits =
+      total_buffer_size_bits - br.RemainingBitCount();
   Vp9ReadLoopfilter(br);
 
   // Read base QP.
@@ -505,7 +507,7 @@ void Parse(BitstreamReader& br,
       (total_buffer_size_bits / 8) - (br.RemainingBitCount() / 8);
 }
 
-absl::optional<Vp9UncompressedHeader> ParseUncompressedVp9Header(
+std::optional<Vp9UncompressedHeader> ParseUncompressedVp9Header(
     rtc::ArrayView<const uint8_t> buf) {
   BitstreamReader reader(buf);
   Vp9UncompressedHeader frame_info;
@@ -513,7 +515,7 @@ absl::optional<Vp9UncompressedHeader> ParseUncompressedVp9Header(
   if (reader.Ok() && frame_info.frame_width > 0) {
     return frame_info;
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 namespace vp9 {

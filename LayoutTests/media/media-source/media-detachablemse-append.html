@@ -1,0 +1,86 @@
+<!-- webkit-test-runner [ DetachableMediaSourceEnabled=true ] -->
+ <!DOCTYPE html>
+<html>
+<head>
+    <title>mediasource-detach-mse</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var readyState;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        await loaderPromise(loader);
+
+        source = new ManagedMediaSource({ detachable: true });
+        run('video.srcObject = source');
+        run('video.muted = true');
+        run('video.playsInline = true');
+        run('video.disableRemotePlayback = true');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        testExpected('source.detachable', true);
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        var loadedDataPromise = waitFor(video, 'loadeddata', true);
+        await Promise.all([ waitFor(video, 'loadedmetadata'), waitFor(sourceBuffer, 'update', true) ]);
+
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        await waitFor(sourceBuffer, 'update');
+
+        testExpected('video.videoTracks.length >= 1', true);
+        testExpected('video.audioTracks.length >= 1', true);
+
+        run('source.endOfStream()');
+        waitFor(source, 'sourceended');
+        await loadedDataPromise;
+
+        run('readyState = video.readyState');
+
+        testExpected('sourceBuffer.buffered.length', 1);
+
+        run('video.srcObject = null');
+        testExpected('video.buffered.length', 0);
+        testExpected('video.readyState', 0);
+        testExpected('isNaN(video.duration)', true);
+        testExpected('video.videoTracks.length', 0);
+        testExpected('video.audioTracks.length', 0);
+
+        run('video.srcObject = source');
+        await Promise.all([waitFor(source, 'sourceopen'), waitFor(source, 'sourceended')]);
+        // Re-attaching an ended MediaSource go back to ended.
+        testExpected('source.readyState', "ended");
+        testExpected('video.duration > 0', true);
+        await Promise.all([waitFor(video, 'loadedmetadata'), waitFor(video, 'loadeddata')]);
+        testExpected('video.buffered.length', 1);
+        testExpected('video.readyState', readyState);
+
+        // Tracks are re-created.
+        testExpected('video.videoTracks.length >= 1', true);
+        testExpected('video.audioTracks.length >= 1', true);
+
+        // Re-attached MediaSource is playable.
+        run('video.play()');
+        await waitFor(video, 'ended', true);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

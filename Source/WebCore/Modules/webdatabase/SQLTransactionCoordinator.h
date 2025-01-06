@@ -35,6 +35,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -42,7 +43,8 @@ namespace WebCore {
 class SQLTransaction;
 
 class SQLTransactionCoordinator {
-    WTF_MAKE_NONCOPYABLE(SQLTransactionCoordinator); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SQLTransactionCoordinator);
+    WTF_MAKE_NONCOPYABLE(SQLTransactionCoordinator);
 public:
     SQLTransactionCoordinator();
     void acquireLock(SQLTransaction&);

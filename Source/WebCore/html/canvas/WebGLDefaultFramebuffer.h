@@ -28,12 +28,13 @@
 #if ENABLE(WEBGL)
 
 #include "WebGLRenderingContextBase.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // Implementation for the WebGL context default framebuffer.
 class WebGLDefaultFramebuffer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebGLDefaultFramebuffer);
     WTF_MAKE_NONCOPYABLE(WebGLDefaultFramebuffer);
 public:
     static std::unique_ptr<WebGLDefaultFramebuffer> create(WebGLRenderingContextBase&, IntSize);
@@ -42,6 +43,7 @@ public:
     PlatformGLObject object() const { return 0; }
     bool hasStencil() const { return m_hasStencil; }
     bool hasDepth() const { return m_hasDepth; }
+    IntSize size() const;
     void reshape(IntSize);
     GCGLbitfield dirtyBuffers() const { return m_dirtyBuffers; }
     void markBuffersClear(GCGLbitfield clearBuffers);
@@ -51,7 +53,8 @@ public:
 private:
     WebGLDefaultFramebuffer(WebGLRenderingContextBase&);
 
-    WebGLRenderingContextBase& m_context;
+    WeakRef<WebGLRenderingContextBase> m_context;
+
     GCGLbitfield m_unpreservedBuffers { 0 };
     GCGLbitfield m_dirtyBuffers { 0 };
     bool m_hasStencil : 1;

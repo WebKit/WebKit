@@ -173,7 +173,7 @@ void MonoInputVolumeController::Initialize() {
 // previous update and the ratio of non-silence frames (i.e., frames with a
 // `speech_probability` higher than `speech_probability_threshold_`) is at least
 // `speech_ratio_threshold_`.
-void MonoInputVolumeController::Process(absl::optional<int> rms_error_db,
+void MonoInputVolumeController::Process(std::optional<int> rms_error_db,
                                         float speech_probability) {
   if (check_volume_on_next_process_) {
     check_volume_on_next_process_ = false;
@@ -404,7 +404,7 @@ void InputVolumeController::Initialize() {
   clipping_rate_log_ = 0.0f;
   clipping_rate_log_counter_ = 0;
 
-  applied_input_volume_ = absl::nullopt;
+  applied_input_volume_ = std::nullopt;
 }
 
 void InputVolumeController::AnalyzeInputAudio(int applied_input_volume,
@@ -498,13 +498,13 @@ void InputVolumeController::AnalyzeInputAudio(int applied_input_volume,
   AggregateChannelLevels();
 }
 
-absl::optional<int> InputVolumeController::RecommendInputVolume(
+std::optional<int> InputVolumeController::RecommendInputVolume(
     float speech_probability,
-    absl::optional<float> speech_level_dbfs) {
+    std::optional<float> speech_level_dbfs) {
   // Only process if applied input volume is set.
   if (!applied_input_volume_.has_value()) {
     RTC_LOG(LS_ERROR) << "[AGC2] Applied input volume not set.";
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   AggregateChannelLevels();
@@ -514,7 +514,7 @@ absl::optional<int> InputVolumeController::RecommendInputVolume(
     return applied_input_volume_;
   }
 
-  absl::optional<int> rms_error_db;
+  std::optional<int> rms_error_db;
   if (speech_level_dbfs.has_value()) {
     // Compute the error for all frames (both speech and non-speech frames).
     rms_error_db = GetSpeechLevelRmsErrorDb(
@@ -533,7 +533,7 @@ absl::optional<int> InputVolumeController::RecommendInputVolume(
         recommended_input_volume_);
   }
 
-  applied_input_volume_ = absl::nullopt;
+  applied_input_volume_ = std::nullopt;
   return recommended_input_volume();
 }
 

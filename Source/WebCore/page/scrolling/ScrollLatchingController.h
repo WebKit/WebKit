@@ -29,6 +29,7 @@
 #include "ScrollTypes.h"
 #include "Timer.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
@@ -46,12 +47,15 @@ class ScrollableArea;
 class WeakPtrImplWithEventTargetData;
 
 class ScrollLatchingController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollLatchingController);
 public:
-    ScrollLatchingController();
+    explicit ScrollLatchingController(Page&);
     ~ScrollLatchingController();
 
     void clear();
+
+    void ref() const;
+    void deref() const;
 
     void receivedWheelEvent(const PlatformWheelEvent&);
     FloatSize cumulativeEventDelta() const { return m_cumulativeEventDelta; }
@@ -86,6 +90,7 @@ private:
 
     bool shouldLatchToScrollableArea(const LocalFrame&, ScrollableArea*, FloatSize) const;
 
+    WeakRef<Page> m_page;
     FloatSize m_cumulativeEventDelta;
     Vector<FrameState> m_frameStateStack;
     Timer m_clearLatchingStateTimer;

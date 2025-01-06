@@ -28,18 +28,19 @@
 #include <cstring>
 #include <type_traits>
 #include <wtf/Assertions.h>
+#include <wtf/Compiler.h>
 
 namespace WTF {
 
 template<typename ContainerType, typename ForEachFunction>
-void forEach(ContainerType&& container, ForEachFunction forEachFunction)
+void forEach(ContainerType&& container, NOESCAPE ForEachFunction&& forEachFunction)
 {
     for (auto& value : container)
         forEachFunction(value);
 }
 
 template<typename ContainerType, typename AnyOfFunction>
-bool anyOf(ContainerType&& container, AnyOfFunction anyOfFunction)
+bool anyOf(ContainerType&& container, NOESCAPE AnyOfFunction&& anyOfFunction)
 {
     for (auto& value : container) {
         if (anyOfFunction(value))
@@ -49,7 +50,7 @@ bool anyOf(ContainerType&& container, AnyOfFunction anyOfFunction)
 }
 
 template<typename ContainerType, typename AllOfFunction>
-bool allOf(ContainerType&& container, AllOfFunction allOfFunction)
+bool allOf(ContainerType&& container, NOESCAPE AllOfFunction&& allOfFunction)
 {
     for (auto& value : container) {
         if (!allOfFunction(value))

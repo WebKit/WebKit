@@ -85,7 +85,7 @@ TEST(RenderDelayController, DISABLED_BasicApiCalls) {
   for (size_t num_capture_channels : {1, 2, 4}) {
     for (size_t num_render_channels : {1, 2, 8}) {
       Block capture_block(/*num_bands=*/1, num_capture_channels);
-      absl::optional<DelayEstimate> delay_blocks;
+      std::optional<DelayEstimate> delay_blocks;
       for (size_t num_matched_filters = 4; num_matched_filters <= 10;
            num_matched_filters++) {
         for (auto down_sampling_factor : kDownSamplingFactors) {
@@ -140,7 +140,7 @@ TEST(RenderDelayController, DISABLED_Alignment) {
             Block render_block(NumBandsForRate(rate), num_render_channels);
 
             for (size_t delay_samples : {15, 50, 150, 200, 800, 4000}) {
-              absl::optional<DelayEstimate> delay_blocks;
+              std::optional<DelayEstimate> delay_blocks;
               SCOPED_TRACE(ProduceDebugText(rate, delay_samples,
                                             num_render_channels,
                                             num_capture_channels));
@@ -203,7 +203,7 @@ TEST(RenderDelayController, DISABLED_NonCausalAlignment) {
             Block capture_block(NumBandsForRate(rate), num_capture_channels);
 
             for (int delay_samples : {-15, -50, -150, -200}) {
-              absl::optional<DelayEstimate> delay_blocks;
+              std::optional<DelayEstimate> delay_blocks;
               SCOPED_TRACE(ProduceDebugText(rate, -delay_samples,
                                             num_render_channels,
                                             num_capture_channels));
@@ -259,7 +259,7 @@ TEST(RenderDelayController, DISABLED_AlignmentWithJitter) {
           for (auto rate : {16000, 32000, 48000}) {
             Block render_block(NumBandsForRate(rate), num_render_channels);
             for (size_t delay_samples : {15, 50, 300, 800}) {
-              absl::optional<DelayEstimate> delay_blocks;
+              std::optional<DelayEstimate> delay_blocks;
               SCOPED_TRACE(ProduceDebugText(rate, delay_samples,
                                             num_render_channels,
                                             num_capture_channels));

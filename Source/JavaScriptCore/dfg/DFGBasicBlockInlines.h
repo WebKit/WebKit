@@ -32,6 +32,13 @@
 
 namespace JSC { namespace DFG {
 
+inline Node* BasicBlock::cloneAndAppend(Graph& graph, const Node* node)
+{
+    Node* result = graph.cloneAndAdd(*node);
+    append(result);
+    return result;
+}
+
 template<typename... Params>
 Node* BasicBlock::appendNode(Graph& graph, SpeculatedType type, Params... params)
 {

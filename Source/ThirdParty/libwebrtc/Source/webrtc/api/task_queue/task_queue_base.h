@@ -10,7 +10,6 @@
 #ifndef API_TASK_QUEUE_TASK_QUEUE_BASE_H_
 #define API_TASK_QUEUE_TASK_QUEUE_BASE_H_
 
-#include <memory>
 #include <utility>
 
 #include "absl/functional/any_invocable.h"

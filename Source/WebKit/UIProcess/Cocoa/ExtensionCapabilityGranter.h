@@ -27,45 +27,38 @@
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class ExtensionCapabilityGranter;
-struct ExtensionCapabilityGranterClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ExtensionCapabilityGranter> : std::true_type { };
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ExtensionCapabilityGranterClient> : std::true_type { };
-}
 
 namespace WebKit {
 
 class ExtensionCapability;
 class ExtensionCapabilityGrant;
+class ExtensionCapabilityGranter;
 class GPUProcessProxy;
 class MediaCapability;
 class WebPageProxy;
 class WebProcessProxy;
 
-struct ExtensionCapabilityGranterClient : public CanMakeWeakPtr<ExtensionCapabilityGranterClient> {
+struct ExtensionCapabilityGranterClient : public AbstractRefCountedAndCanMakeWeakPtr<ExtensionCapabilityGranterClient> {
     virtual ~ExtensionCapabilityGranterClient() = default;
 
     virtual RefPtr<GPUProcessProxy> gpuProcessForCapabilityGranter(const ExtensionCapabilityGranter&) = 0;
     virtual RefPtr<WebProcessProxy> webProcessForCapabilityGranter(const ExtensionCapabilityGranter&, const String& environmentIdentifier) = 0;
 };
 
-class ExtensionCapabilityGranter : public CanMakeWeakPtr<ExtensionCapabilityGranter> {
-    WTF_MAKE_FAST_ALLOCATED;
+class ExtensionCapabilityGranter : public RefCountedAndCanMakeWeakPtr<ExtensionCapabilityGranter> {
+    WTF_MAKE_TZONE_ALLOCATED(ExtensionCapabilityGranter);
     WTF_MAKE_NONCOPYABLE(ExtensionCapabilityGranter);
 public:
-    static UniqueRef<ExtensionCapabilityGranter> create(ExtensionCapabilityGranterClient&);
+    static RefPtr<ExtensionCapabilityGranter> create(ExtensionCapabilityGranterClient&);
 
     void grant(const ExtensionCapability&);
     void revoke(const ExtensionCapability&);
@@ -74,7 +67,6 @@ public:
     void invalidateGrants(Vector<ExtensionCapabilityGrant>&&);
 
 private:
-    friend UniqueRef<ExtensionCapabilityGranter> WTF::makeUniqueRefWithoutFastMallocCheck(ExtensionCapabilityGranterClient&);
     explicit ExtensionCapabilityGranter(ExtensionCapabilityGranterClient&);
 
     WeakRef<ExtensionCapabilityGranterClient> m_client;

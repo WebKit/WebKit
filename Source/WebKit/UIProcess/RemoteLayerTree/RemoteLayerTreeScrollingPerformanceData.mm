@@ -32,10 +32,13 @@
 #import <QuartzCore/CALayer.h>
 #import <WebCore/PerformanceLoggingClient.h>
 #import <WebCore/TileController.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeScrollingPerformanceData);
 
 RemoteLayerTreeScrollingPerformanceData::RemoteLayerTreeScrollingPerformanceData(RemoteLayerTreeDrawingAreaProxy& drawingArea)
     : m_drawingArea(drawingArea)
@@ -121,7 +124,7 @@ static CALayer *findTileGridContainerLayer(CALayer *layer)
 
 unsigned RemoteLayerTreeScrollingPerformanceData::blankPixelCount(const FloatRect& visibleRect) const
 {
-    CALayer *rootLayer = m_drawingArea.remoteLayerTreeHost().rootLayer();
+    CALayer *rootLayer = m_drawingArea->remoteLayerTreeHost().rootLayer();
 
     CALayer *tileGridContainer = findTileGridContainerLayer(rootLayer);
     if (!tileGridContainer) {
@@ -156,15 +159,18 @@ void RemoteLayerTreeScrollingPerformanceData::logData()
     for (auto event : m_events) {
         switch (event.eventType) {
         case ScrollingLogEvent::SwitchedScrollingMode: {
-            m_drawingArea.page().logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::SwitchedScrollingMode), event.startTime, event.value);
+            if (RefPtr page = m_drawingArea->page())
+                page->logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::SwitchedScrollingMode), event.startTime, event.value);
             break;
         }
         case ScrollingLogEvent::Exposed: {
-            m_drawingArea.page().logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::ExposedTilelessArea), event.startTime, event.value);
+            if (RefPtr page = m_drawingArea->page())
+                page->logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::ExposedTilelessArea), event.startTime, event.value);
             break;
         }
         case ScrollingLogEvent::Filled: {
-            m_drawingArea.page().logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::FilledTile), event.startTime, event.value);
+            if (RefPtr page = m_drawingArea->page())
+                page->logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::FilledTile), event.startTime, event.value);
             break;
         }
         default:

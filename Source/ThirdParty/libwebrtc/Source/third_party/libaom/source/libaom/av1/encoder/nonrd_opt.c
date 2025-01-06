@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -10,6 +10,7 @@
  */
 
 #include "config/aom_dsp_rtcd.h"
+#include "config/av1_rtcd.h"
 
 #include "av1/common/reconinter.h"
 
@@ -56,7 +57,7 @@ static AOM_FORCE_INLINE void update_yrd_loop_vars(
   this_rdc->dist += av1_block_error_lp(low_coeff, low_dqcoeff, step << 4) >> 2;
 }
 
-static INLINE void aom_process_hadamard_lp_8x16(MACROBLOCK *x,
+static inline void aom_process_hadamard_lp_8x16(MACROBLOCK *x,
                                                 int max_blocks_high,
                                                 int max_blocks_wide,
                                                 int num_4x4_w, int step,
@@ -330,9 +331,8 @@ void av1_block_yrd(MACROBLOCK *x, RD_STATS *this_rdc, int *skippable,
 // av1_nonrd_pick_inter_mode_sb takes up about 3% of total encoding time, the
 // potential room of improvement for writing AVX2 optimization is only 3% * 8% =
 // 0.24% of total encoding time.
-static AOM_INLINE void scale_square_buf_vals(int16_t *dst, int tx_width,
-                                             const int16_t *src,
-                                             int src_stride) {
+static inline void scale_square_buf_vals(int16_t *dst, int tx_width,
+                                         const int16_t *src, int src_stride) {
 #define DO_SCALING                                                   \
   do {                                                               \
     for (int idy = 0; idy < tx_width; ++idy) {                       \
@@ -561,7 +561,7 @@ static void compute_intra_yprediction(const AV1_COMMON *cm,
 // Checks whether Intra mode needs to be pruned based on
 // 'intra_y_mode_bsize_mask_nrd' and 'prune_hv_pred_modes_using_blksad'
 // speed features.
-static INLINE bool is_prune_intra_mode(
+static inline bool is_prune_intra_mode(
     AV1_COMP *cpi, int mode_index, int force_intra_check, BLOCK_SIZE bsize,
     uint8_t segment_id, SOURCE_SAD source_sad_nonrd,
     uint8_t color_sensitivity[MAX_MB_PLANE - 1]) {

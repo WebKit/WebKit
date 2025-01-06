@@ -27,8 +27,8 @@
 
 #include <optional>
 #include <wayland-client.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
@@ -38,7 +38,7 @@ class CursorTheme;
 class WaylandSHMPool;
 
 class WaylandCursorTheme {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WaylandCursorTheme);
 public:
     static std::unique_ptr<WaylandCursorTheme> create(const char* path, uint32_t size, struct wl_shm*);
     static std::unique_ptr<WaylandCursorTheme> create(struct wl_shm*);

@@ -29,6 +29,7 @@
 #include "APIClient.h"
 #include "APIInjectedBundleFormClient.h"
 #include "WKBundlePageFormClient.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace API {
 
@@ -40,6 +41,7 @@ template<> struct ClientTraits<WKBundlePageFormClientBase> {
 namespace WebKit {
 
 class InjectedBundlePageFormClient : public API::Client<WKBundlePageFormClientBase>, public API::InjectedBundle::FormClient {
+    WTF_MAKE_TZONE_ALLOCATED(InjectedBundlePageFormClient);
 public:
     explicit InjectedBundlePageFormClient(const WKBundlePageFormClientBase*);
 

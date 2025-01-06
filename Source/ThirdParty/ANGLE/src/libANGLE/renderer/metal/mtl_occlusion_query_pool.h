@@ -48,6 +48,8 @@ class OcclusionQueryPool
     size_t getNumRenderPassAllocatedQueries() const { return mAllocatedQueries.size(); }
     // This function is called at the end of render pass
     void resolveVisibilityResults(ContextMtl *contextMtl);
+    // Clear visibility pool buffer to drop previous results
+    void prepareRenderPassVisibilityPoolBuffer(ContextMtl *contextMtl);
 
   private:
     // Buffer to hold the visibility results for current render pass
@@ -57,6 +59,7 @@ class OcclusionQueryPool
     std::vector<QueryMtl *> mAllocatedQueries;
 
     bool mResetFirstQuery = false;
+    bool mUsed            = false;
 };
 
 }  // namespace mtl

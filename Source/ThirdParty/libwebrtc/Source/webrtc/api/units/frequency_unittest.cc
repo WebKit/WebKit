@@ -9,8 +9,9 @@
  */
 #include "api/units/frequency.h"
 
-#include <limits>
+#include <cstdint>
 
+#include "api/units/time_delta.h"
 #include "test/gtest.h"
 
 namespace webrtc {

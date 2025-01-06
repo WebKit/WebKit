@@ -8,7 +8,7 @@
 #define COMPILER_TRANSLATOR_MSL_IDGEN_H_
 
 #include "common/angleutils.h"
-#include "compiler/translator/msl/Name.h"
+#include "compiler/translator/Name.h"
 
 namespace sh
 {

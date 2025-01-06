@@ -36,4 +36,7 @@
 
     void getAcceptLanguages([Optional, CallbackHandler] function callback);
 
+    void getPreferredSystemLanguages([Optional, CallbackHandler] function callback);
+
+    void getSystemUILanguage([Optional, CallbackHandler] function callback);
 };

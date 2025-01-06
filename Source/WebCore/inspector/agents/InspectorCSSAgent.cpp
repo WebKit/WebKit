@@ -75,13 +75,16 @@
 #include "StyleSheetList.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorCSSAgent);
 
 class InspectorCSSAgent::StyleSheetAction : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(StyleSheetAction);
@@ -154,7 +157,7 @@ public:
     SetStyleTextAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, const String& text)
         : InspectorCSSAgent::StyleSheetAction(styleSheet)
         , m_cssId(cssId)
-        , m_text(text)
+        , m_newStyleDeclarationText(text)
     {
     }
 
@@ -165,12 +168,22 @@ public:
 
     ExceptionOr<void> undo() override
     {
-        return m_styleSheet->setRuleStyleText(m_cssId, m_oldText, nullptr, InspectorStyleSheet::IsUndo::Yes);
+        return m_styleSheet->setRuleStyleText(
+            m_cssId,
+            m_oldStyleDeclarationText,
+            nullptr, /* outOldStyleDeclarationText */
+            &m_oldRuleText,
+            nullptr /* outOldRuleText */);
     }
 
     ExceptionOr<void> redo() override
     {
-        return m_styleSheet->setRuleStyleText(m_cssId, m_text, &m_oldText);
+        return m_styleSheet->setRuleStyleText(
+            m_cssId,
+            m_newStyleDeclarationText,
+            &m_oldStyleDeclarationText,
+            nullptr, /* newRuleText */
+            &m_oldRuleText);
     }
 
     String mergeId() override
@@ -184,13 +197,14 @@ public:
         ASSERT(action->mergeId() == mergeId());
 
         SetStyleTextAction* other = static_cast<SetStyleTextAction*>(action.get());
-        m_text = other->m_text;
+        m_newStyleDeclarationText = other->m_newStyleDeclarationText;
     }
 
 private:
     InspectorCSSId m_cssId;
-    String m_text;
-    String m_oldText;
+    String m_newStyleDeclarationText;
+    String m_oldStyleDeclarationText;
+    String m_oldRuleText;
 };
 
 class InspectorCSSAgent::SetRuleHeaderTextAction final : public InspectorCSSAgent::StyleSheetAction {
@@ -418,6 +432,8 @@ std::optional<Inspector::Protocol::CSS::PseudoId> InspectorCSSAgent::protocolVal
         return Inspector::Protocol::CSS::PseudoId::Highlight;
     case PseudoId::SpellingError:
         return Inspector::Protocol::CSS::PseudoId::SpellingError;
+    case PseudoId::TargetText:
+        return Inspector::Protocol::CSS::PseudoId::TargetText;
     case PseudoId::ViewTransition:
         return Inspector::Protocol::CSS::PseudoId::ViewTransition;
     case PseudoId::ViewTransitionGroup:
@@ -486,6 +502,13 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
                     continue;
 
                 if (pseudoId == PseudoId::Backdrop && !element->isInTopLayer())
+                    continue;
+
+                if (pseudoId == PseudoId::ViewTransition && (!element->document().activeViewTransition() || element != element->document().documentElement()))
+                    continue;
+
+                // FIXME: Add named view transition pseudo-element support to Web Inspector. (webkit.org/b/283951)
+                if (isNamedViewTransitionPseudoElement(Style::PseudoElementIdentifier { pseudoId }))
                     continue;
 
                 if (auto protocolPseudoId = protocolValueForPseudoId(pseudoId)) {

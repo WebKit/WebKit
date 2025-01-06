@@ -48,6 +48,9 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic, readonly) CGRect boundingRect;
 @property (nonatomic, readonly) NSString *ID WK_API_AVAILABLE(macos(10.12), ios(10.0));
 @property (nonatomic, readonly) BOOL isAnimatedImage WK_API_AVAILABLE(macos(10.15), ios(13.0));
+#if defined(TARGET_OS_VISION) && TARGET_OS_VISION && __VISION_OS_VERSION_MIN_REQUIRED >= 20000
+@property (nonatomic, readonly) BOOL isSpatialImage WK_API_AVAILABLE(visionos(WK_XROS_TBA));
+#endif // defined(TARGET_OS_VISION) && TARGET_OS_VISION & __VISION_OS_VERSION_MIN_REQUIRED >= 20000
 #if TARGET_OS_IPHONE
 @property (nonatomic, readonly) BOOL isAnimating;
 @property (nonatomic, readonly) BOOL canShowAnimationControls;

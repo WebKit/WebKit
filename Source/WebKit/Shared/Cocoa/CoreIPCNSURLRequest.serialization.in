@@ -1,0 +1,151 @@
+# Copyright (C) 2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if PLATFORM(COCOA) && HAVE(WK_SECURE_CODING_NSURLREQUEST)
+
+webkit_platform_headers: "CoreIPCNSURLRequest.h"
+
+header: "CoreIPCNSURLRequest.h"
+[CustomHeader, WebKitPlatform] enum class WebKit::NSURLRequestCachePolicy : uint8_t {
+    UseProtocolCachePolicy,
+    ReloadIgnoringLocalCacheData,
+    ReturnCacheDataElseLoad,
+    ReturnCacheDataDontLoad,
+    ReloadIgnoringLocalAndRemoteCacheData,
+    ReloadRevalidatingCacheData,
+}
+
+header: "CoreIPCNSURLRequest.h"
+[CustomHeader, WebKitPlatform] enum class WebKit::NSURLRequestNetworkServiceType : uint8_t {
+    Default,
+    OpaqueValue0,
+    OpaqueValue1,
+    Background,
+    OpaqueValue2,
+    OpaqueValue3,
+    OpaqueValue4,
+    OpaqueValue5,
+    AVStreaming,
+    OpaqueValue6,
+    OpaqueValue7,
+    OpaqueValue8
+}
+
+header: "CoreIPCNSURLRequest.h"
+[OptionSet, CustomHeader, WebKitPlatform] enum class WebKit::NSURLRequestAllowedProtocolTypes : uint8_t {
+    OpaqueValue1,
+    OpaqueValue2,
+    OpaqueValue3,
+    OpaqueValue4,
+    OpaqueValue5,
+    OpaqueValue6,
+    OpaqueValue7,
+    OpaqueValue8,
+};
+
+header: "CoreIPCNSURLRequest.h"
+[CustomHeader, WebKitPlatform] enum class WebKit::NSURLRequestAttribution : bool;
+
+header: "CoreIPCNSURLRequest.h"
+[OptionSet, CustomHeader, WebKitPlatform] enum class WebKit::NSURLRequestFlags : int16_t {
+    ShouldHandleCookies,
+    NetworkServiceType,
+    AllowsCellular,
+    PreventsIdleSleep,
+    ShouldPipeline,
+    CachePolicy,
+    Timeout,
+    ProxyDict,
+    SSLProperties,
+    ShouldStartSynchronously
+};
+
+header: "CoreIPCNSURLRequest.h"
+[CustomHeader, WebKitPlatform] enum class WebKit::NSURLRequestFlags : int16_t {
+    ShouldHandleCookies,
+    NetworkServiceType,
+    AllowsCellular,
+    PreventsIdleSleep,
+    ShouldPipeline,
+    CachePolicy,
+    Timeout,
+    ProxyDict,
+    SSLProperties,
+    ShouldStartSynchronously
+};
+
+using WebKit::CoreIPCNSURLRequestData::BodyParts = std::variant<WebKit::CoreIPCString, WebKit::CoreIPCData>;
+using WebKit::CoreIPCNSURLRequestData::HeaderField = std::pair<String, std::variant<String, Vector<String>>>;
+
+header: "CoreIPCNSURLRequest.h"
+[CustomHeader, WebKitPlatform] struct WebKit::CoreIPCNSURLRequestData {
+    std::optional<WebKit::CoreIPCPlistDictionary> protocolProperties;
+    bool isMutable;
+    WebKit::CoreIPCURL url;
+    double timeout;
+    WebKit::NSURLRequestCachePolicy cachePolicy;
+    std::optional<WebKit::CoreIPCURL> mainDocumentURL;
+    bool shouldHandleHTTPCookies;
+    OptionSet<WebKit::NSURLRequestFlags> explicitFlags;
+    bool allowCellular;
+    bool preventsIdleSystemSleep;
+    double timeWindowDelay;
+    double timeWindowDuration;
+    WebKit::NSURLRequestNetworkServiceType networkServiceType;
+    int requestPriority;
+    std::optional<bool> isHTTP;
+    std::optional<WebKit::CoreIPCString> httpMethod;
+    std::optional<Vector<WebKit::CoreIPCNSURLRequestData::HeaderField>> headerFields;
+    std::optional<WebKit::CoreIPCData> body;
+    std::optional<Vector<WebKit::CoreIPCNSURLRequestData::BodyParts>> bodyParts;
+
+    double startTimeoutTime;
+    bool requiresShortConnectionTimeout;
+    double payloadTransmissionTimeout;
+    OptionSet<WebKit::NSURLRequestAllowedProtocolTypes> allowedProtocolTypes;
+    std::optional<WebKit::CoreIPCString> boundInterfaceIdentifier;
+    std::optional<bool> allowsExpensiveNetworkAccess;
+    std::optional<bool> allowsConstrainedNetworkAccess;
+    std::optional<bool> allowsUCA;
+    bool assumesHTTP3Capable;
+    WebKit::NSURLRequestAttribution attribution;
+    bool knownTracker;
+    std::optional<WebKit::CoreIPCString> trackerContext;
+    bool privacyProxyFailClosed;
+    bool privacyProxyFailClosedForUnreachableNonMainHosts;
+    bool privacyProxyFailClosedForUnreachableHosts;
+    std::optional<bool> requiresDNSSECValidation;
+    bool allowsPersistentDNS;
+    bool prohibitPrivacyProxy;
+    bool allowPrivateAccessTokensForThirdParty;
+    bool useEnhancedPrivacyMode;
+    bool blockTrackers;
+    bool failInsecureLoadWithHTTPSDNSRecord;
+    bool isWebSearchContent;
+    bool allowOnlyPartitionedCookies;
+    std::optional<Vector<WebKit::CoreIPCNumber>> contentDispositionEncodingFallbackArray;
+}
+
+[WebKitPlatform] class WebKit::CoreIPCNSURLRequest {
+    WebKit::CoreIPCNSURLRequestData m_data
+}
+#endif // PLATFORM(COCOA)

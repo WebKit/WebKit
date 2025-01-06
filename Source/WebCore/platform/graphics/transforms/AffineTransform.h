@@ -33,8 +33,8 @@
 #include "FloatSize.h"
 #include <array>
 #include <optional>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(CG)
 typedef struct CGAffineTransform CGAffineTransform;
@@ -61,7 +61,7 @@ class Region;
 class TransformationMatrix;
 
 class AffineTransform {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AffineTransform);
 public:
     constexpr AffineTransform();
     constexpr AffineTransform(double a, double b, double c, double d, double e, double f);
@@ -207,13 +207,8 @@ public:
         return AffineTransform(scale.width(), 0, 0, scale.height(), 0, 0);
     }
 
-    static AffineTransform makeRotation(double angleInDegrees, FloatPoint center = { })
-    {
-        auto matrix = makeTranslation(toFloatSize(center));
-        matrix.rotate(angleInDegrees);
-        matrix.translate(-toFloatSize(center));
-        return matrix;
-    }
+    WEBCORE_EXPORT static AffineTransform makeRotation(double angleInDegrees, FloatPoint center);
+    WEBCORE_EXPORT static AffineTransform makeRotation(double angleInDegrees);
 
     // decompose the matrix into its component parts
     typedef struct {

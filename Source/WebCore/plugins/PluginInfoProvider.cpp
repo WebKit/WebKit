@@ -61,14 +61,14 @@ void PluginInfoProvider::refresh(bool reloadPages)
             if (!localFrame)
                 continue;
             if (localFrame->loader().subframeLoader().containsPlugins()) {
-                if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame()))
+                if (RefPtr localMainFrame = page.localMainFrame())
                     framesNeedingReload.append(*localMainFrame);
             }
         }
     }
 
-    for (auto& frame : framesNeedingReload)
-        frame->loader().reload();
+    for (Ref frame : framesNeedingReload)
+        frame->protectedLoader()->reload();
 }
 
 void PluginInfoProvider::addPage(Page& page)

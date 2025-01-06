@@ -64,17 +64,16 @@
     if (self == otherObject)
         return YES;
 
-    if (![otherObject isKindOfClass:[_WKTextInputContext class]])
+    auto *other = dynamic_objc_cast<_WKTextInputContext>(otherObject);
+    if (!other)
         return NO;
-
-    _WKTextInputContext *other = (_WKTextInputContext *)otherObject;
 
     return _textInputContext == other->_textInputContext;
 }
 
 - (NSUInteger)hash
 {
-    return _textInputContext.elementIdentifier.toUInt64();
+    return _textInputContext.elementIdentifier ? _textInputContext.elementIdentifier->toUInt64() : 0;
 }
 
 - (id)copyWithZone:(NSZone *)zone

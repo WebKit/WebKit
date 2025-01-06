@@ -31,9 +31,12 @@
 #include "WebExtensionDataType.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
-OBJC_CLASS _WKWebExtensionDataRecord;
+OBJC_CLASS NSArray;
+OBJC_CLASS NSMutableArray;
+OBJC_CLASS WKWebExtensionDataRecord;
 
 namespace WebKit {
 
@@ -62,11 +65,13 @@ public:
     size_t sizeOfType(Type type) const { return m_typeSizes.get(type); }
     void setSizeOfType(Type type, size_t size) { m_typeSizes.set(type, size); }
 
+#if PLATFORM(COCOA)
     NSArray *errors();
     void addError(NSString *debugDescription, Type);
+#endif
 
 #ifdef __OBJC__
-    _WKWebExtensionDataRecord *wrapper() const { return (_WKWebExtensionDataRecord *)API::ObjectImpl<API::Object::Type::WebExtensionDataRecord>::wrapper(); }
+    WKWebExtensionDataRecord *wrapper() const { return (WKWebExtensionDataRecord *)API::ObjectImpl<API::Object::Type::WebExtensionDataRecord>::wrapper(); }
 #endif
 
     bool operator==(const WebExtensionDataRecord&) const;
@@ -75,12 +80,14 @@ private:
     String m_displayName;
     String m_uniqueIdentifier;
     HashMap<Type, size_t> m_typeSizes;
+#if PLATFORM(COCOA)
     RetainPtr<NSMutableArray> m_errors;
+#endif
 };
 
 class WebExtensionDataRecordHolder : public RefCounted<WebExtensionDataRecordHolder> {
     WTF_MAKE_NONCOPYABLE(WebExtensionDataRecordHolder);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebExtensionDataRecordHolder);
 
 public:
     template<typename... Args>

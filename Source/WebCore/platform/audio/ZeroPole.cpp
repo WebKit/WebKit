@@ -33,10 +33,13 @@
 #include "ZeroPole.h"
 
 #include "DenormalDisabler.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-void ZeroPole::process(const float *source, float *destination, unsigned framesToProcess)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ZeroPole);
+
+void ZeroPole::process(std::span<const float> source, std::span<float> destination, unsigned framesToProcess)
 {
     float zero = m_zero;
     float pole = m_pole;
@@ -49,8 +52,8 @@ void ZeroPole::process(const float *source, float *destination, unsigned framesT
     float lastX = m_lastX;
     float lastY = m_lastY;
 
-    while (framesToProcess--) {
-        float input = *source++;
+    for (unsigned i = 0; i < framesToProcess; ++i) {
+        float input = source[i];
 
         // Zero
         float output1 = k1 * (input - zero * lastX);
@@ -60,7 +63,7 @@ void ZeroPole::process(const float *source, float *destination, unsigned framesT
         float output2 = k2 * output1 + pole * lastY;
         lastY = output2;
 
-        *destination++ = output2;
+        destination[i] = output2;
     }
     
     // Locals to member variables. Flush denormals here so we don't

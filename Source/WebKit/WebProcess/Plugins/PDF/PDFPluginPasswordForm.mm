@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PDFPluginPasswordForm.h"
 
-#if PLATFORM(MAC)
+#if ENABLE(PDF_PLUGIN)
 
 #import <WebCore/ElementInlines.h>
 #import <WebCore/HTMLElement.h>
@@ -49,7 +49,7 @@ PDFPluginPasswordForm::~PDFPluginPasswordForm() = default;
 Ref<Element> PDFPluginPasswordForm::createAnnotationElement()
 {
     Ref document = parent()->document();
-    Ref element = downcast<StyledElement>(document->createElement(divTag, false));
+    Ref element = document->createElement(divTag, false);
     element->setAttributeWithoutSynchronization(classAttr, "password-form"_s);
 
     auto iconElement = document->createElement(svgTag, false);
@@ -88,4 +88,4 @@ void PDFPluginPasswordForm::updateGeometry()
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(PDF_PLUGIN)

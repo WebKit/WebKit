@@ -1,0 +1,52 @@
+* Main Profile
+Only 8 or 10 bit color is supported:
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.0.00M.08") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.0.00M.10") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.0.00M.12") == 'false') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.0.00M.09") == 'false') OK
+Only 4:2:0 subsampling is supported:
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.0.00M.08.0.000.1.1.1.0") == 'false') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.0.00M.08.0.100.1.1.1.0") == 'false') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.0.00M.08.0.110.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.0.00M.08.0.111.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.0.00M.08.0.112.1.1.1.0") == 'true') OK
+
+* High Profile
+Only 8 or 10 bit color is supported:
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.000.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.1.00M.10.0.000.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.1.00M.12.0.000.1.1.1.0") == 'false') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.1.00M.09.0.000.1.1.1.0") == 'false') OK
+Only 4:4:4 subsampling is supported:
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.000.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.100.1.1.1.0") == 'false') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.110.1.1.1.0") == 'false') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.111.1.1.1.0") == 'false') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.112.1.1.1.0") == 'false') OK
+Monochrome is not supported:
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.000.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.1.00M.08.1.000.1.1.1.0") == 'false') OK
+
+* Professional Profile
+Only 8, 10, or 12 bit color is supported:
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.08.0.000.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.10.0.000.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.000.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.09.0.000.1.1.1.0") == 'false') OK
+For 8 and 10 bit color, only 4:4:4 subsampling is supported:
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.08.0.000.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.08.0.100.1.1.1.0") == 'false') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.08.0.110.1.1.1.0") == 'false') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.08.0.111.1.1.1.0") == 'false') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.08.0.112.1.1.1.0") == 'false') OK
+For 12 bit color, only all subsampling values are supported:
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.000.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.100.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.110.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.111.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.112.1.1.1.0") == 'true') OK
+Monochrome is supported for 12 bit color:
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.000.1.1.1.0") == 'true') OK
+EXPECTED (internals.validateAV1ConfigurationRecord("av01.2.00M.12.1.110.1.1.1.0") == 'true') OK
+END OF TEST
+

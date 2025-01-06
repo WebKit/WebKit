@@ -30,7 +30,8 @@ namespace WebCore {
 class AffineTransform;
 
 class SVGAnimateTransformElement final : public SVGAnimateElementBase {
-    WTF_MAKE_ISO_ALLOCATED(SVGAnimateTransformElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGAnimateTransformElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAnimateTransformElement);
 public:
     static Ref<SVGAnimateTransformElement> create(const QualifiedName&, Document&);
 

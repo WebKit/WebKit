@@ -35,6 +35,7 @@
 #import "APIHTTPCookieStore.h"
 #import "CocoaHelpers.h"
 #import "WKWebViewConfiguration.h"
+#import "WKWebViewPrivate.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionCookieParameters.h"
@@ -44,6 +45,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <pal/SessionID.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebKit {
 
@@ -70,7 +72,7 @@ static inline URL toURL(const WebCore::Cookie& cookie)
 
 bool WebExtensionContext::isCookiesMessageAllowed()
 {
-    return isLoaded() && hasPermission(_WKWebExtensionPermissionCookies);
+    return isLoaded() && hasPermission(WKWebExtensionPermissionCookies);
 }
 
 void WebExtensionContext::fetchCookies(WebsiteDataStore& dataStore, const URL& url, const WebExtensionCookieFilterParameters& filterParameters, CompletionHandler<void(Expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
@@ -107,9 +109,9 @@ void WebExtensionContext::fetchCookies(WebsiteDataStore& dataStore, const URL& u
     };
 
     if (url.isValid())
-        dataStore.cookieStore().cookiesForURL(url.isolatedCopy(), WTFMove(internalCompletionHandler));
+        dataStore.protectedCookieStore()->cookiesForURL(url.isolatedCopy(), WTFMove(internalCompletionHandler));
     else
-        dataStore.cookieStore().cookies(WTFMove(internalCompletionHandler));
+        dataStore.protectedCookieStore()->cookies(WTFMove(internalCompletionHandler));
 }
 
 void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, const String& name, const URL& url, CompletionHandler<void(Expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
@@ -222,11 +224,11 @@ void WebExtensionContext::cookiesGetAllCookieStores(CompletionHandler<void(Expec
 {
     HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>> stores;
 
-    auto defaultSessionID = extensionController()->configuration().defaultWebsiteDataStore().sessionID();
+    auto defaultSessionID = extensionController()->protectedConfiguration()->defaultWebsiteDataStore().sessionID();
     stores.set(defaultSessionID, Vector<WebExtensionTabIdentifier> { });
 
     for (Ref tab : openTabs()) {
-        for (WKWebView *webView in tab->webViews()) {
+        if (WKWebView *webView = tab->webView()) {
             auto sessionID = webView.configuration.websiteDataStore->_websiteDataStore.get()->sessionID();
 
             auto& tabsVector = stores.ensure(sessionID, [] {

@@ -8,14 +8,24 @@
 #ifndef GrGradientShader_DEFINE
 #define GrGradientShader_DEFINE
 
-#include "src/gpu/ganesh/GrFPArgs.h"
-#include "src/gpu/ganesh/GrFragmentProcessor.h"
-#include "src/shaders/gradients/SkGradientBaseShader.h"
+#include "include/core/SkColor.h"
+#include "include/core/SkColorSpace.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkScalar.h"
 #include "src/shaders/gradients/SkLinearGradient.h"
 
-#if defined(GR_TEST_UTILS)
-#include "src/base/SkRandom.h"
-#endif
+#include <memory>
+
+class GrFragmentProcessor;
+class SkGradientBaseShader;
+class SkMatrix;
+class SkRandom;
+enum class SkTileMode;
+struct GrFPArgs;
+
+namespace SkShaders {
+class MatrixRec;
+}
 
 namespace GrGradientShader {
 std::unique_ptr<GrFragmentProcessor> MakeGradientFP(const SkGradientBaseShader& shader,
@@ -28,7 +38,7 @@ std::unique_ptr<GrFragmentProcessor> MakeLinear(const SkLinearGradient& shader,
                                                 const GrFPArgs& args,
                                                 const SkShaders::MatrixRec&);
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     /** Helper struct that stores (and populates) parameters to construct a random gradient.
         If fUseColors4f is true, then the SkColor4f factory should be called, with fColors4f and
         fColorSpace. Otherwise, the SkColor factory should be called, with fColors. fColorCount

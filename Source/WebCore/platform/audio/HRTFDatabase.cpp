@@ -33,8 +33,11 @@
 #include "HRTFDatabase.h"
 
 #include "HRTFElevation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HRTFDatabase);
 
 HRTFDatabase::HRTFDatabase(float sampleRate)
     : m_sampleRate(sampleRate)

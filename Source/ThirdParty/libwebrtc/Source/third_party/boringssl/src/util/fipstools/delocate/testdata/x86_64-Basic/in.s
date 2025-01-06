@@ -20,6 +20,7 @@ foo:
 	.loc 1 168 0 is_stmt 0 discriminator 1
 	cmpq	-8(%rbp), %rax
 	jmpq *%rax
+	notrack jmp *%rax
         movdqa  %xmm3,%xmm10
 	psrlq   $1,%xmm3
 	pxor    %xmm6,%xmm5

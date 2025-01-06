@@ -132,8 +132,8 @@ template<typename Output, typename Input> Output convertColorCarryingForwardMiss
 
 // MARK: White Point.
 
-constexpr float D50WhitePoint[] = { 0.3457 / 0.3585, 1.0, (1.0 - 0.3457 - 0.3585) / 0.3585 };
-constexpr float D65WhitePoint[] = { 0.3127 / 0.3290, 1.0, (1.0 - 0.3127 - 0.3290) / 0.3290 };
+constexpr std::array<float, 3> D50WhitePoint { 0.3457 / 0.3585, 1.0, (1.0 - 0.3457 - 0.3585) / 0.3585 };
+constexpr std::array<float, 3> D65WhitePoint { 0.3127 / 0.3290, 1.0, (1.0 - 0.3127 - 0.3290) / 0.3290 };
 
 // MARK: Chromatic Adaptation conversions.
 

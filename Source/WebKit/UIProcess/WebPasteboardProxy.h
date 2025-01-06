@@ -33,6 +33,8 @@
 #include <wtf/WeakHashSet.h>
 
 namespace IPC {
+struct AsyncReplyIDType;
+using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
 class SharedBufferReference;
 }
 
@@ -64,9 +66,13 @@ public:
     void addWebProcessProxy(WebProcessProxy&);
     void removeWebProcessProxy(WebProcessProxy&);
 
+    // Do nothing since this is a singleton.
+    void ref() const final { }
+    void deref() const final { }
+
 #if PLATFORM(COCOA)
     void revokeAccess(WebProcessProxy&);
-    void grantAccessToCurrentData(WebProcessProxy&, const String& pasteboardName);
+    std::optional<IPC::AsyncReplyID> grantAccessToCurrentData(WebProcessProxy&, const String& pasteboardName, CompletionHandler<void()>&&);
     void grantAccessToCurrentTypes(WebProcessProxy&, const String& pasteboardName);
 #endif
 
@@ -82,7 +88,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
-    WebProcessProxy* webProcessProxyForConnection(IPC::Connection&) const;
+    RefPtr<WebProcessProxy> webProcessProxyForConnection(IPC::Connection&) const;
 
 #if PLATFORM(IOS_FAMILY)
     void writeURLToPasteboard(IPC::Connection&, const WebCore::PasteboardURL&, const String& pasteboardName, std::optional<WebCore::PageIdentifier>);
@@ -129,9 +135,9 @@ private:
 
 #if PLATFORM(GTK)
     void getTypes(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&&);
-    void readText(const String& pasteboardName, CompletionHandler<void(String&&)>&&);
-    void readFilePaths(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&&);
-    void readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    void readText(IPC::Connection&, const String& pasteboardName, CompletionHandler<void(String&&)>&&);
+    void readFilePaths(IPC::Connection&, const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&&);
+    void readBuffer(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
     void writeToClipboard(const String& pasteboardName, WebCore::SelectionData&&);
     void clearClipboard(const String& pasteboardName);
     void getPasteboardChangeCount(IPC::Connection&, const String& pasteboardName, CompletionHandler<void(int64_t)>&&);

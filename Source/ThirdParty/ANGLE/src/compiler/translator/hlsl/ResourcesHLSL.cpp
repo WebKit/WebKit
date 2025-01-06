@@ -357,11 +357,9 @@ void ResourcesHLSL::outputHLSLSamplerUniformGroup(
             << (*groupTextureRegisterIndex) << ";\n";
     }
     out << "uniform " << TextureString(textureGroup) << " textures" << suffix << "["
-        << groupRegisterCount << "]"
-        << " : register(t" << (*groupTextureRegisterIndex) << ");\n";
+        << groupRegisterCount << "]" << " : register(t" << (*groupTextureRegisterIndex) << ");\n";
     out << "uniform " << SamplerString(textureGroup) << " samplers" << suffix << "["
-        << groupRegisterCount << "]"
-        << " : register(s" << (*groupTextureRegisterIndex) << ");\n";
+        << groupRegisterCount << "]" << " : register(s" << (*groupTextureRegisterIndex) << ");\n";
     *groupTextureRegisterIndex += groupRegisterCount;
 }
 
@@ -413,8 +411,7 @@ void ResourcesHLSL::outputHLSLReadonlyImageUniformGroup(TInfoSinkBase &out,
     out << "static const uint readonlyImageIndexOffset" << suffix << " = "
         << (*groupTextureRegisterIndex) << ";\n";
     out << "uniform " << TextureString(textureGroup) << " readonlyImages" << suffix << "["
-        << groupRegisterCount << "]"
-        << " : register(t" << (*groupTextureRegisterIndex) << ");\n";
+        << groupRegisterCount << "]" << " : register(t" << (*groupTextureRegisterIndex) << ");\n";
     *groupTextureRegisterIndex += groupRegisterCount;
 }
 
@@ -438,22 +435,8 @@ void ResourcesHLSL::outputHLSLImageUniformGroup(TInfoSinkBase &out,
     out << "static const uint imageIndexOffset" << suffix << " = " << (*groupTextureRegisterIndex)
         << ";\n";
     out << "uniform " << RWTextureString(textureGroup) << " images" << suffix << "["
-        << groupRegisterCount << "]"
-        << " : register(u" << (*groupTextureRegisterIndex) << ");\n";
+        << groupRegisterCount << "]" << " : register(u" << (*groupTextureRegisterIndex) << ");\n";
     *groupTextureRegisterIndex += groupRegisterCount;
-}
-
-void ResourcesHLSL::outputHLSL4_0_FL9_3Sampler(TInfoSinkBase &out,
-                                               const TType &type,
-                                               const TVariable &variable,
-                                               const unsigned int registerIndex)
-{
-    out << "uniform " << SamplerString(type.getBasicType()) << " sampler_"
-        << DecorateVariableIfNeeded(variable) << ArrayString(type) << " : register(s"
-        << str(registerIndex) << ");\n";
-    out << "uniform " << TextureString(type.getBasicType()) << " texture_"
-        << DecorateVariableIfNeeded(variable) << ArrayString(type) << " : register(t"
-        << str(registerIndex) << ");\n";
 }
 
 void ResourcesHLSL::outputUniform(TInfoSinkBase &out,
@@ -519,11 +502,6 @@ void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
         {
             HLSLTextureGroup group = TextureGroup(type.getBasicType());
             groupedSamplerUniforms[group].push_back(&variable);
-        }
-        else if (outputType == SH_HLSL_4_0_FL9_3_OUTPUT && IsSampler(type.getBasicType()))
-        {
-            unsigned int registerIndex = assignUniformRegister(type, variable.name(), nullptr);
-            outputHLSL4_0_FL9_3Sampler(out, type, variable, registerIndex);
         }
         else if (outputType == SH_HLSL_4_1_OUTPUT && IsImage(type.getBasicType()))
         {
@@ -593,12 +571,6 @@ void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
                         HLSLTextureGroup group = TextureGroup(samplerType.getBasicType());
                         groupedSamplerUniforms[group].push_back(sampler);
                         samplerInStructSymbolsToAPINames[sampler] = symbolsToAPINames[sampler];
-                    }
-                    else if (outputType == SH_HLSL_4_0_FL9_3_OUTPUT)
-                    {
-                        unsigned int registerIndex = assignSamplerInStructUniformRegister(
-                            samplerType, symbolsToAPINames[sampler], nullptr);
-                        outputHLSL4_0_FL9_3Sampler(out, samplerType, *sampler, registerIndex);
                     }
                     else
                     {
@@ -725,7 +697,7 @@ TString ResourcesHLSL::uniformBlocksHeader(
         }
 
         // In order to avoid compile performance issue, translate uniform block to structured
-        // buffer. anglebug.com/3682.
+        // buffer. anglebug.com/40096608.
         if (uniformBlockOptimizedMap.count(interfaceBlock.uniqueId().get()) != 0)
         {
             unsigned int structuredBufferRegister = mSRVRegister;

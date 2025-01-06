@@ -29,15 +29,15 @@ if (window.testRunner)
 
 if (window.internals) {
   document.body.offsetHeight;
-  let layoutCountBefore = internals.layoutCount;
+  internals.startTrackingLayoutUpdates();
   // This should not trigger layout.
   document.body.classList.add('animated');
   document.body.offsetHeight;
-  let layoutCountAfter = internals.layoutCount;
+  let layoutCount = internals.layoutUpdateCount();
 
   let pre = document.createElement('pre');
   document.body.appendChild(pre);
-  pre.innerHTML = "Number of layouts triggered: " + (layoutCountAfter - layoutCountBefore);
+  pre.innerHTML = "Number of layouts triggered: " + layoutCount;
 }
 </script>
 </html>

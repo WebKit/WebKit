@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,18 +30,18 @@
 #import "config.h"
 #import "JSWebExtensionWrapper.h"
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+
 #import "CocoaHelpers.h"
 #import "Logging.h"
+#import "WebFrame.h"
+#import "WebPage.h"
 #import <JavaScriptCore/JSObjectRef.h>
 
-#if ENABLE(WK_WEB_EXTENSIONS)
 #import "JSWebExtensionWrappable.h"
 #import "WebExtensionAPIRuntime.h"
-#endif
 
 namespace WebKit {
-
-#if ENABLE(WK_WEB_EXTENSIONS)
 
 WebExtensionCallbackHandler::WebExtensionCallbackHandler(JSValue *callbackFunction)
     : m_callbackFunction(JSValueToObject(callbackFunction.context.JSGlobalContextRef, callbackFunction.JSValueRef, nullptr))
@@ -160,16 +160,14 @@ id WebExtensionCallbackHandler::call(id argumentOne, id argumentTwo, id argument
     });
 }
 
-#endif // ENABLE(WK_WEB_EXTENSIONS)
-
-id toNSObject(JSContextRef context, JSValueRef valueRef, Class containingObjectsOfClass)
+id toNSObject(JSContextRef context, JSValueRef valueRef, Class containingObjectsOfClass, NullValuePolicy nullPolicy, ValuePolicy valuePolicy)
 {
     ASSERT(context);
 
     if (!valueRef)
         return nil;
 
-    JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:[JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)]];
+    JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:toJSContext(context)];
 
     if (value.isArray) {
         NSUInteger length = [value[@"length"] toUInt32];
@@ -177,7 +175,10 @@ id toNSObject(JSContextRef context, JSValueRef valueRef, Class containingObjects
 
         for (NSUInteger i = 0; i < length; ++i) {
             JSValue *itemValue = [value valueAtIndex:i];
-            if (id convertedItem = toNSObject(context, itemValue.JSValueRef))
+            if (valuePolicy == ValuePolicy::StopAtTopLevel && (itemValue.isArray || itemValue._isDictionary)) {
+                if (itemValue)
+                    [mutableArray addObject:itemValue];
+            } else if (id convertedItem = toNSObject(context, itemValue.JSValueRef, Nil, nullPolicy))
                 [mutableArray addObject:convertedItem];
         }
 
@@ -191,7 +192,7 @@ id toNSObject(JSContextRef context, JSValueRef valueRef, Class containingObjects
     }
 
     if (value._isDictionary)
-        return toNSDictionary(context, valueRef);
+        return toNSDictionary(context, valueRef, nullPolicy, valuePolicy);
 
     if (value.isObject && !value.isDate && !value.isNull)
         return value;
@@ -236,7 +237,7 @@ NSDictionary *toNSDictionary(JSContextRef context, JSValueRef valueRef, NullValu
     if (!object)
         return nil;
 
-    JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:[JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)]];
+    JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:toJSContext(context)];
     if (!value._isDictionary)
         return nil;
 
@@ -296,8 +297,6 @@ JSValueRef toJSValueRef(JSContextRef context, NSURL *url, NullOrEmptyString null
     return toJSValueRef(context, url.absoluteURL.absoluteString, nullOrEmptyString);
 }
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-
 RefPtr<WebExtensionCallbackHandler> toJSCallbackHandler(JSContextRef context, JSValueRef callbackValue, WebExtensionAPIRuntimeBase& runtime)
 {
     ASSERT(context);
@@ -314,8 +313,6 @@ RefPtr<WebExtensionCallbackHandler> toJSCallbackHandler(JSContextRef context, JS
 
     return WebExtensionCallbackHandler::create(context, callbackFunction, runtime);
 }
-
-#endif // ENABLE(WK_WEB_EXTENSIONS)
 
 NSString *toNSString(JSStringRef string)
 {
@@ -345,6 +342,80 @@ NSString *serializeJSObject(JSContextRef context, JSValueRef value, JSValueRef* 
     JSRetainPtr<JSStringRef> string(Adopt, JSValueCreateJSONString(context, value, 0, exception));
 
     return toNSString(string.get());
+}
+
+JSObjectRef toJSError(JSContextRef context, NSString *string)
+{
+    ASSERT(context);
+
+    RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", string);
+
+    JSValueRef messageArgument = toJSValueRef(context, string, NullOrEmptyString::NullStringAsEmptyString);
+    return JSObjectMakeError(context, 1, &messageArgument, nullptr);
+}
+
+JSRetainPtr<JSStringRef> toJSString(NSString *string)
+{
+    return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithCFString(string ? (__bridge CFStringRef)string : CFSTR("")));
+}
+
+JSValueRef toJSValueRefOrJSNull(JSContextRef context, id object)
+{
+    ASSERT(context);
+    return object ? toJSValueRef(context, object) : JSValueMakeNull(context);
+}
+
+NSArray *toNSArray(JSContextRef context, JSValueRef value, Class containingObjectsOfClass)
+{
+    ASSERT(containingObjectsOfClass);
+    return toNSObject(context, value, containingObjectsOfClass);
+}
+
+JSContext *toJSContext(JSContextRef context)
+{
+    ASSERT(context);
+    return [JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)];
+}
+
+JSValue *toJSValue(JSContextRef context, JSValueRef value)
+{
+    ASSERT(context);
+
+    if (!value)
+        return nil;
+
+    return [JSValue valueWithJSValueRef:value inContext:toJSContext(context)];
+}
+
+JSValue *toWindowObject(JSContextRef context, WebFrame& frame)
+{
+    ASSERT(context);
+
+    auto frameContext = frame.jsContext();
+    if (!frameContext)
+        return nil;
+
+    return toJSValue(context, JSContextGetGlobalObject(frameContext));
+}
+
+JSValue *toWindowObject(JSContextRef context, WebPage& page)
+{
+    ASSERT(context);
+
+    return toWindowObject(context, page.mainWebFrame());
+}
+
+JSValueRef toJSValueRef(JSContextRef context, id object)
+{
+    ASSERT(context);
+
+    if (!object)
+        return JSValueMakeUndefined(context);
+
+    if (JSValue *value = dynamic_objc_cast<JSValue>(object))
+        return value.JSValueRef;
+
+    return [JSValue valueWithObject:object inContext:toJSContext(context)].JSValueRef;
 }
 
 } // namespace WebKit
@@ -425,3 +496,4 @@ using namespace WebKit;
 @end
 
 #endif // JSC_OBJC_API_ENABLED
+#endif // ENABLE(WK_WEB_EXTENSIONS)

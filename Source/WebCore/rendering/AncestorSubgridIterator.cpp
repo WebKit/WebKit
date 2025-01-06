@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-AncestorSubgridIterator::AncestorSubgridIterator() { }
+AncestorSubgridIterator::AncestorSubgridIterator() = default;
 
 AncestorSubgridIterator::AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, GridTrackSizingDirection direction)
     : m_firstAncestorSubgrid(firstAncestorSubgrid)
@@ -71,7 +71,7 @@ AncestorSubgridIterator& AncestorSubgridIterator::operator++()
 
     if (m_firstAncestorSubgrid && m_currentAncestorSubgrid && m_direction) {
         auto nextAncestor = RenderTraversal::findAncestorOfType<RenderGrid>(*m_currentAncestorSubgrid);
-        m_currentAncestorSubgrid = (nextAncestor && nextAncestor->isSubgrid(GridLayoutFunctions::flowAwareDirectionForChild(*nextAncestor, *m_firstAncestorSubgrid, m_direction.value()))) ? nextAncestor : nullptr;
+        m_currentAncestorSubgrid = (nextAncestor && nextAncestor->isSubgrid(GridLayoutFunctions::flowAwareDirectionForGridItem(*nextAncestor, *m_firstAncestorSubgrid, m_direction.value()))) ? nextAncestor : nullptr;
     }
     return *this;
 }

@@ -27,6 +27,12 @@
 #include "FontCascade.h"
 #include "Length.h"
 #include "StyleColor.h"
+#include "StyleFontData.h"
+#include <wtf/DataRef.h>
+
+namespace WTF {
+class TextStream;
+}
 
 namespace WebCore {
 
@@ -38,6 +44,10 @@ public:
     Ref<StyleInheritedData> copy() const;
 
     bool operator==(const StyleInheritedData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleInheritedData&) const;
+#endif
 
     bool fastPathInheritedEqual(const StyleInheritedData&) const;
     bool nonFastPathInheritedEqual(const StyleInheritedData&) const;
@@ -51,7 +61,7 @@ public:
     Length specifiedLineHeight;
 #endif
 
-    FontCascade fontCascade;
+    DataRef<StyleFontData> fontData;
     Color color;
     Color visitedLinkColor;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,10 +37,13 @@
 #include "NotImplemented.h"
 #include "SourceImage.h"
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace DisplayList {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RecorderImpl);
 
 RecorderImpl::RecorderImpl(DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
     : Recorder(state, initialClip, initialCTM, colorSpace, drawGlyphsMode)
@@ -54,38 +57,50 @@ RecorderImpl::~RecorderImpl()
     ASSERT(stateStack().size() == 1); // If this fires, it indicates mismatched save/restore.
 }
 
-void RecorderImpl::recordSave()
+void RecorderImpl::save(GraphicsContextState::Purpose purpose)
 {
+    updateStateForSave(purpose);
     append(Save());
 }
 
-void RecorderImpl::recordRestore()
+void RecorderImpl::restore(GraphicsContextState::Purpose purpose)
 {
+    if (!updateStateForRestore(purpose))
+        return;
     append(Restore());
 }
 
-void RecorderImpl::recordTranslate(float x, float y)
+void RecorderImpl::translate(float x, float y)
 {
+    if (!updateStateForTranslate(x, y))
+        return;
     append(Translate(x, y));
 }
 
-void RecorderImpl::recordRotate(float angle)
+void RecorderImpl::rotate(float angle)
 {
+    if (!updateStateForRotate(angle))
+        return;
     append(Rotate(angle));
 }
 
-void RecorderImpl::recordScale(const FloatSize& scale)
+void RecorderImpl::scale(const FloatSize& scale)
 {
+    if (!updateStateForScale(scale))
+        return;
     append(Scale(scale));
 }
 
-void RecorderImpl::recordSetCTM(const AffineTransform& transform)
+void RecorderImpl::setCTM(const AffineTransform& transform)
 {
+    updateStateForSetCTM(transform);
     append(SetCTM(transform));
 }
 
-void RecorderImpl::recordConcatenateCTM(const AffineTransform& transform)
+void RecorderImpl::concatCTM(const AffineTransform& transform)
 {
+    if (!updateStateForConcatCTM(transform))
+        return;
     append(ConcatenateCTM(transform));
 }
 
@@ -104,22 +119,22 @@ void RecorderImpl::recordSetState(const GraphicsContextState& state)
     append(SetState(state));
 }
 
-void RecorderImpl::recordSetLineCap(LineCap lineCap)
+void RecorderImpl::setLineCap(LineCap lineCap)
 {
     append(SetLineCap(lineCap));
 }
 
-void RecorderImpl::recordSetLineDash(const DashArray& array, float dashOffset)
+void RecorderImpl::setLineDash(const DashArray& array, float dashOffset)
 {
     append(SetLineDash(array, dashOffset));
 }
 
-void RecorderImpl::recordSetLineJoin(LineJoin join)
+void RecorderImpl::setLineJoin(LineJoin join)
 {
     append(SetLineJoin(join));
 }
 
-void RecorderImpl::recordSetMiterLimit(float limit)
+void RecorderImpl::setMiterLimit(float limit)
 {
     append(SetMiterLimit(limit));
 }
@@ -129,28 +144,34 @@ void RecorderImpl::recordClearDropShadow()
     append(ClearDropShadow());
 }
 
-void RecorderImpl::recordResetClip()
+void RecorderImpl::resetClip()
 {
+    updateStateForResetClip();
     append(ResetClip());
+    clip(initialClip());
 }
 
-void RecorderImpl::recordClip(const FloatRect& clipRect)
+void RecorderImpl::clip(const FloatRect& clipRect)
 {
+    updateStateForClip(clipRect);
     append(Clip(clipRect));
 }
 
-void RecorderImpl::recordClipRoundedRect(const FloatRoundedRect& clipRect)
+void RecorderImpl::clipRoundedRect(const FloatRoundedRect& clipRect)
 {
+    updateStateForClipRoundedRect(clipRect);
     append(ClipRoundedRect(clipRect));
 }
 
-void RecorderImpl::recordClipOut(const FloatRect& clipRect)
+void RecorderImpl::clipOut(const FloatRect& clipRect)
 {
+    updateStateForClipOut(clipRect);
     append(ClipOut(clipRect));
 }
 
-void RecorderImpl::recordClipOutRoundedRect(const FloatRoundedRect& clipRect)
+void RecorderImpl::clipOutRoundedRect(const FloatRoundedRect& clipRect)
 {
+    updateStateForClipOutRoundedRect(clipRect);
     append(ClipOutRoundedRect(clipRect));
 }
 
@@ -159,13 +180,15 @@ void RecorderImpl::recordClipToImageBuffer(ImageBuffer& imageBuffer, const Float
     append(ClipToImageBuffer(imageBuffer.renderingResourceIdentifier(), destinationRect));
 }
 
-void RecorderImpl::recordClipOutToPath(const Path& path)
+void RecorderImpl::clipOut(const Path& path)
 {
+    updateStateForClipOut(path);
     append(ClipOutToPath(path));
 }
 
-void RecorderImpl::recordClipPath(const Path& path, WindRule rule)
+void RecorderImpl::clipPath(const Path& path, WindRule rule)
 {
+    updateStateForClipPath(path);
     append(ClipPath(path, rule));
 }
 
@@ -177,9 +200,9 @@ void RecorderImpl::recordDrawFilteredImageBuffer(ImageBuffer* sourceImage, const
     append(DrawFilteredImageBuffer(WTFMove(identifier), sourceImageRect, filter));
 }
 
-void RecorderImpl::recordDrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode)
+void RecorderImpl::recordDrawGlyphs(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode mode)
 {
-    append(DrawGlyphs(font, glyphs, advances, count, localAnchor, mode));
+    append(DrawGlyphs(font, glyphs, advances, localAnchor, mode));
 }
 
 void RecorderImpl::recordDrawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)
@@ -212,88 +235,111 @@ void RecorderImpl::recordDrawPattern(RenderingResourceIdentifier imageIdentifier
     append(DrawPattern(imageIdentifier, destRect, tileRect, transform, phase, spacing, options));
 }
 
-void RecorderImpl::recordBeginTransparencyLayer(float opacity)
+void RecorderImpl::beginTransparencyLayer(float opacity)
 {
+    updateStateForBeginTransparencyLayer(opacity);
     append(BeginTransparencyLayer(opacity));
 }
 
-void RecorderImpl::recordEndTransparencyLayer()
+void RecorderImpl::beginTransparencyLayer(CompositeOperator compositeOperator, BlendMode blendMode)
 {
+    updateStateForBeginTransparencyLayer(compositeOperator, blendMode);
+    append(BeginTransparencyLayerWithCompositeMode({ compositeOperator, blendMode }));
+}
+
+void RecorderImpl::endTransparencyLayer()
+{
+    updateStateForEndTransparencyLayer();
     append(EndTransparencyLayer());
 }
 
-void RecorderImpl::recordDrawRect(const FloatRect& rect, float lineWidth)
+void RecorderImpl::drawRect(const FloatRect& rect, float lineWidth)
 {
+    appendStateChangeItemIfNecessary();
     append(DrawRect(rect, lineWidth));
 }
 
-void RecorderImpl::recordDrawLine(const FloatPoint& point1, const FloatPoint& point2)
+void RecorderImpl::drawLine(const FloatPoint& point1, const FloatPoint& point2)
 {
+    appendStateChangeItemIfNecessary();
     append(DrawLine(point1, point2));
 }
 
-void RecorderImpl::recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle style)
+void RecorderImpl::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle style)
 {
-    append(DrawLinesForText(blockLocation, localAnchor, widths, thickness, printing, doubleLines, style));
+    appendStateChangeItemIfNecessary();
+    append(DrawLinesForText(point, widths, thickness, printing, doubleLines, style));
 }
 
-void RecorderImpl::recordDrawDotsForDocumentMarker(const FloatRect& rect, const DocumentMarkerLineStyle& style)
+void RecorderImpl::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
 {
+    appendStateChangeItemIfNecessary();
     append(DrawDotsForDocumentMarker(rect, style));
 }
 
-void RecorderImpl::recordDrawEllipse(const FloatRect& rect)
+void RecorderImpl::drawEllipse(const FloatRect& rect)
 {
+    appendStateChangeItemIfNecessary();
     append(DrawEllipse(rect));
 }
 
-void RecorderImpl::recordDrawPath(const Path& path)
+void RecorderImpl::drawPath(const Path& path)
 {
+    appendStateChangeItemIfNecessary();
     append(DrawPath(path));
 }
 
-void RecorderImpl::recordDrawFocusRingPath(const Path& path, float outlineWidth, const Color& color)
+void RecorderImpl::drawFocusRing(const Path& path, float outlineWidth, const Color& color)
 {
+    appendStateChangeItemIfNecessary();
     append(DrawFocusRingPath(path, outlineWidth, color));
 }
 
-void RecorderImpl::recordDrawFocusRingRects(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
+void RecorderImpl::drawFocusRing(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
+    appendStateChangeItemIfNecessary();
     append(DrawFocusRingRects(rects, outlineOffset, outlineWidth, color));
 }
 
-void RecorderImpl::recordFillRect(const FloatRect& rect)
+void RecorderImpl::fillRect(const FloatRect& rect, RequiresClipToRect requiresClipToRect)
 {
-    append(FillRect(rect));
+    appendStateChangeItemIfNecessary();
+    append(FillRect(rect, requiresClipToRect));
 }
 
-void RecorderImpl::recordFillRectWithColor(const FloatRect& rect, const Color& color)
+void RecorderImpl::fillRect(const FloatRect& rect, const Color& color)
 {
+    appendStateChangeItemIfNecessary();
     append(FillRectWithColor(rect, color));
 }
 
-void RecorderImpl::recordFillRectWithGradient(const FloatRect& rect, Gradient& gradient)
+void RecorderImpl::fillRect(const FloatRect& rect, Gradient& gradient)
 {
+    appendStateChangeItemIfNecessary();
     append(FillRectWithGradient(rect, gradient));
 }
 
-void RecorderImpl::recordFillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+void RecorderImpl::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
 {
-    append(FillRectWithGradientAndSpaceTransform(rect, gradient, gradientSpaceTransform));
+    appendStateChangeItemIfNecessary();
+    append(FillRectWithGradientAndSpaceTransform(rect, gradient, gradientSpaceTransform, requiresClipToRect));
 }
 
-void RecorderImpl::recordFillCompositedRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode mode)
+void RecorderImpl::fillRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode mode)
 {
+    appendStateChangeItemIfNecessary();
     append(FillCompositedRect(rect, color, op, mode));
 }
 
-void RecorderImpl::recordFillRoundedRect(const FloatRoundedRect& rect, const Color& color, BlendMode mode)
+void RecorderImpl::fillRoundedRect(const FloatRoundedRect& rect, const Color& color, BlendMode mode)
 {
+    appendStateChangeItemIfNecessary();
     append(FillRoundedRect(rect, color, mode));
 }
 
-void RecorderImpl::recordFillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedRect, const Color& color)
+void RecorderImpl::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedRect, const Color& color)
 {
+    appendStateChangeItemIfNecessary();
     append(FillRectWithRoundedHole(rect, roundedRect, color));
 }
 
@@ -336,25 +382,23 @@ void RecorderImpl::recordFillPath(const Path& path)
     append(FillPath(path));
 }
 
-void RecorderImpl::recordFillEllipse(const FloatRect& rect)
+void RecorderImpl::fillEllipse(const FloatRect& rect)
 {
+    appendStateChangeItemIfNecessary();
     append(FillEllipse(rect));
 }
 
 #if ENABLE(VIDEO)
-void RecorderImpl::recordPaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
+void RecorderImpl::drawVideoFrame(VideoFrame&, const FloatRect&, ImageOrientation, bool)
 {
-    append(PaintFrameForMedia(player.identifier(), destination));
-}
-
-void RecorderImpl::recordPaintVideoFrame(VideoFrame&, const FloatRect&, bool /* shouldDiscardAlpha */)
-{
+    appendStateChangeItemIfNecessary();
     // FIXME: TODO
 }
 #endif // ENABLE(VIDEO)
 
-void RecorderImpl::recordStrokeRect(const FloatRect& rect, float width)
+void RecorderImpl::strokeRect(const FloatRect& rect, float width)
 {
+    appendStateChangeItemIfNecessary();
     append(StrokeRect(rect, width));
 }
 
@@ -403,48 +447,76 @@ void RecorderImpl::recordStrokePath(const Path& path)
     append(StrokePath(path));
 }
 
-void RecorderImpl::recordStrokeEllipse(const FloatRect& rect)
+void RecorderImpl::strokeEllipse(const FloatRect& rect)
 {
+    appendStateChangeItemIfNecessary();
     append(StrokeEllipse(rect));
 }
 
-void RecorderImpl::recordClearRect(const FloatRect& rect)
+void RecorderImpl::clearRect(const FloatRect& rect)
 {
+    appendStateChangeItemIfNecessary();
     append(ClearRect(rect));
 }
 
-void RecorderImpl::recordDrawControlPart(ControlPart& part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
+void RecorderImpl::drawControlPart(ControlPart& part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
+    appendStateChangeItemIfNecessary();
     append(DrawControlPart(part, borderRect, deviceScaleFactor, style));
 }
 
 #if USE(CG)
 
-void RecorderImpl::recordApplyStrokePattern()
+void RecorderImpl::applyStrokePattern()
 {
+    appendStateChangeItemIfNecessary();
     append(ApplyStrokePattern());
 }
 
-void RecorderImpl::recordApplyFillPattern()
+void RecorderImpl::applyFillPattern()
 {
+    appendStateChangeItemIfNecessary();
     append(ApplyFillPattern());
 }
 
 #endif // USE(CG)
 
-void RecorderImpl::recordApplyDeviceScaleFactor(float scaleFactor)
+void RecorderImpl::applyDeviceScaleFactor(float scaleFactor)
 {
+    updateStateForApplyDeviceScaleFactor(scaleFactor);
     append(ApplyDeviceScaleFactor(scaleFactor));
+}
+
+void RecorderImpl::beginPage(const IntSize& pageSize)
+{
+    appendStateChangeItemIfNecessary();
+    append(BeginPage({ pageSize }));
+}
+
+void RecorderImpl::endPage()
+{
+    appendStateChangeItemIfNecessary();
+    append(EndPage());
 }
 
 bool RecorderImpl::recordResourceUse(NativeImage& nativeImage)
 {
+#if USE(SKIA)
+    if (m_displayList.replayOptions().contains(ReplayOption::FlushImagesAndWaitForCompletion))
+        nativeImage.backend().finishAcceleratedRenderingAndCreateFence();
+#endif
+
     m_displayList.cacheNativeImage(nativeImage);
     return true;
 }
 
 bool RecorderImpl::recordResourceUse(ImageBuffer& imageBuffer)
 {
+#if USE(SKIA)
+    if (m_displayList.replayOptions().contains(ReplayOption::FlushImagesAndWaitForCompletion))
+        imageBuffer.finishAcceleratedRenderingAndCreateFence();
+#endif
+
     m_displayList.cacheImageBuffer(imageBuffer);
     return true;
 }

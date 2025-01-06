@@ -11,21 +11,31 @@
 #include "include/core/SkMatrix.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkString.h"
-#include "src/gpu/ganesh/GrGpuResource.h"
-#include "src/gpu/ganesh/GrMemoryPool.h"
-#include "src/gpu/ganesh/GrTracing.h"
-#include "src/gpu/ganesh/GrXferProcessor.h"
+#include "include/core/SkTypes.h"
+#include "include/private/SkColorData.h"
+#include "include/private/base/SkDebug.h"
+#include "include/private/base/SkNoncopyable.h"
+#include "include/private/base/SkTo.h"
+#include "include/private/gpu/ganesh/GrTypesPriv.h"
+#include "src/core/SkTraceEvent.h"
+#include "src/gpu/ganesh/GrSurfaceProxy.h"
+
 #include <atomic>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
 #include <new>
+#include <utility>
 
 class GrAppliedClip;
 class GrCaps;
 class GrDstProxyView;
 class GrOpFlushState;
-class GrOpsRenderPass;
 class GrPaint;
 class GrRecordingContext;
 class GrSurfaceProxyView;
+class SkArenaAlloc;
+enum class GrXferBarrierFlags;
 
 /**
  * GrOp is the base class for all Ganesh deferred GPU operations. To facilitate reordering and to
@@ -194,7 +204,7 @@ public:
     }
 
     /** Used for spewing information about ops when debugging. */
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     virtual SkString dumpInfo() const final {
         return SkStringPrintf("%s\nOpBounds: [L: %.2f, T: %.2f, R: %.2f, B: %.2f]",
                               this->onDumpInfo().c_str(), fBounds.fLeft, fBounds.fTop,
@@ -317,7 +327,7 @@ private:
     // If this op is chained then chainBounds is the union of the bounds of all ops in the chain.
     // Otherwise, this op's bounds.
     virtual void onExecute(GrOpFlushState*, const SkRect& chainBounds) = 0;
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     virtual SkString onDumpInfo() const { return SkString(); }
 #endif
 
@@ -336,9 +346,7 @@ private:
         fBoundsFlags |= (IsHairline ::kYes == zeroArea) ? kZeroArea_BoundsFlag : 0;
     }
 
-    enum {
-        kIllegalOpID = 0,
-    };
+    static constexpr uint16_t kIllegalOpID = 0;
 
     enum BoundsFlags {
         kAABloat_BoundsFlag                     = 0x1,

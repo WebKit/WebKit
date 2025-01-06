@@ -11,6 +11,7 @@
 #include "include/core/SkFontArguments.h"
 #include "include/core/SkFontParameters.h"
 #include "include/core/SkFontStyle.h"
+#include "include/core/SkFourByteTag.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkString.h"
@@ -52,20 +53,18 @@ typedef uint32_t SkFontTableTag;
 class SK_API SkTypeface : public SkWeakRefCnt {
 public:
     /** Returns the typeface's intrinsic style attributes. */
-    SkFontStyle fontStyle() const {
-        return fStyle;
-    }
+    SkFontStyle fontStyle() const;
 
     /** Returns true if style() has the kBold bit set. */
-    bool isBold() const { return fStyle.weight() >= SkFontStyle::kSemiBold_Weight; }
+    bool isBold() const;
 
     /** Returns true if style() has the kItalic bit set. */
-    bool isItalic() const { return fStyle.slant() != SkFontStyle::kUpright_Slant; }
+    bool isItalic() const;
 
     /** Returns true if the typeface claims to be fixed-pitch.
      *  This is a style bit, advance widths may vary even if this returns true.
      */
-    bool isFixedPitch() const { return fIsFixedPitch; }
+    bool isFixedPitch() const;
 
     /** Copy into 'coordinates' (allocated by the caller) the design variation coordinates.
      *
@@ -287,6 +286,20 @@ public:
     bool getPostScriptName(SkString* name) const;
 
     /**
+     *  If the primary resource backing this typeface has a name (like a file
+     *  path or URL) representable by unicode code points, the `resourceName`
+     *  will be set. The primary purpose is as a user facing indication about
+     *  where the data was obtained (which font file was used).
+     *
+     *  Returns the number of resources backing this typeface.
+     *
+     *  For local font collections resource name will often be a file path. The
+     *  file path may or may not exist. If it does exist, using it to create an
+     *  SkTypeface may or may not create a similar SkTypeface to this one.
+     */
+    int getResourceName(SkString* resourceName) const;
+
+    /**
      *  Return a stream for the contents of the font data, or NULL on failure.
      *  If ttcIndex is not null, it is set to the TrueTypeCollection index
      *  of this typeface within the stream, or 0 if the stream is not a
@@ -348,9 +361,17 @@ protected:
     /** Sets the font style. If used, must be called in the constructor. */
     void setFontStyle(SkFontStyle style) { fStyle = style; }
 
+    virtual SkFontStyle onGetFontStyle() const; // TODO: = 0;
+
+    virtual bool onGetFixedPitch() const; // TODO: = 0;
+
     // Must return a valid scaler context. It can not return nullptr.
     virtual std::unique_ptr<SkScalerContext> onCreateScalerContext(const SkScalerContextEffects&,
                                                                    const SkDescriptor*) const = 0;
+    virtual std::unique_ptr<SkScalerContext> onCreateScalerContextAsProxyTypeface
+                                                                  (const SkScalerContextEffects&,
+                                                                   const SkDescriptor*,
+                                                                   sk_sp<SkTypeface>) const;
     virtual void onFilterRec(SkScalerContextRec*) const = 0;
     friend class SkScalerContext;  // onFilterRec
 
@@ -393,6 +414,7 @@ protected:
      */
     virtual void onGetFamilyName(SkString* familyName) const = 0;
     virtual bool onGetPostScriptName(SkString*) const = 0;
+    virtual int onGetResourceName(SkString* resourceName) const; // TODO: = 0;
 
     /** Returns an iterator over the family names in the font. */
     virtual LocalizedStrings* onCreateFamilyNameIterator() const = 0;
@@ -419,6 +441,7 @@ private:
     std::unique_ptr<SkAdvancedTypefaceMetrics> getAdvancedMetrics() const;
     friend class SkRandomTypeface;   // getAdvancedMetrics
     friend class SkPDFFont;          // getAdvancedMetrics
+    friend class SkTypeface_proxy;
 
     friend class SkFontPriv;         // getGlyphToUnicodeMap
 

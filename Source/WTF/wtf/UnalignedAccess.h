@@ -36,7 +36,7 @@ inline Type unalignedLoad(const void* pointer)
 {
     static_assert(std::is_trivially_copyable<Type>::value);
     Type result { };
-    memcpy(&result, pointer, sizeof(Type));
+    memcpySpan(asMutableByteSpan(result), unsafeMakeSpan(static_cast<const uint8_t*>(pointer), sizeof(Type)));
     return result;
 }
 
@@ -44,7 +44,7 @@ template<typename Type>
 inline void unalignedStore(void* pointer, Type value)
 {
     static_assert(std::is_trivially_copyable<Type>::value);
-    memcpy(pointer, &value, sizeof(Type));
+    memcpySpan(unsafeMakeSpan(static_cast<uint8_t*>(pointer), sizeof(Type)), asByteSpan(value));
 }
 
 } // namespace WTF

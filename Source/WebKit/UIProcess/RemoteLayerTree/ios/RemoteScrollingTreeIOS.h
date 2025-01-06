@@ -28,12 +28,14 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(UI_SIDE_COMPOSITING)
 
 #include "RemoteScrollingTree.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class RemoteScrollingCoordinatorProxy;
 
 class RemoteScrollingTreeIOS final : public RemoteScrollingTree {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteScrollingTreeIOS);
 public:
     explicit RemoteScrollingTreeIOS(RemoteScrollingCoordinatorProxy&);
     virtual ~RemoteScrollingTreeIOS();
@@ -41,6 +43,7 @@ public:
 private:
     Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) final;
 
+    void scrollingTreeNodeDidScroll(WebCore::ScrollingTreeScrollingNode&, WebCore::ScrollingLayerPositionAction) final;
     void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) final;
 };
 

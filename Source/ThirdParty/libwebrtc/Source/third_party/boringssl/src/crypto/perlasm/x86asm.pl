@@ -42,10 +42,10 @@ sub ::record_function_hit
     &preprocessor_ifdef("BORINGSSL_DISPATCH_TEST");
     &push("ebx");
     &push("edx");
-    &call(&label("pic"));
-    &set_label("pic");
+    &call(&label("pic_for_function_hit"));
+    &set_label("pic_for_function_hit");
     &blindpop("ebx");
-    &lea("ebx",&DWP("BORINGSSL_function_hit+$index"."-".&label("pic"),"ebx"));
+    &lea("ebx",&DWP("BORINGSSL_function_hit+$index"."-".&label("pic_for_function_hit"),"ebx"));
     &mov("edx", 1);
     &movb(&BP(0, "ebx"), "dl");
     &pop("edx");
@@ -307,24 +307,13 @@ ___
         }
 
         print <<___;
-#if defined(__has_feature)
-#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
-#define OPENSSL_NO_ASM
-#endif
-#endif
+#include <openssl/asm_base.h>
 
-#if !defined(OPENSSL_NO_ASM) && defined(__i386__) && $target
-#if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
+#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86) && $target
 ___
         print @out;
         print <<___;
-#endif  // !defined(OPENSSL_NO_ASM) && defined(__i386__) && $target
-#if defined(__ELF__)
-// See https://www.airs.com/blog/archives/518.
-.section .note.GNU-stack,"",\%progbits
-#endif
+#endif  // !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86) && $target
 ___
     }
 }

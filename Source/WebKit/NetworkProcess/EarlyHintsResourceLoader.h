@@ -26,6 +26,7 @@
 #pragma once
 
 #include "NetworkResourceLoader.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class LinkHeader;
@@ -35,7 +36,7 @@ namespace WebKit {
 
 class EarlyHintsResourceLoader
     : public WebCore::ContentSecurityPolicyClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(EarlyHintsResourceLoader);
     WTF_MAKE_NONCOPYABLE(EarlyHintsResourceLoader);
 public:
     explicit EarlyHintsResourceLoader(NetworkResourceLoader&);

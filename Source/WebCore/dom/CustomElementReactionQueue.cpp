@@ -39,8 +39,13 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomElementReactionQueueItem);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomElementQueue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomElementReactionQueue);
 
 inline CustomElementReactionQueueItem::AdoptedPayload::~AdoptedPayload() = default;
 inline CustomElementReactionQueueItem::FormAssociatedPayload::~FormAssociatedPayload() = default;
@@ -142,11 +147,7 @@ void CustomElementReactionQueue::tryToUpgradeElement(Element& element)
 {
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isCustomElementUpgradeCandidate());
-    RefPtr window = element.document().domWindow();
-    if (!window)
-        return;
-
-    RefPtr registry = window->customElementRegistry();
+    RefPtr registry = element.treeScope().customElementRegistry();
     if (!registry)
         return;
 

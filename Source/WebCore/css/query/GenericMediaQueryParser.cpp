@@ -33,11 +33,12 @@
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+Number.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
-#include "CSSPropertyParserHelpers.h"
 #include "CSSValue.h"
 #include "CSSVariableParser.h"
 #include "MediaQueryParserContext.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace MQ {
@@ -62,7 +63,7 @@ std::optional<Feature> FeatureParser::consumeFeature(CSSParserTokenRange& range,
     return consumeRangeFeature(range, context);
 };
 
-static RefPtr<CSSValue> consumeCustomPropertyValue(AtomString propertyName, CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeCustomPropertyValue(AtomString propertyName, CSSParserTokenRange& range, const MediaQueryParserContext& context)
 {
     auto valueRange = range;
     range.consumeAll();
@@ -73,7 +74,7 @@ static RefPtr<CSSValue> consumeCustomPropertyValue(AtomString propertyName, CSSP
     if (valueRange.atEnd())
         return CSSCustomPropertyValue::createEmpty(propertyName);
 
-    return CSSVariableParser::parseDeclarationValue(propertyName, valueRange, strictCSSParserContext());
+    return CSSVariableParser::parseDeclarationValue(propertyName, valueRange, context.context);
 }
 
 std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
@@ -89,9 +90,9 @@ std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserToke
         if (name.startsWith("max-"_s))
             return { StringView(name).substring(4).toAtomString(), ComparisonOperator::LessThanOrEqual };
         if (name.startsWith("-webkit-min-"_s))
-            return { "-webkit-"_s + StringView(name).substring(12), ComparisonOperator::GreaterThanOrEqual };
+            return { makeAtomString("-webkit-"_s, StringView(name).substring(12)), ComparisonOperator::GreaterThanOrEqual };
         if (name.startsWith("-webkit-max-"_s))
-            return { "-webkit-"_s + StringView(name).substring(12), ComparisonOperator::LessThanOrEqual };
+            return { makeAtomString("-webkit-"_s, StringView(name).substring(12)), ComparisonOperator::LessThanOrEqual };
 
         return { name, ComparisonOperator::Equal };
     };
@@ -114,7 +115,7 @@ std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserToke
 
     range.consumeIncludingWhitespace();
 
-    RefPtr value = isCustomPropertyName(featureName) ? consumeCustomPropertyValue(featureName, range) : consumeValue(range, context);
+    RefPtr value = isCustomPropertyName(featureName) ? consumeCustomPropertyValue(featureName, range, context) : consumeValue(range, context);
 
     if (!value)
         return { };
@@ -217,23 +218,26 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
     return Feature { WTFMove(featureName), Syntax::Range, WTFMove(leftComparison), WTFMove(rightComparison) };
 }
 
-static RefPtr<CSSValue> consumeRatioWithSlash(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeRatioWithSlash(CSSParserTokenRange& range, const MediaQueryParserContext& context)
 {
-    RefPtr leftValue = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative);
+    RefPtr leftValue = CSSPropertyParserHelpers::consumeNumber(range, context.context, ValueRange::NonNegative);
     if (!leftValue)
         return nullptr;
 
     if (!CSSPropertyParserHelpers::consumeSlashIncludingWhitespace(range))
         return nullptr;
 
-    RefPtr rightValue = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative);
+    RefPtr rightValue = CSSPropertyParserHelpers::consumeNumber(range, context.context, ValueRange::NonNegative);
     if (!rightValue)
         return nullptr;
 
-    return CSSAspectRatioValue::create(leftValue->floatValue(), rightValue->floatValue());
+    return CSSAspectRatioValue::create(
+        leftValue->resolveAsNumberDeprecated<float>(),
+        rightValue->resolveAsNumberDeprecated<float>()
+    );
 }
 
-RefPtr<CSSValue> FeatureParser::consumeValue(CSSParserTokenRange& range, const MediaQueryParserContext&)
+RefPtr<CSSValue> FeatureParser::consumeValue(CSSParserTokenRange& range, const MediaQueryParserContext& context)
 {
     if (range.atEnd())
         return nullptr;
@@ -242,17 +246,17 @@ RefPtr<CSSValue> FeatureParser::consumeValue(CSSParserTokenRange& range, const M
         return value;
 
     auto rangeCopy = range;
-    if (RefPtr value = consumeRatioWithSlash(range))
+    if (RefPtr value = consumeRatioWithSlash(range, context))
         return value;
     range = rangeCopy;
 
-    if (RefPtr value = CSSPropertyParserHelpers::consumeInteger(range))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeInteger(range, context.context))
         return value;
-    if (RefPtr value = CSSPropertyParserHelpers::consumeNumber(range))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeNumber(range, context.context))
         return value;
-    if (RefPtr value = CSSPropertyParserHelpers::consumeLength(range, HTMLStandardMode))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeLength(range, context.context, HTMLStandardMode))
         return value;
-    if (RefPtr value = CSSPropertyParserHelpers::consumeResolution(range))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeResolution(range, context.context))
         return value;
 
     return nullptr;
@@ -272,7 +276,7 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
         case FeatureSchema::ValueType::Length:
             if (!primitiveValue)
                 return false;
-            if (primitiveValue->isInteger() && !primitiveValue->intValue())
+            if (primitiveValue->isInteger() && !primitiveValue->resolveAsIntegerDeprecated())
                 return true;
             return primitiveValue->isLength();
 
@@ -284,9 +288,10 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
 
         case FeatureSchema::ValueType::Ratio:
             if (primitiveValue && primitiveValue->isNumberOrInteger()) {
-                if (primitiveValue->floatValue() < 0)
+                auto number = primitiveValue->template resolveAsNumberDeprecated<float>();
+                if (number < 0)
                     return false;
-                value = CSSAspectRatioValue::create(primitiveValue->floatValue(), 1);
+                value = CSSAspectRatioValue::create(number, 1);
                 return true;
             }
             return is<CSSAspectRatioValue>(value.get());

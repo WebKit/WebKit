@@ -102,7 +102,7 @@ ReverbDecayEstimator::ReverbDecayEstimator(const EchoCanceller3Config& config)
 ReverbDecayEstimator::~ReverbDecayEstimator() = default;
 
 void ReverbDecayEstimator::Update(rtc::ArrayView<const float> filter,
-                                  const absl::optional<float>& filter_quality,
+                                  const std::optional<float>& filter_quality,
                                   int filter_delay_blocks,
                                   bool usable_linear_filter,
                                   bool stationary_signal) {

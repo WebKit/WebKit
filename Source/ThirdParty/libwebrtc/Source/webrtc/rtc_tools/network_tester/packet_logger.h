@@ -14,12 +14,8 @@
 #include <fstream>
 #include <string>
 
-#include "rtc_base/ignore_wundef.h"
-
 #ifdef WEBRTC_NETWORK_TESTER_PROTO
-RTC_PUSH_IGNORING_WUNDEF()
 #include "rtc_tools/network_tester/network_tester_packet.pb.h"
-RTC_POP_IGNORING_WUNDEF()
 using webrtc::network_tester::packet::NetworkTesterPacket;
 #else
 class NetworkTesterPacket;

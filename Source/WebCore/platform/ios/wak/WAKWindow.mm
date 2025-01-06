@@ -531,7 +531,7 @@ static RetainPtr<WebEvent>& currentEvent()
 {
     if (!_tileCache)
         return;
-    _tileCache->setTilingMode((LegacyTileCache::TilingMode)mode);
+    Ref { *_tileCache }->setTilingMode((LegacyTileCache::TilingMode)mode);
 }
 
 - (WAKWindowTilingMode)tilingMode
@@ -545,7 +545,7 @@ static RetainPtr<WebEvent>& currentEvent()
 {
     if (!_tileCache)
         return;
-    _tileCache->setTilingDirection((LegacyTileCache::TilingDirection)tilingDirection);
+    Ref { *_tileCache }->setTilingDirection((LegacyTileCache::TilingDirection)tilingDirection);
 }
 
 - (WAKTilingDirection)tilingDirection

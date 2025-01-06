@@ -26,17 +26,18 @@
 
 #pragma once
 
+#include "TimelineRange.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Seconds.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class AnimationTimelinesController;
 class WebAnimation;
 
-class AnimationTimeline : public RefCounted<AnimationTimeline>, public CanMakeWeakPtr<AnimationTimeline> {
+class AnimationTimeline : public RefCountedAndCanMakeWeakPtr<AnimationTimeline> {
 public:
     virtual ~AnimationTimeline();
 
@@ -44,23 +45,39 @@ public:
     virtual bool isScrollTimeline() const { return false; }
     virtual bool isViewTimeline() const { return false; }
 
+    bool isMonotonic() const { return !m_duration; }
+    bool isProgressBased() const { return !isMonotonic(); }
+
     const AnimationCollection& relevantAnimations() const { return m_animations; }
 
     virtual void animationTimingDidChange(WebAnimation&);
     virtual void removeAnimation(WebAnimation&);
 
-    std::optional<double> bindingsCurrentTime();
-    virtual std::optional<Seconds> currentTime() { return m_currentTime; }
+    virtual std::optional<WebAnimationTime> currentTime() { return m_currentTime; }
+    virtual std::optional<WebAnimationTime> duration() const { return m_duration; }
 
+    virtual void detachFromDocument();
+
+    enum class ShouldUpdateAnimationsAndSendEvents : bool { No, Yes };
+    virtual ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() { return ShouldUpdateAnimationsAndSendEvents::No; }
+
+    virtual void suspendAnimations();
+    virtual void resumeAnimations();
+    bool animationsAreSuspended() const;
+
+    virtual AnimationTimelinesController* controller() const { return nullptr; }
+
+    virtual TimelineRange defaultRange() const { return { }; }
+    static void updateGlobalPosition(WebAnimation&);
 protected:
-    AnimationTimeline();
+    AnimationTimeline(std::optional<WebAnimationTime> = std::nullopt);
 
     AnimationCollection m_animations;
 
 private:
-    void updateGlobalPosition(WebAnimation&);
 
-    Markable<Seconds, Seconds::MarkableTraits> m_currentTime;
+    std::optional<WebAnimationTime> m_currentTime;
+    std::optional<WebAnimationTime> m_duration;
 };
 
 } // namespace WebCore

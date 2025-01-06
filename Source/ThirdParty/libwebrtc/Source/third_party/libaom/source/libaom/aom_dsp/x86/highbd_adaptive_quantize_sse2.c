@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,12 +16,12 @@
 #include "aom_dsp/quantize.h"
 #include "aom_dsp/x86/quantize_x86.h"
 
-static INLINE __m128i highbd_invert_sign_64bit_sse2(__m128i a, __m128i sign) {
+static inline __m128i highbd_invert_sign_64bit_sse2(__m128i a, __m128i sign) {
   a = _mm_xor_si128(a, sign);
   return _mm_sub_epi64(a, sign);
 }
 
-static INLINE void highbd_mul_shift_sse2(const __m128i *x, const __m128i *y,
+static inline void highbd_mul_shift_sse2(const __m128i *x, const __m128i *y,
                                          __m128i *p, const int shift) {
   __m128i sign = _mm_srai_epi32(*y, 31);
   __m128i sign_lo = _mm_unpacklo_epi32(sign, sign);
@@ -43,7 +43,7 @@ static INLINE void highbd_mul_shift_sse2(const __m128i *x, const __m128i *y,
   *p = _mm_or_si128(prod_lo, prod_hi);
 }
 
-static INLINE void highbd_calculate_qcoeff(__m128i *coeff, const __m128i *round,
+static inline void highbd_calculate_qcoeff(__m128i *coeff, const __m128i *round,
                                            const __m128i *quant,
                                            const __m128i *shift,
                                            const int *log_scale) {
@@ -54,7 +54,7 @@ static INLINE void highbd_calculate_qcoeff(__m128i *coeff, const __m128i *round,
   highbd_mul_shift_sse2(&qcoeff, shift, coeff, 16 - *log_scale);
 }
 
-static INLINE void highbd_update_mask1(__m128i *cmp_mask0,
+static inline void highbd_update_mask1(__m128i *cmp_mask0,
                                        const int16_t *iscan_ptr, int *is_found,
                                        __m128i *mask) {
   __m128i temp_mask = _mm_setzero_si128();
@@ -67,7 +67,7 @@ static INLINE void highbd_update_mask1(__m128i *cmp_mask0,
   *mask = _mm_max_epi16(temp_mask, *mask);
 }
 
-static INLINE void highbd_update_mask0(__m128i *qcoeff0, __m128i *qcoeff1,
+static inline void highbd_update_mask0(__m128i *qcoeff0, __m128i *qcoeff1,
                                        __m128i *threshold,
                                        const int16_t *iscan_ptr, int *is_found,
                                        __m128i *mask) {
@@ -83,7 +83,7 @@ static INLINE void highbd_update_mask0(__m128i *qcoeff0, __m128i *qcoeff1,
   highbd_update_mask1(&cmp_mask0, iscan_ptr, is_found, mask);
 }
 
-static INLINE __m128i highbd_calculate_dqcoeff(__m128i qcoeff, __m128i dequant,
+static inline __m128i highbd_calculate_dqcoeff(__m128i qcoeff, __m128i dequant,
                                                const int log_scale) {
   __m128i coeff_sign = _mm_srai_epi32(qcoeff, 31);
   __m128i abs_coeff = invert_sign_32_sse2(qcoeff, coeff_sign);

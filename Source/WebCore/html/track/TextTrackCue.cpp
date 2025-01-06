@@ -54,16 +54,16 @@
 #include "VTTRegionList.h"
 #include <limits.h>
 #include <wtf/HexNumber.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCue);
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCueBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCue);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCueBox);
 
 Ref<TextTrackCueBox> TextTrackCueBox::create(Document& document, TextTrackCue& cue)
 {
@@ -192,7 +192,7 @@ ExceptionOr<Ref<TextTrackCue>> TextTrackCue::create(Document& document, double s
         if (result.hasException())
             return result.releaseException();
     }
-    cueFragment.cloneChildNodes(fragment);
+    cueFragment.cloneChildNodes(document, fragment);
 
     OptionSet<RequiredNodes> nodeTypes = { };
     for (Node* node = fragment->firstChild(); node; node = node->nextSibling()) {
@@ -452,7 +452,7 @@ RefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
         return nullptr;
 
     auto clonedFragment = DocumentFragment::create(*document);
-    m_cueNode->cloneChildNodes(clonedFragment);
+    m_cueNode->cloneChildNodes(*document, clonedFragment);
 
     for (Node* node = clonedFragment->firstChild(); node; node = node->nextSibling())
         removeUserAgentPartAttributes(*node);
@@ -513,7 +513,7 @@ void TextTrackCue::rebuildDisplayTree()
 
     m_displayTree->removeChildren();
     auto clonedFragment = DocumentFragment::create(*document);
-    m_cueNode->cloneChildNodes(clonedFragment);
+    m_cueNode->cloneChildNodes(*document, clonedFragment);
     m_displayTree->appendChild(clonedFragment);
 
     if (m_fontSize) {

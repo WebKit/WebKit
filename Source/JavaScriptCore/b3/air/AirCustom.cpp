@@ -76,7 +76,7 @@ bool CCallCustom::isValidForm(Inst& inst)
     size_t expectedArgCount = resultCount + 1; // first Arg is always CCallSpecial.
     for (Value* child : value->children()) {
         ASSERT(!child->type().isTuple());
-        expectedArgCount += cCallArgumentRegisterCount(child);
+        expectedArgCount += cCallArgumentRegisterCount(child->type());
     }
 
     if (inst.args.size() != expectedArgCount)
@@ -115,7 +115,7 @@ bool CCallCustom::isValidForm(Inst& inst)
 
     for (unsigned i = 1 ; i < value->numChildren(); ++i) {
         Value* child = value->child(i);
-        for (unsigned j = 0; j < cCallArgumentRegisterCount(child); j++) {
+        for (unsigned j = 0; j < cCallArgumentRegisterCount(child->type()); j++) {
             if (!checkNextArg(child))
                 return false;
         }
@@ -219,7 +219,7 @@ bool WasmBoundsCheckCustom::isValidForm(Inst& inst)
 MacroAssembler::Jump WasmBoundsCheckCustom::generate(Inst& inst, CCallHelpers& jit, GenerationContext& context)
 {
     WasmBoundsCheckValue* value = inst.origin->as<WasmBoundsCheckValue>();
-    MacroAssembler::Jump outOfBounds = Inst(Air::Branch64, value, Arg::relCond(MacroAssembler::AboveOrEqual), inst.args[0], inst.args[1]).generate(jit, context);
+    MacroAssembler::Jump outOfBounds = Inst((is32Bit() ? Air::Branch32 : Air::Branch64), value, Arg::relCond(MacroAssembler::AboveOrEqual), inst.args[0], inst.args[1]).generate(jit, context);
 
     context.latePaths.append(createSharedTask<GenerationContext::LatePathFunction>(
         [outOfBounds, value] (CCallHelpers& jit, Air::GenerationContext& context) {

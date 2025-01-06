@@ -27,12 +27,14 @@
 #include "WebPerformanceLoggingClient.h"
 
 #include "MessageSenderInlines.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPerformanceLoggingClient);
 
 WebPerformanceLoggingClient::WebPerformanceLoggingClient(WebPage& page)
     : m_page(page)
@@ -41,7 +43,7 @@ WebPerformanceLoggingClient::WebPerformanceLoggingClient(WebPage& page)
 
 void WebPerformanceLoggingClient::logScrollingEvent(ScrollingEvent event, MonotonicTime timestamp, uint64_t data)
 {
-    m_page.send(Messages::WebPageProxy::LogScrollingEvent(static_cast<uint32_t>(event), timestamp, data));
+    Ref { m_page.get() }->send(Messages::WebPageProxy::LogScrollingEvent(static_cast<uint32_t>(event), timestamp, data));
 }
 
 } // namespace WebKit

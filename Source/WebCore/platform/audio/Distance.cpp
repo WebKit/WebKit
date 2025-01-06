@@ -31,11 +31,14 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "Distance.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #include <algorithm>
 #include <math.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DistanceEffect);
 
 DistanceEffect::DistanceEffect() = default;
 

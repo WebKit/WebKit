@@ -34,7 +34,8 @@
 namespace WebCore {
 
 class DateTimeDayFieldElement final : public DateTimeNumericFieldElement {
-    WTF_MAKE_ISO_ALLOCATED(DateTimeDayFieldElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DateTimeDayFieldElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeDayFieldElement);
 
 public:
     static Ref<DateTimeDayFieldElement> create(Document&, DateTimeFieldElementFieldOwner&);
@@ -48,7 +49,8 @@ private:
 };
 
 class DateTimeHourFieldElement final : public DateTimeNumericFieldElement {
-    WTF_MAKE_ISO_ALLOCATED(DateTimeHourFieldElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DateTimeHourFieldElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeHourFieldElement);
 
 public:
     static Ref<DateTimeHourFieldElement> create(Document&, DateTimeFieldElementFieldOwner&, int minimum, int maximum);
@@ -62,7 +64,8 @@ private:
 };
 
 class DateTimeMeridiemFieldElement final : public DateTimeSymbolicFieldElement {
-    WTF_MAKE_ISO_ALLOCATED(DateTimeMeridiemFieldElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DateTimeMeridiemFieldElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeMeridiemFieldElement);
 
 public:
     static Ref<DateTimeMeridiemFieldElement> create(Document&, DateTimeFieldElementFieldOwner&, const Vector<String>&);
@@ -80,7 +83,8 @@ private:
 };
 
 class DateTimeMillisecondFieldElement final : public DateTimeNumericFieldElement {
-    WTF_MAKE_ISO_ALLOCATED(DateTimeMillisecondFieldElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DateTimeMillisecondFieldElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeMillisecondFieldElement);
 
 public:
     static Ref<DateTimeMillisecondFieldElement> create(Document&, DateTimeFieldElementFieldOwner&);
@@ -94,7 +98,8 @@ private:
 };
 
 class DateTimeMinuteFieldElement final : public DateTimeNumericFieldElement {
-    WTF_MAKE_ISO_ALLOCATED(DateTimeMinuteFieldElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DateTimeMinuteFieldElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeMinuteFieldElement);
 
 public:
     static Ref<DateTimeMinuteFieldElement> create(Document&, DateTimeFieldElementFieldOwner&);
@@ -108,7 +113,8 @@ private:
 };
 
 class DateTimeMonthFieldElement final : public DateTimeNumericFieldElement {
-    WTF_MAKE_ISO_ALLOCATED(DateTimeMonthFieldElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DateTimeMonthFieldElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeMonthFieldElement);
 
 public:
     static Ref<DateTimeMonthFieldElement> create(Document&, DateTimeFieldElementFieldOwner&);
@@ -122,7 +128,8 @@ private:
 };
 
 class DateTimeSecondFieldElement final : public DateTimeNumericFieldElement {
-    WTF_MAKE_ISO_ALLOCATED(DateTimeSecondFieldElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DateTimeSecondFieldElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeSecondFieldElement);
 
 public:
     static Ref<DateTimeSecondFieldElement> create(Document&, DateTimeFieldElementFieldOwner&);
@@ -136,7 +143,8 @@ private:
 };
 
 class DateTimeSymbolicMonthFieldElement final : public DateTimeSymbolicFieldElement {
-    WTF_MAKE_ISO_ALLOCATED(DateTimeSymbolicMonthFieldElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DateTimeSymbolicMonthFieldElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeSymbolicMonthFieldElement);
 
 public:
     static Ref<DateTimeSymbolicMonthFieldElement> create(Document&, DateTimeFieldElementFieldOwner&, const Vector<String>&);
@@ -150,7 +158,8 @@ private:
 };
 
 class DateTimeYearFieldElement final : public DateTimeNumericFieldElement {
-    WTF_MAKE_ISO_ALLOCATED(DateTimeYearFieldElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DateTimeYearFieldElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeYearFieldElement);
 
 public:
     static Ref<DateTimeYearFieldElement> create(Document&, DateTimeFieldElementFieldOwner&);

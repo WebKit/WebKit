@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.add() - Attempt to call 'add' without an key parameter when the object store uses out-of-line keys
-

@@ -69,8 +69,8 @@ public:
     Vector<PDFLayoutRow> rows() const;
     unsigned rowIndexForPageIndex(PageIndex) const;
 
-    static constexpr WebCore::FloatSize documentMargin { 6, 8 };
-    static constexpr WebCore::FloatSize pageMargin { 4, 6 };
+    static constexpr WebCore::FloatSize documentMargin { 16, 18 };
+    static constexpr WebCore::FloatSize pageMargin { 14, 16 };
 
     bool isLeftPageIndex(PageIndex) const;
     bool isRightPageIndex(PageIndex) const;
@@ -80,10 +80,12 @@ public:
 
     RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
     std::optional<PageIndex> indexForPage(RetainPtr<PDFPage>) const;
-    PageIndex nearestPageIndexForDocumentPoint(WebCore::FloatPoint, std::optional<PDFLayoutRow>) const;
+    PageIndex nearestPageIndexForDocumentPoint(WebCore::FloatPoint, const std::optional<PDFLayoutRow>&) const;
+
     // For the given Y offset, return a page index and page point for the page at this offset. Returns the leftmost
     // page if two-up and both pages intersect that offset, otherwise the right page if only it intersects the offset.
     // The point is centered horizontally in the given page.
+    // FIXME: <https://webkit.org/b/276981> Remove or provide row.
     std::pair<PageIndex, WebCore::FloatPoint> pageIndexAndPagePointForDocumentYOffset(float) const;
 
     // This is not scaled by scale().
@@ -103,7 +105,12 @@ public:
     // This is the scale that scales the largest page or pair of pages up or down to fit the available width.
     float scale() const { return m_scale; }
 
-    void updateLayout(WebCore::IntSize pluginSize, ShouldUpdateAutoSizeScale);
+    enum class LayoutUpdateChange : uint8_t {
+        PageGeometries = 1 << 0,
+        DocumentBounds = 1 << 1,
+    };
+
+    OptionSet<LayoutUpdateChange> updateLayout(WebCore::IntSize pluginSize, ShouldUpdateAutoSizeScale);
     WebCore::FloatSize contentsSize() const;
     WebCore::FloatSize scaledContentsSize() const;
 
@@ -128,16 +135,23 @@ public:
         WebCore::FloatRect cropBox;
         WebCore::FloatRect layoutBounds;
         WebCore::IntDegrees rotation { 0 };
+
+        friend bool operator==(const PageGeometry&, const PageGeometry&) = default;
     };
 
     std::optional<PageGeometry> geometryForPage(RetainPtr<PDFPage>) const;
     WebCore::AffineTransform toPageTransform(const PageGeometry&) const;
 
 private:
-    void layoutPages(float availableWidth, float maxRowWidth, ShouldUpdateAutoSizeScale);
+    void layoutPages(WebCore::FloatSize availableSize, WebCore::FloatSize maxRowSize, ShouldUpdateAutoSizeScale);
 
-    void layoutSingleColumn(float availableWidth, float maxRowWidth, ShouldUpdateAutoSizeScale);
-    void layoutTwoUpColumn(float availableWidth, float maxRowWidth, ShouldUpdateAutoSizeScale);
+    // maxRowSize does not include document margins.
+    enum class CenterRowVertically : bool { No, Yes };
+    void layoutContinuousRows(WebCore::FloatSize availableSize, WebCore::FloatSize maxRowSize, CenterRowVertically);
+    void layoutDiscreteRows(WebCore::FloatSize availableSize, WebCore::FloatSize maxRowSize, CenterRowVertically);
+
+    // Returns row rect including page margins.
+    WebCore::FloatRect layoutRow(const PDFLayoutRow&, WebCore::FloatSize maxRowSize, float rowTop, CenterRowVertically centerVertically);
 
     RetainPtr<PDFDocument> m_pdfDocument;
     Vector<PageGeometry> m_pageGeometry;

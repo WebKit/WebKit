@@ -444,6 +444,9 @@ static const arg_def_t tile_rows =
 
 static const arg_def_t enable_tpl_model =
     ARG_DEF(NULL, "enable-tpl", 1, "Enable temporal dependency model");
+static const arg_def_t enable_keyframe_filtering =
+    ARG_DEF(NULL, "enable-keyframe-filtering", 1,
+            "Enable key frame temporal filtering (0: off (default), 1: on)");
 
 static const arg_def_t lossless =
     ARG_DEF(NULL, "lossless", 1, "Lossless mode (0: false (default), 1: true)");
@@ -541,6 +544,7 @@ static const arg_def_t *vp9_args[] = { &cpu_used_vp9,
                                        &tile_cols,
                                        &tile_rows,
                                        &enable_tpl_model,
+                                       &enable_keyframe_filtering,
                                        &arnr_maxframes,
                                        &arnr_strength,
                                        &arnr_type,
@@ -577,6 +581,7 @@ static const int vp9_arg_ctrl_map[] = { VP8E_SET_CPUUSED,
                                         VP9E_SET_TILE_COLUMNS,
                                         VP9E_SET_TILE_ROWS,
                                         VP9E_SET_TPL,
+                                        VP9E_SET_KEY_FRAME_FILTERING,
                                         VP8E_SET_ARNR_MAXFRAMES,
                                         VP8E_SET_ARNR_STRENGTH,
                                         VP8E_SET_ARNR_TYPE,
@@ -883,7 +888,7 @@ static struct stream_state *new_stream(struct VpxEncoderConfig *global,
 
     /* Default lag_in_frames is 0 in realtime mode CBR mode*/
     if (global->deadline == VPX_DL_REALTIME &&
-        stream->config.cfg.rc_end_usage == 1)
+        stream->config.cfg.rc_end_usage == VPX_CBR)
       stream->config.cfg.g_lag_in_frames = 0;
   }
 
@@ -898,8 +903,8 @@ static int parse_stream_params(struct VpxEncoderConfig *global,
                                struct stream_state *stream, char **argv) {
   char **argi, **argj;
   struct arg arg;
-  static const arg_def_t **ctrl_args = no_args;
-  static const int *ctrl_args_map = NULL;
+  const arg_def_t **ctrl_args = no_args;
+  const int *ctrl_args_map = NULL;
   struct stream_config *config = &stream->config;
   int eos_mark_found = 0;
 #if CONFIG_VP9_HIGHBITDEPTH
@@ -1586,8 +1591,8 @@ static void test_decode(struct stream_state *stream,
   /* Get the internal reference frame */
   if (strcmp(codec->name, "vp8") == 0) {
     struct vpx_ref_frame ref_enc, ref_dec;
-    int aligned_width = (stream->config.cfg.g_w + 15) & ~15;
-    int aligned_height = (stream->config.cfg.g_h + 15) & ~15;
+    unsigned int aligned_width = (stream->config.cfg.g_w + 15u) & ~15u;
+    unsigned int aligned_height = (stream->config.cfg.g_h + 15u) & ~15u;
 
     vpx_img_alloc(&ref_enc.img, VPX_IMG_FMT_I420, aligned_width, aligned_height,
                   1);

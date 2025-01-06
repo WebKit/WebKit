@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT View transitions: types from rule are reflected in pagereveal and pageswap Test timed out
+PASS View transitions: types from rule are reflected in pagereveal and pageswap
 

@@ -55,7 +55,7 @@
 #include "WebFrame.h"
 #include "WebFullScreenManager.h"
 #include "WebImage.h"
-#include "WebInspector.h"
+#include "WebInspectorInternal.h"
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
 #include "WebPageOverlay.h"
@@ -251,32 +251,6 @@ void WKAccessibilityEnable()
     WebCore::AXObjectCache::enableAccessibility();
 }
 
-void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
-{
-    if (!pageRef)
-        return 0;
-
-    WebCore::Page* page = WebKit::toImpl(pageRef)->corePage();
-    if (!page)
-        return 0;
-
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
-    if (!localMainFrame)
-        return 0;
-    
-    auto& core = *localMainFrame;
-    if (!core.document())
-        return 0;
-    
-    WebCore::AXObjectCache::enableAccessibility();
-
-    WebCore::AXCoreObject* root = core.document()->axObjectCache()->rootObject();
-    if (!root)
-        return 0;
-    
-    return root->wrapper();
-}
-
 void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 {
     if (!pageRef)
@@ -353,11 +327,6 @@ void WKAccessibilitySetForceInitialFrameCaching(bool shouldForce)
     WebCore::AXObjectCache::setForceInitialFrameCaching(shouldForce);
 }
 
-void WKBundlePageStopLoading(WKBundlePageRef pageRef)
-{
-    WebKit::toImpl(pageRef)->stopLoading();
-}
-
 void WKBundlePageSetDefersLoading(WKBundlePageRef, bool)
 {
 }
@@ -371,21 +340,6 @@ WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef pag
 WKStringRef WKBundlePageCopyRenderTreeExternalRepresentationForPrinting(WKBundlePageRef pageRef)
 {
     return WebKit::toCopiedAPI(WebKit::toImpl(pageRef)->renderTreeExternalRepresentationForPrinting());
-}
-
-void WKBundlePageExecuteEditingCommand(WKBundlePageRef pageRef, WKStringRef name, WKStringRef argument)
-{
-    WebKit::toImpl(pageRef)->executeEditingCommand(WebKit::toWTFString(name), WebKit::toWTFString(argument));
-}
-
-bool WKBundlePageIsEditingCommandEnabled(WKBundlePageRef pageRef, WKStringRef name)
-{
-    return WebKit::toImpl(pageRef)->isEditingCommandEnabled(WebKit::toWTFString(name));
-}
-
-void WKBundlePageClearMainFrameName(WKBundlePageRef pageRef)
-{
-    WebKit::toImpl(pageRef)->clearMainFrameName();
 }
 
 void WKBundlePageClose(WKBundlePageRef pageRef)
@@ -403,19 +357,9 @@ double WKBundlePageGetPageZoomFactor(WKBundlePageRef pageRef)
     return WebKit::toImpl(pageRef)->pageZoomFactor();
 }
 
-void WKBundlePageSetScaleAtOrigin(WKBundlePageRef pageRef, double scale, WKPoint origin)
-{
-    WebKit::toImpl(pageRef)->scalePage(scale, WebKit::toIntPoint(origin));
-}
-
 WKStringRef WKBundlePageDumpHistoryForTesting(WKBundlePageRef page, WKStringRef directory)
 {
     return WebKit::toCopiedAPI(WebKit::toImpl(page)->dumpHistoryForTesting(WebKit::toWTFString(directory)));
-}
-
-void WKBundleClearHistoryForTesting(WKBundlePageRef page)
-{
-    WebKit::toImpl(page)->clearHistory();
 }
 
 WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef pageRef)
@@ -516,7 +460,7 @@ WKImageRef WKBundlePageCreateSnapshotWithOptions(WKBundlePageRef pageRef, WKRect
 WKImageRef WKBundlePageCreateSnapshotInViewCoordinates(WKBundlePageRef pageRef, WKRect rect, WKImageOptions options)
 {
     auto snapshotOptions = WebKit::snapshotOptionsFromImageOptions(options);
-    snapshotOptions |= WebKit::SnapshotOptionsInViewCoordinates;
+    snapshotOptions.add(WebKit::SnapshotOption::InViewCoordinates);
     RefPtr<WebKit::WebImage> webImage = WebKit::toImpl(pageRef)->scaledSnapshotWithOptions(WebKit::toIntRect(rect), 1, snapshotOptions);
     return toAPI(webImage.leakRef());
 }
@@ -568,18 +512,6 @@ void WKBundlePageFlushPendingEditorStateUpdate(WKBundlePageRef page)
     WebKit::toImpl(page)->flushPendingEditorStateUpdate();
 }
 
-void WKBundlePageSimulateMouseDown(WKBundlePageRef, int, WKPoint, int, WKEventModifiers, double)
-{
-}
-
-void WKBundlePageSimulateMouseUp(WKBundlePageRef, int, WKPoint, int, WKEventModifiers, double)
-{
-}
-
-void WKBundlePageSimulateMouseMotion(WKBundlePageRef, WKPoint, double)
-{
-}
-
 uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef pageRef)
 {
     return WebKit::toImpl(pageRef)->renderTreeSize();
@@ -601,19 +533,9 @@ void WKBundlePageSetPaintedObjectsCounterThreshold(WKBundlePageRef, uint64_t)
     // We should remove it as soon as we can.
 }
 
-void WKBundlePageSetTracksRepaints(WKBundlePageRef pageRef, bool trackRepaints)
-{
-    WebKit::toImpl(pageRef)->setTracksRepaints(trackRepaints);
-}
-
 bool WKBundlePageIsTrackingRepaints(WKBundlePageRef pageRef)
 {
     return WebKit::toImpl(pageRef)->isTrackingRepaints();
-}
-
-void WKBundlePageResetTrackedRepaints(WKBundlePageRef pageRef)
-{
-    WebKit::toImpl(pageRef)->resetTrackedRepaints();
 }
 
 WKArrayRef WKBundlePageCopyTrackedRepaintRects(WKBundlePageRef pageRef)
@@ -628,20 +550,20 @@ void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int f
         auto* highlightDataArray = WebKit::toImpl(highlightData);
         highlights.reserveInitialCapacity(highlightDataArray->size());
         for (auto dictionary : highlightDataArray->elementsOfType<API::Dictionary>()) {
-            auto startOffset = static_cast<API::UInt64*>(dictionary->get("from"_s))->value();
+            auto startOffset = downcast<API::UInt64>(dictionary->get("from"_s))->value();
 
             std::optional<WebCore::Color> backgroundHighlightColor;
             std::optional<WebCore::Color> foregroundHighlightColor;
 
             if (auto backgroundColor = dictionary->get("color"_s))
-                backgroundHighlightColor = WebCore::CSSParser::parseColorWithoutContext(static_cast<API::String*>(backgroundColor)->string());
+                backgroundHighlightColor = WebCore::CSSParser::parseColorWithoutContext(downcast<API::String>(backgroundColor)->string());
 
             if (auto foregroundColor = dictionary->get("foregroundColor"_s))
-                foregroundHighlightColor = WebCore::CSSParser::parseColorWithoutContext(static_cast<API::String*>(foregroundColor)->string());
+                foregroundHighlightColor = WebCore::CSSParser::parseColorWithoutContext(downcast<API::String>(foregroundColor)->string());
 
             highlights.append({
                 static_cast<unsigned>(startOffset),
-                static_cast<unsigned>(startOffset + static_cast<API::UInt64*>(dictionary->get("length"_s))->value()),
+                static_cast<unsigned>(startOffset + downcast<API::UInt64>(dictionary->get("length"_s))->value()),
                 backgroundHighlightColor,
                 foregroundHighlightColor
             });
@@ -652,9 +574,9 @@ void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int f
     if (annotationData) {
         if (auto* annotationDataArray = WebKit::toImpl(annotationData)) {
             for (auto dictionary : annotationDataArray->elementsOfType<API::Dictionary>()) {
-                auto location = static_cast<API::UInt64*>(dictionary->get("from"_s))->value();
-                auto length = static_cast<API::UInt64*>(dictionary->get("length"_s))->value();
-                auto name = static_cast<API::String*>(dictionary->get("annotation"_s))->string();
+                auto location = downcast<API::UInt64>(dictionary->get("from"_s))->value();
+                auto length = downcast<API::UInt64>(dictionary->get("length"_s))->value();
+                auto name = downcast<API::String>(dictionary->get("annotation"_s))->string();
 
                 auto it = annotations.find(name);
                 if (it == annotations.end())
@@ -687,7 +609,7 @@ void WKBundlePageSetUseDarkAppearance(WKBundlePageRef pageRef, bool useDarkAppea
 {
     WebKit::WebPage* webPage = WebKit::toImpl(pageRef);
     if (WebCore::Page* page = webPage ? webPage->corePage() : nullptr)
-        page->effectiveAppearanceDidChange(useDarkAppearance, page->useElevatedUserInterfaceLevel());
+        page->setUseColorAppearance(useDarkAppearance, page->useElevatedUserInterfaceLevel());
 }
 
 bool WKBundlePageIsUsingDarkAppearance(WKBundlePageRef pageRef)
@@ -776,30 +698,11 @@ void WKBundlePageCallAfterTasksAndTimers(WKBundlePageRef pageRef, WKBundlePageTe
     WebCore::Document* document = localMainFrame->document();
     if (!document)
         return;
-
-    class TimerOwner {
-    public:
-        TimerOwner(WTF::Function<void (void*)>&& callback, void* context)
-            : m_timer(*this, &TimerOwner::timerFired)
-            , m_callback(WTFMove(callback))
-            , m_context(context)
-        {
-            m_timer.startOneShot(0_s);
-        }
-        
-        void timerFired()
-        {
-            m_callback(m_context);
-            delete this;
-        }
-        
-        WebCore::Timer m_timer;
-        WTF::Function<void (void*)> m_callback;
-        void* m_context;
-    };
     
     document->postTask([=] (WebCore::ScriptExecutionContext&) {
-        new TimerOwner(callback, context); // deletes itself when done.
+        WebCore::Timer::schedule(0_s, [=] {
+            callback(context);
+        });
     });
 }
 
@@ -885,23 +788,6 @@ WKCaptionUserPreferencesTestingModeTokenRef WKBundlePageCreateCaptionUserPrefere
     UNUSED_PARAM(page);
     return { };
 #endif
-}
-
-void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef page, WKEventThrottlingBehavior* behavior)
-{
-    std::optional<WebCore::EventThrottlingBehavior> behaviorValue;
-    if (behavior) {
-        switch (*behavior) {
-        case kWKEventThrottlingBehaviorResponsive:
-            behaviorValue = WebCore::EventThrottlingBehavior::Responsive;
-            break;
-        case kWKEventThrottlingBehaviorUnresponsive:
-            behaviorValue = WebCore::EventThrottlingBehavior::Unresponsive;
-            break;
-        }
-    }
-
-    WebKit::toImpl(page)->corePage()->setEventThrottlingBehaviorOverride(behaviorValue);
 }
 
 void WKBundlePageLayoutIfNeeded(WKBundlePageRef page)

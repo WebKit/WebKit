@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include "compiler/translator/IntermRebuild.h"
 #include "compiler/translator/msl/AstHelpers.h"
-#include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
+
 using namespace sh;
 ////////////////////////////////////////////////////////////////////////////////
 namespace

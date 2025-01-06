@@ -15,10 +15,10 @@
 #include <stdint.h>
 
 #include <limits>
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/video/video_codec_constants.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -64,7 +64,7 @@ class RTC_EXPORT VideoBitrateAllocation {
   // Returns one VideoBitrateAllocation for each spatial layer. This is used to
   // configure simulcast streams. Note that the length of the returned vector is
   // always kMaxSpatialLayers, the optional is unset for unused layers.
-  std::vector<absl::optional<VideoBitrateAllocation>> GetSimulcastAllocations()
+  std::vector<std::optional<VideoBitrateAllocation>> GetSimulcastAllocations()
       const;
 
   uint32_t get_sum_bps() const { return sum_; }  // Sum of all bitrates.
@@ -87,7 +87,7 @@ class RTC_EXPORT VideoBitrateAllocation {
 
  private:
   uint32_t sum_;
-  absl::optional<uint32_t> bitrates_[kMaxSpatialLayers][kMaxTemporalStreams];
+  std::optional<uint32_t> bitrates_[kMaxSpatialLayers][kMaxTemporalStreams];
   bool is_bw_limited_;
 };
 

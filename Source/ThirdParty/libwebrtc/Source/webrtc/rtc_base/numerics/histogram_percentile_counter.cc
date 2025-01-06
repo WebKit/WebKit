@@ -12,6 +12,9 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 
 #include "rtc_base/checks.h"
 
@@ -48,12 +51,12 @@ void HistogramPercentileCounter::Add(uint32_t value) {
   Add(value, 1);
 }
 
-absl::optional<uint32_t> HistogramPercentileCounter::GetPercentile(
+std::optional<uint32_t> HistogramPercentileCounter::GetPercentile(
     float fraction) {
   RTC_CHECK_LE(fraction, 1.0);
   RTC_CHECK_GE(fraction, 0.0);
   if (total_elements_ == 0)
-    return absl::nullopt;
+    return std::nullopt;
   size_t elements_to_skip = static_cast<size_t>(
       std::max(0.0f, std::ceil(total_elements_ * fraction) - 1));
   if (elements_to_skip >= total_elements_)
@@ -73,7 +76,7 @@ absl::optional<uint32_t> HistogramPercentileCounter::GetPercentile(
     }
   }
   RTC_DCHECK_NOTREACHED();
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 }  // namespace rtc

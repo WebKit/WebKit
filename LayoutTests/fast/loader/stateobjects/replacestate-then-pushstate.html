@@ -1,20 +1,18 @@
 <html>
 <head>
 <script>
-
-if (window.testRunner) {
-    testRunner.clearBackForwardList();
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
-
 function log(txt)
 {
     document.getElementById("logger").innerText += txt + "\n";
 }
     
-function runTest()
+async function runTest()
 {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        await testRunner.clearBackForwardList();
+    }
     history.replaceState("OriginalHistoryItem", "Replaced title");
     log("History length is " + history.length);
     history.pushState("NewHistoryItem", "Pushed title");

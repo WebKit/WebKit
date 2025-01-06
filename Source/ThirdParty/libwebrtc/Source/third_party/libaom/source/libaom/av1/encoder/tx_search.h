@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -33,8 +33,8 @@ enum {
   FTXS_USE_TRANSFORM_DOMAIN = 1 << 2
 } UENUM1BYTE(FAST_TX_SEARCH_MODE);
 
-static AOM_INLINE int tx_size_cost(const MACROBLOCK *const x, BLOCK_SIZE bsize,
-                                   TX_SIZE tx_size) {
+static inline int tx_size_cost(const MACROBLOCK *const x, BLOCK_SIZE bsize,
+                               TX_SIZE tx_size) {
   assert(bsize == x->e_mbd.mi[0]->bsize);
   if (x->txfm_search_params.tx_mode_search_type != TX_MODE_SELECT ||
       !block_signals_txsize(bsize))
@@ -71,30 +71,6 @@ int64_t av1_pixel_diff_dist(const MACROBLOCK *x, int plane, int blk_row,
 int64_t av1_estimate_txfm_yrd(const AV1_COMP *const cpi, MACROBLOCK *x,
                               RD_STATS *rd_stats, int64_t ref_best_rd,
                               BLOCK_SIZE bs, TX_SIZE tx_size);
-
-/*!\brief Transform type search for luma macroblock with fixed transform size.
- *
- * \ingroup transform_search
- * Search for the best transform type and return the transform coefficients RD
- * cost of current luma macroblock with the given uniform transform size.
- *
- * \param[in]    x              Pointer to structure holding the data for the
-                                current encoding macroblock
- * \param[in]    cpi            Top-level encoder structure
- * \param[in]    rd_stats       Pointer to struct to keep track of the RD stats
- * \param[in]    ref_best_rd    Best RD cost seen for this block so far
- * \param[in]    bs             Size of the current macroblock
- * \param[in]    tx_size        The given transform size
- * \param[in]    ftxs_mode      Transform search mode specifying desired speed
-                                and quality tradeoff
- * \param[in]    skip_trellis   Binary flag indicating if trellis optimization
-                                should be skipped
- * \return       An int64_t value that is the best RD cost found.
- */
-int64_t av1_uniform_txfm_yrd(const AV1_COMP *const cpi, MACROBLOCK *x,
-                             RD_STATS *rd_stats, int64_t ref_best_rd,
-                             BLOCK_SIZE bs, TX_SIZE tx_size,
-                             FAST_TX_SEARCH_MODE ftxs_mode, int skip_trellis);
 
 /*!\brief Recursive transform size and type search.
  *

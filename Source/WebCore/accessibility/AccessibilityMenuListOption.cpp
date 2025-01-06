@@ -37,15 +37,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityMenuListOption::AccessibilityMenuListOption(HTMLOptionElement& element)
-    : AccessibilityNodeObject(&element)
+AccessibilityMenuListOption::AccessibilityMenuListOption(AXID axID, HTMLOptionElement& element)
+    : AccessibilityNodeObject(axID, &element)
     , m_parent(nullptr)
 {
 }
 
-Ref<AccessibilityMenuListOption> AccessibilityMenuListOption::create(HTMLOptionElement& element)
+Ref<AccessibilityMenuListOption> AccessibilityMenuListOption::create(AXID axID, HTMLOptionElement& element)
 {
-    return adoptRef(*new AccessibilityMenuListOption(element));
+    return adoptRef(*new AccessibilityMenuListOption(axID, element));
 }
 
 HTMLOptionElement* AccessibilityMenuListOption::optionElement() const
@@ -101,9 +101,9 @@ bool AccessibilityMenuListOption::canSetSelectedAttribute() const
     return isEnabled();
 }
 
-bool AccessibilityMenuListOption::computeAccessibilityIsIgnored() const
+bool AccessibilityMenuListOption::computeIsIgnored() const
 {
-    return accessibilityIsIgnoredByDefault();
+    return isIgnoredByDefault();
 }
 
 LayoutRect AccessibilityMenuListOption::elementRect() const

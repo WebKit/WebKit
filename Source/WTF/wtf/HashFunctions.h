@@ -109,11 +109,11 @@ namespace WTF {
         typedef typename IntTypes<sizeof(T)>::UnsignedType Bits;
         static unsigned hash(T key)
         {
-            return intHash(bitwise_cast<Bits>(key));
+            return intHash(std::bit_cast<Bits>(key));
         }
         static bool equal(T a, T b)
         {
-            return bitwise_cast<Bits>(a) == bitwise_cast<Bits>(b);
+            return std::bit_cast<Bits>(a) == std::bit_cast<Bits>(b);
         }
         static constexpr bool safeToCompareToEmptyOrDeleted = true;
     };

@@ -29,6 +29,8 @@
 #pragma once
 
 #include <libxml/parser.h>
+#include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextPosition.h>
 
@@ -37,7 +39,7 @@ namespace WebCore {
 class Document;
 
 class XMLErrors {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(XMLErrors);
 public:
     explicit XMLErrors(Document&);
 
@@ -50,7 +52,7 @@ public:
 private:
     void appendErrorMessage(ASCIILiteral typeString, TextPosition, const char* message);
 
-    Document& m_document;
+    CheckedRef<Document> m_document;
     int m_errorCount { 0 };
     std::optional<TextPosition> m_lastErrorPosition;
     StringBuilder m_errorMessages;

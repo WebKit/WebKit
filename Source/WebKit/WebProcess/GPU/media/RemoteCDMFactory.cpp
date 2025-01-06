@@ -34,16 +34,30 @@
 #include "RemoteCDMInstanceSession.h"
 #include "WebProcess.h"
 #include <WebCore/Settings.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
 
-RemoteCDMFactory::RemoteCDMFactory(WebProcess&)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCDMFactory);
+
+RemoteCDMFactory::RemoteCDMFactory(WebProcess& webProcess)
+    : m_webProcess(webProcess)
 {
 }
 
 RemoteCDMFactory::~RemoteCDMFactory() = default;
+
+void RemoteCDMFactory::ref() const
+{
+    return m_webProcess->ref();
+}
+
+void RemoteCDMFactory::deref() const
+{
+    return m_webProcess->deref();
+}
 
 void RemoteCDMFactory::registerFactory(Vector<CDMFactory*>& factories)
 {
@@ -70,10 +84,10 @@ bool RemoteCDMFactory::supportsKeySystem(const String& keySystem)
 std::unique_ptr<CDMPrivate> RemoteCDMFactory::createCDM(const String& keySystem, const CDMPrivateClient&)
 {
     auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteCDMFactoryProxy::CreateCDM(keySystem), { });
-    auto [identifier, configuration] = sendResult.takeReplyOr(RemoteCDMIdentifier { }, RemoteCDMConfiguration { });
+    auto [identifier, configuration] = sendResult.takeReplyOr(std::nullopt, RemoteCDMConfiguration { });
     if (!identifier)
         return nullptr;
-    return RemoteCDM::create(*this, WTFMove(identifier), WTFMove(configuration));
+    return RemoteCDM::create(*this, WTFMove(*identifier), WTFMove(configuration));
 }
 
 void RemoteCDMFactory::addSession(RemoteCDMInstanceSession& session)
@@ -96,8 +110,10 @@ void RemoteCDMFactory::removeInstance(RemoteCDMInstanceIdentifier identifier)
 
 void RemoteCDMFactory::didReceiveSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (auto session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
-        session->didReceiveMessage(connection, decoder);
+    if (ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        if (auto session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
+            session->didReceiveMessage(connection, decoder);
+    }
 }
 
 }

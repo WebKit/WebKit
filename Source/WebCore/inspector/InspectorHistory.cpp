@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,8 +33,12 @@
 #include "InspectorHistory.h"
 
 #include "Node.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorHistory);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorHistory::Action);
 
 class UndoableStateMark : public InspectorHistory::Action {
 private:

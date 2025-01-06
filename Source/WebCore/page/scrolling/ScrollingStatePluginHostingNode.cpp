@@ -29,9 +29,12 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingStateTree.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingStatePluginHostingNode);
 
 Ref<ScrollingStatePluginHostingNode> ScrollingStatePluginHostingNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
 {

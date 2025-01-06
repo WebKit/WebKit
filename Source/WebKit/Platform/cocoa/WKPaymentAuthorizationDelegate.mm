@@ -205,13 +205,13 @@
     if (!presenter)
         return [self completePaymentSession:PKPaymentAuthorizationStatusFailure errors:@[ ]];
 
-    presenter->client().presenterDidAuthorizePayment(*presenter, WebCore::Payment(payment));
+    presenter->checkedClient()->presenterDidAuthorizePayment(*presenter, WebCore::Payment(payment));
 }
 
 - (void)_didFinish
 {
     if (auto presenter = _presenter.get())
-        presenter->client().presenterDidFinish(*presenter, { std::exchange(_sessionError, nil) });
+        presenter->checkedClient()->presenterDidFinish(*presenter, { std::exchange(_sessionError, nil) });
 }
 
 - (void)_didRequestMerchantSession:(WebKit::DidRequestMerchantSessionCompletion::BlockType)completion
@@ -232,7 +232,7 @@
                 return;
             }
 
-            presenter->client().presenterWillValidateMerchant(*presenter, merchantURL.get());
+            presenter->checkedClient()->presenterWillValidateMerchant(*presenter, merchantURL.get());
         });
     }];
 }
@@ -242,11 +242,11 @@
     ASSERT(!_didSelectPaymentMethodCompletion);
     _didSelectPaymentMethodCompletion = completion;
 
-    auto presenter = _presenter.get();
+    RefPtr presenter = _presenter.get();
     if (!presenter)
         return [self completePaymentMethodSelection:nil];
 
-    presenter->client().presenterDidSelectPaymentMethod(*presenter, WebCore::PaymentMethod(paymentMethod));
+    presenter->checkedClient()->presenterDidSelectPaymentMethod(*presenter, WebCore::PaymentMethod(paymentMethod));
 }
 
 - (void)_didSelectShippingContact:(PKContact *)contact completion:(WebKit::DidSelectShippingContactCompletion::BlockType)completion
@@ -254,11 +254,11 @@
     ASSERT(!_didSelectShippingContactCompletion);
     _didSelectShippingContactCompletion = completion;
 
-    auto presenter = _presenter.get();
+    RefPtr presenter = _presenter.get();
     if (!presenter)
         return [self completeShippingContactSelection:nil];
 
-    presenter->client().presenterDidSelectShippingContact(*presenter, WebCore::PaymentContact(contact));
+    presenter->checkedClient()->presenterDidSelectShippingContact(*presenter, WebCore::PaymentContact(contact));
 }
 
 #if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
@@ -313,11 +313,11 @@ static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippi
     ASSERT(!_didSelectShippingMethodCompletion);
     _didSelectShippingMethodCompletion = completion;
 
-    auto presenter = _presenter.get();
+    RefPtr presenter = _presenter.get();
     if (!presenter)
         return [self completeShippingMethodSelection:nil];
 
-    presenter->client().presenterDidSelectShippingMethod(*presenter, toShippingMethod(shippingMethod, true));
+    presenter->checkedClient()->presenterDidSelectShippingMethod(*presenter, toShippingMethod(shippingMethod, true));
 }
 
 #if HAVE(PASSKIT_COUPON_CODE)
@@ -327,11 +327,11 @@ static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippi
     ASSERT(!_didChangeCouponCodeCompletion);
     _didChangeCouponCodeCompletion = completion;
 
-    auto presenter = _presenter.get();
+    RefPtr presenter = _presenter.get();
     if (!presenter)
         return [self completeCouponCodeChange:nil];
 
-    presenter->client().presenterDidChangeCouponCode(*presenter, couponCode);
+    presenter->checkedClient()->presenterDidChangeCouponCode(*presenter, couponCode);
 }
 
 #endif // HAVE(PASSKIT_COUPON_CODE)

@@ -58,7 +58,7 @@ void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& fra
     if (!isProducingData())
         return;
 
-    auto presentationTime = fromGstClockTime(frame.timestamp_us());
+    auto presentationTime = MediaTime(frame.timestamp_us(), G_USEC_PER_SEC);
     if (frame.video_frame_buffer()->type() == webrtc::VideoFrameBuffer::Type::kNative) {
         auto* framebuffer = static_cast<GStreamerVideoFrameLibWebRTC*>(frame.video_frame_buffer().get());
         videoFrameAvailable(VideoFrameGStreamer::createWrappedSample(framebuffer->getSample(), presentationTime, static_cast<VideoFrame::Rotation>(frame.rotation())), { });

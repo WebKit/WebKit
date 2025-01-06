@@ -40,8 +40,11 @@
 #include "PointerCaptureController.h"
 #include "UserGestureIndicator.h"
 #include "VoidCallback.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PointerLockController);
 
 class UnadjustedMovementPlatformMouseEvent : public PlatformMouseEvent {
 public:
@@ -76,7 +79,7 @@ void PointerLockController::requestPointerLock(Element* target, std::optional<Po
         return;
     }
 
-    if (target->document().isSandboxed(SandboxPointerLock)) {
+    if (target->document().isSandboxed(SandboxFlag::PointerLock)) {
         auto reason = "Blocked pointer lock on an element because the element's frame is sandboxed and the 'allow-pointer-lock' permission is not set."_s;
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
         target->document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, reason);

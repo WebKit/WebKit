@@ -13,9 +13,9 @@ function touched(e) {
         window.testRunner.notifyDone()
 }
 
-function runTest() {
-    if (window.internals)
-        window.internals.setPageScaleFactor(2, 0, 0);
+async function runTest() {
+    if (window.testRunner)
+        await window.testRunner.setPageScaleFactor(2, 0, 0);
     window.scrollTo(100,100);
 
     if (window.testRunner) {

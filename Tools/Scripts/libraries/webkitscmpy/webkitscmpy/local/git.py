@@ -131,16 +131,13 @@ class Git(Scm):
             intersected = False
             log = None
             try:
-                kwargs = dict()
-                if sys.version_info >= (3, 6):
-                    kwargs = dict(encoding='utf-8')
                 self._last_populated[branch] = time.time()
                 log = subprocess.Popen(
                     [self.repo.executable(), 'log', '{}/{}'.format(remote, branch) if remote else branch, '--no-decorate', '--date=unix', '--'],
                     cwd=self.repo.root_path,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
-                    **kwargs
+                    encoding='utf-8',
                 )
                 if log.poll():
                     raise self.repo.Exception("Failed to construct branch history for '{}'".format(branch))
@@ -394,7 +391,7 @@ class Git(Scm):
             prod_branches=None,
             contributors=None,
             id=None,
-            cached=sys.version_info > (3, 0),
+            cached=True,
             classifier=None,
     ):
         super(Git, self).__init__(
@@ -611,6 +608,13 @@ class Git(Scm):
         if isinstance(remote, string_utils.basestring):
             return sorted(result.get(remote, []))
         return result
+
+    def is_suitable_branch_for_pull_request(self, branch, source_remote):
+        if branch is None or branch in self.DEFAULT_BRANCHES or self.PROD_BRANCHES.match(branch):
+            return False
+        elif branch in self.branches_for(remote=source_remote) and not self.dev_branches.match(branch):
+            return False
+        return True
 
     def _is_on_default_branch(self, hash):
         branches = self.branches_for(remote=None)
@@ -924,7 +928,7 @@ class Git(Scm):
                 cwd=self.root_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                **(dict(encoding='utf-8') if sys.version_info > (3, 6) else dict())
+                encoding='utf-8',
             )
             if log.poll():
                 raise self.Exception("Failed to construct history for '{}'".format(end.branch))
@@ -1079,24 +1083,38 @@ class Git(Scm):
                     return None
                 self.config.clear()
             branch = match.group('branch')
-            rc = run(
-                [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(name, branch)] + log_arg,
-                cwd=self.root_path,
-            ).returncode
-            if not rc:
-                return self.commit()
-            if rc == 128:
-                command = [self.executable(), 'fetch', name]
-                if prune is None:
-                    if self.config()['webkitscmpy.auto-prune'] == 'true':
-                        command.append('--prune')
-                    elif name in self.source_remotes() and self.config()['webkitscmpy.auto-prune'] == 'only-source':
-                        command.append('--prune')
-                run(command, cwd=self.root_path)
-            return None if run(
-                [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(name, branch)] + log_arg,
-                cwd=self.root_path,
-            ).returncode else self.commit()
+
+            # The names GitHub provides are often too short. If we are tracking other remotes which start
+            # with this name, we should try those too
+            candidate_remotes = [name]
+            for key in self.config().keys():
+                if key.startswith(f'remote.{name}'):
+                    candidate = key.split('.', 2)[1]
+                    if candidate not in candidate_remotes:
+                        candidate_remotes.append(candidate)
+
+            for remote_name in candidate_remotes:
+                rc = run(
+                    [self.executable(), 'checkout'] + ['-B', branch, 'remotes/{}/{}'.format(remote_name, branch)],
+                    cwd=self.root_path, capture_output=True,
+                ).returncode
+                if not rc:
+                    return self.commit()
+                if rc == 128:
+                    command = [self.executable(), 'fetch', remote_name]
+                    if prune is None:
+                        if self.config()['webkitscmpy.auto-prune'] == 'true':
+                            command.append('--prune')
+                        elif name in self.source_remotes() and self.config()['webkitscmpy.auto-prune'] == 'only-source':
+                            command.append('--prune')
+                    log.info(f'Fetching {remote_name}...')
+                    run(command, cwd=self.root_path, capture_output=True)
+                if not run(
+                    [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(remote_name, branch)] + log_arg,
+                    cwd=self.root_path,
+                ).returncode:
+                    return self.commit()
+            return None
 
         match = self.dev_branches.match(argument)
         branch_remote = self.remote_for(argument)
@@ -1302,16 +1320,13 @@ class Git(Scm):
         else:
             command = [self.executable(), 'diff', '{}..{}'.format(base, head)]
 
-        kwargs = dict()
-        if sys.version_info >= (3, 6):
-            kwargs = dict(encoding='utf-8')
         target = '{}..{}'.format(base, head) if head else base
         proc = subprocess.Popen(
             command,
             cwd=self.root_path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            **kwargs
+            encoding='utf-8',
         )
 
         if proc.poll():

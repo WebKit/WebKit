@@ -16,10 +16,10 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
@@ -80,11 +80,11 @@ class TLVTrait {
 
   // Validates the data with regards to size, alignment and type.
   // If valid, returns a bounded buffer.
-  static absl::optional<BoundedByteReader<Config::kHeaderSize>> ParseTLV(
+  static std::optional<BoundedByteReader<Config::kHeaderSize>> ParseTLV(
       rtc::ArrayView<const uint8_t> data) {
     if (data.size() < Config::kHeaderSize) {
       tlv_trait_impl::ReportInvalidSize(data.size(), Config::kHeaderSize);
-      return absl::nullopt;
+      return std::nullopt;
     }
     BoundedByteReader<kTlvHeaderSize> tlv_header(data);
 
@@ -94,7 +94,7 @@ class TLVTrait {
 
     if (type != Config::kType) {
       tlv_trait_impl::ReportInvalidType(type, Config::kType);
-      return absl::nullopt;
+      return std::nullopt;
     }
     const uint16_t length = tlv_header.template Load16<2>();
     if (Config::kVariableLengthAlignment == 0) {
@@ -102,25 +102,25 @@ class TLVTrait {
       if (length != Config::kHeaderSize || data.size() != Config::kHeaderSize) {
         tlv_trait_impl::ReportInvalidFixedLengthField(length,
                                                       Config::kHeaderSize);
-        return absl::nullopt;
+        return std::nullopt;
       }
     } else {
       // Expect variable length data - verify its size alignment.
       if (length > data.size() || length < Config::kHeaderSize) {
         tlv_trait_impl::ReportInvalidVariableLengthField(length, data.size());
-        return absl::nullopt;
+        return std::nullopt;
       }
       const size_t padding = data.size() - length;
       if (padding > 3) {
         // https://tools.ietf.org/html/rfc4960#section-3.2
         // "This padding MUST NOT be more than 3 bytes in total"
         tlv_trait_impl::ReportInvalidPadding(padding);
-        return absl::nullopt;
+        return std::nullopt;
       }
       if (!ValidateLengthAlignment(length, Config::kVariableLengthAlignment)) {
         tlv_trait_impl::ReportInvalidLengthMultiple(
             length, Config::kVariableLengthAlignment);
-        return absl::nullopt;
+        return std::nullopt;
       }
     }
     return BoundedByteReader<Config::kHeaderSize>(data.subview(0, length));

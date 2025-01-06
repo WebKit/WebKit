@@ -34,9 +34,14 @@
 #import "LandmarkInterface.h"
 #import "NativeImage.h"
 #import "VisionUtilities.h"
+#import <wtf/TZoneMallocInlines.h>
 #import <pal/cocoa/VisionSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore::ShapeDetection {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FaceDetectorImpl);
 
 FaceDetectorImpl::FaceDetectorImpl(const FaceDetectorOptions& faceDetectorOptions)
     : m_maxDetectedFaces(faceDetectorOptions.maxDetectedFaces)
@@ -109,5 +114,7 @@ void FaceDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandler<
 }
 
 } // namespace WebCore::ShapeDetection
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)

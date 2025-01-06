@@ -35,18 +35,14 @@
 #include "RTCRtpSendParameters.h"
 #include <wtf/text/WTFString.h>
 
-ALLOW_UNUSED_PARAMETERS_BEGIN
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-ALLOW_COMMA_BEGIN
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
 #include <webrtc/api/rtp_parameters.h>
 #include <webrtc/api/rtp_transceiver_interface.h>
 #include <webrtc/p2p/base/p2p_constants.h>
 #include <webrtc/pc/webrtc_sdp.h>
 
-ALLOW_COMMA_END
-ALLOW_DEPRECATED_DECLARATIONS_END
-ALLOW_UNUSED_PARAMETERS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
@@ -64,6 +60,17 @@ webrtc::Priority fromRTCPriorityType(RTCPriorityType priority)
     }
 
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+RTCPriorityType toRTCPriorityType(webrtc::PriorityValue priority)
+{
+    if (priority <= webrtc::PriorityValue(webrtc::Priority::kVeryLow))
+        return RTCPriorityType::VeryLow;
+    if (priority <= webrtc::PriorityValue(webrtc::Priority::kLow))
+        return RTCPriorityType::Low;
+    if (priority <= webrtc::PriorityValue(webrtc::Priority::kMedium))
+        return RTCPriorityType::Medium;
+    return RTCPriorityType::High;
 }
 
 RTCPriorityType toRTCPriorityType(webrtc::Priority priority)
@@ -255,11 +262,11 @@ void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::
     for (size_t i = 0; i < parameters.encodings.size(); ++i) {
         rtcParameters.encodings[i].active = parameters.encodings[i].active;
         if (parameters.encodings[i].maxBitrate)
-            rtcParameters.encodings[i].max_bitrate_bps = parameters.encodings[i].maxBitrate;
+            rtcParameters.encodings[i].max_bitrate_bps = *parameters.encodings[i].maxBitrate;
         if (parameters.encodings[i].maxFramerate)
-            rtcParameters.encodings[i].max_framerate = parameters.encodings[i].maxFramerate;
+            rtcParameters.encodings[i].max_framerate = *parameters.encodings[i].maxFramerate;
         if (parameters.encodings[i].scaleResolutionDownBy)
-            rtcParameters.encodings[i].scale_resolution_down_by = parameters.encodings[i].scaleResolutionDownBy;
+            rtcParameters.encodings[i].scale_resolution_down_by = *parameters.encodings[i].scaleResolutionDownBy;
         rtcParameters.encodings[i].bitrate_priority = toWebRTCBitRatePriority(parameters.encodings[i].priority);
         if (parameters.encodings[i].networkPriority)
             rtcParameters.encodings[i].network_priority = fromRTCPriorityType(*parameters.encodings[i].networkPriority);
@@ -396,18 +403,20 @@ static inline std::optional<RTCIceTcpCandidateType> toRTCIceTcpCandidateType(con
     return RTCIceTcpCandidateType::So;
 }
 
-static inline std::optional<RTCIceCandidateType> toRTCIceCandidateType(const std::string& type)
+static inline std::optional<RTCIceCandidateType> toRTCIceCandidateType(webrtc::IceCandidateType type)
 {
-    if (type == "")
-        return { };
-    if (type == "local")
+    switch (type) {
+    case webrtc::IceCandidateType::kHost:
         return RTCIceCandidateType::Host;
-    if (type == "stun")
+    case webrtc::IceCandidateType::kSrflx:
         return RTCIceCandidateType::Srflx;
-    if (type == "prflx")
+    case webrtc::IceCandidateType::kPrflx:
         return RTCIceCandidateType::Prflx;
-    ASSERT(type == "relay");
-    return RTCIceCandidateType::Relay;
+    case webrtc::IceCandidateType::kRelay:
+        return RTCIceCandidateType::Relay;
+    };
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 RTCIceCandidateFields convertIceCandidate(const cricket::Candidate& candidate)

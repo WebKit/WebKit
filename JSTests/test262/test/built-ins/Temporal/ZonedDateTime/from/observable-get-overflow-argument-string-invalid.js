@@ -3,20 +3,10 @@
 
 /*---
 esid: sec-temporal.zoneddatetime.from
-description: options properties are extracted with ISO-invalid string argument.
+description: options properties are not extracted with ISO-invalid string argument.
 includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
-
-const expected = [
-  "ownKeys options",
-  "getOwnPropertyDescriptor options.disambiguation",
-  "get options.disambiguation",
-  "getOwnPropertyDescriptor options.offset",
-  "get options.offset",
-  "getOwnPropertyDescriptor options.overflow",
-  "get options.overflow",
-];
 
 let actual = [];
 const options = TemporalHelpers.propertyBagObserver(actual, {
@@ -26,4 +16,4 @@ const options = TemporalHelpers.propertyBagObserver(actual, {
 }, "options");
 
 assert.throws(RangeError, () => Temporal.ZonedDateTime.from("2020-13-34T25:60:60+99:99[UTC]", options));
-assert.compareArray(actual, expected);
+assert.compareArray(actual, [], "options read after string parsing");

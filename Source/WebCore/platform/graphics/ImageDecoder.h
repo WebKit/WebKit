@@ -32,6 +32,7 @@
 #include "IntSize.h"
 #include "PlatformImage.h"
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -46,7 +47,7 @@ struct ImageDecoderFrameInfo {
 };
 
 class ImageDecoder : public ThreadSafeRefCounted<ImageDecoder> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageDecoder, WEBCORE_EXPORT);
 public:
     static RefPtr<ImageDecoder> create(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     WEBCORE_EXPORT virtual ~ImageDecoder();
@@ -92,6 +93,10 @@ public:
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     virtual bool shouldUseQuickLookForFullscreen() const { return false; }
+#endif
+
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    virtual bool isSpatial() const { return false; }
 #endif
 
     virtual IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const = 0;

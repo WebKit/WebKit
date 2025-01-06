@@ -71,7 +71,7 @@ bool FramerateController::ShouldDropFrame(int64_t in_timestamp_ns) {
 
 void FramerateController::Reset() {
   max_framerate_ = std::numeric_limits<double>::max();
-  next_frame_timestamp_ns_ = absl::nullopt;
+  next_frame_timestamp_ns_ = std::nullopt;
 }
 
 void FramerateController::KeepFrame(int64_t in_timestamp_ns) {

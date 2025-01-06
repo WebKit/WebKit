@@ -25,11 +25,13 @@
 
 #include "WindowViewBackend.h"
 
+#include <cassert>
 #include <cstdio>
 #include <cstring>
 #include <linux/input.h>
 #include <memory>
 #include <mutex>
+#include <span>
 #include <sys/mman.h>
 #include <unistd.h>
 
@@ -432,7 +434,6 @@ const struct wl_touch_listener WindowViewBackend::s_touchListener = {
             return;
 
         auto& seatData = window.m_seatData;
-        seatData.touch.tracking = true;
         struct wpe_input_touch_event_raw rawEvent = { wpe_input_touch_event_type_down,
             time, id, wl_fixed_to_int(x), wl_fixed_to_int(y) };
         memcpy(&seatData.touch.points[id], &rawEvent, sizeof(struct wpe_input_touch_event_raw));
@@ -446,10 +447,8 @@ const struct wl_touch_listener WindowViewBackend::s_touchListener = {
     {
         auto& window = *static_cast<WindowViewBackend*>(data);
         auto& seatData = window.m_seatData;
-        if (!seatData.touch.tracking || id < 0 || id >= 10)
+        if (id < 0 || id >= 10)
             return;
-
-        seatData.touch.tracking = false;
 
         struct wpe_input_touch_event_raw rawEvent = { wpe_input_touch_event_type_up,
             time, id, seatData.touch.points[id].x, seatData.touch.points[id].y };
@@ -466,7 +465,7 @@ const struct wl_touch_listener WindowViewBackend::s_touchListener = {
     {
         auto& window = *static_cast<WindowViewBackend*>(data);
         auto& seatData = window.m_seatData;
-        if (!seatData.touch.tracking || id < 0 || id >= 10)
+        if (id < 0 || id >= 10)
             return;
 
         struct wpe_input_touch_event_raw rawEvent = { wpe_input_touch_event_type_motion,
@@ -552,12 +551,10 @@ const struct xdg_toplevel_listener WindowViewBackend::XDGStable::s_toplevelListe
         // wl_array_for_each, but at the time of writing it relies on
         // GCC specific extension to work properly:
         // https://gitlab.freedesktop.org/wayland/wayland/issues/34
-        uint32_t* pos = static_cast<uint32_t*>(states->data);
-        uint32_t* end = static_cast<uint32_t*>(states->data) + states->size;
 
-        for (; pos < end; pos++) {
-            uint32_t state = *pos;
-
+        assert(!(states->size % sizeof(uint32_t)));
+        auto statesSpan = std::span(static_cast<uint32_t*>(states->data), states->size / sizeof(uint32_t));
+        for (auto state : statesSpan) {
             switch (state) {
             case XDG_TOPLEVEL_STATE_ACTIVATED:
                 isFocused = true;
@@ -617,12 +614,9 @@ const struct zxdg_toplevel_v6_listener WindowViewBackend::XDGUnstable::s_topleve
         // wl_array_for_each, but at the time of writing it relies on
         // GCC specific extension to work properly:
         // https://gitlab.freedesktop.org/wayland/wayland/issues/34
-        uint32_t* pos = static_cast<uint32_t*>(states->data);
-        uint32_t* end = static_cast<uint32_t*>(states->data) + states->size;
-
-        for (; pos < end; pos++) {
-            uint32_t state = *pos;
-
+        assert(!(states->size % sizeof(uint32_t)));
+        auto statesSpan = std::span(static_cast<uint32_t*>(states->data), states->size / sizeof(uint32_t));
+        for (auto state : statesSpan) {
             switch (state) {
             case ZXDG_TOPLEVEL_V6_STATE_ACTIVATED:
                 isFocused = true;

@@ -51,6 +51,7 @@
 #include "ScriptDisallowedScope.h"
 #include <pal/text/TextEncoding.h>
 #include <wtf/WallTime.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -74,7 +75,7 @@ static void appendMailtoPostFormDataToURL(URL& url, const FormData& data, const 
         body = PAL::decodeURLEscapeSequences(makeStringByReplacingAll(makeStringByReplacingAll(body, '&', "\r\n"_s), '+', ' '));
     }
 
-    Vector<uint8_t> bodyData(std::span<const char>("body=", static_cast<size_t>(5)));
+    Vector<uint8_t> bodyData("body="_s.span8());
     FormDataBuilder::encodeStringAsFormData(bodyData, body.utf8());
     body = makeStringByReplacingAll(bodyData.span(), '+', "%20"_s);
 

@@ -1,6 +1,3 @@
 
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT reload() promise rejections when detaching an iframe inside onnavigate Test timed out
+PASS reload() promise rejections when detaching an iframe inside onnavigate
 

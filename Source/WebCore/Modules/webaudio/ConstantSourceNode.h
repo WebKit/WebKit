@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class ConstantSourceNode final : public AudioScheduledSourceNode {
-    WTF_MAKE_ISO_ALLOCATED(ConstantSourceNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ConstantSourceNode);
 public:
     static ExceptionOr<Ref<ConstantSourceNode>> create(BaseAudioContext&, const ConstantSourceOptions& = { });
     

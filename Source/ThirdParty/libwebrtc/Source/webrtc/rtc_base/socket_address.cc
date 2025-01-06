@@ -10,33 +10,26 @@
 
 #include "rtc_base/socket_address.h"
 
-#include "absl/strings/string_view.h"
-#include "rtc_base/numerics/safe_conversions.h"
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <string>
 
 #if defined(WEBRTC_POSIX)
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
 #if defined(OPENBSD)
 #include <netinet/in_systm.h>
 #endif
 #if !defined(__native_client__)
-#include <netinet/ip.h>
 #endif
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
 #endif
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/byte_order.h"
-#include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
+#include "rtc_base/ip_address.h"
 #include "rtc_base/net_helpers.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/strings/string_builder.h"
-
-#if defined(WEBRTC_WIN)
-#include "rtc_base/win32.h"
-#endif
 
 namespace rtc {
 

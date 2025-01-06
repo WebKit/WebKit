@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -67,8 +67,8 @@ static int64_t calculate_sse(MACROBLOCKD *const xd,
   return sse;
 }
 
-static AOM_INLINE int64_t compute_sse_plane(MACROBLOCK *x, MACROBLOCKD *xd,
-                                            int plane, const BLOCK_SIZE bsize) {
+static inline int64_t compute_sse_plane(MACROBLOCK *x, MACROBLOCKD *xd,
+                                        int plane, const BLOCK_SIZE bsize) {
   struct macroblockd_plane *const pd = &xd->plane[plane];
   const BLOCK_SIZE plane_bsize =
       get_plane_block_size(bsize, pd->subsampling_x, pd->subsampling_y);
@@ -82,11 +82,11 @@ static AOM_INLINE int64_t compute_sse_plane(MACROBLOCK *x, MACROBLOCKD *xd,
   return sse;
 }
 
-static AOM_INLINE void model_rd_from_sse(const AV1_COMP *const cpi,
-                                         const MACROBLOCK *const x,
-                                         BLOCK_SIZE plane_bsize, int plane,
-                                         int64_t sse, int num_samples,
-                                         int *rate, int64_t *dist) {
+static inline void model_rd_from_sse(const AV1_COMP *const cpi,
+                                     const MACROBLOCK *const x,
+                                     BLOCK_SIZE plane_bsize, int plane,
+                                     int64_t sse, int num_samples, int *rate,
+                                     int64_t *dist) {
   (void)num_samples;
   const MACROBLOCKD *const xd = &x->e_mbd;
   const struct macroblock_plane *const p = &x->plane[plane];
@@ -114,11 +114,11 @@ static AOM_INLINE void model_rd_from_sse(const AV1_COMP *const cpi,
 
 // Fits a curve for rate and distortion using as feature:
 // log2(sse_norm/qstep^2)
-static AOM_INLINE void model_rd_with_curvfit(const AV1_COMP *const cpi,
-                                             const MACROBLOCK *const x,
-                                             BLOCK_SIZE plane_bsize, int plane,
-                                             int64_t sse, int num_samples,
-                                             int *rate, int64_t *dist) {
+static inline void model_rd_with_curvfit(const AV1_COMP *const cpi,
+                                         const MACROBLOCK *const x,
+                                         BLOCK_SIZE plane_bsize, int plane,
+                                         int64_t sse, int num_samples,
+                                         int *rate, int64_t *dist) {
   (void)cpi;
   (void)plane_bsize;
   const MACROBLOCKD *const xd = &x->e_mbd;
@@ -155,11 +155,13 @@ static AOM_INLINE void model_rd_with_curvfit(const AV1_COMP *const cpi,
   if (dist) *dist = dist_i;
 }
 
-static AOM_INLINE void model_rd_for_sb(
-    const AV1_COMP *const cpi, BLOCK_SIZE bsize, MACROBLOCK *x, MACROBLOCKD *xd,
-    int plane_from, int plane_to, int *out_rate_sum, int64_t *out_dist_sum,
-    uint8_t *skip_txfm_sb, int64_t *skip_sse_sb, int *plane_rate,
-    int64_t *plane_sse, int64_t *plane_dist) {
+static inline void model_rd_for_sb(const AV1_COMP *const cpi, BLOCK_SIZE bsize,
+                                   MACROBLOCK *x, MACROBLOCKD *xd,
+                                   int plane_from, int plane_to,
+                                   int *out_rate_sum, int64_t *out_dist_sum,
+                                   uint8_t *skip_txfm_sb, int64_t *skip_sse_sb,
+                                   int *plane_rate, int64_t *plane_sse,
+                                   int64_t *plane_dist) {
   // Note our transform coeffs are 8 times an orthogonal transform.
   // Hence quantizer step is also 8 times. To get effective quantizer
   // we need to divide by 8 before sending to modeling function.
@@ -207,7 +209,7 @@ static AOM_INLINE void model_rd_for_sb(
   *out_dist_sum = dist_sum;
 }
 
-static AOM_INLINE void model_rd_for_sb_with_curvfit(
+static inline void model_rd_for_sb_with_curvfit(
     const AV1_COMP *const cpi, BLOCK_SIZE bsize, MACROBLOCK *x, MACROBLOCKD *xd,
     int plane_from, int plane_to, int *out_rate_sum, int64_t *out_dist_sum,
     uint8_t *skip_txfm_sb, int64_t *skip_sse_sb, int *plane_rate,

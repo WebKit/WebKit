@@ -27,19 +27,25 @@
 #include "PlatformMediaSession.h"
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+
 #include "HTMLMediaElement.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
 #include "NowPlayingInfo.h"
 #include "PlatformMediaSessionManager.h"
 #include <wtf/MediaTime.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformMediaSession);
+
 String convertEnumerationToString(PlatformMediaSession::State state)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 5> values {
         MAKE_STATIC_STRING_IMPL("Idle"),
         MAKE_STATIC_STRING_IMPL("Autoplaying"),
         MAKE_STATIC_STRING_IMPL("Playing"),
@@ -57,7 +63,7 @@ String convertEnumerationToString(PlatformMediaSession::State state)
 
 String convertEnumerationToString(PlatformMediaSession::InterruptionType type)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 8> values {
         MAKE_STATIC_STRING_IMPL("NoInterruption"),
         MAKE_STATIC_STRING_IMPL("SystemSleep"),
         MAKE_STATIC_STRING_IMPL("EnteringBackground"),
@@ -79,9 +85,28 @@ String convertEnumerationToString(PlatformMediaSession::InterruptionType type)
     return values[static_cast<size_t>(type)];
 }
 
+String convertEnumerationToString(PlatformMediaSession::MediaType mediaType)
+{
+    static const std::array<NeverDestroyed<String>, 5> values {
+        MAKE_STATIC_STRING_IMPL("None"),
+        MAKE_STATIC_STRING_IMPL("Video"),
+        MAKE_STATIC_STRING_IMPL("VideoAudio"),
+        MAKE_STATIC_STRING_IMPL("Audio"),
+        MAKE_STATIC_STRING_IMPL("WebAudio"),
+    };
+    static_assert(!static_cast<size_t>(PlatformMediaSession::MediaType::None), "PlatformMediaSession::MediaType::None is not 0 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::MediaType::Video) == 1, "PlatformMediaSession::MediaType::Video is not 1 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::MediaType::VideoAudio) == 2, "PlatformMediaSession::MediaType::VideoAudio is not 2 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::MediaType::Audio) == 3, "PlatformMediaSession::MediaType::Audio is not 3 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::MediaType::WebAudio) == 4, "PlatformMediaSession::MediaType::WebAudio is not 4 as expected");
+
+    ASSERT(static_cast<size_t>(mediaType) < std::size(values));
+    return values[static_cast<size_t>(mediaType)];
+}
+
 String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType command)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 16> values {
         MAKE_STATIC_STRING_IMPL("NoCommand"),
         MAKE_STATIC_STRING_IMPL("PlayCommand"),
         MAKE_STATIC_STRING_IMPL("PauseCommand"),
@@ -128,10 +153,6 @@ std::unique_ptr<PlatformMediaSession> PlatformMediaSession::create(PlatformMedia
 PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionManager&, PlatformMediaSessionClient& client)
     : m_client(client)
     , m_mediaSessionIdentifier(MediaSessionIdentifier::generate())
-#if !RELEASE_LOG_DISABLED
-    , m_logger(client.logger())
-    , m_logIdentifier(uniqueLogIdentifier())
-#endif
 {
 }
 
@@ -147,9 +168,9 @@ void PlatformMediaSession::setActive(bool active)
     m_active = active;
 
     if (m_active)
-        PlatformMediaSessionManager::sharedManager().addSession(*this);
+        PlatformMediaSessionManager::singleton().addSession(*this);
     else
-        PlatformMediaSessionManager::sharedManager().removeSession(*this);
+        PlatformMediaSessionManager::singleton().removeSession(*this);
 }
 
 void PlatformMediaSession::setState(State state)
@@ -161,7 +182,17 @@ void PlatformMediaSession::setState(State state)
     m_state = state;
     if (m_state == State::Playing && canProduceAudio())
         m_hasPlayedAudiblySinceLastInterruption = true;
-    PlatformMediaSessionManager::sharedManager().sessionStateChanged(*this);
+    PlatformMediaSessionManager::singleton().sessionStateChanged(*this);
+}
+
+size_t PlatformMediaSession::activeInterruptionCount() const
+{
+    size_t count = 0;
+    for (auto& interruption : m_interruptionStack) {
+        if (!interruption.ignored)
+            count++;
+    }
+    return count;
 }
 
 PlatformMediaSession::InterruptionType PlatformMediaSession::interruptionType() const
@@ -169,23 +200,25 @@ PlatformMediaSession::InterruptionType PlatformMediaSession::interruptionType() 
     if (!m_interruptionStack.size())
         return InterruptionType::NoInterruption;
 
-    return m_interruptionStack.last();
+    return m_interruptionStack.last().type;
 }
 
 void PlatformMediaSession::beginInterruption(InterruptionType type)
 {
     ASSERT(type != InterruptionType::NoInterruption);
 
-    m_interruptionStack.append(type);
-    ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state, ", interruption count = ", interruptionCount(), ", type = ", type);
+    ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state, ", interruption count = ", m_interruptionStack.size(), ", type = ", type);
 
-    if (interruptionCount() > 1)
-        return;
-
-    if (client().shouldOverrideBackgroundPlaybackRestriction(type)) {
-        ALWAYS_LOG(LOGIDENTIFIER, "returning early because client says to override interruption");
+    if (activeInterruptionCount()) {
+        m_interruptionStack.append({ type, true });
         return;
     }
+    if (client().shouldOverrideBackgroundPlaybackRestriction(type)) {
+        ALWAYS_LOG(LOGIDENTIFIER, "returning early because client says to override interruption");
+        m_interruptionStack.append({ type, true });
+        return;
+    }
+    m_interruptionStack.append({ type, false });
 
     m_stateToRestore = state();
     m_notifyingClient = true;
@@ -196,15 +229,15 @@ void PlatformMediaSession::beginInterruption(InterruptionType type)
 
 void PlatformMediaSession::endInterruption(OptionSet<EndInterruptionFlags> flags)
 {
-    if (!interruptionCount()) {
+    if (m_interruptionStack.isEmpty()) {
         ALWAYS_LOG(LOGIDENTIFIER, "!! ignoring spurious interruption end !!");
         return;
     }
 
-    m_interruptionStack.removeLast();
-    ALWAYS_LOG(LOGIDENTIFIER, "flags = ", (int)flags.toRaw(), ", interruption count = ", interruptionCount(), ", type = ", interruptionType());
+    auto interruption = m_interruptionStack.takeLast();
+    ALWAYS_LOG(LOGIDENTIFIER, "flags = ", (int)flags.toRaw(), ", interruption count = ", m_interruptionStack.size(), " type = ", interruptionType());
 
-    if (interruptionCount())
+    if (activeInterruptionCount() || interruption.ignored)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, "restoring state ", m_stateToRestore);
@@ -244,7 +277,7 @@ bool PlatformMediaSession::clientWillBeginPlayback()
 
     SetForScope preparingToPlay(m_preparingToPlay, true);
 
-    if (!PlatformMediaSessionManager::sharedManager().sessionWillBeginPlayback(*this)) {
+    if (!PlatformMediaSessionManager::singleton().sessionWillBeginPlayback(*this)) {
         if (state() == State::Interrupted)
             m_stateToRestore = State::Playing;
         return false;
@@ -266,9 +299,9 @@ bool PlatformMediaSession::processClientWillPausePlayback(DelayCallingUpdateNowP
         ALWAYS_LOG(LOGIDENTIFIER, "      setting stateToRestore to \"Paused\"");
         return false;
     }
-    
+
     setState(State::Paused);
-    PlatformMediaSessionManager::sharedManager().sessionWillEndPlayback(*this, shouldDelayCallingUpdateNowPlaying);
+    PlatformMediaSessionManager::singleton().sessionWillEndPlayback(*this, shouldDelayCallingUpdateNowPlaying);
     return true;
 }
 
@@ -298,7 +331,7 @@ void PlatformMediaSession::stopSession()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_client.suspendPlayback();
-    PlatformMediaSessionManager::sharedManager().removeSession(*this);
+    PlatformMediaSessionManager::singleton().removeSession(*this);
 }
 
 PlatformMediaSession::MediaType PlatformMediaSession::mediaType() const
@@ -365,7 +398,7 @@ void PlatformMediaSession::isPlayingToWirelessPlaybackTargetChanged(bool isWirel
 
     m_isPlayingToWirelessPlaybackTarget = isWireless;
 
-    PlatformMediaSessionManager::sharedManager().sessionIsPlayingToWirelessPlaybackTargetChanged(*this);
+    PlatformMediaSessionManager::singleton().sessionIsPlayingToWirelessPlaybackTargetChanged(*this);
 }
 
 PlatformMediaSession::DisplayType PlatformMediaSession::displayType() const
@@ -375,7 +408,7 @@ PlatformMediaSession::DisplayType PlatformMediaSession::displayType() const
 
 bool PlatformMediaSession::blockedBySystemInterruption() const
 {
-    return interruptionCount() > 1 && interruptionType() == PlatformMediaSession::InterruptionType::SystemInterruption;
+    return activeInterruptionCount() && interruptionType() == PlatformMediaSession::InterruptionType::SystemInterruption;
 }
 
 bool PlatformMediaSession::activeAudioSessionRequired() const
@@ -399,12 +432,12 @@ bool PlatformMediaSession::hasMediaStreamSource() const
 
 void PlatformMediaSession::canProduceAudioChanged()
 {
-    PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
+    PlatformMediaSessionManager::singleton().sessionCanProduceAudioChanged();
 }
 
 void PlatformMediaSession::clientCharacteristicsChanged(bool positionChanged)
 {
-    PlatformMediaSessionManager::sharedManager().clientCharacteristicsChanged(*this, positionChanged);
+    PlatformMediaSessionManager::singleton().clientCharacteristicsChanged(*this, positionChanged);
 }
 
 static inline bool isPlayingAudio(PlatformMediaSession::MediaType mediaType)
@@ -452,10 +485,39 @@ WeakPtr<PlatformMediaSession> PlatformMediaSession::selectBestMediaSession(const
     return client().selectBestMediaSession(sessions, purpose);
 }
 
+void PlatformMediaSession::setActiveNowPlayingSession(bool isActiveNowPlayingSession)
+{
+    if (isActiveNowPlayingSession == m_isActiveNowPlayingSession)
+        return;
+
+    m_isActiveNowPlayingSession = isActiveNowPlayingSession;
+    client().isActiveNowPlayingSessionChanged();
+}
+
+ProcessID PlatformMediaSession::presentingApplicationPID() const
+{
+    return client().presentingApplicationPID();
+}
+
 #if !RELEASE_LOG_DISABLED
+const Logger& PlatformMediaSession::logger() const
+{
+    return client().logger();
+}
+
+uint64_t PlatformMediaSession::logIdentifier() const
+{
+    return client().logIdentifier();
+}
+
 WTFLogChannel& PlatformMediaSession::logChannel() const
 {
     return LogMedia;
+}
+
+String PlatformMediaSession::description() const
+{
+    return makeString(convertEnumerationToString(mediaType()), ", "_s, convertEnumerationToString(state()));
 }
 #endif
 
@@ -469,6 +531,6 @@ std::optional<NowPlayingInfo> PlatformMediaSessionClient::nowPlayingInfo() const
     return { };
 }
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)

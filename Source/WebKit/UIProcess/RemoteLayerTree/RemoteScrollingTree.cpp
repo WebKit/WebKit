@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "RemoteScrollingTree.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 
@@ -40,6 +41,9 @@
 #include <WebCore/ScrollingTreeStickyNodeCocoa.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollingTree);
+
 using namespace WebCore;
 
 RemoteScrollingTree::RemoteScrollingTree(RemoteScrollingCoordinatorProxy& scrollingCoordinator)
@@ -69,76 +73,83 @@ void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode&
 
     ScrollingTree::scrollingTreeNodeDidScroll(node, scrollingLayerPositionAction);
 
-    if (!m_scrollingCoordinatorProxy)
+    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
+    if (!scrollingCoordinatorProxy)
         return;
 
     std::optional<FloatPoint> layoutViewportOrigin;
     if (auto* scrollingNode = dynamicDowncast<ScrollingTreeFrameScrollingNode>(node))
         layoutViewportOrigin = scrollingNode->layoutViewport().location();
 
-    m_scrollingCoordinatorProxy->scrollingTreeNodeDidScroll(node.scrollingNodeID(), node.currentScrollPosition(), layoutViewportOrigin, scrollingLayerPositionAction);
+    auto scrollUpdate = ScrollUpdate { node.scrollingNodeID(), node.currentScrollPosition(), layoutViewportOrigin, ScrollUpdateType::PositionUpdate, scrollingLayerPositionAction };
+    addPendingScrollUpdate(WTFMove(scrollUpdate));
+
+    scrollingCoordinatorProxy->scrollingThreadAddedPendingUpdate();
 }
 
 void RemoteScrollingTree::scrollingTreeNodeDidStopAnimatedScroll(ScrollingTreeScrollingNode& node)
 {
     ASSERT(isMainRunLoop());
 
-    if (!m_scrollingCoordinatorProxy)
+    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
+    if (!scrollingCoordinatorProxy)
         return;
 
-    m_scrollingCoordinatorProxy->scrollingTreeNodeDidStopAnimatedScroll(node.scrollingNodeID());
+    scrollingCoordinatorProxy->scrollingTreeNodeDidStopAnimatedScroll(node.scrollingNodeID());
 }
 
 bool RemoteScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID, const RequestedScrollData& request)
 {
     ASSERT(isMainRunLoop());
 
-    if (!m_scrollingCoordinatorProxy)
+    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
+    if (!scrollingCoordinatorProxy)
         return false;
 
-    return m_scrollingCoordinatorProxy->scrollingTreeNodeRequestsScroll(nodeID, request);
+    return scrollingCoordinatorProxy->scrollingTreeNodeRequestsScroll(nodeID, request);
 }
 
 bool RemoteScrollingTree::scrollingTreeNodeRequestsKeyboardScroll(ScrollingNodeID nodeID, const RequestedKeyboardScrollData& request)
 {
     ASSERT(isMainRunLoop());
 
-    if (!m_scrollingCoordinatorProxy)
+    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
+    if (!scrollingCoordinatorProxy)
         return false;
 
-    return m_scrollingCoordinatorProxy->scrollingTreeNodeRequestsKeyboardScroll(nodeID, request);
+    return scrollingCoordinatorProxy->scrollingTreeNodeRequestsKeyboardScroll(nodeID, request);
 }
 
 void RemoteScrollingTree::scrollingTreeNodeWillStartScroll(ScrollingNodeID nodeID)
 {
-    if (m_scrollingCoordinatorProxy)
-        m_scrollingCoordinatorProxy->scrollingTreeNodeWillStartScroll(nodeID);
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
+        scrollingCoordinatorProxy->scrollingTreeNodeWillStartScroll(nodeID);
 }
 
 void RemoteScrollingTree::scrollingTreeNodeDidEndScroll(ScrollingNodeID nodeID)
 {
-    if (m_scrollingCoordinatorProxy)
-        m_scrollingCoordinatorProxy->scrollingTreeNodeDidEndScroll(nodeID);
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
+        scrollingCoordinatorProxy->scrollingTreeNodeDidEndScroll(nodeID);
 }
 
 void RemoteScrollingTree::clearNodesWithUserScrollInProgress()
 {
     ScrollingTree::clearNodesWithUserScrollInProgress();
 
-    if (m_scrollingCoordinatorProxy)
-        m_scrollingCoordinatorProxy->clearNodesWithUserScrollInProgress();
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
+        scrollingCoordinatorProxy->clearNodesWithUserScrollInProgress();
 }
 
 void RemoteScrollingTree::scrollingTreeNodeDidBeginScrollSnapping(ScrollingNodeID nodeID)
 {
-    if (m_scrollingCoordinatorProxy)
-        m_scrollingCoordinatorProxy->scrollingTreeNodeDidBeginScrollSnapping(nodeID);
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
+        scrollingCoordinatorProxy->scrollingTreeNodeDidBeginScrollSnapping(nodeID);
 }
 
 void RemoteScrollingTree::scrollingTreeNodeDidEndScrollSnapping(ScrollingNodeID nodeID)
 {
-    if (m_scrollingCoordinatorProxy)
-        m_scrollingCoordinatorProxy->scrollingTreeNodeDidEndScrollSnapping(nodeID);
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
+        scrollingCoordinatorProxy->scrollingTreeNodeDidEndScrollSnapping(nodeID);
 }
 
 Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
@@ -172,60 +183,66 @@ void RemoteScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nodeI
 {
     ASSERT(isMainRunLoop());
 
-    if (!m_scrollingCoordinatorProxy)
+    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
+    if (!scrollingCoordinatorProxy)
         return;
 
-    m_scrollingCoordinatorProxy->currentSnapPointIndicesDidChange(nodeID, horizontal, vertical);
+    scrollingCoordinatorProxy->currentSnapPointIndicesDidChange(nodeID, horizontal, vertical);
 }
 
 void RemoteScrollingTree::reportExposedUnfilledArea(MonotonicTime time, unsigned unfilledArea)
 {
     ASSERT(isMainRunLoop());
 
-    if (!m_scrollingCoordinatorProxy)
+    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
+    if (!scrollingCoordinatorProxy)
         return;
 
-    m_scrollingCoordinatorProxy->reportExposedUnfilledArea(time, unfilledArea);
+    scrollingCoordinatorProxy->reportExposedUnfilledArea(time, unfilledArea);
 }
 
 void RemoteScrollingTree::reportSynchronousScrollingReasonsChanged(MonotonicTime timestamp, OptionSet<SynchronousScrollingReason> reasons)
 {
     ASSERT(isMainRunLoop());
 
-    if (!m_scrollingCoordinatorProxy)
+    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
+    if (!scrollingCoordinatorProxy)
         return;
 
-    m_scrollingCoordinatorProxy->reportSynchronousScrollingReasonsChanged(timestamp, reasons);
+    scrollingCoordinatorProxy->reportSynchronousScrollingReasonsChanged(timestamp, reasons);
 }
 
 void RemoteScrollingTree::receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
 {
     ASSERT(isMainRunLoop());
 
-    if (!m_scrollingCoordinatorProxy)
+    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
+    if (!scrollingCoordinatorProxy)
         return;
 
-    m_scrollingCoordinatorProxy->receivedWheelEventWithPhases(phase, momentumPhase);
+    scrollingCoordinatorProxy->receivedWheelEventWithPhases(phase, momentumPhase);
 }
 
 void RemoteScrollingTree::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
 {
     ASSERT(isMainRunLoop());
 
-    if (!m_scrollingCoordinatorProxy || !isMonitoringWheelEvents())
+    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
+    if (!scrollingCoordinatorProxy || !isMonitoringWheelEvents())
         return;
 
-    m_scrollingCoordinatorProxy->deferWheelEventTestCompletionForReason(nodeID, reason);
+    scrollingCoordinatorProxy->deferWheelEventTestCompletionForReason(nodeID, reason);
 }
 
 void RemoteScrollingTree::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
 {
     ASSERT(isMainRunLoop());
 
-    if (!m_scrollingCoordinatorProxy || !isMonitoringWheelEvents())
+    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
+    if (!scrollingCoordinatorProxy || !isMonitoringWheelEvents())
         return;
 
-    m_scrollingCoordinatorProxy->removeWheelEventTestCompletionDeferralForReason(nodeID, reason);
+    scrollingCoordinatorProxy->removeWheelEventTestCompletionDeferralForReason(nodeID, reason);
 }
 
 void RemoteScrollingTree::propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>& synchronousScrollingNodes)

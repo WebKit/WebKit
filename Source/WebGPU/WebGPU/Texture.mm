@@ -34,8 +34,11 @@
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/MathExtras.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Texture);
 
 bool Texture::isCompressedFormat(WGPUTextureFormat format)
 {
@@ -2147,17 +2150,18 @@ NSUInteger Texture::bytesPerRow(WGPUTextureFormat format, uint32_t textureWidth,
     NSUInteger blockWidth = Texture::texelBlockWidth(format);
     if (!blockWidth) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return NSUIntegerMax;
     }
-    if (textureWidth % blockWidth) {
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    NSUInteger blocksInWidth = textureWidth / blockWidth;
-    return Texture::texelBlockSize(format) * blocksInWidth * sampleCount;
+    NSUInteger add = 0;
+    if (textureWidth % blockWidth)
+        add = 1;
+
+    NSUInteger blocksInWidth = textureWidth / blockWidth + add;
+    auto product = checkedProduct<NSUInteger>(Texture::texelBlockSize(format), blocksInWidth, sampleCount);
+    return product.hasOverflowed() ? NSUIntegerMax : product.value();
 }
 
-uint32_t Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
+Checked<uint32_t> Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
 {
     // For depth-stencil textures, the input value to this function
     // needs to be the output of aspectSpecificFormat().
@@ -2563,7 +2567,7 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createtexture
 
-    Vector viewFormats(std::span { descriptor.viewFormats, descriptor.viewFormatCount });
+    Vector viewFormats(descriptor.viewFormatsSpan());
 
     if (NSString *error = errorValidatingTextureCreation(descriptor, viewFormats)) {
         generateAValidationError(error);
@@ -2778,7 +2782,7 @@ uint32_t Texture::arrayLayerCount() const
 
 NSString* Texture::errorValidatingTextureViewCreation(const WGPUTextureViewDescriptor& descriptor) const
 {
-#define ERROR_STRING(x) (@"GPUTexture.createView: " x)
+#define ERROR_STRING(...) ([NSString stringWithFormat:@"GPUTexture.createView: %@", __VA_ARGS__])
     if (!isValid())
         return ERROR_STRING(@"texture is not valid");
 
@@ -2802,7 +2806,7 @@ NSString* Texture::errorValidatingTextureViewCreation(const WGPUTextureViewDescr
 
     auto endArrayLayer = checkedSum<uint32_t>(descriptor.baseArrayLayer, descriptor.arrayLayerCount);
     if (endArrayLayer.hasOverflowed() || endArrayLayer.value() > arrayLayerCount())
-        return ERROR_STRING(@"endArrayLayer is not valid");
+        return ERROR_STRING([NSString stringWithFormat:@"endArrayLayer(%u) is not valid. Base texture array count is %u", endArrayLayer.value(), arrayLayerCount()]);
 
     if (m_sampleCount > 1) {
         if (descriptor.dimension != WGPUTextureViewDimension_2D)
@@ -2894,33 +2898,35 @@ static MTLPixelFormat resolvedPixelFormat(MTLPixelFormat viewPixelFormat, MTLPix
 
 Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescriptor)
 {
+    auto device = m_device;
+
     if (inputDescriptor.nextInChain || m_destroyed)
-        return TextureView::createInvalid(*this, m_device);
+        return TextureView::createInvalid(*this, device.get());
 
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-createview
 
     auto descriptor = resolveTextureViewDescriptorDefaults(inputDescriptor);
     if (!descriptor) {
-        m_device->generateAValidationError("Validation failure in GPUTexture.createView: descriptor could not be resolved"_s);
-        return TextureView::createInvalid(*this, m_device);
+        device->generateAValidationError("Validation failure in GPUTexture.createView: descriptor could not be resolved"_s);
+        return TextureView::createInvalid(*this, device.get());
     }
 
     if (NSString *error = errorValidatingTextureViewCreation(*descriptor)) {
-        m_device->generateAValidationError(error);
-        return TextureView::createInvalid(*this, m_device);
+        device->generateAValidationError(error);
+        return TextureView::createInvalid(*this, device.get());
     }
 
     auto pixelFormat = Texture::pixelFormat(descriptor->format);
     if (pixelFormat == MTLPixelFormatInvalid) {
-        m_device->generateAValidationError("GPUTexture.createView: invalid texture format"_s);
-        return TextureView::createInvalid(*this, m_device);
+        device->generateAValidationError("GPUTexture.createView: invalid texture format"_s);
+        return TextureView::createInvalid(*this, device.get());
     }
 
     MTLTextureType textureType;
     switch (descriptor->dimension) {
     case WGPUTextureViewDimension_Undefined:
         ASSERT_NOT_REACHED();
-        return TextureView::createInvalid(*this, m_device);
+        return TextureView::createInvalid(*this, device.get());
     case WGPUTextureViewDimension_1D:
         if (descriptor->arrayLayerCount == 1)
             textureType = MTLTextureType1D;
@@ -2936,7 +2942,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     case WGPUTextureViewDimension_2DArray:
         if (m_sampleCount > 1) {
 #if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
-            return TextureView::createInvalid(*this, m_device);
+            return TextureView::createInvalid(*this, device.get());
 #else
             textureType = MTLTextureType2DMultisampleArray;
 #endif
@@ -2954,7 +2960,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
         break;
     case WGPUTextureViewDimension_Force32:
         ASSERT_NOT_REACHED();
-        return TextureView::createInvalid(*this, m_device);
+        return TextureView::createInvalid(*this, device.get());
     }
 
     auto levels = NSMakeRange(descriptor->baseMipLevel, descriptor->mipLevelCount);
@@ -2963,7 +2969,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
 
     id<MTLTexture> texture = [m_texture newTextureViewWithPixelFormat:resolvedPixelFormat(pixelFormat, m_texture.pixelFormat) textureType:textureType levels:levels slices:slices];
     if (!texture)
-        return TextureView::createInvalid(*this, m_device);
+        return TextureView::createInvalid(*this, device.get());
 
     texture.label = fromAPI(descriptor->label);
     if (!texture.label.length)
@@ -2973,15 +2979,15 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     if (m_usage & WGPUTextureUsage_RenderAttachment)
         renderExtent = computeRenderExtent({ m_width, m_height, m_depthOrArrayLayers }, descriptor->baseMipLevel);
 
-    auto result = TextureView::create(texture, *descriptor, renderExtent, *this, m_device);
+    auto result = TextureView::create(texture, *descriptor, renderExtent, *this, device.get());
     m_textureViews.append(result);
     return result;
 }
 
 void Texture::recreateIfNeeded()
 {
-    RELEASE_ASSERT(m_canvasBacking);
-    m_destroyed = false;
+    if (m_canvasBacking)
+        m_destroyed = false;
 }
 
 void Texture::makeCanvasBacking()
@@ -2989,15 +2995,19 @@ void Texture::makeCanvasBacking()
     m_canvasBacking = true;
 }
 
-void Texture::waitForCommandBufferCompletion()
+bool Texture::waitForCommandBufferCompletion()
 {
-    for (auto& commandEncoder : m_commandEncoders)
-        commandEncoder.waitForCommandBufferCompletion();
+    bool result = true;
+    for (Ref commandEncoder : m_commandEncoders)
+        result = commandEncoder->waitForCommandBufferCompletion() && result;
+
+    return result;
 }
 
 void Texture::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
-    m_commandEncoders.add(commandEncoder);
+    CommandEncoder::trackEncoder(commandEncoder, m_commandEncoders);
+    commandEncoder.addTexture(*this);
     if (!m_canvasBacking && isDestroyed())
         commandEncoder.makeSubmitInvalid();
 }
@@ -3203,24 +3213,21 @@ ASCIILiteral Texture::formatToString(WGPUTextureFormat format)
     }
 }
 
-bool Texture::isCanvasBacking() const
-{
-    return m_canvasBacking;
-}
-
 void Texture::destroy()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-destroy
     if (!m_canvasBacking)
-        m_texture = m_device->placeholderTexture(format());
+        m_texture = Ref { m_device }->placeholderTexture(format());
     m_destroyed = true;
-    for (auto& view : m_textureViews) {
-        if (view.get())
-            view->destroy();
+    if (!m_canvasBacking) {
+        for (auto& view : m_textureViews) {
+            if (view.get())
+                view->destroy();
+        }
     }
     if (!m_canvasBacking) {
-        for (auto& commandEncoder : m_commandEncoders)
-            commandEncoder.makeSubmitInvalid();
+        for (Ref commandEncoder : m_commandEncoders)
+            commandEncoder->makeSubmitInvalid();
     }
     m_commandEncoders.clear();
 
@@ -3266,6 +3273,9 @@ WGPUExtent3D Texture::physicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
 
 WGPUExtent3D Texture::physicalTextureExtent(WGPUTextureDimension dimension, WGPUTextureFormat format, WGPUExtent3D logicalExtent)
 {
+    ASSERT(texelBlockWidth(format));
+    ASSERT(texelBlockHeight(format));
+
     switch (dimension) {
     case WGPUTextureDimension_1D:
         return {
@@ -3292,18 +3302,18 @@ static WGPUExtent3D imageCopyTextureSubresourceSize(const WGPUImageCopyTexture& 
 {
     // https://gpuweb.github.io/gpuweb/#imagecopytexture-subresource-size
 
-    return fromAPI(imageCopyTexture.texture).physicalMiplevelSpecificTextureExtent(imageCopyTexture.mipLevel);
+    return protectedFromAPI(imageCopyTexture.texture)->physicalMiplevelSpecificTextureExtent(imageCopyTexture.mipLevel);
 }
 
 NSString* Texture::errorValidatingImageCopyTexture(const WGPUImageCopyTexture& imageCopyTexture, const WGPUExtent3D& copySize)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpuimagecopytexture
 
-    uint32_t blockWidth = Texture::texelBlockWidth(fromAPI(imageCopyTexture.texture).format());
+    uint32_t blockWidth = Texture::texelBlockWidth(protectedFromAPI(imageCopyTexture.texture)->format());
 
-    uint32_t blockHeight = Texture::texelBlockHeight(fromAPI(imageCopyTexture.texture).format());
+    uint32_t blockHeight = Texture::texelBlockHeight(protectedFromAPI(imageCopyTexture.texture)->format());
 
-    if (!fromAPI(imageCopyTexture.texture).isValid())
+    if (!protectedFromAPI(imageCopyTexture.texture)->isValid())
         return @"imageCopyTexture is not valid";
 
     if (imageCopyTexture.mipLevel >= fromAPI(imageCopyTexture.texture).mipLevelCount())
@@ -3315,8 +3325,8 @@ NSString* Texture::errorValidatingImageCopyTexture(const WGPUImageCopyTexture& i
     if (imageCopyTexture.origin.y % blockHeight)
         return @"imageCopyTexture.origin.y is not a multiple of the texture blockHeight";
 
-    if (Texture::isDepthOrStencilFormat(fromAPI(imageCopyTexture.texture).format())
-        || fromAPI(imageCopyTexture.texture).sampleCount() > 1) {
+    if (Texture::isDepthOrStencilFormat(protectedFromAPI(imageCopyTexture.texture)->format())
+        || protectedFromAPI(imageCopyTexture.texture)->sampleCount() > 1) {
         auto subresourceSize = imageCopyTextureSubresourceSize(imageCopyTexture);
         if (subresourceSize.width != copySize.width
             || (copySize.height > 1 && subresourceSize.height != copySize.height))
@@ -3587,9 +3597,9 @@ NSString* Texture::errorValidatingTextureCopyRange(const WGPUImageCopyTexture& i
 {
     // https://gpuweb.github.io/gpuweb/#validating-texture-copy-range
 
-    auto blockWidth = Texture::texelBlockWidth(fromAPI(imageCopyTexture.texture).format());
+    auto blockWidth = Texture::texelBlockWidth(protectedFromAPI(imageCopyTexture.texture)->format());
 
-    auto blockHeight = Texture::texelBlockHeight(fromAPI(imageCopyTexture.texture).format());
+    auto blockHeight = Texture::texelBlockHeight(protectedFromAPI(imageCopyTexture.texture)->format());
 
     auto subresourceSize = imageCopyTextureSubresourceSize(imageCopyTexture);
 
@@ -3709,9 +3719,20 @@ void Texture::setPreviouslyCleared(uint32_t mipLevel, uint32_t slice, bool setCl
     m_clearedToZero.add(mipLevel, set);
 }
 
-bool Texture::isDestroyed() const
+id<MTLSharedEvent> Texture::sharedEvent() const
 {
-    return m_destroyed;
+    return m_sharedEvent;
+}
+
+uint64_t Texture::sharedEventSignalValue() const
+{
+    return m_sharedEventSignalValue;
+}
+
+void Texture::updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t>& completionEvent)
+{
+    m_sharedEvent = completionEvent.first;
+    m_sharedEventSignalValue = completionEvent.second;
 }
 
 } // namespace WebGPU
@@ -3730,55 +3751,60 @@ void wgpuTextureRelease(WGPUTexture texture)
 
 WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureViewDescriptor* descriptor)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(texture).createView(*descriptor));
+    return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(texture)->createView(*descriptor));
 }
 
 void wgpuTextureDestroy(WGPUTexture texture)
 {
-    WebGPU::fromAPI(texture).destroy();
+    WebGPU::protectedFromAPI(texture)->destroy();
+}
+
+void wgpuTextureUndestroy(WGPUTexture texture)
+{
+    WebGPU::fromAPI(texture).recreateIfNeeded();
 }
 
 void wgpuTextureSetLabel(WGPUTexture texture, const char* label)
 {
-    WebGPU::fromAPI(texture).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(texture)->setLabel(WebGPU::fromAPI(label));
 }
 
 uint32_t wgpuTextureGetDepthOrArrayLayers(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).depthOrArrayLayers();
+    return WebGPU::protectedFromAPI(texture)->depthOrArrayLayers();
 }
 
 WGPUTextureDimension wgpuTextureGetDimension(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).dimension();
+    return WebGPU::protectedFromAPI(texture)->dimension();
 }
 
 WGPUTextureFormat wgpuTextureGetFormat(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).format();
+    return WebGPU::protectedFromAPI(texture)->format();
 }
 
 uint32_t wgpuTextureGetHeight(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).height();
+    return WebGPU::protectedFromAPI(texture)->height();
 }
 
 uint32_t wgpuTextureGetWidth(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).width();
+    return WebGPU::protectedFromAPI(texture)->width();
 }
 
 uint32_t wgpuTextureGetMipLevelCount(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).mipLevelCount();
+    return WebGPU::protectedFromAPI(texture)->mipLevelCount();
 }
 
 uint32_t wgpuTextureGetSampleCount(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).sampleCount();
+    return WebGPU::protectedFromAPI(texture)->sampleCount();
 }
 
 WGPUTextureUsageFlags wgpuTextureGetUsage(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).usage();
+    return WebGPU::protectedFromAPI(texture)->usage();
 }

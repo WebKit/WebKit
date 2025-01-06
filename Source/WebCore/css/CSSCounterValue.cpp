@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,12 +29,13 @@
 #include "CSSMarkup.h"
 #include "CSSPrimitiveValue.h"
 #include <wtf/PointerComparison.h> 
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 CSSCounterValue::CSSCounterValue(AtomString identifier, AtomString separator, RefPtr<CSSValue> counterStyle)
-    : CSSValue(CounterClass)
+    : CSSValue(ClassType::Counter)
     , m_identifier(WTFMove(identifier))
     , m_separator(WTFMove(separator))
     , m_counterStyle(WTFMove(counterStyle))

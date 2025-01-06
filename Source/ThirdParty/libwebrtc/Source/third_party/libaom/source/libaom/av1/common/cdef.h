@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -56,9 +56,9 @@ typedef struct {
   int roffset;    /*!< current row offset */
 } CdefBlockInfo;
 
-static INLINE int sign(int i) { return i < 0 ? -1 : 1; }
+static inline int sign(int i) { return i < 0 ? -1 : 1; }
 
-static INLINE int constrain(int diff, int threshold, int damping) {
+static inline int constrain(int diff, int threshold, int damping) {
   if (!threshold) return 0;
 
   const int shift = AOMMAX(0, damping - get_msb(threshold));

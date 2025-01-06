@@ -33,7 +33,8 @@ class CallFrame;
 namespace WebCore {
 
 class HTMLFrameElementBase : public HTMLFrameOwnerElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLFrameElementBase);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLFrameElementBase);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLFrameElementBase);
 public:
     void setLocation(JSC::JSGlobalObject&, const String&);
 

@@ -192,20 +192,6 @@ class SCMTest(unittest.TestCase):
         super(SCMTest, self).__init__(*args, **kwargs)
         self.scm = None
 
-    def assertRegex(self, *args, **kwargs):
-        try:
-            return super(SCMTest, self).assertRegex(*args, **kwargs)
-        except AttributeError:
-            # Python 2
-            return self.assertRegexpMatches(*args, **kwargs)
-
-    def assertNotRegex(self, *args, **kwargs):
-        try:
-            return super(SCMTest, self).assertNotRegex(*args, **kwargs)
-        except AttributeError:
-            # Python 2
-            return self.assertNotRegexpMatches(*args, **kwargs)
-
     def _create_patch(self, patch_contents):
         # FIXME: This code is brittle if the Attachment API changes.
         attachment = Attachment({"bug_id": 12345}, None)

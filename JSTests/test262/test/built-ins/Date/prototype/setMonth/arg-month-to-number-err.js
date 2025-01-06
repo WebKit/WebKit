@@ -11,7 +11,7 @@ info: |
      ? ToNumber(month).
 ---*/
 
-var date = new Date();
+var date = new Date(0);
 var callCount = 0;
 var originalValue = date.getTime();
 var obj = {

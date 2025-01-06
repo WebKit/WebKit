@@ -175,6 +175,9 @@
 /* Allow button title in speech recognition prompt */
 "Allow (speechrecognition)" = "Allow";
 
+/* Allow displaying QuickLook Preview of 3D model */
+"Allow (usdz QuickLook Preview)" = "Allow";
+
 /* Allow button title in user media prompt */
 "Allow (usermedia)" = "Allow";
 
@@ -286,11 +289,11 @@
 /* Button title in Device Orientation Permission API prompt */
 "Cancel (device motion and orientation access)" = "Cancel";
 
+/* Cancel displaying QuickLook Preview of 3D model */
+"Cancel (usdz QuickLook Preview)" = "Cancel";
+
 /* Title for Cancel button label in button bar */
 "Cancel button label in button bar" = "Cancel";
-
-/* Cancel USDZ file */
-"Cancel (usdz QuickLook Preview)" = "Cancel";
 
 /* Capitalize context menu item */
 "Capitalize" = "Capitalize";
@@ -391,8 +394,8 @@
 /* Title for Copy Link button */
 "Copy Link (ActionSheet)" = "Copy Link";
 
-/* Copy link to highlight context menu item */
-"Copy Link to Highlight" = "Copy Link to Highlight";
+/* Copy link with highlight context menu item */
+"Copy Link with Highlight" = "Copy Link with Highlight";
 
 /* Title for Copy Subject */
 "Copy Subject" = "Copy Subject";
@@ -438,9 +441,6 @@
 
 /* Undo action name */
 "Dictation (Undo action name)" = "Dictation";
-
-/* Display USDZ file */
-"Allow (usdz QuickLook Preview)" = "Allow";
 
 /* Message for requesting cross-site cookie and website data access. */
 "Do you want to allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
@@ -496,11 +496,8 @@
 /* Display name for easy reader (i.e. 3rd-grade level) text tracks. */
 "Easy Reader (text track)" = "Easy Reader";
 
-/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty JSON path */
-"Empty `declarative_net_request` JSON path." = "Empty `declarative_net_request` JSON path.";
-
-/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty ruleset id */
-"Empty `declarative_net_request` ruleset id." = "Empty `declarative_net_request` ruleset id.";
+/* Fallback label text for unlabeled email address field. */
+"Email address" = "Email address";
 
 /* WKWebExtensionErrorInvalidManifestEntry description for background */
 "Empty or invalid `background` manifest entry." = "Empty or invalid `background` manifest entry.";
@@ -523,11 +520,26 @@
 /* WKWebExtensionErrorInvalidManifestEntry description for default_icon in browser_action or page_action */
 "Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry." = "Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry.";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for default_locale */
+"Empty or invalid `default_locale` manifest entry." = "Empty or invalid `default_locale` manifest entry.";
+
 /* WKWebExtensionErrorInvalidManifestEntry description for invalid command description */
 "Empty or invalid `description` in the `commands` manifest entry." = "Empty or invalid `description` in the `commands` manifest entry.";
 
 /* WKWebExtensionErrorInvalidManifestEntry description for externally_connectable */
 "Empty or invalid `externally_connectable` manifest entry." = "Empty or invalid `externally_connectable` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for icon_variants in action only */
+"Empty or invalid `icon_variants` for the `action` manifest entry." = "Empty or invalid `icon_variants` for the `action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for icon_variants in browser_action or page_action */
+"Empty or invalid `icon_variants` for the `browser_action` or `page_action` manifest entry." = "Empty or invalid `icon_variants` for the `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for icon_variants */
+"Empty or invalid `icon_variants` manifest entry." = "Empty or invalid `icon_variants` manifest entry.";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty or invalid id in declarative_net_request manifest entry */
+"Empty or invalid `id` in `declarative_net_request` manifest entry." = "Empty or invalid `id` in `declarative_net_request` manifest entry.";
 
 /* WKWebExtensionErrorInvalidManifestEntry description for invalid new tab entry */
 "Empty or invalid `newtab` manifest entry." = "Empty or invalid `newtab` manifest entry.";
@@ -537,6 +549,9 @@
 
 /* WKWebExtensionErrorInvalidManifestEntry description for options UI */
 "Empty or invalid `options_ui` manifest entry" = "Empty or invalid `options_ui` manifest entry";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty or invalid path in declarative_net_request manifest entry */
+"Empty or invalid `path` in `declarative_net_request` manifest entry." = "Empty or invalid `path` in `declarative_net_request` manifest entry.";
 
 /* WKWebExtensionErrorInvalidManifestEntry description for invalid command */
 "Empty or invalid command in the `commands` manifest entry." = "Empty or invalid command in the `commands` manifest entry.";
@@ -550,6 +565,9 @@
 /* menu item */
 "Enter Picture in Picture" = "Enter Picture in Picture";
 
+/* Enter Video Viewer context menu item */
+"Enter Viewer" = "Enter Viewer";
+
 /* Validation message for input form controls of type 'url' that have an invalid value */
 "Enter a URL" = "Enter a URL";
 
@@ -562,13 +580,16 @@
 /* Validation message for input form controls of type 'email' that have an invalid value */
 "Enter an email address" = "Enter an email address";
 
+/* Fallback label text for unlabeled text field. */
+"Enter text" = "Enter text";
+
 /* Custom protocol synchronous load failure description */
 "Error handling synchronous load with custom protocol" = "Error handling synchronous load with custom protocol";
 
-/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many rulesets */
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many rulesets */
 "Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets." = "Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets.";
 
-/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets */
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets */
 "Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored." = "Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored.";
 
 /* Button for exiting full screen when in full screen media playback */
@@ -582,6 +603,9 @@
 
 /* menu item */
 "Exit Picture in Picture" = "Exit Picture in Picture";
+
+/* Exit Video Viewer context menu item */
+"Exit Viewer" = "Exit Viewer";
 
 /* Codec Strings */
 "Extended Profile (AVC Codec Profile)" = "Extended Profile";
@@ -603,6 +627,12 @@
 
 /* WKWebExtensionErrorInvalidActionIcon description for failing to load images for browser_action or page_action */
 "Failed to load images in `default_icon` for the `browser_action` or `page_action` manifest entry." = "Failed to load images in `default_icon` for the `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidActionIcon description for failing to load image variants for action */
+"Failed to load images in `icon_variants` for the `action` manifest entry." = "Failed to load images in `icon_variants` for the `action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidIcon description for failing to load image variants */
+"Failed to load images in `icon_variants` manifest entry." = "Failed to load images in `icon_variants` manifest entry.";
 
 /* WKWebExtensionErrorInvalidIcon description for failing to load images */
 "Failed to load images in `icons` manifest entry." = "Failed to load images in `icons` manifest entry.";
@@ -700,6 +730,9 @@
 /* Codec Strings */
 "High Tier (HEVC Codec Tier" = "High Tier";
 
+/* WKWebExtensionMatchPatternErrorInvalidHost description for invalid or missing host */
+"Host \"%s\" is invalid." = "Host \"%s\" is invalid.";
+
 /* Phishing warning description */
 "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%." = "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%.";
 
@@ -742,11 +775,17 @@
 /* WKWebExtensionErrorInvalidBackgroundPersistence description for iOS */
 "Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS." = "Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS.";
 
+/* WKWebExtensionErrorInvalidBackgroundPersistence description for visionOS */
+"Invalid `persistent` manifest entry. A non-persistent background is required on visionOS." = "Invalid `persistent` manifest entry. A non-persistent background is required on visionOS.";
+
 /* WKWebExtensionErrorInvalidManifestEntry description for invalid command shortcut */
 "Invalid `suggested_key` in the `commands` manifest entry." = "Invalid `suggested_key` in the `commands` manifest entry.";
 
 /* WKWebExtensionErrorInvalidManifestEntry description for web_accessible_resources */
 "Invalid `web_accessible_resources` manifest entry." = "Invalid `web_accessible_resources` manifest entry.";
+
+/* WKWebExtensionErrorInvalidArchive description */
+"Invalid or corrupt extension archive." = "Invalid or corrupt extension archive.";
 
 /* Validation message for input form controls with a value not matching type */
 "Invalid value" = "Invalid value";
@@ -976,7 +1015,7 @@
 /* WKWebExtensionErrorInvalidContentScripts description for unknown 'world' value */
 "Manifest `content_scripts` entry has unknown `world` value." = "Manifest `content_scripts` entry has unknown `world` value.";
 
-/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing declarativeNetRequest permission */
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing declarativeNetRequest permission */
 "Manifest has no `declarativeNetRequest` permission." = "Manifest has no `declarativeNetRequest` permission.";
 
 /* Validation message for input form controls requiring a constrained value according to pattern */
@@ -1020,6 +1059,9 @@
 
 /* WKWebExtensionErrorInvalidManifestEntry description for version */
 "Missing or empty `version` manifest entry." = "Missing or empty `version` manifest entry.";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing enabled boolean */
+"Missing or invalid `enabled` boolean for the `declarative_net_request` manifest entry." = "Missing or invalid `enabled` boolean for the `declarative_net_request` manifest entry.";
 
 /* Media Mute context menu item */
 "Mute" = "Mute";
@@ -1096,6 +1138,9 @@
 /* Title for Open in External Application Link action button */
 "Open in “%@”" = "Open in “%@”";
 
+/* Open this 3D model? */
+"Open this 3D model?" = "Open this 3D model?";
+
 /* context menu item for PDF */
 "Open with %@" = "Open with %@";
 
@@ -1120,6 +1165,9 @@
 /* Paragraph direction context sub-menu item */
 "Paragraph Direction" = "Paragraph Direction";
 
+/* Fallback label text for unlabeled password field. */
+"Password" = "Password";
+
 /* Paste context menu item */
 "Paste" = "Paste";
 
@@ -1132,6 +1180,9 @@
 /* Undo action name */
 "Paste Ruler (Undo action name)" = "Paste Ruler";
 
+/* WKWebExtensionMatchPatternErrorInvalidPath description for missing path */
+"Path \"%s\" is invalid." = "Path \"%s\" is invalid.";
+
 /* Media Pause context menu item */
 "Pause" = "Pause";
 
@@ -1140,6 +1191,9 @@
 
 /* Title for pause animation action button or context menu item */
 "Pause Animation" = "Pause Animation";
+
+/* Fallback label text for unlabeled telephone number input field. */
+"Phone number" = "Phone number";
 
 /* File Upload alert sheet button string for choosing an existing media item from the Photo Library */
 "Photo Library (file upload action sheet)" = "Photo Library";
@@ -1240,6 +1294,9 @@
 /* Title for Save to Photos action button */
 "Save to Photos" = "Save to Photos";
 
+/* WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme */
+"Scheme \"%s\" is invalid." = "Scheme \"%s\" is invalid.";
+
 /* Title of the Search button for zoomed form controls. */
 "Search" = "Search";
 
@@ -1285,9 +1342,6 @@
 /* Label for the set up with Apple Pay button. */
 "Set up with Apple Pay" = "Set up with Apple Pay";
 
-/* Title for Share context menu item. */
-"Share" = "Share";
-
 /* Default name for the file created for a shared image with no explicit name. */
 "Shared Image" = "Shared Image";
 
@@ -1317,9 +1371,6 @@
 
 /* Title for Show Text action button */
 "Show Text" = "Show Text";
-
-/* Open 3D object in a new window? */
-"Open this 3D model?" = "Open this 3D model?";
 
 /* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
 "Show in blocked plug-in" = "Show in blocked plug-in";
@@ -1417,9 +1468,6 @@
 /* Label for the support with Apple Pay button. */
 "Support with Apple Pay" = "Support with Apple Pay";
 
-/* Swap characters context menu item */
-"Swap characters" = "Swap characters";
-
 /* File Upload alert sheet camera button string for taking only photos */
 "Take Photo (file upload action sheet)" = "Take Photo";
 
@@ -1480,6 +1528,9 @@
 /* prompt string in authentication panel */
 "The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again." = "The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again.";
 
+/* Not Secure Connection warning page title */
+"This Connection Is Not Secure" = "This Connection Is Not Secure";
+
 /* WKErrorDuplicateCredential description */
 "This credential is already present" = "This credential is already present";
 
@@ -1491,6 +1542,9 @@
 
 /* text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index' */
 "This is a searchable index. Enter search keywords: " = "This is a searchable index. Enter search keywords: ";
+
+/* Not Secure Connection warning text */
+"This website does not support connecting securely over HTTPS. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people." = "This website does not support connecting securely over HTTPS. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people.";
 
 /* Malware warning */
 "This website may attempt to install dangerous software, which could harm your computer or steal your personal or financial information, like passwords, photos, or credit cards." = "This website may attempt to install dangerous software, which could harm your computer or steal your personal or financial information, like passwords, photos, or credit cards.";
@@ -1561,6 +1615,9 @@
 /* Full Screen Deceptive Website Warning Sheet Content Text */
 "Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information." = "Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information.";
 
+/* Fallback label text for unlabeled URL input field. */
+"URL" = "URL";
+
 /* accessibility role description for a URL field. */
 "URL field" = "URL field";
 
@@ -1570,17 +1627,20 @@
 /* WKWebExtensionErrorResourceNotFound description with invalid file path */
 "Unable to find \"%@\" in the extension’s resources. It is an invalid path." = "Unable to find \"%@\" in the extension’s resources. It is an invalid path.";
 
+/* Error description for missing default_locale */
+"Unable to find `default_locale` in “_locales” folder." = "Unable to find `default_locale` in “_locales” folder.";
+
 /* WKWebExtensionErrorInvalidDeclarativeNetRequest description */
 "Unable to parse `declarativeNetRequest` rules because of an unexpected error." = "Unable to parse `declarativeNetRequest` rules because of an unexpected error.";
 
 /* WKWebExtensionErrorInvalidDeclarativeNetRequest description, because of a JSON error */
-"Unable to parse `declarativeNetRequest` rules: %@" = "Unable to parse `declarativeNetRequest` rules: %@";
+"Unable to parse `declarativeNetRequest` rules: %s" = "Unable to parse `declarativeNetRequest` rules: %s";
 
 /* WKWebExtensionErrorInvalidManifest description */
 "Unable to parse manifest because of an unexpected format." = "Unable to parse manifest because of an unexpected format.";
 
 /* WKWebExtensionErrorInvalidManifest description, because of a JSON error */
-"Unable to parse manifest: %@" = "Unable to parse manifest: %@";
+"Unable to parse manifest: %s" = "Unable to parse manifest: %s";
 
 /* WKWebExtensionErrorInvalidResourceCodeSignature description with file name */
 "Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built." = "Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.";
@@ -1657,6 +1717,12 @@
 /* Validation message for input form controls with value higher than allowed maximum */
 "Value must be less than or equal to %s" = "Value must be less than or equal to %s";
 
+/* Title for View Spatial action button while in fullscreen */
+"View Spatial" = "View Spatial";
+
+/* Title for View Spatial Photo action button */
+"View Spatial Photo" = "View Spatial Photo";
+
 /* Codec Strings */
 "Vorbis Codec String" = "Vorbis";
 
@@ -1681,6 +1747,12 @@
 /* Unwanted software warning title */
 "Website With Harmful Software Warning" = "Website With Harmful Software Warning";
 
+/* Week of year input type label with week number and year */
+"Week %1$d, %2$d" = "Week %1$d, %2$d";
+
+/* Writing Tools context menu item */
+"Writing Tools" = "Writing Tools";
+
 /* Year label in date picker */
 "YEAR (Date picker for extra zoom mode)" = "YEAR";
 
@@ -1696,8 +1768,23 @@
 /* Zoom Out context menu item */
 "Zoom Out" = "Zoom Out";
 
-/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for duplicate ruleset id */
-"`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique." = "`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique.";
+/* WKWebExtensionMatchPatternErrorInvalidHost description for missing host in the pattern */
+"\"%s\" cannot be parsed because it doesn't have a host." = "\"%s\" cannot be parsed because it doesn't have a host.";
+
+/* WKWebExtensionMatchPatternErrorInvalidPath description for missing path in the pattern */
+"\"%s\" cannot be parsed because it doesn't have a path." = "\"%s\" cannot be parsed because it doesn't have a path.";
+
+/* WKWebExtensionMatchPatternErrorInvalidScheme description for missing scheme in the pattern */
+"\"%s\" cannot be parsed because it doesn't have a scheme." = "\"%s\" cannot be parsed because it doesn't have a scheme.";
+
+/* WKWebExtensionMatchPatternErrorInvalidHost description for invalid host in the pattern */
+"\"%s\" cannot be parsed because the host \"%s\" is invalid." = "\"%s\" cannot be parsed because the host \"%s\" is invalid.";
+
+/* WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme in the pattern */
+"\"%s\" cannot be parsed because the scheme \"%s\" is invalid." = "\"%s\" cannot be parsed because the scheme \"%s\" is invalid.";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for duplicate ruleset id */
+"`declarative_net_request` ruleset with id \"%s\" is invalid. Ruleset id must be unique." = "`declarative_net_request` ruleset with id \"%s\" is invalid. Ruleset id must be unique.";
 
 /* Verb stating the action that will occur when a text field is selected, as used by accessibility */
 "activate" = "activate";
@@ -1812,6 +1899,9 @@
 
 /* accessibility role description for a footer */
 "footer" = "footer";
+
+/* Web Push Notification string to indicate the name of the Web App/Web Site a notification was sent from, such as 'from Wikipedia' */
+"from %@" = "from %@";
 
 /* accessibility role description for headings */
 "heading" = "heading";
@@ -2071,3 +2161,5 @@
 /* Option in segmented control for choosing list type in text editing */
 "•" = "•";
 
+/* Description HTML for frame unloaded by ResourceMonitor */
+"This frame is hidden for using too many system resources." = "This frame is hidden for using too many system resources.";

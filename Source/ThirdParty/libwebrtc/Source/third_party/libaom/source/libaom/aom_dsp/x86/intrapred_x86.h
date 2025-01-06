@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,7 +16,7 @@
 #include "aom/aom_integer.h"
 #include "config/aom_config.h"
 
-static INLINE __m128i dc_sum_16_sse2(const uint8_t *ref) {
+static inline __m128i dc_sum_16_sse2(const uint8_t *ref) {
   __m128i x = _mm_load_si128((__m128i const *)ref);
   const __m128i zero = _mm_setzero_si128();
   x = _mm_sad_epu8(x, zero);
@@ -24,7 +24,7 @@ static INLINE __m128i dc_sum_16_sse2(const uint8_t *ref) {
   return _mm_add_epi16(x, high);
 }
 
-static INLINE __m128i dc_sum_32_sse2(const uint8_t *ref) {
+static inline __m128i dc_sum_32_sse2(const uint8_t *ref) {
   __m128i x0 = _mm_load_si128((__m128i const *)ref);
   __m128i x1 = _mm_load_si128((__m128i const *)(ref + 16));
   const __m128i zero = _mm_setzero_si128();

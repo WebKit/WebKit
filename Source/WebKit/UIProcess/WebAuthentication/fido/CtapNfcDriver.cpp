@@ -28,13 +28,20 @@
 
 #if ENABLE(WEB_AUTHN) && HAVE(NEAR_FIELD)
 
+#include "Logging.h"
 #include <WebCore/ApduCommand.h>
 #include <WebCore/ApduResponse.h>
+#include <wtf/Assertions.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
 using namespace apdu;
 using namespace fido;
+
+Ref<CtapNfcDriver> CtapNfcDriver::create(Ref<NfcConnection>&& connection)
+{
+    return adoptRef(*new CtapNfcDriver(WTFMove(connection)));
+}
 
 CtapNfcDriver::CtapNfcDriver(Ref<NfcConnection>&& connection)
     : CtapDriver(WebCore::AuthenticatorTransport::Nfc)
@@ -47,7 +54,9 @@ void CtapNfcDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback
 {
     // For CTAP2, commands follow:
     // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#nfc-command-framing
-    if (protocol() == ProtocolVersion::kCtap) {
+    if (isCtap2Protocol()) {
+        if (!isValidSize(data.size()))
+            RELEASE_LOG(WebAuthn, "CtapNfcDriver::transact Sending data larger than maxSize. msgSize=%ld", data.size());
         ApduCommand command;
         command.setCla(kCtapNfcApduCla);
         command.setIns(kCtapNfcApduIns);
@@ -73,6 +82,7 @@ void CtapNfcDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback
         respondAsync(WTFMove(callback), WTFMove(apduResponse->data()));
         return;
     }
+
 
     // For U2F, U2fAuthenticator would handle the APDU encoding.
     // https://fidoalliance.org/specs/fido-u2f-v1.2-ps-20170411/fido-u2f-nfc-protocol-v1.2-ps-20170411.html#framing

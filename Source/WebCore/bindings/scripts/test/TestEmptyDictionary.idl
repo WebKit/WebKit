@@ -28,5 +28,6 @@
 
 [
     JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary TestEmptyDictionary {
 };

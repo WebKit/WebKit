@@ -30,8 +30,11 @@
 
 #include "RemoteExternalTextureMessages.h"
 #include "WebGPUConvertToBackingContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteExternalTextureProxy);
 
 RemoteExternalTextureProxy::RemoteExternalTextureProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
@@ -62,6 +65,11 @@ void RemoteExternalTextureProxy::undestroy()
 {
     auto sendResult = send(Messages::RemoteExternalTexture::Undestroy());
     UNUSED_VARIABLE(sendResult);
+}
+
+void RemoteExternalTextureProxy::updateExternalTexture(CVPixelBufferRef)
+{
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit::WebGPU

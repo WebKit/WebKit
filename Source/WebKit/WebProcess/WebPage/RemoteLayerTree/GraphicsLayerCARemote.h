@@ -28,12 +28,20 @@
 #include <WebCore/GraphicsLayerCA.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/PlatformLayer.h>
+#include <wtf/TZoneMalloc.h>
+
+#if ENABLE(MODEL_PROCESS)
+namespace WebCore {
+class ModelContext;
+}
+#endif
 
 namespace WebKit {
 
 class RemoteLayerTreeContext;
 
 class GraphicsLayerCARemote final : public WebCore::GraphicsLayerCA, public CanMakeWeakPtr<GraphicsLayerCARemote> {
+    WTF_MAKE_TZONE_ALLOCATED(GraphicsLayerCARemote);
 public:
     GraphicsLayerCARemote(Type layerType, WebCore::GraphicsLayerClient&, RemoteLayerTreeContext&);
     virtual ~GraphicsLayerCARemote();
@@ -48,7 +56,9 @@ private:
 
     Ref<WebCore::PlatformCALayer> createPlatformCALayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner) override;
     Ref<WebCore::PlatformCALayer> createPlatformCALayer(PlatformLayer*, WebCore::PlatformCALayerClient* owner) override;
-    Ref<WebCore::PlatformCALayer> createPlatformCALayer(WebCore::LayerHostingContextIdentifier, WebCore::PlatformCALayerClient* owner) override;
+#if ENABLE(MODEL_PROCESS)
+    Ref<WebCore::PlatformCALayer> createPlatformCALayer(Ref<WebCore::ModelContext>, WebCore::PlatformCALayerClient* owner) override;
+#endif
 #if ENABLE(MODEL_ELEMENT)
     Ref<WebCore::PlatformCALayer> createPlatformCALayer(Ref<WebCore::Model>, WebCore::PlatformCALayerClient* owner) override;
 #endif
@@ -60,6 +70,9 @@ private:
 
     // PlatformCALayerRemote can't currently proxy directly composited image contents, so opt out of this optimization.
     bool shouldDirectlyCompositeImage(WebCore::Image*) const override { return false; }
+
+    bool shouldDirectlyCompositeImageBuffer(WebCore::ImageBuffer*) const override;
+    void setLayerContentsToImageBuffer(WebCore::PlatformCALayer*, WebCore::ImageBuffer*) override;
 
     WebCore::Color pageTiledBackingBorderColor() const override;
 

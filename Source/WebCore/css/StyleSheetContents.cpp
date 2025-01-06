@@ -44,6 +44,7 @@
 #include <wtf/Deque.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 #include "ContentRuleListResults.h"
@@ -80,8 +81,7 @@ StyleSheetContents::StyleSheetContents(StyleRuleImport* ownerRule, const String&
 }
 
 StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
-    : CanMakeWeakPtr<StyleSheetContents>()
-    , m_originalURL(o.m_originalURL)
+    : m_originalURL(o.m_originalURL)
     , m_encodingFromCharsetRule(o.m_encodingFromCharsetRule)
     , m_layerRulesBeforeImportRules(o.m_layerRulesBeforeImportRules.size())
     , m_importRules(o.m_importRules.size())
@@ -93,6 +93,7 @@ StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
     , m_loadCompleted(true)
     , m_hasSyntacticallyValidCSSHeader(o.m_hasSyntacticallyValidCSSHeader)
     , m_usesStyleBasedEditability(o.m_usesStyleBasedEditability)
+    , m_hasNestingRulesCache(o.m_hasNestingRulesCache)
     , m_parserContext(o.m_parserContext)
 {
     ASSERT(o.isCacheable());
@@ -138,7 +139,7 @@ bool StyleSheetContents::isCacheable() const
     // FIXME: Valid mime type avoids the check too.
     if (!m_hasSyntacticallyValidCSSHeader)
         return false;
-    if (m_hasNestingRules)
+    if (hasNestingRules())
         return false;
     return true;
 }
@@ -524,11 +525,25 @@ bool StyleSheetContents::traverseRules(const Function<bool(const StyleRuleBase&)
     for (auto& importRule : m_importRules) {
         if (handler(importRule))
             return true;
-        auto* importedStyleSheet = importRule->styleSheet();
+        RefPtr importedStyleSheet = importRule->styleSheet();
         if (importedStyleSheet && importedStyleSheet->traverseRules(handler))
             return true;
     }
     return traverseRulesInVector(m_childRules, handler);
+}
+
+bool StyleSheetContents::hasNestingRules() const
+{
+    if (m_hasNestingRulesCache)
+        return *m_hasNestingRulesCache;
+
+    m_hasNestingRulesCache = traverseRulesInVector(m_childRules, [&] (auto& rule) {
+        if (rule.isStyleRuleWithNesting())
+            return true;
+        return false;
+    });
+
+    return *m_hasNestingRulesCache;
 }
 
 bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
@@ -539,6 +554,8 @@ bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedRe
             return uncheckedDowncast<StyleRule>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::StyleWithNesting:
             return uncheckedDowncast<StyleRuleWithNesting>(rule).properties().traverseSubresources(handler);
+        case StyleRuleType::NestedDeclarations:
+            return uncheckedDowncast<StyleRuleNestedDeclarations>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::FontFace:
             return uncheckedDowncast<StyleRuleFontFace>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::Import:
@@ -565,6 +582,8 @@ bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedRe
         case StyleRuleType::Property:
         case StyleRuleType::Scope:
         case StyleRuleType::StartingStyle:
+        case StyleRuleType::ViewTransition:
+        case StyleRuleType::PositionTry:
             return false;
         };
         ASSERT_NOT_REACHED();
@@ -587,7 +606,7 @@ bool StyleSheetContents::subresourcesAllowReuse(CachePolicy cachePolicy, FrameLo
         auto* documentLoader = loader.documentLoader();
         if (page && documentLoader) {
             const auto& request = resource.resourceRequest();
-            auto results = page->userContentProvider().processContentRuleListsForLoad(*page, request.url(), ContentExtensions::toResourceType(resource.type(), resource.resourceRequest().requester()), *documentLoader);
+            auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, request.url(), ContentExtensions::toResourceType(resource.type(), resource.resourceRequest().requester()), *documentLoader);
             if (results.summary.blockedLoad || results.summary.madeHTTPS)
                 return true;
         }
@@ -615,6 +634,8 @@ bool StyleSheetContents::mayDependOnBaseURL() const
             return uncheckedDowncast<StyleRule>(rule).properties().mayDependOnBaseURL();
         case StyleRuleType::StyleWithNesting:
             return uncheckedDowncast<StyleRuleWithNesting>(rule).properties().mayDependOnBaseURL();
+        case StyleRuleType::NestedDeclarations:
+            return uncheckedDowncast<StyleRule>(rule).properties().mayDependOnBaseURL();
         case StyleRuleType::FontFace:
             return uncheckedDowncast<StyleRuleFontFace>(rule).properties().mayDependOnBaseURL();
         case StyleRuleType::Import:
@@ -637,6 +658,8 @@ bool StyleSheetContents::mayDependOnBaseURL() const
         case StyleRuleType::Property:
         case StyleRuleType::Scope:
         case StyleRuleType::StartingStyle:
+        case StyleRuleType::ViewTransition:
+        case StyleRuleType::PositionTry:
             return false;
         };
         ASSERT_NOT_REACHED();

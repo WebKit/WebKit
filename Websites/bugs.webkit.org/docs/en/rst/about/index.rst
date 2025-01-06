@@ -10,18 +10,16 @@ that tracks millions of bugs and issues for thousands of organizations around
 the world.
 
 The most current version of this document can always be found on the
-`Bugzilla website <http://www.bugzilla.org/docs/>`_.
+`Bugzilla website <https://www.bugzilla.org/docs/>`_.
 
 .. _evaluating:
 
 Evaluating Bugzilla
 ###################
 
-If you want to try out Bugzilla to see if it meets your needs, you can do so
-on `Landfill <https://landfill.bugzilla.org/bugzilla-4.4-branch/>`_, our test
-server. The `Bugzilla FAQ <https://wiki.mozilla.org/Bugzilla:FAQ>`_ may also
-be helpful, as it answers a number of questions people sometimes have about
-whether Bugzilla is for them.
+The `Bugzilla FAQ <https://wiki.mozilla.org/Bugzilla:FAQ>`_ may be helpful, 
+as it answers a number of questions people sometimes have about whether 
+Bugzilla is for them.
 
 .. _getting-help:
 
@@ -36,7 +34,7 @@ Google Group. Please
 first, and then ask your question there.
 
 If you need a guaranteed response, commercial support is
-`available <http://www.bugzilla.org/support/consulting.html>`_ for Bugzilla
+`available <https://www.bugzilla.org/support/consulting.html>`_ for Bugzilla
 from a number of people and organizations.
 
 .. _conventions:
@@ -81,13 +79,13 @@ new text and markup.
 License
 #######
 
-Bugzilla is `free <http://www.gnu.org/philosophy/free-sw.html>`_ and
-`open source <http://opensource.org/osd>`_ software, which means (among other
+Bugzilla is `free <https://www.gnu.org/philosophy/free-sw.html>`_ and
+`open source <https://opensource.org/osd>`_ software, which means (among other
 things) that you can download it, install it, and run it for any purpose
 whatsoever without the need for license or payment. Isn't that refreshing?
 
 Bugzilla's code is made available under the
-`Mozilla Public License 2.0 <http://www.mozilla.org/MPL/2.0/>`_ (MPL),
+`Mozilla Public License 2.0 <https://www.mozilla.org/MPL/2.0/>`_ (MPL),
 specifically the variant which is Incompatible with Secondary Licenses.
 However, again, if you only want to install and run Bugzilla, you don't need
 to worry about that; it's only relevant if you redistribute the code or any

@@ -1,5 +1,5 @@
 //
-// Copyright 2022 The ANGLE Project Authors. All rights reserved.
+// Copyright 2023 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -75,11 +75,11 @@ TIntermSwizzle *CheckTextureOpWithSamplerExternal2DY2YAndSwizzle(Visit visit,
 
 bool ReswizzleYUVOpsTraverser::visitAggregate(Visit visit, TIntermAggregate *node)
 {
-    TIntermSwizzle *yuvSwizze = CheckTextureOpWithSamplerExternal2DY2YAndSwizzle(visit, node);
-    if (yuvSwizze != nullptr)
+    TIntermSwizzle *yuvSwizzle = CheckTextureOpWithSamplerExternal2DY2YAndSwizzle(visit, node);
+    if (yuvSwizzle != nullptr)
     {
         ASSERT(!getParentNode()->getAsSwizzleNode());
-        queueReplacement(yuvSwizze, OriginalNode::BECOMES_CHILD);
+        queueReplacement(yuvSwizzle, OriginalNode::BECOMES_CHILD);
         return false;
     }
 

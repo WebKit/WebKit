@@ -18,6 +18,9 @@ namespace webrtc {
 
 class MockStatisticsCalculator : public StatisticsCalculator {
  public:
+  MockStatisticsCalculator(TickTimer* tick_timer)
+      : StatisticsCalculator(tick_timer) {}
+
   MOCK_METHOD(void, PacketsDiscarded, (size_t num_packets), (override));
   MOCK_METHOD(void,
               SecondaryPacketsDiscarded,

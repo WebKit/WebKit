@@ -30,6 +30,7 @@
 #include "CSSPropertyParser.h"
 #include "ComputedStyleExtractor.h"
 #include "Document.h"
+#include "DocumentClasses.h"
 #include "ElementChildIteratorInlines.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -61,14 +62,15 @@
 #include "StyleResolver.h"
 #include "XMLNames.h"
 #include <wtf/HashMap.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGElement);
 
 SVGElement::SVGElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry, OptionSet<TypeFlag> typeFlags)
     : StyledElement(tagName, document, typeFlags | TypeFlag::IsSVGElement | TypeFlag::HasCustomStyleResolveCallbacks)
@@ -91,7 +93,7 @@ SVGElement::~SVGElement()
         m_svgRareData = nullptr;
     }
 
-    RefAllowingPartiallyDestroyed<Document> document = this->document();
+    Ref<Document> document = this->document();
     document->checkedSVGExtensions()->removeElementToRebuild(*this);
 
     if (hasPendingResources()) {
@@ -186,7 +188,7 @@ void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& old
         treeScopeForSVGReferences().removeElementFromPendingSVGResources(*this);
 
     if (removalType.disconnectedFromDocument) {
-        RefAllowingPartiallyDestroyed<Document> document = this->document();
+        Ref<Document> document = this->document();
         CheckedRef extensions = document->svgExtensions();
         if (m_svgRareData) {
             for (Ref element : m_svgRareData->takeReferencingElements()) {
@@ -243,7 +245,7 @@ const WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>& SVGElement::insta
 std::optional<FloatRect> SVGElement::getBoundingBox() const
 {
     if (is<SVGGraphicsElement>(*this)) {
-        if (auto renderer = this->renderer())
+        if (CheckedPtr renderer = this->renderer())
             return renderer->objectBoundingBox();
     }
     return std::nullopt;
@@ -457,6 +459,7 @@ static inline bool isSVGLayerAwareElement(const SVGElement& element)
     case SVG::clipPath:
     case SVG::defs:
     case SVG::ellipse:
+    case SVG::filter:
     case SVG::foreignObject:
     case SVG::g:
     case SVG::image:
@@ -817,10 +820,14 @@ bool SVGElement::filterOutAnimatableAttribute(const QualifiedName&) const
 
 String SVGElement::title() const
 {
+    RefPtr page = document().protectedPage();
+    if (!page)
+        return String();
+
     // According to spec, for stand-alone SVG documents we should not return a title when
     // hovering over the rootmost SVG element (the first <title> element is the title of
     // the document, not a tooltip) so we instantly return.
-    if (isOutermostSVGSVGElement() && document().topDocument().isSVGDocument())
+    if (isOutermostSVGSVGElement() && page->topDocumentHasDocumentClass(DocumentClass::SVG))
         return String();
     RefPtr firstTitle = childrenOfType<SVGTitleElement>(*this).first();
     return firstTitle ? const_cast<SVGTitleElement&>(*firstTitle).innerText() : String();
@@ -839,7 +846,7 @@ bool SVGElement::rendererIsNeeded(const RenderStyle& style)
     return false;
 }
 
-CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attrName)
+CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attrName, const Settings& settings)
 {
     if (!attrName.namespaceURI().isNull())
         return CSSPropertyInvalid;
@@ -869,6 +876,10 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
         return CSSPropertyCx;
     case AttributeNames::cyAttr:
         return CSSPropertyCy;
+    case AttributeNames::dAttr:
+        if (settings.cssDPropertyEnabled())
+            return CSSPropertyD;
+        break;
     case AttributeNames::directionAttr:
         return CSSPropertyDirection;
     case AttributeNames::displayAttr:
@@ -894,7 +905,8 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
     case AttributeNames::font_size_adjustAttr:
         return CSSPropertyFontSizeAdjust;
     case AttributeNames::font_stretchAttr:
-        return CSSPropertyFontStretch;
+    case AttributeNames::font_widthAttr:
+        return CSSPropertyFontWidth;
     case AttributeNames::font_styleAttr:
         return CSSPropertyFontStyle;
     case AttributeNames::font_variantAttr:
@@ -909,8 +921,6 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
         return CSSPropertyImageRendering;
     case AttributeNames::heightAttr:
         return CSSPropertyHeight;
-    case AttributeNames::kerningAttr:
-        return CSSPropertyKerning;
     case AttributeNames::letter_spacingAttr:
         return CSSPropertyLetterSpacing;
     case AttributeNames::lighting_colorAttr:
@@ -994,27 +1004,27 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
 
 bool SVGElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (cssPropertyIdForSVGAttributeName(name) > 0)
+    if (cssPropertyIdForSVGAttributeName(name, document().settings()) > 0)
         return true;
     return StyledElement::hasPresentationalHintsForAttribute(name);
 }
 
 void SVGElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(name);
+    CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(name, document().settings());
     if (propertyID > 0)
         addPropertyToPresentationalHintStyle(style, propertyID, value);
 }
 
 void SVGElement::updateSVGRendererForElementChange()
 {
-    RefAllowingPartiallyDestroyed<Document> document = this->document();
+    Ref<Document> document = this->document();
     document->updateSVGRenderer(*this);
 }
 
 void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    CSSPropertyID propId = cssPropertyIdForSVGAttributeName(attrName);
+    CSSPropertyID propId = cssPropertyIdForSVGAttributeName(attrName, document().settings());
     if (propId > 0) {
         invalidateInstances();
         return;

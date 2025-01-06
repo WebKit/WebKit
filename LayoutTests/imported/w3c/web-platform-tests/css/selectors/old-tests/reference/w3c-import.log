@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/bq-u-u-u-green.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/lime-bg-paras-g-u-g-g-u.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/lime-bg-paras-g-u-g-u-u.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/lime-bg-paras-g-u-g-u.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/lime-bg-paras-g-u-u-g-g.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/lime-bg-paras-u-g-g-u-u-g.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/lime-bg-paras-u-g-u-g-g.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/seven-green-divs.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/this-address-p-p-p-lime-background.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/this-line-green-background.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/this-line-green-color.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/this-line-lime-background-offset.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/this-line-lime-background.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/this-test-has-passed-desc.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/three-p-lime-background-except-middle.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/reference/three-paragraph-lime-characters.xht

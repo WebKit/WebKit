@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +33,10 @@
 
 namespace WebCore {
 
-// This class includes a lot of GC related subtle things, and changing this class easily causes GC crashes.
-// Any changes on this class must be reviewed by JavaScriptCore reviewers too.
+// This class includes a lot of subtle GC related things, and changing this class can easily cause GC crashes.
+// Any changes to this class must be reviewed by JavaScriptCore reviewers too.
 class JSValueInWrappedObject {
-    // It must be neither copyable nor movable. Changing this will break concurrent GC.
+    // This must be neither copyable nor movable. Changing this will break concurrent GC.
     WTF_MAKE_NONCOPYABLE(JSValueInWrappedObject);
     WTF_MAKE_NONMOVABLE(JSValueInWrappedObject);
 public:
@@ -46,7 +46,12 @@ public:
     template<typename Visitor> void visit(Visitor&) const;
     void clear();
 
+    // If you expect the value you store to be returned by getValue and not cleared under you, you *MUST* use set not setWeakly.
+    // The owner parameter is typically the wrapper of the DOM node this class is embedded into but can be any GCed object that
+    // will visit this JSValueInWrappedObject via visitAdditionalChildren/isReachableFromOpaqueRoots.
     void set(JSC::VM&, const JSC::JSCell* owner, JSC::JSValue);
+    // Only use this if you actually expect this value to be weakly held. If you call visit on this value *DONT* set using setWeakly
+    // use set instead. The GC might or might not keep your value around in that case.
     void setWeakly(JSC::JSValue);
     JSC::JSValue getValue(JSC::JSValue nullValue = JSC::jsUndefined()) const;
 

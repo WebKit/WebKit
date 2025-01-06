@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -35,6 +35,7 @@
 #include "av1/encoder/nonrd_opt.h"
 #include "av1/encoder/ratectrl.h"
 #include "av1/encoder/rd.h"
+#include "config/aom_config.h"
 
 #define RD_THRESH_POW 1.25
 
@@ -319,6 +320,7 @@ void av1_fill_mode_rates(AV1_COMMON *const cm, ModeCosts *mode_costs,
   }
 }
 
+#if !CONFIG_REALTIME_ONLY
 void av1_fill_lr_rates(ModeCosts *mode_costs, FRAME_CONTEXT *fc) {
   av1_cost_tokens_from_cdf(mode_costs->switchable_restore_cost,
                            fc->switchable_restore_cdf, NULL);
@@ -327,6 +329,7 @@ void av1_fill_lr_rates(ModeCosts *mode_costs, FRAME_CONTEXT *fc) {
   av1_cost_tokens_from_cdf(mode_costs->sgrproj_restore_cost,
                            fc->sgrproj_restore_cdf, NULL);
 }
+#endif  // !CONFIG_REALTIME_ONLY
 
 // Values are now correlated to quantizer.
 static int sad_per_bit_lut_8[QINDEX_RANGE];
@@ -467,6 +470,7 @@ int av1_adjust_q_from_delta_q_res(int delta_q_res, int prev_qindex,
   return adjust_qindex;
 }
 
+#if !CONFIG_REALTIME_ONLY
 int av1_get_adaptive_rdmult(const AV1_COMP *cpi, double beta) {
   assert(beta > 0.0);
   const AV1_COMMON *cm = &cpi->common;
@@ -485,6 +489,7 @@ int av1_get_adaptive_rdmult(const AV1_COMP *cpi, double beta) {
                    is_stat_consumption_stage(cpi)) /
                beta);
 }
+#endif  // !CONFIG_REALTIME_ONLY
 
 static int compute_rd_thresh_factor(int qindex, aom_bit_depth_t bit_depth) {
   double q;
@@ -688,7 +693,7 @@ void av1_fill_dv_costs(const nmv_context *ndvc, IntraBCMVCosts *dv_costs) {
 // WARNING: Population of unified cost update frequency needs to be taken care
 // accordingly, in case of any modifications/additions to the enum
 // COST_UPDATE_TYPE/INTERNAL_COST_UPDATE_TYPE.
-static INLINE void populate_unified_cost_update_freq(
+static inline void populate_unified_cost_update_freq(
     const CostUpdateFreq cost_upd_freq, SPEED_FEATURES *const sf) {
   INTER_MODE_SPEED_FEATURES *const inter_sf = &sf->inter_sf;
   // Mapping of entropy cost update frequency from the encoder's codec control
@@ -715,7 +720,7 @@ static INLINE void populate_unified_cost_update_freq(
 }
 
 // Checks if entropy costs should be initialized/updated at frame level or not.
-static INLINE int is_frame_level_cost_upd_freq_set(
+static inline int is_frame_level_cost_upd_freq_set(
     const AV1_COMMON *const cm, const INTERNAL_COST_UPDATE_TYPE cost_upd_level,
     const int use_nonrd_pick_mode, const int frames_since_key) {
   const int fill_costs =
@@ -728,7 +733,7 @@ static INLINE int is_frame_level_cost_upd_freq_set(
 
 // Decide whether we want to update the mode entropy cost for the current frame.
 // The logit is currently inherited from selective_disable_cdf_rtc.
-static AOM_INLINE int should_force_mode_cost_update(const AV1_COMP *cpi) {
+static inline int should_force_mode_cost_update(const AV1_COMP *cpi) {
   const REAL_TIME_SPEED_FEATURES *const rt_sf = &cpi->sf.rt_sf;
   if (!rt_sf->frame_level_mode_cost_update) {
     return false;
@@ -936,114 +941,6 @@ static int sse_norm_curvfit_model_cat_lookup(double sse_norm) {
   return (sse_norm > 16.0);
 }
 
-// Models distortion by sse using a logistic function on
-// l = log2(sse / q^2) as:
-// dbysse = 16 / (1 + k exp(l + c))
-static double get_dbysse_logistic(double l, double c, double k) {
-  const double A = 16.0;
-  const double dbysse = A / (1 + k * exp(l + c));
-  return dbysse;
-}
-
-// Models rate using a clamped linear function on
-// l = log2(sse / q^2) as:
-// rate = max(0, a + b * l)
-static double get_rate_clamplinear(double l, double a, double b) {
-  const double rate = a + b * l;
-  return (rate < 0 ? 0 : rate);
-}
-
-static const uint8_t bsize_surffit_model_cat_lookup[BLOCK_SIZES_ALL] = {
-  0, 0, 0, 0, 1, 1, 2, 3, 3, 4, 5, 5, 6, 7, 7, 8, 0, 0, 2, 2, 4, 4
-};
-
-static const double surffit_rate_params[9][4] = {
-  {
-      638.390212,
-      2.253108,
-      166.585650,
-      -3.939401,
-  },
-  {
-      5.256905,
-      81.997240,
-      -1.321771,
-      17.694216,
-  },
-  {
-      -74.193045,
-      72.431868,
-      -19.033152,
-      15.407276,
-  },
-  {
-      416.770113,
-      14.794188,
-      167.686830,
-      -6.997756,
-  },
-  {
-      378.511276,
-      9.558376,
-      154.658843,
-      -6.635663,
-  },
-  {
-      277.818787,
-      4.413180,
-      150.317637,
-      -9.893038,
-  },
-  {
-      142.212132,
-      11.542038,
-      94.393964,
-      -5.518517,
-  },
-  {
-      219.100256,
-      4.007421,
-      108.932852,
-      -6.981310,
-  },
-  {
-      222.261971,
-      3.251049,
-      95.972916,
-      -5.609789,
-  },
-};
-
-static const double surffit_dist_params[7] = { 1.475844,  4.328362, -5.680233,
-                                               -0.500994, 0.554585, 4.839478,
-                                               -0.695837 };
-
-static void rate_surffit_model_params_lookup(BLOCK_SIZE bsize, double xm,
-                                             double *rpar) {
-  const int cat = bsize_surffit_model_cat_lookup[bsize];
-  rpar[0] = surffit_rate_params[cat][0] + surffit_rate_params[cat][1] * xm;
-  rpar[1] = surffit_rate_params[cat][2] + surffit_rate_params[cat][3] * xm;
-}
-
-static void dist_surffit_model_params_lookup(BLOCK_SIZE bsize, double xm,
-                                             double *dpar) {
-  (void)bsize;
-  const double *params = surffit_dist_params;
-  dpar[0] = params[0] + params[1] / (1 + exp((xm + params[2]) * params[3]));
-  dpar[1] = params[4] + params[5] * exp(params[6] * xm);
-}
-
-void av1_model_rd_surffit(BLOCK_SIZE bsize, double sse_norm, double xm,
-                          double yl, double *rate_f, double *distbysse_f) {
-  (void)sse_norm;
-  double rpar[2], dpar[2];
-  rate_surffit_model_params_lookup(bsize, xm, rpar);
-  dist_surffit_model_params_lookup(bsize, xm, dpar);
-
-  *rate_f = get_rate_clamplinear(yl, rpar[0], rpar[1]);
-  *distbysse_f = get_dbysse_logistic(yl, dpar[0], dpar[1]);
-}
-
 static const double interp_rgrid_curv[4][65] = {
   {
       0.000000,    0.000000,    0.000000,    0.000000,    0.000000,
@@ -1202,7 +1099,7 @@ void av1_get_entropy_contexts(BLOCK_SIZE plane_bsize,
 // In the worst case, this requires a border of
 //   max_block_width + 2*AOM_INTERP_EXTEND = 128 + 2*4 = 136 pixels
 // around the frame edges.
-static INLINE void enc_clamp_mv(const AV1_COMMON *cm, const MACROBLOCKD *xd,
+static inline void enc_clamp_mv(const AV1_COMMON *cm, const MACROBLOCKD *xd,
                                 MV *mv) {
   int bw = xd->width << MI_SIZE_LOG2;
   int bh = xd->height << MI_SIZE_LOG2;
@@ -1523,7 +1420,7 @@ void av1_set_rd_speed_thresholds(AV1_COMP *cpi) {
   rd->thresh_mult[THR_D45_PRED] = 2500;
 }
 
-static INLINE void update_thr_fact(int (*factor_buf)[MAX_MODES],
+static inline void update_thr_fact(int (*factor_buf)[MAX_MODES],
                                    THR_MODES best_mode_index,
                                    THR_MODES mode_start, THR_MODES mode_end,
                                    BLOCK_SIZE min_size, BLOCK_SIZE max_size,

@@ -32,6 +32,7 @@
 #include "ScrollableArea.h"
 #include "ScrollingTree.h"
 #include "ScrollingTreeNode.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -46,6 +47,7 @@ struct ScrollPropagationInfo {
 };
 
 class WEBCORE_EXPORT ScrollingTreeScrollingNode : public ScrollingTreeNode {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreeScrollingNode, WEBCORE_EXPORT);
     friend class ScrollingTreeScrollingNodeDelegate;
 #if PLATFORM(MAC)
     friend class ScrollingTreeScrollingNodeDelegateMac;
@@ -118,8 +120,6 @@ public:
     std::optional<unsigned> currentVerticalSnapPointIndex() const;
     void setCurrentHorizontalSnapPointIndex(std::optional<unsigned>);
     void setCurrentVerticalSnapPointIndex(std::optional<unsigned>);
-
-    bool useDarkAppearanceForScrollbars() const { return m_scrollableAreaParameters.useDarkAppearanceForScrollbars; }
 
     bool eventCanScrollContents(const PlatformWheelEvent&) const;
     

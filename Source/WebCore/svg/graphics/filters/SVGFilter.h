@@ -57,7 +57,7 @@ public:
     WEBCORE_EXPORT void mergeEffects(const FilterEffectVector&);
 
     RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
-    FilterStyleVector createFilterStyles(const FilterStyle& sourceStyle) const final;
+    FilterStyleVector createFilterStyles(GraphicsContext&, const FilterStyle& sourceStyle) const final;
 
     static FloatSize calculateResolvedSize(const FloatSize&, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits);
 
@@ -78,7 +78,7 @@ private:
     OptionSet<FilterRenderingMode> supportedFilterRenderingModes() const final;
 
     RefPtr<FilterImage> apply(const Filter&, FilterImage& sourceImage, FilterResults&) final;
-    FilterStyleVector createFilterStyles(const Filter&, const FilterStyle& sourceStyle) const final;
+    FilterStyleVector createFilterStyles(GraphicsContext&, const Filter&, const FilterStyle& sourceStyle) const final;
 
     FloatRect m_targetBoundingBox;
     SVGUnitTypes::SVGUnitType m_primitiveUnits;

@@ -11,10 +11,10 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
@@ -36,16 +36,16 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 constexpr int ErrorChunk::kType;
 
-absl::optional<ErrorChunk> ErrorChunk::Parse(
+std::optional<ErrorChunk> ErrorChunk::Parse(
     rtc::ArrayView<const uint8_t> data) {
-  absl::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
+  std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
-  absl::optional<Parameters> error_causes =
+  std::optional<Parameters> error_causes =
       Parameters::Parse(reader->variable_data());
   if (!error_causes.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return ErrorChunk(*std::move(error_causes));
 }

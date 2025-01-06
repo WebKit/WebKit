@@ -41,20 +41,13 @@ class ScriptExecutionContext;
 
 class CSSFontPaletteValuesOverrideColorsValue final : public CSSValue {
 public:
-    static Ref<CSSFontPaletteValuesOverrideColorsValue> create(Ref<CSSPrimitiveValue>&& key, Ref<CSSPrimitiveValue>&& color)
+    static Ref<CSSFontPaletteValuesOverrideColorsValue> create(Ref<CSSPrimitiveValue>&& key, Ref<CSSValue>&& color)
     {
         return adoptRef(*new CSSFontPaletteValuesOverrideColorsValue(WTFMove(key), WTFMove(color)));
     }
 
-    const CSSPrimitiveValue& key() const
-    {
-        return m_key.get();
-    }
-
-    const CSSPrimitiveValue& color() const
-    {
-        return m_color.get();
-    }
+    const CSSPrimitiveValue& key() const { return m_key; }
+    const CSSValue& color() const { return m_color; }
 
     String customCSSText() const;
 
@@ -70,15 +63,15 @@ public:
     }
 
 private:
-    CSSFontPaletteValuesOverrideColorsValue(Ref<CSSPrimitiveValue>&& key, Ref<CSSPrimitiveValue>&& color)
-        : CSSValue(FontPaletteValuesOverrideColorsClass)
+    CSSFontPaletteValuesOverrideColorsValue(Ref<CSSPrimitiveValue>&& key, Ref<CSSValue>&& color)
+        : CSSValue(ClassType::FontPaletteValuesOverrideColors)
         , m_key(WTFMove(key))
         , m_color(WTFMove(color))
     {
     }
 
     Ref<CSSPrimitiveValue> m_key;
-    Ref<CSSPrimitiveValue> m_color;
+    Ref<CSSValue> m_color;
 };
 
 } // namespace WebCore

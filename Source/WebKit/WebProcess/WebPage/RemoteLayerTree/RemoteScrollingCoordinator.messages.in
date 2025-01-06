@@ -22,6 +22,10 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+[
+    DispatchedFrom=UI,
+    DispatchedTo=WebContent
+]
 messages -> RemoteScrollingCoordinator {
     ScrollPositionChangedForNode(WebCore::ScrollingNodeID nodeID, WebCore::FloatPoint scrollPosition, std::optional<WebCore::FloatPoint> layoutViewportOrigin, bool syncLayerPosition) -> ()
     AnimatedScrollDidEndForNode(WebCore::ScrollingNodeID nodeID);

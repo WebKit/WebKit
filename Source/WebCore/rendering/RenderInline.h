@@ -31,7 +31,7 @@ class Position;
 class RenderFragmentContainer;
 
 class RenderInline : public RenderBoxModelObject {
-    WTF_MAKE_ISO_ALLOCATED(RenderInline);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderInline);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderInline);
 public:
     RenderInline(Type, Element&, RenderStyle&&);
@@ -42,10 +42,14 @@ public:
     LayoutUnit marginRight() const final;
     LayoutUnit marginTop() const final;
     LayoutUnit marginBottom() const final;
-    LayoutUnit marginBefore(const RenderStyle* otherStyle = 0) const final;
-    LayoutUnit marginAfter(const RenderStyle* otherStyle = 0) const final;
-    LayoutUnit marginStart(const RenderStyle* otherStyle = 0) const final;
-    LayoutUnit marginEnd(const RenderStyle* otherStyle = 0) const final;
+    LayoutUnit marginBefore(const WritingMode) const final;
+    LayoutUnit marginAfter(const WritingMode) const final;
+    LayoutUnit marginStart(const WritingMode) const final;
+    LayoutUnit marginEnd(const WritingMode) const final;
+    LayoutUnit marginBefore() const { return marginBefore(writingMode()); }
+    LayoutUnit marginAfter() const { return marginAfter(writingMode()); }
+    LayoutUnit marginStart() const { return marginStart(writingMode()); }
+    LayoutUnit marginEnd() const { return marginEnd(writingMode()); }
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
@@ -65,14 +69,12 @@ public:
 
     LegacyInlineFlowBox* createAndAppendInlineFlowBox();
 
-    void dirtyLineBoxes(bool fullLayout);
-    void deleteLines();
-
-    RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
-    const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
-
-    LegacyInlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
-    LegacyInlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
+    RenderLineBoxList& legacyLineBoxes() { return m_legacyLineBoxes; }
+    const RenderLineBoxList& legacyLineBoxes() const { return m_legacyLineBoxes; }
+    void dirtyLegacyLineBoxes(bool fullLayout);
+    void deleteLegacyLines();
+    LegacyInlineFlowBox* firstLegacyInlineBox() const { return m_legacyLineBoxes.firstLegacyLineBox(); }
+    LegacyInlineFlowBox* lastLegacyInlineBox() const { return m_legacyLineBoxes.lastLegacyLineBox(); }
 
 #if PLATFORM(IOS_FAMILY)
     void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const override;
@@ -81,11 +83,13 @@ public:
     LayoutSize offsetForInFlowPositionedInline(const RenderBox* child) const;
 
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) const final;
-    void paintOutline(PaintInfo&, const LayoutPoint&);
+    void paintOutline(PaintInfo&, const LayoutPoint&) const;
 
     bool mayAffectLayout() const;
 
     bool requiresLayer() const override;
+
+    LayoutPoint firstInlineBoxTopLeft() const;
 
 protected:
     void willBeDestroyed() override;
@@ -115,7 +119,6 @@ private:
     LayoutUnit offsetTop() const final;
     LayoutUnit offsetWidth() const final { return linesBoundingBox().width(); }
     LayoutUnit offsetHeight() const final { return linesBoundingBox().height(); }
-    LayoutPoint firstInlineBoxTopLeft() const;
 
 protected:
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
@@ -135,18 +138,19 @@ private:
 
     virtual std::unique_ptr<LegacyInlineFlowBox> createInlineFlowBox(); // Subclassed by RenderSVGInline
 
-    void dirtyLinesFromChangedChild(RenderObject& child) final { m_lineBoxes.dirtyLinesFromChangedChild(*this, child); }
+    void dirtyLineFromChangedChild() final { m_legacyLineBoxes.dirtyLineFromChangedChild(*this); }
 
     LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const final;
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const final;
     
-    void updateHitTestResult(HitTestResult&, const LayoutPoint&) final;
+    void updateHitTestResult(HitTestResult&, const LayoutPoint&) const final;
 
     void imageChanged(WrappedImagePtr, const IntRect* = 0) final;
 
     inline bool willChangeCreatesStackingContext() const;
 
-    RenderLineBoxList m_lineBoxes;   // All of the line boxes created for this inline flow.  For example, <i>Hello<br>world.</i> will have two <i> line boxes.
+    // All of the line boxes created for this svg inline.
+    RenderLineBoxList m_legacyLineBoxes;
 };
 
 bool isEmptyInline(const RenderInline&);

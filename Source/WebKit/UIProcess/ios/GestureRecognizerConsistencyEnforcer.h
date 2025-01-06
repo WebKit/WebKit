@@ -31,6 +31,7 @@
 #import <wtf/Noncopyable.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
 @class WKContentView;
@@ -39,11 +40,14 @@
 namespace WebKit {
 
 class GestureRecognizerConsistencyEnforcer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GestureRecognizerConsistencyEnforcer);
     WTF_MAKE_NONCOPYABLE(GestureRecognizerConsistencyEnforcer);
 public:
     GestureRecognizerConsistencyEnforcer(WKContentView *);
     ~GestureRecognizerConsistencyEnforcer();
+
+    void ref() const;
+    void deref() const;
 
     void beginTracking(WKDeferringGestureRecognizer *);
     void endTracking(WKDeferringGestureRecognizer *);
@@ -53,7 +57,7 @@ public:
 private:
     void timerFired();
 
-    WeakObjCPtr<WKContentView> m_view;
+    WeakObjCPtr<WKContentView> m_view; // Cannot be null.
     RunLoop::Timer m_timer;
     HashSet<RetainPtr<WKDeferringGestureRecognizer>> m_deferringGestureRecognizersWithTouches;
 };

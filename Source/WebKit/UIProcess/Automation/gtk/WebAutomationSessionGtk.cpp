@@ -33,6 +33,7 @@
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
 #include <WebCore/Scrollbar.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/text/Base64.h>
 
 namespace WebKit {
@@ -345,10 +346,7 @@ static std::optional<String> base64EncodedPNGData(GdkTexture* texture)
         return std::nullopt;
 
     GRefPtr<GBytes> pngBytes = adoptGRef(gdk_texture_save_to_png_bytes(texture));
-    size_t pngSize;
-    auto* pngData = static_cast<const uint8_t*>(g_bytes_get_data(pngBytes.get(), &pngSize));
-
-    return base64EncodeToString(std::span<const uint8_t>(pngData, pngSize));
+    return base64EncodeToString(span(pngBytes));
 }
 #else
 static std::optional<String> base64EncodedPNGData(cairo_surface_t* surface)
@@ -359,7 +357,7 @@ static std::optional<String> base64EncodedPNGData(cairo_surface_t* surface)
     Vector<uint8_t> pngData;
     cairo_surface_write_to_png_stream(surface, [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
         auto* pngData = static_cast<Vector<uint8_t>*>(userData);
-        pngData->append(std::span { reinterpret_cast<const uint8_t*>(data), length });
+        pngData->append(unsafeMakeSpan<const uint8_t>(data, length));
         return CAIRO_STATUS_SUCCESS;
     }, &pngData);
 

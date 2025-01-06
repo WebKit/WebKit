@@ -13,6 +13,7 @@
 #include "src/sksl/SkSLContext.h"
 #include "src/sksl/SkSLDefines.h"
 #include "src/sksl/SkSLInliner.h"
+#include "src/sksl/SkSLModule.h"
 #include "src/sksl/SkSLModuleLoader.h"
 #include "src/sksl/SkSLParser.h"
 #include "src/sksl/SkSLPool.h"
@@ -20,7 +21,8 @@
 #include "src/sksl/SkSLProgramSettings.h"
 #include "src/sksl/analysis/SkSLProgramUsage.h"
 #include "src/sksl/ir/SkSLProgram.h"
-#include "src/sksl/ir/SkSLSymbolTable.h"  // IWYU pragma: keep
+#include "src/sksl/ir/SkSLProgramElement.h"  // IWYU pragma: keep
+#include "src/sksl/ir/SkSLSymbolTable.h"     // IWYU pragma: keep
 #include "src/sksl/transform/SkSLTransform.h"
 
 #include <cstdint>
@@ -70,12 +72,12 @@ const Module* Compiler::moduleForProgramKind(ProgramKind kind) {
         case ProgramKind::kGraphiteVertex:        return m.loadGraphiteVertexModule(this);
         case ProgramKind::kGraphiteFragmentES2:   return m.loadGraphiteFragmentES2Module(this);
         case ProgramKind::kGraphiteVertexES2:     return m.loadGraphiteVertexES2Module(this);
+        case ProgramKind::kPrivateRuntimeBlender:
+        case ProgramKind::kPrivateRuntimeColorFilter:
         case ProgramKind::kPrivateRuntimeShader:  return m.loadPrivateRTShaderModule(this);
         case ProgramKind::kRuntimeColorFilter:
         case ProgramKind::kRuntimeShader:
         case ProgramKind::kRuntimeBlender:
-        case ProgramKind::kPrivateRuntimeColorFilter:
-        case ProgramKind::kPrivateRuntimeBlender:
         case ProgramKind::kMeshVertex:
         case ProgramKind::kMeshFragment:          return m.loadPublicModule(this);
     }
@@ -123,7 +125,7 @@ void Compiler::initializeContext(const SkSL::Module* module,
                                  ProgramKind kind,
                                  ProgramSettings settings,
                                  std::string_view source,
-                                 bool isModule) {
+                                 ModuleType moduleType) {
     SkASSERT(!fPool);
     SkASSERT(!fConfig);
     SkASSERT(!fContext->fSymbolTable);
@@ -134,7 +136,7 @@ void Compiler::initializeContext(const SkSL::Module* module,
     this->resetErrors();
 
     fConfig = std::make_unique<ProgramConfig>();
-    fConfig->fIsBuiltinCode = isModule;
+    fConfig->fModuleType = moduleType;
     fConfig->fSettings = settings;
     fConfig->fKind = kind;
 
@@ -151,7 +153,8 @@ void Compiler::initializeContext(const SkSL::Module* module,
     fContext->fErrors->setSource(source);
 
     // Set up a clean symbol table atop the parent module's symbols.
-    fGlobalSymbols = std::make_unique<SymbolTable>(module->fSymbols.get(), isModule);
+    fGlobalSymbols = std::make_unique<SymbolTable>(module->fSymbols.get(),
+                                                   moduleType != ModuleType::program);
     fGlobalSymbols->markModuleBoundary();
     fContext->fSymbolTable = fGlobalSymbols.get();
 }
@@ -173,12 +176,11 @@ void Compiler::cleanupContext() {
 }
 
 std::unique_ptr<Module> Compiler::compileModule(ProgramKind kind,
-                                                const char* moduleName,
+                                                ModuleType moduleType,
                                                 std::string moduleSource,
                                                 const Module* parentModule,
                                                 bool shouldInline) {
     SkASSERT(parentModule);
-    SkASSERT(!moduleSource.empty());
     SkASSERT(this->errorCount() == 0);
 
     // Wrap the program source in a pointer so it is guaranteed to be stable across moves.
@@ -187,7 +189,7 @@ std::unique_ptr<Module> Compiler::compileModule(ProgramKind kind,
     // Compile the module from source, using default program settings (but no memory pooling).
     ProgramSettings settings;
     settings.fUseMemoryPool = false;
-    this->initializeContext(parentModule, kind, settings, *sourcePtr, /*isModule=*/true);
+    this->initializeContext(parentModule, kind, settings, *sourcePtr, moduleType);
 
     std::unique_ptr<Module> module = SkSL::Parser(this, settings, kind, std::move(sourcePtr))
                                              .moduleInheritingFrom(parentModule);
@@ -195,7 +197,9 @@ std::unique_ptr<Module> Compiler::compileModule(ProgramKind kind,
     this->cleanupContext();
 
     if (this->errorCount() != 0) {
-        SkDebugf("Unexpected errors compiling %s:\n\n%s\n", moduleName, this->errorText().c_str());
+        SkDebugf("Unexpected errors compiling %s:\n\n%s\n",
+                 ModuleTypeToString(moduleType),
+                 this->errorText().c_str());
         return nullptr;
     }
     if (shouldInline) {
@@ -215,7 +219,7 @@ std::unique_ptr<Program> Compiler::convertProgram(ProgramKind kind,
     // Load the module used by this ProgramKind.
     const SkSL::Module* module = this->moduleForProgramKind(kind);
 
-    this->initializeContext(module, kind, settings, *sourcePtr, /*isModule=*/false);
+    this->initializeContext(module, kind, settings, *sourcePtr, ModuleType::program);
 
     std::unique_ptr<Program> program = SkSL::Parser(this, settings, kind, std::move(sourcePtr))
                                                .programInheritingFrom(module);
@@ -251,7 +255,7 @@ bool Compiler::optimizeModuleBeforeMinifying(ProgramKind kind, Module& module, b
 
     // Create a temporary program configuration with default settings.
     ProgramConfig config;
-    config.fIsBuiltinCode = true;
+    config.fModuleType = module.fModuleType;
     config.fKind = kind;
     AutoProgramConfig autoConfig(this->context(), &config);
 
@@ -295,7 +299,10 @@ bool Compiler::optimizeModuleBeforeMinifying(ProgramKind kind, Module& module, b
     SkSL::Transform::EliminateEmptyStatements(module);
 
     // We can eliminate `{}` around single-statement blocks.
-    SkSL::Transform::EliminateUnnecessaryBraces(module);
+    SkSL::Transform::EliminateUnnecessaryBraces(this->context(), module);
+
+    // We can convert `float4(myFloat)` with `myFloat.xxxx` to save a few characters.
+    SkSL::Transform::ReplaceSplatCastsWithSwizzles(this->context(), module);
 
     // Make sure that program usage is still correct after the optimization pass is complete.
     SkASSERT(*usage == *Analysis::GetUsage(module));
@@ -309,7 +316,7 @@ bool Compiler::optimizeModuleAfterLoading(ProgramKind kind, Module& module) {
 #ifndef SK_ENABLE_OPTIMIZE_SIZE
     // Create a temporary program configuration with default settings.
     ProgramConfig config;
-    config.fIsBuiltinCode = true;
+    config.fModuleType = module.fModuleType;
     config.fKind = kind;
     AutoProgramConfig autoConfig(this->context(), &config);
 
@@ -417,8 +424,7 @@ bool Compiler::finalize(Program& program) {
         }
     }
     if (this->errorCount() == 0) {
-        bool enforceSizeLimit = ProgramConfig::IsRuntimeEffect(program.fConfig->fKind);
-        Analysis::CheckProgramStructure(program, enforceSizeLimit);
+        Analysis::CheckProgramStructure(program);
 
         // Make sure that variables are declared in the symbol tables that immediately enclose them.
         SkDEBUGCODE(Analysis::CheckSymbolTableCorrectness(program));

@@ -27,6 +27,7 @@
 #pragma once
 
 #include "XPathValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace XPath {
@@ -41,7 +42,8 @@ struct EvaluationContext {
 };
 
 class Expression {
-    WTF_MAKE_NONCOPYABLE(Expression); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Expression);
+    WTF_MAKE_NONCOPYABLE(Expression);
 public:
     static EvaluationContext& evaluationContext();
 

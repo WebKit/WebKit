@@ -31,4 +31,5 @@ dictionary ShadowRootInit {
     boolean clonable = false;
     [EnabledBySetting=DeclarativeShadowRootsSerializerAPIsEnabled] boolean serializable = false;
     SlotAssignmentMode slotAssignment = "named";
+    CustomElementRegistry registry = null;
 };

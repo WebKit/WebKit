@@ -32,6 +32,8 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
 static const NSString * const kURLArgumentString = @"--url";
 
@@ -58,7 +60,9 @@ static const NSString * const kURLArgumentString = @"--url";
 @end
 
 @interface WebViewController () <WKNavigationDelegate> {
+    WKWebsiteDataStore *_dataStore;
     WKWebView *_currentWebView;
+    NSURL *_initialURL;
 }
 - (WKWebView *)createWebView;
 - (void)removeWebView:(WKWebView *)webView;
@@ -159,6 +163,16 @@ void* URLContext = &URLContext;
     return _currentWebView;
 }
 
+- (WKWebsiteDataStore *)dataStore
+{
+    if (!_dataStore) {
+        _WKWebsiteDataStoreConfiguration *dataStoreConfiguration = [[_WKWebsiteDataStoreConfiguration alloc] init];
+        dataStoreConfiguration.webPushMachServiceName = @"com.apple.webkit.webpushd.service";
+        _dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration];
+    }
+    return _dataStore;
+}
+
 - (void)setCurrentWebView:(WKWebView *)webView
 {
     [_currentWebView removeObserver:self forKeyPath:@"estimatedProgress" context:EstimatedProgressContext];
@@ -203,7 +217,12 @@ void* URLContext = &URLContext;
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
 
     configuration.preferences._mockCaptureDevicesEnabled = YES;
+    configuration.preferences._notificationsEnabled = YES;
+    configuration.preferences._pushAPIEnabled = YES;
+    configuration.preferences._notificationEventEnabled = YES;
+    configuration.preferences._appBadgeEnabled = YES;
     configuration.preferences.elementFullscreenEnabled = YES;
+    configuration.websiteDataStore = [self dataStore];
 
     WKWebView *webView = [[WKWebView alloc] initWithFrame:self.webViewContainer.bounds configuration:configuration];
     webView.inspectable = YES;
@@ -248,6 +267,9 @@ void* URLContext = &URLContext;
 
 - (NSURL *)targetURLorDefaultURL
 {
+    if (_initialURL)
+        return _initialURL;
+
     NSArray *args = [[NSProcessInfo processInfo] arguments];
     const NSUInteger targetURLIndex = [args indexOfObject:kURLArgumentString];
 

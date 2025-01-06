@@ -23,7 +23,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemotePipelineLayout NotRefCounted Stream {
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU,
+    EnabledBy=WebGPUEnabled
+]
+messages -> RemotePipelineLayout Stream {
     void Destruct()
     void SetLabel(String label)
 }

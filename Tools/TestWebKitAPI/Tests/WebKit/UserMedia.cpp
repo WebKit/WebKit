@@ -72,7 +72,7 @@ TEST(WebKit, UserMediaBasic)
     auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     WKPageUIClientV6 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
+    zeroBytes(uiClient);
     uiClient.base.version = 6;
     uiClient.decidePolicyForUserMediaPermissionRequest = decidePolicyForUserMediaPermissionRequestCallBack;
     uiClient.checkUserMediaPermissionForOrigin = checkUserMediaPermissionCallback;
@@ -116,7 +116,7 @@ TEST(WebKit, OnDeviceChangeCrash)
     WKPageConfigurationSetPreferences(configuration.get(), preferences.get());
 
     WKPageUIClientV6 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
+    zeroBytes(uiClient);
     uiClient.base.version = 6;
     uiClient.decidePolicyForUserMediaPermissionRequest = decidePolicyForUserMediaPermissionRequestCallBack;
     uiClient.checkUserMediaPermissionForOrigin = checkUserMediaPermissionCallback;
@@ -134,7 +134,7 @@ TEST(WebKit, OnDeviceChangeCrash)
     PlatformWebView webView2(webView.page());
     WKPageSetPageUIClient(webView2.page(), &uiClient.base);
     WKPageNavigationClientV0 navigationClient;
-    memset(&navigationClient, 0, sizeof(navigationClient));
+    zeroBytes(navigationClient);
     navigationClient.base.version = 0;
     navigationClient.webProcessDidCrash = didCrashCallback;
     WKPageSetPageNavigationClient(webView2.page(), &navigationClient.base);
@@ -178,11 +178,11 @@ TEST(WebKit, EnumerateDevicesCrash)
 
     WKPageUIClientV6 uiClient;
     // We want uiClient.checkUserMediaPermissionForOrigin to be null.
-    memset(&uiClient, 0, sizeof(uiClient));
+    zeroBytes(uiClient);
     uiClient.base.version = 6;
 
     WKPageNavigationClientV3 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
     loaderClient.base.version = 3;
     loaderClient.didFinishNavigation = didFinishNavigation;
 

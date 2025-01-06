@@ -411,8 +411,14 @@ NSString *DictionaryLookup::stringForPDFSelection(PDFSelection *selection)
     [selection extendSelectionAtStart:lookupAddedBefore];
     [selection extendSelectionAtEnd:lookupAddedAfter];
 
-    ASSERT([selection.string isEqualToString:[fullPlainTextString substringWithRange:extractedRange]]);
-    return selection.string;
+    NSString *selectionString = selection.string;
+
+    auto extractedStringMatchesSelection = [](NSString *selection, NSString *extracted) -> bool {
+        return selection ? [selection isEqualToString:extracted] : !extracted.length;
+    };
+    ASSERT_UNUSED(extractedStringMatchesSelection, extractedStringMatchesSelection(selectionString, [fullPlainTextString substringWithRange:extractedRange]));
+
+    return selectionString;
 
     END_BLOCK_OBJC_EXCEPTIONS
 

@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKTextManipulationConfiguration.h>
 #import <WebKit/_WKTextManipulationDelegate.h>
@@ -37,8 +38,7 @@
 #import <WebKit/_WKTextManipulationToken.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/text/StringConcatenate.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 
 typedef void(^ItemCallback)(_WKTextManipulationItem *);
 typedef void(^ItemListCallback)(NSArray<_WKTextManipulationItem *> *);
@@ -871,32 +871,52 @@ TEST(TextManipulation, StartTextManipulationExtractsUserInfo)
     EXPECT_WK_STREQ("Fourth", items[4].tokens[0].content);
     {
         auto userInfo = items[0].tokens[0].userInfo;
-        EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#if PLATFORM(MAC)
+        EXPECT_WK_STREQ("Resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#else
+        EXPECT_WK_STREQ("TestWebKitAPIResources.bundle", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#endif
         EXPECT_WK_STREQ("TITLE", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
         EXPECT_FALSE([userInfo[_WKTextManipulationTokenUserInfoVisibilityKey] boolValue]);
     }
     {
         auto userInfo = items[1].tokens[0].userInfo;
-        EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#if PLATFORM(MAC)
+        EXPECT_WK_STREQ("Resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#else
+        EXPECT_WK_STREQ("TestWebKitAPIResources.bundle", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#endif
         EXPECT_WK_STREQ("P", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
         EXPECT_FALSE([userInfo[_WKTextManipulationTokenUserInfoVisibilityKey] boolValue]);
     }
     {
         auto userInfo = items[2].tokens[0].userInfo;
-        EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#if PLATFORM(MAC)
+        EXPECT_WK_STREQ("Resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#else
+        EXPECT_WK_STREQ("TestWebKitAPIResources.bundle", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#endif
         EXPECT_WK_STREQ("DIV", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
         EXPECT_WK_STREQ("button", (NSString *)userInfo[_WKTextManipulationTokenUserInfoRoleAttributeKey]);
         EXPECT_FALSE([userInfo[_WKTextManipulationTokenUserInfoVisibilityKey] boolValue]);
     }
     {
         auto userInfo = items[3].tokens[0].userInfo;
-        EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#if PLATFORM(MAC)
+        EXPECT_WK_STREQ("Resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#else
+        EXPECT_WK_STREQ("TestWebKitAPIResources.bundle", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#endif
         EXPECT_WK_STREQ("SPAN", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
         EXPECT_FALSE([userInfo[_WKTextManipulationTokenUserInfoVisibilityKey] boolValue]);
     }
     {
         auto userInfo = items[4].tokens[0].userInfo;
-        EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#if PLATFORM(MAC)
+        EXPECT_WK_STREQ("Resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#else
+        EXPECT_WK_STREQ("TestWebKitAPIResources.bundle", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+#endif
         EXPECT_WK_STREQ("DIV", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
         EXPECT_TRUE([userInfo[_WKTextManipulationTokenUserInfoVisibilityKey] boolValue]);
     }
@@ -3850,6 +3870,42 @@ TEST(TextManipulation, CompleteTextManipulationReplacesShadowDOMContent)
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('host').shadowRoot.textContent"], "world");
+}
+
+TEST(TextManipulation, CompleteTextManipulationDoesNotFillAutoFilledField)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><body><input id='textField'></body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    Util::run(&done);
+
+    Vector<RetainPtr<_WKTextManipulationItem>> items;
+    done = false;
+    [delegate setItemCallback:[&] (_WKTextManipulationItem *item) {
+        items.append(item);
+        done = true;
+    }];
+
+    [webView stringByEvaluatingJavaScript:@"document.getElementById('textField').value = 'foo'"];
+    Util::run(&done);
+
+    [webView stringByEvaluatingJavaScript:@"internals.setAutofilled(document.getElementById('textField'), true)"];
+
+    done = false;
+    auto item = createItem([items[0] identifier], { { [items[0] tokens][0].identifier, @"bar" } });
+    [webView _completeTextManipulationForItems:@[item.get()] completion:^(NSArray<NSError *> *) {
+        done = true;
+    }];
+    Util::run(&done);
+
+    EXPECT_WK_STREQ("foo", [webView stringByEvaluatingJavaScript:@"document.getElementById('textField').value"]);
 }
 
 TEST(TextManipulation, TextManipulationTokenDebugDescription)

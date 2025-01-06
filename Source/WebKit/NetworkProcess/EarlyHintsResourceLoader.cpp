@@ -36,9 +36,13 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/StoredCredentialsPolicy.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EarlyHintsResourceLoader);
 
 EarlyHintsResourceLoader::EarlyHintsResourceLoader(NetworkResourceLoader& loader)
     : m_loader(&loader)
@@ -114,18 +118,19 @@ ResourceRequest EarlyHintsResourceLoader::constructPreconnectRequest(const Resou
 void EarlyHintsResourceLoader::startPreconnectTask(const URL& baseURL, const LinkHeader& header, const ContentSecurityPolicy& contentSecurityPolicy)
 {
 #if ENABLE(SERVER_PRECONNECT)
-    if (!m_loader || !m_loader->parameters().linkPreconnectEarlyHintsEnabled)
+    RefPtr loader = m_loader.get();
+    if (!loader || !loader->parameters().linkPreconnectEarlyHintsEnabled)
         return;
 
     URL url(baseURL, header.url());
     if (!url.isValid() || url.protocol() != "https"_s)
         return;
 
-    const auto& originalRequest = m_loader->originalRequest();
+    const auto& originalRequest = loader->originalRequest();
     if (!contentSecurityPolicy.allowConnectToSource(url, ContentSecurityPolicy::RedirectResponseReceived::No, originalRequest.url()))
         return;
 
-    auto* networkSession = m_loader->connectionToWebProcess().networkSession();
+    auto* networkSession = loader->protectedConnectionToWebProcess()->networkSession();
     if (!networkSession)
         return;
 

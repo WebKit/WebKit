@@ -57,8 +57,8 @@
 #include "Text.h"
 #include "TextDocument.h"
 #include "XMLDocument.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MODEL_ELEMENT)
 #include "ModelDocument.h"
@@ -68,7 +68,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DOMImplementation);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMImplementation);
 
 Ref<Document> DOMImplementation::protectedDocument()
 {
@@ -139,7 +139,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
     Ref document = HTMLDocument::create(nullptr, m_document->protectedSettings(), URL(), { });
     document->setParserContentPolicy({ ParserContentPolicy::AllowScriptingContent });
     document->open();
-    document->write(nullptr, { "<!doctype html><html><head></head><body></body></html>"_s });
+    document->write(nullptr, FixedVector<String> { "<!doctype html><html><head></head><body></body></html>"_s });
     if (!title.isNull()) {
         auto titleElement = HTMLTitleElement::create(titleTag, document);
         titleElement->appendChild(document->createTextNode(WTFMove(title)));
@@ -151,7 +151,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
     return document;
 }
 
-Ref<Document> DOMImplementation::createDocument(const String& contentType, LocalFrame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier documentIdentifier)
+Ref<Document> DOMImplementation::createDocument(const String& contentType, LocalFrame* frame, const Settings& settings, const URL& url, std::optional<ScriptExecutionContextIdentifier> documentIdentifier)
 {
     // FIXME: Inelegant to have this here just because this is the home of DOM APIs for creating documents.
     // This is internal, not a DOM API. Maybe we should put it in a new class called DocumentFactory,

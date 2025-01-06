@@ -47,8 +47,8 @@ public:
     ~RenderLineBoxList();
 #endif
 
-    LegacyInlineFlowBox* firstLineBox() const { return m_firstLineBox; }
-    LegacyInlineFlowBox* lastLineBox() const { return m_lastLineBox; }
+    LegacyInlineFlowBox* firstLegacyLineBox() const { return m_firstLineBox; }
+    LegacyInlineFlowBox* lastLegacyLineBox() const { return m_lastLineBox; }
 
     void checkConsistency() const;
 
@@ -62,19 +62,11 @@ public:
     void removeLineBox(LegacyInlineFlowBox*);
     
     void dirtyLineBoxes();
-    void dirtyLinesFromChangedChild(RenderBoxModelObject& parent, RenderObject& child);
+    void dirtyLineFromChangedChild(RenderBoxModelObject& parent);
     void shiftLinesBy(LayoutUnit shiftX, LayoutUnit shiftY);
 
-    void paint(RenderBoxModelObject*, PaintInfo&, const LayoutPoint&) const;
-    bool hitTest(RenderBoxModelObject*, const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) const;
-
 private:
-    bool anyLineIntersectsRect(RenderBoxModelObject*, const LayoutRect&, const LayoutPoint&, bool usePrintRect = false) const;
-    bool lineIntersectsDirtyRect(RenderBoxModelObject*, LegacyInlineFlowBox*, const PaintInfo&, const LayoutPoint&) const;
-    bool rangeIntersectsRect(RenderBoxModelObject*, LayoutUnit logicalTop, LayoutUnit logicalBottom, const LayoutRect&, const LayoutPoint&) const;
-
-    // For block flows, each box represents the root inline box for a line in the
-    // paragraph.
+    // For block flows, each box represents the root inline box for a line in the paragraph.
     // For inline flows, each box represents a portion of that inline.
     LegacyInlineFlowBox* m_firstLineBox;
     LegacyInlineFlowBox* m_lastLineBox;

@@ -20,8 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-headers: "WebCoreArgumentCoders.h"
-
 #if PLATFORM(IOS_FAMILY)
 
 [Nested] enum class WebKit::InteractionInformationAtPosition::Selectability : uint8_t {
@@ -61,9 +59,12 @@ struct WebKit::InteractionInformationAtPosition {
     bool preventTextInteraction;
 #endif
     bool elementContainsImageOverlay;
-    bool shouldNotUseIBeamInEditableContent;
     bool isImageOverlayText;
-    bool isVerticalWritingMode;
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    bool isSpatialImage;
+#endif
+    bool isInPlugin;
+    bool needsPointerTouchCompatibilityQuirk;
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     URL url;
     URL imageURL;
@@ -78,10 +79,7 @@ struct WebKit::InteractionInformationAtPosition {
     String textBefore;
     String textAfter;
 
-    float caretLength;
-    WebCore::FloatRect lineCaretExtent;
-
-    std::optional<WebCore::Cursor> cursor;
+    WebKit::CursorContext cursorContext;
 
     WebCore::TextIndicatorData linkIndicator;
 #if ENABLE(DATA_DETECTION)

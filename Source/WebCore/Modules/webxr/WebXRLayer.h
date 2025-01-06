@@ -30,22 +30,22 @@
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "PlatformXR.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ScriptExecutionContext;
 
 class WebXRLayer : public RefCounted<WebXRLayer>, public EventTarget, public ContextDestructionObserver {
-    WTF_MAKE_ISO_ALLOCATED(WebXRLayer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRLayer);
 public:
-    ~WebXRLayer();
+    virtual ~WebXRLayer();
 
     using RefCounted<WebXRLayer>::ref;
     using RefCounted<WebXRLayer>::deref;
 
-    virtual void startFrame(const PlatformXR::FrameData&) = 0;
+    virtual void startFrame(PlatformXR::FrameData&) = 0;
     virtual PlatformXR::Device::Layer endFrame() = 0;
 
 protected:

@@ -13,13 +13,14 @@
 #include <algorithm>
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "api/network_state_predictor.h"
 #include "api/rtc_event_log/rtc_event_log.h"
+#include "api/transport/bandwidth_usage.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
@@ -30,7 +31,6 @@
 #include "modules/congestion_controller/goog_cc/inter_arrival_delta.h"
 #include "modules/congestion_controller/goog_cc/trendline_estimator.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
-#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
 #include "rtc_base/logging.h"
@@ -98,9 +98,9 @@ DelayBasedBwe::~DelayBasedBwe() {}
 
 DelayBasedBwe::Result DelayBasedBwe::IncomingPacketFeedbackVector(
     const TransportPacketsFeedback& msg,
-    absl::optional<DataRate> acked_bitrate,
-    absl::optional<DataRate> probe_bitrate,
-    absl::optional<NetworkStateEstimate> network_estimate,
+    std::optional<DataRate> acked_bitrate,
+    std::optional<DataRate> probe_bitrate,
+    std::optional<NetworkStateEstimate> network_estimate,
     bool in_alr) {
   RTC_DCHECK_RUNS_SERIALIZED(&network_race_);
 
@@ -204,17 +204,17 @@ void DelayBasedBwe::IncomingPacketFeedback(const PacketResult& packet_feedback,
 }
 
 DataRate DelayBasedBwe::TriggerOveruse(Timestamp at_time,
-                                       absl::optional<DataRate> link_capacity) {
+                                       std::optional<DataRate> link_capacity) {
   RateControlInput input(BandwidthUsage::kBwOverusing, link_capacity);
   return rate_control_.Update(input, at_time);
 }
 
 DelayBasedBwe::Result DelayBasedBwe::MaybeUpdateEstimate(
-    absl::optional<DataRate> acked_bitrate,
-    absl::optional<DataRate> probe_bitrate,
-    absl::optional<NetworkStateEstimate> state_estimate,
+    std::optional<DataRate> acked_bitrate,
+    std::optional<DataRate> probe_bitrate,
+    std::optional<NetworkStateEstimate> /* state_estimate */,
     bool recovered_from_overuse,
-    bool in_alr,
+    bool /* in_alr */,
     Timestamp at_time) {
   Result result;
 
@@ -252,8 +252,6 @@ DelayBasedBwe::Result DelayBasedBwe::MaybeUpdateEstimate(
       detector_state != prev_state_) {
     DataRate bitrate = result.updated ? result.target_bitrate : prev_bitrate_;
 
-    BWE_TEST_LOGGING_PLOT(1, "target_bitrate_bps", at_time.ms(), bitrate.bps());
-
     if (event_log_) {
       event_log_->Log(std::make_unique<RtcEventBweUpdateDelayBased>(
           bitrate.bps(), detector_state));
@@ -268,7 +266,7 @@ DelayBasedBwe::Result DelayBasedBwe::MaybeUpdateEstimate(
 }
 
 bool DelayBasedBwe::UpdateEstimate(Timestamp at_time,
-                                   absl::optional<DataRate> acked_bitrate,
+                                   std::optional<DataRate> acked_bitrate,
                                    DataRate* target_rate) {
   const RateControlInput input(active_delay_detector_->State(), acked_bitrate);
   *target_rate = rate_control_.Update(input, at_time);

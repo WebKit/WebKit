@@ -94,15 +94,15 @@ void VisitedLinkStore::removeAll()
 {
     m_linkHashStore.clear();
 
-    for (auto& process : m_processes) {
-        ASSERT(process.processPool().processes().containsIf([&](auto& item) { return item.ptr() == &process; }));
-        process.send(Messages::VisitedLinkTableController::RemoveAllVisitedLinks(), identifier());
+    for (Ref process : m_processes) {
+        ASSERT(process->processPool().processes().containsIf([&](auto& item) { return item.ptr() == &process.get(); }));
+        process->send(Messages::VisitedLinkTableController::RemoveAllVisitedLinks(), identifier());
     }
 }
 
 void VisitedLinkStore::addVisitedLinkHashFromPage(WebPageProxyIdentifier pageProxyID, SharedStringHash linkHash)
 {
-    if (auto page = WebProcessProxy::webPage(pageProxyID)) {
+    if (RefPtr page = WebProcessProxy::webPage(pageProxyID)) {
         if (!page || !page->addsVisitedLinks())
             return;
     }
@@ -122,21 +122,21 @@ void VisitedLinkStore::sendStoreHandleToProcess(WebProcessProxy& process)
 
 void VisitedLinkStore::didInvalidateSharedMemory()
 {
-    for (auto& process : m_processes)
-        sendStoreHandleToProcess(process);
+    for (Ref process : m_processes)
+        sendStoreHandleToProcess(process.get());
 }
 
 void VisitedLinkStore::didUpdateSharedStringHashes(const Vector<WebCore::SharedStringHash>& addedHashes, const Vector<WebCore::SharedStringHash>& removedHashes)
 {
     ASSERT(!addedHashes.isEmpty() || !removedHashes.isEmpty());
 
-    for (auto& process : m_processes) {
-        ASSERT(process.processPool().processes().containsIf([&](auto& item) { return item.ptr() == &process; }));
+    for (Ref process : m_processes) {
+        ASSERT(process->processPool().processes().containsIf([&](auto& item) { return item.ptr() == process.ptr(); }));
 
-        if (addedHashes.size() > 20 || !removedHashes.isEmpty())
-            process.send(Messages::VisitedLinkTableController::AllVisitedLinkStateChanged(), identifier());
+        if (addedHashes.size() > 20 || !removedHashes.isEmpty() || process->throttler().isSuspended())
+            process->send(Messages::VisitedLinkTableController::AllVisitedLinkStateChanged(), identifier());
         else
-            process.send(Messages::VisitedLinkTableController::VisitedLinkStateChanged(addedHashes), identifier());
+            process->send(Messages::VisitedLinkTableController::VisitedLinkStateChanged(addedHashes), identifier());
     }
 }
 

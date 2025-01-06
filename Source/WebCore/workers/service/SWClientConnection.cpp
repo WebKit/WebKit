@@ -46,6 +46,7 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerSWClientConnection.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

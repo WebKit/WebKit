@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#if ENABLE(PDF_PLUGIN)
 
 #include "PDFPluginAnnotation.h"
 
@@ -35,11 +35,11 @@ namespace WebCore {
 class Element;
 }
 
-OBJC_CLASS PDFAnnotationTextWidget;
-
 namespace WebKit {
 
 class PDFPluginTextAnnotation : public PDFPluginAnnotation {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFPluginTextAnnotation);
 public:
     static Ref<PDFPluginTextAnnotation> create(PDFAnnotation *, PDFPluginBase*);
     virtual ~PDFPluginTextAnnotation();
@@ -60,12 +60,8 @@ protected:
 
 private:
     bool handleEvent(WebCore::Event&) override;
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    PDFAnnotationTextWidget *textAnnotation() const { return static_cast<PDFAnnotationTextWidget *>(annotation()); }
-ALLOW_DEPRECATED_DECLARATIONS_END
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#endif // ENABLE(PDF_PLUGIN)

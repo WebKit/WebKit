@@ -32,6 +32,7 @@
 #endif
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 
@@ -52,6 +53,7 @@ public:
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
 
     explicit SendCVPixelBuffer(const RetainPtr<CVPixelBufferRef>& s0)
         : m_arguments(s0)
@@ -77,10 +79,12 @@ public:
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
+    using Reply = CompletionHandler<void(RetainPtr<CVPixelBufferRef>&&)>;
     using Promise = WTF::NativePromise<RetainPtr<CVPixelBufferRef>, IPC::Error>;
     auto&& arguments()
     {

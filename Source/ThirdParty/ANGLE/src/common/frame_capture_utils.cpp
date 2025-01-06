@@ -285,6 +285,21 @@ void WriteParamValueReplay<ParamType::TGLsizeiPointer>(std::ostream &os,
 }
 
 template <>
+void WriteParamValueReplay<ParamType::TGLuintPointer>(std::ostream &os,
+                                                      const CallCapture &call,
+                                                      GLuint *value)
+{
+    if (value == 0)
+    {
+        os << kNullPointerString;
+    }
+    else
+    {
+        os << "(GLuint *)" << static_cast<int>(reinterpret_cast<uintptr_t>(value));
+    }
+}
+
+template <>
 void WriteParamValueReplay<ParamType::TGLuintConstPointer>(std::ostream &os,
                                                            const CallCapture &call,
                                                            const GLuint *value)
@@ -332,7 +347,7 @@ void WriteParamValueReplay<ParamType::TFramebufferID>(std::ostream &os,
                                                       const CallCapture &call,
                                                       gl::FramebufferID value)
 {
-    os << "gFramebufferMap[" << value.value << "]";
+    os << "gFramebufferMapPerContext[" << call.contextID.value << "][" << value.value << "]";
 }
 
 template <>
@@ -556,7 +571,22 @@ void WriteParamValueReplay<ParamType::Tegl_SyncID>(std::ostream &os,
 template <>
 void WriteParamValueReplay<ParamType::TEGLAttribPointer>(std::ostream &os,
                                                          const CallCapture &call,
-                                                         const EGLAttrib *value)
+                                                         EGLAttrib *value)
+{
+    if (value == 0)
+    {
+        os << kNullPointerString;
+    }
+    else
+    {
+        os << "(EGLAttrib *)" << static_cast<int>(reinterpret_cast<uintptr_t>(value));
+    }
+}
+
+template <>
+void WriteParamValueReplay<ParamType::TEGLAttribConstPointer>(std::ostream &os,
+                                                              const CallCapture &call,
+                                                              const EGLAttrib *value)
 {
     if (value == 0)
     {
@@ -612,6 +642,24 @@ void WriteParamValueReplay<ParamType::TEGLTimeKHR>(std::ostream &os,
                                                    EGLTimeKHR value)
 {
     os << value << "ul";
+}
+
+template <>
+void WriteParamValueReplay<ParamType::TGLGETBLOBPROCANGLE>(std::ostream &os,
+                                                           const CallCapture &call,
+                                                           GLGETBLOBPROCANGLE value)
+{
+    // It's not necessary to implement correct capture for these types.
+    os << "0";
+}
+
+template <>
+void WriteParamValueReplay<ParamType::TGLSETBLOBPROCANGLE>(std::ostream &os,
+                                                           const CallCapture &call,
+                                                           GLSETBLOBPROCANGLE value)
+{
+    // It's not necessary to implement correct capture for these types.
+    os << "0";
 }
 
 template <typename ParamValueType>

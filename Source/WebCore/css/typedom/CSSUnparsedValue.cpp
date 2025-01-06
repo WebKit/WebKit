@@ -37,14 +37,15 @@
 #include "CSSVariableReferenceValue.h"
 #include "ExceptionOr.h"
 #include <variant>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSUnparsedValue);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSUnparsedValue);
 
 Ref<CSSUnparsedValue> CSSUnparsedValue::create(Vector<CSSUnparsedSegment>&& segments)
 {
@@ -118,6 +119,8 @@ CSSUnparsedValue::CSSUnparsedValue(Vector<CSSUnparsedSegment>&& segments)
     : m_segments(WTFMove(segments))
 {
 }
+
+CSSUnparsedValue::~CSSUnparsedValue() = default;
 
 void CSSUnparsedValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
 {

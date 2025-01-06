@@ -16,11 +16,14 @@
 
 #include "rtc_base/checks.h"
 
+namespace webrtc {
+namespace {
+
 // After this many packets are added, adding additional packets will cause the
 // oldest packets to be pruned from the buffer.
-static const int kBufferSize = 100;
+constexpr int kBufferSize = 100;
 
-namespace webrtc {
+}  // namespace
 
 PacketLossStats::PacketLossStats()
     : single_loss_historic_count_(0),

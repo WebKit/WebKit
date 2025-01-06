@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
 class Cursor;
 class IntRect;
@@ -38,7 +40,7 @@ class PlayStationWebView;
 namespace API {
 
 class ViewClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ViewClient);
 public:
     virtual ~ViewClient() = default;
 

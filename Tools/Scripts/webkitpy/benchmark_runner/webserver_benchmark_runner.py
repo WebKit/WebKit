@@ -4,7 +4,6 @@ import logging
 import os
 import subprocess
 import signal
-import sys
 import time
 
 from webkitcorepy import NullContext, Timeout
@@ -12,10 +11,7 @@ from webkitcorepy import NullContext, Timeout
 from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
 from webkitpy.benchmark_runner.http_server_driver.http_server_driver_factory import HTTPServerDriverFactory
 
-if sys.version_info > (3, 0):
-    from urllib.parse import urljoin
-else:
-    from urlparse import urljoin
+from urllib.parse import urljoin
 
 _log = logging.getLogger(__name__)
 
@@ -35,7 +31,7 @@ class WebServerBenchmarkRunner(BenchmarkRunner):
         return result
 
     def _construct_subtest_url(self, subtests):
-        if not subtests or not isinstance(subtests, collections.abc.Mapping if sys.version_info >= (3, 10) else collections.Mapping) or 'subtest_url_format' not in self._plan:
+        if not subtests or not isinstance(subtests, collections.abc.Mapping) or 'subtest_url_format' not in self._plan:
             return ''
         subtest_url = ''
         for suite, tests in subtests.items():

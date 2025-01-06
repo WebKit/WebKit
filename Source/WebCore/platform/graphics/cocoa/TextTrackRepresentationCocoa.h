@@ -30,6 +30,7 @@
 #include "TextTrackRepresentation.h"
 #include <QuartzCore/CALayer.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -48,6 +49,7 @@ namespace WebCore {
 class HTMLMediaElement;
 
 class TextTrackRepresentationCocoa : public TextTrackRepresentation, public CanMakeWeakPtr<TextTrackRepresentationCocoa, WeakPtrFactoryInitialization::Eager> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextTrackRepresentationCocoa, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT explicit TextTrackRepresentationCocoa(TextTrackRepresentationClient&);
     WEBCORE_EXPORT virtual ~TextTrackRepresentationCocoa();

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTTPServer.h"
 
+#include "Logging.h"
 #include <libsoup/soup.h>
 #include <wtf/Function.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -55,7 +56,7 @@ bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
     m_soupServer = adoptGRef(soup_server_new("server-header", "WebKitWebDriver", nullptr));
     GUniqueOutPtr<GError> error;
     if (!soupServerListen(m_soupServer.get(), host, port, &error.outPtr())) {
-        WTFLogAlways("Failed to start HTTP server at port %u: %s", port, error->message);
+        RELEASE_LOG(WebDriverClassic, "Failed to start HTTP server at port %u: %s", port, error->message);
         return false;
     }
 
@@ -83,6 +84,12 @@ bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
         GRefPtr<SoupServerMessage> protectedMessage = message;
         soup_server_pause_message(server, message);
         auto* requestBody = soup_server_message_get_request_body(message);
+
+        if (httpServer.m_visibleHost.isEmpty()) {
+            const auto* visibleHostAndPort = soup_message_headers_get_one(soup_server_message_get_request_headers(message), "Host");
+            httpServer.m_visibleHost = visibleHostAndPort ? String::fromLatin1(visibleHostAndPort).split(':').at(0) : "localhost"_s;
+        }
+
         httpServer.m_requestHandler.handleRequest({ String::fromUTF8(soup_server_message_get_method(message)), String::fromUTF8(path), requestBody->data, static_cast<size_t>(requestBody->length) },
             [server, message = WTFMove(protectedMessage)](HTTPRequestHandler::Response&& response) {
                 soup_server_message_set_status(message.get(), response.statusCode, nullptr);

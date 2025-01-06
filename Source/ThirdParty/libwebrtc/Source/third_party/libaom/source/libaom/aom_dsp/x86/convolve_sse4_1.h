@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,7 +15,7 @@
 // Note:
 //  This header file should be put below any x86 intrinsics head file
 
-static INLINE void mult_add_store(CONV_BUF_TYPE *const dst,
+static inline void mult_add_store(CONV_BUF_TYPE *const dst,
                                   const __m128i *const res,
                                   const __m128i *const wt0,
                                   const __m128i *const wt1,
@@ -31,7 +31,7 @@ static INLINE void mult_add_store(CONV_BUF_TYPE *const dst,
   _mm_store_si128((__m128i *)dst, d);
 }
 
-static INLINE __m128i highbd_comp_avg_sse4_1(const __m128i *const data_ref_0,
+static inline __m128i highbd_comp_avg_sse4_1(const __m128i *const data_ref_0,
                                              const __m128i *const res_unsigned,
                                              const __m128i *const wt0,
                                              const __m128i *const wt1,

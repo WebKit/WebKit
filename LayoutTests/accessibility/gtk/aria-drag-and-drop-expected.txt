@@ -5,35 +5,35 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 test1
 	ariaDropEffects:
-	ariaIsGrabbed: false
+	isGrabbed: false
 	has grabbed attribute: false
 test2
 	ariaDropEffects:
-	ariaIsGrabbed: false
+	isGrabbed: false
 	has grabbed attribute: false
 test3
 	ariaDropEffects:
-	ariaIsGrabbed: true
+	isGrabbed: true
 	has grabbed attribute: true
 test4
 	ariaDropEffects:
-	ariaIsGrabbed: false
+	isGrabbed: false
 	has grabbed attribute: true
 test5
 	ariaDropEffects: copy
-	ariaIsGrabbed: false
+	isGrabbed: false
 	has grabbed attribute: false
 test6
 	ariaDropEffects: move
-	ariaIsGrabbed: false
+	isGrabbed: false
 	has grabbed attribute: false
 test7
 	ariaDropEffects: copy move
-	ariaIsGrabbed: false
+	isGrabbed: false
 	has grabbed attribute: false
 test8
 	ariaDropEffects: none
-	ariaIsGrabbed: false
+	isGrabbed: false
 	has grabbed attribute: false
 PASS successfullyParsed is true
 

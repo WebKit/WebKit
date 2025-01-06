@@ -27,12 +27,15 @@
 
 #include <stdio.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 // On Windows, use the threadsafe *_r functions provided by pthread.
 #if OS(WINDOWS) && (USE(PTHREADS) || HAVE(PTHREAD_H))
 #include <pthread.h>
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -166,8 +169,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                         state.listStyle = lstyle = 'E';
 
                         p = &(line[lineLenSansWsp]);
-                        result.filename = tokens[1];
-                        result.filenameLength = p - tokens[1];
+                        result.filename = std::span(tokens[1], p);
 
                         return result.type;
                     }
@@ -370,13 +372,12 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
 
                     result.caseSensitive = true;
                     result.type = FTPFileEntry;
-                    result.filename = tokens[0];
-                    result.filenameLength = pos;
+                    result.filename = std::span(tokens[0], pos);
 
                     if (pos > 4) {
                         p = &(tokens[0][pos - 4]);
                         if (p[0] == '.' && p[1] == 'D' && p[2] == 'I' && p[3] == 'R') {
-                            result.filenameLength -= 4;
+                            result.filename = result.filename.first(result.filename.size() - 4);
                             result.type = FTPDirectoryEntry;
                         }
                     }
@@ -576,8 +577,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                 result.modifiedTime.tm_sec = atoi((p + pos) - 2);
 
                 result.caseSensitive = true;
-                result.filename = tokens[0];
-                result.filenameLength = toklen[0];
+                result.filename = std::span(tokens[0], toklen[0]);
                 result.type = FTPFileEntry;
 
                 p = tokens[tokmarker];
@@ -593,7 +593,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                     p = tokens[1];
                     for (pos = 0; pos < toklen[1]; pos++)
                         *dot++ = *p++;
-                    result.filenameLength += 1 + toklen[1];
+                    result.filename = std::span(result.filename.data(), result.filename.size() + 1 + toklen[1]);
                 }
 
                 /* oldstyle LISTING:
@@ -649,18 +649,15 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
 
                 p = &(line[linelen]); /* line end */
                 result.caseSensitive = true;
-                result.filename = tokens[3];
-                result.filenameLength = p - tokens[3];
+                result.filename = std::span(tokens[3], p);
                 result.type = FTPDirectoryEntry;
 
                 if (*tokens[2] != '<') /* not <DIR> or <JUNCTION> */
                 {
                     // try to handle correctly spaces at the beginning of the filename
                     // filesize (token[2]) must end at offset 38
-                    if (tokens[2] + toklen[2] - line == 38) {
-                        result.filename = &(line[39]);
-                        result.filenameLength = p - result.filename;
-                    }
+                    if (tokens[2] + toklen[2] - line == 38)
+                        result.filename = std::span(&(line[39]), p - result.filename.data());
                     result.type = FTPFileEntry;
                     pos = toklen[2];
                     result.fileSize = String({ tokens[2], pos });
@@ -668,22 +665,18 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                     // try to handle correctly spaces at the beginning of the filename
                     // token[2] must begin at offset 24, the length is 5 or 10
                     // token[3] must begin at offset 39 or higher
-                    if (tokens[2] - line == 24 && (toklen[2] == 5 || toklen[2] == 10) && tokens[3] - line >= 39) {
-                        result.filename = &(line[39]);
-                        result.filenameLength = p - result.filename;
-                    }
+                    if (tokens[2] - line == 24 && (toklen[2] == 5 || toklen[2] == 10) && tokens[3] - line >= 39)
+                        result.filename = std::span(&(line[39]),  p - result.filename.data());
 
                     if ((tokens[2][1]) != 'D') /* not <DIR> */ {
                         result.type = FTPJunkEntry; /* unknown until junc for sure */
-                        if (result.filenameLength > 4) {
-                            p = result.filename;
-                            for (pos = result.filenameLength - 4; pos > 0; pos--) {
+                        if (result.filename.size() > 4) {
+                            p = result.filename.data();
+                            for (pos = result.filename.size() - 4; pos > 0; pos--) {
                                 if (p[0] == ' ' && p[3] == ' ' && p[2] == '>' && (p[1] == '=' || p[1] == '-')) {
                                     result.type = FTPLinkEntry;
-                                    result.filenameLength = p - result.filename;
-                                    result.linkname = p + 4;
-                                    result.linknameLength = &(line[linelen])
-                                        - result.linkname;
+                                    result.filename = std::span(result.filename.data(), p);
+                                    result.linkname = std::span(p + 4, &(line[linelen]) - result.linkname.data());
                                     break;
                                 }
                                 p++;
@@ -767,9 +760,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                 p = &(line[toklen[0]]);
 
                 result.caseSensitive = true;
-                result.filename = &p[53 - 18];
-                result.filenameLength = (&(line[lineLenSansWsp]))
-                    - (result.filename);
+                result.filename = std::span(&p[53 - 18], &(line[lineLenSansWsp]) - result.filename.data());
                 result.type = FTPFileEntry;
 
                 /* I don't have a real listing to determine exact pos, so scan. */
@@ -968,35 +959,29 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                 // there is exactly 1 space between filename and previous token in all
                 // outputs except old Hellsoft
                 if (!isOldHellsoft)
-                    result.filename = tokens[tokmarker + 3] + toklen[tokmarker + 3] + 1;
+                    result.filename = std::span(tokens[tokmarker + 3] + toklen[tokmarker + 3] + 1, &(line[linelen]) - result.filename.data());
                 else
-                    result.filename = tokens[tokmarker + 4];
+                    result.filename = std::span(tokens[tokmarker + 4], &(line[linelen]) - result.filename.data());
 
-                result.filenameLength = (&(line[linelen]))
-                    - (result.filename);
-
-                if (result.type == FTPLinkEntry && result.filenameLength > 4) {
+                if (result.type == FTPLinkEntry && result.filename.size() > 4) {
                     /* First try to use result.fe_size to find " -> " sequence.
                        This can give proper result for cases like "aaa -> bbb -> ccc". */
                     auto fileSize = parseIntegerAllowingTrailingJunk<unsigned>(result.fileSize).value_or(0);
 
-                    if (result.filenameLength > (fileSize + 4) && !strncmp(result.filename + result.filenameLength - fileSize - 4, " -> ", 4)) {
-                        result.linkname = result.filename + (result.filenameLength - fileSize);
-                        result.linknameLength = (&(line[linelen])) - (result.linkname);
-                        result.filenameLength -= fileSize + 4;
+                    if (result.filename.size() > (fileSize + 4) && spanHasPrefix(result.filename.subspan(result.filename.size() - fileSize - 4), " -> "_span)) {
+                        result.linkname = std::span(result.filename.data() + result.filename.size() - fileSize, &(line[linelen]) - result.linkname.data());
+                        result.filename = std::span(result.filename.data(), result.filename.size() - fileSize + 4);
                     } else {
                         /* Search for sequence " -> " from the end for case when there are
                            more occurrences. F.e. if ftpd returns "a -> b -> c" assume
                            "a -> b" as a name. Powerusers can remove unnecessary parts
                            manually but there is no way to follow the link when some
                            essential part is missing. */
-                        p = result.filename + (result.filenameLength - 5);
-                        for (pos = (result.filenameLength - 5); pos > 0; pos--) {
+                        p = result.filename.data() + (result.filename.size() - 5);
+                        for (pos = (result.filename.size() - 5); pos > 0; pos--) {
                             if (!strncmp(p, " -> ", 4)) {
-                                result.linkname = p + 4;
-                                result.linknameLength = (&(line[linelen]))
-                                    - (result.linkname);
-                                result.filenameLength = pos;
+                                result.linkname = std::span(p + 4, &(line[linelen]) - result.linkname.data());
+                                result.filename = std::span(result.filename.data(), pos);
                                 break;
                             }
                             p--;
@@ -1005,20 +990,20 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                 }
 
 #if defined(SUPPORT_LSLF) /* some (very rare) servers return ls -lF */
-                if (result.filenameLength > 1) {
-                    p = result.filename[result.filenameLength - 1];
+                if (result.filename.size() > 1) {
+                    p = result.filename[result.filename.size() - 1];
                     pos = result.type;
                     if (pos == 'd') {
                         if (*p == '/')
-                            result.filenameLength--; /* directory */
+                            result.filename = result.filename.first(result.filename.size() - 1); /* directory */
                     } else if (pos == 'l') {
                         if (*p == '@')
-                            result.filenameLength--; /* symlink */
+                            result.filename = result.filename.first(result.filename.size() - 1); /* symlink */
                     } else if (pos == 'f') {
                         if (*p == '*')
-                            result.filenameLength--; /* executable */
+                            result.filename = result.filename.first(result.filename.size() - 1); /* executable */
                     } else if (*p == '=' || *p == '%' || *p == '|')
-                        result.filenameLength--; /* socket, whiteout, fifo */
+                        result.filename = result.filename.first(result.filename.size() - 1); /* socket, whiteout, fifo */
                 }
 #endif
 
@@ -1106,8 +1091,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                 state.listStyle = lstyle;
 
                 result.caseSensitive = true;
-                result.filename = tokens[0];
-                result.filenameLength = toklen[0];
+                result.filename = std::span(tokens[0], toklen[0]);
                 result.type = FTPDirectoryEntry;
 
                 p = tokens[1];
@@ -1280,15 +1264,14 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                 state.listStyle = lstyle;
 
                 p = &(tokens[tokmarker - 1][toklen[tokmarker - 1]]);
-                result.filename = tokens[0];
-                result.filenameLength = p - tokens[0];
+                result.filename = std::span(tokens[0], p);
                 result.type = FTPFileEntry;
 
-                if (result.filename[result.filenameLength - 1] == '/') {
-                    if (result.linknameLength == 1)
+                if (result.filename[result.filename.size() - 1] == '/') {
+                    if (result.linkname.size() == 1)
                         result.type = FTPJunkEntry;
                     else {
-                        result.filenameLength--;
+                        result.filename = result.filename.first(result.filename.size() - 1);
                         result.type = FTPDirectoryEntry;
                     }
                 } else if (isASCIIDigit(*tokens[tokmarker])) {
@@ -1364,10 +1347,9 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                     if (toklen[pos] == 2 && *p == '-' && p[1] == '>') {
                         p = &(tokens[numtoks - 1][toklen[numtoks - 1]]);
                         result.type = FTPLinkEntry;
-                        result.linkname = tokens[pos + 1];
-                        result.linknameLength = p - result.linkname;
-                        if (result.linknameLength > 1 && result.linkname[result.linknameLength - 1] == '/')
-                            result.linknameLength--;
+                        result.linkname = std::span(tokens[pos + 1], p - result.linkname.data());
+                        if (result.linkname.size() > 1 && result.linkname[result.linkname.size() - 1] == '/')
+                            result.linkname = result.linkname.first(result.linkname.size() - 1);
                     }
                 } /* if (numtoks > (tokmarker+2)) */
 
@@ -1392,5 +1374,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(FTPDIR)

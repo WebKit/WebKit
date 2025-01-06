@@ -1,0 +1,12 @@
+
+PASS e.style['box-shadow-color'] = "auto" should not set the property value
+PASS e.style['box-shadow-color'] = "123" should not set the property value
+PASS e.style['box-shadow-color'] = "#12" should not set the property value
+PASS e.style['box-shadow-color'] = "#123456789" should not set the property value
+PASS e.style['box-shadow-color'] = "rgb" should not set the property value
+PASS e.style['box-shadow-color'] = "rgb(1)" should not set the property value
+PASS e.style['box-shadow-color'] = "rgb(1,2,3,4,5)" should not set the property value
+PASS e.style['box-shadow-color'] = "hsla(1,2,3,4,5)" should not set the property value
+PASS e.style['box-shadow-color'] = "rgb(10%, 20, 30%)" should not set the property value
+PASS e.style['box-shadow-color'] = "rgba(-2, 300, 400%, -0.5)" should not set the property value
+

@@ -43,18 +43,18 @@ layer at (0,0) size 800x600
         RenderText {#text} at (3,39) size 764x36
           text run at (253,39) width 514: ", which should have no bottom border width or visible border because no border"
           text run at (3,57) width 85: "style was set."
-      RenderTable {TABLE} at (0,226) size 784x136 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,226) size 784x136 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x134
           RenderTableRow {TR} at (0,0) size 782x26
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x108
-            RenderTableCell {TD} at (0,67) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,67) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,45) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x108 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 770x108 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x100 [border: (3px solid #000000) (25px solid #000000) (3px solid #000000)]
                 RenderText {#text} at (3,3) size 176x18
                   text run at (3,3) width 176: "This element has a class of "

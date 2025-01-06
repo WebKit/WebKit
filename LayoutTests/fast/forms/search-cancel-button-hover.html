@@ -21,13 +21,18 @@ input[type="search"]::-webkit-search-cancel-button:hover {
 <body>
 <input type="search" id="search" value="foo"/>
 <script>
-if (window.testRunner) {
+onload = async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.waitUntilDone();
     var input = document.getElementById("search");
     var position = searchCancelButtonPosition(input);
-    eventSender.mouseMoveTo(position.x, position.y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseMoveTo(position.x + 1, position.y);
+    await eventSender.asyncMouseMoveTo(position.x, position.y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+    await eventSender.asyncMouseMoveTo(position.x + 1, position.y);
+    testRunner.notifyDone();
 }
 </script>
 </body>

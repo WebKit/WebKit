@@ -18,6 +18,8 @@ layer at (80,30) size 90x90
   RenderSVGEllipse {circle} at (0,5) size 90x90 [fill={[type=SOLID] [color=#D3FF00]}] [cx=125.00] [cy=75.00] [r=45.00]
 layer at (160,25) size 80x100
   RenderSVGPath {polygon} at (80,0) size 80x100 [fill={[type=SOLID] [color=#7A16FF]}] [points="160 25 160 125 240 75"]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (-5,-5) size 0x0
 layer at (5,5) size 260x260
   RenderSVGRect {rect} at (0,0) size 260x260 [stroke={[type=SOLID] [color=#0000FF]}] [x=5.00] [y=5.00] [width=260.00] [height=260.00]
 layer at (5,5) size 260x260

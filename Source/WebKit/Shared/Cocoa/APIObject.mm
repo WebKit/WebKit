@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextControllerInternal.h"
-#import "WKConnectionInternal.h"
 #import "WKContentRuleListInternal.h"
 #import "WKContentRuleListStoreInternal.h"
 #import "WKContentWorldInternal.h"
@@ -91,12 +90,16 @@
 #import "_WKResourceLoadStatisticsThirdPartyInternal.h"
 #import "_WKTargetedElementInfoInternal.h"
 #import "_WKTargetedElementRequestInternal.h"
+#import "_WKTextRunInternal.h"
 #import "_WKUserContentWorldInternal.h"
 #import "_WKUserInitiatedActionInternal.h"
 #import "_WKUserStyleSheetInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebAuthenticationAssertionResponseInternal.h"
 #import "_WKWebAuthenticationPanelInternal.h"
+#import "_WKWebPushDaemonConnectionInternal.h"
+#import "_WKWebPushMessageInternal.h"
+#import "_WKWebPushSubscriptionDataInternal.h"
 #import "_WKWebsiteDataStoreConfigurationInternal.h"
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -104,18 +107,21 @@
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-#import "_WKWebExtensionActionInternal.h"
-#import "_WKWebExtensionCommandInternal.h"
-#import "_WKWebExtensionContextInternal.h"
-#import "_WKWebExtensionControllerConfigurationInternal.h"
-#import "_WKWebExtensionControllerInternal.h"
-#import "_WKWebExtensionDataRecordInternal.h"
-#import "_WKWebExtensionInternal.h"
-#import "_WKWebExtensionMatchPatternInternal.h"
-#import "_WKWebExtensionMessagePortInternal.h"
+#import "WKWebExtensionActionInternal.h"
+#import "WKWebExtensionCommandInternal.h"
+#import "WKWebExtensionContextInternal.h"
+#import "WKWebExtensionControllerConfigurationInternal.h"
+#import "WKWebExtensionControllerInternal.h"
+#import "WKWebExtensionDataRecordInternal.h"
+#import "WKWebExtensionInternal.h"
+#import "WKWebExtensionMatchPatternInternal.h"
+#import "WKWebExtensionMessagePortInternal.h"
+#import "_WKWebExtensionSidebarInternal.h"
 #endif
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static const size_t minimumObjectAlignment = alignof(std::aligned_storage<std::numeric_limits<size_t>::max()>::type);
+ALLOW_DEPRECATED_DECLARATIONS_END
 static_assert(minimumObjectAlignment >= alignof(void*), "Objects should always be at least pointer-aligned.");
 static const size_t maximumExtraSpaceForAlignment = minimumObjectAlignment - alignof(void*);
 
@@ -199,14 +205,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     case Type::BundlePage:
         wrapper = [WKWebProcessPlugInBrowserContextController alloc];
-        break;
-
-    case Type::Connection:
-        // While not actually a WKObject instance, WKConnection uses allocateWKObject to allocate extra space
-        // instead of using ObjectStorage because the wrapped C++ object is a subclass of WebConnection.
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        wrapper = allocateWKObject([WKConnection class], size);
-ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 
     case Type::DebuggableInfo:
@@ -310,11 +308,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         wrapper = [WKNavigationResponse alloc];
         break;
 
-#if PLATFORM(MAC)
     case Type::OpenPanelParameters:
         wrapper = [WKOpenPanelParameters alloc];
         break;
-#endif
 
     case Type::SecurityOrigin:
         wrapper = [WKSecurityOrigin alloc];
@@ -392,6 +388,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         wrapper = [_WKTargetedElementRequest alloc];
         break;
 
+    case Type::TextRun:
+        wrapper = [_WKTextRun alloc];
+        break;
+
     case Type::UserInitiatedAction:
         wrapper = [_WKUserInitiatedAction alloc];
         break;
@@ -410,41 +410,59 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(WK_WEB_EXTENSIONS)
     case Type::WebExtension:
-        wrapper = [_WKWebExtension alloc];
+        wrapper = [WKWebExtension alloc];
         break;
 
     case Type::WebExtensionContext:
-        wrapper = [_WKWebExtensionContext alloc];
+        wrapper = [WKWebExtensionContext alloc];
         break;
 
     case Type::WebExtensionAction:
-        wrapper = [_WKWebExtensionAction alloc];
+        wrapper = [WKWebExtensionAction alloc];
         break;
 
     case Type::WebExtensionCommand:
-        wrapper = [_WKWebExtensionCommand alloc];
+        wrapper = [WKWebExtensionCommand alloc];
         break;
 
     case Type::WebExtensionController:
-        wrapper = [_WKWebExtensionController alloc];
+        wrapper = [WKWebExtensionController alloc];
         break;
 
     case Type::WebExtensionControllerConfiguration:
-        wrapper = [_WKWebExtensionControllerConfiguration alloc];
+        wrapper = [WKWebExtensionControllerConfiguration alloc];
         break;
 
     case Type::WebExtensionDataRecord:
-        wrapper = [_WKWebExtensionDataRecord alloc];
+        wrapper = [WKWebExtensionDataRecord alloc];
         break;
 
     case Type::WebExtensionMatchPattern:
-        wrapper = [_WKWebExtensionMatchPattern alloc];
+        wrapper = [WKWebExtensionMatchPattern alloc];
         break;
 
     case Type::WebExtensionMessagePort:
-        wrapper = [_WKWebExtensionMessagePort alloc];
+        wrapper = [WKWebExtensionMessagePort alloc];
+        break;
+
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    case Type::WebExtensionSidebar:
+        wrapper = [_WKWebExtensionSidebar alloc];
         break;
 #endif
+#endif // ENABLE(WK_WEB_EXTENSIONS)
+
+    case Type::WebPushDaemonConnection:
+        wrapper = [_WKWebPushDaemonConnection alloc];
+        break;
+
+    case Type::WebPushMessage:
+        wrapper = [_WKWebPushMessage alloc];
+        break;
+
+    case Type::WebPushSubscriptionData:
+        wrapper = [_WKWebPushSubscriptionData alloc];
+        break;
 
     case Type::WebsiteDataRecord:
         wrapper = [WKWebsiteDataRecord alloc];
@@ -505,7 +523,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     Object& object = wrapper._apiObject;
-    object.m_wrapper = (__bridge CFTypeRef)wrapper;
+
+    apiObjectsUnderConstruction().add(&object, (__bridge CFTypeRef)wrapper);
 
     return &object;
 }
@@ -530,7 +549,7 @@ RetainPtr<NSObject<NSSecureCoding>> Object::toNSObject()
 {
     switch (type()) {
     case Object::Type::Dictionary: {
-        auto& dictionary = static_cast<API::Dictionary&>(*this);
+        auto& dictionary = downcast<API::Dictionary>(*this);
         auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:dictionary.size()]);
         for (auto& pair : dictionary.map()) {
             if (auto nsObject = pair.value ? pair.value->toNSObject() : RetainPtr<NSObject<NSSecureCoding>>())
@@ -539,7 +558,7 @@ RetainPtr<NSObject<NSSecureCoding>> Object::toNSObject()
         return result;
     }
     case Object::Type::Array: {
-        auto& array = static_cast<API::Array&>(*this);
+        auto& array = downcast<API::Array>(*this);
         auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:array.size()]);
         for (auto& element : array.elements()) {
             if (auto nsObject = element ? element->toNSObject() : RetainPtr<NSObject<NSSecureCoding>>())
@@ -548,17 +567,17 @@ RetainPtr<NSObject<NSSecureCoding>> Object::toNSObject()
         return result;
     }
     case Object::Type::Double:
-        return adoptNS([[NSNumber alloc] initWithDouble:static_cast<API::Double&>(*this).value()]);
+        return adoptNS([[NSNumber alloc] initWithDouble:downcast<API::Double>(*this).value()]);
     case Object::Type::Boolean:
-        return adoptNS([[NSNumber alloc] initWithBool:static_cast<API::Boolean&>(*this).value()]);
+        return adoptNS([[NSNumber alloc] initWithBool:downcast<API::Boolean>(*this).value()]);
     case Object::Type::UInt64:
-        return adoptNS([[NSNumber alloc] initWithUnsignedLongLong:static_cast<API::UInt64&>(*this).value()]);
+        return adoptNS([[NSNumber alloc] initWithUnsignedLongLong:downcast<API::UInt64>(*this).value()]);
     case Object::Type::Int64:
-        return adoptNS([[NSNumber alloc] initWithLongLong:static_cast<API::Int64&>(*this).value()]);
+        return adoptNS([[NSNumber alloc] initWithLongLong:downcast<API::Int64>(*this).value()]);
     case Object::Type::Data:
-        return API::wrapper(static_cast<API::Data&>(*this));
+        return API::wrapper(downcast<API::Data>(*this));
     case Object::Type::String:
-        return (NSString *)static_cast<API::String&>(*this).string();
+        return (NSString *)downcast<API::String>(*this).string();
     default:
         // Other API::Object::Types are intentionally not supported.
         break;
@@ -568,14 +587,13 @@ RetainPtr<NSObject<NSSecureCoding>> Object::toNSObject()
 
 RefPtr<API::Object> Object::fromNSObject(NSObject<NSSecureCoding> *object)
 {
-    if ([object isKindOfClass:NSString.class])
-        return API::String::create((NSString *)object);
-    if ([object isKindOfClass:NSData.class])
-        return API::Data::createWithoutCopying((NSData *)object);
-    if ([object isKindOfClass:NSNumber.class])
-        return API::Double::create([(NSNumber *)object doubleValue]);
-    if ([object isKindOfClass:NSArray.class]) {
-        NSArray *array = (NSArray *)object;
+    if (auto *str = dynamic_objc_cast<NSString>(object))
+        return API::String::create(str);
+    if (auto *data = dynamic_objc_cast<NSData>(object))
+        return API::Data::createWithoutCopying(data);
+    if (auto *number = dynamic_objc_cast<NSNumber>(object))
+        return API::Double::create([number doubleValue]);
+    if (auto *array = dynamic_objc_cast<NSArray>(object)) {
         Vector<RefPtr<API::Object>> result;
         result.reserveInitialCapacity(array.count);
         for (id member in array) {
@@ -584,9 +602,9 @@ RefPtr<API::Object> Object::fromNSObject(NSObject<NSSecureCoding> *object)
         }
         return API::Array::create(WTFMove(result));
     }
-    if ([object isKindOfClass:NSDictionary.class]) {
+    if (auto *dictionary = dynamic_objc_cast<NSDictionary>(object)) {
         __block HashMap<WTF::String, RefPtr<API::Object>> result;
-        [(NSDictionary *)object enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+        [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
             if (auto valueObject = fromNSObject(value); valueObject && [key isKindOfClass:NSString.class])
                 result.add(key, WTFMove(valueObject));
         }];

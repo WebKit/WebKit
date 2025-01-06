@@ -22,12 +22,15 @@
 #include "MediaPlayerPrivateHolePunch.h"
 
 #if USE(EXTERNAL_HOLEPUNCH)
+#include "CoordinatedPlatformLayerBufferHolePunch.h"
 #include "MediaPlayer.h"
-#include "TextureMapperPlatformLayerBuffer.h"
-#include "TextureMapperPlatformLayerProxyGL.h"
+#include "TextureMapperPlatformLayerProxy.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerPrivateHolePunch);
 
 static const FloatSize s_holePunchDefaultFrameSize(1280, 720);
 
@@ -35,11 +38,7 @@ MediaPlayerPrivateHolePunch::MediaPlayerPrivateHolePunch(MediaPlayer* player)
     : m_player(player)
     , m_readyTimer(RunLoop::main(), this, &MediaPlayerPrivateHolePunch::notifyReadyState)
     , m_networkState(MediaPlayer::NetworkState::Empty)
-#if USE(NICOSIA)
-    , m_nicosiaLayer(Nicosia::ContentLayer::create(*this, adoptRef(*new WebCore::TextureMapperPlatformLayerProxyGL(WebCore::TextureMapperPlatformLayerProxy::ContentType::HolePunch))))
-#else
-    , m_platformLayerProxy(adoptRef(new TextureMapperPlatformLayerProxyGL(TextureMapperPlatformLayerProxy::ContentType::HolePunch)))
-#endif
+    , m_platformLayer(TextureMapperPlatformLayerProxy::create(TextureMapperPlatformLayerProxy::ContentType::HolePunch))
 {
     pushNextHolePunchBuffer();
 
@@ -50,18 +49,11 @@ MediaPlayerPrivateHolePunch::MediaPlayerPrivateHolePunch(MediaPlayer* player)
 
 MediaPlayerPrivateHolePunch::~MediaPlayerPrivateHolePunch()
 {
-#if USE(NICOSIA)
-    m_nicosiaLayer->invalidateClient();
-#endif
 }
 
 PlatformLayer* MediaPlayerPrivateHolePunch::platformLayer() const
 {
-#if USE(NICOSIA)
-    return m_nicosiaLayer.ptr();
-#else
-    return const_cast<MediaPlayerPrivateHolePunch*>(this);
-#endif
+    return m_platformLayer.get();
 }
 
 FloatSize MediaPlayerPrivateHolePunch::naturalSize() const
@@ -74,36 +66,8 @@ FloatSize MediaPlayerPrivateHolePunch::naturalSize() const
 
 void MediaPlayerPrivateHolePunch::pushNextHolePunchBuffer()
 {
-    auto proxyOperation =
-        [this](TextureMapperPlatformLayerProxyGL& proxy)
-        {
-            Locker locker { proxy.lock() };
-            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperFlags::ShouldNotBlend, GL_DONT_CARE);
-            proxy.pushNextBuffer(WTFMove(layerBuffer));
-        };
-
-#if USE(NICOSIA)
-    auto& proxy = m_nicosiaLayer->proxy();
-    ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
-    proxyOperation(downcast<TextureMapperPlatformLayerProxyGL>(proxy));
-#else
-    proxyOperation(*m_platformLayerProxy);
-#endif
+    proxy.pushNextBuffer(CoordinatedPlatformLayerBufferHolePunch::create(m_size));
 }
-
-void MediaPlayerPrivateHolePunch::swapBuffersIfNeeded()
-{
-#if !USE(NICOSIA)
-    pushNextHolePunchBuffer();
-#endif
-}
-
-#if !USE(NICOSIA)
-RefPtr<TextureMapperPlatformLayerProxy> MediaPlayerPrivateHolePunch::proxy() const
-{
-    return m_platformLayerProxy.copyRef();
-}
-#endif
 
 static HashSet<String>& mimeTypeCache()
 {

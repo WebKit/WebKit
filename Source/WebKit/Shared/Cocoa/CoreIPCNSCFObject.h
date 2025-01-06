@@ -35,20 +35,7 @@ namespace WebKit {
 
 class CoreIPCArray;
 class CoreIPCCFType;
-#if USE(PASSKIT)
-class CoreIPCCNPhoneNumber;
-class CoreIPCCNPostalAddress;
-class CoreIPCPKContact;
-class CoreIPCPKPayment;
-class CoreIPCPKPaymentToken;
-class CoreIPCPKShippingMethod;
-class CoreIPCPKDateComponentsRange;
-class CoreIPCPKPaymentMethod;
-#endif
 class CoreIPCColor;
-#if ENABLE(DATA_DETECTION)
-class CoreIPCDDScannerResult;
-#endif
 class CoreIPCData;
 class CoreIPCDate;
 class CoreIPCDateComponents;
@@ -63,7 +50,6 @@ class CoreIPCNull;
 class CoreIPCSecureCoding;
 class CoreIPCString;
 class CoreIPCURL;
-class CoreIPNSCURLProtectionSpace;
 
 using ObjectValue = std::variant<
     std::nullptr_t,

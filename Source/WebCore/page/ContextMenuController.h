@@ -31,6 +31,7 @@
 #include "ContextMenuItem.h"
 #include "HitTestRequest.h"
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakRef.h>
 
@@ -43,7 +44,7 @@ class HitTestResult;
 class Page;
 
 class ContextMenuController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ContextMenuController);
 public:
     ContextMenuController(Page&, UniqueRef<ContextMenuClient>&&);
     ~ContextMenuController();
@@ -90,7 +91,7 @@ private:
     void createAndAppendTextDirectionSubMenu(ContextMenuItem&);
     void createAndAppendSubstitutionsSubMenu(ContextMenuItem&);
     void createAndAppendTransformationsSubMenu(ContextMenuItem&);
-    bool shouldEnableCopyLinkToHighlight() const;
+    bool shouldEnableCopyLinkWithHighlight() const;
 #if PLATFORM(GTK)
     void createAndAppendUnicodeSubMenu(ContextMenuItem&);
 #endif
@@ -99,7 +100,7 @@ private:
     void performPDFJSAction(LocalFrame&, const String& action);
 #endif
 
-    SingleThreadWeakRef<Page> m_page;
+    WeakRef<Page> m_page;
     UniqueRef<ContextMenuClient> m_client;
     std::unique_ptr<ContextMenu> m_contextMenu;
     RefPtr<ContextMenuProvider> m_menuProvider;

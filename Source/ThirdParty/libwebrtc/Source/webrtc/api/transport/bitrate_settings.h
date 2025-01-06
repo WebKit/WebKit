@@ -11,9 +11,8 @@
 #ifndef API_TRANSPORT_BITRATE_SETTINGS_H_
 #define API_TRANSPORT_BITRATE_SETTINGS_H_
 
-#include <algorithm>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -28,9 +27,9 @@ struct RTC_EXPORT BitrateSettings {
   ~BitrateSettings();
   BitrateSettings(const BitrateSettings&);
   // 0 <= min <= start <= max should hold for set parameters.
-  absl::optional<int> min_bitrate_bps;
-  absl::optional<int> start_bitrate_bps;
-  absl::optional<int> max_bitrate_bps;
+  std::optional<int> min_bitrate_bps;
+  std::optional<int> start_bitrate_bps;
+  std::optional<int> max_bitrate_bps;
 };
 
 // TODO(srte): BitrateConstraints and BitrateSettings should be merged.

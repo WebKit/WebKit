@@ -19,14 +19,14 @@
 #include "include/core/SkSurface.h"
 #include "include/ports/SkFontMgr_empty.h"
 
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrContextOptions.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrContextOptions.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "include/gpu/ganesh/gl/GrGLBackendSurface.h"
 #include "include/gpu/ganesh/gl/GrGLDirectContext.h"
-#include "include/gpu/gl/GrGLInterface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #include "include/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.h"
 
 #include "modules/skottie/include/Skottie.h"
@@ -187,7 +187,7 @@ Java_org_skia_skottie_SkottieAnimation_nCreateProxy(JNIEnv *env,
         // (using the above registered codecs) or base64 encoded FreeType typefaces.
         .setResourceProvider(skresources::DataURIResourceProviderProxy::Make(nullptr,
             skresources::ImageDecodeStrategy::kPreDecode, freetypeMgr))
-        .setTextShapingFactory(SkShapers::BestAvailable())
+        .setTextShapingFactory(sk_make_sp<SkShapers::HarfbuzzFactory>())
         .make(skottieAnimation->mStream.get());
     skottieAnimation->mTimeBase  = 0.0f; // force a time reset
     skottieAnimation->mDuration = 1000 * skottieAnimation->mAnimation->duration();

@@ -13,8 +13,8 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkSize.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/private/base/SingleOwner.h"
 #include "include/private/base/SkTemplates.h"
 #include "src/base/SkMathPriv.h"
@@ -615,7 +615,7 @@ sk_sp<GrGpuBuffer> GrResourceProvider::createBuffer(size_t size,
     static const size_t MIN_UNIFORM_SIZE = 1 << 7;
     size_t allocSize = intendedType == GrGpuBufferType::kUniform ? std::max(size, MIN_UNIFORM_SIZE)
                                                                  : std::max(size, MIN_SIZE);
-    size_t ceilPow2 = GrNextSizePow2(allocSize);
+    size_t ceilPow2 = SkNextSizePow2(allocSize);
     size_t floorPow2 = ceilPow2 >> 1;
     size_t mid = floorPow2 + (floorPow2 >> 1);
     allocSize = (allocSize <= mid) ? mid : ceilPow2;

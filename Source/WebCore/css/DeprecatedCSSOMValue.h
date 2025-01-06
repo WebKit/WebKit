@@ -28,12 +28,13 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSValue.h"
 #include "ExceptionOr.h"
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class DeprecatedCSSOMValue : public RefCounted<DeprecatedCSSOMValue>, public CanMakeWeakPtr<DeprecatedCSSOMValue> {
+class DeprecatedCSSOMValue : public RefCountedAndCanMakeWeakPtr<DeprecatedCSSOMValue> {
 public:
     // Exactly match the IDL. No reason to add anything if it's not in the IDL.
     enum Type : unsigned short {
@@ -48,8 +49,11 @@ public:
     WEBCORE_EXPORT String cssText() const;
     ExceptionOr<void> setCssText(const String&) { return { }; } // Will never implement.
 
+    bool isBoxShadowValue() const { return classType() == ClassType::BoxShadow; }
     bool isComplexValue() const { return classType() == ClassType::Complex; }
+    bool isFilterFunctionValue() const { return classType() == ClassType::FilterFunction; }
     bool isPrimitiveValue() const { return classType() == ClassType::Primitive; }
+    bool isTextShadowValue() const { return classType() == ClassType::TextShadow; }
     bool isValueList() const { return classType() == ClassType::List; }
 
     CSSStyleDeclaration& owner() const { return m_owner; }
@@ -60,8 +64,15 @@ public:
     WEBCORE_EXPORT void operator delete(DeprecatedCSSOMValue*, std::destroying_delete_t);
 
 protected:
-    static const size_t ClassTypeBits = 2;
-    enum class ClassType : uint8_t { Complex, Primitive, List };
+    static const size_t ClassTypeBits = 3;
+    enum class ClassType : uint8_t {
+        BoxShadow,
+        Complex,
+        FilterFunction,
+        List,
+        Primitive,
+        TextShadow
+    };
     ClassType classType() const { return static_cast<ClassType>(m_classType); }
 
     DeprecatedCSSOMValue(ClassType classType, CSSStyleDeclaration& owner)
@@ -79,9 +90,9 @@ protected:
 
 class DeprecatedCSSOMComplexValue : public DeprecatedCSSOMValue {
 public:
-    static Ref<DeprecatedCSSOMComplexValue> create(const CSSValue& value, CSSStyleDeclaration& owner)
+    static Ref<DeprecatedCSSOMComplexValue> create(Ref<const CSSValue> value, CSSStyleDeclaration& owner)
     {
-        return adoptRef(*new DeprecatedCSSOMComplexValue(value, owner));
+        return adoptRef(*new DeprecatedCSSOMComplexValue(WTFMove(value), owner));
     }
 
     String cssText() const { return m_value->cssText(); }
@@ -89,9 +100,9 @@ public:
     unsigned short cssValueType() const;
 
 protected:
-    DeprecatedCSSOMComplexValue(const CSSValue& value, CSSStyleDeclaration& owner)
+    DeprecatedCSSOMComplexValue(Ref<const CSSValue> value, CSSStyleDeclaration& owner)
         : DeprecatedCSSOMValue(ClassType::Complex, owner)
-        , m_value(value)
+        , m_value(WTFMove(value))
     {
     }
 

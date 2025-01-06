@@ -15,21 +15,6 @@
 #include "vpx_ports/mem.h"
 #include "vpx_ports/system_state.h"
 
-void vpx_ssim_parms_16x16_c(const uint8_t *s, int sp, const uint8_t *r, int rp,
-                            uint32_t *sum_s, uint32_t *sum_r,
-                            uint32_t *sum_sq_s, uint32_t *sum_sq_r,
-                            uint32_t *sum_sxr) {
-  int i, j;
-  for (i = 0; i < 16; i++, s += sp, r += rp) {
-    for (j = 0; j < 16; j++) {
-      *sum_s += s[j];
-      *sum_r += r[j];
-      *sum_sq_s += s[j] * s[j];
-      *sum_sq_r += r[j] * r[j];
-      *sum_sxr += s[j] * r[j];
-    }
-  }
-}
 void vpx_ssim_parms_8x8_c(const uint8_t *s, int sp, const uint8_t *r, int rp,
                           uint32_t *sum_s, uint32_t *sum_r, uint32_t *sum_sq_s,
                           uint32_t *sum_sq_r, uint32_t *sum_sxr) {

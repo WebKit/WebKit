@@ -30,9 +30,12 @@
 #include "ScrollExtents.h"
 #include "ScrollingEffectsController.h"
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollSnapAnimatorState);
 
 ScrollSnapAnimatorState::~ScrollSnapAnimatorState() = default;
 
@@ -101,7 +104,7 @@ bool ScrollSnapAnimatorState::preserveCurrentTargetForAxis(ScrollEventAxis axis,
     auto snapOffsets = snapOffsetsForAxis(axis);
     
     auto found = std::find_if(snapOffsets.begin(), snapOffsets.end(), [boxID](SnapOffset<LayoutUnit> p) -> bool {
-        return p.snapTargetID == boxID;
+        return *p.snapTargetID == boxID;
     });
     if (found == snapOffsets.end()) {
         setActiveSnapIndexForAxis(axis, std::nullopt);
@@ -130,7 +133,7 @@ HashSet<ElementIdentifier> ScrollSnapAnimatorState::currentlySnappedBoxes(const 
     for (auto offset : horizontalOffsets) {
         if (!offset.snapTargetID)
             continue;
-        snappedBoxIDs.add(offset.snapTargetID);
+        snappedBoxIDs.add(*offset.snapTargetID);
         for (auto i : offset.snapAreaIndices)
             snappedBoxIDs.add(m_snapOffsetsInfo.snapAreasIDs[i]);
     }
@@ -138,7 +141,7 @@ HashSet<ElementIdentifier> ScrollSnapAnimatorState::currentlySnappedBoxes(const 
     for (auto offset : verticalOffsets) {
         if (!offset.snapTargetID)
             continue;
-        snappedBoxIDs.add(offset.snapTargetID);
+        snappedBoxIDs.add(*offset.snapTargetID);
         for (auto i : offset.snapAreaIndices)
             snappedBoxIDs.add(m_snapOffsetsInfo.snapAreasIDs[i]);
     }
@@ -164,16 +167,16 @@ static ElementIdentifier chooseBoxToResnapTo(const HashSet<ElementIdentifier>& s
     ASSERT(snappedBoxes.size());
 
     auto found = std::find_if(horizontalOffsets.begin(), horizontalOffsets.end(), [&snappedBoxes](SnapOffset<LayoutUnit> p) -> bool {
-        return snappedBoxes.contains(p.snapTargetID) && p.isFocused;
+        return snappedBoxes.contains(*p.snapTargetID) && p.isFocused;
     });
     if (found != horizontalOffsets.end())
-        return found->snapTargetID;
+        return *found->snapTargetID;
     
     found = std::find_if(verticalOffsets.begin(), verticalOffsets.end(), [&snappedBoxes](SnapOffset<LayoutUnit> p) -> bool {
-        return snappedBoxes.contains(p.snapTargetID) && p.isFocused;
+        return snappedBoxes.contains(*p.snapTargetID) && p.isFocused;
     });
     if (found != verticalOffsets.end())
-        return found->snapTargetID;
+        return *found->snapTargetID;
     
     return *snappedBoxes.begin();
 }

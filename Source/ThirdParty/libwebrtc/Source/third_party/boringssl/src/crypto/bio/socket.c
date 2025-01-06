@@ -56,7 +56,7 @@
 
 #include <openssl/bio.h>
 
-#if !defined(OPENSSL_TRUSTY)
+#if !defined(OPENSSL_NO_SOCK)
 
 #include <fcntl.h>
 #include <string.h>
@@ -104,7 +104,7 @@ static int sock_read(BIO *b, char *out, int outl) {
 #endif
   BIO_clear_retry_flags(b);
   if (ret <= 0) {
-    if (bio_fd_should_retry(ret)) {
+    if (bio_socket_should_retry(ret)) {
       BIO_set_retry_read(b);
     }
   }
@@ -120,7 +120,7 @@ static int sock_write(BIO *b, const char *in, int inl) {
 #endif
   BIO_clear_retry_flags(b);
   if (ret <= 0) {
-    if (bio_fd_should_retry(ret)) {
+    if (bio_socket_should_retry(ret)) {
       BIO_set_retry_write(b);
     }
   }
@@ -186,4 +186,4 @@ BIO *BIO_new_socket(int fd, int close_flag) {
   return ret;
 }
 
-#endif  // OPENSSL_TRUSTY
+#endif  // OPENSSL_NO_SOCK

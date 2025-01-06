@@ -19,9 +19,12 @@
 #include "include/effects/SkGradientShader.h"
 #include "include/gpu/graphite/Context.h"
 #include "include/private/SkColorData.h"
+#include "include/private/base/SkTArray.h"
 #include "src/core/SkColorSpaceXformSteps.h"
+#include "src/gpu/graphite/ReadSwizzle.h"
 #include "src/gpu/graphite/TextureProxy.h"
 #include "src/shaders/SkShaderBase.h"
+#include "src/shaders/gradients/SkGradientBaseShader.h"
 
 class SkColorFilter;
 class SkData;
@@ -54,14 +57,6 @@ enum class DstColorType {
  * as parent-child relationships.
  */
 
-struct DstReadSampleBlock {
-    static void AddBlock(const KeyContext&,
-                         PaintParamsKeyBuilder*,
-                         PipelineDataGatherer*,
-                         sk_sp<TextureProxy> dst,
-                         SkIPoint dstOffset);
-};
-
 struct SolidColorShaderBlock {
     static void AddBlock(const KeyContext&,
                          PaintParamsKeyBuilder*,
@@ -90,7 +85,7 @@ struct GradientShaderBlocks {
         // This ctor is used during pre-compilation when we don't have enough information to
         // extract uniform data. However, we must be able to provide enough data to make all the
         // relevant decisions about which code snippets to use.
-        GradientData(SkShaderBase::GradientType, int numStops);
+        GradientData(SkShaderBase::GradientType, int numStops, bool useStorageBuffer);
 
         // This ctor is used when extracting information from PaintParams. It must provide
         // enough data to generate the uniform data the selected code snippet will require.
@@ -102,7 +97,9 @@ struct GradientShaderBlocks {
                      int numStops,
                      const SkPMColor4f* colors,
                      const float* offsets,
+                     const SkGradientBaseShader* shader,
                      sk_sp<TextureProxy> colorsAndOffsetsProxy,
+                     bool useStorageBuffer,
                      const SkGradientShader::Interpolation&);
 
         bool operator==(const GradientData& rhs) const = delete;
@@ -119,13 +116,20 @@ struct GradientShaderBlocks {
 
         SkTileMode             fTM;
         int                    fNumStops;
+        bool                   fUseStorageBuffer;
 
         // For gradients w/ <= kNumInternalStorageStops stops we use fColors and fOffsets.
         // The offsets are packed into a single float4 to save space when the layout is std140.
-        // Otherwise we use fColorsAndOffsetsProxy.
-        SkPMColor4f            fColors[kNumInternalStorageStops];
-        SkV4                   fOffsets[kNumInternalStorageStops / 4];
-        sk_sp<TextureProxy>    fColorsAndOffsetsProxy;
+        //
+        // Otherwise when storage buffers are preferred, we save the colors and offsets pointers
+        // to fSrcColors and fSrcOffsets so we can directly copy to the gatherer gradient buffer,
+        // else we pack the data into the fColorsAndOffsetsProxy texture.
+        SkPMColor4f                   fColors[kNumInternalStorageStops];
+        SkV4                          fOffsets[kNumInternalStorageStops / 4];
+        sk_sp<TextureProxy>           fColorsAndOffsetsProxy;
+        const SkPMColor4f*            fSrcColors;
+        const float*                  fSrcOffsets;
+        const SkGradientBaseShader*   fSrcShader;
 
         SkGradientShader::Interpolation fInterpolation;
     };
@@ -139,10 +143,11 @@ struct GradientShaderBlocks {
 struct LocalMatrixShaderBlock {
     struct LMShaderData {
         LMShaderData(const SkMatrix& localMatrix)
-                : fLocalMatrix(localMatrix) {
-        }
+                : fLocalMatrix(localMatrix)
+                , fHasPerspective(localMatrix.hasPerspective()) {}
 
         const SkM44 fLocalMatrix;
+        const bool  fHasPerspective;
     };
 
     static void BeginBlock(const KeyContext&,
@@ -157,16 +162,11 @@ struct ImageShaderBlock {
                   SkTileMode tileModeX,
                   SkTileMode tileModeY,
                   SkISize imgSize,
-                  SkRect subset,
-                  ReadSwizzle readSwizzle);
-
+                  SkRect subset);
         SkSamplingOptions fSampling;
-        SkTileMode fTileModes[2];
+        std::pair<SkTileMode, SkTileMode> fTileModes;
         SkISize fImgSize;
         SkRect fSubset;
-        ReadSwizzle fReadSwizzle;
-
-        SkColorSpaceXformSteps fSteps;
 
         // TODO: Currently this is only filled in when we're generating the key from an actual
         // SkImageShader. In the pre-compile case we will need to create a Graphite promise
@@ -190,12 +190,13 @@ struct YUVImageShaderBlock {
 
         SkSamplingOptions fSampling;
         SkSamplingOptions fSamplingUV;
-        SkTileMode fTileModes[2];
+        std::pair<SkTileMode, SkTileMode> fTileModes;
         SkISize fImgSize;
         SkISize fImgSizeUV;  // Size of UV planes relative to Y's texel space
         SkRect fSubset;
         SkPoint fLinearFilterUVInset = { 0.50001f, 0.50001f };
         SkV4 fChannelSelect[4];
+        float fAlphaParam = 0;
         SkMatrix fYUVtoRGBMatrix;
         SkPoint3 fYUVtoRGBTranslate;
 
@@ -276,28 +277,22 @@ struct PerlinNoiseShaderBlock {
                          const PerlinNoiseData&);
 };
 
-struct BlendShaderBlock {
+struct BlendComposeBlock {
     static void BeginBlock(const KeyContext&, PaintParamsKeyBuilder*, PipelineDataGatherer*);
 };
 
-struct BlendModeBlenderBlock {
-    static void AddBlock(const KeyContext&,
-                         PaintParamsKeyBuilder*,
-                         PipelineDataGatherer*,
-                         SkBlendMode);
-};
-
-struct CoeffBlenderBlock {
+struct PorterDuffBlenderBlock {
     static void AddBlock(const KeyContext&,
                          PaintParamsKeyBuilder*,
                          PipelineDataGatherer*,
                          SkSpan<const float> coeffs);
 };
 
-struct ClipShaderBlock {
-    static void BeginBlock(const KeyContext&,
-                           PaintParamsKeyBuilder*,
-                           PipelineDataGatherer*);
+struct HSLCBlenderBlock {
+    static void AddBlock(const KeyContext&,
+                         PaintParamsKeyBuilder*,
+                         PipelineDataGatherer*,
+                         SkSpan<const float> coeffs);
 };
 
 struct ComposeBlock {
@@ -308,19 +303,20 @@ struct ComposeBlock {
 
 struct MatrixColorFilterBlock {
     struct MatrixColorFilterData {
-        MatrixColorFilterData(const float matrix[20],
-                              bool inHSLA)
+        MatrixColorFilterData(const float matrix[20], bool inHSLA, bool clamp)
                 : fMatrix(matrix[ 0], matrix[ 1], matrix[ 2], matrix[ 3],
                           matrix[ 5], matrix[ 6], matrix[ 7], matrix[ 8],
                           matrix[10], matrix[11], matrix[12], matrix[13],
                           matrix[15], matrix[16], matrix[17], matrix[18])
                 , fTranslate{matrix[4], matrix[9], matrix[14], matrix[19]}
-                , fInHSLA(inHSLA) {
+                , fInHSLA(inHSLA)
+                , fClamp(clamp) {
         }
 
         SkM44 fMatrix;
         SkV4  fTranslate;
         bool  fInHSLA;
+        bool  fClamp;
     };
 
     // The gatherer and matrixCFData should be null or non-null together
@@ -350,13 +346,43 @@ struct ColorSpaceTransformBlock {
                                 const SkColorSpace* dst,
                                 SkAlphaType dstAT);
         ColorSpaceTransformData(const SkColorSpaceXformSteps& steps) { fSteps = steps; }
+        ColorSpaceTransformData(ReadSwizzle swizzle) : fReadSwizzle(swizzle) {
+            SkASSERT(fSteps.flags.mask() == 0);  // By default, the colorspace should have no effect
+        }
         SkColorSpaceXformSteps fSteps;
+        ReadSwizzle            fReadSwizzle = ReadSwizzle::kRGBA;
     };
 
     static void AddBlock(const KeyContext&,
                          PaintParamsKeyBuilder*,
                          PipelineDataGatherer*,
                          const ColorSpaceTransformData&);
+};
+
+struct CircularRRectClipBlock {
+    struct CircularRRectClipData {
+        CircularRRectClipData(SkRect rect,
+                              SkPoint radiusPlusHalf,
+                              SkRect edgeSelect) :
+            fRect(rect),
+            fRadiusPlusHalf(radiusPlusHalf),
+            fEdgeSelect(edgeSelect) {}
+        SkRect  fRect;            // bounds, outset by 0.5
+        SkPoint fRadiusPlusHalf;  // abs() of .x is radius+0.5, if < 0 indicates inverse fill
+                                  // .y is 1/(radius+0.5)
+        SkRect  fEdgeSelect;      // 1 indicates a rounded corner on that side (LTRB), 0 otherwise
+    };
+
+    static void AddBlock(const KeyContext&,
+                         PaintParamsKeyBuilder*,
+                         PipelineDataGatherer*,
+                         const CircularRRectClipData&);
+};
+
+struct PrimitiveColorBlock {
+    static void AddBlock(const KeyContext&,
+                         PaintParamsKeyBuilder*,
+                         PipelineDataGatherer*);
 };
 
 /**

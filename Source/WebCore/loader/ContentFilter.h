@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,6 +77,10 @@ public:
     bool responseReceived() const { return m_responseReceived; }
 
     WEBCORE_EXPORT static const URL& blockedPageURL();
+
+#if HAVE(AUDIT_TOKEN)
+    WEBCORE_EXPORT void setHostProcessAuditToken(const std::optional<audit_token_t>&);
+#endif
 
 private:
     using State = PlatformContentFilter::State;

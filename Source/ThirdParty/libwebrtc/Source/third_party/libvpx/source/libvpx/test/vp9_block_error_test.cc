@@ -13,7 +13,7 @@
 #include <string>
 #include <tuple>
 
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "./vpx_config.h"
 #include "./vp9_rtcd.h"
@@ -215,4 +215,13 @@ const BlockErrorParam neon_block_error_tests[] = {
 INSTANTIATE_TEST_SUITE_P(NEON, BlockErrorTest,
                          ::testing::ValuesIn(neon_block_error_tests));
 #endif  // HAVE_NEON
+
+#if HAVE_SVE
+const BlockErrorParam sve_block_error_tests[] = { make_tuple(
+    &BlockError8BitWrapper<vp9_block_error_sve>,
+    &BlockError8BitWrapper<vp9_block_error_c>, VPX_BITS_8) };
+
+INSTANTIATE_TEST_SUITE_P(SVE, BlockErrorTest,
+                         ::testing::ValuesIn(sve_block_error_tests));
+#endif  // HAVE_SVE
 }  // namespace

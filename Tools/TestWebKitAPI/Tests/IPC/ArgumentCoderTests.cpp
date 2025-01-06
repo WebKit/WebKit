@@ -31,6 +31,7 @@
 #include "Encoder.h"
 #include "StreamConnectionEncoder.h"
 #include "Test.h"
+#include <wtf/StdLibExtras.h>
 
 namespace TestWebKitAPI {
 
@@ -106,7 +107,7 @@ private:
 
         Impl()
             : buffer(1024, static_cast<uint8_t>(0))
-            , encoder(EncoderDecoderTest::name(), buffer.data(), buffer.size())
+            , encoder(EncoderDecoderTest::name(), buffer.mutableSpan())
         { }
 
         Vector<uint8_t> buffer;
@@ -594,14 +595,14 @@ TYPED_TEST_P(ArgumentCoderSpanTest, SimpleSpan)
         ASSERT_TRUE(!!span);
         ASSERT_EQ(data8.size(), span->size());
         ASSERT_EQ(data8.size() * sizeof(uint8_t), span->size_bytes());
-        ASSERT_EQ(memcmp(data8.data(), span->data(), span->size_bytes()), 0);
+        ASSERT_TRUE(equalSpans(std::span { data8 }, *span));
     }
     {
         auto span = decoder->template decode<std::span<const uint32_t>>();
         ASSERT_TRUE(!!span);
         ASSERT_EQ(data32.size(), span->size());
         ASSERT_EQ(data32.size() * sizeof(uint32_t), span->size_bytes());
-        ASSERT_EQ(memcmp(data32.data(), span->data(), span->size_bytes()), 0);
+        ASSERT_TRUE(equalSpans(std::span { data32 }, *span));
     }
     {
         auto span = decoder->template decode<std::span<const uint64_t>>();

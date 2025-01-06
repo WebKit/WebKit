@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -19,7 +19,7 @@
 #define mm_storelu(dst, v) memcpy((dst), (const char *)&(v), 8)
 #define mm_storehu(dst, v) memcpy((dst), (const char *)&(v) + 8, 8)
 
-static INLINE void highbd_transpose6x6_sse2(__m128i *x0, __m128i *x1,
+static inline void highbd_transpose6x6_sse2(__m128i *x0, __m128i *x1,
                                             __m128i *x2, __m128i *x3,
                                             __m128i *x4, __m128i *x5,
                                             __m128i *d0, __m128i *d1,
@@ -59,7 +59,7 @@ static INLINE void highbd_transpose6x6_sse2(__m128i *x0, __m128i *x1,
                            _mm_slli_si128(w5, 4));  // 05 15 25 35 45 55 xx xx
 }
 
-static INLINE void highbd_transpose4x8_8x4_low_sse2(__m128i *x0, __m128i *x1,
+static inline void highbd_transpose4x8_8x4_low_sse2(__m128i *x0, __m128i *x1,
                                                     __m128i *x2, __m128i *x3,
                                                     __m128i *d0, __m128i *d1,
                                                     __m128i *d2, __m128i *d3) {
@@ -78,7 +78,7 @@ static INLINE void highbd_transpose4x8_8x4_low_sse2(__m128i *x0, __m128i *x1,
   *d3 = _mm_unpackhi_epi64(ww1, zero);  // 03 13 23 33 xx xx xx xx
 }
 
-static INLINE void highbd_transpose4x8_8x4_high_sse2(__m128i *x0, __m128i *x1,
+static inline void highbd_transpose4x8_8x4_high_sse2(__m128i *x0, __m128i *x1,
                                                      __m128i *x2, __m128i *x3,
                                                      __m128i *d4, __m128i *d5,
                                                      __m128i *d6, __m128i *d7) {
@@ -99,7 +99,7 @@ static INLINE void highbd_transpose4x8_8x4_high_sse2(__m128i *x0, __m128i *x1,
 
 // here in and out pointers (x and d) should be different! we don't store their
 // values inside
-static INLINE void highbd_transpose4x8_8x4_sse2(__m128i *x0, __m128i *x1,
+static inline void highbd_transpose4x8_8x4_sse2(__m128i *x0, __m128i *x1,
                                                 __m128i *x2, __m128i *x3,
                                                 __m128i *d0, __m128i *d1,
                                                 __m128i *d2, __m128i *d3,
@@ -123,7 +123,7 @@ static INLINE void highbd_transpose4x8_8x4_sse2(__m128i *x0, __m128i *x1,
   highbd_transpose4x8_8x4_high_sse2(x0, x1, x2, x3, d4, d5, d6, d7);
 }
 
-static INLINE void highbd_transpose8x8_low_sse2(__m128i *x0, __m128i *x1,
+static inline void highbd_transpose8x8_low_sse2(__m128i *x0, __m128i *x1,
                                                 __m128i *x2, __m128i *x3,
                                                 __m128i *x4, __m128i *x5,
                                                 __m128i *x6, __m128i *x7,
@@ -157,7 +157,7 @@ static INLINE void highbd_transpose8x8_low_sse2(__m128i *x0, __m128i *x1,
   *d3 = _mm_unpackhi_epi64(ww0, ww1);  // 03 13 23 33 43 53 63 73
 }
 
-static INLINE void highbd_transpose8x8_high_sse2(__m128i *x0, __m128i *x1,
+static inline void highbd_transpose8x8_high_sse2(__m128i *x0, __m128i *x1,
                                                  __m128i *x2, __m128i *x3,
                                                  __m128i *x4, __m128i *x5,
                                                  __m128i *x6, __m128i *x7,
@@ -192,7 +192,7 @@ static INLINE void highbd_transpose8x8_high_sse2(__m128i *x0, __m128i *x1,
 
 // here in and out pointers (x and d) should be different! we don't store their
 // values inside
-static INLINE void highbd_transpose8x8_sse2(
+static inline void highbd_transpose8x8_sse2(
     __m128i *x0, __m128i *x1, __m128i *x2, __m128i *x3, __m128i *x4,
     __m128i *x5, __m128i *x6, __m128i *x7, __m128i *d0, __m128i *d1,
     __m128i *d2, __m128i *d3, __m128i *d4, __m128i *d5, __m128i *d6,
@@ -203,7 +203,7 @@ static INLINE void highbd_transpose8x8_sse2(
 
 // here in and out pointers (x and d arrays) should be different! we don't store
 // their values inside
-static INLINE void highbd_transpose8x16_sse2(
+static inline void highbd_transpose8x16_sse2(
     __m128i *x0, __m128i *x1, __m128i *x2, __m128i *x3, __m128i *x4,
     __m128i *x5, __m128i *x6, __m128i *x7, __m128i *d0, __m128i *d1,
     __m128i *d2, __m128i *d3, __m128i *d4, __m128i *d5, __m128i *d6,
@@ -216,7 +216,7 @@ static INLINE void highbd_transpose8x16_sse2(
 }
 
 // Low bit depth functions
-static INLINE void transpose4x8_8x4_low_sse2(__m128i *x0, __m128i *x1,
+static inline void transpose4x8_8x4_low_sse2(__m128i *x0, __m128i *x1,
                                              __m128i *x2, __m128i *x3,
                                              __m128i *d0, __m128i *d1,
                                              __m128i *d2, __m128i *d3) {
@@ -249,7 +249,7 @@ static INLINE void transpose4x8_8x4_low_sse2(__m128i *x0, __m128i *x1,
                        12);  // 03 13 23 33 xx xx xx xx xx xx xx xx xx xx xx xx
 }
 
-static INLINE void transpose4x8_8x4_sse2(__m128i *x0, __m128i *x1, __m128i *x2,
+static inline void transpose4x8_8x4_sse2(__m128i *x0, __m128i *x1, __m128i *x2,
                                          __m128i *x3, __m128i *d0, __m128i *d1,
                                          __m128i *d2, __m128i *d3, __m128i *d4,
                                          __m128i *d5, __m128i *d6,
@@ -298,7 +298,7 @@ static INLINE void transpose4x8_8x4_sse2(__m128i *x0, __m128i *x1, __m128i *x2,
                        12);  // 07 17 27 37 xx xx xx xx xx xx xx xx xx xx xx xx
 }
 
-static INLINE void transpose8x8_low_sse2(__m128i *x0, __m128i *x1, __m128i *x2,
+static inline void transpose8x8_low_sse2(__m128i *x0, __m128i *x1, __m128i *x2,
                                          __m128i *x3, __m128i *x4, __m128i *x5,
                                          __m128i *x6, __m128i *x7, __m128i *d0,
                                          __m128i *d1, __m128i *d2,
@@ -345,7 +345,7 @@ static INLINE void transpose8x8_low_sse2(__m128i *x0, __m128i *x1, __m128i *x2,
   *d3 = _mm_srli_si128(*d2, 8);
 }
 
-static INLINE void transpose8x8_sse2(__m128i *x0, __m128i *x1, __m128i *x2,
+static inline void transpose8x8_sse2(__m128i *x0, __m128i *x1, __m128i *x2,
                                      __m128i *x3, __m128i *x4, __m128i *x5,
                                      __m128i *x6, __m128i *x7, __m128i *d0d1,
                                      __m128i *d2d3, __m128i *d4d5,
@@ -392,7 +392,7 @@ static INLINE void transpose8x8_sse2(__m128i *x0, __m128i *x1, __m128i *x2,
       w6, w7);  // 06 16 26 36 46 56 66 76 07 17 27 37 47 57 67 77
 }
 
-static INLINE void transpose16x8_8x16_sse2(
+static inline void transpose16x8_8x16_sse2(
     __m128i *x0, __m128i *x1, __m128i *x2, __m128i *x3, __m128i *x4,
     __m128i *x5, __m128i *x6, __m128i *x7, __m128i *x8, __m128i *x9,
     __m128i *x10, __m128i *x11, __m128i *x12, __m128i *x13, __m128i *x14,
@@ -444,7 +444,7 @@ static INLINE void transpose16x8_8x16_sse2(
   *d7 = _mm_unpackhi_epi64(w7, w15);
 }
 
-static INLINE void transpose8x16_16x8_sse2(
+static inline void transpose8x16_16x8_sse2(
     __m128i *x0, __m128i *x1, __m128i *x2, __m128i *x3, __m128i *x4,
     __m128i *x5, __m128i *x6, __m128i *x7, __m128i *d0d1, __m128i *d2d3,
     __m128i *d4d5, __m128i *d6d7, __m128i *d8d9, __m128i *d10d11,
@@ -495,7 +495,7 @@ static INLINE void transpose8x16_16x8_sse2(
   *d14d15 = _mm_unpackhi_epi64(w7, w15);
 }
 
-static INLINE void transpose_16x8(unsigned char *in0, unsigned char *in1,
+static inline void transpose_16x8(unsigned char *in0, unsigned char *in1,
                                   int in_p, unsigned char *out, int out_p) {
   __m128i x0, x1, x2, x3, x4, x5, x6, x7;
   __m128i x8, x9, x10, x11, x12, x13, x14, x15;
@@ -564,7 +564,7 @@ static INLINE void transpose_16x8(unsigned char *in0, unsigned char *in1,
   _mm_storeu_si128((__m128i *)(out + 7 * out_p), _mm_unpackhi_epi64(x7, x15));
 }
 
-static INLINE void transpose_16x8_to_8x16(unsigned char *src, int in_p,
+static inline void transpose_16x8_to_8x16(unsigned char *src, int in_p,
                                           unsigned char *dst, int out_p) {
   // a0 b0 c0 d0 e0 f0 g0 h0 A0 B0 C0 D0 E0 F0 G0 H0
   // a1 b1 c1 d1 e1 f1 g1 h1 A1 B1 C1 D1 E1 F1 G1 H1
@@ -652,7 +652,7 @@ static INLINE void transpose_16x8_to_8x16(unsigned char *src, int in_p,
   mm_storehu(dst + (15 * out_p), x_s37);
 }
 
-static INLINE void transpose_8xn(unsigned char *src[], int in_p,
+static inline void transpose_8xn(unsigned char *src[], int in_p,
                                  unsigned char *dst[], int out_p,
                                  int num_8x8_to_transpose) {
   int idx8x8 = 0;

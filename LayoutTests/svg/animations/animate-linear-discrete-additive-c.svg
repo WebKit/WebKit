@@ -29,6 +29,8 @@ if (window.testRunner)
 
 function loaded() {
     document.documentElement.setCurrentTime(11);
+    // Pause the timeline to avoid it advancing before the result is sampled.
+    document.documentElement.pauseAnimations();
     if (window.testRunner)
         testRunner.notifyDone();
 }

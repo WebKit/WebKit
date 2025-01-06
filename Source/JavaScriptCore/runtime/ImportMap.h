@@ -30,6 +30,7 @@
 #include <wtf/URL.h>
 #include <wtf/URLHash.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace JSC {
 
@@ -37,40 +38,53 @@ class SourceCode;
 
 class ImportMap final : public RefCounted<ImportMap> {
 public:
-    using SpecifierMap = HashMap<String, URL>;
-    struct ScopeEntry {
-        URL m_scope;
-        SpecifierMap m_map;
-    };
-    using Scopes = Vector<ScopeEntry>;
-    using IntegrityMap = HashMap<URL, String>;
+    using SpecifierMap = UncheckedKeyHashMap<AtomString, URL>;
+    using ScopesMap = UncheckedKeyHashMap<URL, SpecifierMap>;
+    using ScopesVector = Vector<URL>;
+    using IntegrityMap = UncheckedKeyHashMap<URL, String>;
 
     class Reporter {
     public:
         virtual ~Reporter() = default;
-        virtual void reportWarning(const String&) { };
+        virtual void reportWarning(const String&) const { };
+        virtual void reportError(const String&) const { };
     };
 
     static Ref<ImportMap> create() { return adoptRef(*new ImportMap()); }
 
-    JS_EXPORT_PRIVATE URL resolve(const String& specifier, const URL& baseURL) const;
-    JS_EXPORT_PRIVATE Expected<void, String> registerImportMap(const SourceCode&, const URL& baseURL, ImportMap::Reporter*);
-
-    bool isAcquiringImportMaps() const { return m_isAcquiringImportMaps; }
-    void setAcquiringImportMaps() { m_isAcquiringImportMaps = false; }
+    JS_EXPORT_PRIVATE URL resolve(const String& specifier, const URL& baseURL);
 
     JS_EXPORT_PRIVATE String integrityForURL(const URL&) const;
 
+    // https://html.spec.whatwg.org/C#parse-an-import-map-string
+    JS_EXPORT_PRIVATE static std::optional<Ref<ImportMap>> parseImportMapString(const SourceCode&, const URL& baseURL, const ImportMap::Reporter&);
+
+    // https://html.spec.whatwg.org/C/#merge-existing-and-new-import-maps
+    // `newImportMap` is modified in place here, and should not be used after
+    // this call.
+    JS_EXPORT_PRIVATE void mergeExistingAndNewImportMaps(Ref<ImportMap>&& newImportMap, const ImportMap::Reporter&);
+
+    void addModuleToResolvedModuleSet(String referringScriptURL, AtomString specifier);
 private:
     ImportMap() = default;
+    ImportMap(SpecifierMap&&, ScopesMap&&, IntegrityMap&&);
 
-    static Expected<URL, String> resolveImportMatch(const String&, const URL&, const SpecifierMap&);
+    static Expected<URL, String> resolveImportMatch(const AtomString&, const URL&, const SpecifierMap&);
 
     SpecifierMap m_imports;
-    Scopes m_scopes;
+    ScopesMap m_scopesMap;
+    ScopesVector m_scopesVector;
     IntegrityMap m_integrity;
 
-    bool m_isAcquiringImportMaps : 1 { true };
+    // https://html.spec.whatwg.org/C#resolved-module-set
+    //
+    // We replace the spec's set with two different data structures: a set of all
+    // the prefixes resolved at the top-level scope, and a map of scopes to sets
+    // of prefixes resolved in them. That permits us to reduce the cost of merging
+    // a new map, by performing more work at addModuleToResolvedModuleSet time,
+    // and by keeping more prefixes in memory.
+    HashSet<AtomString> m_toplevelResolvedModuleSet;
+    UncheckedKeyHashMap<AtomString, HashSet<AtomString>> m_scopedResolvedModuleMap;
 };
 
 } // namespace JSC

@@ -34,45 +34,43 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUCompositorIntegration.h>
+#include <wtf/TZoneMallocInlines.h>
 
-#if PLATFORM(COCOA)
-#define MESSAGE_CHECK(assertion) do { \
-    if (UNLIKELY(!(assertion))) { \
-        if (auto* gpu = m_gpu.ptr()) { \
-            if (auto connection = gpu->gpuConnectionToWebProcess(); connection.get()) \
-                connection->terminateWebProcess(); \
-            \
-            return; \
-        } \
-    } \
-} while (0)
-#else
-#define MESSAGE_CHECK RELEASE_ASSERT
-#endif
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, *connection(), completion)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCompositorIntegration);
 
 RemoteCompositorIntegration::RemoteCompositorIntegration(WebCore::WebGPU::CompositorIntegration& compositorIntegration, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(compositorIntegration)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
-    , m_identifier(identifier)
     , m_gpu(gpu)
+    , m_identifier(identifier)
 {
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteCompositorIntegration::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteCompositorIntegration::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteCompositorIntegration::~RemoteCompositorIntegration() = default;
 
+RefPtr<IPC::Connection> RemoteCompositorIntegration::connection() const
+{
+    RefPtr connection = protectedGPU()->gpuConnectionToWebProcess();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
+}
+
 void RemoteCompositorIntegration::destruct()
 {
-    m_objectHeap->removeObject(m_identifier);
+    Ref { m_objectHeap.get() }->removeObject(m_identifier);
 }
 
 void RemoteCompositorIntegration::paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex, CompletionHandler<void()>&& completionHandler)
 {
     UNUSED_PARAM(imageBufferIdentifier);
-    m_backing->withDisplayBufferAsNativeImage(bufferIndex, [gpu = m_gpu, imageBufferIdentifier, completionHandler = WTFMove(completionHandler)] (WebCore::NativeImage* image) mutable {
+    protectedBacking()->withDisplayBufferAsNativeImage(bufferIndex, [gpu = m_gpu, imageBufferIdentifier, completionHandler = WTFMove(completionHandler)] (WebCore::NativeImage* image) mutable {
         if (image && gpu.ptr())
             gpu->paintNativeImageToImageBuffer(*image, imageBufferIdentifier);
         completionHandler();
@@ -81,24 +79,34 @@ void RemoteCompositorIntegration::paintCompositedResultsToCanvas(WebCore::Render
 
 void RemoteCompositorIntegration::stopListeningForIPC()
 {
-    m_streamConnection->stopReceivingMessages(Messages::RemoteCompositorIntegration::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteCompositorIntegration::messageReceiverName(), m_identifier.toUInt64());
 }
 
 #if PLATFORM(COCOA)
 void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, WebCore::WebGPU::TextureFormat textureFormat, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
 {
-    auto convertedDevice = m_objectHeap->convertDeviceFromBacking(deviceIdentifier);
-    MESSAGE_CHECK(convertedDevice);
+    auto convertedDevice = protectedObjectHeap()->convertDeviceFromBacking(deviceIdentifier);
+    MESSAGE_CHECK_COMPLETION(convertedDevice, callback({ }));
 
-    callback(m_backing->recreateRenderBuffers(width, height, WTFMove(destinationColorSpace), alphaMode, textureFormat, *convertedDevice));
+    callback(protectedBacking()->recreateRenderBuffers(width, height, WTFMove(destinationColorSpace), alphaMode, textureFormat, *convertedDevice));
 }
 #endif
 
-void RemoteCompositorIntegration::prepareForDisplay(CompletionHandler<void(bool)>&& completionHandler)
+void RemoteCompositorIntegration::prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_backing->prepareForDisplay([completionHandler = WTFMove(completionHandler)]() mutable {
+    protectedBacking()->prepareForDisplay(frameIndex, [completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler(true);
     });
+}
+
+Ref<WebCore::WebGPU::CompositorIntegration> RemoteCompositorIntegration::protectedBacking()
+{
+    return m_backing;
+}
+
+Ref<IPC::StreamServerConnection> RemoteCompositorIntegration::protectedStreamConnection() const
+{
+    return m_streamConnection;
 }
 
 } // namespace WebKit

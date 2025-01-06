@@ -26,11 +26,14 @@
 #pragma once
 
 #include <span>
+#include <wtf/AbstractRefCounted.h>
+#include <wtf/NativePromise.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
 class ReadableStreamSource;
+class ScriptExecutionContext;
 class WebTransportBidirectionalStream;
 class WebTransportSendStream;
 class WebTransportSessionClient;
@@ -38,15 +41,16 @@ class WritableStreamSink;
 
 struct WebTransportBidirectionalStreamConstructionParameters;
 
-class WEBCORE_EXPORT WebTransportSession {
+using WritableStreamPromise = NativePromise<Ref<WritableStreamSink>, void>;
+using BidirectionalStreamPromise = NativePromise<WebTransportBidirectionalStreamConstructionParameters, void>;
+
+class WEBCORE_EXPORT WebTransportSession : public AbstractRefCounted {
 public:
     virtual ~WebTransportSession();
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 
-    virtual void sendDatagram(std::span<const uint8_t>, CompletionHandler<void()>&&) = 0;
-    virtual void createOutgoingUnidirectionalStream(CompletionHandler<void(RefPtr<WritableStreamSink>&&)>&&) = 0;
-    virtual void createBidirectionalStream(CompletionHandler<void(std::optional<WebTransportBidirectionalStreamConstructionParameters>&&)>&&) = 0;
+    virtual Ref<GenericPromise> sendDatagram(std::span<const uint8_t>) = 0;
+    virtual Ref<WritableStreamPromise> createOutgoingUnidirectionalStream() = 0;
+    virtual Ref<BidirectionalStreamPromise> createBidirectionalStream() = 0;
     virtual void terminate(uint32_t, CString&&) = 0;
 
     void attachClient(WebTransportSessionClient&);

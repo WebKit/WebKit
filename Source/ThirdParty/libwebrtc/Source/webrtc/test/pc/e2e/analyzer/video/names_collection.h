@@ -12,12 +12,12 @@
 #define TEST_PC_E2E_ANALYZER_VIDEO_NAMES_COLLECTION_H_
 
 #include <map>
+#include <optional>
 #include <set>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 
 namespace webrtc {
@@ -70,9 +70,9 @@ class NamesCollection {
   // will continue to return previously known index for `index(name)` and return
   // `name` for `name(index(name))`.
   //
-  // Returns the index of the removed value or absl::nullopt if no such `name`
+  // Returns the index of the removed value or std::nullopt if no such `name`
   // registered in the collection.
-  absl::optional<size_t> RemoveIfPresent(absl::string_view name);
+  std::optional<size_t> RemoveIfPresent(absl::string_view name);
 
   // Returns a set of indexes for all currently present names in the
   // collection.

@@ -80,7 +80,7 @@ public:
     void removeIf(const Functor& functor)
     {
         m_map.removeIf(
-            [&] (HashMap<Value*, Matches>::KeyValuePairType& entry) -> bool {
+            [&] (UncheckedKeyHashMap<Value*, Matches>::KeyValuePairType& entry) -> bool {
                 entry.value.removeAllMatching(
                     [&] (Value* value) -> bool {
                         if (MemoryValue* memory = value->as<MemoryValue>())
@@ -133,7 +133,7 @@ private:
     // - It cannot be a MemoryValue* because the key is imprecise. Many MemoryValues could have the
     //   same key while being unaliased.
     // - It can't be a MemoryMatches array because the MemoryValue*'s could be turned into Identity's.
-    HashMap<Value*, Matches> m_map;
+    UncheckedKeyHashMap<Value*, Matches> m_map;
 };
 
 struct ImpureBlockData {
@@ -153,7 +153,7 @@ struct ImpureBlockData {
     MemoryValueMap memoryValuesAtTail;
 
     // This Maps x->y in "y = WasmAddress(@x)"
-    HashMap<Value*, Value*> m_candidateWasmAddressesAtTail;
+    UncheckedKeyHashMap<Value*, Value*> m_candidateWasmAddressesAtTail;
 };
 
 class CSE {
@@ -826,7 +826,7 @@ private:
     unsigned m_index;
     Value* m_value;
 
-    HashMap<Value*, Vector<Value*>> m_sets;
+    UncheckedKeyHashMap<Value*, Vector<Value*>> m_sets;
 
     InsertionSet m_insertionSet;
 

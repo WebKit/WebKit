@@ -77,6 +77,12 @@ mailing address.
 
 #include <string.h>
 #include "GIFImageDecoder.h"
+#include <wtf/TZoneMallocInlines.h>
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GIFLZWContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GIFLZWBlock);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GIFFrameContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GIFImageReader);
 
 using WebCore::GIFImageDecoder;
 

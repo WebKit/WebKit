@@ -37,7 +37,6 @@ rtc_library("pcc_controller") {
     "../../../rtc_base:checks",
     "../../../rtc_base:random",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("monitor_interval") {
@@ -91,7 +90,6 @@ rtc_library("bitrate_controller") {
     "../../../api/transport:network_control",
     "../../../api/units:data_rate",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 if (rtc_include_tests && !build_with_chromium) {
@@ -111,6 +109,7 @@ if (rtc_include_tests && !build_with_chromium) {
       ":pcc_controller",
       ":rtt_tracker",
       ":utility_function",
+      "../../../api/environment:environment_factory",
       "../../../api/transport:network_control",
       "../../../api/units:data_rate",
       "../../../api/units:data_size",

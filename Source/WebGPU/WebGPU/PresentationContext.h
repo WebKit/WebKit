@@ -29,6 +29,7 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/TypeCasts.h>
 
 struct WGPUSurfaceImpl {
@@ -46,7 +47,7 @@ class Texture;
 class TextureView;
 
 class PresentationContext : public WGPUSurfaceImpl, public WGPUSwapChainImpl, public RefCounted<PresentationContext> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PresentationContext);
 public:
     static Ref<PresentationContext> create(const WGPUSurfaceDescriptor&, const Instance&);
     static Ref<PresentationContext> createInvalid()
@@ -61,13 +62,13 @@ public:
     virtual void configure(Device&, const WGPUSwapChainDescriptor&);
     virtual void unconfigure();
 
-    virtual void present();
-    virtual Texture* getCurrentTexture();
+    virtual void present(uint32_t);
+    virtual Texture* getCurrentTexture(uint32_t);
     virtual TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
 
     virtual bool isPresentationContextIOSurface() const { return false; }
     virtual bool isPresentationContextCoreAnimation() const { return false; }
-    virtual RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t) { return nullptr; }
+    virtual RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t, bool&) { return nullptr; }
 
     virtual bool isValid() { return false; }
 protected:

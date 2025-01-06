@@ -42,7 +42,7 @@ function test()
         description: "A dialog should have both the User Agent and authored `::backdrop` rules.",
         selector: "#test-dialog",
         async domNodeStylesHandler(styles) {
-            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.Backdrop), undefined, "Expected no rules entry for selector `*::backdrop` before showing the dialog.");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.Backdrop), "Expected no rules entry for selector `*::backdrop` before showing the dialog.");
             await InspectorTest.evaluateInPage(`openDialog()`);
             await styles.refresh();
             InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.Backdrop).matchedRules.length, 3, "Expected exactly 3 rules for selector `*::backdrop` after showing the dialog.");
@@ -54,7 +54,7 @@ function test()
         description: "A non-dialog should have no `::backdrop` rules.",
         selector: "#test-div",
         async domNodeStylesHandler(styles) {
-            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.Marker), undefined, "Expected no rules entry for selector `*::backdrop`.");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.Backdrop), "Expected no rules entry for selector `*::backdrop`.");
         }
     });
 

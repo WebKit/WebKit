@@ -11,10 +11,10 @@
 
 #include "common/string_utils.h"
 #include "test_utils/ANGLETest.h"
-#include "test_utils/runner/TestSuite.h"
 
 #if defined(ANGLE_HAS_RAPIDJSON)
 #    include "common/serializer/JsonSerializer.h"
+#    include "test_utils/runner/TestSuite.h"
 #endif  // defined(ANGLE_HAS_RAPIDJSON)
 
 using namespace angle;
@@ -144,8 +144,11 @@ TEST_P(EGLPrintEGLinfoTest, PrintGLInfo)
 
     {
         std::vector<uint8_t> jsonData = json.getData();
-        SaveFileHelper saveFile(artifactPath);
-        saveFile.write(jsonData.data(), jsonData.size());
+
+        FILE *fp = fopen(artifactPath.c_str(), "wb");
+        ASSERT(fp);
+        fwrite(jsonData.data(), sizeof(uint8_t), jsonData.size(), fp);
+        fclose(fp);
     }
 #endif  // defined(ANGLE_HAS_RAPIDJSON)
 }
@@ -453,8 +456,6 @@ TEST_P(EGLPrintEGLinfoTest, PrintConfigInfo)
 
         EGLint conformant = GetAttrib(mDisplay, config, EGL_CONFORMANT);
         std::cout << " Conformant: ";
-        if (conformant & EGL_OPENGL_BIT)
-            std::cout << "OpenGL ";
         if (conformant & EGL_OPENGL_ES_BIT)
             std::cout << "ES1 ";
         if (conformant & EGL_OPENGL_ES2_BIT)
@@ -498,8 +499,6 @@ TEST_P(EGLPrintEGLinfoTest, PrintConfigInfo)
         // Renderable
         EGLint rendType = GetAttrib(mDisplay, config, EGL_RENDERABLE_TYPE);
         std::cout << "\tRender: ";
-        if (rendType & EGL_OPENGL_BIT)
-            std::cout << "OpenGL ";
         if (rendType & EGL_OPENGL_ES_BIT)
             std::cout << "ES1 ";
         if (rendType & EGL_OPENGL_ES2_BIT)

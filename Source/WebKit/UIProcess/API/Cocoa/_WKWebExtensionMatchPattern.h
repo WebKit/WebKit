@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,153 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import <WebKit/WKWebExtensionMatchPatternPrivate.h>
 
-#import <Foundation/Foundation.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-@class _WKWebExtension;
-
-/*! @abstract Indicates a @link WKWebExtensionMatchPattern @/link error. */
-WK_EXTERN NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain WK_API_AVAILABLE(macos(13.3), ios(16.4));
-
-/*!
- @abstract Constants used by NSError to indicate errors in the @link WKWebExtensionMatchPattern @/link domain.
- @constant WKWebExtensionMatchPatternErrorUnknown  Indicates that an unknown error occurred.
- @constant WKWebExtensionMatchPatternErrorInvalidScheme  Indicates that the scheme component was invalid.
- @constant WKWebExtensionMatchPatternErrorInvalidHost  Indicates that the host component was invalid.
- @constant WKWebExtensionMatchPatternErrorInvalidPath  Indicates that the path component was invalid.
- */
-typedef NS_ERROR_ENUM(_WKWebExtensionMatchPatternErrorDomain, _WKWebExtensionMatchPatternError) {
-    _WKWebExtensionMatchPatternErrorUnknown,
-    _WKWebExtensionMatchPatternErrorInvalidScheme,
-    _WKWebExtensionMatchPatternErrorInvalidHost,
-    _WKWebExtensionMatchPatternErrorInvalidPath,
-} NS_SWIFT_NAME(_WKWebExtensionMatchPattern.Error) WK_API_AVAILABLE(macos(13.3), ios(16.4));
-
-/*!
- @abstract Constants used by @link WKWebExtensionMatchPattern @/link to indicate matching options.
- @constant WKWebExtensionMatchPatternOptionsNone  Indicates no special matching options.
- @constant WKWebExtensionMatchPatternOptionsIgnoreSchemes  Indicates that the scheme components should be ignored while matching.
- @constant WKWebExtensionMatchPatternOptionsIgnorePaths  Indicates that the host components should be ignored while matching.
- @constant WKWebExtensionMatchPatternOptionsMatchBidirectionally  Indicates that two patterns should be checked in either direction while matching (A matches B, or B matches A). Invalid for matching URLs.
- */
-typedef NS_OPTIONS(NSUInteger, _WKWebExtensionMatchPatternOptions) {
-    _WKWebExtensionMatchPatternOptionsNone                 = 0,
-    _WKWebExtensionMatchPatternOptionsIgnoreSchemes        = 1 << 0,
-    _WKWebExtensionMatchPatternOptionsIgnorePaths          = 1 << 1,
-    _WKWebExtensionMatchPatternOptionsMatchBidirectionally = 1 << 2,
-} NS_SWIFT_NAME(_WKWebExtensionMatchPattern.Options) WK_API_AVAILABLE(macos(13.3), ios(16.4));
-
-/*!
- @abstract A `WKWebExtensionMatchPattern` object represents a way to specify groups of URLs.
- @discussion All match patterns are specified as strings. Apart from the special `<all_urls>` pattern, match patterns
- consist of three parts: scheme, host, and path.
- */
-WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
-NS_SWIFT_NAME(_WKWebExtension.MatchPattern)
-@interface _WKWebExtensionMatchPattern : NSObject <NSSecureCoding, NSCopying>
-
-+ (instancetype)new NS_UNAVAILABLE;
-- (instancetype)init NS_UNAVAILABLE;
-
-/*!
- @abstract Registers a custom URL scheme that can be used in match patterns.
- @discussion This method should be used to register any custom URL schemes used by the app for the extension base URLs,
- other than `webkit-extension`, or if extensions should have access to other supported URL schemes when using `<all_urls>`.
- @param urlScheme The custom URL scheme to register.
-*/
-+ (void)registerCustomURLScheme:(NSString *)urlScheme;
-
-/*! @abstract Returns a pattern object for `<all_urls>`. */
-+ (instancetype)allURLsMatchPattern;
-
-/*! @abstract Returns a pattern object that has `*` for scheme, host, and path. */
-+ (instancetype)allHostsAndSchemesMatchPattern;
-
-/*!
- @abstract Returns a pattern object for the specified pattern string.
- @result Returns `nil` if the pattern string is invalid.
- @seealso initWithString:error:
- */
-+ (nullable instancetype)matchPatternWithString:(NSString *)string;
-
-/*!
- @abstract Returns a pattern object for the specified scheme, host, and path strings.
- @result A pattern object, or `nil` if any of the strings are invalid.
- @seealso initWithScheme:host:path:error:
- */
-+ (nullable instancetype)matchPatternWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path;
-
-/*!
- @abstract Returns a pattern object for the specified pattern string.
- @param error Set to \c nil or an \c NSError instance if an error occurred.
- @result A pattern object, or `nil` if the pattern string is invalid and `error` will be set.
- @seealso initWithString:
- */
-- (nullable instancetype)initWithString:(NSString *)string error:(NSError **)error NS_DESIGNATED_INITIALIZER;
-
-/*!
- @abstract Returns a pattern object for the specified scheme, host, and path strings.
- @param error Set to \c nil or an \c NSError instance if an error occurred.
- @result A pattern object, or `nil` if any of the strings are invalid and `error` will be set.
- @seealso initWithScheme:host:path:
- */
-- (nullable instancetype)initWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path error:(NSError **)error NS_DESIGNATED_INITIALIZER;
-
-/*! @abstract The original pattern string. */
-@property (nonatomic, readonly, copy) NSString *string;
-
-/*! @abstract The scheme part of the pattern string, unless `matchesAllURLs` is `YES`. */
-@property (nonatomic, nullable, readonly, copy) NSString *scheme;
-
-/*! @abstract The host part of the pattern string, unless `matchesAllURLs` is `YES`. */
-@property (nonatomic, nullable, readonly, copy) NSString *host;
-
-/*! @abstract The path part of the pattern string, unless `matchesAllURLs` is `YES`. */
-@property (nonatomic, nullable, readonly, copy) NSString *path;
-
-/*! @abstract If the pattern is `<all_urls>`. */
-@property (nonatomic, readonly) BOOL matchesAllURLs;
-
-/*! @abstract If the pattern is `<all_urls>` or has `*` as the host. */
-@property (nonatomic, readonly) BOOL matchesAllHosts;
-
-/*!
- @abstract Matches the reciever pattern against the specified URL.
- @param url The URL to match the against the reciever pattern.
- @result A Boolean value indicating if pattern matches the specified URL.
- @seealso matchesURL:options:
- */
-- (BOOL)matchesURL:(nullable NSURL *)url NS_SWIFT_UNAVAILABLE("Use options version with empty options set");
-
-/*!
- @abstract Matches the reciever pattern against the specified URL with options.
- @param url The URL to match the against the reciever pattern.
- @param options The options to use while matching.
- @result A Boolean value indicating if pattern matches the specified URL.
- @seealso matchesURL:
- */
-- (BOOL)matchesURL:(nullable NSURL *)url options:(_WKWebExtensionMatchPatternOptions)options NS_SWIFT_NAME(matches(_:options:));
-
-/*!
- @abstract Matches the receiver pattern against the specified pattern.
- @param pattern The pattern to match against the receiver pattern.
- @result A Boolean value indicating if receiver pattern matches the specified pattern.
- @seealso matchesPattern:options:
- */
-- (BOOL)matchesPattern:(nullable _WKWebExtensionMatchPattern *)pattern NS_SWIFT_UNAVAILABLE("Use options version with empty options set");
-
-/*!
- @abstract Matches the receiver pattern against the specified pattern with options.
- @param pattern The pattern to match against the receiver pattern.
- @param options The options to use while matching.
- @result A Boolean value indicating if receiver pattern matches the specified pattern.
- @seealso matchesPattern:
- */
-- (BOOL)matchesPattern:(nullable _WKWebExtensionMatchPattern *)pattern options:(_WKWebExtensionMatchPatternOptions)options NS_SWIFT_NAME(matches(_:options:));
-
+WK_EXTERN
+@interface _WKWebExtensionMatchPattern : WKWebExtensionMatchPattern
 @end
 
-NS_ASSUME_NONNULL_END
+#define _WKWebExtensionMatchPattern WKWebExtensionMatchPattern
+
+#define _WKWebExtensionMatchPatternOptions WKWebExtensionMatchPatternOptions
+#define _WKWebExtensionMatchPatternOptionsNone WKWebExtensionMatchPatternOptionsNone
+#define _WKWebExtensionMatchPatternOptionsIgnoreSchemes WKWebExtensionMatchPatternOptionsIgnoreSchemes
+#define _WKWebExtensionMatchPatternOptionsIgnorePaths WKWebExtensionMatchPatternOptionsIgnorePaths
+#define _WKWebExtensionMatchPatternOptionsMatchBidirectionally WKWebExtensionMatchPatternOptionsMatchBidirectionally
+
+WK_EXTERN NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain;

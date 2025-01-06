@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -17,7 +17,7 @@
 #include "config/aom_config.h"
 
 // Note: in and out could have the same value
-static INLINE void mm256_transpose_16x16(const __m256i *in, __m256i *out) {
+static inline void mm256_transpose_16x16(const __m256i *in, __m256i *out) {
   __m256i tr0_0 = _mm256_unpacklo_epi16(in[0], in[1]);
   __m256i tr0_1 = _mm256_unpackhi_epi16(in[0], in[1]);
   __m256i tr0_2 = _mm256_unpacklo_epi16(in[2], in[3]);

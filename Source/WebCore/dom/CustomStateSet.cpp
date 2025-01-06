@@ -29,11 +29,11 @@
 #include "CSSParser.h"
 #include "Element.h"
 #include "PseudoClassChangeInvalidation.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CustomStateSet);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CustomStateSet);
 
 bool CustomStateSet::addToSetLike(const AtomString& state)
 {

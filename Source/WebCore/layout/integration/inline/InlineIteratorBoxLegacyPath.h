@@ -28,6 +28,7 @@
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderText.h"
+#include "SVGInlineTextBox.h"
 #include "TextBoxSelectableRange.h"
 #include <wtf/Vector.h>
 
@@ -101,12 +102,12 @@ public:
 
     void traverseNextTextBox() { m_inlineBox = inlineTextBox()->nextTextBox(); }
 
-    void traverseNextOnLine()
+    void traverseNextLeafOnLine()
     {
         m_inlineBox = m_inlineBox->nextLeafOnLine();
     }
 
-    void traversePreviousOnLine()
+    void traversePreviousLeafOnLine()
     {
         m_inlineBox = m_inlineBox->previousLeafOnLine();
     }
@@ -146,9 +147,39 @@ public:
     LegacyInlineBox* legacyInlineBox() const { return const_cast<LegacyInlineBox*>(m_inlineBox); }
     const LegacyRootInlineBox& rootInlineBox() const { return m_inlineBox->root(); }
 
+    void traverseNextBoxOnLine()
+    {
+        if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(m_inlineBox); flowBox && flowBox->firstChild()) {
+            m_inlineBox = flowBox->firstChild();
+            return;
+        }
+
+        traverseNextBoxOnLineSkippingChildren();
+    }
+
+    void traverseNextBoxOnLineSkippingChildren()
+    {
+        if (m_inlineBox->nextOnLine()) {
+            m_inlineBox = m_inlineBox->nextOnLine();
+            return;
+        }
+
+        auto* parent = m_inlineBox->parent();
+        while (parent && !parent->nextOnLine())
+            parent = parent->parent();
+
+        m_inlineBox = parent ? parent->nextOnLine() : nullptr;
+    }
+
+    const Vector<SVGTextFragment>& svgTextFragments() const
+    {
+        return svgInlineTextBox()->textFragments();
+    }
+
 private:
     const LegacyInlineTextBox* inlineTextBox() const { return downcast<LegacyInlineTextBox>(m_inlineBox); }
     const LegacyInlineFlowBox* inlineFlowBox() const { return downcast<LegacyInlineFlowBox>(m_inlineBox); }
+    const SVGInlineTextBox* svgInlineTextBox() const { return downcast<SVGInlineTextBox>(m_inlineBox); }
 
     const LegacyInlineBox* m_inlineBox { nullptr };
 };

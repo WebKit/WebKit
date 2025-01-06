@@ -1,9 +1,0 @@
-PASS successfullyParsed is true
-
-TEST COMPLETE
-     0                0
-     8                0
-validation error:
-buffer length is 16 which is less than required bufferSize of 4294967295
-done
-

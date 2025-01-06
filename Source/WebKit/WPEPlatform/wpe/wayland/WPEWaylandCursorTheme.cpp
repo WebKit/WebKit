@@ -28,8 +28,11 @@
 
 #include "WPECursorTheme.h"
 #include "WPEWaylandSHMPool.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WPE {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WaylandCursorTheme);
 
 std::unique_ptr<WaylandCursorTheme> WaylandCursorTheme::create(const char* name, uint32_t size, struct wl_shm* shm)
 {

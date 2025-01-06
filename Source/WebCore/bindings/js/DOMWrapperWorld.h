@@ -22,6 +22,7 @@
 #pragma once
 
 #include "JSDOMGlobalObject.h"
+#include <wtf/Compiler.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
@@ -29,7 +30,7 @@ namespace WebCore {
 
 class WindowProxy;
 
-typedef HashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;
+typedef UncheckedKeyHashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;
 
 class DOMWrapperWorld : public RefCounted<DOMWrapperWorld>, public CanMakeSingleThreadWeakPtr<DOMWrapperWorld> {
 public:
@@ -50,6 +51,12 @@ public:
 
     void didCreateWindowProxy(WindowProxy* controller) { m_jsWindowProxies.add(controller); }
     void didDestroyWindowProxy(WindowProxy* controller) { m_jsWindowProxies.remove(controller); }
+
+    void setAllowAutofill() { m_allowAutofill = true; }
+    bool allowAutofill() const { return m_allowAutofill; }
+
+    void setAllowElementUserInfo() { m_allowElementUserInfo = true; }
+    bool allowElementUserInfo() const { return m_allowElementUserInfo; }
 
     void setShadowRootIsAlwaysOpen() { m_shadowRootIsAlwaysOpen = true; }
     bool shadowRootIsAlwaysOpen() const { return m_shadowRootIsAlwaysOpen; }
@@ -78,6 +85,8 @@ private:
     String m_name;
     Type m_type { Type::Internal };
 
+    bool m_allowAutofill { false };
+    bool m_allowElementUserInfo { false };
     bool m_shadowRootIsAlwaysOpen { false };
     bool m_shouldDisableLegacyOverrideBuiltInsBehavior { false };
 };

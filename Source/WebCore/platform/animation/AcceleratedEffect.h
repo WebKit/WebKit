@@ -33,10 +33,9 @@
 #include "KeyframeInterpolation.h"
 #include "TimingFunction.h"
 #include "WebAnimationTypes.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Seconds.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -45,8 +44,8 @@ class FloatRect;
 class IntRect;
 class KeyframeEffect;
 
-class AcceleratedEffect : public RefCounted<AcceleratedEffect>, public CanMakeWeakPtr<AcceleratedEffect>, public KeyframeInterpolation {
-    WTF_MAKE_ISO_ALLOCATED(AcceleratedEffect);
+class AcceleratedEffect : public RefCountedAndCanMakeWeakPtr<AcceleratedEffect>, public KeyframeInterpolation {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AcceleratedEffect);
 public:
 
     class WEBCORE_EXPORT Keyframe final : public KeyframeInterpolation::Keyframe {
@@ -75,14 +74,14 @@ public:
     };
 
     static RefPtr<AcceleratedEffect> create(const KeyframeEffect&, const IntRect&, const AcceleratedEffectValues&, OptionSet<AcceleratedEffectProperty>&);
-    WEBCORE_EXPORT static Ref<AcceleratedEffect> create(AnimationEffectTiming, Vector<Keyframe>&&, WebAnimationType, CompositeOperation, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<AcceleratedEffectProperty>&&, bool paused, double playbackRate, std::optional<Seconds> startTime, std::optional<Seconds> holdTime);
+    WEBCORE_EXPORT static Ref<AcceleratedEffect> create(AnimationEffectTiming, Vector<Keyframe>&&, WebAnimationType, CompositeOperation, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<AcceleratedEffectProperty>&&, bool paused, double playbackRate, std::optional<WebAnimationTime> startTime, std::optional<WebAnimationTime> holdTime);
 
     virtual ~AcceleratedEffect() = default;
 
     WEBCORE_EXPORT Ref<AcceleratedEffect> clone() const;
     WEBCORE_EXPORT Ref<AcceleratedEffect> copyWithProperties(OptionSet<AcceleratedEffectProperty>&) const;
 
-    WEBCORE_EXPORT void apply(Seconds, AcceleratedEffectValues&, const FloatRect&);
+    WEBCORE_EXPORT void apply(WebAnimationTime, AcceleratedEffectValues&, const FloatRect&);
 
     // Encoding and decoding support
     AnimationEffectTiming timing() const { return m_timing; }
@@ -93,8 +92,8 @@ public:
     const OptionSet<AcceleratedEffectProperty>& animatedProperties() const { return m_animatedProperties; }
     bool paused() const { return m_paused; }
     double playbackRate() const { return m_playbackRate; }
-    std::optional<Seconds> startTime() const { return m_startTime; }
-    std::optional<Seconds> holdTime() const { return m_holdTime; }
+    std::optional<WebAnimationTime> startTime() const { return m_startTime; }
+    std::optional<WebAnimationTime> holdTime() const { return m_holdTime; }
 
     const OptionSet<AcceleratedEffectProperty>& disallowedProperties() const { return m_disallowedProperties; }
 
@@ -102,7 +101,7 @@ public:
 
 private:
     AcceleratedEffect(const KeyframeEffect&, const IntRect&, const OptionSet<AcceleratedEffectProperty>&);
-    explicit AcceleratedEffect(AnimationEffectTiming, Vector<Keyframe>&&, WebAnimationType, CompositeOperation, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<AcceleratedEffectProperty>&&, bool paused, double playbackRate, std::optional<WTF::Seconds> startTime, std::optional<WTF::Seconds> holdTime);
+    explicit AcceleratedEffect(AnimationEffectTiming, Vector<Keyframe>&&, WebAnimationType, CompositeOperation, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<AcceleratedEffectProperty>&&, bool paused, double playbackRate, std::optional<WebAnimationTime> startTime, std::optional<WebAnimationTime> holdTime);
     explicit AcceleratedEffect(const AcceleratedEffect&, OptionSet<AcceleratedEffectProperty>&);
 
     void validateFilters(const AcceleratedEffectValues& baseValues, OptionSet<AcceleratedEffectProperty>&);
@@ -122,8 +121,8 @@ private:
     OptionSet<AcceleratedEffectProperty> m_disallowedProperties;
     bool m_paused { false };
     double m_playbackRate { 1 };
-    std::optional<Seconds> m_startTime;
-    std::optional<Seconds> m_holdTime;
+    std::optional<WebAnimationTime> m_startTime;
+    std::optional<WebAnimationTime> m_holdTime;
 };
 
 } // namespace WebCore

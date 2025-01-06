@@ -27,9 +27,9 @@ layer at (0,0) size 785x688
           RenderText {#text} at (0,1) size 156x40
             text run at (0,1) width 156: "reciprocity"
         RenderBlock {DIV} at (0,42) size 135x84
-          RenderText {#text} at (0,1) size 114x82
-            text run at (0,1) width 114: "recipro" + hyphen string "-"
-            text run at (0,43) width 54: "city"
+          RenderText {#text} at (0,1) size 130x82
+            text run at (0,1) width 130: "reciproc" + hyphen string "-"
+            text run at (0,43) width 38: "ity"
         RenderBlock {DIV} at (0,126) size 135x84
           RenderText {#text} at (0,1) size 130x82
             text run at (0,1) width 130: "reciproc" + hyphen string "-"

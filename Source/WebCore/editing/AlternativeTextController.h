@@ -31,6 +31,7 @@
 #include "Position.h"
 #include <variant>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
@@ -67,8 +68,8 @@ struct TextCheckingResult;
 #endif
 
 class AlternativeTextController : public CanMakeWeakPtr<AlternativeTextController> {
+    WTF_MAKE_TZONE_ALLOCATED(AlternativeTextController);
     WTF_MAKE_NONCOPYABLE(AlternativeTextController);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit AlternativeTextController(Document& document) UNLESS_ENABLED(: m_document(document) { })
     ~AlternativeTextController() UNLESS_ENABLED({ })
@@ -141,8 +142,8 @@ private:
     Position m_positionForLastDeletedAutocorrection;
 #endif
 #if USE(DICTATION_ALTERNATIVES) || USE(AUTOCORRECTION_PANEL)
-    String markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarker::Type);
-    void applyAlternativeTextToRange(const SimpleRange&, const String&, AlternativeTextType, OptionSet<DocumentMarker::Type>);
+    String markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarkerType);
+    void applyAlternativeTextToRange(const SimpleRange&, const String&, AlternativeTextType, OptionSet<DocumentMarkerType>);
     AlternativeTextClient* alternativeTextClient();
 #endif
     Ref<Document> protectedDocument() const { return m_document.get(); }

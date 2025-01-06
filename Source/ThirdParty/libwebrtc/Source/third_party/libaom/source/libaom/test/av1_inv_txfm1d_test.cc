@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -102,7 +102,7 @@ TEST(av1_inv_txfm1d, InvAccuracyCheck) {
   }
 }
 
-static INLINE int get_max_bit(int x) {
+static inline int get_max_bit(int x) {
   int max_bit = -1;
   while (x) {
     x = x >> 1;

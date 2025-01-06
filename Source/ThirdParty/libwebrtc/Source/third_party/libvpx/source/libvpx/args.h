@@ -45,12 +45,12 @@ typedef struct arg_def {
 #define ARG_DEF_LIST_END \
   { 0 }
 
-struct arg arg_init(char **argv);
 int arg_match(struct arg *arg_, const struct arg_def *def, char **argv);
 const char *arg_next(struct arg *arg);
 void arg_show_usage(FILE *fp, const struct arg_def *const *defs);
 char **argv_dup(int argc, const char **argv);
 
+// Note: arg_match() must be called before invoking these functions.
 unsigned int arg_parse_uint(const struct arg *arg);
 int arg_parse_int(const struct arg *arg);
 struct vpx_rational arg_parse_rational(const struct arg *arg);

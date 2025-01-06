@@ -53,12 +53,14 @@ TEST(AnimationFrameRate, preferredFrameIntervalWithUnspecifiedNominalFramesPerSe
     bool preferredFramesPerSecondNear60FPS = preferredFramesPerSecondMatchNominalFrameRateSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, unspecifiedNominalFramesPerSecond, preferredFramesPerSecondNear60FPS), FullSpeedAnimationInterval);
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, unspecifiedNominalFramesPerSecond, preferredFramesPerSecondNear60FPS), HalfSpeedThrottlingAnimationInterval);
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, unspecifiedNominalFramesPerSecond, preferredFramesPerSecondNear60FPS), HalfSpeedThrottlingAnimationInterval);
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, unspecifiedNominalFramesPerSecond, preferredFramesPerSecondNear60FPS), HalfSpeedThrottlingAnimationInterval);
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, unspecifiedNominalFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
 
     preferredFramesPerSecondNear60FPS = preferredFramesPerSecondTarget60FPSSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, unspecifiedNominalFramesPerSecond, preferredFramesPerSecondNear60FPS), FullSpeedAnimationInterval);
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, unspecifiedNominalFramesPerSecond, preferredFramesPerSecondNear60FPS), HalfSpeedThrottlingAnimationInterval);
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, unspecifiedNominalFramesPerSecond, preferredFramesPerSecondNear60FPS), HalfSpeedThrottlingAnimationInterval);
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, unspecifiedNominalFramesPerSecond, preferredFramesPerSecondNear60FPS), HalfSpeedThrottlingAnimationInterval);
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, unspecifiedNominalFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
 }
@@ -70,12 +72,14 @@ TEST(AnimationFrameRate, preferredFrameIntervalWithFullSpeedNominalFramesPerSeco
     bool preferredFramesPerSecondNear60FPS = preferredFramesPerSecondMatchNominalFrameRateSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, FullSpeedFramesPerSecond, preferredFramesPerSecondNear60FPS), FullSpeedAnimationInterval);
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, FullSpeedFramesPerSecond, preferredFramesPerSecondNear60FPS), HalfSpeedThrottlingAnimationInterval);
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, FullSpeedFramesPerSecond, preferredFramesPerSecondNear60FPS), HalfSpeedThrottlingAnimationInterval);
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, FullSpeedFramesPerSecond, preferredFramesPerSecondNear60FPS), HalfSpeedThrottlingAnimationInterval);
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, FullSpeedFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
 
     preferredFramesPerSecondNear60FPS = preferredFramesPerSecondTarget60FPSSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, FullSpeedFramesPerSecond, preferredFramesPerSecondNear60FPS), FullSpeedAnimationInterval);
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, FullSpeedFramesPerSecond, preferredFramesPerSecondNear60FPS), HalfSpeedThrottlingAnimationInterval);
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, FullSpeedFramesPerSecond, preferredFramesPerSecondNear60FPS), HalfSpeedThrottlingAnimationInterval);
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, FullSpeedFramesPerSecond, preferredFramesPerSecondNear60FPS), HalfSpeedThrottlingAnimationInterval);
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, FullSpeedFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
 }
@@ -88,6 +92,7 @@ TEST(AnimationFrameRate, preferredFrameIntervalWith144FPSNominalFramesPerSecond)
     bool preferredFramesPerSecondNear60FPS = preferredFramesPerSecondMatchNominalFrameRateSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(1.0 / 144));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 144));
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 144));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::VisuallyIdle }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 144));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 144));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
@@ -95,6 +100,7 @@ TEST(AnimationFrameRate, preferredFrameIntervalWith144FPSNominalFramesPerSecond)
     preferredFramesPerSecondNear60FPS = preferredFramesPerSecondTarget60FPSSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(1.0 / 72));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 72));
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 72));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::VisuallyIdle }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 72));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 72));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
@@ -108,6 +114,7 @@ TEST(AnimationFrameRate, preferredFrameIntervalWith120FPSNominalFramesPerSecond)
     bool preferredFramesPerSecondNear60FPS = preferredFramesPerSecondMatchNominalFrameRateSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(1.0 / 120));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 120));
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 120));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::VisuallyIdle }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 120));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 120));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
@@ -115,6 +122,7 @@ TEST(AnimationFrameRate, preferredFrameIntervalWith120FPSNominalFramesPerSecond)
     preferredFramesPerSecondNear60FPS = preferredFramesPerSecondTarget60FPSSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(1.0 / 60));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 60));
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 60));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::VisuallyIdle }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 60));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 60));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
@@ -128,6 +136,7 @@ TEST(AnimationFrameRate, preferredFrameIntervalWith90FPSNominalFramesPerSecond)
     bool preferredFramesPerSecondNear60FPS = preferredFramesPerSecondMatchNominalFrameRateSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(1.0 / 90));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 90));
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 90));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::VisuallyIdle }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 90));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 90));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
@@ -135,6 +144,7 @@ TEST(AnimationFrameRate, preferredFrameIntervalWith90FPSNominalFramesPerSecond)
     preferredFramesPerSecondNear60FPS = preferredFramesPerSecondTarget60FPSSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(1.0 / 90));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 90));
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 90));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::VisuallyIdle }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 90));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 90));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
@@ -148,6 +158,7 @@ TEST(AnimationFrameRate, preferredFrameIntervalWith48FPSNominalFramesPerSecond)
     bool preferredFramesPerSecondNear60FPS = preferredFramesPerSecondMatchNominalFrameRateSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(1.0 / 48));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 48));
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 48));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::VisuallyIdle }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 48));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 48));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
@@ -155,6 +166,7 @@ TEST(AnimationFrameRate, preferredFrameIntervalWith48FPSNominalFramesPerSecond)
     preferredFramesPerSecondNear60FPS = preferredFramesPerSecondTarget60FPSSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(1.0 / 48));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 48));
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 48));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::VisuallyIdle }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 48));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 48));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
@@ -168,6 +180,7 @@ TEST(AnimationFrameRate, preferredFrameIntervalWith30FPSNominalFramesPerSecond)
     bool preferredFramesPerSecondNear60FPS = preferredFramesPerSecondMatchNominalFrameRateSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(1.0 / 30));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 30));
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 30));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::VisuallyIdle }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 30));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 30));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
@@ -175,6 +188,7 @@ TEST(AnimationFrameRate, preferredFrameIntervalWith30FPSNominalFramesPerSecond)
     preferredFramesPerSecondNear60FPS = preferredFramesPerSecondTarget60FPSSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(1.0 / 30));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::LowPowerMode }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 30));
+    ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::AggressiveThermalMitigation }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 30));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::VisuallyIdle }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 30));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::NonInteractedCrossOriginFrame }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), Seconds(2.0 / 30));
     ASSERT_EQ(preferredFrameInterval({ ThrottlingReason::OutsideViewport }, nominalFramesPerSecond, preferredFramesPerSecondNear60FPS), AggressiveThrottlingAnimationInterval);
@@ -192,6 +206,11 @@ TEST(AnimationFrameRate, preferredFramesPerSecondMatchNominalFrameRate)
     ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::LowPowerMode }, 90, preferredFramesPerSecondMatchNominalFrameRateSetting).value(), FramesPerSecond(45));
     ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::LowPowerMode }, 50, preferredFramesPerSecondMatchNominalFrameRateSetting).value(), FramesPerSecond(25));
 
+    ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::AggressiveThermalMitigation }, FullSpeedFramesPerSecond, preferredFramesPerSecondMatchNominalFrameRateSetting).value(), HalfSpeedThrottlingFramesPerSecond);
+    ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::AggressiveThermalMitigation }, 120, preferredFramesPerSecondMatchNominalFrameRateSetting).value(), FramesPerSecond(60));
+    ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::AggressiveThermalMitigation }, 90, preferredFramesPerSecondMatchNominalFrameRateSetting).value(), FramesPerSecond(45));
+    ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::AggressiveThermalMitigation }, 50, preferredFramesPerSecondMatchNominalFrameRateSetting).value(), FramesPerSecond(25));
+
     ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::OutsideViewport }, FullSpeedFramesPerSecond, preferredFramesPerSecondMatchNominalFrameRateSetting), std::nullopt);
 }
 
@@ -206,6 +225,11 @@ TEST(AnimationFrameRate, preferredFramesPerSecondTarget60FPS)
     ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::LowPowerMode }, 120, preferredFramesPerSecondTarget60FPSSetting).value(), FramesPerSecond(30));
     ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::LowPowerMode }, 90, preferredFramesPerSecondTarget60FPSSetting).value(), FramesPerSecond(45));
     ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::LowPowerMode }, 50, preferredFramesPerSecondTarget60FPSSetting).value(), FramesPerSecond(25));
+
+    ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::AggressiveThermalMitigation }, FullSpeedFramesPerSecond, preferredFramesPerSecondTarget60FPSSetting).value(), HalfSpeedThrottlingFramesPerSecond);
+    ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::AggressiveThermalMitigation }, 120, preferredFramesPerSecondTarget60FPSSetting).value(), FramesPerSecond(30));
+    ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::AggressiveThermalMitigation }, 90, preferredFramesPerSecondTarget60FPSSetting).value(), FramesPerSecond(45));
+    ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::AggressiveThermalMitigation }, 50, preferredFramesPerSecondTarget60FPSSetting).value(), FramesPerSecond(25));
 
     ASSERT_EQ(preferredFramesPerSecond({ ThrottlingReason::OutsideViewport }, FullSpeedFramesPerSecond, preferredFramesPerSecondTarget60FPSSetting), std::nullopt);
 }

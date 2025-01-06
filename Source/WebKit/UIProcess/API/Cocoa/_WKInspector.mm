@@ -40,6 +40,7 @@
 #import <WebCore/FrameIdentifier.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/WTFString.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -50,6 +51,7 @@
 #endif
 
 class InspectorClient final : public API::InspectorClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(InspectorClient);
 public:
     explicit InspectorClient(id <_WKInspectorDelegate> delegate)
         : m_delegate(delegate)
@@ -101,7 +103,7 @@ private:
 
 - (WKWebView *)webView
 {
-    auto page = _inspector->inspectedPage();
+    RefPtr page = _inspector->protectedInspectedPage();
     return page ? page->cocoaView().autorelease() : nil;
 }
 
@@ -160,9 +162,14 @@ private:
     _inspector->showResources();
 }
 
-- (void)showMainResourceForFrame:(_WKFrameHandle *)frame
+- (void)showMainResourceForFrame:(_WKFrameHandle *)handle
 {
-    _inspector->showMainResourceForFrame(WebKit::WebFrameProxy::webFrame(frame->_frameHandle->frameID()));
+    if (!handle)
+        return;
+    auto frameID = handle->_frameHandle->frameID();
+    if (!frameID)
+        return;
+    _inspector->showMainResourceForFrame(*frameID);
 }
 
 - (void)attach

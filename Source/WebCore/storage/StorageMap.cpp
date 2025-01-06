@@ -28,8 +28,11 @@
 
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StorageMap);
 
 StorageMap::StorageMap(unsigned quota)
     : m_impl(Impl::create())

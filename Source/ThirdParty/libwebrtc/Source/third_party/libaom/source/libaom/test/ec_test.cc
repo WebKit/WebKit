@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -9,7 +9,7 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include <cstdlib>
 #include <memory>
@@ -78,6 +78,7 @@ TEST(EC_TEST, random_ec_test) {
       tell[j + 1] = od_ec_enc_tell_frac(&enc);
     }
     ptr = od_ec_enc_done(&enc, &ptr_sz);
+    ASSERT_NE(ptr, nullptr);
     EXPECT_GE(((od_ec_enc_tell(&enc) + 7U) >> 3), ptr_sz)
         << "od_ec_enc_tell() lied: "
            "there's "
@@ -130,23 +131,15 @@ TEST(EC_TEST, random_ec_test) {
   od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
   od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
   od_ec_encode_bool_q15(&enc, 0, OD_ICDF(24576));
-  od_ec_enc_patch_initial_bits(&enc, 3, 2);
-  EXPECT_FALSE(enc.error) << "od_ec_enc_patch_initial_bits() failed.\n";
-  od_ec_enc_patch_initial_bits(&enc, 0, 5);
-  EXPECT_TRUE(enc.error)
-      << "od_ec_enc_patch_initial_bits() didn't fail when it should have.\n";
   od_ec_enc_reset(&enc);
   od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
   od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
   od_ec_encode_bool_q15(&enc, 1, OD_ICDF(32256));
   od_ec_encode_bool_q15(&enc, 0, OD_ICDF(24576));
-  od_ec_enc_patch_initial_bits(&enc, 0, 2);
-  EXPECT_FALSE(enc.error) << "od_ec_enc_patch_initial_bits() failed.\n";
   ptr = od_ec_enc_done(&enc, &ptr_sz);
+  ASSERT_NE(ptr, nullptr);
   EXPECT_EQ(ptr_sz, 2u);
-  EXPECT_EQ(ptr[0], 63)
-      << "Got " << ptr[0]
-      << " when expecting 63 for od_ec_enc_patch_initial_bits().\n";
+  EXPECT_EQ(ptr[0], 63);
   od_ec_enc_clear(&enc);
   EXPECT_EQ(ret, 0);
 }

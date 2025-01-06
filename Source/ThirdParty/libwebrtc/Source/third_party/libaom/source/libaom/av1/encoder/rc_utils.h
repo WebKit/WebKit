@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -19,7 +19,7 @@
 extern "C" {
 #endif
 
-static AOM_INLINE void check_reset_rc_flag(AV1_COMP *cpi) {
+static inline void check_reset_rc_flag(AV1_COMP *cpi) {
   RATE_CONTROL *rc = &cpi->rc;
   PRIMARY_RATE_CONTROL *const p_rc = &cpi->ppi->p_rc;
   if (cpi->common.current_frame.frame_number >
@@ -27,7 +27,7 @@ static AOM_INLINE void check_reset_rc_flag(AV1_COMP *cpi) {
     if (cpi->ppi->use_svc) {
       av1_svc_check_reset_layer_rc_flag(cpi);
     } else {
-      if (rc->avg_frame_bandwidth > (3 * rc->prev_avg_frame_bandwidth >> 1) ||
+      if (rc->avg_frame_bandwidth / 3 > (rc->prev_avg_frame_bandwidth >> 1) ||
           rc->avg_frame_bandwidth < (rc->prev_avg_frame_bandwidth >> 1)) {
         rc->rc_1_frame = 0;
         rc->rc_2_frame = 0;
@@ -38,8 +38,8 @@ static AOM_INLINE void check_reset_rc_flag(AV1_COMP *cpi) {
   }
 }
 
-static AOM_INLINE void set_primary_rc_buffer_sizes(const AV1EncoderConfig *oxcf,
-                                                   AV1_PRIMARY *ppi) {
+static inline void set_primary_rc_buffer_sizes(const AV1EncoderConfig *oxcf,
+                                               AV1_PRIMARY *ppi) {
   PRIMARY_RATE_CONTROL *p_rc = &ppi->p_rc;
   const RateControlCfg *const rc_cfg = &oxcf->rc_cfg;
 
@@ -61,8 +61,8 @@ static AOM_INLINE void set_primary_rc_buffer_sizes(const AV1EncoderConfig *oxcf,
   p_rc->buffer_level = AOMMIN(p_rc->buffer_level, p_rc->maximum_buffer_size);
 }
 
-static AOM_INLINE void config_target_level(AV1_COMP *const cpi,
-                                           AV1_LEVEL target_level, int tier) {
+static inline void config_target_level(AV1_COMP *const cpi,
+                                       AV1_LEVEL target_level, int tier) {
   AV1EncoderConfig *const oxcf = &cpi->oxcf;
   SequenceHeader *const seq_params = cpi->common.seq_params;
   TileConfig *const tile_cfg = &oxcf->tile_cfg;
@@ -125,9 +125,8 @@ static AOM_INLINE void config_target_level(AV1_COMP *const cpi,
  * \retval        1           Recode Required
  * \retval        0           No Recode required
  */
-static AOM_INLINE int recode_loop_test(AV1_COMP *cpi, int high_limit,
-                                       int low_limit, int q, int maxq,
-                                       int minq) {
+static inline int recode_loop_test(AV1_COMP *cpi, int high_limit, int low_limit,
+                                   int q, int maxq, int minq) {
   const RATE_CONTROL *const rc = &cpi->rc;
   const AV1EncoderConfig *const oxcf = &cpi->oxcf;
   const int frame_is_kfgfarf = frame_is_kf_gf_arf(cpi);
@@ -145,7 +144,8 @@ static AOM_INLINE int recode_loop_test(AV1_COMP *cpi, int high_limit,
       // Deal with frame undershoot and whether or not we are
       // below the automatically set cq level.
       if (q > oxcf->rc_cfg.cq_level &&
-          rc->projected_frame_size < ((rc->this_frame_target * 7) >> 3)) {
+          rc->projected_frame_size <
+              (((int64_t)rc->this_frame_target * 7) >> 3)) {
         force_recode = 1;
       }
     }
@@ -153,9 +153,9 @@ static AOM_INLINE int recode_loop_test(AV1_COMP *cpi, int high_limit,
   return force_recode;
 }
 
-static AOM_INLINE double av1_get_gfu_boost_projection_factor(double min_factor,
-                                                             double max_factor,
-                                                             int frame_count) {
+static inline double av1_get_gfu_boost_projection_factor(double min_factor,
+                                                         double max_factor,
+                                                         int frame_count) {
   double factor = sqrt((double)frame_count);
   factor = AOMMIN(factor, max_factor);
   factor = AOMMAX(factor, min_factor);
@@ -163,16 +163,16 @@ static AOM_INLINE double av1_get_gfu_boost_projection_factor(double min_factor,
   return factor;
 }
 
-static AOM_INLINE int get_gfu_boost_from_r0_lap(double min_factor,
-                                                double max_factor, double r0,
-                                                int frames_to_key) {
+static inline int get_gfu_boost_from_r0_lap(double min_factor,
+                                            double max_factor, double r0,
+                                            int frames_to_key) {
   double factor = av1_get_gfu_boost_projection_factor(min_factor, max_factor,
                                                       frames_to_key);
   const int boost = (int)rint(factor / r0);
   return boost;
 }
 
-static AOM_INLINE double av1_get_kf_boost_projection_factor(int frame_count) {
+static inline double av1_get_kf_boost_projection_factor(int frame_count) {
   double factor = sqrt((double)frame_count);
   factor = AOMMIN(factor, 10.0);
   factor = AOMMAX(factor, 4.0);
@@ -180,10 +180,10 @@ static AOM_INLINE double av1_get_kf_boost_projection_factor(int frame_count) {
   return factor;
 }
 
-static AOM_INLINE int get_regulated_q_overshoot(AV1_COMP *const cpi,
-                                                int is_encode_stage, int q_low,
-                                                int q_high, int top_index,
-                                                int bottom_index) {
+static inline int get_regulated_q_overshoot(AV1_COMP *const cpi,
+                                            int is_encode_stage, int q_low,
+                                            int q_high, int top_index,
+                                            int bottom_index) {
   const AV1_COMMON *const cm = &cpi->common;
   const RATE_CONTROL *const rc = &cpi->rc;
 
@@ -206,10 +206,9 @@ static AOM_INLINE int get_regulated_q_overshoot(AV1_COMP *const cpi,
   return q_regulated;
 }
 
-static AOM_INLINE int get_regulated_q_undershoot(AV1_COMP *const cpi,
-                                                 int is_encode_stage,
-                                                 int q_high, int top_index,
-                                                 int bottom_index) {
+static inline int get_regulated_q_undershoot(AV1_COMP *const cpi,
+                                             int is_encode_stage, int q_high,
+                                             int top_index, int bottom_index) {
   const AV1_COMMON *const cm = &cpi->common;
   const RATE_CONTROL *const rc = &cpi->rc;
 
@@ -251,7 +250,7 @@ static AOM_INLINE int get_regulated_q_undershoot(AV1_COMP *const cpi,
  * \param[in]     loop_count      Loop itterations so far.
  *
  */
-static AOM_INLINE void recode_loop_update_q(
+static inline void recode_loop_update_q(
     AV1_COMP *const cpi, int *const loop, int *const q, int *const q_low,
     int *const q_high, const int top_index, const int bottom_index,
     int *const undershoot_seen, int *const overshoot_seen,

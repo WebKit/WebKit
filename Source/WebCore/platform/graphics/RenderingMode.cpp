@@ -51,6 +51,8 @@ TextStream& operator<<(TextStream& ts, RenderingMode mode)
     switch (mode) {
     case RenderingMode::Unaccelerated: ts << "Unaccelerated"; break;
     case RenderingMode::Accelerated: ts << "Accelerated"; break;
+    case RenderingMode::PDFDocument: ts << "PDFDocument"; break;
+    case RenderingMode::DisplayList: ts << "DisplayList"; break;
     }
     return ts;
 }

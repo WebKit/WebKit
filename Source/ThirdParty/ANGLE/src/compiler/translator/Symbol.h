@@ -276,15 +276,14 @@ struct TParameter
     const TVariable *createVariable(TSymbolTable *symbolTable)
     {
         const ImmutableString constName(name);
-        const TType *constType = type;
+        const TType *constType = new TType(type);
         name                   = nullptr;
-        type                   = nullptr;
         return new TVariable(symbolTable, constName, constType,
                              constName.empty() ? SymbolType::Empty : SymbolType::UserDefined);
     }
 
     const char *name;  // either pool allocated or static.
-    TType *type;
+    TPublicType type;
 };
 
 // The function sub-class of a symbol.

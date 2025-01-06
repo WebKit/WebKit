@@ -18,7 +18,7 @@ Install Packages
 ================
 
 Use your distribution's package manager to install Perl, your preferred
-database engine (MySQL if in doubt), and a webserver (Apache if in doubt).
+database engine (MySQL or MariaDB if in doubt), and a webserver (Apache if in doubt).
 Some distributions even have a Bugzilla package, although that will vary
 in age.
 
@@ -28,64 +28,102 @@ is not found, just remove it from the list and reissue the command. If you
 want to use a different database or webserver, substitute the package
 names as appropriate.
 
-Fedora and Red Hat
-------------------
+Fedora, CentOS Stream and RHEL
+------------------------------
 
-The following command will install Red Hat's packaged version of Bugzilla:
+The following command will install Fedora's packaged version of Bugzilla:
 
-:command:`yum install bugzilla httpd mysql-server`
+:command:`dnf install bugzilla httpd mariadb-server`
 
 Then, you can skip to :ref:`configuring your database <linux-config-database>`.
 It may be useful to know that Fedora stores the Bugzilla files in
 :file:`/usr/share/bugzilla`, so that's where you'll run :file:`checksetup.pl`.
 
-If you want to install a version of Bugzilla from the Bugzilla project, you
-will instead need:
+If you want to install a version of Bugzilla from the Bugzilla project
+or have it on RHEL or CentOS, you will need to do the following instead:
 
-:command:`yum install httpd mysql-server mod_perl mod_perl-devel httpd-devel
-gd-devel mysql-devel
-graphviz patchutils gcc 'perl(Apache2::SizeLimit)' 'perl(Authen::Radius)'
-'perl(Authen::SASL)' 'perl(Cache::Memcached)' 'perl(CGI)' 'perl(Chart::Lines)'
-'perl(Daemon::Generic)' 'perl(Date::Format)' 'perl(DateTime)'
-'perl(DateTime::TimeZone)' 'perl(DBI)' 'perl(Digest::SHA)' 'perl(Email::MIME)'
-'perl(Email::Reply)' 'perl(Email::Sender)' 'perl(Encode)' 'perl(Encode::Detect)'
-'perl(File::MimeInfo::Magic)' 'perl(GD)' 'perl(GD::Graph)'
-'perl(GD::Text)' 'perl(HTML::FormatText::WithLinks)' 'perl(HTML::Parser)'
-'perl(HTML::Scrubber)' 'perl(IO::Scalar)' 'perl(JSON::RPC)' 'perl(JSON::XS)'
-'perl(List::MoreUtils)' 'perl(LWP::UserAgent)' 'perl(Math::Random::ISAAC)'
-'perl(MIME::Parser)' 'perl(mod_perl2)' 'perl(Net::LDAP)' 'perl(Net::SMTP::SSL)'
-'perl(PatchReader)' 'perl(SOAP::Lite)' 'perl(Template)'
-'perl(Template::Plugin::GD::Image)' 'perl(Test::Taint)' 'perl(TheSchwartz)'
-'perl(URI)' 'perl(XMLRPC::Lite)' 'perl(XML::Twig)'`
+On CentOS Stream and RHEl, add the Fedora EPEL repo, in the way described
+in the `installation instructions <https://docs.fedoraproject.org/en-US/epel/>`_.
 
-If you are running RHEL6, you will have to enable the "RHEL Server Optional"
-channel in RHN to get some of those packages. 
+Run the following to install the base Bugzilla dependencies:
 
-If you plan to use a database other than MySQL, you will need to also install
+:command:`dnf install git httpd httpd-devel mariadb-devel gcc
+mariadb-server mod_perl mod_perl-devel 'perl(autodie)' 'perl(CGI)'
+'perl(Date::Format)' 'perl(DateTime)' 'perl(DateTime::TimeZone)'
+'perl(DBI)' 'perl(DBD::mysql)' 'perl(Digest::SHA)' 'perl(Email::MIME)'
+'perl(Email::Sender)' 'perl(fields)' 'perl(JSON::XS)'
+'perl(List::MoreUtils)' 'perl(Math::Random::ISAAC)' 'perl(Memoize)'
+'perl(Safe)' 'perl(Template)' 'perl(URI)'`
+
+On Fedora, all the optional dependencies are available:
+
+:command:`dnf install gd-devel graphviz patchutils
+'perl(Apache2::SizeLimit)' 'perl(Authen::Radius)' 'perl(Authen::SASL)'
+'perl(Cache::Memcached)' 'perl(Chart::Lines)' 'perl(Daemon::Generic)'
+'perl(Email::Reply)' 'perl(Encode)' 'perl(Encode::Detect)'
+'perl(File::Copy::Recursive)' 'perl(File::MimeInfo::Magic)'
+'perl(File::Which)' 'perl(GD)' 'perl(GD::Graph)' 'perl(GD::Text)' 'perl(HTML::FormatText::WithLinks)' 'perl(HTML::Parser)'
+'perl(HTML::Scrubber)' 'perl(IO::Scalar)' 'perl(JSON::RPC)'
+'perl(LWP::UserAgent)' 'perl(MIME::Parser)' 'perl(mod_perl2)'
+'perl(Net::LDAP)' 'perl(Net::SMTP::SSL)' 'perl(PatchReader)'
+'perl(SOAP::Lite)' 'perl(Template::Plugin::GD::Image)'
+'perl(Test::Taint)' 'perl(TheSchwartz)' 'perl(XMLRPC::Lite)'
+'perl(XML::Twig)'`
+
+On CentOS Stream and RHEL with EPEL, some modules are missing in the
+repositories, so use the following instead:
+
+:command:`dnf install gd-devel graphviz patchutils
+'perl(Apache2::SizeLimit)' 'perl(Authen::Radius)' 'perl(Authen::SASL)'
+'perl(Cache::Memcached)' 'perl(Encode)' 'perl(Encode::Detect)'
+'perl(File::Copy::Recursive)' 'perl(File::MimeInfo::Magic)'
+'perl(File::Which)' 'perl(GD)' 'perl(GD::Graph)' 'perl(GD::Text)'
+'perl(HTML::Parser)' 'perl(HTML::Scrubber)' 'perl(IO::Scalar)'
+'perl(JSON::RPC)' 'perl(LWP::UserAgent)' 'perl(MIME::Parser)'
+'perl(mod_perl2)' 'perl(Net::LDAP)' 'perl(Net::SMTP::SSL)'
+'perl(SOAP::Lite)' 'perl(Test::Taint)' 'perl(XMLRPC::Lite)'
+'perl(XML::Twig)'`
+
+and install the missing optional modules with:
+
+:command:`cd /var/www/html/bugzilla/ && ./install-module.pl Chart::Lines
+Daemon::Generic Email::Reply HTML::FormatText::WithLinks PatchReader
+Template::Plugin::GD::Image TheSchwartz`
+
+If you plan to use a database other than MariaDB, you will need to also install
 the appropriate packages for that.
 
 Ubuntu and Debian
 -----------------
 
-:command:`apt-get install git nano`
+You can install required packages with:
+:command:`apt install apache2 build-essential git
+libcgi-pm-perl libdatetime-perl libdatetime-timezone-perl
+libdbi-perl libdigest-sha-perl libemail-address-perl
+libemail-mime-perl libemail-sender-perl libjson-xs-perl
+liblist-moreutils-perl libmath-random-isaac-perl libtemplate-perl
+libtimedate-perl liburi-perl libmariadb-dev-compat libdbd-mysql-perl
+mariadb-server`
 
-:command:`apt-get install apache2 mysql-server libappconfig-perl
-libdate-calc-perl libtemplate-perl libmime-perl build-essential
-libdatetime-timezone-perl libdatetime-perl libemail-sender-perl
-libemail-mime-perl libemail-mime-modifier-perl libdbi-perl libdbd-mysql-perl
-libcgi-pm-perl libmath-random-isaac-perl libmath-random-isaac-xs-perl
-apache2-mpm-prefork libapache2-mod-perl2 libapache2-mod-perl2-dev
-libchart-perl libxml-perl libxml-twig-perl perlmagick libgd-graph-perl
-libtemplate-plugin-gd-perl libsoap-lite-perl libhtml-scrubber-perl
-libjson-rpc-perl libdaemon-generic-perl libtheschwartz-perl
-libtest-taint-perl libauthen-radius-perl libfile-slurp-perl
-libencode-detect-perl libmodule-build-perl libnet-ldap-perl
-libauthen-sasl-perl libtemplate-perl-doc libfile-mimeinfo-perl
-libhtml-formattext-withlinks-perl libgd-dev libmysqlclient-dev lynx-cur
-graphviz python-sphinx`
+If you plan to use a database other than MariaDB, you will need to also install
+the appropriate packages for that (in the command above, the packages required
+for MariaDB are ``libdbd-mysql-perl``, ``libmariadb-dev-compat`` and ``mariadb-server``).
 
-If you plan to use a database other than MySQL, you will need to also install
-the appropriate packages for that.
+You can install optional packages with:
+:command:`apt install graphviz libapache2-mod-perl2
+libapache2-mod-perl2-dev libauthen-radius-perl libauthen-sasl-perl
+libcache-memcached-perl libchart-perl libdaemon-generic-perl
+libemail-reply-perl libencode-detect-perl libencode-perl
+libfile-copy-recursive-perl libfile-mimeinfo-perl libfile-which-perl
+libgd-dev libgd-graph-perl libgd-perl libgd-text-perl
+libhtml-formattext-withlinks-perl libhtml-parser-perl
+libhtml-scrubber-perl libio-stringy-perl libjson-rpc-perl
+libmime-tools-perl libnet-ldap-perl libnet-smtp-ssl-perl
+libsoap-lite-perl libtemplate-plugin-gd-perl libtest-taint-perl
+libtheschwartz-perl libwww-perl libxmlrpc-lite-perl libxml-twig-perl`
+
+There is no Ubuntu package for ``PatchReader`` and so you will have to install that module
+outside the package manager if you want it.
 
 Gentoo
 ------
@@ -99,6 +137,16 @@ Then, you can skip to :ref:`configuring your database
 <linux-config-database>`.
 
 .. _linux-install-perl:
+
+openSUSE
+--------
+
+:command:`zypper in bugzilla`
+
+has been available in the openSUSE Leap repositories since 15.2 and is
+in the openSUSE Tumbleweed repositories, also comes with an optional
+``bugzilla-apache`` package, that allows you to skip to
+:ref:`configuring your database <linux-config-database>`
 
 Perl
 ====
@@ -185,10 +233,11 @@ We have specific configuration instructions for the following:
 Database Engine
 ===============
 
-Bugzilla supports MySQL, PostgreSQL, Oracle and SQLite as database servers.
-You only require one of these systems to make use of Bugzilla. MySQL is
-most commonly used. SQLite is good for trial installations as it requires no
-setup. Configure your server according to the instructions below:
+Bugzilla supports MySQL (or MariaDB, its compatible counterpart), PostgreSQL,
+Oracle and SQLite as database servers. You only require one of these systems
+to make use of Bugzilla. MySQL or MariaDB are most commonly used. SQLite is
+good for trial installations as it requires no setup. Configure your server
+according to the instructions below:
 
 * :ref:`mysql`
 * :ref:`postgresql`

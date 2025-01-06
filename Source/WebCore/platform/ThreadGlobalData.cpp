@@ -34,10 +34,13 @@
 #include "QualifiedNameCache.h"
 #include "ThreadTimers.h"
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringImpl.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ThreadGlobalData);
 
 ThreadGlobalData::ThreadGlobalData()
     : m_threadTimers(makeUnique<ThreadTimers>())

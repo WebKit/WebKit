@@ -23,6 +23,7 @@ class GrImageContext;
 class SkBitmap;
 class SkColorSpace;
 class SkPixmap;
+class SkSurface;
 enum SkColorType : int;
 enum SkYUVColorSpace : int;
 struct SkIRect;
@@ -33,7 +34,9 @@ enum {
     kNeedNewImageUniqueID = 0
 };
 
-namespace skgpu { namespace graphite { class Recorder; } }
+namespace skgpu::graphite {
+class Recorder;
+}
 
 class SkImage_Base : public SkImage {
 public:
@@ -71,12 +74,16 @@ public:
                               int srcY,
                               CachingHint) const = 0;
 
-#if defined(GRAPHITE_TEST_UTILS)
-    virtual bool onReadPixelsGraphite(skgpu::graphite::Recorder*,
-                                      const SkPixmap& dst,
-                                      int srcX,
-                                      int srcY) const { return false; }
-#endif
+    // used by makeScaled()
+    virtual sk_sp<SkSurface> onMakeSurface(skgpu::graphite::Recorder*,
+                                           const SkImageInfo&) const = 0;
+
+    virtual bool readPixelsGraphite(skgpu::graphite::Recorder*,
+                                    const SkPixmap& dst,
+                                    int srcX,
+                                    int srcY) const {
+        return false;
+    }
 
     virtual bool onHasMipmaps() const = 0;
     virtual bool onIsProtected() const = 0;

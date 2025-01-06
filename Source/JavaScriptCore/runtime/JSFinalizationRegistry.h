@@ -80,8 +80,20 @@ public:
     // token should be a JSObject, Symbol, or undefined.
     void registerTarget(VM&, JSCell* target, JSValue holdings, JSValue token);
 
+    struct LiveRegistration {
+        JSCell* target;
+        JSValue heldValue;
+        JSCell* unregisterToken = nullptr;
+    };
     JS_EXPORT_PRIVATE size_t liveCount(const Locker<JSCellLock>&);
+    Vector<LiveRegistration> liveRegistrations(const Locker<JSCellLock>&) const;
+
+    struct DeadRegistration {
+        JSValue heldValue;
+        JSCell* unregisterToken = nullptr;
+    };
     JS_EXPORT_PRIVATE size_t deadCount(const Locker<JSCellLock>&);
+    Vector<DeadRegistration> deadRegistrations(const Locker<JSCellLock>&) const;
 
 private:
     JSFinalizationRegistry(VM& vm, Structure* structure)
@@ -101,9 +113,9 @@ private:
     using DeadRegistrations = Vector<WriteBarrier<Unknown>>;
 
     // Note that we don't bother putting a write barrier on the key or target because they are weakly referenced.
-    HashMap<JSCell*, LiveRegistrations> m_liveRegistrations;
-    HashMap<JSCell*, DeadRegistrations> m_deadRegistrations;
-    // We use a separate list for no unregister values instead of a special key in the tables above because the HashMap has a tendency to reallocate under us when iterating...
+    UncheckedKeyHashMap<JSCell*, LiveRegistrations> m_liveRegistrations;
+    UncheckedKeyHashMap<JSCell*, DeadRegistrations> m_deadRegistrations;
+    // We use a separate list for no unregister values instead of a special key in the tables above because the UncheckedKeyHashMap has a tendency to reallocate under us when iterating...
     LiveRegistrations m_noUnregistrationLive;
     DeadRegistrations m_noUnregistrationDead;
     bool m_hasAlreadyScheduledWork { false };

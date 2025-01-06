@@ -34,7 +34,7 @@ namespace WebCore {
 class Attr;
 
 class NamedNodeMap final : public ScriptWrappable {
-    WTF_MAKE_ISO_ALLOCATED(NamedNodeMap);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NamedNodeMap);
 public:
     explicit NamedNodeMap(Element& element)
         : m_element(element)

@@ -61,9 +61,7 @@ StochasticSpaceTimeMutatorScheduler::StochasticSpaceTimeMutatorScheduler(JSC::He
 {
 }
 
-StochasticSpaceTimeMutatorScheduler::~StochasticSpaceTimeMutatorScheduler()
-{
-}
+StochasticSpaceTimeMutatorScheduler::~StochasticSpaceTimeMutatorScheduler() = default;
 
 MutatorScheduler::State StochasticSpaceTimeMutatorScheduler::state() const
 {
@@ -75,7 +73,7 @@ void StochasticSpaceTimeMutatorScheduler::beginCollection()
     RELEASE_ASSERT(m_state == Normal);
     m_state = Stopped;
 
-    m_bytesAllocatedThisCycleAtTheBeginning = m_heap.m_bytesAllocatedThisCycle;
+    m_bytesAllocatedThisCycleAtTheBeginning = bytesAllocatedThisCycleImpl();
     m_bytesAllocatedThisCycleAtTheEnd = 
         Options::concurrentGCMaxHeadroom() *
         std::max<double>(m_bytesAllocatedThisCycleAtTheBeginning, m_heap.m_maxEdenSize);
@@ -187,7 +185,7 @@ void StochasticSpaceTimeMutatorScheduler::endCollection()
 
 double StochasticSpaceTimeMutatorScheduler::bytesAllocatedThisCycleImpl()
 {
-    return m_heap.m_bytesAllocatedThisCycle;
+    return m_heap.totalBytesAllocatedThisCycle();
 }
 
 double StochasticSpaceTimeMutatorScheduler::bytesSinceBeginningOfCycle(const Snapshot& snapshot)

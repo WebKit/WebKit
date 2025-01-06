@@ -21,7 +21,7 @@ class MockRecordableEncodedFrame : public RecordableEncodedFrame {
               encoded_buffer,
               (),
               (const, override));
-  MOCK_METHOD(absl::optional<webrtc::ColorSpace>,
+  MOCK_METHOD(std::optional<webrtc::ColorSpace>,
               color_space,
               (),
               (const, override));

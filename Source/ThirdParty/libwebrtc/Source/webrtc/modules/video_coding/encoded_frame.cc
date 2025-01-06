@@ -37,7 +37,7 @@ VCMEncodedFrame::~VCMEncodedFrame() {
 
 void VCMEncodedFrame::Reset() {
   SetRtpTimestamp(0);
-  SetSpatialIndex(absl::nullopt);
+  SetSpatialIndex(std::nullopt);
   _renderTimeMs = -1;
   _payloadType = 0;
   _frameType = VideoFrameType::kVideoFrameDelta;

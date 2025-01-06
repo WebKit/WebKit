@@ -42,8 +42,11 @@ class RemoteScrollingCoordinatorTransaction;
 
 class RemoteLayerTreeDrawingAreaProxyMac final : public RemoteLayerTreeDrawingAreaProxy {
 friend class RemoteScrollingCoordinatorProxyMac;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeDrawingAreaProxyMac);
+    WTF_MAKE_NONCOPYABLE(RemoteLayerTreeDrawingAreaProxyMac);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerTreeDrawingAreaProxyMac);
 public:
-    RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&, WebProcessProxy&);
+    static Ref<RemoteLayerTreeDrawingAreaProxyMac> create(WebPageProxy&, WebProcessProxy&);
     ~RemoteLayerTreeDrawingAreaProxyMac();
 
     void didRefreshDisplay() override;
@@ -52,10 +55,12 @@ public:
     DisplayLink* existingDisplayLink();
 
     void updateZoomTransactionID();
-    WebCore::PlatformLayerIdentifier pageScalingLayerID() { return m_pageScalingLayerID; }
-    WebCore::PlatformLayerIdentifier pageScrollingLayerID() { return m_pageScrollingLayerID; }
+    std::optional<WebCore::PlatformLayerIdentifier> pageScalingLayerID() { return m_pageScalingLayerID.asOptional(); }
+    std::optional<WebCore::PlatformLayerIdentifier> pageScrollingLayerID() { return m_pageScrollingLayerID.asOptional(); }
 
 private:
+    RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&, WebProcessProxy&);
+
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
     std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;
 
@@ -75,10 +80,16 @@ private:
 
     void scheduleDisplayRefreshCallbacks() override;
     void pauseDisplayRefreshCallbacks() override;
-    void setPreferredFramesPerSecond(WebCore::FramesPerSecond) override;
+    void setPreferredFramesPerSecond(IPC::Connection&, WebCore::FramesPerSecond) override;
     void windowScreenDidChange(WebCore::PlatformDisplayID) override;
     std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() override;
+
+    void dispatchSetTopContentInset() override;
+
     void colorSpaceDidChange() override;
+
+    void viewIsBecomingVisible() final;
+    void viewIsBecomingInvisible() final;
 
     void didChangeViewExposedRect() override;
 
@@ -96,10 +107,12 @@ private:
     std::optional<DisplayLinkObserverID> m_fullSpeedUpdateObserverID;
     std::unique_ptr<RemoteLayerTreeDisplayLinkClient> m_displayLinkClient;
 
-    WebCore::PlatformLayerIdentifier m_pageScalingLayerID;
-    WebCore::PlatformLayerIdentifier m_pageScrollingLayerID;
+    Markable<WebCore::PlatformLayerIdentifier> m_pageScalingLayerID;
+    Markable<WebCore::PlatformLayerIdentifier> m_pageScrollingLayerID;
 
     bool m_usesOverlayScrollbars { false };
+    bool m_shouldLogNextObserverChange { false };
+    bool m_shouldLogNextDisplayRefresh { false };
 
     std::optional<WebCore::ScrollbarStyle> m_scrollbarStyle;
 
@@ -110,5 +123,8 @@ private:
 
 } // namespace WebKit
 
-#endif // #if PLATFORM(MAC)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RemoteLayerTreeDrawingAreaProxyMac)
+    static bool isType(const WebKit::DrawingAreaProxy& proxy) { return proxy.isRemoteLayerTreeDrawingAreaProxyMac(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
+#endif // #if PLATFORM(MAC)

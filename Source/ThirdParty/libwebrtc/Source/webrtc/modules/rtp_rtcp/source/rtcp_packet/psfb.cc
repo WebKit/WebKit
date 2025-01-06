@@ -14,9 +14,6 @@
 
 namespace webrtc {
 namespace rtcp {
-constexpr uint8_t Psfb::kPacketType;
-constexpr uint8_t Psfb::kAfbMessageType;
-constexpr size_t Psfb::kCommonFeedbackLength;
 // RFC 4585: Feedback format.
 //
 // Common packet format:

@@ -22,9 +22,10 @@
 #include "src/gpu/graphite/Caps.h"
 #include "src/gpu/graphite/RecorderPriv.h"
 #include "src/gpu/graphite/Surface_Graphite.h"
+#include "src/image/SkImage_Base.h"
 #include "tests/TestUtils.h"
-#include "tools/GpuToolUtils.h"
 #include "tools/ToolUtils.h"
+#include "tools/graphite/GraphiteToolUtils.h"
 
 using namespace skgpu::graphite;
 using Mipmapped = skgpu::Mipmapped;
@@ -273,7 +274,7 @@ void run_test(skiatest::Reporter* reporter,
 //                    drawn w/ mipmapping     --> dropped draw (blue)
 //
 DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(ImageProviderTest_Graphite_Default, reporter, context,
-                                         CtsEnforcement::kNextRelease) {
+                                         CtsEnforcement::kApiLevel_V) {
     TestCase testcases[] = {
         { "0", create_raster_backed_image_no_mipmaps,   { kBackgroundColor, kBackgroundColor } },
         { "1", create_raster_backed_image_with_mipmaps, { kBackgroundColor, kBackgroundColor } },
@@ -315,7 +316,7 @@ DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(ImageProviderTest_Graphite_Default, rep
 //                    drawn w/ mipmapping     --> drawn (yellow) - auto-converted
 //
 DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(ImageProviderTest_Graphite_Testing, reporter, context,
-                                         CtsEnforcement::kNextRelease) {
+                                         CtsEnforcement::kApiLevel_V) {
     static const TestCase testcases[] = {
         { "0", create_raster_backed_image_no_mipmaps,   { kBaseImageColor, kBaseImageColor } },
         { "1", create_raster_backed_image_with_mipmaps, { kBaseImageColor, kFirstMipLevelColor } },
@@ -334,7 +335,7 @@ DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(ImageProviderTest_Graphite_Testing, rep
 // Here we're testing that the RequiredProperties parameter to makeTextureImage and makeSubset
 // works as expected.
 DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(Make_TextureImage_Subset_Test, reporter, context,
-                                         CtsEnforcement::kNextRelease) {
+                                         CtsEnforcement::kApiLevel_V) {
     static const struct {
         std::string name;
         FactoryT fFactory;
@@ -407,12 +408,18 @@ DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(Make_TextureImage_Subset_Test, reporter
                 i = orig->makeSubset(nullptr, kTrueSubset, {mipmapped});
                 REPORTER_ASSERT(reporter, !i->isTextureBacked());
                 REPORTER_ASSERT(reporter, i->dimensions() == kTrueSubset.size());
-                REPORTER_ASSERT(reporter, i->hasMipmaps() == mipmapped);
+                // Picture-backed images don't support mipmaps but check the other types.
+                if (as_IB(i)->type() != SkImage_Base::Type::kLazyPicture) {
+                    REPORTER_ASSERT(reporter, i->hasMipmaps() == mipmapped);
+                }
 
                 i = orig->makeSubset(nullptr, kFakeSubset, {mipmapped});
                 REPORTER_ASSERT(reporter, !i->isTextureBacked());
                 REPORTER_ASSERT(reporter, i->dimensions() == kFakeSubset.size());
-                REPORTER_ASSERT(reporter, i->hasMipmaps() == mipmapped);
+                // Picture-backed images don't support mipmaps but check the other types.
+                if (as_IB(i)->type() != SkImage_Base::Type::kLazyPicture) {
+                    REPORTER_ASSERT(reporter, i->hasMipmaps() == mipmapped);
+                }
             }
         }
     }
@@ -444,7 +451,7 @@ SkColorType pick_colortype(const Caps* caps, bool mipmapped) {
 //    SkImage::makeColorTypeAndColorSpace
 // works as expected.
 DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(MakeColorSpace_Test, reporter, context,
-                                         CtsEnforcement::kNextRelease) {
+                                         CtsEnforcement::kApiLevel_V) {
     static const struct {
         std::string name;
         FactoryT fFactory;

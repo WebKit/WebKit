@@ -47,5 +47,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-js-cycle.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-js-cycle.wasm
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/worker-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/worker-source-phase.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/worker.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/worker.wasm

@@ -15,11 +15,10 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "modules/pacing/interval_budget.h"
-#include "rtc_base/experiments/alr_experiment.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
 
 namespace webrtc {
@@ -58,16 +57,16 @@ class AlrDetector {
 
   // Returns time in milliseconds when the current application-limited region
   // started or empty result if the sender is currently not application-limited.
-  absl::optional<int64_t> GetApplicationLimitedRegionStartTime() const;
+  std::optional<int64_t> GetApplicationLimitedRegionStartTime() const;
 
  private:
   friend class GoogCcStatePrinter;
   const AlrDetectorConfig conf_;
 
-  absl::optional<int64_t> last_send_time_ms_;
+  std::optional<int64_t> last_send_time_ms_;
 
   IntervalBudget alr_budget_;
-  absl::optional<int64_t> alr_started_time_ms_;
+  std::optional<int64_t> alr_started_time_ms_;
 
   RtcEventLog* event_log_;
 };

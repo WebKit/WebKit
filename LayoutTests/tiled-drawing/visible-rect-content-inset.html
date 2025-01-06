@@ -3,17 +3,20 @@
 <html>
 <head>
     <script>
-        if (window.testRunner)
-            testRunner.dumpAsText();
-        if (window.internals)
-            window.internals.setTopContentInset(100);
-
-        function doTest()
+        async function doTest()
         {
-            if (window.internals) {
-                document.getElementById('layers').innerText = internals.layerTreeAsText(document,
-                    internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
-            }
+            if (!window.testRunner || !window.internals)
+                return;
+
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+            internals.disableTileSizeUpdateDelay();
+            await testRunner.setTopContentInset(100);
+
+            document.getElementById('layers').innerText = internals.layerTreeAsText(document,
+                internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+
+            testRunner.notifyDone();
         }
         window.addEventListener('load', doTest, false);
     </script>

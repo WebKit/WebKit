@@ -242,6 +242,9 @@ func do(outPath, oInput string, arInput string) error {
 		return errors.New("found two occurrences of uninitialised hash value in object file")
 	}
 
+	if _, exists := os.LookupEnv("BORINGSSL_FIPS_SHOW_HASH"); exists {
+		fmt.Printf("Module hash: %x\n", calculated)
+	}
 	copy(objectBytes[offset:], calculated)
 
 	return os.WriteFile(outPath, objectBytes, perm&0777)

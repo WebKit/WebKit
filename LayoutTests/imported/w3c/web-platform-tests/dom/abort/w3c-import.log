@@ -15,7 +15,10 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/abort/AbortSignal.any.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/abort/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/dom/abort/abort-signal-any-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/abort/abort-signal-any.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/abort/abort-signal-timeout.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/abort/event.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/abort/reason-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/abort/timeout.any.js

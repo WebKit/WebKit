@@ -28,7 +28,7 @@
 typedef [EnforceRange] unsigned long GPUShaderStageFlags;
 [
     EnabledBySetting=WebGPUEnabled,
-    Exposed=(Window,DedicatedWorker),
+    Exposed=(Window,Worker),
     SecureContext
 ]
 interface GPUShaderStage {

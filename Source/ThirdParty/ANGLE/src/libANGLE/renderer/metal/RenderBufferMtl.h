@@ -52,7 +52,8 @@ class RenderbufferMtl : public RenderbufferImpl
                                  GLsizei samples,
                                  GLenum internalformat,
                                  GLsizei width,
-                                 GLsizei height);
+                                 GLsizei height,
+                                 gl::MultisamplingMode mode);
 
     void releaseTexture();
 

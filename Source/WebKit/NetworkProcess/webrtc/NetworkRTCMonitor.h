@@ -28,24 +28,11 @@
 #if USE(LIBWEBRTC)
 
 #include "RTCNetwork.h"
-#include <WebCore/LibWebRTCMacros.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
-
-ALLOW_COMMA_BEGIN
-
-#include <webrtc/rtc_base/thread.h>
-#include <webrtc/rtc_base/network.h>
-
-ALLOW_COMMA_END
-
 
 namespace WebKit {
 class NetworkRTCMonitor;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkRTCMonitor> : std::true_type { };
 }
 
 namespace IPC {
@@ -59,24 +46,26 @@ class NetworkRTCProvider;
 
 class NetworkRTCMonitor final : public CanMakeWeakPtr<NetworkRTCMonitor> {
 public:
-    explicit NetworkRTCMonitor(NetworkRTCProvider& rtcProvider) : m_rtcProvider(rtcProvider) { }
+    explicit NetworkRTCMonitor(NetworkRTCProvider&);
     ~NetworkRTCMonitor();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void stopUpdating();
     bool isStarted() const { return m_isStarted; }
-    NetworkRTCProvider& rtcProvider() { return m_rtcProvider; }
+    NetworkRTCProvider& rtcProvider();
 
     void onNetworksChanged(const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&);
 
     const RTCNetwork::IPAddress& ipv4() const;
     const RTCNetwork::IPAddress& ipv6()  const;
 
+    void ref();
+    void deref();
+
 private:
     void startUpdatingIfNeeded();
 
-    NetworkRTCProvider& m_rtcProvider;
-    std::unique_ptr<rtc::BasicNetworkManager> m_manager;
+    CheckedRef<NetworkRTCProvider> m_rtcProvider;
     bool m_isStarted { false };
 };
 

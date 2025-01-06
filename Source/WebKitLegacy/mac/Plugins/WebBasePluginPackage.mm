@@ -40,7 +40,9 @@
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
 static constexpr auto JavaCocoaPluginIdentifier ="com.apple.JavaPluginCocoa"_s;
@@ -263,7 +265,7 @@ static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
 {
     NSUInteger sizeInBytes = [data length];
     Vector<uint32_t, 128> rawData((sizeInBytes + 3) / 4);
-    memcpy(rawData.data(), [data bytes], sizeInBytes);
+    memcpySpan(asMutableByteSpan(rawData.mutableSpan()), span(data));
     
     unsigned numArchs = 0;
     struct fat_arch singleArch = { 0, 0, 0, 0, 0 };

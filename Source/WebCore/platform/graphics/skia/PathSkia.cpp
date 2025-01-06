@@ -30,13 +30,14 @@
 #include "GraphicsContextSkia.h"
 #include "NotImplemented.h"
 #include "PathStream.h"
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkPathUtils.h>
 #include <skia/core/SkRRect.h>
-#include <wtf/NeverDestroyed.h>
-
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkSurface.h>
-IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -63,6 +64,20 @@ Ref<PathSkia> PathSkia::create(const PathStream& stream)
 PathSkia::PathSkia(const SkPath& platformPath)
     : m_platformPath(platformPath)
 {
+}
+
+bool PathSkia::definitelyEqual(const PathImpl& otherImpl) const
+{
+    RefPtr otherAsPathSkia = dynamicDowncast<PathSkia>(otherImpl);
+    if (!otherAsPathSkia) {
+        // We could convert other to a platform path to compare, but that would be expensive.
+        return false;
+    }
+
+    if (otherAsPathSkia.get() == this)
+        return true;
+
+    return m_platformPath == otherAsPathSkia->m_platformPath;
 }
 
 Ref<PathImpl> PathSkia::copy() const
@@ -191,8 +206,10 @@ void PathSkia::addPath(const PathSkia& path, const AffineTransform& transform)
 
 bool PathSkia::applyElements(const PathElementApplier& applier) const
 {
-    auto convertPoints = [](FloatPoint dst[], const SkPoint src[], int count) {
-        for (int i = 0; i < count; i++) {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
+
+    auto convertPoints = [](std::span<FloatPoint, 3> dst, const SkPoint src[], int count) {
+        for (int i = 0; i < count; ++i) {
             dst[i].setX(SkScalarToFloat(src[i].fX));
             dst[i].setY(SkScalarToFloat(src[i].fY));
         }
@@ -220,14 +237,18 @@ bool PathSkia::applyElements(const PathElementApplier& applier) const
             convertPoints(pathElement.points, &skPoints[1], 3);
             break;
         case SkPath::kConic_Verb: {
-            // Approximate conic with two quads.
+            // Approximate conic with quads.
+            // The amount of quads can be altered to change the performance/precision tradeoff.
+            // At the moment of writing, at least 4 quads are needed to satisfy layout tests.
             pathElement.type = PathElement::Type::AddQuadCurveToPoint;
-            SkPoint quadPoints[5];
-            SkPath::ConvertConicToQuads(skPoints[0], skPoints[1], skPoints[2], iter.conicWeight(), quadPoints, 1);
-            convertPoints(pathElement.points, &quadPoints[1], 2);
-            applier(pathElement);
-            convertPoints(pathElement.points, &quadPoints[3], 2);
-            applier(pathElement);
+            const int quadCountLog2 = 2;
+            const unsigned quadCount = 1 << quadCountLog2;
+            SkPoint quadPoints[1 + 2 * quadCount];
+            SkPath::ConvertConicToQuads(skPoints[0], skPoints[1], skPoints[2], iter.conicWeight(), quadPoints, quadCountLog2);
+            for (unsigned quadIndex = 0; quadIndex < quadCount; quadIndex++) {
+                convertPoints(pathElement.points, &quadPoints[1 + 2 * quadIndex], 2);
+                applier(pathElement);
+            }
             continue;
         }
         case SkPath::kClose_Verb:
@@ -239,6 +260,8 @@ bool PathSkia::applyElements(const PathElementApplier& applier) const
         applier(pathElement);
     }
     return true;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 bool PathSkia::isEmpty() const

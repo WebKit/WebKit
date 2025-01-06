@@ -30,12 +30,12 @@
 #include "ImageBufferBackendHandleSharing.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBufferBackend.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class ImageBufferRemoteIOSurfaceBackend final : public WebCore::ImageBufferBackend, public ImageBufferBackendHandleSharing {
-    WTF_MAKE_ISO_ALLOCATED(ImageBufferRemoteIOSurfaceBackend);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferRemoteIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferRemoteIOSurfaceBackend);
 public:
     static WebCore::IntSize calculateSafeBackendSize(const Parameters&);

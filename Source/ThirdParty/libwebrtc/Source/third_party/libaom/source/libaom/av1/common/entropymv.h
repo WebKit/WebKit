@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -37,11 +37,11 @@ enum {
   MV_JOINT_HNZVNZ = 3, /* Both components nonzero */
 } UENUM1BYTE(MV_JOINT_TYPE);
 
-static INLINE int mv_joint_vertical(MV_JOINT_TYPE type) {
+static inline int mv_joint_vertical(MV_JOINT_TYPE type) {
   return type == MV_JOINT_HZVNZ || type == MV_JOINT_HNZVNZ;
 }
 
-static INLINE int mv_joint_horizontal(MV_JOINT_TYPE type) {
+static inline int mv_joint_horizontal(MV_JOINT_TYPE type) {
   return type == MV_JOINT_HNZVZ || type == MV_JOINT_HNZVNZ;
 }
 

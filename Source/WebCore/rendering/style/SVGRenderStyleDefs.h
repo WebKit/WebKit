@@ -28,11 +28,11 @@
 
 #pragma once
 
-#include "BasicShapes.h"
 #include "Length.h"
 #include "SVGLengthValue.h"
 #include "ShadowData.h"
 #include "StyleColor.h"
+#include "StylePathData.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -151,9 +151,13 @@ public:
 
     bool operator==(const StyleFillData&) const;
 
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleFillData&) const;
+#endif
+
     float opacity;
-    StyleColor paintColor;
-    StyleColor visitedLinkPaintColor;
+    Style::Color paintColor;
+    Style::Color visitedLinkPaintColor;
     String paintUri;
     String visitedLinkPaintUri;
     SVGPaintType paintType;
@@ -173,10 +177,14 @@ public:
 
     bool operator==(const StyleStrokeData&) const;
 
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleStrokeData&) const;
+#endif
+
     float opacity;
 
-    StyleColor paintColor;
-    StyleColor visitedLinkPaintColor;
+    Style::Color paintColor;
+    Style::Color visitedLinkPaintColor;
 
     String paintUri;
     String visitedLinkPaintUri;
@@ -201,28 +209,16 @@ public:
 
     bool operator==(const StyleStopData&) const;
 
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleStopData&) const;
+#endif
+
     float opacity;
-    StyleColor color;
+    Style::Color color;
 
 private:
     StyleStopData();
     StyleStopData(const StyleStopData&);
-};
-
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleTextData);
-class StyleTextData : public RefCounted<StyleTextData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleTextData);
-public:
-    static Ref<StyleTextData> create() { return adoptRef(*new StyleTextData); }
-    Ref<StyleTextData> copy() const;
-    
-    bool operator==(const StyleTextData& other) const;
-
-    SVGLengthValue kerning;
-
-private:
-    StyleTextData();
-    StyleTextData(const StyleTextData&);
 };
 
 // Note: the rule for this class is, *no inheritance* of these props
@@ -235,11 +231,14 @@ public:
 
     bool operator==(const StyleMiscData&) const;
 
-    float floodOpacity;
-    StyleColor floodColor;
-    StyleColor lightingColor;
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleMiscData&) const;
+#endif
 
-    // non-inherited text stuff lives here not in StyleTextData.
+    float floodOpacity;
+    Style::Color floodColor;
+    Style::Color lightingColor;
+
     SVGLengthValue baselineShiftValue;
 
 private:
@@ -255,6 +254,10 @@ public:
     Ref<StyleShadowSVGData> copy() const;
 
     bool operator==(const StyleShadowSVGData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleShadowSVGData&) const;
+#endif
 
     std::unique_ptr<ShadowData> shadow;
 
@@ -272,6 +275,10 @@ public:
     Ref<StyleInheritedResourceData> copy() const;
 
     bool operator==(const StyleInheritedResourceData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleInheritedResourceData&) const;
+#endif
 
     String markerStart;
     String markerMid;
@@ -292,6 +299,10 @@ public:
 
     bool operator==(const StyleLayoutData&) const;
 
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleLayoutData&) const;
+#endif
+
     Length cx;
     Length cy;
     Length r;
@@ -299,7 +310,7 @@ public:
     Length ry;
     Length x;
     Length y;
-    RefPtr<BasicShapePath> d;
+    RefPtr<StylePathData> d;
 
 private:
     StyleLayoutData();
@@ -323,7 +334,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, VectorEffect);
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleFillData&);
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleStrokeData&);
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleStopData&);
-WTF::TextStream& operator<<(WTF::TextStream&, const StyleTextData&);
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleMiscData&);
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleShadowSVGData&);
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleInheritedResourceData&);

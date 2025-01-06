@@ -13,14 +13,13 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 
@@ -114,8 +113,6 @@ void BitrateEstimator::Update(Timestamp at_time, DataSize amount, bool in_alr) {
       std::max(bitrate_estimate_kbps_, estimate_floor_.Get().kbps<float>());
   bitrate_estimate_var_ = sample_var * pred_bitrate_estimate_var /
                           (sample_var + pred_bitrate_estimate_var);
-  BWE_TEST_LOGGING_PLOT(1, "acknowledged_bitrate", at_time.ms(),
-                        bitrate_estimate_kbps_ * 1000);
 }
 
 float BitrateEstimator::UpdateWindow(int64_t now_ms,
@@ -149,16 +146,16 @@ float BitrateEstimator::UpdateWindow(int64_t now_ms,
   return bitrate_sample;
 }
 
-absl::optional<DataRate> BitrateEstimator::bitrate() const {
+std::optional<DataRate> BitrateEstimator::bitrate() const {
   if (bitrate_estimate_kbps_ < 0.f)
-    return absl::nullopt;
+    return std::nullopt;
   return DataRate::KilobitsPerSec(bitrate_estimate_kbps_);
 }
 
-absl::optional<DataRate> BitrateEstimator::PeekRate() const {
+std::optional<DataRate> BitrateEstimator::PeekRate() const {
   if (current_window_ms_ > 0)
     return DataSize::Bytes(sum_) / TimeDelta::Millis(current_window_ms_);
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 void BitrateEstimator::ExpectFastRateChange() {

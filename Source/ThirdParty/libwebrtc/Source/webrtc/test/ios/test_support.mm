@@ -46,8 +46,8 @@ static char **g_argv;
 static bool g_write_perf_output;
 static bool g_export_perf_results_new_api;
 static std::string g_webrtc_test_metrics_output_path;
-static absl::optional<bool> g_is_xctest;
-static absl::optional<std::vector<std::string>> g_metrics_to_plot;
+static std::optional<bool> g_is_xctest;
+static std::optional<std::vector<std::string>> g_metrics_to_plot;
 
 @interface UIApplication (Testing)
 - (void)_terminateWithStatus:(int)status;
@@ -180,7 +180,7 @@ void InitTestSuite(int (*test_suite)(void),
                    bool write_perf_output,
                    bool export_perf_results_new_api,
                    std::string webrtc_test_metrics_output_path,
-                   absl::optional<std::vector<std::string>> metrics_to_plot) {
+                   std::optional<std::vector<std::string>> metrics_to_plot) {
   g_test_suite = test_suite;
   g_argc = argc;
   g_argv = argv;
@@ -204,12 +204,12 @@ bool ShouldRunIOSUnittestsWithXCTest() {
   char **argv = g_argv;
   while (*argv != nullptr) {
     if (strstr(*argv, kEnableRunIOSUnittestsWithXCTest) != nullptr) {
-      g_is_xctest = absl::optional<bool>(true);
+      g_is_xctest = std::optional<bool>(true);
       return true;
     }
     argv++;
   }
-  g_is_xctest = absl::optional<bool>(false);
+  g_is_xctest = std::optional<bool>(false);
   return false;
 }
 

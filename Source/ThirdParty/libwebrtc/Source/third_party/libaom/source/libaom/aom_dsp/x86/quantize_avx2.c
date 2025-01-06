@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2022, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -14,7 +14,7 @@
 #include "aom/aom_integer.h"
 #include "aom_dsp/x86/quantize_x86.h"
 
-static INLINE void load_b_values_avx2(const int16_t *zbin_ptr, __m256i *zbin,
+static inline void load_b_values_avx2(const int16_t *zbin_ptr, __m256i *zbin,
                                       const int16_t *round_ptr, __m256i *round,
                                       const int16_t *quant_ptr, __m256i *quant,
                                       const int16_t *dequant_ptr,
@@ -49,13 +49,13 @@ static INLINE void load_b_values_avx2(const int16_t *zbin_ptr, __m256i *zbin,
   *shift = _mm256_permute4x64_epi64(*shift, 0x54);
 }
 
-static INLINE __m256i load_coefficients_avx2(const tran_low_t *coeff_ptr) {
+static inline __m256i load_coefficients_avx2(const tran_low_t *coeff_ptr) {
   const __m256i coeff1 = _mm256_load_si256((__m256i *)coeff_ptr);
   const __m256i coeff2 = _mm256_load_si256((__m256i *)(coeff_ptr + 8));
   return _mm256_packs_epi32(coeff1, coeff2);
 }
 
-static INLINE void store_coefficients_avx2(__m256i coeff_vals,
+static inline void store_coefficients_avx2(__m256i coeff_vals,
                                            tran_low_t *coeff_ptr) {
   __m256i coeff_sign = _mm256_srai_epi16(coeff_vals, 15);
   __m256i coeff_vals_lo = _mm256_unpacklo_epi16(coeff_vals, coeff_sign);
@@ -97,7 +97,7 @@ static AOM_FORCE_INLINE __m256i quantize_b_logscale0_16(
   return v_nz_mask;
 }
 
-static INLINE __m256i get_max_lane_eob(const int16_t *iscan, __m256i v_eobmax,
+static inline __m256i get_max_lane_eob(const int16_t *iscan, __m256i v_eobmax,
                                        __m256i v_mask) {
   const __m256i v_iscan = _mm256_loadu_si256((const __m256i *)iscan);
   const __m256i v_iscan_perm = _mm256_permute4x64_epi64(v_iscan, 0xD8);
@@ -106,7 +106,7 @@ static INLINE __m256i get_max_lane_eob(const int16_t *iscan, __m256i v_eobmax,
   return _mm256_max_epi16(v_eobmax, v_nz_iscan);
 }
 
-static INLINE int16_t accumulate_eob256(__m256i eob256) {
+static inline int16_t accumulate_eob256(__m256i eob256) {
   const __m128i eob_lo = _mm256_castsi256_si128(eob256);
   const __m128i eob_hi = _mm256_extractf128_si256(eob256, 1);
   __m128i eob = _mm_max_epi16(eob_lo, eob_hi);

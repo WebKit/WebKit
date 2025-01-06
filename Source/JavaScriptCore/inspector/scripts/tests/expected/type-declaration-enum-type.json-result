@@ -474,8 +474,6 @@ template<> std::optional<Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFrom
 
 } // namespace TestHelpers
 
-
-
 } // namespace Protocol
 
 } // namespace Inspector

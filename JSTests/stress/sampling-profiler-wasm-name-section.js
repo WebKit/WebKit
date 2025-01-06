@@ -1,9 +1,10 @@
+//@ skip if ["arm"].include?($architecture)
+//@ skip if $platform == "tvos" || $platform == "watchos"
+//@ runDefault
+
 // This test is statistical, and without optimizing Wasm tiers the likelihood
 // of hitting the deepest expected stack trace is very low, so disable.
 // FIXME: remove when 32-bit platforms support optimizing Wasm tiers
-//@ skip if ["arm"].include?($architecture)
-//
-//@ runDefault
 
 /*
 This test loads a WebAssembly file compiled by Emscripten with:

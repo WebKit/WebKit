@@ -1265,18 +1265,35 @@ if Bugzilla is currently using the shadowdb or not. Used like:
 
 =back
 
-=head1 B<Methods in need of POD>
-
 =over
 
-=item do_ssl_redirect_if_required
+=item C<write_text($filename, $content)>
+Writes $content to $filename. The content will be encoded as UTF-8. Returns 1 if
+the atomic write was successful, 0 otherwise. C<$!> will be set to the error
+from C<rename()>.
+=item C<read_text($filename)>
+Reads the contents of $filename and returns it as a string. The string will be
+decoded as UTF-8.
+=item C<is_ipv4>
+Returns true if the given IP address is an IPv4 address.
+=item C<is_ipv6>
+Returns true if the given IP address is an IPv6 address.
+=item C<do_ssl_redirect_if_required>
+If Bugzilla is configured to redirect all HTTP requests to HTTPS, this function
+will redirect the user to the HTTPS version of the current page. It will not do
+anything if the user is already on HTTPS, or if there is no C<sslbase> parameter
+set.
 
-=item validate_time
+=item C<validate_time>
 
-=item is_ipv4
+Validates a time string. Returns true or false depending on whether the time
+string is valid.
 
-=item is_ipv6
+=item C<display_value>
 
-=item display_value
+Returns the display value for a given field and value. This value comes from the
+value_descs template variable. The value_descs variable is set in the template
+file C<global/value-descs.none.tmpl>. This is used for localizing Bugzilla to
+other languages.
 
 =back

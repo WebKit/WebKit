@@ -9,8 +9,14 @@
  * be overwritten.
  */
 
-#include "include/gpu/gl/GrGLAssembleHelpers.h"
-#include "include/gpu/gl/GrGLAssembleInterface.h"
+#include "include/core/SkRefCnt.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleHelpers.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleInterface.h"
+#include "include/gpu/ganesh/gl/GrGLExtensions.h"
+#include "include/gpu/ganesh/gl/GrGLFunctions.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
+#include "src/gpu/ganesh/gl/GrGLDefines.h"
 #include "src/gpu/ganesh/gl/GrGLUtil.h"
 
 #define GET_PROC(F) functions->f##F = (GrGL##F##Fn*)get(ctx, "gl" #F)
@@ -436,16 +442,18 @@ sk_sp<const GrGLInterface> GrGLMakeAssembledGLInterface(void *ctx, GrGLGetProc g
         GET_PROC(SamplerParameteriv);
     }
 
-    GET_PROC(GetQueryObjectiv);
-
-#if defined(GR_TEST_UTILS)
     GET_PROC(BeginQuery);
     GET_PROC(DeleteQueries);
     GET_PROC(EndQuery);
     GET_PROC(GenQueries);
     GET_PROC(GetQueryObjectuiv);
     GET_PROC(GetQueryiv);
-#endif
+
+    if (glVer >= GR_GL_VER(3,3)) {
+        GET_PROC(QueryCounter);
+    } else if (extensions.has("GL_ARB_timer_query")) {
+        GET_PROC(QueryCounter);
+    }
 
     if (glVer >= GR_GL_VER(3,3)) {
         GET_PROC(GetQueryObjecti64v);
@@ -456,12 +464,6 @@ sk_sp<const GrGLInterface> GrGLMakeAssembledGLInterface(void *ctx, GrGLGetProc g
     } else if (extensions.has("GL_EXT_timer_query")) {
         GET_PROC_SUFFIX(GetQueryObjecti64v, EXT);
         GET_PROC_SUFFIX(GetQueryObjectui64v, EXT);
-    }
-
-    if (glVer >= GR_GL_VER(3,3)) {
-        GET_PROC(QueryCounter);
-    } else if (extensions.has("GL_ARB_timer_query")) {
-        GET_PROC(QueryCounter);
     }
 
     if (glVer >= GR_GL_VER(4,3)) {

@@ -66,6 +66,8 @@ StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, con
     ASSERT(storageType == StorageType::Session || !m_sessionPageID);
 }
 
+StorageNamespaceImpl::~StorageNamespaceImpl() = default;
+
 PAL::SessionID StorageNamespaceImpl::sessionID() const
 {
     return WebProcess::singleton().sessionID();
@@ -79,9 +81,9 @@ void StorageNamespaceImpl::destroyStorageAreaMap(StorageAreaMap& map)
 Ref<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOrigin& securityOrigin)
 {
     auto& map = m_storageAreaMaps.ensure(securityOrigin.data(), [&] {
-        return makeUnique<StorageAreaMap>(*this, securityOrigin);
+        return StorageAreaMap::create(*this, securityOrigin);
     }).iterator->value;
-    return StorageAreaImpl::create(*map);
+    return StorageAreaImpl::create(map);
 }
 
 Ref<StorageNamespace> StorageNamespaceImpl::copy(Page& newPage)
@@ -96,12 +98,6 @@ Ref<StorageNamespace> StorageNamespaceImpl::copy(Page& newPage)
 void StorageNamespaceImpl::setSessionIDForTesting(PAL::SessionID)
 {
     ASSERT_NOT_REACHED();
-}
-
-PageIdentifier StorageNamespaceImpl::sessionStoragePageID() const
-{
-    ASSERT(m_storageType == StorageType::Session);
-    return *m_sessionPageID;
 }
 
 } // namespace WebKit

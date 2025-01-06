@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "skia_objc_library", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "skia_objc_library", "split_srcs_and_hdrs")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 MTL_FILES = [
     "MtlMemoryAllocatorImpl.h",
@@ -20,18 +18,6 @@ split_srcs_and_hdrs(
     files = MTL_FILES,
 )
 
-skia_filegroup(
-    name = "shared_objc_srcs",
-    srcs = [":mtl_srcs"],
-    visibility = ["//src/gpu:__pkg__"],
-)
-
-skia_filegroup(
-    name = "private_hdrs",
-    srcs = [":mtl_hdrs"],
-    visibility = ["//src/gpu:__pkg__"],
-)
-
 skia_objc_library(
     name = "gpu_mtl",
     srcs = [":mtl_srcs"],
@@ -39,5 +25,13 @@ skia_objc_library(
         ":mtl_hdrs",
         "//include/gpu/mtl:public_hdrs",
     ],
-    visibility = ["//src/gpu/ganesh/mtl:__pkg__"],
+    visibility = [
+        "//src/gpu/ganesh/mtl:__pkg__",
+        "//src/gpu/graphite/mtl:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/gpu",
+        "//src/sksl/codegen:metal",
+    ],
 )

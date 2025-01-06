@@ -30,6 +30,8 @@
 #include "PropertyNameArray.h"
 #include "StructureChain.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class JSPropertyNameEnumerator final : public JSCell {
@@ -125,7 +127,7 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(JSGlobalObject* globalOb
         uintptr_t enumeratorAndFlag = structure->cachedPropertyNameEnumeratorAndFlag();
         if (enumeratorAndFlag) {
             if (!(enumeratorAndFlag & StructureRareData::cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag))
-                return bitwise_cast<JSPropertyNameEnumerator*>(enumeratorAndFlag);
+                return std::bit_cast<JSPropertyNameEnumerator*>(enumeratorAndFlag);
             structure->prototypeChain(vm, globalObject, base); // Refresh cached structure chain.
             if (auto* enumerator = structure->cachedPropertyNameEnumerator())
                 return enumerator;
@@ -164,3 +166,5 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(JSGlobalObject* globalOb
 using EnumeratorMetadata = std::underlying_type_t<JSPropertyNameEnumerator::Flag>;
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

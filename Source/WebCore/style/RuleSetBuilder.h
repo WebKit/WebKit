@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "CSSParserEnum.h"
 #include "MediaQuery.h"
 #include "RuleSet.h"
 
@@ -41,6 +42,7 @@ private:
     RuleSetBuilder(const MQ::MediaQueryEvaluator&);
 
     void addStyleRule(StyleRuleWithNesting&);
+    void addStyleRule(StyleRuleNestedDeclarations&);
     void addRulesFromSheetContents(const StyleSheetContents&);
     void addChildRules(const Vector<Ref<StyleRuleBase>>&);
     void addChildRule(Ref<StyleRuleBase>);
@@ -83,9 +85,10 @@ private:
     const ShrinkToFit m_shrinkToFit { ShrinkToFit::Enable };
 
     CascadeLayerName m_resolvedCascadeLayerName;
-    HashMap<CascadeLayerName, RuleSet::CascadeLayerIdentifier> m_cascadeLayerIdentifierMap;
+    UncheckedKeyHashMap<CascadeLayerName, RuleSet::CascadeLayerIdentifier> m_cascadeLayerIdentifierMap;
     RuleSet::CascadeLayerIdentifier m_currentCascadeLayerIdentifier { 0 };
     Vector<const CSSSelectorList*> m_selectorListStack;
+    Vector<CSSParserEnum::NestedContextType> m_ancestorStack;
     const ShouldResolveNesting m_shouldResolveNesting { ShouldResolveNesting::No };
 
     RuleSet::ContainerQueryIdentifier m_currentContainerQueryIdentifier { 0 };

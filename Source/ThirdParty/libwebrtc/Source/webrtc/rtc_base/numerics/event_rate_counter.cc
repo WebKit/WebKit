@@ -10,6 +10,10 @@
 #include "rtc_base/numerics/event_rate_counter.h"
 
 #include <algorithm>
+#include <cmath>
+
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 
 namespace webrtc {
 

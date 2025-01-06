@@ -20,7 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> WebProcess LegacyReceiver NotRefCounted {
+[
+    DispatchedFrom=UI,
+    DispatchedTo=WebContent
+]
+messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     InitializeWebProcess(struct WebKit::WebProcessCreationParameters processCreationParameters) -> (WebCore::ProcessIdentity processIdentity)
     SetWebsiteDataStoreParameters(struct WebKit::WebProcessDataStoreParameters parameters)
 
@@ -66,7 +70,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     void StartMemorySampler(WebKit::SandboxExtensionHandle sampleLogFileHandle, String sampleLogFilePath, double interval);
     void StopMemorySampler();
 
-    SetTextCheckerState(struct WebKit::TextCheckerState textCheckerState)
+    SetTextCheckerState(OptionSet<WebKit::TextCheckerState> textCheckerState)
 
     SetEnhancedAccessibility(bool flag)
     BindAccessibilityFrameWithData(WebCore::FrameIdentifier frameID, std::span<const uint8_t> data);
@@ -85,7 +89,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     ReloadExecutionContextsForOrigin(struct WebCore::ClientOrigin origin, std::optional<WebCore::FrameIdentifier> triggeringFrame) -> ()
     DeleteAllCookies() -> ()
 
-    SetHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds seconds)
+    [DeferSendingIfSuspended] SetHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds seconds)
 
     SetMemoryCacheDisabled(bool disabled);
 
@@ -107,7 +111,9 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     GamepadDisconnected(unsigned index)
 #endif
 
-    EstablishRemoteWorkerContextConnectionToNetworkProcess(enum:uint8_t WebKit::RemoteWorkerType workerType, WebKit::PageGroupIdentifier pageGroupID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, WebCore::RegistrableDomain domain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, struct WebKit::RemoteWorkerInitializationData initializationData) -> ()
+    EstablishRemoteWorkerContextConnectionToNetworkProcess(enum:uint8_t WebKit::RemoteWorkerType workerType, WebKit::PageGroupIdentifier pageGroupID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, WebCore::Site site, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, struct WebKit::RemoteWorkerInitializationData initializationData) -> ()
+
+    RegisterServiceWorkerClients() -> (bool isSuccess)
 
     SetHasSuspendedPageProxy(bool hasSuspendedPageProxy);
     SetIsInProcessCache(bool isInProcessCache) -> ()
@@ -119,7 +125,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 #if PLATFORM(MAC)
     ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
-    DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -127,7 +132,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-    BacklightLevelDidChange(float backlightLevel)
+    [DeferSendingIfSuspended] BacklightLevelDidChange(float backlightLevel)
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -172,6 +177,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SendResourceLoadStatisticsDataImmediately() -> ()
 
     UpdateDomainsWithStorageAccessQuirks(HashSet<WebCore::RegistrableDomain> domainsWithStorageAccessQuirks);
+    UpdateScriptTelemetryFilter(struct WebKit::ScriptTelemetryRules rules)
 
     GrantAccessToAssetServices(Vector<WebKit::SandboxExtensionHandle> assetServicesHandles)
     RevokeAccessToAssetServices()
@@ -222,5 +228,13 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #if ENABLE(NOTIFY_BLOCKING)
     PostNotification(String message, std::optional<uint64_t> state)
     PostObserverNotification(String message)
+#endif
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    [DeferSendingIfSuspended] SetResourceMonitorContentRuleList(WebKit::WebCompiledContentRuleListData ruleListData)
+#endif
+
+#if PLATFORM(COCOA)
+    RegisterAdditionalFonts(struct WebKit::AdditionalFonts fonts)
 #endif
 }

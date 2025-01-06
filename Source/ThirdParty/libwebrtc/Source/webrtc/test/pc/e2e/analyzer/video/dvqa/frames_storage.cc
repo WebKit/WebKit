@@ -11,9 +11,9 @@
 #include "test/pc/e2e/analyzer/video/dvqa/frames_storage.h"
 
 #include <cstdint>
+#include <optional>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_frame.h"
 
@@ -26,10 +26,10 @@ void FramesStorage::Add(const VideoFrame& frame, Timestamp captured_time) {
   RemoveTooOldFrames();
 }
 
-absl::optional<VideoFrame> FramesStorage::Get(uint16_t frame_id) {
+std::optional<VideoFrame> FramesStorage::Get(uint16_t frame_id) {
   auto it = frame_id_index_.find(frame_id);
   if (it == frame_id_index_.end()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   return heap_[it->second].frame;

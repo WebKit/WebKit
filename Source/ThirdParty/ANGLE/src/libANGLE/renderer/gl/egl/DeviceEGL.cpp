@@ -46,12 +46,6 @@ egl::Error DeviceEGL::getAttribute(const egl::Display *display, EGLint attribute
     return egl::EglBadAttribute();
 }
 
-EGLint DeviceEGL::getType()
-{
-    UNREACHABLE();
-    return EGL_NONE;
-}
-
 void DeviceEGL::generateExtensions(egl::DeviceExtensions *outExtensions) const
 {
     if (hasExtension("EGL_EXT_device_drm"))

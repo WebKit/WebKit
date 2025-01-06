@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -27,17 +27,30 @@
 #include "av1/encoder/encoder.h"
 #include "av1/encoder/picklpf.h"
 
+// AV1 loop filter applies to the whole frame according to mi_rows and mi_cols,
+// which are calculated based on aligned width and aligned height,
+// In addition, if super res is enabled, it copies the whole frame
+// according to the aligned width and height (av1_superres_upscale()).
+// So we need to copy the whole filtered region, instead of the cropped region.
+// For example, input image size is: 160x90.
+// Then src->y_crop_width = 160, src->y_crop_height = 90.
+// The aligned frame size is: src->y_width = 160, src->y_height = 96.
+// AV1 aligns frame size to a multiple of 8, if there is
+// chroma subsampling, it is able to ensure the chroma is also
+// an integer number of mi units. mi unit is 4x4, 8 = 4 * 2, and 2 luma mi
+// units correspond to 1 chroma mi unit if there is subsampling.
+// See: aom_realloc_frame_buffer() in yv12config.c.
 static void yv12_copy_plane(const YV12_BUFFER_CONFIG *src_bc,
                             YV12_BUFFER_CONFIG *dst_bc, int plane) {
   switch (plane) {
-    case 0: aom_yv12_copy_y(src_bc, dst_bc); break;
-    case 1: aom_yv12_copy_u(src_bc, dst_bc); break;
-    case 2: aom_yv12_copy_v(src_bc, dst_bc); break;
+    case 0: aom_yv12_copy_y(src_bc, dst_bc, 0); break;
+    case 1: aom_yv12_copy_u(src_bc, dst_bc, 0); break;
+    case 2: aom_yv12_copy_v(src_bc, dst_bc, 0); break;
     default: assert(plane >= 0 && plane <= 2); break;
   }
 }
 
-int av1_get_max_filter_level(const AV1_COMP *cpi) {
+static int get_max_filter_level(const AV1_COMP *cpi) {
   if (is_stat_consumption_stage_twopass(cpi)) {
     return cpi->ppi->twopass.section_intra_rating > 8 ? MAX_LOOP_FILTER * 3 / 4
                                                       : MAX_LOOP_FILTER;
@@ -59,7 +72,8 @@ static int64_t try_filter_frame(const YV12_BUFFER_CONFIG *sd,
   if (plane == 0 && dir == 0) filter_level[1] = cm->lf.filter_level[1];
   if (plane == 0 && dir == 1) filter_level[0] = cm->lf.filter_level[0];
 
-  // set base filters for use of av1_get_filter_level when in DELTA_LF mode
+  // set base filters for use of get_filter_level (av1_loopfilter.c) when in
+  // DELTA_LF mode
   switch (plane) {
     case 0:
       cm->lf.filter_level[0] = filter_level[0];
@@ -91,7 +105,7 @@ static int search_filter_level(const YV12_BUFFER_CONFIG *sd, AV1_COMP *cpi,
                                int dir) {
   const AV1_COMMON *const cm = &cpi->common;
   const int min_filter_level = 0;
-  const int max_filter_level = av1_get_max_filter_level(cpi);
+  const int max_filter_level = get_max_filter_level(cpi);
   int filt_direction = 0;
   int64_t best_err;
   int filt_best;
@@ -201,7 +215,10 @@ void av1_pick_filter_level(const YV12_BUFFER_CONFIG *sd, AV1_COMP *cpi,
   int disable_filter_rt_screen = 0;
   (void)sd;
 
-  lf->sharpness_level = 0;
+  // Enable loop filter sharpness only for allintra encoding mode,
+  // as frames do not have to serve as references to others
+  lf->sharpness_level =
+      cpi->oxcf.mode == ALLINTRA ? cpi->oxcf.algo_cfg.sharpness : 0;
 
   if (cpi->oxcf.tune_cfg.content == AOM_CONTENT_SCREEN &&
       cpi->oxcf.q_cfg.aq_mode == CYCLIC_REFRESH_AQ &&
@@ -222,7 +239,7 @@ void av1_pick_filter_level(const YV12_BUFFER_CONFIG *sd, AV1_COMP *cpi,
     lf->filter_level[1] = 0;
   } else if (method >= LPF_PICK_FROM_Q) {
     const int min_filter_level = 0;
-    const int max_filter_level = av1_get_max_filter_level(cpi);
+    const int max_filter_level = get_max_filter_level(cpi);
     const int q = av1_ac_quant_QTX(cm->quant_params.base_qindex, 0,
                                    seq_params->bit_depth);
     // based on tests result for rtc test set
@@ -244,6 +261,8 @@ void av1_pick_filter_level(const YV12_BUFFER_CONFIG *sd, AV1_COMP *cpi,
         inter_frame_multiplier = inter_frame_multiplier << 1;
       else if (cpi->rc.frame_source_sad > 50000)
         inter_frame_multiplier = 3 * (inter_frame_multiplier >> 1);
+    } else if (cpi->sf.rt_sf.use_fast_fixed_part) {
+      inter_frame_multiplier = inter_frame_multiplier << 1;
     }
     // These values were determined by linear fitting the result of the
     // searched level for 8 bit depth:
@@ -311,7 +330,7 @@ void av1_pick_filter_level(const YV12_BUFFER_CONFIG *sd, AV1_COMP *cpi,
             &cpi->last_frame_uf, cm->width, cm->height,
             seq_params->subsampling_x, seq_params->subsampling_y,
             seq_params->use_highbitdepth, cpi->oxcf.border_in_pixels,
-            cm->features.byte_alignment, NULL, NULL, NULL, 0, 0))
+            cm->features.byte_alignment, NULL, NULL, NULL, false, 0))
       aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
                          "Failed to allocate last frame buffer");
 

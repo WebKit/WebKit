@@ -29,8 +29,12 @@ class MockAudioEncoder : public AudioEncoder {
   MOCK_METHOD(size_t, Num10MsFramesInNextPacket, (), (const, override));
   MOCK_METHOD(size_t, Max10MsFramesInAPacket, (), (const, override));
   MOCK_METHOD(int, GetTargetBitrate, (), (const, override));
-  MOCK_METHOD((absl::optional<std::pair<TimeDelta, TimeDelta>>),
+  MOCK_METHOD((std::optional<std::pair<TimeDelta, TimeDelta>>),
               GetFrameLengthRange,
+              (),
+              (const, override));
+  MOCK_METHOD((std::optional<std::pair<DataRate, DataRate>>),
+              GetBitrateRange,
               (),
               (const, override));
 
@@ -42,7 +46,7 @@ class MockAudioEncoder : public AudioEncoder {
   MOCK_METHOD(void,
               OnReceivedUplinkBandwidth,
               (int target_audio_bitrate_bps,
-               absl::optional<int64_t> probing_interval_ms),
+               std::optional<int64_t> probing_interval_ms),
               (override));
   MOCK_METHOD(void,
               OnReceivedUplinkPacketLossFraction,

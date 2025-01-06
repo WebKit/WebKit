@@ -1,40 +1,38 @@
 .. _quick-start:
 
-Quick Start (Ubuntu Linux 14.04)
+Quick Start (Ubuntu Linux 22.04)
 ################################
 
 This quick start guide makes installing Bugzilla as simple as possible for
 those who are able to choose their environment. It creates a system using
-Ubuntu Linux 14.04 LTS, Apache and MySQL. It requires a little familiarity
+Ubuntu Linux 22.04 LTS, Apache and MariaDB. It requires a little familiarity
 with Linux and the command line.
 
 Obtain Your Hardware
 ====================
 
-Ubuntu 14.04 LTS Server requires a 64-bit processor.
+Ubuntu 22.04 LTS Server requires a 64-bit processor.
 Bugzilla itself has no prerequisites beyond that, although you should pick
 reliable hardware. You can also probably use any 64-bit virtual machine
-or cloud instance that you have root access on. 
+or cloud instance that you have root access on.
 
 Install the OS
 ==============
 
-Get `Ubuntu Server 14.04 LTS <http://www.ubuntu.com/download/server>`_
-and follow the `installation instructions <http://www.ubuntu.com/download/server/install-ubuntu-server>`_.
+Get `Ubuntu Server 22.04 LTS <https://www.ubuntu.com/download/server>`_
+and follow the `installation instructions <https://www.ubuntu.com/download/server/install-ubuntu-server>`_.
 Here are some tips:
 
 * Choose any server name you like.
 * When creating the initial Linux user, call it ``bugzilla``, give it a 
   strong password, and write that password down.
-* You do not need an encrypted home directory.
+* You do not need an encrypted lvm group, root or home directory.
 * Choose all the defaults for the "partitioning" part (excepting of course
   where the default is "No" and you need to press "Yes" to continue).
-* Choose "install security updates automatically" unless you want to do
-  them manually.
-* From the install options, choose "OpenSSH Server" and "LAMP Server".
-* Set the password for the MySQL root user to a strong password, and write
-  that password down.
-* Install the Grub boot loader to the Master Boot Record.
+* Choose any server name you like.
+* When creating the initial Linux user, call it ``bugzilla``, give it a
+  strong password, and write that password down.
+* From the install options, choose "OpenSSH Server".
 
 Reboot when the installer finishes.
 
@@ -44,59 +42,61 @@ Become root
 ssh to the machine as the 'bugzilla' user, or start a console. Then:
 
 :command:`sudo su`
-   
+
 Install Prerequisites
 =====================
 
-:command:`apt-get install git nano`
+:command:`apt install git nano`
 
-:command:`apt-get install apache2 mysql-server libappconfig-perl libdate-calc-perl libtemplate-perl libmime-perl build-essential libdatetime-timezone-perl libdatetime-perl libemail-sender-perl libemail-mime-perl libemail-mime-modifier-perl libdbi-perl libdbd-mysql-perl libcgi-pm-perl libmath-random-isaac-perl libmath-random-isaac-xs-perl apache2-mpm-prefork libapache2-mod-perl2 libapache2-mod-perl2-dev libchart-perl libxml-perl libxml-twig-perl perlmagick libgd-graph-perl libtemplate-plugin-gd-perl libsoap-lite-perl libhtml-scrubber-perl libjson-rpc-perl libdaemon-generic-perl libtheschwartz-perl libtest-taint-perl libauthen-radius-perl libfile-slurp-perl libencode-detect-perl libmodule-build-perl libnet-ldap-perl libauthen-sasl-perl libtemplate-perl-doc libfile-mimeinfo-perl libhtml-formattext-withlinks-perl libgd-dev libmysqlclient-dev lynx-cur graphviz python-sphinx`
+:command:`apt install apache2 build-essential mariadb-server
+libcgi-pm-perl libdigest-sha-perl libtimedate-perl libdatetime-perl
+libdatetime-timezone-perl libdbi-perl libtemplate-perl
+libemail-address-perl libemail-sender-perl libemail-mime-perl
+liburi-perl liblist-moreutils-perl libmath-random-isaac-perl
+libjson-xs-perl libgd-perl libchart-perl libtemplate-plugin-gd-perl
+libgd-text-perl libgd-graph-perl libmime-tools-perl libwww-perl
+libxml-twig-perl libnet-ldap-perl libauthen-sasl-perl
+libnet-smtp-ssl-perl libauthen-radius-perl libsoap-lite-perl
+libxmlrpc-lite-perl libjson-rpc-perl libtest-taint-perl
+libhtml-parser-perl libhtml-scrubber-perl libencode-perl
+libencode-detect-perl libemail-reply-perl
+libhtml-formattext-withlinks-perl libtheschwartz-perl
+libdaemon-generic-perl libapache2-mod-perl2 libapache2-mod-perl2-dev
+libfile-mimeinfo-perl libio-stringy-perl libcache-memcached-perl
+libfile-copy-recursive-perl libfile-which-perl libdbd-mysql-perl
+perlmagick lynx graphviz python3-sphinx rst2pdf`
 
 This will take a little while. It's split into two commands so you can do
 the next steps (up to step 7) in another terminal while you wait for the
 second command to finish. If you start another terminal, you will need to
 :command:`sudo su` again.
 
-Download Bugzilla
+Configure MariaDB
 =================
-
-Get it from our Git repository:
-
-:command:`cd /var/www/html`
-
-:command:`git clone --branch release-X.X-stable https://github.com/bugzilla/bugzilla bugzilla`
-
-(where "X.X" is the 2-digit version number of the stable release of Bugzilla
-that you want - e.g. 5.0)
-
-Configure MySQL
-===============
 
 The following instructions use the simple :file:`nano` editor, but feel
 free to use any text editor you are comfortable with.
 
-:command:`nano /etc/mysql/my.cnf`
+:command:`nano /etc/mysql/mariadb.conf.d/50-server.cnf`
 
 Set the following values, which increase the maximum attachment size and
 make it possible to search for short words and terms:
 
-* Alter on Line 52: ``max_allowed_packet=100M``
-* Add as new line 32, in the ``[mysqld]`` section: ``ft_min_word_len=2``
+* Uncomment and alter on Line 34 to have a value of at least: ``max_allowed_packet=100M``
+* Add as new line 42, in the ``[mysqld]`` section: ``ft_min_word_len=2``
 
 Save and exit.
 
 Then, add a user to MySQL for Bugzilla to use:
 
-:command:`mysql -u root -p -e "GRANT ALL PRIVILEGES ON bugs.* TO bugs@localhost IDENTIFIED BY '$db_pass'"`
+:command:`mysql -u root -e "GRANT ALL PRIVILEGES ON bugs.* TO bugs@localhost IDENTIFIED BY '$db_pass'"`
 
 Replace ``$db_pass`` with a strong password you have generated. Write it down.
-When you run the above command, it will prompt you for the MySQL root password
-that you configured when you installed Ubuntu. You should make ``$db_pass``
-different to that password.
+You should make ``$db_pass`` different to your password.
 
-Restart MySQL:
+Restart MariaDB:
 
-:command:`service mysql restart`
+:command:`service mariadb restart`
 
 Configure Apache
 ================
@@ -107,20 +107,36 @@ Paste in the following and save:
 
 .. code-block:: apache
 
- ServerName localhost
-
- <Directory /var/www/html/bugzilla>
+ Alias /bugzilla /var/www/webapps/bugzilla
+ <Directory /var/www/webapps/bugzilla>
    AddHandler cgi-script .cgi
    Options +ExecCGI
    DirectoryIndex index.cgi index.html
    AllowOverride All
  </Directory>
 
+This configuration sets up Bugzilla to be served on your server under ``/bugzilla`` path.
+For more in depth setup instructions, refer to :ref:`Apache section of this documentation <apache>`.
+ 
 :command:`a2ensite bugzilla`
 
-:command:`a2enmod cgi headers expires`
+:command:`a2enmod cgi headers expires rewrite`
 
 :command:`service apache2 restart`
+
+Download Bugzilla
+=================
+
+Get it from our Git repository:
+
+:command:`mkdir -p /var/www/webapps`
+
+:command:`cd /var/www/webapps`
+
+:command:`git clone --branch release-X.X-stable https://github.com/bugzilla/bugzilla bugzilla`
+
+(where "X.X" is the 2-digit version number of the stable release of Bugzilla
+that you want - e.g. 5.0)
 
 Check Setup
 ===========
@@ -131,7 +147,7 @@ generates a config file (called :file:`localconfig`) for the database
 access information, and the second time (step 10)
 it uses the info you put in the config file to set up the database.
 
-:command:`cd /var/www/html/bugzilla`
+:command:`cd /var/www/webapps/bugzilla`
 
 :command:`./checksetup.pl`
 
@@ -144,7 +160,7 @@ You will need to set the following values:
 
 * Line 29: set ``$webservergroup`` to ``www-data``
 * Line 67: set ``$db_pass`` to the password for the ``bugs`` user you created
-  in MySQL a few steps ago
+  in MariaDB a few steps ago
 
 Check Setup (again)
 ===================
@@ -162,12 +178,10 @@ Test Server
 
 :command:`./testserver.pl http://localhost/bugzilla`
 
-All the tests should pass. You will get warnings about deprecation from
-the ``Chart::Base`` Perl module; just ignore those.
+All the tests should pass. You will get a warning about failing to run
+``gdlib-config``; just ignore it.
 
-.. todo:: Chart::Base gives confusing deprecation warnings :-|
-          https://rt.cpan.org/Public/Bug/Display.html?id=79658 , unfixed for
-          2 years. :bug:`1070117`.
+.. todo:: ``gdlib-config`` is no longer in Ubuntu.
 
 Access Via Web Browser
 ======================
@@ -183,8 +197,28 @@ You might well need to configure your DNS such that the server has, and
 is reachable by, a name rather than IP address. Doing so is out of scope
 of this document. In the mean time, it is available on your local network
 at ``http://<ip address>/bugzilla``, where ``<ip address>`` is (unless you
-have a complex network setup) the "inet addr" value displayed when you run
-:command:`ifconfig eth0`.
+have a complex network setup) the address starting with 192 displayed when
+you run :command:`hostname -I`.
+
+Accessing Bugzilla from the Internet
+====================================
+
+To be able to access Bugzilla from anywhere in the world, you don't have
+to make it internet facing at all, there are free VPN services that let
+you set up your own network that is accessible anywhere. One of those is
+Tailscale, which has a fairly accessible `Quick Start guide <https://tailscale.com/kb/1017/install/>`_.
+
+If you are setting up an internet facing Bugzilla, it's essential to set
+up SSL, so that the communication between the server and users is
+encrypted. For local and intranet installation this matters less, and
+for those cases, you could set up a self signed local certificate
+instead.
+
+There are a few ways to set up free SSL thanks to `Let's Encrypt <https://letsencrypt.org/>`_.
+The two major ones would be Apache's `mod_md <https://httpd.apache.org/docs/2.4/mod/mod_md.html>`_
+and EFF's `certbot <https://certbot.eff.org/instructions?ws=apache&os=ubuntufocal>`_,
+but we don't cover the exact specifics of this here, as that's out of
+scope of this guide.
 
 Configure Bugzilla
 ==================
@@ -198,6 +232,8 @@ the following parameters in the :guilabel:`Required Settings` section:
 
 * :param:`urlbase`:
   :paramval:`http://<servername>/bugzilla/` or :paramval:`http://<ip address>/bugzilla/`
+* :param:`ssl_redirect`:
+  :paramval:`on` if you set up an SSL certificate
 
 Click :guilabel:`Save Changes` at the bottom of the page.
 

@@ -20,14 +20,15 @@
 
 #pragma once
 
+#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
-class CSSProperty;
 class CSSRule;
 class CSSStyleSheet;
 class CSSValue;
@@ -36,14 +37,11 @@ class MutableStyleProperties;
 class StyleProperties;
 class StyledElement;
 
-class CSSStyleDeclaration : public ScriptWrappable, public CanMakeSingleThreadWeakPtr<CSSStyleDeclaration> {
+class CSSStyleDeclaration : public ScriptWrappable, public AbstractRefCountedAndCanMakeSingleThreadWeakPtr<CSSStyleDeclaration> {
     WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration);
-    WTF_MAKE_ISO_ALLOCATED(CSSStyleDeclaration);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSStyleDeclaration);
 public:
     virtual ~CSSStyleDeclaration() = default;
-
-    virtual void ref() = 0;
-    virtual void deref() = 0;
 
     virtual StyledElement* parentElement() const { return nullptr; }
     virtual CSSRule* parentRule() const = 0;
@@ -67,7 +65,7 @@ public:
     // CSSPropertyID versions of the CSSOM functions to support bindings and editing.
     // Use the non-virtual methods in the concrete subclasses when possible.
     virtual String getPropertyValueInternal(CSSPropertyID) = 0;
-    virtual ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, bool important) = 0;
+    virtual ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant) = 0;
 
     virtual Ref<MutableStyleProperties> copyProperties() const = 0;
 

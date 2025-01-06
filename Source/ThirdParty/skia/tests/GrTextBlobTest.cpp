@@ -25,13 +25,13 @@
 #include "include/core/SkTypeface.h"
 #include "include/core/SkTypes.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "src/core/SkDevice.h"
 #include "src/core/SkScalerContext.h"
 #include "src/text/GlyphRun.h"
-#include "src/text/gpu/SDFTControl.h"
 #include "src/text/gpu/SubRunAllocator.h"
+#include "src/text/gpu/SubRunControl.h"
 #include "src/text/gpu/TextBlob.h"
 #include "tests/CtsEnforcement.h"
 #include "tests/Test.h"
@@ -366,9 +366,9 @@ DEF_TEST(KeyEqualityOnPerspective, r) {
     // Build the strike device.
     SkSurfaceProps props;
 #if !defined(SK_DISABLE_SDF_TEXT)
-    sktext::gpu::SDFTControl control(false, false, false, 1, 100);
+    sktext::gpu::SubRunControl control(false, false, false, 1, 100);
 #else
-    sktext::gpu::SDFTControl control{};
+    sktext::gpu::SubRunControl control{};
 #endif
     SkStrikeDeviceInfo strikeDevice{props, SkScalerContextFlags::kBoostContrast, &control};
     SkMatrix matrix1;

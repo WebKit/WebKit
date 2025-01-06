@@ -46,14 +46,13 @@ public:
     const String& identifier() const { return m_data.identifier; }
     PageGroupIdentifier pageGroupID() const { return m_data.pageGroupID; }
     // Namespace IDs for local storage namespaces are currently equivalent to web page group IDs.
-    StorageNamespaceIdentifier localStorageNamespaceIdentifier() const { return ObjectIdentifier<StorageNamespaceIdentifierType>(pageGroupID().toUInt64()); }
-    WebCore::PageGroup* corePageGroup() const { return m_pageGroup; }
+    WebCore::PageGroup* corePageGroup() const;
 
 private:
     WebPageGroupProxy(const WebPageGroupData&);
 
     WebPageGroupData m_data;
-    WebCore::PageGroup* m_pageGroup;
+    WeakPtr<WebCore::PageGroup> m_pageGroup;
 };
 
 } // namespace WebKit

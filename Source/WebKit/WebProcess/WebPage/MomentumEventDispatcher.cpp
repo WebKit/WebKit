@@ -32,6 +32,7 @@
 #include <WebCore/AnimationFrameRate.h>
 #include <WebCore/Scrollbar.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -39,6 +40,8 @@ static constexpr Seconds deltaHistoryMaximumAge = 500_ms;
 static constexpr Seconds deltaHistoryMaximumInterval = 150_ms;
 static constexpr WebCore::FramesPerSecond idealCurveFrameRate = 60;
 static constexpr Seconds idealCurveFrameInterval = 1_s / idealCurveFrameRate;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MomentumEventDispatcher);
 
 MomentumEventDispatcher::MomentumEventDispatcher(Client& client)
     : m_client(client)
@@ -190,7 +193,7 @@ void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phas
         { },
         WebWheelEvent::MomentumEndType::Unknown);
 
-    m_client.handleSyntheticWheelEvent(m_currentGesture.pageIdentifier, syntheticEvent, m_lastRubberBandableEdges);
+    m_client->handleSyntheticWheelEvent(*m_currentGesture.pageIdentifier, syntheticEvent, m_lastRubberBandableEdges);
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     m_currentLogState.totalGeneratedOffset += appKitAcceleratedDelta.height();
@@ -212,7 +215,7 @@ void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier page
     m_currentGesture.currentOffset = { };
     m_currentGesture.startTime = MonotonicTime::now();
     m_currentGesture.displayNominalFrameRate = displayProperties->nominalFrameRate;
-    m_currentGesture.accelerationCurve = scrollingAccelerationCurveForPage(m_currentGesture.pageIdentifier);
+    m_currentGesture.accelerationCurve = scrollingAccelerationCurveForPage(pageIdentifier);
 
     startDisplayLink();
 
@@ -238,7 +241,7 @@ void MomentumEventDispatcher::didEndMomentumPhase()
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher ending synthetic momentum phase with total offset %.1f %.1f, duration %f (event offset would have been %.1f %.1f) (tail index %d of %zu)", m_currentGesture.currentOffset.width(), m_currentGesture.currentOffset.height(), (MonotonicTime::now() - m_currentGesture.startTime).seconds(), m_currentGesture.accumulatedEventOffset.width(), m_currentGesture.accumulatedEventOffset.height(), m_currentGesture.currentTailDeltaIndex, m_currentGesture.tailDeltaTable.size());
-    m_client.flushMomentumEventLoggingSoon();
+    m_client->flushMomentumEventLoggingSoon();
 #endif
 
     stopDisplayLink();
@@ -271,7 +274,6 @@ std::optional<ScrollingAccelerationCurve> MomentumEventDispatcher::scrollingAcce
 
 std::optional<MomentumEventDispatcher::DisplayProperties> MomentumEventDispatcher::displayProperties(WebCore::PageIdentifier pageIdentifier) const
 {
-    ASSERT(pageIdentifier);
     auto displayPropertiesIterator = m_displayProperties.find(pageIdentifier);
     if (displayPropertiesIterator == m_displayProperties.end())
         return std::nullopt;
@@ -280,14 +282,14 @@ std::optional<MomentumEventDispatcher::DisplayProperties> MomentumEventDispatche
 
 void MomentumEventDispatcher::startDisplayLink()
 {
-    auto displayProperties = this->displayProperties(m_currentGesture.pageIdentifier);
+    auto displayProperties = this->displayProperties(*m_currentGesture.pageIdentifier);
     if (!displayProperties) {
         RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher failed to start display link");
         return;
     }
 
     // FIXME: Switch down to lower-than-full-speed frame rates for the tail end of the curve.
-    m_client.startDisplayDidRefreshCallbacks(displayProperties->displayID);
+    m_client->startDisplayDidRefreshCallbacks(displayProperties->displayID);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher starting display link for display %d", displayProperties->displayID);
 #endif
@@ -298,13 +300,13 @@ void MomentumEventDispatcher::stopDisplayLink()
     if (!m_currentGesture.active)
         return;
 
-    auto displayProperties = this->displayProperties(m_currentGesture.pageIdentifier);
+    auto displayProperties = this->displayProperties(*m_currentGesture.pageIdentifier);
     if (!displayProperties) {
         RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher failed to stop display link");
         return;
     }
 
-    m_client.stopDisplayDidRefreshCallbacks(displayProperties->displayID);
+    m_client->stopDisplayDidRefreshCallbacks(displayProperties->displayID);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher stopping display link for display %d", displayProperties->displayID);
 #endif
@@ -353,7 +355,7 @@ void MomentumEventDispatcher::displayDidRefresh(WebCore::PlatformDisplayID displ
     if (!m_currentGesture.active)
         return;
 
-    auto displayProperties = this->displayProperties(m_currentGesture.pageIdentifier);
+    auto displayProperties = this->displayProperties(*m_currentGesture.pageIdentifier);
     if (!displayProperties || displayID != displayProperties->displayID)
         return;
 
@@ -464,8 +466,8 @@ void MomentumEventDispatcher::equalizeTailGaps()
         return;
 
     enum Axis { Horizontal, Vertical };
-    Vector<float> deltas[2];
-    unsigned firstZeroIndex[2] = { 0, 0 };
+    std::array<Vector<float>, 2> deltas;
+    std::array<unsigned, 2> firstZeroIndex { 0, 0 };
     deltas[Horizontal].reserveInitialCapacity(initialTableSize);
     deltas[Vertical].reserveInitialCapacity(initialTableSize);
     for (unsigned i = 0; i < initialTableSize; i++) {
@@ -492,11 +494,11 @@ void MomentumEventDispatcher::equalizeTailGaps()
     sortDeltas(Vertical);
 
     // GapSize is a count of contiguous frames with zero deltas.
-    typedef unsigned GapSize[2];
-    GapSize minimumGap = { 0, 0 };
-    GapSize currentGap = { 0, 0 };
-    GapSize remainingGapToGenerate = { 0, 0 };
-    unsigned originalTableIndex[2] = { 0, 0 };
+    typedef std::array<unsigned, 2> GapSize;
+    GapSize minimumGap { 0, 0 };
+    GapSize currentGap { 0, 0 };
+    GapSize remainingGapToGenerate { 0, 0 };
+    std::array<unsigned, 2> originalTableIndex { 0, 0 };
 
     auto takeNextDelta = [&] (uint8_t axis) -> float {
         if (originalTableIndex[axis] >= initialTableSize)

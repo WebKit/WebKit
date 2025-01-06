@@ -35,16 +35,13 @@ public:
 
     const char* getResourceType() const override { return "Texture"; }
 
-#if defined(GRAPHITE_TEST_UTILS)
     const Texture* asTexture() const override { return this; }
-#endif
 
 protected:
     Texture(const SharedContext*,
             SkISize dimensions,
             const TextureInfo& info,
             sk_sp<MutableTextureState> mutableState,
-            std::string_view label,
             Ownership,
             skgpu::Budgeted);
 

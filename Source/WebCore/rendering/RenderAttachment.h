@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class RenderAttachment final : public RenderReplaced {
-    WTF_MAKE_ISO_ALLOCATED(RenderAttachment);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderAttachment);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderAttachment);
 public:
     RenderAttachment(HTMLAttachmentElement&, RenderStyle&&);
@@ -57,7 +57,7 @@ private:
     void element() const = delete;
     ASCIILiteral renderName() const override { return "RenderAttachment"_s; }
     LayoutSize layoutWideLayoutAttachmentOnly();
-    void layoutShadowContent(const LayoutSize&);
+    void layoutShadowContent(const LayoutSize&) override;
 
     bool shouldDrawSelectionTint() const override { return isWideLayout(); }
     void paintReplaced(PaintInfo&, const LayoutPoint& offset) final;

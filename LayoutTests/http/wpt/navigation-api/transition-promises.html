@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Navigation API Transition Promises</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+promise_test(async t => {
+    // Wait for after the load event so that the navigation doesn't get converted
+    // into a replace navigation.
+    await new Promise(resolve => window.onload = () => t.step_timeout(resolve, 0));
+
+    let transition_finished = false;
+
+    navigation.onnavigate = t.step_func(e => {
+        e.intercept({ handler: async () => { }});
+    });
+
+    navigation.onnavigateerror = t.unreached_func('Navigation should not error');
+
+    navigation.onnavigatesuccess = t.step_func(e => {
+        navigation.transition.finished.then(() => {
+            transition_finished = true;
+        })
+    });
+
+    await navigation.navigate("#1");
+
+    // The navigation resolves before the transition does.
+    await new Promise(resolve => t.step_timeout(resolve, 0));
+
+    assert_true(transition_finished);
+    t.done();
+}, "NavigationTransition finished promise is fulfilled on success");
+
+promise_test(async t => {
+    let transition_finished = false;
+
+    navigation.onnavigate = t.step_func(e => {
+        e.intercept({ handler: async () => {
+            throw new Error();
+        }});
+    });
+
+    navigation.onnavigatesuccess = t.unreached_func('Navigation should not succeed');
+
+    navigation.onnavigateerror = t.step_func(e => {
+        navigation.transition.finished.then(t.unreached_func('Transition should not be fullfilled'));
+        navigation.transition.finished.catch(() => {
+            // FIXME: Test error is the same as thrown.
+            transition_finished = true;
+        })
+    });
+
+    await navigation.navigate("#1");
+
+    // The navigation resolves before the transition does.
+    await new Promise(resolve => t.step_timeout(resolve, 0));
+
+    assert_true(transition_finished);
+    t.done();
+}, "NavigationTransition finished promise is rejected on error");
+</script>
+</body>
+</html>

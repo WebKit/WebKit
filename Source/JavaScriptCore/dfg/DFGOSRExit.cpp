@@ -42,10 +42,15 @@
 #include "OperandsInlines.h"
 #include "ProbeContext.h"
 #include "VMInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #include <wtf/Scope.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculationFailureDebugInfo);
 
 OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAValueProfile valueProfile, SpeculativeJIT* jit, unsigned streamIndex, unsigned recoveryIndex)
     : OSRExitBase(kind, jit->m_origin.forExit, jit->m_origin.semantic, jit->m_origin.wasHoisted, jit->m_currentNode ? jit->m_currentNode->index() : 0)
@@ -64,7 +69,7 @@ OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAVal
 
 void OSRExit::emitRestoreArguments(CCallHelpers& jit, VM& vm, const Operands<ValueRecovery>& operands)
 {
-    HashMap<MinifiedID, VirtualRegister> alreadyAllocatedArguments; // Maps phantom arguments node ID to operand.
+    UncheckedKeyHashMap<MinifiedID, VirtualRegister> alreadyAllocatedArguments; // Maps phantom arguments node ID to operand.
     for (size_t index = 0; index < operands.size(); ++index) {
         const ValueRecovery& recovery = operands[index];
 
@@ -199,7 +204,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* cal
             jit.add64(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(profilerExit->counterAddress()));
         }
 
-        OSRExit::compileExit(jit, vm, exit, operands, recovery);
+        OSRExit::compileExit(jit, vm, exit, operands, recovery, exitIndex);
 
         LinkBuffer patchBuffer(jit, codeBlock, LinkBuffer::Profile::DFGOSRExit);
         exitCode = FINALIZE_CODE_IF(
@@ -207,7 +212,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* cal
             patchBuffer, OSRExitPtrTag, nullptr,
             "DFG OSR exit #%u (D@%u, %s, %s) from %s, with operands = %s",
                 exitIndex, exit.m_dfgNodeIndex, toCString(exit.m_codeOrigin).data(),
-                exitKindToString(exit.m_kind).characters(), toCString(*codeBlock).data(),
+                toCString(exit.m_kind).data(), toCString(*codeBlock).data(),
                 toCString(ignoringContext<DumpContext>(operands)).data());
         codeBlock->dfgJITData()->setExitCode(exitIndex, exitCode);
     }
@@ -262,15 +267,14 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (V
 
 IGNORE_WARNINGS_END
 
-void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const Operands<ValueRecovery>& operands, SpeculationRecovery* recovery)
+void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const Operands<ValueRecovery>& operands, SpeculationRecovery* recovery, uint32_t osrExitIndex)
 {
-    jit.jitAssertTagsInPlace();
-
     // Pro-forma stuff.
     if (UNLIKELY(Options::printEachOSRExit())) {
         SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
         debugInfo->codeBlock = jit.codeBlock();
         debugInfo->kind = exit.m_kind;
+        debugInfo->exitIndex = osrExitIndex;
         debugInfo->bytecodeIndex = exit.m_codeOrigin.bytecodeIndex();
         jit.probe(tagCFunction<JITProbePtrTag>(operationDebugPrintSpeculationFailure), debugInfo, SavedFPWidth::DontSaveVectors);
     }
@@ -283,7 +287,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case SpeculativeAdd:
             jit.sub32(recovery->src(), recovery->dest());
 #if USE(JSVALUE64)
-            jit.or64(GPRInfo::numberTagRegister, recovery->dest());
+            jit.or64(AssemblyHelpers::TrustedImm64(JSValue::NumberTag), recovery->dest());
 #endif
             break;
 
@@ -292,14 +296,14 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
             jit.rshift32(AssemblyHelpers::TrustedImm32(1), recovery->dest());
             jit.xor32(AssemblyHelpers::TrustedImm32(0x80000000), recovery->dest());
 #if USE(JSVALUE64)
-            jit.or64(GPRInfo::numberTagRegister, recovery->dest());
+            jit.or64(AssemblyHelpers::TrustedImm64(JSValue::NumberTag), recovery->dest());
 #endif
             break;
 
         case SpeculativeAddImmediate:
             jit.sub32(AssemblyHelpers::Imm32(recovery->immediate()), recovery->dest());
 #if USE(JSVALUE64)
-            jit.or64(GPRInfo::numberTagRegister, recovery->dest());
+            jit.or64(AssemblyHelpers::TrustedImm64(JSValue::NumberTag), recovery->dest());
 #endif
             break;
 
@@ -377,7 +381,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                     value = exit.m_jsValueSource.payloadGPR();
 
                 jit.load32(AssemblyHelpers::Address(value, JSCell::structureIDOffset()), scratch1);
-                jit.store32(scratch1, arrayProfile->addressOfLastSeenStructureID());
+                jit.store32(scratch1, arrayProfile->addressOfSpeculationFailureStructureID());
 
                 jit.load8(AssemblyHelpers::Address(value, JSCell::typeInfoTypeOffset()), scratch2);
                 jit.sub32(AssemblyHelpers::TrustedImm32(FirstTypedArrayType), scratch2);
@@ -507,7 +511,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case UnboxedBooleanInGPR:
             jit.store32(
                 recovery.gpr(),
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload);
+                &std::bit_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload);
             break;
             
         case InPair:
@@ -590,7 +594,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
 #else
             jit.store32(
                 AssemblyHelpers::TrustedImm32(JSValue::Int32Tag),
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
+                &std::bit_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
 #endif
             break;
 
@@ -613,7 +617,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case UnboxedBooleanInGPR:
             jit.store32(
                 AssemblyHelpers::TrustedImm32(JSValue::BooleanTag),
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
+                &std::bit_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
             break;
 
         case BooleanDisplacedInJSStack:
@@ -626,7 +630,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
 
         case UnboxedCellInGPR:
             jit.storeCell(
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
+                &std::bit_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
             break;
 
         case CellDisplacedInJSStack:
@@ -876,16 +880,16 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (
     auto* debugInfo = context.arg<SpeculationFailureDebugInfo*>();
     CodeBlock* codeBlock = debugInfo->codeBlock;
     CodeBlock* alternative = codeBlock->alternative();
-    CallFrame* callFrame = bitwise_cast<CallFrame*>(context.fp());
+    CallFrame* callFrame = std::bit_cast<CallFrame*>(context.fp());
 
     VM& vm = codeBlock->vm();
     NativeCallFrameTracer tracer(vm, callFrame);
 
     dataLog("Speculation failure in ", *codeBlock);
-    dataLog(" @ exit #", vm.osrExitIndex, " (", debugInfo->bytecodeIndex, ", ", exitKindToString(debugInfo->kind), ") with ");
+    dataLog(" @ exit #", debugInfo->exitIndex, " (", debugInfo->bytecodeIndex, ", ", debugInfo->kind, ") with ");
     if (alternative) {
         dataLog(
-            "executeCounter = ", alternative->jitExecuteCounter(),
+            "executeCounter = ", alternative->baselineExecuteCounter(),
             ", reoptimizationRetryCounter = ", alternative->reoptimizationRetryCounter(),
             ", optimizationDelayCounter = ", alternative->optimizationDelayCounter());
     } else
@@ -902,12 +906,14 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (
         FPRReg fpr = FPRInfo::toRegister(i);
         dataLog(" ", FPRInfo::debugName(fpr), ":");
         uint64_t bits = context.fpr<uint64_t>(fpr);
-        double value = bitwise_cast<double>(bits);
+        double value = std::bit_cast<double>(bits);
         dataLogF("%llx:%lf", static_cast<long long>(bits), value);
     }
     dataLog("\n");
 }
 
 } } // namespace JSC::DFG
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(DFG_JIT)

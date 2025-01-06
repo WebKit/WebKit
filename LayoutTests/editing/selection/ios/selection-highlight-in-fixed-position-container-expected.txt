@@ -1,0 +1,10 @@
+Verifies that the selection highlight inside a fixed-position container remains visible while scrolling
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Selected text
+PASS selectionRects.length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Select me

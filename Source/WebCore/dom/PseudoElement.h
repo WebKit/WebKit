@@ -32,7 +32,8 @@
 namespace WebCore {
 
 class PseudoElement final : public Element {
-    WTF_MAKE_ISO_ALLOCATED(PseudoElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PseudoElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PseudoElement);
 public:
     static Ref<PseudoElement> create(Element& host, PseudoId);
     virtual ~PseudoElement();

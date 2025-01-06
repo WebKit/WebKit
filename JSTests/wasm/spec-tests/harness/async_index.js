@@ -93,13 +93,15 @@ function reinitializeRegistry() {
       eq_funcref: eq_funcref,
       print: console.log.bind(console),
       print_i32: console.log.bind(console),
+      print_i64: console.log.bind(console),
       print_i32_f32: console.log.bind(console),
       print_f64_f64: console.log.bind(console),
       print_f32: console.log.bind(console),
       print_f64: console.log.bind(console),
       global_i32: 666,
-      global_f32: 666,
-      global_f64: 666,
+      global_i64: 666n,
+      global_f32: 666.6,
+      global_f64: 666.6,
       table: new WebAssembly.Table({
         initial: 10,
         maximum: 20,
@@ -267,6 +269,7 @@ function assert_return(action, ...expected) {
     .then(
       values => {
         uniqueTest(_ => {
+          let actual = values[0];
           if (actual === undefined) {
             actual = [];
           } else if (!Array.isArray(actual)) {

@@ -173,6 +173,21 @@ void Settings::disableGlobalUnstableFeaturesForModernWebKit()
 <%- end -%>
 }
 
+void Settings::disableFeaturesForLockdownMode()
+{
+<%- for @setting in @allSettingsSet.settings do -%>
+<%-   if @setting.disableInLockdownMode -%>
+<%-     if @setting.condition -%>
+#if <%= @setting.condition %>
+<%-     end -%>
+    <%= @setting.setterFunctionName %>(false);
+<%-     if @setting.condition -%>
+#endif
+<%-     end -%>
+<%-   end -%>
+<%- end -%>
+}
+
 <%- for @condition in @allSettingsSet.conditions do -%>
 <%- if @condition.settingsWithComplexGettersNeedingImplementation.length != 0 or @condition.settingsWithComplexSettersNeedingImplementation.length != 0 -%>
 <%- if @condition.condition -%>

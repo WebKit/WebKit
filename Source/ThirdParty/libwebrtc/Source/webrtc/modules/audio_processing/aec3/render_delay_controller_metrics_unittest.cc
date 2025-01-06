@@ -10,7 +10,8 @@
 
 #include "modules/audio_processing/aec3/render_delay_controller_metrics.h"
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/gtest.h"
@@ -27,7 +28,7 @@ TEST(RenderDelayControllerMetrics, NormalUsage) {
 
   for (int j = 0; j < 3; ++j) {
     for (int k = 0; k < kMetricsReportingIntervalBlocks - 1; ++k) {
-      metrics.Update(absl::nullopt, absl::nullopt,
+      metrics.Update(std::nullopt, std::nullopt,
                      ClockdriftDetector::Level::kNone);
     }
     EXPECT_METRIC_EQ(
@@ -49,7 +50,7 @@ TEST(RenderDelayControllerMetrics, NormalUsage) {
     // We expect metric reports every kMetricsReportingIntervalBlocks blocks.
     ++expected_num_metric_reports;
 
-    metrics.Update(absl::nullopt, absl::nullopt,
+    metrics.Update(std::nullopt, std::nullopt,
                    ClockdriftDetector::Level::kNone);
     EXPECT_METRIC_EQ(
         metrics::NumSamples("WebRTC.Audio.EchoCanceller.EchoPathDelay"),

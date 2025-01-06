@@ -19,8 +19,8 @@ rtc_library("flat_containers_internal") {
   deps = [
     "..:checks",
     "../system:no_unique_address",
+    "//third_party/abseil-cpp/absl/algorithm:container",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/algorithm:container" ]
   visibility = [ ":*" ]
 }
 
@@ -52,5 +52,4 @@ rtc_library("unittests") {
     "//testing/gmock:gmock",
     "//testing/gtest:gtest",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/algorithm:container" ]
 }

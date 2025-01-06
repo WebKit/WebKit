@@ -30,11 +30,12 @@
 
 #include "WebPage.h"
 #include <WebCore/ContextMenuClient.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebContextMenuClient : public WebCore::ContextMenuClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebContextMenuClient);
 public:
     WebContextMenuClient(WebPage* page)
         : m_page(page)
@@ -59,10 +60,6 @@ private:
 
 #if HAVE(TRANSLATION_UI_SERVICES)
     void handleTranslation(const WebCore::TranslationContextMenuInfo&) final;
-#endif
-
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    void handleSwapCharacters(WebCore::IntRect selectionBoundsInRootView) final;
 #endif
 
 #if PLATFORM(GTK)

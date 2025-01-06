@@ -32,6 +32,7 @@
 #if PAS_ENABLE_BMALLOC
 
 #include "bmalloc_heap_inlines.h"
+#include "bmalloc_heap_internal.h"
 #include "pas_deallocate.h"
 #include "pas_ensure_heap_forced_into_reserved_memory.h"
 #include "pas_get_allocation_size.h"

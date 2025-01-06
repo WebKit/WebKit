@@ -1,0 +1,39 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<style>
+</style>
+</head>
+<body id="body">
+
+<h1 id="heading">Example heading</h1>
+<iframe id="iframe" onload="runTest()" src="http://localhost:8000/site-isolation/resources/iframe.html"></iframe>
+
+<script>
+var output = "This test ensures that hit testing with site isolation enabled returns a remote element.\n\n";
+
+function runTest() {
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        
+        const headingRect = document.getElementById("heading").getBoundingClientRect();
+        const iframeRect = document.getElementById("iframe").getBoundingClientRect();
+
+        output += `Heading rect: ${headingRect.x}, ${headingRect.y}\n`;
+        output += `iframe rect: ${iframeRect.x}, ${iframeRect.y}\n`;
+
+        setTimeout(async function() {
+            var headingHitTest = accessibilityController.rootElement.elementAtPointWithRemoteElement(headingRect.x + 10, headingRect.y + 10);
+            output += `Hit test at "heading" returns a remote element? ${headingHitTest.isRemoteFrame ? "YES" : "NO"}\n`;
+            var iframeHitTest = accessibilityController.rootElement.elementAtPointWithRemoteElement(iframeRect.x + 50, iframeRect.y + 50);
+            output += `Hit test at "iframe" returns a remote element? ${iframeHitTest.isRemoteFrame ? "YES" : "NO"}\n`;
+
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+}
+</script>
+</body>
+</html>
+

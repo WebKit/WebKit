@@ -28,6 +28,7 @@
 #include "SameDocumentNavigationType.h"
 #include <WebCore/LayoutMilestone.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
@@ -51,7 +52,7 @@ class Object;
 namespace InjectedBundle {
 
 class PageLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PageLoaderClient);
 public:
     virtual ~PageLoaderClient() = default;
 

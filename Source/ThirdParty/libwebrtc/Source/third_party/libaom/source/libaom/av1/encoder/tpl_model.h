@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -30,6 +30,7 @@ struct TPL_INFO;
 #include "config/aom_config.h"
 
 #include "aom_scale/yv12config.h"
+#include "aom_util/aom_pthread.h"
 
 #include "av1/common/mv.h"
 #include "av1/common/scale.h"
@@ -37,7 +38,7 @@ struct TPL_INFO;
 #include "av1/encoder/lookahead.h"
 #include "av1/encoder/ratectrl.h"
 
-static INLINE BLOCK_SIZE convert_length_to_bsize(int length) {
+static inline BLOCK_SIZE convert_length_to_bsize(int length) {
   switch (length) {
     case 64: return BLOCK_64X64;
     case 32: return BLOCK_32X32;
@@ -293,7 +294,7 @@ typedef struct {
 #endif  // CONFIG_THREE_PASS
 } VBR_RATECTRL_INFO;
 
-static INLINE void vbr_rc_reset_gop_data(VBR_RATECTRL_INFO *vbr_rc_info) {
+static inline void vbr_rc_reset_gop_data(VBR_RATECTRL_INFO *vbr_rc_info) {
   vbr_rc_info->q_index_list_ready = 0;
   av1_zero(vbr_rc_info->q_index_list);
 }
@@ -415,7 +416,7 @@ void av1_setup_tpl_buffers(struct AV1_PRIMARY *const ppi,
                            CommonModeInfoParams *const mi_params, int width,
                            int height, int byte_alignment, int lag_in_frames);
 
-static AOM_INLINE void tpl_dealloc_temp_buffers(TplBuffers *tpl_tmp_buffers) {
+static inline void tpl_dealloc_temp_buffers(TplBuffers *tpl_tmp_buffers) {
   aom_free(tpl_tmp_buffers->predictor8);
   tpl_tmp_buffers->predictor8 = NULL;
   aom_free(tpl_tmp_buffers->src_diff);
@@ -428,8 +429,8 @@ static AOM_INLINE void tpl_dealloc_temp_buffers(TplBuffers *tpl_tmp_buffers) {
   tpl_tmp_buffers->dqcoeff = NULL;
 }
 
-static AOM_INLINE bool tpl_alloc_temp_buffers(TplBuffers *tpl_tmp_buffers,
-                                              uint8_t tpl_bsize_1d) {
+static inline bool tpl_alloc_temp_buffers(TplBuffers *tpl_tmp_buffers,
+                                          uint8_t tpl_bsize_1d) {
   // Number of pixels in a tpl block
   const int tpl_block_pels = tpl_bsize_1d * tpl_bsize_1d;
 
@@ -518,6 +519,7 @@ double av1_exponential_entropy(double q_step, double b);
  */
 double av1_laplace_entropy(double q_step, double b, double zero_bin_ratio);
 
+#if CONFIG_BITRATE_ACCURACY
 /*!\brief  Compute the frame rate using transform block stats
  *
  * Assume each position i in the transform block is of Laplace distribution
@@ -538,6 +540,7 @@ double av1_laplace_entropy(double q_step, double b, double zero_bin_ratio);
 double av1_laplace_estimate_frame_rate(int q_index, int block_count,
                                        const double *abs_coeff_mean,
                                        int coeff_num);
+#endif  // CONFIG_BITRATE_ACCURACY
 
 /*
  *!\brief Init TplTxfmStats
@@ -599,22 +602,6 @@ void av1_tpl_txfm_stats_update_abs_coeff_mean(TplTxfmStats *txfm_stats);
 double av1_estimate_coeff_entropy(double q_step, double b,
                                   double zero_bin_ratio, int qcoeff);
 
-/*!\brief  Estimate entropy of a transform block using Laplace dsitribution
- *
- *\ingroup tpl_modelling
- *
- * \param[in]    q_index         quantizer index
- * \param[in]    abs_coeff_mean  array of mean absolute deviations
- * \param[in]    qcoeff_arr      array of quantized coefficients
- * \param[in]    coeff_num       number of coefficients per transform block
- *
- * \return estimated transform block entropy
- *
- */
-double av1_estimate_txfm_block_entropy(int q_index,
-                                       const double *abs_coeff_mean,
-                                       int *qcoeff_arr, int coeff_num);
-
 // TODO(angiebird): Add doxygen description here.
 int64_t av1_delta_rate_cost(int64_t delta_rate, int64_t recrf_dist,
                             int64_t srcrf_dist, int pix_num);
@@ -648,16 +635,6 @@ int av1_get_overlap_area(int row_a, int col_a, int row_b, int col_b, int width,
  */
 int av1_tpl_get_q_index(const TplParams *tpl_data, int gf_frame_index,
                         int leaf_qindex, aom_bit_depth_t bit_depth);
-
-/*!\brief Compute the frame importance from TPL stats
- *
- * \param[in]       tpl_data          TPL struct
- * \param[in]       gf_frame_index    current frame index in the GOP
- *
- * \return frame_importance
- */
-double av1_tpl_get_frame_importance(const TplParams *tpl_data,
-                                    int gf_frame_index);
 
 /*!\brief Compute the ratio between arf q step and the leaf q step based on
  * TPL stats
@@ -730,14 +707,15 @@ typedef struct {
   double act_coeff_rate_list[VBR_RC_INFO_MAX_FRAMES];
 } RATECTRL_LOG;
 
-static INLINE void rc_log_init(RATECTRL_LOG *rc_log) { av1_zero(*rc_log); }
+static inline void rc_log_init(RATECTRL_LOG *rc_log) { av1_zero(*rc_log); }
 
-static INLINE void rc_log_frame_stats(RATECTRL_LOG *rc_log, int coding_index,
+static inline void rc_log_frame_stats(RATECTRL_LOG *rc_log, int coding_index,
                                       const TplTxfmStats *txfm_stats) {
   rc_log->txfm_stats_list[coding_index] = *txfm_stats;
 }
 
-static INLINE void rc_log_frame_encode_param(RATECTRL_LOG *rc_log,
+#if CONFIG_RATECTRL_LOG && CONFIG_THREE_PASS && CONFIG_BITRATE_ACCURACY
+static inline void rc_log_frame_encode_param(RATECTRL_LOG *rc_log,
                                              int coding_index,
                                              double qstep_ratio, int q_index,
                                              FRAME_UPDATE_TYPE update_type) {
@@ -752,22 +730,23 @@ static INLINE void rc_log_frame_encode_param(RATECTRL_LOG *rc_log,
         txfm_stats->coeff_num);
   }
 }
+#endif  // CONFIG_RATECTRL_LOG && CONFIG_THREE_PASS && CONFIG_BITRATE_ACCURACY
 
-static INLINE void rc_log_frame_entropy(RATECTRL_LOG *rc_log, int coding_index,
+static inline void rc_log_frame_entropy(RATECTRL_LOG *rc_log, int coding_index,
                                         double act_rate,
                                         double act_coeff_rate) {
   rc_log->act_rate_list[coding_index] = act_rate;
   rc_log->act_coeff_rate_list[coding_index] = act_coeff_rate;
 }
 
-static INLINE void rc_log_record_chunk_info(RATECTRL_LOG *rc_log,
+static inline void rc_log_record_chunk_info(RATECTRL_LOG *rc_log,
                                             int base_q_index,
                                             int coding_frame_count) {
   rc_log->base_q_index = base_q_index;
   rc_log->coding_frame_count = coding_frame_count;
 }
 
-static INLINE void rc_log_show(const RATECTRL_LOG *rc_log) {
+static inline void rc_log_show(const RATECTRL_LOG *rc_log) {
   printf("= chunk 1\n");
   printf("coding_frame_count %d base_q_index %d\n", rc_log->coding_frame_count,
          rc_log->base_q_index);

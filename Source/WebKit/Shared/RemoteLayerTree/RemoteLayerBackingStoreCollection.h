@@ -29,17 +29,9 @@
 #import <wtf/HashSet.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/OptionSet.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
-
-namespace WebKit {
-class RemoteLayerBackingStoreCollection;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLayerBackingStoreCollection> : std::true_type { };
-}
 
 namespace WebCore {
 class ImageBuffer;
@@ -61,11 +53,14 @@ enum class BufferInSetType : uint8_t;
 enum class SwapBuffersDisplayRequirement : uint8_t;
 
 class RemoteLayerBackingStoreCollection : public CanMakeWeakPtr<RemoteLayerBackingStoreCollection> {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerBackingStoreCollection);
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStoreCollection);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteLayerBackingStoreCollection(RemoteLayerTreeContext&);
     virtual ~RemoteLayerBackingStoreCollection();
+
+    void ref() const;
+    void deref() const;
 
     void markFrontBufferVolatileForTesting(RemoteLayerBackingStore&);
     virtual void backingStoreWasCreated(RemoteLayerBackingStore&);
@@ -76,6 +71,7 @@ public:
 
     // Return value indicates whether the backing store needs to be included in the transaction.
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
+    bool backingStoreWillBeDisplayedWithRenderingSuppression(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
 
     virtual void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);
@@ -92,7 +88,7 @@ public:
 
     virtual void gpuProcessConnectionWasDestroyed();
 
-    RemoteLayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
+    RemoteLayerTreeContext& layerTreeContext() const;
 
 protected:
 
@@ -122,7 +118,7 @@ protected:
     static constexpr auto volatileBackingStoreAgeThreshold = 1_s;
     static constexpr auto volatileSecondaryBackingStoreAgeThreshold = 200_ms;
 
-    RemoteLayerTreeContext& m_layerTreeContext;
+    WeakRef<RemoteLayerTreeContext> m_layerTreeContext;
 
     WeakHashSet<RemoteLayerBackingStore> m_liveBackingStore;
     WeakHashSet<RemoteLayerBackingStore> m_unparentedBackingStore;

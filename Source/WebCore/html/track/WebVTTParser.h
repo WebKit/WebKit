@@ -41,6 +41,7 @@
 #include "VTTRegion.h"
 #include <memory>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -62,6 +63,7 @@ public:
 };
 
 class WebVTTCueData final : public RefCounted<WebVTTCueData> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebVTTCueData, WEBCORE_EXPORT);
 public:
 
     static Ref<WebVTTCueData> create() { return adoptRef(*new WebVTTCueData()); }
@@ -97,7 +99,7 @@ private:
 };
 
 class WEBCORE_EXPORT WebVTTParser final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebVTTParser, WEBCORE_EXPORT);
 public:
     enum ParseState {
         Initial,

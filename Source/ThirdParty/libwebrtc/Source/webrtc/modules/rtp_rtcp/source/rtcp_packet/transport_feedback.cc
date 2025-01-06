@@ -73,13 +73,6 @@ constexpr TimeDelta kTimeWrapPeriod = kBaseTimeTick * (1 << 24);
 //    |           recv delta          |  recv delta   | zero padding  |
 //    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 }  // namespace
-constexpr uint8_t TransportFeedback::kFeedbackMessageType;
-constexpr size_t TransportFeedback::kMaxReportedPackets;
-
-constexpr size_t TransportFeedback::LastChunk::kMaxRunLengthCapacity;
-constexpr size_t TransportFeedback::LastChunk::kMaxOneBitCapacity;
-constexpr size_t TransportFeedback::LastChunk::kMaxTwoBitCapacity;
-constexpr size_t TransportFeedback::LastChunk::kMaxVectorCapacity;
 
 TransportFeedback::LastChunk::LastChunk() {
   Clear();
@@ -582,9 +575,8 @@ bool TransportFeedback::IsConsistent() const {
     return false;
   }
   if (timestamp != last_timestamp_) {
-    RTC_LOG(LS_ERROR) << "Last timestamp mismatch. Calculated: "
-                      << ToLogString(timestamp)
-                      << ". Saved: " << ToLogString(last_timestamp_);
+    RTC_LOG(LS_ERROR) << "Last timestamp mismatch. Calculated: " << timestamp
+                      << ". Saved: " << last_timestamp_;
     return false;
   }
   if (size_bytes_ != packet_size) {

@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace PAL {
 
 class KillRing {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(KillRing, PAL_EXPORT);
 public:
     PAL_EXPORT void append(const String&);
     PAL_EXPORT void prepend(const String&);

@@ -66,7 +66,9 @@ TEST(ProcessSuspension, DestroyWebPageDuringWebProcessSuspension)
 
     auto configuration2 = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration2.get().processPool = configuration1.get().processPool;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     configuration2.get()._relatedWebView = webView1.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(100, 0, 100, 100) configuration:configuration2.get() addToWindow:YES]);
     [webView2 synchronouslyLoadTestPageNamed:@"large-red-square-image"];
 
@@ -220,7 +222,7 @@ TEST(ProcessSuspension, DeallocateSuspendedView)
     // Deallocating a suspended WebView should not throw or crash.
     @autoreleasepool {
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-        [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
         [webView _test_waitForDidFinishNavigation];
 
         __block bool done = false;

@@ -44,6 +44,7 @@
 #include <WebCore/UserAgent.h>
 #include <WebCore/VisiblePosition.h>
 #include <WebCore/VisibleUnits.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(2022_GLIB_API)
 #include "WebKitWebProcessExtension.h"
@@ -61,7 +62,7 @@ void WebPage::platformInitialize(const WebPageCreationParameters&)
     // entry point to the Web process, and send a message to the UI
     // process to connect the two worlds through the accessibility
     // object there specifically placed for that purpose (the socket).
-    if (auto* page = corePage()) {
+    if (RefPtr page = corePage()) {
         m_accessibilityRootObject = AccessibilityRootAtspi::create(*page);
         m_accessibilityRootObject->registerObject([&](const String& plugID) {
             if (!plugID.isEmpty())
@@ -148,7 +149,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
         auto compositionRange = frame.editor().compositionRange();
         if (surroundingRange && compositionRange && contains<ComposedTree>(*surroundingRange, *compositionRange)) {
             auto beforeText = plainText({ surroundingRange->start, compositionRange->start });
-            postLayoutData.surroundingContext = beforeText + plainText({ compositionRange->end, surroundingRange->end });
+            postLayoutData.surroundingContext = makeString(beforeText, plainText({ compositionRange->end, surroundingRange->end }));
             postLayoutData.surroundingContextCursorPosition = beforeText.length();
             postLayoutData.surroundingContextSelectionPosition = postLayoutData.surroundingContextCursorPosition;
         } else {
@@ -161,7 +162,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
     }
 }
 
-static std::optional<InputMethodState> inputMethodSateForElement(Element* element)
+static std::optional<InputMethodState> inputMethodStateForElement(Element* element)
 {
     if (!element || !element->shouldUseInputMethod())
         return std::nullopt;
@@ -189,7 +190,7 @@ static std::optional<InputMethodState> inputMethodSateForElement(Element* elemen
 
 void WebPage::setInputMethodState(Element* element)
 {
-    auto state = inputMethodSateForElement(element);
+    auto state = inputMethodStateForElement(element);
     if (m_inputMethodState == state)
         return;
 

@@ -117,7 +117,13 @@ void QueryActiveUniformBlockiv(const Program *program,
                                GLenum pname,
                                GLint *params);
 
-void QueryInternalFormativ(const TextureCaps &format, GLenum pname, GLsizei bufSize, GLint *params);
+void QueryInternalFormativ(const Context *context,
+                           const Texture *texture,
+                           GLenum internalformat,
+                           const TextureCaps &format,
+                           GLenum pname,
+                           GLsizei bufSize,
+                           GLint *params);
 
 void QueryFramebufferParameteriv(const Framebuffer *framebuffer, GLenum pname, GLint *params);
 
@@ -257,6 +263,11 @@ bool GetQueryParameterInfo(const State &glState,
                            GLenum pname,
                            GLenum *type,
                            unsigned int *numParams);
+
+bool GetIndexedQueryParameterInfo(const State &glState,
+                                  GLenum target,
+                                  GLenum *type,
+                                  unsigned int *numParams);
 
 void QueryProgramPipelineiv(const Context *context,
                             ProgramPipeline *programPipeline,

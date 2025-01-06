@@ -30,7 +30,9 @@
 #include "ImageOptions.h"
 #include "NotificationService.h"
 #include "PageLoadState.h"
+#include "ProcessTerminationReason.h"
 #include "ProvisionalPageProxy.h"
+#include "SystemSettingsManagerProxy.h"
 #include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
 #include "WebFrameProxy.h"
@@ -81,8 +83,9 @@
 #include <jsc/JSCContextPrivate.h>
 #include <libsoup/soup.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
-#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -101,10 +104,14 @@
 #endif
 
 #if PLATFORM(WPE)
-#include "WPEWebView.h"
+#include "WPEWebViewLegacy.h"
+#include "WPEWebViewPlatform.h"
 #include "WebKitOptionMenuPrivate.h"
 #include "WebKitWebViewBackendPrivate.h"
 #include "WebKitWebViewClient.h"
+#if ENABLE(WPE_PLATFORM)
+#include "WebKitInputMethodContextImplWPE.h"
+#endif
 #endif
 
 #if ENABLE(2022_GLIB_API)
@@ -236,9 +243,68 @@ enum {
     N_PROPERTIES,
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
-class PageLoadStateObserver;
+class PageLoadStateObserver final : public RefCounted<PageLoadStateObserver>, public PageLoadState::Observer {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PageLoadStateObserver);
+public:
+    static Ref<PageLoadStateObserver> create(WebKitWebView* webView)
+    {
+        return adoptRef(*new PageLoadStateObserver(webView));
+    }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
+    PageLoadStateObserver(WebKitWebView* webView)
+        : m_webView(webView)
+    {
+    }
+
+    void willChangeIsLoading() override
+    {
+        g_object_freeze_notify(G_OBJECT(m_webView));
+    }
+    void didChangeIsLoading() override;
+
+    void willChangeTitle() override
+    {
+        g_object_freeze_notify(G_OBJECT(m_webView));
+    }
+    void didChangeTitle() override;
+
+    void willChangeActiveURL() override;
+    void didChangeActiveURL() override;
+
+    void willChangeHasOnlySecureContent() override { }
+    void didChangeHasOnlySecureContent() override { }
+
+    void willChangeEstimatedProgress() override
+    {
+        g_object_freeze_notify(G_OBJECT(m_webView));
+    }
+    void didChangeEstimatedProgress() override
+    {
+        g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_ESTIMATED_LOAD_PROGRESS]);
+        g_object_thaw_notify(G_OBJECT(m_webView));
+    }
+
+    void willChangeCanGoBack() override { }
+    void didChangeCanGoBack() override { }
+    void willChangeCanGoForward() override { }
+    void didChangeCanGoForward() override { }
+    void willChangeNetworkRequestsInProgress() override { }
+    void didChangeNetworkRequestsInProgress() override { }
+    void willChangeCertificateInfo() override { }
+    void didChangeCertificateInfo() override { }
+    void willChangeWebProcessIsResponsive() override { }
+    void didChangeWebProcessIsResponsive() override { }
+    void didSwapWebProcesses() override { };
+
+    WebKitWebView* m_webView;
+};
+
 
 #if PLATFORM(WPE)
 static unsigned frameDisplayCallbackID;
@@ -283,7 +349,7 @@ struct _WebKitWebViewPrivate {
 #if ENABLE(WPE_PLATFORM)
     GRefPtr<WPEDisplay> display;
 #endif
-    std::unique_ptr<WKWPE::View> view;
+    RefPtr<WKWPE::View> view;
     Vector<FrameDisplayedCallback> frameDisplayedCallbacks;
     bool inFrameDisplayed;
     HashSet<unsigned> frameDisplayedCallbacksToRemove;
@@ -302,7 +368,7 @@ struct _WebKitWebViewPrivate {
     bool isControlledByAutomation;
     WebKitAutomationBrowsingContextPresentation automationPresentationType;
 
-    std::unique_ptr<PageLoadStateObserver> loadObserver;
+    RefPtr<PageLoadStateObserver> loadObserver;
 
     GRefPtr<WebKitBackForwardList> backForwardList;
     GRefPtr<WebKitSettings> settings;
@@ -356,7 +422,7 @@ struct _WebKitWebViewPrivate {
     bool isWebProcessResponsive;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 #if PLATFORM(GTK)
 WEBKIT_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
@@ -385,6 +451,35 @@ static void webkitWebViewSetIsLoading(WebKitWebView* webView, bool isLoading)
     g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_IS_LOADING]);
 }
 
+void PageLoadStateObserver::didChangeIsLoading()
+{
+    webkitWebViewSetIsLoading(m_webView, getPage(m_webView).pageLoadState().isLoading());
+    g_object_thaw_notify(G_OBJECT(m_webView));
+}
+
+void PageLoadStateObserver::didChangeTitle()
+{
+    m_webView->priv->title = getPage(m_webView).pageLoadState().title().utf8();
+    g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_TITLE]);
+    g_object_thaw_notify(G_OBJECT(m_webView));
+}
+
+void PageLoadStateObserver::willChangeActiveURL()
+{
+    if (m_webView->priv->isActiveURIChangeBlocked)
+        return;
+    g_object_freeze_notify(G_OBJECT(m_webView));
+}
+
+void PageLoadStateObserver::didChangeActiveURL()
+{
+    if (m_webView->priv->isActiveURIChangeBlocked)
+        return;
+    m_webView->priv->activeURI = getPage(m_webView).pageLoadState().activeURL().utf8();
+    g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_URI]);
+    g_object_thaw_notify(G_OBJECT(m_webView));
+}
+
 void webkitWebViewIsPlayingAudioChanged(WebKitWebView* webView)
 {
     g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_IS_PLAYING_AUDIO]);
@@ -406,78 +501,6 @@ void webkitWebViewMediaCaptureStateDidChange(WebKitWebView* webView, WebCore::Me
         g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_DISPLAY_CAPTURE_STATE]);
 }
 
-class PageLoadStateObserver final : public PageLoadState::Observer {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    PageLoadStateObserver(WebKitWebView* webView)
-        : m_webView(webView)
-    {
-    }
-
-private:
-    void willChangeIsLoading() override
-    {
-        g_object_freeze_notify(G_OBJECT(m_webView));
-    }
-    void didChangeIsLoading() override
-    {
-        webkitWebViewSetIsLoading(m_webView, getPage(m_webView).pageLoadState().isLoading());
-        g_object_thaw_notify(G_OBJECT(m_webView));
-    }
-
-    void willChangeTitle() override
-    {
-        g_object_freeze_notify(G_OBJECT(m_webView));
-    }
-    void didChangeTitle() override
-    {
-        m_webView->priv->title = getPage(m_webView).pageLoadState().title().utf8();
-        g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_TITLE]);
-        g_object_thaw_notify(G_OBJECT(m_webView));
-    }
-
-    void willChangeActiveURL() override
-    {
-        if (m_webView->priv->isActiveURIChangeBlocked)
-            return;
-        g_object_freeze_notify(G_OBJECT(m_webView));
-    }
-    void didChangeActiveURL() override
-    {
-        if (m_webView->priv->isActiveURIChangeBlocked)
-            return;
-        m_webView->priv->activeURI = getPage(m_webView).pageLoadState().activeURL().utf8();
-        g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_URI]);
-        g_object_thaw_notify(G_OBJECT(m_webView));
-    }
-
-    void willChangeHasOnlySecureContent() override { }
-    void didChangeHasOnlySecureContent() override { }
-
-    void willChangeEstimatedProgress() override
-    {
-        g_object_freeze_notify(G_OBJECT(m_webView));
-    }
-    void didChangeEstimatedProgress() override
-    {
-        g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_ESTIMATED_LOAD_PROGRESS]);
-        g_object_thaw_notify(G_OBJECT(m_webView));
-    }
-
-    void willChangeCanGoBack() override { }
-    void didChangeCanGoBack() override { }
-    void willChangeCanGoForward() override { }
-    void didChangeCanGoForward() override { }
-    void willChangeNetworkRequestsInProgress() override { }
-    void didChangeNetworkRequestsInProgress() override { }
-    void willChangeCertificateInfo() override { }
-    void didChangeCertificateInfo() override { }
-    void willChangeWebProcessIsResponsive() override { }
-    void didChangeWebProcessIsResponsive() override { }
-    void didSwapWebProcesses() override { };
-
-    WebKitWebView* m_webView;
-};
 
 #if PLATFORM(WPE)
 WebKitWebViewClient::WebKitWebViewClient(WebKitWebView* webView)
@@ -614,11 +637,11 @@ static void allowModalDialogsChanged(WebKitSettings* settings, GParamSpec*, WebK
 
 static void zoomTextOnlyChanged(WebKitSettings* settings, GParamSpec*, WebKitWebView* webView)
 {
-    auto& page = getPage(webView);
+    Ref page = getPage(webView);
     gboolean zoomTextOnly = webkit_settings_get_zoom_text_only(settings);
-    gdouble pageZoomLevel = zoomTextOnly ? 1 : page.textZoomFactor();
-    gdouble textZoomLevel = zoomTextOnly ? page.pageZoomFactor() : 1;
-    page.setPageAndTextZoomFactors(pageZoomLevel, textZoomLevel);
+    gdouble pageZoomLevel = zoomTextOnly ? 1 : page->textZoomFactor();
+    gdouble textZoomLevel = zoomTextOnly ? page->pageZoomFactor() : 1;
+    page->setPageAndTextZoomFactors(pageZoomLevel, textZoomLevel);
 }
 
 static void userAgentChanged(WebKitSettings* settings, GParamSpec*, WebKitWebView* webView)
@@ -737,11 +760,11 @@ static void webkitWebViewUpdateSettings(WebKitWebView* webView)
     if (!webkitWebViewIsConstructed(webView))
         return;
 
-    auto& page = getPage(webView);
+    Ref page = getPage(webView);
     WebKitSettings* settings = webView->priv->settings.get();
-    page.setPreferences(*webkitSettingsGetPreferences(settings));
-    page.setCanRunModal(webkit_settings_get_allow_modal_dialogs(settings));
-    page.setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
+    page->setPreferences(*webkitSettingsGetPreferences(settings));
+    page->setCanRunModal(webkit_settings_get_allow_modal_dialogs(settings));
+    page->setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
 #if PLATFORM(GTK)
     enableBackForwardNavigationGesturesChanged(settings, nullptr, webView);
 #endif
@@ -789,6 +812,7 @@ static Ref<API::PageConfiguration> webkitWebViewCreatePageConfiguration(WebKitWe
     auto pageConfiguration = API::PageConfiguration::create();
     pageConfiguration->setProcessPool(&webkitWebContextGetProcessPool(priv->context.get()));
     pageConfiguration->setPreferences(webkitSettingsGetPreferences(priv->settings.get()));
+    pageConfiguration->preferences().setAllowTestOnlyIPC(pageConfiguration->allowTestOnlyIPC());
     pageConfiguration->setRelatedPage(priv->relatedView ? &webkitWebViewGetPage(priv->relatedView) : nullptr);
     pageConfiguration->setUserContentController(priv->userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(priv->userContentManager.get()) : nullptr);
     pageConfiguration->setControlledByAutomation(priv->isControlledByAutomation);
@@ -825,10 +849,14 @@ static void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfigu
     webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), WTFMove(configuration));
 #elif PLATFORM(WPE)
 #if ENABLE(WPE_PLATFORM)
-    webView->priv->view.reset(WKWPE::View::create(webView->priv->backend ? webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()) : nullptr, webkit_web_view_get_display(webView), configuration.get()));
-#else
-    webView->priv->view.reset(WKWPE::View::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()), configuration.get()));
+    if (!webView->priv->backend) {
+        webView->priv->view = WKWPE::ViewPlatform::create(webkit_web_view_get_display(webView), configuration.get());
+        if (auto* wpeView = webView->priv->view->wpeView())
+            g_signal_connect_object(wpeView, "closed", G_CALLBACK(webkitWebViewClosePage), webView, G_CONNECT_SWAPPED);
+        return;
+    }
 #endif
+    webView->priv->view = WKWPE::ViewLegacy::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()), configuration.get());
 #endif
 }
 
@@ -879,6 +907,9 @@ static void webkitWebViewConstructed(GObject* object)
             priv->display = wpe_display_get_default();
         }
     }
+
+    if (priv->display)
+        SystemSettingsManagerProxy::initialize();
 #endif
 
     if (!priv->settings)
@@ -889,8 +920,11 @@ static void webkitWebViewConstructed(GObject* object)
 
 #if ENABLE(2022_GLIB_API)
 #if ENABLE(REMOTE_INSPECTOR)
-    if (priv->isControlledByAutomation)
+    if (priv->isControlledByAutomation) {
+        if (!webkit_web_context_is_automation_allowed(priv->context.get()))
+            g_critical("WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.");
         priv->networkSession = webkit_web_context_get_network_session_for_automation(priv->context.get());
+    }
 #endif
     if (!priv->networkSession)
         priv->networkSession = webkit_network_session_get_default();
@@ -911,7 +945,7 @@ static void webkitWebViewConstructed(GObject* object)
     webkitWebViewCreatePage(webView, WTFMove(configuration));
     webkitWebContextWebViewCreated(priv->context.get(), webView);
 
-    priv->loadObserver = makeUnique<PageLoadStateObserver>(webView);
+    priv->loadObserver = PageLoadStateObserver::create(webView);
     getPage(webView).pageLoadState().addObserver(*priv->loadObserver);
 
     priv->resourceLoadManager = makeUnique<WebKitWebResourceLoadManager>(webView);
@@ -932,6 +966,12 @@ static void webkitWebViewConstructed(GObject* object)
     GRefPtr<WebKitInputMethodContext> imContext = adoptGRef(webkitInputMethodContextImplGtkNew());
     webkitInputMethodContextSetWebView(imContext.get(), webView);
     webkitWebViewBaseSetInputMethodContext(WEBKIT_WEB_VIEW_BASE(webView), imContext.get());
+#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    if (priv->display) {
+        GRefPtr<WebKitInputMethodContext> imContext = adoptGRef(webkitInputMethodContextImplWPENew(priv->view->wpeView()));
+        webkitInputMethodContextSetWebView(imContext.get(), webView);
+        priv->view->setInputMethodContext(imContext.get());
+    }
 #endif
 
 #if PLATFORM(WPE)
@@ -1149,9 +1189,9 @@ static void webkitWebViewDispose(GObject* object)
 
     webkitWebViewDisconnectSettingsSignalHandlers(webView);
 
-    if (webView->priv->loadObserver) {
-        getPage(webView).pageLoadState().removeObserver(*webView->priv->loadObserver);
-        webView->priv->loadObserver.reset();
+    if (RefPtr loadObserver = webView->priv->loadObserver) {
+        getPage(webView).pageLoadState().removeObserver(*loadObserver);
+        webView->priv->loadObserver = nullptr;
 
         // We notify the context here to ensure it's called only once. Ideally we should
         // call this in finalize, not dispose, but finalize is used internally and we don't
@@ -1442,9 +1482,16 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /**
      * WebKitWebView:is-controlled-by-automation:
      *
-     * Whether the #WebKitWebView is controlled by automation. This should only be used when
-     * creating a new #WebKitWebView as a response to #WebKitAutomationSession::create-web-view
-     * signal request.
+     * Whether the #WebKitWebView is controlled by automation tools (e.g. WebDriver, Selenium). This is
+     * required for views returned as a response to #WebKitAutomationSession::create-web-view signal,
+     * alongside any view you want to control during an automation session.
+     *
+     * As a %G_PARAM_CONSTRUCT_ONLY, you need to set it during construction and it can't be modified.
+     *
+     * If #WebKitWebView:related-view is also passed during construction, #WebKitWebView:is-controlled-by-automation
+     * ignores its own parameter and inherits directly from the related view #WebKitWebView:is-controlled-by-automation
+     * property. This is the recommended way when creating new views as a response to the #WebKitWebView::create
+     * signal. For example, as response to JavaScript `window.open()` calls during an automation session.
      *
      * Since: 2.18
      */
@@ -1659,7 +1706,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         nullptr,
         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
-    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
 
     /**
      * WebKitWebView::load-changed:
@@ -1806,6 +1853,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * The new #WebKitWebView should not be displayed to the user
      * until the #WebKitWebView::ready-to-show signal is emitted.
+     *
+     * For creating views as response to automation tools requests, see the
+     * #WebKitAutomationSession::create-web-view signal.
      *
      * Returns: (transfer full): a newly allocated #WebKitWebView widget
      *    or %NULL to propagate the event further.
@@ -2622,10 +2672,8 @@ void webkitWebViewSetIcon(WebKitWebView* webView, const LinkIcon& icon, API::Dat
 }
 #endif
 
-RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, Ref<API::PageConfiguration>&& configuration, WindowFeatures&& windowFeatures, WebKitNavigationAction* navigationAction)
+RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, Ref<API::PageConfiguration>&& configuration, WebKitNavigationAction* navigationAction)
 {
-    RefPtr openerProcess = configuration->openerProcess();
-
     ASSERT(!webView->priv->configurationForNextRelatedView);
     SetForScope configurationScope(webView->priv->configurationForNextRelatedView, WTFMove(configuration));
 
@@ -2635,13 +2683,8 @@ RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, Ref<API:
         return nullptr;
 
     Ref newPage = getPage(newWebView);
-    if (&getPage(webView) != newPage->configuration().relatedPage() || openerProcess != newPage->configuration().openerProcess()) {
-        g_warning("WebKitWebView returned by WebKitWebView::create signal was not created with the related WebKitWebView");
-        return nullptr;
-    }
-
-    webkitWindowPropertiesUpdateFromWebWindowFeatures(newWebView->priv->windowProperties.get(), windowFeatures);
-
+    ASSERT(newPage->configuration().windowFeatures());
+    webkitWindowPropertiesUpdateFromWebWindowFeatures(newWebView->priv->windowProperties.get(), *newPage->configuration().windowFeatures());
     return newPage;
 }
 
@@ -3012,6 +3055,10 @@ void webkitWebViewRequestPointerLock(WebKitWebView* webView)
 #if PLATFORM(GTK)
     webkitWebViewBaseRequestPointerLock(WEBKIT_WEB_VIEW_BASE(webView));
 #endif
+
+#if PLATFORM(WPE)
+    webView->priv->view->requestPointerLock();
+#endif
 }
 
 void webkitWebViewDenyPointerLockRequest(WebKitWebView* webView)
@@ -3024,8 +3071,12 @@ void webkitWebViewDidLosePointerLock(WebKitWebView* webView)
 #if PLATFORM(GTK)
     webkitWebViewBaseDidLosePointerLock(WEBKIT_WEB_VIEW_BASE(webView));
 #endif
-}
+
+#if PLATFORM(WPE)
+    webView->priv->view->didLosePointerLock();
 #endif
+}
+#endif // ENABLE(POINTER_LOCK)
 
 static void webkitWebViewSynthesizeCompositionKeyPress(WebKitWebView* webView, const String& text, std::optional<Vector<CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
@@ -3079,7 +3130,7 @@ RendererBufferFormat webkitWebViewGetRendererBufferFormat(WebKitWebView* webView
 #if PLATFORM(GTK)
     return webkitWebViewBaseGetRendererBufferFormat(WEBKIT_WEB_VIEW_BASE(webView));
 #elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
-    return webView->priv->view->renderBufferFormat();
+    return static_cast<WKWPE::ViewPlatform*>(webView->priv->view.get())->renderBufferFormat();
 #endif
 }
 #endif
@@ -3337,7 +3388,9 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(content);
 
-    getPage(webView).loadData({ reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 }, "text/html"_s, "UTF-8"_s, String::fromUTF8(baseURI));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
+    getPage(webView).loadData(WebCore::SharedBuffer::create(std::span { reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 }), "text/html"_s, "UTF-8"_s, String::fromUTF8(baseURI));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**
@@ -3360,7 +3413,9 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     g_return_if_fail(content);
     g_return_if_fail(contentURI);
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     getPage(webView).loadAlternateHTML(WebCore::DataSegment::create(Vector(std::span { reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 })), "UTF-8"_s, URL { String::fromUTF8(baseURI) }, URL { String::fromUTF8(contentURI) });
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**
@@ -3378,7 +3433,7 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(plainText);
 
-    getPage(webView).loadData(span8(plainText), "text/plain"_s, "UTF-8"_s, aboutBlankURL().string());
+    getPage(webView).loadData(WebCore::SharedBuffer::create(span8(plainText)), "text/plain"_s, "UTF-8"_s, aboutBlankURL().string());
 }
 
 /**
@@ -3403,11 +3458,10 @@ void webkit_web_view_load_bytes(WebKitWebView* webView, GBytes* bytes, const cha
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(bytes);
 
-    gsize bytesDataSize;
-    gconstpointer bytesData = g_bytes_get_data(bytes, &bytesDataSize);
-    g_return_if_fail(bytesDataSize);
+    auto bytesData = span(bytes);
+    g_return_if_fail(bytesData.size());
 
-    getPage(webView).loadData({ reinterpret_cast<const uint8_t*>(bytesData), bytesDataSize }, mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
+    getPage(webView).loadData(WebCore::SharedBuffer::create(bytesData), mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
         encoding ? String::fromUTF8(encoding) : String::fromUTF8("UTF-8"), String::fromUTF8(baseURI));
 }
 
@@ -3444,7 +3498,7 @@ guint64 webkit_web_view_get_page_id(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
-    return getPage(webView).webPageID().toUInt64();
+    return getPage(webView).webPageIDInMainFrameProcess().toUInt64();
 }
 
 /**
@@ -3946,11 +4000,11 @@ void webkit_web_view_set_zoom_level(WebKitWebView* webView, gdouble zoomLevel)
     const double pageScale = 1.0;
 #endif
 
-    auto& page = getPage(webView);
+    Ref page = getPage(webView);
     if (webkit_settings_get_zoom_text_only(webView->priv->settings.get()))
-        page.setTextZoomFactor(zoomLevel);
+        page->setTextZoomFactor(zoomLevel);
     else
-        page.setPageZoomFactor(zoomLevel * pageScale);
+        page->setPageZoomFactor(zoomLevel * pageScale);
     g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_ZOOM_LEVEL]);
 }
 
@@ -3975,9 +4029,9 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
     const double pageScale = 1.0;
 #endif
 
-    auto& page = getPage(webView);
+    Ref page = getPage(webView);
     gboolean zoomTextOnly = webkit_settings_get_zoom_text_only(webView->priv->settings.get());
-    return zoomTextOnly ? page.textZoomFactor() : page.pageZoomFactor() / pageScale;
+    return zoomTextOnly ? page->textZoomFactor() : page->pageZoomFactor() / pageScale;
 }
 
 /**
@@ -4121,7 +4175,7 @@ enum class RunJavascriptReturnType {
 
 static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, RunJavaScriptParameters&& params, const char* worldName, RunJavascriptReturnType returnType, GRefPtr<GTask>&& task)
 {
-    auto world = worldName ? API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName)) : Ref<API::ContentWorld> { API::ContentWorld::pageContentWorld() };
+    auto world = worldName ? API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName)) : Ref<API::ContentWorld> { API::ContentWorld::pageContentWorldSingleton() };
     getPage(webView).runJavaScriptInFrameInScriptWorld(WTFMove(params), std::nullopt, world.get(), [task = WTFMove(task), returnType] (auto&& result) {
         if (g_task_return_error_if_cancelled(task.get()))
             return;
@@ -4178,7 +4232,9 @@ static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, cons
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     RunJavaScriptParameters params = { String::fromUTF8(std::span(script, length < 0 ? strlen(script) : length)), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes, RemoveTransientActivation::Yes };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
@@ -4314,7 +4370,9 @@ static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webV
         return;
     }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     RunJavaScriptParameters params = { String::fromUTF8(std::span(body, length < 0 ? strlen(body) : length)), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::Yes, WTFMove(argumentsMap), ForceUserGesture::Yes, RemoveTransientActivation::Yes };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
@@ -4875,8 +4933,8 @@ WebKitDownload* webkit_web_view_download_uri(WebKitWebView* webView, const char*
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
     g_return_val_if_fail(uri, nullptr);
 
-    auto& page = getPage(webView);
-    auto downloadProxy = page.process().processPool().download(page.websiteDataStore(), &page, ResourceRequest { String::fromUTF8(uri) });
+    Ref page = getPage(webView);
+    auto downloadProxy = page->configuration().processPool().download(page->websiteDataStore(), page.ptr(), ResourceRequest { String::fromUTF8(uri) });
     auto download = webkitDownloadCreate(downloadProxy, webView);
 #if ENABLE(2022_GLIB_API)
     downloadProxy->setDidStartCallback([session = GRefPtr<WebKitNetworkSession> { webView->priv->networkSession }, download = download.get()](auto* downloadProxy) {
@@ -4927,7 +4985,7 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    WebFrameProxy* mainFrame = getPage(webView).mainFrame();
+    RefPtr mainFrame = getPage(webView).mainFrame();
     if (!mainFrame)
         return FALSE;
 
@@ -4973,20 +5031,20 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    SnapshotOptions snapshotOptions = 0;
+    SnapshotOptions snapshotOptions;
     switch (region) {
     case WEBKIT_SNAPSHOT_REGION_VISIBLE:
-        snapshotOptions |= SnapshotOptionsVisibleContentRect;
+        snapshotOptions.add(SnapshotOption::VisibleContentRect);
         break;
     case WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT:
-        snapshotOptions |= SnapshotOptionsFullContentRect;
+        snapshotOptions.add(SnapshotOption::FullContentRect);
         break;
     }
 
     if (!(options & WEBKIT_SNAPSHOT_OPTIONS_INCLUDE_SELECTION_HIGHLIGHTING))
-        snapshotOptions |= SnapshotOptionsExcludeSelectionHighlighting;
+        snapshotOptions.add(SnapshotOption::ExcludeSelectionHighlighting);
     if (options & WEBKIT_SNAPSHOT_OPTIONS_TRANSPARENT_BACKGROUND)
-        snapshotOptions |= SnapshotOptionsTransparentBackground;
+        snapshotOptions.add(SnapshotOption::TransparentBackground);
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
     getPage(webView).takeSnapshot({ }, { }, snapshotOptions, [task = WTFMove(task)](std::optional<ShareableBitmap::Handle>&& handle) {
@@ -5235,9 +5293,9 @@ void webkit_web_view_send_message_to_page(WebKitWebView* webView, WebKitUserMess
 
     // We sink the reference in case of being floating.
     GRefPtr<WebKitUserMessage> adoptedMessage = message;
-    auto& page = getPage(webView);
+    Ref page = getPage(webView);
     if (!callback) {
-        page.ensureRunningProcess().send(Messages::WebPage::SendMessageToWebProcessExtension(webkitUserMessageGetMessage(message)), page.webPageID().toUInt64());
+        page->ensureRunningProcess().send(Messages::WebPage::SendMessageToWebProcessExtension(webkitUserMessageGetMessage(message)), page->webPageIDInMainFrameProcess().toUInt64());
         return;
     }
 
@@ -5255,8 +5313,8 @@ void webkit_web_view_send_message_to_page(WebKitWebView* webView, WebKitUserMess
             break;
         }
     };
-    page.ensureRunningProcess().sendWithAsyncReply(Messages::WebPage::SendMessageToWebProcessExtensionWithReply(webkitUserMessageGetMessage(message)),
-        WTFMove(completionHandler), page.webPageID().toUInt64());
+    page->ensureRunningProcess().sendWithAsyncReply(Messages::WebPage::SendMessageToWebProcessExtensionWithReply(webkitUserMessageGetMessage(message)),
+        WTFMove(completionHandler), page->webPageIDInMainFrameProcess().toUInt64());
 }
 
 /**
@@ -5404,13 +5462,13 @@ void webkit_web_view_terminate_web_process(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    auto& page = getPage(webView);
+    Ref page = getPage(webView);
 
-    Ref<WebKit::WebProcessProxy> protectedProcessProxy(page.process());
+    Ref protectedProcessProxy(page->legacyMainFrameProcess());
     protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
 
-    if (auto* provisionalPageProxy = page.provisionalPageProxy()) {
-        Ref<WebKit::WebProcessProxy> protectedProcessProxy(provisionalPageProxy->process());
+    if (auto* provisionalPageProxy = page->provisionalPageProxy()) {
+        Ref protectedProcessProxy(provisionalPageProxy->process());
         protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
     }
 }
@@ -5445,8 +5503,10 @@ void webkit_web_view_set_cors_allowlist(WebKitWebView* webView, const gchar* con
 
     Vector<String> allowListVector;
     if (allowList) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
         for (auto str = allowList; *str; ++str)
             allowListVector.append(String::fromUTF8(*str));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     getPage(webView).setCORSDisablingPatterns(WTFMove(allowListVector));
@@ -5454,12 +5514,12 @@ void webkit_web_view_set_cors_allowlist(WebKitWebView* webView, const gchar* con
 
 static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::MediaProducerMediaCaptureKind captureKind, WebKitMediaCaptureState captureState)
 {
-    auto& page = getPage(webView);
-    auto mutedState = page.mutedStateFlags();
+    Ref page = getPage(webView);
+    auto mutedState = page->mutedStateFlags();
 
     switch (captureState) {
     case WEBKIT_MEDIA_CAPTURE_STATE_NONE:
-        page.stopMediaCapture(captureKind, [webView, captureKind] {
+        page->stopMediaCapture(captureKind, [webView, captureKind] {
             switch (captureKind) {
             case WebCore::MediaProducerMediaCaptureKind::Microphone:
                 g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_MICROPHONE_CAPTURE_STATE]);
@@ -5492,7 +5552,7 @@ static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::
             ASSERT_NOT_REACHED();
             return;
         }
-        page.setMuted(mutedState);
+        page->setMuted(mutedState);
         break;
     case WEBKIT_MEDIA_CAPTURE_STATE_MUTED:
         switch (captureKind) {
@@ -5510,7 +5570,7 @@ static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::
             ASSERT_NOT_REACHED();
             return;
         }
-        page.setMuted(mutedState);
+        page->setMuted(mutedState);
         break;
     }
 }

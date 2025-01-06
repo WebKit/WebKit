@@ -30,6 +30,7 @@
 #include "GPUProcessConnection.h"
 #include "RemoteRealtimeMediaSourceProxy.h"
 #include <WebCore/RealtimeMediaSource.h>
+#include <wtf/CheckedRef.h>
 
 namespace WebKit {
 
@@ -42,6 +43,8 @@ class RemoteRealtimeMediaSource : public WebCore::RealtimeMediaSource
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteRealtimeMediaSource, WTF::DestructionThread::MainRunLoop>
 {
 public:
+    ~RemoteRealtimeMediaSource();
+
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_proxy.identifier(); }
     IPC::Connection& connection() { return m_proxy.connection(); }
 
@@ -56,18 +59,16 @@ public:
     void configurationChanged(String&& persistentID, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&);
 
 #if ENABLE(GPU_PROCESS)
-    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteRealtimeMediaSource, WTF::DestructionThread::MainRunLoop>::ref(); }
-    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteRealtimeMediaSource, WTF::DestructionThread::MainRunLoop>::deref(); }
-    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteRealtimeMediaSource, WTF::DestructionThread::MainRunLoop>::controlBlock(); }
+    WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 #endif
 
 protected:
-    RemoteRealtimeMediaSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, WebCore::MediaDeviceHashSalts&&, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, WebCore::PageIdentifier);
-    RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&&, WebCore::MediaDeviceHashSalts&&, UserMediaCaptureManager&, WebCore::PageIdentifier);
+    RemoteRealtimeMediaSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, WebCore::MediaDeviceHashSalts&&, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, std::optional<WebCore::PageIdentifier>);
+    RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&&, WebCore::MediaDeviceHashSalts&&, UserMediaCaptureManager&, std::optional<WebCore::PageIdentifier>);
     void createRemoteMediaSource();
 
     RemoteRealtimeMediaSourceProxy& proxy() { return m_proxy; }
-    UserMediaCaptureManager& manager() { return m_manager; }
+    UserMediaCaptureManager& manager();
 
     void setCapabilities(WebCore::RealtimeMediaSourceCapabilities&&);
 
@@ -80,14 +81,16 @@ protected:
 
 private:
     // RealtimeMediaSource
-    void startProducingData() final { m_proxy.startProducingData(pageIdentifier()); }
+    void startProducingData() final { m_proxy.startProducingData(*pageIdentifier()); }
     void stopProducingData() final { m_proxy.stopProducingData(); }
+    void endProducingData() final { m_proxy.endProducingData(); }
     bool isCaptureSource() const final { return true; }
     void applyConstraints(const WebCore::MediaConstraints&, ApplyConstraintsHandler&&) final;
     void didEnd() final;
     void whenReady(CompletionHandler<void(WebCore::CaptureSourceError&&)>&& callback) final { m_proxy.whenReady(WTFMove(callback)); }
     WebCore::CaptureDevice::DeviceType deviceType() const final { return m_proxy.deviceType(); }
     bool interrupted() const final { return m_proxy.interrupted(); }
+    bool isPowerEfficient() const final { return m_proxy.isPowerEfficient(); }
 
 #if ENABLE(GPU_PROCESS)
     // GPUProcessConnection::Client
@@ -95,7 +98,7 @@ private:
 #endif
 
     RemoteRealtimeMediaSourceProxy m_proxy;
-    UserMediaCaptureManager& m_manager;
+    CheckedRef<UserMediaCaptureManager> m_manager;
     std::optional<WebCore::MediaConstraints> m_constraints;
     WebCore::RealtimeMediaSourceCapabilities m_capabilities;
     std::optional<WebCore::PhotoCapabilities> m_photoCapabilities;

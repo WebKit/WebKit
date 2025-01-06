@@ -188,18 +188,18 @@ IGNORED_INCLUDES = {
     b'compiler/translator/glsl/TranslatorGLSL.h',
     b'compiler/translator/hlsl/TranslatorHLSL.h',
     b'compiler/translator/msl/TranslatorMSL.h',
+    b'compiler/translator/null/TranslatorNULL.h',
     b'compiler/translator/spirv/TranslatorSPIRV.h',
     b'compiler/translator/wgsl/TranslatorWGSL.h',
     b'contrib/optimizations/slide_hash_neon.h',
     b'dirent_on_windows.h',
     b'dlopen_fuchsia.h',
     b'kernel/image.h',
+    b'libANGLE/renderer/d3d/d3d11/Device11.h',
     b'libANGLE/renderer/d3d/d3d11/winrt/NativeWindow11WinRT.h',
-    b'libANGLE/renderer/d3d/DeviceD3D.h',
     b'libANGLE/renderer/d3d/DisplayD3D.h',
     b'libANGLE/renderer/d3d/RenderTargetD3D.h',
     b'libANGLE/renderer/gl/cgl/DisplayCGL.h',
-    b'libANGLE/renderer/gl/eagl/DisplayEAGL.h',
     b'libANGLE/renderer/gl/egl/android/DisplayAndroid.h',
     b'libANGLE/renderer/gl/egl/DisplayEGL.h',
     b'libANGLE/renderer/gl/egl/gbm/DisplayGbm.h',
@@ -245,23 +245,21 @@ IGNORED_INCLUDES = {
     # erroneously marked as valid includes
     b'rapidjson/...',
     # Validation layers support building with robin hood hashing, but we are not enabling that
-    # See http://anglebug.com/5791
+    # See http://anglebug.com/42264327
     b'robin_hood.h',
     # Validation layers optionally use mimalloc
     b'mimalloc-new-delete.h',
     # From the Vulkan-Loader
     b'winres.h',
-    # From the ANGLE desktop GL frontend, since it is only enabled conditionally
-    b'libGLESv2/entry_points_gl_1_autogen.h',
-    b'libGLESv2/entry_points_gl_2_autogen.h',
-    b'libGLESv2/entry_points_gl_3_autogen.h',
-    b'libGLESv2/entry_points_gl_4_autogen.h',
-    b'libGLESv2/entry_points_wgl.h',
     # From a comment in vulkan-validation-layers/src/layers/vk_mem_alloc.h
     b'my_custom_assert.h',
     b'my_custom_min.h',
     # https://bugs.chromium.org/p/gn/issues/detail?id=311
     b'spirv/unified1/spirv.hpp11',
+    # Behind #if defined(QAT_COMPRESSION_ENABLED) in third_party/zlib/deflate.c
+    b'contrib/qat/deflate_qat.h',
+    # Behind #if defined(TRACY_ENABLE) in third_party/vulkan-validation-layers/src/layers/vulkan/generated/chassis.cpp
+    b'profiling/profiling.h',
 }
 
 IGNORED_INCLUDE_PREFIXES = {

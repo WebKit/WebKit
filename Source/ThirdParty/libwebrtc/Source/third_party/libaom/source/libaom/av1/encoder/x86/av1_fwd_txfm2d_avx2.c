@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,7 +20,7 @@
 #include "av1/encoder/x86/av1_fwd_txfm_sse2.h"
 #include "aom_dsp/x86/txfm_common_avx2.h"
 
-static INLINE void fdct16x16_new_avx2(const __m256i *input, __m256i *output,
+static inline void fdct16x16_new_avx2(const __m256i *input, __m256i *output,
                                       int8_t cos_bit) {
   const int32_t *cospi = cospi_arr(cos_bit);
   const __m256i _r = _mm256_set1_epi32(1 << (cos_bit - 1));
@@ -113,7 +113,7 @@ static INLINE void fdct16x16_new_avx2(const __m256i *input, __m256i *output,
   output[15] = x1[15];
 }
 
-static INLINE void fdct16x32_avx2(const __m256i *input, __m256i *output,
+static inline void fdct16x32_avx2(const __m256i *input, __m256i *output,
                                   int8_t cos_bit) {
   const int32_t *cospi = cospi_arr(cos_bit);
   const __m256i _r = _mm256_set1_epi32(1 << (cos_bit - 1));
@@ -304,7 +304,7 @@ static INLINE void fdct16x32_avx2(const __m256i *input, __m256i *output,
   output[31] = x1[31];
 }
 
-static INLINE void fdct16x64_new_avx2(const __m256i *input, __m256i *output,
+static inline void fdct16x64_new_avx2(const __m256i *input, __m256i *output,
                                       int8_t cos_bit) {
   const int32_t *cospi = cospi_arr(cos_bit);
   const __m256i _r = _mm256_set1_epi32(1 << (cos_bit - 1));
@@ -711,7 +711,7 @@ static INLINE void fdct16x64_new_avx2(const __m256i *input, __m256i *output,
   output[63] = x1[63];
 }
 
-static INLINE void fdct32_avx2(const __m256i *input, __m256i *output,
+static inline void fdct32_avx2(const __m256i *input, __m256i *output,
                                int8_t cos_bit) {
   __m256i x1[32];
   const int32_t *cospi = cospi_arr(cos_bit);
@@ -865,7 +865,7 @@ static INLINE void fdct32_avx2(const __m256i *input, __m256i *output,
   output[31] = x1[31];
 }
 
-static INLINE void fdct64_new_avx2(const __m256i *input, __m256i *output,
+static inline void fdct64_new_avx2(const __m256i *input, __m256i *output,
                                    int8_t cos_bit) {
   const int32_t *cospi = cospi_arr(cos_bit);
   const __m256i _r = _mm256_set1_epi32(1 << (cos_bit - 1));
@@ -1278,7 +1278,7 @@ static INLINE void fdct64_new_avx2(const __m256i *input, __m256i *output,
   output[63] = x1[63];
 }
 
-static INLINE void fadst16x16_new_avx2(const __m256i *input, __m256i *output,
+static inline void fadst16x16_new_avx2(const __m256i *input, __m256i *output,
                                        int8_t cos_bit) {
   const int32_t *cospi = cospi_arr(cos_bit);
   const __m256i __zero = _mm256_setzero_si256();
@@ -1408,7 +1408,7 @@ static INLINE void fadst16x16_new_avx2(const __m256i *input, __m256i *output,
   output[15] = x1[0];
 }
 
-static INLINE void fidentity16x16_new_avx2(const __m256i *input,
+static inline void fidentity16x16_new_avx2(const __m256i *input,
                                            __m256i *output, int8_t cos_bit) {
   (void)cos_bit;
   const __m256i one = _mm256_set1_epi16(1);
@@ -1422,7 +1422,7 @@ static INLINE void fidentity16x16_new_avx2(const __m256i *input,
   }
 }
 
-static INLINE void fidentity16x32_avx2(const __m256i *input, __m256i *output,
+static inline void fidentity16x32_avx2(const __m256i *input, __m256i *output,
                                        int8_t cos_bit) {
   (void)cos_bit;
   for (int i = 0; i < 32; ++i) {
@@ -1430,7 +1430,7 @@ static INLINE void fidentity16x32_avx2(const __m256i *input, __m256i *output,
   }
 }
 
-static INLINE void store_output_32bit_w16(int32_t *const out,
+static inline void store_output_32bit_w16(int32_t *const out,
                                           const __m256i *const in1,
                                           const __m256i *const in2,
                                           const int stride,
@@ -1442,7 +1442,7 @@ static INLINE void store_output_32bit_w16(int32_t *const out,
 }
 
 // Store 8 16 bit values. Sign extend the values.
-static INLINE void store_buffer_16bit_to_32bit_w16_avx2(const __m256i *const in,
+static inline void store_buffer_16bit_to_32bit_w16_avx2(const __m256i *const in,
                                                         int32_t *out,
                                                         const int stride,
                                                         const int out_size) {
@@ -1456,7 +1456,7 @@ static INLINE void store_buffer_16bit_to_32bit_w16_avx2(const __m256i *const in,
   }
 }
 
-static INLINE void store_rect_16bit_to_32bit_avx2(const __m256i a,
+static inline void store_rect_16bit_to_32bit_avx2(const __m256i a,
                                                   int32_t *const b) {
   const __m256i one = _mm256_set1_epi16(1);
   const __m256i a_reoder = _mm256_permute4x64_epi64(a, 0xd8);
@@ -1468,7 +1468,7 @@ static INLINE void store_rect_16bit_to_32bit_avx2(const __m256i a,
   _mm256_store_si256((__m256i *)(b + 8), b_hi);
 }
 
-static INLINE void store_rect_buffer_16bit_to_32bit_w16_avx2(
+static inline void store_rect_buffer_16bit_to_32bit_w16_avx2(
     const __m256i *const in, int32_t *const out, const int stride,
     const int out_size) {
   for (int i = 0; i < out_size; ++i) {
@@ -1593,7 +1593,7 @@ static const transform_1d_sse2 row_txfm8x8_arr[TX_TYPES] = {
   fadst8x8_new_sse2       // H_FLIPADST
 };
 
-static INLINE void load_buffer_and_round_shift(const int16_t *in, int stride,
+static inline void load_buffer_and_round_shift(const int16_t *in, int stride,
                                                __m128i *out, int bit) {
   out[0] = _mm_load_si128((const __m128i *)(in + 0 * stride));
   out[1] = _mm_load_si128((const __m128i *)(in + 1 * stride));
@@ -1613,7 +1613,7 @@ static INLINE void load_buffer_and_round_shift(const int16_t *in, int stride,
   out[7] = _mm_slli_epi16(out[7], bit);
 }
 
-static INLINE void load_buffer_and_flip_round_shift(const int16_t *in,
+static inline void load_buffer_and_flip_round_shift(const int16_t *in,
                                                     int stride, __m128i *out,
                                                     int bit) {
   out[7] = load_16bit_to_16bit(in + 0 * stride);
@@ -1663,7 +1663,7 @@ static INLINE void load_buffer_and_flip_round_shift(const int16_t *in,
     c3 = _mm256_permute4x64_epi64(bb3, 0xd8);                        \
   }
 
-static INLINE void transpose_round_shift_flip_8x8(__m128i *const in,
+static inline void transpose_round_shift_flip_8x8(__m128i *const in,
                                                   __m128i *const out, int bit) {
   __m256i c0, c1, c2, c3;
   bit = -bit;
@@ -1712,7 +1712,7 @@ static INLINE void transpose_round_shift_flip_8x8(__m128i *const in,
   out[0] = _mm256_extractf128_si256(c3, 1);
 }
 
-static INLINE void transpose_round_shift_8x8(__m128i *const in,
+static inline void transpose_round_shift_8x8(__m128i *const in,
                                              __m128i *const out, int bit) {
   __m256i c0, c1, c2, c3;
   bit = -bit;
@@ -1760,7 +1760,7 @@ static INLINE void transpose_round_shift_8x8(__m128i *const in,
   out[7] = _mm256_extractf128_si256(c3, 1);
 }
 
-static INLINE void store_buffer_16bit_to_32bit_w8_avx2(const __m128i *const in,
+static inline void store_buffer_16bit_to_32bit_w8_avx2(const __m128i *const in,
                                                        int32_t *const out,
                                                        const int stride,
                                                        const int out_size) {
@@ -2192,7 +2192,7 @@ static void lowbd_fwd_txfm2d_64x16_avx2(const int16_t *input, int32_t *output,
   memset(output + 16 * 32, 0, 16 * 32 * sizeof(*output));
 }
 
-static INLINE void btf_16_avx2(__m256i *w0, __m256i *w1, __m256i *in0,
+static inline void btf_16_avx2(__m256i *w0, __m256i *w1, __m256i *in0,
                                __m256i *in1, __m128i *out0, __m128i *out1,
                                __m128i *out2, __m128i *out3,
                                const __m256i *__rounding, int8_t *cos_bit) {
@@ -2222,7 +2222,7 @@ static INLINE void btf_16_avx2(__m256i *w0, __m256i *w1, __m256i *in0,
   *out3 = _mm256_extracti128_si256(temp1, 0x01);
 }
 
-static INLINE void fdct8x8_new_avx2(const __m256i *input, __m256i *output,
+static inline void fdct8x8_new_avx2(const __m256i *input, __m256i *output,
                                     int8_t cos_bit) {
   const int32_t *cospi = cospi_arr(cos_bit);
   const __m256i __rounding = _mm256_set1_epi32(1 << (cos_bit - 1));
@@ -2301,7 +2301,7 @@ static INLINE void fdct8x8_new_avx2(const __m256i *input, __m256i *output,
   output[7] = x4[7];
 }
 
-static INLINE void fadst8x8_new_avx2(const __m256i *input, __m256i *output,
+static inline void fadst8x8_new_avx2(const __m256i *input, __m256i *output,
                                      int8_t cos_bit) {
   const int32_t *cospi = cospi_arr(cos_bit);
   const __m256i __zero = _mm256_setzero_si256();
@@ -2414,7 +2414,7 @@ static INLINE void fadst8x8_new_avx2(const __m256i *input, __m256i *output,
   output[7] = x6[0];
 }
 
-static INLINE void fidentity8x8_new_avx2(const __m256i *input, __m256i *output,
+static inline void fidentity8x8_new_avx2(const __m256i *input, __m256i *output,
                                          int8_t cos_bit) {
   (void)cos_bit;
 
@@ -2428,7 +2428,7 @@ static INLINE void fidentity8x8_new_avx2(const __m256i *input, __m256i *output,
   output[7] = _mm256_adds_epi16(input[7], input[7]);
 }
 
-static INLINE void fdct8x16_new_avx2(const __m128i *input, __m128i *output,
+static inline void fdct8x16_new_avx2(const __m128i *input, __m128i *output,
                                      int8_t cos_bit) {
   const int32_t *cospi = cospi_arr(cos_bit);
   const __m256i __rounding_256 = _mm256_set1_epi32(1 << (cos_bit - 1));
@@ -2577,7 +2577,7 @@ static INLINE void fdct8x16_new_avx2(const __m128i *input, __m128i *output,
               &output[11], &output[13], &output[3], &__rounding_256, &cos_bit);
 }
 
-static INLINE void fadst8x16_new_avx2(const __m128i *input, __m128i *output,
+static inline void fadst8x16_new_avx2(const __m128i *input, __m128i *output,
                                       int8_t cos_bit) {
   const int32_t *cospi = cospi_arr(cos_bit);
   const __m256i __zero = _mm256_setzero_si256();
@@ -2794,7 +2794,7 @@ static INLINE void fadst8x16_new_avx2(const __m128i *input, __m128i *output,
               &output[12], &output[1], &output[14], &__rounding_256, &cos_bit);
 }
 
-static INLINE void fidentity8x16_new_avx2(const __m128i *input, __m128i *output,
+static inline void fidentity8x16_new_avx2(const __m128i *input, __m128i *output,
                                           int8_t cos_bit) {
   (void)cos_bit;
   const __m256i one = _mm256_set1_epi16(1);

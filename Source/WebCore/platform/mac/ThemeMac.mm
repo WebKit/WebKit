@@ -30,6 +30,7 @@
 
 #import "FontCascade.h"
 #import "LengthSize.h"
+#import <pal/spi/cocoa/NSStepperCellSPI.h>
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -100,7 +101,7 @@ static NSControlSize controlSizeFromPixelSize(const std::array<IntSize, 4>& size
     return NSControlSizeMini;
 }
 
-static FloatRect inflateRect(const FloatRect& zoomedRect, const IntSize& zoomedSize, const int* margins, float zoomFactor)
+static FloatRect inflateRect(const FloatRect& zoomedRect, const IntSize& zoomedSize, std::span<const int> margins, float zoomFactor)
 {
     // Only do the inflation if the available width/height are too small.
     // Otherwise try to fit the glow/check space into the available box's width/height.
@@ -126,15 +127,14 @@ static const std::array<IntSize, 4>& checkboxSizes()
     return sizes;
 }
 
-static const int* checkboxMargins(NSControlSize controlSize)
+static std::span<const int> checkboxMargins(NSControlSize controlSize)
 {
-    static const int margins[4][4] =
-    {
+    static constexpr std::array margins {
         // top right bottom left
-        { 2, 2, 2, 2 },
-        { 2, 1, 2, 1 },
-        { 0, 0, 1, 0 },
-        { 2, 2, 2, 2 },
+        std::array { 2, 2, 2, 2 },
+        std::array { 2, 1, 2, 1 },
+        std::array { 0, 0, 1, 0 },
+        std::array { 2, 2, 2, 2 },
     };
     return margins[controlSize];
 }
@@ -164,15 +164,14 @@ static const std::array<IntSize, 4>& radioSizes()
     return sizes;
 }
 
-static const int* radioMargins(NSControlSize controlSize)
+static std::span<const int> radioMargins(NSControlSize controlSize)
 {
-    static const int margins[4][4] =
-    {
+    static constexpr std::array margins {
         // top right bottom left
-        { 1, 0, 1, 2 },
-        { 1, 1, 2, 1 },
-        { 0, 0, 1, 1 },
-        { 1, 0, 1, 2 },
+        std::array { 1, 0, 1, 2 },
+        std::array { 1, 1, 2, 1 },
+        std::array { 0, 0, 1, 1 },
+        std::array { 1, 0, 1, 2 },
     };
     return margins[controlSize];
 }
@@ -195,25 +194,49 @@ static const std::array<IntSize, 4>& buttonSizes()
     return sizes;
 }
 
-static const int* buttonMargins(NSControlSize controlSize)
+static std::span<const int> buttonMargins(NSControlSize controlSize)
 {
     // FIXME: These values may need to be reevaluated. They appear to have been originally chosen
     // to reflect the size of shadows around native form controls on macOS, but as of macOS 10.15,
     // these margins extend well past the boundaries of a native button cell's shadows.
-    static const int margins[4][4] =
-    {
-        { 5, 7, 7, 7 },
-        { 4, 6, 7, 6 },
-        { 1, 2, 2, 2 },
-        { 6, 6, 6, 6 },
+    static constexpr std::array margins {
+        std::array { 5, 7, 7, 7 },
+        std::array { 4, 6, 7, 6 },
+        std::array { 1, 2, 2, 2 },
+        std::array { 6, 6, 6, 6 },
     };
     return margins[controlSize];
 }
 
 // Stepper
 
+static std::span<const int> stepperMargins(NSControlSize controlSize)
+{
+#if HAVE(NSSTEPPERCELL_INCREMENTING)
+    if ([NSStepperCell instancesRespondToSelector:@selector(setIncrementing:)]) {
+        static constexpr std::array margins {
+            std::array { 4, 3, 4, 3 },
+            std::array { 2, 2, 4, 2 },
+            std::array { 2, 2, 3, 2 },
+            std::array { 4, 3, 4, 3 },
+        };
+        return margins[controlSize];
+    }
+#else
+    UNUSED_PARAM(controlSize);
+#endif
+    static constexpr std::array stepperMargin { 0, 0, 0, 0 };
+    return stepperMargin;
+}
+
 static const std::array<IntSize, 4>& stepperSizes()
 {
+#if HAVE(NSSTEPPERCELL_INCREMENTING)
+    if ([NSStepperCell instancesRespondToSelector:@selector(setIncrementing:)]) {
+        static const std::array<IntSize, 4> sizes = { { IntSize(19, 28), IntSize(15, 22), IntSize(13, 18), IntSize(19, 28) } };
+        return sizes;
+    }
+#endif
     static const std::array<IntSize, 4> sizes = { { IntSize(19, 27), IntSize(15, 22), IntSize(13, 15), IntSize(19, 27) } };
     return sizes;
 }
@@ -223,8 +246,13 @@ static const std::array<IntSize, 4>& stepperSizes()
 static NSControlSize stepperControlSizeForFont(const FontCascade& font)
 {
     auto fontSize = font.size();
-    if (fontSize >= 23 && ThemeMac::supportsLargeFormControls())
+    if (fontSize >= 23 && ThemeMac::supportsLargeFormControls()) {
+#if HAVE(NSSTEPPERCELL_INCREMENTING)
+        if ([NSStepperCell instancesRespondToSelector:@selector(setIncrementing:)])
+            return NSControlSizeRegular;
+#endif
         return NSControlSizeLarge;
+    }
     if (fontSize >= 18)
         return NSControlSizeRegular;
     if (fontSize >= 13)
@@ -246,24 +274,23 @@ static const std::array<IntSize, 4>& switchSizes()
     return sizes;
 }
 
-static const int* switchMargins(NSControlSize controlSize)
+static std::span<const int> switchMargins(NSControlSize controlSize)
 {
-    static const int margins[4][4] =
-    {
+    static constexpr std::array margins {
         // top right bottom left
-        { 2, 2, 1, 2 },
-        { 2, 2, 1, 2 },
-        { 1, 1, 0, 1 },
-        { 2, 2, 1, 2 },
+        std::array { 2, 2, 1, 2 },
+        std::array { 2, 2, 1, 2 },
+        std::array { 1, 1, 0, 1 },
+        std::array { 2, 2, 1, 2 },
     };
     return margins[controlSize];
 }
 
-static const int* visualSwitchMargins(NSControlSize controlSize, bool isVertical)
+static std::span<const int> visualSwitchMargins(NSControlSize controlSize, bool isVertical)
 {
     auto margins = switchMargins(controlSize);
     if (isVertical) {
-        static const int verticalMargins[4] = { margins[3], margins[0], margins[1], margins[2] };
+        static const std::array verticalMargins { margins[3], margins[0], margins[1], margins[2] };
         return verticalMargins;
     }
     return margins;
@@ -417,12 +444,15 @@ void ThemeMac::inflateControlPaintRect(StyleAppearance appearance, FloatRect& zo
         break;
     }
     case StyleAppearance::InnerSpinButton: {
-        static const int stepperMargin[4] = { 0, 0, 0, 0 };
         auto controlSize = controlSizeFromPixelSize(stepperSizes(), zoomRectSize, zoomFactor);
+#if HAVE(NSSTEPPERCELL_INCREMENTING)
+        if ([NSStepperCell instancesRespondToSelector:@selector(setIncrementing:)] && controlSize == NSControlSizeLarge)
+            controlSize = NSControlSizeRegular;
+#endif
         IntSize zoomedSize = stepperSizes()[controlSize];
         zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
         zoomedSize.setWidth(zoomedSize.width() * zoomFactor);
-        zoomedRect = inflateRect(zoomedRect, zoomedSize, stepperMargin, zoomFactor);
+        zoomedRect = inflateRect(zoomedRect, zoomedSize, stepperMargins(controlSize), zoomFactor);
         break;
     }
     default:

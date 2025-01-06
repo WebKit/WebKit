@@ -1,5 +1,4 @@
 
-PASS After dynamic imports, import maps should fire error events
 PASS A dynamic import succeeds
-PASS After a dynamic import(), import maps are not effective
+PASS After a dynamic import(), import maps work fine
 

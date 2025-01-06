@@ -94,6 +94,7 @@ function isTypedArray(array)
         || array instanceof Uint8ClampedArray
         || array instanceof Uint16Array
         || array instanceof Uint32Array
+        || array instanceof Float16Array
         || array instanceof Float32Array
         || array instanceof Float64Array;
 }

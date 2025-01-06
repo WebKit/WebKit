@@ -1,6 +1,6 @@
 {
     "repository": "https://github.com/SeleniumHQ/selenium.git",
-    "revision": "907b2197dada02fe80de04843799f50d3d129f54",
+    "revision": "00a3f4c2d20d74cf0148c273786bfc712923ca6c",
     "paths_to_import": [
         "common",
         "py/conftest.py",
@@ -50,6 +50,8 @@
         "py/test/selenium/webdriver/chrome",
         "py/test/selenium/webdriver/firefox",
         "py/test/selenium/webdriver/ie",
-        "py/test/selenium/webdriver/marionette"
+        "py/test/selenium/webdriver/marionette",
+        "py/test/selenium/webdriver/common/devtools_tests.py",
+        "py/test/selenium/webdriver/common/driver_finder_tests.py"
     ]
 }

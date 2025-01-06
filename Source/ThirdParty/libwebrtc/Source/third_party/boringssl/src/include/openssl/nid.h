@@ -4255,6 +4255,9 @@ extern "C" {
 #define SN_X25519Kyber768Draft00 "X25519Kyber768Draft00"
 #define NID_X25519Kyber768Draft00 964
 
+#define SN_X25519MLKEM768 "X25519MLKEM768"
+#define NID_X25519MLKEM768 965
+
 
 #if defined(__cplusplus)
 } /* extern C */

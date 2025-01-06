@@ -48,6 +48,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -109,14 +110,15 @@ class RemoteMediaPlayerProxy final
     : public RefCounted<RemoteMediaPlayerProxy>
     , public WebCore::MediaPlayerClient
     , private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaPlayerProxy);
 public:
-    using WebCore::MediaPlayerClient::WeakPtrImplType;
-    using WebCore::MediaPlayerClient::WeakValueType;
-    using WebCore::MediaPlayerClient::weakPtrFactory;
+    USING_CAN_MAKE_WEAKPTR(WebCore::MediaPlayerClient);
 
     static Ref<RemoteMediaPlayerProxy> create(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, WebCore::MediaPlayerClientIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);
     ~RemoteMediaPlayerProxy();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     WebCore::MediaPlayerIdentifier identifier() const { return m_id; }
     void invalidate();
@@ -237,6 +239,8 @@ public:
     void addRemoteVideoTrackProxy(WebCore::VideoTrackPrivate&);
     void addRemoteTextTrackProxy(WebCore::InbandTextTrackPrivate&);
 
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+
 private:
     RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, WebCore::MediaPlayerClientIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);
 
@@ -266,6 +270,8 @@ private:
     void mediaPlayerDidRemoveVideoTrack(WebCore::VideoTrackPrivate&) final;
     void mediaPlayerDidAddTextTrack(WebCore::InbandTextTrackPrivate&) final;
     void mediaPlayerDidRemoveTextTrack(WebCore::InbandTextTrackPrivate&) final;
+    String audioOutputDeviceId() const final { return m_configuration.audioOutputDeviceId; }
+    String audioOutputDeviceIdOverride() const final { return m_configuration.audioOutputDeviceId; }
 
     // Not implemented
     void mediaPlayerFirstVideoFrameAvailable() final;
@@ -273,12 +279,15 @@ private:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const final;
     void mediaPlayerKeyNeeded(const WebCore::SharedBuffer&) final;
-    String mediaPlayerMediaKeysStorageDirectory() const final;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
     void mediaPlayerInitializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&) final;
     void mediaPlayerWaitingForKeyChanged() final;
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
+    String mediaPlayerMediaKeysStorageDirectory() const final;
 #endif
 
     String mediaPlayerReferrer() const final;
@@ -289,7 +298,7 @@ private:
     float mediaPlayerContentsScale() const final;
     bool mediaPlayerPlatformVolumeConfigurationRequired() const final;
     WebCore::CachedResourceLoader* mediaPlayerCachedResourceLoader() final;
-    RefPtr<WebCore::PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() final;
+    Ref<WebCore::PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() final;
     bool doesHaveAttribute(const AtomString&, AtomString* = nullptr) const final;
     bool mediaPlayerShouldUsePersistentCache() const final;
     const String& mediaPlayerMediaCacheDirectory() const final;
@@ -359,9 +368,6 @@ private:
     void setVideoLayerSizeIfPossible(const WebCore::FloatSize&);
     void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
     void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
-#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    void willBeAskedToPaintGL();
-#endif
 #endif
     void videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&, bool)>&&);
 
@@ -376,14 +382,25 @@ private:
 
     void isInFullscreenOrPictureInPictureChanged(bool);
 
+    void audioOutputDeviceChanged(String&&);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
-    const void* mediaPlayerLogIdentifier() { return reinterpret_cast<const void*>(m_configuration.logIdentifier); }
+    Ref<const Logger> protectedMediaPlayerLogger() const { return m_logger; }
+    uint64_t mediaPlayerLogIdentifier() { return m_configuration.logIdentifier; }
     const Logger& logger() { return mediaPlayerLogger(); }
-    const void* logIdentifier() { return mediaPlayerLogIdentifier(); }
+    uint64_t logIdentifier() { return mediaPlayerLogIdentifier(); }
     ASCIILiteral logClassName() const { return "RemoteMediaPlayerProxy"_s; }
     WTFLogChannel& logChannel() const;
 #endif
+
+    RefPtr<WebCore::MediaPlayer> protectedPlayer() const { return m_player; }
+#if ENABLE(MEDIA_SOURCE)
+    RefPtr<RemoteMediaSourceProxy> protectedMediaSourceProxy() const { return m_mediaSourceProxy; }
+#endif
+
+    Ref<IPC::Connection> protectedConnection() const { return m_webProcessConnection; }
+    Ref<RemoteVideoFrameObjectHeap> protectedVideoFrameObjectHeap() const;
 
     Vector<Ref<RemoteAudioTrackProxy>> m_audioTracks;
     Vector<Ref<RemoteVideoTrackProxy>> m_videoTracks;
@@ -437,7 +454,7 @@ private:
     RefPtr<WebCore::VideoFrame> m_videoFrameForCurrentTime;
     bool m_shouldCheckHardwareSupport { false };
 #if !RELEASE_LOG_DISABLED
-    const Logger& m_logger;
+    Ref<const Logger> m_logger;
 #endif
 };
 

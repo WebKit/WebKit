@@ -10,6 +10,10 @@
 
 #include "api/video/video_frame_buffer.h"
 
+#include <string>
+
+#include "api/array_view.h"
+#include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/i422_buffer.h"
 #include "api/video/i444_buffer.h"
@@ -74,9 +78,13 @@ const NV12BufferInterface* VideoFrameBuffer::GetNV12() const {
 }
 
 rtc::scoped_refptr<VideoFrameBuffer> VideoFrameBuffer::GetMappedFrameBuffer(
-    rtc::ArrayView<Type> types) {
+    rtc::ArrayView<Type> /* types */) {
   RTC_CHECK(type() == Type::kNative);
   return nullptr;
+}
+
+std::string VideoFrameBuffer::storage_representation() const {
+  return "?";
 }
 
 VideoFrameBuffer::Type I420BufferInterface::type() const {

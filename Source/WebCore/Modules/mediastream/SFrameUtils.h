@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,7 @@
 
 namespace WebCore {
 
-struct SFrameCompatibilityPrefixBuffer {
-    const uint8_t* data { nullptr };
-    size_t size { 0 };
-    Vector<uint8_t> buffer;
-};
+using SFrameCompatibilityPrefixBuffer = std::variant<std::span<const uint8_t>, Vector<uint8_t>>;
 
 size_t computeH264PrefixOffset(std::span<const uint8_t>);
 SFrameCompatibilityPrefixBuffer computeH264PrefixBuffer(std::span<const uint8_t>);
@@ -46,6 +42,16 @@ WEBCORE_EXPORT void toRbsp(Vector<uint8_t>&, size_t);
 
 size_t computeVP8PrefixOffset(std::span<const uint8_t>);
 SFrameCompatibilityPrefixBuffer computeVP8PrefixBuffer(std::span<const uint8_t>);
+
+static inline Vector<uint8_t, 8> encodeBigEndian(uint64_t value)
+{
+    Vector<uint8_t, 8> result(8);
+    for (int i = 7; i >= 0; --i) {
+        result[i] = value & 0xff;
+        value = value >> 8;
+    }
+    return result;
+}
 
 } // namespace WebCore
 

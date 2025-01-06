@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "AudioMediaStreamTrackRendererCocoa.h"
@@ -44,14 +45,22 @@ class MediaTime;
 
 namespace WebCore {
 
-std::unique_ptr<AudioMediaStreamTrackRenderer> AudioMediaStreamTrackRenderer::create(Init&& init)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioMediaStreamTrackRenderer);
+
+RefPtr<AudioMediaStreamTrackRenderer> AudioMediaStreamTrackRenderer::create(Init&& init)
 {
 #if PLATFORM(COCOA)
-    return makeUnique<AudioMediaStreamTrackRendererCocoa>(WTFMove(init));
+    return AudioMediaStreamTrackRendererCocoa::create(WTFMove(init));
 #else
     UNUSED_PARAM(init);
     return nullptr;
 #endif
+}
+
+String AudioMediaStreamTrackRenderer::defaultDeviceID()
+{
+    ASSERT(isMainThread());
+    return "default"_s;
 }
 
 AudioMediaStreamTrackRenderer::AudioMediaStreamTrackRenderer(Init&& init)
@@ -78,7 +87,7 @@ const Logger& AudioMediaStreamTrackRenderer::logger() const
 
 }
 
-const void* AudioMediaStreamTrackRenderer::logIdentifier() const
+uint64_t AudioMediaStreamTrackRenderer::logIdentifier() const
 {
     return m_logIdentifier;
 }

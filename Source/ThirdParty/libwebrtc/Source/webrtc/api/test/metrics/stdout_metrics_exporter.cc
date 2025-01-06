@@ -12,9 +12,9 @@
 #include <stdio.h>
 
 #include <cmath>
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/test/metrics/metric.h"
 #include "rtc_base/strings/string_builder.h"

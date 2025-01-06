@@ -20,6 +20,13 @@
   header_addl_info = time
 %]
 
+[% IF debug %]
+  <p>Bugzilla::Chart object:</p>
+  <pre>
+  [% debug_dump FILTER html %]
+  </pre>
+[% END %]
+
 <div class="center">
 
   [% imageurl = BLOCK %]chart.cgi?

@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "CSSParserEnum.h"
 #include "ExceptionOr.h"
 #include "StyleRuleType.h"
 #include <wtf/TypeCasts.h>
@@ -44,7 +45,7 @@ public:
     virtual StyleRuleType styleRuleType() const = 0;
     virtual bool isGroupingRule() const { return false; }
     virtual String cssText() const = 0;
-    virtual String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const { return cssText(); }
+    virtual String cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>&, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>&) const { return cssText(); }
     virtual void reattach(StyleRuleBase&) = 0;
 
     void setParentStyleSheet(CSSStyleSheet*);
@@ -52,6 +53,7 @@ public:
     CSSStyleSheet* parentStyleSheet() const;
     CSSRule* parentRule() const { return m_parentIsRule ? m_parentRule : nullptr; }
     bool hasStyleRuleAncestor() const;
+    CSSParserEnum::NestedContext nestedContext() const;
     virtual RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&);
     virtual void getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>&) { }
 

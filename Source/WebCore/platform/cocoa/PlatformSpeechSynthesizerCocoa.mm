@@ -296,31 +296,16 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
     NSArray<AVSpeechSynthesisVoice *> *voices = nil;
     // SpeechSynthesis replaces on-device compact with higher quality compact voices. These
     // are not available to WebKit so we're losing these default voices for WebSpeech.
+    // FIXME: Remove respondsToSelector check when is available on all SDKs.
     if ([PAL::getAVSpeechSynthesisVoiceClass() respondsToSelector:@selector(speechVoicesIncludingSuperCompact)])
         voices = [PAL::getAVSpeechSynthesisVoiceClass() speechVoicesIncludingSuperCompact];
     else
         voices = [PAL::getAVSpeechSynthesisVoiceClass() speechVoices];
 
+    // Only show built-in voices when requesting through WebKit to reduce fingerprinting surface area.
     for (AVSpeechSynthesisVoice *voice in voices) {
-        NSString *language = [voice language];
-        bool isDefault = true;
-        NSString *voiceURI = [voice identifier];
-        NSString *name = [voice name];
-        // Only show built-in voices when requesting through WebKit to reduce fingerprinting surface area.
-#if HAVE(AVSPEECHSYNTHESIS_SYSTEMVOICE)
-        // FIXME: Remove respondsToSelector check when is available on all SDKs.
-        BOOL includeVoice = NO;
-        if ([voice respondsToSelector:@selector(isSystemVoice)])
-            includeVoice = voice.isSystemVoice;
-        else
-            includeVoice = voice.quality == AVSpeechSynthesisVoiceQualityDefault;
-        if (includeVoice)
-#else
-        // AVSpeechSynthesis on macOS does not support quality property correctly.
-        if (voice.quality == AVSpeechSynthesisVoiceQualityDefault
-            || (TARGET_OS_OSX && ![voiceURI hasSuffix:@"premium"]))
-#endif
-            m_voiceList.append(PlatformSpeechSynthesisVoice::create(voiceURI, name, language, true, isDefault));
+        if (voice.isSystemVoice)
+            m_voiceList.append(PlatformSpeechSynthesisVoice::create(voice.identifier, voice.name, voice.language, true, true));
     }
     END_BLOCK_OBJC_EXCEPTIONS
 }

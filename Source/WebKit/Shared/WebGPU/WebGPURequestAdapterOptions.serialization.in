@@ -24,5 +24,6 @@
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::RequestAdapterOptions {
     std::optional<WebCore::WebGPU::PowerPreference> powerPreference;
     bool forceFallbackAdapter;
+    bool xrCompatible;
 };
 #endif

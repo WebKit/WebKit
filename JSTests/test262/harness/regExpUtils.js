@@ -13,20 +13,20 @@ function buildString(args) {
   const loneCodePoints = args.loneCodePoints;
   const ranges = args.ranges;
   const CHUNK_SIZE = 10000;
-  let result = Reflect.apply(String.fromCodePoint, null, loneCodePoints);
+  let result = String.fromCodePoint.apply(null, loneCodePoints);
   for (let i = 0; i < ranges.length; i++) {
-    const range = ranges[i];
-    const start = range[0];
-    const end = range[1];
-    const codePoints = [];
+    let range = ranges[i];
+    let start = range[0];
+    let end = range[1];
+    let codePoints = [];
     for (let length = 0, codePoint = start; codePoint <= end; codePoint++) {
       codePoints[length++] = codePoint;
       if (length === CHUNK_SIZE) {
-        result += Reflect.apply(String.fromCodePoint, null, codePoints);
+        result += String.fromCodePoint.apply(null, codePoints);
         codePoints.length = length = 0;
       }
     }
-    result += Reflect.apply(String.fromCodePoint, null, codePoints);
+    result += String.fromCodePoint.apply(null, codePoints);
   }
   return result;
 }
@@ -41,8 +41,8 @@ function printCodePoint(codePoint) {
 
 function printStringCodePoints(string) {
   const buf = [];
-  for (const symbol of string) {
-    const formatted = printCodePoint(symbol.codePointAt(0));
+  for (let symbol of string) {
+    let formatted = printCodePoint(symbol.codePointAt(0));
     buf.push(formatted);
   }
   return buf.join(' ');
@@ -50,8 +50,8 @@ function printStringCodePoints(string) {
 
 function testPropertyEscapes(regExp, string, expression) {
   if (!regExp.test(string)) {
-    for (const symbol of string) {
-      const formatted = printCodePoint(symbol.codePointAt(0));
+    for (let symbol of string) {
+      let formatted = printCodePoint(symbol.codePointAt(0));
       assert(
         regExp.test(symbol),
         `\`${ expression }\` should match ${ formatted } (\`${ symbol }\`)`
@@ -70,7 +70,7 @@ function testPropertyOfStrings(args) {
   const nonMatchStrings = args.nonMatchStrings;
   const allStrings = matchStrings.join('');
   if (!regExp.test(allStrings)) {
-    for (const string of matchStrings) {
+    for (let string of matchStrings) {
       assert(
         regExp.test(string),
         `\`${ expression }\` should match ${ string } (${ printStringCodePoints(string) })`
@@ -82,7 +82,7 @@ function testPropertyOfStrings(args) {
 
   const allNonMatchStrings = nonMatchStrings.join('');
   if (regExp.test(allNonMatchStrings)) {
-    for (const string of nonMatchStrings) {
+    for (let string of nonMatchStrings) {
       assert(
         !regExp.test(string),
         `\`${ expression }\` should not match ${ string } (${ printStringCodePoints(string) })`

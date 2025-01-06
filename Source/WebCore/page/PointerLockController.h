@@ -32,6 +32,7 @@
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
@@ -49,7 +50,7 @@ class WeakPtrImplWithEventTargetData;
 
 class PointerLockController {
     WTF_MAKE_NONCOPYABLE(PointerLockController);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PointerLockController);
 public:
     explicit PointerLockController(Page&);
     ~PointerLockController();

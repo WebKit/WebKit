@@ -10,13 +10,13 @@
 #include "common/system_utils.h"
 #include "compiler/translator/BaseTypes.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
+#include "compiler/translator/Name.h"
 #include "compiler/translator/OutputTree.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/msl/AstHelpers.h"
 #include "compiler/translator/msl/DebugSink.h"
 #include "compiler/translator/msl/EmitMetal.h"
 #include "compiler/translator/msl/Layout.h"
-#include "compiler/translator/msl/Name.h"
 #include "compiler/translator/msl/ProgramPrelude.h"
 #include "compiler/translator/msl/RewritePipelines.h"
 #include "compiler/translator/msl/TranslatorMSL.h"
@@ -181,12 +181,17 @@ class GenMetalTraverser : public TIntermTraverser
 
     void emitSingleConstant(const TConstantUnion *const constUnion);
 
+    void emitForwardProgressStore();
+    void emitForwardProgressSignal();
+    bool shouldEnsureForwardProgress() const { return mForwardProgressStoreNestingCount >= 0; }
+
   private:
     Sink &mOut;
     const TCompiler &mCompiler;
     const PipelineStructs &mPipelineStructs;
     SymbolEnv &mSymbolEnv;
     IdGen &mIdGen;
+    int mForwardProgressStoreNestingCount  = -1; // Negative means forward progress is not ensured.
     int mIndentLevel                  = -1;
     int mLastIndentationPos           = -1;
     int mOpenPointerParenCount        = 0;
@@ -201,8 +206,44 @@ class GenMetalTraverser : public TIntermTraverser
     size_t mDriverUniformsBindingIndex     = 0;
     size_t mUBOArgumentBufferBindingIndex  = 0;
     bool mRasterOrderGroupsSupported       = false;
-    bool mInjectAsmStatementIntoLoopBodies = false;
+    friend class ScopedForwardProgressStore;
 };
+
+class ScopedForwardProgressStore
+{
+public:
+    ScopedForwardProgressStore(GenMetalTraverser& traverser);
+    ~ScopedForwardProgressStore();
+private:
+    GenMetalTraverser& mTraverser;
+};
+
+ScopedForwardProgressStore::ScopedForwardProgressStore(GenMetalTraverser& traverser)
+    : mTraverser(traverser)
+{
+    if (mTraverser.shouldEnsureForwardProgress())
+    {
+        if (mTraverser.mForwardProgressStoreNestingCount == 0)
+        {
+            mTraverser.emitOpenBrace();
+            mTraverser.emitForwardProgressStore();
+        }
+        ++mTraverser.mForwardProgressStoreNestingCount;
+    }
+}
+
+ScopedForwardProgressStore::~ScopedForwardProgressStore()
+{
+    if (mTraverser.shouldEnsureForwardProgress())
+    {
+        --mTraverser.mForwardProgressStoreNestingCount;
+        if (mTraverser.mForwardProgressStoreNestingCount == 0)
+        {
+            mTraverser.emitCloseBrace();
+        }
+    }
+}
+
 }  // anonymous namespace
 
 GenMetalTraverser::~GenMetalTraverser()
@@ -228,9 +269,11 @@ GenMetalTraverser::GenMetalTraverser(const TCompiler &compiler,
       mDriverUniformsBindingIndex(compileOptions.metal.driverUniformsBindingIndex),
       mUBOArgumentBufferBindingIndex(compileOptions.metal.UBOArgumentBufferBindingIndex),
       mRasterOrderGroupsSupported(compileOptions.pls.fragmentSyncType ==
-                                  ShFragmentSynchronizationType::RasterOrderGroups_Metal),
-      mInjectAsmStatementIntoLoopBodies(compileOptions.metal.injectAsmStatementIntoLoopBodies)
-{}
+                                  ShFragmentSynchronizationType::RasterOrderGroups_Metal)
+{
+    if (compileOptions.metal.injectAsmStatementIntoLoopBodies)
+        mForwardProgressStoreNestingCount = 0;
+}
 
 void GenMetalTraverser::emitIndentation()
 {
@@ -278,40 +321,12 @@ static const char *GetOperatorString(TOperator op,
             return "=";
         case TOperator::EOpInitialize:
             return "=";
-        case TOperator::EOpAddAssign:
-            return "+=";
-        case TOperator::EOpSubAssign:
-            return "-=";
-        case TOperator::EOpMulAssign:
-            return "*=";
-        case TOperator::EOpDivAssign:
-            return "/=";
-        case TOperator::EOpIModAssign:
-            return "%=";
-        case TOperator::EOpBitShiftLeftAssign:
-            return "<<=";  // TODO: Check logical vs arithmetic shifting.
-        case TOperator::EOpBitShiftRightAssign:
-            return ">>=";  // TODO: Check logical vs arithmetic shifting.
         case TOperator::EOpBitwiseAndAssign:
             return "&=";
         case TOperator::EOpBitwiseXorAssign:
             return "^=";
         case TOperator::EOpBitwiseOrAssign:
             return "|=";
-        case TOperator::EOpAdd:
-            return "+";
-        case TOperator::EOpSub:
-            return "-";
-        case TOperator::EOpMul:
-            return "*";
-        case TOperator::EOpDiv:
-            return "/";
-        case TOperator::EOpIMod:
-            return "%";
-        case TOperator::EOpBitShiftLeft:
-            return "<<";  // TODO: Check logical vs arithmetic shifting.
-        case TOperator::EOpBitShiftRight:
-            return ">>";  // TODO: Check logical vs arithmetic shifting.
         case TOperator::EOpBitwiseAnd:
             return "&";
         case TOperator::EOpBitwiseXor:
@@ -363,16 +378,12 @@ static const char *GetOperatorString(TOperator op,
             return "++";
         case TOperator::EOpPreDecrement:
             return "--";
-        case TOperator::EOpVectorTimesScalarAssign:
-            return "*=";
         case TOperator::EOpVectorTimesMatrixAssign:
             return "*=";
         case TOperator::EOpMatrixTimesScalarAssign:
             return "*=";
         case TOperator::EOpMatrixTimesMatrixAssign:
             return "*=";
-        case TOperator::EOpVectorTimesScalar:
-            return "*";
         case TOperator::EOpVectorTimesMatrix:
             return "*";
         case TOperator::EOpMatrixTimesVector:
@@ -385,6 +396,38 @@ static const char *GetOperatorString(TOperator op,
             return "==";
         case TOperator::EOpNotEqualComponentWise:
             return "!=";
+
+        case TOperator::EOpBitShiftRight:
+        case TOperator::EOpBitShiftRightAssign:
+            // TODO: Check logical vs arithmetic shifting.
+            return "ANGLE_rshift";
+
+        case TOperator::EOpBitShiftLeft:
+        case TOperator::EOpBitShiftLeftAssign:
+            // TODO: Check logical vs arithmetic shifting.
+            return resultType.isSignedInt() ? "ANGLE_ilshift" : "ANGLE_ulshift";
+
+        case TOperator::EOpAddAssign:
+        case TOperator::EOpAdd:
+            return resultType.isSignedInt() ? "ANGLE_iadd" : "+";
+
+        case TOperator::EOpSubAssign:
+        case TOperator::EOpSub:
+            return resultType.isSignedInt() ? "ANGLE_isub" : "-";
+
+        case TOperator::EOpMulAssign:
+        case TOperator::EOpMul:
+        case TOperator::EOpVectorTimesScalarAssign:
+        case TOperator::EOpVectorTimesScalar:
+            return resultType.isSignedInt() ? "ANGLE_imul" : "*";
+
+        case TOperator::EOpDiv:
+        case TOperator::EOpDivAssign:
+            return resultType.isSignedInt() ? "ANGLE_div" : "/";
+
+        case TOperator::EOpIMod:
+        case TOperator::EOpIModAssign:
+            return resultType.isSignedInt() ? "ANGLE_imod" : "%";
 
         case TOperator::EOpEqual:
             if ((argType0->getStruct() && argType1->getStruct()) &&
@@ -694,9 +737,6 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpAtomicCompSwap:
         case TOperator::EOpEmitVertex:
         case TOperator::EOpEndPrimitive:
-        case TOperator::EOpFtransform:
-        case TOperator::EOpPackDouble2x32:
-        case TOperator::EOpUnpackDouble2x32:
         case TOperator::EOpArrayLength:
             UNIMPLEMENTED();
             return "TOperator_TODO";
@@ -885,17 +925,14 @@ void GenMetalTraverser::emitPostQualifier(const EmitVariableDeclarationConfig &e
 
 void GenMetalTraverser::emitLoopBody(TIntermBlock *bodyNode)
 {
-    if (mInjectAsmStatementIntoLoopBodies)
+    const bool emitForwardProgress = shouldEnsureForwardProgress();
+    if (emitForwardProgress)
     {
         emitOpenBrace();
-
-        emitIndentation();
-        mOut << "__asm__(\"\");\n";
+        emitForwardProgressSignal();
     }
-
     bodyNode->traverse(this);
-
-    if (mInjectAsmStatementIntoLoopBodies)
+    if (emitForwardProgress)
     {
         emitCloseBrace();
     }
@@ -1038,7 +1075,7 @@ void GenMetalTraverser::emitType(const TType &type, const EmitTypeConfig &etConf
         {
             if (type.isArray())
             {
-                mOut << "ANGLE_tensor<";
+                mOut << "metal::array<";
             }
         }
         if (evdConfig.isPointer)
@@ -1057,7 +1094,7 @@ void GenMetalTraverser::emitType(const TType &type, const EmitTypeConfig &etConf
     {
         if (type.isArray())
         {
-            mOut << "ANGLE_tensor<";
+            mOut << "metal::array<";
         }
     }
 
@@ -1255,8 +1292,8 @@ void GenMetalTraverser::emitFieldDeclaration(const TField &field,
                         // Put fragment inouts in their own raster order group for better
                         // parallelism.
                         // NOTE: this is not required for the reads to be ordered and coherent.
-                        // TODO(anglebug.com/7279): Consider making raster order groups a PLS layout
-                        // qualifier?
+                        // TODO(anglebug.com/40096838): Consider making raster order groups a PLS
+                        // layout qualifier?
                         mOut << ", raster_order_group(0)";
                     }
                     mOut << "]]";
@@ -1777,7 +1814,7 @@ bool GenMetalTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
             groupedTraverse(leftNode);
             mOut << "[";
             const TConstantUnion *constIndex = rightNode.getConstantValue();
-            // TODO(anglebug.com/8491): Convert type and bound checks to
+            // TODO(anglebug.com/42266914): Convert type and bound checks to
             // assertions after AST validation is enabled for MSL translation.
             if (!leftType.isUnsizedArray() && constIndex != nullptr &&
                 constIndex->getType() == EbtInt && constIndex->getIConst() >= 0 &&
@@ -1815,6 +1852,18 @@ bool GenMetalTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
             mOut << "]";
         }
         break;
+
+        case TOperator::EOpDivAssign:
+        case TOperator::EOpIModAssign:
+        case TOperator::EOpBitShiftRightAssign:
+        case TOperator::EOpBitShiftLeftAssign:
+        case TOperator::EOpAddAssign:
+        case TOperator::EOpSubAssign:
+        case TOperator::EOpMulAssign:
+        case TOperator::EOpVectorTimesScalarAssign:
+            leftNode.traverse(this);
+            mOut << " = ";
+            [[fallthrough]];
 
         default:
         {
@@ -1871,6 +1920,11 @@ bool GenMetalTraverser::visitUnary(Visit, TIntermUnary *unaryNode)
 
     TIntermTyped &arg    = *unaryNode->getOperand();
     const TType &argType = arg.getType();
+
+    if (op == TOperator::EOpIsnan || op == TOperator::EOpIsinf)
+    {
+        mtl::getTranslatorMetalReflection(&mCompiler)->hasIsnanOrIsinf = true;
+    }
 
     const char *name = GetOperatorString(op, resultType, &argType, nullptr, nullptr);
 
@@ -2161,9 +2215,6 @@ GenMetalTraverser::FuncToName GenMetalTraverser::BuildFuncToName()
     putAngle("texelFetch");
     putAngle("texelFetchOffset");
     putAngle("texture");
-    putAngle("texture1D");
-    putAngle("texture1DLod");
-    putAngle("texture1DProjLod");
     putAngle("texture2D");
     putAngle("texture2DGradEXT");
     putAngle("texture2DLod");
@@ -2172,16 +2223,14 @@ GenMetalTraverser::FuncToName GenMetalTraverser::BuildFuncToName()
     putAngle("texture2DProjGradEXT");
     putAngle("texture2DProjLod");
     putAngle("texture2DProjLodEXT");
-    putAngle("texture2DRect");
-    putAngle("texture2DRectProj");
     putAngle("texture3D");
     putAngle("texture3DLod");
+    putAngle("texture3DProj");
     putAngle("texture3DProjLod");
     putAngle("textureCube");
     putAngle("textureCubeGradEXT");
     putAngle("textureCubeLod");
     putAngle("textureCubeLodEXT");
-    putAngle("textureCubeProjLod");
     putAngle("textureGrad");
     putAngle("textureGradOffset");
     putAngle("textureLod");
@@ -2252,7 +2301,27 @@ bool GenMetalTraverser::visitAggregate(Visit, TIntermAggregate *aggregateNode)
         }
         else
         {
-            emitType(retType, etConfig);
+            bool isFtoi = [&]() {
+                if ((!retType.isScalar() && !retType.isVector()) ||
+                    !IsInteger(retType.getBasicType()))
+                    return false;
+                if (aggregateNode->getChildCount() != 1)
+                    return false;
+                auto &argType = aggregateNode->getChildNode(0)->getAsTyped()->getType();
+                return (argType.isScalar() || argType.isVector()) &&
+                       argType.getBasicType() == EbtFloat;
+            }();
+
+            if (isFtoi)
+            {
+                mOut << "ANGLE_ftoi<";
+                emitType(retType, etConfig);
+                mOut << ">";
+            }
+            else
+            {
+                emitType(retType, etConfig);
+            }
             emitArgList("(", ")");
         }
 
@@ -2375,6 +2444,26 @@ void GenMetalTraverser::emitCloseBrace()
     --mIndentLevel;
     emitIndentation();
     mOut << "}";
+}
+
+void GenMetalTraverser::emitForwardProgressStore()
+{
+    // https://eel.is/c++draft/intro.progress
+    // "The implementation may assume that any thread will eventually do one of the following:""
+    //  - ...
+    //  - "perform an access through a volatile glvalue"
+    // Emit a volatile variable which all loops in the stack will access.
+    emitIndentation();
+    mOut << "volatile bool ANGLE_p;\n";
+}
+
+void GenMetalTraverser::emitForwardProgressSignal()
+{
+    // Emit a read though the volatile variable. This marks the loop as making forward progress even
+    // if the compiler can otherwise analyze it to be infinite. This ensures that the loop
+    // has defined behavior.
+    emitIndentation();
+    mOut << "(void) ANGLE_p;\n";
 }
 
 static bool RequiresSemicolonTerminator(TIntermNode &node)
@@ -2578,6 +2667,8 @@ bool GenMetalTraverser::visitForLoop(TIntermLoop *loopNode)
     TIntermTyped *condNode = loopNode->getCondition();
     TIntermTyped *exprNode = loopNode->getExpression();
 
+    ScopedForwardProgressStore scopedProgress(*this);
+
     mOut << "for (";
 
     if (initNode)
@@ -2620,6 +2711,7 @@ bool GenMetalTraverser::visitWhileLoop(TIntermLoop *loopNode)
     ASSERT(condNode);
     ASSERT(!initNode && !exprNode);
 
+    ScopedForwardProgressStore scopedProgress(*this);
     emitIndentation();
     mOut << "while (";
     condNode->traverse(this);
@@ -2639,6 +2731,7 @@ bool GenMetalTraverser::visitDoWhileLoop(TIntermLoop *loopNode)
     ASSERT(condNode);
     ASSERT(!initNode && !exprNode);
 
+    ScopedForwardProgressStore scopedProgress(*this);
     emitIndentation();
     mOut << "do\n";
     emitLoopBody(loopNode->getBody());

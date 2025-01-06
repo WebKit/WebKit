@@ -53,15 +53,10 @@ public:
     static RefPtr<WebGLProgram> create(WebGLRenderingContextBase&);
     virtual ~WebGLProgram();
 
-    static HashMap<WebGLProgram*, WebGLRenderingContextBase*>& instances() WTF_REQUIRES_LOCK(instancesLock());
+    static UncheckedKeyHashMap<WebGLProgram*, WebGLRenderingContextBase*>& instances() WTF_REQUIRES_LOCK(instancesLock());
     static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
     void contextDestroyed() final;
-
-    unsigned numActiveAttribLocations();
-    GCGLint getActiveAttribLocation(GCGLuint index);
-
-    bool isUsingVertexAttrib0();
 
     bool getLinkStatus();
 
@@ -97,12 +92,9 @@ private:
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
-    void cacheActiveAttribLocations(GraphicsContextGL*);
     void cacheInfoIfNeeded();
 
     static Lock s_instancesLock;
-
-    Vector<GCGLint> m_activeAttribLocations;
 
     GCGLint m_linkStatus { 0 };
 

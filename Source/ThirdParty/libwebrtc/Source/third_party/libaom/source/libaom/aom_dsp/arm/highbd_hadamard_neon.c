@@ -1,6 +1,6 @@
 /*
- *  Copyright (c) 2023 The WebM project authors. All Rights Reserved.
- *  Copyright (c) 2023, Alliance for Open Media. All Rights Reserved.
+ * Copyright (c) 2023 The WebM project authors. All rights reserved.
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  *  This source code is subject to the terms of the BSD 2 Clause License and
  *  the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -18,7 +18,7 @@
 #include "aom_dsp/arm/sum_neon.h"
 #include "aom_ports/mem.h"
 
-static INLINE void hadamard_highbd_col8_first_pass(int16x8_t *a0, int16x8_t *a1,
+static inline void hadamard_highbd_col8_first_pass(int16x8_t *a0, int16x8_t *a1,
                                                    int16x8_t *a2, int16x8_t *a3,
                                                    int16x8_t *a4, int16x8_t *a5,
                                                    int16x8_t *a6,
@@ -51,7 +51,7 @@ static INLINE void hadamard_highbd_col8_first_pass(int16x8_t *a0, int16x8_t *a1,
   *a5 = vsubq_s16(c3, c7);
 }
 
-static INLINE void hadamard_highbd_col4_second_pass(int16x4_t a0, int16x4_t a1,
+static inline void hadamard_highbd_col4_second_pass(int16x4_t a0, int16x4_t a1,
                                                     int16x4_t a2, int16x4_t a3,
                                                     int16x4_t a4, int16x4_t a5,
                                                     int16x4_t a6, int16x4_t a7,

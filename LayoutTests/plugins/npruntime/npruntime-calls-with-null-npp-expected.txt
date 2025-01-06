@@ -1,4 +1,0 @@
-
-Test that calling various NPRuntime related NPN_ functions doesn't crash.
-
-SUCCESS!

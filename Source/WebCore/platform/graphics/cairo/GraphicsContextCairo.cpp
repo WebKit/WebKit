@@ -51,7 +51,7 @@
 #endif
 
 #if USE(THEME_ADWAITA)
-#include "ThemeAdwaita.h"
+#include "Adwaita.h"
 #endif
 
 namespace WebCore {
@@ -181,13 +181,13 @@ void GraphicsContextCairo::strokePath(const Path& path)
     Cairo::strokePath(*this, path, Cairo::StrokeSource(state), Cairo::ShadowState(state));
 }
 
-void GraphicsContextCairo::fillRect(const FloatRect& rect)
+void GraphicsContextCairo::fillRect(const FloatRect& rect, RequiresClipToRect)
 {
     auto& state = this->state();
     Cairo::fillRect(*this, rect, Cairo::FillSource(state), Cairo::ShadowState(state));
 }
 
-void GraphicsContextCairo::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+void GraphicsContextCairo::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect)
 {
     auto& state = this->state();
     Cairo::fillRect(*this, rect, Cairo::FillSource(state, gradient, gradientSpaceTransform), Cairo::ShadowState(state));
@@ -227,7 +227,7 @@ void GraphicsContextCairo::clipToImageBuffer(ImageBuffer& buffer, const FloatRec
 void GraphicsContextCairo::drawFocusRing(const Path& path, float outlineWidth, const Color& color)
 {
 #if USE(THEME_ADWAITA)
-    ThemeAdwaita::paintFocus(*this, path, color);
+    Adwaita::paintFocus(*this, path, color);
     UNUSED_PARAM(outlineWidth);
     return;
 #else
@@ -238,7 +238,7 @@ void GraphicsContextCairo::drawFocusRing(const Path& path, float outlineWidth, c
 void GraphicsContextCairo::drawFocusRing(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
 #if USE(THEME_ADWAITA)
-    ThemeAdwaita::paintFocus(*this, rects, color);
+    Adwaita::paintFocus(*this, rects, color);
     UNUSED_PARAM(outlineOffset);
     UNUSED_PARAM(outlineWidth);
     return;
@@ -272,16 +272,6 @@ void GraphicsContextCairo::didUpdateState(GraphicsContextState& state)
 
     if (state.changes().contains(GraphicsContextState::Change::StrokeStyle))
         Cairo::State::setStrokeStyle(*this, state.strokeStyle());
-
-    // FIXME: m_state should not be changed to flip the shadow offset. This can happen when the shadow is applied to the platform context.
-    if (state.changes().contains(GraphicsContextState::Change::DropShadow)) {
-        auto dropShadow = state.dropShadow();
-        if (dropShadow && state.shadowsIgnoreTransforms()) {
-            // Meaning that this graphics context is associated with a CanvasRenderingContext
-            // We flip the height since CG and HTML5 Canvas have opposite Y axis
-            m_state.m_dropShadow = GraphicsDropShadow { { dropShadow->offset.width(), -dropShadow->offset.height() }, dropShadow->radius, dropShadow->color, dropShadow->radiusMode };
-        }
-    }
 
     if (state.changes().contains(GraphicsContextState::Change::CompositeMode))
         Cairo::State::setCompositeOperation(*this, state.compositeMode().operation, state.compositeMode().blendMode);

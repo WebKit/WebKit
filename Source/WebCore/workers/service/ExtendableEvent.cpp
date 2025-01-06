@@ -30,11 +30,11 @@
 #include "JSDOMPromise.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/Microtask.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ExtendableEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ExtendableEvent);
 
 ExtendableEvent::ExtendableEvent(enum EventInterfaceType eventInterface, const AtomString& type, const ExtendableEventInit& initializer, IsTrusted isTrusted)
     : Event(eventInterface, type, initializer, isTrusted)

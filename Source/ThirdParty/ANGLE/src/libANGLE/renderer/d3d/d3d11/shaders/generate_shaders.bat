@@ -59,9 +59,6 @@ call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGB_565_2D   ps_4_0 compiled\mult
 call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGBA_5551_2D ps_4_0 compiled\multiplyalpha_ftof_pm_rgba_5551_2d_ps.h %debug%
 call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGBA_5551_2D ps_4_0 compiled\multiplyalpha_ftof_um_rgba_5551_2d_ps.h %debug%
 
-call:BuildShader Clear11.hlsl           VS_Clear_FL9             vs_4_0_level_9_3  compiled\clear11_fl9vs.h             %debug%
-call:BuildShader Clear11.hlsl           PS_ClearFloat_FL9        ps_4_0_level_9_3  compiled\clearfloat11_fl9ps.h        %debug%
-
 call:BuildShader Clear11.hlsl           VS_Clear                 vs_4_0            compiled\clear11vs.h                 %debug%
 call:BuildShader Clear11.hlsl           VS_Multiview_Clear                 vs_4_0            compiled\clear11multiviewvs.h                 %debug%
 call:BuildShader Clear11.hlsl           GS_Multiview_Clear                 gs_4_0            compiled\clear11multiviewgs.h                 %debug%

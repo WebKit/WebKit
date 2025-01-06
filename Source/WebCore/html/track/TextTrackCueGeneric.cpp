@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,15 +39,16 @@
 #include "RenderObject.h"
 #include "ScriptExecutionContext.h"
 #include "StyleProperties.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCueGeneric);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCueGeneric);
 
 class TextTrackCueGenericBoxElement final : public VTTCueBox {
-    WTF_MAKE_ISO_ALLOCATED_INLINE(TextTrackCueGenericBoxElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextTrackCueGenericBoxElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackCueGenericBoxElement);
 public:
     static Ref<TextTrackCueGenericBoxElement> create(Document&, TextTrackCueGeneric&);
     
@@ -56,6 +57,8 @@ public:
 private:
     TextTrackCueGenericBoxElement(Document&, VTTCue&);
 };
+
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCueGenericBoxElement);
 
 Ref<TextTrackCueGenericBoxElement> TextTrackCueGenericBoxElement::create(Document& document, TextTrackCueGeneric& cue)
 {

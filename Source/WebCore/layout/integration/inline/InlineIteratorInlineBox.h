@@ -39,7 +39,7 @@ public:
 
     const RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(Box::renderer()); }
 
-    std::pair<bool, bool> hasClosedLeftAndRightEdge() const;
+    RectEdges<bool> closedEdges() const;
 
     // FIXME: Remove. For intermediate porting steps only.
     const LegacyInlineFlowBox* legacyInlineBox() const { return downcast<LegacyInlineFlowBox>(Box::legacyInlineBox()); }
@@ -51,11 +51,13 @@ public:
     LeafBoxIterator firstLeafBox() const;
     LeafBoxIterator lastLeafBox() const;
     LeafBoxIterator endLeafBox() const;
+
+    IteratorRange<BoxIterator> descendants() const;
 };
 
 class InlineBoxIterator : public BoxIterator {
 public:
-    InlineBoxIterator() { }
+    InlineBoxIterator() = default;
     InlineBoxIterator(Box::PathVariant&&);
     InlineBoxIterator(const Box&);
 

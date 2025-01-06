@@ -36,7 +36,7 @@ TEST(MatchedFilterLagAggregator,
   MatchedFilterLagAggregator aggregator(&data_dumper, /*max_filter_lag=*/100,
                                         config.delay);
 
-  absl::optional<DelayEstimate> aggregated_lag;
+  std::optional<DelayEstimate> aggregated_lag;
   for (size_t k = 0; k < kNumLagsBeforeDetection; ++k) {
     aggregated_lag = aggregator.Aggregate(
         MatchedFilter::LagEstimate(/*lag=*/10, /*pre_echo_lag=*/10));
@@ -66,7 +66,7 @@ TEST(MatchedFilterLagAggregator,
   MatchedFilterLagAggregator aggregator(&data_dumper, /*max_filter_lag=*/kLag,
                                         config.delay);
   for (size_t k = 0; k < kNumLagsBeforeDetection * 10; ++k) {
-    absl::optional<DelayEstimate> aggregated_lag = aggregator.Aggregate(
+    std::optional<DelayEstimate> aggregated_lag = aggregator.Aggregate(
         MatchedFilter::LagEstimate(/*lag=*/kLag, /*pre_echo_lag=*/kLag));
     EXPECT_FALSE(aggregated_lag);
     EXPECT_EQ(kLag, aggregated_lag->delay);
@@ -84,7 +84,7 @@ TEST(MatchedFilterLagAggregator, DISABLED_PersistentAggregatedLag) {
   std::vector<MatchedFilter::LagEstimate> lag_estimates(1);
   MatchedFilterLagAggregator aggregator(&data_dumper, std::max(kLag1, kLag2),
                                         config.delay);
-  absl::optional<DelayEstimate> aggregated_lag;
+  std::optional<DelayEstimate> aggregated_lag;
   for (size_t k = 0; k < kNumLagsBeforeDetection; ++k) {
     aggregated_lag = aggregator.Aggregate(
         MatchedFilter::LagEstimate(/*lag=*/kLag1, /*pre_echo_lag=*/kLag1));

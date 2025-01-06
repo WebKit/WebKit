@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<style>
+@font-face {
+    font-family: Ahem; src: url(Ahem.ttf);
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    font-size: 16px;
+    font-family: Ahem;
+    -webkit-text-size-adjust: none;
+}
+
+iframe {
+    width: 200px;
+    height: 200px;
+    border: 1px solid black;
+}
+</style>
+<script>
+subframeLoaded = false;
+
+addEventListener("message", event => {
+    if (event.data === "subframeLoaded")
+        subframeLoaded = true;
+});
+
+addEventListener("load", () => {
+    const subframe = document.querySelector("iframe");
+    subframe.src = "nested-frames.html";
+});
+</script>
+</head>
+<body>
+    <p>Here's to the crazy ones.</p>
+    <iframe></iframe>
+</body>
+</html>

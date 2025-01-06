@@ -24,6 +24,7 @@
 
 [RValue] struct WebKit::ModelProcessConnectionParameters {
     WebCore::ProcessIdentity webProcessIdentity;
+    WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess;
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting;
 #endif

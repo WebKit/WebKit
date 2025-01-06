@@ -29,6 +29,7 @@
 #include <JavaScriptCore/DeleteAllCodeEffort.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class VM;
@@ -37,12 +38,16 @@ class VM;
 namespace WebCore {
 
 class GCController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GCController);
     WTF_MAKE_NONCOPYABLE(GCController);
     friend class WTF::NeverDestroyed<GCController>;
 public:
     WEBCORE_EXPORT static GCController& singleton();
     WEBCORE_EXPORT static void dumpHeapForVM(JSC::VM&);
+
+    // Do nothing since this is a singleton.
+    void ref() const { }
+    void deref() const { }
 
     WEBCORE_EXPORT void garbageCollectSoon();
     WEBCORE_EXPORT void garbageCollectNow(); // It's better to call garbageCollectSoon, unless you have a specific reason not to.
@@ -54,10 +59,10 @@ public:
     WEBCORE_EXPORT void deleteAllCode(JSC::DeleteAllCodeEffort);
     WEBCORE_EXPORT void deleteAllLinkedCode(JSC::DeleteAllCodeEffort);
 
+    WEBCORE_EXPORT void dumpHeap();
+
 private:
     GCController(); // Use singleton() instead.
-
-    void dumpHeap();
 
     void gcTimerFired();
     Timer m_GCTimer;

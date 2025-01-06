@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,5 +24,5 @@
  */
 
 partial interface Document {
-    [EnabledBySetting=ViewTransitionsEnabled] ViewTransition startViewTransition(optional ViewTransitionUpdateCallback? updateCallback = null);
+    [EnabledBySetting=ViewTransitionsEnabled] ViewTransition startViewTransition(optional (ViewTransitionUpdateCallback or StartViewTransitionOptions) callbackOptions = {});
 };

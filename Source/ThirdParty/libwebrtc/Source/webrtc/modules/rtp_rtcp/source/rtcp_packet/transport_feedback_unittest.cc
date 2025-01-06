@@ -12,6 +12,7 @@
 
 #include <limits>
 #include <memory>
+#include <optional>
 #include <utility>
 
 #include "api/array_view.h"
@@ -169,7 +170,7 @@ class FeedbackTester {
   std::vector<TimeDelta> expected_deltas_;
   size_t expected_size_;
   TimeDelta default_delta_;
-  absl::optional<TransportFeedback> feedback_;
+  std::optional<TransportFeedback> feedback_;
   rtc::Buffer serialized_;
   bool include_timestamps_;
 };

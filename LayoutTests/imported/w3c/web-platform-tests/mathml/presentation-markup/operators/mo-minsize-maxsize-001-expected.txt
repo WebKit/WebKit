@@ -1,10 +1,10 @@
 
-FAIL minsize < 0 is treated as 0 assert_approx_equals: expected 125 +/- 1 but got 25
+PASS minsize < 0 is treated as 0
 PASS maxsize < minsize is treated as maxsize = minsize
 PASS minsize < maxsize < 0 is treated as maxsize = minsize = 0
 PASS target size = 0 is treated as Tascent = Tdescent = minsize/2
-FAIL minsize/maxsize percentages are relative to the target size assert_approx_equals: percent minsize expected 300 +/- 1 but got 25
-FAIL default minsize/maxsize percentages assert_approx_equals: default maxsize is infinity expected 7500 +/- 1 but got 25
+FAIL minsize/maxsize percentages are relative to the unstretched size assert_approx_equals: percent maxsize expected 75 +/- 1 but got 150
+FAIL default minsize/maxsize values assert_approx_equals: default minsize is not 1em expected 12.5 +/- 1 but got 25
 ⥯
 
 ⥯
@@ -18,6 +18,8 @@ FAIL default minsize/maxsize percentages assert_approx_equals: default maxsize i
 ⥯
 
 ⥯
+
+↨
 
 ⥯
 

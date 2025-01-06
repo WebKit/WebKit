@@ -123,9 +123,9 @@ void DirectTransport::Start() {
 }
 
 void DirectTransport::ProcessPackets() {
-  absl::optional<int64_t> initial_delay_ms =
+  std::optional<int64_t> initial_delay_ms =
       fake_network_->TimeUntilNextProcess();
-  if (initial_delay_ms == absl::nullopt)
+  if (initial_delay_ms == std::nullopt)
     return;
 
   next_process_task_ = RepeatingTaskHandle::DelayedStart(

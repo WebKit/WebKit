@@ -26,14 +26,14 @@
 #include "config.h"
 #include "APINavigation.h"
 
-#include "ProvisionalFrameProxy.h"
+#include "WebBackForwardListFrameItem.h"
 #include "WebBackForwardListItem.h"
-#include "WebNavigationState.h"
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/DebugUtilities.h>
 #include <wtf/HexNumber.h>
+#include <wtf/text/MakeString.h>
 
 namespace API {
 using namespace WebCore;
@@ -47,53 +47,53 @@ SubstituteData::SubstituteData(Vector<uint8_t>&& content, const ResourceResponse
 }
 
 
-Navigation::Navigation(WebNavigationState& state, WebCore::ProcessIdentifier processID)
-    : m_navigationID(state.generateNavigationID())
+Navigation::Navigation(WebCore::ProcessIdentifier processID)
+    : m_navigationID(WebCore::NavigationIdentifier::generate())
     , m_processID(processID)
-    , m_clientNavigationActivity(navigationActivityTimeout)
+    , m_clientNavigationActivity(ProcessThrottler::TimedActivity::create(navigationActivityTimeout))
 {
 }
 
-Navigation::Navigation(WebNavigationState& state, WebCore::ProcessIdentifier processID, RefPtr<WebBackForwardListItem>&& currentAndTargetItem)
-    : m_navigationID(state.generateNavigationID())
+Navigation::Navigation(WebCore::ProcessIdentifier processID, RefPtr<WebBackForwardListItem>&& currentAndTargetItem)
+    : m_navigationID(WebCore::NavigationIdentifier::generate())
     , m_processID(processID)
     , m_reloadItem(WTFMove(currentAndTargetItem))
-    , m_clientNavigationActivity(navigationActivityTimeout)
+    , m_clientNavigationActivity(ProcessThrottler::TimedActivity::create(navigationActivityTimeout))
 {
 }
 
-Navigation::Navigation(WebNavigationState& state, WebCore::ProcessIdentifier processID, WebCore::ResourceRequest&& request, RefPtr<WebBackForwardListItem>&& fromItem)
-    : m_navigationID(state.generateNavigationID())
+Navigation::Navigation(WebCore::ProcessIdentifier processID, WebCore::ResourceRequest&& request, RefPtr<WebBackForwardListItem>&& fromItem)
+    : m_navigationID(WebCore::NavigationIdentifier::generate())
     , m_processID(processID)
     , m_originalRequest(WTFMove(request))
     , m_currentRequest(m_originalRequest)
     , m_redirectChain { m_originalRequest.url() }
     , m_fromItem(WTFMove(fromItem))
-    , m_clientNavigationActivity(navigationActivityTimeout)
+    , m_clientNavigationActivity(ProcessThrottler::TimedActivity::create(navigationActivityTimeout))
 {
 }
 
-Navigation::Navigation(WebNavigationState& state, WebCore::ProcessIdentifier processID, Ref<WebBackForwardListItem>&& targetItem, RefPtr<WebBackForwardListItem>&& fromItem, FrameLoadType backForwardFrameLoadType)
-    : m_navigationID(state.generateNavigationID())
+Navigation::Navigation(WebCore::ProcessIdentifier processID, Ref<WebBackForwardListFrameItem>&& targetFrameItem, RefPtr<WebBackForwardListItem>&& fromItem, FrameLoadType backForwardFrameLoadType)
+    : m_navigationID(WebCore::NavigationIdentifier::generate())
     , m_processID(processID)
-    , m_originalRequest(targetItem->url())
+    , m_originalRequest(targetFrameItem->protectedMainFrame()->url())
     , m_currentRequest(m_originalRequest)
-    , m_targetItem(WTFMove(targetItem))
+    , m_targetFrameItem(WTFMove(targetFrameItem))
     , m_fromItem(WTFMove(fromItem))
     , m_backForwardFrameLoadType(backForwardFrameLoadType)
-    , m_clientNavigationActivity(navigationActivityTimeout)
+    , m_clientNavigationActivity(ProcessThrottler::TimedActivity::create(navigationActivityTimeout))
 {
 }
 
-Navigation::Navigation(WebKit::WebNavigationState& state, WebCore::ProcessIdentifier processID, std::unique_ptr<SubstituteData>&& substituteData)
-    : Navigation(state, processID)
+Navigation::Navigation(WebCore::ProcessIdentifier processID, std::unique_ptr<SubstituteData>&& substituteData)
+    : Navigation(processID)
 {
     ASSERT(substituteData);
     m_substituteData = WTFMove(substituteData);
 }
 
-Navigation::Navigation(WebKit::WebNavigationState& state, WebCore::ProcessIdentifier processID, WebCore::ResourceRequest&& simulatedRequest, std::unique_ptr<SubstituteData>&& substituteData, RefPtr<WebKit::WebBackForwardListItem>&& fromItem)
-    : Navigation(state, processID, WTFMove(simulatedRequest), WTFMove(fromItem))
+Navigation::Navigation(WebCore::ProcessIdentifier processID, WebCore::ResourceRequest&& simulatedRequest, std::unique_ptr<SubstituteData>&& substituteData, RefPtr<WebKit::WebBackForwardListItem>&& fromItem)
+    : Navigation(processID, WTFMove(simulatedRequest), WTFMove(fromItem))
 {
     ASSERT(substituteData);
     m_substituteData = WTFMove(substituteData);
@@ -121,16 +121,17 @@ bool Navigation::currentRequestIsCrossSiteRedirect() const
         && RegistrableDomain(m_lastNavigationAction.redirectResponse.url()) != RegistrableDomain(m_currentRequest.url());
 }
 
-void Navigation::setProvisionalFrame(WebKit::ProvisionalFrameProxy* provisionalFrame)
+WebKit::WebBackForwardListItem* Navigation::targetItem() const
 {
-    m_provisionalFrame = provisionalFrame;
+    return m_targetFrameItem ? m_targetFrameItem->backForwardListItem() : nullptr;
 }
 
 #if !LOG_DISABLED
 
 WTF::String Navigation::loggingString() const
 {
-    return makeString("Most recent URL: "_s, m_currentRequest.url().string(), " Back/forward list item URL: '"_s, m_targetItem ? m_targetItem->url() : WTF::String { }, "' (0x"_s, hex(reinterpret_cast<uintptr_t>(m_targetItem.get())), ')');
+    RefPtr targetItem = this->targetItem();
+    return makeString("Most recent URL: "_s, m_currentRequest.url().string(), " Back/forward list item URL: '"_s, targetItem ? targetItem->url() : WTF::String { }, "' (0x"_s, hex(reinterpret_cast<uintptr_t>(targetItem.get())), ')');
 }
 
 #endif

@@ -13,9 +13,9 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <set>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/sequence_checker.h"
 #include "modules/include/module_common_types.h"
@@ -75,11 +75,11 @@ class LossNotificationController {
       RTC_GUARDED_BY(sequence_checker_);
 
   // Tracked to avoid processing repeated frames (buggy/malicious remote).
-  absl::optional<int64_t> last_received_frame_id_
+  std::optional<int64_t> last_received_frame_id_
       RTC_GUARDED_BY(sequence_checker_);
 
   // Tracked to avoid processing repeated packets.
-  absl::optional<uint16_t> last_received_seq_num_
+  std::optional<uint16_t> last_received_seq_num_
       RTC_GUARDED_BY(sequence_checker_);
 
   // Tracked in order to correctly report the potential-decodability of
@@ -95,7 +95,7 @@ class LossNotificationController {
     explicit FrameInfo(uint16_t first_seq_num) : first_seq_num(first_seq_num) {}
     uint16_t first_seq_num;
   };
-  absl::optional<FrameInfo> last_decodable_non_discardable_
+  std::optional<FrameInfo> last_decodable_non_discardable_
       RTC_GUARDED_BY(sequence_checker_);
 
   // Track which frames are decodable. Later frames are also decodable if

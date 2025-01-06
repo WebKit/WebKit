@@ -398,9 +398,9 @@ static bool StartHandshaker(ScopedProcess *out, ScopedFD *out_control,
   if (is_resume) {
     args.push_back(kResumeFlag);
   }
-  // config->argv omits argv[0].
-  for (int j = 0; j < config->argc; ++j) {
-    args.push_back(config->argv[j]);
+  // config->handshaker_args omits argv[0].
+  for (const char *arg : config->handshaker_args) {
+    args.push_back(arg);
   }
   args.push_back(nullptr);
 

@@ -12,8 +12,8 @@
 #define MODULES_VIDEO_CODING_TIMING_TIMING_H_
 
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "api/units/time_delta.h"
 #include "api/video/video_frame.h"
@@ -120,10 +120,10 @@ class VCMTiming {
   VideoDelayTimings GetTimings() const;
 
   void SetTimingFrameInfo(const TimingFrameInfo& info);
-  absl::optional<TimingFrameInfo> GetTimingFrameInfo();
+  std::optional<TimingFrameInfo> GetTimingFrameInfo();
 
   void SetMaxCompositionDelayInFrames(
-      absl::optional<int> max_composition_delay_in_frames);
+      std::optional<int> max_composition_delay_in_frames);
 
   VideoFrame::RenderParameters RenderParameters() const;
 
@@ -156,9 +156,9 @@ class VCMTiming {
   TimeDelta jitter_delay_ RTC_GUARDED_BY(mutex_);
   TimeDelta current_delay_ RTC_GUARDED_BY(mutex_);
   uint32_t prev_frame_timestamp_ RTC_GUARDED_BY(mutex_);
-  absl::optional<TimingFrameInfo> timing_frame_info_ RTC_GUARDED_BY(mutex_);
+  std::optional<TimingFrameInfo> timing_frame_info_ RTC_GUARDED_BY(mutex_);
   size_t num_decoded_frames_ RTC_GUARDED_BY(mutex_);
-  absl::optional<int> max_composition_delay_in_frames_ RTC_GUARDED_BY(mutex_);
+  std::optional<int> max_composition_delay_in_frames_ RTC_GUARDED_BY(mutex_);
   // Set by the field trial WebRTC-ZeroPlayoutDelay. The parameter min_pacing
   // determines the minimum delay between frames scheduled for decoding that is
   // used when min playout delay=0 and max playout delay>=0.

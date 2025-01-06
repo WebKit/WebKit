@@ -50,7 +50,7 @@ class FftCheckerCallback : public webrtc::LappedTransform::Callback {
                          size_t in_channels,
                          size_t frames,
                          size_t out_channels,
-                         complex<float>* const* out_block) override {
+                         complex<float>* const* /* out_block */) override {
     RTC_CHECK_EQ(in_channels, out_channels);
 
     size_t full_length = (frames - 1) * 2;

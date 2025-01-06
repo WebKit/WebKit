@@ -103,11 +103,11 @@ ICDFilterFunc GetFilterForICD(vk::ICD preferredICD)
 
 }  // namespace
 
-// If we're loading the validation layers, we could be running from any random directory.
+// If we're loading the vulkan layers, we could be running from any random directory.
 // Change to the executable directory so we can find the layers, then change back to the
 // previous directory to be safe we don't disrupt the application.
-ScopedVkLoaderEnvironment::ScopedVkLoaderEnvironment(bool enableValidationLayers, vk::ICD icd)
-    : mEnableValidationLayers(enableValidationLayers),
+ScopedVkLoaderEnvironment::ScopedVkLoaderEnvironment(bool enableDebugLayers, vk::ICD icd)
+    : mEnableDebugLayers(enableDebugLayers),
       mICD(icd),
       mChangedCWD(false),
       mChangedICDEnv(false),
@@ -135,14 +135,14 @@ ScopedVkLoaderEnvironment::ScopedVkLoaderEnvironment(bool enableValidationLayers
 #    endif  // defined(ANGLE_VK_SWIFTSHADER_ICD_JSON)
 
 #    if !defined(ANGLE_PLATFORM_MACOS)
-    if (mEnableValidationLayers || icd != vk::ICD::Default)
+    if (mEnableDebugLayers || icd != vk::ICD::Default)
     {
         const auto &cwd = angle::GetCWD();
         if (!cwd.valid())
         {
             ERR() << "Error getting CWD for Vulkan layers init.";
-            mEnableValidationLayers = false;
-            mICD                    = vk::ICD::Default;
+            mEnableDebugLayers = false;
+            mICD               = vk::ICD::Default;
         }
         else
         {
@@ -152,21 +152,21 @@ ScopedVkLoaderEnvironment::ScopedVkLoaderEnvironment(bool enableValidationLayers
             if (!mChangedCWD)
             {
                 ERR() << "Error setting CWD for Vulkan layers init.";
-                mEnableValidationLayers = false;
-                mICD                    = vk::ICD::Default;
+                mEnableDebugLayers = false;
+                mICD               = vk::ICD::Default;
             }
         }
     }
 #    endif  // defined(ANGLE_PLATFORM_MACOS)
 
     // Override environment variable to use the ANGLE layers.
-    if (mEnableValidationLayers)
+    if (mEnableDebugLayers)
     {
 #    if defined(ANGLE_VK_LAYERS_DIR)
         if (!angle::PrependPathToEnvironmentVar(kLoaderLayersPathEnv, ANGLE_VK_LAYERS_DIR))
         {
             ERR() << "Error setting environment for Vulkan layers init.";
-            mEnableValidationLayers = false;
+            mEnableDebugLayers = false;
         }
 #    endif  // defined(ANGLE_VK_LAYERS_DIR)
     }
@@ -235,6 +235,14 @@ void ChoosePhysicalDevice(PFN_vkGetPhysicalDeviceProperties pGetPhysicalDevicePr
     for (const VkPhysicalDevice &physicalDevice : physicalDevices)
     {
         pGetPhysicalDeviceProperties(physicalDevice, physicalDevicePropertiesOut);
+
+        if (physicalDevicePropertiesOut->apiVersion < kMinimumVulkanAPIVersion)
+        {
+            // Skip any devices that don't support our minimum API version. This
+            // takes precedence over all other considerations.
+            continue;
+        }
+
         if (filter(*physicalDevicePropertiesOut))
         {
             *physicalDeviceOut = physicalDevice;
@@ -273,6 +281,14 @@ void ChoosePhysicalDevice(PFN_vkGetPhysicalDeviceProperties pGetPhysicalDevicePr
     for (const VkPhysicalDevice &physicalDevice : physicalDevices)
     {
         pGetPhysicalDeviceProperties(physicalDevice, physicalDevicePropertiesOut);
+
+        if (physicalDevicePropertiesOut->apiVersion < kMinimumVulkanAPIVersion)
+        {
+            // Skip any devices that don't support our minimum API version. This
+            // takes precedence over all other considerations.
+            continue;
+        }
+
         // If discrete GPU exists, uses it by default.
         if (physicalDevicePropertiesOut->deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
         {

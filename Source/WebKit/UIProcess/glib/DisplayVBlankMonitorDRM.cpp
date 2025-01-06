@@ -55,21 +55,23 @@
 #endif
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
+
 namespace WebKit {
 
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
-static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd, PlatformMonitor* monitor)
+static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd, PlatformScreen* screen)
 {
     drmModeRes* resources = drmModeGetResources(fd);
     if (!resources)
         return std::nullopt;
 
 #if PLATFORM(GTK)
-    uint32_t widthMM = gdk_monitor_get_width_mm(monitor);
-    uint32_t heightMM = gdk_monitor_get_height_mm(monitor);
+    uint32_t widthMM = gdk_monitor_get_width_mm(screen);
+    uint32_t heightMM = gdk_monitor_get_height_mm(screen);
 #elif PLATFORM(WPE)
-    uint32_t widthMM = wpe_monitor_get_physical_width(monitor);
-    uint32_t heightMM = wpe_monitor_get_physical_height(monitor);
+    uint32_t widthMM = wpe_screen_get_physical_width(screen);
+    uint32_t heightMM = wpe_screen_get_physical_height(screen);
 #endif
 
     // First find connectors matching the size.
@@ -104,9 +106,9 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd, PlatformMon
         for (int i = 0; i < resources->count_crtcs; ++i) {
             if (resources->crtcs[i] == encoder->crtc_id) {
 #if PLATFORM(GTK)
-                auto refreshRate = gdk_monitor_get_refresh_rate(monitor);
+                auto refreshRate = gdk_monitor_get_refresh_rate(screen);
 #elif PLATFORM(WPE)
-                auto refreshRate = wpe_monitor_get_refresh_rate(monitor);
+                auto refreshRate = wpe_screen_get_refresh_rate(screen);
 #endif
                 returnValue = { i, refreshRate };
                 break;
@@ -182,6 +184,46 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd)
 }
 #endif
 
+struct DrmNodeWithCrtc {
+    UnixFileDescriptor drmNodeFd;
+    std::pair<uint32_t, uint32_t> crtcInfo;
+};
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+static std::optional<DrmNodeWithCrtc> findDrmNodeWithCrtc(PlatformScreen* screen = nullptr)
+#else
+static std::optional<DrmNodeWithCrtc> findDrmNodeWithCrtc()
+#endif
+{
+    drmDevicePtr devices[64];
+    const int devicesNum = drmGetDevices2(0, devices, std::size(devices));
+    if (devicesNum <= 0)
+        return { };
+    for (int i = 0; i < devicesNum; i++) {
+        if (!(devices[i]->available_nodes & (1 << DRM_NODE_PRIMARY)))
+            continue;
+        auto fd = UnixFileDescriptor { open(devices[i]->nodes[DRM_NODE_PRIMARY], O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+        if (!fd)
+            continue;
+        std::optional<std::pair<uint32_t, uint32_t>> crtcInfo;
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+        if (screen)
+            crtcInfo = findCrtc(fd.value(), screen);
+        else
+            crtcInfo = findCrtc(fd.value());
+#elif PLATFORM(GTK)
+        crtcInfo = findCrtc(fd.value(), screen);
+#else
+        crtcInfo = findCrtc(fd.value());
+#endif
+        if (crtcInfo) {
+            drmFreeDevices(devices, devicesNum);
+            return DrmNodeWithCrtc { WTFMove(fd), *crtcInfo };
+        }
+    }
+    drmFreeDevices(devices, devicesNum);
+    return { };
+}
+
 static int crtcBitmaskForIndex(uint32_t crtcIndex)
 {
     if (crtcIndex > 1)
@@ -198,81 +240,78 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
 #endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
-    PlatformMonitor* monitor = nullptr;
+    PlatformScreen* screen = nullptr;
     if (usingWPEPlatformAPI) {
-        monitor = ScreenManager::singleton().monitor(displayID);
-        if (!monitor) {
-            RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no monitor found", displayID);
+        screen = ScreenManager::singleton().screen(displayID);
+        if (!screen) {
+            RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no screen found", displayID);
             return nullptr;
         }
     }
 #endif
 
 #if PLATFORM(GTK)
-    auto* monitor = ScreenManager::singleton().monitor(displayID);
-    if (!monitor) {
-        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no monitor found", displayID);
+    auto* screen = ScreenManager::singleton().screen(displayID);
+    if (!screen) {
+        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no screen found", displayID);
         return nullptr;
     }
 #endif
 
+    std::optional<DrmNodeWithCrtc> drmNodeWithCrtcInfo;
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
-    String filename;
-    if (usingWPEPlatformAPI)
-        filename = String::fromUTF8(wpe_display_get_drm_device(wpe_display_get_primary()));
-    else
-        filename = WebCore::PlatformDisplay::sharedDisplay().drmDeviceFile();
-#else
-    auto filename = WebCore::PlatformDisplay::sharedDisplay().drmDeviceFile();
-#endif
-    if (filename.isEmpty()) {
-        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no DRM device found", displayID);
-        return nullptr;
-    }
+#ifdef WPE_PLATFORM_DRM
+    if (usingWPEPlatformAPI && WPE_IS_SCREEN_DRM(screen)) {
+        String filename = String::fromUTF8(wpe_display_get_drm_device(wpe_display_get_primary()));
 
-    auto fd = UnixFileDescriptor { open(filename.utf8().data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
-    if (!fd) {
-        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: failed to open %s", displayID, filename.utf8().data());
-        return nullptr;
+        if (filename.isEmpty()) {
+            RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no DRM device found", displayID);
+            return nullptr;
+        }
+
+        UnixFileDescriptor fd = UnixFileDescriptor(open(filename.utf8().data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt);
+        if (!fd) {
+            RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: failed to open %s", displayID, filename.utf8().data());
+            return nullptr;
+        }
+
+        drmNodeWithCrtcInfo = DrmNodeWithCrtc { WTFMove(fd), { wpe_screen_drm_get_crtc_index(WPE_SCREEN_DRM(screen)), wpe_screen_get_refresh_rate(screen) } };
     }
+#endif
+#endif
 
 #if PLATFORM(GTK)
-    auto crtcInfo = findCrtc(fd.value(), monitor);
+    drmNodeWithCrtcInfo = findDrmNodeWithCrtc(screen);
 #elif PLATFORM(WPE)
 #if ENABLE(WPE_PLATFORM)
-    std::optional<std::pair<uint32_t, uint32_t>> crtcInfo;
     if (usingWPEPlatformAPI) {
-#ifdef WPE_PLATFORM_DRM
-        if (WPE_IS_MONITOR_DRM(monitor))
-            crtcInfo = { wpe_monitor_drm_get_crtc_index(WPE_MONITOR_DRM(monitor)), wpe_monitor_get_refresh_rate(monitor) };
-        else
-#endif
-            crtcInfo = findCrtc(fd.value(), monitor);
+        if (!drmNodeWithCrtcInfo)
+            drmNodeWithCrtcInfo = findDrmNodeWithCrtc(screen);
     } else
-        crtcInfo = findCrtc(fd.value());
+        drmNodeWithCrtcInfo = findDrmNodeWithCrtc();
 #else
-    auto crtcInfo = findCrtc(fd.value());
+    drmNodeWithCrtcInfo = findDrmNodeWithCrtc();
 #endif
 #endif
 
-    if (!crtcInfo) {
-        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no CRTC found", displayID);
+    if (!drmNodeWithCrtcInfo) {
+        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no drm node with CRTC found", displayID);
         return nullptr;
     }
 
-    auto crtcBitmask = crtcBitmaskForIndex(crtcInfo->first);
+    auto crtcBitmask = crtcBitmaskForIndex(drmNodeWithCrtcInfo->crtcInfo.first);
 
     drmVBlank vblank;
     vblank.request.type = static_cast<drmVBlankSeqType>(DRM_VBLANK_RELATIVE | crtcBitmask);
     vblank.request.sequence = 0;
     vblank.request.signal = 0;
-    auto ret = drmWaitVBlank(fd.value(), &vblank);
+    auto ret = drmWaitVBlank(drmNodeWithCrtcInfo->drmNodeFd.value(), &vblank);
     if (ret) {
         RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: drmWaitVBlank failed: %s", displayID, safeStrerror(-ret).data());
         return nullptr;
     }
 
-    return makeUnique<DisplayVBlankMonitorDRM>(crtcInfo->second / 1000, WTFMove(fd), crtcBitmask);
+    return makeUnique<DisplayVBlankMonitorDRM>(drmNodeWithCrtcInfo->crtcInfo.second / 1000, WTFMove(drmNodeWithCrtcInfo->drmNodeFd), crtcBitmask);
 }
 
 DisplayVBlankMonitorDRM::DisplayVBlankMonitorDRM(unsigned refreshRate, UnixFileDescriptor&& fd, int crtcBitmask)
@@ -290,9 +329,9 @@ bool DisplayVBlankMonitorDRM::waitForVBlank() const
     vblank.request.signal = 0;
     auto ret = drmWaitVBlank(m_fd.value(), &vblank);
     if (ret == -EPERM) {
-        // This can happen when the monitor is suspended and the web view hasn't noticed it.
+        // This can happen when the screen is suspended and the web view hasn't noticed it.
         // The display link should be stopped in those cases, but since it isn't, we can at
-        // least sleep for a while pretending the monitor is on.
+        // least sleep for a while pretending the screen is on.
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         return true;
     }
@@ -304,5 +343,7 @@ bool DisplayVBlankMonitorDRM::waitForVBlank() const
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(LIBDRM)

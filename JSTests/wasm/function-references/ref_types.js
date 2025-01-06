@@ -1,4 +1,3 @@
-//@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true")
 import * as assert from "../assert.js";
 import { instantiate } from "../wabt-wrapper.js";
 
@@ -88,12 +87,12 @@ async function testRefTypeParamCheck() {
     assert.throws(
       () => instance2.exports.f(null),
       TypeError,
-      "Funcref must be an exported wasm function"
+      "Argument value did not match the reference type"
     );
     assert.throws(
       () => instance2.exports.f(instance1.exports.f),
       TypeError,
-      "Argument function did not match the reference type"
+      "Argument value did not match the reference type"
     );
     instance3.exports.f(null);
   }
@@ -125,7 +124,7 @@ async function testRefGlobalCheck() {
   assert.throws(
     () => (instance1.exports.g.value = null),
     TypeError,
-    "Funcref must be an exported wasm function"
+    "Argument value did not match the reference type"
   );
 
   /*
@@ -141,12 +140,12 @@ async function testRefGlobalCheck() {
   assert.throws(
     () => (instance2.exports.g.value = null),
     TypeError,
-    "Funcref must be an exported wasm function"
+    "Argument value did not match the reference type"
   );
   assert.throws(
     () => (instance2.exports.g.value = providerInstance.exports.f),
     TypeError,
-    "Argument function did not match the reference type"
+    "Argument value did not match the reference type"
   );
 
   /*
@@ -238,7 +237,7 @@ async function testExternFuncrefNonNullCheck() {
     assert.throws(
       () => instance2.exports.f(null),
       TypeError,
-      "Funcref must be an exported wasm function"
+      "Argument value did not match the reference type"
     );
   }
 }
@@ -322,7 +321,7 @@ async function testWasmJSGlobals() {
   assert.throws(
     () => wasmGlobalFuncref.value = console.log,
     TypeError,
-    "Funcref must be an exported wasm function"
+    "Argument value did not match the reference type"
   );
 
   const wasmGlobalExtern = new WebAssembly.Global({value:'externref', mutable:true});
@@ -352,7 +351,7 @@ async function testRefTypesInTables() {
   assert.throws(
     () => wasmTableFuncref.set(0, console.log),
     TypeError,
-    "WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function"
+    "Argument value did not match the reference type"
   );
 
   const wasmTableExternref = new WebAssembly.Table({ initial: 1, maximum: 1, element: "externref" });

@@ -1,8 +1,6 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT
+PASS
   View transitions: null event.viewTransition when new page removes opt-in
   before pagereveal
- Test timed out
+
 

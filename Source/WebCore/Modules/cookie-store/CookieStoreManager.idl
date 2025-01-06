@@ -26,11 +26,11 @@
 // https://wicg.github.io/cookie-store/#cookiestoremanager
 
 [
-    EnabledBySetting=CookieStoreAPIEnabled&CookieStoreAPIServiceWorkerEnabled,
+    EnabledBySetting=CookieStoreAPIEnabled&CookieStoreManagerEnabled,
     Exposed=(ServiceWorker,Window),
     SecureContext
 ] interface CookieStoreManager {
     Promise<undefined> subscribe(sequence<CookieStoreGetOptions> subscriptions);
-    Promise<sequence<CookieStoreGetOptions>> getSubscriptions();
     Promise<undefined> unsubscribe(sequence<CookieStoreGetOptions> subscriptions);
+    Promise<sequence<CookieStoreGetOptions>> getSubscriptions();
 };

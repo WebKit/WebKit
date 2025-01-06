@@ -267,10 +267,11 @@ HTMLConstructionSite::HTMLConstructionSite(Document& document, OptionSet<ParserC
 {
 }
 
-HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, OptionSet<ParserContentPolicy> parserContentPolicy, unsigned maximumDOMTreeDepth)
+HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, OptionSet<ParserContentPolicy> parserContentPolicy, unsigned maximumDOMTreeDepth, CustomElementRegistry* registry)
     : m_document(fragment.document())
     , m_attachmentRoot(fragment)
     , m_parserContentPolicy(parserContentPolicy)
+    , m_registry(registry)
     , m_isParsingFragment(true)
     , m_redirectAttachToFosterParent(false)
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
@@ -319,7 +320,6 @@ void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomHTMLToken&& toke
     m_openElements.pushHTMLHtmlElement(HTMLStackItem(element.copyRef(), WTFMove(token)));
 
     executeQueuedTasks();
-    element->insertedByParser();
     dispatchDocumentElementAvailableIfNeeded();
 }
 
@@ -585,10 +585,11 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
 
 std::unique_ptr<CustomElementConstructionData> HTMLConstructionSite::insertHTMLElementOrFindCustomElementInterface(AtomHTMLToken&& token)
 {
-    JSCustomElementInterface* elementInterface = nullptr;
-    auto element = createHTMLElementOrFindCustomElementInterface(token, &elementInterface);
-    if (UNLIKELY(elementInterface))
-        return makeUnique<CustomElementConstructionData>(*elementInterface, token.name(), WTFMove(token.attributes()));
+    auto [element, elementInterface, registry] = createHTMLElementOrFindCustomElementInterface(token);
+    if (UNLIKELY(elementInterface)) {
+        RELEASE_ASSERT(registry);
+        return makeUnique<CustomElementConstructionData>(elementInterface.releaseNonNull(), registry.releaseNonNull(), token.name(), WTFMove(token.attributes()));
+    }
     attachLater(protectedCurrentNode(), *element);
     m_openElements.push(HTMLStackItem(element.releaseNonNull(), WTFMove(token)));
     return nullptr;
@@ -779,9 +780,16 @@ static inline QualifiedName qualifiedNameForHTMLTag(const AtomHTMLToken& token)
 
 Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const AtomString& namespaceURI)
 {
-    auto element = ownerDocumentForCurrentNode().createElement(qualifiedNameForTag(token, namespaceURI), true);
+    auto element = treeScopeForCurrentNode().createElement(qualifiedNameForTag(token, namespaceURI), true);
     setAttributes(element, token, m_parserContentPolicy);
     return element;
+}
+
+inline TreeScope& HTMLConstructionSite::treeScopeForCurrentNode()
+{
+    if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
+        return templateElement->fragmentForInsertion().treeScope();
+    return currentNode().treeScope();
 }
 
 inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
@@ -791,42 +799,34 @@ inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
     return currentNode().document();
 }
 
-static inline JSCustomElementInterface* findCustomElementInterface(Document& ownerDocument, const AtomString& localName)
-{
-    auto* window = ownerDocument.domWindow();
-    if (!window)
-        return nullptr;
-
-    auto* registry = window->customElementRegistry();
-    if (LIKELY(!registry))
-        return nullptr;
-
-    return registry->findInterface(localName);
-}
-
-RefPtr<HTMLElement> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface(AtomHTMLToken& token, JSCustomElementInterface** customElementInterface)
+std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomElementRegistry>> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface(AtomHTMLToken& token)
 {
     // FIXME: This can't use HTMLConstructionSite::createElement because we
     // have to pass the current form element.  We should rework form association
     // to occur after construction to allow better code sharing here.
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#create-an-element-for-the-token
-    Ref ownerDocument = ownerDocumentForCurrentNode();
+    Ref treeScope = treeScopeForCurrentNode();
+    Ref ownerDocument = treeScope->documentScope();
     bool insideTemplateElement = !ownerDocument->frame();
     RefPtr element = HTMLElementFactory::createKnownElement(token.tagName(), ownerDocument, insideTemplateElement ? nullptr : form(), true);
     if (UNLIKELY(!element)) {
-        if (auto* elementInterface = findCustomElementInterface(ownerDocument, token.name())) {
-            if (!m_isParsingFragment) {
-                *customElementInterface = elementInterface;
-                return nullptr;
-            }
+        RefPtr<CustomElementRegistry> registry = m_openElements.stackDepth() > 1 ? CustomElementRegistry::registryForNodeOrTreeScope(currentNode(), treeScope) : m_registry;
+        auto* elementInterface = registry ? registry->findInterface(token.name()) : nullptr;
+        if (UNLIKELY(elementInterface)) {
+            if (!m_isParsingFragment)
+                return { nullptr, elementInterface, WTFMove(registry) };
             ASSERT(qualifiedNameForHTMLTag(token) == elementInterface->name());
             element = elementInterface->createElement(ownerDocument);
+            if (UNLIKELY(registry->isScoped()))
+                CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);
             element->setIsCustomElementUpgradeCandidate();
             element->enqueueToUpgrade(*elementInterface);
         } else {
             auto qualifiedName = qualifiedNameForHTMLTag(token);
             if (Document::validateCustomElementName(token.name()) == CustomElementNameValidationStatus::Valid) {
                 element = HTMLMaybeFormAssociatedCustomElement::create(qualifiedName, ownerDocument);
+                if (UNLIKELY(registry && registry->isScoped()))
+                    CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);
                 element->setIsCustomElementUpgradeCandidate();
             } else
                 element = HTMLUnknownElement::create(qualifiedName, ownerDocument);
@@ -845,13 +845,15 @@ RefPtr<HTMLElement> HTMLConstructionSite::createHTMLElementOrFindCustomElementIn
     }
 
     setAttributes(*element, token, m_parserContentPolicy);
-    return element;
+    return { element, nullptr, nullptr };
 }
 
 Ref<HTMLElement> HTMLConstructionSite::createHTMLElement(AtomHTMLToken& token)
 {
-    auto element = createHTMLElementOrFindCustomElementInterface(token, nullptr);
+    auto [element, jsInterface, registry] = createHTMLElementOrFindCustomElementInterface(token);
     ASSERT(element);
+    ASSERT_UNUSED(jsInterface, !jsInterface);
+    ASSERT_UNUSED(registry, !registry);
     return element.releaseNonNull();
 }
 

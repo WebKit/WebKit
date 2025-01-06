@@ -24,7 +24,7 @@
 GPUProcess/glib/GPUProcessGLib.cpp
 GPUProcess/glib/GPUProcessMainGLib.cpp
 
-GPUProcess/graphics/RemoteGraphicsContextGLGBM.cpp
+GPUProcess/graphics/RemoteGraphicsContextGLGBM.cpp @no-unify
 
 GPUProcess/media/RemoteAudioDestinationManager.cpp
 
@@ -73,14 +73,6 @@ Shared/API/glib/WebKitHitTestResult.cpp @no-unify
 Shared/API/glib/WebKitURIRequest.cpp @no-unify
 Shared/API/glib/WebKitURIResponse.cpp @no-unify
 Shared/API/glib/WebKitUserMessage.cpp @no-unify
-
-Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
-Shared/CoordinatedGraphics/SimpleViewportController.cpp
-
-Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp
-Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
-
-Shared/freetype/WebCoreArgumentCodersFreeType.cpp
 
 Shared/glib/ArgumentCodersGLib.cpp
 Shared/glib/InputMethodState.cpp
@@ -184,6 +176,7 @@ UIProcess/API/glib/WebKitUserContentManager.cpp @no-unify
 UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitVersion.cpp @no-unify
 UIProcess/API/glib/WebKitWebContext.cpp @no-unify
+UIProcess/API/glib/WebKitWebExtensionMatchPattern.cpp @no-unify
 UIProcess/API/glib/WebKitWebResource.cpp @no-unify
 UIProcess/API/glib/WebKitWebResourceLoadManager.cpp @no-unify
 UIProcess/API/glib/WebKitWebView.cpp @no-unify
@@ -253,11 +246,14 @@ UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 
 UIProcess/cairo/BackingStoreCairo.cpp
 
+UIProcess/glib/DRMDevice.cpp @no-unify
 UIProcess/glib/DisplayLinkGLib.cpp
 UIProcess/glib/DisplayVBlankMonitor.cpp
 UIProcess/glib/DisplayVBlankMonitorDRM.cpp
 UIProcess/glib/DisplayVBlankMonitorTimer.cpp
+UIProcess/glib/FenceMonitor.cpp
 UIProcess/glib/ScreenManager.cpp
+UIProcess/glib/SystemSettingsManagerProxy.cpp
 UIProcess/glib/WebPageProxyGLib.cpp
 UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp
@@ -269,14 +265,17 @@ UIProcess/gtk/AcceleratedBackingStoreDMABuf.cpp @no-unify
 UIProcess/gtk/Clipboard.cpp
 UIProcess/gtk/ClipboardGtk3.cpp @no-unify
 UIProcess/gtk/ClipboardGtk4.cpp @no-unify
+UIProcess/gtk/Display.cpp @no-unify
+UIProcess/gtk/DisplayX11.cpp @no-unify
+UIProcess/gtk/DisplayWayland.cpp @no-unify
 UIProcess/gtk/WebDateTimePickerGtk.cpp
-UIProcess/gtk/GtkSettingsManager.cpp
 UIProcess/gtk/HardwareAccelerationManager.cpp
 UIProcess/gtk/KeyBindingTranslator.cpp
 UIProcess/gtk/PointerLockManager.cpp @no-unify
 UIProcess/gtk/PointerLockManagerWayland.cpp @no-unify
 UIProcess/gtk/PointerLockManagerX11.cpp @no-unify
 UIProcess/gtk/ScreenManagerGtk.cpp @no-unify
+UIProcess/gtk/SystemSettingsManagerProxyGtk.cpp
 UIProcess/gtk/TextCheckerGtk.cpp @no-unify
 UIProcess/gtk/ViewSnapshotStoreGtk3.cpp @no-unify
 UIProcess/gtk/ViewSnapshotStoreGtk4.cpp @no-unify
@@ -297,6 +296,7 @@ WebProcess/GPU/graphics/gbm/RemoteGraphicsContextGLProxyGBM.cpp
 
 WebProcess/GPU/media/gstreamer/VideoLayerRemoteGStreamer.cpp
 
+WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitWebEditor.cpp @no-unify
@@ -325,9 +325,12 @@ WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
 WebProcess/WebPage/AcceleratedSurface.cpp
 WebProcess/WebPage/ViewGestureGeometryCollector.cpp
 
-WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
+WebProcess/WebPage/CoordinatedGraphics/CompositingRunLoop.cpp
+WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
+WebProcess/WebPage/CoordinatedGraphics/CoordinatedSceneState.cpp
 WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
+WebProcess/WebPage/CoordinatedGraphics/ThreadedCompositor.cpp
 
 WebProcess/WebPage/dmabuf/AcceleratedSurfaceDMABuf.cpp @no-unify
 
@@ -336,7 +339,7 @@ WebProcess/WebPage/glib/WebPageGLib.cpp
 WebProcess/WebPage/gtk/WebPageGtk.cpp
 WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
 
+WebProcess/glib/SystemSettingsManager.cpp
 WebProcess/glib/WebProcessGLib.cpp
 
-WebProcess/gtk/GtkSettingsManagerProxy.cpp
 WebProcess/gtk/WebProcessMainGtk.cpp

@@ -1,12 +1,12 @@
 
+PASS An element with autofocus, present before navigation, gets focused
+PASS Two elements with autofocus, present before navigation; the first gets focused
+PASS An element with autofocus, present before navigation but disabled before finished, does not get focused
+PASS An element with autofocus, present before navigation but with its autofocus attribute removed before finished, does not get focused
+FAIL Two elements with autofocus, present before navigation, but the first gets disabled; the second gets focused assert_equals: Disabling the initially-focused button temporarily resets focus to the body expected Element node <body>
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT An element with autofocus, present before navigation, gets focused Test timed out
-NOTRUN Two elements with autofocus, present before navigation; the first gets focused
-NOTRUN An element with autofocus, present before navigation but disabled before finished, does not get focused
-NOTRUN An element with autofocus, present before navigation but with its autofocus attribute removed before finished, does not get focused
-NOTRUN Two elements with autofocus, present before navigation, but the first gets disabled; the second gets focused
-NOTRUN An element with autofocus, introduced between committed and finished, gets focused
-NOTRUN An element with autofocus, introduced after finished, does not get focused
+<script type="module">
+promise_setup(async () => ... but got Element node <button autofocus="" disabled=""></button>
+PASS An element with autofocus, introduced between committed and finished, gets focused
+PASS An element with autofocus, introduced after finished, does not get focused
 

@@ -60,7 +60,7 @@ static void runTest(NSArray *additionalSupportedImageTypes, Boolean expectedToLo
     RetainPtr<AdditionalSupportedImageTypesTest> testController = adoptNS([AdditionalSupportedImageTypesTest new]);
     webView.get().frameLoadDelegate = testController.get();
 
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"AdditionalSupportedImageTypes" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"AdditionalSupportedImageTypes" withExtension:@"html"];
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
 
     Util::run(&didFinishLoad);

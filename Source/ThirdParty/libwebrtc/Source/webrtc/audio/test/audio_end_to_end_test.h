@@ -14,9 +14,9 @@
 #include <string>
 #include <vector>
 
+#include "api/audio/audio_device.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/test/simulated_network.h"
-#include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_device/include/test_audio_device.h"
 #include "test/call_test.h"
 

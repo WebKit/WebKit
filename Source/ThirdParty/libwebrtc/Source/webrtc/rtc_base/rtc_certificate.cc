@@ -21,7 +21,7 @@ namespace rtc {
 
 scoped_refptr<RTCCertificate> RTCCertificate::Create(
     std::unique_ptr<SSLIdentity> identity) {
-  // Explicit new to access proteced constructor.
+  // Explicit new to access protected constructor.
   return rtc::scoped_refptr<RTCCertificate>(
       new RTCCertificate(identity.release()));
 }

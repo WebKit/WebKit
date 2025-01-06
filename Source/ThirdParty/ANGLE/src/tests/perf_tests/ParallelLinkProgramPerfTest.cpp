@@ -120,13 +120,13 @@ ParallelLinkProgramBenchmark::ParallelLinkProgramBenchmark()
     if (IsWindows() && IsNVIDIA() &&
         GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
     {
-        skipTest("http://anglebug.com/8410 crashes the GL driver");
+        skipTest("http://anglebug.com/42266835 crashes the GL driver");
     }
 
     if (IsLinux() && IsNVIDIA() &&
         GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
     {
-        skipTest("http://anglebug.com/8410 flakily crashes the GL driver");
+        skipTest("http://anglebug.com/42266835 flakily crashes the GL driver");
     }
 }
 

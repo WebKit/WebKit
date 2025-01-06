@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "BoundaryPoint.h"
 #include "CaretRectComputation.h"
 #include "InlineIteratorBox.h"
 #include "InlineIteratorLineBox.h"
@@ -52,11 +53,13 @@ public:
 
     bool isNull() const { return !m_renderer; }
     InlineIterator::LineBoxIterator lineBox() const { return m_box ? m_box->lineBox() : InlineIterator::LineBoxIterator(); }
+    InlineIterator::LeafBoxIterator box() const { return m_box; }
+    unsigned offset() const { return m_offset; }
 
     unsigned char bidiLevelOnLeft() const;
     unsigned char bidiLevelOnRight() const;
-    RenderedPosition leftBoundaryOfBidiRun(unsigned char bidiLevelOfRun);
-    RenderedPosition rightBoundaryOfBidiRun(unsigned char bidiLevelOfRun);
+    RenderedPosition leftBoundaryOfBidiRun(unsigned char bidiLevelOfRun) const;
+    RenderedPosition rightBoundaryOfBidiRun(unsigned char bidiLevelOfRun) const;
 
     enum ShouldMatchBidiLevel { MatchBidiLevel, IgnoreBidiLevel };
     bool atLeftBoundaryOfBidiRun() const { return atLeftBoundaryOfBidiRun(IgnoreBidiLevel, 0); }
@@ -70,6 +73,8 @@ public:
     Position positionAtRightBoundaryOfBiDiRun() const;
 
     IntRect absoluteRect(CaretRectMode = CaretRectMode::Normal) const;
+
+    std::optional<BoundaryPoint> boundaryPoint() const;
 
 private:
     bool operator==(const RenderedPosition&) const { return false; }

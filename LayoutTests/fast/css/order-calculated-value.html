@@ -9,7 +9,7 @@ var testDiv = document.getElementById("testDiv");
 
 shouldBeEmptyString("testDiv.style['order']");
 evalAndLog("testDiv.style['order'] = 'calc(2 * 3)'");
-shouldBeEqualToString("testDiv.style['order']", "6");
+shouldBeEqualToString("testDiv.style['order']", "calc(6)");
 shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('order')", "6");
 </script>
 <script src="../../resources/js-test-post.js"></script>

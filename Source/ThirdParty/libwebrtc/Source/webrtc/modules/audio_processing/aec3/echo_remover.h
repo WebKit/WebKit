@@ -11,9 +11,9 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_ECHO_REMOVER_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_ECHO_REMOVER_H_
 
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
 #include "modules/audio_processing/aec3/block.h"
@@ -41,7 +41,7 @@ class EchoRemover {
   virtual void ProcessCapture(
       EchoPathVariability echo_path_variability,
       bool capture_signal_saturation,
-      const absl::optional<DelayEstimate>& external_delay,
+      const std::optional<DelayEstimate>& external_delay,
       RenderBuffer* render_buffer,
       Block* linear_output,
       Block* capture) = 0;

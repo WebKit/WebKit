@@ -23,7 +23,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteRenderBundleEncoder NotRefCounted Stream {
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU,
+    EnabledBy=WebGPUEnabled
+]
+messages -> RemoteRenderBundleEncoder Stream {
     void Destruct()
     void SetPipeline(WebKit::WebGPUIdentifier identifier)
     void SetIndexBuffer(WebKit::WebGPUIdentifier identifier, WebCore::WebGPU::IndexFormat indexFormat, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)

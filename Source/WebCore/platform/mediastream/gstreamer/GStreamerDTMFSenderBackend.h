@@ -22,13 +22,14 @@
 #if ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)
 
 #include "RTCDTMFSenderBackend.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 // Use eager initialization for the WeakPtrFactory since we call makeWeakPtr() from another thread.
 class GStreamerDTMFSenderBackend final : public RTCDTMFSenderBackend, public CanMakeWeakPtr<GStreamerDTMFSenderBackend, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerDTMFSenderBackend);
 public:
     explicit GStreamerDTMFSenderBackend();
     ~GStreamerDTMFSenderBackend();

@@ -227,7 +227,7 @@ TEST(IPCTestingAPI, CanSendInvalidSyncMessageToUIProcessWithoutTermination)
         "</script>"];
     TestWebKitAPI::Util::run(&done);
 
-    EXPECT_STREQ([alertMessage UTF8String], "Failed to successfully deserialize the message");
+    EXPECT_STREQ([alertMessage UTF8String], "Receiver cancelled the reply due to invalid destination or deserialization error");
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -550,8 +550,7 @@ static NSMutableSet<NSString *> *extractTypesFromContainers(NSSet<NSString *> *i
             @"Markable",
             @"RetainPtr",
             @"HashCountedSet",
-            @"IPC::CoreIPCRetainPtr",
-            @"WebCore::RectEdges"
+            @"IPC::CoreIPCRetainPtr"
         ];
         for (NSString *container in containerTypes) {
             if ([input hasPrefix:[container stringByAppendingString:@"<"]]
@@ -615,6 +614,10 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
             for (NSDictionary *argument in arguments) {
                 if (![argument isKindOfClass:NSDictionary.class])
                     continue;
+                if (NSString *enumName = argument[@"enum"]) {
+                    [typesNeedingDescriptions addObject:enumName];
+                    continue;
+                }
                 [typesNeedingDescriptions addObject:argument[@"type"]];
             }
         }
@@ -669,30 +672,31 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"GCGLint",
         @"GCGLenum",
         @"OSStatus",
+        @"GCGLErrorCodeSet",
+        @"CGBitmapInfo",
     ]];
 
     [typesNeedingDescriptions minusSet:typesHavingDescriptions];
     [typesNeedingDescriptions minusSet:fundamentalTypes];
 
+    // Note: This set should only be shrinking. If you need to add to this set to fix the test,
+    // add IPC metadata in a *.serialization.in file instead.
     NSSet<NSString *> *expectedTypesNeedingDescriptions = [NSSet setWithArray:@[
         @"CTFontDescriptorOptions",
         @"NSObject<NSSecureCoding>",
         @"PKSecureElementPass",
-        @"WebKit::ObjCObjectGraph",
-        @"GCGLErrorCodeSet",
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
         @"NSURLRequest",
+#endif
         @"MachSendRight",
-        @"CGBitmapInfo",
-        @"NSParagraphStyle",
+#if ENABLE(DATA_DETECTION) && !HAVE(WK_SECURE_CODING_DATA_DETECTORS)
+        @"DDScannerResult",
+#endif
 #if PLATFORM(MAC)
+#if !HAVE(WK_SECURE_CODING_DATA_DETECTORS)
         @"WKDDActionContext",
-        @"CGDisplayChangeSummaryFlags",
-        @"WebCore::ContextMenuAction"
-#else
-        @"WebCore::InspectorOverlay::Highlight",
-        @"WebCore::MediaControlsContextMenuItem::ID",
-        @"UIColor",
-        @"WebCore::RenderThemeIOS::CSSValueToSystemColorMap"
+#endif
+        @"WebCore::ContextMenuAction",
 #endif
     ]];
     if (![expectedTypesNeedingDescriptions isEqual:typesNeedingDescriptions]) {

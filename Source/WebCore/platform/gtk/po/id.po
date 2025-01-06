@@ -1,22 +1,23 @@
 # Indonesian translation for webkit.
 # Copyright (C) 2010 webkit's COPYRIGHT HOLDER
 # This file is distributed under the same license as the webkit package.
-# Andika Triwidada <andika@gmail.com>, 2010, 2012.
+# Andika Triwidada <andika@gmail.com>, 2010, 2012, 2021, 2022, 2024.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: webkit HEAD\n"
-"Report-Msgid-Bugs-To: https://bugs.webkit.org/\n"
-"POT-Creation-Date: 2018-02-17 03:27+0000\n"
-"PO-Revision-Date: 2018-03-03 14:24+0700\n"
-"Last-Translator: Andika Triwidada <atriwidada@gnome.org>\n"
+"Project-Id-Version: webkit main\n"
+"Report-Msgid-Bugs-To: https://bugs.webkit.org/enter_bug.cgi?"
+"product=WebKit&component=WebKitGTK\n"
+"POT-Creation-Date: 2024-10-30 03:32+0000\n"
+"PO-Revision-Date: 2024-11-02 07:55+0700\n"
+"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: GNOME Indonesian Translation Team <gnome@i15n.org>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 3.5\n"
 
 #: ../LocalizedStringsGtk.cpp:43
 msgid "Copy Link Loc_ation"
@@ -59,1038 +60,1423 @@ msgid "Switch Video to _Fullscreen"
 msgstr "Tukar Video ke Mode Layar _Penuh"
 
 #: ../LocalizedStringsGtk.cpp:93
+msgid "Paste As Plain _Text"
+msgstr "Tempel Sebagai _Teks Polos"
+
+#: ../LocalizedStringsGtk.cpp:98
 msgid "_Delete"
 msgstr "_Hapus"
 
-#: ../LocalizedStringsGtk.cpp:98
+#: ../LocalizedStringsGtk.cpp:103
 msgid "Select _All"
 msgstr "Pilih semu_a"
 
-#: ../LocalizedStringsGtk.cpp:103
+#: ../LocalizedStringsGtk.cpp:108
+msgid "Insert _Emoji"
+msgstr "Sisipkan _Emoji"
+
+#: ../LocalizedStringsGtk.cpp:113
 msgid "_Insert Unicode Control Character"
 msgstr "S_isipkan karakter Kontrol Unicode"
 
-#: ../LocalizedStringsGtk.cpp:108
+#: ../LocalizedStringsGtk.cpp:118
 msgid "Input _Methods"
 msgstr "_Metoda Masukan"
 
-#: ../LocalizedStringsGtk.cpp:113
-msgid "_Search the Web"
-msgstr "_Cari Web"
-
-#: ../LocalizedStringsGtk.cpp:118
+#: ../LocalizedStringsGtk.cpp:123
 msgid "LRM _Left-to-right mark"
 msgstr "LRM _Left-to-right mark"
 
-#: ../LocalizedStringsGtk.cpp:123
+#: ../LocalizedStringsGtk.cpp:128
 msgid "RLM _Right-to-left mark"
 msgstr "RLM _Right-to-left mark"
 
-#: ../LocalizedStringsGtk.cpp:128
+#: ../LocalizedStringsGtk.cpp:133
 msgid "LRE Left-to-right _embedding"
 msgstr "LRE Left-to-right _embedding"
 
-#: ../LocalizedStringsGtk.cpp:133
+#: ../LocalizedStringsGtk.cpp:138
 msgid "RLE Right-to-left e_mbedding"
 msgstr "RLE Right-to-left e_mbedding"
 
-#: ../LocalizedStringsGtk.cpp:138
+#: ../LocalizedStringsGtk.cpp:143
 msgid "LRO Left-to-right _override"
 msgstr "LRO Left-to-right _override"
 
-#: ../LocalizedStringsGtk.cpp:143
+#: ../LocalizedStringsGtk.cpp:148
 msgid "RLO Right-to-left o_verride"
 msgstr "RLO Right-to-left o_verride"
 
-#: ../LocalizedStringsGtk.cpp:148
+#: ../LocalizedStringsGtk.cpp:153
 msgid "PDF _Pop directional formatting"
 msgstr "PDF _Pop directional formatting"
 
-#: ../LocalizedStringsGtk.cpp:153
+#: ../LocalizedStringsGtk.cpp:158
 msgid "ZWS _Zero width space"
 msgstr "ZWS _Zero width space"
 
-#: ../LocalizedStringsGtk.cpp:158
+#: ../LocalizedStringsGtk.cpp:163
 msgid "ZWJ Zero width _joiner"
 msgstr "ZWJ Zero width _joiner"
 
-#: ../LocalizedStringsGtk.cpp:163
+#: ../LocalizedStringsGtk.cpp:168
 msgid "ZWNJ Zero width _non-joiner"
 msgstr "ZWNJ Zero width _non-joiner"
 
-#: ../LocalizedStringsGtk.cpp:169
+#: ../LocalizedStringsGtk.cpp:174
 #, c-format
 msgid "Use at least one character"
 msgid_plural "Use at least %d characters"
 msgstr[0] "Gunakan paling tidak %d karakter"
 
-#: ../LocalizedStringsGtk.cpp:175
+#: ../LocalizedStringsGtk.cpp:180
 #, c-format
 msgid "Use no more than one character"
 msgid_plural "Use no more than %d characters"
 msgstr[0] "Gunakan tidak lebih dari %d karakter"
 
-#: ../LocalizedStringsGtk.cpp:181
-msgid "Unacceptable TLS certificate"
-msgstr "Sertifikat TLS tak dapat diterima"
-
-#: ../../LocalizedStrings.cpp:96
+#: ../../LocalizedStrings.cpp:157
 msgctxt "alt text for <input> elements with no alt, title, or value"
 msgid "Submit"
 msgstr "Kirim"
 
-#: ../../LocalizedStrings.cpp:101
+#: ../../LocalizedStrings.cpp:162
 msgid "Reset"
 msgstr "Reset"
 
-#: ../../LocalizedStrings.cpp:106
+#: ../../LocalizedStrings.cpp:167
 msgid "This is a searchable index. Enter search keywords: "
-msgstr "Ini adalah indeks yang dapat dicari. Masukkan kata kunci pencarian:"
+msgstr "Ini adalah indeks yang dapat dicari. Masukkan kata kunci pencarian: "
 
-#: ../../LocalizedStrings.cpp:112
+#: ../../LocalizedStrings.cpp:173
 msgid "Submit"
 msgstr "Kirim"
 
-#: ../../LocalizedStrings.cpp:117
+#: ../../LocalizedStrings.cpp:178
 msgid "Choose File"
 msgstr "Pilih Berkas"
 
-#: ../../LocalizedStrings.cpp:122
+#: ../../LocalizedStrings.cpp:183
 msgid "Choose Files"
 msgstr "Pilih Berkas"
 
-#: ../../LocalizedStrings.cpp:127
+#: ../../LocalizedStrings.cpp:188
 msgid "no file selected"
 msgstr "tak ada berkas yang dipilih"
 
-#: ../../LocalizedStrings.cpp:132
+#: ../../LocalizedStrings.cpp:193
 msgid "no files selected"
 msgstr "tidak ada berkas yang dipilih"
 
-#: ../../LocalizedStrings.cpp:137
+#: ../../LocalizedStrings.cpp:198
 msgid "Details"
 msgstr "Rincian"
 
-#: ../../LocalizedStrings.cpp:144
+#: ../../LocalizedStrings.cpp:205
 msgid "Open Link in New _Window"
 msgstr "Buka Taut di _Jendela Baru"
 
-#: ../../LocalizedStrings.cpp:149
+#: ../../LocalizedStrings.cpp:210
 msgid "_Download Linked File"
 msgstr "Un_duh Berkas Tertaut"
 
-#: ../../LocalizedStrings.cpp:155
+#: ../../LocalizedStrings.cpp:216
 msgid "Copy Link"
 msgstr "Salin Tautan"
 
-#: ../../LocalizedStrings.cpp:161
+#: ../../LocalizedStrings.cpp:222
 msgid "Open _Image in New Window"
 msgstr "Buka Gambar d_i Jendela Baru"
 
-#: ../../LocalizedStrings.cpp:167
+#: ../../LocalizedStrings.cpp:228
 msgid "Download Image"
 msgstr "Unduh Citra"
 
-#: ../../LocalizedStrings.cpp:173
+#: ../../LocalizedStrings.cpp:234
 msgid "Cop_y Image"
 msgstr "Sal_in Gambar"
 
-#: ../../LocalizedStrings.cpp:178
+#: ../../LocalizedStrings.cpp:239
 msgid "Open _Frame in New Window"
 msgstr "Buka _Frame di Jendela Baru"
 
-#: ../../LocalizedStrings.cpp:183
+#: ../../LocalizedStrings.cpp:244
 msgid "_Copy"
 msgstr "Sa_lin"
 
-#: ../../LocalizedStrings.cpp:188
+#: ../../LocalizedStrings.cpp:249
 msgid "_Back"
 msgstr "_Mundur"
 
-#: ../../LocalizedStrings.cpp:193
+#: ../../LocalizedStrings.cpp:254
 msgid "_Forward"
 msgstr "Ma_ju"
 
-#: ../../LocalizedStrings.cpp:198
+#: ../../LocalizedStrings.cpp:259
 msgid "_Stop"
 msgstr "_Berhenti"
 
-#: ../../LocalizedStrings.cpp:203
+#: ../../LocalizedStrings.cpp:264
 msgid "_Reload"
 msgstr "_Muat Ulang"
 
-#: ../../LocalizedStrings.cpp:208
+#: ../../LocalizedStrings.cpp:269
 msgid "Cu_t"
 msgstr "Po_tong"
 
-#: ../../LocalizedStrings.cpp:213
+#: ../../LocalizedStrings.cpp:274
 msgid "_Paste"
 msgstr "Tem_pel"
 
-#: ../../LocalizedStrings.cpp:218
+#: ../../LocalizedStrings.cpp:279
 msgid "No Guesses Found"
 msgstr "Tebakan Tak Ditemukan"
 
-#: ../../LocalizedStrings.cpp:223
+#: ../../LocalizedStrings.cpp:284
 msgid "_Ignore Spelling"
 msgstr "Aba_ikan Ejaan"
 
-#: ../../LocalizedStrings.cpp:228
+#: ../../LocalizedStrings.cpp:289
 msgid "_Learn Spelling"
 msgstr "Pe_lajari Ejaan"
 
-#: ../../LocalizedStrings.cpp:237
-#, c-format
-msgid "Look Up “%s”"
-msgstr "Lihat \"%s\""
+#: ../../LocalizedStrings.cpp:295
+msgid "_Search the Web"
+msgstr "_Cari Web"
 
-#: ../../LocalizedStrings.cpp:239
-msgid "Look Up “<selection>”"
-msgstr "Lihat \"<selection>\""
-
-#: ../../LocalizedStrings.cpp:245
+#: ../../LocalizedStrings.cpp:309
 msgid "_Open Link"
 msgstr "_Buka Taut"
 
-#: ../../LocalizedStrings.cpp:250
+#: ../../LocalizedStrings.cpp:314
 msgid "Ignore _Grammar"
 msgstr "Abaikan Tata _Bahasa"
 
-#: ../../LocalizedStrings.cpp:255
+#: ../../LocalizedStrings.cpp:319
 msgid "Spelling and _Grammar"
 msgstr "Ejaan dan Tata _Bahasa"
 
-#: ../../LocalizedStrings.cpp:261
+#: ../../LocalizedStrings.cpp:325
 msgid "_Show Spelling and Grammar"
 msgstr "Tampilkan Ejaan dan Tata Baha_sa"
 
-#: ../../LocalizedStrings.cpp:262
+#: ../../LocalizedStrings.cpp:326
 msgid "_Hide Spelling and Grammar"
 msgstr "Sembunyikan Ejaan dan Tata Ba_hasa"
 
-#: ../../LocalizedStrings.cpp:267
+#: ../../LocalizedStrings.cpp:331
 msgid "_Check Document Now"
 msgstr "Periksa Do_kumen Sekarang"
 
-#: ../../LocalizedStrings.cpp:272
+#: ../../LocalizedStrings.cpp:336
 msgid "Check Spelling While _Typing"
 msgstr "Periksa Ejaan Ketika Menge_tik"
 
-#: ../../LocalizedStrings.cpp:277
+#: ../../LocalizedStrings.cpp:341
 msgid "Check _Grammar With Spelling"
 msgstr "Periksa Tata _Bahasa Bersama Dengan Ejaan"
 
-#: ../../LocalizedStrings.cpp:282
+#: ../../LocalizedStrings.cpp:346
 msgid "_Font"
 msgstr "_Fonta"
 
-#: ../../LocalizedStrings.cpp:287
+#: ../../LocalizedStrings.cpp:351
 msgid "_Bold"
 msgstr "Te_bal"
 
-#: ../../LocalizedStrings.cpp:292
+#: ../../LocalizedStrings.cpp:356
 msgid "_Italic"
 msgstr "M_iring"
 
-#: ../../LocalizedStrings.cpp:297
+#: ../../LocalizedStrings.cpp:361
 msgid "_Underline"
 msgstr "_Garis bawah"
 
-#: ../../LocalizedStrings.cpp:302
+#: ../../LocalizedStrings.cpp:366
 msgid "_Outline"
 msgstr "_Outline"
 
-#: ../../LocalizedStrings.cpp:308
+#: ../../LocalizedStrings.cpp:372
 msgid "Paragraph Direction"
 msgstr "Arah Paragraf"
 
-#: ../../LocalizedStrings.cpp:313
+#: ../../LocalizedStrings.cpp:377
 msgid "Selection Direction"
 msgstr "Arah Pilihan"
 
-#: ../../LocalizedStrings.cpp:318
+#: ../../LocalizedStrings.cpp:382
 msgid "Default"
 msgstr "Default"
 
-#: ../../LocalizedStrings.cpp:323
+#: ../../LocalizedStrings.cpp:387
 msgid "Left to Right"
 msgstr "Kiri ke Kanan"
 
-#: ../../LocalizedStrings.cpp:328
+#: ../../LocalizedStrings.cpp:392
 msgid "Right to Left"
 msgstr "Kanan ke Kiri"
 
-#: ../../LocalizedStrings.cpp:334
+#: ../../LocalizedStrings.cpp:398
 msgid "Open _Video in New Window"
 msgstr "Buka _Video pada Jendela Baru"
 
-#: ../../LocalizedStrings.cpp:339
+#: ../../LocalizedStrings.cpp:403
 msgid "Open _Audio in New Window"
 msgstr "Buka Suar_a pada Jendela Baru"
 
-#: ../../LocalizedStrings.cpp:344
+#: ../../LocalizedStrings.cpp:408
 msgid "Download _Video"
 msgstr "Unduh _Video"
 
-#: ../../LocalizedStrings.cpp:349
+#: ../../LocalizedStrings.cpp:413
 msgid "Download _Audio"
 msgstr "Unduh _Audio"
 
-#: ../../LocalizedStrings.cpp:355
+#: ../../LocalizedStrings.cpp:419
 msgid "Copy Video Address"
 msgstr "Salin Alamat Video"
 
-#: ../../LocalizedStrings.cpp:360
+#: ../../LocalizedStrings.cpp:424
 msgid "Copy Audio Address"
 msgstr "Salin Alamat Audio"
 
-#: ../../LocalizedStrings.cpp:365
+#: ../../LocalizedStrings.cpp:429
 msgid "Controls"
 msgstr "Kontrol"
 
-#: ../../LocalizedStrings.cpp:370
+#: ../../LocalizedStrings.cpp:434
 msgid "Show Controls"
 msgstr "Tampilkan Kendali"
 
-#: ../../LocalizedStrings.cpp:375
+#: ../../LocalizedStrings.cpp:439
 msgid "Hide Controls"
 msgstr "Sembunyikan Kendali"
 
-#: ../../LocalizedStrings.cpp:380
+#: ../../LocalizedStrings.cpp:444
 msgid "Loop"
 msgstr "Pengulangan"
 
-#: ../../LocalizedStrings.cpp:385
+#: ../../LocalizedStrings.cpp:449
 msgid "Enter Full Screen"
 msgstr "Masuk Mode Layar Penuh"
 
-#: ../../LocalizedStrings.cpp:390
-msgctxt "Video Exit Fullscreen context menu item"
+#: ../../LocalizedStrings.cpp:454
+msgctxt "Video Exit Full Screen context menu item"
 msgid "Exit Full Screen"
 msgstr "Keluar Mode Layar Penuh"
 
-#: ../../LocalizedStrings.cpp:396
+#: ../../LocalizedStrings.cpp:460
 msgid "_Play"
 msgstr "_Putar"
 
-#: ../../LocalizedStrings.cpp:401
+#: ../../LocalizedStrings.cpp:465
 msgid "_Pause"
 msgstr "_Jeda"
 
-#: ../../LocalizedStrings.cpp:406
+#: ../../LocalizedStrings.cpp:470
 msgid "_Mute"
 msgstr "_Senyap"
 
-#: ../../LocalizedStrings.cpp:411
+#: ../../LocalizedStrings.cpp:476
+msgid "Play All Animations"
+msgstr "Putar Semua Animasi"
+
+#: ../../LocalizedStrings.cpp:481
+msgid "Pause All Animations"
+msgstr "Jeda Semua Animasi"
+
+#: ../../LocalizedStrings.cpp:486
+msgid "Play Animation"
+msgstr "Putar Animasi"
+
+#: ../../LocalizedStrings.cpp:491
+msgid "Pause Animation"
+msgstr "Jeda Animasi"
+
+#: ../../LocalizedStrings.cpp:497
 msgid "Inspect _Element"
 msgstr "Periksa _Elemen"
 
-#: ../../LocalizedStrings.cpp:420
+#: ../../LocalizedStrings.cpp:511
+msgid "Writing Tools"
+msgstr "Perkakas Menulis"
+
+#: ../../LocalizedStrings.cpp:518
+msgid "Open with Preview"
+msgstr "Buka dengan Preview"
+
+#: ../../LocalizedStrings.cpp:525
+msgid "_Single Page"
+msgstr "Halaman _Tunggal"
+
+#: ../../LocalizedStrings.cpp:530
+msgid "_Single Page Continuous"
+msgstr "Halaman _Tunggal Berkelanjutan"
+
+#: ../../LocalizedStrings.cpp:535
+msgid "_Two Pages"
+msgstr "_Dua Halaman"
+
+#: ../../LocalizedStrings.cpp:540
+msgid "_Two Pages Continuous"
+msgstr "_Dua Halaman Berkelanjutan"
+
+#: ../../LocalizedStrings.cpp:545
+msgid "_Zoom In"
+msgstr "Per_besar"
+
+#: ../../LocalizedStrings.cpp:550
+msgid "_Zoom Out"
+msgstr "Per_kecil"
+
+#: ../../LocalizedStrings.cpp:555
+msgid "_Actual Size"
+msgstr "Ukur_an Sebenarnya"
+
+#: ../../LocalizedStrings.cpp:560
+msgid "_Automatically Resize"
+msgstr "Ubah Ukuran Otom_atis"
+
+#: ../../LocalizedStrings.cpp:565
+msgid "_Next Page"
+msgstr "Halaman Sela_njutnya"
+
+#: ../../LocalizedStrings.cpp:570
+msgid "_Previous Page"
+msgstr "Halaman Se_belumnya"
+
+#. Also exposed to DOM.
+#: ../../LocalizedStrings.cpp:580
+msgid "Portable Document Format"
+msgstr "Format Dokumen Portabel"
+
+#: ../../LocalizedStrings.cpp:588
 msgid "No recent searches"
 msgstr "Tak ada pencarian terkini"
 
-#: ../../LocalizedStrings.cpp:425
+#: ../../LocalizedStrings.cpp:593
 msgid "Recent Searches"
 msgstr "Pencarian Terkini"
 
-#: ../../LocalizedStrings.cpp:430
+#: ../../LocalizedStrings.cpp:598
 msgid "Clear Recent Searches"
 msgstr "Bersihkan Pencarian Terkini"
 
-#: ../../LocalizedStrings.cpp:437
+#: ../../LocalizedStrings.cpp:605
 msgid "HTML content"
 msgstr "Isi HTML"
 
-#: ../../LocalizedStrings.cpp:442
+#: ../../LocalizedStrings.cpp:610
 msgid "link"
 msgstr "taut"
 
-#: ../../LocalizedStrings.cpp:447
+#: ../../LocalizedStrings.cpp:615
 msgid "list marker"
 msgstr "penanda daftar"
 
-#: ../../LocalizedStrings.cpp:452
+#: ../../LocalizedStrings.cpp:620
 msgid "image map"
 msgstr "peta gambar"
 
-#: ../../LocalizedStrings.cpp:457
+#: ../../LocalizedStrings.cpp:625
 msgid "heading"
 msgstr "tajuk"
 
-#: ../../LocalizedStrings.cpp:462
+#: ../../LocalizedStrings.cpp:630
+msgid "color well"
+msgstr "sumur warna"
+
+#: ../../LocalizedStrings.cpp:635
 msgid "definition"
 msgstr "definisi"
 
-#: ../../LocalizedStrings.cpp:467
+#: ../../LocalizedStrings.cpp:640
 msgid "description list"
 msgstr "daftar deskripsi"
 
-#: ../../LocalizedStrings.cpp:472
+#: ../../LocalizedStrings.cpp:645
 msgid "term"
 msgstr "istilah"
 
-#: ../../LocalizedStrings.cpp:477
+#: ../../LocalizedStrings.cpp:650
 msgid "description"
 msgstr "deskripsi"
 
-#: ../../LocalizedStrings.cpp:482
+#: ../../LocalizedStrings.cpp:655
 msgid "details"
 msgstr "rincian"
 
-#: ../../LocalizedStrings.cpp:487
+#: ../../LocalizedStrings.cpp:660
 msgid "summary"
 msgstr "ringkasan"
 
-#: ../../LocalizedStrings.cpp:492
+#: ../../LocalizedStrings.cpp:665
 msgid "footer"
 msgstr "kaki"
 
-#: ../../LocalizedStrings.cpp:497
+#: ../../LocalizedStrings.cpp:670
+msgid "suggestion"
+msgstr "saran"
+
+#: ../../LocalizedStrings.cpp:675
 msgid "file upload button"
 msgstr "tombol unggah berkas"
 
-#: ../../LocalizedStrings.cpp:502
+#: ../../LocalizedStrings.cpp:680
 msgid "output"
 msgstr "keluaran"
 
-#: ../../LocalizedStrings.cpp:507
+#: ../../LocalizedStrings.cpp:685
 msgid "attachment"
 msgstr "lampiran"
 
-#: ../../LocalizedStrings.cpp:512
+#: ../../LocalizedStrings.cpp:690
 msgid "cancel"
 msgstr "batal"
 
-#: ../../LocalizedStrings.cpp:517
+#: ../../LocalizedStrings.cpp:695
 msgid "feed"
 msgstr "asupan"
 
-#: ../../LocalizedStrings.cpp:522
+#: ../../LocalizedStrings.cpp:700
 msgid "figure"
 msgstr "gambar"
 
-#: ../../LocalizedStrings.cpp:527
+#: ../../LocalizedStrings.cpp:705
 msgid "email field"
 msgstr "ruas surel"
 
-#: ../../LocalizedStrings.cpp:532
+#: ../../LocalizedStrings.cpp:710
 msgid "telephone number field"
 msgstr "ruas nomor telepon"
 
-#: ../../LocalizedStrings.cpp:537
+#: ../../LocalizedStrings.cpp:715
 msgid "URL field"
 msgstr "ruas URL"
 
-#: ../../LocalizedStrings.cpp:542
+#: ../../LocalizedStrings.cpp:720
 msgid "date field"
 msgstr "ruas tanggal"
 
-#: ../../LocalizedStrings.cpp:547
+#: ../../LocalizedStrings.cpp:725
 msgid "time field"
 msgstr "ruas waktu"
 
-#: ../../LocalizedStrings.cpp:552
+#: ../../LocalizedStrings.cpp:730
+msgid "month"
+msgstr "bulan"
+
+#: ../../LocalizedStrings.cpp:735
+msgid "day"
+msgstr "hari"
+
+#: ../../LocalizedStrings.cpp:740
+msgid "year"
+msgstr "tahun"
+
+#: ../../LocalizedStrings.cpp:745
+msgid "hour"
+msgstr "jam"
+
+#: ../../LocalizedStrings.cpp:750
+msgid "minutes"
+msgstr "menit"
+
+#: ../../LocalizedStrings.cpp:755
+msgid "seconds"
+msgstr "detik"
+
+#: ../../LocalizedStrings.cpp:760
+msgid "milliseconds"
+msgstr "mili detik"
+
+#: ../../LocalizedStrings.cpp:765
 msgid "date and time field"
 msgstr "ruas tanggal dan waktu"
 
-#: ../../LocalizedStrings.cpp:557
+#: ../../LocalizedStrings.cpp:770
 msgid "month and year field"
 msgstr "ruas bulan dan tahun"
 
-#: ../../LocalizedStrings.cpp:562
+#: ../../LocalizedStrings.cpp:775
 msgid "number field"
 msgstr "ruas angka"
 
-#: ../../LocalizedStrings.cpp:567
+#: ../../LocalizedStrings.cpp:780
 msgid "week and year field"
 msgstr "ruas minggu dan tahun"
 
-#: ../../LocalizedStrings.cpp:572
+#: ../../LocalizedStrings.cpp:786
+msgid "alert"
+msgstr "waspada"
+
+#: ../../LocalizedStrings.cpp:788
+msgid "web alert dialog"
+msgstr "dialog waspada web"
+
+#: ../../LocalizedStrings.cpp:790
+msgid "web dialog"
+msgstr "dialog web"
+
+#: ../../LocalizedStrings.cpp:792
+msgid "log"
+msgstr "log"
+
+#: ../../LocalizedStrings.cpp:794
+msgid "marquee"
+msgstr "marquee"
+
+#: ../../LocalizedStrings.cpp:796
+msgid "application status"
+msgstr "status aplikasi"
+
+#: ../../LocalizedStrings.cpp:798
+msgid "timer"
+msgstr "pewaktu"
+
+#: ../../LocalizedStrings.cpp:800
+msgid "document"
+msgstr "dokumen"
+
+#: ../../LocalizedStrings.cpp:802
+msgid "article"
+msgstr "artikel"
+
+#: ../../LocalizedStrings.cpp:804
+msgid "note"
+msgstr "catatan"
+
+#: ../../LocalizedStrings.cpp:806
+msgid "web application"
+msgstr "aplikasi web"
+
+#: ../../LocalizedStrings.cpp:808
+msgid "banner"
+msgstr "banner"
+
+#: ../../LocalizedStrings.cpp:810
+msgid "complementary"
+msgstr "komplementer"
+
+#: ../../LocalizedStrings.cpp:812
+msgid "content information"
+msgstr "informasi isi"
+
+#: ../../LocalizedStrings.cpp:814
+msgid "main"
+msgstr "utama"
+
+#: ../../LocalizedStrings.cpp:816
+msgid "navigation"
+msgstr "navigasi"
+
+#: ../../LocalizedStrings.cpp:818
+msgid "region"
+msgstr "wilayah"
+
+#: ../../LocalizedStrings.cpp:820
+msgid "search"
+msgstr "cari"
+
+#: ../../LocalizedStrings.cpp:822
+msgid "tooltip"
+msgstr "tooltip"
+
+#: ../../LocalizedStrings.cpp:824
+msgid "tab panel"
+msgstr "panel tab"
+
+#: ../../LocalizedStrings.cpp:826
+msgid "math"
+msgstr "matematika"
+
+#: ../../LocalizedStrings.cpp:832
+msgid "separator"
+msgstr "pemisah"
+
+#: ../../LocalizedStrings.cpp:837
+msgid "highlighted"
+msgstr "disorot"
+
+#: ../../LocalizedStrings.cpp:842
 msgid "press"
 msgstr "tekan"
 
-#: ../../LocalizedStrings.cpp:577
+#: ../../LocalizedStrings.cpp:847
 msgid "select"
 msgstr "pilih"
 
-#: ../../LocalizedStrings.cpp:582
+#: ../../LocalizedStrings.cpp:852
 msgid "activate"
 msgstr "aktifkan"
 
-#: ../../LocalizedStrings.cpp:587
+#: ../../LocalizedStrings.cpp:857
 msgid "uncheck"
 msgstr "hapus contreng"
 
-#: ../../LocalizedStrings.cpp:592
+#: ../../LocalizedStrings.cpp:862
 msgid "check"
 msgstr "contreng"
 
-#: ../../LocalizedStrings.cpp:597
+#: ../../LocalizedStrings.cpp:867
 msgid "jump"
 msgstr "lompat"
 
-#: ../../LocalizedStrings.cpp:620
-msgid "password auto fill"
+#: ../../LocalizedStrings.cpp:891
+msgid "Apple Pay"
+msgstr "Apple Pay"
+
+#: ../../LocalizedStrings.cpp:896
+msgid "Buy with Apple Pay"
+msgstr "Beli dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:901
+msgid "Set up with Apple Pay"
+msgstr "Menyiapkan dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:906
+msgid "Donate with Apple Pay"
+msgstr "Donasi dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:911
+msgid "Check out with Apple Pay"
+msgstr "Checkout dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:916
+msgid "Book with Apple Pay"
+msgstr "Memesan dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:921
+msgid "Subscribe with Apple Pay"
+msgstr "Berlangganan dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:927
+msgid "Reload with Apple Pay"
+msgstr "Isi ulang dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:931
+msgid "Add money with Apple Pay"
+msgstr "Menambahkan uang dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:935
+msgid "Top up with Apple Pay"
+msgstr "Top up dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:939
+msgid "Order with Apple Pay"
+msgstr "Memesan dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:943
+msgid "Rent with Apple Pay"
+msgstr "Menyewa dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:947
+msgid "Support with Apple Pay"
+msgstr "Dukungan dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:951
+msgid "Contribute with Apple Pay"
+msgstr "Berkontribusi dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:955
+msgid "Tip with Apple Pay"
+msgstr "Tips dengan Apple Pay"
+
+#: ../../LocalizedStrings.cpp:962
+msgid "password AutoFill"
 msgstr "isi otomatis kata sandi"
 
-#: ../../LocalizedStrings.cpp:625
-msgid "contact info auto fill"
+#: ../../LocalizedStrings.cpp:967
+msgid "contact info AutoFill"
 msgstr "isi otomatis info kontak"
 
-#: ../../LocalizedStrings.cpp:630
-msgid "strong password auto fill"
+#: ../../LocalizedStrings.cpp:972
+msgid "strong password AutoFill"
 msgstr "isi otomatis kata sandi yang kuat"
 
-#: ../../LocalizedStrings.cpp:635
-msgid "strong confirmation password auto fill"
-msgstr "isi otomatis konfirmasi kata sandiyang kuat"
+#: ../../LocalizedStrings.cpp:977
+msgid "credit card AutoFill"
+msgstr "isi otomatis kartu kredit"
 
-#: ../../LocalizedStrings.cpp:640
-msgid "strong password"
-msgstr "sandi yang kuat"
+#: ../../LocalizedStrings.cpp:982
+#| msgid "contact info AutoFill"
+msgid "loading AutoFill"
+msgstr "memuat Isi Otomatis"
 
-#: ../../LocalizedStrings.cpp:645
+#: ../../LocalizedStrings.cpp:987
+msgid "Strong Password"
+msgstr "Kata Sandi yang Kuat"
+
+#: ../../LocalizedStrings.cpp:992
 msgid "Missing Plug-in"
 msgstr "Kehilangan Plug-in"
 
-#: ../../LocalizedStrings.cpp:650
+#: ../../LocalizedStrings.cpp:997
 msgid "Plug-in Failure"
 msgstr "Kegagalan Plug-in"
 
-#: ../../LocalizedStrings.cpp:655
+#: ../../LocalizedStrings.cpp:1002
 msgctxt ""
 "Label text to be used if plugin is blocked by a page's Content Security "
 "Policy"
 msgid "Blocked Plug-in"
 msgstr "Pengaya yang Diblokir"
 
-#: ../../LocalizedStrings.cpp:660
+#: ../../LocalizedStrings.cpp:1007
 msgctxt ""
 "Label text to be used when an insecure plug-in version was blocked from "
 "loading"
 msgid "Blocked Plug-in"
 msgstr "Pengaya yang Diblokir"
 
-#: ../../LocalizedStrings.cpp:665
+#: ../../LocalizedStrings.cpp:1012
 msgctxt ""
 "Label text to be used when an unsupported plug-in was blocked from loading"
 msgid "Unsupported Plug-in"
 msgstr "Pengaya yang Tak Didukung"
 
-#: ../../LocalizedStrings.cpp:670
-#, c-format
-msgid "%d files"
-msgstr "%d berkas"
+#: ../../LocalizedStrings.cpp:1017
+msgctxt ""
+"Label text to be used when a plug-in was blocked from loading because it was "
+"too small"
+msgid "Plug-In too small"
+msgstr "Pengaya terlalu kecil"
 
-#: ../../LocalizedStrings.cpp:675
+#: ../../LocalizedStrings.cpp:1027
 msgctxt "Unknown filesize FTP directory listing item"
 msgid "Unknown"
 msgstr "Tak Diketahui"
 
-#: ../../LocalizedStrings.cpp:694
-#, c-format
-msgid "%s %d×%d pixels"
-msgstr "%s %d×%d piksel"
-
-#: ../../LocalizedStrings.cpp:696
-#, c-format
-msgid "<filename> %d×%d pixels"
-msgstr "<filename> %d×%d piksel"
-
-#: ../../LocalizedStrings.cpp:702
+#: ../../LocalizedStrings.cpp:1056
 msgid "Loading…"
 msgstr "Memuat…"
 
-#: ../../LocalizedStrings.cpp:707
+#: ../../LocalizedStrings.cpp:1061
 msgid "Live Broadcast"
 msgstr "Siaran Langsung"
 
-#: ../../LocalizedStrings.cpp:713
+#: ../../LocalizedStrings.cpp:1067
 msgid "audio playback"
 msgstr "main ulang suara"
 
-#: ../../LocalizedStrings.cpp:715
+#: ../../LocalizedStrings.cpp:1069
 msgid "video playback"
 msgstr "main ulang video"
 
-#: ../../LocalizedStrings.cpp:717
+#: ../../LocalizedStrings.cpp:1071
 msgid "mute"
 msgstr "senyap"
 
-#: ../../LocalizedStrings.cpp:719
+#: ../../LocalizedStrings.cpp:1073
 msgid "unmute"
 msgstr "usai senyap"
 
-#: ../../LocalizedStrings.cpp:721
+#: ../../LocalizedStrings.cpp:1075
 msgid "play"
 msgstr "putar"
 
-#: ../../LocalizedStrings.cpp:723
+#: ../../LocalizedStrings.cpp:1077
 msgid "pause"
 msgstr "jeda"
 
-#: ../../LocalizedStrings.cpp:725
+#: ../../LocalizedStrings.cpp:1079
 msgid "movie time"
 msgstr "waktu film"
 
-#: ../../LocalizedStrings.cpp:727
+#: ../../LocalizedStrings.cpp:1081
 msgid "timeline slider thumb"
 msgstr "jempol penggeser waktu"
 
-#: ../../LocalizedStrings.cpp:729
+#: ../../LocalizedStrings.cpp:1083
 msgid "back 30 seconds"
 msgstr "mundur 30 detik"
 
-#: ../../LocalizedStrings.cpp:731
-msgid "return to realtime"
+#: ../../LocalizedStrings.cpp:1085
+msgid "return to real time"
 msgstr "kembali ke waktu nyata"
 
-#: ../../LocalizedStrings.cpp:733
+#: ../../LocalizedStrings.cpp:1087
 msgid "elapsed time"
 msgstr "waktu berjalan"
 
-#: ../../LocalizedStrings.cpp:735
+#: ../../LocalizedStrings.cpp:1089
 msgid "remaining time"
 msgstr "sisa waktu"
 
-#: ../../LocalizedStrings.cpp:737
+#: ../../LocalizedStrings.cpp:1091
 msgid "status"
 msgstr "status"
 
-#: ../../LocalizedStrings.cpp:739
+#: ../../LocalizedStrings.cpp:1093
 msgid "enter full screen"
 msgstr "masuk mode layar penuh"
 
-#: ../../LocalizedStrings.cpp:741
+#: ../../LocalizedStrings.cpp:1095
 msgid "exit full screen"
 msgstr "keluar mode layar penuh"
 
-#: ../../LocalizedStrings.cpp:743
+#: ../../LocalizedStrings.cpp:1097
 msgid "fast forward"
 msgstr "maju cepat"
 
-#: ../../LocalizedStrings.cpp:745
+#: ../../LocalizedStrings.cpp:1099
 msgid "fast reverse"
 msgstr "mundur cepat"
 
-#: ../../LocalizedStrings.cpp:747
+#: ../../LocalizedStrings.cpp:1101
 msgid "show closed captions"
 msgstr "tampilkan takarir gambar"
 
-#: ../../LocalizedStrings.cpp:749
+#: ../../LocalizedStrings.cpp:1103
 msgid "hide closed captions"
 msgstr "sembunyikan takarir gambar"
 
-#: ../../LocalizedStrings.cpp:762
+#: ../../LocalizedStrings.cpp:1116
 msgid "audio element playback controls and status display"
 msgstr "tampilan status dan kendali main ulang elemen suara"
 
-#: ../../LocalizedStrings.cpp:764
+#: ../../LocalizedStrings.cpp:1118
 msgid "video element playback controls and status display"
 msgstr "tampilan status dan kendali main ulang elemen video"
 
-#: ../../LocalizedStrings.cpp:766
+#: ../../LocalizedStrings.cpp:1120
 msgid "mute audio tracks"
 msgstr "bisukan trek suara"
 
-#: ../../LocalizedStrings.cpp:768
+#: ../../LocalizedStrings.cpp:1122
 msgid "unmute audio tracks"
 msgstr "bunyikan trek suara"
 
-#: ../../LocalizedStrings.cpp:770
+#: ../../LocalizedStrings.cpp:1124
 msgid "begin playback"
 msgstr "mulai memutar"
 
-#: ../../LocalizedStrings.cpp:772
+#: ../../LocalizedStrings.cpp:1126
 msgid "pause playback"
 msgstr "jeda memutar"
 
-#: ../../LocalizedStrings.cpp:774
+#: ../../LocalizedStrings.cpp:1128
 msgid "movie time scrubber"
 msgstr "pembersih waktu film"
 
-#: ../../LocalizedStrings.cpp:776
+#: ../../LocalizedStrings.cpp:1130
 msgid "movie time scrubber thumb"
 msgstr "jempol pembersih waktu film"
 
-#: ../../LocalizedStrings.cpp:778
+#: ../../LocalizedStrings.cpp:1132
 msgid "seek movie back 30 seconds"
 msgstr "seem film mundur 30 detik"
 
-#: ../../LocalizedStrings.cpp:780
-msgid "return streaming movie to real time"
-msgstr "kembalikan film mengalir ke waktu nyata"
+#: ../../LocalizedStrings.cpp:1134
+msgid "resume real time streaming"
+msgstr "lanjutkan streaming real time"
 
-#: ../../LocalizedStrings.cpp:782
+#: ../../LocalizedStrings.cpp:1136
 msgid "current movie time in seconds"
 msgstr "waktu film kini dalam detik"
 
-#: ../../LocalizedStrings.cpp:784
+#: ../../LocalizedStrings.cpp:1138
 msgid "number of seconds of movie remaining"
 msgstr "cacah detik sisa film"
 
-#: ../../LocalizedStrings.cpp:786
+#: ../../LocalizedStrings.cpp:1140
 msgid "current movie status"
 msgstr "status film kini"
 
-#: ../../LocalizedStrings.cpp:788
+#: ../../LocalizedStrings.cpp:1142
 msgid "seek quickly back"
 msgstr "seek mundur cepat"
 
-#: ../../LocalizedStrings.cpp:790
+#: ../../LocalizedStrings.cpp:1144
 msgid "seek quickly forward"
 msgstr "seek maju cepat"
 
-#: ../../LocalizedStrings.cpp:792
-msgid "Play movie in fullscreen mode"
+#: ../../LocalizedStrings.cpp:1146
+msgid "Play movie in full screen mode"
 msgstr "Mainkan film pada mode layar penuh"
 
-#: ../../LocalizedStrings.cpp:794
+#: ../../LocalizedStrings.cpp:1148
 msgid "start displaying closed captions"
 msgstr "mulai tampilkan takarir gambar"
 
-#: ../../LocalizedStrings.cpp:796
+#: ../../LocalizedStrings.cpp:1150
 msgid "stop displaying closed captions"
 msgstr "tak tampilkan lagi takarir gambar"
 
-#: ../../LocalizedStrings.cpp:809
+#: ../../LocalizedStrings.cpp:1163
 msgid "indefinite time"
 msgstr "waktu tak tentu"
 
-#: ../../LocalizedStrings.cpp:818
-#, c-format
-msgid "%1$d days %2$d hours %3$d minutes %4$d seconds"
-msgstr "%1$d hari %2$d jam %3$d menit %4$d detik"
-
-#: ../../LocalizedStrings.cpp:820
-#, c-format
-msgid "%1$d hours %2$d minutes %3$d seconds"
-msgstr "%1$d jam %2$d menit %3$d detik"
-
-#: ../../LocalizedStrings.cpp:822
-#, c-format
-msgid "%1$d minutes %2$d seconds"
-msgstr "%1$d menit %2$d detik"
-
-#: ../../LocalizedStrings.cpp:823
-#, c-format
-msgid "%1$d seconds"
-msgstr "%1$d detik"
-
-#: ../../LocalizedStrings.cpp:828
+#: ../../LocalizedStrings.cpp:1182
 msgid "Fill out this field"
 msgstr "Isi penuh ruas ini"
 
-#: ../../LocalizedStrings.cpp:833
+#: ../../LocalizedStrings.cpp:1187
 msgid "Select this checkbox"
 msgstr "Pilih kotak centang ini"
 
-#: ../../LocalizedStrings.cpp:838
+#: ../../LocalizedStrings.cpp:1192
 msgid "Select a file"
 msgstr "Pilih berkas"
 
-#: ../../LocalizedStrings.cpp:848
+#: ../../LocalizedStrings.cpp:1202
 msgid "Select one of these options"
 msgstr "Pilih satu dari beberapa opsi ini"
 
-#: ../../LocalizedStrings.cpp:853
+#: ../../LocalizedStrings.cpp:1207
 msgid "Select an item in the list"
 msgstr "Pilih suatu butir dalam daftar"
 
-#: ../../LocalizedStrings.cpp:858
+#: ../../LocalizedStrings.cpp:1212
+msgid "Tap this switch"
+msgstr "Ketuk saklar ini"
+
+#: ../../LocalizedStrings.cpp:1217
 msgid "Invalid value"
 msgstr "Nilai yang tidak valid"
 
-#: ../../LocalizedStrings.cpp:863
+#: ../../LocalizedStrings.cpp:1222
 msgid "Enter an email address"
 msgstr "Masukkan alamat surel"
 
-#: ../../LocalizedStrings.cpp:873
+#: ../../LocalizedStrings.cpp:1232
 msgid "Enter a URL"
 msgstr "Masukkan URL"
 
-#: ../../LocalizedStrings.cpp:878
+#: ../../LocalizedStrings.cpp:1237
 msgid "Match the requested format"
 msgstr "Cocok dengan format yang diminta"
 
-#: ../../LocalizedStrings.cpp:884
-#, c-format
-msgid "Use at least %d characters"
-msgstr "Gunakan paling tidak %d karakter"
-
-#: ../../LocalizedStrings.cpp:890
-#, c-format
-msgid "Use no more than %d characters"
-msgstr "Gunakan tidak lebih dari %d karakter"
-
-#: ../../LocalizedStrings.cpp:900
-#, c-format
-msgid "Value must be greater than or equal to %s"
-msgstr "Nilai mesti lebih dari atau sama dengan %s"
-
-#: ../../LocalizedStrings.cpp:903
+#: ../../LocalizedStrings.cpp:1274
 msgid "range underflow"
 msgstr "limpah bawah rentang"
 
-#: ../../LocalizedStrings.cpp:912
-#, c-format
-msgid "Value must be less than or equal to %s"
-msgstr "Nilai harus kurang dari atau sama dengan %s"
-
-#: ../../LocalizedStrings.cpp:915
+#: ../../LocalizedStrings.cpp:1286
 msgid "range overflow"
 msgstr "limpah atas rentang"
 
-#: ../../LocalizedStrings.cpp:921
+#: ../../LocalizedStrings.cpp:1292
 msgid "Enter a valid value"
 msgstr "Masukkan suatu nilai yang valid"
 
-#: ../../LocalizedStrings.cpp:926
+#: ../../LocalizedStrings.cpp:1297
 msgid "Enter a number"
 msgstr "Masukkan suatu angka"
 
-#: ../../LocalizedStrings.cpp:931
+#: ../../LocalizedStrings.cpp:1302
 msgid "Click to Exit Full Screen"
 msgstr "Klik untuk Keluar Mode Layar Penuh"
 
-#: ../../LocalizedStrings.cpp:938
-msgid "Subtitles"
-msgstr "Subtitel"
+#: ../../LocalizedStrings.cpp:1309
+msgctxt "Menu item label for a audio/text track that has no other name."
+msgid "Unknown"
+msgstr "Tak Diketahui"
 
-#: ../../LocalizedStrings.cpp:943
+#: ../../LocalizedStrings.cpp:1314
+msgctxt ""
+"Menu item label for the track that represents disabling closed captions."
 msgid "Off"
 msgstr "Mati"
 
-#: ../../LocalizedStrings.cpp:948
+#: ../../LocalizedStrings.cpp:1319
+msgctxt "Menu item label for automatic track selection behavior."
 msgid "Auto (Recommended)"
 msgstr "Otomatis (Disarankan)"
 
-#: ../../LocalizedStrings.cpp:953
-msgctxt "Menu item label for a text track that has no other name"
-msgid "Unknown"
-msgstr "Tak Diketahui"
+#: ../../LocalizedStrings.cpp:1453
+#| msgid "_Show Media Controls"
+msgid "Show Media Stats"
+msgstr "Tampilkan Statistik Media"
 
-#: ../../LocalizedStrings.cpp:958
-msgctxt "Menu item label for an audio track that has no other name"
-msgid "Unknown"
-msgstr "Tak Diketahui"
-
-#: ../../LocalizedStrings.cpp:1004
+#: ../../LocalizedStrings.cpp:1460
 msgid "Snapshotted Plug-In"
 msgstr "Pengaya yang Di-snapshot"
 
-#: ../../LocalizedStrings.cpp:1009
+#: ../../LocalizedStrings.cpp:1465
 msgid "Click to restart"
 msgstr "Klik untuk start ulang"
 
-#: ../../LocalizedStrings.cpp:1014
+#: ../../LocalizedStrings.cpp:1470
 msgid "Show in blocked plug-in"
 msgstr "Tampilkan dalam pengaya yang diblokir"
 
-#: ../../LocalizedStrings.cpp:1024
-#, c-format
-msgid "%s WebCrypto Master Key"
-msgstr "Kunci Induk WebCrypto %s"
-
-#: ../../LocalizedStrings.cpp:1032
+#: ../../LocalizedStrings.cpp:1482
 msgid "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB"
 msgstr ""
 "Dipakai untuk mengenkripsi kunci WebCrypto dalam penyimpanan persisten, "
 "seperti misalnya IndexedDB"
 
-#: ../../LocalizedStrings.cpp:1041
-msgid "Done (extra zoomed form controls)"
-msgstr ""
+#: ../../LocalizedStrings.cpp:1491
+msgctxt "Title of the OK button for the number pad in zoomed form controls."
+msgid "OK"
+msgstr "OK"
 
-#: ../../LocalizedStrings.cpp:1046
+#: ../../LocalizedStrings.cpp:1496
 msgid "Cancel"
 msgstr "Batal"
 
-#: ../../LocalizedStrings.cpp:1051
+#: ../../LocalizedStrings.cpp:1501
 msgid "Hide"
 msgstr "Sembunyikan"
 
-#: ../../LocalizedStrings.cpp:1056
+#: ../../LocalizedStrings.cpp:1506
 msgid "Go"
 msgstr "Go"
 
-#: ../../LocalizedStrings.cpp:1061
+#: ../../LocalizedStrings.cpp:1511
 msgid "Search"
 msgstr "Cari"
 
-#: ../../LocalizedStrings.cpp:1066
-msgid "Write"
-msgstr "Tulis"
+#: ../../LocalizedStrings.cpp:1516
+msgctxt "Set button below date picker"
+msgid "Set"
+msgstr "Atur"
 
-#: ../../LocalizedStrings.cpp:1071
-msgid "Speak"
-msgstr "Bicara"
+#: ../../LocalizedStrings.cpp:1521
+msgctxt "Day label in date picker"
+msgid "DAY"
+msgstr "TANGGAL"
 
-#: ../../LocalizedStrings.cpp:1076
-msgid "Day label in date picker"
-msgstr "Label hari dalam penitik tanggal"
+#: ../../LocalizedStrings.cpp:1526
+msgctxt "Month label in date picker"
+msgid "MONTH"
+msgstr "BULAN"
 
-#: ../../LocalizedStrings.cpp:1081
-msgid "Month label in date picker"
-msgstr "Label bulan dalam penitik tanggal"
+#: ../../LocalizedStrings.cpp:1531
+msgctxt "Year label in date picker"
+msgid "YEAR"
+msgstr "TAHUN"
 
-#: ../../LocalizedStrings.cpp:1086
-msgid "Year label in date picker"
-msgstr "Label tahun dalam penitik tanggal"
+#: ../../LocalizedStrings.cpp:1550
+msgid "Unacceptable TLS certificate"
+msgstr "Sertifikat TLS tak dapat diterima"
 
-#: ../../network/soup/NetworkStorageSessionSoup.cpp:280
-msgid "WebKitGTK+ password"
-msgstr "kata sandi WebKitGTK+"
+#: ../../LocalizedStrings.cpp:1569
+msgid "Continue with Touch ID."
+msgstr "Lanjutkan dengan Touch ID."
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:153
-msgid "Context"
-msgstr "Konteks"
+#: ../../LocalizedStrings.cpp:1575
+msgid "This document is password protected."
+msgstr "Dokumen ini dilindungi kata sandi."
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:154
-msgid "Flags with the context of the WebKitHitTestResult"
-msgstr ""
+#: ../../LocalizedStrings.cpp:1580
+msgid "Please enter the password below."
+msgstr "Silakan masukkan kata sandi di bawah."
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:167
-msgid "Link URI"
-msgstr "URI Taut"
+#: ../../LocalizedStrings.cpp:1585
+msgid "Invalid Password"
+msgstr "Kata Sandi Tidak Valid"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:168
-msgid "The link URI"
-msgstr "URI tautan"
+#: ../../LocalizedStrings.cpp:1590
+msgid "Copy Link with Highlight"
+msgstr "Salin Tautan dengan Sorotan"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:180
-msgid "Link Title"
-msgstr "Judul Tautan"
+#: ../../LocalizedStrings.cpp:1596
+msgid "View Spatial"
+msgstr "Lihat Spasial"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:181
-msgid "The link title"
-msgstr "Judul tautan"
+#: ../../network/soup/NetworkStorageSessionSoup.cpp:241
+msgid "WebKitGTK password"
+msgstr "Kata sandi WebKitGTK"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:193
-msgid "Link Label"
-msgstr "Label tautan"
+#: ../../../editing/EditAction.cpp:43
+msgctxt "Undo action name"
+msgid "Set Color"
+msgstr "Setel Warna"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:194
-msgid "The link label"
-msgstr "Label tautan"
+#: ../../../editing/EditAction.cpp:45
+msgctxt "Undo action name"
+msgid "Set Background Color"
+msgstr "Tentukan Warna Latar"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:206
-msgid "Image URI"
-msgstr "URI Gambar"
+#: ../../../editing/EditAction.cpp:47
+msgctxt "Undo action name"
+msgid "Turn Off Kerning"
+msgstr "Matikan Kerning"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:207
-msgid "The image URI"
-msgstr "URI citra"
+#: ../../../editing/EditAction.cpp:49
+msgctxt "Undo action name"
+msgid "Tighten Kerning"
+msgstr "Rapatkan Kerning"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:219
-msgid "Media URI"
-msgstr "URI Media"
+#: ../../../editing/EditAction.cpp:51
+msgctxt "Undo action name"
+msgid "Loosen Kerning"
+msgstr "Longgarkan Kerning"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:220
-msgid "The media URI"
-msgstr "URI media"
+#: ../../../editing/EditAction.cpp:53
+msgctxt "Undo action name"
+msgid "Use Standard Kerning"
+msgstr "Gunakan Kerning Standar"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:96
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:104
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:110
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:987
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:456
-msgid "URI"
-msgstr "URI"
+#: ../../../editing/EditAction.cpp:55
+msgctxt "Undo action name"
+msgid "Turn Off Ligatures"
+msgstr "Matikan Ligatura"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:97
-msgid "The URI to which the request will be made."
-msgstr "URI kemana permintaan akan dibuat."
+#: ../../../editing/EditAction.cpp:57
+msgctxt "Undo action name"
+msgid "Use Standard Ligatures"
+msgstr "Gunakan Ligatura Standar"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:105
-msgid "The URI for which the response was made."
-msgstr "URI untuk mana respon dibuat."
+#: ../../../editing/EditAction.cpp:59
+msgctxt "Undo action name"
+msgid "Use All Ligatures"
+msgstr "Gunakan Semua Ligatura"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:116
-msgid "Status Code"
-msgstr "Kode Status"
+#: ../../../editing/EditAction.cpp:61
+msgctxt "Undo action name"
+msgid "Raise Baseline"
+msgstr "Naikkan Garis Dasar"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:117
-msgid "The status code of the response as returned by the server."
-msgstr "Kode status dari respon yang dikembalikan oleh server."
+#: ../../../editing/EditAction.cpp:63
+msgctxt "Undo action name"
+msgid "Lower Baseline"
+msgstr "Turunkan Garis Dasar"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:129
-msgid "Content Length"
-msgstr "Panjang Isi"
+#: ../../../editing/EditAction.cpp:65
+msgctxt "Undo action name"
+msgid "Set Traditional Character Shape"
+msgstr "Atur Bentuk Karakter Tradisional"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:130
-msgid "The expected content length of the response."
-msgstr "Panjang konten respon yang diharapkan."
+#: ../../../editing/EditAction.cpp:67
+msgctxt "Undo action name"
+msgid "Set Font"
+msgstr "Atur Fonta"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:142
-msgid "MIME Type"
-msgstr "Jenis MIME"
+#: ../../../editing/EditAction.cpp:69
+msgctxt "Undo action name"
+msgid "Change Attributes"
+msgstr "Ubah Atribut"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:143
-msgid "The MIME type of the response"
-msgstr "Tipe MIME respon"
+#: ../../../editing/EditAction.cpp:71
+msgctxt "Undo action name"
+msgid "Align Left"
+msgstr "Rata Kiri"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:155
-msgid "Suggested Filename"
-msgstr "Nama Berkas Yang Disarankan"
+#: ../../../editing/EditAction.cpp:73
+msgctxt "Undo action name"
+msgid "Align Right"
+msgstr "Rata Kanan"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:156
-msgid "The suggested filename for the URI response"
-msgstr "Nama berkas yang disarankan untuk respon URI"
+#: ../../../editing/EditAction.cpp:75
+msgctxt "Undo action name"
+msgid "Center"
+msgstr "Tengah"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:172
-msgid "HTTP Headers"
-msgstr "Header HTTP"
+#: ../../../editing/EditAction.cpp:77
+msgctxt "Undo action name"
+msgid "Justify"
+msgstr "Diratakan"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:173
-msgid "The The HTTP headers of the response"
-msgstr "Header HTTP dari respon"
+#: ../../../editing/EditAction.cpp:80
+msgctxt "Undo action name"
+msgid "Set Writing Direction"
+msgstr "Atur Arah Menulis"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:40
+#: ../../../editing/EditAction.cpp:82
+msgctxt "Undo action name"
+msgid "Subscript"
+msgstr "Subskrip"
+
+#: ../../../editing/EditAction.cpp:84
+msgctxt "Undo action name"
+msgid "Superscript"
+msgstr "Superskrip"
+
+#: ../../../editing/EditAction.cpp:86
+msgctxt "Undo action name"
+msgid "Underline"
+msgstr "Garis bawah"
+
+#: ../../../editing/EditAction.cpp:88
+msgctxt "Undo action name"
+msgid "StrikeThrough"
+msgstr "Dicoret"
+
+#: ../../../editing/EditAction.cpp:90
+msgctxt "Undo action name"
+msgid "Outline"
+msgstr "Kerangka"
+
+#: ../../../editing/EditAction.cpp:92
+msgctxt "Undo action name"
+msgid "Unscript"
+msgstr "Tanpa skrip"
+
+#: ../../../editing/EditAction.cpp:94
+msgctxt "Undo action name"
+msgid "Drag"
+msgstr "Seret"
+
+#: ../../../editing/EditAction.cpp:96
+msgctxt "Undo action name"
+msgid "Cut"
+msgstr "Potong"
+
+#: ../../../editing/EditAction.cpp:98
+msgctxt "Undo action name"
+msgid "Bold"
+msgstr "Tebal"
+
+#: ../../../editing/EditAction.cpp:100
+msgctxt "Undo action name"
+msgid "Italics"
+msgstr "Miring"
+
+#: ../../../editing/EditAction.cpp:102
+msgctxt "Undo action name"
+msgid "Delete"
+msgstr "Hapus"
+
+#: ../../../editing/EditAction.cpp:104
+msgctxt "Undo action name"
+msgid "Dictation"
+msgstr "Dikte"
+
+#: ../../../editing/EditAction.cpp:106
+msgctxt "Undo action name"
+msgid "Paste"
+msgstr "Tempel"
+
+#: ../../../editing/EditAction.cpp:108
+msgctxt "Undo action name"
+msgid "Paste Font"
+msgstr "Tempel Fonta"
+
+#: ../../../editing/EditAction.cpp:110
+msgctxt "Undo action name"
+msgid "Paste Ruler"
+msgstr "Tempel Penggaris"
+
+#: ../../../editing/EditAction.cpp:125
+msgctxt "Undo action name"
+msgid "Typing"
+msgstr "Mengetik"
+
+#: ../../../editing/EditAction.cpp:127
+msgctxt "Undo action name"
+msgid "Create Link"
+msgstr "Buat Tautan"
+
+#: ../../../editing/EditAction.cpp:129
+msgctxt "Undo action name"
+msgid "Unlink"
+msgstr "Lepas taut"
+
+#: ../../../editing/EditAction.cpp:132
+msgctxt "Undo action name"
+msgid "Insert List"
+msgstr "Sisipkan Daftar"
+
+#: ../../../editing/EditAction.cpp:134
+msgctxt "Undo action name"
+msgid "Formatting"
+msgstr "Pemformatan"
+
+#: ../../../editing/EditAction.cpp:136
+msgctxt "Undo action name"
+msgid "Indent"
+msgstr "Indentasi"
+
+#: ../../../editing/EditAction.cpp:138
+msgctxt "Undo action name"
+msgid "Outdent"
+msgstr "Indentasi mundur"
+
+#: ../../../editing/EditAction.cpp:142
+msgctxt "Undo action name"
+msgid "Convert to Ordered List"
+msgstr "Mengonversi ke Daftar Terurut"
+
+#: ../../../editing/EditAction.cpp:144
+msgctxt "Undo action name"
+msgid "Convert to Unordered List"
+msgstr "Mengonversi ke Daftar Tak Terurut"
+
+#: ../../../editing/EditAction.cpp:146
+msgctxt "Undo action name"
+msgid "Remove Background"
+msgstr "Hapus Latar Belakang"
+
+#: ../../../../JavaScriptCore/API/glib/JSCOptions.cpp:684
+msgid "JSC Options"
+msgstr "Opsi JSC"
+
+#: ../../../../JavaScriptCore/API/glib/JSCOptions.cpp:684
+msgid "Show JSC Options"
+msgstr "Tampilkan Opsi JSC"
+
+#: ../../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:63
+msgid "Name"
+msgstr "Nama"
+
+#: ../../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:64
+msgid "Size"
+msgstr "Ukuran"
+
+#: ../../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:65
+msgid "Date Modified"
+msgstr "Tanggal Diubah"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:42
 msgid "Not allowed to use restricted network port"
 msgstr "Tak diijinkan memakai port jaringan yang dibatasi"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:45
+#: ../../../../WebKit/Shared/WebErrors.cpp:47
 msgid "The URL was blocked by a content blocker"
 msgstr "URL diblokir oleh pemblokir kontek"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:50
+#: ../../../../WebKit/Shared/WebErrors.cpp:52
 msgid "The URL can’t be shown"
 msgstr "URL tak dapat ditampilkan"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:55
+#: ../../../../WebKit/Shared/WebErrors.cpp:57
+msgid "The URL was blocked by device restrictions"
+msgstr "URL terblokir oleh pembatasan perangkat"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:62
 msgid "Frame load interrupted"
 msgstr "Pemuatan bingkai terputus"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:61
+#: ../../../../WebKit/Shared/WebErrors.cpp:72
+msgid "Error handling synchronous load with custom protocol"
+msgstr "Galat menangani beban sinkron dengan protokol ubahan"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:78
 msgid "The URL was blocked by a content filter"
 msgstr "URL terblokir oleh suatu penyarin konten"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:67
+#: ../../../../WebKit/Shared/WebErrors.cpp:84
 msgid "Content with specified MIME type can’t be shown"
 msgstr "Konten dengan tipe MIME tersebut tak dapat ditampilkan"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:72
+#: ../../../../WebKit/Shared/WebErrors.cpp:89
 msgid "Plug-in handled load"
-msgstr ""
+msgstr "Beban yang ditangani plug-in"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:77
-msgid "WebKit encountered an internal error"
-msgstr "WebKit menemui suatu galat internal"
-
-#: ../../../../WebKit/Shared/glib/WebErrorsGlib.cpp:42
+#: ../../../../WebKit/Shared/WebErrors.cpp:95
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2557
 msgid "Load request cancelled"
 msgstr "Permintaan memuat dibatalkan"
 
-#: ../../../../WebKit/Shared/glib/WebErrorsGlib.cpp:47
+#: ../../../../WebKit/Shared/WebErrors.cpp:100
 msgid "File does not exist"
 msgstr "Berkas tak ada"
 
-#: ../../../../WebKit/Shared/gtk/WebErrorsGtk.cpp:43
-msgid "Printer not found"
-msgstr "Pencetak tak ditemukan"
+#: ../../../../WebKit/Shared/WebErrors.cpp:111
+msgid "HTTPS Upgrade redirect loop detected"
+msgstr "Loop pengalihan Peningkatan HTTPS terdeteksi"
 
-#: ../../../../WebKit/Shared/gtk/WebErrorsGtk.cpp:48
+#: ../../../../WebKit/Shared/WebErrors.cpp:116
+msgid ""
+"Navigation failed because the request was for an HTTP URL with HTTPS-Only "
+"enabled"
+msgstr ""
+"Navigasi gagal karena permintaan adalah untuk URL HTTP dengan HTTPS-Only "
+"diaktifkan"
+
+#: ../../../../WebKit/Shared/gtk/WebErrorsGtk.cpp:38
 msgid "Invalid page range"
 msgstr "Kisaran halaman tak valid"
 
@@ -1098,338 +1484,125 @@ msgstr "Kisaran halaman tak valid"
 msgid "User cancelled the download"
 msgstr "Pengguna membatalkan pengunduhan"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:232
-msgid "Identifier"
-msgstr "Identifair"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:180
+msgid "Favicons database not initialized yet"
+msgstr "Basis data favicon belum diinisialisasi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:233
-msgid "The automation session identifier"
-msgstr "Identifier sesi otomasi"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:165
-msgid "Destination"
-msgstr "Tujuan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:166
-msgid "The local URI to where the download will be saved"
-msgstr "URI lokal tempat tujuan penyimpanan unduh"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:178
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:123
-msgid "Response"
-msgstr "Respon"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:179
-msgid "The response of the download"
-msgstr "Respon dari pengunduhan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:196
-msgid "Estimated Progress"
-msgstr "Estimasi Kemajuan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:197
-msgid "Determines the current progress of the download"
-msgstr "Menyatakan tingkat kemajuan pengunduhan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:215
-msgid "Allow Overwrite"
-msgstr "Izinkan Menimpa"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:216
-msgid "Whether the destination may be overwritten"
-msgstr "Apakah tujuan dapat ditimpa"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitEditorState.cpp:93
-msgid "Typing Attributes"
-msgstr "Atribut Pengetikan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitEditorState.cpp:94
-msgid "Flags with the typing attributes"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:147
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:426
-#, c-format
-msgid "Unknown favicon for page %s"
-msgstr "favicon yang tidak dikenal untul halaman %s"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:152
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:382
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:187
 #, c-format
 msgid "Page %s does not have a favicon"
 msgstr "Halaman %s tidak memiliki suatu favicon"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:376
-msgid "Favicons database not initialized yet"
-msgstr "Basis data favicon belum diinisialisasi"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:198
+#, c-format
+msgid "Unknown favicon for page %s"
+msgstr "Favicon yang tidak dikenal untuk halaman %s"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:138
-msgid "MIME types filter"
-msgstr "Penyaring tipe MIME"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:270
+msgid "Failed to create texture"
+msgstr "Gagal membuat tekstur"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:139
-msgid "The filter currently associated with the request"
-msgstr "Penyaring yang kini terkait dengan permintaan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:154
-msgid "MIME types"
-msgstr "Tipe MIME"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:155
-msgid "The list of MIME types associated with the request"
-msgstr "Daftar tipe MIME yang terkait dengan permintaan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:169
-msgid "Select multiple files"
-msgstr "Pilih beberapa berkas"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:170
-msgid "Whether the file chooser should allow selecting multiple files"
-msgstr "Apakah pemilih berkas diperbolehkan memilih berkas berganda"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:183
-msgid "Selected files"
-msgstr "Berkas yang dipilih"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:184
-msgid "The list of selected files associated with the request"
-msgstr "Daftar berkas yang dipilih terkat dengan permintaan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:193
-msgid "Search text"
-msgstr "Teks pencarian"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:194
-msgid "Text to search for in the view"
-msgstr "Teks yang akan dicari dalam tilikan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:206
-msgid "Search Options"
-msgstr "Opsi Pencarian"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:207
-msgid "Search options to be used in the search operation"
-msgstr "Opsi pencarian yang akan dipakai dalam operasi pencarian"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:220
-msgid "Maximum matches count"
-msgstr "Cacah cocok maksimum"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:221
-msgid "The maximum number of matches in a given text to report"
-msgstr ""
-"Banyaknya kecocokan maksimum dalam suatu teks yang diberikan untuk dilaporkan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:233
-msgid "WebView"
-msgstr "WebView"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:234
-msgid "The WebView associated with this find controller"
-msgstr "WebView yang terkait dengan pengendali cari ini"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:114
-msgid "Navigation action"
-msgstr "Aksi navigasi"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:115
-msgid "The WebKitNavigationAction triggering this decision"
-msgstr "WebKitNavigationAction yang memicu keputusan ini"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:131
-msgid "Navigation type"
-msgstr "Tipe navigasi"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:132
-msgid "The type of navigation triggering this decision"
-msgstr "Tipe navigasi yang memicu keputusan ini"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:151
-msgid "Mouse button"
-msgstr "Tombol tetikus"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:152
-msgid "The mouse button used if this decision was triggered by a mouse event"
-msgstr ""
-"Tombol tetikus yang dipakai bila keputusan ini dipicu oleh suatu kejadian "
-"tetikus"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:170
-msgid "Mouse event modifiers"
-msgstr "Pengubah kejadian tetikus"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:171
-msgid "The modifiers active if this decision was triggered by a mouse event"
-msgstr ""
-"Modifier yang aktif bila keputusan ini dipicu oleh suatu kejadian tetikus"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:186
-msgid "Navigation URI request"
-msgstr "Permintaan URI navigasi"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:187
-msgid "The URI request that is associated with this navigation"
-msgstr "Permintaan URI yang terkait dengan navigasi ini"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:202
-msgid "Frame name"
-msgstr "Nama bingkai"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:203
-msgid "The name of the new frame this navigation action targets"
-msgstr "Nama bingkai baru yang menjadi target aksi navigasi ini"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:103
-msgid "ID"
-msgstr "ID"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:104
-msgid "The unique id for the notification"
-msgstr "ID unik untuk pemberitahuan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:118
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:940
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:135
-msgid "Title"
-msgstr "Judul"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:119
-msgid "The title for the notification"
-msgstr "Judul pemberitahuan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:133
-msgid "Body"
-msgstr "Tubuh"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:134
-msgid "The body for the notification"
-msgstr "Tubuh pemberitahuan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:148
-msgid "Tag"
-msgstr "Tanda"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:149
-msgid "The tag identifier for the notification"
-msgstr "Identifier tag notifikasi"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:92
-msgid "Response URI request"
-msgstr "Permintaan URI respon"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:93
-msgid "The URI request that is associated with this policy decision"
-msgstr "Permintaan URI yang terkait dengan keputusan kebijakan ini"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:106
-msgid "URI response"
-msgstr "Respon URI"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:107
-msgid "The URI response that is associated with this policy decision"
-msgstr "Respon URI yang terkait dengan keputusan kebijakan ini"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:561
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:667
 msgid "Enable JavaScript"
 msgstr "Aktifkan JavaScript"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:562
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:668
 msgid "Enable JavaScript."
 msgstr "Fungsikan JavaScript."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:576
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:682
 msgid "Auto load images"
 msgstr "Otomatis muat citra"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:577
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:683
 msgid "Load images automatically."
 msgstr "Muat gambar secara otomatis."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:590
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:697
 msgid "Load icons ignoring image load setting"
 msgstr "Muat ikon mengabaikan setelah pemuatan citra"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:591
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:698
 msgid "Whether to load site icons ignoring image load setting."
 msgstr "Apakah memuat ikon situs mengabaikan setelan pemuatan citra."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:608
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:712
 msgid "Enable offline web application cache"
 msgstr "Aktifkan singgahan aplikasi web luring"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:609
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:713
 msgid "Whether to enable offline web application cache."
 msgstr "Apakah memfungsikan singgahan aplikasi web luring."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:625
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:729
 msgid "Enable HTML5 local storage"
 msgstr "Fungsikan penyimpanan lokal HTML5"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:626
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:730
 msgid "Whether to enable HTML5 Local Storage support."
 msgstr "Apakah memfungsikan dukungan Penyimpanan Lokal HTML5."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:643
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:742
 msgid "Enable HTML5 database"
 msgstr "Fungsikan basis data HTML5"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:644
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:743
 msgid "Whether to enable HTML5 database support."
 msgstr "Apakah memfungsikan dukungan basis data HTML5."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:657
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:759
 msgid "Enable XSS auditor"
 msgstr "Fungsikan auditor XSS"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:658
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:760
 msgid "Whether to enable the XSS auditor."
 msgstr "Apakah memfungsikan auditor XSS."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:673
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:774
 msgid "Enable frame flattening"
-msgstr ""
+msgstr "Aktifkan perataan bingkai"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:674
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:775
 msgid "Whether to enable frame flattening."
-msgstr ""
+msgstr "Apakah akan mengaktifkan perataan bingkai."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:686
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:789
 msgid "Enable plugins"
 msgstr "Fungsikan pengaya"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:687
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:790
 msgid "Enable embedded plugin objects."
 msgstr "Aktifkan objek pengaya tertempel."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:699
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:804
 msgid "Enable Java"
 msgstr "Fungsikan Java"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:700
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:805
 msgid "Whether Java support should be enabled."
 msgstr "Apakah dukungan Java difungsikan."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:713
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:819
 msgid "JavaScript can open windows automatically"
 msgstr "JavaScript dapat otomatis membuka jendela"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:714
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:820
 msgid "Whether JavaScript can open windows automatically."
 msgstr "Apakah JavaScript dapat secara otomatis membuka jendela."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:729
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:835
 msgid "Enable hyperlink auditing"
-msgstr "Fungsikan audit taut luar."
+msgstr "Fungsikan audit taut luar"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:730
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:836
 msgid "Whether <a ping> should be able to send pings."
 msgstr "Apakah <a ping> mesti bisa mengirim ping."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:742
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:848
 msgid "Default font family"
 msgstr "Keluarga fonta baku"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:743
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:849
 msgid ""
 "The font family to use as the default for content that does not specify a "
 "font."
@@ -1437,986 +1610,576 @@ msgstr ""
 "Keluarga fonta yang dipakai sebagai yang baku untuk konten yang tidak "
 "menyatakan suatu fonta."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:756
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:862
 msgid "Monospace font family"
 msgstr "Keluarga fonta lebar seragam (monospace)"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:757
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:863
 msgid "The font family used as the default for content using monospace font."
 msgstr ""
 "Keluarga fonta yang dipakai sebagai yang baku untuk konten yang memakai "
 "fonta monospace."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:769
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:875
 msgid "Serif font family"
 msgstr "Keluarga fonta serif"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:770
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:876
 msgid "The font family used as the default for content using serif font."
 msgstr ""
 "Keluarga fonta yang dipakai sebagai yang baku untuk konten yang memakai "
 "fonta serif."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:782
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:888
 msgid "Sans-serif font family"
 msgstr "Keluarga fonta sans-serif"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:783
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:889
 msgid "The font family used as the default for content using sans-serif font."
 msgstr ""
 "Keluarga fonta yang dipakai sebagai yang baku untuk konten yang memakai "
 "fonta sans-serif."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:795
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:901
 msgid "Cursive font family"
 msgstr "Keluarga fonta kursif"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:796
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:902
 msgid "The font family used as the default for content using cursive font."
 msgstr ""
 "Keluarga fonta yang dipakai sebagai yang baku untuk konten yang memakai "
 "fonta kursif."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:808
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:914
 msgid "Fantasy font family"
 msgstr "Keluarga fonta fantasi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:809
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:915
 msgid "The font family used as the default for content using fantasy font."
 msgstr ""
 "Keluarga fonta yang dipakai sebagai yang baku untuk konten yang memakai "
 "fonta fantasi."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:821
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:927
 msgid "Pictograph font family"
 msgstr "Keluarga fonta piktograf"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:822
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:928
 msgid "The font family used as the default for content using pictograph font."
 msgstr ""
 "Keluarga fonta yang dipakai sebagai yang baku untuk konten yang memakai "
 "fonta piktograf."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:835
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:941
 msgid "Default font size"
 msgstr "Ukuran fonta baku"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:836
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:942
 msgid "The default font size used to display text."
 msgstr "Ukuran fonta bawaan yang dipakai untuk menampilkan teks."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:849
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:955
 msgid "Default monospace font size"
 msgstr "Ukuran baku fonta monospace"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:850
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:956
 msgid "The default font size used to display monospace text."
 msgstr "Ukuran fonta bawaan yang dipakai untuk menampilkan teks lebar-seragam."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:864
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:970
 msgid "Minimum font size"
 msgstr "Ukuran fonta minimum"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:865
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:971
 msgid "The minimum font size used to display text."
 msgstr "Ukuran fonta minimum yang dipakai untuk menampilkan teks."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:877
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:983
 msgid "Default charset"
 msgstr "Gugus karakter baku"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:878
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:984
 msgid ""
 "The default text charset used when interpreting content with unspecified "
 "charset."
 msgstr ""
+"Set karakter teks baku yang digunakan saat menafsirkan konten dengan set "
+"karakter yang tidak ditentukan."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:893
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1000
 msgid "Enable private browsing"
 msgstr "Fungsikan meramban pribadi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:894
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1001
 msgid "Whether to enable private browsing"
 msgstr "Apakah memfungsikan meramban pribadi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:906
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1014
 msgid "Enable developer extras"
 msgstr "Fungsikan ekstra pengembang"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:907
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1015
 msgid "Whether to enable developer extras"
 msgstr "Apakah memfungsikan ekstra pengembang"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:919
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1027
 msgid "Enable resizable text areas"
 msgstr "Fungsikan area teks yang dapat diubah ukuran"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:920
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1028
 msgid "Whether to enable resizable text areas"
 msgstr "Apakah memfungsikan area teks yang dapat diubah ukuran"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:935
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1043
 msgid "Enable tabs to links"
 msgstr "Fungsikan tab ke tautan"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:936
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1044
 msgid "Whether to enable tabs to links"
 msgstr "Apakah memfungsikan tab ke tautan"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:949
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1057
 msgid "Enable DNS prefetching"
 msgstr "Fungsikan pratarik DNS"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:950
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1058
 msgid "Whether to enable DNS prefetching"
 msgstr "Apakah memfungsikan pratarik DNS"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:962
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1070
 msgid "Enable Caret Browsing"
 msgstr "Aktifkan Perambanan Caret"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:963
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1071
 msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "Apakah mengaktifkan navigasi papan tik bagi aksesabilitas"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:978
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1086
 msgid "Enable Fullscreen"
 msgstr "Fungsikan Layar Penuh"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:979
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1087
 msgid "Whether to enable the Javascript Fullscreen API"
 msgstr "Apakah memfungsikan API Layar Penuh Javascript"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:991
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1103
 msgid "Print Backgrounds"
 msgstr "Cetak Latar"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:992
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1104
 msgid "Whether background images should be drawn during printing"
 msgstr "Apakah citra latar mesti digambar selama pencetakan"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1010
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1120
 msgid "Enable WebAudio"
 msgstr "Fungsikan WebAudio"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1011
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1121
 msgid "Whether WebAudio content should be handled"
 msgstr "Apakah isi WebAudio mesti ditangani"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1025
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1138
 msgid "Enable WebGL"
 msgstr "Fungsikan WebGL"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1026
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1139
 msgid "Whether WebGL content should be rendered"
 msgstr "Apakah isi WebGL mesti dirender"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1043
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1156
 msgid "Allow modal dialogs"
 msgstr "Izinkan dialog modal"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1044
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1157
 msgid "Whether it is possible to create modal dialogs"
 msgstr "Apakah mungkin membuat dialog yang bertipe modal"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1059
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1172
 msgid "Zoom Text Only"
 msgstr "Zum Teks Saja"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1060
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1173
 msgid "Whether zoom level of web view changes only the text size"
 msgstr "Apakah tingkat zum dari tilikan web hanya mengubah ukuran teks saja"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1074
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1187
 msgid "JavaScript can access clipboard"
 msgstr "JavaScript dapat mengakses papan klip"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1075
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1188
 msgid "Whether JavaScript can access Clipboard"
 msgstr "Apakah JavaScript dapat mengakses Papan Klip"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1091
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1204
 msgid "Media playback requires user gesture"
 msgstr "Pemutaran media memerlukan gestur pengguna"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1092
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1205
 msgid "Whether media playback requires user gesture"
 msgstr "Apakah pemutaran media memerlukan gestur pengguna"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1106
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1219
 msgid "Media playback allows inline"
 msgstr "Pemutaran media mengijinkan inline"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1107
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1220
 msgid "Whether media playback allows inline"
 msgstr "Apakah pemutaran media mengijinkan inline"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1121
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1234
 msgid "Draw compositing indicators"
 msgstr "Gambar indikator pengomposisian"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1122
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1235
 msgid "Whether to draw compositing borders and repaint counters"
-msgstr ""
+msgstr "Apakah akan menggambar batas komposit dan mengecat ulang penghitung"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1141
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1255
 msgid "Enable Site Specific Quirks"
 msgstr "Aktifkan Perilaku Khusus Situs"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1142
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1256
 msgid "Enables the site-specific compatibility workarounds"
 msgstr "Aktifkan pengakalan kompatibilitas spesifik situs"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1162
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1276
 msgid "Enable page cache"
 msgstr "Aktifkan singgahan halaman"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1163
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1277
 msgid "Whether the page cache should be used"
 msgstr "Apakah mengaktifkan singgahan halaman"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1182
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1296
 msgid "User agent string"
 msgstr "String user agent"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1183
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1297
 msgid "The user agent string"
 msgstr "String user agent"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1195
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1309
 msgid "Enable smooth scrolling"
 msgstr "Fungsikan gulir mulus"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1196
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1310
 msgid "Whether to enable smooth scrolling"
 msgstr "Apakah pengguliran mulus difungsikan"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1213
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1330
 msgid "Enable accelerated 2D canvas"
 msgstr "Fungsikan kanvas 2D terakselerasi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1214
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1331
 msgid "Whether to enable accelerated 2D canvas"
 msgstr "Apakah memfungsikan kanvas 2D yang terakselerasi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1229
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1349
+msgid "Enable 2D canvas acceleration"
+msgstr "Mengaktifkan akselerasi kanvas 2D"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1350
+#| msgid "Whether to enable accelerated 2D canvas"
+msgid "Whether to enable 2D canvas acceleration"
+msgstr "Apakah akan mengaktifkan akselerasi kanvas 2D"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1369
 msgid "Write console messages on stdout"
 msgstr "Tulis pesan-pesan konsol ke stdout"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1230
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1370
 msgid "Whether to write console messages on stdout"
 msgstr "Apakah menulis pesan-pesan konsole pada stdout"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1248
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1388
 msgid "Enable MediaStream"
 msgstr "Fungsikan MediaStream"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1249
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1389
 msgid "Whether MediaStream content should be handled"
 msgstr "Apakah konten MediaStream mesti ditangani"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1268
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1408
+msgid "Enable mock capture devices"
+msgstr "Mengaktifkan perangkat tangkapan tiruan"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1409
+msgid "Whether we expose mock capture devices or not"
+msgstr "Apakah kami mengekspos perangkat tangkapan tiruan atau tidak"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1432
 msgid "Enable Spatial Navigation"
 msgstr "Aktifkan Navigasi Spasial"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1269
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1433
 msgid "Whether to enable Spatial Navigation support."
 msgstr "Apakah memfungsikan dukungan Navigasi Spasial."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1288
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1451
 msgid "Enable MediaSource"
 msgstr "Fungsikan MediaSource"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1289
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1452
 msgid "Whether MediaSource should be enabled."
 msgstr "Apakah MediaSource mesti difungsikan."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1309
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1475
 msgid "Enable EncryptedMedia"
 msgstr "Fungsikan EncryptedMedia"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1310
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1476
 msgid "Whether EncryptedMedia should be enabled."
 msgstr "Apakah EncryptedMedia mesti difungsikan."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1328
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1501
+msgid "Enable MediaCapabilities"
+msgstr "Fungsikan MediaCapabilities"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1502
+msgid "Whether MediaCapabilities should be enabled."
+msgstr "Apakah MediaCapabilities harus difungsikan."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1520
 msgid "Allow file access from file URLs"
 msgstr "Izinkan akses berkas dari URL berkas"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1329
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1521
 msgid "Whether file access is allowed from file URLs."
-msgstr ""
+msgstr "Apakah akses berkas diperbolehkan dari URL berkas."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1348
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1540
 msgid "Allow universal access from the context of file scheme URLs"
-msgstr ""
+msgstr "Izinkan akses universal dari konteks URL skema berkas"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1349
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1541
 msgid ""
 "Whether or not universal access is allowed from the context of file scheme "
 "URLs"
 msgstr ""
+"Apakah akses universal diizinkan atau tidak dari konteks URL skema berkas"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1374
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1558
+msgid "Allow top frame navigation to data URLs"
+msgstr "Perbolehkan navigasi bingkai atas ke URL data"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1559
+msgid "Whether or not top frame navigation is allowed to data URLs"
+msgstr "Apakah navigasi bingkai atas diizinkan untuk URL data"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1580
 msgid "Hardware Acceleration Policy"
 msgstr "Kebijakan Akselerasi Perangkat Keras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1375
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1581
 msgid "The policy to decide how to enable and disable hardware acceleration"
 msgstr ""
+"Kebijakan untuk memutuskan cara mengaktifkan dan menonaktifkan akselerasi "
+"perangkat keras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:169
-msgid "Is for audio device"
-msgstr "Untuk peranti audio"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1596
+msgid "Enable back-forward navigation gestures"
+msgstr "Mengaktifkan gestur navigasi maju mundur"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:170
-msgid ""
-"Whether the media device to which the permission was requested has a "
-"microphone or not."
-msgstr ""
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1597
+msgid "Whether horizontal swipe gesture will trigger back-forward navigation"
+msgstr "Apakah gerakan geser horizontal akan memicu navigasi maju mundur"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:182
-msgid "Is for video device"
-msgstr "Untuk peranti video"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1614
+#| msgid "Enable JavaScript"
+msgid "Enable JavaScript Markup"
+msgstr "Aktifkan Markup JavaScript"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:183
-msgid ""
-"Whether the media device to which the permission was requested has a video "
-"capture capability or not."
-msgstr ""
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1615
+msgid "Enable JavaScript in document markup."
+msgstr "Aktifkan JavaScript di markup dokumen."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:413
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:268
-msgid "Local Storage Directory"
-msgstr "Direktori Penyimpanan Lokal"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1631
+msgid "Enable media"
+msgstr "Fungsikan media"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:414
-msgid "The directory where local storage data will be saved"
-msgstr ""
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1632
+msgid "Whether media content should be handled"
+msgstr "Apakah konten media harus ditangani"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:430
-msgid "Website Data Manager"
-msgstr "Manajer Data Situs Web"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1651
+msgid "Media content types requiring hardware support"
+msgstr "Tipe konten media yang memerlukan dukungan perangkat keras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:431
-msgid "The WebKitWebsiteDataManager associated with this context"
-msgstr ""
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1652
+msgid "List of media content types requiring hardware support."
+msgstr "Daftar konten media yang membutuhkan dukungan perangkat keras."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:111
-msgid "The current active URI of the resource"
-msgstr "URI aktif saat ini dari sumber daya"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1670
+#| msgid "Enable WebGL"
+msgid "Enable WebRTC"
+msgstr "Aktifkan WebRTC"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:124
-msgid "The response of the resource"
-msgstr "Respon sumber daya"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1671
+#| msgid "Whether WebAudio content should be handled"
+msgid "Whether WebRTC content should be handled"
+msgstr "Apakah konten WebRTC harus ditangani"
 
-#. This fails when the page is closed or frame is destroyed, so we can just cancel the operation.
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:349
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1693
+msgid "Disable web security"
+msgstr "Nonaktifkan keamanan web"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1694
+#| msgid "Whether Java support should be enabled."
+msgid "Whether web security should be disabled."
+msgstr "Apakah keamanan web harus dinonaktifkan."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1713
+msgid "WebRTC UDP ports range"
+msgstr "Rentang port WebRTC UDP"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1714
+msgid "WebRTC UDP ports range, the format is min-port:max-port"
+msgstr "Rentang port WebRTC UDP, formatnya adalah min-port:max-port"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:358
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5299
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:281
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:940
 msgid "Operation was cancelled"
 msgstr "Operasi dibatalkan"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteData.cpp:187
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteData.cpp:199
 msgid "Local files"
 msgstr "Berkas lokal"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:233
-msgid "Base Data Directory"
-msgstr "Direktori Data Basis"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:234
-msgid "The base directory for Website data"
-msgstr "Direktori basis untuk data Situs web"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:251
-msgid "Base Cache Directory"
-msgstr "Direktori Singgahan Dasar"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:252
-msgid "The base directory for Website cache"
-msgstr "Direktori basis untuk singgahan Situs web"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:269
-msgid "The directory where local storage data will be stored"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:285
-msgid "Disk Cache Directory"
-msgstr "Direktori Singgahan Disk"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:286
-msgid "The directory where HTTP disk cache will be stored"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:302
-msgid "Offline Web Application Cache Directory"
-msgstr "Direktori Singgahan Aplikasi Web Luring"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:303
-msgid "The directory where offline web application cache will be stored"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:319
-msgid "IndexedDB Directory"
-msgstr "Direktori IndexedDB"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:320
-msgid "The directory where IndexedDB databases will be stored"
-msgstr "Direktori tempat basis data IndexedDB akan disimpan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:336
-msgid "WebSQL Directory"
-msgstr "Direktori WebSQL"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:337
-msgid "The directory where WebSQL databases will be stored"
-msgstr "Direktori tempat basis data WebSQL akan disimpan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:353
-msgid "Resource Load Statistics Directory"
-msgstr "Direktori Statistik Beban Sumber Daya"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:354
-msgid "The directory where resource load statistics will be stored"
-msgstr "Direktori tempat statistik beban sumber daya akan disimpan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:374
-msgid "Whether the WebKitWebsiteDataManager is ephemeral"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:605
-msgid "Acknowledge"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:860
-#| msgid "_Back"
-msgid "Backend"
-msgstr "Backend"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:861
-msgid "The backend for the web view"
-msgstr "Backend untuk tilikan web"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:874
-msgid "Web Context"
-msgstr "Konteks Web"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:875
-msgid "The web context for the view"
-msgstr "Konteks web untuk tilikan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:892
-msgid "Related WebView"
-msgstr "WebView Terkait"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:893
-msgid ""
-"The related WebKitWebView used when creating the view to share the same web "
-"process"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:909
-msgid "WebView settings"
-msgstr "Setelan WebView"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:910
-msgid "The WebKitSettings of the view"
-msgstr "WebKitSettings untuk tilikan"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:926
-msgid "WebView user content manager"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:927
-msgid "The WebKitUserContentManager of the view"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:941
-msgid "Main frame document title"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:959
-msgid "Estimated Load Progress"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:960
-msgid "An estimate of the percent completion for a document load"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:973
-msgid "Favicon"
-msgstr "Favicon"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:974
-msgid "The favicon associated to the view, if any"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:988
-msgid "The current active URI of the view"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1003
-msgid "Zoom level"
-msgstr "Tingkat zum"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1004
-msgid "The zoom level of the view content"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1023
-msgid "Is Loading"
-msgstr "Sedang Memuat"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1024
-msgid "Whether the view is loading a page"
-msgstr "Apakah tilikan sedang memuat suatu halaman"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1044
-msgid "Whether the view is playing audio"
-msgstr "Apakah tilikan sedang memutar audio"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1067
-msgid "Whether the web view is ephemeral"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1086
-msgid "Whether the web view is controlled by automation"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1103
-msgid "Editable"
-msgstr "Dapat diedit"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1104
-msgid "Whether the content can be modified by the user."
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:3754
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5064
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5088
 msgid "There was an error creating the snapshot"
-msgstr ""
+msgstr "Ada kesalahan saat membuat snapshot"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:218
-msgid "Geometry"
-msgstr "Geometri"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5305
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:287
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:946
+#, c-format
+msgid "Message %s was not handled"
+msgstr "Pesan %s tidak ditangani"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:219
-msgid "The size and position of the window on the screen."
-msgstr "Ukuran dan posisi jendela pada layar."
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:232
-msgid "Toolbar Visible"
-msgstr "Bilah Alat Tampak"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:233
-msgid "Whether the toolbar should be visible for the window."
-msgstr "Apakah bilah alat mesti tampak bagi jendela tersebut."
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:245
-msgid "Statusbar Visible"
-msgstr "Bilah Status Tampak"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:246
-msgid "Whether the statusbar should be visible for the window."
-msgstr "Apakah bilah status mesti tampak bagi jendela tersebut."
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:258
-msgid "Scrollbars Visible"
-msgstr "Bilah Gulir Tampak"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:259
-msgid "Whether the scrollbars should be visible for the window."
-msgstr "Apakah bilah gulir mesti tampak bagi jendela tersebut."
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:271
-msgid "Menubar Visible"
-msgstr "Bilah Menu Tampak"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:272
-msgid "Whether the menubar should be visible for the window."
-msgstr "Apakah bilah menu harus tampak untuk jendela tersebut."
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:284
-msgid "Locationbar Visible"
-msgstr "Bilah Lokasi Tampak"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:285
-msgid "Whether the locationbar should be visible for the window."
-msgstr "Apakah bilah lokasi harus tampak untuk jendela tersebut."
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:296
-msgid "Resizable"
-msgstr "Dapat diubah ukurannya"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:297
-msgid "Whether the window can be resized."
-msgstr "Apakah jendela dapat diubah ukuran."
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:309
-msgid "Fullscreen"
-msgstr "Layar penuh"
-
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:310
-msgid "Whether window will be displayed fullscreen."
-msgstr "Apakah jendela akan ditampilkan selayar penuh."
-
-#. Title of the HTTP authentication dialog.
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:93
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:107
 msgid "Authentication Required"
 msgstr "Diperlukan Otentikasi"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:104
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:133
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:322
 msgid "_Cancel"
 msgstr "_Batal"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:110
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:143
 msgid "_Authenticate"
 msgstr "Otentik_asi"
 
 #. Prompt on the HTTP authentication dialog.
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:122
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:160
 #, c-format
 msgid "Authentication required by %s:%i"
 msgstr "Otentikasi diperlukan oleh %s:%i"
 
 #. Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:131
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:173
 #, c-format
 msgid "The site says: “%s”"
-msgstr ""
+msgstr "Situs tersebut mengatakan: \"%s\""
 
 #. Check button on the HTTP authentication dialog.
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:138
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:184
 msgid "_Remember password"
 msgstr "Ingat _sandi"
 
 #. Entry on the HTTP authentication dialog.
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:147
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:196
 msgid "_Username"
 msgstr "Nama Pengg_una"
 
 #. Entry on the HTTP authentication dialog.
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:159
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:208
 msgid "_Password"
 msgstr "_Kata-sandi"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitColorChooserRequest.cpp:132
-msgid "Current RGBA color"
-msgstr "Warna RGBA kini"
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:373
+msgid "Printer not found"
+msgstr "Pencetak tak ditemukan"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitColorChooserRequest.cpp:133
-msgid "The current RGBA color for the request"
-msgstr "Warna RGBA kini untuk permintaan"
+#. Translators: this is the print job name, for example "WebKit job #15".
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:380
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:459
+#, c-format
+msgid "%s job #%u"
+msgstr "Tugas %s #%u"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:118
-msgid "Widget"
-msgstr "Widget"
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:535
+#, c-format
+msgid "Error opening %s: %s"
+msgstr "Galat saat membuka %s: %s"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:119
-msgid "Widget that will be added to the print dialog."
-msgstr ""
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:550
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:622
+msgid "Print Web Page"
+msgstr "Cetak Halaman Web"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:136
-msgid "Title of the widget that will be added to the print dialog."
-msgstr ""
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:300
+msgid "_Close"
+msgstr "_Tutup"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:158
-msgid "Web View"
-msgstr "Tilikan Web"
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:324
+msgid "_OK"
+msgstr "_Ok"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:159
-msgid "The web view that will be printed"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:171
-msgid "Print Settings"
-msgstr "Tatanan Pencetakan"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:172
-msgid "The initial print settings for the print operation"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:183
-msgid "Page Setup"
-msgstr "Pengaturan Halaman"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:184
-msgid "The initial page setup for the print operation"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogGtk.cpp:74
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:331
 msgid "Are you sure you want to leave this page?"
 msgstr "Anda yakin ingin meninggalkan halaman ini?"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogGtk.cpp:76
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:333
 msgid "Stay on Page"
 msgstr "Tetap pada Halaman"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogGtk.cpp:76
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:335
 msgid "Leave Page"
 msgstr "Tinggalkan Halaman"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:128
-msgid "Inspected URI"
-msgstr "URI yang diperiksa"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:129
-msgid "The URI that is currently being inspected"
-msgstr "URI yang kini sedang diperiksa"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:140
-msgid "Attached Height"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:141
-msgid "The height that the inspector view should have when it is attached"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:158
-msgid "Can Attach"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:159
-msgid ""
-"Whether the inspector can be attached to the same window that contains the "
-"inspected view"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:1420
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2673
 msgid "Website running in fullscreen mode"
-msgstr ""
+msgstr "Situs web berjalan dalam mode layar penuh"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:74
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:79
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:108
 msgid "Select Files"
 msgstr "Pilih Berkas"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:74
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:79
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:108
 msgid "Select File"
 msgstr "Pilih Berkas"
 
-#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:57
-#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:62
-#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:80
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:65
 #: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:83
 msgid "Web Inspector"
 msgstr "Pemeriksa Web"
 
-#: ../../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp:102
+#. TRANSLATORS: the default action for a desktop notification created by a website.
+#: ../../../../WebKit/UIProcess/Notifications/glib/NotificationService.cpp:463
+msgid "Acknowledge"
+msgstr "Terima"
+
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:219
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:246
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:275
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:338
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:364
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:390
+msgid "Failed to connect to geolocation service"
+msgstr "Gagal tersambung ke layanan geolokasi"
+
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:437
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:519
+msgid "Failed to determine position from geolocation service"
+msgstr "Gagal menentukan posisi dari layanan geolokasi"
+
+#: ../../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp:101
 msgid "Select Color"
 msgstr "Pilih Warna"
 
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:81
-msgctxt "Undo action name"
-msgid "Set Color"
-msgstr "Setel Warna"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:83
-msgctxt "Undo action name"
-msgid "Set Background Color"
-msgstr "Tentukan Warna Latar"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:85
-msgctxt "Undo action name"
-msgid "Turn Off Kerning"
-msgstr "Matikan Kerning"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:87
-msgctxt "Undo action name"
-msgid "Tighten Kerning"
-msgstr "Rapatkan Kerning"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:89
-msgctxt "Undo action name"
-msgid "Loosen Kerning"
-msgstr "Longgarkan Kerning"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:91
-msgctxt "Undo action name"
-msgid "Use Standard Kerning"
-msgstr "Gunakan Kerning Standar"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:93
-msgctxt "Undo action name"
-msgid "Turn Off Ligatures"
-msgstr "Matikan Ligatura"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:95
-msgctxt "Undo action name"
-msgid "Use Standard Ligatures"
-msgstr "Gunakan Ligatura Standar"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:97
-msgctxt "Undo action name"
-msgid "Use All Ligatures"
-msgstr "Gunakan Semua Ligatura"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:99
-msgctxt "Undo action name"
-msgid "Raise Baseline"
-msgstr "Naikkan Garis Dasar"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:101
-msgctxt "Undo action name"
-msgid "Lower Baseline"
-msgstr "Turunkan Garis Dasar"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:103
-msgctxt "Undo action name"
-msgid "Set Traditional Character Shape"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:105
-msgctxt "Undo action name"
-msgid "Set Font"
-msgstr "Atur Fonta"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:107
-msgctxt "Undo action name"
-msgid "Change Attributes"
-msgstr "Ubah Atribut"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:109
-msgctxt "Undo action name"
-msgid "Align Left"
-msgstr "Rata Kiri"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:111
-msgctxt "Undo action name"
-msgid "Align Right"
-msgstr "Rata Kanan"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:113
-msgctxt "Undo action name"
-msgid "Center"
-msgstr "Tengah"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:115
-msgctxt "Undo action name"
-msgid "Justify"
-msgstr "Diratakan"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:117
-msgctxt "Undo action name"
-msgid "Set Writing Direction"
-msgstr "Atur Arah Menulis"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:119
-msgctxt "Undo action name"
-msgid "Subscript"
-msgstr "Subskrip"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:121
-msgctxt "Undo action name"
-msgid "Superscript"
-msgstr "Superskrip"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:123
-msgctxt "Undo action name"
-msgid "Underline"
-msgstr "Garis bawah"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:125
-msgctxt "Undo action name"
-msgid "Outline"
-msgstr "Kerangka"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:127
-msgctxt "Undo action name"
-msgid "Unscript"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:129
-msgctxt "Undo action name"
-msgid "Drag"
-msgstr "Seret"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:131
-msgctxt "Undo action name"
-msgid "Cut"
-msgstr "Potong"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:133
-msgctxt "Undo action name"
-msgid "Bold"
-msgstr "Tebal"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:135
-msgctxt "Undo action name"
-msgid "Italics"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:137
-msgctxt "Undo action name"
-msgid "Delete"
-msgstr "Hapus"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:139
-msgctxt "Undo action name"
-msgid "Dictation"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:141
-msgctxt "Undo action name"
-msgid "Paste"
-msgstr "Tempel"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:143
-msgctxt "Undo action name"
-msgid "Paste Font"
-msgstr "Tempel Fonta"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:145
-msgctxt "Undo action name"
-msgid "Paste Ruler"
-msgstr "Tempel Penggaris"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:160
-msgctxt "Undo action name"
-msgid "Typing"
-msgstr "Mengetik"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:162
-msgctxt "Undo action name"
-msgid "Create Link"
-msgstr "Buat Tautan"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:164
-msgctxt "Undo action name"
-msgid "Unlink"
-msgstr "Lepas taut"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:167
-msgctxt "Undo action name"
-msgid "Insert List"
-msgstr "Sisipkan Daftar"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:169
-msgctxt "Undo action name"
-msgid "Formatting"
-msgstr "Pemformatan"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:171
-msgctxt "Undo action name"
-msgid "Indent"
-msgstr "Indentasi"
-
-#: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:173
-msgctxt "Undo action name"
-msgid "Outdent"
-msgstr ""
-
-#: ../../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp:39
+#: ../../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp:40
 msgid "Local documents on your computer"
 msgstr "Dokumen lokal pada komputer Anda"
-
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp:103
-msgid "Node"
-msgstr "Simpul"
-
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp:104
-msgid "The WebKitDOMNode"
-msgstr "WebKitDOMNode"
-
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:457
-msgid "The current active URI of the web page"
-msgstr "URI aktif saat ini dari laman web"

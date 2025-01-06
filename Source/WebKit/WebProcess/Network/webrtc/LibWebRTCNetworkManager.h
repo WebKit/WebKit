@@ -32,14 +32,18 @@
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/RTCNetworkManager.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class LibWebRTCNetworkManager final : public WebCore::RTCNetworkManager, public rtc::NetworkManagerBase, public webrtc::MdnsResponderInterface, public WebRTCMonitorObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCNetworkManager);
 public:
-    static LibWebRTCNetworkManager* getOrCreate(WebCore::ScriptExecutionContextIdentifier);
+    static RefPtr<LibWebRTCNetworkManager> getOrCreate(WebCore::ScriptExecutionContextIdentifier);
     ~LibWebRTCNetworkManager();
+
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
 
     void setEnumeratingAllNetworkInterfacesEnabled(bool);
     void setEnumeratingVisibleNetworkInterfacesEnabled(bool);
@@ -53,6 +57,7 @@ private:
     void setICECandidateFiltering(bool doFiltering) final { m_useMDNSCandidates = doFiltering; }
     void unregisterMDNSNames() final;
     void close() final;
+    const String& interfaceNameForTesting() const final;
 
     // webrtc::NetworkManagerBase
     void StartUpdating() final;
@@ -78,6 +83,7 @@ private:
 #endif
     bool m_enableEnumeratingAllNetworkInterfaces { false };
     bool m_enableEnumeratingVisibleNetworkInterfaces { false };
+    bool m_hasQueriedInterface { false };
     HashSet<String> m_allowedInterfaces;
 };
 

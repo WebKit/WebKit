@@ -34,6 +34,7 @@
 #import "CAAudioStreamDescription.h"
 #import "CARingBuffer.h"
 #import "Logging.h"
+#import "SpanCoreAudio.h"
 #import <AVFoundation/AVAssetTrack.h>
 #import <AVFoundation/AVAudioMix.h>
 #import <AVFoundation/AVMediaFormat.h>
@@ -51,6 +52,8 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -406,7 +409,7 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
     // Mute the default audio playback by zeroing the tap-owned buffers.
     for (uint32_t i = 0; i < bufferListInOut->mNumberBuffers; ++i) {
         AudioBuffer& buffer = bufferListInOut->mBuffers[i];
-        memset(buffer.mData, 0, buffer.mDataByteSize);
+        zeroSpan(mutableSpan<uint8_t>(buffer));
     }
     *numberFramesOut = 0;
 
@@ -427,5 +430,7 @@ void AudioSourceProviderAVFObjC::setConfigureAudioStorageCallback(ConfigureAudio
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)

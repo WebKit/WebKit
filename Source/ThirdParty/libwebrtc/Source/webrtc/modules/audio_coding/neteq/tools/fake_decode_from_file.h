@@ -12,8 +12,8 @@
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_FAKE_DECODE_FROM_FILE_H_
 
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
@@ -67,7 +67,7 @@ class FakeDecodeFromFile : public AudioDecoder {
 
  private:
   std::unique_ptr<InputAudioFile> input_;
-  absl::optional<uint32_t> next_timestamp_from_input_;
+  std::optional<uint32_t> next_timestamp_from_input_;
   const int sample_rate_hz_;
   const bool stereo_;
 };

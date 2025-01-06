@@ -11,6 +11,8 @@
 #include "api/video/video_timing.h"
 
 #include <algorithm>
+#include <cstdint>
+#include <string>
 
 #include "api/array_view.h"
 #include "api/units/time_delta.h"

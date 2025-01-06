@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FontRanges_h
-#define FontRanges_h
+#pragma once
 
 #include "Font.h"
 #include <wtf/Vector.h>
@@ -33,9 +32,14 @@ namespace WebCore {
 
 class FontAccessor;
 
-enum class ExternalResourceDownloadPolicy {
+enum class ExternalResourceDownloadPolicy : bool {
     Forbid,
     Allow
+};
+
+enum class IsGenericFontFamily : bool {
+    No,
+    Yes
 };
 
 class FontRanges {
@@ -48,13 +52,7 @@ public:
         {
         }
 
-        Range(const Range& range)
-            : m_from(range.m_from)
-            , m_to(range.m_to)
-            , m_fontAccessor(range.m_fontAccessor.copyRef())
-        {
-        }
-
+        Range(const Range&) = default;
         Range(Range&&) = default;
         Range& operator=(const Range&) = delete;
         Range& operator=(Range&&) = default;
@@ -75,7 +73,7 @@ public:
     ~FontRanges();
 
     FontRanges(const FontRanges&) = default;
-    FontRanges(FontRanges&& other, bool isGeneric);
+    FontRanges(FontRanges&& other, IsGenericFontFamily);
     FontRanges& operator=(FontRanges&&) = default;
 
     bool isNull() const { return m_ranges.isEmpty(); }
@@ -90,13 +88,11 @@ public:
     WEBCORE_EXPORT const Font* fontForCharacter(char32_t) const;
     WEBCORE_EXPORT const Font& fontForFirstRange() const;
     bool isLoading() const;
-    bool isGeneric() const { return m_isGeneric; }
+    bool isGenericFontFamily() const { return m_isGenericFontFamily == IsGenericFontFamily::Yes; }
 
 private:
     Vector<Range, 1> m_ranges;
-    bool m_isGeneric { false };
+    IsGenericFontFamily m_isGenericFontFamily { IsGenericFontFamily::No };
 };
 
 }
-
-#endif

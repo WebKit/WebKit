@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "Dualshock3HIDGamepad.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
@@ -35,6 +36,8 @@
 #include <wtf/HexNumber.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Dualshock3HIDGamepad);
 
 Dualshock3HIDGamepad::Dualshock3HIDGamepad(HIDDevice&& device, unsigned index)
     : HIDGamepad(WTFMove(device), index)

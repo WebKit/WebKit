@@ -37,7 +37,6 @@ namespace WebCore {
 
 class Color;
 class Document;
-class LegacyInlineTextBox;
 class RenderCombineText;
 class RenderStyle;
 class RenderText;
@@ -47,13 +46,14 @@ struct MarkedText;
 struct PaintInfo;
 struct StyledMarkedText;
 
-template<typename TextBoxPath>
 class TextBoxPainter {
 public:
-    TextBoxPainter(TextBoxPath&&, PaintInfo&, const LayoutPoint& paintOffset);
+    TextBoxPainter(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&, const RenderStyle&, PaintInfo&, const LayoutPoint& paintOffset);
     ~TextBoxPainter();
 
     void paint();
+
+    static inline FloatSize rotateShadowOffset(const SpaceSeparatedPoint<Style::Length<>>& offset, WritingMode);
 
 protected:
     auto& textBox() const { return m_textBox; }
@@ -80,8 +80,10 @@ protected:
     float textPosition();
     FloatRect computePaintRect(const LayoutPoint& paintOffset);
     bool computeHaveSelection() const;
+    std::pair<unsigned, unsigned> selectionStartEnd() const;
     MarkedText createMarkedTextFromSelectionInBox();
     const FontCascade& fontCascade() const;
+    WritingMode writingMode() const { return m_style.writingMode(); }
     FloatPoint textOriginFromPaintRect(const FloatRect&) const;
 
     struct DecoratingBox {
@@ -93,9 +95,8 @@ protected:
     using DecoratingBoxList = Vector<DecoratingBox>;
     void collectDecoratingBoxesForTextBox(DecoratingBoxList&, const InlineIterator::TextBoxIterator&, FloatPoint textBoxLocation, const TextDecorationPainter::Styles&);
 
-    const ShadowData* debugTextShadow() const;
-
-    const TextBoxPath m_textBox;
+    // FIXME: We could just talk to the display box directly.
+    const InlineIterator::BoxModernPath m_textBox;
     const RenderText& m_renderer;
     const Document& m_document;
     const RenderStyle& m_style;
@@ -114,16 +115,12 @@ protected:
     std::optional<bool> m_emphasisMarkExistsAndIsAbove { };
 };
 
-class LegacyTextBoxPainter : public TextBoxPainter<InlineIterator::BoxLegacyPath> {
-public:
-    LegacyTextBoxPainter(const LegacyInlineTextBox&, PaintInfo&, const LayoutPoint& paintOffset);
-
-    static FloatRect calculateUnionOfAllDocumentMarkerBounds(const LegacyInlineTextBox&);
-};
-
-class ModernTextBoxPainter : public TextBoxPainter<InlineIterator::BoxModernPath> {
-public:
-    ModernTextBoxPainter(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&, PaintInfo&, const LayoutPoint& paintOffset);
-};
-
+inline FloatSize TextBoxPainter::rotateShadowOffset(const SpaceSeparatedPoint<Style::Length<>>& offset, WritingMode writingMode)
+{
+    if (writingMode.isHorizontal())
+        return { offset.x().value, offset.y().value };
+    if (writingMode.isLineOverLeft()) // sideways-lr
+        return { -offset.y().value, offset.x().value };
+    return { offset.y().value, -offset.x().value };
+}
 }

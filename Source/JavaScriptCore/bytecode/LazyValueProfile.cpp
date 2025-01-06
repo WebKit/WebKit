@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,11 @@
 #include "LazyValueProfile.h"
 
 #include "JSCJSValueInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(CompressedLazyValueProfileHolder::LazyValueProfileHolder);
 
 void CompressedLazyValueProfileHolder::computeUpdatedPredictions(const ConcurrentJSLocker& locker, CodeBlock* codeBlock)
 {
@@ -88,9 +91,9 @@ JSValue* CompressedLazyValueProfileHolder::addSpeculationFailureValueProfile(Byt
     return &m_data->speculationFailureValueProfileBuckets.last().second;
 }
 
-HashMap<BytecodeIndex, JSValue*> CompressedLazyValueProfileHolder::speculationFailureValueProfileBucketsMap()
+UncheckedKeyHashMap<BytecodeIndex, JSValue*> CompressedLazyValueProfileHolder::speculationFailureValueProfileBucketsMap()
 {
-    HashMap<BytecodeIndex, JSValue*> result;
+    UncheckedKeyHashMap<BytecodeIndex, JSValue*> result;
     if (m_data) {
         result.reserveInitialCapacity(m_data->speculationFailureValueProfileBuckets.size());
         for (auto& pair : m_data->speculationFailureValueProfileBuckets)

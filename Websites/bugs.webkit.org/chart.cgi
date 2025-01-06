@@ -96,6 +96,13 @@ $user->in_group(Bugzilla->params->{"chartgroup"})
 # Only admins may create public queries
 $user->in_group('admin') || $cgi->delete('public');
 
+if ($cgi->param('debug')
+    && Bugzilla->params->{debug_group}
+    && Bugzilla->user->in_group(Bugzilla->params->{debug_group})
+    ) {
+    $vars->{'debug'} = 1;
+}
+
 # All these actions relate to chart construction.
 if ($action =~ /^(assemble|add|remove|sum|subscribe|unsubscribe)$/) {
     # These two need to be done before the creation of the Chart object, so
@@ -312,7 +319,16 @@ sub plot {
     disable_utf8() if ($format->{'ctype'} =~ /^image\//);
 
     # Debugging PNGs is a pain; we need to be able to see the error messages
-    $vars->{'chart'}->dump() if $cgi->param('debug');
+    if (exists $vars->{'debug'}) {
+        # Bug 1439260 - if we're using debug mode, always use the HTML template
+        # which has proper filters in it. Debug forces an HTML content type
+        # anyway, and can cause XSS if we're not filtering the output.
+        $format = $template->get_format("reports/chart", "", "html");
+        $vars->{'debug_dump'} = $vars->{'chart'}->dump();
+    }
+    
+    print $cgi->header($format->{'ctype'});
+    disable_utf8() if ($format->{'ctype'} =~ /^image\//);
 
     $template->process($format->{'template'}, $vars)
       || ThrowTemplateError($template->error());
@@ -350,7 +366,9 @@ sub view {
 
     # If we have having problems with bad data, we can set debug=1 to dump
     # the data structure.
-    $chart->dump() if $cgi->param('debug');
+    if (exists $vars->{'debug'}) {
+        $vars->{'debug_dump'} = $chart->dump();
+    }
 
     $template->process("reports/create-chart.html.tmpl", $vars)
       || ThrowTemplateError($template->error());

@@ -33,19 +33,9 @@
 
 namespace WebCore {
 
-class Path;
-
 class ThemeAdwaita : public Theme {
 public:
     ThemeAdwaita();
-
-    enum class PaintRounded : bool { No, Yes };
-
-    static void paintFocus(GraphicsContext&, const FloatRect&, int offset, const Color&, PaintRounded = PaintRounded::No);
-    static void paintFocus(GraphicsContext&, const Path&, const Color&);
-    static void paintFocus(GraphicsContext&, const Vector<FloatRect>&, const Color&, PaintRounded = PaintRounded::No);
-    enum class ArrowDirection { Up, Down };
-    static void paintArrow(GraphicsContext&, const FloatRect&, ArrowDirection, bool);
 
     virtual void platformColorsDidChange() { };
 
@@ -58,18 +48,10 @@ private:
     LengthSize controlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const final;
     LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const final;
     LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox&, float) const final;
-    void paint(StyleAppearance, OptionSet<ControlStyle::State>, GraphicsContext&, const FloatRect&, bool, const Color&) final;
 
-    void paintCheckbox(OptionSet<ControlStyle::State>, GraphicsContext&, const FloatRect&, bool, const Color&);
-    void paintRadio(OptionSet<ControlStyle::State>, GraphicsContext&, const FloatRect&, bool, const Color&);
-    void paintButton(OptionSet<ControlStyle::State>, GraphicsContext&, const FloatRect&, bool);
-    void paintSpinButton(OptionSet<ControlStyle::State>, GraphicsContext&, const FloatRect&, bool);
-
-    static Color focusColor(const Color&);
-
-#if PLATFORM(GTK)
-    void refreshGtkSettings();
-#endif // PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void refreshSettings();
+#endif
 
     Color m_accentColor { SRGBA<uint8_t> { 52, 132, 228 } };
 

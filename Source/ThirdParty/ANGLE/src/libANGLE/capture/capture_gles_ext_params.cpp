@@ -2027,9 +2027,7 @@ void CaptureGetTexLevelParameterivANGLE_params(const State &glState,
                                                GLint *params,
                                                ParamCapture *paramCapture)
 {
-    // page 190 https://www.khronos.org/registry/OpenGL/specs/es/3.2/es_spec_3.2.pdf
-    // TEXTURE_BORDER_COLOR: 4 floats, ints, uints
-    paramCapture->readBufferSizeBytes = sizeof(GLint) * 4;
+    paramCapture->readBufferSizeBytes = sizeof(GLint);
 }
 
 void CaptureGetTexLevelParameterfvANGLE_params(const State &glState,
@@ -2040,7 +2038,7 @@ void CaptureGetTexLevelParameterfvANGLE_params(const State &glState,
                                                GLfloat *params,
                                                ParamCapture *paramCapture)
 {
-    CaptureMemory(params, sizeof(GLfloat), paramCapture);
+    paramCapture->readBufferSizeBytes = sizeof(GLfloat);
 }
 
 void CaptureGetMultisamplefvANGLE_val(const State &glState,
@@ -2050,7 +2048,8 @@ void CaptureGetMultisamplefvANGLE_val(const State &glState,
                                       GLfloat *val,
                                       ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    // GL_SAMPLE_POSITION_ANGLE: 2 floats
+    paramCapture->readBufferSizeBytes = sizeof(GLfloat) * 2;
 }
 
 void CaptureGetTranslatedShaderSourceANGLE_length(const State &glState,
@@ -2621,6 +2620,54 @@ void CaptureReadnPixelsEXT_data(const State &glState,
                                 GLsizei bufSize,
                                 void *data,
                                 ParamCapture *paramCapture)
+{
+    UNIMPLEMENTED();
+}
+
+void CaptureGetnUniformfvKHR_params(const State &glState,
+                                    bool isCallValid,
+                                    ShaderProgramID programPacked,
+                                    UniformLocation locationPacked,
+                                    GLsizei bufSize,
+                                    GLfloat *params,
+                                    angle::ParamCapture *paramCapture)
+{
+    UNIMPLEMENTED();
+}
+
+void CaptureGetnUniformivKHR_params(const State &glState,
+                                    bool isCallValid,
+                                    ShaderProgramID programPacked,
+                                    UniformLocation locationPacked,
+                                    GLsizei bufSize,
+                                    GLint *params,
+                                    angle::ParamCapture *paramCapture)
+{
+    UNIMPLEMENTED();
+}
+
+void CaptureGetnUniformuivKHR_params(const State &glState,
+                                     bool isCallValid,
+                                     ShaderProgramID programPacked,
+                                     UniformLocation locationPacked,
+                                     GLsizei bufSize,
+                                     GLuint *params,
+                                     angle::ParamCapture *paramCapture)
+{
+    UNIMPLEMENTED();
+}
+
+void CaptureReadnPixelsKHR_data(const State &glState,
+                                bool isCallValid,
+                                GLint x,
+                                GLint y,
+                                GLsizei width,
+                                GLsizei height,
+                                GLenum format,
+                                GLenum type,
+                                GLsizei bufSize,
+                                void *data,
+                                angle::ParamCapture *paramCapture)
 {
     UNIMPLEMENTED();
 }
@@ -3557,6 +3604,25 @@ void CaptureGenVertexArraysOES_arraysPacked(const State &glState,
     CaptureGenVertexArrays_arraysPacked(glState, isCallValid, n, arrays, paramCapture);
 }
 
+void CaptureBlobCacheCallbacksANGLE_userParam(const State &glState,
+                                              bool isCallValid,
+                                              GLSETBLOBPROCANGLE set,
+                                              GLGETBLOBPROCANGLE get,
+                                              const void *userParam,
+                                              angle::ParamCapture *paramCapture)
+{
+    // Skipped
+}
+
+void CaptureGetPointervANGLE_params(const State &glState,
+                                    bool isCallValid,
+                                    GLenum pname,
+                                    void **params,
+                                    angle::ParamCapture *paramCapture)
+{
+    // Skipped
+}
+
 void CaptureGetTexImageANGLE_pixels(const State &glState,
                                     bool isCallValid,
                                     TextureTarget target,
@@ -3639,6 +3705,51 @@ void CaptureBufferStorageEXT_data(const State &glState,
     {
         CaptureMemory(data, size, paramCapture);
     }
+}
+
+// GL_EXT_clear_texture
+void CaptureClearTexImageEXT_data(const State &glState,
+                                  bool isCallValid,
+                                  TextureID texturePacked,
+                                  GLint level,
+                                  GLenum format,
+                                  GLenum type,
+                                  const void *data,
+                                  angle::ParamCapture *paramCapture)
+{
+    if (!data)
+    {
+        return;
+    }
+
+    const gl::InternalFormat &internalFormatInfo = gl::GetInternalFormatInfo(format, type);
+    GLuint captureSize                           = internalFormatInfo.computePixelBytes(type);
+    CaptureMemory(data, captureSize, paramCapture);
+}
+
+void CaptureClearTexSubImageEXT_data(const State &glState,
+                                     bool isCallValid,
+                                     TextureID texturePacked,
+                                     GLint level,
+                                     GLint xoffset,
+                                     GLint yoffset,
+                                     GLint zoffset,
+                                     GLsizei width,
+                                     GLsizei height,
+                                     GLsizei depth,
+                                     GLenum format,
+                                     GLenum type,
+                                     const void *data,
+                                     angle::ParamCapture *paramCapture)
+{
+    if (!data)
+    {
+        return;
+    }
+
+    const gl::InternalFormat &internalFormatInfo = gl::GetInternalFormatInfo(format, type);
+    GLuint captureSize                           = internalFormatInfo.computePixelBytes(type);
+    CaptureMemory(data, captureSize, paramCapture);
 }
 
 // GL_EXT_separate_shader_objects
@@ -4082,7 +4193,7 @@ void CaptureDeletePerfMonitorsAMD_monitors(const State &glState,
                                            GLuint *monitors,
                                            angle::ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureArray(monitors, n, paramCapture);
 }
 
 void CaptureGenPerfMonitorsAMD_monitors(const State &glState,
@@ -4091,7 +4202,7 @@ void CaptureGenPerfMonitorsAMD_monitors(const State &glState,
                                         GLuint *monitors,
                                         angle::ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureArray(monitors, n, paramCapture);
 }
 
 void CaptureGetPerfMonitorCounterDataAMD_data(const State &glState,
@@ -4388,6 +4499,33 @@ void CaptureFramebufferFoveationConfigQCOM_providedFeatures(const State &glState
                                                             GLuint requestedFeatures,
                                                             GLuint *providedFeatures,
                                                             angle::ParamCapture *paramCapture)
+{
+    UNIMPLEMENTED();
+}
+
+void CaptureTexStorageAttribs2DEXT_attrib_list(const State &glState,
+                                               bool isCallValid,
+                                               GLenum target,
+                                               GLsizei levels,
+                                               GLenum internalformat,
+                                               GLsizei width,
+                                               GLsizei height,
+                                               const GLint *attrib_list,
+                                               angle::ParamCapture *paramCapture)
+{
+    UNIMPLEMENTED();
+}
+
+void CaptureTexStorageAttribs3DEXT_attrib_list(const State &glState,
+                                               bool isCallValid,
+                                               GLenum target,
+                                               GLsizei levels,
+                                               GLenum internalformat,
+                                               GLsizei width,
+                                               GLsizei height,
+                                               GLsizei depth,
+                                               const GLint *attrib_list,
+                                               angle::ParamCapture *paramCapture)
 {
     UNIMPLEMENTED();
 }

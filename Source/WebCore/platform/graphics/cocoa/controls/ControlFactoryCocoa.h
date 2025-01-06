@@ -28,10 +28,12 @@
 #if PLATFORM(COCOA)
 
 #import "ControlFactory.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ControlFactoryCocoa : public ControlFactory {
+    WTF_MAKE_TZONE_ALLOCATED(ControlFactoryCocoa);
 protected:
     using ControlFactory::ControlFactory;
 

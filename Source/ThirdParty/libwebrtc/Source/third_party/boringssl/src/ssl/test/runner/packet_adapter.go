@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"slices"
 	"time"
 )
 
@@ -25,6 +26,9 @@ const opcodeTimeout = byte('T')
 // may only be sent by the C side. Timeout ACKs act as a synchronization point
 // at the timeout, to bracket one flight of messages from C.
 const opcodeTimeoutAck = byte('t')
+
+// opcodeMTU updates the shim's MTU, encoded as a 32-bit number of bytes.
+const opcodeMTU = byte('M')
 
 type packetAdaptor struct {
 	net.Conn
@@ -130,6 +134,17 @@ func (p *packetAdaptor) SendReadTimeout(d time.Duration) ([][]byte, error) {
 	}
 }
 
+// SetPeerMTU instructs the peer to set the MTU to the specified value.
+func (p *packetAdaptor) SetPeerMTU(mtu int) error {
+	p.log(fmt.Sprintf("Setting MTU to %d", mtu), nil)
+
+	payload := make([]byte, 1+4)
+	payload[0] = opcodeMTU
+	binary.BigEndian.PutUint32(payload[1:], uint32(mtu))
+	_, err := p.Conn.Write(payload)
+	return err
+}
+
 type replayAdaptor struct {
 	net.Conn
 	prevWrite []byte
@@ -172,7 +187,7 @@ func (d *damageAdaptor) setDamage(damage bool) {
 
 func (d *damageAdaptor) Write(b []byte) (int, error) {
 	if d.damage && len(b) > 0 {
-		b = append([]byte{}, b...)
+		b = slices.Clone(b)
 		b[len(b)-1]++
 	}
 	return d.Conn.Write(b)

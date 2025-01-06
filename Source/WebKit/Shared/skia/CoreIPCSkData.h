@@ -38,16 +38,16 @@ public:
     {
     }
 
-    CoreIPCSkData(std::span<const uint8_t> data)
-        : m_skData(SkData::MakeWithCopy(data.data(), data.size()))
+    static sk_sp<SkData> create(std::span<const uint8_t> data)
     {
+        return SkData::MakeWithCopy(data.data(), data.size());
     }
-
-    sk_sp<SkData> skData() const { return m_skData; }
 
     std::span<const uint8_t> dataReference() const
     {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Skia port
         return { m_skData->bytes(), m_skData->size() };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
 private:

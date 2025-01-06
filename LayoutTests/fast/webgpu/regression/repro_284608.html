@@ -1,0 +1,62 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  const format = 'bgra8unorm';
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+    let module = device.createShaderModule({
+      code: `
+@vertex
+fn v(@location(0) fromVertexBuffer: f32) -> @builtin(position) vec4f {
+  return vec4(fromVertexBuffer);
+}
+
+@fragment
+fn f() -> @location(0) vec4f {
+  return vec4();
+}
+`,
+    });
+    let pipeline = device.createRenderPipeline({
+      layout: device.createPipelineLayout({bindGroupLayouts: []}),
+      vertex: {
+        module,
+      },
+      fragment: {module, targets: [{format}]},
+      primitive: {topology: 'point-list'},
+    });
+    let texture = device.createTexture({format, size: [1, 1, 1], usage: GPUTextureUsage.RENDER_ATTACHMENT});
+    let renderPassDescriptor = {
+      colorAttachments: [
+        {
+          view: texture.createView(),
+          clearValue: [0, 0, 0, 0],
+          loadOp: 'clear',
+          storeOp: 'store',
+        },
+      ],
+    };
+    let commandEncoder = device.createCommandEncoder();
+    let renderPassEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+    renderPassEncoder.setPipeline(pipeline);
+    let vertexBuffer = device.createBuffer({size: 4, usage: GPUBufferUsage.VERTEX});
+    renderPassEncoder.setVertexBuffer(0, vertexBuffer);
+    let indexBuffer = device.createBuffer({usage: GPUBufferUsage.INDEX, size: 16});
+    renderPassEncoder.setIndexBuffer(indexBuffer, 'uint32');
+    renderPassEncoder.drawIndexed(1, 1, 0, 1, 0);
+    renderPassEncoder.end();
+    device.queue.submit([commandEncoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    let error = await device.popErrorScope();
+    if (error) {
+      log(error.message);
+    } else {
+      log('no validation error');
+    }
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

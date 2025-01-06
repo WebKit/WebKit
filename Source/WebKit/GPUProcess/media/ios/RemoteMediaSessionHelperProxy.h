@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/MediaSessionHelperIOS.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakRef.h>
 
@@ -39,7 +40,7 @@ class GPUConnectionToWebProcess;
 class RemoteMediaSessionHelperProxy
     : public WebCore::MediaSessionHelperClient
     , public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED();
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionHelperProxy);
 public:
     RemoteMediaSessionHelperProxy(GPUConnectionToWebProcess&);
     virtual ~RemoteMediaSessionHelperProxy();
@@ -47,6 +48,10 @@ public:
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
     void overridePresentingApplicationPIDIfNeeded();
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+
+    void ref() const final;
+    void deref() const final;
 
 private:
     // IPC::MessageReceiver
@@ -55,7 +60,7 @@ private:
     // Messages
     void startMonitoringWirelessRoutes();
     void stopMonitoringWirelessRoutes();
-    void providePresentingApplicationPID(int);
+    void providePresentingApplicationPID(int, WebCore::MediaSessionHelper::ShouldOverride);
 
     // MediaSessionHelperClient
     void applicationWillEnterForeground(SuspendedUnderLock) final;

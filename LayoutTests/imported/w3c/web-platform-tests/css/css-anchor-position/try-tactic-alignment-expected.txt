@@ -1,0 +1,41 @@
+
+PASS , justify-self:start;align-self:start, justify-self:start;align-self:start, ltr, horizontal-tb
+PASS flip-inline, justify-self:start;align-self:start, justify-self:end;align-self:start, ltr, horizontal-tb
+PASS flip-block, justify-self:start;align-self:start, justify-self:start;align-self:end, ltr, horizontal-tb
+PASS flip-block flip-inline, justify-self:start;align-self:start, justify-self:end;align-self:end, ltr, horizontal-tb
+PASS flip-start, justify-self:start;align-self:end, justify-self:end;align-self:start, ltr, horizontal-tb
+PASS flip-block flip-start, justify-self:start;align-self:start, justify-self:end;align-self:start, ltr, horizontal-tb
+PASS flip-inline flip-start, justify-self:start;align-self:start, justify-self:start;align-self:end, ltr, horizontal-tb
+PASS flip-block flip-inline flip-start, justify-self:start;align-self:start, justify-self:end;align-self:end, ltr, horizontal-tb
+PASS flip-inline, justify-self:left;align-self:start, justify-self:right;align-self:start, ltr, horizontal-tb
+PASS flip-start, justify-self:left;align-self:end, justify-self:end;align-self:self-start, ltr, horizontal-tb
+PASS flip-start, justify-self:right;align-self:start, justify-self:start;align-self:self-end, ltr, horizontal-tb
+FAIL , justify-self:start assert_equals: expected "start" but got "auto"
+FAIL , justify-self:end assert_equals: expected "end" but got "auto"
+FAIL , justify-self:self-start assert_equals: expected "self-start" but got "auto"
+FAIL , justify-self:self-end assert_equals: expected "self-end" but got "auto"
+FAIL , justify-self:flex-start assert_equals: expected "flex-start" but got "auto"
+FAIL , justify-self:flex-end assert_equals: expected "flex-end" but got "auto"
+FAIL , align-self:start assert_equals: expected "start" but got "auto"
+FAIL , align-self:end assert_equals: expected "end" but got "auto"
+FAIL , align-self:self-start assert_equals: expected "self-start" but got "auto"
+FAIL , align-self:self-end assert_equals: expected "self-end" but got "auto"
+FAIL , align-self:flex-start assert_equals: expected "flex-start" but got "auto"
+FAIL , align-self:flex-end assert_equals: expected "flex-end" but got "auto"
+FAIL flip-inline, justify-self:start assert_equals: expected "end" but got "auto"
+FAIL flip-inline, justify-self:end assert_equals: expected "start" but got "auto"
+FAIL flip-inline, justify-self:self-start assert_equals: expected "self-end" but got "auto"
+FAIL flip-inline, justify-self:self-end assert_equals: expected "self-start" but got "auto"
+FAIL flip-inline, justify-self:flex-start assert_equals: expected "flex-end" but got "auto"
+FAIL flip-inline, justify-self:flex-end assert_equals: expected "flex-start" but got "auto"
+FAIL flip-inline, justify-self:left assert_equals: expected "right" but got "auto"
+FAIL flip-inline, justify-self:right assert_equals: expected "left" but got "auto"
+FAIL flip-block, align-self:start assert_equals: expected "end" but got "auto"
+FAIL flip-block, align-self:end assert_equals: expected "start" but got "auto"
+FAIL flip-block, align-self:self-start assert_equals: expected "self-end" but got "auto"
+FAIL flip-block, align-self:self-end assert_equals: expected "self-start" but got "auto"
+FAIL flip-block, align-self:flex-start assert_equals: expected "flex-end" but got "auto"
+FAIL flip-block, align-self:flex-end assert_equals: expected "flex-start" but got "auto"
+PASS flip-start, justify-self:left;align-self:end, justify-self:end;align-self:self-start, ltr, vertical-rl
+PASS flip-start, justify-self:left;align-self:start, justify-self:start;align-self:self-end, rtl, horizontal-tb
+

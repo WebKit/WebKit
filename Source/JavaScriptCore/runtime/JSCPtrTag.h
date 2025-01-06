@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,10 +133,10 @@ ALWAYS_INLINE static PtrType tagJSCCodePtrImpl(PtrType ptr)
         JITOperationList::assertIsJITOperation(ptr);
 #if ENABLE(JIT_CAGE)
         if (Options::useJITCage())
-            return bitwise_cast<PtrType>(JITOperationList::instance().map(ptr));
+            return std::bit_cast<PtrType>(JITOperationList::singleton().map(ptr));
     } else {
         if (Options::useJITCage())
-            return bitwise_cast<PtrType>(jitCagePtr(bitwise_cast<void*>(ptr), tag));
+            return std::bit_cast<PtrType>(jitCagePtr(std::bit_cast<void*>(ptr), tag));
 #endif // ENABLE(JIT_CAGE)
     }
     return WTF::tagNativeCodePtrImpl<tag>(ptr);
@@ -174,8 +174,8 @@ ALWAYS_INLINE static bool isTaggedJSCCodePtrImpl(PtrType ptr)
         static_assert(tag == OperationPtrTag);
 #if ENABLE(JIT_CAGE)
         if (Options::useJITCage()) {
-#if JIT_OPERATION_VALIDATION_ASSERT_ENABLED
-            return JITOperationList::instance().inverseMap(ptr);
+#if ENABLE(JIT_OPERATION_VALIDATION_ASSERT)
+            return JITOperationList::singleton().inverseMap(ptr);
 #else
             // Not supported. We currently don't use this, and don't have an
             // efficient way to implement this. So, just assert that it's not used.
@@ -197,7 +197,7 @@ inline PtrType tagCodePtrWithStackPointerForJITCall(PtrType ptr, const void* sta
     UNUSED_PARAM(stackPointer);
 #if ENABLE(JIT_CAGE)
     if (Options::useJITCage())
-        return bitwise_cast<PtrType>(JSC_JIT_CAGE(bitwise_cast<void*>(ptr), bitwise_cast<uintptr_t>(stackPointer)));
+        return std::bit_cast<PtrType>(JSC_JIT_CAGE(std::bit_cast<void*>(ptr), std::bit_cast<uintptr_t>(stackPointer)));
 #endif
 #if CPU(ARM64E)
     return ptrauth_sign_unauthenticated(ptr, ptrauth_key_process_dependent_code, stackPointer);
@@ -230,7 +230,7 @@ inline PtrType untagAddressDiversifiedCodePtr(PtrType ptr, const void* ptrAddres
 {
     UNUSED_PARAM(ptrAddress);
 #if CPU(ARM64E)
-    uint64_t address = bitwise_cast<uint64_t>(ptrAddress);
+    uint64_t address = std::bit_cast<uint64_t>(ptrAddress);
     uint64_t tagBits = static_cast<uint64_t>(tag) << 48;
     uint64_t addressDiversifiedTag = tagBits ^ address;
     return __builtin_ptrauth_auth(ptr, ptrauth_key_process_dependent_code, addressDiversifiedTag);

@@ -67,7 +67,6 @@ private:
     GPU(Ref<WebGPU::GPU>&&);
 
     struct PendingRequestAdapterArguments;
-    Deque<PendingRequestAdapterArguments> m_pendingRequestAdapterArguments;
     Ref<WebGPU::GPU> m_backing;
     Ref<WGSLLanguageFeatures> m_wgslLanguageFeatures;
 };

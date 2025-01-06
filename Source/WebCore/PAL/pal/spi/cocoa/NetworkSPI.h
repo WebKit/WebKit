@@ -53,9 +53,19 @@ void nw_parameters_allow_sharing_port_with_listener(nw_parameters_t, nw_listener
 void nw_connection_reset_traffic_class(nw_connection_t, uint32_t traffic_class);
 void nw_parameters_set_traffic_class(nw_parameters_t, uint32_t traffic_class);
 
+nw_interface_t nw_interface_create_with_name(const char *interface_name);
 nw_interface_t nw_path_copy_interface(nw_path_t);
 
 bool nw_settings_get_unified_http_enabled(void);
+
+void nw_parameters_set_server_mode(nw_parameters_t, bool);
+nw_parameters_t nw_parameters_create_webtransport_http(nw_parameters_configure_protocol_block_t, nw_parameters_configure_protocol_block_t, nw_parameters_configure_protocol_block_t, nw_parameters_configure_protocol_block_t);
+nw_protocol_options_t nw_webtransport_create_options(void);
+bool nw_protocol_options_is_webtransport(nw_protocol_options_t);
+void nw_webtransport_options_set_is_unidirectional(nw_protocol_options_t, bool);
+void nw_webtransport_options_set_is_datagram(nw_protocol_options_t, bool);
+void nw_webtransport_options_set_connection_max_sessions(nw_protocol_options_t, uint64_t);
+void nw_webtransport_options_add_connect_request_header(nw_protocol_options_t, const char*, const char*);
 
 WTF_EXTERN_C_END
 

@@ -948,7 +948,7 @@ int AccessibilityUIElement::hierarchicalLevel() const
     return 0;
 }
 
-bool AccessibilityUIElement::ariaIsGrabbed() const
+bool AccessibilityUIElement::isGrabbed() const
 {
     return false;
 }

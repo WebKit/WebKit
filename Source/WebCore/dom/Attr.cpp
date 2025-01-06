@@ -34,12 +34,12 @@
 #include "StyledElement.h"
 #include "TextNodeTraversal.h"
 #include "XMLNSNames.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Attr);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Attr);
 
 using namespace HTMLNames;
 
@@ -109,9 +109,9 @@ ExceptionOr<void> Attr::setNodeValue(const String& value)
     return setValue(value.isNull() ? emptyAtom() : AtomString(value));
 }
 
-Ref<Node> Attr::cloneNodeInternal(Document& targetDocument, CloningOperation)
+Ref<Node> Attr::cloneNodeInternal(TreeScope& treeScope, CloningOperation)
 {
-    return adoptRef(*new Attr(targetDocument, qualifiedName(), value()));
+    return adoptRef(*new Attr(treeScope.documentScope(), qualifiedName(), value()));
 }
 
 CSSStyleDeclaration* Attr::style()
@@ -140,7 +140,7 @@ void Attr::detachFromElementWithValue(const AtomString& value)
     ASSERT(m_standaloneValue.isNull());
     m_standaloneValue = value;
     m_element = nullptr;
-    setTreeScopeRecursively(RefAllowingPartiallyDestroyed<Document> { document() });
+    setTreeScopeRecursively(Ref<Document> { document() });
 }
 
 void Attr::attachToElement(Element& element)

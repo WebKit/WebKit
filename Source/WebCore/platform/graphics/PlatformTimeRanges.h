@@ -28,7 +28,10 @@
 #include <algorithm>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+
+OBJC_CLASS NSArray;
 
 namespace WTF {
 class PrintStream;
@@ -42,7 +45,7 @@ enum class AddTimeRangeOption : uint8_t {
 };
 
 class WEBCORE_EXPORT PlatformTimeRanges final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlatformTimeRanges, WEBCORE_EXPORT);
 public:
     PlatformTimeRanges();
     PlatformTimeRanges(const MediaTime& start, const MediaTime& end);
@@ -138,6 +141,10 @@ private:
 
     Vector<Range> m_ranges;
 };
+
+#if PLATFORM(COCOA)
+RetainPtr<NSArray> makeNSArray(const PlatformTimeRanges&);
+#endif
 
 } // namespace WebCore
 

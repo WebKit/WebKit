@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+thead, tbody { display: contents; }
+</style>
+</head>
+<body>
+
+<table id="table">
+<thead id="thead">
+    <tr id="r0-t0">
+        <th id="r0c0">Author</th>
+        <th id="r0c1">Title</th>
+    </tr>
+</thead>
+<tbody id="tbody">
+    <tr id="r1">
+        <td id="r1c0">Stephen Hawking</td>
+        <td id="r1c1">A Brief History of Time</td>
+    </tr>
+    <tr id="r2">
+        <td id="r2c0">Carl Sagan</td>
+        <td id="r2c1">Cosmos</td>
+    </tr>
+</tbody>
+</table>
+
+<script>
+var output = "This test ensures the acessibility tree is correct when table section elements (e.g. thead, tbody) have display:contents.\n\n";
+
+if (window.accessibilityController) {
+    var table = accessibilityController.accessibleElementById("table");
+    const platform = accessibilityController.platformName;
+    if (platform !== "ios") {
+        // Don't do this on iOS because accessibilityController.accessibleElementById("table") doesn't return anything on iOS.
+        output += expect("table.rowCount === 3", "true");
+        output += expect("table.columnCount === 2", "true");
+
+        // Ensure we return the correct thing via the cellForColumnAndRow API, which ATs like VoiceOver use.
+        output += expect("table.cellForColumnAndRow(0, 0).domIdentifier", "'r0c0'");
+        output += expect("table.cellForColumnAndRow(1, 0).domIdentifier", "'r0c1'");
+
+        output += expect("table.cellForColumnAndRow(0, 1).domIdentifier", "'r1c0'");
+        output += expect("table.cellForColumnAndRow(1, 1).domIdentifier", "'r1c1'");
+
+        output += expect("table.cellForColumnAndRow(0, 2).domIdentifier", "'r2c0'");
+        output += expect("table.cellForColumnAndRow(1, 2).domIdentifier", "'r2c1'");
+    }
+
+    if (platform !== "atspi")
+        output += dumpAXSearchTraversal(accessibilityController.rootElement.childAtIndex(0));
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

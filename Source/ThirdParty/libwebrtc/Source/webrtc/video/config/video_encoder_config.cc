@@ -24,7 +24,7 @@ VideoStream::VideoStream()
       max_bitrate_bps(-1),
       scale_resolution_down_by(-1.),
       max_qp(-1),
-      num_temporal_layers(absl::nullopt),
+      num_temporal_layers(std::nullopt),
       active(true) {}
 VideoStream::VideoStream(const VideoStream& other) = default;
 
@@ -59,7 +59,8 @@ VideoEncoderConfig::VideoEncoderConfig()
       bitrate_priority(1.0),
       number_of_streams(0),
       legacy_conference_mode(false),
-      is_quality_scaling_allowed(false) {}
+      is_quality_scaling_allowed(false),
+      max_qp(-1) {}
 
 VideoEncoderConfig::VideoEncoderConfig(VideoEncoderConfig&&) = default;
 
@@ -87,6 +88,15 @@ std::string VideoEncoderConfig::ToString() const {
   return ss.str();
 }
 
+bool VideoEncoderConfig::HasScaleResolutionDownTo() const {
+  for (const VideoStream& simulcast_layer : simulcast_layers) {
+    if (simulcast_layer.scale_resolution_down_to.has_value()) {
+      return true;
+    }
+  }
+  return false;
+}
+
 VideoEncoderConfig::VideoEncoderConfig(const VideoEncoderConfig&) = default;
 
 void VideoEncoderConfig::EncoderSpecificSettings::FillEncoderSpecificSettings(
@@ -95,21 +105,12 @@ void VideoEncoderConfig::EncoderSpecificSettings::FillEncoderSpecificSettings(
     FillVideoCodecVp8(codec->VP8());
   } else if (codec->codecType == kVideoCodecVP9) {
     FillVideoCodecVp9(codec->VP9());
-#ifdef WEBRTC_USE_H265
-  } else if (codec->codecType == kVideoCodecH265) {
-    FillVideoCodecH265(codec->H265());
-#endif
   } else if (codec->codecType == kVideoCodecAV1) {
     FillVideoCodecAv1(codec->AV1());
   } else {
     RTC_DCHECK_NOTREACHED()
         << "Encoder specifics set/used for unknown codec type.";
   }
-}
-
-void VideoEncoderConfig::EncoderSpecificSettings::FillVideoCodecH265(
-    VideoCodecH265* h265_settings) const {
-  RTC_DCHECK_NOTREACHED();
 }
 
 void VideoEncoderConfig::EncoderSpecificSettings::FillVideoCodecVp8(
@@ -126,15 +127,6 @@ void VideoEncoderConfig::EncoderSpecificSettings::FillVideoCodecAv1(
     VideoCodecAV1* av1_settings) const {
   RTC_DCHECK_NOTREACHED();
 }
-
-void VideoEncoderConfig::H265EncoderSpecificSettings::FillVideoCodecH265(
-    VideoCodecH265* h265_settings) const {
-  *h265_settings = specifics_;
-}
-
-VideoEncoderConfig::H265EncoderSpecificSettings::H265EncoderSpecificSettings(
-    const VideoCodecH265& specifics)
-    : specifics_(specifics) {}
 
 VideoEncoderConfig::Vp8EncoderSpecificSettings::Vp8EncoderSpecificSettings(
     const VideoCodecVP8& specifics)

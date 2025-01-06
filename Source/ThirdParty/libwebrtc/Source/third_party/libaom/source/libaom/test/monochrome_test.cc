@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,7 +11,10 @@
 
 #include <climits>
 #include <vector>
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+
+#include "gtest/gtest.h"
+
+#include "config/aom_config.h"
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
 #include "test/i420_video_source.h"
@@ -31,7 +34,7 @@ const double kPsnrThreshold[3] = { 29.0, 41.5, 41.5 };
 // kPsnrFluctuation represents the maximum allowed psnr fluctuation w.r.t first
 // frame. The indices correspond to one/two-pass, allintra and realtime
 // encoding modes.
-const double kPsnrFluctuation[3] = { 2.5, 0.3, 16.0 };
+const double kPsnrFluctuation[3] = { 2.5, 0.3, 17.0 };
 
 class MonochromeTest
     : public ::libaom_test::CodecTestWith3Params<libaom_test::TestMode, int,
@@ -52,6 +55,8 @@ class MonochromeTest
       encoder->Control(AOME_SET_CPUUSED, GET_PARAM(3));
       if (mode_ == ::libaom_test::kAllIntra) {
         encoder->Control(AOME_SET_CQ_LEVEL, kCqLevel);
+      } else if (mode_ == ::libaom_test::kRealTime) {
+        encoder->Control(AOME_SET_MAX_INTRA_BITRATE_PCT, 10000);
       }
       if (lossless_) {
         encoder->Control(AV1E_SET_LOSSLESS, 1);
@@ -120,6 +125,7 @@ class MonochromeTest
   double frame0_psnr_y_;
 };
 
+#if !CONFIG_REALTIME_ONLY
 TEST_P(MonochromeTest, TestMonochromeEncoding) {
   ::libaom_test::I420VideoSource video("hantro_collage_w352h288.yuv", 352, 288,
                                        30, 1, 0, 5);
@@ -173,6 +179,8 @@ TEST_P(MonochromeAllIntraTest, TestMonochromeEncoding) {
   }
 }
 
+#endif  // !CONFIG_REALTIME_ONLY
+
 class MonochromeRealtimeTest : public MonochromeTest {};
 
 TEST_P(MonochromeRealtimeTest, TestMonochromeEncoding) {
@@ -183,8 +191,12 @@ TEST_P(MonochromeRealtimeTest, TestMonochromeEncoding) {
   cfg_.monochrome = 1;
   // Run at low bitrate.
   cfg_.rc_target_bitrate = 40;
+  cfg_.rc_buf_sz = 6000;
+  cfg_.rc_buf_initial_sz = 4000;
+  cfg_.rc_buf_optimal_sz = 5000;
   ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
 
+#if CONFIG_AV1_DECODER
   // Check that the chroma planes are equal across all frames
   std::vector<int>::const_iterator iter = chroma_value_list_.begin();
   int initial_chroma_value = *iter;
@@ -192,8 +204,10 @@ TEST_P(MonochromeRealtimeTest, TestMonochromeEncoding) {
     // Check that all decoded frames have the same constant chroma planes.
     EXPECT_EQ(*iter, initial_chroma_value);
   }
+#endif
 }
 
+#if !CONFIG_REALTIME_ONLY
 AV1_INSTANTIATE_TEST_SUITE(MonochromeTest,
                            ::testing::Values(::libaom_test::kOnePassGood,
                                              ::libaom_test::kTwoPassGood),
@@ -204,6 +218,7 @@ AV1_INSTANTIATE_TEST_SUITE(MonochromeAllIntraTest,
                            ::testing::Values(::libaom_test::kAllIntra),
                            ::testing::Values(0, 1),   // lossless
                            ::testing::Values(6, 9));  // cpu_used
+#endif                                                // !CONFIG_REALTIME_ONLY
 
 AV1_INSTANTIATE_TEST_SUITE(MonochromeRealtimeTest,
                            ::testing::Values(::libaom_test::kRealTime),

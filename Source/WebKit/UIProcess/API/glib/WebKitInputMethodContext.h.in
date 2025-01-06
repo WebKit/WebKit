@@ -126,7 +126,7 @@ struct _WebKitInputMethodContextClass {
                                      GdkEventKey              *key_event);
 #elif PLATFORM(WPE)
     gboolean (* filter_key_event)   (WebKitInputMethodContext        *context,
-                                     struct wpe_input_keyboard_event *key_event);
+                                     gpointer                         key_event);
 #endif
     void     (* notify_focus_in)    (WebKitInputMethodContext *context);
     void     (* notify_focus_out)   (WebKitInputMethodContext *context);
@@ -184,7 +184,7 @@ webkit_input_method_context_filter_key_event   (WebKitInputMethodContext   *cont
 #elif PLATFORM(WPE)
 WEBKIT_API gboolean
 webkit_input_method_context_filter_key_event   (WebKitInputMethodContext        *context,
-                                                struct wpe_input_keyboard_event *key_event);
+                                                gpointer                         key_event);
 #endif
 
 WEBKIT_API void

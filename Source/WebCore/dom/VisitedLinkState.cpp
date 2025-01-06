@@ -40,8 +40,11 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisitedLinkStore.h"
 #include "XLinkNames.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VisitedLinkState);
 
 using namespace HTMLNames;
 

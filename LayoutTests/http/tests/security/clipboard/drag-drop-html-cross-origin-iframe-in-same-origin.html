@@ -30,18 +30,18 @@ window.onmessage = (event) => {
         checkFrameAccess();
 }
 
-function runTest() {
+async function runTest() {
     document.getElementById('source').focus();
     document.execCommand('selectAll');
     if (window.testRunner) {
         internals.settings.setCustomPasteboardDataEnabled(true);
         const sourceRect = source.getBoundingClientRect();
         const destinationRect = destination.getBoundingClientRect();
-        eventSender.mouseMoveTo(sourceRect.x + 10, sourceRect.y + 10);
-        eventSender.mouseDown();
+        await eventSender.asyncMouseMoveTo(sourceRect.x + 10, sourceRect.y + 10);
+        await eventSender.asyncMouseDown();
         eventSender.leapForward(500);
-        eventSender.mouseMoveTo(destinationRect.x + 10, destinationRect.y + 10);
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(destinationRect.x + 10, destinationRect.y + 10);
+        await eventSender.asyncMouseUp();
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,8 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "WebExtensionUtilities.h"
-#import <WebKit/_WKWebExtensionCommand.h>
+#import <WebKit/WKWebExtensionCommandPrivate.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if USE(APPKIT)
 #import <Carbon/Carbon.h>
@@ -72,6 +73,29 @@ static auto *commandsManifest = @{
     }
 };
 
+static auto *emptyCommandsManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"Test Commands",
+    @"description": @"Test Commands",
+    @"version": @"1.0",
+
+    @"permissions": @[ @"webNavigation" ],
+
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO,
+    },
+
+    @"action": @{
+        @"default_title": @"Test Action"
+    },
+
+    @"commands": @{
+    }
+};
+
 TEST(WKWebExtensionAPICommands, GetAllCommands)
 {
     auto *backgroundScript = Util::constructScript(@[
@@ -93,6 +117,23 @@ TEST(WKWebExtensionAPICommands, GetAllCommands)
     ]);
 
     Util::loadAndRunExtension(commandsManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPICommands, GetAllCommandsEmptyManifest)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"let commands = await browser.commands.getAll()",
+        @"browser.test.assertEq(commands.length, 1, 'Should be one command.')",
+
+        @"let executeActionCommand = commands.find(command => command.name === '_execute_action')",
+
+        @"browser.test.assertTrue(!!executeActionCommand, '_execute_action command should exist')",
+        @"browser.test.assertEq(executeActionCommand.description, 'Test Action', 'The description should be')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    Util::loadAndRunExtension(emptyCommandsManifest, @{ @"background.js": backgroundScript });
 }
 
 TEST(WKWebExtensionAPICommands, CommandEvent)
@@ -126,8 +167,8 @@ TEST(WKWebExtensionAPICommands, CommandEvent)
 
 TEST(WKWebExtensionAPICommands, CommandForEvent)
 {
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:commandsManifest resources:@{ }]);
-    auto context = adoptNS([[_WKWebExtensionContext alloc] initForExtension:extension.get()]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:commandsManifest resources:@{ }]);
+    auto context = adoptNS([[WKWebExtensionContext alloc] initForExtension:extension.get()]);
 
     auto *keyCommandEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:(NSEventModifierFlagCommand | NSEventModifierFlagOption)
         timestamp:0 windowNumber:0 context:nil characters:@"Ω" charactersIgnoringModifiers:@"z" isARepeat:NO keyCode:kVK_ANSI_Z];
@@ -135,6 +176,8 @@ TEST(WKWebExtensionAPICommands, CommandForEvent)
 
     EXPECT_NOT_NULL(command);
     EXPECT_NS_EQUAL(command.identifier, @"test-command");
+    EXPECT_NS_EQUAL(command._userVisibleShortcut, @"⌥⌘Z");
+    EXPECT_FALSE(command._isActionCommand);
 
     keyCommandEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:(NSEventModifierFlagControl | NSEventModifierFlagShift)
         timestamp:0 windowNumber:0 context:nil characters:@"Á" charactersIgnoringModifiers:@"y" isARepeat:NO keyCode:kVK_ANSI_A];
@@ -142,6 +185,8 @@ TEST(WKWebExtensionAPICommands, CommandForEvent)
 
     EXPECT_NOT_NULL(command);
     EXPECT_NS_EQUAL(command.identifier, @"_execute_action");
+    EXPECT_NS_EQUAL(command._userVisibleShortcut, @"⌃⇧Y");
+    EXPECT_TRUE(command._isActionCommand);
 
     keyCommandEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:(NSEventModifierFlagCommand | NSEventModifierFlagOption)
         timestamp:0 windowNumber:0 context:nil characters:@"å" charactersIgnoringModifiers:@"a" isARepeat:NO keyCode:kVK_ANSI_A];
@@ -339,10 +384,10 @@ TEST(WKWebExtensionAPICommands, PerformCommandAndPermissionsRequest)
         @"browser.test.yield('Perform Command')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:commandsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:commandsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+    manager.get().internalDelegate.promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
         EXPECT_EQ(requestedPermissions.count, 1lu);
         EXPECT_TRUE([requestedPermissions isEqualToSet:[NSSet setWithObject:@"webNavigation"]]);
         callback(requestedPermissions, nil);

@@ -18,16 +18,15 @@
         });
     }
 
-    function runTestRunnerTest() {
-        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-    
+    async function runTestRunnerTest() {
         var useragent = navigator.userAgent;
         var javaenabled = navigator.javaEnabled();
         var cookieEnabled = navigator.cookieEnabled;
         var mimetypes = navigator.mimeTypes;
         var plugins = navigator.plugins;
         var appversion = navigator.appVersion;
-        testRunner.statisticsNotifyObserver();
+        await testRunner.statisticsNotifyObserver();
+        completeTest();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

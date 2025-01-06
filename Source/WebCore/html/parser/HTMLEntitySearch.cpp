@@ -29,6 +29,8 @@
 
 #include "HTMLEntityTable.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static const HTMLEntityTableEntry* midpoint(const HTMLEntityTableEntry* left, const HTMLEntityTableEntry* right)
@@ -127,3 +129,5 @@ void HTMLEntitySearch::advance(UChar nextCharacter)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

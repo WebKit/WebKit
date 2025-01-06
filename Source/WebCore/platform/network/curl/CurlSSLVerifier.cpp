@@ -26,12 +26,15 @@
 
 #include "config.h"
 #include "CurlSSLVerifier.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(CURL)
 #include "CurlContext.h"
 #include "CurlSSLHandle.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(x);
 
 CurlSSLVerifier::CurlSSLVerifier(void* sslCtx)
 {

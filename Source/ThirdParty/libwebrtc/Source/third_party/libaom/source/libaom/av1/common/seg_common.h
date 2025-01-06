@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -58,13 +58,13 @@ struct segmentation_probs {
                                    [CDF_SIZE(MAX_SEGMENTS)];
 };
 
-static INLINE int segfeature_active(const struct segmentation *seg,
+static inline int segfeature_active(const struct segmentation *seg,
                                     uint8_t segment_id,
                                     SEG_LVL_FEATURES feature_id) {
   return seg->enabled && (seg->feature_mask[segment_id] & (1 << feature_id));
 }
 
-static INLINE void segfeatures_copy(struct segmentation *dst,
+static inline void segfeatures_copy(struct segmentation *dst,
                                     const struct segmentation *src) {
   int i, j;
   for (i = 0; i < MAX_SEGMENTS; i++) {
@@ -91,14 +91,14 @@ int av1_is_segfeature_signed(SEG_LVL_FEATURES feature_id);
 void av1_set_segdata(struct segmentation *seg, int segment_id,
                      SEG_LVL_FEATURES feature_id, int seg_data);
 
-static INLINE int get_segdata(const struct segmentation *seg, int segment_id,
+static inline int get_segdata(const struct segmentation *seg, int segment_id,
                               SEG_LVL_FEATURES feature_id) {
   return seg->feature_data[segment_id][feature_id];
 }
 
-static AOM_INLINE void set_segment_id(uint8_t *segment_ids, int mi_offset,
-                                      int x_mis, int y_mis, int mi_stride,
-                                      uint8_t segment_id) {
+static inline void set_segment_id(uint8_t *segment_ids, int mi_offset,
+                                  int x_mis, int y_mis, int mi_stride,
+                                  uint8_t segment_id) {
   segment_ids += mi_offset;
   for (int y = 0; y < y_mis; ++y) {
     memset(&segment_ids[y * mi_stride], segment_id,

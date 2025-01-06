@@ -27,11 +27,11 @@
 #include "COEPInheritenceViolationReportBody.h"
 
 #include "JSFetchRequest.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(COEPInheritenceViolationReportBody);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(COEPInheritenceViolationReportBody);
 
 Ref<COEPInheritenceViolationReportBody> COEPInheritenceViolationReportBody::create(COEPDisposition disposition, const URL& blockedURL, const String& type)
 {

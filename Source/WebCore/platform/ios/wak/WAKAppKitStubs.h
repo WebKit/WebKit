@@ -95,7 +95,6 @@
 typedef CGPoint NSPoint;
 typedef CGRect NSRect;
 typedef CGSize NSSize;
-typedef NSUInteger NSRectEdge;
 
 #ifndef NSZeroPoint
 #define NSZeroPoint CGPointZero
@@ -151,18 +150,21 @@ typedef NSUInteger NSRectEdge;
 #ifndef NSMaxY
 #define NSMaxY CGRectGetMaxY
 #endif
+
+typedef NS_ENUM(NSInteger, NSRectEdge) {
 #ifndef NSMinXEdge
-#define NSMinXEdge CGRectMinXEdge
+    NSMinXEdge = CGRectMinXEdge,
 #endif
 #ifndef NSMinYEdge
-#define NSMinYEdge CGRectMinYEdge
+    NSMinYEdge = CGRectMinYEdge,
 #endif
 #ifndef NSMaxXEdge
-#define NSMaxXEdge CGRectMaxXEdge
+    NSMaxXEdge = CGRectMaxXEdge,
 #endif
 #ifndef NSMaxYEdge
-#define NSMaxYEdge CGRectMaxYEdge
+    NSMaxYEdge = CGRectMaxYEdge,
 #endif
+};
 
 @interface NSValue (NSGeometryDetails)
 + (NSValue *)valueWithPoint:(NSPoint)point;

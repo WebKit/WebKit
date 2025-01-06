@@ -32,13 +32,6 @@ from webkitpy.tool.commands.commandtest import CommandsTest
 
 
 class ApplyWatchListLocalTest(CommandsTest):
-    def assertRaisesRegex(self, *args, **kwargs):
-        try:
-            return super(ApplyWatchListLocalTest, self).assertRaisesRegex(*args, **kwargs)
-        except AttributeError:
-            # Python 2
-            return self.assertRaisesRegexp(*args, **kwargs)
-
     def test_args_parsing(self):
         expected_logs = """MockWatchList: determine_cc_and_messages
 No bug was updated because no id was given.

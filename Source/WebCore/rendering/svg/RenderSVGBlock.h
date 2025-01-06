@@ -27,7 +27,7 @@ class SVGElement;
 class SVGGraphicsElement;
 
 class RenderSVGBlock : public RenderBlockFlow {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGBlock);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGBlock);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGBlock);
 public:
     inline SVGGraphicsElement& graphicsElement() const;

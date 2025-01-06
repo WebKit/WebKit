@@ -26,12 +26,13 @@
 
 #include "ListStyleType.h"
 #include "RenderStyleConstants.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 class CounterContent {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CounterContent);
 public:
     CounterContent(const AtomString& identifier, ListStyleType style, const AtomString& separator)
         : m_identifier(identifier)

@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT View transitions: pagereveal event provides viewTransition Test timed out
+PASS View transitions: pagereveal event provides viewTransition
 

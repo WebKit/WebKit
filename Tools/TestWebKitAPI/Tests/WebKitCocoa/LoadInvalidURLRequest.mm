@@ -105,13 +105,17 @@ TEST(WebKit, LoadInvalidURLRequestNonASCII)
 {
     __block bool done = false;
     auto delegate = adoptNS([TestNavigationDelegate new]);
-    delegate.get().webContentProcessDidTerminate = ^(WKWebView *) {
+    delegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
         ASSERT_NOT_REACHED();
     };
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_WK_STREQ(error.domain, @"WebKitErrorDomain");
         EXPECT_EQ(error.code, WebKitErrorCannotShowURL);
+#if HAVE(WK_SECURE_CODING_NSURLREQUEST)
+        EXPECT_WK_STREQ([error.userInfo[@"NSErrorFailingURLKey"] absoluteString], "http://%C3%83%C2%A2%C3%82%C2%80%C3%82%C2%80");
+#else
         EXPECT_WK_STREQ([error.userInfo[@"NSErrorFailingURLKey"] absoluteString], "http://%C3%A2%C2%80%C2%80");
+#endif
         done = true;
     };
     auto webView = adoptNS([WKWebView new]);
@@ -139,7 +143,7 @@ TEST(WebKit, LoadNSURLRequestSubclass)
 
 TEST(WebKit, LoadNSURLRequestWithMutablePropertiesAndKeys)
 {
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [NSURLProtocol setProperty:[NSMutableData data] forKey:[NSMutableString stringWithString:@"mutablestring"] inRequest:request];
     [NSURLProtocol setProperty:[NSMutableArray array] forKey:@"key1" inRequest:request];
     [NSURLProtocol setProperty:[NSMutableDictionary dictionary] forKey:@"key2" inRequest:request];

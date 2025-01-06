@@ -25,6 +25,7 @@
 #include "Path.h"
 #include "SVGGraphicsElement.h"
 #include "SVGNames.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -32,7 +33,8 @@ struct DOMPointInit;
 class SVGPoint;
 
 class SVGGeometryElement : public SVGGraphicsElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGGeometryElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGGeometryElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGGeometryElement);
 public:
     virtual float getTotalLength() const;
     virtual ExceptionOr<Ref<SVGPoint>> getPointAtLength(float distance) const;

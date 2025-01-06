@@ -51,6 +51,7 @@ public:
 
     static OptionSet<WebKit::WebEventModifier> webEventModifiersForUIKeyModifierFlags(UIKeyModifierFlags);
     static UIKeyModifierFlags toUIKeyModifierFlags(OptionSet<WebKit::WebEventModifier>);
+    static UIEventButtonMask toUIEventButtonMask(WebKit::WebMouseEventButton);
 };
 
 } // namespace WebKit

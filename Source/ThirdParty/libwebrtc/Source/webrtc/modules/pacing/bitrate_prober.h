@@ -12,12 +12,15 @@
 #define MODULES_PACING_BITRATE_PROBER_H_
 
 #include <stddef.h>
-#include <stdint.h>
 
+#include <optional>
 #include <queue>
 
-#include "api/transport/field_trial_based_config.h"
+#include "api/field_trials_view.h"
 #include "api/transport/network_types.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 
 namespace webrtc {
@@ -29,8 +32,6 @@ struct BitrateProberConfig {
   BitrateProberConfig& operator=(const BitrateProberConfig&) = default;
   ~BitrateProberConfig() = default;
 
-  // A minimum interval between probes to allow scheduling to be feasible.
-  FieldTrialParameter<TimeDelta> min_probe_delta;
   // Maximum amount of time each probe can be delayed.
   FieldTrialParameter<TimeDelta> max_probe_delay;
   // This is used to start sending a probe after a large enough packet.
@@ -38,6 +39,9 @@ struct BitrateProberConfig {
   // This defines the max min packet size, meaning that on high bitrates
   // a packet of at least this size is needed to trigger sending a probe.
   FieldTrialParameter<DataSize> min_packet_size;
+
+  // If true, `min_packet_size` is ignored.
+  bool allow_start_probing_immediately = false;
 };
 
 // Note that this class isn't thread-safe by itself and therefore relies
@@ -48,6 +52,7 @@ class BitrateProber {
   ~BitrateProber() = default;
 
   void SetEnabled(bool enable);
+  void SetAllowProbeWithoutMediaPacket(bool allow);
 
   // Returns true if the prober is in a probing session, i.e., it currently
   // wants packets to be sent out according to the time returned by
@@ -68,7 +73,7 @@ class BitrateProber {
   Timestamp NextProbeTime(Timestamp now) const;
 
   // Information about the current probing cluster.
-  absl::optional<PacedPacketInfo> CurrentCluster(Timestamp now);
+  std::optional<PacedPacketInfo> CurrentCluster(Timestamp now);
 
   // Returns the minimum number of bytes that the prober recommends for
   // the next probe, or zero if not probing. A probe can consist of multiple
@@ -99,12 +104,14 @@ class BitrateProber {
 
     int sent_probes = 0;
     int sent_bytes = 0;
+    TimeDelta min_probe_delta = TimeDelta::Zero();
     Timestamp requested_at = Timestamp::MinusInfinity();
     Timestamp started_at = Timestamp::MinusInfinity();
-    int retries = 0;
   };
 
   Timestamp CalculateNextProbeTime(const ProbeCluster& cluster) const;
+
+  void MaybeSetActiveState(DataSize packet_size);
   bool ReadyToSetActiveState(DataSize packet_size) const;
 
   ProbingState probing_state_;

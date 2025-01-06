@@ -33,10 +33,15 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN // GLib/Win port
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkColorFilter.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEColorMatrixSkiaApplier);
 
 bool FEColorMatrixSkiaApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
@@ -54,7 +59,10 @@ bool FEColorMatrixSkiaApplier::apply(const Filter&, const FilterImageVector& inp
 
     auto values = FEColorMatrix::normalizedFloats(m_effect.values());
     Vector<float> matrix;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
     float components[9];
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     switch (m_effect.type()) {
     case ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX:

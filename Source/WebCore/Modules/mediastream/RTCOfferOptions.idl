@@ -28,4 +28,7 @@
     EnabledBySetting=PeerConnectionEnabled
 ] dictionary RTCOfferOptions : RTCOfferAnswerOptions {
     boolean iceRestart = false;
+
+    [EnabledBySetting=LegacyWebRTCOfferOptionsEnabled] boolean? offerToReceiveVideo;
+    [EnabledBySetting=LegacyWebRTCOfferOptionsEnabled] boolean? offerToReceiveAudio;
 };

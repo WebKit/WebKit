@@ -42,8 +42,8 @@ enum class DelayChangesCategory {
 RenderDelayControllerMetrics::RenderDelayControllerMetrics() = default;
 
 void RenderDelayControllerMetrics::Update(
-    absl::optional<size_t> delay_samples,
-    absl::optional<size_t> buffer_delay_blocks,
+    std::optional<size_t> delay_samples,
+    std::optional<size_t> buffer_delay_blocks,
     ClockdriftDetector::Level clockdrift) {
   ++call_counter_;
 

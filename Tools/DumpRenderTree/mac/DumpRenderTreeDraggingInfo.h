@@ -52,6 +52,8 @@
 - (void)slideDraggedImageTo:(NSPoint)screenPoint;
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination;
 
+@property (nonatomic, readonly) id localContext;
+
 + (void)clearAllFilePromiseReceivers;
 @end
 

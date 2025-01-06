@@ -12,9 +12,9 @@
 #define VIDEO_ADAPTATION_ENCODE_USAGE_RESOURCE_H_
 
 #include <memory>
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "api/scoped_refptr.h"
 #include "api/video/video_adaptation_reason.h"
 #include "video/adaptation/overuse_frame_detector.h"
@@ -42,13 +42,13 @@ class EncodeUsageResource : public VideoStreamEncoderResource,
   void StartCheckForOveruse(CpuOveruseOptions options);
   void StopCheckForOveruse();
 
-  void SetTargetFrameRate(absl::optional<double> target_frame_rate);
+  void SetTargetFrameRate(std::optional<double> target_frame_rate);
   void OnEncodeStarted(const VideoFrame& cropped_frame,
                        int64_t time_when_first_seen_us);
   void OnEncodeCompleted(uint32_t timestamp,
                          int64_t time_sent_in_us,
                          int64_t capture_time_us,
-                         absl::optional<int> encode_duration_us);
+                         std::optional<int> encode_duration_us);
 
   // OveruseFrameDetectorObserverInterface implementation.
   void AdaptUp() override;
@@ -60,7 +60,7 @@ class EncodeUsageResource : public VideoStreamEncoderResource,
   const std::unique_ptr<OveruseFrameDetector> overuse_detector_
       RTC_GUARDED_BY(encoder_queue());
   bool is_started_ RTC_GUARDED_BY(encoder_queue());
-  absl::optional<double> target_frame_rate_ RTC_GUARDED_BY(encoder_queue());
+  std::optional<double> target_frame_rate_ RTC_GUARDED_BY(encoder_queue());
 };
 
 }  // namespace webrtc

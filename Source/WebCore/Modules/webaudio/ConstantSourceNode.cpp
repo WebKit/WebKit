@@ -33,11 +33,12 @@
 #include "AudioParam.h"
 #include "AudioUtilities.h"
 #include "ConstantSourceOptions.h"
-#include <wtf/IsoMallocInlines.h>
+#include <algorithm>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ConstantSourceNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ConstantSourceNode);
 
 ExceptionOr<Ref<ConstantSourceNode>> ConstantSourceNode::create(BaseAudioContext& context, const ConstantSourceOptions& options)
 {
@@ -81,10 +82,10 @@ void ConstantSourceNode::process(size_t framesToProcess)
     
     bool isSampleAccurate = m_offset->hasSampleAccurateValues();
     if (isSampleAccurate && m_offset->automationRate() == AutomationRate::ARate) {
-        float* offsets = m_sampleAccurateValues.data();
-        m_offset->calculateSampleAccurateValues(offsets, framesToProcess);
+        auto offsets = m_sampleAccurateValues.span();
+        m_offset->calculateSampleAccurateValues(offsets.first(framesToProcess));
         if (nonSilentFramesToProcess > 0) {
-            memcpy(outputBus.channel(0)->mutableData() + quantumFrameOffset, offsets + quantumFrameOffset, nonSilentFramesToProcess * sizeof(*offsets));
+            memcpySpan(outputBus.channel(0)->mutableSpan().subspan(quantumFrameOffset), offsets.subspan(quantumFrameOffset, nonSilentFramesToProcess));
             outputBus.clearSilentFlag();
         } else
             outputBus.zero();
@@ -95,8 +96,8 @@ void ConstantSourceNode::process(size_t framesToProcess)
     if (!value)
         outputBus.zero();
     else {
-        float* dest = outputBus.channel(0)->mutableData();
-        std::fill_n(dest + quantumFrameOffset, nonSilentFramesToProcess, value);
+        auto destination = outputBus.channel(0)->mutableSpan();
+        std::ranges::fill(destination.subspan(quantumFrameOffset).first(nonSilentFramesToProcess), value);
         outputBus.clearSilentFlag();
     }
 }

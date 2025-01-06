@@ -275,15 +275,11 @@ TEST(WebKitLegacy, DidCreateJavaScriptContextBackForwardCacheTest)
         webView.get().frameLoadDelegate = frameLoadDelegate.get();
         WebFrame *mainFrame = webView.get().mainFrame;
 
-        NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"JSContextBackForwardCache1" 
-                                              withExtension:@"html" 
-                                               subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *url1 = [NSBundle.test_resourcesBundle URLForResource:@"JSContextBackForwardCache1" withExtension:@"html"];
         [mainFrame loadRequest:[NSURLRequest requestWithURL:url1]];
         Util::run(&didInsertMyCustomProperty);
 
-        NSURL *url2 = [[NSBundle mainBundle] URLForResource:@"JSContextBackForwardCache2" 
-                                              withExtension:@"html" 
-                                               subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *url2 = [NSBundle.test_resourcesBundle URLForResource:@"JSContextBackForwardCache2" withExtension:@"html"];
         [mainFrame loadRequest:[NSURLRequest requestWithURL:url2]];
         Util::run(&didCompleteTestSuccessfully);
 

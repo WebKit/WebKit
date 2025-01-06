@@ -27,6 +27,7 @@
 #define APIFindClient_h
 
 #include <WebCore/PlatformLayer.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS CALayer;
@@ -42,7 +43,7 @@ class WebPageProxy;
 namespace API {
 
 class FindClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FindClient);
 public:
     virtual ~FindClient() { }
 

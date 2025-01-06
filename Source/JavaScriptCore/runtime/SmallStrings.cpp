@@ -29,6 +29,8 @@
 #include "JSCJSValueInlines.h"
 #include <wtf/text/StringImpl.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 SmallStrings::SmallStrings()
@@ -110,9 +112,7 @@ void SmallStrings::visitStrongReferences(Visitor& visitor)
 template void SmallStrings::visitStrongReferences(AbstractSlotVisitor&);
 template void SmallStrings::visitStrongReferences(SlotVisitor&);
 
-SmallStrings::~SmallStrings()
-{
-}
+SmallStrings::~SmallStrings() = default;
 
 Ref<AtomStringImpl> SmallStrings::singleCharacterStringRep(unsigned char character)
 {
@@ -129,3 +129,5 @@ void SmallStrings::initialize(VM* vm, JSString*& string, ASCIILiteral value)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

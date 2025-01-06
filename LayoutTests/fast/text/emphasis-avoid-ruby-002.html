@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<title>Tests conflicting ruby and emphasis marks</title>
+<style>
+	body > div {
+		border: solid silver;
+		padding: 0.5em;
+		margin: 0.5em;
+		float: left;
+	}
+	p { margin: 0; }
+
+	ruby { text-emphasis-style: filled circle; }
+	.ruby-over { ruby-position: over; }
+	.ruby-under { ruby-position: under; }
+
+	.visible { text-emphasis-color: green; }
+	.conflict { text-emphasis-color: red; }
+	/* Per spec we should be shifting the position of the dots, not hiding them.
+	   But for now this is what we're doing. */
+</style>
+
+<div style="writing-mode: vertical-rl">
+	<div class="ruby-over">
+		<p class="visible" style="text-emphasis-position: over left"><ruby>left dots<rt>ruby</rt></ruby>
+		<p class="conflict" style="text-emphasis-position: right over"><ruby>right dots<rt>ruby</rt></ruby>
+		<p class="visible" style="text-emphasis-position: under left"><ruby>left dots<rt>ruby</rt></ruby>
+		<p class="conflict" style="text-emphasis-position: right under"><ruby>right dots<rt>ruby</rt></ruby>
+	</div>
+	<div class="ruby-under">
+		<p class="conflict" style="text-emphasis-position: over left"><ruby>left dots<rt>ruby</rt></ruby>
+		<p class="visible" style="text-emphasis-position: right over"><ruby>right dots<rt>ruby</rt></ruby>
+		<p class="conflict" style="text-emphasis-position: under left"><ruby>left dots<rt>ruby</rt></ruby>
+		<p class="visible" style="text-emphasis-position: right under"><ruby>right dots<rt>ruby</rt></ruby>
+	</div>
+</div>
+
+<div style="writing-mode: vertical-lr">
+	<div class="ruby-over">
+		<p class="visible" style="text-emphasis-position: over left"><ruby>left dots<rt>ruby</rt></ruby>
+		<p class="conflict" style="text-emphasis-position: right over"><ruby>right dots<rt>ruby</rt></ruby>
+		<p class="visible" style="text-emphasis-position: under left"><ruby>left dots<rt>ruby</rt></ruby>
+		<p class="conflict" style="text-emphasis-position: right under"><ruby>right dots<rt>ruby</rt></ruby>
+	</div>
+	<div class="ruby-under">
+		<p class="conflict" style="text-emphasis-position: over left"><ruby>left dots<rt>ruby</rt></ruby>
+		<p class="visible" style="text-emphasis-position: right over"><ruby>right dots<rt>ruby</rt></ruby>
+		<p class="conflict" style="text-emphasis-position: under left"><ruby>left dots<rt>ruby</rt></ruby>
+		<p class="visible" style="text-emphasis-position: right under"><ruby>right dots<rt>ruby</rt></ruby>
+	</div>
+</div>

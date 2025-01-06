@@ -45,6 +45,8 @@ var complexObject = new SuperFoo;
 var badGetterObject = new ClassWithBadGetter;
 var unboundFunction = function() { console.log(arguments); }
 var boundFunction = unboundFunction.bind(document.body, 1, 2, 3);
+var unboundArrowFunction = (function() { return () => {}; }).call({foo: 42});
+var boundArrowFunction = (function() { return () => this; }).call({foo: 42});
 var objectWithSymbolProperties = {prop:1, [Symbol()]:2, [Symbol('sym')]:3, [Symbol('sym')]:4, [Symbol()]: Symbol(), [Symbol.toStringTag]: new String("IgnoredTag"), prop2: 5};
 var objectWithSymbolToStringTag = {[Symbol.toStringTag]: "Foo"};
 var objectWithShadowedSymbolToStringTag = new (class Foo extends EventTarget {});
@@ -65,6 +67,8 @@ function test()
         {expression: "window.badGetterObject"},
         {expression: "window.unboundFunction"},
         {expression: "window.boundFunction"},
+        {expression: "window.unboundArrowFunction"},
+        {expression: "window.boundArrowFunction"},
         {expression: "window.objectWithSymbolProperties"},
         {expression: "window.objectWithSymbolToStringTag"},
         {expression: "window.objectWithShadowedSymbolToStringTag"},

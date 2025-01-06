@@ -265,7 +265,6 @@ PASS Parsing origin: <sc::a@example.net> against <about:blank>
 PASS Parsing origin: <wow:%NBD> against <about:blank>
 PASS Parsing origin: <wow:%1G> against <about:blank>
 PASS Parsing origin: <wow:￿> against <about:blank>
-PASS Parsing origin: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> against <about:blank>
 PASS Parsing origin: <http://!"$&'()*+,-.;=_`{}~/> against <about:blank>
 PASS Parsing origin: <sc://!"$%&'()*+,-.;=_`{}~/> against <about:blank>
 PASS Parsing origin: <ftp://%e2%98%83> against <about:blank>
@@ -373,4 +372,24 @@ PASS Parsing origin: <stun:///test> against <about:blank>
 PASS Parsing origin: <stun://test/a/../b> against <about:blank>
 PASS Parsing origin: <w://x:0> against <about:blank>
 PASS Parsing origin: <west://x:0> against <about:blank>
+PASS Parsing origin: <android://x:0/a> against <about:blank>
+PASS Parsing origin: <drivefs://x:0/a> against <about:blank>
+PASS Parsing origin: <chromeos-steam://x:0/a> against <about:blank>
+PASS Parsing origin: <steam://x:0/a> against <about:blank>
+PASS Parsing origin: <materialized-view://x:0/a> against <about:blank>
+PASS Parsing origin: <android-app://x:0> against <about:blank>
+PASS Parsing origin: <chrome-distiller://x:0> against <about:blank>
+PASS Parsing origin: <chrome-extension://x:0> against <about:blank>
+PASS Parsing origin: <chrome-native://x:0> against <about:blank>
+PASS Parsing origin: <chrome-resource://x:0> against <about:blank>
+PASS Parsing origin: <chrome-search://x:0> against <about:blank>
+PASS Parsing origin: <fuchsia-dir://x:0> against <about:blank>
+PASS Parsing origin: <isolated-app://x:0> against <about:blank>
+PASS Parsing origin: <non-special:\\opaque> against <about:blank>
+PASS Parsing origin: <non-special:\\opaque/path> against <about:blank>
+PASS Parsing origin: <non-special:\\opaque\path> against <about:blank>
+PASS Parsing origin: <non-special:\/opaque> against <about:blank>
+PASS Parsing origin: <non-special:/\path> against <about:blank>
+PASS Parsing origin: <non-special://host/a\b> against <about:blank>
+PASS Parsing origin: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> against <about:blank>
 

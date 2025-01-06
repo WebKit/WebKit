@@ -66,6 +66,7 @@ public:
     virtual void trackConfigurationChanged(MediaStreamTrackPrivate&) { };
     virtual void trackEnabledChanged(MediaStreamTrackPrivate&) = 0;
     virtual void readyStateChanged(MediaStreamTrackPrivate&) { };
+    virtual void dataFlowStarted(MediaStreamTrackPrivate&) { };
 };
 
 class MediaStreamTrackPrivate final
@@ -95,6 +96,8 @@ public:
     void startProducingData();
     void stopProducingData();
     bool isProducingData() const { return m_isProducingData; }
+
+    void dataFlowStarted();
 
     bool muted() const { return m_isMuted; }
     void setMuted(bool);
@@ -148,7 +151,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
 #endif
 
     friend class MediaStreamTrackPrivateSourceObserver;
@@ -157,7 +160,8 @@ public:
     void initializeSettings(RealtimeMediaSourceSettings&& settings) { m_settings = WTFMove(settings); }
     void initializeCapabilities(RealtimeMediaSourceCapabilities&& capabilities) { m_capabilities = WTFMove(capabilities); }
 
-    UniqueRef<MediaStreamTrackDataHolder> toDataHolder();
+    enum class ShouldClone : bool { No, Yes };
+    UniqueRef<MediaStreamTrackDataHolder> toDataHolder(ShouldClone = ShouldClone::No);
 
 private:
     MediaStreamTrackPrivate(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&&);
@@ -202,7 +206,7 @@ private:
     MediaStreamTrackHintValue m_contentHint { MediaStreamTrackHintValue::Empty };
     Ref<const Logger> m_logger;
 #if !RELEASE_LOG_DISABLED
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
     bool m_isProducingData { false };
     bool m_isMuted { false };

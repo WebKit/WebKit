@@ -31,7 +31,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/PriorityQueue.h>
 
-constexpr std::size_t operator "" _z ( unsigned long long n ) { return n; }
+constexpr std::size_t operator""_z(unsigned long long n) { return n; }
 
 template<typename T, bool (*isHigherPriority)(const T&, const T&)>
 static void enqueue(PriorityQueue<T, isHigherPriority>& queue, T element)

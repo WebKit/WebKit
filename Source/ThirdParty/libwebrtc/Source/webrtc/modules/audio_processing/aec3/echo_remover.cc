@@ -120,7 +120,7 @@ class EchoRemoverImpl final : public EchoRemover {
   // signal.
   void ProcessCapture(EchoPathVariability echo_path_variability,
                       bool capture_signal_saturation,
-                      const absl::optional<DelayEstimate>& external_delay,
+                      const std::optional<DelayEstimate>& external_delay,
                       RenderBuffer* render_buffer,
                       Block* linear_output,
                       Block* capture) override;
@@ -239,7 +239,7 @@ void EchoRemoverImpl::GetMetrics(EchoControl::Metrics* metrics) const {
 void EchoRemoverImpl::ProcessCapture(
     EchoPathVariability echo_path_variability,
     bool capture_signal_saturation,
-    const absl::optional<DelayEstimate>& external_delay,
+    const std::optional<DelayEstimate>& external_delay,
     RenderBuffer* render_buffer,
     Block* linear_output,
     Block* capture) {

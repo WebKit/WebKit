@@ -33,7 +33,7 @@ class DOMPlugin;
 class Navigator;
 
 class DOMPluginArray final : public ScriptWrappable, public RefCounted<DOMPluginArray> {
-    WTF_MAKE_ISO_ALLOCATED(DOMPluginArray);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DOMPluginArray);
 public:
     static Ref<DOMPluginArray> create(Navigator&, Vector<Ref<DOMPlugin>>&& = { }, Vector<Ref<DOMPlugin>>&& = { });
     ~DOMPluginArray();

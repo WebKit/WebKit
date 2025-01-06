@@ -17,11 +17,7 @@ namespace angle
 // MemoryBuffer implementation.
 MemoryBuffer::~MemoryBuffer()
 {
-    if (mData)
-    {
-        free(mData);
-        mData = nullptr;
-    }
+    clear();
 }
 
 bool MemoryBuffer::resize(size_t size)
@@ -31,14 +27,16 @@ bool MemoryBuffer::resize(size_t size)
         if (mData)
         {
             free(mData);
-            mData = nullptr;
+            mData     = nullptr;
+            mCapacity = 0;
         }
         mSize = 0;
         return true;
     }
 
-    if (size == mSize)
+    if (size == mCapacity)
     {
+        mSize = size;
         return true;
     }
 
@@ -56,16 +54,11 @@ bool MemoryBuffer::resize(size_t size)
         free(mData);
     }
 
-    mData = newMemory;
-    mSize = size;
+    mData     = newMemory;
+    mCapacity = size;
+    mSize     = size;
 
     return true;
-}
-
-void MemoryBuffer::trim(size_t size)
-{
-    ASSERT(size <= mSize);
-    mSize = size;
 }
 
 void MemoryBuffer::fill(uint8_t datum)
@@ -84,6 +77,7 @@ MemoryBuffer::MemoryBuffer(MemoryBuffer &&other) : MemoryBuffer()
 MemoryBuffer &MemoryBuffer::operator=(MemoryBuffer &&other)
 {
     std::swap(mSize, other.mSize);
+    std::swap(mCapacity, other.mCapacity);
     std::swap(mData, other.mData);
     return *this;
 }
@@ -130,6 +124,8 @@ bool ScratchBuffer::getImpl(size_t requestedSize,
                             MemoryBuffer **memoryBufferOut,
                             Optional<uint8_t> initValue)
 {
+    mScratchMemory.setSizeToCapacity();
+
     if (mScratchMemory.size() == requestedSize)
     {
         mResetCounter    = mLifetime;

@@ -26,8 +26,8 @@
 #pragma once
 
 #include "IsoPage.h"
-#include "StdLibExtras.h"
 #include "VMAllocate.h"
+#include <bit>
 
 #if !BUSE(LIBPAS)
 

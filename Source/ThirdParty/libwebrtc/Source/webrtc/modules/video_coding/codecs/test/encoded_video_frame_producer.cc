@@ -49,7 +49,7 @@ EncodedVideoFrameProducer::Encode() {
   std::unique_ptr<test::FrameGeneratorInterface> frame_buffer_generator =
       test::CreateSquareFrameGenerator(
           resolution_.Width(), resolution_.Height(),
-          test::FrameGeneratorInterface::OutputType::kI420, absl::nullopt);
+          test::FrameGeneratorInterface::OutputType::kI420, std::nullopt);
 
   std::vector<EncodedFrame> encoded_frames;
   EncoderCallback encoder_callback(encoded_frames);
@@ -61,8 +61,8 @@ EncodedVideoFrameProducer::Encode() {
     VideoFrame frame =
         VideoFrame::Builder()
             .set_video_frame_buffer(frame_buffer_generator->NextFrame().buffer)
-            .set_timestamp_rtp(rtp_timestamp_)
-            .set_capture_time_identifier(capture_time_identifier_)
+            .set_rtp_timestamp(rtp_timestamp_)
+            .set_presentation_timestamp(presentation_timestamp_)
             .build();
     rtp_timestamp_ += rtp_tick;
     RTC_CHECK_EQ(encoder_.Encode(frame, &next_frame_type_),

@@ -38,6 +38,10 @@ class RealTimeThreads {
 public:
     WTF_EXPORT_PRIVATE static RealTimeThreads& singleton();
 
+    // Do nothing since this is a singleton.
+    void ref() const { }
+    void deref() const { }
+
     void registerThread(Thread&);
 
     WTF_EXPORT_PRIVATE void setEnabled(bool);

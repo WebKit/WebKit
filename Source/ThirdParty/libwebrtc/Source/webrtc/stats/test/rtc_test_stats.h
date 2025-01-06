@@ -13,6 +13,7 @@
 
 #include <cstdint>
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -24,27 +25,25 @@ namespace webrtc {
 class RTC_EXPORT RTCTestStats : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
-
   RTCTestStats(const std::string& id, Timestamp timestamp);
-  RTCTestStats(const RTCTestStats& other);
   ~RTCTestStats() override;
 
-  RTCStatsMember<bool> m_bool;
-  RTCStatsMember<int32_t> m_int32;
-  RTCStatsMember<uint32_t> m_uint32;
-  RTCStatsMember<int64_t> m_int64;
-  RTCStatsMember<uint64_t> m_uint64;
-  RTCStatsMember<double> m_double;
-  RTCStatsMember<std::string> m_string;
-  RTCStatsMember<std::vector<bool>> m_sequence_bool;
-  RTCStatsMember<std::vector<int32_t>> m_sequence_int32;
-  RTCStatsMember<std::vector<uint32_t>> m_sequence_uint32;
-  RTCStatsMember<std::vector<int64_t>> m_sequence_int64;
-  RTCStatsMember<std::vector<uint64_t>> m_sequence_uint64;
-  RTCStatsMember<std::vector<double>> m_sequence_double;
-  RTCStatsMember<std::vector<std::string>> m_sequence_string;
-  RTCStatsMember<std::map<std::string, uint64_t>> m_map_string_uint64;
-  RTCStatsMember<std::map<std::string, double>> m_map_string_double;
+  std::optional<bool> m_bool;
+  std::optional<int32_t> m_int32;
+  std::optional<uint32_t> m_uint32;
+  std::optional<int64_t> m_int64;
+  std::optional<uint64_t> m_uint64;
+  std::optional<double> m_double;
+  std::optional<std::string> m_string;
+  std::optional<std::vector<bool>> m_sequence_bool;
+  std::optional<std::vector<int32_t>> m_sequence_int32;
+  std::optional<std::vector<uint32_t>> m_sequence_uint32;
+  std::optional<std::vector<int64_t>> m_sequence_int64;
+  std::optional<std::vector<uint64_t>> m_sequence_uint64;
+  std::optional<std::vector<double>> m_sequence_double;
+  std::optional<std::vector<std::string>> m_sequence_string;
+  std::optional<std::map<std::string, uint64_t>> m_map_string_uint64;
+  std::optional<std::map<std::string, double>> m_map_string_double;
 };
 
 }  // namespace webrtc

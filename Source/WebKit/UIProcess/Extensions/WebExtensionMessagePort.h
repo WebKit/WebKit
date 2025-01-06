@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,16 +29,17 @@
 
 #include "APIObject.h"
 #include "WebExtensionPortChannelIdentifier.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 
 OBJC_CLASS NSError;
-OBJC_CLASS _WKWebExtensionMessagePort;
+OBJC_CLASS WKWebExtensionMessagePort;
 
 namespace WebKit {
 
 class WebExtensionContext;
 
-class WebExtensionMessagePort : public API::ObjectImpl<API::Object::Type::WebExtensionMessagePort> {
+class WebExtensionMessagePort : public API::ObjectImpl<API::Object::Type::WebExtensionMessagePort>, public CanMakeWeakPtr<WebExtensionMessagePort> {
     WTF_MAKE_NONCOPYABLE(WebExtensionMessagePort);
 
 public:
@@ -53,7 +54,7 @@ public:
     ~WebExtensionMessagePort();
 
     enum class ErrorType : uint8_t {
-        Unknown,
+        Unknown = 1,
         NotConnected,
         MessageInvalid,
     };
@@ -66,15 +67,17 @@ public:
     WebExtensionPortChannelIdentifier channelIdentifier() const { return m_channelIdentifier; }
     WebExtensionContext* extensionContext() const;
 
-    void disconnect(Error);
+    void disconnect(Error = std::nullopt);
     void reportDisconnection(Error);
     bool isDisconnected() const;
 
-    void sendMessage(id message, CompletionHandler<void(Error)>&&);
+#if PLATFORM(COCOA)
+    void sendMessage(id message, CompletionHandler<void(Error)>&& = { });
     void receiveMessage(id message, Error);
+#endif
 
 #ifdef __OBJC__
-    _WKWebExtensionMessagePort *wrapper() const { return (_WKWebExtensionMessagePort *)API::ObjectImpl<API::Object::Type::WebExtensionMessagePort>::wrapper(); }
+    WKWebExtensionMessagePort *wrapper() const { return (WKWebExtensionMessagePort *)API::ObjectImpl<API::Object::Type::WebExtensionMessagePort>::wrapper(); }
 #endif
 
 private:

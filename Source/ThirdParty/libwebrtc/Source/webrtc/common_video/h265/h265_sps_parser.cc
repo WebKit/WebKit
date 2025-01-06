@@ -25,7 +25,7 @@
                              " to be"                                         \
                           << " in range [" << (min) << ":" << (max) << "]"    \
                           << " found " << (val) << " instead";                \
-      return absl::nullopt;                                                   \
+      return std::nullopt;                                                    \
     }                                                                         \
   } while (0)
 
@@ -45,16 +45,16 @@
     if (!reader.Ok() || !(a)) {                                          \
       RTC_LOG(LS_WARNING) << "Error in stream: invalid value, expected " \
                           << #a;                                         \
-      return absl::nullopt;                                              \
+      return std::nullopt;                                               \
     }                                                                    \
   } while (0)
 
 namespace {
-using OptionalSps = absl::optional<webrtc::H265SpsParser::SpsState>;
+using OptionalSps = std::optional<webrtc::H265SpsParser::SpsState>;
 using OptionalShortTermRefPicSet =
-    absl::optional<webrtc::H265SpsParser::ShortTermRefPicSet>;
+    std::optional<webrtc::H265SpsParser::ShortTermRefPicSet>;
 using OptionalProfileTierLevel =
-    absl::optional<webrtc::H265SpsParser::ProfileTierLevel>;
+    std::optional<webrtc::H265SpsParser::ProfileTierLevel>;
 
 constexpr int kMaxNumSizeIds = 4;
 constexpr int kMaxNumMatrixIds = 6;
@@ -109,11 +109,9 @@ size_t H265SpsParser::GetDpbMaxPicBuf(int general_profile_idc) {
 // http://www.itu.int/rec/T-REC-H.265
 
 // Unpack RBSP and parse SPS state from the supplied buffer.
-absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSps(
-    const uint8_t* data,
-    size_t length) {
-  RTC_DCHECK(data);
-  return ParseSpsInternal(H265::ParseRbsp(data, length));
+std::optional<H265SpsParser::SpsState> H265SpsParser::ParseSps(
+    rtc::ArrayView<const uint8_t> data) {
+  return ParseSpsInternal(H265::ParseRbsp(data));
 }
 
 bool H265SpsParser::ParseScalingListData(BitstreamReader& reader) {
@@ -154,7 +152,7 @@ bool H265SpsParser::ParseScalingListData(BitstreamReader& reader) {
   return reader.Ok();
 }
 
-absl::optional<H265SpsParser::ShortTermRefPicSet>
+std::optional<H265SpsParser::ShortTermRefPicSet>
 H265SpsParser::ParseShortTermRefPicSet(
     uint32_t st_rps_idx,
     uint32_t num_short_term_ref_pic_sets,
@@ -267,7 +265,7 @@ H265SpsParser::ParseShortTermRefPicSet(
 #if WEBRTC_WEBKIT_BUILD
     if (!reader.Ok() || st_ref_pic_set.num_negative_pics > kMaxSPSPics || st_ref_pic_set.num_positive_pics > kMaxSPSPics
         || (st_ref_pic_set.num_negative_pics + st_ref_pic_set.num_positive_pics) > kMaxSPSPics) {
-      return absl::nullopt;
+      return std::nullopt;
     }
 #endif
     IN_RANGE_OR_RETURN_NULL(st_ref_pic_set.num_negative_pics, 0,
@@ -311,13 +309,13 @@ H265SpsParser::ParseShortTermRefPicSet(
       st_ref_pic_set.num_negative_pics + st_ref_pic_set.num_positive_pics;
 
   if (!reader.Ok()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   return OptionalShortTermRefPicSet(st_ref_pic_set);
 }
 
-absl::optional<H265SpsParser::ProfileTierLevel>
+std::optional<H265SpsParser::ProfileTierLevel>
 H265SpsParser::ParseProfileTierLevel(bool profile_present,
                                      int max_num_sub_layers_minus1,
                                      BitstreamReader& reader) {
@@ -341,7 +339,7 @@ H265SpsParser::ParseProfileTierLevel(bool profile_present,
     if (!reader.Ok() || (!pf_tier_level.general_progressive_source_flag &&
                          pf_tier_level.general_interlaced_source_flag)) {
       RTC_LOG(LS_WARNING) << "Interlaced streams not supported";
-      return absl::nullopt;
+      return std::nullopt;
     }
     pf_tier_level.general_non_packed_constraint_flag = reader.ReadBits(1);
     pf_tier_level.general_frame_only_constraint_flag = reader.ReadBits(1);
@@ -392,13 +390,13 @@ H265SpsParser::ParseProfileTierLevel(bool profile_present,
   }
 
   if (!reader.Ok()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   return OptionalProfileTierLevel(pf_tier_level);
 }
 
-absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
+std::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
     rtc::ArrayView<const uint8_t> buffer) {
   BitstreamReader reader(buffer);
 
@@ -430,7 +428,7 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
   OptionalProfileTierLevel profile_tier_level =
       ParseProfileTierLevel(true, sps.sps_max_sub_layers_minus1, reader);
   if (!profile_tier_level) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   // sps_seq_parameter_set_id: ue(v)
   sps.sps_id = reader.ReadExponentialGolomb();
@@ -519,7 +517,7 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
   sps.log2_max_pic_order_cnt_lsb_minus4 = reader.ReadExponentialGolomb();
 #if WEBRTC_WEBKIT_BUILD
   if (!reader.Ok() || sps.log2_max_pic_order_cnt_lsb_minus4 > kMaxLog2LsbMinus4) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 #endif
   IN_RANGE_OR_RETURN_NULL(sps.log2_max_pic_order_cnt_lsb_minus4, 0, 12);
@@ -599,7 +597,7 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
     if (sps_scaling_list_data_present_flag) {
       // scaling_list_data()
       if (!ParseScalingListData(reader)) {
-        return absl::nullopt;
+        return std::nullopt;
       }
     }
   }
@@ -637,7 +635,7 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
   sps.num_short_term_ref_pic_sets = reader.ReadExponentialGolomb();
 #if WEBRTC_WEBKIT_BUILD
     if (!reader.Ok() || sps.num_short_term_ref_pic_sets > kMaxSPSShortTermRefPics) {
-      return absl::nullopt;
+      return std::nullopt;
     }
 #endif
   IN_RANGE_OR_RETURN_NULL(sps.num_short_term_ref_pic_sets, 0,
@@ -654,7 +652,7 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
     if (ref_pic_set) {
       sps.short_term_ref_pic_set[st_rps_idx] = *ref_pic_set;
     } else {
-      return absl::nullopt;
+      return std::nullopt;
     }
   }
 
@@ -665,7 +663,7 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
     sps.num_long_term_ref_pics_sps = reader.ReadExponentialGolomb();
 #if WEBRTC_WEBKIT_BUILD
     if (!reader.Ok() || sps.num_long_term_ref_pics_sps > kMaxSPSLongTermRefPics) {
-      return absl::nullopt;
+      return std::nullopt;
     }
 #endif
     IN_RANGE_OR_RETURN_NULL(sps.num_long_term_ref_pics_sps, 0,
@@ -712,7 +710,7 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
   }
 
   if (!reader.Ok()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   return OptionalSps(sps);

@@ -48,7 +48,7 @@ void PopulateInputFrameWithIdenticalChannels(size_t num_channels,
 
 void VerifyIdenticalChannels(size_t num_channels,
                              size_t num_bands,
-                             size_t frame_index,
+                             size_t /* frame_index */,
                              const AudioBuffer& audio) {
   EXPECT_GT(num_channels, 1u);
   for (size_t ch = 1; ch < num_channels; ++ch) {

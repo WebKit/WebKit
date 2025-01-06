@@ -16,6 +16,7 @@ rtc_library("rtc_stats") {
   visibility = [ "*" ]
   cflags = []
   sources = [
+    "attribute.cc",
     "rtc_stats.cc",
     "rtc_stats_report.cc",
     "rtcstats_objects.cc",
@@ -26,6 +27,7 @@ rtc_library("rtc_stats") {
     "../rtc_base:checks",
     "../rtc_base:macromagic",
     "../rtc_base:stringutils",
+    "//third_party/abseil-cpp/absl/types:variant",
   ]
 }
 

@@ -24,20 +24,19 @@
 
 #include "config.h"
 #include "LibWebRTCRtpTransformableFrame.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
-ALLOW_UNUSED_PARAMETERS_BEGIN
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-ALLOW_COMMA_BEGIN
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
 #include <webrtc/api/frame_transformer_interface.h>
 
-ALLOW_COMMA_END
-ALLOW_DEPRECATED_DECLARATIONS_END
-ALLOW_UNUSED_PARAMETERS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCRtpTransformableFrame);
 
 LibWebRTCRtpTransformableFrame::LibWebRTCRtpTransformableFrame(std::unique_ptr<webrtc::TransformableFrameInterface>&& frame, bool isAudioSenderFrame)
     : m_rtcFrame(WTFMove(frame))
@@ -59,7 +58,7 @@ std::span<const uint8_t> LibWebRTCRtpTransformableFrame::data() const
     if (!m_rtcFrame)
         return { };
     auto data = m_rtcFrame->GetData();
-    return { data.begin(), data.size() };
+    return unsafeMakeSpan(data.begin(), data.size());
 }
 
 void LibWebRTCRtpTransformableFrame::setData(std::span<const uint8_t> data)

@@ -1,0 +1,23 @@
+Tests that a Capitalize text operation transforms text to capitalized as expected.
+
+PASS: operationResult.length === 1
+PASS: operationResult[0] === 'Brown Fo'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: The quick Brown Fox jumps over the lazy dog.'
+PASS: operationResult.length === 1
+PASS: operationResult[0] === 'Er The La'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: The quick Brown Fox jumps ov Er The La zy dog.'
+PASS: operationResult.length === 3
+PASS: operationResult[0] === 'Lazy'
+PASS: operationResult[1] === 'Ps Over'
+PASS: operationResult[2] === 'E Quick Bro'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT2: ThE Quick Brown fox jumPs Over the Lazy dog.'
+PASS: operationResult.length === 3
+PASS: operationResult[0] === 'Lazy'
+PASS: operationResult[1] === 'Ps Over'
+PASS: operationResult[2] === 'E Quick Bro'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT3: Th E Quick Bro wn fox jum Ps Over the Lazy dog.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

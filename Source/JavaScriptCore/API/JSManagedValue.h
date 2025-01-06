@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,10 @@
 #ifndef JSManagedValue_h
 #define JSManagedValue_h
 
-#import <JavaScriptCore/JSBase.h>
-#import <JavaScriptCore/WebKitAvailability.h>
+#include <JavaScriptCore/JSBase.h>
+#include <JavaScriptCore/WebKitAvailability.h>
 
-#if JSC_OBJC_API_ENABLED
+#if defined(__OBJC__) && JSC_OBJC_API_ENABLED
 
 @class JSValue;
 @class JSContext;
@@ -76,6 +76,6 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 
 @end
 
-#endif // JSC_OBJC_API_ENABLED
+#endif
 
-#endif // JSManagedValue_h
+#endif /* JSManagedValue_h */

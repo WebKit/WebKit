@@ -3,13 +3,43 @@ PASS .container 1
 PASS .container 2
 PASS .container 3
 PASS .container 4
-PASS .container 5
+FAIL .container 5 assert_equals:
+<div class="container container-first-letter">
+  <div class="grid grid-first-letter">
+    <div class="item" data-expected-height="20">The first item.</div>
+    <div class="item" data-expected-height="20">The second item.</div>
+  </div>
+  <div data-expected-height="20">Out of grid.</div>
+</div>
+height expected 20 but got 200
 PASS .container 6
-PASS .container 7
+FAIL .container 7 assert_equals:
+<div class="container container-first-letter">
+  <div class="grid grid-first-letter" data-expected-height="20">
+    Anonymous item.
+  </div>
+  <div data-expected-height="20">Out of grid.</div>
+</div>
+height expected 20 but got 200
 PASS .container 8
-PASS .container 9
+FAIL .container 9 assert_equals:
+<div class="container container-first-letter">
+  <div class="grid">
+    <div class="item" data-expected-height="20">The first item.</div>
+    <div class="item" data-expected-height="20">The second item.</div>
+  </div>
+  <div data-expected-height="20">Out of grid.</div>
+</div>
+height expected 20 but got 200
 PASS .container 10
-PASS .container 11
+FAIL .container 11 assert_equals:
+<div class="container container-first-letter">
+  <div class="grid" data-expected-height="20">
+    Anonymous item.
+  </div>
+  <div data-expected-height="20">Out of grid.</div>
+</div>
+height expected 20 but got 200
 PASS .container 12
 The first item.
 The second item.

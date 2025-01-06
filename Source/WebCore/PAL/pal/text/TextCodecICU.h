@@ -28,6 +28,7 @@
 
 #include "TextCodec.h"
 #include <unicode/ucnv.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/ASCIILiteral.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
@@ -36,6 +37,7 @@ namespace PAL {
 using ICUConverterPtr = std::unique_ptr<UConverter, ICUDeleter<ucnv_close>>;
 
 class TextCodecICU final : public TextCodec {
+    WTF_MAKE_TZONE_ALLOCATED(TextCodecICU);
 public:
     static void registerEncodingNames(EncodingNameRegistrar);
     static void registerCodecs(TextCodecRegistrar);
@@ -50,7 +52,7 @@ private:
     void createICUConverter() const;
     void releaseICUConverter() const;
 
-    int decodeToBuffer(UChar* buffer, UChar* bufferLimit, const char*& source, const char* sourceLimit, int32_t* offsets, bool flush, UErrorCode&);
+    int decodeToBuffer(std::span<UChar> buffer, std::span<const uint8_t>& source, int32_t* offsets, bool flush, UErrorCode&);
 
     ASCIILiteral m_encodingName;
     ASCIILiteral const m_canonicalConverterName;

@@ -46,7 +46,8 @@ pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
                           const pas_heap_config* config,
                           pas_heap_runtime_config* runtime_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_HEAP_INFRASTRUCTURE);
+
     pas_heap* heap;
     uintptr_t begin;
 
@@ -71,7 +72,8 @@ pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
     heap->type = heap_ref->type;
     pas_segregated_heap_construct(
         &heap->segregated_heap, heap, config, runtime_config);
-    pas_large_heap_construct(&heap->large_heap);
+    pas_large_heap_construct(&heap->megapage_large_heap, true);
+    pas_large_heap_construct(&heap->large_heap, false);
     heap->heap_ref = heap_ref;
     heap->heap_ref_kind = heap_ref_kind;
     heap->config_kind = config->kind;

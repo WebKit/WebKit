@@ -226,6 +226,8 @@ function checkWebGLNonNormativeBehavior() {
   wtu.glErrorShouldBe(gl, gl.INVALID_VALUE);
   pls.framebufferPixelLocalClearValuefvWEBGL(2, new Float32Array(5), 2);
   wtu.glErrorShouldBe(gl, gl.INVALID_VALUE);
+  pls.framebufferPixelLocalClearValuefvWEBGL(2, new Float32Array(5), 4294967295);
+  wtu.glErrorShouldBe(gl, gl.INVALID_VALUE);
   pls.framebufferPixelLocalClearValuefvWEBGL(1, [0, 0, 0, 0, 0], 2);
   wtu.glErrorShouldBe(gl, gl.INVALID_VALUE);
   pls.framebufferPixelLocalClearValueivWEBGL(0, new Int32Array(5), 2);

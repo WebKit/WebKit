@@ -35,6 +35,7 @@
 #include "MultiChannelResampler.h"
 #include "PushPullFIFO.h"
 #include "SharedAudioDestination.h"
+#include "SpanCoreAudio.h"
 #include <algorithm>
 
 namespace WebCore {
@@ -110,14 +111,15 @@ OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UIn
 {
     ASSERT(!isMainThread());
 
-    auto* buffers = ioData->mBuffers;
     auto numberOfBuffers = std::min<UInt32>(ioData->mNumberBuffers, m_outputBus->numberOfChannels());
+    auto buffers = span(*ioData);
 
     // Associate the destination data array with the output bus then fill the FIFO.
     for (UInt32 i = 0; i < numberOfBuffers; ++i) {
-        auto* memory = reinterpret_cast<float*>(buffers[i].mData);
-        size_t channelNumberOfFrames = std::min<size_t>(numberOfFrames, buffers[i].mDataByteSize / sizeof(float));
-        m_outputBus->setChannelMemory(i, memory, channelNumberOfFrames);
+        auto memory = mutableSpan<float>(buffers[i]);
+        if (numberOfFrames < memory.size())
+            memory = memory.first(numberOfFrames);
+        m_outputBus->setChannelMemory(i, memory);
     }
     auto framesToRender = pullRendered(numberOfFrames);
     bool success = AudioDestinationResampler::render(sampleTime, MonotonicTime::fromMachAbsoluteTime(hostTime), framesToRender);

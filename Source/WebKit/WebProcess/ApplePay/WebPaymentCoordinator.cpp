@@ -31,7 +31,6 @@
 #include "ApplePayPaymentSetupFeaturesWebKit.h"
 #include "MessageSenderInlines.h"
 #include "PaymentSetupConfigurationWebKit.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPaymentCoordinatorMessages.h"
 #include "WebPaymentCoordinatorProxyMessages.h"
@@ -43,14 +42,22 @@
 #include <WebCore/ApplePayShippingMethodUpdate.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/PaymentCoordinator.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPaymentCoordinator);
+
+Ref<WebPaymentCoordinator> WebPaymentCoordinator::create(WebPage& webPage)
+{
+    return adoptRef(*new WebPaymentCoordinator(webPage));
+}
+
 WebPaymentCoordinator::WebPaymentCoordinator(WebPage& webPage)
     : m_webPage(webPage)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::WebPaymentCoordinator::messageReceiverName(), m_webPage.identifier(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::WebPaymentCoordinator::messageReceiverName(), webPage.identifier(), *this);
 }
 
 WebPaymentCoordinator::~WebPaymentCoordinator()
@@ -103,11 +110,15 @@ void WebPaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, c
 
 bool WebPaymentCoordinator::showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
+    RefPtr webPage = m_webPage.get();
+    if (!webPage)
+        return false;
+
     auto linkIconURLStrings = linkIconURLs.map([](auto& linkIconURL) {
         return linkIconURL.string();
     });
 
-    auto sendResult = sendSync(Messages::WebPaymentCoordinatorProxy::ShowPaymentUI(m_webPage.identifier(), m_webPage.webPageProxyIdentifier(), originatingURL.string(), linkIconURLStrings, paymentRequest));
+    auto sendResult = sendSync(Messages::WebPaymentCoordinatorProxy::ShowPaymentUI(webPage->identifier(), webPage->webPageProxyIdentifier(), originatingURL.string(), linkIconURLStrings, paymentRequest));
     auto [result] = sendResult.takeReplyOr(false);
     return result;
 }
@@ -167,7 +178,7 @@ IPC::Connection* WebPaymentCoordinator::messageSenderConnection() const
 
 uint64_t WebPaymentCoordinator::messageSenderDestinationID() const
 {
-    return m_webPage.identifier().toUInt64();
+    return m_webPage ? m_webPage->identifier().toUInt64() : 0;
 }
 
 void WebPaymentCoordinator::validateMerchant(const String& validationURLString)
@@ -211,22 +222,29 @@ void WebPaymentCoordinator::didCancelPaymentSession(WebCore::PaymentSessionError
 
 WebCore::PaymentCoordinator& WebPaymentCoordinator::paymentCoordinator()
 {
-    return m_webPage.corePage()->paymentCoordinator();
+    return m_webPage->corePage()->paymentCoordinator();
 }
 
 void WebPaymentCoordinator::getSetupFeatures(const WebCore::ApplePaySetupConfiguration& configuration, const URL& url, CompletionHandler<void(Vector<Ref<WebCore::ApplePaySetupFeature>>&&)>&& completionHandler)
 {
-    m_webPage.sendWithAsyncReply(Messages::WebPaymentCoordinatorProxy::GetSetupFeatures(PaymentSetupConfiguration { configuration, url }), WTFMove(completionHandler));
+    RefPtr webPage = m_webPage.get();
+    if (!webPage)
+        return completionHandler({ });
+    webPage->sendWithAsyncReply(Messages::WebPaymentCoordinatorProxy::GetSetupFeatures(PaymentSetupConfiguration { configuration, url }), WTFMove(completionHandler));
 }
 
 void WebPaymentCoordinator::beginApplePaySetup(const WebCore::ApplePaySetupConfiguration& configuration, const URL& url, Vector<Ref<WebCore::ApplePaySetupFeature>>&& features, CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_webPage.sendWithAsyncReply(Messages::WebPaymentCoordinatorProxy::BeginApplePaySetup(PaymentSetupConfiguration { configuration, url }, PaymentSetupFeatures { WTFMove(features) }), WTFMove(completionHandler));
+    RefPtr webPage = m_webPage.get();
+    if (!webPage)
+        return completionHandler(false);
+    webPage->sendWithAsyncReply(Messages::WebPaymentCoordinatorProxy::BeginApplePaySetup(PaymentSetupConfiguration { configuration, url }, PaymentSetupFeatures { WTFMove(features) }), WTFMove(completionHandler));
 }
 
 void WebPaymentCoordinator::endApplePaySetup()
 {
-    m_webPage.send(Messages::WebPaymentCoordinatorProxy::EndApplePaySetup());
+    if (RefPtr webPage = m_webPage.get())
+        webPage->send(Messages::WebPaymentCoordinatorProxy::EndApplePaySetup());
 }
 
 }

@@ -25,6 +25,7 @@
 #include "PlatformXROpenXR.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
+#include <wtf/StdLibExtras.h>
 
 using namespace WebCore;
 
@@ -66,7 +67,7 @@ Instance::Impl::Impl()
 
         auto createInfo = createStructure<XrInstanceCreateInfo, XR_TYPE_INSTANCE_CREATE_INFO>();
         createInfo.createFlags = 0;
-        std::memcpy(createInfo.applicationInfo.applicationName, s_applicationName.characters(), XR_MAX_APPLICATION_NAME_SIZE);
+        memcpySpan(std::span { createInfo.applicationInfo.applicationName }, s_applicationName.spanIncludingNullTerminator());
         createInfo.applicationInfo.apiVersion = XR_CURRENT_API_VERSION;
         createInfo.applicationInfo.applicationVersion = s_applicationVersion;
         createInfo.enabledApiLayerCount = 0;

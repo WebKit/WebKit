@@ -21,7 +21,7 @@ NullSocketServer::NullSocketServer() = default;
 NullSocketServer::~NullSocketServer() {}
 
 bool NullSocketServer::Wait(webrtc::TimeDelta max_wait_duration,
-                            bool process_io) {
+                            bool /* process_io */) {
   // Wait with the given timeout. Do not log a warning if we end up waiting for
   // a long time; that just means no one has any work for us, which is perfectly
   // legitimate.

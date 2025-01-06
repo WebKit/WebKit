@@ -32,6 +32,7 @@
 #include <wtf/Expected.h>
 #include <wtf/Lock.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/CString.h>
@@ -50,7 +51,7 @@ class SQLiteStatement;
 class SQLiteTransaction;
 
 class SQLiteDatabase final : public CanMakeThreadSafeCheckedPtr<SQLiteDatabase> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteDatabase, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(SQLiteDatabase);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SQLiteDatabase);
 

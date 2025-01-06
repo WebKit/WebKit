@@ -26,16 +26,16 @@
 #pragma once
 
 #include <wayland-client.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 typedef struct _WPEViewWayland WPEViewWayland;
 
 namespace WPE {
 
 class WaylandOutput {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WaylandOutput);
 public:
     explicit WaylandOutput(struct wl_output*);
     ~WaylandOutput();

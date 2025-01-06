@@ -8,11 +8,14 @@
 #include "src/gpu/ganesh/vk/GrVkSamplerYcbcrConversion.h"
 
 #include "include/gpu/vk/VulkanTypes.h"
+#include "include/private/base/SkAssert.h"
+#include "src/gpu/ganesh/vk/GrVkCaps.h"
 #include "src/gpu/ganesh/vk/GrVkGpu.h"
+#include "src/gpu/ganesh/vk/GrVkUtil.h"
 #include "src/gpu/vk/VulkanUtilsPriv.h"
 
 GrVkSamplerYcbcrConversion* GrVkSamplerYcbcrConversion::Create(
-        GrVkGpu* gpu, const GrVkYcbcrConversionInfo& info) {
+        GrVkGpu* gpu, const skgpu::VulkanYcbcrConversionInfo& info) {
     if (!gpu->vkCaps().supportsYcbcrConversion()) {
         return nullptr;
     }
@@ -58,7 +61,7 @@ void GrVkSamplerYcbcrConversion::freeGPUData() const {
 }
 
 GrVkSamplerYcbcrConversion::Key GrVkSamplerYcbcrConversion::GenerateKey(
-        const GrVkYcbcrConversionInfo& ycbcrInfo) {
+        const skgpu::VulkanYcbcrConversionInfo& ycbcrInfo) {
     SkASSERT(static_cast<int>(ycbcrInfo.fYcbcrModel <= 7));
     static const int kRangeShift = 3;
     SkASSERT(static_cast<int>(ycbcrInfo.fYcbcrRange) <= 1);

@@ -28,11 +28,11 @@
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePayCouponCodeChangedEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ApplePayCouponCodeChangedEvent);
 
 ApplePayCouponCodeChangedEvent::ApplePayCouponCodeChangedEvent(const AtomString& type, String&& couponCode)
     : Event(EventInterfaceType::ApplePayCouponCodeChangedEvent, type, CanBubble::No, IsCancelable::No)

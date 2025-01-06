@@ -29,6 +29,7 @@
 
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -39,7 +40,7 @@ class RTCDataChannelHandlerClient;
 struct RTCDataChannelInit;
 
 class GStreamerDataChannelHandler final : public RTCDataChannelHandler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerDataChannelHandler);
 public:
     explicit GStreamerDataChannelHandler(GRefPtr<GstWebRTCDataChannel>&&);
     ~GStreamerDataChannelHandler();
@@ -53,7 +54,7 @@ public:
 
 private:
     // RTCDataChannelHandler API
-    void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
+    void setClient(RTCDataChannelHandlerClient&, std::optional<ScriptExecutionContextIdentifier>) final;
     bool sendStringData(const CString&) final;
     bool sendRawData(std::span<const uint8_t>) final;
     std::optional<unsigned short> id() const final;
@@ -79,7 +80,7 @@ private:
     Lock m_clientLock;
     GRefPtr<GstWebRTCDataChannel> m_channel;
     std::optional<WeakPtr<RTCDataChannelHandlerClient>> m_client WTF_GUARDED_BY_LOCK(m_clientLock);
-    ScriptExecutionContextIdentifier m_contextIdentifier;
+    Markable<ScriptExecutionContextIdentifier> m_contextIdentifier;
     PendingMessages m_pendingMessages WTF_GUARDED_BY_LOCK(m_clientLock);
 
     std::optional<size_t> m_cachedBufferedAmount;

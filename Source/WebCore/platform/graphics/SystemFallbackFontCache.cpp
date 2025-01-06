@@ -32,13 +32,25 @@
 
 #include "FontCache.h"
 #include "FontCascade.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SystemFallbackFontCache);
+
 SystemFallbackFontCache& SystemFallbackFontCache::forCurrentThread()
 {
     return FontCache::forCurrentThread().systemFallbackFontCache();
+}
+
+SystemFallbackFontCache* SystemFallbackFontCache::forCurrentThreadIfExists()
+{
+    auto* cache = FontCache::forCurrentThreadIfExists();
+    if (!cache)
+        return nullptr;
+
+    return &cache->systemFallbackFontCache();
 }
 
 RefPtr<Font> SystemFallbackFontCache::systemFallbackFontForCharacterCluster(const Font* font, StringView characterCluster, const FontDescription& description, ResolvedEmojiPolicy resolvedEmojiPolicy, IsForPlatformFont isForPlatformFont)

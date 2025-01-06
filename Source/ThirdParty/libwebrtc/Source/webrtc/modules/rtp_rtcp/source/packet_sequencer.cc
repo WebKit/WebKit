@@ -24,7 +24,7 @@ constexpr uint32_t kTimestampTicksPerMs = 90;
 }  // namespace
 
 PacketSequencer::PacketSequencer(uint32_t media_ssrc,
-                                 absl::optional<uint32_t> rtx_ssrc,
+                                 std::optional<uint32_t> rtx_ssrc,
                                  bool require_marker_before_media_padding,
                                  Clock* clock)
     : media_ssrc_(media_ssrc),
@@ -38,9 +38,10 @@ PacketSequencer::PacketSequencer(uint32_t media_ssrc,
       last_packet_marker_bit_(false) {
   Random random(clock_->TimeInMicroseconds());
   // Random start, 16 bits. Upper half of range is avoided in order to prevent
-  // wraparound issues during startup. Sequence number 0 is avoided for
-  // historical reasons, presumably to avoid debugability or test usage
-  // conflicts.
+  // SRTP wraparound issues during startup. See this unit test for details:
+  // SrtpSessionTest.ProtectUnprotectWrapAroundRocMismatch
+  // Sequence number 0 is avoided for historical reasons, presumably to avoid
+  // debugability or test usage conflicts.
   constexpr uint16_t kMaxInitRtpSeqNumber = 0x7fff;  // 2^15 - 1.
   media_sequence_number_ = random.Rand(1, kMaxInitRtpSeqNumber);
   rtx_sequence_number_ = random.Rand(1, kMaxInitRtpSeqNumber);

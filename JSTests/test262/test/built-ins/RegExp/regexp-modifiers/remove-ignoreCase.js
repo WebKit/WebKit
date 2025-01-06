@@ -44,3 +44,31 @@ assert(!re2.test("FOO"), "Pattern should not match as modified group does not ig
 assert(!re2.test("FOo"), "Pattern should not match as modified group does not ignore case");
 assert(re2.test("foo"), "Pattern should not ignore case in modified group");
 assert(re2.test("foO"), "Pattern should not ignore case in modified group");
+
+var re3 = /b(?-i:ar)/i;
+assert(!re3.test("BAR"), "Pattern should not match as modified group does not ignore case");
+assert(!re3.test("bAR"), "Pattern should not match as modified group does not ignore case");
+assert(re3.test("bar"), "Pattern should not ignore case in modified group");
+assert(re3.test("Bar"), "Pattern should not ignore case in modified group");
+
+var re4 = new RegExp("b(?-i:ar)", "i");
+assert(!re4.test("BAR"), "Pattern should not match as modified group does not ignore case");
+assert(!re4.test("bAR"), "Pattern should not match as modified group does not ignore case");
+assert(re4.test("bar"), "Pattern should not ignore case in modified group");
+assert(re4.test("Bar"), "Pattern should not ignore case in modified group");
+
+var re5 = /b(?-i:a)z/i;
+assert(re5.test("baz"), "a should match a in baz");
+assert(!re5.test("bAz"), "A should not match a in baz");
+assert(re5.test("Baz"), "B should match b in baz");
+assert(re5.test("baZ"), "Z should match z in baz");
+assert(re5.test("BaZ"), "should match baz");
+assert(!re5.test("BAZ"), "should not match baz");
+
+var re6 = new RegExp("b(?-i:a)z", "i");
+assert(re6.test("baz"), "a should match a in baz");
+assert(!re6.test("bAz"), "A should not match a in baz");
+assert(re6.test("Baz"), "B should match b in baz");
+assert(re6.test("baZ"), "Z should match z in baz");
+assert(re6.test("BaZ"), "should match baz");
+assert(!re6.test("BAZ"), "should not match baz");

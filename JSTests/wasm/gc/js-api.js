@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true", "--useWebAssemblyExtendedConstantExpressions=true")
+//@ runWebAssemblySuite("--useWasmGC=true")
 
 import * as assert from "../assert.js";
 import { compile, instantiate } from "./wast-wrapper.js";
@@ -104,22 +104,22 @@ function testI31() {
     assert.throws(
       () => m.exports.f(2.3),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
     assert.throws(
       () => m.exports.f(2n),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
     assert.throws(
       () => m.exports.f(2 ** 30),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
     assert.throws(
       () => m.exports.f(-(2 ** 30) - 1),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
   }
 }
@@ -232,7 +232,7 @@ function testCastFailure() {
     assert.throws(
       () => m.exports.f({}, 3),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
   }
 
@@ -245,7 +245,7 @@ function testCastFailure() {
     assert.throws(
       () => m.exports.f({}),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
   }
 
@@ -260,7 +260,7 @@ function testCastFailure() {
     assert.throws(
       () => m.exports.f(m.exports.g.value),
       TypeError,
-      "Funcref must be an exported wasm function"
+      "Argument value did not match the reference type"
     );
   }
 
@@ -276,7 +276,7 @@ function testCastFailure() {
     assert.throws(
       () => m.exports.f(m.exports.g.value),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
   }
 
@@ -289,7 +289,7 @@ function testCastFailure() {
     assert.throws(
       () => m.exports.f({}),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
   }
 
@@ -302,7 +302,7 @@ function testCastFailure() {
     assert.throws(
       () => m.exports.f({}),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
   }
 
@@ -324,12 +324,12 @@ function testCastFailure() {
     assert.throws(
       () => m.exports.f({}),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
     assert.throws(
       () => m.exports.f(2 ** 31),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
   }
 
@@ -355,22 +355,22 @@ function testCastFailure() {
     assert.throws(
       () => m.exports.g(m.exports.s0.value),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
     assert.throws(
       () => m.exports.g(m.exports.s2.value),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
     assert.throws(
       () => m.exports.h(m.exports.s0.value),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
     assert.throws(
       () => m.exports.h(m.exports.s1.value),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
   }
 }
@@ -390,7 +390,7 @@ function testGlobal() {
     assert.throws(
       () => { m.exports.g.value = { } },
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     )
   }
 
@@ -408,7 +408,7 @@ function testGlobal() {
     assert.throws(
       () => { m.exports.g.value = { } },
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     )
   }
 
@@ -426,7 +426,7 @@ function testGlobal() {
     assert.throws(
       () => { m.exports.g.value = { } },
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     )
   }
 
@@ -564,7 +564,7 @@ function testTable() {
     assert.throws(
       () => m1.exports.t.set(0, 5),
       TypeError,
-      "WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function"
+      "Argument value did not match the reference type"
     )
   }
 
@@ -689,7 +689,7 @@ function testImport() {
     assert.throws(
       () => m2.exports.f(),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
   }
 
@@ -707,7 +707,7 @@ function testImport() {
     assert.throws(
       () => m.exports.g(),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
   }
 
@@ -772,7 +772,7 @@ function testImport() {
     assert.throws(
       () => m.exports.g(),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
   }
 
@@ -790,7 +790,7 @@ function testImport() {
     assert.throws(
       () => m.exports.g(),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
   }
 
@@ -808,7 +808,7 @@ function testImport() {
     assert.throws(
       () => m.exports.g(),
       TypeError,
-      "Argument value did not match reference type"
+      "Argument value did not match the reference type"
     );
   }
 

@@ -39,21 +39,14 @@
 #include "CSSUnits.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSScale);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSScale);
 
 static bool isValidScaleCoord(const CSSNumericValue& coord)
 {
-    if (auto* mathValue = dynamicDowncast<CSSMathValue>(coord)) {
-        auto node = mathValue->toCalcExpressionNode();
-        if (!node)
-            return false;
-        auto resolvedType = node->primitiveType();
-        return resolvedType == CSSUnitType::CSS_NUMBER || resolvedType == CSSUnitType::CSS_INTEGER;
-    }
     return coord.type().matchesNumber();
 }
 
@@ -70,11 +63,11 @@ ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSNumberish x, CSSNumberish y, std:
     return adoptRef(*new CSSScale(z ? Is2D::No : Is2D::Yes, WTFMove(rectifiedX), WTFMove(rectifiedY), WTFMove(rectifiedZ)));
 }
 
-ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSFunctionValue& cssFunctionValue)
+ExceptionOr<Ref<CSSScale>> CSSScale::create(Ref<const CSSFunctionValue> cssFunctionValue)
 {
     auto makeScale = [&](const Function<ExceptionOr<Ref<CSSScale>>(Vector<RefPtr<CSSNumericValue>>&&)>& create, size_t minNumberOfComponents, std::optional<size_t> maxNumberOfComponents = std::nullopt) -> ExceptionOr<Ref<CSSScale>> {
         Vector<RefPtr<CSSNumericValue>> components;
-        for (auto& componentCSSValue : cssFunctionValue) {
+        for (auto& componentCSSValue : cssFunctionValue.get()) {
             auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);
             if (valueOrException.hasException())
                 return valueOrException.releaseException();
@@ -93,7 +86,7 @@ ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSFunctionValue& cssFunctionValue)
         return create(WTFMove(components));
     };
 
-    switch (cssFunctionValue.name()) {
+    switch (cssFunctionValue->name()) {
     case CSSValueScaleX:
         return makeScale([](Vector<RefPtr<CSSNumericValue>>&& components) {
             return CSSScale::create(components[0], CSSNumericFactory::number(1), std::nullopt);

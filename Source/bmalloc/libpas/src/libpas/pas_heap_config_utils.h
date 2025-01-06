@@ -104,6 +104,7 @@ typedef struct {
             .heap_config_ptr = &name ## _heap_config, \
             .page_config_ptr = &name ## _heap_config.small_segregated_config.base, \
             .page_config_kind = pas_page_config_kind_segregated, \
+            .page_config_size_category = pas_page_config_size_category_small, \
             .min_align_shift = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).small_segregated_min_align_shift, \
             .page_size = \
@@ -170,6 +171,7 @@ typedef struct {
             .heap_config_ptr = &name ## _heap_config, \
             .page_config_ptr = &name ## _heap_config.medium_segregated_config.base, \
             .page_config_kind = pas_page_config_kind_segregated, \
+            .page_config_size_category = pas_page_config_size_category_medium, \
             .min_align_shift = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_segregated_min_align_shift, \
             .page_size = \
@@ -222,6 +224,7 @@ typedef struct {
             .heap_config_ptr = &name ## _heap_config, \
             .page_config_ptr = &name ## _heap_config.small_bitfit_config.base, \
             .page_config_kind = pas_page_config_kind_bitfit, \
+            .page_config_size_category = pas_page_config_size_category_small, \
             .min_align_shift = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).small_bitfit_min_align_shift, \
             .page_size = \
@@ -263,6 +266,7 @@ typedef struct {
             .heap_config_ptr = &name ## _heap_config, \
             .page_config_ptr = &name ## _heap_config.medium_bitfit_config.base, \
             .page_config_kind = pas_page_config_kind_bitfit, \
+            .page_config_size_category = pas_page_config_size_category_medium, \
             .min_align_shift = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_bitfit_min_align_shift, \
             .page_size = \
@@ -293,6 +297,7 @@ typedef struct {
             .heap_config_ptr = &name ## _heap_config, \
             .page_config_ptr = &name ## _heap_config.marge_bitfit_config.base, \
             .page_config_kind = pas_page_config_kind_bitfit, \
+            .page_config_size_category = pas_page_config_size_category_marge, \
             .min_align_shift = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).marge_bitfit_min_align_shift, \
             .page_size = \

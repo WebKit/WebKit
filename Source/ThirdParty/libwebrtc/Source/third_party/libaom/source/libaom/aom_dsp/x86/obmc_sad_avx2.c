@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -13,6 +13,7 @@
 #include <immintrin.h>
 
 #include "config/aom_config.h"
+#include "config/aom_dsp_rtcd.h"
 
 #include "aom_ports/mem.h"
 #include "aom/aom_integer.h"
@@ -25,7 +26,7 @@
 // 8 bit
 ////////////////////////////////////////////////////////////////////////////////
 
-static INLINE unsigned int obmc_sad_w4_avx2(const uint8_t *pre,
+static inline unsigned int obmc_sad_w4_avx2(const uint8_t *pre,
                                             const int pre_stride,
                                             const int32_t *wsrc,
                                             const int32_t *mask,
@@ -67,7 +68,7 @@ static INLINE unsigned int obmc_sad_w4_avx2(const uint8_t *pre,
   return xx_hsum_epi32_si32(v_sad_d_0);
 }
 
-static INLINE unsigned int obmc_sad_w8n_avx2(
+static inline unsigned int obmc_sad_w8n_avx2(
     const uint8_t *pre, const int pre_stride, const int32_t *wsrc,
     const int32_t *mask, const int width, const int height) {
   const int pre_step = pre_stride - width;
@@ -147,7 +148,8 @@ OBMCSADWXH(64, 16)
 // High bit-depth
 ////////////////////////////////////////////////////////////////////////////////
 
-static INLINE unsigned int hbd_obmc_sad_w4_avx2(const uint8_t *pre8,
+#if CONFIG_AV1_HIGHBITDEPTH
+static inline unsigned int hbd_obmc_sad_w4_avx2(const uint8_t *pre8,
                                                 const int pre_stride,
                                                 const int32_t *wsrc,
                                                 const int32_t *mask,
@@ -191,7 +193,7 @@ static INLINE unsigned int hbd_obmc_sad_w4_avx2(const uint8_t *pre8,
   return xx_hsum_epi32_si32(v_sad_d_0);
 }
 
-static INLINE unsigned int hbd_obmc_sad_w8n_avx2(
+static inline unsigned int hbd_obmc_sad_w8n_avx2(
     const uint8_t *pre8, const int pre_stride, const int32_t *wsrc,
     const int32_t *mask, const int width, const int height) {
   const uint16_t *pre = CONVERT_TO_SHORTPTR(pre8);
@@ -268,3 +270,4 @@ HBD_OBMCSADWXH(8, 32)
 HBD_OBMCSADWXH(32, 8)
 HBD_OBMCSADWXH(16, 64)
 HBD_OBMCSADWXH(64, 16)
+#endif  // CONFIG_AV1_HIGHBITDEPTH

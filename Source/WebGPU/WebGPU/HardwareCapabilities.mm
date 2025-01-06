@@ -39,9 +39,7 @@ namespace WebGPU {
 static constexpr auto maxVertexBuffers = 12;
 static constexpr uint32_t maxBindGroups = 11;
 
-static constexpr auto tier1LimitForBuffersAndTextures = 1;
 static constexpr auto tier2LimitForBuffersAndTextures = 4;
-static constexpr auto tier1LimitForSamplers = 1;
 static constexpr auto tier2LimitForSamplers = 2;
 static constexpr uint64_t defaultMaxBufferSize = 268435456;
 
@@ -51,7 +49,11 @@ static constexpr auto multipleOf4(auto input)
 }
 static uint64_t maxBufferSize(id<MTLDevice> device)
 {
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    auto result = std::max<uint64_t>(std::min<uint64_t>(device.maxBufferLength, GB), std::min<uint64_t>(INT_MAX, device.maxBufferLength / 10));
+#else
     auto result = std::max<uint64_t>(defaultMaxBufferSize, std::min<uint64_t>(INT_MAX, device.maxBufferLength / 10));
+#endif
     return multipleOf4(result);
 }
 
@@ -65,6 +67,13 @@ static constexpr auto workaroundCTSBindGroupLimit(auto valueToClamp)
     return valueToClamp > 1000 ? 1000 : valueToClamp;
 }
 
+#if CPU(X86_64)
+static bool isIntel(id<MTLDevice> device)
+{
+    return [device.name localizedCaseInsensitiveContainsString:@"intel"];
+}
+#endif
+
 // https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf
 
 static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> device)
@@ -72,14 +81,20 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
     id<MTLCounterSet> timestampCounterSet = nil;
     id<MTLCounterSet> statisticCounterSet = nil;
 
-    for (id<MTLCounterSet> counterSet in device.counterSets) {
-        if ([counterSet.name isEqualToString:MTLCommonCounterSetTimestamp])
-            timestampCounterSet = counterSet;
-        else if ([counterSet.name isEqualToString:MTLCommonCounterSetStatistic])
-            statisticCounterSet = counterSet;
+#if CPU(X86_64)
+    if (!isIntel(device)) {
+#endif
+        if ([device supportsCounterSampling:MTLCounterSamplingPointAtStageBoundary]) {
+            for (id<MTLCounterSet> counterSet in device.counterSets) {
+                if ([counterSet.name isEqualToString:MTLCommonCounterSetTimestamp])
+                    timestampCounterSet = counterSet;
+                else if ([counterSet.name isEqualToString:MTLCommonCounterSetStatistic])
+                    statisticCounterSet = counterSet;
+            }
+        }
+#if CPU(X86_64)
     }
-
-    timestampCounterSet = nil;
+#endif
 
     return {
         .argumentBuffersTier = [device argumentBuffersSupport],
@@ -118,61 +133,10 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
         features.append(WGPUFeatureName_Float32Filterable);
 #endif
 
+    if (baseCapabilities.timestampCounterSet)
+        features.append(WGPUFeatureName_TimestampQuery);
+
     return features;
-}
-
-static HardwareCapabilities apple3(id<MTLDevice> device)
-{
-    auto baseCapabilities = WebGPU::baseCapabilities(device);
-
-    baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
-    baseCapabilities.canPresentRGB10A2PixelFormats = false;
-
-    auto features = WebGPU::baseFeatures(device, baseCapabilities);
-
-    features.append(WGPUFeatureName_TextureCompressionETC2);
-    features.append(WGPUFeatureName_TextureCompressionASTC);
-
-    std::sort(features.begin(), features.end());
-
-    return {
-        {
-            .maxTextureDimension1D =    16384,
-            .maxTextureDimension2D =    16384,
-            .maxTextureDimension3D =    2048,
-            .maxTextureArrayLayers =    2048,
-            .maxBindGroups =    maxBindGroups,
-            .maxBindGroupsPlusVertexBuffers = 30,
-            .maxBindingsPerBindGroup =  10000,
-            .maxDynamicUniformBuffersPerPipelineLayout =    largeReasonableLimit(),
-            .maxDynamicStorageBuffersPerPipelineLayout =    largeReasonableLimit(),
-            .maxSampledTexturesPerShaderStage =    maxBindGroups * tier1LimitForBuffersAndTextures,
-            .maxSamplersPerShaderStage =    maxBindGroups * tier1LimitForSamplers,
-            .maxStorageBuffersPerShaderStage =    maxBindGroups * tier1LimitForBuffersAndTextures,
-            .maxStorageTexturesPerShaderStage =    maxBindGroups * tier1LimitForBuffersAndTextures,
-            .maxUniformBuffersPerShaderStage =    maxBindGroups * tier1LimitForBuffersAndTextures,
-            .maxUniformBufferBindingSize =    0, // To be filled in by the caller.
-            .maxStorageBufferBindingSize =    0, // To be filled in by the caller.
-            .minUniformBufferOffsetAlignment =    32,
-            .minStorageBufferOffsetAlignment =    32,
-            .maxVertexBuffers =    maxVertexBuffers,
-            .maxBufferSize = maxBufferSize(device),
-            .maxVertexAttributes =    30,
-            .maxVertexBufferArrayStride =    multipleOf4(largeReasonableLimit()),
-            .maxInterStageShaderComponents =    64,
-            .maxInterStageShaderVariables =    124,
-            .maxColorAttachments =    8,
-            .maxColorAttachmentBytesPerSample = 32,
-            .maxComputeWorkgroupStorageSize =    16 * KB,
-            .maxComputeInvocationsPerWorkgroup =    512,
-            .maxComputeWorkgroupSizeX =    512,
-            .maxComputeWorkgroupSizeY =    512,
-            .maxComputeWorkgroupSizeZ =    512,
-            .maxComputeWorkgroupsPerDimension =    largeReasonableLimit(),
-        },
-        WTFMove(features),
-        baseCapabilities,
-    };
 }
 
 static HardwareCapabilities apple4(id<MTLDevice> device)
@@ -190,40 +154,7 @@ static HardwareCapabilities apple4(id<MTLDevice> device)
     std::sort(features.begin(), features.end());
 
     return {
-        {
-            .maxTextureDimension1D =    16384,
-            .maxTextureDimension2D =    16384,
-            .maxTextureDimension3D =    2048,
-            .maxTextureArrayLayers =    2048,
-            .maxBindGroups =    maxBindGroups,
-            .maxBindGroupsPlusVertexBuffers = 30,
-            .maxBindingsPerBindGroup =  10000,
-            .maxDynamicUniformBuffersPerPipelineLayout =    largeReasonableLimit(),
-            .maxDynamicStorageBuffersPerPipelineLayout =    largeReasonableLimit(),
-            .maxSampledTexturesPerShaderStage =    maxBindGroups * tier2LimitForBuffersAndTextures,
-            .maxSamplersPerShaderStage =    maxBindGroups * tier2LimitForSamplers,
-            .maxStorageBuffersPerShaderStage =    maxBindGroups * tier2LimitForBuffersAndTextures,
-            .maxStorageTexturesPerShaderStage =    maxBindGroups * tier2LimitForBuffersAndTextures,
-            .maxUniformBuffersPerShaderStage =    maxBindGroups * tier2LimitForBuffersAndTextures,
-            .maxUniformBufferBindingSize =    0, // To be filled in by the caller.
-            .maxStorageBufferBindingSize =    0, // To be filled in by the caller.
-            .minUniformBufferOffsetAlignment =    32,
-            .minStorageBufferOffsetAlignment =    32,
-            .maxVertexBuffers =    maxVertexBuffers,
-            .maxBufferSize =    maxBufferSize(device),
-            .maxVertexAttributes =    30,
-            .maxVertexBufferArrayStride =    multipleOf4(largeReasonableLimit()),
-            .maxInterStageShaderComponents =    124,
-            .maxInterStageShaderVariables =    124,
-            .maxColorAttachments =    8,
-            .maxColorAttachmentBytesPerSample = 64,
-            .maxComputeWorkgroupStorageSize =    32 * KB,
-            .maxComputeInvocationsPerWorkgroup =    1024,
-            .maxComputeWorkgroupSizeX =    1024,
-            .maxComputeWorkgroupSizeY =    1024,
-            .maxComputeWorkgroupSizeZ =    1024,
-            .maxComputeWorkgroupsPerDimension =    largeReasonableLimit(),
-        },
+        defaultLimits(),
         WTFMove(features),
         baseCapabilities,
     };
@@ -244,40 +175,7 @@ static HardwareCapabilities apple5(id<MTLDevice> device)
     std::sort(features.begin(), features.end());
 
     return {
-        {
-            .maxTextureDimension1D =    16384,
-            .maxTextureDimension2D =    16384,
-            .maxTextureDimension3D =    2048,
-            .maxTextureArrayLayers =    2048,
-            .maxBindGroups =    maxBindGroups,
-            .maxBindGroupsPlusVertexBuffers = 30,
-            .maxBindingsPerBindGroup =  10000,
-            .maxDynamicUniformBuffersPerPipelineLayout =    largeReasonableLimit(),
-            .maxDynamicStorageBuffersPerPipelineLayout =    largeReasonableLimit(),
-            .maxSampledTexturesPerShaderStage =    maxBindGroups * tier2LimitForBuffersAndTextures,
-            .maxSamplersPerShaderStage =    maxBindGroups * tier2LimitForSamplers,
-            .maxStorageBuffersPerShaderStage =    maxBindGroups * tier2LimitForBuffersAndTextures,
-            .maxStorageTexturesPerShaderStage =    maxBindGroups * tier2LimitForBuffersAndTextures,
-            .maxUniformBuffersPerShaderStage =    maxBindGroups * tier2LimitForBuffersAndTextures,
-            .maxUniformBufferBindingSize =    0, // To be filled in by the caller.
-            .maxStorageBufferBindingSize =    0, // To be filled in by the caller.
-            .minUniformBufferOffsetAlignment =    32,
-            .minStorageBufferOffsetAlignment =    32,
-            .maxVertexBuffers =    maxVertexBuffers,
-            .maxBufferSize =    maxBufferSize(device),
-            .maxVertexAttributes =    30,
-            .maxVertexBufferArrayStride =    multipleOf4(largeReasonableLimit()),
-            .maxInterStageShaderComponents =    124,
-            .maxInterStageShaderVariables = 124,
-            .maxColorAttachments = 8,
-            .maxColorAttachmentBytesPerSample = 64,
-            .maxComputeWorkgroupStorageSize =    32 * KB,
-            .maxComputeInvocationsPerWorkgroup =    1024,
-            .maxComputeWorkgroupSizeX =    1024,
-            .maxComputeWorkgroupSizeY =    1024,
-            .maxComputeWorkgroupSizeZ =    1024,
-            .maxComputeWorkgroupsPerDimension =    largeReasonableLimit(),
-        },
+        defaultLimits(),
         WTFMove(features),
         baseCapabilities,
     };
@@ -498,8 +396,8 @@ static WGPULimits mergeLimits(const WGPULimits& previous, const WGPULimits& next
 
 static Vector<WGPUFeatureName> mergeFeatures(const Vector<WGPUFeatureName>& previous, const Vector<WGPUFeatureName>& next)
 {
-    ASSERT(WTF::isSortedConstExpr(previous.begin(), previous.end()));
-    ASSERT(WTF::isSortedConstExpr(next.begin(), next.end()));
+    ASSERT(std::is_sorted(previous.begin(), previous.end()));
+    ASSERT(std::is_sorted(next.begin(), next.end()));
 
     Vector<WGPUFeatureName> result(previous.size() + next.size());
     auto end = mergeDeduplicatedSorted(previous.begin(), previous.end(), next.begin(), next.end(), result.begin());
@@ -536,10 +434,6 @@ static std::optional<HardwareCapabilities> rawHardwareCapabilities(id<MTLDevice>
         result->baseCapabilities = mergeBaseCapabilities(result->baseCapabilities, capabilities.baseCapabilities);
     };
 
-    // The feature set tables do not list limits for MTLGPUFamilyCommon1, MTLGPUFamilyCommon2, or MTLGPUFamilyCommon3.
-    // MTLGPUFamilyApple1 and MTLGPUFamilyApple2 are not supported.
-    if ([device supportsFamily:MTLGPUFamilyApple3])
-        merge(apple3(device));
     if ([device supportsFamily:MTLGPUFamilyApple4])
         merge(apple4(device));
     if ([device supportsFamily:MTLGPUFamilyApple5])
@@ -633,7 +527,7 @@ bool anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference)
 
 bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Vector<WGPUFeatureName>& reference)
 {
-    ASSERT(WTF::isSortedConstExpr(reference.begin(), reference.end()));
+    ASSERT(std::is_sorted(reference.begin(), reference.end()));
     for (auto feature : target) {
         if (!std::binary_search(reference.begin(), reference.end(), feature))
             return true;

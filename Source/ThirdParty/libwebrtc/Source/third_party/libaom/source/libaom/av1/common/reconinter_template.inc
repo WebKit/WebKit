@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2022, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -14,12 +14,14 @@
 #endif
 
 #if IS_DEC
-static AOM_INLINE void build_one_inter_predictor(
-    uint8_t *dst, int dst_stride, const MV *src_mv,
-    InterPredParams *inter_pred_params, MACROBLOCKD *xd, int mi_x, int mi_y,
-    int ref, uint8_t **mc_buf) {
+static inline void build_one_inter_predictor(uint8_t *dst, int dst_stride,
+                                             const MV *src_mv,
+                                             InterPredParams *inter_pred_params,
+                                             MACROBLOCKD *xd, int mi_x,
+                                             int mi_y, int ref,
+                                             uint8_t **mc_buf) {
 #else
-static AOM_INLINE void build_one_inter_predictor(
+static inline void build_one_inter_predictor(
     uint8_t *dst, int dst_stride, const MV *src_mv,
     InterPredParams *inter_pred_params) {
 #endif  // IS_DEC
@@ -82,16 +84,16 @@ static bool is_sub8x8_inter(const MACROBLOCKD *xd, int plane, BLOCK_SIZE bsize,
 }
 
 #if IS_DEC
-static AOM_INLINE void build_inter_predictors_sub8x8(const AV1_COMMON *cm,
-                                                     MACROBLOCKD *xd, int plane,
-                                                     const MB_MODE_INFO *mi,
-                                                     int mi_x, int mi_y,
-                                                     uint8_t **mc_buf) {
+static inline void build_inter_predictors_sub8x8(const AV1_COMMON *cm,
+                                                 MACROBLOCKD *xd, int plane,
+                                                 const MB_MODE_INFO *mi,
+                                                 int mi_x, int mi_y,
+                                                 uint8_t **mc_buf) {
 #else
-static AOM_INLINE void build_inter_predictors_sub8x8(const AV1_COMMON *cm,
-                                                     MACROBLOCKD *xd, int plane,
-                                                     const MB_MODE_INFO *mi,
-                                                     int mi_x, int mi_y) {
+static inline void build_inter_predictors_sub8x8(const AV1_COMMON *cm,
+                                                 MACROBLOCKD *xd, int plane,
+                                                 const MB_MODE_INFO *mi,
+                                                 int mi_x, int mi_y) {
 #endif  // IS_DEC
   const BLOCK_SIZE bsize = mi->bsize;
   struct macroblockd_plane *const pd = &xd->plane[plane];
@@ -160,11 +162,11 @@ static AOM_INLINE void build_inter_predictors_sub8x8(const AV1_COMMON *cm,
 }
 
 #if IS_DEC
-static AOM_INLINE void build_inter_predictors_8x8_and_bigger(
+static inline void build_inter_predictors_8x8_and_bigger(
     const AV1_COMMON *cm, MACROBLOCKD *xd, int plane, const MB_MODE_INFO *mi,
     int build_for_obmc, int bw, int bh, int mi_x, int mi_y, uint8_t **mc_buf) {
 #else
-static AOM_INLINE void build_inter_predictors_8x8_and_bigger(
+static inline void build_inter_predictors_8x8_and_bigger(
     const AV1_COMMON *cm, MACROBLOCKD *xd, int plane, const MB_MODE_INFO *mi,
     int build_for_obmc, int bw, int bh, int mi_x, int mi_y) {
 #endif  // IS_DEC
@@ -237,9 +239,11 @@ static AOM_INLINE void build_inter_predictors_8x8_and_bigger(
 }
 
 #if IS_DEC
-static AOM_INLINE void build_inter_predictors(
-    const AV1_COMMON *cm, MACROBLOCKD *xd, int plane, const MB_MODE_INFO *mi,
-    int build_for_obmc, int bw, int bh, int mi_x, int mi_y, uint8_t **mc_buf) {
+static inline void build_inter_predictors(const AV1_COMMON *cm, MACROBLOCKD *xd,
+                                          int plane, const MB_MODE_INFO *mi,
+                                          int build_for_obmc, int bw, int bh,
+                                          int mi_x, int mi_y,
+                                          uint8_t **mc_buf) {
   if (is_sub8x8_inter(xd, plane, mi->bsize, is_intrabc_block(mi),
                       build_for_obmc)) {
     assert(bw < 8 || bh < 8);
@@ -250,11 +254,10 @@ static AOM_INLINE void build_inter_predictors(
   }
 }
 #else
-static AOM_INLINE void build_inter_predictors(const AV1_COMMON *cm,
-                                              MACROBLOCKD *xd, int plane,
-                                              const MB_MODE_INFO *mi,
-                                              int build_for_obmc, int bw,
-                                              int bh, int mi_x, int mi_y) {
+static inline void build_inter_predictors(const AV1_COMMON *cm, MACROBLOCKD *xd,
+                                          int plane, const MB_MODE_INFO *mi,
+                                          int build_for_obmc, int bw, int bh,
+                                          int mi_x, int mi_y) {
   if (is_sub8x8_inter(xd, plane, mi->bsize, is_intrabc_block(mi),
                       build_for_obmc)) {
     assert(bw < 8 || bh < 8);

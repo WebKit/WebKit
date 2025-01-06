@@ -14,8 +14,8 @@
 #include <stdint.h>
 
 #include <bitset>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 
 namespace webrtc {
@@ -41,9 +41,9 @@ class ActiveDecodeTargetsHelper {
                rtc::ArrayView<const int> chain_diffs);
 
   // Returns active decode target to attach to the dependency descriptor.
-  absl::optional<uint32_t> ActiveDecodeTargetsBitmask() const {
+  std::optional<uint32_t> ActiveDecodeTargetsBitmask() const {
     if (unsent_on_chain_.none())
-      return absl::nullopt;
+      return std::nullopt;
     return last_active_decode_targets_.to_ulong();
   }
 

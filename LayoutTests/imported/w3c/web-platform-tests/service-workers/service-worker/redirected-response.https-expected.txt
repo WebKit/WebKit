@@ -17,7 +17,7 @@ PASS mode: "manual", generated redirect response
 PASS mode: "follow", manually-generated redirect response
 PASS mode: "error", manually-generated redirect response
 PASS mode: "manual", manually-generated redirect response
-PASS mode: "follow", generated relative redirect response
+FAIL mode: "follow", generated relative redirect response assert_unreached: Should have rejected: Following the generated redirect response from the service worker should result fail. Reached unreachable code
 PASS mode: "error", generated relative redirect response
 PASS mode: "manual", generated relative redirect response
 PASS Fetch should follow the redirect response 20 times

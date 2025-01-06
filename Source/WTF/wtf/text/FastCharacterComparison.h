@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 #if CPU(NEEDS_ALIGNED_ACCESS)
@@ -70,21 +74,21 @@ namespace WTF {
 #define COMPARE_2UCHARS(address, char1, char2) \
     ((reinterpret_cast_ptr<const uint32_t*>(address))[0] == UCHARPAIR_TOUINT32(char1, char2))
 
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(ARM64)
 
 #define COMPARE_4CHARS(address, char1, char2, char3, char4) \
     ((reinterpret_cast_ptr<const uint32_t*>(address))[0] == CHARQUAD_TOUINT32(char1, char2, char3, char4))
 #define COMPARE_4UCHARS(address, char1, char2, char3, char4) \
     ((reinterpret_cast_ptr<const uint64_t*>(address))[0] == UCHARQUAD_TOUINT64(char1, char2, char3, char4))
 
-#else // CPU(X86_64)
+#else // CPU(X86_64) || CPU(ARM64)
 
 #define COMPARE_4CHARS(address, char1, char2, char3, char4) \
     (COMPARE_2CHARS(address, char1, char2) && COMPARE_2CHARS((address) + 2, char3, char4))
 #define COMPARE_4UCHARS(address, char1, char2, char3, char4) \
     (COMPARE_2UCHARS(address, char1, char2) && COMPARE_2UCHARS((address) + 2, char3, char4))
 
-#endif // CPU(X86_64)
+#endif // CPU(X86_64) || CPU(ARM64)
 
 #endif // CPU(NEEDS_ALIGNED_ACCESS)
 
@@ -194,3 +198,5 @@ ALWAYS_INLINE static bool compareCharacters(const CharacterType* source, char c0
 } // namespace WTF
 
 using WTF::compareCharacters;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

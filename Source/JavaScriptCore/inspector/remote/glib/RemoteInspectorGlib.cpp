@@ -301,7 +301,7 @@ void RemoteInspector::setup(TargetID targetIdentifier)
 
 void RemoteInspector::sendMessageToTarget(TargetID targetIdentifier, const char* message)
 {
-    if (auto connectionToTarget = m_targetConnectionMap.get(targetIdentifier))
+    if (RefPtr connectionToTarget = m_targetConnectionMap.get(targetIdentifier))
         connectionToTarget->sendMessageToTarget(String::fromUTF8(message));
 }
 
@@ -318,6 +318,16 @@ void RemoteInspector::requestAutomationSession(const char* sessionID, const Clie
 
     m_client->requestAutomationSession(String::fromUTF8(sessionID), capabilities);
     updateClientCapabilities();
+}
+
+void RemoteInspector::setInspectorServerAddress(CString&& address)
+{
+    s_inspectorServerAddress = WTFMove(address);
+}
+
+const CString& RemoteInspector::inspectorServerAddress()
+{
+    return s_inspectorServerAddress;
 }
 
 } // namespace Inspector

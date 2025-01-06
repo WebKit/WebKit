@@ -66,7 +66,7 @@ struct PackedAttribute
 
 }  // anonymous namespace
 
-PackedAttributeLayout::PackedAttributeLayout() : numAttributes(0), flags(0), attributeData({}) {}
+PackedAttributeLayout::PackedAttributeLayout() : numAttributes(0), attributeData({}) {}
 
 PackedAttributeLayout::PackedAttributeLayout(const PackedAttributeLayout &other) = default;
 
@@ -97,8 +97,7 @@ void PackedAttributeLayout::addAttributeData(GLenum glType,
 
 bool PackedAttributeLayout::operator==(const PackedAttributeLayout &other) const
 {
-    return (numAttributes == other.numAttributes) && (flags == other.flags) &&
-           (attributeData == other.attributeData);
+    return (numAttributes == other.numAttributes) && (attributeData == other.attributeData);
 }
 
 InputLayoutCache::InputLayoutCache() : mLayoutCache(kDefaultCacheSize * 2) {}
@@ -125,27 +124,6 @@ angle::Result InputLayoutCache::getInputLayout(
     PackedAttributeLayout layout;
 
     ProgramExecutableD3D *executableD3D = GetImplAs<ProgramExecutableD3D>(executable);
-    bool programUsesInstancedPointSprites =
-        executableD3D->usesPointSize() &&
-        executableD3D->usesInstancedPointSpriteEmulation(context11->getRenderer());
-    bool instancedPointSpritesActive =
-        programUsesInstancedPointSprites && (mode == gl::PrimitiveMode::Points);
-
-    if (programUsesInstancedPointSprites)
-    {
-        layout.flags |= PackedAttributeLayout::FLAG_USES_INSTANCED_SPRITES;
-    }
-
-    if (instancedPointSpritesActive)
-    {
-        layout.flags |= PackedAttributeLayout::FLAG_INSTANCED_SPRITES_ACTIVE;
-    }
-
-    if (instances > 0)
-    {
-        layout.flags |= PackedAttributeLayout::FLAG_INSTANCED_RENDERING_ACTIVE;
-    }
-
     const auto &attribs            = state.getVertexArray()->getVertexAttributes();
     const auto &bindings           = state.getVertexArray()->getVertexBindings();
     const auto &locationToSemantic = executableD3D->getAttribLocationToD3DSemantics();
@@ -169,7 +147,7 @@ angle::Result InputLayoutCache::getInputLayout(
                                 binding.getDivisor() * divisorMultiplier);
     }
 
-    if (layout.numAttributes > 0 || layout.flags != 0)
+    if (layout.numAttributes > 0)
     {
         auto it = mLayoutCache.Get(layout);
         if (it != mLayoutCache.end())
@@ -205,10 +183,6 @@ angle::Result InputLayoutCache::createInputLayout(
     ProgramExecutableD3D *executableD3D = renderer->getStateManager()->getProgramExecutableD3D();
     D3D_FEATURE_LEVEL featureLevel      = renderer->getRenderer11DeviceCaps().featureLevel;
 
-    bool programUsesInstancedPointSprites =
-        executableD3D->usesPointSize() &&
-        executableD3D->usesInstancedPointSpriteEmulation(renderer);
-
     unsigned int inputElementCount = 0;
     gl::AttribArray<D3D11_INPUT_ELEMENT_DESC> inputElements;
 
@@ -234,62 +208,6 @@ angle::Result InputLayoutCache::createInputLayout(
         inputElement->InputSlotClass       = inputClass;
         inputElement->InstanceDataStepRate = attrib.divisor;
 
-        inputElementCount++;
-    }
-
-    // Instanced PointSprite emulation requires additional entries in the
-    // inputlayout to support the vertices that make up the pointsprite quad.
-    // We do this even if mode != GL_POINTS, since the shader signature has these inputs, and the
-    // input layout must match the shader
-    if (programUsesInstancedPointSprites)
-    {
-        // On 9_3, we must ensure that slot 0 contains non-instanced data.
-        // If slot 0 currently contains instanced data then we swap it with a non-instanced element.
-        // Note that instancing is only available on 9_3 via ANGLE_instanced_arrays, since 9_3
-        // doesn't support OpenGL ES 3.0.
-        // As per the spec for ANGLE_instanced_arrays, not all attributes can be instanced
-        // simultaneously, so a non-instanced element must exist.
-
-        UINT numIndicesPerInstance = 0;
-        if (instances > 0)
-        {
-            // This requires that the index range is resolved.
-            // Note: Vertex indexes can be arbitrarily large.
-            numIndicesPerInstance = gl::clampCast<UINT>(vertexCount);
-        }
-
-        for (size_t elementIndex = 0; elementIndex < inputElementCount; ++elementIndex)
-        {
-            // If rendering points and instanced pointsprite emulation is being used, the
-            // inputClass is required to be configured as per instance data
-            if (mode == gl::PrimitiveMode::Points)
-            {
-                inputElements[elementIndex].InputSlotClass       = D3D11_INPUT_PER_INSTANCE_DATA;
-                inputElements[elementIndex].InstanceDataStepRate = 1;
-                if (numIndicesPerInstance > 0 && currentAttributes[elementIndex]->divisor > 0)
-                {
-                    inputElements[elementIndex].InstanceDataStepRate = numIndicesPerInstance;
-                }
-            }
-            inputElements[elementIndex].InputSlot++;
-        }
-
-        inputElements[inputElementCount].SemanticName         = "SPRITEPOSITION";
-        inputElements[inputElementCount].SemanticIndex        = 0;
-        inputElements[inputElementCount].Format               = DXGI_FORMAT_R32G32B32_FLOAT;
-        inputElements[inputElementCount].InputSlot            = 0;
-        inputElements[inputElementCount].AlignedByteOffset    = 0;
-        inputElements[inputElementCount].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
-        inputElements[inputElementCount].InstanceDataStepRate = 0;
-        inputElementCount++;
-
-        inputElements[inputElementCount].SemanticName         = "SPRITETEXCOORD";
-        inputElements[inputElementCount].SemanticIndex        = 0;
-        inputElements[inputElementCount].Format               = DXGI_FORMAT_R32G32_FLOAT;
-        inputElements[inputElementCount].InputSlot            = 0;
-        inputElements[inputElementCount].AlignedByteOffset    = sizeof(float) * 3;
-        inputElements[inputElementCount].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
-        inputElements[inputElementCount].InstanceDataStepRate = 0;
         inputElementCount++;
     }
 

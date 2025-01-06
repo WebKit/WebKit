@@ -45,7 +45,7 @@ class SdpStateProvider {
   // Whether an ICE restart was indicated in the remote offer.
   // Used in CreateAnswer.
   virtual bool IceRestartPending(const std::string& content_name) const = 0;
-  virtual absl::optional<rtc::SSLRole> GetDtlsRole(
+  virtual std::optional<rtc::SSLRole> GetDtlsRole(
       const std::string& mid) const = 0;
 };
 

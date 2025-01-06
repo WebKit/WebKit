@@ -27,13 +27,13 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "CocoaImage.h"
 #include "WebExtension.h"
 #include "WebExtensionCommand.h"
 #include "WebExtensionMenuItemContextType.h"
 #include "WebExtensionMenuItemType.h"
 #include <wtf/Forward.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSArray;
@@ -65,9 +65,9 @@ class WebExtensionContext;
 struct WebExtensionMenuItemContextParameters;
 struct WebExtensionMenuItemParameters;
 
-class WebExtensionMenuItem : public RefCounted<WebExtensionMenuItem>, public CanMakeWeakPtr<WebExtensionMenuItem> {
+class WebExtensionMenuItem : public RefCountedAndCanMakeWeakPtr<WebExtensionMenuItem> {
     WTF_MAKE_NONCOPYABLE(WebExtensionMenuItem);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebExtensionMenuItem);
 
 public:
     template<typename... Args>
@@ -96,7 +96,7 @@ public:
 
     WebExtensionCommand* command() const { return m_command.get(); }
 
-    CocoaImage *icon(CGSize) const;
+    RefPtr<WebCore::Icon> icon(WebCore::FloatSize) const;
 
     bool isChecked() const { return m_checked; }
     void setChecked(bool checked) { ASSERT(isCheckedType(type())); m_checked = checked; }
@@ -121,6 +121,8 @@ private:
 
     static String removeAmpersands(const String&);
 
+    void clearIconCache() const;
+
     enum class ForceUnchecked : bool { No, Yes };
     CocoaMenuItem *platformMenuItem(const WebExtensionMenuItemContextParameters&, ForceUnchecked = ForceUnchecked::No) const;
 
@@ -131,7 +133,15 @@ private:
     String m_title;
 
     RefPtr<WebExtensionCommand> m_command;
-    RetainPtr<NSDictionary> m_icons;
+
+    mutable RefPtr<WebCore::Icon> m_cachedIcon;
+    mutable Vector<double> m_cachedIconScales;
+    mutable WebCore::FloatSize m_cachedIconIdealSize;
+
+    RefPtr<JSON::Object> m_icons;
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    RefPtr<JSON::Array> m_iconVariants;
+#endif
 
     bool m_checked : 1 { false };
     bool m_enabled : 1 { true };

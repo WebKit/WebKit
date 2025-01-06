@@ -21,6 +21,7 @@
 
 #include "GraphicsContextGL.h"
 #include "Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -35,6 +36,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GLContext);
 
 const char* GLContext::errorString(int statusCode)
 {
@@ -77,6 +80,7 @@ bool GLContext::getEGLConfig(PlatformDisplay& platformDisplay, EGLConfig* config
             WTFLogAlways("Unknown pixel layout %s, falling back to RGBA8888", environmentVariable);
     }
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib / Windows ports.
     EGLint attributeList[] = {
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
         EGL_RED_SIZE, rgbaSize[0],
@@ -88,6 +92,7 @@ bool GLContext::getEGLConfig(PlatformDisplay& platformDisplay, EGLConfig* config
         EGL_DEPTH_SIZE, 0,
         EGL_NONE
     };
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     switch (surfaceType) {
     case GLContext::Surfaceless:
@@ -162,14 +167,11 @@ std::unique_ptr<GLContext> GLContext::createWindowContext(GLNativeWindowType win
         surface = createWindowSurfaceWPE(display, config, window);
         break;
 #endif // USE(WPE_RENDERER)
-#if PLATFORM(X11)
-    case PlatformDisplay::Type::X11:
-#endif
-#if PLATFORM(WAYLAND)
-    case PlatformDisplay::Type::Wayland:
-#endif
 #if USE(GBM)
     case PlatformDisplay::Type::GBM:
+#endif
+#if PLATFORM(GTK)
+    case PlatformDisplay::Type::Default:
 #endif
     case PlatformDisplay::Type::Surfaceless:
         RELEASE_ASSERT_NOT_REACHED();
@@ -293,12 +295,6 @@ std::unique_ptr<GLContext> GLContext::createOffscreen(PlatformDisplay& platformD
             context = createWPEContext(platformDisplay, eglSharingContext);
             break;
 #endif
-#if PLATFORM(X11)
-        case PlatformDisplay::Type::X11:
-#endif
-#if PLATFORM(WAYLAND)
-        case PlatformDisplay::Type::Wayland:
-#endif
 #if USE(GBM)
         case PlatformDisplay::Type::GBM:
 #endif
@@ -340,12 +336,6 @@ std::unique_ptr<GLContext> GLContext::createSharing(PlatformDisplay& platformDis
             context = createWPEContext(platformDisplay);
             break;
 #endif
-#if PLATFORM(X11)
-        case PlatformDisplay::Type::X11:
-#endif
-#if PLATFORM(WAYLAND)
-        case PlatformDisplay::Type::Wayland:
-#endif
 #if USE(GBM)
         case PlatformDisplay::Type::GBM:
 #endif
@@ -386,7 +376,6 @@ GLContext::~GLContext()
 {
     EGLDisplay display = m_display.eglDisplay();
     if (m_context) {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         eglDestroyContext(display, m_context);
     }
@@ -401,7 +390,9 @@ GLContext::~GLContext()
 
 EGLContext GLContext::createContextForEGLVersion(PlatformDisplay& platformDisplay, EGLConfig config, EGLContext sharingContext)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib / Windows ports.
     static EGLint contextAttributes[3];
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     static bool contextAttributesInitialized = false;
 
     if (!contextAttributesInitialized) {
@@ -494,7 +485,9 @@ bool GLContext::isExtensionSupported(const char* extensionList, const char* exte
 
     ASSERT(extension);
     int extensionLen = strlen(extension);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib / Windows ports.
     const char* extensionListPtr = extensionList;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     while ((extensionListPtr = strstr(extensionListPtr, extension))) {
         if (extensionListPtr[extensionLen] == ' ' || extensionListPtr[extensionLen] == '\0')
             return true;

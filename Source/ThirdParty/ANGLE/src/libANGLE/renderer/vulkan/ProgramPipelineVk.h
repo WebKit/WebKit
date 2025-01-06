@@ -37,8 +37,6 @@ class ProgramPipelineVk : public ProgramPipelineImpl
     angle::Result link(const gl::Context *glContext,
                        const gl::ProgramMergedVaryings &mergedVaryings,
                        const gl::ProgramVaryingPacking &varyingPacking) override;
-
-    void onProgramUniformUpdate(gl::ShaderType shaderType) override;
 };
 
 }  // namespace rx

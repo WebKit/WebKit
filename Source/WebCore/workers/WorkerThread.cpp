@@ -32,10 +32,15 @@
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "SocketProvider.h"
+#include "WorkerBadgeProxy.h"
+#include "WorkerDebuggerProxy.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerLoaderProxy.h"
+#include "WorkerReportingProxy.h"
 #include "WorkerScriptFetcher.h"
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -74,7 +79,8 @@ WorkerParameters WorkerParameters::isolatedCopy() const
 }
 
 struct WorkerThreadStartupData {
-    WTF_MAKE_NONCOPYABLE(WorkerThreadStartupData); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WorkerThreadStartupData);
+    WTF_MAKE_NONCOPYABLE(WorkerThreadStartupData);
 public:
     WorkerThreadStartupData(const WorkerParameters& params, const ScriptBuffer& sourceCode, WorkerThreadStartMode, const SecurityOrigin& topOrigin);
 
@@ -112,6 +118,26 @@ WorkerThread::~WorkerThread()
 {
     ASSERT(workerThreadCounter);
     --workerThreadCounter;
+}
+
+WorkerLoaderProxy* WorkerThread::workerLoaderProxy()
+{
+    return m_workerLoaderProxy.get();
+}
+
+WorkerBadgeProxy* WorkerThread::workerBadgeProxy() const
+{
+    return m_workerBadgeProxy.get();
+}
+
+WorkerDebuggerProxy* WorkerThread::workerDebuggerProxy() const
+{
+    return m_workerDebuggerProxy.get();
+}
+
+WorkerReportingProxy* WorkerThread::workerReportingProxy() const
+{
+    return m_workerReportingProxy.get();
 }
 
 Ref<Thread> WorkerThread::createThread()
@@ -195,6 +221,7 @@ SocketProvider* WorkerThread::socketProvider()
 
 WorkerGlobalScope* WorkerThread::globalScope()
 {
+    ASSERT(!thread() || thread() == &Thread::current());
     return downcast<WorkerGlobalScope>(WorkerOrWorkletThread::globalScope());
 }
 

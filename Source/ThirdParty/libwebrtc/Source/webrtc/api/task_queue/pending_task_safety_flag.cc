@@ -10,6 +10,12 @@
 
 #include "api/task_queue/pending_task_safety_flag.h"
 
+#include "absl/base/nullability.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
+#include "rtc_base/checks.h"
+
 namespace webrtc {
 
 // static

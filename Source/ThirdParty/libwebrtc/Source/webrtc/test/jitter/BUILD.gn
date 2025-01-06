@@ -25,7 +25,6 @@ rtc_library("delay_variation_calculator") {
     "../../rtc_base:logging",
     "../../rtc_base:rtc_numerics",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("logging_delay_variation_calculator") {
@@ -40,8 +39,8 @@ rtc_library("logging_delay_variation_calculator") {
     "../../api/units:data_size",
     "../../api/video:video_frame_type",
     "../../rtc_base:logging",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 if (rtc_include_tests) {

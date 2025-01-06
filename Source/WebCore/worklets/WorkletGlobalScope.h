@@ -52,7 +52,7 @@ enum class WorkletGlobalScopeIdentifierType { };
 using WorkletGlobalScopeIdentifier = ObjectIdentifier<WorkletGlobalScopeIdentifierType>;
 
 class WorkletGlobalScope : public WorkerOrWorkletGlobalScope {
-    WTF_MAKE_ISO_ALLOCATED(WorkletGlobalScope);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WorkletGlobalScope);
 public:
     virtual ~WorkletGlobalScope();
 
@@ -66,6 +66,7 @@ public:
     MessagePortChannelProvider& messagePortChannelProvider();
 
     const URL& url() const final { return m_url; }
+    const URL& cookieURL() const final { return url(); }
 
     void evaluate();
 
@@ -105,6 +106,7 @@ private:
     EventTarget* errorEventTarget() final { return this; }
 
     std::optional<Vector<uint8_t>> wrapCryptoKey(const Vector<uint8_t>&) final { RELEASE_ASSERT_NOT_REACHED(); return std::nullopt; }
+    std::optional<Vector<uint8_t>> serializeAndWrapCryptoKey(CryptoKeyData&&) final { RELEASE_ASSERT_NOT_REACHED(); return std::nullopt; }
     std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>&) final { RELEASE_ASSERT_NOT_REACHED(); return std::nullopt; }
     URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
     String userAgent(const URL&) const final;

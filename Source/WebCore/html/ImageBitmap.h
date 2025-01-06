@@ -27,7 +27,6 @@
 
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
-#include "ImageBuffer.h"
 #include "ScriptWrappable.h"
 #include <atomic>
 #include <wtf/RefCounted.h>
@@ -45,11 +44,14 @@ class Blob;
 class CachedImage;
 class CanvasBase;
 class CSSStyleImageValue;
+class DestinationColorSpace;
+class FloatSize;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmapImageObserver;
 class ImageData;
+class ImageBuffer;
 class IntRect;
 class IntSize;
 #if ENABLE(OFFSCREEN_CANVAS)
@@ -58,10 +60,12 @@ class OffscreenCanvas;
 class PendingImageBitmap;
 class RenderElement;
 class ScriptExecutionContext;
+class SerializedImageBuffer;
 class SVGImageElement;
 #if ENABLE(WEB_CODECS)
 class WebCodecsVideoFrame;
 #endif
+enum class RenderingMode : uint8_t;
 
 struct ImageBitmapOptions;
 
@@ -72,7 +76,7 @@ public:
     DetachedImageBitmap(DetachedImageBitmap&&);
     WEBCORE_EXPORT ~DetachedImageBitmap();
     DetachedImageBitmap& operator=(DetachedImageBitmap&&);
-    size_t memoryCost() const { return m_bitmap->memoryCost(); }
+    size_t memoryCost() const;
 private:
     DetachedImageBitmap(UniqueRef<SerializedImageBuffer>, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha);
     UniqueRef<SerializedImageBuffer> m_bitmap;
@@ -83,7 +87,7 @@ private:
 };
 
 class ImageBitmap final : public ScriptWrappable, public RefCounted<ImageBitmap> {
-    WTF_MAKE_ISO_ALLOCATED(ImageBitmap);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBitmap);
 public:
     using Source = std::variant<
         RefPtr<HTMLImageElement>,
@@ -121,7 +125,7 @@ public:
 
     ~ImageBitmap();
 
-    ImageBuffer* buffer() const { return m_bitmap.get(); }
+    ImageBuffer* buffer() const;
 
     RefPtr<ImageBuffer> takeImageBuffer();
 
@@ -134,7 +138,12 @@ public:
 
     std::optional<DetachedImageBitmap> detach();
     bool isDetached() const { return !m_bitmap; }
-    void close() { takeImageBuffer(); }
+    void close();
+
+#if USE(SKIA)
+    void prepareForCrossThreadTransfer();
+    void finalizeCrossThreadTransfer();
+#endif
 
     size_t memoryCost() const;
 private:

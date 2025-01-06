@@ -97,38 +97,38 @@ bool IsForcedFallbackPossible(const CodecSpecificInfo* codec_info,
           codec_info->codecSpecific.VP8.temporalIdx == kNoTemporalIdx);
 }
 
-absl::optional<int> GetFallbackMaxPixels(const std::string& group) {
+std::optional<int> GetFallbackMaxPixels(const std::string& group) {
   if (group.empty())
-    return absl::nullopt;
+    return std::nullopt;
 
   int min_pixels;
   int max_pixels;
   int min_bps;
   if (sscanf(group.c_str(), "-%d,%d,%d", &min_pixels, &max_pixels, &min_bps) !=
       3) {
-    return absl::optional<int>();
+    return std::optional<int>();
   }
 
   if (min_pixels <= 0 || max_pixels <= 0 || max_pixels < min_pixels)
-    return absl::optional<int>();
+    return std::optional<int>();
 
-  return absl::optional<int>(max_pixels);
+  return std::optional<int>(max_pixels);
 }
 
-absl::optional<int> GetFallbackMaxPixelsIfFieldTrialEnabled(
+std::optional<int> GetFallbackMaxPixelsIfFieldTrialEnabled(
     const webrtc::FieldTrialsView& field_trials) {
   std::string group = field_trials.Lookup(kVp8ForcedFallbackEncoderFieldTrial);
   return (absl::StartsWith(group, "Enabled"))
              ? GetFallbackMaxPixels(group.substr(7))
-             : absl::optional<int>();
+             : std::optional<int>();
 }
 
-absl::optional<int> GetFallbackMaxPixelsIfFieldTrialDisabled(
+std::optional<int> GetFallbackMaxPixelsIfFieldTrialDisabled(
     const webrtc::FieldTrialsView& field_trials) {
   std::string group = field_trials.Lookup(kVp8ForcedFallbackEncoderFieldTrial);
   return (absl::StartsWith(group, "Disabled"))
              ? GetFallbackMaxPixels(group.substr(8))
-             : absl::optional<int>();
+             : std::optional<int>();
 }
 }  // namespace
 
@@ -658,6 +658,10 @@ void SendStatisticsProxy::UmaSamplesContainer::UpdateHistograms(
              << current_stats.frames_dropped_by_capturer << "\n";
   RTC_HISTOGRAMS_COUNTS_1000(kIndex, uma_prefix_ + "DroppedFrames.Capturer",
                              current_stats.frames_dropped_by_capturer);
+  log_stream << uma_prefix_ << "DroppedFrames.BadTimestamp"
+             << current_stats.frames_dropped_by_bad_timestamp << "\n";
+  RTC_HISTOGRAMS_COUNTS_1000(kIndex, uma_prefix_ + "DroppedFrames.BadTimestamp",
+                             current_stats.frames_dropped_by_bad_timestamp);
   log_stream << uma_prefix_ << "DroppedFrames.EncoderQueue "
              << current_stats.frames_dropped_by_encoder_queue << "\n";
   RTC_HISTOGRAMS_COUNTS_1000(kIndex, uma_prefix_ + "DroppedFrames.EncoderQueue",
@@ -974,7 +978,7 @@ void SendStatisticsProxy::OnSendEncodedImage(
   stats->total_encode_time_ms += encoded_image.timing_.encode_finish_ms -
                                  encoded_image.timing_.encode_start_ms;
   stats->scalability_mode =
-      codec_info ? codec_info->scalability_mode : absl::nullopt;
+      codec_info ? codec_info->scalability_mode : std::nullopt;
   // Report resolution of the top spatial layer.
   bool is_top_spatial_layer =
       codec_info == nullptr || codec_info->end_of_picture;
@@ -1036,7 +1040,7 @@ void SendStatisticsProxy::OnSendEncodedImage(
     track.encoded_frame_rate.AddSamples(1);
   }
 
-  absl::optional<int> downscales =
+  std::optional<int> downscales =
       adaptation_limitations_.MaskedQualityCounts().resolution_adaptations;
   stats_.bw_limited_resolution |=
       (downscales.has_value() && downscales.value() > 0);
@@ -1059,7 +1063,7 @@ void SendStatisticsProxy::OnEncoderImplementationChanged(
   // Clear cached scalability mode values, they may no longer be accurate.
   for (auto& pair : stats_.substreams) {
     VideoSendStream::StreamStats& stream_stats = pair.second;
-    stream_stats.scalability_mode = absl::nullopt;
+    stream_stats.scalability_mode = std::nullopt;
   }
 }
 
@@ -1096,6 +1100,9 @@ void SendStatisticsProxy::OnFrameDropped(DropReason reason) {
   switch (reason) {
     case DropReason::kSource:
       ++stats_.frames_dropped_by_capturer;
+      break;
+    case DropReason::kBadTimestamp:
+      ++stats_.frames_dropped_by_bad_timestamp;
       break;
     case DropReason::kEncoderQueue:
       ++stats_.frames_dropped_by_encoder_queue;
@@ -1264,8 +1271,8 @@ void SendStatisticsProxy::OnInitialQualityResolutionAdaptDown() {
 }
 
 void SendStatisticsProxy::TryUpdateInitialQualityResolutionAdaptUp(
-    absl::optional<int> old_quality_downscales,
-    absl::optional<int> updated_quality_downscales) {
+    std::optional<int> old_quality_downscales,
+    std::optional<int> updated_quality_downscales) {
   if (uma_container_->initial_quality_changes_.down == 0)
     return;
 

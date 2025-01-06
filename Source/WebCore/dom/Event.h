@@ -30,6 +30,7 @@
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include <wtf/MonotonicTime.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
@@ -44,8 +45,8 @@ class EventPath;
 class EventTarget;
 class ScriptExecutionContext;
 
-class Event : public ScriptWrappable, public RefCounted<Event> {
-    WTF_MAKE_ISO_ALLOCATED(Event);
+class Event : public ScriptWrappable, public RefCountedAndCanMakeWeakPtr<Event> {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Event);
 public:
     using IsTrusted = EventIsTrusted;
     using CanBubble = EventCanBubble;
@@ -107,11 +108,11 @@ public:
     virtual bool isBeforeTextInsertedEvent() const { return false; }
     virtual bool isBeforeUnloadEvent() const { return false; }
     virtual bool isClipboardEvent() const { return false; }
+    virtual bool isCommandEvent() const { return false; }
     virtual bool isCompositionEvent() const { return false; }
     virtual bool isErrorEvent() const { return false; }
     virtual bool isFocusEvent() const { return false; }
     virtual bool isInputEvent() const { return false; }
-    virtual bool isInvokeEvent() const { return false; }
     virtual bool isKeyboardEvent() const { return false; }
     virtual bool isMouseEvent() const { return false; }
     virtual bool isPointerEvent() const { return false; }
@@ -154,6 +155,9 @@ public:
 
     virtual String debugDescription() const;
 
+    bool isAutofillEvent() { return m_isAutofillEvent; }
+    void setIsAutofillEvent() { m_isAutofillEvent = true; }
+
 protected:
     explicit Event(enum EventInterfaceType, IsTrusted = IsTrusted::No);
     Event(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed = IsComposed::No);
@@ -182,6 +186,7 @@ private:
     unsigned m_isTrusted : 1;
     unsigned m_isExecutingPassiveEventListener : 1;
     unsigned m_currentTargetIsInShadowTree : 1;
+    unsigned m_isAutofillEvent : 1;
 
     unsigned m_eventPhase : 2;
 
@@ -191,7 +196,7 @@ private:
 
     unsigned m_eventInterface : 7 { 0 };
 
-    // 10-bits left.
+    // 9-bits left.
 
     AtomString m_type;
 

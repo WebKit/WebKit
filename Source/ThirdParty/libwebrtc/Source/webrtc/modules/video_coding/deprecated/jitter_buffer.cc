@@ -575,7 +575,7 @@ void VCMJitterBuffer::FindAndInsertContinuousFramesWithState(
 uint32_t VCMJitterBuffer::EstimatedJitterMs() {
   MutexLock lock(&mutex_);
   const double rtt_mult = 1.0f;
-  return jitter_estimate_.GetJitterEstimate(rtt_mult, absl::nullopt).ms();
+  return jitter_estimate_.GetJitterEstimate(rtt_mult, std::nullopt).ms();
 }
 
 void VCMJitterBuffer::SetNackSettings(size_t max_nack_list_size,

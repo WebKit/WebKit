@@ -8,8 +8,15 @@
 #ifndef SkSVGContainer_DEFINED
 #define SkSVGContainer_DEFINED
 
+#include "include/core/SkPath.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkRefCnt.h"
+#include "include/private/base/SkAPI.h"
 #include "include/private/base/SkTArray.h"
+#include "modules/svg/include/SkSVGNode.h"
 #include "modules/svg/include/SkSVGTransformableNode.h"
+
+class SkSVGRenderContext;
 
 class SK_API SkSVGContainer : public SkSVGTransformableNode {
 public:
@@ -22,7 +29,7 @@ protected:
 
     SkPath onAsPath(const SkSVGRenderContext&) const override;
 
-    SkRect onObjectBoundingBox(const SkSVGRenderContext&) const override;
+    SkRect onTransformableObjectBoundingBox(const SkSVGRenderContext&) const final;
 
     bool hasChildren() const final;
 

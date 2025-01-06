@@ -24,13 +24,14 @@
  */
 
 #import <WebCore/PlatformLayerIdentifier.h>
+#import <wtf/Markable.h>
 
 namespace WebKit {
 class RemoteLayerTreeHost;
 }
 
 @interface WKAnimationDelegate : NSObject {
-    WebCore::PlatformLayerIdentifier _layerID;
+    Markable<WebCore::PlatformLayerIdentifier> _layerID;
     WebKit::RemoteLayerTreeHost* _layerTreeHost;
 }
 - (instancetype)initWithLayerID:(WebCore::PlatformLayerIdentifier)layerID layerTreeHost:(WebKit::RemoteLayerTreeHost*)layerTreeHost;

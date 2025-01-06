@@ -92,7 +92,7 @@ void GetSupportedFormatColorspaces(VkPhysicalDevice physicalDevice,
     }
 }
 
-vk::UseValidationLayers ShouldUseValidationLayers(const egl::AttributeMap &attribs)
+vk::UseDebugLayers ShouldLoadDebugLayers(const egl::AttributeMap &attribs)
 {
     EGLAttrib debugSetting =
         attribs.get(EGL_PLATFORM_ANGLE_DEBUG_LAYERS_ENABLED_ANGLE, EGL_DONT_CARE);
@@ -105,9 +105,9 @@ vk::UseValidationLayers ShouldUseValidationLayers(const egl::AttributeMap &attri
 
     const bool ifAvailable = debugSetting == EGL_DONT_CARE;
 
-    return yes && ifAvailable ? vk::UseValidationLayers::YesIfAvailable
-           : yes              ? vk::UseValidationLayers::Yes
-                              : vk::UseValidationLayers::No;
+    return yes && ifAvailable ? vk::UseDebugLayers::YesIfAvailable
+           : yes              ? vk::UseDebugLayers::Yes
+                              : vk::UseDebugLayers::No;
 }
 
 angle::vk::ICD ChooseICDFromAttribs(const egl::AttributeMap &attribs)
@@ -167,17 +167,19 @@ egl::Error DisplayVk::initialize(egl::Display *display)
     ASSERT(mRenderer != nullptr && display != nullptr);
     const egl::AttributeMap &attribs = display->getAttributeMap();
 
-    const vk::UseValidationLayers useValidationLayers = ShouldUseValidationLayers(attribs);
-    const angle::vk::ICD desiredICD                   = ChooseICDFromAttribs(attribs);
+    const vk::UseDebugLayers useDebugLayers = ShouldLoadDebugLayers(attribs);
+    const angle::vk::ICD desiredICD         = ChooseICDFromAttribs(attribs);
     const uint32_t preferredVendorId =
         static_cast<uint32_t>(attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0));
     const uint32_t preferredDeviceId =
         static_cast<uint32_t>(attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0));
 
     angle::Result result = mRenderer->initialize(
-        this, this, desiredICD, preferredVendorId, preferredDeviceId, useValidationLayers,
+        this, this, desiredICD, preferredVendorId, preferredDeviceId, useDebugLayers,
         getWSIExtension(), getWSILayer(), getWindowSystem(), mState.featureOverrides);
     ANGLE_TRY(angle::ToEGL(result, EGL_NOT_INITIALIZED));
+
+    mDeviceQueueIndex = mRenderer->getDeviceQueueIndex(egl::ContextPriority::Medium);
 
     InstallDebugAnnotator(display, mRenderer);
 
@@ -307,7 +309,7 @@ ImageImpl *DisplayVk::createImage(const egl::ImageState &state,
 
 ShareGroupImpl *DisplayVk::createShareGroup(const egl::ShareGroupState &state)
 {
-    return new ShareGroupVk(state);
+    return new ShareGroupVk(state, mRenderer);
 }
 
 bool DisplayVk::isConfigFormatSupported(VkFormat format) const
@@ -434,11 +436,6 @@ gl::Version DisplayVk::getMaxConformantESVersion() const
     return mRenderer->getMaxConformantESVersion();
 }
 
-Optional<gl::Version> DisplayVk::getMaxSupportedDesktopVersion() const
-{
-    return gl::Version{4, 6};
-}
-
 egl::Error DisplayVk::validateImageClientBuffer(const gl::Context *context,
                                                 EGLenum target,
                                                 EGLClientBuffer clientBuffer,
@@ -508,10 +505,10 @@ ExternalImageSiblingImpl *DisplayVk::createExternalImageSibling(const gl::Contex
 
 void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
-    outExtensions->createContextRobustness    = getRenderer()->getNativeExtensions().robustnessEXT;
-    outExtensions->surfaceOrientation         = true;
-    outExtensions->displayTextureShareGroup   = true;
-    outExtensions->displaySemaphoreShareGroup = true;
+    outExtensions->createContextRobustness  = getRenderer()->getNativeExtensions().robustnessAny();
+    outExtensions->surfaceOrientation       = true;
+    outExtensions->displayTextureShareGroup = true;
+    outExtensions->displaySemaphoreShareGroup        = true;
     outExtensions->robustResourceInitializationANGLE = true;
 
     // The Vulkan implementation will always say that EGL_KHR_swap_buffers_with_damage is supported.
@@ -528,19 +525,24 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->imagePixmap           = false;  // ANGLE does not support pixmaps
     outExtensions->glTexture2DImage      = true;
     outExtensions->glTextureCubemapImage = true;
-    outExtensions->glTexture3DImage =
-        getRenderer()->getFeatures().supportsSampler2dViewOf3d.enabled;
+    outExtensions->glTexture3DImage      = getFeatures().supportsSampler2dViewOf3d.enabled;
     outExtensions->glRenderbufferImage = true;
-    outExtensions->imageNativeBuffer =
-        getRenderer()->getFeatures().supportsAndroidHardwareBuffer.enabled;
+    outExtensions->imageNativeBuffer     = getFeatures().supportsAndroidHardwareBuffer.enabled;
     outExtensions->surfacelessContext = true;
     outExtensions->glColorspace       = true;
     outExtensions->imageGlColorspace =
-        outExtensions->glColorspace && getRenderer()->getFeatures().supportsImageFormatList.enabled;
+        outExtensions->glColorspace && getFeatures().supportsImageFormatList.enabled;
 
 #if defined(ANGLE_PLATFORM_ANDROID)
     outExtensions->getNativeClientBufferANDROID = true;
     outExtensions->framebufferTargetANDROID     = true;
+
+    // Only expose EGL_ANDROID_front_buffer_auto_refresh on Android and when Vulkan supports
+    // VK_EXT_swapchain_maintenance1 (supportsSwapchainMaintenance1 feature), since we know that
+    // VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR and VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR
+    // are compatible on Android (does not require swapchain recreation).
+    outExtensions->frontBufferAutoRefreshANDROID =
+        getFeatures().supportsSwapchainMaintenance1.enabled;
 #endif  // defined(ANGLE_PLATFORM_ANDROID)
 
     // EGL_EXT_image_dma_buf_import is only exposed if EGL_EXT_image_dma_buf_import_modifiers can
@@ -548,47 +550,43 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     // the same way; both Vulkan extensions are needed for EGL_EXT_image_dma_buf_import, and with
     // both Vulkan extensions, EGL_EXT_image_dma_buf_import_modifiers is also supportable.
     outExtensions->imageDmaBufImportEXT =
-        getRenderer()->getFeatures().supportsExternalMemoryDmaBufAndModifiers.enabled;
+        getFeatures().supportsExternalMemoryDmaBufAndModifiers.enabled;
     outExtensions->imageDmaBufImportModifiersEXT = outExtensions->imageDmaBufImportEXT;
 
     // Disable context priority when non-zero memory init is enabled. This enforces a queue order.
-    outExtensions->contextPriority = !getRenderer()->getFeatures().allocateNonZeroMemory.enabled;
+    outExtensions->contextPriority = !getFeatures().allocateNonZeroMemory.enabled;
     outExtensions->noConfigContext = true;
 
 #if defined(ANGLE_PLATFORM_ANDROID) || defined(ANGLE_PLATFORM_LINUX)
-    outExtensions->nativeFenceSyncANDROID =
-        getRenderer()->getFeatures().supportsAndroidNativeFenceSync.enabled;
+    outExtensions->nativeFenceSyncANDROID = getFeatures().supportsAndroidNativeFenceSync.enabled;
 #endif  // defined(ANGLE_PLATFORM_ANDROID) || defined(ANGLE_PLATFORM_LINUX)
 
 #if defined(ANGLE_PLATFORM_GGP)
     outExtensions->ggpStreamDescriptor = true;
-    outExtensions->swapWithFrameToken  = getRenderer()->getFeatures().supportsGGPFrameToken.enabled;
+    outExtensions->swapWithFrameToken  = getFeatures().supportsGGPFrameToken.enabled;
 #endif  // defined(ANGLE_PLATFORM_GGP)
 
     outExtensions->bufferAgeEXT = true;
 
-    outExtensions->protectedContentEXT =
-        (getRenderer()->getFeatures().supportsProtectedMemory.enabled &&
-         getRenderer()->getFeatures().supportsSurfaceProtectedSwapchains.enabled);
+    outExtensions->protectedContentEXT = (getFeatures().supportsProtectedMemory.enabled &&
+                                          getFeatures().supportsSurfaceProtectedSwapchains.enabled);
 
     outExtensions->createSurfaceSwapIntervalANGLE = true;
 
     outExtensions->mutableRenderBufferKHR =
-        getRenderer()->getFeatures().supportsSharedPresentableImageExtension.enabled;
+        getFeatures().supportsSharedPresentableImageExtension.enabled;
 
     outExtensions->vulkanImageANGLE = true;
 
-    outExtensions->lockSurface3KHR =
-        getRenderer()->getFeatures().supportsLockSurfaceExtension.enabled;
+    outExtensions->lockSurface3KHR = getFeatures().supportsLockSurfaceExtension.enabled;
 
     outExtensions->partialUpdateKHR = true;
 
     outExtensions->timestampSurfaceAttributeANGLE =
-        getRenderer()->getFeatures().supportsTimestampSurfaceAttribute.enabled;
+        getFeatures().supportsTimestampSurfaceAttribute.enabled;
 
     outExtensions->eglColorspaceAttributePassthroughANGLE =
-        outExtensions->glColorspace &&
-        getRenderer()->getFeatures().eglColorspaceAttributePassthrough.enabled;
+        outExtensions->glColorspace && getFeatures().eglColorspaceAttributePassthrough.enabled;
 
     // If EGL_KHR_gl_colorspace extension is supported check if other colorspace extensions
     // can be supported as well.
@@ -660,12 +658,12 @@ void DisplayVk::populateFeatureList(angle::FeatureList *features)
 // vk::GlobalOps
 void DisplayVk::putBlob(const angle::BlobCacheKey &key, const angle::MemoryBuffer &value)
 {
-    getBlobCache()->putApplication(key, value);
+    getBlobCache()->putApplication(nullptr, key, value);
 }
 
 bool DisplayVk::getBlob(const angle::BlobCacheKey &key, angle::BlobCacheValue *valueOut)
 {
-    return getBlobCache()->get(&mScratchBuffer, key, valueOut);
+    return getBlobCache()->get(nullptr, &mScratchBuffer, key, valueOut);
 }
 
 std::shared_ptr<angle::WaitableEvent> DisplayVk::postMultiThreadWorkerTask(

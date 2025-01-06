@@ -34,9 +34,12 @@
 #include "AudioNodeInput.h"
 #include "AudioParam.h"
 #include "AudioUtilities.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioNodeOutput);
 
 AudioNodeOutput::AudioNodeOutput(AudioNode* node, unsigned numberOfChannels)
     : m_node(node)

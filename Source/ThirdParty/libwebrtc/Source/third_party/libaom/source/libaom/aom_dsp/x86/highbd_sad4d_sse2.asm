@@ -1,5 +1,5 @@
 ;
-; Copyright (c) 2016, Alliance for Open Media. All rights reserved
+; Copyright (c) 2016, Alliance for Open Media. All rights reserved.
 ;
 ; This source code is subject to the terms of the BSD 2 Clause License and
 ; the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -328,17 +328,8 @@ HIGH_SADNXN4D 32, 32, 2
 HIGH_SADNXN4D 32, 16, 2
 HIGH_SADNXN4D 16, 32, 2
 HIGH_SADNXN4D 16, 16, 2
-HIGH_SADNXN4D 16,  8, 2
 HIGH_SADNXN4D  8, 16, 2
-HIGH_SADNXN4D  8,  8, 2
-HIGH_SADNXN4D  4,  8, 2
 HIGH_SADNXN4D  4, 16, 2
 HIGH_SADNXN4D  8, 32, 2
-HIGH_SADNXN4D 32,  8, 2
 HIGH_SADNXN4D 16, 64, 2
 HIGH_SADNXN4D 64, 16, 2
-
-; Current code cannot handle the case when the height is downsampled to 2
-; HIGH_SADNXN4D 16,  4, 2
-; HIGH_SADNXN4D  8,  4, 2
-; HIGH_SADNXN4D  4,  4, 2

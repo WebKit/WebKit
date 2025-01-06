@@ -33,7 +33,7 @@ PushSincResampler::~PushSincResampler() {}
 size_t PushSincResampler::Resample(const int16_t* source,
                                    size_t source_length,
                                    int16_t* destination,
-                                   size_t destination_capacity) {
+                                   size_t /* destination_capacity */) {
   if (!float_buffer_.get())
     float_buffer_.reset(new float[destination_frames_]);
 

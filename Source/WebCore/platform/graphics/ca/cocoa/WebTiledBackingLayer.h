@@ -30,6 +30,7 @@ class IntRect;
 class PlatformCALayer;
 class TileController;
 class TiledBacking;
+enum class ContentsFormat : uint8_t;
 }
 
 @interface WebTiledBackingLayer : CALayer {
@@ -40,8 +41,8 @@ class TiledBacking;
 - (WebCore::TiledBacking*)tiledBacking;
 - (void)invalidate;
 
-- (void)setWantsDeepColorBackingStore:(BOOL)wantsDeepColor;
-- (BOOL)wantsDeepColorBackingStore;
+- (void)setContentsFormat:(WebCore::ContentsFormat)contentsFormat;
+- (WebCore::ContentsFormat)contentsFormat;
 
 @end
 

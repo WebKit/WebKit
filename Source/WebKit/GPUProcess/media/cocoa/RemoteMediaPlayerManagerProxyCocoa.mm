@@ -46,10 +46,6 @@ PlatformVideoTarget RemoteMediaPlayerManagerProxy::videoTargetForMediaElementIde
 
 void RemoteMediaPlayerManagerProxy::handleVideoReceiverEndpointMessage(const VideoReceiverEndpointMessage& endpointMessage)
 {
-    ASSERT(endpointMessage.mediaElementIdentifier().isValid());
-    if (!endpointMessage.mediaElementIdentifier().isValid())
-        return;
-
     auto cachedEntry = m_videoReceiverEndpointCache.find(endpointMessage.mediaElementIdentifier());
     if (cachedEntry == m_videoReceiverEndpointCache.end()) {
         // If no entry for the specified mediaElementIdentifier exists, add a new entry to

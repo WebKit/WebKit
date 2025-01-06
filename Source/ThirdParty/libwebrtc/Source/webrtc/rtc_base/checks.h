@@ -55,11 +55,14 @@ RTC_NORETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
 #include <string>
 
 #include "absl/meta/type_traits.h"
+#include "absl/strings/has_absl_stringify.h"
+#include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "api/scoped_refptr.h"
 #include "rtc_base/numerics/safe_compare.h"
 #include "rtc_base/system/inline.h"
 #include "rtc_base/system/rtc_export.h"
+#include "rtc_base/type_traits.h"
 
 // The macros here print a message to stderr and abort under various
 // conditions. All will accept additional stream messages. For example:
@@ -215,9 +218,10 @@ inline decltype(MakeVal(std::declval<absl::underlying_type_t<T>>())) MakeVal(
   return {static_cast<absl::underlying_type_t<T>>(x)};
 }
 
-template <typename T, decltype(ToLogString(std::declval<T>()))* = nullptr>
+template <typename T,
+          std::enable_if_t<absl::HasAbslStringify<T>::value>* = nullptr>
 ToStringVal MakeVal(const T& x) {
-  return {ToLogString(x)};
+  return {absl::StrCat(x)};
 }
 
 // Ephemeral type that represents the result of the logging << operator.

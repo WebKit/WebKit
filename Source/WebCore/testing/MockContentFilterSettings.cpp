@@ -33,6 +33,7 @@
 #include "MockContentFilter.h"
 #include "MockContentFilterManager.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

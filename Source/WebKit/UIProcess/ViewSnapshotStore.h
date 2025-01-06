@@ -30,7 +30,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(IOSURFACE)
@@ -50,7 +50,9 @@ namespace WebKit {
 class WebBackForwardListItem;
 class WebPageProxy;
 
-class ViewSnapshot : public RefCounted<ViewSnapshot>, public CanMakeWeakPtr<ViewSnapshot> {
+enum class ForceSoftwareCapturingViewportSnapshot : bool { No, Yes };
+
+class ViewSnapshot : public RefCountedAndCanMakeWeakPtr<ViewSnapshot> {
 public:
 #if HAVE(IOSURFACE)
     static Ref<ViewSnapshot> create(std::unique_ptr<WebCore::IOSurface>);

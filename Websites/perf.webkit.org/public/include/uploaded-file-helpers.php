@@ -92,9 +92,10 @@ function upload_file_in_transaction($db, $input_file, $remote_user, $additional_
     $new_file_size = $input_file['size'];
     if (config('uploadUserQuotaInMB') * MEGABYTES - query_file_usage_for_user($db, $remote_user) < $new_file_size
         || config('uploadTotalQuotaInMB') * MEGABYTES - query_total_file_usage($db) < $new_file_size) {
+        $file_deletion_cutoff = microtime(true) - config('uploadFileGracePeriodInHours', 0) * 3600;
         // Instead of <quota> - <used> - <new file size>, just ask for <new file size>
         // since finding files to delete is an expensive operation.
-        if (!prune_old_files($db, $new_file_size, $remote_user))
+        if (!prune_old_files($db, $new_file_size, $remote_user, $file_deletion_cutoff))
             exit_with_error('FileSizeQuotaExceeded');
     }
 
@@ -102,7 +103,7 @@ function upload_file_in_transaction($db, $input_file, $remote_user, $additional_
 
     $db->begin_transaction();
     $file_row = $db->select_or_insert_row('uploaded_files', 'file',
-        array('sha256' => $uploaded_file['sha256'], 'deleted_at' => null), $uploaded_file, '*');
+        array('sha256' => $uploaded_file['sha256']), $uploaded_file, '*');
     if (!$file_row)
         exit_with_error('FailedToInsertFileData');
 
@@ -125,6 +126,14 @@ function upload_file_in_transaction($db, $input_file, $remote_user, $additional_
     if (!move_uploaded_file($input_file['tmp_name'], $new_path)) {
         $db->rollback_transaction();
         exit_with_error('FailedToMoveUploadedFile');
+    }
+
+    if ($file_row['file_deleted_at']) {
+        if (!$db->query_and_get_affected_rows("UPDATE uploaded_files SET file_created_at = CURRENT_TIMESTAMP AT TIME ZONE 'UTC', file_deleted_at = NULL WHERE file_id = $1", array($file_row['file_id']))) {
+            $db->rollback_transaction();
+            exit_with_error('FailedToClearDeletedAtField');
+        }
+        $file_row = $db->select_first_row('uploaded_files', 'file', array('id' => $file_row['file_id']));
     }
 
     $db->commit_transaction();
@@ -153,16 +162,17 @@ function delete_file($db, $file_row)
     return TRUE;
 }
 
-function prune_old_files($db, $size_needed, $remote_user)
+function prune_old_files($db, $size_needed, $remote_user, $file_deletion_cutoff)
 {
-    $user_filter = $remote_user ? 'AND file_author = $1' : 'AND file_author IS NULL';
-    $params = $remote_user ? array($remote_user) : array();
+    $file_filters = 'AND extract(epoch from file_created_at at time zone \'utc\') <= $1';
+    $file_filters .= $remote_user ? ' AND file_author = $2' : ' AND file_author IS NULL';
+    $params = $remote_user? array($file_deletion_cutoff, $remote_user) : array($file_deletion_cutoff);
 
-    // 1. Delete old build products created for a patch not associated with any pending or in-progress builds.
-    $build_product_query = $db->query("SELECT file_id, file_extension, file_size FROM uploaded_files, commit_set_items
-        WHERE file_id = commitset_root_file AND commitset_patch_file IS NOT NULL AND file_deleted_at IS NULL
+    // 1. Delete old build products not associated with any pending or in-progress builds.
+    $build_product_query = $db->query("SELECT DISTINCT file_id, file_extension, file_size, file_created_at FROM uploaded_files, commit_set_items
+        WHERE file_id = commitset_root_file AND commitset_requires_build is TRUE AND file_deleted_at IS NULL
             AND NOT EXISTS (SELECT request_id FROM build_requests WHERE request_commit_set = commitset_set AND request_status <= 'running')
-            $user_filter
+            $file_filters
         ORDER BY file_created_at", $params);
     if (!$build_product_query)
         return FALSE;
@@ -180,7 +190,7 @@ function prune_old_files($db, $size_needed, $remote_user)
             WHERE (commitset_root_file = file_id OR commitset_patch_file = file_id)
                 AND request_commit_set = commitset_set AND request_status <= 'running')
             AND file_deleted_at IS NULL
-            $user_filter
+            $file_filters
         ORDER BY file_created_at", $params);
     if (!$unused_file_query)
         return FALSE;

@@ -31,7 +31,7 @@
 #include "ReferrerPolicy.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -55,6 +55,7 @@ public:
         return *m_eventLoopTaskGroup;
     }
     const URL& url() const final { return m_url; }
+    const URL& cookieURL() const final { return url(); }
     URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final { return { }; };
     String userAgent(const URL&) const final { return emptyString(); }
     ReferrerPolicy referrerPolicy() const final { return ReferrerPolicy::EmptyString; }
@@ -73,19 +74,20 @@ public:
 
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final { return { }; }
     std::optional<uint64_t> noiseInjectionHashSalt() const { return std::nullopt; }
+    OptionSet<NoiseInjectionPolicy> noiseInjectionPolicies() const { return { }; }
 
     void postTask(Task&&) final { ASSERT_NOT_REACHED(); }
     EventTarget* errorEventTarget() final { return nullptr; };
 
     std::optional<Vector<uint8_t>> wrapCryptoKey(const Vector<uint8_t>&) final { return std::nullopt; }
+    std::optional<Vector<uint8_t>> serializeAndWrapCryptoKey(CryptoKeyData&&) final { return std::nullopt; }
     std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>&) final { return std::nullopt; }
 
     JSC::VM& vm() final { return m_vm; }
+    JSC::VM* vmIfExists() const final { return m_vm.ptr(); }
 
     using RefCounted::ref;
     using RefCounted::deref;
-    using RefCounted::refAllowingPartiallyDestroyed;
-    using RefCounted::derefAllowingPartiallyDestroyed;
 
 private:
     EmptyScriptExecutionContext(JSC::VM& vm)

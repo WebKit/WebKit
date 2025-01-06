@@ -5,7 +5,16 @@
 
 [Exposed=Window]
 partial interface AnimationTimeline {
+    readonly attribute CSSNumberish? currentTime;
+    readonly attribute CSSNumberish? duration;
     Animation play (optional AnimationEffect? effect = null);
+};
+
+[Exposed=Window]
+partial interface Animation {
+    attribute CSSNumberish?       startTime;
+    attribute CSSNumberish?       currentTime;
+    readonly attribute double? overallProgress;
 };
 
 [Exposed=Window]
@@ -22,7 +31,10 @@ partial interface AnimationEffect {
 };
 
 partial dictionary EffectTiming {
+    double delay;
+    double endDelay;
     double playbackRate = 1.0;
+    (unrestricted double or CSSNumericValue or DOMString) duration = "auto";
 };
 
 partial dictionary OptionalEffectTiming {
@@ -30,7 +42,10 @@ partial dictionary OptionalEffectTiming {
 };
 
 partial dictionary ComputedEffectTiming {
-    double startTime;
+    CSSNumberish         startTime;
+    CSSNumberish         endTime;
+    CSSNumberish         activeDuration;
+    CSSNumberish?        localTime;
 };
 
 [Exposed=Window]
@@ -74,3 +89,25 @@ enum IterationCompositeOperation { "replace", "accumulate" };
 callback EffectCallback = undefined (double? progress,
                                 (Element or CSSPseudoElement) currentTarget,
                                 Animation animation);
+
+dictionary TimelineRangeOffset {
+  CSSOMString? rangeName;
+  CSSNumericValue offset;
+};
+
+partial dictionary KeyframeAnimationOptions {
+    (TimelineRangeOffset or CSSNumericValue or CSSKeywordValue or DOMString) rangeStart = "normal";
+    (TimelineRangeOffset or CSSNumericValue or CSSKeywordValue or DOMString) rangeEnd = "normal";
+};
+
+[Exposed=Window]
+interface AnimationPlaybackEvent : Event {
+    constructor(DOMString type, optional AnimationPlaybackEventInit
+    eventInitDict = {});
+    readonly attribute CSSNumberish? currentTime;
+    readonly attribute CSSNumberish? timelineTime;
+};
+dictionary AnimationPlaybackEventInit : EventInit {
+    CSSNumberish? currentTime = null;
+    CSSNumberish? timelineTime = null;
+};

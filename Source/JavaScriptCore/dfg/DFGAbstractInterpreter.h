@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ namespace JSC { namespace DFG {
 
 template<typename AbstractStateType>
 class AbstractInterpreter {
-    WTF_MAKE_TZONE_ALLOCATED(AbstractInterpreter);
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(AbstractInterpreter);
 public:
     AbstractInterpreter(Graph&, AbstractStateType&);
     ~AbstractInterpreter();
@@ -281,6 +281,8 @@ private:
     AbstractStateType& m_state;
     std::unique_ptr<PhiChildren> m_phiChildren;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename AbstractStateType>, AbstractInterpreter<AbstractStateType>);
 
 } } // namespace JSC::DFG
 

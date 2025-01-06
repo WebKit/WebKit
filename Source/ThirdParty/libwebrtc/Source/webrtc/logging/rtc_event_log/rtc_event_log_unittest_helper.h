@@ -17,21 +17,26 @@
 #include <memory>
 #include <vector>
 
+#include "api/rtc_event_log/rtc_event_log.h"
+#include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
 #include "logging/rtc_event_log/events/rtc_event_alr_state.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_network_adaptation.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_playout.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_receive_stream_config.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_send_stream_config.h"
+#include "logging/rtc_event_log/events/rtc_event_begin_log.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
 #include "logging/rtc_event_log/events/rtc_event_dtls_transport_state.h"
 #include "logging/rtc_event_log/events/rtc_event_dtls_writable_state.h"
+#include "logging/rtc_event_log/events/rtc_event_end_log.h"
 #include "logging/rtc_event_log/events/rtc_event_frame_decoded.h"
 #include "logging/rtc_event_log/events/rtc_event_generic_ack_received.h"
 #include "logging/rtc_event_log/events/rtc_event_generic_packet_received.h"
 #include "logging/rtc_event_log/events/rtc_event_generic_packet_sent.h"
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
+#include "logging/rtc_event_log/events/rtc_event_neteq_set_minimum_delay.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
@@ -43,9 +48,8 @@
 #include "logging/rtc_event_log/events/rtc_event_rtp_packet_outgoing.h"
 #include "logging/rtc_event_log/events/rtc_event_video_receive_stream_config.h"
 #include "logging/rtc_event_log/events/rtc_event_video_send_stream_config.h"
-#include "logging/rtc_event_log/rtc_event_log_parser.h"
-#include "logging/rtc_event_log/rtc_stream_config.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/extended_reports.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/fir.h"
@@ -56,6 +60,7 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/remb.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "rtc_base/random.h"
 
@@ -160,6 +165,10 @@ class EventVerifier {
   explicit EventVerifier(RtcEventLog::EncodingType encoding_type)
       : encoding_type_(encoding_type) {}
 
+  void ExpectDependencyDescriptorExtensionIsSet(bool value) {
+    expect_dependency_descriptor_rtp_header_extension_is_set_ = value;
+  }
+
   void VerifyLoggedAlrStateEvent(const RtcEventAlrState& original_event,
                                  const LoggedAlrStateEvent& logged_event) const;
 
@@ -239,8 +248,8 @@ class EventVerifier {
       const LoggedGenericAckReceived& logged_event) const;
 
   template <typename EventType, typename ParsedType>
-  void VerifyLoggedRtpPacket(const EventType& original_event,
-                             const ParsedType& logged_event) {
+  void VerifyLoggedRtpPacket(const EventType& /* original_event */,
+                             const ParsedType& /* logged_event */) {
     static_assert(sizeof(ParsedType) == 0,
                   "You have to use one of the two defined template "
                   "specializations of VerifyLoggedRtpPacket");
@@ -331,7 +340,13 @@ class EventVerifier {
   void VerifyReportBlock(const rtcp::ReportBlock& original_report_block,
                          const rtcp::ReportBlock& logged_report_block);
 
+  template <typename Event>
+  void VerifyLoggedDependencyDescriptor(
+      const Event& packet,
+      const std::vector<uint8_t>& logged_dd) const;
+
   RtcEventLog::EncodingType encoding_type_;
+  bool expect_dependency_descriptor_rtp_header_extension_is_set_ = true;
 };
 
 }  // namespace test

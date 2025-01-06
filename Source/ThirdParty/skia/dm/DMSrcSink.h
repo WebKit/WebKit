@@ -9,18 +9,20 @@
 #define DMSrcSink_DEFINED
 
 #include "gm/gm.h"
-#include "include/core/SkBBHFactory.h"
 #include "include/core/SkBitmap.h"
 #include "include/core/SkCanvas.h"
-#include "include/core/SkData.h"
 #include "include/core/SkPicture.h"
 #include "include/docs/SkMultiPictureDocument.h"
-#include "include/gpu/graphite/ContextOptions.h"
+#include "include/gpu/graphite/PrecompileContext.h"
 #include "tools/flags/CommonFlagsConfig.h"
 #include "tools/gpu/MemoryCache.h"
-#include "tools/graphite/TestOptions.h"
 
 #include <functional>
+
+#if !defined (SK_DISABLE_LEGACY_TESTS)
+    #include "include/gpu/graphite/ContextOptions.h"
+    #include "tools/graphite/TestOptions.h"
+#endif
 
 //#define TEST_VIA_SVG
 
@@ -566,7 +568,7 @@ private:
 
 class GraphiteSink : public Sink {
 public:
-    GraphiteSink(const SkCommandLineConfigGraphite*);
+    GraphiteSink(const SkCommandLineConfigGraphite*, const skiatest::graphite::TestOptions&);
 
     Result draw(const Src&, SkBitmap*, SkWStream*, SkString*) const override;
     bool serial() const override { return true; }
@@ -580,11 +582,8 @@ public:
 protected:
     sk_sp<SkSurface> makeSurface(skgpu::graphite::Recorder*, SkISize) const;
 
-    using SurfaceType = SkCommandLineConfigGraphite::SurfaceType;
-
     skiatest::graphite::TestOptions fOptions;
     skgpu::ContextType fContextType;
-    SurfaceType fSurfaceType;
     SkColorType fColorType;
     SkAlphaType fAlphaType;
     sk_sp<SkColorSpace> fColorSpace;
@@ -600,7 +599,8 @@ protected:
 //   asserts that no new pipelines were created
 class GraphitePrecompileTestingSink : public GraphiteSink {
 public:
-    GraphitePrecompileTestingSink(const SkCommandLineConfigGraphite*);
+    GraphitePrecompileTestingSink(const SkCommandLineConfigGraphite*,
+                                  const skiatest::graphite::TestOptions&);
     ~GraphitePrecompileTestingSink() override;
 
     Result draw(const Src&, SkBitmap*, SkWStream*, SkString*) const override;
@@ -617,9 +617,10 @@ private:
     Result drawSrc(const Src&,
                    skgpu::graphite::Context*,
                    skiatest::graphite::GraphiteTestContext*) const;
-    Result resetAndRecreatePipelines(skgpu::graphite::Context*) const;
+    Result resetAndRecreatePipelines() const;
 
     mutable std::unique_ptr<skgpu::graphite::Recorder> fRecorder;
+    mutable std::unique_ptr<skgpu::graphite::PrecompileContext> fPrecompileContext;
 };
 #endif // SK_ENABLE_PRECOMPILE
 #endif // SK_GRAPHITE

@@ -12,10 +12,11 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
+#include <inttypes.h>
 #include <stdio.h>
-#include <string>
 #include <string.h>
 #include <unistd.h>
+#include <string>
 
 #include <openssl/crypto.h>
 #include <openssl/span.h>
@@ -41,6 +42,34 @@ int main(int argc, char **argv) {
 #error "FIPS build not supported on this architecture"
 #endif
 
+    if (!FIPS_mode()) {
+      printf("Module not in FIPS mode\n");
+      abort();
+    }
+    printf("Module is in FIPS mode\n");
+
+    const uint32_t module_version = FIPS_version();
+    if (module_version == 0) {
+      printf("No module version set\n");
+      abort();
+    }
+    printf("Module: '%s', version: %" PRIu32 " hash:\n", FIPS_module_name(),
+           module_version);
+
+#if !defined(BORINGSSL_FIPS)
+    // |module_version| will be zero, so the non-FIPS build will never get
+    // this far.
+    printf("Non zero module version in non-FIPS build - should not happen!\n");
+    abort();
+#elif defined(OPENSSL_ASAN)
+    printf("(not available when compiled for ASAN)");
+#else
+    const uint8_t *module_hash = FIPS_module_hash();
+    for (size_t i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+      printf("%02x", module_hash[i]);
+    }
+    printf("\n");
+#endif
     printf("Hardware acceleration enabled: %s\n",
            CRYPTO_has_asm() ? "yes" : "no");
 

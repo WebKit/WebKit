@@ -41,7 +41,6 @@
     __weak id _resetTarget;
     SEL _resetAction;
     RetainPtr<NSNumber> _lastActiveTouchIdentifier;
-    __weak UIScrollView *_lastTouchedScrollView;
 }
 
 - (void)setGestureIdentifiedTarget:(id)target action:(SEL)action
@@ -74,17 +73,9 @@
 - (void)reset
 {
     [super reset];
+
     [_resetTarget performSelector:_resetAction withObject:self];
     _lastActiveTouchIdentifier = nil;
-    _lastTouchedScrollView = nil;
-}
-
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    [super touchesBegan:touches withEvent:event];
-
-    if (auto scrollView = WebKit::scrollViewForTouches(touches))
-        _lastTouchedScrollView = scrollView;
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
@@ -101,11 +92,6 @@
             break;
         }
     }
-}
-
-- (UIScrollView *)lastTouchedScrollView
-{
-    return _lastTouchedScrollView;
 }
 
 - (NSNumber*)lastActiveTouchIdentifier

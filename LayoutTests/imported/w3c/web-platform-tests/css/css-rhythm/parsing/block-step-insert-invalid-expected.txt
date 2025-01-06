@@ -6,7 +6,9 @@ PASS e.style['block-step-insert'] = "10%" should not set the property value
 PASS e.style['block-step-insert'] = "20" should not set the property value
 PASS e.style['block-step-insert'] = "none" should not set the property value
 PASS e.style['block-step-insert'] = "border-box" should not set the property value
-PASS e.style['block-step-insert'] = "margin-box" should not set the property value
 PASS e.style['block-step-insert'] = "margin padding" should not set the property value
 PASS e.style['block-step-insert'] = "padding margin" should not set the property value
+PASS e.style['block-step-insert'] = "margin" should not set the property value
+PASS e.style['block-step-insert'] = "padding" should not set the property value
+PASS e.style['block-step-insert'] = "content" should not set the property value
 

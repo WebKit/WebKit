@@ -17,6 +17,7 @@
 
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "api/rtp_parameters.h"
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
@@ -30,7 +31,6 @@
 
 namespace webrtc {
 
-class Clock;
 class RtpPacketToSend;
 
 // Note that this class is not thread safe, and thus requires external
@@ -38,20 +38,20 @@ class RtpPacketToSend;
 
 class FlexfecSender : public VideoFecGenerator {
  public:
-  FlexfecSender(int payload_type,
+  FlexfecSender(const Environment& env,
+                int payload_type,
                 uint32_t ssrc,
                 uint32_t protected_media_ssrc,
                 absl::string_view mid,
                 const std::vector<RtpExtension>& rtp_header_extensions,
                 rtc::ArrayView<const RtpExtensionSize> extension_sizes,
-                const RtpState* rtp_state,
-                Clock* clock);
+                const RtpState* rtp_state);
   ~FlexfecSender();
 
   FecType GetFecType() const override {
     return VideoFecGenerator::FecType::kFlexFec;
   }
-  absl::optional<uint32_t> FecSsrc() override { return ssrc_; }
+  std::optional<uint32_t> FecSsrc() override { return ssrc_; }
 
   // Sets the FEC rate, max frames sent before FEC packets are sent,
   // and what type of generator matrices are used.
@@ -72,11 +72,11 @@ class FlexfecSender : public VideoFecGenerator {
   DataRate CurrentFecRate() const override;
 
   // Only called on the VideoSendStream queue, after operation has shut down.
-  absl::optional<RtpState> GetRtpState() override;
+  std::optional<RtpState> GetRtpState() override;
 
  private:
   // Utility.
-  Clock* const clock_;
+  const Environment env_;
   Random random_;
   Timestamp last_generated_packet_ = Timestamp::MinusInfinity();
 

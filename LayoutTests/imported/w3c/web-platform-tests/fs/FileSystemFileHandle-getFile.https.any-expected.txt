@@ -1,4 +1,4 @@
 
-FAIL getFile() provides a file that can be sliced promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL getFile() returns last modified time promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable({keepExistingData: false})', 'handle.createWritable' is undefined)"
+FAIL getFile() provides a file that can be sliced promise_test: Unhandled rejection with value: object "TypeError: writer.write is not a function. (In 'writer.write(new Blob([contents]))', 'writer.write' is undefined)"
+FAIL getFile() returns last modified time promise_test: Unhandled rejection with value: object "TypeError: writer.write is not a function. (In 'writer.write(new Blob(['foo']))', 'writer.write' is undefined)"
 

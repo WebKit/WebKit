@@ -33,7 +33,7 @@
 namespace JSC {
 
 namespace PropertyConditionInternal {
-static bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 void PropertyCondition::dumpInContext(PrintStream& out, DumpContext* context) const

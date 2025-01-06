@@ -38,6 +38,8 @@ namespace WebCore {
 class PixelBuffer : public RefCounted<PixelBuffer> {
     WTF_MAKE_NONCOPYABLE(PixelBuffer);
 public:
+    static CheckedUint32 computePixelCount(const IntSize&);
+    static CheckedUint32 computePixelComponentCount(PixelFormat, const IntSize&);
     WEBCORE_EXPORT static CheckedUint32 computeBufferSize(PixelFormat, const IntSize&);
 
     WEBCORE_EXPORT static bool supportedPixelFormat(PixelFormat);
@@ -49,7 +51,14 @@ public:
 
     std::span<uint8_t> bytes() const { return m_bytes; }
 
-    virtual bool isByteArrayPixelBuffer() const { return false; }
+    enum class Type {
+        ByteArray,
+#if HAVE(HDR_SUPPORT)
+        Float16Array,
+#endif
+        Other
+    };
+    virtual Type type() const { return Type::Other; }
     virtual RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const = 0;
 
     bool setRange(std::span<const uint8_t> data, size_t byteOffset);

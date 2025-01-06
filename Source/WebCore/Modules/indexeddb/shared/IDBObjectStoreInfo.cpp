@@ -27,15 +27,12 @@
 #include "IDBObjectStoreInfo.h"
 
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-IDBObjectStoreInfo::IDBObjectStoreInfo()
-{
-}
-
-IDBObjectStoreInfo::IDBObjectStoreInfo(uint64_t identifier, const String& name, std::optional<IDBKeyPath>&& keyPath, bool autoIncrement, HashMap<uint64_t, IDBIndexInfo>&& indexMap)
+IDBObjectStoreInfo::IDBObjectStoreInfo(IDBObjectStoreIdentifier identifier, const String& name, std::optional<IDBKeyPath>&& keyPath, bool autoIncrement, HashMap<IDBIndexIdentifier, IDBIndexInfo>&& indexMap)
     : m_identifier(identifier)
     , m_name(name)
     , m_keyPath(WTFMove(keyPath))
@@ -44,7 +41,7 @@ IDBObjectStoreInfo::IDBObjectStoreInfo(uint64_t identifier, const String& name, 
 {
 }
 
-IDBIndexInfo IDBObjectStoreInfo::createNewIndex(uint64_t indexID, const String& name, IDBKeyPath&& keyPath, bool unique, bool multiEntry)
+IDBIndexInfo IDBObjectStoreInfo::createNewIndex(IDBIndexIdentifier indexID, const String& name, IDBKeyPath&& keyPath, bool unique, bool multiEntry)
 {
     IDBIndexInfo info(indexID, m_identifier, name, WTFMove(keyPath), unique, multiEntry);
     m_indexMap.set(info.identifier(), info);
@@ -69,7 +66,7 @@ bool IDBObjectStoreInfo::hasIndex(const String& name) const
     return false;
 }
 
-bool IDBObjectStoreInfo::hasIndex(uint64_t indexIdentifier) const
+bool IDBObjectStoreInfo::hasIndex(IDBIndexIdentifier indexIdentifier) const
 {
     return m_indexMap.contains(indexIdentifier);
 }
@@ -84,7 +81,7 @@ IDBIndexInfo* IDBObjectStoreInfo::infoForExistingIndex(const String& name)
     return nullptr;
 }
 
-IDBIndexInfo* IDBObjectStoreInfo::infoForExistingIndex(uint64_t identifier)
+IDBIndexInfo* IDBObjectStoreInfo::infoForExistingIndex(IDBIndexIdentifier identifier)
 {
     auto iterator = m_indexMap.find(identifier);
     if (iterator == m_indexMap.end())
@@ -123,7 +120,7 @@ void IDBObjectStoreInfo::deleteIndex(const String& indexName)
     m_indexMap.remove(info->identifier());
 }
 
-void IDBObjectStoreInfo::deleteIndex(uint64_t indexIdentifier)
+void IDBObjectStoreInfo::deleteIndex(IDBIndexIdentifier indexIdentifier)
 {
     m_indexMap.remove(indexIdentifier);
 }

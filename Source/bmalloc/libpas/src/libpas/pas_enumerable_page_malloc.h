@@ -37,7 +37,7 @@ PAS_API extern pas_enumerable_range_list pas_enumerable_page_malloc_page_list;
 /* It's assumed that whatever is returned from this is never deallocated, but may be decommitted. */
 PAS_API pas_aligned_allocation_result
 pas_enumerable_page_malloc_try_allocate_without_deallocating_padding(
-    size_t size, pas_alignment alignment);
+    size_t size, pas_alignment alignment, bool may_contain_small_or_medium);
 
 PAS_END_EXTERN_C;
 

@@ -27,6 +27,7 @@
     Conditional=APPLE_PAY_DEFERRED_PAYMENTS,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary ApplePayDeferredPaymentRequest {
     DOMString billingAgreement;
     required ApplePayLineItem deferredBilling; // must be `paymentTiming: "deferred"

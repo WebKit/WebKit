@@ -1,3 +1,0 @@
-
-PASS IDBCursor.advance() - object store - throw TransactionInactiveError
-

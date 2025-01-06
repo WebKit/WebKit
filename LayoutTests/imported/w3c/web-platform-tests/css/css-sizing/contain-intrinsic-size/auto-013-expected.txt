@@ -1,0 +1,3 @@
+
+PASS content-visibility: auto forces contain-intrinsic-size to gain an auto value
+

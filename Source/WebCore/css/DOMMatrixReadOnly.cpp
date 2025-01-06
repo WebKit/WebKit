@@ -27,22 +27,25 @@
 #include "DOMMatrixReadOnly.h"
 
 #include "CSSParser.h"
+#include "CSSPropertyParserConsumer+Transform.h"
 #include "CSSToLengthConversionData.h"
 #include "DOMMatrix.h"
 #include "DOMPoint.h"
 #include "MutableStyleProperties.h"
 #include "ScriptExecutionContext.h"
 #include "StyleProperties.h"
-#include "TransformFunctions.h"
+#include "TransformOperations.h"
+#include "TransformOperationsBuilder.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DOMMatrixReadOnly);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMMatrixReadOnly);
 
 // https://drafts.fxtf.org/geometry/#dom-dommatrixreadonly-dommatrixreadonly
 ExceptionOr<Ref<DOMMatrixReadOnly>> DOMMatrixReadOnly::create(ScriptExecutionContext& scriptExecutionContext, std::optional<std::variant<String, Vector<double>>>&& init)
@@ -226,23 +229,17 @@ ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringInt
     if (string.isEmpty())
         return AbstractMatrix { };
 
-    auto styleDeclaration = MutableStyleProperties::create();
-    if (CSSParser::parseValue(styleDeclaration, CSSPropertyTransform, string, true, HTMLStandardMode) == CSSParser::ParseResult::Error)
-        return Exception { ExceptionCode::SyntaxError };
-
-    // Convert to TransformOperations. This can fail if a property requires style (i.e., param uses 'ems' or 'exs')
-    auto value = styleDeclaration->getPropertyCSSValue(CSSPropertyTransform);
-
-    // Check for a "none" or empty transform. In these cases we can use the default identity matrix.
-    if (!value || (is<CSSPrimitiveValue>(*value) && value->valueID() == CSSValueNone))
-        return AbstractMatrix { };
-
-    auto operations = transformsForValue(*value, { });
+    CSSToLengthConversionData conversionData;
+    auto operations = CSSPropertyParserHelpers::parseTransformRaw(string, CSSParserContext(HTMLStandardMode), conversionData);
     if (!operations)
         return Exception { ExceptionCode::SyntaxError };
 
+    // Check for an empty transform operations list, in which case we can use the default identity matrix.
+    if (operations->isEmpty())
+        return AbstractMatrix { };
+
     AbstractMatrix matrix;
-    for (auto& operation : operations->operations()) {
+    for (auto& operation : *operations) {
         if (operation->apply(matrix.matrix, { 0, 0 }))
             return Exception { ExceptionCode::SyntaxError };
         if (operation->is3DOperation())

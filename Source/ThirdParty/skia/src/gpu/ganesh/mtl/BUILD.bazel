@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "skia_objc_library", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "skia_filegroup", "skia_objc_library", "split_srcs_and_hdrs")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 # A list of files that is included by C++ files, but whose
 # implementation resides in .mm files. The latter may need to
@@ -75,37 +73,26 @@ split_srcs_and_hdrs(
     files = MTL_FILES,
 )
 
-skia_filegroup(
-    name = "objc_srcs",
-    srcs = [
-        ":mtl_srcs",
-    ],
-    visibility = ["//src/gpu/ganesh:__pkg__"],
-)
-
-skia_filegroup(
-    name = "private_hdrs",
-    srcs = [
-        ":mtl_cpp_hdrs",
-        ":mtl_hdrs",
-    ],
-    visibility = ["//src/gpu/ganesh:__pkg__"],
-)
-
 skia_objc_library(
     name = "ganesh_metal",
     srcs = [
         ":mtl_cpp_hdrs",
         ":mtl_hdrs",
         ":mtl_srcs",
-        "//include/ports:core_foundation_hdrs",
+        "//src/gpu/ganesh/surface:mtl_objc_srcs",
     ],
     hdrs = [
+        "//include/gpu:shared_gpu_hdrs",
+        "//include/gpu/ganesh:ganesh_hdrs",
         "//include/gpu/ganesh/mtl:public_hdrs",
+        "//include/gpu/mtl:public_hdrs",
+        "//include/ports:core_foundation_hdrs",
     ],
     copts = ["-fobjc-arc"],
+    defines = ["SK_METAL"],
     sdk_frameworks = [
         "Metal",
+        "MetalKit",
         "Foundation",
     ],
     visibility = ["//:__pkg__"],
@@ -115,6 +102,41 @@ skia_objc_library(
         "//src/core:core_priv",
         "//src/gpu",
         "//src/gpu/ganesh",
+        "//src/gpu/mtl:gpu_mtl",
+        "//src/sksl/codegen:metal",
+    ],
+)
+
+skia_objc_library(
+    name = "ganesh_metal_TEST_UTIL",
+    testonly = True,
+    srcs = [
+        ":mtl_cpp_hdrs",
+        ":mtl_hdrs",
+        ":mtl_srcs",
+        "//src/gpu/ganesh/surface:mtl_objc_srcs",
+    ],
+    hdrs = [
+        "//include/gpu:shared_gpu_hdrs",
+        "//include/gpu/ganesh:ganesh_hdrs",
+        "//include/gpu/ganesh/mtl:public_hdrs",
+        "//include/gpu/mtl:public_hdrs",
+        "//include/ports:core_foundation_hdrs",
+    ],
+    copts = ["-fobjc-arc"],
+    defines = ["SK_METAL"],
+    sdk_frameworks = [
+        "Metal",
+        "MetalKit",
+        "Foundation",
+    ],
+    visibility = ["//tools/window:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "//src/gpu",
+        "//src/gpu/ganesh:ganesh_TEST_UTIL",
         "//src/gpu/mtl:gpu_mtl",
         "//src/sksl/codegen:metal",
     ],

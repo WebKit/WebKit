@@ -26,26 +26,28 @@
 
 namespace WebCore {
 
+class LayoutSize;
 class MouseEvent;
 class TextRun;
+
+enum class PluginUnavailabilityReason : uint8_t {
+    PluginMissing,
+    PluginCrashed,
+    PluginBlockedByContentSecurityPolicy,
+    InsecurePluginVersion,
+    UnsupportedPlugin,
+    PluginTooSmall
+};
 
 // Renderer for embeds and objects, often, but not always, rendered via plug-ins.
 // For example, <embed src="foo.html"> does not invoke a plug-in.
 class RenderEmbeddedObject final : public RenderWidget {
-    WTF_MAKE_ISO_ALLOCATED(RenderEmbeddedObject);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderEmbeddedObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderEmbeddedObject);
 public:
     RenderEmbeddedObject(HTMLFrameOwnerElement&, RenderStyle&&);
     virtual ~RenderEmbeddedObject();
 
-    enum PluginUnavailabilityReason {
-        PluginMissing,
-        PluginCrashed,
-        PluginBlockedByContentSecurityPolicy,
-        InsecurePluginVersion,
-        UnsupportedPlugin,
-        PluginTooSmall
-    };
     PluginUnavailabilityReason pluginUnavailabilityReason() const { return m_pluginUnavailabilityReason; };
     WEBCORE_EXPORT void setPluginUnavailabilityReason(PluginUnavailabilityReason);
     WEBCORE_EXPORT void setPluginUnavailabilityReasonWithDescription(PluginUnavailabilityReason, const String& description);
@@ -64,9 +66,13 @@ public:
 
     ScrollableArea* scrollableArea() const;
     bool usesAsyncScrolling() const;
-    ScrollingNodeID scrollingNodeID() const;
+    std::optional<ScrollingNodeID> scrollingNodeID() const;
     void willAttachScrollingNode();
     void didAttachScrollingNode();
+
+    bool paintsContent() const final;
+
+    void setHasShadowContent() { m_hasShadowContent = true; }
 
 private:
     void paintReplaced(PaintInfo&, const LayoutPoint&) final;
@@ -92,6 +98,8 @@ private:
     void getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, FloatRect& indicatorRect, FloatRect& replacementTextRect, FloatRect& arrowRect, FontCascade&, TextRun&, float& textWidth) const;
     LayoutRect getReplacementTextGeometry(const LayoutPoint& accumulatedOffset) const;
 
+    bool canHaveChildren() const override { return m_hasShadowContent; }
+
     bool m_isPluginUnavailable;
     enum class UnavailablePluginIndicatorState { Uninitialized, Hidden, Visible };
     UnavailablePluginIndicatorState m_isUnavailablePluginIndicatorState { UnavailablePluginIndicatorState::Uninitialized };
@@ -100,6 +108,7 @@ private:
     bool m_unavailablePluginIndicatorIsPressed;
     bool m_mouseDownWasInUnavailablePluginIndicator;
     String m_unavailabilityDescription;
+    bool m_hasShadowContent { false };
 };
 
 } // namespace WebCore

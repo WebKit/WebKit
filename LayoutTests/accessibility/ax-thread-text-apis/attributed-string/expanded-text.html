@@ -1,0 +1,30 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- This is new test added with the accessibilityThreadTextApisEnabled effort. After accessibilityThreadTextApisEnabled is enabled by default, we should move it into LayoutTests/accessibility/mac. -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<abbr role="group" id="abbr" title="a">Foo</abbr>
+<acronym role="group" id="acronym" title="b">Bar</acronym>
+
+<script>
+var output = "This test ensures we represent expanded text in attributed strings.\n\n";
+
+if (window.accessibilityController) {
+    var abbrText = accessibilityController.accessibleElementById("abbr").childAtIndex(0);
+    var markerRange = abbrText.textMarkerRangeForElement(abbrText);
+    output += expect("abbrText.attributedStringForTextMarkerRangeContainsAttribute('AXExpandedTextValue', markerRange)", "true");
+
+    var acronymText = accessibilityController.accessibleElementById("acronym").childAtIndex(0);
+    var markerRange = acronymText.textMarkerRangeForElement(acronymText);
+    output += expect("acronymText.attributedStringForTextMarkerRangeContainsAttribute('AXExpandedTextValue', markerRange)", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

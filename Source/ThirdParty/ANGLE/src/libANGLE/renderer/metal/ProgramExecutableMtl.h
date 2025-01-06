@@ -47,17 +47,14 @@ struct UBOConversionInfo
 
     bool _calculateNeedsConversion()
     {
-        if (_stdSize != _metalSize)
-        {
-            return true;
-        }
+        // If we have a different number of fields then we need conversion
         if (_stdInfo.size() != _metalInfo.size())
         {
             return true;
         }
         for (size_t i = 0; i < _stdInfo.size(); ++i)
         {
-            // If the matrix is trasnposed
+            // If the matrix is transposed
             if (_stdInfo[i].isRowMajorMatrix)
             {
                 return true;
@@ -297,7 +294,7 @@ class ProgramExecutableMtl : public ProgramExecutableImpl
     gl::ShaderMap<std::unique_ptr<mtl::BufferPool>> mDefaultUniformBufferPools;
 };
 
-angle::Result CreateMslShaderLib(ContextMtl *context,
+angle::Result CreateMslShaderLib(mtl::Context *context,
                                  gl::InfoLog &infoLog,
                                  mtl::TranslatedShaderInfo *translatedMslInfo,
                                  const std::map<std::string, std::string> &substitutionMacros);

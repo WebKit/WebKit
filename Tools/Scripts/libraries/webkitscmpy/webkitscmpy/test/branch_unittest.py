@@ -460,6 +460,7 @@ Created the local development branch 'eng/4'
         self.assertEqual(program.Branch.to_branch_name('[EWS] bug description'), 'EWS-bug-description')
         self.assertEqual(program.Branch.to_branch_name('[git-webkit] change'), 'git-webkit-change')
         self.assertEqual(program.Branch.to_branch_name('Add Terminal.open_url'), 'Add-Terminal-open_url')
+        self.assertEqual(program.Branch.to_branch_name('REGRESSION(123@main): list<span<T>>'), 'REGRESSION-123-main-list-span-T')
 
     def test_existing_branch_failure(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []), MockTime:

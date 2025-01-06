@@ -36,10 +36,12 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 class Document;
+class LocalFrame;
 }
 
 namespace WebKit {
@@ -47,7 +49,7 @@ namespace WebKit {
 class WebPage;
 
 class WebFoundTextRangeController : private WebCore::PageOverlayClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebFoundTextRangeController);
     WTF_MAKE_NONCOPYABLE(WebFoundTextRangeController);
 
 public:
@@ -64,7 +66,7 @@ public:
 
     void didBeginTextSearchOperation();
 
-    void addLayerForFindOverlay(CompletionHandler<void(WebCore::PlatformLayerIdentifier)>&&);
+    void addLayerForFindOverlay(CompletionHandler<void(std::optional<WebCore::PlatformLayerIdentifier>)>&&);
     void removeLayerForFindOverlay();
 
     void requestRectForFoundTextRange(const WebFoundTextRange&, CompletionHandler<void(WebCore::FloatRect)>&&);
@@ -82,8 +84,13 @@ private:
     void setTextIndicatorWithRange(const WebCore::SimpleRange&);
     void flashTextIndicatorAndUpdateSelectionWithRange(const WebCore::SimpleRange&);
 
+    RefPtr<WebCore::TextIndicator> createTextIndicatorForPDFRange(const WebFoundTextRange&, WebCore::TextIndicatorPresentationTransition);
+    void setTextIndicatorWithPDFRange(const WebFoundTextRange&);
+    void flashTextIndicatorAndUpdateSelectionWithPDFRange(const WebFoundTextRange&);
+
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(WebCore::IntRect clipRect);
 
+    WebCore::LocalFrame* frameForFoundTextRange(const WebFoundTextRange&) const;
     WebCore::Document* documentForFoundTextRange(const WebFoundTextRange&) const;
     std::optional<WebCore::SimpleRange> simpleRangeFromFoundTextRange(WebFoundTextRange);
 

@@ -1,0 +1,8 @@
+
+PASS find(): Promise resolves with the first value that passes the predicate
+PASS find(): Promise resolves with undefined if no value passes the predicate
+PASS find(): Promise rejects with the error emitted from the source Observable
+PASS find(): Promise rejects with any error thrown from the predicate
+PASS find(): Passes the index of the value to the predicate
+PASS find(): Rejects with AbortError when the signal is aborted
+

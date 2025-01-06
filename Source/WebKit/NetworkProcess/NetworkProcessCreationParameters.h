@@ -75,10 +75,9 @@ struct NetworkProcessCreationParameters {
 
     bool enablePrivateClickMeasurement { true };
     bool ftpEnabled { false };
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
-    bool builtInNotificationsEnabled { false };
+#if PLATFORM(COCOA)
+    bool enableModernDownloadProgress { false };
 #endif
-
     Vector<WebsiteDataStoreParameters> websiteDataStoreParameters;
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;
     HashSet<String> localhostAliasesForTesting;

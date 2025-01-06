@@ -23,6 +23,7 @@
 #pragma once
 
 #include "FilterEffectApplier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -31,7 +32,7 @@ class PixelBuffer;
 struct ComponentTransferFunction;
 
 class FEComponentTransferSoftwareApplier final : public FilterEffectConcreteApplier<FEComponentTransfer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FEComponentTransferSoftwareApplier);
     using Base = FilterEffectConcreteApplier<FEComponentTransfer>;
 
 public:

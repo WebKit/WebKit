@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,12 @@
 #include "Register.h"
 #include "StackAlignment.h"
 #include <wtf/ForbidHeapAllocation.h>
+
+#if ENABLE(WEBASSEMBLY)
+#include "JSWebAssemblyInstance.h"
+#endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -69,9 +75,9 @@ public:
     void setThisValue(JSValue value) { thisArg = value; }
 
 #if ENABLE(WEBASSEMBLY)
-    void setWasmInstance(Wasm::Instance* instance)
+    void setWasmInstance(JSWebAssemblyInstance* instance)
     {
-        codeBlockValue = bitwise_cast<CallFrame*>(instance);
+        codeBlockValue = instance;
     }
 #endif
 
@@ -88,3 +94,5 @@ public:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -31,8 +31,11 @@
 
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
+
+constexpr uintptr_t NullWasmCallee = 0;
 
 Segment::Ptr Segment::create(std::optional<I32InitExpr> offset, uint32_t sizeInBytes, Kind kind)
 {

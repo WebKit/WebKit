@@ -121,15 +121,18 @@ describe('/privileged-api/upload-file', function () {
         });
     });
 
-    it('should re-upload the file when the previously uploaded file had been deleted', () => {
+    it('should re-upload the file when the previously uploaded file had been deleted and reuse the file row with updated creation time and cleared deletion time', () => {
         const db = TestServer.database();
         const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+        let firstUploadCreationTime;
+        let secondUploadCreationTime;
         let uploadedFile1;
         let uploadedFile2;
         return TemporaryFile.makeTemporaryFileOfSizeInMB('some.dat', limitInMB).then((stream) => {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then((response) => {
             uploadedFile1 = response['uploadedFile'];
+            firstUploadCreationTime = uploadedFile1.createdAt;
             return db.query(`UPDATE uploaded_files SET file_deleted_at = now() at time zone 'utc'`);
         }).then(() => {
             return TemporaryFile.makeTemporaryFileOfSizeInMB('other.dat', limitInMB);
@@ -137,28 +140,26 @@ describe('/privileged-api/upload-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then((response) => {
             uploadedFile2 = response['uploadedFile'];
+            secondUploadCreationTime = uploadedFile2.createdAt;
             return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
-            assert.notStrictEqual(uploadedFile1.id, uploadedFile2.id);
-            assert.strictEqual(rows.length, 2);
+            assert.strictEqual(uploadedFile1.id, uploadedFile2.id);
+            assert.strictEqual(rows.length, 1);
             assert.strictEqual(rows[0].id, parseInt(uploadedFile1.id));
-            assert.strictEqual(rows[1].id, parseInt(uploadedFile2.id));
 
             assert.strictEqual(rows[0].filename, 'some.dat');
             assert.strictEqual(rows[0].filename, uploadedFile1.filename);
-            assert.strictEqual(rows[1].filename, 'other.dat');
-            assert.strictEqual(rows[1].filename, uploadedFile2.filename);
+
+            assert.notEqual(firstUploadCreationTime, secondUploadCreationTime);
 
             assert.strictEqual(parseInt(rows[0].size), limitInMB * 1024 * 1024);
             assert.strictEqual(parseInt(rows[0].size), parseInt(uploadedFile1.size));
             assert.strictEqual(parseInt(rows[0].size), parseInt(uploadedFile2.size));
-            assert.strictEqual(rows[0].size, rows[1].size);
+            assert.strictEqual(rows[0].deleted_at, null);
             assert.strictEqual(rows[0].sha256, '5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5');
             assert.strictEqual(rows[0].sha256, uploadedFile1.sha256);
             assert.strictEqual(rows[0].sha256, uploadedFile2.sha256);
-            assert.strictEqual(rows[0].sha256, rows[1].sha256);
             assert.strictEqual(rows[0].extension, '.dat');
-            assert.strictEqual(rows[1].extension, '.dat');
         });
     });
 
@@ -203,6 +204,31 @@ describe('/privileged-api/upload-file', function () {
             assert.strictEqual(rows[2].filename, 'another.dat');
             assert.strictEqual(rows[2].deleted_at, null);
         })
+    });
+
+    it('should delete an old file that is out of grace period since the creation time when uploading the file would result in the quota being exceeded', async () => {
+        const db = TestServer.database();
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+        TestServer.overwriteTestConfig({uploadFileGracePeriodInHours: 1});
+        let stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('some.dat', limitInMB, 'a');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('other.dat', limitInMB, 'b');
+        const response = await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        const otherFile = response.uploadedFile;
+        await db.query(`UPDATE uploaded_files SET file_created_at = to_timestamp(${Math.floor(Date.now() / 1000) - 3600 * 2}) WHERE file_id = ${otherFile.id}`);
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('another.dat', limitInMB, 'c');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        const rows = await db.selectAll('uploaded_files', 'id');
+        assert.strictEqual(rows.length, 3);
+        assert.strictEqual(rows[0].filename, 'some.dat');
+        assert.strictEqual(rows[0].deleted_at, null);
+        assert.strictEqual(rows[1].filename, 'other.dat');
+        assert.notStrictEqual(rows[1].deleted_at, null);
+        assert.strictEqual(rows[2].filename, 'another.dat');
+        assert.strictEqual(rows[2].deleted_at, null);
     });
 
     it('should prune all removable files to get space for a file upload', async () => {
@@ -385,5 +411,36 @@ describe('/privileged-api/upload-file', function () {
                 assert.strictEqual(error, 'FileSizeQuotaExceeded');
             });
         });
+    });
+
+    it('should not double counting a file if it is referenced by multiple commit_sets', async () => {
+        const db = TestServer.database();
+        TestServer.overwriteTestConfig({uploadFileLimitInMB: 3, uploadUserQuotaInMB: 5});
+        let stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('root-1-2MB', 2, 'a');
+        const firstResponse = await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('root-2-2MB', 2, 'b');
+        const secondResponse = await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        await Promise.all([
+            db.insert('repositories', {id: 1, name: 'WebKit'}),
+            db.insert('commits', {id: 93116, repository: 1, revision: '191622', time: (new Date(1445945816878)).toISOString()}),
+            db.insert('commit_sets', {id: 500}),
+            db.insert('commit_set_items', {set: 500, commit: 93116, requires_build: true, root_file: firstResponse.uploadedFile.id}),
+            db.insert('commit_sets', {id: 501}),
+            db.insert('commit_set_items', {set: 501, commit: 93116, requires_build: true, root_file: secondResponse.uploadedFile.id}),
+        ]);
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('root-3-3MB', 3, 'c');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        const rows = await db.selectAll('uploaded_files', 'id');
+        assert.strictEqual(rows.length, 3);
+        assert.strictEqual(rows[0].filename, 'root-1-2MB');
+        assert.notStrictEqual(rows[0].deleted_at, null);
+        assert.strictEqual(rows[1].filename, 'root-2-2MB');
+        assert.notStrictEqual(rows[1].deleted_at, null);
+        assert.strictEqual(rows[2].filename, 'root-3-3MB');
+        assert.strictEqual(rows[2].deleted_at, null);
     });
 });

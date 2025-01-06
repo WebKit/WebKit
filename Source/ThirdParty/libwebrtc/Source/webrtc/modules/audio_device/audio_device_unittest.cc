@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/audio_device/include/audio_device.h"
+#include "api/audio/audio_device.h"
 
 #include <algorithm>
 #include <cstring>
 #include <list>
 #include <memory>
 #include <numeric>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
@@ -320,7 +320,7 @@ class LatencyAudioStream : public AudioStream {
   SequenceChecker read_thread_checker_;
   SequenceChecker write_thread_checker_;
 
-  absl::optional<int64_t> pulse_time_ RTC_GUARDED_BY(lock_);
+  std::optional<int64_t> pulse_time_ RTC_GUARDED_BY(lock_);
   std::vector<int> latencies_ RTC_GUARDED_BY(race_checker_);
   size_t read_count_ RTC_GUARDED_BY(read_thread_checker_) = 0;
   size_t write_count_ RTC_GUARDED_BY(write_thread_checker_) = 0;
@@ -369,11 +369,11 @@ class MockAudioTransport : public test::MockAudioTransport {
                                       const size_t bytes_per_frame,
                                       const size_t channels,
                                       const uint32_t sample_rate,
-                                      const uint32_t total_delay_ms,
-                                      const int32_t clock_drift,
-                                      const uint32_t current_mic_level,
-                                      const bool typing_status,
-                                      uint32_t& new_mic_level) {
+                                      const uint32_t /* total_delay_ms */,
+                                      const int32_t /* clock_drift */,
+                                      const uint32_t /* current_mic_level */,
+                                      const bool /* typing_status */,
+                                      uint32_t& /* new_mic_level */) {
     EXPECT_TRUE(rec_mode()) << "No test is expecting these callbacks.";
     // Store audio parameters once in the first callback. For all other
     // callbacks, verify that the provided audio parameters are maintained and
@@ -412,8 +412,8 @@ class MockAudioTransport : public test::MockAudioTransport {
                                const uint32_t sample_rate,
                                void* audio_buffer,
                                size_t& samples_out,
-                               int64_t* elapsed_time_ms,
-                               int64_t* ntp_time_ms) {
+                               int64_t* /* elapsed_time_ms */,
+                               int64_t* /* ntp_time_ms */) {
     EXPECT_TRUE(play_mode()) << "No test is expecting these callbacks.";
     // Store audio parameters once in the first callback. For all other
     // callbacks, verify that the provided audio parameters are maintained and

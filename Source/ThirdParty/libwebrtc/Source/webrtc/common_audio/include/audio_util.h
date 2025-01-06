@@ -18,11 +18,23 @@
 #include <cstring>
 #include <limits>
 
+#include "api/audio/audio_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
 
 typedef std::numeric_limits<int16_t> limits_int16;
+
+// TODO(tommi, peah): Move these constants to their own header, e.g.
+// `audio_constants.h`. Also consider if they should be in api/.
+
+// Absolute highest acceptable sample rate supported for audio processing,
+// capture and codecs. Note that for some components some cases a lower limit
+// applies which typically is 48000 but in some cases is lower.
+constexpr int kMaxSampleRateHz = 384000;
+
+// Number of samples per channel for 10ms of audio at the highest sample rate.
+constexpr size_t kMaxSamplesPerChannel10ms = kMaxSampleRateHz / 100u;
 
 // The conversion functions use the following naming convention:
 // S16:      int16_t [-32768, 32767]
@@ -94,6 +106,7 @@ inline float FloatS16ToDbfs(float v) {
 // Copy audio from `src` channels to `dest` channels unless `src` and `dest`
 // point to the same address. `src` and `dest` must have the same number of
 // channels, and there must be sufficient space allocated in `dest`.
+// TODO: b/335805780 - Accept ArrayView.
 template <typename T>
 void CopyAudioIfNeeded(const T* const* src,
                        int num_frames,
@@ -111,12 +124,15 @@ void CopyAudioIfNeeded(const T* const* src,
 // `deinterleaved` buffers (`num_channel` buffers with `samples_per_channel`
 // per buffer).
 template <typename T>
-void Deinterleave(const T* interleaved,
-                  size_t samples_per_channel,
-                  size_t num_channels,
-                  T* const* deinterleaved) {
+void Deinterleave(const InterleavedView<const T>& interleaved,
+                  const DeinterleavedView<T>& deinterleaved) {
+  RTC_DCHECK_EQ(NumChannels(interleaved), NumChannels(deinterleaved));
+  RTC_DCHECK_EQ(SamplesPerChannel(interleaved),
+                SamplesPerChannel(deinterleaved));
+  const auto num_channels = NumChannels(interleaved);
+  const auto samples_per_channel = SamplesPerChannel(interleaved);
   for (size_t i = 0; i < num_channels; ++i) {
-    T* channel = deinterleaved[i];
+    MonoView<T> channel = deinterleaved[i];
     size_t interleaved_idx = i;
     for (size_t j = 0; j < samples_per_channel; ++j) {
       channel[j] = interleaved[interleaved_idx];
@@ -129,52 +145,24 @@ void Deinterleave(const T* interleaved,
 // `interleaved`. There must be sufficient space allocated in `interleaved`
 // (`samples_per_channel` * `num_channels`).
 template <typename T>
-void Interleave(const T* const* deinterleaved,
-                size_t samples_per_channel,
-                size_t num_channels,
-                T* interleaved) {
-  for (size_t i = 0; i < num_channels; ++i) {
-    const T* channel = deinterleaved[i];
+void Interleave(const DeinterleavedView<const T>& deinterleaved,
+                const InterleavedView<T>& interleaved) {
+  RTC_DCHECK_EQ(NumChannels(interleaved), NumChannels(deinterleaved));
+  RTC_DCHECK_EQ(SamplesPerChannel(interleaved),
+                SamplesPerChannel(deinterleaved));
+  for (size_t i = 0; i < deinterleaved.num_channels(); ++i) {
+    const auto channel = deinterleaved[i];
     size_t interleaved_idx = i;
-    for (size_t j = 0; j < samples_per_channel; ++j) {
+    for (size_t j = 0; j < deinterleaved.samples_per_channel(); ++j) {
       interleaved[interleaved_idx] = channel[j];
-      interleaved_idx += num_channels;
+      interleaved_idx += deinterleaved.num_channels();
     }
-  }
-}
-
-// Copies audio from a single channel buffer pointed to by `mono` to each
-// channel of `interleaved`. There must be sufficient space allocated in
-// `interleaved` (`samples_per_channel` * `num_channels`).
-template <typename T>
-void UpmixMonoToInterleaved(const T* mono,
-                            int num_frames,
-                            int num_channels,
-                            T* interleaved) {
-  int interleaved_idx = 0;
-  for (int i = 0; i < num_frames; ++i) {
-    for (int j = 0; j < num_channels; ++j) {
-      interleaved[interleaved_idx++] = mono[i];
-    }
-  }
-}
-
-template <typename T, typename Intermediate>
-void DownmixToMono(const T* const* input_channels,
-                   size_t num_frames,
-                   int num_channels,
-                   T* out) {
-  for (size_t i = 0; i < num_frames; ++i) {
-    Intermediate value = input_channels[0][i];
-    for (int j = 1; j < num_channels; ++j) {
-      value += input_channels[j][i];
-    }
-    out[i] = value / num_channels;
   }
 }
 
 // Downmixes an interleaved multichannel signal to a single channel by averaging
 // all channels.
+// TODO: b/335805780 - Accept InterleavedView and DeinterleavedView.
 template <typename T, typename Intermediate>
 void DownmixInterleavedToMonoImpl(const T* interleaved,
                                   size_t num_frames,
@@ -197,12 +185,14 @@ void DownmixInterleavedToMonoImpl(const T* interleaved,
   }
 }
 
+// TODO: b/335805780 - Accept InterleavedView and DeinterleavedView.
 template <typename T>
 void DownmixInterleavedToMono(const T* interleaved,
                               size_t num_frames,
                               int num_channels,
                               T* deinterleaved);
 
+// TODO: b/335805780 - Accept InterleavedView and DeinterleavedView.
 template <>
 void DownmixInterleavedToMono<int16_t>(const int16_t* interleaved,
                                        size_t num_frames,

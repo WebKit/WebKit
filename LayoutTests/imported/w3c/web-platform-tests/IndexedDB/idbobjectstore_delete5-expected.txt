@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.delete() - removes all of the records in the range
-

@@ -73,7 +73,7 @@ std::unique_ptr<WebSocketTask> NetworkSessionCurl::createWebSocketTask(WebPagePr
 
 void NetworkSessionCurl::didReceiveChallenge(WebSocketTask& webSocketTask, WebCore::AuthenticationChallenge&& challenge, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& challengeCompletionHandler)
 {
-    networkProcess().authenticationManager().didReceiveAuthenticationChallenge(sessionID(), webSocketTask.webProxyPageID(), !webSocketTask.topOrigin().isNull() ? &webSocketTask.topOrigin() : nullptr, challenge, NegotiatedLegacyTLS::No, WTFMove(challengeCompletionHandler));
+    networkProcess().protectedAuthenticationManager()->didReceiveAuthenticationChallenge(sessionID(), webSocketTask.webProxyPageID(), !webSocketTask.topOrigin().isNull() ? &webSocketTask.topOrigin() : nullptr, challenge, NegotiatedLegacyTLS::No, WTFMove(challengeCompletionHandler));
 }
 
 } // namespace WebKit

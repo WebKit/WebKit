@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -222,35 +222,6 @@ void aom_extend_frame_borders_c(YV12_BUFFER_CONFIG *ybf, const int num_planes) {
   extend_frame(ybf, ybf->border, num_planes);
 }
 
-void aom_extend_frame_inner_borders_c(YV12_BUFFER_CONFIG *ybf,
-                                      const int num_planes) {
-  const int inner_bw = (ybf->border > AOMINNERBORDERINPIXELS)
-                           ? AOMINNERBORDERINPIXELS
-                           : ybf->border;
-  extend_frame(ybf, inner_bw, num_planes);
-}
-
-void aom_extend_frame_borders_y_c(YV12_BUFFER_CONFIG *ybf) {
-  int ext_size = ybf->border;
-  assert(ybf->y_height - ybf->y_crop_height < 16);
-  assert(ybf->y_width - ybf->y_crop_width < 16);
-  assert(ybf->y_height - ybf->y_crop_height >= 0);
-  assert(ybf->y_width - ybf->y_crop_width >= 0);
-#if CONFIG_AV1_HIGHBITDEPTH
-  if (ybf->flags & YV12_FLAG_HIGHBITDEPTH) {
-    extend_plane_high(
-        ybf->y_buffer, ybf->y_stride, ybf->y_crop_width, ybf->y_crop_height,
-        ext_size, ext_size, ext_size + ybf->y_height - ybf->y_crop_height,
-        ext_size + ybf->y_width - ybf->y_crop_width, 0, ybf->y_crop_height);
-    return;
-  }
-#endif
-  extend_plane(
-      ybf->y_buffer, ybf->y_stride, ybf->y_crop_width, ybf->y_crop_height,
-      ext_size, ext_size, ext_size + ybf->y_height - ybf->y_crop_height,
-      ext_size + ybf->y_width - ybf->y_crop_width, 0, ybf->y_crop_height);
-}
-
 #if CONFIG_AV1_HIGHBITDEPTH
 static void memcpy_short_addr(uint8_t *dst8, const uint8_t *src8, int num) {
   uint16_t *dst = CONVERT_TO_SHORTPTR(dst8);
@@ -302,8 +273,10 @@ void aom_yv12_copy_frame_c(const YV12_BUFFER_CONFIG *src_bc,
 }
 
 void aom_yv12_copy_y_c(const YV12_BUFFER_CONFIG *src_ybc,
-                       YV12_BUFFER_CONFIG *dst_ybc) {
+                       YV12_BUFFER_CONFIG *dst_ybc, int use_crop) {
   int row;
+  int width = use_crop ? src_ybc->y_crop_width : src_ybc->y_width;
+  int height = use_crop ? src_ybc->y_crop_height : src_ybc->y_height;
   const uint8_t *src = src_ybc->y_buffer;
   uint8_t *dst = dst_ybc->y_buffer;
 
@@ -311,8 +284,8 @@ void aom_yv12_copy_y_c(const YV12_BUFFER_CONFIG *src_ybc,
   if (src_ybc->flags & YV12_FLAG_HIGHBITDEPTH) {
     const uint16_t *src16 = CONVERT_TO_SHORTPTR(src);
     uint16_t *dst16 = CONVERT_TO_SHORTPTR(dst);
-    for (row = 0; row < src_ybc->y_height; ++row) {
-      memcpy(dst16, src16, src_ybc->y_width * sizeof(uint16_t));
+    for (row = 0; row < height; ++row) {
+      memcpy(dst16, src16, width * sizeof(uint16_t));
       src16 += src_ybc->y_stride;
       dst16 += dst_ybc->y_stride;
     }
@@ -320,56 +293,60 @@ void aom_yv12_copy_y_c(const YV12_BUFFER_CONFIG *src_ybc,
   }
 #endif
 
-  for (row = 0; row < src_ybc->y_height; ++row) {
-    memcpy(dst, src, src_ybc->y_width);
+  for (row = 0; row < height; ++row) {
+    memcpy(dst, src, width);
     src += src_ybc->y_stride;
     dst += dst_ybc->y_stride;
   }
 }
 
 void aom_yv12_copy_u_c(const YV12_BUFFER_CONFIG *src_bc,
-                       YV12_BUFFER_CONFIG *dst_bc) {
+                       YV12_BUFFER_CONFIG *dst_bc, int use_crop) {
   int row;
+  int width = use_crop ? src_bc->uv_crop_width : src_bc->uv_width;
+  int height = use_crop ? src_bc->uv_crop_height : src_bc->uv_height;
   const uint8_t *src = src_bc->u_buffer;
   uint8_t *dst = dst_bc->u_buffer;
 #if CONFIG_AV1_HIGHBITDEPTH
   if (src_bc->flags & YV12_FLAG_HIGHBITDEPTH) {
     const uint16_t *src16 = CONVERT_TO_SHORTPTR(src);
     uint16_t *dst16 = CONVERT_TO_SHORTPTR(dst);
-    for (row = 0; row < src_bc->uv_height; ++row) {
-      memcpy(dst16, src16, src_bc->uv_width * sizeof(uint16_t));
+    for (row = 0; row < height; ++row) {
+      memcpy(dst16, src16, width * sizeof(uint16_t));
       src16 += src_bc->uv_stride;
       dst16 += dst_bc->uv_stride;
     }
     return;
   }
 #endif
-  for (row = 0; row < src_bc->uv_height; ++row) {
-    memcpy(dst, src, src_bc->uv_width);
+  for (row = 0; row < height; ++row) {
+    memcpy(dst, src, width);
     src += src_bc->uv_stride;
     dst += dst_bc->uv_stride;
   }
 }
 
 void aom_yv12_copy_v_c(const YV12_BUFFER_CONFIG *src_bc,
-                       YV12_BUFFER_CONFIG *dst_bc) {
+                       YV12_BUFFER_CONFIG *dst_bc, int use_crop) {
   int row;
+  int width = use_crop ? src_bc->uv_crop_width : src_bc->uv_width;
+  int height = use_crop ? src_bc->uv_crop_height : src_bc->uv_height;
   const uint8_t *src = src_bc->v_buffer;
   uint8_t *dst = dst_bc->v_buffer;
 #if CONFIG_AV1_HIGHBITDEPTH
   if (src_bc->flags & YV12_FLAG_HIGHBITDEPTH) {
     const uint16_t *src16 = CONVERT_TO_SHORTPTR(src);
     uint16_t *dst16 = CONVERT_TO_SHORTPTR(dst);
-    for (row = 0; row < src_bc->uv_height; ++row) {
-      memcpy(dst16, src16, src_bc->uv_width * sizeof(uint16_t));
+    for (row = 0; row < height; ++row) {
+      memcpy(dst16, src16, width * sizeof(uint16_t));
       src16 += src_bc->uv_stride;
       dst16 += dst_bc->uv_stride;
     }
     return;
   }
 #endif
-  for (row = 0; row < src_bc->uv_height; ++row) {
-    memcpy(dst, src, src_bc->uv_width);
+  for (row = 0; row < height; ++row) {
+    memcpy(dst, src, width);
     src += src_bc->uv_stride;
     dst += dst_bc->uv_stride;
   }
@@ -491,8 +468,8 @@ void aom_yv12_partial_coloc_copy_v_c(const YV12_BUFFER_CONFIG *src_bc,
 }
 
 int aom_yv12_realloc_with_new_border_c(YV12_BUFFER_CONFIG *ybf, int new_border,
-                                       int byte_alignment,
-                                       int num_pyramid_levels, int num_planes) {
+                                       int byte_alignment, bool alloc_pyramid,
+                                       int num_planes) {
   if (ybf) {
     if (new_border == ybf->border) return 0;
     YV12_BUFFER_CONFIG new_buf;
@@ -500,7 +477,7 @@ int aom_yv12_realloc_with_new_border_c(YV12_BUFFER_CONFIG *ybf, int new_border,
     const int error = aom_alloc_frame_buffer(
         &new_buf, ybf->y_crop_width, ybf->y_crop_height, ybf->subsampling_x,
         ybf->subsampling_y, ybf->flags & YV12_FLAG_HIGHBITDEPTH, new_border,
-        byte_alignment, num_pyramid_levels, 0);
+        byte_alignment, alloc_pyramid, 0);
     if (error) return error;
     // Copy image buffer
     aom_yv12_copy_frame(ybf, &new_buf, num_planes);

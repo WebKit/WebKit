@@ -20,6 +20,7 @@
 #pragma once
 
 #include "RenderSVGResourceGradient.h"
+#include "RenderView.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderSupport.h"
 
@@ -81,7 +82,7 @@ public:
     {
         // When rendering the mask for a RenderSVGResourceClipper, always use the initial fill paint server.
         if (targetRenderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask))
-            return op == Operation::Fill ? SVGRenderStyle::initialFillPaintColor().absoluteColor() : SVGRenderStyle::initialStrokePaintColor().absoluteColor();
+            return op == Operation::Fill ? SVGRenderStyle::initialFillPaintColor().resolvedColor() : SVGRenderStyle::initialStrokePaintColor().resolvedColor();
 
         auto paintType = op == Operation::Fill ? style.svgStyle().fillPaintType() : style.svgStyle().strokePaintType();
         if (paintType == SVGPaintType::None)
@@ -151,7 +152,7 @@ private:
         return resolveColorFromStyle(style, svgStyle->strokePaintType(), svgStyle->strokePaintColor(), svgStyle->visitedLinkStrokePaintType(), svgStyle->visitedLinkStrokePaintColor());
     }
 
-    static inline Color resolveColorFromStyle(const RenderStyle& style, SVGPaintType paintType, const StyleColor& paintColor, SVGPaintType visitedLinkPaintType, const StyleColor& visitedLinkPaintColor)
+    static inline Color resolveColorFromStyle(const RenderStyle& style, SVGPaintType paintType, const Style::Color& paintColor, SVGPaintType visitedLinkPaintType, const Style::Color& visitedLinkPaintColor)
     {
         // All paint types except None / URI / URINone handle solid colors.
         ASSERT_UNUSED(paintType, paintType != SVGPaintType::None);

@@ -38,20 +38,20 @@
 #include "StyleProperties.h"
 #include "StyleSheetContents.h"
 #include "StyledElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PropertySetCSSStyleDeclaration);
-WTF_MAKE_ISO_ALLOCATED_IMPL(StyleRuleCSSStyleDeclaration);
-WTF_MAKE_ISO_ALLOCATED_IMPL(InlineCSSStyleDeclaration);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PropertySetCSSStyleDeclaration);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StyleRuleCSSStyleDeclaration);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InlineCSSStyleDeclaration);
 
-void PropertySetCSSStyleDeclaration::ref()
+void PropertySetCSSStyleDeclaration::ref() const
 { 
     m_propertySet->ref();
 }
 
-void PropertySetCSSStyleDeclaration::deref()
+void PropertySetCSSStyleDeclaration::deref() const
 {
     m_propertySet->deref(); 
 }
@@ -167,9 +167,9 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& prop
 
     bool changed;
     if (UNLIKELY(propertyID == CSSPropertyCustom))
-        changed = m_propertySet->setCustomProperty(propertyName, value, important, cssParserContext());
+        changed = m_propertySet->setCustomProperty(propertyName, value, cssParserContext(), important ? IsImportant::Yes : IsImportant::No);
     else
-        changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext());
+        changed = m_propertySet->setProperty(propertyID, value, cssParserContext(), important ? IsImportant::Yes : IsImportant::No);
 
     didMutate(changed ? MutationType::PropertyChanged : MutationType::NoChanges);
 
@@ -217,7 +217,7 @@ String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID pr
     return { };
 }
 
-ExceptionOr<void> PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyID, const String& value, bool important)
+ExceptionOr<void> PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyID, const String& value, IsImportant important)
 {
     StyleAttributeMutationScope mutationScope { parentElement() };
     if (!willMutate())
@@ -226,7 +226,7 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropert
     if (!isExposed(propertyID))
         return { };
 
-    if (m_propertySet->setProperty(propertyID, value, important, cssParserContext())) {
+    if (m_propertySet->setProperty(propertyID, value, cssParserContext(), important)) {
         didMutate(MutationType::PropertyChanged);
         mutationScope.enqueueMutationRecord();
     } else

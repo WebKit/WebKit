@@ -34,8 +34,11 @@
 #include "WCUpdateInfo.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteWCLayerTreeHostProxy);
 
 RemoteWCLayerTreeHostProxy::RemoteWCLayerTreeHostProxy(WebPage& page, bool usesOffscreenRendering)
     : m_page(page)
@@ -61,7 +64,7 @@ GPUProcessConnection& RemoteWCLayerTreeHostProxy::ensureGPUProcessConnection()
         m_gpuProcessConnection = gpuProcessConnection;
         gpuProcessConnection->addClient(*this);
         gpuProcessConnection->connection().send(
-            Messages::GPUConnectionToWebProcess::CreateWCLayerTreeHost(wcLayerTreeHostIdentifier(), m_page.nativeWindowHandle(), m_usesOffscreenRendering),
+            Messages::GPUConnectionToWebProcess::CreateWCLayerTreeHost(wcLayerTreeHostIdentifier(), m_page->nativeWindowHandle(), m_usesOffscreenRendering),
             0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     }
     return *gpuProcessConnection;

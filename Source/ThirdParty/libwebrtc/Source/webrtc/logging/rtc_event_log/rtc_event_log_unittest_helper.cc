@@ -17,23 +17,70 @@
 #include <limits>
 #include <memory>
 #include <numeric>
-#include <string>
+#include <optional>
 #include <utility>
 #include <vector>
 
+#include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "api/network_state_predictor.h"
+#include "api/candidate.h"
+#include "api/dtls_transport_interface.h"
+#include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
+#include "api/transport/bandwidth_usage.h"
+#include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "api/video/video_codec_type.h"
+#include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
+#include "logging/rtc_event_log/events/rtc_event_alr_state.h"
+#include "logging/rtc_event_log/events/rtc_event_audio_network_adaptation.h"
+#include "logging/rtc_event_log/events/rtc_event_audio_playout.h"
+#include "logging/rtc_event_log/events/rtc_event_audio_receive_stream_config.h"
+#include "logging/rtc_event_log/events/rtc_event_audio_send_stream_config.h"
+#include "logging/rtc_event_log/events/rtc_event_begin_log.h"
+#include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
+#include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
+#include "logging/rtc_event_log/events/rtc_event_dtls_transport_state.h"
+#include "logging/rtc_event_log/events/rtc_event_dtls_writable_state.h"
+#include "logging/rtc_event_log/events/rtc_event_end_log.h"
+#include "logging/rtc_event_log/events/rtc_event_frame_decoded.h"
+#include "logging/rtc_event_log/events/rtc_event_generic_ack_received.h"
+#include "logging/rtc_event_log/events/rtc_event_generic_packet_received.h"
+#include "logging/rtc_event_log/events/rtc_event_generic_packet_sent.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
+#include "logging/rtc_event_log/events/rtc_event_neteq_set_minimum_delay.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
+#include "logging/rtc_event_log/events/rtc_event_remote_estimate.h"
+#include "logging/rtc_event_log/events/rtc_event_route_change.h"
+#include "logging/rtc_event_log/events/rtc_event_rtcp_packet_incoming.h"
+#include "logging/rtc_event_log/events/rtc_event_rtcp_packet_outgoing.h"
+#include "logging/rtc_event_log/events/rtc_event_rtp_packet_incoming.h"
+#include "logging/rtc_event_log/events/rtc_event_rtp_packet_outgoing.h"
+#include "logging/rtc_event_log/events/rtc_event_video_receive_stream_config.h"
+#include "logging/rtc_event_log/events/rtc_event_video_send_stream_config.h"
+#include "logging/rtc_event_log/rtc_stream_config.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 #include "modules/rtp_rtcp/include/rtp_cvo.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/extended_reports.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/fir.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/loss_notification.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/nack.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/pli.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/remb.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/rrtr.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/target_bitrate.h"
 #include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
@@ -41,9 +88,10 @@
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/random.h"
 #include "rtc_base/time_utils.h"
-#include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/ntp_time.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -51,6 +99,9 @@ namespace webrtc {
 namespace test {
 
 namespace {
+
+using ::testing::ElementsAreArray;
+using ::testing::IsEmpty;
 
 struct ExtensionPair {
   RTPExtensionType type;
@@ -85,13 +136,13 @@ void ShuffleInPlace(Random* prng, rtc::ArrayView<T> array) {
   }
 }
 
-absl::optional<int> GetExtensionId(const std::vector<RtpExtension>& extensions,
-                                   absl::string_view uri) {
+std::optional<int> GetExtensionId(const std::vector<RtpExtension>& extensions,
+                                  absl::string_view uri) {
   for (const auto& extension : extensions) {
     if (extension.uri == uri)
       return extension.id;
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 }  // namespace
@@ -217,10 +268,27 @@ EventGenerator::NewProbeResultSuccess() {
   return std::make_unique<RtcEventProbeResultSuccess>(id, bitrate_bps);
 }
 
+constexpr uint32_t CandidateTypeCount() {
+  // This switch statement only exists to catch changes to the IceCandidateType
+  // enumeration. If you get an error here, please update the switch statement
+  // and the return value.
+  IceCandidateType type = IceCandidateType::kHost;
+  switch (type) {
+    case IceCandidateType::kHost:
+    case IceCandidateType::kSrflx:
+    case IceCandidateType::kPrflx:
+    case IceCandidateType::kRelay:
+      break;
+  }
+  return 4u;
+}
+
 std::unique_ptr<RtcEventIceCandidatePairConfig>
 EventGenerator::NewIceCandidatePairConfig() {
-  IceCandidateType local_candidate_type = static_cast<IceCandidateType>(
-      prng_.Rand(static_cast<uint32_t>(IceCandidateType::kNumValues) - 1));
+  static_assert(static_cast<int>(IceCandidateType::kHost) == 0,
+                "Expect kLocal to be the first enum value, equal to 0");
+  IceCandidateType local_candidate_type =
+      static_cast<IceCandidateType>(prng_.Rand(CandidateTypeCount() - 1));
   IceCandidateNetworkType local_network_type =
       static_cast<IceCandidateNetworkType>(prng_.Rand(
           static_cast<uint32_t>(IceCandidateNetworkType::kNumValues) - 1));
@@ -228,8 +296,8 @@ EventGenerator::NewIceCandidatePairConfig() {
       static_cast<IceCandidatePairAddressFamily>(prng_.Rand(
           static_cast<uint32_t>(IceCandidatePairAddressFamily::kNumValues) -
           1));
-  IceCandidateType remote_candidate_type = static_cast<IceCandidateType>(
-      prng_.Rand(static_cast<uint32_t>(IceCandidateType::kNumValues) - 1));
+  IceCandidateType remote_candidate_type =
+      static_cast<IceCandidateType>(prng_.Rand(CandidateTypeCount() - 1));
   IceCandidatePairAddressFamily remote_address_family =
       static_cast<IceCandidatePairAddressFamily>(prng_.Rand(
           static_cast<uint32_t>(IceCandidatePairAddressFamily::kNumValues) -
@@ -238,12 +306,10 @@ EventGenerator::NewIceCandidatePairConfig() {
       static_cast<IceCandidatePairProtocol>(prng_.Rand(
           static_cast<uint32_t>(IceCandidatePairProtocol::kNumValues) - 1));
 
-  IceCandidatePairDescription desc;
-  desc.local_candidate_type = local_candidate_type;
+  IceCandidatePairDescription desc(local_candidate_type, remote_candidate_type);
   desc.local_relay_protocol = protocol_type;
   desc.local_network_type = local_network_type;
   desc.local_address_family = local_address_family;
-  desc.remote_candidate_type = remote_candidate_type;
   desc.remote_address_family = remote_address_family;
   desc.candidate_pair_protocol = protocol_type;
 
@@ -563,7 +629,7 @@ EventGenerator::NewGenericPacketReceived() {
 }
 std::unique_ptr<RtcEventGenericAckReceived>
 EventGenerator::NewGenericAckReceived() {
-  absl::optional<int64_t> receive_timestamp = absl::nullopt;
+  std::optional<int64_t> receive_timestamp = std::nullopt;
   if (prng_.Rand(0, 2) > 0) {
     receive_timestamp = prng_.Rand(0, 100000);
   }
@@ -598,9 +664,10 @@ void EventGenerator::RandomizeRtpPacket(
     rtp_packet->SetExtension<TransmissionOffset>(prng_.Rand(0x00ffffff));
   }
 
-  if (extension_map.IsRegistered(AudioLevel::kId) &&
+  if (extension_map.IsRegistered(AudioLevelExtension::kId) &&
       (all_configured_exts || prng_.Rand<bool>())) {
-    rtp_packet->SetExtension<AudioLevel>(prng_.Rand<bool>(), prng_.Rand(127));
+    rtp_packet->SetExtension<AudioLevelExtension>(
+        AudioLevel(prng_.Rand<bool>(), prng_.Rand(127)));
   }
 
   if (extension_map.IsRegistered(AbsoluteSendTime::kId) &&
@@ -710,8 +777,9 @@ RtpHeaderExtensionMap EventGenerator::NewRtpHeaderExtensionMap(
     return !absl::c_linear_search(excluded_extensions, type);
   };
 
-  if (not_excluded(AudioLevel::kId) && (configure_all || prng_.Rand<bool>())) {
-    extension_map.Register<AudioLevel>(id[0]);
+  if (not_excluded(AudioLevelExtension::kId) &&
+      (configure_all || prng_.Rand<bool>())) {
+    extension_map.Register<AudioLevelExtension>(id[0]);
   }
   if (not_excluded(TransmissionOffset::kId) &&
       (configure_all || prng_.Rand<bool>())) {
@@ -1008,15 +1076,16 @@ void VerifyLoggedRtpHeader(const Event& original_header,
   }
 
   // AudioLevel header extension.
-  ASSERT_EQ(original_header.template HasExtension<AudioLevel>(),
-            logged_header.extension.hasAudioLevel);
-  if (logged_header.extension.hasAudioLevel) {
-    bool voice_activity;
-    uint8_t audio_level;
-    ASSERT_TRUE(original_header.template GetExtension<AudioLevel>(
-        &voice_activity, &audio_level));
-    EXPECT_EQ(voice_activity, logged_header.extension.voiceActivity);
-    EXPECT_EQ(audio_level, logged_header.extension.audioLevel);
+  ASSERT_EQ(original_header.template HasExtension<AudioLevelExtension>(),
+            logged_header.extension.audio_level().has_value());
+  if (logged_header.extension.audio_level()) {
+    AudioLevel audio_level;
+    ASSERT_TRUE(original_header.template GetExtension<AudioLevelExtension>(
+        &audio_level));
+    EXPECT_EQ(audio_level.voice_activity(),
+              logged_header.extension.audio_level()->voice_activity());
+    EXPECT_EQ(audio_level.level(),
+              logged_header.extension.audio_level()->level());
   }
 
   // VideoOrientation header extension.
@@ -1032,23 +1101,15 @@ void VerifyLoggedRtpHeader(const Event& original_header,
 }
 
 template <typename Event>
-void VerifyLoggedDependencyDescriptor(const Event& packet,
-                                      const std::vector<uint8_t>& logged_dd) {
-  if (webrtc::field_trial::IsDisabled(
-          "WebRTC-RtcEventLogEncodeDependencyDescriptor")) {
-    EXPECT_TRUE(logged_dd.empty());
-  } else {
+void EventVerifier::VerifyLoggedDependencyDescriptor(
+    const Event& packet,
+    const std::vector<uint8_t>& logged_dd) const {
+  if (expect_dependency_descriptor_rtp_header_extension_is_set_) {
     rtc::ArrayView<const uint8_t> original =
         packet.template GetRawExtension<RtpDependencyDescriptorExtension>();
-    EXPECT_EQ(logged_dd.size(), original.size());
-    bool dd_is_same = true;
-    for (size_t i = 0; i < logged_dd.size(); ++i) {
-      dd_is_same = logged_dd[i] == original[i];
-      if (!dd_is_same) {
-        break;
-      }
-    }
-    EXPECT_TRUE(dd_is_same);
+    EXPECT_THAT(logged_dd, ElementsAreArray(original));
+  } else {
+    EXPECT_THAT(logged_dd, IsEmpty());
   }
 }
 

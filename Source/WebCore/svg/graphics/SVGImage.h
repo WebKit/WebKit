@@ -39,10 +39,12 @@ class RenderBox;
 class SVGSVGElement;
 class SVGImageChromeClient;
 class SVGImageForContainer;
+class Settings;
 
 class SVGImage final : public Image {
 public:
     static Ref<SVGImage> create(ImageObserver& observer) { return adoptRef(*new SVGImage(observer)); }
+    WEBCORE_EXPORT static bool isDataDecodable(const Settings&, std::span<const uint8_t>);
 
     RenderBox* embeddedContentBox() const;
     LocalFrameView* frameView() const;

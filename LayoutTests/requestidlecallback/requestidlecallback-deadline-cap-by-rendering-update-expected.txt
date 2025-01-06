@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS idleDeadline.timeRemaining() <= preferredRenderingUpdateInterval is true
-PASS didRunIdleCallback is true
+PASS didRunIdleCallback became true
 PASS successfullyParsed is true
 
 TEST COMPLETE

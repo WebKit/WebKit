@@ -39,10 +39,12 @@
 #import <wtf/Language.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/WTFProcess.h>
 #import <wtf/spi/cocoa/OSLogSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/text/MakeString.h>
 
 #if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>)
 #import <WebKitAdditions/DyldCallbackAdditions.h>
@@ -97,10 +99,10 @@ static void initializeLogd(bool disableLogging)
     // Log a long message to make sure the XPC connection to the log daemon for oversized messages is opened.
     // This is needed to block launchd after the WebContent process has launched, since access to launchd is
     // required when opening new XPC connections.
-    char stringWithSpaces[1024];
-    memset(stringWithSpaces, ' ', sizeof(stringWithSpaces));
-    stringWithSpaces[sizeof(stringWithSpaces) - 1] = 0;
-    RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces);
+    std::array<char, 1024> stringWithSpaces;
+    memsetSpan(std::span { stringWithSpaces }, ' ');
+    stringWithSpaces.back() = '\0';
+    RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces.data());
 }
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -121,6 +123,8 @@ static void checkFrameworkVersion(xpc_object_t message)
 }
 #endif // PLATFORM(MAC)
 
+static bool s_isWebProcess = false;
+
 void XPCServiceEventHandler(xpc_connection_t peer)
 {
     OSObjectPtr<xpc_connection_t> retainedPeerConnection(peer);
@@ -133,6 +137,10 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             if (type == XPC_TYPE_ERROR) {
                 if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_TERMINATION_IMMINENT) {
                     RELEASE_LOG_FAULT(IPC, "Exiting: Received XPC event type: %{public}s", event == XPC_ERROR_CONNECTION_INVALID ? "XPC_ERROR_CONNECTION_INVALID" : "XPC_ERROR_TERMINATION_IMMINENT");
+#if ENABLE(CLOSE_WEBCONTENT_XPC_CONNECTION_POST_LAUNCH)
+                    if (s_isWebProcess)
+                        return;
+#endif
                     // FIXME: Handle this case more gracefully.
                     [[NSRunLoop mainRunLoop] performBlock:^{
                         exitProcess(EXIT_FAILURE);
@@ -142,7 +150,9 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             return;
         }
 
+#if USE(EXIT_XPC_MESSAGE_WORKAROUND)
         handleXPCExitMessage(event);
+#endif
 
         auto* messageName = xpc_dictionary_get_string(event, "message-name");
         if (!messageName) {
@@ -150,6 +160,8 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             return;
         }
         if (!strcmp(messageName, "bootstrap")) {
+            WTF::initialize();
+
             bool disableLogging = xpc_dictionary_get_bool(event, "disable-logging");
             initializeLogd(disableLogging);
 
@@ -184,9 +196,10 @@ void XPCServiceEventHandler(xpc_connection_t peer)
                 return;
             }
             CFStringRef entryPointFunctionName = nullptr;
-            if (!strncmp(serviceName, "com.apple.WebKit.WebContent", strlen("com.apple.WebKit.WebContent")))
+            if (!strncmp(serviceName, "com.apple.WebKit.WebContent", strlen("com.apple.WebKit.WebContent"))) {
+                s_isWebProcess = true;
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(WEBCONTENT_SERVICE_INITIALIZER));
-            else if (!strcmp(serviceName, "com.apple.WebKit.Networking"))
+            } else if (!strcmp(serviceName, "com.apple.WebKit.Networking"))
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(NETWORK_SERVICE_INITIALIZER));
             else if (!strcmp(serviceName, "com.apple.WebKit.GPU"))
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(GPU_SERVICE_INITIALIZER));
@@ -262,11 +275,6 @@ int XPCServiceMain(int, const char**)
 #endif
 #endif
     }
-
-#if PLATFORM(MAC)
-    // Don't allow Apple Events in WebKit processes. This can be removed when <rdar://problem/14012823> is fixed.
-    setenv("__APPLEEVENTSSERVICENAME", "", 1);
-#endif
 
     xpc_main(XPCServiceEventHandler);
     return 0;

@@ -36,32 +36,36 @@ function onFocusedElementContextMenu(event) {
   event.stopPropagation();
 }
 
-window.addEventListener('contextmenu', onWindowContextMenu);
-document.getElementById('contenteditable').addEventListener('contextmenu', onContentEditableContextMenu);
-document.getElementById('link').addEventListener('contextmenu', onFocusedElementContextMenu);
+onload = async () => {
+    window.addEventListener('contextmenu', onWindowContextMenu);
+    document.getElementById('contenteditable').addEventListener('contextmenu', onContentEditableContextMenu);
+    document.getElementById('link').addEventListener('contextmenu', onFocusedElementContextMenu);
 
-if (window.testRunner) {
-  eventSender.keyDown('menu');
-  dismissContextMenu();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        eventSender.keyDown('menu');
+        dismissContextMenu();
 
-  var rect = document.getElementById('contenteditable').getBoundingClientRect();
-  var x = rect.left + rect.width / 2;
-  var y = rect.top + rect.height / 2;
-  eventSender.mouseMoveTo(x, y);
-  eventSender.mouseDown();
-  eventSender.mouseUp();
-  eventSender.keyDown('menu');
-  dismissContextMenu();
+        var rect = document.getElementById('contenteditable').getBoundingClientRect();
+        var x = rect.left + rect.width / 2;
+        var y = rect.top + rect.height / 2;
+        await eventSender.asyncMouseMoveTo(x, y);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        eventSender.keyDown('menu');
+        dismissContextMenu();
 
-  document.getElementById('link').focus();
-  eventSender.keyDown('menu');
-  dismissContextMenu();
+        document.getElementById('link').focus();
+        eventSender.keyDown('menu');
+        dismissContextMenu();
 
-  window.getSelection().selectAllChildren(document.getElementById('contenteditable'));
-  eventSender.keyDown('menu');
-  dismissContextMenu();
+        window.getSelection().selectAllChildren(document.getElementById('contenteditable'));
+        eventSender.keyDown('menu');
+        dismissContextMenu();
 
-  testRunner.dumpAsText();
+        testRunner.notifyDone();
+    }
 }
 
 </script>

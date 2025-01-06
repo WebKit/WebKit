@@ -29,12 +29,14 @@
 
 #import "ControlMac.h"
 #import "ProgressBarPart.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ProgressBarPart;
 
 class ProgressBarMac final : public ControlMac {
+    WTF_MAKE_TZONE_ALLOCATED(ProgressBarMac);
 public:
     ProgressBarMac(ProgressBarPart&, ControlFactoryMac&);
 

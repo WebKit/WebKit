@@ -37,6 +37,7 @@
 #import "WebAccessibilityObjectWrapperMac.h"
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -314,7 +315,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
-    object.accessibilityIsIgnored();
+    object.isIgnored();
 }
 #endif
 
@@ -328,29 +329,29 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
     // Some notifications are unique to Safari and do not have NSAccessibility equivalents.
     NSString *macNotification;
     switch (notification) {
-    case AXActiveDescendantChanged:
+    case AXNotification::ActiveDescendantChanged:
         macNotification = @"AXActiveElementChanged";
         break;
-    case AXAutocorrectionOccured:
+    case AXNotification::AutocorrectionOccured:
         macNotification = @"AXAutocorrectionOccurred";
         break;
-    case AXCurrentStateChanged:
+    case AXNotification::CurrentStateChanged:
         macNotification = NSAccessibilityCurrentStateChangedNotification;
         break;
-    case AXFocusedUIElementChanged:
+    case AXNotification::FocusedUIElementChanged:
         macNotification = NSAccessibilityFocusedUIElementChangedNotification;
         break;
-    case AXImageOverlayChanged:
+    case AXNotification::ImageOverlayChanged:
         macNotification = @"AXImageOverlayChanged";
         break;
-    case AXLayoutComplete:
+    case AXNotification::LayoutComplete:
         macNotification = @"AXLayoutComplete";
         break;
-    case AXLabelChanged:
+    case AXNotification::LabelChanged:
         macNotification = NSAccessibilityTitleChangedNotification;
         break;
-    case AXLoadComplete:
-    case AXFrameLoadComplete:
+    case AXNotification::LoadComplete:
+    case AXNotification::FrameLoadComplete:
         macNotification = @"AXLoadComplete";
         // Frame loading events are handled by the UIProcess on macOS to improve reliability.
         // On macOS, before notifications are allowed by AppKit to be sent to clients, you need to have a client (e.g. VoiceOver)
@@ -358,84 +359,84 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
         // miss AXLoadComplete notifications. By moving them to the UIProcess, we can eliminate that issue.
         skipSystemNotification = true;
         break;
-    case AXInvalidStatusChanged:
+    case AXNotification::InvalidStatusChanged:
         macNotification = @"AXInvalidStatusChanged";
         break;
-    case AXSelectedChildrenChanged:
+    case AXNotification::SelectedChildrenChanged:
         if (object.isTable() && object.isExposable())
             macNotification = NSAccessibilitySelectedRowsChangedNotification;
         else
             macNotification = NSAccessibilitySelectedChildrenChangedNotification;
         break;
-    case AXSelectedCellsChanged:
+    case AXNotification::SelectedCellsChanged:
         macNotification = NSAccessibilitySelectedCellsChangedNotification;
         break;
-    case AXSelectedTextChanged:
+    case AXNotification::SelectedTextChanged:
         macNotification = NSAccessibilitySelectedTextChangedNotification;
         break;
-    case AXCheckedStateChanged:
-    case AXValueChanged:
+    case AXNotification::CheckedStateChanged:
+    case AXNotification::ValueChanged:
         macNotification = NSAccessibilityValueChangedNotification;
         break;
-    case AXLiveRegionCreated:
+    case AXNotification::LiveRegionCreated:
         macNotification = NSAccessibilityLiveRegionCreatedNotification;
         break;
-    case AXLiveRegionChanged:
+    case AXNotification::LiveRegionChanged:
         macNotification = NSAccessibilityLiveRegionChangedNotification;
         break;
-    case AXRowCountChanged:
+    case AXNotification::RowCountChanged:
         macNotification = NSAccessibilityRowCountChangedNotification;
         break;
-    case AXRowExpanded:
+    case AXNotification::RowExpanded:
         macNotification = NSAccessibilityRowExpandedNotification;
         break;
-    case AXRowCollapsed:
+    case AXNotification::RowCollapsed:
         macNotification = NSAccessibilityRowCollapsedNotification;
         break;
-    case AXElementBusyChanged:
+    case AXNotification::ElementBusyChanged:
         macNotification = @"AXElementBusyChanged";
         break;
-    case AXExpandedChanged:
+    case AXNotification::ExpandedChanged:
         macNotification = @"AXExpandedChanged";
         break;
-    case AXSortDirectionChanged:
+    case AXNotification::SortDirectionChanged:
         macNotification = @"AXSortDirectionChanged";
         break;
-    case AXMenuClosed:
+    case AXNotification::MenuClosed:
         macNotification = (id)kAXMenuClosedNotification;
         break;
-    case AXMenuListItemSelected:
-    case AXMenuListValueChanged:
+    case AXNotification::MenuListItemSelected:
+    case AXNotification::MenuListValueChanged:
         macNotification = (id)kAXMenuItemSelectedNotification;
         break;
-    case AXPressDidSucceed:
+    case AXNotification::PressDidSucceed:
         macNotification = @"AXPressDidSucceed";
         break;
-    case AXPressDidFail:
+    case AXNotification::PressDidFail:
         macNotification = @"AXPressDidFail";
         break;
-    case AXMenuOpened:
+    case AXNotification::MenuOpened:
         macNotification = (id)kAXMenuOpenedNotification;
         break;
-    case AXDraggingStarted:
+    case AXNotification::DraggingStarted:
         macNotification = (id)kAXDraggingSourceDragBeganNotification;
         break;
-    case AXDraggingEnded:
+    case AXNotification::DraggingEnded:
         macNotification = (id)kAXDraggingSourceDragEndedNotification;
         break;
-    case AXDraggingEnteredDropZone:
+    case AXNotification::DraggingEnteredDropZone:
         macNotification = (id)kAXDraggingDestinationDropAllowedNotification;
         break;
-    case AXDraggingDropped:
+    case AXNotification::DraggingDropped:
         macNotification = (id)kAXDraggingDestinationDragAcceptedNotification;
         break;
-    case AXDraggingExitedDropZone:
+    case AXNotification::DraggingExitedDropZone:
         macNotification = (id)kAXDraggingDestinationDragNotAcceptedNotification;
         break;
-    case AXTextCompositionBegan:
+    case AXNotification::TextCompositionBegan:
         macNotification = NSAccessibilityTextInputMarkingSessionBeganNotification;
         break;
-    case AXTextCompositionEnded:
+    case AXNotification::TextCompositionEnded:
         macNotification = NSAccessibilityTextInputMarkingSessionEndedNotification;
         break;
     default:
@@ -484,7 +485,7 @@ void AXObjectCache::createIsolatedObjectIfNeeded(AccessibilityObject& object)
     if (!wrapper || [wrapper hasIsolatedObject])
         return;
 
-    if (object.accessibilityIsIgnored())
+    if (object.isIgnored())
         deferAddUnconnectedNode(object);
 }
 #endif
@@ -595,28 +596,28 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     }
 }
 
-static void addTextMarkerFor(NSMutableDictionary *change, AXCoreObject& object, const VisiblePosition& position)
+static void addTextMarkerForVisiblePosition(NSMutableDictionary *change, AXObjectCache& cache, const VisiblePosition& position)
 {
-    if (position.isNull())
-        return;
+    ASSERT(!position.isNull());
 
-    if (RetainPtr marker = textMarkerForVisiblePosition(object.axObjectCache(), position))
+    if (RetainPtr marker = textMarkerForVisiblePosition(&cache, position))
         [change setObject:(__bridge id)marker.get() forKey:NSAccessibilityTextChangeValueStartMarker];
 }
 
-static void addTextMarkerFor(NSMutableDictionary* change, AXCoreObject& object, HTMLTextFormControlElement& textControl)
+static void addFirstTextMarker(NSMutableDictionary *change, AXObjectCache& cache, AccessibilityObject& object)
 {
-    if (auto textMarker = [object.wrapper() textMarkerForFirstPositionInTextControl:textControl])
-        [change setObject:bridge_id_cast(textMarker.get()) forKey:NSAccessibilityTextChangeValueStartMarker];
+    TextMarkerData textMarkerData { cache.treeID(), object.objectID(), 0 };
+    auto textMarkerDataRef = adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData)));
+    [change setObject:bridge_id_cast(textMarkerDataRef.get()) forKey:NSAccessibilityTextChangeValueStartMarker];
 }
 
-template <typename TextMarkerTargetType>
-static NSDictionary *textReplacementChangeDictionary(AXCoreObject& object, AXTextEditType type, const String& string, TextMarkerTargetType& markerTarget)
+static NSDictionary *textReplacementChangeDictionary(AXObjectCache& cache, AccessibilityObject& object, AXTextEditType type, const String& string, const VisiblePosition& visiblePosition = { })
 {
     NSString *text = (NSString *)string;
     NSUInteger length = [text length];
     if (!length)
         return nil;
+
     auto change = adoptNS([[NSMutableDictionary alloc] initWithCapacity:4]);
     [change setObject:@(platformEditTypeForWebCoreEditType(type)) forKey:NSAccessibilityTextEditType];
     if (length > AXValueChangeTruncationLength) {
@@ -624,7 +625,11 @@ static NSDictionary *textReplacementChangeDictionary(AXCoreObject& object, AXTex
         text = [text substringToIndex:AXValueChangeTruncationLength];
     }
     [change setObject:text forKey:NSAccessibilityTextChangeValue];
-    addTextMarkerFor(change.get(), object, markerTarget);
+
+    if (!visiblePosition.isNull())
+        addTextMarkerForVisiblePosition(change.get(), cache, visiblePosition);
+    else
+        addFirstTextMarker(change.get(), cache, object);
     return change.autorelease();
 }
 
@@ -670,16 +675,16 @@ void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*
 #endif
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
-    if (NSDictionary *change = textReplacementChangeDictionary(*object, deletionType, deletedText, position))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *object, deletionType, deletedText, position))
         [changes addObject:change];
-    if (NSDictionary *change = textReplacementChangeDictionary(*object, insertionType, insertedText, position))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *object, insertionType, insertedText, position))
         [changes addObject:change];
 
     if (RefPtr root = rootWebArea())
         postUserInfoForChanges(*root, *object, changes.get());
 }
 
-void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String& deletedText, const String& insertedText, HTMLTextFormControlElement& textControl)
+void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String& deletedText, const String& insertedText)
 {
     if (!object)
         object = rootWebArea();
@@ -693,9 +698,9 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(Access
 #endif
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
-    if (NSDictionary *change = textReplacementChangeDictionary(*object, AXTextEditTypeDelete, deletedText, textControl))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *object, AXTextEditTypeDelete, deletedText, { }))
         [changes addObject:change];
-    if (NSDictionary *change = textReplacementChangeDictionary(*object, AXTextEditTypeInsert, insertedText, textControl))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *object, AXTextEditTypeInsert, insertedText, { }))
         [changes addObject:change];
 
     if (RefPtr root = rootWebArea())
@@ -707,15 +712,15 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* a
     if (!axFrameObject)
         return;
 
-    if (loadingEvent == AXLoadingFinished) {
+    if (loadingEvent == AXLoadingEvent::Finished) {
         if (axFrameObject->document() == axFrameObject->topDocument())
-            postNotification(axFrameObject, axFrameObject->document(), AXLoadComplete);
+            postNotification(axFrameObject, axFrameObject->document(), AXNotification::LoadComplete);
         else
-            postNotification(axFrameObject, axFrameObject->document(), AXFrameLoadComplete);
+            postNotification(axFrameObject, axFrameObject->document(), AXNotification::FrameLoadComplete);
     }
 }
 
-void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node*)
+void AXObjectCache::platformHandleFocusedUIElementChanged(Element*, Element*)
 {
     NSAccessibilityHandleFocusChanged();
     // AXFocusChanged is a test specific notification name and not something a real AT will be listening for
@@ -729,7 +734,7 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node*)
     [rootWebArea->wrapper() accessibilityPostedNotification:@"AXFocusChanged" userInfo:nil];
 }
 
-void AXObjectCache::handleScrolledToAnchor(const Node*)
+void AXObjectCache::handleScrolledToAnchor(const Node&)
 {
 }
 
@@ -854,13 +859,13 @@ static TextMarkerData getBytesFromAXTextMarker(AXTextMarkerRef textMarker)
     if (CFGetTypeID(textMarker) != AXTextMarkerGetTypeID())
         return { };
 
-    RawTextMarkerData rawTextMarkerData;
-    ASSERT(AXTextMarkerGetLength(textMarker) == sizeof(rawTextMarkerData));
-    if (AXTextMarkerGetLength(textMarker) != sizeof(rawTextMarkerData))
+    TextMarkerData textMarkerData;
+    ASSERT(AXTextMarkerGetLength(textMarker) == sizeof(textMarkerData));
+    if (AXTextMarkerGetLength(textMarker) != sizeof(textMarkerData))
         return { };
 
-    memcpy(&rawTextMarkerData, AXTextMarkerGetBytePtr(textMarker), sizeof(rawTextMarkerData));
-    return rawTextMarkerData.toTextMarkerData();
+    memcpySpan(asMutableByteSpan(textMarkerData), AXTextMarkerGetByteSpan(textMarker));
+    return textMarkerData;
 }
 
 AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
@@ -870,7 +875,7 @@ AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cache, AXTe
         return nullptr;
 
     auto textMarkerData = getBytesFromAXTextMarker(textMarker);
-    return cache->accessibilityObjectForTextMarkerData(textMarkerData);
+    return cache->objectForTextMarkerData(textMarkerData);
 }
 
 // TextMarker <-> VisiblePosition conversion.
@@ -884,9 +889,7 @@ AXTextMarkerRef textMarkerForVisiblePosition(AXObjectCache* cache, const Visible
     auto textMarkerData = cache->textMarkerDataForVisiblePosition(visiblePos);
     if (!textMarkerData)
         return nil;
-
-    auto rawTextMarkerData = textMarkerData->toRawTextMarkerData();
-    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&rawTextMarkerData, sizeof(rawTextMarkerData))).autorelease();
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&(*textMarkerData), sizeof(*textMarkerData))).autorelease();
 }
 
 VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
@@ -934,8 +937,7 @@ AXTextMarkerRef textMarkerForCharacterOffset(AXObjectCache* cache, const Charact
     auto textMarkerData = cache->textMarkerDataForCharacterOffset(characterOffset);
     if (!textMarkerData.objectID || textMarkerData.ignored)
         return nil;
-    auto rawTextMarkerData = textMarkerData.toRawTextMarkerData();
-    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&rawTextMarkerData, sizeof(rawTextMarkerData))).autorelease();
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
 }
 
 CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
@@ -959,8 +961,7 @@ AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache* cache, const std::op
     auto textMarkerData = cache->startOrEndTextMarkerDataForRange(*range, isStart);
     if (!textMarkerData.objectID)
         return nil;
-    auto rawTextMarkerData = textMarkerData.toRawTextMarkerData();
-    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&rawTextMarkerData, sizeof(rawTextMarkerData))).autorelease();
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
 }
 
 AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache* cache, const std::optional<SimpleRange>& range)

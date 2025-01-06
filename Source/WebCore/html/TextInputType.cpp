@@ -33,8 +33,11 @@
 
 #include "HTMLInputElement.h"
 #include "InputTypeNames.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextInputType);
 
 using namespace HTMLNames;
 

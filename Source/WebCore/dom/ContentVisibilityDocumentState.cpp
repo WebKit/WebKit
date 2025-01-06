@@ -39,8 +39,11 @@
 #include "SimpleRange.h"
 #include "StyleOriginatedAnimation.h"
 #include "VisibleSelection.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentVisibilityDocumentState);
 
 class ContentVisibilityIntersectionObserverCallback final : public IntersectionObserverCallback {
 public:
@@ -50,6 +53,11 @@ public:
     }
 
 private:
+    ContentVisibilityIntersectionObserverCallback(Document& document)
+        : IntersectionObserverCallback(&document)
+    {
+    }
+
     bool hasCallback() const final { return true; }
 
     CallbackResult<void> handleEvent(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver&) final
@@ -63,9 +71,9 @@ private:
         return { };
     }
 
-    ContentVisibilityIntersectionObserverCallback(Document& document)
-        : IntersectionObserverCallback(&document)
+    CallbackResult<void> handleEventRethrowingException(IntersectionObserver& thisObserver, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver& observer) final
     {
+        return handleEvent(thisObserver, entries, observer);
     }
 };
 

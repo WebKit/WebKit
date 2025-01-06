@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,19 +27,23 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "CocoaImage.h"
 #include "WebExtensionError.h"
 #include "WebExtensionEventListenerType.h"
 #include "WebExtensionTabIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
+#if PLATFORM(COCOA)
+#include "CocoaImage.h"
 #include <wtf/WeakObjCPtr.h>
+#endif
 
 OBJC_CLASS NSArray;
 OBJC_CLASS NSLocale;
 OBJC_CLASS WKWebView;
-OBJC_PROTOCOL(_WKWebExtensionTab);
+OBJC_PROTOCOL(WKWebExtensionTab);
 
 namespace WebKit {
 
@@ -55,9 +59,9 @@ enum class WebExtensionTabImageFormat : uint8_t {
     JPEG,
 };
 
-class WebExtensionTab : public RefCounted<WebExtensionTab>, public CanMakeWeakPtr<WebExtensionTab>, public Identified<WebExtensionTabIdentifier> {
+class WebExtensionTab : public RefCountedAndCanMakeWeakPtr<WebExtensionTab>, public Identified<WebExtensionTabIdentifier> {
     WTF_MAKE_NONCOPYABLE(WebExtensionTab);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebExtensionTab);
 
 public:
     template<typename... Args>
@@ -66,27 +70,27 @@ public:
         return adoptRef(*new WebExtensionTab(std::forward<Args>(args)...));
     }
 
-    explicit WebExtensionTab(const WebExtensionContext&, _WKWebExtensionTab *);
+    explicit WebExtensionTab(const WebExtensionContext&, WKWebExtensionTab *);
 
     enum class ChangedProperties : uint16_t {
-        Audible    = 1 << 1,
-        Loading    = 1 << 2,
-        Muted      = 1 << 3,
-        Pinned     = 1 << 4,
-        ReaderMode = 1 << 5,
-        Size       = 1 << 6,
-        Title      = 1 << 7,
-        URL        = 1 << 8,
-        ZoomFactor = 1 << 9,
+        Loading      = 1 << 1,
+        Muted        = 1 << 2,
+        Pinned       = 1 << 3,
+        PlayingAudio = 1 << 4,
+        ReaderMode   = 1 << 5,
+        Size         = 1 << 6,
+        Title        = 1 << 7,
+        URL          = 1 << 8,
+        ZoomFactor   = 1 << 9,
     };
 
     static constexpr OptionSet<ChangedProperties> allChangedProperties()
     {
         return {
-            ChangedProperties::Audible,
             ChangedProperties::Loading,
             ChangedProperties::Muted,
             ChangedProperties::Pinned,
+            ChangedProperties::PlayingAudio,
             ChangedProperties::ReaderMode,
             ChangedProperties::Size,
             ChangedProperties::Title,
@@ -98,7 +102,7 @@ public:
     using ImageFormat = WebExtensionTabImageFormat;
 
     enum class AssumeWindowMatches : bool { No, Yes };
-    enum class MainWebViewOnly : bool { No, Yes };
+    enum class ReloadFromOrigin : bool { No, Yes };
 
     using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
 
@@ -131,8 +135,7 @@ public:
     RefPtr<WebExtensionTab> parentTab() const;
     void setParentTab(RefPtr<WebExtensionTab>, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    WKWebView *mainWebView() const;
-    NSArray *webViews() const;
+    WKWebView *webView() const;
 
     String title() const;
 
@@ -140,27 +143,32 @@ public:
     void didOpen() { ASSERT(!m_isOpen); m_isOpen = true; }
     void didClose() { ASSERT(m_isOpen); m_isOpen = false; }
 
-    bool isActive() const;
-    bool isSelected() const;
     bool isPrivate() const;
 
-    void pin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-    void unpin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-
     bool isPinned() const;
+    void setPinned(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    void toggleReaderMode(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void pin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setPinned(true, WTFMove(completionHandler)); }
+    void unpin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setPinned(false, WTFMove(completionHandler)); }
 
     bool isReaderModeAvailable() const;
-    bool isShowingReaderMode() const;
 
-    void mute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-    void unmute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    bool isReaderModeActive() const;
+    void setReaderModeActive(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    bool isAudible() const;
+    void toggleReaderMode(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setReaderModeActive(!isReaderModeActive(), WTFMove(completionHandler)); }
+
+    bool isPlayingAudio() const;
+
     bool isMuted() const;
+    void setMuted(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
+    void mute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setMuted(true, WTFMove(completionHandler)); }
+    void unmute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setMuted(false, WTFMove(completionHandler)); }
+
+#if PLATFORM(COCOA)
     CGSize size() const;
+#endif
 
     double zoomFactor() const;
     void setZoomFactor(double, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
@@ -171,37 +179,45 @@ public:
     bool isLoadingComplete() const;
 
     void detectWebpageLocale(CompletionHandler<void(Expected<NSLocale *, WebExtensionError>&&)>&&);
+#if PLATFORM(COCOA)
     void captureVisibleWebpage(CompletionHandler<void(Expected<CocoaImage *, WebExtensionError>&&)>&&);
+#endif
 
     void loadURL(URL, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    void reload(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-    void reloadFromOrigin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void reload(ReloadFromOrigin, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     void goBack(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
     void goForward(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
+    bool isActive() const;
     void activate(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-    void select(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-    void deselect(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+
+    bool isSelected() const;
+    void setSelected(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+
+    void select(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setSelected(true, WTFMove(completionHandler)); }
+    void deselect(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setSelected(false, WTFMove(completionHandler)); }
 
     void duplicate(const WebExtensionTabParameters&, CompletionHandler<void(Expected<RefPtr<WebExtensionTab>, WebExtensionError>&&)>&&);
 
     void close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    bool shouldGrantTabPermissionsOnUserGesture() const;
+    bool shouldGrantPermissionsOnUserGesture() const;
 
-    WebProcessProxySet processes(WebExtensionEventListenerType, WebExtensionContentWorldType, MainWebViewOnly = MainWebViewOnly::Yes) const;
+    WebProcessProxySet processes(WebExtensionEventListenerType, WebExtensionContentWorldType) const;
 
 #ifdef __OBJC__
-    _WKWebExtensionTab *delegate() const { return m_delegate.getAutoreleased(); }
+    WKWebExtensionTab *delegate() const { return m_delegate.getAutoreleased(); }
 
     bool isValid() const { return m_extensionContext && m_delegate; }
 #endif
 
 private:
     WeakPtr<WebExtensionContext> m_extensionContext;
-    WeakObjCPtr<_WKWebExtensionTab> m_delegate;
+#if PLATFORM(COCOA)
+    WeakObjCPtr<WKWebExtensionTab> m_delegate;
+#endif
     RefPtr<WebExtensionMatchPattern> m_temporaryPermissionMatchPattern;
     OptionSet<ChangedProperties> m_changedProperties;
     bool m_activeUserGesture : 1 { false };
@@ -209,22 +225,19 @@ private:
     mutable bool m_private : 1 { false };
     mutable bool m_cachedPrivate : 1 { false };
     bool m_respondsToWindow : 1 { false };
+    bool m_respondsToIndex : 1 { false };
     bool m_respondsToParentTab : 1 { false };
     bool m_respondsToSetParentTab : 1 { false };
-    bool m_respondsToMainWebView : 1 { false };
-    bool m_respondsToWebViews : 1 { false };
-    bool m_respondsToTabTitle : 1 { false };
-    bool m_respondsToIsSelected : 1 { false };
+    bool m_respondsToWebView : 1 { false };
+    bool m_respondsToTitle : 1 { false };
     bool m_respondsToIsPinned : 1 { false };
-    bool m_respondsToPin : 1 { false };
-    bool m_respondsToUnpin : 1 { false };
+    bool m_respondsToSetPinned : 1 { false };
     bool m_respondsToIsReaderModeAvailable : 1 { false };
-    bool m_respondsToIsShowingReaderMode : 1 { false };
-    bool m_respondsToToggleReaderMode : 1 { false };
-    bool m_respondsToIsAudible : 1 { false };
+    bool m_respondsToIsReaderModeActive : 1 { false };
+    bool m_respondsToSetReaderModeActive : 1 { false };
+    bool m_respondsToIsPlayingAudio : 1 { false };
     bool m_respondsToIsMuted : 1 { false };
-    bool m_respondsToMute : 1 { false };
-    bool m_respondsToUnmute : 1 { false };
+    bool m_respondsToSetMuted : 1 { false };
     bool m_respondsToSize : 1 { false };
     bool m_respondsToZoomFactor : 1 { false };
     bool m_respondsToSetZoomFactor : 1 { false };
@@ -232,18 +245,18 @@ private:
     bool m_respondsToPendingURL : 1 { false };
     bool m_respondsToIsLoadingComplete : 1 { false };
     bool m_respondsToDetectWebpageLocale : 1 { false };
-    bool m_respondsToCaptureVisibleWebpage : 1 { false };
+    bool m_respondsToTakeSnapshot : 1 { false };
     bool m_respondsToLoadURL : 1 { false };
     bool m_respondsToReload : 1 { false };
-    bool m_respondsToReloadFromOrigin : 1 { false };
     bool m_respondsToGoBack : 1 { false };
     bool m_respondsToGoForward : 1 { false };
     bool m_respondsToActivate : 1 { false };
-    bool m_respondsToSelect : 1 { false };
-    bool m_respondsToDeselect : 1 { false };
+    bool m_respondsToIsSelected : 1 { false };
+    bool m_respondsToSetSelected : 1 { false };
     bool m_respondsToDuplicate : 1 { false };
     bool m_respondsToClose : 1 { false };
     bool m_respondsToShouldGrantTabPermissionsOnUserGesture : 1 { false };
+    bool m_respondsToShouldBypassPermissions : 1 { false };
 };
 
 } // namespace WebKit

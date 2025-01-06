@@ -22,7 +22,6 @@ class iOSFlavor(default.DefaultFlavor):
         lotties_dir='lotties',
         skp_dir='skps',
         svg_dir='svgs',
-        mskp_dir='mskp',
         tmp_dir='tmp',
         texttraces_dir='')
 
@@ -30,7 +29,7 @@ class iOSFlavor(default.DefaultFlavor):
   def env(self):
     return {
       'IOS_BUNDLE_ID': 'com.google.%s' % self.app_name,
-      'IOS_MOUNT_POINT': self.m.vars.workdir.join('mnt_iosdevice'),
+      'IOS_MOUNT_POINT': self.m.vars.workdir.joinpath('mnt_iosdevice'),
     }
 
   def context(self):
@@ -97,7 +96,7 @@ class iOSFlavor(default.DefaultFlavor):
 
     # Install app (necessary before copying any resources to the device).
     if self.app_name:
-      app_package = self.host_dirs.bin_dir.join('%s.app' % self.app_name)
+      app_package = self.host_dirs.bin_dir.joinpath('%s.app' % self.app_name)
 
       def uninstall_app(attempt):
         # If app ID changes, upgrade will fail, so try uninstalling.
@@ -133,7 +132,7 @@ class iOSFlavor(default.DefaultFlavor):
 
   def _run_ios_script(self, script, first, *rest):
     with self.context():
-      full = self.m.path.start_dir.join(
+      full = self.m.path.start_dir.joinpath(
           'skia', 'platform_tools', 'ios', 'bin', 'ios_' + script)
       self.m.run(self.m.step,
                  name = '%s %s' % (script, first),
@@ -158,7 +157,7 @@ class iOSFlavor(default.DefaultFlavor):
 
   def read_file_on_device(self, path, **kwargs):
     with self.context():
-      full = self.m.path.start_dir.join(
+      full = self.m.path.start_dir.joinpath(
           'skia', 'platform_tools', 'ios', 'bin', 'ios_cat_file')
       rv = self.m.run(self.m.step,
                       name = 'cat_file %s' % path,

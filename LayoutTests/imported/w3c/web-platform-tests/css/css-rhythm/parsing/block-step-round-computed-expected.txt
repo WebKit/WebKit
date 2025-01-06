@@ -1,0 +1,5 @@
+
+PASS Property block-step-round value 'up'
+PASS Property block-step-round value 'down'
+PASS Property block-step-round value 'nearest'
+

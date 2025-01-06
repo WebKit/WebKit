@@ -80,6 +80,12 @@ foo:
 // WAS ldr q0, [x10, :lo12:.Llocal_data2]
 	ldr	q0, [x10]
 
+	// Load from local symbol with offset
+// WAS adrp x10, .Llocal_data2+16
+	adr x10, .Llocal_data2+16
+// WAS ldr q0, [x10, :lo12:.Llocal_data2+16]
+	ldr	q0, [x10]
+
 // WAS bl local_function
 	bl	.Llocal_function_local_target
 
@@ -125,6 +131,16 @@ foo:
 	add w0, w1, b2, sxtw
 	add w0, w1, b2, sxtx
 
+	// Aarch64 SVE2 added these forms:
+	ld1d { z1.d }, p91/z, [x13, x11, lsl #3]
+	ld1b { z11.b }, p15/z, [x10, #1, mul vl]
+	st2d { z6.d, z7.d }, p0, [x12]
+        // Check that "p22" here isn't parsed as the "p22" register.
+// WAS bl p224_point_add
+	bl	bcm_redirector_p224_point_add
+	ptrue p0.d, vl1
+        // The "#7" here isn't a comment, it's now valid Aarch64 assembly.
+	cnth x8, all, mul #7
 
 .Llocal_function_local_target:
 local_function:
@@ -141,10 +157,20 @@ bss_symbol:
 .loc 1 2 0
 BORINGSSL_bcm_text_end:
 .p2align 2
+.hidden bcm_redirector_p224_point_add
+.type bcm_redirector_p224_point_add, @function
+bcm_redirector_p224_point_add:
+.cfi_startproc
+	hint #34 // bti c
+	b p224_point_add
+.cfi_endproc
+.size bcm_redirector_p224_point_add, .-bcm_redirector_p224_point_add
+.p2align 2
 .hidden bcm_redirector_remote_function
 .type bcm_redirector_remote_function, @function
 bcm_redirector_remote_function:
 .cfi_startproc
+	hint #34 // bti c
 	b remote_function
 .cfi_endproc
 .size bcm_redirector_remote_function, .-bcm_redirector_remote_function
@@ -153,6 +179,7 @@ bcm_redirector_remote_function:
 .type bcm_redirector_y0, @function
 bcm_redirector_y0:
 .cfi_startproc
+	hint #34 // bti c
 	b y0
 .cfi_endproc
 .size bcm_redirector_y0, .-bcm_redirector_y0
@@ -161,6 +188,7 @@ bcm_redirector_y0:
 .type bcm_redirector_y12, @function
 bcm_redirector_y12:
 .cfi_startproc
+	hint #34 // bti c
 	b y12
 .cfi_endproc
 .size bcm_redirector_y12, .-bcm_redirector_y12
@@ -169,6 +197,7 @@ bcm_redirector_y12:
 .type bss_symbol_bss_get, @function
 bss_symbol_bss_get:
 .cfi_startproc
+	hint #34 // bti c
 	adrp x0, .Lbss_symbol_local_target
 	add x0, x0, :lo12:.Lbss_symbol_local_target
 	ret
@@ -179,6 +208,7 @@ bss_symbol_bss_get:
 .type .Lboringssl_loadgot_stderr, @function
 .Lboringssl_loadgot_stderr:
 .cfi_startproc
+	hint #34 // bti c
 	adrp x0, :got:stderr
 	ldr x0, [x0, :got_lo12:stderr]
 	ret
@@ -189,6 +219,7 @@ bss_symbol_bss_get:
 .type .LOPENSSL_armcap_P_addr, @function
 .LOPENSSL_armcap_P_addr:
 .cfi_startproc
+	hint #34 // bti c
 	adrp x0, OPENSSL_armcap_P
 	add x0, x0, :lo12:OPENSSL_armcap_P
 	ret

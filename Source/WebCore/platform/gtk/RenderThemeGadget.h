@@ -31,6 +31,7 @@
 #include "IntSize.h"
 #include <gtk/gtk.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -39,7 +40,7 @@ namespace WebCore {
 class FloatRect;
 
 class RenderThemeGadget {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RenderThemeGadget);
     WTF_MAKE_NONCOPYABLE(RenderThemeGadget);
 public:
     enum class Type {

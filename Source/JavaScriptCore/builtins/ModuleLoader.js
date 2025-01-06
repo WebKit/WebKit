@@ -545,9 +545,6 @@ async function loadModule(key, parameters, fetcher)
 {
     "use strict";
 
-    var importMap = @importMapStatus();
-    if (importMap)
-        await importMap;
     var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
     return entry.key;
 }
@@ -567,9 +564,6 @@ async function loadAndEvaluateModule(moduleName, parameters, fetcher)
 {
     "use strict";
 
-    var importMap = @importMapStatus();
-    if (importMap)
-        await importMap;
     var key = this.resolve(moduleName, @undefined, fetcher);
     key = await this.loadModule(key, parameters, fetcher);
     return await this.linkAndEvaluateModule(key, fetcher);
@@ -580,9 +574,6 @@ async function requestImportModule(moduleName, referrer, parameters, fetcher)
 {
     "use strict";
 
-    var importMap = @importMapStatus();
-    if (importMap)
-        await importMap;
     var key = this.resolve(moduleName, referrer, fetcher);
     var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
     await this.linkAndEvaluateModule(entry.key, fetcher);

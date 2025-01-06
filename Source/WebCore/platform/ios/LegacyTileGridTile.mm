@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "Color.h"
+#import "ContentsFormatCocoa.h"
 #import "IOSurface.h"
 #import "LegacyTileCache.h"
 #import "LegacyTileGrid.h"
@@ -52,7 +53,8 @@ LegacyTileGridTile::LegacyTileGridTile(LegacyTileGrid* tileGrid, const IntRect& 
 {
     ASSERT(!tileRect.isEmpty());
     IntSize pixelSize(m_rect.size());
-    const CGFloat screenScale = m_tileGrid->tileCache().screenScale();
+    Ref tileCache = m_tileGrid->tileCache();
+    const CGFloat screenScale = tileCache->screenScale();
     pixelSize.scale(screenScale);
     m_tileLayer = LegacyTileLayerPool::sharedPool()->takeLayerWithSize(pixelSize);
     if (!m_tileLayer) {
@@ -62,24 +64,23 @@ LegacyTileGridTile::LegacyTileGridTile(LegacyTileGrid* tileGrid, const IntRect& 
         m_tileLayer = adoptNS([[LegacyTileLayer alloc] init]);
     }
     LegacyTileLayer* layer = m_tileLayer.get();
-#if HAVE(IOSURFACE_RGB10)
-    if (screenSupportsExtendedColor())
-        layer.contentsFormat = kCAContentsFormatRGBA10XR;
-#endif
+
+    if (NSString *formatString = contentsFormatString(screenContentsFormat()))
+        layer.contentsFormat = formatString;
 
     [layer setTileGrid:tileGrid];
-    [layer setOpaque:m_tileGrid->tileCache().tilesOpaque()];
+    [layer setOpaque:tileCache->tilesOpaque()];
     [layer setEdgeAntialiasingMask:0];
     [layer setNeedsLayoutOnGeometryChange:NO];
     [layer setContentsScale:screenScale];
-    [layer setDrawsAsynchronously:m_tileGrid->tileCache().acceleratedDrawingEnabled()];
+    [layer setDrawsAsynchronously:tileCache->acceleratedDrawingEnabled()];
 
     // Host layer may have other sublayers. Keep the tile layers at the beginning of the array
     // so they are painted behind everything else.
     [tileGrid->tileHostLayer() insertSublayer:layer atIndex:tileGrid->tileCount()];
     [layer setFrame:m_rect];
     invalidateRect(m_rect);
-    showBorder(m_tileGrid->tileCache().tileBordersVisible());
+    showBorder(tileCache->tileBordersVisible());
 
 #if LOG_TILING
     ++totalTileCount;
@@ -124,7 +125,7 @@ void LegacyTileGridTile::showBorder(bool flag)
 {
     LegacyTileLayer* layer = m_tileLayer.get();
     if (flag) {
-        [layer setBorderColor:cachedCGColor(m_tileGrid->tileCache().colorForGridTileBorder(m_tileGrid)).get()];
+        [layer setBorderColor:cachedCGColor(m_tileGrid->protectedTileCache()->colorForGridTileBorder(m_tileGrid)).get()];
         [layer setBorderWidth:0.5f];
     } else {
         [layer setBorderColor:nil];

@@ -78,8 +78,8 @@ RTC_NORETURN void WriteFatalLog(absl::string_view output) {
   abort();
 }
 
-RTC_NORETURN void WriteFatalLog(const char* file,
-                                int line,
+RTC_NORETURN void WriteFatalLog(const char* /* file */,
+                                int /* line */,
                                 absl::string_view output) {
   WriteFatalLog(output);
 }

@@ -34,4 +34,10 @@ specific_include_rules = {
   ".*fake_webrtc_call\.cc": [
     "+video/config",
   ],
+  ".*fake_webrtc_call\.h": [
+    "+video/config",
+  ],
+  ".*codec\.h": [
+    "+absl/strings/str_format.h",
+  ],
 }

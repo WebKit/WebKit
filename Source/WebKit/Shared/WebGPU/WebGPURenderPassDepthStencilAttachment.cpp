@@ -37,16 +37,14 @@ namespace WebKit::WebGPU {
 
 std::optional<RenderPassDepthStencilAttachment> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
 {
-    auto view = convertToBacking(renderPassDepthStencilAttachment.view);
-    if (!view)
-        return std::nullopt;
+    auto view = convertToBacking(renderPassDepthStencilAttachment.protectedView().get());
 
     return { { view, renderPassDepthStencilAttachment.depthClearValue, renderPassDepthStencilAttachment.depthLoadOp, renderPassDepthStencilAttachment.depthStoreOp, renderPassDepthStencilAttachment.depthReadOnly, renderPassDepthStencilAttachment.stencilClearValue, renderPassDepthStencilAttachment.stencilLoadOp, renderPassDepthStencilAttachment.stencilStoreOp, renderPassDepthStencilAttachment.stencilReadOnly } };
 }
 
 std::optional<WebCore::WebGPU::RenderPassDepthStencilAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
 {
-    auto* view = convertTextureViewFromBacking(renderPassDepthStencilAttachment.view);
+    WeakPtr view = convertTextureViewFromBacking(renderPassDepthStencilAttachment.view);
     if (!view)
         return std::nullopt;
 

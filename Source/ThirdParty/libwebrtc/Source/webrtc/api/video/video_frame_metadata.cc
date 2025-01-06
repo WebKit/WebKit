@@ -10,7 +10,17 @@
 
 #include "api/video/video_frame_metadata.h"
 
+#include <cstdint>
+#include <optional>
 #include <utility>
+#include <vector>
+
+#include "api/array_view.h"
+#include "api/transport/rtp/dependency_descriptor.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_frame_type.h"
+#include "api/video/video_rotation.h"
 
 namespace webrtc {
 
@@ -56,11 +66,11 @@ void VideoFrameMetadata::SetContentType(VideoContentType content_type) {
   content_type_ = content_type;
 }
 
-absl::optional<int64_t> VideoFrameMetadata::GetFrameId() const {
+std::optional<int64_t> VideoFrameMetadata::GetFrameId() const {
   return frame_id_;
 }
 
-void VideoFrameMetadata::SetFrameId(absl::optional<int64_t> frame_id) {
+void VideoFrameMetadata::SetFrameId(std::optional<int64_t> frame_id) {
   frame_id_ = frame_id;
 }
 

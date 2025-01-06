@@ -37,6 +37,7 @@
 #import <AVFoundation/AVTime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 
@@ -44,6 +45,8 @@ SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionInterfaceMac);
 
 Ref<PlaybackSessionInterfaceMac> PlaybackSessionInterfaceMac::create(PlaybackSessionModel& model)
 {
@@ -72,10 +75,16 @@ bool PlaybackSessionInterfaceMac::isInWindowFullscreenActive() const
     return m_playbackSessionModel && m_playbackSessionModel->isInWindowFullscreenActive();
 }
 
-void PlaybackSessionInterfaceMac::toggleInWindowFullscreen()
+void PlaybackSessionInterfaceMac::enterInWindowFullscreen()
 {
     if (m_playbackSessionModel)
-        m_playbackSessionModel->toggleInWindowFullscreen();
+        m_playbackSessionModel->enterInWindowFullscreen();
+}
+
+void PlaybackSessionInterfaceMac::exitInWindowFullscreen()
+{
+    if (m_playbackSessionModel)
+        m_playbackSessionModel->exitInWindowFullscreen();
 }
 
 void PlaybackSessionInterfaceMac::durationChanged(double duration)
@@ -294,32 +303,32 @@ void PlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double cur
     manager.timing = [getAVValueTimingClass() valueTimingWithAnchorValue:currentTime anchorTimeStamp:effectiveAnchorTime rate:effectivePlaybackRate];
 }
 
-uint32_t PlaybackSessionInterfaceMac::ptrCount() const
+uint32_t PlaybackSessionInterfaceMac::checkedPtrCount() const
 {
-    return CanMakeCheckedPtr::ptrCount();
+    return CanMakeCheckedPtr::checkedPtrCount();
 }
 
-uint32_t PlaybackSessionInterfaceMac::ptrCountWithoutThreadCheck() const
+uint32_t PlaybackSessionInterfaceMac::checkedPtrCountWithoutThreadCheck() const
 {
-    return CanMakeCheckedPtr::ptrCountWithoutThreadCheck();
+    return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck();
 }
 
-void PlaybackSessionInterfaceMac::incrementPtrCount() const
+void PlaybackSessionInterfaceMac::incrementCheckedPtrCount() const
 {
-    CanMakeCheckedPtr::incrementPtrCount();
+    CanMakeCheckedPtr::incrementCheckedPtrCount();
 }
 
-void PlaybackSessionInterfaceMac::decrementPtrCount() const
+void PlaybackSessionInterfaceMac::decrementCheckedPtrCount() const
 {
-    CanMakeCheckedPtr::decrementPtrCount();
+    CanMakeCheckedPtr::decrementCheckedPtrCount();
 }
 
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 #if !RELEASE_LOG_DISABLED
-const void* PlaybackSessionInterfaceMac::logIdentifier() const
+uint64_t PlaybackSessionInterfaceMac::logIdentifier() const
 {
-    return m_playbackSessionModel ? m_playbackSessionModel->logIdentifier() : nullptr;
+    return m_playbackSessionModel ? m_playbackSessionModel->logIdentifier() : 0;
 }
 
 const Logger* PlaybackSessionInterfaceMac::loggerPtr() const

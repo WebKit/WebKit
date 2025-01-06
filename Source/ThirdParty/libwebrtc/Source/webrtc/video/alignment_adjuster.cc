@@ -67,7 +67,7 @@ double RoundToMultiple(int alignment,
 int AlignmentAdjuster::GetAlignmentAndMaybeAdjustScaleFactors(
     const VideoEncoder::EncoderInfo& encoder_info,
     VideoEncoderConfig* config,
-    absl::optional<size_t> max_layers) {
+    std::optional<size_t> max_layers) {
   const int requested_alignment = encoder_info.requested_resolution_alignment;
   if (!encoder_info.apply_alignment_to_all_simulcast_layers) {
     return requested_alignment;

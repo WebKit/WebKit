@@ -55,6 +55,7 @@ struct pas_local_allocator {
     uint8_t alignment_shift;
     pas_local_allocator_config_kind config_kind : 8;
     bool current_word_is_valid; /* This is just used by enumeration. */
+    bool is_small_bumpable; /* Marks that the bumpable region in this local allocator is part of a small page. */
 
     /* This has to have a pointer to our index within the view. We can get to the view using
        page_ish. Maybe worth reconsidering that, but then again maybe it's good enough. 

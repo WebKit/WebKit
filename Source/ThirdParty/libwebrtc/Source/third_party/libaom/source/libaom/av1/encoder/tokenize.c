@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -27,7 +27,7 @@
 #include "av1/encoder/rdopt.h"
 #include "av1/encoder/tokenize.h"
 
-static AOM_INLINE int av1_fast_palette_color_index_context_on_edge(
+static inline int av1_fast_palette_color_index_context_on_edge(
     const uint8_t *color_map, int stride, int r, int c, int *color_idx) {
   const bool has_left = (c - 1 >= 0);
   const bool has_above = (r - 1 >= 0);
@@ -75,8 +75,9 @@ static AOM_INLINE int av1_fast_palette_color_index_context_on_edge(
 
 // A faster version of av1_get_palette_color_index_context used by the encoder
 // exploiting the fact that the encoder does not need to maintain a color order.
-static AOM_INLINE int av1_fast_palette_color_index_context(
-    const uint8_t *color_map, int stride, int r, int c, int *color_idx) {
+static inline int av1_fast_palette_color_index_context(const uint8_t *color_map,
+                                                       int stride, int r, int c,
+                                                       int *color_idx) {
   assert(r > 0 || c > 0);
 
   const bool has_above = (r - 1 >= 0);

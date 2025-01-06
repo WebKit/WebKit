@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,16 +30,19 @@
 
 namespace WebKit {
 
+class WebPage;
+
 class WebHistoryItemClient final : public WebCore::HistoryItemClient {
 public:
-    static Ref<WebHistoryItemClient> create() { return adoptRef(*new WebHistoryItemClient); }
+    static Ref<WebHistoryItemClient> create(WebPage& page) { return adoptRef(*new WebHistoryItemClient(page)); }
 
     ScopeExit<CompletionHandler<void()>> ignoreChangesForScope();
 
 private:
-    WebHistoryItemClient() = default;
+    explicit WebHistoryItemClient(WebPage&);
     void historyItemChanged(const WebCore::HistoryItem&) final;
 
+    const WeakRef<WebPage> m_page;
     bool m_shouldIgnoreChanges { false };
 };
 

@@ -83,7 +83,7 @@ public:
     explicit NativeWebMouseEvent(WPEEvent*);
 #endif
 #elif PLATFORM(WIN)
-    NativeWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool);
+    NativeWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool, float deviceScaleFactor);
 #endif
 
 #if USE(APPKIT)

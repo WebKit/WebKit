@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,7 +16,7 @@
 #include "av1/encoder/reconinter_enc.h"
 
 // return mv_diff
-static INLINE int is_interp_filter_good_match(
+static inline int is_interp_filter_good_match(
     const INTERPOLATION_FILTER_STATS *st, MB_MODE_INFO *const mi,
     int skip_level) {
   const int is_comp = has_second_ref(mi);
@@ -39,7 +39,7 @@ static INLINE int is_interp_filter_good_match(
   return mv_diff;
 }
 
-static INLINE int save_interp_filter_search_stat(
+static inline int save_interp_filter_search_stat(
     MB_MODE_INFO *const mbmi, int64_t rd, unsigned int pred_sse,
     INTERPOLATION_FILTER_STATS *interp_filter_stats,
     int interp_filter_stats_idx) {
@@ -58,7 +58,7 @@ static INLINE int save_interp_filter_search_stat(
   return interp_filter_stats_idx;
 }
 
-static INLINE int find_interp_filter_in_stats(
+static inline int find_interp_filter_in_stats(
     MB_MODE_INFO *const mbmi, INTERPOLATION_FILTER_STATS *interp_filter_stats,
     int interp_filter_stats_idx, int skip_level) {
   // [skip_levels][single or comp]
@@ -90,7 +90,7 @@ static INLINE int find_interp_filter_in_stats(
   return -1;  // no match result found
 }
 
-int av1_find_interp_filter_match(
+static int find_interp_filter_match(
     MB_MODE_INFO *const mbmi, const AV1_COMP *const cpi,
     const InterpFilter assign_filter, const int need_search,
     INTERPOLATION_FILTER_STATS *interp_filter_stats,
@@ -106,7 +106,7 @@ int av1_find_interp_filter_match(
   return match_found_idx;
 }
 
-static INLINE int get_switchable_rate(MACROBLOCK *const x,
+static inline int get_switchable_rate(MACROBLOCK *const x,
                                       const int_interpfilters filters,
                                       const int ctx[2], int dual_filter) {
   const InterpFilter filter0 = filters.as_filters.y_filter;
@@ -121,7 +121,7 @@ static INLINE int get_switchable_rate(MACROBLOCK *const x,
 
 // Build inter predictor and calculate model rd
 // for a given plane.
-static INLINE void interp_model_rd_eval(
+static inline void interp_model_rd_eval(
     MACROBLOCK *const x, const AV1_COMP *const cpi, BLOCK_SIZE bsize,
     const BUFFER_SET *const orig_dst, int plane_from, int plane_to,
     RD_STATS *rd_stats, int is_skip_build_pred) {
@@ -149,7 +149,7 @@ static INLINE void interp_model_rd_eval(
 }
 
 // calculate the rdcost of given interpolation_filter
-static INLINE int64_t interpolation_filter_rd(
+static inline int64_t interpolation_filter_rd(
     MACROBLOCK *const x, const AV1_COMP *const cpi,
     const TileDataEnc *tile_data, BLOCK_SIZE bsize,
     const BUFFER_SET *const orig_dst, int64_t *const rd,
@@ -266,7 +266,7 @@ static INLINE int64_t interpolation_filter_rd(
   return 0;
 }
 
-static INLINE INTERP_PRED_TYPE is_pred_filter_search_allowed(
+static inline INTERP_PRED_TYPE is_pred_filter_search_allowed(
     const AV1_COMP *const cpi, MACROBLOCKD *xd, BLOCK_SIZE bsize,
     int_interpfilters *af, int_interpfilters *lf) {
   const AV1_COMMON *cm = &cpi->common;
@@ -335,7 +335,7 @@ static DUAL_FILTER_TYPE find_best_interp_rd_facade(
   return best_filt_type;
 }
 
-static INLINE void pred_dual_interp_filter_rd(
+static inline void pred_dual_interp_filter_rd(
     MACROBLOCK *const x, const AV1_COMP *const cpi,
     const TileDataEnc *tile_data, BLOCK_SIZE bsize,
     const BUFFER_SET *const orig_dst, int64_t *const rd, RD_STATS *rd_stats_y,
@@ -372,7 +372,7 @@ static INLINE void pred_dual_interp_filter_rd(
 // a) Using above, left block interp filter
 // b) Find the best horizontal filter and
 //    then evaluate corresponding vertical filters.
-static INLINE void fast_dual_interp_filter_rd(
+static inline void fast_dual_interp_filter_rd(
     MACROBLOCK *const x, const AV1_COMP *const cpi,
     const TileDataEnc *tile_data, BLOCK_SIZE bsize,
     const BUFFER_SET *const orig_dst, int64_t *const rd, RD_STATS *rd_stats_y,
@@ -425,7 +425,7 @@ static INLINE void fast_dual_interp_filter_rd(
 }
 
 // Find the best interp filter if dual_interp_filter = 0
-static INLINE void find_best_non_dual_interp_filter(
+static inline void find_best_non_dual_interp_filter(
     MACROBLOCK *const x, const AV1_COMP *const cpi,
     const TileDataEnc *tile_data, BLOCK_SIZE bsize,
     const BUFFER_SET *const orig_dst, int64_t *const rd, RD_STATS *rd_stats_y,
@@ -562,7 +562,7 @@ static INLINE void find_best_non_dual_interp_filter(
   }
 }
 
-static INLINE void calc_interp_skip_pred_flag(MACROBLOCK *const x,
+static inline void calc_interp_skip_pred_flag(MACROBLOCK *const x,
                                               const AV1_COMP *const cpi,
                                               int *skip_hor, int *skip_ver) {
   const AV1_COMMON *cm = &cpi->common;
@@ -673,7 +673,7 @@ int64_t av1_interpolation_filter_search(
   int match_found_idx = -1;
   const InterpFilter assign_filter = cm->features.interp_filter;
 
-  match_found_idx = av1_find_interp_filter_match(
+  match_found_idx = find_interp_filter_match(
       mbmi, cpi, assign_filter, need_search, args->interp_filter_stats,
       args->interp_filter_stats_idx);
 

@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "WPEWaylandOutput.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WPE {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WaylandOutput);
 
 WaylandOutput::WaylandOutput(struct wl_output* output)
     : m_output(output)

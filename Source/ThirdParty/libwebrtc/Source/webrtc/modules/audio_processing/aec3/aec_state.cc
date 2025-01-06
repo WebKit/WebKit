@@ -14,9 +14,9 @@
 
 #include <algorithm>
 #include <numeric>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
@@ -170,7 +170,7 @@ void AecState::HandleEchoPathChange(
 }
 
 void AecState::Update(
-    const absl::optional<DelayEstimate>& external_delay,
+    const std::optional<DelayEstimate>& external_delay,
     rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
         adaptive_filter_frequency_responses,
     rtc::ArrayView<const std::vector<float>> adaptive_filter_impulse_responses,
@@ -359,7 +359,7 @@ AecState::FilterDelay::FilterDelay(const EchoCanceller3Config& config,
 
 void AecState::FilterDelay::Update(
     rtc::ArrayView<const int> analyzer_filter_delay_estimates_blocks,
-    const absl::optional<DelayEstimate>& external_delay,
+    const std::optional<DelayEstimate>& external_delay,
     size_t blocks_with_proper_filter_adaptation) {
   // Update the delay based on the external delay.
   if (external_delay &&
@@ -405,7 +405,7 @@ void AecState::FilteringQualityAnalyzer::Update(
     bool active_render,
     bool transparent_mode,
     bool saturated_capture,
-    const absl::optional<DelayEstimate>& external_delay,
+    const std::optional<DelayEstimate>& external_delay,
     bool any_filter_converged) {
   // Update blocks counter.
   const bool filter_update = active_render && !saturated_capture;

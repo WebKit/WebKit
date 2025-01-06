@@ -41,6 +41,7 @@
 #include "ReadableStreamSource.h"
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <pal/text/TextCodecUTF8.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

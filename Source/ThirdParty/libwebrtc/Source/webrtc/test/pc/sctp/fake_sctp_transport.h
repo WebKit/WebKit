@@ -13,6 +13,8 @@
 
 #include <memory>
 
+#include "api/environment/environment.h"
+#include "api/priority.h"
 #include "api/transport/sctp_transport_factory_interface.h"
 #include "media/sctp/sctp_transport_internal.h"
 
@@ -30,7 +32,9 @@ class FakeSctpTransport : public cricket::SctpTransportInternal {
     max_message_size_ = max_message_size;
     return true;
   }
-  bool OpenStream(int sid) override { return true; }
+  bool OpenStream(int sid, webrtc::PriorityValue priority) override {
+    return true;
+  }
   bool ResetStream(int sid) override { return true; }
   webrtc::RTCError SendData(int sid,
                             const webrtc::SendDataParams& params,
@@ -40,9 +44,16 @@ class FakeSctpTransport : public cricket::SctpTransportInternal {
   bool ReadyToSendData() override { return true; }
   void set_debug_name_for_testing(const char* debug_name) override {}
 
-  int max_message_size() const { return max_message_size_; }
-  absl::optional<int> max_outbound_streams() const { return absl::nullopt; }
-  absl::optional<int> max_inbound_streams() const { return absl::nullopt; }
+  int max_message_size() const override { return max_message_size_; }
+  std::optional<int> max_outbound_streams() const override {
+    return std::nullopt;
+  }
+  std::optional<int> max_inbound_streams() const override {
+    return std::nullopt;
+  }
+  size_t buffered_amount(int sid) const override { return 0; }
+  size_t buffered_amount_low_threshold(int sid) const override { return 0; }
+  void SetBufferedAmountLowThreshold(int sid, size_t bytes) override {}
   int local_port() const {
     RTC_DCHECK(local_port_);
     return *local_port_;
@@ -53,14 +64,15 @@ class FakeSctpTransport : public cricket::SctpTransportInternal {
   }
 
  private:
-  absl::optional<int> local_port_;
-  absl::optional<int> remote_port_;
+  std::optional<int> local_port_;
+  std::optional<int> remote_port_;
   int max_message_size_;
 };
 
 class FakeSctpTransportFactory : public webrtc::SctpTransportFactoryInterface {
  public:
   std::unique_ptr<cricket::SctpTransportInternal> CreateSctpTransport(
+      const webrtc::Environment& env,
       rtc::PacketTransportInternal*) override {
     last_fake_sctp_transport_ = new FakeSctpTransport();
     return std::unique_ptr<cricket::SctpTransportInternal>(

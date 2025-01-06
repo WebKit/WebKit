@@ -87,7 +87,7 @@ JSC_DEFINE_HOST_FUNCTION(structuredCloneForStream, (JSGlobalObject* globalObject
             return nullptr;
         }
 
-        memcpy(result->data(), buffer.data(), byteLength);
+        memcpySpan(result->mutableSpan(), buffer.span().first(byteLength));
         return result;
     };
 

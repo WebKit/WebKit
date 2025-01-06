@@ -51,11 +51,6 @@ using NetworkLayerStats =
 
 constexpr TimeDelta kStatsWaitTimeout = TimeDelta::Seconds(1);
 
-// Field trial which controls whether to report standard-compliant bytes
-// sent/received per stream.  If enabled, padding and headers are not included
-// in bytes sent or received.
-constexpr char kUseStandardBytesStats[] = "WebRTC-UseStandardBytesStats";
-
 EmulatedNetworkStats PopulateStats(std::vector<EmulatedEndpoint*> endpoints,
                                    NetworkEmulationManager* network_emulation) {
   rtc::Event stats_loaded;
@@ -299,25 +294,23 @@ void StatsBasedNetworkQualityMetricsReporter::OnStatsReports(
   auto inbound_stats = report->GetStatsOfType<RTCInboundRtpStreamStats>();
   for (const auto& stat : inbound_stats) {
     cur_stats.payload_received +=
-        DataSize::Bytes(stat->bytes_received.ValueOrDefault(0ul) +
-                        stat->header_bytes_received.ValueOrDefault(0ul));
+        DataSize::Bytes(stat->bytes_received.value_or(0ul) +
+                        stat->header_bytes_received.value_or(0ul));
   }
 
   auto outbound_stats = report->GetStatsOfType<RTCOutboundRtpStreamStats>();
   for (const auto& stat : outbound_stats) {
-    cur_stats.payload_sent +=
-        DataSize::Bytes(stat->bytes_sent.ValueOrDefault(0ul) +
-                        stat->header_bytes_sent.ValueOrDefault(0ul));
+    cur_stats.payload_sent += DataSize::Bytes(
+        stat->bytes_sent.value_or(0ul) + stat->header_bytes_sent.value_or(0ul));
   }
 
   auto candidate_pairs_stats = report->GetStatsOfType<RTCTransportStats>();
   for (const auto& stat : candidate_pairs_stats) {
     cur_stats.total_received +=
-        DataSize::Bytes(stat->bytes_received.ValueOrDefault(0ul));
-    cur_stats.total_sent +=
-        DataSize::Bytes(stat->bytes_sent.ValueOrDefault(0ul));
-    cur_stats.packets_received += stat->packets_received.ValueOrDefault(0ul);
-    cur_stats.packets_sent += stat->packets_sent.ValueOrDefault(0ul);
+        DataSize::Bytes(stat->bytes_received.value_or(0ul));
+    cur_stats.total_sent += DataSize::Bytes(stat->bytes_sent.value_or(0ul));
+    cur_stats.packets_received += stat->packets_received.value_or(0ul);
+    cur_stats.packets_sent += stat->packets_sent.value_or(0ul);
   }
 
   MutexLock lock(&mutex_);
@@ -326,11 +319,6 @@ void StatsBasedNetworkQualityMetricsReporter::OnStatsReports(
 
 void StatsBasedNetworkQualityMetricsReporter::StopAndReportResults() {
   Timestamp end_time = clock_->CurrentTime();
-
-  if (!webrtc::field_trial::IsEnabled(kUseStandardBytesStats)) {
-    RTC_LOG(LS_ERROR)
-        << "Non-standard GetStats; \"payload\" counts include RTP headers";
-  }
 
   std::map<std::string, NetworkLayerStats> stats = collector_.GetStats();
   for (const auto& entry : stats) {

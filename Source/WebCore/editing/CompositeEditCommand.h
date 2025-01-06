@@ -30,6 +30,7 @@
 #include "EditCommand.h"
 #include "CSSPropertyNames.h"
 #include "UndoStep.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -43,7 +44,7 @@ class StyledElement;
 class Text;
 
 class AccessibilityUndoReplacedText {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityUndoReplacedText);
 public:
     AccessibilityUndoReplacedText() { }
     void configureRangeDeletedByReapplyWithStartingSelection(const VisibleSelection&);
@@ -68,9 +69,14 @@ private:
 
 class EditCommandComposition : public UndoStep {
 public:
+    enum class AddToUndoStack : bool {
+        No, Yes
+    };
+
     static Ref<EditCommandComposition> create(Document&, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction);
 
     void unapply() override;
+    void unapply(AddToUndoStack);
     void reapply() override;
     EditAction editingAction() const override { return m_editAction; }
     void append(SimpleEditCommand*);
@@ -116,7 +122,6 @@ public:
     RefPtr<EditCommandComposition> protectedComposition() const { return composition(); }
     EditCommandComposition& ensureComposition();
 
-    virtual bool isCreateLinkCommand() const;
     virtual bool isTypingCommand() const;
     virtual bool isDictationCommand() const { return false; }
     virtual bool preservesTypingStyle() const;
@@ -228,3 +233,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CompositeEditCommand)
+    static bool isType(const WebCore::EditCommand& command) { return command.isCompositeEditCommand(); }
+SPECIALIZE_TYPE_TRAITS_END()

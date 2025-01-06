@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,7 +47,8 @@ class CaptionUserPreferences;
 #endif
 
 class PageGroup : public CanMakeWeakPtr<PageGroup> {
-    WTF_MAKE_NONCOPYABLE(PageGroup); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PageGroup);
+    WTF_MAKE_NONCOPYABLE(PageGroup);
 public:
     WEBCORE_EXPORT explicit PageGroup(const String& name);
     explicit PageGroup(Page&);
@@ -54,7 +56,7 @@ public:
 
     WEBCORE_EXPORT static PageGroup* pageGroup(const String& groupName);
 
-    const SingleThreadWeakHashSet<Page>& pages() const { return m_pages; }
+    const WeakHashSet<Page>& pages() const { return m_pages; }
 
     void addPage(Page&);
     void removePage(Page&);
@@ -70,7 +72,7 @@ public:
 
 private:
     String m_name;
-    SingleThreadWeakHashSet<Page> m_pages;
+    WeakHashSet<Page> m_pages;
 
     unsigned m_identifier;
 

@@ -30,9 +30,12 @@
 
 #include "AudioUtilities.h"
 #include "BiquadDSPKernel.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
-    
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BiquadProcessor);
+
 BiquadProcessor::BiquadProcessor(BaseAudioContext& context, float sampleRate, size_t numberOfChannels, bool autoInitialize)
     : AudioDSPKernelProcessor(sampleRate, numberOfChannels)
     , m_parameter1(AudioParam::create(context, "frequency"_s, 350.0, 0.0, 0.5 * sampleRate, AutomationRate::ARate))
@@ -103,18 +106,19 @@ void BiquadProcessor::process(const AudioBus* source, AudioBus* destination, siz
             
     // For each channel of our input, process using the corresponding BiquadDSPKernel into the output channel.
     for (unsigned i = 0; i < m_kernels.size(); ++i)
-        m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->mutableData(), framesToProcess);
+        m_kernels[i]->process(source->channel(i)->span().first(framesToProcess), destination->channel(i)->mutableSpan());
 }
 
 void BiquadProcessor::processOnlyAudioParams(size_t framesToProcess)
 {
-    float values[AudioUtilities::renderQuantumSize];
+    std::array<float, AudioUtilities::renderQuantumSize> values;
     ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
 
-    m_parameter1->calculateSampleAccurateValues(values, framesToProcess);
-    m_parameter2->calculateSampleAccurateValues(values, framesToProcess);
-    m_parameter3->calculateSampleAccurateValues(values, framesToProcess);
-    m_parameter4->calculateSampleAccurateValues(values, framesToProcess);
+    auto valuesSpan = std::span { values }.first(framesToProcess);
+    m_parameter1->calculateSampleAccurateValues(valuesSpan);
+    m_parameter2->calculateSampleAccurateValues(valuesSpan);
+    m_parameter3->calculateSampleAccurateValues(valuesSpan);
+    m_parameter4->calculateSampleAccurateValues(valuesSpan);
 }
 
 void BiquadProcessor::setType(BiquadFilterType type)
@@ -125,7 +129,7 @@ void BiquadProcessor::setType(BiquadFilterType type)
     }
 }
 
-void BiquadProcessor::getFrequencyResponse(unsigned nFrequencies, const float* frequencyHz, float* magResponse, float* phaseResponse)
+void BiquadProcessor::getFrequencyResponse(unsigned nFrequencies, std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
 {
     // Compute the frequency response on a separate temporary kernel
     // to avoid interfering with the processing running in the audio
@@ -140,7 +144,7 @@ void BiquadProcessor::getFrequencyResponse(unsigned nFrequencies, const float* f
     float gain = parameter3().value();
     float detune = parameter4().value();
 
-    responseKernel->updateCoefficients(1, &cutoffFrequency, &q, &gain, &detune);
+    responseKernel->updateCoefficients(1, singleElementSpan(cutoffFrequency), singleElementSpan(q), singleElementSpan(gain), singleElementSpan(detune));
     responseKernel->getFrequencyResponse(nFrequencies, frequencyHz, magResponse, phaseResponse);
 }
 

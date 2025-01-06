@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RemoteGraphicsContextGLProxy.h"
 
+#include <wtf/StdLibExtras.h>
+
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
 namespace WebKit {
@@ -671,7 +673,7 @@ void RemoteGraphicsContextGLProxy::getFloatv(GCGLenum pname, std::span<GCGLfloat
         return;
     }
     auto& [valueReply] = sendResult.reply();
-    memcpy(value.data(), valueReply.data(), value.size() * sizeof(const float));
+    memcpySpan(value, valueReply);
 }
 
 void RemoteGraphicsContextGLProxy::getIntegerv(GCGLenum pname, std::span<GCGLint> value)
@@ -684,7 +686,7 @@ void RemoteGraphicsContextGLProxy::getIntegerv(GCGLenum pname, std::span<GCGLint
         return;
     }
     auto& [valueReply] = sendResult.reply();
-    memcpy(value.data(), valueReply.data(), value.size() * sizeof(const int32_t));
+    memcpySpan(value, valueReply);
 }
 
 void RemoteGraphicsContextGLProxy::getIntegeri_v(GCGLenum pname, GCGLuint index, std::span<GCGLint, 4> value) // NOLINT
@@ -697,7 +699,7 @@ void RemoteGraphicsContextGLProxy::getIntegeri_v(GCGLenum pname, GCGLuint index,
         return;
     }
     auto& [valueReply] = sendResult.reply();
-    memcpy(value.data(), valueReply.data(), value.size() * sizeof(const int32_t));
+    memcpySpan(value, valueReply);
 }
 
 GCGLint64 RemoteGraphicsContextGLProxy::getInteger64(GCGLenum pname)
@@ -749,7 +751,7 @@ void RemoteGraphicsContextGLProxy::getBooleanv(GCGLenum pname, std::span<GCGLboo
         return;
     }
     auto& [valueReply] = sendResult.reply();
-    memcpy(value.data(), valueReply.data(), value.size() * sizeof(const bool));
+    memcpySpan(value, valueReply);
 }
 
 GCGLint RemoteGraphicsContextGLProxy::getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname)
@@ -827,7 +829,7 @@ void RemoteGraphicsContextGLProxy::getShaderPrecisionFormat(GCGLenum shaderType,
         return;
     }
     auto& [rangeReply, precisionReply] = sendResult.reply();
-    memcpy(range.data(), rangeReply.data(), range.size() * sizeof(const int32_t));
+    memcpySpan(range, rangeReply);
     if (precision)
         *precision = precisionReply;
 }
@@ -881,7 +883,7 @@ void RemoteGraphicsContextGLProxy::getUniformfv(PlatformGLObject program, GCGLin
         return;
     }
     auto& [valueReply] = sendResult.reply();
-    memcpy(value.data(), valueReply.data(), value.size() * sizeof(const float));
+    memcpySpan(value, valueReply);
 }
 
 void RemoteGraphicsContextGLProxy::getUniformiv(PlatformGLObject program, GCGLint location, std::span<GCGLint> value)
@@ -894,7 +896,7 @@ void RemoteGraphicsContextGLProxy::getUniformiv(PlatformGLObject program, GCGLin
         return;
     }
     auto& [valueReply] = sendResult.reply();
-    memcpy(value.data(), valueReply.data(), value.size() * sizeof(const int32_t));
+    memcpySpan(value, valueReply);
 }
 
 void RemoteGraphicsContextGLProxy::getUniformuiv(PlatformGLObject program, GCGLint location, std::span<GCGLuint> value)
@@ -907,7 +909,7 @@ void RemoteGraphicsContextGLProxy::getUniformuiv(PlatformGLObject program, GCGLi
         return;
     }
     auto& [valueReply] = sendResult.reply();
-    memcpy(value.data(), valueReply.data(), value.size() * sizeof(const uint32_t));
+    memcpySpan(value, valueReply);
 }
 
 GCGLint RemoteGraphicsContextGLProxy::getUniformLocation(PlatformGLObject arg0, const String& name)
@@ -1777,19 +1779,6 @@ void RemoteGraphicsContextGLProxy::copyBufferSubData(GCGLenum readTarget, GCGLen
         markContextLost();
         return;
     }
-}
-
-void RemoteGraphicsContextGLProxy::getBufferSubData(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data)
-{
-    if (isContextLost())
-        return;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetBufferSubData(target, static_cast<uint64_t>(offset), data.size()));
-    if (!sendResult.succeeded()) {
-        markContextLost();
-        return;
-    }
-    auto& [dataReply] = sendResult.reply();
-    memcpy(data.data(), dataReply.data(), data.size() * sizeof(const uint8_t));
 }
 
 void RemoteGraphicsContextGLProxy::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter)
@@ -2733,7 +2722,7 @@ void RemoteGraphicsContextGLProxy::getActiveUniformBlockiv(PlatformGLObject prog
         return;
     }
     auto& [paramsReply] = sendResult.reply();
-    memcpy(params.data(), paramsReply.data(), params.size() * sizeof(const int32_t));
+    memcpySpan(params, paramsReply);
 }
 
 String RemoteGraphicsContextGLProxy::getTranslatedShaderSourceANGLE(PlatformGLObject arg0)
@@ -3046,7 +3035,7 @@ void RemoteGraphicsContextGLProxy::getInternalformativ(GCGLenum target, GCGLenum
         return;
     }
     auto& [paramsReply] = sendResult.reply();
-    memcpy(params.data(), paramsReply.data(), params.size() * sizeof(const int32_t));
+    memcpySpan(params, paramsReply);
 }
 
 void RemoteGraphicsContextGLProxy::setDrawingBufferColorSpace(const WebCore::DestinationColorSpace& arg0)
@@ -3058,19 +3047,6 @@ void RemoteGraphicsContextGLProxy::setDrawingBufferColorSpace(const WebCore::Des
         markContextLost();
         return;
     }
-}
-
-RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::drawingBufferToPixelBuffer(WebCore::GraphicsContextGLFlipY arg0)
-{
-    if (isContextLost())
-        return { };
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::DrawingBufferToPixelBuffer(arg0));
-    if (!sendResult.succeeded()) {
-        markContextLost();
-        return { };
-    }
-    auto& [returnValue] = sendResult.reply();
-    return returnValue;
 }
 
 #if ENABLE(WEBXR)
@@ -3161,7 +3137,7 @@ bool RemoteGraphicsContextGLProxy::addFoveation(WebCore::IntSize physicalSizeLef
     return returnValue;
 }
 
-void RemoteGraphicsContextGLProxy::enableFoveation(GCGLuint arg0)
+void RemoteGraphicsContextGLProxy::enableFoveation(PlatformGLObject arg0)
 {
     if (isContextLost())
         return;
@@ -3177,6 +3153,28 @@ void RemoteGraphicsContextGLProxy::disableFoveation()
     if (isContextLost())
         return;
     auto sendResult = send(Messages::RemoteGraphicsContextGL::DisableFoveation());
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+
+void RemoteGraphicsContextGLProxy::framebufferDiscard(GCGLenum target, std::span<const GCGLenum> attachments)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::FramebufferDiscard(target, attachments));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+
+void RemoteGraphicsContextGLProxy::framebufferResolveRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject arg3)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::FramebufferResolveRenderbuffer(target, attachment, renderbuffertarget, arg3));
     if (sendResult != IPC::Error::NoError) {
         markContextLost();
         return;

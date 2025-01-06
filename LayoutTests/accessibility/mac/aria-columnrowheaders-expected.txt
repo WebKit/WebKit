@@ -37,13 +37,13 @@ AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 19}
+AXElementBusy: 0
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {0, 1}
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
-AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -78,13 +78,13 @@ AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 8}
+AXElementBusy: 0
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {1, 1}
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
-AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -119,13 +119,13 @@ AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 8}
+AXElementBusy: 0
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {2, 1}
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
-AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -161,13 +161,13 @@ AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 4}
+AXElementBusy: 0
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {0, 1}
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
-AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -202,13 +202,13 @@ AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 4}
+AXElementBusy: 0
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {0, 1}
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
-AXElementBusy: 0
 AXRequired: 0
 
 ------------

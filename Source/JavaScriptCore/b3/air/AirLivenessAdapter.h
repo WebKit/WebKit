@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -149,7 +149,7 @@ public:
 
 template<Bank adapterBank, Arg::Temperature minimumTemperature = Arg::Cold>
 struct TmpLivenessAdapter : LivenessAdapter<TmpLivenessAdapter<adapterBank, minimumTemperature>> {
-    WTF_MAKE_TZONE_ALLOCATED(TmpLivenessAdapter);
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(TmpLivenessAdapter);
 public:
     typedef LivenessAdapter<TmpLivenessAdapter<adapterBank, minimumTemperature>> Base;
 
@@ -170,6 +170,14 @@ public:
     static unsigned valueToIndex(Tmp tmp) { return AbsoluteTmpMapper<adapterBank>::absoluteIndex(tmp); }
     static Tmp indexToValue(unsigned index) { return AbsoluteTmpMapper<adapterBank>::tmpFromAbsoluteIndex(index); }
 };
+
+#define TZONE_TEMPLATE_PARAMS template<Bank adapterBank, Arg::Temperature minimumTemperature>
+#define TZONE_TYPE TmpLivenessAdapter<adapterBank, minimumTemperature>
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS();
+
+#undef TZONE_TEMPLATE_PARAMS
+#undef TZONE_TYPE
 
 struct UnifiedTmpLivenessAdapter : LivenessAdapter<UnifiedTmpLivenessAdapter> {
     WTF_MAKE_TZONE_ALLOCATED(UnifiedTmpLivenessAdapter);

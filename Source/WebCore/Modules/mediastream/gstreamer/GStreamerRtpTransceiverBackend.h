@@ -25,13 +25,14 @@
 #include "GStreamerRtpSenderBackend.h"
 #include "GUniquePtrGStreamer.h"
 #include "RTCRtpTransceiverBackend.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class GStreamerRtpReceiverBackend;
 
 class GStreamerRtpTransceiverBackend final : public RTCRtpTransceiverBackend {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerRtpTransceiverBackend);
 public:
     GStreamerRtpTransceiverBackend(GRefPtr<GstWebRTCRTPTransceiver>&&);
 

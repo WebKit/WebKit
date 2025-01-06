@@ -63,8 +63,6 @@ struct BufferMemoryResult {
         SyncTryToReclaimMemory
     };
 
-    static ASCIILiteral toString(Kind);
-
     BufferMemoryResult() { }
 
     BufferMemoryResult(void* basePtr, Kind kind)
@@ -118,7 +116,7 @@ private:
     BufferMemoryManager() = default;
 
     Lock m_lock;
-    unsigned m_maxFastMemoryCount { Options::maxNumWebAssemblyFastMemories() };
+    unsigned m_maxFastMemoryCount { Options::maxNumWasmFastMemories() };
     Vector<void*> m_fastMemories;
     StdSet<std::pair<uintptr_t, size_t>> m_growableBoundsCheckingMemories;
     size_t m_physicalBytes { 0 };

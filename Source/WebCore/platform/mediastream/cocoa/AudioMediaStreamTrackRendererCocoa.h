@@ -34,16 +34,7 @@
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudioTypes.h>
 #include <optional>
-#include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class AudioMediaStreamTrackRendererCocoa;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AudioMediaStreamTrackRendererCocoa> : std::true_type { };
-}
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -51,13 +42,15 @@ class AudioSampleDataSource;
 class AudioSampleBufferList;
 class BaseAudioMediaStreamTrackRendererUnit;
 
-class AudioMediaStreamTrackRendererCocoa : public AudioMediaStreamTrackRenderer, public CanMakeWeakPtr<AudioMediaStreamTrackRendererCocoa, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_FAST_ALLOCATED;
+class AudioMediaStreamTrackRendererCocoa final : public AudioMediaStreamTrackRenderer {
+    WTF_MAKE_TZONE_ALLOCATED(AudioMediaStreamTrackRendererCocoa);
 public:
-    AudioMediaStreamTrackRendererCocoa(Init&&);
+    static Ref<AudioMediaStreamTrackRenderer> create(Init&& init) { return adoptRef(*new AudioMediaStreamTrackRendererCocoa(WTFMove(init))); }
     ~AudioMediaStreamTrackRendererCocoa();
 
 private:
+    explicit AudioMediaStreamTrackRendererCocoa(Init&&);
+
     // AudioMediaStreamTrackRenderer
     void pushSamples(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
     void start(CompletionHandler<void()>&&) final;
@@ -76,6 +69,7 @@ private:
     RefPtr<AudioSampleDataSource> m_registeredDataSource; // Used in main thread.
     bool m_shouldRecreateDataSource { false };
     WebCore::AudioMediaStreamTrackRendererUnit::ResetObserver m_resetObserver;
+    String m_deviceID;
 };
 
 }

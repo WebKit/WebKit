@@ -90,6 +90,13 @@ AuthenticatorGetInfoResponse& AuthenticatorGetInfoResponse::setRemainingDiscover
     return *this;
 }
 
+AuthenticatorGetInfoResponse& AuthenticatorGetInfoResponse::setMinPINLength(uint32_t minPINLength)
+{
+    m_minPINLength = minPINLength;
+    return *this;
+}
+
+
 Vector<uint8_t> encodeAsCBOR(const AuthenticatorGetInfoResponse& response)
 {
     using namespace cbor;
@@ -98,7 +105,7 @@ Vector<uint8_t> encodeAsCBOR(const AuthenticatorGetInfoResponse& response)
 
     CBORValue::ArrayValue versionArray;
     for (const auto& version : response.versions())
-        versionArray.append(version == ProtocolVersion::kCtap ? kCtap2Version : kU2fVersion);
+        versionArray.append(toString(version));
     deviceInfoMap.emplace(CBORValue(1), CBORValue(WTFMove(versionArray)));
 
     if (response.extensions())
@@ -119,7 +126,10 @@ Vector<uint8_t> encodeAsCBOR(const AuthenticatorGetInfoResponse& response)
     }
 
     if (response.remainingDiscoverableCredentials())
-        deviceInfoMap.emplace(CBORValue(8), CBORValue(static_cast<int64_t>(*response.maxMsgSize())));
+        deviceInfoMap.emplace(CBORValue(8), CBORValue(static_cast<int64_t>(*response.remainingDiscoverableCredentials())));
+
+    if (auto minPINLength = response.minPINLength())
+        deviceInfoMap.emplace(CBORValue(13), CBORValue(static_cast<int64_t>(*minPINLength)));
 
     auto encodedBytes = CBORWriter::write(CBORValue(WTFMove(deviceInfoMap)));
     ASSERT(encodedBytes);

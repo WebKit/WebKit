@@ -37,7 +37,7 @@ BlockInsertionSet::BlockInsertionSet(Graph& graph)
 {
 }
 
-BlockInsertionSet::~BlockInsertionSet() { }
+BlockInsertionSet::~BlockInsertionSet() = default;
 
 void BlockInsertionSet::insert(const BlockInsertion& insertion)
 {

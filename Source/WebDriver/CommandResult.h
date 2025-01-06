@@ -79,6 +79,7 @@ public:
     }
 
     unsigned httpStatusCode() const;
+    static unsigned errorCodeToHTTPStatusCode(ErrorCode);
     const RefPtr<JSON::Value>& result() const { return m_result; };
     void setAdditionalErrorData(RefPtr<JSON::Object>&& errorData) { m_errorAdditionalData = WTFMove(errorData); }
     bool isError() const { return !!m_errorCode; }

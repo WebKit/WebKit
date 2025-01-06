@@ -32,11 +32,10 @@ class StyleSheet;
 class CSSStyleSheet;
 
 class ProcessingInstruction final : public CharacterData, private CachedStyleSheetClient {
-    WTF_MAKE_ISO_ALLOCATED(ProcessingInstruction);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ProcessingInstruction);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProcessingInstruction);
 public:
-    using CharacterData::weakPtrFactory;
-    using CharacterData::WeakValueType;
-    using CharacterData::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(CharacterData);
 
     static Ref<ProcessingInstruction> create(Document&, String&& target, String&& data);
     virtual ~ProcessingInstruction();
@@ -59,14 +58,14 @@ private:
     ProcessingInstruction(Document&, String&& target, String&& data);
 
     String nodeName() const override;
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    Ref<Node> cloneNodeInternal(TreeScope&, CloningOperation) override;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void didFinishInsertingNode() override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
 
     void checkStyleSheet();
-    void setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet*) override;
+    void setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet*) override;
 #if ENABLE(XSLT)
     void setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet) override;
 #endif

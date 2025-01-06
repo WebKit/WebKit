@@ -43,7 +43,7 @@ void WebEditorClient::didDispatchInputMethodKeydown(KeyboardEvent& event)
 {
     auto* platformEvent = event.underlyingPlatformEvent();
     ASSERT(event.target());
-    auto* frame = downcast<Node>(event.target())->document().frame();
+    RefPtr frame = downcast<Node>(event.target())->document().frame();
     ASSERT(frame);
 
     if (const auto& underlines = platformEvent->preeditUnderlines()) {

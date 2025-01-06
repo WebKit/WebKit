@@ -30,11 +30,16 @@
 
 #include "ArgumentCoders.h"
 #include "RemoteRenderingBackend.h"
+#include "ShapeDetectionObjectHeap.h"
+#include "SharedPreferencesForWebProcess.h"
 #include <WebCore/DetectedTextInterface.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/TextDetectorInterface.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTextDetector);
 
 RemoteTextDetector::RemoteTextDetector(Ref<WebCore::ShapeDetection::TextDetector>&& textDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteRenderingBackend& backend, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
     : m_backing(WTFMove(textDetector))
@@ -47,12 +52,17 @@ RemoteTextDetector::RemoteTextDetector(Ref<WebCore::ShapeDetection::TextDetector
 
 RemoteTextDetector::~RemoteTextDetector() = default;
 
-Ref<WebCore::ShapeDetection::TextDetector> RemoteTextDetector::protectedBacking()
+std::optional<SharedPreferencesForWebProcess> RemoteTextDetector::sharedPreferencesForWebProcess() const
+{
+    return protectedBackend()->sharedPreferencesForWebProcess();
+}
+
+Ref<WebCore::ShapeDetection::TextDetector> RemoteTextDetector::protectedBacking() const
 {
     return backing();
 }
 
-Ref<RemoteRenderingBackend> RemoteTextDetector::protectedBackend()
+Ref<RemoteRenderingBackend> RemoteTextDetector::protectedBackend() const
 {
     return m_backend.get();
 }

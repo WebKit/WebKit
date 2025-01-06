@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #import "HTTPServer.h"
 #import "WebExtensionUtilities.h"
+#import <WebKit/WKUserContentControllerPrivate.h>
 
 namespace TestWebKitAPI {
 
@@ -57,27 +58,27 @@ TEST(WKWebExtensionAPIScripting, ErrorsExecuteScript)
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertThrows(() => browser.scripting.executeScript(), /a required argument is missing/i)",
         @"browser.test.assertThrows(() => browser.scripting.executeScript({}), /missing required keys: 'target'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target' : {}}), /missing required keys: 'tabId'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 'j'}}), /'tabId' is expected to be a number, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target' : { }}), /missing required keys: 'tabId'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 'bad'}}), /'tabId' is expected to be a number, but a string was provided./i)",
 
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0}, 'func': () => { console.log('function') }, 'function': () => {console.log('function')}}), /it cannot specify both 'func' and 'function'. Please use 'func'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: ['args'], func: () => 'function', arguments: ['arguments']}), /it cannot specify both 'args' and 'arguments'. Please use 'args'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: ['args'], files: ['path/to/file']}), /it must specify both 'func' and 'args'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, 'func': () => { console.log('function') }, 'function': () => {console.log('function')}}), /it cannot specify both 'func' and 'function'. Please use 'func'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, args: ['args'], func: () => 'function', arguments: ['arguments']}), /it cannot specify both 'args' and 'arguments'. Please use 'args'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, args: ['args'], files: ['path/to/file']}), /it must specify both 'func' and 'args'./i)",
 
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: 0, func: () => 'function' }), /'args' is expected to be an array, but a number was provided./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, func: () => 'function', args: [ () => 'arguments' ] }), /it is not JSON-serializable./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, args: 0, func: () => 'function' }), /'args' is expected to be an array, but a number was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, func: () => 'function', args: [ () => 'arguments' ] }), /it is not JSON-serializable./i)",
 
         @"const notAFunction = null",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, func: 'not a function' }), /is expected to be a value, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, func: 'not a function' }), /is expected to be a value, but a string was provided./i)",
 
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }}), /it must specify either 'func' or 'files'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: ['args'], files: [0]}), /'files' is expected to be an array of strings, but a number was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }}), /it must specify either 'func' or 'files'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, args: ['args'], files: [0]}), /'files' is expected to be an array of strings, but a number was provided./i)",
 
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0, allFrames: true, frameIds: [0] }, files: ['path/to/file']}), /it cannot specify both 'allFrames' and 'frameIds'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0, frameIds: ['0'] }, files: ['path/to/file']}), /'frameIds' is expected to be an array of numbers, but a string was provided./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0, frameIds: [-1] }, files: ['path/to/file']}), /'-1' is not a frame identifier./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1, allFrames: true, frameIds: [0] }, files: ['path/to/file']}), /it cannot specify both 'allFrames' and 'frameIds'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1, frameIds: ['0'] }, files: ['path/to/file']}), /'frameIds' is expected to be an array of numbers, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1, frameIds: [-1] }, files: ['path/to/file']}), /'-1' is not a frame identifier./i)",
 
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, world: 'world', files: ['path/to/file']}), /it must specify either 'ISOLATED' or 'MAIN'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, world: 'world', files: ['path/to/file']}), /it must specify either 'isolated' or 'main'./i)",
 
         @"browser.test.notifyPass()"
     ]);
@@ -91,17 +92,17 @@ TEST(WKWebExtensionAPIScripting, ErrorsCSS)
         @"browser.test.assertThrows(() => browser.scripting.insertCSS(), /a required argument is missing./i)",
         @"browser.test.assertThrows(() => browser.scripting.insertCSS({}), /missing required keys: 'target'./i)",
         @"browser.test.assertThrows(() => browser.scripting.insertCSS({ target: {} }), /missing required keys: 'tabId'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: 0 }, files: ['path/to/file'], css: 'css'}), /it cannot specify both 'css' and 'files'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: 0 }}), /it must specify either 'css' or 'files'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: '0' }, files: ['path/to/file'], css: 'css'}), /'tabId' is expected to be a number, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: 1 }, files: ['path/to/file'], css: 'css'}), /it cannot specify both 'css' and 'files'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: 1 }}), /it must specify either 'css' or 'files'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: '1' }, files: ['path/to/file'], css: 'css'}), /'tabId' is expected to be a number, but a string was provided./i)",
         @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: 1 }, css: 'body { color: red }', origin: 'bad' }), /'origin' value is invalid, because it must specify either 'AUTHOR' or 'USER'/i);",
 
         @"browser.test.assertThrows(() => browser.scripting.removeCSS(), /a required argument is missing./i)",
         @"browser.test.assertThrows(() => browser.scripting.removeCSS({}), /missing required keys: 'target'./i)",
         @"browser.test.assertThrows(() => browser.scripting.removeCSS({ target: {} }), /missing required keys: 'tabId'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: 0 }, files: ['path/to/file'], css: 'css'}), /it cannot specify both 'css' and 'files'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: 0 } }), /it must specify either 'css' or 'files'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: '0' }, files: ['path/to/file'], css: 'css'}), /'tabId' is expected to be a number, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: 1 }, files: ['path/to/file'], css: 'css'}), /it cannot specify both 'css' and 'files'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: 1 } }), /it must specify either 'css' or 'files'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: 'bad' }, files: ['path/to/file'], css: 'css'}), /'tabId' is expected to be a number, but a string was provided./i)",
 
         @"browser.test.notifyPass()"
     ]);
@@ -125,12 +126,12 @@ TEST(WKWebExtensionAPIScripting, ErrorsRegisteredContentScript)
 
         @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ] }]), /it must specify at least one 'css' or 'js' file/i)",
         @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], runAt: 'invalid_runAt' }]), /it must specify either 'document_start', 'document_end', or 'document_idle'/i)",
-        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], world: 'invalid_world' }]), /it must specify either 'ISOLATED' or 'MAIN'/i)",
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], world: 'invalid_world' }]), /it must specify either 'isolated' or 'main'/i)",
         @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], css: ['style.css'], cssOrigin: 'bad' }]), /'cssOrigin' value is invalid, because it must specify either 'author' or 'user'/i)",
 
         @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '_0' }]), /it must not start with '_'/i)",
         @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '0', matches: [ ], js: ['path/to/file'] }]), /it must not be empty/i)",
-        @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], world: 'invalid_world' }]), /it must specify either 'ISOLATED' or 'MAIN'/i)",
+        @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], world: 'invalid_world' }]), /it must specify either 'isolated' or 'main'/i)",
 
         @"browser.test.assertThrows(() => browser.scripting.getRegisteredContentScripts([]), /an object is expected/i)",
         @"browser.test.assertThrows(() => browser.scripting.getRegisteredContentScripts({ ids: 0 }), /'ids' is expected to be an array of strings, but a number was provided/i)",
@@ -139,6 +140,8 @@ TEST(WKWebExtensionAPIScripting, ErrorsRegisteredContentScript)
         @"browser.test.assertThrows(() => browser.scripting.unregisterContentScripts([]), /an object is expected/i)",
         @"browser.test.assertThrows(() => browser.scripting.unregisterContentScripts({ ids: 0 }), /'ids' is expected to be an array of strings, but a number was provided/i)",
         @"browser.test.assertThrows(() => browser.scripting.unregisterContentScripts({ ids: [ 0 ] }), /'ids' is expected to be an array of strings, but a number was provided/i)",
+
+        @"browser.test.assertRejects(() => browser.scripting.registerContentScripts([{ id: '1', matches: ['*://*/*'], js: ['invalidFile.js'] }]), /Invalid resource 'invalidFile.js'/i)",
 
         @"browser.test.notifyPass()"
     ]);
@@ -158,31 +161,45 @@ TEST(WKWebExtensionAPIScripting, ExecuteScript)
 
         @"  const blueValue = 'rgb(0, 0, 255)'",
 
-        @"  const expectedResultWithFileExecution = { 'result': 'pink', 'frameId': 0 }",
-        @"  const expectedResultWithFunctionExecution = { 'result': null, 'frameId': 0 }",
-
         @"  function changeBackgroundColor(color) { document.body.style.background = color }",
         @"  function getBackgroundColor() { return window.getComputedStyle(document.body).getPropertyValue('background-color') }",
 
-        @"  let results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: false }, files: [ 'backgroundColor.js' ] })",
-        @"  browser.test.assertDeepEq(results[0], expectedResultWithFileExecution)",
+        @"  let results = await browser.scripting.executeScript({ target: { tabId, allFrames: false }, files: [ 'backgroundColor.js' ] })",
+        @"  browser.test.assertEq(results?.[0]?.result, 'pink', 'Result should be')",
+        @"  browser.test.assertEq(results?.[0]?.frameId, 0, 'Frame should be')",
 
-        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, frameIds: [ 0 ] }, files: [ 'backgroundColor.js' ] })",
-        @"  browser.test.assertDeepEq(results[0], expectedResultWithFileExecution)",
+        @"  results = await browser.scripting.executeScript({ target: { tabId, frameIds: [ 0 ] }, files: [ 'backgroundColor.js' ] })",
+        @"  browser.test.assertEq(results?.[0]?.result, 'pink', 'Result should be')",
+        @"  browser.test.assertEq(results?.[0]?.frameId, 0, 'Frame should be')",
 
-        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId }, files: [ 'backgroundColor.js'] })",
-        @"  browser.test.assertDeepEq(results[0], expectedResultWithFileExecution)",
+        @"  results = await browser.scripting.executeScript({ target: { tabId }, files: [ 'backgroundColor.js'] })",
+        @"  browser.test.assertEq(results?.[0]?.result, 'pink', 'Result should be')",
+        @"  browser.test.assertEq(results?.[0]?.frameId, 0, 'Frame should be')",
 
-        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, frameIds: [ 0 ] }, func: changeBackgroundColor, args: ['pink'] })",
-        @"  browser.test.assertDeepEq(results[0], expectedResultWithFunctionExecution)",
+        @"  results = await browser.scripting.executeScript({ target: { tabId, frameIds: [ 0 ] }, func: changeBackgroundColor, args: ['pink'] })",
+        @"  browser.test.assertEq(results?.[0]?.result, null, 'Result should be')",
+        @"  browser.test.assertEq(results?.[0]?.frameId, 0, 'Frame should be')",
 
-        @"  results = await browser.scripting.executeScript({target: {tabId: tabId}, func: (bool, number, string, dict, array) => { browser.test.log('supported argument types') }, args: [true, 10, 'string', { }, [ ]]})",
-        @"  browser.test.assertDeepEq(results[0], expectedResultWithFunctionExecution)",
+        @"  results = await browser.scripting.executeScript({",
+        @"    target: { tabId },",
+        @"    func: (bool, number, string, dict, array) => {",
+        @"      browser.test.assertEq(typeof bool, 'boolean', 'Boolean argument should be')",
+        @"      browser.test.assertEq(typeof number, 'number', 'Number argument should be')",
+        @"      browser.test.assertEq(typeof string, 'string', 'String argument should be')",
+        @"      browser.test.assertEq(typeof dict, 'object', 'Object argument should be')",
+        @"      browser.test.assertTrue(Array.isArray(array), 'Array argument should be an array')",
+        @"    },",
+        @"    args: [true, 10, 'string', {}, []]",
+        @"  })",
+        @"  browser.test.assertEq(results?.[0]?.result, null, 'Result should be')",
+        @"  browser.test.assertEq(results?.[0]?.frameId, 0, 'Frame should be')",
 
-        @"  await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: changeBackgroundColor, args: ['blue'] })",
-        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
-        @"  browser.test.assertEq(results[0].result, blueValue)",
-        @"  browser.test.assertEq(results[0].result, blueValue)",
+        @"  await browser.scripting.executeScript({ target: { tabId, allFrames: true }, func: changeBackgroundColor, args: ['blue'] })",
+        @"  results = await browser.scripting.executeScript({ target: { tabId, allFrames: true }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results?.[0]?.result, blueValue, 'Result should be')",
+        @"  browser.test.assertEq(results?.[0]?.frameId, 0, 'Frame should be')",
+
+        @"  browser.test.assertSafeResolve(() => browser.scripting.executeScript({ target: { tabId, frameIds: [0], allFrames: false }, func: () => {} }))",
 
         @"  browser.test.notifyPass()",
         @"})",
@@ -194,21 +211,21 @@ TEST(WKWebExtensionAPIScripting, ExecuteScript)
 
     static auto *resources = @{ @"background.js": backgroundScript, @"backgroundColor.js": backgroundColor };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -242,18 +259,18 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptJSONTypes)
         @"browser.test.yield('Load Tab')",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -262,74 +279,144 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptWithFrameIds)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
-        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='background-color: blue'></body>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, " "_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *backgroundScript = Util::constructScript(@[
-        @"browser.webNavigation.onCompleted.addListener(async (details) => {",
-        @"  if (details.frameId !== 0)",
-        @"    return",
+        @"browser.runtime.onMessage.addListener(async (message, sender) => {",
+        @"  browser.test.assertEq(message, 'Hello from frame')",
 
-        @"  const tabId = details.tabId",
+        @"  const frameId = sender.frameId",
+        @"  browser.test.assertTrue(frameId !== 0, 'frameId should not be 0 for an iframe')",
 
-        @"  const pinkValue = 'rgb(255, 192, 203)'",
-        @"  const blueValue = 'rgb(0, 0, 255)'",
+        @"  const result = await browser.scripting.executeScript({",
+        @"    target: { tabId: sender.tab.id, frameIds: [frameId] },",
+        @"    func: () => location.pathname",
+        @"  })",
 
-        @"  function changeBackgroundColor(color) { document.body.style.background = color }",
-        @"  function getBackgroundColor() { return window.getComputedStyle(document.body).getPropertyValue('background-color') }",
-        @"  function getFontSize() { return window.getComputedStyle(document.body).getPropertyValue('font-size') }",
-
-        @"  function logMessage() { console.log('Logging message') }",
-
-        // FIXME: <https://webkit.org/b/260160> A better way to get the frame Ids would be from browser.webNavigation.getAllFrames().
-        @"  let results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: logMessage })",
-        @"  browser.test.assertEq(results.length, 2)",
-
-        @"  let subframe = results[1].frameId",
-        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, frameIds: [ 0, subframe ] }, files: [ 'backgroundColor.js' ]})",
-        @"  browser.test.assertEq(results[0].result, 'pink')",
-        @"  browser.test.assertEq(results[1].result, 'pink')",
-
-        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, frameIds: [ subframe ] }, func: changeBackgroundColor, args: [ 'blue' ] })",
-        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, frameIds: [ subframe ] }, func: getBackgroundColor })",
-        @"  browser.test.assertEq(results[0].result, blueValue)",
-
-        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, frameIds: [ subframe ] }, files: [ 'backgroundColor.js', 'fontSize.js' ] })",
-        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, frameIds: [ subframe ] }, func: getBackgroundColor })",
-        @"  browser.test.assertEq(results[0].result, pinkValue)",
-        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, frameIds: [ subframe ] }, func: getFontSize })",
-        @"  browser.test.assertEq(results[0].result, '104px')",
+        @"  browser.test.assertEq(result[0].result, '/frame.html', 'Should execute in the iframe and return the correct path')",
 
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.yield('Load Tab')"
     ]);
 
-    static auto *backgroundColor = @"document.body.style.background = 'pink'";
-    static auto *fontSize = @"document.body.style.fontSize = '104px'";
+    auto *contentScript = Util::constructScript(@[
+        @"browser.runtime.sendMessage('Hello from frame')",
+    ]);
 
-    static auto *resources = @{
-        @"background.js": backgroundScript,
-        @"backgroundColor.js": backgroundColor,
-        @"fontSize.js": fontSize,
+    static auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Scripting API Test",
+        @"description": @"Scripting API Test",
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module"
+        },
+
+        @"content_scripts": @[ @{
+            @"js": @[ @"content.js" ],
+            @"matches": @[ @"*://localhost/frame.html" ],
+            @"all_frames": @YES
+        } ],
+
+        @"permissions": @[ @"scripting" ]
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript,
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto *urlRequest = server.requestWithLocalhost();
-    auto *url = urlRequest.URL;
-
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.requestWithLocalhost("/frame.html"_s).URL];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIScripting, ExecuteScriptWithDocumentIds)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<span>Main Document</span><iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<span>Frame Document</span>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener(async (message, sender) => {",
+        @"  browser.test.assertEq(message, 'Hello from frame')",
+
+        @"  const documentId = sender?.documentId",
+        @"  browser.test.assertEq(typeof documentId, 'string', 'sender.documentId should be')",
+        @"  browser.test.assertEq(documentId.length, 36, 'sender.documentId should be')",
+
+        @"  const result = await browser.scripting.executeScript({",
+        @"    target: { tabId: sender?.tab?.id, documentIds: [ documentId ] },",
+        @"    func: () => document.body.innerText.trim()",
+        @"  })",
+
+        @"  browser.test.assertEq(result?.[0]?.result, 'Frame Document', 'Result should be')",
+        @"  browser.test.assertEq(typeof result?.[0]?.documentId, 'string', 'Result documentId should be')",
+        @"  browser.test.assertEq(result?.[0]?.documentId.length, 36, 'Result documentId should be')",
+        @"  browser.test.assertEq(result?.[0]?.documentId, documentId, 'Result documentId should be')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.runtime.sendMessage('Hello from frame')",
+    ]);
+
+    static auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Scripting API Test",
+        @"description": @"Scripting API Test",
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module"
+        },
+
+        @"content_scripts": @[ @{
+            @"js": @[ @"content.js" ],
+            @"matches": @[ @"*://localhost/frame.html" ],
+            @"all_frames": @YES
+        } ],
+
+        @"permissions": @[ @"scripting" ]
+    };
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript,
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.requestWithLocalhost("/frame.html"_s).URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
 
     [manager run];
 }
@@ -420,20 +507,20 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSS)
         @"fontSize.css": fontSize,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -496,20 +583,20 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSSWithFrameIds)
         @"fontSize.css": fontSize,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -539,18 +626,18 @@ TEST(WKWebExtensionAPIScripting, CSSUserOrigin)
         @"background.js": backgroundScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -580,18 +667,18 @@ TEST(WKWebExtensionAPIScripting, CSSAuthorOrigin)
         @"background.js": backgroundScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -628,18 +715,18 @@ TEST(WKWebExtensionAPIScripting, World)
         @"background.js": backgroundScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -661,13 +748,10 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScripts)
         @"  const tabId = details.tabId",
 
         @"  var expectedResults = [{",
-        @"    allFrames: false,",
         @"    id: '1',",
         @"    js: ['changeBackgroundColorScript.js', 'changeBackgroundFontScript.js'],",
         @"    matches: ['*://localhost/*'],",
         @"    persistAcrossSessions: true,",
-        @"    runAt: 'document_idle',",
-        @"    world: 'ISOLATED'",
         @"  }]",
 
         @"  var results",
@@ -702,21 +786,21 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScripts)
         @"changeBackgroundFontScript.js": changeBackgroundFontScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -760,18 +844,18 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScriptsWithCSSUserOrigin)
         @"changeColor.css": css
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -815,18 +899,18 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScriptsWithCSSAuthorOrigin)
         @"changeColor.css": css
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -849,13 +933,10 @@ TEST(WKWebExtensionAPIScripting, UpdateContentScripts)
         @"  const tabId = details.tabId",
 
         @"  var expectedResults = [{",
-        @"    allFrames: false,",
         @"    id: '1',",
         @"    js: ['changeBackgroundColorScript.js'],",
         @"    matches: ['*://localhost/*'],",
         @"    persistAcrossSessions: true,",
-        @"    runAt: 'document_idle',",
-        @"    world: 'ISOLATED'",
         @"  }]",
 
         @"  var results",
@@ -867,7 +948,7 @@ TEST(WKWebExtensionAPIScripting, UpdateContentScripts)
         @"  expectedResults[0].allFrames = true",
         @"  expectedResults[0].persistAcrossSessions = false",
         @"  expectedResults[0].runAt = 'document_start'",
-        @"  expectedResults[0].world = 'MAIN'",
+        @"  expectedResults[0].world = 'main'",
 
         @"  browser.test.assertDeepEq(results, expectedResults)",
 
@@ -901,21 +982,21 @@ TEST(WKWebExtensionAPIScripting, UpdateContentScripts)
         @"changeBackgroundFontScript.js": changeBackgroundFontScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -930,13 +1011,10 @@ TEST(WKWebExtensionAPIScripting, GetContentScripts)
         @"browser.webNavigation.onCompleted.addListener(async () => {",
 
         @"  var expectedResults = [{",
-        @"    allFrames: false,",
         @"    id: '1',",
         @"    js: ['changeBackgroundColorScript.js'],",
         @"    matches: ['*://localhost/*'],",
         @"    persistAcrossSessions: true,",
-        @"    runAt: 'document_idle',",
-        @"    world: 'ISOLATED'",
         @"  }]",
 
         @"  var results",
@@ -956,7 +1034,7 @@ TEST(WKWebExtensionAPIScripting, GetContentScripts)
         @"  await browser.scripting.registerContentScripts([{ id: '2', matches: ['*://localhost/*'], js: ['changeBackgroundFontScript.js'], runAt: 'document_start', world: 'MAIN' }])",
 
         @"  results = await browser.scripting.getRegisteredContentScripts({ 'ids': ['1', '2'] })",
-        @"  expectedResults.push({ allFrames: false, id: '2', js: ['changeBackgroundFontScript.js'], matches: ['*://localhost/*'], persistAcrossSessions: true, runAt: 'document_start', world: 'MAIN' })",
+        @"  expectedResults.push({ id: '2', js: ['changeBackgroundFontScript.js'], matches: ['*://localhost/*'], persistAcrossSessions: true, runAt: 'document_start', world: 'main' })",
         @"  browser.test.assertDeepEq(results, expectedResults)",
 
         @"  await browser.scripting.unregisterContentScripts()",
@@ -973,21 +1051,21 @@ TEST(WKWebExtensionAPIScripting, GetContentScripts)
         @"changeBackgroundFontScript.js": changeBackgroundFontScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -1048,21 +1126,21 @@ TEST(WKWebExtensionAPIScripting, UnregisterContentScripts)
         @"changeBackgroundFontScript.js": changeBackgroundFontScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -1104,8 +1182,8 @@ TEST(WKWebExtensionAPIScripting, RegisteredScriptIsInjectedAfterContextReloads)
         @"changeBackgroundColorScript.js": changeBackgroundColorScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get() extensionControllerConfiguration:_WKWebExtensionControllerConfiguration._temporaryConfiguration]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get() extensionControllerConfiguration:WKWebExtensionControllerConfiguration._temporaryConfiguration]);
 
     // Give the extension a unique identifier so it opts into saving data in the temporary configuration.
     manager.get().context.uniqueIdentifier = @"org.webkit.test.extension (76C788B8)";
@@ -1129,8 +1207,8 @@ TEST(WKWebExtensionAPIScripting, RegisteredScriptIsInjectedAfterContextReloads)
     EXPECT_TRUE(manager.get().context.hasInjectedContent);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -1170,12 +1248,12 @@ TEST(WKWebExtensionAPIScripting, MainWorld)
         @"content_script.js": contentScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -1214,14 +1292,128 @@ TEST(WKWebExtensionAPIScripting, IsolatedWorld)
         @"content_script.js": contentScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIScripting, RemoveAllUserScriptsDoesNotRemoveWebExtensionScripts)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *contentScriptsManifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Scripting Test",
+        @"description": @"Scripting Test",
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"content_scripts": @[ @{
+            @"matches": @[ @"*://localhost/*" ],
+            @"js": @[ @"content.js" ]
+        } ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Remove Scripts and Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Remove Scripts and Load Tab");
+
+    [manager.get().defaultTab.webView.configuration.userContentController removeAllUserScripts];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIScripting, RemoveAllUserStyleSheetsDoesNotRemoveWebExtensionStyleSheets)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<div id='test'>Test</div>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *contentScriptsManifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Scripting Test",
+        @"description": @"Scripting Test",
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"content_scripts": @[ @{
+            @"matches": @[ @"*://localhost/*" ],
+            @"css": @[ @"content.css" ],
+            @"js": @[ @"content.js" ]
+        } ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Remove StyleSheets and Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"const testElement = document.getElementById('test')",
+        @"const style = window.getComputedStyle(testElement)",
+        @"browser.test.assertEq(style.color, 'rgb(255, 0, 0)', 'CSS should still apply after removing user stylesheets')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.css": @"#test { color: red; }",
+        @"content.js": contentScript
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Remove StyleSheets and Load Tab");
+
+    [manager.get().defaultTab.webView.configuration.userContentController _removeAllUserStyleSheets];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
 }
 
 } // namespace TestWebKitAPI

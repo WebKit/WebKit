@@ -11,9 +11,9 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "net/dcsctp/common/math.h"
 #include "net/dcsctp/packet/chunk/abort_chunk.h"
@@ -42,7 +42,7 @@ bool ParseAndPrint(uint8_t chunk_type,
                    rtc::ArrayView<const uint8_t> data,
                    rtc::StringBuilder& sb) {
   if (chunk_type == Chunk::kType) {
-    absl::optional<Chunk> c = Chunk::Parse(data);
+    std::optional<Chunk> c = Chunk::Parse(data);
     if (c.has_value()) {
       sb << c->ToString();
     } else {

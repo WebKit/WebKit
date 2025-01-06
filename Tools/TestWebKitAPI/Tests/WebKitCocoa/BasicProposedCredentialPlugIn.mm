@@ -29,6 +29,7 @@
 #import <WebKit/WKBundlePageResourceLoadClient.h>
 #import <WebKit/WKWebProcessPlugIn.h>
 #import <WebKit/WKWebProcessPlugInBrowserContextControllerPrivate.h>
+#import <wtf/StdLibExtras.h>
 
 @interface BasicProposedCredentialPlugIn : NSObject<WKWebProcessPlugIn>
 @end
@@ -38,7 +39,7 @@
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
 {
     WKBundlePageResourceLoadClientV1 client;
-    memset(&client, 0, sizeof(client));
+    zeroBytes(client);
     client.base.version = 1;
     client.shouldUseCredentialStorage = [](auto...) {
         static size_t queries { 0 };

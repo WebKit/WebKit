@@ -51,10 +51,15 @@ AccessibilityAtspi::AccessibilityAtspi()
     m_cacheClearTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
 }
 
-void AccessibilityAtspi::connect(const String& busAddress)
+void AccessibilityAtspi::connect(const String& busAddress, const String& busName)
 {
     if (busAddress.isEmpty())
         return;
+
+    RELEASE_ASSERT(g_dbus_is_name(busName.utf8().data()));
+    RELEASE_ASSERT(!g_dbus_is_unique_name(busName.utf8().data()));
+
+    m_busName = busName;
 
     m_isConnecting = true;
     g_dbus_connection_new_for_address(busAddress.utf8().data(),
@@ -70,10 +75,24 @@ void AccessibilityAtspi::connect(const String& busAddress)
 
 void AccessibilityAtspi::didConnect(GRefPtr<GDBusConnection>&& connection)
 {
-    m_isConnecting = false;
     m_connection = WTFMove(connection);
-    if (!m_connection)
+    if (!m_connection) {
+        m_isConnecting = false;
         return;
+    }
+
+    RELEASE_ASSERT(g_dbus_is_name(m_busName.utf8().data()));
+    g_bus_own_name_on_connection(m_connection.get(), m_busName.utf8().data(), G_BUS_NAME_OWNER_FLAGS_DO_NOT_QUEUE,
+        [](GDBusConnection*, const char*, gpointer userData) {
+            auto& atspi = *static_cast<AccessibilityAtspi*>(userData);
+            atspi.didOwnName();
+        },
+        nullptr, this, nullptr);
+}
+
+void AccessibilityAtspi::didOwnName()
+{
+    m_isConnecting = false;
 
     for (auto& pendingRegistration : m_pendingRootRegistrations)
         registerRoot(pendingRegistration.root, WTFMove(pendingRegistration.interfaces), WTFMove(pendingRegistration.completionHandler));
@@ -128,6 +147,7 @@ void AccessibilityAtspi::initializeRegistry()
     }, this);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
 static GUniquePtr<char*> eventConvertingDetailToNonCamelCase(const char* eventName)
 {
     GUniquePtr<char*> event(g_strsplit(eventName, ":", 3));
@@ -174,6 +194,7 @@ static bool eventIsSubtype(char** needle, char** haystack)
 
     return true;
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void AccessibilityAtspi::removeEventListener(const char* dbusName, const char* eventName)
 {
@@ -294,7 +315,7 @@ void AccessibilityAtspi::registerRoot(AccessibilityRootAtspi& rootObject, Vector
         return g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &rootObject, nullptr, nullptr);
     });
     m_rootObjects.add(&rootObject, WTFMove(registeredObjects));
-    String reference = makeString(span(uniqueName()), ':', path);
+    String reference = makeString(m_busName, ':', path);
     rootObject.setPath(WTFMove(path));
     completionHandler(reference);
 }
@@ -659,7 +680,6 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::MathElement, { "math", N_("math") } },
     { AccessibilityRole::Menu, { "menu", N_("menu") } },
     { AccessibilityRole::MenuBar, { "menu bar", N_("menu bar") } },
-    { AccessibilityRole::MenuButton, { "menu item", N_("menu item") } },
     { AccessibilityRole::MenuItem, { "menu item", N_("menu item") } },
     { AccessibilityRole::MenuItemCheckbox, { "check menu item", N_("check menu item") } },
     { AccessibilityRole::MenuItemRadio, { "radio menu item", N_("radio menu item") } },

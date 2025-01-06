@@ -30,6 +30,7 @@
 #endif
 
 #include "SharedBuffer.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 namespace OpenType {
@@ -73,11 +74,18 @@ typedef UInt16 GlyphID;
 typedef uint32_t Tag;
 #define OT_MAKE_TAG(ch1, ch2, ch3, ch4) ((((uint32_t)(ch4)) << 24) | (((uint32_t)(ch3)) << 16) | (((uint32_t)(ch2)) << 8) | ((uint32_t)(ch1)))
 
-template <typename T> static const T* validateTable(const RefPtr<SharedBuffer>& buffer, size_t count = 1)
+template<typename T> static const T* validateTableSingle(const RefPtr<SharedBuffer>& buffer)
 {
-    if (!buffer || buffer->size() < sizeof(T) * count)
-        return 0;
-    return reinterpret_cast<const T*>(buffer->span().data());
+    if (!buffer || buffer->size() < sizeof(T))
+        return nullptr;
+    return &reinterpretCastSpanStartTo<const T>(buffer->span());
+}
+
+template<typename T> static std::span<const T> validateTable(const RefPtr<SharedBuffer>& buffer, size_t count)
+{
+    if (!buffer || (buffer->size() / sizeof(T)) < count)
+        return { };
+    return spanReinterpretCast<const T>(buffer->span().first(sizeof(T) * count));
 }
 
 struct TableBase {
@@ -91,6 +99,7 @@ protected:
         return offset <= buffer.size(); // "<=" because end is included as valid
     }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     template <typename T> static const T* validatePtr(const SharedBuffer& buffer, const void* position)
     {
         const T* casted = reinterpret_cast<const T*>(position);
@@ -103,6 +112,7 @@ protected:
     {
         return validatePtr<T>(buffer, reinterpret_cast<const int8_t*>(this) + offset);
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 };
 
 #if ENABLE(OPENTYPE_VERTICAL) || ENABLE(OPENTYPE_MATH)
@@ -126,6 +136,7 @@ struct Coverage2Table : CoverageTable {
 #endif // ENABLE(OPENTYPE_VERTICAL) || ENABLE(OPENTYPE_MATH)
 
 #if ENABLE(OPENTYPE_MATH)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 struct TableWithCoverage : TableBase {
 protected:
     bool getCoverageIndex(const SharedBuffer& buffer, const CoverageTable* coverage, Glyph glyph, uint32_t& coverageIndex) const
@@ -184,8 +195,10 @@ protected:
         return false;
     }
 };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 } // namespace OpenType
 } // namespace WebCore
+
 #endif // OpenTypeTypes_h

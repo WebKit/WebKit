@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-WebTransportSendStreamSink::WebTransportSendStreamSink(WebTransportSession& session, WebTransportStreamIdentifier identifier)
+WebTransportSendStreamSink::WebTransportSendStreamSink(WebTransportSession& session, WebCore::WebTransportStreamIdentifier identifier)
     : m_session(session)
     , m_identifier(identifier)
 {
@@ -48,8 +48,8 @@ WebTransportSendStreamSink::~WebTransportSendStreamSink()
 
 void WebTransportSendStreamSink::write(WebCore::ScriptExecutionContext& context, JSC::JSValue value, WebCore::DOMPromiseDeferred<void>&& promise)
 {
-    ASSERT(RunLoop::isMain());
-    if (!m_session)
+    RefPtr session = m_session.get();
+    if (!session)
         return promise.reject(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError });
 
     if (!context.globalObject())
@@ -62,22 +62,12 @@ void WebTransportSendStreamSink::write(WebCore::ScriptExecutionContext& context,
     if (UNLIKELY(bufferSource.hasException(scope)))
         return promise.settle(WebCore::Exception { WebCore::ExceptionCode::ExistingExceptionError });
 
-    WTF::switchOn(bufferSource.releaseReturnValue(),
-        [&](auto&& arrayBufferOrView) {
-            sendBytes(arrayBufferOrView->span(), [promise = WTFMove(promise)] () mutable {
-                promise.resolve();
-            });
-        }
-    );
-}
-
-void WebTransportSendStreamSink::sendBytes(std::span<const uint8_t> bytes, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-    if (!m_session)
-        return completionHandler();
-
-    m_session->streamSendBytes(m_identifier, bytes, false, WTFMove(completionHandler));
+    WTF::switchOn(bufferSource.releaseReturnValue(), [&](auto&& arrayBufferOrView) {
+        constexpr bool withFin { false };
+        context.enqueueTaskWhenSettled(session->streamSendBytes(m_identifier, arrayBufferOrView->span(), withFin), WebCore::TaskSource::Networking, [promise = WTFMove(promise)] (auto&&) mutable {
+            promise.resolve();
+        });
+    });
 }
 
 }

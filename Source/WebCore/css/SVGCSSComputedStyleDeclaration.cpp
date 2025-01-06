@@ -62,14 +62,14 @@ static Ref<CSSValue> createCSSValue(const Vector<SVGLengthValue>& dashes)
         auto primitiveValue = length.toCSSPrimitiveValue();
         // Computed lengths should always be in 'px' unit.
         if (primitiveValue->isLength() && primitiveValue->primitiveType() != CSSUnitType::CSS_PX)
-            list.append(CSSPrimitiveValue::create(primitiveValue->doubleValue(CSSUnitType::CSS_PX), CSSUnitType::CSS_PX));
+            list.append(CSSPrimitiveValue::create(primitiveValue->resolveAsLengthDeprecated(), CSSUnitType::CSS_PX));
         else
             list.append(WTFMove(primitiveValue));
     }
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
-Ref<CSSValue> ComputedStyleExtractor::adjustSVGPaint(SVGPaintType paintType, const String& url, Ref<CSSPrimitiveValue> color) const
+Ref<CSSValue> ComputedStyleExtractor::adjustSVGPaint(SVGPaintType paintType, const String& url, Ref<CSSValue> color) const
 {
     if (paintType >= SVGPaintType::URINone) {
         CSSValueListBuilder values;
@@ -107,7 +107,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
 
     const SVGRenderStyle& svgStyle = style->svgStyle();
 
-    auto createColor = [&style](const StyleColor& color) {
+    auto createColor = [&style](const Style::Color& color) {
         auto resolvedColor = style->colorResolvingCurrentColor(color);
         return CSSValuePool::singleton().createColorValue(resolvedColor);
     };
@@ -145,8 +145,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         return createColor(svgStyle.stopColor());
     case CSSPropertyFill:
         return adjustSVGPaint(svgStyle.fillPaintType(), svgStyle.fillPaintUri(), createColor(svgStyle.fillPaintColor()));
-    case CSSPropertyKerning:
-        return svgStyle.kerning().toCSSPrimitiveValue();
     case CSSPropertyMarkerEnd:
         return svgMarkerValue(svgStyle.markerEndResource(), m_element.get());
     case CSSPropertyMarkerMid:
@@ -168,7 +166,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         case BaselineShift::Length: {
             auto computedValue = svgStyle.baselineShiftValue().toCSSPrimitiveValue(m_element.get());
             if (computedValue->isLength() && computedValue->primitiveType() != CSSUnitType::CSS_PX)
-                return CSSPrimitiveValue::create(computedValue->doubleValue(CSSUnitType::CSS_PX), CSSUnitType::CSS_PX);
+                return CSSPrimitiveValue::create(computedValue->resolveAsLengthDeprecated(), CSSUnitType::CSS_PX);
             return computedValue;
         }
         }
@@ -197,7 +195,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         break;
     default:
         // If you crash here, it's because you added a css property and are not handling it
-        // in either this switch statement or the one in CSSComputedStyleDelcaration::getPropertyCSSValue
+        // in either this switch statement or the one in CSSComputedStyleDeclaration::getPropertyCSSValue
         ASSERT_WITH_MESSAGE(0, "unimplemented propertyID: %d", propertyID);
     }
     return nullptr;

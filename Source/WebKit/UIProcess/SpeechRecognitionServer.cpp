@@ -32,17 +32,33 @@
 #include "WebSpeechRecognitionConnectionMessages.h"
 #include <WebCore/SpeechRecognitionRequestInfo.h>
 #include <WebCore/SpeechRecognitionUpdate.h>
+#include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, messageSenderConnection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, *messageSenderConnection())
 
 namespace WebKit {
 
-SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connection, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&& checkIfEnabled
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionServer);
+
+Ref<SpeechRecognitionServer> SpeechRecognitionServer::create(WebProcessProxy& process, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&& checkIfEnabled
 #if ENABLE(MEDIA_STREAM)
     , RealtimeMediaSourceCreateFunction&& function
 #endif
     )
-    : m_connection(WTFMove(connection))
+{
+    return adoptRef(*new SpeechRecognitionServer(process, identifier, WTFMove(permissionChecker), WTFMove(checkIfEnabled)
+#if ENABLE(MEDIA_STREAM)
+        , WTFMove(function)
+#endif
+    ));
+}
+
+SpeechRecognitionServer::SpeechRecognitionServer(WebProcessProxy& process, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&& checkIfEnabled
+#if ENABLE(MEDIA_STREAM)
+    , RealtimeMediaSourceCreateFunction&& function
+#endif
+    )
+    : m_process(process)
     , m_identifier(identifier)
     , m_permissionChecker(WTFMove(permissionChecker))
     , m_checkIfMockSpeechRecognitionEnabled(WTFMove(checkIfEnabled))
@@ -52,9 +68,14 @@ SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connecti
 {
 }
 
+std::optional<SharedPreferencesForWebProcess> SpeechRecognitionServer::sharedPreferencesForWebProcess() const
+{
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return m_process ? m_process->sharedPreferencesForWebProcess() : std::nullopt;
+}
+
 void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& origin, WebCore::FrameIdentifier frameIdentifier)
 {
-    MESSAGE_CHECK(clientIdentifier);
     ASSERT(!m_requests.contains(clientIdentifier));
     auto requestInfo = WebCore::SpeechRecognitionRequestInfo { clientIdentifier, WTFMove(lang), continuous, interimResults, maxAlternatives, WTFMove(origin), frameIdentifier };
     auto& newRequest = m_requests.add(clientIdentifier, makeUnique<WebCore::SpeechRecognitionRequest>(WTFMove(requestInfo))).iterator->value;
@@ -117,8 +138,6 @@ void SpeechRecognitionServer::handleRequest(UniqueRef<WebCore::SpeechRecognition
 
 void SpeechRecognitionServer::stop(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
 {
-    MESSAGE_CHECK(clientIdentifier);
-
     if (m_requests.remove(clientIdentifier)) {
         sendUpdate(clientIdentifier, WebCore::SpeechRecognitionUpdateType::End);
         return;
@@ -130,7 +149,6 @@ void SpeechRecognitionServer::stop(WebCore::SpeechRecognitionConnectionClientIde
 
 void SpeechRecognitionServer::abort(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
 {
-    MESSAGE_CHECK(clientIdentifier);
     if (m_requests.remove(clientIdentifier)) {
         sendUpdate(clientIdentifier, WebCore::SpeechRecognitionUpdateType::End);
         return;
@@ -142,7 +160,6 @@ void SpeechRecognitionServer::abort(WebCore::SpeechRecognitionConnectionClientId
 
 void SpeechRecognitionServer::invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
 {
-    MESSAGE_CHECK(clientIdentifier);
     if (m_recognizer && m_recognizer->clientIdentifier() == clientIdentifier)
         m_recognizer->abort();
 }
@@ -164,7 +181,7 @@ void SpeechRecognitionServer::sendUpdate(const WebCore::SpeechRecognitionUpdate&
 
 IPC::Connection* SpeechRecognitionServer::messageSenderConnection() const
 {
-    return m_connection.ptr();
+    return m_process ? &m_process->connection() : nullptr;
 }
 
 uint64_t SpeechRecognitionServer::messageSenderDestinationID() const

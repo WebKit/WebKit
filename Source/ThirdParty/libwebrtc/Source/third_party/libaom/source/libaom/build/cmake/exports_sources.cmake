@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017, Alliance for Open Media. All rights reserved
+# Copyright (c) 2017, Alliance for Open Media. All rights reserved.
 #
 # This source code is subject to the terms of the BSD 2 Clause License and the
 # Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License was
@@ -27,9 +27,4 @@ endif()
 if(CONFIG_AV1_ENCODER)
   list(APPEND AOM_EXPORTS_SOURCES "${AOM_ROOT}/aom/exports_enc"
               "${AOM_ROOT}/av1/exports_enc")
-endif()
-
-if(ENABLE_TESTS)
-  list(APPEND AOM_EXPORTS_SOURCES "${AOM_ROOT}/aom/exports_test"
-              "${AOM_ROOT}/av1/exports_test")
 endif()

@@ -14,9 +14,9 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/units/data_rate.h"
 #include "modules/congestion_controller/pcc/monitor_interval.h"
 #include "modules/congestion_controller/pcc/utility_function.h"
@@ -42,7 +42,7 @@ class PccBitrateController {
       double dynamic_boundary_increment,
       std::unique_ptr<PccUtilityFunctionInterface> utility_function);
 
-  absl::optional<DataRate> ComputeRateUpdateForSlowStartMode(
+  std::optional<DataRate> ComputeRateUpdateForSlowStartMode(
       const PccMonitorInterval& monitor_interval);
 
   DataRate ComputeRateUpdateForOnlineLearningMode(
@@ -65,7 +65,7 @@ class PccBitrateController {
   int64_t step_size_adjustments_number_;
   const double initial_conversion_factor_;
 
-  absl::optional<double> previous_utility_;
+  std::optional<double> previous_utility_;
 };
 
 }  // namespace pcc

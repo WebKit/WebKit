@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,13 +15,14 @@
 #include "aom_dsp/x86/synonyms.h"
 #include "aom_dsp/x86/synonyms_avx2.h"
 #include "aom_dsp/x86/sum_squares_sse2.h"
+#include "config/aom_config.h"
 #include "config/aom_dsp_rtcd.h"
 
 static uint64_t aom_sum_squares_2d_i16_nxn_avx2(const int16_t *src, int stride,
                                                 int width, int height) {
   uint64_t result;
   __m256i v_acc_q = _mm256_setzero_si256();
-  const __m256i v_zext_mask_q = yy_set1_64_from_32i(~0);
+  const __m256i v_zext_mask_q = _mm256_set1_epi64x(~0u);
   for (int col = 0; col < height; col += 4) {
     __m256i v_acc_d = _mm256_setzero_si256();
     for (int row = 0; row < width; row += 16) {
@@ -157,7 +158,7 @@ uint64_t aom_sum_sse_2d_i16_avx2(const int16_t *src, int src_stride, int width,
 }
 
 // Accumulate sum of 16-bit elements in the vector
-static AOM_INLINE int32_t mm256_accumulate_epi16(__m256i vec_a) {
+static inline int32_t mm256_accumulate_epi16(__m256i vec_a) {
   __m128i vtmp1 = _mm256_extracti128_si256(vec_a, 1);
   __m128i vtmp2 = _mm256_castsi256_si128(vec_a);
   vtmp1 = _mm_add_epi16(vtmp1, vtmp2);
@@ -171,7 +172,7 @@ static AOM_INLINE int32_t mm256_accumulate_epi16(__m256i vec_a) {
 }
 
 // Accumulate sum of 32-bit elements in the vector
-static AOM_INLINE int32_t mm256_accumulate_epi32(__m256i vec_a) {
+static inline int32_t mm256_accumulate_epi32(__m256i vec_a) {
   __m128i vtmp1 = _mm256_extracti128_si256(vec_a, 1);
   __m128i vtmp2 = _mm256_castsi256_si128(vec_a);
   vtmp1 = _mm_add_epi32(vtmp1, vtmp2);
@@ -256,6 +257,7 @@ uint64_t aom_var_2d_u8_avx2(uint8_t *src, int src_stride, int width,
   return (ss - s * s / (width * height));
 }
 
+#if CONFIG_AV1_HIGHBITDEPTH
 uint64_t aom_var_2d_u16_avx2(uint8_t *src, int src_stride, int width,
                              int height) {
   uint16_t *srcp1 = CONVERT_TO_SHORTPTR(src), *srcp;
@@ -324,3 +326,4 @@ uint64_t aom_var_2d_u16_avx2(uint8_t *src, int src_stride, int width,
   }
   return (ss - s * s / (width * height));
 }
+#endif  // CONFIG_AV1_HIGHBITDEPTH

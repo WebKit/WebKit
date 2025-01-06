@@ -361,7 +361,7 @@ public:
     void writeKey(void* key) const {
         fShapeForKey.writeUnstyledKey(reinterpret_cast<uint32_t*>(key));
     }
-    bool isRRect(SkRRect* rrect) { return fShapeForKey.asRRect(rrect, nullptr, nullptr, nullptr); }
+    bool isRRect(SkRRect* rrect) { return fShapeForKey.asRRect(rrect, nullptr); }
 #else
     int keyBytes() const { return -1; }
     void writeKey(void* key) const { SK_ABORT("Should never be called"); }
@@ -415,12 +415,17 @@ bool draw_shadow(const FACTORY& factory,
     FindContext<FACTORY> context(&path.viewMatrix(), &factory);
 
     SkResourceCache::Key* key = nullptr;
-    AutoSTArray<32 * 4, uint8_t> keyStorage;
+    constexpr int kMinBytes = 128;
+    // We need to make this array be of the cache's Key so the memory we create the Key in
+    // is properly aligned.
+    AutoSTArray<kMinBytes / sizeof(SkResourceCache::Key), SkResourceCache::Key> keyStorage;
     int keyDataBytes = path.keyBytes();
     if (keyDataBytes >= 0) {
+        // Store the key...
         keyStorage.reset(keyDataBytes + sizeof(SkResourceCache::Key));
         key = new (keyStorage.begin()) SkResourceCache::Key();
-        path.writeKey((uint32_t*)(keyStorage.begin() + sizeof(*key)));
+        // ... followed by the bytes from path.
+        path.writeKey((uint32_t*)(((uint8_t*)keyStorage.begin()) + sizeof(SkResourceCache::Key)));
         key->init(&kNamespace, resource_cache_shared_id(), keyDataBytes);
         SkResourceCache::Find(*key, FindVisitor<FACTORY>, &context);
     }

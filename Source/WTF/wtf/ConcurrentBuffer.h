@@ -30,7 +30,10 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -66,9 +69,9 @@ public:
             return;
         Array* newArray = createArray(newSize);
         // This allows us to do ConcurrentBuffer<std::unique_ptr<>>.
-        // static_cast<void*> avoids triggering -Wclass-memaccess.
+        // asMutableByteSpan() avoids triggering -Wclass-memaccess.
         if (array)
-            memcpy(static_cast<void*>(newArray->data), array->data, sizeof(T) * array->size);
+            memcpySpan(asMutableByteSpan(newArray->span()), asByteSpan(array->span()));
         for (size_t i = array ? array->size : 0; i < newSize; ++i)
             new (newArray->data + i) T();
         WTF::storeStoreFence();
@@ -88,6 +91,9 @@ public:
     struct Array {
         size_t size; // This is an immutable size.
         T data[1];
+
+        std::span<T> span() { return unsafeMakeSpan(data, size); }
+        std::span<const T> span() const { return unsafeMakeSpan(data, size); }
     };
     
     Array* array() const { return m_array; }
@@ -112,3 +118,4 @@ private:
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

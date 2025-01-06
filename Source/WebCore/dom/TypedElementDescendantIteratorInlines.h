@@ -62,7 +62,7 @@ template<typename ElementType> ElementDescendantIterator<ElementType> ElementDes
     ASSERT(descendant.isDescendantOf(m_root));
     if (auto descendantElement = dynamicDowncast<ElementType>(descendant))
         return ElementDescendantIterator<ElementType>(m_root, descendantElement);
-    ElementType* next = Traversal<ElementType>::next(descendant, &m_root);
+    ElementType* next = Traversal<ElementType>::next(descendant, m_root.ptr());
     return ElementDescendantIterator<ElementType>(m_root, next);
 }
 
@@ -80,18 +80,18 @@ template<typename ElementType> ElementType* ElementDescendantRange<ElementType>:
 
 template<typename ElementType> ElementDescendantIterator<ElementType> InclusiveElementDescendantRange<ElementType>::begin() const
 {
-    return ElementDescendantIterator<ElementType>(m_root, Traversal<ElementType>::inclusiveFirstWithin(const_cast<ContainerNode&>(m_root)));
+    return ElementDescendantIterator<ElementType>(m_root, Traversal<ElementType>::inclusiveFirstWithin(const_cast<ContainerNode&>(m_root.get())));
 }
 
 template<typename ElementType> ElementDescendantIterator<ElementType> InclusiveElementDescendantRange<ElementType>::beginAt(ElementType& descendant) const
 {
-    ASSERT(&m_root == &descendant || descendant.isDescendantOf(m_root));
+    ASSERT(m_root.ptr() == &descendant || descendant.isDescendantOf(m_root));
     return ElementDescendantIterator<ElementType>(m_root, &descendant);
 }
 
 template<typename ElementType> ElementDescendantIterator<ElementType> InclusiveElementDescendantRange<ElementType>::from(Element& descendant) const
 {
-    ASSERT(&m_root == &descendant || descendant.isDescendantOf(m_root));
+    ASSERT(m_root.ptr() == &descendant || descendant.isDescendantOf(m_root));
     if (auto descendantElement = dynamicDowncast<ElementType>(descendant))
         return ElementDescendantIterator<ElementType>(m_root, descendantElement);
     ElementType* next = Traversal<ElementType>::next(descendant, &m_root);
@@ -154,7 +154,7 @@ template<typename ElementType, bool filter(const ElementType&)> auto FilteredEle
 
 template<typename ElementType, bool filter(const ElementType&)> ElementType* FilteredElementDescendantRange<ElementType, filter>::first() const
 {
-    for (auto* element = Traversal<ElementType>::firstWithin(m_root); element; element = Traversal<ElementType>::next(*element, &m_root)) {
+    for (auto* element = Traversal<ElementType>::firstWithin(m_root.get()); element; element = Traversal<ElementType>::next(*element, m_root.ptr())) {
         if (filter(*element))
             return element;
     }

@@ -28,12 +28,14 @@
 #if PLATFORM(MAC) && ENABLE(INPUT_TYPE_COLOR)
 
 #import "ButtonControlMac.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ColorWellPart;
 
 class ColorWellMac final : public ButtonControlMac {
+    WTF_MAKE_TZONE_ALLOCATED(ColorWellMac);
 public:
     ColorWellMac(ColorWellPart& owningPart, ControlFactoryMac&, NSButtonCell *);
 

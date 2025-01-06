@@ -14,6 +14,8 @@
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/call/transport.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "audio/voip/test/mock_task_queue.h"
@@ -44,8 +46,11 @@ class AudioChannelTest : public ::testing::Test {
   const SdpAudioFormat kPcmuFormat = {"pcmu", 8000, 1};
 
   AudioChannelTest()
-      : fake_clock_(kStartTime), wave_generator_(1000.0, kAudioLevel) {
-    task_queue_factory_ = std::make_unique<MockTaskQueueFactory>(&task_queue_);
+      : fake_clock_(kStartTime),
+        wave_generator_(1000.0, kAudioLevel),
+        env_(CreateEnvironment(
+            &fake_clock_,
+            std::make_unique<MockTaskQueueFactory>(&task_queue_))) {
     audio_mixer_ = AudioMixerImpl::Create();
     encoder_factory_ = CreateBuiltinAudioEncoderFactory();
     decoder_factory_ = CreateBuiltinAudioDecoderFactory();
@@ -68,11 +73,11 @@ class AudioChannelTest : public ::testing::Test {
     // simplify network routing logic.
     rtc::scoped_refptr<AudioChannel> audio_channel =
         rtc::make_ref_counted<AudioChannel>(
-            &transport_, ssrc, task_queue_factory_.get(), audio_mixer_.get(),
-            decoder_factory_);
-    audio_channel->SetEncoder(kPcmuPayload, kPcmuFormat,
-                              encoder_factory_->MakeAudioEncoder(
-                                  kPcmuPayload, kPcmuFormat, absl::nullopt));
+            env_, &transport_, ssrc, audio_mixer_.get(), decoder_factory_);
+    audio_channel->SetEncoder(
+        kPcmuPayload, kPcmuFormat,
+        encoder_factory_->Create(env_, kPcmuFormat,
+                                 {.payload_type = kPcmuPayload}));
     audio_channel->SetReceiveCodecs({{kPcmuPayload, kPcmuFormat}});
     audio_channel->StartSend();
     audio_channel->StartPlay();
@@ -93,7 +98,7 @@ class AudioChannelTest : public ::testing::Test {
   SineWaveGenerator wave_generator_;
   NiceMock<MockTransport> transport_;
   NiceMock<MockTaskQueue> task_queue_;
-  std::unique_ptr<TaskQueueFactory> task_queue_factory_;
+  const Environment env_;
   rtc::scoped_refptr<AudioMixer> audio_mixer_;
   rtc::scoped_refptr<AudioDecoderFactory> decoder_factory_;
   rtc::scoped_refptr<AudioEncoderFactory> encoder_factory_;
@@ -158,7 +163,7 @@ TEST_F(AudioChannelTest, TestIngressStatistics) {
   audio_mixer_->Mix(/*number_of_channels=*/1, &audio_frame);
   audio_mixer_->Mix(/*number_of_channels=*/1, &audio_frame);
 
-  absl::optional<IngressStatistics> ingress_stats =
+  std::optional<IngressStatistics> ingress_stats =
       audio_channel_->GetIngressStatistics();
   EXPECT_TRUE(ingress_stats);
   EXPECT_EQ(ingress_stats->neteq_stats.total_samples_received, 160ULL);
@@ -249,7 +254,7 @@ TEST_F(AudioChannelTest, TestChannelStatistics) {
   // in loop_rtcp above.
   audio_channel_->SendRTCPReportForTesting(kRtcpSr);
 
-  absl::optional<ChannelStatistics> channel_stats =
+  std::optional<ChannelStatistics> channel_stats =
       audio_channel_->GetChannelStatistics();
   EXPECT_TRUE(channel_stats);
 
@@ -331,7 +336,7 @@ TEST_F(AudioChannelTest, RttIsAvailableAfterChangeOfRemoteSsrc) {
   send_recv_rtcp(audio_channel_, ac_2);
   send_recv_rtcp(ac_2, audio_channel_);
 
-  absl::optional<ChannelStatistics> channel_stats =
+  std::optional<ChannelStatistics> channel_stats =
       audio_channel_->GetChannelStatistics();
   ASSERT_TRUE(channel_stats);
   EXPECT_EQ(channel_stats->remote_ssrc, kAc2Ssrc);

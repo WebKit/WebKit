@@ -52,7 +52,7 @@ enum {
     N_PROPERTIES,
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 struct _WebKitEditorStatePrivate {
     WebPageProxy* page;
@@ -64,7 +64,7 @@ struct _WebKitEditorStatePrivate {
     unsigned isRedoAvailable : 1;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitEditorState, webkit_editor_state, G_TYPE_OBJECT, GObject)
 
@@ -102,7 +102,7 @@ static void webkit_editor_state_class_init(WebKitEditorStateClass* editorStateCl
             0, G_MAXUINT, 0,
             WEBKIT_PARAM_READABLE);
 
-    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
 
     /**
      * WebKitEditorState::changed:

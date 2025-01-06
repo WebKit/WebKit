@@ -62,7 +62,7 @@ bool ShouldSkipConfig(EGLDisplay display, EGLConfig config, bool windowSurfaceTe
         return true;
 
     // Disable RGBA16F/RGB10_A2 on Android due to OSWindow on Android not providing compatible
-    // windows (http://anglebug.com/3156)
+    // windows (http://anglebug.com/42261830)
     if (IsAndroid())
     {
         if (IsRGB10_A2Config(display, config))
@@ -109,8 +109,7 @@ std::vector<EGLConfig> GetConfigs(EGLDisplay display)
 
 PlatformParameters FromRenderer(EGLint renderer)
 {
-    return WithNoFixture(
-        PlatformParameters(EGL_OPENGL_ES_API, 2, 0, 0, EGLPlatformParameters(renderer)));
+    return WithNoFixture(PlatformParameters(2, 0, EGLPlatformParameters(renderer)));
 }
 
 std::string EGLConfigName(EGLDisplay display, EGLConfig config)
@@ -472,8 +471,8 @@ class EGLContextCompatibilityTest_PbufferDifferentConfig : public EGLContextComp
 
 void RegisterContextCompatibilityTests()
 {
-    // Linux failures: http://anglebug.com/4990
-    // Also wrong drivers loaded under xvfb due to egl* calls: https://anglebug.com/8083
+    // Linux failures: http://anglebug.com/42263563
+    // Also wrong drivers loaded under xvfb due to egl* calls: https://anglebug.com/42266535
     if (IsLinux())
     {
         std::cerr << "EGLContextCompatibilityTest: skipped on Linux\n";
@@ -483,6 +482,7 @@ void RegisterContextCompatibilityTests()
     std::vector<EGLint> renderers = {{
         EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE,
         EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
+        EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE,
         EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE,
         EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE,
         EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE,

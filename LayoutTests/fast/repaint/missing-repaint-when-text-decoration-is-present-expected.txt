@@ -1,0 +1,11 @@
+XXX
+(repaint rects
+  (rect 0 0 316 36)
+  (rect 0 0 8 36)
+  (rect 308 0 8 36)
+  (rect 0 0 316 8)
+  (rect 0 28 316 8)
+  (rect 0 0 8 592)
+  (rect 0 0 792 8)
+)
+

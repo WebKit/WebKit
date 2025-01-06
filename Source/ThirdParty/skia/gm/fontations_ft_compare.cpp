@@ -11,9 +11,11 @@
 #include "include/core/SkColorPriv.h"
 #include "include/core/SkData.h"
 #include "include/core/SkFont.h"
+#include "include/core/SkFontTypes.h"
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkStream.h"
 #include "include/core/SkString.h"
+#include "include/core/SkSurface.h"
 #include "include/core/SkTypeface.h"
 #include "include/ports/SkTypeface_fontations.h"
 #include "modules/skshaper/include/SkShaper.h"
@@ -26,7 +28,7 @@ namespace skiagm {
 namespace {
 
 constexpr int kGmWidth = 1000;
-constexpr int kMargin = 15;
+constexpr int kMargin = 30;
 constexpr float kFontSize = 24;
 constexpr float kLangYIncrementScale = 1.9;
 
@@ -34,21 +36,22 @@ constexpr float kLangYIncrementScale = 1.9;
  * Fontations + Skia path rendering, compute individual pixel differences for the rectangles that
  * must match in size. Produce a highlighted difference bitmap, in which any pixel becomes white for
  * which a difference was determined. */
-void comparePixels(const SkBitmap& bitmapA,
-                   const SkBitmap& bitmapB,
+void comparePixels(const SkPixmap& pixmapA,
+                   const SkPixmap& pixmapB,
                    SkBitmap* outPixelDiffBitmap,
                    SkBitmap* outHighlightDiffBitmap) {
-    SkASSERT(bitmapA.colorType() == bitmapB.colorType() &&
-             bitmapA.colorType() == outPixelDiffBitmap->colorType() &&
-             bitmapA.dimensions() == bitmapB.dimensions() &&
-             bitmapA.dimensions() == outPixelDiffBitmap->dimensions());
+    if (pixmapA.dimensions() != pixmapB.dimensions()) {
+        return;
+    }
+    if (pixmapA.dimensions() != outPixelDiffBitmap->dimensions()) {
+        return;
+    }
 
-    SkASSERT(bitmapA.bytesPerPixel() == 4);
-    SkISize dimensions = bitmapA.dimensions();
+    SkISize dimensions = pixmapA.dimensions();
     for (int32_t x = 0; x < dimensions.fWidth; x++) {
         for (int32_t y = 0; y < dimensions.fHeight; y++) {
-            SkPMColor c0 = *bitmapA.getAddr32(x, y);
-            SkPMColor c1 = *bitmapB.getAddr32(x, y);
+            SkColor c0 = pixmapA.getColor(x, y);
+            SkColor c1 = pixmapB.getColor(x, y);
             int dr = SkGetPackedR32(c0) - SkGetPackedR32(c1);
             int dg = SkGetPackedG32(c0) - SkGetPackedG32(c1);
             int db = SkGetPackedB32(c0) - SkGetPackedB32(c1);
@@ -71,15 +74,36 @@ class FontationsFtCompareGM : public GM {
 public:
     FontationsFtCompareGM(std::string testName,
                           std::string fontNameFilterRegexp,
-                          std::string langFilterRegexp)
+                          std::string langFilterRegexp,
+                          SkFontHinting hintingMode = SkFontHinting::kNone)
             : fTestDataIterator(fontNameFilterRegexp, langFilterRegexp)
-            , fTestName(testName.c_str()) {
+            , fTestName(testName.c_str())
+            , fHintingMode(hintingMode) {
         this->setBGColor(SK_ColorWHITE);
     }
 
 protected:
     SkString getName() const override {
-        return SkStringPrintf("fontations_compare_ft_%s", fTestName.c_str());
+        SkString testName = SkStringPrintf("fontations_compare_ft_%s", fTestName.c_str());
+        switch (fHintingMode) {
+            case SkFontHinting::kNormal: {
+                testName.append("_hint_normal");
+                break;
+            }
+            case SkFontHinting::kSlight: {
+                testName.append("_hint_slight");
+                break;
+            }
+            case SkFontHinting::kFull: {
+                testName.append("_hint_full");
+                break;
+            }
+            case SkFontHinting::kNone: {
+                testName.append("_hint_none");
+                break;
+            }
+        }
+        return testName;
     }
 
     SkISize getISize() override {
@@ -109,11 +133,11 @@ protected:
                 return DrawResult::kSkip;
             }
 
-            auto configureFont = [](SkFont& font) {
+            auto configureFont = [this](SkFont& font) {
                 font.setSize(kFontSize);
                 font.setEdging(SkFont::Edging::kSubpixelAntiAlias);
                 font.setSubpixel(true);
-                font.setHinting(SkFontHinting::kNone);
+                font.setHinting(fHintingMode);
             };
 
             SkFont font(testTypeface);
@@ -189,53 +213,46 @@ protected:
                              * compare them using pixel comparisons similar to SkDiff, draw a
                              * comparison as faint pixel differences, and as an amplified
                              * visualization in which each differing pixel is drawn as white. */
-                            SkPoint copyBoxFontationsCoord = fontationsCoord();
-                            SkPoint copyBoxFreetypeCoord = freetypeCoord();
-                            SkRect copyBoxFontations(maxBounds);
-                            copyBoxFontations.roundOut(&copyBoxFontations);
-                            SkRect copyBoxFreetype(copyBoxFontations);
-                            copyBoxFontations.offset(copyBoxFontationsCoord.x(),
-                                                     copyBoxFontationsCoord.y());
-                            copyBoxFreetype.offset(copyBoxFreetypeCoord.x(),
-                                                   copyBoxFreetypeCoord.y());
+                            SkPoint fontationsOrigin = fontationsCoord();
+                            SkPoint freetypeOrigin = freetypeCoord();
+                            SkRect fontationsBBox(maxBounds.makeOffset(fontationsOrigin));
+                            SkRect freetypeBBox(maxBounds.makeOffset(freetypeOrigin));
 
                             SkMatrix ctm = canvas->getLocalToDeviceAs3x3();
-                            ctm.mapRect(&copyBoxFontations, copyBoxFontations);
-                            ctm.mapRect(&copyBoxFreetype, copyBoxFreetype);
+                            ctm.mapRect(&fontationsBBox, fontationsBBox);
+                            ctm.mapRect(&freetypeBBox, freetypeBBox);
 
-                            SkISize pixelDimensions(copyBoxFontations.roundOut().size());
+                            SkIRect fontationsIBox(fontationsBBox.roundOut());
+                            SkIRect freetypeIBox(freetypeBBox.roundOut());
+
+                            SkISize pixelDimensions(fontationsIBox.size());
                             SkImageInfo canvasImageInfo = canvas->imageInfo();
-                            SkImageInfo copyImageInfo =
+                            SkImageInfo diffImageInfo =
                                     SkImageInfo::Make(pixelDimensions,
-                                                      canvasImageInfo.colorType(),
-                                                      canvasImageInfo.alphaType());
+                                                      SkColorType::kN32_SkColorType,
+                                                      SkAlphaType::kUnpremul_SkAlphaType);
 
-                            SkBitmap fontationsBitmap, freetypeBitmap, diffBitmap,
-                                    highlightDiffBitmap;
-                            fontationsBitmap.allocPixels(copyImageInfo, 0);
-                            freetypeBitmap.allocPixels(copyImageInfo, 0);
-                            diffBitmap.allocPixels(copyImageInfo, 0);
-                            highlightDiffBitmap.allocPixels(copyImageInfo, 0);
+                            SkBitmap diffBitmap, highlightDiffBitmap;
+                            diffBitmap.allocPixels(diffImageInfo, 0);
+                            highlightDiffBitmap.allocPixels(diffImageInfo, 0);
 
-                            // comparePixels only handles 4 bpp
-                            if (fontationsBitmap.bytesPerPixel() != 4 ||
-                                freetypeBitmap.bytesPerPixel() != 4)
-                            {
+                            // Workaround OveridePaintFilterCanvas limitations
+                            // by getting pixel access through peekPixels()
+                            // instead of readPixels(). Then use same pixmap to
+                            // later write back the comparison results.
+                            SkPixmap canvasPixmap;
+                            if (!canvas->peekPixels(&canvasPixmap)) {
                                 break;
                             }
 
-                            const bool fontationsRead = canvas->readPixels(
-                                    fontationsBitmap, copyBoxFontations.x(), copyBoxFontations.y());
-                            const bool freetypeRead = canvas->readPixels(
-                                    freetypeBitmap, copyBoxFreetype.x(), copyBoxFreetype.y());
-
-                            // readPixels may fail
-                            if (!fontationsRead || !freetypeRead) {
+                            SkPixmap fontationsPixmap, freetypePixmap;
+                            if (!canvasPixmap.extractSubset(&fontationsPixmap, fontationsIBox) ||
+                                !canvasPixmap.extractSubset(&freetypePixmap, freetypeIBox)) {
                                 break;
                             }
 
-                            comparePixels(fontationsBitmap,
-                                          freetypeBitmap,
+                            comparePixels(fontationsPixmap,
+                                          freetypePixmap,
                                           &diffBitmap,
                                           &highlightDiffBitmap);
 
@@ -246,9 +263,13 @@ protected:
                             SkPoint whiteCoord = ctm.mapPoint(SkPoint::Make(
                                     4 * kMargin + maxBounds.width() * 3, yCoord + maxBounds.top()));
 
-                            canvas->writePixels(
+                            SkSurfaceProps canvasSurfaceProps = canvas->getBaseProps();
+                            sk_sp<SkSurface> writeBackSurface =
+                                    SkSurfaces::WrapPixels(canvasPixmap, &canvasSurfaceProps);
+
+                            writeBackSurface->writePixels(
                                     diffBitmap, comparisonCoord.x(), comparisonCoord.y());
-                            canvas->writePixels(
+                            writeBackSurface->writePixels(
                                     highlightDiffBitmap, whiteCoord.x(), whiteCoord.y());
                             break;
                         }
@@ -267,6 +288,7 @@ private:
 
     TestFontDataProvider fTestDataIterator;
     SkString fTestName;
+    SkFontHinting fHintingMode;
     sk_sp<SkTypeface> fReportTypeface;
     std::unique_ptr<SkFontArguments::VariationPosition::Coordinate[]> fCoordinates;
 };
@@ -281,13 +303,51 @@ DEF_GM(return new FontationsFtCompareGM(
         "et_Latn|az_Latn|az_Cyrl|la_Latn|tg_Latn|tg_Cyrl|sw_Latn|mn_Cyrl|kk_"
         "Latn|kk_Cyrl|sq_Latn|af_Latn|ha_Latn|ky_Cyrl"));
 
+DEF_GM(return new FontationsFtCompareGM(
+        "NotoSans",
+        "Noto Sans",
+        "en_Latn|es_Latn|pt_Latn|id_Latn|ru_Cyrl|fr_Latn|tr_Latn|vi_Latn|de_"
+        "Latn|it_Latn|pl_Latn|nl_Latn|uk_Cyrl|gl_Latn|ro_Latn|cs_Latn|hu_Latn|"
+        "el_Grek|se_Latn|da_Latn|bg_Latn|sk_Latn|fi_Latn|bs_Latn|ca_Latn|no_"
+        "Latn|sr_Latn|sr_Cyrl|lt_Latn|hr_Latn|sl_Latn|uz_Latn|uz_Cyrl|lv_Latn|"
+        "et_Latn|az_Latn|az_Cyrl|la_Latn|tg_Latn|tg_Cyrl|sw_Latn|mn_Cyrl|kk_"
+        "Latn|kk_Cyrl|sq_Latn|af_Latn|ha_Latn|ky_Cyrl",
+        SkFontHinting::kSlight));
+
+DEF_GM(return new FontationsFtCompareGM(
+        "NotoSans",
+        "Noto Sans",
+        "en_Latn|es_Latn|pt_Latn|id_Latn|ru_Cyrl|fr_Latn|tr_Latn|vi_Latn|de_"
+        "Latn|it_Latn|pl_Latn|nl_Latn|uk_Cyrl|gl_Latn|ro_Latn|cs_Latn|hu_Latn|"
+        "el_Grek|se_Latn|da_Latn|bg_Latn|sk_Latn|fi_Latn|bs_Latn|ca_Latn|no_"
+        "Latn|sr_Latn|sr_Cyrl|lt_Latn|hr_Latn|sl_Latn|uz_Latn|uz_Cyrl|lv_Latn|"
+        "et_Latn|az_Latn|az_Cyrl|la_Latn|tg_Latn|tg_Cyrl|sw_Latn|mn_Cyrl|kk_"
+        "Latn|kk_Cyrl|sq_Latn|af_Latn|ha_Latn|ky_Cyrl",
+        SkFontHinting::kNormal));
+
 DEF_GM(return new FontationsFtCompareGM("NotoSans_Deva",
                                         "Noto Sans Devanagari",
                                         "hi_Deva|mr_Deva"));
 
+DEF_GM(return new FontationsFtCompareGM(
+        "NotoSans_Deva", "Noto Sans Devanagari", "hi_Deva|mr_Deva", SkFontHinting::kSlight));
+
+DEF_GM(return new FontationsFtCompareGM(
+        "NotoSans_Deva", "Noto Sans Devanagari", "hi_Deva|mr_Deva", SkFontHinting::kNormal));
+
 DEF_GM(return new FontationsFtCompareGM("NotoSans_ar_Arab",
                                         "Noto Sans Arabic",
                                         "ar_Arab|uz_Arab|kk_Arab|ky_Arab"));
+
+DEF_GM(return new FontationsFtCompareGM("NotoSans_ar_Arab",
+                                        "Noto Sans Arabic",
+                                        "ar_Arab|uz_Arab|kk_Arab|ky_Arab",
+                                        SkFontHinting::kSlight));
+
+DEF_GM(return new FontationsFtCompareGM("NotoSans_ar_Arab",
+                                        "Noto Sans Arabic",
+                                        "ar_Arab|uz_Arab|kk_Arab|ky_Arab",
+                                        SkFontHinting::kNormal));
 
 DEF_GM(return new FontationsFtCompareGM("NotoSans_Beng", "Noto Sans Bengali", "bn_Beng"));
 

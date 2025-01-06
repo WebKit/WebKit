@@ -13,11 +13,11 @@
 
 #include <stddef.h>
 
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 
 namespace webrtc {
 
@@ -26,12 +26,12 @@ namespace webrtc {
 // in a way that would allow us to separate them again on the decoding side.
 // EncodeOptionalBlobs() may not fail but may return an empty string
 std::string EncodeOptionalBlobs(
-    const std::vector<absl::optional<std::string>>& blobs);
+    const std::vector<std::optional<std::string>>& blobs);
 
 // Calling DecodeOptionalBlobs() on an empty string, or with `num_of_blobs` set
 // to 0, is an error. DecodeOptionalBlobs() returns an empty vector if it fails,
 // which can happen if `encoded_blobs` is corrupted.
-std::vector<absl::optional<std::string>> DecodeOptionalBlobs(
+std::vector<std::optional<std::string>> DecodeOptionalBlobs(
     absl::string_view encoded_blobs,
     size_t num_of_blobs);
 

@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 #include "./vpx_config.h"
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
 #include "test/i420_video_source.h"
@@ -81,8 +81,8 @@ class DatarateOnePassCbrSvc : public OnePassCbrSvc {
     num_resize_down_ = 0;
     num_resize_up_ = 0;
     for (int i = 0; i < VPX_MAX_LAYERS; i++) {
-      prev_frame_width[i] = 320;
-      prev_frame_height[i] = 240;
+      prev_frame_width_[i] = 320;
+      prev_frame_height_[i] = 240;
     }
     ksvc_flex_noupd_tlenh_ = false;
   }
@@ -547,7 +547,7 @@ class DatarateOnePassCbrSvc : public OnePassCbrSvc {
         }
       }
 
-      if (!single_layer_resize_) {
+      if (!single_layer_resize_ && sl < number_spatial_layers_ - 1) {
         unsigned int scaled_width = top_sl_width_ *
                                     svc_params_.scaling_factor_num[sl] /
                                     svc_params_.scaling_factor_den[sl];
@@ -559,15 +559,15 @@ class DatarateOnePassCbrSvc : public OnePassCbrSvc {
         if (scaled_height % 2 != 0) scaled_height += 1;
         ASSERT_EQ(pkt->data.frame.height[sl], scaled_height);
       } else if (superframe_count_ > 0) {
-        if (pkt->data.frame.width[sl] < prev_frame_width[sl] &&
-            pkt->data.frame.height[sl] < prev_frame_height[sl])
+        if (pkt->data.frame.width[sl] < prev_frame_width_[sl] &&
+            pkt->data.frame.height[sl] < prev_frame_height_[sl])
           num_resize_down_ += 1;
-        if (pkt->data.frame.width[sl] > prev_frame_width[sl] &&
-            pkt->data.frame.height[sl] > prev_frame_height[sl])
+        if (pkt->data.frame.width[sl] > prev_frame_width_[sl] &&
+            pkt->data.frame.height[sl] > prev_frame_height_[sl])
           num_resize_up_ += 1;
       }
-      prev_frame_width[sl] = pkt->data.frame.width[sl];
-      prev_frame_height[sl] = pkt->data.frame.height[sl];
+      prev_frame_width_[sl] = pkt->data.frame.width[sl];
+      prev_frame_height_[sl] = pkt->data.frame.height[sl];
     }
   }
 
@@ -634,8 +634,8 @@ class DatarateOnePassCbrSvc : public OnePassCbrSvc {
   bool denoiser_enable_layers_;
   int num_resize_up_;
   int num_resize_down_;
-  unsigned int prev_frame_width[VPX_MAX_LAYERS];
-  unsigned int prev_frame_height[VPX_MAX_LAYERS];
+  unsigned int prev_frame_width_[VPX_MAX_LAYERS];
+  unsigned int prev_frame_height_[VPX_MAX_LAYERS];
   bool ksvc_flex_noupd_tlenh_;
 
  private:
@@ -1300,6 +1300,71 @@ TEST_P(DatarateOnePassCbrSvcFrameDropMultiBR, OnePassCbrSvc3SL3TL4Threads) {
   ::libvpx_test::Y4mVideoSource video("niklas_1280_720_30.y4m", 0, 60);
   top_sl_width_ = 1280;
   top_sl_height_ = 720;
+  layer_framedrop_ = 0;
+  const int bitrates[3] = { 200, 400, 600 };
+  cfg_.rc_target_bitrate = bitrates[GET_PARAM(3)];
+  ResetModel();
+  layer_framedrop_ = GET_PARAM(2);
+  AssignLayerBitrates();
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+  CheckLayerRateTargeting(number_spatial_layers_, number_temporal_layers_, 0.58,
+                          1.2);
+#if CONFIG_VP9_DECODER
+  // The non-reference frames are expected to be mismatched frames as the
+  // encoder will avoid loopfilter on these frames.
+  EXPECT_EQ(GetNonRefFrames(), GetMismatchFrames());
+#endif
+}
+
+// Check basic rate targeting for 1 pass CBR SVC: 3 spatial layers and
+// 3 temporal layers. Run HD clip with 4 threads, for 1284x770, which
+// likely is the issue for Bug: 366146260.
+TEST_P(DatarateOnePassCbrSvcFrameDropMultiBR,
+       OnePassCbrSvc3SL3TL4Threads1284x770) {
+  SetSvcConfig(3, 3);
+  cfg_.rc_buf_initial_sz = 500;
+  cfg_.rc_buf_optimal_sz = 500;
+  cfg_.rc_buf_sz = 1000;
+  cfg_.rc_min_quantizer = 0;
+  cfg_.rc_max_quantizer = 63;
+  cfg_.g_threads = 4;
+  cfg_.rc_dropframe_thresh = 30;
+  cfg_.kf_max_dist = 9999;
+  ::libvpx_test::Y4mVideoSource video("niklas_1284_770_30.y4m", 0, 60);
+  top_sl_width_ = 1284;
+  top_sl_height_ = 770;
+  layer_framedrop_ = 0;
+  const int bitrates[3] = { 200, 400, 600 };
+  cfg_.rc_target_bitrate = bitrates[GET_PARAM(3)];
+  ResetModel();
+  layer_framedrop_ = GET_PARAM(2);
+  AssignLayerBitrates();
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+  CheckLayerRateTargeting(number_spatial_layers_, number_temporal_layers_, 0.58,
+                          1.2);
+#if CONFIG_VP9_DECODER
+  // The non-reference frames are expected to be mismatched frames as the
+  // encoder will avoid loopfilter on these frames.
+  EXPECT_EQ(GetNonRefFrames(), GetMismatchFrames());
+#endif
+}
+
+// Check basic rate targeting for 1 pass CBR SVC: 3 spatial layers and
+// 3 temporal layers. Run HD clip with 4 threads, for 1857x167.
+TEST_P(DatarateOnePassCbrSvcFrameDropMultiBR,
+       OnePassCbrSvc3SL3TL4Threads1857x167) {
+  SetSvcConfig(3, 3);
+  cfg_.rc_buf_initial_sz = 500;
+  cfg_.rc_buf_optimal_sz = 500;
+  cfg_.rc_buf_sz = 1000;
+  cfg_.rc_min_quantizer = 0;
+  cfg_.rc_max_quantizer = 63;
+  cfg_.g_threads = 1;
+  cfg_.rc_dropframe_thresh = 30;
+  cfg_.kf_max_dist = 9999;
+  ::libvpx_test::Y4mVideoSource video("niklas_1857_167_30.y4m", 0, 60);
+  top_sl_width_ = 1857;
+  top_sl_height_ = 167;
   layer_framedrop_ = 0;
   const int bitrates[3] = { 200, 400, 600 };
   cfg_.rc_target_bitrate = bitrates[GET_PARAM(3)];

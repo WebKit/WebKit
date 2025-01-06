@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
 
 namespace webrtc {
 
@@ -21,7 +21,7 @@ class SmoothingFilter {
  public:
   virtual ~SmoothingFilter() = default;
   virtual void AddSample(float sample) = 0;
-  virtual absl::optional<float> GetAverage() = 0;
+  virtual std::optional<float> GetAverage() = 0;
   virtual bool SetTimeConstantMs(int time_constant_ms) = 0;
 };
 
@@ -49,7 +49,7 @@ class SmoothingFilterImpl final : public SmoothingFilter {
   ~SmoothingFilterImpl() override;
 
   void AddSample(float sample) override;
-  absl::optional<float> GetAverage() override;
+  std::optional<float> GetAverage() override;
   bool SetTimeConstantMs(int time_constant_ms) override;
 
   // Methods used for unittests.
@@ -63,7 +63,7 @@ class SmoothingFilterImpl final : public SmoothingFilter {
   const float init_factor_;
   const float init_const_;
 
-  absl::optional<int64_t> init_end_time_ms_;
+  std::optional<int64_t> init_end_time_ms_;
   float last_sample_;
   float alpha_;
   float state_;

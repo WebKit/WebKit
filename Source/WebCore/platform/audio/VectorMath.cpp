@@ -44,6 +44,7 @@
 
 #include <algorithm>
 #include <math.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -52,106 +53,148 @@ namespace VectorMath {
 #if USE(ACCELERATE)
 // On the Mac we use the highly optimized versions in Accelerate.framework
 
-void multiplyByScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess)
+void multiplyByScalar(std::span<const float> inputVector, float scalar, std::span<float> outputVector)
 {
-    vDSP_vsmul(inputVector, 1, &scalar, outputVector, 1, numberOfElementsToProcess);
+    RELEASE_ASSERT(outputVector.size() >= inputVector.size());
+    vDSP_vsmul(inputVector.data(), 1, &scalar, outputVector.data(), 1, inputVector.size());
 }
 
-void add(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
+void substract(std::span<const float> inputVector1, std::span<const float> inputVector2, std::span<float> outputVector)
 {
-    vDSP_vadd(inputVector1, 1, inputVector2, 1, outputVector, 1, numberOfElementsToProcess);
+    RELEASE_ASSERT(inputVector1.size() == inputVector2.size());
+    RELEASE_ASSERT(outputVector.size() >= inputVector1.size());
+    vDSP_vsub(inputVector1.data(), 1, inputVector2.data(), 1, outputVector.data(), 1, inputVector1.size());
 }
 
-void substract(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
+void addScalar(std::span<const float> inputVector, float scalar, std::span<float> outputVector)
 {
-    vDSP_vsub(inputVector1, 1, inputVector2, 1, outputVector, 1, numberOfElementsToProcess);
+    RELEASE_ASSERT(outputVector.size() >= inputVector.size());
+    vDSP_vsadd(inputVector.data(), 1, &scalar, outputVector.data(), 1, inputVector.size());
 }
 
-void addScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess)
+void multiply(std::span<const float> inputVector1, std::span<const float> inputVector2, std::span<float> outputVector)
 {
-    vDSP_vsadd(inputVector, 1, &scalar, outputVector, 1, numberOfElementsToProcess);
+    RELEASE_ASSERT(inputVector1.size() == inputVector2.size());
+    RELEASE_ASSERT(outputVector.size() >= inputVector1.size());
+    vDSP_vmul(inputVector1.data(), 1, inputVector2.data(), 1, outputVector.data(), 1, inputVector1.size());
 }
 
-void multiply(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
+void interpolate(std::span<const float> inputVector1, std::span<float> inputVector2, float interpolationFactor, std::span<float> outputVector)
 {
-    vDSP_vmul(inputVector1, 1, inputVector2, 1, outputVector, 1, numberOfElementsToProcess);
+    RELEASE_ASSERT(inputVector1.size() == inputVector2.size());
+    RELEASE_ASSERT(outputVector.size() >= inputVector1.size());
+    vDSP_vintb(inputVector1.data(), 1, inputVector2.data(), 1, &interpolationFactor, outputVector.data(), 1, inputVector1.size());
 }
 
-void interpolate(const float* inputVector1, float* inputVector2, float interpolationFactor, float* outputVector, size_t numberOfElementsToProcess)
+void multiplyComplex(std::span<const float> realVector1, std::span<const float> imagVector1, std::span<const float> realVector2, std::span<const float> imagVector2, std::span<float> realOutputVector, std::span<float> imagOutputVector)
 {
-    vDSP_vintb(inputVector1, 1, inputVector2, 1, &interpolationFactor, outputVector, 1, numberOfElementsToProcess);
-}
+    RELEASE_ASSERT(realVector1.size() == imagVector1.size());
+    RELEASE_ASSERT(realVector1.size() == realVector2.size());
+    RELEASE_ASSERT(imagVector1.size() == imagVector1.size());
+    RELEASE_ASSERT(realOutputVector.size() >= realVector1.size());
+    RELEASE_ASSERT(imagOutputVector.size() >= imagVector1.size());
 
-void multiplyComplex(const float* realVector1, const float* imagVector1, const float* realVector2, const float* imag2P, float* realOutputVector, float* imagDestP, size_t numberOfElementsToProcess)
-{
     DSPSplitComplex sc1;
     DSPSplitComplex sc2;
     DSPSplitComplex dest;
-    sc1.realp = const_cast<float*>(realVector1);
-    sc1.imagp = const_cast<float*>(imagVector1);
-    sc2.realp = const_cast<float*>(realVector2);
-    sc2.imagp = const_cast<float*>(imag2P);
-    dest.realp = realOutputVector;
-    dest.imagp = imagDestP;
-    vDSP_zvmul(&sc1, 1, &sc2, 1, &dest, 1, numberOfElementsToProcess, 1);
+    sc1.realp = const_cast<float*>(realVector1.data());
+    sc1.imagp = const_cast<float*>(imagVector1.data());
+    sc2.realp = const_cast<float*>(realVector2.data());
+    sc2.imagp = const_cast<float*>(imagVector2.data());
+    dest.realp = realOutputVector.data();
+    dest.imagp = imagOutputVector.data();
+    vDSP_zvmul(&sc1, 1, &sc2, 1, &dest, 1, realVector1.size(), 1);
 }
 
-void multiplyByScalarThenAddToOutput(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess)
+void multiplyByScalarThenAddToOutput(std::span<const float> inputVector, float scalar, std::span<float> outputVector)
 {
-    vDSP_vsma(inputVector, 1, &scalar, outputVector, 1, outputVector, 1, numberOfElementsToProcess);
+    RELEASE_ASSERT(outputVector.size() >= inputVector.size());
+    vDSP_vsma(inputVector.data(), 1, &scalar, outputVector.data(), 1, outputVector.data(), 1, inputVector.size());
 }
 
-void multiplyByScalarThenAddToVector(const float* inputVector1, float scalar, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
+void multiplyByScalarThenAddToVector(std::span<const float> inputVector1, float scalar, std::span<const float> inputVector2, std::span<float> outputVector)
 {
-    vDSP_vsma(inputVector1, 1, &scalar, inputVector2, 1, outputVector, 1, numberOfElementsToProcess);
+    RELEASE_ASSERT(inputVector1.size() == inputVector2.size());
+    RELEASE_ASSERT(outputVector.size() >= inputVector1.size());
+    vDSP_vsma(inputVector1.data(), 1, &scalar, inputVector2.data(), 1, outputVector.data(), 1, inputVector1.size());
 }
 
-void addVectorsThenMultiplyByScalar(const float* inputVector1, const float* inputVector2, float scalar, float* outputVector, size_t numberOfElementsToProcess)
+void addVectorsThenMultiplyByScalar(std::span<const float> inputVector1, std::span<const float> inputVector2, float scalar, std::span<float> outputVector)
 {
-    vDSP_vasm(inputVector1, 1, inputVector2, 1, &scalar, outputVector, 1, numberOfElementsToProcess);
+    RELEASE_ASSERT(inputVector1.size() == inputVector2.size());
+    RELEASE_ASSERT(outputVector.size() >= inputVector1.size());
+    vDSP_vasm(inputVector1.data(), 1, inputVector2.data(), 1, &scalar, outputVector.data(), 1, inputVector1.size());
 }
 
-float maximumMagnitude(const float* inputVector, size_t numberOfElementsToProcess)
+float maximumMagnitude(std::span<const float> inputVector)
 {
     float maximumValue = 0;
-    vDSP_maxmgv(inputVector, 1, &maximumValue, numberOfElementsToProcess);
+    vDSP_maxmgv(inputVector.data(), 1, &maximumValue, inputVector.size());
     return maximumValue;
 }
 
-float sumOfSquares(const float* inputVector, size_t numberOfElementsToProcess)
+float sumOfSquares(std::span<const float> inputVector)
 {
     float sum = 0;
-    vDSP_svesq(const_cast<float*>(inputVector), 1, &sum, numberOfElementsToProcess);
+    vDSP_svesq(const_cast<float*>(inputVector.data()), 1, &sum, inputVector.size());
     return sum;
 }
 
-void clamp(const float* inputVector, float minimum, float maximum, float* outputVector, size_t numberOfElementsToProcess)
+void clamp(std::span<const float> inputVector, float minimum, float maximum, std::span<float> outputVector)
 {
-    vDSP_vclip(const_cast<float*>(inputVector), 1, &minimum, &maximum, outputVector, 1, numberOfElementsToProcess);
+    RELEASE_ASSERT(outputVector.size() >= inputVector.size());
+    vDSP_vclip(const_cast<float*>(inputVector.data()), 1, &minimum, &maximum, outputVector.data(), 1, inputVector.size());
 }
 
-void linearToDecibels(const float* inputVector, float* outputVector, size_t numberOfElementsToProcess)
+void linearToDecibels(std::span<const float> inputVector, std::span<float> outputVector)
 {
+    RELEASE_ASSERT(outputVector.size() >= inputVector.size());
     float reference = 1;
-    vDSP_vdbcon(inputVector, 1, &reference, outputVector, 1, numberOfElementsToProcess, 1);
+    vDSP_vdbcon(inputVector.data(), 1, &reference, outputVector.data(), 1, inputVector.size(), 1);
+}
+
+void add(std::span<const int> inputVector1, std::span<const int> inputVector2, std::span<int> outputVector)
+{
+    RELEASE_ASSERT(inputVector1.size() == inputVector2.size());
+    RELEASE_ASSERT(outputVector.size() >= inputVector1.size());
+    vDSP_vaddi(inputVector1.data(), 1, inputVector2.data(), 1, outputVector.data(), 1, inputVector1.size());
+}
+
+void add(std::span<const float> inputVector1, std::span<const float> inputVector2, std::span<float> outputVector)
+{
+    RELEASE_ASSERT(inputVector1.size() == inputVector2.size());
+    RELEASE_ASSERT(outputVector.size() >= inputVector1.size());
+    vDSP_vadd(inputVector1.data(), 1, inputVector2.data(), 1, outputVector.data(), 1, inputVector1.size());
+}
+
+void add(std::span<const double> inputVector1, std::span<const double> inputVector2, std::span<double> outputVector)
+{
+    RELEASE_ASSERT(inputVector1.size() == inputVector2.size());
+    RELEASE_ASSERT(outputVector.size() >= inputVector1.size());
+    vDSP_vaddD(inputVector1.data(), 1, inputVector2.data(), 1, outputVector.data(), 1, inputVector1.size());
 }
 
 #else
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
 
 static inline bool is16ByteAligned(const float* vector)
 {
     return !(reinterpret_cast<uintptr_t>(vector) & 0x0F);
 }
 
-void multiplyByScalarThenAddToVector(const float* inputVector1, float scalar, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
+void multiplyByScalarThenAddToVector(std::span<const float> inputVector1, float scalar, std::span<const float> inputVector2, std::span<float> outputVector)
 {
-    multiplyByScalar(inputVector1, scalar, outputVector, numberOfElementsToProcess);
-    add(outputVector, inputVector2, outputVector, numberOfElementsToProcess);
+    multiplyByScalar(inputVector1, scalar, outputVector);
+    add(outputVector, inputVector2, outputVector);
 }
 
-void multiplyByScalarThenAddToOutput(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess)
+void multiplyByScalarThenAddToOutput(std::span<const float> inputSpan, float scalar, std::span<float> outputSpan)
 {
-    size_t n = numberOfElementsToProcess;
+    RELEASE_ASSERT(outputSpan.size() >= inputSpan.size());
+    auto* inputVector = inputSpan.data();
+    auto* outputVector = outputSpan.data();
+    size_t n = inputSpan.size();
 
 #if CPU(X86_SSE2)
     // If the inputVector address is not 16-byte aligned, the first several frames (at most three) should be processed separately.
@@ -215,9 +258,12 @@ void multiplyByScalarThenAddToOutput(const float* inputVector, float scalar, flo
     }
 }
 
-void multiplyByScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess)
+void multiplyByScalar(std::span<const float> inputSpan, float scalar, std::span<float> outputSpan)
 {
-    size_t n = numberOfElementsToProcess;
+    RELEASE_ASSERT(outputSpan.size() >= inputSpan.size());
+    auto* inputVector = inputSpan.data();
+    auto* outputVector = outputSpan.data();
+    size_t n = inputSpan.size();
 
 #if CPU(X86_SSE2)
     // If the inputVector address is not 16-byte aligned, the first several frames (at most three) should be processed separately.
@@ -278,9 +324,12 @@ void multiplyByScalar(const float* inputVector, float scalar, float* outputVecto
     }
 }
 
-void addScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess)
+void addScalar(std::span<const float> inputSpan, float scalar, std::span<float> outputSpan)
 {
-    size_t n = numberOfElementsToProcess;
+    RELEASE_ASSERT(outputSpan.size() >= inputSpan.size());
+    auto* inputVector = inputSpan.data();
+    auto* outputVector = outputSpan.data();
+    size_t n = inputSpan.size();
 
 #if CPU(X86_SSE2)
     // If the inputVector address is not 16-byte aligned, the first several frames (at most three) should be processed separately.
@@ -342,9 +391,14 @@ void addScalar(const float* inputVector, float scalar, float* outputVector, size
     }
 }
 
-void add(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
+void add(std::span<const float> inputSpan1, std::span<const float> inputSpan2, std::span<float> outputSpan)
 {
-    size_t n = numberOfElementsToProcess;
+    RELEASE_ASSERT(inputSpan1.size() == inputSpan2.size());
+    RELEASE_ASSERT(outputSpan.size() >= inputSpan1.size());
+    auto* inputVector1 = inputSpan1.data();
+    auto* inputVector2 = inputSpan2.data();
+    auto* outputVector = outputSpan.data();
+    size_t n = inputSpan1.size();
 
 #if CPU(X86_SSE2)
     // If the inputVector address is not 16-byte aligned, the first several frames (at most three) should be processed separately.
@@ -440,9 +494,14 @@ void add(const float* inputVector1, const float* inputVector2, float* outputVect
     }
 }
 
-void substract(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
+void substract(std::span<const float> inputSpan1, std::span<const float> inputSpan2, std::span<float> outputSpan)
 {
-    size_t n = numberOfElementsToProcess;
+    RELEASE_ASSERT(inputSpan1.size() == inputSpan2.size());
+    RELEASE_ASSERT(outputSpan.size() >= inputSpan1.size());
+    auto* inputVector1 = inputSpan1.data();
+    auto* inputVector2 = inputSpan2.data();
+    auto* outputVector = outputSpan.data();
+    size_t n = inputSpan1.size();
 
 #if CPU(X86_SSE2)
     // If the inputVector address is not 16-byte aligned, the first several frames (at most three) should be processed separately.
@@ -536,22 +595,27 @@ void substract(const float* inputVector1, const float* inputVector2, float* outp
     }
 }
 
-void interpolate(const float* inputVector1, float* inputVector2, float interpolationFactor, float* outputVector, size_t numberOfElementsToProcess)
+void interpolate(std::span<const float> inputVector1, std::span<float> inputVector2, float interpolationFactor, std::span<float> outputVector)
 {
-    if (inputVector1 != outputVector)
-        memcpy(outputVector, inputVector1, numberOfElementsToProcess * sizeof(float));
+    if (inputVector1.data() != outputVector.data())
+        memcpySpan(outputVector, inputVector1);
 
     // inputVector2[k] = inputVector2[k] - inputVector1[k]
-    substract(inputVector2, inputVector1, inputVector2, numberOfElementsToProcess);
+    substract(inputVector2, inputVector1, inputVector2);
 
     // outputVector[k] = outputVector[k] + interpolationFactor * inputVector2[k]
     //                 = inputVector1[k] + interpolationFactor * (inputVector2[k] - inputVector1[k]);
-    multiplyByScalarThenAddToOutput(inputVector2, interpolationFactor, outputVector, numberOfElementsToProcess);
+    multiplyByScalarThenAddToOutput(inputVector2, interpolationFactor, outputVector);
 }
 
-void multiply(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
+void multiply(std::span<const float> inputSpan1, std::span<const float> inputSpan2, std::span<float> outputSpan)
 {
-    size_t n = numberOfElementsToProcess;
+    RELEASE_ASSERT(inputSpan1.size() == inputSpan2.size());
+    RELEASE_ASSERT(outputSpan.size() >= inputSpan1.size());
+    auto* inputVector1 = inputSpan1.data();
+    auto* inputVector2 = inputSpan2.data();
+    auto* outputVector = outputSpan.data();
+    size_t n = inputSpan1.size();
 
 #if CPU(X86_SSE2)
     // If the inputVector1 address is not 16-byte aligned, the first several frames (at most three) should be processed separately.
@@ -618,25 +682,39 @@ void multiply(const float* inputVector1, const float* inputVector2, float* outpu
     }
 }
 
-void multiplyComplex(const float* realVector1, const float* imagVector1, const float* realVector2, const float* imag2P, float* realOutputVector, float* imagDestP, size_t numberOfElementsToProcess)
+void multiplyComplex(std::span<const float> realSpan1, std::span<const float> imagSpan1, std::span<const float> realSpan2, std::span<const float> imagSpan2, std::span<float> realOutputSpan, std::span<float> imagOutputSpan)
 {
+    RELEASE_ASSERT(realSpan1.size() == imagSpan1.size());
+    RELEASE_ASSERT(realSpan1.size() == realSpan2.size());
+    RELEASE_ASSERT(imagSpan1.size() == imagSpan1.size());
+    RELEASE_ASSERT(realOutputSpan.size() >= realSpan1.size());
+    RELEASE_ASSERT(imagOutputSpan.size() >= imagSpan1.size());
+
+    auto* realVector1 = realSpan1.data();
+    auto* imagVector1 = imagSpan1.data();
+    auto* realVector2 = realSpan2.data();
+    auto* imagVector2 = imagSpan2.data();
+    auto* realOutputVector = realOutputSpan.data();
+    auto* imagOutputVector = imagOutputSpan.data();
+    auto numberOfElementsToProcess = realSpan1.size();
+
     unsigned i = 0;
 #if CPU(X86_SSE2)
     // Only use the SSE optimization in the very common case that all addresses are 16-byte aligned. 
     // Otherwise, fall through to the scalar code below.
-    if (is16ByteAligned(realVector1) && is16ByteAligned(imagVector1) && is16ByteAligned(realVector2) && is16ByteAligned(imag2P) && is16ByteAligned(realOutputVector) && is16ByteAligned(imagDestP)) {
+    if (is16ByteAligned(realVector1) && is16ByteAligned(imagVector1) && is16ByteAligned(realVector2) && is16ByteAligned(imagVector2) && is16ByteAligned(realOutputVector) && is16ByteAligned(imagOutputVector)) {
         unsigned endSize = numberOfElementsToProcess - numberOfElementsToProcess % 4;
         while (i < endSize) {
             __m128 real1 = _mm_load_ps(realVector1 + i);
             __m128 real2 = _mm_load_ps(realVector2 + i);
             __m128 imag1 = _mm_load_ps(imagVector1 + i);
-            __m128 imag2 = _mm_load_ps(imag2P + i);
+            __m128 imag2 = _mm_load_ps(imagVector2 + i);
             __m128 real = _mm_mul_ps(real1, real2);
             real = _mm_sub_ps(real, _mm_mul_ps(imag1, imag2));
             __m128 imag = _mm_mul_ps(real1, imag2);
             imag = _mm_add_ps(imag, _mm_mul_ps(imag1, real2));
             _mm_store_ps(realOutputVector + i, real);
-            _mm_store_ps(imagDestP + i, imag);
+            _mm_store_ps(imagOutputVector + i, imag);
             i += 4;
         }
     }
@@ -646,13 +724,13 @@ void multiplyComplex(const float* realVector1, const float* imagVector1, const f
             float32x4_t real1 = vld1q_f32(realVector1 + i);
             float32x4_t real2 = vld1q_f32(realVector2 + i);
             float32x4_t imag1 = vld1q_f32(imagVector1 + i);
-            float32x4_t imag2 = vld1q_f32(imag2P + i);
+            float32x4_t imag2 = vld1q_f32(imagVector2 + i);
 
             float32x4_t realResult = vmlsq_f32(vmulq_f32(real1, real2), imag1, imag2);
             float32x4_t imagResult = vmlaq_f32(vmulq_f32(real1, imag2), imag1, real2);
 
             vst1q_f32(realOutputVector + i, realResult);
-            vst1q_f32(imagDestP + i, imagResult);
+            vst1q_f32(imagOutputVector + i, imagResult);
 
             i += 4;
         }
@@ -660,14 +738,15 @@ void multiplyComplex(const float* realVector1, const float* imagVector1, const f
     for (; i < numberOfElementsToProcess; ++i) {
         // Read and compute result before storing them, in case the
         // destination is the same as one of the sources.
-        realOutputVector[i] = realVector1[i] * realVector2[i] - imagVector1[i] * imag2P[i];
-        imagDestP[i] = realVector1[i] * imag2P[i] + imagVector1[i] * realVector2[i];
+        realOutputVector[i] = realVector1[i] * realVector2[i] - imagVector1[i] * imagVector2[i];
+        imagOutputVector[i] = realVector1[i] * imagVector2[i] + imagVector1[i] * realVector2[i];
     }
 }
 
-float sumOfSquares(const float* inputVector, size_t numberOfElementsToProcess)
+float sumOfSquares(std::span<const float> inputSpan)
 {
-    size_t n = numberOfElementsToProcess;
+    auto* inputVector = inputSpan.data();
+    size_t n = inputSpan.size();
     float sum = 0;
 
 #if CPU(X86_SSE2)
@@ -725,9 +804,10 @@ float sumOfSquares(const float* inputVector, size_t numberOfElementsToProcess)
     return sum;
 }
 
-float maximumMagnitude(const float* inputVector, size_t numberOfElementsToProcess)
+float maximumMagnitude(std::span<const float> inputSpan)
 {
-    size_t n = numberOfElementsToProcess;
+    auto* inputVector = inputSpan.data();
+    size_t n = inputSpan.size();
     float max = 0;
 
 #if CPU(X86_SSE2)
@@ -789,9 +869,12 @@ float maximumMagnitude(const float* inputVector, size_t numberOfElementsToProces
     return max;
 }
 
-void clamp(const float* inputVector, float minimum, float maximum, float* outputVector, size_t numberOfElementsToProcess)
+void clamp(std::span<const float> inputSpan, float minimum, float maximum, std::span<float> outputSpan)
 {
-    size_t n = numberOfElementsToProcess;
+    RELEASE_ASSERT(outputSpan.size() >= inputSpan.size());
+    auto* inputVector = inputSpan.data();
+    auto* outputVector = outputSpan.data();
+    size_t n = inputSpan.size();
 
     // FIXME: Optimize for SSE2.
 #if HAVE(ARM_NEON_INTRINSICS)
@@ -815,16 +898,35 @@ void clamp(const float* inputVector, float minimum, float maximum, float* output
     }
 }
 
-void linearToDecibels(const float* inputVector, float* outputVector, size_t numberOfElementsToProcess)
+void linearToDecibels(std::span<const float> inputVector, std::span<float> outputVector)
 {
-    for (size_t i = 0; i < numberOfElementsToProcess; ++i)
-        outputVector[i] = AudioUtilities::linearToDecibels(inputVector[i]);
+    RELEASE_ASSERT(outputVector.size() >= inputVector.size());
+    for (auto [i, inputValue] : indexedRange(inputVector))
+        outputVector[i] = AudioUtilities::linearToDecibels(inputValue);
 }
 
-void addVectorsThenMultiplyByScalar(const float* inputVector1, const float* inputVector2, float scalar, float* outputVector, size_t numberOfElementsToProcess)
+void addVectorsThenMultiplyByScalar(std::span<const float> inputVector1, std::span<const float> inputVector2, float scalar, std::span<float> outputVector)
 {
-    add(inputVector1, inputVector2, outputVector, numberOfElementsToProcess);
-    multiplyByScalar(outputVector, scalar, outputVector, numberOfElementsToProcess);
+    add(inputVector1, inputVector2, outputVector);
+    multiplyByScalar(outputVector.first(inputVector1.size()), scalar, outputVector);
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+void add(std::span<const int> inputVector1, std::span<const int> inputVector2, std::span<int> outputVector)
+{
+    RELEASE_ASSERT(inputVector1.size() == inputVector2.size());
+    RELEASE_ASSERT(outputVector.size() >= inputVector1.size());
+    for (size_t i = 0; i < inputVector1.size(); ++i)
+        outputVector[i] = inputVector1[i] + inputVector2[i];
+}
+
+void add(std::span<const double> inputVector1, std::span<const double> inputVector2, std::span<double> outputVector)
+{
+    RELEASE_ASSERT(inputVector1.size() == inputVector2.size());
+    RELEASE_ASSERT(outputVector.size() >= inputVector1.size());
+    for (size_t i = 0; i < inputVector1.size(); ++i)
+        outputVector[i] = inputVector1[i] + inputVector2[i];
 }
 
 #endif // USE(ACCELERATE)

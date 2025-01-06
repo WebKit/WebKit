@@ -7,6 +7,6 @@ description: A string is parsed into the correct object when passed as the argum
 features: [Temporal]
 ---*/
 
-const instance = Temporal.Instant.fromEpochSeconds(10);
+const instance = Temporal.Instant.fromEpochMilliseconds(10_000);
 const result = instance.subtract("PT3H");
 assert.sameValue(result.epochNanoseconds, -10_790_000_000_000n, "epochNanoseconds result");

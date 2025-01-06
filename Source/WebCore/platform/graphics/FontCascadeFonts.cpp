@@ -33,11 +33,12 @@
 #include "FontCache.h"
 #include "FontCascade.h"
 #include "GlyphPage.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class MixedFontGlyphPage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MixedFontGlyphPage);
 public:
     MixedFontGlyphPage(const GlyphPage* initialPage)
     {
@@ -50,7 +51,6 @@ public:
     GlyphData glyphDataForCharacter(char32_t c) const
     {
         unsigned index = GlyphPage::indexForCodePoint(c);
-        ASSERT_WITH_SECURITY_IMPLICATION(index < GlyphPage::size);
         return { m_glyphs[index], m_fonts[index].get() };
     }
 
@@ -62,13 +62,12 @@ public:
 private:
     void setGlyphDataForIndex(unsigned index, const GlyphData& glyphData)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(index < GlyphPage::size);
         m_glyphs[index] = glyphData.glyph;
         m_fonts[index] = glyphData.font.get();
     }
 
-    Glyph m_glyphs[GlyphPage::size] { };
-    SingleThreadWeakPtr<const Font> m_fonts[GlyphPage::size] { };
+    std::array<Glyph, GlyphPage::size> m_glyphs = { };
+    std::array<SingleThreadWeakPtr<const Font>, GlyphPage::size> m_fonts = { };
 };
 
 inline FontCascadeFonts::GlyphPageCacheEntry::GlyphPageCacheEntry(RefPtr<GlyphPage>&& singleFont)
@@ -179,7 +178,7 @@ static FontRanges realizeNextFallback(const FontCascadeDescription& description,
                 return FontRanges(WTFMove(font));
             return FontRanges();
         }, [&](const FontFamilyPlatformSpecification& fontFamilySpecification) -> FontRanges {
-            return { fontFamilySpecification.fontRanges(description), true };
+            return { fontFamilySpecification.fontRanges(description), IsGenericFontFamily::Yes };
         });
         const auto& currentFamily = description.effectiveFamilyAt(index++);
         auto ranges = std::visit(visitor, currentFamily);
@@ -567,6 +566,12 @@ void FontCascadeFonts::pruneSystemFallbacks()
         });
     }
     m_systemFallbackFontSet.clear();
+}
+
+TextStream& operator<<(TextStream& ts, const FontCascadeFonts& fontCascadeFonts)
+{
+    ts << "FontCascadeFonts " << &fontCascadeFonts << " " << ValueOrNull(fontCascadeFonts.fontSelector()) << " generation " << fontCascadeFonts.generation();
+    return ts;
 }
 
 } // namespace WebCore

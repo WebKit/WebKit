@@ -228,7 +228,9 @@ static void browserWindowCreateBackForwardMenu(BrowserWindow *window, GList *lis
     GList *listItem;
     for (listItem = list; listItem; listItem = g_list_next(listItem)) {
         WebKitBackForwardListItem *item = (WebKitBackForwardListItem *)listItem->data;
-        const char *title = webkit_back_forward_list_item_get_uri(item);
+        const char *title = webkit_back_forward_list_item_get_title(item);
+        if (!title || !*title)
+            title = webkit_back_forward_list_item_get_uri(item);
 
         char *displayTitle;
 #define MAX_TITLE 100
@@ -392,6 +394,8 @@ static void browserWindowTryClose(GSimpleAction *action, GVariant *parameter, gp
     GSList *link;
     for (link = webViews; link; link = link->next)
         webkit_web_view_try_close(link->data);
+    if (webViews)
+        g_slist_free(webViews);
 }
 
 static void backForwardlistChanged(WebKitBackForwardList *backForwardlist, WebKitBackForwardListItem *itemAdded, GList *itemsRemoved, BrowserWindow *window)

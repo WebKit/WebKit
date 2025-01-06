@@ -13,9 +13,9 @@
 
 #include <stdio.h>
 
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "api/scoped_refptr.h"
 #include "api/video/resolution.h"
 
@@ -104,7 +104,7 @@ class YuvFrameReaderImpl : public FrameReader {
     int Skip(Ratio framerate_scale);
 
    private:
-    absl::optional<int> ticks_;
+    std::optional<int> ticks_;
   };
 
   const std::string filepath_;

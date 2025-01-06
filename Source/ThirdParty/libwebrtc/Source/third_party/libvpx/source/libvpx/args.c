@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #include "args.h"
 
 #include "vpx/vpx_integer.h"
-#include "vpx_ports/msvc.h"
 
 #if defined(__GNUC__)
 __attribute__((noreturn)) extern void die(const char *fmt, ...);
@@ -24,7 +24,7 @@ __declspec(noreturn) extern void die(const char *fmt, ...);
 extern void die(const char *fmt, ...);
 #endif
 
-struct arg arg_init(char **argv) {
+static struct arg arg_init(char **argv) {
   struct arg a;
 
   a.argv = argv;

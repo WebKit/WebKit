@@ -7,7 +7,7 @@ description: An ISO 8601 string can be converted to a calendar ID in Calendar
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const instance = new Temporal.ZonedDateTime(0n, timeZone);
 
 for (const calendar of [

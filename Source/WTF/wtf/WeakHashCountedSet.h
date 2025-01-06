@@ -64,6 +64,11 @@ public:
     bool remove(const ValueType&);
     bool remove(iterator);
 
+    // Removes the value, regardless of its count.
+    // Returns true if a value was removed.
+    bool removeAll(const ValueType&);
+    bool removeAll(iterator);
+
     // Clears the whole set.
     void clear() { m_impl.clear(); }
 
@@ -106,6 +111,22 @@ inline bool WeakHashCountedSet<Value, WeakPtrImpl>::remove(iterator it)
         it->value = newVal;
         return false;
     }
+
+    m_impl.remove(it);
+    return true;
+}
+
+template<typename Value, typename WeakPtrImpl>
+inline bool WeakHashCountedSet<Value, WeakPtrImpl>::removeAll(const ValueType& value)
+{
+    return removeAll(find(value));
+}
+
+template<typename Value, typename WeakPtrImpl>
+inline bool WeakHashCountedSet<Value, WeakPtrImpl>::removeAll(iterator it)
+{
+    if (it == end())
+        return false;
 
     m_impl.remove(it);
     return true;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -9,10 +9,15 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include "config/aom_config.h"
+
+#include "aom/aom_frame_buffer.h"
+#include "aom_scale/yv12config.h"
 #include "av1/common/av1_common_int.h"
 #include "av1/common/blockd.h"
 #include "av1/common/common.h"
 #include "av1/common/entropy.h"
+#include "av1/common/filter.h"
 #include "av1/common/quant_common.h"
 #include "av1/common/seg_common.h"
 
@@ -231,22 +236,9 @@ bool av1_use_qmatrix(const CommonQuantParams *quant_params,
   return quant_params->using_qmatrix && !xd->lossless[segment_id];
 }
 
-const qm_val_t *av1_iqmatrix(const CommonQuantParams *quant_params, int qmlevel,
-                             int plane, TX_SIZE tx_size) {
-  assert(quant_params->giqmatrix[qmlevel][plane][tx_size] != NULL ||
-         qmlevel == NUM_QM_LEVELS - 1);
-  return quant_params->giqmatrix[qmlevel][plane][tx_size];
-}
-const qm_val_t *av1_qmatrix(const CommonQuantParams *quant_params, int qmlevel,
-                            int plane, TX_SIZE tx_size) {
-  assert(quant_params->gqmatrix[qmlevel][plane][tx_size] != NULL ||
-         qmlevel == NUM_QM_LEVELS - 1);
-  return quant_params->gqmatrix[qmlevel][plane][tx_size];
-}
-
 // Returns true if the tx_type corresponds to non-identity transform in both
 // horizontal and vertical directions.
-static INLINE bool is_2d_transform(TX_TYPE tx_type) { return (tx_type < IDTX); }
+static inline bool is_2d_transform(TX_TYPE tx_type) { return (tx_type < IDTX); }
 
 const qm_val_t *av1_get_iqmatrix(const CommonQuantParams *quant_params,
                                  const MACROBLOCKD *xd, int plane,
@@ -274,13 +266,16 @@ const qm_val_t *av1_get_qmatrix(const CommonQuantParams *quant_params,
              : quant_params->gqmatrix[NUM_QM_LEVELS - 1][0][qm_tx_size];
 }
 
+#if CONFIG_QUANT_MATRIX || CONFIG_AV1_DECODER
 #define QM_TOTAL_SIZE 3344
 // We only use wt_matrix_ref[q] and iwt_matrix_ref[q]
 // for q = 0, ..., NUM_QM_LEVELS - 2.
 static const qm_val_t wt_matrix_ref[NUM_QM_LEVELS - 1][2][QM_TOTAL_SIZE];
 static const qm_val_t iwt_matrix_ref[NUM_QM_LEVELS - 1][2][QM_TOTAL_SIZE];
+#endif
 
 void av1_qm_init(CommonQuantParams *quant_params, int num_planes) {
+#if CONFIG_QUANT_MATRIX || CONFIG_AV1_DECODER
   for (int q = 0; q < NUM_QM_LEVELS; ++q) {
     for (int c = 0; c < num_planes; ++c) {
       int current = 0;
@@ -306,6 +301,10 @@ void av1_qm_init(CommonQuantParams *quant_params, int num_planes) {
       }
     }
   }
+#else
+  (void)quant_params;
+  (void)num_planes;
+#endif  // CONFIG_QUANT_MATRIX || CONFIG_AV1_DECODER
 }
 
 /* Provide 15 sets of quantization matrices for chroma and luma
@@ -320,6 +319,8 @@ void av1_qm_init(CommonQuantParams *quant_params, int num_planes) {
    distances. Matrices for QM level 15 are omitted because they are
    not used.
  */
+
+#if CONFIG_QUANT_MATRIX || CONFIG_AV1_DECODER
 static const qm_val_t iwt_matrix_ref[NUM_QM_LEVELS - 1][2][QM_TOTAL_SIZE] = {
   {
       { /* Luma */
@@ -12874,3 +12875,5 @@ static const qm_val_t wt_matrix_ref[NUM_QM_LEVELS - 1][2][QM_TOTAL_SIZE] = {
         32, 32, 32, 32 },
   },
 };
+
+#endif  // CONFIG_QUANT_MATRIX || CONFIG_AV1_DECODER

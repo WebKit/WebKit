@@ -11,11 +11,10 @@
 #ifndef API_VIDEO_CODECS_VIDEO_DECODER_H_
 #define API_VIDEO_CODECS_VIDEO_DECODER_H_
 
-#include <memory>
+#include <cstdint>
+#include <optional>
 #include <string>
-#include <vector>
 
-#include "absl/types/optional.h"
 #include "api/video/encoded_image.h"
 #include "api/video/render_resolution.h"
 #include "api/video/video_codec_type.h"
@@ -38,8 +37,8 @@ class RTC_EXPORT DecodedImageCallback {
   // TODO(sakal): Remove other implementations when upstream projects have been
   // updated.
   virtual void Decoded(VideoFrame& decodedImage,
-                       absl::optional<int32_t> decode_time_ms,
-                       absl::optional<uint8_t> qp);
+                       std::optional<int32_t> decode_time_ms,
+                       std::optional<uint8_t> qp);
 };
 
 class RTC_EXPORT VideoDecoder {
@@ -67,8 +66,8 @@ class RTC_EXPORT VideoDecoder {
     // decoder. If value isn't present some codec-default value will be used. If
     // value is present and decoder doesn't have buffer pool the value will be
     // ignored.
-    absl::optional<int> buffer_pool_size() const;
-    void set_buffer_pool_size(absl::optional<int> value);
+    std::optional<int> buffer_pool_size() const;
+    void set_buffer_pool_size(std::optional<int> value);
 
     // When valid, user of the VideoDecoder interface shouldn't `Decode`
     // encoded images with render resolution larger than width and height
@@ -86,7 +85,7 @@ class RTC_EXPORT VideoDecoder {
     void set_codec_type(VideoCodecType value) { codec_type_ = value; }
 
    private:
-    absl::optional<int> buffer_pool_size_;
+    std::optional<int> buffer_pool_size_;
     RenderResolution max_resolution_;
     int number_of_cores_ = 1;
     VideoCodecType codec_type_ = kVideoCodecGeneric;
@@ -108,7 +107,7 @@ class RTC_EXPORT VideoDecoder {
   // TODO(bugs.webrtc.org/15444): Migrate all subclasses to Decode() without
   // missing_frame and delete this.
   virtual int32_t Decode(const EncodedImage& input_image,
-                         bool missing_frames,
+                         bool /* missing_frames */,
                          int64_t render_time_ms) {
     return Decode(input_image, render_time_ms);
   }
@@ -124,12 +123,12 @@ class RTC_EXPORT VideoDecoder {
   virtual const char* ImplementationName() const;
 };
 
-inline absl::optional<int> VideoDecoder::Settings::buffer_pool_size() const {
+inline std::optional<int> VideoDecoder::Settings::buffer_pool_size() const {
   return buffer_pool_size_;
 }
 
 inline void VideoDecoder::Settings::set_buffer_pool_size(
-    absl::optional<int> value) {
+    std::optional<int> value) {
   buffer_pool_size_ = value;
 }
 

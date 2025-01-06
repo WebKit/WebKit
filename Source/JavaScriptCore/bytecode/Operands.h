@@ -79,7 +79,7 @@ public:
     }
     uint64_t asBits() const
     {
-        uint64_t bits = bitwise_cast<uint64_t>(*this);
+        uint64_t bits = std::bit_cast<uint64_t>(*this);
         ASSERT(bits < (1ULL << maxBits));
         return bits;
     }
@@ -128,7 +128,7 @@ inline bool Operand::isValid() const
 
 inline Operand Operand::fromBits(uint64_t value)
 {
-    Operand result = bitwise_cast<Operand>(value);
+    Operand result = std::bit_cast<Operand>(value);
     ASSERT(result.isValid());
     return result;
 }

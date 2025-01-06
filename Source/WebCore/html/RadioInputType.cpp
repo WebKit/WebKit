@@ -34,8 +34,11 @@
 #include "NodeTraversal.h"
 #include "SpatialNavigation.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RadioInputType);
 
 using namespace HTMLNames;
 

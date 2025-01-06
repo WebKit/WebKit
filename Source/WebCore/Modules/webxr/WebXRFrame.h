@@ -31,10 +31,10 @@
 #include "ExceptionOr.h"
 #include "PlatformXR.h"
 #include <JavaScriptCore/Float32Array.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -48,7 +48,7 @@ class WebXRSpace;
 class WebXRViewerPose;
 
 class WebXRFrame : public RefCounted<WebXRFrame> {
-    WTF_MAKE_ISO_ALLOCATED(WebXRFrame);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRFrame);
 public:
     enum class IsAnimationFrame : bool { No, Yes };
     static Ref<WebXRFrame> create(WebXRSession&, IsAnimationFrame);

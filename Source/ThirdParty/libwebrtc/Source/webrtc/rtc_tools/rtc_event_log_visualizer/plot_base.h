@@ -12,18 +12,16 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
-#include "rtc_base/ignore_wundef.h"
 
-RTC_PUSH_IGNORING_WUNDEF()
+// Generated at build-time by the protobuf compiler.
 #include "rtc_tools/rtc_event_log_visualizer/proto/chart.pb.h"
-RTC_POP_IGNORING_WUNDEF()
 
 namespace webrtc {
 
@@ -215,7 +213,7 @@ class PlotCollection {
 
  protected:
   std::vector<std::unique_ptr<Plot>> plots_;
-  absl::optional<int64_t> calltime_to_utc_ms_;
+  std::optional<int64_t> calltime_to_utc_ms_;
 };
 
 }  // namespace webrtc

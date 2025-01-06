@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,25 +34,25 @@ namespace WebCore {
 // Used for ImageBuffers that return NullGraphicsContext as the ImageBuffer::context().
 // Solves the problem of holding NullGraphicsContext similarly to holding other
 // GraphicsContext instances, via a ImageBuffer reference.
-class NullImageBufferBackend final : public ImageBufferBackend {
+class WEBCORE_EXPORT NullImageBufferBackend : public ImageBufferBackend {
 public:
-    WEBCORE_EXPORT static std::unique_ptr<NullImageBufferBackend> create(const Parameters&, const ImageBufferCreationContext&);
-    WEBCORE_EXPORT ~NullImageBufferBackend();
+    static std::unique_ptr<NullImageBufferBackend> create(const Parameters&, const ImageBufferCreationContext&);
+    ~NullImageBufferBackend();
     static size_t calculateMemoryCost(const Parameters&) { return 0; }
 
-    NullGraphicsContext& context() final;
-    RefPtr<NativeImage> copyNativeImage() final;
-    RefPtr<NativeImage> createNativeImageReference() final;
-    void getPixelBuffer(const IntRect&, PixelBuffer&) final;
-    void putPixelBuffer(const PixelBuffer&, const IntRect&, const IntPoint&, AlphaPremultiplication) final;
-    bool canMapBackingStore() const final;
-    String debugDescription() const final;
+    NullGraphicsContext& context() override;
+    RefPtr<NativeImage> copyNativeImage() override;
+    RefPtr<NativeImage> createNativeImageReference() override;
+    void getPixelBuffer(const IntRect&, PixelBuffer&) override;
+    void putPixelBuffer(const PixelBuffer&, const IntRect&, const IntPoint&, AlphaPremultiplication) override;
+    bool canMapBackingStore() const override;
+    String debugDescription() const override;
 
 protected:
     using ImageBufferBackend::ImageBufferBackend;
-    unsigned bytesPerRow() const final;
+    unsigned bytesPerRow() const override;
 
     NullGraphicsContext m_context;
 };
 
-}
+} // namespace WebCore

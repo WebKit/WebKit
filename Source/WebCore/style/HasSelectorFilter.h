@@ -26,6 +26,7 @@
 
 #include "CSSSelector.h"
 #include <wtf/BloomFilter.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ namespace Style {
 enum class MatchElement : uint8_t;
 
 class HasSelectorFilter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(HasSelectorFilter);
 public:
     enum class Type : uint8_t { Children, Descendants };
     HasSelectorFilter(const Element&, Type);

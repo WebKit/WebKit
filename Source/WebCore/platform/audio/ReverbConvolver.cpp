@@ -35,8 +35,11 @@
 #include "VectorMath.h"
 #include "AudioBus.h"
 #include <mutex>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReverbConvolver);
 
 constexpr int InputBufferSize = 8 * 16384;
 
@@ -70,7 +73,7 @@ ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSli
     // Otherwise, assume we're being run from a command-line tool.
     bool hasRealtimeConstraint = useBackgroundThreads;
 
-    const float* response = impulseResponse->data();
+    auto response = impulseResponse->span();
     size_t totalResponseLength = impulseResponse->length();
 
     // The total latency is zero because the direct-convolution is used in the leading portion.
@@ -92,7 +95,7 @@ ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSli
 
         bool useDirectConvolver = !stageOffset;
 
-        auto stage = makeUnique<ReverbConvolverStage>(response, totalResponseLength, reverbTotalLatency, stageOffset, stageSize, fftSize, renderPhase, renderSliceSize, &m_accumulationBuffer, scale, useDirectConvolver);
+        auto stage = makeUnique<ReverbConvolverStage>(response, reverbTotalLatency, stageOffset, stageSize, fftSize, renderPhase, renderSliceSize, &m_accumulationBuffer, scale, useDirectConvolver);
 
         bool isBackgroundStage = false;
 
@@ -174,19 +177,19 @@ void ReverbConvolver::process(const AudioChannel* sourceChannel, AudioChannel* d
     if (!isSafe)
         return;
         
-    const float* source = sourceChannel->data();
-    float* destination = destinationChannel->mutableData();
-    bool isDataSafe = source && destination;
+    auto source = sourceChannel->span().first(framesToProcess);
+    auto destination = destinationChannel->mutableSpan();
+    bool isDataSafe = source.data() && destination.data();
     ASSERT(isDataSafe);
     if (!isDataSafe)
         return;
 
     // Feed input buffer (read by all threads)
-    m_inputBuffer.write(source, framesToProcess);
+    m_inputBuffer.write(source);
 
     // Accumulate contributions from each stage
     for (size_t i = 0; i < m_stages.size(); ++i)
-        m_stages[i]->process(source, framesToProcess);
+        m_stages[i]->process(source);
 
     // Finally read from accumulation buffer
     m_accumulationBuffer.readAndClear(destination, framesToProcess);

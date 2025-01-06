@@ -1211,7 +1211,7 @@ TEST_P(MultiviewRenderTest, AttribDivisor)
     ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     // Looks like an incorrect D3D debug layer message is generated on Windows AMD and NVIDIA.
-    // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/2778
+    // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/42261480
     if (IsWindows() && IsD3D11())
     {
         ignoreD3D11SDKLayersWarnings();
@@ -1836,7 +1836,7 @@ TEST_P(MultiviewRenderPrimitiveTest, LineLoop)
         return;
     }
     // Only this subtest fails on intel-hd-630-ubuntu-stable. Driver bug?
-    // https://anglebug.com/3472
+    // https://anglebug.com/42262137
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
     ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
@@ -1943,7 +1943,7 @@ TEST_P(MultiviewRenderTest, ProgramRelinkUpdatesAttribDivisor)
     }
 
     // Looks like an incorrect D3D debug layer message is generated on Windows AMD and NVIDIA.
-    // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/2778
+    // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/42261480
     if (IsWindows() && IsD3D11())
     {
         ignoreD3D11SDKLayersWarnings();
@@ -2091,7 +2091,7 @@ TEST_P(MultiviewRenderTest, DivisorUpdatedOnProgramChange)
     ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     // Looks like an incorrect D3D debug layer message is generated on Windows / AMD.
-    // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/2778
+    // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/42261480
     if (IsWindows() && IsD3D11())
     {
         ignoreD3D11SDKLayersWarnings();
@@ -2422,53 +2422,46 @@ void main()
 
 MultiviewRenderTestParams VertexShaderOpenGL(ExtensionName multiviewExtension)
 {
-    return MultiviewRenderTestParams(
-        0, VertexShaderOpenGL(EGL_OPENGL_ES_API, 3, 0, 0, multiviewExtension));
+    return MultiviewRenderTestParams(0, VertexShaderOpenGL(3, 0, multiviewExtension));
 }
 
 MultiviewRenderTestParams VertexShaderVulkan(ExtensionName multiviewExtension)
 {
-    return MultiviewRenderTestParams(
-        0, VertexShaderVulkan(EGL_OPENGL_ES_API, 3, 0, 0, multiviewExtension));
+    return MultiviewRenderTestParams(0, VertexShaderVulkan(3, 0, multiviewExtension));
 }
 
 MultiviewRenderTestParams GeomShaderD3D11(ExtensionName multiviewExtension)
 {
-    return MultiviewRenderTestParams(
-        0, GeomShaderD3D11(EGL_OPENGL_ES_API, 3, 0, 0, multiviewExtension));
+    return MultiviewRenderTestParams(0, GeomShaderD3D11(3, 0, multiviewExtension));
 }
 
 MultiviewRenderTestParams VertexShaderD3D11(ExtensionName multiviewExtension)
 {
-    return MultiviewRenderTestParams(
-        0, VertexShaderD3D11(EGL_OPENGL_ES_API, 3, 0, 0, multiviewExtension));
+    return MultiviewRenderTestParams(0, VertexShaderD3D11(3, 0, multiviewExtension));
 }
 
 MultiviewRenderTestParams MultisampledVertexShaderOpenGL(ExtensionName multiviewExtension)
 {
-    return MultiviewRenderTestParams(
-        2, VertexShaderOpenGL(EGL_OPENGL_ES_API, 3, 1, 0, multiviewExtension));
+    return MultiviewRenderTestParams(2, VertexShaderOpenGL(3, 1, multiviewExtension));
 }
 
 MultiviewRenderTestParams MultisampledVertexShaderVulkan(ExtensionName multiviewExtension)
 {
-    return MultiviewRenderTestParams(
-        2, VertexShaderVulkan(EGL_OPENGL_ES_API, 3, 1, 0, multiviewExtension));
+    return MultiviewRenderTestParams(2, VertexShaderVulkan(3, 1, multiviewExtension));
 }
 
 MultiviewRenderTestParams MultisampledVertexShaderD3D11(ExtensionName multiviewExtension)
 {
-    return MultiviewRenderTestParams(
-        2, VertexShaderD3D11(EGL_OPENGL_ES_API, 3, 1, 0, multiviewExtension));
+    return MultiviewRenderTestParams(2, VertexShaderD3D11(3, 1, multiviewExtension));
 }
 
-#define ALL_VERTEX_SHADER_CONFIGS(minor)                                               \
-    VertexShaderOpenGL(EGL_OPENGL_ES_API, 3, minor, 0, ExtensionName::multiview),      \
-        VertexShaderVulkan(EGL_OPENGL_ES_API, 3, minor, 0, ExtensionName::multiview),  \
-        VertexShaderD3D11(EGL_OPENGL_ES_API, 3, minor, 0, ExtensionName::multiview),   \
-        VertexShaderOpenGL(EGL_OPENGL_ES_API, 3, minor, 0, ExtensionName::multiview2), \
-        VertexShaderVulkan(EGL_OPENGL_ES_API, 3, minor, 0, ExtensionName::multiview2), \
-        VertexShaderD3D11(EGL_OPENGL_ES_API, 3, minor, 0, ExtensionName::multiview2)
+#define ALL_VERTEX_SHADER_CONFIGS(minor)                         \
+    VertexShaderOpenGL(3, minor, ExtensionName::multiview),      \
+        VertexShaderVulkan(3, minor, ExtensionName::multiview),  \
+        VertexShaderD3D11(3, minor, ExtensionName::multiview),   \
+        VertexShaderOpenGL(3, minor, ExtensionName::multiview2), \
+        VertexShaderVulkan(3, minor, ExtensionName::multiview2), \
+        VertexShaderD3D11(3, minor, ExtensionName::multiview2)
 
 #define ALL_SINGLESAMPLE_CONFIGS()                                                              \
     VertexShaderOpenGL(ExtensionName::multiview), VertexShaderVulkan(ExtensionName::multiview), \
@@ -2507,8 +2500,8 @@ ANGLE_INSTANTIATE_TEST(MultiviewOcclusionQueryTest, ALL_SINGLESAMPLE_CONFIGS());
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultiviewProgramGenerationTest);
 ANGLE_INSTANTIATE_TEST(MultiviewProgramGenerationTest,
                        ALL_VERTEX_SHADER_CONFIGS(0),
-                       GeomShaderD3D11(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview),
-                       GeomShaderD3D11(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview2));
+                       GeomShaderD3D11(3, 0, ExtensionName::multiview),
+                       GeomShaderD3D11(3, 0, ExtensionName::multiview2));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultiviewRenderPrimitiveTest);
 ANGLE_INSTANTIATE_TEST(MultiviewRenderPrimitiveTest, ALL_SINGLESAMPLE_CONFIGS());

@@ -45,7 +45,7 @@ class IDBTransactionInfo;
 struct EventNames;
 
 class IDBDatabase final : public ThreadSafeRefCounted<IDBDatabase>, public EventTarget, public IDBActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(IDBDatabase);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBDatabase);
 public:
     static Ref<IDBDatabase> create(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, const IDBResultData&);
 

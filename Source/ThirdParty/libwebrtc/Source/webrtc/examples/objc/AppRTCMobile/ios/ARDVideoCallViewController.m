@@ -45,7 +45,8 @@
 - (instancetype)initForRoom:(NSString *)room
                  isLoopback:(BOOL)isLoopback
                    delegate:(id<ARDVideoCallViewControllerDelegate>)delegate {
-  if (self = [super init]) {
+  self = [super init];
+  if (self) {
     ARDSettingsModel *settingsModel = [[ARDSettingsModel alloc] init];
     _delegate = delegate;
 

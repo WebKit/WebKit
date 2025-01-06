@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,7 +12,7 @@
 #include <emmintrin.h>  // SSE2
 #include <smmintrin.h>  /* SSE4.1 */
 
-#include "config/aom_dsp_rtcd.h"
+#include "config/av1_rtcd.h"
 #include "aom_dsp/x86/intrapred_x86.h"
 #include "aom_dsp/x86/intrapred_utils.h"
 #include "aom_dsp/x86/lpf_common_sse2.h"
@@ -1021,6 +1021,7 @@ static void dr_prediction_z3_16x8_sse4_1(uint8_t *dst, ptrdiff_t stride,
   }
 }
 
+#if !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 static void dr_prediction_z3_4x16_sse4_1(uint8_t *dst, ptrdiff_t stride,
                                          const uint8_t *left, int upsample_left,
                                          int dy) {
@@ -1100,6 +1101,7 @@ static void dr_prediction_z3_32x8_sse4_1(uint8_t *dst, ptrdiff_t stride,
     _mm_storeu_si128((__m128i *)(dst + i * stride + 16), d[i + 8]);
   }
 }
+#endif  // !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 
 static void dr_prediction_z3_16x16_sse4_1(uint8_t *dst, ptrdiff_t stride,
                                           const uint8_t *left,
@@ -1190,6 +1192,7 @@ static void dr_prediction_z3_64x32_sse4_1(uint8_t *dst, ptrdiff_t stride,
   return;
 }
 
+#if !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 static void dr_prediction_z3_16x64_sse4_1(uint8_t *dst, ptrdiff_t stride,
                                           const uint8_t *left,
                                           int upsample_left, int dy) {
@@ -1211,6 +1214,7 @@ static void dr_prediction_z3_64x16_sse4_1(uint8_t *dst, ptrdiff_t stride,
     }
   }
 }
+#endif  // !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 
 void av1_dr_prediction_z3_sse4_1(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
                                  const uint8_t *above, const uint8_t *left,
@@ -1259,6 +1263,7 @@ void av1_dr_prediction_z3_sse4_1(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
         }
       } else {
         switch (bw) {
+#if !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
           case 4:
             dr_prediction_z3_4x16_sse4_1(dst, stride, left, upsample_left, dy);
             break;
@@ -1269,6 +1274,7 @@ void av1_dr_prediction_z3_sse4_1(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
             dr_prediction_z3_16x64_sse4_1(dst, stride, left, upsample_left, dy);
             break;
           default: assert(0 && "Invalid block size");
+#endif  // !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
         }
       }
     } else {
@@ -1290,6 +1296,7 @@ void av1_dr_prediction_z3_sse4_1(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
         }
       } else {
         switch (bh) {
+#if !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
           case 4:
             dr_prediction_z3_16x4_sse4_1(dst, stride, left, upsample_left, dy);
             break;
@@ -1300,6 +1307,7 @@ void av1_dr_prediction_z3_sse4_1(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
             dr_prediction_z3_64x16_sse4_1(dst, stride, left, upsample_left, dy);
             break;
           default: assert(0 && "Invalid block size");
+#endif  // !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
         }
       }
     }

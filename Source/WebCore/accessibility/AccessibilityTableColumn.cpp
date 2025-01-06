@@ -33,13 +33,16 @@
 
 namespace WebCore {
 
-AccessibilityTableColumn::AccessibilityTableColumn() = default;
+AccessibilityTableColumn::AccessibilityTableColumn(AXID axID)
+    : AccessibilityMockObject(axID)
+{
+}
 
 AccessibilityTableColumn::~AccessibilityTableColumn() = default;
 
-Ref<AccessibilityTableColumn> AccessibilityTableColumn::create()
+Ref<AccessibilityTableColumn> AccessibilityTableColumn::create(AXID axID)
 {
-    return adoptRef(*new AccessibilityTableColumn());
+    return adoptRef(*new AccessibilityTableColumn(axID));
 }
 
 void AccessibilityTableColumn::setParent(AccessibilityObject* parent)
@@ -54,24 +57,11 @@ LayoutRect AccessibilityTableColumn::elementRect() const
     // This used to be cached during the call to addChildren(), but calling elementRect()
     // can invalidate elements, so its better to ask for this on demand.
     LayoutRect columnRect;
-    AccessibilityChildrenVector childrenCopy = m_children;
+    auto childrenCopy = const_cast<AccessibilityTableColumn*>(this)->unignoredChildren(/* updateChildrenIfNeeded */ false);
     for (const auto& cell : childrenCopy)
         columnRect.unite(cell->elementRect());
 
     return columnRect;
-}
-
-AXCoreObject* AccessibilityTableColumn::columnHeader()
-{
-    auto* parentTable = dynamicDowncast<AccessibilityTable>(m_parent.get());
-    if (!parentTable || !parentTable->isExposable())
-        return nullptr;
-
-    for (const auto& cell : children()) {
-        if (cell->roleValue() == AccessibilityRole::ColumnHeader)
-            return cell.get();
-    }
-    return nullptr;
 }
 
 void AccessibilityTableColumn::setColumnIndex(unsigned columnIndex)
@@ -86,16 +76,13 @@ void AccessibilityTableColumn::setColumnIndex(unsigned columnIndex)
 #endif
 }
 
-bool AccessibilityTableColumn::computeAccessibilityIsIgnored() const
+bool AccessibilityTableColumn::computeIsIgnored() const
 {
-    if (!m_parent)
-        return true;
-    
 #if PLATFORM(IOS_FAMILY) || USE(ATSPI)
     return true;
 #endif
     
-    return m_parent->accessibilityIsIgnored();
+    return !m_parent || m_parent->isIgnored();
 }
     
 void AccessibilityTableColumn::addChildren()
@@ -103,7 +90,7 @@ void AccessibilityTableColumn::addChildren()
     ASSERT(!m_childrenInitialized); 
     m_childrenInitialized = true;
 
-    auto* parentTable = dynamicDowncast<AccessibilityTable>(m_parent.get());
+    RefPtr parentTable = dynamicDowncast<AccessibilityTable>(m_parent.get());
     if (!parentTable || !parentTable->isExposable())
         return;
 
@@ -114,10 +101,10 @@ void AccessibilityTableColumn::addChildren()
             continue;
 
         // make sure the last one isn't the same as this one (rowspan cells)
-        if (m_children.size() > 0 && m_children.last() == cell.get())
+        if (m_children.size() > 0 && m_children.last().ptr() == cell.get())
             continue;
 
-        addChild(cell.get());
+        addChild(*cell);
     }
 }
     

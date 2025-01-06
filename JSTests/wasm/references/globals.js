@@ -36,10 +36,10 @@ async function testGlobalConstructorForFuncref() {
   {
       let global = new WebAssembly.Global({ value: "anyfunc", mutable: true }, instance.exports.foo);
       assert.eq(global.value, instance.exports.foo);
-      assert.throws(() => global.value = new Pelmen(calories), TypeError, "Funcref must be an exported wasm function");
+      assert.throws(() => global.value = new Pelmen(calories), TypeError, "Argument value did not match the reference type");
   }
 
-  assert.throws(() => new WebAssembly.Global({ value: "anyfunc", mutable: true }, new Pelmen(calories)), TypeError, "Funcref must be an exported wasm function");
+  assert.throws(() => new WebAssembly.Global({ value: "anyfunc", mutable: true }, new Pelmen(calories)), TypeError, "Argument value did not match the reference type");
 }
 
 testGlobalConstructorForExternref();

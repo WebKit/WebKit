@@ -29,7 +29,7 @@
 
 #include "GamepadHapticEffectType.h"
 #include <wtf/MonotonicTime.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -41,7 +41,7 @@ class GamepadButton;
 class GamepadHapticActuator;
 class PlatformGamepad;
 
-class Gamepad: public RefCounted<Gamepad>, public CanMakeWeakPtr<Gamepad> {
+class Gamepad: public RefCountedAndCanMakeWeakPtr<Gamepad> {
 public:
     static Ref<Gamepad> create(Document* document, const PlatformGamepad& platformGamepad)
     {

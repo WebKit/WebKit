@@ -26,6 +26,8 @@
 #include "config.h"
 #include "VisualViewport.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "ContextDestructionObserver.h"
 #include "Document.h"
 #include "Event.h"
@@ -34,11 +36,11 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Page.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(VisualViewport);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(VisualViewport);
 
 VisualViewport::VisualViewport(LocalDOMWindow& window)
     : LocalDOMWindowProperty(&window)
@@ -161,8 +163,8 @@ void VisualViewport::update()
             width = visualViewportRect.width() / pageZoomFactor;
             height = visualViewportRect.height() / pageZoomFactor;
         }
-        if (auto* page = frame->page())
-            scale = page->pageScaleFactor();
+        if (RefPtr page = frame->page())
+            scale = page->pageScaleFactor() / page->chrome().client().baseViewportLayoutSizeScaleFactor();
     }
 
     RefPtr<Document> document = frame ? frame->document() : nullptr;

@@ -31,22 +31,23 @@
 #if ENABLE(WEB_CODECS)
 
 #include "AudioEncoderActiveConfiguration.h"
+#include "BitrateMode.h"
 #include "WebCodecsAudioInternalData.h"
 #include <span>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
+#include <wtf/NativePromise.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class AudioEncoder {
+class AudioEncoder : public ThreadSafeRefCounted<AudioEncoder> {
 public:
     virtual ~AudioEncoder() = default;
 
     struct OpusConfig {
         bool isOggBitStream { false };
         uint64_t frameDuration { 20000 };
-        std::optional<size_t> complexity;
+        std::optional<size_t> complexity { };
         size_t packetlossperc { 0 };
         bool useinbandfec { false };
         bool usedtx { false };
@@ -61,35 +62,36 @@ public:
         size_t sampleRate;
         size_t numberOfChannels;
         uint64_t bitRate { 0 };
-        std::optional<OpusConfig> opusConfig;
-        std::optional<bool> isAacADTS;
-        std::optional<FlacConfig> flacConfig;
+        BitrateMode bitRateMode { BitrateMode::Variable };
+        std::optional<OpusConfig> opusConfig { };
+        std::optional<bool> isAacADTS { };
+        std::optional<FlacConfig> flacConfig { };
     };
     using ActiveConfiguration = AudioEncoderActiveConfiguration;
     struct EncodedFrame {
         Vector<uint8_t> data;
         bool isKeyFrame { false };
         int64_t timestamp { 0 };
-        std::optional<uint64_t> duration;
+        std::optional<uint64_t> duration { };
     };
     struct RawFrame {
         RefPtr<PlatformRawAudioData> frame;
         int64_t timestamp { 0 };
-        std::optional<uint64_t> duration;
+        std::optional<uint64_t> duration { };
     };
-    using CreateResult = Expected<UniqueRef<AudioEncoder>, String>;
+    using CreateResult = Expected<Ref<AudioEncoder>, String>;
+    using CreatePromise = NativePromise<Ref<AudioEncoder>, String>;
 
-    using PostTaskCallback = Function<void(Function<void()>&&)>;
     using DescriptionCallback = Function<void(ActiveConfiguration&&)>;
     using OutputCallback = Function<void(EncodedFrame&&)>;
     using CreateCallback = Function<void(CreateResult&&)>;
 
-    static void create(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static Ref<CreatePromise> create(const String&, const Config&, DescriptionCallback&&, OutputCallback&&);
 
-    using EncodeCallback = Function<void(String&&)>;
-    virtual void encode(RawFrame&&, EncodeCallback&&) = 0;
+    using EncodePromise = NativePromise<void, String>;
+    virtual Ref<EncodePromise> encode(RawFrame&&) = 0;
 
-    virtual void flush(Function<void()>&&) = 0;
+    virtual Ref<GenericPromise> flush() = 0;
     virtual void reset() = 0;
     virtual void close() = 0;
 };

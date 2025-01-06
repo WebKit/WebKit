@@ -32,6 +32,7 @@
 #include "AudioBufferOptions.h"
 #include "ExceptionOr.h"
 #include "JSValueInWrappedObject.h"
+#include "ScriptWrappable.h"
 #include <JavaScriptCore/Forward.h>
 #include <JavaScriptCore/TypedArrayAdaptersForwardDeclarations.h>
 #include <wtf/Lock.h>
@@ -42,7 +43,8 @@ namespace WebCore {
 class AudioBus;
 class WebCoreOpaqueRoot;
 
-class AudioBuffer : public RefCounted<AudioBuffer> {
+class AudioBuffer : public ScriptWrappable, public RefCounted<AudioBuffer> {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioBuffer);
 public:
     enum class LegacyPreventDetaching : bool { No, Yes };
     static RefPtr<AudioBuffer> create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, LegacyPreventDetaching = LegacyPreventDetaching::No);
@@ -69,7 +71,7 @@ public:
 
     // Native channel data access.
     RefPtr<Float32Array> channelData(unsigned channelIndex);
-    float* rawChannelData(unsigned channelIndex);
+    std::span<float> rawChannelData(unsigned channelIndex);
     void zero();
 
     // Because an AudioBuffer has a JavaScript wrapper, which will be garbage collected, it may take a while for this object to be deleted.

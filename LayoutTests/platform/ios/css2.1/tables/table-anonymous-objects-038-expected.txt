@@ -10,17 +10,17 @@ layer at (8,52) size 784x58
   RenderBlock (relative positioned) {div} at (0,36) size 784x58
 layer at (8,52) size 784x58
   RenderBlock (relative positioned) zI: 1 {div} at (0,0) size 784x58 [color=#FF0000]
-    RenderTable {table} at (1,1) size 61x56 [border: (5px outset #808080)]
+    RenderTable {table} at (1,1) size 61x56 [border: (5px outset #FF0000)]
       RenderTableSection (anonymous) at (5,5) size 51x46
         RenderTableRow {tr} at (0,2) size 51x42
-          RenderTableCell {td} at (2,2) size 47x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          RenderTableCell {td} at (2,2) size 47x42 [border: (1px inset #FF0000)] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (2,3) size 43x36
               text run at (2,3) width 43: "TD"
 layer at (8,52) size 63x58
   RenderBlock (positioned) zI: 2 {div} at (0,0) size 63x58 [color=#008000]
-    RenderTable {table} at (1,1) size 61x56 [border: (5px outset #808080)]
+    RenderTable {table} at (1,1) size 61x56 [border: (5px outset #008000)]
       RenderTableSection (anonymous) at (5,5) size 51x46
         RenderTableRow {tr} at (0,2) size 51x42
-          RenderTableCell {td} at (2,2) size 47x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          RenderTableCell {td} at (2,2) size 47x42 [border: (1px inset #008000)] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (2,3) size 43x36
               text run at (2,3) width 43: "TD"

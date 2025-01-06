@@ -43,6 +43,12 @@ namespace JSC {
 
 class Options {
 public:
+    enum class SandboxPolicy : uint8_t {
+        Unknown,
+        Allow,
+        Block,
+    };
+
     enum class DumpLevel : uint8_t {
         None = 0,
         Overridden,
@@ -134,6 +140,7 @@ public: \
 #undef DECLARE_OPTION_ACCESSORS
 
     static bool isAvailable(ID, Availability);
+    JS_EXPORT_PRIVATE static SandboxPolicy machExceptionHandlerSandboxPolicy;
 
 private:
     Options();
@@ -161,6 +168,7 @@ private:
     static unsigned computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads, int minimum = 1);
     static int32_t computePriorityDeltaOfWorkerThreads(int32_t twoCorePriorityDelta, int32_t multiCorePriorityDelta);
     static constexpr bool jitEnabledByDefault() { return is32Bit() || isAddress64Bit(); }
+    static constexpr bool ipintEnabledByDefault() { return isARM64() || isARM64E() || isX86_64(); }
 };
 
 } // namespace JSC

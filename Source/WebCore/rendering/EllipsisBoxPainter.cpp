@@ -48,6 +48,9 @@ void EllipsisBoxPainter::paint()
     auto& style = m_lineBox.style();
     auto textColor = style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor);
 
+    if (m_paintInfo.forceTextColor())
+        textColor = m_paintInfo.forcedTextColor();
+
     if (m_lineBox.ellipsisSelectionState() != RenderObject::HighlightState::None) {
         paintSelection();
 
@@ -63,7 +66,7 @@ void EllipsisBoxPainter::paint()
     auto setShadow = false;
     if (style.textShadow()) {
         auto shadowColor = style.colorWithColorFilter(style.textShadow()->color());
-        context.setDropShadow({ LayoutSize(style.textShadow()->x().value(), style.textShadow()->y().value()), style.textShadow()->radius().value(), shadowColor, ShadowRadiusMode::Default });
+        context.setDropShadow({ LayoutSize(style.textShadow()->x().value, style.textShadow()->y().value), style.textShadow()->radius().value, shadowColor, ShadowRadiusMode::Default });
         setShadow = true;
     }
     

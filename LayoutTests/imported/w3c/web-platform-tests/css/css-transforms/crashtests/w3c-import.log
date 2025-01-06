@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/large-scale3d-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/large-scaley-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/locked-display-transform-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/preserve3d-containing-block-inline-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/preserve3d-containing-block-inline-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/preserve3d-containing-br-001.html

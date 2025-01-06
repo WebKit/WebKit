@@ -153,6 +153,7 @@
 #include <limits.h>
 #include <string.h>
 
+#include <algorithm>
 #include <utility>
 
 #include <openssl/aead.h>
@@ -178,7 +179,6 @@ enum ssl_client_hs_state_t {
   state_start_connect = 0,
   state_enter_early_data,
   state_early_reverify_server_certificate,
-  state_read_hello_verify_request,
   state_read_server_hello,
   state_tls13,
   state_read_server_certificate,
@@ -243,23 +243,36 @@ static bool ssl_write_client_cipher_list(const SSL_HANDSHAKE *hs, CBB *out,
   // Add TLS 1.3 ciphers. Order ChaCha20-Poly1305 relative to AES-GCM based on
   // hardware support.
   if (hs->max_version >= TLS1_3_VERSION) {
+    static const uint16_t kCiphersNoAESHardware[] = {
+        TLS1_3_CK_CHACHA20_POLY1305_SHA256 & 0xffff,
+        TLS1_3_CK_AES_128_GCM_SHA256 & 0xffff,
+        TLS1_3_CK_AES_256_GCM_SHA384 & 0xffff,
+    };
+    static const uint16_t kCiphersAESHardware[] = {
+        TLS1_3_CK_AES_128_GCM_SHA256 & 0xffff,
+        TLS1_3_CK_AES_256_GCM_SHA384 & 0xffff,
+        TLS1_3_CK_CHACHA20_POLY1305_SHA256 & 0xffff,
+    };
+    static const uint16_t kCiphersCNSA[] = {
+        TLS1_3_CK_AES_256_GCM_SHA384 & 0xffff,
+        TLS1_3_CK_AES_128_GCM_SHA256 & 0xffff,
+        TLS1_3_CK_CHACHA20_POLY1305_SHA256 & 0xffff,
+    };
+
     const bool has_aes_hw = ssl->config->aes_hw_override
                                 ? ssl->config->aes_hw_override_value
                                 : EVP_has_aes_hardware();
+    const bssl::Span<const uint16_t> ciphers =
+        ssl->config->tls13_cipher_policy == ssl_compliance_policy_cnsa_202407
+            ? bssl::Span<const uint16_t>(kCiphersCNSA)
+            : (has_aes_hw ? bssl::Span<const uint16_t>(kCiphersAESHardware)
+                          : bssl::Span<const uint16_t>(kCiphersNoAESHardware));
 
-    if ((!has_aes_hw &&  //
-         !ssl_add_tls13_cipher(&child,
-                               TLS1_3_CK_CHACHA20_POLY1305_SHA256 & 0xffff,
-                               ssl->config->tls13_cipher_policy)) ||
-        !ssl_add_tls13_cipher(&child, TLS1_3_CK_AES_128_GCM_SHA256 & 0xffff,
-                              ssl->config->tls13_cipher_policy) ||
-        !ssl_add_tls13_cipher(&child, TLS1_3_CK_AES_256_GCM_SHA384 & 0xffff,
-                              ssl->config->tls13_cipher_policy) ||
-        (has_aes_hw &&  //
-         !ssl_add_tls13_cipher(&child,
-                               TLS1_3_CK_CHACHA20_POLY1305_SHA256 & 0xffff,
-                               ssl->config->tls13_cipher_policy))) {
-      return false;
+    for (auto cipher : ciphers) {
+      if (!ssl_add_tls13_cipher(&child, cipher,
+                                ssl->config->tls13_cipher_policy)) {
+        return false;
+      }
     }
   }
 
@@ -315,7 +328,7 @@ bool ssl_write_client_hello_without_extensions(const SSL_HANDSHAKE *hs,
   // Do not send a session ID on renegotiation.
   if (!ssl->s3->initial_handshake_complete &&
       !empty_session_id &&
-      !CBB_add_bytes(&child, hs->session_id, hs->session_id_len)) {
+      !CBB_add_bytes(&child, hs->session_id.data(), hs->session_id.size())) {
     return false;
   }
 
@@ -371,9 +384,13 @@ bool ssl_add_client_hello(SSL_HANDSHAKE *hs) {
 static bool parse_server_version(const SSL_HANDSHAKE *hs, uint16_t *out_version,
                                  uint8_t *out_alert,
                                  const ParsedServerHello &server_hello) {
+  uint16_t legacy_version = TLS1_2_VERSION;
+  if (SSL_is_dtls(hs->ssl)) {
+    legacy_version = DTLS1_2_VERSION;
+  }
   // If the outer version is not TLS 1.2, use it.
   // TODO(davidben): This function doesn't quite match the RFC8446 formulation.
-  if (server_hello.legacy_version != TLS1_2_VERSION) {
+  if (server_hello.legacy_version != legacy_version) {
     *out_version = server_hello.legacy_version;
     return true;
   }
@@ -409,9 +426,11 @@ static ssl_early_data_reason_t should_offer_early_data(
     return ssl_early_data_disabled;
   }
 
-  if (hs->max_version < TLS1_3_VERSION) {
+  if (hs->max_version < TLS1_3_VERSION || SSL_is_dtls(ssl)) {
     // We discard inapplicable sessions, so this is redundant with the session
     // checks below, but reporting that TLS 1.3 was disabled is more useful.
+    //
+    // TODO(crbug.com/42290594): Support early data in DTLS 1.3.
     return ssl_early_data_protocol_version;
   }
 
@@ -508,25 +527,26 @@ static enum ssl_hs_wait_t do_start_connect(SSL_HANDSHAKE *hs) {
     return ssl_hs_error;
   }
 
-  // Never send a session ID in QUIC. QUIC uses TLS 1.3 at a minimum and
-  // disables TLS 1.3 middlebox compatibility mode.
-  if (ssl->quic_method == nullptr) {
-    const bool has_id_session = ssl->session != nullptr &&
-                                ssl->session->session_id_length > 0 &&
-                                ssl->session->ticket.empty();
-    const bool has_ticket_session =
-        ssl->session != nullptr && !ssl->session->ticket.empty();
-    if (has_id_session) {
-      hs->session_id_len = ssl->session->session_id_length;
-      OPENSSL_memcpy(hs->session_id, ssl->session->session_id,
-                     hs->session_id_len);
-    } else if (has_ticket_session || hs->max_version >= TLS1_3_VERSION) {
-      // Send a random session ID. TLS 1.3 always sends one, and TLS 1.2 session
-      // tickets require a placeholder value to signal resumption.
-      hs->session_id_len = sizeof(hs->session_id);
-      if (!RAND_bytes(hs->session_id, hs->session_id_len)) {
-        return ssl_hs_error;
-      }
+  const bool has_id_session = ssl->session != nullptr &&
+                              !ssl->session->session_id.empty() &&
+                              ssl->session->ticket.empty();
+  const bool has_ticket_session =
+      ssl->session != nullptr && !ssl->session->ticket.empty();
+  // TLS 1.2 session tickets require a placeholder value to signal resumption.
+  const bool ticket_session_requires_random_id =
+      has_ticket_session &&
+      ssl_session_protocol_version(ssl->session.get()) < TLS1_3_VERSION;
+  // Compatibility mode sends a random session ID. Compatibility mode is
+  // enabled for TLS 1.3, but not when it's run over QUIC or DTLS.
+  const bool enable_compatibility_mode = hs->max_version >= TLS1_3_VERSION &&
+                                         ssl->quic_method == nullptr &&
+                                         !SSL_is_dtls(hs->ssl);
+  if (has_id_session) {
+    hs->session_id = ssl->session->session_id;
+  } else if (ticket_session_requires_random_id || enable_compatibility_mode) {
+    hs->session_id.ResizeForOverwrite(SSL_MAX_SSL_SESSION_ID_LENGTH);
+    if (!RAND_bytes(hs->session_id.data(), hs->session_id.size())) {
+      return ssl_hs_error;
     }
   }
 
@@ -550,39 +570,27 @@ static enum ssl_hs_wait_t do_start_connect(SSL_HANDSHAKE *hs) {
 
 static enum ssl_hs_wait_t do_enter_early_data(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
-
-  if (SSL_is_dtls(ssl)) {
-    hs->state = state_read_hello_verify_request;
-    return ssl_hs_ok;
-  }
-
   if (!hs->early_data_offered) {
     hs->state = state_read_server_hello;
     return ssl_hs_ok;
   }
 
-  ssl->s3->aead_write_ctx->SetVersionIfNullCipher(ssl->session->ssl_version);
-  if (!ssl->method->add_change_cipher_spec(ssl)) {
-    return ssl_hs_error;
-  }
-
-  if (!tls13_init_early_key_schedule(hs, ssl->session.get()) ||
-      !tls13_derive_early_secret(hs)) {
-    return ssl_hs_error;
-  }
-
-  // Stash the early data session, so connection properties may be queried out
-  // of it.
+  // Stash the early data session and activate the early version. This must
+  // happen before |do_early_reverify_server_certificate|, so early connection
+  // properties are available to the callback. Note the early version may be
+  // overwritten later by the final version.
   hs->early_session = UpRef(ssl->session);
+  ssl->s3->version = hs->early_session->ssl_version;
   hs->state = state_early_reverify_server_certificate;
   return ssl_hs_ok;
 }
 
 static enum ssl_hs_wait_t do_early_reverify_server_certificate(SSL_HANDSHAKE *hs) {
-  if (hs->ssl->ctx->reverify_on_resume) {
-    // Don't send an alert on error. The alert be in early data, which the
-    // server may not accept anyway. It would also be a mismatch between QUIC
-    // and TCP because the QUIC early keys are deferred below.
+  SSL *const ssl = hs->ssl;
+  if (ssl->ctx->reverify_on_resume) {
+    // Don't send an alert on error. The alert would be in the clear, which the
+    // server is not expecting anyway. Alerts in between ClientHello and
+    // ServerHello cannot usefully be delivered in TLS 1.3.
     //
     // TODO(davidben): The client behavior should be to verify the certificate
     // before deciding whether to offer the session and, if invalid, decline to
@@ -598,11 +606,17 @@ static enum ssl_hs_wait_t do_early_reverify_server_certificate(SSL_HANDSHAKE *hs
     }
   }
 
+  if (!ssl->method->add_change_cipher_spec(ssl)) {
+    return ssl_hs_error;
+  }
+
   // Defer releasing the 0-RTT key to after certificate reverification, so the
   // QUIC implementation does not accidentally write data too early.
-  if (!tls13_set_traffic_key(hs->ssl, ssl_encryption_early_data, evp_aead_seal,
+  if (!tls13_init_early_key_schedule(hs, hs->early_session.get()) ||
+      !tls13_derive_early_secret(hs) ||
+      !tls13_set_traffic_key(hs->ssl, ssl_encryption_early_data, evp_aead_seal,
                              hs->early_session.get(),
-                             hs->early_traffic_secret())) {
+                             hs->early_traffic_secret)) {
     return ssl_hs_error;
   }
 
@@ -612,24 +626,12 @@ static enum ssl_hs_wait_t do_early_reverify_server_certificate(SSL_HANDSHAKE *hs
   return ssl_hs_early_return;
 }
 
-static enum ssl_hs_wait_t do_read_hello_verify_request(SSL_HANDSHAKE *hs) {
+static bool handle_hello_verify_request(SSL_HANDSHAKE *hs,
+                                        const SSLMessage &msg) {
   SSL *const ssl = hs->ssl;
-
   assert(SSL_is_dtls(ssl));
-
-  // When implementing DTLS 1.3, we need to handle the interactions between
-  // HelloVerifyRequest, DTLS 1.3's HelloVerifyRequest removal, and ECH.
-  assert(hs->max_version < TLS1_3_VERSION);
-
-  SSLMessage msg;
-  if (!ssl->method->get_message(ssl, &msg)) {
-    return ssl_hs_read_message;
-  }
-
-  if (msg.type != DTLS1_MT_HELLO_VERIFY_REQUEST) {
-    hs->state = state_read_server_hello;
-    return ssl_hs_ok;
-  }
+  assert(msg.type == DTLS1_MT_HELLO_VERIFY_REQUEST);
+  assert(!hs->received_hello_verify_request);
 
   CBS hello_verify_request = msg.body, cookie;
   uint16_t server_version;
@@ -638,27 +640,23 @@ static enum ssl_hs_wait_t do_read_hello_verify_request(SSL_HANDSHAKE *hs) {
       CBS_len(&hello_verify_request) != 0) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_DECODE_ERROR);
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_DECODE_ERROR);
-    return ssl_hs_error;
+    return false;
   }
 
   if (!hs->dtls_cookie.CopyFrom(cookie)) {
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR);
-    return ssl_hs_error;
+    return false;
   }
+  hs->received_hello_verify_request = true;
 
   ssl->method->next_message(ssl);
 
   // DTLS resets the handshake buffer after HelloVerifyRequest.
   if (!hs->transcript.Init()) {
-    return ssl_hs_error;
+    return false;
   }
 
-  if (!ssl_add_client_hello(hs)) {
-    return ssl_hs_error;
-  }
-
-  hs->state = state_read_server_hello;
-  return ssl_hs_flush;
+  return ssl_add_client_hello(hs);
 }
 
 bool ssl_parse_server_hello(ParsedServerHello *out, uint8_t *out_alert,
@@ -700,6 +698,16 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
     return ssl_hs_read_server_hello;
   }
 
+  if (SSL_is_dtls(ssl) && !hs->received_hello_verify_request &&
+      msg.type == DTLS1_MT_HELLO_VERIFY_REQUEST) {
+    if (!handle_hello_verify_request(hs, msg)) {
+      return ssl_hs_error;
+    }
+    hs->received_hello_verify_request = true;
+    hs->state = state_read_server_hello;
+    return ssl_hs_flush;
+  }
+
   ParsedServerHello server_hello;
   uint16_t server_version;
   uint8_t alert = SSL_AD_DECODE_ERROR;
@@ -715,20 +723,58 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
     return ssl_hs_error;
   }
 
-  assert(ssl->s3->have_version == ssl->s3->initial_handshake_complete);
-  if (!ssl->s3->have_version) {
-    ssl->version = server_version;
-    // At this point, the connection's version is known and ssl->version is
-    // fixed. Begin enforcing the record-layer version.
-    ssl->s3->have_version = true;
-    ssl->s3->aead_write_ctx->SetVersionIfNullCipher(ssl->version);
-  } else if (server_version != ssl->version) {
+  if (!ssl->s3->initial_handshake_complete) {
+    // |ssl->s3->version| may be set due to 0-RTT. If it was to a different
+    // value, the check below will fire.
+    assert(ssl->s3->version == 0 ||
+           (hs->early_data_offered &&
+            ssl->s3->version == hs->early_session->ssl_version));
+    ssl->s3->version = server_version;
+  } else if (server_version != ssl->s3->version) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_SSL_VERSION);
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_PROTOCOL_VERSION);
     return ssl_hs_error;
   }
 
+  // If the version did not match, stop sending 0-RTT data.
+  if (hs->early_data_offered &&
+      ssl->s3->version != hs->early_session->ssl_version) {
+    // This is currently only possible by reading a TLS 1.2 (or earlier)
+    // ServerHello in response to TLS 1.3. If there is ever a TLS 1.4, or
+    // another variant of TLS 1.3, the fatal error below will need to be a clean
+    // 0-RTT reject.
+    assert(ssl_protocol_version(ssl) < TLS1_3_VERSION);
+    assert(ssl_session_protocol_version(hs->early_session.get()) >=
+           TLS1_3_VERSION);
+
+    // A TLS 1.2 server would not know to skip the early data we offered, so
+    // there is no point in continuing the handshake. Report an error code as
+    // soon as we detect this. The caller may use this error code to implement
+    // the fallback described in RFC 8446 appendix D.3.
+    //
+    // Disconnect early writes. This ensures subsequent |SSL_write| calls query
+    // the handshake which, in turn, will replay the error code rather than fail
+    // at the |write_shutdown| check. See https://crbug.com/1078515.
+    // TODO(davidben): Should all handshake errors do this? What about record
+    // decryption failures?
+    //
+    // TODO(crbug.com/42290594): Although missing from the spec, a DTLS 1.2
+    // server will already naturally skip 0-RTT data. If we implement DTLS 1.3
+    // 0-RTT, we may want a clean reject.
+    assert(!SSL_is_dtls(ssl));
+    hs->can_early_write = false;
+    OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_VERSION_ON_EARLY_DATA);
+    ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_PROTOCOL_VERSION);
+    return ssl_hs_error;
+  }
+
   if (ssl_protocol_version(ssl) >= TLS1_3_VERSION) {
+    if (hs->received_hello_verify_request) {
+      OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_MESSAGE);
+      ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_PROTOCOL_VERSION);
+      return ssl_hs_error;
+    }
+
     hs->state = state_tls13;
     return ssl_hs_ok;
   }
@@ -737,21 +783,6 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
   hs->key_shares[0].reset();
   hs->key_shares[1].reset();
   ssl_done_writing_client_hello(hs);
-
-  // A TLS 1.2 server would not know to skip the early data we offered. Report
-  // an error code sooner. The caller may use this error code to implement the
-  // fallback described in RFC 8446 appendix D.3.
-  if (hs->early_data_offered) {
-    // Disconnect early writes. This ensures subsequent |SSL_write| calls query
-    // the handshake which, in turn, will replay the error code rather than fail
-    // at the |write_shutdown| check. See https://crbug.com/1078515.
-    // TODO(davidben): Should all handshake errors do this? What about record
-    // decryption failures?
-    hs->can_early_write = false;
-    OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_VERSION_ON_EARLY_DATA);
-    ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_PROTOCOL_VERSION);
-    return ssl_hs_error;
-  }
 
   // TLS 1.2 handshakes cannot accept ECH.
   if (hs->selected_ech_config) {
@@ -799,9 +830,8 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
 
   hs->new_cipher = cipher;
 
-  if (hs->session_id_len != 0 &&
-      CBS_mem_equal(&server_hello.session_id, hs->session_id,
-                    hs->session_id_len)) {
+  if (!hs->session_id.empty() &&
+      Span<const uint8_t>(server_hello.session_id) == hs->session_id) {
     // Echoing the ClientHello session ID in TLS 1.2, whether from the session
     // or a synthetic one, indicates resumption. If there was no session (or if
     // the session was only offered in ECH ClientHelloInner), this was the
@@ -814,7 +844,7 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
       ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_ILLEGAL_PARAMETER);
       return ssl_hs_error;
     }
-    if (ssl->session->ssl_version != ssl->version) {
+    if (ssl->session->ssl_version != ssl->s3->version) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_OLD_SESSION_VERSION_NOT_RETURNED);
       ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_ILLEGAL_PARAMETER);
       return ssl_hs_error;
@@ -843,16 +873,9 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
     }
 
     // Save the session ID from the server. This may be empty if the session
-    // isn't resumable, or if we'll receive a session ticket later.
-    assert(CBS_len(&server_hello.session_id) <= SSL3_SESSION_ID_SIZE);
-    static_assert(SSL3_SESSION_ID_SIZE <= UINT8_MAX,
-                  "max session ID is too large");
-    hs->new_session->session_id_length =
-        static_cast<uint8_t>(CBS_len(&server_hello.session_id));
-    OPENSSL_memcpy(hs->new_session->session_id,
-                   CBS_data(&server_hello.session_id),
-                   CBS_len(&server_hello.session_id));
-
+    // isn't resumable, or if we'll receive a session ticket later. The
+    // ServerHello parser ensures |server_hello.session_id| is within bounds.
+    hs->new_session->session_id.CopyFrom(server_hello.session_id);
     hs->new_session->cipher = hs->new_cipher;
   }
 
@@ -1168,7 +1191,8 @@ static enum ssl_hs_wait_t do_read_server_key_exchange(SSL_HANDSHAKE *hs) {
         return ssl_hs_error;
       }
       uint8_t alert = SSL_AD_DECODE_ERROR;
-      if (!tls12_check_peer_sigalg(hs, &alert, signature_algorithm)) {
+      if (!tls12_check_peer_sigalg(hs, &alert, signature_algorithm,
+                                   hs->peer_pubkey.get())) {
         ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
         return ssl_hs_error;
       }
@@ -1279,7 +1303,7 @@ static enum ssl_hs_wait_t do_read_certificate_request(SSL_HANDSHAKE *hs) {
 
   uint8_t alert = SSL_AD_DECODE_ERROR;
   UniquePtr<STACK_OF(CRYPTO_BUFFER)> ca_names =
-      ssl_parse_client_CA_list(ssl, &alert, &body);
+      SSL_parse_CA_list(ssl, &alert, &body);
   if (!ca_names) {
     ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
     return ssl_hs_error;
@@ -1331,6 +1355,42 @@ static enum ssl_hs_wait_t do_read_server_hello_done(SSL_HANDSHAKE *hs) {
   return ssl_hs_ok;
 }
 
+static bool check_credential(SSL_HANDSHAKE *hs, const SSL_CREDENTIAL *cred,
+                             uint16_t *out_sigalg) {
+  if (cred->type != SSLCredentialType::kX509) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_UNKNOWN_CERTIFICATE_TYPE);
+    return false;
+  }
+
+  if (hs->config->check_client_certificate_type) {
+    // Check the certificate types advertised by the peer.
+    uint8_t cert_type;
+    switch (EVP_PKEY_id(cred->pubkey.get())) {
+      case EVP_PKEY_RSA:
+        cert_type = SSL3_CT_RSA_SIGN;
+        break;
+      case EVP_PKEY_EC:
+      case EVP_PKEY_ED25519:
+        cert_type = TLS_CT_ECDSA_SIGN;
+        break;
+      default:
+        OPENSSL_PUT_ERROR(SSL, SSL_R_UNKNOWN_CERTIFICATE_TYPE);
+        return false;
+    }
+    if (std::find(hs->certificate_types.begin(), hs->certificate_types.end(),
+                  cert_type) == hs->certificate_types.end()) {
+      OPENSSL_PUT_ERROR(SSL, SSL_R_UNKNOWN_CERTIFICATE_TYPE);
+      return false;
+    }
+  }
+
+  // All currently supported credentials require a signature. Note this does not
+  // check the ECDSA curve. Prior to TLS 1.3, there is no way to determine which
+  // ECDSA curves are supported by the peer, so we must assume all curves are
+  // supported.
+  return tls1_choose_signature_algorithm(hs, cred, out_sigalg);
+}
+
 static enum ssl_hs_wait_t do_send_client_certificate(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
 
@@ -1358,16 +1418,36 @@ static enum ssl_hs_wait_t do_send_client_certificate(SSL_HANDSHAKE *hs) {
     }
   }
 
-  if (!ssl_has_certificate(hs)) {
-    // Without a client certificate, the handshake buffer may be released.
-    hs->transcript.FreeBuffer();
-  }
-
-  if (!ssl_on_certificate_selected(hs) ||
-      !ssl_output_cert_chain(hs)) {
+  Array<SSL_CREDENTIAL *> creds;
+  if (!ssl_get_credential_list(hs, &creds)) {
     return ssl_hs_error;
   }
 
+  if (creds.empty()) {
+    // If there were no credentials, proceed without a client certificate. In
+    // this case, the handshake buffer may be released early.
+    hs->transcript.FreeBuffer();
+  } else {
+    // Select the credential to use.
+    for (SSL_CREDENTIAL *cred : creds) {
+      ERR_clear_error();
+      uint16_t sigalg;
+      if (check_credential(hs, cred, &sigalg)) {
+        hs->credential = UpRef(cred);
+        hs->signature_algorithm = sigalg;
+        break;
+      }
+    }
+    if (hs->credential == nullptr) {
+      // The error from the last attempt is in the error queue.
+      ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_HANDSHAKE_FAILURE);
+      return ssl_hs_error;
+    }
+  }
+
+  if (!ssl_send_tls12_certificate(hs)) {
+    return ssl_hs_error;
+  }
 
   hs->state = state_send_client_key_exchange;
   return ssl_hs_ok;
@@ -1450,16 +1530,15 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
 
   // Depending on the key exchange method, compute |pms|.
   if (alg_k & SSL_kRSA) {
-    if (!pms.Init(SSL_MAX_MASTER_KEY_LENGTH)) {
-      return ssl_hs_error;
-    }
-
     RSA *rsa = EVP_PKEY_get0_RSA(hs->peer_pubkey.get());
     if (rsa == NULL) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
       return ssl_hs_error;
     }
 
+    if (!pms.InitForOverwrite(SSL_MAX_MASTER_KEY_LENGTH)) {
+      return ssl_hs_error;
+    }
     pms[0] = hs->client_version >> 8;
     pms[1] = hs->client_version & 0xff;
     if (!RAND_bytes(&pms[2], SSL_MAX_MASTER_KEY_LENGTH - 2)) {
@@ -1503,7 +1582,6 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
     if (!pms.Init(psk_len)) {
       return ssl_hs_error;
     }
-    OPENSSL_memset(pms.data(), 0, pms.size());
   } else {
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_HANDSHAKE_FAILURE);
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
@@ -1531,13 +1609,13 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
     return ssl_hs_error;
   }
 
-  hs->new_session->secret_length =
-      tls1_generate_master_secret(hs, hs->new_session->secret, pms);
-  if (hs->new_session->secret_length == 0) {
+  hs->new_session->secret.ResizeForOverwrite(SSL3_MASTER_SECRET_SIZE);
+  if (!tls1_generate_master_secret(hs, MakeSpan(hs->new_session->secret),
+                                   pms)) {
     return ssl_hs_error;
   }
-  hs->new_session->extended_master_secret = hs->extended_master_secret;
 
+  hs->new_session->extended_master_secret = hs->extended_master_secret;
   hs->state = state_send_client_certificate_verify;
   return ssl_hs_ok;
 }
@@ -1545,12 +1623,11 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
 static enum ssl_hs_wait_t do_send_client_certificate_verify(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
 
-  if (!hs->cert_request || !ssl_has_certificate(hs)) {
+  if (!hs->cert_request || hs->credential == nullptr) {
     hs->state = state_send_client_finished;
     return ssl_hs_ok;
   }
 
-  assert(ssl_has_private_key(hs));
   ScopedCBB cbb;
   CBB body, child;
   if (!ssl->method->init_message(ssl, cbb.get(), &body,
@@ -1558,21 +1635,17 @@ static enum ssl_hs_wait_t do_send_client_certificate_verify(SSL_HANDSHAKE *hs) {
     return ssl_hs_error;
   }
 
-  uint16_t signature_algorithm;
-  if (!tls1_choose_signature_algorithm(hs, &signature_algorithm)) {
-    ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_HANDSHAKE_FAILURE);
-    return ssl_hs_error;
-  }
+  assert(hs->signature_algorithm != 0);
   if (ssl_protocol_version(ssl) >= TLS1_2_VERSION) {
     // Write out the digest type in TLS 1.2.
-    if (!CBB_add_u16(&body, signature_algorithm)) {
+    if (!CBB_add_u16(&body, hs->signature_algorithm)) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
       return ssl_hs_error;
     }
   }
 
   // Set aside space for the signature.
-  const size_t max_sig_len = EVP_PKEY_size(hs->local_pubkey.get());
+  const size_t max_sig_len = EVP_PKEY_size(hs->credential->pubkey.get());
   uint8_t *ptr;
   if (!CBB_add_u16_length_prefixed(&body, &child) ||
       !CBB_reserve(&child, &ptr, max_sig_len)) {
@@ -1581,7 +1654,7 @@ static enum ssl_hs_wait_t do_send_client_certificate_verify(SSL_HANDSHAKE *hs) {
 
   size_t sig_len = max_sig_len;
   switch (ssl_private_key_sign(hs, ptr, &sig_len, max_sig_len,
-                               signature_algorithm,
+                               hs->signature_algorithm,
                                hs->transcript.buffer())) {
     case ssl_private_key_success:
       break;
@@ -1777,8 +1850,9 @@ static enum ssl_hs_wait_t do_read_session_ticket(SSL_HANDSHAKE *hs) {
 
   // Historically, OpenSSL filled in fake session IDs for ticket-based sessions.
   // TODO(davidben): Are external callers relying on this? Try removing this.
-  SHA256(CBS_data(&ticket), CBS_len(&ticket), hs->new_session->session_id);
-  hs->new_session->session_id_length = SHA256_DIGEST_LENGTH;
+  hs->new_session->session_id.ResizeForOverwrite(SHA256_DIGEST_LENGTH);
+  SHA256(CBS_data(&ticket), CBS_len(&ticket),
+         hs->new_session->session_id.data());
 
   ssl->method->next_message(ssl);
   hs->state = state_process_change_cipher_spec;
@@ -1872,9 +1946,6 @@ enum ssl_hs_wait_t ssl_client_handshake(SSL_HANDSHAKE *hs) {
       case state_early_reverify_server_certificate:
         ret = do_early_reverify_server_certificate(hs);
         break;
-      case state_read_hello_verify_request:
-        ret = do_read_hello_verify_request(hs);
-        break;
       case state_read_server_hello:
         ret = do_read_server_hello(hs);
         break;
@@ -1957,8 +2028,6 @@ const char *ssl_client_handshake_state(SSL_HANDSHAKE *hs) {
       return "TLS client enter_early_data";
     case state_early_reverify_server_certificate:
       return "TLS client early_reverify_server_certificate";
-    case state_read_hello_verify_request:
-      return "TLS client read_hello_verify_request";
     case state_read_server_hello:
       return "TLS client read_server_hello";
     case state_tls13:

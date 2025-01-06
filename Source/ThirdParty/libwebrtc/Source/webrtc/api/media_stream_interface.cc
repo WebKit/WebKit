@@ -10,7 +10,9 @@
 
 #include "api/media_stream_interface.h"
 
+#include "api/audio_options.h"
 #include "api/media_types.h"
+#include "api/scoped_refptr.h"
 
 namespace webrtc {
 
@@ -23,7 +25,7 @@ VideoTrackInterface::ContentHint VideoTrackInterface::content_hint() const {
   return ContentHint::kNone;
 }
 
-bool AudioTrackInterface::GetSignalLevel(int* level) {
+bool AudioTrackInterface::GetSignalLevel(int* /* level */) {
   return false;
 }
 

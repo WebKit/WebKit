@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -128,9 +128,10 @@ typedef struct InterPredParams {
 } InterPredParams;
 
 // Initialize sub-pel params required for inter prediction.
-static AOM_INLINE void init_subpel_params(
-    const MV *const src_mv, InterPredParams *const inter_pred_params,
-    SubpelParams *subpel_params, int width, int height) {
+static inline void init_subpel_params(const MV *const src_mv,
+                                      InterPredParams *const inter_pred_params,
+                                      SubpelParams *subpel_params, int width,
+                                      int height) {
   const struct scale_factors *sf = inter_pred_params->scale_factors;
   int ssx = inter_pred_params->subsampling_x;
   int ssy = inter_pred_params->subsampling_y;
@@ -165,7 +166,7 @@ static AOM_INLINE void init_subpel_params(
 }
 
 // Initialize interp filter required for inter prediction.
-static AOM_INLINE void init_interp_filter_params(
+static inline void init_interp_filter_params(
     const InterpFilterParams *interp_filter_params[2],
     const InterpFilters *filter, int block_width, int block_height,
     int is_intrabc) {
@@ -181,7 +182,7 @@ static AOM_INLINE void init_interp_filter_params(
 }
 
 // Initialize parameters required for inter prediction at mode level.
-static AOM_INLINE void init_inter_mode_params(
+static inline void init_inter_mode_params(
     const MV *const src_mv, InterPredParams *const inter_pred_params,
     SubpelParams *subpel_params, const struct scale_factors *sf, int width,
     int height) {
@@ -190,10 +191,12 @@ static AOM_INLINE void init_inter_mode_params(
 }
 
 // Initialize parameters required for inter prediction at block level.
-static AOM_INLINE void init_inter_block_params(
-    InterPredParams *inter_pred_params, int block_width, int block_height,
-    int pix_row, int pix_col, int subsampling_x, int subsampling_y,
-    int bit_depth, int use_hbd_buf, int is_intrabc) {
+static inline void init_inter_block_params(InterPredParams *inter_pred_params,
+                                           int block_width, int block_height,
+                                           int pix_row, int pix_col,
+                                           int subsampling_x, int subsampling_y,
+                                           int bit_depth, int use_hbd_buf,
+                                           int is_intrabc) {
   inter_pred_params->block_width = block_width;
   inter_pred_params->block_height = block_height;
   inter_pred_params->pix_row = pix_row;
@@ -210,7 +213,7 @@ static AOM_INLINE void init_inter_block_params(
 }
 
 // Initialize params required for inter prediction.
-static AOM_INLINE void av1_init_inter_params(
+static inline void av1_init_inter_params(
     InterPredParams *inter_pred_params, int block_width, int block_height,
     int pix_row, int pix_col, int subsampling_x, int subsampling_y,
     int bit_depth, int use_hbd_buf, int is_intrabc,
@@ -226,7 +229,7 @@ static AOM_INLINE void av1_init_inter_params(
   inter_pred_params->ref_frame_buf = *ref_buf;
 }
 
-static AOM_INLINE void av1_init_comp_mode(InterPredParams *inter_pred_params) {
+static inline void av1_init_comp_mode(InterPredParams *inter_pred_params) {
   inter_pred_params->comp_mode = UNIFORM_COMP;
 }
 
@@ -234,11 +237,11 @@ void av1_init_warp_params(InterPredParams *inter_pred_params,
                           const WarpTypesAllowed *warp_types, int ref,
                           const MACROBLOCKD *xd, const MB_MODE_INFO *mi);
 
-static INLINE int has_scale(int xs, int ys) {
+static inline int has_scale(int xs, int ys) {
   return xs != SCALE_SUBPEL_SHIFTS || ys != SCALE_SUBPEL_SHIFTS;
 }
 
-static INLINE void revert_scale_extra_bits(SubpelParams *sp) {
+static inline void revert_scale_extra_bits(SubpelParams *sp) {
   sp->subpel_x >>= SCALE_EXTRA_BITS;
   sp->subpel_y >>= SCALE_EXTRA_BITS;
   sp->xs >>= SCALE_EXTRA_BITS;
@@ -249,7 +252,7 @@ static INLINE void revert_scale_extra_bits(SubpelParams *sp) {
   assert(sp->ys <= SUBPEL_SHIFTS);
 }
 
-static INLINE void inter_predictor(
+static inline void inter_predictor(
     const uint8_t *src, int src_stride, uint8_t *dst, int dst_stride,
     const SubpelParams *subpel_params, int w, int h,
     ConvolveParams *conv_params, const InterpFilterParams *interp_filters[2]) {
@@ -269,7 +272,7 @@ static INLINE void inter_predictor(
   }
 }
 
-static INLINE void highbd_inter_predictor(
+static inline void highbd_inter_predictor(
     const uint8_t *src, int src_stride, uint8_t *dst, int dst_stride,
     const SubpelParams *subpel_params, int w, int h,
     ConvolveParams *conv_params, const InterpFilterParams *interp_filters[2],
@@ -290,11 +293,10 @@ static INLINE void highbd_inter_predictor(
   }
 }
 
-void av1_modify_neighbor_predictor_for_obmc(MB_MODE_INFO *mbmi);
 int av1_skip_u4x4_pred_in_obmc(BLOCK_SIZE bsize,
                                const struct macroblockd_plane *pd, int dir);
 
-static INLINE int is_interinter_compound_used(COMPOUND_TYPE type,
+static inline int is_interinter_compound_used(COMPOUND_TYPE type,
                                               BLOCK_SIZE sb_type) {
   const int comp_allowed = is_comp_ref_allowed(sb_type);
   switch (type) {
@@ -307,7 +309,7 @@ static INLINE int is_interinter_compound_used(COMPOUND_TYPE type,
   }
 }
 
-static INLINE int is_any_masked_compound_used(BLOCK_SIZE sb_type) {
+static inline int is_any_masked_compound_used(BLOCK_SIZE sb_type) {
   COMPOUND_TYPE comp_type;
   int i;
   if (!is_comp_ref_allowed(sb_type)) return 0;
@@ -320,11 +322,11 @@ static INLINE int is_any_masked_compound_used(BLOCK_SIZE sb_type) {
   return 0;
 }
 
-static INLINE int get_wedge_types_lookup(BLOCK_SIZE sb_type) {
+static inline int get_wedge_types_lookup(BLOCK_SIZE sb_type) {
   return av1_wedge_params_lookup[sb_type].wedge_types;
 }
 
-static INLINE int av1_is_wedge_used(BLOCK_SIZE sb_type) {
+static inline int av1_is_wedge_used(BLOCK_SIZE sb_type) {
   return av1_wedge_params_lookup[sb_type].wedge_types > 0;
 }
 
@@ -338,7 +340,7 @@ void av1_make_masked_inter_predictor(const uint8_t *pre, int pre_stride,
                                      const SubpelParams *subpel_params);
 
 // TODO(jkoleszar): yet another mv clamping function :-(
-static INLINE MV clamp_mv_to_umv_border_sb(const MACROBLOCKD *xd,
+static inline MV clamp_mv_to_umv_border_sb(const MACROBLOCKD *xd,
                                            const MV *src_mv, int bw, int bh,
                                            int ss_x, int ss_y) {
   // If the MV points so far into the UMV border that no visible pixels
@@ -364,7 +366,7 @@ static INLINE MV clamp_mv_to_umv_border_sb(const MACROBLOCKD *xd,
   return clamped_mv;
 }
 
-static INLINE int64_t scaled_buffer_offset(int x_offset, int y_offset,
+static inline int64_t scaled_buffer_offset(int x_offset, int y_offset,
                                            int stride,
                                            const struct scale_factors *sf) {
   int x, y;
@@ -381,7 +383,7 @@ static INLINE int64_t scaled_buffer_offset(int x_offset, int y_offset,
   return (int64_t)y * stride + x;
 }
 
-static INLINE void setup_pred_plane(struct buf_2d *dst, BLOCK_SIZE bsize,
+static inline void setup_pred_plane(struct buf_2d *dst, BLOCK_SIZE bsize,
                                     uint8_t *src, int width, int height,
                                     int stride, int mi_row, int mi_col,
                                     const struct scale_factors *scale,
@@ -409,13 +411,13 @@ void av1_setup_pre_planes(MACROBLOCKD *xd, int idx,
                           const YV12_BUFFER_CONFIG *src, int mi_row, int mi_col,
                           const struct scale_factors *sf, const int num_planes);
 
-static INLINE void set_default_interp_filters(
+static inline void set_default_interp_filters(
     MB_MODE_INFO *const mbmi, InterpFilter frame_interp_filter) {
   mbmi->interp_filters =
       av1_broadcast_interp_filter(av1_unswitchable_filter(frame_interp_filter));
 }
 
-static INLINE int av1_is_interp_needed(const MACROBLOCKD *const xd) {
+static inline int av1_is_interp_needed(const MACROBLOCKD *const xd) {
   const MB_MODE_INFO *const mbmi = xd->mi[0];
   if (mbmi->skip_mode) return 0;
   if (mbmi->motion_mode == WARPED_CAUSAL) return 0;
@@ -449,9 +451,9 @@ void av1_count_overlappable_neighbors(const AV1_COMMON *cm, MACROBLOCKD *xd);
 #define MASK_MASTER_SIZE ((MAX_WEDGE_SIZE) << 1)
 #define MASK_MASTER_STRIDE (MASK_MASTER_SIZE)
 
-void av1_init_wedge_masks();
+void av1_init_wedge_masks(void);
 
-static INLINE const uint8_t *av1_get_contiguous_soft_mask(int8_t wedge_index,
+static inline const uint8_t *av1_get_contiguous_soft_mask(int8_t wedge_index,
                                                           int8_t wedge_sign,
                                                           BLOCK_SIZE sb_type) {
   return av1_wedge_params_lookup[sb_type].masks[wedge_sign][wedge_index];

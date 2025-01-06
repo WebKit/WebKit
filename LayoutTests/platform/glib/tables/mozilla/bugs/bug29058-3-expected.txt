@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x218
   RenderBlock {HTML} at (0,0) size 800x218
     RenderBody {BODY} at (8,8) size 784x202
-      RenderTable {TABLE} at (0,0) size 400x202 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 400x202 [border: (1px outset #000000)]
         RenderBlock {CAPTION} at (0,0) size 400x18
           RenderText {#text} at (47,0) size 306x17
             text run at (47,0) width 306: "Table is 400 px width, set with table width=400."
@@ -13,7 +13,7 @@ layer at (0,0) size 800x218
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,19) size 398x182
           RenderTableRow {TR} at (0,0) size 398x182
-            RenderTableCell {TD} at (0,0) size 398x182 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
+            RenderTableCell {TD} at (0,0) size 398x182 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=3]
               RenderText {#text} at (1,1) size 395x179
                 text run at (1,1) width 304: "table Cols 1 - 3. There must be a lot of text here "
                 text run at (305,1) width 89: "in order to see"

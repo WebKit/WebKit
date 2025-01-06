@@ -30,16 +30,11 @@
 #if PLATFORM(COCOA)
 OBJC_CLASS CALayer;
 using PlatformLayer = CALayer;
-#elif USE(NICOSIA)
-namespace Nicosia {
-class PlatformLayer;
-}
-using PlatformLayer = Nicosia::PlatformLayer;
 #elif USE(COORDINATED_GRAPHICS)
 namespace WebCore {
-class TextureMapperPlatformLayerProxyProvider;
+class TextureMapperPlatformLayerProxy;
 };
-using PlatformLayer = WebCore::TextureMapperPlatformLayerProxyProvider;
+using PlatformLayer = WebCore::TextureMapperPlatformLayerProxy;
 #elif USE(TEXTURE_MAPPER)
 namespace WebCore {
 class TextureMapperPlatformLayer;
@@ -52,7 +47,7 @@ using PlatformLayer = void*;
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 using PlatformLayerContainer = RetainPtr<PlatformLayer>;
-#elif USE(TEXTURE_MAPPER)
+#elif USE(TEXTURE_MAPPER) && !USE(COORDINATED_GRAPHICS)
 using PlatformLayerContainer = std::unique_ptr<PlatformLayer>;
 #else
 #include <wtf/RefPtr.h>

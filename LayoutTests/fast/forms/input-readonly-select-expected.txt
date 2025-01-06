@@ -1,3 +1,6 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
 double clicking on normal input
 PASS selectEventFiredOnInput is true
 
@@ -16,7 +19,4 @@ PASS selectEventFiredOnReadonlyTextarea is true
 double clicking on disabled textarea
 PASS selectEventFiredOnDisabledTextarea is true
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 

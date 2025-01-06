@@ -111,10 +111,10 @@ void LogStreamInternalStats(const std::string& name,
 }
 
 template <typename T>
-absl::optional<T> MaybeGetValue(const std::map<size_t, T>& map, size_t key) {
+std::optional<T> MaybeGetValue(const std::map<size_t, T>& map, size_t key) {
   auto it = map.find(key);
   if (it == map.end()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return it->second;
 }
@@ -211,7 +211,7 @@ uint16_t DefaultVideoQualityAnalyzer::OnFrameCaptured(
     }
     StreamState* state = &stream_states_.at(stream_index);
     state->PushBack(frame_id);
-    absl::optional<TimeDelta> time_between_captured_frames = absl::nullopt;
+    std::optional<TimeDelta> time_between_captured_frames = std::nullopt;
     if (state->last_captured_frame_time().has_value()) {
       time_between_captured_frames =
           captured_time - *state->last_captured_frame_time();
@@ -243,8 +243,8 @@ uint16_t DefaultVideoQualityAnalyzer::OnFrameCaptured(
             StatsSample(captured_frames_in_flight_.size(), Now()));
         frames_comparator_.AddComparison(
             InternalStatsKey(stream_index, peer_index, i),
-            /*captured=*/absl::nullopt,
-            /*rendered=*/absl::nullopt, FrameComparisonType::kDroppedFrame,
+            /*captured=*/std::nullopt,
+            /*rendered=*/std::nullopt, FrameComparisonType::kDroppedFrame,
             it->second.GetStatsForPeer(i));
       }
 
@@ -285,8 +285,12 @@ void DefaultVideoQualityAnalyzer::OnFramePreEncode(
       << "DefaultVideoQualityAnalyzer has to be started before use";
 
   auto it = captured_frames_in_flight_.find(frame.id());
-  RTC_CHECK(it != captured_frames_in_flight_.end())
-      << "Frame id=" << frame.id() << " not found";
+  if (it == captured_frames_in_flight_.end()) {
+    // If the frame is not found, it is possible that it has been encoded twice
+    // and that it was received by all the participants the first time.
+    RTC_LOG(LS_WARNING) << "Frame id=" << frame.id() << " not found.";
+    return;
+  }
   FrameInFlight& frame_in_flight = it->second;
   frame_counters_.pre_encoded++;
   size_t peer_index = peers_->index(peer_name);
@@ -345,7 +349,7 @@ void DefaultVideoQualityAnalyzer::OnFrameEncoded(
   }
   Timestamp now = Now();
   StreamState& state = stream_states_.at(frame_in_flight.stream());
-  absl::optional<TimeDelta> time_between_encoded_frames = absl::nullopt;
+  std::optional<TimeDelta> time_between_encoded_frames = std::nullopt;
   if (state.last_encoded_frame_time().has_value()) {
     time_between_encoded_frames = now - *state.last_encoded_frame_time();
   }
@@ -472,7 +476,7 @@ void DefaultVideoQualityAnalyzer::OnFrameDecoded(
   used_decoder.switched_on_at = now;
   used_decoder.switched_from_at = now;
   it->second.OnFrameDecoded(peer_index, now, frame.width(), frame.height(),
-                            used_decoder);
+                            used_decoder, stats.qp);
 
   if (options_.report_infra_metrics) {
     analyzer_stats_.on_frame_decoded_processing_time_ms.AddSample(
@@ -523,7 +527,7 @@ void DefaultVideoQualityAnalyzer::OnFrameRendered(
 
   // Find corresponding captured frame.
   FrameInFlight* frame_in_flight = &frame_it->second;
-  absl::optional<VideoFrame> captured_frame = frames_storage_.Get(frame.id());
+  std::optional<VideoFrame> captured_frame = frames_storage_.Get(frame.id());
 
   const size_t stream_index = frame_in_flight->stream();
   StreamState* state = &stream_states_.at(stream_index);
@@ -695,7 +699,7 @@ void DefaultVideoQualityAnalyzer::UnregisterParticipantInCall(
     absl::string_view peer_name) {
   MutexLock lock(&mutex_);
   RTC_CHECK(peers_->HasName(peer_name));
-  absl::optional<size_t> peer_index = peers_->RemoveIfPresent(peer_name);
+  std::optional<size_t> peer_index = peers_->RemoveIfPresent(peer_name);
   RTC_CHECK(peer_index.has_value());
 
   for (auto& [stream_index, stream_state] : stream_states_) {
@@ -960,8 +964,8 @@ void DefaultVideoQualityAnalyzer::
     RTC_DCHECK(it != captured_frames_in_flight_.end());
     FrameInFlight& frame = it->second;
 
-    frames_comparator_.AddComparison(stats_key, /*captured=*/absl::nullopt,
-                                     /*rendered=*/absl::nullopt,
+    frames_comparator_.AddComparison(stats_key, /*captured=*/std::nullopt,
+                                     /*rendered=*/std::nullopt,
                                      FrameComparisonType::kFrameInFlight,
                                      frame.GetStatsForPeer(peer_index));
   }
@@ -1049,8 +1053,8 @@ int DefaultVideoQualityAnalyzer::ProcessNotSeenFramesBeforeRendered(
 
       analyzer_stats_.frames_in_flight_left_count.AddSample(
           StatsSample(captured_frames_in_flight_.size(), Now()));
-      frames_comparator_.AddComparison(stats_key, /*captured=*/absl::nullopt,
-                                       /*rendered=*/absl::nullopt,
+      frames_comparator_.AddComparison(stats_key, /*captured=*/std::nullopt,
+                                       /*rendered=*/std::nullopt,
                                        FrameComparisonType::kDroppedFrame,
                                        next_frame.GetStatsForPeer(peer_index));
     } else {
@@ -1254,6 +1258,9 @@ void DefaultVideoQualityAnalyzer::ReportResults(
                                ImprovementDirection::kSmallerIsBetter,
                                std::move(qp_metadata));
   }
+  metrics_logger_->LogMetric(
+      "rendered_frame_qp", test_case_name, stats.rendered_frame_qp,
+      Unit::kUnitless, ImprovementDirection::kSmallerIsBetter, metric_metadata);
   metrics_logger_->LogSingleValueMetric(
       "actual_encode_bitrate", test_case_name,
       static_cast<double>(stats.total_encoded_images_payload) /

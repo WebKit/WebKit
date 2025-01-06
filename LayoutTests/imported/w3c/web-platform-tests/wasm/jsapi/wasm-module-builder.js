@@ -105,6 +105,10 @@ let kWasmF32 = 0x7d;
 let kWasmF64 = 0x7c;
 let kWasmS128 = 0x7b;
 
+// Packed storage types
+let kWasmI8 = 0x78;
+let kWasmI16 = 0x77;
+
 // These are defined as negative integers to distinguish them from positive type
 // indices.
 let kWasmNullFuncRef = -0x0d;
@@ -1152,7 +1156,7 @@ class WasmModuleBuilder {
           section.emit_string(imp.name || '');
           section.emit_u8(imp.kind);
           if (imp.kind == kExternalFunction) {
-            section.emit_u32v(imp.type_index);
+            section.emit_u32v(imp.type);
           } else if (imp.kind == kExternalGlobal) {
             section.emit_type(imp.type);
             section.emit_u8(imp.mutable);
@@ -1487,6 +1491,7 @@ class WasmModuleBuilder {
     return new WebAssembly.Module(this.toBuffer(debug));
   }
 }
+globalThis.WasmModuleBuilder = WasmModuleBuilder;
 
 function wasmSignedLeb(val, max_len = 5) {
   let res = [];
@@ -1503,10 +1508,12 @@ function wasmSignedLeb(val, max_len = 5) {
   throw new Error(
       'Leb value <' + val + '> exceeds maximum length of ' + max_len);
 }
+globalThis.wasmSignedLeb = wasmSignedLeb;
 
 function wasmI32Const(val) {
   return [kExprI32Const, ...wasmSignedLeb(val, 5)];
 }
+globalThis.wasmI32Const = wasmI32Const;
 
 function wasmF32Const(f) {
   // Write in little-endian order at offset 0.
@@ -1515,6 +1522,7 @@ function wasmF32Const(f) {
     kExprF32Const, byte_view[0], byte_view[1], byte_view[2], byte_view[3]
   ];
 }
+globalThis.wasmI32Const = wasmI32Const;
 
 function wasmF64Const(f) {
   // Write in little-endian order at offset 0.
@@ -1524,3 +1532,4 @@ function wasmF64Const(f) {
     byte_view[3], byte_view[4], byte_view[5], byte_view[6], byte_view[7]
   ];
 }
+globalThis.wasmF64Const = wasmF64Const;

@@ -72,6 +72,10 @@ async function decompress(chunk, format, t)
 
 for (const chunk of badChunks) {
   promise_test(async t => {
+    await decompress(chunk, 'brotli', t);
+  }, `chunk of type ${chunk.name} should error the stream for brotli`);
+
+  promise_test(async t => {
     await decompress(chunk, 'gzip', t);
   }, `chunk of type ${chunk.name} should error the stream for gzip`);
 

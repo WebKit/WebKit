@@ -10,6 +10,12 @@
 
 #include "api/dtls_transport_interface.h"
 
+#include <memory>
+#include <optional>
+#include <utility>
+
+#include "rtc_base/ssl_certificate.h"
+
 namespace webrtc {
 
 DtlsTransportInformation::DtlsTransportInformation()
@@ -20,10 +26,10 @@ DtlsTransportInformation::DtlsTransportInformation(DtlsTransportState state)
 
 DtlsTransportInformation::DtlsTransportInformation(
     DtlsTransportState state,
-    absl::optional<DtlsTransportTlsRole> role,
-    absl::optional<int> tls_version,
-    absl::optional<int> ssl_cipher_suite,
-    absl::optional<int> srtp_cipher_suite,
+    std::optional<DtlsTransportTlsRole> role,
+    std::optional<int> tls_version,
+    std::optional<int> ssl_cipher_suite,
+    std::optional<int> srtp_cipher_suite,
     std::unique_ptr<rtc::SSLCertChain> remote_ssl_certificates)
     : state_(state),
       role_(role),
@@ -35,12 +41,12 @@ DtlsTransportInformation::DtlsTransportInformation(
 // Deprecated version
 DtlsTransportInformation::DtlsTransportInformation(
     DtlsTransportState state,
-    absl::optional<int> tls_version,
-    absl::optional<int> ssl_cipher_suite,
-    absl::optional<int> srtp_cipher_suite,
+    std::optional<int> tls_version,
+    std::optional<int> ssl_cipher_suite,
+    std::optional<int> srtp_cipher_suite,
     std::unique_ptr<rtc::SSLCertChain> remote_ssl_certificates)
     : state_(state),
-      role_(absl::nullopt),
+      role_(std::nullopt),
       tls_version_(tls_version),
       ssl_cipher_suite_(ssl_cipher_suite),
       srtp_cipher_suite_(srtp_cipher_suite),

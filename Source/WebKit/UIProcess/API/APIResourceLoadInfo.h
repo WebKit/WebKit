@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@ public:
     WebKit::NetworkResourceLoadIdentifier resourceLoadID() const { return m_info.resourceLoadID; }
     std::optional<WebCore::FrameIdentifier> frameID() const { return m_info.frameID; }
     std::optional<WebCore::FrameIdentifier> parentFrameID() const { return m_info.parentFrameID; }
+    Markable<WTF::UUID> documentID() const { return m_info.documentID; }
     const WTF::URL& originalURL() const { return m_info.originalURL; }
     const WTF::String& originalHTTPMethod() const { return m_info.originalHTTPMethod; }
     WallTime eventTimestamp() const { return m_info.eventTimestamp; }

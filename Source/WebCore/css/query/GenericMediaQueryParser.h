@@ -183,9 +183,8 @@ const FeatureSchema* GenericMediaQueryParser<ConcreteParser>::schemaForFeatureNa
     using SchemaMap = MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, const FeatureSchema*>;
 
     static NeverDestroyed<SchemaMap> schemas = [&] {
-        auto entries = ConcreteParser::featureSchemas();
         SchemaMap map;
-        for (auto& entry : entries)
+        for (auto& entry : ConcreteParser::featureSchemas())
             map.add(entry->name, entry);
         return map;
     }();

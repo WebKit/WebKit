@@ -36,6 +36,8 @@
 #include "LinkBuffer.h"
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 { namespace Air {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Disassembler);
@@ -75,7 +77,7 @@ void Disassembler::addInst(Inst* inst, MacroAssembler::Label start, MacroAssembl
 void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer, const char* airPrefix, const char* asmPrefix, const ScopedLambda<void(Inst&)>& doToEachInst)
 {
     void* codeStart = linkBuffer.entrypoint<DisassemblyPtrTag>().untaggedPtr();
-    void* codeEnd = bitwise_cast<uint8_t*>(codeStart) +  linkBuffer.size();
+    void* codeEnd = std::bit_cast<uint8_t*>(codeStart) +  linkBuffer.size();
 
     auto dumpAsmRange = [&] (CCallHelpers::Label startLabel, CCallHelpers::Label endLabel) {
         RELEASE_ASSERT(startLabel.isSet());
@@ -125,5 +127,7 @@ void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer, co
 }
 
 } } } // namespace JSC::B3::Air
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(B3_JIT)

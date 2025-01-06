@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,24 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+[
+    ExceptionForEnabledBy,
+    DispatchedFrom=WebContent,
+    DispatchedTo=UI
+]
 messages -> WebExtensionController {
-
-    [EnabledIf='hasLoadedContexts()'] DidStartProvisionalLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
-    [EnabledIf='hasLoadedContexts()'] DidCommitLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
-    [EnabledIf='hasLoadedContexts()'] DidFinishLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
-    [EnabledIf='hasLoadedContexts()'] DidFailLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+    [Validator=hasLoadedContexts] DidStartProvisionalLoadForFrame(WebKit::WebPageProxyIdentifier pageID, struct WebKit::WebExtensionFrameParameters frameParameters, WallTime timestamp)
+    [Validator=hasLoadedContexts] DidCommitLoadForFrame(WebKit::WebPageProxyIdentifier pageID, struct WebKit::WebExtensionFrameParameters frameParameters, WallTime timestamp)
+    [Validator=hasLoadedContexts] DidFinishLoadForFrame(WebKit::WebPageProxyIdentifier pageID, struct WebKit::WebExtensionFrameParameters frameParameters, WallTime timestamp)
+    [Validator=hasLoadedContexts] DidFailLoadForFrame(WebKit::WebPageProxyIdentifier pageID, struct WebKit::WebExtensionFrameParameters frameParameters, WallTime timestamp)
 
     // Test APIs
-    [EnabledIf='inTestingMode()'] TestResult(bool result, String message, String sourceURL, unsigned lineNumber)
-    [EnabledIf='inTestingMode()'] TestEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber)
-    [EnabledIf='inTestingMode()'] TestMessage(String message, String sourceURL, unsigned lineNumber)
-    [EnabledIf='inTestingMode()'] TestYielded(String message, String sourceURL, unsigned lineNumber)
-    [EnabledIf='inTestingMode()'] TestFinished(bool result, String message, String sourceURL, unsigned lineNumber)
-
+    [Validator=inTestingMode] TestResult(bool result, String message, String sourceURL, unsigned lineNumber)
+    [Validator=inTestingMode] TestEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber)
+    [Validator=inTestingMode] TestMessage(String message, String sourceURL, unsigned lineNumber)
+    [Validator=inTestingMode] TestYielded(String message, String sourceURL, unsigned lineNumber)
+    [Validator=inTestingMode] TestSentMessage(String message, String argument, String sourceURL, unsigned lineNumber)
+    [Validator=inTestingMode] TestFinished(bool result, String message, String sourceURL, unsigned lineNumber)
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

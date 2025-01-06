@@ -14,7 +14,7 @@ use warnings;
 use parent qw(Email::MIME);
 
 sub new {
-    my ($class, $msg) = @_;
+    my ($class, $msg, $args) = @_;
     state $use_utf8 = Bugzilla->params->{'utf8'};
 
     # Template-Toolkit trims trailing newlines, which is problematic when
@@ -54,7 +54,7 @@ sub new {
     # you're running on. See http://perldoc.perl.org/perlport.html#Newlines
     $msg =~ s/(?:\015+)?\012/\015\012/msg;
 
-    return $class->SUPER::new($msg);
+    return $class->SUPER::new($msg, $args);
 }
 
 sub as_string {
@@ -113,7 +113,7 @@ workarounds.
 =head1 SYNOPSIS
 
   use Bugzilla::MIME;
-  my $email = Bugzilla::MIME->new($message);
+  my $email = Bugzilla::MIME->new($message, $args);
 
 =head1 DESCRIPTION
 

@@ -32,9 +32,9 @@
 #pragma once
 
 #include <JavaScriptCore/InspectorEnvironment.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace Inspector {
 class InspectorAgent;
@@ -139,7 +139,7 @@ class WebDebuggerAgent;
 
 class InstrumentingAgents : public RefCounted<InstrumentingAgents> {
     WTF_MAKE_NONCOPYABLE(InstrumentingAgents);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InstrumentingAgents);
 public:
     // FIXME: InstrumentingAgents could be uniquely owned by InspectorController if instrumentation
     // cookies kept only a weak reference to InstrumentingAgents. Then, reset() would be unnecessary.

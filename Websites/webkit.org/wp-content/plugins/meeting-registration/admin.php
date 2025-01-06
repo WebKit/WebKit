@@ -62,8 +62,8 @@
                 <th>GitHub</th>
                 <th>Slack</th>
                 <th>Interests</th>
-                <th>Optional</th>
                 <th>Contributor</th>
+                <th>In-person</th>
             </tr>
         </thead>
         <tbody>
@@ -81,8 +81,9 @@
             </td>
             <td><?php echo esc_html($registration->contributor_slack); ?></td>
             <td><?php echo apply_filters('the_content', esc_html($registration->contributor_interests)); ?></td>
-            <td><?php if ($registration->contributor_optingame === "on"):?><div class="checked-box"></div><?php endif; ?></td>
             <td><?php if ($registration->contributor_claim === "on"):?><div class="checked-box"></div><?php endif; ?></td>
+            <td><?php if ($registration->contributor_attendance === "in-person"):?><div class="checked-box"></div><?php endif; ?></td>
+            
         </tr>
         <?php endforeach; ?>
         </tbody>

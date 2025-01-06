@@ -1,3 +1,4 @@
+//@ skip if !$isSIMDPlatform
 let bytes = readFile('./resources/funcref-race.wasm', 'binary');
 (async function () {
     let importObject = {

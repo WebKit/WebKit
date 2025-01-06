@@ -132,9 +132,6 @@
         "CustomPreventExtensions": {
             "contextsAllowed": ["interface"]
         },
-        "CustomPushEventHandlerScope": {
-            "contextsAllowed": ["interface"]
-        },
         "CustomPut": {
             "contextsAllowed": ["interface"]
         },
@@ -234,7 +231,7 @@
             "values": ["*"]
         },
         "GenerateIsReachable": {
-            "contextsAllowed": ["interface"],
+            "contextsAllowed": ["interface", "callback-function"],
             "values": ["", "Impl", "ImplWebGLRenderingContext", "ImplCanvasBase", "ImplDocument", "ImplElementRoot", "ImplOwnerNodeRoot", "ImplScriptExecutionContext", "ReachableFromDOMWindow", "ReachableFromNavigator"]
         },
         "Global": {
@@ -269,9 +266,6 @@
         "IsImmutablePrototypeExoticObjectOnPrototype": {
             "contextsAllowed": ["interface"]
         },
-        "IsWeakCallback": {
-            "contextsAllowed": ["callback-function", "interface"]
-        },
         "JSBuiltin": {
             "contextsAllowed": ["interface", "attribute", "operation"]
         },
@@ -291,7 +285,7 @@
             "contextsAllowed": ["interface", "dictionary", "callback-function"]
         },
         "JSGenerateToNativeObject": {
-            "contextsAllowed": ["interface"]
+            "contextsAllowed": ["interface", "dictionary"]
         },
         "JSLegacyParent": {
             "contextsAllowed": ["interface"],
@@ -442,9 +436,6 @@
         "RequiresExistingAtomString": {
             "contextsAllowed": ["type"]
         },
-        "RethrowException": {
-            "contextsAllowed": ["operation", "callback-function"]
-        },
         "ReturnsOwnPromise": {
             "contextsAllowed": ["operation"]
         },
@@ -489,10 +480,6 @@
         },
         "SkipVTableValidation": {
             "contextsAllowed": ["interface"]
-        },
-        "StringContext": {
-            "contextsAllowed": ["type"],
-            "values": ["TrustedHTML", "TrustedScript", "TrustedScriptURL"]
         },
         "SuppressToJSObject": {
             "contextsAllowed": ["interface"]

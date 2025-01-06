@@ -27,17 +27,16 @@ InitialPacketInserterNetEqInput::InitialPacketInserterNetEqInput(
       packets_to_insert_(number_of_initial_packets),
       sample_rate_hz_(sample_rate_hz) {}
 
-absl::optional<int64_t> InitialPacketInserterNetEqInput::NextPacketTime()
-    const {
+std::optional<int64_t> InitialPacketInserterNetEqInput::NextPacketTime() const {
   return source_->NextPacketTime();
 }
 
-absl::optional<int64_t> InitialPacketInserterNetEqInput::NextOutputEventTime()
+std::optional<int64_t> InitialPacketInserterNetEqInput::NextOutputEventTime()
     const {
   return source_->NextOutputEventTime();
 }
 
-absl::optional<NetEqInput::SetMinimumDelayInfo>
+std::optional<NetEqInput::SetMinimumDelayInfo>
 InitialPacketInserterNetEqInput::NextSetMinimumDelayInfo() const {
   return source_->NextSetMinimumDelayInfo();
 }
@@ -80,7 +79,7 @@ bool InitialPacketInserterNetEqInput::ended() const {
   return source_->ended();
 }
 
-absl::optional<RTPHeader> InitialPacketInserterNetEqInput::NextHeader() const {
+std::optional<RTPHeader> InitialPacketInserterNetEqInput::NextHeader() const {
   return source_->NextHeader();
 }
 

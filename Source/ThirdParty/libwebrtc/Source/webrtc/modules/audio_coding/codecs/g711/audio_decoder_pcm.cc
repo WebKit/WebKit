@@ -52,10 +52,15 @@ int AudioDecoderPcmU::DecodeInternal(const uint8_t* encoded,
   return static_cast<int>(ret);
 }
 
-int AudioDecoderPcmU::PacketDuration(const uint8_t* encoded,
+int AudioDecoderPcmU::PacketDuration(const uint8_t* /* encoded */,
                                      size_t encoded_len) const {
   // One encoded byte per sample per channel.
   return static_cast<int>(encoded_len / Channels());
+}
+
+int AudioDecoderPcmU::PacketDurationRedundant(const uint8_t* encoded,
+                                              size_t encoded_len) const {
+  return PacketDuration(encoded, encoded_len);
 }
 
 void AudioDecoderPcmA::Reset() {}
@@ -93,10 +98,15 @@ int AudioDecoderPcmA::DecodeInternal(const uint8_t* encoded,
   return static_cast<int>(ret);
 }
 
-int AudioDecoderPcmA::PacketDuration(const uint8_t* encoded,
+int AudioDecoderPcmA::PacketDuration(const uint8_t* /* encoded */,
                                      size_t encoded_len) const {
   // One encoded byte per sample per channel.
   return static_cast<int>(encoded_len / Channels());
+}
+
+int AudioDecoderPcmA::PacketDurationRedundant(const uint8_t* encoded,
+                                              size_t encoded_len) const {
+  return PacketDuration(encoded, encoded_len);
 }
 
 }  // namespace webrtc

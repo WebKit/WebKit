@@ -33,23 +33,27 @@ namespace WebCore {
 
 std::unique_ptr<PlatformDisplaySurfaceless> PlatformDisplaySurfaceless::create()
 {
-    return std::unique_ptr<PlatformDisplaySurfaceless>(new PlatformDisplaySurfaceless());
+    const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
+    if (!GLContext::isExtensionSupported(extensions, "EGL_MESA_platform_surfaceless"))
+        return nullptr;
+
+    std::unique_ptr<GLDisplay> glDisplay;
+    if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
+        glDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr));
+    else if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
+        glDisplay = GLDisplay::create(eglGetPlatformDisplay(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr));
+
+    if (!glDisplay) {
+        WTFLogAlways("Could not create surfaceless EGL display: %s. Aborting...", GLContext::lastErrorString());
+        CRASH();
+    }
+
+    return std::unique_ptr<PlatformDisplaySurfaceless>(new PlatformDisplaySurfaceless(WTFMove(glDisplay)));
 }
 
-PlatformDisplaySurfaceless::PlatformDisplaySurfaceless()
+PlatformDisplaySurfaceless::PlatformDisplaySurfaceless(std::unique_ptr<GLDisplay>&& glDisplay)
+    : PlatformDisplay(WTFMove(glDisplay))
 {
-#if PLATFORM(GTK)
-    PlatformDisplay::setSharedDisplayForCompositing(*this);
-#endif
-
-    const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
-    if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr);
-    else if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr);
-
-    PlatformDisplay::initializeEGLDisplay();
-
 #if ENABLE(WEBGL)
     m_anglePlatform = EGL_PLATFORM_SURFACELESS_MESA;
     m_angleNativeDisplay = EGL_DEFAULT_DISPLAY;

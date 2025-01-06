@@ -38,11 +38,11 @@
 #include "SecurityOrigin.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerStorageConnection.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(StorageManager);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StorageManager);
 
 Ref<StorageManager> StorageManager::create(NavigatorBase& navigator)
 {
@@ -76,14 +76,14 @@ static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator)
     RefPtr origin = context->securityOrigin();
     ASSERT(origin);
 
-    if (RefPtr document = dynamicDowncast<Document>(context)) {
+    if (RefPtr document = dynamicDowncast<Document>(*context)) {
         if (RefPtr connection = document->storageConnection())
             return ConnectionInfo { *connection, { document->topOrigin().data(), origin->data() } };
 
         return Exception { ExceptionCode::InvalidStateError, "Connection is invalid"_s };
     }
 
-    if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(context))
+    if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(*context))
         return ConnectionInfo { globalScope->storageConnection(), { globalScope->topOrigin().data(), origin->data() } };
 
     return Exception { ExceptionCode::NotSupportedError };

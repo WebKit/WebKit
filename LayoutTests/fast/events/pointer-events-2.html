@@ -172,15 +172,15 @@
       }
     }
 
-    function testContent() {
+    async function testContent() {
       
       // hit left side
       var yOffset = topEdge;
       for (var i=0; i < 5; i++) {
         if (window.eventSender) {
-          eventSender.mouseMoveTo(15, yOffset + 5);
-          eventSender.mouseDown();
-          eventSender.mouseUp();
+          await eventSender.asyncMouseMoveTo(15, yOffset + 5);
+          await eventSender.asyncMouseDown();
+          await eventSender.asyncMouseUp();
         }
         yOffset += 100;
       }
@@ -189,9 +189,9 @@
       yOffset = topEdge;
       for (var i=0; i < 5; i++) {
         if (window.eventSender) {
-          eventSender.mouseMoveTo(345, yOffset + 5);
-          eventSender.mouseDown();
-          eventSender.mouseUp();
+          await eventSender.asyncMouseMoveTo(345, yOffset + 5);
+          await eventSender.asyncMouseDown();
+          await eventSender.asyncMouseUp();
         }
         yOffset += 100;
       }

@@ -75,7 +75,7 @@ class FakeNetworkSocket : public rtc::Socket,
   int error_ RTC_GUARDED_BY(&thread_);
   std::map<Option, int> options_map_ RTC_GUARDED_BY(&thread_);
 
-  absl::optional<EmulatedIpPacket> pending_ RTC_GUARDED_BY(thread_);
+  std::optional<EmulatedIpPacket> pending_ RTC_GUARDED_BY(thread_);
   rtc::scoped_refptr<PendingTaskSafetyFlag> alive_;
 };
 
@@ -135,7 +135,7 @@ int FakeNetworkSocket::Bind(const rtc::SocketAddress& addr) {
     error_ = EADDRNOTAVAIL;
     return 2;
   }
-  absl::optional<uint16_t> port =
+  std::optional<uint16_t> port =
       endpoint_->BindReceiver(local_addr_.port(), this);
   if (!port) {
     local_addr_.Clear();

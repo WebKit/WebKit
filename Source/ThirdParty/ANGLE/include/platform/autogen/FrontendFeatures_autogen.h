@@ -24,176 +24,169 @@ struct FrontendFeatures : FeatureSetBase
     FeatureInfo loseContextOnOutOfMemory = {
         "loseContextOnOutOfMemory",
         FeatureCategory::FrontendWorkarounds,
-        "Some users rely on a lost context notification if a GL_OUT_OF_MEMORY error occurs",
         &members,
     };
 
     FeatureInfo disableProgramCachingForTransformFeedback = {
         "disableProgramCachingForTransformFeedback",
         FeatureCategory::FrontendWorkarounds,
-        "On some GPUs, program binaries don't contain transform feedback varyings",
         &members,
     };
 
     FeatureInfo disableProgramBinary = {
         "disableProgramBinary",
         FeatureCategory::FrontendFeatures,
-        "Disable support for GL_OES_get_program_binary",
-        &members, "http://anglebug.com/5007"
+        &members,
     };
 
     FeatureInfo disableDrawBuffersIndexed = {
         "disableDrawBuffersIndexed",
         FeatureCategory::FrontendFeatures,
-        "Disable support for OES_draw_buffers_indexed and EXT_draw_buffers_indexed",
-        &members, "http://anglebug.com/7724"
+        &members,
     };
 
     FeatureInfo disableAnisotropicFiltering = {
         "disableAnisotropicFiltering",
         FeatureCategory::FrontendWorkarounds,
-        "Disable support for anisotropic filtering",
         &members,
     };
 
     FeatureInfo allowCompressedFormats = {
         "allowCompressedFormats",
         FeatureCategory::FrontendWorkarounds,
-        "Allow compressed formats",
         &members,
     };
 
     FeatureInfo singleThreadedTextureDecompression = {
         "singleThreadedTextureDecompression",
         FeatureCategory::FrontendWorkarounds,
-        "Disables multi-threaded decompression of compressed texture formats",
         &members,
     };
 
     FeatureInfo forceDepthAttachmentInitOnClear = {
         "forceDepthAttachmentInitOnClear",
         FeatureCategory::FrontendWorkarounds,
-        "Force depth attachment initialization on clear ops",
-        &members, "https://anglebug.com/7246"
+        &members,
     };
 
     FeatureInfo enableCaptureLimits = {
         "enableCaptureLimits",
         FeatureCategory::FrontendFeatures,
-        "Set the context limits like frame capturing was enabled",
-        &members, "http://anglebug.com/5750"
+        &members,
     };
 
     FeatureInfo forceRobustResourceInit = {
         "forceRobustResourceInit",
         FeatureCategory::FrontendFeatures,
-        "Force-enable robust resource init",
-        &members, "http://anglebug.com/6041"
+        &members,
     };
 
     FeatureInfo forceInitShaderVariables = {
         "forceInitShaderVariables",
         FeatureCategory::FrontendFeatures,
-        "Force-enable shader variable initialization",
         &members,
     };
 
     FeatureInfo enableProgramBinaryForCapture = {
         "enableProgramBinaryForCapture",
         FeatureCategory::FrontendFeatures,
-        "Even if FrameCapture is enabled, enable GL_OES_get_program_binary",
-        &members, "http://anglebug.com/5658"
+        &members,
     };
 
     FeatureInfo forceGlErrorChecking = {
         "forceGlErrorChecking",
         FeatureCategory::FrontendFeatures,
-        "Force GL error checking (i.e. prevent applications from disabling error checking",
-        &members, "https://issuetracker.google.com/220069903"
+        &members,
     };
 
     FeatureInfo emulatePixelLocalStorage = {
         "emulatePixelLocalStorage",
         FeatureCategory::FrontendFeatures,
-        "Emulate ANGLE_shader_pixel_local_storage using shader images",
-        &members, "http://anglebug.com/7279"
+        &members,
     };
 
     FeatureInfo cacheCompiledShader = {
         "cacheCompiledShader",
         FeatureCategory::FrontendFeatures,
-        "Enable to cache compiled shaders",
-        &members, "http://anglebug.com/7036"
+        &members,
     };
 
     FeatureInfo dumpShaderSource = {
         "dumpShaderSource",
         FeatureCategory::FrontendFeatures,
-        "Write shader source to temp directory",
-        &members, "http://anglebug.com/7760"
+        &members,
     };
 
     FeatureInfo enableShaderSubstitution = {
         "enableShaderSubstitution",
         FeatureCategory::FrontendWorkarounds,
-        "Check the filesystem for shaders to use instead of those provided through glShaderSource",
-        &members, "http://anglebug.com/7761"
+        &members,
     };
 
     FeatureInfo disableProgramCaching = {
         "disableProgramCaching",
         FeatureCategory::FrontendFeatures,
-        "Disables saving programs to the cache",
-        &members, "http://anglebug.com/1423136"
+        &members,
     };
 
     FeatureInfo dumpTranslatedShaders = {
         "dumpTranslatedShaders",
         FeatureCategory::FrontendFeatures,
-        "Write translated shaders to temp directory",
-        &members, "http://anglebug.com/8280"
+        &members,
     };
 
     FeatureInfo enableTranslatedShaderSubstitution = {
         "enableTranslatedShaderSubstitution",
         FeatureCategory::FrontendWorkarounds,
-        "Check the filesystem for translated shaders to use instead of the shader translator's",
-        &members, "http://anglebug.com/8280"
+        &members,
     };
 
     FeatureInfo compileJobIsThreadSafe = {
         "compileJobIsThreadSafe",
         FeatureCategory::FrontendFeatures,
-        "If false, parts of the compile job cannot be parallelized",
-        &members, "http://anglebug.com/8297"
+        &members,
     };
 
     FeatureInfo linkJobIsThreadSafe = {
         "linkJobIsThreadSafe",
         FeatureCategory::FrontendFeatures,
-        "If false, parts of the link job cannot be parallelized",
-        &members, "http://anglebug.com/8297"
+        &members,
     };
 
     FeatureInfo alwaysRunLinkSubJobsThreaded = {
         "alwaysRunLinkSubJobsThreaded",
         FeatureCategory::FrontendFeatures,
-        "If true, sub tasks of the link job are always threaded, regardless of GL_KHR_parallel_shader_compile",
-        &members, "http://anglebug.com/8417"
+        &members,
     };
 
     FeatureInfo uncurrentEglSurfaceUponSurfaceDestroy = {
         "uncurrentEglSurfaceUponSurfaceDestroy",
         FeatureCategory::FrontendWorkarounds,
-        "Make egl surface uncurrent when calling eglDestroySurface(), if the surface is still bound by the context of current render thread",
-        &members, "https://issuetracker.google.com/292285899"
+        &members,
     };
 
     FeatureInfo forceMinimumMaxVertexAttributes = {
         "forceMinimumMaxVertexAttributes",
         FeatureCategory::FrontendFeatures,
-        "Force the minimum GL_MAX_VERTEX_ATTRIBS that the context's client version allows.",
-        &members, ""
+        &members,
+    };
+
+    FeatureInfo forceFlushAfterDrawcallUsingShadowmap = {
+        "forceFlushAfterDrawcallUsingShadowmap",
+        FeatureCategory::FrontendWorkarounds,
+        &members,
+    };
+
+    FeatureInfo rejectWebglShadersWithUndefinedBehavior = {
+        "rejectWebglShadersWithUndefinedBehavior",
+        FeatureCategory::FrontendWorkarounds,
+        &members,
+    };
+
+    FeatureInfo alwaysEnableEmulatedMultidrawExtensions = {
+        "alwaysEnableEmulatedMultidrawExtensions",
+        FeatureCategory::FrontendWorkarounds,
+        &members,
     };
 
 };

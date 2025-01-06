@@ -38,7 +38,8 @@ static NSString const *kARDWSSMessagePayloadKey = @"msg";
 - (instancetype)initWithURL:(NSURL *)url
                     restURL:(NSURL *)restURL
                    delegate:(id<ARDSignalingChannelDelegate>)delegate {
-  if (self = [super init]) {
+  self = [super init];
+  if (self) {
     _url = url;
     _restURL = restURL;
     _delegate = delegate;

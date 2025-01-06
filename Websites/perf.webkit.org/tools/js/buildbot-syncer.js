@@ -148,7 +148,7 @@ class BuildbotSyncer {
         return this._remote.postJSON(path, data);
     }
 
-    scheduleRequestInGroupIfAvailable(newRequest, requestsInGroup, workerName)
+    scheduleRequestInGroupIfAvailable(newRequest, requestsInGroup, workerName, useWorkerWithoutRequestsInProgress = false)
     {
         assert(newRequest instanceof BuildRequest);
 
@@ -161,9 +161,13 @@ class BuildbotSyncer {
         for (let entry of this._entryList) {
             let entryPreventsNewRequest = entry.isPending();
             if (entry.isInProgress()) {
-                const requestInProgress = BuildRequest.findById(entry.buildRequestId());
-                if (!requestInProgress || requestInProgress.testGroupId() != newRequest.testGroupId())
+                if (useWorkerWithoutRequestsInProgress)
                     entryPreventsNewRequest = true;
+                else {
+                    const requestInProgress = BuildRequest.findById(entry.buildRequestId());
+                    if (!requestInProgress || requestInProgress.testGroupId() != newRequest.testGroupId())
+                        entryPreventsNewRequest = true;
+                }
             }
             if (entryPreventsNewRequest) {
                 if (!entry.workerName())
@@ -178,20 +182,22 @@ class BuildbotSyncer {
             }
         }
 
-        for (let [name, entry] of latestEntryByWorkerName.entries()) {
-            const latestActiveBuildRequest = BuildRequest.findById(entry.buildRequestId());
-            if (!latestActiveBuildRequest)
-                continue;
-            if (latestActiveBuildRequest.testGroupId() == newRequest.testGroupId())
-                continue;
-            const testGroup = latestActiveBuildRequest.testGroup();
-            if (!testGroup) {
-                // The request might be for a very old test group we didn't fetch.
-                continue;
+        if (newRequest.isTest()) {
+            for (let [name, entry] of latestEntryByWorkerName.entries()) {
+                const latestActiveBuildRequest = BuildRequest.findById(entry.buildRequestId());
+                if (!latestActiveBuildRequest)
+                    continue;
+                if (latestActiveBuildRequest.testGroupId() == newRequest.testGroupId())
+                    continue;
+                const testGroup = latestActiveBuildRequest.testGroup();
+                if (!testGroup) {
+                    // The request might be for a very old test group we didn't fetch.
+                    continue;
+                }
+                if (testGroup.hasFinished() && !testGroup.mayNeedMoreRequests())
+                    continue;
+                usedWorkers.add(name);
             }
-            if (testGroup.hasFinished() && !testGroup.mayNeedMoreRequests())
-                continue;
-            usedWorkers.add(name);
         }
 
         if (!this._workerList || hasPendingBuildsWithoutWorkerNameSpecified) {

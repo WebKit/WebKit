@@ -1,4 +1,4 @@
-<html> <!-- webkit-test-runner [ runSingly=true ] -->
+<html>
 <head>
 <script src="../../../resources/ui-helper.js"></script>
 <style>
@@ -31,7 +31,6 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
     (async function() {
         await UIHelper.setAppAccentColor(230, 110, 2);
-        internals.setUseSystemAppearance(false);
         runTest();
         testRunner.notifyDone();
     })();

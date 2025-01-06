@@ -28,6 +28,10 @@
 #import <Foundation/NSProgress.h>
 #import <wtf/RefPtr.h>
 
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+#import <WebKitAdditions/DownloadProgressAdditions.h>
+#endif
+
 namespace WebKit {
 
 class Download;
@@ -36,6 +40,10 @@ class SandboxExtension;
 }
 
 NS_ASSUME_NONNULL_BEGIN
+
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+WKDOWNLOADPROGRESS_ADDITIONS
+#endif
 
 @interface WKDownloadProgress : NSProgress
 

@@ -5,8 +5,8 @@ This test verifies platform selection UI is not incorrectly suppressed when the 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS caretRect.top is 6
-PASS caretRect.left is 34
+PASS caretRect.top is 5
+PASS caretRect.left is 35
 PASS caretRect.width is 2
 PASS caretRect.height is 25
 PASS successfullyParsed is true

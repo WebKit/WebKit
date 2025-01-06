@@ -38,7 +38,6 @@
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
 typedef struct _GstSample GstSample;
-typedef struct OpaqueMTPluginByteSource *MTPluginByteSourceRef;
 typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 
 namespace WebCore {
@@ -57,13 +56,11 @@ struct PlatformSample {
         MockSampleBoxType,
         CMSampleBufferType,
         GStreamerSampleType,
-        ByteRangeSampleType
     } type;
     union {
         const MockSampleBox* mockSampleBox;
         CMSampleBufferRef cmSampleBuffer;
         GstSample* gstSample;
-        std::pair<MTPluginByteSourceRef, std::reference_wrapper<const TrackInfo>> byteRangeSample;
     } sample;
 };
 
@@ -74,6 +71,7 @@ public:
     virtual MediaTime presentationTime() const = 0;
     virtual MediaTime decodeTime() const = 0;
     virtual MediaTime duration() const = 0;
+    virtual MediaTime presentationEndTime() const { return presentationTime() + duration(); }
     virtual TrackID trackID() const = 0;
     virtual size_t sizeInBytes() const = 0;
     virtual FloatSize presentationSize() const = 0;
@@ -139,7 +137,7 @@ struct AudioInfo;
 struct VideoInfo;
 
 struct TrackInfo : public ThreadSafeRefCounted<TrackInfo> {
-    enum class TrackType { Unknown, Audio, Video };
+    enum class TrackType : uint8_t { Unknown, Audio, Video };
 
     bool isAudio() const { return type() == TrackType::Audio; }
     bool isVideo() const { return type() == TrackType::Video; }
@@ -155,7 +153,7 @@ struct TrackInfo : public ThreadSafeRefCounted<TrackInfo> {
 
     FourCC codecName;
     String codecString;
-    uint64_t trackID { 0 };
+    TrackID trackID { 0 };
 
     virtual ~TrackInfo() = default;
 
@@ -196,9 +194,7 @@ struct AudioInfo : public TrackInfo {
     uint32_t rate { 0 };
     uint32_t channels { 0 };
     uint32_t framesPerPacket { 0 };
-    uint32_t bitDepth { 16 };
-    int8_t profile { 0 };
-    int8_t extendedProfile { 0 };
+    uint8_t bitDepth { 16 };
 
     RefPtr<SharedBuffer> cookieData;
 
@@ -208,26 +204,47 @@ private:
     bool equalTo(const TrackInfo& otherAudioInfo) const final
     {
         auto& other = downcast<const AudioInfo>(otherAudioInfo);
-        return rate == other.rate && channels == other.channels && bitDepth == other.bitDepth && framesPerPacket == other.framesPerPacket && profile == other.profile && extendedProfile == other.extendedProfile && ((!cookieData && !other.cookieData) || (cookieData && other.cookieData && *cookieData == *other.cookieData));
+        return rate == other.rate && channels == other.channels && bitDepth == other.bitDepth && framesPerPacket == other.framesPerPacket && ((!cookieData && !other.cookieData) || (cookieData && other.cookieData && *cookieData == *other.cookieData));
     }
 };
 
 class MediaSamplesBlock {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    using MediaSampleDataType = std::variant<MediaSample::ByteRange, Ref<const FragmentedSharedBuffer>>;
     struct MediaSampleItem {
-        using MediaSampleDataType = MediaSamplesBlock::MediaSampleDataType;
+        using MediaSampleDataType = RefPtr<FragmentedSharedBuffer>;
         MediaTime presentationTime;
-        MediaTime decodeTime;
-        MediaTime duration;
-        MediaTime trimDuration;
+        MediaTime decodeTime { MediaTime::indefiniteTime() };
+        MediaTime duration { MediaTime::zeroTime() };
+        std::pair<MediaTime, MediaTime> trimInterval { MediaTime::zeroTime(), MediaTime::zeroTime() };
         MediaSampleDataType data;
-        MediaSample::SampleFlags flags;
+        uint32_t flags { };
+        bool isSync() const { return flags & MediaSample::IsSync; }
     };
+
+    using MediaSampleDataType = MediaSampleItem::MediaSampleDataType;
     using SamplesVector = Vector<MediaSampleItem>;
+
+    MediaSamplesBlock() = default;
+    MediaSamplesBlock(const TrackInfo* info, SamplesVector&& items)
+        : m_info(info)
+        , m_samples(WTFMove(items))
+    {
+    }
 
     void setInfo(RefPtr<const TrackInfo>&& info) { m_info = WTFMove(info); }
     const TrackInfo* info() const { return m_info.get(); }
+    MediaTime presentationTime() const { return isEmpty() ? MediaTime::invalidTime() : first().presentationTime; }
+    MediaTime duration() const
+    {
+        MediaTime duration = MediaTime::zeroTime();
+        for (auto& sample : *this)
+            duration += sample.duration;
+        return duration;
+    }
+    MediaTime presentationEndTime() const { return presentationTime() + duration(); }
+    bool isSync() const { return size() ? (first().flags & MediaSample::IsSync) : false; }
+    TrackID trackID() const { return m_info ? m_info->trackID : -1; }
     bool isVideo() const { return m_info && m_info->isVideo(); }
     bool isAudio() const { return m_info && m_info->isAudio(); }
     TrackInfo::TrackType type() const { return m_info ? m_info->type() : TrackInfo::TrackType::Unknown; }

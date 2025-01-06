@@ -96,7 +96,8 @@ void CaptureGetMultisamplefv_val(const State &glState,
                                  GLfloat *val,
                                  ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    // GL_SAMPLE_POSITION: 2 floats
+    paramCapture->readBufferSizeBytes = sizeof(GLfloat) * 2;
 }
 
 void CaptureGetProgramInterfaceiv_params(const State &glState,

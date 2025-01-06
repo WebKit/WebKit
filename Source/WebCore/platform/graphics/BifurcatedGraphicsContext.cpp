@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "BifurcatedGraphicsContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ASSERT_ENABLED
 #define VERIFY_STATE_SYNCHRONIZATION() do { \
@@ -35,6 +36,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BifurcatedGraphicsContext);
 
 BifurcatedGraphicsContext::BifurcatedGraphicsContext(GraphicsContext& primaryContext, GraphicsContext& secondaryContext)
     : m_primaryContext(primaryContext)
@@ -159,6 +162,17 @@ void BifurcatedGraphicsContext::beginTransparencyLayer(float opacity)
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
+void BifurcatedGraphicsContext::beginTransparencyLayer(CompositeOperator compositeOperator, BlendMode blendMode)
+{
+    GraphicsContext::beginTransparencyLayer(compositeOperator, blendMode);
+    m_primaryContext.beginTransparencyLayer(compositeOperator, blendMode);
+    m_secondaryContext.beginTransparencyLayer(compositeOperator, blendMode);
+
+    GraphicsContext::save(GraphicsContextState::Purpose::TransparencyLayer);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
 void BifurcatedGraphicsContext::endTransparencyLayer()
 {
     GraphicsContext::endTransparencyLayer();
@@ -178,10 +192,10 @@ void BifurcatedGraphicsContext::applyDeviceScaleFactor(float factor)
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::fillRect(const FloatRect& rect)
+void BifurcatedGraphicsContext::fillRect(const FloatRect& rect, RequiresClipToRect requiresClipToRect)
 {
-    m_primaryContext.fillRect(rect);
-    m_secondaryContext.fillRect(rect);
+    m_primaryContext.fillRect(rect, requiresClipToRect);
+    m_secondaryContext.fillRect(rect, requiresClipToRect);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
@@ -202,10 +216,10 @@ void BifurcatedGraphicsContext::fillRect(const FloatRect& rect, Gradient& gradie
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+void BifurcatedGraphicsContext::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
 {
-    m_primaryContext.fillRect(rect, gradient, gradientSpaceTransform);
-    m_secondaryContext.fillRect(rect, gradient, gradientSpaceTransform);
+    m_primaryContext.fillRect(rect, gradient, gradientSpaceTransform, requiresClipToRect);
+    m_secondaryContext.fillRect(rect, gradient, gradientSpaceTransform, requiresClipToRect);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
@@ -436,10 +450,10 @@ ImageDrawResult BifurcatedGraphicsContext::drawTiledImage(Image& image, const Fl
 }
 
 #if ENABLE(VIDEO)
-void BifurcatedGraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
+void BifurcatedGraphicsContext::drawVideoFrame(VideoFrame& videoFrame, const FloatRect& destination, WebCore::ImageOrientation orientation, bool shouldDiscardAlpha)
 {
-    m_primaryContext.paintFrameForMedia(player, destination);
-    m_secondaryContext.paintFrameForMedia(player, destination);
+    m_primaryContext.drawVideoFrame(videoFrame, destination, orientation, shouldDiscardAlpha);
+    m_secondaryContext.drawVideoFrame(videoFrame, destination, orientation, shouldDiscardAlpha);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
@@ -516,10 +530,10 @@ FloatSize BifurcatedGraphicsContext::drawText(const FontCascade& cascade, const 
     return size;
 }
 
-void BifurcatedGraphicsContext::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode fontSmoothingMode)
+void BifurcatedGraphicsContext::drawGlyphs(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& point, FontSmoothingMode fontSmoothingMode)
 {
-    m_primaryContext.drawGlyphs(font, glyphs, advances, numGlyphs, point, fontSmoothingMode);
-    m_secondaryContext.drawGlyphs(font, glyphs, advances, numGlyphs, point, fontSmoothingMode);
+    m_primaryContext.drawGlyphs(font, glyphs, advances, point, fontSmoothingMode);
+    m_secondaryContext.drawGlyphs(font, glyphs, advances, point, fontSmoothingMode);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
@@ -560,6 +574,22 @@ void BifurcatedGraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect,
 {
     m_primaryContext.drawDotsForDocumentMarker(rect, markerStyle);
     m_secondaryContext.drawDotsForDocumentMarker(rect, markerStyle);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
+void BifurcatedGraphicsContext::beginPage(const IntSize& pageSize)
+{
+    m_primaryContext.beginPage(pageSize);
+    m_secondaryContext.beginPage(pageSize);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
+void BifurcatedGraphicsContext::endPage()
+{
+    m_primaryContext.endPage();
+    m_secondaryContext.endPage();
 
     VERIFY_STATE_SYNCHRONIZATION();
 }

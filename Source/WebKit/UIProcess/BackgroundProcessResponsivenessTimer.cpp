@@ -143,7 +143,7 @@ void BackgroundProcessResponsivenessTimer::setResponsive(bool isResponsive)
 
 bool BackgroundProcessResponsivenessTimer::shouldBeActive() const
 {
-#if !PLATFORM(IOS_FAMILY)
+#if !USE(RUNNINGBOARD)
     auto webProcess = protectedWebProcessProxy();
     if (webProcess->visiblePageCount())
         return false;

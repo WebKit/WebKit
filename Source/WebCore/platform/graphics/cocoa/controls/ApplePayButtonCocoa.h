@@ -28,12 +28,14 @@
 #if ENABLE(APPLE_PAY)
 
 #import "PlatformControl.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ApplePayButtonPart;
 
 class ApplePayButtonCocoa final : public PlatformControl {
+    WTF_MAKE_TZONE_ALLOCATED(ApplePayButtonCocoa);
 public:
     ApplePayButtonCocoa(ApplePayButtonPart& owningMeterPart);
 

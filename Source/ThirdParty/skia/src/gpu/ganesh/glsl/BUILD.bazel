@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 GLSL_FILES = [
     "GrGLSLBlend.cpp",
@@ -31,16 +29,5 @@ GLSL_FILES = [
 split_srcs_and_hdrs(
     name = "glsl",
     files = GLSL_FILES,
-)
-
-skia_filegroup(
-    name = "srcs",
-    srcs = [":glsl_srcs"],
-    visibility = ["//src/gpu/ganesh:__pkg__"],
-)
-
-skia_filegroup(
-    name = "private_hdrs",
-    srcs = [":glsl_hdrs"],
     visibility = ["//src/gpu/ganesh:__pkg__"],
 )

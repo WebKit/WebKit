@@ -32,7 +32,7 @@ namespace PAL {
 
 // This function is only suitable for zip files which are guaranteed to not have any flags set in their headers.
 // See https://tools.ietf.org/html/rfc1952 for more information.
-PAL_EXPORT Vector<LChar> gunzip(const unsigned char* data, size_t length);
+PAL_EXPORT Vector<LChar> gunzip(std::span<const uint8_t> data);
 
 }
 

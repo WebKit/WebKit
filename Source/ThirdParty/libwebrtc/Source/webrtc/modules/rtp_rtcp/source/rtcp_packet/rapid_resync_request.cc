@@ -16,7 +16,6 @@
 
 namespace webrtc {
 namespace rtcp {
-constexpr uint8_t RapidResyncRequest::kFeedbackMessageType;
 // RFC 4585: Feedback format.
 // Rapid Resynchronisation Request (draft-perkins-avt-rapid-rtp-sync-03).
 //

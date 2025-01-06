@@ -39,7 +39,8 @@
   static NSInteger nextYOrigin_;
 
 - (id)initWithTitle:(NSString *)title width:(int)width height:(int)height {
-  if (self = [super init]) {
+  self = [super init];
+  if (self) {
     title_ = title;
     width_ = width;
     height_ = height;

@@ -47,24 +47,24 @@ namespace Inspector {
 
 class InjectedScriptHost;
 
-class JS_EXPORT_PRIVATE InjectedScriptManager {
+class InjectedScriptManager {
     WTF_MAKE_NONCOPYABLE(InjectedScriptManager);
     WTF_MAKE_TZONE_ALLOCATED(InjectedScriptManager);
 public:
-    InjectedScriptManager(InspectorEnvironment&, Ref<InjectedScriptHost>&&);
-    virtual ~InjectedScriptManager();
+    JS_EXPORT_PRIVATE InjectedScriptManager(InspectorEnvironment&, Ref<InjectedScriptHost>&&);
+    JS_EXPORT_PRIVATE virtual ~InjectedScriptManager();
 
-    virtual void connect();
-    virtual void disconnect();
-    virtual void discardInjectedScripts();
+    JS_EXPORT_PRIVATE virtual void connect();
+    JS_EXPORT_PRIVATE virtual void disconnect();
+    JS_EXPORT_PRIVATE virtual void discardInjectedScripts();
 
     InjectedScriptHost& injectedScriptHost();
     InspectorEnvironment& inspectorEnvironment() const { return m_environment; }
 
-    InjectedScript injectedScriptFor(JSC::JSGlobalObject*);
-    InjectedScript injectedScriptForId(int);
-    int injectedScriptIdFor(JSC::JSGlobalObject*);
-    InjectedScript injectedScriptForObjectId(const String& objectId);
+    JS_EXPORT_PRIVATE InjectedScript injectedScriptFor(JSC::JSGlobalObject*);
+    JS_EXPORT_PRIVATE InjectedScript injectedScriptForId(int);
+    JS_EXPORT_PRIVATE int injectedScriptIdFor(JSC::JSGlobalObject*);
+    JS_EXPORT_PRIVATE InjectedScript injectedScriptForObjectId(const String& objectId);
     void releaseObjectGroup(const String& objectGroup);
     void clearEventValue();
     void clearExceptionValue();
@@ -72,8 +72,8 @@ public:
 protected:
     virtual void didCreateInjectedScript(const InjectedScript&);
 
-    HashMap<int, InjectedScript> m_idToInjectedScript;
-    HashMap<JSC::JSGlobalObject*, int> m_scriptStateToId;
+    UncheckedKeyHashMap<int, InjectedScript> m_idToInjectedScript;
+    UncheckedKeyHashMap<JSC::JSGlobalObject*, int> m_scriptStateToId;
 
 private:
     Expected<JSC::JSObject*, NakedPtr<JSC::Exception>> createInjectedScript(JSC::JSGlobalObject*, int id);

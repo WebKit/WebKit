@@ -42,6 +42,7 @@
 #include "WorkerRunLoop.h"
 #include "WorkerThreadableLoader.h"
 #include "WorkletGlobalScope.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

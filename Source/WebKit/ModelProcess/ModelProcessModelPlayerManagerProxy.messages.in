@@ -23,7 +23,8 @@
 
 #if ENABLE(MODEL_PROCESS)
 
-messages -> ModelProcessModelPlayerManagerProxy NotRefCounted {
+[EnabledBy=ModelElementEnabled && ModelProcessEnabled]
+messages -> ModelProcessModelPlayerManagerProxy {
     CreateModelPlayer(WebCore::ModelPlayerIdentifier identifier)
     DeleteModelPlayer(WebCore::ModelPlayerIdentifier identifier)
 }

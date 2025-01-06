@@ -1,0 +1,16 @@
+Select me
+
+Verifies that the selection appears in the right location after the view becomes first responder, after being reparented
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS selectionRectsBefore.length is 1
+PASS selectionRectsAfter.length is 1
+PASS selectionRectsBefore[0].top is selectionRectsAfter[0].top
+PASS selectionRectsBefore[0].left is selectionRectsAfter[0].left
+PASS selectionRectsBefore[0].width is selectionRectsAfter[0].width
+PASS selectionRectsBefore[0].height is selectionRectsAfter[0].height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

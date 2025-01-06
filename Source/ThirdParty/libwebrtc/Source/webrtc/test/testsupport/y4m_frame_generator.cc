@@ -74,6 +74,10 @@ Y4mFrameGenerator::VideoFrameData Y4mFrameGenerator::NextFrame() {
   return VideoFrameData(scaled_buffer, update_rect);
 }
 
+void Y4mFrameGenerator::SkipNextFrame() {
+  frame_reader_->PullFrame();
+}
+
 void Y4mFrameGenerator::ChangeResolution(size_t width, size_t height) {
   width_ = width;
   height_ = height;

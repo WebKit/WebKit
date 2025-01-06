@@ -29,14 +29,14 @@
 #include "CustomEffectCallback.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/Exception.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CustomEffect);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CustomEffect);
 
-ExceptionOr<Ref<CustomEffect>> CustomEffect::create(Ref<CustomEffectCallback>&& callback, std::optional<std::variant<double, EffectTiming>>&& options)
+ExceptionOr<Ref<CustomEffect>> CustomEffect::create(Document& document, Ref<CustomEffectCallback>&& callback, std::optional<std::variant<double, EffectTiming>>&& options)
 {
     auto customEffect = adoptRef(*new CustomEffect(WTFMove(callback)));
 
@@ -49,8 +49,12 @@ ExceptionOr<Ref<CustomEffect>> CustomEffect::create(Ref<CustomEffectCallback>&& 
         } else {
             auto effectTimingOptions = std::get<EffectTiming>(optionsValue);
 
+            auto convertedDuration = effectTimingOptions.durationAsDoubleOrString();
+            if (!convertedDuration)
+                return Exception { ExceptionCode::TypeError };
+
             timing = {
-                effectTimingOptions.duration,
+                *convertedDuration,
                 effectTimingOptions.iterations,
                 effectTimingOptions.delay,
                 effectTimingOptions.endDelay,
@@ -60,7 +64,7 @@ ExceptionOr<Ref<CustomEffect>> CustomEffect::create(Ref<CustomEffectCallback>&& 
                 effectTimingOptions.direction
             };
         }
-        auto updateTimingResult = customEffect->updateTiming(timing);
+        auto updateTimingResult = customEffect->updateTiming(document, timing);
         if (updateTimingResult.hasException())
             return updateTimingResult.releaseException();
     }

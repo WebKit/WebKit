@@ -1,0 +1,20 @@
+
+PASS e.style['block-step-align'] = "up up" should not set the property value
+PASS e.style['block-step-align'] = "up down" should not set the property value
+PASS e.style['block-step-align'] = "up nearest" should not set the property value
+PASS e.style['block-step-align'] = "down down" should not set the property value
+PASS e.style['block-step-align'] = "down up" should not set the property value
+PASS e.style['block-step-align'] = "down nearest" should not set the property value
+PASS e.style['block-step-align'] = "nearest nearest" should not set the property value
+PASS e.style['block-step-align'] = "nearest up" should not set the property value
+PASS e.style['block-step-align'] = "nearest down" should not set the property value
+PASS e.style['block-step-align'] = "-1px" should not set the property value
+PASS e.style['block-step-align'] = "min-content" should not set the property value
+PASS e.style['block-step-align'] = "10%" should not set the property value
+PASS e.style['block-step-align'] = "20" should not set the property value
+PASS e.style['block-step-align'] = "none" should not set the property value
+PASS e.style['block-step-align'] = "border-box" should not set the property value
+PASS e.style['block-step-align'] = "margin" should not set the property value
+PASS e.style['block-step-align'] = "padding" should not set the property value
+PASS e.style['block-step-align'] = "content" should not set the property value
+

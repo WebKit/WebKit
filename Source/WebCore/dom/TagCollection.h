@@ -31,7 +31,7 @@ namespace WebCore {
 
 // HTMLCollection that limits to a particular tag.
 class TagCollection final : public CachedHTMLCollection<TagCollection, CollectionTypeTraits<CollectionType::ByTag>::traversalType> {
-    WTF_MAKE_ISO_ALLOCATED(TagCollection);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TagCollection);
 public:
     static Ref<TagCollection> create(ContainerNode& rootNode, CollectionType type, const AtomString& qualifiedName)
     {
@@ -49,7 +49,7 @@ private:
 };
 
 class TagCollectionNS final : public CachedHTMLCollection<TagCollectionNS, CollectionTypeTraits<CollectionType::ByTag>::traversalType> {
-    WTF_MAKE_ISO_ALLOCATED(TagCollectionNS);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TagCollectionNS);
 public:
     static Ref<TagCollectionNS> create(ContainerNode& rootNode, const AtomString& namespaceURI, const AtomString& localName)
     {
@@ -67,7 +67,7 @@ private:
 };
 
 class HTMLTagCollection final : public CachedHTMLCollection<HTMLTagCollection, CollectionTypeTraits<CollectionType::ByHTMLTag>::traversalType> {
-    WTF_MAKE_ISO_ALLOCATED(HTMLTagCollection);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLTagCollection);
 public:
     static Ref<HTMLTagCollection> create(ContainerNode& rootNode, CollectionType type, const AtomString& qualifiedName)
     {

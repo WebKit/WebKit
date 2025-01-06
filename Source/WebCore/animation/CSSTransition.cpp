@@ -32,11 +32,11 @@
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"
 #include "StyleResolver.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSTransition);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSTransition);
 
 Ref<CSSTransition> CSSTransition::create(const Styleable& owningElement, const AnimatableCSSProperty& property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
 {
@@ -61,10 +61,13 @@ CSSTransition::CSSTransition(const Styleable& styleable, const AnimatableCSSProp
 {
 }
 
-void CSSTransition::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
+CSSTransition::~CSSTransition() = default;
+
+OptionSet<AnimationImpact> CSSTransition::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
 {
-    StyleOriginatedAnimation::resolve(targetStyle, resolutionContext, startTime);
+    auto impact = StyleOriginatedAnimation::resolve(targetStyle, resolutionContext, startTime);
     m_currentStyle = RenderStyle::clonePtr(targetStyle);
+    return impact;
 }
 
 void CSSTransition::animationDidFinish()
@@ -89,7 +92,6 @@ void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
     animationEffect->setDelay(delay);
     animationEffect->setIterationDuration(duration);
     animationEffect->setTimingFunction(backingAnimation().timingFunction());
-    animationEffect->updateStaticTimingProperties();
     effectTimingDidChange();
 
     unsuspendEffectInvalidation();

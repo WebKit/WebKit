@@ -40,29 +40,29 @@ class BackendDispatcher;
 
 typedef String ErrorString;
 
-class JS_EXPORT_PRIVATE SupplementalBackendDispatcher : public RefCounted<SupplementalBackendDispatcher> {
+class SupplementalBackendDispatcher : public RefCounted<SupplementalBackendDispatcher> {
 public:
-    SupplementalBackendDispatcher(BackendDispatcher&);
-    virtual ~SupplementalBackendDispatcher();
+    JS_EXPORT_PRIVATE SupplementalBackendDispatcher(BackendDispatcher&);
+    JS_EXPORT_PRIVATE virtual ~SupplementalBackendDispatcher();
     virtual void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) = 0;
 protected:
     Ref<BackendDispatcher> m_backendDispatcher;
 };
 
-class JS_EXPORT_PRIVATE BackendDispatcher : public RefCounted<BackendDispatcher> {
+class BackendDispatcher : public RefCounted<BackendDispatcher> {
 public:
-    static Ref<BackendDispatcher> create(Ref<FrontendRouter>&&);
+    JS_EXPORT_PRIVATE static Ref<BackendDispatcher> create(Ref<FrontendRouter>&&);
 
-    class JS_EXPORT_PRIVATE CallbackBase : public RefCounted<CallbackBase> {
+    class CallbackBase : public RefCounted<CallbackBase> {
     public:
-        CallbackBase(Ref<BackendDispatcher>&&, long requestId);
+        JS_EXPORT_PRIVATE CallbackBase(Ref<BackendDispatcher>&&, long requestId);
         virtual ~CallbackBase() { }
 
-        bool isActive() const;
+        JS_EXPORT_PRIVATE bool isActive() const;
         void disable() { m_alreadySent = true; }
 
-        void sendSuccess(Ref<JSON::Object>&&);
-        void sendFailure(const ErrorString&);
+        JS_EXPORT_PRIVATE void sendSuccess(Ref<JSON::Object>&&);
+        JS_EXPORT_PRIVATE void sendFailure(const ErrorString&);
 
     private:
         Ref<BackendDispatcher> m_backendDispatcher;
@@ -83,8 +83,8 @@ public:
         ServerError
     };
 
-    void registerDispatcherForDomain(const String& domain, SupplementalBackendDispatcher*);
-    void dispatch(const String& message);
+    JS_EXPORT_PRIVATE void registerDispatcherForDomain(const String& domain, SupplementalBackendDispatcher*);
+    JS_EXPORT_PRIVATE void dispatch(const String& message);
 
     // Note that 'unused' is a workaround so the compiler can pick the right sendResponse based on arity.
     // When <http://webkit.org/b/179847> is fixed or this class is renamed for the JSON::Object case,
@@ -92,19 +92,19 @@ public:
     void sendResponse(long requestId, RefPtr<JSON::Object>&& result);
     void sendResponse(long requestId, RefPtr<JSON::Object>&& result, bool unused);
     void sendResponse(long requestId, Ref<JSON::Object>&& result);
-    void sendResponse(long requestId, Ref<JSON::Object>&& result, bool unused);
-    void sendPendingErrors();
+    JS_EXPORT_PRIVATE void sendResponse(long requestId, Ref<JSON::Object>&& result, bool unused);
+    JS_EXPORT_PRIVATE void sendPendingErrors();
 
-    void reportProtocolError(CommonErrorCode, const String& errorMessage);
-    void reportProtocolError(std::optional<long> relatedRequestId, CommonErrorCode, const String& errorMessage);
+    JS_EXPORT_PRIVATE void reportProtocolError(CommonErrorCode, const String& errorMessage);
+    JS_EXPORT_PRIVATE void reportProtocolError(std::optional<long> relatedRequestId, CommonErrorCode, const String& errorMessage);
 
-    std::optional<bool> getBoolean(JSON::Object*, const String& name, bool required);
-    std::optional<int> getInteger(JSON::Object*, const String& name, bool required);
-    std::optional<double> getDouble(JSON::Object*, const String& name, bool required);
-    String getString(JSON::Object*, const String& name, bool required);
-    RefPtr<JSON::Value> getValue(JSON::Object*, const String& name, bool required);
-    RefPtr<JSON::Object> getObject(JSON::Object*, const String& name, bool required);
-    RefPtr<JSON::Array> getArray(JSON::Object*, const String& name, bool required);
+    JS_EXPORT_PRIVATE std::optional<bool> getBoolean(JSON::Object*, const String& name, bool required);
+    JS_EXPORT_PRIVATE std::optional<int> getInteger(JSON::Object*, const String& name, bool required);
+    JS_EXPORT_PRIVATE std::optional<double> getDouble(JSON::Object*, const String& name, bool required);
+    JS_EXPORT_PRIVATE String getString(JSON::Object*, const String& name, bool required);
+    JS_EXPORT_PRIVATE RefPtr<JSON::Value> getValue(JSON::Object*, const String& name, bool required);
+    JS_EXPORT_PRIVATE RefPtr<JSON::Object> getObject(JSON::Object*, const String& name, bool required);
+    JS_EXPORT_PRIVATE RefPtr<JSON::Array> getArray(JSON::Object*, const String& name, bool required);
 
 private:
     BackendDispatcher(Ref<FrontendRouter>&&);
@@ -113,7 +113,7 @@ private:
     WTF_INTERNAL T getPropertyValue(JSON::Object*, const String& name, bool required, std::function<T(JSON::Value&)> converter, ASCIILiteral typeName);
 
     Ref<FrontendRouter> m_frontendRouter;
-    HashMap<String, SupplementalBackendDispatcher*> m_dispatchers;
+    UncheckedKeyHashMap<String, SupplementalBackendDispatcher*> m_dispatchers;
 
     // Protocol errors reported for the top-level request being processed.
     // If processing a request triggers async responses, then any related errors will

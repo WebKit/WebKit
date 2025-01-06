@@ -34,6 +34,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -46,24 +47,30 @@ static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Coo
 }
 
 class WKHTTPCookieStoreObserver : public API::HTTPCookieStoreObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WKHTTPCookieStoreObserver);
 public:
+    static RefPtr<WKHTTPCookieStoreObserver> create(id<WKHTTPCookieStoreObserver> observer)
+    {
+        return adoptRef(new WKHTTPCookieStoreObserver(observer));
+    }
+
+private:
     explicit WKHTTPCookieStoreObserver(id<WKHTTPCookieStoreObserver> observer)
         : m_observer(observer)
     {
     }
 
-private:
     void cookiesDidChange(API::HTTPCookieStore& cookieStore) final
     {
-        [m_observer cookiesDidChangeInCookieStore:wrapper(cookieStore)];
+        if ([m_observer respondsToSelector:@selector(cookiesDidChangeInCookieStore:)])
+            [m_observer cookiesDidChangeInCookieStore:wrapper(cookieStore)];
     }
 
     WeakObjCPtr<id<WKHTTPCookieStoreObserver>> m_observer;
 };
 
 @implementation WKHTTPCookieStore {
-    HashMap<CFTypeRef, std::unique_ptr<WKHTTPCookieStoreObserver>> _observers;
+    HashMap<CFTypeRef, RefPtr<WKHTTPCookieStoreObserver>> _observers;
 }
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
@@ -73,7 +80,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKHTTPCookieStore.class, self))
         return;
 
-    for (auto& observer : _observers.values())
+    for (RefPtr observer : _observers.values())
         _cookieStore->unregisterObserver(*observer);
 
     _cookieStore->API::HTTPCookieStore::~HTTPCookieStore();
@@ -114,7 +121,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     if (!result.isNewEntry)
         return;
 
-    result.iterator->value = makeUnique<WKHTTPCookieStoreObserver>(observer);
+    result.iterator->value = WKHTTPCookieStoreObserver::create(observer);
     _cookieStore->registerObserver(*result.iterator->value);
 }
 

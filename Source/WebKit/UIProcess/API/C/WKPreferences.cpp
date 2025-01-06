@@ -758,6 +758,16 @@ bool WKPreferencesGetWebAuthenticationEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->webAuthenticationEnabled();
 }
 
+void WKPreferencesSetDigitalCredentialsEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setDigitalCredentialsEnabled(flag);
+}
+
+bool WKPreferencesGetDigitalCredentialsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->digitalCredentialsEnabled();
+}
+
 void WKPreferencesSetInvisibleMediaAutoplayPermitted(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setInvisibleAutoplayNotPermitted(!flag);
@@ -1238,16 +1248,6 @@ bool WKPreferencesGetGamepadsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->gamepadsEnabled();
 }
 
-void WKPreferencesSetHighlightAPIEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setHighlightAPIEnabled(enabled);
-}
-
-bool WKPreferencesGetHighlightAPIEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->highlightAPIEnabled();
-}
-
 void WKPreferencesSetMinimumZoomFontSize(WKPreferencesRef preferencesRef, double size)
 {
     toImpl(preferencesRef)->setMinimumZoomFontSize(size);
@@ -1368,14 +1368,14 @@ bool WKPreferencesGetMediaCaptureRequiresSecureConnection(WKPreferencesRef prefe
     return toImpl(preferencesRef)->mediaCaptureRequiresSecureConnection();
 }
 
-void WKPreferencesSetInactiveMediaCaptureSteamRepromptIntervalInMinutes(WKPreferencesRef preferencesRef, double interval)
+void WKPreferencesSetInactiveMediaCaptureStreamRepromptIntervalInMinutes(WKPreferencesRef preferencesRef, double interval)
 {
-    toImpl(preferencesRef)->setInactiveMediaCaptureSteamRepromptIntervalInMinutes(interval);
+    toImpl(preferencesRef)->setInactiveMediaCaptureStreamRepromptIntervalInMinutes(interval);
 }
 
-double WKPreferencesGetInactiveMediaCaptureSteamRepromptIntervalInMinutes(WKPreferencesRef preferencesRef)
+double WKPreferencesGetInactiveMediaCaptureStreamRepromptIntervalInMinutes(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->inactiveMediaCaptureSteamRepromptIntervalInMinutes();
+    return toImpl(preferencesRef)->inactiveMediaCaptureStreamRepromptIntervalInMinutes();
 }
 
 void WKPreferencesSetDataTransferItemsEnabled(WKPreferencesRef preferencesRef, bool flag)
@@ -1466,6 +1466,16 @@ WK_EXPORT bool WKPreferencesGetApplePayEnabled(WKPreferencesRef preferencesRef)
 void WKPreferencesSetApplePayEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     WebKit::toImpl(preferencesRef)->setApplePayEnabled(enabled);
+}
+
+bool WKPreferencesGetCSSTransformStyleSeparatedEnabled(WKPreferencesRef preferencesRef)
+{
+    return WebKit::toImpl(preferencesRef)->cssTransformStyleSeparatedEnabled();
+}
+
+void WKPreferencesSetCSSTransformStyleSeparatedEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    WebKit::toImpl(preferencesRef)->setCSSTransformStyleSeparatedEnabled(enabled);
 }
 
 bool WKPreferencesGetApplePayCapabilityDisclosureAllowed(WKPreferencesRef preferencesRef)
@@ -2008,6 +2018,15 @@ void WKPreferencesSetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef, bool)
 bool WKPreferencesGetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef)
 {
     return false;
+}
+
+void WKPreferencesSetHighlightAPIEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+}
+
+bool WKPreferencesGetHighlightAPIEnabled(WKPreferencesRef preferencesRef)
+{
+    return true;
 }
 
 void WKPreferencesSetWebSQLDisabled(WKPreferencesRef, bool)

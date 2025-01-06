@@ -131,6 +131,10 @@ class ValidationError;
 struct VertexAttribute;
 struct VertexBufferLayout;
 struct VertexState;
+class XRBinding;
+class XRProjectionLayer;
+class XRSubImage;
+class XRView;
 
 } // namespace WebCore::WebGPU
 
@@ -300,6 +304,10 @@ public:
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ShaderModule&) = 0;
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Texture&) = 0;
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::TextureView&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRBinding&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRProjectionLayer&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRSubImage&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRView&) = 0;
 };
 
 } // namespace WebKit::WebGPU

@@ -15,9 +15,9 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "modules/audio_processing/agc/gain_control.h"
 
@@ -81,8 +81,8 @@ class GainControlImpl : public GainControl {
   std::vector<std::unique_ptr<MonoAgcState>> mono_agcs_;
   std::vector<int> capture_levels_;
 
-  absl::optional<size_t> num_proc_channels_;
-  absl::optional<int> sample_rate_hz_;
+  std::optional<size_t> num_proc_channels_;
+  std::optional<int> sample_rate_hz_;
 
   static int instance_counter_;
 };

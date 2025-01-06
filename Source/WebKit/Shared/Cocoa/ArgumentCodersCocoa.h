@@ -151,10 +151,10 @@ template<typename T, typename = IsObjCObject<T>> void encode(Encoder&, T *);
 
 #if ASSERT_ENABLED
 
-static inline bool isObjectClassAllowed(id object, const HashSet<Class>& allowedClasses)
+static inline bool isObjectClassAllowed(id object, const AllowedClassHashSet& allowedClasses)
 {
-    for (Class allowedClass : allowedClasses) {
-        if ([object isKindOfClass:allowedClass])
+    for (auto& allowedClass : allowedClasses) {
+        if ([object isKindOfClass:allowedClass.get()])
             return true;
     }
     return false;

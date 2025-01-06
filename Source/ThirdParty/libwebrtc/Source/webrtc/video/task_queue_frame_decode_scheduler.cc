@@ -53,18 +53,17 @@ void TaskQueueFrameDecodeScheduler::ScheduleFrame(
                  // this scheduled release should be skipped.
                  if (scheduled_rtp_ != rtp)
                    return;
-                 scheduled_rtp_ = absl::nullopt;
+                 scheduled_rtp_ = std::nullopt;
                  std::move(cb)(rtp, schedule.render_time);
                }),
       wait);
 }
 
 void TaskQueueFrameDecodeScheduler::CancelOutstanding() {
-  scheduled_rtp_ = absl::nullopt;
+  scheduled_rtp_ = std::nullopt;
 }
 
-absl::optional<uint32_t>
-TaskQueueFrameDecodeScheduler::ScheduledRtpTimestamp() {
+std::optional<uint32_t> TaskQueueFrameDecodeScheduler::ScheduledRtpTimestamp() {
   return scheduled_rtp_;
 }
 

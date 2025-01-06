@@ -107,7 +107,7 @@ class ControllerManagerImpl final : public ControllerManager {
 
   std::vector<std::unique_ptr<Controller>> controllers_;
 
-  absl::optional<int64_t> last_reordering_time_ms_;
+  std::optional<int64_t> last_reordering_time_ms_;
   ScoringPoint last_scoring_point_;
 
   std::vector<Controller*> default_sorted_controllers_;

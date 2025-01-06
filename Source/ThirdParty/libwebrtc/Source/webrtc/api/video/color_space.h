@@ -13,9 +13,9 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "api/video/hdr_metadata.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -174,7 +174,7 @@ class RTC_EXPORT ColorSpace {
   RangeID range_ = RangeID::kInvalid;
   ChromaSiting chroma_siting_horizontal_ = ChromaSiting::kUnspecified;
   ChromaSiting chroma_siting_vertical_ = ChromaSiting::kUnspecified;
-  absl::optional<HdrMetadata> hdr_metadata_;
+  std::optional<HdrMetadata> hdr_metadata_;
 };
 
 }  // namespace webrtc

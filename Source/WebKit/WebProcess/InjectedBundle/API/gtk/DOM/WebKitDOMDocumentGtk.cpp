@@ -1717,7 +1717,7 @@ WebKitDOMHTMLCollection* webkit_dom_document_get_plugins(WebKitDOMDocument* self
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
     WebCore::Document* item = WebKit::core(self);
-    RefPtr<WebCore::HTMLCollection> gobjectResult = WTF::getPtr(item->plugins());
+    RefPtr<WebCore::HTMLCollection> gobjectResult = WTF::getPtr(item->embeds());
     return WebKit::kit(gobjectResult.get());
 }
 

@@ -31,14 +31,14 @@ async function checkResult()
 {{
     debug("Cookies sent with HTTP request:");
     await shouldNotHaveCookie("strict");
-    await shouldHaveCookieWithValue("implicit-strict", "6");
-    await shouldHaveCookieWithValue("strict-because-invalid-SameSite-value", "6");
+    await shouldHaveCookieWithValue("implicit-none", "6");
+    await shouldHaveCookieWithValue("none-because-invalid-SameSite-value", "6");
     await shouldNotHaveCookie("lax");
 
     debug("<br>Cookies visible in DOM:");
     shouldNotHaveDOMCookie("strict");
-    shouldHaveDOMCookieWithValue("implicit-strict", "6");
-    shouldHaveDOMCookieWithValue("strict-because-invalid-SameSite-value", "6");
+    shouldHaveDOMCookieWithValue("implicit-none", "6");
+    shouldHaveDOMCookieWithValue("none-because-invalid-SameSite-value", "6");
     shouldNotHaveDOMCookie("lax");
 
     await resetCookies();

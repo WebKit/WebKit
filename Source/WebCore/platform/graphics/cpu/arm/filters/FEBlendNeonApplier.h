@@ -31,13 +31,14 @@
 #if HAVE(ARM_NEON_INTRINSICS)
 
 #include "FilterEffectApplier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FEBlend;
 
 class FEBlendNeonApplier final : public FilterEffectConcreteApplier<FEBlend> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FEBlendNeonApplier);
     using Base = FilterEffectConcreteApplier<FEBlend>;
 
 public:

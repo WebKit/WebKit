@@ -32,13 +32,18 @@
 #include <WebCore/ScrollbarThemeMac.h>
 #include <WebCore/ScrollingCoordinator.h>
 #include <pal/spi/mac/NSScrollerImpSPI.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollbarsController);
 
 RemoteScrollbarsController::RemoteScrollbarsController(WebCore::ScrollableArea& scrollableArea, WebCore::ScrollingCoordinator* coordinator)
     : ScrollbarsController(scrollableArea)
     , m_coordinator(ThreadSafeWeakPtr<WebCore::ScrollingCoordinator>(coordinator))
 {
+    if (auto scrollingCoordinator = m_coordinator.get())
+        scrollingCoordinator->setScrollbarWidth(scrollableArea, scrollableArea.scrollbarWidthStyle());
 }
 
 void RemoteScrollbarsController::scrollbarLayoutDirectionChanged(WebCore::UserInterfaceLayoutDirection scrollbarLayoutDirection)
@@ -79,7 +84,7 @@ void RemoteScrollbarsController::mouseExitedScrollbar(WebCore::Scrollbar* scroll
 
 bool RemoteScrollbarsController::shouldScrollbarParticipateInHitTesting(WebCore::Scrollbar* scrollbar)
 {
-    // Non-overlay scrollbars should always participate in hit testing.    
+    // Non-overlay scrollbars should always participate in hit testing.
     ASSERT(scrollbar->isOverlayScrollbar());
 
     // Overlay scrollbars should participate in hit testing whenever they are at all visible.
@@ -123,6 +128,14 @@ void RemoteScrollbarsController::updateScrollbarEnabledState(WebCore::Scrollbar&
 {
     if (auto scrollingCoordinator = m_coordinator.get())
         scrollingCoordinator->setScrollbarEnabled(scrollbar);
+}
+
+void RemoteScrollbarsController::scrollbarWidthChanged(WebCore::ScrollbarWidth width)
+{
+    if (auto scrollingCoordinator = m_coordinator.get())
+        scrollingCoordinator->setScrollbarWidth(scrollableArea(), width);
+
+    updateScrollbarsThickness();
 }
 
 void RemoteScrollbarsController::updateScrollbarStyle()

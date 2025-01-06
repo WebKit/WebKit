@@ -77,6 +77,10 @@ void ClearErrors(const gl::Context *context,
                  const char *file,
                  const char *function,
                  unsigned int line);
+void ClearErrors(const FunctionsGL *functions,
+                 const char *file,
+                 const char *function,
+                 unsigned int line);
 
 // Check for a single error
 angle::Result CheckError(const gl::Context *context,
@@ -95,6 +99,8 @@ angle::Result HandleError(const gl::Context *context,
 #define ANGLE_GL_TRY_ALWAYS_CHECK(context, call)                      \
     (ClearErrors(context, __FILE__, __FUNCTION__, __LINE__), (call)); \
     ANGLE_TRY(CheckError(context, #call, __FILE__, __FUNCTION__, __LINE__))
+
+#define ANGLE_GL_CLEAR_ERRORS(functions) ClearErrors(functions, __FILE__, __FUNCTION__, __LINE__)
 
 #if defined(ANGLE_ENABLE_ASSERTS)
 #    define ANGLE_GL_TRY(context, call) ANGLE_GL_TRY_ALWAYS_CHECK(context, call)
@@ -124,6 +130,7 @@ namespace nativegl
 {
 bool SupportsVertexArrayObjects(const FunctionsGL *functions);
 bool CanUseDefaultVertexArrayObject(const FunctionsGL *functions);
+bool CanUseClientSideArrays(const FunctionsGL *functions, GLuint vao);
 bool SupportsCompute(const FunctionsGL *functions);
 bool SupportsFenceSync(const FunctionsGL *functions);
 bool SupportsOcclusionQueries(const FunctionsGL *functions);

@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "BufferSource.h"
 #include "CBORReader.h"
 #include "CBORWriter.h"
 
@@ -78,7 +79,7 @@ Vector<uint8_t> AuthenticationExtensionsClientInputs::toCBOR() const
     if (!appid.isEmpty())
         clientInputsMap[cbor::CBORValue("appid")] = cbor::CBORValue(appid);
     if (credProps)
-        clientInputsMap[cbor::CBORValue("credProps")] = cbor::CBORValue(credProps);
+        clientInputsMap[cbor::CBORValue("credProps")] = cbor::CBORValue(*credProps);
     if (largeBlob) {
         cbor::CBORValue::MapValue largeBlobMap;
         if (!largeBlob->support.isNull())

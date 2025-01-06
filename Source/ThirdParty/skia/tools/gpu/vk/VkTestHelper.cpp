@@ -10,21 +10,22 @@
 #if defined(SK_VULKAN)
 
 #include "include/core/SkSurface.h"
-#include "include/gpu/GrTypes.h"
-#include "include/gpu/vk/GrVkBackendContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
+#include "include/gpu/vk/VulkanBackendContext.h"
+#include "include/gpu/vk/VulkanMemoryAllocator.h"
 #include "tests/TestType.h"
 #include "tools/gpu/ProtectedUtils.h"
 #include "tools/gpu/vk/VkTestUtils.h"
 
 #if defined(SK_GANESH)
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/vk/GrVkDirectContext.h"
 #endif
 
 #if defined(SK_GRAPHITE)
 #include "include/gpu/graphite/Context.h"
 #include "include/gpu/graphite/vk/VulkanGraphiteUtils.h"
-#include "include/private/gpu/graphite/ContextOptionsPriv.h"
+#include "src/gpu/graphite/ContextOptionsPriv.h"
 #endif
 
 #define ACQUIRE_INST_VK_PROC(name)                                                               \
@@ -83,9 +84,8 @@ protected:
             return false;
         }
 
-        GrVkBackendContext gr;
-        sk_gpu_test::ConvertBackendContext(fBackendContext, &gr);
-        fDirectContext = GrDirectContexts::MakeVulkan(gr);
+        SkASSERT(fBackendContext.fMemoryAllocator);
+        fDirectContext = GrDirectContexts::MakeVulkan(fBackendContext);
         if (!fDirectContext) {
             return false;
         }
@@ -142,6 +142,7 @@ public:
     }
 
     skgpu::graphite::Recorder* recorder() override { return fRecorder.get(); }
+    skgpu::graphite::Context* context() override { return fContext.get(); }
 
 protected:
     bool init() override {

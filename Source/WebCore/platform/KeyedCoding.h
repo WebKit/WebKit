@@ -28,13 +28,14 @@
 #include <functional>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class SharedBuffer;
 
 class KeyedDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(KeyedDecoder);
 public:
     WEBCORE_EXPORT static std::unique_ptr<KeyedDecoder> decoder(std::span<const uint8_t> data);
 
@@ -142,7 +143,7 @@ private:
 };
 
 class KeyedEncoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(KeyedEncoder);
 public:
     WEBCORE_EXPORT static std::unique_ptr<KeyedEncoder> encoder();
 
@@ -185,13 +186,13 @@ public:
         encodeObject(key, *object, std::forward<F>(function));
     }
 
-    template<typename T, typename F>
-    void encodeObjects(const String& key, T begin, T end, F&& function)
+    template<typename CollectionType, typename F>
+    void encodeObjects(const String& key, const CollectionType& collection, F&& function)
     {
         beginArray(key);
-        for (T it = begin; it != end; ++it) {
+        for (auto& item : collection) {
             beginArrayElement();
-            function(*this, *it);
+            function(*this, item);
             endArrayElement();
         }
         endArray();

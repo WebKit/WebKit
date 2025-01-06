@@ -13,6 +13,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <optional>
 #include <utility>
 
 #include "modules/rtp_rtcp/source/leb128.h"
@@ -188,8 +189,7 @@ VectorObuInfo ParseObus(
   VectorObuInfo obu_infos;
   bool expect_continues_obu = false;
   for (rtc::ArrayView<const uint8_t> rtp_payload : rtp_payloads) {
-    rtc::ByteBufferReader payload(
-        reinterpret_cast<const char*>(rtp_payload.data()), rtp_payload.size());
+    rtc::ByteBufferReader payload(rtp_payload);
     uint8_t aggregation_header;
     if (!payload.ReadUInt8(&aggregation_header)) {
       RTC_DLOG(LS_WARNING)
@@ -356,19 +356,19 @@ rtc::scoped_refptr<EncodedImageBuffer> VideoRtpDepacketizerAv1::AssembleFrame(
   return bitstream;
 }
 
-absl::optional<VideoRtpDepacketizer::ParsedRtpPayload>
+std::optional<VideoRtpDepacketizer::ParsedRtpPayload>
 VideoRtpDepacketizerAv1::Parse(rtc::CopyOnWriteBuffer rtp_payload) {
   if (rtp_payload.size() == 0) {
     RTC_DLOG(LS_ERROR) << "Empty rtp payload.";
-    return absl::nullopt;
+    return std::nullopt;
   }
   uint8_t aggregation_header = rtp_payload.cdata()[0];
   if (RtpStartsNewCodedVideoSequence(aggregation_header) &&
       RtpStartsWithFragment(aggregation_header)) {
     // new coded video sequence can't start from an OBU fragment.
-    return absl::nullopt;
+    return std::nullopt;
   }
-  absl::optional<ParsedRtpPayload> parsed(absl::in_place);
+  std::optional<ParsedRtpPayload> parsed(std::in_place);
 
   // To assemble frame, all of the rtp payload is required, including
   // aggregation header.

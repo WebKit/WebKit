@@ -55,7 +55,9 @@ class AcceleratedEffect;
 struct AcceleratedEffectValues;
 #endif
 
+enum class AppleVisualEffect : uint8_t;
 enum class MediaPlayerVideoGravity : uint8_t;
+enum class ContentsFormat : uint8_t;
 
 enum class PlatformCALayerFilterType : uint8_t {
     Linear,
@@ -75,10 +77,16 @@ enum class PlatformCALayerLayerType : uint8_t {
         LayerTypeAVPlayerLayer,
         LayerTypeContentsProvidedLayer,
         LayerTypeBackdropLayer,
+#if HAVE(CORE_MATERIAL)
+        LayerTypeMaterialLayer,
+#endif
         LayerTypeShapeLayer,
         LayerTypeScrollContainerLayer,
 #if ENABLE(MODEL_ELEMENT)
         LayerTypeModelLayer,
+#endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+        LayerTypeSeparatedImageLayer,
 #endif
         LayerTypeCustom,
         LayerTypeHost,
@@ -210,8 +218,8 @@ public:
     virtual bool acceleratesDrawing() const = 0;
     virtual void setAcceleratesDrawing(bool) = 0;
 
-    virtual bool wantsDeepColorBackingStore() const = 0;
-    virtual void setWantsDeepColorBackingStore(bool) = 0;
+    virtual ContentsFormat contentsFormat() const = 0;
+    virtual void setContentsFormat(ContentsFormat) = 0;
 
     virtual bool hasContents() const = 0;
     virtual CFTypeRef contents() const = 0;
@@ -228,7 +236,7 @@ public:
     virtual void setBackingStoreAttached(bool) = 0;
     virtual bool backingStoreAttached() const = 0;
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     virtual void setVisibleRect(const FloatRect&) = 0;
 #endif
 
@@ -281,8 +289,8 @@ public:
     virtual void setEventRegion(const EventRegion&) { }
     
 #if ENABLE(SCROLLING_THREAD)
-    virtual ScrollingNodeID scrollingNodeID() const { return { }; }
-    virtual void setScrollingNodeID(ScrollingNodeID) { }
+    virtual std::optional<ScrollingNodeID> scrollingNodeID() const { return std::nullopt; }
+    virtual void setScrollingNodeID(std::optional<ScrollingNodeID>) { }
 #endif
 
     virtual GraphicsLayer::CustomAppearance customAppearance() const = 0;
@@ -299,6 +307,11 @@ public:
     virtual bool isDescendentOfSeparatedPortal() const = 0;
     virtual void setIsDescendentOfSeparatedPortal(bool) = 0;
 #endif
+#endif
+
+#if HAVE(CORE_MATERIAL)
+    virtual AppleVisualEffect appleVisualEffect() const = 0;
+    virtual void setAppleVisualEffect(AppleVisualEffect) = 0;
 #endif
 
     virtual TiledBacking* tiledBacking() = 0;

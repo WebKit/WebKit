@@ -28,6 +28,50 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
+#if __has_include("WebKitLogDefinitions.h")
+#include "WebKitLogDefinitions.h"
+#endif
+
+#define COMMA() ,
+#define OPTIONAL_ARGS(...) __VA_OPT__(COMMA()) __VA_ARGS__
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#include "LogClient.h"
+
+#define RELEASE_LOG_FORWARDABLE(category, logMessage, ...) do { \
+    if (auto* client = downcast<LogClient>(WebCore::logClient().get())) \
+        client->logMessage(__VA_ARGS__); \
+    else \
+        RELEASE_LOG(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__)); \
+} while (0)
+
+#define RELEASE_LOG_INFO_FORWARDABLE(category, logMessage, ...) do { \
+    if (auto* client = downcast<LogClient>(WebCore::logClient().get())) \
+        client->logMessage(__VA_ARGS__); \
+    else \
+        RELEASE_LOG_INFO(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__)); \
+} while (0)
+
+#define RELEASE_LOG_ERROR_FORWARDABLE(category, logMessage, ...) do { \
+    if (auto* client = downcast<LogClient>(WebCore::logClient().get())) \
+        client->logMessage(__VA_ARGS__); \
+    else \
+        RELEASE_LOG_ERROR(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__)); \
+} while (0)
+
+#define RELEASE_LOG_FAULT_FORWARDABLE(category, logMessage, ...) do { \
+    if (auto* client = downcast<LogClient>(WebCore::logClient().get())) \
+        client->logMessage(__VA_ARGS__); \
+    else \
+        RELEASE_LOG_FAULT(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__)); \
+} while (0)
+#else
+#define RELEASE_LOG_FORWARDABLE(category, logMessage, ...) RELEASE_LOG(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__))
+#define RELEASE_LOG_INFO_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_INFO(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__))
+#define RELEASE_LOG_ERROR_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_ERROR(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__))
+#define RELEASE_LOG_FAULT_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_FAULT(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__))
+#endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #ifndef LOG_CHANNEL_PREFIX
@@ -119,7 +163,6 @@ extern "C" {
     M(TextInput) \
     M(TextInteraction) \
     M(Translation) \
-    M(UnifiedTextReplacement) \
     M(UIHitTesting) \
     M(ViewGestures) \
     M(ViewState) \

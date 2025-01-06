@@ -49,7 +49,7 @@
 - (DOMHTMLCollection *)plugins
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->plugins()));
+    return kit(WTF::getPtr(IMPL->embeds()));
 }
 
 - (DOMHTMLCollection *)scripts
@@ -173,13 +173,13 @@
 - (void)write:(NSString *)text
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->write(nullptr, { String { text } });
+    IMPL->write(nullptr, FixedVector<String> { String { text } });
 }
 
 - (void)writeln:(NSString *)text
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->writeln(nullptr, { String { text} });
+    IMPL->writeln(nullptr, FixedVector<String> { String { text } });
 }
 
 - (void)clear

@@ -37,7 +37,8 @@
                 await UIHelper.delayFor(0);
 
                 let scale = 2.0;
-                eventSender.scalePageBy(scale, 0, 0);
+                if (window.testRunner)
+                    await testRunner.setPageScaleFactor(scale, 0, 0);
 
                 let windowHeight = window.innerHeight * scale;
                 let initialScrollPosition = document.scrollingElement.scrollTop;

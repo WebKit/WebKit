@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FileSystemHandleIdentifier.h"
+#include "StorageEstimate.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -34,7 +35,6 @@ namespace WebCore {
 class FileSystemStorageConnection;
 template<typename> class ExceptionOr;
 struct ClientOrigin;
-struct StorageEstimate;
 
 class StorageConnection : public ThreadSafeRefCounted<StorageConnection> {
 public:

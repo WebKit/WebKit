@@ -27,12 +27,15 @@
 
 #include "config.h"
 #include "CurlRequestScheduler.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(CURL)
 
 #include "CurlRequestSchedulerClient.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CurlRequestScheduler);
 
 CurlRequestScheduler::CurlRequestScheduler(long maxConnects, long maxTotalConnections, long maxHostConnections)
     : m_maxConnects(maxConnects)

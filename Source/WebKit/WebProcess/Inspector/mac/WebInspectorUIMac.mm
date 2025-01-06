@@ -60,6 +60,10 @@ String WebInspectorUI::localizedStringsURL() const
     return [WKInspectorViewController URLForInspectorResource:@"localizedStrings.js"].absoluteString;
 }
 
+void WebInspectorUI::didEstablishConnection()
+{
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

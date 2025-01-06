@@ -1,5 +1,6 @@
 
 PASS Loading data…
+PASS Test that embedded 0x0A is stripped
 PASS Parsing: <file:/example.com/> against <http://example.org/foo/bar>
 PASS Parsing: <file://example:1/> against <about:blank>
 PASS Parsing: <file://example:test/> against <about:blank>
@@ -24,6 +25,11 @@ PASS Parsing: <file://localhost/> against <file:///tmp/mock/path>
 PASS Parsing: <file://localhost/test> against <file:///tmp/mock/path>
 PASS Parsing: <test> against <file:///tmp/mock/path>
 PASS Parsing: <file:test> against <file:///tmp/mock/path>
+PASS Parsing: <file:///w|m> against <about:blank>
+PASS Parsing: <file:///w||m> against <about:blank>
+FAIL Parsing: <file:///w|/m> against <about:blank> assert_equals: href expected "file:///w:/m" but got "file:///w|/m"
+PASS Parsing: <file:C|/m/> against <about:blank>
+PASS Parsing: <file:C||/m/> against <about:blank>
 PASS Parsing: <file:/example.com/> against <about:blank>
 PASS Parsing: <file:...> against <http://www.example.com/test>
 PASS Parsing: <file:..> against <http://www.example.com/test>
@@ -131,4 +137,4 @@ PASS Parsing: <> against <about:blank>
 PASS Parsing: <///abcdef/../> against <file:///>
 PASS Parsing: </\//\/a/../> against <file:///>
 PASS Parsing: <//a/../> against <file:///>
-
+Link with embedded \n is parsed correctly

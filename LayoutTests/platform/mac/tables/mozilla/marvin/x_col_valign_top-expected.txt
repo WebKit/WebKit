@@ -6,15 +6,15 @@ layer at (0,0) size 800x272
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 134x18
           text run at (0,0) width 134: "COL VALIGN=TOP"
-      RenderTable {table} at (0,34) size 668x214 [border: (1px outset #808080)]
+      RenderTable {table} at (0,34) size 668x214 [border: (1px outset #000000)]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableSection (anonymous) at (1,1) size 666x212
           RenderTableRow {tr} at (0,2) size 666x208
-            RenderTableCell {td} at (2,2) size 204x208 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,2) size 204x208 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderImage {img} at (2,2) size 200x200
-            RenderTableCell {td} at (208,95) size 456x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (208,95) size 456x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,95) size 452x18
                 text run at (2,2) width 389: "The top of this text should be vertically aligned to the top of "
                 text run at (390,2) width 64: "the image"

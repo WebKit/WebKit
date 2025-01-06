@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -34,15 +35,15 @@ namespace WebCore {
 class LegacyCDMSession;
 class LegacyCDMSessionClient;
 
-class CDMPrivateInterface {
-    WTF_MAKE_FAST_ALLOCATED;
+class CDMPrivateInterface : public AbstractRefCounted {
+    WTF_MAKE_TZONE_ALLOCATED(CDMPrivateInterface);
 public:
     CDMPrivateInterface() = default;
     virtual ~CDMPrivateInterface() = default;
 
-    virtual bool supportsMIMEType(const String&) = 0;
+    virtual bool supportsMIMEType(const String&) const = 0;
 
-    virtual std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) = 0;
+    virtual RefPtr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) = 0;
 };
 
 } // namespace WebCore

@@ -13,9 +13,9 @@
 #include <stddef.h>
 
 #include <memory>
+#include <optional>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "test/gmock.h"
@@ -93,7 +93,7 @@ TEST(TaskQueueFrameDecodeSchedulerTest, CancelOutstanding) {
   time_controller_.AdvanceTime(decode_delay / 2);
   EXPECT_THAT(scheduler.ScheduledRtpTimestamp(), Optional(rtp));
   scheduler.CancelOutstanding();
-  EXPECT_THAT(scheduler.ScheduledRtpTimestamp(), Eq(absl::nullopt));
+  EXPECT_THAT(scheduler.ScheduledRtpTimestamp(), Eq(std::nullopt));
   time_controller_.AdvanceTime(decode_delay / 2);
 
   scheduler.Stop();

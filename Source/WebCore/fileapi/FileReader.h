@@ -50,8 +50,11 @@ namespace WebCore {
 class Blob;
 
 class FileReader final : public RefCounted<FileReader>, public ActiveDOMObject, public EventTarget, private FileReaderLoaderClient {
-    WTF_MAKE_ISO_ALLOCATED(FileReader);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FileReader);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<FileReader> create(ScriptExecutionContext&);
 
     virtual ~FileReader();
@@ -74,10 +77,6 @@ public:
     DOMException* error() { return m_error.get(); }
     FileReaderLoader::ReadType readType() const { return m_readType; }
     std::optional<std::variant<String, RefPtr<JSC::ArrayBuffer>>> result() const;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit FileReader(ScriptExecutionContext&);

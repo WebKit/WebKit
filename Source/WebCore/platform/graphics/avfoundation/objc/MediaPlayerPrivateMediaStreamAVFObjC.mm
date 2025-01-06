@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
+#import "AudioMediaStreamTrackRenderer.h"
 #import "AudioTrackPrivateMediaStream.h"
 #import "GraphicsContextCG.h"
 #import "LocalSampleBufferDisplayLayer.h"
@@ -47,6 +48,8 @@
 #import <wtf/Lock.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 #import "CoreVideoSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -184,6 +187,7 @@ MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
 #pragma mark MediaPlayer Factory Methods
 
 class MediaPlayerFactoryMediaStreamAVFObjC final : public MediaPlayerFactory {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaPlayerFactoryMediaStreamAVFObjC);
 public:
     MediaPlayerFactoryMediaStreamAVFObjC()
     {
@@ -351,6 +355,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferDisplayLayerStatusDidFail
     updateLayersAsNeeded();
 }
 
+#if PLATFORM(IOS_FAMILY)
+bool MediaPlayerPrivateMediaStreamAVFObjC::canShowWhileLocked() const
+{
+    auto player = m_player.get();
+    return player && player->canShowWhileLocked();
+}
+#endif
+
 void MediaPlayerPrivateMediaStreamAVFObjC::applicationDidBecomeActive()
 {
     if (m_sampleBufferDisplayLayer && m_sampleBufferDisplayLayer->didFail()) {
@@ -422,7 +434,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::layersAreInitialized(IntSize size, bo
 
     scheduleRenderingModeChanged();
 
-    m_sampleBufferDisplayLayer->setLogIdentifier(makeString(hex(reinterpret_cast<uintptr_t>(logIdentifier()))));
+    m_sampleBufferDisplayLayer->setLogIdentifier(makeString(hex(logIdentifier())));
     if (m_storedBounds)
         m_sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds);
 
@@ -476,7 +488,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
 {
     INFO_LOG(LOGIDENTIFIER);
 
-    m_intrinsicSize = FloatSize();
+    m_intrinsicSize = { };
 
     m_mediaStreamPrivate = &stream;
     m_mediaStreamPrivate->addObserver(*this);
@@ -759,7 +771,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged()
 {
     SizeChanged sizeChanged = SizeChanged::No;
 
-    FloatSize intrinsicSize = m_mediaStreamPrivate->intrinsicSize();
+    IntSize intrinsicSize = m_mediaStreamPrivate->intrinsicSize();
     if (intrinsicSize.isEmpty() || m_intrinsicSize.isEmpty()) {
         if (intrinsicSize.height() != m_intrinsicSize.height() || intrinsicSize.width() != m_intrinsicSize.width()) {
             m_intrinsicSize = intrinsicSize;
@@ -1135,6 +1147,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::audioOutputDeviceChanged()
     if (!player)
         return;
     auto deviceId = player->audioOutputDeviceId();
+    if (deviceId.isEmpty())
+        deviceId = AudioMediaStreamTrackRenderer::defaultDeviceID();
     for (auto& audioTrack : m_audioTrackMap.values())
         audioTrack->setAudioOutputDevice(deviceId);
 }

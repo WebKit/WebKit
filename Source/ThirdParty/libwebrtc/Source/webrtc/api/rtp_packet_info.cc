@@ -10,8 +10,15 @@
 
 #include "api/rtp_packet_info.h"
 
+#include <stddef.h>
+
 #include <algorithm>
+#include <cstdint>
 #include <utility>
+#include <vector>
+
+#include "api/rtp_headers.h"
+#include "api/units/timestamp.h"
 
 namespace webrtc {
 
@@ -37,8 +44,8 @@ RtpPacketInfo::RtpPacketInfo(const RTPHeader& rtp_header,
 
   csrcs_.assign(&rtp_header.arrOfCSRCs[0], &rtp_header.arrOfCSRCs[csrcs_count]);
 
-  if (extension.hasAudioLevel) {
-    audio_level_ = extension.audioLevel;
+  if (extension.audio_level()) {
+    audio_level_ = extension.audio_level()->level();
   }
 
   absolute_capture_time_ = extension.absolute_capture_time;

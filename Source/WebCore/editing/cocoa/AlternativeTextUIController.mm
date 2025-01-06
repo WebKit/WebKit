@@ -27,6 +27,7 @@
 #import "AlternativeTextUIController.h"
 
 #import "FloatRect.h"
+#import <wtf/TZoneMallocInlines.h>
 
 #if USE(APPKIT)
 #import <AppKit/NSSpellChecker.h>
@@ -40,7 +41,9 @@
 
 namespace WebCore {
 
-DictationContext AlternativeTextUIController::addAlternatives(PlatformTextAlternatives *alternatives)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AlternativeTextUIController);
+
+std::optional<DictationContext> AlternativeTextUIController::addAlternatives(PlatformTextAlternatives *alternatives)
 {
     return m_contextController.addAlternatives(alternatives);
 }

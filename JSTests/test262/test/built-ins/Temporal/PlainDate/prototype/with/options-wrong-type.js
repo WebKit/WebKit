@@ -20,4 +20,6 @@ const instance = new Temporal.PlainDate(2000, 5, 2);
 for (const value of badOptions) {
   assert.throws(TypeError, () => instance.with({ day: 5 }, value),
     `TypeError on wrong options type ${typeof value}`);
+  assert.throws(RangeError, () => instance.with({ day: -1 }, value),
+    "Partial date processed before throwing TypeError");
 };

@@ -51,10 +51,13 @@ typedef (double or CSSNumericValue) CSSNumberish;
 
     attribute DOMString id;
     [ImplementedAs=bindingsEffect] attribute AnimationEffect? effect;
-    attribute AnimationTimeline? timeline;
+    [ImplementedAs=bindingsTimeline] attribute AnimationTimeline? timeline;
     [ImplementedAs=bindingsStartTime] attribute CSSNumberish? startTime;
     [ImplementedAs=bindingsCurrentTime] attribute CSSNumberish? currentTime;
+    [ImplementedAs=bindingsRangeStart, EnabledBySetting=ScrollDrivenAnimationsEnabled] attribute (TimelineRangeOffset or CSSNumericValue or CSSKeywordValue or DOMString) rangeStart;
+    [ImplementedAs=bindingsRangeEnd, EnabledBySetting=ScrollDrivenAnimationsEnabled] attribute (TimelineRangeOffset or CSSNumericValue or CSSKeywordValue or DOMString) rangeEnd;
     attribute double playbackRate;
+    [EnabledBySetting=WebAnimationsOverallProgressPropertyEnabled] readonly attribute double? overallProgress;
     [ImplementedAs=bindingsFrameRate, EnabledBySetting=WebAnimationsCustomFrameRateEnabled] attribute (FramesPerSecond or AnimationFrameRatePreset) frameRate;
     [ImplementedAs=bindingsPlayState] readonly attribute AnimationPlayState playState;
     [ImplementedAs=bindingsReplaceState] readonly attribute AnimationReplaceState replaceState;

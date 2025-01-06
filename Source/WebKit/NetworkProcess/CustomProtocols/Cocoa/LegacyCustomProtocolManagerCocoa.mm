@@ -36,6 +36,7 @@
 #import <pal/spi/cocoa/NSURLConnectionSPI.h>
 #import <pal/text/TextEncoding.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 using namespace WebKit;
 
@@ -43,6 +44,11 @@ static RefPtr<NetworkProcess>& firstNetworkProcess()
 {
     static NeverDestroyed<RefPtr<NetworkProcess>> networkProcess;
     return networkProcess.get();
+}
+
+static RefPtr<NetworkProcess> protectedFirstNetworkProcess()
+{
+    return firstNetworkProcess();
 }
 
 void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkProcess)
@@ -54,16 +60,16 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
         return !legacyCustomProtocolManager->m_registeredSchemes.isEmpty();
     };
 
-    RELEASE_ASSERT(!firstNetworkProcess() || !hasRegisteredSchemes(firstNetworkProcess()->supplement<LegacyCustomProtocolManager>()));
+    RELEASE_ASSERT(!firstNetworkProcess() || !hasRegisteredSchemes(RefPtr { protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>() }.get()));
     firstNetworkProcess() = &networkProcess;
 }
 
 @interface WKCustomProtocol : NSURLProtocol {
 @private
-    LegacyCustomProtocolID _customProtocolID;
+    Markable<LegacyCustomProtocolID> _customProtocolID;
     RetainPtr<CFRunLoopRef> _initializationRunLoop;
 }
-@property (nonatomic, readonly) LegacyCustomProtocolID customProtocolID;
+@property (nonatomic, readonly) Markable<LegacyCustomProtocolID> customProtocolID;
 @property (nonatomic, readonly) CFRunLoopRef initializationRunLoop;
 @end
 
@@ -73,8 +79,9 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request
 {
-    if (auto* customProtocolManager = firstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
-        return customProtocolManager->supportsScheme([[[request URL] scheme] lowercaseString]);
+    // FIXME: This code runs in a dispatch queue so we can't ref NetworkProcess here.
+    if (SUPPRESS_UNCOUNTED_LOCAL auto* customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
+        SUPPRESS_UNCOUNTED_ARG return customProtocolManager->supportsScheme([[[request URL] scheme] lowercaseString]);
     return NO;
 }
 
@@ -94,7 +101,7 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
     if (!self)
         return nil;
 
-    if (auto* customProtocolManager = firstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
+    if (RefPtr customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
         _customProtocolID = customProtocolManager->addCustomProtocol(self);
     _initializationRunLoop = CFRunLoopGetCurrent();
 
@@ -108,16 +115,16 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
 
 - (void)startLoading
 {
-    ensureOnMainRunLoop([customProtocolID = self.customProtocolID, request = retainPtr([self request])] {
-        if (auto* customProtocolManager = firstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
+    ensureOnMainRunLoop([customProtocolID = *self.customProtocolID, request = retainPtr([self request])] {
+        if (RefPtr customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
             customProtocolManager->startLoading(customProtocolID, request.get());
     });
 }
 
 - (void)stopLoading
 {
-    ensureOnMainRunLoop([customProtocolID = self.customProtocolID] {
-        if (auto* customProtocolManager = firstNetworkProcess()->supplement<LegacyCustomProtocolManager>()) {
+    ensureOnMainRunLoop([customProtocolID = *self.customProtocolID] {
+        if (RefPtr customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>()) {
             customProtocolManager->stopLoading(customProtocolID);
             customProtocolManager->removeCustomProtocol(customProtocolID);
         }
@@ -188,7 +195,7 @@ void LegacyCustomProtocolManager::didLoadData(LegacyCustomProtocolID customProto
     if (!protocol)
         return;
 
-    RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
+    RetainPtr nsData = toNSData(data);
 
     dispatchOnInitializationRunLoop(protocol.get(), ^ {
         [[protocol client] URLProtocol:protocol.get() didLoadData:nsData.get()];

@@ -1,11 +1,11 @@
 # emoji-sequences.txt
-# Date: 2023-06-05, 21:39:54 GMT
-# © 2023 Unicode®, Inc.
+# Date: 2024-05-01, 21:25:24 GMT
+# © 2024 Unicode®, Inc.
 # Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
-# For terms of use, see https://www.unicode.org/terms_of_use.html
+# For terms of use and license, see https://www.unicode.org/terms_of_use.html
 #
 # Emoji Sequence Data for UTS #51
-# Version: 15.1
+# Version: 16.0
 #
 # For documentation and usage, see https://www.unicode.org/reports/tr51
 #
@@ -301,6 +301,8 @@
 1FA80..1FA82  ; Basic_Emoji                  ; yo-yo..parachute                                               # E12.0  [3] (🪀..🪂)
 1FA83..1FA86  ; Basic_Emoji                  ; boomerang..nesting dolls                                       # E13.0  [4] (🪃..🪆)
 1FA87..1FA88  ; Basic_Emoji                  ; maracas..flute                                                 # E15.0  [2] (🪇..🪈)
+1FA89         ; Basic_Emoji                  ; harp                                                           # E16.0  [1] (🪉)
+1FA8F         ; Basic_Emoji                  ; shovel                                                         # E16.0  [1] (🪏)
 1FA90..1FA95  ; Basic_Emoji                  ; ringed planet..banjo                                           # E12.0  [6] (🪐..🪕)
 1FA96..1FAA8  ; Basic_Emoji                  ; military helmet..rock                                          # E13.0 [19] (🪖..🪨)
 1FAA9..1FAAC  ; Basic_Emoji                  ; mirror ball..hamsa                                             # E14.0  [4] (🪩..🪬)
@@ -308,15 +310,20 @@
 1FAB0..1FAB6  ; Basic_Emoji                  ; fly..feather                                                   # E13.0  [7] (🪰..🪶)
 1FAB7..1FABA  ; Basic_Emoji                  ; lotus..nest with eggs                                          # E14.0  [4] (🪷..🪺)
 1FABB..1FABD  ; Basic_Emoji                  ; hyacinth..wing                                                 # E15.0  [3] (🪻..🪽)
+1FABE         ; Basic_Emoji                  ; leafless tree                                                  # E16.0  [1] (🪾)
 1FABF         ; Basic_Emoji                  ; goose                                                          # E15.0  [1] (🪿)
 1FAC0..1FAC2  ; Basic_Emoji                  ; anatomical heart..people hugging                               # E13.0  [3] (🫀..🫂)
 1FAC3..1FAC5  ; Basic_Emoji                  ; pregnant man..person with crown                                # E14.0  [3] (🫃..🫅)
+1FAC6         ; Basic_Emoji                  ; fingerprint                                                    # E16.0  [1] (🫆)
 1FACE..1FACF  ; Basic_Emoji                  ; moose..donkey                                                  # E15.0  [2] (🫎..🫏)
 1FAD0..1FAD6  ; Basic_Emoji                  ; blueberries..teapot                                            # E13.0  [7] (🫐..🫖)
 1FAD7..1FAD9  ; Basic_Emoji                  ; pouring liquid..jar                                            # E14.0  [3] (🫗..🫙)
 1FADA..1FADB  ; Basic_Emoji                  ; ginger root..pea pod                                           # E15.0  [2] (🫚..🫛)
+1FADC         ; Basic_Emoji                  ; root vegetable                                                 # E16.0  [1] (🫜)
+1FADF         ; Basic_Emoji                  ; splatter                                                       # E16.0  [1] (🫟)
 1FAE0..1FAE7  ; Basic_Emoji                  ; melting face..bubbles                                          # E14.0  [8] (🫠..🫧)
 1FAE8         ; Basic_Emoji                  ; shaking face                                                   # E15.0  [1] (🫨)
+1FAE9         ; Basic_Emoji                  ; face with bags under eyes                                      # E16.0  [1] (🫩)
 1FAF0..1FAF6  ; Basic_Emoji                  ; hand with index finger and thumb crossed..heart hands          # E14.0  [7] (🫰..🫶)
 1FAF7..1FAF8  ; Basic_Emoji                  ; leftwards pushing hand..rightwards pushing hand                # E15.0  [2] (🫷..🫸)
 00A9 FE0F     ; Basic_Emoji                  ; copyright                                                      # E0.6   [1] (©️)
@@ -527,7 +534,7 @@
 1F6F0 FE0F    ; Basic_Emoji                  ; satellite                                                      # E0.7   [1] (🛰️)
 1F6F3 FE0F    ; Basic_Emoji                  ; passenger ship                                                 # E0.7   [1] (🛳️)
 
-# Total elements: 1386
+# Total elements: 1393
 
 # ================================================
 
@@ -604,6 +611,7 @@
 1F1E8 1F1F3   ; RGI_Emoji_Flag_Sequence      ; flag: China                                                    # E0.6   [1] (🇨🇳)
 1F1E8 1F1F4   ; RGI_Emoji_Flag_Sequence      ; flag: Colombia                                                 # E2.0   [1] (🇨🇴)
 1F1E8 1F1F5   ; RGI_Emoji_Flag_Sequence      ; flag: Clipperton Island                                        # E2.0   [1] (🇨🇵)
+1F1E8 1F1F6   ; RGI_Emoji_Flag_Sequence      ; flag: Sark                                                     # E16.0  [1] (🇨🇶)
 1F1E8 1F1F7   ; RGI_Emoji_Flag_Sequence      ; flag: Costa Rica                                               # E2.0   [1] (🇨🇷)
 1F1E8 1F1FA   ; RGI_Emoji_Flag_Sequence      ; flag: Cuba                                                     # E2.0   [1] (🇨🇺)
 1F1E8 1F1FB   ; RGI_Emoji_Flag_Sequence      ; flag: Cape Verde                                               # E2.0   [1] (🇨🇻)
@@ -812,7 +820,7 @@
 1F1FF 1F1F2   ; RGI_Emoji_Flag_Sequence      ; flag: Zambia                                                   # E2.0   [1] (🇿🇲)
 1F1FF 1F1FC   ; RGI_Emoji_Flag_Sequence      ; flag: Zimbabwe                                                 # E2.0   [1] (🇿🇼)
 
-# Total elements: 258
+# Total elements: 259
 
 # ================================================
 

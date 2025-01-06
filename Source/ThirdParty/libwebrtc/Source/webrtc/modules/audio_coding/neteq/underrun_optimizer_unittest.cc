@@ -25,7 +25,7 @@ TEST(UnderrunOptimizerTest, ResamplePacketDelays) {
   TickTimer tick_timer;
   constexpr int kResampleIntervalMs = 500;
   UnderrunOptimizer underrun_optimizer(&tick_timer, kDefaultHistogramQuantile,
-                                       kForgetFactor, absl::nullopt,
+                                       kForgetFactor, std::nullopt,
                                        kResampleIntervalMs);
 
   // The histogram should be updated once with the maximum delay observed for

@@ -8,7 +8,7 @@
 
 <input type="text" role="combobox" id="combobox" aria-label="Combobox" aria-activedescendant="item2">
 <div role="list">
-  <div role="listitem">item1</div>
+  <div role="listitem" id="item1" aria-label="item1">item1</div>
   <div role="listitem" id="item2" aria-label="item2">item2</div>
 </div>
 
@@ -16,12 +16,21 @@
 var output = "On macOS, a combobox should map aria-activedescendant to AXSelectedChildren.\n";
 
 if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
     var combobox = accessibilityController.accessibleElementById("combobox");
     output += expect("combobox.selectedChildrenCount", "1");
     activeDescendant = combobox.selectedChildAtIndex(0);
     output += expect("activeDescendant.role", "'AXRole: AXGroup'");
     output += expect("activeDescendant.title", "'AXTitle: item2'");
-    debug(output);
+
+    document.getElementById("combobox").setAttribute("aria-activedescendant", "item1");
+    setTimeout(async function() {
+        output += await expectAsync("combobox.selectedChildAtIndex(0).title", "'AXTitle: item1'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
 }
 </script>
 </body>

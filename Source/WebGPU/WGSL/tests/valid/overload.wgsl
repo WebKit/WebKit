@@ -4505,7 +4505,7 @@ fn testTextureNumSamples()
 
 // 16.7.8
 // RUN: %metal-compile testTextureSample
-@compute @workgroup_size(1)
+@fragment
 fn testTextureSample()
 {
     // [].(Texture[F32, Texture1d], Sampler, F32) => Vector[F32, 4],
@@ -4557,7 +4557,7 @@ fn testTextureSample()
 
 // 16.7.9
 // RUN: %metal-compile testTextureSampleBias
-@compute @workgroup_size(1)
+@fragment
 fn testTextureSampleBias()
 {
     // [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], F32) => Vector[F32, 4],
@@ -4587,7 +4587,7 @@ fn testTextureSampleBias()
 
 // 16.7.10
 // RUN: %metal-compile testTextureSampleCompare
-@compute @workgroup_size(1)
+@fragment
 fn testTextureSampleCompare()
 {
     // [].(texture_depth_2d, sampler_comparison, vec2[f32], f32) => f32,

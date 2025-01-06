@@ -66,7 +66,7 @@ public:
     void setMockConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
 
     const WebAuthenticationPanelClient& client() const { return m_client.get(); }
-    void setClient(UniqueRef<WebAuthenticationPanelClient>&&);
+    void setClient(Ref<WebAuthenticationPanelClient>&&);
 
     // FIXME: <rdar://problem/71509848> Remove the following deprecated methods.
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
@@ -80,8 +80,10 @@ private:
     // FIXME: <rdar://problem/71509848> Remove the following deprecated method.
     WebAuthenticationPanel(const WebKit::AuthenticatorManager&, const WTF::String& rpId, const TransportSet&, WebCore::ClientDataType, const WTF::String& userName);
 
-    std::unique_ptr<WebKit::AuthenticatorManager> m_manager; // FIXME: <rdar://problem/71509848> Change to UniqueRef.
-    UniqueRef<WebAuthenticationPanelClient> m_client;
+    RefPtr<WebKit::AuthenticatorManager> protectedManager() const;
+
+    RefPtr<WebKit::AuthenticatorManager> m_manager; // FIXME: <rdar://problem/71509848> Change to Ref.
+    Ref<WebAuthenticationPanelClient> m_client;
 
     // FIXME: <rdar://problem/71509848> Remove the following deprecated fields.
     WeakPtr<WebKit::AuthenticatorManager> m_weakManager;

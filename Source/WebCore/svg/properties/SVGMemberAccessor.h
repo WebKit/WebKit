@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@ class SVGProperty;
 
 template<typename OwnerType>
 class SVGMemberAccessor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(SVGMemberAccessor);
 public:
     virtual ~SVGMemberAccessor() = default;
 
@@ -54,5 +54,7 @@ public:
 protected:
     SVGMemberAccessor() = default;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename OwnerType>, SVGMemberAccessor<OwnerType>);
 
 } // namespace WebCore

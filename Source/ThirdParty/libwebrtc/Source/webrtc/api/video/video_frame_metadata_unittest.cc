@@ -10,11 +10,9 @@
 
 #include "api/video/video_frame_metadata.h"
 
-#include "api/video/video_frame.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "test/gtest.h"
-#include "video/video_receive_stream2.h"
 
 namespace webrtc {
 namespace {
@@ -28,8 +26,7 @@ RTPVideoHeaderH264 ExampleHeaderH264() {
   RTPVideoHeaderH264 header;
   header.nalu_type = 4;
   header.packetization_type = H264PacketizationTypes::kH264StapA;
-  header.nalus[0] = nalu_info;
-  header.nalus_length = 1;
+  header.nalus = {nalu_info};
   header.packetization_mode = H264PacketizationMode::SingleNalUnit;
   return header;
 }

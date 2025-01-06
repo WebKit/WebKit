@@ -13,13 +13,13 @@
 
 #include <atomic>
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/agc/agc.h"
 #include "modules/audio_processing/agc2/clipping_predictor.h"
 #include "modules/audio_processing/audio_buffer.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/gtest_prod_util.h"
 
@@ -75,8 +75,8 @@ class AgcManagerDirect final {
   // TODO(webrtc:7494): This signature is needed for testing purposes, unify
   // the signatures when the clean-up is done.
   void Process(const AudioBuffer& audio_buffer,
-               absl::optional<float> speech_probability,
-               absl::optional<float> speech_level_dbfs);
+               std::optional<float> speech_probability,
+               std::optional<float> speech_level_dbfs);
 
   // Processes `audio_buffer`. Chooses a digital compression gain and the new
   // input volume to recommend. Must be called after `AnalyzePreProcess()`.
@@ -100,7 +100,7 @@ class AgcManagerDirect final {
 
   // If available, returns the latest digital compression gain that has been
   // chosen.
-  absl::optional<int> GetDigitalComressionGain();
+  std::optional<int> GetDigitalComressionGain();
 
   // Returns true if clipping prediction is enabled.
   bool clipping_predictor_enabled() const { return !!clipping_predictor_; }
@@ -150,7 +150,7 @@ class AgcManagerDirect final {
 
   const bool analog_controller_enabled_;
 
-  const absl::optional<int> min_mic_level_override_;
+  const std::optional<int> min_mic_level_override_;
   std::unique_ptr<ApmDataDumper> data_dumper_;
   static std::atomic<int> instance_counter_;
   const int num_capture_channels_;
@@ -176,7 +176,7 @@ class AgcManagerDirect final {
   const int clipped_wait_frames_;
 
   std::vector<std::unique_ptr<MonoAgc>> channel_agcs_;
-  std::vector<absl::optional<int>> new_compressions_to_set_;
+  std::vector<std::optional<int>> new_compressions_to_set_;
 
   const std::unique_ptr<ClippingPredictor> clipping_predictor_;
   const bool use_clipping_predictor_step_;
@@ -213,16 +213,14 @@ class MonoAgc {
   // after `HandleClipping()`. If `rms_error_override` has a value, RMS error
   // from AGC is overridden by it.
   void Process(rtc::ArrayView<const int16_t> audio,
-               absl::optional<int> rms_error_override);
+               std::optional<int> rms_error_override);
 
   // Returns the recommended input volume. Must be called after `Process()`.
   int recommended_analog_level() const { return recommended_input_volume_; }
 
   float voice_probability() const { return agc_->voice_probability(); }
   void ActivateLogging() { log_to_histograms_ = true; }
-  absl::optional<int> new_compression() const {
-    return new_compression_to_set_;
-  }
+  std::optional<int> new_compression() const { return new_compression_to_set_; }
 
   // Only used for testing.
   void set_agc(Agc* agc) { agc_.reset(agc); }
@@ -263,7 +261,7 @@ class MonoAgc {
   // recommended input volume.
   int recommended_input_volume_ = 0;
 
-  absl::optional<int> new_compression_to_set_;
+  std::optional<int> new_compression_to_set_;
   bool log_to_histograms_ = false;
   const int clipped_level_min_;
 

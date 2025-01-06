@@ -42,7 +42,8 @@ namespace {
 // TODO(crbug.com/webrtc/11710): When OS certificate verification is available,
 // and we don't need VerifyPeerCertMatchesHost, don't compile this in order to
 // avoid a dependency on OpenSSL X509 objects (see crbug.com/webrtc/11410).
-void LogCertificates(SSL* ssl, X509* certificate) {
+void LogCertificates([[maybe_unused]] SSL* ssl,
+                     [[maybe_unused]] X509* certificate) {
 // Logging certificates is extremely verbose. So it is disabled by default.
 #ifdef LOG_CERTIFICATES
   BIO* mem = BIO_new(BIO_s_mem());

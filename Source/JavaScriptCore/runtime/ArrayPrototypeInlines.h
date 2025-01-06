@@ -31,6 +31,7 @@
 #include "ExceptionHelpers.h"
 #include "GetVM.h"
 #include "JSGlobalObject.h"
+#include "ObjectPrototype.h"
 
 namespace JSC {
 
@@ -56,6 +57,28 @@ ALWAYS_INLINE bool arraySpeciesWatchpointIsValid(VM& vm, JSObject* thisObject)
         return true;
 
     return thisObject->getDirectOffset(vm, vm.propertyNames->constructor) == invalidOffset;
+}
+
+ALWAYS_INLINE bool arrayMissingIsConcatSpreadable(VM& vm, JSObject* thisObject)
+{
+    JSGlobalObject* globalObject = thisObject->globalObject();
+    ASSERT(globalObject->arrayIsConcatSpreadableWatchpointSet().state() != ClearWatchpoint);
+    if (globalObject->arrayIsConcatSpreadableWatchpointSet().state() != IsWatched)
+        return false;
+
+    if (isJSArray(thisObject)) {
+        ArrayPrototype* arrayPrototype = globalObject->arrayPrototype();
+        if (arrayPrototype != thisObject->getPrototypeDirect())
+            return false;
+    } else {
+        if (globalObject->objectPrototype() != thisObject->getPrototypeDirect())
+            return false;
+    }
+
+    if (!thisObject->hasCustomProperties())
+        return true;
+
+    return thisObject->getDirectOffset(vm, vm.propertyNames->isConcatSpreadableSymbol) == invalidOffset;
 }
 
 ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstructArray(JSGlobalObject* globalObject, JSObject* thisObject, uint64_t length)
@@ -106,15 +129,6 @@ ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstructArray
     JSObject* newObject = construct(globalObject, constructor, args, "Species construction did not get a valid constructor"_s);
     RETURN_IF_EXCEPTION(scope, exceptionResult);
     return std::pair { SpeciesConstructResult::CreatedObject, newObject };
-}
-
-ALWAYS_INLINE JSValue getProperty(JSGlobalObject* globalObject, JSObject* object, uint64_t index)
-{
-    if (JSValue result = object->tryGetIndexQuickly(index))
-        return result;
-
-    // Don't return undefined if the property is not found.
-    return object->getIfPropertyExists(globalObject, index);
 }
 
 ALWAYS_INLINE void setLength(JSGlobalObject* globalObject, VM& vm, JSObject* obj, uint64_t value)

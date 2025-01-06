@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
 <html>
 <head>
     <style>
@@ -22,9 +22,6 @@
     <script>
         jsTestIsAsync = true;
 
-        if (window.internals)
-            internals.setUsesOverlayScrollbars(true);
-
         async function doTest()
         {
             description('Ensure scrollbars controller state is correct for scroller type');
@@ -33,6 +30,9 @@
             await UIHelper.renderingUpdate();
             svgScroller = document.getElementById('svgScroller');
             shouldBeEqualToString('window.internals.scrollbarsControllerTypeForNode(svgScroller)', 'ScrollbarsControllerMac');
+
+            disabledScroller = document.getElementById('disabledScroller');
+            shouldBeEqualToString('window.internals.scrollbarsControllerTypeForNode(disabledScroller)', 'ScrollbarsControllerMac');
 
             scroller = document.getElementById('scroller');
             shouldBeEqualToString('window.internals.scrollbarsControllerTypeForNode(scroller)', window.internals.isUsingUISideCompositing() ? 'RemoteScrollbarsController' : 'ScrollbarsControllerMac');
@@ -60,6 +60,13 @@
             </div>
         </foreignObject>
     </svg>
+
+    <div style="height: 200px; width: 100px; overflow: scroll;" id="disabledScroller">
+        <div style="height: 100px; overflow: hidden; position: relative; background-color: green;">
+            <div style="margin-top: 100px; height: 100px; background-color: red;"></div>
+        </div>
+    </div>
+    
     <div id="console"></div>
 </body>
 </html>

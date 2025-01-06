@@ -16,15 +16,15 @@
 
 namespace libyuv {
 
-void TestRotateBpp(int src_width,
-                   int src_height,
-                   int dst_width,
-                   int dst_height,
-                   libyuv::RotationMode mode,
-                   int benchmark_iterations,
-                   int disable_cpu_flags,
-                   int benchmark_cpu_info,
-                   const int kBpp) {
+static void TestRotateBpp(int src_width,
+                          int src_height,
+                          int dst_width,
+                          int dst_height,
+                          libyuv::RotationMode mode,
+                          int benchmark_iterations,
+                          int disable_cpu_flags,
+                          int benchmark_cpu_info,
+                          const int kBpp) {
   if (src_width < 1) {
     src_width = 1;
   }

@@ -34,18 +34,9 @@
 #include "Scrollbar.h"
 #include "ScrollbarColor.h"
 #include <wtf/CheckedPtr.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class ScrollableArea;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ScrollableArea> : std::true_type { };
-}
 
 namespace WTF {
 class TextStream;
@@ -81,13 +72,13 @@ inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orient
 }
 
 class ScrollableArea : public CanMakeWeakPtr<ScrollableArea> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollableArea);
 public:
     // CheckedPtr interface
-    virtual uint32_t ptrCount() const = 0;
-    virtual uint32_t ptrCountWithoutThreadCheck() const = 0;
-    virtual void incrementPtrCount() const = 0;
-    virtual void decrementPtrCount() const = 0;
+    virtual uint32_t checkedPtrCount() const = 0;
+    virtual uint32_t checkedPtrCountWithoutThreadCheck() const = 0;
+    virtual void incrementCheckedPtrCount() const = 0;
+    virtual void decrementCheckedPtrCount() const = 0;
 
     virtual bool isScrollView() const { return false; }
     virtual bool isRenderLayer() const { return false; }
@@ -217,7 +208,7 @@ public:
     void invalidateScrollbars();
     bool useDarkAppearanceForScrollbars() const;
 
-    virtual ScrollingNodeID scrollingNodeID() const { return { }; }
+    virtual std::optional<ScrollingNodeID> scrollingNodeID() const { return std::nullopt; }
     ScrollingNodeID scrollingNodeIDForTesting();
 
     WEBCORE_EXPORT ScrollAnimator& scrollAnimator() const;
@@ -389,10 +380,10 @@ public:
     // This function is static so that it can be called from the main thread or the scrolling thread.
     WEBCORE_EXPORT static void computeScrollbarValueAndOverhang(float currentPosition, float totalSize, float visibleSize, float& scrollbarValue, float& overhangAmount);
 
-    static std::optional<BoxSide> targetSideForScrollDelta(FloatSize, ScrollEventAxis);
+    WEBCORE_EXPORT static std::optional<BoxSide> targetSideForScrollDelta(FloatSize, ScrollEventAxis);
 
     // "Pinned" means scrolled at or beyond the edge.
-    bool isPinnedOnSide(BoxSide) const;
+    WEBCORE_EXPORT bool isPinnedOnSide(BoxSide) const;
     WEBCORE_EXPORT RectEdges<bool> edgePinnedState() const;
 
     // True if scrolling happens by moving compositing layers.
@@ -414,6 +405,8 @@ public:
 
     virtual bool shouldPlaceVerticalScrollbarOnLeft() const = 0;
     
+    virtual bool isHorizontalWritingMode() const { return false; }
+
     virtual String debugDescription() const = 0;
 
     virtual float pageScaleFactor() const
@@ -435,9 +428,13 @@ public:
     virtual void updateScrollAnchoringElement() { }
     virtual void updateScrollPositionForScrollAnchoringController() { }
     virtual void invalidateScrollAnchoringElement() { }
-    virtual FrameIdentifier rootFrameID() const { return { }; }
+    virtual std::optional<FrameIdentifier> rootFrameID() const { return std::nullopt; }
 
     WEBCORE_EXPORT void setScrollbarsController(std::unique_ptr<ScrollbarsController>&&);
+    WEBCORE_EXPORT virtual void scrollbarWidthChanged(ScrollbarWidth) { }
+
+    virtual IntSize totalScrollbarSpace() const { return { }; }
+    virtual int insetForLeftScrollbarSpace() const { return 0; }
 
 protected:
     WEBCORE_EXPORT ScrollableArea();
@@ -506,6 +503,6 @@ private:
     Markable<ScrollingNodeID> m_scrollingNodeIDForTesting;
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, const ScrollableArea&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const ScrollableArea&);
 
 } // namespace WebCore

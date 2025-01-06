@@ -23,11 +23,13 @@
 
 #include "SVGGeometryElement.h"
 #include "SVGNames.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGLineElement final : public SVGGeometryElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGLineElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGLineElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGLineElement);
 public:
     static Ref<SVGLineElement> create(const QualifiedName&, Document&);
 

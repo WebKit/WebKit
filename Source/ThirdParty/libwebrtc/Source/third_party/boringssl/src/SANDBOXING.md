@@ -21,7 +21,7 @@ would be a sandbox escape.
 
 This document attempts to describe these baseline OS dependencies and long-lived
 internal resources. These dependencies may change over time, but we aim to
-[work with sandboxed consumers](/BREAKING-CHANGES.md) when they do. However,
+[work with sandboxed consumers](./BREAKING-CHANGES.md) when they do. However,
 each sandbox imposes different constraints, so, above all, sandboxed consumers
 must have ample test coverage to detect issues as they arise.
 
@@ -90,8 +90,10 @@ addition to the operations above.
 
 On Linux ARM platforms, BoringSSL depends on OS APIs to query CPU capabilities.
 32-bit and 64-bit ARM both depend on the `getauxval` function. 32-bit ARM, to
-work around bugs in older Android devices, may additionally read `/proc/cpuinfo`
-and `/proc/self/auxv`.
+work around bugs in older Android devices, may additionally read
+`/proc/cpuinfo`.
+
+On 64-bit Apple ARM platforms, BoringSSL needs to query `hw.optional.*` sysctls.
 
 If querying CPU capabilities fails, BoringSSL will still function, but may not
 perform as well.

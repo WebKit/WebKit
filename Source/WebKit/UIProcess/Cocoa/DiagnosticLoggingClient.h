@@ -27,6 +27,7 @@
 
 #import "APIDiagnosticLoggingClient.h"
 #import "WKFoundation.h"
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
 @class WKWebView;
@@ -35,7 +36,7 @@
 namespace WebKit {
 
 class DiagnosticLoggingClient final : public API::DiagnosticLoggingClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DiagnosticLoggingClient);
 public:
     explicit DiagnosticLoggingClient(WKWebView *);
 

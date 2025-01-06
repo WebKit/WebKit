@@ -31,6 +31,8 @@
 #include "PrivateName.h"
 #include <wtf/dtoa.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class PropertyName {
@@ -164,8 +166,10 @@ ALWAYS_INLINE bool isCanonicalNumericIndexString(UniquedStringImpl* propertyName
 
     double index = jsToNumber(propertyName);
     NumberToStringBuffer buffer;
-    const char* indexString = WTF::numberToString(index, buffer);
-    return equal(propertyName, indexString);
+    auto span = WTF::numberToStringAndSize(index, buffer);
+    return equal(propertyName, byteCast<LChar>(span));
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

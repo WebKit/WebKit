@@ -7,10 +7,11 @@
 
 #include "tools/gpu/vk/VkYcbcrSamplerHelper.h"
 
-#ifdef SK_VULKAN
+#if defined(SK_VULKAN)
 
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/vk/GrVkBackendSurface.h"
+#include "include/gpu/vk/VulkanTypes.h"
 #include "src/gpu/ganesh/GrDirectContextPriv.h"
 #include "src/gpu/ganesh/vk/GrVkGpu.h"
 #include "src/gpu/ganesh/vk/GrVkUtil.h"
@@ -183,9 +184,9 @@ bool VkYcbcrSamplerHelper::createBackendTexture(uint32_t width, uint32_t height)
 
     // Wrap the image into SkImage.
     VkFormatProperties formatProperties;
-    SkASSERT(fPhysDev != VK_NULL_HANDLE);
+    SkASSERT(fSharedCtxt->physDevice() != VK_NULL_HANDLE);
     VULKAN_CALL(fSharedCtxt->interface(),
-                GetPhysicalDeviceFormatProperties(fPhysDev,
+                GetPhysicalDeviceFormatProperties(fSharedCtxt->physDevice(),
                                                   VK_FORMAT_G8_B8R8_2PLANE_420_UNORM,
                                                   &formatProperties));
     SkDEBUGCODE(auto linFlags = formatProperties.linearTilingFeatures;)
@@ -219,12 +220,12 @@ bool VkYcbcrSamplerHelper::createBackendTexture(uint32_t width, uint32_t height)
             VK_IMAGE_ASPECT_PLANE_0_BIT | VK_IMAGE_ASPECT_PLANE_1_BIT,
             ycbcrInfo};
 
-    fTexture = skgpu::graphite::BackendTexture{{(int32_t)width, (int32_t)height},
-                                               imageInfo,
-                                               VK_IMAGE_LAYOUT_UNDEFINED,
-                                               /*queueFamilyIndex=*/0,
-                                               fImage,
-                                               alloc};
+    fTexture = skgpu::graphite::BackendTextures::MakeVulkan({(int32_t)width, (int32_t)height},
+                                                            imageInfo,
+                                                            VK_IMAGE_LAYOUT_UNDEFINED,
+                                                            /*queueFamilyIndex=*/0,
+                                                            fImage,
+                                                            alloc);
     return true;
 }
 #endif // SK_GRAPHITE
@@ -335,16 +336,16 @@ bool VkYcbcrSamplerHelper::createGrBackendTexture(uint32_t width, uint32_t heigh
              (linFlags & VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT) &&
              (linFlags & VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT));
 
-    GrVkYcbcrConversionInfo ycbcrInfo = {vkImageInfo.format,
-                                         /*externalFormat=*/0,
-                                         VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709,
-                                         VK_SAMPLER_YCBCR_RANGE_ITU_NARROW,
-                                         VK_CHROMA_LOCATION_COSITED_EVEN,
-                                         VK_CHROMA_LOCATION_COSITED_EVEN,
-                                         VK_FILTER_LINEAR,
-                                         false,
-                                         formatProperties.linearTilingFeatures,
-                                         /*fComponents=*/{}};
+    skgpu::VulkanYcbcrConversionInfo ycbcrInfo = {vkImageInfo.format,
+                                                  /*externalFormat=*/0,
+                                                  VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709,
+                                                  VK_SAMPLER_YCBCR_RANGE_ITU_NARROW,
+                                                  VK_CHROMA_LOCATION_COSITED_EVEN,
+                                                  VK_CHROMA_LOCATION_COSITED_EVEN,
+                                                  VK_FILTER_LINEAR,
+                                                  false,
+                                                  formatProperties.linearTilingFeatures,
+                                                  /*fComponents=*/{}};
     skgpu::VulkanAlloc alloc;
     alloc.fMemory = fImageMemory;
     alloc.fOffset = 0;
@@ -372,6 +373,9 @@ GrVkGpu* VkYcbcrSamplerHelper::vkGpu() {
 
 VkYcbcrSamplerHelper::VkYcbcrSamplerHelper(GrDirectContext* dContext) : fDContext(dContext) {
     SkASSERT_RELEASE(dContext->backend() == GrBackendApi::kVulkan);
+#if defined(SK_GRAPHITE)
+    fSharedCtxt = nullptr;
+#endif
 }
 
 VkYcbcrSamplerHelper::~VkYcbcrSamplerHelper() {
@@ -411,11 +415,11 @@ bool VkYcbcrSamplerHelper::isYCbCrSupported() {
             return false;
         }
 
-        SkASSERT(fPhysDev != VK_NULL_HANDLE);
+        SkASSERT(fSharedCtxt->physDevice() != VK_NULL_HANDLE);
         VULKAN_CALL(fSharedCtxt->interface(),
-                    GetPhysicalDeviceFormatProperties(fPhysDev,
-                                                    VK_FORMAT_G8_B8R8_2PLANE_420_UNORM,
-                                                    &formatProperties));
+                    GetPhysicalDeviceFormatProperties(fSharedCtxt->physDevice(),
+                                                      VK_FORMAT_G8_B8R8_2PLANE_420_UNORM,
+                                                      &formatProperties));
     } else
 #endif
     {

@@ -1,0 +1,11 @@
+This test ensures that aria-hidden=false is treated like an undefined value.
+
+PASS: !hiddenText === true
+PASS: !invisibleText === true
+PASS: !ariaHiddenText === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+This text is hidden with aria-hidden

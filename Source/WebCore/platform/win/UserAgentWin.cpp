@@ -27,7 +27,7 @@
 #include "UserAgent.h"
 
 #include "SystemInfo.h"
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -29,6 +29,7 @@
 
 #include "PlatformVideoTrackConfiguration.h"
 #include "VideoColorSpace.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ namespace WebCore {
 using VideoTrackConfigurationInit = PlatformVideoTrackConfiguration;
 
 class VideoTrackConfiguration : public RefCounted<VideoTrackConfiguration> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(VideoTrackConfiguration);
 public:
     static Ref<VideoTrackConfiguration> create(VideoTrackConfigurationInit&& init) { return adoptRef(*new VideoTrackConfiguration(WTFMove(init))); }
     static Ref<VideoTrackConfiguration> create() { return adoptRef(*new VideoTrackConfiguration()); }
@@ -64,6 +65,9 @@ public:
 
     uint64_t bitrate() const { return m_state.bitrate; }
     void setBitrate(uint64_t bitrate) { m_state.bitrate = bitrate; }
+
+    std::optional<SpatialVideoMetadata> spatialVideoMetadata() const { return m_state.spatialVideoMetadata; }
+    void setSpatialVideoMetadata(const SpatialVideoMetadata& metadata) { m_state.spatialVideoMetadata = metadata; }
 
     Ref<JSON::Object> toJSON() const;
 

@@ -12,10 +12,10 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 #include <ostream>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "modules/video_coding/svc/create_scalability_structure.h"
@@ -85,7 +85,7 @@ struct SvcTestParam {
   }
 
   ScalabilityMode GetScalabilityMode() const {
-    absl::optional<ScalabilityMode> scalability_mode =
+    std::optional<ScalabilityMode> scalability_mode =
         ScalabilityModeFromString(name);
     RTC_CHECK(scalability_mode.has_value());
     return *scalability_mode;
@@ -101,10 +101,10 @@ TEST_P(ScalabilityStructureTest,
        StaticConfigMatchesConfigReturnedByController) {
   std::unique_ptr<ScalableVideoController> controller =
       CreateScalabilityStructure(GetParam().GetScalabilityMode());
-  absl::optional<ScalableVideoController::StreamLayersConfig> static_config =
+  std::optional<ScalableVideoController::StreamLayersConfig> static_config =
       ScalabilityStructureConfig(GetParam().GetScalabilityMode());
   ASSERT_THAT(controller, NotNull());
-  ASSERT_NE(static_config, absl::nullopt);
+  ASSERT_NE(static_config, std::nullopt);
   ScalableVideoController::StreamLayersConfig config =
       controller->StreamConfig();
   EXPECT_EQ(config.num_spatial_layers, static_config->num_spatial_layers);

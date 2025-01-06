@@ -27,8 +27,10 @@
 
 #include "CompositeOperation.h"
 #include "FilterOperation.h"
+#include <algorithm>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -36,7 +38,7 @@ namespace WebCore {
 struct BlendingContext;
 
 class FilterOperations {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FilterOperations, WEBCORE_EXPORT);
 public:
     using const_iterator = Vector<Ref<FilterOperation>>::const_iterator;
     using const_reverse_iterator = Vector<Ref<FilterOperation>>::const_reverse_iterator;
@@ -75,10 +77,7 @@ public:
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const;
 
     template<FilterOperation::Type Type>
-    bool hasFilterOfType() const
-    {
-        return WTF::anyOf(m_operations, [](auto& op) { return op->type() == Type; });
-    }
+    bool hasFilterOfType() const;
 
     bool hasReferenceFilter() const;
     bool isReferenceFilter() const;
@@ -95,6 +94,11 @@ private:
 
     Vector<Ref<FilterOperation>> m_operations;
 };
+
+template<FilterOperation::Type type> bool FilterOperations::hasFilterOfType() const
+{
+    return std::ranges::any_of(m_operations, [](auto& op) { return op->type() == type; });
+}
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FilterOperations&);
 

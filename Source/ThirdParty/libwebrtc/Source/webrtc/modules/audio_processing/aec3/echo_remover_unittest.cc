@@ -53,7 +53,7 @@ INSTANTIATE_TEST_SUITE_P(MultiChannel,
 TEST_P(EchoRemoverMultiChannel, BasicApiCalls) {
   const size_t num_render_channels = std::get<0>(GetParam());
   const size_t num_capture_channels = std::get<1>(GetParam());
-  absl::optional<DelayEstimate> delay_estimate;
+  std::optional<DelayEstimate> delay_estimate;
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     std::unique_ptr<EchoRemover> remover(
@@ -95,7 +95,7 @@ TEST(EchoRemoverDeathTest, DISABLED_WrongSampleRate) {
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.c
 TEST(EchoRemoverDeathTest, DISABLED_WrongCaptureNumBands) {
-  absl::optional<DelayEstimate> delay_estimate;
+  std::optional<DelayEstimate> delay_estimate;
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     std::unique_ptr<EchoRemover> remover(
@@ -114,7 +114,7 @@ TEST(EchoRemoverDeathTest, DISABLED_WrongCaptureNumBands) {
 
 // Verifies the check for non-null capture block.
 TEST(EchoRemoverDeathTest, NullCapture) {
-  absl::optional<DelayEstimate> delay_estimate;
+  std::optional<DelayEstimate> delay_estimate;
   std::unique_ptr<EchoRemover> remover(
       EchoRemover::Create(EchoCanceller3Config(), 16000, 1, 1));
   std::unique_ptr<RenderDelayBuffer> render_buffer(
@@ -134,7 +134,7 @@ TEST(EchoRemoverDeathTest, NullCapture) {
 TEST(EchoRemover, BasicEchoRemoval) {
   constexpr int kNumBlocksToProcess = 500;
   Random random_generator(42U);
-  absl::optional<DelayEstimate> delay_estimate;
+  std::optional<DelayEstimate> delay_estimate;
   for (size_t num_channels : {1, 2, 4}) {
     for (auto rate : {16000, 32000, 48000}) {
       Block x(NumBandsForRate(rate), num_channels);

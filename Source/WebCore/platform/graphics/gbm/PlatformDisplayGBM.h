@@ -28,6 +28,8 @@
 #if USE(GBM)
 #include "PlatformDisplay.h"
 
+struct gbm_device;
+
 namespace WebCore {
 
 class PlatformDisplayGBM final : public PlatformDisplay {
@@ -36,7 +38,7 @@ public:
 
     virtual ~PlatformDisplayGBM();
 private:
-    explicit PlatformDisplayGBM(struct gbm_device*);
+    PlatformDisplayGBM(std::unique_ptr<GLDisplay>&&, struct gbm_device*);
 
     Type type() const override { return PlatformDisplay::Type::GBM; }
 };

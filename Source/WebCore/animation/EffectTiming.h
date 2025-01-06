@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSNumericValue.h"
 #include "CommonAtomStrings.h"
 #include "FillMode.h"
 #include "PlaybackDirection.h"
@@ -33,8 +34,11 @@
 
 namespace WebCore {
 
+using OptionalDoubleOrString = std::optional<std::variant<double, String>>;
+using DoubleOrCSSNumericValueOrString = std::variant<double, RefPtr<CSSNumericValue>, String>;
+
 struct EffectTiming {
-    std::variant<double, String> duration { autoAtom() };
+    DoubleOrCSSNumericValueOrString duration { autoAtom() };
     double delay { 0 };
     double endDelay { 0 };
     double iterationStart { 0 };
@@ -42,6 +46,7 @@ struct EffectTiming {
     String easing { "linear"_s };
     FillMode fill { FillMode::Auto };
     PlaybackDirection direction { PlaybackDirection::Normal };
+    OptionalDoubleOrString durationAsDoubleOrString() const;
 };
 
 } // namespace WebCore

@@ -32,6 +32,8 @@
 #include <wtf/Hasher.h>
 #include <wtf/PtrTag.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 // FunctionAttributes and FunctionCallConvention are only needed because x86 builds
@@ -158,7 +160,7 @@ public:
 
 protected:
     FunctionPtr(AlreadyTaggedValueTag, void* ptr)
-        : m_ptr(bitwise_cast<Ptr>(ptr))
+        : m_ptr(std::bit_cast<Ptr>(ptr))
     {
         assertIsNullOrTaggedWith<tag>(ptr);
     }
@@ -206,3 +208,5 @@ void add(Hasher& hasher, const FunctionPtr<tag, Out(In...), attr>& ptr)
 
 using WTF::FunctionAttributes;
 using WTF::FunctionPtr;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

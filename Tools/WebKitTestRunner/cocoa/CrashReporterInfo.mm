@@ -30,6 +30,7 @@
 #import <WebKit/WKURLCF.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/CrashReporter.h>
+#import <wtf/text/MakeString.h>
 
 namespace WTR {
 

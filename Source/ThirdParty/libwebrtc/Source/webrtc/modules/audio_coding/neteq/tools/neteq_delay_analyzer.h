@@ -12,12 +12,12 @@
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_DELAY_ANALYZER_H_
 
 #include <map>
+#include <optional>
 #include <set>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
 
@@ -57,10 +57,10 @@ class NetEqDelayAnalyzer : public test::NetEqPostInsertPacket,
   struct TimingData {
     explicit TimingData(int64_t at) : arrival_time_ms(at) {}
     int64_t arrival_time_ms;
-    absl::optional<int64_t> decode_get_audio_count;
-    absl::optional<int64_t> sync_delay_ms;
-    absl::optional<int> target_delay_ms;
-    absl::optional<int> current_delay_ms;
+    std::optional<int64_t> decode_get_audio_count;
+    std::optional<int64_t> sync_delay_ms;
+    std::optional<int> target_delay_ms;
+    std::optional<int> current_delay_ms;
   };
   std::map<uint32_t, TimingData> data_;
   std::vector<int64_t> get_audio_time_ms_;

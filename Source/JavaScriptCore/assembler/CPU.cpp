@@ -137,7 +137,6 @@ bool isARM64E_FPAC()
 #if CPU(X86_64)
 bool isX86_64_AVX()
 {
-    // We need runtime check since macOS Rosetta2 does not support AVX.
 #if ENABLE(ASSEMBLER)
     return MacroAssembler::supportsAVX();
 #else

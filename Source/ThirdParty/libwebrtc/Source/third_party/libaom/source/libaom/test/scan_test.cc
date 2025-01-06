@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -9,9 +9,9 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
 #include "av1/common/scan.h"
 #include "av1/common/txb_common.h"
+#include "gtest/gtest.h"
 #include "test/av1_txfm_test.h"
 
 static int scan_test(const int16_t *scan, const int16_t *iscan, int si, int r,
@@ -25,8 +25,8 @@ static int scan_test(const int16_t *scan, const int16_t *iscan, int si, int r,
   }
 }
 
-int scan_order_test(const SCAN_ORDER *scan_order, int w, int h,
-                    SCAN_MODE mode) {
+static int scan_order_test(const SCAN_ORDER *scan_order, int w, int h,
+                           SCAN_MODE mode) {
   const int16_t *scan = scan_order->scan;
   const int16_t *iscan = scan_order->iscan;
   int dim = w + h - 1;

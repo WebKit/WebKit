@@ -29,7 +29,6 @@
 
 #include "VisibleContentRectUpdateInfo.h"
 
-#include "WebCoreArgumentCoders.h"
 #include <WebCore/LengthBox.h>
 #include <wtf/text/TextStream.h>
 

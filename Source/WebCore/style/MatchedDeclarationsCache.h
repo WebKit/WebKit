@@ -28,6 +28,7 @@
 #include "MatchResult.h"
 #include "RenderStyle.h"
 #include "Timer.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ namespace Style {
 class Resolver;
 
 class MatchedDeclarationsCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MatchedDeclarationsCache);
 public:
     explicit MatchedDeclarationsCache(const Resolver&);
     ~MatchedDeclarationsCache();
@@ -70,7 +71,7 @@ private:
     void sweep();
 
     SingleThreadWeakRef<const Resolver> m_owner;
-    HashMap<unsigned, Entry, AlreadyHashed> m_entries;
+    UncheckedKeyHashMap<unsigned, Entry, AlreadyHashed> m_entries;
     Timer m_sweepTimer;
     unsigned m_additionsSinceLastSweep { 0 };
 };

@@ -29,8 +29,11 @@
 #if PLATFORM(COCOA)
 
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCPersonNameComponents);
 
 CoreIPCPersonNameComponents::CoreIPCPersonNameComponents(NSPersonNameComponents *components)
     : m_namePrefix(components.namePrefix)

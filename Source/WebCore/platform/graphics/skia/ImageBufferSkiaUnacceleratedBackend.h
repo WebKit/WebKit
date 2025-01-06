@@ -29,12 +29,12 @@
 
 #include "ImageBuffer.h"
 #include "ImageBufferSkiaSurfaceBackend.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ImageBufferSkiaUnacceleratedBackend final : public ImageBufferSkiaSurfaceBackend {
-    WTF_MAKE_ISO_ALLOCATED(ImageBufferSkiaUnacceleratedBackend);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferSkiaUnacceleratedBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferSkiaUnacceleratedBackend);
 public:
     static std::unique_ptr<ImageBufferSkiaUnacceleratedBackend> create(const Parameters&, const ImageBufferCreationContext&);

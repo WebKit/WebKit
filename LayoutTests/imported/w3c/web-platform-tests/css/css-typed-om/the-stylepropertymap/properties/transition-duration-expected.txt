@@ -5,7 +5,7 @@ PASS Can set 'transition-duration' to CSS-wide keywords: unset
 PASS Can set 'transition-duration' to CSS-wide keywords: revert
 PASS Can set 'transition-duration' to var() references:  var(--A)
 PASS Can set 'transition-duration' to a time: 0s
-PASS Can set 'transition-duration' to a time: -3.14ms
+FAIL Can set 'transition-duration' to a time: -3.14ms assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Can set 'transition-duration' to a time: 3.14s
 PASS Can set 'transition-duration' to a time: calc(0s + 0ms)
 PASS Setting 'transition-duration' to a length: 0px throws TypeError

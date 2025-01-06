@@ -1,11 +1,12 @@
 /*
- *  Copyright (c) 2018, Alliance for Open Media. All Rights Reserved.
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree. An additional intellectual property rights grant can be found
- *  in the file PATENTS.  All contributing project authors may
- *  be found in the AUTHORS file in the root of the source tree.
+ * This source code is subject to the terms of the BSD 2 Clause License and
+ * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
+ * was not distributed with this source code in the LICENSE file, you can
+ * obtain it at www.aomedia.org/license/software. If the Alliance for Open
+ * Media Patent License 1.0 was not distributed with this source code in the
+ * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
 #ifndef AOM_AOM_DSP_ARM_TRANSPOSE_NEON_H_
@@ -13,14 +14,14 @@
 
 #include <arm_neon.h>
 
-#include "aom/aom_integer.h"  // For AOM_FORCE_INLINE.
+#include "aom_dsp/aom_dsp_common.h"  // For AOM_FORCE_INLINE.
 #include "config/aom_config.h"
 
-static INLINE void transpose_elems_inplace_u8_8x8(uint8x8_t *a0, uint8x8_t *a1,
-                                                  uint8x8_t *a2, uint8x8_t *a3,
-                                                  uint8x8_t *a4, uint8x8_t *a5,
-                                                  uint8x8_t *a6,
-                                                  uint8x8_t *a7) {
+static inline void transpose_elems_u8_8x8(
+    uint8x8_t a0, uint8x8_t a1, uint8x8_t a2, uint8x8_t a3, uint8x8_t a4,
+    uint8x8_t a5, uint8x8_t a6, uint8x8_t a7, uint8x8_t *o0, uint8x8_t *o1,
+    uint8x8_t *o2, uint8x8_t *o3, uint8x8_t *o4, uint8x8_t *o5, uint8x8_t *o6,
+    uint8x8_t *o7) {
   // Swap 8 bit elements. Goes from:
   // a0: 00 01 02 03 04 05 06 07
   // a1: 10 11 12 13 14 15 16 17
@@ -36,10 +37,8 @@ static INLINE void transpose_elems_inplace_u8_8x8(uint8x8_t *a0, uint8x8_t *a1,
   // b1.val[0]: 20 30 22 32 24 34 26 36  60 70 62 72 64 74 66 76
   // b1.val[1]: 21 31 23 33 25 35 27 37  61 71 63 73 65 75 67 77
 
-  const uint8x16x2_t b0 =
-      vtrnq_u8(vcombine_u8(*a0, *a4), vcombine_u8(*a1, *a5));
-  const uint8x16x2_t b1 =
-      vtrnq_u8(vcombine_u8(*a2, *a6), vcombine_u8(*a3, *a7));
+  const uint8x16x2_t b0 = vtrnq_u8(vcombine_u8(a0, a4), vcombine_u8(a1, a5));
+  const uint8x16x2_t b1 = vtrnq_u8(vcombine_u8(a2, a6), vcombine_u8(a3, a7));
 
   // Swap 16 bit elements resulting in:
   // c0.val[0]: 00 10 20 30 04 14 24 34  40 50 60 70 44 54 64 74
@@ -62,17 +61,238 @@ static INLINE void transpose_elems_inplace_u8_8x8(uint8x8_t *a0, uint8x8_t *a1,
   const uint32x4x2_t d1 = vuzpq_u32(vreinterpretq_u32_u16(c0.val[1]),
                                     vreinterpretq_u32_u16(c1.val[1]));
 
-  *a0 = vreinterpret_u8_u32(vget_low_u32(d0.val[0]));
-  *a1 = vreinterpret_u8_u32(vget_high_u32(d0.val[0]));
-  *a2 = vreinterpret_u8_u32(vget_low_u32(d1.val[0]));
-  *a3 = vreinterpret_u8_u32(vget_high_u32(d1.val[0]));
-  *a4 = vreinterpret_u8_u32(vget_low_u32(d0.val[1]));
-  *a5 = vreinterpret_u8_u32(vget_high_u32(d0.val[1]));
-  *a6 = vreinterpret_u8_u32(vget_low_u32(d1.val[1]));
-  *a7 = vreinterpret_u8_u32(vget_high_u32(d1.val[1]));
+  *o0 = vreinterpret_u8_u32(vget_low_u32(d0.val[0]));
+  *o1 = vreinterpret_u8_u32(vget_high_u32(d0.val[0]));
+  *o2 = vreinterpret_u8_u32(vget_low_u32(d1.val[0]));
+  *o3 = vreinterpret_u8_u32(vget_high_u32(d1.val[0]));
+  *o4 = vreinterpret_u8_u32(vget_low_u32(d0.val[1]));
+  *o5 = vreinterpret_u8_u32(vget_high_u32(d0.val[1]));
+  *o6 = vreinterpret_u8_u32(vget_low_u32(d1.val[1]));
+  *o7 = vreinterpret_u8_u32(vget_high_u32(d1.val[1]));
 }
 
-static INLINE void transpose_elems_inplace_u8_8x4(uint8x8_t *a0, uint8x8_t *a1,
+static inline void transpose_elems_inplace_u8_8x8(uint8x8_t *a0, uint8x8_t *a1,
+                                                  uint8x8_t *a2, uint8x8_t *a3,
+                                                  uint8x8_t *a4, uint8x8_t *a5,
+                                                  uint8x8_t *a6,
+                                                  uint8x8_t *a7) {
+  transpose_elems_u8_8x8(*a0, *a1, *a2, *a3, *a4, *a5, *a6, *a7, a0, a1, a2, a3,
+                         a4, a5, a6, a7);
+}
+
+static inline void transpose_arrays_u8_8x8(const uint8x8_t *in,
+                                           uint8x8_t *out) {
+  transpose_elems_u8_8x8(in[0], in[1], in[2], in[3], in[4], in[5], in[6], in[7],
+                         &out[0], &out[1], &out[2], &out[3], &out[4], &out[5],
+                         &out[6], &out[7]);
+}
+
+static AOM_FORCE_INLINE void transpose_arrays_u8_8x16(const uint8x8_t *x,
+                                                      uint8x16_t *d) {
+  uint8x8x2_t w0 = vzip_u8(x[0], x[1]);
+  uint8x8x2_t w1 = vzip_u8(x[2], x[3]);
+  uint8x8x2_t w2 = vzip_u8(x[4], x[5]);
+  uint8x8x2_t w3 = vzip_u8(x[6], x[7]);
+
+  uint8x8x2_t w8 = vzip_u8(x[8], x[9]);
+  uint8x8x2_t w9 = vzip_u8(x[10], x[11]);
+  uint8x8x2_t w10 = vzip_u8(x[12], x[13]);
+  uint8x8x2_t w11 = vzip_u8(x[14], x[15]);
+
+  uint16x4x2_t w4 =
+      vzip_u16(vreinterpret_u16_u8(w0.val[0]), vreinterpret_u16_u8(w1.val[0]));
+  uint16x4x2_t w5 =
+      vzip_u16(vreinterpret_u16_u8(w2.val[0]), vreinterpret_u16_u8(w3.val[0]));
+  uint16x4x2_t w12 =
+      vzip_u16(vreinterpret_u16_u8(w8.val[0]), vreinterpret_u16_u8(w9.val[0]));
+  uint16x4x2_t w13 = vzip_u16(vreinterpret_u16_u8(w10.val[0]),
+                              vreinterpret_u16_u8(w11.val[0]));
+
+  uint32x2x2_t w6 = vzip_u32(vreinterpret_u32_u16(w4.val[0]),
+                             vreinterpret_u32_u16(w5.val[0]));
+  uint32x2x2_t w7 = vzip_u32(vreinterpret_u32_u16(w4.val[1]),
+                             vreinterpret_u32_u16(w5.val[1]));
+  uint32x2x2_t w14 = vzip_u32(vreinterpret_u32_u16(w12.val[0]),
+                              vreinterpret_u32_u16(w13.val[0]));
+  uint32x2x2_t w15 = vzip_u32(vreinterpret_u32_u16(w12.val[1]),
+                              vreinterpret_u32_u16(w13.val[1]));
+
+  // Store first 4-line result
+  d[0] = vreinterpretq_u8_u32(vcombine_u32(w6.val[0], w14.val[0]));
+  d[1] = vreinterpretq_u8_u32(vcombine_u32(w6.val[1], w14.val[1]));
+  d[2] = vreinterpretq_u8_u32(vcombine_u32(w7.val[0], w15.val[0]));
+  d[3] = vreinterpretq_u8_u32(vcombine_u32(w7.val[1], w15.val[1]));
+
+  w4 = vzip_u16(vreinterpret_u16_u8(w0.val[1]), vreinterpret_u16_u8(w1.val[1]));
+  w5 = vzip_u16(vreinterpret_u16_u8(w2.val[1]), vreinterpret_u16_u8(w3.val[1]));
+  w12 =
+      vzip_u16(vreinterpret_u16_u8(w8.val[1]), vreinterpret_u16_u8(w9.val[1]));
+  w13 = vzip_u16(vreinterpret_u16_u8(w10.val[1]),
+                 vreinterpret_u16_u8(w11.val[1]));
+
+  w6 = vzip_u32(vreinterpret_u32_u16(w4.val[0]),
+                vreinterpret_u32_u16(w5.val[0]));
+  w7 = vzip_u32(vreinterpret_u32_u16(w4.val[1]),
+                vreinterpret_u32_u16(w5.val[1]));
+  w14 = vzip_u32(vreinterpret_u32_u16(w12.val[0]),
+                 vreinterpret_u32_u16(w13.val[0]));
+  w15 = vzip_u32(vreinterpret_u32_u16(w12.val[1]),
+                 vreinterpret_u32_u16(w13.val[1]));
+
+  // Store second 4-line result
+  d[4] = vreinterpretq_u8_u32(vcombine_u32(w6.val[0], w14.val[0]));
+  d[5] = vreinterpretq_u8_u32(vcombine_u32(w6.val[1], w14.val[1]));
+  d[6] = vreinterpretq_u8_u32(vcombine_u32(w7.val[0], w15.val[0]));
+  d[7] = vreinterpretq_u8_u32(vcombine_u32(w7.val[1], w15.val[1]));
+}
+
+static AOM_FORCE_INLINE void transpose_arrays_u8_16x8(const uint8x16_t *x,
+                                                      uint8x8_t *d) {
+  uint8x16x2_t w0 = vzipq_u8(x[0], x[1]);
+  uint8x16x2_t w1 = vzipq_u8(x[2], x[3]);
+  uint8x16x2_t w2 = vzipq_u8(x[4], x[5]);
+  uint8x16x2_t w3 = vzipq_u8(x[6], x[7]);
+
+  uint16x8x2_t w4 = vzipq_u16(vreinterpretq_u16_u8(w0.val[0]),
+                              vreinterpretq_u16_u8(w1.val[0]));
+  uint16x8x2_t w5 = vzipq_u16(vreinterpretq_u16_u8(w2.val[0]),
+                              vreinterpretq_u16_u8(w3.val[0]));
+  uint16x8x2_t w6 = vzipq_u16(vreinterpretq_u16_u8(w0.val[1]),
+                              vreinterpretq_u16_u8(w1.val[1]));
+  uint16x8x2_t w7 = vzipq_u16(vreinterpretq_u16_u8(w2.val[1]),
+                              vreinterpretq_u16_u8(w3.val[1]));
+
+  uint32x4x2_t w8 = vzipq_u32(vreinterpretq_u32_u16(w4.val[0]),
+                              vreinterpretq_u32_u16(w5.val[0]));
+  uint32x4x2_t w9 = vzipq_u32(vreinterpretq_u32_u16(w6.val[0]),
+                              vreinterpretq_u32_u16(w7.val[0]));
+  uint32x4x2_t w10 = vzipq_u32(vreinterpretq_u32_u16(w4.val[1]),
+                               vreinterpretq_u32_u16(w5.val[1]));
+  uint32x4x2_t w11 = vzipq_u32(vreinterpretq_u32_u16(w6.val[1]),
+                               vreinterpretq_u32_u16(w7.val[1]));
+
+  d[0] = vreinterpret_u8_u32(vget_low_u32(w8.val[0]));
+  d[1] = vreinterpret_u8_u32(vget_high_u32(w8.val[0]));
+  d[2] = vreinterpret_u8_u32(vget_low_u32(w8.val[1]));
+  d[3] = vreinterpret_u8_u32(vget_high_u32(w8.val[1]));
+  d[4] = vreinterpret_u8_u32(vget_low_u32(w10.val[0]));
+  d[5] = vreinterpret_u8_u32(vget_high_u32(w10.val[0]));
+  d[6] = vreinterpret_u8_u32(vget_low_u32(w10.val[1]));
+  d[7] = vreinterpret_u8_u32(vget_high_u32(w10.val[1]));
+  d[8] = vreinterpret_u8_u32(vget_low_u32(w9.val[0]));
+  d[9] = vreinterpret_u8_u32(vget_high_u32(w9.val[0]));
+  d[10] = vreinterpret_u8_u32(vget_low_u32(w9.val[1]));
+  d[11] = vreinterpret_u8_u32(vget_high_u32(w9.val[1]));
+  d[12] = vreinterpret_u8_u32(vget_low_u32(w11.val[0]));
+  d[13] = vreinterpret_u8_u32(vget_high_u32(w11.val[0]));
+  d[14] = vreinterpret_u8_u32(vget_low_u32(w11.val[1]));
+  d[15] = vreinterpret_u8_u32(vget_high_u32(w11.val[1]));
+}
+
+static inline uint16x8x2_t aom_vtrnq_u64_to_u16(uint32x4_t a0, uint32x4_t a1) {
+  uint16x8x2_t b0;
+#if AOM_ARCH_AARCH64
+  b0.val[0] = vreinterpretq_u16_u64(
+      vtrn1q_u64(vreinterpretq_u64_u32(a0), vreinterpretq_u64_u32(a1)));
+  b0.val[1] = vreinterpretq_u16_u64(
+      vtrn2q_u64(vreinterpretq_u64_u32(a0), vreinterpretq_u64_u32(a1)));
+#else
+  b0.val[0] = vcombine_u16(vreinterpret_u16_u32(vget_low_u32(a0)),
+                           vreinterpret_u16_u32(vget_low_u32(a1)));
+  b0.val[1] = vcombine_u16(vreinterpret_u16_u32(vget_high_u32(a0)),
+                           vreinterpret_u16_u32(vget_high_u32(a1)));
+#endif
+  return b0;
+}
+
+static inline void transpose_arrays_u8_16x16(const uint8x16_t *x,
+                                             uint8x16_t *d) {
+  uint8x16x2_t w0 = vzipq_u8(x[0], x[1]);
+  uint8x16x2_t w1 = vzipq_u8(x[2], x[3]);
+  uint8x16x2_t w2 = vzipq_u8(x[4], x[5]);
+  uint8x16x2_t w3 = vzipq_u8(x[6], x[7]);
+
+  uint8x16x2_t w4 = vzipq_u8(x[8], x[9]);
+  uint8x16x2_t w5 = vzipq_u8(x[10], x[11]);
+  uint8x16x2_t w6 = vzipq_u8(x[12], x[13]);
+  uint8x16x2_t w7 = vzipq_u8(x[14], x[15]);
+
+  uint16x8x2_t w8 = vzipq_u16(vreinterpretq_u16_u8(w0.val[0]),
+                              vreinterpretq_u16_u8(w1.val[0]));
+  uint16x8x2_t w9 = vzipq_u16(vreinterpretq_u16_u8(w2.val[0]),
+                              vreinterpretq_u16_u8(w3.val[0]));
+  uint16x8x2_t w10 = vzipq_u16(vreinterpretq_u16_u8(w4.val[0]),
+                               vreinterpretq_u16_u8(w5.val[0]));
+  uint16x8x2_t w11 = vzipq_u16(vreinterpretq_u16_u8(w6.val[0]),
+                               vreinterpretq_u16_u8(w7.val[0]));
+
+  uint32x4x2_t w12 = vzipq_u32(vreinterpretq_u32_u16(w8.val[0]),
+                               vreinterpretq_u32_u16(w9.val[0]));
+  uint32x4x2_t w13 = vzipq_u32(vreinterpretq_u32_u16(w10.val[0]),
+                               vreinterpretq_u32_u16(w11.val[0]));
+  uint32x4x2_t w14 = vzipq_u32(vreinterpretq_u32_u16(w8.val[1]),
+                               vreinterpretq_u32_u16(w9.val[1]));
+  uint32x4x2_t w15 = vzipq_u32(vreinterpretq_u32_u16(w10.val[1]),
+                               vreinterpretq_u32_u16(w11.val[1]));
+
+  uint16x8x2_t d01 = aom_vtrnq_u64_to_u16(w12.val[0], w13.val[0]);
+  d[0] = vreinterpretq_u8_u16(d01.val[0]);
+  d[1] = vreinterpretq_u8_u16(d01.val[1]);
+  uint16x8x2_t d23 = aom_vtrnq_u64_to_u16(w12.val[1], w13.val[1]);
+  d[2] = vreinterpretq_u8_u16(d23.val[0]);
+  d[3] = vreinterpretq_u8_u16(d23.val[1]);
+  uint16x8x2_t d45 = aom_vtrnq_u64_to_u16(w14.val[0], w15.val[0]);
+  d[4] = vreinterpretq_u8_u16(d45.val[0]);
+  d[5] = vreinterpretq_u8_u16(d45.val[1]);
+  uint16x8x2_t d67 = aom_vtrnq_u64_to_u16(w14.val[1], w15.val[1]);
+  d[6] = vreinterpretq_u8_u16(d67.val[0]);
+  d[7] = vreinterpretq_u8_u16(d67.val[1]);
+
+  // upper half
+  w8 = vzipq_u16(vreinterpretq_u16_u8(w0.val[1]),
+                 vreinterpretq_u16_u8(w1.val[1]));
+  w9 = vzipq_u16(vreinterpretq_u16_u8(w2.val[1]),
+                 vreinterpretq_u16_u8(w3.val[1]));
+  w10 = vzipq_u16(vreinterpretq_u16_u8(w4.val[1]),
+                  vreinterpretq_u16_u8(w5.val[1]));
+  w11 = vzipq_u16(vreinterpretq_u16_u8(w6.val[1]),
+                  vreinterpretq_u16_u8(w7.val[1]));
+
+  w12 = vzipq_u32(vreinterpretq_u32_u16(w8.val[0]),
+                  vreinterpretq_u32_u16(w9.val[0]));
+  w13 = vzipq_u32(vreinterpretq_u32_u16(w10.val[0]),
+                  vreinterpretq_u32_u16(w11.val[0]));
+  w14 = vzipq_u32(vreinterpretq_u32_u16(w8.val[1]),
+                  vreinterpretq_u32_u16(w9.val[1]));
+  w15 = vzipq_u32(vreinterpretq_u32_u16(w10.val[1]),
+                  vreinterpretq_u32_u16(w11.val[1]));
+
+  d01 = aom_vtrnq_u64_to_u16(w12.val[0], w13.val[0]);
+  d[8] = vreinterpretq_u8_u16(d01.val[0]);
+  d[9] = vreinterpretq_u8_u16(d01.val[1]);
+  d23 = aom_vtrnq_u64_to_u16(w12.val[1], w13.val[1]);
+  d[10] = vreinterpretq_u8_u16(d23.val[0]);
+  d[11] = vreinterpretq_u8_u16(d23.val[1]);
+  d45 = aom_vtrnq_u64_to_u16(w14.val[0], w15.val[0]);
+  d[12] = vreinterpretq_u8_u16(d45.val[0]);
+  d[13] = vreinterpretq_u8_u16(d45.val[1]);
+  d67 = aom_vtrnq_u64_to_u16(w14.val[1], w15.val[1]);
+  d[14] = vreinterpretq_u8_u16(d67.val[0]);
+  d[15] = vreinterpretq_u8_u16(d67.val[1]);
+}
+
+static AOM_FORCE_INLINE void transpose_arrays_u8_32x16(const uint8x16x2_t *x,
+                                                       uint8x16_t *d) {
+  uint8x16_t x2[32];
+  for (int i = 0; i < 16; ++i) {
+    x2[i] = x[i].val[0];
+    x2[i + 16] = x[i].val[1];
+  }
+  transpose_arrays_u8_16x16(x2, d);
+  transpose_arrays_u8_16x16(x2 + 16, d + 16);
+}
+
+static inline void transpose_elems_inplace_u8_8x4(uint8x8_t *a0, uint8x8_t *a1,
                                                   uint8x8_t *a2,
                                                   uint8x8_t *a3) {
   // Swap 8 bit elements. Goes from:
@@ -106,7 +326,42 @@ static INLINE void transpose_elems_inplace_u8_8x4(uint8x8_t *a0, uint8x8_t *a1,
   *a3 = vreinterpret_u8_u16(c1.val[1]);
 }
 
-static INLINE void transpose_elems_inplace_u8_4x4(uint8x8_t *a0,
+static inline void transpose_elems_inplace_u8_16x4(uint8x16_t *a0,
+                                                   uint8x16_t *a1,
+                                                   uint8x16_t *a2,
+                                                   uint8x16_t *a3) {
+  // Swap 8 bit elements. Goes from:
+  // a0: 00 01 02 03 04 05 06 07 08 09 010 011 012 013 014 015
+  // a1: 10 11 12 13 14 15 16 17 18 19 110 111 112 113 114 115
+  // a2: 20 21 22 23 24 25 26 27 28 29 210 211 212 213 214 215
+  // a3: 30 31 32 33 34 35 36 37 38 39 310 311 312 313 314 315
+  // to:
+  // b0.val[0]: 00 10 02 12 04 14 06 16 08 18 010 110 012 112 014 114
+  // b0.val[1]: 01 11 03 13 05 15 07 17 09 19 011 111 013 113 015 115
+  // b1.val[0]: 20 30 22 32 24 34 26 36 28 38 210 310 212 312 214 314
+  // b1.val[1]: 21 31 23 33 25 35 27 37 29 39 211 311 213 313 215 315
+
+  const uint8x16x2_t b0 = vtrnq_u8(*a0, *a1);
+  const uint8x16x2_t b1 = vtrnq_u8(*a2, *a3);
+
+  // Swap 16 bit elements resulting in:
+  // c0.val[0]: 00 10 20 30 04 14 24 34 08  18  28  38  012 112 212 312
+  // c0.val[1]: 02 12 22 32 06 16 26 36 09  19  29  39  013 113 213 313
+  // c1.val[0]: 01 11 21 31 05 15 25 35 010 110 210 310 014 114 214 314
+  // c1.val[1]: 03 13 23 33 07 17 27 37 011 111 211 311 015 115 215 315
+
+  const uint16x8x2_t c0 = vtrnq_u16(vreinterpretq_u16_u8(b0.val[0]),
+                                    vreinterpretq_u16_u8(b1.val[0]));
+  const uint16x8x2_t c1 = vtrnq_u16(vreinterpretq_u16_u8(b0.val[1]),
+                                    vreinterpretq_u16_u8(b1.val[1]));
+
+  *a0 = vreinterpretq_u8_u16(c0.val[0]);
+  *a1 = vreinterpretq_u8_u16(c1.val[0]);
+  *a2 = vreinterpretq_u8_u16(c0.val[1]);
+  *a3 = vreinterpretq_u8_u16(c1.val[1]);
+}
+
+static inline void transpose_elems_inplace_u8_4x4(uint8x8_t *a0,
                                                   uint8x8_t *a1) {
   // Swap 16 bit elements. Goes from:
   // a0: 00 01 02 03  10 11 12 13
@@ -136,7 +391,7 @@ static INLINE void transpose_elems_inplace_u8_4x4(uint8x8_t *a0,
   *a1 = d0.val[1];
 }
 
-static INLINE void transpose_elems_u8_4x8(uint8x8_t a0, uint8x8_t a1,
+static inline void transpose_elems_u8_4x8(uint8x8_t a0, uint8x8_t a1,
                                           uint8x8_t a2, uint8x8_t a3,
                                           uint8x8_t a4, uint8x8_t a5,
                                           uint8x8_t a6, uint8x8_t a7,
@@ -194,7 +449,7 @@ static INLINE void transpose_elems_u8_4x8(uint8x8_t a0, uint8x8_t a1,
   *o3 = d1.val[1];
 }
 
-static INLINE void transpose_array_inplace_u16_4x4(uint16x4_t a[4]) {
+static inline void transpose_array_inplace_u16_4x4(uint16x4_t a[4]) {
   // Input:
   // 00 01 02 03
   // 10 11 12 13
@@ -231,7 +486,7 @@ static INLINE void transpose_array_inplace_u16_4x4(uint16x4_t a[4]) {
   a[3] = vreinterpret_u16_u32(e.val[1]);
 }
 
-static INLINE void transpose_array_inplace_u16_4x8(uint16x8_t a[4]) {
+static inline void transpose_array_inplace_u16_4x8(uint16x8_t a[4]) {
   // 4x8 Input:
   // a[0]: 00 01 02 03 04 05 06 07
   // a[1]: 10 11 12 13 14 15 16 17
@@ -265,22 +520,6 @@ static INLINE void transpose_array_inplace_u16_4x8(uint16x8_t a[4]) {
   a[3] = vreinterpretq_u16_u32(c1.val[1]);
 }
 
-static INLINE uint16x8x2_t aom_vtrnq_u64_to_u16(uint32x4_t a0, uint32x4_t a1) {
-  uint16x8x2_t b0;
-#if AOM_ARCH_AARCH64
-  b0.val[0] = vreinterpretq_u16_u64(
-      vtrn1q_u64(vreinterpretq_u64_u32(a0), vreinterpretq_u64_u32(a1)));
-  b0.val[1] = vreinterpretq_u16_u64(
-      vtrn2q_u64(vreinterpretq_u64_u32(a0), vreinterpretq_u64_u32(a1)));
-#else
-  b0.val[0] = vcombine_u16(vreinterpret_u16_u32(vget_low_u32(a0)),
-                           vreinterpret_u16_u32(vget_low_u32(a1)));
-  b0.val[1] = vcombine_u16(vreinterpret_u16_u32(vget_high_u32(a0)),
-                           vreinterpret_u16_u32(vget_high_u32(a1)));
-#endif
-  return b0;
-}
-
 // Special transpose for loop filter.
 // 4x8 Input:
 // p_q:  p3 p2 p1 p0 q0 q1 q2 q3
@@ -306,7 +545,7 @@ static INLINE uint16x8x2_t aom_vtrnq_u64_to_u16(uint32x4_t a0, uint32x4_t a1) {
 // order of the low halves also restored relative to the high halves. This is
 // preferable because it puts all values from the same source row back together,
 // but some post-processing is inevitable.
-static INLINE void loop_filter_transpose_u16_4x8q(uint16x8_t a[4]) {
+static inline void loop_filter_transpose_u16_4x8q(uint16x8_t a[4]) {
   // b0.val[0]: 00 10 02 12 04 14 06 16
   // b0.val[1]: 01 11 03 13 05 15 07 17
   // b1.val[0]: 20 30 22 32 24 34 26 36
@@ -350,7 +589,7 @@ static INLINE void loop_filter_transpose_u16_4x8q(uint16x8_t a[4]) {
   a[3] = d0.val[0];  // p3q3
 }
 
-static INLINE void transpose_elems_u16_4x8(
+static inline void transpose_elems_u16_4x8(
     const uint16x4_t a0, const uint16x4_t a1, const uint16x4_t a2,
     const uint16x4_t a3, const uint16x4_t a4, const uint16x4_t a5,
     const uint16x4_t a6, const uint16x4_t a7, uint16x8_t *o0, uint16x8_t *o1,
@@ -401,7 +640,7 @@ static INLINE void transpose_elems_u16_4x8(
   *o3 = vreinterpretq_u16_u32(d1.val[1]);
 }
 
-static INLINE void transpose_elems_s16_4x8(
+static inline void transpose_elems_s16_4x8(
     const int16x4_t a0, const int16x4_t a1, const int16x4_t a2,
     const int16x4_t a3, const int16x4_t a4, const int16x4_t a5,
     const int16x4_t a6, const int16x4_t a7, int16x8_t *o0, int16x8_t *o1,
@@ -452,7 +691,7 @@ static INLINE void transpose_elems_s16_4x8(
   *o3 = vreinterpretq_s16_s32(d1.val[1]);
 }
 
-static INLINE void transpose_elems_inplace_u16_8x8(
+static inline void transpose_elems_inplace_u16_8x8(
     uint16x8_t *a0, uint16x8_t *a1, uint16x8_t *a2, uint16x8_t *a3,
     uint16x8_t *a4, uint16x8_t *a5, uint16x8_t *a6, uint16x8_t *a7) {
   // Swap 16 bit elements. Goes from:
@@ -523,7 +762,7 @@ static INLINE void transpose_elems_inplace_u16_8x8(
   *a7 = d3.val[1];
 }
 
-static INLINE int16x8x2_t aom_vtrnq_s64_to_s16(int32x4_t a0, int32x4_t a1) {
+static inline int16x8x2_t aom_vtrnq_s64_to_s16(int32x4_t a0, int32x4_t a1) {
   int16x8x2_t b0;
 #if AOM_ARCH_AARCH64
   b0.val[0] = vreinterpretq_s16_s64(
@@ -539,7 +778,7 @@ static INLINE int16x8x2_t aom_vtrnq_s64_to_s16(int32x4_t a0, int32x4_t a1) {
   return b0;
 }
 
-static INLINE void transpose_elems_inplace_s16_8x8(int16x8_t *a0, int16x8_t *a1,
+static inline void transpose_elems_inplace_s16_8x8(int16x8_t *a0, int16x8_t *a1,
                                                    int16x8_t *a2, int16x8_t *a3,
                                                    int16x8_t *a4, int16x8_t *a5,
                                                    int16x8_t *a6,
@@ -612,7 +851,7 @@ static INLINE void transpose_elems_inplace_s16_8x8(int16x8_t *a0, int16x8_t *a1,
   *a7 = d3.val[1];
 }
 
-static INLINE void transpose_arrays_s16_8x8(const int16x8_t *a,
+static inline void transpose_arrays_s16_8x8(const int16x8_t *a,
                                             int16x8_t *out) {
   // Swap 16 bit elements. Goes from:
   // a0: 00 01 02 03 04 05 06 07
@@ -682,7 +921,41 @@ static INLINE void transpose_arrays_s16_8x8(const int16x8_t *a,
   out[7] = d3.val[1];
 }
 
-static INLINE void transpose_elems_inplace_u16_4x4(uint16x4_t *a0,
+static inline void transpose_elems_inplace_s16_8x4(int16x8_t *a0, int16x8_t *a1,
+                                                   int16x8_t *a2,
+                                                   int16x8_t *a3) {
+  // Swap 16 bit elements. Goes from:
+  // a0: 00 01 02 03 04 05 06 07
+  // a1: 10 11 12 13 14 15 16 17
+  // a2: 20 21 22 23 24 25 26 27
+  // a3: 30 31 32 33 34 35 36 37
+  // to:
+  // b0.val[0]: 00 10 02 12 04 14 06 16
+  // b0.val[1]: 01 11 03 13 05 15 07 17
+  // b1.val[0]: 20 30 22 32 24 34 26 36
+  // b1.val[1]: 21 31 23 33 25 35 27 37
+
+  const int16x8x2_t b0 = vtrnq_s16(*a0, *a1);
+  const int16x8x2_t b1 = vtrnq_s16(*a2, *a3);
+
+  // Swap 32 bit elements resulting in:
+  // c0.val[0]: 00 10 20 30 04 14 24 34
+  // c0.val[1]: 01 11 21 31 05 15 25 35
+  // c1.val[0]: 02 12 22 32 06 16 26 36
+  // c1.val[1]: 03 13 23 33 07 17 27 37
+
+  const int32x4x2_t c0 = vtrnq_s32(vreinterpretq_s32_s16(b0.val[0]),
+                                   vreinterpretq_s32_s16(b1.val[0]));
+  const int32x4x2_t c1 = vtrnq_s32(vreinterpretq_s32_s16(b0.val[1]),
+                                   vreinterpretq_s32_s16(b1.val[1]));
+
+  *a0 = vreinterpretq_s16_s32(c0.val[0]);
+  *a1 = vreinterpretq_s16_s32(c1.val[0]);
+  *a2 = vreinterpretq_s16_s32(c0.val[1]);
+  *a3 = vreinterpretq_s16_s32(c1.val[1]);
+}
+
+static inline void transpose_elems_inplace_u16_4x4(uint16x4_t *a0,
                                                    uint16x4_t *a1,
                                                    uint16x4_t *a2,
                                                    uint16x4_t *a3) {
@@ -717,7 +990,7 @@ static INLINE void transpose_elems_inplace_u16_4x4(uint16x4_t *a0,
   *a3 = vreinterpret_u16_u32(c1.val[1]);
 }
 
-static INLINE void transpose_elems_inplace_s16_4x4(int16x4_t *a0, int16x4_t *a1,
+static inline void transpose_elems_inplace_s16_4x4(int16x4_t *a0, int16x4_t *a1,
                                                    int16x4_t *a2,
                                                    int16x4_t *a3) {
   // Swap 16 bit elements. Goes from:
@@ -751,7 +1024,7 @@ static INLINE void transpose_elems_inplace_s16_4x4(int16x4_t *a0, int16x4_t *a1,
   *a3 = vreinterpret_s16_s32(c1.val[1]);
 }
 
-static INLINE int32x4x2_t aom_vtrnq_s64_to_s32(int32x4_t a0, int32x4_t a1) {
+static inline int32x4x2_t aom_vtrnq_s64_to_s32(int32x4_t a0, int32x4_t a1) {
   int32x4x2_t b0;
 #if AOM_ARCH_AARCH64
   b0.val[0] = vreinterpretq_s32_s64(
@@ -765,7 +1038,7 @@ static INLINE int32x4x2_t aom_vtrnq_s64_to_s32(int32x4_t a0, int32x4_t a1) {
   return b0;
 }
 
-static INLINE void transpose_elems_s32_4x4(const int32x4_t a0,
+static inline void transpose_elems_s32_4x4(const int32x4_t a0,
                                            const int32x4_t a1,
                                            const int32x4_t a2,
                                            const int32x4_t a3, int32x4_t *o0,
@@ -800,13 +1073,13 @@ static INLINE void transpose_elems_s32_4x4(const int32x4_t a0,
   *o3 = c1.val[1];
 }
 
-static INLINE void transpose_elems_inplace_s32_4x4(int32x4_t *a0, int32x4_t *a1,
+static inline void transpose_elems_inplace_s32_4x4(int32x4_t *a0, int32x4_t *a1,
                                                    int32x4_t *a2,
                                                    int32x4_t *a3) {
   transpose_elems_s32_4x4(*a0, *a1, *a2, *a3, a0, a1, a2, a3);
 }
 
-static INLINE void transpose_arrays_s32_4x4(const int32x4_t *in,
+static inline void transpose_arrays_s32_4x4(const int32x4_t *in,
                                             int32x4_t *out) {
   transpose_elems_s32_4x4(in[0], in[1], in[2], in[3], &out[0], &out[1], &out[2],
                           &out[3]);
@@ -851,7 +1124,7 @@ TRANSPOSE_ARRAYS_S32_WXH_NEON(64, 32)
 
 #undef TRANSPOSE_ARRAYS_S32_WXH_NEON
 
-static INLINE int64x2_t aom_vtrn1q_s64(int64x2_t a, int64x2_t b) {
+static inline int64x2_t aom_vtrn1q_s64(int64x2_t a, int64x2_t b) {
 #if AOM_ARCH_AARCH64
   return vtrn1q_s64(a, b);
 #else
@@ -859,7 +1132,7 @@ static INLINE int64x2_t aom_vtrn1q_s64(int64x2_t a, int64x2_t b) {
 #endif
 }
 
-static INLINE int64x2_t aom_vtrn2q_s64(int64x2_t a, int64x2_t b) {
+static inline int64x2_t aom_vtrn2q_s64(int64x2_t a, int64x2_t b) {
 #if AOM_ARCH_AARCH64
   return vtrn2q_s64(a, b);
 #else
@@ -867,7 +1140,7 @@ static INLINE int64x2_t aom_vtrn2q_s64(int64x2_t a, int64x2_t b) {
 #endif
 }
 
-static INLINE void transpose_elems_s32_4x8(int32x4_t a0, int32x4_t a1,
+static inline void transpose_elems_s32_4x8(int32x4_t a0, int32x4_t a1,
                                            int32x4_t a2, int32x4_t a3,
                                            int32x4_t a4, int32x4_t a5,
                                            int32x4_t a6, int32x4_t a7,
@@ -892,7 +1165,7 @@ static INLINE void transpose_elems_s32_4x8(int32x4_t a0, int32x4_t a1,
   o3->val[1] = a7;
 }
 
-static INLINE void transpose_elems_inplace_s32_8x8(
+static inline void transpose_elems_inplace_s32_8x8(
     int32x4x2_t *a0, int32x4x2_t *a1, int32x4x2_t *a2, int32x4x2_t *a3,
     int32x4x2_t *a4, int32x4x2_t *a5, int32x4x2_t *a6, int32x4x2_t *a7) {
   // Perform an 8 x 8 matrix transpose by building on top of the existing 4 x 4
@@ -946,7 +1219,7 @@ static INLINE void transpose_elems_inplace_s32_8x8(
   a7->val[1] = q3_v4;
 }
 
-static INLINE void transpose_arrays_s16_4x4(const int16x4_t *const in,
+static inline void transpose_arrays_s16_4x4(const int16x4_t *const in,
                                             int16x4_t *const out) {
   int16x4_t a0 = in[0];
   int16x4_t a1 = in[1];
@@ -961,7 +1234,7 @@ static INLINE void transpose_arrays_s16_4x4(const int16x4_t *const in,
   out[3] = a3;
 }
 
-static INLINE void transpose_arrays_s16_4x8(const int16x4_t *const in,
+static inline void transpose_arrays_s16_4x8(const int16x4_t *const in,
                                             int16x8_t *const out) {
 #if AOM_ARCH_AARCH64
   const int16x8_t a0 = vzip1q_s16(vcombine_s16(in[0], vdup_n_s16(0)),
@@ -1010,7 +1283,7 @@ static INLINE void transpose_arrays_s16_4x8(const int16x4_t *const in,
 #endif
 }
 
-static INLINE void transpose_arrays_s16_8x4(const int16x8_t *const in,
+static inline void transpose_arrays_s16_8x4(const int16x8_t *const in,
                                             int16x4_t *const out) {
   // Swap 16 bit elements. Goes from:
   // in[0]: 00 01 02 03 04 05 06 07
@@ -1055,6 +1328,38 @@ static INLINE void transpose_arrays_s16_8x4(const int16x8_t *const in,
   out[5] = vget_high_s16(vreinterpretq_s16_u32(c1.val[0]));
   out[6] = vget_high_s16(vreinterpretq_s16_u32(c0.val[1]));
   out[7] = vget_high_s16(vreinterpretq_s16_u32(c1.val[1]));
+}
+
+static inline void transpose_arrays_s64_4x4(const int64x2_t *in,
+                                            int64x2_t *out) {
+  // Perform a 4x4 matrix transpose going from:
+  // in[0] = 00 01
+  // in[1] = 02 03
+  // in[2] = 10 11
+  // in[3] = 12 13
+  // in[4] = 20 21
+  // in[5] = 22 23
+  // in[6] = 30 31
+  // in[7] = 32 33
+  //
+  // to:
+  // out[0] = 00 10
+  // out[1] = 20 30
+  // out[2] = 01 11
+  // out[3] = 21 31
+  // out[4] = 02 12
+  // out[5] = 22 32
+  // out[6] = 03 13
+  // out[7] = 23 33
+
+  out[0] = aom_vtrn1q_s64(in[0], in[2]);
+  out[1] = aom_vtrn1q_s64(in[4], in[6]);
+  out[2] = aom_vtrn2q_s64(in[0], in[2]);
+  out[3] = aom_vtrn2q_s64(in[4], in[6]);
+  out[4] = aom_vtrn1q_s64(in[1], in[3]);
+  out[5] = aom_vtrn1q_s64(in[5], in[7]);
+  out[6] = aom_vtrn2q_s64(in[1], in[3]);
+  out[7] = aom_vtrn2q_s64(in[5], in[7]);
 }
 
 #endif  // AOM_AOM_DSP_ARM_TRANSPOSE_NEON_H_

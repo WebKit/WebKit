@@ -11,11 +11,14 @@ review process. You will also want to run
 [`scripts/run_code_generation.py`](../../scripts/run_code_generation.py) to
 update the generated files.
 
-Please update both Windows and Linux binaries at the same time. Start with
-Windows, then merge your work into a single CL that updates both binaries
-simultaneously. Note that we don't currently support Mac for generating the
-lexer and parser files. If we do we should add a flex/bison download for Mac
-as well.
+Please update Windows, Linux and Mac binaries at the same time. Start with
+Windows, then merge your work into a single CL that updates all binaries
+simultaneously.
+
+If you get authentication errors while uploading, try running:
+```
+$ download_from_google_storage --config
+```
 
 Contact syoussefi for any help with updating the binaries.
 
@@ -24,7 +27,7 @@ Contact syoussefi for any help with updating the binaries.
 This is expected to be a rare operation, and is currently done based on the
 following instructions.  Note: get the binaries first on windows, as only a
 single option is available, then build the binaries for the same version on
-Linux.
+Linux/Mac.
 
 ### On Windows
 
@@ -118,6 +121,38 @@ $ cd angle/
 $ cp /path/to/flex/build/src/flex \
      /path/to/bison/build/src/bison \
      tools/flex-bison/linux/
+```
+
+Upload the binaries:
+
+```
+$ cd angle/
+$ ./tools/flex-bison/update_flex_bison_binaries.py
+```
+
+### On Mac
+
+Use homebrew to install flex and bison:
+```
+$ brew install flex bison
+```
+
+Find the install locations using `brew info`:
+```
+$ brew info bison
+...
+/opt/homebrew/Cellar/bison/3.8.2 (100 files, 3.7MB)
+...
+```
+
+Copy the 2 executables to this directory:
+
+```
+$ cd angle/
+$ cp -r \
+     /path/to/bison/install/bin \
+     /path/to/flex/install/bin \
+     tools/flex-bison/mac/
 ```
 
 Upload the binaries:

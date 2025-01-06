@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -430,7 +430,7 @@ static bool init_arrays(const aom_film_grain_t *params, int luma_stride,
 }
 
 // get a number between 0 and 2^bits - 1
-static INLINE int get_random_number(int bits) {
+static inline int get_random_number(int bits) {
   uint16_t bit;
   bit = ((random_register >> 0) ^ (random_register >> 1) ^
          (random_register >> 3) ^ (random_register >> 12)) &
@@ -969,117 +969,26 @@ static void hor_boundary_overlap(int *top_block, int top_stride,
   }
 }
 
-int av1_add_film_grain(const aom_film_grain_t *params, const aom_image_t *src,
-                       aom_image_t *dst) {
-  uint8_t *luma, *cb, *cr;
-  int height, width, luma_stride, chroma_stride;
-  int use_high_bit_depth = 0;
-  int chroma_subsamp_x = 0;
-  int chroma_subsamp_y = 0;
-  int mc_identity = src->mc == AOM_CICP_MC_IDENTITY ? 1 : 0;
-
-  switch (src->fmt) {
-    case AOM_IMG_FMT_AOMI420:
-    case AOM_IMG_FMT_I420:
-      use_high_bit_depth = 0;
-      chroma_subsamp_x = 1;
-      chroma_subsamp_y = 1;
-      break;
-    case AOM_IMG_FMT_I42016:
-      use_high_bit_depth = 1;
-      chroma_subsamp_x = 1;
-      chroma_subsamp_y = 1;
-      break;
-      //    case AOM_IMG_FMT_444A:
-    case AOM_IMG_FMT_I444:
-      use_high_bit_depth = 0;
-      chroma_subsamp_x = 0;
-      chroma_subsamp_y = 0;
-      break;
-    case AOM_IMG_FMT_I44416:
-      use_high_bit_depth = 1;
-      chroma_subsamp_x = 0;
-      chroma_subsamp_y = 0;
-      break;
-    case AOM_IMG_FMT_I422:
-      use_high_bit_depth = 0;
-      chroma_subsamp_x = 1;
-      chroma_subsamp_y = 0;
-      break;
-    case AOM_IMG_FMT_I42216:
-      use_high_bit_depth = 1;
-      chroma_subsamp_x = 1;
-      chroma_subsamp_y = 0;
-      break;
-    default:  // unknown input format
-      fprintf(stderr, "Film grain error: input format is not supported!");
-      return -1;
-  }
-
-  assert(params->bit_depth == src->bit_depth);
-
-  dst->fmt = src->fmt;
-  dst->bit_depth = src->bit_depth;
-
-  dst->r_w = src->r_w;
-  dst->r_h = src->r_h;
-  dst->d_w = src->d_w;
-  dst->d_h = src->d_h;
-
-  dst->cp = src->cp;
-  dst->tc = src->tc;
-  dst->mc = src->mc;
-
-  dst->monochrome = src->monochrome;
-  dst->csp = src->csp;
-  dst->range = src->range;
-
-  dst->x_chroma_shift = src->x_chroma_shift;
-  dst->y_chroma_shift = src->y_chroma_shift;
-
-  dst->temporal_id = src->temporal_id;
-  dst->spatial_id = src->spatial_id;
-
-  width = src->d_w % 2 ? src->d_w + 1 : src->d_w;
-  height = src->d_h % 2 ? src->d_h + 1 : src->d_h;
-
-  copy_rect(src->planes[AOM_PLANE_Y], src->stride[AOM_PLANE_Y],
-            dst->planes[AOM_PLANE_Y], dst->stride[AOM_PLANE_Y], src->d_w,
-            src->d_h, use_high_bit_depth);
-  // Note that dst is already assumed to be aligned to even.
-  extend_even(dst->planes[AOM_PLANE_Y], dst->stride[AOM_PLANE_Y], src->d_w,
-              src->d_h, use_high_bit_depth);
-
-  if (!src->monochrome) {
-    copy_rect(src->planes[AOM_PLANE_U], src->stride[AOM_PLANE_U],
-              dst->planes[AOM_PLANE_U], dst->stride[AOM_PLANE_U],
-              width >> chroma_subsamp_x, height >> chroma_subsamp_y,
-              use_high_bit_depth);
-
-    copy_rect(src->planes[AOM_PLANE_V], src->stride[AOM_PLANE_V],
-              dst->planes[AOM_PLANE_V], dst->stride[AOM_PLANE_V],
-              width >> chroma_subsamp_x, height >> chroma_subsamp_y,
-              use_high_bit_depth);
-  }
-
-  luma = dst->planes[AOM_PLANE_Y];
-  cb = dst->planes[AOM_PLANE_U];
-  cr = dst->planes[AOM_PLANE_V];
-
-  // luma and chroma strides in samples
-  luma_stride = dst->stride[AOM_PLANE_Y] >> use_high_bit_depth;
-  chroma_stride = dst->stride[AOM_PLANE_U] >> use_high_bit_depth;
-
-  return av1_add_film_grain_run(
-      params, luma, cb, cr, height, width, luma_stride, chroma_stride,
-      use_high_bit_depth, chroma_subsamp_y, chroma_subsamp_x, mc_identity);
-}
-
-int av1_add_film_grain_run(const aom_film_grain_t *params, uint8_t *luma,
-                           uint8_t *cb, uint8_t *cr, int height, int width,
-                           int luma_stride, int chroma_stride,
-                           int use_high_bit_depth, int chroma_subsamp_y,
-                           int chroma_subsamp_x, int mc_identity) {
+/*!\brief Add film grain
+ *
+ * Add film grain to an image
+ *
+ * Returns 0 for success, -1 for failure
+ *
+ * \param[in]    grain_params     Grain parameters
+ * \param[in]    luma             luma plane
+ * \param[in]    cb               cb plane
+ * \param[in]    cr               cr plane
+ * \param[in]    height           luma plane height
+ * \param[in]    width            luma plane width
+ * \param[in]    luma_stride      luma plane stride
+ * \param[in]    chroma_stride    chroma plane stride
+ */
+static int add_film_grain_run(const aom_film_grain_t *params, uint8_t *luma,
+                              uint8_t *cb, uint8_t *cr, int height, int width,
+                              int luma_stride, int chroma_stride,
+                              int use_high_bit_depth, int chroma_subsamp_y,
+                              int chroma_subsamp_x, int mc_identity) {
   int **pred_pos_luma;
   int **pred_pos_chroma;
   int *luma_grain_block;
@@ -1458,4 +1367,110 @@ int av1_add_film_grain_run(const aom_film_grain_t *params, uint8_t *luma,
                  &cb_grain_block, &cr_grain_block, &y_line_buf, &cb_line_buf,
                  &cr_line_buf, &y_col_buf, &cb_col_buf, &cr_col_buf);
   return 0;
+}
+
+int av1_add_film_grain(const aom_film_grain_t *params, const aom_image_t *src,
+                       aom_image_t *dst) {
+  uint8_t *luma, *cb, *cr;
+  int height, width, luma_stride, chroma_stride;
+  int use_high_bit_depth = 0;
+  int chroma_subsamp_x = 0;
+  int chroma_subsamp_y = 0;
+  int mc_identity = src->mc == AOM_CICP_MC_IDENTITY ? 1 : 0;
+
+  switch (src->fmt) {
+    case AOM_IMG_FMT_AOMI420:
+    case AOM_IMG_FMT_I420:
+      use_high_bit_depth = 0;
+      chroma_subsamp_x = 1;
+      chroma_subsamp_y = 1;
+      break;
+    case AOM_IMG_FMT_I42016:
+      use_high_bit_depth = 1;
+      chroma_subsamp_x = 1;
+      chroma_subsamp_y = 1;
+      break;
+      //    case AOM_IMG_FMT_444A:
+    case AOM_IMG_FMT_I444:
+      use_high_bit_depth = 0;
+      chroma_subsamp_x = 0;
+      chroma_subsamp_y = 0;
+      break;
+    case AOM_IMG_FMT_I44416:
+      use_high_bit_depth = 1;
+      chroma_subsamp_x = 0;
+      chroma_subsamp_y = 0;
+      break;
+    case AOM_IMG_FMT_I422:
+      use_high_bit_depth = 0;
+      chroma_subsamp_x = 1;
+      chroma_subsamp_y = 0;
+      break;
+    case AOM_IMG_FMT_I42216:
+      use_high_bit_depth = 1;
+      chroma_subsamp_x = 1;
+      chroma_subsamp_y = 0;
+      break;
+    default:  // unknown input format
+      fprintf(stderr, "Film grain error: input format is not supported!");
+      return -1;
+  }
+
+  assert(params->bit_depth == src->bit_depth);
+
+  dst->fmt = src->fmt;
+  dst->bit_depth = src->bit_depth;
+
+  dst->r_w = src->r_w;
+  dst->r_h = src->r_h;
+  dst->d_w = src->d_w;
+  dst->d_h = src->d_h;
+
+  dst->cp = src->cp;
+  dst->tc = src->tc;
+  dst->mc = src->mc;
+
+  dst->monochrome = src->monochrome;
+  dst->csp = src->csp;
+  dst->range = src->range;
+
+  dst->x_chroma_shift = src->x_chroma_shift;
+  dst->y_chroma_shift = src->y_chroma_shift;
+
+  dst->temporal_id = src->temporal_id;
+  dst->spatial_id = src->spatial_id;
+
+  width = src->d_w % 2 ? src->d_w + 1 : src->d_w;
+  height = src->d_h % 2 ? src->d_h + 1 : src->d_h;
+
+  copy_rect(src->planes[AOM_PLANE_Y], src->stride[AOM_PLANE_Y],
+            dst->planes[AOM_PLANE_Y], dst->stride[AOM_PLANE_Y], src->d_w,
+            src->d_h, use_high_bit_depth);
+  // Note that dst is already assumed to be aligned to even.
+  extend_even(dst->planes[AOM_PLANE_Y], dst->stride[AOM_PLANE_Y], src->d_w,
+              src->d_h, use_high_bit_depth);
+
+  if (!src->monochrome) {
+    copy_rect(src->planes[AOM_PLANE_U], src->stride[AOM_PLANE_U],
+              dst->planes[AOM_PLANE_U], dst->stride[AOM_PLANE_U],
+              width >> chroma_subsamp_x, height >> chroma_subsamp_y,
+              use_high_bit_depth);
+
+    copy_rect(src->planes[AOM_PLANE_V], src->stride[AOM_PLANE_V],
+              dst->planes[AOM_PLANE_V], dst->stride[AOM_PLANE_V],
+              width >> chroma_subsamp_x, height >> chroma_subsamp_y,
+              use_high_bit_depth);
+  }
+
+  luma = dst->planes[AOM_PLANE_Y];
+  cb = dst->planes[AOM_PLANE_U];
+  cr = dst->planes[AOM_PLANE_V];
+
+  // luma and chroma strides in samples
+  luma_stride = dst->stride[AOM_PLANE_Y] >> use_high_bit_depth;
+  chroma_stride = dst->stride[AOM_PLANE_U] >> use_high_bit_depth;
+
+  return add_film_grain_run(params, luma, cb, cr, height, width, luma_stride,
+                            chroma_stride, use_high_bit_depth, chroma_subsamp_y,
+                            chroma_subsamp_x, mc_identity);
 }

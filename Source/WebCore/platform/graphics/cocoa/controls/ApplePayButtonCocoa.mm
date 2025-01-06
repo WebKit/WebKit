@@ -31,9 +31,12 @@
 #import "ApplePayButtonPart.h"
 #import "FloatRoundedRect.h"
 #import "GraphicsContextCG.h"
+#import <wtf/TZoneMallocInlines.h>
 #import <pal/cocoa/PassKitSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ApplePayButtonCocoa);
 
 ApplePayButtonCocoa::ApplePayButtonCocoa(ApplePayButtonPart& owningPart)
     : PlatformControl(owningPart)

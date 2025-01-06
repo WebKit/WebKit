@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,7 +11,7 @@
 
 #include "aom_dsp/flow_estimation/disflow.h"
 
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "config/aom_dsp_rtcd.h"
 #include "test/acm_random.h"
@@ -114,9 +114,19 @@ INSTANTIATE_TEST_SUITE_P(SSE4_1, ComputeFlowTest,
                          ::testing::Values(aom_compute_flow_at_point_sse4_1));
 #endif
 
+#if HAVE_AVX2
+INSTANTIATE_TEST_SUITE_P(AVX2, ComputeFlowTest,
+                         ::testing::Values(aom_compute_flow_at_point_avx2));
+#endif
+
 #if HAVE_NEON
 INSTANTIATE_TEST_SUITE_P(NEON, ComputeFlowTest,
                          ::testing::Values(aom_compute_flow_at_point_neon));
+#endif
+
+#if HAVE_SVE
+INSTANTIATE_TEST_SUITE_P(SVE, ComputeFlowTest,
+                         ::testing::Values(aom_compute_flow_at_point_sve));
 #endif
 
 }  // namespace

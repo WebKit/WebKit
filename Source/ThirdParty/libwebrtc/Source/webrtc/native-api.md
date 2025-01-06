@@ -108,10 +108,3 @@ macro for you.
 
 [metrics_h]: https://webrtc.googlesource.com/src/+/main/system_wrappers/include/metrics.h
 
-## `WEBRTC_EXCLUDE_TRANSIENT_SUPPRESSOR`
-The transient suppressor functionality in the audio processing module is not
-always used. If you wish to exclude it from the build in order to preserve
-binary size, then define the preprocessor macro
-`WEBRTC_EXCLUDE_TRANSIENT_SUPPRESSOR`. If you use GN, you can just set the GN
-argument `rtc_exclude_transient_suppressor` to true and GN will define the macro
-for you.

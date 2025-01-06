@@ -27,6 +27,7 @@
 #include "ServiceWorkerNotificationHandler.h"
 
 #include "Logging.h"
+#include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/NotificationData.h>
 #include <wtf/Scope.h>
@@ -63,7 +64,7 @@ void ServiceWorkerNotificationHandler::showNotification(IPC::Connection& connect
     dataStore->showPersistentNotification(&connection, data);
 }
 
-void ServiceWorkerNotificationHandler::cancelNotification(const WTF::UUID& notificationID)
+void ServiceWorkerNotificationHandler::cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID)
 {
     if (auto* dataStore = dataStoreForNotificationID(notificationID))
         dataStore->cancelServiceWorkerNotification(notificationID);
@@ -81,6 +82,30 @@ void ServiceWorkerNotificationHandler::didDestroyNotification(const WTF::UUID& n
 {
     if (auto* dataStore = dataStoreForNotificationID(notificationID))
         dataStore->didDestroyServiceWorkerNotification(notificationID);
+}
+
+void ServiceWorkerNotificationHandler::requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void ServiceWorkerNotificationHandler::getPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void ServiceWorkerNotificationHandler::getPermissionStateSync(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+std::optional<SharedPreferencesForWebProcess> ServiceWorkerNotificationHandler::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
+{
+    if (auto webProcessProxy = WebProcessProxy::processForConnection(connection))
+        return webProcessProxy->sharedPreferencesForWebProcess();
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
 }
 
 } // namespace WebKit

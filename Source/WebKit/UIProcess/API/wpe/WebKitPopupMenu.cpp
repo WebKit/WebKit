@@ -70,15 +70,15 @@ void WebKitPopupMenu::cancelTracking()
 
 void WebKitPopupMenu::selectItem(unsigned itemIndex)
 {
-    if (m_client)
-        m_client->setTextFromItemForPopupMenu(this, itemIndex);
+    if (CheckedPtr client = this->client())
+        client->setTextFromItemForPopupMenu(this, itemIndex);
     m_selectedItem = itemIndex;
 }
 
 void WebKitPopupMenu::activateItem(std::optional<unsigned> itemIndex)
 {
-    if (m_client)
-        m_client->valueChangedForPopupMenu(this, itemIndex.value_or(m_selectedItem.value_or(-1)));
+    if (CheckedPtr client = this->client())
+        client->valueChangedForPopupMenu(this, itemIndex.value_or(m_selectedItem.value_or(-1)));
     if (m_menu) {
         g_signal_handlers_disconnect_matched(m_menu.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
         m_menu = nullptr;

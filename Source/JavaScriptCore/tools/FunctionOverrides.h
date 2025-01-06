@@ -60,7 +60,7 @@ private:
     void parseOverridesInFile(const char* fileName) WTF_REQUIRES_LOCK(m_lock);
     void clear() WTF_REQUIRES_LOCK(m_lock) { m_entries.clear(); }
 
-    HashMap<String, String> m_entries WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<String, String> m_entries WTF_GUARDED_BY_LOCK(m_lock);
     Lock m_lock;
 };
 

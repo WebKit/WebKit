@@ -38,7 +38,7 @@ class WebDriverGtk(WebDriver):
         return self._port._build_path('bin', 'MiniBrowser')
 
     def browser_args(self):
-        return ['--automation', '--javascript-can-open-windows-automatically=true', '--enable-xss-auditor=false']
+        return ['--automation', '--javascript-can-open-windows-automatically=true']
 
     def capabilities(self):
         return {'webkitgtk:browserOptions': {
@@ -46,7 +46,7 @@ class WebDriverGtk(WebDriver):
             'args': self.browser_args()}}
 
     def selenium_name(self):
-        return 'WebKitGTK'
+        return 'webkitgtk'
 
 
 register_driver('gtk', WebDriverGtk)

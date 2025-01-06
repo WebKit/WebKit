@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+    promise_test(async (test) => {
+        let promise;
+        const devices1 = await navigator.mediaDevices.enumerateDevices();
+
+        promise = new Promise(resolve => {
+            navigator.mediaDevices.ondevicechange = resolve;
+        });
+        await navigator.mediaDevices.getUserMedia({ audio:false, video:true });
+
+        await promise;
+        const devices2 = await navigator.mediaDevices.enumerateDevices();
+
+        promise = new Promise(resolve => {
+            navigator.mediaDevices.ondevicechange = resolve;
+        });
+        await navigator.mediaDevices.getUserMedia({ audio:true, video:false });
+        await promise;
+
+        await promise;
+        const devices3 = await navigator.mediaDevices.enumerateDevices();
+
+        assert_equals(devices1.length, 2, "devices1 length");
+        assert_equals(devices1[0].label, "", "devices1 first label");
+        assert_equals(devices1[1].label, "", "devices1 second label");
+        assert_equals(devices1[0].kind, "audioinput", "devices1 first kind");
+        assert_equals(devices1[1].kind, "videoinput", "devices1 second kind");
+
+        assert_greater_than(devices2.length, devices1.length);
+        assert_greater_than(devices3.length, devices2.length);
+
+        assert_equals(devices2[0].label, "", "devices2 first label");
+        assert_equals(devices2[0].kind, "audioinput", "devices2 first kind");
+
+        for (let device of devices3)
+            assert_not_equals(device.label, "", "devices3");
+    }, "'devicechange' event fired when getUserMedia is called with camera and then with microphone");
+    </script>
+</head>
+<body>
+</body>
+</html>

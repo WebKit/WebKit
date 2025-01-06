@@ -28,6 +28,8 @@
 
 #if PLATFORM(MAC)
 
+#import "Chrome.h"
+#import "ChromeClient.h"
 #import "DataDetection.h"
 #import "DataDetectionResultsStorage.h"
 #import "DataDetectorElementInfo.h"
@@ -42,6 +44,7 @@
 #import "LocalFrameView.h"
 #import "Page.h"
 #import "PlatformMouseEvent.h"
+#import "ShadowRoot.h"
 #import "SimpleRange.h"
 #import "TypedElementDescendantIteratorInlines.h"
 #import <QuartzCore/QuartzCore.h>
@@ -150,12 +153,10 @@ bool ImageOverlayController::handleDataDetectorAction(const HTMLElement& element
         return false;
 
     auto identifierValue = parseInteger<uint64_t>(element.attributeWithoutSynchronization(HTMLNames::x_apple_data_detectors_resultAttr));
-    if (!identifierValue)
+    if (!identifierValue || !*identifierValue)
         return false;
 
     auto identifier = ObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>(*identifierValue);
-    if (!identifier.isValid())
-        return false;
 
     auto* dataDetectionResults = frame->dataDetectionResultsIfExists();
     if (!dataDetectionResults)

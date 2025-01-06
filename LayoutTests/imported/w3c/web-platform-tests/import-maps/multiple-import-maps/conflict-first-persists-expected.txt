@@ -1,0 +1,5 @@
+
+PASS First defined rule persists in case of conflict
+PASS First defined rule persists in case of conflict - prefixed bare specifiers
+PASS First defined rule persists in case of conflict - non-prefix bare specifier
+

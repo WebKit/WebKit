@@ -90,7 +90,7 @@ VCMEncodedFrame* VCMReceiver::FrameForDecoding(uint16_t max_wait_time_ms,
   }
   uint32_t frame_timestamp = found_frame->RtpTimestamp();
 
-  if (absl::optional<VideoPlayoutDelay> playout_delay =
+  if (std::optional<VideoPlayoutDelay> playout_delay =
           found_frame->EncodedImage().PlayoutDelay()) {
     timing_->set_min_playout_delay(playout_delay->min());
     timing_->set_max_playout_delay(playout_delay->max());
@@ -161,8 +161,9 @@ VCMEncodedFrame* VCMReceiver::FrameForDecoding(uint16_t max_wait_time_ms,
     return NULL;
   }
   frame->SetRenderTime(render_time_ms);
-  TRACE_EVENT_ASYNC_STEP1("webrtc", "Video", frame->RtpTimestamp(),
-                          "SetRenderTS", "render_time", frame->RenderTimeMs());
+  TRACE_EVENT_ASYNC_STEP_INTO1("webrtc", "Video", frame->RtpTimestamp(),
+                               "SetRenderTS", "render_time",
+                               frame->RenderTimeMs());
   return frame;
 }
 

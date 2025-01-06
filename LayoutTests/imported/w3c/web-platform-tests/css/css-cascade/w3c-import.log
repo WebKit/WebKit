@@ -10,17 +10,17 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 text-size-adjust
-initial-letter
-mask-position-y
-mask-position-x
-box-decoration-break
 user-select
-ruby-position
+initial-letter
+mask-position-x
+mask-position-y
+box-decoration-break
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-001.html
@@ -48,6 +48,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-unset-visited-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-unset-visited.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/at-scope-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/at-scope-relative-syntax.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/import-conditional-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/import-conditional-001.html
@@ -142,6 +143,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-declaration-list-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-deep.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-evaluation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-featureless-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-featureless-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-featureless.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-hover.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-external.html
@@ -151,10 +155,21 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-media.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-name-defining-rules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-nesting.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-part-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-part-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-part.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-proximity.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-shadow.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-pseudo-element-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-pseudo-element-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-pseudo-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-shadow-sharing-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-shadow-sharing-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-shadow-sharing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-specificity.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-starting-style.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-style-sharing-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-style-sharing-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-supports.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-visited-cssom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-visited-expected.html

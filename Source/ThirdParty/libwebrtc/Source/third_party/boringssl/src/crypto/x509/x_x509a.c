@@ -90,7 +90,7 @@ static X509_CERT_AUX *aux_get(X509 *x) {
   return x->aux;
 }
 
-int X509_alias_set1(X509 *x, const unsigned char *name, ossl_ssize_t len) {
+int X509_alias_set1(X509 *x, const uint8_t *name, ossl_ssize_t len) {
   X509_CERT_AUX *aux;
   // TODO(davidben): Empty aliases are not meaningful in PKCS#12, and the
   // getters cannot quite represent them. Also erase the object if |len| is
@@ -112,7 +112,7 @@ int X509_alias_set1(X509 *x, const unsigned char *name, ossl_ssize_t len) {
   return ASN1_STRING_set(aux->alias, name, len);
 }
 
-int X509_keyid_set1(X509 *x, const unsigned char *id, ossl_ssize_t len) {
+int X509_keyid_set1(X509 *x, const uint8_t *id, ossl_ssize_t len) {
   X509_CERT_AUX *aux;
   // TODO(davidben): Empty key IDs are not meaningful in PKCS#12, and the
   // getters cannot quite represent them. Also erase the object if |len| is
@@ -134,7 +134,7 @@ int X509_keyid_set1(X509 *x, const unsigned char *id, ossl_ssize_t len) {
   return ASN1_STRING_set(aux->keyid, id, len);
 }
 
-unsigned char *X509_alias_get0(X509 *x, int *out_len) {
+const uint8_t *X509_alias_get0(const X509 *x, int *out_len) {
   const ASN1_UTF8STRING *alias = x->aux != NULL ? x->aux->alias : NULL;
   if (out_len != NULL) {
     *out_len = alias != NULL ? alias->length : 0;
@@ -142,7 +142,7 @@ unsigned char *X509_alias_get0(X509 *x, int *out_len) {
   return alias != NULL ? alias->data : NULL;
 }
 
-unsigned char *X509_keyid_get0(X509 *x, int *out_len) {
+const uint8_t *X509_keyid_get0(const X509 *x, int *out_len) {
   const ASN1_OCTET_STRING *keyid = x->aux != NULL ? x->aux->keyid : NULL;
   if (out_len != NULL) {
     *out_len = keyid != NULL ? keyid->length : 0;
@@ -150,7 +150,7 @@ unsigned char *X509_keyid_get0(X509 *x, int *out_len) {
   return keyid != NULL ? keyid->data : NULL;
 }
 
-int X509_add1_trust_object(X509 *x, ASN1_OBJECT *obj) {
+int X509_add1_trust_object(X509 *x, const ASN1_OBJECT *obj) {
   ASN1_OBJECT *objtmp = OBJ_dup(obj);
   if (objtmp == NULL) {
     goto err;
@@ -172,7 +172,7 @@ err:
   return 0;
 }
 
-int X509_add1_reject_object(X509 *x, ASN1_OBJECT *obj) {
+int X509_add1_reject_object(X509 *x, const ASN1_OBJECT *obj) {
   ASN1_OBJECT *objtmp = OBJ_dup(obj);
   if (objtmp == NULL) {
     goto err;

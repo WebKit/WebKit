@@ -53,32 +53,17 @@ typedef EGLDisplay (EGLAPIENTRYP PFNEGLGETPLATFORMDISPLAYEXTPROC) (EGLenum platf
 
 namespace WebCore {
 
-std::unique_ptr<PlatformDisplayLibWPE> PlatformDisplayLibWPE::create()
+std::unique_ptr<PlatformDisplayLibWPE> PlatformDisplayLibWPE::create(int hostFd)
 {
-    return std::unique_ptr<PlatformDisplayLibWPE>(new PlatformDisplayLibWPE());
-}
+    auto* backend = wpe_renderer_backend_egl_create(hostFd);
+    if (!backend)
+        return nullptr;
 
-PlatformDisplayLibWPE::PlatformDisplayLibWPE()
-{
-#if PLATFORM(GTK)
-    PlatformDisplay::setSharedDisplayForCompositing(*this);
-#endif
-}
+    EGLNativeDisplayType eglNativeDisplay = wpe_renderer_backend_egl_get_native_display(backend);
 
-PlatformDisplayLibWPE::~PlatformDisplayLibWPE()
-{
-    if (m_backend)
-        wpe_renderer_backend_egl_destroy(m_backend);
-}
-
-bool PlatformDisplayLibWPE::initialize(int hostFd)
-{
-    m_backend = wpe_renderer_backend_egl_create(hostFd);
-
-    EGLNativeDisplayType eglNativeDisplay = wpe_renderer_backend_egl_get_native_display(m_backend);
-
+    std::unique_ptr<GLDisplay> glDisplay;
 #if WPE_CHECK_VERSION(1, 1, 0)
-    uint32_t eglPlatform = wpe_renderer_backend_egl_get_platform(m_backend);
+    uint32_t eglPlatform = wpe_renderer_backend_egl_get_platform(backend);
     if (eglPlatform) {
         using GetPlatformDisplayType = PFNEGLGETPLATFORMDISPLAYEXTPROC;
         GetPlatformDisplayType getPlatformDisplay =
@@ -96,26 +81,37 @@ bool PlatformDisplayLibWPE::initialize(int hostFd)
             }();
 
         if (getPlatformDisplay)
-            m_eglDisplay = getPlatformDisplay(eglPlatform, eglNativeDisplay, nullptr);
+            glDisplay = GLDisplay::create(getPlatformDisplay(eglPlatform, eglNativeDisplay, nullptr));
     }
 #endif
 
-    if (m_eglDisplay == EGL_NO_DISPLAY)
-        m_eglDisplay = eglGetDisplay(eglNativeDisplay);
-    if (m_eglDisplay == EGL_NO_DISPLAY) {
-        WTFLogAlways("PlatformDisplayLibWPE: could not create the EGL display: %s.", GLContext::lastErrorString());
-        return false;
+    if (!glDisplay)
+        glDisplay = GLDisplay::create(eglGetDisplay(eglNativeDisplay));
+
+    if (!glDisplay) {
+        WTFLogAlways("Could not create WPE EGL display: %s. Aborting...", GLContext::lastErrorString());
+        CRASH();
     }
 
-    PlatformDisplay::initializeEGLDisplay();
+    return std::unique_ptr<PlatformDisplayLibWPE>(new PlatformDisplayLibWPE(WTFMove(glDisplay), backend));
+}
 
+PlatformDisplayLibWPE::PlatformDisplayLibWPE(std::unique_ptr<GLDisplay>&& glDisplay, struct wpe_renderer_backend_egl* backend)
+    : PlatformDisplay(WTFMove(glDisplay))
+    , m_backend(backend)
+{
 #if ENABLE(WEBGL)
-    if (m_eglDisplay != EGL_NO_DISPLAY) {
-        m_anglePlatform = eglPlatform;
-        m_angleNativeDisplay = eglNativeDisplay;
-    }
+#if WPE_CHECK_VERSION(1, 1, 0)
+    m_anglePlatform = wpe_renderer_backend_egl_get_platform(m_backend);
 #endif
-    return m_eglDisplay != EGL_NO_DISPLAY;
+    m_angleNativeDisplay = wpe_renderer_backend_egl_get_native_display(m_backend);
+#endif
+}
+
+PlatformDisplayLibWPE::~PlatformDisplayLibWPE()
+{
+    if (m_backend)
+        wpe_renderer_backend_egl_destroy(m_backend);
 }
 
 } // namespace WebCore

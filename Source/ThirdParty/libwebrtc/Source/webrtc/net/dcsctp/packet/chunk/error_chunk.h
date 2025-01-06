@@ -41,7 +41,7 @@ class ErrorChunk : public Chunk, public TLVTrait<ErrorChunkConfig> {
   ErrorChunk(ErrorChunk&& other) = default;
   ErrorChunk& operator=(ErrorChunk&& other) = default;
 
-  static absl::optional<ErrorChunk> Parse(rtc::ArrayView<const uint8_t> data);
+  static std::optional<ErrorChunk> Parse(rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

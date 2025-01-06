@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "RenderedImageWithOptionsProtocol.h"
+#import "TestNSBundleExtras.h"
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -45,7 +46,7 @@ static void runTestWithWidth(NSNumber *width, CGSize expectedSize)
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(RenderedImageWithOptionsProtocol)];
     auto remoteObject = retainPtr([[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:interface]);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"rendered-image-excluding-overflow" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"rendered-image-excluding-overflow" withExtension:@"html"]]];
     [webView _test_waitForDidFinishNavigation];
 
     __block bool testFinished = false;

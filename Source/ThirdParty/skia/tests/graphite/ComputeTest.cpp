@@ -429,7 +429,7 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_DispatchGroupTest,
     // from step 1 while slot 2 contains the result of the second multiplication pass from step 1.
     // Slot 0 is not mappable.
     REPORTER_ASSERT(reporter,
-                    std::holds_alternative<BufferView>(builder.outputTable().fSharedSlots[0]),
+                    std::holds_alternative<BindBufferInfo>(builder.outputTable().fSharedSlots[0]),
                     "shared resource at slot 0 is missing");
     BindBufferInfo outputInfo = builder.getSharedBufferResource(2);
     if (!outputInfo) {
@@ -590,7 +590,7 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_UniformBufferTest,
             SkASSERT(resourceIndex == 0);
             SkDEBUGCODE(
                 const Uniform uniforms[] = {{"factor", SkSLType::kFloat}};
-                mgr->setExpectedUniforms(uniforms);
+                mgr->setExpectedUniforms(uniforms, /*isSubstruct=*/false);
             )
             mgr->write(kFactor);
         }
@@ -726,7 +726,7 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_ExternallyAssignedBuffer,
     REPORTER_ASSERT(reporter, outputInfo, "Failed to allocate output buffer");
 
     DispatchGroup::Builder builder(recorder.get());
-    builder.assignSharedBuffer({outputInfo, sizeof(float) * kProblemSize}, 0);
+    builder.assignSharedBuffer(outputInfo, 0);
 
     // Initialize the step with a pre-determined global size
     if (!builder.appendStep(&step, {WorkgroupSize(1, 1, 1)})) {
@@ -773,9 +773,9 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_StorageTexture,
                                               testContext) {
     std::unique_ptr<Recorder> recorder = context->makeRecorder();
 
-    // For this test we allocate a 16x16 tile which is written to by a single workgroup of the same
+    // For this test we allocate a 8x8 tile which is written to by a single workgroup of the same
     // size.
-    constexpr uint32_t kDim = 16;
+    constexpr uint32_t kDim = 8;
 
     class TestComputeStep : public ComputeStep {
     public:
@@ -875,9 +875,9 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_StorageTextureReadAndWrite
                                               testContext) {
     std::unique_ptr<Recorder> recorder = context->makeRecorder();
 
-    // For this test we allocate a 16x16 tile which is written to by a single workgroup of the same
+    // For this test we allocate a 8x8 tile which is written to by a single workgroup of the same
     // size.
-    constexpr uint32_t kDim = 16;
+    constexpr uint32_t kDim = 8;
 
     class TestComputeStep : public ComputeStep {
     public:
@@ -1031,9 +1031,9 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_ReadOnlyStorageBuffer,
                                               testContext) {
     std::unique_ptr<Recorder> recorder = context->makeRecorder();
 
-    // For this test we allocate a 16x16 tile which is written to by a single workgroup of the same
+    // For this test we allocate a 8x8 tile which is written to by a single workgroup of the same
     // size.
-    constexpr uint32_t kDim = 16;
+    constexpr uint32_t kDim = 8;
 
     class TestComputeStep : public ComputeStep {
     public:
@@ -1061,7 +1061,7 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_ReadOnlyStorageBuffer,
         std::string computeSkSL() const override {
             return R"(
                 void main() {
-                    uint ix = sk_LocalInvocationID.y * 16 + sk_LocalInvocationID.x;
+                    uint ix = sk_LocalInvocationID.y * 8 + sk_LocalInvocationID.x;
                     uint value = in_data[ix];
                     half4 splat = half4(
                         half(value & 0xFF),
@@ -1175,9 +1175,9 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_StorageTextureMultipleComp
                                               testContext) {
     std::unique_ptr<Recorder> recorder = context->makeRecorder();
 
-    // For this test we allocate a 16x16 tile which is written to by a single workgroup of the same
+    // For this test we allocate a 8x8 tile which is written to by a single workgroup of the same
     // size.
-    constexpr uint32_t kDim = 16;
+    constexpr uint32_t kDim = 8;
 
     // Writes to a texture in slot 0.
     class TestComputeStep1 : public ComputeStep {
@@ -1322,11 +1322,11 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_SampledTexture,
                                               testContext) {
     std::unique_ptr<Recorder> recorder = context->makeRecorder();
 
-    // The first ComputeStep initializes a 16x16 texture with a checkerboard pattern of alternating
+    // The first ComputeStep initializes a 8x8 texture with a checkerboard pattern of alternating
     // red and black pixels. The second ComputeStep downsamples this texture into a 4x4 using
     // bilinear filtering at pixel borders, intentionally averaging the values of each 4x4 tile in
     // the source texture, and writes the result to the destination texture.
-    constexpr uint32_t kSrcDim = 16;
+    constexpr uint32_t kSrcDim = 8;
     constexpr uint32_t kDstDim = 4;
 
     class TestComputeStep1 : public ComputeStep {
@@ -1418,8 +1418,7 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_SampledTexture,
         SamplerDesc calculateSamplerParameters(int index, const ResourceDesc&) const override {
             SkASSERT(index == 1);
             // Use the repeat tile mode to sample an infinite checkerboard.
-            constexpr SkTileMode kTileModes[2] = {SkTileMode::kRepeat, SkTileMode::kRepeat};
-            return {SkFilterMode::kLinear, kTileModes};
+            return {SkFilterMode::kLinear, SkTileMode::kRepeat};
         }
 
         WorkgroupSize calculateGlobalDispatchSize() const override {
@@ -1495,7 +1494,7 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_AtomicOperationsTest,
     std::unique_ptr<Recorder> recorder = context->makeRecorder();
 
     constexpr uint32_t kWorkgroupCount = 32;
-    constexpr uint32_t kWorkgroupSize = 256;
+    constexpr uint32_t kWorkgroupSize = 128;
 
     class TestComputeStep : public ComputeStep {
     public:
@@ -1625,7 +1624,7 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_AtomicOperationsOverArrayA
     std::unique_ptr<Recorder> recorder = context->makeRecorder();
 
     constexpr uint32_t kWorkgroupCount = 32;
-    constexpr uint32_t kWorkgroupSize = 256;
+    constexpr uint32_t kWorkgroupSize = 128;
 
     class TestComputeStep : public ComputeStep {
     public:
@@ -1654,7 +1653,7 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_AtomicOperationsOverArrayA
         // and workgroup address spaces.
         std::string computeSkSL() const override {
             return R"(
-                const uint WORKGROUP_SIZE = 256;
+                const uint WORKGROUP_SIZE = 128;
 
                 workgroup atomicUint localCounts[2];
 
@@ -1945,14 +1944,14 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_ClearOrdering,
     ComputeTask::DispatchGroupList groups;
 
     // First group.
-    builder.assignSharedBuffer({input, kBufferSize}, 0);
+    builder.assignSharedBuffer(input, 0);
     builder.appendStep(&garbageStep, {{1, 1, 1}});
     groups.push_back(builder.finalize());
 
     // Second group.
     builder.reset();
-    builder.assignSharedBuffer({input, kBufferSize}, 0, ClearBuffer::kYes);
-    builder.assignSharedBuffer({output, kBufferSize}, 1);
+    builder.assignSharedBuffer(input, 0, ClearBuffer::kYes);
+    builder.assignSharedBuffer(output, 1);
     builder.appendStep(&copyStep, {{1, 1, 1}});
     groups.push_back(builder.finalize());
 
@@ -2058,7 +2057,7 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_ClearOrderingScratchBuffer
     {
         auto scratch = recorder->priv().drawBufferManager()->getScratchStorage(kBufferSize);
         auto input = scratch.suballocate(kBufferSize);
-        builder.assignSharedBuffer({input, kBufferSize}, 0);
+        builder.assignSharedBuffer(input, 0);
 
         // `scratch` returns to the scratch buffer pool when it goes out of scope
     }
@@ -2070,9 +2069,9 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_ClearOrderingScratchBuffer
     {
         auto scratch = recorder->priv().drawBufferManager()->getScratchStorage(kBufferSize);
         auto input = scratch.suballocate(kBufferSize);
-        builder.assignSharedBuffer({input, kBufferSize}, 0, ClearBuffer::kYes);
+        builder.assignSharedBuffer(input, 0, ClearBuffer::kYes);
     }
-    builder.assignSharedBuffer({output, kBufferSize}, 1);
+    builder.assignSharedBuffer(output, 1);
     builder.appendStep(&copyStep, {{1, 1, 1}});
     groups.push_back(builder.finalize());
 
@@ -2230,7 +2229,8 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_IndirectDispatch,
         ERRORF(reporter, "Shared resource at slot 0 is missing");
         return;
     }
-    builder.appendStepIndirect(&countStep, {indirectBufferInfo, kIndirectDispatchArgumentSize});
+    REPORTER_ASSERT(reporter, indirectBufferInfo.fSize == kIndirectDispatchArgumentSize);
+    builder.appendStepIndirect(&countStep, indirectBufferInfo);
 
     BindBufferInfo info = builder.getSharedBufferResource(1);
     if (!info) {
@@ -2531,7 +2531,8 @@ DEF_GRAPHITE_TEST_FOR_DAWN_CONTEXT(Compute_NativeShaderSourceWGSL, reporter, con
     std::unique_ptr<Recorder> recorder = context->makeRecorder();
 
     constexpr uint32_t kWorkgroupCount = 32;
-    constexpr uint32_t kWorkgroupSize = 256;  // The WebGPU default workgroup size limit is 256
+    // The WebGPU compat default workgroup size limit is 128.
+    constexpr uint32_t kWorkgroupSize = 128;
 
     class TestComputeStep : public ComputeStep {
     public:
@@ -2557,7 +2558,7 @@ DEF_GRAPHITE_TEST_FOR_DAWN_CONTEXT(Compute_NativeShaderSourceWGSL, reporter, con
 
                 var<workgroup> localCounter: atomic<u32>;
 
-                @compute @workgroup_size(256)
+                @compute @workgroup_size(128)
                 fn atomicCount(@builtin(local_invocation_id) localId: vec3u) {
                     // Initialize the local counter.
                     if localId.x == 0u {

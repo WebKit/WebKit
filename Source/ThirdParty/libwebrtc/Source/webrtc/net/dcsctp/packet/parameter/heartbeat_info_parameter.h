@@ -37,7 +37,7 @@ class HeartbeatInfoParameter : public Parameter,
   explicit HeartbeatInfoParameter(rtc::ArrayView<const uint8_t> info)
       : info_(info.begin(), info.end()) {}
 
-  static absl::optional<HeartbeatInfoParameter> Parse(
+  static std::optional<HeartbeatInfoParameter> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

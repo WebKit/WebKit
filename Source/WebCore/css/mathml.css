@@ -44,6 +44,8 @@
 /* Universal rules */
 * {
     writing-mode: horizontal-tb !important;
+    /* FIXME: It should be 'display: block math'. (webkit.org/b/278533) */
+    display: block;
 }
 
 /* The <math> element */
@@ -139,16 +141,16 @@ math {
 }
 
 math[display="block" i] {
+    /* FIXME: It should be 'display: block math'. (webkit.org/b/278533) */
     display: block;
     page-break-inside: avoid;
     math-style: normal;
 }
-math[display="inline" i] {
-  math-style: compact;
-}
 
-ms, mspace, mtext, mi, mn, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose, semantics, mpadded, maction {
-    display: block;
+math[display="inline" i] {
+    /* FIXME: It should be 'display: inline math'. (webkit.org/b/278533) */
+    display: inline;
+    math-style: compact;
 }
 
 ms, mtext, mi, mn, mo, annotation, mtd {
@@ -165,21 +167,13 @@ mfrac > * {
 }
 
 msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + * {
-    font-size: 0.75em; /* FIXME: MathML standard is 0.71em */
+    font-size: 0.71em;
     math-style: compact;
 }
+
 mroot > *:last-child {
-    font-size: 0.5625em; /* This 0.75^2 since the scriptlevel is incremented by 2 in the index. */
+    font-size: 0.5041em; /* This 0.71^2 since the scriptlevel is incremented by 2 in the index. */
     math-style: compact;
-}
-mi {
-    padding-inline-end: 0.1em;
-}
-msub > mi:first-child, msubsup > mi:first-child {
-    padding-inline-end: 0;
-}
-msubsup > mi:first-child + * + * {
-    margin-inline-start: 0.14em; /* This is larger than 0.1em because the child's font-size is smaller than the <msubsup>'s. */
 }
 
 mphantom {

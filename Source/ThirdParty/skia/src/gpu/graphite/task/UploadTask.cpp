@@ -53,7 +53,7 @@ std::pair<size_t, size_t> compute_combined_buffer_size(
         const SkISize& baseDimensions,
         SkTextureCompressionType compressionType,
         TArray<std::pair<size_t, size_t>>* levelOffsetsAndRowBytes) {
-    SkASSERT(levelOffsetsAndRowBytes && !levelOffsetsAndRowBytes->size());
+    SkASSERT(levelOffsetsAndRowBytes && levelOffsetsAndRowBytes->empty());
     SkASSERT(mipLevelCount >= 1);
 
     SkISize compressedBlockDimensions = CompressedDimensionsInBlocks(compressionType,
@@ -366,12 +366,24 @@ Task::Status UploadInstance::addCommand(Context* context,
         }
     } else {
         // Here we assume that multiple copies in a single UploadInstance are always used for
-        // mipmaps of a single image, and that we won't ever copy to a replay target with mipmaps.
+        // mipmaps of a single image, and that we won't ever upload to a replay target's mipmaps
+        // directly.
         SkASSERT(fCopyData.size() == 1);
         const BufferTextureCopyData& copyData = fCopyData[0];
         SkIRect dstRect = copyData.fRect;
         dstRect.offset(replayData.fTranslation);
         SkIRect croppedDstRect = dstRect;
+
+        if (!replayData.fClip.isEmpty()) {
+            SkIRect dstClip = replayData.fClip;
+            dstClip.offset(replayData.fTranslation);
+            if (!croppedDstRect.intersect(dstClip)) {
+                // The replay clip can change on each insert, so subsequent replays may actually
+                // intersect the copy rect.
+                return Status::kSuccess;
+            }
+        }
+
         if (!croppedDstRect.intersect(SkIRect::MakeSize(fTextureProxy->dimensions()))) {
             // The replay translation can change on each insert, so subsequent replays may
             // actually intersect the copy rect.

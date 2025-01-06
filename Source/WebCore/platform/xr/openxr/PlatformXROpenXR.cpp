@@ -168,7 +168,7 @@ void OpenXRDevice::initializeReferenceSpace(PlatformXR::ReferenceSpaceType space
         updateStageParameters();
 }
 
-void OpenXRDevice::requestFrame(RequestFrameCallback&& callback)
+void OpenXRDevice::requestFrame(std::optional<RequestData>&&, RequestFrameCallback&& callback)
 {
     m_queue.dispatch([this, protectedThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
         pollEvents();

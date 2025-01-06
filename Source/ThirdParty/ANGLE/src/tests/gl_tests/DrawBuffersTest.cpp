@@ -284,7 +284,7 @@ TEST_P(DrawBuffersTest, BlendWithGaps)
 {
     ANGLE_SKIP_TEST_IF(!setupTest());
 
-    // http://anglebug.com/5154
+    // http://anglebug.com/42263715
     ANGLE_SKIP_TEST_IF(IsMac() && IsIntel() && IsDesktopOpenGL());
 
     glBindTexture(GL_TEXTURE_2D, mTextures[0]);
@@ -830,7 +830,7 @@ TEST_P(DrawBuffersTest, AllRGBA8)
 // Same as above but adds a state change from a program with different masks after a clear.
 TEST_P(DrawBuffersWebGL2Test, TwoProgramsWithDifferentOutputsAndClear)
 {
-    // TODO(http://anglebug.com/2872): Broken on the GL back-end.
+    // TODO(http://anglebug.com/42261569): Broken on the GL back-end.
     ANGLE_SKIP_TEST_IF(IsOpenGL());
 
     ANGLE_SKIP_TEST_IF(!setupTest());
@@ -1262,7 +1262,7 @@ TEST_P(DrawBuffersTestES3, BlendWithDrawBufferAndFramebufferChanges)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_draw_buffers_indexed"));
 
-    // http://anglebug.com/5154
+    // http://anglebug.com/42263715
     ANGLE_SKIP_TEST_IF(IsMac() && IsIntel() && IsDesktopOpenGL());
 
     // Create two framebuffers, one with 3 attachments (fbo3), one with 4 (fbo4).  The test issues

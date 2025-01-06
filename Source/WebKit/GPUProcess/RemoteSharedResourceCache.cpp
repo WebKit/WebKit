@@ -28,6 +28,9 @@
 #if ENABLE(GPU_PROCESS)
 #include "RemoteSharedResourceCache.h"
 
+#include "GPUConnectionToWebProcess.h"
+#include <wtf/TZoneMallocInlines.h>
+
 #if HAVE(IOSURFACE)
 #include <WebCore/IOSurfacePool.h>
 #endif
@@ -36,6 +39,23 @@ namespace WebKit {
 using namespace WebCore;
 
 constexpr Seconds defaultRemoteSharedResourceCacheTimeout = 15_s;
+
+// Per GPU process limit of accelerated image buffers. These consume limited global OS resources.
+constexpr size_t globalAcceleratedImageBufferLimit = 10000;
+
+// Per GPU process limit of image buffers for canvas. These consume limited process-wide resources.
+constexpr size_t globalImageBufferForCanvasLimit = 200000;
+
+// Per Web Content process limit of accelerated image buffers for canvas. Prevents GPU resource exhaustion affecting other Web Content processes.
+constexpr size_t acceleratedImageBufferForCanvasLimit = 5000;
+
+// Per Web Content process limit of image buffers for canvas. Prevents IPC-related resource exhaustion affecting other Web Content processes.
+constexpr size_t imageBufferForCanvasLimit = 50000;
+
+static std::atomic<size_t> globalAcceleratedImageBufferCount = 0;
+static std::atomic<size_t> globalImageBufferForCanvasCount = 0;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSharedResourceCache);
 
 Ref<RemoteSharedResourceCache> RemoteSharedResourceCache::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
 {
@@ -70,8 +90,56 @@ void RemoteSharedResourceCache::releaseSerializedImageBuffer(WebCore::RenderingR
 void RemoteSharedResourceCache::lowMemoryHandler()
 {
 #if HAVE(IOSURFACE)
-    m_ioSurfacePool->discardAllSurfaces();
+    Ref { m_ioSurfacePool }->discardAllSurfaces();
 #endif
+}
+
+void RemoteSharedResourceCache::didCreateImageBuffer(RenderingPurpose purpose, RenderingMode renderingMode)
+{
+    if (purpose == RenderingPurpose::Canvas) {
+        if (renderingMode == RenderingMode::Accelerated)
+            ++m_acceleratedImageBufferForCanvasCount;
+        ++globalImageBufferForCanvasCount;
+        ++m_imageBufferForCanvasCount;
+    }
+    if (renderingMode == RenderingMode::Accelerated)
+        ++globalAcceleratedImageBufferCount;
+}
+
+void RemoteSharedResourceCache::didReleaseImageBuffer(RenderingPurpose purpose, RenderingMode renderingMode)
+{
+    if (purpose == RenderingPurpose::Canvas) {
+        if (renderingMode == RenderingMode::Accelerated)
+            --m_acceleratedImageBufferForCanvasCount;
+        --globalImageBufferForCanvasCount;
+        --m_imageBufferForCanvasCount;
+    }
+    if (renderingMode == RenderingMode::Accelerated)
+        --globalAcceleratedImageBufferCount;
+}
+
+bool RemoteSharedResourceCache::reachedAcceleratedImageBufferLimit(RenderingPurpose purpose) const
+{
+    return (purpose == RenderingPurpose::Canvas && m_acceleratedImageBufferForCanvasCount >= acceleratedImageBufferForCanvasLimit) || globalAcceleratedImageBufferCount >= globalAcceleratedImageBufferLimit;
+}
+
+bool RemoteSharedResourceCache::reachedImageBufferForCanvasLimit() const
+{
+    return m_imageBufferForCanvasCount >= imageBufferForCanvasLimit || globalImageBufferForCanvasCount >= globalImageBufferForCanvasLimit;
+}
+
+ImageBufferResourceLimits RemoteSharedResourceCache::getResourceLimitsForTesting() const
+{
+    return {
+        .acceleratedImageBufferForCanvasCount = m_acceleratedImageBufferForCanvasCount,
+        .acceleratedImageBufferForCanvasLimit = acceleratedImageBufferForCanvasLimit,
+        .globalAcceleratedImageBufferCount = globalAcceleratedImageBufferCount,
+        .globalAcceleratedImageBufferLimit = globalAcceleratedImageBufferLimit,
+        .globalImageBufferForCanvasCount = globalImageBufferForCanvasCount,
+        .globalImageBufferForCanvasLimit = globalImageBufferForCanvasLimit,
+        .imageBufferForCanvasCount = m_imageBufferForCanvasCount,
+        .imageBufferForCanvasLimit = imageBufferForCanvasLimit,
+    };
 }
 
 } // namespace WebKit

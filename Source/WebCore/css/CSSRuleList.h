@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006, 2012 Apple Inc.
+ * Copyright (C) 2002-2024 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,8 +21,10 @@
 
 #pragma once
 
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -30,13 +32,10 @@ namespace WebCore {
 class CSSRule;
 class CSSStyleSheet;
 
-class CSSRuleList {
+class CSSRuleList : public AbstractRefCounted {
     WTF_MAKE_NONCOPYABLE(CSSRuleList);
 public:
     virtual ~CSSRuleList();
-
-    virtual void ref() = 0;
-    virtual void deref() = 0;
 
     virtual unsigned length() const = 0;
     virtual CSSRule* item(unsigned index) const = 0;
@@ -50,10 +49,10 @@ protected:
 
 class StaticCSSRuleList final : public CSSRuleList, public RefCounted<StaticCSSRuleList> {
 public:
-    static Ref<StaticCSSRuleList> create() { return adoptRef(*new StaticCSSRuleList); }
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
+    static Ref<StaticCSSRuleList> create() { return adoptRef(*new StaticCSSRuleList); }
 
     Vector<RefPtr<CSSRule>>& rules() { return m_rules; }
     
@@ -72,15 +71,15 @@ private:
 // The rule owns the live list.
 template <class Rule>
 class LiveCSSRuleList final : public CSSRuleList {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(LiveCSSRuleList);
 public:
     LiveCSSRuleList(Rule& rule)
         : m_rule(rule)
     {
     }
     
-    void ref() final { m_rule.ref(); }
-    void deref() final { m_rule.deref(); }
+    void ref() const final { m_rule.ref(); }
+    void deref() const final { m_rule.deref(); }
 
 private:
     unsigned length() const final { return m_rule.length(); }
@@ -89,5 +88,7 @@ private:
     
     Rule& m_rule;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<class Rule>, LiveCSSRuleList<Rule>);
 
 } // namespace WebCore

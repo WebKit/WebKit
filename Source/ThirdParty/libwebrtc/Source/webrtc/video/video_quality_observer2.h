@@ -13,10 +13,10 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <set>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_content_type.h"
 #include "rtc_base/numerics/moving_average.h"
@@ -37,7 +37,7 @@ class VideoQualityObserver {
   ~VideoQualityObserver() = default;
 
   void OnDecodedFrame(uint32_t rtp_frame_timestamp,
-                      absl::optional<uint8_t> qp,
+                      std::optional<uint8_t> qp,
                       VideoCodecType codec);
 
   void OnRenderedFrame(const VideoFrameMetaData& frame_meta);

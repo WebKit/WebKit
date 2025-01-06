@@ -29,17 +29,16 @@
 #include "LibWebRTCMacros.h"
 #include "RTCSignalingState.h"
 
-ALLOW_UNUSED_PARAMETERS_BEGIN
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-ALLOW_COMMA_BEGIN
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
 #include <webrtc/api/media_stream_interface.h>
 #include <webrtc/api/make_ref_counted.h>
+// See Bug 274508: Disable thread-safety-reference-return warnings in libwebrtc
+IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
 #include <webrtc/api/peer_connection_interface.h>
+IGNORE_CLANG_WARNINGS_END
 
-ALLOW_DEPRECATED_DECLARATIONS_END
-ALLOW_UNUSED_PARAMETERS_END
-ALLOW_COMMA_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #include <wtf/text/WTFString.h>
 
@@ -216,6 +215,7 @@ private:
 
     void SetEncoderToPacketizerFrameTransformer(rtc::scoped_refptr<webrtc::FrameTransformerInterface>) final { }
     void SetEncoderSelector(std::unique_ptr<webrtc::VideoEncoderFactory::EncoderSelectorInterface>) final { }
+    webrtc::RTCError GenerateKeyFrame(const std::vector<std::string>&) final { return  { }; }
 
 private:
     rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> m_track;
@@ -229,7 +229,7 @@ private:
     webrtc::RtpParameters GetParameters() const { return { }; }
     bool SetParameters(const webrtc::RtpParameters&) { return true; }
     void SetObserver(webrtc::RtpReceiverObserverInterface*) { }
-    void SetJitterBufferMinimumDelay(absl::optional<double>) final { }
+    void SetJitterBufferMinimumDelay(std::optional<double>) final { }
     rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track() const final
     {
         if (!m_track)
@@ -252,12 +252,12 @@ public:
 
 private:
     cricket::MediaType media_type() const final { return m_sender->media_type(); }
-    absl::optional<std::string> mid() const final { return { }; }
+    std::optional<std::string> mid() const final { return { }; }
     rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver() const final { return m_receiver; }
     bool stopped() const final { return false; }
     webrtc::RtpTransceiverDirection direction() const final { return webrtc::RtpTransceiverDirection::kSendRecv; }
     void SetDirection(webrtc::RtpTransceiverDirection) final { }
-    absl::optional<webrtc::RtpTransceiverDirection> current_direction() const final { return { }; }
+    std::optional<webrtc::RtpTransceiverDirection> current_direction() const final { return { }; }
     void StopInternal() final { }
     webrtc::RTCError StopStandard() final { return { }; }
     bool stopping() const final { return true; }
@@ -315,6 +315,15 @@ private:
     void RemoveStream(webrtc::MediaStreamInterface*) final { }
 
     std::vector<rtc::scoped_refptr<webrtc::RtpTransceiverInterface>> GetTransceivers() const final;
+
+    bool ShouldFireNegotiationNeededEvent(uint32_t) final { return false; }
+    void ReconfigureBandwidthEstimation(const webrtc::BandwidthEstimationSettings&) final { }
+    void SetAudioPlayout(bool) final { }
+    void SetAudioRecording(bool) final { }
+    std::optional<bool> can_trickle_ice_candidates() final { return { }; }
+    void AddAdaptationResource(rtc::scoped_refptr<webrtc::Resource>) final { }
+    rtc::Thread* signaling_thread() const final { return nullptr; }
+    webrtc::NetworkControllerInterface* GetNetworkController() final { return nullptr; }
 
 protected:
     void SetRemoteDescription(webrtc::SetSessionDescriptionObserver*, webrtc::SessionDescriptionInterface*) final { ASSERT_NOT_REACHED(); }

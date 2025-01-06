@@ -14,9 +14,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "rtc_base/buffer.h"
@@ -37,7 +37,7 @@ class LegacyEncodedAudioFrame final : public AudioDecoder::EncodedAudioFrame {
 
   size_t Duration() const override;
 
-  absl::optional<DecodeResult> Decode(
+  std::optional<DecodeResult> Decode(
       rtc::ArrayView<int16_t> decoded) const override;
 
   // For testing:

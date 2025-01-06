@@ -65,15 +65,15 @@ static RefPtr<SharedBuffer> convertToSharedBuffer(T array)
     return SharedBuffer::create(array->span());
 }
 
-std::unique_ptr<RemoteLegacyCDMSession> RemoteLegacyCDMSession::create(WeakPtr<RemoteLegacyCDMFactory> factory, RemoteLegacyCDMSessionIdentifier&& identifier, LegacyCDMSessionClient& client)
+RefPtr<RemoteLegacyCDMSession> RemoteLegacyCDMSession::create(RemoteLegacyCDMFactory& factory, RemoteLegacyCDMSessionIdentifier&& identifier, LegacyCDMSessionClient& client)
 {
-    auto session = std::unique_ptr<RemoteLegacyCDMSession>(new RemoteLegacyCDMSession(WTFMove(factory), WTFMove(identifier), client));
+    RefPtr session = adoptRef(new RemoteLegacyCDMSession(factory, WTFMove(identifier), client));
     if (session->m_factory)
         session->m_factory->addSession(identifier, *session);
     return session;
 }
 
-RemoteLegacyCDMSession::RemoteLegacyCDMSession(WeakPtr<RemoteLegacyCDMFactory> factory, RemoteLegacyCDMSessionIdentifier&& identifier, LegacyCDMSessionClient& client)
+RemoteLegacyCDMSession::RemoteLegacyCDMSession(RemoteLegacyCDMFactory& factory, RemoteLegacyCDMSessionIdentifier&& identifier, LegacyCDMSessionClient& client)
     : m_factory(WTFMove(factory))
     , m_identifier(WTFMove(identifier))
     , m_client(client)
@@ -82,8 +82,15 @@ RemoteLegacyCDMSession::RemoteLegacyCDMSession(WeakPtr<RemoteLegacyCDMFactory> f
 
 RemoteLegacyCDMSession::~RemoteLegacyCDMSession()
 {
-    if (m_factory)
-        m_factory->removeSession(m_identifier);
+    ASSERT(!m_factory);
+}
+
+void RemoteLegacyCDMSession::invalidate()
+{
+    if (RefPtr factory = m_factory.get()) {
+        factory->removeSession(m_identifier);
+        m_factory = nullptr;
+    }
 }
 
 RefPtr<Uint8Array> RemoteLegacyCDMSession::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)

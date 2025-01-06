@@ -31,9 +31,8 @@ features: [Temporal]
 // This code path is encountered if the time zone offset is negative and its
 // absolute value in nanoseconds is greater than the nanosecond field of the
 // exact time's epoch parts
-const tz = TemporalHelpers.specificOffsetTimeZone(-2);
-const datetime = new Temporal.ZonedDateTime(1001n, tz);
+const datetime = new Temporal.ZonedDateTime(1001n, "-00:02");
 
 const pdt = datetime.toPlainDateTime();
 
-TemporalHelpers.assertPlainDateTime(pdt, 1970, 1, "M01", 1, 0, 0, 0, 0, 0, 999);
+TemporalHelpers.assertPlainDateTime(pdt, 1969, 12, "M12", 31, 23, 58, 0, 0, 1, 1);

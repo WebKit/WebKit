@@ -49,10 +49,9 @@
             debug('');
             debug("Test that scrolling doesn't trigger a layout per scroll");
 
-            const initialLayoutCount = internals.layoutCount;
+            internals.startTrackingLayoutUpdates();
             await doMouseWheelScroll();
-            const finalLayoutCount = internals.layoutCount;
-            layoutCount = finalLayoutCount - initialLayoutCount;
+            layoutCount = internals.layoutUpdateCount();
             shouldBeTrue('layoutCount <= 4');
             if (layoutCount > 4)
                 debug('saw ' + layoutCount + ' layouts')

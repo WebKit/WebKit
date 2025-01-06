@@ -163,7 +163,7 @@ TEST(WebKit, TryUsingPrewarmedProcessThatJustCrashed)
     configuration.get().processPool = pool.get();
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestNavigationDelegate alloc] init]);
-    delegate.get().webContentProcessDidTerminate = ^(WKWebView *view) {
+    delegate.get().webContentProcessDidTerminate = ^(WKWebView *view, _WKProcessTerminationReason) {
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
     };
     [webView setNavigationDelegate:delegate.get()];

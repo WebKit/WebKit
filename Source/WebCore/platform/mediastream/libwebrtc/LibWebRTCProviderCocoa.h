@@ -29,6 +29,8 @@
 
 #if USE(LIBWEBRTC)
 
+#include <wtf/TZoneMalloc.h>
+
 namespace webrtc {
 class VideoDecoderFactory;
 class VideoEncoderFactory;
@@ -37,14 +39,13 @@ class VideoEncoderFactory;
 namespace WebCore {
 
 class WEBCORE_EXPORT LibWebRTCProviderCocoa : public LibWebRTCProvider {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LibWebRTCProviderCocoa, WEBCORE_EXPORT);
 public:
     LibWebRTCProviderCocoa() = default;
     ~LibWebRTCProviderCocoa();
 
     std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory() override;
     std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory() override;
-
-    void setActive(bool) final;
 
 private:
     std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguration&) final;

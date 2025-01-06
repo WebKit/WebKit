@@ -13,10 +13,10 @@
 #include <stdint.h>
 
 #include <limits>
+#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "test/gtest.h"
 
 namespace rtc {
@@ -71,10 +71,10 @@ TYPED_TEST_P(BasicNumberTest, TestInvalidNumbers) {
       (min_value == 0) ? "-2" : (std::to_string(min_value) + "1");
   // Make the large value approximately ten times larger than the maximum.
   const std::string too_large_string = std::to_string(max_value) + "1";
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(too_low_string));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(too_low_string.c_str()));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(too_large_string));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(too_large_string.c_str()));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(too_low_string));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(too_low_string.c_str()));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(too_large_string));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(too_large_string.c_str()));
 }
 
 TYPED_TEST_P(BasicNumberTest, TestInvalidInputs) {
@@ -86,33 +86,33 @@ TYPED_TEST_P(BasicNumberTest, TestInvalidInputs) {
   const char kBeginningEmbeddedNul[] = {'\0', '1', '2', '3', '4'};
   const char kTrailingEmbeddedNul[] = {'1', '2', '3', '4', '\0'};
 
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(kInvalidCharArray));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(std::string(kInvalidCharArray)));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(kPlusMinusCharArray));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(std::string(kPlusMinusCharArray)));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(kNumberFollowedByCruft));
-  EXPECT_EQ(absl::nullopt,
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(kInvalidCharArray));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(std::string(kInvalidCharArray)));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(kPlusMinusCharArray));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(std::string(kPlusMinusCharArray)));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(kNumberFollowedByCruft));
+  EXPECT_EQ(std::nullopt,
             StringToNumber<T>(std::string(kNumberFollowedByCruft)));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(" 5"));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(" - 5"));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>("- 5"));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(" -5"));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>("5 "));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(" 5"));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(" - 5"));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>("- 5"));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(" -5"));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>("5 "));
   // Test various types of empty inputs
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>({nullptr, 0}));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(""));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(std::string()));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(std::string("")));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(absl::string_view()));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(absl::string_view(nullptr, 0)));
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(absl::string_view("")));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>({nullptr, 0}));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(""));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(std::string()));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(std::string("")));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(absl::string_view()));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(absl::string_view(nullptr, 0)));
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(absl::string_view("")));
   // Test strings with embedded nuls.
-  EXPECT_EQ(absl::nullopt, StringToNumber<T>(absl::string_view(
-                               kEmbeddedNul, sizeof(kEmbeddedNul))));
-  EXPECT_EQ(absl::nullopt,
+  EXPECT_EQ(std::nullopt, StringToNumber<T>(absl::string_view(
+                              kEmbeddedNul, sizeof(kEmbeddedNul))));
+  EXPECT_EQ(std::nullopt,
             StringToNumber<T>(absl::string_view(
                 kBeginningEmbeddedNul, sizeof(kBeginningEmbeddedNul))));
-  EXPECT_EQ(absl::nullopt,
+  EXPECT_EQ(std::nullopt,
             StringToNumber<T>(absl::string_view(kTrailingEmbeddedNul,
                                                 sizeof(kTrailingEmbeddedNul))));
 }
@@ -129,10 +129,10 @@ INSTANTIATE_TYPED_TEST_SUITE_P(StringToNumberTest_Integers,
                                IntegerTypes);
 
 TEST(StringToNumberTest, TestSpecificValues) {
-  EXPECT_EQ(absl::nullopt, StringToNumber<uint8_t>("256"));
-  EXPECT_EQ(absl::nullopt, StringToNumber<uint8_t>("-256"));
-  EXPECT_EQ(absl::nullopt, StringToNumber<int8_t>("256"));
-  EXPECT_EQ(absl::nullopt, StringToNumber<int8_t>("-256"));
+  EXPECT_EQ(std::nullopt, StringToNumber<uint8_t>("256"));
+  EXPECT_EQ(std::nullopt, StringToNumber<uint8_t>("-256"));
+  EXPECT_EQ(std::nullopt, StringToNumber<int8_t>("256"));
+  EXPECT_EQ(std::nullopt, StringToNumber<int8_t>("-256"));
 }
 
 }  // namespace rtc

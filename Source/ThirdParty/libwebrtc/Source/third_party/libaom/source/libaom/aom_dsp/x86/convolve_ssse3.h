@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -14,7 +14,7 @@
 
 #include <tmmintrin.h>  // SSSE3
 
-static INLINE void shuffle_filter_ssse3(const int16_t *const filter,
+static inline void shuffle_filter_ssse3(const int16_t *const filter,
                                         __m128i *const f) {
   const __m128i f_values = _mm_load_si128((const __m128i *)filter);
   // pack and duplicate the filter values
@@ -24,7 +24,7 @@ static INLINE void shuffle_filter_ssse3(const int16_t *const filter,
   f[3] = _mm_shuffle_epi8(f_values, _mm_set1_epi16(0x0e0cu));
 }
 
-static INLINE __m128i convolve8_8_ssse3(const __m128i *const s,
+static inline __m128i convolve8_8_ssse3(const __m128i *const s,
                                         const __m128i *const f) {
   // multiply 2 adjacent elements with the filter and add the result
   const __m128i k_64 = _mm_set1_epi16(1 << 6);

@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "HTTPServer.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 
@@ -76,11 +77,11 @@ TEST(WKWebExtensionAPIDevTools, Basics)
         @"devtools.js": devToolsScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
-    [manager.get().defaultTab.mainWebView._inspector show];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
 
     [manager loadAndRun];
 }
@@ -135,18 +136,18 @@ TEST(WKWebExtensionAPIDevTools, CreatePanel)
         @"icon.svg": iconSVG,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
-    [manager.get().defaultTab.mainWebView._inspector show];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Created");
 
     NSString *extensionIdentifier = [NSString stringWithFormat:@"WebExtensionTab-%@-1", manager.get().context.uniqueIdentifier];
-    [manager.get().defaultTab.mainWebView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
+    [manager.get().defaultTab.webView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
         EXPECT_NULL(error);
     }];
 
@@ -154,7 +155,7 @@ TEST(WKWebExtensionAPIDevTools, CreatePanel)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Loaded");
 
-    [manager.get().defaultTab.mainWebView._inspector showResources];
+    [manager.get().defaultTab.webView._inspector showResources];
 
     [manager run];
 
@@ -201,13 +202,13 @@ TEST(WKWebExtensionAPIDevTools, InspectedWindowEval)
         @"devtools.js": devToolsScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.requestWithLocalhost().URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.requestWithLocalhost().URL];
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
-    [manager.get().defaultTab.mainWebView._inspector show];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
 
     [manager loadAndRun];
 }
@@ -230,11 +231,11 @@ TEST(WKWebExtensionAPIDevTools, InspectedWindowReload)
         @"devtools.js": devToolsScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
-    [manager.get().defaultTab.mainWebView._inspector show];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
 
     [manager loadAndRun];
 
@@ -265,11 +266,11 @@ TEST(WKWebExtensionAPIDevTools, InspectedWindowReloadIgnoringCache)
         @"devtools.js": devToolsScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
-    [manager.get().defaultTab.mainWebView._inspector show];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
 
     [manager loadAndRun];
 
@@ -304,18 +305,18 @@ TEST(WKWebExtensionAPIDevTools, NetworkNavigatedEvent)
         @"devtools.js": devToolsScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
-    [manager.get().defaultTab.mainWebView._inspector show];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Next Page");
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.request().URL];
-    [manager.get().defaultTab.mainWebView loadRequest:server.request()];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.request().URL];
+    [manager.get().defaultTab.webView loadRequest:server.request()];
 
     [manager run];
 }
@@ -348,20 +349,20 @@ TEST(WKWebExtensionAPIDevTools, PanelsThemeName)
     // Force light mode for the app, so the switch to dark will trigger the event.
     NSApp.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto *mainWebView = manager.get().defaultTab.mainWebView;
+    auto *webView = manager.get().defaultTab.webView;
 
-    [mainWebView loadRequest:server.requestWithLocalhost()];
-    [mainWebView._inspector show];
+    [webView loadRequest:server.requestWithLocalhost()];
+    [webView._inspector show];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Change Theme");
 
     // Force dark mode on the inspector to tigger the theme change.
-    mainWebView._inspector.extensionHostWebView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
+    webView._inspector.extensionHostWebView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
 
     [manager run];
 }
@@ -392,11 +393,11 @@ TEST(WKWebExtensionAPIDevTools, MessagePassingToBackground)
         @"devtools.js": devToolsScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
-    [manager.get().defaultTab.mainWebView._inspector show];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
 
     [manager loadAndRun];
 }
@@ -439,18 +440,18 @@ TEST(WKWebExtensionAPIDevTools, MessagePassingFromPanelToBackground)
         @"icon.svg": iconSVG,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
-    [manager.get().defaultTab.mainWebView._inspector show];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Created");
 
     NSString *extensionIdentifier = [NSString stringWithFormat:@"WebExtensionTab-%@-1", manager.get().context.uniqueIdentifier];
-    [manager.get().defaultTab.mainWebView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
+    [manager.get().defaultTab.webView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
         EXPECT_NULL(error);
     }];
 
@@ -493,18 +494,18 @@ TEST(WKWebExtensionAPIDevTools, MessagePassingFromPanelToDevToolsBackground)
         @"icon.svg": iconSVG,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
-    [manager.get().defaultTab.mainWebView._inspector show];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Created");
 
     NSString *extensionIdentifier = [NSString stringWithFormat:@"WebExtensionTab-%@-1", manager.get().context.uniqueIdentifier];
-    [manager.get().defaultTab.mainWebView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
+    [manager.get().defaultTab.webView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
         EXPECT_NULL(error);
     }];
 
@@ -543,11 +544,11 @@ TEST(WKWebExtensionAPIDevTools, PortMessagePassingToBackground)
         @"devtools.js": devToolsScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
-    [manager.get().defaultTab.mainWebView._inspector show];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
 
     [manager loadAndRun];
 }
@@ -595,18 +596,18 @@ TEST(WKWebExtensionAPIDevTools, PortMessagePassingFromPanelToBackground)
         @"icon.svg": iconSVG,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
-    [manager.get().defaultTab.mainWebView._inspector show];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Created");
 
     NSString *extensionIdentifier = [NSString stringWithFormat:@"WebExtensionTab-%@-1", manager.get().context.uniqueIdentifier];
-    [manager.get().defaultTab.mainWebView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
+    [manager.get().defaultTab.webView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
         EXPECT_NULL(error);
     }];
 
@@ -655,18 +656,18 @@ TEST(WKWebExtensionAPIDevTools, PortMessagePassingFromPanelToDevToolsBackground)
         @"icon.svg": iconSVG,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
-    [manager.get().defaultTab.mainWebView._inspector show];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Created");
 
     NSString *extensionIdentifier = [NSString stringWithFormat:@"WebExtensionTab-%@-1", manager.get().context.uniqueIdentifier];
-    [manager.get().defaultTab.mainWebView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
+    [manager.get().defaultTab.webView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
         EXPECT_NULL(error);
     }];
 

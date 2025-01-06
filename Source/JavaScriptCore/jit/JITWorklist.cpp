@@ -141,8 +141,11 @@ void JITWorklist::resumeAllThreads() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     m_suspensionLock.unlock();
 }
 
-auto JITWorklist::compilationState(JITCompilationKey key) -> State
+auto JITWorklist::compilationState(VM& vm, JITCompilationKey key) -> State
 {
+    if (!vm.numberOfActiveJITPlans())
+        return NotKnown;
+
     Locker locker { *m_lock };
     const auto& iter = m_plans.find(key);
     if (iter == m_plans.end())
@@ -152,6 +155,9 @@ auto JITWorklist::compilationState(JITCompilationKey key) -> State
 
 auto JITWorklist::completeAllReadyPlansForVM(VM& vm, JITCompilationKey requestedKey) -> State
 {
+    if (!vm.numberOfActiveJITPlans())
+        return NotKnown;
+
     DeferGC deferGC(vm);
 
     Vector<RefPtr<JITPlan>, 8> myReadyPlans;
@@ -210,6 +216,9 @@ void JITWorklist::waitUntilAllPlansForVMAreReady(VM& vm)
 
 void JITWorklist::completeAllPlansForVM(VM& vm)
 {
+    if (!vm.numberOfActiveJITPlans())
+        return;
+
     DeferGC deferGC(vm);
     waitUntilAllPlansForVMAreReady(vm);
     completeAllReadyPlansForVM(vm);
@@ -217,6 +226,9 @@ void JITWorklist::completeAllPlansForVM(VM& vm)
 
 void JITWorklist::cancelAllPlansForVM(VM& vm)
 {
+    if (!vm.numberOfActiveJITPlans())
+        return;
+
     removeMatchingPlansForVM(vm, [&](JITPlan& plan) {
         return plan.stage() != JITPlanStage::Compiling;
     });
@@ -229,6 +241,9 @@ void JITWorklist::cancelAllPlansForVM(VM& vm)
 
 void JITWorklist::removeDeadPlans(VM& vm)
 {
+    if (!vm.numberOfActiveJITPlans())
+        return;
+
     removeMatchingPlansForVM(vm, [&](JITPlan& plan) {
         if (!plan.isKnownToBeLiveAfterGC())
             return true;

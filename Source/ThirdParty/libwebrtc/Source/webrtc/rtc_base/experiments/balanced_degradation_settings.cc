@@ -144,11 +144,11 @@ std::vector<BalancedDegradationSettings::Config> GetValidOrDefault(
   return DefaultConfigs();
 }
 
-absl::optional<VideoEncoder::QpThresholds> GetThresholds(
+std::optional<VideoEncoder::QpThresholds> GetThresholds(
     VideoCodecType type,
     const BalancedDegradationSettings::Config& config) {
-  absl::optional<int> low;
-  absl::optional<int> high;
+  std::optional<int> low;
+  std::optional<int> high;
 
   switch (type) {
     case kVideoCodecVP8:
@@ -179,19 +179,19 @@ absl::optional<VideoEncoder::QpThresholds> GetThresholds(
 
   if (low && high) {
     RTC_LOG(LS_INFO) << "QP thresholds: low: " << *low << ", high: " << *high;
-    return absl::optional<VideoEncoder::QpThresholds>(
+    return std::optional<VideoEncoder::QpThresholds>(
         VideoEncoder::QpThresholds(*low, *high));
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 int GetFps(VideoCodecType type,
-           const absl::optional<BalancedDegradationSettings::Config>& config) {
+           const std::optional<BalancedDegradationSettings::Config>& config) {
   if (!config.has_value()) {
     return std::numeric_limits<int>::max();
   }
 
-  absl::optional<int> fps;
+  std::optional<int> fps;
   switch (type) {
     case kVideoCodecVP8:
       fps = config->vp8.GetFps();
@@ -219,13 +219,13 @@ int GetFps(VideoCodecType type,
   return (framerate == kMaxFps) ? std::numeric_limits<int>::max() : framerate;
 }
 
-absl::optional<int> GetKbps(
+std::optional<int> GetKbps(
     VideoCodecType type,
-    const absl::optional<BalancedDegradationSettings::Config>& config) {
+    const std::optional<BalancedDegradationSettings::Config>& config) {
   if (!config.has_value())
-    return absl::nullopt;
+    return std::nullopt;
 
-  absl::optional<int> kbps;
+  std::optional<int> kbps;
   switch (type) {
     case kVideoCodecVP8:
       kbps = config->vp8.GetKbps();
@@ -251,16 +251,16 @@ absl::optional<int> GetKbps(
   if (kbps.has_value())
     return kbps;
 
-  return config->kbps > 0 ? absl::optional<int>(config->kbps) : absl::nullopt;
+  return config->kbps > 0 ? std::optional<int>(config->kbps) : std::nullopt;
 }
 
-absl::optional<int> GetKbpsRes(
+std::optional<int> GetKbpsRes(
     VideoCodecType type,
-    const absl::optional<BalancedDegradationSettings::Config>& config) {
+    const std::optional<BalancedDegradationSettings::Config>& config) {
   if (!config.has_value())
-    return absl::nullopt;
+    return std::nullopt;
 
-  absl::optional<int> kbps_res;
+  std::optional<int> kbps_res;
   switch (type) {
     case kVideoCodecVP8:
       kbps_res = config->vp8.GetKbpsRes();
@@ -286,34 +286,34 @@ absl::optional<int> GetKbpsRes(
   if (kbps_res.has_value())
     return kbps_res;
 
-  return config->kbps_res > 0 ? absl::optional<int>(config->kbps_res)
-                              : absl::nullopt;
+  return config->kbps_res > 0 ? std::optional<int>(config->kbps_res)
+                              : std::nullopt;
 }
 }  // namespace
 
-absl::optional<int> BalancedDegradationSettings::CodecTypeSpecific::GetQpLow()
+std::optional<int> BalancedDegradationSettings::CodecTypeSpecific::GetQpLow()
     const {
-  return (qp_low > 0) ? absl::optional<int>(qp_low) : absl::nullopt;
+  return (qp_low > 0) ? std::optional<int>(qp_low) : std::nullopt;
 }
 
-absl::optional<int> BalancedDegradationSettings::CodecTypeSpecific::GetQpHigh()
+std::optional<int> BalancedDegradationSettings::CodecTypeSpecific::GetQpHigh()
     const {
-  return (qp_high > 0) ? absl::optional<int>(qp_high) : absl::nullopt;
+  return (qp_high > 0) ? std::optional<int>(qp_high) : std::nullopt;
 }
 
-absl::optional<int> BalancedDegradationSettings::CodecTypeSpecific::GetFps()
+std::optional<int> BalancedDegradationSettings::CodecTypeSpecific::GetFps()
     const {
-  return (fps > 0) ? absl::optional<int>(fps) : absl::nullopt;
+  return (fps > 0) ? std::optional<int>(fps) : std::nullopt;
 }
 
-absl::optional<int> BalancedDegradationSettings::CodecTypeSpecific::GetKbps()
+std::optional<int> BalancedDegradationSettings::CodecTypeSpecific::GetKbps()
     const {
-  return (kbps > 0) ? absl::optional<int>(kbps) : absl::nullopt;
+  return (kbps > 0) ? std::optional<int>(kbps) : std::nullopt;
 }
 
-absl::optional<int> BalancedDegradationSettings::CodecTypeSpecific::GetKbpsRes()
+std::optional<int> BalancedDegradationSettings::CodecTypeSpecific::GetKbpsRes()
     const {
-  return (kbps_res > 0) ? absl::optional<int>(kbps_res) : absl::nullopt;
+  return (kbps_res > 0) ? std::optional<int>(kbps_res) : std::nullopt;
 }
 
 BalancedDegradationSettings::Config::Config() = default;
@@ -415,32 +415,32 @@ int BalancedDegradationSettings::MinFps(VideoCodecType type, int pixels) const {
   return GetFps(type, GetMinFpsConfig(pixels));
 }
 
-absl::optional<BalancedDegradationSettings::Config>
+std::optional<BalancedDegradationSettings::Config>
 BalancedDegradationSettings::GetMinFpsConfig(int pixels) const {
   for (const auto& config : configs_) {
     if (pixels <= config.pixels)
       return config;
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 int BalancedDegradationSettings::MaxFps(VideoCodecType type, int pixels) const {
   return GetFps(type, GetMaxFpsConfig(pixels));
 }
 
-absl::optional<BalancedDegradationSettings::Config>
+std::optional<BalancedDegradationSettings::Config>
 BalancedDegradationSettings::GetMaxFpsConfig(int pixels) const {
   for (size_t i = 0; i < configs_.size() - 1; ++i) {
     if (pixels <= configs_[i].pixels)
       return configs_[i + 1];
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 bool BalancedDegradationSettings::CanAdaptUp(VideoCodecType type,
                                              int pixels,
                                              uint32_t bitrate_bps) const {
-  absl::optional<int> min_kbps = GetKbps(type, GetMaxFpsConfig(pixels));
+  std::optional<int> min_kbps = GetKbps(type, GetMaxFpsConfig(pixels));
   if (!min_kbps.has_value() || bitrate_bps == 0) {
     return true;  // No limit configured or bitrate provided.
   }
@@ -451,25 +451,25 @@ bool BalancedDegradationSettings::CanAdaptUpResolution(
     VideoCodecType type,
     int pixels,
     uint32_t bitrate_bps) const {
-  absl::optional<int> min_kbps = GetKbpsRes(type, GetMaxFpsConfig(pixels));
+  std::optional<int> min_kbps = GetKbpsRes(type, GetMaxFpsConfig(pixels));
   if (!min_kbps.has_value() || bitrate_bps == 0) {
     return true;  // No limit configured or bitrate provided.
   }
   return bitrate_bps >= static_cast<uint32_t>(min_kbps.value() * 1000);
 }
 
-absl::optional<int> BalancedDegradationSettings::MinFpsDiff(int pixels) const {
+std::optional<int> BalancedDegradationSettings::MinFpsDiff(int pixels) const {
   for (const auto& config : configs_) {
     if (pixels <= config.pixels) {
       return (config.fps_diff > kNoFpsDiff)
-                 ? absl::optional<int>(config.fps_diff)
-                 : absl::nullopt;
+                 ? std::optional<int>(config.fps_diff)
+                 : std::nullopt;
     }
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
-absl::optional<VideoEncoder::QpThresholds>
+std::optional<VideoEncoder::QpThresholds>
 BalancedDegradationSettings::GetQpThresholds(VideoCodecType type,
                                              int pixels) const {
   return GetThresholds(type, GetConfig(pixels));

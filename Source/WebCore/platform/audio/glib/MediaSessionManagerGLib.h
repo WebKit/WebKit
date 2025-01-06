@@ -23,6 +23,7 @@
 #include "MediaSessionIdentifier.h"
 #include "NowPlayingManager.h"
 #include "PlatformMediaSessionManager.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
@@ -33,7 +34,7 @@ class MediaSessionGLib;
 class MediaSessionManagerGLib
     : public PlatformMediaSessionManager
     , private NowPlayingManagerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaSessionManagerGLib);
 public:
     MediaSessionManagerGLib(GRefPtr<GDBusNodeInfo>&&);
     ~MediaSessionManagerGLib();
@@ -44,7 +45,7 @@ public:
     String lastUpdatedNowPlayingTitle() const final { return m_lastUpdatedNowPlayingTitle; }
     double lastUpdatedNowPlayingDuration() const final { return m_lastUpdatedNowPlayingDuration; }
     double lastUpdatedNowPlayingElapsedTime() const final { return m_lastUpdatedNowPlayingElapsedTime; }
-    MediaUniqueIdentifier lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
+    std::optional<MediaUniqueIdentifier> lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
     bool registeredAsNowPlayingApplication() const final { return m_registeredAsNowPlayingApplication; }
     bool haveEverRegisteredAsNowPlayingApplication() const final { return m_haveEverRegisteredAsNowPlayingApplication; }
 
@@ -100,10 +101,10 @@ private:
     String m_lastUpdatedNowPlayingTitle;
     double m_lastUpdatedNowPlayingDuration { NAN };
     double m_lastUpdatedNowPlayingElapsedTime { NAN };
-    MediaUniqueIdentifier m_lastUpdatedNowPlayingInfoUniqueIdentifier;
+    Markable<MediaUniqueIdentifier> m_lastUpdatedNowPlayingInfoUniqueIdentifier;
 
     const std::unique_ptr<NowPlayingManager> m_nowPlayingManager;
-    HashMap<MediaSessionIdentifier, std::unique_ptr<MediaSessionGLib>> m_sessions;
+    UncheckedKeyHashMap<MediaSessionIdentifier, std::unique_ptr<MediaSessionGLib>> m_sessions;
 
     bool m_dbusNotificationsEnabled { true };
 };

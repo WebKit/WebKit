@@ -38,7 +38,6 @@
 #include "CanvasTextBaseline.h"
 #include "Color.h"
 #include "Filter.h"
-#include "FilterTargetSwitcher.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
 #include "FontSelectorClient.h"
@@ -57,6 +56,7 @@ namespace WebCore {
 
 class ByteArrayPixelBuffer;
 class CachedImage;
+class CanvasLayerContextSwitcher;
 class CanvasGradient;
 class DOMMatrix;
 class FloatRect;
@@ -90,16 +90,20 @@ using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>
     >;
 
 class CanvasRenderingContext2DBase : public CanvasRenderingContext, public CanvasPath {
-    WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2DBase);
-    friend class CanvasFilterTargetSwitcher;
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CanvasRenderingContext2DBase);
+    friend class CanvasFilterContextSwitcher;
+    friend class CanvasLayerContextSwitcher;
 protected:
-    CanvasRenderingContext2DBase(CanvasBase&, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
+    CanvasRenderingContext2DBase(CanvasBase&, CanvasRenderingContext::Type, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
 
 public:
     virtual ~CanvasRenderingContext2DBase();
 
+    bool isAccelerated() const;
+
     const CanvasRenderingContext2DSettings& getContextAttributes() const { return m_settings; }
     using RenderingMode = WebCore::RenderingMode;
+    std::optional<RenderingMode> renderingModeForTesting() const final;
     std::optional<RenderingMode> getEffectiveRenderingModeForTesting();
 
     double lineWidth() const { return state().lineWidth; }
@@ -146,8 +150,17 @@ public:
     String filterString() const { return state().filterString; }
     void setFilterString(const String&);
 
+    String letterSpacing() const { return state().letterSpacing; }
+    void setLetterSpacing(const String&);
+
+    String wordSpacing() const { return state().wordSpacing; }
+    void setWordSpacing(const String&);
+
     void save() { ++m_unrealizedSaveCount; }
     void restore();
+
+    void beginLayer();
+    void endLayer();
 
     void scale(double sx, double sy);
     void rotate(double angleInRadians);
@@ -217,8 +230,6 @@ public:
     void putImageData(ImageData&, int dx, int dy);
     void putImageData(ImageData&, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight);
 
-    static constexpr float webkitBackingStorePixelRatio() { return 1; }
-
     void reset();
 
     bool imageSmoothingEnabled() const { return state().imageSmoothingEnabled; }
@@ -259,6 +270,14 @@ public:
         bool isPopulated() const { return m_font.fonts(); }
 #endif
 
+        const FontCascade& fontCascade() const { return m_font; }
+
+        float letterSpacing() const { return m_font.letterSpacing(); }
+        void setLetterSpacing(const Length& letterSpacing) { m_font.setLetterSpacing(letterSpacing); }
+
+        float wordSpacing() const { return m_font.wordSpacing(); }
+        void setWordSpacing(const Length& wordSpacing) { m_font.setWordSpacing(wordSpacing); }
+
     private:
         void update(FontSelector&);
         void fontsNeedUpdate(FontSelector&) final;
@@ -296,8 +315,13 @@ public:
         String filterString;
         FilterOperations filterOperations;
 
+        String letterSpacing;
+        String wordSpacing;
+
         String unparsedFont;
         FontProxy font;
+
+        RefPtr<CanvasLayerContextSwitcher> targetSwitcher;
 
         CanvasLineCap canvasLineCap() const;
         CanvasLineJoin canvasLineJoin() const;
@@ -317,7 +341,13 @@ protected:
     void realizeSaves();
     State& modifiableState() { ASSERT(!m_unrealizedSaveCount || m_stateStack.size() >= MaxSaveCount); return m_stateStack.last(); }
 
+    // These methods are de-virtualized for performance reasons.
     GraphicsContext* drawingContext() const;
+    GraphicsContext* effectiveDrawingContext() const;
+
+    virtual GraphicsContext* existingDrawingContext() const;
+    virtual AffineTransform baseTransform() const;
+
     enum class DidDrawOption {
         ApplyTransform = 1 << 0,
         ApplyShadow = 1 << 1,
@@ -351,10 +381,8 @@ protected:
 
     virtual std::optional<FilterOperations> setFilterStringWithoutUpdatingStyle(const String&) { return std::nullopt; }
 
-    virtual RefPtr<Filter> createFilter(const Function<FloatRect()>&) const { return nullptr; }
+    virtual RefPtr<Filter> createFilter(const FloatRect&) const { return nullptr; }
     virtual IntOutsets calculateFilterOutsets(const FloatRect&) const { return { }; }
-
-    void setFilterTargetSwitcher(FilterTargetSwitcher* targetSwitcher) { m_targetSwitcher = targetSwitcher; }
 
     static String normalizeSpaces(const String&);
 
@@ -366,8 +394,6 @@ protected:
     Ref<TextMetrics> measureTextInternal(const String& text);
 
     bool usesCSSCompatibilityParseMode() const { return m_usesCSSCompatibilityParseMode; }
-
-    OptionSet<ImageBufferOptions> adjustImageBufferOptionsForTesting(OptionSet<ImageBufferOptions>) final;
 
 private:
     struct CachedContentsTransparent {
@@ -386,7 +412,6 @@ private:
     void applyShadow();
     bool shouldDrawShadows() const;
 
-    bool is2dBase() const final { return true; }
     bool needsPreparationForDisplay() const final;
     void prepareForDisplay() final;
 
@@ -394,7 +419,7 @@ private:
     bool isEntireBackingStoreDirty() const;
     FloatRect backingStoreBounds() const { return FloatRect { { }, FloatSize { canvasBase().size() } }; }
 
-    PixelFormat pixelFormat() const final;
+    ImageBufferPixelFormat pixelFormat() const final;
     DestinationColorSpace colorSpace() const final;
     bool willReadFrequently() const final;
 
@@ -455,10 +480,10 @@ private:
 
     template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator);
 
-    bool isAccelerated() const override;
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const override;
+#if USE(SKIA)
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
-
+#endif
     bool hasDeferredOperations() const final;
     void flushDeferredOperations() final;
 
@@ -482,7 +507,6 @@ private:
     mutable std::variant<CachedContentsTransparent, CachedContentsUnknown, CachedContentsImageData> m_cachedContents;
     CanvasRenderingContext2DSettings m_settings;
     bool m_hasDeferredOperations { false };
-    FilterTargetSwitcher* m_targetSwitcher { nullptr };
 };
 
 } // namespace WebCore

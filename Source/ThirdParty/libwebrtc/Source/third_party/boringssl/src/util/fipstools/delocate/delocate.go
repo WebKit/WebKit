@@ -35,7 +35,7 @@ import (
 // inputFile represents a textual assembly file.
 type inputFile struct {
 	path string
-	// index is a unique identifer given to this file. It's used for
+	// index is a unique identifier given to this file. It's used for
 	// mapping local symbols.
 	index int
 	// isArchive indicates that the input should be processed as an ar
@@ -263,6 +263,47 @@ func (d *delocation) processDirective(statement, directive *node32) (*node32, er
 	return statement, nil
 }
 
+func (d *delocation) processSymbolExpr(expr *node32, b *strings.Builder) bool {
+	changed := false
+	assertNodeType(expr, ruleSymbolExpr)
+
+	for expr != nil {
+		atom := expr.up
+		assertNodeType(atom, ruleSymbolAtom)
+
+		for term := atom.up; term != nil; term = skipWS(term.next) {
+			if term.pegRule == ruleSymbolExpr {
+				changed = d.processSymbolExpr(term, b) || changed
+				continue
+			}
+
+			if term.pegRule != ruleLocalSymbol {
+				b.WriteString(d.contents(term))
+				continue
+			}
+
+			oldSymbol := d.contents(term)
+			newSymbol := d.mapLocalSymbol(oldSymbol)
+			if newSymbol != oldSymbol {
+				changed = true
+			}
+
+			b.WriteString(newSymbol)
+		}
+
+		next := skipWS(atom.next)
+		if next == nil {
+			break
+		}
+		assertNodeType(next, ruleSymbolOperator)
+		b.WriteString(d.contents(next))
+		next = skipWS(next.next)
+		assertNodeType(next, ruleSymbolExpr)
+		expr = next
+	}
+	return changed
+}
+
 func (d *delocation) processLabelContainingDirective(statement, directive *node32) (*node32, error) {
 	// The symbols within directives need to be mapped so that local
 	// symbols in two different .s inputs don't collide.
@@ -280,24 +321,12 @@ func (d *delocation) processLabelContainingDirective(statement, directive *node3
 	for node = skipWS(node.up); node != nil; node = skipWS(node.next) {
 		assertNodeType(node, ruleSymbolArg)
 		arg := node.up
-		var mapped string
+		assertNodeType(arg, ruleSymbolExpr)
 
-		for term := arg; term != nil; term = term.next {
-			if term.pegRule != ruleLocalSymbol {
-				mapped += d.contents(term)
-				continue
-			}
+		var b strings.Builder
+		changed = d.processSymbolExpr(arg, &b) || changed
 
-			oldSymbol := d.contents(term)
-			newSymbol := d.mapLocalSymbol(oldSymbol)
-			if newSymbol != oldSymbol {
-				changed = true
-			}
-
-			mapped += newSymbol
-		}
-
-		args = append(args, mapped)
+		args = append(args, b.String())
 	}
 
 	if !changed {
@@ -560,11 +589,15 @@ func (d *delocation) processAarch64Instruction(statement, instruction *node32) (
 							panic("Symbol reference outside of ldr instruction")
 						}
 
-						if skipWS(parts.next) != nil || parts.up.next != nil {
-							panic("can't handle tweak or post-increment with symbol references")
-						}
-
-						// Suppress the offset; adrp loaded the full address.
+						// Suppress the offset; adrp loaded the full address. This assumes the
+						// the compiler does not emit code like the following:
+						//
+						//   adrp x0, symbol
+						//   ldr x1, [x0, :lo12:symbol]
+						//   ldr x2, [x0, :lo12:symbol+4]
+						//
+						// Such code would only work if lo12(symbol+4) = lo12(symbol) + 4, but
+						// this is true when symbol is sufficiently aligned.
 						args = append(args, "["+baseAddrReg+"]")
 						changed = true
 						continue
@@ -581,6 +614,15 @@ func (d *delocation) processAarch64Instruction(statement, instruction *node32) (
 				// The adrp instruction will have been turned into a sequence that loads
 				// the full address, above, thus the offset is turned into zero. If that
 				// results in the instruction being a nop, then it is deleted.
+				//
+				// This assumes the compiler does not emit code like the following:
+				//
+				//   adrp x0, symbol
+				//   add x1, x0, :lo12:symbol
+				//   add x2, x0, :lo12:symbol+4
+				//
+				// Such code would only work if lo12(symbol+4) = lo12(symbol) + 4, but
+				// this is true when symbol is sufficiently aligned.
 				if instructionName != "add" {
 					panic(fmt.Sprintf("unsure how to handle %q instruction using lo12", instructionName))
 				}
@@ -894,6 +936,12 @@ func (d *delocation) isRIPRelative(node *node32) bool {
 }
 
 func (d *delocation) processIntelInstruction(statement, instruction *node32) (*node32, error) {
+	var prefix string
+	if instruction.pegRule == ruleInstructionPrefix {
+		prefix = d.contents(instruction)
+		instruction = skipWS(instruction.next)
+	}
+
 	assertNodeType(instruction, ruleInstructionName)
 	instructionName := d.contents(instruction)
 
@@ -1134,6 +1182,22 @@ Args:
 
 			args = append(args, argStr)
 
+		case ruleGOTAddress:
+			if instructionName != "leaq" {
+				return nil, fmt.Errorf("_GLOBAL_OFFSET_TABLE_ used outside of lea")
+			}
+			if i != 0 || len(argNodes) != 2 {
+				return nil, fmt.Errorf("Load of _GLOBAL_OFFSET_TABLE_ address didn't have expected form")
+			}
+			d.gotDeltaNeeded = true
+			changed = true
+			targetReg := d.contents(argNodes[1])
+			args = append(args, ".Lboringssl_got_delta(%rip)")
+			wrappers = append(wrappers, func(k func()) {
+				k()
+				d.output.WriteString(fmt.Sprintf("\taddq .Lboringssl_got_delta(%%rip), %s\n", targetReg))
+			})
+
 		case ruleGOTLocation:
 			if instructionName != "movabsq" {
 				return nil, fmt.Errorf("_GLOBAL_OFFSET_TABLE_ lookup didn't use movabsq")
@@ -1195,6 +1259,9 @@ Args:
 	if changed {
 		d.writeCommentedNode(statement)
 		replacement := "\t" + instructionName + "\t" + strings.Join(args, ", ") + "\n"
+		if len(prefix) != 0 {
+			replacement = "\t" + prefix + replacement
+		}
 		wrappers.do(func() {
 			d.output.WriteString(replacement)
 		})
@@ -1260,6 +1327,16 @@ func writeAarch64Function(w stringWriter, funcName string, writeContents func(st
 	w.WriteString(".type " + funcName + ", @function\n")
 	w.WriteString(funcName + ":\n")
 	w.WriteString(".cfi_startproc\n")
+	// We insert a landing pad (`bti c` instruction) unconditionally at the beginning of
+	// every generated function so that they can be called indirectly (with `blr` or
+	// `br x16/x17`). The instruction is encoded in the HINT space as `hint #34` and is
+	// a no-op on machines or program states not supporting BTI (Branch Target Identification).
+	// None of the generated function bodies call other functions (with bl or blr), so we only
+	// insert a landing pad instead of signing and validating $lr with `paciasp` and `autiasp`.
+	// Normally we would also generate a .note.gnu.property section to annotate the assembly
+	// file as BTI-compatible, but if the input assembly files are BTI-compatible, they should
+	// already have those sections so there is no need to add an extra one ourselves.
+	w.WriteString("\thint #34 // bti c\n")
 	writeContents(w)
 	w.WriteString(".cfi_endproc\n")
 	w.WriteString(".size " + funcName + ", .-" + funcName + "\n")
@@ -1637,9 +1714,6 @@ func main() {
 		// preprocessor, but we don't want the compiler complaining that
 		// "argument unused during compilation".
 		cppCommand = append(cppCommand, "-Wno-unused-command-line-argument")
-		// We are preprocessing for assembly output and need to simulate that
-		// environment for arm_arch.h.
-		cppCommand = append(cppCommand, "-D__ASSEMBLER__=1")
 
 		for includePath := range includePaths {
 			cppCommand = append(cppCommand, "-I"+includePath)

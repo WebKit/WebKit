@@ -15,16 +15,19 @@
 #include <atomic>
 #include <map>
 #include <memory>
+#include <optional>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio/audio_mixer.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/environment/environment.h"
+#include "api/neteq/neteq.h"
 #include "api/rtp_headers.h"
 #include "api/scoped_refptr.h"
 #include "api/voip/voip_statistics.h"
 #include "audio/audio_level.h"
-#include "modules/audio_coding/acm2/acm_receiver.h"
+#include "modules/audio_coding/acm2/acm_resampler.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
 #include "modules/rtp_rtcp/include/remote_ntp_time_estimator.h"
@@ -46,8 +49,8 @@ namespace webrtc {
 // smaller footprint.
 class AudioIngress : public AudioMixer::Source {
  public:
-  AudioIngress(RtpRtcpInterface* rtp_rtcp,
-               Clock* clock,
+  AudioIngress(const Environment& env,
+               RtpRtcpInterface* rtp_rtcp,
                ReceiveStatistics* receive_statistics,
                rtc::scoped_refptr<AudioDecoderFactory> decoder_factory);
   ~AudioIngress() override;
@@ -80,12 +83,7 @@ class AudioIngress : public AudioMixer::Source {
     return output_audio_level_.TotalDuration();
   }
 
-  NetworkStatistics GetNetworkStatistics() const {
-    NetworkStatistics stats;
-    acm_receiver_.GetNetworkStatistics(&stats,
-                                       /*get_and_clear_legacy_stats=*/false);
-    return stats;
-  }
+  NetworkStatistics GetNetworkStatistics() const;
 
   ChannelStatistics GetChannelStatistics();
 
@@ -97,14 +95,19 @@ class AudioIngress : public AudioMixer::Source {
     return rtc::dchecked_cast<int>(remote_ssrc_.load());
   }
   int PreferredSampleRate() const override {
+    std::optional<NetEq::DecoderFormat> decoder =
+        neteq_->GetCurrentDecoderFormat();
+
     // If we haven't received any RTP packet from remote and thus
     // last_packet_sampling_rate is not available then use NetEq's sampling
     // rate as that would be what would be used for audio output sample.
-    return std::max(acm_receiver_.last_packet_sample_rate_hz().value_or(0),
-                    acm_receiver_.last_output_sample_rate_hz());
+    return std::max(decoder ? decoder->sample_rate_hz : 0,
+                    neteq_->last_output_sample_rate_hz());
   }
 
  private:
+  const Environment env_;
+
   // Indicates AudioIngress status as caller invokes Start/StopPlaying.
   // If not playing, incoming RTP data processing is skipped, thus
   // producing no data to output device.
@@ -123,8 +126,8 @@ class AudioIngress : public AudioMixer::Source {
   // Synchronizaton is handled internally by RtpRtcpInterface.
   RtpRtcpInterface* const rtp_rtcp_;
 
-  // Synchronizaton is handled internally by acm2::AcmReceiver.
-  acm2::AcmReceiver acm_receiver_;
+  // Synchronizaton is handled internally by NetEq.
+  const std::unique_ptr<NetEq> neteq_;
 
   // Synchronizaton is handled internally by voe::AudioLevel.
   voe::AudioLevel output_audio_level_;
@@ -138,6 +141,9 @@ class AudioIngress : public AudioMixer::Source {
   std::map<int, int> receive_codec_info_ RTC_GUARDED_BY(lock_);
 
   RtpTimestampUnwrapper timestamp_wrap_handler_ RTC_GUARDED_BY(lock_);
+
+  // Resampler for the output audio.
+  acm2::ResamplerHelper resampler_helper_ RTC_GUARDED_BY(lock_);
 };
 
 }  // namespace webrtc

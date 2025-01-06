@@ -13,9 +13,9 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "call/rtp_packet_sink_interface.h"
 #include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -41,7 +41,7 @@ class StreamStatistician {
   virtual RtpReceiveStats GetStats() const = 0;
 
   // Returns average over the stream life time.
-  virtual absl::optional<int> GetFractionLostInPercent() const = 0;
+  virtual std::optional<int> GetFractionLostInPercent() const = 0;
 
   // TODO(bugs.webrtc.org/10679): Delete, migrate users to the above GetStats
   // method (and extend RtpReceiveStats if needed).
@@ -65,11 +65,6 @@ class ReceiveStatistics : public ReceiveStatisticsProvider,
 
   // Returns a pointer to the statistician of an ssrc.
   virtual StreamStatistician* GetStatistician(uint32_t ssrc) const = 0;
-
-  // TODO(bugs.webrtc.org/10669): Deprecated, delete as soon as downstream
-  // projects are updated. This method sets the max reordering threshold of all
-  // current and future streams.
-  virtual void SetMaxReorderingThreshold(int max_reordering_threshold) = 0;
 
   // Sets the max reordering threshold in number of packets.
   virtual void SetMaxReorderingThreshold(uint32_t ssrc,

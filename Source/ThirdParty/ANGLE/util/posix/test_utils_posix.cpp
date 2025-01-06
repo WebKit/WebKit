@@ -98,7 +98,8 @@ ReadResult ReadFromFile(int fd, std::string *out)
 void ReadEntireFile(int fd, std::string *out)
 {
     while (ReadFromFile(fd, out) == ReadResult::GotData)
-    {}
+    {
+    }
 }
 
 class PosixProcess : public Process
@@ -383,7 +384,7 @@ bool StabilizeCPUForBenchmarking()
         success = false;
     }
 #    else
-    // TODO(jmadill): Implement for non-linux. http://anglebug.com/2923
+    // TODO(jmadill): Implement for non-linux. http://anglebug.com/40096532
 #    endif
 
     return success;

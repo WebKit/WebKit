@@ -124,8 +124,9 @@ class ImmutableString
 };
 
 constexpr ImmutableString kEmptyImmutableString("");
-}  // namespace sh
 
-std::ostream &operator<<(std::ostream &os, const sh::ImmutableString &str);
+std::ostream &operator<<(std::ostream &os, const ImmutableString &str);
+
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_IMMUTABLESTRING_H_

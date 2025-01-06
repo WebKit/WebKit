@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DiagnosticLoggingKeys.h"
 
+#include "HTMLMediaElement.h"
+
 namespace WebCore {
 
 String DiagnosticLoggingKeys::mediaLoadedKey()
@@ -753,6 +755,61 @@ String DiagnosticLoggingKeys::backgroundCPUUsageToDiagnosticLoggingKey(double cp
         return "50to70"_s;
     return "over70"_s;
 }
-    
+
+String DiagnosticLoggingKeys::mediaSourceTypeWatchTimeKey()
+{
+    return "watchtimeBySource"_s;
+}
+
+String DiagnosticLoggingKeys::mediaVideoCodecWatchTimeKey()
+{
+    return "watchtimeByVideoCodec"_s;
+}
+
+String DiagnosticLoggingKeys::mediaAudioCodecWatchTimeKey()
+{
+    return "watchtimeByAudioCodec"_s;
+}
+
+String DiagnosticLoggingKeys::mediaBufferingWatchTimeKey()
+{
+    return "watchtimeBuffering"_s;
+}
+
+String DiagnosticLoggingKeys::secondsKey()
+{
+    return "seconds"_s;
+}
+
+String DiagnosticLoggingKeys::sourceTypeKey()
+{
+    return "sourceType"_s;
+}
+
+String DiagnosticLoggingKeys::videoCodecKey()
+{
+    return "videoCodec"_s;
+}
+
+String DiagnosticLoggingKeys::audioCodecKey()
+{
+    return "audioCodec"_s;
+}
+
+String DiagnosticLoggingKeys::textTrackTypeKey()
+{
+    return "textTrackType"_s;
+}
+
+String DiagnosticLoggingKeys::textTrackKindKey()
+{
+    return "textTrackKind"_s;
+}
+
+String DiagnosticLoggingKeys::textTrackModeKey()
+{
+    return "textTrackMode"_s;
+}
+
 } // namespace WebCore
 

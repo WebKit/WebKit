@@ -1,0 +1,5 @@
+aaaaabbb
+aaaaabbb
+
+PASS assert_less_than(t.offsetWidth, refWidth, "test div should have smaller width")
+

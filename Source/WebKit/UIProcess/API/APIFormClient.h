@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 class WebFrameProxy;
@@ -36,7 +37,7 @@ namespace API {
 class Object;
 
 class FormClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FormClient);
 public:
     virtual ~FormClient() { }
 

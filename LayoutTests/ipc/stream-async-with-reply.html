@@ -15,13 +15,13 @@ async function runTest() {
     const IPCStreamTester_AsyncPingReplyName = IPC.messages.IPCStreamTester_AsyncPingReply.name;
 
     for (const processTarget of IPC.processTargets) {
-        const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSizeLog2);
+        const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSizeLog2, defaultTimeout);
         streamConnection.open();
         IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateStreamTester.name, [
             { type: 'uint64_t', value: streamTesterID },
             { type: 'StreamServerConnectionHandle', value: serverConnectionHandle },
         ]);
-        const arguments = streamConnection.waitForMessage(streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name, defaultTimeout);
+        const arguments = streamConnection.waitForMessage(streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name);
         streamConnection.setSemaphores(arguments[0].value, arguments[1].value);
         // Test starts here.
         try {
@@ -29,7 +29,7 @@ async function runTest() {
             let asyncReplyIDs = { };
             const requestCount = 100;
             for (let request = 0; request < requestCount; ++request) {
-                asyncReplyIDs[request] = streamConnection.sendWithAsyncReply(streamTesterID, IPCStreamTester_AsyncPingName, defaultTimeout, [{type: 'uint32_t', value: request}], (message) => {
+                asyncReplyIDs[request] = streamConnection.sendWithAsyncReply(streamTesterID, IPCStreamTester_AsyncPingName, [{type: 'uint32_t', value: request}], (message) => {
                     results[request] = message;
                 });
                 assert_greater_than(asyncReplyIDs[request], 0, "asyncReplyID is valid");
@@ -38,7 +38,7 @@ async function runTest() {
             }
             for (let request = 0; request < requestCount; ++request) {
                 if (typeof results[request] === "undefined")
-                    streamConnection.waitForAsyncReplyAndDispatchImmediately(asyncReplyIDs[request], IPCStreamTester_AsyncPingReplyName, defaultTimeout);
+                    streamConnection.waitForAsyncReplyAndDispatchImmediately(asyncReplyIDs[request], IPCStreamTester_AsyncPingReplyName);
             }
             for (let request = 0; request < requestCount; ++request) {
                 const subcase = `${processTarget} request:${request}`

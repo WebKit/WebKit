@@ -34,7 +34,7 @@ namespace WebCore {
 
 SVGTransformable::~SVGTransformable() = default;
 
-template<typename CharacterType> static int parseTransformParamList(StringParsingBuffer<CharacterType>& buffer, float* values, int required, int optional)
+template<typename CharacterType> static int parseTransformParamList(StringParsingBuffer<CharacterType>& buffer, std::span<float, 6> values, int required, int optional)
 {
     int optionalParams = 0, requiredParams = 0;
     
@@ -96,8 +96,8 @@ template<typename CharacterType> static int parseTransformParamList(StringParsin
 }
 
 // These should be kept in sync with enum SVGTransformType
-static constexpr int requiredValuesForType[] =  { 0, 6, 1, 1, 1, 1, 1 };
-static constexpr int optionalValuesForType[] =  { 0, 0, 1, 1, 2, 0, 0 };
+static constexpr std::array requiredValuesForType { 0, 6, 1, 1, 1, 1, 1 };
+static constexpr std::array optionalValuesForType { 0, 0, 1, 1, 2, 0, 0 };
 
 template<typename CharacterType> static std::optional<SVGTransformValue> parseTransformValueGeneric(SVGTransformValue::SVGTransformType type, StringParsingBuffer<CharacterType>& buffer)
 {
@@ -105,7 +105,7 @@ template<typename CharacterType> static std::optional<SVGTransformValue> parseTr
         return std::nullopt;
 
     int valueCount = 0;
-    float values[] = { 0, 0, 0, 0, 0, 0 };
+    std::array<float, 6> values { 0, 0, 0, 0, 0, 0 };
     if ((valueCount = parseTransformParamList(buffer, values, requiredValuesForType[type], optionalValuesForType[type])) < 0)
         return std::nullopt;
 
@@ -162,12 +162,12 @@ std::optional<SVGTransformValue> SVGTransformable::parseTransformValue(SVGTransf
     return parseTransformValueGeneric(type, buffer);
 }
 
-template<typename CharacterType> static constexpr CharacterType skewXDesc[] =  {'s', 'k', 'e', 'w', 'X'};
-template<typename CharacterType> static constexpr CharacterType skewYDesc[] =  {'s', 'k', 'e', 'w', 'Y'};
-template<typename CharacterType> static constexpr CharacterType scaleDesc[] =  {'s', 'c', 'a', 'l', 'e'};
-template<typename CharacterType> static constexpr CharacterType translateDesc[] =  {'t', 'r', 'a', 'n', 's', 'l', 'a', 't', 'e'};
-template<typename CharacterType> static constexpr CharacterType rotateDesc[] =  {'r', 'o', 't', 'a', 't', 'e'};
-template<typename CharacterType> static constexpr CharacterType matrixDesc[] =  {'m', 'a', 't', 'r', 'i', 'x'};
+template<typename CharacterType> static constexpr std::array<CharacterType, 5> skewXDesc  { 's', 'k', 'e', 'w', 'X' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 5> skewYDesc  { 's', 'k', 'e', 'w', 'Y' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 5> scaleDesc  { 's', 'c', 'a', 'l', 'e' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 9> translateDesc  { 't', 'r', 'a', 'n', 's', 'l', 'a', 't', 'e' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 6> rotateDesc  { 'r', 'o', 't', 'a', 't', 'e' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 6> matrixDesc  { 'm', 'a', 't', 'r', 'i', 'x' };
 
 template<typename CharacterType> static std::optional<SVGTransformValue::SVGTransformType> parseTransformTypeGeneric(StringParsingBuffer<CharacterType>& buffer)
 {
@@ -175,20 +175,20 @@ template<typename CharacterType> static std::optional<SVGTransformValue::SVGTran
         return std::nullopt;
 
     if (*buffer == 's') {
-        if (skipCharactersExactly(buffer, skewXDesc<CharacterType>))
+        if (skipCharactersExactly(buffer, std::span { skewXDesc<CharacterType> }))
             return SVGTransformValue::SVG_TRANSFORM_SKEWX;
-        if (skipCharactersExactly(buffer, skewYDesc<CharacterType>))
+        if (skipCharactersExactly(buffer, std::span { skewYDesc<CharacterType> }))
             return SVGTransformValue::SVG_TRANSFORM_SKEWY;
-        if (skipCharactersExactly(buffer, scaleDesc<CharacterType>))
+        if (skipCharactersExactly(buffer, std::span { scaleDesc<CharacterType> }))
             return SVGTransformValue::SVG_TRANSFORM_SCALE;
         return std::nullopt;
     }
 
-    if (skipCharactersExactly(buffer, translateDesc<CharacterType>))
+    if (skipCharactersExactly(buffer, std::span { translateDesc<CharacterType> }))
         return SVGTransformValue::SVG_TRANSFORM_TRANSLATE;
-    if (skipCharactersExactly(buffer, rotateDesc<CharacterType>))
+    if (skipCharactersExactly(buffer, std::span { rotateDesc<CharacterType> }))
         return SVGTransformValue::SVG_TRANSFORM_ROTATE;
-    if (skipCharactersExactly(buffer, matrixDesc<CharacterType>))
+    if (skipCharactersExactly(buffer, std::span { matrixDesc<CharacterType> }))
         return SVGTransformValue::SVG_TRANSFORM_MATRIX;
 
     return std::nullopt;

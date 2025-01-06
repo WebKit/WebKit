@@ -29,12 +29,15 @@
 #if PLATFORM(MAC)
 
 #import "GraphicsContext.h"
+#import "ImageBuffer.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "ProgressBarPart.h"
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProgressBarMac);
 
 ProgressBarMac::ProgressBarMac(ProgressBarPart& owningPart, ControlFactoryMac& controlFactory)
     : ControlMac(owningPart, controlFactory)
@@ -55,12 +58,12 @@ IntSize ProgressBarMac::cellSize(NSControlSize controlSize, const ControlStyle&)
 
 IntOutsets ProgressBarMac::cellOutsets(NSControlSize controlSize, const ControlStyle&) const
 {
-    static const IntOutsets cellOutsets[] = {
+    static const std::array cellOutsets {
         // top right bottom left
-        { 0, 0, 1, 0 },
-        { 0, 0, 1, 0 },
-        { 0, 0, 1, 0 },
-        { 0, 0, 1, 0 },
+        IntOutsets { 0, 0, 1, 0 },
+        IntOutsets { 0, 0, 1, 0 },
+        IntOutsets { 0, 0, 1, 0 },
+        IntOutsets { 0, 0, 1, 0 },
     };
     return cellOutsets[controlSize];
 }

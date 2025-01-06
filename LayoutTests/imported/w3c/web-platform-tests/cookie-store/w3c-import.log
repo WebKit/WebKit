@@ -48,7 +48,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_subscriptions_empty.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/encoding.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/httponly_cookies.https.window.js
-/LayoutTests/imported/w3c/web-platform-tests/cookie-store/idlharness.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/cookie-store/idlharness.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/serviceworker_cookieStore_cross_origin.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/serviceworker_cookieStore_cross_origin.js
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/serviceworker_cookieStore_subscriptions_reset.https.html

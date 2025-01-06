@@ -853,21 +853,21 @@ static const yytype_int16 yyrline[] = {
     454,  458,  465,  466,  469,  472,  475,  481,  482,  485,  491,  492,  499,  500,  507,  508,
     515,  516,  522,  523,  529,  530,  536,  537,  543,  544,  550,  551,  552,  553,  557,  558,
     559,  563,  567,  571,  575,  582,  585,  591,  598,  605,  608,  611,  615,  619,  623,  627,
-    631,  638,  645,  648,  655,  668,  691,  701,  704,  710,  714,  718,  722,  729,  736,  739,
-    743,  747,  752,  759,  763,  767,  771,  776,  783,  787,  793,  796,  799,  809,  813,  820,
-    826,  832,  836,  840,  843,  846,  850,  858,  863,  867,  870,  873,  876,  879,  883,  891,
-    894,  898,  901,  904,  907,  910,  913,  917,  924,  931,  934,  937,  943,  950,  953,  959,
-    962,  965,  968,  974,  977,  984,  989,  996,  1004, 1018, 1021, 1024, 1027, 1030, 1033, 1037,
-    1041, 1045, 1049, 1053, 1057, 1061, 1065, 1069, 1073, 1077, 1081, 1085, 1089, 1093, 1097, 1101,
-    1105, 1109, 1113, 1117, 1124, 1127, 1130, 1133, 1136, 1139, 1142, 1150, 1158, 1168, 1171, 1174,
-    1177, 1180, 1183, 1186, 1194, 1202, 1212, 1215, 1218, 1221, 1224, 1227, 1230, 1238, 1246, 1256,
-    1259, 1262, 1265, 1273, 1281, 1288, 1298, 1305, 1312, 1315, 1318, 1321, 1324, 1327, 1330, 1333,
-    1336, 1339, 1342, 1345, 1348, 1356, 1364, 1372, 1380, 1388, 1396, 1406, 1416, 1426, 1429, 1436,
-    1443, 1450, 1453, 1461, 1461, 1464, 1464, 1470, 1473, 1479, 1482, 1489, 1493, 1499, 1502, 1508,
-    1512, 1516, 1517, 1523, 1524, 1525, 1526, 1527, 1528, 1529, 1533, 1537, 1537, 1537, 1544, 1545,
-    1549, 1549, 1550, 1550, 1555, 1559, 1566, 1570, 1577, 1578, 1582, 1588, 1592, 1601, 1601, 1608,
-    1611, 1617, 1621, 1627, 1627, 1632, 1632, 1636, 1636, 1644, 1647, 1653, 1656, 1662, 1666, 1673,
-    1676, 1679, 1682, 1685, 1693, 1699, 1705, 1708, 1714, 1714};
+    631,  638,  645,  648,  655,  668,  691,  701,  704,  710,  714,  718,  722,  729,  735,  738,
+    742,  746,  751,  758,  762,  766,  770,  775,  782,  786,  792,  795,  798,  808,  812,  819,
+    825,  831,  835,  839,  842,  845,  849,  857,  862,  866,  869,  872,  875,  878,  882,  892,
+    895,  899,  902,  905,  908,  911,  914,  918,  925,  932,  935,  938,  944,  951,  954,  960,
+    963,  966,  969,  975,  978,  985,  990,  997,  1005, 1019, 1022, 1025, 1028, 1031, 1034, 1038,
+    1042, 1046, 1050, 1054, 1058, 1062, 1066, 1070, 1074, 1078, 1082, 1086, 1090, 1094, 1098, 1102,
+    1106, 1110, 1114, 1118, 1125, 1128, 1131, 1134, 1137, 1140, 1143, 1151, 1159, 1169, 1172, 1175,
+    1178, 1181, 1184, 1187, 1195, 1203, 1213, 1216, 1219, 1222, 1225, 1228, 1231, 1239, 1247, 1257,
+    1260, 1263, 1266, 1274, 1282, 1289, 1299, 1306, 1313, 1316, 1319, 1322, 1325, 1328, 1331, 1334,
+    1337, 1340, 1343, 1346, 1349, 1357, 1365, 1373, 1381, 1389, 1397, 1407, 1417, 1427, 1430, 1437,
+    1444, 1451, 1454, 1464, 1464, 1467, 1467, 1473, 1476, 1482, 1485, 1492, 1496, 1502, 1505, 1511,
+    1515, 1519, 1520, 1526, 1527, 1528, 1529, 1530, 1531, 1532, 1536, 1540, 1540, 1540, 1547, 1548,
+    1552, 1552, 1553, 1553, 1558, 1562, 1569, 1573, 1580, 1581, 1588, 1594, 1598, 1607, 1607, 1614,
+    1617, 1623, 1627, 1633, 1633, 1638, 1638, 1642, 1642, 1650, 1653, 1659, 1662, 1668, 1672, 1679,
+    1682, 1685, 1688, 1691, 1699, 1705, 1711, 1714, 1720, 1720};
 #endif
 
 /** Accessing symbol of state STATE.  */
@@ -2968,7 +2968,7 @@ yyreduce:
         {
             // Add the parameter
             (yyval.interm.function) = (yyvsp[-1].interm.function);
-            if ((yyvsp[0].interm.param).type->getBasicType() != EbtVoid)
+            if ((yyvsp[0].interm.param).type.getBasicType() != EbtVoid)
             {
                 (yyvsp[-1].interm.function)
                     ->addParameter((yyvsp[0].interm.param).createVariable(&context->symbolTable));
@@ -2988,7 +2988,7 @@ yyreduce:
             (yyval.interm.function) = (yyvsp[-2].interm.function);
             // Only first parameter of one-parameter functions can be void
             // The check for named parameters not being void is done in parameter_declarator
-            if ((yyvsp[0].interm.param).type->getBasicType() == EbtVoid)
+            if ((yyvsp[0].interm.param).type.getBasicType() == EbtVoid)
             {
                 // This parameter > first is void
                 context->error((yylsp[-1]), "cannot be a parameter type except for '(void)'",
@@ -3029,45 +3029,46 @@ yyreduce:
         case 104: /* parameter_declarator: type_specifier identifier array_specifier  */
         {
             (yyval.interm.param) = context->parseParameterArrayDeclarator(
-                ImmutableString((yyvsp[-1].lex).string), (yylsp[-1]),
-                *((yyvsp[0].interm.arraySizes)), (yylsp[0]), &(yyvsp[-2].interm.type));
+                (yyvsp[-2].interm.type), ImmutableString((yyvsp[-1].lex).string), (yylsp[-1]),
+                (yyvsp[0].interm.arraySizes), (yylsp[0]));
         }
         break;
 
         case 105: /* parameter_declaration: type_qualifier parameter_declarator  */
         {
             (yyval.interm.param) = (yyvsp[0].interm.param);
-            context->checkIsParameterQualifierValid(
-                (yylsp[0]), *(yyvsp[-1].interm.typeQualifierBuilder), (yyvsp[0].interm.param).type);
+            context->parseParameterQualifier((yylsp[0]), *(yyvsp[-1].interm.typeQualifierBuilder),
+                                             (yyval.interm.param).type);
         }
         break;
 
         case 106: /* parameter_declaration: parameter_declarator  */
         {
             (yyval.interm.param) = (yyvsp[0].interm.param);
-            (yyval.interm.param).type->setQualifier(EvqParamIn);
+            (yyval.interm.param).type.setQualifier(EvqParamIn);
         }
         break;
 
         case 107: /* parameter_declaration: type_qualifier parameter_type_specifier  */
         {
-            (yyval.interm.param) = (yyvsp[0].interm.param);
-            context->checkIsParameterQualifierValid(
-                (yylsp[0]), *(yyvsp[-1].interm.typeQualifierBuilder), (yyvsp[0].interm.param).type);
+            (yyval.interm.param) = context->parseParameterDeclarator(
+                (yyvsp[0].interm.type), kEmptyImmutableString, (yylsp[0]));
+            context->parseParameterQualifier((yylsp[0]), *(yyvsp[-1].interm.typeQualifierBuilder),
+                                             (yyval.interm.param).type);
         }
         break;
 
         case 108: /* parameter_declaration: parameter_type_specifier  */
         {
-            (yyval.interm.param) = (yyvsp[0].interm.param);
-            (yyval.interm.param).type->setQualifier(EvqParamIn);
+            (yyval.interm.param) = context->parseParameterDeclarator(
+                (yyvsp[0].interm.type), kEmptyImmutableString, (yylsp[0]));
+            (yyval.interm.param).type.setQualifier(EvqParamIn);
         }
         break;
 
         case 109: /* parameter_type_specifier: type_specifier  */
         {
-            TParameter param     = {0, new TType((yyvsp[0].interm.type))};
-            (yyval.interm.param) = param;
+            (yyval.interm.type) = (yyvsp[0].interm.type);
         }
         break;
 
@@ -3319,8 +3320,10 @@ yyreduce:
 
         case 142: /* storage_qualifier: PATCH  */
         {
+            constexpr std::array<TExtension, 2u> extensions{
+                {TExtension::OES_tessellation_shader, TExtension::EXT_tessellation_shader}};
             if (context->getShaderVersion() < 320 &&
-                !context->checkCanUseExtension((yylsp[0]), TExtension::EXT_tessellation_shader))
+                !context->checkCanUseOneOfExtensions((yylsp[0]), extensions))
             {
                 context->error((yylsp[0]), "unsupported storage qualifier", "patch");
             }
@@ -4238,6 +4241,9 @@ yyreduce:
         {
             // This is for user defined type names. The lexical phase looked up the type.
             const TStructure *structure = static_cast<const TStructure *>((yyvsp[0].lex).symbol);
+            // Temporary check until VK and Metal backends support type name like
+            // gl_DepthRangeParameters.
+            context->checkIsNotReserved((yylsp[0]), ImmutableString((yyvsp[0].lex).string));
             (yyval.interm.typeSpecifierNonArray).initializeStruct(structure, false, (yylsp[0]));
         }
         break;
@@ -4494,6 +4500,7 @@ yyreduce:
 
         case 297: /* expression_statement: expression SEMICOLON  */
         {
+            context->checkIsValidExpressionStatement((yyloc), (yyvsp[-1].interm.intermTypedNode));
             (yyval.interm.intermNode) = (yyvsp[-1].interm.intermTypedNode);
         }
         break;
@@ -4522,7 +4529,7 @@ yyreduce:
 
         case 301: /* $@7: %empty  */
         {
-            context->incrSwitchNestingLevel();
+            context->incrSwitchNestingLevel((yylsp[-3]));
         }
         break;
 

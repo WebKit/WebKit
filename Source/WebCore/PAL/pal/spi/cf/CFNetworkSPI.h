@@ -98,6 +98,7 @@ OS_OBJECT_DECL(nw_endpoint);
 OS_OBJECT_DECL(nw_resolver);
 OS_OBJECT_DECL(nw_parameters);
 OS_OBJECT_DECL(nw_proxy_config);
+OS_OBJECT_DECL(nw_protocol_options);
 #else
 struct nw_array;
 typedef struct nw_array *nw_array_t;
@@ -113,6 +114,8 @@ struct nw_parameters;
 typedef struct nw_parameters *nw_parameters_t;
 struct nw_proxy_config;
 typedef struct nw_proxy_config *nw_proxy_config_t;
+struct nw_protocol_options;
+typedef struct nw_protocol_options *nw_protocol_options_t;
 #endif // OS_OBJECT_USE_OBJC
 
 #if HAVE(NW_PROXY_CONFIG) || HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
@@ -139,8 +142,10 @@ typedef enum {
 nw_resolver_t nw_resolver_create_with_endpoint(nw_endpoint_t, nw_parameters_t);
 typedef void (^nw_resolver_update_block_t) (nw_resolver_status_t, nw_array_t);
 bool nw_resolver_set_update_handler(nw_resolver_t, dispatch_queue_t, nw_resolver_update_block_t);
+bool nw_resolver_cancel(nw_resolver_t);
 void nw_context_set_privacy_level(nw_context_t, nw_context_privacy_level_t);
 void nw_parameters_set_context(nw_parameters_t, nw_context_t);
+
 nw_context_t nw_context_create(const char *);
 size_t nw_array_get_count(nw_array_t);
 nw_object_t nw_array_get_object_at_index(nw_array_t, size_t);
@@ -228,10 +233,16 @@ typedef enum {
 - (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
 - (CFHTTPCookieStorageRef)_cookieStorage;
 - (void)_saveCookies:(dispatch_block_t) completionHandler;
-#if HAVE(CFNETWORK_OVERRIDE_SESSION_COOKIE_ACCEPT_POLICY)
 @property (nonatomic, readwrite) BOOL _overrideSessionCookieAcceptPolicy;
-#endif
 @end
+
+typedef CF_ENUM(int, CFURLCredentialPersistence)
+{
+    kCFURLCredentialPersistenceNone = 1,
+    kCFURLCredentialPersistenceForSession = 2,
+    kCFURLCredentialPersistencePermanent = 3,
+    kCFURLCredentialPersistenceSynchronizable = 4
+};
 
 @interface NSURLCredentialStorage ()
 - (id)_initWithIdentifier:(NSString *)identifier private:(bool)isPrivate;
@@ -261,6 +272,9 @@ typedef enum {
 #endif
 #if HAVE(ALLOW_PRIVATE_ACCESS_TOKENS_FOR_THIRD_PARTY)
 @property (setter=_setAllowPrivateAccessTokensForThirdParty:) BOOL _allowPrivateAccessTokensForThirdParty;
+#endif
+#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+@property (setter=_setAllowOnlyPartitionedCookies:) BOOL _allowOnlyPartitionedCookies;
 #endif
 @end
 
@@ -356,9 +370,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @property (readwrite, assign) NSInteger _connectionCacheNumFastLanes;
 @property (readwrite, assign) NSInteger _connectionCacheMinimumFastLanePriority;
 #endif
-#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
 @property (nullable, copy) NSString *_attributedBundleIdentifier;
-#endif
 @end
 
 @interface NSURLSessionTask ()
@@ -385,6 +397,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @property (assign, readonly) NSInteger _responseHeaderBytesReceived;
 @property (assign, readonly) int64_t _responseBodyBytesReceived;
 @property (assign, readonly) int64_t _responseBodyBytesDecoded;
+@property (nullable, copy, readonly) NSString* _interfaceName;
 #if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
 @property (assign, readonly) nw_connection_privacy_stance_t _privacyStance;
 #endif
@@ -441,6 +454,17 @@ enum : NSUInteger {
 #endif // defined(__OBJC__)
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+enum URLCredentialType {
+    kURLCredentialInternetPassword = 0,
+    kURLCredentialServerTrust,
+    kURLCredentialKerberosTicket,
+    kURLCredentialClientCertificate,
+    kURLCredentialXMobileMeAuthToken,
+    kURLCredentialUnknown,
+    kURLCredentialOAuth2,
+    kURLCredentialOAuth1
+};
 
 WTF_EXTERN_C_BEGIN
 
@@ -581,6 +605,7 @@ WTF_EXTERN_C_END
 
 @interface NSMutableURLRequest (Staging_103362732)
 @property (setter=_setWebSearchContent:) BOOL _isWebSearchContent;
+@property (setter=_setAllowOnlyPartitionedCookies:) BOOL _allowOnlyPartitionedCookies;
 @end
 
 #if HAVE(ALTERNATIVE_SERVICE)
@@ -588,5 +613,9 @@ WTF_EXTERN_C_END
 @property BOOL canSuspendLocked;
 @end
 #endif
+
+@interface NSURLProtectionSpace (SPI)
+- (void)_setServerTrust:(SecTrustRef)serverTrust;
+@end
 
 #endif // defined(__OBJC__)

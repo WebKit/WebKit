@@ -48,15 +48,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class LoadListener;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::LoadListener> : std::true_type { };
-}
-
 namespace API {
 class Array;
 }
@@ -91,23 +82,14 @@ struct FrameTreeNodeData;
 struct ProvisionalFrameCreationParameters;
 struct WebsitePoliciesData;
 
-// Simple listener class used by plug-ins to know when frames finish or fail loading.
-class LoadListener : public CanMakeWeakPtr<LoadListener> {
-public:
-    virtual ~LoadListener() { }
-
-    virtual void didFinishLoad(WebFrame*) = 0;
-    virtual void didFailLoad(WebFrame*, bool wasCancelled) = 0;
-};
-
 class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public CanMakeWeakPtr<WebFrame> {
 public:
     static Ref<WebFrame> create(WebPage& page, WebCore::FrameIdentifier frameID) { return adoptRef(*new WebFrame(page, frameID)); }
     static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
-    static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, const String& frameName);
+    static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, const String& frameName, std::optional<WebCore::FrameIdentifier> openerFrameID);
     ~WebFrame();
 
-    void initWithCoreMainFrame(WebPage&, WebCore::Frame&, bool receivedMainFrameIdentifierFromUIProcess);
+    void initWithCoreMainFrame(WebPage&, WebCore::Frame&);
 
     // Called when the FrameLoaderClient (and therefore the WebCore::Frame) is being torn down.
     void invalidate();
@@ -130,9 +112,8 @@ public:
 
     FrameInfoData info() const;
     FrameTreeNodeData frameTreeData() const;
-    void getFrameInfo(CompletionHandler<void(FrameInfoData&&)>&&);
 
-    WebCore::FrameIdentifier frameID() const;
+    WebCore::FrameIdentifier frameID() const { return m_frameID; }
 
     enum class ForNavigationAction : bool { No, Yes };
     uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction);
@@ -142,7 +123,7 @@ public:
     void didFinishLoadInAnotherProcess();
     void removeFromTree();
 
-    void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { });
+    void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { }, WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No);
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     void addConsoleMessage(MessageSource, MessageLevel, const String&, uint64_t requestID = 0);
@@ -215,9 +196,6 @@ public:
 
     void setTextDirection(const String&);
     void updateRemoteFrameSize(WebCore::IntSize);
-
-    void setLoadListener(LoadListener* loadListener) { m_loadListener = loadListener; }
-    LoadListener* loadListener() const { return m_loadListener.get(); }
     
 #if PLATFORM(COCOA)
     typedef bool (*FrameFilterFunction)(WKBundleFrameRef, WKBundleFrameRef subframe, void* context);
@@ -245,7 +223,7 @@ public:
     Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() { return m_layerHostingContextIdentifier; }
 
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections() const;
-    OptionSet<WebCore::AdvancedPrivacyProtections> originatorAdvancedPrivacyProtections() const;
+    std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> originatorAdvancedPrivacyProtections() const;
 
     bool handleContextMenuEvent(const WebCore::PlatformMouseEvent&);
     WebCore::HandleUserInputEventResult handleMouseEvent(const WebMouseEvent&);
@@ -254,12 +232,18 @@ public:
     bool isFocused() const;
 
     String frameTextForTesting(bool);
+
+    void markAsRemovedInAnotherProcess() { m_wasRemovedInAnotherProcess = true; }
+    bool wasRemovedInAnotherProcess() const { return m_wasRemovedInAnotherProcess; }
+
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);
 
     void setLayerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier identifier) { m_layerHostingContextIdentifier = identifier; }
 
     inline WebCore::DocumentLoader* policySourceDocumentLoader() const;
+
+    RefPtr<WebCore::LocalFrame> localFrame();
 
     WeakPtr<WebCore::Frame> m_coreFrame;
     WeakPtr<WebPage> m_page;
@@ -273,9 +257,8 @@ private:
 
     std::optional<DownloadID> m_policyDownloadID;
 
-    WeakPtr<LoadListener> m_loadListener;
-
     const WebCore::FrameIdentifier m_frameID;
+    bool m_wasRemovedInAnotherProcess { false };
 
 #if PLATFORM(IOS_FAMILY)
     TransactionID m_firstLayerTreeTransactionIDAfterDidCommitLoad;

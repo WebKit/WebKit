@@ -35,9 +35,9 @@ class TestSignalProcessing(unittest.TestCase):
         signal_samples = signal.get_array_of_samples()
         noise_samples = noise.get_array_of_samples()
 
-        # Test target SNR -Inf (noise expected).
+        # Test target SNR -inf (noise expected).
         mix_neg_inf = signal_processing.SignalProcessingUtils.MixSignals(
-            signal, noise, -np.Inf)
+            signal, noise, -np.inf)
         self.assertTrue(len(noise), len(mix_neg_inf))  # Check duration.
         mix_neg_inf_samples = mix_neg_inf.get_array_of_samples()
         self.assertTrue(  # Check samples.
@@ -54,9 +54,9 @@ class TestSignalProcessing(unittest.TestCase):
         self.assertTrue(
             any([x != y for x, y in zip(noise_samples, mix_0_samples)]))
 
-        # Test target SNR +Inf (signal expected).
+        # Test target SNR +inf (signal expected).
         mix_pos_inf = signal_processing.SignalProcessingUtils.MixSignals(
-            signal, noise, np.Inf)
+            signal, noise, np.inf)
         self.assertTrue(len(signal), len(mix_pos_inf))  # Check duration.
         mix_pos_inf_samples = mix_pos_inf.get_array_of_samples()
         self.assertTrue(  # Check samples.

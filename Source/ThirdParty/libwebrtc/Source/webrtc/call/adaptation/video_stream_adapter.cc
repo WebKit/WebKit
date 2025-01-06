@@ -12,9 +12,9 @@
 
 #include <algorithm>
 #include <limits>
+#include <optional>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "absl/types/variant.h"
 #include "api/sequence_checker.h"
 #include "api/video/video_adaptation_counters.h"
@@ -38,7 +38,7 @@ int GetLowerFrameRateThan(int fps) {
   RTC_DCHECK(fps != std::numeric_limits<int>::max());
   return (fps * 2) / 3;
 }
-// TODO(hbos): Use absl::optional<> instead?
+// TODO(hbos): Use std::optional<> instead?
 int GetHigherFrameRateThan(int fps) {
   return fps != std::numeric_limits<int>::max()
              ? (fps * 3) / 2
@@ -118,16 +118,16 @@ VideoSourceRestrictions FilterRestrictionsByDegradationPreference(
     case DegradationPreference::BALANCED:
       break;
     case DegradationPreference::MAINTAIN_FRAMERATE:
-      source_restrictions.set_max_frame_rate(absl::nullopt);
+      source_restrictions.set_max_frame_rate(std::nullopt);
       break;
     case DegradationPreference::MAINTAIN_RESOLUTION:
-      source_restrictions.set_max_pixels_per_frame(absl::nullopt);
-      source_restrictions.set_target_pixels_per_frame(absl::nullopt);
+      source_restrictions.set_max_pixels_per_frame(std::nullopt);
+      source_restrictions.set_target_pixels_per_frame(std::nullopt);
       break;
     case DegradationPreference::DISABLED:
-      source_restrictions.set_max_pixels_per_frame(absl::nullopt);
-      source_restrictions.set_target_pixels_per_frame(absl::nullopt);
-      source_restrictions.set_max_frame_rate(absl::nullopt);
+      source_restrictions.set_max_pixels_per_frame(std::nullopt);
+      source_restrictions.set_target_pixels_per_frame(std::nullopt);
+      source_restrictions.set_max_frame_rate(std::nullopt);
   }
   return source_restrictions;
 }
@@ -145,7 +145,7 @@ int GetLowerResolutionThan(int pixel_count) {
   return (pixel_count * 3) / 5;
 }
 
-// TODO(hbos): Use absl::optional<> instead?
+// TODO(hbos): Use std::optional<> instead?
 int GetHigherResolutionThan(int pixel_count) {
   return pixel_count != std::numeric_limits<int>::max()
              ? (pixel_count * 5) / 3
@@ -211,7 +211,7 @@ VideoStreamAdapter::VideoStreamAdapter(
       balanced_settings_(field_trials),
       adaptation_validation_id_(0),
       degradation_preference_(DegradationPreference::DISABLED),
-      awaiting_frame_size_change_(absl::nullopt) {
+      awaiting_frame_size_change_(std::nullopt) {
   sequence_checker_.Detach();
   RTC_DCHECK(input_state_provider_);
   RTC_DCHECK(encoder_stats_observer_);
@@ -240,7 +240,7 @@ void VideoStreamAdapter::ClearRestrictions() {
   ++adaptation_validation_id_;
   current_restrictions_ = {VideoSourceRestrictions(),
                            VideoAdaptationCounters()};
-  awaiting_frame_size_change_ = absl::nullopt;
+  awaiting_frame_size_change_ = std::nullopt;
   BroadcastVideoRestrictionsUpdate(input_state_provider_->InputState(),
                                    nullptr);
 }
@@ -420,7 +420,7 @@ VideoStreamAdapter::AdaptIfFpsDiffInsufficient(
   RTC_DCHECK_EQ(degradation_preference_, DegradationPreference::BALANCED);
   int frame_size_pixels = input_state.single_active_stream_pixels().value_or(
       input_state.frame_size_pixels().value());
-  absl::optional<int> min_fps_diff =
+  std::optional<int> min_fps_diff =
       balanced_settings_.MinFpsDiff(frame_size_pixels);
   if (current_restrictions_.counters.fps_adaptations <
           restrictions.counters.fps_adaptations &&
@@ -492,9 +492,9 @@ VideoStreamAdapter::RestrictionsOrState VideoStreamAdapter::DecreaseResolution(
   RTC_LOG(LS_INFO) << "Scaling down resolution, max pixels: " << target_pixels;
   new_restrictions.restrictions.set_max_pixels_per_frame(
       target_pixels != std::numeric_limits<int>::max()
-          ? absl::optional<size_t>(target_pixels)
-          : absl::nullopt);
-  new_restrictions.restrictions.set_target_pixels_per_frame(absl::nullopt);
+          ? std::optional<size_t>(target_pixels)
+          : std::nullopt);
+  new_restrictions.restrictions.set_target_pixels_per_frame(std::nullopt);
   ++new_restrictions.counters.resolution_adaptations;
   return new_restrictions;
 }
@@ -523,8 +523,8 @@ VideoStreamAdapter::RestrictionsOrState VideoStreamAdapter::DecreaseFramerate(
   RTC_LOG(LS_INFO) << "Scaling down framerate: " << max_frame_rate;
   new_restrictions.restrictions.set_max_frame_rate(
       max_frame_rate != std::numeric_limits<int>::max()
-          ? absl::optional<double>(max_frame_rate)
-          : absl::nullopt);
+          ? std::optional<double>(max_frame_rate)
+          : std::nullopt);
   ++new_restrictions.counters.fps_adaptations;
   return new_restrictions;
 }
@@ -548,12 +548,12 @@ VideoStreamAdapter::RestrictionsOrState VideoStreamAdapter::IncreaseResolution(
                    << max_pixels_wanted;
   new_restrictions.restrictions.set_max_pixels_per_frame(
       max_pixels_wanted != std::numeric_limits<int>::max()
-          ? absl::optional<size_t>(max_pixels_wanted)
-          : absl::nullopt);
+          ? std::optional<size_t>(max_pixels_wanted)
+          : std::nullopt);
   new_restrictions.restrictions.set_target_pixels_per_frame(
       max_pixels_wanted != std::numeric_limits<int>::max()
-          ? absl::optional<size_t>(target_pixels)
-          : absl::nullopt);
+          ? std::optional<size_t>(target_pixels)
+          : std::nullopt);
   --new_restrictions.counters.resolution_adaptations;
   RTC_DCHECK_GE(new_restrictions.counters.resolution_adaptations, 0);
   return new_restrictions;
@@ -601,8 +601,8 @@ VideoStreamAdapter::RestrictionsOrState VideoStreamAdapter::IncreaseFramerate(
   RestrictionsWithCounters new_restrictions = current_restrictions;
   new_restrictions.restrictions.set_max_frame_rate(
       max_frame_rate != std::numeric_limits<int>::max()
-          ? absl::optional<double>(max_frame_rate)
-          : absl::nullopt);
+          ? std::optional<double>(max_frame_rate)
+          : std::nullopt);
   --new_restrictions.counters.fps_adaptations;
   RTC_DCHECK_GE(new_restrictions.counters.fps_adaptations, 0);
   return new_restrictions;
@@ -669,7 +669,7 @@ void VideoStreamAdapter::ApplyAdaptation(
     awaiting_frame_size_change_.emplace(
         false, adaptation.input_state().frame_size_pixels().value());
   } else {
-    awaiting_frame_size_change_ = absl::nullopt;
+    awaiting_frame_size_change_ = std::nullopt;
   }
   current_restrictions_ = {adaptation.restrictions(), adaptation.counters()};
   BroadcastVideoRestrictionsUpdate(adaptation.input_state(), resource);
@@ -686,7 +686,7 @@ Adaptation VideoStreamAdapter::GetAdaptationTo(
 }
 
 void VideoStreamAdapter::BroadcastVideoRestrictionsUpdate(
-    const VideoStreamInputState& input_state,
+    const VideoStreamInputState& /* input_state */,
     const rtc::scoped_refptr<Resource>& resource) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   VideoSourceRestrictions filtered = FilterRestrictionsByDegradationPreference(
@@ -717,10 +717,10 @@ VideoStreamAdapter::AwaitingFrameSizeChange::AwaitingFrameSizeChange(
     : pixels_increased(pixels_increased),
       frame_size_pixels(frame_size_pixels) {}
 
-absl::optional<uint32_t> VideoStreamAdapter::GetSingleActiveLayerPixels(
+std::optional<uint32_t> VideoStreamAdapter::GetSingleActiveLayerPixels(
     const VideoCodec& codec) {
   int num_active = 0;
-  absl::optional<uint32_t> pixels;
+  std::optional<uint32_t> pixels;
   if (codec.codecType == VideoCodecType::kVideoCodecAV1 &&
       codec.GetScalabilityMode().has_value()) {
     for (int i = 0;
@@ -747,7 +747,7 @@ absl::optional<uint32_t> VideoStreamAdapter::GetSingleActiveLayerPixels(
       }
     }
   }
-  return (num_active > 1) ? absl::nullopt : pixels;
+  return (num_active > 1) ? std::nullopt : pixels;
 }
 
 }  // namespace webrtc

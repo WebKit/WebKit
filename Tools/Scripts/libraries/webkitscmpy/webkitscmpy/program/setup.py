@@ -81,13 +81,10 @@ class Setup(Command):
     def fetch(cls, repository):
         from webkitscmpy.mocks.local import Git as MockGit
 
-        kwargs = dict()
-        if sys.version_info >= (3, 6):
-            kwargs = dict(encoding='utf-8')
         remote_cmd = run(
             [repository.executable(), 'remote'],
             capture_output=True, cwd=repository.root_path,
-            **kwargs
+            encoding='utf-8',
         )
         if remote_cmd.returncode:
             sys.stderr.write('Failed to list remotes in repository\n')
@@ -185,13 +182,12 @@ class Setup(Command):
                 log.info("User already owns a fork of '{}'!".format(parent_name))
                 return result
 
-        if repository.owner == username or args.defaults or Terminal.choose(
-            "Create a private fork of '{}/{}' named '{}' belonging to '{}'".format(
-                repository.owner, repository.name, forked_name, username
-            ), default='Yes',
-        ) == 'No':
+        if repository.owner == username or args.defaults:
             log.info("Continuing without forking '{}/{}'".format(repository.owner, repository.name))
             return 1
+        print("Create a private fork of '{}/{}' named '{}' belonging to '{}'".format(repository.owner, repository.name, forked_name, username))
+        print('For detailed information about forking, please see: https://github.com/WebKit/WebKit/wiki/Git-Config#forking')
+        input('Press Enter to continue (Ctrl+C to exit)')
 
         data = dict(
             owner=username,

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 
+#include "CSSColorValue.h"
 #include "CSSCounterValue.h"
 #include "CSSRectValue.h"
 #include "DeprecatedCSSOMCounter.h"
@@ -40,6 +41,8 @@ unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
         return CSS_COUNTER;
     if (m_value->isRect())
         return CSS_RECT;
+    if (m_value->isColor())
+        return CSS_RGBCOLOR;
 
     auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(m_value.get());
     if (!primitiveValue)
@@ -69,7 +72,6 @@ unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
     case CSSUnitType::CSS_PT:                           return CSS_PT;
     case CSSUnitType::CSS_PX:                           return CSS_PX;
     case CSSUnitType::CSS_RAD:                          return CSS_RAD;
-    case CSSUnitType::CSS_RGBCOLOR:                     return CSS_RGBCOLOR;
     case CSSUnitType::CSS_S:                            return CSS_S;
     case CSSUnitType::CSS_STRING:                       return CSS_STRING;
     case CSSUnitType::CSS_URI:                          return CSS_URI;
@@ -109,7 +111,7 @@ ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short u
     auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(m_value.get());
     if (!numericType || !primitiveValue)
         return Exception { ExceptionCode::InvalidAccessError };
-    return primitiveValue->getFloatValue(*numericType);
+    return primitiveValue->getFloatValueDeprecated(*numericType);
 }
 
 ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const
@@ -143,7 +145,7 @@ ExceptionOr<Ref<DeprecatedCSSOMRGBColor>> DeprecatedCSSOMPrimitiveValue::getRGBC
 {
     if (primitiveType() != CSS_RGBCOLOR)
         return Exception { ExceptionCode::InvalidAccessError };
-    return DeprecatedCSSOMRGBColor::create(m_owner, downcast<CSSPrimitiveValue>(m_value.get()).color());
+    return DeprecatedCSSOMRGBColor::create(m_owner, downcast<CSSColorValue>(m_value.get()).color().absoluteColor());
 }
 
 }

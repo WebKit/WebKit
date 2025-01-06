@@ -26,8 +26,6 @@
 #include "config.h"
 #include "GCAwareJITStubRoutine.h"
 
-#if ENABLE(JIT)
-
 #include "AccessCase.h"
 #include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
@@ -49,9 +47,9 @@ GCAwareJITStubRoutine::GCAwareJITStubRoutine(Type type, const MacroAssemblerCode
 
 void GCAwareJITStubRoutine::makeGCAware(VM& vm, bool isCodeImmutable)
 {
+    m_isCodeImmutable = isCodeImmutable;
     vm.heap.m_jitStubRoutines->add(this);
     m_isGCAware = true;
-    m_isCodeImmutable = isCodeImmutable;
 }
 
 void GCAwareJITStubRoutine::observeZeroRefCountImpl()
@@ -90,6 +88,7 @@ bool GCAwareJITStubRoutine::removeDeadOwners(VM& vm)
     if (m_owner)
         return !vm.heap.isMarked(m_owner);
 
+#if ENABLE(JIT)
     if (m_isInSharedJITStubSet) {
         auto& owners = static_cast<PolymorphicAccessJITStubRoutine*>(this)->m_owners;
         owners.removeAllIf([&](auto pair) {
@@ -102,9 +101,12 @@ bool GCAwareJITStubRoutine::removeDeadOwners(VM& vm)
         }
         return false;
     }
+#endif
 
     return false;
 }
+
+#if ENABLE(JIT)
 
 PolymorphicAccessJITStubRoutine::PolymorphicAccessJITStubRoutine(Type type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, FixedVector<Ref<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, JSCell* owner)
     : GCAwareJITStubRoutine(type, code, owner)
@@ -141,6 +143,9 @@ void PolymorphicAccessJITStubRoutine::invalidate()
 
 unsigned PolymorphicAccessJITStubRoutine::computeHash(std::span<const Ref<AccessCase>> cases)
 {
+    if (cases.size() == 1)
+        return cases.front()->hash();
+
     Hasher hasher;
     for (auto& key : cases)
         WTF::add(hasher, key->hash());
@@ -214,7 +219,7 @@ GCAwareJITStubRoutineWithExceptionHandler::~GCAwareJITStubRoutineWithExceptionHa
     // We delay deallocation of m_exceptionHandlerCallSiteIndex until GCAwareJITStubRoutineWithExceptionHandler gets destroyed.
     // This means that CallSiteIndex can be reserved correctly so long as the code owned by GCAwareJITStubRoutineWithExceptionHandler is on the stack.
     // This is important since CallSite can be queried so long as this code is on the stack: StackVisitor can retreive CallSiteIndex from the stack.
-    ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+    ASSERT((!isCompilationThread() && !Thread::mayBeGCThread()) || vm().heap.isInPhase(CollectorPhase::End));
     if (m_codeOriginPool)
         m_codeOriginPool->removeDisposableCallSiteIndex(m_exceptionHandlerCallSiteIndex);
 #endif
@@ -291,7 +296,6 @@ Ref<PolymorphicAccessJITStubRoutine> createPreCompiledICJITStubRoutine(const Mac
     return adoptRef(*new PolymorphicAccessJITStubRoutine(JITStubRoutine::Type::PolymorphicAccessJITStubRoutineType, code, vm, { }, { }, nullptr));
 }
 
-} // namespace JSC
-
 #endif // ENABLE(JIT)
 
+} // namespace JSC

@@ -31,6 +31,8 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/UniqueRef.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 /*
@@ -677,7 +679,7 @@ MallocPtr<ExpressionInfo> ExpressionInfo::Encoder::createExpressionInfo()
     size_t numberOfChapters = m_expressionInfoChapters.size();
     size_t numberOfEncodedInfo = m_expressionInfoEncodedInfo.size() - m_numberOfEncodedInfoExtensions;
     size_t totalSize = ExpressionInfo::totalSizeInBytes(numberOfChapters, numberOfEncodedInfo, m_numberOfEncodedInfoExtensions);
-    auto info = MallocPtr<ExpressionInfo, VMMalloc>::malloc(totalSize);
+    auto info = MallocPtr<ExpressionInfo>::malloc(totalSize);
     new (info.get()) ExpressionInfo(WTFMove(m_expressionInfoChapters), WTFMove(m_expressionInfoEncodedInfo), m_numberOfEncodedInfoExtensions);
     return info;
 }
@@ -888,7 +890,7 @@ IterationStatus ExpressionInfo::Decoder::decode(std::optional<ExpressionInfo::In
 MallocPtr<ExpressionInfo> ExpressionInfo::createUninitialized(unsigned numberOfChapters, unsigned numberOfEncodedInfo, unsigned numberOfEncodedInfoExtensions)
 {
     size_t totalSize = ExpressionInfo::totalSizeInBytes(numberOfChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions);
-    auto info = MallocPtr<ExpressionInfo, VMMalloc>::malloc(totalSize);
+    auto info = MallocPtr<ExpressionInfo>::malloc(totalSize);
     new (info.get()) ExpressionInfo(numberOfChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions);
     return info;
 }
@@ -1060,22 +1062,4 @@ void ExpressionInfo::dumpEncodedInfo(ExpressionInfo::EncodedInfo* start, Express
 
 } // namespace JSC
 
-namespace WTF {
-
-void printInternal(PrintStream& out, JSC::ExpressionInfo::FieldID fieldID)
-{
-    auto name = [] (auto fieldID) {
-        switch (fieldID) {
-        case JSC::ExpressionInfo::FieldID::InstPC: return "Inst";
-        case JSC::ExpressionInfo::FieldID::Divot: return "Divot";
-        case JSC::ExpressionInfo::FieldID::Start: return "Start";
-        case JSC::ExpressionInfo::FieldID::End: return "End";
-        case JSC::ExpressionInfo::FieldID::Line: return "Line";
-        case JSC::ExpressionInfo::FieldID::Column: return "Column";
-        }
-        return ""; // placate GCC.
-    };
-    out.print(name(fieldID));
-}
-
-} // namespace WTF
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

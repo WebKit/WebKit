@@ -39,7 +39,7 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 
 class StaticRange final : public AbstractRange, public SimpleRange {
-    WTF_MAKE_ISO_ALLOCATED(StaticRange);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StaticRange);
 public:
     struct Init {
         RefPtr<Node> startContainer;

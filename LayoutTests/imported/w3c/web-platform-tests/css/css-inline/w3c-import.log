@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/empty-text-node-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/empty-text-node-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/empty-text-node-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/firefox-bug-1901624-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/float-becomes-inflow-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/inline-002-crash.html

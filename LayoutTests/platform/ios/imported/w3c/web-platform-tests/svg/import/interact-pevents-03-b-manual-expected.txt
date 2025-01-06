@@ -14,9 +14,9 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (195,93) size 410x72
               RenderSVGText {text} at (117,66) size 246x43 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 245x43
-                  chunk 1 (middle anchor) text run 1 at (117.61,100.00) startOffset 0 endOffset 1 width 27.93: "@"
-                  chunk 1 (middle anchor) text run 2 at (155.54,100.00) startOffset 1 endOffset 2 width 15.00: " "
-                  chunk 1 (middle anchor) text run 3 at (180.54,100.00) startOffset 2 endOffset 3 width 21.93: "A"
+                  chunk 1 (middle anchor) text run 1 at (117.60,100.00) startOffset 0 endOffset 1 width 27.93: "@"
+                  chunk 1 (middle anchor) text run 2 at (155.53,100.00) startOffset 1 endOffset 2 width 15.00: " "
+                  chunk 1 (middle anchor) text run 3 at (180.53,100.00) startOffset 2 endOffset 3 width 21.93: "A"
                   chunk 1 (middle anchor) text run 4 at (212.46,100.00) startOffset 3 endOffset 4 width 15.00: " "
                   chunk 1 (middle anchor) text run 5 at (237.46,100.00) startOffset 4 endOffset 5 width 15.60: "y"
                   chunk 1 (middle anchor) text run 6 at (263.07,100.00) startOffset 5 endOffset 6 width 15.00: " "
@@ -26,9 +26,9 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (195,176) size 410x73 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
               RenderSVGText {text} at (117,66) size 246x43 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 245x43
-                  chunk 1 (middle anchor) text run 1 at (117.61,100.00) startOffset 0 endOffset 1 width 27.93: "@"
-                  chunk 1 (middle anchor) text run 2 at (155.54,100.00) startOffset 1 endOffset 2 width 15.00: " "
-                  chunk 1 (middle anchor) text run 3 at (180.54,100.00) startOffset 2 endOffset 3 width 21.93: "A"
+                  chunk 1 (middle anchor) text run 1 at (117.60,100.00) startOffset 0 endOffset 1 width 27.93: "@"
+                  chunk 1 (middle anchor) text run 2 at (155.53,100.00) startOffset 1 endOffset 2 width 15.00: " "
+                  chunk 1 (middle anchor) text run 3 at (180.53,100.00) startOffset 2 endOffset 3 width 21.93: "A"
                   chunk 1 (middle anchor) text run 4 at (212.46,100.00) startOffset 3 endOffset 4 width 15.00: " "
                   chunk 1 (middle anchor) text run 5 at (237.46,100.00) startOffset 4 endOffset 5 width 15.60: "y"
                   chunk 1 (middle anchor) text run 6 at (263.07,100.00) startOffset 5 endOffset 6 width 15.00: " "
@@ -38,8 +38,8 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (212,260) size 376x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
               RenderSVGText {text} at (127,66) size 226x43 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 225x43
-                  chunk 1 (middle anchor) text run 1 at (127.61,100.00) startOffset 0 endOffset 1 width 27.93: "@"
-                  chunk 1 (middle anchor) text run 2 at (185.54,100.00) startOffset 1 endOffset 2 width 21.93: "A"
+                  chunk 1 (middle anchor) text run 1 at (127.60,100.00) startOffset 0 endOffset 1 width 27.93: "@"
+                  chunk 1 (middle anchor) text run 2 at (185.53,100.00) startOffset 1 endOffset 2 width 21.93: "A"
                   chunk 1 (middle anchor) text run 3 at (237.46,100.00) startOffset 2 endOffset 3 width 15.60: "y"
                   chunk 1 (middle anchor) text run 4 at (283.07,100.00) startOffset 3 endOffset 4 width 23.94: "\x{D6}"
                   chunk 1 (middle anchor) text run 5 at (337.01,100.00) startOffset 4 endOffset 5 width 15.39: "\x{E7}"

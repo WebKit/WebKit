@@ -7,9 +7,11 @@ For test purposes, environment variables can be set to control libyuv behavior. 
 By default the cpu is detected and the most advanced form of SIMD is used.  But you can disable instruction sets selectively, or completely, falling back on C code.  Set the variable to 1 to disable the specified instruction set.
 
 ## All CPUs
+
     LIBYUV_DISABLE_ASM
 
 ## Intel CPUs
+
     LIBYUV_DISABLE_X86
     LIBYUV_DISABLE_SSE2
     LIBYUV_DISABLE_SSSE3
@@ -26,21 +28,31 @@ By default the cpu is detected and the most advanced form of SIMD is used.  But 
     LIBYUV_DISABLE_AVX512VBMI
     LIBYUV_DISABLE_AVX512VBMI2
     LIBYUV_DISABLE_AVX512VBITALG
-    LIBYUV_DISABLE_AVX512VPOPCNTDQ
-    LIBYUV_DISABLE_GFNI
+    LIBYUV_DISABLE_AVX10
+    LIBYUV_DISABLE_AVXVNNI
+    LIBYUV_DISABLE_AVXVNNIINT8
+    LIBYUV_DISABLE_AMXINT8
 
-## ARM CPUs
+## Arm CPUs
 
     LIBYUV_DISABLE_NEON
+    LIBYUV_DISABLE_NEON_DOTPROD
+    LIBYUV_DISABLE_NEON_I8MM
+    LIBYUV_DISABLE_SVE
+    LIBYUV_DISABLE_SVE2
+    LIBYUV_DISABLE_SME
 
 ## MIPS CPUs
+
     LIBYUV_DISABLE_MSA
 
 ## LOONGARCH CPUs
+
     LIBYUV_DISABLE_LSX
     LIBYUV_DISABLE_LASX
 
 ## RISCV CPUs
+
     LIBYUV_DISABLE_RVV
 
 # Test Width/Height/Repeat

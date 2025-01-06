@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder WebM audio bitrate</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="MediaRecorder-audio-bitrate.js"></script>
+</head>
+<body>
+<script>
+    promise_test(async (t) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+        const bitRates = [128000, 256000];
+        let promises = [];
+        bitRates.forEach(bitRate => {
+            promises.push(record(stream, bitRate, 'audio/webm'));
+        });
+
+        let blobs = new Array(bitRates.length).fill(0);
+        promises.forEach(async (promise, index) => {
+            blobs[index] = await promise;
+        });
+        await Promise.all(promises);
+
+        let counter = 0;
+        blobs.forEach(blob => {
+            assert_not_equals(blob.size, 0, "bitrate " + bitRates[counter++]);
+            assert_true(blob.type.startsWith("audio/webm"));
+        });
+        assert_greater_than(blobs[1].size, blobs[0].size);
+    }, "Various audio bitrates with WebM");
+</script>
+</body>
+</html>

@@ -42,7 +42,7 @@ inline bool operator!=(const ReceiveTimeInfo& lhs, const ReceiveTimeInfo& rhs) {
 // DLRR Report Block: Delay since the Last Receiver Report (RFC 3611).
 class Dlrr {
  public:
-  static const uint8_t kBlockType = 5;
+  static constexpr uint8_t kBlockType = 5;
 
   Dlrr();
   Dlrr(const Dlrr& other);
@@ -70,8 +70,8 @@ class Dlrr {
   const std::vector<ReceiveTimeInfo>& sub_blocks() const { return sub_blocks_; }
 
  private:
-  static const size_t kBlockHeaderLength = 4;
-  static const size_t kSubBlockLength = 12;
+  static constexpr size_t kBlockHeaderLength = 4;
+  static constexpr size_t kSubBlockLength = 12;
 
   std::vector<ReceiveTimeInfo> sub_blocks_;
 };

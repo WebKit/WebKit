@@ -1,5 +1,5 @@
 
 
-PASS Setup activating worker
+PASS Setup activated but not running worker
 PASS Service worker load does not use preload when using an updated fetch request
 

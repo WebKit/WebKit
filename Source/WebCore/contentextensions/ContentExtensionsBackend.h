@@ -27,9 +27,11 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "CompiledContentExtension.h"
 #include "ContentExtension.h"
 #include "ContentExtensionRule.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,7 +44,6 @@ struct ContentRuleListResults;
 
 namespace ContentExtensions {
 
-class CompiledContentExtension;
 struct ResourceLoadInfo;
 
 // The ContentExtensionsBackend is the internal model of all the content extensions.
@@ -51,7 +52,7 @@ struct ResourceLoadInfo;
 // 1) It stores the rules for each content extension.
 // 2) It provides APIs for the WebCore interfaces to use those rules efficiently.
 class ContentExtensionsBackend {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ContentExtensionsBackend, WEBCORE_EXPORT);
 public:
     // - Rule management interface. This can be used by upper layer.
 
@@ -75,6 +76,7 @@ public:
 
     ContentRuleListResults processContentRuleListsForLoad(Page&, const URL&, OptionSet<ResourceType>, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom, const RuleListFilter&);
     WEBCORE_EXPORT ContentRuleListResults processContentRuleListsForPingLoad(const URL&, const URL& mainDocumentURL, const URL& frameURL);
+    bool processContentRuleListsForResourceMonitoring(const URL&, const URL& mainDocumentURL, const URL& frameURL, OptionSet<ResourceType>);
 
     static const String& displayNoneCSSRule();
 
@@ -85,7 +87,7 @@ public:
 private:
     ActionsFromContentRuleList actionsFromContentRuleList(const ContentExtension&, const String& urlString, const ResourceLoadInfo&, ResourceFlags) const;
 
-    HashMap<String, Ref<ContentExtension>> m_contentExtensions;
+    UncheckedKeyHashMap<String, Ref<ContentExtension>> m_contentExtensions;
 };
 
 WEBCORE_EXPORT void applyResultsToRequest(ContentRuleListResults&&, Page*, ResourceRequest&);

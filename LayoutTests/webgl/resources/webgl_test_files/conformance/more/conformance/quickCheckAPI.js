@@ -220,7 +220,7 @@ texParameterParam[GL.TEXTURE_WRAP_T] = texParameterParam[GL.TEXTURE_WRAP_S];
 textureUnit = constCheck.apply(this, (function(){
   var textureUnits = [];
   var texUnits = GL.getParameter(GL.MAX_TEXTURE_IMAGE_UNITS);
-  for (var i=0; i<texUnits; i++) textureUnits.push(GL['TEXTURE'+i]);
+  for (var i=0; i<texUnits; i++) textureUnits.push(GL.TEXTURE0+i);
   return textureUnits;
 })());
 

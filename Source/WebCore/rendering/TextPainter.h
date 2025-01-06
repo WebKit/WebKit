@@ -55,21 +55,20 @@ public:
     void setStyle(const TextPaintStyle& textPaintStyle) { m_style = textPaintStyle; }
     void setShadow(const ShadowData* shadow) { m_shadow = shadow; }
     void setShadowColorFilter(const FilterOperations* colorFilter) { m_shadowColorFilter = colorFilter; }
-    void setIsHorizontal(bool isHorizontal) { m_textBoxIsHorizontal = isHorizontal; }
     void setEmphasisMark(const AtomString& mark, float offset, const RenderCombineText*);
 
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
 
     template<typename LayoutRun>
-    void setGlyphDisplayListIfNeeded(const LayoutRun& run, const PaintInfo& paintInfo, const TextRun& textRun)
+    void setGlyphDisplayListIfNeeded(const LayoutRun& run, const PaintInfo& paintInfo, const RenderStyle& style, const TextRun& textRun)
     {
-        if (!TextPainter::shouldUseGlyphDisplayList(paintInfo))
+        if (!TextPainter::shouldUseGlyphDisplayList(paintInfo, style))
             const_cast<LayoutRun&>(run).removeFromGlyphDisplayListCache();
         else
             m_glyphDisplayList = GlyphDisplayListCache::singleton().get(run, m_font, m_context, textRun, paintInfo);
     }
 
-    static bool shouldUseGlyphDisplayList(const PaintInfo&);
+    static bool shouldUseGlyphDisplayList(const PaintInfo&, const RenderStyle&);
     WEBCORE_EXPORT static void setForceUseGlyphDisplayListForTesting(bool);
     WEBCORE_EXPORT static String cachedGlyphDisplayListsForTextNodeAsText(Text&, OptionSet<DisplayList::AsTextFlag>);
     WEBCORE_EXPORT static void clearGlyphDisplayListCacheForTesting();
@@ -98,7 +97,7 @@ private:
     const RenderCombineText* m_combinedText { nullptr };
     DisplayList::DisplayList* m_glyphDisplayList { nullptr };
     float m_emphasisMarkOffset { 0 };
-    bool m_textBoxIsHorizontal { true };
+    WritingMode m_writingMode;
 };
 
 inline void TextPainter::setEmphasisMark(const AtomString& mark, float offset, const RenderCombineText* combinedText)
@@ -110,7 +109,7 @@ inline void TextPainter::setEmphasisMark(const AtomString& mark, float offset, c
 
 class ShadowApplier {
 public:
-    ShadowApplier(const RenderStyle&, GraphicsContext&, const ShadowData*, const FilterOperations* colorFilter, const FloatRect& textRect, bool lastShadowIterationShouldDrawText = true, bool opaque = false, FontOrientation = FontOrientation::Horizontal);
+    ShadowApplier(const RenderStyle&, GraphicsContext&, const ShadowData*, const FilterOperations* colorFilter, const FloatRect& textRect, bool lastShadowIterationShouldDrawText = true, bool opaque = false, bool ignoreWritingMode = false);
     FloatSize extraOffset() const { return m_extraOffset; }
     bool nothingToDraw() const { return m_nothingToDraw; }
     bool didSaveContext() const { return m_didSaveContext; }

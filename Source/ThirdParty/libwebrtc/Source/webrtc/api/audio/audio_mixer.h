@@ -21,7 +21,7 @@ namespace webrtc {
 // WORK IN PROGRESS
 // This class is under development and is not yet intended for for use outside
 // of WebRtc/Libjingle.
-class AudioMixer : public rtc::RefCountInterface {
+class AudioMixer : public RefCountInterface {
  public:
   // A callback class that all mixer participants must inherit from/implement.
   class Source {

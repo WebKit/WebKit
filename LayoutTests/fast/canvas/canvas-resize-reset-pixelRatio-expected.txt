@@ -1,2 +1,0 @@
-High-DPI canvas is not enabled.
-

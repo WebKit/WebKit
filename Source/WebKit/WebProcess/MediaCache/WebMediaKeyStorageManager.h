@@ -27,6 +27,7 @@
 
 #include "WebProcessSupplement.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,7 +40,7 @@ namespace WebKit {
 class WebProcess;
 
 class WebMediaKeyStorageManager : public WebProcessSupplement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebMediaKeyStorageManager);
     WTF_MAKE_NONCOPYABLE(WebMediaKeyStorageManager);
 public:
     explicit WebMediaKeyStorageManager(WebProcess&) { }

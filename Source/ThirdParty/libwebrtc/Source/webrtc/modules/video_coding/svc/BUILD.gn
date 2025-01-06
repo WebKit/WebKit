@@ -17,10 +17,8 @@ rtc_source_set("scalability_mode_util") {
     "../../../api/video_codecs:scalability_mode",
     "../../../api/video_codecs:video_codecs_api",
     "../../../rtc_base:checks",
-  ]
-  absl_deps = [
-    "//third_party/abseil-cpp/absl/strings",
-    "//third_party/abseil-cpp/absl/types:optional",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }
 
@@ -35,10 +33,7 @@ rtc_source_set("scalable_video_controller") {
     "../../../api/video:video_bitrate_allocation",
     "../../../common_video/generic_frame_descriptor",
     "../../../rtc_base:checks",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/container:inlined_vector",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -63,11 +58,9 @@ rtc_source_set("scalability_structures") {
     "../../../common_video/generic_frame_descriptor",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
-  ]
-  absl_deps = [
+    "../../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/base:core_headers",
-    "//third_party/abseil-cpp/absl/strings",
-    "//third_party/abseil-cpp/absl/types:optional",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }
 
@@ -78,14 +71,37 @@ rtc_source_set("svc_rate_allocator") {
   ]
   deps = [
     ":scalability_structures",
+    ":scalable_video_controller",
+    "../../../api:field_trials_view",
+    "../../../api/units:data_rate",
     "../../../api/video:video_bitrate_allocation",
     "../../../api/video:video_bitrate_allocator",
     "../../../api/video:video_codec_constants",
+    "../../../api/video:video_frame",
+    "../../../api/video_codecs:scalability_mode",
     "../../../api/video_codecs:video_codecs_api",
     "../../../rtc_base:checks",
     "../../../rtc_base/experiments:stable_target_rate_experiment",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/container:inlined_vector" ]
+}
+
+rtc_source_set("simulcast_to_svc_converter") {
+  sources = [
+    "simulcast_to_svc_converter.cc",
+    "simulcast_to_svc_converter.h",
+  ]
+  deps = [
+    ":scalability_mode_util",
+    ":scalability_structures",
+    ":scalable_video_controller",
+    "../../../api/video:encoded_image",
+    "../../../api/video_codecs:video_codecs_api",
+    "../../../modules/video_coding:video_codec_interface",
+    "../../../modules/video_coding:video_coding_utility",
+    "../../../rtc_base:checks",
+    "../../../rtc_base/system:rtc_export",
+  ]
 }
 
 if (rtc_include_tests) {
@@ -104,6 +120,7 @@ if (rtc_include_tests) {
       ":scalability_mode_util",
       ":scalability_structures",
       ":scalable_video_controller",
+      ":simulcast_to_svc_converter",
       "..:chain_diff_calculator",
       "..:frame_dependencies_calculator",
       "../../../api:array_view",
@@ -114,10 +131,7 @@ if (rtc_include_tests) {
       "../../../common_video/generic_frame_descriptor",
       "../../../rtc_base:stringutils",
       "../../../test:test_support",
-    ]
-    absl_deps = [
-      "//third_party/abseil-cpp/absl/strings",
-      "//third_party/abseil-cpp/absl/types:optional",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
   }
 
@@ -127,8 +141,29 @@ if (rtc_include_tests) {
     deps = [
       ":svc_rate_allocator",
       "..:webrtc_vp9_helpers",
+      "../../../api/units:data_rate",
+      "../../../api/video:video_bitrate_allocation",
+      "../../../api/video:video_bitrate_allocator",
+      "../../../api/video:video_codec_constants",
+      "../../../api/video:video_frame",
+      "../../../api/video_codecs:scalability_mode",
+      "../../../api/video_codecs:video_codecs_api",
       "../../../rtc_base:checks",
-      "../../../test:field_trial",
+      "../../../test:explicit_key_value_config",
+      "../../../test:test_support",
+      "../codecs/av1:av1_svc_config",
+      "//third_party/abseil-cpp/absl/container:inlined_vector",
+    ]
+  }
+
+  rtc_source_set("simulcast_to_svc_converter_tests") {
+    testonly = true
+    sources = [ "simulcast_to_svc_converter_unittest.cc" ]
+    deps = [
+      ":scalability_structures",
+      ":scalable_video_controller",
+      ":simulcast_to_svc_converter",
+      "../../../rtc_base:checks",
       "../../../test:test_support",
     ]
   }

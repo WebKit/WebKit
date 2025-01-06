@@ -30,28 +30,31 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include "ModelConnectionToWebProcess.h"
+#include "SharedPreferencesForWebProcess.h"
 #include <WebCore/ModelPlayerIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class ModelProcessModelPlayerManagerProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ModelProcessModelPlayerManagerProxy> : std::true_type { };
-}
 
 namespace WebKit {
 
 class ModelProcessModelPlayerProxy;
 
 class ModelProcessModelPlayerManagerProxy
-    : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    : public RefCounted<ModelProcessModelPlayerManagerProxy>
+    , public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(ModelProcessModelPlayerManagerProxy);
 public:
-    explicit ModelProcessModelPlayerManagerProxy(ModelConnectionToWebProcess&);
+    static Ref<ModelProcessModelPlayerManagerProxy> create(ModelConnectionToWebProcess& modelConnectionToWebProcess)
+    {
+        return adoptRef(*new ModelProcessModelPlayerManagerProxy(modelConnectionToWebProcess));
+    }
+
     ~ModelProcessModelPlayerManagerProxy();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     ModelConnectionToWebProcess* modelConnectionToWebProcess() { return m_modelConnectionToWebProcess.get(); }
     void clear();
@@ -60,6 +63,8 @@ public:
     void didReceivePlayerMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
+    explicit ModelProcessModelPlayerManagerProxy(ModelConnectionToWebProcess&);
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages

@@ -92,7 +92,7 @@ WEBKIT_DEPRECATED gboolean  webkit_dom_event_target_add_event_listener(WebKitDOM
  * webkit_dom_event_target_remove_event_listener:
  * @target: A #WebKitDOMEventTarget
  * @event_name: A #gchar
- * @handler: (scope call): A #GCallback
+ * @handler: (type gpointer): A #GCallback
  * @use_capture: A #gboolean
  *
  * Returns: a #gboolean

@@ -12,18 +12,28 @@
 
 #include <string.h>
 
-#include <algorithm>
+#include <algorithm>  // IWYU pragma: keep
 #include <cstdint>
+#include <cstring>
+#include <functional>
 #include <iterator>
 #include <memory>
+#include <string>
 #include <utility>
+#include <vector>
 
+#include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "rtc_base/byte_buffer.h"
 #include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/crc32.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
+#include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/message_digest.h"
+#include "rtc_base/net_helpers.h"
+#include "rtc_base/socket_address.h"
 #include "system_wrappers/include/metrics.h"
 
 using rtc::ByteBufferReader;
@@ -41,7 +51,9 @@ uint32_t ReduceTransactionId(absl::string_view transaction_id) {
   RTC_DCHECK(transaction_id.length() == cricket::kStunTransactionIdLength ||
              transaction_id.length() == cricket::kStunLegacyTransactionIdLength)
       << transaction_id.length();
-  ByteBufferReader reader(transaction_id.data(), transaction_id.size());
+  ByteBufferReader reader(rtc::MakeArrayView(
+      reinterpret_cast<const uint8_t*>(transaction_id.data()),
+      transaction_id.size()));
   uint32_t result = 0;
   uint32_t next;
   while (reader.ReadUInt32(&next)) {
@@ -97,7 +109,6 @@ const char STUN_ERROR_REASON_UNSUPPORTED_PROTOCOL[] = "Unsupported Protocol";
 const char STUN_ERROR_REASON_ROLE_CONFLICT[] = "Role Conflict";
 const char STUN_ERROR_REASON_SERVER_ERROR[] = "Server Error";
 
-const char TURN_MAGIC_COOKIE_VALUE[] = {'\x72', '\xC6', '\x4B', '\xC6'};
 const char EMPTY_TRANSACTION_ID[] = "0000000000000000";
 const uint32_t STUN_FINGERPRINT_XOR_VALUE = 0x5354554E;
 const int SERVER_NOT_REACHABLE_ERROR = 701;
@@ -355,24 +366,6 @@ bool StunMessage::ValidateMessageIntegrity32ForTesting(
                                         password);
 }
 
-// Deprecated
-bool StunMessage::ValidateMessageIntegrity(const char* data,
-                                           size_t size,
-                                           const std::string& password) {
-  return ValidateMessageIntegrityOfType(STUN_ATTR_MESSAGE_INTEGRITY,
-                                        kStunMessageIntegritySize, data, size,
-                                        password);
-}
-
-// Deprecated
-bool StunMessage::ValidateMessageIntegrity32(const char* data,
-                                             size_t size,
-                                             const std::string& password) {
-  return ValidateMessageIntegrityOfType(STUN_ATTR_GOOG_MESSAGE_INTEGRITY_32,
-                                        kStunMessageIntegrity32Size, data, size,
-                                        password);
-}
-
 // Verifies a STUN message has a valid MESSAGE-INTEGRITY attribute, using the
 // procedure outlined in RFC 5389, section 15.4.
 bool StunMessage::ValidateMessageIntegrityOfType(int mi_attr_type,
@@ -585,7 +578,7 @@ bool StunMessage::AddFingerprint() {
 
 bool StunMessage::Read(ByteBufferReader* buf) {
   // Keep a copy of the buffer data around for later verification.
-  buffer_.assign(buf->Data(), buf->Length());
+  buffer_.assign(reinterpret_cast<const char*>(buf->Data()), buf->Length());
 
   if (!buf->ReadUInt16(&type_)) {
     return false;
@@ -601,8 +594,8 @@ bool StunMessage::Read(ByteBufferReader* buf) {
     return false;
   }
 
-  std::string magic_cookie;
-  if (!buf->ReadString(&magic_cookie, kStunMagicCookieLength)) {
+  absl::string_view magic_cookie;
+  if (!buf->ReadStringView(&magic_cookie, kStunMagicCookieLength)) {
     return false;
   }
 
@@ -812,7 +805,7 @@ void StunAttribute::ConsumePadding(ByteBufferReader* buf) const {
 void StunAttribute::WritePadding(ByteBufferWriter* buf) const {
   int remainder = length_ % 4;
   if (remainder > 0) {
-    char zeroes[4] = {0};
+    uint8_t zeroes[4] = {0};
     buf->WriteBytes(zeroes, 4 - remainder);
   }
 }
@@ -912,7 +905,8 @@ bool StunAddressAttribute::Read(ByteBufferReader* buf) {
     if (length() != SIZE_IP4) {
       return false;
     }
-    if (!buf->ReadBytes(reinterpret_cast<char*>(&v4addr), sizeof(v4addr))) {
+    if (!buf->ReadBytes(rtc::MakeArrayView(reinterpret_cast<uint8_t*>(&v4addr),
+                                           sizeof(v4addr)))) {
       return false;
     }
     rtc::IPAddress ipaddr(v4addr);
@@ -922,7 +916,8 @@ bool StunAddressAttribute::Read(ByteBufferReader* buf) {
     if (length() != SIZE_IP6) {
       return false;
     }
-    if (!buf->ReadBytes(reinterpret_cast<char*>(&v6addr), sizeof(v6addr))) {
+    if (!buf->ReadBytes(rtc::MakeArrayView(reinterpret_cast<uint8_t*>(&v6addr),
+                                           sizeof(v6addr)))) {
       return false;
     }
     rtc::IPAddress ipaddr(v6addr);
@@ -945,12 +940,12 @@ bool StunAddressAttribute::Write(ByteBufferWriter* buf) const {
   switch (address_.family()) {
     case AF_INET: {
       in_addr v4addr = address_.ipaddr().ipv4_address();
-      buf->WriteBytes(reinterpret_cast<char*>(&v4addr), sizeof(v4addr));
+      buf->WriteBytes(reinterpret_cast<uint8_t*>(&v4addr), sizeof(v4addr));
       break;
     }
     case AF_INET6: {
       in6_addr v6addr = address_.ipaddr().ipv6_address();
-      buf->WriteBytes(reinterpret_cast<char*>(&v6addr), sizeof(v6addr));
+      buf->WriteBytes(reinterpret_cast<uint8_t*>(&v6addr), sizeof(v6addr));
       break;
     }
   }
@@ -1035,12 +1030,14 @@ bool StunXorAddressAttribute::Write(ByteBufferWriter* buf) const {
   switch (xored_ip.family()) {
     case AF_INET: {
       in_addr v4addr = xored_ip.ipv4_address();
-      buf->WriteBytes(reinterpret_cast<const char*>(&v4addr), sizeof(v4addr));
+      buf->WriteBytes(reinterpret_cast<const uint8_t*>(&v4addr),
+                      sizeof(v4addr));
       break;
     }
     case AF_INET6: {
       in6_addr v6addr = xored_ip.ipv6_address();
-      buf->WriteBytes(reinterpret_cast<const char*>(&v6addr), sizeof(v6addr));
+      buf->WriteBytes(reinterpret_cast<const uint8_t*>(&v6addr),
+                      sizeof(v6addr));
       break;
     }
   }
@@ -1128,13 +1125,13 @@ StunAttributeValueType StunByteStringAttribute::value_type() const {
 }
 
 void StunByteStringAttribute::CopyBytes(absl::string_view bytes) {
-  char* new_bytes = new char[bytes.size()];
+  uint8_t* new_bytes = new uint8_t[bytes.size()];
   memcpy(new_bytes, bytes.data(), bytes.size());
   SetBytes(new_bytes, bytes.size());
 }
 
 void StunByteStringAttribute::CopyBytes(const void* bytes, size_t length) {
-  char* new_bytes = new char[length];
+  uint8_t* new_bytes = new uint8_t[length];
   memcpy(new_bytes, bytes, length);
   SetBytes(new_bytes, length);
 }
@@ -1142,7 +1139,7 @@ void StunByteStringAttribute::CopyBytes(const void* bytes, size_t length) {
 uint8_t StunByteStringAttribute::GetByte(size_t index) const {
   RTC_DCHECK(bytes_ != NULL);
   RTC_DCHECK(index < length());
-  return static_cast<uint8_t>(bytes_[index]);
+  return bytes_[index];
 }
 
 void StunByteStringAttribute::SetByte(size_t index, uint8_t value) {
@@ -1152,8 +1149,8 @@ void StunByteStringAttribute::SetByte(size_t index, uint8_t value) {
 }
 
 bool StunByteStringAttribute::Read(ByteBufferReader* buf) {
-  bytes_ = new char[length()];
-  if (!buf->ReadBytes(bytes_, length())) {
+  bytes_ = new uint8_t[length()];
+  if (!buf->ReadBytes(rtc::ArrayView<uint8_t>(bytes_, length()))) {
     return false;
   }
 
@@ -1171,7 +1168,7 @@ bool StunByteStringAttribute::Write(ByteBufferWriter* buf) const {
   return true;
 }
 
-void StunByteStringAttribute::SetBytes(char* bytes, size_t length) {
+void StunByteStringAttribute::SetBytes(uint8_t* bytes, size_t length) {
   delete[] bytes_;
   bytes_ = bytes;
   SetLength(static_cast<uint16_t>(length));
@@ -1425,36 +1422,11 @@ std::unique_ptr<StunAttribute> CopyStunAttribute(
   return copy;
 }
 
-StunAttributeValueType RelayMessage::GetAttributeValueType(int type) const {
-  switch (type) {
-    case STUN_ATTR_LIFETIME:
-      return STUN_VALUE_UINT32;
-    case STUN_ATTR_MAGIC_COOKIE:
-      return STUN_VALUE_BYTE_STRING;
-    case STUN_ATTR_BANDWIDTH:
-      return STUN_VALUE_UINT32;
-    case STUN_ATTR_DESTINATION_ADDRESS:
-      return STUN_VALUE_ADDRESS;
-    case STUN_ATTR_SOURCE_ADDRESS2:
-      return STUN_VALUE_ADDRESS;
-    case STUN_ATTR_DATA:
-      return STUN_VALUE_BYTE_STRING;
-    case STUN_ATTR_OPTIONS:
-      return STUN_VALUE_UINT32;
-    default:
-      return StunMessage::GetAttributeValueType(type);
-  }
-}
-
-StunMessage* RelayMessage::CreateNew() const {
-  return new RelayMessage();
-}
-
 StunAttributeValueType TurnMessage::GetAttributeValueType(int type) const {
   switch (type) {
     case STUN_ATTR_CHANNEL_NUMBER:
       return STUN_VALUE_UINT32;
-    case STUN_ATTR_TURN_LIFETIME:
+    case STUN_ATTR_LIFETIME:
       return STUN_VALUE_UINT32;
     case STUN_ATTR_XOR_PEER_ADDRESS:
       return STUN_VALUE_XOR_ADDRESS;

@@ -73,6 +73,10 @@ sub vpx_config($) {
 }
 
 sub specialize {
+  if (@_ <= 1) {
+    die "'specialize' must be called with a function name and at least one ",
+        "architecture ('C' is implied): \n@_\n";
+  }
   my $fn=$_[0];
   shift;
   foreach my $opt (@_) {
@@ -208,7 +212,19 @@ sub filter {
 #
 sub common_top() {
   my $include_guard = uc($opts{sym})."_H_";
+  my @time = localtime;
+  my $year = $time[5] + 1900;
   print <<EOF;
+/*
+ *  Copyright (c) ${year} The WebM project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
 // This file is generated. Do not edit.
 #ifndef ${include_guard}
 #define ${include_guard}
@@ -238,13 +254,14 @@ EOF
 }
 
 sub common_bottom() {
+  my $include_guard = uc($opts{sym})."_H_";
   print <<EOF;
 
 #ifdef __cplusplus
 }  // extern "C"
 #endif
 
-#endif
+#endif  // ${include_guard}
 EOF
 }
 
@@ -487,7 +504,7 @@ if ($opts{arch} eq 'x86') {
   @ALL_ARCHS = filter(qw/neon_asm neon/);
   arm;
 } elsif ($opts{arch} eq 'armv8' || $opts{arch} eq 'arm64' ) {
-  @ALL_ARCHS = filter(qw/neon neon_dotprod neon_i8mm/);
+  @ALL_ARCHS = filter(qw/neon neon_dotprod neon_i8mm sve sve2/);
   @REQUIRES = filter(qw/neon/);
   &require(@REQUIRES);
   arm;

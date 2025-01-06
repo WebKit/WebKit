@@ -32,6 +32,7 @@
 #include <wtf/ProcessID.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -54,7 +55,7 @@ enum class SandboxExtensionType : uint8_t {
 
 #if ENABLE(SANDBOX_EXTENSIONS)
 class SandboxExtensionImpl {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SandboxExtensionImpl);
 public:
     static std::unique_ptr<SandboxExtensionImpl> create(const char* path, SandboxExtensionType, std::optional<audit_token_t> = std::nullopt, OptionSet<SandboxExtensionFlags> = SandboxExtensionFlags::Default);
     SandboxExtensionImpl(std::span<const uint8_t>);

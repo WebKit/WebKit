@@ -32,7 +32,6 @@ crypto/gcrypt/CryptoAlgorithmEd25519GCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmHKDFGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmHMACGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmPBKDF2GCrypt.cpp
-crypto/gcrypt/CryptoAlgorithmRSAES_PKCS1_v1_5GCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmRSASSA_PKCS1_v1_5GCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmRSA_OAEPGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmRSA_PSSGCrypt.cpp

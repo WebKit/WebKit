@@ -28,11 +28,11 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PaymentMethodChangeEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PaymentMethodChangeEvent);
 
 PaymentMethodChangeEvent::PaymentMethodChangeEvent(const AtomString& type, Init&& eventInit)
     : PaymentRequestUpdateEvent { EventInterfaceType::PaymentMethodChangeEvent, type, eventInit }

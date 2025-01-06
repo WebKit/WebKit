@@ -29,6 +29,7 @@
 #include "libANGLE/formatutils.h"
 #include "libANGLE/validationES.h"
 #include "libANGLE/validationES2.h"
+#include "libANGLE/validationES32.h"
 #include "libANGLE/validationES3_autogen.h"
 
 namespace gl
@@ -582,6 +583,8 @@ static bool IsCapBannedWithActivePLS(GLenum cap)
         case GL_DEBUG_OUTPUT_SYNCHRONOUS:
         case GL_DEPTH_CLAMP_EXT:
         case GL_DEPTH_TEST:
+        case GL_POLYGON_OFFSET_POINT_NV:
+        case GL_POLYGON_OFFSET_LINE_NV:  // = GL_POLYGON_OFFSET_LINE_ANGLE
         case GL_POLYGON_OFFSET_FILL:
         case GL_PRIMITIVE_RESTART_FIXED_INDEX:
         case GL_SCISSOR_TEST:
@@ -647,7 +650,8 @@ bool ValidCap(const PrivateState &state, ErrorSet *errors, GLenum cap, bool quer
             return state.getExtensions().sRGBWriteControlEXT;
 
         case GL_SAMPLE_MASK:
-            return state.getClientVersion() >= Version(3, 1);
+            return state.getClientVersion() >= Version(3, 1) ||
+                   state.getExtensions().textureMultisampleANGLE;
 
         case GL_ROBUST_RESOURCE_INITIALIZATION_ANGLE:
             return queryOnly && state.getExtensions().robustResourceInitializationANGLE;
@@ -685,7 +689,10 @@ bool ValidCap(const PrivateState &state, ErrorSet *errors, GLenum cap, bool quer
         case GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM:
             return queryOnly && state.getExtensions().shaderFramebufferFetchARM;
 
-        // GL_ANGLE_variable_rasterization_rate_metal
+        case GL_BLEND_ADVANCED_COHERENT_KHR:
+            return state.getClientVersion() >= Version(2, 0) &&
+                   state.getExtensions().blendEquationAdvancedCoherentKHR;
+
         case GL_VARIABLE_RASTERIZATION_RATE_ANGLE:
             return state.getExtensions().variableRasterizationRateMetalANGLE;
 
@@ -2273,6 +2280,26 @@ static bool ValidateLabelLength(const Context *context,
     return true;
 }
 
+bool ValidateObjectLabelBase(const Context *context,
+                             angle::EntryPoint entryPoint,
+                             GLenum identifier,
+                             GLuint name,
+                             GLsizei length,
+                             const GLchar *label)
+{
+    if (!ValidateObjectIdentifierAndName(context, entryPoint, identifier, name))
+    {
+        return false;
+    }
+
+    if (!ValidateLabelLength(context, entryPoint, length, label))
+    {
+        return false;
+    }
+
+    return true;
+}
+
 bool ValidateObjectLabelKHR(const Context *context,
                             angle::EntryPoint entryPoint,
                             GLenum identifier,
@@ -2286,12 +2313,29 @@ bool ValidateObjectLabelKHR(const Context *context,
         return false;
     }
 
-    if (!ValidateObjectIdentifierAndName(context, entryPoint, identifier, name))
+    if (!ValidateObjectLabelBase(context, entryPoint, identifier, name, length, label))
     {
         return false;
     }
 
-    if (!ValidateLabelLength(context, entryPoint, length, label))
+    return true;
+}
+
+bool ValidateGetObjectLabelBase(const Context *context,
+                                angle::EntryPoint entryPoint,
+                                GLenum identifier,
+                                GLuint name,
+                                GLsizei bufSize,
+                                const GLsizei *length,
+                                const GLchar *label)
+{
+    if (bufSize < 0)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufferSize);
+        return false;
+    }
+
+    if (!ValidateObjectIdentifierAndName(context, entryPoint, identifier, name))
     {
         return false;
     }
@@ -2313,13 +2357,7 @@ bool ValidateGetObjectLabelKHR(const Context *context,
         return false;
     }
 
-    if (bufSize < 0)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufferSize);
-        return false;
-    }
-
-    if (!ValidateObjectIdentifierAndName(context, entryPoint, identifier, name))
+    if (!ValidateGetObjectLabelBase(context, entryPoint, identifier, name, bufSize, length, label))
     {
         return false;
     }
@@ -2340,6 +2378,25 @@ static bool ValidateObjectPtrName(const Context *context,
     return true;
 }
 
+bool ValidateObjectPtrLabelBase(const Context *context,
+                                angle::EntryPoint entryPoint,
+                                const void *ptr,
+                                GLsizei length,
+                                const GLchar *label)
+{
+    if (!ValidateObjectPtrName(context, entryPoint, ptr))
+    {
+        return false;
+    }
+
+    if (!ValidateLabelLength(context, entryPoint, length, label))
+    {
+        return false;
+    }
+
+    return true;
+}
+
 bool ValidateObjectPtrLabelKHR(const Context *context,
                                angle::EntryPoint entryPoint,
                                const void *ptr,
@@ -2352,12 +2409,28 @@ bool ValidateObjectPtrLabelKHR(const Context *context,
         return false;
     }
 
-    if (!ValidateObjectPtrName(context, entryPoint, ptr))
+    if (!ValidateObjectPtrLabelBase(context, entryPoint, ptr, length, label))
     {
         return false;
     }
 
-    if (!ValidateLabelLength(context, entryPoint, length, label))
+    return true;
+}
+
+bool ValidateGetObjectPtrLabelBase(const Context *context,
+                                   angle::EntryPoint entryPoint,
+                                   const void *ptr,
+                                   GLsizei bufSize,
+                                   const GLsizei *length,
+                                   const GLchar *label)
+{
+    if (bufSize < 0)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufferSize);
+        return false;
+    }
+
+    if (!ValidateObjectPtrName(context, entryPoint, ptr))
     {
         return false;
     }
@@ -2378,13 +2451,7 @@ bool ValidateGetObjectPtrLabelKHR(const Context *context,
         return false;
     }
 
-    if (bufSize < 0)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufferSize);
-        return false;
-    }
-
-    if (!ValidateObjectPtrName(context, entryPoint, ptr))
+    if (!ValidateGetObjectPtrLabelBase(context, entryPoint, ptr, bufSize, length, label))
     {
         return false;
     }
@@ -2403,19 +2470,7 @@ bool ValidateGetPointervKHR(const Context *context,
         return false;
     }
 
-    // TODO: represent this in Context::getQueryParameterInfo.
-    switch (pname)
-    {
-        case GL_DEBUG_CALLBACK_FUNCTION:
-        case GL_DEBUG_CALLBACK_USER_PARAM:
-            break;
-
-        default:
-            ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kEnumNotSupported, pname);
-            return false;
-    }
-
-    return true;
+    return ValidateGetPointerv(context, entryPoint, pname, params);
 }
 
 bool ValidateGetPointervRobustANGLERobustANGLE(const Context *context,
@@ -3530,7 +3585,7 @@ bool ValidateCreateShader(const Context *context, angle::EntryPoint entryPoint, 
             break;
 
         case ShaderType::TessControl:
-            if (!context->getExtensions().tessellationShaderEXT &&
+            if (!context->getExtensions().tessellationShaderAny() &&
                 context->getClientVersion() < ES_3_2)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidShaderType);
@@ -3539,7 +3594,7 @@ bool ValidateCreateShader(const Context *context, angle::EntryPoint entryPoint, 
             break;
 
         case ShaderType::TessEvaluation:
-            if (!context->getExtensions().tessellationShaderEXT &&
+            if (!context->getExtensions().tessellationShaderAny() &&
                 context->getClientVersion() < ES_3_2)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidShaderType);
@@ -6508,6 +6563,41 @@ bool ValidateRenderbufferStorageMultisampleEXT(const Context *context,
     }
 
     return true;
+}
+
+bool ValidateBlobCacheCallbacksANGLE(const Context *context,
+                                     angle::EntryPoint entryPoint,
+                                     GLSETBLOBPROCANGLE set,
+                                     GLGETBLOBPROCANGLE get,
+                                     const void *userParam)
+{
+    if (!context->getExtensions().blobCacheANGLE)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    if ((get == nullptr) != (set == nullptr))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBlobCacheCallbacksUnbalanced);
+        return false;
+    }
+
+    return true;
+}
+
+bool ValidateGetPointervANGLE(const Context *context,
+                              angle::EntryPoint entryPoint,
+                              GLenum pname,
+                              void *const *params)
+{
+    if (!context->getExtensions().blobCacheANGLE)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateGetPointerv(context, entryPoint, pname, params);
 }
 
 void RecordBindTextureTypeError(const Context *context,

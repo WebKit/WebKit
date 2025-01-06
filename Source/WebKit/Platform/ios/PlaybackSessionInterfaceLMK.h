@@ -30,13 +30,14 @@
 #include <WebCore/NowPlayingMetadataObserver.h>
 #include <WebCore/PlaybackSessionInterfaceIOS.h>
 #include <wtf/Observer.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WKLinearMediaPlayerDelegate;
 
 namespace WebKit {
 
 class PlaybackSessionInterfaceLMK final : public WebCore::PlaybackSessionInterfaceIOS {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionInterfaceLMK);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceLMK);
 public:
     static Ref<PlaybackSessionInterfaceLMK> create(WebCore::PlaybackSessionModel&);
@@ -58,6 +59,8 @@ public:
     void wirelessVideoPlaybackDisabledChanged(bool) final { }
     void mutedChanged(bool) final;
     void volumeChanged(double) final;
+    void supportsLinearMediaPlayerChanged(bool) final;
+    void spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>&) final;
     void startObservingNowPlayingMetadata() final;
     void stopObservingNowPlayingMetadata() final;
 #if !RELEASE_LOG_DISABLED
@@ -66,12 +69,16 @@ public:
 
     void nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata&);
 
+    void setSpatialVideoEnabled(bool enabled) { m_spatialVideoEnabled = enabled; }
+    bool spatialVideoEnabled() const { return m_spatialVideoEnabled; }
+
 private:
     PlaybackSessionInterfaceLMK(WebCore::PlaybackSessionModel&);
 
     RetainPtr<WKSLinearMediaPlayer> m_player;
     RetainPtr<WKLinearMediaPlayerDelegate> m_playerDelegate;
     WebCore::NowPlayingMetadataObserver m_nowPlayingMetadataObserver;
+    bool m_spatialVideoEnabled { false };
 };
 
 } // namespace WebKit

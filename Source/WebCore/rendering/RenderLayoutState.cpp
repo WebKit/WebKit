@@ -34,9 +34,12 @@
 #include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderLayoutState);
 
 RenderLayoutState::RenderLayoutState(RenderElement& renderer)
     : m_clipped(false)
@@ -45,7 +48,7 @@ RenderLayoutState::RenderLayoutState(RenderElement& renderer)
 #if ASSERT_ENABLED
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
-    , m_blockStartTrimming(Vector<bool>(0))
+    , m_marginTrimBlockStart(false)
     , m_renderer(&renderer)
 #endif
 {
@@ -66,7 +69,7 @@ RenderLayoutState::RenderLayoutState(RenderElement& renderer)
     }
 }
 
-RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, std::optional<LineClamp> lineClamp, std::optional<TextBoxTrim> textBoxTrim)
+RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, std::optional<LineClamp> lineClamp, std::optional<LegacyLineClamp> legacyLineClamp, std::optional<TextBoxTrim> textBoxTrim)
     : m_clipped(false)
     , m_isPaginated(false)
     , m_pageLogicalHeightChanged(false)
@@ -74,8 +77,9 @@ RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutSt
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
 #endif
-    , m_blockStartTrimming(Vector<bool>(0))
+    , m_marginTrimBlockStart(false)
     , m_lineClamp(lineClamp)
+    , m_legacyLineClamp(legacyLineClamp)
     , m_textBoxTrim(textBoxTrim)
 #if ASSERT_ENABLED
     , m_renderer(&renderer)
@@ -145,7 +149,7 @@ void RenderLayoutState::computePaginationInformation(const LocalFrameViewLayoutC
     // We can compare this later on to figure out what part of the page we're actually on.
     if (pageLogicalHeight || renderer.isRenderFragmentedFlow()) {
         m_pageLogicalHeight = pageLogicalHeight;
-        bool isFlipped = renderer.style().isFlippedBlocksWritingMode();
+        bool isFlipped = renderer.writingMode().isBlockFlipped();
         m_pageOffset = LayoutSize(m_layoutOffset.width() + (!isFlipped ? renderer.borderLeft() + renderer.paddingLeft() : renderer.borderRight() + renderer.paddingRight()), m_layoutOffset.height() + (!isFlipped ? renderer.borderTop() + renderer.paddingTop() : renderer.borderBottom() + renderer.paddingBottom()));
         m_pageLogicalHeightChanged = pageLogicalHeightChanged;
         m_isPaginated = true;
@@ -167,7 +171,7 @@ void RenderLayoutState::computePaginationInformation(const LocalFrameViewLayoutC
     if (ancestor)
         propagateLineGridInfo(*ancestor, renderer);
 
-    if (lineGrid() && (lineGrid()->style().writingMode() == renderer.style().writingMode())) {
+    if (lineGrid() && (lineGrid()->writingMode().computedWritingMode() == renderer.writingMode().computedWritingMode())) {
         if (CheckedPtr columnFlow = dynamicDowncast<RenderMultiColumnFlow>(renderer))
             computeLineGridPaginationOrigin(*columnFlow);
     }
@@ -336,18 +340,32 @@ SubtreeLayoutStateMaintainer::~SubtreeLayoutStateMaintainer()
     }
 }
 
-ContentVisibilityForceLayoutScope::ContentVisibilityForceLayoutScope(RenderView& layoutRoot, const Element* context)
+FlexPercentResolveDisabler::FlexPercentResolveDisabler(LocalFrameViewLayoutContext& layoutContext, const RenderBox& flexItem)
+    : m_layoutContext(layoutContext)
+    , m_flexItem(flexItem)
 {
-    if (context) {
-        m_context = &layoutRoot.frameView().layoutContext();
-        m_context->setNeedsSkippedContentLayout(true);
-    }
+    m_layoutContext->disablePercentHeightResolveFor(flexItem);
+}
+
+FlexPercentResolveDisabler::~FlexPercentResolveDisabler()
+{
+    m_layoutContext->enablePercentHeightResolveFor(m_flexItem);
+}
+
+ContentVisibilityForceLayoutScope::ContentVisibilityForceLayoutScope(LocalFrameViewLayoutContext& layoutContext, const Element* element)
+    : m_layoutContext(layoutContext)
+    , m_element(element)
+{
+    if (element)
+        m_layoutContext->setNeedsSkippedContentLayout(true);
 }
 
 ContentVisibilityForceLayoutScope::~ContentVisibilityForceLayoutScope()
 {
-    if (m_context)
-        m_context->setNeedsSkippedContentLayout(false);
+    if (m_element) {
+        ASSERT(m_layoutContext->needsSkippedContentLayout());
+        m_layoutContext->setNeedsSkippedContentLayout(false);
+    }
 }
 
 } // namespace WebCore

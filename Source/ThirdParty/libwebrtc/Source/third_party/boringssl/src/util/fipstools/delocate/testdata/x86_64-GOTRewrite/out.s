@@ -268,6 +268,11 @@ bar:
 	popq %rbx
 	leaq 128(%rsp), %rsp
 
+	# With -mcmodel=medium, the code may load the address of the GOT directly.
+# WAS leaq _GLOBAL_OFFSET_TABLE_(%rip), %rcx
+	leaq	.Lboringssl_got_delta(%rip), %rcx
+	addq .Lboringssl_got_delta(%rip), %rcx
+
 .comm foobar,64,32
 .text
 .loc 1 2 0
@@ -302,6 +307,8 @@ OPENSSL_ia32cap_get:
 .size OPENSSL_ia32cap_addr_delta, 8
 OPENSSL_ia32cap_addr_delta:
 .quad OPENSSL_ia32cap_P-OPENSSL_ia32cap_addr_delta
+.Lboringssl_got_delta:
+	.quad _GLOBAL_OFFSET_TABLE_-.Lboringssl_got_delta
 .type BORINGSSL_bcm_text_hash, @object
 .size BORINGSSL_bcm_text_hash, 32
 BORINGSSL_bcm_text_hash:

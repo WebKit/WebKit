@@ -59,15 +59,16 @@ using WebCore::LegacyTileCache;
         WebThreadLock();
 
     CGRect dirtyRect = CGContextGetClipBoundingBox(context);
-    auto useExistingTiles = _tileGrid->tileCache().setOverrideVisibleRect(WebCore::FloatRect(dirtyRect));
+    Ref tileCache = _tileGrid->tileCache();
+    auto useExistingTiles = tileCache->setOverrideVisibleRect(WebCore::FloatRect(dirtyRect));
     if (!useExistingTiles)
-        _tileGrid->tileCache().doLayoutTiles();
+        tileCache->doLayoutTiles();
 
     [super renderInContext:context];
 
-    _tileGrid->tileCache().clearOverrideVisibleRect();
+    tileCache->clearOverrideVisibleRect();
     if (!useExistingTiles)
-        _tileGrid->tileCache().doLayoutTiles();
+        tileCache->doLayoutTiles();
 }
 @end
 
@@ -92,7 +93,7 @@ using WebCore::LegacyTileCache;
         WebThreadLock();
     // This may trigger WebKit layout and generate more repaint rects.
     if (_tileGrid)
-        _tileGrid->tileCache().prepareToDraw();
+        _tileGrid->protectedTileCache()->prepareToDraw();
 }
 
 - (void)renderInContext:(CGContextRef)context
@@ -113,7 +114,7 @@ using WebCore::LegacyTileCache;
         WebThreadLock();
 
     if (_tileGrid)
-        _tileGrid->tileCache().drawLayer(self, context, self.isRenderingInContext ? LegacyTileCache::DrawingFlags::Snapshotting : LegacyTileCache::DrawingFlags::None);
+        _tileGrid->protectedTileCache()->drawLayer(self, context, self.isRenderingInContext ? LegacyTileCache::DrawingFlags::Snapshotting : LegacyTileCache::DrawingFlags::None);
 }
 
 - (id<CAAction>)actionForKey:(NSString *)key

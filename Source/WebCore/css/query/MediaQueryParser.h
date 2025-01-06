@@ -41,6 +41,9 @@ struct MediaQueryParser : public GenericMediaQueryParser<MediaQueryParser>  {
 
     static const FeatureSchema* schemaForFeatureName(const AtomString&, const MediaQueryParserContext&, State&);
     static Vector<const FeatureSchema*> featureSchemas();
+
+    // Accessor used by calc()'s media-progress() function to find a MediaProgressProviding by name.
+    static const MediaProgressProviding* mediaProgressProvidingSchemaForFeatureName(const AtomString&, const MediaQueryParserContext&);
 };
 
 void serialize(StringBuilder&, const MediaQueryList&);

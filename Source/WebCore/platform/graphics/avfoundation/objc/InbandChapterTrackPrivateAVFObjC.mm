@@ -32,6 +32,7 @@
 #import "InbandTextTrackPrivateClient.h"
 #import <AVFoundation/AVMetadataItem.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 
@@ -39,6 +40,8 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InbandChapterTrackPrivateAVFObjC);
 
 InbandChapterTrackPrivateAVFObjC::InbandChapterTrackPrivateAVFObjC(RetainPtr<NSLocale> locale, TrackID trackID)
     : InbandTextTrackPrivate(CueFormat::WebVTT)

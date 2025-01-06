@@ -137,8 +137,8 @@ VideoFrameTimeMetadata RealtimeIncomingVideoSource::metadataFromVideoFrame(const
     VideoFrameTimeMetadata metadata;
     if (frame.ntp_time_ms() > 0)
         metadata.captureTime = Seconds::fromMilliseconds(frame.ntp_time_ms());
-    if (isInBounds<uint32_t>(frame.timestamp()))
-        metadata.rtpTimestamp = frame.timestamp();
+    if (isInBounds<uint32_t>(frame.rtp_timestamp()))
+        metadata.rtpTimestamp = frame.rtp_timestamp();
     auto lastPacketTimestamp = std::max_element(frame.packet_infos().cbegin(), frame.packet_infos().cend(), [](const auto& a, const auto& b) {
         return a.receive_time() < b.receive_time();
     });

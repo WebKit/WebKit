@@ -24,4 +24,5 @@ PASS Check if generated prefixes match to "ns${index}".
 FAIL Check if "ns1" is generated even if the element already has xmlns:ns1. assert_equals: expected "<root xmlns:ns2=\"uri2\"><child xmlns:ns1=\"uri1\" xmlns:ns1=\"uri3\" ns1:attr1=\"value1\"/></root>" but got "<root xmlns:ns2=\"uri2\"><child xmlns:ns1=\"uri1\" xmlns:ns3=\"uri3\" ns3:attr1=\"value1\"/></root>"
 PASS Check if no special handling for XLink namespace unlike HTML serializer.
 PASS Check if document fragment serializes.
+PASS Check children were included for void elements
 

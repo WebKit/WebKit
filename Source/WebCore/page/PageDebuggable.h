@@ -29,16 +29,18 @@
 
 #include <JavaScriptCore/RemoteInspectionTarget.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class Page;
 
 class PageDebuggable final : public Inspector::RemoteInspectionTarget {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PageDebuggable);
     WTF_MAKE_NONCOPYABLE(PageDebuggable);
 public:
-    PageDebuggable(Page&);
+    static Ref<PageDebuggable> create(Page&);
     ~PageDebuggable() = default;
 
     Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::Page; }
@@ -55,8 +57,12 @@ public:
     const String& nameOverride() const { return m_nameOverride; }
     void setNameOverride(const String&);
 
+    void detachFromPage();
+
 private:
-    Page& m_page;
+    explicit PageDebuggable(Page&);
+
+    WeakPtr<Page> m_page;
     String m_nameOverride;
 };
 

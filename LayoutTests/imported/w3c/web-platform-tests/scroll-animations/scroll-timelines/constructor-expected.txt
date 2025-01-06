@@ -2,8 +2,7 @@
 PASS A ScrollTimeline can be created with a source
 PASS A ScrollTimeline can be created with a non-scrolling source
 PASS A ScrollTimeline created with a null source should have no source
-FAIL A ScrollTimeline created without a source should use the document.scrollingElement assert_equals: expected Element node <html><head><meta charset="utf-8">
-<title>ScrollTimeline ... but got null
+PASS A ScrollTimeline created without a source should use the document.scrollingElement
 PASS A ScrollTimeline created with the default axis should default to 'block'
 PASS 'block' is a valid axis value
 PASS 'inline' is a valid axis value

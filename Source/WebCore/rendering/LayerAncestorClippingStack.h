@@ -28,6 +28,7 @@
 #include "LayoutRect.h"
 #include "RenderLayer.h"
 #include "ScrollTypes.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -58,7 +59,7 @@ struct CompositedClipData {
 // This class encapsulates the set of layers and their scrolling tree nodes representing clipping in the layer's containing block ancestry,
 // but not in its paint order ancestry.
 class LayerAncestorClippingStack {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LayerAncestorClippingStack);
 public:
     LayerAncestorClippingStack(Vector<CompositedClipData>&&);
     ~LayerAncestorClippingStack() = default;
@@ -77,11 +78,11 @@ public:
 
     GraphicsLayer* firstLayer() const;
     GraphicsLayer* lastLayer() const;
-    ScrollingNodeID lastOverflowScrollProxyNodeID() const;
+    std::optional<ScrollingNodeID> lastOverflowScrollProxyNodeID() const;
 
     struct ClippingStackEntry {
         CompositedClipData clipData;
-        ScrollingNodeID overflowScrollProxyNodeID; // The node for repositioning the scrolling proxy layer.
+        Markable<ScrollingNodeID> overflowScrollProxyNodeID; // The node for repositioning the scrolling proxy layer.
         RefPtr<GraphicsLayer> clippingLayer;
         RefPtr<GraphicsLayer> scrollingLayer; // Only present for scrolling entries.
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -245,7 +245,7 @@ void av1_nn_predict_sse3(const float *input_nodes,
 
 // Based on N. N. Schraudolph. A Fast, Compact Approximation of the Exponential
 // Function. Neural Computation, 11(4):853–862, 1999.
-static AOM_INLINE __m128 approx_exp(__m128 y) {
+static inline __m128 approx_exp(__m128 y) {
 #define A ((1 << 23) / 0.69314718056f)  // (1 << 23) / ln(2)
 #define B \
   127  // Offset for the exponent according to IEEE floating point standard.
@@ -261,7 +261,7 @@ static AOM_INLINE __m128 approx_exp(__m128 y) {
 #undef C
 }
 
-static AOM_INLINE __m128 reduce_max(__m128 reg) {
+static inline __m128 reduce_max(__m128 reg) {
   __m128 tmp_reg;
 
   tmp_reg = _mm_shuffle_ps(reg, reg, 0x4e);  // 01 00 11 10
@@ -273,7 +273,7 @@ static AOM_INLINE __m128 reduce_max(__m128 reg) {
   return reg;
 }
 
-static AOM_INLINE __m128 reduce_sum(__m128 reg) {
+static inline __m128 reduce_sum(__m128 reg) {
   __m128 tmp_reg;
 
   tmp_reg = _mm_shuffle_ps(reg, reg, 0x4e);  // 01 00 11 10

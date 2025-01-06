@@ -121,7 +121,7 @@ public:
 
     bool hadRulesMutation() const { return m_mutatedRules; }
     void clearHadRulesMutation() { m_mutatedRules = false; }
-    RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&&);
+    RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&);
 
     enum RuleMutationType { OtherMutation, RuleInsertion, KeyframesRuleMutation, RuleReplace };
     enum class ContentsClonedForMutation : bool { No, Yes };
@@ -160,7 +160,7 @@ public:
     bool canAccessRules() const;
 
     String debugDescription() const final;
-    String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&);
+    String cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>&, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>&);
     void getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>&);
 
     bool isDetached() const;

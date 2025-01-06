@@ -44,7 +44,7 @@ static void didReachMilestone(WKPageRef, WKPageRenderingProgressEvents type, WKT
 static void setPageLoaderClient(WKPageRef page)
 {
     WKPageNavigationClientV3 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
 
     loaderClient.base.version = 3;
     loaderClient.renderingProgressDidChange = didReachMilestone;

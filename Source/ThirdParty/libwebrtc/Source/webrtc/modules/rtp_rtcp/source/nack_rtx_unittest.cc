@@ -15,6 +15,8 @@
 
 #include "absl/algorithm/container.h"
 #include "api/call/transport.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "call/rtp_stream_receiver_controller.h"
 #include "call/rtx_receive_stream.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
@@ -24,7 +26,6 @@
 #include "modules/rtp_rtcp/source/rtp_sender_video.h"
 #include "rtc_base/rate_limiter.h"
 #include "rtc_base/thread.h"
-#include "test/explicit_key_value_config.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -119,29 +120,28 @@ class RtxLoopBackTransport : public webrtc::Transport {
 class RtpRtcpRtxNackTest : public ::testing::Test {
  protected:
   RtpRtcpRtxNackTest()
-      : rtp_rtcp_module_(nullptr),
+      : fake_clock_(123456),
+        env_(CreateEnvironment(&fake_clock_)),
         transport_(kTestRtxSsrc),
         rtx_stream_(&media_stream_, rtx_associated_payload_types_, kTestSsrc),
-        fake_clock(123456),
-        retransmission_rate_limiter_(&fake_clock, kMaxRttMs) {}
+        retransmission_rate_limiter_(&fake_clock_, kMaxRttMs) {}
   ~RtpRtcpRtxNackTest() override {}
 
   void SetUp() override {
     RtpRtcpInterface::Configuration configuration;
     configuration.audio = false;
-    configuration.clock = &fake_clock;
-    receive_statistics_ = ReceiveStatistics::Create(&fake_clock);
+    receive_statistics_ = ReceiveStatistics::Create(&fake_clock_);
     configuration.receive_statistics = receive_statistics_.get();
     configuration.outgoing_transport = &transport_;
     configuration.retransmission_rate_limiter = &retransmission_rate_limiter_;
     configuration.local_media_ssrc = kTestSsrc;
     configuration.rtx_send_ssrc = kTestRtxSsrc;
-    rtp_rtcp_module_ = ModuleRtpRtcpImpl2::Create(configuration);
-    test::ExplicitKeyValueConfig field_trials("");
+    rtp_rtcp_module_ =
+        std::make_unique<ModuleRtpRtcpImpl2>(env_, configuration);
     RTPSenderVideo::Config video_config;
-    video_config.clock = &fake_clock;
+    video_config.clock = &fake_clock_;
     video_config.rtp_sender = rtp_rtcp_module_->RtpSender();
-    video_config.field_trials = &field_trials;
+    video_config.field_trials = &env_.field_trials();
     rtp_sender_video_ = std::make_unique<RTPSenderVideo>(video_config);
     rtp_rtcp_module_->SetRTCPStatus(RtcpMode::kCompound);
     rtp_rtcp_module_->SetStorePacketsStatus(true, 600);
@@ -212,11 +212,11 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
           /*capture_time=*/Timestamp::Millis(timestamp / 90), payload_data,
           sizeof(payload_data), video_header, TimeDelta::Zero(), {}));
       // Min required delay until retransmit = 5 + RTT ms (RTT = 0).
-      fake_clock.AdvanceTimeMilliseconds(5);
+      fake_clock_.AdvanceTimeMilliseconds(5);
       int length = BuildNackList(nack_list);
       if (length > 0)
         rtp_rtcp_module_->SendNACK(nack_list, length);
-      fake_clock.AdvanceTimeMilliseconds(28);  //  33ms - 5ms delay.
+      fake_clock_.AdvanceTimeMilliseconds(28);  //  33ms - 5ms delay.
       // Prepare next frame.
       timestamp += 3000;
     }
@@ -224,6 +224,8 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
   }
 
   rtc::AutoThread main_thread_;
+  SimulatedClock fake_clock_;
+  const Environment env_;
   std::unique_ptr<ReceiveStatistics> receive_statistics_;
   std::unique_ptr<ModuleRtpRtcpImpl2> rtp_rtcp_module_;
   std::unique_ptr<RTPSenderVideo> rtp_sender_video_;
@@ -233,7 +235,6 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
   VerifyingMediaStream media_stream_;
   RtxReceiveStream rtx_stream_;
   uint8_t payload_data[65000];
-  SimulatedClock fake_clock;
   RateLimiter retransmission_rate_limiter_;
   std::unique_ptr<RtpStreamReceiverInterface> media_receiver_;
   std::unique_ptr<RtpStreamReceiverInterface> rtx_receiver_;
@@ -264,7 +265,7 @@ TEST_F(RtpRtcpRtxNackTest, LongNackList) {
         video_header, TimeDelta::Zero(), {}));
     // Prepare next frame.
     timestamp += 3000;
-    fake_clock.AdvanceTimeMilliseconds(33);
+    fake_clock_.AdvanceTimeMilliseconds(33);
   }
   EXPECT_FALSE(transport_.expected_sequence_numbers_.empty());
   EXPECT_FALSE(media_stream_.sequence_numbers_.empty());

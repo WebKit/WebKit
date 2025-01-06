@@ -44,13 +44,13 @@ class FuzzerTimeout : public Timeout {
     // expired.
     RTC_DCHECK(timeout_id_.has_value());
     RTC_DCHECK(active_timeouts_.erase(*timeout_id_) == 1);
-    timeout_id_ = absl::nullopt;
+    timeout_id_ = std::nullopt;
   }
 
   // A set of all active timeouts, managed by `FuzzerCallbacks`.
   std::set<TimeoutID>& active_timeouts_;
   // If present, the timout is active and will expire reported as `timeout_id`.
-  absl::optional<TimeoutID> timeout_id_;
+  std::optional<TimeoutID> timeout_id_;
 };
 
 class FuzzerCallbacks : public DcSctpSocketCallbacks {
@@ -64,7 +64,7 @@ class FuzzerCallbacks : public DcSctpSocketCallbacks {
     // The fuzzer timeouts don't implement |precision|.
     return std::make_unique<FuzzerTimeout>(active_timeouts_);
   }
-  TimeMs TimeMillis() override { return TimeMs(42); }
+  webrtc::Timestamp Now() override { return webrtc::Timestamp::Millis(42); }
   uint32_t GetRandomInt(uint32_t low, uint32_t high) override {
     return kRandomValue;
   }
@@ -91,7 +91,7 @@ class FuzzerCallbacks : public DcSctpSocketCallbacks {
   }
 
   // Given an index among the active timeouts, will expire that one.
-  absl::optional<TimeoutID> ExpireTimeout(size_t index) {
+  std::optional<TimeoutID> ExpireTimeout(size_t index) {
     if (index < active_timeouts_.size()) {
       auto it = active_timeouts_.begin();
       std::advance(it, index);
@@ -99,7 +99,7 @@ class FuzzerCallbacks : public DcSctpSocketCallbacks {
       active_timeouts_.erase(it);
       return timeout_id;
     }
-    return absl::nullopt;
+    return std::nullopt;
   }
 
  private:

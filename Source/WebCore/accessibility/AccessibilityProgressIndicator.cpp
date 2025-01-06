@@ -35,20 +35,20 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-AccessibilityProgressIndicator::AccessibilityProgressIndicator(RenderObject& renderer)
-    : AccessibilityRenderObject(renderer)
+AccessibilityProgressIndicator::AccessibilityProgressIndicator(AXID axID, RenderObject& renderer)
+    : AccessibilityRenderObject(axID, renderer)
 {
     ASSERT(is<RenderProgress>(renderer) || is<RenderMeter>(renderer) || is<HTMLProgressElement>(renderer.node()) || is<HTMLMeterElement>(renderer.node()));
 }
 
-Ref<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(RenderObject& renderer)
+Ref<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(AXID axID, RenderObject& renderer)
 {
-    return adoptRef(*new AccessibilityProgressIndicator(renderer));
+    return adoptRef(*new AccessibilityProgressIndicator(axID, renderer));
 }
 
-bool AccessibilityProgressIndicator::computeAccessibilityIsIgnored() const
+bool AccessibilityProgressIndicator::computeIsIgnored() const
 {
-    return accessibilityIsIgnoredByDefault();
+    return isIgnoredByDefault();
 }
     
 String AccessibilityProgressIndicator::valueDescription() const
@@ -72,7 +72,7 @@ String AccessibilityProgressIndicator::valueDescription() const
 
     String gaugeRegionValue = gaugeRegionValueDescription();
     if (!gaugeRegionValue.isEmpty())
-        description = description.isEmpty() ? gaugeRegionValue : description + ", "_s + gaugeRegionValue;
+        description = description.isEmpty() ? gaugeRegionValue : makeString(description, ", "_s,  gaugeRegionValue);
 
     return description;
 }

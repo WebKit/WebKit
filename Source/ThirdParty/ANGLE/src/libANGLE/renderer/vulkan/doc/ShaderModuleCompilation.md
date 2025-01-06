@@ -7,8 +7,7 @@ of steps:
 shader translator][translator]. The translator compiles application shaders into SPIR-V, after
 transforming GLSL to conform to the [GL_KHR_vulkan_glsl][GL_KHR_vulkan_glsl] extension spec with
 some additional workarounds and emulation. We emulate OpenGL's different depth range, viewport y
-flipping, default uniforms, and OpenGL
-[line segment rasterization](OpenGLLineSegmentRasterization.md) among others. For more info see
+flipping, default uniforms, and emulate a number of extensions among others. For more info see
 [TranslatorVulkan.cpp][TranslatorVulkan.cpp]. After initial compilation, the SPIR-V blobs are not
 complete. The translator initially assigns resources and in/out variables arbitrary descriptor set,
 binding and location indices. The correct values are determined at link time. For the sake of
@@ -16,8 +15,7 @@ transform feedback, some additional code is generated to be removed or modified 
 transformation.
 
    The translator outputs some feature code conditional to Vulkan specialization constants, which are
-resolved at draw-time. For example,
-[Bresenham line rasterization](OpenGLLineSegmentRasterization.md) emulation.
+resolved at draw-time. For example, for emulating Dithering and Android surface rotation.
 
 1. **Link Time**: During a call to `glLinkProgram` the Vulkan back-end can know the necessary
 locations and properties to write to connect the shader stage interfaces. However, some draw-time

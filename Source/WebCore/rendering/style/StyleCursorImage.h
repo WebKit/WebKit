@@ -25,6 +25,7 @@
 #pragma once
 
 #include "StyleMultiImage.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ class SVGCursorElement;
 enum class LoadedFromOpaqueSource : bool;
 
 class StyleCursorImage final : public StyleMultiImage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StyleCursorImage);
 public:
     static Ref<StyleCursorImage> create(Ref<StyleImage>&&, const std::optional<IntPoint>&, const URL&, LoadedFromOpaqueSource);
     virtual ~StyleCursorImage();
@@ -50,6 +51,8 @@ public:
 
     void cursorElementRemoved(SVGCursorElement&);
     void cursorElementChanged(SVGCursorElement&);
+
+    std::optional<IntPoint> hotSpot() const { return m_hotSpot; }
 
 private:
     explicit StyleCursorImage(Ref<StyleImage>&&, const std::optional<IntPoint>& hotSpot, const URL&, LoadedFromOpaqueSource);

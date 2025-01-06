@@ -1,0 +1,51 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let texture = device.createTexture({ size: [4], format: 'stencil8', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    shaderModule = device.createShaderModule({ code: `
+        struct f {
+            @location(0) g: vec4<u32>
+        }
+        @fragment fn h() -> f {
+            return f();
+        }
+        struct i {
+            @builtin(position) j: vec4<f32>
+        }
+        @vertex fn k() -> i {
+            return i();
+        }
+    `});
+    let textureView1 = texture.createView();
+    let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: [], depthStencilFormat: 'stencil8' });
+    let renderPipeline = await device.createRenderPipelineAsync({
+        layout: pipelineLayout,
+        fragment: {
+            module: shaderModule,
+            targets: [{ format: 'rg16uint' }]
+        },
+        depthStencil: { format: 'stencil8' },
+        vertex: { module: shaderModule }
+    });
+    renderBundleEncoder.setPipeline(renderPipeline);
+    let commandEncoder1 = device.createCommandEncoder();
+    let commandEncoder2 = device.createCommandEncoder();
+    let renderPassEncoder1 = commandEncoder1.beginRenderPass({
+        colorAttachments: [],
+        depthStencilAttachment: { view: textureView1, stencilLoadOp: 'load', stencilStoreOp: 'store' }
+    });
+    let renderPassEncoder2 = commandEncoder2.beginRenderPass({
+        colorAttachments: [],
+        depthStencilAttachment: { view: textureView1, stencilLoadOp: 'load', stencilStoreOp: 'store' }
+    });
+    let renderBundle = renderBundleEncoder.finish();
+    renderPassEncoder1.executeBundles([renderBundle]);
+    renderPassEncoder2.executeBundles([renderBundle]);
+    await device.queue.onSubmittedWorkDone();
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.waitUntilDone();
+run();
+</script>

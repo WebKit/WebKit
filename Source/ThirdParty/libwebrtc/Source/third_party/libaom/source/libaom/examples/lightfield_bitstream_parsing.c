@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -40,11 +40,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "aom/aom_codec.h"
 #include "aom/aom_decoder.h"
 #include "aom/aom_encoder.h"
 #include "aom/aom_integer.h"
 #include "aom/aomdx.h"
-#include "aom_dsp/bitwriter_buffer.h"
 #include "common/tools_common.h"
 #include "common/video_reader.h"
 #include "common/video_writer.h"
@@ -101,7 +101,6 @@ static void process_tile_list(const TILE_LIST_INFO *tiles, int num_tiles,
                               uint8_t output_frame_width_in_tiles_minus_1,
                               uint8_t output_frame_height_in_tiles_minus_1) {
   unsigned char *tl = tl_buf;
-  struct aom_write_bit_buffer wb = { tl, 0 };
   unsigned char *saved_obu_size_loc = NULL;
   uint32_t tile_list_obu_header_size = 0;
   uint32_t tile_list_obu_size = 0;
@@ -109,26 +108,23 @@ static void process_tile_list(const TILE_LIST_INFO *tiles, int num_tiles,
   int i;
 
   // Write the tile list OBU header that is 1 byte long.
-  aom_wb_write_literal(&wb, 0, 1);  // forbidden bit.
-  aom_wb_write_literal(&wb, 8, 4);  // tile list OBU: "1000"
-  aom_wb_write_literal(&wb, 0, 1);  // obu_extension = 0
-  aom_wb_write_literal(&wb, 1, 1);  // obu_has_size_field
-  aom_wb_write_literal(&wb, 0, 1);  // reserved
-  tl++;
+  int obu_type = OBU_TILE_LIST;
+  int obu_has_size_field = 1;
+  *tl++ = (obu_type << 3) | (obu_has_size_field << 1);
   tile_list_obu_header_size++;
 
   // Write the OBU size using a fixed length_field_size of 4 bytes.
   saved_obu_size_loc = tl;
-  // aom_wb_write_unsigned_literal(&wb, data, bits) requires that bits <= 32.
-  aom_wb_write_unsigned_literal(&wb, 0, 32);
-  tl += 4;
+  for (i = 0; i < 4; i++) {
+    *tl++ = 0;
+  }
   tile_list_obu_header_size += 4;
 
   // write_tile_list_obu()
-  aom_wb_write_literal(&wb, output_frame_width_in_tiles_minus_1, 8);
-  aom_wb_write_literal(&wb, output_frame_height_in_tiles_minus_1, 8);
-  aom_wb_write_literal(&wb, num_tiles_minus_1, 16);
-  tl += 4;
+  *tl++ = output_frame_width_in_tiles_minus_1;
+  *tl++ = output_frame_height_in_tiles_minus_1;
+  *tl++ = (num_tiles_minus_1 >> 8) & 0xff;
+  *tl++ = num_tiles_minus_1 & 0xff;
   tile_list_obu_size += 4;
 
   // Write each tile's data
@@ -139,10 +135,6 @@ static void process_tile_list(const TILE_LIST_INFO *tiles, int num_tiles,
     int ref_idx = tiles[i].reference_idx;
     int tc = tiles[i].tile_col;
     int tr = tiles[i].tile_row;
-
-    // Reset bit writer to the right location.
-    wb.bit_buffer = tl;
-    wb.bit_offset = 0;
 
     size_t frame_size = frame_sizes[image_idx];
     const unsigned char *frame = frames[image_idx];
@@ -163,11 +155,12 @@ static void process_tile_list(const TILE_LIST_INFO *tiles, int num_tiles,
     //  uint16_t coded_tile_data_size_minus_1;
     //  uint8_t *coded_tile_data;
     uint32_t tile_info_bytes = 5;
-    aom_wb_write_literal(&wb, ref_idx, 8);
-    aom_wb_write_literal(&wb, tr, 8);
-    aom_wb_write_literal(&wb, tc, 8);
-    aom_wb_write_literal(&wb, (int)tile_data.coded_tile_data_size - 1, 16);
-    tl += tile_info_bytes;
+    *tl++ = ref_idx;
+    *tl++ = tr;
+    *tl++ = tc;
+    int coded_tile_data_size_minus_1 = (int)tile_data.coded_tile_data_size - 1;
+    *tl++ = (coded_tile_data_size_minus_1 >> 8) & 0xff;
+    *tl++ = coded_tile_data_size_minus_1 & 0xff;
 
     memcpy(tl, (uint8_t *)tile_data.coded_tile_data,
            tile_data.coded_tile_data_size);

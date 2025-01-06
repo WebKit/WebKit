@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -19,16 +19,8 @@ struct AV1Common;
 struct DecoderCodingBlock;
 struct txb_ctx;
 
-uint8_t av1_read_coeffs_txb(const struct AV1Common *const cm,
-                            struct DecoderCodingBlock *dcb,
-                            struct aom_reader *const r, const int blk_row,
-                            const int blk_col, const int plane,
-                            const struct txb_ctx *const txb_ctx,
-                            const TX_SIZE tx_size);
-
-void av1_read_coeffs_txb_facade(const struct AV1Common *const cm,
-                                struct DecoderCodingBlock *dcb,
-                                struct aom_reader *const r, const int plane,
-                                const int row, const int col,
-                                const TX_SIZE tx_size);
+void av1_read_coeffs_txb(const struct AV1Common *const cm,
+                         struct DecoderCodingBlock *dcb,
+                         struct aom_reader *const r, const int plane,
+                         const int row, const int col, const TX_SIZE tx_size);
 #endif  // AOM_AV1_DECODER_DECODETXB_H_

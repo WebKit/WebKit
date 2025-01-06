@@ -35,8 +35,12 @@
 #include "NodeRenderStyle.h"
 #include "RenderView.h"
 #include "ScriptElementCachedScriptFetcher.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PreloadRequest);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLResourcePreloader);
 
 URL PreloadRequest::completeURL(Document& document)
 {
@@ -90,7 +94,7 @@ void HTMLResourcePreloader::preload(std::unique_ptr<PreloadRequest> preload)
     if (!MQ::MediaQueryEvaluator { screenAtom(), document, document->renderStyle() }.evaluate(queries))
         return;
 
-    document->cachedResourceLoader().preload(preload->resourceType(), preload->resourceRequest(document));
+    document->protectedCachedResourceLoader()->preload(preload->resourceType(), preload->resourceRequest(document));
 }
 
 }

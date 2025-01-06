@@ -12,6 +12,7 @@
 #define API_TEST_STATS_OBSERVER_INTERFACE_H_
 
 #include "absl/strings/string_view.h"
+#include "api/scoped_refptr.h"
 #include "api/stats/rtc_stats_report.h"
 
 namespace webrtc {

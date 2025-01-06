@@ -93,7 +93,7 @@ class TextureUploadSubImageBenchmark : public TextureUploadBenchmarkBase
         if (IsLinux() && IsIntel() &&
             GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
         {
-            skipTest("http://anglebug.com/6319");
+            skipTest("http://anglebug.com/42264836");
         }
     }
 

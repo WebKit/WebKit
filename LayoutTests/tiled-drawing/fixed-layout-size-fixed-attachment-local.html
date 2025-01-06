@@ -15,12 +15,15 @@
     }
   </style>
   <script>
-  function runTest() {
-    if (window.internals) {
+  if (window.testRunner)
+      window.testRunner.waitUntilDone();
+  async function runTest() {
+    if (window.internals && window.testRunner) {
       window.internals.setFixedLayoutSize(800, 600);
-      window.internals.setPageScaleFactor(0.5, 0, 0);
+      await window.testRunner.setPageScaleFactor(0.5, 0, 0);
       window.internals.setUseFixedLayout(true);
       window.internals.settings.setVisualViewportEnabled(false);
+      window.testRunner.notifyDone();
     }
   }
   window.addEventListener('load', runTest, false);

@@ -214,6 +214,22 @@ EventInfo FromCLenum<EventInfo>(CLenum from);
 CLenum ToCLenum(EventInfo from);
 std::ostream &operator<<(std::ostream &os, EventInfo value);
 
+enum class ExecutionStatus : uint8_t
+{
+    Complete  = 0,
+    Running   = 1,
+    Submitted = 2,
+    Queued    = 3,
+
+    InvalidEnum = 4,
+    EnumCount   = 4,
+};
+
+template <>
+ExecutionStatus FromCLenum<ExecutionStatus>(CLenum from);
+CLenum ToCLenum(ExecutionStatus from);
+std::ostream &operator<<(std::ostream &os, ExecutionStatus value);
+
 enum class FilterMode : uint8_t
 {
     Nearest = 0,

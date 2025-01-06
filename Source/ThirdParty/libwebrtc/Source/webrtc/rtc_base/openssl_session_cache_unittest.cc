@@ -35,6 +35,15 @@ SSL_CTX* NewTlsContext() {
   return SSL_CTX_new(TLS_method());
 #endif
 }
+
+SSL_SESSION* NewSslSession(SSL_CTX* ssl_ctx) {
+#ifdef OPENSSL_IS_BORINGSSL
+  return SSL_SESSION_new(ssl_ctx);
+#else
+  return SSL_SESSION_new();
+#endif
+}
+
 }  // namespace
 
 namespace rtc {
@@ -79,7 +88,7 @@ TEST(OpenSSLSessionCache, InvalidLookupReturnsNullptr) {
 
 TEST(OpenSSLSessionCache, SimpleValidSessionLookup) {
   SSL_CTX* ssl_ctx = NewDtlsContext();
-  SSL_SESSION* ssl_session = SSL_SESSION_new(ssl_ctx);
+  SSL_SESSION* ssl_session = NewSslSession(ssl_ctx);
 
   OpenSSLSessionCache session_cache(SSL_MODE_DTLS, ssl_ctx);
   session_cache.AddSession("webrtc.org", ssl_session);
@@ -90,8 +99,8 @@ TEST(OpenSSLSessionCache, SimpleValidSessionLookup) {
 
 TEST(OpenSSLSessionCache, AddToExistingReplacesPrevious) {
   SSL_CTX* ssl_ctx = NewDtlsContext();
-  SSL_SESSION* ssl_session_1 = SSL_SESSION_new(ssl_ctx);
-  SSL_SESSION* ssl_session_2 = SSL_SESSION_new(ssl_ctx);
+  SSL_SESSION* ssl_session_1 = NewSslSession(ssl_ctx);
+  SSL_SESSION* ssl_session_2 = NewSslSession(ssl_ctx);
 
   OpenSSLSessionCache session_cache(SSL_MODE_DTLS, ssl_ctx);
   session_cache.AddSession("webrtc.org", ssl_session_1);

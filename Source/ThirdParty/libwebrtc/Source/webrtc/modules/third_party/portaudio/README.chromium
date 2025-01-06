@@ -3,7 +3,7 @@ Short Name: portaudio
 URL: https://github.com/PortAudio/portaudio/tree/master/src/common
 Version: 9d8563100d841300f1689b186d131347ad43a0f6
 Date: 2022-04-12
-License: Custom license
+License: MIT
 License File: LICENSE
 Security Critical: yes
 Shipped: yes

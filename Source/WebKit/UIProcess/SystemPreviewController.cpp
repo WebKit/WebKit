@@ -30,8 +30,16 @@
 
 #include "WebPageProxy.h"
 #include <WebCore/MIMETypeRegistry.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SystemPreviewController);
+
+Ref<SystemPreviewController> SystemPreviewController::create(WebPageProxy& webPageProxy)
+{
+    return adoptRef(*new SystemPreviewController(webPageProxy));
+}
 
 SystemPreviewController::SystemPreviewController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)

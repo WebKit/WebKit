@@ -28,11 +28,11 @@
 #if ENABLE(WEBGL)
 #include "WebGLProvokingVertex.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLProvokingVertex);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLProvokingVertex);
 
 WebGLProvokingVertex::WebGLProvokingVertex(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLProvokingVertex)

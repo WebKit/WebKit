@@ -38,7 +38,7 @@ class StateCookieParameter : public Parameter,
   explicit StateCookieParameter(rtc::ArrayView<const uint8_t> data)
       : data_(data.begin(), data.end()) {}
 
-  static absl::optional<StateCookieParameter> Parse(
+  static std::optional<StateCookieParameter> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

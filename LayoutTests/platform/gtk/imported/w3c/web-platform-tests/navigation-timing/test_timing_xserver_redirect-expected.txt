@@ -6,9 +6,9 @@ This test validates the values of the window.performance.redirectCount and the w
 PASS window.performance is defined
 PASS window.performance.navigation is defined
 PASS timing.navigation.type is TYPE_NAVIGATE
-FAIL navigation.redirectCount == 0 on a cross-origin server redirected navigation assert_equals: navigation.redirectCount == 0 on a cross-origin server redirected navigation expected 0 but got 1
+PASS navigation.redirectCount == 0 on a cross-origin server redirected navigation
 PASS window.performance.timing.navigationStart > 0
-FAIL timing.redirectStart == 0 on a server redirected navigation from another domain assert_equals: timing.redirectStart == 0 on a server redirected navigation from another domain expected 0 but got 1688433422136
-FAIL timing.redirectEnd == 0 on a server redirected navigation from another domain assert_equals: timing.redirectEnd == 0 on a server redirected navigation from another domain expected 0 but got 1688433422166
+PASS timing.redirectStart == 0 on a server redirected navigation from another domain
+PASS timing.redirectEnd == 0 on a server redirected navigation from another domain
 
 

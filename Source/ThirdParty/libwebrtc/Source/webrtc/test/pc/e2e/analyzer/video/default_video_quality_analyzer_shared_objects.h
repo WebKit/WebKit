@@ -14,13 +14,13 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <optional>
 #include <ostream>
 #include <set>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/numerics/samples_stats_counter.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -151,6 +151,11 @@ struct StreamStats {
   // Sender side qp values per spatial layer. In case when spatial layer is not
   // set for `webrtc::EncodedImage`, 0 is used as default.
   std::map<int, SamplesStatsCounter> spatial_layers_qp;
+  // QP values of the rendered frames. In SVC or simulcast coding scenarios, the
+  // receiver will only render one of the spatial layers at a time. Hence, this
+  // value corresponds to the rendered frames' QP values, which should ideally
+  // correspond to one of the QP values in `spatial_layers_qp`.
+  SamplesStatsCounter rendered_frame_qp;
 
   int64_t total_encoded_images_payload = 0;
   // Counters on which phase how many frames were dropped.
@@ -233,9 +238,9 @@ class VideoStreamsInfo {
   // empty set will be returned.
   std::set<std::string> GetStreams(absl::string_view sender_name) const;
 
-  // Returns sender name for specified `stream_label`. Returns `absl::nullopt`
+  // Returns sender name for specified `stream_label`. Returns `std::nullopt`
   // if provided `stream_label` isn't known to the video analyzer.
-  absl::optional<std::string> GetSender(absl::string_view stream_label) const;
+  std::optional<std::string> GetSender(absl::string_view stream_label) const;
 
   // Returns set of the receivers for specified `stream_label`. If stream wasn't
   // received by any peer or `stream_label` isn't known to the video analyzer

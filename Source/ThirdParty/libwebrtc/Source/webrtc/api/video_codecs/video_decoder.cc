@@ -10,23 +10,25 @@
 
 #include "api/video_codecs/video_decoder.h"
 
-#include "absl/types/optional.h"
-#include "api/video/render_resolution.h"
-#include "api/video/video_codec_type.h"
+#include <cstdint>
+#include <optional>
+#include <string>
+
+#include "api/video/video_frame.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 
 int32_t DecodedImageCallback::Decoded(VideoFrame& decodedImage,
-                                      int64_t decode_time_ms) {
+                                      int64_t /* decode_time_ms */) {
   // The default implementation ignores custom decode time value.
   return Decoded(decodedImage);
 }
 
 void DecodedImageCallback::Decoded(VideoFrame& decodedImage,
-                                   absl::optional<int32_t> decode_time_ms,
-                                   absl::optional<uint8_t> qp) {
+                                   std::optional<int32_t> decode_time_ms,
+                                   std::optional<uint8_t> /* qp */) {
   Decoded(decodedImage, decode_time_ms.value_or(-1));
 }
 

@@ -26,6 +26,11 @@
 #include "config.h"
 #include "OSLogPrintStream.h"
 
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/ParsingUtilities.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 #if OS(DARWIN)
@@ -54,25 +59,25 @@ void OSLogPrintStream::vprintf(const char* format, va_list argList)
     va_list backup;
     va_copy(backup, argList);
 ALLOW_NONLITERAL_FORMAT_BEGIN
-    size_t bytesWritten = vsnprintf(m_string.mutableData() + offset, freeBytes, format, argList);
+    size_t bytesWritten = vsnprintf(m_string.mutableSpanIncludingNullTerminator().subspan(offset).data(), freeBytes, format, argList);
     if (UNLIKELY(bytesWritten >= freeBytes)) {
         size_t newLength = std::max(bytesWritten + m_string.length(), m_string.length() * 2);
         m_string.grow(newLength);
         freeBytes = newLength - offset;
-        bytesWritten = vsnprintf(m_string.mutableData() + offset, freeBytes, format, backup);
+        bytesWritten = vsnprintf(m_string.mutableSpanIncludingNullTerminator().subspan(offset).data(), freeBytes, format, backup);
         ASSERT(bytesWritten < freeBytes);
     }
 ALLOW_NONLITERAL_FORMAT_END
 
     size_t newOffset = offset + bytesWritten;
-    char* buffer = m_string.mutableData();
+    auto buffer = m_string.mutableSpan();
     bool loggedText = false;
     do {
         if (buffer[offset] == '\n') {
             // Set the new line to a null character so os_log stops copying there.
             buffer[offset] = '\0';
-            os_log_with_type(m_log, m_logType, "%{public}s", buffer);
-            buffer += offset + 1;
+            os_log_with_type(m_log, m_logType, "%{public}s", buffer.data());
+            skip(buffer, offset + 1);
             newOffset -= offset + 1;
             offset = 0;
             loggedText = true;
@@ -81,7 +86,7 @@ ALLOW_NONLITERAL_FORMAT_END
     } while (offset < newOffset);
 
     if (loggedText)
-        memmove(m_string.mutableData(), buffer, newOffset);
+        memmoveSpan(m_string.mutableSpan(), buffer.first(newOffset));
     m_offset = newOffset;
 }
 
@@ -89,3 +94,4 @@ ALLOW_NONLITERAL_FORMAT_END
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

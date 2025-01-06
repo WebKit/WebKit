@@ -33,12 +33,13 @@
 
 #include "InspectorWebAgentBase.h"
 #include "WebConsoleAgent.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class PageConsoleAgent final : public WebConsoleAgent {
     WTF_MAKE_NONCOPYABLE(PageConsoleAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PageConsoleAgent);
 public:
     PageConsoleAgent(PageAgentContext&);
     ~PageConsoleAgent();

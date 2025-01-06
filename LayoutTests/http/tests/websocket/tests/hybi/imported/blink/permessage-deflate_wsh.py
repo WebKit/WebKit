@@ -26,9 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from mod_pywebsocket.extensions import PerMessageDeflateExtensionProcessor
-from mod_pywebsocket.extensions import ExtensionProcessorInterface
-from mod_pywebsocket.common import ExtensionParameter
+from pywebsocket3.extensions import PerMessageDeflateExtensionProcessor
+from pywebsocket3.extensions import ExtensionProcessorInterface
+from pywebsocket3.common import ExtensionParameter
 from urllib import parse as urlparse
 
 _GOODBYE_MESSAGE = u'Goodbye'

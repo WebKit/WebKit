@@ -107,7 +107,7 @@ AudioEncoderRuntimeConfig AudioNetworkAdaptorImpl::GetEncoderRuntimeConfig() {
     controller->MakeDecision(&config);
 
   // Update ANA stats.
-  auto increment_opt = [](absl::optional<uint32_t>& a) {
+  auto increment_opt = [](std::optional<uint32_t>& a) {
     a = a.value_or(0) + 1;
   };
   if (prev_config_) {

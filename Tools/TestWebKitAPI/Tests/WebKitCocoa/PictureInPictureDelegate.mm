@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,19 +50,13 @@ static bool hasVideoInPictureInPictureCalled;
 static bool onLoadCompleted = false;
 static bool fetchOnLoadedCompletedDone = false;
 
-static void onLoadedCompletedCallback(WKSerializedScriptValueRef serializedResultValue, WKErrorRef error, void*)
+static void onLoadedCompletedCallback(WKTypeRef result, WKErrorRef error, void*)
 {
     EXPECT_NULL(error);
-    
-    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
-    
-    JSValueRef resultValue = WKSerializedScriptValueDeserialize(serializedResultValue, scriptContext, 0);
-    EXPECT_TRUE(JSValueIsBoolean(scriptContext, resultValue));
+    EXPECT_EQ(WKGetTypeID(result), WKBooleanGetTypeID());
     
     fetchOnLoadedCompletedDone = true;
-    onLoadCompleted = JSValueToBoolean(scriptContext, resultValue);
-    
-    JSGlobalContextRelease(scriptContext);
+    onLoadCompleted = WKBooleanGetValue((WKBooleanRef)result);
 }
 
 static void waitUntilOnLoadIsCompleted(WKPageRef page)
@@ -70,7 +64,7 @@ static void waitUntilOnLoadIsCompleted(WKPageRef page)
     onLoadCompleted = false;
     while (!onLoadCompleted) {
         fetchOnLoadedCompletedDone = false;
-        WKPageRunJavaScriptInMainFrame(page, TestWebKitAPI::Util::toWK("window.onloadcompleted !== undefined").get(), 0, onLoadedCompletedCallback);
+        WKPageEvaluateJavaScriptInMainFrame(page, TestWebKitAPI::Util::toWK("window.onloadcompleted !== undefined").get(), 0, onLoadedCompletedCallback);
         TestWebKitAPI::Util::run(&fetchOnLoadedCompletedDone);
     }
 }
@@ -110,7 +104,7 @@ namespace TestWebKitAPI {
 TEST(PictureInPicture, WKUIDelegate)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration preferences]._fullScreenEnabled = YES;
+    [configuration preferences].elementFullscreenEnabled = YES;
     [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
     RetainPtr<PictureInPictureUIDelegate> handler = adoptNS([[PictureInPictureUIDelegate alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"pictureInPictureChangeHandler"];
@@ -126,7 +120,7 @@ TEST(PictureInPicture, WKUIDelegate)
     [[window contentView] addSubview:webView.get()];
     [window makeKeyAndOrderFront:nil];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"PictureInPictureDelegate" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"PictureInPictureDelegate" withExtension:@"html"]];
 
     receivedLoadedMessage = false;
     
@@ -176,7 +170,7 @@ TEST(PictureInPicture, AudioCannotTogglePictureInPicture)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 54) configuration:configuration.get()]);
-    [configuration preferences]._fullScreenEnabled = YES;
+    [configuration preferences].elementFullscreenEnabled = YES;
     [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
     RetainPtr<PictureInPictureUIDelegate> handler = adoptNS([[PictureInPictureUIDelegate alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"pictureInPictureChangeHandler"];
@@ -208,14 +202,14 @@ TEST(PictureInPicture, WKPageUIClient)
     WKPreferencesSetAllowsPictureInPictureMediaPlayback(preferences, true);
 
     WKPageUIClientV10 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
+    zeroBytes(uiClient);
     uiClient.base.version = 10;
     uiClient.base.clientInfo = NULL;
     uiClient.hasVideoInPictureInPictureDidChange = hasVideoInPictureInPictureDidChange;
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
     
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0 , sizeof(loaderClient));
+    zeroBytes(loaderClient);
     loaderClient.base.version = 0;
     loaderClient.didFinishNavigation = didFinishNavigation;
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);

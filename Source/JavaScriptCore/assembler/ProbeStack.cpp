@@ -32,6 +32,8 @@
 
 #if ENABLE(ASSEMBLER)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace Probe {
 
@@ -161,5 +163,7 @@ void* Stack::lowWatermarkFromVisitingDirtyPages()
 
 } // namespace Probe
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER)

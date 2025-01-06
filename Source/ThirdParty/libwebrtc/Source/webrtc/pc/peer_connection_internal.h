@@ -13,14 +13,14 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
+#include "api/audio/audio_device.h"
 #include "api/peer_connection_interface.h"
 #include "call/call.h"
-#include "modules/audio_device/include/audio_device.h"
 #include "pc/jsep_transport_controller.h"
 #include "pc/peer_connection_message_handler.h"
 #include "pc/rtp_transceiver.h"
@@ -47,7 +47,7 @@ class PeerConnectionSdpMethods {
   // bundling, returns false.
   virtual bool NeedsIceRestart(const std::string& content_name) const = 0;
 
-  virtual absl::optional<std::string> sctp_mid() const = 0;
+  virtual std::optional<std::string> sctp_mid() const = 0;
 
   // Functions below this comment are known to only be accessed
   // from SdpOfferAnswerHandler.
@@ -76,7 +76,7 @@ class PeerConnectionSdpMethods {
   virtual LegacyStatsCollector* legacy_stats() = 0;
   // Returns the observer. Will crash on CHECK if the observer is removed.
   virtual PeerConnectionObserver* Observer() const = 0;
-  virtual absl::optional<rtc::SSLRole> GetSctpSslRole_n() = 0;
+  virtual std::optional<rtc::SSLRole> GetSctpSslRole_n() = 0;
   virtual PeerConnectionInterface::IceConnectionState
   ice_connection_state_internal() = 0;
   virtual void SetIceConnectionState(
@@ -127,6 +127,9 @@ class PeerConnectionSdpMethods {
   virtual const FieldTrialsView& trials() const = 0;
 
   virtual void ClearStatsCache() = 0;
+  // Keeps track of assigned payload types and comes up with reasonable
+  // suggestions when new PTs need to be assigned.
+  virtual PayloadTypePicker& payload_type_picker() = 0;
 };
 
 // Functions defined in this class are called by other objects,
@@ -150,7 +153,7 @@ class PeerConnectionInternal : public PeerConnectionInterface,
     return {};
   }
 
-  virtual absl::optional<std::string> sctp_transport_name() const = 0;
+  virtual std::optional<std::string> sctp_transport_name() const = 0;
 
   virtual cricket::CandidateStatsList GetPooledCandidateStats() const = 0;
 
@@ -162,7 +165,7 @@ class PeerConnectionInternal : public PeerConnectionInterface,
 
   virtual Call::Stats GetCallStats() = 0;
 
-  virtual absl::optional<AudioDeviceModule::Stats> GetAudioDeviceStats() = 0;
+  virtual std::optional<AudioDeviceModule::Stats> GetAudioDeviceStats() = 0;
 
   virtual bool GetLocalCertificate(
       const std::string& transport_name,

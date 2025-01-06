@@ -31,7 +31,6 @@ rtc_library("system_wrappers") {
   defines = []
   libs = []
   deps = [
-    ":field_trial",
     "../api:array_view",
     "../api/units:timestamp",
     "../modules:module_api_public",
@@ -43,7 +42,6 @@ rtc_library("system_wrappers") {
     "../rtc_base/system:arch",
     "../rtc_base/system:rtc_export",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 
   if (is_android) {
     if (build_with_mozilla) {
@@ -92,10 +90,8 @@ rtc_library("field_trial") {
     "../rtc_base:logging",
     "../rtc_base:stringutils",
     "../rtc_base/containers:flat_set",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
-    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }
 
@@ -111,8 +107,8 @@ rtc_library("metrics") {
     "../rtc_base:macromagic",
     "../rtc_base:stringutils",
     "../rtc_base/synchronization:mutex",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 rtc_library("denormal_disabler") {
@@ -146,6 +142,7 @@ if (rtc_include_tests && !build_with_chromium) {
       ":field_trial",
       ":metrics",
       ":system_wrappers",
+      "../api/units:time_delta",
       "../rtc_base:checks",
       "../rtc_base:random",
       "../rtc_base:stringutils",
@@ -153,9 +150,8 @@ if (rtc_include_tests && !build_with_chromium) {
       "../test:test_main",
       "../test:test_support",
       "//testing/gtest",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
-
-    absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 
     if (is_android) {
       deps += [ "//testing/android/native_test:native_test_support" ]

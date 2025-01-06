@@ -41,10 +41,6 @@ import time
 
 from webkitcorepy import string_utils
 
-if sys.version_info < (3,):
-    # Avoid having to compile scandir where it is unneeded.
-    import scandir
-
 
 class FileSystem(object):
     """FileSystem interface for webkitpy.
@@ -113,10 +109,7 @@ class FileSystem(object):
 
         dirs = []
 
-        if sys.version_info >= (3,):
-            it = os.walk(path)
-        else:
-            it = scandir.walk(path)
+        it = os.walk(path)
 
         for dirpath, dirnames, filenames in it:
             if dir_filter(self, dirpath):
@@ -148,10 +141,7 @@ class FileSystem(object):
         if self.basename(path) in dirs_to_skip:
             return []
 
-        if sys.version_info >= (3,):
-            it = os.walk(path)
-        else:
-            it = scandir.walk(path)
+        it = os.walk(path)
 
         for dirpath, dirnames, filenames in it:
             for d in dirs_to_skip:
@@ -191,10 +181,7 @@ class FileSystem(object):
         return os.listdir(path)
 
     def scandir(self, path):
-        if sys.version_info >= (3,):
-            return os.scandir(path)
-        else:
-            return scandir.scandir(path)
+        return os.scandir(path)
 
     def mkdtemp(self, **kwargs):
         """Create and return a uniquely named directory.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -17,12 +17,12 @@
 
 // Load 8 16 bit values. If the source is 32 bits then pack down with
 // saturation.
-static INLINE __m128i load_tran_low(const tran_low_t *a) {
+static inline __m128i load_tran_low(const tran_low_t *a) {
   const __m128i a_low = _mm_load_si128((const __m128i *)a);
   return _mm_packs_epi32(a_low, *(const __m128i *)(a + 4));
 }
 
-static INLINE void unpack_trans(__m128i a, __m128i *a_1, __m128i *a_2) {
+static inline void unpack_trans(__m128i a, __m128i *a_1, __m128i *a_2) {
   const __m128i one = _mm_set1_epi16(1);
   const __m128i a_hi = _mm_mulhi_epi16(a, one);
   const __m128i a_lo = _mm_mullo_epi16(a, one);
@@ -32,7 +32,7 @@ static INLINE void unpack_trans(__m128i a, __m128i *a_1, __m128i *a_2) {
 
 // Store 8 16 bit values. If the destination is 32 bits then sign extend the
 // values by multiplying by 1.
-static INLINE void store_tran_low(__m128i a, tran_low_t *b) {
+static inline void store_tran_low(__m128i a, tran_low_t *b) {
   __m128i a_1, a_2;
   unpack_trans(a, &a_1, &a_2);
   _mm_store_si128((__m128i *)(b), a_1);
@@ -41,7 +41,7 @@ static INLINE void store_tran_low(__m128i a, tran_low_t *b) {
 // Stores the second result at an offset of 8 (instead of 4) to match the output
 // with that of AVX2 implementation and the function is similar to
 // store_tran_low().
-static INLINE void store_tran_low_offset_4(__m128i a, tran_low_t *b) {
+static inline void store_tran_low_offset_4(__m128i a, tran_low_t *b) {
   __m128i a_1, a_2;
   unpack_trans(a, &a_1, &a_2);
   _mm_store_si128((__m128i *)(b), a_1);

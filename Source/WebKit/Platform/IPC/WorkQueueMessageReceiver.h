@@ -31,7 +31,9 @@
 namespace IPC {
 
 class WorkQueueMessageReceiver : public MessageReceiver, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WorkQueueMessageReceiver> {
-
+public:
+    void ref() const override { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const override { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 };
 
 }

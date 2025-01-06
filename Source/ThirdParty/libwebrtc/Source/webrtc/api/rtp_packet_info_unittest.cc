@@ -8,9 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "api/rtp_packet_infos.h"
+#include "api/rtp_packet_info.h"
+
+#include <cstdint>
+#include <optional>
+#include <vector>
+
+#include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
-#include "test/gmock.h"
+#include "api/units/timestamp.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -128,7 +134,7 @@ TEST(RtpPacketInfoTest, ReceiveTimeMs) {
 }
 
 TEST(RtpPacketInfoTest, AudioLevel) {
-  constexpr absl::optional<uint8_t> kValue = 31;
+  constexpr std::optional<uint8_t> kValue = 31;
 
   RtpPacketInfo lhs;
   RtpPacketInfo rhs;
@@ -157,7 +163,7 @@ TEST(RtpPacketInfoTest, AudioLevel) {
 }
 
 TEST(RtpPacketInfoTest, AbsoluteCaptureTime) {
-  constexpr absl::optional<AbsoluteCaptureTime> kValue = AbsoluteCaptureTime{
+  constexpr std::optional<AbsoluteCaptureTime> kValue = AbsoluteCaptureTime{
       .absolute_capture_timestamp = 12, .estimated_capture_clock_offset = 34};
 
   RtpPacketInfo lhs;
@@ -207,7 +213,7 @@ TEST(RtpPacketInfoTest, LocalCaptureClockOffset) {
   EXPECT_FALSE(lhs != rhs);
 
   rhs = RtpPacketInfo();
-  EXPECT_EQ(rhs.local_capture_clock_offset(), absl::nullopt);
+  EXPECT_EQ(rhs.local_capture_clock_offset(), std::nullopt);
 
   rhs = RtpPacketInfo(/*ssrc=*/{}, /*csrcs=*/{}, /*rtp_timestamp=*/{},
                       /*receive_time=*/Timestamp::Zero());

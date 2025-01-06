@@ -19,7 +19,7 @@ bool AudioDeviceGeneric::BuiltInAECIsAvailable() const {
   return false;
 }
 
-int32_t AudioDeviceGeneric::EnableBuiltInAEC(bool enable) {
+int32_t AudioDeviceGeneric::EnableBuiltInAEC(bool /* enable */) {
   RTC_LOG_F(LS_ERROR) << "Not supported on this platform";
   return -1;
 }
@@ -29,7 +29,7 @@ bool AudioDeviceGeneric::BuiltInAGCIsAvailable() const {
   return false;
 }
 
-int32_t AudioDeviceGeneric::EnableBuiltInAGC(bool enable) {
+int32_t AudioDeviceGeneric::EnableBuiltInAGC(bool /* enable */) {
   RTC_LOG_F(LS_ERROR) << "Not supported on this platform";
   return -1;
 }
@@ -39,7 +39,7 @@ bool AudioDeviceGeneric::BuiltInNSIsAvailable() const {
   return false;
 }
 
-int32_t AudioDeviceGeneric::EnableBuiltInNS(bool enable) {
+int32_t AudioDeviceGeneric::EnableBuiltInNS(bool /* enable */) {
   RTC_LOG_F(LS_ERROR) << "Not supported on this platform";
   return -1;
 }

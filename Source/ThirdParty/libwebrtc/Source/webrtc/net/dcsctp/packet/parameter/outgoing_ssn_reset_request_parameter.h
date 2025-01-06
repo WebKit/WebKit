@@ -49,7 +49,7 @@ class OutgoingSSNResetRequestParameter
         sender_last_assigned_tsn_(sender_last_assigned_tsn),
         stream_ids_(std::move(stream_ids)) {}
 
-  static absl::optional<OutgoingSSNResetRequestParameter> Parse(
+  static std::optional<OutgoingSSNResetRequestParameter> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

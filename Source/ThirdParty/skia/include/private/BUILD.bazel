@@ -1,4 +1,4 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "generate_cpp_files_for_headers", "skia_filegroup")
+load("//bazel:skia_rules.bzl", "generate_cpp_files_for_headers", "skia_filegroup")
 
 package(
     default_applicable_licenses = ["//:license"],
@@ -6,39 +6,12 @@ package(
 
 licenses(["notice"])
 
-exports_files_legacy()
-
 # In own skia_filegroup for mapping to the //gn/sksl.gni file.
 skia_filegroup(
     name = "sksl_private_hdrs",
     srcs = [
         "SkSLSampleUsage.h",
     ],
-)
-
-skia_filegroup(
-    name = "private_hdrs",
-    srcs = [
-        "SkColorData.h",
-        "SkEncodedInfo.h",
-        "SkExif.h",
-        "SkGainmapInfo.h",
-        "SkGainmapShader.h",
-        "SkIDChangeListener.h",
-        "SkJpegMetadataDecoder.h",
-        "SkPathRef.h",
-        "SkWeakRefCnt.h",
-        "SkXmp.h",
-        ":sksl_private_hdrs",
-        "//include/private/base:private_hdrs",
-        "//include/private/chromium:private_hdrs",
-    ] + select({
-        "//src/gpu:has_ganesh_backend": [
-            "//include/private/gpu:private_hdrs",
-        ],
-        "//conditions:default": [],
-    }),
-    visibility = ["//include:__pkg__"],
 )
 
 skia_filegroup(

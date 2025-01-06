@@ -7,7 +7,7 @@ description: A calendar ID is valid input for Calendar
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const instance = new Temporal.ZonedDateTime(0n, timeZone);
 
 const calendar = "iso8601";

@@ -34,12 +34,12 @@ namespace WebCore {
 
 class ImageBufferSkiaBackend : public ImageBufferBackend {
 public:
-    virtual ~ImageBufferSkiaBackend();
+    WEBCORE_EXPORT virtual ~ImageBufferSkiaBackend();
 
 protected:
     using ImageBufferBackend::ImageBufferBackend;
 
-    String debugDescription() const override;
+    WEBCORE_EXPORT String debugDescription() const override;
 };
 
 } // namespace WebCore

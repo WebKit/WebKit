@@ -52,6 +52,7 @@
 #import "SourceOrigin.h"
 #import "StrongInlines.h"
 #import <wtf/URL.h>
+#import <wtf/text/MakeString.h>
 
 namespace JSC {
 
@@ -79,6 +80,7 @@ const GlobalObjectMethodTable* JSAPIGlobalObject::globalObjectMethodTable()
         &deriveShadowRealmGlobalObject,
         &codeForEval,
         &canCompileStrings,
+        &trustedScriptStructure,
     };
     return &table;
 };

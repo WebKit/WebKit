@@ -27,29 +27,29 @@
 
 #include <WebCore/WritableStreamSink.h>
 
+namespace WebCore {
+struct WebTransportStreamIdentifierType;
+using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
+}
+
 namespace WebKit {
 
 class WebTransportSession;
 
-struct WebTransportStreamIdentifierType;
-using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
-
 class WebTransportSendStreamSink : public WebCore::WritableStreamSink {
 public:
-    static Ref<WebTransportSendStreamSink> create(WebTransportSession& session, WebTransportStreamIdentifier identifier) { return adoptRef(*new WebTransportSendStreamSink(session, identifier)); }
+    static Ref<WebTransportSendStreamSink> create(WebTransportSession& session, WebCore::WebTransportStreamIdentifier identifier) { return adoptRef(*new WebTransportSendStreamSink(session, identifier)); }
     ~WebTransportSendStreamSink();
 
-    void sendBytes(std::span<const uint8_t>, CompletionHandler<void()>&&);
-
 private:
-    WebTransportSendStreamSink(WebTransportSession&, WebTransportStreamIdentifier);
+    WebTransportSendStreamSink(WebTransportSession&, WebCore::WebTransportStreamIdentifier);
 
     void write(WebCore::ScriptExecutionContext&, JSC::JSValue, WebCore::DOMPromiseDeferred<void>&&) final;
     void close() final { }
     void error(String&&) final { }
 
-    WeakPtr<WebTransportSession> m_session;
-    WebTransportStreamIdentifier m_identifier;
+    ThreadSafeWeakPtr<WebTransportSession> m_session;
+    const WebCore::WebTransportStreamIdentifier m_identifier;
 };
 
 }

@@ -10,12 +10,17 @@
 // SPIR-V tools include for AST validation.
 #include <spirv-tools/libspirv.hpp>
 
+#if defined(ANGLE_ENABLE_ASSERTS)
+constexpr bool kAngleAssertEnabled = true;
+#else
+constexpr bool kAngleAssertEnabled = false;
+#endif
+
 namespace angle
 {
 namespace spirv
 {
 
-#if defined(ANGLE_ENABLE_ASSERTS)
 namespace
 {
 void ValidateSpirvMessage(spv_message_level_t level,
@@ -25,43 +30,55 @@ void ValidateSpirvMessage(spv_message_level_t level,
 {
     WARN() << "Level" << level << ": " << message;
 }
+
+spv_target_env GetEnv(const Blob &blob)
+{
+    switch (blob[kHeaderIndexVersion])
+    {
+        case kVersion_1_4:
+            return SPV_ENV_VULKAN_1_1_SPIRV_1_4;
+        default:
+            return SPV_ENV_VULKAN_1_1;
+    }
+}
 }  // anonymous namespace
 
 bool Validate(const Blob &blob)
 {
-    spvtools::SpirvTools spirvTools(SPV_ENV_VULKAN_1_1);
-
-    spvtools::ValidatorOptions options;
-    options.SetFriendlyNames(false);
-
-    spirvTools.SetMessageConsumer(ValidateSpirvMessage);
-    const bool result = spirvTools.Validate(blob.data(), blob.size(), options);
-
-    if (!result)
+    if (kAngleAssertEnabled)
     {
-        std::string readableSpirv;
-        spirvTools.Disassemble(blob, &readableSpirv, 0);
-        WARN() << "Invalid SPIR-V:\n" << readableSpirv;
+        spvtools::SpirvTools spirvTools(GetEnv(blob));
+
+        spvtools::ValidatorOptions options;
+        options.SetFriendlyNames(false);
+
+        spirvTools.SetMessageConsumer(ValidateSpirvMessage);
+        const bool result = spirvTools.Validate(blob.data(), blob.size(), options);
+
+        if (!result)
+        {
+            std::string readableSpirv;
+            spirvTools.Disassemble(blob, &readableSpirv, 0);
+            WARN() << "Invalid SPIR-V:\n" << readableSpirv;
+        }
+
+        return result;
     }
 
-    return result;
+    // "Validate()" is only used inside an ASSERT().
+    // Return false to indicate an error in case this is ever accidentally used somewhere else.
+    return false;
 }
 
 void Print(const Blob &blob)
 {
-    spvtools::SpirvTools spirvTools(SPV_ENV_VULKAN_1_1);
+    spvtools::SpirvTools spirvTools(GetEnv(blob));
     std::string readableSpirv;
-    spirvTools.Disassemble(blob, &readableSpirv, 0);
-    INFO() << "Dissembly SPIRV: " << readableSpirv.c_str();
+    spirvTools.Disassemble(blob, &readableSpirv,
+                           SPV_BINARY_TO_TEXT_OPTION_COMMENT | SPV_BINARY_TO_TEXT_OPTION_INDENT |
+                               SPV_BINARY_TO_TEXT_OPTION_NESTED_INDENT);
+    INFO() << "Disassembled SPIR-V:\n" << readableSpirv.c_str();
 }
-#else   // ANGLE_ENABLE_ASSERTS
-bool Validate(const Blob &blob)
-{
-    // Placeholder implementation since this is only used inside an ASSERT().
-    // Return false to indicate an error in case this is ever accidentally used somewhere else.
-    return false;
-}
-#endif  // ANGLE_ENABLE_ASSERTS
 
 }  // namespace spirv
 }  // namespace angle

@@ -96,8 +96,8 @@ private:
     CryptoKeyRSA(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType, PlatformRSAKeyContainer&&, bool extractable, CryptoKeyUsageBitmap);
 
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::RSA; }
-
     KeyAlgorithm algorithm() const final;
+    CryptoKey::Data data() const final;
 
     PlatformRSAKeyContainer m_platformKey;
 

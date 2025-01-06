@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -21,7 +21,7 @@
 
 #include "aom_dsp/blend.h"
 
-static INLINE void comp_mask_pred_16_ssse3(const uint8_t *src0,
+static inline void comp_mask_pred_16_ssse3(const uint8_t *src0,
                                            const uint8_t *src1,
                                            const uint8_t *mask, uint8_t *dst) {
   const __m128i alpha_max = _mm_set1_epi8(AOM_BLEND_A64_MAX_ALPHA);
@@ -47,7 +47,7 @@ static INLINE void comp_mask_pred_16_ssse3(const uint8_t *src0,
   _mm_store_si128((__m128i *)dst, _mm_packus_epi16(roundAL, roundAH));
 }
 
-static INLINE void comp_mask_pred_8_ssse3(uint8_t *comp_pred, int height,
+static inline void comp_mask_pred_8_ssse3(uint8_t *comp_pred, int height,
                                           const uint8_t *src0, int stride0,
                                           const uint8_t *src1, int stride1,
                                           const uint8_t *mask,

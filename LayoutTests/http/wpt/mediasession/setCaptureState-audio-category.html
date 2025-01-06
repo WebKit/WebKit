@@ -1,0 +1,84 @@
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<video id=video autoplay playsinline controls></video>
+<script>
+function validateInternalAudioCategory(expectedCategory)
+{
+    if (!window.internals)
+        return;
+    assert_equals(internals.audioSessionCategory(), expectedCategory);
+}
+
+async function waitForInternalAudioCategory(expectedCategory)
+{
+    let counter = 0;
+    while (++counter < 50) {
+        if (internals.audioSessionCategory() !== expectedCategory)
+           await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    assert_equals(internals.audioSessionCategory(), expectedCategory, "waitForInternalAudioCategory");
+}
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const track = stream.getTracks()[0];
+
+    const recorder = new MediaRecorder(stream);
+    recorder.start();
+    let blobs = [];
+    let resolveCallback;
+    let promise = new Promise((resolve, reject) => {
+        resolveCallback = resolve;
+        setTimeout(() => reject("blob promise rejected"), 5000);
+    });
+    recorder.ondataavailable = e => {
+       if (e.data.size)
+           blobs.push(e.data);
+       if (blobs.length > 1)
+           resolveCallback();
+    }
+    const timer = setInterval(() => recorder.requestData(), 200);
+    await Promise.all([
+        promise,
+        new Promise(resolve => setTimeout(resolve, 1000)),
+    ]);
+    clearInterval(timer);
+
+    validateInternalAudioCategory("PlayAndRecord");
+
+    assert_greater_than(blobs.length, 0);
+
+    const blob = new Blob(blobs, { type: blobs[blobs.length - 1].type });
+    video.srcObject = blob;
+    await video.play();
+
+    validateInternalAudioCategory("PlayAndRecord");
+
+    video.pause();
+
+    await navigator.mediaSession.setMicrophoneActive(false);
+    await new Promise(resolve => track.onmute = resolve);
+
+    validateInternalAudioCategory("None");
+
+    await video.play();
+    await waitForInternalAudioCategory("MediaPlayback");
+
+    video.pause();
+
+    if (!window.internals)
+        return;
+
+    internals.withUserGesture(() => {
+        promise = navigator.mediaSession.setMicrophoneActive(true);
+    });
+    await promise;
+    await new Promise(resolve => track.onunmute = resolve);
+    validateInternalAudioCategory("PlayAndRecord");
+}, "Use MediaSession to play recorded audio with MediaPlayback category");
+
+</script>
+</body>
+</html>

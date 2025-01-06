@@ -27,8 +27,14 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#if USE(LIBWEBRTC)
+#include "LibWebRTCAudioModule.h"
+#endif
+
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WTF {
 class MediaTime;
@@ -37,11 +43,10 @@ class MediaTime;
 namespace WebCore {
 
 class AudioStreamDescription;
-class LibWebRTCAudioModule;
 class PlatformAudioData;
 
-class WEBCORE_EXPORT AudioMediaStreamTrackRenderer : public LoggerHelper {
-    WTF_MAKE_FAST_ALLOCATED;
+class WEBCORE_EXPORT AudioMediaStreamTrackRenderer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioMediaStreamTrackRenderer, WTF::DestructionThread::Main>, public LoggerHelper {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioMediaStreamTrackRenderer, WEBCORE_EXPORT);
 public:
     struct Init {
         Function<void()>&& crashCallback;
@@ -50,11 +55,13 @@ public:
 #endif
 #if !RELEASE_LOG_DISABLED
         const Logger& logger;
-        const void* logIdentifier;
+        uint64_t logIdentifier;
 #endif
     };
-    static std::unique_ptr<AudioMediaStreamTrackRenderer> create(Init&&);
+    static RefPtr<AudioMediaStreamTrackRenderer> create(Init&&);
     virtual ~AudioMediaStreamTrackRenderer() = default;
+
+    static String defaultDeviceID();
 
     virtual void start(CompletionHandler<void()>&&) = 0;
     virtual void stop() = 0;
@@ -72,7 +79,7 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
-    const void* logIdentifier() const final;
+    uint64_t logIdentifier() const final;
 
     ASCIILiteral logClassName() const final;
     WTFLogChannel& logChannel() const final;
@@ -95,7 +102,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

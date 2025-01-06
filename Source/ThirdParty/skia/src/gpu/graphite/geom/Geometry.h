@@ -8,14 +8,20 @@
 #ifndef skgpu_graphite_geom_Geometry_DEFINED
 #define skgpu_graphite_geom_Geometry_DEFINED
 
+#include "include/core/SkRefCnt.h"
 #include "include/core/SkVertices.h"
-#include "src/core/SkVerticesPriv.h"
+#include "include/private/base/SkAssert.h"
 #include "src/gpu/graphite/geom/AnalyticBlurMask.h"
 #include "src/gpu/graphite/geom/CoverageMaskShape.h"
 #include "src/gpu/graphite/geom/EdgeAAQuad.h"
 #include "src/gpu/graphite/geom/Rect.h"
 #include "src/gpu/graphite/geom/Shape.h"
 #include "src/gpu/graphite/geom/SubRunData.h"
+
+#include <cstdint>
+#include <new>
+#include <type_traits>
+#include <utility>
 
 namespace skgpu::graphite {
 
@@ -100,7 +106,9 @@ public:
     bool isCoverageMaskShape() const { return fType == Type::kCoverageMaskShape; }
     bool isAnalyticBlur() const { return fType == Type::kAnalyticBlur; }
     bool isEmpty() const {
-        return fType == (Type::kEmpty) || (this->isShape() && this->shape().isEmpty());
+        return fType == (Type::kEmpty) || (this->isShape() &&
+                                           this->shape().isEmpty() &&
+                                           !this->shape().inverted());
     }
 
     const Shape& shape() const { SkASSERT(this->isShape()); return fShape; }

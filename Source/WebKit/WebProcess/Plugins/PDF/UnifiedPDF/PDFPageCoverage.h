@@ -28,6 +28,7 @@
 #if ENABLE(UNIFIED_PDF)
 
 #include "PDFDocumentLayout.h"
+#include <wtf/text/ParsingUtilities.h>
 
 namespace WTF {
 class TextStream;
@@ -37,15 +38,42 @@ namespace WebKit {
 
 struct PerPageInfo {
     PDFDocumentLayout::PageIndex pageIndex { 0 };
-    WebCore::FloatRect pageBounds;
+    WebCore::FloatRect pageBounds; // These are in "PDFDocumentLayout" coordinates.
+    WebCore::FloatRect rectInPageLayoutCoordinates; // Some arbirary rect converted into "PDFDocumentLayout" coordinates.
 
     bool operator==(const PerPageInfo&) const = default;
 };
 
 using PDFPageCoverage = Vector<PerPageInfo>;
 
+inline PerPageInfo unite(const PerPageInfo& a, const PerPageInfo& b)
+{
+    return { a.pageIndex, a.pageBounds, unionRect(a.rectInPageLayoutCoordinates, b.rectInPageLayoutCoordinates) };
+}
+
+inline PDFPageCoverage unite(const PDFPageCoverage& a, const PDFPageCoverage& b)
+{
+    PDFPageCoverage result;
+    result.reserveCapacity(a.size() + b.size());
+    auto as = a.span();
+    auto bs = b.span();
+    while (!as.empty() && !bs.empty()) {
+        auto cmp = as.front().pageIndex <=> bs.front().pageIndex;
+        if (cmp < 0)
+            result.append(consume(as));
+        else if (cmp > 0)
+            result.append(consume(bs));
+        else
+            result.append(unite(consume(as), consume(bs)));
+    }
+    result.append(as);
+    result.append(bs);
+    return result;
+}
+
 struct PDFPageCoverageAndScales {
     PDFPageCoverage pages;
+    WebCore::FloatSize contentsOffset { };
     float deviceScaleFactor { 1 };
     float pdfDocumentScale { 1 };
     float tilingScaleFactor { 1 };

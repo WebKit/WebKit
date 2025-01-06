@@ -38,6 +38,10 @@ static void* WKDownloadProgressBytesReceivedContext = &WKDownloadProgressBytesRe
 static NSString * const countOfBytesExpectedToReceiveKeyPath = @"countOfBytesExpectedToReceive";
 static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
 
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+#import <WebKitAdditions/DownloadProgressAdditions.mm>
+#endif
+
 @implementation WKDownloadProgress {
     RetainPtr<NSURLSessionDownloadTask> m_task;
     WeakPtr<WebKit::Download> m_download;
@@ -83,8 +87,10 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
 - (void)publish
 #endif
 {
-    BOOL consumedExtension = m_sandboxExtension->consume();
-    ASSERT_UNUSED(consumedExtension, consumedExtension);
+    if (m_sandboxExtension) {
+        BOOL consumedExtension = m_sandboxExtension->consume();
+        ASSERT_UNUSED(consumedExtension, consumedExtension);
+    }
 
 #if HAVE(NSPROGRESS_PUBLISHING_SPI)
     [super _publish];
@@ -107,8 +113,10 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
     [super unpublish];
 #endif
 
-    m_sandboxExtension->revoke();
-    m_sandboxExtension = nullptr;
+    if (m_sandboxExtension) {
+        m_sandboxExtension->revoke();
+        m_sandboxExtension = nullptr;
+    }
 }
 
 - (void)_updateProgressExtendedAttributeOnProgressFile

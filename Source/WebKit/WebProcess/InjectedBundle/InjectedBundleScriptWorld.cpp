@@ -31,7 +31,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -114,6 +114,16 @@ DOMWrapperWorld& InjectedBundleScriptWorld::coreWorld()
 void InjectedBundleScriptWorld::clearWrappers()
 {
     m_world->clearWrappers();
+}
+
+void InjectedBundleScriptWorld::setAllowAutofill()
+{
+    m_world->setAllowAutofill();
+}
+
+void InjectedBundleScriptWorld::setAllowElementUserInfo()
+{
+    m_world->setAllowElementUserInfo();
 }
 
 void InjectedBundleScriptWorld::makeAllShadowRootsOpen()

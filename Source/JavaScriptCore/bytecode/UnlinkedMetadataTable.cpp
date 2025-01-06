@@ -28,6 +28,8 @@
 
 #include "BytecodeStructs.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetadataTable);
@@ -152,7 +154,7 @@ void UnlinkedMetadataTable::finalize()
         uint8_t* newBuffer = reinterpret_cast_ptr<uint8_t*>(MetadataTableMalloc::malloc(valueProfileSize + sizeof(LinkingData) + s_offset32TableSize + offset));
         memset(newBuffer, 0, valueProfileSize + sizeof(LinkingData) + s_offset16TableSize);
         memset(newBuffer + valueProfileSize + sizeof(LinkingData) + s_offset16TableSize + s_offset32TableSize, 0, offset - s_offset16TableSize);
-        Offset32* buffer = bitwise_cast<Offset32*>(newBuffer + valueProfileSize + sizeof(LinkingData) + s_offset16TableSize);
+        Offset32* buffer = std::bit_cast<Offset32*>(newBuffer + valueProfileSize + sizeof(LinkingData) + s_offset16TableSize);
         for (unsigned i = 0; i < s_offsetTableEntries; ++i)
             buffer[i] = preprocessBuffer()[i] + s_offset32TableSize;
         MetadataTableMalloc::free(m_rawBuffer);
@@ -162,7 +164,7 @@ void UnlinkedMetadataTable::finalize()
         uint8_t* newBuffer = reinterpret_cast_ptr<uint8_t*>(MetadataTableMalloc::malloc(valueProfileSize + sizeof(LinkingData) + offset));
         memset(newBuffer, 0, valueProfileSize + sizeof(LinkingData));
         memset(newBuffer + valueProfileSize + sizeof(LinkingData) + s_offset16TableSize, 0, offset - s_offset16TableSize);
-        Offset16* buffer = bitwise_cast<Offset16*>(newBuffer + valueProfileSize + sizeof(LinkingData));
+        Offset16* buffer = std::bit_cast<Offset16*>(newBuffer + valueProfileSize + sizeof(LinkingData));
         for (unsigned i = 0; i < s_offsetTableEntries; ++i)
             buffer[i] = preprocessBuffer()[i];
         MetadataTableMalloc::free(m_rawBuffer);
@@ -178,3 +180,5 @@ UnlinkedMetadataTable::~UnlinkedMetadataTable()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

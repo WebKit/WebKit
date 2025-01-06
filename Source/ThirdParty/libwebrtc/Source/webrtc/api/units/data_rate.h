@@ -11,10 +11,7 @@
 #ifndef API_UNITS_DATA_RATE_H_
 #define API_UNITS_DATA_RATE_H_
 
-#ifdef WEBRTC_UNIT_TEST
-#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
-#endif              // WEBRTC_UNIT_TEST
-
+#include <cstdint>
 #include <limits>
 #include <string>
 #include <type_traits>
@@ -23,6 +20,7 @@
 #include "api/units/frequency.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/units/unit_base.h"  // IWYU pragma: export
 
 namespace webrtc {
@@ -49,6 +47,9 @@ class DataRate final : public rtc_units_impl::RelativeUnit<DataRate> {
   static constexpr DataRate Infinity() { return PlusInfinity(); }
 
   DataRate() = delete;
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, DataRate value);
 
   template <typename T = int64_t>
   constexpr T bps() const {
@@ -137,18 +138,12 @@ inline constexpr DataRate operator*(const Frequency frequency,
   return size * frequency;
 }
 
-std::string ToString(DataRate value);
-inline std::string ToLogString(DataRate value) {
-  return ToString(value);
-}
+RTC_EXPORT std::string ToString(DataRate value);
 
-#ifdef WEBRTC_UNIT_TEST
-inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
-    std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
-    DataRate value) {
-  return stream << ToString(value);
+template <typename Sink>
+void AbslStringify(Sink& sink, DataRate value) {
+  sink.Append(ToString(value));
 }
-#endif  // WEBRTC_UNIT_TEST
 
 }  // namespace webrtc
 

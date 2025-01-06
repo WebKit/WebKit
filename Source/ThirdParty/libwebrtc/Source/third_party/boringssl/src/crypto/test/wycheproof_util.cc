@@ -106,28 +106,28 @@ const EVP_MD *GetWycheproofDigest(FileTest *t, const char *key,
   return nullptr;
 }
 
-bssl::UniquePtr<EC_GROUP> GetWycheproofCurve(FileTest *t, const char *key,
-                                             bool instruction) {
+const EC_GROUP *GetWycheproofCurve(FileTest *t, const char *key,
+                                   bool instruction) {
   std::string name;
   bool ok =
       instruction ? t->GetInstruction(&name, key) : t->GetAttribute(&name, key);
   if (!ok) {
     return nullptr;
   }
-  int nid;
   if (name == "secp224r1") {
-    nid = NID_secp224r1;
-  } else if (name == "secp256r1") {
-    nid = NID_X9_62_prime256v1;
-  } else if (name == "secp384r1") {
-    nid = NID_secp384r1;
-  } else if (name == "secp521r1") {
-    nid = NID_secp521r1;
-  } else {
-    t->PrintLine("Unknown curve '%s'", name.c_str());
-    return nullptr;
+    return EC_group_p224();
   }
-  return bssl::UniquePtr<EC_GROUP>(EC_GROUP_new_by_curve_name(nid));
+  if (name == "secp256r1") {
+    return EC_group_p256();
+  }
+  if (name == "secp384r1") {
+    return EC_group_p384();
+  }
+  if (name == "secp521r1") {
+    return EC_group_p521();
+  }
+  t->PrintLine("Unknown curve '%s'", name.c_str());
+  return nullptr;
 }
 
 bssl::UniquePtr<BIGNUM> GetWycheproofBIGNUM(FileTest *t, const char *key,

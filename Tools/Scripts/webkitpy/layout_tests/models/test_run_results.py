@@ -269,11 +269,13 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
         expected = 'SKIP'
         expectations = list(expectations_by_type.values())[0]
         for element in expectations_by_type.values():
+            if element.model().has_modifier(test_name, test_expectations.SKIP):
+                continue
+
             test_expectation = element.filtered_expectations_for_test(test_name, pixel_tests_enabled, port_obj._options.world_leaks)
             expected = element.model().expectations_to_string(test_expectation)
-            if expected != 'SKIP':
-                expectations = element
-                continue
+            expectations = element
+            continue
 
         result_type = result.type
         actual = [keywords[result_type]]

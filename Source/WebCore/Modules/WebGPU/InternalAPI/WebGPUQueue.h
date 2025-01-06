@@ -37,15 +37,16 @@
 #include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::WebGPU {
 
 class Buffer;
 
-class Queue : public RefCounted<Queue> {
+class Queue : public RefCountedAndCanMakeWeakPtr<Queue> {
 public:
     virtual ~Queue() = default;
 
@@ -57,7 +58,7 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual void submit(Vector<std::reference_wrapper<CommandBuffer>>&&) = 0;
+    virtual void submit(Vector<Ref<WebGPU::CommandBuffer>>&&) = 0;
 
     virtual void onSubmittedWorkDone(CompletionHandler<void()>&&) = 0;
 

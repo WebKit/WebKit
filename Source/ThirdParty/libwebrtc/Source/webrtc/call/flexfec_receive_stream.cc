@@ -10,6 +10,7 @@
 
 #include "call/flexfec_receive_stream.h"
 
+#include "api/call/transport.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

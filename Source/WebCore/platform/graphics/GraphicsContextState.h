@@ -58,11 +58,16 @@ public:
         ShouldSubpixelQuantizeFonts = 1 << 13,
         ShadowsIgnoreTransforms     = 1 << 14,
         DrawLuminanceMask           = 1 << 15,
-#if HAVE(OS_DARK_MODE_SUPPORT)
         UseDarkAppearance           = 1 << 16,
-#endif
     };
     using ChangeFlags = OptionSet<Change>;
+
+    struct ChangeIndex {
+        Change toChange() { return static_cast<Change>(1 << value); }
+
+        uint32_t value;
+    };
+    static constexpr ChangeIndex toIndex(GraphicsContextState::Change change) { return { WTF::ctzConstexpr(enumToUnderlyingType(change)) }; }
 
     static constexpr ChangeFlags basicChangeFlags { Change::StrokeThickness, Change::StrokeBrush, Change::FillBrush };
     static constexpr ChangeFlags strokeChangeFlags { Change::StrokeThickness, Change::StrokeBrush };
@@ -137,14 +142,13 @@ public:
     bool drawLuminanceMask() const { return m_drawLuminanceMask; }
     void setDrawLuminanceMask(bool drawLuminanceMask) { setProperty(Change::DrawLuminanceMask, &GraphicsContextState::m_drawLuminanceMask, drawLuminanceMask); }
 
-#if HAVE(OS_DARK_MODE_SUPPORT)
     bool useDarkAppearance() const { return m_useDarkAppearance; }
     void setUseDarkAppearance(bool useDarkAppearance) { setProperty(Change::UseDarkAppearance, &GraphicsContextState::m_useDarkAppearance, useDarkAppearance); }
-#endif
     
     bool containsOnlyInlineChanges() const;
     bool containsOnlyInlineStrokeChanges() const;
     void mergeLastChanges(const GraphicsContextState&, const std::optional<GraphicsContextState>& lastDrawingState = std::nullopt);
+    void mergeSingleChange(const GraphicsContextState&, ChangeIndex, const std::optional<GraphicsContextState>& lastDrawingState = std::nullopt);
     void mergeAllChanges(const GraphicsContextState&);
 
     Purpose purpose() const { return m_purpose; }
@@ -196,9 +200,7 @@ private:
     bool m_shouldSubpixelQuantizeFonts { true };
     bool m_shadowsIgnoreTransforms { false };
     bool m_drawLuminanceMask { false };
-#if HAVE(OS_DARK_MODE_SUPPORT)
     bool m_useDarkAppearance { false };
-#endif
 
     Purpose m_purpose { Purpose::Initial };
 };

@@ -25,18 +25,18 @@
 
 #pragma once
 
-#if ENABLE(WEB_CODECS)
+#if ENABLE(VIDEO)
 
 #include "VideoEncoderActiveConfiguration.h"
 #include "VideoEncoderScalabilityMode.h"
 #include "VideoFrame.h"
 #include <span>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
+#include <wtf/NativePromise.h>
 
 namespace WebCore {
 
-class VideoEncoder {
+class VideoEncoder : public ThreadSafeRefCounted<VideoEncoder> {
 public:
     virtual ~VideoEncoder() = default;
 
@@ -64,23 +64,24 @@ public:
         int64_t timestamp { 0 };
         std::optional<uint64_t> duration;
     };
-    using CreateResult = Expected<UniqueRef<VideoEncoder>, String>;
+    using CreateResult = Expected<Ref<VideoEncoder>, String>;
+    using CreatePromise = NativePromise<Ref<VideoEncoder>, String>;
 
-    using PostTaskCallback = Function<void(Function<void()>&&)>;
     using DescriptionCallback = Function<void(ActiveConfiguration&&)>;
     using OutputCallback = Function<void(EncodedFrame&&)>;
     using CreateCallback = Function<void(CreateResult&&)>;
 
-    using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
+    using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
     WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);
 
-    static void create(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
-    WEBCORE_EXPORT static void createLocalEncoder(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static Ref<CreatePromise> create(const String&, const Config&, DescriptionCallback&&, OutputCallback&&);
+    WEBCORE_EXPORT static void createLocalEncoder(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
 
-    using EncodeCallback = Function<void(String&&)>;
-    virtual void encode(RawFrame&&, bool shouldGenerateKeyFrame, EncodeCallback&&) = 0;
+    using EncodePromise = NativePromise<void, String>;
+    virtual Ref<EncodePromise> encode(RawFrame&&, bool shouldGenerateKeyFrame) = 0;
 
-    virtual void flush(Function<void()>&&) = 0;
+    virtual Ref<GenericPromise> setRates(uint64_t /* bitRate */, double /* frameRate */) = 0;
+    virtual Ref<GenericPromise> flush() = 0;
     virtual void reset() = 0;
     virtual void close() = 0;
 
@@ -89,4 +90,4 @@ public:
 
 }
 
-#endif // ENABLE(WEB_CODECS)
+#endif // ENABLE(VIDEO)

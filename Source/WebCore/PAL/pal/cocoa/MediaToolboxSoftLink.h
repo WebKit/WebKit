@@ -51,35 +51,4 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTAudioProcessingTapGetSourceAu
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, MediaToolbox, MTAudioProcessingTapCreate, OSStatus, (CFAllocatorRef allocator, const MTAudioProcessingTapCallbacks* callbacks, MTAudioProcessingTapCreationFlags flags, MTAudioProcessingTapRef* tapOut), (allocator, callbacks, flags, tapOut))
 #define MTAudioProcessingTapCreate softLink_MediaToolbox_MTAudioProcessingTapCreate
 
-#if HAVE(MT_PLUGIN_FORMAT_READER)
-
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, MediaToolbox, kMTPluginFormatReaderProperty_Duration, CFStringRef)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, MediaToolbox, kMTPluginTrackReaderProperty_Enabled, CFStringRef)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, MediaToolbox, kMTPluginTrackReaderProperty_FormatDescriptionArray, CFStringRef)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, MediaToolbox, kMTPluginTrackReaderProperty_NominalFrameRate, CFStringRef)
-SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, MediaToolbox, kMTPluginFormatReader_SupportsPlayableHorizonQueries, CFStringRef)
-
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTPluginByteSourceGetLength, int64_t, (MTPluginByteSourceRef byteSource), (byteSource))
-#define MTPluginByteSourceGetLength PAL::softLink_MediaToolbox_MTPluginByteSourceGetLength
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTPluginByteSourceRead, OSStatus, (MTPluginByteSourceRef byteSource, size_t num, int64_t offset, void* dest, size_t* bytesReadOut), (byteSource, num, offset, dest, bytesReadOut))
-#define MTPluginByteSourceRead PAL::softLink_MediaToolbox_MTPluginByteSourceRead
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTPluginFormatReaderGetClassID, CMBaseClassID, (), ())
-#define MTPluginFormatReaderGetClassID PAL::softLink_MediaToolbox_MTPluginFormatReaderGetClassID
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTPluginFormatReaderGetTypeID, CFTypeID, (), ())
-#define MTPluginFormatReaderGetTypeID PAL::softLink_MediaToolbox_MTPluginFormatReaderGetTypeID
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTPluginFormatReaderDisableSandboxing, OSStatus, (), ())
-#define MTPluginFormatReaderDisableSandboxing PAL::softLink_MediaToolbox_MTPluginFormatReaderDisableSandboxing
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTRegisterPluginFormatReaderBundleDirectory, void, (CFURLRef directoryURL), (directoryURL))
-#define MTRegisterPluginFormatReaderBundleDirectory PAL::softLink_MediaToolbox_MTRegisterPluginFormatReaderBundleDirectory
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTPluginSampleCursorGetClassID, CMBaseClassID, (), ())
-#define MTPluginSampleCursorGetClassID PAL::softLink_MediaToolbox_MTPluginSampleCursorGetClassID
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTPluginSampleCursorGetTypeID, CFTypeID, (), ())
-#define MTPluginSampleCursorGetTypeID PAL::softLink_MediaToolbox_MTPluginSampleCursorGetTypeID
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTPluginTrackReaderGetClassID, CMBaseClassID, (), ())
-#define MTPluginTrackReaderGetClassID PAL::softLink_MediaToolbox_MTPluginTrackReaderGetClassID
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTPluginTrackReaderGetTypeID, CFTypeID, (), ())
-#define MTPluginTrackReaderGetTypeID PAL::softLink_MediaToolbox_MTPluginTrackReaderGetTypeID
-
-#endif // HAVE(MT_PLUGIN_FORMAT_READER)
-
 #endif // USE(MEDIATOOLBOX)

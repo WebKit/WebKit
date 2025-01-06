@@ -33,6 +33,9 @@ unsigned toPlatformModifiers(OptionSet<WebKit::WebEventModifier>);
 WebKitNavigationType toWebKitNavigationType(WebCore::NavigationType);
 unsigned toWebKitMouseButton(WebKit::WebMouseEventButton);
 unsigned toWebKitError(unsigned webCoreError);
+#if ENABLE(WK_WEB_EXTENSIONS)
+unsigned toWebKitWebExtensionMatchPatternError(unsigned apiError);
+#endif
 unsigned toWebCoreError(unsigned webKitError);
 
 enum SnapshotRegion {

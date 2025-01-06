@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,9 +32,12 @@
 #include "NotificationPayload.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerGlobalScope.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WTFProcess.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SWContextManager::ServiceWorkerTerminationRequest);
 
 SWContextManager& SWContextManager::singleton()
 {
@@ -335,6 +338,15 @@ void SWContextManager::setRegistrationUpdateViaCache(ServiceWorkerRegistrationId
             }
         };
     });
+}
+
+void SWContextManager::removeFetch(ServiceWorkerIdentifier serviceWorkerIdentifier, SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier, bool isNavigationFetch)
+{
+    ASSERT(isMainThread());
+    if (auto* proxy = serviceWorkerThreadProxy(serviceWorkerIdentifier))
+        proxy->removeFetch(serverConnectionIdentifier, fetchIdentifier);
+    if (isNavigationFetch && m_connection)
+        m_connection->removeNavigationFetch(serverConnectionIdentifier, fetchIdentifier);
 }
 
 } // namespace WebCore

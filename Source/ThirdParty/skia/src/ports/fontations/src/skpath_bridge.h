@@ -9,19 +9,6 @@
 namespace fontations_ffi {
 
 /** C++ pure virtual interface type, exposed to Rust side to be able to write
- * from Skrifa path output functions to an SkPath type to capture and convert a
- * glyph path. */
-class PathWrapper {
-public:
-    virtual ~PathWrapper() = default;
-    virtual void move_to(float x, float y) = 0;
-    virtual void line_to(float x, float y) = 0;
-    virtual void quad_to(float cx0, float cy0, float x, float y) = 0;
-    virtual void curve_to(float cx0, float cy0, float cx1, float cy1, float x, float y) = 0;
-    virtual void close() = 0;
-};
-
-/** C++ pure virtual interface type, exposed to Rust side to be able to write
  * out variation design parameters to the caller-side allocated
  * SkFontParameters::Variation::Axis. A direct cast or mapping between a shared
  * C++/Rust struct and a Skia side struct is not possible because the
@@ -46,6 +33,7 @@ struct FillSweepParams;
 class ColorPainterWrapper {
 public:
     virtual ~ColorPainterWrapper() = default;
+    virtual bool is_bounds_mode() = 0;
     virtual void push_transform(const Transform& transform) = 0;
     virtual void pop_transform() = 0;
     virtual void push_clip_glyph(uint16_t glyph_id) = 0;

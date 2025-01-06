@@ -100,7 +100,7 @@ EncodedImageExtractionResult SingleProcessEncodedImageDataInjector::ExtractData(
   }
 
   size_t prev_frames_size = 0;
-  absl::optional<uint16_t> id = absl::nullopt;
+  std::optional<uint16_t> id = std::nullopt;
   bool discard = true;
   std::vector<ExtractionInfo> extraction_infos;
   for (size_t frame_size : frame_sizes) {

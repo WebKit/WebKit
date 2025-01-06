@@ -29,10 +29,6 @@
 from __future__ import print_function
 import logging
 import re
-import sys
-
-if sys.version_info < (3, 0):
-    from itertools import ifilter  as filter
 
 _log = logging.getLogger(__name__)
 

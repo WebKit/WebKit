@@ -97,10 +97,24 @@ bin/gn gen out/Cached   --args='cc_wrapper="ccache"'
 bin/gn gen out/RTTI     --args='extra_cflags_cc=["-frtti"]'
 ```
 
-Once you have generated your build files, run Ninja to compile and link Skia:
+Once you have generated your build files, run Ninja to compile and link all of Skia:
 
 ```
 ninja -C out/Static
+```
+
+To avoid building everything, include the target or targets after the ninja command. For example:
+
+```
+ninja -C out/Debug skia
+ninja -C out/Debug viewer dm
+```
+
+Not all targets are available for all sets of build arguments. For a list of all available targets
+for a given build directory, run:
+
+```
+gn ls out/Debug
 ```
 
 If some header files are missing, install the corresponding dependencies:
@@ -113,13 +127,14 @@ To pull new changes and rebuild:
 
 ```
 git pull
-python tools/git-sync-deps
+python3 tools/git-sync-deps
 ninja -C out/Static
 ```
 
 ## Android
 
-To build Skia for Android you need an
+To build Skia for Android you need a recent version of
+[Java](https://www.oracle.com/java/technologies/downloads/) and a recent
 [Android NDK](https://developer.android.com/ndk/index.html).
 
 If you do not have an NDK and have access to CIPD, you can use one of these
@@ -315,7 +330,7 @@ given at the top of that file or on the Developer site, or the absolute path
 to the file.
 
 If you find yourself missing a Google signing identity or provisioning profile,
-you'll want to have a read through go/appledev.
+you'll want to have a read through go/appledev and go/ios-signing.
 
 For signed packages `ios-deploy` makes installing and running them on a device
 easy:

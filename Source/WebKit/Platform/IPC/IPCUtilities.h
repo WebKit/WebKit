@@ -31,6 +31,10 @@
 #include <windows.h>
 #endif
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+#include <wtf/unix/UnixFileDescriptor.h>
+#endif
+
 namespace IPC {
 
 // Function to check when asserting IPC-related failures, so that IPC testing skips the assertions
@@ -49,16 +53,24 @@ inline bool isTestingIPC()
 
 #if USE(UNIX_DOMAIN_SOCKETS)
 struct SocketPair {
-    int client;
-    int server;
+    UnixFileDescriptor client;
+    UnixFileDescriptor server;
 };
 
 enum PlatformConnectionOptions {
     SetCloexecOnClient = 1 << 0,
     SetCloexecOnServer = 1 << 1,
+#if USE(GLIB) && OS(LINUX)
+    SetPasscredOnServer = 1 << 2
+#endif
 };
 
 SocketPair createPlatformConnection(unsigned options = SetCloexecOnClient | SetCloexecOnServer);
+
+#if USE(GLIB) && OS(LINUX)
+void sendPIDToPeer(int socket);
+pid_t readPIDFromPeer(int socket);
+#endif
 #endif
 
 #if OS(WINDOWS)

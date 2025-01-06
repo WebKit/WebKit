@@ -86,12 +86,12 @@ class MockBugzilla:
 class MockRequestsGet:
     def __init__(self, url):
         self._urls_data = {
-            "https://ews.webkit.org/status/4/": b'{"mac-wk1": {"url": "https://ews-build.webkit.org/#/builders/1/builds/99"}, "mac-wk2": {"url": "https://ews-build.webkit.org/#/builders/2/builds/99"}, "mac-debug-wk1": {"url": "https://ews-build.webkit.org/#/builders/3/builds/99"}, "ios-wk2": {"url": "https://ews-build.webkit.org/#/builders/4/builds/99"}, "win": {"url": "https://ews-build.webkit.org/#/builders/5/builds/99"}}',
-            "https://ews-build.webkit.org/api/v2/builders": b'{"builders": [{"builderid": 1, "description": "mac-wk1"}, {"builderid": 2, "description": "mac-wk2"}, {"builderid": 3, "description": "mac-debug-wk1"}, {"builderid": 4, "description": "ios-wk2"}, {"builderid": 5, "description": "win"}]}',
+            "https://ews.webkit.org/status/4/": b'{"mac-wk1": {"url": "https://ews-build.webkit.org/#/builders/1/builds/99"}, "mac-wk2": {"url": "https://ews-build.webkit.org/#/builders/2/builds/99"}, "mac-debug-wk1": {"url": "https://ews-build.webkit.org/#/builders/3/builds/99"}, "ios": {"url": "https://ews-build.webkit.org/#/builders/4/builds/99"}, "win": {"url": "https://ews-build.webkit.org/#/builders/5/builds/99"}}',
+            "https://ews-build.webkit.org/api/v2/builders": b'{"builders": [{"builderid": 1, "description": "mac-wk1"}, {"builderid": 2, "description": "mac-wk2"}, {"builderid": 3, "description": "mac-debug-wk1"}, {"builderid": 4, "description": "ios"}, {"builderid": 5, "description": "win"}]}',
             "https://ews-build.webkit.org/api/v2/builders/1/builds/99/steps": b'{ "steps": [ { "complete": true, "name": "layout-tests", "results": 2, "state_string": "Ran layout tests",  "urls": [ { "name": "download layout test results", "url": "/results/mac-wk1/r12345.zip" } ] } ] }',
             "https://ews-build.webkit.org/api/v2/builders/2/builds/99/steps": b'{ "steps": [ { "complete": true, "name": "layout-tests", "results": 2, "state_string": "Ran layout tests",  "urls": [ { "name": "download layout test results", "url": "/results/mac-wk2/r12345.zip" } ] } ] }',
             "https://ews-build.webkit.org/api/v2/builders/3/builds/99/steps": b'{ "steps": [ { "complete": true, "name": "layout-tests", "results": 2, "state_string": "Ran layout tests",  "urls": [ { "name": "download layout test results", "url": "/results/mac-debug-wk1/r12345.zip" } ] } ] }',
-            "https://ews-build.webkit.org/api/v2/builders/4/builds/99/steps": b'{ "steps": [ { "complete": true, "name": "layout-tests", "results": 2, "state_string": "Ran layout tests",  "urls": [ { "name": "download layout test results", "url": "/results/ios-wk2/r12345.zip" }  ] } ] }',
+            "https://ews-build.webkit.org/api/v2/builders/4/builds/99/steps": b'{ "steps": [ { "complete": true, "name": "layout-tests", "results": 2, "state_string": "Ran layout tests",  "urls": [ { "name": "download layout test results", "url": "/results/ios/r12345.zip" }  ] } ] }',
             "https://ews-build.webkit.org/api/v2/builders/5/builds/99/steps": b'{ "steps": [ { "complete": true, "name": "layout-tests", "results": 2, "state_string": "Ran layout tests",  "urls": [ { "name": "download layout test results", "url": "/results/win/r12345.zip" }  ] } ] }',
         }
         self._url = url
@@ -234,7 +234,7 @@ class ResultsFetcherTest(unittest.TestCase):
                     "https://ews-build.webkit.org/results/mac-debug-wk1/r12345.zip",
                 ],
                 "mac-wk2": ["https://ews-build.webkit.org/results/mac-wk2/r12345.zip"],
-                "ios-wk2": ["https://ews-build.webkit.org/results/ios-wk2/r12345.zip"],
+                "ios": ["https://ews-build.webkit.org/results/ios/r12345.zip"],
                 "win": ["https://ews-build.webkit.org/results/win/r12345.zip"],
             }
             self.assertEqual(expected, actual)

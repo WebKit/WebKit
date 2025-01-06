@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<video id="vid" mute controls></video>
+<script>
+try {
+    vid.remote.watchAvailability(_ => {
+        let d = document;
+        let p = document.createElement("p");
+        p.innerText = "This should not leak the Document.";
+        document.body.appendChild(p);
+    });
+    parent.postMessage("iframeLoaded");
+} catch (error) {
+    parent.postMessage("testFailed");
+}
+</script>
+</body>
+</html>

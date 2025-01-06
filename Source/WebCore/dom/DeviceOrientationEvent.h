@@ -36,7 +36,7 @@ class Document;
 template<typename IDLType> class DOMPromiseDeferred;
 
 class DeviceOrientationEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(DeviceOrientationEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DeviceOrientationEvent);
 public:
     static Ref<DeviceOrientationEvent> create(const AtomString& eventType, DeviceOrientationData* orientation)
     {

@@ -29,15 +29,15 @@
 
 #include "WebXRPose.h"
 #include "WebXRView.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class WebXRViewerPose : public WebXRPose {
-    WTF_MAKE_ISO_ALLOCATED(WebXRViewerPose);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRViewerPose);
 public:
     static Ref<WebXRViewerPose> create(Ref<WebXRRigidTransform>&&, bool emulatedPosition);
     virtual ~WebXRViewerPose();

@@ -10,22 +10,38 @@
 
 #include "audio/channel_receive_frame_transformer_delegate.h"
 
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <string>
 #include <utility>
 
+#include "api/array_view.h"
+#include "api/frame_transformer_interface.h"
+#include "api/rtp_headers.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/buffer.h"
+#include "rtc_base/string_encode.h"
 
 namespace webrtc {
-namespace {
 
 class TransformableIncomingAudioFrame
     : public TransformableAudioFrameInterface {
  public:
   TransformableIncomingAudioFrame(rtc::ArrayView<const uint8_t> payload,
                                   const RTPHeader& header,
-                                  uint32_t ssrc)
-      : payload_(payload.data(), payload.size()),
+                                  uint32_t ssrc,
+                                  const std::string& codec_mime_type,
+                                  Timestamp receive_time)
+      : TransformableAudioFrameInterface(Passkey()),
+        payload_(payload.data(), payload.size()),
         header_(header),
-        ssrc_(ssrc) {}
+        ssrc_(ssrc),
+        codec_mime_type_(codec_mime_type),
+        receive_time_(receive_time) {}
   ~TransformableIncomingAudioFrame() override = default;
   rtc::ArrayView<const uint8_t> GetData() const override { return payload_; }
 
@@ -45,28 +61,48 @@ class TransformableIncomingAudioFrame
   }
   Direction GetDirection() const override { return Direction::kReceiver; }
 
-  const absl::optional<uint16_t> SequenceNumber() const override {
+  std::string GetMimeType() const override { return codec_mime_type_; }
+  const std::optional<uint16_t> SequenceNumber() const override {
     return header_.sequenceNumber;
   }
 
-  absl::optional<uint64_t> AbsoluteCaptureTimestamp() const override {
+  std::optional<uint64_t> AbsoluteCaptureTimestamp() const override {
     // This could be extracted from received header extensions + extrapolation,
     // if required in future, eg for being able to re-send received frames.
-    return absl::nullopt;
+    return std::nullopt;
   }
   const RTPHeader& Header() const { return header_; }
 
   FrameType Type() const override {
-    return header_.extension.voiceActivity ? FrameType::kAudioFrameSpeech
-                                           : FrameType::kAudioFrameCN;
+    if (!header_.extension.audio_level()) {
+      // Audio level extension not set.
+      return FrameType::kAudioFrameCN;
+    }
+    return header_.extension.audio_level()->voice_activity()
+               ? FrameType::kAudioFrameSpeech
+               : FrameType::kAudioFrameCN;
+  }
+
+  std::optional<uint8_t> AudioLevel() const override {
+    if (header_.extension.audio_level()) {
+      return header_.extension.audio_level()->level();
+    }
+    return std::nullopt;
+  }
+
+  std::optional<Timestamp> ReceiveTime() const override {
+    return receive_time_ == Timestamp::MinusInfinity()
+               ? std::nullopt
+               : std::optional<Timestamp>(receive_time_);
   }
 
  private:
   rtc::Buffer payload_;
   RTPHeader header_;
   uint32_t ssrc_;
+  std::string codec_mime_type_;
+  Timestamp receive_time_;
 };
-}  // namespace
 
 ChannelReceiveFrameTransformerDelegate::ChannelReceiveFrameTransformerDelegate(
     ReceiveFrameCallback receive_frame_callback,
@@ -92,10 +128,17 @@ void ChannelReceiveFrameTransformerDelegate::Reset() {
 void ChannelReceiveFrameTransformerDelegate::Transform(
     rtc::ArrayView<const uint8_t> packet,
     const RTPHeader& header,
-    uint32_t ssrc) {
+    uint32_t ssrc,
+    const std::string& codec_mime_type,
+    Timestamp receive_time) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  frame_transformer_->Transform(
-      std::make_unique<TransformableIncomingAudioFrame>(packet, header, ssrc));
+  if (short_circuit_) {
+    receive_frame_callback_(packet, header, receive_time);
+  } else {
+    frame_transformer_->Transform(
+        std::make_unique<TransformableIncomingAudioFrame>(
+            packet, header, ssrc, codec_mime_type, receive_time));
+  }
 }
 
 void ChannelReceiveFrameTransformerDelegate::OnTransformedFrame(
@@ -107,17 +150,27 @@ void ChannelReceiveFrameTransformerDelegate::OnTransformedFrame(
       });
 }
 
+void ChannelReceiveFrameTransformerDelegate::StartShortCircuiting() {
+  rtc::scoped_refptr<ChannelReceiveFrameTransformerDelegate> delegate(this);
+  channel_receive_thread_->PostTask([delegate = std::move(delegate)]() mutable {
+    RTC_DCHECK_RUN_ON(&delegate->sequence_checker_);
+    delegate->short_circuit_ = true;
+  });
+}
+
 void ChannelReceiveFrameTransformerDelegate::ReceiveFrame(
     std::unique_ptr<TransformableFrameInterface> frame) const {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   if (!receive_frame_callback_)
     return;
 
+  auto* transformed_frame =
+      static_cast<TransformableAudioFrameInterface*>(frame.get());
+  Timestamp receive_time =
+      transformed_frame->ReceiveTime().value_or(Timestamp::MinusInfinity());
   RTPHeader header;
   if (frame->GetDirection() ==
       TransformableFrameInterface::Direction::kSender) {
-    auto* transformed_frame =
-        static_cast<TransformableAudioFrameInterface*>(frame.get());
     header.payloadType = transformed_frame->GetPayloadType();
     header.timestamp = transformed_frame->GetTimestamp();
     header.ssrc = transformed_frame->GetSsrc();
@@ -127,15 +180,34 @@ void ChannelReceiveFrameTransformerDelegate::ReceiveFrame(
           transformed_frame->AbsoluteCaptureTimestamp().value();
     }
   } else {
-    auto* transformed_frame =
+    auto* transformed_incoming_frame =
         static_cast<TransformableIncomingAudioFrame*>(frame.get());
-    header = transformed_frame->Header();
+    header = transformed_incoming_frame->Header();
   }
 
   // TODO(crbug.com/1464860): Take an explicit struct with the required
   // information rather than the RTPHeader to make it easier to
   // construct the required information when injecting transformed frames not
   // originally from this receiver.
-  receive_frame_callback_(frame->GetData(), header);
+  receive_frame_callback_(frame->GetData(), header, receive_time);
+}
+
+rtc::scoped_refptr<FrameTransformerInterface>
+ChannelReceiveFrameTransformerDelegate::FrameTransformer() {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  return frame_transformer_;
+}
+
+std::unique_ptr<TransformableAudioFrameInterface> CloneReceiverAudioFrame(
+    TransformableAudioFrameInterface* original) {
+  RTC_CHECK(original->GetDirection() ==
+            TransformableFrameInterface::Direction::kReceiver);
+
+  auto* original_incoming_frame =
+      static_cast<TransformableIncomingAudioFrame*>(original);
+  return std::make_unique<TransformableIncomingAudioFrame>(
+      original->GetData(), original_incoming_frame->Header(),
+      original->GetSsrc(), original->GetMimeType(),
+      original->ReceiveTime().value_or(Timestamp::MinusInfinity()));
 }
 }  // namespace webrtc

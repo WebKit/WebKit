@@ -58,6 +58,8 @@
 #include <wtf/Int128.h>
 #include <wtf/MathExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ClassInfo JSBigInt::s_info = { "BigInt"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSBigInt) };
@@ -312,7 +314,7 @@ JSBigInt* JSBigInt::createFrom(JSGlobalObject* globalObject, double value)
         RELEASE_AND_RETURN(scope, createZero(globalObject));
 
     bool sign = value < 0; // -0 was already handled above.
-    uint64_t doubleBits = bitwise_cast<uint64_t>(value);
+    uint64_t doubleBits = std::bit_cast<uint64_t>(value);
     int32_t rawExponent = static_cast<int32_t>(doubleBits >> doublePhysicalMantissaSize) & 0x7ff;
     ASSERT(rawExponent != 0x7ff); // Since value is integer, exponent should not be 0x7ff (full bits, used for infinity etc.).
     ASSERT(rawExponent >= 0x3ff); // Since value is integer, exponent should be >= 0 + bias (0x3ff).
@@ -573,7 +575,7 @@ JSBigInt::ImplResult JSBigInt::exponentiateImpl(JSGlobalObject* globalObject, Bi
     // 3. Return a BigInt representing the mathematical value of base raised
     //    to the power exponent.
     if (base.isZero())
-        return base;
+        return { base };
 
     if (base.length() == 1 && base.digit(0) == 1) {
         // (-1) ** even_number == 1.
@@ -581,7 +583,7 @@ JSBigInt::ImplResult JSBigInt::exponentiateImpl(JSGlobalObject* globalObject, Bi
             RELEASE_AND_RETURN(scope, JSBigInt::unaryMinusImpl(globalObject, base));
 
         // (-1) ** odd_number == -1; 1 ** anything == 1.
-        return base;
+        return { base };
     }
 
     // For all bases >= 2, very large exponents would lead to unrepresentable
@@ -594,7 +596,7 @@ JSBigInt::ImplResult JSBigInt::exponentiateImpl(JSGlobalObject* globalObject, Bi
 
     Digit expValue = exponent.digit(0);
     if (expValue == 1)
-        return base;
+        return { base };
     if (expValue >= maxLengthBits) {
         throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
         return nullptr;
@@ -616,7 +618,7 @@ JSBigInt::ImplResult JSBigInt::exponentiateImpl(JSGlobalObject* globalObject, Bi
         if (base.sign()) 
             result->setSign(static_cast<bool>(n & 1));
 
-        return result;
+        return { result };
     }
 
     JSBigInt* result = nullptr;
@@ -651,7 +653,7 @@ JSBigInt::ImplResult JSBigInt::exponentiateImpl(JSGlobalObject* globalObject, Bi
         }
     }
 
-    return result;
+    return { result };
 }
 
 JSValue JSBigInt::exponentiate(JSGlobalObject* globalObject, JSBigInt* base, JSBigInt* exponent)
@@ -683,9 +685,9 @@ JSBigInt::ImplResult JSBigInt::multiplyImpl(JSGlobalObject* globalObject, BigInt
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (x.isZero())
-        return x;
+        return { x };
     if (y.isZero())
-        return y;
+        return { y };
 
     unsigned resultLength = x.length() + y.length();
     JSBigInt* result = JSBigInt::createWithLength(globalObject, resultLength);
@@ -824,7 +826,7 @@ JSBigInt::ImplResult JSBigInt::remainderImpl(JSGlobalObject* globalObject, BigIn
     // 2. Return the JSBigInt representing x modulo y.
     // See https://github.com/tc39/proposal-bigint/issues/84 though.
     if (absoluteCompare(x, y) == ComparisonResult::LessThan)
-        return x;
+        return { x };
 
     JSBigInt* remainder;
     if (y.length() == 1) {
@@ -1142,7 +1144,7 @@ template <typename BigIntImpl1, typename BigIntImpl2>
 JSBigInt::ImplResult JSBigInt::leftShiftImpl(JSGlobalObject* globalObject, BigIntImpl1 x, BigIntImpl2 y)
 {
     if (x.isZero() || y.isZero())
-        return x;
+        return { x };
 
     if (y.sign())
         return rightShiftByAbsolute(globalObject, x, y);
@@ -1173,7 +1175,7 @@ template <typename BigIntImpl1, typename BigIntImpl2>
 JSBigInt::ImplResult JSBigInt::signedRightShiftImpl(JSGlobalObject* globalObject, BigIntImpl1 x, BigIntImpl2 y)
 {
     if (x.isZero() || y.isZero())
-        return x;
+        return { x };
 
     if (y.sign())
         return leftShiftByAbsolute(globalObject, x, y);
@@ -1551,12 +1553,12 @@ JSBigInt::ImplResult JSBigInt::absoluteAdd(JSGlobalObject* globalObject, BigIntI
 
     if (x.isZero()) {
         ASSERT(y.isZero());
-        return x;
+        return { x };
     }
 
     if (y.isZero()) {
         if (resultSign == x.sign())
-            return x;
+            return { x };
         RELEASE_AND_RETURN(scope, unaryMinusImpl(globalObject, x));
     }
 
@@ -1598,7 +1600,7 @@ JSBigInt::ImplResult JSBigInt::absoluteSub(JSGlobalObject* globalObject, BigIntI
 
     if (x.isZero()) {
         ASSERT(y.isZero());
-        return x;
+        return { x };
     }
 
     if (y.isZero()) {
@@ -2708,7 +2710,7 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(BigIntImpl x, double y)
 {
     // This algorithm expect that the double format is IEEE 754
 
-    uint64_t doubleBits = bitwise_cast<uint64_t>(y);
+    uint64_t doubleBits = std::bit_cast<uint64_t>(y);
     int rawExponent = static_cast<int>(doubleBits >> 52) & 0x7FF;
 
     // Handle finite doubles for {y}.
@@ -2992,7 +2994,7 @@ JSValue JSBigInt::toNumberHeap(JSBigInt* bigInt)
     ASSERT((doubleBits & (static_cast<uint64_t>(1) << 63)) == signBit);
     ASSERT((doubleBits & (static_cast<uint64_t>(0x7ff) << 52)) == exponent);
     ASSERT((doubleBits & ((static_cast<uint64_t>(1) << 52) - 1)) == mantissa);
-    return jsNumber(bitwise_cast<double>(doubleBits));
+    return jsNumber(std::bit_cast<double>(doubleBits));
 }
 
 template <typename BigIntImpl>
@@ -3002,7 +3004,7 @@ JSBigInt::ImplResult JSBigInt::asIntNImpl(JSGlobalObject* globalObject, uint64_t
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (bigInt.isZero())
-        return bigInt;
+        return { bigInt };
     if (n == 0)
         RELEASE_AND_RETURN(scope, zeroImpl(globalObject));
 
@@ -3010,12 +3012,12 @@ JSBigInt::ImplResult JSBigInt::asIntNImpl(JSGlobalObject* globalObject, uint64_t
     uint64_t length = static_cast<uint64_t>(bigInt.length());
     // If bigInt has less than n bits, return it directly.
     if (length < neededLength)
-        return bigInt;
+        return { bigInt };
     ASSERT(neededLength <= INT32_MAX);
     Digit topDigit = bigInt.digit(static_cast<int32_t>(neededLength) - 1);
     Digit compareDigit = static_cast<Digit>(1) << ((n - 1) % digitBits);
     if (length == neededLength && topDigit < compareDigit)
-        return bigInt;
+        return { bigInt };
 
     // Otherwise we have to truncate (which is a no-op in the special case
     // of bigInt == -2^(n-1)), and determine the right sign. We also might have
@@ -3041,7 +3043,7 @@ JSBigInt::ImplResult JSBigInt::asIntNImpl(JSGlobalObject* globalObject, uint64_t
         }
         // Truncation is no-op if bigInt == -2^(n-1).
         if (length == neededLength && topDigit == compareDigit)
-            return bigInt;
+            return { bigInt };
         RELEASE_AND_RETURN(scope, truncateToNBits(globalObject, N, bigInt));
     }
     RELEASE_AND_RETURN(scope, truncateAndSubFromPowerOfTwo(globalObject, N, bigInt, false));
@@ -3054,7 +3056,7 @@ JSBigInt::ImplResult JSBigInt::asUintNImpl(JSGlobalObject* globalObject, uint64_
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (bigInt.isZero())
-        return bigInt;
+        return { bigInt };
     if (n == 0)
         RELEASE_AND_RETURN(scope, zeroImpl(globalObject));
 
@@ -3069,19 +3071,19 @@ JSBigInt::ImplResult JSBigInt::asUintNImpl(JSGlobalObject* globalObject, uint64_
 
     // If bigInt is positive and has up to n bits, return it directly.
     if (n >= maxLengthBits)
-        return bigInt;
+        return { bigInt };
     static_assert(maxLengthBits < INT32_MAX - digitBits);
     int32_t neededLength = static_cast<int32_t>((n + digitBits - 1) / digitBits);
     if (static_cast<int32_t>(bigInt.length()) < neededLength)
-        return bigInt;
+        return { bigInt };
 
     int32_t bitsInTopDigit = n % digitBits;
     if (static_cast<int32_t>(bigInt.length()) == neededLength) {
         if (bitsInTopDigit == 0)
-            return bigInt;
+            return { bigInt };
         Digit topDigit = bigInt.digit(neededLength - 1);
         if ((topDigit >> bitsInTopDigit) == 0)
-            return bigInt;
+            return { bigInt };
     }
 
     // Otherwise, truncate.
@@ -3248,3 +3250,5 @@ unsigned JSBigInt::hashSlow()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

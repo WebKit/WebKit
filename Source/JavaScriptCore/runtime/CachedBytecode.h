@@ -28,7 +28,7 @@
 #include "CacheUpdate.h"
 #include "LeafExecutable.h"
 #include "ParserModes.h"
-#include <wtf/MallocPtr.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -51,9 +51,9 @@ public:
         return adoptRef(*new CachedBytecode(CachePayload::makeMappedPayload(WTFMove(data)), WTFMove(leafExecutables)));
     }
 
-    static Ref<CachedBytecode> create(MallocPtr<uint8_t, VMMalloc>&& data, size_t size, LeafExecutableMap&& leafExecutables)
+    static Ref<CachedBytecode> create(MallocSpan<uint8_t, VMMalloc>&& data, LeafExecutableMap&& leafExecutables)
     {
-        return adoptRef(*new CachedBytecode(CachePayload::makeMallocPayload(WTFMove(data), size), WTFMove(leafExecutables)));
+        return adoptRef(*new CachedBytecode(CachePayload::makeMallocPayload(WTFMove(data)), WTFMove(leafExecutables)));
     }
 
     LeafExecutableMap& leafExecutables() { return m_leafExecutables; }
@@ -64,8 +64,7 @@ public:
     using ForEachUpdateCallback = Function<void(off_t, std::span<const uint8_t>)>;
     JS_EXPORT_PRIVATE void commitUpdates(const ForEachUpdateCallback&) const;
 
-    std::span<const uint8_t> span() const { return { data(), size() }; }
-    const uint8_t* data() const { return m_payload.data(); }
+    std::span<const uint8_t> span() const { return m_payload.span(); }
     size_t size() const { return m_payload.size(); }
     bool hasUpdates() const { return !m_updates.isEmpty(); }
     size_t sizeForUpdate() const { return m_size; }

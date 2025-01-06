@@ -46,6 +46,16 @@ void SharedJITStubSet::setStatelessStub(StatelessCacheKey key, Ref<PolymorphicAc
     m_statelessStubs.add(key, WTFMove(stub));
 }
 
+MacroAssemblerCodeRef<JITStubRoutinePtrTag> SharedJITStubSet::getDOMJITCode(DOMJITCacheKey key) const
+{
+    return m_domJITCodes.get(key);
+}
+
+void SharedJITStubSet::setDOMJITCode(DOMJITCacheKey key, MacroAssemblerCodeRef<JITStubRoutinePtrTag> code)
+{
+    m_domJITCodes.add(key, WTFMove(code));
+}
+
 RefPtr<InlineCacheHandler> SharedJITStubSet::getSlowPathHandler(AccessType type) const
 {
     return m_slowPathHandlers[static_cast<unsigned>(type)];

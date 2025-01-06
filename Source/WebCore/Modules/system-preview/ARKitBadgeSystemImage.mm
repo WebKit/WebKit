@@ -38,6 +38,7 @@
 #import <dlfcn.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -81,9 +82,11 @@ static RetainPtr<CGPDFPageRef> systemPreviewLogo()
     return logoPage;
 }
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ARKitBadgeSystemImage);
+
 RenderingResourceIdentifier ARKitBadgeSystemImage::imageIdentifier() const
 {
-    return m_image ? m_image->nativeImage()->renderingResourceIdentifier() : m_renderingResourceIdentifier;
+    return m_image ? m_image->nativeImage()->renderingResourceIdentifier() : *m_renderingResourceIdentifier;
 }
 
 void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRect& rect) const
@@ -198,7 +201,7 @@ void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRe
     CIImage *translatedImage = [croppedImage imageByApplyingTransform:CGAffineTransformMakeTranslation(-flippedInsetBadgeRect.origin.x, -flippedInsetBadgeRect.origin.y)];
 
     auto surfaceDimension = useSmallBadge ? smallBadgeDimension : largeBadgeDimension;
-    std::unique_ptr<IOSurface> badgeSurface = IOSurface::create(&IOSurfacePool::sharedPool(), { surfaceDimension, surfaceDimension }, DestinationColorSpace::SRGB());
+    std::unique_ptr<IOSurface> badgeSurface = IOSurface::create(&IOSurfacePool::sharedPoolSingleton(), { surfaceDimension, surfaceDimension }, DestinationColorSpace::SRGB());
     IOSurfaceRef surface = badgeSurface->surface();
     [ciContext render:translatedImage toIOSurface:surface bounds:badgeRect colorSpace:sRGBColorSpaceRef()];
     auto surfaceContext = badgeSurface->createPlatformContext();

@@ -293,12 +293,12 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
         if (interpretations.size() > 1) {
             auto alternatives = interpretations;
             alternatives.remove(0);
-            addMarker(*textNode, previousDictationPhraseStart, dictationPhraseLength, DocumentMarker::Type::DictationPhraseWithAlternatives, WTFMove(alternatives));
+            addMarker(*textNode, previousDictationPhraseStart, dictationPhraseLength, DocumentMarkerType::DictationPhraseWithAlternatives, WTFMove(alternatives));
         }
         previousDictationPhraseStart += dictationPhraseLength;
     }
 
-    addMarker(*textNode, 0, textNode->length(), DocumentMarker::Type::DictationResult, retainPtr(metadata));
+    addMarker(*textNode, 0, textNode->length(), DocumentMarkerType::DictationResult, retainPtr(metadata));
 
     client()->respondToChangedContents();
 }
@@ -352,6 +352,17 @@ void Editor::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping()
 {
     Ref document = protectedDocument();
     TypingCommand::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(document, document->selection().selection());
+}
+
+bool Editor::writingSuggestionsSupportsSuffix()
+{
+    return false;
+}
+
+bool Editor::shouldDrawVisuallyContiguousBidiSelection() const
+{
+    CheckedPtr client = this->client();
+    return client && client->shouldDrawVisuallyContiguousBidiSelection();
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -54,7 +54,7 @@ void av1_cdef_filter_fb(uint8_t *dst8, uint16_t *dst16, int dstride,
                         cdef_list *dlist, int cdef_count, int level,
                         int sec_strength, int damping, int coeff_shift);
 
-static INLINE void fill_rect(uint16_t *dst, int dstride, int v, int h,
+static inline void fill_rect(uint16_t *dst, int dstride, int v, int h,
                              uint16_t x) {
   for (int i = 0; i < v; i++) {
     for (int j = 0; j < h; j++) {

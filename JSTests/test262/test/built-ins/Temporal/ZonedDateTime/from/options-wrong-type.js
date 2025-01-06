@@ -19,4 +19,8 @@ const badOptions = [
 for (const value of badOptions) {
   assert.throws(TypeError, () => Temporal.ZonedDateTime.from({ year: 1976, month: 11, day: 18, timeZone: "UTC" }, value),
     `TypeError on wrong options type ${typeof value}`);
+  assert.throws(TypeError, () => Temporal.ZonedDateTime.from(new Temporal.ZonedDateTime(0n, "UTC"), value),
+    "TypeError thrown before cloning ZonedDateTime instance");
+  assert.throws(RangeError, () => Temporal.ZonedDateTime.from("1976-11-18Z", value),
+    "Invalid string string processed before throwing TypeError");
 };

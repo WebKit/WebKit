@@ -10,7 +10,9 @@
 
 #include "rtc_base/numerics/safe_compare.h"
 
+#include <cstdint>
 #include <limits>
+#include <utility>
 
 #include "test/gtest.h"
 

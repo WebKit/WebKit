@@ -177,6 +177,9 @@ def RunTestSuite(test_suite,
             runner_cmd += ['--isolated-script-test-output=%s' % results_path]
 
         if use_xvfb:
+            # Default changed to '--use-xorg', which fails per http://crbug.com/40257169#comment34
+            # '--use-xvfb' forces the old working behavior
+            runner_cmd += ['--use-xvfb']
             xvfb_whd = '3120x3120x24'  # Max screen dimensions from traces, as per:
             # % egrep 'Width|Height' src/tests/restricted_traces/*/*.json | awk '{print $3 $2}' | sort -n
             exit_code = xvfb.run_executable(

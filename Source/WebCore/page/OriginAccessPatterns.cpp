@@ -26,10 +26,10 @@
 #include "config.h"
 #include "OriginAccessPatterns.h"
 
-#include "RuntimeApplicationChecks.h"
 #include "UserContentURLPattern.h"
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RuntimeApplicationChecks.h>
 
 namespace WebCore {
 

@@ -178,7 +178,7 @@ static std::optional<Vector<uint8_t>> gcryptAESCTR(PAL::GCrypt::CipherOperation 
 
         // Encrypt/decrypt this single block with the block-specific counter. Output for this
         // single block is appended to the general output vector.
-        auto blockOutput = callOperation(operation, handle, blockCounterData, inputText.data() + i, blockInputSize);
+        auto blockOutput = callOperation(operation, handle, blockCounterData, inputText.subspan(i).data(), blockInputSize);
         if (!blockOutput)
             return std::nullopt;
 

@@ -110,7 +110,7 @@ void RenderTextLineBoxes::removeAllFromParent(RenderText& renderer)
 {
     if (!m_first) {
         if (renderer.parent())
-            renderer.parent()->dirtyLinesFromChangedChild(renderer);
+            renderer.parent()->dirtyLineFromChangedChild();
         return;
     }
     for (auto* box = m_first; box; box = box->nextTextBox())
@@ -157,7 +157,7 @@ bool RenderTextLineBoxes::dirtyForTextChange(RenderText& renderer)
     dirtyAll();
 
     if (!m_first && renderer.parent()) {
-        renderer.parent()->dirtyLinesFromChangedChild(renderer);
+        renderer.parent()->dirtyLineFromChangedChild();
         return true;
     }
     return m_first;

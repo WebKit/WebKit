@@ -16,10 +16,7 @@ open STDOUT,">$output";
 
 &asm_init($ARGV[0]);
 
-$sse2=0;
-for (@ARGV) { $sse2=1 if (/-DOPENSSL_IA32_SSE2/); }
-
-&external_label("OPENSSL_ia32cap_P") if ($sse2);
+$sse2=1;
 
 &bn_mul_add_words("bn_mul_add_words");
 &bn_mul_words("bn_mul_words");
@@ -36,17 +33,13 @@ sub bn_mul_add_words
 	{
 	local($name)=@_;
 
-	&function_begin_B($name,$sse2?"EXTRN\t_OPENSSL_ia32cap_P:DWORD":"");
+	&function_begin_B($name);
 
 	$r="eax";
 	$a="edx";
 	$c="ecx";
 
 	if ($sse2) {
-		&picmeup("eax","OPENSSL_ia32cap_P");
-		&bt(&DWP(0,"eax"),26);
-		&jnc(&label("maw_non_sse2"));
-
 		&mov($r,&wparam(0));
 		&mov($a,&wparam(1));
 		&mov($c,&wparam(2));
@@ -136,85 +129,7 @@ sub bn_mul_add_words
 		&movd("eax","mm1");		# c = carry_out
 		&emms();
 		&ret();
-
-	&set_label("maw_non_sse2",16);
 	}
-
-	# function_begin prologue
-	&push("ebp");
-	&push("ebx");
-	&push("esi");
-	&push("edi");
-
-	&comment("");
-	$Low="eax";
-	$High="edx";
-	$a="ebx";
-	$w="ebp";
-	$r="edi";
-	$c="esi";
-
-	&xor($c,$c);		# clear carry
-	&mov($r,&wparam(0));	#
-
-	&mov("ecx",&wparam(2));	#
-	&mov($a,&wparam(1));	#
-
-	&and("ecx",0xfffffff8);	# num / 8
-	&mov($w,&wparam(3));	#
-
-	&push("ecx");		# Up the stack for a tmp variable
-
-	&jz(&label("maw_finish"));
-
-	&set_label("maw_loop",16);
-
-	for ($i=0; $i<32; $i+=4)
-		{
-		&comment("Round $i");
-
-		 &mov("eax",&DWP($i,$a)); 	# *a
-		&mul($w);			# *a * w
-		&add("eax",$c);			# L(t)+= c
-		&adc("edx",0);			# H(t)+=carry
-		 &add("eax",&DWP($i,$r));	# L(t)+= *r
-		&adc("edx",0);			# H(t)+=carry
-		 &mov(&DWP($i,$r),"eax");	# *r= L(t);
-		&mov($c,"edx");			# c=  H(t);
-		}
-
-	&comment("");
-	&sub("ecx",8);
-	&lea($a,&DWP(32,$a));
-	&lea($r,&DWP(32,$r));
-	&jnz(&label("maw_loop"));
-
-	&set_label("maw_finish",0);
-	&mov("ecx",&wparam(2));	# get num
-	&and("ecx",7);
-	&jnz(&label("maw_finish2"));	# helps branch prediction
-	&jmp(&label("maw_end"));
-
-	&set_label("maw_finish2",1);
-	for ($i=0; $i<7; $i++)
-		{
-		&comment("Tail Round $i");
-		 &mov("eax",&DWP($i*4,$a));	# *a
-		&mul($w);			# *a * w
-		&add("eax",$c);			# L(t)+=c
-		&adc("edx",0);			# H(t)+=carry
-		 &add("eax",&DWP($i*4,$r));	# L(t)+= *r
-		&adc("edx",0);			# H(t)+=carry
-		 &dec("ecx") if ($i != 7-1);
-		&mov(&DWP($i*4,$r),"eax");	# *r= L(t);
-		 &mov($c,"edx");		# c=  H(t);
-		&jz(&label("maw_end")) if ($i != 7-1);
-		}
-	&set_label("maw_end",0);
-	&mov("eax",$c);
-
-	&pop("ecx");	# clear variable from
-
 	&function_end($name);
 	}
 
@@ -222,17 +137,13 @@ sub bn_mul_words
 	{
 	local($name)=@_;
 
-	&function_begin_B($name,$sse2?"EXTRN\t_OPENSSL_ia32cap_P:DWORD":"");
+	&function_begin_B($name);
 
 	$r="eax";
 	$a="edx";
 	$c="ecx";
 
 	if ($sse2) {
-		&picmeup("eax","OPENSSL_ia32cap_P");
-		&bt(&DWP(0,"eax"),26);
-		&jnc(&label("mw_non_sse2"));
-
 		&mov($r,&wparam(0));
 		&mov($a,&wparam(1));
 		&mov($c,&wparam(2));
@@ -253,79 +164,7 @@ sub bn_mul_words
 		&movd("eax","mm1");		# return carry
 		&emms();
 		&ret();
-	&set_label("mw_non_sse2",16);
 	}
-
-	# function_begin prologue
-	&push("ebp");
-	&push("ebx");
-	&push("esi");
-	&push("edi");
-
-	&comment("");
-	$Low="eax";
-	$High="edx";
-	$a="ebx";
-	$w="ecx";
-	$r="edi";
-	$c="esi";
-	$num="ebp";
-
-	&xor($c,$c);		# clear carry
-	&mov($r,&wparam(0));	#
-	&mov($a,&wparam(1));	#
-	&mov($num,&wparam(2));	#
-	&mov($w,&wparam(3));	#
-
-	&and($num,0xfffffff8);	# num / 8
-	&jz(&label("mw_finish"));
-
-	&set_label("mw_loop",0);
-	for ($i=0; $i<32; $i+=4)
-		{
-		&comment("Round $i");
-
-		 &mov("eax",&DWP($i,$a,"",0)); 	# *a
-		&mul($w);			# *a * w
-		&add("eax",$c);			# L(t)+=c
-		 # XXX
-
-		&adc("edx",0);			# H(t)+=carry
-		 &mov(&DWP($i,$r,"",0),"eax");	# *r= L(t);
-
-		&mov($c,"edx");			# c=  H(t);
-		}
-
-	&comment("");
-	&add($a,32);
-	&add($r,32);
-	&sub($num,8);
-	&jz(&label("mw_finish"));
-	&jmp(&label("mw_loop"));
-
-	&set_label("mw_finish",0);
-	&mov($num,&wparam(2));	# get num
-	&and($num,7);
-	&jnz(&label("mw_finish2"));
-	&jmp(&label("mw_end"));
-
-	&set_label("mw_finish2",1);
-	for ($i=0; $i<7; $i++)
-		{
-		&comment("Tail Round $i");
-		 &mov("eax",&DWP($i*4,$a,"",0));# *a
-		&mul($w);			# *a * w
-		&add("eax",$c);			# L(t)+=c
-		 # XXX
-		&adc("edx",0);			# H(t)+=carry
-		 &mov(&DWP($i*4,$r,"",0),"eax");# *r= L(t);
-		&mov($c,"edx");			# c=  H(t);
-		 &dec($num) if ($i != 7-1);
-		&jz(&label("mw_end")) if ($i != 7-1);
-		}
-	&set_label("mw_end",0);
-	&mov("eax",$c);
-
 	&function_end($name);
 	}
 
@@ -333,17 +172,13 @@ sub bn_sqr_words
 	{
 	local($name)=@_;
 
-	&function_begin_B($name,$sse2?"EXTRN\t_OPENSSL_ia32cap_P:DWORD":"");
+	&function_begin_B($name);
 
 	$r="eax";
 	$a="edx";
 	$c="ecx";
 
 	if ($sse2) {
-		&picmeup("eax","OPENSSL_ia32cap_P");
-		&bt(&DWP(0,"eax"),26);
-		&jnc(&label("sqr_non_sse2"));
-
 		&mov($r,&wparam(0));
 		&mov($a,&wparam(1));
 		&mov($c,&wparam(2));
@@ -359,62 +194,7 @@ sub bn_sqr_words
 
 		&emms();
 		&ret();
-	&set_label("sqr_non_sse2",16);
 	}
-
-	# function_begin prologue
-	&push("ebp");
-	&push("ebx");
-	&push("esi");
-	&push("edi");
-
-	&comment("");
-	$r="esi";
-	$a="edi";
-	$num="ebx";
-
-	&mov($r,&wparam(0));	#
-	&mov($a,&wparam(1));	#
-	&mov($num,&wparam(2));	#
-
-	&and($num,0xfffffff8);	# num / 8
-	&jz(&label("sw_finish"));
-
-	&set_label("sw_loop",0);
-	for ($i=0; $i<32; $i+=4)
-		{
-		&comment("Round $i");
-		&mov("eax",&DWP($i,$a,"",0)); 	# *a
-		 # XXX
-		&mul("eax");			# *a * *a
-		&mov(&DWP($i*2,$r,"",0),"eax");	#
-		 &mov(&DWP($i*2+4,$r,"",0),"edx");#
-		}
-
-	&comment("");
-	&add($a,32);
-	&add($r,64);
-	&sub($num,8);
-	&jnz(&label("sw_loop"));
-
-	&set_label("sw_finish",0);
-	&mov($num,&wparam(2));	# get num
-	&and($num,7);
-	&jz(&label("sw_end"));
-
-	for ($i=0; $i<7; $i++)
-		{
-		&comment("Tail Round $i");
-		&mov("eax",&DWP($i*4,$a,"",0));	# *a
-		 # XXX
-		&mul("eax");			# *a * *a
-		&mov(&DWP($i*8,$r,"",0),"eax");	#
-		 &dec($num) if ($i != 7-1);
-		&mov(&DWP($i*8+4,$r,"",0),"edx");
-		 &jz(&label("sw_end")) if ($i != 7-1);
-		}
-	&set_label("sw_end",0);
-
 	&function_end($name);
 	}
 

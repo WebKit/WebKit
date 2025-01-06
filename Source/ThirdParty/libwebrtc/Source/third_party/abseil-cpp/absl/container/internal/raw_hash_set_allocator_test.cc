@@ -22,8 +22,10 @@
 #include <type_traits>
 #include <utility>
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/config.h"
+#include "absl/container/internal/container_memory.h"
 #include "absl/container/internal/raw_hash_set.h"
 #include "absl/container/internal/tracked.h"
 
@@ -31,6 +33,7 @@ namespace absl {
 ABSL_NAMESPACE_BEGIN
 namespace container_internal {
 namespace {
+using ::testing::AnyOf;
 
 enum AllocSpec {
   kPropagateOnCopy = 1,
@@ -131,7 +134,7 @@ class CheckedAlloc {
 };
 
 struct Identity {
-  int32_t operator()(int32_t v) const { return v; }
+  size_t operator()(int32_t v) const { return static_cast<size_t>(v); }
 };
 
 struct Policy {
@@ -176,6 +179,11 @@ struct Policy {
   }
 
   static slot_type& element(slot_type* slot) { return *slot; }
+
+  template <class Hash>
+  static constexpr HashSlotFn get_hash_slot_fn() {
+    return nullptr;
+  }
 };
 
 template <int Spec>
@@ -287,8 +295,8 @@ TEST_F(PropagateOnAll, MoveConstructor) {
   t1.insert(0);
   Table u(std::move(t1));
   auto it = u.begin();
-  EXPECT_EQ(1, a1.num_allocs());
-  EXPECT_EQ(0, it->num_moves());
+  EXPECT_THAT(a1.num_allocs(), AnyOf(1, 2));
+  EXPECT_THAT(it->num_moves(), AnyOf(0, 1));
   EXPECT_EQ(0, it->num_copies());
 }
 
@@ -296,8 +304,8 @@ TEST_F(NoPropagateOnMove, MoveConstructor) {
   t1.insert(0);
   Table u(std::move(t1));
   auto it = u.begin();
-  EXPECT_EQ(1, a1.num_allocs());
-  EXPECT_EQ(0, it->num_moves());
+  EXPECT_THAT(a1.num_allocs(), AnyOf(1, 2));
+  EXPECT_THAT(it->num_moves(), AnyOf(0, 1));
   EXPECT_EQ(0, it->num_copies());
 }
 
@@ -305,8 +313,8 @@ TEST_F(PropagateOnAll, MoveConstructorWithSameAlloc) {
   t1.insert(0);
   Table u(std::move(t1), a1);
   auto it = u.begin();
-  EXPECT_EQ(1, a1.num_allocs());
-  EXPECT_EQ(0, it->num_moves());
+  EXPECT_THAT(a1.num_allocs(), AnyOf(1, 2));
+  EXPECT_THAT(it->num_moves(), AnyOf(0, 1));
   EXPECT_EQ(0, it->num_copies());
 }
 
@@ -314,8 +322,8 @@ TEST_F(NoPropagateOnMove, MoveConstructorWithSameAlloc) {
   t1.insert(0);
   Table u(std::move(t1), a1);
   auto it = u.begin();
-  EXPECT_EQ(1, a1.num_allocs());
-  EXPECT_EQ(0, it->num_moves());
+  EXPECT_THAT(a1.num_allocs(), AnyOf(1, 2));
+  EXPECT_THAT(it->num_moves(), AnyOf(0, 1));
   EXPECT_EQ(0, it->num_copies());
 }
 
@@ -325,8 +333,8 @@ TEST_F(PropagateOnAll, MoveConstructorWithDifferentAlloc) {
   it = u.find(0);
   EXPECT_EQ(a2, u.get_allocator());
   EXPECT_EQ(1, a1.num_allocs());
-  EXPECT_EQ(1, a2.num_allocs());
-  EXPECT_EQ(1, it->num_moves());
+  EXPECT_THAT(a2.num_allocs(), AnyOf(1, 2));
+  EXPECT_THAT(it->num_moves(), AnyOf(1, 2));
   EXPECT_EQ(0, it->num_copies());
 }
 
@@ -336,8 +344,8 @@ TEST_F(NoPropagateOnMove, MoveConstructorWithDifferentAlloc) {
   it = u.find(0);
   EXPECT_EQ(a2, u.get_allocator());
   EXPECT_EQ(1, a1.num_allocs());
-  EXPECT_EQ(1, a2.num_allocs());
-  EXPECT_EQ(1, it->num_moves());
+  EXPECT_THAT(a2.num_allocs(), AnyOf(1, 2));
+  EXPECT_THAT(it->num_moves(), AnyOf(1, 2));
   EXPECT_EQ(0, it->num_copies());
 }
 
@@ -345,8 +353,8 @@ TEST_F(PropagateOnAll, CopyAssignmentWithSameAlloc) {
   auto it = t1.insert(0).first;
   Table u(0, a1);
   u = t1;
-  EXPECT_EQ(2, a1.num_allocs());
-  EXPECT_EQ(0, it->num_moves());
+  EXPECT_THAT(a1.num_allocs(), AnyOf(2, 3));
+  EXPECT_THAT(it->num_moves(), AnyOf(0, 1));
   EXPECT_EQ(1, it->num_copies());
 }
 
@@ -354,8 +362,8 @@ TEST_F(NoPropagateOnCopy, CopyAssignmentWithSameAlloc) {
   auto it = t1.insert(0).first;
   Table u(0, a1);
   u = t1;
-  EXPECT_EQ(2, a1.num_allocs());
-  EXPECT_EQ(0, it->num_moves());
+  EXPECT_THAT(a1.num_allocs(), AnyOf(2, 3));
+  EXPECT_THAT(it->num_moves(), AnyOf(0, 1));
   EXPECT_EQ(1, it->num_copies());
 }
 
@@ -364,9 +372,9 @@ TEST_F(PropagateOnAll, CopyAssignmentWithDifferentAlloc) {
   Table u(0, a2);
   u = t1;
   EXPECT_EQ(a1, u.get_allocator());
-  EXPECT_EQ(2, a1.num_allocs());
+  EXPECT_THAT(a1.num_allocs(), AnyOf(2, 3));
   EXPECT_EQ(0, a2.num_allocs());
-  EXPECT_EQ(0, it->num_moves());
+  EXPECT_THAT(it->num_moves(), AnyOf(0, 1));
   EXPECT_EQ(1, it->num_copies());
 }
 
@@ -376,8 +384,8 @@ TEST_F(NoPropagateOnCopy, CopyAssignmentWithDifferentAlloc) {
   u = t1;
   EXPECT_EQ(a2, u.get_allocator());
   EXPECT_EQ(1, a1.num_allocs());
-  EXPECT_EQ(1, a2.num_allocs());
-  EXPECT_EQ(0, it->num_moves());
+  EXPECT_THAT(a2.num_allocs(), AnyOf(1, 2));
+  EXPECT_THAT(it->num_moves(), AnyOf(0, 1));
   EXPECT_EQ(1, it->num_copies());
 }
 
@@ -387,8 +395,8 @@ TEST_F(PropagateOnAll, MoveAssignmentWithSameAlloc) {
   u = std::move(t1);
   auto it = u.begin();
   EXPECT_EQ(a1, u.get_allocator());
-  EXPECT_EQ(1, a1.num_allocs());
-  EXPECT_EQ(0, it->num_moves());
+  EXPECT_THAT(a1.num_allocs(), AnyOf(1, 2));
+  EXPECT_THAT(it->num_moves(), AnyOf(0, 1));
   EXPECT_EQ(0, it->num_copies());
 }
 
@@ -398,8 +406,8 @@ TEST_F(NoPropagateOnMove, MoveAssignmentWithSameAlloc) {
   u = std::move(t1);
   auto it = u.begin();
   EXPECT_EQ(a1, u.get_allocator());
-  EXPECT_EQ(1, a1.num_allocs());
-  EXPECT_EQ(0, it->num_moves());
+  EXPECT_THAT(a1.num_allocs(), AnyOf(1, 2));
+  EXPECT_THAT(it->num_moves(), AnyOf(0, 1));
   EXPECT_EQ(0, it->num_copies());
 }
 
@@ -409,9 +417,9 @@ TEST_F(PropagateOnAll, MoveAssignmentWithDifferentAlloc) {
   u = std::move(t1);
   auto it = u.begin();
   EXPECT_EQ(a1, u.get_allocator());
-  EXPECT_EQ(1, a1.num_allocs());
+  EXPECT_THAT(a1.num_allocs(), AnyOf(1, 2));
   EXPECT_EQ(0, a2.num_allocs());
-  EXPECT_EQ(0, it->num_moves());
+  EXPECT_THAT(it->num_moves(), AnyOf(0, 1));
   EXPECT_EQ(0, it->num_copies());
 }
 
@@ -422,8 +430,8 @@ TEST_F(NoPropagateOnMove, MoveAssignmentWithDifferentAlloc) {
   auto it = u.find(0);
   EXPECT_EQ(a2, u.get_allocator());
   EXPECT_EQ(1, a1.num_allocs());
-  EXPECT_EQ(1, a2.num_allocs());
-  EXPECT_EQ(1, it->num_moves());
+  EXPECT_THAT(a2.num_allocs(), AnyOf(1, 2));
+  EXPECT_THAT(it->num_moves(), AnyOf(1, 2));
   EXPECT_EQ(0, it->num_copies());
 }
 

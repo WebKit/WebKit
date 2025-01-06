@@ -41,13 +41,13 @@
 #include "NodeName.h"
 #include "NodeRareData.h"
 #include "RenderTable.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTableElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTableElement);
 
 using namespace HTMLNames;
 
@@ -56,6 +56,8 @@ HTMLTableElement::HTMLTableElement(const QualifiedName& tagName, Document& docum
 {
     ASSERT(hasTagName(tableTag));
 }
+
+HTMLTableElement::~HTMLTableElement() = default;
 
 Ref<HTMLTableElement> HTMLTableElement::create(Document& document)
 {

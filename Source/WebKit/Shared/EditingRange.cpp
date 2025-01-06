@@ -35,7 +35,6 @@ namespace WebKit {
 
 std::optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::LocalFrame& frame, const EditingRange& editingRange, EditingRangeIsRelativeTo base)
 {
-    ASSERT(editingRange.location != notFound);
     WebCore::CharacterRange range { editingRange.location, editingRange.length };
 
     if (base == EditingRangeIsRelativeTo::EditableRoot) {

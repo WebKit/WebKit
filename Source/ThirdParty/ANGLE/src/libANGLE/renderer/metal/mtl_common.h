@@ -173,34 +173,6 @@ constexpr size_t kOcclusionQueryResultSize = sizeof(uint64_t);
 
 constexpr gl::Version kMaxSupportedGLVersion = gl::Version(3, 0);
 
-// Work-around the enum is not available on macOS
-#if (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED < 110000)) || TARGET_OS_MACCATALYST
-constexpr MTLBlitOption kBlitOptionRowLinearPVRTC = MTLBlitOptionNone;
-#else
-constexpr MTLBlitOption kBlitOptionRowLinearPVRTC = MTLBlitOptionRowLinearPVRTC;
-#endif
-
-#if defined(__MAC_10_14) && (TARGET_OS_OSX || TARGET_OS_MACCATALYST)
-constexpr MTLBarrierScope kBarrierScopeRenderTargets = MTLBarrierScopeRenderTargets;
-#else
-constexpr MTLBarrierScope kBarrierScopeRenderTargets = MTLBarrierScope(0);
-#endif
-
-#if defined(__IPHONE_13_0) || defined(__MAC_10_15)
-#    define ANGLE_MTL_SWIZZLE_AVAILABLE 1
-using TextureSwizzleChannels                   = MTLTextureSwizzleChannels;
-using BarrierScope                             = MTLBarrierScope;
-using RenderStages                             = MTLRenderStages;
-constexpr MTLRenderStages kRenderStageVertex   = MTLRenderStageVertex;
-constexpr MTLRenderStages kRenderStageFragment = MTLRenderStageFragment;
-#else
-#    define ANGLE_MTL_SWIZZLE_AVAILABLE 0
-using TextureSwizzleChannels                = int;
-using RenderStages                          = int;
-constexpr RenderStages kRenderStageVertex   = 1;
-constexpr RenderStages kRenderStageFragment = 2;
-#endif
-
 enum class PixelType
 {
     Int,
@@ -399,13 +371,6 @@ inline AutoObjCObj<U> adoptObjCObj(U *NS_RELEASES_ARGUMENT src)
 #    error "ObjC GC not supported."
 #endif
 }
-
-// NOTE: SharedEvent is only declared on iOS 12.0+ or mac 10.14+
-#if defined(__IPHONE_12_0) || defined(__MAC_10_14)
-#    define ANGLE_MTL_EVENT_AVAILABLE 1
-#else
-#    define ANGLE_MTL_EVENT_AVAILABLE 0
-#endif
 
 using RasterizationRateMapRef = AutoObjCPtr<id<MTLRasterizationRateMap>>;
 

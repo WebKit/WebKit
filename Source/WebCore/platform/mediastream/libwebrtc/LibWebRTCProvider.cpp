@@ -30,6 +30,7 @@
 
 #include "ContentType.h"
 #include "LibWebRTCAudioModule.h"
+#include "LibWebRTCLogSink.h"
 #include "LibWebRTCUtils.h"
 #include "Logging.h"
 #include "MediaCapabilitiesDecodingInfo.h"
@@ -38,24 +39,25 @@
 #include "MediaEncodingConfiguration.h"
 #include "ProcessQualified.h"
 #include <dlfcn.h>
+#include <wtf/TZoneMallocInlines.h>
 
-ALLOW_UNUSED_PARAMETERS_BEGIN
-ALLOW_COMMA_BEGIN
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
-#include <webrtc/api/async_resolver_factory.h>
 #include <webrtc/api/audio_codecs/builtin_audio_decoder_factory.h>
 #include <webrtc/api/audio_codecs/builtin_audio_encoder_factory.h>
 #include <webrtc/api/create_peerconnection_factory.h>
 #include <webrtc/modules/audio_processing/include/audio_processing.h>
 #include <webrtc/p2p/base/basic_packet_socket_factory.h>
 #include <webrtc/p2p/client/basic_port_allocator.h>
+// See Bug 274508: Disable thread-safety-reference-return warnings in libwebrtc
+IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
 #include <webrtc/pc/peer_connection_factory.h>
+IGNORE_CLANG_WARNINGS_END
 #include <webrtc/pc/peer_connection_factory_proxy.h>
 #include <webrtc/rtc_base/physical_socket_server.h>
 #include <webrtc/rtc_base/task_queue_gcd.h>
 
-ALLOW_UNUSED_PARAMETERS_END
-ALLOW_COMMA_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
@@ -66,6 +68,8 @@ ALLOW_COMMA_END
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCProvider);
+
 LibWebRTCProvider::LibWebRTCProvider()
 {
 }
@@ -75,22 +79,10 @@ LibWebRTCProvider::~LibWebRTCProvider()
 }
 
 #if !PLATFORM(COCOA)
-void LibWebRTCProvider::registerWebKitVP9Decoder()
-{
-}
-
-void LibWebRTCProvider::registerWebKitVP8Decoder()
-{
-}
-
 void WebRTCProvider::setH264HardwareEncoderAllowed(bool)
 {
 }
 #endif
-
-void WebRTCProvider::setActive(bool)
-{
-}
 
 static inline rtc::SocketAddress prepareSocketAddress(const rtc::SocketAddress& address, bool disableNonLocalhostConnections)
 {
@@ -101,7 +93,7 @@ static inline rtc::SocketAddress prepareSocketAddress(const rtc::SocketAddress& 
 }
 
 class BasicPacketSocketFactory : public rtc::PacketSocketFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(BasicPacketSocketFactory);
 public:
     explicit BasicPacketSocketFactory(rtc::Thread& networkThread)
         : m_socketFactory(makeUniqueRefWithoutFastMallocCheck<rtc::BasicPacketSocketFactory>(networkThread.socketserver()))
@@ -120,13 +112,12 @@ public:
         return nullptr;
     }
 
-    rtc::AsyncPacketSocket* CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo& info, const std::string& name, const rtc::PacketSocketTcpOptions& options)
+    rtc::AsyncPacketSocket* CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::PacketSocketTcpOptions& options) final
     {
-        return m_socketFactory->CreateClientTcpSocket(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections), remoteAddress, info, name, options);
+        return m_socketFactory->CreateClientTcpSocket(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections), remoteAddress, options);
     }
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    rtc::AsyncResolverInterface* CreateAsyncResolver() final { return m_socketFactory->CreateAsyncResolver(); }
-ALLOW_DEPRECATED_DECLARATIONS_END
+
+    std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAsyncDnsResolver() final { return m_socketFactory->CreateAsyncDnsResolver(); }
 
 private:
     bool m_disableNonLocalhostConnections { false };
@@ -176,10 +167,22 @@ static rtc::LoggingSeverity computeLogLevel(WTFLogLevel level)
     return rtc::LS_NONE;
 }
 
+static LibWebRTCLogSink& getRTCLogSink()
+{
+    static LazyNeverDestroyed<LibWebRTCLogSink> logSink;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        LibWebRTCLogSink::LogCallback callback = [] (auto&& severity, auto&& message) {
+            doReleaseLogging(severity, message.c_str());
+        };
+        logSink.construct(WTFMove(callback));
+    });
+    return logSink.get();
+}
+
 void LibWebRTCProvider::setRTCLogging(WTFLogLevel level)
 {
-    auto rtcLevel = computeLogLevel(level);
-    rtc::LogMessage::SetLogOutput(rtcLevel, (rtcLevel == rtc::LS_NONE) ? nullptr : doReleaseLogging);
+    getRTCLogSink().start(computeLogLevel(level));
 }
 
 static void initializePeerConnectionFactoryAndThreads(PeerConnectionFactoryAndThreads& factoryAndThreads)
@@ -307,10 +310,9 @@ rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::cr
     willCreatePeerConnectionFactory();
 
     ASSERT(!m_audioModule);
-    auto audioModule = rtc::make_ref_counted<LibWebRTCAudioModule>();
-    m_audioModule = audioModule.get();
+    m_audioModule = LibWebRTCAudioModule::create();
 
-    return webrtc::CreatePeerConnectionFactory(networkThread, signalingThread, signalingThread, WTFMove(audioModule), webrtc::CreateBuiltinAudioEncoderFactory(), webrtc::CreateBuiltinAudioDecoderFactory(), createEncoderFactory(), createDecoderFactory(), nullptr, nullptr, nullptr, nullptr
+    return webrtc::CreatePeerConnectionFactory(networkThread, signalingThread, signalingThread, rtc::scoped_refptr<webrtc::AudioDeviceModule>(m_audioModule.get()), webrtc::CreateBuiltinAudioEncoderFactory(), webrtc::CreateBuiltinAudioDecoderFactory(), createEncoderFactory(), createDecoderFactory(), nullptr, nullptr, nullptr, nullptr
 #if PLATFORM(COCOA)
         , webrtc::CreateTaskQueueGcdFactory()
 #endif
@@ -362,20 +364,6 @@ void LibWebRTCProvider::setEnableWebRTCEncryption(bool enableWebRTCEncryption)
 
     webrtc::PeerConnectionFactoryInterface::Options options;
     options.disable_encryption = !enableWebRTCEncryption;
-    options.ssl_max_version = m_useDTLS10 ? rtc::SSL_PROTOCOL_DTLS_10 : rtc::SSL_PROTOCOL_DTLS_12;
-    m_factory->SetOptions(options);
-}
-
-void LibWebRTCProvider::setUseDTLS10(bool useDTLS10)
-{
-    m_useDTLS10 = useDTLS10;
-
-    auto* factory = this->factory();
-    if (!factory)
-        return;
-
-    webrtc::PeerConnectionFactoryInterface::Options options;
-    options.ssl_max_version = useDTLS10 ? rtc::SSL_PROTOCOL_DTLS_10 : rtc::SSL_PROTOCOL_DTLS_12;
     m_factory->SetOptions(options);
 }
 
@@ -394,6 +382,9 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     auto* factory = this->factory();
     if (!factory)
         return nullptr;
+
+    if (auto portRange = portAllocatorRange())
+        portAllocator->SetPortRange(portRange->first, portRange->second);
 
     webrtc::PeerConnectionDependencies dependencies { &observer };
     dependencies.allocator = WTFMove(portAllocator);
@@ -427,13 +418,6 @@ static inline std::optional<cricket::MediaType> typeFromKind(const String& kind)
     return { };
 }
 
-static inline std::optional<uint16_t> toChannels(absl::optional<int> numChannels)
-{
-    if (!numChannels)
-        return { };
-    return static_cast<uint32_t>(*numChannels);
-}
-
 static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilities& rtpCapabilities)
 {
     RTCRtpCapabilities capabilities;
@@ -448,7 +432,7 @@ static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilit
         String sdpFmtpLine;
         if (sdpFmtpLineBuilder.length())
             sdpFmtpLine = sdpFmtpLineBuilder.toString();
-        return RTCRtpCodecCapability { fromStdString(codec.mime_type()), static_cast<uint32_t>(codec.clock_rate ? *codec.clock_rate : 0), toChannels(codec.num_channels), WTFMove(sdpFmtpLine) };
+        return RTCRtpCodecCapability { fromStdString(codec.mime_type()), static_cast<uint32_t>(codec.clock_rate ? *codec.clock_rate : 0), codec.num_channels, WTFMove(sdpFmtpLine) };
 
     });
 

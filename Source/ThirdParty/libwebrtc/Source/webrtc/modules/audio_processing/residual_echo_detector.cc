@@ -12,8 +12,8 @@
 
 #include <algorithm>
 #include <numeric>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -89,7 +89,7 @@ void ResidualEchoDetector::AnalyzeCaptureAudio(
   }
 
   // Get the next render value.
-  const absl::optional<float> buffered_render_power = render_buffer_.Pop();
+  const std::optional<float> buffered_render_power = render_buffer_.Pop();
   if (!buffered_render_power) {
     // This can happen in a few cases: at the start of a call, due to a glitch
     // or due to clock drift. The excess capture value will be ignored.

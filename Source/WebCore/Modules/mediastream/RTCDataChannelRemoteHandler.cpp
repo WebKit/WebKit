@@ -32,8 +32,11 @@
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDataChannelRemoteHandler);
 
 std::unique_ptr<RTCDataChannelRemoteHandler> RTCDataChannelRemoteHandler::create(RTCDataChannelIdentifier remoteIdentifier, RefPtr<RTCDataChannelRemoteHandlerConnection>&& connection)
 {
@@ -87,11 +90,10 @@ void RTCDataChannelRemoteHandler::readyToSend()
         m_connection->close(m_remoteIdentifier);
 }
 
-void RTCDataChannelRemoteHandler::setClient(RTCDataChannelHandlerClient& client, ScriptExecutionContextIdentifier contextIdentifier)
+void RTCDataChannelRemoteHandler::setClient(RTCDataChannelHandlerClient& client, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
 {
     m_client = &client;
-    ASSERT(m_localIdentifier.channelIdentifier);
-    m_connection->connectToSource(*this, contextIdentifier, m_localIdentifier, m_remoteIdentifier);
+    m_connection->connectToSource(*this, contextIdentifier, *m_localIdentifier, m_remoteIdentifier);
 }
 
 bool RTCDataChannelRemoteHandler::sendStringData(const CString& text)

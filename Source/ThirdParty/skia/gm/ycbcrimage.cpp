@@ -16,7 +16,7 @@
 #include "include/core/SkPaint.h"
 #include "include/core/SkSize.h"
 #include "include/core/SkString.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkImageGanesh.h"
 #include "tools/gpu/vk/VkYcbcrSamplerHelper.h"
 
@@ -56,9 +56,8 @@ protected:
 
 #if defined(SK_GRAPHITE)
     DrawResult createYCbCrImage(skgpu::graphite::Recorder* recorder,
-                                skiatest::graphite::GraphiteTestContext* graphiteTestContext,
                                 SkString* errorMsg) {
-        if (!graphiteTestContext || !recorder) {
+        if (!recorder) {
             *errorMsg = "Cannot generate a YCbCr image without a valid GraphiteTestContext and "
                         "recorder.";
             return skiagm::DrawResult::kSkip;
@@ -66,15 +65,12 @@ protected:
 
         SkASSERT_RELEASE(recorder->backend() == skgpu::BackendApi::kVulkan);
 
-        VulkanTestContext* vkTestCtxt = static_cast<VulkanTestContext*>(graphiteTestContext);
-
         const VulkanSharedContext* vulkanSharedCtxt =
                 static_cast<const VulkanSharedContext*>(recorder->priv().sharedContext());
         SkASSERT(vulkanSharedCtxt);
 
         std::unique_ptr<VkYcbcrSamplerHelper> ycbcrHelper(
-                new VkYcbcrSamplerHelper(vulkanSharedCtxt,
-                                         vkTestCtxt->getBackendContext().fPhysicalDevice));
+                new VkYcbcrSamplerHelper(vulkanSharedCtxt));
         if (!ycbcrHelper) {
             *errorMsg = "Failed to create VkYcbcrSamplerHelper.";
             return skiagm::DrawResult::kFail;
@@ -90,26 +86,20 @@ protected:
 
         SkASSERT(!fYCbCrImage);
 
-        // TODO(b/311392779): Once graphite supports YCbCr sampling, actually create the image and
-        // return either DrawResult::Ok or DrawResult::kFail. For now, clean up the helper and
-        // texture manually.
-        recorder->deleteBackendTexture(ycbcrHelper->backendTexture());
+        fYCbCrImage = SkImages::WrapTexture(recorder,
+                                            ycbcrHelper->backendTexture(),
+                                            kRGB_888x_SkColorType,
+                                            kPremul_SkAlphaType,
+                                            /*colorSpace=*/nullptr,
+                                            release_ycbcrhelper,
+                                            ycbcrHelper.get());
+        SkASSERT(fYCbCrImage);
         ycbcrHelper.release();
-        return skiagm::DrawResult::kSkip;
-        // fYCbCrImage = SkImages::WrapTexture(recorder,
-        //                                     ycbcrHelper->backendTexture(),
-        //                                     kRGB_888x_SkColorType,
-        //                                     kPremul_SkAlphaType,
-        //                                     /*colorSpace=*/nullptr,
-        //                                     release_ycbcrhelper,
-        //                                     ycbcrHelper.get());
-        // SkASSERT(fYCbCrImage);
-        // ycbcrHelper.release();
-        // if (!fYCbCrImage) {
-        //     *errorMsg = "Failed to create I420 SkImage.";
-        //     return DrawResult::kFail;
-        // }
-        // return DrawResult::kOk;
+        if (!fYCbCrImage) {
+            *errorMsg = "Failed to create I420 SkImage.";
+            return DrawResult::kFail;
+        }
+        return DrawResult::kOk;
     }
 #endif // SK_GRAPHITE
 
@@ -156,7 +146,7 @@ protected:
                 return DrawResult::kSkip;
             }
 
-            return this->createYCbCrImage(recorder, graphiteTestContext, errorMsg);
+            return this->createYCbCrImage(recorder, errorMsg);
         } else
 #endif
         {

@@ -25,13 +25,14 @@
 
 #include "config.h"
 #include "WebXRViewerPose.h"
-#include <wtf/IsoMallocInlines.h>
 
 #if ENABLE(WEBXR)
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRViewerPose);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRViewerPose);
 
 Ref<WebXRViewerPose> WebXRViewerPose::create(Ref<WebXRRigidTransform>&& transform, bool emulatedPosition)
 {

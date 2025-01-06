@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,13 @@
 
 #if PLATFORM(COCOA)
 
+#import "ApplePayButtonCocoa.h"
+#import "ApplePayButtonPart.h"
+#import <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ControlFactoryCocoa);
 
 #if ENABLE(APPLE_PAY)
 std::unique_ptr<PlatformControl> ControlFactoryCocoa::createPlatformApplePayButton(ApplePayButtonPart& part)

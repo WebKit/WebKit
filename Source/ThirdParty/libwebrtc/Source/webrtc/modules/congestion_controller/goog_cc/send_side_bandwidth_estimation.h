@@ -16,12 +16,13 @@
 #include <stdint.h>
 
 #include <deque>
+#include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/field_trials_view.h"
-#include "api/network_state_predictor.h"
+#include "api/transport/bandwidth_usage.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
@@ -36,20 +37,19 @@ class RtcEventLog;
 
 class LinkCapacityTracker {
  public:
-  LinkCapacityTracker();
-  ~LinkCapacityTracker();
+  LinkCapacityTracker() = default;
+  ~LinkCapacityTracker() = default;
   // Call when a new delay-based estimate is available.
   void UpdateDelayBasedEstimate(Timestamp at_time,
                                 DataRate delay_based_bitrate);
   void OnStartingRate(DataRate start_rate);
-  void OnRateUpdate(absl::optional<DataRate> acknowledged,
+  void OnRateUpdate(std::optional<DataRate> acknowledged,
                     DataRate target,
                     Timestamp at_time);
   void OnRttBackoff(DataRate backoff_rate, Timestamp at_time);
   DataRate estimate() const;
 
  private:
-  FieldTrialParameter<TimeDelta> tracking_rate;
   double capacity_estimate_bps_ = 0;
   Timestamp last_link_capacity_update_ = Timestamp::MinusInfinity();
   DataRate last_delay_based_estimate_ = DataRate::PlusInfinity();
@@ -115,19 +115,20 @@ class SendSideBandwidthEstimation {
   // Call when we receive a RTCP message with a ReceiveBlock.
   void UpdateRtt(TimeDelta rtt, Timestamp at_time);
 
-  void SetBitrates(absl::optional<DataRate> send_bitrate,
+  void SetBitrates(std::optional<DataRate> send_bitrate,
                    DataRate min_bitrate,
                    DataRate max_bitrate,
                    Timestamp at_time);
   void SetSendBitrate(DataRate bitrate, Timestamp at_time);
   void SetMinMaxBitrate(DataRate min_bitrate, DataRate max_bitrate);
   int GetMinBitrate() const;
-  void SetAcknowledgedRate(absl::optional<DataRate> acknowledged_rate,
+  void SetAcknowledgedRate(std::optional<DataRate> acknowledged_rate,
                            Timestamp at_time);
   void UpdateLossBasedEstimator(const TransportPacketsFeedback& report,
                                 BandwidthUsage delay_detector_state,
-                                absl::optional<DataRate> probe_bitrate,
+                                std::optional<DataRate> probe_bitrate,
                                 bool in_alr);
+  bool PaceAtLossBasedEstimate() const;
 
  private:
   friend class GoogCcStatePrinter;
@@ -167,6 +168,7 @@ class SendSideBandwidthEstimation {
   bool LossBasedBandwidthEstimatorV1ReadyForUse() const;
   bool LossBasedBandwidthEstimatorV2ReadyForUse() const;
 
+  const FieldTrialsView* key_value_config_;
   RttBasedBackoff rtt_backoff_;
   LinkCapacityTracker link_capacity_;
 
@@ -176,7 +178,7 @@ class SendSideBandwidthEstimation {
   int lost_packets_since_last_loss_update_;
   int expected_packets_since_last_loss_update_;
 
-  absl::optional<DataRate> acknowledged_rate_;
+  std::optional<DataRate> acknowledged_rate_;
   DataRate current_target_;
   DataRate last_logged_target_;
   DataRate min_bitrate_configured_;
@@ -208,7 +210,7 @@ class SendSideBandwidthEstimation {
   float high_loss_threshold_;
   DataRate bitrate_threshold_;
   LossBasedBandwidthEstimation loss_based_bandwidth_estimator_v1_;
-  LossBasedBweV2 loss_based_bandwidth_estimator_v2_;
+  std::unique_ptr<LossBasedBweV2> loss_based_bandwidth_estimator_v2_;
   LossBasedState loss_based_state_;
   FieldTrialFlag disable_receiver_limit_caps_only_;
 };

@@ -5,7 +5,7 @@
 esid: sec-temporal.zoneddatetime
 description: >
   Appropriate error thrown when argument cannot be converted to a valid string
-  or object for TimeZone
+  for time zone
 features: [BigInt, Symbol, Temporal]
 ---*/
 

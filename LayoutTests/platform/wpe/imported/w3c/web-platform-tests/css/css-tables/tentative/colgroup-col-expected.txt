@@ -37,36 +37,6 @@ FAIL table 4 assert_equals:
   <td data-expected-width="75"><div style="width:75px">50px</div></td>
 </tr></tbody></table>
 width expected 66 but got 23
-FAIL table 5 assert_equals:
-<table data-expected-width="106">
-  <colgroup>
-    <col style="width:0%">
-    <col style="width:0%">
-  </colgroup>
-  <tbody><tr>
-    <td data-expected-width="100">
-      <div><span style=" display: inline-block;word-break: break-word;font: 20px/1 Ahem">01234</span></div>
-    </td>
-    <td>
-      <div></div>
-    </td>
-  </tr>
-</tbody></table>
-width expected 106 but got 56
-FAIL table 6 assert_equals:
-<table data-expected-width="107">
-  <colgroup>
-    <col style="width:0%">
-    <col style="width:1%">
-  </colgroup>
-  <tbody><tr>
-    <td data-expected-width="100">
-      <div><span style=" display: inline-block;word-break: break-word;font: 20px/1 Ahem;">01234</span></div>
-    </td>
-    <td>
-      <div></div>
-    </td>
-  </tr>
-</tbody></table>
-width expected 107 but got 57
+PASS table 5
+PASS table 6
 

@@ -27,7 +27,7 @@ if (USE_CAIRO)
     list(APPEND WPEToolingBackends_PRIVATE_LIBRARIES Cairo::Cairo)
     list(APPEND WPEToolingBackends_PRIVATE_DEFINITIONS USE_CAIRO=1)
 elseif (USE_SKIA)
-    list(APPEND WPEToolingBackends_PRIVATE_LIBRARIES Skia)
+    list(APPEND WPEToolingBackends_PRIVATE_LIBRARIES Skia::Skia)
     list(APPEND WPEToolingBackends_PRIVATE_DEFINITIONS USE_SKIA=1)
 endif ()
 

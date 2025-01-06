@@ -26,9 +26,10 @@
 #include <unistd.h>
 #endif  // WEBRTC_WIN
 
+#include <optional>
+
 #include "absl/algorithm/container.h"
 #include "absl/strings/match.h"
-#include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
@@ -52,7 +53,7 @@ bool DeleteFile(absl::string_view file);
 bool MoveFile(absl::string_view old_file, absl::string_view new_file);
 bool IsFile(absl::string_view file);
 bool IsFolder(absl::string_view file);
-absl::optional<size_t> GetFileSize(absl::string_view file);
+std::optional<size_t> GetFileSize(absl::string_view file);
 
 #if defined(WEBRTC_WIN)
 
@@ -110,11 +111,11 @@ bool IsFolder(absl::string_view file) {
          FILE_ATTRIBUTE_DIRECTORY;
 }
 
-absl::optional<size_t> GetFileSize(absl::string_view file) {
+std::optional<size_t> GetFileSize(absl::string_view file) {
   WIN32_FILE_ATTRIBUTE_DATA data = {0};
   if (::GetFileAttributesExW(ToUtf16(file).c_str(), GetFileExInfoStandard,
                              &data) == 0)
-    return absl::nullopt;
+    return std::nullopt;
   return data.nFileSizeLow;
 }
 
@@ -168,10 +169,10 @@ bool IsFolder(absl::string_view file) {
   return res == 0 && S_ISDIR(st.st_mode);
 }
 
-absl::optional<size_t> GetFileSize(absl::string_view file) {
+std::optional<size_t> GetFileSize(absl::string_view file) {
   struct stat st;
   if (::stat(std::string(file).c_str(), &st) != 0)
-    return absl::nullopt;
+    return std::nullopt;
   return st.st_size;
 }
 

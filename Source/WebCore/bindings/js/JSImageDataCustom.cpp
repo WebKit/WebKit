@@ -40,13 +40,14 @@ using namespace JSC;
 JSValue toJSNewlyCreated(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<ImageData>&& imageData)
 {
     VM& vm = lexicalGlobalObject->vm();
-    auto& data = imageData->data();
+    auto& imageDataArray = imageData->data();
+    Ref arrayBufferView = imageDataArray.arrayBufferView();
     auto* wrapper = createWrapper<ImageData>(globalObject, WTFMove(imageData));
     Identifier dataName = Identifier::fromString(vm, "data"_s);
-    wrapper->putDirect(vm, dataName, toJS(lexicalGlobalObject, globalObject, data), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+    wrapper->putDirect(vm, dataName, toJS(lexicalGlobalObject, globalObject, arrayBufferView), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
     // https://bugs.webkit.org/show_bug.cgi?id=142595
-    vm.heap.deprecatedReportExtraMemory(data.length());
+    vm.heap.deprecatedReportExtraMemory(imageDataArray.byteLength());
     
     return wrapper;
 }

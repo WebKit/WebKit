@@ -38,13 +38,13 @@
 #include "Logging.h"
 #include "SecurityOrigin.h"
 #include "TransactionOperation.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBClient {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(IDBConnectionToServer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBConnectionToServer);
 
 Ref<IDBConnectionToServer> IDBConnectionToServer::create(IDBConnectionToServerDelegate& delegate)
 {
@@ -57,9 +57,11 @@ IDBConnectionToServer::IDBConnectionToServer(IDBConnectionToServerDelegate& dele
 {
 }
 
+IDBConnectionToServer::~IDBConnectionToServer() = default;
+
 IDBConnectionIdentifier IDBConnectionToServer::identifier() const
 {
-    return m_delegate->identifier();
+    return *m_delegate->identifier();
 }
 
 IDBConnectionProxy& IDBConnectionToServer::proxy()
@@ -141,7 +143,7 @@ void IDBConnectionToServer::didDeleteObjectStore(const IDBResultData& resultData
     m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::renameObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& newName)
+void IDBConnectionToServer::renameObjectStore(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
 {
     LOG(IndexedDB, "IDBConnectionToServer::renameObjectStore");
     ASSERT(isMainThread());
@@ -158,7 +160,7 @@ void IDBConnectionToServer::didRenameObjectStore(const IDBResultData& resultData
     m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::clearObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier)
+void IDBConnectionToServer::clearObjectStore(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::clearObjectStore");
     ASSERT(isMainThread());
@@ -192,7 +194,7 @@ void IDBConnectionToServer::didCreateIndex(const IDBResultData& resultData)
     m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::deleteIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& indexName)
+void IDBConnectionToServer::deleteIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
 {
     LOG(IndexedDB, "IDBConnectionToServer::deleteIndex");
     ASSERT(isMainThread());
@@ -209,7 +211,7 @@ void IDBConnectionToServer::didDeleteIndex(const IDBResultData& resultData)
     m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::renameIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+void IDBConnectionToServer::renameIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const String& newName)
 {
     LOG(IndexedDB, "IDBConnectionToServer::renameIndex");
     ASSERT(isMainThread());

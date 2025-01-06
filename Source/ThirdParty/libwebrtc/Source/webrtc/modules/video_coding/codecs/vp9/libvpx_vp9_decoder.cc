@@ -16,7 +16,6 @@
 #include <algorithm>
 
 #include "absl/strings/match.h"
-#include "api/transport/field_trial_based_config.h"
 #include "api/video/color_space.h"
 #include "api/video/i010_buffer.h"
 #include "common_video/include/video_frame_buffer.h"
@@ -170,7 +169,7 @@ bool LibvpxVp9Decoder::Configure(const Settings& settings) {
   inited_ = true;
   // Always start with a complete key frame.
   key_frame_required_ = true;
-  if (absl::optional<int> buffer_pool_size = settings.buffer_pool_size()) {
+  if (std::optional<int> buffer_pool_size = settings.buffer_pool_size()) {
     if (!libvpx_buffer_pool_.Resize(*buffer_pool_size)) {
       return false;
     }
@@ -197,7 +196,7 @@ int LibvpxVp9Decoder::Decode(const EncodedImage& input_image,
   }
 
   if (input_image._frameType == VideoFrameType::kVideoFrameKey) {
-    absl::optional<Vp9UncompressedHeader> frame_info =
+    std::optional<Vp9UncompressedHeader> frame_info =
         ParseUncompressedVp9Header(
             rtc::MakeArrayView(input_image.data(), input_image.size()));
     if (frame_info) {
@@ -345,7 +344,7 @@ int LibvpxVp9Decoder::ReturnFrame(
 
   auto builder = VideoFrame::Builder()
                      .set_video_frame_buffer(img_wrapped_buffer)
-                     .set_timestamp_rtp(timestamp);
+                     .set_rtp_timestamp(timestamp);
   if (explicit_color_space) {
     builder.set_color_space(*explicit_color_space);
   } else {
@@ -354,7 +353,7 @@ int LibvpxVp9Decoder::ReturnFrame(
   }
   VideoFrame decoded_image = builder.build();
 
-  decode_complete_callback_->Decoded(decoded_image, absl::nullopt, qp);
+  decode_complete_callback_->Decoded(decoded_image, std::nullopt, qp);
   return WEBRTC_VIDEO_CODEC_OK;
 }
 

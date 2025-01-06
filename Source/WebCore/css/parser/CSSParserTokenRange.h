@@ -30,6 +30,7 @@
 #pragma once
 
 #include "CSSParserToken.h"
+#include "CSSTokenizer.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -58,6 +59,7 @@ public:
 
     size_t size() const { return end() - begin(); }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     const CSSParserToken& peek(unsigned offset = 0) const
     {
         if (m_first + offset >= m_last)
@@ -71,6 +73,7 @@ public:
             return eofToken();
         return *m_first++;
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     const CSSParserToken& consumeIncludingWhitespace()
     {
@@ -85,11 +88,13 @@ public:
 
     void consumeComponentValue();
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     void consumeWhitespace()
     {
-        while (peek().type() == WhitespaceToken)
+        while (CSSTokenizer::isWhitespace(peek().type()))
             ++m_first;
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     void trimTrailingWhitespace();
     const CSSParserToken& consumeLast();
@@ -99,7 +104,7 @@ public:
     String serialize(CSSParserToken::SerializationMode = CSSParserToken::SerializationMode::Normal) const;
 
     const CSSParserToken* begin() const { return m_first; }
-    std::span<const CSSParserToken> span() const { return std::span { begin(), size() }; }
+    std::span<const CSSParserToken> span() const { return unsafeMakeSpan(begin(), size()); }
 
     static CSSParserToken& eofToken();
 

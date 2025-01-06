@@ -151,7 +151,7 @@ void JSFinalizationRegistry::finalizeUnconditionally(VM& vm, CollectionScope)
     });
 
     if (!m_hasAlreadyScheduledWork && (readiedCell || deadCount(locker))) {
-        auto ticket = vm.deferredWorkTimer->addPendingWork(vm, this, { });
+        auto ticket = vm.deferredWorkTimer->addPendingWork(DeferredWorkTimer::WorkType::ImminentlyScheduled, vm, this, { });
         ASSERT(vm.deferredWorkTimer->hasPendingWork(ticket));
         vm.deferredWorkTimer->scheduleWorkSoon(ticket, [this](DeferredWorkTimer::Ticket) {
             JSGlobalObject* globalObject = this->globalObject();
@@ -234,6 +234,21 @@ size_t JSFinalizationRegistry::liveCount(const Locker<JSCellLock>&)
     return count;
 }
 
+Vector<JSFinalizationRegistry::LiveRegistration> JSFinalizationRegistry::liveRegistrations(const Locker<JSCellLock>&) const
+{
+    Vector<LiveRegistration> liveRegistrations;
+
+    for (const auto& registration : m_noUnregistrationLive)
+        liveRegistrations.append({ registration.target, registration.holdings.get() });
+
+    for (const auto& [unregisterToken, registrations] : m_liveRegistrations) {
+        for (const auto& registration : registrations)
+            liveRegistrations.append({ registration.target, registration.holdings.get(), unregisterToken });
+    }
+
+    return liveRegistrations;
+}
+
 size_t JSFinalizationRegistry::deadCount(const Locker<JSCellLock>&)
 {
     size_t count = m_noUnregistrationDead.size();
@@ -241,6 +256,21 @@ size_t JSFinalizationRegistry::deadCount(const Locker<JSCellLock>&)
         count += iter.value.size();
 
     return count;
+}
+
+Vector<JSFinalizationRegistry::DeadRegistration> JSFinalizationRegistry::deadRegistrations(const Locker<JSCellLock>&) const
+{
+    Vector<DeadRegistration> deadRegistrations;
+
+    for (const auto& heldValue : m_noUnregistrationDead)
+        deadRegistrations.append({ heldValue.get() });
+
+    for (const auto& [unregisterToken, heldValues] : m_deadRegistrations) {
+        for (const auto& heldValue : heldValues)
+            deadRegistrations.append({ heldValue.get(), unregisterToken });
+    }
+
+    return deadRegistrations;
 }
 
 }

@@ -11,6 +11,8 @@
 #ifndef API_VOIP_VOIP_NETWORK_H_
 #define API_VOIP_VOIP_NETWORK_H_
 
+#include <cstdint>
+
 #include "api/array_view.h"
 #include "api/voip/voip_base.h"
 

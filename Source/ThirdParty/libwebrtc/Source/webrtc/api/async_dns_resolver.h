@@ -11,11 +11,9 @@
 #ifndef API_ASYNC_DNS_RESOLVER_H_
 #define API_ASYNC_DNS_RESOLVER_H_
 
-#include <functional>
 #include <memory>
 
 #include "absl/functional/any_invocable.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/system/rtc_export.h"
 

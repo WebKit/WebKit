@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: SyntaxError: The given initial value does not parse for the given syntax.
 
-Harness Error (FAIL), message = SyntaxError: The given initial value does not parse for the given syntax.
-
+PASS Animating a custom property of type "<transform-list>|none" from "none" to <transform-list> value
+PASS Animating a custom property of type "<transform-function>|none" from "none" to <transform-function> value
 

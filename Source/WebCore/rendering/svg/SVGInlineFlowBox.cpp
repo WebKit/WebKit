@@ -28,37 +28,11 @@
 #include "SVGInlineTextBox.h"
 #include "SVGRenderingContext.h"
 #include "SVGTextFragment.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGInlineFlowBox);
-
-void SVGInlineFlowBox::paintSelectionBackground(PaintInfo& paintInfo)
-{
-    ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection);
-    ASSERT(!paintInfo.context().paintingDisabled());
-
-    PaintInfo childPaintInfo(paintInfo);
-    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
-        if (auto* textBox = dynamicDowncast<SVGInlineTextBox>(*child))
-            textBox->paintSelectionBackground(childPaintInfo);
-        else if (auto* flowBox = dynamicDowncast<SVGInlineFlowBox>(*child))
-            flowBox->paintSelectionBackground(childPaintInfo);
-    }
-}
-
-void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit, LayoutUnit)
-{
-    ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection);
-    ASSERT(!paintInfo.context().paintingDisabled());
-
-    SVGRenderingContext renderingContext(renderer(), paintInfo, SVGRenderingContext::SaveGraphicsContext);
-    if (renderingContext.isRenderingPrepared()) {
-        for (auto* child = firstChild(); child; child = child->nextOnLine())
-            child->paint(paintInfo, paintOffset, 0, 0);
-    }
-}
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGInlineFlowBox);
 
 FloatRect SVGInlineFlowBox::calculateBoundaries() const
 {

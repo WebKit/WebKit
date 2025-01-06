@@ -81,9 +81,7 @@ shouldBe(JSON.stringify(Intl.PluralRules.supportedLocalesOf([ 'en', 'pt', 'en', 
 // Canonicalizes tags.
 shouldBe(
     JSON.stringify(Intl.PluralRules.supportedLocalesOf('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')),
-    $vm.icuVersion() >= 67
-        ? '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
-        : '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-x-reserved"]'
+    '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
 );
 // Throws on problems with length, get, or toString.
 shouldThrow(() => Intl.PluralRules.supportedLocalesOf(Object.create(null, { length: { get() { throw new Error(); } } })), Error);
@@ -291,6 +289,6 @@ shouldBe(new Intl.PluralRules('en', {minimumSignificantDigits: 2}).select(1), 'o
 
 // Plural categories are correctly determined
 shouldBe(new Intl.PluralRules('en').resolvedOptions().pluralCategories instanceof Array, true);
-shouldBe(new Intl.PluralRules('ar').resolvedOptions().pluralCategories.join(), 'few,many,one,two,zero,other');
+shouldBe(new Intl.PluralRules('ar').resolvedOptions().pluralCategories.join(), 'zero,one,two,few,many,other');
 shouldBe(new Intl.PluralRules('en').resolvedOptions().pluralCategories.join(), 'one,other');
-shouldBe(new Intl.PluralRules('en', {type: 'ordinal'}).resolvedOptions().pluralCategories.join(), 'few,one,two,other');
+shouldBe(new Intl.PluralRules('en', {type: 'ordinal'}).resolvedOptions().pluralCategories.join(), 'one,two,few,other');

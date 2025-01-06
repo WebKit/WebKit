@@ -310,7 +310,7 @@ egl::Error WindowSurfaceCGL::releaseTexImage(const gl::Context *context, EGLint 
     return egl::Error(EGL_SUCCESS);
 }
 
-void WindowSurfaceCGL::setSwapInterval(EGLint interval)
+void WindowSurfaceCGL::setSwapInterval(const egl::Display *display, EGLint interval)
 {
     // TODO(cwallez) investigate implementing swap intervals other than 0
 }

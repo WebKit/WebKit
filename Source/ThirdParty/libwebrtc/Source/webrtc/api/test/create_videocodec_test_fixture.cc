@@ -14,6 +14,8 @@
 #include <utility>
 
 #include "api/test/videocodec_test_fixture.h"
+#include "api/video_codecs/video_decoder_factory.h"
+#include "api/video_codecs/video_encoder_factory.h"
 #include "modules/video_coding/codecs/test/videocodec_test_fixture_impl.h"
 
 namespace webrtc {

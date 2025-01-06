@@ -32,6 +32,8 @@
 #include <wtf/Gigacage.h>
 #include <wtf/SafeStrerror.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace ArrayBufferInternal {
 static constexpr bool verbose = false;
@@ -94,7 +96,7 @@ static RefPtr<BufferMemoryHandle> tryAllocateResizableMemory(VM* vm, size_t size
     tryAllocate(vm,
         [&] () -> BufferMemoryResult::Kind {
             auto result = BufferMemoryManager::singleton().tryAllocateGrowableBoundsCheckingMemory(maximumBytes);
-            slowMemory = bitwise_cast<char*>(result.basePtr);
+            slowMemory = std::bit_cast<char*>(result.basePtr);
             return result.kind;
         });
     if (!slowMemory) {
@@ -104,15 +106,7 @@ static RefPtr<BufferMemoryHandle> tryAllocateResizableMemory(VM* vm, size_t size
 
     constexpr bool readable = false;
     constexpr bool writable = false;
-    if (!OSAllocator::protect(slowMemory + initialBytes, maximumBytes - initialBytes, readable, writable)) {
-#if OS(WINDOWS)
-        dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
-#else
-        dataLogLn("mprotect failed: ", safeStrerror(errno).data());
-#endif
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
+    OSAllocator::protect(slowMemory + initialBytes, maximumBytes - initialBytes, readable, writable);
     return adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, maximumBytes, PageCount::fromBytes(initialBytes), PageCount::fromBytes(maximumBytes), MemorySharingMode::Shared, MemoryMode::BoundsChecking));
 }
 
@@ -155,7 +149,7 @@ void ArrayBufferContents::makeShared()
 
 SharedArrayBufferContents::~SharedArrayBufferContents()
 {
-    WaiterListManager::singleton().unregisterSharedArrayBuffer(bitwise_cast<uint8_t*>(data()), m_sizeInBytes);
+    WaiterListManager::singleton().unregister(std::bit_cast<uint8_t*>(data()), m_sizeInBytes);
     if (m_destructor) {
         // FIXME: we shouldn't use getUnsafe here https://bugs.webkit.org/show_bug.cgi?id=197698
         m_destructor->run(m_data.getUnsafe());
@@ -496,14 +490,7 @@ Expected<int64_t, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByteLeng
                 dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + bytesToAdd), ")");
                 constexpr bool readable = true;
                 constexpr bool writable = true;
-                if (!OSAllocator::protect(startAddress, bytesToAdd, readable, writable)) {
-#if OS(WINDOWS)
-                    dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
-#else
-                    dataLogLn("mprotect failed: ", safeStrerror(errno).data());
-#endif
-                    RELEASE_ASSERT_NOT_REACHED();
-                }
+                OSAllocator::protect(startAddress, bytesToAdd, readable, writable);
             } else {
                 size_t bytesToSubtract = memoryHandle->size() - desiredSize;
                 ASSERT(bytesToSubtract);
@@ -519,20 +506,13 @@ Expected<int64_t, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByteLeng
                 dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as none in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + bytesToSubtract), ")");
                 constexpr bool readable = false;
                 constexpr bool writable = false;
-                if (!OSAllocator::protect(startAddress, bytesToSubtract, readable, writable)) {
-#if OS(WINDOWS)
-                    dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
-#else
-                    dataLogLn("mprotect failed: ", safeStrerror(errno).data());
-#endif
-                    RELEASE_ASSERT_NOT_REACHED();
-                }
+                OSAllocator::protect(startAddress, bytesToSubtract, readable, writable);
             }
             memoryHandle->updateSize(desiredSize);
         }
 
         if (m_contents.m_sizeInBytes < newByteLength)
-            memset(bitwise_cast<uint8_t*>(data()) + m_contents.m_sizeInBytes, 0, newByteLength - m_contents.m_sizeInBytes);
+            memset(std::bit_cast<uint8_t*>(data()) + m_contents.m_sizeInBytes, 0, newByteLength - m_contents.m_sizeInBytes);
 
         m_contents.m_sizeInBytes = newByteLength;
     }
@@ -606,19 +586,11 @@ Expected<int64_t, GrowFailReason> SharedArrayBufferContents::grow(const Abstract
         dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
         constexpr bool readable = true;
         constexpr bool writable = true;
-        if (!OSAllocator::protect(startAddress, extraBytes, readable, writable)) {
-#if OS(WINDOWS)
-            dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
-#else
-            dataLogLn("mprotect failed: ", safeStrerror(errno).data());
-#endif
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-
+        OSAllocator::protect(startAddress, extraBytes, readable, writable);
         m_memoryHandle->updateSize(desiredSize);
     }
 
-    memset(bitwise_cast<uint8_t*>(data()) + sizeInBytes, 0, newByteLength - sizeInBytes);
+    memset(std::bit_cast<uint8_t*>(data()) + sizeInBytes, 0, newByteLength - sizeInBytes);
 
     updateSize(newByteLength);
     return deltaByteLength;
@@ -647,3 +619,4 @@ std::optional<ArrayBufferContents> ArrayBufferContents::fromSpan(std::span<const
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

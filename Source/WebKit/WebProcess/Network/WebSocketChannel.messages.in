@@ -20,6 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) A RISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+[
+    DispatchedFrom=Networking,
+    DispatchedTo=WebContent
+]
 messages -> WebSocketChannel {
     DidConnect(String subprotocol, String extensions)
     DidClose(unsigned short code, String reason)

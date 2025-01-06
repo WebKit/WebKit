@@ -16,8 +16,8 @@
 #include <wrl/client.h>
 
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_geometry.h"
 
@@ -138,7 +138,7 @@ class WgcScreenSource final : public WgcCaptureSource {
   // device index as it's SourceId. However, WGC requires we use an HMONITOR to
   // describe which screen to capture. So, we internally convert the supplied
   // device index into an HMONITOR when `IsCapturable()` is called.
-  absl::optional<HMONITOR> hmonitor_;
+  std::optional<HMONITOR> hmonitor_;
 };
 
 }  // namespace webrtc

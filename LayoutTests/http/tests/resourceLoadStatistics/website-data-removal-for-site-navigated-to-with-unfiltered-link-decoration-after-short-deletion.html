@@ -247,9 +247,9 @@
     }
 
 
-    function processWebsiteDataAndContinue() {
-        testRunner.installStatisticsDidScanDataRecordsCallback(checkWebsiteDataAndContinue);
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+    async function processWebsiteDataAndContinue() {
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
+        checkWebsiteDataAndContinue();
     }
 
     function setStatisticsForDomain(callback) {

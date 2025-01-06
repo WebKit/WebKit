@@ -52,12 +52,12 @@ TEST(AbsoluteCaptureTimeSenderTest, InterpolateLaterPacketSentLater) {
   EXPECT_EQ(sender.OnSendPacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
                                 NtpTime(kExtension1.absolute_capture_timestamp),
                                 kExtension1.estimated_capture_clock_offset),
-            absl::nullopt);
+            std::nullopt);
 
   EXPECT_EQ(sender.OnSendPacket(kSource, kRtpTimestamp2, kRtpClockFrequency,
                                 NtpTime(kExtension2.absolute_capture_timestamp),
                                 kExtension2.estimated_capture_clock_offset),
-            absl::nullopt);
+            std::nullopt);
 }
 
 TEST(AbsoluteCaptureTimeSenderTest, InterpolateEarlierPacketSentLater) {
@@ -84,12 +84,12 @@ TEST(AbsoluteCaptureTimeSenderTest, InterpolateEarlierPacketSentLater) {
   EXPECT_EQ(sender.OnSendPacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
                                 NtpTime(kExtension1.absolute_capture_timestamp),
                                 kExtension1.estimated_capture_clock_offset),
-            absl::nullopt);
+            std::nullopt);
 
   EXPECT_EQ(sender.OnSendPacket(kSource, kRtpTimestamp2, kRtpClockFrequency,
                                 NtpTime(kExtension2.absolute_capture_timestamp),
                                 kExtension2.estimated_capture_clock_offset),
-            absl::nullopt);
+            std::nullopt);
 }
 
 TEST(AbsoluteCaptureTimeSenderTest,
@@ -117,12 +117,12 @@ TEST(AbsoluteCaptureTimeSenderTest,
   EXPECT_EQ(sender.OnSendPacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
                                 NtpTime(kExtension1.absolute_capture_timestamp),
                                 kExtension1.estimated_capture_clock_offset),
-            absl::nullopt);
+            std::nullopt);
 
   EXPECT_EQ(sender.OnSendPacket(kSource, kRtpTimestamp2, kRtpClockFrequency,
                                 NtpTime(kExtension2.absolute_capture_timestamp),
                                 kExtension2.estimated_capture_clock_offset),
-            absl::nullopt);
+            std::nullopt);
 }
 
 TEST(AbsoluteCaptureTimeSenderTest,
@@ -150,12 +150,12 @@ TEST(AbsoluteCaptureTimeSenderTest,
   EXPECT_EQ(sender.OnSendPacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
                                 NtpTime(kExtension1.absolute_capture_timestamp),
                                 kExtension1.estimated_capture_clock_offset),
-            absl::nullopt);
+            std::nullopt);
 
   EXPECT_EQ(sender.OnSendPacket(kSource, kRtpTimestamp2, kRtpClockFrequency,
                                 NtpTime(kExtension2.absolute_capture_timestamp),
                                 kExtension2.estimated_capture_clock_offset),
-            absl::nullopt);
+            std::nullopt);
 }
 
 TEST(AbsoluteCaptureTimeSenderTest, SkipInterpolateIfTooLate) {
@@ -184,7 +184,7 @@ TEST(AbsoluteCaptureTimeSenderTest, SkipInterpolateIfTooLate) {
   EXPECT_EQ(sender.OnSendPacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
                                 NtpTime(kExtension1.absolute_capture_timestamp),
                                 kExtension1.estimated_capture_clock_offset),
-            absl::nullopt);
+            std::nullopt);
 
   clock.AdvanceTime(TimeDelta::Millis(1));
 
@@ -224,7 +224,7 @@ TEST(AbsoluteCaptureTimeSenderTest, SkipInterpolateIfSourceChanged) {
   EXPECT_EQ(sender.OnSendPacket(kSource1, kRtpTimestamp2, kRtpClockFrequency,
                                 NtpTime(kExtension2.absolute_capture_timestamp),
                                 kExtension2.estimated_capture_clock_offset),
-            absl::nullopt);
+            std::nullopt);
 }
 
 TEST(AbsoluteCaptureTimeSenderTest, SkipInterpolateWhenForced) {
@@ -258,7 +258,7 @@ TEST(AbsoluteCaptureTimeSenderTest, SkipInterpolateWhenForced) {
                                 NtpTime(kExtension2.absolute_capture_timestamp),
                                 kExtension2.estimated_capture_clock_offset,
                                 /*force=*/false),
-            absl::nullopt);
+            std::nullopt);
 }
 
 TEST(AbsoluteCaptureTimeSenderTest, SkipInterpolateIfRtpClockFrequencyChanged) {
@@ -291,7 +291,7 @@ TEST(AbsoluteCaptureTimeSenderTest, SkipInterpolateIfRtpClockFrequencyChanged) {
   EXPECT_EQ(sender.OnSendPacket(kSource, kRtpTimestamp2, kRtpClockFrequency1,
                                 NtpTime(kExtension2.absolute_capture_timestamp),
                                 kExtension2.estimated_capture_clock_offset),
-            absl::nullopt);
+            std::nullopt);
 }
 
 TEST(AbsoluteCaptureTimeSenderTest,
@@ -337,7 +337,7 @@ TEST(AbsoluteCaptureTimeSenderTest,
   const AbsoluteCaptureTime kExtension1 = {Int64MsToUQ32x32(9000 + 20),
                                            Int64MsToQ32x32(370)};
   const AbsoluteCaptureTime kExtension2 = {Int64MsToUQ32x32(9000 + 40),
-                                           absl::nullopt};
+                                           std::nullopt};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeSender sender(&clock);
@@ -388,7 +388,7 @@ TEST(AbsoluteCaptureTimeSenderTest,
   EXPECT_EQ(sender.OnSendPacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
                                 NtpTime(kExtension1.absolute_capture_timestamp),
                                 kExtension1.estimated_capture_clock_offset),
-            absl::nullopt);
+            std::nullopt);
 
   EXPECT_EQ(sender.OnSendPacket(kSource, kRtpTimestamp2, kRtpClockFrequency,
                                 NtpTime(kExtension2.absolute_capture_timestamp),

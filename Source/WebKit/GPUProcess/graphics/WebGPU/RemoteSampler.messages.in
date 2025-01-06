@@ -23,7 +23,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteSampler NotRefCounted Stream {
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU,
+    EnabledBy=WebGPUEnabled
+]
+messages -> RemoteSampler Stream {
     void Destruct()
     void SetLabel(String label)
 }

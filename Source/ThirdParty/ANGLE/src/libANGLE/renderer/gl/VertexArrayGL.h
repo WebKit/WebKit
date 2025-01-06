@@ -47,6 +47,7 @@ class VertexArrayGL : public VertexArrayImpl
 
     GLuint getVertexArrayID() const;
     VertexArrayStateGL *getNativeState() const;
+    bool syncsToSharedState() const { return !mOwnsNativeState; }
 
     angle::Result syncState(const gl::Context *context,
                             const gl::VertexArray::DirtyBits &dirtyBits,

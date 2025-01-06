@@ -24,7 +24,12 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
-messages -> RemoteMediaSessionCoordinatorProxy NotRefCounted {
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=UI,
+    EnabledBy=MediaSessionCoordinatorEnabled
+]
+messages -> RemoteMediaSessionCoordinatorProxy {
 
     Join() -> (std::optional<WebCore::ExceptionData> error)
 

@@ -281,6 +281,8 @@ void vp9_svc_update_ref_frame(struct VP9_COMP *const cpi);
 void vp9_svc_adjust_frame_rate(struct VP9_COMP *const cpi);
 
 void vp9_svc_adjust_avg_frame_qindex(struct VP9_COMP *const cpi);
+
+int vp9_svc_check_skip_enhancement_layer(struct VP9_COMP *const cpi);
 #ifdef __cplusplus
 }  // extern "C"
 #endif

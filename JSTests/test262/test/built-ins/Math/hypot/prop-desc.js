@@ -7,6 +7,8 @@ includes: [propertyHelper.js]
 es6id: 20.2.2.18
 ---*/
 
-verifyNotEnumerable(Math, "hypot");
-verifyWritable(Math, "hypot");
-verifyConfigurable(Math, "hypot");
+verifyProperty(Math, "hypot", {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

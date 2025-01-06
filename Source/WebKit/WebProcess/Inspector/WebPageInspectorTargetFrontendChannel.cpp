@@ -29,8 +29,11 @@
 #include "MessageSenderInlines.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageInspectorTargetFrontendChannel);
 
 WebPageInspectorTargetFrontendChannel::WebPageInspectorTargetFrontendChannel(WebPage& page, const String& targetId, Inspector::FrontendChannel::ConnectionType connectionType)
     : m_page(page)
@@ -41,7 +44,7 @@ WebPageInspectorTargetFrontendChannel::WebPageInspectorTargetFrontendChannel(Web
 
 void WebPageInspectorTargetFrontendChannel::sendMessageToFrontend(const String& message)
 {
-    m_page.send(Messages::WebPageProxy::SendMessageToInspectorFrontend(m_targetId, message));
+    Ref { m_page.get() }->send(Messages::WebPageProxy::SendMessageToInspectorFrontend(m_targetId, message));
 }
 
 } // namespace WebKit

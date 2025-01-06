@@ -24,7 +24,8 @@
  */
 
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary TestInheritedDictionary {
     boolean boolMember;
     DOMString stringMember;

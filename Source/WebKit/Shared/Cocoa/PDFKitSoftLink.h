@@ -33,20 +33,27 @@
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, PDFKit)
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+// FIXME (rdar://133488399): Weak link PDFKit on tvOS.
+#if PLATFORM(APPLETV)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFHostViewController)
+#endif
+
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFActionResetForm)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFAnnotationButtonWidget)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFAnnotationChoiceWidget)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFAnnotationLink)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFAnnotationPopup)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFAnnotationText)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFAnnotationTextWidget)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFDocument)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFLayerController)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFSelection)
 SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, kPDFDestinationUnspecifiedValue, CGFloat)
 SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, PDFViewCopyPermissionNotification, NSNotificationName)
 SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, PDFDocumentCreationDateAttribute, PDFDocumentAttribute)
-ALLOW_DEPRECATED_DECLARATIONS_END
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, PDFAnnotationKeySubtype, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, PDFAnnotationKeyWidgetFieldType, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, PDFAnnotationSubtypeLink, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, PDFAnnotationSubtypePopup, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, PDFAnnotationSubtypeText, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, PDFAnnotationSubtypeWidget, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, PDFAnnotationWidgetSubtypeButton, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, PDFAnnotationWidgetSubtypeChoice, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, PDFAnnotationWidgetSubtypeSignature, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, PDFAnnotationWidgetSubtypeText, NSString *)
 
 #endif // HAVE(PDFKIT)

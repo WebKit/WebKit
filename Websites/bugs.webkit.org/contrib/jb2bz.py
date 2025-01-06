@@ -30,7 +30,7 @@ if not mimetypes.encodings_map.has_key('.bz2'):
 
 bug_status='CONFIRMED'
 component="default"
-version=""
+version="unspecified"
 product="" # this is required, the rest of these are defaulted as above
 
 """
@@ -230,6 +230,7 @@ def process_jitterbug(filename):
                         "bug_id=%s," \
                         "priority='---'," \
                         "bug_severity='normal',"  \
+                        "op_sys='All'," \
                         "bug_status=%s," \
                         "creation_ts=%s,"  \
                         "delta_ts=%s,"  \

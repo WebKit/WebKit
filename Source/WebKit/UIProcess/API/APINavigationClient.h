@@ -37,6 +37,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/LayoutMilestone.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if HAVE(APP_SSO)
 #include "SOAuthorizationLoadPolicy.h"
@@ -73,7 +74,7 @@ class NavigationResponse;
 class Object;
 
 class NavigationClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(NavigationClient);
 public:
     virtual ~NavigationClient() { }
 
@@ -116,7 +117,7 @@ public:
     virtual void processDidBecomeResponsive(WebKit::WebPageProxy&) { }
     virtual void processDidBecomeUnresponsive(WebKit::WebPageProxy&) { }
 
-    virtual RefPtr<Data> webCryptoMasterKey(WebKit::WebPageProxy&) { return nullptr; }
+    virtual void legacyWebCryptoMasterKey(WebKit::WebPageProxy&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler) { completionHandler(std::nullopt); }
 
 #if USE(QUICK_LOOK)
     virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) { }

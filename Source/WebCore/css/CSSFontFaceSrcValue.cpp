@@ -35,12 +35,13 @@
 #include "FontCustomPlatformData.h"
 #include "SVGFontFaceElement.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 CSSFontFaceSrcLocalValue::CSSFontFaceSrcLocalValue(AtomString&& fontFaceName)
-    : CSSValue(FontFaceSrcLocalClass)
+    : CSSValue(ClassType::FontFaceSrcLocal)
     , m_fontFaceName(WTFMove(fontFaceName))
 {
 }
@@ -73,7 +74,7 @@ bool CSSFontFaceSrcLocalValue::equals(const CSSFontFaceSrcLocalValue& other) con
 }
 
 CSSFontFaceSrcResourceValue::CSSFontFaceSrcResourceValue(ResolvedURL&& location, String&& format, Vector<FontTechnology>&& technologies, LoadedFromOpaqueSource source)
-    : CSSValue(FontFaceSrcResourceClass)
+    : CSSValue(ClassType::FontFaceSrcResource)
     , m_location(WTFMove(location))
     , m_format(WTFMove(format))
     , m_technologies(WTFMove(technologies))
@@ -123,7 +124,7 @@ bool CSSFontFaceSrcResourceValue::customTraverseSubresources(const Function<bool
     return m_cachedFont && handler(*m_cachedFont);
 }
 
-void CSSFontFaceSrcResourceValue::customSetReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+void CSSFontFaceSrcResourceValue::customSetReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>& replacementURLStrings)
 {
     auto replacementURLString = replacementURLStrings.get(m_location.resolvedURL.string());
     if (!replacementURLString.isNull())

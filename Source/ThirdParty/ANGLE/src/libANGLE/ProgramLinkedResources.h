@@ -273,6 +273,19 @@ class AtomicCounterBufferLinker final : angle::NonCopyable
     std::vector<AtomicCounterBuffer> *mAtomicCounterBuffersOut = nullptr;
 };
 
+class PixelLocalStorageLinker final : angle::NonCopyable
+{
+  public:
+    PixelLocalStorageLinker();
+    ~PixelLocalStorageLinker();
+
+    void init(std::vector<ShPixelLocalStorageFormat> *pixelLocalStorageFormatsOut);
+    void link(const std::vector<ShPixelLocalStorageFormat> &pixelLocalStorageFormats) const;
+
+  private:
+    std::vector<ShPixelLocalStorageFormat> *mPixelLocalStorageFormatsOut = nullptr;
+};
+
 struct ProgramLinkedResources
 {
     ProgramLinkedResources();
@@ -284,12 +297,14 @@ struct ProgramLinkedResources
               std::vector<std::string> *uniformMappedNamesOut,
               std::vector<InterfaceBlock> *shaderStorageBlocksOut,
               std::vector<BufferVariable> *bufferVariablesOut,
-              std::vector<AtomicCounterBuffer> *atomicCounterBuffersOut);
+              std::vector<AtomicCounterBuffer> *atomicCounterBuffersOut,
+              std::vector<ShPixelLocalStorageFormat> *pixelLocalStorageFormatsOut);
 
     ProgramVaryingPacking varyingPacking;
     UniformBlockLinker uniformBlockLinker;
     ShaderStorageBlockLinker shaderStorageBlockLinker;
     AtomicCounterBufferLinker atomicCounterBufferLinker;
+    PixelLocalStorageLinker pixelLocalStorageLinker;
     std::vector<UnusedUniform> unusedUniforms;
     std::vector<std::string> unusedInterfaceBlocks;
 };

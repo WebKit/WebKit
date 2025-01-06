@@ -32,11 +32,14 @@
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKTextInputContext.h>
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/MakeString.h>
 
 static constexpr auto longTextString = "Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. "
     "The ones who see things differently. They're not fond of rules. And they have no respect for the status quo. "
@@ -147,27 +150,6 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
 
 @implementation TestWKWebView (SynchronousDocumentContext)
 
-- (UIWKDocumentContext *)synchronouslyRequestDocumentContext:(UIWKDocumentRequest *)request
-{
-    __block bool finished = false;
-    __block RetainPtr<id> result;
-    [self.textInputContentView requestDocumentContext:request completionHandler:^(UIWKDocumentContext *context) {
-        result = context;
-        finished = true;
-    }];
-    TestWebKitAPI::Util::run(&finished);
-
-#if USE(BROWSERENGINEKIT)
-    if (RetainPtr context = dynamic_objc_cast<BETextDocumentContext>(result.get()))
-        return [context _uikitDocumentContext];
-#endif
-
-    if (RetainPtr context = dynamic_objc_cast<UIWKDocumentContext>(result.get()))
-        return context.autorelease();
-
-    return nil;
-}
-
 - (UITextPlaceholder *)synchronouslyInsertTextPlaceholderWithSize:(CGSize)size
 {
     __block bool finished = false;
@@ -206,16 +188,20 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
 
 @end
 
-static NSString *applyStyle(NSString *htmlString)
+namespace DocumentEditingContextTestHelpers {
+
+NSString *applyStyle(NSString *htmlString)
 {
     return [@"<style>body { margin: 0; } </style><meta name='viewport' content='initial-scale=1'>" stringByAppendingString:htmlString];
 }
 
 constexpr unsigned glyphWidth { 25 }; // pixels
 
-static NSString *applyAhemStyle(NSString *htmlString)
+NSString *applyAhemStyle(NSString *htmlString)
 {
-    return [NSString stringWithFormat:@"<style>@font-face { font-family: Ahem; src: url(Ahem.ttf); } body { margin: 0; } * { font: %upx/1 Ahem; -webkit-text-size-adjust: 100%%; }</style><meta name='viewport' content='width=980, initial-scale=1.0'>%@", glyphWidth, htmlString];
+    return [NSString stringWithFormat:@"<style>@font-face { font-family: Ahem; src: url(Ahem.ttf); } body { margin: 0; } * { font: %upx/1 Ahem; -webkit-text-size-adjust: 100%%; }</style><meta name='viewport' content='width=980, initial-scale=1.0'>%@", DocumentEditingContextTestHelpers::glyphWidth, htmlString];
+}
+
 }
 
 TEST(DocumentEditingContext, Simple)
@@ -224,7 +210,7 @@ TEST(DocumentEditingContext, Simple)
 
     UIWKDocumentContext *context;
 
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='the'>The</span> quick brown fox <span id='jumps'>jumps</span> over the lazy <span id='dog'>dog.</span>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(@"<span id='the'>The</span> quick brown fox <span id='jumps'>jumps</span> over the lazy <span id='dog'>dog.</span>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 1)"];
 
     context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityWord, 1)];
@@ -301,7 +287,7 @@ TEST(DocumentEditingContext, Simple)
     EXPECT_NSSTRING_EQ("jumps", context.selectedText);
 
     // Text rects.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<span id='four'>MMMM</span> MMM MM M")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"<span id='four'>MMMM</span> MMM MM M")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(four, 0, four, 1)"];
     context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 0)];
     EXPECT_NOT_NULL(context);
@@ -314,15 +300,15 @@ TEST(DocumentEditingContext, Simple)
     }];
     EXPECT_EQ(4UL, rects.count);
 #if PLATFORM(MACCATALYST)
-    EXPECT_EQ(CGRectMake(0, -1, glyphWidth, glyphWidth + 1), rects[0].CGRectValue);
-    EXPECT_EQ(CGRectMake(glyphWidth, -1, glyphWidth, glyphWidth + 1), rects[1].CGRectValue);
-    EXPECT_EQ(CGRectMake(2 * glyphWidth, -1, glyphWidth, glyphWidth + 1), rects[2].CGRectValue);
-    EXPECT_EQ(CGRectMake(3 * glyphWidth, -1, glyphWidth, glyphWidth + 1), rects[3].CGRectValue);
+    EXPECT_EQ(CGRectMake(0, -1, DocumentEditingContextTestHelpers::glyphWidth, DocumentEditingContextTestHelpers::glyphWidth + 1), rects[0].CGRectValue);
+    EXPECT_EQ(CGRectMake(DocumentEditingContextTestHelpers::glyphWidth, -1, DocumentEditingContextTestHelpers::glyphWidth, DocumentEditingContextTestHelpers::glyphWidth + 1), rects[1].CGRectValue);
+    EXPECT_EQ(CGRectMake(2 * DocumentEditingContextTestHelpers::glyphWidth, -1, DocumentEditingContextTestHelpers::glyphWidth, DocumentEditingContextTestHelpers::glyphWidth + 1), rects[2].CGRectValue);
+    EXPECT_EQ(CGRectMake(3 * DocumentEditingContextTestHelpers::glyphWidth, -1, DocumentEditingContextTestHelpers::glyphWidth, DocumentEditingContextTestHelpers::glyphWidth + 1), rects[3].CGRectValue);
 #else
-    EXPECT_EQ(CGRectMake(0, 0, glyphWidth, glyphWidth), rects[0].CGRectValue);
-    EXPECT_EQ(CGRectMake(glyphWidth, 0, glyphWidth, glyphWidth), rects[1].CGRectValue);
-    EXPECT_EQ(CGRectMake(2 * glyphWidth, 0, glyphWidth, glyphWidth), rects[2].CGRectValue);
-    EXPECT_EQ(CGRectMake(3 * glyphWidth, 0, glyphWidth, glyphWidth), rects[3].CGRectValue);
+    EXPECT_EQ(CGRectMake(0, 0, DocumentEditingContextTestHelpers::glyphWidth, DocumentEditingContextTestHelpers::glyphWidth), rects[0].CGRectValue);
+    EXPECT_EQ(CGRectMake(DocumentEditingContextTestHelpers::glyphWidth, 0, DocumentEditingContextTestHelpers::glyphWidth, DocumentEditingContextTestHelpers::glyphWidth), rects[1].CGRectValue);
+    EXPECT_EQ(CGRectMake(2 * DocumentEditingContextTestHelpers::glyphWidth, 0, DocumentEditingContextTestHelpers::glyphWidth, DocumentEditingContextTestHelpers::glyphWidth), rects[2].CGRectValue);
+    EXPECT_EQ(CGRectMake(3 * DocumentEditingContextTestHelpers::glyphWidth, 0, DocumentEditingContextTestHelpers::glyphWidth, DocumentEditingContextTestHelpers::glyphWidth), rects[3].CGRectValue);
 #endif
     rects = [context characterRectsForCharacterRange:NSMakeRange(5, 1)];
     EXPECT_EQ(0UL, rects.count);
@@ -332,20 +318,20 @@ TEST(DocumentEditingContext, Simple)
     rects = [context characterRectsForCharacterRange:NSMakeRange(0, 1)];
     EXPECT_EQ(1UL, rects.count);
 #if PLATFORM(MACCATALYST)
-    EXPECT_EQ(CGRectMake(0, -1, glyphWidth, glyphWidth + 1), rects.firstObject.CGRectValue);
+    EXPECT_EQ(CGRectMake(0, -1, DocumentEditingContextTestHelpers::glyphWidth, DocumentEditingContextTestHelpers::glyphWidth + 1), rects.firstObject.CGRectValue);
 #else
-    EXPECT_EQ(CGRectMake(0, 0, glyphWidth, glyphWidth), rects.firstObject.CGRectValue);
+    EXPECT_EQ(CGRectMake(0, 0, DocumentEditingContextTestHelpers::glyphWidth, DocumentEditingContextTestHelpers::glyphWidth), rects.firstObject.CGRectValue);
 #endif
     rects = [context characterRectsForCharacterRange:NSMakeRange(6, 1)];
     EXPECT_EQ(1UL, rects.count);
 #if PLATFORM(MACCATALYST)
-    EXPECT_EQ(CGRectMake(6 * glyphWidth, -1, glyphWidth, glyphWidth + 1), rects.firstObject.CGRectValue);
+    EXPECT_EQ(CGRectMake(6 * DocumentEditingContextTestHelpers::glyphWidth, -1, DocumentEditingContextTestHelpers::glyphWidth, DocumentEditingContextTestHelpers::glyphWidth + 1), rects.firstObject.CGRectValue);
 #else
-    EXPECT_EQ(CGRectMake(6 * glyphWidth, 0, glyphWidth, glyphWidth), rects.firstObject.CGRectValue);
+    EXPECT_EQ(CGRectMake(6 * DocumentEditingContextTestHelpers::glyphWidth, 0, DocumentEditingContextTestHelpers::glyphWidth, DocumentEditingContextTestHelpers::glyphWidth), rects.firstObject.CGRectValue);
 #endif
 
     // Text Input Context
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px;' value='hello, world'>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(@"<input type='text' style='width: 50px; height: 50px;' value='hello, world'>")];
     NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, textInputContexts.count);
     EXPECT_EQ(CGRectMake(0, 0, 50, 50), textInputContexts[0].boundingRect);
@@ -457,7 +443,7 @@ TEST(DocumentEditingContext, RequestMarkedText)
 TEST(DocumentEditingContext, RequestMarkedTextRectsAndTextOnly)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<input />")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"<input />")];
     [webView stringByEvaluatingJavaScript:@"document.querySelector('input').focus()"];
     [webView _synchronouslyExecuteEditCommand:@"InsertText" argument:@"Hello world"];
 
@@ -523,7 +509,7 @@ TEST(DocumentEditingContext, RectsRequestInContentEditable)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>Test<br><br><br><br></p>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"<p id='text' contenteditable>Test<br><br><br><br></p>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.lastChild, text.lastChild.length, text.lastChild, text.lastChild.length)"]; // Will focus <p>.
     
     NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
@@ -548,7 +534,7 @@ TEST(DocumentEditingContext, RectsRequestInContentEditableWithDivBreaks)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<div id='text' contenteditable>Test<div><br></div><div><br></div><div><br></div></div>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"<div id='text' contenteditable>Test<div><br></div><div><br></div><div><br></div></div>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.lastChild, text.lastChild.length, text.lastChild, text.lastChild.length)"]; // Will focus <p>.
 
     NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
@@ -573,7 +559,7 @@ TEST(DocumentEditingContext, PasswordFieldRequest)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<input id='passwordField' type='password' value='testPassword'>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"<input id='passwordField' type='password' value='testPassword'>")];
     [webView stringByEvaluatingJavaScript:@"passwordField.focus(); passwordField.select();"];
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityWord, 1)];
@@ -588,7 +574,7 @@ TEST(DocumentEditingContext, SpatialRequest_RectEncompassingInput)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
 
     // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <textarea id='test' style='width: 26em; margin: 200px 0 0 200px; padding: 0;'>The quick brown fox jumps over the lazy dog.</textarea> after")]; // Word wraps "over" onto next line
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"before <textarea id='test' style='width: 26em; margin: 200px 0 0 200px; padding: 0;'>The quick brown fox jumps over the lazy dog.</textarea> after")]; // Word wraps "over" onto next line
 
     NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, textInputContexts.count);
@@ -604,16 +590,16 @@ TEST(DocumentEditingContext, SpatialRequest_RectBeforeInput)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
 
     // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <textarea id='test' style='width: 26em; margin: 200px 0 0 200px; padding: 0;'>The quick brown fox jumps over the lazy dog.</textarea> after")]; // Word wraps "over" onto next line
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"before <textarea id='test' style='width: 26em; margin: 200px 0 0 200px; padding: 0;'>The quick brown fox jumps over the lazy dog.</textarea> after")]; // Word wraps "over" onto next line
 
     NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, textInputContexts.count);
 
     auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
-    documentRect.origin.x -= glyphWidth * 2;
-    documentRect.origin.y -= glyphWidth * 2;
-    documentRect.size.width = glyphWidth;
-    documentRect.size.height = glyphWidth;
+    documentRect.origin.x -= DocumentEditingContextTestHelpers::glyphWidth * 2;
+    documentRect.origin.y -= DocumentEditingContextTestHelpers::glyphWidth * 2;
+    documentRect.size.width = DocumentEditingContextTestHelpers::glyphWidth;
+    documentRect.size.height = DocumentEditingContextTestHelpers::glyphWidth;
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatial, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
     EXPECT_NULL(context.contextBefore);
@@ -626,16 +612,16 @@ TEST(DocumentEditingContext, SpatialRequest_RectInsideInput)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
 
     // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <textarea id='test' style='width: 26em; margin: 200px 0 0 200px; padding: 0;'>The quick brown fox jumps over the lazy dog.</textarea> after")]; // Word wraps "over" onto next line
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"before <textarea id='test' style='width: 26em; margin: 200px 0 0 200px; padding: 0;'>The quick brown fox jumps over the lazy dog.</textarea> after")]; // Word wraps "over" onto next line
 
     NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, textInputContexts.count);
 
     auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
-    documentRect.origin.x += (documentRect.size.width / 2) - (glyphWidth * 2);
-    documentRect.origin.y += (documentRect.size.height / 2) - (glyphWidth * 2);
-    documentRect.size.width = glyphWidth;
-    documentRect.size.height = glyphWidth;
+    documentRect.origin.x += (documentRect.size.width / 2) - (DocumentEditingContextTestHelpers::glyphWidth * 2);
+    documentRect.origin.y += (documentRect.size.height / 2) - (DocumentEditingContextTestHelpers::glyphWidth * 2);
+    documentRect.size.width = DocumentEditingContextTestHelpers::glyphWidth;
+    documentRect.size.height = DocumentEditingContextTestHelpers::glyphWidth;
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatial, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
     EXPECT_NSSTRING_EQ("The quick b", context.contextBefore);
@@ -648,16 +634,16 @@ TEST(DocumentEditingContext, SpatialRequest_RectAfterInput)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
 
     // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <textarea id='test' style='width: 26em; margin: 200px 0 0 200px; padding: 0;'>The quick brown fox jumps over the lazy dog.</textarea> after")]; // Word wraps "over" onto next line
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"before <textarea id='test' style='width: 26em; margin: 200px 0 0 200px; padding: 0;'>The quick brown fox jumps over the lazy dog.</textarea> after")]; // Word wraps "over" onto next line
 
     NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, textInputContexts.count);
 
     auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
-    documentRect.origin.x += documentRect.size.width + glyphWidth;
-    documentRect.origin.y += documentRect.size.height + glyphWidth;
-    documentRect.size.width = glyphWidth;
-    documentRect.size.height = glyphWidth;
+    documentRect.origin.x += documentRect.size.width + DocumentEditingContextTestHelpers::glyphWidth;
+    documentRect.origin.y += documentRect.size.height + DocumentEditingContextTestHelpers::glyphWidth;
+    documentRect.size.width = DocumentEditingContextTestHelpers::glyphWidth;
+    documentRect.size.height = DocumentEditingContextTestHelpers::glyphWidth;
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatial, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
     EXPECT_NSSTRING_EQ("The quick brown fox jumps over the lazy dog.", context.contextBefore);
@@ -668,14 +654,14 @@ TEST(DocumentEditingContext, SpatialRequest_RectAfterInput)
 TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectBeforeRangeSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:applyAhemStyle(@"<span id='spatialBox'>The</span> quick brown fox <span id='jumps'>jumps</span> over the dog.")];
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:DocumentEditingContextTestHelpers::applyAhemStyle(@"<span id='spatialBox'>The</span> quick brown fox <span id='jumps'>jumps</span> over the dog.")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 1)"];
 
     // Hit testing below the last line is treated as if the line was hit. So, use height of 1
     // to ensure we aren't even close to the line height.
     auto spatialBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"spatialBox.getBoundingClientRect().toJSON()"]);
     spatialBoxRect.size.height = 1;
-    EXPECT_EQ(CGRectMake(0, 0, 3 * glyphWidth, 1), spatialBoxRect);
+    EXPECT_EQ(CGRectMake(0, 0, 3 * DocumentEditingContextTestHelpers::glyphWidth, 1), spatialBoxRect);
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 2, spatialBoxRect)];
     EXPECT_NOT_NULL(context);
@@ -687,14 +673,14 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectBeforeRangeSe
 TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAfterRangeSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:applyAhemStyle(@"The quick brown fox <span id='jumps'>jumps</span> over the dog.<span id='spatialBox'></span>")];
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:DocumentEditingContextTestHelpers::applyAhemStyle(@"The quick brown fox <span id='jumps'>jumps</span> over the dog.<span id='spatialBox'></span>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 1)"];
 
     // Hit testing below the last line is treated as if the line was hit. So, use height of 1
     // to ensure we aren't even close to the line height.
     auto spatialBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"spatialBox.getBoundingClientRect().toJSON()"]);
     spatialBoxRect.size.height = 1;
-    EXPECT_EQ(CGRectMake(39 * glyphWidth, 0, 0, 1), spatialBoxRect);
+    EXPECT_EQ(CGRectMake(39 * DocumentEditingContextTestHelpers::glyphWidth, 0, 0, 1), spatialBoxRect);
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 2, spatialBoxRect)];
     EXPECT_NOT_NULL(context);
@@ -706,14 +692,14 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAfterRangeSel
 TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAroundRangeSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:applyAhemStyle(@"The quick brown <span id='spatialBox'>fox <span id='jumps'>jumps</span> </span>over the dog.")];
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:DocumentEditingContextTestHelpers::applyAhemStyle(@"The quick brown <span id='spatialBox'>fox <span id='jumps'>jumps</span> </span>over the dog.")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 1)"];
 
     // Hit testing below the last line is treated as if the line was hit. So, use height of 1
     // to ensure we aren't even close to the line height.
     auto spatialBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"spatialBox.getBoundingClientRect().toJSON()"]);
     spatialBoxRect.size.height = 1;
-    EXPECT_EQ(CGRectMake(16 * glyphWidth, 0, 10 * glyphWidth, 1), spatialBoxRect);
+    EXPECT_EQ(CGRectMake(16 * DocumentEditingContextTestHelpers::glyphWidth, 0, 10 * DocumentEditingContextTestHelpers::glyphWidth, 1), spatialBoxRect);
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 2, spatialBoxRect)];
     EXPECT_NOT_NULL(context);
@@ -725,14 +711,14 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAroundRangeSe
 TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectBeforeCaretSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:applyAhemStyle(@"<body contenteditable='true'><span id='spatialBox'>The</span> quick brown fox <span id='jumps'>jumps</span> over the dog.</body>")];
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:DocumentEditingContextTestHelpers::applyAhemStyle(@"<body contenteditable='true'><span id='spatialBox'>The</span> quick brown fox <span id='jumps'>jumps</span> over the dog.</body>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 0)"];
 
     // Hit testing below the last line is treated as if the line was hit. So, use height of 1
     // to ensure we aren't even close to the line height.
     auto spatialBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"spatialBox.getBoundingClientRect().toJSON()"]);
     spatialBoxRect.size.height = 1;
-    EXPECT_EQ(CGRectMake(0, 0, 3 * glyphWidth, 1), spatialBoxRect);
+    EXPECT_EQ(CGRectMake(0, 0, 3 * DocumentEditingContextTestHelpers::glyphWidth, 1), spatialBoxRect);
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 2, spatialBoxRect)];
     EXPECT_NOT_NULL(context);
@@ -744,14 +730,14 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectBeforeCaretSe
 TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAfterCaretSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:applyAhemStyle(@"<body contenteditable='true'>The quick brown fox <span id='jumps'>jumps</span> over the dog.<span id='spatialBox'></span></body>")];
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:DocumentEditingContextTestHelpers::applyAhemStyle(@"<body contenteditable='true'>The quick brown fox <span id='jumps'>jumps</span> over the dog.<span id='spatialBox'></span></body>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 0)"];
 
     // Hit testing below the last line is treated as if the line was hit. So, use height of 1
     // to ensure we aren't even close to the line height.
     auto spatialBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"spatialBox.getBoundingClientRect().toJSON()"]);
     spatialBoxRect.size.height = 1;
-    EXPECT_EQ(CGRectMake(39 * glyphWidth, 0, 0, 1), spatialBoxRect);
+    EXPECT_EQ(CGRectMake(39 * DocumentEditingContextTestHelpers::glyphWidth, 0, 0, 1), spatialBoxRect);
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 2, spatialBoxRect)];
     EXPECT_NOT_NULL(context);
@@ -763,14 +749,14 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAfterCaretSel
 TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAroundCaretSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:applyAhemStyle(@"<body contenteditable='true'>The quick brown <span id='spatialBox'>fox <span id='jumps'>jumps</span> </span>over the dog.</body>")];
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:DocumentEditingContextTestHelpers::applyAhemStyle(@"<body contenteditable='true'>The quick brown <span id='spatialBox'>fox <span id='jumps'>jumps</span> </span>over the dog.</body>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 0)"];
 
     // Hit testing below the last line is treated as if the line was hit. So, use height of 1
     // to ensure we aren't even close to the line height.
     auto spatialBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"spatialBox.getBoundingClientRect().toJSON()"]);
     spatialBoxRect.size.height = 1;
-    EXPECT_EQ(CGRectMake(16 * glyphWidth, 0, 10 * glyphWidth, 1), spatialBoxRect);
+    EXPECT_EQ(CGRectMake(16 * DocumentEditingContextTestHelpers::glyphWidth, 0, 10 * DocumentEditingContextTestHelpers::glyphWidth, 1), spatialBoxRect);
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 2, spatialBoxRect)];
     EXPECT_NOT_NULL(context);
@@ -784,7 +770,7 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectEncompassingI
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
 
     // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(fox_jumps_over, 0, fox_jumps_over, 1)"];
 
     NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
@@ -801,17 +787,17 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectBeforeInputWi
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
 
     // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(fox_jumps_over, 0, fox_jumps_over, 1)"];
 
     NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, textInputContexts.count);
 
     auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
-    documentRect.origin.x -= glyphWidth * 2;
-    documentRect.origin.y -= glyphWidth * 2;
-    documentRect.size.width = glyphWidth;
-    documentRect.size.height = glyphWidth;
+    documentRect.origin.x -= DocumentEditingContextTestHelpers::glyphWidth * 2;
+    documentRect.origin.y -= DocumentEditingContextTestHelpers::glyphWidth * 2;
+    documentRect.size.width = DocumentEditingContextTestHelpers::glyphWidth;
+    documentRect.size.height = DocumentEditingContextTestHelpers::glyphWidth;
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
     EXPECT_NSSTRING_EQ("The quick brown ", context.contextBefore);
@@ -824,7 +810,7 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectBeforeSelecti
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
 
     // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(fox_jumps_over, 0, fox_jumps_over, 1)"];
 
     NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
@@ -833,10 +819,10 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectBeforeSelecti
     auto selectionBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"fox_jumps_over.getBoundingClientRect().toJSON()"]);
 
     auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
-    documentRect.origin.x = ((documentRect.origin.x + selectionBoxRect.origin.x) / 2) - (glyphWidth * 2);
-    documentRect.origin.y = ((documentRect.origin.y + selectionBoxRect.origin.y) / 2) - (glyphWidth * 2);
-    documentRect.size.width = glyphWidth;
-    documentRect.size.height = glyphWidth;
+    documentRect.origin.x = ((documentRect.origin.x + selectionBoxRect.origin.x) / 2) - (DocumentEditingContextTestHelpers::glyphWidth * 2);
+    documentRect.origin.y = ((documentRect.origin.y + selectionBoxRect.origin.y) / 2) - (DocumentEditingContextTestHelpers::glyphWidth * 2);
+    documentRect.size.width = DocumentEditingContextTestHelpers::glyphWidth;
+    documentRect.size.height = DocumentEditingContextTestHelpers::glyphWidth;
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
     EXPECT_NSSTRING_EQ("The quick brown ", context.contextBefore);
@@ -849,7 +835,7 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAfterSelectio
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
 
     // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(fox_jumps_over, 0, fox_jumps_over, 1)"];
 
     NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
@@ -858,10 +844,10 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAfterSelectio
     auto selectionBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"fox_jumps_over.getBoundingClientRect().toJSON()"]);
 
     auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
-    documentRect.origin.x = ((documentRect.origin.x + documentRect.size.width + selectionBoxRect.origin.x + selectionBoxRect.size.width) / 2) + glyphWidth;
-    documentRect.origin.y = ((documentRect.origin.y + documentRect.size.height + selectionBoxRect.origin.y + selectionBoxRect.size.height) / 2) + glyphWidth;
-    documentRect.size.width = glyphWidth;
-    documentRect.size.height = glyphWidth;
+    documentRect.origin.x = ((documentRect.origin.x + documentRect.size.width + selectionBoxRect.origin.x + selectionBoxRect.size.width) / 2) + DocumentEditingContextTestHelpers::glyphWidth;
+    documentRect.origin.y = ((documentRect.origin.y + documentRect.size.height + selectionBoxRect.origin.y + selectionBoxRect.size.height) / 2) + DocumentEditingContextTestHelpers::glyphWidth;
+    documentRect.size.width = DocumentEditingContextTestHelpers::glyphWidth;
+    documentRect.size.height = DocumentEditingContextTestHelpers::glyphWidth;
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
     EXPECT_NSSTRING_EQ("The quick brown ", context.contextBefore);
@@ -874,17 +860,17 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAfterInputWit
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
 
     // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(fox_jumps_over, 0, fox_jumps_over, 1)"];
 
     NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, textInputContexts.count);
 
     auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
-    documentRect.origin.x += documentRect.size.width + (glyphWidth * 2);
-    documentRect.origin.y += documentRect.size.height + (glyphWidth * 2);
-    documentRect.size.width = glyphWidth;
-    documentRect.size.height = glyphWidth;
+    documentRect.origin.x += documentRect.size.width + (DocumentEditingContextTestHelpers::glyphWidth * 2);
+    documentRect.origin.y += documentRect.size.height + (DocumentEditingContextTestHelpers::glyphWidth * 2);
+    documentRect.size.width = DocumentEditingContextTestHelpers::glyphWidth;
+    documentRect.size.height = DocumentEditingContextTestHelpers::glyphWidth;
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
     EXPECT_NSSTRING_EQ("The quick brown ", context.contextBefore);
@@ -896,7 +882,7 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_LimitContextToEdi
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 980, 600)]);
 
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"hello world <textarea>foo bar baz</textarea> this is a test")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"hello world <textarea>foo bar baz</textarea> this is a test")];
     [webView stringByEvaluatingJavaScript:@"document.querySelector('textarea').select()"];
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 200, CGRectMake(0, 0, 980, 600))];
@@ -909,7 +895,7 @@ TEST(DocumentEditingContext, RequestRectsInTextAreaAcrossWordWrappedLine)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<textarea id='test' style='width: 26em; padding: 0'>The quick brown fox jumps over the lazy dog.</textarea>")]; // Word wraps "over" onto next line
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"<textarea id='test' style='width: 26em; padding: 0'>The quick brown fox jumps over the lazy dog.</textarea>")]; // Word wraps "over" onto next line
     [webView stringByEvaluatingJavaScript:@"test.focus(); test.setSelectionRange(25, 25)"]; // Place caret after 's' in "jumps".
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 2)];
@@ -929,26 +915,26 @@ TEST(DocumentEditingContext, RequestRectsInTextAreaAcrossWordWrappedLine)
     
     if (textRects.count >= 18) {
         CGFloat x = 401;
-        EXPECT_EQ(CGRectMake(x + 0 * glyphWidth, yPos, 25, height), textRects[0].CGRectValue); // f
-        EXPECT_EQ(CGRectMake(x + 1 * glyphWidth, yPos, 25, height), textRects[1].CGRectValue); // o
-        EXPECT_EQ(CGRectMake(x + 2 * glyphWidth, yPos, 25, height), textRects[2].CGRectValue); // x
-        EXPECT_EQ(CGRectMake(x + 3 * glyphWidth, yPos, 25, height), textRects[3].CGRectValue); //
-        EXPECT_EQ(CGRectMake(x + 4 * glyphWidth, yPos, 25, height), textRects[4].CGRectValue); // j
-        EXPECT_EQ(CGRectMake(x + 5 * glyphWidth, yPos, 25, height), textRects[5].CGRectValue); // u
-        EXPECT_EQ(CGRectMake(x + 6 * glyphWidth, yPos, 25, height), textRects[6].CGRectValue); // m
-        EXPECT_EQ(CGRectMake(x + 7 * glyphWidth, yPos, 25, height), textRects[7].CGRectValue); // p
-        EXPECT_EQ(CGRectMake(x + 8 * glyphWidth, yPos, 25, height), textRects[8].CGRectValue); // s
-        EXPECT_EQ(CGRectMake(x + 9 * glyphWidth, yPos, 25, height), textRects[9].CGRectValue); //
+        EXPECT_EQ(CGRectMake(x + 0 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[0].CGRectValue); // f
+        EXPECT_EQ(CGRectMake(x + 1 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[1].CGRectValue); // o
+        EXPECT_EQ(CGRectMake(x + 2 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[2].CGRectValue); // x
+        EXPECT_EQ(CGRectMake(x + 3 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[3].CGRectValue); //
+        EXPECT_EQ(CGRectMake(x + 4 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[4].CGRectValue); // j
+        EXPECT_EQ(CGRectMake(x + 5 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[5].CGRectValue); // u
+        EXPECT_EQ(CGRectMake(x + 6 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[6].CGRectValue); // m
+        EXPECT_EQ(CGRectMake(x + 7 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[7].CGRectValue); // p
+        EXPECT_EQ(CGRectMake(x + 8 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[8].CGRectValue); // s
+        EXPECT_EQ(CGRectMake(x + 9 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[9].CGRectValue); //
 
         x = 1;
-        EXPECT_EQ(CGRectMake(x + 0 * glyphWidth, 25 + yPos, 25, height), textRects[10].CGRectValue); // o
-        EXPECT_EQ(CGRectMake(x + 1 * glyphWidth, 25 + yPos, 25, height), textRects[11].CGRectValue); // v
-        EXPECT_EQ(CGRectMake(x + 2 * glyphWidth, 25 + yPos, 25, height), textRects[12].CGRectValue); // e
-        EXPECT_EQ(CGRectMake(x + 3 * glyphWidth, 25 + yPos, 25, height), textRects[13].CGRectValue); // r
-        EXPECT_EQ(CGRectMake(x + 4 * glyphWidth, 25 + yPos, 25, height), textRects[14].CGRectValue); //
-        EXPECT_EQ(CGRectMake(x + 5 * glyphWidth, 25 + yPos, 25, height), textRects[15].CGRectValue); // t
-        EXPECT_EQ(CGRectMake(x + 6 * glyphWidth, 25 + yPos, 25, height), textRects[16].CGRectValue); // h
-        EXPECT_EQ(CGRectMake(x + 7 * glyphWidth, 25 + yPos, 25, height), textRects[17].CGRectValue); // e
+        EXPECT_EQ(CGRectMake(x + 0 * DocumentEditingContextTestHelpers::glyphWidth, 25 + yPos, 25, height), textRects[10].CGRectValue); // o
+        EXPECT_EQ(CGRectMake(x + 1 * DocumentEditingContextTestHelpers::glyphWidth, 25 + yPos, 25, height), textRects[11].CGRectValue); // v
+        EXPECT_EQ(CGRectMake(x + 2 * DocumentEditingContextTestHelpers::glyphWidth, 25 + yPos, 25, height), textRects[12].CGRectValue); // e
+        EXPECT_EQ(CGRectMake(x + 3 * DocumentEditingContextTestHelpers::glyphWidth, 25 + yPos, 25, height), textRects[13].CGRectValue); // r
+        EXPECT_EQ(CGRectMake(x + 4 * DocumentEditingContextTestHelpers::glyphWidth, 25 + yPos, 25, height), textRects[14].CGRectValue); //
+        EXPECT_EQ(CGRectMake(x + 5 * DocumentEditingContextTestHelpers::glyphWidth, 25 + yPos, 25, height), textRects[15].CGRectValue); // t
+        EXPECT_EQ(CGRectMake(x + 6 * DocumentEditingContextTestHelpers::glyphWidth, 25 + yPos, 25, height), textRects[16].CGRectValue); // h
+        EXPECT_EQ(CGRectMake(x + 7 * DocumentEditingContextTestHelpers::glyphWidth, 25 + yPos, 25, height), textRects[17].CGRectValue); // e
     }
 }
 
@@ -956,7 +942,7 @@ TEST(DocumentEditingContext, RequestRectsInTextAreaInsideIFrame)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     // Use "padding: 0" for the <textarea> as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle([NSString stringWithFormat:@"<iframe srcdoc=\"%@\" style='position: absolute; left: 1em; top: 1em; border: none'></iframe>", applyAhemStyle(@"<textarea id='test' style='padding: 0'>The quick brown fox jumps over the lazy dog.</textarea><script>let textarea = document.getElementById('test'); textarea.focus(); textarea.setSelectionRange(0, 0); /* Place caret at the beginning of the field. */</script>")])];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle([NSString stringWithFormat:@"<iframe srcdoc=\"%@\" style='position: absolute; left: 1em; top: 1em; border: none'></iframe>", DocumentEditingContextTestHelpers::applyAhemStyle(@"<textarea id='test' style='padding: 0'>The quick brown fox jumps over the lazy dog.</textarea><script>let textarea = document.getElementById('test'); textarea.focus(); textarea.setSelectionRange(0, 0); /* Place caret at the beginning of the field. */</script>")])];
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
     EXPECT_NOT_NULL(context);
@@ -975,9 +961,9 @@ TEST(DocumentEditingContext, RequestRectsInTextAreaInsideIFrame)
 
     if (textRects.count >= 3) {
         CGFloat x = 26;
-        EXPECT_EQ(CGRectMake(x + 0 * glyphWidth, yPos, 25, height), textRects[0].CGRectValue); // T
-        EXPECT_EQ(CGRectMake(x + 1 * glyphWidth, yPos, 25, height), textRects[1].CGRectValue); // h
-        EXPECT_EQ(CGRectMake(x + 2 * glyphWidth, yPos, 25, height), textRects[2].CGRectValue); // e
+        EXPECT_EQ(CGRectMake(x + 0 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[0].CGRectValue); // T
+        EXPECT_EQ(CGRectMake(x + 1 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[1].CGRectValue); // h
+        EXPECT_EQ(CGRectMake(x + 2 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[2].CGRectValue); // e
     }
 }
 
@@ -986,8 +972,8 @@ TEST(DocumentEditingContext, RequestRectsInTextAreaInsideScrolledIFrame)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     // Use "padding: 0" for the <textarea> as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle([NSString stringWithFormat:@"<iframe srcdoc=\"%@\" style='position: absolute; left: 1em; top: 1em; border: none' height='200'></iframe>",
-        applyAhemStyle(@"<body style='height: 1000px'><div style='width: 200px; height: 200px'></div><textarea id='test' style='padding: 0'>The quick brown fox jumps over the lazy dog.</textarea>"
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle([NSString stringWithFormat:@"<iframe srcdoc=\"%@\" style='position: absolute; left: 1em; top: 1em; border: none' height='200'></iframe>",
+        DocumentEditingContextTestHelpers::applyAhemStyle(@"<body style='height: 1000px'><div style='width: 200px; height: 200px'></div><textarea id='test' style='padding: 0'>The quick brown fox jumps over the lazy dog.</textarea>"
             "<script>let textarea = document.getElementById('test'); textarea.focus({preventScroll: true}); textarea.setSelectionRange(0, 0); /* Place caret at the beginning of the field. */"
             "window.scrollTo(0, 200, {behavior: 'instant'}); /* Scroll <textarea> to the top. */ </script></body>")])];
 
@@ -1007,9 +993,9 @@ TEST(DocumentEditingContext, RequestRectsInTextAreaInsideScrolledIFrame)
 
     if (textRects.count >= 3) {
         CGFloat x = 26;
-        EXPECT_EQ(CGRectMake(x + 0 * glyphWidth, yPos, 25, height), textRects[0].CGRectValue); // T
-        EXPECT_EQ(CGRectMake(x + 1 * glyphWidth, yPos, 25, height), textRects[1].CGRectValue); // h
-        EXPECT_EQ(CGRectMake(x + 2 * glyphWidth, yPos, 25, height), textRects[2].CGRectValue); // e
+        EXPECT_EQ(CGRectMake(x + 0 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[0].CGRectValue); // T
+        EXPECT_EQ(CGRectMake(x + 1 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[1].CGRectValue); // h
+        EXPECT_EQ(CGRectMake(x + 2 * DocumentEditingContextTestHelpers::glyphWidth, yPos, 25, height), textRects[2].CGRectValue); // e
     }
 }
 
@@ -1018,7 +1004,7 @@ TEST(DocumentEditingContext, RequestRectsInTextAreaInsideScrolledIFrame)
 TEST(DocumentEditingContext, RequestFirstTwoWords)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.</p>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.</p>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 2)];
@@ -1055,7 +1041,7 @@ TEST(DocumentEditingContext, RequestFirstTwoWords)
 TEST(DocumentEditingContext, RequestFirstTwoWordWithLeadingNonBreakableSpace)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>&nbsp;The quick brown fox jumps over the lazy dog.</p>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"<p id='text' contenteditable>&nbsp;The quick brown fox jumps over the lazy dog.</p>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
@@ -1082,7 +1068,7 @@ TEST(DocumentEditingContext, RequestFirstTwoWordWithLeadingNonBreakableSpace)
 TEST(DocumentEditingContext, RequestLastWord)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.</p>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.</p>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, text.firstChild.length, text.firstChild, text.firstChild.length)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
@@ -1109,7 +1095,7 @@ TEST(DocumentEditingContext, RequestLastWord)
 TEST(DocumentEditingContext, RequestLastWordWithTrailingNonBreakableSpace)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.&nbsp;</p>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.&nbsp;</p>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, text.firstChild.length, text.firstChild, text.firstChild.length)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
@@ -1138,7 +1124,7 @@ TEST(DocumentEditingContext, RequestLastWordWithTrailingNonBreakableSpace)
 TEST(DocumentEditingContext, RequestTwoWordsAroundSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='the'>The</span> quick brown fox <span id='jumps'>jumps</span> over the lazy <span id='dog'>dog.</span>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(@"<span id='the'>The</span> quick brown fox <span id='jumps'>jumps</span> over the lazy <span id='dog'>dog.</span>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 1)"];
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityWord, 2)];
@@ -1151,7 +1137,7 @@ TEST(DocumentEditingContext, RequestTwoWordsAroundSelection)
 TEST(DocumentEditingContext, RequestThreeWordsAroundSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='the'>The</span> quick brown fox <span id='jumps'>jumps</span> over the lazy <span id='dog'>dog.</span>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(@"<span id='the'>The</span> quick brown fox <span id='jumps'>jumps</span> over the lazy <span id='dog'>dog.</span>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 1)"];
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityWord, 3)];
@@ -1164,7 +1150,7 @@ TEST(DocumentEditingContext, RequestThreeWordsAroundSelection)
 TEST(DocumentEditingContext, RequestBeforeInlinePlaceholder)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='wrapper' contenteditable>hello world</span>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(@"<span id='wrapper' contenteditable>hello world</span>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(wrapper.firstChild, 5)"]; // Place cursor after "hello".
 
     auto *placeholder = [webView synchronouslyInsertTextPlaceholderWithSize:CGSizeMake(5, 5)];
@@ -1181,7 +1167,7 @@ TEST(DocumentEditingContext, RequestBeforeInlinePlaceholder)
 TEST(DocumentEditingContext, RequestAfterInlinePlaceholder)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='wrapper' contenteditable>hello world</span>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(@"<span id='wrapper' contenteditable>hello world</span>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(wrapper.firstChild, 6)"]; // Place cursor before "world".
 
     auto *placeholder = [webView synchronouslyInsertTextPlaceholderWithSize:CGSizeMake(5, 5)];
@@ -1198,7 +1184,7 @@ TEST(DocumentEditingContext, RequestAfterInlinePlaceholder)
 TEST(DocumentEditingContext, RequestBeforeBlockPlaceholder)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='wrapper' contenteditable>hello world</span>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(@"<span id='wrapper' contenteditable>hello world</span>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(wrapper.firstChild, 5)"]; // Place cursor after "hello".
 
     auto *placeholder = [webView synchronouslyInsertTextPlaceholderWithSize:CGSizeMake(0, 5)];
@@ -1215,7 +1201,7 @@ TEST(DocumentEditingContext, RequestBeforeBlockPlaceholder)
 TEST(DocumentEditingContext, RequestAfterBlockPlaceholder)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='wrapper' contenteditable>hello world</span>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(@"<span id='wrapper' contenteditable>hello world</span>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(wrapper.firstChild, 6)"]; // Place cursor before "world".
 
     auto *placeholder = [webView synchronouslyInsertTextPlaceholderWithSize:CGSizeMake(0, 5)];
@@ -1236,7 +1222,7 @@ constexpr NSString * const threeSentencesExample = @"<p id='text' contenteditabl
 TEST(DocumentEditingContext, RequestFirstTwoSentences)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(threeSentencesExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(threeSentencesExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularitySentence, 2)];
@@ -1249,7 +1235,7 @@ TEST(DocumentEditingContext, RequestFirstTwoSentences)
 TEST(DocumentEditingContext, RequestFirstTwoSentencesNoSpaces)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<p id='text' contenteditable>The first sentence.The second sentence.The third sentence.</p>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(@"<p id='text' contenteditable>The first sentence.The second sentence.The third sentence.</p>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularitySentence, 2)];
@@ -1262,7 +1248,7 @@ TEST(DocumentEditingContext, RequestFirstTwoSentencesNoSpaces)
 TEST(DocumentEditingContext, RequestLastSentence)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(threeSentencesExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(threeSentencesExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, text.firstChild.length, text.firstChild, text.firstChild.length)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularitySentence, 1)];
@@ -1275,7 +1261,7 @@ TEST(DocumentEditingContext, RequestLastSentence)
 TEST(DocumentEditingContext, RequestLastTwoSentences)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(threeSentencesExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(threeSentencesExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, text.firstChild.length, text.firstChild, text.firstChild.length)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularitySentence, 2)];
@@ -1292,7 +1278,7 @@ constexpr NSString * const threeParagraphsExample = @"<p id='text' style='width:
 TEST(DocumentEditingContext, RequestFirstParagraph)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(threeParagraphsExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityParagraph, 1)];
@@ -1305,7 +1291,7 @@ TEST(DocumentEditingContext, RequestFirstParagraph)
 TEST(DocumentEditingContext, RequestFirstTwoParagraphs)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(threeParagraphsExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityParagraph, 2)];
@@ -1318,7 +1304,7 @@ TEST(DocumentEditingContext, RequestFirstTwoParagraphs)
 TEST(DocumentEditingContext, RequestLastParagraph)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(threeParagraphsExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, text.firstChild.length, text.firstChild, text.firstChild.length)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityParagraph, 1)];
@@ -1331,7 +1317,7 @@ TEST(DocumentEditingContext, RequestLastParagraph)
 TEST(DocumentEditingContext, RequestLastTwoParagraphs)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(threeParagraphsExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, text.firstChild.length, text.firstChild, text.firstChild.length)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityParagraph, 2)];
@@ -1344,7 +1330,7 @@ TEST(DocumentEditingContext, RequestLastTwoParagraphs)
 TEST(DocumentEditingContext, RequestLastTwoParagraphsWithSelectiontWithinParagraph)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<span id='the'>The</span> quick brown fox <span id='jumps'>jumps</span> over the lazy <span id='dog'>dog.</span>")];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"<span id='the'>The</span> quick brown fox <span id='jumps'>jumps</span> over the lazy <span id='dog'>dog.</span>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 1)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityParagraph, 2)];
@@ -1360,7 +1346,7 @@ TEST(DocumentEditingContext, RequestLastTwoParagraphsWithSelectiontWithinParagra
 TEST(DocumentEditingContext, RequestFirstCharacter)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(threeParagraphsExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityCharacter, 1)];
@@ -1373,7 +1359,7 @@ TEST(DocumentEditingContext, RequestFirstCharacter)
 TEST(DocumentEditingContext, RequestFirstWordUsingCharacterGranularity)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(threeParagraphsExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityCharacter, 3)];
@@ -1386,7 +1372,7 @@ TEST(DocumentEditingContext, RequestFirstWordUsingCharacterGranularity)
 TEST(DocumentEditingContext, RequestFirstWordPlusTrailingSpaceUsingCharacterGranularity)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyStyle(threeParagraphsExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityCharacter, 4)];
@@ -1401,7 +1387,7 @@ TEST(DocumentEditingContext, RequestFirstWordPlusTrailingSpaceUsingCharacterGran
 TEST(DocumentEditingContext, RequestFirstLine)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(threeParagraphsExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(threeParagraphsExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityLine, 1)];
@@ -1414,7 +1400,7 @@ TEST(DocumentEditingContext, RequestFirstLine)
 TEST(DocumentEditingContext, RequestFirstTwoLines)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(threeParagraphsExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(threeParagraphsExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityLine, 2)];
@@ -1427,7 +1413,7 @@ TEST(DocumentEditingContext, RequestFirstTwoLines)
 TEST(DocumentEditingContext, RequestLastLine)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(threeParagraphsExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(threeParagraphsExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, text.firstChild.length, text.firstChild, text.firstChild.length)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityLine, 1)];
@@ -1440,7 +1426,7 @@ TEST(DocumentEditingContext, RequestLastLine)
 TEST(DocumentEditingContext, RequestLastTwoLines)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:applyAhemStyle(threeParagraphsExample)];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(threeParagraphsExample)];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, text.firstChild.length, text.firstChild, text.firstChild.length)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityLine, 2)];
@@ -1652,5 +1638,35 @@ TEST(DocumentEditingContext, RequestAnnotationsForTextChecking)
 }
 
 #endif // ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+
+TEST(DocumentEditingContext, ContextWithWritingSuggestions)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+    [webView selectAll:nil];
+    [[webView textInputContentView] insertText:@"Hel"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"lo" attributes:@{
+        NSBackgroundColorAttributeName : UIColor.clearColor,
+        NSForegroundColorAttributeName : UIColor.systemGrayColor,
+    }]);
+    [[webView textInputContentView] setAttributedMarkedText:attributedText.get() selectedRange:NSMakeRange(0, 0)];
+
+    RetainPtr context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityWord, 2)];
+    RetainPtr contextBefore = dynamic_objc_cast<NSString>([context contextBefore]) ?: @"";
+    RetainPtr selectedText = dynamic_objc_cast<NSString>([context selectedText]) ?: @"";
+    RetainPtr contextAfter = dynamic_objc_cast<NSString>([context contextAfter]) ?: @"";
+    RetainPtr markedText = dynamic_objc_cast<NSString>([context markedText]) ?: @"";
+    NSRange selectedRangeInMarkedText = [context selectedRangeInMarkedText];
+
+    EXPECT_WK_STREQ("Hel", contextBefore.get());
+    EXPECT_WK_STREQ("", selectedText.get());
+    EXPECT_WK_STREQ("", contextAfter.get());
+    EXPECT_WK_STREQ("lo", markedText.get());
+    EXPECT_EQ(selectedRangeInMarkedText.location, 0U);
+    EXPECT_EQ(selectedRangeInMarkedText.length, 0U);
+}
 
 #endif // HAVE(UI_WK_DOCUMENT_CONTEXT)

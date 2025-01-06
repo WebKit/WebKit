@@ -25,15 +25,15 @@
 
         function navigate() {
             if (sameSiteNavigation) {
-                document.location.href = "http://localhost:8000/storageAccess/resources/has-storage-access-iframe.html#policyShouldGrantAccess";
+                document.location.href = "https://localhost:8443/storageAccess/resources/has-storage-access-iframe.html#policyShouldGrantAccess";
             } else {
-                document.location.href = "http://127.0.0.1:8000/resourceLoadStatistics/resources/redirect.py?redirectTo=http://localhost:8000/storageAccess/resources/has-storage-access-iframe.html";
+                document.location.href = "https://127.0.0.1:8443/resourceLoadStatistics/resources/redirect.py?redirectTo=https://localhost:8443/storageAccess/resources/has-storage-access-iframe.html";
             }
         }
 
         function setCookieAndNavigate() {
-            document.cookie = "cookieSetClientSideAfterGrantedStorageAccess=value";
-            top.postMessage("document.cookie == " + document.cookie, "http://127.0.0.1:8000");
+            document.cookie = "cookieSetClientSideAfterGrantedStorageAccess=value; SameSite=None; Secure";
+            top.postMessage("document.cookie == " + document.cookie, "https://127.0.0.1:8443");
             setTimeout("navigate()", 200);
         }
 
@@ -45,11 +45,11 @@
                         && hasAccess
                         && (userShouldGrantAccess || !userShouldBeConsulted)
                         && policyShouldGrantAccess)
-                        top.postMessage("PASS Storage access was granted.", "http://127.0.0.1:8000");
+                        top.postMessage("PASS Storage access was granted.", "https://127.0.0.1:8443");
                     else if (!hasAccess
                         && !requestStorageAccessResolved
                         && ((!userShouldGrantAccess && userShouldBeConsulted) || !policyShouldGrantAccess))
-                        top.postMessage("PASS Storage access was denied.", "http://127.0.0.1:8000");
+                        top.postMessage("PASS Storage access was denied.", "https://127.0.0.1:8443");
                     else
                         top.postMessage("FAIL Storage access was " +
                             (hasAccess ? "" : "not ") +
@@ -57,16 +57,16 @@
                             (requestStorageAccessResolved ? "" : "not ") +
                             "granted but should " +
                             (userShouldGrantAccess && policyShouldGrantAccess ? "" : "not ") +
-                            "have been granted.", "http://127.0.0.1:8000");
+                            "have been granted.", "https://127.0.0.1:8443");
                     setTimeout("setCookieAndNavigate()", 200);
                 },
                 function (reason) {
-                    top.postMessage("FAIL document.hasStorageAccess() was rejected. Reason: " + reason, "http://127.0.0.1:8000");
+                    top.postMessage("FAIL document.hasStorageAccess() was rejected. Reason: " + reason, "https://127.0.0.1:8443");
                 }
             );
         }
 
-        top.postMessage("document.cookie == " + document.cookie, "http://127.0.0.1:8000");
+        top.postMessage("document.cookie == " + document.cookie, "https://127.0.0.1:8443");
     </script>
 </head>
 <body onclick="makeRequestWithUserGesture()">

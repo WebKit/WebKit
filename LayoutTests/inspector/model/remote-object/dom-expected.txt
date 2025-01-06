@@ -195,6 +195,11 @@ EXPRESSION: input = document.createElement("input"); input.type = "password"; in
         "_value": ""
       },
       {
+        "_name": "alpha",
+        "_type": "boolean",
+        "_value": "false"
+      },
+      {
         "_name": "alt",
         "_type": "string",
         "_value": ""
@@ -206,11 +211,6 @@ EXPRESSION: input = document.createElement("input"); input.type = "password"; in
       },
       {
         "_name": "defaultChecked",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "checked",
         "_type": "boolean",
         "_value": "false"
       }

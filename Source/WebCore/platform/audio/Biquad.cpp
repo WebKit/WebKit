@@ -37,6 +37,7 @@
 #include <algorithm>
 #include <stdio.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(ACCELERATE)
 // Work around a bug where VForce.h forward declares std::complex in a way that's incompatible with libc++ complex.
@@ -45,6 +46,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Biquad);
 
 #if USE(ACCELERATE)
 constexpr int kBufferSize = 1024;
@@ -71,10 +74,10 @@ Biquad::Biquad()
 
 Biquad::~Biquad() = default;
 
-void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
+void Biquad::process(std::span<const float> source, std::span<float> destination)
 {
     if (hasSampleAccurateValues()) {
-        size_t n = framesToProcess;
+        size_t n = source.size();
 
         // Create local copies of member variables
         double x1 = m_x1;
@@ -82,18 +85,20 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
         double y1 = m_y1;
         double y2 = m_y2;
 
-        auto* b0 = m_b0.data();
-        auto* b1 = m_b1.data();
-        auto* b2 = m_b2.data();
-        auto* a1 = m_a1.data();
-        auto* a2 = m_a2.data();
+        auto b0 = m_b0.span();
+        auto b1 = m_b1.span();
+        auto b2 = m_b2.span();
+        auto a1 = m_a1.span();
+        auto a2 = m_a2.span();
 
+        size_t sourceIndex = 0;
+        size_t destinationIndex = 0;
         for (size_t k = 0; k < n; ++k) {
             // FIXME: this can be optimized by pipelining the multiply adds...
-            float x = *sourceP++;
+            float x = source[sourceIndex++];
             float y = b0[k] * x + b1[k] * x1 + b2[k] * x2 - a1[k] * y1 - a2[k] * y2;
 
-            *destP++ = y;
+            destination[destinationIndex++] = y;
 
             // Update state variables
             x2 = x1;
@@ -121,8 +126,8 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
     }
 
 #if USE(ACCELERATE)
-    auto* inputP = m_inputBuffer.data();
-    auto* outputP = m_outputBuffer.data();
+    auto inputP = m_inputBuffer.span();
+    auto outputP = m_outputBuffer.span();
 
     // Set up filter state. This is needed in case we're switching from
     // filtering with variable coefficients (i.e., with automations) to
@@ -133,22 +138,22 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
     outputP[1] = m_y1;
 
     // Use vecLib if available
-    processFast(sourceP, destP, framesToProcess);
+    processFast(source, destination);
 
-    ASSERT(framesToProcess >= 2);
+    ASSERT(source.size() >= 2);
 
     // Copy the last inputs and outputs to the filter memory variables.
     // This is needed because the next rendering quantum might be an
     // automation which needs the history to continue correctly. Because
-    // sourceP and destP can be the same block of memory, we can't read from
-    // sourceP to get the last inputs. Fortunately, processFast has put the
+    // source and destP can be the same block of memory, we can't read from
+    // source to get the last inputs. Fortunately, processFast has put the
     // last inputs in input[0] and input[1].
     m_x1 = inputP[1];
     m_x2 = inputP[0];
-    m_y1 = destP[framesToProcess - 1];
-    m_y2 = destP[framesToProcess - 2];
+    m_y1 = destination[source.size() - 1];
+    m_y2 = destination[source.size() - 2];
 #else
-    size_t n = framesToProcess;
+    size_t n = source.size();
 
     // Create local copies of member variables
     double x1 = m_x1;
@@ -162,12 +167,14 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
     double a1 = m_a1[0];
     double a2 = m_a2[0];
 
+    size_t sourceIndex = 0;
+    size_t destinationIndex = 0;
     while (n--) {
         // FIXME: this can be optimized by pipelining the multiply adds...
-        float x = *sourceP++;
+        float x = source[sourceIndex++];
         float y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
 
-        *destP++ = y;
+        destination[destinationIndex++] = y;
 
         // Update state variables
         x2 = x1;
@@ -189,54 +196,57 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
 
 // Here we have optimized version using Accelerate.framework
 
-void Biquad::processFast(const float* sourceP, float* destP, size_t framesToProcess)
+void Biquad::processFast(std::span<const float> source, std::span<float> destination)
 {
-    double filterCoefficients[5];
-    filterCoefficients[0] = m_b0[0];
-    filterCoefficients[1] = m_b1[0];
-    filterCoefficients[2] = m_b2[0];
-    filterCoefficients[3] = m_a1[0];
-    filterCoefficients[4] = m_a2[0];
+    std::array<double, 5> filterCoefficients {
+        m_b0[0],
+        m_b1[0],
+        m_b2[0],
+        m_a1[0],
+        m_a2[0]
+    };
 
-    double* inputP = m_inputBuffer.data();
-    double* outputP = m_outputBuffer.data();
+    auto inputP = m_inputBuffer.span();
+    auto outputP = m_outputBuffer.span();
 
-    double* input2P = inputP + 2;
-    double* output2P = outputP + 2;
+    auto input2P = inputP.subspan(2);
+    auto output2P = outputP.subspan(2);
 
     // Break up processing into smaller slices (kBufferSize) if necessary.
 
-    size_t n = framesToProcess;
+    size_t n = source.size();
 
+    size_t sourceIndex = 0;
+    size_t destinationIndex = 0;
     while (n > 0) {
         int framesThisTime = n < kBufferSize ? n : kBufferSize;
 
         // Copy input to input buffer
         for (int i = 0; i < framesThisTime; ++i)
-            input2P[i] = *sourceP++;
+            input2P[i] = source[sourceIndex++];
 
-        processSliceFast(inputP, outputP, filterCoefficients, framesThisTime);
+        processSliceFast(inputP, outputP, std::span { filterCoefficients }, framesThisTime);
 
         // Copy output buffer to output (converts float -> double).
         for (int i = 0; i < framesThisTime; ++i)
-            *destP++ = static_cast<float>(output2P[i]);
+            destination[destinationIndex++] = static_cast<float>(output2P[i]);
 
         n -= framesThisTime;
     }
 }
 
-void Biquad::processSliceFast(double* sourceP, double* destP, double* coefficientsP, size_t framesToProcess)
+void Biquad::processSliceFast(std::span<double> source, std::span<double> destination, std::span<double> coefficients, size_t framesToProcess)
 {
     // Use double-precision for filter stability
-    vDSP_deq22D(sourceP, 1, coefficientsP, destP, 1, framesToProcess);
+    vDSP_deq22D(source.data(), 1, coefficients.data(), destination.data(), 1, framesToProcess);
 
-    // Save history. Note that sourceP and destP reference m_inputBuffer and m_outputBuffer respectively.
+    // Save history. Note that source and destination reference m_inputBuffer and m_outputBuffer respectively.
     // These buffers are allocated (in the constructor) with space for two extra samples so it's OK to access
     // array values two beyond framesToProcess.
-    sourceP[0] = sourceP[framesToProcess - 2 + 2];
-    sourceP[1] = sourceP[framesToProcess - 1 + 2];
-    destP[0] = destP[framesToProcess - 2 + 2];
-    destP[1] = destP[framesToProcess - 1 + 2];
+    source[0] = source[framesToProcess - 2 + 2];
+    source[1] = source[framesToProcess - 1 + 2];
+    destination[0] = destination[framesToProcess - 2 + 2];
+    destination[1] = destination[framesToProcess - 1 + 2];
 }
 
 #endif // USE(ACCELERATE)
@@ -246,11 +256,11 @@ void Biquad::reset()
 {
 #if USE(ACCELERATE)
     // Two extra samples for filter history
-    double* inputP = m_inputBuffer.data();
+    auto inputP = m_inputBuffer.span();
     inputP[0] = 0;
     inputP[1] = 0;
 
-    double* outputP = m_outputBuffer.data();
+    auto outputP = m_outputBuffer.span();
     outputP[0] = 0;
     outputP[1] = 0;
 #endif
@@ -546,7 +556,7 @@ void Biquad::setBandpassParams(size_t index, double frequency, double Q)
     }
 }
 
-void Biquad::getFrequencyResponse(unsigned nFrequencies, const float* frequency, float* magResponse, float* phaseResponse)
+void Biquad::getFrequencyResponse(unsigned nFrequencies, std::span<const float> frequency, std::span<float> magResponse, std::span<float> phaseResponse)
 {
     // Evaluate the Z-transform of the filter at given normalized
     // frequency from 0 to 1. (1 corresponds to the Nyquist

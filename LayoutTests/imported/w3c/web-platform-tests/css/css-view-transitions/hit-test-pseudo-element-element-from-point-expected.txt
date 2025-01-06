@@ -1,0 +1,3 @@
+
+PASS Hit-testing view transition pseudo-elements should always return the document element
+

@@ -1,0 +1,97 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+
+var output;
+const BUFFER_SIZE = 0x4000;
+
+const SHADER = `
+
+struct OOBStruct {
+    field0: array<u32, 0x10000000>,
+    field1: array<u32, 0x10000000>,
+    field2: array<u32, 0x10000000>,
+    field3: array<u32, 0x10000000>,
+    field4: array<u32, 0x1000>,
+}
+
+@group(0) @binding(0) var<storage, read_write> g_oob_struct: OOBStruct;
+
+@compute @workgroup_size(1)
+fn c() {
+    g_oob_struct.field0[0x1000] = 1234;
+    g_oob_struct.field0[0x2000] = 1234;
+    g_oob_struct.field0[0x3000] = 1234;
+    g_oob_struct.field0[0x4000] = 1234;
+}
+`;
+
+
+async function main() {
+    const adapter = await navigator.gpu.requestAdapter({});
+    const device = await adapter.requestDevice({});
+
+    device.pushErrorScope('validation');
+    
+    const shaderModule = device.createShaderModule({code: SHADER});
+    const bindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            {binding: 0, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        ]
+    });
+
+    const oobBuffer = device.createBuffer({
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+        size: BUFFER_SIZE
+    });
+
+    const overflownBuffer = device.createBuffer({
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+        size: BUFFER_SIZE
+    });
+
+    const outputBuffer = device.createBuffer({
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        size: BUFFER_SIZE
+    });
+
+    const bindGroup = device.createBindGroup({
+        layout: bindGroupLayout, entries: [
+            {binding: 0, resource: {buffer: oobBuffer}},
+        ],
+    });
+
+    const commandEncoder = device.createCommandEncoder();
+    const computePassEncoder = commandEncoder.beginComputePass({});
+    const pipelineLayout = device.createPipelineLayout({bindGroupLayouts: [bindGroupLayout]});
+    const computePipeline = device.createComputePipeline({layout: pipelineLayout, compute: {module: shaderModule}});
+    computePassEncoder.setPipeline(computePipeline);
+    computePassEncoder.setBindGroup(0, bindGroup);
+    computePassEncoder.dispatchWorkgroups(1);
+    computePassEncoder.end();
+
+    commandEncoder.copyBufferToBuffer(overflownBuffer, 0, outputBuffer, 0, BUFFER_SIZE);
+
+    device.queue.submit([commandEncoder.finish()]);
+
+    await device.queue.onSubmittedWorkDone();
+
+    await outputBuffer.mapAsync(GPUMapMode.READ);
+    output = new Uint32Array(outputBuffer.getMappedRange());
+
+    debug(output);
+
+    shouldBe('output[0]', '0');
+
+    outputBuffer.unmap();
+}
+
+
+globalThis.testRunner?.waitUntilDone();
+
+main().catch(e => {
+    debug(e);
+}).finally(() => {
+    globalThis.testRunner?.notifyDone();
+});
+
+</script>

@@ -39,7 +39,7 @@
 
     undefined setDragImage(Element image, long x, long y);
 
-    readonly attribute FrozenArray<DOMString> types;
+    [CallWith=CurrentDocument] readonly attribute FrozenArray<DOMString> types;
     [CallWith=CurrentDocument] DOMString getData(DOMString format);
     [CallWith=CurrentDocument] undefined setData(DOMString format, DOMString data);
     undefined clearData(optional DOMString format);

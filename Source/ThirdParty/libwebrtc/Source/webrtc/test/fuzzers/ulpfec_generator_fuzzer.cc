@@ -10,6 +10,8 @@
 
 #include <memory>
 
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/fec_test_helper.h"
@@ -26,8 +28,12 @@ constexpr uint8_t kRedPayloadType = 97;
 }  // namespace
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  SimulatedClock clock(1);
-  UlpfecGenerator generator(kRedPayloadType, kFecPayloadType, &clock);
+  // Create Environment once because creating it for each input noticably
+  // reduces the speed of the fuzzer.
+  static const Environment* const env =
+      new Environment(CreateEnvironment(std::make_unique<SimulatedClock>(1)));
+
+  UlpfecGenerator generator(*env, kRedPayloadType, kFecPayloadType);
   size_t i = 0;
   if (size < 4)
     return;

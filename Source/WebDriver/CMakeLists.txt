@@ -9,11 +9,17 @@ set(WebDriver_PRIVATE_INCLUDE_DIRECTORIES
 set(WebDriver_SOURCES
     CommandResult.cpp
     HTTPServer.cpp
+    LogInitialization.cpp
+    Logging.cpp
     Session.cpp
     SessionHost.cpp
     WebDriverMain.cpp
     WebDriverService.cpp
 )
+
+if (ENABLE_WEBDRIVER_BIDI)
+    list(APPEND WebDriver_SOURCES WebSocketServer.cpp)
+endif ()
 
 set(WebDriver_FRAMEWORKS
     WTF

@@ -1,0 +1,48 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let buffer = device.createBuffer({ size: 20, usage: GPUBufferUsage.INDIRECT });
+    let shaderModule = device.createShaderModule({ code: `
+    @fragment fn g() -> @location(0) vec4<f32> {
+        return vec4();
+    }
+    @vertex fn j() -> @builtin(position) vec4f {
+        return vec4f();
+    }
+    `});
+    let texture = device.createTexture({ size: [2, 1], dimension: '2d', format: 'bgra8unorm', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let textureView = texture.createView();
+    let renderPipeline = await device.createRenderPipelineAsync({
+        layout: pipelineLayout,
+        fragment: {
+            module: shaderModule, targets: [{ format: 'bgra8unorm' }]
+        },
+        vertex: { module: shaderModule }
+    });
+    let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: ['bgra8unorm'] });
+    renderBundleEncoder.setPipeline(renderPipeline);
+    buffer.destroy();
+    renderBundleEncoder.drawIndexedIndirect(buffer, 0);
+    renderBundleEncoder.drawIndirect(buffer, 0);
+    renderBundleEncoder.drawIndexed(0);
+    renderBundleEncoder.drawIndirect(buffer, 0);
+    renderBundleEncoder.drawIndexed(0);
+    renderBundleEncoder.drawIndirect(buffer, 0);
+    renderBundleEncoder.draw(0);
+    renderBundleEncoder.draw(0);
+    renderBundleEncoder.draw(0);
+    renderBundleEncoder.draw(0);
+    let commandEncoder = device.createCommandEncoder();
+    let renderPass = commandEncoder.beginRenderPass({
+        colorAttachments: [{ view: textureView, loadOp: 'clear', storeOp: 'store' }]
+    });
+    let renderBundle = renderBundleEncoder.finish();
+    renderPass.executeBundles([renderBundle]);
+    await device.queue.onSubmittedWorkDone();
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.waitUntilDone();
+run();
+</script>

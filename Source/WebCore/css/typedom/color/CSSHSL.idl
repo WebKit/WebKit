@@ -33,7 +33,7 @@ typedef (CSSNumberish or CSSKeywordish) CSSColorPercent;
     EnabledBySetting=CSSTypedOMColorEnabled,
     Exposed=(Window,Worker,PaintWorklet/*,LayoutWorklet*/),
     JSGenerateToNativeObject,
-] interface CSSHSL : CSSColorValue {
+] interface CSSHSL : CSSOMColorValue {
     constructor(CSSColorAngle h, CSSColorPercent s, CSSColorPercent l, optional CSSColorPercent alpha = 1.0);
     attribute CSSColorAngle h;
     attribute CSSColorPercent s;

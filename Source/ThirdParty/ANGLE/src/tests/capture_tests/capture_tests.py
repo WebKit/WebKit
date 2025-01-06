@@ -78,13 +78,9 @@ def diff_files(path, expected_path):
 
 def run_test(test_name, overwrite_expected):
     with temporary_dir() as temp_dir:
+        cmd = [angle_test_util.ExecutablePathInCurrentDir('angle_end2end_tests')]
         if angle_test_util.IsAndroid():
-            cmd = [
-                '../../src/tests/angle_android_test_runner.py', 'gtest',
-                '--suite=angle_end2end_tests', '--output-directory=.'
-            ]
-        else:
-            cmd = [angle_test_util.ExecutablePathInCurrentDir('angle_end2end_tests')]
+            cmd.append('--angle-test-runner')
 
         test_args = ['--gtest_filter=%s' % test_name, '--angle-per-test-capture-label']
         extra_env = {
@@ -131,7 +127,7 @@ def main():
 
     angle_test_util.Initialize('angle_end2end_tests')
 
-    test_name = 'CapturedTest.MultiFrame/ES3_Vulkan'
+    test_name = 'CapturedTest*/ES3_Vulkan'
     had_error = False
     try:
         if not run_test(test_name, args.overwrite_expected):

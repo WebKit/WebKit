@@ -94,6 +94,8 @@
 - (NSURL *)currentURL;
 - (NSView *)mainContentView;
 
+- (NSImage *)windowSnapshotInRect:(CGRect)rect;
+
 - (CGFloat)pageScaleForMenuItemTag:(NSInteger)tag;
 
 - (void)updateTitleForBadgeChange;

@@ -26,11 +26,15 @@
 #pragma once
 
 #include "SWClientConnection.h"
+#include <wtf/Forward.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
 class WorkerGlobalScope;
 class WorkerThread;
+
+struct CookieChangeSubscription;
 
 class WorkerSWClientConnection final : public SWClientConnection {
 public:
@@ -60,7 +64,9 @@ private:
     void unsubscribeFromPushService(ServiceWorkerRegistrationIdentifier, PushSubscriptionIdentifier, UnsubscribeFromPushServiceCallback&&) final;
     void getPushSubscription(ServiceWorkerRegistrationIdentifier, GetPushSubscriptionCallback&&) final;
     void getPushPermissionState(ServiceWorkerRegistrationIdentifier, GetPushPermissionStateCallback&&) final;
+#if ENABLE(NOTIFICATION_EVENT)
     void getNotifications(const URL&, const String&, GetNotificationsCallback&&) final;
+#endif
 
     void enableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) final;
     void disableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) final;
@@ -75,26 +81,35 @@ private:
     void retrieveRecordResponse(BackgroundFetchRecordIdentifier, RetrieveRecordResponseCallback&&) final;
     void retrieveRecordResponseBody(BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallback&&) final;
 
+    void addCookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier, Vector<CookieChangeSubscription>&&, ExceptionOrVoidCallback&&) final;
+    void removeCookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier, Vector<CookieChangeSubscription>&&, ExceptionOrVoidCallback&&) final;
+    void cookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier, ExceptionOrCookieChangeSubscriptionsCallback&&) final;
+
     Ref<WorkerThread> m_thread;
 
-    uint64_t m_lastRequestIdentifier { 0 };
-    HashMap<uint64_t, RegistrationCallback> m_matchRegistrationRequests;
-    HashMap<uint64_t, GetRegistrationsCallback> m_getRegistrationsRequests;
-    HashMap<uint64_t, WhenRegistrationReadyCallback> m_whenRegistrationReadyRequests;
-    HashMap<uint64_t, CompletionHandler<void(ExceptionOr<bool>&&)>> m_unregisterRequests;
-    HashMap<uint64_t, SubscribeToPushServiceCallback> m_subscribeToPushServiceRequests;
-    HashMap<uint64_t, UnsubscribeFromPushServiceCallback> m_unsubscribeFromPushServiceRequests;
-    HashMap<uint64_t, GetPushSubscriptionCallback> m_getPushSubscriptionRequests;
-    HashMap<uint64_t, GetPushPermissionStateCallback> m_getPushPermissionStateCallbacks;
-    HashMap<uint64_t, ExceptionOrVoidCallback> m_voidCallbacks;
-    HashMap<uint64_t, ExceptionOrNavigationPreloadStateCallback> m_navigationPreloadStateCallbacks;
-    HashMap<uint64_t, GetNotificationsCallback> m_getNotificationsCallbacks;
-    HashMap<uint64_t, ExceptionOrBackgroundFetchInformationCallback> m_backgroundFetchInformationCallbacks;
-    HashMap<uint64_t, BackgroundFetchIdentifiersCallback> m_backgroundFetchIdentifiersCallbacks;
-    HashMap<uint64_t, AbortBackgroundFetchCallback> m_abortBackgroundFetchCallbacks;
-    HashMap<uint64_t, MatchBackgroundFetchCallback> m_matchBackgroundFetchCallbacks;
-    HashMap<uint64_t, RetrieveRecordResponseCallback> m_retrieveRecordResponseCallbacks;
-    HashMap<uint64_t, RetrieveRecordResponseBodyCallback> m_retrieveRecordResponseBodyCallbacks;
+    struct SWClientRequestIdentifierType;
+    using SWClientRequestIdentifier = AtomicObjectIdentifier<SWClientRequestIdentifierType>;
+
+    HashMap<SWClientRequestIdentifier, RegistrationCallback> m_matchRegistrationRequests;
+    HashMap<SWClientRequestIdentifier, GetRegistrationsCallback> m_getRegistrationsRequests;
+    HashMap<SWClientRequestIdentifier, WhenRegistrationReadyCallback> m_whenRegistrationReadyRequests;
+    HashMap<SWClientRequestIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>> m_unregisterRequests;
+    HashMap<SWClientRequestIdentifier, SubscribeToPushServiceCallback> m_subscribeToPushServiceRequests;
+    HashMap<SWClientRequestIdentifier, UnsubscribeFromPushServiceCallback> m_unsubscribeFromPushServiceRequests;
+    HashMap<SWClientRequestIdentifier, GetPushSubscriptionCallback> m_getPushSubscriptionRequests;
+    HashMap<SWClientRequestIdentifier, GetPushPermissionStateCallback> m_getPushPermissionStateCallbacks;
+    HashMap<SWClientRequestIdentifier, ExceptionOrVoidCallback> m_voidCallbacks;
+    HashMap<SWClientRequestIdentifier, ExceptionOrNavigationPreloadStateCallback> m_navigationPreloadStateCallbacks;
+#if ENABLE(NOTIFICATION_EVENT)
+    HashMap<SWClientRequestIdentifier, GetNotificationsCallback> m_getNotificationsCallbacks;
+#endif
+    HashMap<SWClientRequestIdentifier, ExceptionOrBackgroundFetchInformationCallback> m_backgroundFetchInformationCallbacks;
+    HashMap<SWClientRequestIdentifier, BackgroundFetchIdentifiersCallback> m_backgroundFetchIdentifiersCallbacks;
+    HashMap<SWClientRequestIdentifier, AbortBackgroundFetchCallback> m_abortBackgroundFetchCallbacks;
+    HashMap<SWClientRequestIdentifier, MatchBackgroundFetchCallback> m_matchBackgroundFetchCallbacks;
+    HashMap<SWClientRequestIdentifier, RetrieveRecordResponseCallback> m_retrieveRecordResponseCallbacks;
+    HashMap<SWClientRequestIdentifier, RetrieveRecordResponseBodyCallback> m_retrieveRecordResponseBodyCallbacks;
+    HashMap<SWClientRequestIdentifier, ExceptionOrCookieChangeSubscriptionsCallback> m_cookieChangeSubscriptionsCallback;
 };
 
 } // namespace WebCore

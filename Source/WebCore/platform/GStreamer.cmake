@@ -63,9 +63,11 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
 endif ()
 
 if (USE_GSTREAMER_TRANSCODER)
-    list(APPEND WebCore_LIBRARIES
-        ${GSTREAMER_TRANSCODER_LIBRARIES}
-    )
+    if (NOT USE_GSTREAMER_FULL)
+        list(APPEND WebCore_LIBRARIES
+            ${GSTREAMER_TRANSCODER_LIBRARIES}
+        )
+    endif ()
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
         ${GSTREAMER_TRANSCODER_INCLUDE_DIRS}
     )
@@ -73,12 +75,14 @@ endif ()
 
 if (ENABLE_VIDEO)
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+        ${GSTREAMER_GL_INCLUDE_DIRS}
         ${GSTREAMER_TAG_INCLUDE_DIRS}
         ${GSTREAMER_VIDEO_INCLUDE_DIRS}
     )
 
     if (NOT USE_GSTREAMER_FULL)
         list(APPEND WebCore_LIBRARIES
+           ${GSTREAMER_GL_LIBRARIES}
            ${GSTREAMER_TAG_LIBRARIES}
            ${GSTREAMER_VIDEO_LIBRARIES}
         )
@@ -90,15 +94,6 @@ if (ENABLE_VIDEO)
         )
         list(APPEND WebCore_LIBRARIES
             ${GSTREAMER_MPEGTS_LIBRARIES}
-        )
-    endif ()
-
-    if (USE_GSTREAMER_GL AND NOT USE_GSTREAMER_FULL)
-        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-            ${GSTREAMER_GL_INCLUDE_DIRS}
-        )
-        list(APPEND WebCore_LIBRARIES
-            ${GSTREAMER_GL_LIBRARIES}
         )
     endif ()
 
@@ -129,7 +124,7 @@ if (ENABLE_VIDEO)
     endif ()
 endif ()
 
-if (ENABLE_WEB_AUDIO OR ENABLE_WEB_CODECS)
+if (ENABLE_MEDIA_STREAM OR ENABLE_WEB_AUDIO OR ENABLE_WEB_CODECS)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/audio/gstreamer"
     )
@@ -157,3 +152,25 @@ if (ENABLE_ENCRYPTED_MEDIA AND ENABLE_THUNDER)
         ${THUNDER_LIBRARIES}
     )
 endif ()
+
+if (ENABLE_SPEECH_SYNTHESIS)
+    if (USE_SPIEL)
+        list(APPEND WebCore_SOURCES
+            platform/spiel/PlatformSpeechSynthesizerSpiel.cpp
+        )
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+            ${SPIEL_INCLUDE_DIRS}
+        )
+        list(APPEND WebCore_LIBRARIES
+            LibSpiel::LibSpiel
+        )
+    elseif (USE_FLITE)
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+            ${Flite_INCLUDE_DIRS}
+        )
+        list(APPEND WebCore_LIBRARIES
+            ${Flite_LIBRARIES}
+        )
+    endif ()
+endif ()
+

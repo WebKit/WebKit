@@ -493,8 +493,6 @@ template<> std::optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromStr
 
 } // namespace TestHelpers
 
-
-
 } // namespace Protocol
 
 } // namespace Inspector

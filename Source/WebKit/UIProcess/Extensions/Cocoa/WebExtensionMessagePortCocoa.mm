@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,8 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WKWebExtensionMessagePortInternal.h"
 #import "WebExtensionContext.h"
-#import "_WKWebExtensionMessagePortInternal.h"
 #import <wtf/BlockPtr.h>
 
 namespace WebKit {
@@ -44,27 +44,27 @@ NSError *toAPI(WebExtensionMessagePort::Error error)
     if (!error)
         return nil;
 
-    _WKWebExtensionMessagePortError errorCode;
+    WKWebExtensionMessagePortError errorCode;
     NSString *message;
 
     switch (error.value().first) {
     case WebKit::WebExtensionMessagePort::ErrorType::Unknown:
-        errorCode = _WKWebExtensionMessagePortErrorUnknown;
+        errorCode = WKWebExtensionMessagePortErrorUnknown;
         message = (NSString *)error.value().second.value_or("An unknown error occurred."_s);
         break;
 
     case WebKit::WebExtensionMessagePort::ErrorType::NotConnected:
-        errorCode = _WKWebExtensionMessagePortErrorNotConnected;
+        errorCode = WKWebExtensionMessagePortErrorNotConnected;
         message = (NSString *)error.value().second.value_or("Message port is not connected and cannot send messages."_s);
         break;
 
     case WebKit::WebExtensionMessagePort::ErrorType::MessageInvalid:
-        errorCode = _WKWebExtensionMessagePortErrorMessageInvalid;
+        errorCode = WKWebExtensionMessagePortErrorMessageInvalid;
         message = (NSString *)error.value().second.value_or("Message is not JSON-serializable."_s);
         break;
     }
 
-    return [NSError errorWithDomain:_WKWebExtensionMessagePortErrorDomain code:errorCode userInfo:@{ NSDebugDescriptionErrorKey: message }];
+    return [NSError errorWithDomain:WKWebExtensionMessagePortErrorDomain code:errorCode userInfo:@{ NSDebugDescriptionErrorKey: message }];
 }
 
 WebExtensionMessagePort::Error toWebExtensionMessagePortError(NSError *error)
@@ -79,6 +79,11 @@ WebExtensionMessagePort::WebExtensionMessagePort(WebExtensionContext& extensionC
     , m_applicationIdentifier(applicationIdentifier)
     , m_channelIdentifier(channelIdentifier)
 {
+}
+
+WebExtensionMessagePort::~WebExtensionMessagePort()
+{
+    remove();
 }
 
 bool WebExtensionMessagePort::operator==(const WebExtensionMessagePort& other) const
@@ -116,26 +121,42 @@ void WebExtensionMessagePort::remove()
     if (isDisconnected())
         return;
 
-    m_extensionContext->removeNativePort(*this);
-    m_extensionContext->firePortDisconnectEventIfNeeded(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, m_channelIdentifier);
+    Ref protectedThis { *this };
+
+    RefPtr extensionContext = m_extensionContext.get();
+    if (!extensionContext)
+        return;
+
+    extensionContext->removeNativePort(*this);
+    extensionContext->firePortDisconnectEventIfNeeded(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, m_channelIdentifier);
     m_extensionContext = nullptr;
 }
 
 void WebExtensionMessagePort::sendMessage(id message, CompletionHandler<void(Error error)>&& completionHandler)
 {
     if (isDisconnected()) {
-        completionHandler({ { ErrorType::NotConnected, std::nullopt } });
+        if (completionHandler)
+            completionHandler({ { ErrorType::NotConnected, std::nullopt } });
         return;
     }
 
-    if (!isValidJSONObject(message, JSONOptions::FragmentsAllowed)) {
-        completionHandler({ { ErrorType::MessageInvalid, std::nullopt } });
+    if (message && !isValidJSONObject(message, JSONOptions::FragmentsAllowed)) {
+        if (completionHandler)
+            completionHandler({ { ErrorType::MessageInvalid, std::nullopt } });
         return;
     }
 
-    m_extensionContext->portPostMessage(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, std::nullopt, m_channelIdentifier, encodeJSONString(message, JSONOptions::FragmentsAllowed) );
+    RefPtr extensionContext = m_extensionContext.get();
+    if (!extensionContext) {
+        if (completionHandler)
+            completionHandler({ { ErrorType::NotConnected, std::nullopt } });
+        return;
+    }
 
-    completionHandler(std::nullopt);
+    extensionContext->portPostMessage(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, std::nullopt, m_channelIdentifier, encodeJSONString(message, JSONOptions::FragmentsAllowed) );
+
+    if (completionHandler)
+        completionHandler(std::nullopt);
 }
 
 void WebExtensionMessagePort::receiveMessage(id message, Error error)

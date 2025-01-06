@@ -30,6 +30,7 @@
 #include <variant>
 #include <wtf/Assertions.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(WIN)
 typedef struct HICON__* HICON;
@@ -128,7 +129,7 @@ enum class PlatformCursorType : uint8_t {
 };
 
 class Cursor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Cursor);
 public:
     using Type = PlatformCursorType;
 

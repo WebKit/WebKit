@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "test/acm_random.h"
 #include "aom/aom_integer.h"
@@ -66,7 +66,7 @@ TEST(AV1, TestBitIO) {
           aom_write(&bw, bit, static_cast<int>(probas[i]));
         }
 
-        aom_stop_encode(&bw);
+        GTEST_ASSERT_GE(aom_stop_encode(&bw), 0);
 
         aom_reader br;
         aom_reader_init(&br, bw_buffer, bw.pos);
@@ -100,7 +100,7 @@ TEST(AV1, TestTell) {
     for (int i = 0; i < kSymbols; i++) {
       aom_write(&bw, 0, p);
     }
-    aom_stop_encode(&bw);
+    GTEST_ASSERT_GE(aom_stop_encode(&bw), 0);
     aom_reader br;
     aom_reader_init(&br, bw_buffer, bw.pos);
     uint32_t last_tell = aom_reader_tell(&br);
@@ -146,7 +146,7 @@ TEST(AV1, TestHasOverflowed) {
     for (int i = 0; i < kSymbols; i++) {
       aom_write(&bw, 1, p);
     }
-    aom_stop_encode(&bw);
+    GTEST_ASSERT_GE(aom_stop_encode(&bw), 0);
     aom_reader br;
     aom_reader_init(&br, bw_buffer, bw.pos);
     ASSERT_FALSE(aom_reader_has_overflowed(&br));

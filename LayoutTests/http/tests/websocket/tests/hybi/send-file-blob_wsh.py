@@ -1,5 +1,5 @@
-from mod_pywebsocket import common
-from mod_pywebsocket import msgutil
+from pywebsocket3 import common
+from pywebsocket3 import msgutil
 
 
 def _retrieve_frame(stream):

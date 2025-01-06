@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "TextRun.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextRun);
 
 struct ExpectedTextRunSize final : public CanMakeCheckedPtr<ExpectedTextRunSize> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -38,6 +41,7 @@ struct ExpectedTextRunSize final : public CanMakeCheckedPtr<ExpectedTextRunSize>
     float float2;
     float float3;
     ExpansionBehavior expansionBehavior;
+    TextSpacing::SpacingState spacingState;
     unsigned bitfields : 5;
 };
 

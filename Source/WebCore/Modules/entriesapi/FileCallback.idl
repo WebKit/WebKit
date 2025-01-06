@@ -23,4 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-callback FileCallback = undefined (File file);
+[ GenerateIsReachable=ImplScriptExecutionContext ] callback FileCallback = undefined (File file);

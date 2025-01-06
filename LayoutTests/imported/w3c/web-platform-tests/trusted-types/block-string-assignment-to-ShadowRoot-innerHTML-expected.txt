@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+
+PASS shadowRoot.innerHTML = html assigned via policy (successful HTML transformation).
+PASS `shadowRoot.innerHTML = string` throws.
+PASS `shadowRoot.innerHTML = null` throws.
+PASS `shadowRoot.innerHTML = string` assigned via default policy (successful HTML transformation).
+PASS `shadowRoot.innerHTML = string` assigned via default policy does not throw
+

@@ -543,6 +543,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     preferences._largeImageAsyncDecodingEnabled = settings.largeImageAsyncDecodingEnabled;
     preferences._animatedImageAsyncDecodingEnabled = settings.animatedImageAsyncDecodingEnabled;
     preferences._colorFilterEnabled = settings.appleColorFilterEnabled;
+    preferences.siteSpecificQuirksModeEnabled = settings.siteSpecificQuirksModeEnabled;
     preferences._punchOutWhiteBackgroundsInDarkMode = settings.punchOutWhiteBackgroundsInDarkMode;
     preferences._mockCaptureDevicesEnabled = settings.useMockCaptureDevices;
 
@@ -669,7 +670,6 @@ static BOOL areEssentiallyEqual(double a, double b)
 - (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
     WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration];
-    [controller awakeFromNib];
     [controller.window makeKeyAndOrderFront:self];
     
     [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
@@ -855,6 +855,8 @@ static BOOL isJavaScriptURL(NSURL *url)
             | _WKWebsiteNetworkConnectionIntegrityPolicyRequestValidation
             | _WKWebsiteNetworkConnectionIntegrityPolicySanitizeLookalikeCharacters;
     }();
+
+    preferences.allowsContentJavaScript = NSApplication.sharedApplication.browserAppDelegate.settingsController.allowsContentJavascript;
 
     if (navigationAction._canHandleRequest) {
         decisionHandler(WKNavigationActionPolicyAllow, preferences);
@@ -1072,6 +1074,11 @@ static BOOL isJavaScriptURL(NSURL *url)
 - (void)_webViewDidLosePointerLock:(WKWebView *)webView
 {
     [webView _setHeaderBannerLayer:nil];
+}
+
+- (NSImage *)windowSnapshotInRect:(CGRect)rect
+{
+    return [_webView _windowSnapshotInRect:rect withOptions:kCGWindowImageBoundsIgnoreFraming];
 }
 
 @end

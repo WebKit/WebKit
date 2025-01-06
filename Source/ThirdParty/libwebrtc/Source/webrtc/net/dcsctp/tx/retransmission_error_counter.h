@@ -42,7 +42,7 @@ class RetransmissionErrorCounter {
 
  private:
   const absl::string_view log_prefix_;
-  const absl::optional<int> limit_;
+  const std::optional<int> limit_;
   int counter_ = 0;
 };
 }  // namespace dcsctp

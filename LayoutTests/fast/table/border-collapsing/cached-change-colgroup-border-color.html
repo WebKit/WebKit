@@ -7,11 +7,12 @@ Here we change colgroup border color, expect that cache is invalidated and paint
         <title></title>
         <link rel="stylesheet" href="resources/cached.css">
         <script type="text/javascript">
-            function test() {
+            async function test() {
                 document.body.offsetTop;
-                if (window.testRunner)
-                    testRunner.displayAndTrackRepaints();
+                testRunner?.waitUntilDone();
+                await testRunner?.displayAndTrackRepaints();
                 document.getElementById("colgroup").style.borderColor = "yellow";
+                testRunner?.notifyDone();
             }
         </script>
     </head>

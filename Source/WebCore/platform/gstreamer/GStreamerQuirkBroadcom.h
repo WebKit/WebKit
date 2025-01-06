@@ -23,14 +23,15 @@
 #if USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
+#include "GStreamerQuirkBroadcomBase.h"
 #include "GStreamerQuirks.h"
 
 namespace WebCore {
 
-class GStreamerQuirkBroadcom final : public GStreamerQuirk {
+class GStreamerQuirkBroadcom final : public GStreamerQuirkBroadcomBase {
 public:
     GStreamerQuirkBroadcom();
-    const char* identifier() final { return "Broadcom"; }
+    const ASCIILiteral identifier() const final { return "Broadcom"_s; }
 
     void configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) final;
     std::optional<bool> isHardwareAccelerated(GstElementFactory*) final;

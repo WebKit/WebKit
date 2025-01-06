@@ -55,6 +55,7 @@
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <Foundation/Foundation.h>
+#import <WebCore/Chrome.h>
 #import <WebCore/ColorChooser.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
@@ -91,6 +92,7 @@
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
@@ -157,6 +159,8 @@ NSString *WebConsoleMessageErrorMessageLevel = @"ErrorMessageLevel";
 
 using namespace WebCore;
 using namespace HTMLNames;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebChromeClient);
 
 WebChromeClient::WebChromeClient(WebView *webView) 
     : m_webView(webView)
@@ -249,7 +253,7 @@ void WebChromeClient::focusedFrameChanged(Frame*)
 {
 }
 
-Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& features, const NavigationAction&)
+RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& openedMainFrameName, const WindowFeatures& features, const NavigationAction&)
 {
     id delegate = [m_webView UIDelegate];
     WebView *newWebView;
@@ -300,9 +304,21 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& fea
     else
         newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:), nil);
 
-    auto* newPage = core(newWebView);
-    if (newPage && !features.wantsNoOpener())
-        m_webView.page->protectedStorageNamespaceProvider()->cloneSessionStorageNamespaceForPage(*m_webView.page, *newPage);
+    RefPtr newPage = core(newWebView);
+    if (newPage) {
+        if (!features.wantsNoOpener()) {
+            m_webView.page->protectedStorageNamespaceProvider()->cloneSessionStorageNamespaceForPage(*m_webView.page, *newPage);
+            newPage->mainFrame().setOpenerForWebKitLegacy(&frame);
+            newPage->applyWindowFeatures(features);
+        }
+
+        auto effectiveSandboxFlags = frame.effectiveSandboxFlags();
+        if (!effectiveSandboxFlags.contains(WebCore::SandboxFlag::PropagatesToAuxiliaryBrowsingContexts))
+            effectiveSandboxFlags = { };
+        newPage->mainFrame().updateSandboxFlags(effectiveSandboxFlags, WebCore::Frame::NotifyUIProcess::No);
+        newPage->chrome().show();
+        newPage->mainFrame().tree().setSpecifiedName(AtomString(openedMainFrameName));
+    }
 
     return newPage;
 }
@@ -561,15 +577,6 @@ bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, const String& promp
     return !result.isNull();
 }
 
-void WebChromeClient::setStatusbarText(const String& status)
-{
-    // We want the temporaries allocated here to be released even before returning to the 
-    // event loop; see <http://bugs.webkit.org/show_bug.cgi?id=9880>.
-    @autoreleasepool {
-        CallUIDelegate(m_webView, @selector(webView:setStatusText:), (NSString *)status);
-    }
-}
-
 void WebChromeClient::invalidateRootView(const IntRect&)
 {
 }
@@ -639,19 +646,19 @@ void WebChromeClient::scrollContainingScrollViewsToRevealRect(const IntRect& r) 
 
 // End host window methods.
 
-bool WebChromeClient::shouldUnavailablePluginMessageBeButton(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
+bool WebChromeClient::shouldUnavailablePluginMessageBeButton(PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
-    if (pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing)
+    if (pluginUnavailabilityReason == PluginUnavailabilityReason::PluginMissing)
         return [[m_webView UIDelegate] respondsToSelector:@selector(webView:didPressMissingPluginButton:)];
 
     return false;
 }
 
-void WebChromeClient::unavailablePluginButtonClicked(Element& element, RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
+void WebChromeClient::unavailablePluginButtonClicked(Element& element, PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
     ASSERT(element.hasTagName(objectTag) || element.hasTagName(embedTag) || element.hasTagName(appletTag));
 
-    ASSERT(pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing);
+    ASSERT(pluginUnavailabilityReason == PluginUnavailabilityReason::PluginMissing);
     CallUIDelegate(m_webView, @selector(webView:didPressMissingPluginButton:), kit(&element));
 }
 
@@ -690,7 +697,7 @@ void WebChromeClient::exceededDatabaseQuota(LocalFrame& frame, const String& dat
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
-std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
+RefPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
     // FIXME: Implement <input type='color'> for WK1 (Bug 119094).
     ASSERT_NOT_REACHED();
@@ -700,7 +707,7 @@ std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserCl
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
-std::unique_ptr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)
+RefPtr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)
 {
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -708,7 +715,7 @@ std::unique_ptr<DataListSuggestionPicker> WebChromeClient::createDataListSuggest
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-std::unique_ptr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTimeChooserClient&)
+RefPtr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTimeChooserClient&)
 {
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -1017,7 +1024,7 @@ void WebChromeClient::clearPlaybackControlsManager()
     [m_webView _clearPlaybackControlsManager];
 }
 
-void WebChromeClient::playbackControlsMediaEngineChanged()
+void WebChromeClient::mediaEngineChanged(WebCore::HTMLMediaElement&)
 {
     [m_webView _playbackControlsMediaEngineChanged];
 }
@@ -1167,6 +1174,11 @@ RefPtr<WebCore::ShapeDetection::TextDetector> WebChromeClient::createTextDetecto
 #else
     return nullptr;
 #endif
+}
+
+void WebChromeClient::registerBlobPathForTesting(const String&, CompletionHandler<void()>&& completion)
+{
+    completion();
 }
 
 void WebChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&& completion)

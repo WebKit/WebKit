@@ -32,24 +32,11 @@
 #import <WebCore/FidoConstants.h>
 #import <wtf/Algorithms.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 using namespace fido;
-
-namespace {
-
-// FIXME: This is duplicate code with compareVersion in NfcConnection.mm.
-inline bool compareCcidVersion(NSData *data, const uint8_t version[], size_t versionSize)
-{
-    if (!data)
-        return false;
-    if (data.length != versionSize)
-        return false;
-    return !memcmp(data.bytes, version, versionSize);
-}
-
-} // namespace
 
 Ref<CcidConnection> CcidConnection::create(RetainPtr<TKSmartCard>&& smartCard, CcidService& service)
 {
@@ -77,13 +64,12 @@ void CcidConnection::detectContactless()
 {
     transact(Vector(std::span { kGetUidCommand }), [weakThis = WeakPtr { *this }] (Vector<uint8_t>&& response) mutable {
         ASSERT(RunLoop::isMain());
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
         // Only contactless smart cards have uid, check for longer length than apdu status
-        if (response.size() > 2) {
-            if (weakThis)
-                weakThis->m_contactless = true;
-        }
+        if (response.size() > 2)
+            protectedThis->m_contactless = true;
     });
 }
 
@@ -91,21 +77,23 @@ void CcidConnection::trySelectFidoApplet()
 {
     transact(Vector(std::span { kCtapNfcAppletSelectionCommand }), [weakThis = WeakPtr { *this }] (Vector<uint8_t>&& response) mutable {
         ASSERT(RunLoop::isMain());
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        if (equalSpans(response.span(), std::span { kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f) })
-            || equalSpans(response.span(), std::span { kCtapNfcAppletSelectionCtap, sizeof(kCtapNfcAppletSelectionCtap) })) {
-            if (weakThis && weakThis->m_service)
-                weakThis->m_service->didConnectTag();
+        if (equalSpans(response.span(), std::span { kCtapNfcAppletSelectionU2f })
+            || equalSpans(response.span(), std::span { kCtapNfcAppletSelectionCtap })) {
+            if (RefPtr service = protectedThis->m_service.get())
+                service->didConnectTag();
             return;
         }
-        weakThis->transact(Vector(std::span { kCtapNfcAppletSelectionCommand, sizeof(kCtapNfcAppletSelectionCommand) }), [weakThis = WTFMove(weakThis)] (Vector<uint8_t>&& response) mutable {
+        protectedThis->transact(Vector(std::span { kCtapNfcAppletSelectionCommand }), [weakThis = WTFMove(weakThis)] (Vector<uint8_t>&& response) mutable {
             ASSERT(RunLoop::isMain());
-            if (!weakThis)
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
-            if (equalSpans(response.span(), std::span { kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f) })) {
-                if (weakThis && weakThis->m_service)
-                    weakThis->m_service->didConnectTag();
+            if (equalSpans(response.span(), std::span { kCtapNfcAppletSelectionU2f })) {
+                if (RefPtr service = protectedThis->m_service.get())
+                    service->didConnectTag();
             }
         });
     });
@@ -116,7 +104,7 @@ void CcidConnection::transact(Vector<uint8_t>&& data, DataReceivedCallback&& cal
     [m_smartCard beginSessionWithReply:makeBlockPtr([this, data = WTFMove(data), callback = WTFMove(callback)] (BOOL success, NSError *error) mutable {
         if (!success)
             return;
-        [m_smartCard transmitRequest:adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]).autorelease() reply:makeBlockPtr([this, callback = WTFMove(callback)](NSData * _Nullable nsResponse, NSError * _Nullable error) mutable {
+        [m_smartCard transmitRequest:toNSData(data).autorelease() reply:makeBlockPtr([this, callback = WTFMove(callback)](NSData * _Nullable nsResponse, NSError * _Nullable error) mutable {
             [m_smartCard endSession];
             callOnMainRunLoop([response = makeVector(nsResponse), callback = WTFMove(callback)] () mutable {
                 callback(WTFMove(response));

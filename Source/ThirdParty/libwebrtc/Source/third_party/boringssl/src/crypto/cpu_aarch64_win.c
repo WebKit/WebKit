@@ -16,13 +16,13 @@
 #include "internal.h"
 
 #if defined(OPENSSL_AARCH64) && defined(OPENSSL_WINDOWS) && \
-    !defined(OPENSSL_STATIC_ARMCAP)
+    !defined(OPENSSL_STATIC_ARMCAP) && !defined(OPENSSL_NO_ASM)
 
 #include <windows.h>
 
 #include <openssl/arm_arch.h>
 
-extern uint32_t OPENSSL_armcap_P;
+
 void OPENSSL_cpuid_setup(void) {
   // We do not need to check for the presence of NEON, as Armv8-A always has it
   OPENSSL_armcap_P |= ARMV7_NEON;

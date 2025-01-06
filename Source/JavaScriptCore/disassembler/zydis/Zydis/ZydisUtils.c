@@ -30,6 +30,9 @@
 
 #include "ZycoreLibC.h"
 #include "ZydisUtils.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 /* ============================================================================================== */
 /* Exported functions                                                                             */
@@ -375,5 +378,7 @@ ZyanStatus ZydisGetInstructionSegments(const ZydisDecodedInstruction* instructio
 /* ---------------------------------------------------------------------------------------------- */
 
 /* ============================================================================================== */
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ENABLE(ZYDIS) */

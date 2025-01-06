@@ -27,13 +27,11 @@
 #include "AbortController.h"
 
 #include "AbortSignal.h"
-#include "DOMException.h"
-#include "JSDOMException.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AbortController);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AbortController);
 
 Ref<AbortController> AbortController::create(ScriptExecutionContext& context)
 {
@@ -52,12 +50,8 @@ AbortSignal& AbortController::signal()
     return m_signal.get();
 }
 
-void AbortController::abort(JSDOMGlobalObject& globalObject, JSC::JSValue reason)
+void AbortController::abort(JSC::JSValue reason)
 {
-    ASSERT(reason);
-    if (reason.isUndefined())
-        reason = toJS(&globalObject, &globalObject, DOMException::create(ExceptionCode::AbortError));
-
     protectedSignal()->signalAbort(reason);
 }
 

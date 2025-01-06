@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -13,7 +13,7 @@
 
 #include "config/aom_dsp_rtcd.h"
 
-static INLINE void sse_sum_wd4_sse2(const int16_t *data, int stride, int bh,
+static inline void sse_sum_wd4_sse2(const int16_t *data, int stride, int bh,
                                     int *x_sum, int64_t *x2_sum) {
   const int16_t *data_tmp = data;
   __m128i temp_buffer1, temp_buffer2;
@@ -52,7 +52,7 @@ static INLINE void sse_sum_wd4_sse2(const int16_t *data, int stride, int bh,
 #endif
 }
 
-static INLINE void sse_sum_wd8_sse2(const int16_t *data, int stride, int bh,
+static inline void sse_sum_wd8_sse2(const int16_t *data, int stride, int bh,
                                     int *x_sum, int64_t *x2_sum,
                                     int loop_cycles) {
   const int16_t *data_tmp;

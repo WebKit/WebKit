@@ -51,7 +51,7 @@ void ReadableStreamToSharedBufferSink::enqueue(const Ref<JSC::Uint8Array>& buffe
         return;
 
     if (m_callback) {
-        std::span<const uint8_t> chunk { buffer->data(), buffer->byteLength() };
+        auto chunk = buffer->span();
         m_callback(&chunk);
     }
 }

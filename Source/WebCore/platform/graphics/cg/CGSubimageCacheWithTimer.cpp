@@ -30,9 +30,12 @@
 
 #if CACHE_SUBIMAGES
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CGSubimageCacheWithTimer);
 
 CGSubimageCacheWithTimer* CGSubimageCacheWithTimer::s_cache;
 

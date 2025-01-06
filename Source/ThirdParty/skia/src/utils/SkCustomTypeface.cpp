@@ -23,6 +23,7 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkScalar.h"
+#include "include/core/SkSerialProcs.h"
 #include "include/core/SkStream.h"
 #include "include/core/SkString.h"
 #include "include/core/SkTypeface.h"
@@ -200,6 +201,7 @@ sk_sp<SkTypeface> SkCustomTypefaceBuilder::detach() {
 /////////////
 
 void SkUserTypeface::onFilterRec(SkScalerContextRec* rec) const {
+    rec->useStrokeForFakeBold();
     rec->setHinting(SkFontHinting::kNone);
 }
 
@@ -257,9 +259,15 @@ protected:
         GlyphMetrics mx(glyph.maskFormat());
 
         const SkUserTypeface* tf = this->userTF();
-        mx.advance = fMatrix.mapXY(tf->fGlyphRecs[glyph.getGlyphID()].fAdvance, 0);
+        const SkGlyphID gid = glyph.getGlyphID();
+        if (gid >= tf->fGlyphRecs.size()) {
+            mx.neverRequestPath = true;
+            return mx;
+        }
 
-        const auto& rec = tf->fGlyphRecs[glyph.getGlyphID()];
+        const auto& rec = tf->fGlyphRecs[gid];
+        mx.advance = fMatrix.mapXY(rec.fAdvance, 0);
+
         if (rec.isDrawable()) {
             mx.maskFormat = SkMask::kARGB32_Format;
 
@@ -293,7 +301,7 @@ protected:
         canvas->drawDrawable(rec.fDrawable.get(), &fMatrix);
     }
 
-    bool generatePath(const SkGlyph& glyph, SkPath* path) override {
+    bool generatePath(const SkGlyph& glyph, SkPath* path, bool* modified) override {
         const auto& rec = this->userTF()->fGlyphRecs[glyph.getGlyphID()];
 
         SkASSERT(!rec.isDrawable());
@@ -482,7 +490,9 @@ sk_sp<SkTypeface> SkCustomTypefaceBuilder::Deserialize(SkStream* stream) {
 
         switch (gtype) {
         case GlyphType::kDrawable: {
-            auto drawable = SkDrawable::Deserialize(data->data(), data->size());
+            SkDeserialProcs procs;
+            procs.fAllowSkSL = false;
+            auto drawable = SkDrawable::Deserialize(data->data(), data->size(), &procs);
             if (!drawable) {
                 return nullptr;
             }

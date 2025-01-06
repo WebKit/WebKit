@@ -35,18 +35,10 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <pal/SessionID.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebKit {
-class NetworkDataTaskClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkDataTaskClient> : std::true_type { };
-}
 
 namespace WebCore {
 class AuthenticationChallenge;
@@ -69,7 +61,7 @@ using RedirectCompletionHandler = CompletionHandler<void(WebCore::ResourceReques
 using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>;
 using ResponseCompletionHandler = CompletionHandler<void(WebCore::PolicyAction)>;
 
-class NetworkDataTaskClient : public CanMakeWeakPtr<NetworkDataTaskClient> {
+class NetworkDataTaskClient : public AbstractRefCountedAndCanMakeWeakPtr<NetworkDataTaskClient> {
 public:
     virtual void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) = 0;
     virtual void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) = 0;
@@ -121,12 +113,11 @@ public:
     NetworkDataTaskClient* client() const { return m_client.get(); }
     void clearClient() { m_client = nullptr; }
 
-    DownloadID pendingDownloadID() const { return m_pendingDownloadID; }
+    std::optional<DownloadID> pendingDownloadID() const { return m_pendingDownloadID.asOptional(); }
     PendingDownload* pendingDownload() const;
     void setPendingDownloadID(DownloadID downloadID)
     {
         ASSERT(!m_pendingDownloadID);
-        ASSERT(downloadID);
         m_pendingDownloadID = downloadID;
     }
     void setPendingDownload(PendingDownload&);
@@ -175,7 +166,7 @@ protected:
     WeakPtr<NetworkSession> m_session;
     WeakPtr<NetworkDataTaskClient> m_client;
     WeakPtr<PendingDownload> m_pendingDownload;
-    DownloadID m_pendingDownloadID;
+    Markable<DownloadID> m_pendingDownloadID;
     String m_user;
     String m_password;
     String m_partition;

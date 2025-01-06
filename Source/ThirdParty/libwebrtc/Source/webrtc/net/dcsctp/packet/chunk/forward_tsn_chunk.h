@@ -40,7 +40,7 @@ class ForwardTsnChunk : public AnyForwardTsnChunk,
                   std::vector<SkippedStream> skipped_streams)
       : AnyForwardTsnChunk(new_cumulative_tsn, std::move(skipped_streams)) {}
 
-  static absl::optional<ForwardTsnChunk> Parse(
+  static std::optional<ForwardTsnChunk> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

@@ -24,6 +24,7 @@ rtc_library("time_controller") {
   ]
 
   deps = [
+    "../../api:field_trials_view",
     "../../api:sequence_checker",
     "../../api:time_controller",
     "../../api/task_queue",
@@ -38,10 +39,8 @@ rtc_library("time_controller") {
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/synchronization:yield_policy",
     "../../system_wrappers",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/functional:any_invocable",
-    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }
 
@@ -57,10 +56,10 @@ if (rtc_include_tests) {
       ":time_controller",
       "../:test_support",
       "../../api:time_controller",
+      "../../api/task_queue",
       "../../api/units:time_delta",
       "../../rtc_base:macromagic",
       "../../rtc_base:rtc_event",
-      "../../rtc_base:rtc_task_queue",
       "../../rtc_base:task_queue_for_test",
       "../../rtc_base:threading",
       "../../rtc_base/synchronization:mutex",

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -18,12 +18,12 @@
 #include "av1/common/x86/cfl_simd.h"
 
 // Load 32-bit integer from memory into the first element of dst.
-static INLINE __m128i _mm_loadh_epi32(__m128i const *mem_addr) {
+static inline __m128i _mm_loadh_epi32(__m128i const *mem_addr) {
   return _mm_cvtsi32_si128(*((int *)mem_addr));
 }
 
 // Store 32-bit integer from the first element of a into memory.
-static INLINE void _mm_storeh_epi32(__m128i const *mem_addr, __m128i a) {
+static inline void _mm_storeh_epi32(__m128i const *mem_addr, __m128i a) {
   *((int *)mem_addr) = _mm_cvtsi128_si32(a);
 }
 
@@ -37,7 +37,7 @@ static INLINE void _mm_storeh_epi32(__m128i const *mem_addr, __m128i a) {
  * Note: We don't need to worry about going over the active area, as long as we
  * stay inside the CfL prediction buffer.
  */
-static INLINE void cfl_luma_subsampling_420_lbd_ssse3(const uint8_t *input,
+static inline void cfl_luma_subsampling_420_lbd_ssse3(const uint8_t *input,
                                                       int input_stride,
                                                       uint16_t *pred_buf_q3,
                                                       int width, int height) {
@@ -92,7 +92,7 @@ static INLINE void cfl_luma_subsampling_420_lbd_ssse3(const uint8_t *input,
  * Note: We don't need to worry about going over the active area, as long as we
  * stay inside the CfL prediction buffer.
  */
-static INLINE void cfl_luma_subsampling_422_lbd_ssse3(const uint8_t *input,
+static inline void cfl_luma_subsampling_422_lbd_ssse3(const uint8_t *input,
                                                       int input_stride,
                                                       uint16_t *pred_buf_q3,
                                                       int width, int height) {
@@ -132,7 +132,7 @@ static INLINE void cfl_luma_subsampling_422_lbd_ssse3(const uint8_t *input,
  * Note: We don't need to worry about going over the active area, as long as we
  * stay inside the CfL prediction buffer.
  */
-static INLINE void cfl_luma_subsampling_444_lbd_ssse3(const uint8_t *input,
+static inline void cfl_luma_subsampling_444_lbd_ssse3(const uint8_t *input,
                                                       int input_stride,
                                                       uint16_t *pred_buf_q3,
                                                       int width, int height) {
@@ -179,7 +179,7 @@ static INLINE void cfl_luma_subsampling_444_lbd_ssse3(const uint8_t *input,
  * Note: We don't need to worry about going over the active area, as long as we
  * stay inside the CfL prediction buffer.
  */
-static INLINE void cfl_luma_subsampling_420_hbd_ssse3(const uint16_t *input,
+static inline void cfl_luma_subsampling_420_hbd_ssse3(const uint16_t *input,
                                                       int input_stride,
                                                       uint16_t *pred_buf_q3,
                                                       int width, int height) {
@@ -234,7 +234,7 @@ static INLINE void cfl_luma_subsampling_420_hbd_ssse3(const uint16_t *input,
  * Note: We don't need to worry about going over the active area, as long as we
  * stay inside the CfL prediction buffer.
  */
-static INLINE void cfl_luma_subsampling_422_hbd_ssse3(const uint16_t *input,
+static inline void cfl_luma_subsampling_422_hbd_ssse3(const uint16_t *input,
                                                       int input_stride,
                                                       uint16_t *pred_buf_q3,
                                                       int width, int height) {
@@ -267,7 +267,7 @@ static INLINE void cfl_luma_subsampling_422_hbd_ssse3(const uint16_t *input,
   } while (pred_buf_m128i < end);
 }
 
-static INLINE void cfl_luma_subsampling_444_hbd_ssse3(const uint16_t *input,
+static inline void cfl_luma_subsampling_444_hbd_ssse3(const uint16_t *input,
                                                       int input_stride,
                                                       uint16_t *pred_buf_q3,
                                                       int width, int height) {
@@ -301,7 +301,7 @@ static INLINE void cfl_luma_subsampling_444_hbd_ssse3(const uint16_t *input,
 
 CFL_GET_SUBSAMPLE_FUNCTION(ssse3)
 
-static INLINE __m128i predict_unclipped(const __m128i *input, __m128i alpha_q12,
+static inline __m128i predict_unclipped(const __m128i *input, __m128i alpha_q12,
                                         __m128i alpha_sign, __m128i dc_q0) {
   __m128i ac_q3 = _mm_loadu_si128(input);
   __m128i ac_sign = _mm_sign_epi16(alpha_sign, ac_q3);
@@ -310,7 +310,7 @@ static INLINE __m128i predict_unclipped(const __m128i *input, __m128i alpha_q12,
   return _mm_add_epi16(scaled_luma_q0, dc_q0);
 }
 
-static INLINE void cfl_predict_lbd_ssse3(const int16_t *pred_buf_q3,
+static inline void cfl_predict_lbd_ssse3(const int16_t *pred_buf_q3,
                                          uint8_t *dst, int dst_stride,
                                          int alpha_q3, int width, int height) {
   const __m128i alpha_sign = _mm_set1_epi16(alpha_q3);
@@ -344,17 +344,17 @@ static INLINE void cfl_predict_lbd_ssse3(const int16_t *pred_buf_q3,
 CFL_PREDICT_FN(ssse3, lbd)
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE __m128i highbd_max_epi16(int bd) {
+static inline __m128i highbd_max_epi16(int bd) {
   const __m128i neg_one = _mm_set1_epi16(-1);
   // (1 << bd) - 1 => -(-1 << bd) -1 => -1 - (-1 << bd) => -1 ^ (-1 << bd)
   return _mm_xor_si128(_mm_slli_epi16(neg_one, bd), neg_one);
 }
 
-static INLINE __m128i highbd_clamp_epi16(__m128i u, __m128i zero, __m128i max) {
+static inline __m128i highbd_clamp_epi16(__m128i u, __m128i zero, __m128i max) {
   return _mm_max_epi16(_mm_min_epi16(u, max), zero);
 }
 
-static INLINE void cfl_predict_hbd_ssse3(const int16_t *pred_buf_q3,
+static inline void cfl_predict_hbd_ssse3(const int16_t *pred_buf_q3,
                                          uint16_t *dst, int dst_stride,
                                          int alpha_q3, int bd, int width,
                                          int height) {

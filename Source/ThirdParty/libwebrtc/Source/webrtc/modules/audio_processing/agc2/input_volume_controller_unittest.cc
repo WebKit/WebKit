@@ -156,7 +156,7 @@ class SpeechSamplesReader {
            int applied_input_volume,
            int gain_db,
            float speech_probability,
-           absl::optional<float> speech_level_dbfs,
+           std::optional<float> speech_level_dbfs,
            InputVolumeController& controller) {
     RTC_DCHECK(controller.capture_output_used());
 
@@ -201,7 +201,7 @@ class SpeechSamplesReader {
 float UpdateRecommendedInputVolume(MonoInputVolumeController& mono_controller,
                                    int applied_input_volume,
                                    float speech_probability,
-                                   absl::optional<float> rms_error_dbfs) {
+                                   std::optional<float> rms_error_dbfs) {
   mono_controller.set_stream_analog_level(applied_input_volume);
   EXPECT_EQ(mono_controller.recommended_analog_level(), applied_input_volume);
   mono_controller.Process(rms_error_dbfs, speech_probability);
@@ -256,12 +256,12 @@ class InputVolumeControllerTestHelper {
   // - Uses `audio_buffer` to call `AnalyzeInputAudio()` and
   // `RecommendInputVolume()`;
   //  Returns the recommended input volume.
-  absl::optional<int> CallAgcSequence(int applied_input_volume,
-                                      float speech_probability,
-                                      absl::optional<float> speech_level_dbfs,
-                                      int num_calls = 1) {
+  std::optional<int> CallAgcSequence(int applied_input_volume,
+                                     float speech_probability,
+                                     std::optional<float> speech_level_dbfs,
+                                     int num_calls = 1) {
     RTC_DCHECK_GE(num_calls, 1);
-    absl::optional<int> volume = applied_input_volume;
+    std::optional<int> volume = applied_input_volume;
     for (int i = 0; i < num_calls; ++i) {
       // Repeat the initial volume if `RecommendInputVolume()` doesn't return a
       // value.
@@ -285,7 +285,7 @@ class InputVolumeControllerTestHelper {
   int CallRecommendInputVolume(int num_calls,
                                int initial_volume,
                                float speech_probability,
-                               absl::optional<float> speech_level_dbfs) {
+                               std::optional<float> speech_level_dbfs) {
     RTC_DCHECK(controller.capture_output_used());
 
     // Create non-clipping audio for `AnalyzeInputAudio()`.
@@ -1189,7 +1189,7 @@ TEST_P(InputVolumeControllerParametrizedTest, EmptyRmsErrorHasNoEffect) {
   constexpr int kGainDb = -20;
   SpeechSamplesReader reader;
   int volume = reader.Feed(kNumFrames, kInitialInputVolume, kGainDb,
-                           kLowSpeechProbability, absl::nullopt, controller);
+                           kLowSpeechProbability, std::nullopt, controller);
 
   // Check that no adaptation occurs.
   ASSERT_EQ(volume, kInitialInputVolume);
@@ -1845,8 +1845,8 @@ TEST(MonoInputVolumeControllerTest,
   EXPECT_EQ(volume_1, kInitialInputVolume);
   EXPECT_EQ(volume_2, kInitialInputVolume);
 
-  volume_1 = UpdateRecommendedInputVolume(
-      mono_controller_1, volume_1, kHighSpeechProbability, absl::nullopt);
+  volume_1 = UpdateRecommendedInputVolume(mono_controller_1, volume_1,
+                                          kHighSpeechProbability, std::nullopt);
   volume_2 = UpdateRecommendedInputVolume(mono_controller_2, volume_2,
                                           kHighSpeechProbability, -10.0f);
 

@@ -40,12 +40,14 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Event;
 class FloatQuad;
+class Frame;
 class LocalFrame;
 class RenderObject;
 class RunLoopObserver;
@@ -85,7 +87,7 @@ enum class TimelineRecordType {
 
 class InspectorTimelineAgent final : public InspectorAgentBase , public Inspector::TimelineBackendDispatcherHandler , public JSC::Debugger::Observer {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorTimelineAgent);
 public:
     InspectorTimelineAgent(PageAgentContext&);
     ~InspectorTimelineAgent();
@@ -126,16 +128,16 @@ public:
     void willRecalculateStyle(LocalFrame*);
     void didRecalculateStyle();
     void didScheduleStyleRecalculation(LocalFrame*);
-    void didTimeStamp(LocalFrame&, const String&);
-    void didPerformanceMark(const String&, std::optional<MonotonicTime>, LocalFrame*);
+    void didTimeStamp(Frame&, const String&);
+    void didPerformanceMark(const String&, std::optional<MonotonicTime>, Frame*);
     void didRequestAnimationFrame(int callbackId, LocalFrame*);
     void didCancelAnimationFrame(int callbackId, LocalFrame*);
     void willFireAnimationFrame(int callbackId, LocalFrame*);
     void didFireAnimationFrame();
     void willFireObserverCallback(const String& callbackType, LocalFrame*);
     void didFireObserverCallback();
-    void time(LocalFrame&, const String&);
-    void timeEnd(LocalFrame&, const String&);
+    void time(Frame&, const String&);
+    void timeEnd(Frame&, const String&);
     void mainFrameStartedLoading();
     void mainFrameNavigated();
     void didCompleteRenderingFrame();
@@ -184,13 +186,13 @@ private:
     std::optional<double> timestampFromMonotonicTime(MonotonicTime);
 
     void sendEvent(Ref<JSON::Object>&&);
-    void appendRecord(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, LocalFrame*, std::optional<double> startTime = std::nullopt);
+    void appendRecord(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, Frame*, std::optional<double> startTime = std::nullopt);
     void pushCurrentRecord(Ref<JSON::Object>&&, TimelineRecordType, bool captureCallStack, LocalFrame*, std::optional<double> startTime = std::nullopt);
     void pushCurrentRecord(const TimelineRecordEntry& record) { m_recordStack.append(record); }
 
     TimelineRecordEntry createRecordEntry(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, LocalFrame*, std::optional<double> startTime = std::nullopt);
 
-    void setFrameIdentifier(JSON::Object* record, LocalFrame*);
+    void setFrameIdentifier(JSON::Object* record, Frame*);
 
     void didCompleteRecordEntry(const TimelineRecordEntry&);
     void didCompleteCurrentRecord(TimelineRecordType);

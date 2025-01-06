@@ -12,9 +12,9 @@
 
 #include <algorithm>
 #include <memory>
+#include <optional>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
@@ -46,7 +46,7 @@ CrossTrafficRouteImpl::CrossTrafficRouteImpl(
     EmulatedEndpointImpl* endpoint)
     : clock_(clock), receiver_(receiver), endpoint_(endpoint) {
   null_receiver_ = std::make_unique<NullReceiver>();
-  absl::optional<uint16_t> port =
+  std::optional<uint16_t> port =
       endpoint_->BindReceiver(0, null_receiver_.get());
   RTC_DCHECK(port);
   null_receiver_port_ = port.value();
@@ -65,7 +65,7 @@ void CrossTrafficRouteImpl::NetworkDelayedAction(size_t packet_size,
   auto action_receiver = std::make_unique<ActionReceiver>(action);
   // BindOneShotReceiver arranges to free the port in the endpoint after the
   // action is done.
-  absl::optional<uint16_t> port =
+  std::optional<uint16_t> port =
       endpoint_->BindOneShotReceiver(0, action_receiver.get());
   RTC_DCHECK(port);
   actions_.push_back(std::move(action_receiver));

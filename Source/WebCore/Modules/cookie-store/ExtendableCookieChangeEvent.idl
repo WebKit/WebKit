@@ -26,7 +26,7 @@
 // https://wicg.github.io/cookie-store/#extendablecookiechangeevent
 
 [
-    EnabledBySetting=CookieStoreAPIEnabled&CookieStoreAPIServiceWorkerEnabled,
+    EnabledBySetting=CookieStoreAPIEnabled&CookieStoreManagerEnabled,
     Exposed=ServiceWorker
 ] interface ExtendableCookieChangeEvent : ExtendableEvent {
     constructor([AtomString] DOMString type, optional ExtendableCookieChangeEventInit eventInitDict = {});

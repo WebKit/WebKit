@@ -23,9 +23,13 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-messages -> RemoteLegacyCDMSession NotRefCounted {
+[
+    DispatchedFrom=GPU,
+    DispatchedTo=WebContent
+]
+messages -> RemoteLegacyCDMSession {
     SendMessage(RefPtr<WebCore::SharedBuffer> message, String destinationURL)
-    SendError(enum:uint8_t WebCore::LegacyCDMSessionClient::MediaKeyErrorCode errorCode, uint32_t systemCode)
+    SendError(WebCore::LegacyCDMSessionClient::MediaKeyErrorCode errorCode, uint32_t systemCode)
 }
 
 #endif

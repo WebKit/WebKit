@@ -15,31 +15,46 @@
 #ifdef RTC_ENABLE_VP9
 
 #include <array>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <vector>
 
+#include "api/environment/environment.h"
 #include "api/fec_controller_override.h"
 #include "api/field_trials_view.h"
+#include "api/scoped_refptr.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
+#include "api/video/video_frame_type.h"
 #include "api/video_codecs/scalability_mode.h"
+#include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/vp9_profile.h"
-#include "common_video/include/video_frame_buffer_pool.h"
 #include "modules/video_coding/codecs/interface/libvpx_interface.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
-#include "modules/video_coding/codecs/vp9/vp9_frame_buffer_pool.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
+#include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/svc/scalable_video_controller.h"
+#include "modules/video_coding/svc/simulcast_to_svc_converter.h"
 #include "modules/video_coding/utility/framerate_controller_deprecated.h"
 #include "rtc_base/containers/flat_map.h"
 #include "rtc_base/experiments/encoder_info_settings.h"
 #include "vpx/vp8cx.h"
+#include "vpx/vpx_codec.h"
+#include "vpx/vpx_encoder.h"
+#include "vpx/vpx_image.h"
 
 namespace webrtc {
 
-class LibvpxVp9Encoder : public VP9Encoder {
+class LibvpxVp9Encoder : public VideoEncoder {
  public:
-  LibvpxVp9Encoder(const cricket::VideoCodec& codec,
-                   std::unique_ptr<LibvpxInterface> interface,
-                   const FieldTrialsView& trials);
+  LibvpxVp9Encoder(const Environment& env,
+                   Vp9EncoderSettings settings,
+                   std::unique_ptr<LibvpxInterface> interface);
 
   ~LibvpxVp9Encoder() override;
 
@@ -65,11 +80,11 @@ class LibvpxVp9Encoder : public VP9Encoder {
   int NumberOfThreads(int width, int height, int number_of_cores);
 
   // Call encoder initialize function and set control settings.
-  int InitAndSetControlSettings(const VideoCodec* inst);
+  int InitAndSetControlSettings();
 
   bool PopulateCodecSpecific(CodecSpecificInfo* codec_specific,
-                             absl::optional<int>* spatial_idx,
-                             absl::optional<int>* temporal_idx,
+                             std::optional<int>* spatial_idx,
+                             std::optional<int>* temporal_idx,
                              const vpx_codec_cx_pkt& pkt);
   void FillReferenceIndices(const vpx_codec_cx_pkt& pkt,
                             size_t pic_num,
@@ -116,6 +131,7 @@ class LibvpxVp9Encoder : public VP9Encoder {
   rtc::scoped_refptr<VideoFrameBuffer> PrepareBufferForProfile0(
       rtc::scoped_refptr<VideoFrameBuffer> buffer);
 
+  const Environment env_;
   const std::unique_ptr<LibvpxInterface> libvpx_;
   EncodedImage encoded_image_;
   CodecSpecificInfo codec_specific_;
@@ -138,6 +154,7 @@ class LibvpxVp9Encoder : public VP9Encoder {
   uint8_t num_spatial_layers_;         // Number of configured SLs
   uint8_t num_active_spatial_layers_;  // Number of actively encoded SLs
   uint8_t first_active_layer_;
+  uint8_t last_active_layer_;
   bool layer_deactivation_requires_key_frame_;
   bool is_svc_;
   InterLayerPredMode inter_layer_pred_;
@@ -149,8 +166,11 @@ class LibvpxVp9Encoder : public VP9Encoder {
   bool ss_info_needed_;
   bool force_all_active_layers_;
 
+  const bool enable_svc_for_simulcast_;
+  std::optional<SimulcastToSvcConverter> simulcast_to_svc_converter_;
+
   std::unique_ptr<ScalableVideoController> svc_controller_;
-  absl::optional<ScalabilityMode> scalability_mode_;
+  std::optional<ScalabilityMode> scalability_mode_;
   std::vector<FramerateControllerDeprecated> framerate_controller_;
 
   // Used for flexible mode.
@@ -168,22 +188,6 @@ class LibvpxVp9Encoder : public VP9Encoder {
   std::array<RefFrameBuffer, kNumVp9Buffers> ref_buf_;
   std::vector<ScalableVideoController::LayerFrameConfig> layer_frames_;
 
-  // Variable frame-rate related fields and methods.
-  const struct VariableFramerateExperiment {
-    bool enabled;
-    // Framerate is limited to this value in steady state.
-    float framerate_limit;
-    // This qp or below is considered a steady state.
-    int steady_state_qp;
-    // Frames of at least this percentage below ideal for configured bitrate are
-    // considered in a steady state.
-    int steady_state_undershoot_percentage;
-    // Number of consecutive frames with good QP and size required to detect
-    // the steady state.
-    int frames_before_steady_state;
-  } variable_framerate_experiment_;
-  static VariableFramerateExperiment ParseVariableFramerateConfig(
-      const FieldTrialsView& trials);
   FramerateControllerDeprecated variable_framerate_controller_;
 
   const struct QualityScalerExperiment {

@@ -1,0 +1,61 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> bounding box</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t);
+    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly());
+    assert_points_are_equal(model.boundingBoxExtents, new DOMPointReadOnly());
+}, `<model> with empty source gets the expected bounding box`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/2x2x2-at-100x50x200.usdz");
+    await model.ready;
+    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(100, 50, 200));
+    assert_points_are_equal(model.boundingBoxExtents, new DOMPointReadOnly(2, 2, 2));
+}, `<model> gets the expected bounding box after model content with center way-out is ready.`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/2x2x2-center.usdz");
+    await model.ready;
+    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(0, 0, 0));
+    assert_points_are_equal(model.boundingBoxExtents, new DOMPointReadOnly(2, 2, 2));
+}, `<model> gets the expected bounding box after model content with center at (0, 0, 0) is ready.`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/2x2x2-positive.usdz");
+    await model.ready;
+    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(1, 1, 1));
+    assert_points_are_equal(model.boundingBoxExtents, new DOMPointReadOnly(2, 2, 2));
+}, `<model> gets the expected bounding box after model content with center at (1, 1, 1) is ready.`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/2x2x2-at-100x50x200.usdz");
+    await model.ready;
+    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(100, 50, 200));
+    assert_points_are_equal(model.boundingBoxExtents, new DOMPointReadOnly(2, 2, 2));
+
+    source.src = "resources/2x2x2-center.usdz";
+    await model.ready;
+    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(0, 0, 0));
+    assert_points_are_equal(model.boundingBoxExtents, new DOMPointReadOnly(2, 2, 2));
+
+    return new Promise((resolve, reject) => {
+        model.addEventListener("error", event => {
+            assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly());
+            assert_points_are_equal(model.boundingBoxExtents, new DOMPointReadOnly());
+            resolve();
+        });
+        source.remove();
+    });
+}, `<model> gets the expected bounding box after model source changes.`);
+
+</script>
+</body>

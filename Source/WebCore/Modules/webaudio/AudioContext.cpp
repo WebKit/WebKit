@@ -44,7 +44,7 @@
 #include "Performance.h"
 #include "PlatformMediaSessionManager.h"
 #include "Quirks.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStream.h"
@@ -73,7 +73,7 @@ namespace WebCore {
 constexpr unsigned maxHardwareContexts = 4;
 #endif
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AudioContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioContext);
 
 #if OS(WINDOWS)
 static unsigned hardwareContextCount;
@@ -126,8 +126,8 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
 
 AudioContext::AudioContext(Document& document, const AudioContextOptions& contextOptions)
     : BaseAudioContext(document)
-    , m_destinationNode(makeUniqueRef<DefaultAudioDestinationNode>(*this, contextOptions.sampleRate))
-    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
+    , m_destinationNode(makeUniqueRefWithoutRefCountedCheck<DefaultAudioDestinationNode>(*this, contextOptions.sampleRate))
+    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::singleton(), *this))
     , m_currentIdentifier(MediaUniqueIdentifier::generate())
 {
     constructCommon();
@@ -495,10 +495,10 @@ void AudioContext::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteCo
     }
 }
 
-MediaSessionGroupIdentifier AudioContext::mediaSessionGroupIdentifier() const
+std::optional<MediaSessionGroupIdentifier> AudioContext::mediaSessionGroupIdentifier() const
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
-    return document && document->page() ? document->page()->mediaSessionGroupIdentifier() : MediaSessionGroupIdentifier { };
+    return document && document->page() ? document->page()->mediaSessionGroupIdentifier() : std::nullopt;
 }
 
 static bool hasPlayBackAudioSession(Document* document)
@@ -523,6 +523,13 @@ bool AudioContext::isNowPlayingEligible() const
         return false;
 
     RefPtr document = this->document();
+    if (!document)
+        return false;
+
+    RefPtr page = document->page();
+    if (page && page->mediaPlaybackIsSuspended())
+        return false;
+
     return hasPlayBackAudioSession(document.get());
 }
 
@@ -551,8 +558,12 @@ std::optional<NowPlayingInfo> AudioContext::nowPlayingInfo() const
         false,
         m_currentIdentifier,
         isPlaying(),
-        !page->isVisibleAndActive()
+        !page->isVisibleAndActive(),
+        false
     };
+
+    if (page->usesEphemeralSession() && !document->settings().allowPrivacySensitiveOperationsInNonPersistentDataStores())
+        return nowPlayingInfo;
 
 #if ENABLE(MEDIA_SESSION)
     if (RefPtr mediaSession = NavigatorMediaSession::mediaSessionIfExists(window->protectedNavigator()))
@@ -649,7 +660,7 @@ bool AudioContext::shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSess
 void AudioContext::defaultDestinationWillBecomeConnected()
 {
     // We might need to interrupt if we previously overrode a background interruption.
-    if (!PlatformMediaSessionManager::sharedManager().isApplicationInBackground() || m_mediaSession->state() == PlatformMediaSession::State::Interrupted) {
+    if (!PlatformMediaSessionManager::singleton().isApplicationInBackground() || m_mediaSession->state() == PlatformMediaSession::State::Interrupted) {
         PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
         return;
     }
@@ -660,6 +671,24 @@ void AudioContext::defaultDestinationWillBecomeConnected()
     m_canOverrideBackgroundPlaybackRestriction = false;
     m_mediaSession->beginInterruption(PlatformMediaSession::InterruptionType::EnteringBackground);
     m_canOverrideBackgroundPlaybackRestriction = true;
+}
+
+void AudioContext::isActiveNowPlayingSessionChanged()
+{
+    if (RefPtr document = this->document()) {
+        if (RefPtr page = document->protectedPage())
+            page->hasActiveNowPlayingSessionChanged();
+    }
+}
+
+ProcessID AudioContext::presentingApplicationPID() const
+{
+    if (RefPtr document = this->document()) {
+        if (RefPtr page = document->protectedPage())
+            return page->presentingApplicationPID();
+    }
+
+    return { };
 }
 
 #if !RELEASE_LOG_DISABLED

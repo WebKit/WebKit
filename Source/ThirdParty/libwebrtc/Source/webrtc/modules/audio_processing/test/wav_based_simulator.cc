@@ -13,9 +13,16 @@
 #include <stdio.h>
 
 #include <iostream>
+#include <memory>
+#include <utility>
+#include <vector>
 
+#include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
-#include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "api/audio/audio_processing.h"
+#include "api/scoped_refptr.h"
+#include "common_audio/wav_file.h"
+#include "modules/audio_processing/test/audio_processing_simulator.h"
 #include "modules/audio_processing/test/test_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/system/file_wrapper.h"
@@ -56,11 +63,8 @@ WavBasedSimulator::GetCustomEventChain(absl::string_view filename) {
 
 WavBasedSimulator::WavBasedSimulator(
     const SimulationSettings& settings,
-    rtc::scoped_refptr<AudioProcessing> audio_processing,
-    std::unique_ptr<AudioProcessingBuilder> ap_builder)
-    : AudioProcessingSimulator(settings,
-                               std::move(audio_processing),
-                               std::move(ap_builder)) {
+    absl::Nonnull<scoped_refptr<AudioProcessing>> audio_processing)
+    : AudioProcessingSimulator(settings, std::move(audio_processing)) {
   if (settings_.call_order_input_filename) {
     call_chain_ = WavBasedSimulator::GetCustomEventChain(
         *settings_.call_order_input_filename);

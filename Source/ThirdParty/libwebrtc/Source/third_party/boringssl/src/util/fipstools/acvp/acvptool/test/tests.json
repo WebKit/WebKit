@@ -5,6 +5,7 @@
 {"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-CTR.bz2", "Out": "expected/ACVP-AES-CTR.bz2"},
 {"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-ECB.bz2", "Out": "expected/ACVP-AES-ECB.bz2"},
 {"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-GCM.bz2", "Out": "expected/ACVP-AES-GCM.bz2"},
+{"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-GCM-randnonce.bz2", "Out": "expected/ACVP-AES-GCM-randnonce.bz2"},
 {"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-GMAC.bz2", "Out": "expected/ACVP-AES-GMAC.bz2"},
 {"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-KW.bz2", "Out": "expected/ACVP-AES-KW.bz2"},
 {"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-KWP.bz2", "Out": "expected/ACVP-AES-KWP.bz2"},
@@ -31,5 +32,9 @@
 {"Wrapper": "modulewrapper", "In": "vectors/SHA2-384.bz2", "Out": "expected/SHA2-384.bz2"},
 {"Wrapper": "modulewrapper", "In": "vectors/SHA2-512.bz2", "Out": "expected/SHA2-512.bz2"},
 {"Wrapper": "modulewrapper", "In": "vectors/TLS12.bz2", "Out": "expected/TLS12.bz2"},
-{"Wrapper": "modulewrapper", "In": "vectors/TLS13.bz2", "Out": "expected/TLS13.bz2"}
+{"Wrapper": "modulewrapper", "In": "vectors/TLS13.bz2", "Out": "expected/TLS13.bz2"},
+{"Wrapper": "testmodulewrapper", "In": "vectors/PBKDF.bz2", "Out": "expected/PBKDF.bz2"},
+{"Wrapper": "testmodulewrapper", "In": "vectors/EDDSA.bz2", "Out": "expected/EDDSA.bz2"},
+{"Wrapper": "testmodulewrapper", "In": "vectors/SHAKE-128.bz2", "Out": "expected/SHAKE-128.bz2"},
+{"Wrapper": "testmodulewrapper", "In": "vectors/SHAKE-256.bz2", "Out": "expected/SHAKE-256.bz2"}
 ]

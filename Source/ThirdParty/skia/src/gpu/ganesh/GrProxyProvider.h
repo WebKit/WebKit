@@ -8,19 +8,38 @@
 #ifndef GrProxyProvider_DEFINED
 #define GrProxyProvider_DEFINED
 
-#include "include/gpu/GrTypes.h"
+#include "include/core/SkRefCnt.h"
+#include "include/gpu/ganesh/GrTypes.h"
+#include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/core/SkTDynamicHash.h"
+#include "src/gpu/RefCntedCallback.h"
 #include "src/gpu/ResourceKey.h"
+#include "src/gpu/ganesh/GrCaps.h"
+#include "src/gpu/ganesh/GrSurfaceProxy.h"
 #include "src/gpu/ganesh/GrTextureProxy.h"
 
+#include <cstdint>
+#include <string_view>
+
+class GrBackendFormat;
 class GrBackendRenderTarget;
+class GrBackendTexture;
 class GrContextThreadSafeProxy;
 class GrImageContext;
+class GrRenderTargetProxy;
+class GrResourceProvider;
+class GrSurface;
 class GrSurfaceProxyView;
+class GrTexture;
 class SkBitmap;
-class SkImage;
+class SkData;
+enum class SkBackingFit;
 enum class SkTextureCompressionType;
-struct GrVkDrawableInfo;
+struct SkISize;
+namespace skgpu {
+enum class Budgeted : bool;
+enum class Mipmapped : bool;
+}  // namespace skgpu
 
 /*
  * A factory for creating GrSurfaceProxy-derived objects.
@@ -252,7 +271,7 @@ public:
     bool renderingDirectly() const;
     bool isAbandoned() const;
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     /**
      * Create a texture proxy that is backed by an instantiated GrSurface.
      */

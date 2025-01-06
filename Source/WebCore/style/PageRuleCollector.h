@@ -33,9 +33,9 @@ namespace Style {
 
 class PageRuleCollector {
 public:
-    PageRuleCollector(ScopeRuleSets& ruleSets, TextDirection rootDirection)
+    PageRuleCollector(ScopeRuleSets& ruleSets, WritingMode rootWritingMode)
         : m_ruleSets(ruleSets)
-        , m_rootDirection(rootDirection)
+        , m_rootWritingMode(rootWritingMode)
     { }
 
     void matchAllPageRules(int pageIndex);
@@ -51,7 +51,7 @@ private:
     void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>& rules, bool isLeftPage, bool isFirstPage, const String& pageName);
 
     ScopeRuleSets& m_ruleSets;
-    TextDirection m_rootDirection;
+    WritingMode m_rootWritingMode;
 
     MatchResult m_result;
 };

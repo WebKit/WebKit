@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2023 The WebM project authors. All Rights Reserved.
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023 The WebM project authors. All rights reserved.
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -19,7 +19,7 @@
 #include "aom_dsp/arm/mem_neon.h"
 #include "aom_dsp/arm/sum_neon.h"
 
-static INLINE uint32_t highbd_sad4xh_small_neon(const uint8_t *src_ptr,
+static inline uint32_t highbd_sad4xh_small_neon(const uint8_t *src_ptr,
                                                 int src_stride,
                                                 const uint8_t *ref_ptr,
                                                 int ref_stride, int h) {
@@ -40,7 +40,7 @@ static INLINE uint32_t highbd_sad4xh_small_neon(const uint8_t *src_ptr,
   return horizontal_add_u32x4(sum);
 }
 
-static INLINE uint32_t highbd_sad8xh_small_neon(const uint8_t *src_ptr,
+static inline uint32_t highbd_sad8xh_small_neon(const uint8_t *src_ptr,
                                                 int src_stride,
                                                 const uint8_t *ref_ptr,
                                                 int ref_stride, int h) {
@@ -62,7 +62,7 @@ static INLINE uint32_t highbd_sad8xh_small_neon(const uint8_t *src_ptr,
 }
 
 #if !CONFIG_REALTIME_ONLY
-static INLINE uint32_t highbd_sad8xh_large_neon(const uint8_t *src_ptr,
+static inline uint32_t highbd_sad8xh_large_neon(const uint8_t *src_ptr,
                                                 int src_stride,
                                                 const uint8_t *ref_ptr,
                                                 int ref_stride, int h) {
@@ -85,7 +85,7 @@ static INLINE uint32_t highbd_sad8xh_large_neon(const uint8_t *src_ptr,
 }
 #endif  // !CONFIG_REALTIME_ONLY
 
-static INLINE uint32_t highbd_sad16xh_large_neon(const uint8_t *src_ptr,
+static inline uint32_t highbd_sad16xh_large_neon(const uint8_t *src_ptr,
                                                  int src_stride,
                                                  const uint8_t *ref_ptr,
                                                  int ref_stride, int h) {
@@ -113,7 +113,7 @@ static INLINE uint32_t highbd_sad16xh_large_neon(const uint8_t *src_ptr,
   return horizontal_add_u32x4(sum[0]);
 }
 
-static INLINE uint32_t highbd_sadwxh_large_neon(const uint8_t *src_ptr,
+static inline uint32_t highbd_sadwxh_large_neon(const uint8_t *src_ptr,
                                                 int src_stride,
                                                 const uint8_t *ref_ptr,
                                                 int ref_stride, int w, int h) {
@@ -160,7 +160,7 @@ static INLINE uint32_t highbd_sadwxh_large_neon(const uint8_t *src_ptr,
   return horizontal_add_u32x4(sum[0]);
 }
 
-static INLINE unsigned int highbd_sad128xh_large_neon(const uint8_t *src_ptr,
+static inline unsigned int highbd_sad128xh_large_neon(const uint8_t *src_ptr,
                                                       int src_stride,
                                                       const uint8_t *ref_ptr,
                                                       int ref_stride, int h) {
@@ -168,7 +168,7 @@ static INLINE unsigned int highbd_sad128xh_large_neon(const uint8_t *src_ptr,
                                   h);
 }
 
-static INLINE unsigned int highbd_sad64xh_large_neon(const uint8_t *src_ptr,
+static inline unsigned int highbd_sad64xh_large_neon(const uint8_t *src_ptr,
                                                      int src_stride,
                                                      const uint8_t *ref_ptr,
                                                      int ref_stride, int h) {
@@ -176,7 +176,7 @@ static INLINE unsigned int highbd_sad64xh_large_neon(const uint8_t *src_ptr,
                                   h);
 }
 
-static INLINE unsigned int highbd_sad32xh_large_neon(const uint8_t *src_ptr,
+static inline unsigned int highbd_sad32xh_large_neon(const uint8_t *src_ptr,
                                                      int src_stride,
                                                      const uint8_t *ref_ptr,
                                                      int ref_stride, int h) {
@@ -251,14 +251,8 @@ HBD_SAD_WXH_LARGE_NEON(64, 16)
                                             2 * ref_stride, (h) / 2); \
   }
 
-HBD_SAD_SKIP_WXH_SMALL_NEON(4, 4)
-HBD_SAD_SKIP_WXH_SMALL_NEON(4, 8)
-
-HBD_SAD_SKIP_WXH_SMALL_NEON(8, 4)
-HBD_SAD_SKIP_WXH_SMALL_NEON(8, 8)
 HBD_SAD_SKIP_WXH_SMALL_NEON(8, 16)
 
-HBD_SAD_SKIP_WXH_LARGE_NEON(16, 8)
 HBD_SAD_SKIP_WXH_LARGE_NEON(16, 16)
 HBD_SAD_SKIP_WXH_LARGE_NEON(16, 32)
 
@@ -278,15 +272,12 @@ HBD_SAD_SKIP_WXH_SMALL_NEON(4, 16)
 
 HBD_SAD_SKIP_WXH_SMALL_NEON(8, 32)
 
-HBD_SAD_SKIP_WXH_LARGE_NEON(16, 4)
 HBD_SAD_SKIP_WXH_LARGE_NEON(16, 64)
-
-HBD_SAD_SKIP_WXH_LARGE_NEON(32, 8)
 
 HBD_SAD_SKIP_WXH_LARGE_NEON(64, 16)
 #endif  // !CONFIG_REALTIME_ONLY
 
-static INLINE uint32_t highbd_sad4xh_avg_neon(const uint8_t *src_ptr,
+static inline uint32_t highbd_sad4xh_avg_neon(const uint8_t *src_ptr,
                                               int src_stride,
                                               const uint8_t *ref_ptr,
                                               int ref_stride, int h,
@@ -313,7 +304,7 @@ static INLINE uint32_t highbd_sad4xh_avg_neon(const uint8_t *src_ptr,
   return horizontal_add_u32x4(sum);
 }
 
-static INLINE uint32_t highbd_sad8xh_avg_neon(const uint8_t *src_ptr,
+static inline uint32_t highbd_sad8xh_avg_neon(const uint8_t *src_ptr,
                                               int src_stride,
                                               const uint8_t *ref_ptr,
                                               int ref_stride, int h,
@@ -341,7 +332,7 @@ static INLINE uint32_t highbd_sad8xh_avg_neon(const uint8_t *src_ptr,
   return horizontal_add_u32x4(sum);
 }
 
-static INLINE uint32_t highbd_sad16xh_avg_neon(const uint8_t *src_ptr,
+static inline uint32_t highbd_sad16xh_avg_neon(const uint8_t *src_ptr,
                                                int src_stride,
                                                const uint8_t *ref_ptr,
                                                int ref_stride, int h,
@@ -379,7 +370,7 @@ static INLINE uint32_t highbd_sad16xh_avg_neon(const uint8_t *src_ptr,
   return horizontal_add_u32x4(sum[0]);
 }
 
-static INLINE uint32_t highbd_sadwxh_avg_neon(const uint8_t *src_ptr,
+static inline uint32_t highbd_sadwxh_avg_neon(const uint8_t *src_ptr,
                                               int src_stride,
                                               const uint8_t *ref_ptr,
                                               int ref_stride, int w, int h,
@@ -440,14 +431,14 @@ static INLINE uint32_t highbd_sadwxh_avg_neon(const uint8_t *src_ptr,
   return horizontal_add_u32x4(sum[0]);
 }
 
-static INLINE unsigned int highbd_sad128xh_avg_neon(
+static inline unsigned int highbd_sad128xh_avg_neon(
     const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr,
     int ref_stride, int h, const uint8_t *second_pred) {
   return highbd_sadwxh_avg_neon(src_ptr, src_stride, ref_ptr, ref_stride, 128,
                                 h, second_pred);
 }
 
-static INLINE unsigned int highbd_sad64xh_avg_neon(const uint8_t *src_ptr,
+static inline unsigned int highbd_sad64xh_avg_neon(const uint8_t *src_ptr,
                                                    int src_stride,
                                                    const uint8_t *ref_ptr,
                                                    int ref_stride, int h,
@@ -456,7 +447,7 @@ static INLINE unsigned int highbd_sad64xh_avg_neon(const uint8_t *src_ptr,
                                 second_pred);
 }
 
-static INLINE unsigned int highbd_sad32xh_avg_neon(const uint8_t *src_ptr,
+static inline unsigned int highbd_sad32xh_avg_neon(const uint8_t *src_ptr,
                                                    int src_stride,
                                                    const uint8_t *ref_ptr,
                                                    int ref_stride, int h,

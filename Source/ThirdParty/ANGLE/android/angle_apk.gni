@@ -93,6 +93,10 @@ if (enable_java_templates) {
                 [ "$angle_vulkan_validation_layers_dir:${_layer}" ]
           }
         }
+        if (angle_enable_vulkan_api_dump_layer) {
+          shared_libraries +=
+              [ "$angle_lunarg_vulkantools_dir:VkLayer_lunarg_api_dump" ]
+        }
       } else {
         loadable_modules = []
         foreach(_library, angle_libraries) {
@@ -104,6 +108,9 @@ if (enable_java_templates) {
               "$root_out_dir/lib.compressed/lib${_layer}${shlib_extension}",
             ]
           }
+        }
+        if (angle_enable_vulkan_api_dump_layer) {
+          loadable_modules += [ "$root_out_dir/lib.compressed/libVkLayer_lunarg_api_dump${shlib_extension}" ]
         }
       }
     }

@@ -26,7 +26,7 @@
     }
 
     function runTestRunnerTest() {
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, false, async function() {
             if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
                 testFailed("Host did not get set as non-prevalent resource.");
 
@@ -34,9 +34,8 @@
             testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigin2);
             testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigin3);
 
-            testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-
-            testRunner.statisticsProcessStatisticsAndDataRecords();
+            await testRunner.statisticsProcessStatisticsAndDataRecords();
+            completeTest();
         });
     }
 

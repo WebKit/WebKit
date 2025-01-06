@@ -23,20 +23,20 @@ if (window.accessibilityController) {
     var initiallyGrabbedDiv = accessibilityController.accessibleElementById("initially-grabbed-div");
     var initiallyUngrabbedDiv = accessibilityController.accessibleElementById("initially-ungrabbed-div");
     var displayContentsDiv = accessibilityController.accessibleElementById("display-contents-div");
-    testOutput += expect("initiallyGrabbedDiv.ariaIsGrabbed", "true");
-    testOutput += expect("initiallyUngrabbedDiv.ariaIsGrabbed", "false");
+    testOutput += expect("initiallyGrabbedDiv.isGrabbed", "true");
+    testOutput += expect("initiallyUngrabbedDiv.isGrabbed", "false");
     testOutput += expect("initiallyGrabbedDiv.isAttributeSettable('AXGrabbed')", "true");
     testOutput += expect("initiallyUngrabbedDiv.isAttributeSettable('AXGrabbed')", "true");
 
-    testOutput += expect("displayContentsDiv.ariaIsGrabbed", "true");
+    testOutput += expect("displayContentsDiv.isGrabbed", "true");
     testOutput += expect("displayContentsDiv.isAttributeSettable('AXGrabbed')", "true");
     testOutput += expect("displayContentsDiv.ariaDropEffects", "'copy,move'");
 
     testOutput += "\nSetting aria-grabbed false for element #initially-grabbed-div.\n";
     document.getElementById("initially-grabbed-div").setAttribute("aria-grabbed", "false");
     setTimeout(async function() {
-        await waitFor(() => !initiallyGrabbedDiv.ariaIsGrabbed);
-        testOutput += expect("initiallyGrabbedDiv.ariaIsGrabbed", "false");
+        await waitFor(() => !initiallyGrabbedDiv.isGrabbed);
+        testOutput += expect("initiallyGrabbedDiv.isGrabbed", "false");
 
         testOutput += "\nSetting aria-dropeffect of #dropeffect-div to 'move'.\n";
         document.getElementById("dropeffect-div").setAttribute("aria-dropeffect", "move");

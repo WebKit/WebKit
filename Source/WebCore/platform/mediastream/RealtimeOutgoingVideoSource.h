@@ -32,16 +32,14 @@
 
 #include "LibWebRTCMacros.h"
 #include "MediaStreamTrackPrivate.h"
-#include <Timer.h>
+#include "Timer.h"
 #include <wtf/Lock.h>
 
-ALLOW_UNUSED_PARAMETERS_BEGIN
-ALLOW_COMMA_BEGIN
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
 #include <webrtc/api/media_stream_interface.h>
 
-ALLOW_UNUSED_PARAMETERS_END
-ALLOW_COMMA_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #include <wtf/LoggerHelper.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -67,10 +65,10 @@ public:
     MediaStreamTrackPrivate& source() const { return m_videoSource.get(); }
 
     void AddRef() const final { ref(); }
-    rtc::RefCountReleaseStatus Release() const final
+    webrtc::RefCountReleaseStatus Release() const final
     {
         deref();
-        return rtc::RefCountReleaseStatus::kOtherRefsRemained;
+        return webrtc::RefCountReleaseStatus::kOtherRefsRemained;
     }
 
     void applyRotation();
@@ -90,7 +88,7 @@ protected:
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper API
     const Logger& logger() const final { return m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "RealtimeOutgoingVideoSource"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -106,9 +104,7 @@ private:
     void observeSource();
     void unobserveSource();
 
-    using MediaStreamTrackPrivateObserver::weakPtrFactory;
-    using MediaStreamTrackPrivateObserver::WeakValueType;
-    using MediaStreamTrackPrivateObserver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(MediaStreamTrackPrivateObserver);
 
     // Notifier API
     void RegisterObserver(webrtc::ObserverInterface*) final { }
@@ -116,7 +112,7 @@ private:
 
     // VideoTrackSourceInterface API
     bool is_screencast() const final { return false; }
-    absl::optional<bool> needs_denoising() const final { return absl::optional<bool>(); }
+    std::optional<bool> needs_denoising() const final { return std::optional<bool>(); }
     bool GetStats(Stats*) final { return false; };
     bool SupportsEncodedOutput() const final { return false; }
     void GenerateKeyFrame() final { }
@@ -164,7 +160,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
     MonotonicTime m_lastFrameLogTime;
     unsigned m_frameCount { 0 };
 #endif

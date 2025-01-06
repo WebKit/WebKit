@@ -11,10 +11,10 @@
 #ifndef API_VIDEO_CODECS_H264_PROFILE_LEVEL_ID_H_
 #define API_VIDEO_CODECS_H264_PROFILE_LEVEL_ID_H_
 
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
-#include "api/video_codecs/sdp_video_format.h"
+#include "api/rtp_parameters.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -60,32 +60,32 @@ struct H264ProfileLevelId {
 // Parse profile level id that is represented as a string of 3 hex bytes.
 // Nothing will be returned if the string is not a recognized H264
 // profile level id.
-absl::optional<H264ProfileLevelId> ParseH264ProfileLevelId(const char* str);
+std::optional<H264ProfileLevelId> ParseH264ProfileLevelId(const char* str);
 
 // Parse profile level id that is represented as a string of 3 hex bytes
 // contained in an SDP key-value map. A default profile level id will be
 // returned if the profile-level-id key is missing. Nothing will be returned if
 // the key is present but the string is invalid.
-RTC_EXPORT absl::optional<H264ProfileLevelId> ParseSdpForH264ProfileLevelId(
-    const SdpVideoFormat::Parameters& params);
+RTC_EXPORT std::optional<H264ProfileLevelId> ParseSdpForH264ProfileLevelId(
+    const CodecParameterMap& params);
 
 // Given that a decoder supports up to a given frame size (in pixels) at up to a
 // given number of frames per second, return the highest H.264 level where it
 // can guarantee that it will be able to support all valid encoded streams that
 // are within that level.
-RTC_EXPORT absl::optional<H264Level> H264SupportedLevel(
+RTC_EXPORT std::optional<H264Level> H264SupportedLevel(
     int max_frame_pixel_count,
     float max_fps);
 
 // Returns canonical string representation as three hex bytes of the profile
 // level id, or returns nothing for invalid profile level ids.
-RTC_EXPORT absl::optional<std::string> H264ProfileLevelIdToString(
+RTC_EXPORT std::optional<std::string> H264ProfileLevelIdToString(
     const H264ProfileLevelId& profile_level_id);
 
 // Returns true if the parameters have the same H264 profile (Baseline, High,
 // etc).
-RTC_EXPORT bool H264IsSameProfile(const SdpVideoFormat::Parameters& params1,
-                                  const SdpVideoFormat::Parameters& params2);
+RTC_EXPORT bool H264IsSameProfile(const CodecParameterMap& params1,
+                                  const CodecParameterMap& params2);
 
 }  // namespace webrtc
 

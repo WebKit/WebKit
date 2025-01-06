@@ -34,16 +34,14 @@
             if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
                 testFailed("Host did not get set as prevalent resource.");
 
-            testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, false, function() {
+            testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, false, async function() {
                 if (testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
                     testFailed("Host did not get cleared of user interaction.");
 
-                testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
-                    setTimeout("finishTest()", 1000);
-                });
                 testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
                 testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
-                testRunner.statisticsProcessStatisticsAndDataRecords();
+                await testRunner.statisticsProcessStatisticsAndDataRecords();
+                setTimeout("finishTest()", 1000);
             });
         });
     }

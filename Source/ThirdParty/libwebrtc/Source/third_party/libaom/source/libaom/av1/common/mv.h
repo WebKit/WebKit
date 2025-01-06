@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -76,19 +76,19 @@ typedef struct {
   int row_max;
 } SubpelMvLimits;
 
-static AOM_INLINE FULLPEL_MV get_fullmv_from_mv(const MV *subpel_mv) {
+static inline FULLPEL_MV get_fullmv_from_mv(const MV *subpel_mv) {
   const FULLPEL_MV full_mv = { (int16_t)GET_MV_RAWPEL(subpel_mv->row),
                                (int16_t)GET_MV_RAWPEL(subpel_mv->col) };
   return full_mv;
 }
 
-static AOM_INLINE MV get_mv_from_fullmv(const FULLPEL_MV *full_mv) {
+static inline MV get_mv_from_fullmv(const FULLPEL_MV *full_mv) {
   const MV subpel_mv = { (int16_t)GET_MV_SUBPEL(full_mv->row),
                          (int16_t)GET_MV_SUBPEL(full_mv->col) };
   return subpel_mv;
 }
 
-static AOM_INLINE void convert_fullmv_to_mv(int_mv *mv) {
+static inline void convert_fullmv_to_mv(int_mv *mv) {
   mv->as_mv = get_mv_from_fullmv(&mv->as_fullmv);
 }
 
@@ -180,23 +180,23 @@ static const WarpedMotionParams default_warp_params = {
 #define GM_TRANS_MIN -GM_TRANS_MAX
 #define GM_ALPHA_MIN -GM_ALPHA_MAX
 
-static INLINE int block_center_x(int mi_col, BLOCK_SIZE bs) {
+static inline int block_center_x(int mi_col, BLOCK_SIZE bs) {
   const int bw = block_size_wide[bs];
   return mi_col * MI_SIZE + bw / 2 - 1;
 }
 
-static INLINE int block_center_y(int mi_row, BLOCK_SIZE bs) {
+static inline int block_center_y(int mi_row, BLOCK_SIZE bs) {
   const int bh = block_size_high[bs];
   return mi_row * MI_SIZE + bh / 2 - 1;
 }
 
-static INLINE int convert_to_trans_prec(int allow_hp, int coor) {
+static inline int convert_to_trans_prec(int allow_hp, int coor) {
   if (allow_hp)
     return ROUND_POWER_OF_TWO_SIGNED(coor, WARPEDMODEL_PREC_BITS - 3);
   else
     return ROUND_POWER_OF_TWO_SIGNED(coor, WARPEDMODEL_PREC_BITS - 2) * 2;
 }
-static INLINE void integer_mv_precision(MV *mv) {
+static inline void integer_mv_precision(MV *mv) {
   int mod = (mv->row % 8);
   if (mod != 0) {
     mv->row -= mod;
@@ -228,7 +228,7 @@ static INLINE void integer_mv_precision(MV *mv) {
 // allow_hp is zero, the bottom bit will always be zero. If CONFIG_AMVR and
 // is_integer is true, the bottom three bits will be zero (so the motion vector
 // represents an integer)
-static INLINE int_mv gm_get_motion_vector(const WarpedMotionParams *gm,
+static inline int_mv gm_get_motion_vector(const WarpedMotionParams *gm,
                                           int allow_hp, BLOCK_SIZE bsize,
                                           int mi_col, int mi_row,
                                           int is_integer) {
@@ -296,7 +296,7 @@ static INLINE int_mv gm_get_motion_vector(const WarpedMotionParams *gm,
   return res;
 }
 
-static INLINE TransformationType get_wmtype(const WarpedMotionParams *gm) {
+static inline TransformationType get_wmtype(const WarpedMotionParams *gm) {
   if (gm->wmmat[5] == (1 << WARPEDMODEL_PREC_BITS) && !gm->wmmat[4] &&
       gm->wmmat[2] == (1 << WARPEDMODEL_PREC_BITS) && !gm->wmmat[3]) {
     return ((!gm->wmmat[1] && !gm->wmmat[0]) ? IDENTITY : TRANSLATION);
@@ -312,20 +312,20 @@ typedef struct candidate_mv {
   int_mv comp_mv;
 } CANDIDATE_MV;
 
-static INLINE int is_zero_mv(const MV *mv) {
+static inline int is_zero_mv(const MV *mv) {
   return *((const uint32_t *)mv) == 0;
 }
 
-static INLINE int is_equal_mv(const MV *a, const MV *b) {
+static inline int is_equal_mv(const MV *a, const MV *b) {
   return *((const uint32_t *)a) == *((const uint32_t *)b);
 }
 
-static INLINE void clamp_mv(MV *mv, const SubpelMvLimits *mv_limits) {
+static inline void clamp_mv(MV *mv, const SubpelMvLimits *mv_limits) {
   mv->col = clamp(mv->col, mv_limits->col_min, mv_limits->col_max);
   mv->row = clamp(mv->row, mv_limits->row_min, mv_limits->row_max);
 }
 
-static INLINE void clamp_fullmv(FULLPEL_MV *mv, const FullMvLimits *mv_limits) {
+static inline void clamp_fullmv(FULLPEL_MV *mv, const FullMvLimits *mv_limits) {
   mv->col = clamp(mv->col, mv_limits->col_min, mv_limits->col_max);
   mv->row = clamp(mv->row, mv_limits->row_min, mv_limits->row_max);
 }

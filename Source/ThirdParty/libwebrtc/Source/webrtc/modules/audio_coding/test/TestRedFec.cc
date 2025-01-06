@@ -24,6 +24,8 @@
 #include "api/audio_codecs/g722/audio_encoder_g722.h"
 #include "api/audio_codecs/opus/audio_decoder_opus.h"
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
+#include "api/environment/environment_factory.h"
+#include "api/neteq/default_neteq_factory.h"
 #include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
 #include "modules/audio_coding/codecs/red/audio_encoder_copy_red.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
@@ -34,7 +36,8 @@
 namespace webrtc {
 
 TestRedFec::TestRedFec()
-    : encoder_factory_(CreateAudioEncoderFactory<AudioEncoderG711,
+    : env_(CreateEnvironment(&field_trials_)),
+      encoder_factory_(CreateAudioEncoderFactory<AudioEncoderG711,
                                                  AudioEncoderG722,
                                                  AudioEncoderL16,
                                                  AudioEncoderOpus>()),
@@ -43,8 +46,9 @@ TestRedFec::TestRedFec()
                                                  AudioDecoderL16,
                                                  AudioDecoderOpus>()),
       _acmA(AudioCodingModule::Create()),
-      _acm_receiver(std::make_unique<acm2::AcmReceiver>(
-          acm2::AcmReceiver::Config(decoder_factory_))),
+      _neteq(DefaultNetEqFactory().Create(env_,
+                                          NetEq::Config(),
+                                          decoder_factory_)),
       _channelA2B(NULL),
       _testCntr(0) {}
 
@@ -63,7 +67,7 @@ void TestRedFec::Perform() {
   // Create and connect the channel
   _channelA2B = new Channel;
   _acmA->RegisterTransportCallback(_channelA2B);
-  _channelA2B->RegisterReceiverACM(_acm_receiver.get());
+  _channelA2B->RegisterReceiverNetEq(_neteq.get());
 
   RegisterSendCodec(_acmA, {"L16", 8000, 1}, Vad::kVadAggressive, true);
 
@@ -77,6 +81,8 @@ void TestRedFec::Perform() {
   Run();
   _outFileB.Close();
 
+// TODO(bugs.webrtc.org/345525069): Either fix/enable or remove G722.
+#if defined(__has_feature) && !__has_feature(undefined_behavior_sanitizer)
   // Switch to a 16 kHz codec; RED should be switched off.
   RegisterSendCodec(_acmA, {"G722", 8000, 1}, Vad::kVadAggressive, false);
 
@@ -96,8 +102,9 @@ void TestRedFec::Perform() {
   OpenOutFile(_testCntr);
   Run();
   _outFileB.Close();
+#endif
 
-  RegisterSendCodec(_acmA, {"opus", 48000, 2}, absl::nullopt, false);
+  RegisterSendCodec(_acmA, {"opus", 48000, 2}, std::nullopt, false);
 
   // _channelA2B imposes 25% packet loss rate.
   EXPECT_EQ(0, _acmA->SetPacketLossRate(25));
@@ -110,11 +117,11 @@ void TestRedFec::Perform() {
   Run();
 
   // Switch to L16 with RED.
-  RegisterSendCodec(_acmA, {"L16", 8000, 1}, absl::nullopt, true);
+  RegisterSendCodec(_acmA, {"L16", 8000, 1}, std::nullopt, true);
   Run();
 
   // Switch to Opus again.
-  RegisterSendCodec(_acmA, {"opus", 48000, 2}, absl::nullopt, false);
+  RegisterSendCodec(_acmA, {"opus", 48000, 2}, std::nullopt, false);
   _acmA->ModifyEncoder([&](std::unique_ptr<AudioEncoder>* enc) {
     EXPECT_EQ(true, (*enc)->SetFec(false));
   });
@@ -129,12 +136,12 @@ void TestRedFec::Perform() {
 void TestRedFec::RegisterSendCodec(
     const std::unique_ptr<AudioCodingModule>& acm,
     const SdpAudioFormat& codec_format,
-    absl::optional<Vad::Aggressiveness> vad_mode,
+    std::optional<Vad::Aggressiveness> vad_mode,
     bool use_red) {
   constexpr int payload_type = 17, cn_payload_type = 27, red_payload_type = 37;
 
-  auto encoder = encoder_factory_->MakeAudioEncoder(payload_type, codec_format,
-                                                    absl::nullopt);
+  auto encoder = encoder_factory_->Create(env_, codec_format,
+                                          {.payload_type = payload_type});
   EXPECT_NE(encoder, nullptr);
   std::map<int, SdpAudioFormat> receive_codecs = {{payload_type, codec_format}};
   if (!absl::EqualsIgnoreCase(codec_format.name, "opus")) {
@@ -160,7 +167,7 @@ void TestRedFec::RegisterSendCodec(
     }
   }
   acm->SetEncoder(std::move(encoder));
-  _acm_receiver->SetCodecs(receive_codecs);
+  _neteq->SetCodecs(receive_codecs);
 }
 
 void TestRedFec::Run() {
@@ -175,7 +182,8 @@ void TestRedFec::Run() {
     EXPECT_GT(_inFileA.Read10MsData(audioFrame), 0);
     EXPECT_GE(_acmA->Add10MsData(audioFrame), 0);
     bool muted;
-    EXPECT_EQ(0, _acm_receiver->GetAudio(outFreqHzB, &audioFrame, &muted));
+    EXPECT_EQ(NetEq::kOK, _neteq->GetAudio(&audioFrame, &muted));
+    EXPECT_TRUE(_resampler_helper.MaybeResample(outFreqHzB, &audioFrame));
     ASSERT_FALSE(muted);
     _outFileB.Write10MsData(audioFrame.data(), audioFrame.samples_per_channel_);
   }

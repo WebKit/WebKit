@@ -30,7 +30,7 @@ namespace WebCore {
 class HTMLOListElement;
 
 class RenderListItem final : public RenderBlockFlow {
-    WTF_MAKE_ISO_ALLOCATED(RenderListItem);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderListItem);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListItem);
 public:
     RenderListItem(Element&, RenderStyle&&);
@@ -41,11 +41,8 @@ public:
     int value() const;
     void updateValue();
 
-    void setNotInList(bool notInList) { m_notInList = notInList; }
-    bool notInList() const { return m_notInList; }
-
-    WEBCORE_EXPORT StringView markerTextWithoutSuffix() const;
-    StringView markerTextWithSuffix() const;
+    WEBCORE_EXPORT String markerTextWithoutSuffix() const;
+    String markerTextWithSuffix() const;
 
     void updateListMarkerNumbers();
 
@@ -74,7 +71,6 @@ private:
 
     SingleThreadWeakPtr<RenderListMarker> m_marker;
     mutable std::optional<int> m_value;
-    bool m_notInList { false };
 };
 
 bool isHTMLListElement(const Node&);

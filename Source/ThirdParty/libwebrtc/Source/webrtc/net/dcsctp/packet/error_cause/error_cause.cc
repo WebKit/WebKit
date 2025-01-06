@@ -13,11 +13,11 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "net/dcsctp/common/math.h"
 #include "net/dcsctp/packet/error_cause/cookie_received_while_shutting_down_cause.h"
@@ -40,7 +40,7 @@ namespace dcsctp {
 template <class ErrorCause>
 bool ParseAndPrint(ParameterDescriptor descriptor, rtc::StringBuilder& sb) {
   if (descriptor.type == ErrorCause::kType) {
-    absl::optional<ErrorCause> p = ErrorCause::Parse(descriptor.data);
+    std::optional<ErrorCause> p = ErrorCause::Parse(descriptor.data);
     if (p.has_value()) {
       sb << p->ToString();
     } else {

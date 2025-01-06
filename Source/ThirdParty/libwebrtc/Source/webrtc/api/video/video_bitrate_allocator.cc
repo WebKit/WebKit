@@ -10,6 +10,11 @@
 
 #include "api/video/video_bitrate_allocator.h"
 
+#include <cstdint>
+
+#include "api/units/data_rate.h"
+#include "api/video/video_bitrate_allocation.h"
+
 namespace webrtc {
 
 VideoBitrateAllocationParameters::VideoBitrateAllocationParameters(
@@ -49,6 +54,6 @@ VideoBitrateAllocation VideoBitrateAllocator::Allocate(
   return GetAllocation(parameters.total_bitrate.bps(), parameters.framerate);
 }
 
-void VideoBitrateAllocator::SetLegacyConferenceMode(bool enabled) {}
+void VideoBitrateAllocator::SetLegacyConferenceMode(bool /* enabled */) {}
 
 }  // namespace webrtc

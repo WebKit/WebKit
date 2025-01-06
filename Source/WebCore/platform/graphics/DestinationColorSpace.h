@@ -39,7 +39,13 @@ public:
     WEBCORE_EXPORT static const DestinationColorSpace& DisplayP3();
 #endif
 
-    WEBCORE_EXPORT explicit DestinationColorSpace(PlatformColorSpace);
+    explicit DestinationColorSpace(PlatformColorSpace platformColorSpace)
+        : m_platformColorSpace { WTFMove(platformColorSpace) }
+    {
+#if USE(CG) || USE(SKIA)
+        ASSERT(m_platformColorSpace);
+#endif
+    }
 
 #if USE(SKIA)
     PlatformColorSpaceValue platformColorSpace() const { return m_platformColorSpace; }
@@ -50,6 +56,12 @@ public:
     PlatformColorSpace serializableColorSpace() const { return m_platformColorSpace; }
 
     WEBCORE_EXPORT std::optional<DestinationColorSpace> asRGB() const;
+
+    WEBCORE_EXPORT bool supportsOutput() const;
+
+    bool usesExtendedRange() const;
+    bool usesRec2100TransferFunctions() const;
+    bool usesStandardRange() const { return !usesExtendedRange() && !usesRec2100TransferFunctions(); }
 
 private:
     PlatformColorSpace m_platformColorSpace;

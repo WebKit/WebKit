@@ -27,12 +27,13 @@
 
 #include "ExceptionOr.h"
 #include "GPUIntegralTypes.h"
+#include "GPUTextureAspect.h"
 #include "GPUTextureDimension.h"
 #include "GPUTextureFormat.h"
 #include "WebGPUTexture.h"
 #include <optional>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,7 +45,7 @@ class GPUTextureView;
 struct GPUTextureDescriptor;
 struct GPUTextureViewDescriptor;
 
-class GPUTexture : public RefCounted<GPUTexture>, public CanMakeWeakPtr<GPUTexture> {
+class GPUTexture : public RefCountedAndCanMakeWeakPtr<GPUTexture> {
 public:
     static Ref<GPUTexture> create(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, const GPUDevice& device)
     {
@@ -70,6 +71,11 @@ public:
     GPUSize32Out sampleCount() const;
     GPUTextureDimension dimension() const;
     GPUFlagsConstant usage() const;
+
+    static GPUTextureFormat aspectSpecificFormat(GPUTextureFormat, GPUTextureAspect);
+    static uint32_t texelBlockSize(GPUTextureFormat);
+    static uint32_t texelBlockWidth(GPUTextureFormat);
+    static uint32_t texelBlockHeight(GPUTextureFormat);
 
     virtual ~GPUTexture();
 private:

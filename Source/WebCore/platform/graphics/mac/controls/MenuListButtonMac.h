@@ -28,12 +28,14 @@
 #if PLATFORM(MAC)
 
 #import "ControlMac.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MenuListButtonPart;
 
 class MenuListButtonMac final : public ControlMac {
+    WTF_MAKE_TZONE_ALLOCATED(MenuListButtonMac);
 public:
     MenuListButtonMac(MenuListButtonPart&, ControlFactoryMac&);
 

@@ -50,7 +50,7 @@
             shouldBeEqualToString('testComputedStyle("object-position: right 10px bottom 15px;")', 'calc(100% - 10px) calc(100% - 15px)');
             shouldBeEqualToString('testComputedStyle("object-position: bottom 20% right -20px;")', 'calc(100% + 20px) 80%');
             shouldBeEqualToString('testComputedStyle("object-position: calc(100% - 20px) calc(100% - 10%)")', 'calc(100% - 20px) 90%');
-            shouldBeEqualToString('testComputedStyle("object-position: right calc(100% - 20px) bottom calc(100% - 10%)")', 'calc(100% - (100% - 20px)) 10%');
+            shouldBeEqualToString('testComputedStyle("object-position: right calc(100% - 20px) bottom calc(100% - 10%)")', 'calc(0% + 20px) 10%');
             
         </script>
         <script src="../../../resources/js-test-post.js"></script>

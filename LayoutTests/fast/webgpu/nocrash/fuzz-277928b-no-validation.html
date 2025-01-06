@@ -1,0 +1,44 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let bindGroupLayout = device.createBindGroupLayout({ entries: [{ binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'storage' } }] });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let shaderModule = device.createShaderModule({ code: `
+        @fragment fn g() -> @location(0) vec4<f32> {
+            return vec4();
+        }
+        @vertex fn h() -> @builtin(position) vec4<f32> {
+            return vec4();
+        }
+    `});
+    let texture = device.createTexture({ size: { width: 20 }, sampleCount: 4, format: 'bgra8unorm', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let textureView = texture.createView();
+    let renderPipeline = await device.createRenderPipelineAsync({
+        layout: pipelineLayout,
+        multisample: { count: 4 },
+        fragment: { module: shaderModule, targets: [{ format: 'bgra8unorm' }] },
+        vertex: { module: shaderModule }
+    });
+    let buffer = device.createBuffer({ size: 26, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.VERTEX });
+    let bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [{ binding: 0, resource: {buffer: buffer, size: 8} }]
+    });
+    let commandEncoder = device.createCommandEncoder();
+    let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: ['bgra8unorm'], sampleCount: 4 });
+    renderBundleEncoder.setPipeline(renderPipeline);
+    renderBundleEncoder.setVertexBuffer(7, buffer);
+    renderBundleEncoder.draw(8);
+    let renderBundleEncoder2 = device.createRenderBundleEncoder({ colorFormats: ['bgra8unorm'], sampleCount: 4 });
+    renderBundleEncoder2.setBindGroup(0, bindGroup);
+    let renderBundle = renderBundleEncoder.finish();
+    let renderBundle2 = renderBundleEncoder2.finish();
+    let renderPassEncoder = commandEncoder.beginRenderPass({ colorAttachments: [{ view: textureView, loadOp: 'clear', storeOp: 'store' }] });
+    renderPassEncoder.executeBundles([renderBundle2, renderBundle]);
+    await device.queue.onSubmittedWorkDone();
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.waitUntilDone();
+run();
+</script>

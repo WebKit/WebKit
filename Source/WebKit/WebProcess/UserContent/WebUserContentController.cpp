@@ -104,29 +104,38 @@ InjectedBundleScriptWorld* WebUserContentController::worldForIdentifier(ContentW
     return iterator == worldMap().end() ? nullptr : iterator->value.first.ptr();
 }
 
-InjectedBundleScriptWorld* WebUserContentController::addContentWorld(const std::pair<ContentWorldIdentifier, String>& world)
+InjectedBundleScriptWorld* WebUserContentController::addContentWorld(const ContentWorldData& world)
 {
-    ASSERT(world.first);
-    if (world.first == pageContentWorldIdentifier())
+    if (world.identifier == pageContentWorldIdentifier())
         return nullptr;
-    
-    auto addResult = worldMap().ensure(world.first, [&] {
+
+    auto addResult = worldMap().ensure(world.identifier, [&] {
 #if PLATFORM(GTK) || PLATFORM(WPE)
         // The GLib API doesn't allow to create script worlds from the UI process. We need to
         // use the existing world created by the web extension if any. The world name is used
         // as the identifier.
-        if (auto* existingWorld = InjectedBundleScriptWorld::find(world.second))
+        if (auto* existingWorld = InjectedBundleScriptWorld::find(world.name))
             return std::make_pair(Ref<InjectedBundleScriptWorld>(*existingWorld), 1);
 #endif
-        return std::make_pair(InjectedBundleScriptWorld::create(world.second, InjectedBundleScriptWorld::Type::User), 1);
+        return std::make_pair(InjectedBundleScriptWorld::create(world.name, InjectedBundleScriptWorld::Type::User), 1);
     });
-    
-    if (addResult.isNewEntry)
-        return addResult.iterator->value.first.ptr();
+
+    if (addResult.isNewEntry) {
+        Ref scriptWorld = addResult.iterator->value.first;
+        if (world.options.contains(ContentWorldOption::AllowAccessToClosedShadowRoots))
+            scriptWorld->makeAllShadowRootsOpen();
+        if (world.options.contains(ContentWorldOption::AllowAutofill))
+            scriptWorld->setAllowAutofill();
+        if (world.options.contains(ContentWorldOption::AllowElementUserInfo))
+            scriptWorld->setAllowElementUserInfo();
+        if (world.options.contains(ContentWorldOption::DisableLegacyBuiltinOverrides))
+            scriptWorld->disableOverrideBuiltinsBehavior();
+        return scriptWorld.ptr();
+    }
     return nullptr;
 }
 
-void WebUserContentController::addContentWorlds(const Vector<std::pair<ContentWorldIdentifier, String>>& worlds)
+void WebUserContentController::addContentWorlds(const Vector<ContentWorldData>& worlds)
 {
     for (auto& world : worlds) {
         if (auto* contentWorld = addContentWorld(world)) {
@@ -150,7 +159,6 @@ void WebUserContentController::addContentWorlds(const Vector<std::pair<ContentWo
 void WebUserContentController::removeContentWorlds(const Vector<ContentWorldIdentifier>& worldIdentifiers)
 {
     for (auto& worldIdentifier : worldIdentifiers) {
-        ASSERT(worldIdentifier);
         ASSERT(worldIdentifier != pageContentWorldIdentifier());
 
         auto it = worldMap().find(worldIdentifier);
@@ -440,7 +448,7 @@ void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& 
             if (&page.userContentProvider() != this)
                 return;
             
-            auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+            RefPtr localMainFrame = page.localMainFrame();
             if (!localMainFrame)
                 return;
 
@@ -449,7 +457,7 @@ void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& 
                 return;
             }
 
-            for (WebCore::Frame* frame = localMainFrame; frame; frame = frame->tree().traverseNext(localMainFrame)) {
+            for (WebCore::Frame* frame = localMainFrame.get(); frame; frame = frame->tree().traverseNext(localMainFrame.get())) {
                 auto* localFrame = dynamicDowncast<LocalFrame>(frame);
                 if (!localFrame)
                     continue;

@@ -23,16 +23,10 @@
 #include "api/rtp_packet_info.h"
 #include "api/video/video_frame_type.h"
 #include "common_video/h264/h264_common.h"
-#ifdef WEBRTC_USE_H265
-#include "common_video/h265/h265_common.h"
-#endif
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
-#ifdef WEBRTC_USE_H265
-#include "modules/video_coding/codecs/h265/include/h265_globals.h"
-#endif
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/mod_ops.h"
@@ -41,13 +35,18 @@ namespace webrtc {
 namespace video_coding {
 
 PacketBuffer::Packet::Packet(const RtpPacketReceived& rtp_packet,
+                             int64_t sequence_number,
                              const RTPVideoHeader& video_header)
     : marker_bit(rtp_packet.Marker()),
       payload_type(rtp_packet.PayloadType()),
-      seq_num(rtp_packet.SequenceNumber()),
+      sequence_number(sequence_number),
       timestamp(rtp_packet.Timestamp()),
       times_nacked(-1),
-      video_header(video_header) {}
+      video_header(video_header) {
+  // Unwrapped sequence number should match the original wrapped one.
+  RTC_DCHECK_EQ(static_cast<uint16_t>(sequence_number),
+                rtp_packet.SequenceNumber());
+}
 
 PacketBuffer::PacketBuffer(size_t start_buffer_size, size_t max_buffer_size)
     : max_size_(max_buffer_size),
@@ -70,7 +69,7 @@ PacketBuffer::InsertResult PacketBuffer::InsertPacket(
     std::unique_ptr<PacketBuffer::Packet> packet) {
   PacketBuffer::InsertResult result;
 
-  uint16_t seq_num = packet->seq_num;
+  uint16_t seq_num = packet->seq_num();
   size_t index = seq_num % buffer_.size();
 
   if (!first_packet_received_) {
@@ -95,7 +94,7 @@ PacketBuffer::InsertResult PacketBuffer::InsertPacket(
 
   if (buffer_[index] != nullptr) {
     // Duplicate packet, just delete the payload.
-    if (buffer_[index]->seq_num == packet->seq_num) {
+    if (buffer_[index]->seq_num() == packet->seq_num()) {
       return result;
     }
 
@@ -146,7 +145,7 @@ void PacketBuffer::ClearTo(uint16_t seq_num) {
   size_t iterations = std::min(diff, buffer_.size());
   for (size_t i = 0; i < iterations; ++i) {
     auto& stored = buffer_[first_seq_num_ % buffer_.size()];
-    if (stored != nullptr && AheadOf<uint16_t>(seq_num, stored->seq_num)) {
+    if (stored != nullptr && AheadOf<uint16_t>(seq_num, stored->seq_num())) {
       stored = nullptr;
     }
     ++first_seq_num_;
@@ -207,7 +206,7 @@ bool PacketBuffer::ExpandBufferSize() {
   std::vector<std::unique_ptr<Packet>> new_buffer(new_size);
   for (std::unique_ptr<Packet>& entry : buffer_) {
     if (entry != nullptr) {
-      new_buffer[entry->seq_num % new_size] = std::move(entry);
+      new_buffer[entry->seq_num() % new_size] = std::move(entry);
     }
   }
   buffer_ = std::move(new_buffer);
@@ -223,13 +222,13 @@ bool PacketBuffer::PotentialNewFrame(uint16_t seq_num) const {
 
   if (entry == nullptr)
     return false;
-  if (entry->seq_num != seq_num)
+  if (entry->seq_num() != seq_num)
     return false;
   if (entry->is_first_packet_in_frame())
     return true;
   if (prev_entry == nullptr)
     return false;
-  if (prev_entry->seq_num != static_cast<uint16_t>(entry->seq_num - 1))
+  if (prev_entry->seq_num() != static_cast<uint16_t>(entry->seq_num() - 1))
     return false;
   if (prev_entry->timestamp != entry->timestamp)
     return false;
@@ -276,23 +275,21 @@ std::vector<std::unique_ptr<PacketBuffer::Packet>> PacketBuffer::FindFrames(
       bool has_h264_pps = false;
       bool has_h264_idr = false;
       bool is_h264_keyframe = false;
-      bool is_h265_descriptor = false;
-#ifdef WEBRTC_USE_H265
-      is_h265_descriptor =
-          (buffer_[start_index]->codec() == kVideoCodecH265) && !is_generic;
-      bool has_h265_sps = false;
-      bool has_h265_pps = false;
-      bool has_h265_idr = false;
-      bool is_h265_keyframe = false;
-#endif
-
       int idr_width = -1;
       int idr_height = -1;
       bool full_frame_found = false;
       while (true) {
+        // GFD is only attached to first packet of frame, so update check on
+        // every packet.
+        if (buffer_[start_index] != nullptr) {
+          is_generic = buffer_[start_index]->video_header.generic.has_value();
+          if (is_generic) {
+            is_h264_descriptor = false;
+          }
+        }
         ++tested_packets;
 
-        if (!is_h264_descriptor && !is_h265_descriptor) {
+        if (!is_h264_descriptor) {
           if (buffer_[start_index] == nullptr ||
               buffer_[start_index]->is_first_packet_in_frame()) {
             full_frame_found = buffer_[start_index] != nullptr;
@@ -303,15 +300,15 @@ std::vector<std::unique_ptr<PacketBuffer::Packet>> PacketBuffer::FindFrames(
         if (is_h264_descriptor) {
           const auto* h264_header = absl::get_if<RTPVideoHeaderH264>(
               &buffer_[start_index]->video_header.video_type_header);
-          if (!h264_header || h264_header->nalus_length >= kMaxNalusPerPacket)
+          if (!h264_header)
             return found_frames;
 
-          for (size_t j = 0; j < h264_header->nalus_length; ++j) {
-            if (h264_header->nalus[j].type == H264::NaluType::kSps) {
+          for (const NaluInfo& nalu : h264_header->nalus) {
+            if (nalu.type == H264::NaluType::kSps) {
               has_h264_sps = true;
-            } else if (h264_header->nalus[j].type == H264::NaluType::kPps) {
+            } else if (nalu.type == H264::NaluType::kPps) {
               has_h264_pps = true;
-            } else if (h264_header->nalus[j].type == H264::NaluType::kIdr) {
+            } else if (nalu.type == H264::NaluType::kIdr) {
               has_h264_idr = true;
             }
           }
@@ -330,34 +327,6 @@ std::vector<std::unique_ptr<PacketBuffer::Packet>> PacketBuffer::FindFrames(
             }
           }
         }
-#ifdef WEBRTC_USE_H265
-        if (is_h265_descriptor && !is_h265_keyframe) {
-          const auto* h265_header = absl::get_if<RTPVideoHeaderH265>(
-              &buffer_[start_index]->video_header.video_type_header);
-          if (!h265_header || h265_header->nalus_length >= kMaxNalusPerPacket)
-            return found_frames;
-          for (size_t j = 0; j < h265_header->nalus_length; ++j) {
-            if (h265_header->nalus[j].type == H265::NaluType::kSps) {
-              has_h265_sps = true;
-            } else if (h265_header->nalus[j].type == H265::NaluType::kPps) {
-              has_h265_pps = true;
-            } else if (h265_header->nalus[j].type ==
-                           H265::NaluType::kIdrWRadl ||
-                       h265_header->nalus[j].type == H265::NaluType::kIdrNLp ||
-                       h265_header->nalus[j].type == H265::NaluType::kCra) {
-              has_h265_idr = true;
-            }
-          }
-          if ((has_h265_sps && has_h265_pps) || has_h265_idr) {
-            is_h265_keyframe = true;
-            if (buffer_[start_index]->width() > 0 &&
-                buffer_[start_index]->height() > 0) {
-              idr_width = buffer_[start_index]->width();
-              idr_height = buffer_[start_index]->height();
-            }
-          }
-        }
-#endif
 
         if (tested_packets == buffer_.size())
           break;
@@ -370,7 +339,7 @@ std::vector<std::unique_ptr<PacketBuffer::Packet>> PacketBuffer::FindFrames(
         // the timestamp of that packet is the same as this one. This may cause
         // the PacketBuffer to hand out incomplete frames.
         // See: https://bugs.chromium.org/p/webrtc/issues/detail?id=7106
-        if ((is_h264_descriptor || is_h265_descriptor) &&
+        if (is_h264_descriptor &&
             (buffer_[start_index] == nullptr ||
              buffer_[start_index]->timestamp != frame_timestamp)) {
           break;
@@ -417,44 +386,7 @@ std::vector<std::unique_ptr<PacketBuffer::Packet>> PacketBuffer::FindFrames(
         }
       }
 
-#ifdef WEBRTC_USE_H265
-      if (is_h265_descriptor) {
-        // Warn if this is an unsafe frame.
-        if (has_h265_idr && (!has_h265_sps || !has_h265_pps)) {
-          RTC_LOG(LS_WARNING)
-              << "Received H.265-IDR frame "
-              << "(SPS: " << has_h265_sps << ", PPS: " << has_h265_pps << "). "
-              << "Treating as delta frame since "
-              << "WebRTC-SpsPpsIdrIsH265Keyframe is always enabled.";
-        }
-
-        // Now that we have decided whether to treat this frame as a key frame
-        // or delta frame in the frame buffer, we update the field that
-        // determines if the RtpFrameObject is a key frame or delta frame.
-        const size_t first_packet_index = start_seq_num % buffer_.size();
-        if (is_h265_keyframe) {
-          buffer_[first_packet_index]->video_header.frame_type =
-              VideoFrameType::kVideoFrameKey;
-          if (idr_width > 0 && idr_height > 0) {
-            // IDR frame was finalized and we have the correct resolution for
-            // IDR; update first packet to have same resolution as IDR.
-            buffer_[first_packet_index]->video_header.width = idr_width;
-            buffer_[first_packet_index]->video_header.height = idr_height;
-          }
-        } else {
-          buffer_[first_packet_index]->video_header.frame_type =
-              VideoFrameType::kVideoFrameDelta;
-        }
-
-        // If this is not a key frame, make sure there are no gaps in the
-        // packet sequence numbers up until this point.
-        if (!is_h265_keyframe && missing_packets_.upper_bound(start_seq_num) !=
-                                     missing_packets_.begin()) {
-          return found_frames;
-        }
-      }
-#endif
-      if (is_h264_descriptor || is_h265_descriptor || full_frame_found) {
+      if (is_h264_descriptor || full_frame_found) {
         const uint16_t end_seq_num = seq_num + 1;
         // Use uint16_t type to handle sequence number wrap around case.
         uint16_t num_packets = end_seq_num - start_seq_num;
@@ -462,7 +394,7 @@ std::vector<std::unique_ptr<PacketBuffer::Packet>> PacketBuffer::FindFrames(
         for (uint16_t i = start_seq_num; i != end_seq_num; ++i) {
           std::unique_ptr<Packet>& packet = buffer_[i % buffer_.size()];
           RTC_DCHECK(packet);
-          RTC_DCHECK_EQ(i, packet->seq_num);
+          RTC_DCHECK_EQ(i, packet->seq_num());
           // Ensure frame boundary flags are properly set.
           packet->video_header.is_first_packet_in_frame = (i == start_seq_num);
           packet->video_header.is_last_packet_in_frame = (i == seq_num);

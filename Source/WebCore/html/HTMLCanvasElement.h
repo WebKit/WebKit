@@ -62,7 +62,8 @@ struct ImageBitmapRenderingContextSettings;
 struct UncachedString;
 
 class HTMLCanvasElement final : public HTMLElement, public CanvasBase, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(HTMLCanvasElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLCanvasElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLCanvasElement);
 public:
     static Ref<HTMLCanvasElement> create(Document&);
     static Ref<HTMLCanvasElement> create(const QualifiedName&, Document&);
@@ -125,7 +126,7 @@ public:
 
     SecurityOrigin* securityOrigin() const final;
 
-    // FIXME: Only some canvas rendering contexts need an ImageBuffer.
+    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=275100): Only some canvas rendering contexts need an ImageBuffer.
     // It would be better to have the contexts own the buffers.
     void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&) final;
 
@@ -144,6 +145,8 @@ public:
     void ref() const final { HTMLElement::ref(); }
     void deref() const final { HTMLElement::deref(); }
 
+    using HTMLElement::scriptExecutionContext;
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
@@ -159,6 +162,7 @@ private:
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    bool isReplaced(const RenderStyle&) const final;
 
     bool canContainRangeEndPoint() const final;
     bool canStartSelection() const final;
@@ -168,15 +172,9 @@ private:
     void createImageBuffer() const final;
     void clearImageBuffer() const;
 
-    bool hasCreatedImageBuffer() const final { return m_hasCreatedImageBuffer; }
-
     void setSurfaceSize(const IntSize&);
 
-    bool paintsIntoCanvasBuffer() const;
-
-    bool isGPUBased() const;
-
-    bool shouldNotifyRendererOnDidDraw() const;
+    bool usesContentsAsLayerContents() const;
 
     void refCanvasBase() const final { HTMLElement::ref(); }
     void derefCanvasBase() const final { HTMLElement::deref(); }
@@ -189,8 +187,6 @@ private:
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
     mutable std::unique_ptr<CSSParserContext> m_cssParserContext;
     bool m_ignoreReset { false };
-    // m_hasCreatedImageBuffer means we tried to malloc the buffer. We didn't necessarily get it.
-    mutable bool m_hasCreatedImageBuffer { false };
     mutable bool m_didClearImageBuffer { false };
 #if ENABLE(WEBGL)
     bool m_hasRelevantWebGLEventListener { false };

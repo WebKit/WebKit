@@ -32,6 +32,7 @@
 #include "Timer.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,7 +40,7 @@ class DeviceClient;
 class Page;
 
 class DeviceController : public Supplement<Page>, public CanMakeCheckedPtr<DeviceController> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DeviceController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceController);
 public:
     explicit DeviceController(DeviceClient&);

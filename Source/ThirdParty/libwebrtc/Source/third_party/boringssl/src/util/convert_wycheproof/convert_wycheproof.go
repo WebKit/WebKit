@@ -29,7 +29,6 @@ type wycheproofTest struct {
 	Algorithm        string            `json:"algorithm"`
 	GeneratorVersion string            `json:"generatorVersion"`
 	NumberOfTests    int               `json:"numberOfTests"`
-	Notes            map[string]string `json:"notes"`
 	Header           []string          `json:"header"`
 	// encoding/json does not support collecting unused keys, so we leave
 	// everything past this point as generic.

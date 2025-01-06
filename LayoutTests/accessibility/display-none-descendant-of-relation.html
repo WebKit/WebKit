@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div style="display:contents" id="div">
+    <p>Text</p>
+    <script>
+    // Should not be announced
+    </script>
+</div>
+<button aria-labelledby="div">foo</button>
+
+<script>
+var output = "This test ensures we do not expose display:none descendants in the accessibility tree, even if they are a target of a relationship.\n\n";
+
+if (window.accessibilityController) {
+    output += dumpAXSearchTraversal(accessibilityController.rootElement.childAtIndex(0));
+    debug(output);
+}
+</script>
+</body>
+</html>
+

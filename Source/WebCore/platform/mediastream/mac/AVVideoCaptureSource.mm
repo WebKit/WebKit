@@ -80,10 +80,10 @@ using namespace WebCore;
 @end
 
 @interface WebCoreAVVideoCaptureSourceObserver : NSObject<AVCaptureVideoDataOutputSampleBufferDelegate, AVCapturePhotoCaptureDelegate> {
-    AVVideoCaptureSource* m_callback;
+    ThreadSafeWeakPtr<AVVideoCaptureSource> m_captureSource;
 }
 
--(id)initWithCallback:(AVVideoCaptureSource*)callback;
+-(id)initWithCaptureSource:(AVVideoCaptureSource*)captureSource;
 -(void)disconnect;
 -(void)addNotificationObservers;
 -(void)removeNotificationObservers;
@@ -99,15 +99,6 @@ using namespace WebCore;
 @end
 
 namespace WebCore {
-
-static inline OSType avVideoCapturePixelBufferFormat()
-{
-#if HAVE(DISPLAY_LAYER_BIPLANAR_SUPPORT)
-    return preferedPixelBufferFormat();
-#else
-    return kCVPixelFormatType_420YpCbCr8Planar;
-#endif
-}
 
 static dispatch_queue_t globaVideoCaptureSerialQueue()
 {
@@ -221,7 +212,13 @@ static WorkQueue& photoQueue()
     return queue.get();
 }
 
-CaptureSourceOrError AVVideoCaptureSource::create(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
+static bool s_useAVCaptureDeviceRotationCoordinatorAPI = false;
+void AVVideoCaptureSource::setUseAVCaptureDeviceRotationCoordinatorAPI(bool value)
+{
+    s_useAVCaptureDeviceRotationCoordinatorAPI = value;
+}
+
+CaptureSourceOrError AVVideoCaptureSource::create(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
 {
     auto *avDevice = [PAL::getAVCaptureDeviceClass() deviceWithUniqueID:device.persistentId()];
     if (!avDevice)
@@ -247,14 +244,11 @@ static double cameraZoomScaleFactor(AVCaptureDeviceType deviceType)
 #endif
 }
 
-AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDevice* avDevice, const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
+AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDevice* avDevice, const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
     : RealtimeVideoCaptureSource(device, WTFMove(hashSalts), pageIdentifier)
-    , m_objcObserver(adoptNS([[WebCoreAVVideoCaptureSourceObserver alloc] initWithCallback:this]))
+    , m_objcObserver(adoptNS([[WebCoreAVVideoCaptureSourceObserver alloc] initWithCaptureSource:this]))
     , m_device(avDevice)
     , m_zoomScaleFactor(cameraZoomScaleFactor([avDevice deviceType]))
-#if PLATFORM(IOS_FAMILY)
-    , m_startupTimer(*this, &AVVideoCaptureSource::startupTimerFired)
-#endif
     , m_verifyCapturingTimer(*this, &AVVideoCaptureSource::verifyIsCapturing)
     , m_defaultTorchMode((int64_t)[m_device torchMode])
 {
@@ -335,8 +329,12 @@ void AVVideoCaptureSource::startProducingData()
 
 #if PLATFORM(IOS_FAMILY)
     m_shouldCallNotifyMutedChange = false;
+
+    if (!m_startupTimer)
+        m_startupTimer = makeUnique<Timer>(*this, &AVVideoCaptureSource::startupTimerFired);
+
     static constexpr Seconds startupTimerInterval = 1_s;
-    m_startupTimer.startOneShot(startupTimerInterval);
+    m_startupTimer->startOneShot(startupTimerInterval);
 #endif
 }
 
@@ -416,10 +414,21 @@ void AVVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettin
 {
     m_currentSettings = std::nullopt;
 
-    if (settings.contains(RealtimeMediaSourceSettings::Flag::WhiteBalanceMode))
-        updateWhiteBalanceMode();
-    if (settings.contains(RealtimeMediaSourceSettings::Flag::Torch))
-        updateTorch();
+    bool whiteBalanceModeChanged = settings.contains(RealtimeMediaSourceSettings::Flag::WhiteBalanceMode);
+    bool torchChanged = settings.contains(RealtimeMediaSourceSettings::Flag::Torch);
+    if (!whiteBalanceModeChanged && !torchChanged)
+        return;
+
+    m_pendingSettingsChanges = settings;
+    scheduleDeferredTask([this, whiteBalanceModeChanged, torchChanged] {
+        startApplyingConstraints();
+        if (whiteBalanceModeChanged)
+            updateWhiteBalanceMode();
+        if (torchChanged)
+            updateTorch();
+        endApplyingConstraints();
+        m_pendingSettingsChanges = { };
+    });
 }
 
 static bool isZoomSupported(const Vector<VideoPreset>& presets)
@@ -487,14 +496,21 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
 
     if (!supportedWhiteBalanceModes(device()).isEmpty()) {
         supportedConstraints.setSupportsWhiteBalanceMode(true);
-        settings.setWhiteBalanceMode(meteringModeFromAVCaptureWhiteBalanceMode([device() whiteBalanceMode]));
+        auto value = m_pendingSettingsChanges.contains(RealtimeMediaSourceSettings::Flag::WhiteBalanceMode) ? whiteBalanceMode() : meteringModeFromAVCaptureWhiteBalanceMode([device() whiteBalanceMode]);
+        settings.setWhiteBalanceMode(value);
     }
 
     if ([device() hasTorch]) {
         supportedConstraints.setSupportsTorch(true);
-        settings.setTorch([device() torchMode] == AVCaptureTorchModeOn);
+        auto value = m_pendingSettingsChanges.contains(RealtimeMediaSourceSettings::Flag::Torch) ? torch() : [device() torchMode] == AVCaptureTorchModeOn;
+        settings.setTorch(value);
     }
 
+#if PLATFORM(IOS_FAMILY)
+    supportedConstraints.setSupportsPowerEfficient(true);
+    if (canBePowerEfficient())
+        settings.setPowerEfficient(m_currentPreset ? m_currentPreset->isEfficient() : false);
+#endif
     settings.setSupportedConstraints(supportedConstraints);
 
     m_currentSettings = WTFMove(settings);
@@ -539,7 +555,11 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
     }
 
     capabilities.setBackgroundBlur(device().portraitEffectActive ? RealtimeMediaSourceCapabilities::BackgroundBlur::On : RealtimeMediaSourceCapabilities::BackgroundBlur::Off);
-    supportedConstraints.setSupportsBackgroundBlur(true);
+
+#if PLATFORM(IOS_FAMILY)
+    supportedConstraints.setSupportsPowerEfficient(true);
+    capabilities.setPowerEfficient(canBePowerEfficient());
+#endif
 
     capabilities.setSupportedConstraints(supportedConstraints);
     updateCapabilities(capabilities);
@@ -786,18 +806,7 @@ double AVVideoCaptureSource::facingModeFitnessScoreAdjustment() const
     return fitnessScore;
 }
 
-bool AVVideoCaptureSource::prefersPreset(const VideoPreset& preset)
-{
-#if PLATFORM(IOS_FAMILY)
-    return [preset.format() isVideoBinned];
-#else
-    UNUSED_PARAM(preset);
-#endif
-
-    return true;
-}
-
-void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRate, double requestedZoom, std::optional<VideoPreset>&& preset)
+void AVVideoCaptureSource::applyFrameRateAndZoomWithPreset(double requestedFrameRate, double requestedZoom, std::optional<VideoPreset>&& preset)
 {
     requestedZoom *= m_zoomScaleFactor;
     if (m_currentFrameRate == requestedFrameRate && m_currentZoom == requestedZoom && preset && m_currentPreset && preset->format() == m_currentPreset->format())
@@ -813,20 +822,39 @@ void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRa
     m_currentZoom = requestedZoom;
 
     setSessionSizeFrameRateAndZoom();
+
+#if PLATFORM(IOS_FAMILY)
+    // Updating the device configuration may switch off the torch. We reenable torch asynchronously if needed.
+    if (torch()) {
+        m_pendingSettingsChanges = { RealtimeMediaSourceSettings::Flag::Torch };
+        scheduleDeferredTask([this] {
+            startApplyingConstraints();
+            updateTorch();
+            endApplyingConstraints();
+            m_pendingSettingsChanges = { };
+        });
+    }
+#endif
 }
 
-static bool isSameFrameRateRange(AVFrameRateRange* a, AVFrameRateRange* b)
+static bool isFrameRateMatching(double frameRate, AVCaptureDevice* device)
 {
-    return a.minFrameRate == b.minFrameRate && a.maxFrameRate == b.maxFrameRate && !PAL::CMTimeCompare(a.minFrameDuration, b.minFrameDuration) && !PAL::CMTimeCompare(a.maxFrameDuration, b.maxFrameDuration);
+    auto activeVideoMinFrameDuration = device.activeVideoMinFrameDuration;
+    auto activeVideoMaxFrameDuration = device.activeVideoMaxFrameDuration;
+    if (CMTIME_IS_INVALID(activeVideoMinFrameDuration) || CMTIME_IS_INVALID(activeVideoMaxFrameDuration))
+        return false;
+
+    auto frameDuration = PAL::CMTimeMake(1, frameRate);
+    return PAL::CMTimeCompare(frameDuration, activeVideoMinFrameDuration) >= 0 && PAL::CMTimeCompare(frameDuration, activeVideoMaxFrameDuration) <= 0;
 }
 
-bool AVVideoCaptureSource::areSettingsMatching(AVFrameRateRange* frameRateRange) const
+bool AVVideoCaptureSource::areSettingsMatching() const
 {
     return m_appliedPreset && m_appliedPreset->format() == m_currentPreset->format() &&
 #if PLATFORM(IOS_FAMILY)
         device().videoZoomFactor == m_currentZoom &&
 #endif
-        isSameFrameRateRange(m_appliedFrameRateRange.get(), frameRateRange);
+        isFrameRateMatching(m_currentFrameRate, device());
 }
 
 void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
@@ -838,12 +866,13 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
     if (!m_currentPreset)
         return;
 
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeFrameRateAndZoom { m_currentPreset->size().width(), m_currentPreset->size().height(), m_currentFrameRate, m_currentZoom });
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeFrameRateAndZoom { m_currentPreset->size().width(), m_currentPreset->size().height(), m_currentFrameRate, m_currentZoom }
+#if PLATFORM(IOS_FAMILY)
+        , " binned: ", !!m_currentPreset->format().isVideoBinned
+#endif
+    );
 
-    auto* frameRateRange = frameDurationForFrameRate(m_currentFrameRate);
-    ASSERT(frameRateRange);
-
-    if (areSettingsMatching(frameRateRange)) {
+    if (areSettingsMatching()) {
         ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, " settings already match");
         return;
     }
@@ -859,7 +888,7 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
 
 #if PLATFORM(MAC)
         auto settingsDictionary = @{
-            (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(avVideoCapturePixelBufferFormat()),
+            (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(preferedPixelBufferFormat()),
             (__bridge NSString *)kCVPixelBufferWidthKey: @(m_currentPreset->size().width()),
             (__bridge NSString *)kCVPixelBufferHeightKey: @(m_currentPreset->size().height()),
             (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
@@ -867,6 +896,8 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
         [m_videoOutput setVideoSettings:settingsDictionary];
 #endif
 
+        auto* frameRateRange = frameDurationForFrameRate(m_currentFrameRate);
+        ASSERT(frameRateRange);
         if (frameRateRange) {
             m_currentFrameRate = clampTo(m_currentFrameRate, frameRateRange.minFrameRate, frameRateRange.maxFrameRate);
 
@@ -890,7 +921,6 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
         }
 #endif
 
-        m_appliedFrameRateRange = frameRateRange;
         m_appliedPreset = m_currentPreset;
     } @catch(NSException *exception) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error configuring device ", exception.name, ", reason : ", exception.reason);
@@ -964,6 +994,7 @@ void AVVideoCaptureSource::updateWhiteBalanceMode()
     }
 
     [device unlockForConfiguration];
+    m_currentSettings = std::nullopt;
 }
 
 void AVVideoCaptureSource::updateTorch()
@@ -994,6 +1025,7 @@ void AVVideoCaptureSource::updateTorch()
     }
 
     [device unlockForConfiguration];
+    m_currentSettings = std::nullopt;
 }
 
 IntDegrees AVVideoCaptureSource::sensorOrientationFromVideoOutput()
@@ -1045,7 +1077,9 @@ bool AVVideoCaptureSource::setupSession()
         return false;
     }
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(APPLETV)
+    [m_session setMultitaskingCameraAccessEnabled:YES];
+#elif PLATFORM(IOS_FAMILY)
     PAL::AVCaptureSessionSetAuthorizedToUseCameraInMultipleForegroundAppLayout(m_session.get());
 #endif
     [m_session addObserver:m_objcObserver.get() forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:(void *)nil];
@@ -1096,7 +1130,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
     [session() addInput:videoIn.get()];
 
     m_videoOutput = adoptNS([PAL::allocAVCaptureVideoDataOutputInstance() init]);
-    auto settingsDictionary = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys: @(avVideoCapturePixelBufferFormat()), kCVPixelBufferPixelFormatTypeKey, nil]);
+    auto settingsDictionary = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys: @(preferedPixelBufferFormat()), kCVPixelBufferPixelFormatTypeKey, nil]);
 
     [m_videoOutput setVideoSettings:settingsDictionary.get()];
     [m_videoOutput setAlwaysDiscardsLateVideoFrames:YES];
@@ -1107,6 +1141,16 @@ bool AVVideoCaptureSource::setupCaptureSession()
         return false;
     }
     [session() addOutput:m_videoOutput.get()];
+
+#if PLATFORM(IOS_FAMILY)
+    if (s_useAVCaptureDeviceRotationCoordinatorAPI) {
+        AVCaptureConnection* connection = [m_videoOutput connectionWithMediaType:AVMediaTypeVideo];
+        if ([connection isVideoRotationAngleSupported:0]) {
+            RELEASE_LOG(WebRTC, "Setting AVVideoCaptureSource connection angle to 0");
+            [connection setVideoRotationAngle:0];
+        }
+    }
+#endif
 
     setSessionSizeFrameRateAndZoom();
     m_needsTorchReconfiguration = m_needsTorchReconfiguration || torch();
@@ -1127,13 +1171,11 @@ void AVVideoCaptureSource::monitorOrientation(OrientationNotifier& notifier)
 {
 #if PLATFORM(IOS_FAMILY)
     if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeExternalUnknown() && [device() deviceType] == AVCaptureDeviceTypeExternalUnknown)
-        return;
+        m_useSensorAndDeviceOrientation = false;
+#endif
 
     notifier.addObserver(*this);
     orientationChanged(notifier.orientation());
-#else
-    UNUSED_PARAM(notifier);
-#endif
 }
 
 void AVVideoCaptureSource::orientationChanged(IntDegrees orientation)
@@ -1144,8 +1186,26 @@ void AVVideoCaptureSource::orientationChanged(IntDegrees orientation)
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "rotation = ", m_videoFrameRotation, ", orientation = ", m_deviceOrientation);
 }
 
+void AVVideoCaptureSource::rotationAngleForHorizonLevelDisplayChanged(const String& devicePersistentId, VideoFrameRotation videoFrameRotation)
+{
+    if (captureDevice().persistentId() != devicePersistentId)
+        return;
+
+    m_useSensorAndDeviceOrientation = false;
+
+    if (videoFrameRotation == m_videoFrameRotation)
+        return;
+
+    m_videoFrameRotation = videoFrameRotation;
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "rotation = ", m_videoFrameRotation);
+    notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
+}
+
 void AVVideoCaptureSource::computeVideoFrameRotation()
 {
+    if (!m_useSensorAndDeviceOrientation)
+        return;
+
     bool frontCamera = [device() position] == AVCaptureDevicePositionFront;
     VideoFrame::Rotation videoFrameRotation;
     switch (m_sensorOrientation - m_deviceOrientation) {
@@ -1233,7 +1293,7 @@ void AVVideoCaptureSource::captureSessionIsRunningDidChange(bool state)
         updateVerifyCapturingTimer();
 
 #if PLATFORM(IOS_FAMILY)
-        if (m_startupTimer.isActive()) {
+        if (m_startupTimer && m_startupTimer->isActive()) {
             m_shouldCallNotifyMutedChange = true;
             return;
         }
@@ -1266,6 +1326,16 @@ bool AVVideoCaptureSource::interrupted() const
     return RealtimeMediaSource::interrupted();
 }
 
+static bool isFormatPowerEfficient(AVCaptureDeviceFormat* format)
+{
+#if PLATFORM(IOS_FAMILY)
+    return format.isVideoBinned;
+#else
+    UNUSED_PARAM(format);
+    return false;
+#endif
+}
+
 void AVVideoCaptureSource::generatePresets()
 {
     Vector<VideoPreset> presets;
@@ -1283,7 +1353,7 @@ void AVVideoCaptureSource::generatePresets()
         for (AVFrameRateRange* range in [format videoSupportedFrameRateRanges])
             frameRates.append({ range.minFrameRate, range.maxFrameRate});
 
-        VideoPreset preset { size, WTFMove(frameRates), computeMinZoom(), computeMaxZoom(format) };
+        VideoPreset preset { size, WTFMove(frameRates), computeMinZoom(), computeMaxZoom(format), isFormatPowerEfficient(format) };
         preset.setFormat(format);
         presets.append(WTFMove(preset));
     }
@@ -1332,13 +1402,13 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
 
 @implementation WebCoreAVVideoCaptureSourceObserver
 
-- (id)initWithCallback:(AVVideoCaptureSource*)callback
+- (id)initWithCaptureSource:(AVVideoCaptureSource*)captureSource
 {
     self = [super init];
     if (!self)
         return nil;
 
-    m_callback = callback;
+    m_captureSource = captureSource;
 
     return self;
 }
@@ -1347,19 +1417,20 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     [self removeNotificationObservers];
-    m_callback = nullptr;
+    m_captureSource = nullptr;
 }
 
 - (void)addNotificationObservers
 {
-    ASSERT(m_callback);
+    auto source = m_captureSource.get();
+    ASSERT(source);
 
     NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
 
     [center addObserver:self selector:@selector(deviceConnectedDidChange:) name:AVCaptureDeviceWasDisconnectedNotification object:nil];
 
 #if PLATFORM(IOS_FAMILY)
-    AVCaptureSession* session = m_callback->session();
+    AVCaptureSession* session = source->session();
     [center addObserver:self selector:@selector(sessionRuntimeError:) name:AVCaptureSessionRuntimeErrorNotification object:session];
     [center addObserver:self selector:@selector(beginSessionInterrupted:) name:AVCaptureSessionWasInterruptedNotification object:session];
     [center addObserver:self selector:@selector(endSessionInterrupted:) name:AVCaptureSessionInterruptionEndedNotification object:session];
@@ -1373,19 +1444,14 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
 
 - (void)captureOutput:(AVCaptureOutput*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection*)connection
 {
-    if (!m_callback)
-        return;
-
-    m_callback->captureOutputDidOutputSampleBufferFromConnection(captureOutput, sampleBuffer, connection);
+    if (auto source = m_captureSource.get())
+        source->captureOutputDidOutputSampleBufferFromConnection(captureOutput, sampleBuffer, connection);
 }
 
 - (void)captureOutput:(AVCapturePhotoOutput *)captureOutput didFinishProcessingPhoto:(AVCapturePhoto *)photo error:(NSError *)error
 {
-    if (!m_callback)
-        return;
-
-    m_callback->captureOutputDidFinishProcessingPhoto(captureOutput, photo, error);
-
+    if (auto source = m_captureSource.get())
+        source->captureOutputDidFinishProcessingPhoto(captureOutput, photo, error);
 }
 
 - (void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
@@ -1393,17 +1459,18 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
     UNUSED_PARAM(object);
     UNUSED_PARAM(context);
 
-    if (!m_callback)
+    auto source = m_captureSource.get();
+    if (!source)
         return;
 
     id newValue = [change valueForKey:NSKeyValueChangeNewKey];
     bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
 
 #if !RELEASE_LOG_DISABLED
-    if (m_callback->loggerPtr()) {
-        auto identifier = Logger::LogSiteIdentifier("AVVideoCaptureSource"_s, "observeValueForKeyPath"_s, m_callback->logIdentifier());
+    if (source->loggerPtr()) {
+        auto identifier = Logger::LogSiteIdentifier("AVVideoCaptureSource"_s, "observeValueForKeyPath"_s, source->logIdentifier());
         RetainPtr<NSString> valueString = adoptNS([[NSString alloc] initWithFormat:@"%@", newValue]);
-        m_callback->logger().logAlways(m_callback->logChannel(), identifier, willChange ? "will" : "did", " change '", [keyPath UTF8String], "' to ", [valueString UTF8String]);
+        source->logger().logAlways(source->logChannel(), identifier, willChange ? "will" : "did", " change '", [keyPath UTF8String], "' to ", [valueString UTF8String]);
     }
 #endif
 
@@ -1411,35 +1478,35 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
         return;
 
     if ([keyPath isEqualToString:@"running"])
-        m_callback->captureSessionIsRunningDidChange([newValue boolValue]);
+        source->captureSessionIsRunningDidChange([newValue boolValue]);
     if ([keyPath isEqualToString:@"suspended"])
-        m_callback->captureDeviceSuspendedDidChange();
+        source->captureDeviceSuspendedDidChange();
 }
 
 - (void)deviceConnectedDidChange:(NSNotification*)notification
 {
-    if (m_callback)
-        m_callback->deviceDisconnected(notification);
+    if (auto source = m_captureSource.get())
+        source->deviceDisconnected(notification);
 }
 
 #if PLATFORM(IOS_FAMILY)
 - (void)sessionRuntimeError:(NSNotification*)notification
 {
     NSError *error = notification.userInfo[AVCaptureSessionErrorKey];
-    if (m_callback)
-        m_callback->captureSessionRuntimeError(error);
+    if (auto source = m_captureSource.get())
+        source->captureSessionRuntimeError(error);
 }
 
 - (void)beginSessionInterrupted:(NSNotification*)notification
 {
-    if (m_callback)
-        m_callback->captureSessionBeginInterruption(notification);
+    if (auto source = m_captureSource.get())
+        source->captureSessionBeginInterruption(notification);
 }
 
 - (void)endSessionInterrupted:(NSNotification*)notification
 {
-    if (m_callback)
-        m_callback->captureSessionEndInterruption(notification);
+    if (auto source = m_captureSource.get())
+        source->captureSessionEndInterruption(notification);
 }
 #endif
 

@@ -1,0 +1,8 @@
+
+FAIL CSS Values and Units Test: attr() invalidation of pseudo elements assert_not_equals: Change of attribute value should lead to invalidation of ::after element style. got disallowed value "16px"
+FAIL CSS Values and Units Test: attr() invalidation of pseudo elements 1 assert_not_equals: Change of attribute value should lead to invalidation of ::backdrop element style. got disallowed value "16px"
+FAIL CSS Values and Units Test: attr() invalidation of pseudo elements 2 assert_not_equals: Change of attribute value should lead to invalidation of ::before element style. got disallowed value "16px"
+FAIL CSS Values and Units Test: attr() invalidation of pseudo elements 3 assert_not_equals: Change of attribute value should lead to invalidation of ::first-letter element style. got disallowed value "16px"
+FAIL CSS Values and Units Test: attr() invalidation of pseudo elements 4 assert_not_equals: Change of attribute value should lead to invalidation of ::first-line element style. got disallowed value "16px"
+FAIL CSS Values and Units Test: attr() invalidation of pseudo elements 5 assert_not_equals: Change of attribute value should lead to invalidation of ::selection element style. got disallowed value "16px"
+

@@ -33,7 +33,7 @@
 #include "PlatformPath.h"
 #include "WindRule.h"
 #include <wtf/DataRef.h>
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -42,7 +42,7 @@ class PathTraversalState;
 class RoundedRect;
 
 class Path {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Path);
 public:
     Path() = default;
     WEBCORE_EXPORT Path(PathSegment&&);
@@ -55,11 +55,13 @@ public:
     Path& operator=(const Path&) = default;
     Path& operator=(Path&&) = default;
 
+    WEBCORE_EXPORT bool definitelyEqual(const Path&) const;
+
     WEBCORE_EXPORT void moveTo(const FloatPoint&);
 
     WEBCORE_EXPORT void addLineTo(const FloatPoint&);
     WEBCORE_EXPORT void addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint);
-    void addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint);
+    WEBCORE_EXPORT void addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint);
     void addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius);
 
     void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, RotationDirection);
@@ -85,6 +87,8 @@ public:
 
     WEBCORE_EXPORT std::optional<PathSegment> singleSegment() const;
     std::optional<PathDataLine> singleDataLine() const;
+    std::optional<PathRect> singleRect() const;
+    std::optional<PathRoundedRect> singleRoundedRect() const;
     std::optional<PathArc> singleArc() const;
     std::optional<PathClosedArc> singleClosedArc() const;
     std::optional<PathDataQuadCurve> singleQuadCurve() const;
@@ -109,8 +113,10 @@ public:
     bool strokeContains(const FloatPoint&, const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
 
     WEBCORE_EXPORT FloatRect fastBoundingRect() const;
-    FloatRect boundingRect() const;
+    WEBCORE_EXPORT FloatRect boundingRect() const;
     FloatRect strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier = { }) const;
+
+    WEBCORE_EXPORT void ensureImplForTesting();
 
 private:
     PlatformPathImpl& ensurePlatformPathImpl();

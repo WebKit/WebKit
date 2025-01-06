@@ -23,13 +23,15 @@
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
     
 class SVGPathElement;
 
 class SVGMPathElement final : public SVGElement, public SVGURIReference {
-    WTF_MAKE_ISO_ALLOCATED(SVGMPathElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGMPathElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGMPathElement);
 public:
     static Ref<SVGMPathElement> create(const QualifiedName&, Document&);
 
@@ -39,10 +41,10 @@ public:
 
     void targetPathChanged();
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMPathElement, SVGElement, SVGURIReference>;
+
 private:
     SVGMPathElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMPathElement, SVGElement, SVGURIReference>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

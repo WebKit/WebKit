@@ -31,6 +31,8 @@
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/ProcessID.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,12 +43,6 @@
 namespace WebCore {
 class PlatformMediaSession;
 class AudioCaptureSource;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PlatformMediaSession> : std::true_type { };
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AudioCaptureSource> : std::true_type { };
 }
 
 namespace WTF {
@@ -127,7 +123,8 @@ public:
 };
 
 class PlatformMediaSession
-    : public CanMakeWeakPtr<PlatformMediaSession>
+    : public CanMakeCheckedPtr<PlatformMediaSession>
+    , public CanMakeWeakPtr<PlatformMediaSession>
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     , public MediaPlaybackTargetClient
 #endif
@@ -135,7 +132,8 @@ class PlatformMediaSession
     , private LoggerHelper
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PlatformMediaSession);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlatformMediaSession);
 public:
     static std::unique_ptr<PlatformMediaSession> create(PlatformMediaSessionManager&, PlatformMediaSessionClient&);
 
@@ -232,8 +230,8 @@ public:
     bool preparingToPlay() const { return m_preparingToPlay; }
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const final { return m_logger.get(); }
-    const void* logIdentifier() const override { return m_logIdentifier; }
+    const Logger& logger() const final;
+    uint64_t logIdentifier() const final;
     ASCIILiteral logClassName() const override { return "PlatformMediaSession"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -251,30 +249,38 @@ public:
 
     MediaSessionIdentifier mediaSessionIdentifier() const { return m_mediaSessionIdentifier; }
 
+    bool isActiveNowPlayingSession() const { return m_isActiveNowPlayingSession; }
+    void setActiveNowPlayingSession(bool);
+
+    ProcessID presentingApplicationPID() const;
+
+#if !RELEASE_LOG_DISABLED
+    virtual String description() const;
+#endif
+
 protected:
     PlatformMediaSession(PlatformMediaSessionManager&, PlatformMediaSessionClient&);
     PlatformMediaSessionClient& client() const { return m_client; }
 
 private:
     bool processClientWillPausePlayback(DelayCallingUpdateNowPlaying);
-    size_t interruptionCount() const { return m_interruptionStack.size(); }
+    size_t activeInterruptionCount() const;
 
     PlatformMediaSessionClient& m_client;
     MediaSessionIdentifier m_mediaSessionIdentifier;
     State m_state { State::Idle };
     State m_stateToRestore { State::Idle };
-    Vector<InterruptionType> m_interruptionStack;
-    int m_interruptionCount { 0 };
+    struct Interruption {
+        InterruptionType type { InterruptionType::NoInterruption };
+        bool ignored { false };
+    };
+    Vector<Interruption> m_interruptionStack;
     bool m_active { false };
     bool m_notifyingClient { false };
     bool m_isPlayingToWirelessPlaybackTarget { false };
     bool m_hasPlayedAudiblySinceLastInterruption { false };
     bool m_preparingToPlay { false };
-
-#if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
-#endif
+    bool m_isActiveNowPlayingSession { false };
 
     friend class PlatformMediaSessionManager;
 };
@@ -314,7 +320,7 @@ public:
 
     virtual bool isPlayingOnSecondScreen() const { return false; }
 
-    virtual MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const = 0;
+    virtual std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const = 0;
 
     virtual bool hasMediaStreamSource() const { return false; }
 
@@ -326,8 +332,13 @@ public:
     virtual std::optional<NowPlayingInfo> nowPlayingInfo() const;
     virtual WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlatformMediaSession::PlaybackControlsPurpose) { return nullptr; }
 
+    virtual void isActiveNowPlayingSessionChanged() = 0;
+
+    virtual ProcessID presentingApplicationPID() const = 0;
+
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;
+    virtual uint64_t logIdentifier() const = 0;
 #endif
 
 protected:
@@ -336,6 +347,7 @@ protected:
 
 String convertEnumerationToString(PlatformMediaSession::State);
 String convertEnumerationToString(PlatformMediaSession::InterruptionType);
+String convertEnumerationToString(PlatformMediaSession::MediaType);
 WEBCORE_EXPORT String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType);
 
 } // namespace WebCore
@@ -366,6 +378,14 @@ struct LogArgument<WebCore::PlatformMediaSession::RemoteControlCommandType> {
     static String toString(const WebCore::PlatformMediaSession::RemoteControlCommandType command)
     {
         return convertEnumerationToString(command);
+    }
+};
+
+template <>
+struct LogArgument<WebCore::PlatformMediaSession::MediaType> {
+    static String toString(const WebCore::PlatformMediaSession::MediaType mediaType)
+    {
+        return convertEnumerationToString(mediaType);
     }
 };
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@
 namespace WebCore {
 
 struct DetachedRTCDataChannel {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DetachedRTCDataChannel, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(DetachedRTCDataChannel);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     DetachedRTCDataChannel(RTCDataChannelIdentifier identifier, String&& label, RTCDataChannelInit&& options, RTCDataChannelState state)
         : identifier(identifier)

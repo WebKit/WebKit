@@ -30,7 +30,7 @@ TEST(VideoRtpDepacketizerAv1Test, ParsePassFullRtpPayloadAsCodecPayload) {
   const uint8_t packet[] = {(uint8_t{1} << 7) | kObuCountOne, 1, 2, 3, 4};
   rtc::CopyOnWriteBuffer rtp_payload(packet);
   VideoRtpDepacketizerAv1 depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(rtp_payload);
   ASSERT_TRUE(parsed);
   EXPECT_EQ(parsed->video_payload.size(), sizeof(packet));
@@ -44,7 +44,7 @@ TEST(VideoRtpDepacketizerAv1Test,
       kObuHeaderFrame};  // Value doesn't matter since it is a
                          // continuation of the OBU from previous packet.
   VideoRtpDepacketizerAv1 depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(rtc::CopyOnWriteBuffer(packet));
   ASSERT_TRUE(parsed);
   EXPECT_FALSE(parsed->video_header.is_first_packet_in_frame);
@@ -54,7 +54,7 @@ TEST(VideoRtpDepacketizerAv1Test,
      ParseTreatsNoContinuationFlagAsBeginningOfFrame) {
   const uint8_t packet[] = {(uint8_t{0} << 7) | kObuCountOne, kObuHeaderFrame};
   VideoRtpDepacketizerAv1 depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(rtc::CopyOnWriteBuffer(packet));
   ASSERT_TRUE(parsed);
   EXPECT_TRUE(parsed->video_header.is_first_packet_in_frame);
@@ -64,7 +64,7 @@ TEST(VideoRtpDepacketizerAv1Test, ParseTreatsWillContinueFlagAsNotEndOfFrame) {
   const uint8_t packet[] = {(uint8_t{1} << 6) | kObuCountOne, kObuHeaderFrame};
   rtc::CopyOnWriteBuffer rtp_payload(packet);
   VideoRtpDepacketizerAv1 depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(rtp_payload);
   ASSERT_TRUE(parsed);
   EXPECT_FALSE(parsed->video_header.is_last_packet_in_frame);
@@ -73,7 +73,7 @@ TEST(VideoRtpDepacketizerAv1Test, ParseTreatsWillContinueFlagAsNotEndOfFrame) {
 TEST(VideoRtpDepacketizerAv1Test, ParseTreatsNoWillContinueFlagAsEndOfFrame) {
   const uint8_t packet[] = {(uint8_t{0} << 6) | kObuCountOne, kObuHeaderFrame};
   VideoRtpDepacketizerAv1 depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(rtc::CopyOnWriteBuffer(packet));
   ASSERT_TRUE(parsed);
   EXPECT_TRUE(parsed->video_header.is_last_packet_in_frame);
@@ -84,7 +84,7 @@ TEST(VideoRtpDepacketizerAv1Test,
   const uint8_t packet[] = {(uint8_t{1} << 3) | kObuCountOne,
                             kObuHeaderSequenceHeader};
   VideoRtpDepacketizerAv1 depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(rtc::CopyOnWriteBuffer(packet));
   ASSERT_TRUE(parsed);
   EXPECT_TRUE(parsed->video_header.is_first_packet_in_frame);
@@ -97,7 +97,7 @@ TEST(VideoRtpDepacketizerAv1Test,
   const uint8_t packet[] = {(uint8_t{0} << 3) | kObuCountOne,
                             kObuHeaderSequenceHeader};
   VideoRtpDepacketizerAv1 depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(rtc::CopyOnWriteBuffer(packet));
   ASSERT_TRUE(parsed);
   EXPECT_TRUE(parsed->video_header.is_first_packet_in_frame);

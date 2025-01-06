@@ -1,0 +1,112 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+
+  navigator.serviceWorker.register("empty.js").then(() => {
+    window.setTimeout(async () => {
+      if (!window.IPC)
+        return window.testRunner?.notifyDone();
+      const { CoreIPC } = await import('./coreipc.js');
+      await CoreIPC.Networking.ServiceWorkerFetchTask.DidFinish(0, {
+        metrics: {
+          redirectStart: {
+            secondsSinceEpochSeconds: 69
+          },
+          fetchStart: {
+            secondsSinceEpochSeconds: 103
+          },
+          domainLookupStart: {
+            secondsSinceEpochSeconds: 66
+          },
+          domainLookupEnd: {
+            secondsSinceEpochSeconds: 20
+          },
+          connectStart: {
+            secondsSinceEpochSeconds: 106
+          },
+          secureConnectionStart: {
+            secondsSinceEpochSeconds: 347892350986
+          },
+          connectEnd: {
+            secondsSinceEpochSeconds: 90194313277
+          },
+          requestStart: {
+            secondsSinceEpochSeconds: 112
+          },
+          responseStart: {
+            secondsSinceEpochSeconds: 99
+          },
+          responseEnd: {
+            secondsSinceEpochSeconds: 64
+          },
+          workerStart: {
+            secondsSinceEpochSeconds: 26
+          },
+          protocol: '',
+          redirectCount: 384,
+          isComplete: false,
+          isCellular: false,
+          isExpensive: false,
+          isConstrained: false,
+          isMultipath: false,
+          reusedConnection: false,
+          doesFailTAOCheck: true,
+          crossOriginRedirect: false,
+          privacyStance: 3,
+          responseBodyBytesReceived: 820,
+          responseBodyDecodedSize: 981,
+          additionalNetworkLoadMetricsForWebInspector: {
+            optionalValue: {
+              priority: 2,
+              remoteAddress: '',
+              connectionIdentifier: '',
+              tlsProtocol: '',
+              tlsCipher: '',
+              requestHeaders: {
+                commonHeaders: [{
+                  key: 20,
+                  value: ''
+                }, {
+                  key: 70,
+                  value: ''
+                }, {
+                  key: 92,
+                  value: ''
+                }, {
+                  key: 62,
+                  value: ''
+                }, {
+                  key: 34,
+                  value: ''
+                }, {
+                  key: 33,
+                  value: ''
+                }, {
+                  key: 35,
+                  value: ''
+                }, {
+                  key: 40,
+                  value: ''
+                }, {
+                  key: 68,
+                  value: ''
+                }],
+                uncommonHeaders: []
+              },
+              requestHeaderBytesSent: 298,
+              responseHeaderBytesReceived: 411,
+              requestBodyBytesSent: 828,
+              isProxyConnection: false
+            }
+          }
+        }
+      });
+      window.testRunner?.notifyDone();
+    }, 5);
+  })
+</script>

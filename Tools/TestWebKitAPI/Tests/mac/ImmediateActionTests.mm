@@ -32,75 +32,12 @@
 #import "Test.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
+#import "WKWebViewForTestingImmediateActions.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKHitTestResult.h>
 #import <pal/spi/cocoa/RevealSPI.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <wtf/RetainPtr.h>
-
-static NSPoint gSwizzledImmediateActionLocation = NSZeroPoint;
-static NSPoint swizzledImmediateActionLocationInView(id, SEL, NSView *)
-{
-    return gSwizzledImmediateActionLocation;
-}
-
-using ImmediateActionHitTestResult = std::pair<RetainPtr<_WKHitTestResult>, _WKImmediateActionType>;
-
-@interface WKWebViewForTestingImmediateActions : TestWKWebView
-
-@property (nonatomic, readonly) NSImmediateActionGestureRecognizer *immediateActionGesture;
-
-- (ImmediateActionHitTestResult)simulateImmediateAction:(NSPoint)location;
-
-@end
-
-@implementation WKWebViewForTestingImmediateActions {
-    bool _hasReturnedImmediateActionController;
-    RetainPtr<_WKHitTestResult> _hitTestResult;
-    _WKImmediateActionType _actionType;
-}
-
-- (id)_immediateActionAnimationControllerForHitTestResult:(_WKHitTestResult *)hitTestResult withType:(_WKImmediateActionType)type userData:(id <NSSecureCoding>)userData
-{
-    _hasReturnedImmediateActionController = true;
-    _hitTestResult = hitTestResult;
-    _actionType = type;
-    return [super _immediateActionAnimationControllerForHitTestResult:hitTestResult withType:type userData:userData];
-}
-
-- (NSImmediateActionGestureRecognizer *)immediateActionGesture
-{
-    for (NSGestureRecognizer *gesture in [self gestureRecognizers]) {
-        if ([gesture isKindOfClass:NSImmediateActionGestureRecognizer.class])
-            return static_cast<NSImmediateActionGestureRecognizer *>(gesture);
-    }
-    return nil;
-}
-
-- (ImmediateActionHitTestResult)simulateImmediateAction:(NSPoint)location
-{
-    auto immediateActionGesture = self.immediateActionGesture;
-    if (!immediateActionGesture.delegate)
-        return ImmediateActionHitTestResult { nil, _WKImmediateActionNone };
-
-    _hasReturnedImmediateActionController = false;
-
-    InstanceMethodSwizzler swizzleLocationInView {
-        NSImmediateActionGestureRecognizer.class,
-        @selector(locationInView:),
-        reinterpret_cast<IMP>(swizzledImmediateActionLocationInView),
-    };
-
-    gSwizzledImmediateActionLocation = location;
-    [immediateActionGesture.delegate immediateActionRecognizerWillPrepare:immediateActionGesture];
-
-    TestWebKitAPI::Util::run(&_hasReturnedImmediateActionController);
-
-    _hasReturnedImmediateActionController = false;
-    return { std::exchange(_hitTestResult, nil), std::exchange(_actionType, _WKImmediateActionNone) };
-}
-
-@end
 
 @interface RVPresentingContext (Internal)
 @property (nonatomic, readonly, weak) id<RVPresenterHighlightDelegate> highlightDelegate;

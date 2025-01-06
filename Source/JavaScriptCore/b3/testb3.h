@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AirCCallingConvention.h"
 #include "AirCode.h"
 #include "AirInstInlines.h"
 #include "AirStackSlot.h"
@@ -79,7 +80,6 @@
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/StdList.h>
-#include <wtf/TZoneMallocInitialization.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFProcess.h>
 #include <wtf/text/StringCommon.h>
@@ -94,7 +94,9 @@ inline void usage()
         exitProcess(1);
 }
 
-#if ENABLE(B3_JIT) && !CPU(ARM)
+#if ENABLE(B3_JIT)
+
+using JSC::B3::Air::cCallArgumentValues;
 
 using namespace JSC;
 using namespace JSC::B3;
@@ -194,18 +196,68 @@ extern Lock crashLock;
     }
 
 
+extern bool g_dumpB3AfterGeneration;
+
 inline std::unique_ptr<Compilation> compileProc(Procedure& procedure, unsigned optLevel = Options::defaultB3OptLevel())
 {
     procedure.setOptLevel(optLevel);
+    if (g_dumpB3AfterGeneration)
+        procedure.setShouldDumpIR();
     return makeUnique<Compilation>(B3::compile(procedure));
 }
+
+template<typename T>
+struct ArgumentTweaker {
+    using Result = T;
+    static Result tweak(T t)
+    {
+        return t;
+    }
+};
+
+#if CPU(ARM_THUMB2)
+
+// Air and B3 (rightly) use the register names d0-d15 to refer to FPRs--this is
+// a useful simplification since any FPR in JSC will typically hold a
+// double-precision float.
+//
+// However, in the context of testb3, we do sometimes want to talk about
+// single-precision floats and, notably, to pass them as arguments between C and
+// the JITted code.
+//
+// This presents a problem since C will use the odd-numberd s1-s31 without
+// batting an eye; we need to prevent this from happening.
+//
+// To achieve this, we pass nominally `float` arguments as a `FrakenFloat`
+// instead--on armv7, this ensures that an argument `float x` will go into an
+// even-numbered FPR and the odd-numbered FPR will be occupied by the
+// `unusedUnaddressable` field of the FrankenFloat.
+
+struct FrankenFloat {
+    float real;
+    float unusedUnaddressable;
+};
+
+template<>
+struct ArgumentTweaker<float> {
+    using Result = FrankenFloat;
+    static Result tweak(float f)
+    {
+        return FrankenFloat { f, 0.0f };
+    }
+};
+
+#endif
+
+template <typename T>
+using TweakedArgument = typename ArgumentTweaker<T>::Result;
 
 template<typename T, typename... Arguments>
 T invoke(CodePtr<JITCompilationPtrTag> ptr, Arguments... arguments)
 {
     void* executableAddress = untagCFunctionPtr<JITCompilationPtrTag>(ptr.taggedPtr());
-    T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(executableAddress);
-    return function(arguments...);
+    T (SYSV_ABI *function)(TweakedArgument<Arguments>...) = std::bit_cast<T(SYSV_ABI *)(TweakedArgument<Arguments>...)>(executableAddress);
+    return function(ArgumentTweaker<Arguments>::tweak(arguments)...);
 }
 
 template<typename T, typename... Arguments>
@@ -285,6 +337,10 @@ typedef B3Operand<int8_t> Int8Operand;
 
 #define MAKE_OPERAND(value) B3Operand<decltype(value)> { #value, value }
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846264338327950288
+#endif
+
 template<typename FloatType>
 void populateWithInterestingValues(Vector<B3Operand<FloatType>>& operands)
 {
@@ -323,51 +379,84 @@ Vector<B3Operand<FloatType>> floatingPointOperands()
 
 inline Vector<V128Operand> v128Operands()
 {
-    Vector<V128Operand> operands;
-    operands.append({ "0,0", v128_t { 0, 0 } });
-    operands.append({ "1,0", v128_t { 1, 0 } });
-    operands.append({ "0,1", v128_t { 0, 1 } });
-    operands.append({ "42,0", v128_t { 42, 0 } });
-    operands.append({ "0,42", v128_t { 0, 42 } });
-    operands.append({ "42,42", v128_t { 42, 42 } });
-    operands.append({ "-42,-42", v128_t { static_cast<uint64_t>(-42), static_cast<uint64_t>(-42) } });
-    operands.append({ "0,-42", v128_t { 0, static_cast<uint64_t>(-42) } });
-    operands.append({ "-42,0", v128_t { static_cast<uint64_t>(-42), 0 } });
-    operands.append({ "int64-max,int64-max", v128_t { static_cast<uint64_t>(std::numeric_limits<int64_t>::max()), static_cast<uint64_t>(std::numeric_limits<int64_t>::max()) } });
-    operands.append({ "int64-min,int64-min", v128_t { static_cast<uint64_t>(std::numeric_limits<int64_t>::min()), static_cast<uint64_t>(std::numeric_limits<int64_t>::min()) } });
-    operands.append({ "int32-max,int32-max", v128_t { static_cast<uint64_t>(std::numeric_limits<int32_t>::max()), static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) } });
-    operands.append({ "int32-min,int32-min", v128_t { static_cast<uint64_t>(std::numeric_limits<int32_t>::min()), static_cast<uint64_t>(std::numeric_limits<int32_t>::min()) } });
-    operands.append({ "uint64-max,uint64-max", v128_t { static_cast<uint64_t>(std::numeric_limits<uint64_t>::max()), static_cast<uint64_t>(std::numeric_limits<uint64_t>::max()) } });
-    operands.append({ "uint64-min,uint64-min", v128_t { static_cast<uint64_t>(std::numeric_limits<uint64_t>::min()), static_cast<uint64_t>(std::numeric_limits<uint64_t>::min()) } });
-    operands.append({ "uint32-max,uint32-max", v128_t { static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()), static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()) } });
-    operands.append({ "uint32-min,uint32-min", v128_t { static_cast<uint64_t>(std::numeric_limits<uint32_t>::min()), static_cast<uint64_t>(std::numeric_limits<uint32_t>::min()) } });
-
-    return operands;
+    return {
+        { "0,0", v128_t { 0, 0 } },
+        { "1,0", v128_t { 1, 0 } },
+        { "0,1", v128_t { 0, 1 } },
+        { "42,0", v128_t { 42, 0 } },
+        { "0,42", v128_t { 0, 42 } },
+        { "42,42", v128_t { 42, 42 } },
+        { "-42,-42", v128_t { static_cast<uint64_t>(-42), static_cast<uint64_t>(-42) } },
+        { "0,-42", v128_t { 0, static_cast<uint64_t>(-42) } },
+        { "-42,0", v128_t { static_cast<uint64_t>(-42), 0 } },
+        { "int64-max,int64-max", v128_t { static_cast<uint64_t>(std::numeric_limits<int64_t>::max()), static_cast<uint64_t>(std::numeric_limits<int64_t>::max()) } },
+        { "int64-min,int64-min", v128_t { static_cast<uint64_t>(std::numeric_limits<int64_t>::min()), static_cast<uint64_t>(std::numeric_limits<int64_t>::min()) } },
+        { "int32-max,int32-max", v128_t { static_cast<uint64_t>(std::numeric_limits<int32_t>::max()), static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) } },
+        { "int32-min,int32-min", v128_t { static_cast<uint64_t>(std::numeric_limits<int32_t>::min()), static_cast<uint64_t>(std::numeric_limits<int32_t>::min()) } },
+        { "uint64-max,uint64-max", v128_t { static_cast<uint64_t>(std::numeric_limits<uint64_t>::max()), static_cast<uint64_t>(std::numeric_limits<uint64_t>::max()) } },
+        { "uint64-min,uint64-min", v128_t { static_cast<uint64_t>(std::numeric_limits<uint64_t>::min()), static_cast<uint64_t>(std::numeric_limits<uint64_t>::min()) } },
+        { "uint32-max,uint32-max", v128_t { static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()), static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()) } },
+        { "uint32-min,uint32-min", v128_t { static_cast<uint64_t>(std::numeric_limits<uint32_t>::min()), static_cast<uint64_t>(std::numeric_limits<uint32_t>::min()) } },
+    };
 }
 
 inline Vector<Int64Operand> int64Operands()
 {
-    Vector<Int64Operand> operands;
-    operands.append({ "0", 0 });
-    operands.append({ "1", 1 });
-    operands.append({ "-1", -1 });
-    operands.append({ "42", 42 });
-    operands.append({ "-42", -42 });
-    operands.append({ "int64-max", std::numeric_limits<int64_t>::max() });
-    operands.append({ "int64-min", std::numeric_limits<int64_t>::min() });
-    operands.append({ "int32-max", std::numeric_limits<int32_t>::max() });
-    operands.append({ "int32-min", std::numeric_limits<int32_t>::min() });
-    operands.append({ "uint64-max", static_cast<int64_t>(std::numeric_limits<uint64_t>::max()) });
-    operands.append({ "uint64-min", static_cast<int64_t>(std::numeric_limits<uint64_t>::min()) });
-    operands.append({ "uint32-max", static_cast<int64_t>(std::numeric_limits<uint32_t>::max()) });
-    operands.append({ "uint32-min", static_cast<int64_t>(std::numeric_limits<uint32_t>::min()) });
-    
-    return operands;
+    return {
+        { "0", 0 },
+        { "1", 1 },
+        { "-1", -1 },
+        { "42", 42 },
+        { "-42", -42 },
+        { "int64-max", std::numeric_limits<int64_t>::max() },
+        { "int64-min", std::numeric_limits<int64_t>::min() },
+        { "int32-max", std::numeric_limits<int32_t>::max() },
+        { "int32-min", std::numeric_limits<int32_t>::min() },
+        { "uint64-max", static_cast<int64_t>(std::numeric_limits<uint64_t>::max()) },
+        { "uint64-min", static_cast<int64_t>(std::numeric_limits<uint64_t>::min()) },
+        { "uint32-max", static_cast<int64_t>(std::numeric_limits<uint32_t>::max()) },
+        { "uint32-min", static_cast<int64_t>(std::numeric_limits<uint32_t>::min()) },
+    };
+}
+
+inline Vector<Int64Operand> int64OperandsMore()
+{
+    return {
+        { "0", 0 },
+        { "1", 1 },
+        { "2", 2 },
+        { "2", 3 },
+        { "4", 4 },
+        { "24", 24 },
+        { "42", 42 },
+        { "15887", 15887 },
+        { "65534", 65534 },
+        { "65535", 65535 },
+        { "65536", 65536 },
+        { "-1", -1 },
+        { "-2", -2 },
+        { "-3", -3 },
+        { "-4", -4 },
+        { "-24", -24 },
+        { "-42", -42 },
+        { "-15887", -15887 },
+        { "-65534", -65534 },
+        { "-65535", -65535 },
+        { "-65536", -65536 },
+        { "int64-max", std::numeric_limits<int64_t>::max() },
+        { "int64-min", std::numeric_limits<int64_t>::min() },
+        { "int32-max", std::numeric_limits<int32_t>::max() },
+        { "int32-min", std::numeric_limits<int32_t>::min() },
+        { "uint64-max", static_cast<int64_t>(std::numeric_limits<uint64_t>::max()) },
+        { "uint64-min", static_cast<int64_t>(std::numeric_limits<uint64_t>::min()) },
+        { "uint32-max", static_cast<int64_t>(std::numeric_limits<uint32_t>::max()) },
+        { "uint32-min", static_cast<int64_t>(std::numeric_limits<uint32_t>::min()) },
+    };
 }
 
 inline Vector<Int32Operand> int32Operands()
 {
-    Vector<Int32Operand> operands({
+    return {
         { "0", 0 },
         { "1", 1 },
         { "-1", -1 },
@@ -377,13 +466,43 @@ inline Vector<Int32Operand> int32Operands()
         { "int32-min", std::numeric_limits<int32_t>::min() },
         { "uint32-max", static_cast<int32_t>(std::numeric_limits<uint32_t>::max()) },
         { "uint32-min", static_cast<int32_t>(std::numeric_limits<uint32_t>::min()) }
-    });
-    return operands;
+    };
+}
+
+inline Vector<Int32Operand> int32OperandsMore()
+{
+    return {
+        { "0", 0 },
+        { "1", 1 },
+        { "2", 2 },
+        { "2", 3 },
+        { "4", 4 },
+        { "24", 24 },
+        { "42", 42 },
+        { "15887", 15887 },
+        { "65534", 65534 },
+        { "65535", 65535 },
+        { "65536", 65536 },
+        { "-1", -1 },
+        { "-2", -2 },
+        { "-3", -3 },
+        { "-4", -4 },
+        { "-24", -24 },
+        { "-42", -42 },
+        { "-15887", -15887 },
+        { "-65534", -65534 },
+        { "-65535", -65535 },
+        { "-65536", -65536 },
+        { "int32-max", std::numeric_limits<int32_t>::max() },
+        { "int32-min", std::numeric_limits<int32_t>::min() },
+        { "uint32-max", static_cast<int32_t>(std::numeric_limits<uint32_t>::max()) },
+        { "uint32-min", static_cast<int32_t>(std::numeric_limits<uint32_t>::min()) }
+    };
 }
 
 inline Vector<Int16Operand> int16Operands()
 {
-    Vector<Int16Operand> operands({
+    return {
         { "0", 0 },
         { "1", 1 },
         { "-1", -1 },
@@ -393,13 +512,12 @@ inline Vector<Int16Operand> int16Operands()
         { "int16-min", std::numeric_limits<int16_t>::min() },
         { "uint16-max", static_cast<int16_t>(std::numeric_limits<uint16_t>::max()) },
         { "uint16-min", static_cast<int16_t>(std::numeric_limits<uint16_t>::min()) }
-    });
-    return operands;
+    };
 }
 
 inline Vector<Int8Operand> int8Operands()
 {
-    Vector<Int8Operand> operands({
+    return {
         { "0", 0 },
         { "1", 1 },
         { "-1", -1 },
@@ -409,8 +527,7 @@ inline Vector<Int8Operand> int8Operands()
         { "int8-min", std::numeric_limits<int8_t>::min() },
         { "uint8-max", static_cast<int8_t>(std::numeric_limits<uint8_t>::max()) },
         { "uint8-min", static_cast<int8_t>(std::numeric_limits<uint8_t>::min()) }
-    });
-    return operands;
+    };
 }
 
 inline void add32(CCallHelpers& jit, GPRReg src1, GPRReg src2, GPRReg dest)
@@ -456,6 +573,7 @@ struct TestConfig {
 };
 
 void run(const TestConfig* filter);
+
 void testBitAndSExt32(int32_t value, int64_t mask);
 void testUbfx32ShiftAnd();
 void testUbfx32AndShift();
@@ -509,6 +627,8 @@ void testSubWithUnsignedRightShift32();
 void testSubWithLeftShift64();
 void testSubWithRightShift64();
 void testSubWithUnsignedRightShift64();
+void testAddZeroExtend64();
+void testAddSignExtend64();
 
 void testAndLeftShift32();
 void testAndRightShift32();
@@ -570,7 +690,7 @@ void testPatchpointDoubleRegs();
 void testSpillDefSmallerThanUse();
 void testSpillUseLargerThanDef();
 void testLateRegister();
-extern "C" void interpreterPrint(Vector<intptr_t>* stream, intptr_t value);
+extern "C" void SYSV_ABI interpreterPrint(Vector<intptr_t>* stream, intptr_t value);
 void testInterpreter();
 void testReduceStrengthCheckBottomUseInAnotherBlock();
 void testResetReachabilityDanglingReference();
@@ -633,8 +753,8 @@ void testBitNotMem(int64_t);
 void testBitNotArg32(int32_t);
 void testBitNotImm32(int32_t);
 void testBitNotMem32(int32_t);
-void testNotOnBooleanAndBranch32(int64_t, int64_t);
-void testBitNotOnBooleanAndBranch32(int64_t, int64_t);
+void testNotOnBooleanAndBranch32(int32_t, int32_t);
+void testBitNotOnBooleanAndBranch32(int32_t, int32_t);
 void testShlArgs(int64_t, int64_t);
 void testShlImms(int64_t, int64_t);
 void testShlArgImm(int64_t, int64_t);
@@ -752,7 +872,7 @@ void testIToF32Imm(int32_t value);
 void testIToDReducedToIToF64Arg();
 void testIToDReducedToIToF32Arg();
 void testStoreZeroReg();
-void testStore32(int value);
+void testStore32(int32_t value);
 void testStoreConstant(int value);
 void testStoreConstantPtr(intptr_t value);
 void testStore8Arg();
@@ -765,8 +885,8 @@ void testAdd1(int value);
 void testAdd1Ptr(intptr_t value);
 void testNeg32(int32_t value);
 void testNegPtr(intptr_t value);
-void testStoreAddLoad32(int amount);
-void testStoreRelAddLoadAcq32(int amount);
+void testStoreAddLoad32(int32_t amount);
+void testStoreRelAddLoadAcq32(int32_t amount);
 void testStoreAddLoadImm32(int amount);
 void testStoreAddLoad8(int amount, B3::Opcode loadOpcode);
 void testStoreRelAddLoadAcq8(int amount, B3::Opcode loadOpcode);
@@ -897,17 +1017,17 @@ void testLoadOffsetScaledUnsignedImm12Max();
 void testLoadOffsetScaledUnsignedOverImm12Max();
 void testAddTreeArg32(int32_t);
 void testMulTreeArg32(int32_t);
-void testArg(int argument);
+void testArg(int64_t argument);
 void testReturnConst64(int64_t value);
 void testReturnVoid();
 void testLoadZeroExtendIndexAddress();
 void testLoadSignExtendIndexAddress();
 void testStoreZeroExtendIndexAddress();
 void testStoreSignExtendIndexAddress();
-void testAddArg(int);
-void testAddArgs(int, int);
-void testAddArgImm(int, int);
-void testAddImmArg(int, int);
+void testAddArg(int64_t);
+void testAddArgs(int64_t, int64_t);
+void testAddArgImm(int64_t, int64_t);
+void testAddImmArg(int64_t, int64_t);
 void testAddArgMem(int64_t, int64_t);
 void testAddMemArg(int64_t, int64_t);
 void testAddImmMem(int64_t, int64_t);
@@ -916,8 +1036,8 @@ void testAddArgs32(int, int);
 void testAddArgMem32(int32_t, int32_t);
 void testAddMemArg32(int32_t, int32_t);
 void testAddImmMem32(int32_t, int32_t);
-void testAddNeg1(int, int);
-void testAddNeg2(int, int);
+void testAddNeg1(int64_t, int64_t);
+void testAddNeg2(int64_t, int64_t);
 void testAddArgZeroImmZDef();
 void testAddLoadTwice();
 void testAddArgDouble(double);
@@ -959,11 +1079,11 @@ void testAddArgFloatWithUselessDoubleConversion(float);
 void testAddArgsFloatWithUselessDoubleConversion(float, float);
 void testAddArgsFloatWithEffectfulDoubleConversion(float, float);
 void testAddMulMulArgs(int64_t, int64_t, int64_t c);
-void testMulArg(int);
-void testMulArgStore(int);
-void testMulAddArg(int);
-void testMulArgs(int, int);
-void testMulArgNegArg(int, int);
+void testMulArg(int32_t);
+void testMulArgStore(int32_t);
+void testMulAddArg(int32_t);
+void testMulArgs(int64_t, int64_t);
+void testMulArgNegArg(int64_t, int64_t);
 void testCheckMulArgumentAliasing64();
 void testCheckMulArgumentAliasing32();
 void testCheckMul64SShr();
@@ -981,9 +1101,9 @@ void testCallPairResult(int, int);
 void testCallPairResultRare(int, int);
 void testReturnDouble(double value);
 void testReturnFloat(float value);
-void testMulNegArgArg(int, int);
+void testMulNegArgArg(int64_t, int64_t);
 void testMulArgImm(int64_t, int64_t);
-void testMulImmArg(int, int);
+void testMulImmArg(int64_t, int64_t);
 void testMulArgs32(int, int);
 void testMulArgs32SignExtend();
 void testMulArgs32ZeroExtend();
@@ -1148,30 +1268,30 @@ void testUDivArgsInt32(uint32_t, uint32_t);
 void testUDivArgsInt64(uint64_t, uint64_t);
 void testUModArgsInt32(uint32_t, uint32_t);
 void testUModArgsInt64(uint64_t, uint64_t);
-void testSubArg(int);
-void testSubArgs(int, int);
+void testSubArg(int64_t);
+void testSubArgs(int64_t, int64_t);
 void testSubArgImm(int64_t, int64_t);
-void testSubNeg(int, int);
-void testNegSub(int, int);
-void testNegValueSubOne(int);
-void testSubSub(int, int, int c);
-void testSubSub2(int, int, int c);
-void testSubAdd(int, int, int c);
-void testSubFirstNeg(int, int);
-void testSubImmArg(int, int);
+void testSubNeg(int64_t, int64_t);
+void testNegSub(int64_t, int64_t);
+void testNegValueSubOne(int64_t);
+void testSubSub(intptr_t, intptr_t, intptr_t c);
+void testSubSub2(intptr_t, intptr_t, intptr_t c);
+void testSubAdd(int64_t, int64_t, int64_t c);
+void testSubFirstNeg(int64_t, int64_t);
+void testSubImmArg(int64_t, int64_t);
 void testSubArgMem(int64_t, int64_t);
 void testSubMemArg(int64_t, int64_t);
 void testSubImmMem(int64_t, int64_t);
 void testSubMemImm(int64_t, int64_t);
 void testSubArgs32(int, int);
 void testSubArgs32ZeroExtend(int, int);
-void testSubArgImm32(int, int);
-void testSubImmArg32(int, int);
+void testSubArgImm32(int32_t, int32_t);
+void testSubImmArg32(int32_t, int32_t);
 void testSubMemArg32(int32_t, int32_t);
 void testSubArgMem32(int32_t, int32_t);
 void testSubImmMem32(int32_t, int32_t);
 void testSubMemImm32(int32_t, int32_t);
-void testNegValueSubOne32(int);
+void testNegValueSubOne32(int32_t);
 void testNegMulArgImm(int64_t, int64_t);
 void testSubMulMulArgs(int64_t, int64_t, int64_t c);
 void testSubArgDouble(double);
@@ -1202,14 +1322,15 @@ void addAtomicTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
 void addLoadTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
 void addTupleTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
 
-bool shouldRun(const TestConfig*, const char* testName);
-
 void testCSEStoreWithLoop();
+
+bool shouldRun(const TestConfig*, const char* testName);
 
 void testLoadPreIndex32();
 void testLoadPreIndex64();
 void testLoadPostIndex32();
 void testLoadPostIndex64();
+void testLoadPreIndex32WithStore();
 
 void testStorePreIndex32();
 void testStorePreIndex64();
@@ -1246,5 +1367,11 @@ void testVectorFmulByElementFloat();
 void testVectorFmulByElementDouble();
 void testVectorExtractLane0Float();
 void testVectorExtractLane0Double();
+
+void testConstDoubleMove();
+void testConstFloatMove();
+
+void testSShrCompare32(int32_t);
+void testSShrCompare64(int64_t);
 
 #endif // ENABLE(B3_JIT)

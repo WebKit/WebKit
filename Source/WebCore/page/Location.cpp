@@ -36,13 +36,14 @@
 #include "LocalFrame.h"
 #include "NavigationScheduler.h"
 #include "SecurityOrigin.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Location);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Location);
 
 Location::Location(DOMWindow& window)
     : m_window(window)
@@ -285,7 +286,7 @@ void Location::reload(LocalDOMWindow& activeWindow)
     if (targetDocument->url().protocolIsJavaScript())
         return;
 
-    localFrame->checkedNavigationScheduler()->scheduleRefresh(activeDocument);
+    localFrame->protectedNavigationScheduler()->scheduleRefresh(activeDocument);
 }
 
 ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& urlString)

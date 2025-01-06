@@ -12,8 +12,11 @@
     </script>
     <div></div>
     <script>
-        if (window.testRunner)
-            testRunner.displayAndTrackRepaints();
+        onload = async () => {
+            testRunner?.waitUntilDone();
+            await testRunner?.displayAndTrackRepaints();
+            testRunner?.notifyDone();
+        }
     </script>
 </body>
 </html>

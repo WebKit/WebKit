@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -76,7 +76,7 @@ void av1_build_compound_diffwtd_mask_highbd_ssse3(
         }
       }
     } else {
-      const __m128i xshift = xx_set1_64_from_32i(bd - 8 + DIFF_FACTOR_LOG2);
+      const __m128i xshift = _mm_set1_epi64x(bd - 8 + DIFF_FACTOR_LOG2);
       if (mask_type == DIFFWTD_38_INV) {
         for (int i = 0; i < h; ++i) {
           for (int j = 0; j < w; j += 8) {

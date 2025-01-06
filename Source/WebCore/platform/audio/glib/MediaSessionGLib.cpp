@@ -25,9 +25,13 @@
 #include "MediaSessionManagerGLib.h"
 #include <gio/gio.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSessionGLib);
 
 #define DBUS_MPRIS_OBJECT_PATH "/org/mpris/MediaPlayer2"
 #define DBUS_MPRIS_PLAYER_INTERFACE "org.mpris.MediaPlayer2.Player"
@@ -36,13 +40,13 @@ namespace WebCore {
 static std::optional<PlatformMediaSession::RemoteControlCommandType> getCommand(const char* name)
 {
     static const std::pair<ComparableASCIILiteral, PlatformMediaSession::RemoteControlCommandType> commandList[] = {
-        { "Next", PlatformMediaSession::RemoteControlCommandType::NextTrackCommand },
-        { "Pause", PlatformMediaSession::RemoteControlCommandType::PauseCommand },
-        { "Play", PlatformMediaSession::RemoteControlCommandType::PlayCommand },
-        { "PlayPause", PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand },
-        { "Previous", PlatformMediaSession::RemoteControlCommandType::PreviousTrackCommand },
-        { "Seek", PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand },
-        { "Stop", PlatformMediaSession::RemoteControlCommandType::StopCommand }
+        { "Next"_s, PlatformMediaSession::RemoteControlCommandType::NextTrackCommand },
+        { "Pause"_s, PlatformMediaSession::RemoteControlCommandType::PauseCommand },
+        { "Play"_s, PlatformMediaSession::RemoteControlCommandType::PlayCommand },
+        { "PlayPause"_s, PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand },
+        { "Previous"_s, PlatformMediaSession::RemoteControlCommandType::PreviousTrackCommand },
+        { "Seek"_s, PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand },
+        { "Stop"_s, PlatformMediaSession::RemoteControlCommandType::StopCommand }
     };
 
     static const SortedArrayMap map { commandList };
@@ -95,22 +99,22 @@ enum class MprisProperty : uint8_t {
 static std::optional<MprisProperty> getMprisProperty(const char* propertyName)
 {
     static constexpr std::pair<ComparableASCIILiteral, MprisProperty> propertiesList[] {
-        { "CanControl", MprisProperty::CanControl },
-        { "CanGoNext", MprisProperty::CanGoNext },
-        { "CanGoPrevious", MprisProperty::CanGoPrevious },
-        { "CanPause", MprisProperty::CanPause },
-        { "CanPlay", MprisProperty::CanPlay },
-        { "CanQuit", MprisProperty::CanQuit },
-        { "CanRaise", MprisProperty::CanRaise },
-        { "CanSeek", MprisProperty::CanSeek },
-        { "DesktopEntry", MprisProperty::DesktopEntry },
-        { "HasTrackList", MprisProperty::HasTrackList },
-        { "Identity", MprisProperty::Identity },
-        { "Metadata", MprisProperty::GetMetadata },
-        { "PlaybackStatus", MprisProperty::GetPlaybackStatus },
-        { "Position", MprisProperty::GetPosition },
-        { "SupportedMimeTypes", MprisProperty::SupportedMimeTypes },
-        { "SupportedUriSchemes", MprisProperty::SupportedUriSchemes }
+        { "CanControl"_s, MprisProperty::CanControl },
+        { "CanGoNext"_s, MprisProperty::CanGoNext },
+        { "CanGoPrevious"_s, MprisProperty::CanGoPrevious },
+        { "CanPause"_s, MprisProperty::CanPause },
+        { "CanPlay"_s, MprisProperty::CanPlay },
+        { "CanQuit"_s, MprisProperty::CanQuit },
+        { "CanRaise"_s, MprisProperty::CanRaise },
+        { "CanSeek"_s, MprisProperty::CanSeek },
+        { "DesktopEntry"_s, MprisProperty::DesktopEntry },
+        { "HasTrackList"_s, MprisProperty::HasTrackList },
+        { "Identity"_s, MprisProperty::Identity },
+        { "Metadata"_s, MprisProperty::GetMetadata },
+        { "PlaybackStatus"_s, MprisProperty::GetPlaybackStatus },
+        { "Position"_s, MprisProperty::GetPosition },
+        { "SupportedMimeTypes"_s, MprisProperty::SupportedMimeTypes },
+        { "SupportedUriSchemes"_s, MprisProperty::SupportedUriSchemes }
     };
     static constexpr SortedArrayMap map { propertiesList };
     auto value = map.get(StringView::fromLatin1(propertyName), MprisProperty::NoProperty);
@@ -226,8 +230,10 @@ bool MediaSessionGLib::ensureMprisSessionRegistered()
         return false;
     }
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     m_playerRegistrationId = g_dbus_connection_register_object(m_connection.get(), DBUS_MPRIS_OBJECT_PATH, mprisInterface->interfaces[1],
         &gInterfaceVTable, this, nullptr, &error.outPtr());
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     if (!m_playerRegistrationId) {
         g_warning("Failed at MPRIS object registration: %s", error->message);
@@ -284,7 +290,8 @@ void MediaSessionGLib::updateNowPlaying(NowPlayingInfo& nowPlayingInfo)
     GVariantBuilder propertiesBuilder;
     g_variant_builder_init(&propertiesBuilder, G_VARIANT_TYPE("a{sv}"));
     g_variant_builder_add(&propertiesBuilder, "{sv}", "Metadata", getMetadataAsGVariant(nowPlayingInfo));
-    emitPropertiesChanged(g_variant_new("(sa{sv}as)", DBUS_MPRIS_PLAYER_INTERFACE, &propertiesBuilder, nullptr));
+    GRefPtr properties = g_variant_new("(sa{sv}as)", DBUS_MPRIS_PLAYER_INTERFACE, &propertiesBuilder, nullptr);
+    emitPropertiesChanged(WTFMove(properties));
     g_variant_builder_clear(&propertiesBuilder);
 }
 
@@ -341,7 +348,7 @@ GVariant* MediaSessionGLib::getPlaybackStatusAsGVariant(std::optional<const Plat
     return nullptr;
 }
 
-void MediaSessionGLib::emitPropertiesChanged(GVariant* parameters)
+void MediaSessionGLib::emitPropertiesChanged(GRefPtr<GVariant>&& parameters)
 {
     if (!m_connection)
         return;
@@ -350,7 +357,7 @@ void MediaSessionGLib::emitPropertiesChanged(GVariant* parameters)
         return;
 
     GUniqueOutPtr<GError> error;
-    if (!g_dbus_connection_emit_signal(m_connection.get(), nullptr, DBUS_MPRIS_OBJECT_PATH, "org.freedesktop.DBus.Properties", "PropertiesChanged", parameters, &error.outPtr()))
+    if (!g_dbus_connection_emit_signal(m_connection.get(), nullptr, DBUS_MPRIS_OBJECT_PATH, "org.freedesktop.DBus.Properties", "PropertiesChanged", parameters.get(), &error.outPtr()))
         g_warning("Failed to emit MPRIS properties changed: %s", error->message);
 }
 
@@ -362,7 +369,8 @@ void MediaSessionGLib::playbackStatusChanged(PlatformMediaSession& platformSessi
     GVariantBuilder builder;
     g_variant_builder_init(&builder, G_VARIANT_TYPE("a{sv}"));
     g_variant_builder_add(&builder, "{sv}", "PlaybackStatus", getPlaybackStatusAsGVariant(&platformSession));
-    emitPropertiesChanged(g_variant_new("(sa{sv}as)", DBUS_MPRIS_PLAYER_INTERFACE, &builder, nullptr));
+    GRefPtr properties = g_variant_new("(sa{sv}as)", DBUS_MPRIS_PLAYER_INTERFACE, &builder, nullptr);
+    emitPropertiesChanged(WTFMove(properties));
     g_variant_builder_clear(&builder);
 }
 

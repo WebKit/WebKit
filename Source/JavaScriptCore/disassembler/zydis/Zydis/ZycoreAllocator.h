@@ -35,6 +35,9 @@
 #include "ZycoreExportConfig.h"
 #include "ZycoreStatus.h"
 #include "ZycoreTypes.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #ifdef __cplusplus
 extern "C" {
@@ -139,5 +142,7 @@ ZYCORE_EXPORT ZYAN_REQUIRES_LIBC ZyanAllocator* ZyanAllocatorDefault(void);
 #ifdef __cplusplus
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ZYCORE_ALLOCATOR_H */

@@ -11,9 +11,11 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSpan.h"
 #include "include/ports/SkCFObject.h"
+#include "include/private/base/SkTArray.h"
 #include "src/gpu/graphite/DrawTypes.h"
 #include "src/gpu/graphite/GraphicsPipeline.h"
 #include "src/gpu/graphite/dawn/DawnAsyncWait.h"
+#include "src/gpu/graphite/dawn/DawnSampler.h"
 
 #include "webgpu/webgpu_cpp.h"  // NO_G3_REWRITE
 
@@ -46,7 +48,8 @@ public:
     inline static constexpr unsigned int kIntrinsicUniformBufferIndex = 0;
     inline static constexpr unsigned int kRenderStepUniformBufferIndex = 1;
     inline static constexpr unsigned int kPaintUniformBufferIndex = 2;
-    inline static constexpr unsigned int kNumUniformBuffers = 3;
+    inline static constexpr unsigned int kGradientBufferIndex = 3;
+    inline static constexpr unsigned int kNumUniformBuffers = 4;
 
     inline static constexpr unsigned int kVertexBufferIndex = 0;
     inline static constexpr unsigned int kInstanceBufferIndex = 1;
@@ -55,33 +58,32 @@ public:
     static sk_sp<DawnGraphicsPipeline> Make(const DawnSharedContext* sharedContext,
                                             DawnResourceProvider* resourceProvider,
                                             const RuntimeEffectDictionary* runtimeDict,
+                                            const UniqueKey& pipelineKey,
                                             const GraphicsPipelineDesc& pipelineDesc,
-                                            const RenderPassDesc& renderPassDesc);
+                                            const RenderPassDesc& renderPassDesc,
+                                            SkEnumBitMask<PipelineCreationFlags>,
+                                            uint32_t compilationID);
 
-    ~DawnGraphicsPipeline() override {}
+    ~DawnGraphicsPipeline() override;
 
     uint32_t stencilReferenceValue() const { return fStencilReferenceValue; }
     PrimitiveType primitiveType() const { return fPrimitiveType; }
-    bool hasStepUniforms() const { return fHasStepUniforms; }
-    bool hasPaintUniforms() const { return fHasPaintUniforms; }
-    int numTexturesAndSamplers() const { return fNumFragmentTexturesAndSamplers; }
+
     const wgpu::RenderPipeline& dawnRenderPipeline() const;
 
     using BindGroupLayouts = std::array<wgpu::BindGroupLayout, kBindGroupCount>;
     const BindGroupLayouts& dawnGroupLayouts() const { return fGroupLayouts; }
 
 private:
-    using AsyncPipelineCreation = DawnAsyncResult<wgpu::RenderPipeline>;
+    struct AsyncPipelineCreation;
 
     DawnGraphicsPipeline(const skgpu::graphite::SharedContext* sharedContext,
-                         PipelineInfo* pipelineInfo,
+                         const PipelineInfo& pipelineInfo,
                          std::unique_ptr<AsyncPipelineCreation> pipelineCreationInfo,
                          BindGroupLayouts groupLayouts,
                          PrimitiveType primitiveType,
                          uint32_t refValue,
-                         bool hasStepUniforms,
-                         bool hasPaintUniforms,
-                         int numFragmentTexturesAndSamplers);
+                         skia_private::TArray<sk_sp<DawnSampler>> immutableSamplers);
 
     void freeGpuData() override;
 
@@ -89,9 +91,9 @@ private:
     BindGroupLayouts fGroupLayouts;
     const PrimitiveType fPrimitiveType;
     const uint32_t fStencilReferenceValue;
-    const bool fHasStepUniforms;
-    const bool fHasPaintUniforms;
-    const int fNumFragmentTexturesAndSamplers;
+
+    // Hold a ref to immutable samplers used such that their lifetime is properly managed.
+    const skia_private::TArray<sk_sp<DawnSampler>> fImmutableSamplers;
 };
 
 } // namespace skgpu::graphite

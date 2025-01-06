@@ -53,7 +53,7 @@ public:
 };
 
 class RenderTableSection final : public RenderBox {
-    WTF_MAKE_ISO_ALLOCATED(RenderTableSection);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderTableSection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableSection);
 public:
     RenderTableSection(Element&, RenderStyle&&);
@@ -97,9 +97,6 @@ public:
     const BorderValue& borderAdjoiningStartCell(const RenderTableCell&) const;
     const BorderValue& borderAdjoiningEndCell(const RenderTableCell&) const;
 
-    const RenderTableCell* firstRowCellAdjoiningTableStart() const;
-    const RenderTableCell* firstRowCellAdjoiningTableEnd() const;
-
     CellStruct& cellAt(unsigned row,  unsigned col);
     const CellStruct& cellAt(unsigned row, unsigned col) const;
     RenderTableCell* primaryCellAt(unsigned row, unsigned col);
@@ -119,10 +116,10 @@ public:
     LayoutUnit outerBorderStart() const { return m_outerBorderStart; }
     LayoutUnit outerBorderEnd() const { return m_outerBorderEnd; }
 
-    inline LayoutUnit outerBorderLeft(const RenderStyle* styleForCellFlow) const;
-    inline LayoutUnit outerBorderRight(const RenderStyle* styleForCellFlow) const;
-    inline LayoutUnit outerBorderTop(const RenderStyle* styleForCellFlow) const;
-    inline LayoutUnit outerBorderBottom(const RenderStyle* styleForCellFlow) const;
+    inline LayoutUnit outerBorderLeft(const WritingMode) const;
+    inline LayoutUnit outerBorderRight(const WritingMode) const;
+    inline LayoutUnit outerBorderTop(const WritingMode) const;
+    inline LayoutUnit outerBorderBottom(const WritingMode) const;
 
     unsigned numRows() const;
     unsigned numColumns() const;
@@ -179,6 +176,8 @@ private:
     LayoutUnit offsetTopForRowGroupBorder(RenderTableCell*, BoxSide borderSide, unsigned row);
     LayoutUnit verticalRowGroupBorderHeight(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row);
     LayoutUnit horizontalRowGroupBorderWidth(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row, unsigned column);
+
+    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { }
 
     void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 
@@ -237,7 +236,7 @@ private:
 
     // This map holds the collapsed border values for cells with collapsed borders.
     // It is held at RenderTableSection level to spare memory consumption by table cells.
-    HashMap<std::pair<const RenderTableCell*, int>, CollapsedBorderValue > m_cellsCollapsedBorders;
+    UncheckedKeyHashMap<std::pair<const RenderTableCell*, int>, CollapsedBorderValue > m_cellsCollapsedBorders;
 
     bool m_forceSlowPaintPathWithOverflowingCell { false };
     bool m_hasMultipleCellLevels { false };

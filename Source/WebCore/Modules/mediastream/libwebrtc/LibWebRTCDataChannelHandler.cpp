@@ -32,8 +32,17 @@
 #include "RTCDataChannel.h"
 #include "RTCError.h"
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCDataChannelHandler);
+
+template<typename T>
+inline std::span<const T> span(const webrtc::DataBuffer& buffer)
+{
+    return unsafeMakeSpan(buffer.data.data<T>(), buffer.size());
+}
 
 webrtc::DataChannelInit LibWebRTCDataChannelHandler::fromRTCDataChannelInit(const RTCDataChannelInit& options)
 {
@@ -49,7 +58,7 @@ webrtc::DataChannelInit LibWebRTCDataChannelHandler::fromRTCDataChannelInit(cons
         init.negotiated = *options.negotiated;
     if (options.id)
         init.id = *options.id;
-    init.priority = fromRTCPriorityType(options.priority);
+    init.priority = webrtc::PriorityValue(fromRTCPriorityType(options.priority));
     return init;
 }
 
@@ -89,7 +98,7 @@ String LibWebRTCDataChannelHandler::label() const
     return fromStdString(m_channel->label());
 }
 
-void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client, ScriptExecutionContextIdentifier contextIdentifier)
+void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
 {
     Locker locker { m_clientLock };
     ASSERT(!m_client);
@@ -183,11 +192,11 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
 {
     Locker locker { m_clientLock };
     if (!m_hasClient) {
-        auto* data = buffer.data.data<uint8_t>();
+        auto data = span<uint8_t>(buffer);
         if (buffer.binary)
-            m_bufferedMessages.append(SharedBuffer::create(std::span { data, buffer.size() }));
+            m_bufferedMessages.append(SharedBuffer::create(data));
         else
-            m_bufferedMessages.append(String::fromUTF8({ data, buffer.size() }));
+            m_bufferedMessages.append(String::fromUTF8(data));
         return;
     }
 
@@ -196,7 +205,7 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
         if (!client)
             return;
 
-        std::span data { buffer->data.data<uint8_t>(), buffer->size() };
+        auto data = span<uint8_t>(*buffer);
         if (buffer->binary)
             client->didReceiveRawData(data);
         else
@@ -224,7 +233,7 @@ void LibWebRTCDataChannelHandler::postTask(Function<void()>&& function)
         callOnMainThread(WTFMove(function));
         return;
     }
-    ScriptExecutionContext::postTaskTo(m_contextIdentifier, WTFMove(function));
+    ScriptExecutionContext::postTaskTo(*m_contextIdentifier, WTFMove(function));
 }
 
 } // namespace WebCore

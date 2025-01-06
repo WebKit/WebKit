@@ -13,10 +13,10 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/crypto/frame_decryptor_interface.h"
 #include "api/dtls_transport_interface.h"
 #include "api/frame_transformer_interface.h"
@@ -100,7 +100,7 @@ class AudioRtpReceiver : public ObserverInterface,
   void Stop() override;
   void SetupMediaChannel(uint32_t ssrc) override;
   void SetupUnsignaledMediaChannel() override;
-  absl::optional<uint32_t> ssrc() const override;
+  std::optional<uint32_t> ssrc() const override;
   void NotifyFirstPacketReceived() override;
   void set_stream_ids(std::vector<std::string> stream_ids) override;
   void set_transport(
@@ -110,21 +110,20 @@ class AudioRtpReceiver : public ObserverInterface,
   void SetObserver(RtpReceiverObserverInterface* observer) override;
 
   void SetJitterBufferMinimumDelay(
-      absl::optional<double> delay_seconds) override;
+      std::optional<double> delay_seconds) override;
 
   void SetMediaChannel(
       cricket::MediaReceiveChannelInterface* media_channel) override;
 
   std::vector<RtpSource> GetSources() const override;
   int AttachmentId() const override { return attachment_id_; }
-  void SetDepacketizerToDecoderFrameTransformer(
-      rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer)
-      override;
+  void SetFrameTransformer(
+      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) override;
 
  private:
-  void RestartMediaChannel(absl::optional<uint32_t> ssrc)
+  void RestartMediaChannel(std::optional<uint32_t> ssrc)
       RTC_RUN_ON(&signaling_thread_checker_);
-  void RestartMediaChannel_w(absl::optional<uint32_t> ssrc,
+  void RestartMediaChannel_w(std::optional<uint32_t> ssrc,
                              bool track_enabled,
                              MediaSourceInterface::SourceState state)
       RTC_RUN_ON(worker_thread_);
@@ -138,7 +137,7 @@ class AudioRtpReceiver : public ObserverInterface,
   const rtc::scoped_refptr<AudioTrackProxyWithInternal<AudioTrack>> track_;
   cricket::VoiceMediaReceiveChannelInterface* media_channel_
       RTC_GUARDED_BY(worker_thread_) = nullptr;
-  absl::optional<uint32_t> signaled_ssrc_ RTC_GUARDED_BY(worker_thread_);
+  std::optional<uint32_t> signaled_ssrc_ RTC_GUARDED_BY(worker_thread_);
   std::vector<rtc::scoped_refptr<MediaStreamInterface>> streams_
       RTC_GUARDED_BY(&signaling_thread_checker_);
   bool cached_track_enabled_ RTC_GUARDED_BY(&signaling_thread_checker_);

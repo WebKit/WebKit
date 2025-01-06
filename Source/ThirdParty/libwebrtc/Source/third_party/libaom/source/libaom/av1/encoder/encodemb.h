@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -138,7 +138,7 @@ void av1_subtract_txb(MACROBLOCK *x, int plane, BLOCK_SIZE plane_bsize,
 
 void av1_subtract_plane(MACROBLOCK *x, BLOCK_SIZE plane_bsize, int plane);
 
-static INLINE void av1_set_txb_context(MACROBLOCK *x, int plane, int block,
+static inline void av1_set_txb_context(MACROBLOCK *x, int plane, int block,
                                        TX_SIZE tx_size, ENTROPY_CONTEXT *a,
                                        ENTROPY_CONTEXT *l) {
   const uint8_t ctx = x->plane[plane].txb_entropy_ctx[block];
@@ -146,14 +146,11 @@ static INLINE void av1_set_txb_context(MACROBLOCK *x, int plane, int block,
   memset(l, ctx, tx_size_high_unit[tx_size] * sizeof(*l));
 }
 
-void av1_encode_block_intra(int plane, int block, int blk_row, int blk_col,
-                            BLOCK_SIZE plane_bsize, TX_SIZE tx_size, void *arg);
-
 void av1_encode_intra_block_plane(const struct AV1_COMP *cpi, MACROBLOCK *x,
                                   BLOCK_SIZE bsize, int plane, RUN_TYPE dry_run,
                                   TRELLIS_OPT_TYPE enable_optimize_b);
 
-static INLINE int is_trellis_used(TRELLIS_OPT_TYPE optimize_b,
+static inline int is_trellis_used(TRELLIS_OPT_TYPE optimize_b,
                                   RUN_TYPE dry_run) {
   if (optimize_b == NO_TRELLIS_OPT) return false;
   if (optimize_b == FINAL_PASS_TRELLIS_OPT && dry_run != OUTPUT_ENABLED)

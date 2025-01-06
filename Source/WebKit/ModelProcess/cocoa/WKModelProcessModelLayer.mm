@@ -28,14 +28,16 @@
 {
     [super setOpacity:opacity];
 
-    _player->updateOpacity();
+    if (_player)
+        _player->updateOpacity();
 }
 
 - (void)layoutSublayers
 {
     [super layoutSublayers];
 
-    _player->updateTransform();
+    if (_player)
+        _player->updateTransform();
 }
 
 @end

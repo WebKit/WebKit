@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ RespondToThermalPressureAggressively=true ] -->
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that DOM timers are throttled when aggressive thermal mitigation is enabled.");
+jsTestIsAsync = true;
+
+let i = 0;
+const maxNestingLevel = 5;
+
+let enabled = true;
+debug("Enabling aggressive thermal mitigation");
+evalAndLog("internals.setAggressiveThermalMitigationEnabled(true)");
+
+const timerHandle = setInterval(function() {
+    i++;
+    debug("* Nesting: " + i);
+    if (i >= maxNestingLevel && enabled)
+        shouldBeTrue("internals.isTimerThrottled(timerHandle)");
+    else
+        shouldBeFalse("internals.isTimerThrottled(timerHandle)");
+
+    if (i == maxNestingLevel + 1) {
+        debug("");
+        debug("Disabling aggressive thermal mitigation");
+        enabled = false;
+        evalAndLog("internals.setAggressiveThermalMitigationEnabled(false)");
+    }
+
+    if (i == 10) {
+        clearInterval(timerHandle);
+        finishJSTest();
+    }
+}, 10);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

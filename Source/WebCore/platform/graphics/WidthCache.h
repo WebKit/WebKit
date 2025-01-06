@@ -27,14 +27,18 @@
 #define WidthCache_h
 
 #include "TextRun.h"
+#include "TextSpacing.h"
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashSet.h>
 #include <wtf/Hasher.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/ZippedRange.h>
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/WYHash.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -59,9 +63,9 @@ private:
             unsigned length = string.length();
             ASSERT(length <= s_capacity);
             if (string.is8Bit())
-                copySmallCharacters(m_characters.data(), string.span8());
+                copySmallCharacters(std::span { m_characters }, string.span8());
             else
-                copySmallCharacters(m_characters.data(), string.span16());
+                copySmallCharacters(std::span { m_characters }, string.span16());
             m_hashAndLength = WYHash::computeHashAndMaskTop8Bits(std::span<const UChar> { m_characters }.first(s_capacity)) | (length << 24);
         }
 
@@ -80,13 +84,13 @@ private:
         static constexpr unsigned s_deletedValueLength = s_capacity + 1;
 
         template<typename CharacterType>
-        ALWAYS_INLINE static void copySmallCharacters(UChar* destination, std::span<const CharacterType> source)
+        ALWAYS_INLINE static void copySmallCharacters(std::span<UChar, s_capacity> destination, std::span<const CharacterType> source)
         {
             if constexpr (std::is_same_v<CharacterType, UChar>)
-                memcpy(destination, source.data(), source.size_bytes());
+                memcpySpan(destination, source);
             else {
-                for (auto character : source)
-                    *destination++ = character;
+                for (auto [sourceCharacter, destinationCharacter] : zippedRange(source, destination))
+                    destinationCharacter = sourceCharacter;
             }
         }
 
@@ -133,7 +137,7 @@ public:
         return addSlowCase(text, entry);
     }
 
-    float* add(const TextRun& run, float entry, bool hasKerningOrLigatures, bool hasWordSpacingOrLetterSpacing, GlyphOverflow* glyphOverflow)
+    float* add(const TextRun& run, float entry, bool hasKerningOrLigatures, bool hasWordSpacingOrLetterSpacing, bool hasTextSpacing, GlyphOverflow* glyphOverflow)
     {
         // The width cache is not really profitable unless we're doing expensive glyph transformations.
         if (!hasKerningOrLigatures)
@@ -146,6 +150,9 @@ public:
             return nullptr;
         // If we allow tabs and a tab occurs inside a word, the width of the word varies based on its position on the line.
         if (run.allowTabs())
+            return nullptr;
+        // width calculation with text-spacing depends on context of adjacent characters.
+        if (hasTextSpacing && invalidateCacheForTextSpacing(run))
             return nullptr;
 
         return add(run.text(), entry);
@@ -200,8 +207,25 @@ private:
         return nullptr;
     }
 
-    using Map = HashMap<SmallStringKey, float, SmallStringKeyHash, SmallStringKeyHashTraits, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
-    using SingleCharMap = HashMap<uint32_t, float, DefaultHash<uint32_t>, HashTraits<uint32_t>, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
+    // returns true if cache is/was invalidated
+    bool invalidateCacheForTextSpacing(const TextRun& textRun)
+    {
+        if (m_hasSeenIdeograph)
+            return true;
+        const auto& text = textRun.textAsString();
+        for (unsigned index = 0; index < text.length(); ++index) {
+            if (TextSpacing::isIdeograph(text.characterAt(index))) {
+                m_hasSeenIdeograph = true;
+                clear();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    using Map = UncheckedKeyHashMap<SmallStringKey, float, SmallStringKeyHash, SmallStringKeyHashTraits, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
+    using SingleCharMap = UncheckedKeyHashMap<uint32_t, float, DefaultHash<uint32_t>, HashTraits<uint32_t>, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
 
     static constexpr int s_minInterval = -3; // A cache hit pays for about 3 cache misses.
     static constexpr int s_maxInterval = 20; // Sampling at this interval has almost no overhead.
@@ -211,8 +235,11 @@ private:
     int m_countdown;
     SingleCharMap m_singleCharMap;
     Map m_map;
+    bool m_hasSeenIdeograph;
 };
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // WidthCache_h

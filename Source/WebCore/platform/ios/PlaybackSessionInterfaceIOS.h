@@ -35,11 +35,11 @@
 #include <functional>
 #include <objc/objc.h>
 #include <wtf/CheckedRef.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS WKSLinearMediaPlayer;
@@ -55,7 +55,7 @@ class WEBCORE_EXPORT PlaybackSessionInterfaceIOS
     : public PlaybackSessionModelClient
     , public RefCounted<PlaybackSessionInterfaceIOS>
     , public CanMakeCheckedPtr<PlaybackSessionInterfaceIOS> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlaybackSessionInterfaceIOS, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceIOS);
 public:
     void initialize();
@@ -86,7 +86,7 @@ public:
     virtual void stopObservingNowPlayingMetadata();
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const;
+    uint64_t logIdentifier() const;
     const Logger* loggerPtr() const;
     virtual ASCIILiteral logClassName() const = 0;
     WTFLogChannel& logChannel() const;
@@ -101,10 +101,10 @@ protected:
     PlaybackSessionModel* m_playbackSessionModel { nullptr };
 
     // CheckedPtr interface
-    uint32_t ptrCount() const final;
-    uint32_t ptrCountWithoutThreadCheck() const final;
-    void incrementPtrCount() const final;
-    void decrementPtrCount() const final;
+    uint32_t checkedPtrCount() const final;
+    uint32_t checkedPtrCountWithoutThreadCheck() const final;
+    void incrementCheckedPtrCount() const final;
+    void decrementCheckedPtrCount() const final;
 
 private:
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;

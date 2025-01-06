@@ -47,7 +47,6 @@
 #    (sorry about latter).
 # 6. Don't use [or hand-code with .byte] "rep ret." "ret" mnemonic is
 #    required to identify the spots, where to inject Win64 epilogue!
-#    But on the pros, it's then prefixed with rep automatically:-)
 # 7. Stick to explicit ip-relative addressing. If you have to use
 #    GOTPCREL addressing, stick to mov symbol@GOTPCREL(%rip),%r??.
 #    Both are recognized and translated to proper Win64 addressing
@@ -157,7 +156,7 @@ my %globals;
 		    $epilogue = "movq	8(%rsp),%rdi\n\t" .
 				"movq	16(%rsp),%rsi\n\t";
 		}
-	    	$epilogue . ".byte	0xf3,0xc3";
+	    	$epilogue . "ret";
 	    } elsif ($self->{op} eq "call" && !$elf && $current_segment eq ".init") {
 		".p2align\t3\n\t.quad";
 	    } else {
@@ -171,7 +170,7 @@ my %globals;
 		    $self->{op} = "mov	rdi,QWORD$PTR\[8+rsp\]\t;WIN64 epilogue\n\t".
 				  "mov	rsi,QWORD$PTR\[16+rsp\]\n\t";
 	    	}
-		$self->{op} .= "DB\t0F3h,0C3h\t\t;repret";
+		$self->{op} .= "ret";
 	    } elsif ($self->{op} =~ /^(pop|push)f/) {
 		$self->{op} .= $self->{sz};
 	    } elsif ($self->{op} eq "call" && $current_segment eq ".CRT\$XCU") {
@@ -715,16 +714,21 @@ my %globals;
     }
 }
 { package seh_directive;
-    # This implements directives, like MASM's, for specifying Windows unwind
-    # codes. See https://learn.microsoft.com/en-us/cpp/build/exception-handling-x64?view=msvc-170
-    # for details on the Windows unwind mechanism. Unlike MASM's directives, we
-    # have no .seh_endprolog directive. Instead, the last prolog directive is
-    # implicitly the end of the prolog.
+    # This implements directives, like MASM, gas, and clang-assembler for
+    # specifying Windows unwind codes. See
+    # https://learn.microsoft.com/en-us/cpp/build/exception-handling-x64?view=msvc-170
+    # for details on the Windows unwind mechanism. As perlasm generally uses gas
+    # syntax, the syntax is patterned after the gas spelling, described in
+    # https://sourceware.org/legacy-ml/binutils/2009-08/msg00193.html
+    #
+    # TODO(https://crbug.com/boringssl/571): Translate to the MASM directives
+    # when using the MASM output. Emit as-is when using "mingw64" output, which
+    # is Windows with gas syntax.
     #
     # TODO(https://crbug.com/boringssl/259): For now, SEH directives are ignored
     # on non-Windows platforms. This means functions need to specify both CFI
     # and SEH directives, often redundantly. Ideally we'd abstract between the
-    # two. E.g., we can synthesize CFI from SEH prologs, but SEH does not
+    # two. E.g., we can synthesize CFI from SEH prologues, but SEH does not
     # annotate epilogs, so we'd need to combine parts from both. Or we can
     # restrict ourselves to a subset of CFI and synthesize SEH from CFI.
     #
@@ -733,7 +737,7 @@ my %globals;
     # complication is the current scheme modifies RDI and RSI (non-volatile on
     # Windows) at the start of the function, and saves them in the parameter
     # stack area. This can be expressed with .seh_savereg, but .seh_savereg is
-    # only usable late in the prolog. However, unwind information gives enough
+    # only usable late in the prologue. However, unwind information gives enough
     # information to locate the parameter stack area at any point in the
     # function, so we can defer conversion or implement other schemes.
 
@@ -778,6 +782,11 @@ my %globals;
 	die "Missing .seh_startproc directive" unless %info;
     }
 
+    sub _check_in_prologue {
+	_check_in_proc();
+	die "Invalid SEH directive after .seh_endprologue" if defined($info{endprologue});
+    }
+
     sub _check_not_in_proc {
 	die "Missing .seh_endproc directive" if %info;
     }
@@ -795,8 +804,8 @@ my %globals;
 	    info_label => $info_label,
 	    # start_label is the start of the function.
 	    start_label => $start_label,
-	    # endprolog is the label of the last unwind code in the function.
-	    endprolog => $start_label,
+	    # endprologue is the label of the end of the prologue.
+	    endprologue => undef,
 	    # unwind_codes contains the textual representation of the
 	    # unwind codes in the function so far.
 	    unwind_codes => "",
@@ -822,14 +831,14 @@ my %globals;
 
     sub _add_unwind_code {
 	my ($op, $value, @extra) = @_;
-	_check_in_proc();
+	_check_in_prologue();
 	if ($op != $UWOP_PUSH_NONVOL) {
 	    $info{has_nonpushreg} = 1;
 	} elsif ($info{has_nonpushreg}) {
-	    die ".seh_pushreg directives must appear first in the prolog";
+	    die ".seh_pushreg directives must appear first in the prologue";
 	}
 
-	my $label = _new_unwind_label("prolog");
+	my $label = _new_unwind_label("prologue");
 	# Encode an UNWIND_CODE structure. See
 	# https://learn.microsoft.com/en-us/cpp/build/exception-handling-x64?view=msvc-170#struct-unwind_code
 	my $encoded = $op | ($value << 4);
@@ -845,17 +854,13 @@ ____
 	$info{num_codes} += 1 + scalar(@extra);
 	# Unwind codes are listed in reverse order.
 	$info{unwind_codes} = $codes . $info{unwind_codes};
-	# Track the label of the last unwind code. It implicitly is the end of
-	# the prolog. MASM has an endprolog directive, but it seems to be
-	# unnecessary.
-	$info{endprolog} = $label;
 	return $label;
     }
 
     sub _updating_fixed_allocation {
-	_check_in_proc();
+	_check_in_prologue();
 	if ($info{frame_reg} != 0) {
-	    # Windows documentation does not explicitly forbid .seh_allocstack
+	    # Windows documentation does not explicitly forbid .seh_stackalloc
 	    # after .seh_setframe, but it appears to have no effect. Offsets are
 	    # still relative to the fixed allocation when the frame register was
 	    # established.
@@ -863,7 +868,7 @@ ____
 	}
 	if ($info{has_offset}) {
 	    # Windows documentation does not explicitly forbid .seh_savereg
-	    # before .seh_allocstack, but it does not work very well. Offsets
+	    # before .seh_stackalloc, but it does not work very well. Offsets
 	    # are relative to the top of the final fixed allocation, not where
 	    # RSP currently is.
 	    die "directives with an offset must come after the fixed allocation is established.";
@@ -872,11 +877,8 @@ ____
 
     sub _endproc {
 	_check_in_proc();
-	if ($info{num_codes} == 0) {
-	    # If a Windows function has no directives (i.e. it doesn't touch the
-	    # stack), it is a leaf function and is not expected to appear in
-	    # .pdata or .xdata.
-	    die ".seh_endproc found with no unwind codes";
+	if (!defined($info{endprologue})) {
+	    die "Missing .seh_endprologue";
 	}
 
 	my $end_label = _new_unwind_label("end");
@@ -895,11 +897,21 @@ ____
 	$xdata .= <<____;
 $info{info_label}:
 	.byte	1	# version 1, no flags
-	.byte	$info{endprolog}-$info{start_label}
+	.byte	$info{endprologue}-$info{start_label}
 	.byte	$info{num_codes}
 	.byte	$frame_encoded
 $info{unwind_codes}
 ____
+
+	# UNWIND_INFOs must be 4-byte aligned. If needed, we must add an extra
+	# unwind code. This does not change the unwind code count. Windows
+	# documentation says "For alignment purposes, this array always has an
+	# even number of entries, and the final entry is potentially unused. In
+	# that case, the array is one longer than indicated by the count of
+	# unwind codes field."
+	if ($info{num_codes} & 1) {
+	    $xdata .= "\t.value\t0\n";
+	}
 
 	%info = ();
 	return $end_label;
@@ -917,7 +929,7 @@ ____
 	    my $label;
 	    SWITCH: for ($dir) {
 		/^startproc$/ && do {
-		    $label = _startproc();
+		    $label = _startproc($1);
 		    last;
 		};
 		/^pushreg$/ && do {
@@ -927,7 +939,7 @@ ____
 		    $label = _add_unwind_code($UWOP_PUSH_NONVOL, $reg_num);
 		    last;
 		};
-		/^allocstack$/ && do {
+		/^stackalloc$/ && do {
 		    my $num = eval($$line);
 		    if ($num <= 0 || $num % 8 != 0) {
 			die "invalid stack allocation: $num";
@@ -977,7 +989,7 @@ ____
 		    $info{has_offset} = 1;
 		    last;
 		};
-		/^savexmm128$/ && do {
+		/^savexmm$/ && do {
 		    $$line =~ /%xmm(\d+)\s*,\s*(.+)/ or die "could not parse .seh_$dir";
 		    my $reg_num = $1;
 		    my $offset = eval($2);
@@ -990,6 +1002,19 @@ ____
 			$label = _add_unwind_code($UWOP_SAVE_XMM128_FAR, $reg_num, $offset >> 16, $offset & 0xffff);
 		    }
 		    $info{has_offset} = 1;
+		    last;
+		};
+		/^endprologue$/ && do {
+		    _check_in_prologue();
+		    if ($info{num_codes} == 0) {
+			# If a Windows function has no directives (i.e. it
+			# doesn't touch the stack), it is a leaf function and is
+			# not expected to appear in .pdata or .xdata.
+			die ".seh_endprologue found with no unwind codes";
+		    }
+
+		    $label = _new_unwind_label("endprologue");
+		    $info{endprologue} = $label;
 		    last;
 		};
 		/^endproc$/ && do {
@@ -1499,6 +1524,7 @@ default	rel
 \%define XMMWORD
 \%define YMMWORD
 \%define ZMMWORD
+\%define _CET_ENDBR
 
 \%ifdef BORINGSSL_PREFIX
 \%include "boringssl_prefix_symbols_nasm.inc"
@@ -1522,16 +1548,9 @@ if ($gas) {
         die "unknown target: $flavour";
     }
     print <<___;
-#if defined(__has_feature)
-#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
-#define OPENSSL_NO_ASM
-#endif
-#endif
+#include <openssl/asm_base.h>
 
-#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && $target
-#if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
+#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && $target
 ___
 }
 
@@ -1627,13 +1646,7 @@ print "\n$current_segment\tENDS\n"	if ($current_segment && $masm);
 if ($masm) {
     print "END\n";
 } elsif ($gas) {
-    print <<___;
-#endif
-#if defined(__ELF__)
-// See https://www.airs.com/blog/archives/518.
-.section .note.GNU-stack,"",\%progbits
-#endif
-___
+    print "#endif\n";
 } elsif ($nasm) {
     print <<___;
 \%else

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -128,7 +128,7 @@ static int haar_ac_sad_8x8_uint8_input(const uint8_t *input, int stride,
                                        int hbd) {
   tran_low_t output[64];
 
-  av1_fdwt8x8_uint8_input_c(input, output, stride, hbd);
+  av1_fdwt8x8_uint8_input(input, output, stride, hbd);
   return haar_ac_sad(output, 8, 8, 8);
 }
 

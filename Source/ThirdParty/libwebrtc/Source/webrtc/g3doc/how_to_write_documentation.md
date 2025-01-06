@@ -1,5 +1,5 @@
 <!-- go/cmark -->
-<!--* freshness: {owner: 'titovartem' reviewed: '2023-01-16'} *-->
+<!--* freshness: {owner: 'titovartem' reviewed: '2024-09-09'} *-->
 
 # How to write WebRTC documentation
 

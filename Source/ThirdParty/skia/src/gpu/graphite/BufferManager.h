@@ -63,7 +63,7 @@ public:
     //
     // NOTE: This number may be different from the size of the underlying GPU buffer but it is
     // guaranteed to be less than or equal to it.
-    size_t size() const { return fSize; }
+    uint32_t size() const { return fSize; }
 
     // Sub-allocate a slice within the scratch buffer object. Fails and returns a NULL pointer if
     // the buffer doesn't have enough space remaining for `requiredBytes`.
@@ -80,12 +80,12 @@ public:
 private:
     friend class DrawBufferManager;
 
-    ScratchBuffer(size_t size, size_t alignment, sk_sp<Buffer>, DrawBufferManager*);
+    ScratchBuffer(uint32_t size, uint32_t alignment, sk_sp<Buffer>, DrawBufferManager*);
 
-    size_t fSize;
-    size_t fAlignment;
+    uint32_t fSize;
+    uint32_t fAlignment;
     sk_sp<Buffer> fBuffer;
-    size_t fOffset = 0;
+    uint32_t fOffset = 0;
 
     DrawBufferManager* fOwner = nullptr;
 };
@@ -105,10 +105,19 @@ public:
     // work that will be wasted because the next Recording snap will fail.
     bool hasMappingFailed() const { return fMappingFailed; }
 
-    std::pair<VertexWriter, BindBufferInfo> getVertexWriter(size_t requiredBytes);
-    std::pair<IndexWriter, BindBufferInfo> getIndexWriter(size_t requiredBytes);
-    std::pair<UniformWriter, BindBufferInfo> getUniformWriter(size_t requiredBytes);
-    std::pair<UniformWriter, BindBufferInfo> getSsboWriter(size_t requiredBytes);
+    // These writers automatically calculate the required bytes based on count and stride. If a
+    // valid writer is returned, the byte count will fit in a uint32_t.
+    std::pair<VertexWriter, BindBufferInfo> getVertexWriter(size_t count, size_t stride);
+    std::pair<IndexWriter, BindBufferInfo> getIndexWriter(size_t count, size_t stride);
+    std::pair<UniformWriter, BindBufferInfo> getUniformWriter(size_t count, size_t stride);
+
+    // Return an SSBO writer that is aligned for binding, per the requirements in fCurrentBuffers.
+    std::pair<UniformWriter, BindBufferInfo> getSsboWriter(size_t count, size_t stride);
+    // Return an SSBO writer that is aligned for indexing from the shader, per the provided stride.
+    std::pair<UniformWriter, BindBufferInfo> getAlignedSsboWriter(size_t count, size_t stride);
+
+    // The remaining writers and buffer allocator functions assume that byte counts are safely
+    // calculated by the caller (e.g. Vello or ).
 
     // Return a pointer to a mapped storage buffer suballocation without a specific data writer.
     std::pair<void* /* mappedPtr */, BindBufferInfo> getUniformPointer(size_t requiredBytes);
@@ -140,41 +149,54 @@ public:
     ScratchBuffer getScratchStorage(size_t requiredBytes);
 
     // Returns the last 'unusedBytes' from the last call to getVertexWriter(). Assumes that
-    // 'unusedBytes' is less than the 'requiredBytes' to the original allocation.
+    // 'unusedBytes' is less than the 'count*stride' to the original allocation.
     void returnVertexBytes(size_t unusedBytes);
 
-    size_t alignUniformBlockSize(size_t dataSize) {
-        return SkAlignTo(dataSize, fCurrentBuffers[kUniformBufferIndex].fStartAlignment);
-    }
-
-    // Finalizes all buffers and transfers ownership of them to a Recording. Should not call if
-    // hasMappingFailed() returns true.
-    void transferToRecording(Recording*);
+    // Finalizes all buffers and transfers ownership of them to a Recording. Returns true on success
+    // and false if a mapping had previously failed.
+    //
+    // Regardless of success or failure, the DrawBufferManager is reset to a valid initial state
+    // for recording buffer data for the next Recording.
+    [[nodiscard]] bool transferToRecording(Recording*);
 
 private:
     friend class ScratchBuffer;
 
     struct BufferInfo {
-        BufferInfo(BufferType type, size_t blockSize, const Caps* caps);
+        BufferInfo(BufferType type, uint32_t minBlockSize, uint32_t maxBlockSize, const Caps* caps);
 
         const BufferType fType;
-        const size_t fStartAlignment;
-        const size_t fBlockSize;
+        const uint32_t fStartAlignment;
+        const uint32_t fMinBlockSize;
+        const uint32_t fMaxBlockSize;
         sk_sp<Buffer> fBuffer;
         // The fTransferBuffer can be null, if draw buffer cannot be mapped,
         // see Caps::drawBufferCanBeMapped() for detail.
         BindBufferInfo fTransferBuffer{};
         void* fTransferMapPtr = nullptr;
-        size_t fOffset = 0;
+        uint32_t fOffset = 0;
+
+        // Block size to use when creating new buffers; between fMinBlockSize and fMaxBlockSize.
+        uint32_t fCurBlockSize = 0;
+        // How many bytes have been used for for this buffer type since the last Recording snap.
+        uint32_t fUsedSize = 0;
     };
-    std::pair<void* /*mappedPtr*/, BindBufferInfo> prepareMappedBindBuffer(BufferInfo* info,
-                                                                           size_t requiredBytes,
-                                                                           std::string_view label);
+    std::pair<void* /*mappedPtr*/, BindBufferInfo> prepareMappedBindBuffer(
+            BufferInfo* info,
+            std::string_view label,
+            uint32_t requiredBytes,
+            uint32_t requiredAlignment = 0);
     BindBufferInfo prepareBindBuffer(BufferInfo* info,
-                                     size_t requiredBytes,
                                      std::string_view label,
+                                     uint32_t requiredBytes,
+                                     uint32_t requiredAlignment = 0,
                                      bool supportCpuUpload = false,
                                      ClearBuffer cleared = ClearBuffer::kNo);
+
+    // Helper method for public getSsboWriter methods.
+    std::pair<UniformWriter, BindBufferInfo> getSsboWriter(size_t count,
+                                                           size_t stride,
+                                                           size_t alignment);
 
     sk_sp<Buffer> findReusableSbo(size_t bufferSize);
 
@@ -199,7 +221,7 @@ private:
     skia_private::TArray<std::pair<sk_sp<Buffer>, BindBufferInfo>> fUsedBuffers;
 
     // List of buffer regions that were requested to be cleared at the time of allocation.
-    skia_private::TArray<ClearBufferInfo> fClearList;
+    skia_private::TArray<BindBufferInfo> fClearList;
 
     // TODO(b/330744081): These should probably be maintained in a sorted data structure that
     // supports fast insertion and lookup doesn't waste buffers (e.g. by vending out large buffers
@@ -252,7 +274,6 @@ private:
     struct CopyRange {
         BindBufferInfo  fSource; // The CPU-to-GPU buffer and offset for the source of the copy
         BindBufferInfo* fTarget; // The late-assigned destination of the copy
-        size_t          fSize;   // The number of bytes to copy
     };
     struct BufferInfo {
         BufferInfo(BufferType type, const Caps* caps);
@@ -268,17 +289,17 @@ private:
         }
 
         const BufferType fBufferType;
-        const size_t     fAlignment;
+        const uint32_t   fAlignment;
 
-        std::vector<CopyRange> fData;
-        size_t fTotalRequiredBytes;
+        skia_private::TArray<CopyRange> fData;
+        uint32_t fTotalRequiredBytes;
     };
 
     void* prepareStaticData(BufferInfo* info, size_t requiredBytes, BindBufferInfo* target);
 
     ResourceProvider* const fResourceProvider;
     UploadBufferManager fUploadManager;
-    const size_t fRequiredTransferAlignment;
+    const uint32_t fRequiredTransferAlignment;
 
     // The source data that's copied into a final GPU-private buffer
     BufferInfo fVertexBufferInfo;

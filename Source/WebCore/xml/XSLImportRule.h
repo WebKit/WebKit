@@ -27,13 +27,14 @@
 #include "CachedResourceHandle.h"
 #include "CachedStyleSheetClient.h"
 #include "XSLStyleSheet.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CachedXSLStyleSheet;
 
 class XSLImportRule : private CachedStyleSheetClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(XSLImportRule);
 public:
     XSLImportRule(XSLStyleSheet& parentSheet, const String& href);
     virtual ~XSLImportRule();

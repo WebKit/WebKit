@@ -42,14 +42,12 @@ class FrameCombiner {
   static constexpr size_t kMaximumNumberOfChannels = 8;
   static constexpr size_t kMaximumChannelSize = 48 * 10;
 
-  using MixingBuffer = std::array<std::array<float, kMaximumChannelSize>,
-                                  kMaximumNumberOfChannels>;
-
  private:
   std::unique_ptr<ApmDataDumper> data_dumper_;
-  std::unique_ptr<MixingBuffer> mixing_buffer_;
   Limiter limiter_;
   const bool use_limiter_;
+  std::array<float, kMaximumChannelSize * kMaximumNumberOfChannels>
+      mixing_buffer_ = {};
 };
 }  // namespace webrtc
 

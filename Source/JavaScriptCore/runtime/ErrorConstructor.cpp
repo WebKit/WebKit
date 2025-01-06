@@ -33,6 +33,7 @@ const ClassInfo ErrorConstructor::s_info = { "Function"_s, &Base::s_info, nullpt
 static JSC_DECLARE_HOST_FUNCTION(callErrorConstructor);
 static JSC_DECLARE_HOST_FUNCTION(constructErrorConstructor);
 static JSC_DECLARE_HOST_FUNCTION(errorConstructorCaptureStackTrace);
+static JSC_DECLARE_HOST_FUNCTION(errorConstructorIsError);
 
 ErrorConstructor::ErrorConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callErrorConstructor, constructErrorConstructor)
@@ -49,6 +50,9 @@ void ErrorConstructor::finishCreation(VM& vm, ErrorPrototype* errorPrototype)
     putDirectWithoutTransition(vm, vm.propertyNames->stackTraceLimit, jsNumber(globalObject->stackTraceLimit().value_or(Options::defaultErrorStackTraceLimit())), static_cast<unsigned>(PropertyAttribute::None));
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->captureStackTrace, errorConstructorCaptureStackTrace, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
+
+    if (Options::useErrorIsError())
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("isError"_s, errorConstructorIsError, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
 }
 
 // ECMA 15.9.3
@@ -126,6 +130,12 @@ JSC_DEFINE_HOST_FUNCTION(errorConstructorCaptureStackTrace, (JSGlobalObject* glo
 
     object->putDirect(vm, vm.propertyNames->stack, jsString(vm, Interpreter::stackTraceAsString(vm, stackTrace)), static_cast<unsigned>(PropertyAttribute::DontEnum));
     return encodedJSUndefined();
+}
+
+JSC_DEFINE_HOST_FUNCTION(errorConstructorIsError, (JSGlobalObject*, CallFrame* callFrame))
+{
+    JSObject* object = jsDynamicCast<JSObject*>(callFrame->argument(0));
+    return JSValue::encode(jsBoolean(object && object->isErrorInstance()));
 }
 
 } // namespace JSC

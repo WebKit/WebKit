@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -17,12 +17,12 @@
 #include "aom_dsp/aom_dsp_common.h"
 #include "aom_ports/mem.h"
 
-static INLINE int8_t signed_char_clamp(int t) {
+static inline int8_t signed_char_clamp(int t) {
   return (int8_t)clamp(t, -128, 127);
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE int16_t signed_char_clamp_high(int t, int bd) {
+static inline int16_t signed_char_clamp_high(int t, int bd) {
   switch (bd) {
     case 10: return (int16_t)clamp(t, -128 * 4, 128 * 4 - 1);
     case 12: return (int16_t)clamp(t, -128 * 16, 128 * 16 - 1);
@@ -33,7 +33,7 @@ static INLINE int16_t signed_char_clamp_high(int t, int bd) {
 #endif
 
 // should we apply any filter at all: 11111111 yes, 00000000 no
-static INLINE int8_t filter_mask2(uint8_t limit, uint8_t blimit, uint8_t p1,
+static inline int8_t filter_mask2(uint8_t limit, uint8_t blimit, uint8_t p1,
                                   uint8_t p0, uint8_t q0, uint8_t q1) {
   int8_t mask = 0;
   mask |= (abs(p1 - p0) > limit) * -1;
@@ -42,7 +42,7 @@ static INLINE int8_t filter_mask2(uint8_t limit, uint8_t blimit, uint8_t p1,
   return ~mask;
 }
 
-static INLINE int8_t filter_mask(uint8_t limit, uint8_t blimit, uint8_t p3,
+static inline int8_t filter_mask(uint8_t limit, uint8_t blimit, uint8_t p3,
                                  uint8_t p2, uint8_t p1, uint8_t p0, uint8_t q0,
                                  uint8_t q1, uint8_t q2, uint8_t q3) {
   int8_t mask = 0;
@@ -56,7 +56,7 @@ static INLINE int8_t filter_mask(uint8_t limit, uint8_t blimit, uint8_t p3,
   return ~mask;
 }
 
-static INLINE int8_t filter_mask3_chroma(uint8_t limit, uint8_t blimit,
+static inline int8_t filter_mask3_chroma(uint8_t limit, uint8_t blimit,
                                          uint8_t p2, uint8_t p1, uint8_t p0,
                                          uint8_t q0, uint8_t q1, uint8_t q2) {
   int8_t mask = 0;
@@ -68,7 +68,7 @@ static INLINE int8_t filter_mask3_chroma(uint8_t limit, uint8_t blimit,
   return ~mask;
 }
 
-static INLINE int8_t flat_mask3_chroma(uint8_t thresh, uint8_t p2, uint8_t p1,
+static inline int8_t flat_mask3_chroma(uint8_t thresh, uint8_t p2, uint8_t p1,
                                        uint8_t p0, uint8_t q0, uint8_t q1,
                                        uint8_t q2) {
   int8_t mask = 0;
@@ -79,7 +79,7 @@ static INLINE int8_t flat_mask3_chroma(uint8_t thresh, uint8_t p2, uint8_t p1,
   return ~mask;
 }
 
-static INLINE int8_t flat_mask4(uint8_t thresh, uint8_t p3, uint8_t p2,
+static inline int8_t flat_mask4(uint8_t thresh, uint8_t p3, uint8_t p2,
                                 uint8_t p1, uint8_t p0, uint8_t q0, uint8_t q1,
                                 uint8_t q2, uint8_t q3) {
   int8_t mask = 0;
@@ -93,7 +93,7 @@ static INLINE int8_t flat_mask4(uint8_t thresh, uint8_t p3, uint8_t p2,
 }
 
 // is there high edge variance internal edge: 11111111 yes, 00000000 no
-static INLINE int8_t hev_mask(uint8_t thresh, uint8_t p1, uint8_t p0,
+static inline int8_t hev_mask(uint8_t thresh, uint8_t p1, uint8_t p0,
                               uint8_t q0, uint8_t q1) {
   int8_t hev = 0;
   hev |= (abs(p1 - p0) > thresh) * -1;
@@ -101,7 +101,7 @@ static INLINE int8_t hev_mask(uint8_t thresh, uint8_t p1, uint8_t p0,
   return hev;
 }
 
-static INLINE void filter4(int8_t mask, uint8_t thresh, uint8_t *op1,
+static inline void filter4(int8_t mask, uint8_t thresh, uint8_t *op1,
                            uint8_t *op0, uint8_t *oq0, uint8_t *oq1) {
   int8_t filter1, filter2;
 
@@ -199,7 +199,7 @@ void aom_lpf_vertical_4_quad_c(uint8_t *s, int pitch, const uint8_t *blimit0,
   aom_lpf_vertical_4_c(s + 12 * pitch, pitch, blimit0, limit0, thresh0);
 }
 
-static INLINE void filter6(int8_t mask, uint8_t thresh, int8_t flat,
+static inline void filter6(int8_t mask, uint8_t thresh, int8_t flat,
                            uint8_t *op2, uint8_t *op1, uint8_t *op0,
                            uint8_t *oq0, uint8_t *oq1, uint8_t *oq2) {
   if (flat && mask) {
@@ -216,7 +216,7 @@ static INLINE void filter6(int8_t mask, uint8_t thresh, int8_t flat,
   }
 }
 
-static INLINE void filter8(int8_t mask, uint8_t thresh, int8_t flat,
+static inline void filter8(int8_t mask, uint8_t thresh, int8_t flat,
                            uint8_t *op3, uint8_t *op2, uint8_t *op1,
                            uint8_t *op0, uint8_t *oq0, uint8_t *oq1,
                            uint8_t *oq2, uint8_t *oq3) {
@@ -375,7 +375,7 @@ void aom_lpf_vertical_8_quad_c(uint8_t *s, int pitch, const uint8_t *blimit0,
   aom_lpf_vertical_8_c(s + 12 * pitch, pitch, blimit0, limit0, thresh0);
 }
 
-static INLINE void filter14(int8_t mask, uint8_t thresh, int8_t flat,
+static inline void filter14(int8_t mask, uint8_t thresh, int8_t flat,
                             int8_t flat2, uint8_t *op6, uint8_t *op5,
                             uint8_t *op4, uint8_t *op3, uint8_t *op2,
                             uint8_t *op1, uint8_t *op0, uint8_t *oq0,
@@ -514,7 +514,7 @@ void aom_lpf_vertical_14_quad_c(uint8_t *s, int pitch, const uint8_t *blimit0,
 
 #if CONFIG_AV1_HIGHBITDEPTH
 // Should we apply any filter at all: 11111111 yes, 00000000 no ?
-static INLINE int8_t highbd_filter_mask2(uint8_t limit, uint8_t blimit,
+static inline int8_t highbd_filter_mask2(uint8_t limit, uint8_t blimit,
                                          uint16_t p1, uint16_t p0, uint16_t q0,
                                          uint16_t q1, int bd) {
   int8_t mask = 0;
@@ -527,7 +527,7 @@ static INLINE int8_t highbd_filter_mask2(uint8_t limit, uint8_t blimit,
 }
 
 // Should we apply any filter at all: 11111111 yes, 00000000 no ?
-static INLINE int8_t highbd_filter_mask(uint8_t limit, uint8_t blimit,
+static inline int8_t highbd_filter_mask(uint8_t limit, uint8_t blimit,
                                         uint16_t p3, uint16_t p2, uint16_t p1,
                                         uint16_t p0, uint16_t q0, uint16_t q1,
                                         uint16_t q2, uint16_t q3, int bd) {
@@ -544,7 +544,7 @@ static INLINE int8_t highbd_filter_mask(uint8_t limit, uint8_t blimit,
   return ~mask;
 }
 
-static INLINE int8_t highbd_filter_mask3_chroma(uint8_t limit, uint8_t blimit,
+static inline int8_t highbd_filter_mask3_chroma(uint8_t limit, uint8_t blimit,
                                                 uint16_t p2, uint16_t p1,
                                                 uint16_t p0, uint16_t q0,
                                                 uint16_t q1, uint16_t q2,
@@ -560,7 +560,7 @@ static INLINE int8_t highbd_filter_mask3_chroma(uint8_t limit, uint8_t blimit,
   return ~mask;
 }
 
-static INLINE int8_t highbd_flat_mask3_chroma(uint8_t thresh, uint16_t p2,
+static inline int8_t highbd_flat_mask3_chroma(uint8_t thresh, uint16_t p2,
                                               uint16_t p1, uint16_t p0,
                                               uint16_t q0, uint16_t q1,
                                               uint16_t q2, int bd) {
@@ -573,7 +573,7 @@ static INLINE int8_t highbd_flat_mask3_chroma(uint8_t thresh, uint16_t p2,
   return ~mask;
 }
 
-static INLINE int8_t highbd_flat_mask4(uint8_t thresh, uint16_t p3, uint16_t p2,
+static inline int8_t highbd_flat_mask4(uint8_t thresh, uint16_t p3, uint16_t p2,
                                        uint16_t p1, uint16_t p0, uint16_t q0,
                                        uint16_t q1, uint16_t q2, uint16_t q3,
                                        int bd) {
@@ -590,7 +590,7 @@ static INLINE int8_t highbd_flat_mask4(uint8_t thresh, uint16_t p3, uint16_t p2,
 
 // Is there high edge variance internal edge:
 // 11111111_11111111 yes, 00000000_00000000 no ?
-static INLINE int16_t highbd_hev_mask(uint8_t thresh, uint16_t p1, uint16_t p0,
+static inline int16_t highbd_hev_mask(uint8_t thresh, uint16_t p1, uint16_t p0,
                                       uint16_t q0, uint16_t q1, int bd) {
   int16_t hev = 0;
   int16_t thresh16 = (uint16_t)thresh << (bd - 8);
@@ -599,7 +599,7 @@ static INLINE int16_t highbd_hev_mask(uint8_t thresh, uint16_t p1, uint16_t p0,
   return hev;
 }
 
-static INLINE void highbd_filter4(int8_t mask, uint8_t thresh, uint16_t *op1,
+static inline void highbd_filter4(int8_t mask, uint8_t thresh, uint16_t *op1,
                                   uint16_t *op0, uint16_t *oq0, uint16_t *oq1,
                                   int bd) {
   int16_t filter1, filter2;
@@ -689,7 +689,7 @@ void aom_highbd_lpf_vertical_4_dual_c(
                               bd);
 }
 
-static INLINE void highbd_filter6(int8_t mask, uint8_t thresh, int8_t flat,
+static inline void highbd_filter6(int8_t mask, uint8_t thresh, int8_t flat,
                                   uint16_t *op2, uint16_t *op1, uint16_t *op0,
                                   uint16_t *oq0, uint16_t *oq1, uint16_t *oq2,
                                   int bd) {
@@ -707,7 +707,7 @@ static INLINE void highbd_filter6(int8_t mask, uint8_t thresh, int8_t flat,
   }
 }
 
-static INLINE void highbd_filter8(int8_t mask, uint8_t thresh, int8_t flat,
+static inline void highbd_filter8(int8_t mask, uint8_t thresh, int8_t flat,
                                   uint16_t *op3, uint16_t *op2, uint16_t *op1,
                                   uint16_t *op0, uint16_t *oq0, uint16_t *oq1,
                                   uint16_t *oq2, uint16_t *oq3, int bd) {
@@ -841,7 +841,7 @@ void aom_highbd_lpf_vertical_8_dual_c(
                               bd);
 }
 
-static INLINE void highbd_filter14(int8_t mask, uint8_t thresh, int8_t flat,
+static inline void highbd_filter14(int8_t mask, uint8_t thresh, int8_t flat,
                                    int8_t flat2, uint16_t *op6, uint16_t *op5,
                                    uint16_t *op4, uint16_t *op3, uint16_t *op2,
                                    uint16_t *op1, uint16_t *op0, uint16_t *oq0,

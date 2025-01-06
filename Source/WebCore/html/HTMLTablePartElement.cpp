@@ -35,11 +35,11 @@
 #include "MutableStyleProperties.h"
 #include "NodeName.h"
 #include "StyleProperties.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTablePartElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTablePartElement);
 
 using namespace HTMLNames;
 

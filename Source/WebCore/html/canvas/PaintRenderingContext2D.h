@@ -27,23 +27,31 @@
 
 #include "CanvasRenderingContext2DBase.h"
 
-#include "CustomPaintCanvas.h"
-
 namespace WebCore {
 
+namespace DisplayList {
+class DrawingContext;
+}
+
+class CustomPaintCanvas;
+
 class PaintRenderingContext2D final : public CanvasRenderingContext2DBase {
-    WTF_MAKE_ISO_ALLOCATED(PaintRenderingContext2D);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PaintRenderingContext2D);
 public:
-    static std::unique_ptr<PaintRenderingContext2D> create(CanvasBase&);
+    static std::unique_ptr<PaintRenderingContext2D> create(CustomPaintCanvas&);
 
     virtual ~PaintRenderingContext2D();
 
-    CustomPaintCanvas& canvas() const { return downcast<CustomPaintCanvas>(canvasBase()); }
+    GraphicsContext* ensureDrawingContext() const;
+    GraphicsContext* existingDrawingContext() const final;
+    AffineTransform baseTransform() const final;
+
+    CustomPaintCanvas& canvas() const;
+    void replayDisplayList(GraphicsContext& target) const;
 
 private:
-    bool isPaint() const override { return true; }
-
-    PaintRenderingContext2D(CanvasBase&);
+    PaintRenderingContext2D(CustomPaintCanvas&);
+    mutable std::unique_ptr<DisplayList::DrawingContext> m_recordingContext;
 };
 
 } // namespace WebCore

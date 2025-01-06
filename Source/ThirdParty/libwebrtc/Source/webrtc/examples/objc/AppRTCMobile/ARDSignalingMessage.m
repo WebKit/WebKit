@@ -24,7 +24,8 @@ static NSString * const kARDTypeValueRemoveCandidates = @"remove-candidates";
 @synthesize type = _type;
 
 - (instancetype)initWithType:(ARDSignalingMessageType)type {
-  if (self = [super init]) {
+  self = [super init];
+  if (self) {
     _type = type;
   }
   return self;
@@ -79,7 +80,8 @@ static NSString * const kARDTypeValueRemoveCandidates = @"remove-candidates";
 @synthesize candidate = _candidate;
 
 - (instancetype)initWithCandidate:(RTC_OBJC_TYPE(RTCIceCandidate) *)candidate {
-  if (self = [super initWithType:kARDSignalingMessageTypeCandidate]) {
+  self = [super initWithType:kARDSignalingMessageTypeCandidate];
+  if (self) {
     _candidate = candidate;
   }
   return self;
@@ -97,7 +99,8 @@ static NSString * const kARDTypeValueRemoveCandidates = @"remove-candidates";
 
 - (instancetype)initWithRemovedCandidates:(NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidates {
   NSParameterAssert(candidates.count);
-  if (self = [super initWithType:kARDSignalingMessageTypeCandidateRemoval]) {
+  self = [super initWithType:kARDSignalingMessageTypeCandidateRemoval];
+  if (self) {
     _candidates = candidates;
   }
   return self;
@@ -130,7 +133,8 @@ static NSString * const kARDTypeValueRemoveCandidates = @"remove-candidates";
           NO, @"Unexpected type: %@", [RTC_OBJC_TYPE(RTCSessionDescription) stringForType:sdpType]);
       break;
   }
-  if (self = [super initWithType:messageType]) {
+  self = [super initWithType:messageType];
+  if (self) {
     _sessionDescription = description;
   }
   return self;

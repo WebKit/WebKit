@@ -78,6 +78,21 @@ static void checkURLArgument(NSURL *url)
     return self;
 }
 
+- (instancetype)initWithDirectory:(NSURL *)directory
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    if (!directory)
+        [NSException raise:NSInvalidArgumentException format:@"Directory is nil"];
+
+    NSString *path = directory.path;
+    API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self, path, path);
+
+    return self;
+}
+
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebsiteDataStoreConfiguration.class, self))
@@ -785,16 +800,6 @@ static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_WKUnifiedO
 - (void)setAllLoadsBlockedByDeviceManagementRestrictionsForTesting:(BOOL)blocked
 {
     _configuration->setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(blocked);
-}
-
-- (BOOL)webPushDaemonUsesMockBundlesForTesting
-{
-    return _configuration->webPushDaemonUsesMockBundlesForTesting();
-}
-
-- (void)setWebPushDaemonUsesMockBundlesForTesting:(BOOL)usesMockBundles
-{
-    _configuration->setWebPushDaemonUsesMockBundlesForTesting(usesMockBundles);
 }
 
 - (BOOL)resourceLoadStatisticsDebugModeEnabled

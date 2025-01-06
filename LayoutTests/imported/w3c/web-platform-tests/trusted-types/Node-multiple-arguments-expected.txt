@@ -22,11 +22,13 @@
 'mixed';
 'mixed';
 'mixed';
+'mixed';
 'mixed';'script';
 'mixed';'script';
 'mixed';'script';
 'mixed';'script';
 'mixed';'script';
+'script';
 'script';
 'script';
 'script';

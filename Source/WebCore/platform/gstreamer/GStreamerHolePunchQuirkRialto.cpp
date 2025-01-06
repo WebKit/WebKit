@@ -30,6 +30,7 @@
 
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamer.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

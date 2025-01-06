@@ -40,7 +40,7 @@ TEST(MediaDocument, WirelessPlaybackEnabled)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
 
-    NSURL *videoURL = [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *videoURL = [NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"mp4"];
     [webView loadFileURL:videoURL allowingReadAccessToURL:videoURL];
 
     while (![webView _wirelessVideoPlaybackDisabled])

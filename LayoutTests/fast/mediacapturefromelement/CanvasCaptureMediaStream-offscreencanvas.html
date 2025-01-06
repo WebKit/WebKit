@@ -30,7 +30,6 @@ var testOffScreenCanvasCommits = function(drawFunction, message) {
     recorder.start(1000);
 
     var ctx = drawFunction(offscreen);
-    ctx.commit();
   }, message);
 };
 

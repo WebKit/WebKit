@@ -3,5 +3,68 @@ PointerEvent: Dispatch custom event
 Test Description: This test checks if PointerEvent constructor works properly.
 
 
-FAIL PointerEvent: Constructor test event.getCoalescedEvents is not a function. (In 'event.getCoalescedEvents()', 'event.getCoalescedEvents' is undefined)
+PASS PointerEvent: Constructor test
+PASS getCoalescedEvents().length
+PASS getPredictedEvents().length
+PASS event.target
+PASS event.currentTarget
+PASS event.eventPhase
+PASS event.clientX
+PASS event.pointerType
+PASS getCoalescedEvents()[0].clientX
+PASS getCoalescedEvents()[1].clientX
+PASS getPredictedEvents()[0].clientX
+PASS getPredictedEvents()[1].clientX
+PASS getCoalescedEvents()[0].pointerId
+PASS getCoalescedEvents()[0].pointerType
+PASS getCoalescedEvents()[0].isPrimary
+PASS getCoalescedEvents()[0].getCoalescedEvents().length
+PASS getCoalescedEvents()[0].getPredictedEvents().length
+PASS getCoalescedEvents()[0].target
+PASS getCoalescedEvents()[0].currentTarget
+PASS getCoalescedEvents()[0].eventPhase
+PASS getCoalescedEvents()[0].cancelable
+PASS getCoalescedEvents()[0].bubbles
+PASS getCoalescedEvents()[0].offsetX
+PASS getCoalescedEvents()[0].offsetY
+PASS getCoalescedEvents()[1].pointerId
+PASS getCoalescedEvents()[1].pointerType
+PASS getCoalescedEvents()[1].isPrimary
+PASS getCoalescedEvents()[1].getCoalescedEvents().length
+PASS getCoalescedEvents()[1].getPredictedEvents().length
+PASS getCoalescedEvents()[1].target
+PASS getCoalescedEvents()[1].currentTarget
+PASS getCoalescedEvents()[1].eventPhase
+PASS getCoalescedEvents()[1].cancelable
+PASS getCoalescedEvents()[1].bubbles
+PASS getCoalescedEvents()[1].offsetX
+PASS getCoalescedEvents()[1].offsetY
+PASS getPredictedEvents()[0].pointerId
+PASS getPredictedEvents()[0].pointerType
+PASS getPredictedEvents()[0].isPrimary
+PASS getPredictedEvents()[0].getCoalescedEvents().length
+PASS getPredictedEvents()[0].getPredictedEvents().length
+PASS getPredictedEvents()[0].target
+PASS getPredictedEvents()[0].currentTarget
+PASS getPredictedEvents()[0].eventPhase
+PASS getPredictedEvents()[0].cancelable
+PASS getPredictedEvents()[0].bubbles
+PASS getPredictedEvents()[0].offsetX
+PASS getPredictedEvents()[0].offsetY
+PASS getPredictedEvents()[1].pointerId
+PASS getPredictedEvents()[1].pointerType
+PASS getPredictedEvents()[1].isPrimary
+PASS getPredictedEvents()[1].getCoalescedEvents().length
+PASS getPredictedEvents()[1].getPredictedEvents().length
+PASS getPredictedEvents()[1].target
+PASS getPredictedEvents()[1].currentTarget
+PASS getPredictedEvents()[1].eventPhase
+PASS getPredictedEvents()[1].cancelable
+PASS getPredictedEvents()[1].bubbles
+PASS getPredictedEvents()[1].offsetX
+PASS getPredictedEvents()[1].offsetY
+PASS default event.pointerType
+PASS default getCoalescedEvents().length
+PASS default getPredictedEvents().length
+PASS type event.pointerType
 

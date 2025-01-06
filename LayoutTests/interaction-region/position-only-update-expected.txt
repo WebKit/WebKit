@@ -24,7 +24,8 @@ compositing
           (drawsContent 1)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [500.00 50.00 0.00 1.00])
           (event region
-            (rect (0,0) width=80 height=20)
+            (rect (0,0) width=80 height=19)
+            (rect (0,19) width=79 height=1)
           )
         )
         (GraphicsLayer
@@ -43,7 +44,9 @@ compositing
                   (drawsContent 1)
                   (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [500.00 50.00 0.00 1.00])
                   (event region
-                    (rect (0,0) width=80 height=100)
+                    (rect (0,0) width=79 height=40)
+                    (rect (0,40) width=80 height=19)
+                    (rect (0,59) width=79 height=41)
                   )
                 )
               )

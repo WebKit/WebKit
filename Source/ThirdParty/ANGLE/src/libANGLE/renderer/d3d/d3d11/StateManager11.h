@@ -649,9 +649,6 @@ class StateManager11 final : angle::NonCopyable
     ResourceSerial mCurrentComputeConstantBuffer;
     ResourceSerial mCurrentGeometryConstantBuffer;
 
-    d3d11::Buffer mPointSpriteVertexBuffer;
-    d3d11::Buffer mPointSpriteIndexBuffer;
-
     template <typename T>
     using VertexConstantBufferArray =
         std::array<T, gl::IMPLEMENTATION_MAX_VERTEX_SHADER_UNIFORM_BUFFERS>;

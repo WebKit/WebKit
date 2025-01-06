@@ -31,11 +31,13 @@
 #pragma once
 
 #include "InputType.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // Base of checkbox and radio types.
 class BaseCheckableInputType : public InputType {
+    WTF_MAKE_TZONE_ALLOCATED(BaseCheckableInputType);
 public:
     bool canSetStringValue() const final;
 

@@ -1,8 +1,4 @@
-wrods is misspelled aab lotsi nowadays. euep.
 This tests that misspelling ranges are properly retrieved in the fashion that a spell checker would.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
 
 textMarkerRange start: 0
 textMarkerRange end: 45
@@ -10,20 +6,21 @@ startRange start: 0
 startRange end: 0
 misspelling start: 0
 misspelling end: 5
-PASS text.stringForTextMarkerRange(misspellingRange) is 'wrods'
+PASS: text.stringForTextMarkerRange(misspellingRange) === 'wrods'
 misspelling start: 20
 misspelling end: 23
-PASS text.stringForTextMarkerRange(misspellingRange) is 'aab'
+PASS: text.stringForTextMarkerRange(misspellingRange) === 'aab'
 misspelling start: 24
 misspelling end: 29
-PASS text.stringForTextMarkerRange(misspellingRange) is 'lotsi'
+PASS: text.stringForTextMarkerRange(misspellingRange) === 'lotsi'
 misspelling start: 40
 misspelling end: 44
-PASS text.stringForTextMarkerRange(misspellingRange) is 'euep'
+PASS: text.stringForTextMarkerRange(misspellingRange) === 'euep'
 misspelling start: 24
 misspelling end: 29
-PASS text.stringForTextMarkerRange(misspellingRange) is 'lotsi'
+PASS: text.stringForTextMarkerRange(misspellingRange) === 'lotsi'
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+wrods is misspelled aab lotsi nowadays. euep.

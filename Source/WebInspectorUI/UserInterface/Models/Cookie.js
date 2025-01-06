@@ -25,7 +25,7 @@
 
 WI.Cookie = class Cookie
 {
-    constructor(type, name, value, {header, expires, session, maxAge, path, domain, secure, httpOnly, sameSite} = {})
+    constructor(type, name, value, {header, expires, session, maxAge, path, domain, secure, httpOnly, sameSite, partitionKey, partitioned} = {})
     {
         console.assert(Object.values(WI.Cookie.Type).includes(type));
         console.assert(typeof name === "string");
@@ -39,6 +39,8 @@ WI.Cookie = class Cookie
         console.assert(!secure || typeof secure === "boolean");
         console.assert(!httpOnly || typeof httpOnly === "boolean");
         console.assert(!sameSite || Object.values(WI.Cookie.SameSiteType).includes(sameSite));
+        console.assert(!partitionKey || typeof partitionKey === "string");
+        console.assert(!partitioned || typeof partitioned === "boolean");
 
         this._type = type;
         this._name = name;
@@ -55,6 +57,8 @@ WI.Cookie = class Cookie
             this._secure = secure || false;
             this._httpOnly = httpOnly || false;
             this._sameSite = sameSite || WI.Cookie.SameSiteType.None;
+            this._partitionKey = partitionKey || null;
+            this._partitioned = !!partitionKey || partitioned || false;
         }
     }
 
@@ -155,6 +159,7 @@ WI.Cookie = class Cookie
         let domain = null;
         let secure = false;
         let httpOnly = false;
+        let partitioned = false;
         let sameSite = WI.Cookie.SameSiteType.None;
 
         // Parse Attributes
@@ -208,6 +213,10 @@ WI.Cookie = class Cookie
             case "samesite":
                 sameSite = WI.Cookie.parseSameSiteAttributeValue(attributeValue);
                 break;
+            case "partitioned":
+                console.assert(!attributeValue);
+                partitioned = true;
+                break;
             default:
                 console.warn("Unknown Cookie attribute:", attribute);
                 break;
@@ -217,7 +226,7 @@ WI.Cookie = class Cookie
         if (!expires)
             session = true;
 
-        return new WI.Cookie(WI.Cookie.Type.Response, name, value, {header, expires, session, maxAge, path, domain, secure, httpOnly, sameSite});
+        return new WI.Cookie(WI.Cookie.Type.Response, name, value, {header, expires, session, maxAge, path, domain, secure, httpOnly, sameSite, partitioned});
     }
 
     // Public
@@ -234,6 +243,8 @@ WI.Cookie = class Cookie
     get secure() { return this._secure; }
     get httpOnly() { return this._httpOnly; }
     get sameSite() { return this._sameSite; }
+    get partitionKey() { return this._partitionKey; }
+    get partitioned() { return this._partitioned; }
     get size() { return this._size; }
 
     get url()
@@ -270,7 +281,9 @@ WI.Cookie = class Cookie
             && this._domain === other.domain
             && this._secure === other.secure
             && this._httpOnly === other.httpOnly
-            && this._sameSite === other.sameSite;
+            && this._sameSite === other.sameSite
+            && this._partitionKey === other.partitionKey
+            && this._partitioned === other.partitioned;
     }
 
     toProtocol()
@@ -303,6 +316,7 @@ WI.Cookie = class Cookie
             httpOnly: !!this._httpOnly,
             secure: !!this._secure,
             sameSite: this._sameSite,
+            partitionKey: this._partitionKey,
         };
 
         return json;

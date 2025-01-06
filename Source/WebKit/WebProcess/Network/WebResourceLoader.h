@@ -60,17 +60,17 @@ enum class PrivateRelayed : bool;
 class WebResourceLoader : public RefCounted<WebResourceLoader>, public IPC::MessageSender {
 public:
     struct TrackingParameters {
-        WebPageProxyIdentifier webPageProxyID;
-        WebCore::PageIdentifier pageID;
-        WebCore::FrameIdentifier frameID;
-        WebCore::ResourceLoaderIdentifier resourceID;
+        Markable<WebPageProxyIdentifier> webPageProxyID { };
+        Markable<WebCore::PageIdentifier> pageID;
+        Markable<WebCore::FrameIdentifier> frameID;
+        Markable<WebCore::ResourceLoaderIdentifier> resourceID;
     };
 
     static Ref<WebResourceLoader> create(Ref<WebCore::ResourceLoader>&&, const TrackingParameters&);
 
     ~WebResourceLoader();
 
-    void didReceiveWebResourceLoaderMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     WebCore::ResourceLoader* resourceLoader() const { return m_coreLoader.get(); }
 
@@ -107,7 +107,7 @@ private:
 #endif
     
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
-    TrackingParameters m_trackingParameters;
+    const TrackingParameters m_trackingParameters;
     WebResourceInterceptController m_interceptController;
     size_t m_numBytesReceived { 0 };
 
@@ -117,7 +117,7 @@ private:
 
     Seconds timeSinceLoadStart() const { return MonotonicTime::now() - m_loadStart; }
 
-    MonotonicTime m_loadStart;
+    const MonotonicTime m_loadStart;
     MonotonicTime m_workerStart;
 };
 

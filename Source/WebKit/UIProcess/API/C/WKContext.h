@@ -27,7 +27,6 @@
 #define WKContext_h
 
 #include <WebKit/WKBase.h>
-#include <WebKit/WKContextConnectionClient.h>
 #include <WebKit/WKContextDownloadClient.h>
 #include <WebKit/WKContextHistoryClient.h>
 #include <WebKit/WKContextInjectedBundleClient.h>
@@ -162,8 +161,7 @@ WK_EXPORT WKContextRef WKContextCreateWithConfiguration(WKContextConfigurationRe
 WK_EXPORT void WKContextSetClient(WKContextRef context, const WKContextClientBase* client);
 WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, const WKContextInjectedBundleClientBase* client);
 WK_EXPORT void WKContextSetHistoryClient(WKContextRef context, const WKContextHistoryClientBase* client);
-WK_EXPORT void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadClientBase* client);
-WK_EXPORT void WKContextSetConnectionClient(WKContextRef context, const WKContextConnectionClientBase* client);
+WK_EXPORT void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadClientBase* client) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKDownload);
 
 WK_EXPORT WKDownloadRef WKContextDownloadURLRequest(WKContextRef context, WKURLRequestRef request) WK_C_API_DEPRECATED;
 WK_EXPORT WKDownloadRef WKContextResumeDownload(WKContextRef context, WKDataRef resumeData, WKStringRef path) WK_C_API_DEPRECATED;

@@ -29,9 +29,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/IterationStatus.h>
+#include <wtf/MallocPtr.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -213,12 +216,12 @@ private:
 
     Chapter* chapters() const
     {
-        return bitwise_cast<Chapter*>(this + 1);
+        return std::bit_cast<Chapter*>(this + 1);
     }
 
     EncodedInfo* encodedInfo() const
     {
-        return bitwise_cast<EncodedInfo*>(&chapters()[m_numberOfChapters]);
+        return std::bit_cast<EncodedInfo*>(&chapters()[m_numberOfChapters]);
     }
 
     EncodedInfo* endEncodedInfo() const
@@ -238,7 +241,7 @@ private:
 
     unsigned* payload() const
     {
-        return bitwise_cast<unsigned*>(this + 1);
+        return std::bit_cast<unsigned*>(this + 1);
     }
 
     static MallocPtr<ExpressionInfo> createUninitialized(unsigned numberOfChapters, unsigned numberOfEncodedInfo, unsigned numberOfEncodedInfoExtensions);
@@ -316,7 +319,7 @@ private:
 
     static constexpr unsigned numberOfWordsBetweenChapters = 10000;
 
-    using LineColumnMap = HashMap<InstPC, LineColumn, WTF::IntHash<InstPC>, WTF::UnsignedWithZeroKeyHashTraits<InstPC>>;
+    using LineColumnMap = UncheckedKeyHashMap<InstPC, LineColumn, WTF::IntHash<InstPC>, WTF::UnsignedWithZeroKeyHashTraits<InstPC>>;
 
     mutable LineColumnMap m_cachedLineColumns;
     unsigned m_numberOfChapters;
@@ -333,8 +336,4 @@ static_assert(roundUpToMultipleOf<sizeof(unsigned)>(sizeof(ExpressionInfo)) == s
 
 } // namespace JSC
 
-namespace WTF {
-
-JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::ExpressionInfo::FieldID);
-
-} // namespace WTF
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

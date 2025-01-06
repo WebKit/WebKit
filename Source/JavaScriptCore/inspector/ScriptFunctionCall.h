@@ -48,7 +48,7 @@ class JSValue;
 
 namespace Inspector {
 
-class JS_EXPORT_PRIVATE ScriptCallArgumentHandler {
+class ScriptCallArgumentHandler {
 public:
     ScriptCallArgumentHandler(JSC::JSGlobalObject* globalObject) : m_globalObject(globalObject) { }
 
@@ -59,7 +59,7 @@ public:
     void appendArgument(long long);
     void appendArgument(unsigned int);
     void appendArgument(uint64_t);
-    void appendArgument(int);
+    JS_EXPORT_PRIVATE void appendArgument(int);
     void appendArgument(bool);
 
 protected:
@@ -73,11 +73,11 @@ private:
     void* operator new[](size_t) { ASSERT_NOT_REACHED(); return reinterpret_cast<void*>(0xbadbeef); }
 };
 
-class JS_EXPORT_PRIVATE ScriptFunctionCall : public ScriptCallArgumentHandler {
+class ScriptFunctionCall : public ScriptCallArgumentHandler {
 public:
     typedef JSC::JSValue (*ScriptFunctionCallHandler)(JSC::JSGlobalObject*, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>&);
-    ScriptFunctionCall(JSC::JSGlobalObject*, JSC::JSObject* thisObject, const String& name, ScriptFunctionCallHandler = nullptr);
-    Expected<JSC::JSValue, NakedPtr<JSC::Exception>> call();
+    JS_EXPORT_PRIVATE ScriptFunctionCall(JSC::JSGlobalObject*, JSC::JSObject* thisObject, const String& name, ScriptFunctionCallHandler = nullptr);
+    JS_EXPORT_PRIVATE Expected<JSC::JSValue, NakedPtr<JSC::Exception>> call();
 
 protected:
     ScriptFunctionCallHandler m_callHandler;

@@ -14,9 +14,24 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/dynamic-mi-mozilla-409125-expected.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/dynamic-mi-mozilla-409125-ref.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/dynamic-mi-mozilla-409125.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/dynamic-mi-mozilla-414123-expected.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/dynamic-mi-mozilla-414123-ref.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/dynamic-mi-mozilla-414123.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/dynamic-mtext-like-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/dynamic-mtext-like-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/dynamic-mtext-like-001.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/dynamic-mtext-like-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/dynamic-mtext-like-002.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/mi-mathvariant-1-expected.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/mi-mathvariant-1-ref.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/mi-mathvariant-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/mi-mathvariant-2-expected.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/mi-mathvariant-2-ref.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/mi-mathvariant-2.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/ms-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/ms-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/ms-001.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tokens/tokens-rendering-from-in-flow.html

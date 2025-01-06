@@ -36,7 +36,6 @@
 #include "GPU.h"
 #include "Geolocation.h"
 #include "JSDOMPromiseDeferred.h"
-#include "JSPushSubscription.h"
 #include "LoaderStrategy.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
@@ -45,7 +44,6 @@
 #include "PermissionsPolicy.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
-#include "PushStrategy.h"
 #include "Quirks.h"
 #include "ResourceLoadObserver.h"
 #include "ScriptController.h"
@@ -54,26 +52,19 @@
 #include "ShareData.h"
 #include "ShareDataReader.h"
 #include "SharedBuffer.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
-
-#if ENABLE(DECLARATIVE_WEB_PUSH)
-#include "Logging.h"
-#endif
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Navigator);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Navigator);
 
 Navigator::Navigator(ScriptExecutionContext* context, LocalDOMWindow& window)
     : NavigatorBase(context)
     , LocalDOMWindowProperty(&window)
-#if ENABLE(DECLARATIVE_WEB_PUSH)
-    , m_pushManager(*this)
-#endif
 {
 }
 
@@ -266,7 +257,7 @@ void Navigator::initializePluginAndMimeTypeArrays()
     bool needsEmptyNavigatorPluginsQuirk = frame && frame->document() && frame->document()->quirks().shouldNavigatorPluginsBeEmpty();
     if (!frame || !frame->page() || needsEmptyNavigatorPluginsQuirk) {
         if (needsEmptyNavigatorPluginsQuirk)
-            frame->document()->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "QUIRK: Navigator plugins / mimeTypes empty on marcus.com. More information at https://bugs.webkit.org/show_bug.cgi?id=248798"_s);
+            frame->protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "QUIRK: Navigator plugins / mimeTypes empty on marcus.com. More information at https://bugs.webkit.org/show_bug.cgi?id=248798"_s);
         m_plugins = DOMPluginArray::create(*this);
         m_mimeTypes = DOMMimeTypeArray::create(*this);
         return;
@@ -387,10 +378,32 @@ GPU* Navigator::gpu()
     return m_gpuForWebGPU.get();
 }
 
-Document* Navigator::document()
+Page* Navigator::page()
 {
     auto* frame = this->frame();
+    return frame ? frame->page() : nullptr;
+}
+
+RefPtr<Page> Navigator::protectedPage()
+{
+    return page();
+}
+
+const Document* Navigator::document() const
+{
+    RefPtr frame = this->frame();
     return frame ? frame->document() : nullptr;
+}
+
+Document* Navigator::document()
+{
+    RefPtr frame = this->frame();
+    return frame ? frame->document() : nullptr;
+}
+
+RefPtr<Document> Navigator::protectedDocument()
+{
+    return document();
 }
 
 void Navigator::setAppBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
@@ -445,78 +458,15 @@ void Navigator::clearClientBadge(Ref<DeferredPromise>&& promise)
     setClientBadge(0, WTFMove(promise));
 }
 
-#if ENABLE(DECLARATIVE_WEB_PUSH)
-PushManager& Navigator::pushManager()
+int Navigator::maxTouchPoints() const
 {
-    return m_pushManager;
+#if ENABLE(IOS_TOUCH_EVENTS) && !PLATFORM(MACCATALYST)
+    RefPtr document = this->document();
+    if (!document || !document->quirks().needsZeroMaxTouchPointsQuirk())
+        return 5;
+#endif
+
+    return 0;
 }
-
-static URL toScope(Navigator& navigator)
-{
-    if (auto* frame = navigator.frame()) {
-        if (auto* document = frame->document())
-            return URL { document->url().protocolHostAndPort() };
-    }
-
-    return { };
-}
-
-void Navigator::subscribeToPushService(const Vector<uint8_t>& applicationServerKey, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
-{
-    LOG(Push, "Navigator::subscribeToPushService");
-
-    platformStrategies()->pushStrategy()->navigatorSubscribeToPushService(toScope(*this), applicationServerKey, [protectedThis = Ref { *this }, promise = WTFMove(promise)](auto&& result) mutable {
-        LOG(Push, "Navigator::subscribeToPushService completed");
-        if (result.hasException()) {
-            promise.reject(result.releaseException());
-            return;
-        }
-
-        promise.resolve(PushSubscription::create(result.releaseReturnValue(), protectedThis.ptr()));
-    });
-}
-
-void Navigator::unsubscribeFromPushService(PushSubscriptionIdentifier subscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
-{
-    LOG(Push, "Navigator::unsubscribeFromPushService");
-
-    platformStrategies()->pushStrategy()->navigatorUnsubscribeFromPushService(toScope(*this), subscriptionIdentifier, [promise = WTFMove(promise)](auto&& result) mutable {
-        LOG(Push, "Navigator::unsubscribeFromPushService completed");
-        promise.settle(WTFMove(result));
-    });
-}
-
-void Navigator::getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
-{
-    LOG(Push, "Navigator::getPushSubscription");
-
-    platformStrategies()->pushStrategy()->navigatorGetPushSubscription(toScope(*this), [protectedThis = Ref { *this }, promise = WTFMove(promise)](auto&& result) mutable {
-        LOG(Push, "Navigator::getPushSubscription completed");
-        if (result.hasException()) {
-            promise.reject(result.releaseException());
-            return;
-        }
-
-        auto optionalPushSubscriptionData = result.releaseReturnValue();
-        if (!optionalPushSubscriptionData) {
-            promise.resolve(nullptr);
-            return;
-        }
-
-        promise.resolve(PushSubscription::create(WTFMove(*optionalPushSubscriptionData), protectedThis.ptr()).ptr());
-    });
-}
-
-void Navigator::getPushPermissionState(DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
-{
-    LOG(Push, "Navigator::getPushPermissionState");
-
-    platformStrategies()->pushStrategy()->navigatorGetPushPermissionState(toScope(*this), [promise = WTFMove(promise)](auto&& result) mutable {
-        LOG(Push, "Navigator::getPushPermissionState completed");
-        promise.settle(WTFMove(result));
-    });
-}
-
-#endif // #if ENABLE(DECLARATIVE_WEB_PUSH)
 
 } // namespace WebCore

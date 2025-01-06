@@ -28,23 +28,23 @@
 
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
-#include "HTMLScriptElement.h"
+#include "HTMLElement.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSTrustedScript.h"
 #include "LocalDOMWindow.h"
-#include "Node.h"
 #include "SVGNames.h"
-#include "Text.h"
 #include "TrustedTypePolicy.h"
 #include "TrustedTypePolicyFactory.h"
 #include "WindowOrWorkerGlobalScopeTrustedTypes.h"
 #include "WorkerGlobalScope.h"
 #include "XLinkNames.h"
+#include <JavaScriptCore/ArgList.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSCast.h>
 #include <pal/text/TextEncoding.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -242,7 +242,7 @@ AttributeTypeAndSink trustedTypeForAttribute(const String& elementName, const St
     if (attributeNS.isNull() && !attributeName.isNull()) {
         auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(attribute);
         if (!eventName.isNull()) {
-            returnValues.sink = "Element "_s + attributeName;
+            returnValues.sink = makeString("Element "_s, attributeName);
             returnValues.attributeType = trustedTypeToString(TrustedType::TrustedScript);
             return returnValues;
         }
@@ -303,38 +303,40 @@ ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecuti
         : nullString());
 }
 
-ExceptionOr<RefPtr<Text>> processNodeOrStringAsTrustedType(Ref<Document> document, RefPtr<Node> parent, std::variant<RefPtr<Node>, String, RefPtr<TrustedScript>> variant)
+ExceptionOr<bool> canCompile(ScriptExecutionContext& scriptExecutionContext, JSC::CompilationType compilationType, String codeString, const JSC::ArgList& args)
 {
-    RefPtr<Text> text;
-    if (std::holds_alternative<String>(variant))
-        text = Text::create(document, WTFMove(std::get<String>(variant)));
-    else if (std::holds_alternative<RefPtr<Node>>(variant)) {
-        if (RefPtr textNode = dynamicDowncast<Text>(std::get<RefPtr<Node>>(variant)))
-            text = textNode;
-    }
+    if (compilationType == CompilationType::Function) {
+        VM& vm = scriptExecutionContext.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (text) {
-        if (UNLIKELY(is<HTMLScriptElement>(parent))) {
-            auto holder = trustedTypeCompliantString(TrustedType::TrustedScript, *document->scriptExecutionContext(), text->wholeText(), "HTMLScriptElement text"_s);
-            if (holder.hasException())
-                return holder.releaseException();
+        bool isTrusted = true;
 
-            text->replaceWholeText(holder.releaseReturnValue());
+        for (size_t i = 0; i < args.size(); i++) {
+            auto arg = args.at(i);
+            if (!arg.isObject()) {
+                isTrusted = false;
+                break;
+            }
+            if (auto trustedScript = JSTrustedScript::toWrapped(vm, arg)) {
+                if (!trustedScript) {
+                    isTrusted = false;
+                    break;
+                }
+                auto argString = arg.toWTFString(scriptExecutionContext.globalObject());
+                RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
+                if (trustedScript->toString() != argString) {
+                    isTrusted = false;
+                    break;
+                }
+            } else {
+                isTrusted = false;
+                break;
+            }
         }
-    } else if (std::holds_alternative<RefPtr<TrustedScript>>(variant))
-        text = Text::create(document, std::get<RefPtr<TrustedScript>>(variant)->toString());
 
-    return text;
-}
-
-ExceptionOr<bool> canCompile(ScriptExecutionContext& scriptExecutionContext, JSC::CompilationType compilationType, String codeString, JSC::JSValue bodyArgument)
-{
-    VM& vm = scriptExecutionContext.vm();
-
-    if (bodyArgument.isObject())
-        return JSTrustedScript::toWrapped(vm, bodyArgument) ? true : false;
-
-    ASSERT(bodyArgument.isString());
+        if (isTrusted)
+            return true;
+    }
 
     auto sink = compilationType == CompilationType::Function ? "Function"_s : "eval"_s;
 

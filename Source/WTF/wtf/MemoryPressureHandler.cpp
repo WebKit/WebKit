@@ -67,7 +67,7 @@ static MemoryPressureHandler* memoryPressureHandlerIfExists()
 }
 
 MemoryPressureHandler::MemoryPressureHandler()
-#if OS(LINUX) || OS(FREEBSD) || OS(QNX)
+#if OS(LINUX) || OS(FREEBSD) || OS(HAIKU) || OS(QNX)
     : m_holdOffTimer(RunLoop::main(), this, &MemoryPressureHandler::holdOffTimerFired)
 #elif OS(WINDOWS)
     : m_windowsMeasurementTimer(RunLoop::main(), this, &MemoryPressureHandler::windowsMeasurementTimerFired)
@@ -85,12 +85,6 @@ void MemoryPressureHandler::setMemoryFootprintPollIntervalForTesting(Seconds pol
 
 void MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor(bool use)
 {
-    if (!isFastMallocEnabled()) {
-        // If we're running with FastMalloc disabled, some kind of testing or debugging is probably happening.
-        // Let's be nice and not enable the memory kill mechanism.
-        return;
-    }
-
     if (use) {
         m_measurementTimer = makeUnique<RunLoop::Timer>(RunLoop::main(), this, &MemoryPressureHandler::measurementTimerFired);
         m_measurementTimer->startRepeating(m_configuration.pollInterval);

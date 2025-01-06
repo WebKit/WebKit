@@ -26,13 +26,14 @@
 #include "config.h"
 #include "PointerLockManager.h"
 
+#include "Display.h"
 #include "NativeWebMouseEvent.h"
 #include "WebPageProxy.h"
-#include <WebCore/PlatformDisplay.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PointerEvent.h>
 #include <WebCore/PointerID.h>
 #include <gtk/gtk.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(WAYLAND)
 #include "PointerLockManagerWayland.h"
@@ -45,14 +46,16 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PointerLockManager);
+
 std::unique_ptr<PointerLockManager> PointerLockManager::create(WebPageProxy& webPage, const FloatPoint& position, const FloatPoint& globalPosition, WebMouseEventButton button, unsigned short buttons, OptionSet<WebEventModifier> modifiers)
 {
 #if PLATFORM(WAYLAND)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
+    if (Display::singleton().isWayland())
         return makeUnique<PointerLockManagerWayland>(webPage, position, globalPosition, button, buttons, modifiers);
 #endif
 #if PLATFORM(X11)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
+    if (Display::singleton().isX11())
         return makeUnique<PointerLockManagerX11>(webPage, position, globalPosition, button, buttons, modifiers);
 #endif
     ASSERT_NOT_REACHED();
@@ -92,7 +95,7 @@ bool PointerLockManager::unlock()
     return true;
 }
 
-void PointerLockManager::handleMotion(FloatSize&& delta)
+void PointerLockManager::handleMotion(const FloatSize& delta)
 {
     m_webPage.handleMouseEvent(NativeWebMouseEvent(WebEventType::MouseMove, m_button, m_buttons, IntPoint(m_position), IntPoint(m_initialPoint), 0, m_modifiers, delta, mousePointerID, mousePointerEventType(), PlatformMouseEvent::IsTouch::No));
 }

@@ -64,7 +64,6 @@
 #include <openssl/mem.h>
 #include <openssl/obj.h>
 #include <openssl/x509.h>
-#include <openssl/x509v3.h>
 
 #include "internal.h"
 
@@ -213,13 +212,12 @@ int X509_print_ex(BIO *bp, X509 *x, unsigned long nmflags,
       return 0;
     }
 
-    EVP_PKEY *pkey = X509_get_pubkey(x);
+    const EVP_PKEY *pkey = X509_get0_pubkey(x);
     if (pkey == NULL) {
       BIO_printf(bp, "%12sUnable to load Public Key\n", "");
       ERR_print_errors(bp);
     } else {
       EVP_PKEY_print_public(bp, pkey, 16, NULL);
-      EVP_PKEY_free(pkey);
     }
   }
 

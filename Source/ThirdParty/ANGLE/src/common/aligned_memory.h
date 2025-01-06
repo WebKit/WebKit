@@ -14,7 +14,6 @@
 namespace angle
 {
 
-// This can be replaced with std::aligned_malloc when we have C++17.
 void *AlignedAlloc(size_t size, size_t alignment);
 void AlignedFree(void *ptr);
 

@@ -48,6 +48,11 @@ public:
     static std::unique_ptr<SkJpegMetadataDecoder> Make(std::vector<Segment> headerSegments);
 
     /**
+     * Create metadata for the specified encoded JPEG file. This may return nullptr.
+     */
+    static std::unique_ptr<SkJpegMetadataDecoder> Make(sk_sp<SkData> data);
+
+    /**
      * Return the Exif data attached to the image (if any) and nullptr otherwise. If |copyData| is
      * false, then the returned SkData may directly reference the data provided when this object was
      * created.
@@ -60,6 +65,13 @@ public:
      * created.
      */
     virtual sk_sp<SkData> getICCProfileData(bool copyData) const = 0;
+
+    /**
+     * Return the ISO 21496-1 metadata, if any, and nullptr otherwise. If |copyData| is false,
+     * then the returned SkData may directly reference the data provided when this object was
+     * created.
+     */
+    virtual sk_sp<SkData> getISOGainmapMetadata(bool copyData) const = 0;
 
     /**
      * Return true if there is a possibility that this image contains a gainmap image.

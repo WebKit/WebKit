@@ -30,23 +30,13 @@
 #include "AuthenticatorManager.h"
 #include "VirtualAuthenticatorConfiguration.h"
 #include "VirtualCredential.h"
-#include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class VirtualAuthenticatorManager;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::VirtualAuthenticatorManager> : std::true_type { };
-}
 
 namespace WebKit {
 struct VirtualCredential;
 
 class VirtualAuthenticatorManager final : public AuthenticatorManager {
 public:
-    explicit VirtualAuthenticatorManager();
+    static Ref<VirtualAuthenticatorManager> create();
 
     String createAuthenticator(const VirtualAuthenticatorConfiguration& /*config/*/);
     bool removeAuthenticator(const String& /*authenticatorId*/);
@@ -62,7 +52,9 @@ protected:
     
     
 private:
-    UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&) const final;
+    VirtualAuthenticatorManager();
+
+    Ref<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&) const final;
     void runPanel() override;
     void filterTransports(TransportSet&) const override { };
 
@@ -71,5 +63,9 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::VirtualAuthenticatorManager)
+static bool isType(const WebKit::AuthenticatorManager& manager) { return manager.isVirtual(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEB_AUTHN)

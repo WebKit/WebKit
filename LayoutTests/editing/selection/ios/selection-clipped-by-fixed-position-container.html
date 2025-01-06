@@ -1,0 +1,73 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+    margin: 0;
+}
+
+.target {
+    text-align: center;
+    font-size: 40px;
+    line-height: 40px;
+}
+
+.target > span {
+    border: 1px solid orange;
+}
+
+.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 150px;
+    line-height: 150px;
+    background: tomato;
+    color: white;
+    text-align: center;
+    display: none;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the selection highlight is clipped by fixed-position containers after pinch-zooming");
+
+    await UIHelper.longPressElement(document.querySelector(".target > span"));
+    await UIHelper.waitForSelectionToAppear();
+
+    let selectionRects = await UIHelper.getUISelectionViewRects();
+    let {x, y} = UIHelper.midPointOfRect(selectionRects[0]);
+    viewBeforeShowingFixedContainer = await UIHelper.frontmostViewAtPoint(x, y);
+
+    // Reveal the fixed-position popup. This should occlude the selection.
+    document.querySelector(".fixed").style.display = "block";
+
+    // Force the compositing view hierarchy to be updated, by pinch-zooming in and out.
+    await UIHelper.pinch(150, 150, 150, 200, 150, 125, 150, 225);
+    await UIHelper.pinch(150, 125, 150, 225, 150, 150, 150, 200);
+    await UIHelper.waitForZoomingOrScrollingToEnd();
+
+    viewAfterShowingFixedContainer = await UIHelper.frontmostViewAtPoint(x, y);
+
+    shouldNotBe("viewBeforeShowingFixedContainer", "viewAfterShowingFixedContainer");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="fixed">Fixed position</div>
+    <p class="target"><span>Select</span> me</p>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

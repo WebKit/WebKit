@@ -44,8 +44,6 @@ private:
     void close() final { }
     void error(String&&) final { }
 
-    void send(std::span<const uint8_t>, CompletionHandler<void()>&&);
-
     ThreadSafeWeakPtr<WebTransport> m_transport;
 };
 

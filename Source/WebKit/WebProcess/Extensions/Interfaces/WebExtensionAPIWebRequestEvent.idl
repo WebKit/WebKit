@@ -28,8 +28,8 @@
     MainWorldOnly,
 ] interface WebExtensionAPIWebRequestEvent {
 
-    [NeedsPage, RaisesException] void addListener([CallbackHandler] function listener, [NSDictionary, Optional] any filter, [NSArray=NSString, Optional] array extraInfoSpec);
-    [NeedsPage] void removeListener([CallbackHandler] function listener);
+    [NeedsFrameIdentifier, RaisesException] void addListener([CallbackHandler] function listener, [NSDictionary, Optional] any filter, [NSArray=NSString, Optional] array extraInfoSpec);
+    [NeedsFrameIdentifier] void removeListener([CallbackHandler] function listener);
     boolean hasListener([CallbackHandler] function listener);
 
 };

@@ -1,4 +1,5 @@
 
+PASS Make sure the page is ready for animation.
 PASS Instant scrolling of an element with default scroll-behavior
 PASS Smooth scrolling of an element with default scroll-behavior
 

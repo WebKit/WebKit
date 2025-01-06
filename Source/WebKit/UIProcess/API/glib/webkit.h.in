@@ -123,6 +123,9 @@
 #include <@API_INCLUDE_PREFIX@/WebKitVersion.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebContext.h>
 #if PLATFORM(GTK)
+#include <@API_INCLUDE_PREFIX@/WebKitWebExtensionMatchPattern.h>
+#endif
+#if PLATFORM(GTK)
 #include <@API_INCLUDE_PREFIX@/WebKitWebInspector.h>
 #endif
 #include <@API_INCLUDE_PREFIX@/WebKitWebResource.h>

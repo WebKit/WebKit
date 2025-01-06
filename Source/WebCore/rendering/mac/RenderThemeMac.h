@@ -143,11 +143,10 @@ private:
 
     bool searchFieldShouldAppearAsTextField(const RenderStyle&) const final;
 
-    const IntSize* menuListSizes() const;
-
-    const IntSize* searchFieldSizes() const;
-    const IntSize* cancelButtonSizes() const;
-    const IntSize* resultsButtonSizes() const;
+    std::span<const IntSize, 4> menuListSizes() const;
+    std::span<const IntSize, 4> searchFieldSizes() const;
+    std::span<const IntSize, 4> cancelButtonSizes() const;
+    std::span<const IntSize, 4> resultsButtonSizes() const;
     void setSearchFieldSize(RenderStyle&) const;
 
 #if ENABLE(SERVICE_CONTROLS)

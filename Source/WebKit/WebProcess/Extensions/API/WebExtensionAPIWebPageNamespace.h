@@ -42,7 +42,7 @@ class WebExtensionAPIWebPageNamespace : public WebExtensionAPIObject, public JSW
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
+    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
     WebExtensionAPIWebPageRuntime& runtime() const;
     WebExtensionAPITest& test();

@@ -44,7 +44,7 @@ class LinkBuffer;
 class PCToCodeOriginMapBuilder;
 
 class PCToCodeOriginMapBuilder {
-    WTF_MAKE_TZONE_ALLOCATED(PCToCodeOriginMapBuilder);
+    WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(PCToCodeOriginMapBuilder);
     WTF_MAKE_NONCOPYABLE(PCToCodeOriginMapBuilder);
     friend class PCToCodeOriginMap;
 

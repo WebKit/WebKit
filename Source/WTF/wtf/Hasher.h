@@ -99,17 +99,17 @@ inline void add(Hasher& hasher, bool boolean)
 
 inline void add(Hasher& hasher, double number)
 {
-    add(hasher, bitwise_cast<uint64_t>(number));
+    add(hasher, std::bit_cast<uint64_t>(number));
 }
 
 inline void add(Hasher& hasher, float number)
 {
-    add(hasher, bitwise_cast<uint32_t>(number));
+    add(hasher, std::bit_cast<uint32_t>(number));
 }
 
 template<typename T> inline void add(Hasher& hasher, T* ptr)
 {
-    add(hasher, bitwise_cast<uintptr_t>(ptr));
+    add(hasher, std::bit_cast<uintptr_t>(ptr));
 }
 
 inline void add(Hasher& hasher, const String& string)
@@ -126,7 +126,18 @@ inline void add(Hasher& hasher, const String& string)
 inline void add(Hasher& hasher, const AtomString& string)
 {
     // Chose to hash the pointer here. Assuming this is better than hashing the characters or hashing the already-computed hash of the characters.
-    add(hasher, bitwise_cast<uintptr_t>(string.impl()));
+    add(hasher, std::bit_cast<uintptr_t>(string.impl()));
+}
+
+inline void add(Hasher& hasher, ASCIILiteral literal)
+{
+    // Chose to hash the characters here. Assuming this is better than hashing the possibly-already-computed hash of the characters.
+    bool remainder = literal.length() & 1;
+    unsigned roundedLength = literal.length() - remainder;
+    for (unsigned i = 0; i < roundedLength; i += 2)
+        add(hasher, (literal[i] << 16) | literal[i + 1]);
+    if (remainder)
+        add(hasher, literal[roundedLength]);
 }
 
 inline void add(Hasher& hasher, const URL& url)

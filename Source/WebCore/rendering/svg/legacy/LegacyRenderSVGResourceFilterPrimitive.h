@@ -34,7 +34,7 @@ class FilterEffect;
 class SVGFilterPrimitiveStandardAttributes;
 
 class LegacyRenderSVGResourceFilterPrimitive final : public LegacyRenderSVGHiddenContainer {
-    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceFilterPrimitive);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGResourceFilterPrimitive);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFilterPrimitive);
 public:
     LegacyRenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, RenderStyle&&);
@@ -53,4 +53,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGResourceFilterPrimitive, isRenderSVGResourceFilterPrimitive())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGResourceFilterPrimitive, isLegacyRenderSVGResourceFilterPrimitive())

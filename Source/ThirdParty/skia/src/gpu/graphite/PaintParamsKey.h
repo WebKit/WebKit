@@ -19,20 +19,52 @@
 #include <cstring> // for memcmp
 
 class SkArenaAlloc;
+struct SkSamplingOptions;
+enum class SkTileMode;
 
 namespace skgpu::graphite {
 
+class Caps;
 class ShaderCodeDictionary;
 class ShaderNode;
+class TextureProxy;
+class UniquePaintParamsID;
 
-// This class is a compact representation of the shader needed to implement a given
-// PaintParams. Its structure is a series of nodes where each node consists of:
-//   4 bytes: code-snippet ID
-//   N child nodes, where N is the constant number of children defined by the ShaderCodeDictionary
-//     for the node's snippet ID.
-//
-// All children of a child node are stored in the key before the next child is encoded in the key,
-// e.g. iterating the data in a key is a depth-first traversal of the node tree.
+/**
+ * This class is a compact representation of the shader needed to implement a given
+ * PaintParams. Its structure is a series of nodes where each node consists of:
+ *   4 bytes: code-snippet ID
+ *   N child nodes, where N is the constant number of children defined by the ShaderCodeDictionary
+ *     for the node's snippet ID.
+ *
+ * Some snippet definitions support embedding data into the PaintParamsKey, used when something
+ * external to the generated SkSL needs produce unique pipelines (e.g. immutable samplers). For
+ * snippets that store data, the data is stored immediately after the ID as:
+ *   4 bytes: code-snippet ID
+ *   4 bytes: data length
+ *   0-M: variable length data
+ *   N child nodes
+ *
+ * All children of a child node are stored in the key before the next child is encoded in the key,
+ * e.g. iterating the data in a key is a depth-first traversal of the node tree.
+ *
+ * The PaintParamsKey stores multiple root nodes, with each root representing an effect tree that
+ * affects different parts of the shading pipeline. The key is can only hold 2 or 3 roots:
+ *  1. Color root node: produces the "src" color used in final blending with the "dst" color.
+ *  2. Final blend node: defines the blend function combining src and dst colors. If this is a
+ *     FixedBlend snippet the final pipeline may be able to lift it to HW blending.
+ *  3. Clipping: optional, produces analytic coverage from a clip shader or shape.
+ *
+ * Logically the root effects produce a src color and the src coverage (augmenting any other
+ * coverage coming from the RenderStep). A single src shading node could be used instead of the
+ * two for color and blending, but its structure would always be:
+ *
+ *    [ BlendCompose [ [ color-root-node ] surface-color [ final-blend ] ] ]
+ *
+ * where "surface-color" would be a special snippet that produces the current dst color value.
+ * To keep PaintParamsKeys memory cost lower, the BlendCompose and "surface-color" nodes are implied
+ * when generating the SkSL and pipeline.
+ */
 class PaintParamsKey {
 public:
     // PaintParamsKey can only be created by using a PaintParamsKeyBuilder or by cloning the key
@@ -42,7 +74,7 @@ public:
     ~PaintParamsKey() = default;
     PaintParamsKey& operator=(const PaintParamsKey&) = default;
 
-    static constexpr PaintParamsKey Invalid() { return PaintParamsKey(SkSpan<const int32_t>()); }
+    static constexpr PaintParamsKey Invalid() { return PaintParamsKey(SkSpan<const uint32_t>()); }
     bool isValid() const { return !fData.empty(); }
 
     // Return a PaintParamsKey whose data is owned by the provided arena and is not attached to
@@ -53,16 +85,19 @@ public:
     // Converts the key into a forest of ShaderNode trees. If the key is valid this will return at
     // least one root node. If the key contains unknown shader snippet IDs, returns an empty span.
     // All shader nodes, and the returned span's backing data, are owned by the provided arena.
-    // TODO: Strengthen PaintParams key generation so we can assume there's only ever one root node
-    // representing the final blend (either a shader blend (with 2 children: main effect & dst) or
-    // a fixed function blend (with 1 child being the main effect)).
+    //
+    // A valid key will produce either 2 or 3 root nodes. The first root node represents how the
+    // source color is computed. The second node defines the final blender between the calculated
+    // source color and the current pixel's dst color. If provided, the third node calculates an
+    // additional analytic coverage value to combine with the geometry's coverage.
     SkSpan<const ShaderNode*> getRootNodes(const ShaderCodeDictionary*, SkArenaAlloc*) const;
 
-    // Converts the key to a structured list of snippet names for debugging or labeling purposes.
-    SkString toString(const ShaderCodeDictionary* dict) const;
+    // Converts the key to a structured list of snippet information for debugging or labeling
+    // purposes.
+    SkString toString(const ShaderCodeDictionary* dict, bool includeData) const;
 
 #ifdef SK_DEBUG
-    void dump(const ShaderCodeDictionary*) const;
+    void dump(const ShaderCodeDictionary*, UniquePaintParamsID) const;
 #endif
 
     bool operator==(const PaintParamsKey& that) const {
@@ -80,7 +115,7 @@ public:
 private:
     friend class PaintParamsKeyBuilder;   // for the parented-data ctor
 
-    constexpr PaintParamsKey(SkSpan<const int32_t> span) : fData(span) {}
+    constexpr PaintParamsKey(SkSpan<const uint32_t> span) : fData(span) {}
 
     // Returns null if the node or any of its children have an invalid snippet ID. Recursively
     // creates a node and all of its children, incrementing 'currentIndex' by the total number of
@@ -90,8 +125,8 @@ private:
                                  SkArenaAlloc* arena) const;
 
     // The memory referenced in 'fData' is always owned by someone else. It either shares the span
-    // of from the Builder, or clone() puts the span in an arena.
-    SkSpan<const int32_t> fData;
+    // from the Builder, or clone() puts the span in an arena.
+    SkSpan<const uint32_t> fData;
 };
 
 // The PaintParamsKeyBuilder and the PaintParamsKeys snapped from it share the same
@@ -136,6 +171,13 @@ public:
         this->endBlock();
     }
 
+    void addData(SkSpan<const uint32_t> data) {
+        // First push the data size followed by the actual data.
+        SkDEBUGCODE(this->validateData(data.size()));
+        fData.push_back(data.size());
+        fData.push_back_n(data.size(), data.begin());
+    }
+
 private:
     friend class AutoLockBuilderAsKey; // for lockAsKey() and unlock()
 
@@ -161,10 +203,11 @@ private:
 
     // The data array uses clear() on unlock so that it's underlying storage and repeated use of the
     // builder will hit a high-water mark and avoid lots of allocations when recording draws.
-    skia_private::TArray<int32_t> fData;
+    skia_private::TArray<uint32_t> fData;
 
 #ifdef SK_DEBUG
     void pushStack(int32_t codeSnippetID);
+    void validateData(size_t dataSize);
     void popStack();
 
     // Information about the current block being written
@@ -172,6 +215,7 @@ private:
         int fCodeSnippetID;
         int fNumExpectedChildren;
         int fNumActualChildren = 0;
+        int fDataSize = -1;
     };
 
     const ShaderCodeDictionary* fDict;

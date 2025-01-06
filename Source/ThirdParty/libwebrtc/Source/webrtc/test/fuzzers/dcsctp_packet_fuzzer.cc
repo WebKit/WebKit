@@ -14,7 +14,7 @@ namespace webrtc {
 using dcsctp::SctpPacket;
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  absl::optional<SctpPacket> c =
+  std::optional<SctpPacket> c =
       SctpPacket::Parse(rtc::ArrayView<const uint8_t>(data, size),
                         /*disable_checksum_verification=*/true);
 

@@ -44,6 +44,7 @@ namespace {
 class MockGraphicsContextGLClient final : public WebCore::GraphicsContextGL::Client {
 public:
     void forceContextLost() final { ++m_contextLostCalls; }
+    void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, const String&) final { }
 
     int contextLostCalls() { return m_contextLostCalls; }
 private:
@@ -71,7 +72,7 @@ class GraphicsContextGLCocoaTest : public ::testing::Test {
 protected:
     void SetUp() override // NOLINT
     {
-        m_scopedProcessType = ScopedSetAuxiliaryProcessTypeForTesting { WebCore::AuxiliaryProcessType::GPU };
+        m_scopedProcessType = ScopedSetAuxiliaryProcessTypeForTesting { WTF::AuxiliaryProcessType::GPU };
     }
     void TearDown() override // NOLINT
     {
@@ -81,17 +82,16 @@ private:
     std::optional<ScopedSetAuxiliaryProcessTypeForTesting> m_scopedProcessType;
 };
 
-class AnyContextAttributeTest : public testing::TestWithParam<std::tuple<bool, bool, bool>> {
+class AnyContextAttributeTest : public testing::TestWithParam<std::tuple<bool, bool>> {
 protected:
-    bool useMetal() const { return std::get<0>(GetParam()); }
-    bool antialias() const { return std::get<1>(GetParam()); }
-    bool preserveDrawingBuffer() const { return std::get<2>(GetParam()); }
+    bool antialias() const { return std::get<0>(GetParam()); }
+    bool preserveDrawingBuffer() const { return std::get<1>(GetParam()); }
     WebCore::GraphicsContextGLAttributes attributes();
     RefPtr<TestedGraphicsContextGLCocoa> createTestContext(WebCore::IntSize contextSize);
 
     void SetUp() override // NOLINT
     {
-        m_scopedProcessType = ScopedSetAuxiliaryProcessTypeForTesting { WebCore::AuxiliaryProcessType::GPU };
+        m_scopedProcessType = ScopedSetAuxiliaryProcessTypeForTesting { WTF::AuxiliaryProcessType::GPU };
     }
     void TearDown() override // NOLINT
     {
@@ -105,7 +105,6 @@ private:
 WebCore::GraphicsContextGLAttributes AnyContextAttributeTest::attributes()
 {
     WebCore::GraphicsContextGLAttributes attributes;
-    attributes.useMetal = useMetal();
     attributes.antialias = antialias();
     attributes.depth = false;
     attributes.stencil = false;
@@ -137,7 +136,7 @@ static ::testing::AssertionResult changeContextContents(TestedGraphicsContextGLC
     auto sampleAt = context.getInternalFramebufferSize();
     sampleAt.contract(2, 3);
     sampleAt.clampNegativeToZero();
-    context.readPixels({ sampleAt.width(), sampleAt.height(), 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, gotValues, 4, 0);
+    context.readPixels({ sampleAt.width(), sampleAt.height(), 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, gotValues, 4, 0, false);
     WebCore::Color got { WebCore::SRGBA<uint8_t> { gotValues[0], gotValues[1], gotValues[2], gotValues[3] } };
     if (got != expected)
         return ::testing::AssertionFailure() << "Failed to verify draw to context. Got: " << got << ", expected: " << expected << ".";
@@ -195,7 +194,6 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentPowerPreferenceMetal)
     if (!hasMultipleGPUs())
         return;
     WebCore::GraphicsContextGLAttributes attributes;
-    attributes.useMetal = true;
     EXPECT_EQ(attributes.powerPreference, WebCore::GraphicsContextGLPowerPreference::Default);
     auto defaultContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
     ASSERT_NE(defaultContext, nullptr);
@@ -211,7 +209,9 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentPowerPreferenceMetal)
     EXPECT_NE(lowPowerContext->getString(WebCore::GraphicsContextGL::RENDERER), highPerformanceContext->getString(WebCore::GraphicsContextGL::RENDERER));
     EXPECT_EQ(defaultContext->getString(WebCore::GraphicsContextGL::RENDERER), lowPowerContext->getString(WebCore::GraphicsContextGL::RENDERER));
 }
+#endif
 
+#if PLATFORM(MAC)
 // Tests that requesting context with windowGPUID from low power device results
 // to same thing as requesting default low power context.
 // Tests that windowGPUID from low power device still respects high performance request.
@@ -220,13 +220,11 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsExplicitLowPowerDeviceMetal)
     if (!hasMultipleGPUs())
         return;
     WebCore::GraphicsContextGLAttributes attributes1;
-    attributes1.useMetal = true;
     attributes1.powerPreference = WebCore::GraphicsContextGLPowerPreference::LowPower;
     auto lowPowerContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes1 });
     ASSERT_NE(lowPowerContext, nullptr);
 
     WebCore::GraphicsContextGLAttributes attributes2;
-    attributes2.useMetal = true;
     attributes2.windowGPUID = [lowPowerDevice() registryID];
     auto explicitDeviceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes2 });
     ASSERT_NE(explicitDeviceContext.get(), nullptr);
@@ -250,13 +248,11 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsExplicitHighPerformanceDeviceMeta
     if (!hasMultipleGPUs())
         return;
     WebCore::GraphicsContextGLAttributes attributes1;
-    attributes1.useMetal = true;
     attributes1.powerPreference = WebCore::GraphicsContextGLPowerPreference::HighPerformance;
     auto highPerformanceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes1 });
     ASSERT_NE(highPerformanceContext, nullptr);
 
     WebCore::GraphicsContextGLAttributes attributes2;
-    attributes2.useMetal = true;
     attributes2.windowGPUID = [highPerformanceDevice() registryID];
     auto explicitDeviceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes2 });
     ASSERT_NE(explicitDeviceContext.get(), nullptr);
@@ -281,7 +277,6 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentGPUIDsMetal)
     auto devices = allDevices();
     for (id<MTLDevice> device in devices.get()) {
         WebCore::GraphicsContextGLAttributes attributes;
-        attributes.useMetal = true;
         attributes.windowGPUID = [device registryID];
         auto context = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
         EXPECT_NE(context.get(), nullptr);
@@ -303,7 +298,6 @@ TEST_F(GraphicsContextGLCocoaTest, ClearBufferIncorrectSizes)
 {
     using GL = WebCore::GraphicsContextGL;
     WebCore::GraphicsContextGLAttributes attributes;
-    attributes.useMetal = true;
     attributes.isWebGL2 = true;
     attributes.depth = true;
     attributes.stencil = true;
@@ -389,7 +383,6 @@ TEST_F(GraphicsContextGLCocoaTest, ClearBufferIncorrectSizes)
 TEST_F(GraphicsContextGLCocoaTest, TwoLinks)
 {
     WebCore::GraphicsContextGLAttributes attributes;
-    attributes.useMetal = true;
     auto gl = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
     auto vs = gl->createShader(WebCore::GraphicsContextGL::VERTEX_SHADER);
     gl->shaderSource(vs, "void main() { }"_s);
@@ -510,7 +503,7 @@ TEST_P(AnyContextAttributeTest, PrepareFailureWorks)
     } else {
         ASSERT_FALSE(changeContextContents(*context, 1));
         uint32_t gotValue = 0;
-        context->readPixels({ 0, 0, 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, { reinterpret_cast<uint8_t*>(&gotValue), 4 }, 4, 0);
+        context->readPixels({ 0, 0, 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, { reinterpret_cast<uint8_t*>(&gotValue), 4 }, 4, 0, false);
         EXPECT_EQ(0u, gotValue);
         EXPECT_EQ(GCGLErrorCode::InvalidFramebufferOperation, context->getErrors());
     }
@@ -537,27 +530,15 @@ TEST_P(AnyContextAttributeTest, FinishIsSignaled)
     while (!signalled)
         sleep(.1_s);
     EXPECT_TRUE(signalled);
-    if (context->contextAttributes().useMetal)
-        EXPECT_NE(Thread::current().uid(), signalThreadUID);
-    else
-        EXPECT_EQ(Thread::current().uid(), signalThreadUID);
+    EXPECT_NE(Thread::current().uid(), signalThreadUID);
 }
-
-#if PLATFORM(IOS_FAMILY) || PLATFORM(IOS_FAMILY_SIMULATOR)
-#define USE_METAL_TESTING_VALUES testing::Values(true)
-#else
-#define USE_METAL_TESTING_VALUES testing::Values(true, false)
-#endif
 
 INSTANTIATE_TEST_SUITE_P(GraphicsContextGLCocoaTest,
     AnyContextAttributeTest,
     testing::Combine(
-        USE_METAL_TESTING_VALUES,
         testing::Values(true, false),
         testing::Values(true, false)),
     TestParametersToStringFormatter());
-
-#undef USE_METAL_TESTING_VALUES
 
 }
 

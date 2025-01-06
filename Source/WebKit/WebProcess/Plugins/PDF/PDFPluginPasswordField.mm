@@ -26,12 +26,12 @@
 #import "config.h"
 #import "PDFPluginPasswordField.h"
 
-#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#if ENABLE(PDF_PLUGIN)
 
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
-#import <Quartz/Quartz.h>
 #import <WebCore/AddEventListenerOptions.h>
+#import <WebCore/EnterKeyHint.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/HTMLElement.h>
@@ -55,6 +55,7 @@ Ref<Element> PDFPluginPasswordField::createAnnotationElement()
 {
     auto element = PDFPluginTextAnnotation::createAnnotationElement();
     element->setAttribute(typeAttr, "password"_s);
+    element->setAttribute(enterkeyhintAttr, AtomString { attributeValueForEnterKeyHint(EnterKeyHint::Go) });
     element->addEventListener(eventNames().keyupEvent, *eventListener(), false);
     return element;
 }
@@ -84,4 +85,4 @@ void PDFPluginPasswordField::resetField()
     
 } // namespace WebKit
 
-#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#endif // ENABLE(PDF_PLUGIN)

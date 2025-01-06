@@ -147,7 +147,6 @@ async function go() {
     await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: 'amount' };", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
     await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: '', value: '0' } };", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
     await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value:'-10.00'} };", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
-    await logAndShouldReject("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value: '10000000000.00' } }; request = new PaymentRequest([validPaymentMethod()], paymentDetails)", "request.show()")
     debug("")
     debug("")
 
@@ -198,7 +197,7 @@ async function go() {
     finishJSTest();
 }
 
-function clickElement(element) {
+async function clickElement(element) {
     let x = element.offsetLeft + 2;
     let y = element.offsetTop + 2;
 
@@ -206,9 +205,9 @@ function clickElement(element) {
     if (supportsTouchEvents && window.testRunner && testRunner.runUIScript) {
         testRunner.runUIScript(`(function() { uiController.singleTapAtPoint(${x}, ${y}, function() { }); })();`, function () { });
     } else if (window.eventSender) {
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(x, y);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 }
 

@@ -73,6 +73,7 @@ private:
         GCAwareJITStubRoutine* routine;
     };
     Vector<Routine> m_routines;
+    Vector<GCAwareJITStubRoutine*> m_immutableCodeRoutines;
     Range<uintptr_t> m_range { 0, 0 };
 };
 

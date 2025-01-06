@@ -8,8 +8,8 @@
 #include "modules/skottie/src/animator/KeyframeAnimator.h"
 
 #include "include/private/base/SkTo.h"
+#include "modules/jsonreader/SkJSONReader.h"
 #include "modules/skottie/src/SkottieJson.h"
-#include "src/utils/SkJSON.h"
 
 #include <cstddef>
 
@@ -164,8 +164,8 @@ bool AnimatorBuilder::parseKeyframes(const AnimationBuilder& abuilder,
         if (i > 0) {
             auto& prev_kf = fKFs.back();
 
-            // Ts must be strictly monotonic.
-            if (t <= prev_kf.t) {
+            // Ts must be monotonic.
+            if (t < prev_kf.t) {
                 return false;
             }
 

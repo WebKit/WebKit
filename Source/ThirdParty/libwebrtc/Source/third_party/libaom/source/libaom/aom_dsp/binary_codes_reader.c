@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,8 +12,13 @@
 #include "aom_dsp/binary_codes_reader.h"
 #include "aom_dsp/recenter.h"
 
-uint16_t aom_read_primitive_quniform_(aom_reader *r,
-                                      uint16_t n ACCT_STR_PARAM) {
+#define read_primitive_quniform(r, n, ACCT_STR_NAME) \
+  read_primitive_quniform_(r, n ACCT_STR_ARG(ACCT_STR_NAME))
+#define read_primitive_subexpfin(r, n, k, ACCT_STR_NAME) \
+  read_primitive_subexpfin_(r, n, k ACCT_STR_ARG(ACCT_STR_NAME))
+
+static uint16_t read_primitive_quniform_(aom_reader *r,
+                                         uint16_t n ACCT_STR_PARAM) {
   if (n <= 1) return 0;
   const int l = get_msb(n) + 1;
   const int m = (1 << l) - n;
@@ -23,8 +28,8 @@ uint16_t aom_read_primitive_quniform_(aom_reader *r,
 
 // Decode finite subexponential code that for a symbol v in [0, n-1] with
 // parameter k
-uint16_t aom_read_primitive_subexpfin_(aom_reader *r, uint16_t n,
-                                       uint16_t k ACCT_STR_PARAM) {
+static uint16_t read_primitive_subexpfin_(aom_reader *r, uint16_t n,
+                                          uint16_t k ACCT_STR_PARAM) {
   int i = 0;
   int mk = 0;
 
@@ -33,7 +38,7 @@ uint16_t aom_read_primitive_subexpfin_(aom_reader *r, uint16_t n,
     int a = (1 << b);
 
     if (n <= mk + 3 * a) {
-      return aom_read_primitive_quniform(r, n - mk, ACCT_STR_NAME) + mk;
+      return read_primitive_quniform(r, n - mk, ACCT_STR_NAME) + mk;
     }
 
     if (!aom_read_bit(r, ACCT_STR_NAME)) {
@@ -51,5 +56,5 @@ uint16_t aom_read_primitive_subexpfin_(aom_reader *r, uint16_t n,
 uint16_t aom_read_primitive_refsubexpfin_(aom_reader *r, uint16_t n, uint16_t k,
                                           uint16_t ref ACCT_STR_PARAM) {
   return inv_recenter_finite_nonneg(
-      n, ref, aom_read_primitive_subexpfin(r, n, k, ACCT_STR_NAME));
+      n, ref, read_primitive_subexpfin(r, n, k, ACCT_STR_NAME));
 }

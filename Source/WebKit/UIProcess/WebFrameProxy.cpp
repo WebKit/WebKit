@@ -37,10 +37,10 @@
 #include "LoadedWebArchive.h"
 #include "MessageSenderInlines.h"
 #include "NetworkProcessMessages.h"
-#include "ProvisionalFrameCreationParameters.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
 #include "RemotePageProxy.h"
+#include "WebBackForwardListFrameItem.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebNavigationState.h"
 #include "WebPageMessages.h"
@@ -75,11 +75,11 @@ static HashMap<FrameIdentifier, WeakRef<WebFrameProxy>>& allFrames()
     return map.get();
 }
 
-WebFrameProxy* WebFrameProxy::webFrame(FrameIdentifier identifier)
+WebFrameProxy* WebFrameProxy::webFrame(std::optional<FrameIdentifier> identifier)
 {
-    if (!std::remove_reference_t<decltype(allFrames())>::isValidKey(identifier))
+    if (!identifier || !std::remove_reference_t<decltype(allFrames())>::isValidKey(*identifier))
         return nullptr;
-    return allFrames().get(identifier);
+    return allFrames().get(*identifier);
 }
 
 bool WebFrameProxy::canCreateFrame(FrameIdentifier frameID)
@@ -88,11 +88,15 @@ bool WebFrameProxy::canCreateFrame(FrameIdentifier frameID)
         && !allFrames().contains(frameID);
 }
 
-WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIdentifier frameID)
+WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIdentifier frameID, SandboxFlags effectiveSandboxFlags, WebCore::ScrollbarMode scrollingMode, WebFrameProxy* opener, IsMainFrame isMainFrame)
     : m_page(page)
     , m_frameProcess(process)
+    , m_opener(opener)
+    , m_frameLoadState(isMainFrame)
     , m_frameID(frameID)
     , m_layerHostingContextIdentifier(LayerHostingContextIdentifier::generate())
+    , m_effectiveSandboxFlags(effectiveSandboxFlags)
+    , m_scrollingMode(scrollingMode)
 {
     ASSERT(!allFrames().contains(frameID));
     allFrames().set(frameID, *this);
@@ -123,7 +127,7 @@ RefPtr<WebPageProxy> WebFrameProxy::protectedPage() const
     return m_page.get();
 }
 
-RefPtr<ProvisionalFrameProxy> WebFrameProxy::takeProvisionalFrame()
+std::unique_ptr<ProvisionalFrameProxy> WebFrameProxy::takeProvisionalFrame()
 {
     return std::exchange(m_provisionalFrame, nullptr);
 }
@@ -155,14 +159,6 @@ void WebFrameProxy::webProcessWillShutDown()
         m_navigateCallback({ }, { });
 }
 
-bool WebFrameProxy::isMainFrame() const
-{
-    if (!m_page)
-        return false;
-
-    return this == m_page->mainFrame() || (m_page->provisionalPageProxy() && this == m_page->provisionalPageProxy()->mainFrame());
-}
-
 WebProcessProxy& WebFrameProxy::process() const
 {
     return m_frameProcess->process();
@@ -177,7 +173,7 @@ std::optional<PageIdentifier> WebFrameProxy::pageIdentifier() const
 {
     if (!m_page)
         return { };
-    return m_page->webPageID();
+    return m_page->webPageIDInMainFrameProcess();
 }
 
 void WebFrameProxy::navigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier documentIdentifier, const URL& url, CompletionHandler<void(std::optional<PageIdentifier>, std::optional<FrameIdentifier>)>&& callback)
@@ -187,7 +183,7 @@ void WebFrameProxy::navigateServiceWorkerClient(WebCore::ScriptExecutionContextI
         return;
     }
 
-    protectedPage()->sendWithAsyncReply(Messages::WebPage::NavigateServiceWorkerClient { documentIdentifier, url }, [this, protectedThis = Ref { *this }, url, callback = WTFMove(callback)](auto result) mutable {
+    protectedPage()->sendWithAsyncReplyToProcessContainingFrame(frameID(), Messages::WebPage::NavigateServiceWorkerClient { documentIdentifier, url }, CompletionHandler<void(WebCore::ScheduleLocationChangeResult)> { [this, protectedThis = Ref { *this }, url, callback = WTFMove(callback)](auto result) mutable {
         switch (result) {
         case WebCore::ScheduleLocationChangeResult::Stopped:
             callback({ }, { });
@@ -207,7 +203,7 @@ void WebFrameProxy::navigateServiceWorkerClient(WebCore::ScriptExecutionContextI
             m_navigateCallback = WTFMove(callback);
             return;
         }
-    });
+    } });
 }
 
 void WebFrameProxy::bindAccessibilityFrameWithData(std::span<const uint8_t> data)
@@ -215,20 +211,22 @@ void WebFrameProxy::bindAccessibilityFrameWithData(std::span<const uint8_t> data
     if (!m_page)
         return;
 
-    m_page->send(Messages::WebProcess::BindAccessibilityFrameWithData(m_frameID, data));
+    m_page->sendToProcessContainingFrame(m_frameID, Messages::WebProcess::BindAccessibilityFrameWithData(m_frameID, data));
 }
 
 void WebFrameProxy::loadURL(const URL& url, const String& referrer)
 {
     if (RefPtr page = m_page.get())
-        page->send(Messages::WebPage::LoadURLInFrame(url, referrer, m_frameID));
+        page->sendToProcessContainingFrame(m_frameID, Messages::WebPage::LoadURLInFrame(url, referrer, m_frameID));
 }
 
 void WebFrameProxy::loadData(std::span<const uint8_t> data, const String& type, const String& encodingName, const URL& baseURL)
 {
     ASSERT(!isMainFrame());
-    if (RefPtr page = m_page.get())
-        page->send(Messages::WebPage::LoadDataInFrame(data, type, encodingName, baseURL, m_frameID));
+    if (RefPtr page = m_page.get()) {
+        protectedProcess()->addPreviouslyApprovedFileURL(baseURL);
+        page->sendToProcessContainingFrame(m_frameID, Messages::WebPage::LoadDataInFrame(data, type, encodingName, baseURL, m_frameID));
+    }
 }
     
 bool WebFrameProxy::canProvideSource() const
@@ -318,11 +316,11 @@ void WebFrameProxy::didChangeTitle(const String& title)
     m_title = title;
 }
 
-WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(CompletionHandler<void(PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&, std::optional<NavigatingToAppBoundDomain>, WasNavigationIntercepted)>&& completionHandler, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData shouldWaitForInitialLinkDecorationFilteringData)
+WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(CompletionHandler<void(PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<BrowsingWarning>&&, std::optional<NavigatingToAppBoundDomain>, WasNavigationIntercepted)>&& completionHandler, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData shouldWaitForInitialLinkDecorationFilteringData)
 {
     if (m_activeListener)
         m_activeListener->ignore();
-    m_activeListener = WebFramePolicyListenerProxy::create([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (PolicyAction action, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, WasNavigationIntercepted wasNavigationIntercepted) mutable {
+    m_activeListener = WebFramePolicyListenerProxy::create([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (PolicyAction action, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<BrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, WasNavigationIntercepted wasNavigationIntercepted) mutable {
         if (action != PolicyAction::Use && m_navigateCallback)
             m_navigateCallback(pageIdentifier(), frameID());
 
@@ -394,7 +392,7 @@ bool WebFrameProxy::didHandleContentFilterUnblockNavigation(const ResourceReques
 void WebFrameProxy::collapseSelection()
 {
     if (RefPtr page = m_page.get())
-        page->send(Messages::WebPage::CollapseSelectionInFrame(m_frameID));
+        page->sendToProcessContainingFrame(frameID(), Messages::WebPage::CollapseSelectionInFrame(m_frameID));
 }
 #endif
 
@@ -404,7 +402,7 @@ void WebFrameProxy::disconnect()
         parentFrame->m_childFrames.remove(*this);
 }
 
-void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const String& frameName)
+void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const String& frameName, SandboxFlags effectiveSandboxFlags, WebCore::ScrollbarMode scrollingMode)
 {
     // The DecidePolicyForNavigationActionSync IPC is synchronous and may therefore get processed before the DidCreateSubframe one.
     // When this happens, decidePolicyForNavigationActionSync() calls didCreateSubframe() and we need to ignore the DidCreateSubframe
@@ -417,10 +415,10 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const St
     MESSAGE_CHECK(WebFrameProxy::canCreateFrame(frameID));
     MESSAGE_CHECK(frameID.processIdentifier() == process().coreProcessIdentifier());
 
-    Ref child = WebFrameProxy::create(*page, m_frameProcess, frameID);
+    Ref child = WebFrameProxy::create(*page, m_frameProcess, frameID, effectiveSandboxFlags, scrollingMode, nullptr, IsMainFrame::No);
     child->m_parentFrame = *this;
     child->m_frameName = frameName;
-    page->createRemoteSubframesInOtherProcesses(child, frameName);
+    page->observeAndCreateRemoteSubframesInOtherProcesses(child, frameName);
     m_childFrames.add(WTFMove(child));
 }
 
@@ -429,39 +427,28 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
     if (isMainFrame())
         return completionHandler();
 
-    if (m_provisionalFrame && m_provisionalFrame->process().processID() == process.processID())
-        return completionHandler();
+    Site navigationSite(navigation.currentRequest().url());
+    RefPtr page = m_page.get();
+    // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
+    RegistrableDomain mainFrameDomain(page->mainFrame()->url());
 
-    if (process.coreProcessIdentifier() == this->process().coreProcessIdentifier()) {
-        m_provisionalFrame = nullptr;
-        return completionHandler();
-    }
-
-    RegistrableDomain navigationDomain(navigation.currentRequest().url());
-    // addAllowedFirstPartyForCookies can be sync, but we need completionHander to be invoked after this function.
-    auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    if (!m_provisionalFrame || m_provisionalFrame->process().coreProcessIdentifier() != process.coreProcessIdentifier() || navigation.currentRequestIsCrossSiteRedirect()) {
-        RefPtr page = m_page.get();
-        // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
-        RegistrableDomain mainFrameDomain(page->mainFrame()->url());
-
-        m_provisionalFrame = ProvisionalFrameProxy::create(*this, group.ensureProcessForDomain(navigationDomain, process, page->preferences()));
-        page->websiteDataStore().protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, [aggregator] { });
-    }
-
-    if (this->process().processID() != process.processID())
-        process.send(Messages::WebPage::CreateProvisionalFrame({ m_layerHostingContextIdentifier }, frameID()), page()->webPageIDInProcess(process));
+    m_provisionalFrame = nullptr;
+    m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, group.ensureProcessForSite(navigationSite, process, page->preferences()));
+    page->websiteDataStore().protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, WTFMove(completionHandler));
 }
 
-void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent hasInsecureContent, WebCore::MouseEventPolicy mouseEventPolicy, const UserData& userData)
+void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, const String& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, const CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, const UserData& userData)
 {
     ASSERT(m_page);
     if (m_provisionalFrame) {
-        protectedProcess()->send(Messages::WebPage::LoadDidCommitInAnotherProcess(frameID, m_layerHostingContextIdentifier), m_page->webPageID());
-        if (RefPtr process = std::exchange(m_provisionalFrame, nullptr)->takeFrameProcess())
+        protectedProcess()->send(Messages::WebPage::LoadDidCommitInAnotherProcess(frameID, m_layerHostingContextIdentifier), *webPageIDInCurrentProcess());
+        if (RefPtr process = std::exchange(m_provisionalFrame, nullptr)->takeFrameProcess()) {
             m_frameProcess = process.releaseNonNull();
+            if (m_remoteFrameSize)
+                protectedProcess()->send(Messages::WebPage::UpdateFrameSize(frameID, *m_remoteFrameSize), *webPageIDInCurrentProcess());
+        }
     }
-    protectedPage()->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
+    protectedPage()->didCommitLoadForFrame(connection, frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
 }
 
 void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
@@ -498,7 +485,7 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& 
     protectedProcess()->sendWithAsyncReply(Messages::WebPage::GetFrameInfo(m_frameID), [aggregator] (std::optional<FrameInfoData>&& info) {
         if (info)
             aggregator->setCurrentFrameData(WTFMove(*info));
-    }, m_page->webPageID());
+    }, *webPageIDInCurrentProcess());
 
     bool isSiteIsolationEnabled = page() && page()->preferences().siteIsolationEnabled();
     size_t index = 0;
@@ -523,6 +510,7 @@ FrameTreeCreationParameters WebFrameProxy::frameTreeCreationParameters() const
 {
     return {
         m_frameID,
+        m_opener ? std::optional(m_opener->frameID()) : std::nullopt,
         m_frameName,
         WTF::map(m_childFrames, [] (auto& frame) {
             return frame->frameTreeCreationParameters();
@@ -575,7 +563,7 @@ void WebFrameProxy::notifyParentOfLoadCompletion(WebProcessProxy& childFrameProc
 std::optional<WebCore::PageIdentifier> WebFrameProxy::webPageIDInCurrentProcess()
 {
     if (m_page)
-        return m_page->webPageID();
+        return m_page->webPageIDInProcess(process());
     return std::nullopt;
 }
 
@@ -680,12 +668,39 @@ WebFrameProxy* WebFrameProxy::previousSibling() const
     return (--it)->ptr();
 }
 
+void WebFrameProxy::updateOpener(WebCore::FrameIdentifier newOpener)
+{
+    m_opener = WebFrameProxy::webFrame(newOpener);
+}
+
 WebFrameProxy& WebFrameProxy::rootFrame()
 {
     Ref rootFrame = *this;
     while (rootFrame->m_parentFrame && rootFrame->m_parentFrame->process().coreProcessIdentifier() == process().coreProcessIdentifier())
         rootFrame = *rootFrame->m_parentFrame;
     return rootFrame;
+}
+
+bool WebFrameProxy::isMainFrame() const
+{
+    return m_frameLoadState.isMainFrame() == IsMainFrame::Yes;
+}
+
+void WebFrameProxy::setPendingChildBackForwardItem(WebBackForwardListFrameItem* pendingChildBackForwardItem)
+{
+    m_pendingChildBackForwardItem = pendingChildBackForwardItem;
+}
+
+WebBackForwardListFrameItem* WebFrameProxy::takePendingChildBackForwardItem()
+{
+    return std::exchange(m_pendingChildBackForwardItem, nullptr).get();
+}
+
+void WebFrameProxy::updateScrollingMode(WebCore::ScrollbarMode scrollingMode)
+{
+    m_scrollingMode = scrollingMode;
+    if (RefPtr page = m_page.get())
+        page->sendToProcessContainingFrame(m_frameID, Messages::WebPage::UpdateFrameScrollingMode(m_frameID, scrollingMode));
 }
 
 } // namespace WebKit

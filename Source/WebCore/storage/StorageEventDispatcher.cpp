@@ -49,11 +49,11 @@ static void dispatchStorageEvents(const String& key, const String& oldValue, con
         if (!storage)
             return;
         // Send events only to our page.
-        if (auto* page = window.page(); !page || !isRelevantPage(*page))
+        if (RefPtr page = window.page(); !page || !isRelevantPage(*page))
             return;
         if (isSourceStorage(*storage))
             return;
-        if (!securityOrigin.equal(window.securityOrigin()))
+        if (!securityOrigin.equal(*window.securityOrigin()))
             return;
         windows.append(window);
     });

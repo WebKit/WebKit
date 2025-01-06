@@ -13,18 +13,20 @@
 
 #include <memory>
 
+#include "api/environment/environment.h"
+#include "api/video/video_bitrate_allocator.h"
 #include "api/video/video_bitrate_allocator_factory.h"
+#include "api/video_codecs/video_codec.h"
 #include "test/gmock.h"
 
 namespace webrtc {
 
-class MockVideoBitrateAllocatorFactory
-    : public webrtc::VideoBitrateAllocatorFactory {
+class MockVideoBitrateAllocatorFactory : public VideoBitrateAllocatorFactory {
  public:
   ~MockVideoBitrateAllocatorFactory() override { Die(); }
   MOCK_METHOD(std::unique_ptr<VideoBitrateAllocator>,
-              CreateVideoBitrateAllocator,
-              (const VideoCodec&),
+              Create,
+              (const Environment&, const VideoCodec&),
               (override));
   MOCK_METHOD(void, Die, ());
 };

@@ -40,7 +40,7 @@ class UnrecognizedChunkTypeCause
   explicit UnrecognizedChunkTypeCause(std::vector<uint8_t> unrecognized_chunk)
       : unrecognized_chunk_(std::move(unrecognized_chunk)) {}
 
-  static absl::optional<UnrecognizedChunkTypeCause> Parse(
+  static std::optional<UnrecognizedChunkTypeCause> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

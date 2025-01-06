@@ -28,7 +28,8 @@
 typedef double DOMHighResTimeStamp;
 
 [
-  JSGenerateToJSObject
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary CookieListItem {
     USVString name;
     USVString value;

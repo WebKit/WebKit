@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CCallHelpers.h"
+#include "CallLinkInfo.h"
 #include "CodeLocation.h"
 #include "Identifier.h"
 #include "JSString.h"
@@ -38,14 +39,16 @@
 #include "WasmMemoryInformation.h"
 #include "WasmName.h"
 #include "WasmNameSection.h"
-#include "WasmOSREntryData.h"
 #include "WasmOps.h"
 #include "WasmTypeDefinition.h"
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <wtf/FixedBitVector.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -57,7 +60,10 @@ struct CompilationContext;
 struct ModuleInformation;
 struct UnlinkedHandlerInfo;
 
-using BlockSignature = const FunctionSignature*;
+struct BlockSignature {
+    const FunctionSignature* m_signature;
+    RefPtr<TypeDefinition> m_generatedUnderlyingType;
+};
 
 enum class TableElementType : uint8_t {
     Externref,
@@ -75,14 +81,15 @@ inline bool isValueType(Type type)
     case TypeKind::F32:
     case TypeKind::F64:
         return true;
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Funcref:
-        return !Options::useWebAssemblyTypedFunctionReferences();
+        return false;
     case TypeKind::Ref:
     case TypeKind::RefNull:
-        return Options::useWebAssemblyTypedFunctionReferences() && type.index != TypeDefinition::invalidIndex;
+        return type.index != TypeDefinition::invalidIndex;
     case TypeKind::V128:
-        return Options::useWebAssemblySIMD();
+        return Options::useWasmSIMD();
     default:
         break;
     }
@@ -91,9 +98,7 @@ inline bool isValueType(Type type)
 
 inline bool isRefType(Type type)
 {
-    if (Options::useWebAssemblyTypedFunctionReferences())
-        return type.isRef() || type.isRefNull();
-    return type.isFuncref() || type.isExternref();
+    return type.isRef() || type.isRefNull();
 }
 
 // If this is a type, returns true iff it's a ref type; if it's a packed type, returns false
@@ -106,56 +111,52 @@ inline bool isRefType(StorageType type)
 
 inline bool isExternref(Type type)
 {
-    if (Options::useWebAssemblyTypedFunctionReferences())
-        return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Externref);
-    return type.kind == TypeKind::Externref;
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Externref);
 }
 
 inline bool isFuncref(Type type)
 {
-    if (Options::useWebAssemblyTypedFunctionReferences())
-        return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Funcref);
-    return type.kind == TypeKind::Funcref;
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Funcref);
 }
 
 inline bool isEqref(Type type)
 {
-    if (!Options::useWebAssemblyGC())
+    if (!Options::useWasmGC())
         return false;
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Eqref);
 }
 
 inline bool isAnyref(Type type)
 {
-    if (!Options::useWebAssemblyGC())
+    if (!Options::useWasmGC())
         return false;
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Anyref);
 }
 
 inline bool isNullref(Type type)
 {
-    if (!Options::useWebAssemblyGC())
+    if (!Options::useWasmGC())
         return false;
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullref);
 }
 
 inline bool isNullfuncref(Type type)
 {
-    if (!Options::useWebAssemblyGC())
+    if (!Options::useWasmGC())
         return false;
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullfuncref);
 }
 
 inline bool isNullexternref(Type type)
 {
-    if (!Options::useWebAssemblyGC())
+    if (!Options::useWasmGC())
         return false;
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullexternref);
 }
 
 inline bool isInternalref(Type type)
 {
-    if (!Options::useWebAssemblyGC() || !isRefType(type))
+    if (!Options::useWasmGC() || !isRefType(type))
         return false;
     if (typeIndexIsType(type.index)) {
         switch (static_cast<TypeKind>(type.index)) {
@@ -175,21 +176,21 @@ inline bool isInternalref(Type type)
 
 inline bool isI31ref(Type type)
 {
-    if (!Options::useWebAssemblyGC())
+    if (!Options::useWasmGC())
         return false;
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::I31ref);
 }
 
 inline bool isArrayref(Type type)
 {
-    if (!Options::useWebAssemblyGC())
+    if (!Options::useWasmGC())
         return false;
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Arrayref);
 }
 
 inline bool isStructref(Type type)
 {
-    if (!Options::useWebAssemblyGC())
+    if (!Options::useWasmGC())
         return false;
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Structref);
 }
@@ -219,46 +220,48 @@ inline JSString* typeToJSAPIString(VM& vm, Type type)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+inline Type nonNullFuncrefType()
+{
+    return Wasm::Type { Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Funcref) };
+}
+
 inline Type funcrefType()
 {
-    if (Options::useWebAssemblyTypedFunctionReferences())
-        return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Funcref) };
-    return Types::Funcref;
+    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Funcref) };
 }
 
 inline Type externrefType(bool isNullable = true)
 {
-    if (Options::useWebAssemblyTypedFunctionReferences())
-        return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Externref) };
-    ASSERT(isNullable);
-    return Types::Externref;
+    return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Externref) };
 }
 
 inline Type eqrefType()
 {
-    ASSERT(Options::useWebAssemblyGC());
+    ASSERT(Options::useWasmGC());
     return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Eqref) };
 }
 
 inline Type anyrefType(bool isNullable = true)
 {
-    ASSERT(Options::useWebAssemblyGC());
+    ASSERT(Options::useWasmGC());
     return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Anyref) };
 }
 
 inline Type arrayrefType(bool isNullable = true)
 {
-    ASSERT(Options::useWebAssemblyGC());
+    ASSERT(Options::useWasmGC());
     // Returns a non-null ref type, since this is used for the return types of array operations
     // that are guaranteed to return a non-null array reference
     return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Arrayref) };
 }
 
+inline Type exnrefType()
+{
+    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Exn) };
+}
+
 inline bool isRefWithTypeIndex(Type type)
 {
-    if (!Options::useWebAssemblyTypedFunctionReferences())
-        return false;
-
     return isRefType(type) && !typeIndexIsType(type.index);
 }
 
@@ -266,7 +269,7 @@ inline bool isRefWithTypeIndex(Type type)
 // for an unresolved recursive reference in a recursion group.
 inline bool isRefWithRecursiveReference(Type type)
 {
-    if (!Options::useWebAssemblyGC())
+    if (!Options::useWasmGC())
         return false;
 
     if (isRefWithTypeIndex(type)) {
@@ -288,9 +291,6 @@ inline bool isRefWithRecursiveReference(StorageType storageType)
 
 inline bool isTypeIndexHeapType(int32_t heapType)
 {
-    if (!Options::useWebAssemblyTypedFunctionReferences())
-        return false;
-
     return heapType >= 0;
 }
 
@@ -300,7 +300,7 @@ inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
         return true;
 
     // When Wasm GC is off, RTTs are not registered and there is no subtyping on typedefs.
-    if (!Options::useWebAssemblyGC())
+    if (!Options::useWasmGC())
         return false;
 
     auto subRTT = TypeInformation::tryGetCanonicalRTT(sub);
@@ -313,9 +313,6 @@ inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
 inline bool isSubtype(Type sub, Type parent)
 {
     // Before the typed funcref proposal there is no non-trivial subtyping.
-    if (!Options::useWebAssemblyTypedFunctionReferences())
-        return sub == parent;
-
     if (sub.isNullable() && !parent.isNullable())
         return false;
 
@@ -366,21 +363,22 @@ inline bool isSubtype(StorageType sub, StorageType parent)
     return isSubtype(sub.as<Type>(), parent.as<Type>());
 }
 
-inline bool isValidHeapTypeKind(TypeKind kind)
+inline bool isValidHeapTypeKind(intptr_t kind)
 {
     switch (kind) {
-    case TypeKind::Funcref:
-    case TypeKind::Externref:
+    case static_cast<intptr_t>(TypeKind::Funcref):
+    case static_cast<intptr_t>(TypeKind::Externref):
+    case static_cast<intptr_t>(TypeKind::Exn):
         return true;
-    case TypeKind::I31ref:
-    case TypeKind::Arrayref:
-    case TypeKind::Structref:
-    case TypeKind::Eqref:
-    case TypeKind::Anyref:
-    case TypeKind::Nullref:
-    case TypeKind::Nullfuncref:
-    case TypeKind::Nullexternref:
-        return Options::useWebAssemblyGC();
+    case static_cast<intptr_t>(TypeKind::I31ref):
+    case static_cast<intptr_t>(TypeKind::Arrayref):
+    case static_cast<intptr_t>(TypeKind::Structref):
+    case static_cast<intptr_t>(TypeKind::Eqref):
+    case static_cast<intptr_t>(TypeKind::Anyref):
+    case static_cast<intptr_t>(TypeKind::Nullref):
+    case static_cast<intptr_t>(TypeKind::Nullfuncref):
+    case static_cast<intptr_t>(TypeKind::Nullexternref):
+        return Options::useWasmGC();
     default:
         break;
     }
@@ -390,7 +388,7 @@ inline bool isValidHeapTypeKind(TypeKind kind)
 // FIXME: separating out heap types in wasm.json could be cleaner in the long term.
 inline const char* heapTypeKindAsString(TypeKind kind)
 {
-    ASSERT(isValidHeapTypeKind(kind));
+    ASSERT(isValidHeapTypeKind(static_cast<intptr_t>(kind)));
     switch (kind) {
     case TypeKind::Funcref:
         return "func";
@@ -412,6 +410,8 @@ inline const char* heapTypeKindAsString(TypeKind kind)
         return "nofunc";
     case TypeKind::Nullexternref:
         return "noextern";
+    case TypeKind::Exn:
+        return "exn";
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return "";
@@ -723,10 +723,47 @@ inline bool isValidNameType(Int val)
     return false;
 }
 
+// A code index is an index in the code section of the module, thus does not include imports. This is also sometimes called an internal function.
+// A space index is an index into the total function space of a module and includes imports. It's broken down into [ imports..., code section... ].
+// These are **NOT** convertable without knowing how many imports there are e.g. via ModuleInformation/CalleeGroup's toCodeIndex/toSpaceIndex
+
+class FunctionSpaceIndex;
+class TRIVIAL_ABI FunctionCodeIndex {
+public:
+    FunctionCodeIndex() = default;
+    FunctionCodeIndex(FunctionSpaceIndex) = delete;
+    explicit constexpr FunctionCodeIndex(uint32_t index)
+        : m_index(index)
+    { }
+
+    size_t rawIndex() const { return m_index; }
+    operator size_t() const { return m_index; }
+    void dump(PrintStream& out) const { out.print(m_index); }
+
+private:
+    uint32_t m_index { UINT_MAX };
+};
+
+class TRIVIAL_ABI FunctionSpaceIndex {
+public:
+    FunctionSpaceIndex() = default;
+    FunctionSpaceIndex(FunctionCodeIndex) = delete;
+    explicit constexpr FunctionSpaceIndex(uint32_t index)
+        : m_index(index)
+    { }
+
+    size_t rawIndex() const { return m_index; }
+    operator size_t() const { return m_index; }
+    void dump(PrintStream& out) const { out.print(m_index); }
+
+private:
+    uint32_t m_index { UINT_MAX };
+};
+
 struct UnlinkedWasmToWasmCall {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     CodeLocationNearCall<WasmEntryPtrTag> callLocation;
-    size_t functionIndexSpace;
+    FunctionSpaceIndex functionIndexSpace;
     CodeLocationDataLabelPtr<WasmEntryPtrTag> calleeLocation;
 
 };
@@ -739,6 +776,10 @@ struct Entrypoint {
 };
 #endif
 
+class OSREntryValue;
+using StackMap = FixedVector<OSREntryValue>;
+using StackMaps = UncheckedKeyHashMap<CallSiteIndex, StackMap>;
+
 struct InternalFunction {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
@@ -749,33 +790,55 @@ struct InternalFunction {
     Vector<CCallHelpers::Label> bbqLoopEntrypoints;
     std::optional<CCallHelpers::Label> bbqSharedLoopEntrypoint;
     Entrypoint entrypoint;
+    FixedBitVector outgoingJITDirectCallees;
 #endif
     unsigned osrEntryScratchBufferSize { 0 };
 };
 
-static constexpr uintptr_t NullWasmCallee = 0;
+extern const uintptr_t NullWasmCallee;
+
+struct WasmCallableFunction {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    using LoadLocation = CodePtr<WasmEntryPtrTag>*;
+    static constexpr ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WasmCallableFunction, entrypointLoadLocation); }
+    static constexpr ptrdiff_t offsetOfBoxedWasmCalleeLoadLocation() { return OBJECT_OFFSETOF(WasmCallableFunction, boxedWasmCalleeLoadLocation); }
+
+    const uintptr_t* boxedWasmCalleeLoadLocation { &NullWasmCallee };
+    // Target instance and entrypoint are only set for wasm->wasm calls, and are otherwise nullptr. The js-specific logic occurs through import function.
+    WriteBarrier<JSWebAssemblyInstance> targetInstance { };
+    LoadLocation entrypointLoadLocation { };
+};
 
 // WebAssembly direct calls and call_indirect use indices into "function index space". This space starts
 // with all imports, and then all internal functions. WasmToWasmImportableFunction and FunctionIndexSpace are only
 // meant as fast lookup tables for these opcodes and do not own code.
-struct WasmToWasmImportableFunction {
+struct WasmToWasmImportableFunction : public WasmCallableFunction {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    using LoadLocation = CodePtr<WasmEntryPtrTag>*;
     static constexpr ptrdiff_t offsetOfSignatureIndex() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, typeIndex); }
-    static constexpr ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, entrypointLoadLocation); }
-    static constexpr ptrdiff_t offsetOfBoxedWasmCalleeLoadLocation() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, boxedWasmCalleeLoadLocation); }
     static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, rtt); }
 
     // FIXME: Pack type index and code pointer into one 64-bit value. See <https://bugs.webkit.org/show_bug.cgi?id=165511>.
     TypeIndex typeIndex { TypeDefinition::invalidIndex };
-    LoadLocation entrypointLoadLocation { };
-    const uintptr_t* boxedWasmCalleeLoadLocation { &NullWasmCallee };
     // Used when GC proposal is enabled, otherwise can be null.
     const RTT* rtt;
 };
 using FunctionIndexSpace = Vector<WasmToWasmImportableFunction>;
 
+struct WasmOrJSImportableFunction final : public WasmToWasmImportableFunction {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    using LoadLocation = CodePtr<WasmEntryPtrTag>*;
+
+    CodePtr<WasmEntryPtrTag> importFunctionStub;
+    WriteBarrier<JSObject> importFunction { };
+    DataOnlyCallLinkInfo callLinkInfo { };
+    uintptr_t boxedCallee { 0xBEEF };
+
+    static constexpr ptrdiff_t offsetOfCallLinkInfo() { return OBJECT_OFFSETOF(WasmOrJSImportableFunction, callLinkInfo); }
+};
+
 } } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WTF {
 

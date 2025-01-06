@@ -31,6 +31,8 @@
 #include <wtf/text/UniquedStringImpl.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 struct SourceProviderCacheItemCreationParameters {
@@ -40,7 +42,7 @@ struct SourceProviderCacheItemCreationParameters {
     unsigned lastTokenLineStartOffset { 0 };
     unsigned endFunctionOffset { 0 };
     unsigned parameterCount { 0 };
-    LexicalScopeFeatures lexicalScopeFeatures { 0 };
+    LexicallyScopedFeatures lexicallyScopedFeatures { 0 };
     InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures { 0 };
     Vector<UniquedStringImpl*, 8> usedVariables;
     JSTokenType tokenType { CLOSEBRACE };
@@ -74,11 +76,13 @@ public:
         return token;
     }
 
-    LexicalScopeFeatures lexicalScopeFeatures() const
+    LexicallyScopedFeatures lexicallyScopedFeatures() const
     {
-        LexicalScopeFeatures features = NoLexicalFeatures;
+        LexicallyScopedFeatures features = NoLexicallyScopedFeatures;
         if (strictMode)
-            features |= StrictModeLexicalFeature;
+            features |= StrictModeLexicallyScopedFeature;
+        if (taintedByWithScope)
+            features |= TaintedByWithScopeLexicallyScopedFeature;
         return features;
     }
 
@@ -92,6 +96,7 @@ public:
     unsigned lastTokenEndOffset: 31;
     bool needsSuperBinding: 1;
     unsigned parameterCount : 31;
+    bool taintedByWithScope : 1;
     unsigned lastTokenLineStartOffset : 31;
     bool isBodyArrowExpression : 1;
     unsigned usedVariablesCount;
@@ -127,12 +132,13 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     , endFunctionOffset(parameters.endFunctionOffset)
     , usesEval(parameters.usesEval)
     , lastTokenLine(parameters.lastTokenLine)
-    , strictMode(parameters.lexicalScopeFeatures & StrictModeLexicalFeature)
+    , strictMode(parameters.lexicallyScopedFeatures & StrictModeLexicallyScopedFeature)
     , lastTokenStartOffset(parameters.lastTokenStartOffset)
     , expectedSuperBinding(static_cast<unsigned>(parameters.expectedSuperBinding))
     , lastTokenEndOffset(parameters.lastTokenEndOffset)
     , needsSuperBinding(parameters.needsSuperBinding)
     , parameterCount(parameters.parameterCount)
+    , taintedByWithScope(parameters.lexicallyScopedFeatures & TaintedByWithScopeLexicallyScopedFeature)
     , lastTokenLineStartOffset(parameters.lastTokenLineStartOffset)
     , isBodyArrowExpression(parameters.isBodyArrowExpression)
     , usedVariablesCount(parameters.usedVariables.size())
@@ -153,3 +159,5 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

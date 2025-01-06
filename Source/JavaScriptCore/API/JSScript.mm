@@ -45,8 +45,10 @@
 #import <wtf/SHA1.h>
 #import <wtf/SafeStrerror.h>
 #import <wtf/Scope.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/spi/darwin/DataVaultSPI.h>
+#import <wtf/text/MakeString.h>
 
 #if JSC_OBJC_API_ENABLED
 
@@ -183,12 +185,12 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     SHA1::Digest computedHash;
     SHA1 sha1;
-    sha1.addBytes(fileData.subspan(0, fileDataSize));
+    sha1.addBytes(fileData.first(fileDataSize));
     sha1.computeHash(computedHash);
 
     SHA1::Digest fileHash;
     auto hashSpan = fileData.subspan(fileDataSize, sizeof(SHA1::Digest));
-    memcpy(&fileHash, hashSpan.data(), hashSpan.size());
+    memcpySpan(std::span { fileHash }, hashSpan);
 
     if (computedHash != fileHash) {
         FileSystem::deleteFile(cacheFilename);

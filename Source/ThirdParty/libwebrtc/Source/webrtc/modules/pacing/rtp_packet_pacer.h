@@ -11,16 +11,15 @@
 #ifndef MODULES_PACING_RTP_PACKET_PACER_H_
 #define MODULES_PACING_RTP_PACKET_PACER_H_
 
-#include <stdint.h>
 
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
+#include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "modules/rtp_rtcp/include/rtp_packet_sender.h"
 
 namespace webrtc {
 
@@ -49,7 +48,7 @@ class RtpPacketPacer {
   virtual DataSize QueueSizeData() const = 0;
 
   // Returns the time when the first packet was sent.
-  virtual absl::optional<Timestamp> FirstSentPacketTime() const = 0;
+  virtual std::optional<Timestamp> FirstSentPacketTime() const = 0;
 
   // Returns the expected number of milliseconds it will take to send the
   // current packets in the queue, given the current size and bitrate, ignoring

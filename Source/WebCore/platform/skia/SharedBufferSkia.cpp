@@ -43,7 +43,7 @@ Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(sk_sp<SkData>&& data)
 sk_sp<SkData> SharedBuffer::createSkData() const
 {
     ref();
-    return SkData::MakeWithProc(data(), size(), [](const void*, void* context) {
+    return SkData::MakeWithProc(span().data(), size(), [](const void*, void* context) {
         static_cast<SharedBuffer*>(context)->deref();
     }, const_cast<SharedBuffer*>(this));
 }

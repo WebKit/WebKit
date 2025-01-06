@@ -28,6 +28,7 @@
 #include "MediaPlayerEnums.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
@@ -36,7 +37,7 @@ namespace WebCore {
 class ContentType;
 
 class WEBCORE_EXPORT MIMETypeCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MIMETypeCache, WEBCORE_EXPORT);
 public:
     MIMETypeCache() = default;
     virtual ~MIMETypeCache() = default;
@@ -60,7 +61,7 @@ private:
     bool shouldOverrideExtendedType(const ContentType&);
 
     std::optional<HashSet<String>> m_supportedTypes;
-    std::optional<HashMap<String, MediaPlayerEnums::SupportsType>> m_cachedResults;
+    std::optional<UncheckedKeyHashMap<String, MediaPlayerEnums::SupportsType>> m_cachedResults;
 };
 
 } // namespace WebCore

@@ -42,7 +42,7 @@ setUpGuardMallocIfNeeded();
 die "Did not specify an application to open (e.g. run-webkit-app AppName).\n" unless length($ARGV[0]) > 0;
 
 # Check to see that all the frameworks are built.
-checkFrameworks();
+checkBuild();
 
 my $appPath = shift(@ARGV);
 if (isIOSWebKit()) {

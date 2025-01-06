@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Animation.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/AriaMixin-element-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/AriaMixin-string-attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/AriaMixin-string-attributes.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Attr.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/CSSStyleDeclaration.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/ChildNode.html
@@ -41,4 +42,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Range.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Selection.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/ShadowRoot.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/with-exceptions.html

@@ -1,0 +1,53 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let texture = device.createTexture({ size: { width: 1, }, dimension: '3d', format: 'rg8unorm', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let bindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            { binding: 0, visibility: GPUShaderStage.VERTEX, externalTexture: {}, buffer: { hasDynamicOffset: true } },
+            { binding: 1, visibility: GPUShaderStage.VERTEX, buffer: { hasDynamicOffset: true } }
+        ]
+    });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+    let shaderModule = device.createShaderModule({ code: `
+        struct FragmentOutput0 {
+            @location(0) f0: vec3<f32>
+        }
+        @fragment fn fragment0() -> FragmentOutput0 {
+            return FragmentOutput0();
+        }
+        @vertex fn vertex0() -> @builtin(position) vec4f {
+            return vec4f();
+        }
+    `});
+    let buffer = device.createBuffer({ size: 1, usage: GPUBufferUsage.UNIFORM });
+    let pipeline = await device.createRenderPipelineAsync({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule, targets: [{ format: 'rg8unorm' }] },
+        vertex: { module: shaderModule, buffers: [{ arrayStride: 8, attributes: [] }] }
+    });
+    let textureView = texture.createView();
+    let commandEncoder = device.createCommandEncoder();
+    let renderPassEncoder = commandEncoder.beginRenderPass({
+        colorAttachments: [{ view: textureView, depthSlice: 0, loadOp: 'load', storeOp: 'discard' }],
+    });
+    let videoFrame = new VideoFrame(new ArrayBuffer(6), { codedWidth: 2, codedHeight: 2, format: 'I420', timestamp: 0 });
+    let externalTexture = device.importExternalTexture({ source: videoFrame });
+    renderPassEncoder.setPipeline(pipeline)
+    let bindGroupLayout2 = device.createBindGroupLayout({
+        entries: [{ binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { hasDynamicOffset: true } }]
+    });
+    buffer.destroy();
+    let bindGroup = device.createBindGroup({
+        layout: bindGroupLayout2,
+        entries: [{ binding: 0, resource: { buffer: buffer } }]
+    });
+    renderPassEncoder.setBindGroup(0, bindGroup, [0]);
+    renderPassEncoder.drawIndexed(0);
+    await device.queue.onSubmittedWorkDone();
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.waitUntilDone();
+run();
+</script>

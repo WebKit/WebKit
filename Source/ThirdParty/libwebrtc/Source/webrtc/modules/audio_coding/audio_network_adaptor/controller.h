@@ -11,7 +11,8 @@
 #ifndef MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_CONTROLLER_H_
 #define MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_CONTROLLER_H_
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
 
 namespace webrtc {
@@ -21,11 +22,11 @@ class Controller {
   struct NetworkMetrics {
     NetworkMetrics();
     ~NetworkMetrics();
-    absl::optional<int> uplink_bandwidth_bps;
-    absl::optional<float> uplink_packet_loss_fraction;
-    absl::optional<int> target_audio_bitrate_bps;
-    absl::optional<int> rtt_ms;
-    absl::optional<size_t> overhead_bytes_per_packet;
+    std::optional<int> uplink_bandwidth_bps;
+    std::optional<float> uplink_packet_loss_fraction;
+    std::optional<int> target_audio_bitrate_bps;
+    std::optional<int> rtt_ms;
+    std::optional<size_t> overhead_bytes_per_packet;
   };
 
   virtual ~Controller() = default;

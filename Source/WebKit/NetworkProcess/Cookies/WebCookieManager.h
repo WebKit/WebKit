@@ -31,6 +31,7 @@
 #include <stdint.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakRef.h>
 
@@ -50,11 +51,14 @@ namespace WebKit {
 class NetworkProcess;
 
 class WebCookieManager : public NetworkProcessSupplement, public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebCookieManager);
     WTF_MAKE_NONCOPYABLE(WebCookieManager);
 public:
     WebCookieManager(NetworkProcess&);
     ~WebCookieManager();
+
+    void ref() const final;
+    void deref() const final;
 
     static ASCIILiteral supplementName();
 

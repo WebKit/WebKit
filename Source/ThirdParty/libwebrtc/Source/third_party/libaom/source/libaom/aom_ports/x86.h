@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -43,7 +43,7 @@ typedef enum {
   AOM_CPU_LAST
 } aom_cpu_t;
 
-#if defined(__GNUC__) && __GNUC__ || defined(__ANDROID__)
+#if defined(__GNUC__) || defined(__ANDROID__)
 #if AOM_ARCH_X86_64
 #define cpuid(func, func2, ax, bx, cx, dx)                      \
   __asm__ __volatile__("cpuid           \n\t"                   \
@@ -118,7 +118,7 @@ typedef enum {
 
 // NaCl has no support for xgetbv or the raw opcode.
 #if !defined(__native_client__) && (defined(__i386__) || defined(__x86_64__))
-static INLINE uint64_t xgetbv(void) {
+static inline uint64_t xgetbv(void) {
   const uint32_t ecx = 0;
   uint32_t eax, edx;
   // Use the raw opcode for xgetbv for compatibility with older toolchains.
@@ -132,7 +132,7 @@ static INLINE uint64_t xgetbv(void) {
 #include <immintrin.h>
 #define xgetbv() _xgetbv(0)
 #elif defined(_MSC_VER) && defined(_M_IX86)
-static INLINE uint64_t xgetbv(void) {
+static inline uint64_t xgetbv(void) {
   uint32_t eax_, edx_;
   __asm {
     xor ecx, ecx  // ecx = 0
@@ -171,7 +171,7 @@ static INLINE uint64_t xgetbv(void) {
 #define BIT(n) (1u << (n))
 #endif
 
-static INLINE int x86_simd_caps(void) {
+static inline int x86_simd_caps(void) {
   unsigned int flags = 0;
   unsigned int mask = ~0u;
   unsigned int max_cpuid_val, reg_eax, reg_ebx, reg_ecx, reg_edx;
@@ -248,8 +248,8 @@ static INLINE int x86_simd_caps(void) {
 // If you are timing a large function (CPU time > a couple of seconds), use
 // x86_readtsc64 to read the timestamp counter in a 64-bit integer. The
 // out-of-order leakage that can occur is minimal compared to total runtime.
-static INLINE unsigned int x86_readtsc(void) {
-#if defined(__GNUC__) && __GNUC__
+static inline unsigned int x86_readtsc(void) {
+#if defined(__GNUC__)
   unsigned int tsc;
   __asm__ __volatile__("rdtsc\n\t" : "=a"(tsc) :);
   return tsc;
@@ -266,8 +266,8 @@ static INLINE unsigned int x86_readtsc(void) {
 #endif
 }
 // 64-bit CPU cycle counter
-static INLINE uint64_t x86_readtsc64(void) {
-#if defined(__GNUC__) && __GNUC__
+static inline uint64_t x86_readtsc64(void) {
+#if defined(__GNUC__)
   uint32_t hi, lo;
   __asm__ __volatile__("rdtsc" : "=a"(lo), "=d"(hi));
   return ((uint64_t)hi << 32) | lo;
@@ -285,8 +285,8 @@ static INLINE uint64_t x86_readtsc64(void) {
 }
 
 // 32-bit CPU cycle counter with a partial fence against out-of-order execution.
-static INLINE unsigned int x86_readtscp(void) {
-#if defined(__GNUC__) && __GNUC__
+static inline unsigned int x86_readtscp(void) {
+#if defined(__GNUC__)
   unsigned int tscp;
   __asm__ __volatile__("rdtscp\n\t" : "=a"(tscp) :);
   return tscp;
@@ -306,7 +306,7 @@ static INLINE unsigned int x86_readtscp(void) {
 #endif
 }
 
-static INLINE unsigned int x86_tsc_start(void) {
+static inline unsigned int x86_tsc_start(void) {
   unsigned int reg_eax, reg_ebx, reg_ecx, reg_edx;
   // This call should not be removed. See function notes above.
   cpuid(0, 0, reg_eax, reg_ebx, reg_ecx, reg_edx);
@@ -318,7 +318,7 @@ static INLINE unsigned int x86_tsc_start(void) {
   return x86_readtsc();
 }
 
-static INLINE unsigned int x86_tsc_end(void) {
+static inline unsigned int x86_tsc_end(void) {
   uint32_t v = x86_readtscp();
   unsigned int reg_eax, reg_ebx, reg_ecx, reg_edx;
   // This call should not be removed. See function notes above.
@@ -331,7 +331,7 @@ static INLINE unsigned int x86_tsc_end(void) {
   return v;
 }
 
-#if defined(__GNUC__) && __GNUC__
+#if defined(__GNUC__)
 #define x86_pause_hint() __asm__ __volatile__("pause \n\t")
 #elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
 #define x86_pause_hint() asm volatile("pause \n\t")
@@ -343,7 +343,7 @@ static INLINE unsigned int x86_tsc_end(void) {
 #endif
 #endif
 
-#if defined(__GNUC__) && __GNUC__
+#if defined(__GNUC__)
 static void x87_set_control_word(unsigned short mode) {
   __asm__ __volatile__("fldcw %0" : : "m"(*&mode));
 }
@@ -378,7 +378,7 @@ static unsigned short x87_get_control_word(void) {
 }
 #endif
 
-static INLINE unsigned int x87_set_double_precision(void) {
+static inline unsigned int x87_set_double_precision(void) {
   unsigned int mode = x87_get_control_word();
   // Intel 64 and IA-32 Architectures Developer's Manual: Vol. 1
   // https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-1-manual.pdf

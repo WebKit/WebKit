@@ -82,7 +82,7 @@ class JITConstant {
 
     inline uint64_t encode(void* pointer, ByteSizedEnumType type)
     {
-        uint64_t pointerBits = bitwise_cast<uint64_t>(pointer);
+        uint64_t pointerBits = std::bit_cast<uint64_t>(pointer);
         return pointerBits | static_cast<uint64_t>(type) << 48;
     }
 public:
@@ -100,7 +100,7 @@ public:
     { }
 
     inline uint32_t hash() const { return computeHash(m_encodedPointer); }
-    inline void* pointer() const { return bitwise_cast<void*>(m_encodedPointer & ~typeMask); }
+    inline void* pointer() const { return std::bit_cast<void*>(m_encodedPointer & ~typeMask); }
     void setPointer(void* pointer) { m_encodedPointer = encode(pointer, type()); }
     inline ByteSizedEnumType type() const { return static_cast<ByteSizedEnumType>((m_encodedPointer & typeMask) >> typeShift); }
     void setType(ByteSizedEnumType type) { m_encodedPointer = encode(pointer(), type); }
@@ -202,7 +202,7 @@ public:
         }
     }
 
-    static bool isLowerTier(JITType expectedLower, JITType expectedHigher)
+    static bool isLowerTierPrecise(JITType expectedLower, JITType expectedHigher)
     {
         RELEASE_ASSERT(isExecutableScript(expectedLower));
         RELEASE_ASSERT(isExecutableScript(expectedHigher));
@@ -211,7 +211,7 @@ public:
     
     static bool isHigherTier(JITType expectedHigher, JITType expectedLower)
     {
-        return isLowerTier(expectedLower, expectedHigher);
+        return isLowerTierPrecise(expectedLower, expectedHigher);
     }
     
     static bool isLowerOrSameTier(JITType expectedLower, JITType expectedHigher)

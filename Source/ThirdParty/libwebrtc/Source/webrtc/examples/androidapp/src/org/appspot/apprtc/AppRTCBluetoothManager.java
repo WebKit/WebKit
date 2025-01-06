@@ -111,7 +111,7 @@ public class AppRTCBluetoothManager {
     }
 
     @Override
-    /** Notifies the client when the proxy object has been disconnected from the service. */
+    // Notifies the client when the proxy object has been disconnected from the service.
     public void onServiceDisconnected(int profile) {
       if (profile != BluetoothProfile.HEADSET || bluetoothState == State.UNINITIALIZED) {
         return;

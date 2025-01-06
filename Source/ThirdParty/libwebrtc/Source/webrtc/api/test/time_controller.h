@@ -17,7 +17,7 @@
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "rtc_base/synchronization/yield_policy.h"
+#include "rtc_base/socket_server.h"
 #include "rtc_base/thread.h"
 #include "system_wrappers/include/clock.h"
 

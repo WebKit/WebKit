@@ -33,6 +33,7 @@
 #include "MediaSourcePrivateClient.h"
 #include "PlatformTimeRanges.h"
 #include "SourceBufferPrivate.h"
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -74,7 +75,7 @@ MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client)
 {
 }
 
-MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client, RefCountedSerialFunctionDispatcher& dispatcher)
+MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client, GuaranteedSerialFunctionDispatcher& dispatcher)
     : m_readyState(MediaSourceReadyState::Closed)
     , m_dispatcher(dispatcher)
     , m_client(client)
@@ -143,7 +144,7 @@ void MediaSourcePrivate::sourceBufferPrivateDidChangeActiveState(SourceBufferPri
 
 bool MediaSourcePrivate::hasAudio() const
 {
-    assertIsCurrent(m_dispatcher);
+    ASSERT(m_dispatcher->isCurrent() || Thread::mayBeGCThread());
 
     return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), [] (SourceBufferPrivate* sourceBuffer) {
         return sourceBuffer->hasAudio();
@@ -262,7 +263,9 @@ const PlatformTimeRanges& MediaSourcePrivate::liveSeekableRange() const
 {
     Locker locker { m_lock };
 
+    IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
     return m_liveSeekable;
+    IGNORE_CLANG_WARNINGS_END
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -277,11 +280,12 @@ void MediaSourcePrivate::setCDMSession(LegacyCDMSession* session)
 
 void MediaSourcePrivate::ensureOnDispatcher(Function<void()>&& function) const
 {
-    if (m_dispatcher->isCurrent()) {
+    Ref dispatcher = m_dispatcher;
+    if (dispatcher->isCurrent()) {
         function();
         return;
     }
-    m_dispatcher->dispatch(WTFMove(function));
+    dispatcher->dispatch(WTFMove(function));
 }
 
 MediaTime MediaSourcePrivate::currentTime() const
@@ -296,6 +300,10 @@ bool MediaSourcePrivate::timeIsProgressing() const
     if (RefPtr player = this->player())
         return player->timeIsProgressing();
     return false;
+}
+
+void MediaSourcePrivate::shutdown()
+{
 }
 
 } // namespace WebCore

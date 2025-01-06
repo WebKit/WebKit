@@ -30,9 +30,7 @@
 #import "CodeSigning.h"
 #import "CoreIPCAuditToken.h"
 #import "DefaultWebBrowserChecks.h"
-#import "HighPerformanceGPUManager.h"
 #import "Logging.h"
-#import "ObjCObjectGraph.h"
 #import "SandboxUtilities.h"
 #import "SharedBufferReference.h"
 #import "WKAPICast.h"
@@ -41,9 +39,10 @@
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import <WebCore/ActivityState.h>
-#import <WebCore/RuntimeApplicationChecks.h>
+#import <pal/spi/ios/MobileGestaltSPI.h>
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/Scope.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -85,68 +84,6 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& WebProcessProxy::platform
     return platformPathsWithAssumedReadAccess;
 }
 
-RefPtr<ObjCObjectGraph> WebProcessProxy::transformHandlesToObjects(ObjCObjectGraph& objectGraph)
-{
-    struct Transformer final : ObjCObjectGraph::Transformer {
-        Transformer(WebProcessProxy& webProcessProxy)
-            : m_webProcessProxy(webProcessProxy)
-        {
-        }
-
-        Ref<WebProcessProxy> protectedWebProcessProxy() const { return const_cast<WebProcessProxy&>(m_webProcessProxy.get()); }
-
-        bool shouldTransformObject(id object) const override
-        {
-            if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
-                return true;
-            return false;
-        }
-
-        RetainPtr<id> transformObject(id object) const override
-        {
-            if (auto* handle = dynamic_objc_cast<WKBrowsingContextHandle>(object)) {
-                if (auto webPageProxy = protectedWebProcessProxy()->webPage(handle.pageProxyID)) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-                    return [WKBrowsingContextController _browsingContextControllerForPageRef:toAPI(webPageProxy.get())];
-ALLOW_DEPRECATED_DECLARATIONS_END
-                }
-
-                return [NSNull null];
-            }
-            return object;
-        }
-
-        WeakRef<WebProcessProxy> m_webProcessProxy;
-    };
-
-    return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer(*this)).get());
-}
-
-RefPtr<ObjCObjectGraph> WebProcessProxy::transformObjectsToHandles(ObjCObjectGraph& objectGraph)
-{
-    struct Transformer final : ObjCObjectGraph::Transformer {
-        bool shouldTransformObject(id object) const override
-        {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (dynamic_objc_cast<WKBrowsingContextController>(object))
-                return true;
-ALLOW_DEPRECATED_DECLARATIONS_END
-            return false;
-        }
-
-        RetainPtr<id> transformObject(id object) const override
-        {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (auto* controller = dynamic_objc_cast<WKBrowsingContextController>(object))
-                return controller.handle;
-ALLOW_DEPRECATED_DECLARATIONS_END
-            return object;
-        }
-    };
-
-    return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer()).get());
-}
-
 static Vector<String>& mediaTypeCache()
 {
     ASSERT(RunLoop::isMain());
@@ -179,20 +116,6 @@ Vector<String> WebProcessProxy::mediaMIMETypes() const
 {
     return mediaTypeCache();
 }
-
-#if PLATFORM(MAC)
-void WebProcessProxy::requestHighPerformanceGPU()
-{
-    LOG(WebGL, "WebProcessProxy::requestHighPerformanceGPU()");
-    HighPerformanceGPUManager::singleton().addProcessRequiringHighPerformance(*this);
-}
-
-void WebProcessProxy::releaseHighPerformanceGPU()
-{
-    LOG(WebGL, "WebProcessProxy::releaseHighPerformanceGPU()");
-    HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(*this);
-}
-#endif
 
 #if ENABLE(REMOTE_INSPECTOR)
 bool WebProcessProxy::shouldEnableRemoteInspector()
@@ -272,7 +195,7 @@ void WebProcessProxy::sendAudioComponentRegistrations()
         if (!registrations)
             return;
         
-        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), registrations = WTFMove(registrations)] () mutable {
+        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), registrations = WTFMove(registrations)] () mutable {
             if (!weakThis)
                 return;
 
@@ -297,11 +220,11 @@ bool WebProcessProxy::messageSourceIsValidWebContentProcess()
 #endif
 
     // WebKitTestRunner does not pass the isPlatformBinary check, we should return early in this case.
-    if (isRunningTest(WebCore::applicationBundleIdentifier()))
+    if (isRunningTest(applicationBundleIdentifier()))
         return true;
 
     // Confirm that the connection is from a WebContent process:
-    auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(connection()->xpcConnection());
+    auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(connection().xpcConnection());
 
     if (!isPlatformBinary || !signingIdentifier.startsWith("com.apple.WebKit.WebContent"_s)) {
         RELEASE_LOG_ERROR(Process, "Process is not an entitled WebContent process.");
@@ -317,7 +240,7 @@ std::optional<audit_token_t> WebProcessProxy::auditToken() const
     if (!hasConnection())
         return std::nullopt;
     
-    return connection()->getAuditToken();
+    return protectedConnection()->getAuditToken();
 }
 
 std::optional<Vector<SandboxExtension::Handle>> WebProcessProxy::fontdMachExtensionHandles()
@@ -326,6 +249,24 @@ std::optional<Vector<SandboxExtension::Handle>> WebProcessProxy::fontdMachExtens
         return std::nullopt;
     return SandboxExtension::createHandlesForMachLookup({ "com.apple.fonts"_s }, auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
 }
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebProcessProxyCocoaAdditions.mm>)
+#import <WebKitAdditions/WebProcessProxyCocoaAdditions.mm>
+#else
+bool WebProcessProxy::shouldDisableJITCage() const
+{
+    return false;
+}
+#endif
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+void WebProcessProxy::setupLogStream(uint32_t pid, IPC::StreamServerConnectionHandle&& serverConnection, LogStreamIdentifier logStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&& completionHandler)
+{
+    Ref logStream = LogStream::create(processID());
+    logStream->setup(WTFMove(serverConnection), logStreamIdentifier, WTFMove(completionHandler));
+    m_logStream = WTFMove(logStream);
+}
+#endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
 }
 

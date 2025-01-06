@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -307,16 +307,14 @@ void av1_cyclic_refresh_setup(struct AV1_COMP *const cpi);
 
 int av1_cyclic_refresh_get_rdmult(const CYCLIC_REFRESH *cr);
 
-void av1_cyclic_refresh_reset_resize(struct AV1_COMP *const cpi);
-
 int av1_cyclic_refresh_disable_lf_cdef(struct AV1_COMP *const cpi);
 
-static INLINE int cyclic_refresh_segment_id_boosted(int segment_id) {
+static inline int cyclic_refresh_segment_id_boosted(int segment_id) {
   return segment_id == CR_SEGMENT_ID_BOOST1 ||
          segment_id == CR_SEGMENT_ID_BOOST2;
 }
 
-static INLINE int cyclic_refresh_segment_id(int segment_id) {
+static inline int cyclic_refresh_segment_id(int segment_id) {
   if (segment_id == CR_SEGMENT_ID_BOOST1)
     return CR_SEGMENT_ID_BOOST1;
   else if (segment_id == CR_SEGMENT_ID_BOOST2)

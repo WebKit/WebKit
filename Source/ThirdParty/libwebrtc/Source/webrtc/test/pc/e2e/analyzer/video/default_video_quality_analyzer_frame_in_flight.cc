@@ -10,11 +10,11 @@
 
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_frame_in_flight.h"
 
+#include <optional>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -26,11 +26,11 @@ namespace webrtc {
 namespace {
 
 template <typename T>
-absl::optional<T> MaybeGetValue(const std::unordered_map<size_t, T>& map,
-                                size_t key) {
+std::optional<T> MaybeGetValue(const std::unordered_map<size_t, T>& map,
+                               size_t key) {
   auto it = map.find(key);
   if (it == map.end()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return it->second;
 }
@@ -41,7 +41,7 @@ FrameInFlight::FrameInFlight(
     size_t stream,
     uint16_t frame_id,
     Timestamp captured_time,
-    absl::optional<TimeDelta> time_between_captured_frames,
+    std::optional<TimeDelta> time_between_captured_frames,
     std::set<size_t> expected_receivers)
     : stream_(stream),
       expected_receivers_(std::move(expected_receivers)),
@@ -79,7 +79,7 @@ bool FrameInFlight::HaveAllPeersReceived() const {
 
 void FrameInFlight::OnFrameEncoded(
     webrtc::Timestamp time,
-    absl::optional<TimeDelta> time_between_encoded_frames,
+    std::optional<TimeDelta> time_between_encoded_frames,
     VideoFrameType frame_type,
     DataSize encoded_image_size,
     uint32_t target_encode_bitrate,
@@ -93,7 +93,7 @@ void FrameInFlight::OnFrameEncoded(
         *time_between_encoded_frames;
   }
   frame_type_ = frame_type;
-  encoded_image_size_ = encoded_image_size;
+  encoded_image_size_ += encoded_image_size;
   target_encode_bitrate_ += target_encode_bitrate;
   stream_layers_qp_[stream_index].AddSample(SamplesStatsCounter::StatsSample{
       .value = static_cast<double>(qp), .time = time});
@@ -135,11 +135,13 @@ void FrameInFlight::OnFrameDecoded(size_t peer,
                                    webrtc::Timestamp time,
                                    int width,
                                    int height,
-                                   const StreamCodecInfo& used_decoder) {
+                                   const StreamCodecInfo& used_decoder,
+                                   const std::optional<uint8_t> qp) {
   receiver_stats_[peer].decode_end_time = time;
   receiver_stats_[peer].used_decoder = used_decoder;
   receiver_stats_[peer].decoded_frame_width = width;
   receiver_stats_[peer].decoded_frame_height = height;
+  receiver_stats_[peer].decoded_frame_qp = qp;
 }
 
 void FrameInFlight::OnDecoderError(size_t peer,
@@ -192,7 +194,7 @@ FrameStats FrameInFlight::GetStatsForPeer(size_t peer) const {
   stats.used_encoder = used_encoder_;
   stats.spatial_layers_qp = stream_layers_qp_;
 
-  absl::optional<ReceiverFrameStats> receiver_stats =
+  std::optional<ReceiverFrameStats> receiver_stats =
       MaybeGetValue<ReceiverFrameStats>(receiver_stats_, peer);
   if (receiver_stats.has_value()) {
     stats.received_time = receiver_stats->received_time;
@@ -204,6 +206,7 @@ FrameStats FrameInFlight::GetStatsForPeer(size_t peer) const {
         receiver_stats->time_between_rendered_frames;
     stats.decoded_frame_width = receiver_stats->decoded_frame_width;
     stats.decoded_frame_height = receiver_stats->decoded_frame_height;
+    stats.decoded_frame_qp = receiver_stats->decoded_frame_qp;
     stats.used_decoder = receiver_stats->used_decoder;
     stats.pre_decoded_frame_type = receiver_stats->frame_type;
     stats.pre_decoded_image_size = receiver_stats->encoded_image_size;

@@ -43,4 +43,9 @@ PASS Content appears between match and suffix.
 PASS Non-matching suffix in first potential match.
 PASS Non-matching suffix search continues to prefix match.
 PASS Range end matches correct suffix.
+PASS `start` element contains search-invisible text (display: none).
+PASS `start` element contains hidden text, which is a block boundary.
+FAIL `start` element contains hidden text which is not a block boundary. assert_equals: Expected to scroll expected true but got false
+FAIL `start` element contains search-invisible text (iframe). assert_equals: Expected to scroll expected true but got false
+FAIL `start` element contains search-invisible text (image). assert_equals: Expected to scroll expected true but got false
 

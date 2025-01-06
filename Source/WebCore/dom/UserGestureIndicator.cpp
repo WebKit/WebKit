@@ -30,12 +30,16 @@
 #include "FrameDestructionObserverInlines.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "Page.h"
 #include "ResourceLoadObserver.h"
 #include "SecurityOrigin.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserGestureIndicator);
 
 static RefPtr<UserGestureToken>& currentToken()
 {
@@ -117,14 +121,18 @@ UserGestureIndicator::UserGestureIndicator(std::optional<IsProcessingUserGesture
         currentToken() = UserGestureToken::create(isProcessingUserGesture.value(), gestureType, document, authorizationToken, canRequestDOMPaste);
 
     if (isProcessingUserGesture && document && currentToken()->processingUserGesture()) {
+        bool oldHadUserInteraction = document->hasHadUserInteraction();
         document->updateLastHandledUserGestureTimestamp(currentToken()->startTime());
         if (processInteractionStyle == ProcessInteractionStyle::Immediate)
             ResourceLoadObserver::shared().logUserInteractionWithReducedTimeResolution(document->topDocument());
-        document->topDocument().setUserDidInteractWithPage(true);
-        if (RefPtr frame = document->frame(); frame && !frame->hasHadUserInteraction()) {
+        if (RefPtr page = document->protectedPage())
+            page->setUserDidInteractWithPage(true);
+        if (RefPtr frame = document->frame(); frame && !oldHadUserInteraction) {
             for (RefPtr<Frame> ancestor = WTFMove(frame); ancestor; ancestor = ancestor->tree().parent()) {
-                if (RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestor))
-                    localAncestor->setHasHadUserInteraction();
+                if (RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestor)) {
+                    if (RefPtr ancestorDocument = localAncestor->protectedDocument())
+                        ancestorDocument->updateLastHandledUserGestureTimestamp(currentToken()->startTime());
+                }
             }
         }
 
@@ -180,10 +188,11 @@ bool UserGestureIndicator::processingUserGesture(const Document* document)
     if (!isMainThread())
         return false;
 
-    if (!currentToken() || !currentToken()->processingUserGesture())
+    RefPtr token = currentToken();
+    if (!token || !token->processingUserGesture())
         return false;
 
-    return !document || currentToken()->isValidForDocument(*document);
+    return !document || token->isValidForDocument(*document);
 }
 
 bool UserGestureIndicator::processingUserGestureForMedia()
@@ -191,7 +200,8 @@ bool UserGestureIndicator::processingUserGestureForMedia()
     if (!isMainThread())
         return false;
 
-    return currentToken() ? currentToken()->processingUserGestureForMedia() : false;
+    RefPtr token = currentToken();
+    return token ? token->processingUserGestureForMedia() : false;
 }
 
 std::optional<WTF::UUID> UserGestureIndicator::authorizationToken() const
@@ -199,7 +209,8 @@ std::optional<WTF::UUID> UserGestureIndicator::authorizationToken() const
     if (!isMainThread())
         return std::nullopt;
 
-    return currentToken() ? currentToken()->authorizationToken() : std::nullopt;
+    RefPtr token = currentToken();
+    return token ? token->authorizationToken() : std::nullopt;
 }
 
 }

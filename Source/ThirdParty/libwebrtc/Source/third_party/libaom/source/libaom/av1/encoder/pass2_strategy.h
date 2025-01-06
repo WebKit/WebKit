@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -104,43 +104,12 @@ void av1_get_second_pass_params(struct AV1_COMP *cpi,
  */
 void av1_twopass_postencode_update(struct AV1_COMP *cpi);
 
-/*!\brief Distributes bits to frames in a group
- *
- *\ingroup rate_control
- *
- * This function decides on the allocation of bits between the different
- * frames and types of frame in a GF/ARF group.
- *
- * \param[in]   cpi           Top - level encoder instance structure
- * \param[in]   rc            Rate control data
- * \param[in]   gf_group      GF/ARF group data structure
- * \param[in]   is_key_frame  Indicates if the first frame in the group is
- *                            also a key frame.
- * \param[in]   use_arf       Are ARF frames enabled or is this a GF only
- *                            uni-directional group.
- * \param[in]   gf_group_bits Bits available to be allocated.
- *
- * \remark No return but updates the rate control and group data structures
- *         to reflect the allocation of bits.
- */
-void av1_gop_bit_allocation(const AV1_COMP *cpi, RATE_CONTROL *const rc,
-                            GF_GROUP *gf_group, int is_key_frame, int use_arf,
-                            int64_t gf_group_bits);
-
 int av1_calc_arf_boost(const TWO_PASS *twopass,
                        const TWO_PASS_FRAME *twopass_frame,
                        const PRIMARY_RATE_CONTROL *p_rc, FRAME_INFO *frame_info,
                        int offset, int f_frames, int b_frames,
                        int *num_fpstats_used, int *num_fpstats_required,
                        int project_gfu_boost);
-
-void av1_mark_flashes(FIRSTPASS_STATS *first_stats,
-                      FIRSTPASS_STATS *last_stats);
-void av1_estimate_noise(FIRSTPASS_STATS *first_stats,
-                        FIRSTPASS_STATS *last_stats);
-void av1_estimate_coeff(FIRSTPASS_STATS *first_stats,
-                        FIRSTPASS_STATS *last_stats);
-
 #ifdef __cplusplus
 }  // extern "C"
 #endif

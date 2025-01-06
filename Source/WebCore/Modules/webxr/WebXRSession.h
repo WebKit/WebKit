@@ -55,8 +55,13 @@ class WebXRViewerSpace;
 struct XRRenderStateInit;
 
 class WebXRSession final : public RefCounted<WebXRSession>, public EventTarget, public ActiveDOMObject, public PlatformXR::TrackingAndRenderingClient {
-    WTF_MAKE_ISO_ALLOCATED(WebXRSession);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRSession);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    USING_CAN_MAKE_WEAKPTR(PlatformXR::TrackingAndRenderingClient);
+
     using RequestReferenceSpacePromise = DOMPromiseDeferred<IDLInterface<WebXRReferenceSpace>>;
     using EndPromise = DOMPromiseDeferred<void>;
     using FeatureList = PlatformXR::Device::FeatureList;
@@ -64,20 +69,14 @@ public:
     static Ref<WebXRSession> create(Document&, WebXRSystem&, XRSessionMode, PlatformXR::Device&, FeatureList&&);
     virtual ~WebXRSession();
 
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
-    using PlatformXR::TrackingAndRenderingClient::weakPtrFactory;
-    using PlatformXR::TrackingAndRenderingClient::WeakValueType;
-    using PlatformXR::TrackingAndRenderingClient::WeakPtrImplType;
-
     XREnvironmentBlendMode environmentBlendMode() const;
     XRInteractionMode interactionMode() const;
     XRVisibilityState visibilityState() const;
     const WebXRRenderState& renderState() const;
     const WebXRInputSourceArray& inputSources() const;
     RefPtr<PlatformXR::Device> device() const { return m_device.get(); }
+
+    const Vector<String> enabledFeatures() const;
 
     ExceptionOr<void> updateRenderState(const XRRenderStateInit&);
     void requestReferenceSpace(XRReferenceSpaceType, RequestReferenceSpacePromise&&);
@@ -164,6 +163,7 @@ private:
 
     Vector<PlatformXR::Device::ViewData> m_views;
     PlatformXR::FrameData m_frameData;
+    std::optional<PlatformXR::RequestData> m_requestData;
 
     double m_minimumInlineFOV { 0.0 };
     double m_maximumInlineFOV { piFloat };

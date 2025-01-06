@@ -3,6 +3,7 @@ This test outdents an empty paragraph with inline style.
 |   style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |   <img>
 |   <br>
-| <b>
-|   <#selection-caret>
-|   <br>
+| <div>
+|   <b>
+|     <#selection-caret>
+|     <br>

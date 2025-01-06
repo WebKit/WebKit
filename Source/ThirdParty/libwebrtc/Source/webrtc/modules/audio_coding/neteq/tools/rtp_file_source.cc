@@ -12,22 +12,23 @@
 
 #include <string.h>
 
-#include "absl/strings/string_view.h"
-#ifndef WIN32
-#include <netinet/in.h>
-#endif
-
+#include <cstdint>
 #include <memory>
+#include <optional>
 
+#include "absl/strings/string_view.h"
 #include "modules/audio_coding/neteq/tools/packet.h"
+#include "modules/audio_coding/neteq/tools/packet_source.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/copy_on_write_buffer.h"
 #include "test/rtp_file_reader.h"
 
 namespace webrtc {
 namespace test {
 
 RtpFileSource* RtpFileSource::Create(absl::string_view file_name,
-                                     absl::optional<uint32_t> ssrc_filter) {
+                                     std::optional<uint32_t> ssrc_filter) {
   RtpFileSource* source = new RtpFileSource(ssrc_filter);
   RTC_CHECK(source->OpenFile(file_name));
   return source;
@@ -79,7 +80,7 @@ std::unique_ptr<Packet> RtpFileSource::NextPacket() {
   }
 }
 
-RtpFileSource::RtpFileSource(absl::optional<uint32_t> ssrc_filter)
+RtpFileSource::RtpFileSource(std::optional<uint32_t> ssrc_filter)
     : PacketSource(), ssrc_filter_(ssrc_filter) {}
 
 bool RtpFileSource::OpenFile(absl::string_view file_name) {

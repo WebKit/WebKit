@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -87,9 +87,11 @@
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
@@ -98,6 +100,10 @@ typedef Inspector::NetworkBackendDispatcherHandler::LoadResourceCallback LoadRes
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorNetworkAgent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorNetworkAgent::PendingInterceptRequest);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorNetworkAgent::PendingInterceptResponse);
 
 namespace {
 
@@ -113,7 +119,7 @@ public:
 
     ~InspectorThreadableLoaderClient() override = default;
 
-    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response) override
+    void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse& response) override
     {
         m_mimeType = response.mimeType();
         m_statusCode = response.httpStatusCode();
@@ -137,7 +143,7 @@ public:
         m_responseText.append(m_decoder->decode(buffer.span()));
     }
 
-    void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) override
+    void didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&) override
     {
         if (m_decoder)
             m_responseText.append(m_decoder->flush());
@@ -146,7 +152,7 @@ public:
         dispose();
     }
 
-    void didFail(const ResourceError& error) override
+    void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError& error) override
     {
         m_callback->sendFailure(error.isAccessControl() ? "Loading resource for inspector failed access control check"_s : "Loading resource for inspector failed"_s);
         dispose();
@@ -573,7 +579,7 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
     if (cachedResource) {
         // Use mime type from cached resource in case the one in response is empty.
         if (resourceResponse && response.mimeType().isEmpty())
-            resourceResponse->setString(Inspector::Protocol::Network::Response::mimeTypeKey, cachedResource->response().mimeType());
+            resourceResponse->setString("mimeType"_s, cachedResource->response().mimeType());
         m_resourcesData->addCachedResource(requestId, cachedResource);
     }
 
@@ -596,12 +602,12 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
                 });
             }
             
-            resourceResponse->setString(Inspector::Protocol::Network::Response::mimeTypeKey, previousResourceData->mimeType());
+            resourceResponse->setString("mimeType"_s, previousResourceData->mimeType());
             
-            resourceResponse->setInteger(Inspector::Protocol::Network::Response::statusKey, previousResourceData->httpStatusCode());
-            resourceResponse->setString(Inspector::Protocol::Network::Response::statusTextKey, previousResourceData->httpStatusText());
+            resourceResponse->setInteger("status"_s, previousResourceData->httpStatusCode());
+            resourceResponse->setString("statusText"_s, previousResourceData->httpStatusText());
             
-            resourceResponse->setString(Inspector::Protocol::Network::Response::sourceKey, Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::Network::Response::Source::DiskCache));
+            resourceResponse->setString("source"_s, Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::Network::Response::Source::DiskCache));
         }
     }
 
@@ -1179,7 +1185,7 @@ void InspectorNetworkAgent::interceptRequest(ResourceLoader& loader, Function<vo
     ASSERT(m_enabled);
     ASSERT(m_interceptionEnabled);
 
-    String requestId = IdentifiersFactory::requestId(loader.identifier().toUInt64());
+    String requestId = IdentifiersFactory::requestId(loader.identifier()->toUInt64());
     if (m_pendingInterceptRequests.contains(requestId)) {
         handler(loader.request());
         return;
@@ -1382,7 +1388,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequest
     if (loader.reachedTerminalState())
         return makeUnexpected("Unable to abort request, it has already been processed"_s);
 
-    addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Info, makeString("Web Inspector blocked "_s, loader.url().string(), " from loading"_s), loader.identifier().toUInt64()));
+    addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Info, makeString("Web Inspector blocked "_s, loader.url().string(), " from loading"_s), loader.identifier() ? loader.identifier()->toUInt64() : 0));
 
     loader.didFail(ResourceError(InspectorNetworkAgent::errorDomain(), 0, loader.url(), "Blocked by Web Inspector"_s, toResourceErrorType(errorType)));
     return { };
@@ -1418,7 +1424,7 @@ Ref<TextResourceDecoder> InspectorNetworkAgent::createTextDecoder(const String& 
         return TextResourceDecoder::create("text/plain"_s, textEncodingName);
 
     if (MIMETypeRegistry::isTextMIMEType(mimeType))
-        return TextResourceDecoder::create(mimeType, "UTF-8");
+        return TextResourceDecoder::create(mimeType, "UTF-8"_s);
 
     if (MIMETypeRegistry::isXMLMIMEType(mimeType)) {
         auto decoder = TextResourceDecoder::create("application/xml"_s);
@@ -1426,7 +1432,7 @@ Ref<TextResourceDecoder> InspectorNetworkAgent::createTextDecoder(const String& 
         return decoder;
     }
 
-    return TextResourceDecoder::create("text/plain"_s, "UTF-8");
+    return TextResourceDecoder::create("text/plain"_s, "UTF-8"_s);
 }
 
 std::optional<String> InspectorNetworkAgent::textContentForCachedResource(CachedResource& cachedResource)

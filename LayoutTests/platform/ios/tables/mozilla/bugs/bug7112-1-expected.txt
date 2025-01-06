@@ -11,17 +11,17 @@ layer at (0,0) size 800x974
             text run at (136,5) width 118: "td align=center"
         RenderText {#text} at (253,0) size 186x19
           text run at (253,0) width 186: " that has a p, a table, and a p."
-      RenderTable {TABLE} at (0,36) size 236x112 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,36) size 236x112 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 234x110
           RenderTableRow {TR} at (0,2) size 234x106
-            RenderTableCell {TD} at (2,2) size 230x106 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 230x106 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {P} at (2,2) size 226x20
                 RenderText {#text} at (100,0) size 25x19
                   text run at (100,0) width 25: "text"
-              RenderTable {TABLE} at (24,38) size 181x30 [border: (1px outset #808080)]
+              RenderTable {TABLE} at (24,38) size 181x30 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 179x28
                   RenderTableRow {TR} at (0,2) size 179x24
-                    RenderTableCell {TD} at (2,2) size 175x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (2,2) size 175x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 36x19
                         text run at (2,2) width 36: "text 3"
               RenderBlock {P} at (2,84) size 226x20
@@ -40,17 +40,17 @@ layer at (0,0) size 800x974
           text run at (0,40) width 413: "table (above), but you're not doing the text-align inside it either. "
           text run at (412,40) width 341: "In quirks mode you should do the former, in standard"
           text run at (0,60) width 104: "mode, the latter."
-      RenderTable {TABLE} at (0,260) size 236x112 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,260) size 236x112 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 234x110
           RenderTableRow {TR} at (0,2) size 234x106
-            RenderTableCell {TD} at (2,2) size 230x106 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 230x106 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {P} at (2,2) size 226x20
                 RenderText {#text} at (100,0) size 25x19
                   text run at (100,0) width 25: "text"
-              RenderTable {TABLE} at (2,38) size 226x30 [border: (1px outset #808080)]
+              RenderTable {TABLE} at (2,38) size 226x30 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 224x28
                   RenderTableRow {TR} at (0,2) size 224x24
-                    RenderTableCell {TD} at (2,2) size 220x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (2,2) size 220x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 36x19
                         text run at (2,2) width 36: "text 3"
               RenderBlock {P} at (2,84) size 226x20
@@ -58,18 +58,18 @@ layer at (0,0) size 800x974
                   text run at (100,0) width 25: "text"
       RenderBlock (anonymous) at (0,372) size 784x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (242,392) size 300x30 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (242,392) size 300x30 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 298x28
           RenderTableRow {TR} at (0,2) size 298x24
-            RenderTableCell {TD} at (2,2) size 294x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 294x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 105x19
                 text run at (2,2) width 105: "Data of Table 1!"
       RenderBlock (anonymous) at (0,422) size 784x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,442) size 300x30 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,442) size 300x30 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 298x28
           RenderTableRow {TR} at (0,2) size 298x24
-            RenderTableCell {TD} at (2,2) size 294x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 294x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (94,2) size 106x19
                 text run at (94,2) width 106: "Data of Table 2!"
       RenderBlock (anonymous) at (0,472) size 784x20

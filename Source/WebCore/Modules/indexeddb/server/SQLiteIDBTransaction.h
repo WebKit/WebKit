@@ -26,12 +26,16 @@
 #pragma once
 
 #include "IDBError.h"
+#include "IDBIndexIdentifier.h"
+#include "IDBObjectStoreIdentifier.h"
 #include "IDBResourceIdentifier.h"
 #include "IDBTransactionInfo.h"
 #include "IndexedDB.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -45,9 +49,10 @@ namespace IDBServer {
 class SQLiteIDBBackingStore;
 class SQLiteIDBCursor;
 
-class SQLiteIDBTransaction {
-    WTF_MAKE_FAST_ALLOCATED;
+class SQLiteIDBTransaction : public CanMakeThreadSafeCheckedPtr<SQLiteIDBTransaction> {
+    WTF_MAKE_TZONE_ALLOCATED(SQLiteIDBTransaction);
     WTF_MAKE_NONCOPYABLE(SQLiteIDBTransaction);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SQLiteIDBTransaction);
 public:
     SQLiteIDBTransaction(SQLiteIDBBackingStore&, const IDBTransactionInfo&);
     ~SQLiteIDBTransaction();
@@ -58,18 +63,20 @@ public:
     IDBError commit();
     IDBError abort();
 
-    std::unique_ptr<SQLiteIDBCursor> maybeOpenBackingStoreCursor(uint64_t objectStoreID, uint64_t indexID, const IDBKeyRangeData&);
+    std::unique_ptr<SQLiteIDBCursor> maybeOpenBackingStoreCursor(IDBObjectStoreIdentifier, std::optional<IDBIndexIdentifier>, const IDBKeyRangeData&);
     SQLiteIDBCursor* maybeOpenCursor(const IDBCursorInfo&);
 
     void closeCursor(SQLiteIDBCursor&);
-    void notifyCursorsOfChanges(int64_t objectStoreID);
+    void notifyCursorsOfChanges(IDBObjectStoreIdentifier);
 
     IDBTransactionMode mode() const { return m_info.mode(); }
     IDBTransactionDurability durability() const { return m_info.durability(); }
     bool inProgress() const;
+    bool inProgressOrReadOnly() const;
 
+    SQLiteDatabase* sqliteDatabase() const;
     SQLiteTransaction* sqliteTransaction() const { return m_sqliteTransaction.get(); }
-    SQLiteIDBBackingStore& backingStore() { return m_backingStore; }
+    SQLiteIDBBackingStore& backingStore() { return m_backingStore.get(); }
 
     void addBlobFile(const String& temporaryPath, const String& storedFilename);
     void addRemovedBlobFile(const String& removedFilename);
@@ -80,10 +87,12 @@ private:
 
     void moveBlobFilesIfNecessary();
     void deleteBlobFilesIfNecessary();
+    bool isReadOnly() const { return mode() == IDBTransactionMode::Readonly; }
 
     IDBTransactionInfo m_info;
 
-    SQLiteIDBBackingStore& m_backingStore;
+    CheckedRef<SQLiteIDBBackingStore> m_backingStore;
+    CheckedPtr<SQLiteDatabase> m_sqliteDatabase;
     std::unique_ptr<SQLiteTransaction> m_sqliteTransaction;
     HashMap<IDBResourceIdentifier, std::unique_ptr<SQLiteIDBCursor>> m_cursors;
     HashSet<SQLiteIDBCursor*> m_backingStoreCursors;

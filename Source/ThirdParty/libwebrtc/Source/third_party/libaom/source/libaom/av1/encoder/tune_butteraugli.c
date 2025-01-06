@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -209,7 +209,7 @@ void av1_setup_butteraugli_source(AV1_COMP *cpi) {
   if (dst->buffer_alloc_sz == 0) {
     aom_alloc_frame_buffer(
         dst, width, height, ss_x, ss_y, cm->seq_params->use_highbitdepth,
-        cpi->oxcf.border_in_pixels, cm->features.byte_alignment, 0, 0);
+        cpi->oxcf.border_in_pixels, cm->features.byte_alignment, false, 0);
   }
   av1_copy_and_extend_frame(cpi->source, dst);
 
@@ -218,7 +218,7 @@ void av1_setup_butteraugli_source(AV1_COMP *cpi) {
     aom_alloc_frame_buffer(
         resized_dst, width / resize_factor, height / resize_factor, ss_x, ss_y,
         cm->seq_params->use_highbitdepth, cpi->oxcf.border_in_pixels,
-        cm->features.byte_alignment, 0, 0);
+        cm->features.byte_alignment, false, 0);
   }
   if (!av1_resize_and_extend_frame_nonnormative(
           cpi->source, resized_dst, bit_depth, av1_num_planes(cm))) {
@@ -244,7 +244,7 @@ void av1_setup_butteraugli_rdmult_and_restore_source(AV1_COMP *cpi, double K) {
   aom_alloc_frame_buffer(
       &resized_recon, width / resize_factor, height / resize_factor, ss_x, ss_y,
       cm->seq_params->use_highbitdepth, cpi->oxcf.border_in_pixels,
-      cm->features.byte_alignment, 0, 0);
+      cm->features.byte_alignment, false, 0);
   copy_img(&cpi->common.cur_frame->buf, &resized_recon, width / resize_factor,
            height / resize_factor);
 
@@ -267,12 +267,12 @@ void av1_setup_butteraugli_rdmult(AV1_COMP *cpi) {
 
   cpi->source = av1_realloc_and_scale_if_required(
       cm, cpi->unscaled_source, &cpi->scaled_source, cm->features.interp_filter,
-      0, false, false, cpi->oxcf.border_in_pixels, cpi->image_pyramid_levels);
+      0, false, false, cpi->oxcf.border_in_pixels, cpi->alloc_pyramid);
   if (cpi->unscaled_last_source != NULL) {
     cpi->last_source = av1_realloc_and_scale_if_required(
         cm, cpi->unscaled_last_source, &cpi->scaled_last_source,
         cm->features.interp_filter, 0, false, false, cpi->oxcf.border_in_pixels,
-        cpi->image_pyramid_levels);
+        cpi->alloc_pyramid);
   }
 
   av1_setup_butteraugli_source(cpi);
@@ -299,7 +299,8 @@ void av1_setup_butteraugli_rdmult(AV1_COMP *cpi) {
   // cpi->sf.part_sf.fixed_partition_size = BLOCK_32X32;
 
   av1_set_quantizer(cm, q_cfg->qm_minlevel, q_cfg->qm_maxlevel, q_index,
-                    q_cfg->enable_chroma_deltaq, q_cfg->enable_hdr_deltaq);
+                    q_cfg->enable_chroma_deltaq, q_cfg->enable_hdr_deltaq,
+                    oxcf->mode == ALLINTRA);
   av1_set_speed_features_qindex_dependent(cpi, oxcf->speed);
   av1_init_quantizer(&cpi->enc_quant_dequant_params, &cm->quant_params,
                      cm->seq_params->bit_depth);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 
 #include "InlineDisplayContent.h"
 #include "InlineLineTypes.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -37,7 +36,7 @@ class Box;
 class InlineInvalidation;
 
 class InlineDamage {
-    WTF_MAKE_ISO_ALLOCATED_INLINE(InlineDamage);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InlineDamage);
 public:
     InlineDamage() = default;
     ~InlineDamage();

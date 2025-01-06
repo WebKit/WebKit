@@ -32,6 +32,7 @@
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -48,7 +49,8 @@ class HostTLSCertificateSet;
 class ResourceError;
 
 class SoupNetworkSession {
-    WTF_MAKE_NONCOPYABLE(SoupNetworkSession); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SoupNetworkSession);
+    WTF_MAKE_NONCOPYABLE(SoupNetworkSession);
 public:
     explicit SoupNetworkSession(PAL::SessionID);
     ~SoupNetworkSession();

@@ -430,11 +430,8 @@ TEST(ECTest, SetKeyWithoutGroup) {
   EXPECT_FALSE(EC_KEY_set_private_key(key.get(), BN_value_one()));
 
   // Public keys may not be configured without a group.
-  bssl::UniquePtr<EC_GROUP> group(
-      EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1));
-  ASSERT_TRUE(group);
-  EXPECT_FALSE(
-      EC_KEY_set_public_key(key.get(), EC_GROUP_get0_generator(group.get())));
+  EXPECT_FALSE(EC_KEY_set_public_key(key.get(),
+                                     EC_GROUP_get0_generator(EC_group_p256())));
 }
 
 TEST(ECTest, SetNULLKey) {
@@ -454,16 +451,13 @@ TEST(ECTest, SetNULLKey) {
 TEST(ECTest, GroupMismatch) {
   bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(NID_secp384r1));
   ASSERT_TRUE(key);
-  bssl::UniquePtr<EC_GROUP> p256(
-      EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1));
-  ASSERT_TRUE(p256);
 
   // Changing a key's group is invalid.
-  EXPECT_FALSE(EC_KEY_set_group(key.get(), p256.get()));
+  EXPECT_FALSE(EC_KEY_set_group(key.get(), EC_group_p256()));
 
   // Configuring a public key with the wrong group is invalid.
-  EXPECT_FALSE(
-      EC_KEY_set_public_key(key.get(), EC_GROUP_get0_generator(p256.get())));
+  EXPECT_FALSE(EC_KEY_set_public_key(key.get(),
+                                     EC_GROUP_get0_generator(EC_group_p256())));
 }
 
 TEST(ECTest, EmptyKey) {
@@ -531,15 +525,15 @@ TEST(ECTest, BrainpoolP256r1) {
 
 class ECCurveTest : public testing::TestWithParam<int> {
  public:
-  const EC_GROUP *group() const { return group_.get(); }
+  const EC_GROUP *group() const { return group_; }
 
   void SetUp() override {
-    group_.reset(EC_GROUP_new_by_curve_name(GetParam()));
+    group_ = EC_GROUP_new_by_curve_name(GetParam());
     ASSERT_TRUE(group_);
   }
 
  private:
-  bssl::UniquePtr<EC_GROUP> group_;
+  const EC_GROUP *group_;
 };
 
 TEST_P(ECCurveTest, SetAffine) {
@@ -995,24 +989,23 @@ static std::string CurveToString(const testing::TestParamInfo<int> &params) {
 INSTANTIATE_TEST_SUITE_P(All, ECCurveTest, testing::ValuesIn(AllCurves()),
                          CurveToString);
 
-static bssl::UniquePtr<EC_GROUP> GetCurve(FileTest *t, const char *key) {
+static const EC_GROUP *GetCurve(FileTest *t, const char *key) {
   std::string curve_name;
   if (!t->GetAttribute(&curve_name, key)) {
     return nullptr;
   }
 
   if (curve_name == "P-224") {
-    return bssl::UniquePtr<EC_GROUP>(EC_GROUP_new_by_curve_name(NID_secp224r1));
+    return EC_group_p224();
   }
   if (curve_name == "P-256") {
-    return bssl::UniquePtr<EC_GROUP>(EC_GROUP_new_by_curve_name(
-        NID_X9_62_prime256v1));
+    return EC_group_p256();
   }
   if (curve_name == "P-384") {
-    return bssl::UniquePtr<EC_GROUP>(EC_GROUP_new_by_curve_name(NID_secp384r1));
+    return EC_group_p384();
   }
   if (curve_name == "P-521") {
-    return bssl::UniquePtr<EC_GROUP>(EC_GROUP_new_by_curve_name(NID_secp521r1));
+    return EC_group_p521();
   }
 
   t->PrintLine("Unknown curve '%s'", curve_name.c_str());
@@ -1035,7 +1028,7 @@ TEST(ECTest, ScalarBaseMultVectors) {
 
   FileTestGTest("crypto/fipsmodule/ec/ec_scalar_base_mult_tests.txt",
                 [&](FileTest *t) {
-    bssl::UniquePtr<EC_GROUP> group = GetCurve(t, "Curve");
+    const EC_GROUP *group = GetCurve(t, "Curve");
     ASSERT_TRUE(group);
     bssl::UniquePtr<BIGNUM> n = GetBIGNUM(t, "N");
     ASSERT_TRUE(n);
@@ -1051,25 +1044,24 @@ TEST(ECTest, ScalarBaseMultVectors) {
     ASSERT_TRUE(py);
     auto check_point = [&](const EC_POINT *p) {
       if (is_infinity) {
-        EXPECT_TRUE(EC_POINT_is_at_infinity(group.get(), p));
+        EXPECT_TRUE(EC_POINT_is_at_infinity(group, p));
       } else {
         ASSERT_TRUE(EC_POINT_get_affine_coordinates_GFp(
-            group.get(), p, px.get(), py.get(), ctx.get()));
+            group, p, px.get(), py.get(), ctx.get()));
         EXPECT_EQ(0, BN_cmp(x.get(), px.get()));
         EXPECT_EQ(0, BN_cmp(y.get(), py.get()));
       }
     };
 
-    const EC_POINT *g = EC_GROUP_get0_generator(group.get());
-    bssl::UniquePtr<EC_POINT> p(EC_POINT_new(group.get()));
+    const EC_POINT *g = EC_GROUP_get0_generator(group);
+    bssl::UniquePtr<EC_POINT> p(EC_POINT_new(group));
     ASSERT_TRUE(p);
     // Test single-point multiplication.
-    ASSERT_TRUE(EC_POINT_mul(group.get(), p.get(), n.get(), nullptr, nullptr,
+    ASSERT_TRUE(EC_POINT_mul(group, p.get(), n.get(), nullptr, nullptr,
                              ctx.get()));
     check_point(p.get());
 
-    ASSERT_TRUE(
-        EC_POINT_mul(group.get(), p.get(), nullptr, g, n.get(), ctx.get()));
+    ASSERT_TRUE(EC_POINT_mul(group, p.get(), nullptr, g, n.get(), ctx.get()));
     check_point(p.get());
   });
 }
@@ -1082,7 +1074,7 @@ TEST(ECTest, DISABLED_ScalarBaseMultVectorsTwoPoint) {
 
   FileTestGTest("crypto/fipsmodule/ec/ec_scalar_base_mult_tests.txt",
                 [&](FileTest *t) {
-    bssl::UniquePtr<EC_GROUP> group = GetCurve(t, "Curve");
+    const EC_GROUP *group = GetCurve(t, "Curve");
     ASSERT_TRUE(group);
     bssl::UniquePtr<BIGNUM> n = GetBIGNUM(t, "N");
     ASSERT_TRUE(n);
@@ -1098,41 +1090,40 @@ TEST(ECTest, DISABLED_ScalarBaseMultVectorsTwoPoint) {
     ASSERT_TRUE(py);
     auto check_point = [&](const EC_POINT *p) {
       if (is_infinity) {
-        EXPECT_TRUE(EC_POINT_is_at_infinity(group.get(), p));
+        EXPECT_TRUE(EC_POINT_is_at_infinity(group, p));
       } else {
         ASSERT_TRUE(EC_POINT_get_affine_coordinates_GFp(
-            group.get(), p, px.get(), py.get(), ctx.get()));
+            group, p, px.get(), py.get(), ctx.get()));
         EXPECT_EQ(0, BN_cmp(x.get(), px.get()));
         EXPECT_EQ(0, BN_cmp(y.get(), py.get()));
       }
     };
 
-    const EC_POINT *g = EC_GROUP_get0_generator(group.get());
-    bssl::UniquePtr<EC_POINT> p(EC_POINT_new(group.get()));
+    const EC_POINT *g = EC_GROUP_get0_generator(group);
+    bssl::UniquePtr<EC_POINT> p(EC_POINT_new(group));
     ASSERT_TRUE(p);
     bssl::UniquePtr<BIGNUM> a(BN_new()), b(BN_new());
     for (int i = -64; i < 64; i++) {
       SCOPED_TRACE(i);
       ASSERT_TRUE(BN_set_word(a.get(), abs(i)));
       if (i < 0) {
-        ASSERT_TRUE(BN_sub(a.get(), EC_GROUP_get0_order(group.get()), a.get()));
+        ASSERT_TRUE(BN_sub(a.get(), EC_GROUP_get0_order(group), a.get()));
       }
 
       ASSERT_TRUE(BN_copy(b.get(), n.get()));
       ASSERT_TRUE(BN_sub(b.get(), b.get(), a.get()));
       if (BN_is_negative(b.get())) {
-        ASSERT_TRUE(BN_add(b.get(), b.get(), EC_GROUP_get0_order(group.get())));
+        ASSERT_TRUE(BN_add(b.get(), b.get(), EC_GROUP_get0_order(group)));
       }
 
-      ASSERT_TRUE(
-          EC_POINT_mul(group.get(), p.get(), a.get(), g, b.get(), ctx.get()));
+      ASSERT_TRUE(EC_POINT_mul(group, p.get(), a.get(), g, b.get(), ctx.get()));
       check_point(p.get());
 
       EC_SCALAR a_scalar, b_scalar;
-      ASSERT_TRUE(ec_bignum_to_scalar(group.get(), &a_scalar, a.get()));
-      ASSERT_TRUE(ec_bignum_to_scalar(group.get(), &b_scalar, b.get()));
-      ASSERT_TRUE(ec_point_mul_scalar_public(group.get(), &p->raw, &a_scalar,
-                                             &g->raw, &b_scalar));
+      ASSERT_TRUE(ec_bignum_to_scalar(group, &a_scalar, a.get()));
+      ASSERT_TRUE(ec_bignum_to_scalar(group, &b_scalar, b.get()));
+      ASSERT_TRUE(ec_point_mul_scalar_public(group, &p->raw, &a_scalar, &g->raw,
+                                             &b_scalar));
       check_point(p.get());
     }
   });
@@ -1148,31 +1139,31 @@ static std::vector<uint8_t> HexToBytes(const char *str) {
 
 TEST(ECTest, DeriveFromSecret) {
   struct DeriveTest {
-    int curve;
+    const EC_GROUP *group;
     std::vector<uint8_t> secret;
     std::vector<uint8_t> expected_priv;
     std::vector<uint8_t> expected_pub;
   };
   const DeriveTest kDeriveTests[] = {
-      {NID_X9_62_prime256v1, HexToBytes(""),
+      {EC_group_p256(), HexToBytes(""),
        HexToBytes(
            "b98a86a71efb51ebdac4759937b977e9b0c05224675bb2b6a58ba306e237f4b8"),
        HexToBytes(
            "04fbe6cab439918e00231a2ff073cdc25823998864a9eb36f809095a1a919ece875"
            "a145803fbe89a6cde53936e3c6d9c253ed3d38f5f58cae455c27e95645ceda9")},
-      {NID_X9_62_prime256v1, HexToBytes("123456"),
+      {EC_group_p256(), HexToBytes("123456"),
        HexToBytes(
            "44a72bc62087b88e5ab7126766177ed0d8f1ed09ad066cd746527fc201105a7e"),
        HexToBytes(
            "04ec0555cd76e991fef7f5504343937d0f38696db3360a4854052cb0d84a377a5a0"
            "ff64c352755c28692b4ae085c2b817db9a1eddbd22e9cf39c12751e0870791b")},
-      {NID_X9_62_prime256v1, HexToBytes("00000000000000000000000000000000"),
+      {EC_group_p256(), HexToBytes("00000000000000000000000000000000"),
        HexToBytes(
            "7ca1e2c83e6a5f2c1b3e7d58180226f269930c4b9fbe2a275096079630b7c57d"),
        HexToBytes(
            "0442ef70c8fc0fbe383ed0a0da36f39f9a590f3feebc07863cc858c9a8ef0465731"
            "0408c249bd4d61929c54b71ffe056e6b4fa1eb537039b43d1c175f0ceab0f89")},
-      {NID_X9_62_prime256v1,
+      {EC_group_p256(),
        HexToBytes(
            "de9c9b35543aaa0fba039e34e8ca9695da3225c7161c9e3a8c70356cac28c780"),
        HexToBytes(
@@ -1180,7 +1171,7 @@ TEST(ECTest, DeriveFromSecret) {
        HexToBytes(
            "046741f806b593bf3a3d4a9d76bdcb9b0d7874633cbea8f42c05e78561f7e8ec362"
            "b9b6f1913ded796fbdafe7f210cea897ac22a4e580c06a60f2659fd09f1830f")},
-      {NID_secp384r1, HexToBytes("123456"),
+      {EC_group_p384(), HexToBytes("123456"),
        HexToBytes("95cd90d548997de090c7622708eccb7edc1b1bd78d2422235ad97406dada"
                   "076555309da200096f6e4b36c46002beee89"),
        HexToBytes(
@@ -1191,13 +1182,12 @@ TEST(ECTest, DeriveFromSecret) {
 
   for (const auto &test : kDeriveTests) {
     SCOPED_TRACE(Bytes(test.secret));
-    bssl::UniquePtr<EC_GROUP> group(EC_GROUP_new_by_curve_name(test.curve));
-    ASSERT_TRUE(group);
+
     bssl::UniquePtr<EC_KEY> key(EC_KEY_derive_from_secret(
-        group.get(), test.secret.data(), test.secret.size()));
+        test.group, test.secret.data(), test.secret.size()));
     ASSERT_TRUE(key);
 
-    std::vector<uint8_t> priv(BN_num_bytes(EC_GROUP_get0_order(group.get())));
+    std::vector<uint8_t> priv(BN_num_bytes(EC_GROUP_get0_order(test.group)));
     ASSERT_TRUE(BN_bn2bin_padded(priv.data(), priv.size(),
                                  EC_KEY_get0_private_key(key.get())));
     EXPECT_EQ(Bytes(priv), Bytes(test.expected_priv));
@@ -1226,33 +1216,33 @@ TEST(ECTest, HashToCurve) {
     int (*hash_to_curve)(const EC_GROUP *group, EC_POINT *out,
                          const uint8_t *dst, size_t dst_len, const uint8_t *msg,
                          size_t msg_len);
-    int curve_nid;
+    const EC_GROUP *group;
     const char *dst;
     const char *msg;
     const char *x_hex;
     const char *y_hex;
   };
-  static const HashToCurveTest kTests[] = {
-      // See draft-irtf-cfrg-hash-to-curve-16, appendix J.1.1.
-      {&EC_hash_to_curve_p256_xmd_sha256_sswu, NID_X9_62_prime256v1,
+  const HashToCurveTest kTests[] = {
+      // See RFC 9380, appendix J.1.1.
+      {&EC_hash_to_curve_p256_xmd_sha256_sswu, EC_group_p256(),
        "QUUX-V01-CS02-with-P256_XMD:SHA-256_SSWU_RO_", "",
        "2c15230b26dbc6fc9a37051158c95b79656e17a1a920b11394ca91"
        "c44247d3e4",
        "8a7a74985cc5c776cdfe4b1f19884970453912e9d31528c060be9a"
        "b5c43e8415"},
-      {&EC_hash_to_curve_p256_xmd_sha256_sswu, NID_X9_62_prime256v1,
+      {&EC_hash_to_curve_p256_xmd_sha256_sswu, EC_group_p256(),
        "QUUX-V01-CS02-with-P256_XMD:SHA-256_SSWU_RO_", "abc",
        "0bb8b87485551aa43ed54f009230450b492fead5f1cc91658775da"
        "c4a3388a0f",
        "5c41b3d0731a27a7b14bc0bf0ccded2d8751f83493404c84a88e71"
        "ffd424212e"},
-      {&EC_hash_to_curve_p256_xmd_sha256_sswu, NID_X9_62_prime256v1,
+      {&EC_hash_to_curve_p256_xmd_sha256_sswu, EC_group_p256(),
        "QUUX-V01-CS02-with-P256_XMD:SHA-256_SSWU_RO_", "abcdef0123456789",
        "65038ac8f2b1def042a5df0b33b1f4eca6bff7cb0f9c6c15268118"
        "64e544ed80",
        "cad44d40a656e7aff4002a8de287abc8ae0482b5ae825822bb870d"
        "6df9b56ca3"},
-      {&EC_hash_to_curve_p256_xmd_sha256_sswu, NID_X9_62_prime256v1,
+      {&EC_hash_to_curve_p256_xmd_sha256_sswu, EC_group_p256(),
        "QUUX-V01-CS02-with-P256_XMD:SHA-256_SSWU_RO_",
        "q128_qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"
        "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"
@@ -1261,7 +1251,7 @@ TEST(ECTest, HashToCurve) {
        "3dc65a0b5d",
        "98f8df449a072c4721d241a3b1236d3caccba603f916ca680f4539"
        "d2bfb3c29e"},
-      {&EC_hash_to_curve_p256_xmd_sha256_sswu, NID_X9_62_prime256v1,
+      {&EC_hash_to_curve_p256_xmd_sha256_sswu, EC_group_p256(),
        "QUUX-V01-CS02-with-P256_XMD:SHA-256_SSWU_RO_",
        "a512_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -1279,25 +1269,25 @@ TEST(ECTest, HashToCurve) {
        "2b0f4757dc"},
 
       // See draft-irtf-cfrg-hash-to-curve-07, appendix G.2.1.
-      {hash_to_curve_p384_sha512_draft07, NID_secp384r1,
+      {hash_to_curve_p384_sha512_draft07, EC_group_p384(),
        "P384_XMD:SHA-512_SSWU_RO_TESTGEN", "",
        "2fc0b9efdd63a8e43b4db88dc12f03c798f6fd91bccac0c9096185"
        "4386e58fdc54fc2a01f0f358759054ce1f9b762025",
        "949b936fabb72cdb02cd7980b86cb6a3adf286658e81301648851d"
        "b8a49d9bec00ccb57698d559fc5960fa5030a8e54b"},
-      {hash_to_curve_p384_sha512_draft07, NID_secp384r1,
+      {hash_to_curve_p384_sha512_draft07, EC_group_p384(),
        "P384_XMD:SHA-512_SSWU_RO_TESTGEN", "abc",
        "4f3338035391e8ce8ce40c974136f0edc97f392ffd44a643338741"
        "8ed1b8c2603487e1688ec151f048fbc6b2c138c92f",
        "152b90aef6558be328a3168855fb1906452e7167b0f7c8a56ff9d4"
        "fa87d6fb522cdf8e409db54418b2c764fd26260757"},
-      {hash_to_curve_p384_sha512_draft07, NID_secp384r1,
+      {hash_to_curve_p384_sha512_draft07, EC_group_p384(),
        "P384_XMD:SHA-512_SSWU_RO_TESTGEN", "abcdef0123456789",
        "e9e5d7ac397e123d060ad44301cbc8eb972f6e64ebcff29dcc9b9a"
        "10357902aace2240c580fec85e5b427d98b4e80703",
        "916cb8963521ad75105be43cc4148e5a5bbb4fcf107f1577e4f7fa"
        "3ca58cd786aa76890c8e687d2353393bc16c78ec4d"},
-      {hash_to_curve_p384_sha512_draft07, NID_secp384r1,
+      {hash_to_curve_p384_sha512_draft07, EC_group_p384(),
        "P384_XMD:SHA-512_SSWU_RO_TESTGEN",
        "a512_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -1319,17 +1309,15 @@ TEST(ECTest, HashToCurve) {
     SCOPED_TRACE(test.dst);
     SCOPED_TRACE(test.msg);
 
-    bssl::UniquePtr<EC_GROUP> group(EC_GROUP_new_by_curve_name(test.curve_nid));
-    ASSERT_TRUE(group);
-    bssl::UniquePtr<EC_POINT> p(EC_POINT_new(group.get()));
+    bssl::UniquePtr<EC_POINT> p(EC_POINT_new(test.group));
     ASSERT_TRUE(p);
     ASSERT_TRUE(test.hash_to_curve(
-        group.get(), p.get(), reinterpret_cast<const uint8_t *>(test.dst),
+        test.group, p.get(), reinterpret_cast<const uint8_t *>(test.dst),
         strlen(test.dst), reinterpret_cast<const uint8_t *>(test.msg),
         strlen(test.msg)));
 
     std::vector<uint8_t> buf;
-    ASSERT_TRUE(EncodeECPoint(&buf, group.get(), p.get(),
+    ASSERT_TRUE(EncodeECPoint(&buf, test.group, p.get(),
                               POINT_CONVERSION_UNCOMPRESSED));
     size_t field_len = (buf.size() - 1) / 2;
     EXPECT_EQ(test.x_hex,
@@ -1339,32 +1327,28 @@ TEST(ECTest, HashToCurve) {
   }
 
   // hash-to-curve functions should check for the wrong group.
-  bssl::UniquePtr<EC_GROUP> p224(EC_GROUP_new_by_curve_name(NID_secp224r1));
-  ASSERT_TRUE(p224);
-  bssl::UniquePtr<EC_GROUP> p384(EC_GROUP_new_by_curve_name(NID_secp384r1));
-  ASSERT_TRUE(p384);
   EC_JACOBIAN raw;
-  bssl::UniquePtr<EC_POINT> p_p384(EC_POINT_new(p384.get()));
+  bssl::UniquePtr<EC_POINT> p_p384(EC_POINT_new(EC_group_p384()));
   ASSERT_TRUE(p_p384);
-  bssl::UniquePtr<EC_POINT> p_p224(EC_POINT_new(p224.get()));
+  bssl::UniquePtr<EC_POINT> p_p224(EC_POINT_new(EC_group_p224()));
   ASSERT_TRUE(p_p224);
   static const uint8_t kDST[] = {0, 1, 2, 3};
   static const uint8_t kMessage[] = {4, 5, 6, 7};
   EXPECT_FALSE(ec_hash_to_curve_p384_xmd_sha384_sswu(
-      p224.get(), &raw, kDST, sizeof(kDST), kMessage, sizeof(kMessage)));
+      EC_group_p224(), &raw, kDST, sizeof(kDST), kMessage, sizeof(kMessage)));
   EXPECT_FALSE(EC_hash_to_curve_p384_xmd_sha384_sswu(
-      p224.get(), p_p224.get(), kDST, sizeof(kDST), kMessage,
+      EC_group_p224(), p_p224.get(), kDST, sizeof(kDST), kMessage,
       sizeof(kMessage)));
   EXPECT_FALSE(EC_hash_to_curve_p384_xmd_sha384_sswu(
-      p224.get(), p_p384.get(), kDST, sizeof(kDST), kMessage,
+      EC_group_p224(), p_p384.get(), kDST, sizeof(kDST), kMessage,
       sizeof(kMessage)));
   EXPECT_FALSE(EC_hash_to_curve_p384_xmd_sha384_sswu(
-      p384.get(), p_p224.get(), kDST, sizeof(kDST), kMessage,
+      EC_group_p384(), p_p224.get(), kDST, sizeof(kDST), kMessage,
       sizeof(kMessage)));
 
   // Zero-length DSTs are not allowed.
   EXPECT_FALSE(ec_hash_to_curve_p384_xmd_sha384_sswu(
-      p384.get(), &raw, nullptr, 0, kMessage, sizeof(kMessage)));
+      EC_group_p384(), &raw, nullptr, 0, kMessage, sizeof(kMessage)));
 }
 
 TEST(ECTest, HashToScalar) {
@@ -1372,21 +1356,21 @@ TEST(ECTest, HashToScalar) {
     int (*hash_to_scalar)(const EC_GROUP *group, EC_SCALAR *out,
                           const uint8_t *dst, size_t dst_len,
                           const uint8_t *msg, size_t msg_len);
-    int curve_nid;
+    const EC_GROUP *group;
     const char *dst;
     const char *msg;
     const char *result_hex;
   };
-  static const HashToScalarTest kTests[] = {
-      {&ec_hash_to_scalar_p384_xmd_sha512_draft07, NID_secp384r1,
+  const HashToScalarTest kTests[] = {
+      {&ec_hash_to_scalar_p384_xmd_sha512_draft07, EC_group_p384(),
        "P384_XMD:SHA-512_SCALAR_TEST", "",
        "9687acc2de56c3cf94c0e05b6811a21aa480092254ec0532bdce63"
        "140ecd340f09dc2d45d77e21fb0aa76f7707b8a676"},
-      {&ec_hash_to_scalar_p384_xmd_sha512_draft07, NID_secp384r1,
+      {&ec_hash_to_scalar_p384_xmd_sha512_draft07, EC_group_p384(),
        "P384_XMD:SHA-512_SCALAR_TEST", "abcdef0123456789",
        "8f8076022a68233cbcecaceae68c2068f132724f001caa78619eff"
        "1ffc58fa871db73fe9034fc9cf853c384ed34b5666"},
-      {&ec_hash_to_scalar_p384_xmd_sha512_draft07, NID_secp384r1,
+      {&ec_hash_to_scalar_p384_xmd_sha512_draft07, EC_group_p384(),
        "P384_XMD:SHA-512_SCALAR_TEST",
        "a512_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -1406,25 +1390,22 @@ TEST(ECTest, HashToScalar) {
     SCOPED_TRACE(test.dst);
     SCOPED_TRACE(test.msg);
 
-    bssl::UniquePtr<EC_GROUP> group(EC_GROUP_new_by_curve_name(test.curve_nid));
-    ASSERT_TRUE(group);
     EC_SCALAR scalar;
     ASSERT_TRUE(test.hash_to_scalar(
-        group.get(), &scalar, reinterpret_cast<const uint8_t *>(test.dst),
+        test.group, &scalar, reinterpret_cast<const uint8_t *>(test.dst),
         strlen(test.dst), reinterpret_cast<const uint8_t *>(test.msg),
         strlen(test.msg)));
     uint8_t buf[EC_MAX_BYTES];
     size_t len;
-    ec_scalar_to_bytes(group.get(), buf, &len, &scalar);
+    ec_scalar_to_bytes(test.group, buf, &len, &scalar);
     EXPECT_EQ(test.result_hex, EncodeHex(bssl::MakeConstSpan(buf, len)));
   }
 
   // hash-to-scalar functions should check for the wrong group.
-  bssl::UniquePtr<EC_GROUP> p224(EC_GROUP_new_by_curve_name(NID_secp224r1));
-  ASSERT_TRUE(p224);
   EC_SCALAR scalar;
   static const uint8_t kDST[] = {0, 1, 2, 3};
   static const uint8_t kMessage[] = {4, 5, 6, 7};
   EXPECT_FALSE(ec_hash_to_scalar_p384_xmd_sha512_draft07(
-      p224.get(), &scalar, kDST, sizeof(kDST), kMessage, sizeof(kMessage)));
+      EC_group_p224(), &scalar, kDST, sizeof(kDST), kMessage,
+      sizeof(kMessage)));
 }

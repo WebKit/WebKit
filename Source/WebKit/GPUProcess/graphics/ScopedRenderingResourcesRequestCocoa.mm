@@ -48,7 +48,7 @@ void ScopedRenderingResourcesRequest::scheduleFreeRenderingResources()
 {
     if (didScheduleFreeRenderingResources)
         return;
-    RunLoop::main().dispatchAfter(freeRenderingResourcesTimeout, freeRenderingResources);
+    RunLoop::protectedMain()->dispatchAfter(freeRenderingResourcesTimeout, freeRenderingResources);
     didScheduleFreeRenderingResources = true;
 }
 

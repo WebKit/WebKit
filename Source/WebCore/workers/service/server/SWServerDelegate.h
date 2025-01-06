@@ -50,6 +50,7 @@ class RegistrableDomain;
 class ResourceRequest;
 class SWRegistrationStore;
 class SWServer;
+class Site;
 
 struct BackgroundFetchRequest;
 struct ServiceWorkerJobData;
@@ -60,14 +61,14 @@ public:
     virtual ~SWServerDelegate() = default;
 
     virtual void softUpdate(ServiceWorkerJobData&&, bool shouldRefreshCache, ResourceRequest&&, CompletionHandler<void(WorkerFetchResult&&)>&&) = 0;
-    virtual void createContextConnection(const RegistrableDomain&, std::optional<ProcessIdentifier>, std::optional<ScriptExecutionContextIdentifier>, CompletionHandler<void()>&&) = 0;
+    virtual void createContextConnection(const Site&, std::optional<ProcessIdentifier>, std::optional<ScriptExecutionContextIdentifier>, CompletionHandler<void()>&&) = 0;
     virtual void appBoundDomains(CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&) = 0;
     virtual void addAllowedFirstPartyForCookies(ProcessIdentifier, std::optional<ProcessIdentifier>, RegistrableDomain&&) = 0;
 
     virtual void requestBackgroundFetchPermission(const ClientOrigin&, CompletionHandler<void(bool)>&&) = 0;
-    virtual std::unique_ptr<BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(BackgroundFetchRecordLoaderClient&, const BackgroundFetchRequest&, size_t responseDataSize, const WebCore::ClientOrigin&) = 0;
+    virtual RefPtr<BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(BackgroundFetchRecordLoaderClient&, const BackgroundFetchRequest&, size_t responseDataSize, const WebCore::ClientOrigin&) = 0;
     virtual Ref<BackgroundFetchStore> createBackgroundFetchStore() = 0;
-    virtual std::unique_ptr<SWRegistrationStore> createUniqueRegistrationStore(SWServer&) = 0;
+    virtual RefPtr<SWRegistrationStore> createRegistrationStore(SWServer&) = 0;
 };
 
 } // namespace WebCore

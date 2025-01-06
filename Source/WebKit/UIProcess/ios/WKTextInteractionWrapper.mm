@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,17 +29,86 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "RemoteLayerTreeNode.h"
+#import "RemoteLayerTreeViews.h"
 #import "WKContentViewInteraction.h"
+#import <WebCore/TileController.h>
+#import <wtf/TZoneMallocInlines.h>
+
+@interface WKTextInteractionWrapper ()
+
+@property (nonatomic, readonly, weak) WKContentView *view;
+@property (nonatomic) BOOL shouldRestoreEditMenuAfterOverflowScrolling;
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+@property (nonatomic, readonly) UITextSelectionDisplayInteraction *textSelectionDisplayInteraction;
+#endif
+
+#if USE(BROWSERENGINEKIT)
+@property (nonatomic, readonly) BETextInteraction *asyncTextInteraction;
+#endif
+
+@end
+
+namespace WebKit {
+
+enum class DeactivateSelection : bool { No, Yes };
+
+class HideEditMenuScope {
+    WTF_MAKE_TZONE_ALLOCATED(HideEditMenuScope);
+    WTF_MAKE_NONCOPYABLE(HideEditMenuScope);
+public:
+    HideEditMenuScope(WKTextInteractionWrapper *wrapper, DeactivateSelection deactivateSelection)
+        : m_wrapper { wrapper }
+        , m_reactivateSelection { deactivateSelection == DeactivateSelection::Yes }
+    {
+        [wrapper.textInteractionAssistant willStartScrollingOverflow];
+#if USE(BROWSERENGINEKIT)
+        wrapper.shouldRestoreEditMenuAfterOverflowScrolling = [wrapper view].isPresentingEditMenu;
+        [wrapper.asyncTextInteraction dismissEditMenuForSelection];
+#endif
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+        if (deactivateSelection == DeactivateSelection::Yes)
+            wrapper.textSelectionDisplayInteraction.activated = NO;
+#endif
+    }
+
+    ~HideEditMenuScope()
+    {
+        RetainPtr wrapper = m_wrapper;
+        [[wrapper textInteractionAssistant] didEndScrollingOverflow];
+#if USE(BROWSERENGINEKIT)
+        if ([wrapper shouldRestoreEditMenuAfterOverflowScrolling]) {
+            [wrapper setShouldRestoreEditMenuAfterOverflowScrolling:NO];
+            [[wrapper asyncTextInteraction] presentEditMenuForSelection];
+        }
+#endif
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+        if (m_reactivateSelection)
+            [wrapper textSelectionDisplayInteraction].activated = YES;
+#endif
+    }
+
+private:
+    __weak WKTextInteractionWrapper *m_wrapper { nil };
+    bool m_reactivateSelection { false };
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
+
+} // namespace WebKit
 
 @implementation WKTextInteractionWrapper {
     __weak WKContentView *_view;
     RetainPtr<UIWKTextInteractionAssistant> _textInteractionAssistant;
+    std::unique_ptr<WebKit::HideEditMenuScope> _hideEditMenuScope;
 #if USE(BROWSERENGINEKIT)
     RetainPtr<BETextInteraction> _asyncTextInteraction;
     RetainPtr<NSTimer> _showEditMenuTimer;
     BOOL _showEditMenuAfterNextSelectionChange;
 #endif
-    BOOL _shouldRestoreEditMenuAfterOverflowScrolling;
+    Vector<WeakObjCPtr<UIView>> _managedTextSelectionViews;
 }
 
 - (instancetype)initWithView:(WKContentView *)view
@@ -59,6 +128,14 @@
 #endif
 
     _textInteractionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:view]);
+
+#if PLATFORM(APPLETV) && HAVE(UI_TEXT_CONTEXT_MENU_INTERACTION)
+    if (RetainPtr contextMenuInteraction = [self contextMenuInteraction]) {
+        [view removeInteraction:contextMenuInteraction.get()];
+        [self setExternalContextMenuInteractionDelegate:nil];
+    }
+#endif
+
     return self;
 }
 
@@ -78,21 +155,114 @@
     return _textInteractionAssistant.get();
 }
 
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
+- (UITextSelectionDisplayInteraction *)textSelectionDisplayInteraction
+{
+#if USE(BROWSERENGINEKIT)
+    if (_asyncTextInteraction)
+        return [_asyncTextInteraction textSelectionDisplayInteraction];
+#endif
+
+    for (id<UIInteraction> interaction in _view.interactions) {
+        if (RetainPtr selectionInteraction = dynamic_objc_cast<UITextSelectionDisplayInteraction>(interaction))
+            return selectionInteraction.get();
+    }
+
+    return nil;
+}
+
+#endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
+- (NSArray<UIView *> *)managedTextSelectionViews
+{
+    RetainPtr views = adoptNS([[NSMutableArray alloc] initWithCapacity:_managedTextSelectionViews.size()]);
+    _managedTextSelectionViews.removeAllMatching([views](auto& weakView) {
+        if (RetainPtr view = weakView.get()) {
+            [views addObject:view.get()];
+            return false;
+        }
+        return true;
+    });
+    return views.autorelease();
+}
+
+- (void)prepareToMoveSelectionContainer:(UIView *)newContainer
+{
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    RetainPtr displayInteraction = [self textSelectionDisplayInteraction];
+    RetainPtr highlightView = [displayInteraction highlightView];
+    if ([highlightView superview] != newContainer) {
+        NSMutableSet<UIView *> *viewsBeforeInstallingInteraction = [NSMutableSet set];
+        for (UIView *subview in newContainer.subviews)
+            [viewsBeforeInstallingInteraction addObject:subview];
+
+        // Calling these delegate methods tells the display interaction to remove and reparent all internally
+        // managed views (e.g. selection highlight views, selection handles) in the new selection container.
+        [displayInteraction willMoveToView:_view];
+        [displayInteraction didMoveToView:_view];
+
+        _managedTextSelectionViews = { };
+        for (UIView *subview in newContainer.subviews) {
+            if (![viewsBeforeInstallingInteraction containsObject:subview])
+                _managedTextSelectionViews.append(subview);
+        }
+    }
+
+    if (newContainer == _view)
+        return;
+
+    RetainPtr subviews = [newContainer subviews];
+    __block std::optional<NSUInteger> indexAfterTileGridContainer;
+    auto tileGridContainerName = WebCore::TileController::tileGridContainerLayerName();
+    [subviews enumerateObjectsUsingBlock:^(UIView *view, NSUInteger index, BOOL* stop) {
+        RetainPtr compositingView = dynamic_objc_cast<WKCompositingView>(view);
+        if ([[compositingView layer].name isEqualToString:tileGridContainerName]) {
+            indexAfterTileGridContainer = index + 1;
+            *stop = YES;
+        }
+    }];
+
+    if (!indexAfterTileGridContainer)
+        return;
+
+    if (*indexAfterTileGridContainer < [subviews count] && [subviews objectAtIndex:*indexAfterTileGridContainer] == highlightView)
+        return;
+
+    // The first managed selection view in the array of subviews should be the highlight view.
+    // If there are any other views between the tile grid container and the highlight view,
+    // reposition the managed selection views above the tile grid container.
+    for (UIView *view in self.managedTextSelectionViews.reverseObjectEnumerator) {
+        if (newContainer == view.superview)
+            [newContainer insertSubview:view atIndex:*indexAfterTileGridContainer];
+    }
+#endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+}
+
+- (void)setNeedsSelectionUpdate
+{
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    [self.textSelectionDisplayInteraction setNeedsSelectionUpdate];
+#endif
+}
+
 - (void)activateSelection
 {
-    [_textInteractionAssistant activateSelection];
 #if USE(BROWSERENGINEKIT)
-    [_asyncTextInteraction textSelectionDisplayInteraction].activated = YES;
+    self.textSelectionDisplayInteraction.activated = YES;
+#else
+    [_textInteractionAssistant activateSelection];
 #endif
 }
 
 - (void)deactivateSelection
 {
-    [_textInteractionAssistant deactivateSelection];
 #if USE(BROWSERENGINEKIT)
-    [_asyncTextInteraction textSelectionDisplayInteraction].activated = NO;
+    self.textSelectionDisplayInteraction.activated = NO;
     _showEditMenuAfterNextSelectionChange = NO;
     [self stopShowEditMenuTimer];
+#else
+    [_textInteractionAssistant deactivateSelection];
 #endif
 }
 
@@ -116,28 +286,47 @@
 #endif
 }
 
-- (void)willStartScrollingOverflow
+- (WKContentView *)view
 {
-    [_textInteractionAssistant willStartScrollingOverflow];
-#if USE(BROWSERENGINEKIT)
-    _shouldRestoreEditMenuAfterOverflowScrolling = _view.isPresentingEditMenu;
-    [_asyncTextInteraction dismissEditMenuForSelection];
-    [_asyncTextInteraction textSelectionDisplayInteraction].activated = NO;
-#endif
+    return _view;
+}
+
+- (void)willBeginDragLift
+{
+    if (_hideEditMenuScope)
+        return;
+
+    _hideEditMenuScope = WTF::makeUnique<WebKit::HideEditMenuScope>(self, WebKit::DeactivateSelection::Yes);
+}
+
+- (void)didConcludeDrop
+{
+    _hideEditMenuScope = nullptr;
+}
+
+- (void)willStartScrollingOverflow:(UIScrollView *)scrollView
+{
+    if (_hideEditMenuScope)
+        return;
+
+    auto deactivateSelection = [_view _shouldHideSelectionDuringOverflowScroll:scrollView] ? WebKit::DeactivateSelection::Yes : WebKit::DeactivateSelection::No;
+    _hideEditMenuScope = WTF::makeUnique<WebKit::HideEditMenuScope>(self, deactivateSelection);
 }
 
 - (void)didEndScrollingOverflow
 {
-    [_textInteractionAssistant didEndScrollingOverflow];
-#if USE(BROWSERENGINEKIT)
-    if (std::exchange(_shouldRestoreEditMenuAfterOverflowScrolling, NO))
-        [_asyncTextInteraction presentEditMenuForSelection];
-    [_asyncTextInteraction textSelectionDisplayInteraction].activated = YES;
-#endif
+    _hideEditMenuScope = nullptr;
+}
+
+- (void)reset
+{
+    _shouldRestoreEditMenuAfterOverflowScrolling = NO;
+    _hideEditMenuScope = nullptr;
 }
 
 - (void)willStartScrollingOrZooming
 {
+    // FIXME: Adopt `HideEditMenuScope` here once `BETextInput` is used on all iOS-family platforms.
     [_textInteractionAssistant willStartScrollingOrZooming];
 #if USE(BROWSERENGINEKIT)
     _shouldRestoreEditMenuAfterOverflowScrolling = _view.isPresentingEditMenu;
@@ -147,6 +336,7 @@
 
 - (void)didEndScrollingOrZooming
 {
+    // FIXME: Adopt `HideEditMenuScope` here once `BETextInput` is used on all iOS-family platforms.
     [_textInteractionAssistant didEndScrollingOrZooming];
 #if USE(BROWSERENGINEKIT)
     if (std::exchange(_shouldRestoreEditMenuAfterOverflowScrolling, NO))
@@ -245,6 +435,11 @@
 - (void)stopShowEditMenuTimer
 {
     [std::exchange(_showEditMenuTimer, nil) invalidate];
+}
+
+- (BETextInteraction *)asyncTextInteraction
+{
+    return _asyncTextInteraction.get();
 }
 
 #endif // USE(BROWSERENGINEKIT)

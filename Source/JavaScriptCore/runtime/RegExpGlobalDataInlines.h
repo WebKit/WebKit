@@ -48,7 +48,7 @@ inline void RegExpGlobalData::setInput(JSGlobalObject* globalObject, JSString* s
    expression matching through the performMatch function. We use cached results to calculate,
    e.g., RegExp.lastMatch and RegExp.leftParen.
 */
-ALWAYS_INLINE MatchResult RegExpGlobalData::performMatch(JSGlobalObject* owner, RegExp* regExp, JSString* string, const String& input, int startOffset, int** ovector)
+ALWAYS_INLINE MatchResult RegExpGlobalData::performMatch(JSGlobalObject* owner, RegExp* regExp, JSString* string, StringView input, int startOffset, int** ovector)
 {
     ASSERT(owner);
     VM& vm = owner->vm();
@@ -72,7 +72,7 @@ ALWAYS_INLINE MatchResult RegExpGlobalData::performMatch(JSGlobalObject* owner, 
     return MatchResult(position, end);
 }
 
-ALWAYS_INLINE MatchResult RegExpGlobalData::performMatch(JSGlobalObject* owner, RegExp* regExp, JSString* string, const String& input, int startOffset)
+ALWAYS_INLINE MatchResult RegExpGlobalData::performMatch(JSGlobalObject* owner, RegExp* regExp, JSString* string, StringView input, int startOffset)
 {
     ASSERT(owner);
     VM& vm = owner->vm();

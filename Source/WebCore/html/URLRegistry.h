@@ -31,6 +31,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,10 +44,12 @@ class URLRegistrable {
 public:
     virtual ~URLRegistrable() = default;
     virtual URLRegistry& registry() const = 0;
+    enum class RegistrableType : uint8_t { Blob, MediaSource };
+    virtual RegistrableType registrableType() const = 0;
 };
 
 class URLRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(URLRegistry);
 public:
     static void forEach(const Function<void(URLRegistry&)>&);
 

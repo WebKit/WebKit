@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2023 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,14 +30,21 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include <ExceptionOr.h>
+#include <span>
+#include <variant>
+
 namespace WebCore {
 
 bool isValidAudioDataInit(const WebCodecsAudioData::Init&);
 
-bool isAudioSampleFormatInterleaved(const AudioSampleFormat&);
-size_t computeBytesPerSample(const AudioSampleFormat&);
+bool isAudioSampleFormatInterleaved(AudioSampleFormat);
+size_t computeBytesPerSample(AudioSampleFormat);
 ExceptionOr<size_t> computeCopyElementCount(const WebCodecsAudioData&, const WebCodecsAudioData::CopyToOptions&);
+AudioSampleFormat audioSampleElementFormat(AudioSampleFormat);
+using AudioSampleFormatSpan = std::variant<std::span<uint8_t>, std::span<int16_t>, std::span<int32_t>, std::span<float>>;
+AudioSampleFormatSpan audioElementSpan(AudioSampleFormat, std::span<uint8_t>);
 
-}
+} // WebCore
 
 #endif

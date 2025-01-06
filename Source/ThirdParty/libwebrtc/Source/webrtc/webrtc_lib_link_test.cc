@@ -8,12 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/audio/audio_device.h"
+#include "api/audio/audio_processing.h"
+#include "api/audio/builtin_audio_processing_builder.h"
 #include "api/audio_codecs/audio_decoder_factory_template.h"
 #include "api/audio_codecs/audio_encoder_factory_template.h"
 #include "api/audio_codecs/opus/audio_decoder_opus.h"
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
-#include "api/call/call_factory_interface.h"
 #include "api/create_peerconnection_factory.h"
+#include "api/enable_media.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
 #include "api/stats/rtcstats_objects.h"
@@ -28,18 +31,12 @@
 #include "api/video_codecs/video_encoder_factory_template_libvpx_vp8_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_libvpx_vp9_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
-#include "media/engine/webrtc_media_engine.h"
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_processing/include/audio_processing.h"
 
 namespace webrtc {
 
-cricket::MediaEngineDependencies CreateSomeMediaDeps(
-    TaskQueueFactory* task_queue_factory) {
-  cricket::MediaEngineDependencies media_deps;
-  media_deps.task_queue_factory = task_queue_factory;
+void CreateSomeMediaDeps(PeerConnectionFactoryDependencies& media_deps) {
   media_deps.adm = AudioDeviceModule::CreateForTest(
-      AudioDeviceModule::kDummyAudio, task_queue_factory);
+      AudioDeviceModule::kDummyAudio, media_deps.task_queue_factory.get());
   media_deps.audio_encoder_factory =
       webrtc::CreateAudioEncoderFactory<webrtc::AudioEncoderOpus>();
   media_deps.audio_decoder_factory =
@@ -52,8 +49,8 @@ cricket::MediaEngineDependencies CreateSomeMediaDeps(
       std::make_unique<VideoDecoderFactoryTemplate<
           LibvpxVp8DecoderTemplateAdapter, LibvpxVp9DecoderTemplateAdapter,
           OpenH264DecoderTemplateAdapter, Dav1dDecoderTemplateAdapter>>();
-  media_deps.audio_processing = webrtc::AudioProcessingBuilder().Create();
-  return media_deps;
+  media_deps.audio_processing_builder =
+      std::make_unique<BuiltinAudioProcessingBuilder>();
 }
 
 webrtc::PeerConnectionFactoryDependencies CreateSomePcfDeps() {
@@ -62,11 +59,9 @@ webrtc::PeerConnectionFactoryDependencies CreateSomePcfDeps() {
   pcf_deps.signaling_thread = rtc::Thread::Current();
   pcf_deps.network_thread = rtc::Thread::Current();
   pcf_deps.worker_thread = rtc::Thread::Current();
-  pcf_deps.call_factory = webrtc::CreateCallFactory();
-  pcf_deps.event_log_factory = std::make_unique<webrtc::RtcEventLogFactory>(
-      pcf_deps.task_queue_factory.get());
-  auto media_deps = CreateSomeMediaDeps(pcf_deps.task_queue_factory.get());
-  pcf_deps.media_engine = cricket::CreateMediaEngine(std::move(media_deps));
+  pcf_deps.event_log_factory = std::make_unique<webrtc::RtcEventLogFactory>();
+  CreateSomeMediaDeps(pcf_deps);
+  EnableMedia(pcf_deps);
   return pcf_deps;
 }
 
@@ -86,8 +81,9 @@ void TestCase1ModularFactory() {
 }
 
 void TestCase2RegularFactory() {
-  auto task_queue_factory = CreateDefaultTaskQueueFactory();
-  auto media_deps = CreateSomeMediaDeps(task_queue_factory.get());
+  PeerConnectionFactoryDependencies media_deps;
+  media_deps.task_queue_factory = CreateDefaultTaskQueueFactory();
+  CreateSomeMediaDeps(media_deps);
 
   auto peer_connection_factory = webrtc::CreatePeerConnectionFactory(
       rtc::Thread::Current(), rtc::Thread::Current(), rtc::Thread::Current(),

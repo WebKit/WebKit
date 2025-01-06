@@ -36,7 +36,7 @@ class DeviceMotionData;
 template<typename IDLType> class DOMPromiseDeferred;
 
 class DeviceMotionEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(DeviceMotionEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DeviceMotionEvent);
 public:
     virtual ~DeviceMotionEvent();
 

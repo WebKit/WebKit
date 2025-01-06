@@ -3,10 +3,9 @@
   (bounds 300.00 150.00)
   (opacity 0.50)
   (children
-    (contents layer (model)
+    (contents layer (hosted model)
       (position 0.00 0.00)
       (bounds 300.00 150.00)
-      (opacity 0.50)
     )
   )
 )

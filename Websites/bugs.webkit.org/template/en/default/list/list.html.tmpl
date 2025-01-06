@@ -254,7 +254,7 @@
 
         [% IF bugowners && user.id %]
           <button type="button" id="email_assignees"
-                  onclick="document.location='mailto:[% bugowners FILTER html %]'">
+                  onclick="document.location='mailto:[% bugowners FILTER html FILTER js %]'">
             Send Mail to [% terms.Bug %] Assignees</button>
         [% END %]
 

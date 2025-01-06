@@ -22,6 +22,7 @@
 
 #include <memory>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -31,7 +32,7 @@ class HTMLInputElement;
 class RadioButtonGroup;
 
 class RadioButtonGroups {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RadioButtonGroups);
 public:
     RadioButtonGroups();
     ~RadioButtonGroups();
@@ -45,7 +46,7 @@ public:
     Vector<Ref<HTMLInputElement>> groupMembers(const HTMLInputElement&) const;
 
 private:
-    typedef HashMap<AtomString, std::unique_ptr<RadioButtonGroup>> NameToGroupMap;
+    typedef UncheckedKeyHashMap<AtomString, std::unique_ptr<RadioButtonGroup>> NameToGroupMap;
     NameToGroupMap m_nameToGroupMap;
 };
 

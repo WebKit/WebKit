@@ -63,7 +63,7 @@ GRefPtr<JSCException> jscExceptionCreate(JSCContext* context, JSValueRef jsExcep
     GRefPtr<JSCException> exception = adoptGRef(JSC_EXCEPTION(g_object_new(JSC_TYPE_EXCEPTION, nullptr)));
     auto* jsContext = jscContextGetJSContext(context);
     JSC::JSGlobalObject* globalObject = toJS(jsContext);
-    JSC::VM& vm = globalObject->vm();
+    Ref vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
     exception->priv->jsException.set(vm, toJS(JSValueToObject(jsContext, jsException, nullptr)));
     // The context has a strong reference to the exception, so we can't ref the context. We use a weak
@@ -388,6 +388,7 @@ char* jsc_exception_report(JSCException* exception)
 
     jscExceptionEnsureProperties(exception);
     GString* report = g_string_new(nullptr);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     if (priv->sourceURI)
         report = g_string_append(report, priv->sourceURI.get());
     if (priv->lineNumber)
@@ -405,6 +406,7 @@ char* jsc_exception_report(JSCException* exception)
         for (unsigned i = 0; lines.get()[i]; ++i)
             g_string_append_printf(report, "  %s\n", lines.get()[i]);
     }
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     return g_string_free(report, FALSE);
 }

@@ -11,7 +11,7 @@ PASS verticalScrollbarStateForAuto is "enabled"
 PASS horizontalScrollbarStateForAuto is "none"
 overflow:scroll
 PASS verticalScrollbarStateForScroll is "enabled"
-PASS horizontalScrollbarStateForScroll is "none"
+PASS horizontalScrollbarStateForScroll is "disabled"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html>
 <script>
-    function doUpdate()
+    async function doUpdate()
     {
         document.getElementsByTagName('canvas')[0].style.top = "60px";
 
         if (window.testRunner) {
-            testRunner.displayAndTrackRepaints();
+            await testRunner.displayAndTrackRepaints();
             testRunner.notifyDone();
         }
     }
 
-    function init()
+    async function init()
     {
         if (window.testRunner)
-            doUpdate();
+            await doUpdate();
         else {
             // Delay canvas layer update if test runs without testRunner to
             // allow first layer update to be processed on UI side.

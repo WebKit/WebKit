@@ -22,6 +22,9 @@
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
+
 constexpr auto OPENXR_INPUT_HAND_PATH { "/user/hand/"_s };
 constexpr auto OPENXR_INPUT_GRIP_PATH { "/input/grip/pose"_s };
 constexpr auto OPENXR_INPUT_AIM_PATH { "/input/aim/pose"_s };
@@ -30,18 +33,20 @@ using namespace WebCore;
 
 namespace PlatformXR {
 
-std::unique_ptr<OpenXRInputSource> OpenXRInputSource::create(XrInstance instance, XrSession session, XRHandedness handeness, InputSourceHandle handle)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRInputSource);
+
+std::unique_ptr<OpenXRInputSource> OpenXRInputSource::create(XrInstance instance, XrSession session, XRHandedness handedness, InputSourceHandle handle)
 {
-    auto input = std::unique_ptr<OpenXRInputSource>(new OpenXRInputSource(instance, session, handeness, handle));
+    auto input = std::unique_ptr<OpenXRInputSource>(new OpenXRInputSource(instance, session, handedness, handle));
     if (XR_FAILED(input->initialize()))
         return nullptr;
     return input;
 }
 
-OpenXRInputSource::OpenXRInputSource(XrInstance instance, XrSession session, XRHandedness handeness, InputSourceHandle handle)
+OpenXRInputSource::OpenXRInputSource(XrInstance instance, XrSession session, XRHandedness handedness, InputSourceHandle handle)
     : m_instance(instance)
     , m_session(session)
-    , m_handeness(handeness)
+    , m_handedness(handedness)
     , m_handle(handle)
 {
 }
@@ -58,12 +63,12 @@ OpenXRInputSource::~OpenXRInputSource()
 
 XrResult OpenXRInputSource::initialize()
 {
-    String handenessName = handenessToString(m_handeness);
-    m_subactionPathName = makeString(OPENXR_INPUT_HAND_PATH, handenessName);
+    String handednessName = handednessToString(m_handedness);
+    m_subactionPathName = makeString(OPENXR_INPUT_HAND_PATH, handednessName);
     RETURN_RESULT_IF_FAILED(xrStringToPath(m_instance, m_subactionPathName.utf8().data(), &m_subactionPath), m_instance);
 
     // Initialize Action Set.
-    auto prefix = makeString("input_"_s, handenessName);
+    auto prefix = makeString("input_"_s, handednessName);
     auto actionSetName = makeString(prefix, "_action_set"_s);
     auto createInfo =  createStructure<XrActionSetCreateInfo, XR_TYPE_ACTION_SET_CREATE_INFO>();
     std::strncpy(createInfo.actionSetName, actionSetName.utf8().data(), XR_MAX_ACTION_SET_NAME_SIZE - 1);
@@ -102,19 +107,7 @@ XrResult OpenXRInputSource::suggestBindings(SuggestedBindings& bindings) const
         RETURN_RESULT_IF_FAILED(createBinding(profile.path, m_gripAction, makeString(m_subactionPathName, OPENXR_INPUT_GRIP_PATH), bindings), m_instance);
         RETURN_RESULT_IF_FAILED(createBinding(profile.path, m_pointerAction, makeString(m_subactionPathName, OPENXR_INPUT_AIM_PATH), bindings), m_instance);
 
-        // Suggest binding for button actions.
-        const OpenXRButton* buttons;
-        size_t buttonsSize;
-        if (m_handeness == XRHandedness::Left) {
-            buttons = profile.leftButtons;
-            buttonsSize = profile.leftButtonsSize;
-        } else {
-            buttons = profile.rightButtons;
-            buttonsSize = profile.rightButtonsSize;
-        }
-
-        for (size_t i = 0; i < buttonsSize; ++i) {
-            const auto& button = buttons[i];
+        for (const auto& button : m_handedness == XRHandedness::Left ? profile.leftButtons : profile.rightButtons) {
             const auto& actions = m_buttonActions.get(button.type);
             if (button.press) {
                 ASSERT(actions.press != XR_NULL_HANDLE);
@@ -131,8 +124,7 @@ XrResult OpenXRInputSource::suggestBindings(SuggestedBindings& bindings) const
         }
 
         // Suggest binding for axis actions.
-        for (size_t i = 0; i < profile.axesSize; ++i) {
-            const auto& axis = profile.axes[i];
+        for (const auto& axis : profile.axes) {
             auto action = m_axisActions.get(axis.type);
             ASSERT(action != XR_NULL_HANDLE);
             RETURN_RESULT_IF_FAILED(createBinding(profile.path, action, makeString(m_subactionPathName, span(axis.path)), bindings), m_instance);
@@ -145,7 +137,7 @@ XrResult OpenXRInputSource::suggestBindings(SuggestedBindings& bindings) const
 std::optional<FrameData::InputSource> OpenXRInputSource::getInputSource(XrSpace localSpace, const XrFrameState& frameState) const
 {
     FrameData::InputSource data;
-    data.handeness = m_handeness;
+    data.handedness = m_handedness;
     data.handle = m_handle;
     data.targetRayMode = XRTargetRayMode::TrackedPointer;
     data.profiles = m_profiles;
@@ -216,8 +208,8 @@ XrResult OpenXRInputSource::updateInteractionProfile()
     m_profiles.clear();
     for (auto& profile : openXRInputProfiles) {
         if (!strncmp(profile.path, buffer, writtenCount)) {
-            for (size_t i = 0; i < profile.profileIdsSize; ++i)
-                m_profiles.append(String::fromUTF8(profile.profileIds[i]));
+            for (const auto& id : profile.profileIds)
+                m_profiles.append(String::fromUTF8(id));
             break;
         }
     }

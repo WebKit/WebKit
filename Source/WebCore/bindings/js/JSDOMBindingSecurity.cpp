@@ -22,7 +22,7 @@
 #include "config.h"
 #include "JSDOMBindingSecurity.h"
 
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTTPParsers.h"
 #include "JSDOMExceptionHandling.h"
@@ -30,8 +30,8 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "SecurityOrigin.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
-
 
 namespace WebCore {
 using namespace JSC;
@@ -79,7 +79,7 @@ static inline bool canAccessDocument(JSC::JSGlobalObject* lexicalGlobalObject, D
 
     auto& active = activeDOMWindow(*lexicalGlobalObject);
 
-    if (active.document()->securityOrigin().isSameOriginDomain(targetDocument->securityOrigin()))
+    if (active.document()->protectedSecurityOrigin()->isSameOriginDomain(targetDocument->securityOrigin()))
         return true;
 
     switch (reportingOption) {

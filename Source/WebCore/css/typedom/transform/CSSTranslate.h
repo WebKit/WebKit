@@ -35,10 +35,10 @@ class CSSFunctionValue;
 template<typename> class ExceptionOr;
 
 class CSSTranslate : public CSSTransformComponent {
-    WTF_MAKE_ISO_ALLOCATED(CSSTranslate);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSTranslate);
 public:
     static ExceptionOr<Ref<CSSTranslate>> create(Ref<CSSNumericValue> x, Ref<CSSNumericValue> y, RefPtr<CSSNumericValue> z);
-    static ExceptionOr<Ref<CSSTranslate>> create(CSSFunctionValue&);
+    static ExceptionOr<Ref<CSSTranslate>> create(Ref<const CSSFunctionValue>);
 
     const CSSNumericValue& x() const { return m_x.get(); }
     const CSSNumericValue& y() const { return m_y.get(); }

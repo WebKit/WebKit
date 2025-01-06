@@ -24,19 +24,19 @@
 #include "GRefPtrGStreamer.h"
 
 #include <wtf/Deque.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class GStreamerElementHarness : public ThreadSafeRefCounted<GStreamerElementHarness> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerElementHarness);
 
 public:
     class Stream : public ThreadSafeRefCounted<Stream> {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Stream);
 
     public:
         static Ref<Stream> create(GRefPtr<GstPad>&& pad, RefPtr<GStreamerElementHarness>&& downstreamHarness)

@@ -13,15 +13,13 @@
         }
 
         if (testRunner) {
-            setEnableFeature(true, function() {
-                testRunner.installStatisticsDidScanDataRecordsCallback(checkStats);
-            });
+            setEnableFeature(true, function() { });
         }
 
         var lastPageInRedirectChainLoaded = false;
         var statsChecked = false;
 
-        function receiveMessage(event) {
+        async function receiveMessage(event) {
             if (event.origin === "null") {
                 if (event.data.indexOf("PASS") === -1)
                     testFailed(event.data.replace("FAIL ", ""));
@@ -31,8 +29,10 @@
             lastPageInRedirectChainLoaded = true;
             if (statsChecked)
                 finishTest();
-            else
-                testRunner.statisticsNotifyObserver();
+            else {
+                await testRunner.statisticsNotifyObserver();
+                checkStats();
+            }
         }
 
         function checkStats() {

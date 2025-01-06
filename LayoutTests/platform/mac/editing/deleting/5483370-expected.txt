@@ -9,14 +9,14 @@ layer at (0,0) size 800x600
           text run at (720,0) width 56: "Only the"
           text run at (0,18) width 352: "last letter in 'foo' should be removed during this delete."
       RenderBlock {DIV} at (0,52) size 784x52
-        RenderTable {TABLE} at (0,0) size 30x52 [border: (1px outset #808080)]
+        RenderTable {TABLE} at (0,0) size 30x52 [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 28x50
             RenderTableRow {TR} at (0,2) size 28x22
-              RenderTableCell {TD} at (2,2) size 18x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 18x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 14x18
                   text run at (2,2) width 14: "fo"
-              RenderTableCell {TD} at (21,2) size 5x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (21,2) size 5x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
             RenderTableRow {TR} at (0,26) size 28x22
-              RenderTableCell {TD} at (2,26) size 18x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderTableCell {TD} at (21,26) size 5x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (2,26) size 18x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (21,26) size 5x22 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
 caret: position 2 of child 0 {#text} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

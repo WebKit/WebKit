@@ -98,7 +98,7 @@ VideoRtpReceiver::GetFrameDecryptor() const {
   return frame_decryptor_;
 }
 
-void VideoRtpReceiver::SetDepacketizerToDecoderFrameTransformer(
+void VideoRtpReceiver::SetFrameTransformer(
     rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) {
   RTC_DCHECK_RUN_ON(worker_thread_);
   frame_transformer_ = std::move(frame_transformer);
@@ -127,7 +127,7 @@ void VideoRtpReceiver::Stop() {
   track_->internal()->set_ended();
 }
 
-void VideoRtpReceiver::RestartMediaChannel(absl::optional<uint32_t> ssrc) {
+void VideoRtpReceiver::RestartMediaChannel(std::optional<uint32_t> ssrc) {
   RTC_DCHECK_RUN_ON(&signaling_thread_checker_);
   MediaSourceInterface::SourceState state = source_->state();
   // TODO(tommi): Can we restart the media channel without blocking?
@@ -139,7 +139,7 @@ void VideoRtpReceiver::RestartMediaChannel(absl::optional<uint32_t> ssrc) {
 }
 
 void VideoRtpReceiver::RestartMediaChannel_w(
-    absl::optional<uint32_t> ssrc,
+    std::optional<uint32_t> ssrc,
     MediaSourceInterface::SourceState state) {
   RTC_DCHECK_RUN_ON(worker_thread_);
   if (!media_channel_) {
@@ -197,10 +197,10 @@ void VideoRtpReceiver::SetupMediaChannel(uint32_t ssrc) {
 
 void VideoRtpReceiver::SetupUnsignaledMediaChannel() {
   RTC_DCHECK_RUN_ON(&signaling_thread_checker_);
-  RestartMediaChannel(absl::nullopt);
+  RestartMediaChannel(std::nullopt);
 }
 
-absl::optional<uint32_t> VideoRtpReceiver::ssrc() const {
+std::optional<uint32_t> VideoRtpReceiver::ssrc() const {
   RTC_DCHECK_RUN_ON(worker_thread_);
   if (!signaled_ssrc_.has_value() && media_channel_) {
     return media_channel_->GetUnsignaledSsrc();
@@ -263,7 +263,7 @@ void VideoRtpReceiver::SetObserver(RtpReceiverObserverInterface* observer) {
 }
 
 void VideoRtpReceiver::SetJitterBufferMinimumDelay(
-    absl::optional<double> delay_seconds) {
+    std::optional<double> delay_seconds) {
   RTC_DCHECK_RUN_ON(worker_thread_);
   delay_.Set(delay_seconds);
   if (media_channel_ && signaled_ssrc_)
@@ -339,7 +339,7 @@ std::vector<RtpSource> VideoRtpReceiver::GetSources() const {
 }
 
 void VideoRtpReceiver::SetupMediaChannel(
-    absl::optional<uint32_t> ssrc,
+    std::optional<uint32_t> ssrc,
     cricket::MediaReceiveChannelInterface* media_channel) {
   RTC_DCHECK_RUN_ON(&signaling_thread_checker_);
   RTC_DCHECK(media_channel);

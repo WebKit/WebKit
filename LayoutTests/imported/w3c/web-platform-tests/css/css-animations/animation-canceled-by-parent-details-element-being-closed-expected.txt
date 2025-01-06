@@ -1,3 +1,0 @@
-
-PASS A CSS Animation running on an element within a <details> element is canceled after the <details> element is closed.
-

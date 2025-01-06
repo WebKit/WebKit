@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,8 @@
 #include "Logging.h"
 #include <WebCore/AnimationFrameRate.h>
 #include <wtf/RunLoop.h>
+#include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
@@ -38,6 +40,9 @@ namespace WebKit {
 using namespace WebCore;
 
 constexpr unsigned maxFireCountWithoutObservers { 20 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayLink);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayLink::Client);
 
 DisplayLink::DisplayLink(PlatformDisplayID displayID)
     : m_displayID(displayID)
@@ -182,6 +187,8 @@ void DisplayLink::notifyObserversDisplayDidRefresh()
     ASSERT(!RunLoop::isMain());
 
     Locker locker { m_clientsLock };
+
+    tracePoint(DisplayLinkUpdate);
 
     auto maxFramesPerSecond = [](const Vector<ObserverInfo>& observers) {
         std::optional<FramesPerSecond> observersMaxFramesPerSecond;

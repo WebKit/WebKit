@@ -32,8 +32,11 @@
 #include "IntersectionObserverEntry.h"
 #include "LocalFrame.h"
 #include <limits>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LazyLoadImageObserver);
 
 class LazyImageLoadIntersectionObserverCallback final : public IntersectionObserverCallback {
 public:
@@ -43,6 +46,11 @@ public:
     }
 
 private:
+    LazyImageLoadIntersectionObserverCallback(Document& document)
+        : IntersectionObserverCallback(&document)
+    {
+    }
+
     bool hasCallback() const final { return true; }
 
     CallbackResult<void> handleEvent(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver&) final
@@ -60,9 +68,9 @@ private:
         return { };
     }
 
-    LazyImageLoadIntersectionObserverCallback(Document& document)
-        : IntersectionObserverCallback(&document)
+    CallbackResult<void> handleEventRethrowingException(IntersectionObserver& thisObserver, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver& observer) final
     {
+        return handleEvent(thisObserver, entries, observer);
     }
 };
 

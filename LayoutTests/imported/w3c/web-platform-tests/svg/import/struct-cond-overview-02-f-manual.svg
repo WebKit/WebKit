@@ -38,10 +38,6 @@
     </font-face>
   </defs>
   <g id="test-body-content" font-size="18">
-    <rect width="100" height="100" fill="blue" />
-    <rect width="100" height="100" id="testRequiredFeatures" requiredFeatures="INVALID_FEATURE_STRING" />
-    <rect x="200" width="100" height="100" fill="blue" />
-    <use x="200" xlink:href="#testRequiredFeatures" />
     <rect y="120" width="100" height="100" fill="blue" />
     <rect y="120" width="100" height="100" id="testRequiredExtensions" requiredExtensions="INVALID_EXTENSION_STRING" />
     <rect y="120" x="200" width="100" height="100" fill="blue" />

@@ -1,0 +1,15 @@
+This test ensures basic right-line text marker functionality works.
+
+PASS: webArea.stringForTextMarkerRange(webArea.rightLineTextMarkerRangeForTextMarker(startMarker)) === 'Foo and bar'
+PASS: webArea.stringForTextMarkerRange(webArea.rightLineTextMarkerRangeForTextMarker(startMarker)) === 'Foo and bar'
+PASS: webArea.stringForTextMarkerRange(webArea.rightLineTextMarkerRangeForTextMarker(endMarker)) === 'Last text'
+PASS: webArea.stringForTextMarkerRange(webArea.rightLineTextMarkerRangeForTextMarker(endMarker)) === 'Foo and bar'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First text
+
+Foo and bar
+
+Last text

@@ -35,7 +35,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/UniqueRef.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
@@ -995,7 +995,7 @@ TEST(WTF_HashMap, Ref_Value)
 
         HashMap<int, Ref<RefLogger>> map;
 
-        map.ensure(1, [&]() mutable {
+        map.ensure(1, [&] {
             Ref<RefLogger> ref(a);
             return ref; 
         });

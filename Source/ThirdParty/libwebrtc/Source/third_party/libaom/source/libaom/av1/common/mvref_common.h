@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -34,7 +34,7 @@ typedef struct position {
 // clamp_mv_ref
 #define MV_BORDER (16 << 3)  // Allow 16 pels in 1/8th pel units
 
-static INLINE int get_relative_dist(const OrderHintInfo *oh, int a, int b) {
+static inline int get_relative_dist(const OrderHintInfo *oh, int a, int b) {
   if (!oh->enable_order_hint) return 0;
 
   const int bits = oh->order_hint_bits_minus_1 + 1;
@@ -49,7 +49,7 @@ static INLINE int get_relative_dist(const OrderHintInfo *oh, int a, int b) {
   return diff;
 }
 
-static INLINE void clamp_mv_ref(MV *mv, int bw, int bh, const MACROBLOCKD *xd) {
+static inline void clamp_mv_ref(MV *mv, int bw, int bh, const MACROBLOCKD *xd) {
   const SubpelMvLimits mv_limits = {
     xd->mb_to_left_edge - GET_MV_SUBPEL(bw) - MV_BORDER,
     xd->mb_to_right_edge + GET_MV_SUBPEL(bw) + MV_BORDER,
@@ -59,13 +59,13 @@ static INLINE void clamp_mv_ref(MV *mv, int bw, int bh, const MACROBLOCKD *xd) {
   clamp_mv(mv, &mv_limits);
 }
 
-static INLINE int_mv get_block_mv(const MB_MODE_INFO *candidate, int which_mv) {
+static inline int_mv get_block_mv(const MB_MODE_INFO *candidate, int which_mv) {
   return candidate->mv[which_mv];
 }
 
 // Checks that the given mi_row, mi_col and search point
 // are inside the borders of the tile.
-static INLINE int is_inside(const TileInfo *const tile, int mi_col, int mi_row,
+static inline int is_inside(const TileInfo *const tile, int mi_col, int mi_row,
                             const POSITION *mi_pos) {
   return !(mi_row + mi_pos->row < tile->mi_row_start ||
            mi_col + mi_pos->col < tile->mi_col_start ||
@@ -73,19 +73,19 @@ static INLINE int is_inside(const TileInfo *const tile, int mi_col, int mi_row,
            mi_col + mi_pos->col >= tile->mi_col_end);
 }
 
-static INLINE int find_valid_row_offset(const TileInfo *const tile, int mi_row,
+static inline int find_valid_row_offset(const TileInfo *const tile, int mi_row,
                                         int row_offset) {
   return clamp(row_offset, tile->mi_row_start - mi_row,
                tile->mi_row_end - mi_row - 1);
 }
 
-static INLINE int find_valid_col_offset(const TileInfo *const tile, int mi_col,
+static inline int find_valid_col_offset(const TileInfo *const tile, int mi_col,
                                         int col_offset) {
   return clamp(col_offset, tile->mi_col_start - mi_col,
                tile->mi_col_end - mi_col - 1);
 }
 
-static INLINE void lower_mv_precision(MV *mv, int allow_hp, int is_integer) {
+static inline void lower_mv_precision(MV *mv, int allow_hp, int is_integer) {
   if (is_integer) {
     integer_mv_precision(mv);
   } else {
@@ -96,7 +96,7 @@ static INLINE void lower_mv_precision(MV *mv, int allow_hp, int is_integer) {
   }
 }
 
-static INLINE int8_t get_uni_comp_ref_idx(const MV_REFERENCE_FRAME *const rf) {
+static inline int8_t get_uni_comp_ref_idx(const MV_REFERENCE_FRAME *const rf) {
   // Single ref pred
   if (rf[1] <= INTRA_FRAME) return -1;
 
@@ -110,7 +110,7 @@ static INLINE int8_t get_uni_comp_ref_idx(const MV_REFERENCE_FRAME *const rf) {
   return -1;
 }
 
-static INLINE int8_t av1_ref_frame_type(const MV_REFERENCE_FRAME *const rf) {
+static inline int8_t av1_ref_frame_type(const MV_REFERENCE_FRAME *const rf) {
   if (rf[1] > INTRA_FRAME) {
     const int8_t uni_comp_ref_idx = get_uni_comp_ref_idx(rf);
     if (uni_comp_ref_idx >= 0) {
@@ -149,7 +149,7 @@ static MV_REFERENCE_FRAME ref_frame_map[TOTAL_COMP_REFS][2] = {
 };
 // clang-format on
 
-static INLINE void av1_set_ref_frame(MV_REFERENCE_FRAME *rf,
+static inline void av1_set_ref_frame(MV_REFERENCE_FRAME *rf,
                                      MV_REFERENCE_FRAME ref_frame_type) {
   if (ref_frame_type >= REF_FRAMES) {
     rf[0] = ref_frame_map[ref_frame_type - REF_FRAMES][0];
@@ -167,7 +167,7 @@ static uint16_t compound_mode_ctx_map[3][COMP_NEWMV_CTXS] = {
   { 4, 4, 5, 6, 7 },
 };
 
-static INLINE int16_t av1_mode_context_analyzer(
+static inline int16_t av1_mode_context_analyzer(
     const int16_t *const mode_context, const MV_REFERENCE_FRAME *const rf) {
   const int8_t ref_frame = av1_ref_frame_type(rf);
 
@@ -182,7 +182,7 @@ static INLINE int16_t av1_mode_context_analyzer(
   return comp_ctx;
 }
 
-static INLINE uint8_t av1_drl_ctx(const uint16_t *ref_mv_weight, int ref_idx) {
+static inline uint8_t av1_drl_ctx(const uint16_t *ref_mv_weight, int ref_idx) {
   if (ref_mv_weight[ref_idx] >= REF_CAT_LEVEL &&
       ref_mv_weight[ref_idx + 1] >= REF_CAT_LEVEL)
     return 0;
@@ -206,7 +206,7 @@ void av1_setup_motion_field(AV1_COMMON *cm);
 void av1_set_frame_refs(AV1_COMMON *const cm, int *remapped_ref_idx,
                         int lst_map_idx, int gld_map_idx);
 
-static INLINE void av1_collect_neighbors_ref_counts(MACROBLOCKD *const xd) {
+static inline void av1_collect_neighbors_ref_counts(MACROBLOCKD *const xd) {
   av1_zero(xd->neighbors_ref_counts);
 
   uint8_t *const ref_counts = xd->neighbors_ref_counts;
@@ -262,7 +262,7 @@ uint8_t av1_findSamples(const AV1_COMMON *cm, MACROBLOCKD *xd, int *pts,
 #define INTRABC_DELAY_PIXELS 256  //  Delay of 256 pixels
 #define INTRABC_DELAY_SB64 (INTRABC_DELAY_PIXELS / 64)
 
-static INLINE void av1_find_ref_dv(int_mv *ref_dv, const TileInfo *const tile,
+static inline void av1_find_ref_dv(int_mv *ref_dv, const TileInfo *const tile,
                                    int mib_size, int mi_row) {
   if (mi_row - mib_size < tile->mi_row_start) {
     ref_dv->as_fullmv.row = 0;
@@ -274,7 +274,7 @@ static INLINE void av1_find_ref_dv(int_mv *ref_dv, const TileInfo *const tile,
   convert_fullmv_to_mv(ref_dv);
 }
 
-static INLINE int av1_is_dv_valid(const MV dv, const AV1_COMMON *cm,
+static inline int av1_is_dv_valid(const MV dv, const AV1_COMMON *cm,
                                   const MACROBLOCKD *xd, int mi_row, int mi_col,
                                   BLOCK_SIZE bsize, int mib_size_log2) {
   const int bw = block_size_wide[bsize];

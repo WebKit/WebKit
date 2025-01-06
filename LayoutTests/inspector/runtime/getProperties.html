@@ -125,6 +125,30 @@ function test()
     });
 
     addTestCase({
+        name: "Runtime.getProperties.ArrowFunction",
+        expression: `(function() { return ((a, b, c)=>{}); }).call({foo: 42})`,
+        ownProperties: true,
+    });
+
+    addTestCase({
+        name: "Runtime.getProperties.ArrowFunctionNoParameters",
+        expression: `(function() { return (()=>{}); }).call({foo: 42})`,
+        ownProperties: true,
+    });
+
+    addTestCase({
+        name: "Runtime.getProperties.BoundArrowFunction",
+        expression: `(function() { return ((a, b, c)=>{this}); }).call({foo: 42})`,
+        ownProperties: true,
+    });
+
+    addTestCase({
+        name: "Runtime.getProperties.BoundArrowFunctionNoParameters",
+        expression: `(function() { return (()=>{this}); }).call({foo: 42})`,
+        ownProperties: true,
+    });
+
+    addTestCase({
         name: "Runtime.getProperties.Private.Instance.Parent",
         expression: `new PrivateMembersTestClassParent`,
         ownProperties: true,

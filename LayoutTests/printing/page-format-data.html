@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
-<head id="head_element">
-<script src="../resources/js-test-pre.js"></script>
-<style>
-</style>
+<head>
+<script src="../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -11,11 +9,11 @@
 <script>
     description("This tests page format data");
 
-    function appendStyle(styleString)
+    function appendStyle(style)
     {
-        var styleElement = document.createElement("style");
-        styleElement.innerHTML = styleString;
-        document.getElementById("head_element").appendChild(styleElement);
+        const element = document.createElement("style");
+        element.textContent = style;
+        document.head.appendChild(element);
     }
 
     function inchSize(width, height)
@@ -101,6 +99,14 @@
         debug("Test b4");
         appendStyle("@page {size:b4;}");
         shouldBe("internals.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4)", "mmSize(250, 353) + pxMargins(1, 2, 3, 4)");
+
+        debug("Test jis-b5");
+        appendStyle("@page {size:jis-b5;}");
+        shouldBe("internals.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4)", "mmSize(182, 257) + pxMargins(1, 2, 3, 4)");
+
+        debug("Test jis-b4");
+        appendStyle("@page {size:jis-b4;}");
+        shouldBe("internals.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4)", "mmSize(257, 364) + pxMargins(1, 2, 3, 4)");
 
         debug("Test letter");
         appendStyle("@page {size:letter;}");
@@ -188,10 +194,8 @@
 
         debug("");
 
-    } else {
+    } else
         testFailed("This test can be run only with window.testRunner");
-    }
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

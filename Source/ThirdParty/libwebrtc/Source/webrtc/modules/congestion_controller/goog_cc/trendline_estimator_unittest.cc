@@ -15,7 +15,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "api/network_state_predictor.h"
+#include "api/transport/bandwidth_usage.h"
 #include "api/transport/field_trial_based_config.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"

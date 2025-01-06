@@ -32,6 +32,7 @@
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
 #include "WebExtensionDataType.h"
+#include "WebPageProxyIdentifier.h"
 
 namespace WebKit {
 
@@ -40,18 +41,19 @@ class WebExtensionAPIStorageArea : public WebExtensionAPIObject, public JSWebExt
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
+    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
-    void get(WebPage&, id items, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void getBytesInUse(WebPage&, id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void set(WebPage&, NSDictionary *items, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void remove(WebPage&, id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void clear(WebPage&, Ref<WebExtensionCallbackHandler>&&);
+    void get(WebPageProxyIdentifier, id items, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getKeys(WebPageProxyIdentifier, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getBytesInUse(WebPageProxyIdentifier, id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void set(WebPageProxyIdentifier, NSDictionary *items, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void remove(WebPageProxyIdentifier, id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void clear(WebPageProxyIdentifier, Ref<WebExtensionCallbackHandler>&&);
 
     double quotaBytes();
 
     // Exposed only by storage.session.
-    void setAccessLevel(WebPage&, NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void setAccessLevel(WebPageProxyIdentifier, NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     // Exposed only by storage.sync.
     double quotaBytesPerItem();

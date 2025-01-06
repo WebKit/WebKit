@@ -39,15 +39,18 @@
 
 namespace WebKit {
 
+Ref<NfcService> NfcService::create(AuthenticatorTransportServiceObserver& observer)
+{
+    return adoptRef(*new NfcService(observer));
+}
+
 NfcService::NfcService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
     , m_restartTimer(RunLoop::main(), this, &NfcService::platformStartDiscovery)
 {
 }
 
-NfcService::~NfcService()
-{
-}
+NfcService::~NfcService() = default;
 
 bool NfcService::isAvailable()
 {
@@ -63,7 +66,7 @@ void NfcService::didConnectTag()
 #if HAVE(NEAR_FIELD)
     auto connection = m_connection;
     ASSERT(connection);
-    getInfo(WTF::makeUnique<CtapNfcDriver>(connection.releaseNonNull()));
+    getInfo(CtapNfcDriver::create(connection.releaseNonNull()));
 #endif
 }
 

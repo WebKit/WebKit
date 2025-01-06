@@ -30,14 +30,14 @@
 #if ENABLE(MATHML)
 
 #include "MathMLFractionElement.h"
-#include "RenderMathMLBlock.h"
+#include "RenderMathMLRow.h"
 
 namespace WebCore {
 
 class MathMLFractionElement;
 
-class RenderMathMLFraction final : public RenderMathMLBlock {
-    WTF_MAKE_ISO_ALLOCATED(RenderMathMLFraction);
+class RenderMathMLFraction final : public RenderMathMLRow {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMathMLFraction);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLFraction);
 public:
     RenderMathMLFraction(MathMLFractionElement&, RenderStyle&&);
@@ -55,6 +55,7 @@ private:
     std::optional<LayoutUnit> firstLineBaseline() const final;
     void paint(PaintInfo&, const LayoutPoint&) final;
     RenderMathMLOperator* unembellishedOperator() const final;
+    bool isMathContentCentered() const final { return true; }
 
     MathMLFractionElement& element() const { return static_cast<MathMLFractionElement&>(nodeForNonAnonymous()); }
 

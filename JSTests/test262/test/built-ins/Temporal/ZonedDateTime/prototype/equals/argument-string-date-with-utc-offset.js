@@ -7,8 +7,7 @@ description: UTC offset not valid with format that does not include a time
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
-const instance = new Temporal.ZonedDateTime(0n, timeZone);
+const instance = new Temporal.ZonedDateTime(0n, "UTC");
 
 const validStrings = [
   "1970-01-01T00Z[UTC]",

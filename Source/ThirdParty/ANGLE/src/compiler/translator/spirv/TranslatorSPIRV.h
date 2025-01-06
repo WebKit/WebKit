@@ -12,6 +12,7 @@
 #ifndef COMPILER_TRANSLATOR_SPIRV_TRANSLATORSPIRV_H_
 #define COMPILER_TRANSLATOR_SPIRV_TRANSLATORSPIRV_H_
 
+#include "common/hash_containers.h"
 #include "compiler/translator/Compiler.h"
 
 namespace sh
@@ -21,8 +22,14 @@ class TOutputVulkanGLSL;
 class SpecConst;
 class DriverUniform;
 
-// An index -> TVariable map, tracking the declarated input attachments.
-using InputAttachmentMap = TUnorderedMap<uint32_t, const TVariable *>;
+// An index -> TVariable map, tracking the declarated color input attachments, as well as TVariables
+// for depth and stencil input attachments.
+struct InputAttachmentMap
+{
+    TUnorderedMap<uint32_t, const TVariable *> color;
+    const TVariable *depth   = nullptr;
+    const TVariable *stencil = nullptr;
+};
 
 class TranslatorSPIRV final : public TCompiler
 {

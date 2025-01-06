@@ -33,11 +33,19 @@
 #include "PlatformLocale.h"
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(MAC)
+#define PlatformNSParagraphStyle NSParagraphStyle.class
+#else
+#define PlatformNSParagraphStyle PAL::getNSParagraphStyleClass()
+#endif
+
 OBJC_CLASS NSCalendar;
 OBJC_CLASS NSDateFormatter;
+OBJC_CLASS NSParagraphStyle;
 OBJC_CLASS NSLocale;
 
 namespace WebCore {
@@ -45,9 +53,12 @@ namespace WebCore {
 class DateComponents;
 
 class LocaleCocoa final : public Locale {
+    WTF_MAKE_TZONE_ALLOCATED(LocaleCocoa);
 public:
     explicit LocaleCocoa(const AtomString&);
     ~LocaleCocoa();
+
+    Locale::WritingDirection defaultWritingDirection() const override;
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) override;

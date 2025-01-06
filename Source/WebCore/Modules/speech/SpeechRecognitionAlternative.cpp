@@ -26,11 +26,11 @@
 #include "config.h"
 #include "SpeechRecognitionAlternative.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechRecognitionAlternative);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SpeechRecognitionAlternative);
 
 Ref<SpeechRecognitionAlternative> SpeechRecognitionAlternative::create(String&& transcript, double confidence)
 {

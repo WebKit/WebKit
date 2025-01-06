@@ -23,7 +23,7 @@ happens when you are not running checksetup.pl as ##root##. To see the
 problem we ran into, run: ##command##
 END
     bad_executable => 'not a valid executable: ##bin##',
-    blacklisted => '(blacklisted)',
+    blocklisted => '(blocklisted)',
     bz_schema_exists_before_220 => <<'END',
 You are upgrading from a version before 2.20, but the bz_schema table
 already exists. This means that you restored a mysqldump into the Bugzilla

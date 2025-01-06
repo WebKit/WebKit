@@ -29,12 +29,12 @@ EncodeNetEqInput::EncodeNetEqInput(std::unique_ptr<Generator> generator,
 
 EncodeNetEqInput::~EncodeNetEqInput() = default;
 
-absl::optional<int64_t> EncodeNetEqInput::NextPacketTime() const {
+std::optional<int64_t> EncodeNetEqInput::NextPacketTime() const {
   RTC_DCHECK(packet_data_);
   return static_cast<int64_t>(packet_data_->time_ms);
 }
 
-absl::optional<int64_t> EncodeNetEqInput::NextOutputEventTime() const {
+std::optional<int64_t> EncodeNetEqInput::NextOutputEventTime() const {
   return next_output_event_ms_;
 }
 
@@ -56,7 +56,7 @@ bool EncodeNetEqInput::ended() const {
   return next_output_event_ms_ > input_duration_ms_;
 }
 
-absl::optional<RTPHeader> EncodeNetEqInput::NextHeader() const {
+std::optional<RTPHeader> EncodeNetEqInput::NextHeader() const {
   RTC_DCHECK(packet_data_);
   return packet_data_->header;
 }

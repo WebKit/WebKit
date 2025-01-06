@@ -26,25 +26,18 @@
 #pragma once
 
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/NavigationIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/URL.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
-class PageLoadStateObserverBase;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PageLoadStateObserverBase> : std::true_type { };
-}
-
-namespace WebKit {
 
 class WebPageProxy;
 
-class PageLoadStateObserverBase : public CanMakeWeakPtr<PageLoadStateObserverBase> {
+class PageLoadStateObserverBase : public AbstractRefCountedAndCanMakeWeakPtr<PageLoadStateObserverBase> {
 public:
     virtual ~PageLoadStateObserverBase() = default;
 
@@ -122,14 +115,16 @@ public:
 #endif
         };
 
-        RefPtr<WebPageProxy> m_webPageProxy;
-        PageLoadState* m_pageLoadState;
+        RefPtr<PageLoadState> m_pageLoadState;
     };
 
     struct PendingAPIRequest {
-        uint64_t navigationID { 0 };
+        Markable<WebCore::NavigationIdentifier> navigationID;
         String url;
     };
+
+    void ref() const;
+    void deref() const;
 
     void addObserver(Observer&);
     void removeObserver(Observer&);
@@ -139,34 +134,34 @@ public:
 
     void reset(const Transaction::Token&);
 
-    bool isLoading() const;
+    bool isLoading() const { return isLoading(m_committedState); }
     bool isProvisional() const { return m_committedState.state == State::Provisional; }
     bool isCommitted() const { return m_committedState.state == State::Committed; }
     bool isFinished() const { return m_committedState.state == State::Finished; }
 
-    bool hasUncommittedLoad() const;
+    bool hasUncommittedLoad() const { return isLoading(m_uncommittedState); }
 
     const String& provisionalURL() const { return m_committedState.provisionalURL; }
     const String& url() const { return m_committedState.url; }
     const WebCore::SecurityOriginData& origin() const { return m_committedState.origin; }
     const String& unreachableURL() const { return m_committedState.unreachableURL; }
 
-    String activeURL() const;
+    String activeURL() const { return activeURL(m_committedState); }
 
     bool hasOnlySecureContent() const;
     bool hasNegotiatedLegacyTLS() const;
     void negotiatedLegacyTLS(const Transaction::Token&);
-    bool wasPrivateRelayed() const;
+    bool wasPrivateRelayed() const { return m_committedState.wasPrivateRelayed; }
 
     double estimatedProgress() const;
     bool networkRequestsInProgress() const { return m_committedState.networkRequestsInProgress; }
 
     const WebCore::CertificateInfo& certificateInfo() const { return m_committedState.certificateInfo; }
 
-    const URL& resourceDirectoryURL() const;
+    const URL& resourceDirectoryURL() const { return m_committedState.resourceDirectoryURL; }
 
-    const String& pendingAPIRequestURL() const;
-    const PendingAPIRequest& pendingAPIRequest() const;
+    const String& pendingAPIRequestURL() const { return m_committedState.pendingAPIRequest.url; }
+    const PendingAPIRequest& pendingAPIRequest() const { return m_committedState.pendingAPIRequest; }
     void setPendingAPIRequest(const Transaction::Token&, PendingAPIRequest&& pendingAPIRequest, const URL& resourceDirectoryPath = { });
     void clearPendingAPIRequest(const Transaction::Token&);
 
@@ -187,7 +182,7 @@ public:
 
     const String& title() const;
     void setTitle(const Transaction::Token&, const String&);
-    void setTitleFromSafeBrowsingWarning(const Transaction::Token&, const String&);
+    void setTitleFromBrowsingWarning(const Transaction::Token&, const String&);
 
     bool canGoBack() const;
     void setCanGoBack(const Transaction::Token&, bool);
@@ -199,6 +194,8 @@ public:
     void didChangeProgress(const Transaction::Token&, double);
     void didFinishProgress(const Transaction::Token&);
     void setNetworkRequestsInProgress(const Transaction::Token&, bool);
+    void setHTTPFallbackInProgress(const Transaction::Token&, bool);
+    bool httpFallbackInProgress();
 
     void didSwapWebProcesses();
 
@@ -232,12 +229,13 @@ private:
         String unreachableURL;
 
         String title;
-        String titleFromSafeBrowsingWarning;
+        String titleFromBrowsingWarning;
 
         URL resourceDirectoryURL;
 
         bool canGoBack { false };
         bool canGoForward { false };
+        bool isHTTPFallbackInProgress { false };
 
         double estimatedProgress { 0 };
         bool networkRequestsInProgress { false };
@@ -250,7 +248,9 @@ private:
     static bool hasOnlySecureContent(const Data&);
     static double estimatedProgress(const Data&);
 
-    WebPageProxy& m_webPageProxy;
+    Ref<WebPageProxy> protectedPage() const;
+
+    WeakRef<WebPageProxy> m_webPageProxy;
 
     Data m_committedState;
     Data m_uncommittedState;

@@ -65,9 +65,6 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
 
     void testSetUp() override
     {
-        // Older Metal versions do not support compressed TEXTURE_3D.
-        mDisableTexture3D = IsMetal() && !IsMetalCompressedTexture3DAvailable();
-
         // Apple platforms require PVRTC1 textures to be squares.
         mSquarePvrtc1 = IsAppleGPU();
     }
@@ -219,7 +216,7 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
 
         // Try a whole image update from a pixel unpack buffer.
         // Don't test non-emulated formats on Desktop GL.
-        // TODO(anglebug.com/6300): implement emulation on Desktop GL, then remove this check.
+        // TODO(anglebug.com/42264819): implement emulation on Desktop GL, then remove this check.
         if (!(IsDesktopOpenGL() && desc.mayBeEmulated()))
         {
             GLBuffer buffer;
@@ -556,6 +553,78 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
         }
     }
 
+    void testSamplerSliced3D(GLenum target)
+    {
+        ASSERT(target == GL_TEXTURE_2D_ARRAY || target == GL_TEXTURE_3D);
+
+        const FormatDesc desc = ::testing::get<1>(GetParam());
+        {
+            int width                                    = desc.blockX;
+            int height                                   = desc.blockY;
+            int depth                                    = 9;
+            static GLubyte red_RGBA_ASTC_block_data[144] = {
+                252, 253, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255,
+                252, 253, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255,
+                252, 253, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255,
+                252, 253, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255,
+                252, 253, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255,
+                252, 253, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255,
+                252, 253, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255,
+                252, 253, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255,
+                252, 253, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255};
+
+            GLTexture texID;
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(target, texID);
+            EXPECT_GL_NO_ERROR();
+            glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+            glCompressedTexImage3D(target, 0, desc.format, width, height, depth, 0,
+                                   desc.size * depth, red_RGBA_ASTC_block_data);
+            EXPECT_GL_NO_ERROR();
+
+            float layer = 0.0f;
+            for (int i = 0; i < depth; i++)
+            {
+                GLFramebuffer fb;
+                glBindFramebuffer(GL_FRAMEBUFFER, fb);
+                GLRenderbuffer rb;
+                glBindRenderbuffer(GL_RENDERBUFFER, rb);
+                glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
+                glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                          rb);
+                EXPECT_GL_NO_ERROR();
+
+                glViewport(0, 0, width, height);
+                glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+                glClear(GL_COLOR_BUFFER_BIT);
+
+                if (target == GL_TEXTURE_2D_ARRAY)
+                {
+                    layer = i * 1.0f;
+                    draw2DArrayTexturedQuad(0.0f, 1.0f, false, layer);
+                }
+                else
+                {
+                    layer = ((float)i + 0.5f) / (float)depth;
+                    draw3DTexturedQuad(0.0f, 1.0f, false, layer);
+                }
+
+                std::vector<GLColor> pixels(width * height);
+                glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        const int curPos = y * width + x;
+                        EXPECT_COLOR_NEAR(GLColor::red, pixels[curPos], 2);
+                    }
+                }
+            }
+        }
+    }
+
     void test()
     {
         // ETC2/EAC formats always pass validation on ES3 contexts but in some cases fail in drivers
@@ -594,6 +663,27 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
         {
             check3D(GL_TEXTURE_2D_ARRAY, true, mSupports2DArray);
             check3D(GL_TEXTURE_3D, true, mSupports3D && !mDisableTexture3D);
+        }
+    }
+
+    void testSamplerASTCSliced3D()
+    {
+        for (const std::string &extName : mExtNames)
+        {
+            if (!extName.empty())
+            {
+                if (IsGLExtensionRequestable(extName))
+                {
+                    glRequestExtensionANGLE(extName.c_str());
+                }
+                ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(extName));
+            }
+        }
+
+        if (getClientMajorVersion() >= 3)
+        {
+            testSamplerSliced3D(GL_TEXTURE_2D_ARRAY);
+            testSamplerSliced3D(GL_TEXTURE_3D);
         }
     }
 
@@ -684,6 +774,7 @@ using CompressedTextureETC2RGBA8SRGBTest  = _Test<kETC2RGBA8SRGB,  kEmpty, true,
 
 using CompressedTextureASTCTest         = _Test<kASTC, kEmpty,        true, true, true, false, false>;
 using CompressedTextureASTCSliced3DTest = _Test<kASTC, kASTCSliced3D, true, true, true, true,  false>;
+using CompressedTextureSamplerASTCSliced3DTest = _Test<kASTC, kASTCSliced3D, true, true, true, true,  false>;
 
 using CompressedTexturePVRTC1Test     = _Test<kPVRTC1, kEmpty,     true, false, false, false, false>;
 using CompressedTexturePVRTC1SRGBTest = _Test<kPVRTC1, kPVRTCSRGB, true, false, false, false, false>;
@@ -907,6 +998,12 @@ ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureASTCSliced3DTest,
                                  ANGLE_ALL_TEST_PLATFORMS_ES2,
                                  ANGLE_ALL_TEST_PLATFORMS_ES3);
 
+ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureSamplerASTCSliced3DTest,
+                                 PrintToStringParamName,
+                                 testing::ValuesIn(kASTCFormats),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
+
 ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTexturePVRTC1Test,
                                  PrintToStringParamName,
                                  testing::ValuesIn(kPVRTC1Formats),
@@ -944,6 +1041,9 @@ TEST_P(CompressedTextureETC2RGBA8SRGBTest,  Test) { test(); }
 
 TEST_P(CompressedTextureASTCTest,         Test) { test(); }
 TEST_P(CompressedTextureASTCSliced3DTest, Test) { test(); }
+
+// Check that texture sampling works correctly
+TEST_P(CompressedTextureSamplerASTCSliced3DTest, Test) { testSamplerASTCSliced3D(); }
 
 TEST_P(CompressedTexturePVRTC1Test,     Test) { test(); }
 TEST_P(CompressedTexturePVRTC1SRGBTest, Test) { test(); }

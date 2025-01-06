@@ -28,7 +28,6 @@
 namespace WebCore {
 
 // https://html.spec.whatwg.org/multipage/scripting.html#concept-script-type
-// https://wicg.github.io/import-maps/#integration-prepare-a-script
 enum class ScriptType : uint8_t { Classic, Module, ImportMap };
 static constexpr unsigned bitWidthOfScriptType = 2;
 static_assert(static_cast<unsigned>(ScriptType::ImportMap) <= ((1U << bitWidthOfScriptType) - 1));

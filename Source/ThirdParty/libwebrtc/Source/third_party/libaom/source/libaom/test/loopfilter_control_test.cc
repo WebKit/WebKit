@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -13,7 +13,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
@@ -31,20 +31,20 @@ const int kBitrate = 500;
 std::unordered_map<std::string,
                    std::unordered_map<int, std::unordered_map<int, double>>>
     kPsnrThreshold = { { "park_joy_90p_8_420.y4m",
-                         { { 0, { { 0, 35.0 }, { 3, 35.8 } } },
-                           { 1, { { 0, 35.1 }, { 3, 35.9 } } },
-                           { 2, { { 0, 35.1 }, { 3, 36.1 } } },
-                           { 3, { { 0, 35.1 }, { 3, 36.1 } } } } },
+                         { { 0, { { 0, 33.0 }, { 3, 33.0 } } },
+                           { 1, { { 0, 33.0 }, { 3, 33.0 } } },
+                           { 2, { { 0, 33.0 }, { 3, 33.0 } } },
+                           { 3, { { 0, 33.0 }, { 3, 33.0 } } } } },
                        { "paris_352_288_30.y4m",
-                         { { 0, { { 0, 35.40 }, { 3, 36.0 } } },
-                           { 1, { { 0, 35.50 }, { 3, 36.0 } } },
-                           { 2, { { 0, 35.50 }, { 3, 36.0 } } },
-                           { 3, { { 0, 35.50 }, { 3, 36.0 } } } } },
+                         { { 0, { { 0, 33.0 }, { 3, 34.0 } } },
+                           { 1, { { 0, 33.0 }, { 3, 34.0 } } },
+                           { 2, { { 0, 33.0 }, { 3, 34.0 } } },
+                           { 3, { { 0, 33.0 }, { 3, 34.0 } } } } },
                        { "niklas_1280_720_30.y4m",
-                         { { 0, { { 0, 33.20 }, { 3, 32.90 } } },
-                           { 1, { { 0, 33.57 }, { 3, 33.22 } } },
-                           { 2, { { 0, 33.57 }, { 3, 33.22 } } },
-                           { 3, { { 0, 33.45 }, { 3, 33.10 } } } } } };
+                         { { 0, { { 0, 31.0 }, { 3, 30.0 } } },
+                           { 1, { { 0, 31.0 }, { 3, 31.0 } } },
+                           { 2, { { 0, 31.0 }, { 3, 31.0 } } },
+                           { 3, { { 0, 31.0 }, { 3, 31.0 } } } } } };
 
 typedef struct {
   const char *filename;

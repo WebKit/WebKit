@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "AudioTrackPrivateMediaSourceAVFObjC.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_SOURCE)
 
@@ -32,11 +33,15 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioTrackPrivateMediaSourceAVFObjC);
+
 AudioTrackPrivateMediaSourceAVFObjC::AudioTrackPrivateMediaSourceAVFObjC(AVAssetTrack* track)
     : m_impl(makeUnique<AVTrackPrivateAVFObjCImpl>(track))
 {
     resetPropertiesFromTrack();
 }
+
+AudioTrackPrivateMediaSourceAVFObjC::~AudioTrackPrivateMediaSourceAVFObjC() = default;
 
 void AudioTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack()
 {

@@ -37,7 +37,7 @@ class TextureUpload
 class ShareGroupVk : public ShareGroupImpl
 {
   public:
-    ShareGroupVk(const egl::ShareGroupState &state);
+    ShareGroupVk(const egl::ShareGroupState &state, vk::Renderer *renderer);
     void onDestroy(const egl::Display *display) override;
 
     void onContextAdd() override;
@@ -60,12 +60,11 @@ class ShareGroupVk : public ShareGroupImpl
     // Used to flush the mutable textures more often.
     angle::Result onMutableTextureUpload(ContextVk *contextVk, TextureVk *newTexture);
 
-    vk::BufferPool *getDefaultBufferPool(vk::Renderer *renderer,
-                                         VkDeviceSize size,
+    vk::BufferPool *getDefaultBufferPool(VkDeviceSize size,
                                          uint32_t memoryTypeIndex,
                                          BufferUsageType usageType);
-    void pruneDefaultBufferPools(vk::Renderer *renderer);
-    bool isDueForBufferPoolPrune(vk::Renderer *renderer);
+
+    void pruneDefaultBufferPools();
 
     void calculateTotalBufferCount(size_t *bufferCount, VkDeviceSize *totalSize) const;
     void logBufferPools() const;
@@ -96,8 +95,33 @@ class ShareGroupVk : public ShareGroupImpl
         vk::WaitableMonolithicPipelineCreationTask *taskOut);
     void waitForCurrentMonolithicPipelineCreationTask();
 
+    vk::RefCountedEventsGarbageRecycler *getRefCountedEventsGarbageRecycler()
+    {
+        return &mRefCountedEventsGarbageRecycler;
+    }
+    void cleanupRefCountedEventGarbage() { mRefCountedEventsGarbageRecycler.cleanup(mRenderer); }
+    void cleanupExcessiveRefCountedEventGarbage()
+    {
+        // TODO: b/336844257 needs tune.
+        constexpr size_t kExcessiveGarbageCountThreshold = 256;
+        if (mRefCountedEventsGarbageRecycler.getGarbageCount() > kExcessiveGarbageCountThreshold)
+        {
+            mRefCountedEventsGarbageRecycler.cleanup(mRenderer);
+        }
+    }
+
+    void onFramebufferBoundary();
+    uint32_t getCurrentFrameCount() const { return mCurrentFrameCount; }
+
   private:
     angle::Result updateContextsPriority(ContextVk *contextVk, egl::ContextPriority newPriority);
+
+    bool isDueForBufferPoolPrune();
+
+    vk::Renderer *mRenderer;
+
+    // Tracks the total number of frames rendered.
+    uint32_t mCurrentFrameCount;
 
     // VkFramebuffer caches
     FramebufferCache mFramebufferCache;
@@ -141,6 +165,9 @@ class ShareGroupVk : public ShareGroupImpl
 
     // Texture update manager used to flush uploaded mutable textures.
     TextureUpload mTextureUpload;
+
+    // Holds RefCountedEvent that are free and ready to reuse
+    vk::RefCountedEventsGarbageRecycler mRefCountedEventsGarbageRecycler;
 };
 }  // namespace rx
 

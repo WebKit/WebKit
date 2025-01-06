@@ -11,14 +11,14 @@ window.onpageshow = function(evt) {
     setTimeout("testRunner.notifyDone()", 0);
 }
 
-function clickLinkToSlowPage() {
+async function clickLinkToSlowPage() {
     var link = document.getElementById("linkToSlowPage");
     var linkRect = link.getClientRects()[0];
     var targetX = linkRect.left + linkRect.width / 2;
     var targetY = linkRect.top + linkRect.height / 2;
-    eventSender.mouseMoveTo(targetX, targetY);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(targetX, targetY);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 }
 
 window.onload = function(evt) {

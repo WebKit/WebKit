@@ -120,7 +120,7 @@ class ResidualEchoEstimatorTest {
   Random random_generator_;
   std::vector<SubtractorOutput> output_;
   std::array<float, kBlockSize> y_;
-  absl::optional<DelayEstimate> delay_estimate_;
+  std::optional<DelayEstimate> delay_estimate_;
   bool first_frame_ = true;
 };
 

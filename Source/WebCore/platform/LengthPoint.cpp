@@ -32,7 +32,7 @@ namespace WebCore {
 
 TextStream& operator<<(TextStream& ts, const LengthPoint& size)
 {
-    return ts << size.x() << " " << size.y();
+    return ts << size.x << " " << size.y;
 }
 
 } // namespace WebCore

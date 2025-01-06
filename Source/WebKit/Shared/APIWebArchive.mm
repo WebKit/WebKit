@@ -127,20 +127,11 @@ API::Array* WebArchive::subframeArchives()
     return m_cachedSubframeArchives.get();
 }
 
-static void releaseWebArchiveData(uint8_t*, const void* data)
-{
-    // Balanced by CFRetain in WebArchive::data().
-    CFRelease(data);
-}
-
 Ref<API::Data> WebArchive::data()
 {
-    RetainPtr<CFDataRef> rawDataRepresentation = m_legacyWebArchive->rawDataRepresentation();
-
-    // Balanced by CFRelease in releaseWebArchiveData.
-    CFRetain(rawDataRepresentation.get());
-
-    return API::Data::createWithoutCopying(span(rawDataRepresentation.get()), releaseWebArchiveData, rawDataRepresentation.get());
+    RetainPtr rawDataRepresentation = m_legacyWebArchive->rawDataRepresentation();
+    auto rawDataSpan = span(rawDataRepresentation.get());
+    return API::Data::createWithoutCopying(rawDataSpan, [rawDataRepresentation = WTFMove(rawDataRepresentation)] { });
 }
 
 LegacyWebArchive* WebArchive::coreLegacyWebArchive()

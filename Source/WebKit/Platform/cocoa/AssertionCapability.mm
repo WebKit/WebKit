@@ -29,6 +29,7 @@
 #if ENABLE(EXTENSION_CAPABILITIES)
 
 #import "Logging.h"
+#import "ProcessLauncher.h"
 #import <BrowserEngineKit/BrowserEngineKit.h>
 
 #if USE(LEGACY_EXTENSIONKIT_SPI)
@@ -41,21 +42,23 @@ AssertionCapability::AssertionCapability(String environmentIdentifier, String do
     : m_environmentIdentifier { WTFMove(environmentIdentifier) }
     , m_domain { WTFMove(domain) }
     , m_name { WTFMove(name) }
-    , m_willInvalidateBlock { makeBlockPtr(WTFMove(willInvalidateFunction)) }
-    , m_didInvalidateBlock { makeBlockPtr(WTFMove(didInvalidateFunction)) }
+    , m_willInvalidateBlock { willInvalidateFunction ? makeBlockPtr(WTFMove(willInvalidateFunction)) : nullptr }
+    , m_didInvalidateBlock { didInvalidateFunction ? makeBlockPtr(WTFMove(didInvalidateFunction)) : nullptr }
 {
     RELEASE_LOG(Process, "AssertionCapability::AssertionCapability: taking assertion %{public}s", m_name.utf8().data());
 #if USE(LEGACY_EXTENSIONKIT_SPI)
-    _SECapability* capability = [get_SECapabilityClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:m_environmentIdentifier willInvalidate:m_willInvalidateBlock.get() didInvalidate:m_didInvalidateBlock.get()];
-    setPlatformCapability(capability);
-#else
+    if (!ProcessLauncher::hasExtensionsInAppBundle()) {
+        _SECapability* capability = [get_SECapabilityClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:m_environmentIdentifier willInvalidate:m_willInvalidateBlock.get() didInvalidate:m_didInvalidateBlock.get()];
+        setPlatformCapability(capability);
+        return;
+    }
+#endif
     if (m_name == "Suspended"_s)
         setPlatformCapability([BEProcessCapability suspended]);
     else if (m_name == "Background"_s)
         setPlatformCapability([BEProcessCapability background]);
     else if (m_name == "Foreground"_s)
         setPlatformCapability([BEProcessCapability foreground]);
-#endif
 }
 
 } // namespace WebKit

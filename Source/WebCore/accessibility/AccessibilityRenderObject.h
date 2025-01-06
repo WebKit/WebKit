@@ -54,102 +54,97 @@ class VisibleSelection;
 
 class AccessibilityRenderObject : public AccessibilityNodeObject {
 public:
-    static Ref<AccessibilityRenderObject> create(RenderObject&);
+    static Ref<AccessibilityRenderObject> create(AXID, RenderObject&);
     virtual ~AccessibilityRenderObject();
     
     FloatRect frameRect() const final;
-    bool isNonLayerSVGObject() const override;
+    bool isNonLayerSVGObject() const final;
 
-    bool isAttachment() const override;
-    bool isOffScreen() const override;
-    bool hasBoldFont() const override;
-    bool hasItalicFont() const override;
-    bool hasPlainText() const override;
-    bool hasSameFont(const AXCoreObject&) const override;
-    bool hasSameFontColor(const AXCoreObject&) const override;
-    bool hasSameStyle(const AXCoreObject&) const override;
-    bool hasUnderline() const override;
+    bool isAttachment() const final;
+    bool isDetached() const final { return !m_renderer && AccessibilityNodeObject::isDetached(); }
+    bool isOffScreen() const final;
+    bool hasBoldFont() const final;
+    bool hasItalicFont() const final;
+    bool hasPlainText() const final;
+    bool hasSameFont(AXCoreObject&) final;
+    bool hasSameFontColor(AXCoreObject&) final;
+    bool hasSameStyle(AXCoreObject&) final;
+    bool hasUnderline() const final;
 
-    void setAccessibleName(const AtomString&) override;
-    
-    int layoutCount() const override;
-    
-    AccessibilityObject* firstChild() const override;
-    AccessibilityObject* lastChild() const override;
+    void setAccessibleName(const AtomString&) final;
+
+    int layoutCount() const final;
+
+    AccessibilityObject* firstChild() const final;
+    AccessibilityObject* lastChild() const final;
     AccessibilityObject* previousSibling() const final;
     AccessibilityObject* nextSibling() const final;
     AccessibilityObject* parentObject() const override;
-    AccessibilityObject* parentObjectIfExists() const override;
     AccessibilityObject* observableObject() const override;
-    AXCoreObject* titleUIElement() const override;
+    AccessibilityObject* titleUIElement() const override;
 
     // Should be called on the root accessibility object to kick off a hit test.
-    AccessibilityObject* accessibilityHitTest(const IntPoint&) const override;
+    AccessibilityObject* accessibilityHitTest(const IntPoint&) const final;
 
-    Element* anchorElement() const override;
+    Element* anchorElement() const final;
     
-    LayoutRect boundingBoxRect() const override;
+    LayoutRect boundingBoxRect() const final;
 
     RenderObject* renderer() const final { return m_renderer.get(); }
-    Node* node() const override;
+    Document* document() const final;
 
-    Document* document() const override;
-
-    URL url() const override;
-    CharacterRange selectedTextRange() const override;
-    int insertionPointLineNumber() const override;
+    URL url() const final;
+    CharacterRange selectedTextRange() const final;
+    int insertionPointLineNumber() const final;
     String stringValue() const override;
     String helpText() const override;
     String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const override;
-    String selectedText() const override;
+    String selectedText() const final;
 #if ENABLE(AX_THREAD_TEXT_APIS)
     AXTextRuns textRuns() final;
 #endif
 
-    bool isWidget() const override;
-    Widget* widget() const override;
-    Widget* widgetForAttachmentView() const override;
-    AccessibilityChildrenVector documentLinks() override;
-    LocalFrameView* documentFrameView() const override;
+    bool isWidget() const final;
+    Widget* widget() const final;
+    Widget* widgetForAttachmentView() const final;
+    AccessibilityChildrenVector documentLinks() final;
+    LocalFrameView* documentFrameView() const final;
     bool isPlugin() const final { return is<PluginViewBase>(widget()); }
 
-    void setSelectedTextRange(CharacterRange&&) override;
+    void setSelectedTextRange(CharacterRange&&) final;
     bool setValue(const String&) override;
 
     void addChildren() override;
 
-    IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override;
-    void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
+    IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const final;
+    void setSelectedVisiblePositionRange(const VisiblePositionRange&) const final;
     bool isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange&) const;
 
-    VisiblePosition visiblePositionForIndex(unsigned indexValue, bool lastIndexOK) const override;
-    int index(const VisiblePosition&) const override;
+    VisiblePosition visiblePositionForIndex(unsigned indexValue, bool lastIndexOK) const final;
+    int index(const VisiblePosition&) const final;
 
     VisiblePosition visiblePositionForIndex(int) const final;
     int indexForVisiblePosition(const VisiblePosition&) const final;
 
-    CharacterRange doAXRangeForLine(unsigned) const override;
-    CharacterRange doAXRangeForIndex(unsigned) const override;
-    
-    String doAXStringForRange(const CharacterRange&) const override;
-    IntRect doAXBoundsForRange(const CharacterRange&) const override;
-    IntRect doAXBoundsForRangeUsingCharacterOffset(const CharacterRange&) const override;
-    
-    String secureFieldValue() const override;
-    void labelText(Vector<AccessibilityText>&) const override;
+    CharacterRange doAXRangeForLine(unsigned) const final;
+    CharacterRange doAXRangeForIndex(unsigned) const final;
 
+    String doAXStringForRange(const CharacterRange&) const final;
+    IntRect doAXBoundsForRange(const CharacterRange&) const final;
+    IntRect doAXBoundsForRangeUsingCharacterOffset(const CharacterRange&) const final;
+
+    String secureFieldValue() const final;
+    void labelText(Vector<AccessibilityText>&) const override;
 protected:
-    explicit AccessibilityRenderObject(RenderObject&);
-    explicit AccessibilityRenderObject(Node&);
-    void detachRemoteParts(AccessibilityDetachmentType) override;
-    ScrollableArea* getScrollableAreaIfScrollable() const override;
-    void scrollTo(const IntPoint&) const override;
-    
-    bool isDetached() const final { return !m_renderer && AccessibilityNodeObject::isDetached(); }
+    explicit AccessibilityRenderObject(AXID, RenderObject&);
+    explicit AccessibilityRenderObject(AXID, Node&);
+    void detachRemoteParts(AccessibilityDetachmentType) final;
+    ScrollableArea* getScrollableAreaIfScrollable() const final;
+    void scrollTo(const IntPoint&) const final;
 
     bool shouldIgnoreAttributeRole() const override;
     AccessibilityRole determineAccessibilityRole() override;
-    bool computeAccessibilityIsIgnored() const override;
+    bool computeIsIgnored() const override;
 
 #if ENABLE(MATHML)
     virtual bool isIgnoredElementWithinMathTree() const;
@@ -162,18 +157,16 @@ private:
     bool isAllowedChildOfTree() const;
     CharacterRange documentBasedSelectedTextRange() const;
     RefPtr<Element> rootEditableElementForPosition(const Position&) const;
-    bool nodeIsTextControl(const Node&) const;
-    Path elementPath() const override;
-    
+    bool elementIsTextControl(const Element&) const;
+    Path elementPath() const final;
+
     AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement&, const IntPoint&) const;
     AccessibilityObject* associatedAXImage(HTMLMapElement&) const;
     AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
 
     bool renderObjectIsObservable(RenderObject&) const;
     RenderObject* renderParentObject() const;
-#if USE(ATSPI)
     RenderObject* markerRenderer() const;
-#endif
 
     bool isSVGImage() const;
     void detachRemoteSVGRoot();
@@ -181,17 +174,17 @@ private:
     AccessibilitySVGRoot* remoteSVGRootElement(CreationChoice createIfNecessary) const;
     AccessibilityObject* remoteSVGElementHitTest(const IntPoint&) const;
     void offsetBoundingBoxForRemoteSVGElement(LayoutRect&) const;
-    bool supportsPath() const override;
+    bool supportsPath() const final;
 
+#if USE(ATSPI)
     void addNodeOnlyChildren();
+    void addCanvasChildren();
+#endif // USE(ATSPI)
     void addTextFieldChildren();
     void addImageMapChildren();
-    void addCanvasChildren();
     void addAttachmentChildren();
     void addRemoteSVGChildren();
-#if USE(ATSPI)
     void addListItemMarker();
-#endif
 #if PLATFORM(COCOA)
     void updateAttachmentViewParents();
 #endif
@@ -201,7 +194,7 @@ private:
 
     bool inheritsPresentationalRole() const override;
 
-    bool shouldGetTextFromNode(TextUnderElementMode) const;
+    bool shouldGetTextFromNode(const TextUnderElementMode&) const;
 
 #if ENABLE(APPLE_PAY)
     bool isApplePayButton() const;

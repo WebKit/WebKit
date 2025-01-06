@@ -1,0 +1,7 @@
+
+PASS anchor-scope matches tree-scoped names
+PASS anchor-scope in shadow does not affect slotted-in element
+PASS anchor-scope in ::slotted() rule does not affect anchoring outside
+PASS anchor-scope in shadow does not affected slotted-in element (:host)
+FAIL anchor-scope in ::part() affects slotted-in element assert_equals: expected "1px" but got "10px"
+

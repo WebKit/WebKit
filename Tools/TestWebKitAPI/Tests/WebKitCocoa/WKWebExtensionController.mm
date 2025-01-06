@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,52 +33,66 @@
 #import "WebExtensionUtilities.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/_WKWebExtensionContextPrivate.h>
-#import <WebKit/_WKWebExtensionControllerPrivate.h>
-#import <WebKit/_WKWebExtensionPrivate.h>
+#import <WebKit/WKWebExtensionContextPrivate.h>
+#import <WebKit/WKWebExtensionControllerPrivate.h>
+#import <WebKit/WKWebExtensionPrivate.h>
 
 namespace TestWebKitAPI {
 
 TEST(WKWebExtensionController, Configuration)
 {
-    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] init];
+    WKWebExtensionController *testController = [[WKWebExtensionController alloc] init];
     EXPECT_TRUE(testController.configuration.persistent);
     EXPECT_NULL(testController.configuration.identifier);
 
-    testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
+    testController = [[WKWebExtensionController alloc] initWithConfiguration:WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
     EXPECT_FALSE(testController.configuration.persistent);
     EXPECT_NULL(testController.configuration.identifier);
 
     NSUUID *identifier = [NSUUID UUID];
-    _WKWebExtensionControllerConfiguration *configuration = [_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
+    WKWebExtensionControllerConfiguration *configuration = [WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
 
-    testController = [[_WKWebExtensionController alloc] initWithConfiguration:configuration];
+    testController = [[WKWebExtensionController alloc] initWithConfiguration:configuration];
     EXPECT_TRUE(testController.configuration.persistent);
     EXPECT_NS_EQUAL(testController.configuration.identifier, identifier);
 }
 
 TEST(WKWebExtensionController, LoadingAndUnloadingContexts)
 {
-    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
+    WKWebExtensionController *testController = [[WKWebExtensionController alloc] initWithConfiguration:WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
+    NSError *error;
 
     EXPECT_EQ(testController.extensions.count, 0ul);
     EXPECT_EQ(testController.extensionContexts.count, 0ul);
 
-    _WKWebExtension *testExtensionOne = [[_WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @2, @"name": @"Test One", @"description": @"Test One", @"version": @"1.0" }];
-    _WKWebExtensionContext *testContextOne = [[_WKWebExtensionContext alloc] initForExtension:testExtensionOne];
+#if TARGET_OS_IPHONE
+    WKWebExtension *invalidPersistenceExtension = [[WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @2, @"name": @"Invalid Persistence", @"description": @"Invalid Persistence", @"version": @"1.0", @"background": @{ @"page": @"background.html", @"persistent": @YES } }];
+    WKWebExtensionContext *invalidPersistenceContext = [[WKWebExtensionContext alloc] initForExtension:invalidPersistenceExtension];
+
+    EXPECT_FALSE(invalidPersistenceContext.loaded);
+    EXPECT_FALSE([testController loadExtensionContext:invalidPersistenceContext error:&error]);
+    EXPECT_NOT_NULL(error);
+    EXPECT_NS_EQUAL(error.domain, WKWebExtensionErrorDomain);
+    EXPECT_EQ(error.code, WKWebExtensionErrorInvalidBackgroundPersistence);
+
+    EXPECT_EQ(testController.extensions.count, 0ul);
+    EXPECT_EQ(testController.extensionContexts.count, 0ul);
+#endif // TARGET_OS_IPHONE
+
+    WKWebExtension *testExtensionOne = [[WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @2, @"name": @"Test One", @"description": @"Test One", @"version": @"1.0" }];
+    WKWebExtensionContext *testContextOne = [[WKWebExtensionContext alloc] initForExtension:testExtensionOne];
 
     EXPECT_EQ(testExtensionOne.errors.count, 0ul);
     EXPECT_FALSE(testContextOne.loaded);
     EXPECT_NULL([testController extensionContextForExtension:testExtensionOne]);
 
-    _WKWebExtension *testExtensionTwo = [[_WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @2, @"name": @"Test Two", @"description": @"Test Two", @"version": @"1.0" }];
-    _WKWebExtensionContext *testContextTwo = [[_WKWebExtensionContext alloc] initForExtension:testExtensionTwo];
+    WKWebExtension *testExtensionTwo = [[WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @2, @"name": @"Test Two", @"description": @"Test Two", @"version": @"1.0" }];
+    WKWebExtensionContext *testContextTwo = [[WKWebExtensionContext alloc] initForExtension:testExtensionTwo];
 
     EXPECT_EQ(testExtensionTwo.errors.count, 0ul);
     EXPECT_FALSE(testContextTwo.loaded);
     EXPECT_NULL([testController extensionContextForExtension:testExtensionTwo]);
 
-    NSError *error;
     EXPECT_TRUE([testController loadExtensionContext:testContextOne error:&error]);
     EXPECT_NULL(error);
 
@@ -90,8 +104,8 @@ TEST(WKWebExtensionController, LoadingAndUnloadingContexts)
 
     EXPECT_FALSE([testController loadExtensionContext:testContextOne error:&error]);
     EXPECT_NOT_NULL(error);
-    EXPECT_NS_EQUAL(error.domain, _WKWebExtensionContextErrorDomain);
-    EXPECT_EQ(error.code, _WKWebExtensionContextErrorAlreadyLoaded);
+    EXPECT_NS_EQUAL(error.domain, WKWebExtensionContextErrorDomain);
+    EXPECT_EQ(error.code, WKWebExtensionContextErrorAlreadyLoaded);
 
     EXPECT_EQ(testExtensionOne.errors.count, 0ul);
     EXPECT_TRUE(testContextOne.loaded);
@@ -128,8 +142,8 @@ TEST(WKWebExtensionController, LoadingAndUnloadingContexts)
 
     EXPECT_FALSE([testController unloadExtensionContext:testContextOne error:&error]);
     EXPECT_NOT_NULL(error);
-    EXPECT_NS_EQUAL(error.domain, _WKWebExtensionContextErrorDomain);
-    EXPECT_EQ(error.code, _WKWebExtensionContextErrorNotLoaded);
+    EXPECT_NS_EQUAL(error.domain, WKWebExtensionContextErrorDomain);
+    EXPECT_EQ(error.code, WKWebExtensionContextErrorNotLoaded);
 
     EXPECT_EQ(testExtensionTwo.errors.count, 0ul);
     EXPECT_FALSE(testContextOne.loaded);
@@ -144,9 +158,9 @@ TEST(WKWebExtensionController, BackgroundPageLoading)
 
     NSMutableDictionary *manifest = [@{ @"manifest_version": @2, @"name": @"Test One", @"description": @"Test One", @"version": @"1.0", @"background": @{ @"page": @"background.html", @"persistent": @NO } } mutableCopy];
 
-    _WKWebExtension *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
-    _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
-    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
+    WKWebExtension *testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
+    WKWebExtensionContext *testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
+    WKWebExtensionController *testController = [[WKWebExtensionController alloc] initWithConfiguration:WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
@@ -167,8 +181,8 @@ TEST(WKWebExtensionController, BackgroundPageLoading)
 
     manifest[@"background"] = @{ @"service_worker": @"background.js" };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
@@ -186,7 +200,7 @@ TEST(WKWebExtensionController, BackgroundPageLoading)
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
-    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     testContext.baseURL = [NSURL URLWithString:@"test-extension://aaabbbcccddd"];
 
     EXPECT_TRUE([testController loadExtensionContext:testContext error:&error]);
@@ -213,9 +227,9 @@ TEST(WKWebExtensionController, BackgroundPageWithModulesLoading)
 
     NSMutableDictionary *manifest = [@{ @"manifest_version": @2, @"name": @"Test One", @"description": @"Test One", @"version": @"1.0", @"background": @{ @"scripts": @[ @"main.js", @"exports.js" ], @"type": @"module", @"persistent": @NO } } mutableCopy];
 
-    _WKWebExtension *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
-    _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
-    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
+    WKWebExtension *testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
+    WKWebExtensionContext *testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
+    WKWebExtensionController *testController = [[WKWebExtensionController alloc] initWithConfiguration:WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
@@ -236,8 +250,8 @@ TEST(WKWebExtensionController, BackgroundPageWithModulesLoading)
 
     manifest[@"background"] = @{ @"service_worker": @"main.js", @"type": @"module" };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
@@ -500,14 +514,14 @@ TEST(WKWebExtensionController, ContentScriptLoading)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"content.js": contentScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"content.js": contentScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    _WKWebExtensionMatchPattern *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:@"*://localhost/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    WKWebExtensionMatchPattern *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://localhost/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get()._webExtensionController = manager.get().controller;
+    configuration.get().webExtensionController = manager.get().controller;
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
@@ -559,13 +573,13 @@ TEST(WKWebExtensionController, CSSUserOrigin)
         @"content.js": contentScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -605,13 +619,13 @@ TEST(WKWebExtensionController, CSSAuthorOrigin)
         @"content.js": contentScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -767,12 +781,82 @@ TEST(WKWebExtensionController, WebAccessibleResources)
         @"bad.svg": @"<svg xmlns='http://www.w3.org/2000/svg'></svg>"
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionController, WebAccessibleResourcesV2)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *contentScript = Util::constructScript(@[
+        @"var imgGood = document.createElement('img')",
+        @"imgGood.src = browser.runtime.getURL('good.svg')",
+
+        @"var imgBad = document.createElement('img')",
+        @"imgBad.src = browser.runtime.getURL('bad.svg')",
+
+        @"var goodLoaded = false",
+        @"var badFailed = false",
+
+        @"imgGood.onload = () => {",
+        @"  goodLoaded = true",
+        @"  if (badFailed)",
+        @"    browser.test.notifyPass()",
+        @"}",
+
+        @"imgGood.onerror = () => {",
+        @"  browser.test.notifyFail('The good image should load')",
+        @"}",
+
+        @"imgBad.onload = () => {",
+        @"  browser.test.notifyFail('The bad image should not load')",
+        @"}",
+
+        @"imgBad.onerror = () => {",
+        @"  badFailed = true",
+        @"  if (goodLoaded)",
+        @"    browser.test.notifyPass()",
+        @"}",
+
+        @"document.body.appendChild(imgGood)",
+        @"document.body.appendChild(imgBad)"
+    ]);
+
+    auto *manifest = @{
+        @"manifest_version": @2,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+
+        @"content_scripts": @[ @{
+            @"js": @[ @"content.js" ],
+            @"matches": @[ @"*://localhost/*" ],
+        } ],
+
+        @"web_accessible_resources": @[ @"good.svg" ]
+    };
+
+    auto *resources = @{
+        @"content.js": contentScript,
+        @"good.svg": @"<svg xmlns='http://www.w3.org/2000/svg'></svg>",
+        @"bad.svg": @"<svg xmlns='http://www.w3.org/2000/svg'></svg>"
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }

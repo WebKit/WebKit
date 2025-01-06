@@ -33,6 +33,7 @@
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
+#include <WebCore/NavigationIdentifier.h>
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/SecurityContext.h>
@@ -50,7 +51,7 @@ public:
     NetworkResourceLoadParameters() = default;
     NetworkResourceLoadParameters(
         NetworkLoadParameters&&
-        , WebCore::ResourceLoaderIdentifier
+        , std::optional<WebCore::ResourceLoaderIdentifier>
         , RefPtr<WebCore::FormData>&& httpBody
         , std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensionIfHttpBody
         , std::optional<SandboxExtension::Handle>&& sandboxExtensionIflocalFile
@@ -72,11 +73,12 @@ public:
         , URL&& documentURL
         , bool isCrossOriginOpenerPolicyEnabled
         , bool isClearSiteDataHeaderEnabled
+        , bool isClearSiteDataExecutionContextEnabled
         , bool isDisplayingInitialEmptyDocument
         , WebCore::SandboxFlags effectiveSandboxFlags
         , URL&& openerURL
         , WebCore::CrossOriginOpenerPolicy&& sourceCrossOriginOpenerPolicy
-        , uint64_t navigationID
+        , std::optional<WebCore::NavigationIdentifier> navigationID
         , std::optional<WebCore::NavigationRequester>&&
         , WebCore::ServiceWorkersMode
         , std::optional<WebCore::ServiceWorkerRegistrationIdentifier>
@@ -98,7 +100,7 @@ public:
 
     RefPtr<WebCore::SecurityOrigin> parentOrigin() const;
 
-    WebCore::ResourceLoaderIdentifier identifier;
+    Markable<WebCore::ResourceLoaderIdentifier> identifier;
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
     RefPtr<SandboxExtension> resourceSandboxExtension; // Created automatically for the sender.
     Seconds maximumBufferingTime;
@@ -120,11 +122,12 @@ public:
 
     bool isCrossOriginOpenerPolicyEnabled { false };
     bool isClearSiteDataHeaderEnabled { false };
+    bool isClearSiteDataExecutionContextEnabled { false };
     bool isDisplayingInitialEmptyDocument { false };
-    WebCore::SandboxFlags effectiveSandboxFlags { WebCore::SandboxNone };
+    WebCore::SandboxFlags effectiveSandboxFlags;
     URL openerURL;
     WebCore::CrossOriginOpenerPolicy sourceCrossOriginOpenerPolicy;
-    uint64_t navigationID { 0 };
+    std::optional<WebCore::NavigationIdentifier> navigationID;
     std::optional<WebCore::NavigationRequester> navigationRequester;
 
     WebCore::ServiceWorkersMode serviceWorkersMode { WebCore::ServiceWorkersMode::None };

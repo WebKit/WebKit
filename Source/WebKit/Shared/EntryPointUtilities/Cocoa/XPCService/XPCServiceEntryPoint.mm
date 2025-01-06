@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,11 @@
 #import "Logging.h"
 #import "SandboxUtilities.h"
 #import "XPCServiceEntryPoint.h"
+#import <JavaScriptCore/JSCConfig.h>
 #import <WebCore/ProcessIdentifier.h>
+#import <WebCore/WebCoreHeapSupport.h>
 #import <signal.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/WTFProcess.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
@@ -37,9 +40,17 @@
 
 namespace WebKit {
 
-XPCServiceInitializerDelegate::~XPCServiceInitializerDelegate()
+DECLARE_TZONE_HEAPREF_SPECIFICATION_BOUNDS(XPCService);
+
+XPCServiceInitializerDelegate::XPCServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+    : m_connection(WTFMove(connection))
+    , m_initializerMessage(initializerMessage)
 {
+    PREINITIALIZE_TZONE_HEAPREFS(XPCService);
+    WebCore::initializeHeapRefs();
 }
+
+XPCServiceInitializerDelegate::~XPCServiceInitializerDelegate() = default;
 
 bool XPCServiceInitializerDelegate::checkEntitlements()
 {
@@ -85,20 +96,19 @@ bool XPCServiceInitializerDelegate::getClientBundleIdentifier(String& clientBund
 
 bool XPCServiceInitializerDelegate::getClientSDKAlignedBehaviors(SDKAlignedBehaviors& behaviors)
 {
-    size_t length = 0;
-    auto behaviorData = xpc_dictionary_get_data(m_initializerMessage, "client-sdk-aligned-behaviors", &length);
-    if (!length || !behaviorData)
+    auto behaviorData = xpc_dictionary_get_data_span(m_initializerMessage, "client-sdk-aligned-behaviors");
+    if (behaviorData.empty())
         return false;
-    RELEASE_ASSERT(length == behaviors.storageLengthInBytes());
-    memcpy(behaviors.storage(), behaviorData, length);
-
+    memcpySpan(behaviors.storageBytes(), behaviorData);
     return true;
 }
 
-bool XPCServiceInitializerDelegate::getProcessIdentifier(WebCore::ProcessIdentifier& identifier)
+bool XPCServiceInitializerDelegate::getProcessIdentifier(std::optional<WebCore::ProcessIdentifier>& identifier)
 {
     auto parsedIdentifier = parseInteger<uint64_t>(StringView::fromLatin1(xpc_dictionary_get_string(m_initializerMessage, "process-identifier")));
     if (!parsedIdentifier)
+        return false;
+    if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(*parsedIdentifier))
         return false;
 
     identifier = ObjectIdentifier<WebCore::ProcessIdentifierType>(*parsedIdentifier);
@@ -129,6 +139,10 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
     auto isPrewarmedProcess = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "is-prewarmed"));
     if (!isPrewarmedProcess.isEmpty())
         extraInitializationData.add("is-prewarmed"_s, isPrewarmedProcess);
+
+    auto isLockdownModeEnabled = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "enable-lockdown-mode"));
+    if (!isLockdownModeEnabled.isEmpty())
+        extraInitializationData.add("enable-lockdown-mode"_s, isLockdownModeEnabled);
 
     if (!isClientSandboxed()) {
         auto userDirectorySuffix = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "user-directory-suffix"));
@@ -177,6 +191,49 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
     globalTransaction.get() = WTFMove(transaction);
 }
 #endif
+
+void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLockdownMode, bool isWebContentProcess)
+{
+    RELEASE_ASSERT(!g_jscConfig.initializeHasBeenCalled);
+
+    bool optionsChanged = false;
+    if (xpc_dictionary_get_bool(initializerMessage, "configure-jsc-for-testing"))
+        JSC::Config::configureForTesting();
+    if (enableLockdownMode == EnableLockdownMode::Yes) {
+        JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Block;
+        JSC::Options::initialize();
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::ExecutableAllocator::disableJIT();
+        JSC::Options::useGenerationalGC() = false;
+        JSC::Options::useConcurrentGC() = false;
+        JSC::Options::useLLIntICs() = false;
+        JSC::Options::useWasm() = false;
+        JSC::Options::useZombieMode() = true;
+        JSC::Options::allowDoubleShape() = false;
+        JSC::Options::alwaysHaveABadTime() = true;
+        optionsChanged = true;
+    } else if (xpc_dictionary_get_bool(initializerMessage, "disable-jit")) {
+        JSC::Options::initialize();
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::ExecutableAllocator::disableJIT();
+        optionsChanged = true;
+    }
+    if (xpc_dictionary_get_bool(initializerMessage, "enable-shared-array-buffer")) {
+        JSC::Options::initialize();
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::Options::useSharedArrayBuffer() = true;
+        optionsChanged = true;
+    }
+    // FIXME (276012): Remove this XPC bootstrap message when it's no longer necessary. See rdar://130669638 for more context.
+    if (xpc_dictionary_get_bool(initializerMessage, "disable-jit-cage")) {
+        JSC::Options::initialize();
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::Options::useJITCage() = false;
+        optionsChanged = true;
+    }
+    if (optionsChanged)
+        JSC::Options::notifyOptionsChanged();
+}
 
 void XPCServiceExit()
 {

@@ -2,25 +2,23 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: B.3.1
-description: Function name is not assigned based on the property name
+esid: sec-runtime-semantics-propertydefinitionevaluation
+description: Function name is not assigned based on the __proto__ property name
 info: |
     [...]
-    6. If propKey is the String value "__proto__" and if
-       IsComputedPropertyKey(propKey) is false, then
-       a. If Type(propValue) is either Object or Null, then
-          i. Return object.[[SetPrototypeOf]](propValue).
-       b. Return NormalCompletion(empty).
-    7. If IsAnonymousFunctionDefinition(AssignmentExpression) is true, then
-       a. Let hasNameProperty be HasOwnProperty(propValue, "name").
-       b. ReturnIfAbrupt(hasNameProperty).
-       c. If hasNameProperty is false, perform SetFunctionName(propValue, propKey).
+    3. Else if propKey is "__proto__" and IsComputedPropertyKey of PropertyName is false, then
+        a. Let isProtoSetter be true.
+    [...]
+    5. If IsAnonymousFunctionDefinition(AssignmentExpression) is true and isProtoSetter is false, then
+        a. Let propValue be ? NamedEvaluation of AssignmentExpression with argument propKey.
+    6. Else,
+        a. Let exprValueRef be ? Evaluation of AssignmentExpression.
 ---*/
 
 var o;
 
 o = {
-  __proto__: function() {}
+  __proto__: function () {},
 };
 
-assert(o.__proto__.name !== '__proto__');
+assert(Object.getPrototypeOf(o).name !== "__proto__");

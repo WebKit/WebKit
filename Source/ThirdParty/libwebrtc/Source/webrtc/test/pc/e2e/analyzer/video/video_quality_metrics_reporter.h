@@ -64,7 +64,7 @@ class VideoQualityMetricsReporter
   test::MetricsLogger* const metrics_logger_;
 
   std::string test_case_name_;
-  absl::optional<Timestamp> start_time_;
+  std::optional<Timestamp> start_time_;
 
   Mutex video_bwe_stats_lock_;
   // Map between a peer connection label (provided by the framework) and

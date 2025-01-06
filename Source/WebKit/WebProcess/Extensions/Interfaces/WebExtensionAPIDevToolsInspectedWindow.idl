@@ -28,8 +28,8 @@
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPIDevToolsInspectedWindow {
 
-    [RaisesException, NeedsPage] void eval([CannotBeEmpty] DOMString expression, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
-    [RaisesException, NeedsPage] void reload([Optional, NSDictionary] any options);
+    [RaisesException, NeedsPageIdentifier] void eval([CannotBeEmpty] DOMString expression, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void reload([Optional, NSDictionary] any options);
 
     [NeedsPage] readonly attribute double tabId;
 

@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "CSSColorValue.h"
+#include "CSSOMColorValue.h"
 
 namespace WebCore {
 
-class CSSLCH final : public CSSColorValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSLCH);
+class CSSLCH final : public CSSOMColorValue {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSLCH);
 public:
     static ExceptionOr<Ref<CSSLCH>> create(CSSColorPercent&& lightness, CSSColorPercent&& chroma, CSSColorAngle&& hue, CSSColorPercent&& alpha);
 

@@ -69,7 +69,7 @@ foreach my $module (keys %mods) {
             $used =~ s#/#::#g;
             $used =~ s#\.pm$##;
             $used =~ s#\$module#[^:]+#;
-            $used =~ s#\${[^}]+}#[^:]+#;
+            $used =~ s#\$\{[^}]+\}#[^:]+#;
             $used =~ s#[" ]##g;
             push(@use, grep(/^\Q$used\E$/, keys %mods));
         }

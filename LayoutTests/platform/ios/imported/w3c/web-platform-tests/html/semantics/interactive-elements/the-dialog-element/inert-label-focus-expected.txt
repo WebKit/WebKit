@@ -1,4 +1,0 @@
-Label for Submit
-
-FAIL Tests focusing of an inert label for a non-inert target. assert_not_equals: Clicking the label should not focus the submit input. got disallowed value Element node <input id="submit" type="submit"></input>
-

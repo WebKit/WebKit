@@ -17,6 +17,7 @@
 
 #include "absl/strings/string_view.h"
 #include "api/audio/audio_frame.h"
+#include "api/environment/environment.h"
 #include "api/neteq/neteq.h"
 #include "api/rtp_headers.h"
 #include "modules/audio_coding/neteq/tools/packet.h"
@@ -70,6 +71,7 @@ class NetEqDecodingTest : public ::testing::Test {
                              int max_time_to_speech_ms);
 
   SimulatedClock clock_;
+  const Environment env_;
   std::unique_ptr<NetEq> neteq_;
   NetEq::Config config_;
   std::unique_ptr<test::RtpFileSource> rtp_source_;

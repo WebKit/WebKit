@@ -31,6 +31,7 @@
 #import "NfcService.h"
 #import "WKNFReaderSessionDelegate.h"
 #import <WebCore/FidoConstants.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
 
@@ -38,30 +39,26 @@ namespace WebKit {
 using namespace fido;
 
 namespace {
-inline bool compareVersion(NSData *data, const uint8_t version[], size_t versionSize)
+inline bool compareVersion(NSData *data, std::span<const uint8_t> version)
 {
-    if (!data)
-        return false;
-    if (data.length != versionSize)
-        return false;
-    return !memcmp(data.bytes, version, versionSize);
+    return data && equalSpans(span(data), version);
 }
 
 // Confirm the FIDO applet is avaliable.
 // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#nfc-applet-selection
 static bool trySelectFidoApplet(NFReaderSession *session)
 {
-    auto *versionData = [session transceive:adoptNS([[NSData alloc] initWithBytes:kCtapNfcAppletSelectionCommand length:sizeof(kCtapNfcAppletSelectionCommand)]).get()];
-    if (compareVersion(versionData, kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f))
-        || compareVersion(versionData, kCtapNfcAppletSelectionCtap, sizeof(kCtapNfcAppletSelectionCtap)))
+    auto *versionData = [session transceive:toNSData(std::span { kCtapNfcAppletSelectionCommand }).get()];
+    if (compareVersion(versionData, std::span { kCtapNfcAppletSelectionU2f })
+        || compareVersion(versionData, std::span { kCtapNfcAppletSelectionCtap }))
         return true;
 
     // Some legacy U2F keys such as Google T1 Titan don't understand the FIDO applet command. Instead,
     // they are configured to only have the FIDO applet. Therefore, when the above command fails, we
     // use U2F_VERSION command to double check if the connected tag can actually speak U2F, indicating
     // we are interacting with one of these legacy keys.
-    versionData = [session transceive:adoptNS([[NSData alloc] initWithBytes:kCtapNfcU2fVersionCommand length:sizeof(kCtapNfcU2fVersionCommand)]).get()];
-    if (compareVersion(versionData, kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f)))
+    versionData = [session transceive:toNSData(std::span { kCtapNfcU2fVersionCommand }).get()];
+    if (compareVersion(versionData, std::span { kCtapNfcAppletSelectionU2f }))
         return true;
 
     return false;
@@ -92,7 +89,7 @@ NfcConnection::~NfcConnection()
 Vector<uint8_t> NfcConnection::transact(Vector<uint8_t>&& data) const
 {
     // The method will return an empty NSData if the tag is disconnected.
-    auto *responseData = [m_session transceive:adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]).get()];
+    auto *responseData = [m_session transceive:toNSData(data).get()];
     return makeVector(responseData);
 }
 
@@ -105,7 +102,8 @@ void NfcConnection::stop() const
 
 void NfcConnection::didDetectTags(NSArray *tags)
 {
-    if (!m_service || !tags.count)
+    RefPtr service = m_service.get();
+    if (!service || !tags.count)
         return;
 
     // A physical NFC tag could have multiple interfaces.
@@ -114,7 +112,7 @@ void NfcConnection::didDetectTags(NSArray *tags)
     for (NFTag *tag : tags) {
         if ([tagID isEqualToData:tag.tagID])
             continue;
-        m_service->didDetectMultipleTags();
+        service->didDetectMultipleTags();
         restartPolling();
         return;
     }
@@ -130,7 +128,7 @@ void NfcConnection::didDetectTags(NSArray *tags)
             continue;
         }
 
-        m_service->didConnectTag();
+        service->didConnectTag();
         return;
     }
     restartPolling();

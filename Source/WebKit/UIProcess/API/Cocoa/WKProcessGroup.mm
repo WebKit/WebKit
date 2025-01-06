@@ -28,11 +28,9 @@
 
 #import "APINavigationData.h"
 #import "APIProcessPoolConfiguration.h"
-#import "ObjCObjectGraph.h"
 #import "WKAPICast.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextHistoryDelegate.h"
-#import "WKConnectionInternal.h"
 #import "WKNSString.h"
 #import "WKNSURL.h"
 #import "WKNavigationDataInternal.h"
@@ -41,6 +39,7 @@
 #import "WebFrameProxy.h"
 #import "WebProcessPool.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -64,7 +63,7 @@ static void setUpInjectedBundleClient(WKProcessGroup *processGroup, WKContextRef
 ALLOW_DEPRECATED_DECLARATIONS_END
 {
     WKContextInjectedBundleClientV1 injectedBundleClient;
-    memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+    zeroBytes(injectedBundleClient);
 
     injectedBundleClient.base.version = 1;
     injectedBundleClient.base.clientInfo = (__bridge void*)processGroup;
@@ -133,7 +132,7 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 ALLOW_DEPRECATED_DECLARATIONS_END
 {
     WKContextHistoryClientV0 historyClient;
-    memset(&historyClient, 0, sizeof(historyClient));
+    zeroBytes(historyClient);
 
     historyClient.base.version = 0;
     historyClient.base.clientInfo = (__bridge CFTypeRef)processGroup;

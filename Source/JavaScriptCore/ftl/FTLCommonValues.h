@@ -56,6 +56,7 @@ public:
     LValue intPtrThree { nullptr };
     LValue intPtrEight { nullptr };
     LValue doubleZero { nullptr };
+    LValue doubleEncodeOffsetAsDouble { nullptr };
 #if USE(BIGINT32)
     LValue bigInt32Zero { nullptr };
 #endif

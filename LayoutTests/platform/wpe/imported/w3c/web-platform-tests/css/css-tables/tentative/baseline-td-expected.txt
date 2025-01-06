@@ -17,38 +17,8 @@ Xp
 Xp
 Xp
 
-FAIL table, .display-table 1 assert_equals:
-<table style="height:100px" class="ahem vgrad">
-  <tbody><tr><td style="font: 75px/1 Ahem;vertical-align:baseline;"><div class="m" data-offset-y="0">Xp</div></td>
-  <td style="" title="default"><div class="m" data-offset-y="25">Xp</div></td>
-  <td style="vertical-align: top"><div class="m" data-offset-y="0">Xp</div></td>
-  <td style="vertical-align: middle"><div class="m" data-offset-y="25">Xp</div></td>
-  <td style="vertical-align: bottom"><div class="m" data-offset-y="50">Xp</div></td>
-  <td style="vertical-align: baseline"><div class="m" data-offset-y="28">Xp</div></td>
-  <td style="vertical-align: sub"><div class="m" data-offset-y="28">Xp</div></td>
-  <td style="vertical-align: super"><div class="m" data-offset-y="28">Xp</div></td>
-  <td style="vertical-align: text-top"><div class="m" data-offset-y="28">Xp</div></td>
-  <td style="vertical-align: text-bottom"><div class="m" data-offset-y="28">Xp</div></td>
-  <td style="vertical-align: 100px"><div class="m" data-offset-y="28">Xp</div></td>
-  <td style="vertical-align: 100%"><div class="m" data-offset-y="28">Xp</div></td>
-</tr></tbody></table>
-offsetTop expected 28 but got 30
-FAIL table, .display-table 2 assert_equals:
-<div style="height:100px;position:relative" class="ahem vgrad display-table">
-  <div class="display-cell" style="font: 75px/1 Ahem;vertical-align:baseline;"><div class="m" data-offset-y="0">Xp</div></div>
-  <div class="display-cell" style="" title="default"><div class="m" data-offset-y="28">Xp</div></div>
-  <div class="display-cell" style="vertical-align: top"><div class="m" data-offset-y="0">Xp</div></div>
-  <div class="display-cell" style="vertical-align: middle"><div class="m" data-offset-y="25">Xp</div></div>
-  <div class="display-cell" style="vertical-align: bottom"><div class="m" data-offset-y="50">Xp</div></div>
-  <div class="display-cell" style="vertical-align: baseline"><div class="m" data-offset-y="28">Xp</div></div>
-  <div class="display-cell" style="vertical-align: sub"><div class="m" data-offset-y="28">Xp</div></div>
-  <div class="display-cell" style="vertical-align: super"><div class="m" data-offset-y="28">Xp</div></div>
-  <div class="display-cell" style="vertical-align: text-top"><div class="m" data-offset-y="28">Xp</div></div>
-  <div class="display-cell" style="vertical-align: text-bottom"><div class="m" data-offset-y="28">Xp</div></div>
-  <div class="display-cell" style="vertical-align: 100px"><div class="m" data-offset-y="28">Xp</div></div>
-  <div class="display-cell" style="vertical-align: 100%"><div class="m" data-offset-y="28">Xp</div></div>
-</div>
-offsetTop expected 28 but got 30
+PASS table, .display-table 1
+PASS table, .display-table 2
 FAIL table, .display-table 3 assert_equals:
 <table style="height:100px;position:relative;display:inline-table">
     <tbody><tr><td style="vertical-align:baseline">
@@ -59,15 +29,6 @@ FAIL table, .display-table 3 assert_equals:
     </td>
   </tr></tbody></table>
 offsetTop expected 30 but got 0
-FAIL table, .display-table 4 assert_equals:
-<table style="border: 1px solid black" data-expected-height="202">
-  <tbody><tr>
-    <td style="vertical-align:baseline;height:200px">base</td>
-    <td style="vertical-align:baseline">
-      <div style="background:yellow;width:50px;height:100px"></div>
-    </td>
-  </tr>
-</tbody></table>
-height expected 202 but got 288
+PASS table, .display-table 4
 PASS table, .display-table 5
 

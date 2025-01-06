@@ -32,11 +32,11 @@
 #import "LocalFrameView.h"
 #import "Logging.h"
 #import "MediaSelectionOption.h"
-#import "PlaybackSessionInterfaceAVKit.h"
+#import "PlaybackSessionInterfaceAVKitLegacy.h"
 #import "PlaybackSessionModelMediaElement.h"
 #import "RenderVideo.h"
 #import "TimeRanges.h"
-#import "VideoPresentationInterfaceAVKit.h"
+#import "VideoPresentationInterfaceAVKitLegacy.h"
 #import "VideoPresentationModelVideoElement.h"
 #import "WebCoreThreadRun.h"
 #import <QuartzCore/CoreAnimation.h>
@@ -44,6 +44,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/CheckedRef.h>
 #import <wtf/CrossThreadCopier.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
 
 #import <pal/ios/UIKitSoftLink.h>
@@ -103,7 +104,7 @@ class VideoFullscreenControllerContext final
     , private PlaybackSessionModel
     , private PlaybackSessionModelClient
     , public CanMakeCheckedPtr<VideoFullscreenControllerContext> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(VideoFullscreenControllerContext);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoFullscreenControllerContext);
 public:
     static Ref<VideoFullscreenControllerContext> create()
@@ -123,10 +124,10 @@ private:
     VideoFullscreenControllerContext() { }
 
     // CheckedPtr interface
-    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
-    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     // VideoPresentationModelClient
     void hasVideoChanged(bool) override;
@@ -171,7 +172,8 @@ private:
     String externalPlaybackLocalizedDeviceName() const override;
     bool wirelessVideoPlaybackDisabled() const override;
     void togglePictureInPicture() override { }
-    void toggleInWindowFullscreen() override { }
+    void enterInWindowFullscreen() override { }
+    void exitInWindowFullscreen() override { }
     void enterFullscreen() override { }
     void toggleMuted() override;
     void setMuted(bool) final;
@@ -1022,8 +1024,8 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
     RunLoop::main().dispatch([protectedThis = Ref { *this }, this, videoElementClientRect, videoDimensions, viewRef, mode, allowsPictureInPicture] {
         ASSERT(isUIThread());
         WebThreadLock();
-        Ref<PlaybackSessionInterfaceIOS> sessionInterface = PlaybackSessionInterfaceAVKit::create(*this);
-        m_interface = VideoPresentationInterfaceAVKit::create(sessionInterface.get());
+        Ref<PlaybackSessionInterfaceIOS> sessionInterface = PlaybackSessionInterfaceAVKitLegacy::create(*this);
+        m_interface = VideoPresentationInterfaceAVKitLegacy::create(sessionInterface.get());
         m_interface->setVideoPresentationModel(this);
 
         m_videoFullscreenView = adoptNS([PAL::allocUIViewInstance() init]);

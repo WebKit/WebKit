@@ -14,13 +14,13 @@
 #include "api/test/frame_generator_interface.h"
 #include "api/test/simulated_network.h"
 #include "call/fake_network_pipe.h"
-#include "call/simulated_network.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/call_test.h"
 #include "test/field_trial.h"
 #include "test/frame_forwarder.h"
 #include "test/gtest.h"
+#include "test/network/simulated_network.h"
 #include "test/null_transport.h"
 #include "test/video_test_constants.h"
 
@@ -116,8 +116,8 @@ TEST_F(CallOperationEndToEndTest, RendersSingleDelayedFrame) {
     // Create frames that are smaller than the send width/height, this is
     // done to check that the callbacks are done after processing video.
     std::unique_ptr<test::FrameGeneratorInterface> frame_generator(
-        test::CreateSquareFrameGenerator(kWidth, kHeight, absl::nullopt,
-                                         absl::nullopt));
+        test::CreateSquareFrameGenerator(kWidth, kHeight, std::nullopt,
+                                         std::nullopt));
     GetVideoSendStream()->SetSource(&frame_forwarder,
                                     DegradationPreference::MAINTAIN_FRAMERATE);
 
@@ -175,7 +175,7 @@ TEST_F(CallOperationEndToEndTest, TransmitsFirstFrame) {
 
     frame_generator = test::CreateSquareFrameGenerator(
         test::VideoTestConstants::kDefaultWidth,
-        test::VideoTestConstants::kDefaultHeight, absl::nullopt, absl::nullopt);
+        test::VideoTestConstants::kDefaultHeight, std::nullopt, std::nullopt);
     GetVideoSendStream()->SetSource(&frame_forwarder,
                                     DegradationPreference::MAINTAIN_FRAMERATE);
     test::FrameGeneratorInterface::VideoFrameData frame_data =

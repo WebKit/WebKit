@@ -1,0 +1,10 @@
+
+PASS getKey() returns the record's primary key
+PASS getKey() returns the record's primary key where the index contains duplicate values
+PASS getKey() attempt to retrieve the primary key of a record that doesn't exist
+PASS getKey() returns the key of the first record within the range
+PASS getKey() throws DataError when using invalid key
+PASS getKey() throws InvalidStateError when the index is deleted
+PASS getKey() throws TransactionInactiveError on aborted transaction
+PASS getKey() throws InvalidStateError on index deleted by aborted upgrade
+

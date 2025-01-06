@@ -37,6 +37,8 @@
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import <pal/system/cocoa/SleepDisablerCocoa.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 namespace WebKit {
 
@@ -71,6 +73,11 @@ void WebProcessProxy::platformInitialize()
     }
 
     throttler().setAllowsActivities(!m_processPool->processesShouldSuspend());
+
+#if ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
+    if (WTF::CocoaApplication::isIBooks())
+        protectedProcessPool()->registerAssetFonts(*this);
+#endif
 }
 
 void WebProcessProxy::platformDestroy()

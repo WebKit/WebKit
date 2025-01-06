@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT currententrychange fires before popstate for navigation.back() and navigation.forward() Test timed out
+PASS currententrychange fires before popstate for navigation.back() and navigation.forward()
 

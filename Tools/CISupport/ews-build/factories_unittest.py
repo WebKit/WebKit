@@ -70,8 +70,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'jhbuild',
             'validate-change',
             'clean-derived-sources',
-            'compile-webkit',
-            'install-built-product'
+            'compile-webkit'
         ],
         'GTK-WK2-Tests-EWS': [
             'configure-build',
@@ -95,7 +94,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'layout-tests',
             'set-build-summary'
         ],
-        'iOS-17-Build-EWS': [
+        'iOS-18-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -110,7 +109,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'iOS-17-Simulator-Build-EWS': [
+        'iOS-18-Simulator-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -125,7 +124,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'iOS-17-Simulator-WK2-Tests-EWS': [
+        'iOS-18-Simulator-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -148,7 +147,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'iOS-17-Simulator-WPT-WK2-Tests-EWS': [
+        'iOS-18-Simulator-WPT-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -171,7 +170,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'macOS-Sonoma-Debug-Build-EWS': [
+        'macOS-Sequoia-Debug-Build-EWS': [
             'configure-build',
             'check-change-relevance',
             'validate-change',
@@ -187,7 +186,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'macOS-Sonoma-Debug-WK2-Tests-EWS': [
+        'macOS-Sequoia-Debug-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -272,6 +271,48 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
+        'macOS-Ventura-Release-WK2-Intel-Tests-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'get-test-expectations-baseline',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'get-updated-test-expectations',
+            'find-modified-layout-tests',
+            'download-built-product',
+            'extract-built-product',
+            'wait-for-crash-collection',
+            'kill-old-processes',
+            'run-layout-tests-in-stress-mode',
+            'layout-tests',
+            'trigger-crash-log-submission',
+            'set-build-summary'
+        ],
+        'macOS-Safer-CPP-Checks-EWS': [
+            'configure-build',
+            'check-change-relevance',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'show-identifier',
+            'install-cmake',
+            'install-ninja',
+            'print-clang-version',
+            'checkout-llvm-project',
+            'update-clang',
+            'checkout-pull-request',
+            'kill-old-processes',
+            'validate-change',
+            'scan-build'
+        ],
         'macOS-Release-WK2-Stress-Tests-EWS': [
             'configure-build',
             'validate-change',
@@ -294,7 +335,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'watchOS-10-Build-EWS': [
+        'visionOS-2-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -309,7 +350,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'watchOS-10-Simulator-Build-EWS': [
+        'visionOS-2-Simulator-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -324,7 +365,30 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'tvOS-17-Build-EWS': [
+        'visionOS-2-Simulator-WK2-Tests-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'get-test-expectations-baseline',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'get-updated-test-expectations',
+            'find-modified-layout-tests',
+            'download-built-product',
+            'extract-built-product',
+            'wait-for-crash-collection',
+            'kill-old-processes',
+            'run-layout-tests-in-stress-mode',
+            'layout-tests',
+            'trigger-crash-log-submission',
+            'set-build-summary'
+        ],
+        'watchOS-11-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -339,7 +403,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'tvOS-17-Simulator-Build-EWS': [
+        'watchOS-11-Simulator-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -350,6 +414,52 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-identifier',
             'apply-patch',
             'checkout-pull-request',
+            'kill-old-processes',
+            'validate-change',
+            'compile-webkit'
+        ],
+        'tvOS-18-Build-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'kill-old-processes',
+            'validate-change',
+            'compile-webkit'
+        ],
+        'tvOS-18-Simulator-Build-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'kill-old-processes',
+            'validate-change',
+            'compile-webkit'
+        ],
+        'PlayStation-Build-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'validate-user-for-queue',
             'kill-old-processes',
             'validate-change',
             'compile-webkit'
@@ -648,7 +758,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'Commit-Queue': [
             'configure-build',
             'validate-change',
-            'validate-commiter-and-reviewer',
+            'validate-committer-and-reviewer',
             'configuration',
             'clean-up-git-repo',
             'checkout-source',
@@ -675,7 +785,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'configure-build',
             'validate-change',
             'determine-label-owner',
-            'validate-commiter-and-reviewer',
+            'validate-committer-and-reviewer',
             'configuration',
             'clean-up-git-repo',
             'checkout-source',
@@ -706,7 +816,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'configure-build',
             'validate-change',
             'determine-label-owner',
-            'validate-commiter-and-reviewer',
+            'validate-committer-and-reviewer',
             'configuration',
             'clean-up-git-repo',
             'checkout-source',

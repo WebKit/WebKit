@@ -10,8 +10,11 @@
 
 #include "api/rtc_error.h"
 
+#include <string>
 #include <utility>
 
+#include "absl/strings/string_view.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {

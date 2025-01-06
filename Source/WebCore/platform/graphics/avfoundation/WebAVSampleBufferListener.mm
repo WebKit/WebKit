@@ -56,11 +56,11 @@ static void* outputObscuredDueToInsufficientExternalProtectionContext = &outputO
 namespace WebCore {
 static bool isSampleBufferVideoRenderer(id object)
 {
-    if (dynamic_objc_cast<AVSampleBufferDisplayLayer>(object, PAL::getAVSampleBufferDisplayLayerClass()))
+    if (is_objc<AVSampleBufferDisplayLayer>(object))
         return true;
 
 #if HAVE(AVSAMPLEBUFFERVIDEORENDERER)
-    if (dynamic_objc_cast<AVSampleBufferVideoRenderer>(object, PAL::getAVSampleBufferVideoRendererClass()))
+    if (is_objc<AVSampleBufferVideoRenderer>(object))
         return true;
 #endif
 
@@ -254,7 +254,7 @@ static bool isSampleBufferVideoRenderer(id object)
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
 - (void)layerReadyForDisplayChanged:(NSNotification *)notification
 {
-    RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object, PAL::getAVSampleBufferDisplayLayerClass());
+    RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object);
     if (!layer)
         return;
 
@@ -271,7 +271,7 @@ static bool isSampleBufferVideoRenderer(id object)
 
 - (void)audioRendererWasAutomaticallyFlushed:(NSNotification *)notification
 {
-    RetainPtr renderer = dynamic_objc_cast<AVSampleBufferAudioRenderer>(notification.object, PAL::getAVSampleBufferAudioRendererClass());
+    RetainPtr renderer = dynamic_objc_cast<AVSampleBufferAudioRenderer>(notification.object);
     CMTime flushTime = [[notification.userInfo valueForKey:AVSampleBufferAudioRendererFlushTimeKey] CMTimeValue];
 
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), flushTime] {

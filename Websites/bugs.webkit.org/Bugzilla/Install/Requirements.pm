@@ -78,8 +78,8 @@ use constant APACHE_PATH => [qw(
 # installed or not. "version" is the version we need, or 0 if we'll accept
 # any version.
 #
-# "blacklist" is an arrayref of regular expressions that describe versions that
-# are 'blacklisted'--that is, even if the version is high enough, Bugzilla
+# "blocklist" is an arrayref of regular expressions that describe versions that
+# are 'blocklisted'--that is, even if the version is high enough, Bugzilla
 # will refuse to say that it's OK to run with that version.
 sub REQUIRED_MODULES {
     my @modules = (
@@ -121,10 +121,12 @@ sub REQUIRED_MODULES {
         version => ($^V >= v5.13.3) ? '1.614' : '1.54'
     },
     # 2.24 contains several useful text virtual methods.
+    # 2.28-3.007 are broken, see https://bugzilla.mozilla.org/show_bug.cgi?id=1560873
     {
         package => 'Template-Toolkit',
         module  => 'Template',
-        version => '2.24'
+        version => '2.24',
+        blocklist => ['^2.2[89]$', '^3.00[0-7]$']
     },
     # 1.300011 has a debug mode for SMTP and automatically pass -i to sendmail.
     {
@@ -137,6 +139,11 @@ sub REQUIRED_MODULES {
         module  => 'Email::MIME',
         # This fixes a memory leak in walk_parts that affected jobqueue.pl.
         version => '1.904'
+    },
+    {
+        package => 'Email-Address',
+        module  => 'Email::Address',
+        version => 0,
     },
     {
         package => 'URI',
@@ -292,7 +299,7 @@ sub OPTIONAL_MODULES {
         # throwing warnings with Perl 5.12.
         version => '0.712',
         # SOAP::Transport::HTTP 1.12 is bogus.
-        blacklist => ['^1\.12$'],
+        blocklist => ['^1\.12$'],
         feature => ['xmlrpc'],
     },
     # Since SOAP::Lite 1.0, XMLRPC::Lite is no longer included
@@ -735,16 +742,16 @@ sub have_vers {
 
     # Must do a string comparison as $vnum may be of the form 5.10.1.
     my $vok = ($vnum ne '-1' && version->new($vnum) >= version->new($wanted)) ? 1 : 0;
-    my $blacklisted;
-    if ($vok && $params->{blacklist}) {
-        $blacklisted = grep($vnum =~ /$_/, @{$params->{blacklist}});
-        $vok = 0 if $blacklisted;
+    my $blocklisted;
+    if ($vok && $params->{blocklist}) {
+        $blocklisted = grep($vnum =~ /$_/, @{$params->{blocklist}});
+        $vok = 0 if $blocklisted;
     }
 
     if ($output) {
         _checking_for({ 
             package => $package, ok => $vok, wanted => $wanted,
-            found   => $vnum, blacklisted => $blacklisted
+            found   => $vnum, blocklisted => $blocklisted
         });
     }
     
@@ -753,8 +760,8 @@ sub have_vers {
 
 sub _checking_for {
     my ($params) = @_;
-    my ($package, $ok, $wanted, $blacklisted, $found) = 
-        @$params{qw(package ok wanted blacklisted found)};
+    my ($package, $ok, $wanted, $blocklisted, $found) =
+        @$params{qw(package ok wanted blocklisted found)};
 
     my $ok_string = $ok ? install_string('module_ok') : '';
 
@@ -781,10 +788,10 @@ sub _checking_for {
         $ok_string = install_string('module_not_found');
     }
 
-    my $black_string = $blacklisted ? install_string('blacklisted') : '';
+    my $block_string = $blocklisted ? install_string('blocklisted') : '';
     my $want_string  = $wanted ? "v$wanted" : install_string('any');
 
-    my $str = sprintf "%s %20s %-11s $ok_string $black_string\n",
+    my $str = sprintf "%s %20s %-11s $ok_string $block_string\n",
                 install_string('checking_for'), $package, "($want_string)";
     print $ok ? $str : colored($str, COLOR_ERROR);
 }

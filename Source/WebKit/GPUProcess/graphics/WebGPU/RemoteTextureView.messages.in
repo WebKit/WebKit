@@ -23,7 +23,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteTextureView NotRefCounted Stream {
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU,
+    EnabledBy=WebGPUEnabled
+]
+messages -> RemoteTextureView Stream {
     void Destruct()
     void SetLabel(String label)
 }

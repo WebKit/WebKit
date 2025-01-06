@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "SlotVisitorMacros.h"
+#include "WasmCallee.h"
 #include "WasmFormat.h"
 #include "WasmLimits.h"
 #include "WriteBarrier.h"
@@ -36,13 +37,15 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class JSWebAssemblyTable;
+class WebAssemblyFunctionBase;
 
 namespace Wasm {
 
-class Instance;
 class FuncRefTable;
 
 class Table : public ThreadSafeRefCounted<Table> {
@@ -105,8 +108,8 @@ protected:
     JSWebAssemblyTable* m_owner;
 };
 
-class ExternRefTable final : public Table {
-    WTF_MAKE_TZONE_ALLOCATED(ExternRefTable);
+class ExternOrAnyRefTable final : public Table {
+    WTF_MAKE_TZONE_ALLOCATED(ExternOrAnyRefTable);
 public:
     friend class Table;
 
@@ -115,7 +118,7 @@ public:
     JSValue get(uint32_t index) const { return m_jsValues.get()[index].get(); }
 
 private:
-    ExternRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType);
+    ExternOrAnyRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType);
 
     MallocPtr<WriteBarrier<Unknown>, VMMalloc> m_jsValues;
 };
@@ -127,18 +130,24 @@ public:
 
     JS_EXPORT_PRIVATE ~FuncRefTable();
 
-    // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to Instance here because the js ensures that Table keeps all the instances alive. We couldn't hold a Ref here because it would cause cycles.
+    // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to JSWebAssemblyInstance here because the js ensures that Table keeps all the instances alive.
     struct Function {
-        WasmToWasmImportableFunction m_function;
-        Instance* m_instance { nullptr };
+        WasmOrJSImportableFunction m_function;
+        JSWebAssemblyInstance* m_instance { nullptr };
         WriteBarrier<Unknown> m_value { NullWriteBarrierTag };
+        // In the case when we do not JIT, we cannot use the WasmToJSCallee singleton.
+        // This callee gives the jitless wasm_to_js thunk the info it needs to call the imported
+        // function with the correct wasm type.
+        // Note that wasm to js calls will have m_function's boxedWasmCalleeLoadLocation already set.
+        RefPtr<WasmToJSCallee> m_protectedJSCallee;
+        uintptr_t m_boxedProtectedJSCallee;
 
         static constexpr ptrdiff_t offsetOfFunction() { return OBJECT_OFFSETOF(Function, m_function); }
         static constexpr ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(Function, m_instance); }
         static constexpr ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(Function, m_value); }
     };
 
-    void setFunction(uint32_t, JSObject*, WasmToWasmImportableFunction, Instance*);
+    void setFunction(uint32_t, WebAssemblyFunctionBase*);
     const Function& function(uint32_t) const;
     void copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex);
 
@@ -158,7 +167,7 @@ public:
 private:
     FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType);
 
-    Function* tailPointer() { return bitwise_cast<Function*>(bitwise_cast<uint8_t*>(this) + offsetOfTail()); }
+    Function* tailPointer() { return std::bit_cast<Function*>(std::bit_cast<uint8_t*>(this) + offsetOfTail()); }
 
     static Ref<FuncRefTable> createFixedSized(uint32_t size, Type wasmType);
 
@@ -166,5 +175,7 @@ private:
 };
 
 } } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

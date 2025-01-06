@@ -22,49 +22,54 @@
 
 #if ENABLE(WEB_CODECS) && USE(GSTREAMER)
 
-#include "GStreamerCodecUtilities.h"
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"
 #include "PlatformRawAudioDataGStreamer.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerAudioEncoder);
 
 GST_DEBUG_CATEGORY(webkit_audio_encoder_debug);
 #define GST_CAT_DEFAULT webkit_audio_encoder_debug
 
 static WorkQueue& gstEncoderWorkQueue()
 {
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("GStreamer AudioEncoder Queue"_s));
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<Ref<WorkQueue>> queue;
+    std::call_once(onceKey, [] {
+        queue.construct(WorkQueue::create("GStreamer AudioEncoder queue"_s));
+    });
     return queue.get();
 }
 
 class GStreamerInternalAudioEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerInternalAudioEncoder, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GStreamerInternalAudioEncoder);
     WTF_MAKE_NONCOPYABLE(GStreamerInternalAudioEncoder);
-    WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static Ref<GStreamerInternalAudioEncoder> create(AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback, AudioEncoder::PostTaskCallback&& postTaskCallback, GRefPtr<GstElement>&& element) { return adoptRef(*new GStreamerInternalAudioEncoder(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback), WTFMove(element))); }
+    static Ref<GStreamerInternalAudioEncoder> create(AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element) { return adoptRef(*new GStreamerInternalAudioEncoder(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(element))); }
     ~GStreamerInternalAudioEncoder();
 
     String initialize(const String& codecName, const AudioEncoder::Config&);
-    void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
     bool encode(AudioEncoder::RawFrame&&);
-    void flush(Function<void()>&&);
+    void flush();
     void close() { m_isClosed = true; }
 
     const RefPtr<GStreamerElementHarness> harness() const { return m_harness; }
     bool isClosed() const { return m_isClosed; }
 
 private:
-    GStreamerInternalAudioEncoder(AudioEncoder::DescriptionCallback&&, AudioEncoder::OutputCallback&&, AudioEncoder::PostTaskCallback&&, GRefPtr<GstElement>&&);
+    GStreamerInternalAudioEncoder(AudioEncoder::DescriptionCallback&&, AudioEncoder::OutputCallback&&, GRefPtr<GstElement>&&);
 
     AudioEncoder::DescriptionCallback m_descriptionCallback;
     AudioEncoder::OutputCallback m_outputCallback;
-    AudioEncoder::PostTaskCallback m_postTaskCallback;
     int64_t m_timestamp { 0 };
     std::optional<uint64_t> m_duration;
     bool m_isClosed { false };
@@ -76,7 +81,7 @@ private:
     GRefPtr<GstCaps> m_inputCaps;
 };
 
-void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
+void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -88,9 +93,7 @@ void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::
         auto components = codecName.split('-');
         if (components.size() != 2) {
             auto errorMessage = makeString("Invalid LPCM codec string: "_s, codecName);
-            postTaskCallback([callback = WTFMove(callback), errorMessage = WTFMove(errorMessage)]() mutable {
-                callback(makeUnexpected(WTFMove(errorMessage)));
-            });
+            callback(makeUnexpected(WTFMove(errorMessage)));
             return;
         }
         element = gst_element_factory_make("identity", nullptr);
@@ -99,34 +102,28 @@ void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::
         auto lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Encoding, codecName);
         if (!lookupResult) {
             auto errorMessage = makeString("No GStreamer encoder found for codec "_s, codecName);
-            postTaskCallback([callback = WTFMove(callback), errorMessage = WTFMove(errorMessage)]() mutable {
-                callback(makeUnexpected(WTFMove(errorMessage)));
-            });
+            callback(makeUnexpected(WTFMove(errorMessage)));
             return;
         }
         element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
     }
-    auto encoder = makeUniqueRef<GStreamerAudioEncoder>(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback), WTFMove(element));
-    auto internalEncoder = encoder->m_internalEncoder;
+    Ref encoder = adoptRef(*new GStreamerAudioEncoder(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(element)));
+    Ref internalEncoder = encoder->m_internalEncoder;
     auto error = internalEncoder->initialize(codecName, config);
     if (!error.isEmpty()) {
-        encoder->m_internalEncoder->postTask([callback = WTFMove(callback), error = WTFMove(error)]() mutable {
-            GST_WARNING("Error creating encoder: %s", error.ascii().data());
-            callback(makeUnexpected(makeString("GStreamer encoding initialization failed with error: "_s, error)));
-        });
+        GST_WARNING("Error creating encoder: %s", error.ascii().data());
+        callback(makeUnexpected(makeString("GStreamer encoding initialization failed with error: "_s, error)));
         return;
     }
     gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), encoder = WTFMove(encoder)]() mutable {
         auto internalEncoder = encoder->m_internalEncoder;
-        internalEncoder->postTask([callback = WTFMove(callback), encoder = WTFMove(encoder)]() mutable {
-            GST_DEBUG("Encoder created");
-            callback(UniqueRef<AudioEncoder> { WTFMove(encoder) });
-        });
+        GST_DEBUG("Encoder created");
+        callback(Ref<AudioEncoder> { WTFMove(encoder) });
     });
 }
 
-GStreamerAudioEncoder::GStreamerAudioEncoder(DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback, GRefPtr<GstElement>&& element)
-    : m_internalEncoder(GStreamerInternalAudioEncoder::create(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback), WTFMove(element)))
+GStreamerAudioEncoder::GStreamerAudioEncoder(DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
+    : m_internalEncoder(GStreamerInternalAudioEncoder::create(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(element)))
 {
 }
 
@@ -136,33 +133,22 @@ GStreamerAudioEncoder::~GStreamerAudioEncoder()
     close();
 }
 
-void GStreamerAudioEncoder::encode(RawFrame&& frame, EncodeCallback&& callback)
+Ref<AudioEncoder::EncodePromise> GStreamerAudioEncoder::encode(RawFrame&& frame)
 {
-    gstEncoderWorkQueue().dispatch([frame = WTFMove(frame), encoder = m_internalEncoder, callback = WTFMove(callback)]() mutable {
-        auto result = encoder->encode(WTFMove(frame));
-        if (encoder->isClosed())
-            return;
+    return invokeAsync(gstEncoderWorkQueue(), [frame = WTFMove(frame), encoder = m_internalEncoder]() mutable {
+        if (!encoder->encode(WTFMove(frame)))
+            return EncodePromise::createAndReject("Encoding failed"_s);
 
-        String resultString;
-        if (result)
-            encoder->harness()->processOutputSamples();
-        else
-            resultString = "Encoding failed"_s;
-
-        encoder->postTask([weakEncoder = ThreadSafeWeakPtr { encoder.get() }, result = WTFMove(resultString), callback = WTFMove(callback)]() mutable {
-            auto encoder = weakEncoder.get();
-            if (!encoder || encoder->isClosed())
-                return;
-
-            callback(WTFMove(result));
-        });
+        encoder->harness()->processOutputSamples();
+        return EncodePromise::createAndResolve();
     });
 }
 
-void GStreamerAudioEncoder::flush(Function<void()>&& callback)
+Ref<GenericPromise> GStreamerAudioEncoder::flush()
 {
-    gstEncoderWorkQueue().dispatch([encoder = m_internalEncoder, callback = WTFMove(callback)]() mutable {
-        encoder->flush(WTFMove(callback));
+    return invokeAsync(gstEncoderWorkQueue(), [encoder = m_internalEncoder] {
+        encoder->flush();
+        return GenericPromise::createAndResolve();
     });
 }
 
@@ -178,10 +164,9 @@ void GStreamerAudioEncoder::close()
     m_internalEncoder->close();
 }
 
-GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback, AudioEncoder::PostTaskCallback&& postTaskCallback, GRefPtr<GstElement>&& encoderElement)
+GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& encoderElement)
     : m_descriptionCallback(WTFMove(descriptionCallback))
     , m_outputCallback(WTFMove(outputCallback))
-    , m_postTaskCallback(WTFMove(postTaskCallback))
     , m_encoder(WTFMove(encoderElement))
 {
     static Atomic<uint64_t> counter = 0;
@@ -211,44 +196,33 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::Descr
         if (!caps)
             return;
 
-        encoder->postTask([weakEncoder = WTFMove(weakEncoder), caps = WTFMove(caps)] {
-            auto encoder = weakEncoder->get();
-            if (!encoder)
-                return;
+        auto structure = gst_caps_get_structure(caps.get(), 0);
+        GstBuffer* header = nullptr;
+        if (auto streamHeader = gst_structure_get_value(structure, "streamheader")) {
+            RELEASE_ASSERT(GST_VALUE_HOLDS_ARRAY(streamHeader));
+            auto firstValue = gst_value_array_get_value(streamHeader, 0);
+            RELEASE_ASSERT(GST_VALUE_HOLDS_BUFFER(firstValue));
+            header = gst_value_get_buffer(firstValue);
+        } else if (auto codecData = gst_structure_get_value(structure, "codec_data")) {
+            RELEASE_ASSERT(GST_VALUE_HOLDS_BUFFER(codecData));
+            header = gst_value_get_buffer(codecData);
+        }
 
-            auto structure = gst_caps_get_structure(caps.get(), 0);
-            GstBuffer* header = nullptr;
-            if (auto streamHeader = gst_structure_get_value(structure, "streamheader")) {
-                RELEASE_ASSERT(GST_VALUE_HOLDS_ARRAY(streamHeader));
-                auto firstValue = gst_value_array_get_value(streamHeader, 0);
-                RELEASE_ASSERT(GST_VALUE_HOLDS_BUFFER(firstValue));
-                header = gst_value_get_buffer(firstValue);
-            } else if (auto codecData = gst_structure_get_value(structure, "codec_data")) {
-                RELEASE_ASSERT(GST_VALUE_HOLDS_BUFFER(codecData));
-                header = gst_value_get_buffer(codecData);
-            }
-
-            AudioEncoder::ActiveConfiguration configuration;
-            if (header) {
-                GstMappedBuffer buffer(header, GST_MAP_READ);
-                configuration.description = { { buffer.data(), buffer.size() } };
-            }
-            int numberOfChannels;
-            if (gst_structure_get_int(structure, "channels", &numberOfChannels))
-                configuration.numberOfChannels = numberOfChannels;
-
-            int sampleRate;
-            if (gst_structure_get_int(structure, "rate", &sampleRate))
-                configuration.sampleRate = sampleRate;
-
-            encoder->m_descriptionCallback(WTFMove(configuration));
-        });
+        AudioEncoder::ActiveConfiguration configuration;
+        if (header) {
+            GstMappedBuffer buffer(header, GST_MAP_READ);
+            configuration.description = buffer.createVector();
+        }
+        configuration.numberOfChannels = gstStructureGet<int>(structure, "channels"_s);
+        configuration.sampleRate = gstStructureGet<int>(structure, "rate"_s);
+        encoder->m_descriptionCallback(WTFMove(configuration));
     }), new ThreadSafeWeakPtr { *this }, [](void* data, GClosure*) {
         delete static_cast<ThreadSafeWeakPtr<GStreamerInternalAudioEncoder>*>(data);
     }, static_cast<GConnectFlags>(0));
 
     m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
-        if (!weakThis.get())
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
         if (m_isClosed)
             return;
@@ -270,11 +244,7 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::Descr
         GST_TRACE_OBJECT(m_harness->element(), "Notifying encoded%s frame", isKeyFrame ? " key" : "");
         GstMappedBuffer mappedBuffer(outputBuffer, GST_MAP_READ);
         AudioEncoder::EncodedFrame encodedFrame { mappedBuffer.createVector(), isKeyFrame, m_timestamp, m_duration };
-        m_postTaskCallback([protectedThis = Ref { *this }, this, encodedFrame = WTFMove(encodedFrame)]() mutable {
-            if (protectedThis->m_isClosed)
-                return;
-            m_outputCallback({ WTFMove(encodedFrame) });
-        });
+        m_outputCallback({ WTFMove(encodedFrame) });
     });
 }
 
@@ -290,34 +260,56 @@ GStreamerInternalAudioEncoder::~GStreamerInternalAudioEncoder()
 String GStreamerInternalAudioEncoder::initialize(const String& codecName, const AudioEncoder::Config& config)
 {
     GST_DEBUG_OBJECT(m_harness->element(), "Initializing encoder for codec %s", codecName.ascii().data());
+
+    GUniquePtr<char> name(gst_element_get_name(m_encoder.get()));
+    auto nameView = StringView::fromLatin1(name.get());
     if (codecName.startsWith("mp4a"_s)) {
         const char* streamFormat = config.isAacADTS.value_or(false) ? "adts" : "raw";
         m_outputCaps = adoptGRef(gst_caps_new_simple("audio/mpeg", "mpegversion", G_TYPE_INT, 4, "stream-format", G_TYPE_STRING, streamFormat, nullptr));
         if (gstObjectHasProperty(m_encoder.get(), "bitrate") && config.bitRate && config.bitRate < std::numeric_limits<int>::max())
             g_object_set(m_encoder.get(), "bitrate", static_cast<int>(config.bitRate), nullptr);
-    } else if (codecName == "mp3"_s)
+    } else if (codecName == "mp3"_s) {
+        if (gstObjectHasProperty(m_encoder.get(), "cbr")) {
+            switch (config.bitRateMode) {
+            case BitrateMode::Constant:
+                g_object_set(m_encoder.get(), "cbr", TRUE, nullptr);
+                break;
+            case BitrateMode::Variable:
+                g_object_set(m_encoder.get(), "cbr", FALSE, nullptr);
+                break;
+            };
+        }
         m_outputCaps = adoptGRef(gst_caps_new_simple("audio/mpeg", "mpegversion", G_TYPE_INT, 1, "layer", G_TYPE_INT, 3, nullptr));
-    else if (codecName == "opus"_s) {
+    } else if (codecName == "opus"_s && nameView.startsWith("opusenc"_s)) {
+        if (config.bitRate && config.bitRate < std::numeric_limits<int>::max()) {
+            if (config.bitRate >= 4000 && config.bitRate <= 650000)
+                g_object_set(m_encoder.get(), "bitrate", static_cast<int>(config.bitRate), nullptr);
+            else
+                return makeString("Opus bitrate out of range: "_s, config.bitRate, "not in [4000, 650000]"_s);
+        }
+
+        if (config.numberOfChannels > 255)
+            return makeString("Too many audio channels requested from Opus config, the maximum allowed is 255."_s);
+
+        switch (config.bitRateMode) {
+        case BitrateMode::Constant:
+            gst_util_set_object_arg(G_OBJECT(m_encoder.get()), "bitrate-type", "cbr");
+            break;
+        case BitrateMode::Variable:
+            gst_util_set_object_arg(G_OBJECT(m_encoder.get()), "bitrate-type", "vbr");
+            break;
+        };
+
         if (auto parameters = config.opusConfig) {
-            GUniquePtr<char> name(gst_element_get_name(m_encoder.get()));
-            if (LIKELY(g_str_has_prefix(name.get(), "opusenc"))) {
-                if (config.bitRate && config.bitRate < std::numeric_limits<int>::max()) {
-                    if (config.bitRate >= 4000 && config.bitRate <= 650000)
-                        g_object_set(m_encoder.get(), "bitrate", static_cast<int>(config.bitRate), nullptr);
-                    else
-                        return makeString("Opus bitrate out of range: "_s, config.bitRate, "not in [4000, 650000]"_s);
-                }
+            g_object_set(m_encoder.get(), "packet-loss-percentage", parameters->packetlossperc, "inband-fec", parameters->useinbandfec, "dtx", parameters->usedtx, nullptr);
 
-                g_object_set(m_encoder.get(), "packet-loss-percentage", parameters->packetlossperc, "inband-fec", parameters->useinbandfec, "dtx", parameters->usedtx, nullptr);
+            if (parameters->complexity)
+                g_object_set(m_encoder.get(), "complexity", static_cast<int>(*parameters->complexity), nullptr);
 
-                if (parameters->complexity)
-                    g_object_set(m_encoder.get(), "complexity", static_cast<int>(*parameters->complexity), nullptr);
-
-                // The frame-size property is expressed in milli-seconds, the value in parameters is
-                // expressed in micro-seconds.
-                auto frameSize = makeString(parameters->frameDuration / 1000);
-                gst_util_set_object_arg(G_OBJECT(m_encoder.get()), "frame-size", frameSize.ascii().data());
-            }
+            // The frame-size property is expressed in milli-seconds, the value in parameters is
+            // expressed in micro-seconds.
+            auto frameSize = makeString(parameters->frameDuration / 1000);
+            gst_util_set_object_arg(G_OBJECT(m_encoder.get()), "frame-size", frameSize.ascii().data());
         }
         int channelMappingFamily = config.numberOfChannels <= 2 ? 0 : 1;
         m_outputCaps = adoptGRef(gst_caps_new_simple("audio/x-opus", "channel-mapping-family", G_TYPE_INT, channelMappingFamily, nullptr));
@@ -328,8 +320,7 @@ String GStreamerInternalAudioEncoder::initialize(const String& codecName, const 
     else if (codecName == "flac"_s) {
         m_outputCaps = adoptGRef(gst_caps_new_empty_simple("audio/x-flac"));
         if (auto parameters = config.flacConfig) {
-            GUniquePtr<char> name(gst_element_get_name(m_encoder.get()));
-            if (LIKELY(g_str_has_prefix(name.get(), "flacenc")))
+            if (nameView.startsWith("flacenc"_s))
                 g_object_set(m_encoder.get(), "blocksize", static_cast<unsigned>(parameters->blockSize), "quality", parameters->compressLevel, nullptr);
         }
     } else if (codecName == "vorbis"_s) {
@@ -378,10 +369,9 @@ bool GStreamerInternalAudioEncoder::encode(AudioEncoder::RawFrame&& rawFrame)
     return m_harness->pushSample(gstAudioFrame->sample());
 }
 
-void GStreamerInternalAudioEncoder::flush(Function<void()>&& callback)
+void GStreamerInternalAudioEncoder::flush()
 {
     m_harness->flush();
-    m_postTaskCallback(WTFMove(callback));
 }
 
 #undef GST_CAT_DEFAULT

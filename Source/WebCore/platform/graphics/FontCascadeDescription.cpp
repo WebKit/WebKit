@@ -32,6 +32,7 @@
 
 #include "Font.h"
 #include <wtf/text/StringHash.h>
+#include <wtf/text/TextStream.h>
 
 #if USE(CORE_TEXT)
 #include "FontCascade.h"
@@ -156,6 +157,31 @@ void FontCascadeDescription::resolveFontSizeAdjustFromFontIfNeeded(const Font& f
 
     auto aspectValue = fontSizeAdjust.resolve(computedSize(), font.fontMetrics());
     setFontSizeAdjust({ fontSizeAdjust.metric, FontSizeAdjust::ValueType::FromFont, aspectValue });
+}
+
+TextStream& operator<<(TextStream& ts, const FontCascadeDescription& fontCascadeDescription)
+{
+    bool first = true;
+    for (auto& family : fontCascadeDescription.families()) {
+        if (!first)
+            ts << ", ";
+        ts << family;
+        first = false;
+    }
+
+    ts << ", specified size " << fontCascadeDescription.specifiedSize();
+    ts << ", computed size " << fontCascadeDescription.computedSize();
+    ts << ", is absolute size " << fontCascadeDescription.isAbsoluteSize();
+    if (fontCascadeDescription.kerning() != Kerning::Auto)
+        ts << ", kerning " << fontCascadeDescription.kerning();
+
+    if (fontCascadeDescription.fontSmoothing() != FontSmoothingMode::AutoSmoothing)
+        ts << ", font smoothing " << fontCascadeDescription.fontSmoothing();
+
+    ts << ", keyword size " << fontCascadeDescription.keywordSize();
+    ts << ", is specified font " << fontCascadeDescription.isSpecifiedFont();
+
+    return ts;
 }
 
 } // namespace WebCore

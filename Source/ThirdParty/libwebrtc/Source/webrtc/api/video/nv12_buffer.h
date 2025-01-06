@@ -11,8 +11,9 @@
 #ifndef API_VIDEO_NV12_BUFFER_H_
 #define API_VIDEO_NV12_BUFFER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
-#include <utility>
 
 #include "api/scoped_refptr.h"
 #include "api/video/video_frame_buffer.h"

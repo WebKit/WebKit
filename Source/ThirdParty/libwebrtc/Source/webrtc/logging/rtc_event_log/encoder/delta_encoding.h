@@ -14,11 +14,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 
 namespace webrtc {
 
@@ -29,8 +29,8 @@ namespace webrtc {
 // be provided separately to the decoder.
 // This function never fails.
 // TODO(eladalon): Split into optional and non-optional variants (efficiency).
-std::string EncodeDeltas(absl::optional<uint64_t> base,
-                         const std::vector<absl::optional<uint64_t>>& values);
+std::string EncodeDeltas(std::optional<uint64_t> base,
+                         const std::vector<std::optional<uint64_t>>& values);
 
 // EncodeDeltas() and DecodeDeltas() are inverse operations;
 // invoking DecodeDeltas() over the output of EncodeDeltas(), will return
@@ -39,10 +39,9 @@ std::string EncodeDeltas(absl::optional<uint64_t> base,
 // of `num_of_deltas` elements based on `base`, the function returns an empty
 // vector, which signals an error.
 // TODO(eladalon): Split into optional and non-optional variants (efficiency).
-std::vector<absl::optional<uint64_t>> DecodeDeltas(
-    absl::string_view input,
-    absl::optional<uint64_t> base,
-    size_t num_of_deltas);
+std::vector<std::optional<uint64_t>> DecodeDeltas(absl::string_view input,
+                                                  std::optional<uint64_t> base,
+                                                  size_t num_of_deltas);
 
 }  // namespace webrtc
 

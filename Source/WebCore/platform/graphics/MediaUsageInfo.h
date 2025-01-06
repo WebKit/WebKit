@@ -58,6 +58,7 @@ struct MediaUsageInfo {
     bool isVideoAndRequiresUserGestureForVideoRateChange { false };
     bool isAudioAndRequiresUserGestureForAudioRateChange { false };
     bool isVideoAndRequiresUserGestureForVideoDueToLowPowerMode { false };
+    bool isVideoAndRequiresUserGestureForVideoDueToAggressiveThermalMitigation { false };
     bool noUserGestureRequired { false };
     bool requiresPlaybackAndIsNotPlaying { false };
     bool hasEverNotifiedAboutPlaying { false };

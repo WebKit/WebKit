@@ -35,7 +35,7 @@
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionTabIdentifier.h"
 #import "WebExtensionWindowIdentifier.h"
-#import "WebPageProxy.h"
+#import "WebFrame.h"
 #import "WebProcess.h"
 #import "_WKWebExtensionWebRequestFilter.h"
 
@@ -48,11 +48,14 @@ void WebExtensionAPIWebRequestEvent::invokeListenersWithArgument(NSDictionary *a
     if (m_listeners.isEmpty())
         return;
 
-    _WKWebExtensionWebRequestResourceType resourceType = _WKWebExtensionWebRequestResourceTypeFromResourceLoadInfo(resourceLoadInfo);
+    auto resourceType = toWebExtensionWebRequestResourceType(resourceLoadInfo);
     auto resourceURL = resourceLoadInfo.originalURL;
 
-    for (auto& listener : m_listeners) {
-        _WKWebExtensionWebRequestFilter *filter = listener.second.get();
+    // Copy the listeners since call() can trigger a mutation of the listeners.
+    auto listenersCopy = m_listeners;
+
+    for (auto& listener : listenersCopy) {
+        auto *filter = listener.second.get();
         if (filter && ![filter matchesRequestForResourceOfType:resourceType URL:resourceURL tabID:toWebAPI(tabIdentifier) windowID:toWebAPI(windowIdentifier)])
             continue;
 
@@ -60,7 +63,7 @@ void WebExtensionAPIWebRequestEvent::invokeListenersWithArgument(NSDictionary *a
     }
 }
 
-void WebExtensionAPIWebRequestEvent::addListener(WebPage& page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, id extraInfoSpec, NSString **outExceptionString)
+void WebExtensionAPIWebRequestEvent::addListener(WebCore::FrameIdentifier frameIdentifier, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, id extraInfoSpec, NSString **outExceptionString)
 {
     _WKWebExtensionWebRequestFilter *parsedFilter;
     if (filter) {
@@ -69,13 +72,13 @@ void WebExtensionAPIWebRequestEvent::addListener(WebPage& page, RefPtr<WebExtens
             return;
     }
 
-    m_pageProxyIdentifier = page.webPageProxyIdentifier();
+    m_frameIdentifier = frameIdentifier;
     m_listeners.append({ listener, parsedFilter });
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(m_pageProxyIdentifier, m_type, contentWorldType()), extensionContext().identifier());
+    WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(*m_frameIdentifier, m_type, contentWorldType()), extensionContext().identifier());
 }
 
-void WebExtensionAPIWebRequestEvent::removeListener(WebPage& page, RefPtr<WebExtensionCallbackHandler> listener)
+void WebExtensionAPIWebRequestEvent::removeListener(WebCore::FrameIdentifier frameIdentifier, RefPtr<WebExtensionCallbackHandler> listener)
 {
     auto removedCount = m_listeners.removeAllMatching([&](auto& entry) {
         return entry.first->callbackFunction() == listener->callbackFunction();
@@ -84,9 +87,9 @@ void WebExtensionAPIWebRequestEvent::removeListener(WebPage& page, RefPtr<WebExt
     if (!removedCount)
         return;
 
-    ASSERT(page.webPageProxyIdentifier() == m_pageProxyIdentifier);
+    ASSERT(frameIdentifier == m_frameIdentifier);
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(m_pageProxyIdentifier, m_type, contentWorldType(), removedCount), extensionContext().identifier());
+    WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(*m_frameIdentifier, m_type, contentWorldType(), removedCount), extensionContext().identifier());
 }
 
 bool WebExtensionAPIWebRequestEvent::hasListener(RefPtr<WebExtensionCallbackHandler> listener)
@@ -101,7 +104,7 @@ void WebExtensionAPIWebRequestEvent::removeAllListeners()
     if (m_listeners.isEmpty())
         return;
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(m_pageProxyIdentifier, m_type, contentWorldType(), m_listeners.size()), extensionContext().identifier());
+    WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(*m_frameIdentifier, m_type, contentWorldType(), m_listeners.size()), extensionContext().identifier());
 
     m_listeners.clear();
 }

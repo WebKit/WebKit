@@ -17,25 +17,42 @@
 
 #include <openssl/base.h>
 
+#include "../ec/internal.h"
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 
-// ecdsa_sign_with_nonce_for_known_answer_test behaves like |ECDSA_do_sign| but
-// takes a fixed nonce. This function is used as part of known-answer tests in
-// the FIPS module.
-ECDSA_SIG *ecdsa_sign_with_nonce_for_known_answer_test(const uint8_t *digest,
-                                                       size_t digest_len,
-                                                       const EC_KEY *eckey,
-                                                       const uint8_t *nonce,
-                                                       size_t nonce_len);
+// ECDSA_MAX_FIXED_LEN is the maximum length of an ECDSA signature in the
+// fixed-width, big-endian format from IEEE P1363.
+#define ECDSA_MAX_FIXED_LEN (2 * EC_MAX_BYTES)
 
-// ecdsa_do_verify_no_self_test does the same as |ECDSA_do_verify|, but doesn't
+// ecdsa_sign_fixed behaves like |ECDSA_sign| but uses the fixed-width,
+// big-endian format from IEEE P1363.
+int ecdsa_sign_fixed(const uint8_t *digest, size_t digest_len, uint8_t *sig,
+                     size_t *out_sig_len, size_t max_sig_len,
+                     const EC_KEY *key);
+
+// ecdsa_sign_fixed_with_nonce_for_known_answer_test behaves like
+// |ecdsa_sign_fixed| but takes a caller-supplied nonce. This function is used
+// as part of known-answer tests in the FIPS module.
+int ecdsa_sign_fixed_with_nonce_for_known_answer_test(
+    const uint8_t *digest, size_t digest_len, uint8_t *sig, size_t *out_sig_len,
+    size_t max_sig_len, const EC_KEY *key, const uint8_t *nonce,
+    size_t nonce_len);
+
+// ecdsa_verify_fixed behaves like |ECDSA_verify| but uses the fixed-width,
+// big-endian format from IEEE P1363.
+int ecdsa_verify_fixed(const uint8_t *digest, size_t digest_len,
+                       const uint8_t *sig, size_t sig_len, const EC_KEY *key);
+
+// ecdsa_verify_fixed_no_self_test behaves like ecdsa_verify_fixed, but doesn't
 // try to run the self-test first. This is for use in the self tests themselves,
 // to prevent an infinite loop.
-int ecdsa_do_verify_no_self_test(const uint8_t *digest, size_t digest_len,
-                                 const ECDSA_SIG *sig, const EC_KEY *eckey);
+int ecdsa_verify_fixed_no_self_test(const uint8_t *digest, size_t digest_len,
+                                    const uint8_t *sig, size_t sig_len,
+                                    const EC_KEY *key);
 
 
 #if defined(__cplusplus)

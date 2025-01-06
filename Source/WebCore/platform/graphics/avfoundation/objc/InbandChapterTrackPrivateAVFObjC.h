@@ -29,6 +29,7 @@
 
 #include "InbandTextTrackPrivate.h"
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVTimedMetadataGroup;
@@ -37,6 +38,7 @@ OBJC_CLASS NSLocale;
 namespace WebCore {
 
 class InbandChapterTrackPrivateAVFObjC : public InbandTextTrackPrivate {
+    WTF_MAKE_TZONE_ALLOCATED(InbandChapterTrackPrivateAVFObjC);
 public:
     static Ref<InbandChapterTrackPrivateAVFObjC> create(RetainPtr<NSLocale> locale, TrackID trackID)
     {

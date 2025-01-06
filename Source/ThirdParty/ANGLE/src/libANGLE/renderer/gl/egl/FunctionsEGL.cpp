@@ -358,7 +358,7 @@ egl::Error FunctionsEGL::initialize(EGLAttrib platformType, EGLNativeDisplayType
 
     if (hasExtension("EGL_EXT_image_dma_buf_import_modifiers"))
     {
-        // https://anglebug.com/7664
+        // https://anglebug.com/42266130
         // Some drivers, notably older versions of ANGLE, announce this extension without
         // implementing the following functions. DisplayEGL checks for this case and disables the
         // extension.

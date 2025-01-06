@@ -4,4 +4,6 @@ PASS Property border-image-outset value '1px 2'
 PASS Property border-image-outset value '1px 2 3px'
 PASS Property border-image-outset value '1px 2 3px 4'
 PASS Property border-image-outset value '0 calc(0.5em + 10px) 3 calc(-0.5em + 10px)'
+PASS Property border-image-outset value 'calc(10 + (sign(2cqw - 10px) * 5))'
+PASS Property border-image-outset value 'calc(10 + (sign(2cqw - 10px) * 5)) calc(20px + (sign(2cqw - 10px) * 5px)'
 

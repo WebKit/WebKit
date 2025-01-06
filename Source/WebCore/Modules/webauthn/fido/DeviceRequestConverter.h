@@ -57,6 +57,9 @@ WEBCORE_EXPORT Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<ui
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#authenticatorGetAssertion
 WEBCORE_EXPORT Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, AuthenticatorSupportedOptions::UserVerificationAvailability, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> = std::nullopt);
 
+
+WEBCORE_EXPORT Vector<uint8_t> encodeBogusRequestForAuthenticatorSelection();
+
 // Represents CTAP requests with empty parameters, including
 // AuthenticatorGetInfo, AuthenticatorReset and AuthenticatorGetNextAssertion commands.
 WEBCORE_EXPORT Vector<uint8_t> encodeEmptyAuthenticatorRequest(CtapRequestCommand);

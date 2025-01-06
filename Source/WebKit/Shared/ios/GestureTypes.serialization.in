@@ -59,4 +59,9 @@ enum class WebKit::SelectionTouch : uint8_t {
     EndedNotMoving
 };
 
+enum class WebKit::TextInteractionSource : uint8_t {
+    Touch,
+    Mouse,
+};
+
 #endif

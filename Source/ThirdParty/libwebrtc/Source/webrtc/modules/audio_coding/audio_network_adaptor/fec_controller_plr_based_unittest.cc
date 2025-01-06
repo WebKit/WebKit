@@ -79,8 +79,8 @@ FecControllerPlrBasedTestStates CreateFecControllerPlrBased(
 }
 
 void UpdateNetworkMetrics(FecControllerPlrBasedTestStates* states,
-                          const absl::optional<int>& uplink_bandwidth_bps,
-                          const absl::optional<float>& uplink_packet_loss) {
+                          const std::optional<int>& uplink_bandwidth_bps,
+                          const std::optional<float>& uplink_packet_loss) {
   // UpdateNetworkMetrics can accept multiple network metric updates at once.
   // However, currently, the most used case is to update one metric at a time.
   // To reflect this fact, we separate the calls.
@@ -132,7 +132,7 @@ TEST(FecControllerPlrBasedTest, OutputInitValueWhenUplinkBandwidthUnknown) {
           kEnablingPacketLossAtLowBw - kEpsilon, kEnablingPacketLossAtLowBw,
           kEnablingPacketLossAtLowBw + kEpsilon}) {
       auto states = CreateFecControllerPlrBased(initial_fec_enabled);
-      UpdateNetworkMetrics(&states, absl::nullopt, packet_loss);
+      UpdateNetworkMetrics(&states, std::nullopt, packet_loss);
       CheckDecision(&states, initial_fec_enabled, packet_loss);
     }
   }
@@ -147,7 +147,7 @@ TEST(FecControllerPlrBasedTest,
                           kDisablingBandwidthLow + 1, kEnablingBandwidthLow - 1,
                           kEnablingBandwidthLow, kEnablingBandwidthLow + 1}) {
       auto states = CreateFecControllerPlrBased(initial_fec_enabled);
-      UpdateNetworkMetrics(&states, bandwidth, absl::nullopt);
+      UpdateNetworkMetrics(&states, bandwidth, std::nullopt);
       CheckDecision(&states, initial_fec_enabled, 0.0);
     }
   }

@@ -31,6 +31,7 @@
 #include <WebCore/SelectionData.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _GtkWidget GtkWidget;
@@ -48,7 +49,8 @@ class ShareableBitmap;
 namespace WebKit {
 
 class DragSource {
-    WTF_MAKE_NONCOPYABLE(DragSource); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DragSource);
+    WTF_MAKE_NONCOPYABLE(DragSource);
 public:
 
     explicit DragSource(GtkWidget*);

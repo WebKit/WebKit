@@ -26,10 +26,7 @@ namespace skgpu::graphite {
 
 class ResourceCache;
 class SharedContext;
-
-#if defined(GRAPHITE_TEST_UTILS)
 class Texture;
-#endif
 
 /**
  * Base class for objects that can be kept in the ResourceCache.
@@ -136,7 +133,7 @@ public:
     void setLabel(std::string_view label) {
         fLabel = label;
 
-        if (!label.empty()) {
+        if (!fLabel.empty()) {
             const std::string fullLabel = "Skia_" + fLabel;
             this->setBackendLabel(fullLabel.c_str());
         }
@@ -172,10 +169,10 @@ public:
      */
     virtual void prepareForReturnToCache(const std::function<void()>& takeRef) {}
 
-#if defined(GRAPHITE_TEST_UTILS)
-    bool testingShouldDeleteASAP() const { return fDeleteASAP == DeleteASAP::kYes; }
-
     virtual const Texture* asTexture() const { return nullptr; }
+
+#if defined(GPU_TEST_UTILS)
+    bool testingShouldDeleteASAP() const { return fDeleteASAP == DeleteASAP::kYes; }
 #endif
 
 protected:
@@ -183,7 +180,6 @@ protected:
              Ownership,
              skgpu::Budgeted,
              size_t gpuMemorySize,
-             std::string_view label,
              bool commandBufferRefsAsUsageRefs = false);
     virtual ~Resource();
 

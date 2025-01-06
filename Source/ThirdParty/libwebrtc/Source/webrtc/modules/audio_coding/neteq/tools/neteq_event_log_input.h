@@ -11,8 +11,9 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_EVENT_LOG_INPUT_H_
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_EVENT_LOG_INPUT_H_
 
+#include <optional>
+
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 
@@ -21,7 +22,7 @@ namespace test {
 
 std::unique_ptr<NetEqInput> CreateNetEqEventLogInput(
     const ParsedRtcEventLog& parsed_log,
-    absl::optional<uint32_t> ssrc);
+    std::optional<uint32_t> ssrc);
 
 }  // namespace test
 }  // namespace webrtc

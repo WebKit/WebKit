@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "generate_cpp_files_for_headers", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "generate_cpp_files_for_headers", "skia_cc_library", "split_srcs_and_hdrs")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 MOCK_FILES = [
     "GrMockAttachment.h",
@@ -27,24 +25,16 @@ MOCK_FILES = [
 split_srcs_and_hdrs(
     name = "mock",
     files = MOCK_FILES,
-)
-
-skia_filegroup(
-    name = "srcs",
-    srcs = [":mock_srcs"],
     visibility = ["//src/gpu/ganesh:__pkg__"],
 )
 
-skia_filegroup(
-    name = "private_hdrs",
-    srcs = [":mock_hdrs"],
-    visibility = ["//src/gpu/ganesh:__pkg__"],
-)
-
+# TODO(kjlubick, egdaniel) If we decouple the mock Ganesh backend
+# then the headers/sources should be put here.
 skia_cc_library(
     name = "ganesh_mock",
     hdrs = [
-        "//include/gpu/mock:public_hdrs",
+        "//include/gpu:shared_gpu_hdrs",
+        "//include/gpu/ganesh/mock:public_hdrs",
     ],
     visibility = ["//:__pkg__"],
     deps = [

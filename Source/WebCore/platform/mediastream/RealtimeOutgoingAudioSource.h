@@ -38,10 +38,12 @@
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/api/media_stream_interface.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
-ALLOW_UNUSED_PARAMETERS_END
 ALLOW_COMMA_END
+ALLOW_UNUSED_PARAMETERS_END
 
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
@@ -84,7 +86,7 @@ protected:
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper API
     const Logger& logger() const final { return m_audioSource->logger(); }
-    const void* logIdentifier() const final { return m_audioSource->logIdentifier(); }
+    uint64_t logIdentifier() const final { return m_audioSource->logIdentifier(); }
     ASCIILiteral logClassName() const final { return "RealtimeOutgoingAudioSource"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -95,11 +97,11 @@ private:
     void RemoveSink(webrtc::AudioTrackSinkInterface*) final;
 
     void AddRef() const final { ref(); }
-    rtc::RefCountReleaseStatus Release() const final
+    webrtc::RefCountReleaseStatus Release() const final
     {
         auto result = refCount() - 1;
         deref();
-        return result ? rtc::RefCountReleaseStatus::kOtherRefsRemained : rtc::RefCountReleaseStatus::kDroppedLastRef;
+        return result ? webrtc::RefCountReleaseStatus::kOtherRefsRemained : webrtc::RefCountReleaseStatus::kDroppedLastRef;
     }
 
     SourceState state() const final { return kLive; }

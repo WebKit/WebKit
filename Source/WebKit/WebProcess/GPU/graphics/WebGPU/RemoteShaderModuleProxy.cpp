@@ -32,8 +32,11 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUCompilationInfo.h>
 #include <WebCore/WebGPUCompilationMessage.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteShaderModuleProxy);
 
 RemoteShaderModuleProxy::RemoteShaderModuleProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)

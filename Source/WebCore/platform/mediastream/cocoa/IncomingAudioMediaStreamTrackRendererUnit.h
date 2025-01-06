@@ -29,10 +29,12 @@
 
 #include "BaseAudioMediaStreamTrackRendererUnit.h"
 #include "CAAudioStreamDescription.h"
-#include <wtf/FastMalloc.h>
+#include "LibWebRTCAudioModule.h"
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -45,7 +47,6 @@ class AudioMediaStreamTrackRendererInternalUnit;
 class AudioSampleDataSource;
 class AudioSampleBufferList;
 class CAAudioStreamDescription;
-class LibWebRTCAudioModule;
 class WebAudioBufferList;
 
 class IncomingAudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTrackRendererUnit
@@ -53,50 +54,66 @@ class IncomingAudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTra
     , public LoggerHelper
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IncomingAudioMediaStreamTrackRendererUnit);
 public:
     explicit IncomingAudioMediaStreamTrackRendererUnit(LibWebRTCAudioModule&);
     ~IncomingAudioMediaStreamTrackRendererUnit();
 
     void newAudioChunkPushed(uint64_t);
 
+    void ref() { m_audioModule.get()->ref(); };
+    void deref() { m_audioModule.get()->deref(); };
+
 private:
-    void start();
-    void stop();
+    struct Mixer;
+    void start(Mixer&);
+    void stop(Mixer&);
     void postTask(Function<void()>&&);
     void renderAudioChunk(uint64_t currentAudioSampleCount);
 
     // BaseAudioMediaStreamTrackRendererUnit
-    void setAudioOutputDevice(const String&) final;
-    void addResetObserver(ResetObserver&) final;
-    void addSource(Ref<AudioSampleDataSource>&&) final;
-    void removeSource(AudioSampleDataSource&) final;
+    void addResetObserver(const String&, ResetObserver&) final;
+    void addSource(const String&, Ref<AudioSampleDataSource>&&) final;
+    void removeSource(const String&, AudioSampleDataSource&) final;
+
+    std::pair<bool, Vector<Ref<AudioSampleDataSource>>> addSourceToMixer(const String&, Ref<AudioSampleDataSource>&&);
+    std::pair<bool, Vector<Ref<AudioSampleDataSource>>> removeSourceFromMixer(const String&, AudioSampleDataSource&);
 
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper.
     const Logger& logger() const final;
     ASCIILiteral logClassName() const final { return "IncomingAudioMediaStreamTrackRendererUnit"_s; }
     WTFLogChannel& logChannel() const final;
-    const void* logIdentifier() const final;
+    uint64_t logIdentifier() const final;
 #endif
 
-    // Main thread variables.
-    LibWebRTCAudioModule& m_audioModule;
-    Ref<WTF::WorkQueue> m_queue;
-    HashSet<Ref<AudioSampleDataSource>> m_sources;
-    RefPtr<AudioSampleDataSource> m_registeredMixedSource;
+    const ThreadSafeWeakPtr<LibWebRTCAudioModule> m_audioModule;
+    const Ref<WTF::WorkQueue> m_queue;
+
+    struct Mixer {
+        HashSet<Ref<AudioSampleDataSource>> sources;
+        RefPtr<AudioSampleDataSource> registeredMixedSource;
+        String deviceID;
+    };
+
+    struct RenderMixer {
+        Vector<Ref<AudioSampleDataSource>> inputSources;
+        RefPtr<AudioSampleDataSource> mixedSource;
+        size_t writeCount { 0 };
+    };
+
+    HashMap<String, Mixer> m_mixers WTF_GUARDED_BY_CAPABILITY(mainThread);
 
     // Background thread variables.
-    Vector<Ref<AudioSampleDataSource>> m_renderSources;
-    RefPtr<AudioSampleDataSource> m_mixedSource;
-    std::optional<CAAudioStreamDescription> m_outputStreamDescription;
-    std::unique_ptr<WebAudioBufferList> m_audioBufferList;
+    HashMap<String, RenderMixer> m_renderMixers WTF_GUARDED_BY_CAPABILITY(m_queue.get());
+
+    std::optional<CAAudioStreamDescription> m_outputStreamDescription WTF_GUARDED_BY_CAPABILITY(m_queue.get());
+    std::unique_ptr<WebAudioBufferList> m_audioBufferList WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     size_t m_sampleCount { 0 };
-    size_t m_writeCount { 0 };
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

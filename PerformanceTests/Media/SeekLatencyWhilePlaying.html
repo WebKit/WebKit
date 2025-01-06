@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<script>
+var video;
+var url;
+
+window.addEventListener('load', () => {
+    PerfTestRunner.prepareToMeasureValuesAsync({
+        unit: 'ms',
+        done: function () {
+            if (video) {
+                video.src = null;
+                video.load();
+            }
+        }
+    });
+
+    runTest();
+});
+
+function waitFor(object, event) {
+    return new Promise(resolve => {
+        object.addEventListener(event, resolve, {once: true});
+    })
+}
+
+function sleepFor(timeout) {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
+async function runTest() {
+    video = document.querySelector('video');
+    video.src = 'test-with-audio.mp4';
+    await waitFor(video, 'canplaythrough');
+    video.play();
+    await waitFor(video, 'playing');
+
+    while (true) {
+        var startTime = PerfTestRunner.now();
+
+        video.currentTime += 0.5;
+        await waitFor(video, 'seeked');
+
+        if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
+            break;
+
+        PerfTestRunner.gc();
+        await sleepFor(10);
+    }
+}
+
+</script>
+</head>
+<body>
+    <video muted></video>
+</body>
+</html>

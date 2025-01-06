@@ -29,7 +29,6 @@
 
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY)
 
-#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 

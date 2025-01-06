@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebDebuggerAgent.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ class WorkerOrWorkletGlobalScope;
 
 class WorkerDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(WorkerDebuggerAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WorkerDebuggerAgent);
 public:
     WorkerDebuggerAgent(WorkerAgentContext&);
     ~WorkerDebuggerAgent();

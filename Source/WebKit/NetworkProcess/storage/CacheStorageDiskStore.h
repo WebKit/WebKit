@@ -31,11 +31,20 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+class FormData;
+class SharedBuffer;
+namespace DOMCacheEngine {
+using ResponseBody = std::variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
+}
+}
+
 namespace WebKit {
 
 class CacheStorageDiskStore final : public CacheStorageStore {
 public:
     static Ref<CacheStorageDiskStore> create(const String& cacheName, const String& path, Ref<WorkQueue>&&);
+    static size_t computeRealBodySizeForStorage(const WebCore::DOMCacheEngine::ResponseBody&);
 
 private:
     CacheStorageDiskStore(const String& cacheName, const String& path, Ref<WorkQueue>&&);
@@ -54,9 +63,8 @@ private:
     String blobsDirectoryPath() const;
     String blobFilePath(const String&) const;
     std::optional<CacheStorageRecord> readRecordFromFileData(std::span<const uint8_t>, FileSystem::MappedFileData&&);
-    using FileDatas = Vector<FileSystem::MappedFileData>;
-    void readAllRecordInfosInternal(CompletionHandler<void(FileDatas&&)>&&);
-    void readRecordsInternal(Vector<String>&&, CompletionHandler<void(FileDatas&&, FileDatas&&)>&&);
+    void readAllRecordInfosInternal(ReadAllRecordInfosCallback&&);
+    void readRecordsInternal(const Vector<CacheStorageRecordInformation>&, ReadRecordsCallback&&);
 
     String m_cacheName;
     String m_path;

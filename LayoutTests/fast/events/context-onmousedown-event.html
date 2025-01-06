@@ -5,16 +5,21 @@
 </body>
 </html>
 
-
 <script>
-if (window.testRunner) {
-     var box, x, y;
-     box = document.getElementById("box");
-     x = box.offsetParent.offsetLeft + box.offsetLeft + box.offsetWidth / 2;
-     y = box.offsetParent.offsetTop + box.offsetTop + box.offsetHeight / 2;
-     eventSender.mouseMoveTo(x, y);
-     eventSender.contextClick();
-     testRunner.dumpAsText();
+onload = async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    var box, x, y;
+    box = document.getElementById("box");
+    x = box.offsetParent.offsetLeft + box.offsetLeft + box.offsetWidth / 2;
+    y = box.offsetParent.offsetTop + box.offsetTop + box.offsetHeight / 2;
+    await eventSender.asyncMouseMoveTo(x, y);
+    eventSender.contextClick();
+    testRunner.notifyDone();
 }
 
 </script>

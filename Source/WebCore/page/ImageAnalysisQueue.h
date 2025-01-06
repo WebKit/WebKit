@@ -28,8 +28,8 @@
 #if ENABLE(IMAGE_ANALYSIS)
 
 #include "Timer.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/PriorityQueue.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakHashMap.h>
@@ -47,11 +47,11 @@ class Page;
 class Timer;
 class WeakPtrImplWithEventTargetData;
 
-class ImageAnalysisQueue {
-    WTF_MAKE_FAST_ALLOCATED;
+class ImageAnalysisQueue final : public RefCounted<ImageAnalysisQueue> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageAnalysisQueue, WEBCORE_EXPORT);
 public:
-    ImageAnalysisQueue(Page&);
-    ~ImageAnalysisQueue();
+    static Ref<ImageAnalysisQueue> create(Page&);
+    WEBCORE_EXPORT ~ImageAnalysisQueue();
 
     WEBCORE_EXPORT void enqueueAllImagesIfNeeded(Document&, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier);
     void clear();
@@ -62,6 +62,8 @@ public:
     WEBCORE_EXPORT void clearDidBecomeEmptyCallback();
 
 private:
+    explicit ImageAnalysisQueue(Page&);
+
     void resumeProcessingSoon();
     void resumeProcessing();
 
@@ -80,7 +82,7 @@ private:
     // FIXME: Refactor the source and target LIDs into either a std::pair<> of strings, or its own named struct.
     String m_sourceLanguageIdentifier;
     String m_targetLanguageIdentifier;
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
     Timer m_resumeProcessingTimer;
     WeakHashMap<HTMLImageElement, URL, WeakPtrImplWithEventTargetData> m_queuedElements;
     PriorityQueue<Task, firstIsHigherPriority> m_queue;

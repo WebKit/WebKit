@@ -64,6 +64,16 @@
 
 namespace WebCore {
 
+void LegacyTileCache::ref() const
+{
+    [m_window retain];
+}
+
+void LegacyTileCache::deref() const
+{
+    [m_window release];
+}
+
 LegacyTileCache::LegacyTileCache(WAKWindow* window)
     : m_window(window)
     , m_tombstone(adoptNS([[LegacyTileCacheTombstone alloc] init]))
@@ -104,11 +114,6 @@ bool LegacyTileCache::setOverrideVisibleRect(const FloatRect& rect)
     if (activeTileGrid())
         coveredByExistingTiles = activeTileGrid()->tilesCover(enclosingIntRect(m_overrideVisibleRect.value()));
     return coveredByExistingTiles;
-}
-
-bool LegacyTileCache::tilesOpaque() const
-{
-    return m_tilesOpaque;
 }
     
 LegacyTileGrid* LegacyTileCache::activeTileGrid() const
@@ -717,16 +722,6 @@ void LegacyTileCache::setTilingMode(TilingMode tilingMode)
         m_hasPendingUpdateTilingMode = false;
         updateTilingMode();
     });
-}
-
-void LegacyTileCache::setTilingDirection(TilingDirection tilingDirection)
-{
-    m_tilingDirection = tilingDirection;
-}
-
-LegacyTileCache::TilingDirection LegacyTileCache::tilingDirection() const
-{
-    return m_tilingDirection;
 }
     
 float LegacyTileCache::zoomedOutScale() const

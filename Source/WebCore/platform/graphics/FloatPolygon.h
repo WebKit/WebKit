@@ -40,6 +40,8 @@ namespace WebCore {
 
 class FloatPolygonEdge;
 
+typedef PODIntervalTree<float, FloatPolygonEdge*> EdgeIntervalTree;
+
 class FloatPolygon {
 public:
     FloatPolygon(Vector<FloatPoint>&& vertices, WindRule fillRule);
@@ -58,8 +60,6 @@ public:
     bool isEmpty() const { return m_empty; }
 
 private:
-    using EdgeIntervalTree = PODIntervalTree<float, FloatPolygonEdge*>;
-
     bool containsNonZero(const FloatPoint&) const;
     bool containsEvenOdd(const FloatPoint&) const;
 

@@ -9,16 +9,19 @@
 </style>
 <script>
     var numberOfClicks = 0;
+    if (window.testRunner)
+        window.testRunner.waitUntilDone();
 
-    function runTest() {
+    async function runTest() {
         if (!window.eventSender)
             return;
-        if (window.internals) {
+        if (window.internals)
             window.internals.setHeaderHeight(100);
-            window.internals.setPageScaleFactor(2, 0, 0);
-        }
-        if (window.testRunner)
+
+        if (window.testRunner) {
+            await window.testRunner.setPageScaleFactor(2, 0, 0);
             testRunner.dumpAsText();
+        }
 
         // The page should scale, but the header should not.
         eventSender.mouseMoveTo(25, 125);
@@ -30,6 +33,8 @@
             result.innerHTML = "Pass!";
         else
             result.innerHTML = "Fail.";
+        if (window.testRunner)
+            window.testRunner.notifyDone();
     }
     
     function clicked() {

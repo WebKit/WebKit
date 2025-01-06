@@ -1,4 +1,5 @@
 
+
 PASS setup
 PASS stylesheet takes effect
 PASS accent-color
@@ -6,6 +7,7 @@ PASS align-content
 PASS align-items
 PASS align-self
 PASS alignment-baseline
+PASS anchor-name
 PASS animation-composition
 PASS animation-delay
 PASS animation-direction
@@ -31,8 +33,11 @@ PASS background-position-y
 PASS background-repeat
 PASS background-size
 PASS baseline-shift
+PASS block-ellipsis
 PASS block-size
+PASS block-step-align
 PASS block-step-insert
+PASS block-step-round
 PASS block-step-size
 PASS border-block-end-color
 PASS border-block-end-style
@@ -106,6 +111,7 @@ PASS container-name
 PASS container-type
 PASS content
 PASS content-visibility
+PASS continue
 PASS counter-increment
 PASS counter-reset
 PASS counter-set
@@ -179,7 +185,6 @@ PASS isolation
 PASS justify-content
 PASS justify-items
 PASS justify-self
-PASS kerning
 PASS left
 PASS letter-spacing
 PASS lighting-color
@@ -218,6 +223,7 @@ PASS math-style
 PASS max-block-size
 PASS max-height
 PASS max-inline-size
+PASS max-lines
 PASS max-width
 PASS min-block-size
 PASS min-height
@@ -259,6 +265,8 @@ PASS perspective
 PASS perspective-origin
 PASS pointer-events
 PASS position
+PASS position-anchor
+PASS position-try-order
 PASS print-color-adjust
 PASS quotes
 PASS r
@@ -266,6 +274,9 @@ PASS resize
 PASS right
 PASS rotate
 PASS row-gap
+PASS ruby-align
+PASS ruby-overhang
+PASS ruby-position
 PASS rx
 PASS ry
 PASS scale
@@ -340,6 +351,7 @@ PASS text-underline-offset
 PASS text-underline-position
 PASS text-wrap-mode
 PASS text-wrap-style
+PASS timeline-scope
 PASS top
 PASS touch-action
 PASS transform
@@ -358,6 +370,7 @@ PASS vertical-align
 PASS view-timeline-axis
 PASS view-timeline-inset
 PASS view-timeline-name
+PASS view-transition-class
 PASS view-transition-name
 PASS visibility
 PASS white-space-collapse
@@ -373,9 +386,6 @@ PASS z-index
 PASS zoom
 PASS -apple-pay-button-style
 PASS -apple-pay-button-type
-PASS -webkit-backdrop-filter
-PASS -webkit-background-clip
-PASS -webkit-background-origin
 PASS -webkit-border-horizontal-spacing
 PASS -webkit-border-vertical-spacing
 PASS -webkit-box-align
@@ -388,7 +398,6 @@ PASS -webkit-box-ordinal-group
 PASS -webkit-box-orient
 PASS -webkit-box-pack
 PASS -webkit-box-reflect
-PASS -webkit-box-shadow
 PASS -webkit-column-axis
 PASS -webkit-column-progression
 PASS -webkit-cursor-visibility
@@ -403,15 +412,10 @@ PASS -webkit-line-clamp
 PASS -webkit-line-grid
 PASS -webkit-line-snap
 PASS -webkit-locale
-PASS -webkit-mask-clip
-PASS -webkit-mask-composite
 PASS -webkit-mask-position-x
 PASS -webkit-mask-position-y
-PASS -webkit-mask-source-type
 PASS -webkit-nbsp-mode
 PASS -webkit-rtl-ordering
-PASS -webkit-ruby-position
-PASS -webkit-text-combine
 PASS -webkit-text-fill-color
 PASS -webkit-text-security
 PASS -webkit-text-stroke-color

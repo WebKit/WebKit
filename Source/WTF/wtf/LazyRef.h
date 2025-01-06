@@ -54,7 +54,7 @@ public:
             return;
         uintptr_t pointer = std::exchange(m_pointer, 0);
         if (pointer)
-            bitwise_cast<T*>(pointer)->deref();
+            std::bit_cast<T*>(pointer)->deref();
     }
 
     bool isInitialized() const { return !(m_pointer & lazyTag); }
@@ -69,10 +69,10 @@ public:
         ASSERT(m_pointer);
         ASSERT(!(m_pointer & initializingTag));
         if (UNLIKELY(m_pointer & lazyTag)) {
-            FuncType func = *bitwise_cast<FuncType*>(m_pointer & ~(lazyTag | initializingTag));
+            FuncType func = *std::bit_cast<FuncType*>(m_pointer & ~(lazyTag | initializingTag));
             return *func(owner, *this);
         }
-        return *bitwise_cast<T*>(m_pointer);
+        return *std::bit_cast<T*>(m_pointer);
     }
 
     const T* getIfExists() const
@@ -85,7 +85,7 @@ public:
         ASSERT(m_pointer);
         if (m_pointer & lazyTag)
             return nullptr;
-        return bitwise_cast<T*>(m_pointer);
+        return std::bit_cast<T*>(m_pointer);
     }
 
     T* ptr(OwnerType& owner) RETURNS_NONNULL { &get(owner); }
@@ -102,13 +102,13 @@ public:
         // variable. The "theFunc" variable is guaranteed to be native-aligned, i.e. at least a
         // multiple of 4.
         static constexpr FuncType theFunc = &callFunc<Func>;
-        m_pointer = lazyTag | bitwise_cast<uintptr_t>(&theFunc);
+        m_pointer = lazyTag | std::bit_cast<uintptr_t>(&theFunc);
     }
 
     void set(Ref<T>&& ref)
     {
         Ref<T> local = WTFMove(ref);
-        m_pointer = bitwise_cast<uintptr_t>(&local.leakRef());
+        m_pointer = std::bit_cast<uintptr_t>(&local.leakRef());
     }
 
 private:
@@ -122,7 +122,7 @@ private:
         callStatelessLambda<void, Func>(owner, ref);
         RELEASE_ASSERT(!(ref.m_pointer & lazyTag));
         RELEASE_ASSERT(!(ref.m_pointer & initializingTag));
-        return bitwise_cast<T*>(ref.m_pointer);
+        return std::bit_cast<T*>(ref.m_pointer);
     }
 
     uintptr_t m_pointer { 0 };

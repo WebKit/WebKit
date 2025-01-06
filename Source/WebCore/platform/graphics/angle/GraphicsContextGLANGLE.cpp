@@ -37,9 +37,9 @@
 #include "IntSize.h"
 #include "Logging.h"
 #include "NotImplemented.h"
-#include "RuntimeApplicationChecks.h"
 #include <algorithm>
 #include <cstring>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Seconds.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -51,6 +51,8 @@
 // This one definition short-circuits the need for gl2ext.h, which
 // would need more work to be included from WebCore.
 #define GL_MAX_SAMPLES_EXT 0x8D57
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -162,6 +164,21 @@ bool GraphicsContextGLANGLE::initialize()
         ASSERT(m_displayObj);
         usedDisplays().add(m_displayObj);
     }
+
+    if (supportsExtension("GL_KHR_debug"_s)) {
+        ensureExtensionEnabled("GL_KHR_debug"_s);
+        GL_Enable(DEBUG_OUTPUT);
+        GL_Enable(DEBUG_OUTPUT_SYNCHRONOUS);
+        GL_DebugMessageControlKHR(DONT_CARE, DONT_CARE, DONT_CARE, 0, nullptr, 0);
+        GL_DebugMessageControlKHR(DEBUG_SOURCE_API, DONT_CARE, DONT_CARE, 0, nullptr, 1);
+        auto debugMessageCallback = [](GCGLenum, GCGLenum type, GCGLenum id, GCGLenum severity, GCGLsizei length, const GCGLchar* message, const void* context) {
+            auto* gl = reinterpret_cast<const GraphicsContextGLANGLE*>(context);
+            if (gl->m_client)
+                gl->m_client->addDebugMessage(type, id, severity, String { std::span { message, static_cast<size_t>(length) } });
+        };
+        GL_DebugMessageCallbackKHR(debugMessageCallback, this);
+    }
+
     ASSERT(GL_GetError() == NO_ERROR);
 
     return true;
@@ -243,7 +260,7 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
     if (!pixelBuffer)
         return nullptr;
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
-    setPackParameters(1, 0);
+    setPackParameters(1, 0, false);
     GL_ReadnPixelsRobustANGLE(0, 0, pixelBuffer->size().width(), pixelBuffer->size().height(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->bytes().size(), nullptr, nullptr, nullptr, pixelBuffer->bytes().data());
     // FIXME: Rendering to GL_RGB textures with a IOSurface bound to the texture image leaves
     // the alpha in the IOSurface in incorrect state. Also ANGLE GL_ReadPixels will in some
@@ -518,21 +535,21 @@ void GraphicsContextGLANGLE::clearDepth(GCGLclampf depth)
     GL_ClearDepthf(static_cast<float>(depth));
 }
 
-void GraphicsContextGLANGLE::readPixels(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength)
+void GraphicsContextGLANGLE::readPixels(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength, GCGLboolean reverseRowOrder)
 {
     if (!makeContextCurrent())
         return;
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
-    setPackParameters(alignment, rowLength);
+    setPackParameters(alignment, rowLength, reverseRowOrder);
     readPixelsImpl(rect, format, type, data.size(), data.data(), false);
 }
 
-std::optional<IntSize> GraphicsContextGLANGLE::readPixelsWithStatus(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> data)
+std::optional<IntSize> GraphicsContextGLANGLE::readPixelsWithStatus(IntRect rect, GCGLenum format, GCGLenum type, GCGLboolean reverseRowOrder, std::span<uint8_t> data)
 {
     if (!makeContextCurrent())
         return std::nullopt;
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
-    setPackParameters(1, 0); // Used for tight packing read only.
+    setPackParameters(1, 0, reverseRowOrder); // Used for tight packing read only.
     return readPixelsImpl(rect, format, type, data.size(), data.data(), false);
 }
 
@@ -540,7 +557,7 @@ void GraphicsContextGLANGLE::readPixelsBufferObject(IntRect rect, GCGLenum forma
 {
     if (!makeContextCurrent())
         return;
-    setPackParameters(alignment, rowLength);
+    setPackParameters(alignment, rowLength, false);
     readPixelsImpl(rect, format, type, 0, reinterpret_cast<uint8_t*>(offset), true);
 }
 
@@ -880,16 +897,31 @@ void GraphicsContextGLANGLE::bufferSubData(GCGLenum target, GCGLintptr offset, s
     GL_BufferSubData(target, offset, data.size(), data.data());
 }
 
+bool GraphicsContextGLANGLE::getBufferSubDataImpl(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data)
+{
+    void* ptr = GL_MapBufferRange(target, offset, data.size(), GraphicsContextGL::MAP_READ_BIT);
+    if (!ptr)
+        return false;
+    memcpy(data.data(), ptr, data.size());
+    if (!GL_UnmapBuffer(target))
+        addError(GCGLErrorCode::InvalidOperation);
+    return true;
+}
+
 void GraphicsContextGLANGLE::getBufferSubData(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data)
 {
     if (!makeContextCurrent())
         return;
-    void* ptr = GL_MapBufferRange(target, offset, data.size(), GraphicsContextGL::MAP_READ_BIT);
-    if (!ptr)
-        return;
-    memcpy(data.data(), ptr, data.size());
-    if (!GL_UnmapBuffer(target))
-        addError(GCGLErrorCode::InvalidOperation);
+
+    getBufferSubDataImpl(target, offset, data);
+}
+
+bool GraphicsContextGLANGLE::getBufferSubDataWithStatus(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data)
+{
+    if (!makeContextCurrent())
+        return false;
+
+    return getBufferSubDataImpl(target, offset, data);
 }
 
 void GraphicsContextGLANGLE::copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size)
@@ -3307,7 +3339,7 @@ GCGLenum GraphicsContextGLANGLE::adjustWebGL1TextureInternalFormat(GCGLenum inte
     return internalformat;
 }
 
-void GraphicsContextGLANGLE::setPackParameters(GCGLint alignment, GCGLint rowLength)
+void GraphicsContextGLANGLE::setPackParameters(GCGLint alignment, GCGLint rowLength, GCGLboolean reverseRowOrder)
 {
     if (m_packAlignment != alignment) {
         GL_PixelStorei(GL_PACK_ALIGNMENT, alignment);
@@ -3316,6 +3348,10 @@ void GraphicsContextGLANGLE::setPackParameters(GCGLint alignment, GCGLint rowLen
     if (m_packRowLength != rowLength) {
         GL_PixelStorei(GL_PACK_ROW_LENGTH, rowLength);
         m_packRowLength = rowLength;
+    }
+    if (m_packReverseRowOrder != reverseRowOrder) {
+        GL_PixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, reverseRowOrder);
+        m_packReverseRowOrder = reverseRowOrder;
     }
 }
 
@@ -3360,5 +3396,7 @@ bool GraphicsContextGLANGLE::validateClearBufferv(GCGLenum buffer, size_t values
     return false;
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBGL)

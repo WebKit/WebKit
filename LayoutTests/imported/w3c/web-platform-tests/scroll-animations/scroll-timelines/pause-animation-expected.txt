@@ -1,11 +1,9 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Pausing clears the start time Test timed out
-NOTRUN A pending ready promise should be resolved and not replaced when the animation is paused
-NOTRUN A pause-pending animation maintains the current time when applying a pending playback rate
-NOTRUN The animation's current time remains fixed after pausing
-NOTRUN Pausing a canceled animation sets the current time
-NOTRUN Pause pending task doesn't run when the timeline is inactive.
-NOTRUN Animation start and current times are correct if scroll timeline is activated after animation.pause call.
+PASS Pausing clears the start time
+PASS A pending ready promise should be resolved and not replaced when the animation is paused
+PASS A pause-pending animation maintains the current time when applying a pending playback rate
+PASS The animation's current time remains fixed after pausing
+PASS Pausing a canceled animation sets the current time
+PASS Pause pending task doesn't run when the timeline is inactive.
+PASS Animation start and current times are correct if scroll timeline is activated after animation.pause call.
 

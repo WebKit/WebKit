@@ -1,0 +1,4 @@
+
+PASS Should use the first fallback position at the initial scroll offset
+FAIL Should use the second fallback position after scrolling left assert_equals: Anchored element should be at the left of anchor expected 601 but got 700
+

@@ -28,7 +28,9 @@
 #if ENABLE(MEDIA_SESSION)
 
 #include "Supplementable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +38,7 @@ class MediaSession;
 class Navigator;
 
 class NavigatorMediaSession final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorMediaSession);
 public:
     explicit NavigatorMediaSession(Navigator&);
     ~NavigatorMediaSession();
@@ -51,7 +53,7 @@ private:
     static ASCIILiteral supplementName();
 
     RefPtr<MediaSession> m_mediaSession;
-    Navigator& m_navigator;
+    CheckedRef<Navigator> m_navigator;
 };
 
 }

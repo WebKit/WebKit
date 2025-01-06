@@ -11,6 +11,7 @@
 #include "include/core/SkRect.h"
 #include "src/base/SkArenaAlloc.h"
 #include "src/base/SkTBlockList.h"
+#include "src/gpu/graphite/CommandTypes.h"
 #include "src/gpu/graphite/DrawTypes.h"
 
 namespace skgpu::graphite {
@@ -76,7 +77,7 @@ COMMAND(BindGraphicsPipeline,
 COMMAND(SetBlendConstants,
             PODArray<float> fBlendConstants);
 COMMAND(BindUniformBuffer,
-            BindUniformBufferInfo fInfo;
+            BindBufferInfo fInfo;
             UniformSlot fSlot);
 COMMAND(BindDrawBuffers,
             BindBufferInfo fVertices;
@@ -88,7 +89,7 @@ COMMAND(BindTexturesAndSamplers,
             PODArray<int> fTextureIndices;
             PODArray<int> fSamplerIndices);
 COMMAND(SetScissor,
-            SkIRect fScissor);
+            Scissor fScissor);
 COMMAND(Draw,
             PrimitiveType fType;
             uint32_t fBaseVertex;
@@ -140,7 +141,7 @@ public:
         this->add<SetBlendConstants>(this->copy(blendConstants.data(), 4));
     }
 
-    void bindUniformBuffer(BindUniformBufferInfo info, UniformSlot slot) {
+    void bindUniformBuffer(BindBufferInfo info, UniformSlot slot) {
         this->add<BindUniformBuffer>(info, slot);
     }
 
@@ -154,7 +155,7 @@ public:
     }
 
     void setScissor(SkIRect scissor) {
-        this->add<SetScissor>(scissor);
+        this->add<SetScissor>(Scissor(scissor));
     }
 
     void bindDrawBuffers(BindBufferInfo vertexAttribs,

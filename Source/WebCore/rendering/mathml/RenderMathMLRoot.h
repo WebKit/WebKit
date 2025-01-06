@@ -39,7 +39,7 @@ enum class RootType { SquareRoot, RootWithIndex };
 
 // Render base^(1/index), or sqrt(base) using radical notation.
 class RenderMathMLRoot final : public RenderMathMLRow {
-    WTF_MAKE_ISO_ALLOCATED(RenderMathMLRoot);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMathMLRoot);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLRoot);
 public:
     RenderMathMLRoot(MathMLRootElement&, RenderStyle&&);
@@ -65,7 +65,7 @@ private:
         LayoutUnit kernBeforeDegree;
         LayoutUnit kernAfterDegree;
     };
-    HorizontalParameters horizontalParameters();
+    HorizontalParameters horizontalParameters(LayoutUnit indexWidth);
     struct VerticalParameters {
         LayoutUnit verticalGap;
         LayoutUnit ruleThickness;

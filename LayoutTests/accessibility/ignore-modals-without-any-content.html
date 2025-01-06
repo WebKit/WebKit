@@ -27,54 +27,49 @@
 </div>
 
 <script>
-    var testOutput = "This test ensures that we ignore modals that don't have any accessible content.\n";
+var output = "This test ensures that we ignore modals that don't have any accessible content.\n";
 
-    async function findTextInsideId(id) {
-        const containerElement = accessibilityController.accessibleElementById(id);
-        testOutput += `\nBeginning search from #${id} element.\n`;
+async function findTextInsideId(id) {
+    const containerElement = accessibilityController.accessibleElementById(id);
+    output += `\nBeginning search from #${id} element.\n`;
 
-        let searchResult = null;
-        while (true) {
-            searchResult = containerElement.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
-            if (!searchResult)
-                break;
+    let searchResult = null;
+    while (true) {
+        searchResult = containerElement.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
 
-            if (searchResult.role.includes("StaticText")) {
-                testOutput += `\n${searchResult.role}`;
-                const textContent = accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue;
-                testOutput += `\n${textContent}\n`;
-            }
+        if (searchResult.role.includes("StaticText")) {
+            output += `\n${searchResult.role}`;
+            const textContent = accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue;
+            output += `\n${textContent}\n`;
         }
     }
+}
 
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-        setTimeout(async function() {
-            await findTextInsideId("container");
+    setTimeout(async function() {
+        await findTextInsideId("container");
 
-            testOutput += "\nAppending a text node to modal to make it accessible.";
-            let text = document.createTextNode("Foo text, inside modal");
-            document.getElementById("modal").appendChild(text);
+        output += "\nAppending a text node to modal to make it accessible.";
+        let text = document.createTextNode("Foo text, inside modal");
+        document.getElementById("modal").appendChild(text);
 
-            // Wait for text node to be added as an AX child.
-            await waitFor(() => {
-                return accessibilityController.accessibleElementById("modal").childAtIndex(0);
-            });
+        // Wait for text node to be added as an AX child.
+        await waitFor(() => accessibilityController.accessibleElementById("modal").childAtIndex(0));
+        await waitFor(() => !accessibilityController.accessibleElementById("container"));
 
-            let containerElement = accessibilityController.accessibleElementById("container");
-            if (containerElement)
-                testOutput += "\nFAIL: #container AX element was still accessible after adding accessible content to modal.\n";
-            else
-                testOutput += "\nPASS: #container AX element is no longer accessible after adding accessible content to modal.\n";
+        output += "\nPASS: #container AX element is no longer accessible after adding accessible content to modal.\n";
 
-            await findTextInsideId("modal");
+        await findTextInsideId("modal");
 
-            document.getElementById("container").style.visibility = "hidden";
-            debug(testOutput);
-            finishJSTest();
-        }, 0);
-    }
+        document.getElementById("container").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
 </body>
 </html>

@@ -26,6 +26,9 @@
 #pragma once
 
 #include <type_traits>
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -108,3 +111,5 @@ inline TransformIterator<Transform, Iterator> makeTransformIterator(Transform&& 
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

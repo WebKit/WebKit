@@ -32,7 +32,7 @@
 #include "BPlatform.h"
 #include "GigacageConfig.h"
 #include "Sizes.h"
-#include "StdLibExtras.h"
+#include <bit>
 #include <cstddef>
 #include <inttypes.h>
 
@@ -87,7 +87,7 @@ constexpr size_t gigacageSizeToMask(size_t size) { return size - 1; }
 constexpr size_t primitiveGigacageMask = gigacageSizeToMask(primitiveGigacageSize);
 
 // These constants are needed by the LLInt.
-constexpr ptrdiff_t offsetOfPrimitiveGigacageBasePtr = Kind::Primitive * sizeof(void*);
+constexpr ptrdiff_t offsetOfPrimitiveGigacageBasePtr = static_cast<ptrdiff_t>(Primitive) * sizeof(void*);
 
 extern "C" BEXPORT bool disablePrimitiveGigacageRequested;
 
@@ -129,7 +129,7 @@ BINLINE void* basePtr(Kind kind)
 BINLINE void* addressOfBasePtr(Kind kind)
 {
     RELEASE_BASSERT(kind < NumberOfKinds);
-    return &g_gigacageConfig.basePtrs[kind];
+    return &g_gigacageConfig.basePtrs[static_cast<size_t>(kind)];
 }
 
 BINLINE constexpr size_t maxSize(Kind kind)
@@ -225,6 +225,3 @@ BINLINE void removePrimitiveDisableCallback(void (*)(void*), void*) { }
 #endif // GIGACAGE_ENABLED
 
 } // namespace Gigacage
-
-
-

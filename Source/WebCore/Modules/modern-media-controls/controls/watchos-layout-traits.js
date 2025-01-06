@@ -30,7 +30,7 @@ class WatchOSLayoutTraits extends LayoutTraits
         return WatchOSMediaControls;
     }
 
-    overridenSupportingObjectClasses()
+    supportingObjectClasses()
     {
         return [WatchOSMediaControlsSupport];
     }

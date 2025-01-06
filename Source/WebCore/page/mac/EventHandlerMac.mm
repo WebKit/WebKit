@@ -59,7 +59,6 @@
 #import "RenderListBox.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
-#import "RuntimeApplicationChecks.h"
 #import "ScreenProperties.h"
 #import "ScrollAnimator.h"
 #import "ScrollLatchingController.h"
@@ -76,6 +75,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(MAC_GESTURE_EVENTS)
@@ -156,7 +156,8 @@ bool EventHandler::wheelEvent(NSEvent *event)
         if (m_frame->settings().wheelEventGesturesBecomeNonBlocking() && m_wheelScrollGestureState.value_or(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking)
             processingSteps = { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch };
     }
-    return handleWheelEvent(wheelEvent, processingSteps).wasHandled();
+    auto [result, _] = handleWheelEvent(wheelEvent, processingSteps);
+    return result.wasHandled();
 }
 
 bool EventHandler::keyEvent(NSEvent *event)
@@ -487,7 +488,8 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
         auto* frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             return false;
-        return frameView->frame().eventHandler().handleWheelEvent(wheelEvent, processingSteps).wasHandled();
+        auto [result, _] = frameView->frame().eventHandler().handleWheelEvent(wheelEvent, processingSteps);
+        return result.wasHandled();
     }
 
     if ([currentNSEvent() type] != NSEventTypeScrollWheel || m_sendingEventToSubview)
@@ -693,18 +695,19 @@ static bool frameHasPlatformWidget(const LocalFrame& frame)
     return false;
 }
 
-bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
+HandleUserInputEventResult EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
         return passSubframeEventToSubframe(mouseEventAndResult, subframe);
 
     // WebKit2 code path.
-    subframe.eventHandler().handleMousePressEvent(mouseEventAndResult.event());
+    if (auto remoteMouseEventData = subframe.eventHandler().handleMousePressEvent(mouseEventAndResult.event()).remoteUserInputEventData())
+        return *remoteMouseEventData;
     return true;
 }
 
-bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
+HandleUserInputEventResult EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -716,18 +719,20 @@ bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mo
         return false;
 #endif
 
-    subframe.eventHandler().handleMouseMoveEvent(mouseEventAndResult.event(), hitTestResult);
+    if (auto remoteMouseEventData = subframe.eventHandler().handleMouseMoveEvent(mouseEventAndResult.event(), hitTestResult).remoteUserInputEventData())
+        return *remoteMouseEventData;
     return true;
 }
 
-bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
+HandleUserInputEventResult EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
         return passSubframeEventToSubframe(mouseEventAndResult, subframe);
 
     // WebKit2 code path.
-    subframe.eventHandler().handleMouseReleaseEvent(mouseEventAndResult.event());
+    if (auto remoteMouseEventData = subframe.eventHandler().handleMouseReleaseEvent(mouseEventAndResult.event()).remoteUserInputEventData())
+        return *remoteMouseEventData;
     return true;
 }
 
@@ -742,30 +747,6 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
 bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 {
     return m_activationEventNumber == event.eventNumber();
-}
-
-bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
-{
-    RefPtr page = m_frame->page();
-    if (!page)
-        return false;
-
-    KeyboardUIMode keyboardUIMode = page->chrome().client().keyboardUIMode();
-    bool handlingOptionTab = event && isKeyboardOptionTab(*event);
-
-    // If tab-to-links is off, option-tab always highlights all controls
-    if ((keyboardUIMode & KeyboardAccessTabsToLinks) == 0 && handlingOptionTab)
-        return true;
-    
-    // If system preferences say to include all controls, we always include all controls
-    if (keyboardUIMode & KeyboardAccessFull)
-        return true;
-    
-    // Otherwise tab-to-links includes all controls, unless the sense is flipped via option-tab.
-    if (keyboardUIMode & KeyboardAccessTabsToLinks)
-        return !handlingOptionTab;
-    
-    return handlingOptionTab;
 }
 
 bool EventHandler::needsKeyboardEventDisambiguationQuirks() const
@@ -951,7 +932,7 @@ void EventHandler::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& 
 
     updateWheelGestureState(wheelEvent, eventHandling);
 
-    if (auto scrollingCoordinator = m_frame->page()->scrollingCoordinator()) {
+    if (RefPtr scrollingCoordinator = m_frame->page()->scrollingCoordinator()) {
         if (scrollingCoordinator->coordinatesScrollingForFrameView(*view))
             scrollingCoordinator->wheelEventWasProcessedByMainThread(wheelEvent, m_wheelScrollGestureState);
     }

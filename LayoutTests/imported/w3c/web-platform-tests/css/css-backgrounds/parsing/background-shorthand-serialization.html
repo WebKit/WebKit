@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>CSS Background Shorthand Serialization Test: background shorthand should only serialize non-initial values</title>
+<title>CSS Background Shorthand Specified Value Serialization Test: background shorthand should only serialize non-initial values</title>
 <link rel="help" href="https://drafts.csswg.org/css-backgrounds/#background">
 <meta name="assert" content="background shorthand should only serialize non-initial values">
 <script src="/resources/testharness.js"></script>
@@ -43,4 +43,16 @@
     element.style = `background: padding-box border-box;`;
     assert_equals(element.style.background , 'none');
   }, "all initial values");
+
+
+  test((t) => {
+    element.style = `background: border-area border-box;`;
+    assert_equals(element.style.background , 'border-area');
+  }, "border-area border-box");
+
+
+  test((t) => {
+    element.style = `background: border-area padding-box;`;
+    assert_equals(element.style.background , 'padding-box border-area');
+  }, "border-area padding-box");
 </script>

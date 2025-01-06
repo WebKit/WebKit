@@ -9,15 +9,21 @@
  */
 #include "api/task_queue/task_queue_test.h"
 
+#include <cstdint>
 #include <memory>
+#include <utility>
+#include <vector>
 
 #include "absl/cleanup/cleanup.h"
 #include "absl/strings/string_view.h"
+#include "api/ref_count.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/event.h"
 #include "rtc_base/ref_counter.h"
 #include "rtc_base/time_utils.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {
@@ -268,7 +274,7 @@ TEST_P(TaskQueueTest, PostALot) {
     explicit BlockingCounter(int initial_count) : count_(initial_count) {}
 
     void DecrementCount() {
-      if (count_.DecRef() == rtc::RefCountReleaseStatus::kDroppedLastRef) {
+      if (count_.DecRef() == webrtc::RefCountReleaseStatus::kDroppedLastRef) {
         event_.Set();
       }
     }

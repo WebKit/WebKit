@@ -35,7 +35,7 @@ class Element;
 class WeakPtrImplWithEventTargetData;
 
 class DatasetDOMStringMap final : public ScriptWrappable {
-    WTF_MAKE_ISO_ALLOCATED(DatasetDOMStringMap);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DatasetDOMStringMap);
 public:
     explicit DatasetDOMStringMap(Element& element)
         : m_element(element)

@@ -236,6 +236,11 @@ IterationRecord iteratorForIterable(JSGlobalObject* globalObject, JSValue iterab
     return { iterator, nextMethod };
 }
 
+IterationRecord iteratorDirect(JSGlobalObject* globalObject, JSValue object)
+{
+    return { object, object.get(globalObject, globalObject->vm().propertyNames->next) };
+}
+
 IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterable, JSValue symbolIterator)
 {
     if (!isJSArray(iterable))

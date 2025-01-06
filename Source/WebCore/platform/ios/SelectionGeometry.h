@@ -29,14 +29,14 @@
 #include "IntRect.h"
 #include "WritingMode.h"
 #include <optional>
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 enum class SelectionRenderingBehavior : bool { CoalesceBoundingRects, UseIndividualQuads };
 
 class SelectionGeometry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SelectionGeometry);
 public:
     WEBCORE_EXPORT explicit SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, bool isHorizontal, int columnNumber);
 
@@ -89,6 +89,8 @@ public:
     void setContainsEnd(bool containsEnd) { m_containsEnd = containsEnd; }
     void setIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal; }
     void setBehavior(SelectionRenderingBehavior behavior) { m_behavior = behavior; }
+
+    WEBCORE_EXPORT void move(float x, float y);
 
 private:
     FloatQuad m_quad;

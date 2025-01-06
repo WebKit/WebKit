@@ -34,6 +34,7 @@
 namespace WebKit {
 using namespace fido;
 
+#if HAVE(SECURITY_KEY_API)
 // FIXME(191518)
 static void deviceAddedCallback(void* context, IOReturn, void*, IOHIDDeviceRef device)
 {
@@ -47,10 +48,17 @@ static void deviceRemovedCallback(void* context, IOReturn, void*, IOHIDDeviceRef
 {
     // FIXME(191525)
 }
+#endif // HAVE(SECURITY_KEY_API)
+
+Ref<HidService> HidService::create(AuthenticatorTransportServiceObserver& observer)
+{
+    return adoptRef(*new HidService(observer));
+}
 
 HidService::HidService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
 {
+#if HAVE(SECURITY_KEY_API)
     m_manager = adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
     NSDictionary *matchingDictionary = @{
         @kIOHIDPrimaryUsagePageKey: @(kCtapHidUsagePage),
@@ -59,12 +67,15 @@ HidService::HidService(AuthenticatorTransportServiceObserver& observer)
     IOHIDManagerSetDeviceMatching(m_manager.get(), (__bridge CFDictionaryRef)matchingDictionary);
     IOHIDManagerRegisterDeviceMatchingCallback(m_manager.get(), deviceAddedCallback, this);
     IOHIDManagerRegisterDeviceRemovalCallback(m_manager.get(), deviceRemovedCallback, this);
+#endif
 }
 
 HidService::~HidService()
 {
+#if HAVE(SECURITY_KEY_API)
     IOHIDManagerUnscheduleFromRunLoop(m_manager.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     IOHIDManagerClose(m_manager.get(), kIOHIDOptionsTypeNone);
+#endif
 }
 
 void HidService::startDiscoveryInternal()
@@ -74,18 +85,22 @@ void HidService::startDiscoveryInternal()
 
 void HidService::platformStartDiscovery()
 {
+#if HAVE(SECURITY_KEY_API)
     IOHIDManagerScheduleWithRunLoop(m_manager.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     IOHIDManagerOpen(m_manager.get(), kIOHIDOptionsTypeNone);
+#endif
 }
 
-UniqueRef<HidConnection> HidService::createHidConnection(IOHIDDeviceRef device) const
+Ref<HidConnection> HidService::createHidConnection(IOHIDDeviceRef device) const
 {
-    return makeUniqueRef<HidConnection>(device);
+    return HidConnection::create(device);
 }
 
 void HidService::deviceAdded(IOHIDDeviceRef device)
 {
-    getInfo(WTF::makeUnique<CtapHidDriver>(createHidConnection(device)));
+#if HAVE(SECURITY_KEY_API)
+    getInfo(CtapHidDriver::create(createHidConnection(device)));
+#endif
 }
 
 } // namespace WebKit

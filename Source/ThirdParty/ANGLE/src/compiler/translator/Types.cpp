@@ -154,12 +154,6 @@ const char *getBasicString(TBasicType t)
             return "isubpassInput";
         case EbtUSubpassInput:
             return "usubpassInput";
-        case EbtSubpassInputMS:
-            return "subpassInputMS";
-        case EbtISubpassInputMS:
-            return "isubpassInputMS";
-        case EbtUSubpassInputMS:
-            return "usubpassInputMS";
         default:
             UNREACHABLE();
             return "unknown type";
@@ -981,6 +975,56 @@ void TPublicType::clearArrayness()
 bool TPublicType::isAggregate() const
 {
     return isArray() || typeSpecifierNonArray.isMatrix() || typeSpecifierNonArray.isVector();
+}
+
+bool TPublicType::isUnsizedArray() const
+{
+    if (!arraySizes)
+    {
+        return false;
+    }
+    for (unsigned int arraySize : *arraySizes)
+    {
+        if (arraySize == 0u)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void TPublicType::sizeUnsizedArrays()
+{
+    auto *sizes = new TVector<unsigned int>(arraySizes->size(), 1);
+    for (size_t i = 0; i < arraySizes->size(); ++i)
+    {
+        auto value = (*arraySizes)[i];
+        if (value != 0)
+        {
+            (*sizes)[i] = value;
+        }
+    }
+    arraySizes = sizes;
+}
+
+void TPublicType::makeArrays(TVector<unsigned int> *sizes)
+{
+    if (arraySizes == nullptr)
+    {
+        arraySizes = sizes;
+        return;
+    }
+    auto *newSizes = new TVector<unsigned int>(arraySizes->size() + sizes->size());
+    size_t i       = 0;
+    for (; i < arraySizes->size(); ++i)
+    {
+        (*newSizes)[i] = (*arraySizes)[i];
+    }
+    for (size_t j = 0; j < sizes->size(); ++j, ++i)
+    {
+        (*newSizes)[i] = (*sizes)[j];
+    }
+    arraySizes = newSizes;
 }
 
 }  // namespace sh

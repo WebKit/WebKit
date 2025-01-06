@@ -12,6 +12,7 @@
 #if defined(SK_VULKAN)
 
 #include "include/core/SkAlphaType.h"
+#include "include/core/SkBitmap.h"
 #include "include/core/SkBlendMode.h"
 #include "include/core/SkBlurTypes.h"
 #include "include/core/SkCanvas.h"
@@ -26,20 +27,23 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSurface.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "tests/CtsEnforcement.h"
 #include "tests/Test.h"
 #include "tools/gpu/vk/VkTestHelper.h"
 
 #if defined(SK_GANESH)
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #endif
 
 #if defined(SK_GRAPHITE)
 #include "include/gpu/graphite/BackendTexture.h"
+#include "include/gpu/graphite/Context.h"
 #include "include/gpu/graphite/Recorder.h"
 #include "include/gpu/graphite/TextureInfo.h"
+#include "include/gpu/graphite/vk/VulkanGraphiteTypes.h"
 #endif
 
 #include <memory>
@@ -193,7 +197,7 @@ void create_backend_texture_graphite(skiatest::Reporter* reporter,
     vkTextureInfo.fImageUsageFlags = VK_IMAGE_USAGE_SAMPLED_BIT |
                                      VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
                                      VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-    TextureInfo textureInfo(vkTextureInfo);
+    TextureInfo textureInfo = TextureInfos::MakeVulkan(vkTextureInfo);
 
     BackendTexture backendTex = helper->recorder()->createBackendTexture({ kSize, kSize },
                                                                          textureInfo);
@@ -239,6 +243,60 @@ DEF_GANESH_TEST(VkProtectedContext_ReadFromProtectedSurface,
     REPORTER_ASSERT(reporter, !surface->readPixels(SkImageInfo(), nullptr, 8, 0, 0));
 }
 
+// Graphite does not perform Copy-on-Write which is why there is no DEF_GRAPHITE_TEST correlate
+DEF_GANESH_TEST(VkProtectedContext_CopyOnWrite,
+                reporter,
+                options,
+                CtsEnforcement::kNever) {
+    std::unique_ptr<VkTestHelper> helper = VkTestHelper::Make(skiatest::TestType::kGanesh,
+                                                              /* isProtected= */ true);
+    if (!helper) {
+        return;
+    }
+
+    REPORTER_ASSERT(reporter, helper->isValid());
+
+    GrDirectContext* dContext = helper->directContext();
+
+    SkImageInfo ii = SkImageInfo::Make({ kSize, kSize },
+                                       kRGBA_8888_SkColorType,
+                                       kPremul_SkAlphaType);
+
+    // We can't use VkTestHelper::createSurface here bc that will wrap a backend
+    // texture which blocks the copy-on-write-behavior
+    sk_sp<SkSurface> surface = SkSurfaces::RenderTarget(dContext,
+                                                        skgpu::Budgeted::kNo,
+                                                        ii,
+                                                        /* sampleCount= */ 1,
+                                                        kBottomLeft_GrSurfaceOrigin,
+                                                        /* surfaceProps= */ nullptr,
+                                                        /* shouldCreateWithMips= */ false,
+                                                        /* isProtected= */ true);
+
+
+    REPORTER_ASSERT(reporter, surface);
+    SkCanvas* canvas = surface->getCanvas();
+    REPORTER_ASSERT(reporter, canvas);
+
+    sk_sp<SkImage> imageBefore = surface->makeImageSnapshot();
+    REPORTER_ASSERT(reporter, imageBefore);
+    REPORTER_ASSERT(reporter, imageBefore->isProtected());
+
+    SkPaint paint;
+    paint.setColor(SK_ColorBLACK);
+    canvas->drawRect(SkRect::MakeWH(4, 4), paint);
+
+    sk_sp<SkImage> imageAfter = surface->makeImageSnapshot();
+    REPORTER_ASSERT(reporter, imageAfter);
+    REPORTER_ASSERT(reporter, imageAfter->isProtected());
+
+    REPORTER_ASSERT(reporter, imageBefore != imageAfter);
+
+    SkBitmap readback;
+    readback.allocPixels(imageAfter->imageInfo());
+    REPORTER_ASSERT(reporter, !imageAfter->readPixels(dContext, readback.pixmap(), 0, 0));
+}
+
 namespace {
 
 struct AsyncContext {
@@ -252,8 +310,7 @@ void async_callback(void* c, std::unique_ptr<const SkSurface::AsyncReadResult> r
     context->fCalled = true;
 }
 
-void async_read_from_protected_surface(skiatest::Reporter* reporter,
-                                              skiatest::TestType testType) {
+void async_read_from_protected_surface(skiatest::Reporter* reporter, skiatest::TestType testType) {
     std::unique_ptr<VkTestHelper> helper = VkTestHelper::Make(testType, /* isProtected= */ true);
     if (!helper) {
         return;
@@ -266,13 +323,36 @@ void async_read_from_protected_surface(skiatest::Reporter* reporter,
                                                      /* isProtected= */ true);
     REPORTER_ASSERT(reporter, surface);
     AsyncContext cbContext;
-    const SkImageInfo imageInfo = SkImageInfo::Make(10, 10, kRGBA_8888_SkColorType,
+    const SkImageInfo imageInfo = SkImageInfo::Make(6, 6, kRGBA_8888_SkColorType,
                                                     kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
-    surface->asyncRescaleAndReadPixelsYUV420(kIdentity_SkYUVColorSpace, SkColorSpace::MakeSRGB(),
-                                             imageInfo.bounds(), imageInfo.dimensions(),
-                                             SkSurface::RescaleGamma::kSrc,
-                                             SkSurface::RescaleMode::kNearest,
-                                             &async_callback, &cbContext);
+
+    if (testType == skiatest::TestType::kGanesh) {
+        surface->asyncRescaleAndReadPixelsYUV420(kIdentity_SkYUVColorSpace,
+                                                 SkColorSpace::MakeSRGB(),
+                                                 imageInfo.bounds(),
+                                                 imageInfo.dimensions(),
+                                                 SkSurface::RescaleGamma::kSrc,
+                                                 SkSurface::RescaleMode::kNearest,
+                                                 &async_callback,
+                                                 &cbContext);
+    }
+#if defined(SK_GRAPHITE)
+    else {
+        // Graphite deprecates SkSurface::asyncRescaleAndReadPixelsYUVA420 in favor of
+        // Context::asyncRescaleAndReadPixelsYUV420.
+        skgpu::graphite::Context* context = helper->context();
+
+        context->asyncRescaleAndReadPixelsYUV420(surface.get(),
+                                                 kIdentity_SkYUVColorSpace,
+                                                 SkColorSpace::MakeSRGB(),
+                                                 imageInfo.bounds(),
+                                                 imageInfo.dimensions(),
+                                                 SkSurface::RescaleGamma::kSrc,
+                                                 SkSurface::RescaleMode::kNearest,
+                                                 &async_callback,
+                                                 &cbContext);
+    }
+#endif
 
     helper->submitAndWaitForCompletion(&cbContext.fCalled);
     REPORTER_ASSERT(reporter, !cbContext.fResult);

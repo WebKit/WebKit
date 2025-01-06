@@ -172,6 +172,16 @@
          Source code: <a href="wasm/TSF">TSF</a>
         </dd>
 
+        <dt id="tfjs-wasm">tfjs-wasm</dt>
+        <dd>
+         Tests <a href="https://github.com/tensorflow/tfjs">Tensorflow.js</a> pre-trained machine learning models supported by <a href="https://github.com/tensorflow/tfjs/tree/master/tfjs-backend-wasm">WebAssembly backend</a>. The current benchmark includes models: <a href="https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2_100_224/classification/3/default/1">mobilenet</a>, <a href="https://www.npmjs.com/package/@tensorflow-models/knn-classifier">knn-classifier</a>, <a href="https://www.npmjs.com/package/@tensorflow-models/coco-ssd">coco-ssd</a>, <a href="https://www.npmjs.com/package/@tensorflow-models/universal-sentence-encoder">universal-sentence-encoder</a>. Source code: <a href="wasm/">TFJS</a>.
+        </dd>
+
+        <dt id="argon2-wasm">argon2-wasm</dt>
+        <dd>
+         Tests <a href="https://github.com/P-H-C/phc-winner-argon2">Argon2</a>, a password-hashing function (the winner of Password Hashing Competition), in Web Assembly. This is test is based on <a href="https://github.com/antelle/argon2-browser">argon2-browser</a> library. Source code: <a href="wasm/">ARGON2</a>.
+        </dd>
+
         <dt id="tagcloud-SP">tagcloud-SP</dt>
         <dd>
          Parses JSON and generates markup for a <a href="http://en.wikipedia.org/wiki/Tag_cloud">tag
@@ -239,6 +249,15 @@
          benchmark</a> compiled to a hybrid of Web Assembly and JavaScript. It stresses how quickly
          JavaScript can call into Web Assembly code.
          Source code: <a href="wasm/richards.c">richards.c</a>, <a href="wasm/richards.js">richards.js</a>
+        </dd>
+
+        <dt id="8bitbench-wasm">8bitbench-wasm</dt>
+        <dd>
+         A simple 8-bit emulator targeting wasm, written in rust. It aims to represent what an emulator or small game might act like in the real world.
+         <br />
+         Attribution: See <a href="8bitbench/ABOUT.md">8bitbench/ABOUT.md</a>
+         <br />
+         Source code: <a href="8bitbench/js3harness.js">8bitbench/js3harness.js</a>, based off <a href="https://github.com/justinmichaud/8bitbench">https://github.com/justinmichaud/8bitbench</a>
         </dd>
 
         <dt id="regexp">regexp</dt>
@@ -625,7 +644,48 @@
         <dd>
          This is an implementation of a mock file system that stresses the performance of DataView, Promises, and async
          iteration. The benchmark simulates adding and removing files, and swapping the byte order of existing files.
-         Source code: <a href="simple/file-system.js">async-fs.js</a>
+         Source code: <a href="generators/async-file-system.js">async-file-system.js</a>
+        </dd>
+
+        <dt id="sync-fs">sync-fs</dt>
+        <dd>
+         This is an implementation of a mock file system that stresses the performance of DataView, Promises, and synchronous
+         generators / iterators. The benchmark simulates adding and removing files, and swapping the byte order of existing files.
+         Source code: <a href="generators/sync-file-system.js">sync-file-system.js</a>
+        </dd>
+
+        <dt id="lazy-collections">lazy-collections</dt>
+        <dd>
+         This benchmark iterates over common integer sequences (fibonacci, prime numbers, etc) as lazy collections using eponymous
+         library by <a href="https://robinmalfait.com">Robin Malfait</a> that stresses the performance of generators.
+         Source code: <a href="generators/lazy-collections.js">lazy-collections.js</a>
+        </dd>
+
+        <dt id="js-tokens">js-tokens</dt>
+        <dd>
+         This benchmarks runs <a href="https://github.com/lydell/js-tokens">js-tokens</a>, a lenient and almost spec-compliant JavaScript
+         tokenizer by Simon Lydell, over its own source code and a JSX snippet. Stresses the performance of generators and regular
+         expressions, especially sticky and unicode RegExp patterns with property escapes <code>\p{}</code>.
+         Source code: <a href="generators/js-tokens.js">js-tokens.js</a>
+        </dd>
+
+        <dt id="doxbee-promise">doxbee-promise</dt>
+        <dd>
+         A typical CRUD method extracted from DoxBee that is called when uploading files. The benchmark emulates a situation where
+         10k requests are being made concurrently to execute some mixed async / sync action with fast I/O response times.
+         Authored by <a href="https://blog.spion.dev/posts/analysis-generators-and-other-async-patterns-node.html">Gorki Kosev</a>,
+         <a href="https://github.com/v8/promise-performance-tests">packed by Benedikt Meurer</a>.
+         Source code: <a href="simple/doxbee-promise.js">doxbee-promise.js</a>
+        </dd>
+
+        <dt id="doxbee-async">doxbee-async</dt>
+        <dd>
+         A typical CRUD method extracted from DoxBee that is called when uploading files. The benchmark emulates a situation where
+         10k requests are being made concurrently to execute some mixed async / sync action with fast I/O response times.
+         Uses async / await instead of plain Promise.
+         Authored by <a href="https://blog.spion.dev/posts/analysis-generators-and-other-async-patterns-node.html">Gorki Kosev</a>,
+         <a href="https://github.com/v8/promise-performance-tests">packed by Benedikt Meurer</a>.
+         Source code: <a href="simple/doxbee-async.js">doxbee-async.js</a>
         </dd>
 
         <dt id="Air">Air</dt>

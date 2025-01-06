@@ -27,6 +27,8 @@
 #include "SourceImage.h"
 
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
+#include "NativeImage.h"
 
 namespace WebCore {
 
@@ -34,6 +36,12 @@ SourceImage::SourceImage(ImageVariant&& imageVariant)
     : m_imageVariant(WTFMove(imageVariant))
 {
 }
+
+SourceImage::SourceImage(const SourceImage&) = default;
+SourceImage::SourceImage(SourceImage&&) = default;
+SourceImage& SourceImage::operator=(const SourceImage&) = default;
+SourceImage& SourceImage::operator=(SourceImage&&) = default;
+SourceImage::~SourceImage() = default;
 
 bool SourceImage::operator==(const SourceImage& other) const
 {
@@ -92,7 +100,7 @@ ImageBuffer* SourceImage::imageBuffer() const
         auto nativeImage = std::get<Ref<NativeImage>>(m_imageVariant);
 
         auto rect = FloatRect { { }, nativeImage->size() };
-        auto imageBuffer = ImageBuffer::create(nativeImage->size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        auto imageBuffer = ImageBuffer::create(nativeImage->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
         if (!imageBuffer)
             return nullptr;
 

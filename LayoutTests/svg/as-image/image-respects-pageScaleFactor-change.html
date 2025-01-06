@@ -6,20 +6,18 @@
         testRunner.waitUntilDone();
     }
     
-    function load() {
-        if (!window.internals)
+    async function load() {
+        if (!window.testRunner)
             return;
 
-        window.internals.setPageScaleFactor(2, 0, 0);
+        await window.testRunner.setPageScaleFactor(2, 0, 0);
         
         setTimeout(increasePageScale, 0);
     }
     
-    function increasePageScale() {
-        window.internals.setPageScaleFactor(4, 0, 0);
-        
-        if (window.testRunner)
-            testRunner.notifyDone();
+    async function increasePageScale() {
+        await window.testRunner.setPageScaleFactor(4, 0, 0);
+        testRunner.notifyDone();
     }
 
     window.onload = load;

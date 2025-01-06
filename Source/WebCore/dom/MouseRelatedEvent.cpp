@@ -31,12 +31,13 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "RenderLayer.h"
+#include "RenderLayerInlines.h"
 #include "RenderObject.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MouseRelatedEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MouseRelatedEvent);
 
 // FIXME: Remove this variant.
 MouseRelatedEvent::MouseRelatedEvent()
@@ -56,6 +57,7 @@ MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, con
     , m_screenLocation(screenLocation)
     , m_movementX(movementX)
     , m_movementY(movementY)
+    , m_windowLocation(windowLocation)
     , m_isSimulated(isSimulated == IsSimulated::Yes)
 {
     init(m_isSimulated, windowLocation);
@@ -68,12 +70,11 @@ MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, con
 }
 
 MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const MouseRelatedEventInit& initializer, IsTrusted isTrusted)
-    : UIEventWithKeyState(eventInterface, eventType, initializer)
+    : UIEventWithKeyState(eventInterface, eventType, initializer, isTrusted)
     , m_screenLocation(IntPoint(initializer.screenX, initializer.screenY))
     , m_movementX(initializer.movementX)
     , m_movementY(initializer.movementY)
 {
-    ASSERT_UNUSED(isTrusted, isTrusted == IsTrusted::No);
     init(false, IntPoint(0, 0));
 }
 

@@ -119,6 +119,60 @@
     _isDoneQueryingControlledElementID = true;
 }
 
+- (BOOL)_playPredominantOrNowPlayingMediaSession
+{
+    __block bool done = false;
+    __block BOOL result = NO;
+    [self _playPredominantOrNowPlayingMediaSession:^(BOOL success) {
+        result = success;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
+}
+
+- (BOOL)_pauseNowPlayingMediaSession
+{
+    __block bool done = false;
+    __block BOOL result = NO;
+    [self _pauseNowPlayingMediaSession:^(BOOL success) {
+        result = success;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
+}
+
+- (void)waitForVideoToPlay
+{
+    [self waitForVideoToPlay:@"video"];
+}
+
+- (void)waitForVideoToPlay:(NSString *)selector
+{
+    while (true) {
+        __auto_type scriptToRun = [NSString stringWithFormat:@"(function() {"
+            "  let video = document.querySelector('%@');"
+            "  return !video.paused && video.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA;"
+            "})();", selector];
+        if ([[self objectByEvaluatingJavaScript:scriptToRun] boolValue])
+            return;
+    }
+}
+
+- (BOOL)isVideoPaused:(NSString *)selector
+{
+    return [[self objectByEvaluatingJavaScript:[NSString stringWithFormat:@"document.querySelector('%@').paused", selector]] boolValue];
+}
+
+- (void)waitForVideoToPause
+{
+    while (true) {
+        if ([self isVideoPaused:@"video"])
+            return;
+    }
+}
+
 @end
 
 namespace TestWebKitAPI {
@@ -140,7 +194,12 @@ TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideo)
     [webView waitForMediaControlsToShow];
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerSingleSmallVideo)
+#else
 TEST(VideoControlsManager, VideoControlsManagerSingleSmallVideo)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
@@ -172,7 +231,12 @@ TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosWithAudioA
     EXPECT_TRUE([[webView controlledElementID] isEqualToString:@"bar"]);
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosScrollPausedVideoOutOfView)
+#else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPausedVideoOutOfView)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
@@ -184,7 +248,12 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPausedVideoOu
     }];
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosScrollPlayingVideoWithSoundOutOfView)
+#else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingVideoWithSoundOutOfView)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
@@ -196,7 +265,12 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingVideoW
     }];
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosScrollPlayingMutedVideoOutOfView)
+#else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingMutedVideoOutOfView)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
@@ -208,7 +282,12 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingMutedV
     }];
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosShowControlsForLastInteractedVideo)
+#else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosShowControlsForLastInteractedVideo)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
     NSPoint clickPoint = NSMakePoint(400, 300);
@@ -235,7 +314,12 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosShowControlsForLast
     TestWebKitAPI::Util::run(&secondVideoPaused);
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosSwitchControlledVideoWhenScrolling)
+#else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosSwitchControlledVideoWhenScrolling)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
 
@@ -275,7 +359,12 @@ TEST(VideoControlsManager, VideoControlsManagerSingleSmallAutoplayingVideo)
     }];
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerLargeAutoplayingVideoSeeksAfterEnding)
+#else
 TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoSeeksAfterEnding)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
@@ -373,7 +462,7 @@ TEST(VideoControlsManager, VideoControlsManagerTearsDownMediaControlsOnDealloc)
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
-    NSURL *urlOfVideo = [[NSBundle mainBundle] URLForResource:@"video-with-audio" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *urlOfVideo = [NSBundle.test_resourcesBundle URLForResource:@"video-with-audio" withExtension:@"mp4"];
     [webView loadFileURL:urlOfVideo allowingReadAccessToURL:[urlOfVideo URLByDeletingLastPathComponent]];
 
     __block bool finishedTest = false;
@@ -425,7 +514,7 @@ TEST(VideoControlsManager, VideoControlsManagerSmallVideoInMediaDocument)
         finishedLoad = true;
     }];
     
-    NSURL *urlOfVideo = [[NSBundle mainBundle] URLForResource:@"video-with-audio" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *urlOfVideo = [NSBundle.test_resourcesBundle URLForResource:@"video-with-audio" withExtension:@"mp4"];
     [webView loadFileURL:urlOfVideo allowingReadAccessToURL:[urlOfVideo URLByDeletingLastPathComponent]];
     
     TestWebKitAPI::Util::run(&finishedLoad);
@@ -500,6 +589,42 @@ TEST(VideoControlsManager, VideoControlsManagerDoesNotChangeValuesExposedToJavaS
 
     EXPECT_EQ(2.0, [[webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('video')[0].playbackRate"] doubleValue]);
     EXPECT_EQ(1.0, [[webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('video')[0].defaultPlaybackRate"] doubleValue]);
+}
+
+TEST(VideoControlsManager, TogglePlaybackForControlledVideo)
+{
+    RetainPtr webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
+    [webView synchronouslyLoadTestPageNamed:@"large-video-with-audio"];
+    [webView waitForMediaControlsToShow];
+
+    BOOL paused = [webView _pauseNowPlayingMediaSession];
+    EXPECT_TRUE(paused);
+    [webView waitForVideoToPause];
+
+    BOOL played = [webView _playPredominantOrNowPlayingMediaSession];
+    EXPECT_TRUE(played);
+    [webView waitForVideoToPlay];
+}
+
+// rdar://136308546 This is failing on all Mac queues.
+#if PLATFORM(MAC)
+TEST(VideoControlsManager, DISABLED_StartPlayingLargestVideoInViewport)
+#else
+TEST(VideoControlsManager, StartPlayingLargestVideoInViewport)
+#endif
+{
+    RetainPtr webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 640, 480));
+    [webView synchronouslyLoadTestPageNamed:@"large-videos-with-audio"];
+
+    Util::waitForConditionWithLogging([webView] -> bool {
+        return [[webView stringByEvaluatingJavaScript:@"!!document.getElementById('foo')?.canPlayThrough"] boolValue];
+    }, 5, @"Expected first video to finish loading.");
+
+    BOOL played = [webView _playPredominantOrNowPlayingMediaSession];
+    EXPECT_TRUE(played);
+    [webView waitForVideoToPlay:@"#foo"];
+    EXPECT_TRUE([webView isVideoPaused:@"#bar"]);
+    EXPECT_TRUE([webView isVideoPaused:@"#baz"]);
 }
 
 } // namespace TestWebKitAPI

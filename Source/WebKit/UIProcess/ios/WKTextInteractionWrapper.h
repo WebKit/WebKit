@@ -42,7 +42,7 @@
 - (void)didEndScrollingOverflow;
 - (void)selectionChanged;
 - (void)setGestureRecognizers;
-- (void)willStartScrollingOverflow;
+- (void)willStartScrollingOverflow:(UIScrollView *)scrollView;
 - (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(WKBEGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(WKBESelectionFlags)flags;
 - (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(WKBESelectionTouchPhase)touch withFlags:(WKBESelectionFlags)flags;
 - (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
@@ -55,12 +55,20 @@
 - (void)selectWord;
 - (void)selectAll:(id)sender;
 - (void)translate:(NSString *)text fromRect:(CGRect)presentationRect;
+- (void)prepareToMoveSelectionContainer:(UIView *)newContainer;
+- (void)setNeedsSelectionUpdate;
+
+- (void)willBeginDragLift;
+- (void)didConcludeDrop;
+
+- (void)reset;
 
 #if USE(UICONTEXTMENU)
 - (void)setExternalContextMenuInteractionDelegate:(id<UIContextMenuInteractionDelegate>)delegate;
 @property (nonatomic, strong, readonly) UIContextMenuInteraction *contextMenuInteraction;
 #endif
 
+@property (nonatomic, readonly) NSArray<UIView *> *managedTextSelectionViews;
 @property (nonatomic, readonly) UIWKTextInteractionAssistant *textInteractionAssistant;
 
 @end

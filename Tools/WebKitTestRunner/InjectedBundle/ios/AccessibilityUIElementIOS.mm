@@ -57,6 +57,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (id)accessibilityElementForRow:(NSInteger)row andColumn:(NSInteger)column;
 - (NSURL *)accessibilityURL;
 - (NSArray *)accessibilityHeaderElements;
+- (NSString *)accessibilityDatetimeValue;
 - (NSArray *)accessibilityDetailsElements;
 - (NSArray *)accessibilityErrorMessageElements;
 - (NSString *)accessibilityPlaceholderValue;
@@ -67,6 +68,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSArray *)lineRectsAndText;
 - (CGPoint)accessibilityClickPoint;
 - (void)accessibilityModifySelection:(WebCore::TextGranularity)granularity increase:(BOOL)increase;
+- (NSDictionary<NSString *, id> *)_accessibilityResolvedEditingStyles;
 - (NSRange)_accessibilitySelectedTextRange;
 - (void)_accessibilitySetSelectedTextRange:(NSRange)range;
 - (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string;
@@ -82,6 +84,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (UIAccessibilityTraits)_axSelectedTrait;
 - (UIAccessibilityTraits)_axTextAreaTrait;
 - (UIAccessibilityTraits)_axSearchFieldTrait;
+- (UIAccessibilityTraits)_axVisitedTrait;
 - (NSString *)accessibilityCurrentState;
 - (NSUInteger)accessibilityRowCount;
 - (NSUInteger)accessibilityColumnCount;
@@ -383,6 +386,9 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringDescriptionOfAttributeVal
     if (JSStringIsEqualToUTF8CString(attribute, "AXVisibleCharacterRange"))
         return [NSStringFromRange([m_element accessibilityVisibleCharacterRange]) createJSStringRef];
 
+    if (JSStringIsEqualToUTF8CString(attribute, "AXResolvedEditingStyles"))
+        return [[[m_element _accessibilityResolvedEditingStyles] description] createJSStringRef];
+
     return createJSString();
 }
 
@@ -481,6 +487,10 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
         return [m_element _accessibilityHasTouchEventListener];
     if (JSStringIsEqualToUTF8CString(attribute, "AXIsStrongPasswordField"))
         return [m_element _accessibilityIsStrongPasswordField];
+    if (JSStringIsEqualToUTF8CString(attribute, "AXVisited")) {
+        UIAccessibilityTraits traits = [m_element accessibilityTraits];
+        return (traits & [m_element _axVisitedTrait]) == [m_element _axVisitedTrait];
+    }
     return false;
 }
 
@@ -743,7 +753,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()
     return [[[m_element accessibilitySpeechHint] componentsJoinedByString:@", "] createJSStringRef];
 }
 
-bool AccessibilityUIElement::ariaIsGrabbed() const
+bool AccessibilityUIElement::isGrabbed() const
 {
     return false;
 }
@@ -807,8 +817,8 @@ unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef c
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement *startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
 {
-    NSDictionary *parameterizedAttribute = searchPredicateParameterizedAttributeForSearchCriteria(context, startElement, isDirectionNext, 5, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
-    id results = [m_element accessibilityFindMatchingObjects:parameterizedAttribute];
+    NSDictionary *parameter = searchPredicateForSearchCriteria(context, startElement, nullptr, isDirectionNext, 5, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
+    id results = [m_element accessibilityFindMatchingObjects:parameter];
     if (![results isKindOfClass:[NSArray class]])
         return nullptr;
 
@@ -1058,6 +1068,11 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
     return createJSString();
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::dateTimeValue() const
+{
+    return [[m_element accessibilityDatetimeValue] createJSStringRef];
+}
+
 void AccessibilityUIElement::assistiveTechnologySimulatedFocus()
 {
     [m_element accessibilityElementDidBecomeFocused];
@@ -1259,6 +1274,12 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRange
     
     id textMarkerRange = [m_element textMarkerRangeForMarkers:textMarkers];
     return AccessibilityTextMarkerRange::create(textMarkerRange);
+}
+
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForSearchPredicate(JSContextRef context, AccessibilityTextMarkerRange *startRange, bool forward, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
+{
+    // FIXME: add implementation for iOS.
+    return nullptr;
 }
 
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMarkerRange(AccessibilityTextMarkerRange* start, bool forward)

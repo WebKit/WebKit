@@ -249,7 +249,7 @@ void TaskQueueStdlib::ProcessTasks() {
       continue;
     }
 
-    flag_notify_.Wait(task.sleep_time);
+    flag_notify_.Wait(task.sleep_time, task.sleep_time);
   }
 
   // Ensure remaining deleted tasks are destroyed with Current() set up to this

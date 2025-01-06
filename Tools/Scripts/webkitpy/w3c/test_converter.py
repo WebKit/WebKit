@@ -29,15 +29,11 @@ import json
 import logging
 import os
 import re
-import sys
 
 from webkitpy.common.host import Host
 from webkitpy.common.webkit_finder import WebKitFinder
 
-if sys.version_info > (3, 0):
-    from html.parser import HTMLParser
-else:
-    from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 
 _log = logging.getLogger(__name__)
 
@@ -61,10 +57,7 @@ def convert_for_webkit(new_path, filename, reference_support_info, reference_fil
 
 class _W3CTestConverter(HTMLParser):
     def __init__(self, new_path, filename, reference_support_info, reference_file_renames=[], host=Host(), webkit_test_runner_options=''):
-        if sys.version_info > (3, 0):
-            HTMLParser.__init__(self, convert_charrefs=False)
-        else:
-            HTMLParser.__init__(self)
+        HTMLParser.__init__(self, convert_charrefs=False)
 
         self._host = host
         self._filesystem = self._host.filesystem

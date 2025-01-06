@@ -11,8 +11,15 @@
 #ifndef API_TEST_MOCK_VIDEO_ENCODER_H_
 #define API_TEST_MOCK_VIDEO_ENCODER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <vector>
 
+#include "api/fec_controller_override.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
+#include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
 #include "test/gmock.h"
 

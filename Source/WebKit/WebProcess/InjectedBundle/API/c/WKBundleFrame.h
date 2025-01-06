@@ -39,7 +39,6 @@ extern "C" {
 WK_EXPORT WKTypeID WKBundleFrameGetTypeID();
 
 WK_EXPORT bool WKBundleFrameIsMainFrame(WKBundleFrameRef frame);
-WK_EXPORT bool WKBundleFrameIsRemote(WKBundleFrameRef frame);
 WK_EXPORT WKBundleFrameRef WKBundleFrameGetParentFrame(WKBundleFrameRef frame) WK_C_API_DEPRECATED_WITH_MESSAGE("Parent frame might not be in the same process");
 WK_EXPORT WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frame) WK_C_API_DEPRECATED_WITH_MESSAGE("Child frames might not be in the same process");
 

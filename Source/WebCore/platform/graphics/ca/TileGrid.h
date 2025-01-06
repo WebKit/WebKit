@@ -30,10 +30,12 @@
 #include "PlatformCALayerClient.h"
 #include "TileGridIdentifier.h"
 #include "Timer.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(CG)
 typedef struct CGContext *CGContextRef;
@@ -47,9 +49,10 @@ class TileController;
 
 using TileIndex = IntPoint;
 
-class TileGrid : public PlatformCALayerClient {
+class TileGrid final : public PlatformCALayerClient, public CanMakeCheckedPtr<TileGrid> {
+    WTF_MAKE_TZONE_ALLOCATED(TileGrid);
     WTF_MAKE_NONCOPYABLE(TileGrid);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TileGrid);
 public:
     explicit TileGrid(TileController&);
     ~TileGrid();
@@ -115,7 +118,7 @@ private:
     bool getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight) const;
 
     enum class CoverageType { PrimaryTiles, SecondaryTiles };
-    IntRect ensureTilesForRect(const FloatRect&, CoverageType);
+    IntRect ensureTilesForRect(const FloatRect&, HashSet<TileIndex>& tilesNeedingDisplay, CoverageType);
 
     struct TileCohortInfo {
         TileCohort cohort;
@@ -142,6 +145,7 @@ private:
     void removeTiles(const Vector<TileIndex>& toRemove);
 
     // PlatformCALayerClient
+    PlatformLayerIdentifier platformCALayerIdentifier() const override;
     void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>) override;
     bool platformCALayerShowDebugBorders() const override;
     bool platformCALayerShowRepaintCounter(PlatformCALayer*) const override;
@@ -154,12 +158,12 @@ private:
     bool platformCALayerNeedsPlatformContext(const PlatformCALayer*) const override;
 
     TileGridIdentifier m_identifier;
-    TileController& m_controller;
+    CheckedRef<TileController> m_controller;
 #if USE(CA)
     Ref<PlatformCALayer> m_containerLayer;
 #endif
 
-    HashMap<TileIndex, TileInfo> m_tiles;
+    UncheckedKeyHashMap<TileIndex, TileInfo> m_tiles;
 
     IntRect m_primaryTileCoverageRect;
     Vector<FloatRect> m_secondaryTileCoverageRects;
@@ -173,6 +177,7 @@ private:
     IntSize m_tileSize;
 
     float m_scale { 1 };
+    std::optional<float> m_scaleAtLastRevalidation;
 };
 
 }

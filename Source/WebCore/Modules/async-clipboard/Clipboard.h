@@ -26,7 +26,7 @@
 #pragma once
 
 #include "EventTarget.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -40,7 +40,7 @@ class Pasteboard;
 class PasteboardCustomData;
 
 class Clipboard final : public RefCounted<Clipboard>, public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(Clipboard);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Clipboard);
 public:
     static Ref<Clipboard> create(Navigator&);
     ~Clipboard();

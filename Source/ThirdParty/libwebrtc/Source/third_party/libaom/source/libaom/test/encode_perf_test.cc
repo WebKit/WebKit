@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -10,17 +10,15 @@
  */
 
 #include <string>
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
-#include "config/aom_config.h"
-#include "config/aom_version.h"
-
+#include "aom/aom_codec.h"
+#include "aom_ports/aom_timer.h"
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
 #include "test/i420_video_source.h"
 #include "test/util.h"
 #include "test/y4m_video_source.h"
-#include "aom_ports/aom_timer.h"
 
 namespace {
 
@@ -164,7 +162,7 @@ TEST_P(AV1EncodePerfTest, PerfTest) {
 
         printf("{\n");
         printf("\t\"type\" : \"encode_perf_test\",\n");
-        printf("\t\"version\" : \"%s\",\n", VERSION_STRING_NOSP);
+        printf("\t\"version\" : \"%s\",\n", aom_codec_version_str());
         printf("\t\"videoName\" : \"%s\",\n", display_name.c_str());
         printf("\t\"encodeTimeSecs\" : %f,\n", elapsed_secs);
         printf("\t\"totalFrames\" : %u,\n", frames);

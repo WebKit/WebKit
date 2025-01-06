@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <array>
 #include <wtf/Assertions.h>
 #include <wtf/text/LChar.h>
 
@@ -76,7 +77,7 @@ template<typename CharacterType> constexpr bool isASCIIAlphaCaselessEqual(Charac
 // in the CSS tokenizer, for example, instead make direct use toASCIILowerUnchecked.
 template<typename CharacterType> constexpr CharacterType toASCIILowerUnchecked(CharacterType);
 
-extern WTF_EXPORT_PRIVATE const unsigned char asciiCaseFoldTable[256];
+extern WTF_EXPORT_PRIVATE const std::array<uint8_t, 256> asciiCaseFoldTable;
 
 template<typename CharacterType> constexpr bool isASCII(CharacterType character)
 {

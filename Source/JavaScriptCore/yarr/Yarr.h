@@ -43,6 +43,7 @@ namespace JSC { namespace Yarr {
 #define YarrStackSpaceForDotStarEnclosure 1
 
 static constexpr unsigned quantifyInfinite = UINT_MAX;
+static constexpr uint64_t quantifyInfinite64 = std::numeric_limits<uint64_t>::max();
 static constexpr unsigned offsetNoMatch = std::numeric_limits<unsigned>::max();
 
 // The below limit restricts the number of "recursive" match calls in order to

@@ -6,11 +6,15 @@
  */
 
 #include "src/sksl/codegen/SkSLRasterPipelineBuilder.h"
+#include <cstdint>
+#include <optional>
 
 #include "include/core/SkStream.h"
 #include "include/private/base/SkMalloc.h"
+#include "include/private/base/SkTFitsIn.h"
 #include "include/private/base/SkTo.h"
 #include "src/base/SkArenaAlloc.h"
+#include "src/base/SkSafeMath.h"
 #include "src/core/SkOpts.h"
 #include "src/core/SkRasterPipelineContextUtils.h"
 #include "src/core/SkRasterPipelineOpContexts.h"
@@ -20,7 +24,6 @@
 #include "src/sksl/SkSLString.h"
 #include "src/sksl/tracing/SkSLDebugTracePriv.h"
 #include "src/sksl/tracing/SkSLTraceHook.h"
-#include "src/utils/SkBitSet.h"
 
 #if !defined(SKSL_STANDALONE)
 #include "src/core/SkRasterPipeline.h"
@@ -1271,10 +1274,6 @@ std::unique_ptr<Program> Builder::finish(int numValueSlots,
                                      numImmutableSlots, fNumLabels, debugTrace);
 }
 
-void Program::optimize() {
-    // TODO(johnstiles): perform any last-minute cleanup of the instruction stream here
-}
-
 static int stack_usage(const Instruction& inst) {
     switch (inst.fOp) {
         case BuilderOp::push_condition_mask:
@@ -1399,8 +1398,6 @@ Program::Program(TArray<Instruction> instrs,
         , fNumImmutableSlots(numImmutableSlots)
         , fNumLabels(numLabels)
         , fDebugTrace(debugTrace) {
-    this->optimize();
-
     fTempStackMaxDepths = this->tempStackMaxDepths();
 
     fNumTempStackSlots = 0;
@@ -1621,31 +1618,69 @@ void Program::appendAdjacentMultiSlotTernaryOp(TArray<Stage>* pipeline, SkArenaA
     }
 }
 
-void Program::appendStackRewind(TArray<Stage>* pipeline) const {
+void Program::appendStackRewindForNonTailcallers(TArray<Stage>* pipeline) const {
 #if defined(SKSL_STANDALONE) || !SK_HAS_MUSTTAIL
-    pipeline->push_back({ProgramOp::stack_rewind, nullptr});
+    // When SK_HAS_MUSTTAIL is not enabled, stack rewinds are critical because because the stack may
+    // grow after every single SkSL stage.
+    this->appendStackRewind(pipeline);
 #endif
+}
+
+void Program::appendStackRewind(TArray<Stage>* pipeline) const {
+    pipeline->push_back({ProgramOp::stack_rewind, nullptr});
+}
+
+void Builder::invoke_shader(int childIdx) {
+    this->appendInstruction(BuilderOp::invoke_shader, {}, childIdx);
+}
+
+void Builder::invoke_color_filter(int childIdx) {
+    this->appendInstruction(BuilderOp::invoke_color_filter, {}, childIdx);
+}
+
+void Builder::invoke_blender(int childIdx) {
+    this->appendInstruction(BuilderOp::invoke_blender, {}, childIdx);
+}
+
+void Builder::invoke_to_linear_srgb() {
+    // The intrinsics accept a three-component value; add a fourth padding element (which will be
+    // ignored) since our RP ops deal in RGBA colors.
+    this->pad_stack(1);
+    this->appendInstruction(BuilderOp::invoke_to_linear_srgb, {});
+    this->discard_stack(1);
+}
+
+void Builder::invoke_from_linear_srgb() {
+    // The intrinsics accept a three-component value; add a fourth padding element (which will be
+    // ignored) since our RP ops deal in RGBA colors.
+    this->pad_stack(1);
+    this->appendInstruction(BuilderOp::invoke_from_linear_srgb, {});
+    this->discard_stack(1);
 }
 
 static void* context_bit_pun(intptr_t val) {
     return sk_bit_cast<void*>(val);
 }
 
-Program::SlotData Program::allocateSlotData(SkArenaAlloc* alloc) const {
+std::optional<Program::SlotData> Program::allocateSlotData(SkArenaAlloc* alloc) const {
     // Allocate a contiguous slab of slot data for immutables, values, and stack entries.
     const int N = SkOpts::raster_pipeline_highp_stride;
     const int scalarWidth = 1 * sizeof(float);
     const int vectorWidth = N * sizeof(float);
-    const int allocSize = vectorWidth * (fNumValueSlots + fNumTempStackSlots) +
-                          scalarWidth * fNumImmutableSlots;
+    SkSafeMath safe;
+    size_t allocSize = safe.add(safe.mul(vectorWidth, safe.add(fNumValueSlots, fNumTempStackSlots)),
+                                safe.mul(scalarWidth, fNumImmutableSlots));
+    if (!safe || !SkTFitsIn<int>(allocSize)) {
+        return std::nullopt;
+    }
     float* slotPtr = static_cast<float*>(alloc->makeBytesAlignedTo(allocSize, vectorWidth));
     sk_bzero(slotPtr, allocSize);
 
     // Store the temp stack immediately after the values, and immutable data after the stack.
     SlotData s;
-    s.values    = SkSpan{slotPtr,        N * fNumValueSlots};
-    s.stack     = SkSpan{s.values.end(), N * fNumTempStackSlots};
-    s.immutable = SkSpan{s.stack.end(),  1 * fNumImmutableSlots};
+    s.values    = SkSpan<float>{slotPtr,        N * fNumValueSlots};
+    s.stack     = SkSpan<float>{s.values.end(), N * fNumTempStackSlots};
+    s.immutable = SkSpan<float>{s.stack.end(),  1 * fNumImmutableSlots};
     return s;
 }
 
@@ -1658,8 +1693,11 @@ bool Program::appendStages(SkRasterPipeline* pipeline,
 #else
     // Convert our Instruction list to an array of ProgramOps.
     TArray<Stage> stages;
-    SlotData slotData = this->allocateSlotData(alloc);
-    this->makeStages(&stages, alloc, uniforms, slotData);
+    std::optional<SlotData> slotData = this->allocateSlotData(alloc);
+    if (!slotData) {
+        return false;
+    }
+    this->makeStages(&stages, alloc, uniforms, *slotData);
 
     // Allocate buffers for branch targets and labels; these are needed to convert labels into
     // actual offsets into the pipeline and fix up branches.
@@ -1673,7 +1711,7 @@ bool Program::appendStages(SkRasterPipeline* pipeline,
     auto resetBasePointer = [&]() {
         // Whenever we hand off control to another shader, we have to assume that it might overwrite
         // the base pointer (if it uses SkSL, it will!), so we reset it on return.
-        pipeline->append(SkRasterPipelineOp::set_base_pointer, slotData.values.data());
+        pipeline->append(SkRasterPipelineOp::set_base_pointer, (*slotData).values.data());
     };
 
     resetBasePointer();
@@ -1790,14 +1828,27 @@ void Program::makeStages(TArray<Stage>* pipeline,
     }
 
     // Track labels that we have reached in processing.
-    SkBitSet labelsEncountered(fNumLabels);
+    TArray<int> labelToInstructionIndex;
+    labelToInstructionIndex.push_back_n(fNumLabels, -1);
+
+    int mostRecentInvocationInstructionIdx = 0;
 
     auto EmitStackRewindForBackwardsBranch = [&](int labelID) {
         // If we have already encountered the label associated with this branch, this is a
         // backwards branch. Add a stack-rewind immediately before the branch to ensure that
         // long-running loops don't use an unbounded amount of stack space.
-        if (labelsEncountered.test(labelID)) {
-            this->appendStackRewind(pipeline);
+        int labelInstructionIdx = labelToInstructionIndex[labelID];
+        if (labelInstructionIdx >= 0) {
+            if (mostRecentInvocationInstructionIdx > labelInstructionIdx) {
+                // The backwards-branch range includes an external invocation to another shader,
+                // color filter, blender, or colorspace conversion. In this case, we always emit a
+                // stack rewind, since the non-tailcall stages may exist on the stack.
+                this->appendStackRewind(pipeline);
+            } else {
+                // The backwards-branch range only includes SkSL ops. If tailcalling is supported,
+                // stack rewinding isn't needed. If the platform cannot tailcall, we need to rewind.
+                this->appendStackRewindForNonTailcallers(pipeline);
+            }
             mostRecentRewind = pipeline->size();
         }
     };
@@ -1816,7 +1867,9 @@ void Program::makeStages(TArray<Stage>* pipeline,
 
     // Write each BuilderOp to the pipeline array.
     pipeline->reserve_exact(pipeline->size() + fInstructions.size());
-    for (const Instruction& inst : fInstructions) {
+    for (int instructionIdx = 0; instructionIdx < fInstructions.size(); ++instructionIdx) {
+        const Instruction& inst = fInstructions[instructionIdx];
+
         auto ImmutableA = [&]() { return &slots.immutable[1 * inst.fSlotA]; };
         auto ImmutableB = [&]() { return &slots.immutable[1 * inst.fSlotB]; };
         auto SlotA      = [&]() { return &slots.values[N * inst.fSlotA]; };
@@ -1833,12 +1886,14 @@ void Program::makeStages(TArray<Stage>* pipeline,
         float*& tempStackPtr = tempStackMap[inst.fStackID];
 
         switch (inst.fOp) {
-            case BuilderOp::label:
-                SkASSERT(inst.fImmA >= 0 && inst.fImmA < fNumLabels);
-                labelsEncountered.set(inst.fImmA);
-                pipeline->push_back({ProgramOp::label, context_bit_pun(inst.fImmA)});
+            case BuilderOp::label: {
+                intptr_t labelID = inst.fImmA;
+                SkASSERT(labelID >= 0 && labelID < fNumLabels);
+                SkASSERT(labelToInstructionIndex[labelID] == -1);
+                labelToInstructionIndex[labelID] = instructionIdx;
+                pipeline->push_back({ProgramOp::label, context_bit_pun(labelID)});
                 break;
-
+            }
             case BuilderOp::jump:
             case BuilderOp::branch_if_any_lanes_active:
             case BuilderOp::branch_if_no_lanes_active: {
@@ -2348,11 +2403,13 @@ void Program::makeStages(TArray<Stage>* pipeline,
             case BuilderOp::invoke_color_filter:
             case BuilderOp::invoke_blender:
                 pipeline->push_back({(ProgramOp)inst.fOp, context_bit_pun(inst.fImmA)});
+                mostRecentInvocationInstructionIdx = instructionIdx;
                 break;
 
             case BuilderOp::invoke_to_linear_srgb:
             case BuilderOp::invoke_from_linear_srgb:
                 pipeline->push_back({(ProgramOp)inst.fOp, tempStackMap[inst.fImmA] - (4 * N)});
+                mostRecentInvocationInstructionIdx = instructionIdx;
                 break;
 
             case BuilderOp::trace_line: {
@@ -2414,7 +2471,7 @@ void Program::makeStages(TArray<Stage>* pipeline,
         // potential stack overflow when running a long program.
         int numPipelineStages = pipeline->size();
         if (numPipelineStages - mostRecentRewind > 500) {
-            this->appendStackRewind(pipeline);
+            this->appendStackRewindForNonTailcallers(pipeline);
             mostRecentRewind = numPipelineStages;
         }
     }
@@ -2844,7 +2901,7 @@ void Program::Dumper::dump(SkWStream* out, bool writeInstructionCount) {
     // executed. The program requires pointer ranges for managing its data, and ASAN will report
     // errors if those pointers are pointing at unallocated memory.
     SkArenaAlloc alloc(/*firstHeapAllocation=*/1000);
-    fSlots = fProgram.allocateSlotData(&alloc);
+    fSlots = fProgram.allocateSlotData(&alloc).value();
     float* uniformPtr = alloc.makeArray<float>(fProgram.fNumUniformSlots);
     fUniforms = SkSpan(uniformPtr, fProgram.fNumUniformSlots);
 

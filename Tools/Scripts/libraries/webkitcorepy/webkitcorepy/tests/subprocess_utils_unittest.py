@@ -73,13 +73,11 @@ class SubprocessUtils(unittest.TestCase):
         self.assertEqual(t.poll(), 1)
         self.assertNotEqual(data.get('iteration', 9), 9)
 
-    # Without signal.alarm, the timeout argument will not work in Python 2
-    if Timeout.SIGALRM or sys.version_info > (3, 0):
-        def test_run_timeout(self):
-            with OutputCapture(), self.assertRaises(TimeoutExpired):
-                run([sys.executable, '-c', 'import time;time.sleep(2)'], timeout=1)
+    def test_run_timeout(self):
+        with OutputCapture(), self.assertRaises(TimeoutExpired):
+            run([sys.executable, '-c', 'import time;time.sleep(2)'], timeout=1)
 
-        def test_run_timeout_context(self):
-            with OutputCapture(), self.assertRaises(TimeoutExpired):
-                with Timeout(1):
-                    run([sys.executable, '-c', 'import time;time.sleep(2)'])
+    def test_run_timeout_context(self):
+        with OutputCapture(), self.assertRaises(TimeoutExpired):
+            with Timeout(1):
+                run([sys.executable, '-c', 'import time;time.sleep(2)'])

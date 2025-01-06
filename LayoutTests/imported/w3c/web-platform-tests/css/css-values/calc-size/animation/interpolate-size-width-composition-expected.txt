@@ -1,0 +1,17 @@
+
+FAIL Compositing: property <width> underlying [100px] from add [100px] to add [auto] at (-0.3) should be [170px] assert_equals: expected "170px " but got "200px "
+PASS Compositing: property <width> underlying [100px] from add [100px] to add [auto] at (0) should be [200px]
+FAIL Compositing: property <width> underlying [100px] from add [100px] to add [auto] at (0.5) should be [250px] assert_equals: expected "250px " but got "200px "
+FAIL Compositing: property <width> underlying [100px] from add [100px] to add [auto] at (1) should be [300px] assert_equals: expected "300px " but got "200px "
+FAIL Compositing: property <width> underlying [100px] from add [100px] to add [auto] at (1.5) should be [350px] assert_equals: expected "350px " but got "200px "
+FAIL Compositing: property <width> underlying [100px] from add [fit-content] to add [auto] at (-0.3) should be [200px] assert_equals: expected "200px " but got "100px "
+FAIL Compositing: property <width> underlying [100px] from add [fit-content] to add [auto] at (0) should be [200px] assert_equals: expected "200px " but got "100px "
+FAIL Compositing: property <width> underlying [100px] from add [fit-content] to add [auto] at (0.5) should be [300px] assert_equals: expected "300px " but got "200px "
+FAIL Compositing: property <width> underlying [100px] from add [fit-content] to add [auto] at (1) should be [300px] assert_equals: expected "300px " but got "200px "
+FAIL Compositing: property <width> underlying [100px] from add [fit-content] to add [auto] at (1.5) should be [300px] assert_equals: expected "300px " but got "200px "
+FAIL Compositing: property <width> underlying [max-content] from add [100px] to add [auto] at (-0.3) should be [70px] assert_equals: expected "70px " but got "100px "
+PASS Compositing: property <width> underlying [max-content] from add [100px] to add [auto] at (0) should be [100px]
+FAIL Compositing: property <width> underlying [max-content] from add [100px] to add [auto] at (0.5) should be [150px] assert_equals: expected "150px " but got "200px "
+PASS Compositing: property <width> underlying [max-content] from add [100px] to add [auto] at (1) should be [200px]
+FAIL Compositing: property <width> underlying [max-content] from add [100px] to add [auto] at (1.5) should be [250px] assert_equals: expected "250px " but got "200px "
+

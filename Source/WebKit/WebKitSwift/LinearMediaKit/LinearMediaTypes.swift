@@ -56,6 +56,22 @@ import WebKitSwift
     }
 }
 
+@_objcImplementation extension WKSLinearMediaSpatialVideoMetadata {
+    let width: Int32
+    let height: Int32
+    let horizontalFOVDegrees: Float
+    let baseline: Float
+    let disparityAdjustment: Float
+
+    init(width: Int32, height: Int32, horizontalFOVDegrees: Float, baseline: Float, disparityAdjustment: Float) {
+        self.width = width
+        self.height = height
+        self.horizontalFOVDegrees = horizontalFOVDegrees
+        self.baseline = baseline
+        self.disparityAdjustment = disparityAdjustment
+    }
+}
+
 // MARK: LinearMediaKit Extensions
 
 extension WKSLinearMediaContentMetadata {
@@ -216,5 +232,13 @@ extension WKSLinearMediaTimeRange {
 extension WKSLinearMediaTrack: @retroactive Track {
 }
 #endif
+
+extension WKSLinearMediaSpatialVideoMetadata {
+#if canImport(LinearMediaKit, _version: 211.60.3)
+    var metadata: SpatialVideoMetadata {
+        return SpatialVideoMetadata(width: self.width, height: self.height, horizontalFOVDegrees: self.horizontalFOVDegrees, baseline: self.baseline, disparityAdjustment: self.disparityAdjustment, isRecommendedForImmersive: true)
+    }
+#endif
+}
 
 #endif // os(visionOS)

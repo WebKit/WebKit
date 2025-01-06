@@ -3,17 +3,21 @@
     <title>Frame Scale Hit Test</title>
 
     <script>
-        function init() {
-            if (!window.eventSender || !window.internals)
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+        async function init() {
+            if (!window.eventSender || !window.testRunner)
                 return;
             // Scale the page and resize the frames to verify hit testing on the frameset
             var leftPanelWidth = window.innerWidth / 8;
             var panelHeight = window.innerHeight / 2;
-            window.internals.setPageScaleFactor(0.5, 0, 0);
+            await window.testRunner.setPageScaleFactor(0.5, 0, 0);
             eventSender.mouseMoveTo(leftPanelWidth, panelHeight / 2);
             eventSender.mouseDown();
             eventSender.mouseMoveTo(2 * leftPanelWidth, panelHeight / 2);
             eventSender.mouseUp();
+            if (window.testRunner)
+                window.testRunner.notifyDone();
         }
         window.onload = init;
     </script>

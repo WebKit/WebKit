@@ -12,22 +12,18 @@
 
 #include <memory>
 
+#include "absl/base/nullability.h"
+#include "api/environment/environment.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "logging/rtc_event_log/fake_rtc_event_log.h"
 
 namespace webrtc {
 
-std::unique_ptr<RtcEventLog> FakeRtcEventLogFactory::Create(
-    RtcEventLog::EncodingType /*encoding_type*/) const {
+absl::Nonnull<std::unique_ptr<RtcEventLog>> FakeRtcEventLogFactory::Create(
+    const Environment& /*env*/) const {
   auto fake_event_log = std::make_unique<FakeRtcEventLog>();
-  const_cast<FakeRtcEventLogFactory*>(this)->last_log_created_ =
-      fake_event_log.get();
+  const_cast<FakeRtcEventLog*&>(last_log_created_) = fake_event_log.get();
   return fake_event_log;
-}
-
-std::unique_ptr<RtcEventLog> FakeRtcEventLogFactory::CreateRtcEventLog(
-    RtcEventLog::EncodingType encoding_type) {
-  return Create(encoding_type);
 }
 
 }  // namespace webrtc

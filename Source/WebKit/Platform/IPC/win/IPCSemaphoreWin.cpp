@@ -27,7 +27,6 @@
 #include "config.h"
 #include "IPCSemaphore.h"
 
-#include "WebCoreArgumentCoders.h"
 #include <WebCore/SharedMemory.h>
 
 namespace IPC {

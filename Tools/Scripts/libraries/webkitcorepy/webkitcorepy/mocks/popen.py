@@ -27,7 +27,7 @@ import signal
 import sys
 import time
 
-from webkitcorepy import log, string_utils, Timeout, TimeoutExpired, unicode
+from webkitcorepy import log, string_utils, TimeoutExpired
 from webkitcorepy.mocks import Subprocess
 
 # This file is mocked version of the subprocess.Popen object. This object differs slightly between Python 2 and 3.
@@ -117,129 +117,81 @@ class PopenBase(object):
         self.send_signal(self.SIGKILL)
 
 
-if sys.version_info > (3, 0):
-    class Popen(PopenBase):
-        def __init__(self, args, bufsize=None, executable=None,
-                     stdin=None, stdout=None, stderr=None,
-                     preexec_fn=None, close_fds=True,
-                     shell=False, cwd=None, env=None, universal_newlines=None,
-                     startupinfo=None, creationflags=0,
-                     restore_signals=True, start_new_session=False,
-                     pass_fds=(), encoding=None, errors=None, text=None):
+class Popen(PopenBase):
+    def __init__(self, args, bufsize=None, executable=None,
+                 stdin=None, stdout=None, stderr=None,
+                 preexec_fn=None, close_fds=True,
+                 shell=False, cwd=None, env=None, universal_newlines=None,
+                 startupinfo=None, creationflags=0,
+                 restore_signals=True, start_new_session=False,
+                 pass_fds=(), encoding=None, errors=None, text=None):
 
-            super(Popen, self).__init__(args, bufsize=bufsize, cwd=cwd, env=env, stdin=stdin, stdout=stdout, stderr=stderr)
+        super(Popen, self).__init__(args, bufsize=bufsize, cwd=cwd, env=env, stdin=stdin, stdout=stdout, stderr=stderr)
 
-            if pass_fds and not close_fds:
-                log.warn("pass_fds overriding close_fds.")
+        if pass_fds and not close_fds:
+            log.warn("pass_fds overriding close_fds.")
 
-            for arg in args:
-                if not isinstance(arg, (str, bytes, os.PathLike)):
-                    raise TypeError(
-                        'expected {}, {} or os.PathLike object, not {}',
-                        str, bytes, type(arg),
-                    )
+        for arg in args:
+            if not isinstance(arg, (str, bytes, os.PathLike)):
+                raise TypeError(
+                    'expected {}, {} or os.PathLike object, not {}',
+                    str, bytes, type(arg),
+                )
 
-            self.args = args
-            self.encoding = encoding
-            self.errors = errors
+        self.args = args
+        self.encoding = encoding
+        self.errors = errors
 
-            if (text is not None and universal_newlines is not None and bool(universal_newlines) != bool(text)):
-                raise subprocess.SubprocessError('Cannot disambiguate when both text and universal_newlines are supplied but different. Pass one or the other.')
+        if (text is not None and universal_newlines is not None and bool(universal_newlines) != bool(text)):
+            raise subprocess.SubprocessError('Cannot disambiguate when both text and universal_newlines are supplied but different. Pass one or the other.')
 
-            self.text_mode = encoding or errors or text or universal_newlines
+        self.text_mode = encoding or errors or text or universal_newlines
 
-            if self.stdin is not None and self.text_mode:
-                self.stdin = io.TextIOWrapper(self.stdin, write_through=True, line_buffering=(bufsize == 1), encoding=encoding, errors=errors)
-            if self.stdout is not None and self.text_mode:
-                self.stdout = io.TextIOWrapper(self.stdout, encoding=encoding, errors=errors)
-                self._stdout_type = str
-            if self.stderr is not None and self.text_mode:
-                self.stderr = io.TextIOWrapper(self.stderr, encoding=encoding, errors=errors)
-                self._stderr_type = str
+        if self.stdin is not None and self.text_mode:
+            self.stdin = io.TextIOWrapper(self.stdin, write_through=True, line_buffering=(bufsize == 1), encoding=encoding, errors=errors)
+        if self.stdout is not None and self.text_mode:
+            self.stdout = io.TextIOWrapper(self.stdout, encoding=encoding, errors=errors)
+            self._stdout_type = str
+        if self.stderr is not None and self.text_mode:
+            self.stderr = io.TextIOWrapper(self.stderr, encoding=encoding, errors=errors)
+            self._stderr_type = str
 
-        def communicate(self, input=None, timeout=None):
-            if self._communication_started and input:
-                raise ValueError('Cannot send input after starting communication')
+    def communicate(self, input=None, timeout=None):
+        if self._communication_started and input:
+            raise ValueError('Cannot send input after starting communication')
 
-            self._communication_started = True
-            if input:
-                self.stdin.write(string_utils.encode(input))
-            self.wait(timeout=timeout)
-            return self.stdout.read() if self.stdout else None, self.stderr.read() if self.stderr else None
+        self._communication_started = True
+        if input:
+            self.stdin.write(string_utils.encode(input))
+        self.wait(timeout=timeout)
+        return self.stdout.read() if self.stdout else None, self.stderr.read() if self.stderr else None
 
-        def wait(self, timeout=None):
-            if self.poll() is not None:
-                return
+    def wait(self, timeout=None):
+        if self.poll() is not None:
+            return
 
-            if timeout and (self._completion.elapsed is None or timeout < self._completion.elapsed):
-                raise TimeoutExpired(self._args, timeout)
+        if timeout and (self._completion.elapsed is None or timeout < self._completion.elapsed):
+            raise TimeoutExpired(self._args, timeout)
 
-            if self._completion.elapsed is None:
-                raise ValueError('Running a command that hangs without a timeout')
+        if self._completion.elapsed is None:
+            raise ValueError('Running a command that hangs without a timeout')
 
-            if self._completion.elapsed:
-                time.sleep(self._completion.elapsed)
+        if self._completion.elapsed:
+            time.sleep(self._completion.elapsed)
 
-            self.returncode = self._completion.returncode
-            if self.stdout:
-                self.stdout.seek(0)
-            if self.stderr:
-                self.stderr.seek(0)
+        self.returncode = self._completion.returncode
+        if self.stdout:
+            self.stdout.seek(0)
+        if self.stderr:
+            self.stderr.seek(0)
 
-        def __enter__(self):
-            return self
+    def __enter__(self):
+        return self
 
-        def __exit__(self, exc_type, exc_value, traceback):
-            if self.stdout:
-                self.stdout.close()
-            if self.stderr:
-                self.stderr.close()
-            if self.stdin:
-                self.stdin.close()
-
-else:
-    class Popen(PopenBase):
-        def __init__(self, args, bufsize=-1, executable=None,
-                     stdin=None, stdout=None, stderr=None,
-                     preexec_fn=None, close_fds=True,
-                     shell=False, cwd=None, env=None, universal_newlines=None,
-                     startupinfo=None, creationflags=0):
-
-            super(Popen, self).__init__(args, bufsize=bufsize, cwd=cwd, env=env, stdin=stdin, stdout=stdout, stderr=stderr)
-
-            for index in range(len(args)):
-                if not isinstance(args[index], (str, unicode)):
-                    raise TypeError('execv() arg {} must contain only strings'.format(index + 1))
-
-            self.text_mode = universal_newlines
-
-        def communicate(self, input=None):
-            if self._communication_started and input:
-                raise ValueError('Cannot send input after starting communication')
-
-            self._communication_started = True
-            if input:
-                self.stdin.write(input)
-            self.wait()
-            return self.stdout.read() if self.stdout else None, self.stderr.read() if self.stderr else None
-
-        def wait(self):
-            if self.poll() is not None:
-                return
-
-            # Need to check the timeout context
-            timeout = Timeout.difference()
-            if timeout and (self._completion.elapsed is None or timeout < self._completion.elapsed):
-                raise TimeoutExpired(self._args, timeout)
-
-            if self._completion.elapsed is None:
-                raise ValueError('Running a command that hangs without a timeout')
-
-            if self._completion.elapsed:
-                time.sleep(self._completion.elapsed)
-
-            self.returncode = self._completion.returncode
-            if self.stdout:
-                self.stdout.seek(0)
-            if self.stderr:
-                self.stderr.seek(0)
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self.stdout:
+            self.stdout.close()
+        if self.stderr:
+            self.stderr.close()
+        if self.stdin:
+            self.stdin.close()

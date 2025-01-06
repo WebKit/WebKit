@@ -8,20 +8,21 @@
 #ifndef GrDrawOp_DEFINED
 #define GrDrawOp_DEFINED
 
-#include <functional>
-#include "src/core/SkAAClip.h"
-#include "src/core/SkIPoint16.h"
-#include "src/gpu/ganesh/GrDeferredUpload.h"
-#include "src/gpu/ganesh/GrPipeline.h"
+#include "include/core/SkTypes.h"
+#include "include/private/base/SkMacros.h"
+#include "src/gpu/ganesh/GrCaps.h"
+#include "src/gpu/ganesh/GrProcessorSet.h"
 #include "src/gpu/ganesh/ops/GrOp.h"
 
+#include <cstdint>
+
 class GrAppliedClip;
-namespace skgpu {
-namespace ganesh {
-class SurfaceDrawContext;
-}
-}  // namespace skgpu
 class GrShape;
+class SkMatrix;
+enum class GrAA : bool;
+enum class GrClampType;
+enum class SkClipOp;
+namespace skgpu::ganesh { class SurfaceDrawContext; }
 
 /**
  * Base class for GrOps that draw. These ops can draw into an op list's GrRenderTarget.
@@ -91,7 +92,7 @@ public:
     }
 #endif
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     // This is really only intended for TextureOp and FillRectOp to override
     virtual int numQuads() const { return -1; }
 #endif
@@ -108,7 +109,7 @@ protected:
         /** Indices that the op reads and/or writes the stencil buffer */
         kUsesStencil = 0x2,
     };
-    GR_DECL_BITFIELD_CLASS_OPS_FRIENDS(FixedFunctionFlags);
+    SK_DECL_BITFIELD_CLASS_OPS_FRIENDS(FixedFunctionFlags);
     virtual FixedFunctionFlags fixedFunctionFlags() const {
         // Override usesMSAA() and usesStencil() instead.
         SK_ABORT("fixedFunctionFlags() not implemented.");
@@ -121,6 +122,6 @@ private:
     using INHERITED = GrOp;
 };
 
-GR_MAKE_BITFIELD_CLASS_OPS(GrDrawOp::FixedFunctionFlags)
+SK_MAKE_BITFIELD_CLASS_OPS(GrDrawOp::FixedFunctionFlags)
 
 #endif

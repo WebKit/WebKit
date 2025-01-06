@@ -29,8 +29,8 @@
 
 <h2 id="introduction">Introduction</h2>
 
-<p>Welcome to Bugzilla 5.0! It has been slightly over two years since we released
-  Bugzilla 4.4 in May of 2013. This new major release comes with many new features
+<p>Welcome to [% terms.Bugzilla %] 5.0! It has been slightly over two years since we released
+[%+ terms.Bugzilla %] 4.4 in May of 2013. This new major release comes with many new features
   and improvements to WebServices and performance.</p>
 
 <p>If you're upgrading, make sure to read
@@ -42,6 +42,66 @@
   version's release notes</strong>.</p>
 
 <h2 id="point">Updates in this 5.0.x Release</h2>
+
+<h3>5.0.4.1</h3>
+
+<p>This release fixes three security issues. See the
+  <a href="https://www.bugzilla.org/security/4.4.13/">Security Advisory</a>
+  for details.</p>
+
+<p>This release is intended to follow the stable 5.0 branch of
+[%+ terms.Bugzilla %]. Version 5.0.5 contained invasive fixes which should not
+have been on a stable branch, so we branched again from 5.0.4 to continue to
+provide security updates without the invasive changes. <b>This release track of
+[%+ terms.Bugzilla %] now lives on the 5.0.4 branch in Git.</b></p>
+
+<p>This release also contains the following [% terms.bug %] fixes:</p>
+
+<ul>
+
+  <li>MySQL 8.0 introduced non-backward-compatible changes which broke
+  Bugzilla.  This version now properly detects and prevents you from running it
+  on MySQL 8 or newer. Future versions of [% terms.Bugzilla %] will support
+  MySQL 8, but the changes are too invasive for a branch that only gets
+  security support. If you can't stay on MySQL 5.7.x or older, we recommend
+  using MariaDB or version 5.2 or newer of [% terms.Bugzilla %].
+  (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1851354">[% terms.Bug %] 1851354</a>)</li>
+
+  <li>The "Email Assignees" link on the [% terms.Bug %] List page was fixed to
+  properly handle email addresses that contain apostrophes.
+  (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1226123">[% terms.Bug %] 1226123</a>)</li>
+
+  <li>Metadata to assist browsers in properly rendering [% terms.Bugzilla %] on
+  mobile browsers was added. Without this metadata Google Search tools would
+  report [% terms.Bugzilla %] pages as not suitable for mobile devices.
+  [%+ terms.Bugzilla %] still needs work to actually look nice on mobile devices
+  but this is a good start.
+  (<a href="https://github.com/bugzilla/bugzilla/pull/78">PR #78</a>)</li>
+
+  <li>The Email::MIME module changed the way it set content types on emails in
+  version 1.949, causing [% terms.Bugzilla %] to throw an error and preventing
+  emails from being correctly delivered to recipients. We now set the content
+  type correctly on emails.
+  (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1657496">[% terms.Bug %] 1657496</a>)</li>
+
+  <li>Template Toolkit versions 2.28 through 3.007 are blacklisted due to a
+  compatibility issue.  Versions 2.22 through 2.27 and 3.008 and later are
+  still supported.
+  (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1560873">[% terms.Bug %] 1560873</a>)</li>
+
+  <li>[% terms.Bugzilla %] has a dependency on the Email::Address Perl module
+  which was unstated in the dependency list because it was also a dependency of
+  Email::Sender which [% terms.Bugzilla %] also uses. Newer versions of
+  Email::Sender stopped depending on Email::Address, so [% terms.Bugzilla %]
+  now needs to depend on it explicitly.
+  (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1851352">[% terms.Bug %] 1851352</a>)</li>
+
+  <li>The contrib script <code>jb2bz.py</code> for importing from Jitterbugz
+  was updated to properly handle missing version and operating system values on
+  imported [% terms.bugs %].
+  (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1429243">[% terms.Bug %] 1429243</a>)</li>
+
+</ul>
 
 <h3>5.0.4</h3>
 

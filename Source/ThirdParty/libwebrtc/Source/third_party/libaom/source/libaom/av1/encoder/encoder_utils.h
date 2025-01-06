@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -39,7 +39,7 @@ extern const int default_switchable_interp_probs[FRAME_UPDATE_TYPES]
 
 // Mark all inactive blocks as active. Other segmentation features may be set
 // so memset cannot be used, instead only inactive blocks should be reset.
-static AOM_INLINE void suppress_active_map(AV1_COMP *cpi) {
+static inline void suppress_active_map(AV1_COMP *cpi) {
   unsigned char *const seg_map = cpi->enc_seg.map;
   int i;
   const int num_mis =
@@ -52,7 +52,7 @@ static AOM_INLINE void suppress_active_map(AV1_COMP *cpi) {
 
 // Returns 'size' in the number of Mode Info (MI) units. 'size' is either the
 // width or height.
-static AOM_INLINE int size_in_mi(int size) {
+static inline int size_in_mi(int size) {
   // Ensure that the decoded width and height are both multiples of
   // 8 luma pixels (note: this may only be a multiple of 4 chroma pixels if
   // subsampling is used).
@@ -62,8 +62,8 @@ static AOM_INLINE int size_in_mi(int size) {
   return aligned_size >> MI_SIZE_LOG2;
 }
 
-static AOM_INLINE void set_mb_mi(CommonModeInfoParams *mi_params, int width,
-                                 int height) {
+static inline void set_mb_mi(CommonModeInfoParams *mi_params, int width,
+                             int height) {
   mi_params->mi_cols = size_in_mi(width);
   mi_params->mi_rows = size_in_mi(height);
   mi_params->mi_stride = calc_mi_size(mi_params->mi_cols);
@@ -80,34 +80,34 @@ static AOM_INLINE void set_mb_mi(CommonModeInfoParams *mi_params, int width,
          mi_size_high[mi_params->mi_alloc_bsize]);
 }
 
-static AOM_INLINE void enc_free_mi(CommonModeInfoParams *mi_params) {
+static inline void enc_free_mi(CommonModeInfoParams *mi_params) {
   aom_free(mi_params->mi_alloc);
   mi_params->mi_alloc = NULL;
+  mi_params->mi_alloc_size = 0;
   aom_free(mi_params->mi_grid_base);
   mi_params->mi_grid_base = NULL;
-  mi_params->mi_alloc_size = 0;
+  mi_params->mi_grid_size = 0;
   aom_free(mi_params->tx_type_map);
   mi_params->tx_type_map = NULL;
 }
 
-static AOM_INLINE void enc_set_mb_mi(CommonModeInfoParams *mi_params, int width,
-                                     int height,
-                                     BLOCK_SIZE min_partition_size) {
+static inline void enc_set_mb_mi(CommonModeInfoParams *mi_params, int width,
+                                 int height, BLOCK_SIZE min_partition_size) {
   mi_params->mi_alloc_bsize = min_partition_size;
 
   set_mb_mi(mi_params, width, height);
 }
 
-static AOM_INLINE void stat_stage_set_mb_mi(CommonModeInfoParams *mi_params,
-                                            int width, int height,
-                                            BLOCK_SIZE min_partition_size) {
+static inline void stat_stage_set_mb_mi(CommonModeInfoParams *mi_params,
+                                        int width, int height,
+                                        BLOCK_SIZE min_partition_size) {
   (void)min_partition_size;
   mi_params->mi_alloc_bsize = BLOCK_16X16;
 
   set_mb_mi(mi_params, width, height);
 }
 
-static AOM_INLINE void enc_setup_mi(CommonModeInfoParams *mi_params) {
+static inline void enc_setup_mi(CommonModeInfoParams *mi_params) {
   const int mi_grid_size =
       mi_params->mi_stride * calc_mi_size(mi_params->mi_rows);
   memset(mi_params->mi_alloc, 0,
@@ -118,7 +118,7 @@ static AOM_INLINE void enc_setup_mi(CommonModeInfoParams *mi_params) {
          mi_grid_size * sizeof(*mi_params->tx_type_map));
 }
 
-static AOM_INLINE void init_buffer_indices(
+static inline void init_buffer_indices(
     ForceIntegerMVInfo *const force_intpel_info, int *const remapped_ref_idx) {
   int fb_idx;
   for (fb_idx = 0; fb_idx < REF_FRAMES; ++fb_idx)
@@ -467,14 +467,10 @@ MAKE_SDSF_SKIP_SAD_WRAPPER(aom_highbd_sad_skip_32x32)
 MAKE_SDSF_SKIP_SAD_WRAPPER(aom_highbd_sad_skip_32x16)
 MAKE_SDSF_SKIP_SAD_WRAPPER(aom_highbd_sad_skip_16x32)
 MAKE_SDSF_SKIP_SAD_WRAPPER(aom_highbd_sad_skip_16x16)
-MAKE_SDSF_SKIP_SAD_WRAPPER(aom_highbd_sad_skip_16x8)
 MAKE_SDSF_SKIP_SAD_WRAPPER(aom_highbd_sad_skip_8x16)
-MAKE_SDSF_SKIP_SAD_WRAPPER(aom_highbd_sad_skip_8x8)
-MAKE_SDSF_SKIP_SAD_WRAPPER(aom_highbd_sad_skip_4x8)
 
 #if !CONFIG_REALTIME_ONLY
 MAKE_SDSF_SKIP_SAD_WRAPPER(aom_highbd_sad_skip_64x16)
-MAKE_SDSF_SKIP_SAD_WRAPPER(aom_highbd_sad_skip_32x8)
 MAKE_SDSF_SKIP_SAD_WRAPPER(aom_highbd_sad_skip_16x64)
 MAKE_SDSF_SKIP_SAD_WRAPPER(aom_highbd_sad_skip_4x16)
 MAKE_SDSF_SKIP_SAD_WRAPPER(aom_highbd_sad_skip_8x32)
@@ -490,14 +486,10 @@ MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_32x32x4d)
 MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_32x16x4d)
 MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_16x32x4d)
 MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_16x16x4d)
-MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_16x8x4d)
 MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_8x16x4d)
-MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_8x8x4d)
-MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_4x8x4d)
 
 #if !CONFIG_REALTIME_ONLY
 MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_64x16x4d)
-MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_32x8x4d)
 MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_16x64x4d)
 MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_4x16x4d)
 MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_8x32x4d)
@@ -569,7 +561,7 @@ MAKE_OBFP_SAD_WRAPPER(aom_highbd_obmc_sad16x64)
 MAKE_OBFP_SAD_WRAPPER(aom_highbd_obmc_sad64x16)
 #endif
 
-static AOM_INLINE void highbd_set_var_fns(AV1_PRIMARY *const ppi) {
+static inline void highbd_set_var_fns(AV1_PRIMARY *const ppi) {
   SequenceHeader *const seq_params = &ppi->seq_params;
   if (seq_params->use_highbitdepth) {
     switch (seq_params->bit_depth) {
@@ -660,13 +652,9 @@ static AOM_INLINE void highbd_set_var_fns(AV1_PRIMARY *const ppi) {
         HIGHBD_SDSFP_WRAPPER(32, 16, 8)
         HIGHBD_SDSFP_WRAPPER(16, 32, 8)
         HIGHBD_SDSFP_WRAPPER(16, 16, 8)
-        HIGHBD_SDSFP_WRAPPER(16, 8, 8)
         HIGHBD_SDSFP_WRAPPER(8, 16, 8)
-        HIGHBD_SDSFP_WRAPPER(8, 8, 8)
-        HIGHBD_SDSFP_WRAPPER(4, 8, 8)
 #if !CONFIG_REALTIME_ONLY
         HIGHBD_SDSFP_WRAPPER(64, 16, 8)
-        HIGHBD_SDSFP_WRAPPER(32, 8, 8)
         HIGHBD_SDSFP_WRAPPER(16, 64, 8)
         HIGHBD_SDSFP_WRAPPER(8, 32, 8)
         HIGHBD_SDSFP_WRAPPER(4, 16, 8)
@@ -760,14 +748,10 @@ static AOM_INLINE void highbd_set_var_fns(AV1_PRIMARY *const ppi) {
         HIGHBD_SDSFP_WRAPPER(32, 16, 10)
         HIGHBD_SDSFP_WRAPPER(16, 32, 10)
         HIGHBD_SDSFP_WRAPPER(16, 16, 10)
-        HIGHBD_SDSFP_WRAPPER(16, 8, 10)
         HIGHBD_SDSFP_WRAPPER(8, 16, 10)
-        HIGHBD_SDSFP_WRAPPER(8, 8, 10)
-        HIGHBD_SDSFP_WRAPPER(4, 8, 10)
 
 #if !CONFIG_REALTIME_ONLY
         HIGHBD_SDSFP_WRAPPER(64, 16, 10)
-        HIGHBD_SDSFP_WRAPPER(32, 8, 10)
         HIGHBD_SDSFP_WRAPPER(16, 64, 10)
         HIGHBD_SDSFP_WRAPPER(8, 32, 10)
         HIGHBD_SDSFP_WRAPPER(4, 16, 10)
@@ -861,14 +845,10 @@ static AOM_INLINE void highbd_set_var_fns(AV1_PRIMARY *const ppi) {
         HIGHBD_SDSFP_WRAPPER(32, 16, 12)
         HIGHBD_SDSFP_WRAPPER(16, 32, 12)
         HIGHBD_SDSFP_WRAPPER(16, 16, 12)
-        HIGHBD_SDSFP_WRAPPER(16, 8, 12)
         HIGHBD_SDSFP_WRAPPER(8, 16, 12)
-        HIGHBD_SDSFP_WRAPPER(8, 8, 12)
-        HIGHBD_SDSFP_WRAPPER(4, 8, 12)
 
 #if !CONFIG_REALTIME_ONLY
         HIGHBD_SDSFP_WRAPPER(64, 16, 12)
-        HIGHBD_SDSFP_WRAPPER(32, 8, 12)
         HIGHBD_SDSFP_WRAPPER(16, 64, 12)
         HIGHBD_SDSFP_WRAPPER(8, 32, 12)
         HIGHBD_SDSFP_WRAPPER(4, 16, 12)
@@ -884,7 +864,7 @@ static AOM_INLINE void highbd_set_var_fns(AV1_PRIMARY *const ppi) {
 }
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
-static AOM_INLINE void copy_frame_prob_info(AV1_COMP *cpi) {
+static inline void copy_frame_prob_info(AV1_COMP *cpi) {
   FrameProbInfo *const frame_probs = &cpi->ppi->frame_probs;
   if (cpi->sf.tx_sf.tx_type_search.prune_tx_type_using_stats) {
     av1_copy(frame_probs->tx_type_probs, default_tx_type_probs);
@@ -940,8 +920,8 @@ static AOM_INLINE void copy_frame_prob_info(AV1_COMP *cpi) {
 #endif
 }
 
-static AOM_INLINE void restore_cdef_coding_context(CdefInfo *const dst,
-                                                   const CdefInfo *const src) {
+static inline void restore_cdef_coding_context(CdefInfo *const dst,
+                                               const CdefInfo *const src) {
   dst->cdef_bits = src->cdef_bits;
   dst->cdef_damping = src->cdef_damping;
   av1_copy(dst->cdef_strengths, src->cdef_strengths);
@@ -952,7 +932,7 @@ static AOM_INLINE void restore_cdef_coding_context(CdefInfo *const dst,
 // Coding context that only needs to be restored when recode loop includes
 // filtering (deblocking, CDEF, superres post-encode upscale and/or loop
 // restoraton).
-static AOM_INLINE void restore_extra_coding_context(AV1_COMP *cpi) {
+static inline void restore_extra_coding_context(AV1_COMP *cpi) {
   CODING_CONTEXT *const cc = &cpi->coding_context;
   AV1_COMMON *cm = &cpi->common;
   cm->lf = cc->lf;
@@ -961,8 +941,8 @@ static AOM_INLINE void restore_extra_coding_context(AV1_COMP *cpi) {
   cpi->ppi->mv_stats = cc->mv_stats;
 }
 
-static AOM_INLINE int equal_dimensions_and_border(const YV12_BUFFER_CONFIG *a,
-                                                  const YV12_BUFFER_CONFIG *b) {
+static inline int equal_dimensions_and_border(const YV12_BUFFER_CONFIG *a,
+                                              const YV12_BUFFER_CONFIG *b) {
   return a->y_height == b->y_height && a->y_width == b->y_width &&
          a->uv_height == b->uv_height && a->uv_width == b->uv_width &&
          a->y_stride == b->y_stride && a->uv_stride == b->uv_stride &&
@@ -971,20 +951,19 @@ static AOM_INLINE int equal_dimensions_and_border(const YV12_BUFFER_CONFIG *a,
              (b->flags & YV12_FLAG_HIGHBITDEPTH);
 }
 
-static AOM_INLINE int update_entropy(bool *ext_refresh_frame_context,
-                                     bool *ext_refresh_frame_context_pending,
-                                     bool update) {
+static inline int update_entropy(bool *ext_refresh_frame_context,
+                                 bool *ext_refresh_frame_context_pending,
+                                 bool update) {
   *ext_refresh_frame_context = update;
   *ext_refresh_frame_context_pending = 1;
   return 0;
 }
 
 #if !CONFIG_REALTIME_ONLY
-static AOM_INLINE int combine_prior_with_tpl_boost(double min_factor,
-                                                   double max_factor,
-                                                   int prior_boost,
-                                                   int tpl_boost,
-                                                   int frames_to_key) {
+static inline int combine_prior_with_tpl_boost(double min_factor,
+                                               double max_factor,
+                                               int prior_boost, int tpl_boost,
+                                               int frames_to_key) {
   double factor = sqrt((double)frames_to_key);
   double range = max_factor - min_factor;
   factor = AOMMIN(factor, max_factor);
@@ -996,7 +975,7 @@ static AOM_INLINE int combine_prior_with_tpl_boost(double min_factor,
 }
 #endif
 
-static AOM_INLINE void set_size_independent_vars(AV1_COMP *cpi) {
+static inline void set_size_independent_vars(AV1_COMP *cpi) {
   int i;
   AV1_COMMON *const cm = &cpi->common;
   FeatureFlags *const features = &cm->features;
@@ -1012,23 +991,36 @@ static AOM_INLINE void set_size_independent_vars(AV1_COMP *cpi) {
       features->allow_warped_motion, cpi->oxcf.motion_mode_cfg.enable_obmc);
 }
 
-static AOM_INLINE void release_scaled_references(AV1_COMP *cpi) {
-  // TODO(isbs): only refresh the necessary frames, rather than all of them
+static inline void release_scaled_references(AV1_COMP *cpi) {
+  // Scaled references should only need to be released under certain conditions:
+  // if the reference will be updated, or if the scaled reference has same
+  // resolution. For now only apply this to Golden for non-svc RTC mode.
+  AV1_COMMON *const cm = &cpi->common;
+  const bool refresh_golden = (cpi->refresh_frame.golden_frame) ? 1 : 0;
+  bool release_golden = true;
   for (int i = 0; i < INTER_REFS_PER_FRAME; ++i) {
     RefCntBuffer *const buf = cpi->scaled_ref_buf[i];
-    if (buf != NULL) {
+    const int golden_ref = (i == GOLDEN_FRAME - 1);
+    if (golden_ref && is_one_pass_rt_params(cpi) && !cpi->ppi->use_svc &&
+        buf != NULL) {
+      const RefCntBuffer *const ref = get_ref_frame_buf(cm, GOLDEN_FRAME);
+      const bool same_resoln = buf->buf.y_crop_width == ref->buf.y_crop_width &&
+                               buf->buf.y_crop_height == ref->buf.y_crop_height;
+      release_golden = refresh_golden || same_resoln;
+    }
+    if (buf != NULL && (!golden_ref || (golden_ref && release_golden))) {
       --buf->ref_count;
       cpi->scaled_ref_buf[i] = NULL;
     }
   }
 }
 
-static AOM_INLINE void restore_all_coding_context(AV1_COMP *cpi) {
+static inline void restore_all_coding_context(AV1_COMP *cpi) {
   restore_extra_coding_context(cpi);
   if (!frame_is_intra_only(&cpi->common)) release_scaled_references(cpi);
 }
 
-static AOM_INLINE int reduce_num_ref_buffers(const AV1_COMP *cpi) {
+static inline int reduce_num_ref_buffers(const AV1_COMP *cpi) {
   const SequenceHeader *const seq_params = cpi->common.seq_params;
   return is_one_pass_rt_params(cpi) &&
          use_rtc_reference_structure_one_layer(cpi) &&
@@ -1037,7 +1029,7 @@ static AOM_INLINE int reduce_num_ref_buffers(const AV1_COMP *cpi) {
 }
 
 // Refresh reference frame buffers according to refresh_frame_flags.
-static AOM_INLINE void refresh_reference_frames(AV1_COMP *cpi) {
+static inline void refresh_reference_frames(AV1_COMP *cpi) {
   AV1_COMMON *const cm = &cpi->common;
   // All buffers are refreshed for shown keyframes and S-frames.
   // In case of RT, golden frame refreshes the 6th slot and other reference
@@ -1062,10 +1054,12 @@ static AOM_INLINE void refresh_reference_frames(AV1_COMP *cpi) {
   }
 }
 
+#if !CONFIG_REALTIME_ONLY
 void av1_update_film_grain_parameters_seq(struct AV1_PRIMARY *ppi,
                                           const AV1EncoderConfig *oxcf);
 void av1_update_film_grain_parameters(struct AV1_COMP *cpi,
                                       const AV1EncoderConfig *oxcf);
+#endif
 
 void av1_scale_references(AV1_COMP *cpi, const InterpFilter filter,
                           const int phase, const int use_optimized_scaler);
@@ -1100,8 +1094,8 @@ void av1_save_all_coding_context(AV1_COMP *cpi);
 void av1_dump_filtered_recon_frames(AV1_COMP *cpi);
 #endif
 
-static AOM_INLINE int av1_get_enc_border_size(bool resize, bool all_intra,
-                                              BLOCK_SIZE sb_size) {
+static inline int av1_get_enc_border_size(bool resize, bool all_intra,
+                                          BLOCK_SIZE sb_size) {
   // For allintra encoding mode, inter-frame motion search is not applicable and
   // the intraBC motion vectors are restricted within the tile boundaries. Hence
   // a smaller frame border size (AOM_ENC_ALLINTRA_BORDER) is used in this case.
@@ -1114,7 +1108,7 @@ static AOM_INLINE int av1_get_enc_border_size(bool resize, bool all_intra,
   return block_size_wide[sb_size] + 32;
 }
 
-static AOM_INLINE bool av1_is_resize_needed(const AV1EncoderConfig *oxcf) {
+static inline bool av1_is_resize_needed(const AV1EncoderConfig *oxcf) {
   const ResizeCfg *resize_cfg = &oxcf->resize_cfg;
   const SuperResCfg *superres_cfg = &oxcf->superres_cfg;
   return resize_cfg->resize_mode || superres_cfg->superres_mode;

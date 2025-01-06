@@ -3,8 +3,8 @@
 import subprocess
 import sys
 
-def script_symbols(script):
-    symbols = []
+def linker_script_symbols(script):
+    symbols = set()
     in_symbols = False
     with open(script, 'r') as f:
         for line in f.readlines():
@@ -14,25 +14,24 @@ def script_symbols(script):
                 line = line.lstrip()
                 line = line.rstrip('\n')
                 line = line.rstrip(';')
-                symbols.append(line.strip('"'))
+                symbols.add(line.strip('"'))
             elif line.lstrip() == 'extern "C++" {\n':
                 in_symbols = True
     return symbols
+
+def elf_visible_symbols(path):
+    p = subprocess.Popen(['nm', '-jUCD', path], stdout=subprocess.PIPE, encoding='ascii')
+    data = p.communicate()
+    return frozenset(data[0].splitlines())
 
 if len(sys.argv) < 3:
     print("Usage: %s script lib" % sys.argv[0])
     sys.exit(1)
 
+script_symbols = linker_script_symbols(sys.argv[1])
+elf_symbols = elf_visible_symbols(sys.argv[2])
 
-symbols = script_symbols(sys.argv[1])
-p = subprocess.Popen(['objdump', '-t', '-C', sys.argv[2]], stdout=subprocess.PIPE, encoding="ascii")
-data = p.communicate()[0]
-
-symbols = []
-for symbol in script_symbols(sys.argv[1]):
-    if symbol not in data:
-        symbols.append(symbol)
-
+symbols = script_symbols - elf_symbols
 if symbols:
     print('The following symbols are in version script %s and not in library %s' % (sys.argv[1], sys.argv[2]))
     print('\n'.join(sorted(symbols)))

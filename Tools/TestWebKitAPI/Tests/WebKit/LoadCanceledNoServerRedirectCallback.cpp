@@ -56,7 +56,7 @@ TEST(WebKit, LoadCanceledNoServerRedirectCallback)
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("LoadCanceledNoServerRedirectCallbackTest"));
     
     WKContextInjectedBundleClientV0 injectedBundleClient;
-    memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+    zeroBytes(injectedBundleClient);
 
     injectedBundleClient.base.version = 0;
 
@@ -65,7 +65,7 @@ TEST(WebKit, LoadCanceledNoServerRedirectCallback)
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
     
     loaderClient.base.version = 0;
     loaderClient.didFinishNavigation = didFinishNavigation;
@@ -73,7 +73,7 @@ TEST(WebKit, LoadCanceledNoServerRedirectCallback)
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
     
     WKContextHistoryClientV0 historyClient;
-    memset(&historyClient, 0, sizeof(historyClient));
+    zeroBytes(historyClient);
     
     historyClient.base.version = 0;
     historyClient.didPerformServerRedirect = didPerformServerRedirect;

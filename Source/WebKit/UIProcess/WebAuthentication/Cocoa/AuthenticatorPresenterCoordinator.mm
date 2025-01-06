@@ -31,11 +31,20 @@
 #import "AuthenticatorManager.h"
 #import "WKASCAuthorizationPresenterDelegate.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 #import "AuthenticationServicesCoreSoftLink.h"
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorPresenterCoordinator);
+
+Ref<AuthenticatorPresenterCoordinator> AuthenticatorPresenterCoordinator::create(const AuthenticatorManager& manager, const String& rpId, const AuthenticatorPresenterCoordinator::TransportSet& transports, WebCore::ClientDataType type, const String& username)
+{
+    return adoptRef(*new AuthenticatorPresenterCoordinator(manager, rpId, transports, type, username));
+}
 
 AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const AuthenticatorManager& manager, const String& rpId, const TransportSet& transports, ClientDataType type, const String& username)
     : m_manager(manager)
@@ -119,6 +128,16 @@ void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus 
         m_credentialRequestHandler(nil, error.get());
         break;
     }
+    case WebAuthenticationStatus::PINTooShort: {
+        RetainPtr error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorPINTooShort userInfo:nil]);
+        m_credentialRequestHandler(nil, error.get());
+        break;
+    }
+    case WebAuthenticationStatus::PINTooLong: {
+        RetainPtr error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorPINTooLong userInfo:nil]);
+        m_credentialRequestHandler(nil, error.get());
+        break;
+    }
     case WebAuthenticationStatus::MultipleNFCTagsPresent: {
         auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorMultipleNFCTagsPresent userInfo:nil]);
         [m_presenter updateInterfaceForUserVisibleError:error.get()];
@@ -177,6 +196,20 @@ void AuthenticatorPresenterCoordinator::requestPin(uint64_t, CompletionHandler<v
 #endif // HAVE(ASC_AUTH_UI)
 }
 
+void AuthenticatorPresenterCoordinator::requestNewPin(uint64_t minLength, CompletionHandler<void(const String&)>&& completionHandler)
+{
+#if HAVE(ASC_AUTH_UI)
+    if (m_pinHandler)
+        m_pinHandler(String());
+    m_pinHandler = WTFMove(completionHandler);
+
+    if (m_presentedPIN)
+        return;
+    m_presentedPIN = true;
+    [m_presenter presentNewPINEntryInterfaceWithMinLength:minLength];
+#endif // HAVE(ASC_AUTH_UI)
+}
+
 void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<AuthenticatorAssertionResponse>>&& responses, WebAuthenticationSource source, CompletionHandler<void(AuthenticatorAssertionResponse*)>&& completionHandler)
 {
 #if HAVE(ASC_AUTH_UI)
@@ -194,7 +227,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
 
             RetainPtr<NSData> userHandle;
             if (response->userHandle())
-                userHandle = adoptNS([[NSData alloc] initWithBytes:response->userHandle()->data() length:response->userHandle()->byteLength()]);
+                userHandle = toNSData(response->userHandle()->span());
 
             auto loginChoice = adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initWithName:response->name() displayName:response->displayName() userHandle:userHandle.get()]);
             [loginChoices addObject:loginChoice.get()];
@@ -211,7 +244,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
         for (auto& response : responses) {
             RetainPtr<NSData> userHandle;
             if (response->userHandle())
-                userHandle = adoptNS([[NSData alloc] initWithBytes:response->userHandle()->data() length:response->userHandle()->byteLength()]);
+                userHandle = toNSData(response->userHandle()->span());
 
             auto loginChoice = adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initWithName:response->name() displayName:response->displayName() userHandle:userHandle.get()]);
             [m_context addLoginChoice:loginChoice.get()];

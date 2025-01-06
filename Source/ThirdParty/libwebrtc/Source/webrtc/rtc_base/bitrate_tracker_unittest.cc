@@ -12,8 +12,8 @@
 
 #include <cstdlib>
 #include <limits>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -34,7 +34,7 @@ TEST(BitrateTrackerTest, ReturnsNulloptInitially) {
   Timestamp now = Timestamp::Seconds(12'345);
   BitrateTracker stats(kWindow);
 
-  EXPECT_EQ(stats.Rate(now), absl::nullopt);
+  EXPECT_EQ(stats.Rate(now), std::nullopt);
 }
 
 TEST(BitrateTrackerTest, ReturnsNulloptAfterSingleDataPoint) {
@@ -44,7 +44,7 @@ TEST(BitrateTrackerTest, ReturnsNulloptAfterSingleDataPoint) {
   stats.Update(1'500, now);
   now += TimeDelta::Millis(10);
 
-  EXPECT_EQ(stats.Rate(now), absl::nullopt);
+  EXPECT_EQ(stats.Rate(now), std::nullopt);
 }
 
 TEST(BitrateTrackerTest, ReturnsRateAfterTwoMeasurements) {
@@ -75,14 +75,14 @@ TEST(BitrateTrackerTest, MeasuresConstantRate) {
   DataSize total_size = kPacketSize;
   DataRate last_error = DataRate::PlusInfinity();
   for (TimeDelta i = TimeDelta::Zero(); i < kWindow; i += kInterval) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     now += kInterval;
     total_size += kPacketSize;
     stats.Update(kPacketSize, now);
 
     // Until window is full, bitrate is measured over a smaller window and might
     // look larger than the constant rate.
-    absl::optional<DataRate> bitrate = stats.Rate(now);
+    std::optional<DataRate> bitrate = stats.Rate(now);
     ASSERT_THAT(bitrate,
                 AllOf(Ge(kConstantRate), Le(total_size / (now - start))));
 
@@ -95,7 +95,7 @@ TEST(BitrateTrackerTest, MeasuresConstantRate) {
   // Once window is full, bitrate measurment should be stable.
   for (TimeDelta i = TimeDelta::Zero(); i < kInterval;
        i += TimeDelta::Millis(1)) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     EXPECT_EQ(stats.Rate(now + i), kConstantRate);
   }
 }
@@ -111,20 +111,20 @@ TEST(BitrateTrackerTest, IncreasingThenDecreasingBitrate) {
 
   stats.Update(kLargePacketSize, now);
   for (TimeDelta i = TimeDelta::Zero(); i < kWindow; i += kLargeInterval) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     now += kLargeInterval;
     stats.Update(kLargePacketSize, now);
   }
-  absl::optional<DataRate> last_bitrate = stats.Rate(now);
+  std::optional<DataRate> last_bitrate = stats.Rate(now);
   EXPECT_EQ(last_bitrate, kLargePacketSize / kLargeInterval);
 
   // Decrease bitrate with smaller measurments.
   for (TimeDelta i = TimeDelta::Zero(); i < kWindow; i += kLargeInterval) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     now += kLargeInterval;
     stats.Update(kSmallPacketSize, now);
 
-    absl::optional<DataRate> bitrate = stats.Rate(now);
+    std::optional<DataRate> bitrate = stats.Rate(now);
     EXPECT_LT(bitrate, last_bitrate);
 
     last_bitrate = bitrate;
@@ -133,11 +133,11 @@ TEST(BitrateTrackerTest, IncreasingThenDecreasingBitrate) {
 
   // Increase bitrate with more frequent measurments.
   for (TimeDelta i = TimeDelta::Zero(); i < kWindow; i += kSmallInterval) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     now += kSmallInterval;
     stats.Update(kSmallPacketSize, now);
 
-    absl::optional<DataRate> bitrate = stats.Rate(now);
+    std::optional<DataRate> bitrate = stats.Rate(now);
     EXPECT_GE(bitrate, last_bitrate);
 
     last_bitrate = bitrate;
@@ -162,17 +162,17 @@ TEST(BitrateTrackerTest, ResetAfterSilence) {
 
   now += kWindow + kEpsilon;
   // Silence over window size should trigger auto reset for coming sample.
-  EXPECT_EQ(stats.Rate(now), absl::nullopt);
+  EXPECT_EQ(stats.Rate(now), std::nullopt);
   stats.Update(kPacketSize, now);
   // Single measurment after reset is not enough to estimate the rate.
-  EXPECT_EQ(stats.Rate(now), absl::nullopt);
+  EXPECT_EQ(stats.Rate(now), std::nullopt);
 
   // Manual reset, add the same check again.
   stats.Reset();
-  EXPECT_EQ(stats.Rate(now), absl::nullopt);
+  EXPECT_EQ(stats.Rate(now), std::nullopt);
   now += kInterval;
   stats.Update(kPacketSize, now);
-  EXPECT_EQ(stats.Rate(now), absl::nullopt);
+  EXPECT_EQ(stats.Rate(now), std::nullopt);
 }
 
 TEST(BitrateTrackerTest, HandlesChangingWindowSize) {
@@ -223,17 +223,17 @@ TEST(BitrateTrackerTest, HandlesZeroCounts) {
   BitrateTracker stats(kWindow);
 
   stats.Update(kPacketSize, now);
-  ASSERT_EQ(stats.Rate(now), absl::nullopt);
+  ASSERT_EQ(stats.Rate(now), std::nullopt);
   now += kInterval;
   stats.Update(0, now);
-  absl::optional<DataRate> last_bitrate = stats.Rate(now);
+  std::optional<DataRate> last_bitrate = stats.Rate(now);
   EXPECT_GT(last_bitrate, DataRate::Zero());
   now += kInterval;
   while (now < start + kWindow) {
-    SCOPED_TRACE(now - start);
+    SCOPED_TRACE(ToString(now - start));
     stats.Update(0, now);
 
-    absl::optional<DataRate> bitrate = stats.Rate(now);
+    std::optional<DataRate> bitrate = stats.Rate(now);
     EXPECT_GT(bitrate, DataRate::Zero());
     // As window expands, average bitrate decreases.
     EXPECT_LT(bitrate, last_bitrate);
@@ -260,7 +260,7 @@ TEST(BitrateTrackerTest, ReturnsNulloptWhenOverflows) {
   now += kEpsilon;
   stats.Update(very_large_number, now);
 
-  EXPECT_EQ(stats.Rate(now), absl::nullopt);
+  EXPECT_EQ(stats.Rate(now), std::nullopt);
 }
 
 }  // namespace

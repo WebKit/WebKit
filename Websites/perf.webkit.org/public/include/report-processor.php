@@ -218,6 +218,8 @@ class ReportProcessor {
         $metric_rows = $this->db->fetch_table('test_metrics');
         foreach ($metric_rows as &$metric) {
             $test = &$test_by_id[$metric['metric_test']];
+            if (is_null($test['metrics']))
+                continue;
             $metrics_by_name = &array_ensure_item_has_array($test['metrics'], $metric['metric_name']);
             $metrics_by_name[$metric['metric_aggregator']] = $metric['metric_id'];
         }

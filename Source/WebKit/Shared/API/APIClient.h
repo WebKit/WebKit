@@ -29,6 +29,7 @@
 #include <algorithm>
 #include <array>
 #include <tuple>
+#include <wtf/StdLibExtras.h>
 
 namespace API {
 
@@ -66,12 +67,12 @@ public:
             return;
         }
 
-        memset(&m_client, 0, sizeof(m_client));
+        zeroBytes(m_client);
 
         if (client && client->version < latestClientVersion) {
             auto interfaceSizes = InterfaceSizes<ClientVersions>::sizes();
 
-            memcpy(&m_client, client, interfaceSizes[client->version]);
+            memcpySpan(asMutableByteSpan(m_client), unsafeMakeSpan(reinterpret_cast<const uint8_t*>(client), interfaceSizes[client->version]));
         }
     }
 

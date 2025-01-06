@@ -4,9 +4,10 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
+#include "tools/window/mac/GraphiteDawnMetalWindowContext_mac.h"
 
 #include "tools/window/GraphiteDawnWindowContext.h"
-#include "tools/window/mac/WindowContextFactory_mac.h"
+#include "tools/window/mac/MacWindowInfo.h"
 
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/CAConstraintLayoutManager.h>
@@ -20,7 +21,7 @@ namespace {
 
 class GraphiteDawnMetalWindowContext_mac : public GraphiteDawnWindowContext {
 public:
-    GraphiteDawnMetalWindowContext_mac(const MacWindowInfo&, const DisplayParams&);
+    GraphiteDawnMetalWindowContext_mac(const MacWindowInfo&, std::unique_ptr<const DisplayParams>);
 
     ~GraphiteDawnMetalWindowContext_mac() override;
 
@@ -35,11 +36,10 @@ private:
     CAMetalLayer*        fMetalLayer;
 };
 
-GraphiteDawnMetalWindowContext_mac::GraphiteDawnMetalWindowContext_mac(const MacWindowInfo& info,
-                                                                       const DisplayParams& params)
-    : GraphiteDawnWindowContext(params, wgpu::TextureFormat::BGRA8Unorm)
-    , fMainView(info.fMainView) {
-
+GraphiteDawnMetalWindowContext_mac::GraphiteDawnMetalWindowContext_mac(
+        const MacWindowInfo& info, std::unique_ptr<const DisplayParams> params)
+        : GraphiteDawnWindowContext(std::move(params), wgpu::TextureFormat::BGRA8Unorm)
+        , fMainView(info.fMainView) {
     CGFloat backingScaleFactor = skwindow::GetBackingScaleFactor(fMainView);
     CGSize backingSize = fMainView.bounds.size;
     this->initializeContext(backingSize.width * backingScaleFactor,
@@ -62,7 +62,7 @@ bool GraphiteDawnMetalWindowContext_mac::onInitializeContext() {
     // Create a CAMetalLayer that covers the whole window that will be passed to
     // CreateSurface.
     fMetalLayer = [CAMetalLayer layer];
-    BOOL useVsync = fDisplayParams.fDisableVsync ? NO : YES;
+    BOOL useVsync = fDisplayParams->disableVsync() ? NO : YES;
     fMetalLayer.displaySyncEnabled = useVsync;
     fMainView.wantsLayer = YES;
     fMainView.layer = fMetalLayer;
@@ -81,25 +81,19 @@ bool GraphiteDawnMetalWindowContext_mac::onInitializeContext() {
         return false;
     }
 
-
     fDevice = std::move(device);
     fSurface = std::move(surface);
-    fSwapChain = this->createSwapChain();
+    configureSurface();
 
     return true;
 }
 
-void GraphiteDawnMetalWindowContext_mac::onDestroyContext() {
-    fMetalLayer = nil;
-    fMainView.layer = nil;
-    fMainView.wantsLayer = NO;
-}
+void GraphiteDawnMetalWindowContext_mac::onDestroyContext() {}
 
 void GraphiteDawnMetalWindowContext_mac::resize(int w, int h) {
     if (!this->resizeInternal()) {
         return;
     }
-    fSwapChain = this->createSwapChain();
 }
 
 bool GraphiteDawnMetalWindowContext_mac::resizeInternal() {
@@ -117,6 +111,8 @@ bool GraphiteDawnMetalWindowContext_mac::resizeInternal() {
 
     fWidth = backingSize.width;
     fHeight = backingSize.height;
+    configureSurface();
+
     return true;
 }
 
@@ -124,9 +120,10 @@ bool GraphiteDawnMetalWindowContext_mac::resizeInternal() {
 
 namespace skwindow {
 
-std::unique_ptr<WindowContext> MakeGraphiteDawnMetalForMac(const MacWindowInfo& info,
-                                                           const DisplayParams& params) {
-    std::unique_ptr<WindowContext> ctx(new GraphiteDawnMetalWindowContext_mac(info, params));
+std::unique_ptr<WindowContext> MakeGraphiteDawnMetalForMac(
+        const MacWindowInfo& info, std::unique_ptr<const DisplayParams> params) {
+    std::unique_ptr<WindowContext> ctx(
+            new GraphiteDawnMetalWindowContext_mac(info, std::move(params)));
     if (!ctx->isValid()) {
         return nullptr;
     }

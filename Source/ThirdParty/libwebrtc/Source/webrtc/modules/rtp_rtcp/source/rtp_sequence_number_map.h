@@ -14,8 +14,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <deque>
-
-#include "absl/types/optional.h"
+#include <optional>
 
 namespace webrtc {
 
@@ -57,7 +56,7 @@ class RtpSequenceNumberMap final {
                    size_t packet_count,
                    uint32_t timestamp);
 
-  absl::optional<Info> Get(uint16_t sequence_number) const;
+  std::optional<Info> Get(uint16_t sequence_number) const;
 
   size_t AssociationCountForTesting() const;
 

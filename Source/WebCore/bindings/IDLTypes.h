@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include "BufferSource.h"
 #include "StringAdaptors.h"
 #include <JavaScriptCore/HandleTypes.h>
 #include <JavaScriptCore/Strong.h>
 #include <variant>
 #include <wtf/Brigand.h>
+#include <wtf/Compiler.h>
 #include <wtf/Markable.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
@@ -69,6 +71,9 @@ struct IDLType {
     using ParameterType = T;
     using NullableParameterType = std::optional<ImplementationType>;
 
+    using CallbackReturnType = T;
+    using NullableCallbackReturnType = std::optional<ImplementationType>;
+
     using InnerParameterType = T;
     using NullableInnerParameterType = std::optional<ImplementationType>;
 
@@ -97,6 +102,9 @@ struct IDLAny : IDLType<JSC::Strong<JSC::Unknown>> {
     using ParameterType = JSC::JSValue;
     using NullableParameterType = JSC::JSValue;
 
+    using CallbackReturnType = JSC::JSValue;
+    using NullableCallbackReturnType = JSC::JSValue;
+
     using ConversionResultType = JSC::JSValue;
     using NullableConversionResultType = JSC::JSValue;
 
@@ -106,7 +114,10 @@ struct IDLAny : IDLType<JSC::Strong<JSC::Unknown>> {
     template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 
-struct IDLUndefined : IDLType<void> { };
+struct IDLUndefined : IDLType<std::monostate> {
+    using CallbackReturnType = void;
+    using NullableCallbackReturnType = void;
+};
 
 struct IDLBoolean : IDLType<bool> { };
 
@@ -160,39 +171,7 @@ template<typename T> struct IDLLegacyNullToEmptyStringAdaptor : IDLString<String
     using InnerType = T;
 };
 
-template<typename T> struct IDLStringContextTrustedHTMLAdaptor : IDLString<String> {
-    using InnerType = T;
-};
-
 template<typename T> struct IDLStringContextTrustedScriptAdaptor : IDLString<String> {
-    using InnerType = T;
-};
-
-template<typename T> struct IDLStringContextTrustedScriptURLAdaptor : IDLString<String> {
-    using InnerType = T;
-};
-
-template<typename T> struct IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor : IDLString<String> {
-    using InnerType = T;
-};
-
-template<typename T> struct IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor : IDLString<String> {
-    using InnerType = T;
-};
-
-template<typename T> struct IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor : IDLString<String> {
-    using InnerType = T;
-};
-
-template<typename T> struct IDLAtomStringStringContextTrustedHTMLAdaptor : IDLString<AtomString> {
-    using InnerType = T;
-};
-
-template<typename T> struct IDLAtomStringStringContextTrustedScriptAdaptor : IDLString<AtomString> {
-    using InnerType = T;
-};
-
-template<typename T> struct IDLAtomStringStringContextTrustedScriptURLAdaptor : IDLString<AtomString> {
     using InnerType = T;
 };
 
@@ -331,21 +310,25 @@ struct IDLUnion : IDLType<std::variant<typename Ts::ImplementationType...>> {
     using NullableParameterType = const std::optional<std::variant<typename Ts::ImplementationType...>>&;
 };
 
-template<typename T> struct IDLBufferSource : IDLWrapper<T> {
+template<typename T> struct IDLBufferSourceBase : IDLWrapper<T> {
     using ConversionResultType = Ref<T>;
     using NullableConversionResultType = RefPtr<T>;
 };
 
-struct IDLArrayBuffer : IDLBufferSource<JSC::ArrayBuffer> { };
+struct IDLArrayBuffer : IDLBufferSourceBase<JSC::ArrayBuffer> { };
 // NOTE: WebIDL defines ArrayBufferView as an IDL union of all the TypedArray types.
 //       and DataView. For convenience in our implementation, we give it a distinct
 //       type that maps to the shared based class of all those classes.
-struct IDLArrayBufferView : IDLBufferSource<JSC::ArrayBufferView> { };
-struct IDLDataView : IDLBufferSource<JSC::DataView> { };
+struct IDLArrayBufferView : IDLBufferSourceBase<JSC::ArrayBufferView> { };
+struct IDLDataView : IDLBufferSourceBase<JSC::DataView> { };
 
-template<typename T> struct IDLTypedArray : IDLBufferSource<T> { };
+template<typename T> struct IDLTypedArray : IDLBufferSourceBase<T> { };
 // NOTE: The specific typed array types are IDLTypedArray specialized on the typed array
 //       implementation type, e.g. IDLFloat64Array is IDLTypedArray<JSC::Float64Array>
+struct IDLBufferSource : IDLWrapper<BufferSource> {
+    using ConversionResultType = BufferSource;
+    using NullableConversionResultType = std::optional<BufferSource>;
+};
 
 
 // Non-WebIDL extensions
@@ -419,6 +402,9 @@ template<typename T> struct IDLOptional : IDLType<typename T::NullableType> {
 
 template<typename T>
 struct IsIDLInterface : public std::integral_constant<bool, WTF::IsTemplate<T, IDLInterface>::value> { };
+
+template<typename T>
+struct IsIDLCallbackFunction : public std::integral_constant<bool, WTF::IsTemplate<T, IDLCallbackFunction>::value> { };
 
 template<typename T>
 struct IsIDLDictionary : public std::integral_constant<bool, WTF::IsTemplate<T, IDLDictionary>::value> { };

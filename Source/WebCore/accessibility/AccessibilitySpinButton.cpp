@@ -31,123 +31,71 @@
 
 namespace WebCore {
 
-Ref<AccessibilitySpinButton> AccessibilitySpinButton::create()
+Ref<AccessibilitySpinButton> AccessibilitySpinButton::create(AXID axID, AXObjectCache& cache)
 {
-    return adoptRef(*new AccessibilitySpinButton);
+    return adoptRef(*new AccessibilitySpinButton(axID, cache));
 }
     
-AccessibilitySpinButton::AccessibilitySpinButton()
-    : m_spinButtonElement(nullptr)
+AccessibilitySpinButton::AccessibilitySpinButton(AXID axID, AXObjectCache& cache)
+    : AccessibilityMockObject(axID)
+    , m_spinButtonElement(nullptr)
+    , m_incrementor(downcast<AccessibilitySpinButtonPart>(*cache.create(AccessibilityRole::SpinButtonPart)))
+    , m_decrementor(downcast<AccessibilitySpinButtonPart>(*cache.create(AccessibilityRole::SpinButtonPart)))
 {
+    m_incrementor->setIsIncrementor(true);
+    m_incrementor->setParent(this);
+
+    m_decrementor->setIsIncrementor(false);
+    m_decrementor->setParent(this);
+
+    addChild(m_incrementor.get());
+    addChild(m_decrementor.get());
+    m_childrenInitialized = true;
 }
 
 AccessibilitySpinButton::~AccessibilitySpinButton() = default;
     
-AXCoreObject* AccessibilitySpinButton::incrementButton()
+AccessibilitySpinButtonPart* AccessibilitySpinButton::incrementButton()
 {
-    if (!m_childrenInitialized)
-        addChildren();
-    if (!m_childrenInitialized)
-        return nullptr;
-
-    ASSERT(m_children.size() == 2);
-
-    return m_children[0].get();
+    ASSERT(m_childrenInitialized);
+    RELEASE_ASSERT(m_children.size() == 2);
+    return &downcast<AccessibilitySpinButtonPart>(m_children[0].get());
 }
    
-AXCoreObject* AccessibilitySpinButton::decrementButton()
+AccessibilitySpinButtonPart* AccessibilitySpinButton::decrementButton()
 {
-    if (!m_childrenInitialized)
-        addChildren();
-    if (!m_childrenInitialized)
-        return nullptr;
-    
-    ASSERT(m_children.size() == 2);
-    
-    return m_children[1].get();    
+    ASSERT(m_childrenInitialized);
+    RELEASE_ASSERT(m_children.size() == 2);
+    return &downcast<AccessibilitySpinButtonPart>(m_children[1].get());
 }
     
 LayoutRect AccessibilitySpinButton::elementRect() const
 {
     ASSERT(m_spinButtonElement);
     
-    if (!m_spinButtonElement || !m_spinButtonElement->renderer())
-        return LayoutRect();
-    
-    Vector<FloatQuad> quads;
-    m_spinButtonElement->renderer()->absoluteFocusRingQuads(quads);
+    CheckedPtr renderer = m_spinButtonElement ? m_spinButtonElement->renderer() : nullptr;
+    if (!renderer)
+        return { };
 
-    return boundingBoxForQuads(m_spinButtonElement->renderer(), quads);
+    Vector<FloatQuad> quads;
+    renderer->absoluteFocusRingQuads(quads);
+    return boundingBoxForQuads(renderer.get(), quads);
 }
 
 void AccessibilitySpinButton::addChildren()
 {
-    AXObjectCache* cache = axObjectCache();
-    if (!cache)
-        return;
-    
-    m_childrenInitialized = true;
-    
-    auto& incrementor = downcast<AccessibilitySpinButtonPart>(*cache->create(AccessibilityRole::SpinButtonPart));
-    incrementor.setIsIncrementor(true);
-    incrementor.setParent(this);
-    addChild(&incrementor);
-
-    auto& decrementor = downcast<AccessibilitySpinButtonPart>(*cache->create(AccessibilityRole::SpinButtonPart));
-    decrementor.setIsIncrementor(false);
-    decrementor.setParent(this);
-    addChild(&decrementor);
+    // This class sets its children once in the constructor, and should never
+    // have dirty or uninitialized children afterwards.
+    ASSERT(m_childrenInitialized);
+    ASSERT(!m_subtreeDirty);
+    ASSERT(!m_childrenDirty);
 }
     
 void AccessibilitySpinButton::step(int amount)
 {
     ASSERT(m_spinButtonElement);
-    if (!m_spinButtonElement)
-        return;
-    
-    m_spinButtonElement->step(amount);
-}
-
-// AccessibilitySpinButtonPart 
-
-AccessibilitySpinButtonPart::AccessibilitySpinButtonPart()
-    : m_isIncrementor(false)
-{
-}
-    
-Ref<AccessibilitySpinButtonPart> AccessibilitySpinButtonPart::create()
-{
-    return adoptRef(*new AccessibilitySpinButtonPart);
-}
-
-LayoutRect AccessibilitySpinButtonPart::elementRect() const
-{
-    // FIXME: This logic should exist in the render tree or elsewhere, but there is no
-    // relationship that exists that can be queried.
-    
-    LayoutRect parentRect = parentObject()->elementRect();
-    if (m_isIncrementor)
-        parentRect.setHeight(parentRect.height() / 2);
-    else {
-        parentRect.setY(parentRect.y() + parentRect.height() / 2);        
-        parentRect.setHeight(parentRect.height() / 2);        
-    }
-        
-    return parentRect;
-}
-
-bool AccessibilitySpinButtonPart::press()
-{
-    auto* spinButton = dynamicDowncast<AccessibilitySpinButton>(m_parent.get());
-    if (!spinButton)
-        return false;
-
-    if (m_isIncrementor)
-        spinButton->step(1);
-    else
-        spinButton->step(-1);
-
-    return true;
+    if (m_spinButtonElement)
+        m_spinButtonElement->step(amount);
 }
 
 } // namespace WebCore

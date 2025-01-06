@@ -10,7 +10,13 @@
 
 #include "p2p/base/turn_server.h"
 
+#include <memory>
+
 #include "p2p/base/basic_packet_socket_factory.h"
+#include "p2p/base/port_interface.h"
+#include "rtc_base/async_packet_socket.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/thread.h"
 #include "rtc_base/virtual_socket_server.h"
 #include "test/gtest.h"
 

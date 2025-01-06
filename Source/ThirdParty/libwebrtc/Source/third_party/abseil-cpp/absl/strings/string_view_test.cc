@@ -32,6 +32,7 @@
 
 #include "gtest/gtest.h"
 #include "absl/base/config.h"
+#include "absl/meta/type_traits.h"
 
 #if defined(ABSL_HAVE_STD_STRING_VIEW) || defined(__ANDROID__)
 // We don't control the death messaging when using std::string_view.
@@ -45,6 +46,14 @@
 #endif
 
 namespace {
+
+static_assert(!absl::type_traits_internal::IsOwner<absl::string_view>::value &&
+                  absl::type_traits_internal::IsView<absl::string_view>::value,
+              "string_view is a view, not an owner");
+
+static_assert(absl::type_traits_internal::IsLifetimeBoundAssignment<
+                  absl::string_view, std::string>::value,
+              "lifetimebound assignment not detected");
 
 // A minimal allocator that uses malloc().
 template <typename T>
@@ -885,7 +894,11 @@ TEST(StringViewTest, NULLInput) {
   EXPECT_EQ(s.size(), 0u);
 
 #ifdef ABSL_HAVE_STRING_VIEW_FROM_NULLPTR
-  s = absl::string_view(nullptr);
+  // The `str` parameter is annotated nonnull, but we want to test the defensive
+  // null check. Use a variable instead of passing nullptr directly to avoid a
+  // `-Wnonnull` warning.
+  char* null_str = nullptr;
+  s = absl::string_view(null_str);
   EXPECT_EQ(s.data(), nullptr);
   EXPECT_EQ(s.size(), 0u);
 
@@ -1051,9 +1064,6 @@ TEST(StringViewTest, ConstexprNullSafeStringView) {
     EXPECT_EQ(0u, s.size());
     EXPECT_EQ(absl::string_view(), s);
   }
-#if !defined(_MSC_VER) || _MSC_VER >= 1910
-  // MSVC 2017+ is required for good constexpr string_view support.
-  // See the implementation of `absl::string_view::StrlenInternal()`.
   {
     static constexpr char kHi[] = "hi";
     absl::string_view s = absl::NullSafeStringView(kHi);
@@ -1066,13 +1076,25 @@ TEST(StringViewTest, ConstexprNullSafeStringView) {
     EXPECT_EQ(s.size(), 5u);
     EXPECT_EQ("hello", s);
   }
-#endif
 }
 
 TEST(StringViewTest, ConstexprCompiles) {
   constexpr absl::string_view sp;
+  // With `-Wnonnull` turned on, there is no way to test the defensive null
+  // check in the `string_view(const char*)` constructor in a constexpr context,
+  // as the argument needs to be constexpr. The compiler will therefore always
+  // know at compile time that the argument is nullptr and complain because the
+  // parameter is annotated nonnull. We hence turn the warning off for this
+  // test.
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+#endif
 #ifdef ABSL_HAVE_STRING_VIEW_FROM_NULLPTR
   constexpr absl::string_view cstr(nullptr);
+#endif
+#if defined(__clang__)
+#pragma clang diagnostic pop
 #endif
   constexpr absl::string_view cstr_len("cstr", 4);
 

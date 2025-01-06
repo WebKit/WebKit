@@ -31,8 +31,11 @@
 #include "JSDOMPromiseDeferred.h"
 #include "PasteboardCustomData.h"
 #include "PasteboardItemInfo.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ClipboardItemPasteboardDataSource);
 
 ClipboardItemPasteboardDataSource::ClipboardItemPasteboardDataSource(ClipboardItem& item, const PasteboardItemInfo& info)
     : ClipboardItemDataSource(item)
@@ -49,8 +52,8 @@ Vector<String> ClipboardItemPasteboardDataSource::types() const
 
 void ClipboardItemPasteboardDataSource::getType(const String& type, Ref<DeferredPromise>&& promise)
 {
-    if (RefPtr clipboard = m_item.clipboard())
-        clipboard->getType(m_item, type, WTFMove(promise));
+    if (RefPtr clipboard = m_item->clipboard())
+        clipboard->getType(Ref { m_item.get() }, type, WTFMove(promise));
     else
         promise->reject(ExceptionCode::NotAllowedError);
 }

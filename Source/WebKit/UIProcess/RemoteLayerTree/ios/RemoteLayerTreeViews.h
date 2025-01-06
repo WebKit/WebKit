@@ -62,11 +62,10 @@ class WebPageProxy;
 @interface WKShapeView : WKCompositingView
 @end
 
-@interface WKRemoteView : WKCompositingView
-
-- (instancetype)initWithFrame:(CGRect)frame contextID:(uint32_t)contextID;
-
+#if HAVE(CORE_MATERIAL)
+@interface WKMaterialView : WKCompositingView
 @end
+#endif
 
 @interface WKUIRemoteView : _UIRemoteView <WKContentControlled>
 @end

@@ -33,11 +33,11 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "AudioProcessor.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AudioBasicProcessorNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioBasicProcessorNode);
 
 AudioBasicProcessorNode::AudioBasicProcessorNode(BaseAudioContext& context, NodeType type)
     : AudioNode(context, type)
@@ -47,6 +47,8 @@ AudioBasicProcessorNode::AudioBasicProcessorNode(BaseAudioContext& context, Node
 
     // The subclass must create m_processor.
 }
+
+AudioBasicProcessorNode::~AudioBasicProcessorNode() = default;
 
 void AudioBasicProcessorNode::initialize()
 {

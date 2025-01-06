@@ -320,7 +320,8 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier identifi
     headerSize += bytesUsedToEncodedLength(keyData[headerSize]) + sizeof(InitialOctet);
 
     CCRSACryptorRef ccPublicKey = nullptr;
-    if (CCRSACryptorImport(keyData.data() + headerSize, keyData.size() - headerSize, &ccPublicKey))
+    auto dataAfterHeader = keyData.subspan(headerSize);
+    if (CCRSACryptorImport(dataAfterHeader.data(), dataAfterHeader.size(), &ccPublicKey))
         return nullptr;
 
     // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
@@ -377,7 +378,8 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identif
     headerSize += bytesUsedToEncodedLength(keyData[headerSize]);
 
     CCRSACryptorRef ccPrivateKey = nullptr;
-    if (CCRSACryptorImport(keyData.data() + headerSize, keyData.size() - headerSize, &ccPrivateKey))
+    auto dataAfterHeader = keyData.subspan(headerSize);
+    if (CCRSACryptorImport(dataAfterHeader.data(), dataAfterHeader.size(), &ccPrivateKey))
         return nullptr;
 
     // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.

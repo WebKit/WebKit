@@ -4,11 +4,7 @@ import os
 import subprocess
 import sys
 
-ENCODING_KWARGS = dict()
-if sys.version_info >= (3, 6):
-    ENCODING_KWARGS = dict(encoding='utf-8')
-
-TOPLEVEL = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], **ENCODING_KWARGS).strip()
+TOPLEVEL = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], encoding='utf-8').strip()
 
 LOCATION = os.path.join(TOPLEVEL, r'{{ location }}')
 SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))

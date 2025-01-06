@@ -4,6 +4,11 @@ let messageClients = async function(msg) {
         includeUncontrolled: true
     });
 
+    if (!allClients.length) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        return messageClients(msg);
+    }
+
     for (const client of allClients)
         client.postMessage(msg);
 }

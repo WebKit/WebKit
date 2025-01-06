@@ -43,7 +43,6 @@
 #include <wtf/PointerComparison.h>
 
 namespace WebCore {
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(KeyframeEffectStack);
 
 KeyframeEffectStack::KeyframeEffectStack() = default;
 
@@ -172,7 +171,7 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
 
         ASSERT(effect->animation());
         auto* animation = effect->animation();
-        animation->resolve(targetStyle, resolutionContext);
+        impact.add(animation->resolve(targetStyle, resolutionContext));
 
         if (effect->isRunningAccelerated() || effect->isAboutToRunAccelerated())
             impact.add(AnimationImpact::RequiresRecomposite);

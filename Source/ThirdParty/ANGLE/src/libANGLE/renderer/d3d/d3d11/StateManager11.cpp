@@ -1508,7 +1508,7 @@ void StateManager11::syncViewport(const gl::Context *context)
     // The es 3.1 spec section 9.2 states that, "If there are no attachments, rendering
     // will be limited to a rectangle having a lower left of (0, 0) and an upper right of
     // (width, height), where width and height are the framebuffer object's default width
-    // and height." See http://anglebug.com/1594
+    // and height." See http://anglebug.com/42260558
     // If the Framebuffer has no color attachment and the default width or height is smaller
     // than the current viewport, use the smaller of the two sizes.
     // If framebuffer default width or height is 0, the params should not set.
@@ -1691,6 +1691,7 @@ void StateManager11::invalidateImageBindings()
     mInternalDirtyBits.set(DIRTY_BIT_GRAPHICS_UAV_STATE);
     mInternalDirtyBits.set(DIRTY_BIT_COMPUTE_SRV_STATE);
     mInternalDirtyBits.set(DIRTY_BIT_COMPUTE_UAV_STATE);
+    mInternalDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS);
 }
 
 void StateManager11::invalidateConstantBuffer(unsigned int slot)
@@ -1996,7 +1997,7 @@ angle::Result StateManager11::ensureInitialized(const gl::Context *context)
 
     mIndependentBlendStates = extensions.drawBuffersIndexedAny();  // requires FL10_1
 
-    // FL9_3 is limited to 4; ES3.1 context on FL11_0 is limited to 7
+    // ES3.1 context on FL11_0 is limited to 7
     mCurBlendStateExt =
         gl::BlendStateExt(GetImplAs<Context11>(context)->getNativeCaps().maxDrawBuffers);
 
@@ -2018,9 +2019,6 @@ void StateManager11::deinitialize()
     {
         ShaderDriverConstantBuffer.reset();
     }
-
-    mPointSpriteVertexBuffer.reset();
-    mPointSpriteIndexBuffer.reset();
 }
 
 // Applies the render target surface, depth stencil surface, viewport rectangle and
@@ -2819,7 +2817,7 @@ angle::Result StateManager11::setImageState(const gl::Context *context,
 
     if (mShaderConstants.onImageChange(type, index, imageUnit))
     {
-        invalidateProgramUniforms();
+        invalidateDriverUniforms();
     }
 
     return angle::Result::Continue;
@@ -3072,7 +3070,7 @@ angle::Result StateManager11::syncProgramForCompute(const gl::Context *context)
     Context11 *context11 = GetImplAs<Context11>(context);
     ANGLE_TRY(context11->triggerDispatchCallProgramRecompilation(context));
 
-    mExecutableD3D->updateCachedComputeImage2DBindLayout(context);
+    mExecutableD3D->updateCachedImage2DBindLayout(context, gl::ShaderType::Compute);
 
     // Binaries must be compiled before the sync.
     ASSERT(mExecutableD3D->hasComputeExecutableForCachedImage2DBindLayout());
@@ -3141,20 +3139,7 @@ angle::Result StateManager11::applyVertexBuffers(const gl::Context *context,
                                                  gl::DrawElementsType indexTypeOrInvalid,
                                                  GLint firstVertex)
 {
-    Context11 *context11  = GetImplAs<Context11>(context);
-    RendererD3D *renderer = context11->getRenderer();
-
-    bool programUsesInstancedPointSprites =
-        mExecutableD3D->usesPointSize() &&
-        mExecutableD3D->usesInstancedPointSpriteEmulation(renderer);
-    bool instancedPointSpritesActive =
-        programUsesInstancedPointSprites && (mode == gl::PrimitiveMode::Points);
-
-    // Note that if we use instance emulation, we reserve the first buffer slot.
-    size_t reservedBuffers = GetReservedBufferCount(programUsesInstancedPointSprites);
-
-    for (size_t attribIndex = 0; attribIndex < (gl::MAX_VERTEX_ATTRIBS - reservedBuffers);
-         ++attribIndex)
+    for (size_t attribIndex = 0; attribIndex < gl::MAX_VERTEX_ATTRIBS; ++attribIndex)
     {
         ID3D11Buffer *buffer = nullptr;
         UINT vertexStride    = 0;
@@ -3175,28 +3160,6 @@ angle::Result StateManager11::applyVertexBuffers(const gl::Context *context,
                 ASSERT(attrib.vertexBuffer.get());
                 buffer = GetAs<VertexBuffer11>(attrib.vertexBuffer.get())->getBuffer().get();
             }
-            else if (instancedPointSpritesActive &&
-                     indexTypeOrInvalid != gl::DrawElementsType::InvalidEnum)
-            {
-                ASSERT(mVertexArray11->isCachedIndexInfoValid());
-                TranslatedIndexData indexInfo = mVertexArray11->getCachedIndexInfo();
-                if (indexInfo.srcIndexData.srcBuffer != nullptr)
-                {
-                    const uint8_t *bufferData = nullptr;
-                    ANGLE_TRY(indexInfo.srcIndexData.srcBuffer->getData(context, &bufferData));
-                    ASSERT(bufferData != nullptr);
-
-                    ptrdiff_t offset =
-                        reinterpret_cast<ptrdiff_t>(indexInfo.srcIndexData.srcIndices);
-                    indexInfo.srcIndexData.srcBuffer  = nullptr;
-                    indexInfo.srcIndexData.srcIndices = bufferData + offset;
-                }
-
-                ANGLE_TRY(bufferStorage->getEmulatedIndexedBuffer(context, &indexInfo.srcIndexData,
-                                                                  attrib, firstVertex, &buffer));
-
-                mVertexArray11->updateCachedIndexInfo(indexInfo);
-            }
             else
             {
                 ANGLE_TRY(bufferStorage->getBuffer(
@@ -3207,80 +3170,7 @@ angle::Result StateManager11::applyVertexBuffers(const gl::Context *context,
             ANGLE_TRY(attrib.computeOffset(context, firstVertex, &vertexOffset));
         }
 
-        size_t bufferIndex = reservedBuffers + attribIndex;
-
-        queueVertexBufferChange(bufferIndex, buffer, vertexStride, vertexOffset);
-    }
-
-    // Instanced PointSprite emulation requires two additional ID3D11Buffers. A vertex buffer needs
-    // to be created and added to the list of current buffers, strides and offsets collections.
-    // This buffer contains the vertices for a single PointSprite quad.
-    // An index buffer also needs to be created and applied because rendering instanced data on
-    // D3D11 FL9_3 requires DrawIndexedInstanced() to be used. Shaders that contain gl_PointSize and
-    // used without the GL_POINTS rendering mode require a vertex buffer because some drivers cannot
-    // handle missing vertex data and will TDR the system.
-    if (programUsesInstancedPointSprites)
-    {
-        constexpr UINT kPointSpriteVertexStride = sizeof(float) * 5;
-
-        if (!mPointSpriteVertexBuffer.valid())
-        {
-            static constexpr float kPointSpriteVertices[] = {
-                // Position        | TexCoord
-                -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, /* v0 */
-                -1.0f, 1.0f,  0.0f, 0.0f, 0.0f, /* v1 */
-                1.0f,  1.0f,  0.0f, 1.0f, 0.0f, /* v2 */
-                1.0f,  -1.0f, 0.0f, 1.0f, 1.0f, /* v3 */
-                -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, /* v4 */
-                1.0f,  1.0f,  0.0f, 1.0f, 0.0f, /* v5 */
-            };
-
-            D3D11_SUBRESOURCE_DATA vertexBufferData = {kPointSpriteVertices, 0, 0};
-            D3D11_BUFFER_DESC vertexBufferDesc;
-            vertexBufferDesc.ByteWidth           = sizeof(kPointSpriteVertices);
-            vertexBufferDesc.BindFlags           = D3D11_BIND_VERTEX_BUFFER;
-            vertexBufferDesc.Usage               = D3D11_USAGE_IMMUTABLE;
-            vertexBufferDesc.CPUAccessFlags      = 0;
-            vertexBufferDesc.MiscFlags           = 0;
-            vertexBufferDesc.StructureByteStride = 0;
-
-            ANGLE_TRY(mRenderer->allocateResource(context11, vertexBufferDesc, &vertexBufferData,
-                                                  &mPointSpriteVertexBuffer));
-        }
-
-        // Set the stride to 0 if GL_POINTS mode is not being used to instruct the driver to avoid
-        // indexing into the vertex buffer.
-        UINT stride = instancedPointSpritesActive ? kPointSpriteVertexStride : 0;
-        queueVertexBufferChange(0, mPointSpriteVertexBuffer.get(), stride, 0);
-
-        if (!mPointSpriteIndexBuffer.valid())
-        {
-            // Create an index buffer and set it for pointsprite rendering
-            static constexpr unsigned short kPointSpriteIndices[] = {
-                0, 1, 2, 3, 4, 5,
-            };
-
-            D3D11_SUBRESOURCE_DATA indexBufferData = {kPointSpriteIndices, 0, 0};
-            D3D11_BUFFER_DESC indexBufferDesc;
-            indexBufferDesc.ByteWidth           = sizeof(kPointSpriteIndices);
-            indexBufferDesc.BindFlags           = D3D11_BIND_INDEX_BUFFER;
-            indexBufferDesc.Usage               = D3D11_USAGE_IMMUTABLE;
-            indexBufferDesc.CPUAccessFlags      = 0;
-            indexBufferDesc.MiscFlags           = 0;
-            indexBufferDesc.StructureByteStride = 0;
-
-            ANGLE_TRY(mRenderer->allocateResource(context11, indexBufferDesc, &indexBufferData,
-                                                  &mPointSpriteIndexBuffer));
-        }
-
-        if (instancedPointSpritesActive)
-        {
-            // The index buffer is applied here because Instanced PointSprite emulation uses the a
-            // non-indexed rendering path in ANGLE (DrawArrays). This means that applyIndexBuffer()
-            // on the renderer will not be called and setting this buffer here ensures that the
-            // rendering path will contain the correct index buffers.
-            syncIndexBuffer(mPointSpriteIndexBuffer.get(), DXGI_FORMAT_R16_UINT, 0);
-        }
+        queueVertexBufferChange(attribIndex, buffer, vertexStride, vertexOffset);
     }
 
     applyVertexBufferChanges();
@@ -3827,7 +3717,7 @@ angle::Result StateManager11::getUAVsForShaderStorageBuffers(const gl::Context *
             previouslyBound.end())
         {
             // D3D11 doesn't support binding a buffer multiple times
-            // http://anglebug.com/3032
+            // http://anglebug.com/42261718
             ERR() << "Writing to multiple blocks on the same buffer is not allowed.";
             return angle::Result::Stop;
         }
@@ -3904,7 +3794,7 @@ angle::Result StateManager11::getUAVsForAtomicCounterBuffers(const gl::Context *
 
         Buffer11 *bufferStorage = GetImplAs<Buffer11>(buffer.get());
         // TODO(enrico.galli@intel.com): Check to make sure that we aren't binding the same buffer
-        // multiple times, as this is unsupported by D3D11. http://anglebug.com/3141
+        // multiple times, as this is unsupported by D3D11. http://anglebug.com/42261818
 
         // Bindings only have a valid size if bound using glBindBufferRange. Therefore, we use the
         // buffer size for glBindBufferBase
@@ -4024,16 +3914,7 @@ void StateManager11::syncPrimitiveTopology(const gl::State &glState,
                 return;
             }
 
-            // If instanced pointsprites are enabled and the shader uses gl_PointSize, the topology
-            // must be D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST.
-            if (usesPointSize && mRenderer->getFeatures().useInstancedPointSpriteEmulation.enabled)
-            {
-                primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-            }
-            else
-            {
-                primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
-            }
+            primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
             break;
         }
         case gl::PrimitiveMode::Lines:

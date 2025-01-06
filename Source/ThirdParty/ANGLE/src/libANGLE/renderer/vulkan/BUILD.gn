@@ -69,6 +69,9 @@ config("angle_vulkan_backend_config") {
   if (angle_enable_vulkan_validation_layers) {
     defines += [ "ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS" ]
   }
+  if (angle_enable_vulkan_api_dump_layer) {
+    defines += [ "ANGLE_ENABLE_VULKAN_API_DUMP_LAYER" ]
+  }
 
   defines += [ "ANGLE_ENABLE_VULKAN_SHARED_RING_BUFFER_CMD_ALLOC=" +
                "${angle_enable_vulkan_shared_ring_buffer_cmd_alloc}" ]
@@ -81,6 +84,26 @@ config("angle_vulkan_backend_config") {
 
   if (angle_enable_crc_for_pipeline_cache) {
     defines += [ "ANGLE_ENABLE_CRC_FOR_PIPELINE_CACHE" ]
+  }
+}
+
+if (is_android) {
+  # Used only in generated Android.bp file for DMA-BUF-enabled builds on Android.
+  # See b/353262025 for details.
+  angle_source_set("angle_android_vulkan_dma_buf") {
+    sources = vulkan_backend_dma_buf_sources
+    deps = [
+      ":angle_vulkan_backend",
+      "$angle_root/src/common/linux:angle_dma_buf",
+    ]
+    defines = [
+      "ANGLE_ANDROID_DMA_BUF",
+      "ANGLE_USE_VULKAN_DISPLAY",
+      "ANGLE_VULKAN_DISPLAY_MODE_OFFSCREEN",
+    ]
+    if (angle_use_gbm) {
+      deps += [ "//third_party/minigbm" ]
+    }
   }
 }
 
@@ -119,11 +142,11 @@ template("angle_vulkan_backend_template") {
     if (angle_enable_cl) {
       deps += [
         "$angle_root/third_party/clspv/:clspv_core_shared",
-        "$angle_root/third_party/vulkan-deps/spirv-tools/src/:spvtools",
-        "$angle_root/third_party/vulkan-deps/spirv-tools/src/:spvtools_opt",
+        "$angle_root/third_party/spirv-tools/src/:spvtools",
+        "$angle_root/third_party/spirv-tools/src/:spvtools_opt",
       ]
       include_dirs = [
-        "$angle_root/third_party/vulkan-deps/spirv-tools/src/include",
+        "$angle_root/third_party/spirv-tools/src/include",
         "$angle_root/third_party/clspv/src/include",
       ]
     }
@@ -151,6 +174,11 @@ template("angle_vulkan_backend_template") {
     if (angle_enable_vulkan_validation_layers) {
       defines += [ "ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT" ]
       data_deps += [ "$angle_root/src/common/vulkan:vulkan_validation_layers" ]
+    }
+
+    if (angle_enable_vulkan_api_dump_layer &&
+        current_toolchain == default_toolchain) {
+      data_deps += [ "$angle_root/src/common/vulkan:lunarg_vulkantools" ]
     }
 
     if (is_linux || is_chromeos) {

@@ -28,6 +28,7 @@
 
 [
     JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary TestDictionaryWithOnlyConditionalMembers {
     [Conditional=TEST_CONDITIONAL] TestDictionary conditionalMember;
 };

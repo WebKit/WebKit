@@ -27,6 +27,8 @@
 
 #include <wtf/text/StringView.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template<typename T>
@@ -37,14 +39,14 @@ public:
 
     constexpr StringParsingBuffer() = default;
 
-    constexpr StringParsingBuffer(std::span<const CharacterType> characters)
+    constexpr StringParsingBuffer(std::span<const CharacterType> characters LIFETIME_BOUND)
         : m_data { characters }
     {
         ASSERT(m_data.data() || m_data.empty());
     }
 
-    constexpr auto position() const { return m_data.data(); }
-    constexpr auto end() const { return m_data.data() + m_data.size(); }
+    constexpr auto position() const LIFETIME_BOUND { return m_data.data(); }
+    constexpr auto end() const LIFETIME_BOUND { return m_data.data() + m_data.size(); }
 
     constexpr bool hasCharactersRemaining() const { return !m_data.empty(); }
     constexpr bool atEnd() const { return m_data.empty(); }
@@ -57,7 +59,7 @@ public:
         m_data = { position, m_data.data() + m_data.size() };
     }
 
-    StringView stringViewOfCharactersRemaining() const { return span(); }
+    StringView stringViewOfCharactersRemaining() const LIFETIME_BOUND { return span(); }
 
     CharacterType consume()
     {
@@ -67,9 +69,9 @@ public:
         return character;
     }
 
-    std::span<const CharacterType> span() const { return m_data; }
+    std::span<const CharacterType> span() const LIFETIME_BOUND { return m_data; }
 
-    std::span<const CharacterType> consume(size_t count)
+    std::span<const CharacterType> consume(size_t count) LIFETIME_BOUND
     {
         ASSERT(count <= lengthRemaining());
         auto result = m_data;
@@ -135,3 +137,5 @@ template<typename StringType, typename Function> decltype(auto) readCharactersFo
 
 using WTF::StringParsingBuffer;
 using WTF::readCharactersForParsing;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

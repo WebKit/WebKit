@@ -10,8 +10,13 @@
 
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
 
+#include <cstdint>
+#include <memory>
+
 #include "absl/memory/memory.h"
-#include "api/network_state_predictor.h"
+#include "api/rtc_event_log/rtc_event.h"
+#include "api/transport/bandwidth_usage.h"
+#include "logging/rtc_event_log/events/rtc_event_definition.h"
 
 namespace webrtc {
 

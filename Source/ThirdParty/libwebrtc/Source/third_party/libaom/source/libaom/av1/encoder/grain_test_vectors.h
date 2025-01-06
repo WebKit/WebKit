@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,6 +16,8 @@
  * not signaled in film grain metadata. The parameters are valid
  * for any bit depth.
  */
+
+#if !CONFIG_REALTIME_ONLY
 static aom_film_grain_t film_grain_test_vectors[16] = {
   /* Test 1 */
   {
@@ -778,4 +780,5 @@ static aom_film_grain_t film_grain_test_vectors[16] = {
       45231 /* random_seed */
   },
 };
+#endif  // !CONFIG_REALTIME_ONLY
 #endif  // AOM_AV1_ENCODER_GRAIN_TEST_VECTORS_H_

@@ -13,6 +13,7 @@
 #include <utility>
 
 #include "api/test/pclf/media_configuration.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {

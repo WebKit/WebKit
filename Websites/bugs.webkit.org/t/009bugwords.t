@@ -19,7 +19,7 @@ use 5.10.1;
 use strict;
 use warnings;
 
-use lib 't';
+use lib qw(. t lib);
 
 use Support::Files;
 use Support::Templates;

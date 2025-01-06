@@ -51,6 +51,9 @@ static UIActionIdentifier const WKElementActionTypeCustomIdentifier = @"WKElemen
 static UIActionIdentifier const WKElementActionTypeOpenIdentifier = @"WKElementActionTypeOpen";
 static UIActionIdentifier const WKElementActionTypeCopyIdentifier = @"WKElementActionTypeCopy";
 static UIActionIdentifier const WKElementActionTypeSaveImageIdentifier = @"WKElementActionTypeSaveImage";
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+static UIActionIdentifier const WKElementActionTypeViewSpatialIdentifier = @"WKElementActionTypeViewSpatial";
+#endif
 #if TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
 static UIActionIdentifier const WKElementActionTypeAddToReadingListIdentifier = @"WKElementActionTypeAddToReadingList";
 static UIActionIdentifier const WKElementActionTypeOpenInDefaultBrowserIdentifier = @"WKElementActionTypeOpenInDefaultBrowser";
@@ -160,6 +163,14 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
         break;
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    case _WKElementActionTypeViewSpatial:
+        title = WEB_UI_STRING("View Spatial Photo", "Title for View Spatial Photo action button");
+        handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
+            [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
+        };
+        break;
+#endif
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
     case _WKElementActionTypeAddToReadingList:
         title = WEB_UI_STRING("Add to Reading List", "Title for Add to Reading List action button");
@@ -275,12 +286,18 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         return [UIImage systemImageNamed:@"doc.on.doc"];
     case _WKElementActionTypeSaveImage:
         return [UIImage systemImageNamed:@"square.and.arrow.down"];
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    case _WKElementActionTypeViewSpatial:
+        return [UIImage systemImageNamed:@"cube"];
+#endif
+#if HAVE(LINK_PREVIEW)
     case _WKElementActionTypeAddToReadingList:
         return [UIImage systemImageNamed:@"eyeglasses"];
     case _WKElementActionTypeOpenInDefaultBrowser:
         return [UIImage systemImageNamed:@"safari"];
     case _WKElementActionTypeOpenInExternalApplication:
         return [UIImage systemImageNamed:@"arrow.up.forward.app"];
+#endif // HAVE(LINK_PREVIEW)
     case _WKElementActionTypeShare:
         return [UIImage systemImageNamed:@"square.and.arrow.up"];
     case _WKElementActionTypeOpenInNewTab:
@@ -323,12 +340,18 @@ UIActionIdentifier elementActionTypeToUIActionIdentifier(_WKElementActionType ac
         return WKElementActionTypeCopyIdentifier;
     case _WKElementActionTypeSaveImage:
         return WKElementActionTypeSaveImageIdentifier;
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    case _WKElementActionTypeViewSpatial:
+        return WKElementActionTypeViewSpatialIdentifier;
+#endif
+#if HAVE(LINK_PREVIEW)
     case _WKElementActionTypeAddToReadingList:
         return WKElementActionTypeAddToReadingListIdentifier;
     case _WKElementActionTypeOpenInDefaultBrowser:
         return WKElementActionTypeOpenInDefaultBrowserIdentifier;
     case _WKElementActionTypeOpenInExternalApplication:
         return WKElementActionTypeOpenInExternalApplicationIdentifier;
+#endif // HAVE(LINK_PREVIEW)
     case _WKElementActionTypeShare:
         return WKElementActionTypeShareIdentifier;
     case _WKElementActionTypeOpenInNewTab:
@@ -362,12 +385,18 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
         return _WKElementActionTypeCopy;
     if ([identifier isEqualToString:WKElementActionTypeSaveImageIdentifier])
         return _WKElementActionTypeSaveImage;
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    if ([identifier isEqualToString:WKElementActionTypeViewSpatialIdentifier])
+        return _WKElementActionTypeViewSpatial;
+#endif
+#if HAVE(LINK_PREVIEW)
     if ([identifier isEqualToString:WKElementActionTypeAddToReadingListIdentifier])
         return _WKElementActionTypeAddToReadingList;
     if ([identifier isEqualToString:WKElementActionTypeOpenInDefaultBrowserIdentifier])
         return _WKElementActionTypeOpenInDefaultBrowser;
     if ([identifier isEqualToString:WKElementActionTypeOpenInExternalApplicationIdentifier])
         return _WKElementActionTypeOpenInExternalApplication;
+#endif // HAVE(LINK_PREVIEW)
     if ([identifier isEqualToString:WKElementActionTypeShareIdentifier])
         return _WKElementActionTypeShare;
     if ([identifier isEqualToString:WKElementActionTypeOpenInNewTabIdentifier])

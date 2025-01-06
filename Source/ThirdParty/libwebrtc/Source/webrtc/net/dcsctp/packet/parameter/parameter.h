@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <iterator>
 #include <memory>
+#include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -23,7 +24,6 @@
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "net/dcsctp/packet/tlv_trait.h"
 #include "rtc_base/strings/string_builder.h"
@@ -61,7 +61,7 @@ class Parameters {
     std::vector<uint8_t> data_;
   };
 
-  static absl::optional<Parameters> Parse(rtc::ArrayView<const uint8_t> data);
+  static std::optional<Parameters> Parse(rtc::ArrayView<const uint8_t> data);
 
   Parameters() {}
   Parameters(Parameters&& other) = default;
@@ -71,7 +71,7 @@ class Parameters {
   std::vector<ParameterDescriptor> descriptors() const;
 
   template <typename P>
-  absl::optional<P> get() const {
+  std::optional<P> get() const {
     static_assert(std::is_base_of<Parameter, P>::value,
                   "Template parameter not derived from Parameter");
     for (const auto& p : descriptors()) {
@@ -79,7 +79,7 @@ class Parameters {
         return P::Parse(p.data);
       }
     }
-    return absl::nullopt;
+    return std::nullopt;
   }
 
  private:

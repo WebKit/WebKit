@@ -30,4 +30,10 @@ namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontAccessor);
 
+TextStream& operator<<(TextStream& ts, const FontSelector& fontSelector)
+{
+    ts << "FontSelector " << &fontSelector << " id " << fontSelector.uniqueId() << " version " << fontSelector.version();
+    return ts;
+}
+
 } // namespace WebCore

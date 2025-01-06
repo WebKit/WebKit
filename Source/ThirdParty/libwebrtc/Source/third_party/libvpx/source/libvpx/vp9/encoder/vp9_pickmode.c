@@ -12,6 +12,7 @@
 #include <limits.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "./vp9_rtcd.h"
 #include "./vpx_dsp_rtcd.h"
@@ -128,15 +129,24 @@ static int mv_refs_rt(VP9_COMP *cpi, const VP9_COMMON *cm, const MACROBLOCK *x,
       !cpi->svc.layer_context[cpi->svc.temporal_layer_id].is_key_frame &&
       ref_frame == LAST_FRAME) {
     // Get base layer mv.
-    MV_REF *candidate =
-        &cm->prev_frame
-             ->mvs[(mi_col >> 1) + (mi_row >> 1) * (cm->mi_cols >> 1)];
-    if (candidate->mv[0].as_int != INVALID_MV) {
-      base_mv->as_mv.row = (candidate->mv[0].as_mv.row * 2);
-      base_mv->as_mv.col = (candidate->mv[0].as_mv.col * 2);
-      clamp_mv_ref(&base_mv->as_mv, xd);
-    } else {
-      base_mv->as_int = INVALID_MV;
+    const int prev_layer = cpi->svc.spatial_layer_id - 1;
+    const int index =
+        (mi_col >> 1) + (mi_row >> 1) * cpi->svc.mi_cols[prev_layer];
+    // prev_frame->mvs[] is allocated to size mi_cols * mi_rows corresponding
+    // to the previous spatial layer, so the index check is against
+    // svc.mi_col/rows[prev_layer].
+    if (index < cpi->svc.mi_cols[prev_layer] * cpi->svc.mi_rows[prev_layer]) {
+      MV_REF *candidate = &cm->prev_frame->mvs[index];
+      // Avoid using base_mv if scaled mv is out of range, for either component.
+      if (candidate->mv[0].as_int != INVALID_MV &&
+          abs(candidate->mv[0].as_mv.row) <= INT16_MAX >> 1 &&
+          abs(candidate->mv[0].as_mv.col) <= INT16_MAX >> 1) {
+        base_mv->as_mv.row = candidate->mv[0].as_mv.row * 2;
+        base_mv->as_mv.col = candidate->mv[0].as_mv.col * 2;
+        clamp_mv_ref(&base_mv->as_mv, xd);
+      } else {
+        base_mv->as_int = INVALID_MV;
+      }
     }
   }
 
@@ -1698,7 +1708,7 @@ void vp9_pick_inter_mode(VP9_COMP *cpi, MACROBLOCK *x, TileDataEnc *tile_data,
   MV_REFERENCE_FRAME usable_ref_frame, second_ref_frame;
   int_mv frame_mv[MB_MODE_COUNT][MAX_REF_FRAMES];
   uint8_t mode_checked[MB_MODE_COUNT][MAX_REF_FRAMES];
-  struct buf_2d yv12_mb[4][MAX_MB_PLANE];
+  struct buf_2d yv12_mb[4][MAX_MB_PLANE] = { 0 };
   RD_COST this_rdc, best_rdc;
   // var_y and sse_y are saved to be used in skipping checking
   unsigned int var_y = UINT_MAX;

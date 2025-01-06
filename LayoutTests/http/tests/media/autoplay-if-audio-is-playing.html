@@ -55,9 +55,9 @@ function doTest()
     var y = video1Button.offsetTop + 5;
 
     if (window.eventSender) {
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(x, y);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 }());
 

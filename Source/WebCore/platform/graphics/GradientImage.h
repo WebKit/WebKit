@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class Gradient;
-class NativeImage;
+class ImageBuffer;
 
 class GradientImage final : public GeneratedImage {
 public:
@@ -52,7 +52,7 @@ private:
     void dump(WTF::TextStream&) const final;
     
     Ref<Gradient> m_gradient;
-    RefPtr<NativeImage> m_cachedImage;
+    RefPtr<ImageBuffer> m_cachedImage;
     FloatSize m_cachedAdjustedSize;
     unsigned m_cachedGeneratorHash { 0 };
     FloatSize m_cachedScaleFactor;

@@ -60,8 +60,8 @@ IPCStreamTester::~IPCStreamTester() = default;
 
 void IPCStreamTester::initialize()
 {
-    workQueue().dispatch([this] {
-        m_streamConnection->open(workQueue());
+    protectedWorkQueue()->dispatch([this] {
+        m_streamConnection->open(protectedWorkQueue());
         m_streamConnection->startReceivingMessages(*this, Messages::IPCStreamTester::messageReceiverName(), m_identifier.toUInt64());
         m_streamConnection->send(Messages::IPCStreamTesterProxy::WasCreated(workQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore()), m_identifier);
     });
@@ -69,11 +69,12 @@ void IPCStreamTester::initialize()
 
 void IPCStreamTester::stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnection)
 {
-    workQueue().dispatch([this] {
+    Ref workQueue = m_workQueue;
+    workQueue->dispatch([this] {
         m_streamConnection->stopReceivingMessages(Messages::IPCStreamTester::messageReceiverName(), m_identifier.toUInt64());
         m_streamConnection->invalidate();
     });
-    workQueue().stopAndWaitForCompletion();
+    workQueue->stopAndWaitForCompletion();
 }
 
 void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(std::optional<WebCore::SharedMemory::Handle>&&)>&& completionHandler)
@@ -85,8 +86,8 @@ void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, Comp
         auto handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
         if (!handle)
             return std::nullopt;
-        uint8_t* data = static_cast<uint8_t*>(sharedMemory->data());
-        for (size_t i = 0; i < sharedMemory->size(); ++i)
+        auto data = sharedMemory->mutableSpan();
+        for (size_t i = 0; i < data.size(); ++i)
             data[i] = i;
         return WTFMove(*handle);
     }();
@@ -96,6 +97,21 @@ void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, Comp
 void IPCStreamTester::syncMessageEmptyReply(uint32_t, CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
+}
+
+void IPCStreamTester::syncMessage(uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    completionHandler(value);
+}
+
+void IPCStreamTester::syncMessageNotStreamEncodableReply(uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    completionHandler(value);
+}
+
+void IPCStreamTester::syncMessageNotStreamEncodableBoth(uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    completionHandler(value);
 }
 
 void IPCStreamTester::syncCrashOnZero(int32_t value, CompletionHandler<void(int32_t)>&& completionHandler)
@@ -110,6 +126,10 @@ void IPCStreamTester::syncCrashOnZero(int32_t value, CompletionHandler<void(int3
 void IPCStreamTester::asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
 {
     completionHandler(value + 1);
+}
+
+void IPCStreamTester::emptyMessage()
+{
 }
 
 #if USE(FOUNDATION)
@@ -135,7 +155,11 @@ void IPCStreamTester::checkAutoreleasePool(CompletionHandler<void(int32_t)>&& co
 
 #if USE(FOUNDATION)
     static const CFArrayCallBacks arrayCallbacks {
+        .version = 0,
+        .retain = nullptr,
         .release = releaseUseCountHolder,
+        .copyDescription = nullptr,
+        .equal = nullptr,
     };
     const void* values[] = { new UseCountHolder { m_autoreleasePoolCheckValue } };
     CFArrayRef releaseDetector = CFArrayCreate(kCFAllocatorDefault, values, 1, &arrayCallbacks);

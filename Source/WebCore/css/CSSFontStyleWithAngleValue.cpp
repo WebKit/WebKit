@@ -26,10 +26,12 @@
 #include "config.h"
 #include "CSSFontStyleWithAngleValue.h"
 
+#include <wtf/text/MakeString.h>
+
 namespace WebCore {
 
 CSSFontStyleWithAngleValue::CSSFontStyleWithAngleValue(Ref<CSSPrimitiveValue>&& obliqueAngle)
-    : CSSValue(FontStyleWithAngleClass)
+    : CSSValue(ClassType::FontStyleWithAngle)
     , m_obliqueAngle(WTFMove(obliqueAngle))
 {
 }

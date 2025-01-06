@@ -1,0 +1,60 @@
+<!-- webkit-test-runner [ SWVPDecodersAlwaysEnabled=true ] -->
+<html>
+<head>
+<title>videos with video range color</title>
+<script src=video-test.js></script>
+<script>
+    var pixelData;
+
+    async function test(element, file) {
+        element.src = "";
+        element.load();
+        element.src = file;
+
+        let promise = new Promise(resolve => element.requestVideoFrameCallback(resolve));
+        await waitFor(element, 'loadedmetadata');
+
+        await element.play();
+        await promise;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = element.videoWidth;
+        canvas.height = element.videoHeight;
+        var ctx = canvas.getContext('2d');
+
+        ctx.drawImage(element, 0, 0);
+        pixelData = ctx.getImageData(20, 20, 1, 1).data;
+        testExpected("pixelData[0]", 0, "==");
+        testExpected("pixelData[1]", 0, "==");
+        testExpected("pixelData[2]", 0, "==");
+
+        pixelData = ctx.getImageData(canvas.width / 2 + 20, canvas.width / 2 + 20, 1, 1).data;
+        testExpected("pixelData[0]", 253, ">=");
+        testExpected("pixelData[1]", 253, ">=");
+        testExpected("pixelData[2]", 2, "<=");
+    };
+
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        const files = [
+            'content/test-h264-601-videorange.mp4',
+            'content/test-vp9-601-videorange.webm',
+            'content/test-vp8-601-videorange.webm',
+        ]
+
+        for (const file of files) {
+            await test(document.createElement('video'), file);
+        }
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+<video/>
+</body>
+</html>

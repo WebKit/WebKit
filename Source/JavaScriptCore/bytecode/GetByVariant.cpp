@@ -32,9 +32,10 @@
 
 namespace JSC {
 
-GetByVariant::GetByVariant(CacheableIdentifier identifier, const StructureSet& structureSet, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<CallLinkStatus> callLinkStatus, JSFunction* intrinsicFunction, CodePtr<CustomAccessorPtrTag> customAccessorGetter, std::unique_ptr<DOMAttributeAnnotation> domAttribute)
+GetByVariant::GetByVariant(CacheableIdentifier identifier, const StructureSet& structureSet, bool viaGlobalProxy, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<CallLinkStatus> callLinkStatus, JSFunction* intrinsicFunction, CodePtr<CustomAccessorPtrTag> customAccessorGetter, std::unique_ptr<DOMAttributeAnnotation> domAttribute)
     : m_structureSet(structureSet)
     , m_conditionSet(conditionSet)
+    , m_viaGlobalProxy(viaGlobalProxy)
     , m_offset(offset)
     , m_callLinkStatus(WTFMove(callLinkStatus))
     , m_intrinsicFunction(intrinsicFunction)
@@ -50,7 +51,7 @@ GetByVariant::GetByVariant(CacheableIdentifier identifier, const StructureSet& s
         ASSERT(intrinsic() != NoIntrinsic);
 }
 
-GetByVariant::~GetByVariant() { }
+GetByVariant::~GetByVariant() = default;
 
 GetByVariant::GetByVariant(const GetByVariant& other)
     : GetByVariant(other.m_identifier)
@@ -63,6 +64,7 @@ GetByVariant& GetByVariant::operator=(const GetByVariant& other)
     m_identifier = other.m_identifier;
     m_structureSet = other.m_structureSet;
     m_conditionSet = other.m_conditionSet;
+    m_viaGlobalProxy = other.m_viaGlobalProxy;
     m_offset = other.m_offset;
     m_intrinsicFunction = other.m_intrinsicFunction;
     m_customAccessorGetter = other.m_customAccessorGetter;
@@ -104,6 +106,9 @@ bool GetByVariant::attemptToMerge(const GetByVariant& other)
         return false;
 
     if (m_identifier && (m_identifier != other.m_identifier))
+        return false;
+
+    if (m_viaGlobalProxy != other.m_viaGlobalProxy)
         return false;
 
     if (m_offset != other.m_offset)
@@ -192,6 +197,7 @@ void GetByVariant::dumpInContext(PrintStream& out, DumpContext* context) const
         return;
     }
     out.print(inContext(structureSet(), context), ", ", inContext(m_conditionSet, context));
+    out.print(", viaGlobalProxy = ", viaGlobalProxy());
     out.print(", offset = ", offset());
     if (m_callLinkStatus)
         out.print(", call = ", *m_callLinkStatus);

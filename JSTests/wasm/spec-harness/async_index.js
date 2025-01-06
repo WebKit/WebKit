@@ -70,6 +70,9 @@ function eq_externref(x, y) {
 function eq_funcref(x, y) {
   return x === y ? 1 : 0;
 }
+function eq_ref(x, y) {
+  return x === y ? 1 : 0;
+}
 
 // Default imports.
 var registry = {};
@@ -91,6 +94,7 @@ function reinitializeRegistry() {
       is_funcref: is_funcref,
       eq_externref: eq_externref,
       eq_funcref: eq_funcref,
+      eq_ref: eq_ref,
       print: console.log.bind(console),
       print_i32: console.log.bind(console),
       print_i64: console.log.bind(console),
@@ -100,8 +104,8 @@ function reinitializeRegistry() {
       print_f64: console.log.bind(console),
       global_i32: 666,
       global_i64: 666n,
-      global_f32: 666,
-      global_f64: 666,
+      global_f32: 666.6,
+      global_f64: 666.6,
       table: new WebAssembly.Table({
         initial: 10,
         maximum: 20,
@@ -175,6 +179,12 @@ function assert_invalid(bytes) {
 }
 
 const assert_malformed = assert_invalid;
+
+function assert_invalid_custom(bytes) {
+  module(bytes);
+}
+
+const assert_malformed_custom = assert_invalid_custom;
 
 function instance(bytes, imports, valid = true) {
   const test = valid
@@ -287,11 +297,25 @@ function assert_return(action, ...expected) {
                 // so there's no good way to test that it's a canonical NaN.
                 assert_true(Number.isNaN(actual[i]), `expected NaN, observed ${actual[i]}.`);
                 return;
+              case "ref.i31":
+                assert_true(typeof actual[i] === "number" && (actual[i] & 0x7fffffff) === actual[i], `expected Wasm i31, got ${actual[i]}`);
+                return;
+              case "ref.any":
+              case "ref.eq":
+              case "ref.struct":
+              case "ref.array":
+                // For now, JS can't distinguish exported Wasm GC values,
+                // so we only test for object.
+                assert_true(typeof actual[i] === "object", `expected Wasm GC object, got ${actual[i]}`);
+                return;
               case "ref.func":
                 assert_true(typeof actual[i] === "function", `expected Wasm function, got ${actual[i]}`);
                 return;
               case "ref.extern":
                 assert_true(actual[i] !== null, `expected Wasm reference, got ${actual[i]}`);
+                return;
+              case "ref.null":
+                assert_true(actual[i] === null, `expected Wasm null reference, got ${actual[i]}`);
                 return;
               default:
                 assert_equals(actual[i], expected[i], loc);
@@ -310,6 +334,20 @@ function assert_return(action, ...expected) {
     )
     // Clear all exceptions, so that subsequent tests get executed.
     .catch(_ => {});
+}
+
+function assert_exception(action) {
+    let result = action();
+
+    _assert(result instanceof Result);
+
+    uniqueTest(() => {
+        assert_true(result.isError(), 'expected error result');
+        if (result.isError()) {
+            let e = result.value;
+            assert_true(e instanceof WebAssembly.Exception, `expected runtime error, observed ${e}:`);
+        }
+    }, "A wast module that must throw an exception at runtime.");
 }
 
 let StackOverflow;

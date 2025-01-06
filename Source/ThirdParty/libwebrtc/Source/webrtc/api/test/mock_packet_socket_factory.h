@@ -11,10 +11,14 @@
 #ifndef API_TEST_MOCK_PACKET_SOCKET_FACTORY_H_
 #define API_TEST_MOCK_PACKET_SOCKET_FACTORY_H_
 
+#include <cstdint>
 #include <memory>
-#include <string>
+#include <type_traits>
 
+#include "api/async_dns_resolver.h"
 #include "api/packet_socket_factory.h"
+#include "rtc_base/async_packet_socket.h"
+#include "rtc_base/socket_address.h"
 #include "test/gmock.h"
 
 namespace rtc {
@@ -32,8 +36,6 @@ class MockPacketSocketFactory : public PacketSocketFactory {
               CreateClientTcpSocket,
               (const SocketAddress& local_address,
                const SocketAddress&,
-               const ProxyInfo&,
-               const std::string&,
                const PacketSocketTcpOptions&),
               (override));
   MOCK_METHOD(std::unique_ptr<webrtc::AsyncDnsResolverInterface>,

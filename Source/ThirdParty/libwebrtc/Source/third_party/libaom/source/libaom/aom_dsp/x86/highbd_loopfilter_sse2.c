@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -25,7 +25,7 @@ static AOM_FORCE_INLINE __m128i abs_diff16(__m128i a, __m128i b) {
   return _mm_or_si128(_mm_subs_epu16(a, b), _mm_subs_epu16(b, a));
 }
 
-static INLINE void get_limit(const uint8_t *bl, const uint8_t *l,
+static inline void get_limit(const uint8_t *bl, const uint8_t *l,
                              const uint8_t *t, int bd, __m128i *blt,
                              __m128i *lt, __m128i *thr, __m128i *t80_out) {
   const int shift = bd - 8;
@@ -43,7 +43,7 @@ static INLINE void get_limit(const uint8_t *bl, const uint8_t *l,
   *t80_out = _mm_set1_epi16(1 << (bd - 1));
 }
 
-static INLINE void get_limit_dual(
+static inline void get_limit_dual(
     const uint8_t *_blimit0, const uint8_t *_limit0, const uint8_t *_thresh0,
     const uint8_t *_blimit1, const uint8_t *_limit1, const uint8_t *_thresh1,
     int bd, __m128i *blt_out, __m128i *lt_out, __m128i *thr_out,
@@ -71,7 +71,7 @@ static INLINE void get_limit_dual(
   *t80_out = _mm_set1_epi16(1 << (bd - 1));
 }
 
-static INLINE void load_highbd_pixel(const uint16_t *s, int size, int pitch,
+static inline void load_highbd_pixel(const uint16_t *s, int size, int pitch,
                                      __m128i *p, __m128i *q) {
   int i;
   for (i = 0; i < size; i++) {
@@ -80,7 +80,7 @@ static INLINE void load_highbd_pixel(const uint16_t *s, int size, int pitch,
   }
 }
 
-static INLINE void highbd_filter_mask_dual(const __m128i *p, const __m128i *q,
+static inline void highbd_filter_mask_dual(const __m128i *p, const __m128i *q,
                                            const __m128i *l, const __m128i *bl,
                                            __m128i *mask) {
   __m128i abs_p0q0 = abs_diff16(p[0], q[0]);
@@ -105,7 +105,7 @@ static INLINE void highbd_filter_mask_dual(const __m128i *p, const __m128i *q,
   *mask = _mm_cmpeq_epi16(max, zero);  // return ~mask
 }
 
-static INLINE void highbd_hev_filter_mask_x_sse2(__m128i *pq, int x,
+static inline void highbd_hev_filter_mask_x_sse2(__m128i *pq, int x,
                                                  __m128i *p1p0, __m128i *q1q0,
                                                  __m128i *abs_p1p0, __m128i *l,
                                                  __m128i *bl, __m128i *t,
@@ -154,7 +154,7 @@ static INLINE void highbd_hev_filter_mask_x_sse2(__m128i *pq, int x,
   *mask = _mm_cmpeq_epi16(max, zero);  //  ~mask
 }
 
-static INLINE void flat_mask_internal(const __m128i *th, const __m128i *pq,
+static inline void flat_mask_internal(const __m128i *th, const __m128i *pq,
                                       int start, int end, __m128i *flat) {
   int i;
   __m128i max = _mm_max_epi16(abs_diff16(pq[start], pq[0]),
@@ -172,7 +172,7 @@ static INLINE void flat_mask_internal(const __m128i *th, const __m128i *pq,
   *flat = _mm_cmpeq_epi16(ft, zero);
 }
 
-static INLINE void flat_mask_internal_dual(const __m128i *th, const __m128i *p,
+static inline void flat_mask_internal_dual(const __m128i *th, const __m128i *p,
                                            const __m128i *q, int start, int end,
                                            __m128i *flat) {
   int i;
@@ -191,7 +191,7 @@ static INLINE void flat_mask_internal_dual(const __m128i *th, const __m128i *p,
   *flat = _mm_cmpeq_epi16(ft, zero);
 }
 
-static INLINE void highbd_flat_mask4_sse2(__m128i *pq, __m128i *flat,
+static inline void highbd_flat_mask4_sse2(__m128i *pq, __m128i *flat,
                                           __m128i *flat2, int bd) {
   // check the distance 1,2,3 against 0
   __m128i th = _mm_set1_epi16(1);
@@ -200,7 +200,7 @@ static INLINE void highbd_flat_mask4_sse2(__m128i *pq, __m128i *flat,
   flat_mask_internal(&th, pq, 4, 7, flat2);
 }
 
-static INLINE void highbd_flat_mask4_dual_sse2(const __m128i *p,
+static inline void highbd_flat_mask4_dual_sse2(const __m128i *p,
                                                const __m128i *q, __m128i *flat,
                                                __m128i *flat2, int bd) {
   // check the distance 1,2,3 against 0
@@ -264,7 +264,7 @@ static AOM_FORCE_INLINE void highbd_filter4_sse2(__m128i *p1p0, __m128i *q1q0,
   *ps1ps0 = _mm_adds_epi16(ps1ps0_work, *t80);
 }
 
-static INLINE void highbd_filter4_dual_sse2(__m128i *p, __m128i *q, __m128i *ps,
+static inline void highbd_filter4_dual_sse2(__m128i *p, __m128i *q, __m128i *ps,
                                             __m128i *qs, const __m128i *mask,
                                             const __m128i *th, int bd,
                                             __m128i *t80) {

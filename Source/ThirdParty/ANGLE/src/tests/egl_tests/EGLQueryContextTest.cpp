@@ -95,6 +95,24 @@ TEST_P(EGLQueryContextTest, GetClientVersion)
     EXPECT_GE(clientVersion, GetParam().majorVersion);
 }
 
+// Tests querying the client major version from the context.
+TEST_P(EGLQueryContextTest, GetClientMajorVersion)
+{
+    EGLint majorVersion;
+    EXPECT_TRUE(eglQueryContext(mDisplay, mContext, EGL_CONTEXT_MAJOR_VERSION, &majorVersion) !=
+                EGL_FALSE);
+    EXPECT_GE(majorVersion, GetParam().majorVersion);
+}
+
+// Tests querying the client minor version from the context.
+TEST_P(EGLQueryContextTest, GetClientMinorVersion)
+{
+    EGLint minorVersion;
+    EXPECT_TRUE(eglQueryContext(mDisplay, mContext, EGL_CONTEXT_MINOR_VERSION, &minorVersion) !=
+                EGL_FALSE);
+    EXPECT_GE(minorVersion, GetParam().minorVersion);
+}
+
 TEST_P(EGLQueryContextTest, GetRenderBufferNoSurface)
 {
     EGLint renderBuffer;
@@ -148,32 +166,6 @@ TEST_P(EGLQueryContextTest, BadAttribute)
     EGLint val;
     EXPECT_TRUE(eglQueryContext(mDisplay, mContext, EGL_HEIGHT, &val) == EGL_FALSE);
     EXPECT_TRUE(eglGetError() == EGL_BAD_ATTRIBUTE);
-}
-
-// Test that EGL_OPENGL_API is supported only if angle_enable_gl_desktop_frontend is enabled
-TEST_P(EGLQueryContextTest, DesktopGlApi)
-{
-#ifdef ANGLE_ENABLE_GL_DESKTOP_FRONTEND
-    const bool kIsDesktopGlApiSupported = true;
-#else
-    const bool kIsDesktopGlApiSupported = false;
-#endif  // ANGLE_ENABLE_GL_DESKTOP_FRONTEND
-
-    EGLint majorVersion, minorVersion;
-    ASSERT_EGL_TRUE(eglInitialize(mDisplay, &majorVersion, &minorVersion));
-
-    eglBindAPI(EGL_OPENGL_API);
-    if (kIsDesktopGlApiSupported)
-    {
-        ASSERT_EGL_SUCCESS();
-    }
-    else
-    {
-        EXPECT_EGL_ERROR(EGL_BAD_PARAMETER);
-    }
-
-    // Cleanup by binding GLES API
-    eglBindAPI(EGL_OPENGL_ES_API);
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLQueryContextTest);

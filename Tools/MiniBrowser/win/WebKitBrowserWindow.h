@@ -67,6 +67,7 @@ private:
     void clearWebsiteData() override;
 
     void updateProxySettings();
+    void adjustScaleFactors() override;
 
     bool canTrustServerCertificate(WKProtectionSpaceRef);
 
@@ -99,4 +100,6 @@ private:
     std::unordered_map<std::wstring, std::wstring> m_acceptedServerTrustCerts;
     std::vector<WKRetainPtr<WKStringRef>> m_experimentalFeatureKeys;
     std::vector<WKRetainPtr<WKStringRef>> m_internalDebugFeatureKeys;
+
+    float m_defaultResetPageZoomFactor = 1;
 };

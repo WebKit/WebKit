@@ -7,7 +7,7 @@ layer at (0,0) size 800x150
         RenderText {#text} at (0,0) size 485x19
           text run at (0,0) width 408: "There should be no rules between any rows and columns in the "
           text run at (407,0) width 78: "table below."
-      RenderTable {table} at (0,36) size 179x90 [border: (0.50px outset #808080)]
+      RenderTable {table} at (0,36) size 179x90 [border: (0.50px outset #000000)]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0

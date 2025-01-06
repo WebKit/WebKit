@@ -32,11 +32,12 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLUListElement.h"
 #include "RenderListItem.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLLIElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLLIElement);
 
 using namespace HTMLNames;
 
@@ -94,27 +95,6 @@ void HTMLLIElement::collectPresentationalHintsForAttribute(const QualifiedName& 
             addPropertyToPresentationalHintStyle(style, CSSPropertyCounterSet, makeString("list-item "_s, *parsedValue));
     } else
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
-}
-
-void HTMLLIElement::didAttachRenderers()
-{
-    CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(*renderer());
-    if (!listItemRenderer)
-        return;
-
-    // Check if there is an enclosing list.
-    bool isInList = false;
-    for (auto& ancestor : ancestorsOfType<HTMLElement>(*this)) {
-        if (is<HTMLUListElement>(ancestor) || is<HTMLOListElement>(ancestor)) {
-            isInList = true;
-            break;
-        }
-    }
-
-    // If we are not in a list, tell the renderer so it can position us inside.
-    // We don't want to change our style to say "inside" since that would affect nested nodes.
-    if (!isInList)
-        listItemRenderer->setNotInList(true);
 }
 
 }

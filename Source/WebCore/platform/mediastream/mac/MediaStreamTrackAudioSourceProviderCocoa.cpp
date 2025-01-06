@@ -29,8 +29,11 @@
 #if ENABLE(WEB_AUDIO) && ENABLE(MEDIA_STREAM)
 
 #import "LibWebRTCAudioModule.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackAudioSourceProviderCocoa);
 
 Ref<MediaStreamTrackAudioSourceProviderCocoa> MediaStreamTrackAudioSourceProviderCocoa::create(MediaStreamTrackPrivate& source)
 {

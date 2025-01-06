@@ -28,8 +28,8 @@
 #include "JSShadowRealmGlobalScopeBase.h"
 #include <JavaScriptCore/Weak.h>
 #include <memory>
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,7 +39,7 @@ class ScriptModuleLoader;
 
 class ShadowRealmGlobalScope : public RefCounted<ShadowRealmGlobalScope> {
     friend class JSShadowRealmGlobalScopeBase;
-    WTF_MAKE_ISO_ALLOCATED(ShadowRealmGlobalScope);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ShadowRealmGlobalScope);
 
 public:
     static Ref<ShadowRealmGlobalScope> create(JSDOMGlobalObject*, ScriptModuleLoader*);

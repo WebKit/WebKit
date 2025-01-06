@@ -8,6 +8,7 @@ PointerAlignment: Right
 # IncludeCategories does not recognize <openssl/header.h>. We should
 # reconfigure IncludeCategories to match. For now, keep it at Preserve.
 IncludeBlocks: Preserve
+InsertBraces: true
 TypenameMacros: ['LHASH_OF', 'STACK_OF']
 StatementMacros:
   - "DECLARE_ASN1_ALLOC_FUNCTIONS"

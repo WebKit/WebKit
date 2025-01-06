@@ -69,7 +69,7 @@ public:
     
     void checkShouldFireCallbacks();
 
-    using ScrollableAreaReasonMap = HashMap<ScrollingNodeID, OptionSet<DeferReason>>;
+    using ScrollableAreaReasonMap = UncheckedKeyHashMap<ScrollingNodeID, OptionSet<DeferReason>>;
 
 private:
     void scheduleCallbackCheck();
@@ -87,6 +87,8 @@ private:
 };
 
 class WheelEventTestMonitorCompletionDeferrer {
+    WTF_MAKE_NONCOPYABLE(WheelEventTestMonitorCompletionDeferrer);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WheelEventTestMonitorCompletionDeferrer(WheelEventTestMonitor* monitor, ScrollingNodeID identifier, WheelEventTestMonitor::DeferReason reason)
         : m_monitor(monitor)

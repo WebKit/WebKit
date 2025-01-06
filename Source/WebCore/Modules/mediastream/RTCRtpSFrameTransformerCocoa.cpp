@@ -29,6 +29,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "CryptoUtilitiesCocoa.h"
+#include "SFrameUtils.h"
 #include <CommonCrypto/CommonCrypto.h>
 
 namespace WebCore {
@@ -69,16 +70,6 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptData(std::span<cons
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptData(std::span<const uint8_t> data, const Vector<uint8_t>& iv, const Vector<uint8_t>& key)
 {
     return transformAESCTR(kCCEncrypt, iv, iv.size(), key, data);
-}
-
-static inline Vector<uint8_t, 8> encodeBigEndian(uint64_t value)
-{
-    Vector<uint8_t, 8> result(8);
-    for (int i = 7; i >= 0; --i) {
-        result.data()[i] = value & 0xff;
-        value = value >> 8;
-    }
-    return result;
 }
 
 Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const Vector<uint8_t>& nonce, std::span<const uint8_t> header, std::span<const uint8_t> data, const Vector<uint8_t>& key)

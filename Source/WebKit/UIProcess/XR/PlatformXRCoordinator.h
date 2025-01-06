@@ -30,16 +30,8 @@
 #include "XRDeviceIdentifier.h"
 #include "XRDeviceInfo.h"
 #include <WebCore/PlatformXR.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Function.h>
-
-namespace WebKit {
-class PlatformXRCoordinatorSessionEventClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PlatformXRCoordinatorSessionEventClient> : std::true_type { };
-}
 
 namespace WebCore {
 class SecurityOriginData;
@@ -49,7 +41,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class PlatformXRCoordinatorSessionEventClient : public CanMakeWeakPtr<PlatformXRCoordinatorSessionEventClient> {
+class PlatformXRCoordinatorSessionEventClient : public AbstractRefCountedAndCanMakeWeakPtr<PlatformXRCoordinatorSessionEventClient> {
 public:
     virtual ~PlatformXRCoordinatorSessionEventClient() = default;
 
@@ -65,7 +57,7 @@ public:
     static PlatformXR::LayerHandle defaultLayerHandle() { return 1; }
 
     using DeviceInfoCallback = Function<void(std::optional<XRDeviceInfo>)>;
-    virtual void getPrimaryDeviceInfo(DeviceInfoCallback&&) = 0;
+    virtual void getPrimaryDeviceInfo(WebPageProxy&, DeviceInfoCallback&&) = 0;
 
     using FeatureListCallback = CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>;
     virtual void requestPermissionOnSessionFeatures(WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, const PlatformXR::Device::FeatureList& /* requiredFeaturesRequested */, const PlatformXR::Device::FeatureList& /* optionalFeaturesRequested */, FeatureListCallback&& completionHandler) { completionHandler(granted); }
@@ -75,7 +67,7 @@ public:
     virtual void endSessionIfExists(WebPageProxy&) = 0;
 
     // Session display loop.
-    virtual void scheduleAnimationFrame(WebPageProxy&, PlatformXR::Device::RequestFrameCallback&&) = 0;
+    virtual void scheduleAnimationFrame(WebPageProxy&, std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&&) = 0;
     virtual void submitFrame(WebPageProxy&) { }
 };
 

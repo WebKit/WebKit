@@ -22,7 +22,7 @@ namespace rtcp {
 // RFC 3550 section 6.4.1.
 class ReportBlock {
  public:
-  static const size_t kLength = 24;
+  static constexpr size_t kLength = 24;
 
   ReportBlock();
   ~ReportBlock() {}

@@ -7,7 +7,6 @@ description: Tests that offset time zones are correctly normalized in resolvedOp
 let validOffsetTimeZones = {
     '-00': '+00:00',
     '-00:00': '+00:00',
-    '−00:00': '+00:00',
     '+00': '+00:00',
     '+0000': '+00:00',
     '+0300': '+03:00',
@@ -17,14 +16,12 @@ let validOffsetTimeZones = {
     '-07:00': '-07:00',
     '-14': '-14:00',
     '-2100': '-21:00',
-    '−2200': '-22:00',
     '+0103': '+01:03',
     '+15:59': '+15:59',
     '+2227': '+22:27',
     '-02:32': '-02:32',
     '-1701': '-17:01',
     '-22:23': '-22:23',
-    '−22:53': '-22:53',
 };
 Object.keys(validOffsetTimeZones).forEach((timeZone) => {
     let df = new Intl.DateTimeFormat(undefined, {timeZone});

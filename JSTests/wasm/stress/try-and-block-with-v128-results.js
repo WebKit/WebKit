@@ -1,11 +1,15 @@
+//@ requireOptions("--useWasmSIMD=1")
+//@ skip if !$isSIMDPlatform
 let tools;
 if (globalThis.callerIsBBQOrOMGCompiled) {
   function instantiateJsc(filename, importObject) {
     let bytes = read(filename, 'binary');
     return WebAssembly.instantiate(bytes, importObject, 'x');
   }
-  const log = debug;
-  const report = $.agent.report;
+  const verbose = false;
+  const nullLog = function () { }
+  const log = verbose ? debug : nullLog;
+  const report = verbose ? $.agent.report : nullLog;
   const isJIT = callerIsBBQOrOMGCompiled;
   tools = {log, report, isJIT, instantiate: instantiateJsc};
 } else {

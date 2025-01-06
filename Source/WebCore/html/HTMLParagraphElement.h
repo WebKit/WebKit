@@ -27,7 +27,8 @@
 namespace WebCore {
 
 class HTMLParagraphElement final : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLParagraphElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLParagraphElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLParagraphElement);
 public:
     static Ref<HTMLParagraphElement> create(Document&);
     static Ref<HTMLParagraphElement> create(const QualifiedName&, Document&);

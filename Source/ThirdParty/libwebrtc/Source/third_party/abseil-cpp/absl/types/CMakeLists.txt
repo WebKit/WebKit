@@ -114,7 +114,9 @@ absl_cc_library(
     ${ABSL_DEFAULT_COPTS}
   DEPS
     absl::algorithm
+    absl::config
     absl::core_headers
+    absl::nullability
     absl::throw_delegate
     absl::type_traits
   PUBLIC
@@ -137,6 +139,7 @@ absl_cc_test(
     absl::inlined_vector
     absl::hash_testing
     absl::strings
+    absl::type_traits
     GTest::gmock_main
 )
 
@@ -175,6 +178,7 @@ absl_cc_library(
     absl::config
     absl::core_headers
     absl::memory
+    absl::nullability
     absl::type_traits
     absl::utility
   PUBLIC
@@ -284,6 +288,7 @@ absl_cc_library(
   COPTS
     ${ABSL_DEFAULT_COPTS}
   DEPS
+    absl::config
     absl::core_headers
     absl::type_traits
   PUBLIC

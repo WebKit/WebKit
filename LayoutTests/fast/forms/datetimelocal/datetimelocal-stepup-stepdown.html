@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
 <div id="console"></div>
 <script>
-description('Check stepUp() and stepDown() bahevior for type=datetime-local.');
+description('Check stepUp() and stepDown() behavior for type=datetime-local.');
 
 var input = document.createElement('input');
 
@@ -38,31 +38,30 @@ function stepDown(value, step, min, optionalStepCount) {
 
 input.type = 'datetime-local';
 debug('Invalid value');
-shouldBe('stepUp("", null, null)', '"1970-01-01T00:01"');
-shouldBe('stepDown("", null, null)', '"1969-12-31T23:59"');
+shouldBeEqualToString('stepUp("", null, null)', '1970-01-01T00:01');
+shouldBeEqualToString('stepDown("", null, null)', '1969-12-31T23:59');
 debug('Non-number arguments');
-shouldBe('stepUp("2010-02-10T20:13", null, null, "0")', '"2010-02-10T20:13"');
-shouldBe('stepDown("2010-02-10T20:13", null, null, "0")', '"2010-02-10T20:13"');
-shouldBe('stepUp("2010-02-10T20:13", null, null, "foo")', '"2010-02-10T20:13"');
-shouldBe('stepDown("2010-02-10T20:13", null, null, "foo")', '"2010-02-10T20:13"');
-shouldBe('stepUp("2010-02-10T20:13", null, null, null)', '"2010-02-10T20:13"');
-shouldBe('stepDown("2010-02-10T20:13", null, null, null)', '"2010-02-10T20:13"');
+shouldBeEqualToString('stepUp("2010-02-10T20:13", null, null, "0")', '2010-02-10T20:13');
+shouldBeEqualToString('stepDown("2010-02-10T20:13", null, null, "0")', '2010-02-10T20:13');
+shouldBeEqualToString('stepUp("2010-02-10T20:13", null, null, "foo")', '2010-02-10T20:13');
+shouldBeEqualToString('stepDown("2010-02-10T20:13", null, null, "foo")', '2010-02-10T20:13');
+shouldBeEqualToString('stepUp("2010-02-10T20:13", null, null, null)', '2010-02-10T20:13');
+shouldBeEqualToString('stepDown("2010-02-10T20:13", null, null, null)', '2010-02-10T20:13');
 debug('Normal cases');
-shouldBe('stepUp("2010-02-10T20:13", null, null)', '"2010-02-10T20:14"');
-shouldBe('stepDown("2010-02-10T20:13", null, null)', '"2010-02-10T20:12"');
-shouldBe('stepUp("2010-02-10T20:13", null, null, 10)', '"2010-02-10T20:23"');
-shouldBe('stepDown("2010-02-10T20:13", null, null, 11)', '"2010-02-10T20:02"');
-shouldBe('stepUp("1970-01-01T20:13", "4", null, 2)', '"1970-01-01T20:13:08"');
-shouldBe('stepDown("1970-01-01T20:13", "4", null, 3)', '"1970-01-01T20:12:48"');
+shouldBeEqualToString('stepUp("2010-02-10T20:13", null, null)', '2010-02-10T20:14');
+shouldBeEqualToString('stepDown("2010-02-10T20:13", null, null)', '2010-02-10T20:12');
+shouldBeEqualToString('stepUp("2010-02-10T20:13", null, null, 10)', '2010-02-10T20:23');
+shouldBeEqualToString('stepDown("2010-02-10T20:13", null, null, 11)', '2010-02-10T20:02');
+shouldBeEqualToString('stepUp("1970-01-01T20:13", "4", null, 2)', '1970-01-01T20:13:08');
+shouldBeEqualToString('stepDown("1970-01-01T20:13", "4", null, 3)', '1970-01-01T20:12:48');
 debug('Step=any');
-shouldThrowErrorName('stepUp("2010-02-10T20:13", "any", null)', "InvalidStateError");
-shouldThrowErrorName('stepDown("2010-02-10T20:13", "any", null)', "InvalidStateError");
+shouldThrow('stepUp("2010-02-10T20:13", "any", null)');
+shouldThrow('stepDown("2010-02-10T20:13", "any", null)');
 debug('Overflow/underflow');
-shouldBe('stepUp("2010-02-10T20:13", "3.40282346e+38", null)', '"2010-02-10T20:13"');
-shouldBe('stepDown("2010-02-10T20:13", "3.40282346e+38", null)', '"1970-01-01T00:00"');
-shouldBe('stepUp("2010-02-10T20:13", "1", "2010-02-10T20:13")', '"2010-02-10T20:13"');
-shouldBe('stepDown("2010-02-10T20:13", "1", "2010-02-10T20:13")', '"2010-02-10T20:13"');
+shouldBeEqualToString('stepUp("2010-02-10T20:13", "3.40282346e+38", null)', '1970-01-01T00:00');
+shouldBeEqualToString('stepDown("2010-02-10T20:13", "3.40282346e+38", null)', '1970-01-01T00:00');
+shouldBeEqualToString('stepUp("2010-02-10T20:13", "1", "2010-02-10T20:13")', '2010-02-10T20:13');
+shouldBeEqualToString('stepDown("2010-02-10T20:13", "1", "2010-02-10T20:13")', '2010-02-10T20:13');
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

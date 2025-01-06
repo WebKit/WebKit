@@ -24,9 +24,12 @@ not part of the NDK) and a number of other apps/programs.
 Project links:
 
   * [API documentation](https://commondatastorage.googleapis.com/chromium-boringssl-docs/headers.html)
-  * [Bug tracker](https://bugs.chromium.org/p/boringssl/issues/list)
+  * [Issue tracker](https://crbug.com/boringssl)
+    * [Filing new (public) issues](https://crbug.com/boringssl/new)
   * [CI](https://ci.chromium.org/p/boringssl/g/main/console)
   * [Code review](https://boringssl-review.googlesource.com)
+
+To file a security issue, use the [Chromium process](https://www.chromium.org/Home/chromium-security/reporting-security-bugs/) and mention in the report this is for BoringSSL. You can ignore the parts of the process that are specific to Chromium/Chrome.
 
 There are other files in this directory which might be helpful:
 

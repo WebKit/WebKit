@@ -30,6 +30,7 @@
 #define Reverb_h
 
 #include "ReverbConvolver.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -39,7 +40,7 @@ class AudioBus;
 // Multi-channel convolution reverb with channel matrixing - one or more ReverbConvolver objects are used internally.
 
 class Reverb final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Reverb);
 public:
     enum { MaxFrameSize = 256 };
 

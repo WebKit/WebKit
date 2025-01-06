@@ -34,6 +34,8 @@
 #include <wtf/PointerPreparations.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace MachineContext {
 
@@ -138,11 +140,11 @@ inline T stackPointer(const PlatformRegisters& regs)
 #if USE(PLATFORM_REGISTERS_WITH_PROFILE)
     void* value = WTF_READ_PLATFORM_REGISTERS_SP_WITH_PROFILE(regs);
     assertIsNotTagged(value);
-    return bitwise_cast<T>(value);
+    return std::bit_cast<T>(value);
 #elif USE(DARWIN_REGISTER_MACROS)
-    return bitwise_cast<T>(reinterpret_cast<void*>(__darwin_arm_thread_state64_get_sp(regs)));
+    return std::bit_cast<T>(reinterpret_cast<void*>(__darwin_arm_thread_state64_get_sp(regs)));
 #else
-    return bitwise_cast<T>(stackPointerImpl(const_cast<PlatformRegisters&>(regs)));
+    return std::bit_cast<T>(stackPointerImpl(const_cast<PlatformRegisters&>(regs)));
 #endif
 }
 
@@ -151,7 +153,7 @@ inline T stackPointer(const PlatformRegisters& regs)
 template<typename T>
 inline T stackPointer(const PlatformRegisters& regs)
 {
-    return bitwise_cast<T>(regs.stackPointer);
+    return std::bit_cast<T>(regs.stackPointer);
 }
 #endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
@@ -221,11 +223,11 @@ inline T stackPointer(const mcontext_t& machineContext)
 #if USE(PLATFORM_REGISTERS_WITH_PROFILE)
     void* value = WTF_READ_MACHINE_CONTEXT_SP_WITH_PROFILE(machineContext);
     assertIsNotTagged(value);
-    return bitwise_cast<T>(value);
+    return std::bit_cast<T>(value);
 #elif USE(DARWIN_REGISTER_MACROS)
     return stackPointer(machineContext->__ss);
 #else
-    return bitwise_cast<T>(stackPointerImpl(const_cast<mcontext_t&>(machineContext)));
+    return std::bit_cast<T>(stackPointerImpl(const_cast<mcontext_t&>(machineContext)));
 #endif
 }
 #endif // HAVE(MACHINE_CONTEXT)
@@ -292,9 +294,9 @@ inline T framePointer(const PlatformRegisters& regs)
 #if USE(PLATFORM_REGISTERS_WITH_PROFILE)
     void* value = WTF_READ_PLATFORM_REGISTERS_FP_WITH_PROFILE(regs);
     assertIsNotTagged(value);
-    return bitwise_cast<T>(value);
+    return std::bit_cast<T>(value);
 #else
-    return bitwise_cast<T>(framePointerImpl(const_cast<PlatformRegisters&>(regs)));
+    return std::bit_cast<T>(framePointerImpl(const_cast<PlatformRegisters&>(regs)));
 #endif
 }
 #endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
@@ -379,9 +381,9 @@ inline T framePointer(const mcontext_t& machineContext)
 #if USE(PLATFORM_REGISTERS_WITH_PROFILE)
     void* value = WTF_READ_MACHINE_CONTEXT_FP_WITH_PROFILE(machineContext);
     assertIsNotTagged(value);
-    return bitwise_cast<T>(value);
+    return std::bit_cast<T>(value);
 #else
-    return bitwise_cast<T>(framePointerImpl(const_cast<mcontext_t&>(machineContext)));
+    return std::bit_cast<T>(framePointerImpl(const_cast<mcontext_t&>(machineContext)));
 #endif
 }
 #endif // HAVE(MACHINE_CONTEXT)
@@ -870,3 +872,5 @@ inline void* llintInstructionPointer(const mcontext_t& machineContext)
 
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

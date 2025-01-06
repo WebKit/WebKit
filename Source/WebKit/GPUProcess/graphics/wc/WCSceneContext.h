@@ -27,7 +27,7 @@
 
 #if USE(GRAPHICS_LAYER_WC)
 
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class GLContext;
@@ -37,7 +37,7 @@ class TextureMapper;
 namespace WebKit {
 
 class WCSceneContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WCSceneContext);
 public:
     explicit WCSceneContext(uint64_t nativeWindow);
     ~WCSceneContext();

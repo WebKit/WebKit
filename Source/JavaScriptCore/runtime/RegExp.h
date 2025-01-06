@@ -56,6 +56,7 @@ public:
     static void destroy(JSCell*);
     static size_t estimatedSize(JSCell*, VM&);
     JS_EXPORT_PRIVATE static void dumpToStream(const JSCell*, PrintStream&);
+    void dumpSimpleName(PrintStream&) const;
 
     OptionSet<Yarr::Flags> flags() const { return m_flags; }
 #define JSC_DEFINE_REGEXP_FLAG_ACCESSOR(key, name, lowerCaseName, index) bool lowerCaseName() const { return m_flags.contains(Yarr::Flags::name); }
@@ -75,20 +76,20 @@ public:
         m_constructionErrorCode = Yarr::ErrorCode::NoError;
     }
 
-    JS_EXPORT_PRIVATE int match(JSGlobalObject*, const String&, unsigned startOffset, Vector<int>& ovector);
+    JS_EXPORT_PRIVATE int match(JSGlobalObject*, StringView, unsigned startOffset, Vector<int>& ovector);
 
     // Returns false if we couldn't run the regular expression for any reason.
-    bool matchConcurrently(VM&, const String&, unsigned startOffset, int& position, Vector<int>& ovector);
+    bool matchConcurrently(VM&, StringView, unsigned startOffset, int& position, Vector<int>& ovector);
     
-    JS_EXPORT_PRIVATE MatchResult match(JSGlobalObject*, const String&, unsigned startOffset);
+    JS_EXPORT_PRIVATE MatchResult match(JSGlobalObject*, StringView, unsigned startOffset);
 
-    bool matchConcurrently(VM&, const String&, unsigned startOffset, MatchResult&);
+    bool matchConcurrently(VM&, StringView, unsigned startOffset, MatchResult&);
 
     // Call these versions of the match functions if you're desperate for performance.
     template<typename VectorType, Yarr::MatchFrom thread = Yarr::MatchFrom::VMThread>
-    int matchInline(JSGlobalObject* nullOrGlobalObject, VM&, const String&, unsigned startOffset, VectorType& ovector);
+    int matchInline(JSGlobalObject* nullOrGlobalObject, VM&, StringView, unsigned startOffset, VectorType& ovector);
     template<Yarr::MatchFrom thread = Yarr::MatchFrom::VMThread>
-    MatchResult matchInline(JSGlobalObject* nullOrGlobalObject, VM&, const String&, unsigned startOffset);
+    MatchResult matchInline(JSGlobalObject* nullOrGlobalObject, VM&, StringView, unsigned startOffset);
     
     unsigned numSubpatterns() const { return m_numSubpatterns; }
 
@@ -117,6 +118,7 @@ public:
         return m_rareData->m_captureGroupNames[i];
     }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     template <typename Offsets>
     unsigned subpatternIdForGroupName(StringView groupName, const Offsets ovector) const
     {
@@ -130,6 +132,7 @@ public:
 
         return ovector[offsetVectorBaseForNamedCaptures() + it->value[0] - 1];
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     bool hasCode()
     {
@@ -167,6 +170,10 @@ public:
     }
 #endif
 
+    bool hasValidAtom() const { return !m_atom.isNull(); }
+    const String& atom() const { return m_atom; }
+    void setAtom(String&& atom) { m_atom = WTFMove(atom); }
+
 private:
     friend class RegExpCache;
     RegExp(VM&, const String&, OptionSet<Yarr::Flags>);
@@ -190,14 +197,14 @@ private:
     void compileIfNecessaryMatchOnly(VM&, Yarr::CharSize, std::optional<StringView> sampleString);
 
 #if ENABLE(YARR_JIT_DEBUG)
-    void matchCompareWithInterpreter(const String&, int startOffset, int* offsetVector, int jitResult);
+    void matchCompareWithInterpreter(StringView, int startOffset, int* offsetVector, int jitResult);
 #endif
 
 #if ENABLE(YARR_JIT)
     Yarr::YarrCodeBlock& ensureRegExpJITCode()
     {
         if (!m_regExpJITCode)
-            m_regExpJITCode = makeUnique<Yarr::YarrCodeBlock>();
+            m_regExpJITCode = makeUnique<Yarr::YarrCodeBlock>(this);
         return *m_regExpJITCode.get();
     }
 #endif
@@ -210,10 +217,11 @@ private:
         // This first element of the RHS vector is the subpatternId in the non-duplicate case.
         // For the duplicate case, the first element is the namedCaptureGroupId.
         // The remaining elements are the subpatternIds for each of the duplicate groups.
-        HashMap<String, Vector<unsigned>> m_namedGroupToParenIndices;
+        UncheckedKeyHashMap<String, Vector<unsigned>> m_namedGroupToParenIndices;
     };
 
     String m_patternString;
+    String m_atom;
     RegExpState m_state { NotCompiled };
     OptionSet<Yarr::Flags> m_flags;
     Yarr::ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };

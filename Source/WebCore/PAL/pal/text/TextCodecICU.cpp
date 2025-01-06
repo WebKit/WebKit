@@ -32,13 +32,17 @@
 #include "ThreadGlobalData.h"
 #include <array>
 #include <unicode/ucnv_cb.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace PAL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCodecICU);
 
 const size_t ConversionBufferSize = 16384;
 
@@ -68,15 +72,14 @@ DECLARE_ALIASES(x_mac_centraleurroman, "windows-10029"_s, "x-mac-ce"_s, "macce"_
 DECLARE_ALIASES(x_mac_turkish, "windows-10081"_s, "mactr"_s, "x-MacTurkish"_s);
 
 #define DECLARE_ENCODING_NAME(encoding, alias_array) \
-    { encoding, std::size(alias_array##_aliases), alias_array##_aliases }
+    { encoding, std::span { alias_array##_aliases } }
 
 #define DECLARE_ENCODING_NAME_NO_ALIASES(encoding) \
-    { encoding, 0, nullptr }
+    { encoding, { } }
 
 static const struct EncodingName {
     ASCIILiteral name;
-    unsigned aliasCount;
-    const ASCIILiteral* aliases;
+    std::span<const ASCIILiteral> aliases;
 } encodingNames[] = {
     DECLARE_ENCODING_NAME("ISO-8859-2"_s, ISO_8859_2),
     DECLARE_ENCODING_NAME("ISO-8859-4"_s, ISO_8859_4),
@@ -105,8 +108,8 @@ void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
 {
     for (auto& encodingName : encodingNames) {
         registrar(encodingName.name, encodingName.name);
-        for (size_t i = 0; i < encodingName.aliasCount; ++i)
-            registrar(encodingName.aliases[i], encodingName.name);
+        for (auto& alias : encodingName.aliases)
+            registrar(alias, encodingName.name);
     }
 }
 
@@ -171,11 +174,16 @@ void TextCodecICU::createICUConverter() const
         ucnv_setFallback(m_converter.get(), true);
 }
 
-int TextCodecICU::decodeToBuffer(UChar* target, UChar* targetLimit, const char*& source, const char* sourceLimit, int32_t* offsets, bool flush, UErrorCode& error)
+int TextCodecICU::decodeToBuffer(std::span<UChar> targetSpan, std::span<const uint8_t>& sourceSpan, int32_t* offsets, bool flush, UErrorCode& error)
 {
-    UChar* targetStart = target;
+    UChar* targetStart = targetSpan.data();
     error = U_ZERO_ERROR;
+    auto* source = byteCast<char>(sourceSpan.data());
+    auto* sourceLimit = byteCast<char>(std::to_address(sourceSpan.end()));
+    auto* target = targetSpan.data();
+    auto* targetLimit = std::to_address(targetSpan.end());
     ucnv_toUnicode(m_converter.get(), &target, targetLimit, &source, sourceLimit, offsets, flush, &error);
+    skip(sourceSpan, byteCast<uint8_t>(source) - sourceSpan.data());
     return target - targetStart;
 }
 
@@ -211,7 +219,7 @@ private:
     UConverterToUCallback m_savedAction { nullptr };
 };
 
-String TextCodecICU::decode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
+String TextCodecICU::decode(std::span<const uint8_t> source, bool flush, bool stopOnError, bool& sawError)
 {
     // Get a converter for the passed-in encoding.
     if (!m_converter) {
@@ -227,23 +235,21 @@ String TextCodecICU::decode(std::span<const uint8_t> bytes, bool flush, bool sto
 
     StringBuilder result;
 
-    UChar buffer[ConversionBufferSize];
-    UChar* bufferLimit = buffer + ConversionBufferSize;
-    const char* source = byteCast<char>(bytes.data());
-    const char* sourceLimit = source + bytes.size();
+    std::array<UChar, ConversionBufferSize> buffer;
+    auto target = std::span { buffer };
     int32_t* offsets = nullptr;
     UErrorCode err = U_ZERO_ERROR;
 
     do {
-        size_t ucharsDecoded = decodeToBuffer(buffer, bufferLimit, source, sourceLimit, offsets, flush, err);
-        result.append(std::span { buffer, ucharsDecoded });
+        size_t ucharsDecoded = decodeToBuffer(target, source, offsets, flush, err);
+        result.append(target.first(ucharsDecoded));
     } while (needsToGrowToProduceBuffer(err));
 
     if (U_FAILURE(err)) {
         // flush the converter so it can be reused, and not be bothered by this error.
         do {
-            decodeToBuffer(buffer, bufferLimit, source, sourceLimit, offsets, true, err);
-        } while (source < sourceLimit);
+            decodeToBuffer(target, source, offsets, true, err);
+        } while (!source.empty());
         sawError = true;
     }
 
@@ -260,8 +266,8 @@ static void urlEscapedEntityCallback(const void* context, UConverterFromUnicodeA
     if (reason == UCNV_UNASSIGNED) {
         *error = U_ZERO_ERROR;
         UnencodableReplacementArray entity;
-        int entityLen = TextCodec::getUnencodableReplacement(codePoint, UnencodableHandling::URLEncodedEntities, entity);
-        ucnv_cbFromUWriteBytes(fromUArgs, entity.data(), entityLen, 0, error);
+        auto span = TextCodec::getUnencodableReplacement(codePoint, UnencodableHandling::URLEncodedEntities, entity);
+        ucnv_cbFromUWriteBytes(fromUArgs, span.data(), span.size(), 0, error);
     } else
         UCNV_FROM_U_CALLBACK_ESCAPE(context, fromUArgs, codeUnits, length, codePoint, reason, error);
 }
@@ -303,17 +309,17 @@ Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling hand
     }
 
     auto upconvertedCharacters = string.upconvertedCharacters();
-    auto* source = upconvertedCharacters.get();
-    auto* sourceLimit = source + string.length();
+    auto source = upconvertedCharacters.span().data();
+    auto* sourceLimit = std::to_address(upconvertedCharacters.span().end());
 
     Vector<uint8_t> result;
     do {
-        char buffer[ConversionBufferSize];
-        char* target = buffer;
-        char* targetLimit = target + ConversionBufferSize;
+        std::array<char, ConversionBufferSize> buffer;
+        char* target = buffer.data();
+        char* targetLimit = std::to_address(std::span { buffer }.end());
         error = U_ZERO_ERROR;
         ucnv_fromUnicode(m_converter.get(), &target, targetLimit, &source, sourceLimit, 0, true, &error);
-        result.append(std::span(byteCast<uint8_t>(&buffer[0]), target - buffer));
+        result.append(byteCast<uint8_t>(std::span(buffer)).first(target - buffer.data()));
     } while (needsToGrowToProduceBuffer(error));
     return result;
 }

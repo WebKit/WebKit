@@ -12,12 +12,18 @@
 #include <string.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <utility>
 
 #include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
+#include "api/video/video_frame_buffer.h"
+#include "api/video/video_rotation.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/memory/aligned_malloc.h"
 #include "third_party/libyuv/include/libyuv/convert.h"
 #include "third_party/libyuv/include/libyuv/planar_functions.h"
+#include "third_party/libyuv/include/libyuv/rotate.h"
 #include "third_party/libyuv/include/libyuv/scale.h"
 
 // Aligning pointer to 64 bytes for improved performance, e.g. use SIMD.

@@ -28,12 +28,13 @@
 
 #include "Download.h"
 #include "Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #define DOWNLOAD_MONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - DownloadMonitor::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
 
-constexpr uint64_t operator"" _kbps(unsigned long long kilobytesPerSecond)
+constexpr uint64_t operator""_kbps(unsigned long long kilobytesPerSecond)
 {
     return kilobytesPerSecond * 1024;
 }
@@ -43,27 +44,39 @@ struct ThroughputInterval {
     uint64_t bytesPerSecond;
 };
 
-static const ThroughputInterval throughputIntervals[] = {
-    { 1_min, 1_kbps },
-    { 5_min, 2_kbps },
-    { 10_min, 4_kbps },
-    { 15_min, 8_kbps },
-    { 20_min, 16_kbps },
-    { 25_min, 32_kbps },
-    { 30_min, 64_kbps },
-    { 45_min, 96_kbps },
-    { 60_min, 128_kbps }
+static constexpr std::array throughputIntervals = {
+    ThroughputInterval { 1_min, 1_kbps },
+    ThroughputInterval { 5_min, 2_kbps },
+    ThroughputInterval { 10_min, 4_kbps },
+    ThroughputInterval { 15_min, 8_kbps },
+    ThroughputInterval { 20_min, 16_kbps },
+    ThroughputInterval { 25_min, 32_kbps },
+    ThroughputInterval { 30_min, 64_kbps },
+    ThroughputInterval { 45_min, 96_kbps },
+    ThroughputInterval { 60_min, 128_kbps }
 };
 
 static Seconds timeUntilNextInterval(size_t currentInterval)
 {
-    RELEASE_ASSERT(currentInterval + 1 < std::size(throughputIntervals));
+    RELEASE_ASSERT(currentInterval + 1 < throughputIntervals.size());
     return throughputIntervals[currentInterval + 1].time - throughputIntervals[currentInterval].time;
 }
 
 DownloadMonitor::DownloadMonitor(Download& download)
     : m_download(download)
 {
+}
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DownloadMonitor);
+
+void DownloadMonitor::ref() const
+{
+    m_download->ref();
+}
+
+void DownloadMonitor::deref() const
+{
+    m_download->deref();
 }
 
 double DownloadMonitor::measuredThroughputRate() const
@@ -92,14 +105,14 @@ void DownloadMonitor::downloadReceivedBytes(uint64_t bytesReceived)
 
 void DownloadMonitor::applicationWillEnterForeground()
 {
-    DOWNLOAD_MONITOR_RELEASE_LOG("applicationWillEnterForeground (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
+    DOWNLOAD_MONITOR_RELEASE_LOG("applicationWillEnterForeground (id = %" PRIu64 ")", m_download->downloadID().toUInt64());
     m_timer.stop();
     m_interval = 0;
 }
 
 void DownloadMonitor::applicationDidEnterBackground()
 {
-    DOWNLOAD_MONITOR_RELEASE_LOG("applicationDidEnterBackground (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
+    DOWNLOAD_MONITOR_RELEASE_LOG("applicationDidEnterBackground (id = %" PRIu64 ")", m_download->downloadID().toUInt64());
     ASSERT(!m_timer.isActive());
     ASSERT(!m_interval);
     m_timer.startOneShot(throughputIntervals[0].time / testSpeedMultiplier());
@@ -107,7 +120,7 @@ void DownloadMonitor::applicationDidEnterBackground()
 
 uint32_t DownloadMonitor::testSpeedMultiplier() const
 {
-    return m_download.testSpeedMultiplier();
+    return m_download->testSpeedMultiplier();
 }
 
 void DownloadMonitor::timerFired()
@@ -116,13 +129,13 @@ void DownloadMonitor::timerFired()
 
     RELEASE_ASSERT(m_interval < std::size(throughputIntervals));
     if (measuredThroughputRate() < throughputIntervals[m_interval].bytesPerSecond) {
-        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: cancelling download (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
-        m_download.cancel([](auto) { }, Download::IgnoreDidFailCallback::No);
+        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: cancelling download (id = %" PRIu64 ")", m_download->downloadID().toUInt64());
+        Ref { m_download.get() }->cancel([](auto) { }, Download::IgnoreDidFailCallback::No);
     } else if (m_interval + 1 < std::size(throughputIntervals)) {
-        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: sufficient throughput rate (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
+        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: sufficient throughput rate (id = %" PRIu64 ")", m_download->downloadID().toUInt64());
         m_timer.startOneShot(timeUntilNextInterval(m_interval++) / testSpeedMultiplier());
     } else
-        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: Download reached threshold to not be terminated (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
+        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: Download reached threshold to not be terminated (id = %" PRIu64 ")", m_download->downloadID().toUInt64());
 }
 
 } // namespace WebKit

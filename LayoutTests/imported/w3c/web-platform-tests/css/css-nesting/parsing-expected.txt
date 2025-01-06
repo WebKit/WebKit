@@ -10,6 +10,7 @@ PASS .foo { + .bar, .foo, > .baz { color: green; }}
 PASS .foo { .foo { color: green; }}
 PASS .foo { .test > & .bar { color: green; }}
 PASS .foo { .foo, .foo & { color: green; }}
+PASS .foo { .foo, .bar { color: green; }}
 PASS .foo { :is(.bar, .baz) { color: green; }}
 PASS .foo { &:is(.bar, .baz) { color: green; }}
 PASS .foo { :is(.bar, &.baz) { color: green; }}

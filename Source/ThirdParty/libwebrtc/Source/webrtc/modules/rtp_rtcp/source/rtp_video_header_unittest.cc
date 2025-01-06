@@ -117,7 +117,7 @@ TEST(RTPVideoHeaderTest, FrameId_FromMetadata) {
 
 TEST(RTPVideoHeaderTest, FrameId_FromMetadataWhenFrameIdIsMissing) {
   VideoFrameMetadata metadata;
-  metadata.SetFrameId(absl::nullopt);
+  metadata.SetFrameId(std::nullopt);
   RTPVideoHeader video_header = RTPVideoHeader::FromMetadata(metadata);
   EXPECT_FALSE(video_header.generic.has_value());
 }

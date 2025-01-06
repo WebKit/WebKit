@@ -1250,19 +1250,20 @@ class LocalLabel < NoChildren
         if $labelMapping[name]
             raise "Label name collision: #{name}" unless $labelMapping[name].is_a? LocalLabel
         else
+            raise "nil codeOrigin" if codeOrigin.nil?
             $labelMapping[name] = LocalLabel.new(codeOrigin, name)
         end
         $labelMapping[name]
     end
     
-    def self.unique(comment)
+    def self.unique(codeOrigin, comment)
         newName = "_#{comment}"
         if $labelMapping[newName]
             while $labelMapping[newName = "_#{@@uniqueNameCounter}_#{comment}"]
                 @@uniqueNameCounter += 1
             end
         end
-        forName(nil, newName)
+        forName(codeOrigin, newName)
     end
     
     def cleanName
@@ -1348,6 +1349,9 @@ class LocalLabelReference < NoChildren
     
     def initialize(codeOrigin, label)
         super(codeOrigin)
+        if label.is_a? LocalLabelReference
+            label = label.label
+        end
         @label = label
     end
     

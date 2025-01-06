@@ -27,8 +27,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include <wtf/FastMalloc.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
@@ -36,7 +36,7 @@ namespace WebKit {
 // Class for maintaining view of GPU process RemoteSharedResourceCache state in Web process.
 // Thread-safe.
 class RemoteSharedResourceCacheProxy : public ThreadSafeRefCounted<RemoteSharedResourceCacheProxy> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteSharedResourceCacheProxy);
 public:
     static Ref<RemoteSharedResourceCacheProxy> create();
     virtual ~RemoteSharedResourceCacheProxy();

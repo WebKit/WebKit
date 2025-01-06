@@ -23,6 +23,7 @@
 import atexit
 import json
 import logging
+import os
 import re
 import time
 
@@ -31,6 +32,7 @@ from webkitcorepy import Version, Timeout
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.systemhost import SystemHost
+from webkitpy.port.config import apple_additions
 from webkitpy.port.device import Device
 from webkitpy.xcode.device_type import DeviceType
 
@@ -55,6 +57,7 @@ class DeviceRequest(object):
 class SimulatedDeviceManager(object):
     class Runtime(object):
         def __init__(self, runtime_dict):
+            self.root = runtime_dict['runtimeRoot']
             self.build_version = runtime_dict['buildversion']
             self.os_variant = runtime_dict['name'].split(' ')[0]
             self.version = Version.from_string(runtime_dict['version'])
@@ -123,6 +126,7 @@ class SimulatedDeviceManager(object):
             host=host,
             device_type=device_type,
             build_version=runtime.build_version,
+            runtime_root=runtime.root,
         ))
         SimulatedDeviceManager.AVAILABLE_DEVICES.append(result)
         return result
@@ -313,13 +317,13 @@ class SimulatedDeviceManager(object):
         return None
 
     @staticmethod
-    def _does_fulfill_request(device, requests):
-        if not device.platform_device.is_booted_or_booting():
+    def _does_fulfill_request(device, requests, allow_shutdown_devices=False):
+        if not allow_shutdown_devices and not device.platform_device.is_booted_or_booting():
             return None
 
         # Exact match.
         for request in requests:
-            if not request.use_booted_simulator:
+            if not request.use_booted_simulator and not allow_shutdown_devices:
                 continue
             if request.device_type == device.device_type:
                 _log.debug(u"The request for '{}' matched {} exactly".format(request.device_type, device))
@@ -327,7 +331,7 @@ class SimulatedDeviceManager(object):
 
         # Contained-in match.
         for request in requests:
-            if not request.use_booted_simulator:
+            if not request.use_booted_simulator and not allow_shutdown_devices:
                 continue
             if device.device_type in request.device_type:
                 _log.debug(u"The request for '{}' fuzzy-matched {}".format(request.device_type, device))
@@ -340,7 +344,7 @@ class SimulatedDeviceManager(object):
         # This is usually used when we don't want to take the time to start a simulator and would
         # rather use the one the user has already started, even if it isn't quite what we're looking for.
         for request in requests_copy:
-            if not request.use_booted_simulator or not request.allow_incomplete_match:
+            if (not request.use_booted_simulator and not allow_shutdown_devices) or not request.allow_incomplete_match:
                 continue
             if request.device_type.software_variant == device.device_type.software_variant:
                 _log.warn(u"The request for '{}' incomplete-matched {}".format(request.device_type, device))
@@ -367,6 +371,10 @@ class SimulatedDeviceManager(object):
     @staticmethod
     def _boot_device(device, host=None):
         host = host or SystemHost.get_default()
+
+        # FIXME: remove this workaround after rdar://129789675 has been resolved.
+        host.executive.run_command(['sh', '-c', "mkdir -m 700 -p " + "~/Library/Developer/CoreSimulator/Devices/" + device.udid + "/data/private/var/db"])
+
         _log.debug(u"Booting device '{}'".format(device.udid))
         device.platform_device.booted_by_script = True
         try:
@@ -393,8 +401,24 @@ class SimulatedDeviceManager(object):
                 return SimulatedDeviceManager.max_supported_simulators(host)
         return 0
 
+    @staticmethod
+    def _validate_running_device_against_requests(requests: list[Device], device: Device):
+        '''Reduce device requests based on request options.'''
+        for request in requests:
+            if not request.merge_requests:
+                # If multiple devices are requested but only 1 is running, all requests will be fulfilled with the 1 running device.
+                continue
+            if not request.use_booted_simulator:
+                continue
+            if request.device_type != device.device_type and not request.allow_incomplete_match:
+                continue
+            if request.device_type.software_variant != device.device_type.software_variant:
+                continue
+            requests.remove(request)
+        return requests
+
     @classmethod
-    def initialize_devices(cls, requests, host=None, name_base='Managed', simulator_ui=True, timeout=SIMULATOR_BOOT_TIMEOUT, keep_alive=False, **kwargs):
+    def initialize_devices(cls, requests, host=None, name_base='Managed', simulator_ui=True, timeout=SIMULATOR_BOOT_TIMEOUT, keep_alive=False, udids=None, **kwargs):
         host = host or SystemHost.get_default()
         if SimulatedDeviceManager.INITIALIZED_DEVICES is not None:
             return SimulatedDeviceManager.INITIALIZED_DEVICES
@@ -411,31 +435,45 @@ class SimulatedDeviceManager(object):
         if not hasattr(requests, '__iter__'):
             requests = [requests]
 
-        # Check running sims
+        # Parse user-specified UDIDs
+        udids = udids or []
+        if type(udids) is str:
+            udids = udids.split(',')
+
+        # Check for running simulators.
+        deferred_booted_devices = []
         for device in cls.available_devices(host):
-            matched_request = cls._does_fulfill_request(device, requests)
+            matched_request = cls._does_fulfill_request(device, requests, True)
             if matched_request is None:
                 continue
-            requests.remove(matched_request)
-            _log.debug(u'Attached to running simulator {}'.format(device))
-            SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
 
-            # DeviceRequests are compared by reference
-            requests_copy = [request for request in requests]
+            device_is_booted = device.platform_device.is_booted_or_booting()
+            if device.platform_device.udid not in udids:
+                if device_is_booted:  # Defer booted devices that weren't requested, resorting to non-booted if we still need them later
+                    deferred_booted_devices.append((matched_request, device))
+            else:
+                # For specified UDIDs, either use or boot them immediately
+                cls._boot_device(device, host) if not device_is_booted else SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
+                _log.debug(u'Attached to requested simulator {}'.format(device))
+                requests.remove(matched_request)
+                requests = cls._validate_running_device_against_requests(requests, device)
 
-            # Merging requests means that if 4 devices are requested, but only one is running, these
-            # 4 requests will be fulfilled by the 1 running device.
-            for request in requests_copy:
-                if not request.merge_requests:
-                    continue
-                if not request.use_booted_simulator:
-                    continue
-                if request.device_type != device.device_type and not request.allow_incomplete_match:
-                    continue
-                if request.device_type.software_variant != device.device_type.software_variant:
-                    continue
-                requests.remove(request)
+        # Check for matches among remaining booted simulators.
+        if len(deferred_booted_devices) and len(requests):
+            for matched_request, device in deferred_booted_devices:
+                _log.debug(u'Attached to running simulator {}'.format(device))
+                requests.remove(matched_request)
+                SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
 
+                requests = cls._validate_running_device_against_requests(requests, device)
+                if not len(requests):
+                    break
+
+        if len(requests):
+            _log.debug(f'Running{"/specified" if udids else ""} simulators did not satisfy request. Finding matching non-booted ones, and/or creating new ones to satisfy the request.')
+
+        # Check for any other matching simulators that can satisfy the request.
+        # If none are found, we create and boot new ones.
         for request in requests:
             device = cls._create_or_find_device_for_request(request, host, name_base)
             assert device is not None
@@ -448,6 +486,7 @@ class SimulatedDeviceManager(object):
         deadline = time.time() + timeout
         for device in SimulatedDeviceManager.INITIALIZED_DEVICES:
             cls._wait_until_device_is_usable(device, deadline)
+            device.set_up_environment_extras()
 
         return SimulatedDeviceManager.INITIALIZED_DEVICES
 
@@ -531,18 +570,26 @@ class SimulatedDevice(object):
         'watchOS': 'com.apple.NanoSettings',
     }
 
-    def __init__(self, name, udid, host, device_type, build_version):
+    def __init__(self, name, udid, host, device_type, build_version, runtime_root):
         assert device_type.software_version
 
         self.name = name
         self.udid = udid
         self.device_type = device_type
         self.build_version = build_version
+        self.runtime_root = runtime_root
         self._state = SimulatedDevice.DeviceState.SHUTTING_DOWN
 
         self.executive = host.executive
         self.filesystem = host.filesystem
         self.platform = host.platform
+
+        self.environment_extras = [
+            [SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'launchctl', 'unload', '-w', f'{runtime_root}/System/Library/LaunchDaemons/com.apple.chronod.plist'],  # FIXME: rdar://129075664
+        ]
+
+        if apple_additions():
+            self.environment_extras.extend(apple_additions().environment_extras(udid))
 
         # Determine tear down behavior
         self.booted_by_script = False
@@ -627,6 +674,11 @@ class SimulatedDevice(object):
     def install_app(self, app_path, env=None):
         # Even after carousel is running, it takes a few seconds for watchOS to allow installs.
         for i in range(self.NUM_INSTALL_RETRIES):
+            # FIXME: remove this workaround when rdar://129789675 has been resolved.
+            eligibility_util = os.path.join(os.path.dirname(app_path), "WebKitEligibilityUtil")
+            exit_code = self.executive.run_command(['xcrun', 'simctl', 'spawn', self.udid, eligibility_util], return_exit_code=True)
+            _log.debug(u'WebKitEligibilityUtil returned {}'.format(exit_code))
+
             exit_code = self.executive.run_command(['xcrun', 'simctl', 'install', self.udid, app_path], return_exit_code=True)
             if exit_code == 0:
                 return True
@@ -675,6 +727,13 @@ class SimulatedDevice(object):
             raise RuntimeError(u'Failed to find process id for {}: {}'.format(bundle_id, output))
         _log.debug(u'Returning pid {} of launched process'.format(match.group('pid')))
         return int(match.group('pid'))
+
+    def set_up_environment_extras(self):
+        if len(self.environment_extras) == 0:
+            return
+        _log.debug(u'Running extra environment setup commands.')
+        for command in self.environment_extras:
+            self.executive.run_command(command)
 
     def __eq__(self, other):
         return self.udid == other.udid

@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
 #import "AVAudioSessionCaptureDevice.h"
+#import "AudioSession.h"
 #import "CoreAudioSharedUnit.h"
 #import "Logging.h"
 #import "RealtimeMediaSourceCenter.h"
@@ -38,6 +39,10 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/Vector.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/AVAudioSessionCaptureDeviceManagerAdditionsIncludes.mm>
+#endif
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -123,9 +128,9 @@ AVAudioSessionCaptureDeviceManager::~AVAudioSessionCaptureDeviceManager()
 
 const Vector<CaptureDevice>& AVAudioSessionCaptureDeviceManager::captureDevices()
 {
-    if (!m_devices)
+    if (!m_captureDevices)
         refreshAudioCaptureDevices();
-    return m_devices.value();
+    return m_captureDevices.value();
 }
 
 std::optional<CaptureDevice> AVAudioSessionCaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& deviceID)
@@ -150,41 +155,61 @@ std::optional<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::a
     return std::nullopt;
 }
 
-void AVAudioSessionCaptureDeviceManager::setPreferredAudioSessionDeviceUID(const String& deviceUID)
+void AVAudioSessionCaptureDeviceManager::setPreferredMicrophoneID(const String& microphoneID)
 {
-    if (setPreferredAudioSessionDeviceUIDInternal(deviceUID))
-        m_preferredAudioDeviceUID = deviceUID;
+    auto previousMicrophoneID = m_preferredMicrophoneID;
+    m_preferredMicrophoneID = microphoneID;
+    if (!setPreferredAudioSessionDeviceIDs())
+        m_preferredMicrophoneID = WTFMove(previousMicrophoneID);
 }
 
-void AVAudioSessionCaptureDeviceManager::configurePreferredAudioCaptureDevice()
+void AVAudioSessionCaptureDeviceManager::configurePreferredMicrophone()
 {
-    ASSERT(!m_preferredAudioDeviceUID.isEmpty());
-    if (!m_preferredAudioDeviceUID.isEmpty())
-        setPreferredAudioSessionDeviceUIDInternal(m_preferredAudioDeviceUID);
+    ASSERT(!m_preferredMicrophoneID.isEmpty());
+    if (!m_preferredMicrophoneID.isEmpty())
+        setPreferredAudioSessionDeviceIDs();
 }
 
-bool AVAudioSessionCaptureDeviceManager::setPreferredAudioSessionDeviceUIDInternal(const String& deviceUID)
+void AVAudioSessionCaptureDeviceManager::setPreferredSpeakerID(const String& speakerID)
 {
-    AVAudioSessionPortDescription *preferredPort = nil;
-    NSString *nsDeviceUID = deviceUID;
-    for (AVAudioSessionPortDescription *portDescription in [m_audioSession availableInputs]) {
-        if ([portDescription.UID isEqualToString:nsDeviceUID]) {
-            preferredPort = portDescription;
-            break;
+    auto previousSpeakerID = m_preferredSpeakerID;
+    m_preferredSpeakerID = speakerID;
+    if (!setPreferredAudioSessionDeviceIDs())
+        m_preferredSpeakerID = WTFMove(previousSpeakerID);
+    else if (!m_preferredSpeakerID.isEmpty()) {
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/AVAudioSessionCaptureDeviceManagerAdditions-2.mm>
+#endif
+    }
+
+    AudioSession::sharedSession().setCategory(AudioSession::sharedSession().category(), AudioSession::sharedSession().mode(), AudioSession::sharedSession().routeSharingPolicy());
+}
+
+bool AVAudioSessionCaptureDeviceManager::setPreferredAudioSessionDeviceIDs()
+{
+    AVAudioSessionPortDescription *preferredInputPort = nil;
+    if (!m_preferredMicrophoneID.isEmpty()) {
+        NSString *nsDeviceUID = m_preferredMicrophoneID;
+        for (AVAudioSessionPortDescription *portDescription in [m_audioSession availableInputs]) {
+            if ([portDescription.UID isEqualToString:nsDeviceUID]) {
+                preferredInputPort = portDescription;
+                break;
+            }
+        }
+    }
+    {
+        RELEASE_LOG_INFO(WebRTC, "AVAudioSessionCaptureDeviceManager setting preferred input to '%{public}s'", m_preferredMicrophoneID.ascii().data());
+
+        NSError *error = nil;
+        if (![[PAL::getAVAudioSessionClass() sharedInstance] setPreferredInput:preferredInputPort error:&error]) {
+            RELEASE_LOG_ERROR(WebRTC, "AVAudioSessionCaptureDeviceManager failed to set preferred input to '%{public}s' with error: %@", m_preferredMicrophoneID.utf8().data(), error.localizedDescription);
+            return false;
         }
     }
 
-    if (!preferredPort) {
-        RELEASE_LOG_ERROR(WebRTC, "failed to find preferred input '%{public}s'", deviceUID.ascii().data());
-        return false;
-    }
-
-    NSError *error = nil;
-    if (![[PAL::getAVAudioSessionClass() sharedInstance] setPreferredInput:preferredPort error:&error]) {
-        RELEASE_LOG_ERROR(WebRTC, "failed to set preferred input to '%{public}s' with error: %@", deviceUID.ascii().data(), error.localizedDescription);
-        return false;
-    }
-
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/AVAudioSessionCaptureDeviceManagerAdditions-3.mm>
+#endif
     return true;
 }
 
@@ -218,7 +243,7 @@ Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieve
     auto currentInput = [m_audioSession currentRoute].inputs.firstObject;
     if (currentInput) {
         if (currentInput != m_lastDefaultMicrophone.get()) {
-            auto device = AVAudioSessionCaptureDevice::create(currentInput, currentInput);
+            auto device = AVAudioSessionCaptureDevice::createInput(currentInput, currentInput);
             callOnWebThreadOrDispatchAsyncOnMainThread(makeBlockPtr([device = crossThreadCopy(WTFMove(device))] () mutable {
                 CoreAudioSharedUnit::singleton().handleNewCurrentMicrophoneDevice(WTFMove(device));
             }).get());
@@ -231,37 +256,34 @@ Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieve
     Vector<AVAudioSessionCaptureDevice> newAudioDevices;
     newAudioDevices.reserveInitialCapacity(availableInputs.count);
     for (AVAudioSessionPortDescription *portDescription in availableInputs) {
-        auto device = AVAudioSessionCaptureDevice::create(portDescription, currentInput);
+        auto device = AVAudioSessionCaptureDevice::createInput(portDescription, currentInput);
         newAudioDevices.append(WTFMove(device));
     }
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/AVAudioSessionCaptureDeviceManagerAdditions.mm>
+#endif
 
     return newAudioDevices;
 }
 
 void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSessionCaptureDevice>&& newAudioDevices)
 {
-    bool firstTime = !m_devices;
-    bool deviceListChanged = !m_devices || newAudioDevices.size() != m_devices->size();
+    bool firstTime = !m_captureDevices;
+    bool deviceListChanged = !m_audioSessionCaptureDevices || newAudioDevices.size() != m_audioSessionCaptureDevices->size();
     bool defaultDeviceChanged = false;
     if (!deviceListChanged && !firstTime) {
         for (auto& newState : newAudioDevices) {
 
             std::optional<CaptureDevice> oldState;
-            for (const auto& device : m_devices.value()) {
+            for (const auto& device : m_audioSessionCaptureDevices.value()) {
                 if (device.type() == newState.type() && device.persistentId() == newState.persistentId()) {
                     oldState = device;
                     break;
                 }
             }
 
-            if (!oldState.has_value()) {
-                deviceListChanged = true;
-                break;
-            }
-            if (newState.isDefault() != oldState.value().isDefault())
-                defaultDeviceChanged  = true;
-
-            if (newState.enabled() != oldState.value().enabled()) {
+            if (!oldState || newState.isDefault() != oldState->isDefault() || newState.enabled() != oldState->enabled()) {
                 deviceListChanged = true;
                 break;
             }
@@ -271,12 +293,28 @@ void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSe
     if (!deviceListChanged && !firstTime && !defaultDeviceChanged)
         return;
 
-    auto newDevices = copyToVectorOf<CaptureDevice>(newAudioDevices);
     m_audioSessionCaptureDevices = WTFMove(newAudioDevices);
-    std::sort(newDevices.begin(), newDevices.end(), [] (auto& first, auto& second) -> bool {
+
+    Vector<CaptureDevice> newCaptureDevices;
+    Vector<CaptureDevice> newSpeakerDevices;
+    for (auto& device : *m_audioSessionCaptureDevices) {
+        if (device.type() == CaptureDevice::DeviceType::Microphone)
+            newCaptureDevices.append(device);
+        else {
+            ASSERT(device.type() == CaptureDevice::DeviceType::Speaker);
+            newSpeakerDevices.append(device);
+        }
+    }
+
+    std::sort(newCaptureDevices.begin(), newCaptureDevices.end(), [] (auto& first, auto& second) -> bool {
         return first.isDefault() && !second.isDefault();
     });
-    m_devices = WTFMove(newDevices);
+    m_captureDevices = WTFMove(newCaptureDevices);
+
+    std::sort(newSpeakerDevices.begin(), newSpeakerDevices.end(), [] (auto& first, auto& second) -> bool {
+        return first.isDefault() && !second.isDefault();
+    });
+    m_speakerDevices = WTFMove(newSpeakerDevices);
 
     if (deviceListChanged && !firstTime)
         deviceChanged();

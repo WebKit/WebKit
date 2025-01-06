@@ -1,6 +1,10 @@
+CONSOLE MESSAGE: InvalidStateError: Video element has no video frame
+CONSOLE MESSAGE: InvalidStateError: Video element has no video frame
 
 
 
-FAIL captureStream with 3d context drawing - not buffered initially assert_true: expecting value 1 to be part of a green pixel expected true got false
-PASS captureStream with 3d context drawing - buffered initially
+Harness Error (FAIL), message = InvalidStateError: Video element has no video frame
+
+FAIL captureStream with 3d context drawing - not buffered initially promise_test: Unhandled rejection with value: "no rvfc for 1"
+FAIL captureStream with 3d context drawing - buffered initially promise_test: Unhandled rejection with value: "no rvfc for 1"
 

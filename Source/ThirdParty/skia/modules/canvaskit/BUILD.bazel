@@ -1,5 +1,5 @@
 load("@skia_user_config//:copts.bzl", "DEFAULT_COPTS")
-load("//bazel:macros.bzl", "bool_flag", "exports_files_legacy", "skia_filegroup", "wasm_cc_binary")
+load("//bazel:macros.bzl", "bool_flag", "skia_filegroup", "wasm_cc_binary")
 load("//bazel/karma:karma_test.bzl", "karma_test")
 
 package(
@@ -8,8 +8,8 @@ package(
 
 licenses(["notice"])
 
-exports_files_legacy(
-    label_list = ["npm_build/types/index.d.ts"],
+exports_files(
+    ["npm_build/types/index.d.ts"],
     visibility = ["//infra:__subpackages__"],
 )
 
@@ -83,7 +83,10 @@ CK_DEFINES = [
     ":enable_skp_serialization_true": ["CK_SERIALIZE_SKP=1"],
     ":enable_skp_serialization_false": [],
 }) + select({
-    ":enable_runtime_effect_true": ["CK_INCLUDE_RUNTIME_EFFECT=1"],
+    ":enable_runtime_effect_true": [
+        "CK_INCLUDE_RUNTIME_EFFECT=1",
+        "CK_DEBUG_TRACE_JSON=1",
+    ],
     ":enable_runtime_effect_false": [],
 }) + select({
     ":enable_webgl_true": ["CK_ENABLE_WEBGL"],
@@ -181,11 +184,11 @@ CK_LINKOPTS = BASE_LINKOPTS + [
     ],
     ":enable_runtime_effect_false": [],
 }) + select({
-    "//bazel/common_config_settings:build_for_debugger_true": [
+    ":build_for_debugger_true": [
         "--pre-js",
         "modules/canvaskit/debugger.js",
     ],
-    "//bazel/common_config_settings:build_for_debugger_false": [],
+    ":build_for_debugger_false": [],
 }) + select({
     ":include_matrix_js_true": [
         "--pre-js",
@@ -243,8 +246,8 @@ JS_INTERFACE_FILES = [
     "htmlcanvas/radialgradient.js",
     "htmlcanvas/util.js",
 ] + select({
-    "//bazel/common_config_settings:build_for_debugger_true": ["debugger.js"],
-    "//bazel/common_config_settings:build_for_debugger_false": [],
+    ":build_for_debugger_true": ["debugger.js"],
+    ":build_for_debugger_false": [],
 })
 
 CK_SRCS = [
@@ -263,8 +266,8 @@ CK_SRCS = [
     ":enable_skottie_true": ["skottie_bindings.cpp"],
     ":enable_skottie_false": [],
 }) + select({
-    "//bazel/common_config_settings:build_for_debugger_true": ["debugger_bindings.cpp"],
-    "//bazel/common_config_settings:build_for_debugger_false": [],
+    ":build_for_debugger_true": ["debugger_bindings.cpp"],
+    ":build_for_debugger_false": [],
 })
 
 CK_COPTS = [
@@ -298,7 +301,8 @@ cc_binary(
         ":enable_fonts_true": [
             "//:fontmgr_data_freetype",
             "//:fontmgr_empty_freetype",
-            "//modules/skparagraph:skparagraph_harfbuzz_icu",
+            "//modules/skparagraph:skparagraph_harfbuzz_skunicode",
+            "//modules/skunicode:skunicode_icu",
         ],
         ":enable_fonts_false": [],
     }) + select({
@@ -312,16 +316,19 @@ cc_binary(
         ],
         ":enable_skottie_false": [],
     }) + select({
-        "//bazel/common_config_settings:build_for_debugger_true": [
+        ":build_for_debugger_true": [
             "//tools/debugger",
         ],
-        "//bazel/common_config_settings:build_for_debugger_false": [],
+        ":build_for_debugger_false": [],
     }) + select({
         ":enable_webgl_true": [
             "//:ganesh_gl",
             "//:ganesh_webgl_factory",
         ],
         "//conditions:default": [],
+    }) + select({
+        ":enable_runtime_effect_true": ["//tools/sksltrace:sksltraceutils"],
+        ":enable_runtime_effect_false": [],
     }),
 )
 
@@ -375,6 +382,11 @@ bool_flag(
 
 bool_flag(
     name = "enable_webgl",
+    default = False,
+)
+
+bool_flag(
+    name = "build_for_debugger",
     default = False,
 )
 

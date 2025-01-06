@@ -30,10 +30,12 @@
 
 #include "AudioTrackPrivate.h"
 #include "PlatformVideoColorSpace.h"
+#include "SpatialVideoMetadata.h"
 #include "VideoTrackPrivate.h"
 #include <wtf/Observer.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVPlayerItem;
@@ -59,7 +61,7 @@ struct PlatformVideoTrackConfiguration;
 struct PlatformAudioTrackConfiguration;
 
 class AVTrackPrivateAVFObjCImpl : public CanMakeWeakPtr<AVTrackPrivateAVFObjCImpl> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AVTrackPrivateAVFObjCImpl);
 public:
     explicit AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack*);
     explicit AVTrackPrivateAVFObjCImpl(AVAssetTrack*);
@@ -101,6 +103,7 @@ private:
     PlatformVideoColorSpace colorSpace() const;
     double framerate() const;
     uint64_t bitrate() const;
+    std::optional<SpatialVideoMetadata> spatialVideoMetadata() const;
     uint32_t sampleRate() const;
     uint32_t numberOfChannels() const;
 

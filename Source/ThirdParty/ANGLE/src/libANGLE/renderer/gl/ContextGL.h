@@ -279,6 +279,11 @@ class ContextGL : public ContextImpl
 
     void framebufferFetchBarrier() override;
 
+    angle::Result startTiling(const gl::Context *context,
+                              const gl::Rectangle &area,
+                              GLbitfield preserveMask) override;
+    angle::Result endTiling(const gl::Context *context, GLbitfield preserveMask) override;
+
     void setMaxShaderCompilerThreads(GLuint count) override;
 
     void invalidateTexture(gl::TextureType target) override;
@@ -290,15 +295,10 @@ class ContextGL : public ContextImpl
 
     void markWorkSubmitted();
 
-    const gl::Debug &getDebug() const { return mState.getDebug(); }
+    MultiviewImplementationTypeGL getMultiviewImplementationType() const;
+    bool hasNativeParallelCompile();
 
-    angle::Result drawPixelLocalStorageEXTEnable(gl::Context *,
-                                                 GLsizei n,
-                                                 const gl::PixelLocalStoragePlane[],
-                                                 const GLenum loadops[]) override;
-    angle::Result drawPixelLocalStorageEXTDisable(gl::Context *,
-                                                  const gl::PixelLocalStoragePlane[],
-                                                  const GLenum storeops[]) override;
+    const gl::Debug &getDebug() const { return mState.getDebug(); }
 
   private:
     angle::Result setDrawArraysState(const gl::Context *context,
@@ -315,10 +315,6 @@ class ContextGL : public ContextImpl
 
     gl::AttributesMask updateAttributesForBaseInstance(GLuint baseInstance);
     void resetUpdatedAttributes(gl::AttributesMask attribMask);
-
-    // Resets draw state prior to drawing load/store operations for EXT_shader_pixel_local_storage,
-    // in order to guarantee every pixel gets updated.
-    void resetDrawStateForPixelLocalStorageEXT(const gl::Context *context);
 
   protected:
     std::shared_ptr<RendererGL> mRenderer;

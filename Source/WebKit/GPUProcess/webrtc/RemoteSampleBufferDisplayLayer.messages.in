@@ -23,7 +23,12 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
-messages -> RemoteSampleBufferDisplayLayer NotRefCounted {
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU,
+    EnabledBy=UseGPUProcessForMediaEnabled
+]
+messages -> RemoteSampleBufferDisplayLayer {
 #if !RELEASE_LOG_DISABLED
     SetLogIdentifier(String logIdentifier)
 #endif

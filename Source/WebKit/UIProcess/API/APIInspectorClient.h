@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 class WebInspectorUIProxy;
@@ -34,7 +35,7 @@ class WebInspectorUIProxy;
 namespace API {
 
 class InspectorClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(InspectorClient);
 public:
     virtual ~InspectorClient() = default;
 

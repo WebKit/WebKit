@@ -1,0 +1,6 @@
+
+
+PASS Trusted types are not enforced for setAttributeNode and
+              setAttributeNS after moving the target node from a TT-realm to a
+              non-TT realm for iframe.srcdoc
+

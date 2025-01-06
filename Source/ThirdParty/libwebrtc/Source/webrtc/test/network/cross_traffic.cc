@@ -12,10 +12,10 @@
 
 #include <math.h>
 
+#include <optional>
 #include <utility>
 
 #include "absl/memory/memory.h"
-#include "absl/types/optional.h"
 #include "cross_traffic.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"

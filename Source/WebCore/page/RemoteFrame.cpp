@@ -41,9 +41,9 @@ Ref<RemoteFrame> RemoteFrame::createMainFrame(Page& page, ClientCreator&& client
     return adoptRef(*new RemoteFrame(page, WTFMove(clientCreator), identifier, nullptr, nullptr, std::nullopt, opener));
 }
 
-Ref<RemoteFrame> RemoteFrame::createSubframe(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, Frame& parent)
+Ref<RemoteFrame> RemoteFrame::createSubframe(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, Frame& parent, Frame* opener)
 {
-    return adoptRef(*new RemoteFrame(page, WTFMove(clientCreator), identifier, nullptr, &parent, std::nullopt, nullptr));
+    return adoptRef(*new RemoteFrame(page, WTFMove(clientCreator), identifier, nullptr, &parent, std::nullopt, opener));
 }
 
 Ref<RemoteFrame> RemoteFrame::createSubframeWithContentsInAnotherProcess(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, HTMLFrameOwnerElement& ownerElement, std::optional<LayerHostingContextIdentifier> layerHostingContextIdentifier)
@@ -146,9 +146,25 @@ String RemoteFrame::customUserAgentAsSiteSpecificQuirks() const
     return m_customUserAgentAsSiteSpecificQuirks;
 }
 
+String RemoteFrame::customNavigatorPlatform() const
+{
+    return m_customNavigatorPlatform;
+}
+
 void RemoteFrame::documentURLForConsoleLog(CompletionHandler<void(const URL&)>&& completionHandler)
 {
     m_client->documentURLForConsoleLog(WTFMove(completionHandler));
+}
+
+OptionSet<AdvancedPrivacyProtections> RemoteFrame::advancedPrivacyProtections() const
+{
+    return m_advancedPrivacyProtections;
+}
+
+void RemoteFrame::updateScrollingMode()
+{
+    if (RefPtr ownerElement = this->ownerElement())
+        m_client->updateScrollingMode(ownerElement->scrollingMode());
 }
 
 } // namespace WebCore

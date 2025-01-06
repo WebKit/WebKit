@@ -55,6 +55,7 @@
 #import <WebKitLegacy/DOMExtensions.h>
 #import <algorithm>
 #import <wtf/NakedPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/Base64.h>
 
 using namespace WebCore;
@@ -99,6 +100,8 @@ WebInspectorClient::WebInspectorClient(WebView* inspectedWebView)
     , m_highlighter(adoptNS([[WebNodeHighlighter alloc] initWithInspectedWebView:inspectedWebView]))
 {
 }
+
+WebInspectorClient::~WebInspectorClient() = default;
 
 void WebInspectorClient::inspectedPageDestroyed()
 {
@@ -423,10 +426,10 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
         m_suggestedToActualURLMap.set(suggestedURLCopy, actualURL);
 
         if (base64Encoded) {
-            auto decodedData = base64Decode(contentCopy, Base64DecodeMode::DefaultValidatePadding);
+            auto decodedData = base64Decode(contentCopy, { Base64DecodeOption::ValidatePadding });
             if (!decodedData)
                 return;
-            RetainPtr<NSData> dataContent = adoptNS([[NSData alloc] initWithBytes:decodedData->data() length:decodedData->size()]);
+            RetainPtr dataContent = toNSData(decodedData->span());
             [dataContent writeToURL:actualURL atomically:YES];
         } else
             [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];

@@ -14,9 +14,16 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/col-change-span-bg-invalidation-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/col-change-span-bg-invalidation-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/col-change-span-bg-invalidation-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/col-change-span-bg-invalidation-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/col-paint-htb-rtl-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/col-paint-htb-rtl-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/col-paint-htb-rtl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/col-paint-vrl-rtl-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/col-paint-vrl-rtl-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/col-paint-vrl-rtl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/row-background-paint-remove-last-cell-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/row-background-paint-remove-last-cell-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/row-background-paint-remove-last-cell.html

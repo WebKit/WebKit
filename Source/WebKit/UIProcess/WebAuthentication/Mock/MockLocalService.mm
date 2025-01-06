@@ -40,6 +40,11 @@
 
 namespace WebKit {
 
+Ref<MockLocalService> MockLocalService::create(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
+{
+    return adoptRef(*new MockLocalService(observer, configuration));
+}
+
 MockLocalService::MockLocalService(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
     : LocalService(observer)
     , m_configuration(configuration)
@@ -52,9 +57,9 @@ bool MockLocalService::platformStartDiscovery() const
     return !!m_configuration.local;
 }
 
-UniqueRef<LocalConnection> MockLocalService::createLocalConnection() const
+Ref<LocalConnection> MockLocalService::createLocalConnection() const
 {
-    return makeUniqueRef<MockLocalConnection>(m_configuration);
+    return MockLocalConnection::create(m_configuration);
 }
 
 } // namespace WebKit

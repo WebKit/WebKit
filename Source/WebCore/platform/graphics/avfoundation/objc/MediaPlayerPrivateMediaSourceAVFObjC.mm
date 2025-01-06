@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 #import "AVAssetMIMETypeCache.h"
 #import "AVAssetTrackUtilities.h"
 #import "AVStreamDataParserMIMETypeCache.h"
-#import "CDMSessionMediaSourceAVFObjC.h"
+#import "CDMSessionAVContentKeySession.h"
 #import "ContentTypeUtilities.h"
 #import "GraphicsContext.h"
 #import "IOSurface.h"
@@ -46,13 +46,14 @@
 #import "TextTrackRepresentation.h"
 #import "VideoFrameCV.h"
 #import "VideoLayerManagerObjC.h"
-#import "WebCoreDecompressionSession.h"
+#import "VideoMediaSampleRenderer.h"
 #import "WebSampleBufferVideoRendering.h"
 #import <AVFoundation/AVFoundation.h>
 #import <CoreMedia/CMTime.h>
 #import <QuartzCore/CALayer.h>
 #import <objc_runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <pal/spi/cf/CFNotificationCenterSPI.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/Deque.h>
@@ -60,12 +61,16 @@
 #import <wtf/MainThread.h>
 #import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/spi/cocoa/NSObjCRuntimeSPI.h>
 
 #import "CoreVideoSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 @interface AVSampleBufferDisplayLayer (Staging_100128644)
 @property (assign, nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
@@ -76,6 +81,30 @@
 - (void)removeAllVideoTargets;
 @end
 #endif
+
+@interface WebEffectiveRateChangedListenerObjCAdapter : NSObject
+@property (atomic, readonly, direct) RefPtr<WebCore::EffectiveRateChangedListener> protectedListener;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithEffectiveRateChangedListener:(const WebCore::EffectiveRateChangedListener&)listener;
+@end
+
+NS_DIRECT_MEMBERS
+@implementation WebEffectiveRateChangedListenerObjCAdapter {
+    ThreadSafeWeakPtr<WebCore::EffectiveRateChangedListener> _listener;
+}
+
+- (instancetype)initWithEffectiveRateChangedListener:(const WebCore::EffectiveRateChangedListener&)listener
+{
+    if ((self = [super init]))
+        _listener = listener;
+    return self;
+}
+
+- (RefPtr<WebCore::EffectiveRateChangedListener>)protectedListener
+{
+    return _listener.get();
+}
+@end
 
 namespace WebCore {
 
@@ -93,27 +122,16 @@ String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekStat
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-
-static bool isCopyDisplayedPixelBufferAvailable()
-{
-    static auto result = [] {
-        return [PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(copyDisplayedPixelBuffer)];
-    }();
-    return MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled() && result;
-}
-
-#endif // HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaSourceAVFObjC
 
-class EffectiveRateChangedListener : public ThreadSafeRefCounted<EffectiveRateChangedListener> {
+class EffectiveRateChangedListener : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<EffectiveRateChangedListener> {
 public:
     static Ref<EffectiveRateChangedListener> create(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
     {
         return adoptRef(*new EffectiveRateChangedListener(client, timebase));
     }
+    ~EffectiveRateChangedListener() = default;
 
     void effectiveRateChanged()
     {
@@ -129,22 +147,27 @@ private:
     EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC&, CMTimebaseRef);
 
     WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> m_client;
+    RetainPtr<WebEffectiveRateChangedListenerObjCAdapter> m_objcAdapter;
 };
 
 static void timebaseEffectiveRateChangedCallback(CFNotificationCenterRef, void* observer, CFNotificationName, const void*, CFDictionaryRef)
 {
-    static_cast<EffectiveRateChangedListener*>(observer)->effectiveRateChanged();
+    RetainPtr adapter { dynamic_objc_cast<WebEffectiveRateChangedListenerObjCAdapter>(reinterpret_cast<id>(observer)) };
+    if (auto protectedListener = [adapter protectedListener])
+        protectedListener->effectiveRateChanged();
 }
 
 void EffectiveRateChangedListener::stop(CMTimebaseRef timebase)
 {
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kCMTimebaseNotification_EffectiveRateChanged, timebase);
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), m_objcAdapter.get(), kCMTimebaseNotification_EffectiveRateChanged, timebase);
 }
 
 EffectiveRateChangedListener::EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
     : m_client(client)
+    , m_objcAdapter(adoptNS([[WebEffectiveRateChangedListenerObjCAdapter alloc] initWithEffectiveRateChangedListener:*this]))
 {
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, timebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, static_cast<CFNotificationSuspensionBehavior>(0));
+    // Observer removed MediaPlayerPrivateMediaSourceAVFObjC destructor.
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), m_objcAdapter.get(), timebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, static_cast<CFNotificationSuspensionBehavior>(_CFNotificationObserverIsObjC));
 }
 
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer* player)
@@ -193,7 +216,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     }];
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    m_videoTarget = player->videoTarget();
+    setVideoTarget(player->videoTarget());
 #endif
 }
 
@@ -214,7 +237,6 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
     flushPendingSizeChanges();
 
     destroyLayer();
-    destroyDecompressionSession();
 
     m_seekTimer.stop();
 }
@@ -223,6 +245,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 #pragma mark MediaPlayer Factory Methods
 
 class MediaPlayerFactoryMediaSourceAVFObjC final : public MediaPlayerFactory {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaPlayerFactoryMediaSourceAVFObjC);
 public:
     MediaPlayerFactoryMediaSourceAVFObjC()
     {
@@ -308,10 +331,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const ContentType&, 
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(*this, client);
+    if (RefPtr mediaSourcePrivate = downcast<MediaSourcePrivateAVFObjC>(client.mediaSourcePrivate())) {
+        mediaSourcePrivate->setPlayer(this);
+        m_mediaSourcePrivate = WTFMove(mediaSourcePrivate);
+        client.reOpen();
+    } else
+        m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(*this, client);
     m_mediaSourcePrivate->setResourceOwner(m_resourceOwner);
-    m_mediaSourcePrivate->setVideoRenderer(layerOrVideoRenderer());
-    m_mediaSourcePrivate->setDecompressionSession(m_decompressionSession.get());
+    m_mediaSourcePrivate->setVideoRenderer(layerOrVideoRenderer().get());
 
     acceleratedRenderingStateChanged();
 }
@@ -358,12 +385,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal(std::optional<MonotonicT
     if (!shouldBePlaying())
         return;
 
-    if (hostTime) {
-        auto cmHostTime = PAL::CMClockMakeHostTimeFromSystemUnits(hostTime->toMachAbsoluteTime());
-        ALWAYS_LOG(LOGIDENTIFIER, "setting rate to ", m_rate, " at host time ", PAL::CMTimeGetSeconds(cmHostTime));
-        [m_synchronizer setRate:m_rate time:PAL::kCMTimeInvalid atHostTime:cmHostTime];
-    } else
-        [m_synchronizer setRate:m_rate];
+    setSynchronizerRate(m_rate, WTFMove(hostTime));
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::pause()
@@ -377,12 +399,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal(std::optional<Monotonic
     ALWAYS_LOG(LOGIDENTIFIER);
     m_isPlaying = false;
 
-    if (hostTime) {
-        auto cmHostTime = PAL::CMClockMakeHostTimeFromSystemUnits(hostTime->toMachAbsoluteTime());
-        ALWAYS_LOG(LOGIDENTIFIER, "setting rate to 0 at host time ", PAL::CMTimeGetSeconds(cmHostTime));
-        [m_synchronizer setRate:0 time:PAL::kCMTimeInvalid atHostTime:cmHostTime];
-    } else
-        [m_synchronizer setRate:0];
+    setSynchronizerRate(0, WTFMove(hostTime));
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::paused() const
@@ -447,7 +464,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible)
             m_mediaSourcePrivate->flushActiveSourceBuffersIfNeeded();
         }
     }
-
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     updateSpatialTrackingLabel();
@@ -562,7 +578,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
         ALWAYS_LOG(LOGIDENTIFIER);
         MediaTime synchronizerTime = PAL::toMediaTime([m_synchronizer currentTime]);
 
-        m_isSynchronizerSeeking = synchronizerTime != seekedTime;
+        m_isSynchronizerSeeking = m_isSynchronizerSeeking = std::abs((synchronizerTime - seekedTime).toMicroseconds()) > 1000;
+
         ALWAYS_LOG(LOGIDENTIFIER, "seekedTime = ", seekedTime, ", synchronizerTime = ", synchronizerTime, "synchronizer seeking = ", m_isSynchronizerSeeking);
 
         if (!m_isSynchronizerSeeking) {
@@ -586,7 +603,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::maybeCompleteSeek()
 {
     if (m_seekState == SeekCompleted)
         return;
-    if (hasVideo() && !m_hasAvailableVideoFrame) {
+    if (hasVideo() && hasVideoRenderer() && !m_hasAvailableVideoFrame) {
         ALWAYS_LOG(LOGIDENTIFIER, "waiting for video frame");
         m_seekState = WaitingForAvailableFame;
         return;
@@ -599,7 +616,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::maybeCompleteSeek()
     }
     m_seekState = SeekCompleted;
     if (shouldBePlaying())
-        [m_synchronizer setRate:m_rate];
+        setSynchronizerRate(m_rate);
     if (auto player = m_player.get()) {
         player->seeked(m_lastSeekTime);
         player->timeChanged();
@@ -623,7 +640,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)
     }
 
     if (shouldBePlaying())
-        [m_synchronizer setRate:m_rate];
+        setSynchronizerRate(m_rate);
 }
 
 double MediaPlayerPrivateMediaSourceAVFObjC::rate() const
@@ -729,31 +746,17 @@ RefPtr<NativeImage> MediaPlayerPrivateMediaSourceAVFObjC::nativeImageForCurrentT
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
 {
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    if (isCopyDisplayedPixelBufferAvailable()) {
-        if (auto pixelBuffer = adoptCF([layerOrVideoRenderer() copyDisplayedPixelBuffer])) {
-            INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", currentTime());
-            m_lastPixelBuffer = WTFMove(pixelBuffer);
-            return true;
-        }
-    }
-#endif
-
-    if (layerOrVideoRenderer() || !m_decompressionSession)
+    RefPtr renderer = layerOrVideoRenderer();
+    if (!renderer)
         return false;
 
-    auto flags = !m_lastPixelBuffer ? WebCoreDecompressionSession::AllowLater : WebCoreDecompressionSession::ExactTime;
-    auto newPixelBuffer = m_decompressionSession->imageForTime(currentTime(), flags);
-    if (!newPixelBuffer)
+    auto entry = renderer->copyDisplayedPixelBuffer();
+    if (!entry.pixelBuffer)
         return false;
 
-    m_lastPixelBuffer = WTFMove(newPixelBuffer);
-
-    if (m_resourceOwner) {
-        if (auto surface = CVPixelBufferGetIOSurface(m_lastPixelBuffer.get()))
-            IOSurface::setOwnershipIdentity(surface, m_resourceOwner);
-    }
-
+    INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", entry.presentationTimeStamp);
+    m_lastPixelBuffer = WTFMove(entry.pixelBuffer);
+    m_lastPixelBufferPresentationTimeStamp = entry.presentationTimeStamp;
     return true;
 }
 
@@ -779,6 +782,16 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastImage()
     return true;
 }
 
+void MediaPlayerPrivateMediaSourceAVFObjC::maybePurgeLastImage()
+{
+    // If we are in the middle of a rVFC operation, do not purge anything:
+    if (m_isGatheringVideoFrameMetadata)
+        return;
+
+    m_lastImage = nullptr;
+    m_lastPixelBuffer = nullptr;
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::paint(GraphicsContext& context, const FloatRect& rect)
 {
     paintCurrentFrameInContext(context, rect);
@@ -797,20 +810,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsCo
     FloatRect imageRect { FloatPoint::zero(), image->size() };
     context.drawNativeImage(*image, outputRect, imageRect);
 }
-
-#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-void MediaPlayerPrivateMediaSourceAVFObjC::willBeAskedToPaintGL()
-{
-    // We have been asked to paint into a WebGL canvas, so take that as a signal to create
-    // a decompression session, even if that means the native video can't also be displayed
-    // in page.
-    if (m_hasBeenAskedToPaintGL)
-        return;
-
-    m_hasBeenAskedToPaintGL = true;
-    acceleratedRenderingStateChanged();
-}
-#endif
 
 RefPtr<VideoFrame> MediaPlayerPrivateMediaSourceAVFObjC::videoFrameForCurrentTime()
 {
@@ -841,47 +840,52 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayerOrVideoRenderer() co
 {
     // Decompression sessions do not support encrypted content; force layer
     // creation.
-    if (m_mediaSourcePrivate && m_mediaSourcePrivate->cdmInstance())
+    if (!canUseDecompressionSession())
         return true;
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    return isCopyDisplayedPixelBufferAvailable() && [&] {
-        if (m_mediaSourcePrivate && m_mediaSourcePrivate->needsVideoLayer())
-            return true;
-        auto player = m_player.get();
-        return player && player->renderingCanBeAccelerated();
-    }();
-#else
-    return !m_hasBeenAskedToPaintGL;
-#endif
+    RefPtr player = m_player.get();
+    return player && player->renderingCanBeAccelerated();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setPresentationSize(const IntSize& newSize)
 {
     if (!layerOrVideoRenderer() && !newSize.isEmpty())
-        updateDisplayLayerAndDecompressionSession();
+        updateDisplayLayer();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoLayerSizeFenced(const FloatSize& newSize, WTF::MachSendRight&&)
 {
     if (!layerOrVideoRenderer() && !newSize.isEmpty())
-        updateDisplayLayerAndDecompressionSession();
+        updateDisplayLayer();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
 {
-    updateDisplayLayerAndDecompressionSession();
+    RefPtr renderer = layerOrVideoRenderer();
+    if (willUseDecompressionSessionIfNeeded()) {
+        if (renderer && !renderer->isUsingDecompressionSession()) {
+            if (m_mediaSourcePrivate)
+                m_mediaSourcePrivate->videoRendererWillReconfigure(*renderer);
+            renderer->setPrefersDecompressionSession(true);
+            if (m_mediaSourcePrivate)
+                m_mediaSourcePrivate->videoRendererDidReconfigure(*renderer);
+            return;
+        }
+        if (renderer)
+            return; // With a decompression session we can continue using the existing VideoMediaSampleRenderer. No need to re-create one.
+    }
+    updateDisplayLayer();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::updateDisplayLayerAndDecompressionSession()
+void MediaPlayerPrivateMediaSourceAVFObjC::updateDisplayLayer()
 {
-    if (shouldEnsureLayerOrVideoRenderer()) {
-        destroyDecompressionSession();
-        ensureLayerOrVideoRenderer();
+    if (shouldEnsureLayerOrVideoRenderer() || willUseDecompressionSessionIfNeeded()) {
+        auto needsRenderingModeChanged = destroyRenderlessVideoMediaSampleRenderer();
+        ensureLayerOrVideoRenderer(needsRenderingModeChanged);
         return;
     }
 
     destroyLayerOrVideoRenderer();
-    ensureDecompressionSession();
+    ensureRenderlessVideoMediaSampleRenderer();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::notifyActiveSourceBuffersChanged()
@@ -919,33 +923,16 @@ size_t MediaPlayerPrivateMediaSourceAVFObjC::extraMemoryCost() const
 
 std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateMediaSourceAVFObjC::videoPlaybackQualityMetrics()
 {
-    if (m_decompressionSession) {
+    if (RefPtr renderer = layerOrVideoRenderer()) {
         return VideoPlaybackQualityMetrics {
-            m_decompressionSession->totalVideoFrames(),
-            m_decompressionSession->droppedVideoFrames(),
-            m_decompressionSession->corruptedVideoFrames(),
-            m_decompressionSession->totalFrameDelay().toDouble(),
+            renderer->totalVideoFrames(),
+            renderer->droppedVideoFrames(),
+            renderer->corruptedVideoFrames(),
+            renderer->totalFrameDelay().toDouble(),
             0,
         };
     }
-
-    auto metrics = [layerOrVideoRenderer() videoPerformanceMetrics];
-    if (!metrics)
-        return std::nullopt;
-
-    uint32_t displayCompositedFrames = 0;
-ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    if ([metrics respondsToSelector:@selector(numberOfDisplayCompositedVideoFrames)])
-        displayCompositedFrames = [metrics numberOfDisplayCompositedVideoFrames];
-ALLOW_NEW_API_WITHOUT_GUARDS_END
-
-    return VideoPlaybackQualityMetrics {
-        static_cast<uint32_t>([metrics totalNumberOfVideoFrames]),
-        static_cast<uint32_t>([metrics numberOfDroppedVideoFrames]),
-        static_cast<uint32_t>([metrics numberOfCorruptedVideoFrames]),
-        [metrics totalFrameDelay],
-        displayCompositedFrames,
-    };
+    return { };
 }
 
 #pragma mark -
@@ -953,27 +940,29 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
 {
-    if (m_sampleBufferDisplayLayer)
+    if (m_sampleBufferDisplayLayer && m_sampleBufferDisplayLayer->as<AVSampleBufferDisplayLayer>())
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
-    if (!m_sampleBufferDisplayLayer)
+    RetainPtr sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
+    if (!sampleBufferDisplayLayer)
         return;
 
-#ifndef NDEBUG
-    [m_sampleBufferDisplayLayer setName:@"MediaPlayerPrivateMediaSource AVSampleBufferDisplayLayer"];
-#endif
-    [m_sampleBufferDisplayLayer setVideoGravity: (m_shouldMaintainAspectRatio ? AVLayerVideoGravityResizeAspect : AVLayerVideoGravityResize)];
+    m_sampleBufferDisplayLayer = createVideoMediaSampleRendererForRendererer(sampleBufferDisplayLayer.get());
 
-    configureLayerOrVideoRenderer(m_sampleBufferDisplayLayer.get());
+#ifndef NDEBUG
+    [sampleBufferDisplayLayer setName:@"MediaPlayerPrivateMediaSource AVSampleBufferDisplayLayer"];
+#endif
+    [sampleBufferDisplayLayer setVideoGravity: (m_shouldMaintainAspectRatio ? AVLayerVideoGravityResizeAspect : AVLayerVideoGravityResize)];
+
+    configureLayerOrVideoRenderer(sampleBufferDisplayLayer.get());
 
     if (RefPtr player = m_player.get()) {
-        if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(setToneMapToStandardDynamicRange:)])
-            [m_sampleBufferDisplayLayer setToneMapToStandardDynamicRange:player->shouldDisableHDR()];
+        if ([sampleBufferDisplayLayer respondsToSelector:@selector(setToneMapToStandardDynamicRange:)])
+            [sampleBufferDisplayLayer setToneMapToStandardDynamicRange:player->shouldDisableHDR()];
 
-        m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), player->presentationSize());
+        m_videoLayerManager->setVideoLayer(sampleBufferDisplayLayer.get(), player->presentationSize());
     }
 }
 
@@ -984,28 +973,33 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    CMTime currentTime = PAL::CMTimebaseGetTime([m_synchronizer timebase]);
-    [m_synchronizer removeRenderer:m_sampleBufferDisplayLayer.get() atTime:currentTime completionHandler:nil];
-
-    m_videoLayerManager->didDestroyVideoLayer();
+    if (RetainPtr displayLayer = m_sampleBufferDisplayLayer->as<AVSampleBufferDisplayLayer>()) {
+        CMTime currentTime = PAL::CMTimebaseGetTime([m_synchronizer timebase]);
+        [m_synchronizer removeRenderer:displayLayer.get() atTime:currentTime completionHandler:nil];
+        m_videoLayerManager->didDestroyVideoLayer();
+    }
     m_sampleBufferDisplayLayer = nullptr;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::ensureVideoRenderer()
 {
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    if (m_sampleBufferVideoRenderer)
+    if (m_sampleBufferVideoRenderer) {
+        ASSERT(m_sampleBufferVideoRenderer->as<AVSampleBufferVideoRenderer>(), "The m_sampleBufferVideoRenderer should always be created with a renderer");
         return;
+    }
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_sampleBufferVideoRenderer = adoptNS([PAL::allocAVSampleBufferVideoRendererInstance() init]);
-    if (!m_sampleBufferVideoRenderer)
+    RetainPtr sampleBufferVideoRenderer = adoptNS([PAL::allocAVSampleBufferVideoRendererInstance() init]);
+    if (!sampleBufferVideoRenderer)
         return;
 
-    [m_sampleBufferVideoRenderer addVideoTarget:m_videoTarget.get()];
+    m_sampleBufferVideoRenderer = createVideoMediaSampleRendererForRendererer(sampleBufferVideoRenderer.get());
 
-    configureLayerOrVideoRenderer(m_sampleBufferVideoRenderer.get());
+    [sampleBufferVideoRenderer addVideoTarget:m_videoTarget.get()];
+
+    configureLayerOrVideoRenderer(sampleBufferVideoRenderer.get());
 #endif // ENABLE(LINEAR_MEDIA_PLAYER)
 }
 
@@ -1017,49 +1011,56 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyVideoRenderer()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    CMTime currentTime = PAL::CMTimebaseGetTime([m_synchronizer timebase]);
-    [m_synchronizer removeRenderer:m_sampleBufferVideoRenderer.get() atTime:currentTime completionHandler:nil];
+    RetainPtr renderer = m_sampleBufferVideoRenderer->as<AVSampleBufferVideoRenderer>();
+    ASSERT(renderer);
 
-    if ([m_sampleBufferVideoRenderer respondsToSelector:@selector(removeAllVideoTargets)])
-        [m_sampleBufferVideoRenderer removeAllVideoTargets];
+    CMTime currentTime = PAL::CMTimebaseGetTime([m_synchronizer timebase]);
+    [m_synchronizer removeRenderer:renderer.get() atTime:currentTime completionHandler:nil];
+
+    if ([renderer respondsToSelector:@selector(removeAllVideoTargets)])
+        [renderer removeAllVideoTargets];
     m_sampleBufferVideoRenderer = nullptr;
 #endif // ENABLE(LINEAR_MEDIA_PLAYER)
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession()
+bool MediaPlayerPrivateMediaSourceAVFObjC::isUsingRenderlessMediaSampleRenderer() const
 {
-    if (m_decompressionSession)
+    return m_sampleBufferDisplayLayer && !m_sampleBufferDisplayLayer->as<AVSampleBufferDisplayLayer>() && !willUseDecompressionSessionIfNeeded();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::ensureRenderlessVideoMediaSampleRenderer()
+{
+    if (isUsingRenderlessMediaSampleRenderer())
         return;
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+        mediaSourcePrivate->setVideoRenderer(nullptr);
 
-    ALWAYS_LOG(LOGIDENTIFIER);
-
-    m_decompressionSession = WebCoreDecompressionSession::createOpenGL();
-    m_decompressionSession->setTimebase([m_synchronizer timebase]);
-    m_decompressionSession->setResourceOwner(m_resourceOwner);
-
-    if (m_mediaSourcePrivate)
-        m_mediaSourcePrivate->setDecompressionSession(m_decompressionSession.get());
+    setHasAvailableVideoFrame(false);
+    m_sampleBufferDisplayLayer = createVideoMediaSampleRendererForRendererer(nil);
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+        mediaSourcePrivate->setVideoRenderer(m_sampleBufferDisplayLayer.get());
 
     if (auto player = m_player.get())
         player->renderingModeChanged();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::destroyDecompressionSession()
+MediaPlayerEnums::NeedsRenderingModeChanged MediaPlayerPrivateMediaSourceAVFObjC::destroyRenderlessVideoMediaSampleRenderer()
 {
-    if (!m_decompressionSession)
-        return;
+    if (!isUsingRenderlessMediaSampleRenderer())
+        return MediaPlayerEnums::NeedsRenderingModeChanged::No;
 
     ALWAYS_LOG(LOGIDENTIFIER);
+    ASSERT(!m_sampleBufferVideoRenderer, "No layer or renderer can be in use when a render-less VideoMediaSampleRenderer is active");
 
-    if (m_mediaSourcePrivate)
-        m_mediaSourcePrivate->setDecompressionSession(nullptr);
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+        mediaSourcePrivate->setVideoRenderer(nullptr);
 
-    m_decompressionSession->invalidate();
-    m_decompressionSession = nullptr;
+    m_sampleBufferDisplayLayer = nullptr;
     setHasAvailableVideoFrame(false);
+    return MediaPlayerEnums::NeedsRenderingModeChanged::Yes;
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayerOrVideoRenderer()
+void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayerOrVideoRenderer(MediaPlayerEnums::NeedsRenderingModeChanged needsRenderingModeChanged)
 {
     switch (acceleratedVideoMode()) {
     case AcceleratedVideoMode::Layer:
@@ -1077,7 +1078,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayerOrVideoRenderer()
     }
 
     RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
-    RetainPtr renderer = layerOrVideoRenderer();
+    RefPtr renderer = layerOrVideoRenderer();
 
     if (!renderer) {
         ERROR_LOG(LOGIDENTIFIER, "Failed to create AVSampleBufferDisplayLayer or AVSampleBufferVideoRenderer");
@@ -1089,34 +1090,46 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayerOrVideoRenderer()
 
     ALWAYS_LOG(LOGIDENTIFIER, acceleratedVideoMode(), ", renderer=", !!renderer);
 
-    bool needsRenderingModeChanged;
     switch (acceleratedVideoMode()) {
     case AcceleratedVideoMode::Layer:
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+        if (!m_usingLinearMediaPlayer)
+            needsRenderingModeChanged = MediaPlayerEnums::NeedsRenderingModeChanged::Yes;
+#else
+        needsRenderingModeChanged = MediaPlayerEnums::NeedsRenderingModeChanged::Yes;
+#endif
+        FALLTHROUGH;
     case AcceleratedVideoMode::VideoRenderer:
-        needsRenderingModeChanged = true;
         if (mediaSourcePrivate)
             mediaSourcePrivate->setVideoRenderer(renderer.get());
         break;
     case AcceleratedVideoMode::StagedLayer:
+        needsRenderingModeChanged = MediaPlayerEnums::NeedsRenderingModeChanged::Yes;
+        FALLTHROUGH;
     case AcceleratedVideoMode::StagedVideoRenderer:
-        needsRenderingModeChanged = false;
         if (mediaSourcePrivate)
             mediaSourcePrivate->stageVideoRenderer(renderer.get());
         break;
     }
 
-    RefPtr player = m_player.get();
-    if (player && needsRenderingModeChanged)
-        player->renderingModeChanged();
+    switch (needsRenderingModeChanged) {
+    case MediaPlayerEnums::NeedsRenderingModeChanged::Yes:
+        if (RefPtr player = m_player.get())
+            player->renderingModeChanged();
+        break;
+    case MediaPlayerEnums::NeedsRenderingModeChanged::No:
+        break;
+    }
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayerOrVideoRenderer()
 {
-    destroyLayer();
+    if (!isUsingRenderlessMediaSampleRenderer())
+        destroyLayer();
     destroyVideoRenderer();
 
     if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
-        mediaSourcePrivate->setVideoRenderer(nil);
+        mediaSourcePrivate->setVideoRenderer(nullptr);
 
     setHasAvailableVideoFrame(false);
 
@@ -1146,6 +1159,28 @@ void MediaPlayerPrivateMediaSourceAVFObjC::configureLayerOrVideoRenderer(WebSamp
     }
 }
 
+Ref<VideoMediaSampleRenderer> MediaPlayerPrivateMediaSourceAVFObjC::createVideoMediaSampleRendererForRendererer(WebSampleBufferVideoRendering *renderer)
+{
+    Ref videoRenderer = VideoMediaSampleRenderer::create(renderer);
+    videoRenderer->setTimebase([m_synchronizer timebase]);
+    videoRenderer->notifyWhenDecodingErrorOccurred([weakThis = WeakPtr { *this }](OSStatus) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->setNetworkState(MediaPlayer::NetworkState::DecodeError);
+    });
+    videoRenderer->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }](const MediaTime& presentationTime, double displayTime) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        protectedThis->setHasAvailableVideoFrame(true);
+        if (protectedThis->m_isGatheringVideoFrameMetadata)
+            protectedThis->checkNewVideoFrameMetadata(presentationTime, displayTime);
+    });
+    videoRenderer->setResourceOwner(m_resourceOwner);
+    videoRenderer->setPrefersDecompressionSession(m_preferDecompressionSession);
+    return videoRenderer;
+}
+
 MediaPlayerPrivateMediaSourceAVFObjC::AcceleratedVideoMode MediaPlayerPrivateMediaSourceAVFObjC::acceleratedVideoMode() const
 {
 #if ENABLE(LINEAR_MEDIA_PLAYER)
@@ -1165,9 +1200,49 @@ MediaPlayerPrivateMediaSourceAVFObjC::AcceleratedVideoMode MediaPlayerPrivateMed
     return AcceleratedVideoMode::Layer;
 }
 
+bool MediaPlayerPrivateMediaSourceAVFObjC::canUseDecompressionSession() const
+{
+    // FIXME: with shouldUseModernAVContentKeySession can a DecompressionSession be used so long as we have a AVSBDL considering the cryptor is now attached to the CMSampleBuffer?
+    return !m_mediaSourcePrivate || (!m_mediaSourcePrivate->cdmInstance() && !m_mediaSourcePrivate->needsVideoLayer());
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::isUsingDecompressionSession() const
+{
+    if (RefPtr renderer = layerOrVideoRenderer())
+        return renderer->isUsingDecompressionSession();
+    return false;
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::willUseDecompressionSessionIfNeeded() const
+{
+    if (!canUseDecompressionSession())
+        return false;
+
+    return m_preferDecompressionSession || (m_canFallbackToDecompressionSession && m_isGatheringVideoFrameMetadata);
+}
+
 bool MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying() const
 {
     return m_isPlaying && !seeking() && (m_flushingActiveSourceBuffersDueToVisibilityChange || allRenderersHaveAvailableSamples()) && m_readyState >= MediaPlayer::ReadyState::HaveFutureData;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setSynchronizerRate(double rate, std::optional<MonotonicTime>&& hostTime)
+{
+    if (hostTime) {
+        auto cmHostTime = PAL::CMClockMakeHostTimeFromSystemUnits(hostTime->toMachAbsoluteTime());
+        ALWAYS_LOG(LOGIDENTIFIER, "setting rate to ", m_rate, " at host time ", PAL::CMTimeGetSeconds(cmHostTime));
+        [m_synchronizer setRate:rate time:PAL::kCMTimeInvalid atHostTime:cmHostTime];
+    } else
+        [m_synchronizer setRate:rate];
+
+    // If we are pausing the synchronizer, update the last image to ensure we have something
+    // to display if and when the decoders are purged while in the background. And vice-versa,
+    // purge our retained images and pixel buffers when playing the synchronizer, to release that
+    // retained memory.
+    if (!rate)
+        updateLastPixelBuffer();
+    else
+        maybePurgeLastImage();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)
@@ -1182,9 +1257,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)
     if (!m_hasAvailableVideoFrame)
         return;
 
+    setNeedsPlaceholderImage(false);
+
     auto player = m_player.get();
     if (player)
         player->firstVideoFrameAvailable();
+
     if (m_seekState == WaitingForAvailableFame)
         maybeCompleteSeek();
 
@@ -1216,7 +1294,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateAllRenderersHaveAvailableSample
     bool allRenderersHaveAvailableSamples = true;
 
     do {
-        if (hasVideo() && !m_hasAvailableVideoFrame) {
+        if (hasVideo() && hasVideoRenderer() && !m_hasAvailableVideoFrame) {
             allRenderersHaveAvailableSamples = false;
             break;
         }
@@ -1236,9 +1314,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateAllRenderersHaveAvailableSample
     m_allRenderersHaveAvailableSamples = allRenderersHaveAvailableSamples;
 
     if (shouldBePlaying() && [m_synchronizer rate] != m_rate)
-        [m_synchronizer setRate:m_rate];
+        setSynchronizerRate(m_rate);
     else if (!shouldBePlaying() && [m_synchronizer rate])
-        [m_synchronizer setRate:0];
+        setSynchronizerRate(0);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
@@ -1306,7 +1384,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::flushPendingSizeChanges()
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-CDMSessionMediaSourceAVFObjC* MediaPlayerPrivateMediaSourceAVFObjC::cdmSession() const
+CDMSessionAVContentKeySession* MediaPlayerPrivateMediaSourceAVFObjC::cdmSession() const
 {
     return m_session.get();
 }
@@ -1318,13 +1396,20 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* sessi
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_session = toCDMSessionMediaSourceAVFObjC(session);
+    m_session = toCDMSessionAVContentKeySession(session);
 
     if (!m_mediaSourcePrivate)
         return;
 
     m_mediaSourcePrivate->setCDMSession(session);
 }
+
+void MediaPlayerPrivateMediaSourceAVFObjC::keyAdded()
+{
+    if (m_mediaSourcePrivate)
+        m_mediaSourcePrivate->keyAdded();
+}
+
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
@@ -1353,7 +1438,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceAttached(CDMInstance& inst
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->cdmInstanceAttached(instance);
 
-    updateDisplayLayerAndDecompressionSession();
+    updateDisplayLayer();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceDetached(CDMInstance& instance)
@@ -1362,7 +1447,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceDetached(CDMInstance& inst
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->cdmInstanceDetached(instance);
 
-    updateDisplayLayerAndDecompressionSession();
+    updateDisplayLayer();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::attemptToDecryptWithInstance(CDMInstance& instance)
@@ -1399,7 +1484,24 @@ const Vector<ContentType>& MediaPlayerPrivateMediaSourceAVFObjC::mediaContentTyp
 
 void MediaPlayerPrivateMediaSourceAVFObjC::needsVideoLayerChanged()
 {
-    updateDisplayLayerAndDecompressionSession();
+    updateDisplayLayer();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setNeedsPlaceholderImage(bool needsPlaceholder)
+{
+    if (m_needsPlaceholderImage == needsPlaceholder)
+        return;
+
+    m_needsPlaceholderImage = needsPlaceholder;
+
+    if (!m_sampleBufferDisplayLayer)
+        return;
+
+    RetainPtr displayLayer = m_sampleBufferDisplayLayer->as<AVSampleBufferDisplayLayer>();
+    if (m_needsPlaceholderImage)
+        [displayLayer setContents:(id)m_lastPixelBuffer.get()];
+    else
+        [displayLayer setContents:nil];
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
@@ -1413,11 +1515,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState
     m_readyState = readyState;
 
     if (shouldBePlaying())
-        [m_synchronizer setRate:m_rate];
+        setSynchronizerRate(m_rate);
     else
-        [m_synchronizer setRate:0];
+        setSynchronizerRate(0);
 
-    if (m_readyState >= MediaPlayer::ReadyState::HaveCurrentData && hasVideo() && !m_hasAvailableVideoFrame) {
+    if (m_readyState >= MediaPlayer::ReadyState::HaveCurrentData && hasVideo() && hasVideoRenderer() && !m_hasAvailableVideoFrame) {
         m_readyStateIsWaitingForAvailableFrame = true;
         return;
     }
@@ -1617,20 +1719,33 @@ void MediaPlayerPrivateMediaSourceAVFObjC::startVideoFrameMetadataGathering()
 {
     if (m_videoFrameMetadataGatheringObserver)
         return;
-    ASSERT(m_synchronizer);
     m_isGatheringVideoFrameMetadata = true;
+
+    if (isUsingDecompressionSession())
+        return;
+
     acceleratedRenderingStateChanged();
 
-    // FIXME: We should use a CADisplayLink to get updates on rendering, for now we emulate with addPeriodicTimeObserverForInterval.
-    m_videoFrameMetadataGatheringObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }](CMTime currentTime) {
-        ensureOnMainThread([weakThis, currentTime] {
-            if (weakThis)
-                weakThis->checkNewVideoFrameMetadata(currentTime);
+    if (willUseDecompressionSessionIfNeeded())
+        return;
+
+    ASSERT(m_synchronizer);
+    m_videoFrameMetadataGatheringObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }](CMTime currentCMTime) {
+        ensureOnMainThread([weakThis, currentCMTime] {
+            if (!weakThis)
+                return;
+            auto currentTime = PAL::toMediaTime(currentCMTime);
+            auto presentationTime = weakThis->m_lastPixelBufferPresentationTimeStamp;
+            if (!presentationTime.isValid())
+                presentationTime = currentTime;
+
+            auto displayTime = MonotonicTime::now().secondsSinceEpoch().seconds() - (currentTime - presentationTime).toDouble();
+            weakThis->checkNewVideoFrameMetadata(currentTime, displayTime);
         });
     }];
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::checkNewVideoFrameMetadata(CMTime currentTime)
+void MediaPlayerPrivateMediaSourceAVFObjC::checkNewVideoFrameMetadata(MediaTime presentationTime, double displayTime)
 {
     auto player = m_player.get();
     if (!player)
@@ -1639,11 +1754,18 @@ void MediaPlayerPrivateMediaSourceAVFObjC::checkNewVideoFrameMetadata(CMTime cur
     if (!updateLastPixelBuffer())
         return;
 
+#ifndef NDEBUG
+    if (isUsingDecompressionSession() && m_lastPixelBufferPresentationTimeStamp != presentationTime)
+        ALWAYS_LOG(LOGIDENTIFIER, "notification of new frame delayed retrieved:", m_lastPixelBufferPresentationTimeStamp, " expected:", presentationTime);
+#endif
+
     VideoFrameMetadata metadata;
     metadata.width = m_naturalSize.width();
     metadata.height = m_naturalSize.height();
-    metadata.presentedFrames = ++m_sampleCount;
-    metadata.presentationTime = PAL::CMTimeGetSeconds(currentTime);
+    metadata.presentedFrames = isUsingDecompressionSession() ? layerOrVideoRenderer()->totalDisplayedFrames() : ++m_sampleCount;
+    metadata.presentationTime = displayTime;
+    metadata.expectedDisplayTime = displayTime;
+    metadata.mediaTime = (m_lastPixelBufferPresentationTimeStamp.isValid() ? m_lastPixelBufferPresentationTimeStamp : presentationTime).toDouble();
 
     m_videoFrameMetadata = metadata;
     player->onNewVideoFrameMetadata(WTFMove(metadata), m_lastPixelBuffer.get());
@@ -1655,7 +1777,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::stopVideoFrameMetadataGathering()
     acceleratedRenderingStateChanged();
     m_videoFrameMetadata = { };
 
-    ASSERT(m_videoFrameMetadataGatheringObserver);
     if (m_videoFrameMetadataGatheringObserver)
         [m_synchronizer removeTimeObserver:m_videoFrameMetadataGatheringObserver.get()];
     m_videoFrameMetadataGatheringObserver = nil;
@@ -1663,17 +1784,20 @@ void MediaPlayerPrivateMediaSourceAVFObjC::stopVideoFrameMetadataGathering()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setShouldDisableHDR(bool shouldDisable)
 {
-    if (![m_sampleBufferDisplayLayer respondsToSelector:@selector(setToneMapToStandardDynamicRange:)])
+    if (!m_sampleBufferDisplayLayer)
+        return;
+
+    if (![m_sampleBufferDisplayLayer->as<AVSampleBufferDisplayLayer>() respondsToSelector:@selector(setToneMapToStandardDynamicRange:)])
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, shouldDisable);
-    [m_sampleBufferDisplayLayer setToneMapToStandardDynamicRange:shouldDisable];
+    [m_sampleBufferDisplayLayer->as<AVSampleBufferDisplayLayer>() setToneMapToStandardDynamicRange:shouldDisable];
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::playerContentBoxRectChanged(const LayoutRect& newRect)
 {
     if (!layerOrVideoRenderer() && !newRect.isEmpty())
-        updateDisplayLayerAndDecompressionSession();
+        updateDisplayLayer();
 }
 
 WTFLogChannel& MediaPlayerPrivateMediaSourceAVFObjC::logChannel() const
@@ -1687,14 +1811,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setShouldMaintainAspectRatio(bool sho
         return;
 
     m_shouldMaintainAspectRatio = shouldMaintainAspectRatio;
-    if (!m_sampleBufferDisplayLayer)
+    if (!m_sampleBufferDisplayLayer || isUsingRenderlessMediaSampleRenderer())
         return;
 
     [CATransaction begin];
     [CATransaction setAnimationDuration:0];
     [CATransaction setDisableActions:YES];
 
-    [m_sampleBufferDisplayLayer setVideoGravity: (m_shouldMaintainAspectRatio ? AVLayerVideoGravityResizeAspect : AVLayerVideoGravityResize)];
+    [m_sampleBufferDisplayLayer->as<AVSampleBufferDisplayLayer>() setVideoGravity: (m_shouldMaintainAspectRatio ? AVLayerVideoGravityResizeAspect : AVLayerVideoGravityResize)];
 
     [CATransaction commit];
 }
@@ -1728,19 +1852,27 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setSpatialTrackingLabel(const String&
 
 void MediaPlayerPrivateMediaSourceAVFObjC::updateSpatialTrackingLabel()
 {
-    auto *renderer = m_sampleBufferVideoRenderer ? m_sampleBufferVideoRenderer.get() : [m_sampleBufferDisplayLayer sampleBufferRenderer];
+    if ((!m_sampleBufferDisplayLayer && !m_sampleBufferVideoRenderer) || isUsingRenderlessMediaSampleRenderer())
+        return;
+    auto *renderer = (m_sampleBufferVideoRenderer ? m_sampleBufferVideoRenderer : m_sampleBufferDisplayLayer)->as<AVSampleBufferVideoRenderer>();
+    ASSERT(renderer);
+
     if (!m_spatialTrackingLabel.isNull()) {
+        INFO_LOG(LOGIDENTIFIER, "Explicitly set STSLabel: ", m_spatialTrackingLabel);
         renderer.STSLabel = m_spatialTrackingLabel;
         return;
     }
 
-    if (renderer) {
-        // Let AVSBRS manage setting the spatial tracking label in its video renderer itself.
+    if (renderer && m_visible) {
+        // If the media player has a renderer, and that renderer belongs to a page that is visible,
+        // then let AVSBRS manage setting the spatial tracking label in its video renderer itself.
+        INFO_LOG(LOGIDENTIFIER, "Has visible renderer, set STSLabel: nil");
         renderer.STSLabel = nil;
         return;
     }
 
     if (m_sampleBufferAudioRendererMap.isEmpty()) {
+        INFO_LOG(LOGIDENTIFIER, "No audio renderers - no-op");
         // If there are no audio renderers, there's nothing to do.
         return;
     }
@@ -1749,25 +1881,37 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateSpatialTrackingLabel()
     // the session's spatial tracking label if not, and set the label directly on each audio
     // renderer.
     AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
-    auto *defaultLabel = !m_defaultSpatialTrackingLabel.isNull() ? (NSString *)m_defaultSpatialTrackingLabel : session.spatialTrackingLabel;
+    String defaultLabel;
+    if (!m_defaultSpatialTrackingLabel.isNull()) {
+        INFO_LOG(LOGIDENTIFIER, "Default STSLabel: ", m_defaultSpatialTrackingLabel);
+        defaultLabel = m_defaultSpatialTrackingLabel;
+    } else {
+        INFO_LOG(LOGIDENTIFIER, "AVAudioSession label: ", session.spatialTrackingLabel);
+        defaultLabel = session.spatialTrackingLabel;
+    }
     for (const auto &key : m_sampleBufferAudioRendererMap.keys())
         [(__bridge AVSampleBufferAudioRenderer *)key.get() setSTSLabel:defaultLabel];
 }
 #endif
 
-WebSampleBufferVideoRendering *MediaPlayerPrivateMediaSourceAVFObjC::layerOrVideoRenderer() const
+bool MediaPlayerPrivateMediaSourceAVFObjC::hasVideoRenderer() const
+{
+    return layerOrVideoRenderer() && layerOrVideoRenderer()->renderer();
+}
+
+RefPtr<VideoMediaSampleRenderer> MediaPlayerPrivateMediaSourceAVFObjC::layerOrVideoRenderer() const
 {
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     switch (acceleratedVideoMode()) {
     case AcceleratedVideoMode::Layer:
     case AcceleratedVideoMode::StagedLayer:
-        return m_sampleBufferDisplayLayer.get();
+        return m_sampleBufferDisplayLayer;
     case AcceleratedVideoMode::VideoRenderer:
     case AcceleratedVideoMode::StagedVideoRenderer:
-        return m_sampleBufferVideoRenderer.get();
+        return m_sampleBufferVideoRenderer;
     }
 #else
-    return m_sampleBufferDisplayLayer.get();
+    return m_sampleBufferDisplayLayer;
 #endif
 }
 
@@ -1778,7 +1922,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setVideoTarget(const PlatformVideoTar
     if (!!videoTarget)
         m_usingLinearMediaPlayer = true;
     m_videoTarget = videoTarget;
-    updateDisplayLayerAndDecompressionSession();
+    updateDisplayLayer();
 }
 #endif
 
@@ -1788,12 +1932,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::isInFullscreenOrPictureInPictureChang
     ALWAYS_LOG(LOGIDENTIFIER, isInFullscreenOrPictureInPicture);
     if (!m_usingLinearMediaPlayer)
         return;
-    updateDisplayLayerAndDecompressionSession();
+    updateDisplayLayer();
 #else
     UNUSED_PARAM(isInFullscreenOrPictureInPicture);
 #endif
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

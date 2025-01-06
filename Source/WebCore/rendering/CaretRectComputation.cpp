@@ -31,6 +31,7 @@
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineIteratorTextBoxInlines.h"
+#include "InlineIteratorSVGTextBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LineSelection.h"
 #include "RenderBlockFlow.h"
@@ -82,11 +83,11 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
         break;
     case TextAlignMode::Justify:
     case TextAlignMode::Start:
-        if (!currentStyle.isLeftToRightDirection())
+        if (!currentStyle.writingMode().isBidiLTR())
             alignment = AlignRight;
         break;
     case TextAlignMode::End:
-        if (currentStyle.isLeftToRightDirection())
+        if (currentStyle.writingMode().isBidiLTR())
             alignment = AlignRight;
         break;
     }
@@ -96,7 +97,7 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
 
     switch (alignment) {
     case AlignLeft:
-        if (currentStyle.isLeftToRightDirection())
+        if (currentStyle.writingMode().isBidiLTR())
             x += textIndentOffset;
         break;
     case AlignCenter:
@@ -108,13 +109,13 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
         break;
     case AlignRight:
         x = maxX - caretWidth();
-        if (!currentStyle.isLeftToRightDirection())
+        if (!currentStyle.writingMode().isBidiLTR())
             x -= textIndentOffset;
         break;
     }
     x = std::min(x, std::max<LayoutUnit>(maxX - caretWidth(), 0));
 
-    auto lineHeight = renderer.lineHeight(true, currentStyle.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+    auto lineHeight = renderer.lineHeight(true, currentStyle.writingMode().isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
     auto height = std::min(lineHeight, LayoutUnit { currentStyle.metricsOfPrimaryFont().height() });
     auto y = renderer.borderAndPaddingBefore() + (lineHeight > height ? (lineHeight - height) / 2 : LayoutUnit { });
 
@@ -123,7 +124,7 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
     if (caretRectMode == CaretRectMode::ExpandToEndOfLine)
         rect.shiftMaxXEdgeTo(logicalWidth);
 
-    return currentStyle.isHorizontalWritingMode() ? rect : rect.transposedRect();
+    return currentStyle.writingMode().isHorizontal() ? rect : rect.transposedRect();
 }
 
 static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxIterator& lineBox, float logicalLeftPosition, CaretRectMode caretRectMode)
@@ -180,7 +181,7 @@ static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxI
     if (caretRectMode == CaretRectMode::ExpandToEndOfLine)
         rect.shiftMaxXEdgeTo(lineRight);
 
-    return root.style().isHorizontalWritingMode() ? rect : rect.transposedRect();
+    return root.writingMode().isHorizontal() ? rect : rect.transposedRect();
 }
 
 static LayoutRect computeCaretRectForText(const InlineBoxAndOffset& boxAndOffset, CaretRectMode caretRectMode)
@@ -225,18 +226,20 @@ static LayoutRect computeCaretRectForLineBreak(const InlineBoxAndOffset& boxAndO
 
 static LayoutRect computeCaretRectForSVGInlineText(const InlineBoxAndOffset& boxAndOffset, CaretRectMode)
 {
-    auto* box = boxAndOffset.box ? boxAndOffset.box->legacyInlineBox() : nullptr;
+    auto box = boxAndOffset.box;
     auto caretOffset = boxAndOffset.offset;
+    if (!is<InlineIterator::SVGTextBoxIterator>(box))
+        return { };
 
-    auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*box);
+    auto textBox = downcast<InlineIterator::SVGTextBoxIterator>(box);
     if (!textBox)
         return { };
 
-    if (caretOffset < textBox->start() || caretOffset > textBox->start() + textBox->len())
+    if (caretOffset < textBox->start() || caretOffset > textBox->start() + textBox->length())
         return { };
 
     // Use the edge of the selection rect to determine the caret rect.
-    if (caretOffset < textBox->start() + textBox->len()) {
+    if (caretOffset < textBox->start() + textBox->length()) {
         LayoutRect rect = textBox->localSelectionRect(caretOffset, caretOffset + 1);
         LayoutUnit x = textBox->isLeftToRightDirection() ? rect.x() : rect.maxX();
         return LayoutRect(x, rect.y(), caretWidth(), rect.height());
@@ -276,7 +279,7 @@ static LayoutRect computeCaretRectForBox(const RenderBox& renderer, const Inline
     //
     // FIXME: ignoring :first-line, missing good reason to take care of
     auto fontHeight = renderer.style().metricsOfPrimaryFont().height();
-    if (fontHeight > rect.height() || (!renderer.isReplacedOrInlineBlock() && !renderer.isRenderTable()))
+    if (fontHeight > rect.height() || (!renderer.isReplacedOrAtomicInline() && !renderer.isRenderTable()))
         rect.setHeight(fontHeight);
 
     // Move to local coords

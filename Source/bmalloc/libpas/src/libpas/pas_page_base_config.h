@@ -28,6 +28,7 @@
 
 #include "pas_lock.h"
 #include "pas_page_config_kind.h"
+#include "pas_page_config_size_category.h"
 #include "pas_page_kind.h"
 #include "pas_page_granule_use_count.h"
 #include "pas_utils.h"
@@ -73,6 +74,9 @@ struct pas_page_base_config {
     /* What page_kind to put in pages allocated by this config. This happens to tell if the config
        is a segregated or a bitfit config. */
     pas_page_config_kind page_config_kind;
+
+    /* The broad object size of pages allocated by this config, as in small or medium or large. */
+    pas_page_config_size_category page_config_size_category;
 
     /* Smallest small object size and the minimum alignment. */
     uint8_t min_align_shift;

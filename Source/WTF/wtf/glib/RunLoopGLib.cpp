@@ -96,13 +96,13 @@ RunLoop::~RunLoop()
 
 void RunLoop::run()
 {
-    RunLoop& runLoop = RunLoop::current();
-    GMainContext* mainContext = runLoop.m_mainContext.get();
+    Ref runLoop = RunLoop::current();
+    GMainContext* mainContext = runLoop->m_mainContext.get();
 
     // The innermost main loop should always be there.
-    ASSERT(!runLoop.m_mainLoops.isEmpty());
+    ASSERT(!runLoop->m_mainLoops.isEmpty());
 
-    GMainLoop* innermostLoop = runLoop.m_mainLoops[0].get();
+    GMainLoop* innermostLoop = runLoop->m_mainLoops[0].get();
     if (!g_main_loop_is_running(innermostLoop)) {
         g_main_context_push_thread_default(mainContext);
         g_main_loop_run(innermostLoop);
@@ -112,13 +112,13 @@ void RunLoop::run()
 
     // Create and run a nested loop if the innermost one was already running.
     GMainLoop* nestedMainLoop = g_main_loop_new(mainContext, FALSE);
-    runLoop.m_mainLoops.append(adoptGRef(nestedMainLoop));
+    runLoop->m_mainLoops.append(adoptGRef(nestedMainLoop));
 
     g_main_context_push_thread_default(mainContext);
     g_main_loop_run(nestedMainLoop);
     g_main_context_pop_thread_default(mainContext);
 
-    runLoop.m_mainLoops.removeLast();
+    runLoop->m_mainLoops.removeLast();
 }
 
 void RunLoop::stop()
@@ -157,8 +157,8 @@ void RunLoop::notify(RunLoop::Event event, const char* name)
     });
 }
 
-RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
-    : m_runLoop(runLoop)
+RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop)
+    : m_runLoop(WTFMove(runLoop))
     , m_source(adoptGRef(g_source_new(&RunLoop::s_runLoopSourceFunctions, sizeof(RunLoopSource))))
 {
     auto& runLoopSource = *reinterpret_cast<RunLoopSource*>(m_source.get());

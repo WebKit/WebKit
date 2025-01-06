@@ -30,6 +30,7 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include <WebKit/WKDownloadRef.h>
+#include <wtf/StdLibExtras.h>
 
 namespace TestWebKitAPI {
 
@@ -50,7 +51,7 @@ static WKStringRef decideDestinationWithSuggestedFilename(WKDownloadRef download
 static void navigationResponseDidBecomeDownload(WKPageRef page, WKNavigationResponseRef navigationResponse, WKDownloadRef download, const void* clientInfo)
 {
     WKDownloadClientV0 client;
-    memset(&client, 0, sizeof(client));
+    zeroBytes(client);
     client.base.version = 0;
     client.decideDestinationWithResponse = decideDestinationWithSuggestedFilename;
     WKDownloadSetClient(download, &client.base);
@@ -59,7 +60,7 @@ static void navigationResponseDidBecomeDownload(WKPageRef page, WKNavigationResp
 static void setPagePolicyClient(WKPageRef page)
 {
     WKPageNavigationClientV3 navigationClient;
-    memset(&navigationClient, 0, sizeof(navigationClient));
+    zeroBytes(navigationClient);
 
     navigationClient.base.version = 3;
     navigationClient.decidePolicyForNavigationResponse = decidePolicyForNavigationResponse;

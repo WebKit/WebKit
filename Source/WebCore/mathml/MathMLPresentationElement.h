@@ -34,7 +34,8 @@
 namespace WebCore {
 
 class MathMLPresentationElement : public MathMLElement {
-    WTF_MAKE_ISO_ALLOCATED(MathMLPresentationElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MathMLPresentationElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLPresentationElement);
 public:
     static Ref<MathMLPresentationElement> create(const QualifiedName& tagName, Document&);
 

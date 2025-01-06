@@ -1204,4 +1204,10 @@ PASS XHR: stun://[:1] should throw
 PASS sendBeacon(): stun://[:1] should throw
 PASS Location's href: stun://[:1] should throw
 PASS window.open(): stun://[:1] should throw
+PASS URL's constructor's base argument: non-special://host\a should throw
+PASS URL's href: non-special://host\a should throw
+PASS XHR: non-special://host\a should throw
+PASS sendBeacon(): non-special://host\a should throw
+PASS Location's href: non-special://host\a should throw
+PASS window.open(): non-special://host\a should throw
 

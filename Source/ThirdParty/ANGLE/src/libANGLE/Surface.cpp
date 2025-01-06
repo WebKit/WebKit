@@ -396,9 +396,9 @@ EGLint Surface::isPostSubBufferSupported() const
     return mPostSubBufferRequested && mImplementation->isPostSubBufferSupported();
 }
 
-void Surface::setSwapInterval(EGLint interval)
+void Surface::setSwapInterval(const Display *display, EGLint interval)
 {
-    mImplementation->setSwapInterval(interval);
+    mImplementation->setSwapInterval(display, interval);
 }
 
 void Surface::setMipmapLevel(EGLint level)

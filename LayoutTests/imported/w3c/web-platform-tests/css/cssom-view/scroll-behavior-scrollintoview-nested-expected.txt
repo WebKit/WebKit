@@ -1,3 +1,4 @@
 
+PASS Make sure the page is ready for animation.
 PASS scrollIntoView with nested elements with different scroll-behavior
 

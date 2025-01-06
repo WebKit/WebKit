@@ -28,7 +28,8 @@
 namespace WebCore {
 
 class HTMLHeadElement final : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLHeadElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLHeadElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLHeadElement);
 public:
     static Ref<HTMLHeadElement> create(Document&);
     static Ref<HTMLHeadElement> create(const QualifiedName&, Document&);

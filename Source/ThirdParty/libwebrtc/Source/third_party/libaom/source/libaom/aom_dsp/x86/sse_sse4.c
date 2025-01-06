@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -19,7 +19,7 @@
 #include "aom/aom_integer.h"
 #include "aom_dsp/x86/synonyms.h"
 
-static INLINE int64_t summary_all_sse4(const __m128i *sum_all) {
+static inline int64_t summary_all_sse4(const __m128i *sum_all) {
   int64_t sum;
   const __m128i sum0 = _mm_cvtepu32_epi64(*sum_all);
   const __m128i sum1 = _mm_cvtepu32_epi64(_mm_srli_si128(*sum_all, 8));
@@ -30,7 +30,7 @@ static INLINE int64_t summary_all_sse4(const __m128i *sum_all) {
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE void summary_32_sse4(const __m128i *sum32, __m128i *sum64) {
+static inline void summary_32_sse4(const __m128i *sum32, __m128i *sum64) {
   const __m128i sum0 = _mm_cvtepu32_epi64(*sum32);
   const __m128i sum1 = _mm_cvtepu32_epi64(_mm_srli_si128(*sum32, 8));
   *sum64 = _mm_add_epi64(sum0, *sum64);
@@ -38,7 +38,7 @@ static INLINE void summary_32_sse4(const __m128i *sum32, __m128i *sum64) {
 }
 #endif
 
-static INLINE void sse_w16_sse4_1(__m128i *sum, const uint8_t *a,
+static inline void sse_w16_sse4_1(__m128i *sum, const uint8_t *a,
                                   const uint8_t *b) {
   const __m128i v_a0 = xx_loadu_128(a);
   const __m128i v_b0 = xx_loadu_128(b);
@@ -52,7 +52,7 @@ static INLINE void sse_w16_sse4_1(__m128i *sum, const uint8_t *a,
   *sum = _mm_add_epi32(*sum, _mm_madd_epi16(v_d01_w, v_d01_w));
 }
 
-static INLINE void sse4x2_sse4_1(const uint8_t *a, int a_stride,
+static inline void sse4x2_sse4_1(const uint8_t *a, int a_stride,
                                  const uint8_t *b, int b_stride, __m128i *sum) {
   const __m128i v_a0 = xx_loadl_32(a);
   const __m128i v_a1 = xx_loadl_32(a + a_stride);
@@ -64,7 +64,7 @@ static INLINE void sse4x2_sse4_1(const uint8_t *a, int a_stride,
   *sum = _mm_add_epi32(*sum, _mm_madd_epi16(v_d_w, v_d_w));
 }
 
-static INLINE void sse8_sse4_1(const uint8_t *a, const uint8_t *b,
+static inline void sse8_sse4_1(const uint8_t *a, const uint8_t *b,
                                __m128i *sum) {
   const __m128i v_a0 = xx_loadl_64(a);
   const __m128i v_b0 = xx_loadl_64(b);
@@ -179,7 +179,7 @@ int64_t aom_sse_sse4_1(const uint8_t *a, int a_stride, const uint8_t *b,
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE void highbd_sse_w4x2_sse4_1(__m128i *sum, const uint16_t *a,
+static inline void highbd_sse_w4x2_sse4_1(__m128i *sum, const uint16_t *a,
                                           int a_stride, const uint16_t *b,
                                           int b_stride) {
   const __m128i v_a0 = xx_loadl_64(a);
@@ -192,7 +192,7 @@ static INLINE void highbd_sse_w4x2_sse4_1(__m128i *sum, const uint16_t *a,
   *sum = _mm_add_epi32(*sum, _mm_madd_epi16(v_d_w, v_d_w));
 }
 
-static INLINE void highbd_sse_w8_sse4_1(__m128i *sum, const uint16_t *a,
+static inline void highbd_sse_w8_sse4_1(__m128i *sum, const uint16_t *a,
                                         const uint16_t *b) {
   const __m128i v_a_w = xx_loadu_128(a);
   const __m128i v_b_w = xx_loadu_128(b);

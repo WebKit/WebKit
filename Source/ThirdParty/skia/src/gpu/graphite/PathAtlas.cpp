@@ -199,8 +199,13 @@ void PathAtlas::DrawAtlasMgr::evict(PlotLocator plotLocator) {
     }
 }
 
-void PathAtlas::DrawAtlasMgr::postFlush(Recorder* recorder) {
-    fDrawAtlas->compact(recorder->priv().tokenTracker()->nextFlushToken());
+void PathAtlas::DrawAtlasMgr::evictAll() {
+    fDrawAtlas->evictAllPlots();
+    SkASSERT(fShapeCache.empty());
+}
+
+void PathAtlas::DrawAtlasMgr::compact(Recorder* recorder, bool forceCompact) {
+    fDrawAtlas->compact(recorder->priv().tokenTracker()->nextFlushToken(), forceCompact);
 }
 
 }  // namespace skgpu::graphite

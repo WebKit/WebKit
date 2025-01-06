@@ -16,8 +16,8 @@
 
 #include <deque>
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -62,7 +62,7 @@ class RTC_EXPORT RateStatistics {
   // from a monotonic clock. Ie, it doesn't matter if this call moves the
   // window, since any subsequent call to Update or Rate would still have moved
   // the window as much or more.
-  absl::optional<int64_t> Rate(int64_t now_ms) const;
+  std::optional<int64_t> Rate(int64_t now_ms) const;
 
   // Update the size of the averaging window. The maximum allowed value for
   // window_size_ms is max_window_size_ms as supplied in the constructor.

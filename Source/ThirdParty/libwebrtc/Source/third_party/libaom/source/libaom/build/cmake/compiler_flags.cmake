@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2016, Alliance for Open Media. All rights reserved
+# Copyright (c) 2016, Alliance for Open Media. All rights reserved.
 #
 # This source code is subject to the terms of the BSD 2 Clause License and the
 # Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License was
@@ -176,11 +176,11 @@ function(require_cxx_flag cxx_flag update_cxx_flags)
   endif()
 
   unset(HAVE_CXX_FLAG CACHE)
-  message("Checking C compiler flag support for: " ${cxx_flag})
+  message("Checking C++ compiler flag support for: " ${cxx_flag})
   check_cxx_compiler_flag("${cxx_flag}" HAVE_CXX_FLAG)
   if(NOT HAVE_CXX_FLAG)
     message(
-      FATAL_ERROR "${PROJECT_NAME} requires support for C flag: ${cxx_flag}.")
+      FATAL_ERROR "${PROJECT_NAME} requires support for C++ flag: ${cxx_flag}.")
   endif()
 
   if(NOT "${AOM_EXE_LINKER_FLAGS}" STREQUAL "")

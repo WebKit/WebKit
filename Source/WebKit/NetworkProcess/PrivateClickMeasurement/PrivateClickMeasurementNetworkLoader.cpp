@@ -29,10 +29,14 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::PCM {
 
 #if !PLATFORM(COCOA)
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkLoader);
+
 void NetworkLoader::start(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, Callback&& completionHandler)
 {
     notImplemented();

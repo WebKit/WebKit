@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkerOrWorkletGlobalScope.h"
 
+#include "NoiseInjectionPolicy.h"
 #include "ScriptModuleLoader.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "WorkerEventLoop.h"
@@ -34,13 +35,13 @@
 #include "WorkerOrWorkletThread.h"
 #include "WorkerRunLoop.h"
 #include "WorkletGlobalScope.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
 
-WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, PAL::SessionID sessionID, Ref<JSC::VM>&& vm, ReferrerPolicy referrerPolicy, WorkerOrWorkletThread* thread, std::optional<uint64_t> noiseInjectionHashSalt, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, ScriptExecutionContextIdentifier contextIdentifier)
+WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, PAL::SessionID sessionID, Ref<JSC::VM>&& vm, ReferrerPolicy referrerPolicy, WorkerOrWorkletThread* thread, std::optional<uint64_t> noiseInjectionHashSalt, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
     : ScriptExecutionContext(Type::WorkerOrWorkletGlobalScope, contextIdentifier)
     , m_script(makeUnique<WorkerOrWorkletScriptController>(type, WTFMove(vm), this))
     , m_moduleLoader(makeUnique<ScriptModuleLoader>(this, ScriptModuleLoader::OwnerType::WorkerOrWorklet))
@@ -85,6 +86,11 @@ void WorkerOrWorkletGlobalScope::clearScript()
 JSC::VM& WorkerOrWorkletGlobalScope::vm()
 {
     return script()->vm();
+}
+
+JSC::VM* WorkerOrWorkletGlobalScope::vmIfExists() const
+{
+    return &script()->vm();
 }
 
 void WorkerOrWorkletGlobalScope::disableEval(const String& errorMessage)
@@ -135,6 +141,16 @@ void WorkerOrWorkletGlobalScope::postTaskForMode(Task&& task, const String& mode
 {
     ASSERT(workerOrWorkletThread());
     workerOrWorkletThread()->runLoop().postTaskForMode(WTFMove(task), mode);
+}
+
+OptionSet<NoiseInjectionPolicy> WorkerOrWorkletGlobalScope::noiseInjectionPolicies() const
+{
+    OptionSet<NoiseInjectionPolicy> policies;
+    if (m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::FingerprintingProtections))
+        policies.add(NoiseInjectionPolicy::Minimal);
+    if (m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::ScriptTelemetry))
+        policies.add(NoiseInjectionPolicy::Enhanced);
+    return policies;
 }
 
 } // namespace WebCore

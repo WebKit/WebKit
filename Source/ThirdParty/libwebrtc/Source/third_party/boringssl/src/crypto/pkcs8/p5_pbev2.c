@@ -144,7 +144,7 @@ static int add_cipher_oid(CBB *out, int nid) {
 }
 
 static int pkcs5_pbe2_cipher_init(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
-                                  const EVP_MD *pbkdf2_md, unsigned iterations,
+                                  const EVP_MD *pbkdf2_md, uint32_t iterations,
                                   const char *pass, size_t pass_len,
                                   const uint8_t *salt, size_t salt_len,
                                   const uint8_t *iv, size_t iv_len, int enc) {
@@ -162,7 +162,7 @@ static int pkcs5_pbe2_cipher_init(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
 }
 
 int PKCS5_pbe2_encrypt_init(CBB *out, EVP_CIPHER_CTX *ctx,
-                            const EVP_CIPHER *cipher, unsigned iterations,
+                            const EVP_CIPHER *cipher, uint32_t iterations,
                             const char *pass, size_t pass_len,
                             const uint8_t *salt, size_t salt_len) {
   int cipher_nid = EVP_CIPHER_nid(cipher);
@@ -310,7 +310,7 @@ int PKCS5_pbe2_decrypt_init(const struct pbe_suite *suite, EVP_CIPHER_CTX *ctx,
     return 0;
   }
 
-  return pkcs5_pbe2_cipher_init(ctx, cipher, md, (unsigned)iterations, pass,
+  return pkcs5_pbe2_cipher_init(ctx, cipher, md, (uint32_t)iterations, pass,
                                 pass_len, CBS_data(&salt), CBS_len(&salt),
                                 CBS_data(&iv), CBS_len(&iv), 0 /* decrypt */);
 }

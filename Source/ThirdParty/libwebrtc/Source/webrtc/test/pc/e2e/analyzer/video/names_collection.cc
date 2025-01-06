@@ -10,10 +10,10 @@
 
 #include "test/pc/e2e/analyzer/video/names_collection.h"
 
+#include <optional>
 #include <set>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 
 namespace webrtc {
 
@@ -65,15 +65,14 @@ size_t NamesCollection::AddIfAbsent(absl::string_view name) {
   return out;
 }
 
-absl::optional<size_t> NamesCollection::RemoveIfPresent(
-    absl::string_view name) {
+std::optional<size_t> NamesCollection::RemoveIfPresent(absl::string_view name) {
   auto it = index_.find(name);
   if (it == index_.end()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   size_t index = it->second;
   if (removed_[index]) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   removed_[index] = true;
   size_--;

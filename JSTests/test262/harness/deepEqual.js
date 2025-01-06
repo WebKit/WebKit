@@ -14,56 +14,122 @@ assert.deepEqual = function(actual, expected, message) {
   );
 };
 
+let getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+let join = arr => arr.join(', ');
+function stringFromTemplate(strings, ...subs) {
+  let parts = strings.map((str, i) => `${i === 0 ? '' : subs[i - 1]}${str}`);
+  return parts.join('');
+}
+function escapeKey(key) {
+  if (typeof key === 'symbol') return `[${String(key)}]`;
+  if (/^[a-zA-Z0-9_$]+$/.test(key)) return key;
+  return assert._formatIdentityFreeValue(key);
+}
+
 assert.deepEqual.format = function(value, seen) {
-  switch (typeof value) {
+  let basic = assert._formatIdentityFreeValue(value);
+  if (basic) return basic;
+  switch (value === null ? 'null' : typeof value) {
     case 'string':
-      return typeof JSON !== "undefined" ? JSON.stringify(value) : `"${value}"`;
+    case 'bigint':
     case 'number':
     case 'boolean':
-    case 'symbol':
-    case 'bigint':
-      return value.toString();
     case 'undefined':
-      return 'undefined';
+    case 'null':
+      assert(false, 'values without identity should use basic formatting');
+      break;
+    case 'symbol':
     case 'function':
-      return `[Function${value.name ? `: ${value.name}` : ''}]`;
     case 'object':
-      if (value === null) return 'null';
-      if (value instanceof Date) return `Date "${value.toISOString()}"`;
-      if (value instanceof RegExp) return value.toString();
-      if (!seen) {
-        seen = {
-          counter: 0,
-          map: new Map()
-        };
-      }
-
-      let usage = seen.map.get(value);
-      if (usage) {
-        usage.used = true;
-        return `[Ref: #${usage.id}]`;
-      }
-
-      usage = { id: ++seen.counter, used: false };
-      seen.map.set(value, usage);
-
-      if (typeof Set !== "undefined" && value instanceof Set) {
-        return `Set {${Array.from(value).map(value => assert.deepEqual.format(value, seen)).join(', ')}}${usage.used ? ` as #${usage.id}` : ''}`;
-      }
-      if (typeof Map !== "undefined" && value instanceof Map) {
-        return `Map {${Array.from(value).map(pair => `${assert.deepEqual.format(pair[0], seen)} => ${assert.deepEqual.format(pair[1], seen)}}`).join(', ')}}${usage.used ? ` as #${usage.id}` : ''}`;
-      }
-      if (Array.isArray ? Array.isArray(value) : value instanceof Array) {
-        return `[${value.map(value => assert.deepEqual.format(value, seen)).join(', ')}]${usage.used ? ` as #${usage.id}` : ''}`;
-      }
-      let tag = Symbol.toStringTag in value ? value[Symbol.toStringTag] : 'Object';
-      if (tag === 'Object' && Object.getPrototypeOf(value) === null) {
-        tag = '[Object: null prototype]';
-      }
-      return `${tag ? `${tag} ` : ''}{ ${Object.keys(value).map(key => `${key.toString()}: ${assert.deepEqual.format(value[key], seen)}`).join(', ')} }${usage.used ? ` as #${usage.id}` : ''}`;
+      break;
     default:
       return typeof value;
   }
+
+  if (!seen) {
+    seen = {
+      counter: 0,
+      map: new Map()
+    };
+  }
+  let usage = seen.map.get(value);
+  if (usage) {
+    usage.used = true;
+    return `ref #${usage.id}`;
+  }
+  usage = { id: ++seen.counter, used: false };
+  seen.map.set(value, usage);
+
+  // Properly communicating multiple references requires deferred rendering of
+  // all identity-bearing values until the outermost format call finishes,
+  // because the current value can also in appear in a not-yet-visited part of
+  // the object graph (which, when visited, will update the usage object).
+  //
+  // To preserve readability of the desired output formatting, we accomplish
+  // this deferral using tagged template literals.
+  // Evaluation closes over the usage object and returns a function that accepts
+  // "mapper" arguments for rendering the corresponding substitution values and
+  // returns an object with only a toString method which will itself be invoked
+  // when trying to use the result as a string in assert.deepEqual.
+  //
+  // For convenience, any absent mapper is presumed to be `String`, and the
+  // function itself has a toString method that self-invokes with no mappers
+  // (allowing returning the function directly when every mapper is `String`).
+  function lazyResult(strings, ...subs) {
+    function acceptMappers(...mappers) {
+      function toString() {
+        let renderings = subs.map((sub, i) => (mappers[i] || String)(sub));
+        let rendered = stringFromTemplate(strings, ...renderings);
+        if (usage.used) rendered += ` as #${usage.id}`;
+        return rendered;
+      }
+
+      return { toString };
+    }
+
+    acceptMappers.toString = () => String(acceptMappers());
+    return acceptMappers;
+  }
+
+  let format = assert.deepEqual.format;
+  function lazyString(strings, ...subs) {
+    return { toString: () => stringFromTemplate(strings, ...subs) };
+  }
+
+  if (typeof value === 'function') {
+    return lazyResult`function${value.name ? ` ${String(value.name)}` : ''}`;
+  }
+  if (typeof value !== 'object') {
+    // probably a symbol
+    return lazyResult`${value}`;
+  }
+  if (Array.isArray ? Array.isArray(value) : value instanceof Array) {
+    return lazyResult`[${value.map(value => format(value, seen))}]`(join);
+  }
+  if (value instanceof Date) {
+    return lazyResult`Date(${format(value.toISOString(), seen)})`;
+  }
+  if (value instanceof Error) {
+    return lazyResult`error ${value.name || 'Error'}(${format(value.message, seen)})`;
+  }
+  if (value instanceof RegExp) {
+    return lazyResult`${value}`;
+  }
+  if (typeof Map !== "undefined" && value instanceof Map) {
+    let contents = Array.from(value).map(pair => lazyString`${format(pair[0], seen)} => ${format(pair[1], seen)}`);
+    return lazyResult`Map {${contents}}`(join);
+  }
+  if (typeof Set !== "undefined" && value instanceof Set) {
+    let contents = Array.from(value).map(value => format(value, seen));
+    return lazyResult`Set {${contents}}`(join);
+  }
+
+  let tag = Symbol.toStringTag && Symbol.toStringTag in value
+    ? value[Symbol.toStringTag]
+    : Object.getPrototypeOf(value) === null ? '[Object: null prototype]' : 'Object';
+  let keys = Reflect.ownKeys(value).filter(key => getOwnPropertyDescriptor(value, key).enumerable);
+  let contents = keys.map(key => lazyString`${escapeKey(key)}: ${format(value[key], seen)}`);
+  return lazyResult`${tag ? `${tag} ` : ''}{${contents}}`(String, join);
 };
 
 assert.deepEqual._compare = (function () {

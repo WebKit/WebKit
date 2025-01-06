@@ -15,6 +15,7 @@
     "UnexpectedUnencryptedExtension-Client-TLS13": "Fuzzer mode will not read the peer's alert as a MAC error",
     "UnknownUnencryptedExtension-Client-TLS13": "Fuzzer mode will not read the peer's alert as a MAC error",
     "WrongMessageType-TLS13-ServerHello-*": "Fuzzer mode will not read the peer's alert as a MAC error",
+    "CurveTest-Invalid-*-Client-*-TLS13": "Fuzzer mode will not read the peer's alert as a MAC error",
 
     "BadECDSA-*": "Fuzzer mode always accepts a signature.",
     "*-InvalidSignature-*": "Fuzzer mode always accepts a signature.",
@@ -48,6 +49,9 @@
     "*-TicketAgeSkew-*-Reject*": "Trial decryption does not work with the NULL cipher.",
     "*EarlyDataRejected*": "Trial decryption does not work with the NULL cipher.",
     "ALPS-EarlyData-Mismatch-*": "Trial decryption does not work with the NULL cipher.",
+
+    "UnencryptedEncryptedExtensions": "The NULL cipher will not notice that the peer didn't change keys.",
+    "AppDataBeforeTLS13KeyChange*": "The NULL cipher will not notice that the peer didn't change keys.",
 
     "Renegotiate-Client-BadExt*": "Fuzzer mode does not check renegotiation_info.",
 

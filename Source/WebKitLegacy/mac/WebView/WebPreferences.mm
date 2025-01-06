@@ -45,7 +45,6 @@
 #import <WebCore/AudioSession.h>
 #import <WebCore/MediaPlayerEnums.h>
 #import <WebCore/NetworkStorageSession.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -56,6 +55,7 @@
 #import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 using namespace WebCore;
@@ -655,6 +655,16 @@ public:
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedLongLong:value] forKey:_key];
     [self _postPreferencesChangedNotification];
+}
+
+- (BOOL)_useSystemAppearance
+{
+    return [self _boolValueForKey: WebKitUseSystemAppearancePreferenceKey];
+}
+
+- (void)_setUseSystemAppearance:(BOOL)flag
+{
+    return [self _setBoolValue:flag forKey: WebKitUseSystemAppearancePreferenceKey];
 }
 
 - (NSString *)standardFontFamily
@@ -2715,6 +2725,17 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:webSQLEnabled forKey:WebKitWebSQLEnabledPreferenceKey];
 }
 
+- (BOOL)siteSpecificQuirksModeEnabled
+{
+    return [self _boolValueForKey:WebKitSiteSpecificQuirksModeEnabledPreferenceKey];
+}
+
+- (void)setSiteSpecificQuirksModeEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitSiteSpecificQuirksModeEnabledPreferenceKey];
+}
+
+
 @end
 
 @implementation WebPreferences (WebInternal)
@@ -2814,16 +2835,6 @@ static RetainPtr<NSString>& classIBCreatorID()
 - (void)setRequestIdleCallbackEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitRequestIdleCallbackEnabledPreferenceKey];
-}
-
-- (BOOL)highlightAPIEnabled
-{
-    return [self _boolValueForKey:WebKitHighlightAPIEnabledPreferenceKey];
-}
-
-- (void)setHighlightAPIEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitHighlightAPIEnabledPreferenceKey];
 }
 
 - (BOOL)asyncClipboardAPIEnabled
@@ -3283,6 +3294,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 }
 
 - (void)setCSSIndividualTransformPropertiesEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)highlightAPIEnabled
+{
+    return YES;
+}
+
+- (void)setHighlightAPIEnabled:(BOOL)flag
 {
 }
 

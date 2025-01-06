@@ -28,11 +28,13 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include <wtf/StdLibExtras.h>
+
 namespace WebCore::ContentExtensions {
 
 String deserializeString(std::span<const uint8_t> span)
 {
-    auto serializedLength = *reinterpret_cast<const uint32_t*>(span.data());
+    auto serializedLength = stringSerializedLength(span);
     return String::fromUTF8(span.subspan(sizeof(uint32_t), serializedLength - sizeof(uint32_t)));
 }
 
@@ -41,13 +43,13 @@ void serializeString(Vector<uint8_t>& actions, const String& string)
     auto utf8 = string.utf8();
     uint32_t serializedLength = sizeof(uint32_t) + utf8.length();
     actions.reserveCapacity(actions.size() + serializedLength);
-    actions.append(std::span { reinterpret_cast<const uint8_t*>(&serializedLength), sizeof(serializedLength) });
+    actions.append(asByteSpan(serializedLength));
     actions.append(utf8.span());
 }
 
 size_t stringSerializedLength(std::span<const uint8_t> span)
 {
-    return *reinterpret_cast<const uint32_t*>(span.data());
+    return reinterpretCastSpanStartTo<const uint32_t>(span);
 }
 
 } // namespace WebCore::ContentExtensions

@@ -35,7 +35,7 @@ namespace WebCore {
 class SVGRectElement;
 
 class RenderSVGRect final : public RenderSVGShape {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGRect);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGRect);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGRect);
 public:
     RenderSVGRect(SVGRectElement&, RenderStyle&&);

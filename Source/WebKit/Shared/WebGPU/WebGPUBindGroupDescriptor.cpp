@@ -41,9 +41,7 @@ std::optional<BindGroupDescriptor> ConvertToBackingContext::convertToBacking(con
     if (!base)
         return std::nullopt;
 
-    auto identifier = convertToBacking(bindGroupDescriptor.layout);
-    if (!identifier)
-        return std::nullopt;
+    auto identifier = convertToBacking(bindGroupDescriptor.protectedLayout().get());
 
     Vector<BindGroupEntry> entries;
     entries.reserveInitialCapacity(bindGroupDescriptor.entries.size());
@@ -63,7 +61,7 @@ std::optional<WebCore::WebGPU::BindGroupDescriptor> ConvertFromBackingContext::c
     if (!base)
         return std::nullopt;
 
-    auto* bindGroupLayout = convertBindGroupLayoutFromBacking(bindGroupDescriptor.bindGroupLayout);
+    WeakPtr bindGroupLayout = convertBindGroupLayoutFromBacking(bindGroupDescriptor.bindGroupLayout);
     if (!bindGroupLayout)
         return std::nullopt;
 

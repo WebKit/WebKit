@@ -1,0 +1,25 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- This is new test added with the accessibilityThreadTextApisEnabled effort. After accessibilityThreadTextApisEnabled is enabled by default, we should move it into LayoutTests/accessibility/mac. -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<blockquote id="quote">Foo</blockquote>
+
+<script>
+var output = "This test ensures we represent AXBlockQuoteLevel in attributed strings.\n\n";
+
+if (window.accessibilityController) {
+    var fooText = accessibilityController.accessibleElementById("quote").childAtIndex(0);
+    var markerRange = fooText.textMarkerRangeForElement(fooText);
+    output += expect("fooText.attributedStringForTextMarkerRangeContainsAttribute('AXBlockQuoteLevel', markerRange)", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

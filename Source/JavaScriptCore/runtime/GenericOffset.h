@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@ namespace JSC {
 // A mixin for creating the various kinds of variable offsets that our engine supports.
 template<typename T>
 class GenericOffset {
-    WTF_MAKE_TZONE_ALLOCATED(GenericOffset);
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(GenericOffset);
 public:
     static constexpr unsigned invalidOffset = UINT_MAX;
     
@@ -99,5 +99,7 @@ public:
 private:
     unsigned m_offset;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename T>, GenericOffset<T>);
 
 } // namespace JSC

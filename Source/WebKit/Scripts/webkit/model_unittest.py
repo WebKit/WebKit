@@ -28,10 +28,7 @@
 import os
 import sys
 import unittest
-if sys.version_info > (3, 0):
-    from io import StringIO
-else:
-    from StringIO import StringIO
+from io import StringIO
 module_directory = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.abspath(os.path.join(module_directory, os.path.pardir)))
 from webkit import model  # noqa: E402

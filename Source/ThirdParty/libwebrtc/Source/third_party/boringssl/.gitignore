@@ -11,6 +11,10 @@ rust/Cargo.lock
 rust/bssl-crypto/Cargo.lock
 rust/target
 
+src/fuzz/
+src/pki/testdata
+src/third_party
+
 util/bot/android_ndk
 util/bot/android_sdk/public
 util/bot/cmake

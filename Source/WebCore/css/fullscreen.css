@@ -54,6 +54,17 @@ video:fullscreen {
     -webkit-cursor-visibility: auto-hide;
 }
 
+#if defined(WTF_PLATFORM_APPLETV) && WTF_PLATFORM_APPLETV
+video:fullscreen {
+    /*
+     * FIXME: Adding !important improves compatibility when placing video elements in element
+     * fullscreen on tvOS, but we should add an -internal pseudo-class to contain styles that are
+     * specific to video using element fullscreen.
+     */
+    object-fit: contain !important;
+}
+#endif
+
 img:fullscreen {
     width: auto;
     height: 100%;
@@ -77,6 +88,7 @@ iframe:fullscreen {
     max-height: 100vh !important;
     border-radius: 20px !important;
     pointer-events: auto !important;
+    cursor: auto !important;
 }
 
 *|*:not(:root):-internal-in-window-fullscreen::backdrop {

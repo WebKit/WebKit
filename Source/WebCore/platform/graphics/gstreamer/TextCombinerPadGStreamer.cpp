@@ -46,7 +46,7 @@ enum {
     N_PROPERTIES,
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 #define webkit_text_combiner_pad_parent_class parent_class
 WEBKIT_DEFINE_TYPE(WebKitTextCombinerPad, webkit_text_combiner_pad, GST_TYPE_GHOST_PAD);
@@ -159,7 +159,7 @@ static void webkit_text_combiner_pad_class_init(WebKitTextCombinerPadClass* klas
         g_param_spec_object("inner-combiner-pad", nullptr, nullptr, GST_TYPE_PAD,
             static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
-    g_object_class_install_properties(gobjectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(gobjectClass, N_PROPERTIES, sObjProperties.data());
 }
 
 GstPad* webKitTextCombinerPadLeakInternalPadRef(WebKitTextCombinerPad* pad)

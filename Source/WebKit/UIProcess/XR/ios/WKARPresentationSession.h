@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)terminate;
 @end
 
-id<WKARPresentationSession> createPresesentationSession(ARSession *, WKARPresentationSessionDescriptor *);
+id<WKARPresentationSession> createPresentationSession(ARSession *, WKARPresentationSessionDescriptor *);
 
 NS_ASSUME_NONNULL_END
 

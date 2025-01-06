@@ -1,0 +1,21 @@
+<html>
+<head>
+    <script>
+        const anObject = new Int32Array();
+        anObject.buffer.transfer(1);
+        let config = {
+            codec: 'invalid',
+            description: anObject,
+        };
+        VideoDecoder.isConfigSupported(config);
+
+        function onLoad() {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+        }
+    </script>
+</head>
+<body onload="onLoad()">
+    <p>PASS</p>
+</body>
+</html>

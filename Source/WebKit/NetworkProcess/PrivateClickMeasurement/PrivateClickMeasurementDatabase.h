@@ -27,6 +27,8 @@
 
 #include "DatabaseUtilities.h"
 #include <WebCore/PrivateClickMeasurement.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -36,22 +38,18 @@ class Database;
 }
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PCM::Database> : std::true_type { };
-}
-
 namespace WebKit::PCM {
 
 struct DebugInfo;
 
 // This is created, used, and destroyed on the Store's queue.
-class Database : public DatabaseUtilities, public CanMakeWeakPtr<Database> {
-    WTF_MAKE_FAST_ALLOCATED;
+class Database : public DatabaseUtilities, public RefCountedAndCanMakeWeakPtr<Database> {
+    WTF_MAKE_TZONE_ALLOCATED(Database);
 public:
-    Database(const String& storageDirectory);
+    static Ref<Database> create(const String& storageDirectory);
+
     virtual ~Database();
-    
+
     using ApplicationBundleIdentifier = String;
 
     static void interruptAllDatabases();
@@ -76,6 +74,7 @@ private:
     using SourceEarliestTimeToSend = double;
     using DestinationEarliestTimeToSend = double;
 
+    Database(const String& storageDirectory);
     bool createSchema() final;
     void destroyStatements() final;
     std::pair<std::optional<UnattributedPrivateClickMeasurement>, std::optional<AttributedPrivateClickMeasurement>> findPrivateClickMeasurement(const WebCore::PCM::SourceSite&, const WebCore::PCM::AttributionDestinationSite&, const ApplicationBundleIdentifier&);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@
 #include "WasmCallingConvention.h"
 #include "WebAssemblyFunction.h"
 #include <cstdlib>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC { namespace DFG {
@@ -908,7 +909,7 @@ private:
                 if (codeSize > Options::maximumRegExpTestInlineCodesize())
                     return false;
 
-                unsigned alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), inlineCodeStats8Bit.stackSize());
+                unsigned alignedFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(inlineCodeStats8Bit.stackSize());
 
                 if (alignedFrameSize)
                     m_graph.m_parameterSlots = std::max(m_graph.m_parameterSlots, argumentCountForStackSize(alignedFrameSize));
@@ -1106,7 +1107,7 @@ private:
 
             size_t dollarSignPosition = replace.find('$');
             if (dollarSignPosition != WTF::notFound) {
-                StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
+                StringBuilder builder(OverflowPolicy::RecordOverflow);
                 int ovector[2] = { static_cast<int>(matchStart),  static_cast<int>(matchEnd) };
                 substituteBackreferencesSlow(builder, replace, string, ovector, nullptr, dollarSignPosition);
                 if (UNLIKELY(builder.hasOverflowed()))
@@ -1218,6 +1219,39 @@ private:
             break;
         }
 
+        case CompareStrictEq:
+        case SameValue:
+        case CompareEq:
+        case CompareLess:
+        case CompareLessEq:
+        case CompareGreater:
+        case CompareGreaterEq: {
+            if (m_node->child1().useKind() == UntypedUse && m_node->child2().useKind() == UntypedUse) {
+                if (m_node->op() == CompareEq || m_node->op() == CompareStrictEq || m_node->op() == SameValue) {
+                    if (Node::shouldSpeculateBoolean(m_node->child1().node(), m_node->child2().node())) {
+                        m_node->child1().setUseKind(BooleanUse);
+                        m_node->child2().setUseKind(BooleanUse);
+                        if (m_node->op() == SameValue)
+                            m_node->setOpAndDefaultFlags(CompareStrictEq);
+                        m_node->clearFlags(NodeMustGenerate);
+                        m_changed = true;
+                        break;
+                    }
+                }
+
+                if (Node::shouldSpeculateInt32(m_node->child1().node(), m_node->child2().node())) {
+                    m_node->child1().setUseKind(Int32Use);
+                    m_node->child2().setUseKind(Int32Use);
+                    if (m_node->op() == SameValue)
+                        m_node->setOpAndDefaultFlags(CompareStrictEq);
+                    m_node->clearFlags(NodeMustGenerate);
+                    m_changed = true;
+                    break;
+                }
+            }
+            break;
+        }
+
         case Call:
         case Construct:
         case TailCallInlinedCaller:
@@ -1257,10 +1291,9 @@ private:
                 auto* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(function);
                 if (!wasmFunction)
                     break;
-                const auto& typeDefinition = Wasm::TypeInformation::get(wasmFunction->typeIndex()).expand();
-                const auto& signature = *typeDefinition.as<Wasm::FunctionSignature>();
+                const auto& signature = Wasm::TypeInformation::getFunctionSignature(wasmFunction->typeIndex());
                 const Wasm::WasmCallingConvention& wasmCC = Wasm::wasmCallingConvention();
-                Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(typeDefinition);
+                Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(signature);
                 if (wasmCallInfo.argumentsOrResultsIncludeV128)
                     break;
 

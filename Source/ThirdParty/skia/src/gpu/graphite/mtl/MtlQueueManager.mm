@@ -26,7 +26,7 @@ const MtlSharedContext* MtlQueueManager::mtlSharedContext() const {
 }
 
 std::unique_ptr<CommandBuffer> MtlQueueManager::getNewCommandBuffer(
-        ResourceProvider* resourceProvider) {
+        ResourceProvider* resourceProvider, Protected) {
     MtlResourceProvider* mtlResourceProvider = static_cast<MtlResourceProvider*>(resourceProvider);
     auto cmdBuffer = MtlCommandBuffer::Make(fQueue.get(),
                                             this->mtlSharedContext(),
@@ -62,7 +62,7 @@ QueueManager::OutstandingSubmission MtlQueueManager::onSubmitToGpu() {
     return submission;
 }
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 void MtlQueueManager::startCapture() {
     if (@available(macOS 10.13, iOS 11.0, tvOS 11.0, *)) {
         // TODO: add newer Metal interface as well

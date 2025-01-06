@@ -107,20 +107,20 @@ PASS Screen interface: screen must inherit property "width" with the proper type
 PASS Screen interface: screen must inherit property "height" with the proper type
 PASS Screen interface: screen must inherit property "colorDepth" with the proper type
 PASS Screen interface: screen must inherit property "pixelDepth" with the proper type
-FAIL CaretPosition interface: existence and properties of interface object assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
-FAIL CaretPosition interface object length assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
-FAIL CaretPosition interface object name assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
-FAIL CaretPosition interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
-FAIL CaretPosition interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
-FAIL CaretPosition interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
-FAIL CaretPosition interface: attribute offsetNode assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
-FAIL CaretPosition interface: attribute offset assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
-FAIL CaretPosition interface: operation getClientRect() assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
-FAIL CaretPosition must be primary interface of document.caretPositionFromPoint(5, 5) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: document.caretPositionFromPoint is not a function. (In 'document.caretPositionFromPoint(5, 5)', 'document.caretPositionFromPoint' is undefined)"
-FAIL Stringification of document.caretPositionFromPoint(5, 5) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: document.caretPositionFromPoint is not a function. (In 'document.caretPositionFromPoint(5, 5)', 'document.caretPositionFromPoint' is undefined)"
-FAIL CaretPosition interface: document.caretPositionFromPoint(5, 5) must inherit property "offsetNode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: document.caretPositionFromPoint is not a function. (In 'document.caretPositionFromPoint(5, 5)', 'document.caretPositionFromPoint' is undefined)"
-FAIL CaretPosition interface: document.caretPositionFromPoint(5, 5) must inherit property "offset" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: document.caretPositionFromPoint is not a function. (In 'document.caretPositionFromPoint(5, 5)', 'document.caretPositionFromPoint' is undefined)"
-FAIL CaretPosition interface: document.caretPositionFromPoint(5, 5) must inherit property "getClientRect()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: document.caretPositionFromPoint is not a function. (In 'document.caretPositionFromPoint(5, 5)', 'document.caretPositionFromPoint' is undefined)"
+PASS CaretPosition interface: existence and properties of interface object
+PASS CaretPosition interface object length
+PASS CaretPosition interface object name
+PASS CaretPosition interface: existence and properties of interface prototype object
+PASS CaretPosition interface: existence and properties of interface prototype object's "constructor" property
+PASS CaretPosition interface: existence and properties of interface prototype object's @@unscopables property
+PASS CaretPosition interface: attribute offsetNode
+PASS CaretPosition interface: attribute offset
+PASS CaretPosition interface: operation getClientRect()
+PASS CaretPosition must be primary interface of document.caretPositionFromPoint(5, 5)
+PASS Stringification of document.caretPositionFromPoint(5, 5)
+PASS CaretPosition interface: document.caretPositionFromPoint(5, 5) must inherit property "offsetNode" with the proper type
+PASS CaretPosition interface: document.caretPositionFromPoint(5, 5) must inherit property "offset" with the proper type
+PASS CaretPosition interface: document.caretPositionFromPoint(5, 5) must inherit property "getClientRect()" with the proper type
 FAIL CSSPseudoElement interface: operation getBoxQuads(optional BoxQuadOptions) assert_own_property: self does not have own property "CSSPseudoElement" expected property "CSSPseudoElement" missing
 FAIL CSSPseudoElement interface: operation convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) assert_own_property: self does not have own property "CSSPseudoElement" expected property "CSSPseudoElement" missing
 FAIL CSSPseudoElement interface: operation convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) assert_own_property: self does not have own property "CSSPseudoElement" expected property "CSSPseudoElement" missing
@@ -283,7 +283,7 @@ PASS Window interface: window must inherit property "outerHeight" with the prope
 PASS Window interface: window must inherit property "devicePixelRatio" with the proper type
 PASS Document interface: operation elementFromPoint(double, double)
 PASS Document interface: operation elementsFromPoint(double, double)
-FAIL Document interface: operation caretPositionFromPoint(double, double) assert_own_property: interface prototype object missing non-static operation expected property "caretPositionFromPoint" missing
+PASS Document interface: operation caretPositionFromPoint(double, double)
 PASS Document interface: attribute scrollingElement
 FAIL Document interface: operation getBoxQuads(optional BoxQuadOptions) assert_own_property: interface prototype object missing non-static operation expected property "getBoxQuads" missing
 FAIL Document interface: operation convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertQuadFromNode" missing
@@ -293,8 +293,8 @@ PASS Document interface: document must inherit property "elementFromPoint(double
 PASS Document interface: calling elementFromPoint(double, double) on document with too few arguments must throw TypeError
 PASS Document interface: document must inherit property "elementsFromPoint(double, double)" with the proper type
 PASS Document interface: calling elementsFromPoint(double, double) on document with too few arguments must throw TypeError
-FAIL Document interface: document must inherit property "caretPositionFromPoint(double, double)" with the proper type assert_inherits: property "caretPositionFromPoint" not found in prototype chain
-FAIL Document interface: calling caretPositionFromPoint(double, double) on document with too few arguments must throw TypeError assert_inherits: property "caretPositionFromPoint" not found in prototype chain
+PASS Document interface: document must inherit property "caretPositionFromPoint(double, double)" with the proper type
+PASS Document interface: calling caretPositionFromPoint(double, double) on document with too few arguments must throw TypeError
 PASS Document interface: document must inherit property "scrollingElement" with the proper type
 FAIL Document interface: document must inherit property "getBoxQuads(optional BoxQuadOptions)" with the proper type assert_inherits: property "getBoxQuads" not found in prototype chain
 FAIL Document interface: calling getBoxQuads(optional BoxQuadOptions) on document with too few arguments must throw TypeError assert_inherits: property "getBoxQuads" not found in prototype chain

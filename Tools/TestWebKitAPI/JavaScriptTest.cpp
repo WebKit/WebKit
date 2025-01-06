@@ -35,8 +35,10 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSerializedScriptValue.h>
+#include <WebKit/WKStringPrivate.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
+#include <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
 
@@ -47,38 +49,37 @@ struct JavaScriptCallbackContext {
     JSRetainPtr<JSStringRef> actualString;
 };
 
-static void javaScriptCallback(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* ctx)
+static void javaScriptCallback(WKTypeRef result, WKErrorRef error, void* ctx)
 {
-    ASSERT_NOT_NULL(resultSerializedScriptValue);
-
+    EXPECT_NULL(error);
     JavaScriptCallbackContext* context = static_cast<JavaScriptCallbackContext*>(ctx);
 
-    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
-    ASSERT_NOT_NULL(scriptContext);
-
-    JSValueRef scriptValue = WKSerializedScriptValueDeserialize(resultSerializedScriptValue, scriptContext, 0);
-    ASSERT_NOT_NULL(scriptValue);
-
-    context->actualString = adopt(JSValueToStringCopy(scriptContext, scriptValue, 0));
-    ASSERT_NOT_NULL(context->actualString.get());
+    if (!result)
+        context->actualString = adopt(JSStringCreateWithUTF8CString("undefined"));
+    else if (WKBooleanGetTypeID() == WKGetTypeID(result))
+        context->actualString = adopt(JSStringCreateWithUTF8CString(WKBooleanGetValue((WKBooleanRef)result) ? "true" : "false"));
+    else if (WKStringGetTypeID() == WKGetTypeID(result))
+        context->actualString = adopt(WKStringCopyJSString((WKStringRef)result));
+    else if (WKDoubleGetTypeID() == WKGetTypeID(result)) {
+        double value = WKDoubleGetValue((WKDoubleRef)result);
+        String s = makeString(value);
+        context->actualString = adopt(JSStringCreateWithUTF8CString(s.utf8().data()));
+    } else
+        WTFLogAlways("Unexpected type %d", WKGetTypeID(result));
 
     context->didFinish = true;
-
-    JSGlobalContextRelease(scriptContext);
-
-    EXPECT_NULL(error);
 }
 
 ::testing::AssertionResult runJSTest(const char*, const char*, const char*, WKPageRef page, const char* script, const char* expectedResult)
 {
     JavaScriptCallbackContext context;
-    WKPageRunJavaScriptInMainFrame(page, Util::toWK(script).get(), &context, javaScriptCallback);
+    WKPageEvaluateJavaScriptInMainFrame(page, Util::toWK(script).get(), &context, javaScriptCallback);
     Util::run(&context.didFinish);
 
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(context.actualString.get());
     auto buffer = makeUniqueArray<char>(bufferSize);
     JSStringGetUTF8CString(context.actualString.get(), buffer.get(), bufferSize);
-    
+
     return compareJSResult(script, buffer.get(), expectedResult);
 }
     

@@ -111,7 +111,7 @@ class AbstractExecutive(object):
         return string_utils.decode(string_utils.encode((b' ' if isinstance(args[0], bytes) else ' ').join(args), encoding='unicode_escape'))
 
     def run_command(self, args, cwd=None, env=None, input=None, stdout=None, error_handler=None, ignore_errors=False,
-        return_exit_code=False, return_stderr=True, decode_output=True):
+                    return_exit_code=False, return_stderr=True, decode_output=True, pass_fds=()):
         raise NotImplementedError('subclasses must implement')
 
     def popen(self, args, **kwargs):

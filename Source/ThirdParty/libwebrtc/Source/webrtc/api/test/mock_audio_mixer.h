@@ -11,6 +11,9 @@
 #ifndef API_TEST_MOCK_AUDIO_MIXER_H_
 #define API_TEST_MOCK_AUDIO_MIXER_H_
 
+#include <cstddef>
+
+#include "api/audio/audio_frame.h"
 #include "api/audio/audio_mixer.h"
 #include "test/gmock.h"
 

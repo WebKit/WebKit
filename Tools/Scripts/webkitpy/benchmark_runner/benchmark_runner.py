@@ -1,7 +1,6 @@
 import json
 import logging
 import shutil
-import sys
 import os
 from collections import defaultdict, OrderedDict
 
@@ -10,12 +9,8 @@ from webkitpy.benchmark_runner.benchmark_results import BenchmarkResults
 from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import BrowserDriverFactory
 
 
-if sys.version_info > (3, 0):
-    def istext(a):
-        return isinstance(a, bytes) or isinstance(a, str)
-else:
-    def istext(a):
-        return isinstance(a, str) or isinstance(a, unicode)
+def istext(a):
+    return isinstance(a, bytes) or isinstance(a, str)
 
 
 _log = logging.getLogger(__name__)
@@ -79,6 +74,12 @@ class BenchmarkRunner(object):
             with open(plan_file, 'r') as fp:
                 plan_name = os.path.split(os.path.splitext(plan_file)[0])[1]
                 plan = json.load(fp)
+                if 'import_plan_file' in plan:
+                    imported_plan_file = BenchmarkRunner._find_plan_file(plan.pop('import_plan_file'))
+                    with open(imported_plan_file, 'r') as ifp:
+                        imported_plan = json.load(ifp)
+                    imported_plan.update(plan)
+                    plan = imported_plan
                 return plan_name, plan
         except IOError as error:
             _log.error('Can not open plan file: {plan_file} - Error {error}'.format(plan_file=plan_file, error=error))

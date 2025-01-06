@@ -46,8 +46,8 @@
 #include "RenderView.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "RenderThemeIOS.h"
@@ -57,8 +57,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControlSingleLine);
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControlInnerBlock);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextControlSingleLine);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextControlInnerBlock);
 
 RenderTextControlSingleLine::RenderTextControlSingleLine(Type type, HTMLInputElement& element, RenderStyle&& style)
     : RenderTextControl(type, element, WTFMove(style))
@@ -156,7 +156,7 @@ void RenderTextControlSingleLine::layout()
         LayoutUnit containerLogicalHeight = containerRenderer->logicalHeight();
 
         CheckedPtr autoFillStrongPasswordButtonRenderer = [&]() -> RenderBox* {
-            if (!inputElement().hasAutoFillStrongPasswordButton())
+            if (!inputElement().hasAutofillStrongPasswordButton())
                 return nullptr;
 
             RefPtr autoFillButtonElement = inputElement().autoFillButtonElement();
@@ -191,7 +191,7 @@ void RenderTextControlSingleLine::layout()
 
     // Fix up the y-position of the container as it may have been flexed when the strong password or strong
     // confirmation password button wraps to the next line.
-    if (inputElement().hasAutoFillStrongPasswordButton() && containerRenderer)
+    if (inputElement().hasAutofillStrongPasswordButton() && containerRenderer)
         containerRenderer->setLogicalTop(oldContainerLogicalTop);
 
     // Center the child block in the block progression direction (vertical centering for horizontal text fields).
@@ -478,7 +478,7 @@ bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction
 {
     auto* layer = innerTextElement()->renderer()->layer();
     auto* scrollableArea = layer ? layer->scrollableArea() : nullptr;
-    if (scrollableArea && scrollableArea->scroll(logicalToPhysical(direction, style().isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), granularity, stepCount))
+    if (scrollableArea && scrollableArea->scroll(logicalToPhysical(direction, writingMode().isHorizontal(), writingMode().isBlockFlipped()), granularity, stepCount))
         return true;
     return RenderBlockFlow::logicalScroll(direction, granularity, stepCount, stopElement);
 }

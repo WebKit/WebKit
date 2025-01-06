@@ -15,6 +15,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <glib-object.h>
 #include <glib.h>
+#include <glibconfig.h>
 #include <gobject/gclosure.h>
 #include <gtk/gtk.h>
 #include <stddef.h>
@@ -22,17 +23,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <cstdint>
 #include <map>
-#include <utility>
 
+#include "api/media_stream_interface.h"
+#include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/video_frame.h"
 #include "api/video/video_frame_buffer.h"
 #include "api/video/video_rotation.h"
 #include "api/video/video_source_interface.h"
+#include "examples/peerconnection/client/main_wnd.h"
+#include "examples/peerconnection/client/peer_connection_client.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "third_party/libyuv/include/libyuv/convert.h"
 #include "third_party/libyuv/include/libyuv/convert_from.h"
 
 namespace {
@@ -312,7 +315,7 @@ void GtkMainWnd::SwitchToPeerList(const Peers& peers) {
     } else if (draw_area_) {
       gtk_widget_destroy(draw_area_);
       draw_area_ = NULL;
-      draw_buffer_.reset();
+      draw_buffer_.SetSize(0);
     }
 
     peer_list_ = gtk_tree_view_new();
@@ -424,68 +427,29 @@ void GtkMainWnd::OnRedraw() {
   gdk_threads_enter();
 
   VideoRenderer* remote_renderer = remote_renderer_.get();
-  if (remote_renderer && remote_renderer->image() != NULL &&
+  if (remote_renderer && !remote_renderer->image().empty() &&
       draw_area_ != NULL) {
-    width_ = remote_renderer->width();
-    height_ = remote_renderer->height();
-
-    if (!draw_buffer_.get()) {
-      draw_buffer_size_ = (width_ * height_ * 4) * 4;
-      draw_buffer_.reset(new uint8_t[draw_buffer_size_]);
-      gtk_widget_set_size_request(draw_area_, width_ * 2, height_ * 2);
+    if (width_ != remote_renderer->width() ||
+        height_ != remote_renderer->height()) {
+      width_ = remote_renderer->width();
+      height_ = remote_renderer->height();
+      gtk_widget_set_size_request(draw_area_, remote_renderer->width(),
+                                  remote_renderer->height());
     }
-
-    const uint32_t* image =
-        reinterpret_cast<const uint32_t*>(remote_renderer->image());
-    uint32_t* scaled = reinterpret_cast<uint32_t*>(draw_buffer_.get());
-    for (int r = 0; r < height_; ++r) {
-      for (int c = 0; c < width_; ++c) {
-        int x = c * 2;
-        scaled[x] = scaled[x + 1] = image[c];
-      }
-
-      uint32_t* prev_line = scaled;
-      scaled += width_ * 2;
-      memcpy(scaled, prev_line, (width_ * 2) * 4);
-
-      image += width_;
-      scaled += width_ * 2;
-    }
-
-    VideoRenderer* local_renderer = local_renderer_.get();
-    if (local_renderer && local_renderer->image()) {
-      image = reinterpret_cast<const uint32_t*>(local_renderer->image());
-      scaled = reinterpret_cast<uint32_t*>(draw_buffer_.get());
-      // Position the local preview on the right side.
-      scaled += (width_ * 2) - (local_renderer->width() / 2);
-      // right margin...
-      scaled -= 10;
-      // ... towards the bottom.
-      scaled += (height_ * width_ * 4) - ((local_renderer->height() / 2) *
-                                          (local_renderer->width() / 2) * 4);
-      // bottom margin...
-      scaled -= (width_ * 2) * 5;
-      for (int r = 0; r < local_renderer->height(); r += 2) {
-        for (int c = 0; c < local_renderer->width(); c += 2) {
-          scaled[c / 2] = image[c + r * local_renderer->width()];
-        }
-        scaled += width_ * 2;
-      }
-    }
-
+    draw_buffer_.SetData(remote_renderer->image());
     gtk_widget_queue_draw(draw_area_);
   }
-
+  // Here we can draw the local preview as well if we want....
   gdk_threads_leave();
 }
 
 void GtkMainWnd::Draw(GtkWidget* widget, cairo_t* cr) {
   cairo_format_t format = CAIRO_FORMAT_ARGB32;
   cairo_surface_t* surface = cairo_image_surface_create_for_data(
-      draw_buffer_.get(), format, width_ * 2, height_ * 2,
-      cairo_format_stride_for_width(format, width_ * 2));
+      draw_buffer_.data(), format, width_, height_,
+      cairo_format_stride_for_width(format, width_));
   cairo_set_source_surface(cr, surface, 0, 0);
-  cairo_rectangle(cr, 0, 0, width_ * 2, height_ * 2);
+  cairo_rectangle(cr, 0, 0, width_, height_);
   cairo_fill(cr);
   cairo_surface_destroy(surface);
 }
@@ -513,7 +477,8 @@ void GtkMainWnd::VideoRenderer::SetSize(int width, int height) {
 
   width_ = width;
   height_ = height;
-  image_.reset(new uint8_t[width * height * 4]);
+  // ARGB
+  image_.SetSize(width * height * 4);
   gdk_threads_leave();
 }
 
@@ -536,7 +501,7 @@ void GtkMainWnd::VideoRenderer::OnFrame(const webrtc::VideoFrame& video_frame) {
   // native endianness.
   libyuv::I420ToARGB(buffer->DataY(), buffer->StrideY(), buffer->DataU(),
                      buffer->StrideU(), buffer->DataV(), buffer->StrideV(),
-                     image_.get(), width_ * 4, buffer->width(),
+                     image_.data(), width_ * 4, buffer->width(),
                      buffer->height());
 
   gdk_threads_leave();

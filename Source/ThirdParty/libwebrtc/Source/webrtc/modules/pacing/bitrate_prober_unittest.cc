@@ -12,8 +12,10 @@
 
 #include <algorithm>
 
+#include "api/transport/field_trial_based_config.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
+#include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "test/explicit_key_value_config.h"
@@ -39,11 +41,13 @@ TEST(BitrateProberTest, VerifyStatesAndTimeBetweenProbes) {
   prober.CreateProbeCluster({.at_time = now,
                              .target_data_rate = kTestBitrate1,
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 0});
   prober.CreateProbeCluster({.at_time = now,
                              .target_data_rate = kTestBitrate2,
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 1});
   EXPECT_FALSE(prober.is_probing());
@@ -100,6 +104,7 @@ TEST(BitrateProberTest, DoesntProbeWithoutRecentPackets) {
   prober.CreateProbeCluster({.at_time = now,
                              .target_data_rate = DataRate::KilobitsPerSec(900),
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 0});
   EXPECT_FALSE(prober.is_probing());
@@ -125,6 +130,7 @@ TEST(BitrateProberTest, DiscardsDelayedProbes) {
   prober.CreateProbeCluster({.at_time = now,
                              .target_data_rate = DataRate::KilobitsPerSec(900),
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 0});
 
@@ -154,6 +160,7 @@ TEST(BitrateProberTest, LimitsNumberOfPendingProbeClusters) {
   prober.CreateProbeCluster({.at_time = now,
                              .target_data_rate = DataRate::KilobitsPerSec(900),
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 0});
   prober.OnIncomingPacket(kProbeSize);
@@ -165,6 +172,7 @@ TEST(BitrateProberTest, LimitsNumberOfPendingProbeClusters) {
         {.at_time = now,
          .target_data_rate = DataRate::KilobitsPerSec(900),
          .target_duration = TimeDelta::Millis(15),
+         .min_probe_delta = TimeDelta::Millis(2),
          .target_probe_count = 5,
          .id = i});
     prober.OnIncomingPacket(kProbeSize);
@@ -190,6 +198,7 @@ TEST(BitrateProberTest, DoesntInitializeProbingForSmallPackets) {
   prober.CreateProbeCluster({.at_time = Timestamp::Zero(),
                              .target_data_rate = DataRate::KilobitsPerSec(1000),
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 0});
   prober.OnIncomingPacket(DataSize::Bytes(100));
@@ -208,6 +217,7 @@ TEST(BitrateProberTest, DoesInitializeProbingForSmallPacketsIfConfigured) {
   prober.CreateProbeCluster({.at_time = Timestamp::Zero(),
                              .target_data_rate = DataRate::KilobitsPerSec(1000),
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 0});
   prober.OnIncomingPacket(DataSize::Bytes(10));
@@ -224,6 +234,7 @@ TEST(BitrateProberTest, VerifyProbeSizeOnHighBitrate) {
   prober.CreateProbeCluster({.at_time = Timestamp::Zero(),
                              .target_data_rate = kHighBitrate,
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 0});
   // Probe size should ensure a minimum of 1 ms interval.
@@ -231,10 +242,9 @@ TEST(BitrateProberTest, VerifyProbeSizeOnHighBitrate) {
             kHighBitrate * TimeDelta::Millis(1));
 }
 
-TEST(BitrateProberTest, ProbeSizeCanBeSetWithFieldTrial) {
-  const test::ExplicitKeyValueConfig trials(
-      "WebRTC-Bwe-ProbingBehavior/min_probe_delta:20ms/");
-  BitrateProber prober(trials);
+TEST(BitrateProberTest, ProbeSizeCanBeSetInProbeClusterConfig) {
+  const FieldTrialBasedConfig config;
+  BitrateProber prober(config);
   prober.SetEnabled(true);
 
   const DataRate kHighBitrate = DataRate::KilobitsPerSec(10000);  // 10 Mbps
@@ -242,6 +252,7 @@ TEST(BitrateProberTest, ProbeSizeCanBeSetWithFieldTrial) {
   prober.CreateProbeCluster({.at_time = Timestamp::Zero(),
                              .target_data_rate = kHighBitrate,
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(20),
                              .target_probe_count = 5,
                              .id = 0});
   EXPECT_EQ(prober.RecommendedMinProbeSize(),
@@ -267,6 +278,7 @@ TEST(BitrateProberTest, MinumumNumberOfProbingPackets) {
   prober.CreateProbeCluster({.at_time = Timestamp::Zero(),
                              .target_data_rate = kBitrate,
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 0});
 
@@ -290,6 +302,7 @@ TEST(BitrateProberTest, ScaleBytesUsedForProbing) {
   prober.CreateProbeCluster({.at_time = Timestamp::Zero(),
                              .target_data_rate = kBitrate,
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 0});
   prober.OnIncomingPacket(kPacketSize);
@@ -314,6 +327,7 @@ TEST(BitrateProberTest, HighBitrateProbing) {
   prober.CreateProbeCluster({.at_time = Timestamp::Zero(),
                              .target_data_rate = kBitrate,
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 0});
   prober.OnIncomingPacket(kPacketSize);
@@ -340,6 +354,7 @@ TEST(BitrateProberTest, ProbeClusterTimeout) {
   prober.CreateProbeCluster({.at_time = now,
                              .target_data_rate = kBitrate,
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 0});
   prober.OnIncomingPacket(kSmallPacketSize);
@@ -348,6 +363,7 @@ TEST(BitrateProberTest, ProbeClusterTimeout) {
   prober.CreateProbeCluster({.at_time = now,
                              .target_data_rate = kBitrate / 10,
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 1});
   prober.OnIncomingPacket(kSmallPacketSize);
@@ -356,6 +372,7 @@ TEST(BitrateProberTest, ProbeClusterTimeout) {
   prober.CreateProbeCluster({.at_time = now,
                              .target_data_rate = kBitrate / 10,
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 2});
   prober.OnIncomingPacket(kSmallPacketSize);
@@ -378,6 +395,7 @@ TEST(BitrateProberTest, CanProbeImmediatelyIfConfigured) {
   prober.CreateProbeCluster({.at_time = Timestamp::Zero(),
                              .target_data_rate = DataRate::KilobitsPerSec(300),
                              .target_duration = TimeDelta::Millis(15),
+                             .min_probe_delta = TimeDelta::Millis(2),
                              .target_probe_count = 5,
                              .id = 0});
   EXPECT_TRUE(prober.is_probing());
@@ -392,6 +410,7 @@ TEST(BitrateProberTest, CanProbeImmediatelyAgainAfterProbeIfConfigured) {
       .at_time = Timestamp::Zero(),
       .target_data_rate = DataRate::KilobitsPerSec(300),
       .target_duration = TimeDelta::Millis(15),
+      .min_probe_delta = TimeDelta::Millis(2),
       .target_probe_count = 1,
       .id = 0};
   prober.CreateProbeCluster(cluster_config);

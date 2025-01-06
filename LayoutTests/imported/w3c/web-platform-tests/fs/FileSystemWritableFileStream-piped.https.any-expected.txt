@@ -1,10 +1,10 @@
 
-FAIL can be piped to with a string promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL can be piped to with an ArrayBuffer promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL can be piped to with a Blob promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL can be piped to with a param object with write command promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL can be piped to with a param object with multiple commands promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL multiple operations can be queued promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL plays well with fetch promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL abort() aborts write promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+PASS can be piped to with a string
+PASS can be piped to with an ArrayBuffer
+PASS can be piped to with a Blob
+PASS can be piped to with a param object with write command
+PASS can be piped to with a param object with multiple commands
+PASS multiple operations can be queued
+PASS plays well with fetch
+PASS abort() aborts write
 

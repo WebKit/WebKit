@@ -366,8 +366,24 @@ copy("vk_gl_cts_data_external_graphicsfuzz_data_gles3_graphicsfuzz_synthetic") {
   outputs = [ "$root_gen_dir/vk_gl_cts_data/data/gles3/graphicsfuzz/synthetic/{{source_file_part}}" ]
 }
 
+copy("vk_gl_cts_data_external_openglcts_data_gl_cts_data_common") {
+  sources = [
+    "$deqp_path/external/openglcts/data/gl_cts/data/common/CoverageGL21.test",
+    "$deqp_path/external/openglcts/data/gl_cts/data/common/CoverageGL30.test",
+    "$deqp_path/external/openglcts/data/gl_cts/data/common/CoverageGL31.test",
+    "$deqp_path/external/openglcts/data/gl_cts/data/common/CoverageGL32.test",
+    "$deqp_path/external/openglcts/data/gl_cts/data/common/CoverageGL33.test",
+    "$deqp_path/external/openglcts/data/gl_cts/data/common/CoverageGL40.test",
+    "$deqp_path/external/openglcts/data/gl_cts/data/common/CoverageGL43.test",
+  ]
+  outputs = [
+    "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/common/{{source_file_part}}",
+  ]
+}
+
 copy("vk_gl_cts_data_external_openglcts_data_gl_cts_data_gles3") {
   sources = [
+    "$deqp_path/external/openglcts/data/gl_cts/data/gles3/CoverageES30.test",
     "$deqp_path/external/openglcts/data/gl_cts/data/gles3/declarations.test",
     "$deqp_path/external/openglcts/data/gl_cts/data/gles3/literal_parsing.test",
     "$deqp_path/external/openglcts/data/gl_cts/data/gles3/name_hiding.test",

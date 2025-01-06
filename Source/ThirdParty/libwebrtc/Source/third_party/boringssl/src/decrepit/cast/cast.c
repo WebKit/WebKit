@@ -437,21 +437,25 @@ static int cast_cbc_cipher(EVP_CIPHER_CTX *ctx, uint8_t *out, const uint8_t *in,
 }
 
 static const EVP_CIPHER cast5_ecb = {
-    NID_cast5_ecb,       CAST_BLOCK,
-    CAST_KEY_LENGTH,     CAST_BLOCK /* iv_len */,
-    sizeof(CAST_KEY),    EVP_CIPH_ECB_MODE | EVP_CIPH_VARIABLE_LENGTH,
-    NULL /* app_data */, cast_init_key,
-    cast_ecb_cipher,     NULL /* cleanup */,
-    NULL /* ctrl */,
+    .nid = NID_cast5_ecb,
+    .block_size = CAST_BLOCK,
+    .key_len = CAST_KEY_LENGTH,
+    .iv_len = CAST_BLOCK,
+    .ctx_size = sizeof(CAST_KEY),
+    .flags = EVP_CIPH_ECB_MODE | EVP_CIPH_VARIABLE_LENGTH,
+    .init = cast_init_key,
+    .cipher = cast_ecb_cipher,
 };
 
 static const EVP_CIPHER cast5_cbc = {
-    NID_cast5_cbc,       CAST_BLOCK,
-    CAST_KEY_LENGTH,     CAST_BLOCK /* iv_len */,
-    sizeof(CAST_KEY),    EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH,
-    NULL /* app_data */, cast_init_key,
-    cast_cbc_cipher,     NULL /* cleanup */,
-    NULL /* ctrl */,
+    .nid = NID_cast5_cbc,
+    .block_size = CAST_BLOCK,
+    .key_len = CAST_KEY_LENGTH,
+    .iv_len = CAST_BLOCK,
+    .ctx_size = sizeof(CAST_KEY),
+    .flags = EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH,
+    .init = cast_init_key,
+    .cipher = cast_cbc_cipher,
 };
 
 const EVP_CIPHER *EVP_cast5_ecb(void) { return &cast5_ecb; }

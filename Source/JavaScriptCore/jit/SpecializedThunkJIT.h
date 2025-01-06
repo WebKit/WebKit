@@ -36,7 +36,7 @@
 namespace JSC {
 
     class SpecializedThunkJIT : public JSInterfaceJIT {
-        WTF_MAKE_TZONE_ALLOCATED(SpecializedThunkJIT);
+        WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(SpecializedThunkJIT);
     public:
         static constexpr int ThisArgument = -1;
         SpecializedThunkJIT(VM& vm, int expectedArgCount)

@@ -32,9 +32,7 @@
 
 namespace JSC { namespace B3 {
 
-WasmAddressValue::~WasmAddressValue()
-{
-}
+WasmAddressValue::~WasmAddressValue() = default;
 
 void WasmAddressValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
@@ -42,9 +40,10 @@ void WasmAddressValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 }
 
 WasmAddressValue::WasmAddressValue(Origin origin, Value* value, GPRReg pinnedGPR)
-    : Value(CheckedOpcode, WasmAddress, Int64, One, origin, value)
+    : Value(CheckedOpcode, WasmAddress, pointerType(), One, origin, value)
     , m_pinnedGPR(pinnedGPR)
 {
+    ASSERT(value->type() == pointerType());
 }
 
 } } // namespace JSC::B3

@@ -34,6 +34,7 @@
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
 #import <wtf/text/StringHash.h>
@@ -54,9 +55,10 @@ class Page;
 class WebInspectorFrontendClient;
 
 class WebInspectorClient final : public WebCore::InspectorClient, public Inspector::FrontendChannel {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebInspectorClient);
 public:
     explicit WebInspectorClient(WebView *inspectedWebView);
+    virtual ~WebInspectorClient();
 
     void inspectedPageDestroyed() override;
 
@@ -104,7 +106,7 @@ private:
 
     WeakObjCPtr<WebView> m_inspectedWebView;
     RetainPtr<WebNodeHighlighter> m_highlighter;
-    SingleThreadWeakPtr<WebCore::Page> m_frontendPage;
+    WeakPtr<WebCore::Page> m_frontendPage;
     std::unique_ptr<WebInspectorFrontendClient> m_frontendClient;
 };
 

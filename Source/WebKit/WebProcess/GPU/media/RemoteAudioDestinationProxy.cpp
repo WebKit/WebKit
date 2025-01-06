@@ -31,15 +31,17 @@
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
 #include "RemoteAudioDestinationManagerMessages.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/AudioBus.h>
 #include <WebCore/AudioUtilities.h>
+#include <WebCore/SharedMemory.h>
 #include <algorithm>
+#include <wtf/StdLibExtras.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/AudioUtilitiesCocoa.h>
 #include <WebCore/CARingBuffer.h>
+#include <WebCore/SpanCoreAudio.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <mach/mach_time.h>
 #endif
@@ -68,12 +70,18 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
     , m_numberOfInputChannels(numberOfInputChannels)
     , m_remoteSampleRate(hardwareSampleRate())
 {
+#if PLATFORM(MAC)
+    // On macOS, we are seeing page load time improvements when eagerly creating the Audio destination in the GPU process. See rdar://124071843.
+    RunLoop::current().dispatch([protectedThis = Ref { *this }]() {
+        protectedThis->connection();
+    });
+#endif
 }
 
 uint32_t RemoteAudioDestinationProxy::totalFrameCount() const
 {
     RELEASE_ASSERT(m_frameCount->size() == sizeof(std::atomic<uint32_t>));
-    return WTF::atomicLoad(static_cast<uint32_t*>(m_frameCount->data()));
+    return WTF::atomicLoad(&spanReinterpretCast<uint32_t>(m_frameCount->mutableSpan())[0]);
 }
 
 void RemoteAudioDestinationProxy::startRenderingThread()
@@ -149,12 +157,12 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
         m_destinationID = RemoteAudioDestinationIdentifier::generate();
 
         m_lastFrameCount = 0;
-        std::optional<SharedMemory::Handle> frameCountHandle;
-        if ((m_frameCount = SharedMemory::allocate(sizeof(std::atomic<uint32_t>)))) {
-            frameCountHandle = m_frameCount->createHandle(SharedMemory::Protection::ReadWrite);
+        std::optional<WebCore::SharedMemory::Handle> frameCountHandle;
+        if ((m_frameCount = WebCore::SharedMemory::allocate(sizeof(std::atomic<uint32_t>)))) {
+            frameCountHandle = m_frameCount->createHandle(WebCore::SharedMemory::Protection::ReadWrite);
         }
         RELEASE_ASSERT(frameCountHandle.has_value());
-        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore, WTFMove(*frameCountHandle)), 0);
+        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::CreateAudioDestination(*m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore, WTFMove(*frameCountHandle)), 0);
 
 #if PLATFORM(COCOA)
         m_currentFrame = 0;
@@ -164,7 +172,7 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
         RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
         auto [ringBuffer, handle] = WTFMove(*result);
         m_ringBuffer = WTFMove(ringBuffer);
-        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, WTFMove(handle) }, 0);
+        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { *m_destinationID, WTFMove(handle) }, 0);
         m_audioBufferList = makeUnique<WebCore::WebAudioBufferList>(streamFormat);
         m_audioBufferList->setSampleCount(maxAudioBufferListSampleCount);
 #endif
@@ -183,7 +191,7 @@ IPC::Connection* RemoteAudioDestinationProxy::existingConnection()
 RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy()
 {
     if (auto gpuProcessConnection = m_gpuProcessConnection.get(); gpuProcessConnection && m_destinationID)
-        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::DeleteAudioDestination(m_destinationID), 0);
+        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::DeleteAudioDestination(*m_destinationID), 0);
     stopRenderingThread();
 }
 
@@ -198,7 +206,7 @@ void RemoteAudioDestinationProxy::startRendering(CompletionHandler<void(bool)>&&
         return;
     }
 
-    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
+    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(*m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
         protectedThis->setIsPlaying(isPlaying);
         completionHandler(isPlaying);
     });
@@ -206,20 +214,6 @@ void RemoteAudioDestinationProxy::startRendering(CompletionHandler<void(bool)>&&
 
 void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& completionHandler)
 {
-#if PLATFORM(MAC)
-    // FIXME: rdar://104617724
-    // On macOS, page load testing reports a regression on a particular page if we do not
-    // start the GPU process connection and create the audio objects redundantly on a particular earlier
-    // page. This should be fixed once it is understood why.
-    auto* connection = this->connection();
-    if (!connection) {
-        RunLoop::current().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
-            // Not calling setIsPlaying(false) intentionally to match the pre-regression state.
-            completionHandler(false);
-        });
-        return;
-    }
-#else
     auto* connection = existingConnection();
     if (!connection) {
         RunLoop::current().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -228,9 +222,8 @@ void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& 
         });
         return;
     }
-#endif
 
-    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
+    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(*m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
         protectedThis->setIsPlaying(isPlaying);
         completionHandler(!isPlaying);
     });
@@ -248,14 +241,16 @@ void RemoteAudioDestinationProxy::renderAudio(unsigned frameCount)
         frameCount -= numberOfFrames;
         auto* ioData = m_audioBufferList->list();
 
-        auto* buffers = ioData->mBuffers;
+
         auto numberOfBuffers = std::min<UInt32>(ioData->mNumberBuffers, m_outputBus->numberOfChannels());
+        auto buffers = unsafeMakeSpan(ioData->mBuffers, numberOfBuffers);
 
         // Associate the destination data array with the output bus then fill the FIFO.
         for (UInt32 i = 0; i < numberOfBuffers; ++i) {
-            auto* memory = reinterpret_cast<float*>(buffers[i].mData);
-            size_t channelNumberOfFrames = std::min<size_t>(numberOfFrames, buffers[i].mDataByteSize / sizeof(float));
-            m_outputBus->setChannelMemory(i, memory, channelNumberOfFrames);
+            auto memory = mutableSpan<float>(buffers[i]);
+            if (numberOfFrames < memory.size())
+                memory = memory.first(numberOfFrames);
+            m_outputBus->setChannelMemory(i, memory);
         }
         size_t framesToRender = pullRendered(numberOfFrames);
         m_ringBuffer->store(m_audioBufferList->list(), numberOfFrames, m_currentFrame);
@@ -269,7 +264,7 @@ void RemoteAudioDestinationProxy::gpuProcessConnectionDidClose(GPUProcessConnect
 {
     stopRenderingThread();
     m_gpuProcessConnection = nullptr;
-    m_destinationID = { };
+    m_destinationID = std::nullopt;
 
     if (isPlaying())
         startRendering([](bool) { });

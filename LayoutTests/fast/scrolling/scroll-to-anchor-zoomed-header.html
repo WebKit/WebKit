@@ -24,11 +24,12 @@
 
     if (window.internals) {
         internals.setHeaderHeight(headerHeight);
-        internals.setPageScaleFactor(pageScale, 0, 0);
     }
 
-    function runTest()
+    async function runTest()
     {
+        if (window.testRunner)
+            await testRunner.setPageScaleFactor(pageScale, 0, 0);
         setTimeout(function() {
             window.location='#anchor';
             setTimeout(finishTest, 0);

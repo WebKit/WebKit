@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "./vpx_config.h"
 #include "./y4menc.h"

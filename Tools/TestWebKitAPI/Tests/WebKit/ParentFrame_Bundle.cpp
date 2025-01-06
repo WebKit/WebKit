@@ -73,7 +73,7 @@ void ParentFrameTest::didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
     testBundle = bundle;
     
     WKBundlePageLoaderClientV1 pageLoaderClient;
-    memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
+    zeroBytes(pageLoaderClient);
     
     pageLoaderClient.base.version = 1;
     pageLoaderClient.didFinishLoadForFrame = didFinishLoadForFrame;

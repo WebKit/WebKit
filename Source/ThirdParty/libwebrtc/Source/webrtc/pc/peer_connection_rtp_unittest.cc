@@ -12,12 +12,14 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
+#include "api/audio/audio_device.h"
 #include "api/audio/audio_mixer.h"
+#include "api/audio/audio_processing.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
@@ -45,8 +47,6 @@
 #include "api/video_codecs/video_encoder_factory_template_libvpx_vp9_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
 #include "media/base/stream_params.h"
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "p2p/base/port_allocator.h"
 #include "pc/media_session.h"
 #include "pc/peer_connection_wrapper.h"
@@ -75,13 +75,13 @@ using ::testing::UnorderedElementsAre;
 using ::testing::Values;
 
 template <typename MethodFunctor>
-class OnSuccessObserver : public webrtc::SetRemoteDescriptionObserverInterface {
+class OnSuccessObserver : public SetRemoteDescriptionObserverInterface {
  public:
   explicit OnSuccessObserver(MethodFunctor on_success)
       : on_success_(std::move(on_success)) {}
 
-  // webrtc::SetRemoteDescriptionObserverInterface implementation.
-  void OnSetRemoteDescriptionComplete(webrtc::RTCError error) override {
+  // SetRemoteDescriptionObserverInterface implementation.
+  void OnSetRemoteDescriptionComplete(RTCError error) override {
     RTC_CHECK(error.ok());
     on_success_();
   }
@@ -113,7 +113,7 @@ class PeerConnectionRtpBaseTest : public ::testing::Test {
                                             Dav1dDecoderTemplateAdapter>>(),
             nullptr /* audio_mixer */,
             nullptr /* audio_processing */)) {
-    webrtc::metrics::Reset();
+    metrics::Reset();
   }
 
   std::unique_ptr<PeerConnectionWrapper> CreatePeerConnection() {
@@ -201,7 +201,7 @@ class PeerConnectionRtpTestUnifiedPlan : public PeerConnectionRtpBaseTest {
   }
 };
 
-// These tests cover `webrtc::PeerConnectionObserver` callbacks firing upon
+// These tests cover `PeerConnectionObserver` callbacks firing upon
 // setting the remote description.
 
 TEST_P(PeerConnectionRtpTest, AddTrackWithoutStreamFiresOnAddTrack) {
@@ -934,8 +934,8 @@ TEST_P(PeerConnectionRtpTest,
   auto caller = CreatePeerConnection();
   auto callee = CreatePeerConnection();
 
-  rtc::scoped_refptr<webrtc::MockSetSessionDescriptionObserver> observer =
-      rtc::make_ref_counted<webrtc::MockSetSessionDescriptionObserver>();
+  rtc::scoped_refptr<MockSetSessionDescriptionObserver> observer =
+      rtc::make_ref_counted<MockSetSessionDescriptionObserver>();
 
   auto offer = caller->CreateOfferAndSetAsLocal();
   callee->pc()->SetRemoteDescription(observer.get(), offer.release());
@@ -959,10 +959,10 @@ TEST_F(PeerConnectionRtpTestUnifiedPlan,
   auto caller = CreatePeerConnection();
 
   auto transceiver = caller->AddTransceiver(cricket::MEDIA_TYPE_AUDIO);
-  EXPECT_EQ(absl::nullopt, transceiver->mid());
+  EXPECT_EQ(std::nullopt, transceiver->mid());
   EXPECT_FALSE(transceiver->stopped());
   EXPECT_EQ(RtpTransceiverDirection::kSendRecv, transceiver->direction());
-  EXPECT_EQ(absl::nullopt, transceiver->current_direction());
+  EXPECT_EQ(std::nullopt, transceiver->current_direction());
 }
 
 // Test that adding a transceiver with the audio kind creates an audio sender
@@ -1786,6 +1786,36 @@ TEST_F(PeerConnectionRtpTestUnifiedPlan, CheckForInvalidEncodingParameters) {
                 .error()
                 .type());
   init.send_encodings = default_send_encodings;
+
+  init.send_encodings[0].scalability_mode = std::nullopt;
+  init.send_encodings[0].codec =
+      cricket::CreateVideoCodec(SdpVideoFormat("VP8", {})).ToCodecParameters();
+  EXPECT_EQ(RTCErrorType::NONE,
+            caller->pc()
+                ->AddTransceiver(cricket::MEDIA_TYPE_VIDEO, init)
+                .error()
+                .type());
+  init.send_encodings = default_send_encodings;
+
+  init.send_encodings[0].scalability_mode = "L1T2";
+  init.send_encodings[0].codec =
+      cricket::CreateVideoCodec(SdpVideoFormat("VP8", {})).ToCodecParameters();
+  EXPECT_EQ(RTCErrorType::NONE,
+            caller->pc()
+                ->AddTransceiver(cricket::MEDIA_TYPE_VIDEO, init)
+                .error()
+                .type());
+  init.send_encodings = default_send_encodings;
+
+  init.send_encodings[0].scalability_mode = "L2T2";
+  init.send_encodings[0].codec =
+      cricket::CreateVideoCodec(SdpVideoFormat("VP8", {})).ToCodecParameters();
+  EXPECT_EQ(RTCErrorType::UNSUPPORTED_OPERATION,
+            caller->pc()
+                ->AddTransceiver(cricket::MEDIA_TYPE_VIDEO, init)
+                .error()
+                .type());
+  init.send_encodings = default_send_encodings;
 }
 
 // Test that AddTransceiver transfers the send_encodings to the sender and they
@@ -1836,14 +1866,16 @@ TEST_F(PeerConnectionMsidSignalingTest, UnifiedPlanTalkingToOurself) {
 
   // Offer should have had both a=msid and a=ssrc MSID lines.
   auto* offer = callee->pc()->remote_description();
-  EXPECT_EQ((cricket::kMsidSignalingMediaSection |
-             cricket::kMsidSignalingSsrcAttribute),
-            offer->description()->msid_signaling());
+  EXPECT_EQ(
+      (cricket::kMsidSignalingSemantic | cricket::kMsidSignalingMediaSection |
+       cricket::kMsidSignalingSsrcAttribute),
+      offer->description()->msid_signaling());
 
   // Answer should have had only a=msid lines.
   auto* answer = caller->pc()->remote_description();
-  EXPECT_EQ(cricket::kMsidSignalingMediaSection,
-            answer->description()->msid_signaling());
+  EXPECT_EQ(
+      cricket::kMsidSignalingSemantic | cricket::kMsidSignalingMediaSection,
+      answer->description()->msid_signaling());
 }
 
 TEST_F(PeerConnectionMsidSignalingTest, PlanBOfferToUnifiedPlanAnswer) {
@@ -1856,13 +1888,15 @@ TEST_F(PeerConnectionMsidSignalingTest, PlanBOfferToUnifiedPlanAnswer) {
 
   // Offer should have only a=ssrc MSID lines.
   auto* offer = callee->pc()->remote_description();
-  EXPECT_EQ(cricket::kMsidSignalingSsrcAttribute,
-            offer->description()->msid_signaling());
+  EXPECT_EQ(
+      cricket::kMsidSignalingSemantic | cricket::kMsidSignalingSsrcAttribute,
+      offer->description()->msid_signaling());
 
   // Answer should have only a=ssrc MSID lines to match the offer.
   auto* answer = caller->pc()->remote_description();
-  EXPECT_EQ(cricket::kMsidSignalingSsrcAttribute,
-            answer->description()->msid_signaling());
+  EXPECT_EQ(
+      cricket::kMsidSignalingSemantic | cricket::kMsidSignalingSsrcAttribute,
+      answer->description()->msid_signaling());
 }
 
 // This tests that a Plan B endpoint appropriately sets the remote description
@@ -1884,9 +1918,10 @@ TEST_F(PeerConnectionMsidSignalingTest, UnifiedPlanToPlanBAnswer) {
 
   // Offer should have had both a=msid and a=ssrc MSID lines.
   auto* offer = callee->pc()->remote_description();
-  EXPECT_EQ((cricket::kMsidSignalingMediaSection |
-             cricket::kMsidSignalingSsrcAttribute),
-            offer->description()->msid_signaling());
+  EXPECT_EQ(
+      (cricket::kMsidSignalingSemantic | cricket::kMsidSignalingMediaSection |
+       cricket::kMsidSignalingSsrcAttribute),
+      offer->description()->msid_signaling());
 
   // Callee should always have 1 stream for all of it's receivers.
   const auto& track_events = callee->observer()->add_track_events_;
@@ -1907,7 +1942,8 @@ TEST_F(PeerConnectionMsidSignalingTest, PureUnifiedPlanToUs) {
   auto offer = caller->CreateOffer();
   // Simulate a pure Unified Plan offerer by setting the MSID signaling to media
   // section only.
-  offer->description()->set_msid_signaling(cricket::kMsidSignalingMediaSection);
+  offer->description()->set_msid_signaling(cricket::kMsidSignalingSemantic |
+                                           cricket::kMsidSignalingMediaSection);
 
   ASSERT_TRUE(
       caller->SetLocalDescription(CloneSessionDescription(offer.get())));
@@ -1915,8 +1951,9 @@ TEST_F(PeerConnectionMsidSignalingTest, PureUnifiedPlanToUs) {
 
   // Answer should have only a=msid to match the offer.
   auto answer = callee->CreateAnswer();
-  EXPECT_EQ(cricket::kMsidSignalingMediaSection,
-            answer->description()->msid_signaling());
+  EXPECT_EQ(
+      cricket::kMsidSignalingSemantic | cricket::kMsidSignalingMediaSection,
+      answer->description()->msid_signaling());
 }
 
 // Sender setups in a call.

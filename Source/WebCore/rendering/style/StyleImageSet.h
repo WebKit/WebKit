@@ -25,11 +25,12 @@
 #pragma once
 
 #include "StyleMultiImage.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class StyleImageSet final : public StyleMultiImage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StyleImageSet);
 public:
     static Ref<StyleImageSet> create(Vector<ImageWithScale>&&, Vector<size_t>&&);
     virtual ~StyleImageSet();

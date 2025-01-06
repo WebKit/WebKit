@@ -55,6 +55,7 @@ typedef struct _GMainContext GMainContext;
 typedef struct _GMainLoop GMainLoop;
 typedef struct _GPatternSpec GPatternSpec;
 typedef struct _GPollableOutputStream GPollableOutputStream;
+typedef struct _GResource GResource;
 typedef struct _GSList GSList;
 typedef struct _GSocketClient GSocketClient;
 typedef struct _GSocketConnection GSocketConnection;

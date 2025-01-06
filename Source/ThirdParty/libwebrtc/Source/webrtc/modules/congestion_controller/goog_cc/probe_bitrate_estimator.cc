@@ -12,8 +12,8 @@
 
 #include <algorithm>
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
@@ -64,7 +64,7 @@ ProbeBitrateEstimator::ProbeBitrateEstimator(RtcEventLog* event_log)
 
 ProbeBitrateEstimator::~ProbeBitrateEstimator() = default;
 
-absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
+std::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
     const PacketResult& packet_feedback) {
   int cluster_id = packet_feedback.sent_packet.pacing_info.probe_cluster_id;
   RTC_DCHECK_NE(cluster_id, PacedPacketInfo::kNotAProbe);
@@ -103,7 +103,7 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
           packet_feedback.sent_packet.pacing_info.probe_cluster_min_bytes) *
       kMinReceivedBytesRatio;
   if (cluster->num_probes < min_probes || cluster->size_total < min_size)
-    return absl::nullopt;
+    return std::nullopt;
 
   TimeDelta send_interval = cluster->last_send - cluster->first_send;
   TimeDelta receive_interval = cluster->last_receive - cluster->first_receive;
@@ -122,7 +122,7 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
       event_log_->Log(std::make_unique<RtcEventProbeResultFailure>(
           cluster_id, ProbeFailureReason::kInvalidSendReceiveInterval));
     }
-    return absl::nullopt;
+    return std::nullopt;
   }
   // Since the `send_interval` does not include the time it takes to actually
   // send the last packet the size of the last sent packet should not be
@@ -159,7 +159,7 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
       event_log_->Log(std::make_unique<RtcEventProbeResultFailure>(
           cluster_id, ProbeFailureReason::kInvalidSendReceiveRatio));
     }
-    return absl::nullopt;
+    return std::nullopt;
   }
   RTC_LOG(LS_INFO) << "Probing successful"
                       " [cluster id: "
@@ -187,9 +187,9 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
   return estimated_data_rate_;
 }
 
-absl::optional<DataRate>
+std::optional<DataRate>
 ProbeBitrateEstimator::FetchAndResetLastEstimatedBitrate() {
-  absl::optional<DataRate> estimated_data_rate = estimated_data_rate_;
+  std::optional<DataRate> estimated_data_rate = estimated_data_rate_;
   estimated_data_rate_.reset();
   return estimated_data_rate;
 }

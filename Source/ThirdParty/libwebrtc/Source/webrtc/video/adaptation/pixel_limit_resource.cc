@@ -36,7 +36,7 @@ PixelLimitResource::PixelLimitResource(
     VideoStreamInputStateProvider* input_state_provider)
     : task_queue_(task_queue),
       input_state_provider_(input_state_provider),
-      max_pixels_(absl::nullopt) {
+      max_pixels_(std::nullopt) {
   RTC_DCHECK(task_queue_);
   RTC_DCHECK(input_state_provider_);
 }
@@ -67,7 +67,7 @@ void PixelLimitResource::SetResourceListener(ResourceListener* listener) {
         // No pixel limit configured yet, try again later.
         return kResourceUsageCheckIntervalMs;
       }
-      absl::optional<int> frame_size_pixels =
+      std::optional<int> frame_size_pixels =
           input_state_provider_->InputState().frame_size_pixels();
       if (!frame_size_pixels.has_value()) {
         // We haven't observed a frame yet so we don't know if it's going to be

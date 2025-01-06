@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,7 +16,7 @@
 
 #include "aom_dsp/blend.h"
 
-static INLINE uint8x16_t alpha_blend_a64_u8x16(uint8x16_t m, uint8x16_t a,
+static inline uint8x16_t alpha_blend_a64_u8x16(uint8x16_t m, uint8x16_t a,
                                                uint8x16_t b) {
   const uint8x16_t m_inv = vsubq_u8(vdupq_n_u8(AOM_BLEND_A64_MAX_ALPHA), m);
 
@@ -32,7 +32,7 @@ static INLINE uint8x16_t alpha_blend_a64_u8x16(uint8x16_t m, uint8x16_t a,
   return vcombine_u8(blend_u8_lo, blend_u8_hi);
 }
 
-static INLINE uint8x8_t alpha_blend_a64_u8x8(uint8x8_t m, uint8x8_t a,
+static inline uint8x8_t alpha_blend_a64_u8x8(uint8x8_t m, uint8x8_t a,
                                              uint8x8_t b) {
   const uint8x8_t m_inv = vsub_u8(vdup_n_u8(AOM_BLEND_A64_MAX_ALPHA), m);
 
@@ -44,7 +44,7 @@ static INLINE uint8x8_t alpha_blend_a64_u8x8(uint8x8_t m, uint8x8_t a,
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE uint16x8_t alpha_blend_a64_u16x8(uint16x8_t m, uint16x8_t a,
+static inline uint16x8_t alpha_blend_a64_u16x8(uint16x8_t m, uint16x8_t a,
                                                uint16x8_t b) {
   uint16x8_t m_inv = vsubq_u16(vdupq_n_u16(AOM_BLEND_A64_MAX_ALPHA), m);
 
@@ -63,7 +63,7 @@ static INLINE uint16x8_t alpha_blend_a64_u16x8(uint16x8_t m, uint16x8_t a,
   return vcombine_u16(blend_u16_lo, blend_u16_hi);
 }
 
-static INLINE uint16x4_t alpha_blend_a64_u16x4(uint16x4_t m, uint16x4_t a,
+static inline uint16x4_t alpha_blend_a64_u16x4(uint16x4_t m, uint16x4_t a,
                                                uint16x4_t b) {
   const uint16x4_t m_inv = vsub_u16(vdup_n_u16(AOM_BLEND_A64_MAX_ALPHA), m);
 
@@ -75,19 +75,19 @@ static INLINE uint16x4_t alpha_blend_a64_u16x4(uint16x4_t m, uint16x4_t a,
 }
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
-static INLINE uint8x8_t avg_blend_u8x8(uint8x8_t a, uint8x8_t b) {
+static inline uint8x8_t avg_blend_u8x8(uint8x8_t a, uint8x8_t b) {
   return vrhadd_u8(a, b);
 }
 
-static INLINE uint8x16_t avg_blend_u8x16(uint8x16_t a, uint8x16_t b) {
+static inline uint8x16_t avg_blend_u8x16(uint8x16_t a, uint8x16_t b) {
   return vrhaddq_u8(a, b);
 }
 
-static INLINE uint8x8_t avg_blend_pairwise_u8x8(uint8x8_t a, uint8x8_t b) {
+static inline uint8x8_t avg_blend_pairwise_u8x8(uint8x8_t a, uint8x8_t b) {
   return vrshr_n_u8(vpadd_u8(a, b), 1);
 }
 
-static INLINE uint8x16_t avg_blend_pairwise_u8x16(uint8x16_t a, uint8x16_t b) {
+static inline uint8x16_t avg_blend_pairwise_u8x16(uint8x16_t a, uint8x16_t b) {
 #if AOM_ARCH_AARCH64
   return vrshrq_n_u8(vpaddq_u8(a, b), 1);
 #else
@@ -97,14 +97,14 @@ static INLINE uint8x16_t avg_blend_pairwise_u8x16(uint8x16_t a, uint8x16_t b) {
 #endif  // AOM_ARCH_AARCH64
 }
 
-static INLINE uint8x8_t avg_blend_pairwise_u8x8_4(uint8x8_t a, uint8x8_t b,
+static inline uint8x8_t avg_blend_pairwise_u8x8_4(uint8x8_t a, uint8x8_t b,
                                                   uint8x8_t c, uint8x8_t d) {
   uint8x8_t a_c = vpadd_u8(a, c);
   uint8x8_t b_d = vpadd_u8(b, d);
   return vrshr_n_u8(vqadd_u8(a_c, b_d), 2);
 }
 
-static INLINE uint8x16_t avg_blend_pairwise_u8x16_4(uint8x16_t a, uint8x16_t b,
+static inline uint8x16_t avg_blend_pairwise_u8x16_4(uint8x16_t a, uint8x16_t b,
                                                     uint8x16_t c,
                                                     uint8x16_t d) {
 #if AOM_ARCH_AARCH64

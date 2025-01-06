@@ -151,6 +151,7 @@ class TranslatorMetalReflection
         hasUBOs              = false;
         hasFlatInput         = false;
         hasInvariance        = false;
+        hasIsnanOrIsinf      = false;
         hasAttributeAliasing = false;
         originalNames.clear();
         samplerBindings.clear();
@@ -163,6 +164,7 @@ class TranslatorMetalReflection
     bool hasUBOs              = false;
     bool hasFlatInput         = false;
     bool hasInvariance        = false;
+    bool hasIsnanOrIsinf      = false;
     bool hasAttributeAliasing = false;
 
   private:

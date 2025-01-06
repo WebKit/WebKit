@@ -5,6 +5,7 @@ specific_include_rules = {
   ],
   "metrics_logger\.h": [
     "+rtc_base/synchronization/mutex.h",
+    "+rtc_base/thread_annotations.h",
     "+system_wrappers/include/clock.h",
   ],
   "metrics_accumulator\.h": [

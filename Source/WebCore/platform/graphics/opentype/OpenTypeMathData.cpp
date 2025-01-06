@@ -37,7 +37,6 @@
 #include "SharedBuffer.h"
 
 namespace WebCore {
-using namespace std;
 
 #if ENABLE(OPENTYPE_MATH)
 namespace OpenType {
@@ -67,6 +66,7 @@ struct MathItalicsCorrectionInfo : TableWithCoverage {
     OpenType::UInt16 italicsCorrectionCount;
     OpenType::MathValueRecord italicsCorrection[1]; // There are italicsCorrectionCount italic correction values.
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     int16_t getItalicCorrection(const SharedBuffer& buffer, Glyph glyph) const
     {
         uint16_t count = uint16_t(italicsCorrectionCount);
@@ -87,6 +87,7 @@ struct MathItalicsCorrectionInfo : TableWithCoverage {
 
         return int16_t(italicsCorrection[i].value);
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 };
 
 struct MathGlyphInfo : TableWithCoverage {
@@ -122,6 +123,7 @@ struct GlyphAssembly : TableBase {
         PartFlagsExtender = 0x01
     };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     void getAssemblyParts(const SharedBuffer& buffer, Vector<OpenTypeMathData::AssemblyPart>& assemblyParts) const
     {
         uint16_t count = partCount;
@@ -134,7 +136,7 @@ struct GlyphAssembly : TableBase {
             assemblyParts[i].isExtender = flag & PartFlagsExtender;
         }
     }
-
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 };
 
 struct MathGlyphConstruction : TableBase {
@@ -145,6 +147,7 @@ struct MathGlyphConstruction : TableBase {
         OpenType::UInt16 advanceMeasurement;
     } mathGlyphVariantRecords[1]; // There are variantCount MathGlyphVariantRecord's.
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     void getSizeVariants(const SharedBuffer& buffer, Vector<Glyph>& variants) const
     {
         uint16_t count = variantCount;
@@ -154,6 +157,7 @@ struct MathGlyphConstruction : TableBase {
         for (uint16_t i = 0; i < count; i++)
             variants[i] = mathGlyphVariantRecords[i].variantGlyph;
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     void getAssemblyParts(const SharedBuffer& buffer, Vector<OpenTypeMathData::AssemblyPart>& assemblyParts) const
     {
@@ -172,6 +176,7 @@ struct MathVariants : TableWithCoverage {
     OpenType::UInt16 horizontalGlyphCount;
     OpenType::Offset mathGlyphConstructionsOffset[1]; // There are verticalGlyphCount vertical glyph contructions and horizontalGlyphCount vertical glyph contructions.
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     const MathGlyphConstruction* mathGlyphConstruction(const SharedBuffer& buffer, Glyph glyph, bool isVertical) const
     {
         uint32_t count = uint16_t(verticalGlyphCount) + uint16_t(horizontalGlyphCount);
@@ -198,6 +203,7 @@ struct MathVariants : TableWithCoverage {
 
         return validateOffset<MathGlyphConstruction>(buffer, mathGlyphConstructionsOffset[i]);
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 };
 
 struct MATHTable : TableBase {
@@ -240,7 +246,7 @@ struct MATHTable : TableBase {
 OpenTypeMathData::OpenTypeMathData(const FontPlatformData& font)
 {
     m_mathBuffer = font.openTypeTable(OpenType::MATHTag);
-    const OpenType::MATHTable* math = OpenType::validateTable<OpenType::MATHTable>(m_mathBuffer);
+    auto* math = OpenType::validateTableSingle<OpenType::MATHTable>(m_mathBuffer);
     if (!math) {
         m_mathBuffer = nullptr;
         return;
@@ -268,11 +274,12 @@ OpenTypeMathData::OpenTypeMathData(const FontPlatformData&) = default;
 OpenTypeMathData::~OpenTypeMathData() = default;
 
 #if ENABLE(OPENTYPE_MATH)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 float OpenTypeMathData::getMathConstant(const Font& font, MathConstant constant) const
 {
     int32_t value = 0;
 
-    const OpenType::MATHTable* math = OpenType::validateTable<OpenType::MATHTable>(m_mathBuffer);
+    auto* math = OpenType::validateTableSingle<OpenType::MATHTable>(m_mathBuffer);
     ASSERT(math);
     const OpenType::MathConstants* mathConstants = math->mathConstants(*m_mathBuffer);
     ASSERT(mathConstants);
@@ -305,11 +312,12 @@ float OpenTypeMathData::getMathConstant(const Font&, MathConstant) const
     return 0;
 #endif
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if ENABLE(OPENTYPE_MATH)
 float OpenTypeMathData::getItalicCorrection(const Font& font, Glyph glyph) const
 {
-    const OpenType::MATHTable* math = OpenType::validateTable<OpenType::MATHTable>(m_mathBuffer);
+    auto* math = OpenType::validateTableSingle<OpenType::MATHTable>(m_mathBuffer);
     ASSERT(math);
     const OpenType::MathGlyphInfo* mathGlyphInfo = math->mathGlyphInfo(*m_mathBuffer);
     if (!mathGlyphInfo)
@@ -337,7 +345,7 @@ void OpenTypeMathData::getMathVariants(Glyph glyph, bool isVertical, Vector<Glyp
 {
     sizeVariants.clear();
     assemblyParts.clear();
-    const OpenType::MATHTable* math = OpenType::validateTable<OpenType::MATHTable>(m_mathBuffer);
+    auto* math = OpenType::validateTableSingle<OpenType::MATHTable>(m_mathBuffer);
     ASSERT(math);
     const OpenType::MathVariants* mathVariants = math->mathVariants(*m_mathBuffer);
     ASSERT(mathVariants);

@@ -9,7 +9,7 @@ var canvas;
 var gl;
 var OES_vertex_array_object;
 var uniformLocation;
-var extension;
+var WEBGL_lose_context;
 var buffer;
 var framebuffer;
 var program;
@@ -340,7 +340,7 @@ function testAPIs(contextType) {
       passed = passed && r;
     }
 
-    methods.push(...["makeXRCompatible"]);
+    methods.push(...["makeXRCompatible", "drawingBufferStorage"]);
     var extended = false;
     for (var i in gl) {
       if (typeof gl[i] == "function" && methods.indexOf(i) == -1) {
@@ -439,7 +439,7 @@ function testLostContextWithoutRestore()
         return false;
 
     // Test the extension itself.
-    if (!compareGLError(gl.INVALID_OPERATION, "extension.loseContext()"))
+    if (!compareGLError(gl.INVALID_OPERATION, "WEBGL_lose_context.loseContext()"))
         return false;
 
     imageData = new ImageData(1, 1);
@@ -567,13 +567,7 @@ function testLostContextWithoutRestore()
         return false;
 
     // Functions return nullable values should all return null.
-    if (gl.createBuffer() != null ||
-        gl.createFramebuffer() != null ||
-        gl.createProgram() != null ||
-        gl.createRenderbuffer() != null ||
-        gl.createShader(gl.GL_VERTEX_SHADER) != null ||
-        gl.createTexture() != null ||
-        gl.getActiveAttrib(program, 0) != null ||
+    if (gl.getActiveAttrib(program, 0) != null ||
         gl.getActiveUniform(program, 0) != null ||
         gl.getAttachedShaders(program) != null ||
         gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_SIZE) != null ||
@@ -594,6 +588,22 @@ function testLostContextWithoutRestore()
         gl.getExtension("WEBGL_lose_context") != null)
         return false;
 
+    const failedTests = [
+        "gl.createBuffer()",
+        "gl.createFramebuffer()",
+        "gl.createProgram()",
+        "gl.createRenderbuffer()",
+        "gl.createShader(gl.VERTEX_SHADER)",
+        "gl.createTexture()",
+    ].reduce(s => {
+        const v = eval(s);
+        return !v;
+    });
+    if (failedTests.length) {
+        console.log({failedTests});
+        return false;
+    }
+
     // "Is" queries should all return false.
     if (gl.isBuffer(buffer) || gl.isEnabled(gl.BLEND) || gl.isFramebuffer(framebuffer) ||
         gl.isProgram(program) || gl.isRenderbuffer(renderbuffer) || gl.isShader(shader) ||
@@ -609,7 +619,7 @@ function testLostContextWithoutRestore()
             !compareGLError(gl.NO_ERROR, "OES_vertex_array_object.isVertexArrayOES(vertexArrayObject)") ||
             !compareGLError(gl.NO_ERROR, "OES_vertex_array_object.deleteVertexArrayOES(vertexArrayObject)"))
             return false;
-        if (OES_vertex_array_object.createVertexArrayOES() != null)
+        if (!OES_vertex_array_object.createVertexArrayOES())
             return false;
     }
     return true;
@@ -718,7 +728,7 @@ function testLosingAndRestoringContext()
         });
         canvas.addEventListener("webglcontextrestored", function() {
             if (!testRestoredContext())
-                reject("Test failed");
+                reject("Test failed: !testRestoredContext()");
             else
                 resolve("Test passed");
         });
@@ -788,16 +798,22 @@ function testOESTextureFloat() {
 function testOESVertexArrayObject() {
   if (OES_vertex_array_object) {
     // Extension must still be lost.
-    if (OES_vertex_array_object.createVertexArrayOES() != null)
+    if (!OES_vertex_array_object.createVertexArrayOES()) {
+        console.error("!OES_vertex_array_object.createVertexArrayOES()");
         return false;
+    }
     // Try re-enabling extension
 
     var old_OES_vertex_array_object = OES_vertex_array_object;
     OES_vertex_array_object = reGetExtensionAndTestForProperty(gl, "OES_vertex_array_object", false);
-    if (OES_vertex_array_object.createVertexArrayOES() == null)
+    if (!OES_vertex_array_object.createVertexArrayOES()) {
+        console.error("!OES_vertex_array_object.createVertexArrayOES() 2");
         return false;
-    if (old_OES_vertex_array_object.createVertexArrayOES() != null)
+    }
+    if (!old_OES_vertex_array_object.createVertexArrayOES()) {
+        console.error("!old_OES_vertex_array_object.createVertexArrayOES()");
         return false;
+    }
     return true;
   }
 }

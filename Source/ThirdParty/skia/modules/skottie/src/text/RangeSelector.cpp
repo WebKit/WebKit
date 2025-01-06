@@ -7,16 +7,16 @@
 #include "modules/skottie/src/text/RangeSelector.h"
 
 #include "include/core/SkCubicMap.h"
+#include "include/core/SkPoint.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkFloatingPoint.h"
-#include "include/private/base/SkPoint_impl.h"
 #include "include/private/base/SkTPin.h"
 #include "include/private/base/SkTo.h"
+#include "modules/jsonreader/SkJSONReader.h"
 #include "modules/skottie/include/Skottie.h"
 #include "modules/skottie/src/SkottieJson.h"
 #include "modules/skottie/src/SkottiePriv.h"
 #include "modules/skottie/src/animator/Animator.h"
-#include "src/utils/SkJSON.h"
 
 #include <algorithm>
 #include <limits>

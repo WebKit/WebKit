@@ -84,7 +84,7 @@ void RunNarrowBandDetectionTest(size_t num_channels) {
       render_delay_buffer->PrepareCaptureProcessing();
 
       analyzer.Update(*render_delay_buffer->GetRenderBuffer(),
-                      known_delay ? absl::optional<size_t>(0) : absl::nullopt);
+                      known_delay ? std::optional<size_t>(0) : std::nullopt);
     }
   };
 
@@ -149,7 +149,7 @@ TEST(RenderSignalAnalyzer, NoFalseDetectionOfNarrowBands) {
       render_delay_buffer->PrepareCaptureProcessing();
 
       analyzer.Update(*render_delay_buffer->GetRenderBuffer(),
-                      absl::optional<size_t>(0));
+                      std::optional<size_t>(0));
     }
 
     mask.fill(1.f);

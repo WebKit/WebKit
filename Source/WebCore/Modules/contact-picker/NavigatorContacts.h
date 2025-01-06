@@ -26,7 +26,9 @@
 #pragma once
 
 #include "Supplementable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,7 +36,7 @@ class ContactsManager;
 class Navigator;
 
 class NavigatorContacts final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorContacts);
 public:
     explicit NavigatorContacts(Navigator&);
     ~NavigatorContacts();
@@ -47,7 +49,7 @@ private:
     static ASCIILiteral supplementName();
 
     RefPtr<ContactsManager> m_contactsManager;
-    Navigator& m_navigator;
+    CheckedRef<Navigator> m_navigator;
 };
 
 }

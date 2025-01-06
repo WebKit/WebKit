@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -18,7 +18,7 @@
 #include "aom_dsp/arm/mem_neon.h"
 #include "aom_dsp/arm/sum_neon.h"
 
-static INLINE void highbd_obmc_variance_8x1_s16_neon(uint16x8_t pre,
+static inline void highbd_obmc_variance_8x1_s16_neon(uint16x8_t pre,
                                                      const int32_t *wsrc,
                                                      const int32_t *mask,
                                                      uint32x4_t *sse,
@@ -61,7 +61,7 @@ static INLINE void highbd_obmc_variance_8x1_s16_neon(uint16x8_t pre,
 // 32-bit elements (4095*4095*256 = 4292870400) before we have to accumulate
 // into 64-bit elements. Therefore blocks of size 32x64, 64x32, 64x64, 64x128,
 // 128x64, 128x128 are processed in a different helper function.
-static INLINE void highbd_obmc_variance_xlarge_neon(
+static inline void highbd_obmc_variance_xlarge_neon(
     const uint8_t *pre, int pre_stride, const int32_t *wsrc,
     const int32_t *mask, int width, int h, int h_limit, uint64_t *sse,
     int64_t *sum) {
@@ -108,28 +108,28 @@ static INLINE void highbd_obmc_variance_xlarge_neon(
   *sum = horizontal_long_add_s32x4(sum_s32);
 }
 
-static INLINE void highbd_obmc_variance_xlarge_neon_128xh(
+static inline void highbd_obmc_variance_xlarge_neon_128xh(
     const uint8_t *pre, int pre_stride, const int32_t *wsrc,
     const int32_t *mask, int h, uint64_t *sse, int64_t *sum) {
   highbd_obmc_variance_xlarge_neon(pre, pre_stride, wsrc, mask, 128, h, 16, sse,
                                    sum);
 }
 
-static INLINE void highbd_obmc_variance_xlarge_neon_64xh(
+static inline void highbd_obmc_variance_xlarge_neon_64xh(
     const uint8_t *pre, int pre_stride, const int32_t *wsrc,
     const int32_t *mask, int h, uint64_t *sse, int64_t *sum) {
   highbd_obmc_variance_xlarge_neon(pre, pre_stride, wsrc, mask, 64, h, 32, sse,
                                    sum);
 }
 
-static INLINE void highbd_obmc_variance_xlarge_neon_32xh(
+static inline void highbd_obmc_variance_xlarge_neon_32xh(
     const uint8_t *pre, int pre_stride, const int32_t *wsrc,
     const int32_t *mask, int h, uint64_t *sse, int64_t *sum) {
   highbd_obmc_variance_xlarge_neon(pre, pre_stride, wsrc, mask, 32, h, 64, sse,
                                    sum);
 }
 
-static INLINE void highbd_obmc_variance_large_neon(
+static inline void highbd_obmc_variance_large_neon(
     const uint8_t *pre, int pre_stride, const int32_t *wsrc,
     const int32_t *mask, int width, int h, uint64_t *sse, int64_t *sum) {
   uint16_t *pre_ptr = CONVERT_TO_SHORTPTR(pre);
@@ -158,14 +158,14 @@ static INLINE void highbd_obmc_variance_large_neon(
   *sum = horizontal_long_add_s32x4(sum_s32);
 }
 
-static INLINE void highbd_obmc_variance_neon_128xh(
+static inline void highbd_obmc_variance_neon_128xh(
     const uint8_t *pre, int pre_stride, const int32_t *wsrc,
     const int32_t *mask, int h, uint64_t *sse, int64_t *sum) {
   highbd_obmc_variance_large_neon(pre, pre_stride, wsrc, mask, 128, h, sse,
                                   sum);
 }
 
-static INLINE void highbd_obmc_variance_neon_64xh(const uint8_t *pre,
+static inline void highbd_obmc_variance_neon_64xh(const uint8_t *pre,
                                                   int pre_stride,
                                                   const int32_t *wsrc,
                                                   const int32_t *mask, int h,
@@ -173,7 +173,7 @@ static INLINE void highbd_obmc_variance_neon_64xh(const uint8_t *pre,
   highbd_obmc_variance_large_neon(pre, pre_stride, wsrc, mask, 64, h, sse, sum);
 }
 
-static INLINE void highbd_obmc_variance_neon_32xh(const uint8_t *pre,
+static inline void highbd_obmc_variance_neon_32xh(const uint8_t *pre,
                                                   int pre_stride,
                                                   const int32_t *wsrc,
                                                   const int32_t *mask, int h,
@@ -181,7 +181,7 @@ static INLINE void highbd_obmc_variance_neon_32xh(const uint8_t *pre,
   highbd_obmc_variance_large_neon(pre, pre_stride, wsrc, mask, 32, h, sse, sum);
 }
 
-static INLINE void highbd_obmc_variance_neon_16xh(const uint8_t *pre,
+static inline void highbd_obmc_variance_neon_16xh(const uint8_t *pre,
                                                   int pre_stride,
                                                   const int32_t *wsrc,
                                                   const int32_t *mask, int h,
@@ -189,7 +189,7 @@ static INLINE void highbd_obmc_variance_neon_16xh(const uint8_t *pre,
   highbd_obmc_variance_large_neon(pre, pre_stride, wsrc, mask, 16, h, sse, sum);
 }
 
-static INLINE void highbd_obmc_variance_neon_8xh(const uint8_t *pre8,
+static inline void highbd_obmc_variance_neon_8xh(const uint8_t *pre8,
                                                  int pre_stride,
                                                  const int32_t *wsrc,
                                                  const int32_t *mask, int h,
@@ -212,7 +212,7 @@ static INLINE void highbd_obmc_variance_neon_8xh(const uint8_t *pre8,
   *sum = horizontal_long_add_s32x4(sum_s32);
 }
 
-static INLINE void highbd_obmc_variance_neon_4xh(const uint8_t *pre8,
+static inline void highbd_obmc_variance_neon_4xh(const uint8_t *pre8,
                                                  int pre_stride,
                                                  const int32_t *wsrc,
                                                  const int32_t *mask, int h,
@@ -237,19 +237,19 @@ static INLINE void highbd_obmc_variance_neon_4xh(const uint8_t *pre8,
   *sum = horizontal_long_add_s32x4(sum_s32);
 }
 
-static INLINE void highbd_8_obmc_variance_cast(int64_t sum64, uint64_t sse64,
+static inline void highbd_8_obmc_variance_cast(int64_t sum64, uint64_t sse64,
                                                int *sum, unsigned int *sse) {
   *sum = (int)sum64;
   *sse = (unsigned int)sse64;
 }
 
-static INLINE void highbd_10_obmc_variance_cast(int64_t sum64, uint64_t sse64,
+static inline void highbd_10_obmc_variance_cast(int64_t sum64, uint64_t sse64,
                                                 int *sum, unsigned int *sse) {
   *sum = (int)ROUND_POWER_OF_TWO(sum64, 2);
   *sse = (unsigned int)ROUND_POWER_OF_TWO(sse64, 4);
 }
 
-static INLINE void highbd_12_obmc_variance_cast(int64_t sum64, uint64_t sse64,
+static inline void highbd_12_obmc_variance_cast(int64_t sum64, uint64_t sse64,
                                                 int *sum, unsigned int *sse) {
   *sum = (int)ROUND_POWER_OF_TWO(sum64, 4);
   *sse = (unsigned int)ROUND_POWER_OF_TWO(sse64, 8);

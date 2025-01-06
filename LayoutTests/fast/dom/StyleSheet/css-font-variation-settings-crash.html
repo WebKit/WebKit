@@ -1,0 +1,9 @@
+<p>This test passes if WebKit does not crash.</p>
+<script>
+globalThis.testRunner?.dumpAsText();
+
+const node = document.body;
+node.attributeStyleMap.set('font-variation-settings', node.computedStyleMap().get('color-scheme'));
+
+document.write('PASS. WebKit did not crash');
+</script>

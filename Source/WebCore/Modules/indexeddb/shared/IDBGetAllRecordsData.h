@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "IDBIndexIdentifier.h"
 #include "IDBKeyRangeData.h"
+#include "IDBObjectStoreIdentifier.h"
 
 namespace WebCore {
 
@@ -37,8 +39,8 @@ struct IDBGetAllRecordsData {
     IDBKeyRangeData keyRangeData;
     IndexedDB::GetAllType getAllType;
     std::optional<uint32_t> count;
-    uint64_t objectStoreIdentifier;
-    uint64_t indexIdentifier;
+    IDBObjectStoreIdentifier objectStoreIdentifier;
+    std::optional<IDBIndexIdentifier> indexIdentifier { };
 
     WEBCORE_EXPORT IDBGetAllRecordsData isolatedCopy() const;
 

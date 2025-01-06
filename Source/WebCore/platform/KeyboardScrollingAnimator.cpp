@@ -32,8 +32,11 @@
 #include "ScrollAnimator.h"
 #include "ScrollTypes.h"
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(KeyboardScrollingAnimator);
 
 KeyboardScrollingAnimator::KeyboardScrollingAnimator(ScrollableArea& scrollableArea)
     : m_scrollableArea(scrollableArea)
@@ -51,14 +54,14 @@ const std::optional<KeyboardScrollingKey> keyboardScrollingKeyForKeyboardEvent(c
         return { };
 
     static constexpr std::pair<PackedASCIILiteral<uint64_t>, KeyboardScrollingKey> mappings[] = {
-        { "Down", KeyboardScrollingKey::DownArrow },
-        { "End", KeyboardScrollingKey::End },
-        { "Home", KeyboardScrollingKey::Home },
-        { "Left", KeyboardScrollingKey::LeftArrow },
-        { "PageDown", KeyboardScrollingKey::PageDown },
-        { "PageUp", KeyboardScrollingKey::PageUp },
-        { "Right", KeyboardScrollingKey::RightArrow },
-        { "Up", KeyboardScrollingKey::UpArrow },
+        { "Down"_s, KeyboardScrollingKey::DownArrow },
+        { "End"_s, KeyboardScrollingKey::End },
+        { "Home"_s, KeyboardScrollingKey::Home },
+        { "Left"_s, KeyboardScrollingKey::LeftArrow },
+        { "PageDown"_s, KeyboardScrollingKey::PageDown },
+        { "PageUp"_s, KeyboardScrollingKey::PageUp },
+        { "Right"_s, KeyboardScrollingKey::RightArrow },
+        { "Up"_s, KeyboardScrollingKey::UpArrow },
     };
     static constexpr SortedArrayMap map { mappings };
 
@@ -119,8 +122,13 @@ const std::optional<ScrollGranularity> scrollGranularityForKeyboardEvent(const K
         return ScrollGranularity::Line;
     case KeyboardScrollingKey::UpArrow:
     case KeyboardScrollingKey::DownArrow:
-        if (event.metaKey())
-            return ScrollGranularity::Document;
+        if (event.shiftKey())
+            return { };
+        if (event.metaKey()) {
+            if (event.modifierKeys().hasExactlyOneBitSet())
+                return ScrollGranularity::Document;
+            return { };
+        }
         if (event.altKey())
             return ScrollGranularity::Page;
         return ScrollGranularity::Line;
@@ -166,7 +174,7 @@ float KeyboardScrollingAnimator::scrollDistance(ScrollDirection direction, Scrol
     return step;
 }
 
-RectEdges<bool> KeyboardScrollingAnimator::rubberbandableDirections() const
+RectEdges<bool> KeyboardScrollingAnimator::scrollingDirections() const
 {
     RectEdges<bool> edges;
 
@@ -211,7 +219,7 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
     if (m_scrollTriggeringKeyIsPressed)
         return true;
 
-    if (!rubberbandableDirections().at(boxSideForDirection(direction)))
+    if (!scrollingDirections().at(boxSideForDirection(direction)))
         return false;
 
     if (granularity == ScrollGranularity::Document || (!isKeyRepeat && granularity == ScrollGranularity::Page)) {

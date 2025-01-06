@@ -29,6 +29,8 @@
 #include "NetworkCacheKey.h"
 #include "NetworkCacheSubresourcesEntry.h"
 #include <wtf/persistence/PersistentCoders.h>
+#include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 
 namespace WTF::Persistence {
 

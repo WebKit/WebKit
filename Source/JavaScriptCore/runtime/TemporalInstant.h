@@ -54,9 +54,7 @@ public:
 
     static TemporalInstant* toInstant(JSGlobalObject*, JSValue);
     static TemporalInstant* from(JSGlobalObject*, JSValue);
-    static TemporalInstant* fromEpochSeconds(JSGlobalObject*, JSValue);
     static TemporalInstant* fromEpochMilliseconds(JSGlobalObject*, JSValue);
-    static TemporalInstant* fromEpochMicroseconds(JSGlobalObject*, JSValue);
     static TemporalInstant* fromEpochNanoseconds(JSGlobalObject*, JSValue);
     static JSValue compare(JSGlobalObject*, JSValue, JSValue);
 

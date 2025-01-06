@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringHash.h>
@@ -35,8 +36,8 @@ namespace PAL {
 struct ICUConverterWrapper;
 
 class ThreadGlobalData : public WTF::Thread::ClientData {
+    WTF_MAKE_TZONE_ALLOCATED(ThreadGlobalData);
     WTF_MAKE_NONCOPYABLE(ThreadGlobalData);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     PAL_EXPORT virtual ~ThreadGlobalData();
 

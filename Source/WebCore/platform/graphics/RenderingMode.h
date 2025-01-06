@@ -43,7 +43,13 @@ enum class RenderingPurpose : uint8_t {
     MediaPainting,
 };
 
-enum class RenderingMode : bool { Unaccelerated, Accelerated };
+enum class RenderingMode : uint8_t {
+    Unaccelerated,
+    Accelerated,
+    PDFDocument,
+    DisplayList,
+};
+
 enum class RenderingMethod : bool { Local };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, RenderingPurpose);

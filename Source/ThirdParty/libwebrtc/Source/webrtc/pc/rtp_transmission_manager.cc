@@ -10,10 +10,11 @@
 
 #include "pc/rtp_transmission_manager.h"
 
+#include <optional>
 #include <type_traits>
 #include <utility>
 
-#include "absl/types/optional.h"
+#include "api/environment/environment.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtp_transceiver_direction.h"
 #include "pc/audio_rtp_receiver.h"
@@ -21,7 +22,7 @@
 #include "pc/legacy_stats_collector_interface.h"
 #include "pc/video_rtp_receiver.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
@@ -34,13 +35,15 @@ static const char kDefaultVideoSenderId[] = "defaultv0";
 }  // namespace
 
 RtpTransmissionManager::RtpTransmissionManager(
+    const Environment& env,
     bool is_unified_plan,
     ConnectionContext* context,
     UsagePattern* usage_pattern,
     PeerConnectionObserver* observer,
     LegacyStatsCollectorInterface* legacy_stats,
     std::function<void()> on_negotiation_needed)
-    : is_unified_plan_(is_unified_plan),
+    : env_(env),
+      is_unified_plan_(is_unified_plan),
       context_(context),
       usage_pattern_(usage_pattern),
       observer_(observer),
@@ -245,14 +248,15 @@ RtpTransmissionManager::CreateSender(
                (track->kind() == MediaStreamTrackInterface::kAudioKind));
     sender = RtpSenderProxyWithInternal<RtpSenderInternal>::Create(
         signaling_thread(),
-        AudioRtpSender::Create(worker_thread(), id, legacy_stats_, this));
+        AudioRtpSender::Create(env_, worker_thread(), id, legacy_stats_, this));
     NoteUsageEvent(UsageEvent::AUDIO_ADDED);
   } else {
     RTC_DCHECK_EQ(media_type, cricket::MEDIA_TYPE_VIDEO);
     RTC_DCHECK(!track ||
                (track->kind() == MediaStreamTrackInterface::kVideoKind));
     sender = RtpSenderProxyWithInternal<RtpSenderInternal>::Create(
-        signaling_thread(), VideoRtpSender::Create(worker_thread(), id, this));
+        signaling_thread(),
+        VideoRtpSender::Create(env_, worker_thread(), id, this));
     NoteUsageEvent(UsageEvent::VIDEO_ADDED);
   }
   bool set_track_succeeded = sender->SetTrack(track.get());
@@ -520,8 +524,8 @@ void RtpTransmissionManager::CreateVideoReceiver(
 
   video_receiver->SetupMediaChannel(
       remote_sender_info.sender_id == kDefaultVideoSenderId
-          ? absl::nullopt
-          : absl::optional<uint32_t>(remote_sender_info.first_ssrc),
+          ? std::nullopt
+          : std::optional<uint32_t>(remote_sender_info.first_ssrc),
       video_media_receive_channel());
 
   auto receiver = RtpReceiverProxyWithInternal<RtpReceiverInternal>::Create(

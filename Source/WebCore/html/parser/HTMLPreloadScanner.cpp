@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
- * Copyright (C) 2010-2021 Google Inc. All Rights Reserved.
+ * Copyright (C) 2010-2023 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,25 +48,30 @@
 #include "SizesAttributeParser.h"
 #include <wtf/MainThread.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TokenPreloadScanner);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLPreloadScanner);
 
 using namespace HTMLNames;
 
 TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVector& data)
 {
     static constexpr std::pair<PackedASCIILiteral<uint64_t>, TokenPreloadScanner::TagId> mappings[] = {
-        { "base", TagId::Base },
-        { "img", TagId::Img },
-        { "input", TagId::Input },
-        { "link", TagId::Link },
-        { "meta", TagId::Meta },
-        { "picture", TagId::Picture },
-        { "script", TagId::Script },
-        { "source", TagId::Source },
-        { "style", TagId::Style },
-        { "template", TagId::Template },
+        { "base"_s, TagId::Base },
+        { "img"_s, TagId::Img },
+        { "input"_s, TagId::Input },
+        { "link"_s, TagId::Link },
+        { "meta"_s, TagId::Meta },
+        { "picture"_s, TagId::Picture },
+        { "script"_s, TagId::Script },
+        { "source"_s, TagId::Source },
+        { "style"_s, TagId::Style },
+        { "template"_s, TagId::Template },
+        { "video"_s, TagId::Video },
     };
     static constexpr SortedArrayMap map { mappings };
     return map.get(data.span(), TagId::Unknown);
@@ -84,6 +89,8 @@ ASCIILiteral TokenPreloadScanner::initiatorFor(TagId tagId)
         return "link"_s;
     case TagId::Script:
         return "script"_s;
+    case TagId::Video:
+        return "video"_s;
     case TagId::Unknown:
     case TagId::Style:
     case TagId::Base:
@@ -198,6 +205,14 @@ private:
             m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<UChar>).toString();
         else if (match(attributeName, charsetAttr))
             m_charset = attributeValue.toString();
+    }
+
+    void processVideoAttribute(const AtomString& attributeName, StringView attributeValue)
+    {
+        if (match(attributeName, posterAttr))
+            setURLToLoad(attributeValue);
+        else if (match(attributeName, crossoriginAttr))
+            m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<UChar>).toString();
     }
 
     void processAttribute(const AtomString& attributeName, StringView attributeValue, const Vector<bool>& pictureState)
@@ -321,6 +336,9 @@ private:
             else if (document->settings().disabledAdaptationsMetaTagEnabled() && match(attributeName, nameAttr))
                 m_metaIsDisabledAdaptations = equalLettersIgnoringASCIICase(attributeValue, "disabled-adaptations"_s);
             break;
+        case TagId::Video:
+            processVideoAttribute(attributeName, attributeValue);
+            break;
         case TagId::Base:
         case TagId::Style:
         case TagId::Template:
@@ -365,6 +383,7 @@ private:
         case TagId::Img:
         case TagId::Input:
         case TagId::Source:
+        case TagId::Video:
             ASSERT(m_tagId != TagId::Input || m_inputIsImage);
             return CachedResource::Type::ImageResource;
         case TagId::Link:
@@ -454,6 +473,8 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
                 --m_templateCount;
             return;
         }
+        if (m_templateCount)
+            return;
         if (tagId == TagId::Style) {
             if (m_inStyle)
                 m_cssScanner.reset();
@@ -467,8 +488,19 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
     case HTMLToken::Type::StartTag: {
         TagId tagId = tagIdFor(token.name());
         if (tagId == TagId::Template) {
-            ++m_templateCount;
-            return;
+            bool isDeclarativeShadowRoot = false;
+            static constexpr UChar shadowRootAsUChar[] = { 's', 'h', 'a', 'd', 'o', 'w', 'r', 'o', 'o', 't', 'm', 'o', 'd', 'e' };
+            const auto* shadowRootModeAttribute = findAttribute(token.attributes(), shadowRootAsUChar);
+            if (shadowRootModeAttribute) {
+                String shadowRootValue(shadowRootModeAttribute->value);
+                isDeclarativeShadowRoot = equalIgnoringASCIICase(shadowRootValue, "open"_s) || equalIgnoringASCIICase(shadowRootValue, "closed"_s);
+            }
+            // If this is a declarative shadow root <template shadowrootmode> element
+            // *and* we're not already inside a non-Declartive Shadow DOM (DSD)
+            // <template> element, then we leave the template count at zero.
+            // Otherwise, increment it.
+            if (!(isDeclarativeShadowRoot && !m_templateCount))
+                ++m_templateCount;
         }
         if (m_templateCount)
             return;

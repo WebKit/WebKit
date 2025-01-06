@@ -32,29 +32,88 @@
 #import "GraphicsContext.h"
 #import "InnerSpinButtonPart.h"
 #import "LocalDefaultSystemAppearance.h"
+#import <pal/spi/cocoa/NSStepperCellSPI.h>
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-InnerSpinButtonMac::InnerSpinButtonMac(InnerSpinButtonPart& owningPart, ControlFactoryMac& controlFactory)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InnerSpinButtonMac);
+
+InnerSpinButtonMac::InnerSpinButtonMac(InnerSpinButtonPart& owningPart, ControlFactoryMac& controlFactory, NSStepperCell *stepperCell)
     : ControlMac(owningPart, controlFactory)
+    , m_stepperCell(stepperCell)
 {
 }
 
+#if HAVE(NSSTEPPERCELL_INCREMENTING)
+IntOutsets InnerSpinButtonMac::cellOutsets(NSControlSize controlSize, const ControlStyle&) const
+{
+    static const std::array cellOutsets {
+        // top right bottom left
+        IntOutsets { 4, 3, 4, 3 },
+        IntOutsets { 2, 2, 4, 2 },
+        IntOutsets { 2, 2, 3, 2 },
+        IntOutsets { 4, 3, 4, 3 },
+    };
+    return cellOutsets[controlSize];
+}
+#endif
+
 IntSize InnerSpinButtonMac::cellSize(NSControlSize controlSize, const ControlStyle&) const
 {
-    static const IntSize sizes[] = {
-        { 19, 27 },
-        { 15, 22 },
-        { 13, 15 },
-        { 19, 27 }
+#if HAVE(NSSTEPPERCELL_INCREMENTING)
+    if ([NSStepperCell instancesRespondToSelector:@selector(setIncrementing:)]) {
+        static constexpr std::array sizes {
+            IntSize { 19, 28 },
+            IntSize { 15, 22 },
+            IntSize { 13, 18 },
+            IntSize { 19, 28 }
+        };
+        return sizes[controlSize];
+    }
+#endif
+    static constexpr std::array sizes {
+        IntSize { 19, 27 },
+        IntSize { 15, 22 },
+        IntSize { 13, 15 },
+        IntSize { 19, 27 }
     };
     return sizes[controlSize];
 }
 
-void InnerSpinButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float, const ControlStyle& style)
+void InnerSpinButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
+{
+#if HAVE(NSSTEPPERCELL_INCREMENTING)
+    if ([NSStepperCell instancesRespondToSelector:@selector(setIncrementing:)]) {
+        drawWithCell(context, borderRect, deviceScaleFactor, style);
+        return;
+    }
+#endif
+    UNUSED_PARAM(deviceScaleFactor);
+    drawWithCoreUI(context, borderRect, style);
+}
+
+#if HAVE(NSSTEPPERCELL_INCREMENTING)
+void InnerSpinButtonMac::drawWithCell(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
+{
+    LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
+    GraphicsContextStateSaver stateSaver(context);
+
+    auto logicalRect = rectForBounds(borderRect.rect(), style);
+
+    if (style.zoomFactor != 1) {
+        logicalRect.scale(1 / style.zoomFactor);
+        context.scale(style.zoomFactor);
+    }
+
+    drawCell(context, logicalRect, deviceScaleFactor, style, m_stepperCell.get(), true);
+}
+#endif
+
+void InnerSpinButtonMac::drawWithCoreUI(GraphicsContext& context, const FloatRoundedRect& borderRect, const ControlStyle& style)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -101,6 +160,45 @@ void InnerSpinButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& 
 
     END_BLOCK_OBJC_EXCEPTIONS
 }
+
+#if HAVE(NSSTEPPERCELL_INCREMENTING)
+FloatRect InnerSpinButtonMac::rectForBounds(const FloatRect& bounds, const ControlStyle& style) const
+{
+    auto controlSize = [m_stepperCell controlSize];
+
+    FloatSize size = cellSize(controlSize, style);
+    size.scale(style.zoomFactor);
+
+    auto outsets = cellOutsets(controlSize, style);
+
+    return inflatedRect(bounds, size, outsets, style);
+}
+
+void InnerSpinButtonMac::updateCellStates(const FloatRect& rect, const ControlStyle& style)
+{
+    ControlMac::updateCellStates(rect, style);
+
+    if (![m_stepperCell respondsToSelector:@selector(setIncrementing:)])
+        return;
+
+    const auto& states = style.states;
+
+    [m_stepperCell setIncrementing:states.contains(ControlStyle::State::SpinUp)];
+
+    bool oldPressed = [m_stepperCell isHighlighted];
+    bool pressed = states.contains(ControlStyle::State::Pressed);
+    if (pressed != oldPressed)
+        [m_stepperCell setHighlighted:pressed];
+
+    auto controlSize = controlSizeForSize(rect.size(), style);
+
+    if (controlSize == NSControlSizeLarge)
+        controlSize = NSControlSizeRegular;
+
+    if (controlSize != [m_stepperCell controlSize])
+        [m_stepperCell setControlSize:controlSize];
+}
+#endif
 
 } // namespace WebCore
 

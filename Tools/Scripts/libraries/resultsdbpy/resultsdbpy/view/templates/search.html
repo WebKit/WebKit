@@ -340,7 +340,7 @@ DOM.inject(
                 const queryString = paramsToQuery(params);
                 window.history.pushState(queryString, '', splitURL[0] + '?' + queryString);
             }, SUITES)}
-            ${dashboards.map(dashboard=>{return dashboard.toString();})}
+            ${dashboards.map(dashboard=>{return dashboard.toString();}).join('')}
             ${view}
         </div>
     </div>`

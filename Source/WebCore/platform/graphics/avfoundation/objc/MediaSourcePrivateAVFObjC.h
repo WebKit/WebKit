@@ -37,7 +37,6 @@
 #include <wtf/Vector.h>
 
 OBJC_CLASS AVAsset;
-OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVStreamDataParser;
 OBJC_CLASS NSError;
 OBJC_CLASS NSObject;
@@ -52,7 +51,7 @@ class MediaPlayerPrivateMediaSourceAVFObjC;
 class MediaSourcePrivateClient;
 class SourceBufferPrivateAVFObjC;
 class TimeRanges;
-class WebCoreDecompressionSession;
+class VideoMediaSampleRenderer;
 
 class MediaSourcePrivateAVFObjC final
     : public MediaSourcePrivate
@@ -67,6 +66,7 @@ public:
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::AVFObjC; }
 
     RefPtr<MediaPlayerPrivateInterface> player() const final;
+    void setPlayer(MediaPlayerPrivateInterface*) final;
 
     AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) final;
     void durationChanged(const MediaTime&) final;
@@ -82,9 +82,10 @@ public:
     FloatSize naturalSize() const;
 
     void hasSelectedVideoChanged(SourceBufferPrivateAVFObjC&);
-    void setVideoRenderer(WebSampleBufferVideoRendering *);
-    void stageVideoRenderer(WebSampleBufferVideoRendering *);
-    void setDecompressionSession(WebCoreDecompressionSession*);
+    void setVideoRenderer(VideoMediaSampleRenderer*);
+    void stageVideoRenderer(VideoMediaSampleRenderer*);
+    void videoRendererWillReconfigure(VideoMediaSampleRenderer&);
+    void videoRendererDidReconfigure(VideoMediaSampleRenderer&);
 
     void flushActiveSourceBuffersIfNeeded();
 
@@ -101,10 +102,10 @@ public:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const final { return "MediaSourcePrivateAVFObjC"_s; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 
-    const void* nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
+    uint64_t nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
 #endif
 
     using RendererType = MediaSourcePrivateClient::RendererType;
@@ -112,6 +113,10 @@ public:
     bool needsVideoLayer() const;
 
     void setResourceOwner(const ProcessIdentity& resourceOwner) { m_resourceOwner = resourceOwner; }
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    void keyAdded();
+#endif
 
 private:
     friend class SourceBufferPrivateAVFObjC;
@@ -138,11 +143,11 @@ private:
 #endif
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
     uint64_t m_nextSourceBufferID { 0 };
 #endif
 
-    HashMap<SourceBufferPrivate*, Vector<PlatformTimeRanges>> m_bufferedRanges;
+    UncheckedKeyHashMap<SourceBufferPrivate*, Vector<PlatformTimeRanges>> m_bufferedRanges;
     ProcessIdentity m_resourceOwner;
 };
 

@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2024 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -191,8 +191,13 @@
         (iokit-property "MetalPluginName")
     )
 
-    (allow sysctl-read
-           (sysctl-name #"kern.bootsessionuuid"))
+    (allow sysctl-read (sysctl-name "kern.bootsessionuuid"))
+#if HAVE(SANDBOX_STATE_FLAGS)
+    (with-filter (require-not (webcontent-process-launched))
+        (allow sysctl-read (sysctl-name "kern.boottime")))
+#else
+    (allow sysctl-read (sysctl-name "kern.boottime"))
+#endif
 
     (mobile-preferences-read
         "com.apple.Metal" ;; <rdar://problem/25535471>
@@ -413,7 +418,12 @@
     (literal "/"))
 
 (allow file-read*
-       (subpath "/private/var/MobileAsset/PreinstalledAssetsV2/InstallWithOs"))
+    (subpath "/private/var/MobileAsset/PreinstalledAssetsV2/InstallWithOs"))
+
+;; FIXME: Remove when rdar://141156558 has been fixed.
+#if ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
+(allow file-read* (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_Font7"))
+#endif
 
 (device-access)
 
@@ -423,9 +433,12 @@
         (extension "com.apple.fileprovider.read-write")))
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-(deny mach-lookup (with no-report) (global-name
-    "com.apple.logd"
-    "com.apple.logd.events"))
+#if !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
+(with-filter (require-not (lockdown-mode))
+    (allow mach-lookup (global-name
+        "com.apple.logd"
+        "com.apple.logd.events")))
+#endif
 #else
 (allow mach-lookup (global-name
     "com.apple.logd"
@@ -440,7 +453,8 @@
 
 ;; <rdar://problem/12413942>
 (allow file-read*
-       (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
+   (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
+
 (allow iokit-get-properties
        (iokit-property "IORegistryEntryPropertyKeys"))
 
@@ -828,11 +842,12 @@
 (deny mach-lookup
     (global-name "com.apple.mobilegestalt.xpc"))
 
-(allow mach-lookup (with telemetry)
-    (require-all
-        (require-not (webcontent-process-launched))
-        (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.mobilegestalt.xpc")))
+(with-filter (require-not (state-flag "BlockMobileGestaltInWebContentSandbox"))
+    (allow mach-lookup (with telemetry)
+        (require-all
+            (require-not (webcontent-process-launched))
+            (extension "com.apple.webkit.extension.mach")
+            (global-name "com.apple.mobilegestalt.xpc"))))
 
 (deny mach-lookup (with no-report)
     (xpc-service-name "com.apple.audio.toolbox.reporting.service"))
@@ -883,26 +898,18 @@
         (global-name "com.apple.analyticsd")
         (global-name "com.apple.osanalytics.osanalyticshelper")))
 
-(define (mach-extension-list)
-    (global-name
-        "com.apple.mobileassetd.v2"))
-
-(allow mach-lookup (with telemetry-backtrace)
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (mach-extension-list)))
-
-(with-filter (state-flag "EnableExperimentalSandbox")
-    (deny mach-lookup
+(with-filter (require-not (state-flag "BlockMobileAssetInWebContentSandbox"))
+    (allow mach-lookup
         (require-all
             (extension "com.apple.webkit.extension.mach")
-            (mach-extension-list))))
+            (global-name "com.apple.mobileassetd.v2"))))
 
-(allow mach-lookup
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (system-attribute apple-internal)
-        (global-name "com.apple.webinspector")))
+(with-filter (require-not (state-flag "BlockWebInspectorInWebContentSandbox"))
+    (allow mach-lookup
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (system-attribute apple-internal)
+            (global-name "com.apple.webinspector"))))
 
 ;; Silence warnings about these connections if we have decided not to extend access to them:
 (deny mach-lookup (with no-report)
@@ -1459,67 +1466,13 @@
 (allow darwin-notification-post
     (notification-name
 #if ENABLE(NOTIFY_BLOCKING)
-        ;; Keep in sync with notify_entitlements() in process-entitlements.sh.
-        ;; FORWARDED_NOTIFICATIONS
-        "_NS_ctasd"
-        "com.apple.CFPreferences._domainsChangedExternally"
-        "com.apple.WebKit.LibraryPathDiagnostics"
-        "com.apple.WebKit.deleteAllCode"
-        "com.apple.WebKit.dumpGCHeap"
-        "com.apple.WebKit.dumpUntrackedMallocs"
-        "com.apple.WebKit.fullGC"
-        "com.apple.WebKit.logMemStats"
-        "com.apple.WebKit.logPageState"
-        "com.apple.WebKit.showAllDocuments"
-        "com.apple.WebKit.showBackForwardCache"
-        "com.apple.WebKit.showGraphicsLayerTree"
-        "com.apple.WebKit.showLayerTree"
-        "com.apple.WebKit.showLayoutTree"
-        "com.apple.WebKit.showMemoryCache"
-        "com.apple.WebKit.showPaintOrderTree"
-        "com.apple.WebKit.showRenderTree"
-        "com.apple.analyticsd.running"
-        "com.apple.coreaudio.list_components"
-        "com.apple.distnote.locale_changed"
-        "com.apple.language.changed"
-        "com.apple.mediaaccessibility.audibleMediaSettingsChanged"
-        "com.apple.mediaaccessibility.captionAppearanceSettingsChanged"
-        "com.apple.powerlog.state_changed"
-        "com.apple.system.logging.prefschanged"
-        "com.apple.system.lowpowermode"
-        "com.apple.system.networkd.settings"
-        "com.apple.system.timezone"
-        "com.apple.webinspectord.automatic_inspection_enabled"
-        "com.apple.webinspectord.available"
-        "com.apple.zoomwindow"
-        "org.WebKit.lowMemory"
-        "org.WebKit.lowMemory.begin"
-        "org.WebKit.lowMemory.end"
-        "org.WebKit.memoryWarning"
-        "org.WebKit.memoryWarning.begin"
-        "org.WebKit.memoryWarning.end"
-
-        ;; EMBEDDED_FORWARDED_NOTIFICATIONS
-        "com.apple.mobile.usermanagerd.foregrounduser_changed"
-        "com.apple.mobile.keybagd.lock_status"
-        "com.apple.mobile.keybagd.user_changed"
-
-        ;; NON_FORWARDED_NOTIFICATIONS
-        "com.apple.accessibility.cache.app.ax"
-        "com.apple.accessibility.cache.ax"
-        "com.apple.accessibility.cache.enhance.text.legibility"
-        "com.apple.accessibility.cache.enhance.text.legibilitycom.apple.WebKit.WebContent"
-        "com.apple.accessibility.cache.guided.access"
-        "com.apple.accessibility.cache.guided.access.via.mdm"
-        "com.apple.accessibility.cache.hearing.aid.paired"
-        "com.apple.accessibility.cache.invert.colors"
-        "com.apple.accessibility.cache.invert.colorscom.apple.WebKit.WebContent"
-        "com.apple.accessibility.cache.reduce.motion"
-        "com.apple.accessibility.cache.reduce.motioncom.apple.WebKit.WebContent"
-        "com.apple.accessibility.cache.speech.settings.disabled.by.mc"
-        "com.apple.accessibility.cache.switch.control"
-        "com.apple.accessibility.cache.vot"
-        "com.apple.accessibility.cache.zoom"
+#define WK_NOTIFICATION_COMMENT(...)
+#define WK_NOTIFICATION(name) name
+#include "Resources/cocoa/NotificationAllowList/ForwardedNotifications.def"
+#include "Resources/cocoa/NotificationAllowList/EmbeddedForwardedNotifications.def"
+#include "Resources/cocoa/NotificationAllowList/NonForwardedNotifications.def"
+#undef WK_NOTIFICATION
+#undef WK_NOTIFICATION_COMMENT
 #endif
         "_AXNotification_AXSClassicInvertColorsPreference"
         "com.apple.WebContentFilter.remoteUI.WebContentAnalysisUI-com.apple.uikit.viewService.connectionRequest"

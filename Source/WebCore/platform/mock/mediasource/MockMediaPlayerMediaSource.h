@@ -44,6 +44,9 @@ class MockMediaPlayerMediaSource final
     , public RefCounted<MockMediaPlayerMediaSource>
     , public CanMakeWeakPtr<MockMediaPlayerMediaSource> {
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     explicit MockMediaPlayerMediaSource(MediaPlayer*);
 
     // MediaPlayer Engine Support
@@ -53,8 +56,7 @@ public:
 
     virtual ~MockMediaPlayerMediaSource();
 
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::MockMSE; }
 
     void advanceCurrentTime();
     MediaTime currentTime() const override;
@@ -67,7 +69,7 @@ public:
     void setNetworkState(MediaPlayer::NetworkState);
 
 #if !RELEASE_LOG_DISABLED
-    const void* mediaPlayerLogIdentifier() { return m_player.get()->mediaPlayerLogIdentifier(); }
+    uint64_t mediaPlayerLogIdentifier() { return m_player.get()->mediaPlayerLogIdentifier(); }
     const Logger& mediaPlayerLogger() { return m_player.get()->mediaPlayerLogger(); }
 #endif
 
@@ -110,6 +112,10 @@ private:
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MockMediaPlayerMediaSource)
+static bool isType(const WebCore::MediaPlayerPrivateInterface& player) { return player.mediaPlayerType() == WebCore::MediaPlayerType::MockMSE; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(MEDIA_SOURCE)
 

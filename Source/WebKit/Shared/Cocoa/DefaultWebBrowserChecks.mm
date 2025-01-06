@@ -30,10 +30,10 @@
 #import "Connection.h"
 #import "Logging.h"
 #import <WebCore/RegistrableDomain.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -44,6 +44,11 @@
 namespace WebKit {
 
 static bool isFullWebBrowserOrRunningTest(const String&);
+
+static bool treatAsNonBrowser(const String& bundleID)
+{
+    return bundleID == "inAppBrowserPrivacyTestIdentifier"_s;
+}
 
 bool isRunningTest(const String& bundleID)
 {
@@ -68,13 +73,20 @@ static bool isInWebKitChildProcess()
 
     static dispatch_once_t once;
     dispatch_once(&once, ^{
+#if USE(EXTENSIONKIT)
+        isInSubProcess |= WTF::processHasEntitlement("com.apple.developer.web-browser-engine.networking"_s)
+            || WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s)
+            || WTF::processHasEntitlement("com.apple.developer.web-browser-engine.webcontent"_s);
+        if (isInSubProcess)
+            return;
+#endif // USE(EXTENSIONKIT)
         NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
         isInSubProcess = [bundleIdentifier hasPrefix:@"com.apple.WebKit.WebContent"]
             || [bundleIdentifier hasPrefix:@"com.apple.WebKit.Networking"]
             || [bundleIdentifier hasPrefix:@"com.apple.WebKit.GPU"];
 #if ENABLE(MODEL_PROCESS)
         isInSubProcess = isInSubProcess || [bundleIdentifier hasPrefix:@"com.apple.WebKit.Model"];
-#endif
+#endif // ENABLE(MODEL_PROCESS)
     });
 
     return isInSubProcess;
@@ -135,7 +147,7 @@ void determineTrackingPreventionState()
     bool appWasLinkedOnOrAfter = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SessionCleanupByDefault);
 
     itpQueue() = WorkQueue::create("com.apple.WebKit.itpCheckQueue"_s);
-    itpQueue()->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = WebCore::applicationBundleIdentifier().isolatedCopy()] {
+    itpQueue()->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = applicationBundleIdentifier().isolatedCopy()] {
         currentTrackingPreventionState = determineTrackingPreventionStateInternal(appWasLinkedOnOrAfter, bundleIdentifier) ? TrackingPreventionState::Enabled : TrackingPreventionState::Disabled;
         RunLoop::main().dispatch([] {
             itpQueue() = nullptr;
@@ -248,7 +260,12 @@ bool isParentProcessAFullWebBrowser(AuxiliaryProcess& auxiliaryProcess)
         fullWebBrowser = WTF::hasEntitlement(*auditToken, "com.apple.developer.web-browser"_s);
     });
 
-    return fullWebBrowser || isRunningTest(WebCore::applicationBundleIdentifier());
+    auto bundleID = applicationBundleIdentifier();
+
+    if (isRunningTest(bundleID))
+        return true;
+
+    return fullWebBrowser && !treatAsNonBrowser(bundleID);
 }
 
 bool isFullWebBrowserOrRunningTest(const String& bundleIdentifier)
@@ -273,7 +290,10 @@ bool isFullWebBrowserOrRunningTest(const String& bundleIdentifier)
     static bool fullWebBrowser = false;
 #endif
 
-    return fullWebBrowser || isRunningTest(bundleIdentifier);
+    if (isRunningTest(bundleIdentifier))
+        return true;
+
+    return fullWebBrowser && !treatAsNonBrowser(bundleIdentifier);
 }
 
 bool shouldEvaluateJavaScriptWithoutTransientActivation()
@@ -293,7 +313,7 @@ bool isFullWebBrowserOrRunningTest()
     ASSERT(!isInWebKitChildProcess());
     ASSERT(RunLoop::isMain());
 
-    return isFullWebBrowserOrRunningTest(WebCore::applicationBundleIdentifier());
+    return isFullWebBrowserOrRunningTest(applicationBundleIdentifier());
 }
 
 } // namespace WebKit

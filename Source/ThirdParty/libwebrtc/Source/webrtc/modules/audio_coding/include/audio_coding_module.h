@@ -12,11 +12,11 @@
 #define MODULES_AUDIO_CODING_INCLUDE_AUDIO_CODING_MODULE_H_
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/function_view.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
@@ -39,17 +39,17 @@ class AudioPacketizationCallback {
                            uint32_t timestamp,
                            const uint8_t* payload_data,
                            size_t payload_len_bytes,
-                           int64_t absolute_capture_timestamp_ms) {
+                           int64_t /* absolute_capture_timestamp_ms */) {
     // TODO(bugs.webrtc.org/10739): Deprecate the old SendData and make this one
     // pure virtual.
     return SendData(frame_type, payload_type, timestamp, payload_data,
                     payload_len_bytes);
   }
-  virtual int32_t SendData(AudioFrameType frame_type,
-                           uint8_t payload_type,
-                           uint32_t timestamp,
-                           const uint8_t* payload_data,
-                           size_t payload_len_bytes) {
+  virtual int32_t SendData(AudioFrameType /* frame_type */,
+                           uint8_t /* payload_type */,
+                           uint32_t /* timestamp */,
+                           const uint8_t* /* payload_data */,
+                           size_t /* payload_len_bytes */) {
     RTC_DCHECK_NOTREACHED() << "This method must be overridden, or not used.";
     return -1;
   }
@@ -77,6 +77,10 @@ class AudioCodingModule {
       *encoder = std::move(new_encoder);
     });
   }
+
+  // Reset encoder and audio coding module. This throws away any audio passed
+  // and starts fresh.
+  virtual void Reset() = 0;
 
   // int32_t RegisterTransportCallback()
   // Register a transport callback which will be called to deliver

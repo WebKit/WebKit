@@ -33,7 +33,7 @@ class Document;
 
 class MainThreadStylePropertyMapReadOnly : public StylePropertyMapReadOnly {
 public:
-    ExceptionOr<RefPtr<CSSStyleValue>> get(ScriptExecutionContext&, const AtomString&) const final;
+    ExceptionOr<CSSStyleValueOrUndefined> get(ScriptExecutionContext&, const AtomString&) const final;
     ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(ScriptExecutionContext&, const AtomString&) const final;
     ExceptionOr<bool> has(ScriptExecutionContext&, const AtomString&) const final;
 

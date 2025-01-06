@@ -304,7 +304,7 @@ void printInternal(PrintStream& out, UInt128 value)
 {
     auto vector = numberToStringUnsigned<Vector<LChar, 50>>(value);
     vector.append('\0');
-    out.printf("%s", bitwise_cast<const char*>(vector.data()));
+    out.printf("%s", std::bit_cast<const char*>(vector.data()));
 }
 
 void printInternal(PrintStream& out, Int128 value)
@@ -320,7 +320,7 @@ void printInternal(PrintStream& out, Int128 value)
         positive = -value;
     auto vector = numberToStringUnsigned<Vector<LChar, 50>>(positive);
     vector.append('\0');
-    out.printf("-%s", bitwise_cast<const char*>(vector.data()));
+    out.printf("-%s", std::bit_cast<const char*>(vector.data()));
 }
 
 }  // namespace WTF
@@ -333,7 +333,6 @@ constexpr bool numeric_limits<WTF::UInt128Impl>::is_exact;
 constexpr bool numeric_limits<WTF::UInt128Impl>::has_infinity;
 constexpr bool numeric_limits<WTF::UInt128Impl>::has_quiet_NaN;
 constexpr bool numeric_limits<WTF::UInt128Impl>::has_signaling_NaN;
-constexpr float_denorm_style numeric_limits<WTF::UInt128Impl>::has_denorm;
 constexpr bool numeric_limits<WTF::UInt128Impl>::has_denorm_loss;
 constexpr float_round_style numeric_limits<WTF::UInt128Impl>::round_style;
 constexpr bool numeric_limits<WTF::UInt128Impl>::is_iec559;
@@ -357,7 +356,6 @@ constexpr bool numeric_limits<WTF::Int128Impl>::is_exact;
 constexpr bool numeric_limits<WTF::Int128Impl>::has_infinity;
 constexpr bool numeric_limits<WTF::Int128Impl>::has_quiet_NaN;
 constexpr bool numeric_limits<WTF::Int128Impl>::has_signaling_NaN;
-constexpr float_denorm_style numeric_limits<WTF::Int128Impl>::has_denorm;
 constexpr bool numeric_limits<WTF::Int128Impl>::has_denorm_loss;
 constexpr float_round_style numeric_limits<WTF::Int128Impl>::round_style;
 constexpr bool numeric_limits<WTF::Int128Impl>::is_iec559;

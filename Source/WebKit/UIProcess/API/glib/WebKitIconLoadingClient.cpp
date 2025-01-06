@@ -22,12 +22,13 @@
 
 #include "APIIconLoadingClient.h"
 #include "WebKitWebViewPrivate.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GWeakPtr.h>
 
 using namespace WebKit;
 
 class IconLoadingClient : public API::IconLoadingClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(IconLoadingClient);
 public:
     explicit IconLoadingClient(WebKitWebView* webView)
         : m_webView(webView)

@@ -57,13 +57,12 @@ FloatSize visualCellSize(IntSize size, const ControlStyle& style)
 
 IntOutsets cellOutsets(NSControlSize controlSize)
 {
-    static const IntOutsets margins[] =
-    {
+    static const std::array margins {
         // top right bottom left
-        { 2, 2, 1, 2 },
-        { 2, 2, 1, 2 },
-        { 1, 1, 0, 1 },
-        { 2, 2, 1, 2 },
+        IntOutsets { 2, 2, 1, 2 },
+        IntOutsets { 2, 2, 1, 2 },
+        IntOutsets { 1, 1, 0, 1 },
+        IntOutsets { 2, 2, 1, 2 },
     };
     return margins[controlSize];
 }

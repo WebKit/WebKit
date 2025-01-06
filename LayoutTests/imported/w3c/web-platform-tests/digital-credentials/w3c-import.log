@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/allow-attribute.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/dc-types.ts
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/default-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/digital-credentials-static-methods.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/disabled-by-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/disabled-by-permissions-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/enabled-on-self-origin-by-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/enabled-on-self-origin-by-permissions-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/get-user-activation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/identity-create.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/identity-get.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/non-fully-active.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/tsconfig.json

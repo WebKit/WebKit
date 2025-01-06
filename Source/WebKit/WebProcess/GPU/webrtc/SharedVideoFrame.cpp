@@ -37,14 +37,13 @@
 #include <WebCore/VideoFrameCV.h>
 #include <WebCore/VideoFrameLibWebRTC.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(LIBWEBRTC)
 
-ALLOW_COMMA_BEGIN
-
-#include <webrtc/sdk/WebKit/WebKitUtilities.h>
-
-ALLOW_COMMA_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <webrtc/webkit_sdk/WebKit/WebKitUtilities.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #endif
 
@@ -53,6 +52,8 @@ ALLOW_COMMA_END
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedVideoFrameWriter);
 
 SharedVideoFrameWriter::SharedVideoFrameWriter()
     : m_semaphore(makeUniqueRef<IPC::Semaphore>())
@@ -143,7 +144,7 @@ std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(CVPi
     if (!prepareWriting(info, newSemaphoreCallback, newMemoryCallback))
         return { };
 
-    if (!info.writePixelBuffer(pixelBuffer, static_cast<uint8_t*>(m_storage->data())))
+    if (!info.writePixelBuffer(pixelBuffer, m_storage->mutableSpan()))
         return { };
 
     scope.release();
@@ -170,7 +171,7 @@ std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(webr
     if (!prepareWriting(info, newSemaphoreCallback, newMemoryCallback))
         return { };
 
-    if (!info.writeVideoFrameBuffer(frameBuffer, static_cast<uint8_t*>(m_storage->data())))
+    if (!info.writeVideoFrameBuffer(frameBuffer, m_storage->mutableSpan()))
         return { };
 
     scope.release();
@@ -191,6 +192,8 @@ void SharedVideoFrameWriter::disable()
     m_isDisabled = true;
     m_semaphore->signal();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedVideoFrameReader);
 
 SharedVideoFrameReader::SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap>&& objectHeap, const ProcessIdentity& resourceOwner, UseIOSurfaceBufferPool useIOSurfaceBufferPool)
     : m_objectHeap(WTFMove(objectHeap))
@@ -232,7 +235,7 @@ RetainPtr<CVPixelBufferRef> SharedVideoFrameReader::readBufferFromSharedMemory()
         return { };
     }
 
-    auto result = info->createPixelBufferFromMemory(data.data() + SharedVideoFrameInfoEncodingLength, pixelBufferPool(*info));
+    auto result = info->createPixelBufferFromMemory(data.subspan(SharedVideoFrameInfoEncodingLength), pixelBufferPool(*info));
     if (result && m_resourceOwner && m_useIOSurfaceBufferPool == UseIOSurfaceBufferPool::Yes)
         setOwnershipIdentityForCVPixelBuffer(result.get(), m_resourceOwner);
     return result;

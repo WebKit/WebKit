@@ -37,12 +37,12 @@ class EncodeNetEqInput : public NetEqInput {
                    int64_t input_duration_ms);
   ~EncodeNetEqInput() override;
 
-  absl::optional<int64_t> NextPacketTime() const override;
+  std::optional<int64_t> NextPacketTime() const override;
 
-  absl::optional<int64_t> NextOutputEventTime() const override;
+  std::optional<int64_t> NextOutputEventTime() const override;
 
-  absl::optional<SetMinimumDelayInfo> NextSetMinimumDelayInfo() const override {
-    return absl::nullopt;
+  std::optional<SetMinimumDelayInfo> NextSetMinimumDelayInfo() const override {
+    return std::nullopt;
   }
 
   std::unique_ptr<PacketData> PopPacket() override;
@@ -53,7 +53,7 @@ class EncodeNetEqInput : public NetEqInput {
 
   bool ended() const override;
 
-  absl::optional<RTPHeader> NextHeader() const override;
+  std::optional<RTPHeader> NextHeader() const override;
 
  private:
   static constexpr int64_t kOutputPeriodMs = 10;

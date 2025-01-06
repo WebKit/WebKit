@@ -32,7 +32,7 @@ namespace WebCore {
 
 String convertEnumerationToString(SpeechRecognitionUpdateType enumerationValue)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 11> values {
         MAKE_STATIC_STRING_IMPL("UpdateTypeStart"),
         MAKE_STATIC_STRING_IMPL("UpdateTypeAudioStart"),
         MAKE_STATIC_STRING_IMPL("UpdateTypeSoundStart"),

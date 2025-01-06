@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: TypeError: a message
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: a message
 
-Harness Error (FAIL), message = TypeError: a message
+Harness Error (FAIL), message = Unhandled rejection: a message
 
-FAIL event.intercept() should abort if the handler throws assert_equals: expected "#1" but got ""
+PASS event.intercept() should abort if the handler throws
 

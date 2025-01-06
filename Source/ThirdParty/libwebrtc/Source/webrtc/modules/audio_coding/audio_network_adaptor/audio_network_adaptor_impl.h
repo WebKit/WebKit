@@ -14,8 +14,8 @@
 #include <stdio.h>
 
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "modules/audio_coding/audio_network_adaptor/controller.h"
 #include "modules/audio_coding/audio_network_adaptor/debug_dump_writer.h"
@@ -79,7 +79,7 @@ class AudioNetworkAdaptorImpl final : public AudioNetworkAdaptor {
 
   Controller::NetworkMetrics last_metrics_;
 
-  absl::optional<AudioEncoderRuntimeConfig> prev_config_;
+  std::optional<AudioEncoderRuntimeConfig> prev_config_;
 
   ANAStats stats_;
 };

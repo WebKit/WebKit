@@ -26,6 +26,9 @@
 #include "config.h"
 #include "CGImagePixelReader.h"
 
+#include <WebCore/Color.h>
+#include <wtf/Vector.h>
+
 namespace TestWebKitAPI {
 using namespace WebCore;
 

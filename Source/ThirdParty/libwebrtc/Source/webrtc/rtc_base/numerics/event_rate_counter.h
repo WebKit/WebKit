@@ -10,6 +10,10 @@
 #ifndef RTC_BASE_NUMERICS_EVENT_RATE_COUNTER_H_
 #define RTC_BASE_NUMERICS_EVENT_RATE_COUNTER_H_
 
+#include <cstdint>
+
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/numerics/sample_stats.h"
 
 namespace webrtc {

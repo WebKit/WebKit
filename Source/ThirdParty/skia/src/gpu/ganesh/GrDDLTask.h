@@ -8,11 +8,20 @@
 #ifndef GrDDLTask_DEFINED
 #define GrDDLTask_DEFINED
 
-#include "include/core/SkPoint.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkTypes.h"
+#include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/gpu/ganesh/GrRenderTask.h"
 
 class GrDeferredDisplayList;
+class GrDrawingManager;
+class GrOpFlushState;
+class GrRecordingContext;
 class GrRenderTargetProxy;
+class GrResourceAllocator;
+class GrSurfaceProxy;
+class SkString;
+struct SkIRect;
 
 /**
  * This render task isolates the DDL's tasks from the rest of the DAG. This means that
@@ -54,7 +63,7 @@ private:
 
     bool onExecute(GrOpFlushState*) override;
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     void dump(const SkString& label,
               SkString indent,
               bool printDependencies,

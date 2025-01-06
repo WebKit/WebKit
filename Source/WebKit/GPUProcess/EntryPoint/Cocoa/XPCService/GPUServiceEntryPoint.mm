@@ -59,6 +59,7 @@ void GPU_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t initializ
         JSC::Options::initialize();
         JSC::Options::AllowUnfinalizedAccessScope scope;
         JSC::ExecutableAllocator::disableJIT();
+        JSC::Options::useWasm() = false;
         JSC::Options::notifyOptionsChanged();
     }
     WTF::compilerFence();

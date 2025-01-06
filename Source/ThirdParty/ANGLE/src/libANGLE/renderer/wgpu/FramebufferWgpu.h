@@ -78,12 +78,68 @@ class FramebufferWgpu : public FramebufferImpl
                                     size_t index,
                                     GLfloat *xy) const override;
 
-    RenderTargetWgpu *getReadPixelsRenderTarget(const angle::Format &format) const;
+    RenderTargetWgpu *getReadPixelsRenderTarget() const;
+
+    void addNewColorAttachments(std::vector<wgpu::RenderPassColorAttachment> newColorAttachments);
+
+    void updateDepthStencilAttachment(
+        wgpu::RenderPassDepthStencilAttachment newRenderPassDepthStencilAttachment);
+
+    angle::Result flushOneColorAttachmentUpdate(const gl::Context *context,
+                                                bool deferClears,
+                                                uint32_t colorIndexGL);
+
+    angle::Result flushAttachmentUpdates(const gl::Context *context,
+                                         gl::DrawBufferMask dirtyColorAttachments,
+                                         bool dirtyDepthStencilAttachment,
+                                         bool deferColorClears,
+                                         bool deferDepthStencilClears);
+
+    angle::Result flushDeferredClears(ContextWgpu *contextWgpu);
+
+    // Starts a new render pass iff there are new color and/or depth/stencil attachments.
+    angle::Result startRenderPassNewAttachments(ContextWgpu *contextWgpu);
+
+    angle::Result startNewRenderPass(ContextWgpu *contextWgpu);
+
+    void setUpForRenderPass(ContextWgpu *contextWgpu,
+                            bool depthOrStencil,
+                            std::vector<wgpu::RenderPassColorAttachment> colorAttachments,
+                            wgpu::RenderPassDepthStencilAttachment depthStencilAttachment);
+
+    const gl::DrawBuffersArray<wgpu::TextureFormat> &getCurrentColorAttachmentFormats() const
+    {
+        return mCurrentColorAttachmentFormats;
+    }
+
+    wgpu::TextureFormat getCurrentDepthStencilAttachmentFormat() const
+    {
+        return mCurrentDepthStencilFormat;
+    }
 
   private:
+    void mergeClearWithDeferredClears(wgpu::Color clearValue,
+                                      gl::DrawBufferMask clearColorBuffers,
+                                      float depthValue,
+                                      uint32_t stencilValue,
+                                      bool clearColor,
+                                      bool clearDepth,
+                                      bool clearStencil);
+
     RenderTargetCache<RenderTargetWgpu> mRenderTargetCache;
     wgpu::RenderPassDescriptor mCurrentRenderPassDesc;
+    wgpu::RenderPassDepthStencilAttachment mCurrentDepthStencilAttachment;
     std::vector<wgpu::RenderPassColorAttachment> mCurrentColorAttachments;
+    gl::DrawBuffersArray<wgpu::TextureFormat> mCurrentColorAttachmentFormats;
+    wgpu::TextureFormat mCurrentDepthStencilFormat = wgpu::TextureFormat::Undefined;
+
+    // Secondary vector to track new clears that are added and should be run in a new render pass
+    // during flushColorAttachmentUpdates.
+    std::vector<wgpu::RenderPassColorAttachment> mNewColorAttachments;
+    wgpu::RenderPassDepthStencilAttachment mNewDepthStencilAttachment;
+    bool mAddedNewDepthStencilAttachment = false;
+
+    webgpu::ClearValuesArray mDeferredClears;
 };
 
 }  // namespace rx

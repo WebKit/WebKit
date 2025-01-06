@@ -29,12 +29,12 @@
 #include "DataTransfer.h"
 #include "Node.h"
 #include "WindowProxy.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(InputEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InputEvent);
 
 Ref<InputEvent> InputEvent::create(const AtomString& eventType, const String& inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view,
     const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail, IsInputMethodComposing isInputMethodComposing)
@@ -60,6 +60,8 @@ InputEvent::InputEvent(const AtomString& eventType, const Init& initializer)
     , m_isInputMethodComposing(initializer.isComposing)
 {
 }
+
+InputEvent::~InputEvent() = default;
 
 RefPtr<DataTransfer> InputEvent::dataTransfer() const
 {

@@ -30,7 +30,10 @@
 #include "InspectorFrontendRouter.h"
 #include <wtf/JSONValues.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace Inspector {
 
@@ -39,9 +42,7 @@ SupplementalBackendDispatcher::SupplementalBackendDispatcher(BackendDispatcher& 
 {
 }
 
-SupplementalBackendDispatcher::~SupplementalBackendDispatcher()
-{
-}
+SupplementalBackendDispatcher::~SupplementalBackendDispatcher() = default;
 
 BackendDispatcher::CallbackBase::CallbackBase(Ref<BackendDispatcher>&& backendDispatcher, long requestId)
     : m_backendDispatcher(WTFMove(backendDispatcher))
@@ -357,3 +358,5 @@ RefPtr<JSON::Array> BackendDispatcher::getArray(JSON::Object* params, const Stri
 }
 
 } // namespace Inspector
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

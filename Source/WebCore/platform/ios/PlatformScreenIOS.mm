@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "ContentsFormat.h"
 #import "DeprecatedGlobalSettings.h"
 #import "FloatRect.h"
 #import "FloatSize.h"
@@ -35,6 +36,7 @@
 #import "HostWindow.h"
 #import "IntRect.h"
 #import "LocalFrameView.h"
+#import "PlatformCALayerClient.h"
 #import "ScreenProperties.h"
 #import "WAKWindow.h"
 #import "Widget.h"
@@ -71,6 +73,23 @@ bool screenHasInvertedColors()
     return PAL::softLinkUIKitUIAccessibilityIsInvertColorsEnabled();
 }
 
+ContentsFormat screenContentsFormat(Widget* widget, PlatformCALayerClient* client)
+{
+#if HAVE(HDR_SUPPORT)
+    if (client && client->hdrForImagesEnabled() && screenSupportsHighDynamicRange(widget))
+        return ContentsFormat::RGBA16F;
+#endif
+
+#if HAVE(IOSURFACE_RGB10)
+    if (screenSupportsExtendedColor(widget))
+        return ContentsFormat::RGBA10;
+#endif
+
+    UNUSED_PARAM(widget);
+    UNUSED_PARAM(client);
+    return ContentsFormat::RGBA8;
+}
+
 bool screenSupportsExtendedColor(Widget*)
 {
     if (auto data = screenData(primaryScreenDisplayID()))
@@ -93,7 +112,13 @@ bool screenSupportsHighDynamicRange(Widget*)
 
 DestinationColorSpace screenColorSpace(Widget* widget)
 {
-    return screenSupportsExtendedColor(widget) ? DestinationColorSpace { extendedSRGBColorSpaceRef() } : DestinationColorSpace::SRGB();
+#if HAVE(IOSURFACE_RGB10)
+    if (screenContentsFormat(widget) == ContentsFormat::RGBA10)
+        return DestinationColorSpace { extendedSRGBColorSpaceRef() };
+#else
+    UNUSED_PARAM(widget);
+#endif
+    return DestinationColorSpace::SRGB();
 }
 
 // These functions scale between screen and page coordinates because JavaScript/DOM operations

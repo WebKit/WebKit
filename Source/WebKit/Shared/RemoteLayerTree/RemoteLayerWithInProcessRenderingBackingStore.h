@@ -25,12 +25,16 @@
 
 #pragma once
 
+#include "RemoteImageBufferSet.h"
 #include "RemoteLayerBackingStore.h"
 #include <WebCore/DynamicContentScalingResourceCache.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
-class RemoteLayerWithInProcessRenderingBackingStore : public RemoteLayerBackingStore {
+class RemoteLayerWithInProcessRenderingBackingStore final : public RemoteLayerBackingStore {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerWithInProcessRenderingBackingStore);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerWithInProcessRenderingBackingStore);
 public:
     using RemoteLayerBackingStore::RemoteLayerBackingStore;
 
@@ -55,9 +59,6 @@ public:
 
 private:
     RefPtr<WebCore::ImageBuffer> allocateBuffer();
-    SwapBuffersDisplayRequirement prepareBuffers();
-    WebCore::SetNonVolatileResult swapToValidFrontBuffer();
-
     void ensureFrontBuffer();
     bool hasFrontBuffer() const final;
     bool frontBufferMayBeVolatile() const final;
@@ -79,14 +80,10 @@ private:
     };
 
     // Returns true if it was able to fulfill the request. This can fail when trying to mark an in-use surface as volatile.
-    bool setBufferVolatile(Buffer&, bool forcePurge = false);
-
+    bool setBufferVolatile(RefPtr<WebCore::ImageBuffer>&, bool forcePurge = false);
     WebCore::SetNonVolatileResult setBufferNonVolatile(Buffer&);
-    WebCore::SetNonVolatileResult setFrontBufferNonVolatile();
 
-    Buffer m_frontBuffer;
-    Buffer m_backBuffer;
-    Buffer m_secondaryBackBuffer;
+    ImageBufferSet m_bufferSet;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     WebCore::DynamicContentScalingResourceCache m_dynamicContentScalingResourceCache;

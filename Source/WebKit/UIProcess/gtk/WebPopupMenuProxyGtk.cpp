@@ -62,15 +62,15 @@ WebPopupMenuProxyGtk::~WebPopupMenuProxyGtk()
 
 void WebPopupMenuProxyGtk::selectItem(unsigned itemIndex)
 {
-    if (m_client)
-        m_client->setTextFromItemForPopupMenu(this, itemIndex);
+    if (CheckedPtr client = this->client())
+        client->setTextFromItemForPopupMenu(this, itemIndex);
     m_selectedItem = itemIndex;
 }
 
 void WebPopupMenuProxyGtk::activateItem(std::optional<unsigned> itemIndex)
 {
-    if (m_client)
-        m_client->valueChangedForPopupMenu(this, itemIndex.value_or(m_selectedItem.value_or(-1)));
+    if (CheckedPtr client = this->client())
+        client->valueChangedForPopupMenu(this, itemIndex.value_or(m_selectedItem.value_or(-1)));
 }
 
 bool WebPopupMenuProxyGtk::activateItemAtPath(GtkTreePath* path)
@@ -363,7 +363,7 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
     gtk_window_move(GTK_WINDOW(m_popup), menuPosition.x(), menuPosition.y());
 #endif
 
-    const GdkEvent* event = m_client->currentlyProcessedMouseDownEvent() ? m_client->currentlyProcessedMouseDownEvent()->nativeEvent() : nullptr;
+    const GdkEvent* event = client()->currentlyProcessedMouseDownEvent() ? client()->currentlyProcessedMouseDownEvent()->nativeEvent() : nullptr;
     m_device = event ? gdk_event_get_device(event) : nullptr;
     if (!m_device)
         m_device = gtk_get_current_event_device();
@@ -383,8 +383,8 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
     // PopupMenu can fail to open when there is no mouse grab.
     // Ensure WebCore does not go into some pesky state.
     if (grabResult != GDK_GRAB_SUCCESS) {
-       m_client->failedToShowPopupMenu();
-       return;
+        client()->failedToShowPopupMenu();
+        return;
     }
 #endif
 }

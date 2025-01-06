@@ -28,13 +28,14 @@
 #if ENABLE(NETWORK_ISSUE_REPORTING)
 
 #import <wtf/Forward.h>
+#import <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSURLSessionTaskMetrics;
 
 namespace WebKit {
 
 class NetworkIssueReporter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkIssueReporter);
     WTF_MAKE_NONCOPYABLE(NetworkIssueReporter);
 public:
     NetworkIssueReporter();

@@ -1,0 +1,17 @@
+
+FAIL Compositing: property <max-width> underlying [100px] from add [100px] to add [fit-content] at (-0.3) should be [calc-size(fit-content, 230px + size * -0.3)] assert_equals: expected "none " but got "200px "
+FAIL Compositing: property <max-width> underlying [100px] from add [100px] to add [fit-content] at (0) should be [calc-size(fit-content, 200px + size * 0)] assert_equals: expected "none " but got "200px "
+FAIL Compositing: property <max-width> underlying [100px] from add [100px] to add [fit-content] at (0.5) should be [calc-size(fit-content, 150px + size * 0.5)] assert_equals: expected "none " but got "fit - content "
+FAIL Compositing: property <max-width> underlying [100px] from add [100px] to add [fit-content] at (1) should be [calc-size(fit-content, 100px + size * 1)] assert_equals: expected "none " but got "fit - content "
+FAIL Compositing: property <max-width> underlying [100px] from add [100px] to add [fit-content] at (1.5) should be [calc-size(fit-content, 50px + size * 1.5)] assert_equals: expected "none " but got "fit - content "
+FAIL Compositing: property <max-width> underlying [100px] from add [fit-content] to add [max-content] at (-0.3) should be [calc-size(fit-content, 100px + size)] assert_equals: expected "none " but got "fit - content "
+FAIL Compositing: property <max-width> underlying [100px] from add [fit-content] to add [max-content] at (0) should be [calc-size(fit-content, 100px + size)] assert_equals: expected "none " but got "fit - content "
+FAIL Compositing: property <max-width> underlying [100px] from add [fit-content] to add [max-content] at (0.5) should be [calc-size(max-content, 100px + size)] assert_equals: expected "none " but got "max - content "
+FAIL Compositing: property <max-width> underlying [100px] from add [fit-content] to add [max-content] at (1) should be [calc-size(max-content, 100px + size)] assert_equals: expected "none " but got "max - content "
+FAIL Compositing: property <max-width> underlying [100px] from add [fit-content] to add [max-content] at (1.5) should be [calc-size(max-content, 100px + size)] assert_equals: expected "none " but got "max - content "
+FAIL Compositing: property <max-width> underlying [max-content] from add [100px] to add [min-content] at (-0.3) should be [calc-size(min-content, 130px + size * -0.3)] assert_equals: expected "none " but got "100px "
+FAIL Compositing: property <max-width> underlying [max-content] from add [100px] to add [min-content] at (0) should be [calc-size(min-content, 100px + size * 0)] assert_equals: expected "none " but got "100px "
+FAIL Compositing: property <max-width> underlying [max-content] from add [100px] to add [min-content] at (0.5) should be [calc-size(min-content, 50px + size * 0.5)] assert_equals: expected "none " but got "min - content "
+FAIL Compositing: property <max-width> underlying [max-content] from add [100px] to add [min-content] at (1) should be [calc-size(min-content, 0px + size * 1)] assert_equals: expected "none " but got "min - content "
+FAIL Compositing: property <max-width> underlying [max-content] from add [100px] to add [min-content] at (1.5) should be [calc-size(min-content, -50px + size * 1.5)] assert_equals: expected "none " but got "min - content "
+

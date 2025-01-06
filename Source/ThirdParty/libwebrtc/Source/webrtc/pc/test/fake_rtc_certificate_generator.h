@@ -11,10 +11,10 @@
 #ifndef PC_TEST_FAKE_RTC_CERTIFICATE_GENERATOR_H_
 #define PC_TEST_FAKE_RTC_CERTIFICATE_GENERATOR_H_
 
+#include <optional>
 #include <string>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "api/peer_connection_interface.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
@@ -136,7 +136,7 @@ class FakeRTCCertificateGenerator
   int generated_failures() { return generated_failures_; }
 
   void GenerateCertificateAsync(const rtc::KeyParams& key_params,
-                                const absl::optional<uint64_t>& expires_ms,
+                                const std::optional<uint64_t>& expires_ms,
                                 Callback callback) override {
     // The certificates are created from constant PEM strings and use its coded
     // expiration time, we do not support modifying it.

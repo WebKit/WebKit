@@ -14,9 +14,9 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 
@@ -36,11 +36,13 @@ class RtpPacketizer {
 
   // If type is not set, returns a raw packetizer.
   static std::unique_ptr<RtpPacketizer> Create(
-      absl::optional<VideoCodecType> type,
+      std::optional<VideoCodecType> type,
       rtc::ArrayView<const uint8_t> payload,
       PayloadSizeLimits limits,
       // Codec-specific details.
-      const RTPVideoHeader& rtp_video_header);
+      const RTPVideoHeader& rtp_video_header,
+      // TODO(bugs.webrtc.org/15927): remove after rollout.
+      bool enable_av1_even_split = false);
 
   virtual ~RtpPacketizer() = default;
 

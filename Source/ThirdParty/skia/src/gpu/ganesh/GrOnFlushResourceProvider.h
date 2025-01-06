@@ -8,8 +8,7 @@
 #ifndef GrOnFlushResourceProvider_DEFINED
 #define GrOnFlushResourceProvider_DEFINED
 
-#include "include/core/SkSpan.h"
-#include "src/gpu/ganesh/GrDeferredUpload.h"
+#include "src/gpu/AtlasTypes.h"
 
 class GrCaps;
 class GrDrawingManager;
@@ -57,7 +56,7 @@ public:
 
     const GrCaps* caps() const;
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     bool failFlushTimeCallbacks() const;
 #endif
 

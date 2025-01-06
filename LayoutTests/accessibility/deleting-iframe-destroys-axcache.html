@@ -3,34 +3,44 @@
 <script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 <script>
-    jsTestIsAsync = true;
+jsTestIsAsync = true;
 
-    function runTest()
-    {
-        description("This tests that deleting an iframe doesn't cause the accessibility cache to be destroyed and recreated.");
+function runTest()
+{
+    description("This tests that deleting an iframe doesn't cause the accessibility cache to be destroyed and recreated.");
 
-        if (window.accessibilityController) {
-            window.root = accessibilityController.rootElement;
-            window.stopElement = accessibilityController.accessibleElementById("stopElement");
+    if (window.accessibilityController) {
+        window.root = accessibilityController.rootElement;
+        window.stopElement = accessibilityController.accessibleElementById("stopElement");
 
-            window.body = root.childAtIndex(0);
-            window.before = body.childAtIndex(0);
-            window.iframe = body.childAtIndex(1).childAtIndex(0);
-            window.after = body.childAtIndex(2);
+        window.body = root.childAtIndex(0);
+        window.before = body.childAtIndex(0);
+        window.iframe = body.childAtIndex(1).childAtIndex(0);
+        window.after = body.childAtIndex(2);
 
-            window.frameButton = window.iframe.childAtIndex(0);
-            window.frameButtonRole = window.frameButton.role;
+        window.frameButton = window.iframe.childAtIndex(0);
+        window.frameButtonRole = window.frameButton.role;
 
-            document.getElementById("tree").innerText += "\nBefore:\n";
-            dumpAccessibilityTree(root, stopElement, 0, true);
+        document.getElementById("tree").innerText += "\nBefore:\n";
+        dumpAccessibilityTree(root, stopElement, 0, true);
 
-            // Remove the iframe.
-            document.body.removeChild(document.getElementById("iframe"));
+        // Remove the iframe.
+        document.body.removeChild(document.getElementById("iframe"));
 
+        setTimeout(async () => {
             window.newRoot = accessibilityController.rootElement;
-            window.newBody = newRoot.childAtIndex(0);
-            window.newBefore = newBody.childAtIndex(0);
-            window.newAfter = newBody.childAtIndex(1);
+            await waitFor(() => {
+                window.newBody = newRoot.childAtIndex(0);
+                return window.newBody;
+            });
+            await waitFor(() => {
+                window.newBefore = newBody.childAtIndex(0);
+                return window.newBefore;
+            });
+            await waitFor(() => {
+                window.newAfter = newBody.childAtIndex(1);
+                return window.newAfter;
+            });
 
             document.getElementById("tree").innerText += "\nAfter:\n";
             dumpAccessibilityTree(newRoot, stopElement, 0, true);
@@ -46,16 +56,17 @@
             shouldBeTrue("body.isEqual(newBody)");
             shouldBeTrue("before.isEqual(newBefore)");
             shouldBeTrue("after.isEqual(newAfter)");
-        }
 
-        finishJSTest();
+            finishJSTest();
+        })
     }
-    
-    window.addEventListener('load', function() {
-        setTimeout(runTest, 10);
-    }, false);
-    
-  </script>
+
+}
+
+window.addEventListener('load', function() {
+    setTimeout(runTest, 10);
+}, false);
+</script>
 </head>
 <body>
 

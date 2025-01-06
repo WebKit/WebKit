@@ -48,6 +48,9 @@
 
 - (void)slideDraggedImageTo:(NSPoint)screenPoint;
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination;
+
+@property (nonatomic, readonly) id localContext;
+
 @end
 
 #endif // PLATFORM(MAC)

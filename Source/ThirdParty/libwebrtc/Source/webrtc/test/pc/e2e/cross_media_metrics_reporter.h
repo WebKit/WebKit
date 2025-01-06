@@ -12,10 +12,10 @@
 #define TEST_PC_E2E_CROSS_MEDIA_METRICS_REPORTER_H_
 
 #include <map>
+#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/numerics/samples_stats_counter.h"
 #include "api/test/metrics/metrics_logger.h"
 #include "api/test/peerconnection_quality_test_fixture.h"

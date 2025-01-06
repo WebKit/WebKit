@@ -36,11 +36,6 @@ class ProcessQualified<WTF::UUID> {
 public:
     static ProcessQualified generate() { return { WTF::UUID::createVersion4Weak(), Process::identifier() }; }
 
-    ProcessQualified()
-        : m_object(WTF::UUID::emptyValue)
-    {
-    }
-
     ProcessQualified(WTF::UUID object, ProcessIdentifier processIdentifier)
         : m_object(WTFMove(object))
         , m_processIdentifier(processIdentifier)
@@ -66,6 +61,11 @@ public:
 
     template<typename Encoder> void encode(Encoder& encoder) const { encoder << m_object << m_processIdentifier; }
     template<typename Decoder> static std::optional<ProcessQualified> decode(Decoder&);
+
+    struct MarkableTraits {
+        static bool isEmptyValue(const ProcessQualified<WTF::UUID>& identifier) { return WTF::UUID::MarkableTraits::isEmptyValue(identifier.object()); }
+        static ProcessQualified<WTF::UUID> emptyValue() { return { WTF::UUID::MarkableTraits::emptyValue(), ProcessIdentifier::MarkableTraits::emptyValue() }; }
+    };
 
 private:
     WTF::UUID m_object;

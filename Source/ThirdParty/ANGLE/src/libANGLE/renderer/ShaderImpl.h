@@ -27,9 +27,9 @@ namespace rx
 // differently afterwards:
 //
 // - The Vulkan backend which generates binary (i.e. SPIR-V), does nothing more
-// - The backends that generate text (HLSL and MSL), do nothing at this stage, but modify the text
-//   at link time before invoking the native compiler.  These expensive calls are handled in link
-//   sub-tasks (see LinkSubTask in ProgramImpl.h).
+// - The backends that generate text (HLSL, MSL, WGSL), do nothing at this stage, but modify the
+//   text at link time before invoking the native compiler.  These expensive calls are handled in
+//   link sub-tasks (see LinkSubTask in ProgramImpl.h).
 // - The GL backend needs to invoke the native driver, which is problematic when done in another
 //   thread (and is avoided).
 //
@@ -42,10 +42,15 @@ class ShaderTranslateTask
 {
   public:
     virtual ~ShaderTranslateTask() = default;
+
+    // Used for compile()
     virtual bool translate(ShHandle compiler,
                            const ShCompileOptions &options,
                            const std::string &source);
     virtual void postTranslate(ShHandle compiler, const gl::CompiledShaderState &compiledState) {}
+
+    // Used for load()
+    virtual void load(const gl::CompiledShaderState &compiledState) {}
 
     // Used by the GL backend to query whether the driver is compiling in parallel internally.
     virtual bool isCompilingInternally() { return false; }
@@ -59,10 +64,12 @@ class ShaderImpl : angle::NonCopyable
     ShaderImpl(const gl::ShaderState &state) : mState(state) {}
     virtual ~ShaderImpl() {}
 
-    virtual void destroy() {}
+    virtual void onDestroy(const gl::Context *context) {}
 
     virtual std::shared_ptr<ShaderTranslateTask> compile(const gl::Context *context,
-                                                         ShCompileOptions *options) = 0;
+                                                         ShCompileOptions *options)  = 0;
+    virtual std::shared_ptr<ShaderTranslateTask> load(const gl::Context *context,
+                                                      gl::BinaryInputStream *stream) = 0;
 
     virtual std::string getDebugInfo() const = 0;
 

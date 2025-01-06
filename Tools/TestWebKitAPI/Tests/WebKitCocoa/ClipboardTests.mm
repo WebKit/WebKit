@@ -171,7 +171,7 @@ TEST(ClipboardTests, WriteSanitizedMarkup)
 TEST(ClipboardTests, ConvertTIFFToPNGWhenPasting)
 {
     auto webView = createWebViewForClipboardTests();
-    auto url = [[NSBundle mainBundle] URLForResource:@"sunset-in-cupertino-100px" withExtension:@"tiff" subdirectory:@"TestWebKitAPI.resources"];
+    auto url = [NSBundle.test_resourcesBundle URLForResource:@"sunset-in-cupertino-100px" withExtension:@"tiff"];
     auto pasteboard = NSPasteboard.generalPasteboard;
     [pasteboard clearContents];
     [pasteboard setData:[NSData dataWithContentsOfURL:url] forType:NSPasteboardTypeTIFF];

@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="button" aria-describedby="description">Foo</button>
+<div id="description" aria-hidden="true"></div>
+
+<script>
+var output = "This test ensures that an element with aria-describedby when the text of the target changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var button = accessibilityController.accessibleElementById("button");
+    output += expect("button.customContent.includes('New text')", "false");
+
+    document.getElementById("description").innerHTML = `
+        <div>
+            <div>
+                <div>New text</div>
+            </div>
+        </div>
+    `;
+    setTimeout(async function() {
+        output += await expectAsync("button.customContent.includes('New text')", "true");
+
+        document.getElementById("description").innerHTML = `
+            <div>Final text</div>
+        `;
+        output += await expectAsync("button.customContent.includes('Final text')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

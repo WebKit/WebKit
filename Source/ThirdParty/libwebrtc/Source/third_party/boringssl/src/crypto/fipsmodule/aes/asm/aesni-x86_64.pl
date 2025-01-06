@@ -211,7 +211,6 @@ $movkey = $PREFIX eq "aes_hw" ? "movups" : "movups";
 		("%rdi","%rsi","%rdx","%rcx");	# Unix order
 
 $code=".text\n";
-$code.=".extern	OPENSSL_ia32cap_P\n";
 
 $rounds="%eax";	# input to and changed by aesni_[en|de]cryptN !!!
 # this is natural Unix argument order for public $PREFIX_[ecb|cbc]_encrypt ...
@@ -275,6 +274,7 @@ $code.=<<___;
 .align	16
 ${PREFIX}_encrypt:
 .cfi_startproc
+	_CET_ENDBR
 #ifdef BORINGSSL_DISPATCH_TEST
 .extern	BORINGSSL_function_hit
 	movb \$1,BORINGSSL_function_hit+1(%rip)
@@ -297,6 +297,7 @@ $code.=<<___;
 .align	16
 ${PREFIX}_decrypt:
 .cfi_startproc
+	_CET_ENDBR
 	movups	($inp),$inout0		# load input
 	mov	240($key),$rounds	# key->rounds
 ___
@@ -617,6 +618,7 @@ $code.=<<___;
 .align	16
 ${PREFIX}_ecb_encrypt:
 .cfi_startproc
+	_CET_ENDBR
 ___
 $code.=<<___ if ($win64);
 	lea	-0x58(%rsp),%rsp
@@ -1203,6 +1205,7 @@ $code.=<<___;
 .align	16
 ${PREFIX}_ctr32_encrypt_blocks:
 .cfi_startproc
+	_CET_ENDBR
 #ifdef BORINGSSL_DISPATCH_TEST
 	movb \$1,BORINGSSL_function_hit(%rip)
 #endif
@@ -1299,10 +1302,7 @@ $code.=<<___;
 	lea	7($ctr),%r9
 	 mov	%r10d,0x60+12(%rsp)
 	bswap	%r9d
-	leaq	OPENSSL_ia32cap_P(%rip),%r10
-	 mov	4(%r10),%r10d
 	xor	$key0,%r9d
-	 and	\$`1<<26|1<<22`,%r10d		# isolate XSAVE+MOVBE
 	mov	%r9d,0x70+12(%rsp)
 
 	$movkey	0x10($key),$rndkey1
@@ -1313,103 +1313,9 @@ $code.=<<___;
 	cmp	\$8,$len		# $len is in blocks
 	jb	.Lctr32_tail		# short input if ($len<8)
 
-	sub	\$6,$len		# $len is biased by -6
-	cmp	\$`1<<22`,%r10d		# check for MOVBE without XSAVE
-	je	.Lctr32_6x		# [which denotes Atom Silvermont]
-
 	lea	0x80($key),$key		# size optimization
-	sub	\$2,$len		# $len is biased by -8
+	sub	\$8,$len		# $len is biased by -8
 	jmp	.Lctr32_loop8
-
-.align	16
-.Lctr32_6x:
-	shl	\$4,$rounds
-	mov	\$48,$rnds_
-	bswap	$key0
-	lea	32($key,$rounds),$key	# end of key schedule
-	sub	%rax,%r10		# twisted $rounds
-	jmp	.Lctr32_loop6
-
-.align	16
-.Lctr32_loop6:
-	 add	\$6,$ctr		# next counter value
-	$movkey	-48($key,$rnds_),$rndkey0
-	aesenc	$rndkey1,$inout0
-	 mov	$ctr,%eax
-	 xor	$key0,%eax
-	aesenc	$rndkey1,$inout1
-	 movbe	%eax,`0x00+12`(%rsp)	# store next counter value
-	 lea	1($ctr),%eax
-	aesenc	$rndkey1,$inout2
-	 xor	$key0,%eax
-	 movbe	%eax,`0x10+12`(%rsp)
-	aesenc	$rndkey1,$inout3
-	 lea	2($ctr),%eax
-	 xor	$key0,%eax
-	aesenc	$rndkey1,$inout4
-	 movbe	%eax,`0x20+12`(%rsp)
-	 lea	3($ctr),%eax
-	aesenc	$rndkey1,$inout5
-	$movkey	-32($key,$rnds_),$rndkey1
-	 xor	$key0,%eax
-
-	aesenc	$rndkey0,$inout0
-	 movbe	%eax,`0x30+12`(%rsp)
-	 lea	4($ctr),%eax
-	aesenc	$rndkey0,$inout1
-	 xor	$key0,%eax
-	 movbe	%eax,`0x40+12`(%rsp)
-	aesenc	$rndkey0,$inout2
-	 lea	5($ctr),%eax
-	 xor	$key0,%eax
-	aesenc	$rndkey0,$inout3
-	 movbe	%eax,`0x50+12`(%rsp)
-	 mov	%r10,%rax		# mov	$rnds_,$rounds
-	aesenc	$rndkey0,$inout4
-	aesenc	$rndkey0,$inout5
-	$movkey	-16($key,$rnds_),$rndkey0
-
-	call	.Lenc_loop6
-
-	movdqu	($inp),$inout6		# load 6 input blocks
-	movdqu	0x10($inp),$inout7
-	movdqu	0x20($inp),$in0
-	movdqu	0x30($inp),$in1
-	movdqu	0x40($inp),$in2
-	movdqu	0x50($inp),$in3
-	lea	0x60($inp),$inp		# $inp+=6*16
-	$movkey	-64($key,$rnds_),$rndkey1
-	pxor	$inout0,$inout6		# inp^=E(ctr)
-	movaps	0x00(%rsp),$inout0	# load next counter [xor-ed with 0 round]
-	pxor	$inout1,$inout7
-	movaps	0x10(%rsp),$inout1
-	pxor	$inout2,$in0
-	movaps	0x20(%rsp),$inout2
-	pxor	$inout3,$in1
-	movaps	0x30(%rsp),$inout3
-	pxor	$inout4,$in2
-	movaps	0x40(%rsp),$inout4
-	pxor	$inout5,$in3
-	movaps	0x50(%rsp),$inout5
-	movdqu	$inout6,($out)		# store 6 output blocks
-	movdqu	$inout7,0x10($out)
-	movdqu	$in0,0x20($out)
-	movdqu	$in1,0x30($out)
-	movdqu	$in2,0x40($out)
-	movdqu	$in3,0x50($out)
-	lea	0x60($out),$out		# $out+=6*16
-
-	sub	\$6,$len
-	jnc	.Lctr32_loop6		# loop if $len-=6 didn't borrow
-
-	add	\$6,$len		# restore real remaining $len
-	jz	.Lctr32_done		# done if ($len==0)
-
-	lea	-48($rnds_),$rounds
-	lea	-80($key,$rnds_),$key	# restore $key
-	neg	$rounds
-	shr	\$4,$rounds		# restore $rounds
-	jmp	.Lctr32_tail
 
 .align	32
 .Lctr32_loop8:
@@ -1524,6 +1430,8 @@ $code.=<<___;
 	pxor		$rndkey0,$in3
 	movdqu		0x50($inp),$in5
 	pxor		$rndkey0,$in4
+	prefetcht0	0x1c0($inp)	# We process 128 bytes (8*16), so to prefetch 1 iteration
+	prefetcht0	0x200($inp)	# We need to prefetch 2 64 byte lines
 	pxor		$rndkey0,$in5
 	aesenc		$rndkey1,$inout0
 	aesenc		$rndkey1,$inout1
@@ -1779,6 +1687,7 @@ $code.=<<___;
 .align	16
 ${PREFIX}_xts_encrypt:
 .cfi_startproc
+	_CET_ENDBR
 	lea	(%rsp),%r11			# frame pointer
 .cfi_def_cfa_register	%r11
 	push	%rbp
@@ -2262,6 +2171,7 @@ $code.=<<___;
 .align	16
 ${PREFIX}_xts_decrypt:
 .cfi_startproc
+	_CET_ENDBR
 	lea	(%rsp),%r11			# frame pointer
 .cfi_def_cfa_register	%r11
 	push	%rbp
@@ -2780,6 +2690,7 @@ $code.=<<___;
 .align	16
 ${PREFIX}_cbc_encrypt:
 .cfi_startproc
+	_CET_ENDBR
 	test	$len,$len		# check length
 	jz	.Lcbc_ret
 
@@ -2897,16 +2808,10 @@ $code.=<<___;
 	movdqa	$inout3,$in3
 	movdqu	0x50($inp),$inout5
 	movdqa	$inout4,$in4
-	leaq	OPENSSL_ia32cap_P(%rip),%r9
-	mov	4(%r9),%r9d
 	cmp	\$0x70,$len
 	jbe	.Lcbc_dec_six_or_seven
 
-	and	\$`1<<26|1<<22`,%r9d	# isolate XSAVE+MOVBE
-	sub	\$0x50,$len		# $len is biased by -5*16
-	cmp	\$`1<<22`,%r9d		# check for MOVBE without XSAVE
-	je	.Lcbc_dec_loop6_enter	# [which denotes Atom Silvermont]
-	sub	\$0x20,$len		# $len is biased by -7*16
+	sub	\$0x70,$len		# $len is biased by -7*16
 	lea	0x70($key),$key		# size optimization
 	jmp	.Lcbc_dec_loop8_enter
 .align	16
@@ -3098,51 +3003,6 @@ $code.=<<___;
 	 pxor	$inout7,$inout7
 	jmp	.Lcbc_dec_tail_collected
 
-.align	16
-.Lcbc_dec_loop6:
-	movups	$inout5,($out)
-	lea	0x10($out),$out
-	movdqu	0x00($inp),$inout0	# load input
-	movdqu	0x10($inp),$inout1
-	movdqa	$inout0,$in0
-	movdqu	0x20($inp),$inout2
-	movdqa	$inout1,$in1
-	movdqu	0x30($inp),$inout3
-	movdqa	$inout2,$in2
-	movdqu	0x40($inp),$inout4
-	movdqa	$inout3,$in3
-	movdqu	0x50($inp),$inout5
-	movdqa	$inout4,$in4
-.Lcbc_dec_loop6_enter:
-	lea	0x60($inp),$inp
-	movdqa	$inout5,$inout6
-
-	call	_aesni_decrypt6
-
-	pxor	$iv,$inout0		# ^= IV
-	movdqa	$inout6,$iv
-	pxor	$in0,$inout1
-	movdqu	$inout0,($out)
-	pxor	$in1,$inout2
-	movdqu	$inout1,0x10($out)
-	pxor	$in2,$inout3
-	movdqu	$inout2,0x20($out)
-	pxor	$in3,$inout4
-	mov	$key_,$key
-	movdqu	$inout3,0x30($out)
-	pxor	$in4,$inout5
-	mov	$rnds_,$rounds
-	movdqu	$inout4,0x40($out)
-	lea	0x50($out),$out
-	sub	\$0x60,$len
-	ja	.Lcbc_dec_loop6
-
-	movdqa	$inout5,$inout0
-	add	\$0x50,$len
-	jle	.Lcbc_dec_clear_tail_collected
-	movups	$inout5,($out)
-	lea	0x10($out),$out
-
 .Lcbc_dec_tail:
 	movups	($inp),$inout0
 	sub	\$0x10,$len
@@ -3311,65 +3171,55 @@ $code.=<<___;
 .size	${PREFIX}_cbc_encrypt,.-${PREFIX}_cbc_encrypt
 ___
 }
-# int ${PREFIX}_set_decrypt_key(const unsigned char *inp,
-#				int bits, AES_KEY *key)
-#
-# input:	$inp	user-supplied key
-#		$bits	$inp length in bits
-#		$key	pointer to key schedule
-# output:	%eax	0 denoting success, -1 or -2 - failure (see C)
-#		*$key	key schedule
-#
-{ my ($inp,$bits,$key) = @_4args;
-  $bits =~ s/%r/%e/;
+{ my ($key, $rounds, $tmp) = @_4args;
+  $rounds =~ s/%r/%e/;
 
+# void ${PREFIX}_encrypt_key_to_decrypt_key(AES_KEY *key)
 $code.=<<___;
-.globl	${PREFIX}_set_decrypt_key
-.type	${PREFIX}_set_decrypt_key,\@abi-omnipotent
+.globl	${PREFIX}_encrypt_key_to_decrypt_key
+.type	${PREFIX}_encrypt_key_to_decrypt_key,\@abi-omnipotent
 .align	16
-${PREFIX}_set_decrypt_key:
+${PREFIX}_encrypt_key_to_decrypt_key:
 .cfi_startproc
-	.byte	0x48,0x83,0xEC,0x08	# sub rsp,8
-.cfi_adjust_cfa_offset	8
-	call	__aesni_set_encrypt_key
-	shl	\$4,$bits		# rounds-1 after _aesni_set_encrypt_key
-	test	%eax,%eax
-	jnz	.Ldec_key_ret
-	lea	16($key,$bits),$inp	# points at the end of key schedule
+	_CET_ENDBR
+
+	mov	240($key), $rounds
+	shl	\$4,$rounds
+
+	lea	16($key,$rounds),$tmp	# points at the end of key schedule
 
 	$movkey	($key),%xmm0		# just swap
-	$movkey	($inp),%xmm1
-	$movkey	%xmm0,($inp)
+	$movkey	($tmp),%xmm1
+	$movkey	%xmm0,($tmp)
 	$movkey	%xmm1,($key)
 	lea	16($key),$key
-	lea	-16($inp),$inp
+	lea	-16($tmp),$tmp
 
 .Ldec_key_inverse:
 	$movkey	($key),%xmm0		# swap and inverse
-	$movkey	($inp),%xmm1
+	$movkey	($tmp),%xmm1
 	aesimc	%xmm0,%xmm0
 	aesimc	%xmm1,%xmm1
 	lea	16($key),$key
-	lea	-16($inp),$inp
-	$movkey	%xmm0,16($inp)
+	lea	-16($tmp),$tmp
+	$movkey	%xmm0,16($tmp)
 	$movkey	%xmm1,-16($key)
-	cmp	$key,$inp
+	cmp	$key,$tmp
 	ja	.Ldec_key_inverse
 
 	$movkey	($key),%xmm0		# inverse middle
 	aesimc	%xmm0,%xmm0
 	pxor	%xmm1,%xmm1
-	$movkey	%xmm0,($inp)
+	$movkey	%xmm0,($tmp)
 	pxor	%xmm0,%xmm0
-.Ldec_key_ret:
-	add	\$8,%rsp
-.cfi_adjust_cfa_offset	-8
 	ret
 .cfi_endproc
-.LSEH_end_set_decrypt_key:
-.size	${PREFIX}_set_decrypt_key,.-${PREFIX}_set_decrypt_key
+.size	${PREFIX}_encrypt_key_to_decrypt_key,.-${PREFIX}_encrypt_key_to_decrypt_key
 ___
+}
 
+{ my ($inp,$bits,$key) = @_4args;
+  $bits =~ s/%r/%e/;
 # This is based on submission from Intel by
 #	Huang Ying
 #	Vinodh Gopal
@@ -3394,29 +3244,26 @@ ___
 # are used. Note that it's declared "abi-omnipotent", which means that
 # amount of volatile registers is smaller on Windows.
 #
+# There are two variants of this function, one which uses aeskeygenassist
+# ("base") and one which uses aesenclast + pshufb ("alt"). See aes/internal.h
+# for details.
 $code.=<<___;
-.globl	${PREFIX}_set_encrypt_key
-.type	${PREFIX}_set_encrypt_key,\@abi-omnipotent
+.globl	${PREFIX}_set_encrypt_key_base
+.type	${PREFIX}_set_encrypt_key_base,\@abi-omnipotent
 .align	16
-${PREFIX}_set_encrypt_key:
-__aesni_set_encrypt_key:
+${PREFIX}_set_encrypt_key_base:
 .cfi_startproc
+.seh_startproc
+	_CET_ENDBR
 #ifdef BORINGSSL_DISPATCH_TEST
 	movb \$1,BORINGSSL_function_hit+3(%rip)
 #endif
-	.byte	0x48,0x83,0xEC,0x08	# sub rsp,8
+	sub	\$8,%rsp
 .cfi_adjust_cfa_offset	8
-	mov	\$-1,%rax
-	test	$inp,$inp
-	jz	.Lenc_key_ret
-	test	$key,$key
-	jz	.Lenc_key_ret
-
+.seh_stackalloc	8
+.seh_endprologue
 	movups	($inp),%xmm0		# pull first 128 bits of *userKey
 	xorps	%xmm4,%xmm4		# low dword of xmm4 is assumed 0
-	leaq	OPENSSL_ia32cap_P(%rip),%r10
-	movl	4(%r10),%r10d
-	and	\$`1<<28|1<<11`,%r10d	# AVX and XOP bits
 	lea	16($key),%rax		# %rax is used as modifiable copy of $key
 	cmp	\$256,$bits
 	je	.L14rounds
@@ -3427,8 +3274,6 @@ __aesni_set_encrypt_key:
 
 .L10rounds:
 	mov	\$9,$bits			# 10 rounds for 128-bit key
-	cmp	\$`1<<28`,%r10d			# AVX, bit no XOP
-	je	.L10rounds_alt
 
 	$movkey	%xmm0,($key)			# round 0
 	aeskeygenassist	\$0x1,%xmm0,%xmm1	# round 1
@@ -3457,7 +3302,192 @@ __aesni_set_encrypt_key:
 	jmp	.Lenc_key_ret
 
 .align	16
-.L10rounds_alt:
+.L12rounds:
+	movq	16($inp),%xmm2			# remaining 1/3 of *userKey
+	mov	\$11,$bits			# 12 rounds for 192
+
+	$movkey	%xmm0,($key)			# round 0
+	aeskeygenassist	\$0x1,%xmm2,%xmm1	# round 1,2
+	call		.Lkey_expansion_192a_cold
+	aeskeygenassist	\$0x2,%xmm2,%xmm1	# round 2,3
+	call		.Lkey_expansion_192b
+	aeskeygenassist	\$0x4,%xmm2,%xmm1	# round 4,5
+	call		.Lkey_expansion_192a
+	aeskeygenassist	\$0x8,%xmm2,%xmm1	# round 5,6
+	call		.Lkey_expansion_192b
+	aeskeygenassist	\$0x10,%xmm2,%xmm1	# round 7,8
+	call		.Lkey_expansion_192a
+	aeskeygenassist	\$0x20,%xmm2,%xmm1	# round 8,9
+	call		.Lkey_expansion_192b
+	aeskeygenassist	\$0x40,%xmm2,%xmm1	# round 10,11
+	call		.Lkey_expansion_192a
+	aeskeygenassist	\$0x80,%xmm2,%xmm1	# round 11,12
+	call		.Lkey_expansion_192b
+	$movkey	%xmm0,(%rax)
+	mov	$bits,48(%rax)	# 240(%rdx)
+	xor	%rax, %rax
+	jmp	.Lenc_key_ret
+
+.align	16
+.L14rounds:
+	movups	16($inp),%xmm2			# remaining half of *userKey
+	mov	\$13,$bits			# 14 rounds for 256
+	lea	16(%rax),%rax
+
+	$movkey	%xmm0,($key)			# round 0
+	$movkey	%xmm2,16($key)			# round 1
+	aeskeygenassist	\$0x1,%xmm2,%xmm1	# round 2
+	call		.Lkey_expansion_256a_cold
+	aeskeygenassist	\$0x1,%xmm0,%xmm1	# round 3
+	call		.Lkey_expansion_256b
+	aeskeygenassist	\$0x2,%xmm2,%xmm1	# round 4
+	call		.Lkey_expansion_256a
+	aeskeygenassist	\$0x2,%xmm0,%xmm1	# round 5
+	call		.Lkey_expansion_256b
+	aeskeygenassist	\$0x4,%xmm2,%xmm1	# round 6
+	call		.Lkey_expansion_256a
+	aeskeygenassist	\$0x4,%xmm0,%xmm1	# round 7
+	call		.Lkey_expansion_256b
+	aeskeygenassist	\$0x8,%xmm2,%xmm1	# round 8
+	call		.Lkey_expansion_256a
+	aeskeygenassist	\$0x8,%xmm0,%xmm1	# round 9
+	call		.Lkey_expansion_256b
+	aeskeygenassist	\$0x10,%xmm2,%xmm1	# round 10
+	call		.Lkey_expansion_256a
+	aeskeygenassist	\$0x10,%xmm0,%xmm1	# round 11
+	call		.Lkey_expansion_256b
+	aeskeygenassist	\$0x20,%xmm2,%xmm1	# round 12
+	call		.Lkey_expansion_256a
+	aeskeygenassist	\$0x20,%xmm0,%xmm1	# round 13
+	call		.Lkey_expansion_256b
+	aeskeygenassist	\$0x40,%xmm2,%xmm1	# round 14
+	call		.Lkey_expansion_256a
+	$movkey	%xmm0,(%rax)
+	mov	$bits,16(%rax)	# 240(%rdx)
+	xor	%rax,%rax
+	jmp	.Lenc_key_ret
+
+.align	16
+.Lbad_keybits:
+	mov	\$-2,%rax
+.Lenc_key_ret:
+	pxor	%xmm0,%xmm0
+	pxor	%xmm1,%xmm1
+	pxor	%xmm2,%xmm2
+	pxor	%xmm3,%xmm3
+	pxor	%xmm4,%xmm4
+	pxor	%xmm5,%xmm5
+	add	\$8,%rsp
+.cfi_adjust_cfa_offset	-8
+	ret
+.cfi_endproc
+.seh_endproc
+
+.align	16
+.Lkey_expansion_128:
+.cfi_startproc
+	$movkey	%xmm0,(%rax)
+	lea	16(%rax),%rax
+.Lkey_expansion_128_cold:
+	shufps	\$0b00010000,%xmm0,%xmm4
+	xorps	%xmm4, %xmm0
+	shufps	\$0b10001100,%xmm0,%xmm4
+	xorps	%xmm4, %xmm0
+	shufps	\$0b11111111,%xmm1,%xmm1	# critical path
+	xorps	%xmm1,%xmm0
+	ret
+.cfi_endproc
+
+.align 16
+.Lkey_expansion_192a:
+.cfi_startproc
+	$movkey	%xmm0,(%rax)
+	lea	16(%rax),%rax
+.Lkey_expansion_192a_cold:
+	movaps	%xmm2, %xmm5
+.Lkey_expansion_192b_warm:
+	shufps	\$0b00010000,%xmm0,%xmm4
+	movdqa	%xmm2,%xmm3
+	xorps	%xmm4,%xmm0
+	shufps	\$0b10001100,%xmm0,%xmm4
+	pslldq	\$4,%xmm3
+	xorps	%xmm4,%xmm0
+	pshufd	\$0b01010101,%xmm1,%xmm1	# critical path
+	pxor	%xmm3,%xmm2
+	pxor	%xmm1,%xmm0
+	pshufd	\$0b11111111,%xmm0,%xmm3
+	pxor	%xmm3,%xmm2
+	ret
+.cfi_endproc
+
+.align 16
+.Lkey_expansion_192b:
+.cfi_startproc
+	movaps	%xmm0,%xmm3
+	shufps	\$0b01000100,%xmm0,%xmm5
+	$movkey	%xmm5,(%rax)
+	shufps	\$0b01001110,%xmm2,%xmm3
+	$movkey	%xmm3,16(%rax)
+	lea	32(%rax),%rax
+	jmp	.Lkey_expansion_192b_warm
+.cfi_endproc
+
+.align	16
+.Lkey_expansion_256a:
+.cfi_startproc
+	$movkey	%xmm2,(%rax)
+	lea	16(%rax),%rax
+.Lkey_expansion_256a_cold:
+	shufps	\$0b00010000,%xmm0,%xmm4
+	xorps	%xmm4,%xmm0
+	shufps	\$0b10001100,%xmm0,%xmm4
+	xorps	%xmm4,%xmm0
+	shufps	\$0b11111111,%xmm1,%xmm1	# critical path
+	xorps	%xmm1,%xmm0
+	ret
+.cfi_endproc
+
+.align 16
+.Lkey_expansion_256b:
+.cfi_startproc
+	$movkey	%xmm0,(%rax)
+	lea	16(%rax),%rax
+
+	shufps	\$0b00010000,%xmm2,%xmm4
+	xorps	%xmm4,%xmm2
+	shufps	\$0b10001100,%xmm2,%xmm4
+	xorps	%xmm4,%xmm2
+	shufps	\$0b10101010,%xmm1,%xmm1	# critical path
+	xorps	%xmm1,%xmm2
+	ret
+.cfi_endproc
+.size	${PREFIX}_set_encrypt_key_base,.-${PREFIX}_set_encrypt_key_base
+
+.globl	${PREFIX}_set_encrypt_key_alt
+.type	${PREFIX}_set_encrypt_key_alt,\@abi-omnipotent
+.align	16
+${PREFIX}_set_encrypt_key_alt:
+.cfi_startproc
+.seh_startproc
+	_CET_ENDBR
+#ifdef BORINGSSL_DISPATCH_TEST
+	movb \$1,BORINGSSL_function_hit+3(%rip)
+#endif
+	sub	\$8,%rsp
+.cfi_adjust_cfa_offset	8
+.seh_stackalloc	8
+.seh_endprologue
+	movups	($inp),%xmm0		# pull first 128 bits of *userKey
+	xorps	%xmm4,%xmm4		# low dword of xmm4 is assumed 0
+	lea	16($key),%rax		# %rax is used as modifiable copy of $key
+	cmp	\$256,$bits
+	je	.L14rounds_alt
+	cmp	\$192,$bits
+	je	.L12rounds_alt
+	cmp	\$128,$bits
+	jne	.Lbad_keybits_alt
+
+	mov	\$9,$bits			# 10 rounds for 128-bit key
 	movdqa	.Lkey_rotate(%rip),%xmm5
 	mov	\$8,%r10d
 	movdqa	.Lkey_rcon1(%rip),%xmm4
@@ -3521,39 +3551,12 @@ __aesni_set_encrypt_key:
 
 	mov	$bits,96(%rax)	# 240($key)
 	xor	%eax,%eax
-	jmp	.Lenc_key_ret
-
-.align	16
-.L12rounds:
-	movq	16($inp),%xmm2			# remaining 1/3 of *userKey
-	mov	\$11,$bits			# 12 rounds for 192
-	cmp	\$`1<<28`,%r10d			# AVX, but no XOP
-	je	.L12rounds_alt
-
-	$movkey	%xmm0,($key)			# round 0
-	aeskeygenassist	\$0x1,%xmm2,%xmm1	# round 1,2
-	call		.Lkey_expansion_192a_cold
-	aeskeygenassist	\$0x2,%xmm2,%xmm1	# round 2,3
-	call		.Lkey_expansion_192b
-	aeskeygenassist	\$0x4,%xmm2,%xmm1	# round 4,5
-	call		.Lkey_expansion_192a
-	aeskeygenassist	\$0x8,%xmm2,%xmm1	# round 5,6
-	call		.Lkey_expansion_192b
-	aeskeygenassist	\$0x10,%xmm2,%xmm1	# round 7,8
-	call		.Lkey_expansion_192a
-	aeskeygenassist	\$0x20,%xmm2,%xmm1	# round 8,9
-	call		.Lkey_expansion_192b
-	aeskeygenassist	\$0x40,%xmm2,%xmm1	# round 10,11
-	call		.Lkey_expansion_192a
-	aeskeygenassist	\$0x80,%xmm2,%xmm1	# round 11,12
-	call		.Lkey_expansion_192b
-	$movkey	%xmm0,(%rax)
-	mov	$bits,48(%rax)	# 240(%rdx)
-	xor	%rax, %rax
-	jmp	.Lenc_key_ret
+	jmp	.Lenc_key_ret_alt
 
 .align	16
 .L12rounds_alt:
+	movq	16($inp),%xmm2			# remaining 1/3 of *userKey
+	mov	\$11,$bits			# 12 rounds for 192
 	movdqa	.Lkey_rotate192(%rip),%xmm5
 	movdqa	.Lkey_rcon1(%rip),%xmm4
 	mov	\$8,%r10d
@@ -3591,51 +3594,13 @@ __aesni_set_encrypt_key:
 
 	mov	$bits,32(%rax)	# 240($key)
 	xor	%eax,%eax
-	jmp	.Lenc_key_ret
-
-.align	16
-.L14rounds:
-	movups	16($inp),%xmm2			# remaining half of *userKey
-	mov	\$13,$bits			# 14 rounds for 256
-	lea	16(%rax),%rax
-	cmp	\$`1<<28`,%r10d			# AVX, but no XOP
-	je	.L14rounds_alt
-
-	$movkey	%xmm0,($key)			# round 0
-	$movkey	%xmm2,16($key)			# round 1
-	aeskeygenassist	\$0x1,%xmm2,%xmm1	# round 2
-	call		.Lkey_expansion_256a_cold
-	aeskeygenassist	\$0x1,%xmm0,%xmm1	# round 3
-	call		.Lkey_expansion_256b
-	aeskeygenassist	\$0x2,%xmm2,%xmm1	# round 4
-	call		.Lkey_expansion_256a
-	aeskeygenassist	\$0x2,%xmm0,%xmm1	# round 5
-	call		.Lkey_expansion_256b
-	aeskeygenassist	\$0x4,%xmm2,%xmm1	# round 6
-	call		.Lkey_expansion_256a
-	aeskeygenassist	\$0x4,%xmm0,%xmm1	# round 7
-	call		.Lkey_expansion_256b
-	aeskeygenassist	\$0x8,%xmm2,%xmm1	# round 8
-	call		.Lkey_expansion_256a
-	aeskeygenassist	\$0x8,%xmm0,%xmm1	# round 9
-	call		.Lkey_expansion_256b
-	aeskeygenassist	\$0x10,%xmm2,%xmm1	# round 10
-	call		.Lkey_expansion_256a
-	aeskeygenassist	\$0x10,%xmm0,%xmm1	# round 11
-	call		.Lkey_expansion_256b
-	aeskeygenassist	\$0x20,%xmm2,%xmm1	# round 12
-	call		.Lkey_expansion_256a
-	aeskeygenassist	\$0x20,%xmm0,%xmm1	# round 13
-	call		.Lkey_expansion_256b
-	aeskeygenassist	\$0x40,%xmm2,%xmm1	# round 14
-	call		.Lkey_expansion_256a
-	$movkey	%xmm0,(%rax)
-	mov	$bits,16(%rax)	# 240(%rdx)
-	xor	%rax,%rax
-	jmp	.Lenc_key_ret
+	jmp	.Lenc_key_ret_alt
 
 .align	16
 .L14rounds_alt:
+	movups	16($inp),%xmm2			# remaining half of *userKey
+	mov	\$13,$bits			# 14 rounds for 256
+	lea	16(%rax),%rax
 	movdqa	.Lkey_rotate(%rip),%xmm5
 	movdqa	.Lkey_rcon1(%rip),%xmm4
 	mov	\$7,%r10d
@@ -3686,12 +3651,12 @@ __aesni_set_encrypt_key:
 .Ldone_key256:
 	mov	$bits,16(%rax)	# 240($key)
 	xor	%eax,%eax
-	jmp	.Lenc_key_ret
+	jmp	.Lenc_key_ret_alt
 
 .align	16
-.Lbad_keybits:
+.Lbad_keybits_alt:
 	mov	\$-2,%rax
-.Lenc_key_ret:
+.Lenc_key_ret_alt:
 	pxor	%xmm0,%xmm0
 	pxor	%xmm1,%xmm1
 	pxor	%xmm2,%xmm2
@@ -3702,78 +3667,8 @@ __aesni_set_encrypt_key:
 .cfi_adjust_cfa_offset	-8
 	ret
 .cfi_endproc
-.LSEH_end_set_encrypt_key:
-
-.align	16
-.Lkey_expansion_128:
-	$movkey	%xmm0,(%rax)
-	lea	16(%rax),%rax
-.Lkey_expansion_128_cold:
-	shufps	\$0b00010000,%xmm0,%xmm4
-	xorps	%xmm4, %xmm0
-	shufps	\$0b10001100,%xmm0,%xmm4
-	xorps	%xmm4, %xmm0
-	shufps	\$0b11111111,%xmm1,%xmm1	# critical path
-	xorps	%xmm1,%xmm0
-	ret
-
-.align 16
-.Lkey_expansion_192a:
-	$movkey	%xmm0,(%rax)
-	lea	16(%rax),%rax
-.Lkey_expansion_192a_cold:
-	movaps	%xmm2, %xmm5
-.Lkey_expansion_192b_warm:
-	shufps	\$0b00010000,%xmm0,%xmm4
-	movdqa	%xmm2,%xmm3
-	xorps	%xmm4,%xmm0
-	shufps	\$0b10001100,%xmm0,%xmm4
-	pslldq	\$4,%xmm3
-	xorps	%xmm4,%xmm0
-	pshufd	\$0b01010101,%xmm1,%xmm1	# critical path
-	pxor	%xmm3,%xmm2
-	pxor	%xmm1,%xmm0
-	pshufd	\$0b11111111,%xmm0,%xmm3
-	pxor	%xmm3,%xmm2
-	ret
-
-.align 16
-.Lkey_expansion_192b:
-	movaps	%xmm0,%xmm3
-	shufps	\$0b01000100,%xmm0,%xmm5
-	$movkey	%xmm5,(%rax)
-	shufps	\$0b01001110,%xmm2,%xmm3
-	$movkey	%xmm3,16(%rax)
-	lea	32(%rax),%rax
-	jmp	.Lkey_expansion_192b_warm
-
-.align	16
-.Lkey_expansion_256a:
-	$movkey	%xmm2,(%rax)
-	lea	16(%rax),%rax
-.Lkey_expansion_256a_cold:
-	shufps	\$0b00010000,%xmm0,%xmm4
-	xorps	%xmm4,%xmm0
-	shufps	\$0b10001100,%xmm0,%xmm4
-	xorps	%xmm4,%xmm0
-	shufps	\$0b11111111,%xmm1,%xmm1	# critical path
-	xorps	%xmm1,%xmm0
-	ret
-
-.align 16
-.Lkey_expansion_256b:
-	$movkey	%xmm0,(%rax)
-	lea	16(%rax),%rax
-
-	shufps	\$0b00010000,%xmm2,%xmm4
-	xorps	%xmm4,%xmm2
-	shufps	\$0b10001100,%xmm2,%xmm4
-	xorps	%xmm4,%xmm2
-	shufps	\$0b10101010,%xmm1,%xmm1	# critical path
-	xorps	%xmm1,%xmm2
-	ret
-.size	${PREFIX}_set_encrypt_key,.-${PREFIX}_set_encrypt_key
-.size	__aesni_set_encrypt_key,.-__aesni_set_encrypt_key
+.seh_endproc
+.size	${PREFIX}_set_encrypt_key_alt,.-${PREFIX}_set_encrypt_key_alt
 ___
 }
 
@@ -4063,14 +3958,6 @@ $code.=<<___;
 	.rva	.LSEH_begin_${PREFIX}_cbc_encrypt
 	.rva	.LSEH_end_${PREFIX}_cbc_encrypt
 	.rva	.LSEH_info_cbc
-
-	.rva	${PREFIX}_set_decrypt_key
-	.rva	.LSEH_end_set_decrypt_key
-	.rva	.LSEH_info_key
-
-	.rva	${PREFIX}_set_encrypt_key
-	.rva	.LSEH_end_set_encrypt_key
-	.rva	.LSEH_info_key
 .section	.xdata
 .align	8
 ___
@@ -4088,9 +3975,6 @@ $code.=<<___;
 .LSEH_info_cbc:
 	.byte	9,0,0,0
 	.rva	cbc_se_handler
-.LSEH_info_key:
-	.byte	0x01,0x04,0x01,0x00
-	.byte	0x04,0x02,0x00,0x00	# sub rsp,8
 ___
 }
 

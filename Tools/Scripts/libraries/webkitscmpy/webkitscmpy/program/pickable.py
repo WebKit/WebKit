@@ -39,9 +39,6 @@ class Pickable(Command):
 
         @classmethod
         def fuzzy(cls, string, ratio=None):
-            if sys.version_info <= (3, 6):
-                return re.compile(string)
-
             try:
                 from rapidfuzz import fuzz
             except ModuleNotFoundError:

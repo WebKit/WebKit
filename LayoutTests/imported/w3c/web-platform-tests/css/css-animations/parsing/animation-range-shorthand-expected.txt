@@ -1,67 +1,67 @@
 
-FAIL e.style['animation-range'] = "normal" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "normal normal" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "cover" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "contain" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "entry" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "entry-crossing" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "exit" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "exit-crossing" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "entry, exit" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "entry 0% entry 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "entry-crossing 0% entry-crossing 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "exit 0% exit 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "exit-crossing 0% exit-crossing 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "cover 0% cover 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "contain 0% contain 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "entry calc(10% - 10%) entry calc(50% + 50%)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "cover 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "contain 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "entry 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "entry-crossing 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "exit 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "exit-crossing 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "entry 50px exit 100px" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "exit calc(10% + 50px)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "entry 50% exit 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "cover 50% entry 50%, contain 50% exit 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "50% exit 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "normal 100px" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "100px" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "100px normal" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['animation-range'] = "10% normal" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL Property animation-range value 'normal' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'normal normal' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'cover' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'contain' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'entry' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'entry-crossing' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'exit' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'exit-crossing' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'entry, exit' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'entry 0% entry 100%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'entry-crossing 0% entry-crossing 100%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'exit 0% exit 100%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'exit-crossing 0% exit-crossing 100%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'cover 0% cover 100%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'contain 0% contain 100%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'entry calc(10% - 10%) entry calc(50% + 50%)' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'cover 50%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'contain 50%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'entry 50%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'entry-crossing 50%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'exit 50%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'exit-crossing 50%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'entry 50px exit 100px' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'exit calc(10% + 50px)' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'entry 50% exit 50%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'cover 50% entry 50%, contain 50% exit 50%' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'entry 10em exit 20em' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value '10em exit 20em' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value 'normal 100px' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value '100px' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value '100px normal' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property animation-range value '10% normal' assert_true: animation-range doesn't seem to be supported in the computed style expected true got false
+PASS e.style['animation-range'] = "normal" should set the property value
+PASS e.style['animation-range'] = "normal normal" should set the property value
+PASS e.style['animation-range'] = "cover" should set the property value
+PASS e.style['animation-range'] = "contain" should set the property value
+PASS e.style['animation-range'] = "entry" should set the property value
+PASS e.style['animation-range'] = "entry-crossing" should set the property value
+PASS e.style['animation-range'] = "exit" should set the property value
+PASS e.style['animation-range'] = "exit-crossing" should set the property value
+PASS e.style['animation-range'] = "entry, exit" should set the property value
+PASS e.style['animation-range'] = "entry 0% entry 100%" should set the property value
+PASS e.style['animation-range'] = "entry-crossing 0% entry-crossing 100%" should set the property value
+PASS e.style['animation-range'] = "exit 0% exit 100%" should set the property value
+PASS e.style['animation-range'] = "exit-crossing 0% exit-crossing 100%" should set the property value
+PASS e.style['animation-range'] = "cover 0% cover 100%" should set the property value
+PASS e.style['animation-range'] = "contain 0% contain 100%" should set the property value
+FAIL e.style['animation-range'] = "entry calc(10% - 10%) entry calc(50% + 50%)" should set the property value assert_equals: serialization should be canonical expected "entry" but got "entry calc(0%) entry calc(100%)"
+PASS e.style['animation-range'] = "cover 50%" should set the property value
+PASS e.style['animation-range'] = "contain 50%" should set the property value
+PASS e.style['animation-range'] = "entry 50%" should set the property value
+PASS e.style['animation-range'] = "entry-crossing 50%" should set the property value
+PASS e.style['animation-range'] = "exit 50%" should set the property value
+PASS e.style['animation-range'] = "exit-crossing 50%" should set the property value
+PASS e.style['animation-range'] = "entry 50px exit 100px" should set the property value
+PASS e.style['animation-range'] = "exit calc(10% + 50px)" should set the property value
+PASS e.style['animation-range'] = "entry 50% exit 50%" should set the property value
+PASS e.style['animation-range'] = "cover 50% entry 50%, contain 50% exit 50%" should set the property value
+PASS e.style['animation-range'] = "50% exit 50%" should set the property value
+PASS e.style['animation-range'] = "normal 100px" should set the property value
+PASS e.style['animation-range'] = "100px" should set the property value
+PASS e.style['animation-range'] = "100px normal" should set the property value
+PASS e.style['animation-range'] = "10% normal" should set the property value
+PASS Property animation-range value 'normal'
+PASS Property animation-range value 'normal normal'
+PASS Property animation-range value 'cover'
+PASS Property animation-range value 'contain'
+PASS Property animation-range value 'entry'
+PASS Property animation-range value 'entry-crossing'
+PASS Property animation-range value 'exit'
+PASS Property animation-range value 'exit-crossing'
+PASS Property animation-range value 'entry, exit'
+PASS Property animation-range value 'entry 0% entry 100%'
+PASS Property animation-range value 'entry-crossing 0% entry-crossing 100%'
+PASS Property animation-range value 'exit 0% exit 100%'
+PASS Property animation-range value 'exit-crossing 0% exit-crossing 100%'
+PASS Property animation-range value 'cover 0% cover 100%'
+PASS Property animation-range value 'contain 0% contain 100%'
+PASS Property animation-range value 'entry calc(10% - 10%) entry calc(50% + 50%)'
+PASS Property animation-range value 'cover 50%'
+PASS Property animation-range value 'contain 50%'
+PASS Property animation-range value 'entry 50%'
+PASS Property animation-range value 'entry-crossing 50%'
+PASS Property animation-range value 'exit 50%'
+PASS Property animation-range value 'exit-crossing 50%'
+PASS Property animation-range value 'entry 50px exit 100px'
+PASS Property animation-range value 'exit calc(10% + 50px)'
+PASS Property animation-range value 'entry 50% exit 50%'
+PASS Property animation-range value 'cover 50% entry 50%, contain 50% exit 50%'
+PASS Property animation-range value 'entry 10em exit 20em'
+PASS Property animation-range value '10em exit 20em'
+PASS Property animation-range value 'normal 100px'
+PASS Property animation-range value '100px'
+PASS Property animation-range value '100px normal'
+PASS Property animation-range value '10% normal'
 PASS e.style['animation-range'] = "entry 50% 0s" should not set the property value
 PASS e.style['animation-range'] = "0s entry 50%" should not set the property value
 PASS e.style['animation-range'] = "1s" should not set the property value
@@ -83,46 +83,48 @@ PASS e.style['animation-range'] = "thing 42%" should not set the property value
 PASS e.style['animation-range'] = "thing 100%" should not set the property value
 PASS e.style['animation-range'] = "thing 100px" should not set the property value
 PASS e.style['animation-range'] = "100% thing" should not set the property value
-FAIL e.style['animation-range'] = "normal" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "normal" but got (undefined) undefined
-FAIL e.style['animation-range'] = "normal" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "normal" but got (undefined) undefined
-FAIL e.style['animation-range'] = "normal" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['animation-range'] = "normal normal" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "normal" but got (undefined) undefined
-FAIL e.style['animation-range'] = "normal normal" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "normal" but got (undefined) undefined
-FAIL e.style['animation-range'] = "normal normal" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['animation-range'] = "normal entry 100%" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "entry" but got (undefined) undefined
-FAIL e.style['animation-range'] = "normal entry 100%" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "normal" but got (undefined) undefined
-FAIL e.style['animation-range'] = "normal entry 100%" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['animation-range'] = "normal entry 10%" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "entry 10%" but got (undefined) undefined
-FAIL e.style['animation-range'] = "normal entry 10%" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "normal" but got (undefined) undefined
-FAIL e.style['animation-range'] = "normal entry 10%" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['animation-range'] = "cover" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "cover" but got (undefined) undefined
-FAIL e.style['animation-range'] = "cover" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "cover" but got (undefined) undefined
-FAIL e.style['animation-range'] = "cover" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['animation-range'] = "contain" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "contain" but got (undefined) undefined
-FAIL e.style['animation-range'] = "contain" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "contain" but got (undefined) undefined
-FAIL e.style['animation-range'] = "contain" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['animation-range'] = "contain 100% contain 0%" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "contain 0%" but got (undefined) undefined
-FAIL e.style['animation-range'] = "contain 100% contain 0%" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "contain 100%" but got (undefined) undefined
-FAIL e.style['animation-range'] = "contain 100% contain 0%" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['animation-range'] = "entry 10% exit 20%" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "exit 20%" but got (undefined) undefined
-FAIL e.style['animation-range'] = "entry 10% exit 20%" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "entry 10%" but got (undefined) undefined
-FAIL e.style['animation-range'] = "entry 10% exit 20%" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['animation-range'] = "entry calc(10% + 10px) exit 20px" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "exit 20px" but got (undefined) undefined
-FAIL e.style['animation-range'] = "entry calc(10% + 10px) exit 20px" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "entry calc(10% + 10px)" but got (undefined) undefined
-FAIL e.style['animation-range'] = "entry calc(10% + 10px) exit 20px" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['animation-range'] = "entry, exit" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "entry, exit" but got (undefined) undefined
-FAIL e.style['animation-range'] = "entry, exit" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "entry, exit" but got (undefined) undefined
-FAIL e.style['animation-range'] = "entry, exit" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['animation-range'] = "entry 0%, exit" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "entry, exit" but got (undefined) undefined
-FAIL e.style['animation-range'] = "entry 0%, exit" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "entry, exit" but got (undefined) undefined
-FAIL e.style['animation-range'] = "entry 0%, exit" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['animation-range'] = "exit calc(10% + 50px)" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "exit" but got (undefined) undefined
-FAIL e.style['animation-range'] = "exit calc(10% + 50px)" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "exit calc(10% + 50px)" but got (undefined) undefined
-FAIL e.style['animation-range'] = "exit calc(10% + 50px)" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['animation-range'] = "100px" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "normal" but got (undefined) undefined
-FAIL e.style['animation-range'] = "100px" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "100px" but got (undefined) undefined
-FAIL e.style['animation-range'] = "100px" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['animation-range'] = "10%" should set animation-range-end assert_equals: animation-range-end should be canonical expected (string) "normal" but got (undefined) undefined
-FAIL e.style['animation-range'] = "10%" should set animation-range-start assert_equals: animation-range-start should be canonical expected (string) "10%" but got (undefined) undefined
-FAIL e.style['animation-range'] = "10%" should not set unrelated longhands assert_true: expected true got false
+PASS e.style['animation-range'] = "normal foo normal 100%" should not set the property value
+PASS e.style['animation-range'] = "normal normal 100%" should not set the property value
+PASS e.style['animation-range'] = "normal" should set animation-range-end
+PASS e.style['animation-range'] = "normal" should set animation-range-start
+PASS e.style['animation-range'] = "normal" should not set unrelated longhands
+PASS e.style['animation-range'] = "normal normal" should set animation-range-end
+PASS e.style['animation-range'] = "normal normal" should set animation-range-start
+PASS e.style['animation-range'] = "normal normal" should not set unrelated longhands
+PASS e.style['animation-range'] = "normal entry 100%" should set animation-range-end
+PASS e.style['animation-range'] = "normal entry 100%" should set animation-range-start
+PASS e.style['animation-range'] = "normal entry 100%" should not set unrelated longhands
+PASS e.style['animation-range'] = "normal entry 10%" should set animation-range-end
+PASS e.style['animation-range'] = "normal entry 10%" should set animation-range-start
+PASS e.style['animation-range'] = "normal entry 10%" should not set unrelated longhands
+PASS e.style['animation-range'] = "cover" should set animation-range-end
+PASS e.style['animation-range'] = "cover" should set animation-range-start
+PASS e.style['animation-range'] = "cover" should not set unrelated longhands
+PASS e.style['animation-range'] = "contain" should set animation-range-end
+PASS e.style['animation-range'] = "contain" should set animation-range-start
+PASS e.style['animation-range'] = "contain" should not set unrelated longhands
+PASS e.style['animation-range'] = "contain 100% contain 0%" should set animation-range-end
+PASS e.style['animation-range'] = "contain 100% contain 0%" should set animation-range-start
+PASS e.style['animation-range'] = "contain 100% contain 0%" should not set unrelated longhands
+PASS e.style['animation-range'] = "entry 10% exit 20%" should set animation-range-end
+PASS e.style['animation-range'] = "entry 10% exit 20%" should set animation-range-start
+PASS e.style['animation-range'] = "entry 10% exit 20%" should not set unrelated longhands
+PASS e.style['animation-range'] = "entry calc(10% + 10px) exit 20px" should set animation-range-end
+PASS e.style['animation-range'] = "entry calc(10% + 10px) exit 20px" should set animation-range-start
+PASS e.style['animation-range'] = "entry calc(10% + 10px) exit 20px" should not set unrelated longhands
+PASS e.style['animation-range'] = "entry, exit" should set animation-range-end
+PASS e.style['animation-range'] = "entry, exit" should set animation-range-start
+PASS e.style['animation-range'] = "entry, exit" should not set unrelated longhands
+PASS e.style['animation-range'] = "entry 0%, exit" should set animation-range-end
+PASS e.style['animation-range'] = "entry 0%, exit" should set animation-range-start
+PASS e.style['animation-range'] = "entry 0%, exit" should not set unrelated longhands
+PASS e.style['animation-range'] = "exit calc(10% + 50px)" should set animation-range-end
+PASS e.style['animation-range'] = "exit calc(10% + 50px)" should set animation-range-start
+PASS e.style['animation-range'] = "exit calc(10% + 50px)" should not set unrelated longhands
+PASS e.style['animation-range'] = "100px" should set animation-range-end
+PASS e.style['animation-range'] = "100px" should set animation-range-start
+PASS e.style['animation-range'] = "100px" should not set unrelated longhands
+PASS e.style['animation-range'] = "10%" should set animation-range-end
+PASS e.style['animation-range'] = "10%" should set animation-range-start
+PASS e.style['animation-range'] = "10%" should not set unrelated longhands
 

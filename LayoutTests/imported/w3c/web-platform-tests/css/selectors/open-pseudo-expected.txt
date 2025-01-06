@@ -1,0 +1,6 @@
+
+
+FAIL The dialog element should support :open. ':open' is not a valid selector.
+FAIL The details element should support :open. ':open' is not a valid selector.
+FAIL The select element should support :open. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+

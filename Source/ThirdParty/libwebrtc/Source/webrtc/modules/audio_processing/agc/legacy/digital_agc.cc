@@ -271,7 +271,7 @@ int32_t WebRtcAgc_AddFarendToDigital(DigitalAgc* stt,
 // Gains is an 11 element long array (one value per ms, incl start & end).
 int32_t WebRtcAgc_ComputeDigitalGains(DigitalAgc* stt,
                                       const int16_t* const* in_near,
-                                      size_t num_bands,
+                                      size_t /* num_bands */,
                                       uint32_t FS,
                                       int16_t lowlevelSignal,
                                       int32_t gains[11]) {

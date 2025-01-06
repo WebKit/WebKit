@@ -1,0 +1,35 @@
+
+
+FAIL .test 1 assert_equals:
+<div class="container test" data-expected-height="100">
+  <img class="block-step test" src="../../support/60x60-green.png" data-expected-margin-top="20" data-expected-margin-bottom="20">
+</div>
+margin-top expected "20" but got "0"
+FAIL .test 2 assert_equals:
+<img class="block-step test" src="../../support/60x60-green.png" data-expected-margin-top="20" data-expected-margin-bottom="20">
+margin-top expected "20" but got "0"
+FAIL .test 3 assert_equals:
+<div class="container test" data-expected-height="100">
+  <canvas width="20" height="20" class="block-step test" data-expected-margin-top="40" data-expected-margin-bottom="40"></canvas>
+</div>
+margin-top expected "40" but got "0"
+FAIL .test 4 assert_equals:
+<canvas width="20" height="20" class="block-step test" data-expected-margin-top="40" data-expected-margin-bottom="40"></canvas>
+margin-top expected "40" but got "0"
+FAIL .test 5 assert_equals:
+<div class="container test" data-expected-height="100">
+  <svg class="block-step test" viewBox="0 0 100 50" data-expected-margin-top="25" data-expected-margin-bottom="25"></svg>
+</div>
+margin-top expected "25" but got "0"
+FAIL .test 6 assert_equals:
+<svg class="block-step test" viewBox="0 0 100 50" data-expected-margin-top="25" data-expected-margin-bottom="25"></svg>
+margin-top expected "25" but got "0"
+PASS .test 7
+PASS .test 8
+PASS .test 9
+PASS .test 10
+PASS .test 11
+PASS .test 12
+PASS .test 13
+PASS .test 14
+

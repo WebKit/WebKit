@@ -31,6 +31,7 @@
 #include "WebExtensionAPIDevToolsExtensionPanel.h"
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
+#include "WebPageProxyIdentifier.h"
 
 namespace WebKit {
 
@@ -43,12 +44,9 @@ public:
 #if PLATFORM(COCOA)
     RefPtr<WebExtensionAPIDevToolsExtensionPanel> extensionPanel(Inspector::ExtensionTabID) const;
 
-    void createPanel(WebPage&, NSString *title, NSString *iconPath, NSString *pagePath, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void createPanel(WebPageProxyIdentifier, NSString *title, NSString *iconPath, NSString *pagePath, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     NSString *themeName();
-
-    Inspector::ExtensionAppearance theme() const { return m_theme; }
-    void setTheme(Inspector::ExtensionAppearance appearance) { m_theme = appearance; }
 
     WebExtensionAPIEvent& onThemeChanged();
 #endif
@@ -56,7 +54,6 @@ public:
 private:
     RefPtr<WebExtensionAPIEvent> m_onThemeChanged;
     HashMap<Inspector::ExtensionTabID, Ref<WebExtensionAPIDevToolsExtensionPanel>> m_extensionPanels;
-    Inspector::ExtensionAppearance m_theme { Inspector::ExtensionAppearance::Light };
 };
 
 } // namespace WebKit

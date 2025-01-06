@@ -163,17 +163,11 @@ struct RegisterState {
 using RegisterState = jmp_buf;
 
 // ALLOCATE_AND_GET_REGISTER_STATE() is a macro so that it is always "inlined" even in debug builds.
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 4611)
-#endif
 #define ALLOCATE_AND_GET_REGISTER_STATE(registers) \
     alignas(alignof(void*) > alignof(RegisterState) ? alignof(void*) : alignof(RegisterState)) RegisterState registers; \
+    memset(&registers, 0, sizeof(registers)); /* Clear RegisterState so that it never includes some garbage for conservative root scanning. */ \
     setjmp(registers)
 
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 #endif // ALLOCATE_AND_GET_REGISTER_STATE
 
 } // namespace JSC

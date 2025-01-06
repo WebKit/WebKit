@@ -29,9 +29,10 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
 #include "Logging.h"
-#include "RuntimeApplicationChecks.h"
 #include <pal/spi/ios/SBSStatusBarSPI.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/RuntimeApplicationChecks.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -77,7 +78,7 @@ using namespace WebCore;
     ASSERT(!m_coordinator);
 
     UIStatusBarStyleOverrides overrides = UIStatusBarStyleOverrideWebRTCAudioCapture;
-    m_statusBarStyleOverride = [getSBSStatusBarStyleOverridesAssertionClass() assertionWithStatusBarStyleOverrides:overrides forPID:presentingApplicationPID() exclusive:YES showsWhenForeground:YES];
+    m_statusBarStyleOverride = [getSBSStatusBarStyleOverridesAssertionClass() assertionWithStatusBarStyleOverrides:overrides forPID:legacyPresentingApplicationPID() exclusive:YES showsWhenForeground:YES];
     m_coordinator = adoptNS([[getSBSStatusBarStyleOverridesCoordinatorClass() alloc] init]);
     m_coordinator.get().delegate = self;
 
@@ -148,6 +149,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaCaptureStatusBarManager);
 
 bool MediaCaptureStatusBarManager::hasSupport()
 {

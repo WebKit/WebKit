@@ -28,6 +28,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "CalleeBits.h"
 #include "CodeSpecializationKind.h"
 #include "ConcurrentJSLock.h"
@@ -70,11 +74,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/LazyRef.h>
 #include <wtf/LazyUniqueRef.h>
+#include <wtf/MallocPtr.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackPointer.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeRefCountedWithSuppressingSaferCPPChecking.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/text/AdaptiveStringSearcher.h>
@@ -170,9 +175,6 @@ class Database;
 namespace DOMJIT {
 class Signature;
 }
-namespace Wasm {
-class Instance;
-}
 
 struct EntryFrame;
 
@@ -257,7 +259,7 @@ struct ScratchBuffer {
 
     static ScratchBuffer* fromData(void* buffer)
     {
-        return bitwise_cast<ScratchBuffer*>(static_cast<char*>(buffer) - OBJECT_OFFSETOF(ScratchBuffer, m_buffer));
+        return std::bit_cast<ScratchBuffer*>(static_cast<char*>(buffer) - OBJECT_OFFSETOF(ScratchBuffer, m_buffer));
     }
 
     static size_t allocationSize(Checked<size_t> bufferSize) { return sizeof(ScratchBuffer) + bufferSize; }
@@ -285,18 +287,14 @@ private:
 enum VMIdentifierType { };
 using VMIdentifier = AtomicObjectIdentifier<VMIdentifierType>;
 
-class VM : public ThreadSafeRefCounted<VM>, public DoublyLinkedListNode<VM> {
+class VM : public ThreadSafeRefCountedWithSuppressingSaferCPPChecking<VM>, public DoublyLinkedListNode<VM> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VM);
 public:
     // WebCore has a one-to-one mapping of threads to VMs;
     // create() should only be called once
     // on a thread, this is the 'default' VM (it uses the
     // thread's default string uniquing table from Thread::current()).
-    // API contexts created using the new context group aware interface
-    // create APIContextGroup objects which require less locking of JSC
-    // than the old singleton APIShared VM created for use by
-    // the original API.
-    enum VMType { Default, APIContextGroup, APIShared };
+    enum class VMType { Default, APIContextGroup };
 
     struct ClientData {
         JS_EXPORT_PRIVATE virtual ~ClientData() { };
@@ -304,10 +302,7 @@ public:
         JS_EXPORT_PRIVATE virtual String overrideSourceURL(const StackFrame&, const String& originalSourceURL) const = 0;
     };
 
-    bool isSharedInstance() { return vmType == APIShared; }
-    bool usingAPI() { return vmType != Default; }
-    JS_EXPORT_PRIVATE static bool sharedInstanceExists();
-    JS_EXPORT_PRIVATE static VM& sharedInstance();
+    bool usingAPI() { return vmType != VMType::Default; }
 
     JS_EXPORT_PRIVATE static Ref<VM> create(HeapType = HeapType::Small, WTF::RunLoop* = nullptr);
     JS_EXPORT_PRIVATE static RefPtr<VM> tryCreate(HeapType = HeapType::Small, WTF::RunLoop* = nullptr);
@@ -555,8 +550,8 @@ public:
 
     WriteBarrier<JSPropertyNameEnumerator> m_emptyPropertyNameEnumerator;
 
-    WriteBarrier<JSCell> m_sentinelSetBucket;
-    WriteBarrier<JSCell> m_sentinelMapBucket;
+    WriteBarrier<JSCell> m_orderedHashTableDeletedValue;
+    WriteBarrier<JSCell> m_orderedHashTableSentinel;
 
     WriteBarrier<NativeExecutable> m_fastCanConstructBoundExecutable;
     WriteBarrier<NativeExecutable> m_slowCanConstructBoundExecutable;
@@ -596,18 +591,18 @@ public:
 
     WriteBarrier<JSBigInt> heapBigIntConstantOne;
 
-    JSCell* sentinelSetBucket()
+    JSCell* orderedHashTableDeletedValue()
     {
-        if (LIKELY(m_sentinelSetBucket))
-            return m_sentinelSetBucket.get();
-        return sentinelSetBucketSlow();
+        if (LIKELY(m_orderedHashTableDeletedValue))
+            return m_orderedHashTableDeletedValue.get();
+        return orderedHashTableDeletedValueSlow();
     }
 
-    JSCell* sentinelMapBucket()
+    JSCell* orderedHashTableSentinel()
     {
-        if (LIKELY(m_sentinelMapBucket))
-            return m_sentinelMapBucket.get();
-        return sentinelMapBucketSlow();
+        if (LIKELY(m_orderedHashTableSentinel))
+            return m_orderedHashTableSentinel.get();
+        return orderedHashTableSentinelSlow();
     }
 
     JSPropertyNameEnumerator* emptyPropertyNameEnumerator()
@@ -667,7 +662,7 @@ public:
     SourceProviderCache* addSourceProviderCache(SourceProvider*);
     void clearSourceProviderCaches();
 
-    typedef HashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache>> SourceProviderCacheMap;
+    typedef UncheckedKeyHashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache>> SourceProviderCacheMap;
     SourceProviderCacheMap sourceProviderCacheMap;
 #if ENABLE(JIT)
     std::unique_ptr<JITThunks> jitStubs;
@@ -717,6 +712,11 @@ public:
     static constexpr ptrdiff_t offsetOfHeapMutatorShouldBeFenced()
     {
         return OBJECT_OFFSETOF(VM, heap) + OBJECT_OFFSETOF(Heap, m_mutatorShouldBeFenced);
+    }
+
+    static constexpr ptrdiff_t offsetOfTrapsBits()
+    {
+        return OBJECT_OFFSETOF(VM, m_traps) + VMTraps::offsetOfTrapsBits();
     }
 
     static constexpr ptrdiff_t offsetOfSoftStackLimit()
@@ -1007,11 +1007,14 @@ public:
     template<typename Func>
     void forEachDebugger(const Func&);
 
-    Ref<Waiter> syncWaiter();
+    void changeNumberOfActiveJITPlans(int64_t value)
+    {
+        m_numberOfActiveJITPlans.fetch_add(value, std::memory_order_relaxed);
+    }
 
-#if ENABLE(WEBASSEMBLY)
-    void registerWasmInstance(Wasm::Instance&);
-#endif
+    int64_t numberOfActiveJITPlans() const { return m_numberOfActiveJITPlans.load(std::memory_order_relaxed); }
+
+    Ref<Waiter> syncWaiter();
 
     void notifyDebuggerHookInjected() { m_isDebuggerHookInjected = true; }
     bool isDebuggerHookInjected() const { return m_isDebuggerHookInjected; }
@@ -1021,8 +1024,8 @@ private:
     static VM*& sharedInstanceInternal();
     void createNativeThunk();
 
-    JS_EXPORT_PRIVATE JSCell* sentinelSetBucketSlow();
-    JS_EXPORT_PRIVATE JSCell* sentinelMapBucketSlow();
+    JS_EXPORT_PRIVATE JSCell* orderedHashTableDeletedValueSlow();
+    JS_EXPORT_PRIVATE JSCell* orderedHashTableSentinelSlow();
     JSPropertyNameEnumerator* emptyPropertyNameEnumeratorSlow();
 
     void updateStackLimits();
@@ -1096,7 +1099,7 @@ private:
     std::unique_ptr<CodeCache> m_codeCache;
     std::unique_ptr<IntlCache> m_intlCache;
     std::unique_ptr<BuiltinExecutables> m_builtinExecutables;
-    HashMap<RefPtr<UniquedStringImpl>, RefPtr<WatchpointSet>> m_impurePropertyWatchpointSets;
+    UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, RefPtr<WatchpointSet>> m_impurePropertyWatchpointSets;
     std::unique_ptr<TypeProfiler> m_typeProfiler;
     std::unique_ptr<TypeProfilerLog> m_typeProfilerLog;
     unsigned m_typeProfilerEnabledCount { 0 };
@@ -1135,14 +1138,13 @@ private:
     bool m_isDebuggerHookInjected { false };
 
     Lock m_loopHintExecutionCountLock;
-    HashMap<const JSInstruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;
+    UncheckedKeyHashMap<const JSInstruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;
 
     Ref<Waiter> m_syncWaiter;
 
+    std::atomic<int64_t> m_numberOfActiveJITPlans { 0 };
+
     Vector<Function<void()>> m_didPopListeners;
-#if ENABLE(WEBASSEMBLY)
-    ThreadSafeWeakHashSet<Wasm::Instance> m_wasmInstances;
-#endif
 
 #if ENABLE(DFG_DOES_GC_VALIDATION)
     DoesGCCheck m_doesGC;
@@ -1188,3 +1190,36 @@ extern "C" void SYSV_ABI sanitizeStackForVMImpl(VM*);
 JS_EXPORT_PRIVATE void sanitizeStackForVM(VM&);
 
 } // namespace JSC
+
+
+namespace WTF {
+
+// Unfortunately we have a lot of code that uses JSC::VM without locally
+// verifying its lifetime. Safer CPP checker needs to understand JSC::VM's
+// lifetime threaded from JSC entrance. Until that, we explicitly suppress
+// Ref<VM> lifetime checking by using ThreadSafeRefCountedWithSuppressingSaferCPPChecking.
+template<> struct DefaultRefDerefTraits<JSC::VM> {
+    static ALWAYS_INLINE JSC::VM* refIfNotNull(JSC::VM* ptr)
+    {
+        if (LIKELY(ptr))
+            ptr->refSuppressingSaferCPPChecking();
+        return ptr;
+    }
+
+    static ALWAYS_INLINE JSC::VM& ref(JSC::VM& ref)
+    {
+        ref.refSuppressingSaferCPPChecking();
+        return ref;
+    }
+
+    static ALWAYS_INLINE void derefIfNotNull(JSC::VM* ptr)
+    {
+        if (LIKELY(ptr))
+            ptr->derefSuppressingSaferCPPChecking();
+    }
+};
+
+} // namespace WTF
+
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

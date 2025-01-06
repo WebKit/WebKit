@@ -19,10 +19,8 @@
 #include <openssl/mem.h>
 #include <openssl/obj.h>
 #include <openssl/stack.h>
-#include <openssl/x509v3.h>
 
 #include "../internal.h"
-#include "../x509v3/internal.h"
 #include "internal.h"
 
 
@@ -107,11 +105,10 @@ static void x509_policy_node_free(X509_POLICY_NODE *node) {
 
 static X509_POLICY_NODE *x509_policy_node_new(const ASN1_OBJECT *policy) {
   assert(!is_any_policy(policy));
-  X509_POLICY_NODE *node = OPENSSL_malloc(sizeof(X509_POLICY_NODE));
+  X509_POLICY_NODE *node = OPENSSL_zalloc(sizeof(X509_POLICY_NODE));
   if (node == NULL) {
     return NULL;
   }
-  OPENSSL_memset(node, 0, sizeof(X509_POLICY_NODE));
   node->policy = OBJ_dup(policy);
   node->parent_policies = sk_ASN1_OBJECT_new_null();
   if (node->policy == NULL || node->parent_policies == NULL) {
@@ -134,11 +131,10 @@ static void x509_policy_level_free(X509_POLICY_LEVEL *level) {
 }
 
 static X509_POLICY_LEVEL *x509_policy_level_new(void) {
-  X509_POLICY_LEVEL *level = OPENSSL_malloc(sizeof(X509_POLICY_LEVEL));
+  X509_POLICY_LEVEL *level = OPENSSL_zalloc(sizeof(X509_POLICY_LEVEL));
   if (level == NULL) {
     return NULL;
   }
-  OPENSSL_memset(level, 0, sizeof(X509_POLICY_LEVEL));
   level->nodes = sk_X509_POLICY_NODE_new(x509_policy_node_cmp);
   if (level->nodes == NULL) {
     x509_policy_level_free(level);

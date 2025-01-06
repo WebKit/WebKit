@@ -1,0 +1,6 @@
+Click on the blue square below.
+
+PASS
+
+PASS Clicking on a div element and having a click event listener on only document
+

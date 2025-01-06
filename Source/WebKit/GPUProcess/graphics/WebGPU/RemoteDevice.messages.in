@@ -23,9 +23,15 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteDevice NotRefCounted Stream {
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU,
+    EnabledBy=WebGPUEnabled
+]
+messages -> RemoteDevice Stream {
     void Destroy()
     void Destruct()
+    void CreateXRBinding(WebKit::WebGPUIdentifier identifier)
     void CreateBuffer(WebKit::WebGPU::BufferDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void CreateTexture(WebKit::WebGPU::TextureDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void CreateSampler(WebKit::WebGPU::SamplerDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
@@ -45,10 +51,12 @@ messages -> RemoteDevice NotRefCounted Stream {
     void ResolveUncapturedErrorEvent() -> (bool hasUncapturedError, std::optional<WebKit::WebGPU::Error> error)
     void ResolveDeviceLostPromise() -> (WebCore::WebGPU::DeviceLostReason reason)
     void SetLabel(String label)
+    void PauseAllErrorReporting(bool pauseErrorReporting)
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
     void ImportExternalTextureFromVideoFrame(WebKit::WebGPU::ExternalTextureDescriptor descriptor, WebKit::WebGPUIdentifier identifier) NotStreamEncodable
+    void UpdateExternalTexture(WebKit::WebGPUIdentifier externalTextureIdentifier, WebCore::MediaPlayerIdentifier mediaIdentifier)
 #endif
 }
 

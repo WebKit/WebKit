@@ -100,3 +100,17 @@ assert(re4.test("\u2028"), "Pattern character '.' should match line terminators 
 assert(re4.test("\u2029"), "Pattern character '.' should match line terminators in modified group");
 assert(re4.test("\uD800"), "Pattern character '.' should match non-line terminators in modified group");
 assert(re4.test("\uDFFF"), "Pattern character '.' should match non-line terminators in modified group");
+
+var re5 = /a.(?s:b.b).c/;
+assert(re5.test("a,b,b,c"), "Pattern character '.' should match non-line terminators in modified group");
+assert(re5.test("a,b\nb,c"), "Pattern character '.' should match line terminators in modified group");
+assert(!re5.test("a\nb\nb,c"), "Pattern character '.' should not match line terminators outside modified group");
+assert(!re5.test("a,b\nb\nc"), "Pattern character '.' should not match line terminators outside modified group");
+assert(!re5.test("a\nb\nb\nc"), "Pattern character '.' should not match line terminators outside modified group");
+
+var re6 = new RegExp("a.(?s:b.b).c");
+assert(re6.test("a,b,b,c"), "Pattern character '.' should match non-line terminators in modified group");
+assert(re6.test("a,b\nb,c"), "Pattern character '.' should match line terminators in modified group");
+assert(!re6.test("a\nb\nb,c"), "Pattern character '.' should not match line terminators outside modified group");
+assert(!re6.test("a,b\nb\nc"), "Pattern character '.' should not match line terminators outside modified group");
+assert(!re6.test("a\nb\nb\nc"), "Pattern character '.' should not match line terminators outside modified group");

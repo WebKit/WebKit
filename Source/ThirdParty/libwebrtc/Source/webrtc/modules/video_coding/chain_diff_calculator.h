@@ -13,10 +13,10 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
-#include "absl/types/optional.h"
 
 namespace webrtc {
 
@@ -38,7 +38,7 @@ class ChainDiffCalculator {
  private:
   absl::InlinedVector<int, 4> ChainDiffs(int64_t frame_id) const;
 
-  absl::InlinedVector<absl::optional<int64_t>, 4> last_frame_in_chain_;
+  absl::InlinedVector<std::optional<int64_t>, 4> last_frame_in_chain_;
 };
 
 }  // namespace webrtc

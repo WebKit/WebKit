@@ -69,6 +69,7 @@ enum class RuleMatchingBehavior: uint8_t {
 
 namespace Style {
 
+struct BuilderContext;
 struct ResolvedStyle;
 struct SelectorMatchingState;
 
@@ -81,10 +82,10 @@ struct ResolutionContext {
     bool isSVGUseTreeRoot { false };
 };
 
-using KeyframesRuleMap = HashMap<AtomString, RefPtr<StyleRuleKeyframes>>;
+using KeyframesRuleMap = UncheckedKeyHashMap<AtomString, RefPtr<StyleRuleKeyframes>>;
 
 class Resolver : public RefCounted<Resolver>, public CanMakeSingleThreadWeakPtr<Resolver> {
-    WTF_MAKE_ISO_ALLOCATED(Resolver);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Resolver);
 public:
     // Style resolvers are shared between shadow trees with identical styles. That's why we don't simply provide a Style::Scope.
     enum class ScopeType : bool { Document, ShadowTree };
@@ -92,6 +93,7 @@ public:
     ~Resolver();
 
     ResolvedStyle styleForElement(Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
+    ResolvedStyle styleForElementWithCachedMatchResult(Element&, const ResolutionContext&, const MatchResult&, const RenderStyle& existingRenderStyle);
 
     void keyframeStylesForAnimation(Element&, const RenderStyle& elementStyle, const ResolutionContext&, BlendingKeyframes&);
 
@@ -142,9 +144,12 @@ public:
     void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
     Vector<Ref<StyleRuleKeyframe>> keyframeRulesForName(const AtomString&) const;
 
+    RefPtr<StyleRuleViewTransition> viewTransitionRule() const;
+
     bool usesFirstLineRules() const { return m_ruleSets.features().usesFirstLineRules; }
     bool usesFirstLetterRules() const { return m_ruleSets.features().usesFirstLetterRules; }
-    
+    bool usesStartingStyleRules() const { return m_ruleSets.features().hasStartingStyleRules; }
+
     void invalidateMatchedDeclarationsCache();
     void clearCachedDeclarationsAffectedByViewportUnits();
 
@@ -161,6 +166,7 @@ private:
 
     class State;
 
+    State initializeStateAndStyle(const Element&, const ResolutionContext&);
     BuilderContext builderContext(const State&);
 
     void applyMatchedProperties(State&, const MatchResult&);

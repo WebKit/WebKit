@@ -26,11 +26,12 @@
 #pragma once
 
 #include <WebCore/SleepDisablerClient.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebSleepDisablerClient final : public WebCore::SleepDisablerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebSleepDisablerClient);
 public:
     void didCreateSleepDisabler(WebCore::SleepDisablerIdentifier, const String&, bool display, std::optional<WebCore::PageIdentifier>) final;
     void didDestroySleepDisabler(WebCore::SleepDisablerIdentifier, std::optional<WebCore::PageIdentifier>) final;

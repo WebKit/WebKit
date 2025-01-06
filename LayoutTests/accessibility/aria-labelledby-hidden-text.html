@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<button id="button1" aria-labelledby="span1" aria-label="foo" data-expectedlabel="label">
+  <span id="span1" style="display:none;">
+    <span id="span2" style="display:none;">label</span>
+  </span>
+</button>
+
+<button id="button2" aria-labelledby="span3" aria-label="foo" data-expectedlabel="label">
+  <span id="span3" style="visibility:hidden;">
+    <span id="span4" style="visibility:hidden;">label</span>
+  </span>
+</button>
+
+<button id="button3" aria-labelledby="span5" aria-label="foo" data-expectedlabel="foo">
+  <span id="span5">
+    <span id="span6" style="visibility:hidden;">label</span>
+  </span>
+</button>
+
+<script>
+let output = "Tests that labels specified via aria-lablledby and aria-label are retrieved according to ARIA specifications in cases where the label text is hidden.\n\n";
+
+if (window.accessibilityController) {
+    for (let i = 1; i <= 3; ++i) {
+        button = document.getElementById(`button${i}`);
+        axButton = accessibilityController.accessibleElementById(`button${i}`);
+        output += expect("axButton.title", "`AXTitle: ${button.getAttribute('data-expectedlabel')}`");
+    }
+
+    debug(output);
+}
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017, Alliance for Open Media. All rights reserved
+# Copyright (c) 2017, Alliance for Open Media. All rights reserved.
 #
 # This source code is subject to the terms of the BSD 2 Clause License and the
 # Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License was
@@ -13,10 +13,7 @@ if(AOM_AOM_SCALE_AOM_SCALE_CMAKE_)
 endif() # AOM_AOM_SCALE_AOM_SCALE_CMAKE_
 set(AOM_AOM_SCALE_AOM_SCALE_CMAKE_ 1)
 
-list(APPEND AOM_SCALE_SOURCES "${AOM_ROOT}/aom_scale/aom_scale.h"
-            "${AOM_ROOT}/aom_scale/generic/aom_scale.c"
-            "${AOM_ROOT}/aom_scale/generic/gen_scalers.c"
-            "${AOM_ROOT}/aom_scale/generic/yv12config.c"
+list(APPEND AOM_SCALE_SOURCES "${AOM_ROOT}/aom_scale/generic/yv12config.c"
             "${AOM_ROOT}/aom_scale/generic/yv12extend.c"
             "${AOM_ROOT}/aom_scale/yv12config.h")
 

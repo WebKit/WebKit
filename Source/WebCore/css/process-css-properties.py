@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -371,20 +372,20 @@ class LogicalPropertyGroup:
 
     logical_property_group_resolvers = {
         "logical": {
-            # Order matches LogicalBoxAxis enum in Source/WebCore/platform/text/WritingMode.h.
+            # Order matches LogicalBoxAxis enum in Source/WebCore/platform/BoxSides.h.
             "axis": ["inline", "block"],
-            # Order matches LogicalBoxSide enum in Source/WebCore/platform/text/WritingMode.h.
+            # Order matches LogicalBoxSide enum in Source/WebCore/platform/BoxSides.h.
             "side": ["block-start", "inline-end", "block-end", "inline-start"],
-            # Order matches LogicalBoxCorner enum in Source/WebCore/platform/text/WritingMode.h.
+            # Order matches LogicalBoxCorner enum in Source/WebCore/platform/BoxSides.h.
             "corner": ["start-start", "start-end", "end-start", "end-end"],
         },
         "physical": {
-            # Order matches BoxAxis enum in Source/WebCore/platform/text/WritingMode.h.
+            # Order matches BoxAxis enum in Source/WebCore/platform/BoxSides.h.
             "axis": ["horizontal", "vertical"],
-            # Order matches BoxSide enum in Source/WebCore/platform/text/WritingMode.h.
+            # Order matches BoxSide enum in Source/WebCore/platform/BoxSides.h.
             "side": ["top", "right", "bottom", "left"],
-            # Order matches BoxCorner enum in Source/WebCore/platform/text/WritingMode.h.
-            "corner": ["top-left", "top-right", "bottom-right", "bottom-left"],
+            # Order matches BoxCorner enum in Source/WebCore/platform/BoxSides.h.
+            "corner": ["top-left", "top-right", "bottom-left", "bottom-right"],
         },
     }
 
@@ -456,6 +457,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("conditional-converter", allowed_types=[str]),
         Schema.Entry("converter", allowed_types=[str]),
         Schema.Entry("custom", allowed_types=[str]),
+        Schema.Entry("disables-native-appearance", allowed_types=[bool], default_value=False),
         Schema.Entry("enable-if", allowed_types=[str]),
         Schema.Entry("fast-path-inherited", allowed_types=[bool], default_value=False),
         Schema.Entry("fill-layer-property", allowed_types=[bool], default_value=False),
@@ -471,17 +473,14 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("parser-function", allowed_types=[str]),
         Schema.Entry("parser-function-allows-number-or-integer-input", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-additional-parameters", allowed_types=[list], default_value=[]),
-        Schema.Entry("parser-function-requires-context", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-function-requires-context-mode", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-current-shorthand", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-current-property", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-function-requires-quirks-mode", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-value-pool", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-grammar", allowed_types=[str]),
         Schema.Entry("parser-grammar-comment", allowed_types=[str]),
         Schema.Entry("parser-grammar-unused", allowed_types=[str]),
         Schema.Entry("parser-grammar-unused-reason", allowed_types=[str]),
-        Schema.Entry("related-property", allowed_types=[str]),
+        Schema.Entry("cascade-alias", allowed_types=[str]),
         Schema.Entry("separator", allowed_types=[str]),
         Schema.Entry("setter", allowed_types=[str]),
         Schema.Entry("settings-flag", allowed_types=[str]),
@@ -491,7 +490,6 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("skip-parser", allowed_types=[bool], default_value=False),
         Schema.Entry("status", allowed_types=[str]),
         Schema.Entry("svg", allowed_types=[bool], default_value=False),
-        Schema.Entry("synonym", allowed_types=[str]),
         Schema.Entry("top-priority", allowed_types=[bool], default_value=False),
         Schema.Entry("url", allowed_types=[str]),
         Schema.Entry("visited-link-color-support", allowed_types=[bool], default_value=False),
@@ -571,16 +569,14 @@ class StylePropertyCodeGenProperties:
             if json_value.get("longhands") is not None:
                 raise Exception(f"{key_path} is a shorthand, but has sink priority.")
 
-        if json_value.get("related-property"):
-            if json_value.get("related-property") == name:
-                raise Exception(f"{key_path} can't have itself as a related property.")
+        if json_value.get("cascade-alias"):
+            if json_value.get("cascade-alias") == name:
+                raise Exception(f"{key_path} can't have itself as a cascade alias property.")
             if json_value.get("longhands"):
-                raise Exception(f"{key_path} can't have both a related property and be a shorthand.")
-            if json_value.get("high-priority", False):
-                raise Exception(f"{key_path} can't have both a related property and be high priority.")
+                raise Exception(f"{key_path} can't be both a cascade alias and a shorthand.")
 
         if json_value.get("parser-grammar"):
-            for entry_name in ["parser-function", "parser-function-requires-additional-parameters", "parser-function-requires-context", "parser-function-requires-context-mode", "parser-function-requires-current-shorthand", "parser-function-requires-current-property", "parser-function-requires-quirks-mode", "parser-function-requires-value-pool", "skip-parser", "longhands"]:
+            for entry_name in ["parser-function", "parser-function-requires-additional-parameters", "parser-function-requires-current-shorthand", "parser-function-requires-current-property", "parser-function-requires-value-pool", "skip-parser", "longhands"]:
                 if entry_name in json_value:
                     raise Exception(f"{key_path} can't have both 'parser-grammar' and '{entry_name}'.")
             grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
@@ -621,11 +617,6 @@ class StylePropertyCodeGenProperties:
                     return True
         return False
 
-    @property
-    def is_deferred(self):
-        return self.related_property or self.logical_property_group
-
-
 class StyleProperty:
     schema = Schema(
         Schema.Entry("animatable", allowed_types=[bool], default_value=False),
@@ -639,7 +630,6 @@ class StyleProperty:
     def __init__(self, **dictionary):
         StyleProperty.schema.set_attributes_from_dictionary(dictionary, instance=self)
         self.property_name = self.codegen_properties.property_name
-        self.synonymous_properties = []
 
     def __str__(self):
         return self.name
@@ -684,36 +674,20 @@ class StyleProperty:
 
         return StyleProperty(**json_value)
 
-    def perform_fixups_for_synonyms(self, all_properties):
-        # If 'synonym' was specified, replace the name with references to the Property object, and vice-versa a back-reference on that Property object back to this.
-        if self.codegen_properties.synonym:
-            if self.codegen_properties.synonym not in all_properties.all_by_name:
-                raise Exception(f"Property {self.name} has an unknown synonym: {self.codegen_properties.synonym}.")
-
-            original = all_properties.all_by_name[self.codegen_properties.synonym]
-            original.synonymous_properties.append(self)
-
-            self.codegen_properties.synonym = original
-
     def perform_fixups_for_longhands(self, all_properties):
         # If 'longhands' was specified, replace the names with references to the Property objects.
         if self.codegen_properties.longhands:
             self.codegen_properties.longhands = [all_properties.all_by_name[longhand.value] for longhand in self.codegen_properties.longhands]
 
-    def perform_fixups_for_related_properties(self, all_properties):
-        # If 'related-property' was specified, validate the relationship and replace the name with a reference to the Property object.
-        if self.codegen_properties.related_property:
-            if self.codegen_properties.related_property not in all_properties.all_by_name:
-                raise Exception(f"Property {self.name} has an unknown related property: {self.codegen_properties.related_property}.")
+    def perform_fixups_for_cascade_alias_properties(self, all_properties):
+        if self.codegen_properties.cascade_alias:
+            if self.codegen_properties.cascade_alias not in all_properties.all_by_name:
+                raise Exception(f"Property {self.name} is a cascade alias for an unknown property: {self.codegen_properties.cascade_alias}.")
 
-            related_property = all_properties.all_by_name[self.codegen_properties.related_property]
-            if type(related_property.codegen_properties.related_property) is str:
-                if related_property.codegen_properties.related_property != self.name:
-                    raise Exception(f"Property {self.name} has {related_property.name} as a related property, but it's not reciprocal.")
-            else:
-                if related_property.codegen_properties.related_property.name != self.name:
-                    raise Exception(f"Property {self.name} has {related_property.name} as a related property, but it's not reciprocal.")
-            self.codegen_properties.related_property = related_property
+            if not self.codegen_properties.skip_builder:
+                raise Exception(f"Property {self.name} is a cascade alias and should also set skip-builder.")
+
+            self.codegen_properties.cascade_alias = all_properties.all_by_name[self.codegen_properties.cascade_alias]
 
     def perform_fixups_for_logical_property_groups(self, all_properties):
         if self.codegen_properties.logical_property_group:
@@ -739,9 +713,8 @@ class StyleProperty:
             all_properties.logical_property_groups[group_name][logic][resolver] = self
 
     def perform_fixups(self, all_properties):
-        self.perform_fixups_for_synonyms(all_properties)
         self.perform_fixups_for_longhands(all_properties)
-        self.perform_fixups_for_related_properties(all_properties)
+        self.perform_fixups_for_cascade_alias_properties(all_properties)
         self.perform_fixups_for_logical_property_groups(all_properties)
 
     @property
@@ -788,7 +761,7 @@ class StyleProperty:
         if not self.codegen_properties.computable:
             return True
 
-        if self.codegen_properties.skip_builder and not self.codegen_properties.is_logical:
+        if self.codegen_properties.skip_builder and not self.codegen_properties.is_logical and not self.codegen_properties.cascade_alias:
             return True
 
         if self.codegen_properties.longhands is not None:
@@ -954,12 +927,12 @@ class StyleProperties:
         if not a_is_high_priority and b_is_high_priority:
             return 1
 
-        # Sort deferred longhands to the back, before shorthands.
-        a_is_deferred = a.codegen_properties.is_deferred
-        b_is_deferred = b.codegen_properties.is_deferred
-        if a_is_deferred and not b_is_deferred:
+        # Sort longhands in a logical property group to the back, before shorthands.
+        a_is_in_logical_property_group = a.codegen_properties.logical_property_group
+        b_is_in_logical_property_group = b.codegen_properties.logical_property_group
+        if a_is_in_logical_property_group and not b_is_in_logical_property_group:
             return 1
-        if not a_is_deferred and b_is_deferred:
+        if not a_is_in_logical_property_group and b_is_in_logical_property_group:
             return -1
 
         # Sort sunken names at the end of their priority bucket.
@@ -1000,11 +973,8 @@ class DescriptorCodeGenProperties:
         Schema.Entry("parser-function", allowed_types=[str]),
         Schema.Entry("parser-function-allows-number-or-integer-input", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-additional-parameters", allowed_types=[list], default_value=[]),
-        Schema.Entry("parser-function-requires-context", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-function-requires-context-mode", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-current-shorthand", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-current-property", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-function-requires-quirks-mode", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-value-pool", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-grammar", allowed_types=[str]),
         Schema.Entry("parser-grammar-comment", allowed_types=[str]),
@@ -1023,7 +993,7 @@ class DescriptorCodeGenProperties:
         self.top_priority = None
         self.high_priority = None
         self.sink_priority = None
-        self.is_deferred = None
+        self.logical_property_group = None
 
     def __str__(self):
         return f"DescriptorCodeGenProperties {vars(self)}"
@@ -1047,7 +1017,7 @@ class DescriptorCodeGenProperties:
                 del json_value["longhands"]
 
         if json_value.get("parser-grammar"):
-            for entry_name in ["parser-function", "parser-function-requires-additional-parameters", "parser-function-requires-context", "parser-function-requires-context-mode", "parser-function-requires-current-shorthand", "parser-function-requires-current-property", "parser-function-requires-quirks-mode", "parser-function-requires-value-pool", "skip-parser", "longhands"]:
+            for entry_name in ["parser-function", "parser-function-requires-additional-parameters", "parser-function-requires-current-shorthand", "parser-function-requires-current-property", "parser-function-requires-value-pool", "skip-parser", "longhands"]:
                 if entry_name in json_value:
                     raise Exception(f"{key_path} can't have both 'parser-grammar' and '{entry_name}.")
             grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
@@ -1485,7 +1455,7 @@ class BuiltinSchema:
             def builtin_schema_type_parameter_string_getter(name, self):
                 return self.results[name]
 
-            # Dynamically generate a class that can handle validationg and generation.
+            # Dynamically generate a class that can handle validation and generation.
             class_name = f"Builtin{self.name.id_without_prefix}Consumer"
             class_attributes = {
                 "__init__": builtin_schema_type_init,
@@ -1511,7 +1481,7 @@ class BuiltinSchema:
 
 
 # Reference terms look like keyword terms, but are surrounded by '<' and '>' characters (i.e. "<number>").
-# They can either reference a rule from the grammer-rules set, in which case they will be replaced by
+# They can either reference a rule from the grammar-rules set, in which case they will be replaced by
 # the real term during fixup, or a builtin rule, in which case they will inform the generator to call
 # out to a handwritten consumer. Example:
 #
@@ -1520,27 +1490,26 @@ class BuiltinSchema:
 class ReferenceTerm:
     builtins = BuiltinSchema(
         BuiltinSchema.Entry("angle", "consumeAngle",
-            BuiltinSchema.OptionalParameter("mode", values={"svg": "SVGAttributeMode", "strict": "HTMLStandardMode"}, default=None),
             BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid"),
             BuiltinSchema.OptionalParameter("unitless-zero", values={"unitless-zero-allowed": "UnitlessZeroQuirk::Allow"}, default="UnitlessZeroQuirk::Forbid")),
         BuiltinSchema.Entry("length", "consumeLength",
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative"}, default="ValueRange::All"),
             BuiltinSchema.OptionalParameter("mode", values={"svg": "SVGAttributeMode", "strict": "HTMLStandardMode"}, default=None),
             BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid")),
-        BuiltinSchema.Entry("length-percentage", "consumeLengthOrPercent",
+        BuiltinSchema.Entry("length-percentage", "consumeLengthPercentage",
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative"}, default="ValueRange::All"),
-            BuiltinSchema.OptionalParameter("mode", values={"svg": "SVGAttributeMode", "strict": "HTMLStandardMode"}, default=None),
-            BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid")),
+            BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid"),
+            BuiltinSchema.OptionalParameter("unitless_zero", values={"unitless-zero-forbidden": "UnitlessZeroQuirk::Forbid"}, default="UnitlessZeroQuirk::Allow"),
+            BuiltinSchema.OptionalParameter("anchor", values={"anchor-allowed": "AnchorPolicy::Allow"}, default="AnchorPolicy::Forbid"),
+            BuiltinSchema.OptionalParameter("anchor_size", values={"anchor-size-allowed": "AnchorSizePolicy::Allow"}, default="AnchorSizePolicy::Forbid")),
         BuiltinSchema.Entry("time", "consumeTime",
-            BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative"}, default="ValueRange::All"),
-            BuiltinSchema.OptionalParameter("mode", values={"svg": "SVGAttributeMode", "strict": "HTMLStandardMode"}, default=None),
-            BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid")),
+            BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative"}, default="ValueRange::All")),
         BuiltinSchema.Entry("integer", "consumeInteger",
-            BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "IntegerValueRange::NonNegative", "[1,inf]": "IntegerValueRange::Positive"}, default="IntegerValueRange::All")),
+            BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "CSS::Range{0, CSS::Range::infinity}", "[1,inf]": "CSS::Range{1, CSS::Range::infinity}"}, default="CSS::Range{-CSS::Range::infinity, CSS::Range::infinity}")),
         BuiltinSchema.Entry("number", "consumeNumber",
             # FIXME: "FontWeight" is not real. Add support for arbitrary ranges.
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative", "[1,1000]": "ValueRange::FontWeight"}, default="ValueRange::All")),
-        BuiltinSchema.Entry("percentage", "consumePercent",
+        BuiltinSchema.Entry("percentage", "consumePercentage",
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative"}, default="ValueRange::All")),
         BuiltinSchema.Entry("position", "consumePosition",
             BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid")),
@@ -2009,7 +1978,7 @@ class BoundedRepetitionTerm:
 # separated by either spaces or commas where the list of terms
 # has a length that is exactly provided length. The syntax in
 # the CSS specifications uses a trailing 'multiplier' length
-# '{A}' with a '#' prefix for comma speparation.
+# '{A}' with a '#' prefix for comma separation.
 #
 #   e.g. "<length>{2}" or "<length>#{4}"
 #
@@ -2470,6 +2439,7 @@ class GenerateCSSPropertyNames:
         self.generation_context.generate_includes(
             to=to,
             headers=[
+                "BoxSides.h",
                 "CSSProperty.h",
                 "Settings.h",
             ],
@@ -2483,6 +2453,7 @@ class GenerateCSSPropertyNames:
 
         to.write_block("""
             IGNORE_WARNINGS_BEGIN("implicit-fallthrough")
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
             // Older versions of gperf like to use the `register` keyword.
             #define register
@@ -2521,6 +2492,7 @@ class GenerateCSSPropertyNames:
             namespace="WebCore"
         )
 
+        to.write("WTF_ALLOW_UNSAFE_BUFFER_USAGE_END")
         to.write("IGNORE_WARNINGS_END")
 
     def _generate_gperf_declarations(self, *, to):
@@ -2613,7 +2585,6 @@ class GenerateCSSPropertyNames:
         to.write(f"{signature}")
         to.write(f"{{")
         with to.indent():
-            to.write(f"auto textflow = makeTextFlow(writingMode, direction);")
             to.write(f"switch (id) {{")
 
             for group_name, property_group in sorted(self.properties_and_descriptors.style_properties.logical_property_groups.items(), key=lambda x: x[0]):
@@ -2630,7 +2601,7 @@ class GenerateCSSPropertyNames:
                     to.write(f"case {property.id}: {{")
                     with to.indent():
                         to.write(f"static constexpr CSSPropertyID properties[{len(properties)}] = {{ {', '.join(properties)} }};")
-                        to.write(f"return properties[static_cast<size_t>(map{source_as_id}{kind_as_id}To{destination_as_id}{kind_as_id}(textflow, {resolver_enum}))];")
+                        to.write(f"return properties[static_cast<size_t>(map{kind_as_id}{source_as_id}To{destination_as_id}(writingMode, {resolver_enum}))];")
                     to.write(f"}}")
 
             to.write(f"default:")
@@ -2839,10 +2810,10 @@ class GenerateCSSPropertyNames:
 
             self.generation_context.generate_property_id_switch_function(
                 to=writer,
-                signature="CSSPropertyID relatedProperty(CSSPropertyID id)",
-                iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.related_property),
-                mapping=lambda p: f"return {p.codegen_properties.related_property.id};",
-                default="return CSSPropertyID::CSSPropertyInvalid;"
+                signature="CSSPropertyID cascadeAliasProperty(CSSPropertyID id)",
+                iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.cascade_alias),
+                mapping=lambda p: f"return {p.codegen_properties.cascade_alias.id};",
+                default="return id;"
             )
 
             self.generation_context.generate_property_id_switch_function(
@@ -2889,6 +2860,12 @@ class GenerateCSSPropertyNames:
 
             self.generation_context.generate_property_id_switch_function_bool(
                 to=writer,
+                signature="bool CSSProperty::disablesNativeAppearance(CSSPropertyID id)",
+                iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.disables_native_appearance)
+            )
+
+            self.generation_context.generate_property_id_switch_function_bool(
+                to=writer,
                 signature="bool CSSProperty::isDirectionAwareProperty(CSSPropertyID id)",
                 iterable=self.properties_and_descriptors.style_properties.all_direction_aware_properties
             )
@@ -2905,7 +2882,7 @@ class GenerateCSSPropertyNames:
 
             self._generate_physical_logical_conversion_function(
                 to=writer,
-                signature="CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID id, TextDirection direction, WritingMode writingMode)",
+                signature="CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID id, WritingMode writingMode)",
                 source="logical",
                 destination="physical",
                 resolver_enum_prefix="LogicalBox"
@@ -2913,7 +2890,7 @@ class GenerateCSSPropertyNames:
 
             self._generate_physical_logical_conversion_function(
                 to=writer,
-                signature="CSSPropertyID CSSProperty::unresolvePhysicalProperty(CSSPropertyID id, TextDirection direction, WritingMode writingMode)",
+                signature="CSSPropertyID CSSProperty::unresolvePhysicalProperty(CSSPropertyID id, WritingMode writingMode)",
                 source="physical",
                 destination="logical",
                 resolver_enum_prefix="Box"
@@ -2960,8 +2937,8 @@ class GenerateCSSPropertyNames:
             last_high_priority_property = None
             first_low_priority_property = None
             last_low_priority_property = None
-            first_deferred_property = None
-            last_deferred_property = None
+            first_logical_group_property = None
+            last_logical_group_property = None
 
             for property in self.properties_and_descriptors.all_unique:
                 if property.codegen_properties.longhands:
@@ -2976,14 +2953,14 @@ class GenerateCSSPropertyNames:
                     if not first_high_priority_property:
                         first_high_priority_property = property
                     last_high_priority_property = property
-                elif not property.codegen_properties.is_deferred:
+                elif not property.codegen_properties.logical_property_group:
                     if not first_low_priority_property:
                         first_low_priority_property = property
                     last_low_priority_property = property
                 else:
-                    if not first_deferred_property:
-                        first_deferred_property = property
-                    last_deferred_property = property
+                    if not first_logical_group_property:
+                        first_logical_group_property = property
+                    last_logical_group_property = property
 
                 to.write(f"{property.id_without_scope} = {count},")
 
@@ -3004,8 +2981,8 @@ class GenerateCSSPropertyNames:
         to.write(f"constexpr auto lastHighPriorityProperty = {last_high_priority_property.id};")
         to.write(f"constexpr auto firstLowPriorityProperty = {first_low_priority_property.id};")
         to.write(f"constexpr auto lastLowPriorityProperty = {last_low_priority_property.id};")
-        to.write(f"constexpr auto firstDeferredProperty = {first_deferred_property.id};")
-        to.write(f"constexpr auto lastDeferredProperty = {last_deferred_property.id};")
+        to.write(f"constexpr auto firstLogicalGroupProperty = {first_logical_group_property.id};")
+        to.write(f"constexpr auto lastLogicalGroupProperty = {last_logical_group_property.id};")
         to.write(f"constexpr auto firstShorthandProperty = {first_shorthand_property.id};")
         to.write(f"constexpr auto lastShorthandProperty = {last_shorthand_property.id};")
         to.write(f"constexpr uint16_t numCSSPropertyLonghands = firstShorthandProperty - firstCSSProperty;")
@@ -3047,7 +3024,7 @@ class GenerateCSSPropertyNames:
             const AtomString& nameString(CSSPropertyID);
             String nameForIDL(CSSPropertyID);
 
-            CSSPropertyID relatedProperty(CSSPropertyID);
+            CSSPropertyID cascadeAliasProperty(CSSPropertyID);
 
             template<CSSPropertyID first, CSSPropertyID last> struct CSSPropertiesRange {
                 struct Iterator {
@@ -3061,7 +3038,7 @@ class GenerateCSSPropertyNames:
                 static constexpr uint16_t size() { return last - first + 1; }
             };
             using AllCSSPropertiesRange = CSSPropertiesRange<static_cast<CSSPropertyID>(firstCSSProperty), lastShorthandProperty>;
-            using AllLonghandCSSPropertiesRange = CSSPropertiesRange<static_cast<CSSPropertyID>(firstCSSProperty), lastDeferredProperty>;
+            using AllLonghandCSSPropertiesRange = CSSPropertiesRange<static_cast<CSSPropertyID>(firstCSSProperty), lastLogicalGroupProperty>;
             constexpr AllCSSPropertiesRange allCSSProperties() { return { }; }
             constexpr AllLonghandCSSPropertiesRange allLonghandCSSProperties() { return { }; }
 
@@ -3314,7 +3291,7 @@ class GenerateStyleBuilderGenerated:
 
     def _generate_color_property_initial_value_setter(self, to, property):
         if property.codegen_properties.initial == "currentColor":
-            initial_function = "StyleColor::currentColor"
+            initial_function = "Style::Color::currentColor"
         else:
             initial_function = "RenderStyle::" + property.codegen_properties.initial
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
@@ -3330,9 +3307,9 @@ class GenerateStyleBuilderGenerated:
 
     def _generate_color_property_value_setter(self, to, property, value):
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
-        to.write(f"    builderState.style().{property.codegen_properties.setter}(builderState.colorFromPrimitiveValue({value}, ForVisitedLink::No));")
+        to.write(f"    builderState.style().{property.codegen_properties.setter}(builderState.createStyleColor({value}, ForVisitedLink::No));")
         to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
-        to.write(f"    builderState.style().setVisitedLink{property.name_for_methods}(builderState.colorFromPrimitiveValue({value}, ForVisitedLink::Yes));")
+        to.write(f"    builderState.style().setVisitedLink{property.name_for_methods}(builderState.createStyleColor({value}, ForVisitedLink::Yes));")
 
     # Animation property setters.
 
@@ -3545,9 +3522,9 @@ class GenerateStyleBuilderGenerated:
                 elif property.codegen_properties.conditional_converter:
                     return f"WTFMove(convertedValue.value())"
                 elif property.codegen_properties.color_property and not property.codegen_properties.visited_link_color_support:
-                    return f"builderState.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value), ForVisitedLink::No)"
+                    return f"builderState.createStyleColor(value, ForVisitedLink::No)"
                 else:
-                    return "fromCSSValueDeducingType(value)"
+                    return "fromCSSValueDeducingType(builderState, value)"
 
             if property in self.style_properties.all_by_name["font"].codegen_properties.longhands and "Initial" not in property.codegen_properties.custom and not property.codegen_properties.converter:
                 to.write(f"if (CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID())) {{")
@@ -3604,8 +3581,6 @@ class GenerateStyleBuilderGenerated:
                     continue
                 if property.codegen_properties.skip_builder:
                     continue
-                if property.codegen_properties.synonym:
-                    continue
 
                 if property.codegen_properties.is_logical:
                     raise Exception(f"Property '{property.name}' is logical but doesn't have skip-builder.")
@@ -3642,14 +3617,8 @@ class GenerateStyleBuilderGenerated:
                     with to.indent():
                         to.write(f"break;")
                     continue
-                
-                if property.codegen_properties.synonym:
-                    continue
 
                 to.write(f"case {property.id}:")
-
-                for synonymous_property in property.synonymous_properties:
-                    to.write(f"case {synonymous_property.id}:")
 
                 with to.indent():
                     if property.codegen_properties.longhands:
@@ -3968,18 +3937,62 @@ class GenerateCSSPropertyParsing:
                     "CSSParserContext.h",
                     "CSSParserIdioms.h",
                     "CSSPropertyParser.h",
+                    "CSSPropertyParserConsumer+Align.h",
                     "CSSPropertyParserConsumer+Angle.h",
+                    "CSSPropertyParserConsumer+Animations.h",
+                    "CSSPropertyParserConsumer+Attr.h",
+                    "CSSPropertyParserConsumer+Background.h",
+                    "CSSPropertyParserConsumer+Box.h",
                     "CSSPropertyParserConsumer+Color.h",
+                    "CSSPropertyParserConsumer+ColorAdjust.h",
+                    "CSSPropertyParserConsumer+Conditional.h",
+                    "CSSPropertyParserConsumer+Contain.h",
+                    "CSSPropertyParserConsumer+Content.h",
+                    "CSSPropertyParserConsumer+CounterStyles.h",
+                    "CSSPropertyParserConsumer+Display.h",
+                    "CSSPropertyParserConsumer+Easing.h",
+                    "CSSPropertyParserConsumer+Filter.h",
+                    "CSSPropertyParserConsumer+Font.h",
+                    "CSSPropertyParserConsumer+Grid.h",
                     "CSSPropertyParserConsumer+Ident.h",
+                    "CSSPropertyParserConsumer+Image.h",
+                    "CSSPropertyParserConsumer+Inline.h",
+                    "CSSPropertyParserConsumer+Inset.h",
                     "CSSPropertyParserConsumer+Integer.h",
                     "CSSPropertyParserConsumer+Length.h",
+                    "CSSPropertyParserConsumer+LengthPercentage.h",
                     "CSSPropertyParserConsumer+List.h",
+                    "CSSPropertyParserConsumer+Lists.h",
+                    "CSSPropertyParserConsumer+Masking.h",
+                    "CSSPropertyParserConsumer+Motion.h",
                     "CSSPropertyParserConsumer+Number.h",
-                    "CSSPropertyParserConsumer+Percent.h",
+                    "CSSPropertyParserConsumer+Overflow.h",
+                    "CSSPropertyParserConsumer+Page.h",
+                    "CSSPropertyParserConsumer+Percentage.h",
+                    "CSSPropertyParserConsumer+PointerEvents.h",
+                    "CSSPropertyParserConsumer+Position.h",
+                    "CSSPropertyParserConsumer+PositionTry.h",
                     "CSSPropertyParserConsumer+Primitives.h",
                     "CSSPropertyParserConsumer+Resolution.h",
+                    "CSSPropertyParserConsumer+Ruby.h",
+                    "CSSPropertyParserConsumer+SVG.h",
+                    "CSSPropertyParserConsumer+ScrollSnap.h",
+                    "CSSPropertyParserConsumer+Scrollbars.h",
+                    "CSSPropertyParserConsumer+Shapes.h",
+                    "CSSPropertyParserConsumer+Sizing.h",
+                    "CSSPropertyParserConsumer+Speech.h",
+                    "CSSPropertyParserConsumer+String.h",
+                    "CSSPropertyParserConsumer+Syntax.h",
+                    "CSSPropertyParserConsumer+Text.h",
+                    "CSSPropertyParserConsumer+TextDecoration.h",
                     "CSSPropertyParserConsumer+Time.h",
-                    "CSSPropertyParserWorkerSafe.h",
+                    "CSSPropertyParserConsumer+Timeline.h",
+                    "CSSPropertyParserConsumer+Transform.h",
+                    "CSSPropertyParserConsumer+Transitions.h",
+                    "CSSPropertyParserConsumer+UI.h",
+                    "CSSPropertyParserConsumer+URL.h",
+                    "CSSPropertyParserConsumer+ViewTransition.h",
+                    "CSSPropertyParserConsumer+WillChange.h",
                     "CSSValuePool.h",
                     "DeprecatedGlobalSettings.h",
                 ]
@@ -3988,7 +4001,7 @@ class GenerateCSSPropertyParsing:
             with self.generation_context.namespace("WebCore", to=writer):
                 self.generation_context.generate_using_namespace_declarations(
                     to=writer,
-                    namespaces=["CSSPropertyParserHelpers", "CSSPropertyParserHelpersWorkerSafe"]
+                    namespaces=["CSSPropertyParserHelpers"]
                 )
 
                 self._generate_css_property_parsing_cpp_property_parsing_functions(
@@ -4431,27 +4444,30 @@ class TermGeneratorReferenceTerm(TermGenerator):
         if self.term.is_builtin:
             builtin = self.term.builtin
             if isinstance(builtin, BuiltinAngleConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {context_string}.mode, {builtin.unitless}, {builtin.unitless_zero})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.unitless}, {builtin.unitless_zero})"
             elif isinstance(builtin, BuiltinTimeConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {context_string}.mode, {builtin.value_range}, {builtin.unitless})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range})"
             elif isinstance(builtin, BuiltinLengthConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {builtin.mode or f'{context_string}.mode'}, {builtin.value_range}, {builtin.unitless})"
+                if builtin.mode:
+                    return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.mode}, {builtin.value_range}, {builtin.unitless})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range}, {builtin.unitless})"
             elif isinstance(builtin, BuiltinLengthPercentageConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {builtin.mode or f'{context_string}.mode'}, {builtin.value_range}, {builtin.unitless})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range}, {builtin.unitless}, {builtin.unitless_zero}, {builtin.anchor}, {builtin.anchor_size})"
             elif isinstance(builtin, BuiltinIntegerConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {builtin.value_range})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range})"
             elif isinstance(builtin, BuiltinNumberConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {builtin.value_range})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range})"
             elif isinstance(builtin, BuiltinPercentageConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {builtin.value_range})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range})"
             elif isinstance(builtin, BuiltinPositionConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {context_string}.mode, {builtin.unitless}, PositionSyntax::Position)"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.unitless}, PositionSyntax::Position)"
             elif isinstance(builtin, BuiltinColorConsumer):
                 if builtin.quirky_colors:
                     return f"{builtin.consume_function_name}({range_string}, {context_string}, {{ .acceptQuirkyColors = ({context_string}.mode == HTMLQuirksMode) }})"
                 return f"{builtin.consume_function_name}({range_string}, {context_string})"
+            elif self.requires_context:
+                return f"{builtin.consume_function_name}({range_string}, {context_string})"
             else:
-                assert(not self.requires_context)
                 return f"{builtin.consume_function_name}({range_string})"
         else:
             return f"consume{self.term.name.id_without_prefix}({range_string}, {context_string})"
@@ -4465,21 +4481,21 @@ class TermGeneratorReferenceTerm(TermGenerator):
             elif isinstance(builtin, BuiltinTimeConsumer):
                 return True
             elif isinstance(builtin, BuiltinLengthConsumer):
-                return builtin.mode is None
+                return True
             elif isinstance(builtin, BuiltinLengthPercentageConsumer):
-                return builtin.mode is None
+                return True
             elif isinstance(builtin, BuiltinIntegerConsumer):
-                return False
+                return True
             elif isinstance(builtin, BuiltinNumberConsumer):
-                return False
+                return True
             elif isinstance(builtin, BuiltinPercentageConsumer):
-                return False
+                return True
             elif isinstance(builtin, BuiltinPositionConsumer):
                 return True
             elif isinstance(builtin, BuiltinColorConsumer):
                 return True
             elif isinstance(builtin, BuiltinResolutionConsumer):
-                return False
+                return True
             elif isinstance(builtin, BuiltinStringConsumer):
                 return False
             elif isinstance(builtin, BuiltinCustomIdentConsumer):
@@ -4489,9 +4505,9 @@ class TermGeneratorReferenceTerm(TermGenerator):
             elif isinstance(builtin, BuiltinURLConsumer):
                 return False
             elif isinstance(builtin, BuiltinFeatureTagValueConsumer):
-                return False
+                return True
             elif isinstance(builtin, BuiltinVariationTagValueConsumer):
-                return False
+                return True
             else:
                 raise Exception(f"Unknown builtin type used: {builtin.name.name}")
         else:
@@ -4859,18 +4875,11 @@ class CustomPropertyConsumer(PropertyConsumer):
         return self.__str__()
 
     def generate_call_string(self, *, range_string, id_string, current_shorthand_string, context_string):
-        parameters = []
+        parameters = [range_string, context_string]
         if self.property.codegen_properties.parser_function_requires_current_property:
             parameters.append(id_string)
-        parameters.append(range_string)
         if self.property.codegen_properties.parser_function_requires_current_shorthand:
             parameters.append(current_shorthand_string)
-        if self.property.codegen_properties.parser_function_requires_context:
-            parameters.append(context_string)
-        if self.property.codegen_properties.parser_function_requires_context_mode:
-            parameters.append(f"{context_string}.mode")
-        if self.property.codegen_properties.parser_function_requires_quirks_mode:
-            parameters.append(f"{context_string}.mode == HTMLQuirksMode")
         if self.property.codegen_properties.parser_function_requires_value_pool:
             parameters.append("CSSValuePool::singleton()")
         parameters += self.property.codegen_properties.parser_function_requires_additional_parameters

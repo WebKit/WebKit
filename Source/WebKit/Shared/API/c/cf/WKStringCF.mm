@@ -45,7 +45,7 @@ WKStringRef WKStringCreateWithCFString(CFStringRef cfString)
 {
     // Since WKNSString is an internal class with no subclasses, we can do a simple equality check.
     if (object_getClass((__bridge NSString *)cfString) == wkNSStringClass())
-        return WebKit::toAPI(static_cast<API::String*>(&[(WKNSString *)(__bridge NSString *)CFRetain(cfString) _apiObject]));
+        return WebKit::toAPI(downcast<API::String>(&[(WKNSString *)(__bridge NSString *)CFRetain(cfString) _apiObject]));
     String string(cfString);
     return WebKit::toCopiedAPI(string);
 }

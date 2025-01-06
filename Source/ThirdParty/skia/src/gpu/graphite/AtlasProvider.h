@@ -72,13 +72,18 @@ public:
             Recorder*, uint16_t width, uint16_t height, SkColorType, uint16_t identifier,
             bool requireStorageUsage);
 
-    void clearTexturePool();
+    // This frees textures held in the atlas pool, and compacts the pages within the other
+    // atlas managers. It does not free resources that are in use or clear cached masks.
+    void freeGpuResources();
 
     // Push any pending uploads to atlases onto the draw context
     void recordUploads(DrawContext*);
 
-    // Handle any post-flush work (garbage collection, e.g.)
-    void postFlush();
+    // Handle any post-flush work (garbage collection)
+    void compact(bool forceCompact);
+
+    // Invalidate any cached state about what may or may not already be uploaded in the atlas.
+    void invalidateAtlases();
 
 private:
     std::unique_ptr<TextAtlasManager> fTextAtlasManager;

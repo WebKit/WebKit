@@ -32,6 +32,7 @@
 #include <wtf/Condition.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -66,7 +67,7 @@ private:
 };
 
 class DatabaseTask {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DatabaseTask);
 public:
     virtual ~DatabaseTask();
 

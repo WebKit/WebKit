@@ -28,6 +28,7 @@
 #include "ContentSecurityPolicyDirective.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class ContentSecurityPolicyDirectiveList;
 enum class AllowTrustedTypePolicy : uint8_t;
 
 class ContentSecurityPolicyTrustedTypesDirective : public ContentSecurityPolicyDirective {
+    WTF_MAKE_TZONE_ALLOCATED(ContentSecurityPolicyTrustedTypesDirective);
 public:
     ContentSecurityPolicyTrustedTypesDirective(const ContentSecurityPolicyDirectiveList&, const String& name, const String& value);
 

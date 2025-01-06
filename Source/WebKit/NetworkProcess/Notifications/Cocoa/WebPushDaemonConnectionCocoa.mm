@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebPushDaemonConnection.h"
 
-#if PLATFORM(COCOA) && ENABLE(BUILT_IN_NOTIFICATIONS)
+#if PLATFORM(COCOA) && ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 #import "DaemonUtilities.h"
 #import "Decoder.h"
@@ -41,10 +41,7 @@ namespace WebKit::WebPushD {
 void Connection::newConnectionWasInitialized() const
 {
     ASSERT(m_connection);
-    if (networkSession().sessionID().isEphemeral())
-        return;
-
-    sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(m_configuration));
+    sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(m_configuration));
 }
 
 static OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)
@@ -75,9 +72,8 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
         if (xpc_dictionary_get_uint64(reply, WebPushD::protocolVersionKey) != WebPushD::protocolVersionValue)
             return completionHandler(nullptr);
 
-        size_t dataSize { 0 };
-        const uint8_t* data = static_cast<const uint8_t *>(xpc_dictionary_get_data(reply, WebPushD::protocolEncodedMessageKey, &dataSize));
-        auto decoder = IPC::Decoder::create({ data, dataSize }, { });
+        auto data = xpc_dictionary_get_data_span(reply, WebPushD::protocolEncodedMessageKey);
+        auto decoder = IPC::Decoder::create(data, { });
 
         completionHandler(decoder.get());
     });
@@ -87,4 +83,4 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
 
 } // namespace WebKit::WebPushD
 
-#endif // PLATFORM(COCOA) && ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // PLATFORM(COCOA) && ENABLE(WEB_PUSH_NOTIFICATIONS)

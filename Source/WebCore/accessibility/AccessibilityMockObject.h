@@ -30,9 +30,7 @@
 namespace WebCore {
     
 class AccessibilityMockObject : public AccessibilityObject {
-    
-protected:
-    AccessibilityMockObject();
+
 public:
     virtual ~AccessibilityMockObject();
     
@@ -41,6 +39,8 @@ public:
     bool isEnabled() const override { return true; }
 
 protected:
+    explicit AccessibilityMockObject(AXID);
+
     WeakPtr<AccessibilityObject> m_parent;
 
     // Must be called when the parent object clears its children.
@@ -48,9 +48,9 @@ protected:
 
 private:
     bool isMockObject() const final { return true; }
-    bool isDetachedFromParent() override { return !m_parent; }
+    bool isDetachedFromParent() final { return !m_parent; }
 
-    bool computeAccessibilityIsIgnored() const override;
+    bool computeIsIgnored() const override;
 };
 
 } // namespace WebCore 

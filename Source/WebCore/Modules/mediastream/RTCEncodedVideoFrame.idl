@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webrtc-encoded-transform/#RTCEncodedVideoFrameType
+
 enum RTCEncodedVideoFrameType { "empty", "key", "delta" };
+
+// // https://w3c.github.io/webrtc-encoded-transform/#RTCEncodedVideoFrameMetadata
 
 [
     Conditional=WEB_RTC,
@@ -41,10 +45,12 @@ dictionary RTCEncodedVideoFrameMetadata {
     // sequence<unsigned long> contributingSources;
 };
 
+// https://w3c.github.io/webrtc-encoded-transform/#RTCEncodedVideoFrame-interface
+
 [
     Conditional=WEB_RTC,
     EnabledBySetting=WebRTCEncodedTransformEnabled,
-    Exposed=DedicatedWorker,
+    Exposed=(Window,DedicatedWorker),
 ] interface RTCEncodedVideoFrame {
     readonly attribute RTCEncodedVideoFrameType type;
     readonly attribute unsigned long long timestamp;

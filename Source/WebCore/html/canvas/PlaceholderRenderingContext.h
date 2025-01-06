@@ -28,29 +28,52 @@
 #if ENABLE(OFFSCREEN_CANVAS)
 
 #include "CanvasRenderingContext.h"
+#include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class ImageBufferPipe;
-class OffscreenCanvas;
+class PlaceholderRenderingContext;
 
-class PlaceholderRenderingContext final : public CanvasRenderingContext {
-    WTF_MAKE_ISO_ALLOCATED(PlaceholderRenderingContext);
+// Thread-safe interface to submit frames from worker to the placeholder rendering context.
+class PlaceholderRenderingContextSource : public ThreadSafeRefCounted<PlaceholderRenderingContextSource> {
+    WTF_MAKE_TZONE_ALLOCATED(PlaceholderRenderingContextSource);
+    WTF_MAKE_NONCOPYABLE(PlaceholderRenderingContextSource);
 public:
-    PlaceholderRenderingContext(CanvasBase&);
+    static Ref<PlaceholderRenderingContextSource> create(PlaceholderRenderingContext&);
+    virtual ~PlaceholderRenderingContextSource() = default;
 
-    HTMLCanvasElement* canvas() const;
+    // Called by the offscreen context to submit the frame.
+    void setPlaceholderBuffer(ImageBuffer&);
 
-    const RefPtr<ImageBufferPipe>& imageBufferPipe() const { return m_imageBufferPipe; }
-
-private:
-    bool isPlaceholder() const final { return true; }
-
-    bool isAccelerated() const final { return !!m_imageBufferPipe; }
-    bool isGPUBased() const final { return !!m_imageBufferPipe; }
+    // Called by the placeholder context to attach to compositor layer.
     void setContentsToLayer(GraphicsLayer&);
 
-    RefPtr<ImageBufferPipe> m_imageBufferPipe;
+private:
+    explicit PlaceholderRenderingContextSource(PlaceholderRenderingContext&);
+
+    WeakPtr<PlaceholderRenderingContext> m_placeholder; // For main thread use.
+    Lock m_lock;
+    RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> m_delegate WTF_GUARDED_BY_LOCK(m_lock);
+};
+
+class PlaceholderRenderingContext final : public CanvasRenderingContext {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PlaceholderRenderingContext);
+public:
+    static std::unique_ptr<PlaceholderRenderingContext> create(HTMLCanvasElement&);
+
+    HTMLCanvasElement& canvas() const;
+    IntSize size() const;
+    void setPlaceholderBuffer(Ref<ImageBuffer>&&);
+
+    Ref<PlaceholderRenderingContextSource> source() const { return m_source; }
+
+private:
+    PlaceholderRenderingContext(HTMLCanvasElement&);
+    void setContentsToLayer(GraphicsLayer&) final;
+
+    Ref<PlaceholderRenderingContextSource> m_source;
 };
 
 }

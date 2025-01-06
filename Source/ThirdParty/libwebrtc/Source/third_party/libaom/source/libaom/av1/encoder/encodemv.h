@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -46,7 +46,7 @@ void av1_find_best_ref_mvs_from_stack(int allow_hp,
                                       int_mv *nearest_mv, int_mv *near_mv,
                                       int is_integer);
 
-static INLINE MV_JOINT_TYPE av1_get_mv_joint(const MV *mv) {
+static inline MV_JOINT_TYPE av1_get_mv_joint(const MV *mv) {
   // row:  Z  col:  Z  | MV_JOINT_ZERO   (0)
   // row:  Z  col: NZ  | MV_JOINT_HNZVZ  (1)
   // row: NZ  col:  Z  | MV_JOINT_HZVNZ  (2)
@@ -54,17 +54,17 @@ static INLINE MV_JOINT_TYPE av1_get_mv_joint(const MV *mv) {
   return (!!mv->col) | ((!!mv->row) << 1);
 }
 
-static INLINE int av1_mv_class_base(MV_CLASS_TYPE c) {
+static inline int av1_mv_class_base(MV_CLASS_TYPE c) {
   return c ? CLASS0_SIZE << (c + 2) : 0;
 }
 
 // If n != 0, returns the floor of log base 2 of n. If n == 0, returns 0.
-static INLINE uint8_t av1_log_in_base_2(unsigned int n) {
+static inline uint8_t av1_log_in_base_2(unsigned int n) {
   // get_msb() is only valid when n != 0.
   return n == 0 ? 0 : get_msb(n);
 }
 
-static INLINE MV_CLASS_TYPE av1_get_mv_class(int z, int *offset) {
+static inline MV_CLASS_TYPE av1_get_mv_class(int z, int *offset) {
   assert(z >= 0);
   const MV_CLASS_TYPE c = (MV_CLASS_TYPE)av1_log_in_base_2(z >> 3);
   assert(c <= MV_CLASS_10);
@@ -72,7 +72,7 @@ static INLINE MV_CLASS_TYPE av1_get_mv_class(int z, int *offset) {
   return c;
 }
 
-static INLINE int av1_check_newmv_joint_nonzero(const AV1_COMMON *cm,
+static inline int av1_check_newmv_joint_nonzero(const AV1_COMMON *cm,
                                                 MACROBLOCK *const x) {
   (void)cm;
   MACROBLOCKD *xd = &x->e_mbd;

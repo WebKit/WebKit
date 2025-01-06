@@ -1,0 +1,6 @@
+
+PASS anchor() cannot be used as <length> initial value
+PASS anchor-size() cannot be used as <length> initial value
+PASS anchor() cannot be used as <length-percentage> initial value
+PASS anchor-size() cannot be used as <length-percentage> initial value
+

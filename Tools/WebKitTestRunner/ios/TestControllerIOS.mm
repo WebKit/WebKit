@@ -53,6 +53,19 @@
 SOFT_LINK_PRIVATE_FRAMEWORK(TextInput)
 SOFT_LINK_CLASS(TextInput, TIPreferencesController);
 
+static unsigned globalKeyboardUpdateForChangedSelectionCount = 0;
+
+@implementation NSObject (UIKeyboardStateManager_TestRunner)
+
+- (void)swizzled_updateForChangedSelection
+{
+    ++globalKeyboardUpdateForChangedSelectionCount;
+
+    [self swizzled_updateForChangedSelection];
+}
+
+@end
+
 #if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
 
 @interface WindowDidRotateObserver : NSObject
@@ -98,7 +111,7 @@ static void overrideSyncInputManagerToAcceptedAutocorrection(id, SEL, TIKeyboard
 
 static BOOL overrideIsInHardwareKeyboardMode()
 {
-    return NO;
+    return WTR::TestController::singleton().isInHardwareKeyboardMode();
 }
 
 static void overridePresentMenuOrPopoverOrViewController()
@@ -166,6 +179,18 @@ void TestController::platformInitialize(const Options& options)
     CFNotificationCenterAddObserver(center, this, handleMenuWillHideNotification, (CFStringRef)UIMenuControllerWillHideMenuNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
     CFNotificationCenterAddObserver(center, this, handleMenuDidHideNotification, (CFStringRef)UIMenuControllerDidHideMenuNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
     ALLOW_DEPRECATED_DECLARATIONS_END
+
+    m_hardwareKeyboardModeSwizzler = WTF::makeUnique<ClassMethodSwizzler>(UIKeyboard.class, @selector(isInHardwareKeyboardMode), reinterpret_cast<IMP>(overrideIsInHardwareKeyboardMode));
+
+    if (auto stateManagerClass = NSClassFromString(@"_UIKeyboardStateManager")) {
+        auto originalMethod = class_getInstanceMethod(stateManagerClass, @selector(updateForChangedSelection));
+        auto swizzledMethod = class_getInstanceMethod(stateManagerClass, @selector(swizzled_updateForChangedSelection));
+        auto originalImplementation = method_getImplementation(originalMethod);
+        auto swizzledImplementation = method_getImplementation(swizzledMethod);
+        class_replaceMethod(stateManagerClass, @selector(swizzled_updateForChangedSelection), originalImplementation, method_getTypeEncoding(originalMethod));
+        class_replaceMethod(stateManagerClass, @selector(updateForChangedSelection), swizzledImplementation, method_getTypeEncoding(swizzledMethod));
+    } else
+        NSLog(@"Failed to look up class: _UIKeyboardStateManager");
 }
 
 void TestController::platformDestroy()
@@ -320,9 +345,9 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
 
     // Override the implementation of +[UIKeyboard isInHardwareKeyboardMode] to ensure that test runs are deterministic
     // regardless of whether a hardware keyboard is attached. We intentionally never restore the original implementation.
-    //
-    // FIXME: Investigate whether this can be removed. The swizzled return value is inconsistent with GSEventSetHardwareKeyboardAttached.
-    method_setImplementation(class_getClassMethod([UIKeyboard class], @selector(isInHardwareKeyboardMode)), reinterpret_cast<IMP>(overrideIsInHardwareKeyboardMode));
+    // FIXME: Investigate whether we can change the default value for `useHardwareKeyboardMode` to `true`.
+    // The swizzled return value is inconsistent with the default value of GSEventSetHardwareKeyboardAttached above.
+    setIsInHardwareKeyboardMode(options.useHardwareKeyboardMode());
 
     if (m_overriddenKeyboardInputMode) {
         m_overriddenKeyboardInputMode = nil;
@@ -517,6 +542,11 @@ static UIKeyboardInputMode *swizzleCurrentInputMode()
 static NSArray<UIKeyboardInputMode *> *swizzleActiveInputModes()
 {
     return @[ TestController::singleton().overriddenKeyboardInputMode() ];
+}
+
+unsigned TestController::keyboardUpdateForChangedSelectionCount() const
+{
+    return globalKeyboardUpdateForChangedSelectionCount;
 }
 
 void TestController::setKeyboardInputModeIdentifier(const String& identifier)

@@ -75,7 +75,6 @@ class GtkPort(GLibPort):
     def setup_environ_for_server(self, server_name=None):
         environment = super(GtkPort, self).setup_environ_for_server(server_name)
         environment['LIBOVERLAY_SCROLLBAR'] = '0'
-        environment['WEBKIT_NICOSIA_PAINTING_THREADS'] = '0'
 
         # Configure the software libgl renderer if jhbuild ready and we test inside a virtualized window system
         if self._driver_class() in [XvfbDriver, WestonDriver] and (self._should_use_jhbuild() or self._is_flatpak()):
@@ -181,9 +180,11 @@ class GtkPort(GLibPort):
         if os.environ.get("WEBKIT_MINI_BROWSER_PREFIX"):
             command = shlex.split(os.environ["WEBKIT_MINI_BROWSER_PREFIX"]) + command
 
+        env, pass_fds = self.setup_sysprof_for_minibrowser()
+
         if self._should_use_jhbuild():
             command = self._jhbuild_wrapper + command
-        return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False, env=self.setup_environ_for_minibrowser())
+        return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False, env=env, pass_fds=pass_fds)
 
     @memoized
     def _is_gtk4_build(self):
@@ -199,4 +200,3 @@ class GtkPort(GLibPort):
 
         except (webkitpy.common.system.executive.ScriptError, IOError, OSError):
             return False
-        return False

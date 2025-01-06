@@ -13,12 +13,13 @@
 
 #include <stddef.h>
 
+#include <optional>
 #include <string>
 #include <type_traits>
 #include <vector>
 
+#include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/string_to_number.h"
@@ -62,28 +63,32 @@ bool tokenize_first(absl::string_view source,
                     std::string* token,
                     std::string* rest);
 
-// Convert arbitrary values to/from a string.
-// TODO(jonasolsson): Remove these when absl::StrCat becomes available.
+template <typename T,
+          typename std::enable_if<
+              !std::is_pointer<T>::value ||
+              std::is_convertible<T, const char*>::value>::type* = nullptr>
+std::string ToString(T value) {
+  return {absl::StrCat(value)};
+}
+
+// Versions that behave differently from StrCat
+template <>
 std::string ToString(bool b);
 
-std::string ToString(absl::string_view s);
-// The const char* overload is needed for correct overload resolution because of
-// the const void* version of ToString() below.
-std::string ToString(const char* s);
-
-std::string ToString(short s);
-std::string ToString(unsigned short s);
-std::string ToString(int s);
-std::string ToString(unsigned int s);
-std::string ToString(long int s);
-std::string ToString(unsigned long int s);
-std::string ToString(long long int s);
-std::string ToString(unsigned long long int s);
-
-std::string ToString(double t);
+// Versions not supported by StrCat:
+template <>
 std::string ToString(long double t);
 
-std::string ToString(const void* p);
+template <typename T,
+          typename std::enable_if<
+              std::is_pointer<T>::value &&
+              !std::is_convertible<T, const char*>::value>::type* = nullptr>
+std::string ToString(T p) {
+  char buf[32];
+  const int len = std::snprintf(&buf[0], std::size(buf), "%p", p);
+  RTC_DCHECK_LE(len, std::size(buf));
+  return std::string(&buf[0], len);
+}
 
 template <typename T,
           typename std::enable_if<std::is_arithmetic<T>::value &&
@@ -91,7 +96,7 @@ template <typename T,
                                   int>::type = 0>
 static bool FromString(absl::string_view s, T* t) {
   RTC_DCHECK(t);
-  absl::optional<T> result = StringToNumber<T>(s);
+  std::optional<T> result = StringToNumber<T>(s);
 
   if (result)
     *t = *result;

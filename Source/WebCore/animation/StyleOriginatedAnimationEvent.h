@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class StyleOriginatedAnimationEvent : public AnimationEventBase {
-    WTF_MAKE_ISO_ALLOCATED(StyleOriginatedAnimationEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StyleOriginatedAnimationEvent);
 public:
     virtual ~StyleOriginatedAnimationEvent();
 

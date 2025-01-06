@@ -34,10 +34,9 @@
             }
         }
         
-        function doTest()
+        async function doTest()
         {
-            if (window.testRunner)
-                testRunner.displayAndTrackRepaints(); // Flush pending compositing repaints.
+            await testRunner?.displayAndTrackRepaints(); // Flush pending compositing repaints.
             
             if (window.internals)
                 window.internals.startTrackingRepaints();

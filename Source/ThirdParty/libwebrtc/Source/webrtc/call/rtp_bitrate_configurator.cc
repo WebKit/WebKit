@@ -11,7 +11,10 @@
 #include "call/rtp_bitrate_configurator.h"
 
 #include <algorithm>
+#include <optional>
 
+#include "api/transport/bitrate_settings.h"
+#include "api/units/data_rate.h"
 #include "rtc_base/checks.h"
 
 namespace {
@@ -49,7 +52,7 @@ BitrateConstraints RtpBitrateConfigurator::GetConfig() const {
   return bitrate_config_;
 }
 
-absl::optional<BitrateConstraints>
+std::optional<BitrateConstraints>
 RtpBitrateConfigurator::UpdateWithSdpParameters(
     const BitrateConstraints& bitrate_config) {
   RTC_DCHECK_GE(bitrate_config.min_bitrate_bps, 0);
@@ -58,7 +61,7 @@ RtpBitrateConfigurator::UpdateWithSdpParameters(
     RTC_DCHECK_GT(bitrate_config.max_bitrate_bps, 0);
   }
 
-  absl::optional<int> new_start;
+  std::optional<int> new_start;
   // Only update the "start" bitrate if it's set, and different from the old
   // value. In practice, this value comes from the x-google-start-bitrate codec
   // parameter in SDP, and setting the same remote description twice shouldn't
@@ -72,7 +75,7 @@ RtpBitrateConfigurator::UpdateWithSdpParameters(
   return UpdateConstraints(new_start);
 }
 
-absl::optional<BitrateConstraints>
+std::optional<BitrateConstraints>
 RtpBitrateConfigurator::UpdateWithClientPreferences(
     const BitrateSettings& bitrate_mask) {
   bitrate_config_mask_ = bitrate_mask;
@@ -80,17 +83,17 @@ RtpBitrateConfigurator::UpdateWithClientPreferences(
 }
 
 // Relay cap can change only max bitrate.
-absl::optional<BitrateConstraints> RtpBitrateConfigurator::UpdateWithRelayCap(
+std::optional<BitrateConstraints> RtpBitrateConfigurator::UpdateWithRelayCap(
     DataRate cap) {
   if (cap.IsFinite()) {
     RTC_DCHECK(!cap.IsZero());
   }
   max_bitrate_over_relay_ = cap;
-  return UpdateConstraints(absl::nullopt);
+  return UpdateConstraints(std::nullopt);
 }
 
-absl::optional<BitrateConstraints> RtpBitrateConfigurator::UpdateConstraints(
-    const absl::optional<int>& new_start) {
+std::optional<BitrateConstraints> RtpBitrateConfigurator::UpdateConstraints(
+    const std::optional<int>& new_start) {
   BitrateConstraints updated;
   updated.min_bitrate_bps =
       std::max(bitrate_config_mask_.min_bitrate_bps.value_or(0),
@@ -114,7 +117,7 @@ absl::optional<BitrateConstraints> RtpBitrateConfigurator::UpdateConstraints(
   if (updated.min_bitrate_bps == bitrate_config_.min_bitrate_bps &&
       updated.max_bitrate_bps == bitrate_config_.max_bitrate_bps &&
       !new_start) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   if (new_start) {

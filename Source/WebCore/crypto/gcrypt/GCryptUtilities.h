@@ -71,7 +71,7 @@ static inline bool matches(const void* lhs, size_t size, const std::array<uint8_
 
 } // namespace CryptoConstants
 
-std::optional<const char*> hashAlgorithmName(CryptoAlgorithmIdentifier);
+std::optional<ASCIILiteral> hashAlgorithmName(CryptoAlgorithmIdentifier);
 
 std::optional<int> hmacAlgorithm(CryptoAlgorithmIdentifier);
 std::optional<int> digestAlgorithm(CryptoAlgorithmIdentifier);

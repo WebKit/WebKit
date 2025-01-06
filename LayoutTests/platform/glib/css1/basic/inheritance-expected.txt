@@ -98,18 +98,18 @@ layer at (0,0) size 785x730
             text run at (354,0) width 173: "this part (which is spanned)"
         RenderText {#text} at (527,0) size 4x17
           text run at (527,0) width 4: "."
-      RenderTable {TABLE} at (0,433) size 614x282 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,433) size 614x282 [border: (1px outset #008000)]
         RenderTableSection {TBODY} at (1,1) size 612x279
           RenderTableRow {TR} at (0,0) size 612x26
-            RenderTableCell {TD} at (0,0) size 612x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 612x26 [bgcolor=#C0C0C0] [border: (1px inset #008000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x17
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 612x253
-            RenderTableCell {TD} at (0,139) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,139) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #008000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,117) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 600x253 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 600x253 [border: (1px inset #008000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {H3} at (4,4) size 592x22 [color=#0000FF]
                 RenderText {#text} at (0,0) size 210x21
                   text run at (0,0) width 210: "This sentence should show "

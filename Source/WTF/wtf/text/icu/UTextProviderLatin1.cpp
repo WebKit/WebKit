@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/text/icu/UTextProviderLatin1.h>
 
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/icu/UTextProvider.h>
 
@@ -140,53 +141,57 @@ static UBool uTextLatin1Access(UText* uText, int64_t index, UBool forward)
     }
     uText->chunkLength = static_cast<int32_t>(uText->chunkNativeLimit - uText->chunkNativeStart);
 
-    StringImpl::copyCharacters(const_cast<UChar*>(uText->chunkContents), { static_cast<const LChar*>(uText->context) + uText->chunkNativeStart, static_cast<size_t>(uText->chunkLength) });
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    StringImpl::copyCharacters(const_cast<UChar*>(uText->chunkContents), unsafeMakeSpan(static_cast<const LChar*>(uText->context) + uText->chunkNativeStart, uText->chunkLength));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     uText->nativeIndexingLimit = uText->chunkLength;
 
     return true;
 }
 
-static int32_t uTextLatin1Extract(UText* uText, int64_t start, int64_t limit, UChar* dest, int32_t destCapacity, UErrorCode* status)
+static int32_t uTextLatin1Extract(UText* uText, int64_t start, int64_t limit, UChar* rawDest, int32_t rawDestCapacity, UErrorCode* status)
 {
-    int64_t length = uText->a;
+    int64_t rawLength = uText->a;
     if (U_FAILURE(*status))
         return 0;
 
-    if (destCapacity < 0 || (!dest && destCapacity > 0)) {
+    if (rawDestCapacity < 0 || (!rawDest && rawDestCapacity > 0)) {
         *status = U_ILLEGAL_ARGUMENT_ERROR;
         return 0;
     }
+    std::span dest = unsafeMakeSpan(rawDest, rawDestCapacity);
 
     if (start < 0 || start > limit || (limit - start) > INT32_MAX) {
         *status = U_INDEX_OUTOFBOUNDS_ERROR;
         return 0;
     }
 
-    if (start > length)
-        start = length;
-    if (limit > length)
-        limit = length;
+    if (start > rawLength)
+        start = rawLength;
+    if (limit > rawLength)
+        limit = rawLength;
 
-    length = limit - start;
+    size_t length = limit - start;
     
     if (!length)
         return 0;
 
-    if (dest) {
-        int32_t trimmedLength = static_cast<int32_t>(length);
-        if (trimmedLength > destCapacity)
-            trimmedLength = destCapacity;
-
-        StringImpl::copyCharacters(dest, { static_cast<const LChar*>(uText->context) + start, static_cast<size_t>(trimmedLength) });
+    if (dest.data()) {
+        size_t trimmedLength = length;
+        if (trimmedLength > dest.size())
+            trimmedLength = dest.size();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        StringImpl::copyCharacters(dest.data(), unsafeMakeSpan(static_cast<const LChar*>(uText->context) + start, trimmedLength));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
-    if (length < destCapacity) {
-        if (dest)
+    if (length < dest.size()) {
+        if (dest.data())
             dest[length] = 0;
         if (*status == U_STRING_NOT_TERMINATED_WARNING)
             *status = U_ZERO_ERROR;
-    } else if (length == destCapacity)
+    } else if (length == dest.size())
         *status = U_STRING_NOT_TERMINATED_WARNING;
     else
         *status = U_BUFFER_OVERFLOW_ERROR;
@@ -291,7 +296,9 @@ static void textLatin1ContextAwareMoveInPrimaryContext(UText* text, int64_t nati
     text->chunkLength = length < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(length) : 0;
     text->nativeIndexingLimit = text->chunkLength;
     text->chunkOffset = forward ? 0 : text->chunkLength;
-    StringImpl::copyCharacters(const_cast<UChar*>(text->chunkContents), { static_cast<const LChar*>(text->p) + (text->chunkNativeStart - text->b), static_cast<size_t>(text->chunkLength) });
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    StringImpl::copyCharacters(const_cast<UChar*>(text->chunkContents), unsafeMakeSpan(static_cast<const LChar*>(text->p) + (text->chunkNativeStart - text->b), text->chunkLength));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 static void textLatin1ContextAwareSwitchToPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)

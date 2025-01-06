@@ -26,6 +26,7 @@
 #import "WebPreferencesPrivate.h"
 
 @interface WebPreferences (WebPreferencesInternal)
+
 - (BOOL)_boolValueForKey:(NSString *)key;
 - (void)_setBoolValue:(BOOL)value forKey:(NSString *)key;
 - (int)_integerValueForKey:(NSString *)key;
@@ -38,4 +39,7 @@
 - (unsigned long long)_unsignedLongLongValueForKey:(NSString *)key;
 - (NSString *)_stringValueForKey:(NSString *)key;
 - (void)_setStringValue:(NSString *)value forKey:(NSString *)key;
+
+@property (nonatomic, setter=_setUseSystemAppearance:) BOOL _useSystemAppearance;
+
 @end

@@ -28,11 +28,11 @@
 #if ENABLE(WEBGL)
 #include "WebGLDepthTexture.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLDepthTexture);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLDepthTexture);
 
 WebGLDepthTexture::WebGLDepthTexture(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLDepthTexture)

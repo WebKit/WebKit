@@ -35,10 +35,13 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionContextProxy);
 
 WebExtensionControllerProxy* WebExtensionContextProxy::extensionControllerProxy() const
 {
@@ -124,7 +127,7 @@ Vector<Ref<WebPage>> WebExtensionContextProxy::popupPages(std::optional<WebExten
         if (windowIdentifier && entry.value.second && entry.value.second.value() != windowIdentifier.value())
             continue;
 
-        result.append(entry.key);
+        result.append(Ref { entry.key });
     }
 
     return result;
@@ -146,7 +149,7 @@ Vector<Ref<WebPage>> WebExtensionContextProxy::tabPages(std::optional<WebExtensi
         if (windowIdentifier && entry.value.second && entry.value.second.value() != windowIdentifier.value())
             continue;
 
-        result.append(entry.key);
+        result.append(Ref { entry.key });
     }
 
     return result;
@@ -182,12 +185,12 @@ void WebExtensionContextProxy::setStorageAccessLevel(bool allowedInContentScript
 
 void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(const Function<void(WebFrame&, WebExtensionAPINamespace&)>& function, DOMWrapperWorld& world)
 {
-    for (Ref frame : m_extensionContentFrames) {
-        RefPtr page = frame->page() ? frame->page()->corePage() : nullptr;
+    m_extensionContentFrames.forEach([&](auto& frame) {
+        RefPtr page = frame.page() ? frame.page()->corePage() : nullptr;
         if (!page)
-            continue;
+            return;
 
-        auto context = page->isServiceWorkerPage() ? frame->jsContextForServiceWorkerWorld(world) : frame->jsContextForWorld(world);
+        auto context = page->isServiceWorkerPage() ? frame.jsContextForServiceWorkerWorld(world) : frame.jsContextForWorld(world);
         auto globalObject = JSContextGetGlobalObject(context);
 
         RefPtr<WebExtensionAPINamespace> namespaceObjectImpl;
@@ -202,10 +205,10 @@ void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(const Function
         }
 
         if (!namespaceObjectImpl)
-            continue;
+            return;
 
         function(frame, *namespaceObjectImpl);
-    }
+    });
 }
 
 } // namespace WebKit

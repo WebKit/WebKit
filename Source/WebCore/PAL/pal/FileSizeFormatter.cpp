@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FileSizeFormatter.h"
 
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace PAL {
 

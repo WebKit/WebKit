@@ -27,6 +27,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include "RemoteConnectionToTarget.h"
 #include "RemoteControllableTarget.h"
 
 #include <utility>
@@ -54,7 +55,6 @@ typedef struct _GCancellable GCancellable;
 #endif
 
 #if USE(INSPECTOR_SOCKET_SERVER)
-#include "RemoteConnectionToTarget.h"
 #include "RemoteInspectorConnectionClient.h"
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
@@ -67,12 +67,11 @@ using TargetListing = RefPtr<JSON::Object>;
 namespace Inspector {
 
 class RemoteAutomationTarget;
-class RemoteConnectionToTarget;
 class RemoteControllableTarget;
 class RemoteInspectionTarget;
 class RemoteInspectorClient;
 
-class JS_EXPORT_PRIVATE RemoteInspector final
+class RemoteInspector final
 #if PLATFORM(COCOA)
     : public RemoteInspectorXPCConnection::Client
 #elif USE(INSPECTOR_SOCKET_SERVER)
@@ -80,7 +79,7 @@ class JS_EXPORT_PRIVATE RemoteInspector final
 #endif
 {
 public:
-    class JS_EXPORT_PRIVATE Client {
+    class Client {
     public:
         struct Capabilities {
             bool remoteAutomationAllowed : 1;
@@ -109,7 +108,8 @@ public:
 #endif
         };
 
-        virtual ~Client();
+        JS_EXPORT_PRIVATE Client();
+        JS_EXPORT_PRIVATE virtual ~Client();
         virtual bool remoteAutomationAllowed() const = 0;
         virtual String browserName() const { return { }; }
         virtual String browserVersion() const { return { }; }
@@ -121,15 +121,17 @@ public:
     };
 
 #if PLATFORM(COCOA)
-    static void setNeedMachSandboxExtension(bool needExtension) { needMachSandboxExtension = needExtension; }
+    JS_EXPORT_PRIVATE static void setNeedMachSandboxExtension(bool needExtension);
 #endif
 #if USE(GLIB)
-    static void setInspectorServerAddress(CString&& address) { s_inspectorServerAddress = WTFMove(address); }
-    static const CString& inspectorServerAddress() { return s_inspectorServerAddress; }
+    JS_EXPORT_PRIVATE static void setInspectorServerAddress(CString&&);
+    JS_EXPORT_PRIVATE static const CString& inspectorServerAddress();
 #endif
-    static void startDisabled();
-    static RemoteInspector& singleton();
+    JS_EXPORT_PRIVATE static void startDisabled();
+    JS_EXPORT_PRIVATE static RemoteInspector& singleton();
     friend class LazyNeverDestroyed<RemoteInspector>;
+
+    virtual ~RemoteInspector();
 
     void registerTarget(RemoteControllableTarget*);
     void unregisterTarget(RemoteControllableTarget*);
@@ -137,8 +139,8 @@ public:
     void sendMessageToRemote(TargetID, const String& message);
 
     RemoteInspector::Client* client() const { return m_client; }
-    void setClient(RemoteInspector::Client*);
-    void clientCapabilitiesDidChange();
+    JS_EXPORT_PRIVATE void setClient(RemoteInspector::Client*);
+    JS_EXPORT_PRIVATE void clientCapabilitiesDidChange();
     std::optional<RemoteInspector::Client::Capabilities> clientCapabilities() const { return m_clientCapabilities; }
 
     void setupFailed(TargetID);
@@ -149,19 +151,20 @@ public:
     bool enabled() const { return m_enabled; }
     bool hasActiveDebugSession() const { return m_hasActiveDebugSession; }
 
-    void start();
-    void stop();
+    JS_EXPORT_PRIVATE void start();
+    JS_EXPORT_PRIVATE void stop();
 
 #if PLATFORM(COCOA)
     bool hasParentProcessInformation() const { return m_parentProcessIdentifier != 0; }
     ProcessID parentProcessIdentifier() const { return m_parentProcessIdentifier; }
     RetainPtr<CFDataRef> parentProcessAuditData() const { return m_parentProcessAuditData; }
-    void setParentProcessInformation(ProcessID, RetainPtr<CFDataRef> auditData);
+    JS_EXPORT_PRIVATE void setParentProcessInformation(ProcessID, RetainPtr<CFDataRef> auditData);
     std::optional<audit_token_t> parentProcessAuditToken();
 
     void setUsePerTargetPresentingApplicationPIDs(bool usePerTargetPresentingApplicationPIDs) { m_usePerTargetPresentingApplicationPIDs = usePerTargetPresentingApplicationPIDs; }
 
     bool isSimulatingCustomerInstall() const { return m_simulateCustomerInstall; }
+    JS_EXPORT_PRIVATE void connectToWebInspector();
 #endif
 
     void updateTargetListing(TargetID);
@@ -271,9 +274,9 @@ private:
     // from any thread.
     Lock m_mutex;
 
-    HashMap<TargetID, RemoteControllableTarget*> m_targetMap;
-    HashMap<TargetID, RefPtr<RemoteConnectionToTarget>> m_targetConnectionMap;
-    HashMap<TargetID, TargetListing> m_targetListingMap;
+    UncheckedKeyHashMap<TargetID, RemoteControllableTarget*> m_targetMap;
+    UncheckedKeyHashMap<TargetID, RefPtr<RemoteConnectionToTarget>> m_targetConnectionMap;
+    UncheckedKeyHashMap<TargetID, TargetListing> m_targetListingMap;
 
 #if PLATFORM(COCOA)
     RefPtr<RemoteInspectorXPCConnection> m_relayConnection;

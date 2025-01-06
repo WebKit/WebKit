@@ -1,0 +1,40 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- This is a new test added as part of the AccessibilityThreadTextApisEnabled effort. Move it to accessibility/mac after the feature is enabled by default. -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="p1" style="font-family: Helvetica">This is a test.</p>
+<p id="p2" style="font-family: Monaco">Second paragraph.</p>
+<p id="p3" style="display:none">Third paragraph.</p>
+
+<script>
+var output = "This test ensures we return the right attributed string for text marker ranges that span multiple elements.\n\n";
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var range1 = webArea.textMarkerRangeForElement(webArea);
+    output += `"${webArea.attributedStringForTextMarkerRange(range1)}"\n`;
+
+    var finalAttributedString;
+    document.getElementById("p3").removeAttribute("style");
+    setTimeout(async function() {
+        await waitFor(() => {
+            range1 = webArea.textMarkerRangeForElement(webArea);
+            finalAttributedString = webArea.attributedStringForTextMarkerRange(range1);
+            return finalAttributedString && finalAttributedString.includes("Third paragraph.");
+        });
+        output += `\n\nFinal attributed string:\n\n${finalAttributedString}\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

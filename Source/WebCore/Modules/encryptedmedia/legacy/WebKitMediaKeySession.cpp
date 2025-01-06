@@ -40,12 +40,12 @@
 #include "WebKitMediaKeys.h"
 #include <JavaScriptCore/Uint8Array.h>
 #include <wtf/FileSystem.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebKitMediaKeySession);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebKitMediaKeySession);
 
 Ref<WebKitMediaKeySession> WebKitMediaKeySession::create(Document& document, WebKitMediaKeys& keys, const String& keySystem)
 {
@@ -80,6 +80,7 @@ void WebKitMediaKeySession::close()
     ALWAYS_LOG(LOGIDENTIFIER);
     if (m_session) {
         m_session->releaseKeys();
+        m_session->invalidate();
         m_session = nullptr;
     }
 }

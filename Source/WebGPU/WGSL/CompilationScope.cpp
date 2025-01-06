@@ -33,12 +33,14 @@ namespace WGSL {
 CompilationScope::CompilationScope(ShaderModule& shaderModule)
     : m_shaderModule(shaderModule)
     , m_builderState(shaderModule.astBuilder().saveCurrentState())
+    , m_replacementsSize(shaderModule.currentReplacementSize())
 {
 }
 
 CompilationScope::CompilationScope(CompilationScope&& other)
     : m_shaderModule(other.m_shaderModule)
     , m_builderState(other.m_builderState)
+    , m_replacementsSize(other.m_replacementsSize)
 {
     other.m_invalidated = true;
 }
@@ -47,7 +49,7 @@ CompilationScope::~CompilationScope()
 {
     if (m_invalidated)
         return;
-    m_shaderModule.revertReplacements();
+    m_shaderModule.revertReplacements(m_replacementsSize);
     m_shaderModule.astBuilder().restore(WTFMove(m_builderState));
 }
 

@@ -12,8 +12,8 @@
 #define TEST_TESTSUPPORT_FIXED_FPS_VIDEO_FRAME_WRITER_ADAPTER_H_
 
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/test/video/video_frame_writer.h"
 #include "api/video/video_sink_interface.h"
 #include "system_wrappers/include/clock.h"
@@ -78,7 +78,7 @@ class FixedFpsVideoFrameWriterAdapter : public VideoFrameWriter {
 
   // Expected time slot for the last frame.
   Timestamp last_frame_time_ = Timestamp::MinusInfinity();
-  absl::optional<VideoFrame> last_frame_ = absl::nullopt;
+  std::optional<VideoFrame> last_frame_ = std::nullopt;
 };
 
 }  // namespace test

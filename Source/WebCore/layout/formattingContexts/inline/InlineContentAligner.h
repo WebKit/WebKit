@@ -36,10 +36,10 @@ class InlineContentAligner {
 public:
     static InlineLayoutUnit applyTextAlignJustify(Line::RunList&, InlineLayoutUnit spaceToDistribute, size_t hangingTrailingWhitespaceLength);
 
-    static InlineLayoutUnit applyRubyAlignSpaceAround(Line::RunList&, WTF::Range<size_t>, InlineLayoutUnit spaceToDistribute);
+    static InlineLayoutUnit applyRubyAlign(RubyAlign, Line::RunList&, WTF::Range<size_t>, InlineLayoutUnit spaceToDistribute);
 
     enum class AdjustContentOnlyInsideRubyBase : bool { No, Yes };
-    static void applyRubyBaseAlignmentOffset(InlineDisplay::Boxes&, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, AdjustContentOnlyInsideRubyBase, InlineFormattingContext&);
+    static void applyRubyBaseAlignmentOffset(InlineDisplay::Boxes&, const UncheckedKeyHashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, AdjustContentOnlyInsideRubyBase, InlineFormattingContext&);
     static void applyRubyAnnotationAlignmentOffset(InlineDisplay::Boxes&, InlineLayoutUnit alignmentOffset, InlineFormattingContext&);
 
 private:

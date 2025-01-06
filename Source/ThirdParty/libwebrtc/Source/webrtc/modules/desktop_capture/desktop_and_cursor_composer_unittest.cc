@@ -121,7 +121,9 @@ class FakeScreenCapturer : public DesktopCapturer {
     next_frame_ = std::move(next_frame);
   }
 
-  bool IsOccluded(const DesktopVector& pos) override { return is_occluded_; }
+  bool IsOccluded(const DesktopVector& /* pos */) override {
+    return is_occluded_;
+  }
 
   void set_is_occluded(bool value) { is_occluded_ = value; }
 
@@ -147,7 +149,9 @@ class FakeMouseMonitor : public MouseCursorMonitor {
     hotspot_ = hotspot;
   }
 
-  void Init(Callback* callback, Mode mode) override { callback_ = callback; }
+  void Init(Callback* callback, Mode /* mode */) override {
+    callback_ = callback;
+  }
 
   void Capture() override {
     if (changed_) {
@@ -209,7 +213,7 @@ class DesktopAndCursorComposerTest : public ::testing::Test,
   }
 
   // DesktopCapturer::Callback interface
-  void OnCaptureResult(DesktopCapturer::Result result,
+  void OnCaptureResult(DesktopCapturer::Result /* result */,
                        std::unique_ptr<DesktopFrame> frame) override {
     frame_ = std::move(frame);
   }

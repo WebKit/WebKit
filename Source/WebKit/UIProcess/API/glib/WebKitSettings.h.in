@@ -575,6 +575,13 @@ webkit_settings_apply_from_key_file                            (WebKitSettings  
                                                                 const gchar     *group_name,
                                                                 GError         **error);
 
+WEBKIT_API const gchar*
+webkit_settings_get_webrtc_udp_ports_range                     (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_webrtc_udp_ports_range                     (WebKitSettings *settings,
+                                                                const gchar    *udp_port_range);
+
 G_END_DECLS
 
 #endif /* WebKitSettings_h */

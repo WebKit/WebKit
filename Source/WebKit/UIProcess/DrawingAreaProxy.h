@@ -35,20 +35,13 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <stdint.h>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/Identified.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakRef.h>
-
-namespace WebKit {
-class DrawingAreaProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::DrawingAreaProxy> : std::true_type { };
-}
 
 #if PLATFORM(COCOA)
 namespace WTF {
@@ -73,14 +66,17 @@ class WebProcessProxy;
 struct UpdateInfo;
 #endif
 
-class DrawingAreaProxy : public IPC::MessageReceiver, public IPC::MessageSender, public Identified<DrawingAreaIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+class DrawingAreaProxy : public IPC::MessageReceiver, public IPC::MessageSender, public Identified<DrawingAreaIdentifier>, public CanMakeCheckedPtr<DrawingAreaProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(DrawingAreaProxy);
     WTF_MAKE_NONCOPYABLE(DrawingAreaProxy);
-
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DrawingAreaProxy);
 public:
     virtual ~DrawingAreaProxy();
 
     DrawingAreaType type() const { return m_type; }
+
+    virtual bool isRemoteLayerTreeDrawingAreaProxyMac() const { return false; }
+    virtual bool isRemoteLayerTreeDrawingAreaProxyIOS() const { return false; }
 
     void startReceivingMessages(WebProcessProxy&);
     void stopReceivingMessages(WebProcessProxy&);
@@ -88,7 +84,7 @@ public:
 
     virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
 
-    virtual void deviceScaleFactorDidChange() = 0;
+    virtual void deviceScaleFactorDidChange(CompletionHandler<void()>&&) = 0;
     virtual void colorSpaceDidChange() { }
     virtual void windowScreenDidChange(WebCore::PlatformDisplayID) { }
     virtual std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() { return std::nullopt; }
@@ -106,6 +102,9 @@ public:
     virtual void adjustTransientZoom(double, WebCore::FloatPoint) { }
     virtual void commitTransientZoom(double, WebCore::FloatPoint) { }
 
+    virtual void viewIsBecomingVisible() { }
+    virtual void viewIsBecomingInvisible() { }
+
 #if PLATFORM(MAC)
     virtual void didChangeViewExposedRect();
     void viewExposedRectChangedTimerFired();
@@ -113,7 +112,7 @@ public:
 
     virtual void updateDebugIndicator() { }
 
-    virtual void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) { }
+    virtual void waitForDidUpdateActivityState(ActivityStateChangeID) { }
 
     // Hide the content until the currently pending update arrives.
     virtual void hideContentUntilPendingUpdate() { ASSERT_NOT_REACHED(); }
@@ -134,7 +133,7 @@ public:
     virtual bool shouldCoalesceVisualEditorStateUpdates() const { return false; }
     virtual bool shouldSendWheelEventsToEventDispatcher() const { return false; }
 
-    WebPageProxy& page() const;
+    WebPageProxy* page() const;
     virtual void viewWillStartLiveResize() { };
     virtual void viewWillEndLiveResize() { };
 
@@ -155,10 +154,11 @@ public:
 protected:
     DrawingAreaProxy(DrawingAreaType, WebPageProxy&, WebProcessProxy&);
 
-    Ref<WebPageProxy> protectedWebPageProxy() const;
+    RefPtr<WebPageProxy> protectedWebPageProxy() const;
+    Ref<WebProcessProxy> protectedWebProcessProxy() const;
 
     DrawingAreaType m_type;
-    WeakRef<WebPageProxy> m_webPageProxy;
+    WeakPtr<WebPageProxy> m_webPageProxy;
     Ref<WebProcessProxy> m_webProcessProxy;
 
     WebCore::IntSize m_size;

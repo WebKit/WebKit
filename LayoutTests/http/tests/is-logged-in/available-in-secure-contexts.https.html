@@ -7,7 +7,7 @@
 <body>
 <script>
     description("Tests that IsLoggedIn is available in secure contexts.");
-    if (navigator.setLoggedIn !== undefined && typeof navigator.setLoggedIn === "function")
+    if (navigator.setStatus !== undefined && typeof navigator.setStatus === "function")
         testPassed("navigator.setLoggedIn is defined as a function on a page with protocol " + document.location.protocol);
     else
         testFailed("navigator.setLoggedIn is undefined or not of type function on a page with protocol " + document.location.protocol);

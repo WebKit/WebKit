@@ -37,7 +37,7 @@ header: "SessionState.h"
     std::optional<WallTime> expectedFileModificationTime;
 };
 
-[CustomHeader, LegacyPopulateFromEmptyConstructor] class WebKit::FrameState {
+[RefCounted, CustomHeader] class WebKit::FrameState {
     String urlString;
     String originalURLString;
     String referrer;
@@ -55,6 +55,16 @@ header: "SessionState.h"
 
     std::optional<WebKit::HTTPBody> httpBody;
 
+    Markable<WebCore::BackForwardItemIdentifier> itemID;
+    Markable<WebCore::BackForwardFrameItemIdentifier> frameItemID;
+    bool hasCachedPage;
+    String title;
+    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
+    RefPtr<WebCore::SerializedScriptValue> sessionStateObject;
+    bool wasCreatedByJSWithoutUserInteraction;
+    bool wasRestoredFromSession;
+    std::optional<WebCore::PolicyContainer> policyContainer;
+
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect;
     WebCore::IntRect unobscuredContentRect;
@@ -64,29 +74,11 @@ header: "SessionState.h"
     WebCore::FloatBoxExtent obscuredInsets;
 #endif
 
-    Vector<WebKit::FrameState> children;
-    [Validator='WebKit::FrameState::validateDocumentState(*m_documentState)'] Vector<AtomString> m_documentState;
-};
-
-[CustomHeader] struct WebKit::PageState {
-    String title;
-    WebKit::FrameState mainFrameState;
-    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
-    RefPtr<WebCore::SerializedScriptValue> sessionStateObject;
-    bool wasCreatedByJSWithoutUserInteraction;
-};
-
-[CustomHeader] struct WebKit::BackForwardListItemState {
-    WebCore::BackForwardItemIdentifier identifier;
-
-    WebKit::PageState pageState;
-    bool hasCachedPage;
-#if PLATFORM(COCOA) || PLATFORM(GTK)
-    [NotSerialized] RefPtr<WebKit::ViewSnapshot> snapshot;
-#endif
+    Vector<Ref<WebKit::FrameState>> children;
+    [Validator='WebKit::FrameState::validateDocumentState(*documentState)'] Vector<AtomString> documentState();
 };
 
 [CustomHeader] struct WebKit::BackForwardListState {
-    Vector<WebKit::BackForwardListItemState> items;
+    Vector<Ref<WebKit::FrameState>> items;
     std::optional<uint32_t> currentIndex;
 };

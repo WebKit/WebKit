@@ -15,9 +15,9 @@
 
 #include <deque>
 #include <limits>
+#include <optional>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 
 namespace rtc {
@@ -43,7 +43,7 @@ class MovingMaxCounter {
   // Advances the current time, and returns the maximum sample in the time
   // window ending at the current time. The new current time must be at least as
   // large as the old current time.
-  absl::optional<T> Max(int64_t current_time_ms);
+  std::optional<T> Max(int64_t current_time_ms);
   void Reset();
 
  private:
@@ -85,9 +85,9 @@ void MovingMaxCounter<T>::Add(const T& sample, int64_t current_time_ms) {
 }
 
 template <class T>
-absl::optional<T> MovingMaxCounter<T>::Max(int64_t current_time_ms) {
+std::optional<T> MovingMaxCounter<T>::Max(int64_t current_time_ms) {
   RollWindow(current_time_ms);
-  absl::optional<T> res;
+  std::optional<T> res;
   if (!samples_.empty()) {
     res.emplace(samples_.front().second);
   }

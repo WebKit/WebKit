@@ -1,5 +1,5 @@
 <!-- go/cmark -->
-<!--* freshness: {owner: 'eshr' reviewed: '2021-04-13'} *-->
+<!--* freshness: {owner: 'eshr' reviewed: '2024-11-06'} *-->
 
 # Video Adaptation
 
@@ -23,8 +23,8 @@ resource detects that it is overused, it calls `SetUsageState(kOveruse)`. When
 the resource is no longer overused, it can signal this using
 `SetUsageState(kUnderuse)`.
 
-There are two resources that are used by default on all video tracks: Quality
-scaler resource and encode overuse resource.
+There are two resources that are used by default on all video tracks: the
+quality scaler and encode overuse resources.
 
 ### QP Scaler Resource
 
@@ -72,8 +72,8 @@ status and the `Adaptation` proposal.
 There are 3 degradation preferences, described in the
 [RtpParameters][RtpParameters] header. These are
 
-*   `MAINTIAIN_FRAMERATE`: Adapt video resolution
-*   `MAINTIAIN_RESOLUTION`: Adapt video frame-rate.
+*   `MAINTAIN_FRAMERATE`: Adapt video resolution
+*   `MAINTAIN_RESOLUTION`: Adapt video frame-rate.
 *   `BALANCED`: Adapt video frame-rate or resolution.
 
 The degradation preference is set for a video track using the

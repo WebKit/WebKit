@@ -348,7 +348,7 @@ Protocol::ErrorStringOr<std::optional<int> /* saveResultIndex */> InspectorRunti
 
     InjectedScript injectedScript;
 
-    auto objectId = callArgument->getString(Protocol::Runtime::CallArgument::objectIdKey);
+    auto objectId = callArgument->getString("objectId"_s);
     if (!objectId) {
         injectedScript = injectedScriptForEval(errorString, WTFMove(executionContextId));
         if (injectedScript.hasNoValue())
@@ -409,9 +409,9 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>> 
         if (!location)
             return makeUnexpected("Unexpected non-object item in locations"_s);
 
-        auto descriptor = location->getInteger(Protocol::Runtime::TypeLocation::typeInformationDescriptorKey).value_or(TypeProfilerSearchDescriptorNormal);
-        auto sourceIDString = location->getString(Protocol::Runtime::TypeLocation::sourceIDKey);
-        auto divot = location->getInteger(Protocol::Runtime::TypeLocation::divotKey).value_or(0);
+        auto descriptor = location->getInteger("typeInformationDescriptor"_s).value_or(TypeProfilerSearchDescriptorNormal);
+        auto sourceIDString = location->getString("sourceID"_s);
+        auto divot = location->getInteger("divot"_s).value_or(0);
 
         auto typeLocation = m_vm.typeProfiler()->findLocation(divot, parseInteger<uintptr_t>(sourceIDString).value(), static_cast<TypeProfilerSearchDescriptor>(descriptor), m_vm);
 

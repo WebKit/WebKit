@@ -34,15 +34,18 @@
 #include <algorithm>
 #include <complex>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IIRFilter);
 
 // The length of the memory buffers for the IIR filter. This MUST be a power of
 // two and must be greater than the possible length of the filter coefficients.
 constexpr int bufferLength = 32;
 static_assert(bufferLength >= IIRFilter::maxOrder + 1, "Internal IIR buffer length must be greater than maximum IIR Filter order.");
 
-static std::complex<double> evaluatePolynomial(const double* coefficients, std::complex<double> z, int order)
+static std::complex<double> evaluatePolynomial(std::span<const double> coefficients, std::complex<double> z, int order)
 {
     // Use Horner's method to evaluate the polynomial P(z) = sum(coef[k]*z^k, k, 0, order);
     std::complex<double> result = 0;
@@ -66,7 +69,7 @@ void IIRFilter::reset()
     m_bufferIndex = 0;
 }
 
-void IIRFilter::process(const float* source, float* destination, size_t framesToProcess)
+void IIRFilter::process(std::span<const float> source, std::span<float> destination)
 {
     // Compute
     //
@@ -77,11 +80,8 @@ void IIRFilter::process(const float* source, float* destination, size_t framesTo
     // This is a Direct Form I implementation of an IIR Filter. Should we
     // consider doing a different implementation such as Transposed Direct Form
     // II?
-    const double* feedback = m_feedback.data();
-    const double* feedforward = m_feedforward.data();
-
-    ASSERT(feedback);
-    ASSERT(feedforward);
+    auto feedback = m_feedback.span();
+    auto feedforward = m_feedforward.span();
 
     // Sanity check to see if the feedback coefficients have been scaled appropriately. It must be EXACTLY 1!
     ASSERT(feedback[0] == 1);
@@ -90,10 +90,10 @@ void IIRFilter::process(const float* source, float* destination, size_t framesTo
     int feedforwardLength = m_feedforward.size();
     int minLength = std::min(feedbackLength, feedforwardLength);
 
-    double* xBuffer = m_xBuffer.data();
-    double* yBuffer = m_yBuffer.data();
+    auto xBuffer = m_xBuffer.span();
+    auto yBuffer = m_yBuffer.span();
 
-    for (size_t n = 0; n < framesToProcess; ++n) {
+    for (size_t n = 0; n < source.size(); ++n) {
         // To help minimize roundoff, we compute using double's, even though the
         // filter coefficients only have single precision values.
         double yn = feedforward[0] * source[n];
@@ -122,7 +122,7 @@ void IIRFilter::process(const float* source, float* destination, size_t framesTo
     }
 }
 
-void IIRFilter::getFrequencyResponse(unsigned length, const float* frequency, float* magResponse, float* phaseResponse)
+void IIRFilter::getFrequencyResponse(unsigned length, std::span<const float> frequency, std::span<float> magResponse, std::span<float> phaseResponse)
 {
     // Evaluate the z-transform of the filter at the given normalized frequencies
     // from 0 to 1. (One corresponds to the Nyquist frequency.)
@@ -148,8 +148,8 @@ void IIRFilter::getFrequencyResponse(unsigned length, const float* frequency, fl
             double omega = -piDouble * frequency[k];
             auto zRecip = std::complex<double>(cos(omega), sin(omega));
 
-            auto numerator = evaluatePolynomial(m_feedforward.data(), zRecip, m_feedforward.size() - 1);
-            auto denominator = evaluatePolynomial(m_feedback.data(), zRecip, m_feedback.size() - 1);
+            auto numerator = evaluatePolynomial(m_feedforward.span(), zRecip, m_feedforward.size() - 1);
+            auto denominator = evaluatePolynomial(m_feedback.span(), zRecip, m_feedback.size() - 1);
             auto response = numerator / denominator;
             magResponse[k] = static_cast<float>(std::abs(response));
             phaseResponse[k] = static_cast<float>(atan2(imag(response), real(response)));
@@ -201,16 +201,18 @@ double IIRFilter::tailTime(double sampleRate, bool isFilterStable)
     input[0] = 1;
 
     // Process the first block and get the max magnitude of the output.
-    process(input.data(), output.data(), AudioUtilities::renderQuantumSize);
-    magnitudes[0] = VectorMath::maximumMagnitude(output.data(), AudioUtilities::renderQuantumSize);
+    auto inputSpan = input.span().first(AudioUtilities::renderQuantumSize);
+    auto outputSpan = output.span().first(AudioUtilities::renderQuantumSize);
+    process(inputSpan, outputSpan);
+    magnitudes[0] = VectorMath::maximumMagnitude(outputSpan);
 
     // Process the rest of the signal, getting the max magnitude of the
     // output for each block.
     input[0] = 0;
 
     for (int k = 1; k < numberOfBlocks; ++k) {
-        process(input.data(), output.data(), AudioUtilities::renderQuantumSize);
-        magnitudes[k] = VectorMath::maximumMagnitude(output.data(), AudioUtilities::renderQuantumSize);
+        process(inputSpan, output.span());
+        magnitudes[k] = VectorMath::maximumMagnitude(outputSpan);
     }
 
     // Done computing the impulse response; reset the state so the actual node

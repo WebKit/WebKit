@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+function error(e)
+{
+    let d = document;
+    let p = d.createElement("p");
+    p.innerText = `Error. Failed to get position: ${e.code}: ${e.message}`;
+    d.body.appendChild(p);
+}
+
+function success(position)
+{
+    let d = document;
+    let p = d.createElement("p");
+    p.innerText = `Success! Latitude: ${position.latitude}, Longitude: ${position.longitude}, Accuracy: ${position.accuracy}.`;
+    d.body.appendChild(p);
+}
+
+onload = () => {
+    navigator.geolocation.watchPosition(success, error, { enableHighAccuracy: true, timeout: 1000 });
+    parent.postMessage("iframeLoaded");
+};
+</script>
+</body>
+</html>

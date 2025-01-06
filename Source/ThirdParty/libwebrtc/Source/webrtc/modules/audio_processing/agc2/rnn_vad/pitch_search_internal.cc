@@ -182,11 +182,11 @@ void ComputeAutoCorrelation(
 // Searches the strongest pitch period at 24 kHz and returns its inverted lag at
 // 48 kHz.
 int ComputePitchPeriod48kHz(
-    rtc::ArrayView<const float, kBufSize24kHz> pitch_buffer,
+    rtc::ArrayView<const float, kBufSize24kHz> /* pitch_buffer */,
     rtc::ArrayView<const int> inverted_lags,
     rtc::ArrayView<const float, kInitialNumLags24kHz> auto_correlation,
     rtc::ArrayView<const float, kRefineNumLags24kHz> y_energy,
-    const VectorMath& vector_math) {
+    const VectorMath& /* vector_math */) {
   static_assert(kMaxPitch24kHz > kInitialNumLags24kHz, "");
   static_assert(kMaxPitch24kHz < kBufSize24kHz, "");
   int best_inverted_lag = 0;     // Pitch period.

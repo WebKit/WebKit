@@ -27,21 +27,22 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "AudioTrackPrivate.h"
+#include "InbandTextTrackPrivate.h"
 #include "MediaDescription.h"
 #include "PlatformMediaError.h"
+#include "VideoTrackPrivate.h"
 #include <wtf/MediaTime.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-class AudioTrackPrivate;
-class InbandTextTrackPrivate;
 class MediaSample;
 class MediaDescription;
 class PlatformTimeRanges;
-class VideoTrackPrivate;
 
 struct SourceBufferEvictionData {
     uint64_t contentSize { 0 };
@@ -72,18 +73,27 @@ public:
         struct AudioTrackInformation {
             RefPtr<MediaDescription> description;
             RefPtr<AudioTrackPrivate> track;
+
+            RefPtr<MediaDescription> protectedDescription() const { return description; }
+            RefPtr<AudioTrackPrivate> protectedTrack() const { return track; }
         };
         Vector<AudioTrackInformation> audioTracks;
 
         struct VideoTrackInformation {
             RefPtr<MediaDescription> description;
             RefPtr<VideoTrackPrivate> track;
+
+            RefPtr<MediaDescription> protectedDescription() const { return description; }
+            RefPtr<VideoTrackPrivate> protectedTrack() const { return track; }
         };
         Vector<VideoTrackInformation> videoTracks;
 
         struct TextTrackInformation {
             RefPtr<MediaDescription> description;
             RefPtr<InbandTextTrackPrivate> track;
+
+            RefPtr<MediaDescription> protectedDescription() const { return description; }
+            RefPtr<InbandTextTrackPrivate> protectedTrack() const { return track; }
         };
         Vector<TextTrackInformation> textTracks;
     };
@@ -95,6 +105,7 @@ public:
     virtual void sourceBufferPrivateDidDropSample() = 0;
     virtual void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) = 0;
     virtual void sourceBufferPrivateEvictionDataChanged(const SourceBufferEvictionData&) { }
+    virtual Ref<MediaPromise> sourceBufferPrivateDidAttach(InitializationSegment&&) = 0;
 };
 
 } // namespace WebCore

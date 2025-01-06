@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -10,7 +10,7 @@
  */
 
 #include <assert.h>
-#include <emmintrin.h>
+#include <smmintrin.h>
 #include "aom_dsp/x86/synonyms.h"
 
 #include "config/av1_rtcd.h"
@@ -20,7 +20,7 @@
 // We actually use the 4x4 pixels to calculate correlations corresponding to
 // the top-left 3x3 pixels, so this function must be called with 1x1 overlap,
 // moving the window along/down by 3 pixels at a time.
-INLINE static void horver_correlation_4x4(const int16_t *diff, int stride,
+static inline void horver_correlation_4x4(const int16_t *diff, int stride,
                                           __m128i *xy_sum_32,
                                           __m128i *xz_sum_32, __m128i *x_sum_32,
                                           __m128i *x2_sum_32) {
@@ -29,10 +29,8 @@ INLINE static void horver_correlation_4x4(const int16_t *diff, int stride,
   //                      [ i j k l ]
   //                      [ m n o p ]
 
-  const __m128i pixelsa = _mm_set_epi64x(*(int64_t *)&diff[0 * stride],
-                                         *(int64_t *)&diff[2 * stride]);
-  const __m128i pixelsb = _mm_set_epi64x(*(int64_t *)&diff[1 * stride],
-                                         *(int64_t *)&diff[3 * stride]);
+  const __m128i pixelsa = xx_loadu_2x64(&diff[0 * stride], &diff[2 * stride]);
+  const __m128i pixelsb = xx_loadu_2x64(&diff[1 * stride], &diff[3 * stride]);
   // pixelsa = [d c b a l k j i] as i16
   // pixelsb = [h g f e p o n m] as i16
 

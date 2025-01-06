@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -13,7 +13,9 @@
 
 #include "config/av1_rtcd.h"
 
+#if CONFIG_SVT_AV1
 #include "third_party/SVT-AV1/convolve_2d_avx2.h"
+#endif
 
 #include "aom_dsp/x86/convolve_avx2.h"
 #include "aom_dsp/aom_filter.h"
@@ -21,13 +23,11 @@
 
 #include "av1/common/convolve.h"
 
-void av1_convolve_2d_sr_general_avx2(const uint8_t *src, int src_stride,
-                                     uint8_t *dst, int dst_stride, int w, int h,
-                                     const InterpFilterParams *filter_params_x,
-                                     const InterpFilterParams *filter_params_y,
-                                     const int subpel_x_qn,
-                                     const int subpel_y_qn,
-                                     ConvolveParams *conv_params) {
+static void convolve_2d_sr_general_avx2(
+    const uint8_t *src, int src_stride, uint8_t *dst, int dst_stride, int w,
+    int h, const InterpFilterParams *filter_params_x,
+    const InterpFilterParams *filter_params_y, const int subpel_x_qn,
+    const int subpel_y_qn, ConvolveParams *conv_params) {
   if (filter_params_x->taps > 8) {
     const int bd = 8;
     int im_stride = 8, i;
@@ -143,19 +143,25 @@ void av1_convolve_2d_sr_general_avx2(const uint8_t *src, int src_stride,
 void av1_convolve_2d_sr_avx2(
     const uint8_t *src, int32_t src_stride, uint8_t *dst, int32_t dst_stride,
     int32_t w, int32_t h, const InterpFilterParams *filter_params_x,
-    const InterpFilterParams *filter_params_y, const int32_t subpel_x_q4,
-    const int32_t subpel_y_q4, ConvolveParams *conv_params) {
-  const int32_t tap_x = get_filter_tap(filter_params_x, subpel_x_q4);
-  const int32_t tap_y = get_filter_tap(filter_params_y, subpel_y_q4);
+    const InterpFilterParams *filter_params_y, const int32_t subpel_x_qn,
+    const int32_t subpel_y_qn, ConvolveParams *conv_params) {
+#if CONFIG_SVT_AV1
+  const int32_t tap_x = get_filter_tap(filter_params_x, subpel_x_qn);
+  const int32_t tap_y = get_filter_tap(filter_params_y, subpel_y_qn);
 
   const bool use_general = (tap_x == 12 || tap_y == 12);
   if (use_general) {
-    av1_convolve_2d_sr_general_avx2(src, src_stride, dst, dst_stride, w, h,
-                                    filter_params_x, filter_params_y,
-                                    subpel_x_q4, subpel_y_q4, conv_params);
+    convolve_2d_sr_general_avx2(src, src_stride, dst, dst_stride, w, h,
+                                filter_params_x, filter_params_y, subpel_x_qn,
+                                subpel_y_qn, conv_params);
   } else {
     av1_convolve_2d_sr_specialized_avx2(src, src_stride, dst, dst_stride, w, h,
                                         filter_params_x, filter_params_y,
-                                        subpel_x_q4, subpel_y_q4, conv_params);
+                                        subpel_x_qn, subpel_y_qn, conv_params);
   }
+#else
+  convolve_2d_sr_general_avx2(src, src_stride, dst, dst_stride, w, h,
+                              filter_params_x, filter_params_y, subpel_x_qn,
+                              subpel_y_qn, conv_params);
+#endif
 }

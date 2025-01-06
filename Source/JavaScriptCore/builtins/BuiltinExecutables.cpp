@@ -31,7 +31,10 @@
 #include "JSCJSValueInlines.h"
 #include "Parser.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -91,11 +94,11 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     RELEASE_ASSERT(!view.isNull());
     RELEASE_ASSERT(view.is8Bit());
     auto characters = view.span8();
-    const char* regularFunctionBegin = "(function (";
-    const char* asyncFunctionBegin = "(async function (";
+    auto regularFunctionBegin = "(function ("_span;
+    auto asyncFunctionBegin = "(async function ("_span;
     RELEASE_ASSERT(view.length() >= strlen("(function (){})"));
-    bool isAsyncFunction = view.length() >= strlen("(async function (){})") && !memcmp(characters.data(), asyncFunctionBegin, strlen(asyncFunctionBegin));
-    RELEASE_ASSERT(isAsyncFunction || !memcmp(characters.data(), regularFunctionBegin, strlen(regularFunctionBegin)));
+    bool isAsyncFunction = view.length() >= strlen("(async function (){})") && spanHasPrefix(characters, asyncFunctionBegin);
+    RELEASE_ASSERT(isAsyncFunction || spanHasPrefix(characters, regularFunctionBegin));
 
     unsigned asyncOffset = isAsyncFunction ? strlen("async ") : 0;
     unsigned parametersStart = strlen("function (") + asyncOffset;
@@ -164,11 +167,11 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
             ++endColumn;
 
         if (!isInStrictContext && (characters[i] == '"' || characters[i] == '\'')) {
-            const unsigned useStrictLength = strlen("use strict");
-            if (i + 1 + useStrictLength < view.length()) {
-                if (!memcmp(characters.data() + i + 1, "use strict", useStrictLength)) {
+            const auto useStrict = "use strict"_span;
+            if (i + 1 + useStrict.size() < view.length()) {
+                if (spanHasPrefix(characters.subspan(i + 1), useStrict)) {
                     isInStrictContext = true;
-                    i += 1 + useStrictLength;
+                    i += 1 + useStrict.size();
                 }
             }
         }
@@ -208,7 +211,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
 
     FunctionMetadataNode metadata(
         start, end, startColumn, endColumn, source.startOffset() + functionKeywordStart, source.startOffset() + functionNameStart, source.startOffset() + parametersStart, implementationVisibility,
-        isInStrictContext ? StrictModeLexicalFeature : NoLexicalFeatures, constructorKind, constructorKind == ConstructorKind::Extends ? SuperBinding::Needed : SuperBinding::NotNeeded,
+        isInStrictContext ? StrictModeLexicallyScopedFeature : NoLexicallyScopedFeatures, constructorKind, constructorKind == ConstructorKind::Extends ? SuperBinding::Needed : SuperBinding::NotNeeded,
         parameterCount, parseMode, isArrowFunctionBodyExpression);
 
     metadata.finishParsing(newSource, Identifier(), FunctionMode::FunctionExpression);
@@ -221,7 +224,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
         JSParserBuiltinMode builtinMode = isBuiltinDefaultClassConstructor ? JSParserBuiltinMode::NotBuiltin : JSParserBuiltinMode::Builtin;
         std::unique_ptr<ProgramNode> program = parseRootNode<ProgramNode>(
             vm, source, implementationVisibility, builtinMode,
-            JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, error,
+            NoLexicallyScopedFeatures, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, error,
             constructorKind, &positionBeforeLastNewlineFromParser);
 
         if (program) {
@@ -302,3 +305,5 @@ JSC_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_EXECUTABLES)
 #undef DEFINE_BUILTIN_EXECUTABLES
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

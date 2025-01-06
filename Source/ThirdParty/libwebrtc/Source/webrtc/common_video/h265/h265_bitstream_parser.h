@@ -14,31 +14,33 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/video_codecs/bitstream_parser.h"
 #include "common_video/h265/h265_pps_parser.h"
 #include "common_video/h265/h265_sps_parser.h"
 #include "common_video/h265/h265_vps_parser.h"
 #include "rtc_base/containers/flat_map.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 // Stateful H265 bitstream parser (due to VPS/SPS/PPS). Used to parse out QP
 // values from the bitstream.
-class H265BitstreamParser : public BitstreamParser {
+class RTC_EXPORT H265BitstreamParser : public BitstreamParser {
  public:
   H265BitstreamParser();
   ~H265BitstreamParser() override;
 
   // New interface.
   void ParseBitstream(rtc::ArrayView<const uint8_t> bitstream) override;
-  absl::optional<int> GetLastSliceQp() const override;
+  std::optional<int> GetLastSliceQp() const override;
 
-  static absl::optional<uint32_t> ParsePpsIdFromSliceSegmentLayerRbsp(
-      const uint8_t* data,
-      size_t length,
+  std::optional<uint32_t> GetLastSlicePpsId() const;
+
+  static std::optional<uint32_t> ParsePpsIdFromSliceSegmentLayerRbsp(
+      rtc::ArrayView<const uint8_t> data,
       uint8_t nalu_type);
 
  protected:
@@ -47,9 +49,8 @@ class H265BitstreamParser : public BitstreamParser {
     kInvalidStream,
     kUnsupportedStream,
   };
-  void ParseSlice(const uint8_t* slice, size_t length);
-  Result ParseNonParameterSetNalu(const uint8_t* source,
-                                  size_t source_length,
+  void ParseSlice(rtc::ArrayView<const uint8_t> slice);
+  Result ParseNonParameterSetNalu(rtc::ArrayView<const uint8_t> source,
                                   uint8_t nalu_type);
 
   const H265PpsParser::PpsState* GetPPS(uint32_t id) const;
@@ -62,8 +63,8 @@ class H265BitstreamParser : public BitstreamParser {
   flat_map<uint32_t, H265PpsParser::PpsState> pps_;
 
   // Last parsed slice QP.
-  absl::optional<int32_t> last_slice_qp_delta_;
-  absl::optional<uint32_t> last_slice_pps_id_;
+  std::optional<int32_t> last_slice_qp_delta_;
+  std::optional<uint32_t> last_slice_pps_id_;
 };
 
 }  // namespace webrtc

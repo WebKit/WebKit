@@ -22,6 +22,7 @@
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/internal/default_socket_server.h"
+#include "rtc_base/network/received_packet.h"
 #include "rtc_base/null_socket_server.h"
 #include "rtc_base/physical_socket_server.h"
 #include "rtc_base/ref_counted_object.h"
@@ -84,20 +85,20 @@ class SocketClient : public TestGenerator, public sigslot::has_slots<> {
       : socket_(AsyncUDPSocket::Create(socket, addr)),
         post_thread_(post_thread),
         post_handler_(phandler) {
-    socket_->SignalReadPacket.connect(this, &SocketClient::OnPacket);
+    socket_->RegisterReceivedPacketCallback(
+        [&](rtc::AsyncPacketSocket* socket, const rtc::ReceivedPacket& packet) {
+          OnPacket(socket, packet);
+        });
   }
 
   ~SocketClient() override { delete socket_; }
 
   SocketAddress address() const { return socket_->GetLocalAddress(); }
 
-  void OnPacket(AsyncPacketSocket* socket,
-                const char* buf,
-                size_t size,
-                const SocketAddress& remote_addr,
-                const int64_t& packet_time_us) {
-    EXPECT_EQ(size, sizeof(uint32_t));
-    uint32_t prev = reinterpret_cast<const uint32_t*>(buf)[0];
+  void OnPacket(AsyncPacketSocket* socket, const rtc::ReceivedPacket& packet) {
+    EXPECT_EQ(packet.payload().size(), sizeof(uint32_t));
+    uint32_t prev =
+        reinterpret_cast<const uint32_t*>(packet.payload().data())[0];
     uint32_t result = Next(prev);
 
     post_thread_->PostDelayedTask([post_handler_ = post_handler_,

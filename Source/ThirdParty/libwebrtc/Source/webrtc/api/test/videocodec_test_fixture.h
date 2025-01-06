@@ -11,14 +11,18 @@
 #ifndef API_TEST_VIDEOCODEC_TEST_FIXTURE_H_
 #define API_TEST_VIDEOCODEC_TEST_FIXTURE_H_
 
+#include <cstddef>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "api/test/videocodec_test_stats.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
 #include "api/video_codecs/h264_profile_level_id.h"
-#include "api/video_codecs/video_decoder_factory.h"
-#include "api/video_codecs/video_encoder_factory.h"
-#include "modules/video_coding/include/video_codec_interface.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_codec.h"
+#include "modules/video_coding/codecs/h264/include/h264_globals.h"
 
 namespace webrtc {
 namespace test {
@@ -91,15 +95,15 @@ class VideoCodecTestFixture {
     std::string filename;
     // Dimensions of test clip. Falls back to (codec_settings.width/height) if
     // not set.
-    absl::optional<int> clip_width;
-    absl::optional<int> clip_height;
+    std::optional<int> clip_width;
+    std::optional<int> clip_height;
     // Framerate of input clip. Defaults to 30fps if not set.
-    absl::optional<int> clip_fps;
+    std::optional<int> clip_fps;
 
     // The resolution at which psnr/ssim comparisons should be made. Frames
     // will be scaled to this size if different.
-    absl::optional<int> reference_width;
-    absl::optional<int> reference_height;
+    std::optional<int> reference_width;
+    std::optional<int> reference_height;
 
     // File to process. This must be a video file in the YUV format.
     std::string filepath;
@@ -134,8 +138,8 @@ class VideoCodecTestFixture {
     // default `SdpVideoFormat` based on `codec_name`.
     // Encoder and decoder name (`SdpVideoFormat::name`) should be the same as
     // `codec_name`.
-    absl::optional<SdpVideoFormat> encoder_format;
-    absl::optional<SdpVideoFormat> decoder_format;
+    std::optional<SdpVideoFormat> encoder_format;
+    std::optional<SdpVideoFormat> decoder_format;
 
     // H.264 specific settings.
     struct H264CodecSettings {

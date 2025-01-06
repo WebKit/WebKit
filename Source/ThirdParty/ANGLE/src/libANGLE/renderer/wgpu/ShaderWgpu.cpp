@@ -50,7 +50,16 @@ std::shared_ptr<ShaderTranslateTask> ShaderWgpu::compile(const gl::Context *cont
 
     options->validateAST = true;
 
+    options->separateCompoundStructDeclarations = true;
+
     return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTaskWgpu);
+}
+
+std::shared_ptr<ShaderTranslateTask> ShaderWgpu::load(const gl::Context *context,
+                                                      gl::BinaryInputStream *stream)
+{
+    UNREACHABLE();
+    return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTask);
 }
 
 std::string ShaderWgpu::getDebugInfo() const

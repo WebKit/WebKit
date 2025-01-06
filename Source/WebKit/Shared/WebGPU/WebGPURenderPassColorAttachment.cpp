@@ -37,13 +37,11 @@ namespace WebKit::WebGPU {
 
 std::optional<RenderPassColorAttachment> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassColorAttachment& renderPassColorAttachment)
 {
-    auto view = convertToBacking(renderPassColorAttachment.view);
-    if (!view)
-        return std::nullopt;
+    auto view = convertToBacking(renderPassColorAttachment.protectedView().get());
 
     std::optional<WebGPUIdentifier> resolveTarget;
     if (renderPassColorAttachment.resolveTarget) {
-        resolveTarget = convertToBacking(*renderPassColorAttachment.resolveTarget);
+        resolveTarget = convertToBacking(*renderPassColorAttachment.protectedResolveTarget());
         if (!resolveTarget)
             return std::nullopt;
     }
@@ -60,11 +58,11 @@ std::optional<RenderPassColorAttachment> ConvertToBackingContext::convertToBacki
 
 std::optional<WebCore::WebGPU::RenderPassColorAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassColorAttachment& renderPassColorAttachment)
 {
-    auto* view = convertTextureViewFromBacking(renderPassColorAttachment.view);
+    WeakPtr view = convertTextureViewFromBacking(renderPassColorAttachment.view);
     if (!view)
         return std::nullopt;
 
-    WebCore::WebGPU::TextureView* resolveTarget = nullptr;
+    WeakPtr<WebCore::WebGPU::TextureView> resolveTarget;
     if (renderPassColorAttachment.resolveTarget) {
         resolveTarget = convertTextureViewFromBacking(renderPassColorAttachment.resolveTarget.value());
         if (!resolveTarget)

@@ -28,6 +28,8 @@
 #include "WebPageInspectorTarget.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -39,7 +41,7 @@ namespace WebKit {
 class WebPage;
 
 class WebPageInspectorTargetController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPageInspectorTargetController);
 public:
     WebPageInspectorTargetController(WebPage&);
     ~WebPageInspectorTargetController();
@@ -52,7 +54,9 @@ public:
     void sendMessageToTargetBackend(const String& targetId, const String& message);
 
 private:
-    WebPage& m_page;
+    Ref<WebPage> protectedPage() const;
+
+    WeakRef<WebPage> m_page;
     WebPageInspectorTarget m_pageTarget;
     HashMap<String, WeakPtr<Inspector::InspectorTarget>> m_targets;
 };

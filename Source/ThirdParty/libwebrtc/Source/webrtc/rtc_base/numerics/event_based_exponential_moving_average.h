@@ -14,8 +14,7 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
-
-#include "absl/types/optional.h"
+#include <optional>
 
 namespace rtc {
 
@@ -63,7 +62,7 @@ class EventBasedExponentialMovingAverage {
   double sample_variance_ = std::numeric_limits<double>::infinity();
   // This is the ratio between variance of the estimate and variance of samples.
   double estimator_variance_ = 1;
-  absl::optional<int64_t> last_observation_timestamp_;
+  std::optional<int64_t> last_observation_timestamp_;
 };
 
 }  // namespace rtc

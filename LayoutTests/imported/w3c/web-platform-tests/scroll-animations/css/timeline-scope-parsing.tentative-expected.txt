@@ -1,9 +1,9 @@
 
-FAIL e.style['timeline-scope'] = "initial" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-scope'] = "inherit" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-scope'] = "unset" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-scope'] = "revert" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-scope'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['timeline-scope'] = "initial" should set the property value
+PASS e.style['timeline-scope'] = "inherit" should set the property value
+PASS e.style['timeline-scope'] = "unset" should set the property value
+PASS e.style['timeline-scope'] = "revert" should set the property value
+PASS e.style['timeline-scope'] = "none" should set the property value
 FAIL e.style['timeline-scope'] = "abc" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['timeline-scope'] = "  abc" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['timeline-scope'] = "aBc" should set the property value assert_not_equals: property should be set got disallowed value ""

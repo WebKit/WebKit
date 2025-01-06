@@ -25,6 +25,9 @@
 
 #include <gtest/gtest.h>
 
+#include "internal.h"
+
+
 // Test that OPENSSL_VERSION_NUMBER and OPENSSL_VERSION_TEXT are consistent.
 // Node.js parses the version out of OPENSSL_VERSION_TEXT instead of using
 // OPENSSL_VERSION_NUMBER.
@@ -43,22 +46,24 @@ TEST(CryptoTest, Strndup) {
   EXPECT_STREQ("", str.get());
 }
 
+TEST(CryptoTest, ByteSwap) {
+  EXPECT_EQ(0x04030201u, CRYPTO_bswap4(0x01020304u));
+  EXPECT_EQ(UINT64_C(0x0807060504030201),
+            CRYPTO_bswap8(UINT64_C(0x0102030405060708)));
+}
+
 #if defined(BORINGSSL_FIPS_COUNTERS)
 using CounterArray = size_t[fips_counter_max + 1];
 
 static void read_all_counters(CounterArray counters) {
-  for (fips_counter_t counter = static_cast<fips_counter_t>(0);
-       counter <= fips_counter_max;
-       counter = static_cast<fips_counter_t>(counter + 1)) {
-    counters[counter] = FIPS_read_counter(counter);
+  for (int counter = 0; counter <= fips_counter_max; counter++) {
+    counters[counter] = FIPS_read_counter(static_cast<fips_counter_t>(counter));
   }
 }
 
 static void expect_counter_delta_is_zero_except_for_a_one_at(
     CounterArray before, CounterArray after, fips_counter_t position) {
-  for (fips_counter_t counter = static_cast<fips_counter_t>(0);
-       counter <= fips_counter_max;
-       counter = static_cast<fips_counter_t>(counter + 1)) {
+  for (int counter = 0; counter <= fips_counter_max; counter++) {
     const size_t expected_delta = counter == position ? 1 : 0;
     EXPECT_EQ(after[counter], before[counter] + expected_delta) << counter;
   }

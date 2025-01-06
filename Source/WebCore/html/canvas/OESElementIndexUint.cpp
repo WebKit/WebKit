@@ -28,11 +28,11 @@
 #if ENABLE(WEBGL)
 #include "OESElementIndexUint.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(OESElementIndexUint);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OESElementIndexUint);
 
 OESElementIndexUint::OESElementIndexUint(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::OESElementIndexUint)

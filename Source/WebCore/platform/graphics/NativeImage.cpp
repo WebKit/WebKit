@@ -26,7 +26,15 @@
 #include "config.h"
 #include "NativeImage.h"
 
+#if USE(SKIA)
+#include "GLFence.h"
+#endif
+
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeImage);
 
 NativeImageBackend::NativeImageBackend() = default;
 
@@ -70,6 +78,8 @@ NativeImage::NativeImage(UniqueRef<NativeImageBackend> backend, RenderingResourc
 {
 }
 
+NativeImage::~NativeImage() = default;
+
 const PlatformImagePtr& NativeImage::platformImage() const
 {
     return m_backend->platformImage();
@@ -88,6 +98,11 @@ bool NativeImage::hasAlpha() const
 DestinationColorSpace NativeImage::colorSpace() const
 {
     return m_backend->colorSpace();
+}
+
+Headroom NativeImage::headroom() const
+{
+    return m_backend->headroom();
 }
 
 void NativeImage::replaceBackend(UniqueRef<NativeImageBackend> backend)

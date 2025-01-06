@@ -29,29 +29,24 @@
 #if PLATFORM(MAC)
 
 #import "AppKitSPI.h"
-#import "WKSafeBrowsingWarning.h"
+#import "WKTextAnimationType.h"
 #import "WKTextFinderClient.h"
-#import "WKTextIndicatorStyleType.h"
 #import "WKWebViewConfigurationPrivate.h"
-#import <WebKit/WKUIDelegatePrivate.h>
 #import "WebBackForwardList.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
-#import "WebTextReplacementData.h"
-#import "WebUnifiedTextReplacementContextData.h"
 #import "WebViewImpl.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
+#import "_WKWarningView.h"
+#import <WebCore/CGWindowUtilities.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <pal/spi/mac/NSTextFinderSPI.h>
 #import <pal/spi/mac/NSTextInputContextSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/UnifiedTextReplacementAdditions.h>
-#import <WebKitAdditions/WebMultiRepresentationHEICAttachmentAdditions.h>
-#endif
 
 _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)
 {
@@ -178,7 +173,7 @@ std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScr
     BOOL didCreateWindowSnapshotReadinessHandler = [self _holdWindowResizeSnapshotIfNeeded];
 
     [super setFrameSize:size];
-    [_safeBrowsingWarning setFrame:self.bounds];
+    [_warningView setFrame:self.bounds];
     if (_impl)
         _impl->setFrameSize(NSSizeToCGSize(size));
 
@@ -676,6 +671,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     _impl->attributedSubstringForProposedRange(nsRange, completionHandlerPtr);
 }
 
+// FIXME: actually return valid information.
+// rdar://130702677
+- (void)unionRectForCharacterRange:(NSRange)range completionHandler:(void(^)(NSRect rect))completionHandler
+{
+    completionHandler(NSZeroRect);
+}
+
 - (void)firstRectForCharacterRange:(NSRange)theRange completionHandler:(void(^)(NSRect firstRect, NSRange actualRange))completionHandlerPtr
 {
     _impl->firstRectForCharacterRange(theRange, completionHandlerPtr);
@@ -700,6 +702,24 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 {
     _impl->removeTextPlaceholder(placeholder, willInsertText, completionHandler);
 }
+
+- (void)showContextMenuForSelection:(id)sender
+{
+    _page->handleContextMenuKeyEvent();
+}
+
+#if ENABLE(WRITING_TOOLS)
+
+- (void)showWritingTools:(id)sender
+{
+    WTRequestedTool tool = (WTRequestedTool)[sender tag];
+    if (tool == -1)
+        tool = WTRequestedToolIndex;
+
+    _impl->showWritingTools(tool);
+}
+
+#endif
 
 #if ENABLE(DRAG_SUPPORT)
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -856,13 +876,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _impl->addTrackingRectWithTrackingNum(NSRectToCGRect(rect), owner, data, assumeInside, tag);
 }
 
-- (void)_addTrackingRects:(NSRect *)rects owner:(id)owner userDataList:(void **)userDataList assumeInsideList:(BOOL *)assumeInsideList trackingNums:(NSTrackingRectTag *)trackingNums count:(int)count
+- (void)_addTrackingRects:(NSRect *)rawRects owner:(id)owner userDataList:(void **)userDataList assumeInsideList:(BOOL *)assumeInsideList trackingNums:(NSTrackingRectTag *)trackingNums count:(int)count
 {
-    CGRect *cgRects = (CGRect *)calloc(1, sizeof(CGRect));
-    for (int i = 0; i < count; i++)
-        cgRects[i] = NSRectToCGRect(rects[i]);
-    _impl->addTrackingRectsWithTrackingNums(cgRects, owner, userDataList, assumeInsideList, trackingNums, count);
-    free(cgRects);
+    auto nsRects = unsafeMakeSpan(rawRects, count);
+    auto cgRects = WTF::map(nsRects, [](auto& nsRect) {
+        return NSRectToCGRect(nsRect);
+    });
+    _impl->addTrackingRectsWithTrackingNums(cgRects, owner, userDataList, assumeInsideList, trackingNums);
 }
 
 - (void)removeTrackingRect:(NSTrackingRectTag)tag
@@ -876,7 +896,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (!_impl)
         return;
-    _impl->removeTrackingRects(tags, count);
+    _impl->removeTrackingRects(unsafeMakeSpan(tags, count));
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -1077,8 +1097,23 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #endif // HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewMacAdditionsAfter.mm>
+#pragma mark – NSAdaptiveImageGlyph
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+
+- (BOOL)supportsAdaptiveImageGlyph
+{
+    if ([self _isEditable] || [_configuration _multiRepresentationHEICInsertionEnabled])
+        return _impl->isContentRichlyEditable();
+
+    return NO;
+}
+
+- (void)insertAdaptiveImageGlyph:(NSAdaptiveImageGlyph *)adaptiveImageGlyph replacementRange:(NSRange)replacementRange
+{
+    _impl->insertMultiRepresentationHEIC(adaptiveImageGlyph.imageContent, adaptiveImageGlyph.contentDescription);
+}
+
 #endif
 
 @end
@@ -1235,12 +1270,28 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-- (BOOL)_web_wantsCompleteUnifiedTextReplacementBehavior
+- (BOOL)_web_hasActiveIntelligenceTextEffects
 {
-    return [self _wantsCompleteUnifiedTextReplacementBehavior];
-}
+#if ENABLE(WRITING_TOOLS)
+    return [_intelligenceTextEffectCoordinator hasActiveEffects];
+#else
+    return NO;
 #endif
+}
+
+- (void)_web_suppressContentRelativeChildViews
+{
+#if ENABLE(WRITING_TOOLS)
+    [_intelligenceTextEffectCoordinator hideEffectsWithCompletion:^{ }];
+#endif
+}
+
+- (void)_web_restoreContentRelativeChildViews
+{
+#if ENABLE(WRITING_TOOLS)
+    [_intelligenceTextEffectCoordinator showEffectsWithCompletion:^{ }];
+#endif
+}
 
 #if ENABLE(DRAG_SUPPORT)
 
@@ -1317,6 +1368,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _impl->endPreviewPanelControl(panel);
 }
 
+#pragma mark - NSTextCheckingClient_WritingTools
+
+- (BOOL)providesWritingToolsContextMenu
+{
+    return YES;
+}
+
 @end
 
 #pragma mark -
@@ -1355,7 +1413,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSView *)_safeBrowsingWarning
 {
-    return _impl->safeBrowsingWarning();
+    return _impl->warningView();
 }
 
 - (_WKRectEdge)_pinnedState
@@ -1415,12 +1473,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_setTopContentInset:(CGFloat)contentInset
 {
-    return _impl->setTopContentInset(contentInset);
+    _impl->setTopContentInset(contentInset);
 }
 
 - (CGFloat)_topContentInset
 {
     return _impl->topContentInset();
+}
+
+- (void)_setTopContentInset:(CGFloat)contentInset immediate:(BOOL)immediate
+{
+    _impl->setTopContentInset(contentInset);
+    if (immediate)
+        _impl->flushPendingTopContentInset();
 }
 
 - (void)_setAutomaticallyAdjustsContentInsets:(BOOL)automaticallyAdjustsContentInsets
@@ -1518,16 +1583,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _page->setAlwaysShowsVerticalScroller(alwaysShowsVerticalScroller);
 }
 
-- (BOOL)_useSystemAppearance
-{
-    return _impl->useSystemAppearance();
-}
-
-- (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
-{
-    _impl->setUseSystemAppearance(useSystemAppearance);
-}
-
 - (void)_setOverlayScrollbarStyle:(_WKOverlayScrollbarStyle)scrollbarStyle
 {
     _impl->setOverlayScrollbarStyle(toCoreScrollbarStyle(scrollbarStyle));
@@ -1617,7 +1672,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)_canChangeFrameLayout:(_WKFrameHandle *)frameHandle
 {
-    if (auto* webFrameProxy = WebKit::WebFrameProxy::webFrame(frameHandle->_frameHandle->frameID()))
+    if (RefPtr webFrameProxy = WebKit::WebFrameProxy::webFrame(frameHandle->_frameHandle->frameID()))
         return _impl->canChangeFrameLayout(*webFrameProxy);
     return false;
 }
@@ -1640,6 +1695,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event
 {
     _impl->gestureEventWasNotHandledByWebCoreFromViewOnly(event);
+}
+
+- (double)minimumMagnification
+{
+    return _page->minPageZoomFactor();
 }
 
 - (void)_disableFrameSizeUpdates
@@ -1704,7 +1764,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(_WKFrameHandle *)frameHandle
 {
-    if (auto* webFrameProxy = WebKit::WebFrameProxy::webFrame(frameHandle->_frameHandle->frameID()))
+    if (RefPtr webFrameProxy = WebKit::WebFrameProxy::webFrame(frameHandle->_frameHandle->frameID()))
         return _impl->printOperationWithPrintInfo(printInfo, *webFrameProxy);
     return nil;
 }
@@ -1757,14 +1817,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _impl->mouseMoved(event);
 }
 
-- (void)_createFlagsChangedEventMonitorForTesting
+- (void)_simulateMouseEnter:(NSEvent *)event
 {
-    _impl->createFlagsChangedEventMonitor();
-}
-
-- (void)_removeFlagsChangedEventMonitorForTesting
-{
-    _impl->removeFlagsChangedEventMonitor();
+    _impl->mouseEntered(event);
 }
 
 - (void)_setFont:(NSFont *)font sender:(id)sender
@@ -1772,6 +1827,24 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _impl->setFontForWebView(font, sender);
 }
 
+- (void)_showWritingTools
+{
+#if ENABLE(WRITING_TOOLS)
+    _impl->showWritingTools();
+#endif
+}
+
 @end // WKWebView (WKPrivateMac)
+
+@implementation WKWebView (WKWindowSnapshot)
+- (NSImage *)_windowSnapshotInRect:(CGRect)rect withOptions:(CGWindowImageOption)options
+{
+    RetainPtr snapshot = WebCore::cgWindowListCreateImage(rect, kCGWindowListOptionIncludingWindow, (CGSWindowID)[[self window] windowNumber], options);
+    if (!snapshot)
+        return nil;
+
+    return [[NSImage alloc] initWithCGImage:snapshot.get() size:NSZeroSize];
+}
+@end
 
 #endif // PLATFORM(MAC)

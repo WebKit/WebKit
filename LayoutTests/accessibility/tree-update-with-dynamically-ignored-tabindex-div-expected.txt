@@ -1,0 +1,23 @@
+This test ensures that we properly update the accessibility tree when an object becomes dynamically ignored in the middle of handling children updates for it.
+
+
+{#main AXRole: AXGroup}
+
+{#div-1 AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: Foo}
+
+{#main AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: Foo}
+
+{AXRole: AXStaticText AXValue: Red}
+
+{AXRole: AXStaticText AXValue: Green}
+
+{AXRole: AXStaticText AXValue: Blue}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

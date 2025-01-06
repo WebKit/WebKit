@@ -11,12 +11,12 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSamplingOptions.h"
 #include "include/core/SkTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/ganesh/gl/GrGLBackendSurface.h"
-#include "include/gpu/gl/GrGLFunctions.h"
-#include "include/gpu/gl/GrGLInterface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLFunctions.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #include "include/private/SkColorData.h"
 #include "include/private/base/SkDebug.h"
 #include "include/private/base/SkTArray.h"
@@ -53,6 +53,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string_view>
 
 class GrAttachment;
@@ -80,6 +81,7 @@ struct SkISize;
 namespace SkSL { enum class GLSLGeneration; }
 
 namespace skgpu {
+class AutoCallback;
 class RefCntedCallback;
 class Swizzle;
 enum class Budgeted : bool;
@@ -223,7 +225,7 @@ public:
         return fProgramCache->precompileShader(this->getContext(), key, data);
     }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     bool isTestingOnlyBackendTexture(const GrBackendTexture&) const override;
 
     GrBackendRenderTarget createTestingOnlyBackendRenderTarget(SkISize dimensions,
@@ -241,9 +243,9 @@ public:
 
     void submit(GrOpsRenderPass* renderPass) override;
 
-    [[nodiscard]] GrGLsync insertFence();
-    bool waitFence(GrGLsync);
-    void deleteFence(GrGLsync);
+    [[nodiscard]] GrGLsync insertSync();
+    bool testSync(GrGLsync);
+    void deleteSync(GrGLsync);
 
     [[nodiscard]] std::unique_ptr<GrSemaphore> makeSemaphore(bool isOwned) override;
     std::unique_ptr<GrSemaphore> wrapBackendSemaphore(const GrBackendSemaphore&,
@@ -252,7 +254,10 @@ public:
     void insertSemaphore(GrSemaphore* semaphore) override;
     void waitSemaphore(GrSemaphore* semaphore) override;
 
-    void checkFinishProcs() override;
+    std::optional<GrTimerQuery> startTimerQuery() override;
+    uint64_t getTimerQueryResult(GrGLuint);
+
+    void checkFinishedCallbacks() override;
     void finishOutstandingGpuWork() override;
 
     // Calls glGetError() until no errors are reported. Also looks for OOMs.
@@ -261,8 +266,6 @@ public:
     GrGLenum getErrorAndCheckForOOM();
 
     std::unique_ptr<GrSemaphore> prepareTextureForCrossContextUsage(GrTexture*) override;
-
-    void deleteSync(GrGLsync);
 
     void bindFramebuffer(GrGLenum fboTarget, GrGLuint fboid);
     void deleteFramebuffer(GrGLuint fboid);
@@ -280,6 +283,8 @@ private:
     GrGLGpu(std::unique_ptr<GrGLContext>, GrDirectContext*);
 
     // GrGpu overrides
+    void endTimerQuery(const GrTimerQuery&) override;
+
     GrBackendTexture onCreateBackendTexture(SkISize dimensions,
                                             const GrBackendFormat&,
                                             GrRenderable,
@@ -437,8 +442,7 @@ private:
 
     void flushBlendAndColorWrite(const skgpu::BlendInfo&, const skgpu::Swizzle&);
 
-    void addFinishedProc(GrGpuFinishedProc finishedProc,
-                         GrGpuFinishedContext finishedContext) override;
+    void addFinishedCallback(skgpu::AutoCallback callback, std::optional<GrTimerQuery>) override;
 
     GrOpsRenderPass* onGetOpsRenderPass(
             GrRenderTarget*,
@@ -451,9 +455,7 @@ private:
             const skia_private::TArray<GrSurfaceProxy*, true>& sampledProxies,
             GrXferBarrierFlags renderPassXferBarriers) override;
 
-    bool onSubmitToGpu(GrSyncCpu sync) override;
-
-    bool waitSync(GrGLsync, uint64_t timeout, bool flush);
+    bool onSubmitToGpu(const GrSubmitInfo& info) override;
 
     bool copySurfaceAsDraw(GrSurface* dst, bool drawToMultisampleFBO, GrSurface* src,
                            const SkIRect& srcRect, const SkIRect& dstRect, GrSamplerState::Filter);
@@ -636,7 +638,7 @@ private:
         }
     } fHWScissorSettings;
 
-    class {
+    class HWWindowRectsState {
     public:
         bool valid() const { return kInvalidSurfaceOrigin != fRTOrigin; }
         void invalidate() { fRTOrigin = kInvalidSurfaceOrigin; }
@@ -667,13 +669,14 @@ private:
         }
 
     private:
-        enum { kInvalidSurfaceOrigin = -1 };
+        static constexpr int kInvalidSurfaceOrigin = -1;
 
         int                  fRTOrigin;
         int                  fWidth;
         int                  fHeight;
         GrWindowRectsState   fWindowState;
-    } fHWWindowRectsState;
+    };
+    HWWindowRectsState fHWWindowRectsState;
 
     GrNativeRect fHWViewport;
 

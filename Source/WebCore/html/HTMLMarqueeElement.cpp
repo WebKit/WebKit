@@ -34,11 +34,11 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderMarquee.h"
 #include "RenderStyleInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMarqueeElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLMarqueeElement);
 
 using namespace HTMLNames;
 
@@ -118,7 +118,7 @@ void HTMLMarqueeElement::collectPresentationalHintsForAttribute(const QualifiedN
         break;
     case AttributeNames::scrolldelayAttr:
         if (!value.isEmpty())
-            addHTMLNumberToStyle(style, CSSPropertyWebkitMarqueeSpeed, value);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitMarqueeSpeed, limitToOnlyHTMLNonNegative(value, RenderStyle::initialMarqueeSpeed()), CSSUnitType::CSS_MS);
         break;
     case AttributeNames::loopAttr:
         if (!value.isEmpty()) {

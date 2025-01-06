@@ -35,8 +35,11 @@
 #include "SpotLightSource.h"
 #include <wtf/Int128.h>
 #include <wtf/ParallelJobs.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FELightingNeonParallelApplier);
 
 // Otherwise: Distant Light.
 #define FLAG_POINT_LIGHT                 0x01
@@ -520,8 +523,9 @@ void FELightingNeonParallelApplier::applyPlatformWorker(ApplyParameters* paramet
 void FELightingNeonParallelApplier::applyPlatformParallel(const LightingData& data, const LightSource::PaintingData& paintingData) const
 {
     alignas(16) FloatArguments floatArguments;
+    auto bytes = data.pixels->bytes();
     ApplyParameters neonData = {
-        data.pixels->bytes(),
+        bytes.data(),
         1,
         data.width - 2,
         data.height - 2,

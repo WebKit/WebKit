@@ -1,0 +1,34 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> animations playback</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    await model.ready;
+
+    await model.play();
+    model.currentTime = model.duration - 0.01;
+    await sleepForSeconds(0.2);
+    assert_true(model.paused, "Model animation is paused after animation finishes without looping");
+}, `<model> with loop=false should stop after reaching its duration`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    await model.ready;
+
+    model.loop = true;
+    await model.play();
+    model.currentTime = model.duration - 0.01;
+    await sleepForSeconds(0.2);
+    assert_false(model.paused, "Model animation should keep playing after animation finishes with looping");
+}, `<model> with loop=true should loop and continue playing after reaching its duration`);
+
+</script>
+</body>

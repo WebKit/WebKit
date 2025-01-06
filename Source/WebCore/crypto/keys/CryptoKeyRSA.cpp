@@ -133,6 +133,7 @@ JsonWebKey CryptoKeyRSA::exportJwk() const
     JsonWebKey result;
     result.kty = "RSA"_s;
     result.key_ops = usages();
+    result.usages = usagesBitmap();
     result.ext = extractable();
 
     auto rsaComponents = exportData();
@@ -169,6 +170,23 @@ JsonWebKey CryptoKeyRSA::exportJwk() const
     }
     result.oth = WTFMove(oth);
     return result;
+}
+
+CryptoKey::Data CryptoKeyRSA::data() const
+{
+    auto jwk = exportJwk();
+    std::optional<CryptoAlgorithmIdentifier> hash;
+    if (m_restrictedToSpecificHash)
+        hash = hashAlgorithmIdentifier();
+    return CryptoKey::Data {
+        CryptoKeyClass::RSA,
+        algorithmIdentifier(),
+        extractable(),
+        usagesBitmap(),
+        std::nullopt,
+        WTFMove(jwk),
+        hash
+    };
 }
 
 } // namespace WebCore

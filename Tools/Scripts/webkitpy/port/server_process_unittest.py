@@ -101,7 +101,7 @@ class FakeServerProcess(server_process.ServerProcess):
 
 
 class TestServerProcess(unittest.TestCase):
-    stderr_print = 'print >>sys.stderr, "stderr"' if sys.version_info < (3, 0) else 'print("stderr", file=sys.stderr)'
+    stderr_print = 'print("stderr", file=sys.stderr)'
 
     def serial_test_basic(self):
         # Give -u switch to force stdout and stderr to be unbuffered for Windows

@@ -34,6 +34,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "CSSTokenizerInputStream.h"
 #include "HTMLEntityParser.h"
 #include "MarkupTokenizerInlines.h"
 #include <wtf/text/StringBuilder.h>

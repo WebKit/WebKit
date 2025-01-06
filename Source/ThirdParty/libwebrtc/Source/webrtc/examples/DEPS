@@ -1,5 +1,6 @@
 include_rules = [
   "+common_video",
+  "+json",
   "+logging/rtc_event_log/rtc_event_log_factory.h",
   "+media",
   "+modules/audio_device",

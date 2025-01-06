@@ -20,6 +20,7 @@
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "modules/portal/pipewire_utils.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/sanitizer.h"
 #include "rtc_base/string_to_number.h"
 
 namespace webrtc {
@@ -33,7 +34,16 @@ struct {
     {SPA_VIDEO_FORMAT_NV12, VideoType::kNV12},
     {SPA_VIDEO_FORMAT_YUY2, VideoType::kYUY2},
     {SPA_VIDEO_FORMAT_UYVY, VideoType::kUYVY},
-    {SPA_VIDEO_FORMAT_RGB, VideoType::kRGB24},
+    // PipeWire is big-endian for the formats, while libyuv is little-endian
+    // This means that BGRA == ARGB, RGBA == ABGR and similar
+    // This follows mapping in libcamera PipeWire plugin:
+    // https://gitlab.freedesktop.org/pipewire/pipewire/-/blob/master/spa/plugins/libcamera/libcamera-utils.cpp
+    {SPA_VIDEO_FORMAT_BGRA, VideoType::kARGB},
+    {SPA_VIDEO_FORMAT_RGBA, VideoType::kABGR},
+    {SPA_VIDEO_FORMAT_ARGB, VideoType::kBGRA},
+    {SPA_VIDEO_FORMAT_RGB, VideoType::kBGR24},
+    {SPA_VIDEO_FORMAT_BGR, VideoType::kRGB24},
+    {SPA_VIDEO_FORMAT_RGB16, VideoType::kRGB565},
 };
 
 VideoType VideoCaptureModulePipeWire::PipeWireRawFormatToVideoType(
@@ -42,13 +52,26 @@ VideoType VideoCaptureModulePipeWire::PipeWireRawFormatToVideoType(
     if (spa_and_pixel_format.spa_format == spa_format)
       return spa_and_pixel_format.video_type;
   }
-  RTC_LOG(LS_INFO) << "Unsupported pixel format: " << spa_format;
+  RTC_LOG(LS_WARNING) << "Unsupported pixel format: " << spa_format;
   return VideoType::kUnknown;
+}
+
+uint32_t VideoCaptureModulePipeWire::VideoTypeToPipeWireRawFormat(
+    VideoType type) {
+  for (const auto& spa_and_pixel_format : kSupportedFormats) {
+    if (spa_and_pixel_format.video_type == type)
+      return spa_and_pixel_format.spa_format;
+  }
+  RTC_LOG(LS_WARNING) << "Unsupported video type: " << static_cast<int>(type);
+  return SPA_VIDEO_FORMAT_UNKNOWN;
 }
 
 VideoCaptureModulePipeWire::VideoCaptureModulePipeWire(
     VideoCaptureOptions* options)
-    : VideoCaptureImpl(), session_(options->pipewire_session()) {}
+    : VideoCaptureImpl(),
+      session_(options->pipewire_session()),
+      initialized_(false),
+      started_(false) {}
 
 VideoCaptureModulePipeWire::~VideoCaptureModulePipeWire() {
   RTC_DCHECK_RUN_ON(&api_checker_);
@@ -60,12 +83,15 @@ int32_t VideoCaptureModulePipeWire::Init(const char* deviceUniqueId) {
   RTC_CHECK_RUNS_SERIALIZED(&capture_checker_);
   RTC_DCHECK_RUN_ON(&api_checker_);
 
-  absl::optional<int> id;
-  id = rtc::StringToNumber<int>(deviceUniqueId);
-  if (id == absl::nullopt)
+  auto node =
+      std::find_if(session_->nodes_.begin(), session_->nodes_.end(),
+                   [deviceUniqueId](const PipeWireNode::PipeWireNodePtr& node) {
+                     return node->unique_id() == deviceUniqueId;
+                   });
+  if (node == session_->nodes_.end())
     return -1;
 
-  node_id_ = id.value();
+  node_id_ = (*node)->id();
 
   const int len = strlen(deviceUniqueId);
   _deviceUniqueId = new (std::nothrow) char[len + 1];
@@ -75,57 +101,81 @@ int32_t VideoCaptureModulePipeWire::Init(const char* deviceUniqueId) {
 }
 
 static spa_pod* BuildFormat(spa_pod_builder* builder,
-                            uint32_t format,
+                            VideoType video_type,
                             uint32_t width,
                             uint32_t height,
                             float frame_rate) {
-  spa_pod_frame frames[2];
+  spa_pod_frame frame;
 
-  spa_pod_builder_push_object(builder, &frames[0], SPA_TYPE_OBJECT_Format,
+  const uint32_t media_subtype = video_type == VideoType::kMJPEG
+                                     ? SPA_MEDIA_SUBTYPE_mjpg
+                                     : SPA_MEDIA_SUBTYPE_raw;
+
+  spa_pod_builder_push_object(builder, &frame, SPA_TYPE_OBJECT_Format,
                               SPA_PARAM_EnumFormat);
   spa_pod_builder_add(builder, SPA_FORMAT_mediaType,
                       SPA_POD_Id(SPA_MEDIA_TYPE_video), SPA_FORMAT_mediaSubtype,
-                      SPA_POD_Id(format), 0);
+                      SPA_POD_Id(media_subtype), 0);
 
-  if (format == SPA_MEDIA_SUBTYPE_raw) {
-    spa_pod_builder_prop(builder, SPA_FORMAT_VIDEO_format, 0);
-    spa_pod_builder_push_choice(builder, &frames[1], SPA_CHOICE_Enum, 0);
-    spa_pod_builder_id(builder, kSupportedFormats[0].spa_format);
-    for (const auto& spa_and_pixel_format : kSupportedFormats)
-      spa_pod_builder_id(builder, spa_and_pixel_format.spa_format);
-    spa_pod_builder_pop(builder, &frames[1]);
+  if (media_subtype == SPA_MEDIA_SUBTYPE_raw) {
+    const uint32_t format =
+        VideoCaptureModulePipeWire::VideoTypeToPipeWireRawFormat(video_type);
+    RTC_CHECK(format != SPA_VIDEO_FORMAT_UNKNOWN);
+    spa_pod_builder_add(builder, SPA_FORMAT_VIDEO_format, SPA_POD_Id(format),
+                        0);
   }
 
-  spa_rectangle preferred_size = spa_rectangle{width, height};
-  spa_rectangle min_size = spa_rectangle{1, 1};
-  spa_rectangle max_size = spa_rectangle{4096, 4096};
-  spa_pod_builder_add(
-      builder, SPA_FORMAT_VIDEO_size,
-      SPA_POD_CHOICE_RANGE_Rectangle(&preferred_size, &min_size, &max_size), 0);
+  spa_rectangle resolution = spa_rectangle{width, height};
+  spa_pod_builder_add(builder, SPA_FORMAT_VIDEO_size,
+                      SPA_POD_Rectangle(&resolution), 0);
 
-  spa_fraction preferred_frame_rate =
-      spa_fraction{static_cast<uint32_t>(frame_rate), 1};
-  spa_fraction min_frame_rate = spa_fraction{0, 1};
-  spa_fraction max_frame_rate = spa_fraction{INT32_MAX, 1};
-  spa_pod_builder_add(
-      builder, SPA_FORMAT_VIDEO_framerate,
-      SPA_POD_CHOICE_RANGE_Fraction(&preferred_frame_rate, &min_frame_rate,
-                                    &max_frame_rate),
-      0);
+  // Framerate can be also set to 0 to be unspecified
+  if (frame_rate) {
+    spa_fraction framerate = spa_fraction{static_cast<uint32_t>(frame_rate), 1};
+    spa_pod_builder_add(builder, SPA_FORMAT_VIDEO_framerate,
+                        SPA_POD_Fraction(&framerate), 0);
+  } else {
+    // Default to some reasonable values
+    spa_fraction preferred_frame_rate =
+        spa_fraction{static_cast<uint32_t>(30), 1};
+    spa_fraction min_frame_rate = spa_fraction{1, 1};
+    spa_fraction max_frame_rate = spa_fraction{30, 1};
+    spa_pod_builder_add(
+        builder, SPA_FORMAT_VIDEO_framerate,
+        SPA_POD_CHOICE_RANGE_Fraction(&preferred_frame_rate, &min_frame_rate,
+                                      &max_frame_rate),
+        0);
+  }
 
-  return static_cast<spa_pod*>(spa_pod_builder_pop(builder, &frames[0]));
+  return static_cast<spa_pod*>(spa_pod_builder_pop(builder, &frame));
 }
 
+RTC_NO_SANITIZE("cfi-icall")
 int32_t VideoCaptureModulePipeWire::StartCapture(
     const VideoCaptureCapability& capability) {
-  RTC_CHECK_RUNS_SERIALIZED(&capture_checker_);
   RTC_DCHECK_RUN_ON(&api_checker_);
+
+  if (initialized_) {
+    if (capability == _requestedCapability) {
+      return 0;
+    } else {
+      StopCapture();
+    }
+  }
 
   uint8_t buffer[1024] = {};
 
+  // We don't want members above to be guarded by capture_checker_ as
+  // it's meant to be for members that are accessed on the API thread
+  // only when we are not capturing. The code above can be called many
+  // times while sharing instance of VideoCapturePipeWire between
+  // websites and therefore it would not follow the requirements of this
+  // checker.
+  RTC_CHECK_RUNS_SERIALIZED(&capture_checker_);
+  PipeWireThreadLoopLock thread_loop_lock(session_->pw_main_loop_);
+
   RTC_LOG(LS_VERBOSE) << "Creating new PipeWire stream for node " << node_id_;
 
-  PipeWireThreadLoopLock thread_loop_lock(session_->pw_main_loop_);
   pw_properties* reuse_props =
       pw_properties_new_string("pipewire.client.reuse=1");
   stream_ = pw_stream_new(session_->pw_core_, "camera-stream", reuse_props);
@@ -149,19 +199,15 @@ int32_t VideoCaptureModulePipeWire::StartCapture(
   uint32_t width = capability.width;
   uint32_t height = capability.height;
   uint32_t frame_rate = capability.maxFPS;
-  bool prefer_jpeg = (width > 640) || (height > 480);
+  VideoType video_type = capability.videoType;
 
   params.push_back(
-      BuildFormat(&builder, SPA_MEDIA_SUBTYPE_raw, width, height, frame_rate));
-  params.insert(
-      prefer_jpeg ? params.begin() : params.end(),
-      BuildFormat(&builder, SPA_MEDIA_SUBTYPE_mjpg, width, height, frame_rate));
+      BuildFormat(&builder, video_type, width, height, frame_rate));
 
   int res = pw_stream_connect(
       stream_, PW_DIRECTION_INPUT, node_id_,
       static_cast<enum pw_stream_flags>(PW_STREAM_FLAG_AUTOCONNECT |
-                                        PW_STREAM_FLAG_DONT_RECONNECT |
-                                        PW_STREAM_FLAG_MAP_BUFFERS),
+                                        PW_STREAM_FLAG_DONT_RECONNECT),
       params.data(), params.size());
   if (res != 0) {
     RTC_LOG(LS_ERROR) << "Could not connect to camera stream: "
@@ -170,14 +216,19 @@ int32_t VideoCaptureModulePipeWire::StartCapture(
   }
 
   _requestedCapability = capability;
+  initialized_ = true;
+
   return 0;
 }
 
 int32_t VideoCaptureModulePipeWire::StopCapture() {
-  RTC_CHECK_RUNS_SERIALIZED(&capture_checker_);
   RTC_DCHECK_RUN_ON(&api_checker_);
 
   PipeWireThreadLoopLock thread_loop_lock(session_->pw_main_loop_);
+  // PipeWireSession is guarded by API checker so just make sure we do
+  // race detection when the PipeWire loop is locked/stopped to not run
+  // any callback at this point.
+  RTC_CHECK_RUNS_SERIALIZED(&capture_checker_);
   if (stream_) {
     pw_stream_destroy(stream_);
     stream_ = nullptr;
@@ -216,6 +267,7 @@ void VideoCaptureModulePipeWire::OnStreamParamChanged(
     that->OnFormatChanged(format);
 }
 
+RTC_NO_SANITIZE("cfi-icall")
 void VideoCaptureModulePipeWire::OnFormatChanged(const struct spa_pod* format) {
   RTC_CHECK_RUNS_SERIALIZED(&capture_checker_);
 
@@ -276,10 +328,17 @@ void VideoCaptureModulePipeWire::OnFormatChanged(const struct spa_pod* format) {
         break;
       case VideoType::kYUY2:
       case VideoType::kUYVY:
+      case VideoType::kRGB565:
         stride = configured_capability_.width * 2;
         break;
       case VideoType::kRGB24:
+      case VideoType::kBGR24:
         stride = configured_capability_.width * 3;
+        break;
+      case VideoType::kARGB:
+      case VideoType::kABGR:
+      case VideoType::kBGRA:
+        stride = configured_capability_.width * 4;
         break;
       default:
         RTC_LOG(LS_ERROR) << "Unsupported video format.";
@@ -289,11 +348,11 @@ void VideoCaptureModulePipeWire::OnFormatChanged(const struct spa_pod* format) {
                         0);
   }
 
+  const int buffer_types =
+      (1 << SPA_DATA_DmaBuf) | (1 << SPA_DATA_MemFd) | (1 << SPA_DATA_MemPtr);
   spa_pod_builder_add(
       &builder, SPA_PARAM_BUFFERS_buffers, SPA_POD_CHOICE_RANGE_Int(8, 1, 32),
-      SPA_PARAM_BUFFERS_dataType,
-      SPA_POD_CHOICE_FLAGS_Int((1 << SPA_DATA_MemFd) | (1 << SPA_DATA_MemPtr)),
-      0);
+      SPA_PARAM_BUFFERS_dataType, SPA_POD_CHOICE_FLAGS_Int(buffer_types), 0);
   params.push_back(
       static_cast<spa_pod*>(spa_pod_builder_pop(&builder, &frame)));
 
@@ -316,7 +375,6 @@ void VideoCaptureModulePipeWire::OnStreamStateChanged(
   VideoCaptureModulePipeWire* that =
       static_cast<VideoCaptureModulePipeWire*>(data);
   RTC_DCHECK(that);
-  RTC_CHECK_RUNS_SERIALIZED(&that->capture_checker_);
 
   MutexLock lock(&that->api_lock_);
   switch (state) {
@@ -358,18 +416,20 @@ static VideoRotation VideorotationFromPipeWireTransform(uint32_t transform) {
   }
 }
 
+RTC_NO_SANITIZE("cfi-icall")
 void VideoCaptureModulePipeWire::ProcessBuffers() {
   RTC_CHECK_RUNS_SERIALIZED(&capture_checker_);
 
   while (pw_buffer* buffer = pw_stream_dequeue_buffer(stream_)) {
+    spa_buffer* spaBuffer = buffer->buffer;
     struct spa_meta_header* h;
     h = static_cast<struct spa_meta_header*>(
-        spa_buffer_find_meta_data(buffer->buffer, SPA_META_Header, sizeof(*h)));
+        spa_buffer_find_meta_data(spaBuffer, SPA_META_Header, sizeof(*h)));
 
     struct spa_meta_videotransform* videotransform;
     videotransform =
         static_cast<struct spa_meta_videotransform*>(spa_buffer_find_meta_data(
-            buffer->buffer, SPA_META_VideoTransform, sizeof(*videotransform)));
+            spaBuffer, SPA_META_VideoTransform, sizeof(*videotransform)));
     if (videotransform) {
       VideoRotation rotation =
           VideorotationFromPipeWireTransform(videotransform->transform);
@@ -379,11 +439,34 @@ void VideoCaptureModulePipeWire::ProcessBuffers() {
 
     if (h->flags & SPA_META_HEADER_FLAG_CORRUPTED) {
       RTC_LOG(LS_INFO) << "Dropping corruped frame.";
-    } else {
-      IncomingFrame(static_cast<unsigned char*>(buffer->buffer->datas[0].data),
-                    buffer->buffer->datas[0].chunk->size,
-                    configured_capability_);
+      pw_stream_queue_buffer(stream_, buffer);
+      continue;
     }
+
+    if (spaBuffer->datas[0].type == SPA_DATA_DmaBuf ||
+        spaBuffer->datas[0].type == SPA_DATA_MemFd) {
+      ScopedBuf frame;
+      frame.initialize(
+          static_cast<uint8_t*>(
+              mmap(nullptr, spaBuffer->datas[0].maxsize, PROT_READ, MAP_SHARED,
+                   spaBuffer->datas[0].fd, spaBuffer->datas[0].mapoffset)),
+          spaBuffer->datas[0].maxsize, spaBuffer->datas[0].fd,
+          spaBuffer->datas[0].type == SPA_DATA_DmaBuf);
+
+      if (!frame) {
+        RTC_LOG(LS_ERROR) << "Failed to mmap the memory: "
+                          << std::strerror(errno);
+        return;
+      }
+
+      IncomingFrame(
+          SPA_MEMBER(frame.get(), spaBuffer->datas[0].mapoffset, uint8_t),
+          spaBuffer->datas[0].chunk->size, configured_capability_);
+    } else {  // SPA_DATA_MemPtr
+      IncomingFrame(static_cast<uint8_t*>(spaBuffer->datas[0].data),
+                    spaBuffer->datas[0].chunk->size, configured_capability_);
+    }
+
     pw_stream_queue_buffer(stream_, buffer);
   }
 }

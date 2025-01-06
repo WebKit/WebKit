@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 
 #define WTF_MAKE_ISO_ALLOCATED_INLINE(name) WTF_MAKE_FAST_ALLOCATED
 #define WTF_MAKE_ISO_ALLOCATED_IMPL(name) struct WTFIsoMallocSemicolonifier##name { }
-#define WTF_MAKE_ISO_ALLOCATED_IMPL_TEMPLATE(name) struct WTFIsoMallocSemicolonifier##name { }
 #define WTF_MAKE_COMPACT_ISO_ALLOCATED_INLINE(name) WTF_MAKE_FAST_COMPACT_ALLOCATED
 #define WTF_MAKE_COMPACT_ISO_ALLOCATED_IMPL(name) struct WTFIsoMallocSemicolonifier##name { }
 #define WTF_MAKE_COMPACT_ISO_ALLOCATED_IMPL_TEMPLATE(name) struct WTFIsoMallocSemicolonifier##name { }
@@ -43,7 +42,6 @@
 
 #define WTF_MAKE_ISO_ALLOCATED_INLINE(name) MAKE_BISO_MALLOCED_INLINE(name, IsoHeap)
 #define WTF_MAKE_ISO_ALLOCATED_IMPL(name) MAKE_BISO_MALLOCED_IMPL(name, IsoHeap)
-#define WTF_MAKE_ISO_ALLOCATED_IMPL_TEMPLATE(name) MAKE_BISO_MALLOCED_IMPL_TEMPLATE(name, IsoHeap)
 #define WTF_MAKE_COMPACT_ISO_ALLOCATED_INLINE(name) MAKE_BISO_MALLOCED_INLINE(name, CompactIsoHeap)
 #define WTF_MAKE_COMPACT_ISO_ALLOCATED_IMPL(name) MAKE_BISO_MALLOCED_IMPL(name, CompactIsoHeap)
 #define WTF_MAKE_COMPACT_ISO_ALLOCATED_IMPL_TEMPLATE(name) MAKE_BISO_MALLOCED_IMPL_TEMPLATE(name, IsoHeap)

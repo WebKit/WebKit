@@ -19,14 +19,14 @@
 namespace webrtc {
 
 VideoSourceRestrictions::VideoSourceRestrictions()
-    : max_pixels_per_frame_(absl::nullopt),
-      target_pixels_per_frame_(absl::nullopt),
-      max_frame_rate_(absl::nullopt) {}
+    : max_pixels_per_frame_(std::nullopt),
+      target_pixels_per_frame_(std::nullopt),
+      max_frame_rate_(std::nullopt) {}
 
 VideoSourceRestrictions::VideoSourceRestrictions(
-    absl::optional<size_t> max_pixels_per_frame,
-    absl::optional<size_t> target_pixels_per_frame,
-    absl::optional<double> max_frame_rate)
+    std::optional<size_t> max_pixels_per_frame,
+    std::optional<size_t> target_pixels_per_frame,
+    std::optional<double> max_frame_rate)
     : max_pixels_per_frame_(std::move(max_pixels_per_frame)),
       target_pixels_per_frame_(std::move(target_pixels_per_frame)),
       max_frame_rate_(std::move(max_frame_rate)) {
@@ -51,32 +51,32 @@ std::string VideoSourceRestrictions::ToString() const {
   return ss.Release();
 }
 
-const absl::optional<size_t>& VideoSourceRestrictions::max_pixels_per_frame()
+const std::optional<size_t>& VideoSourceRestrictions::max_pixels_per_frame()
     const {
   return max_pixels_per_frame_;
 }
 
-const absl::optional<size_t>& VideoSourceRestrictions::target_pixels_per_frame()
+const std::optional<size_t>& VideoSourceRestrictions::target_pixels_per_frame()
     const {
   return target_pixels_per_frame_;
 }
 
-const absl::optional<double>& VideoSourceRestrictions::max_frame_rate() const {
+const std::optional<double>& VideoSourceRestrictions::max_frame_rate() const {
   return max_frame_rate_;
 }
 
 void VideoSourceRestrictions::set_max_pixels_per_frame(
-    absl::optional<size_t> max_pixels_per_frame) {
+    std::optional<size_t> max_pixels_per_frame) {
   max_pixels_per_frame_ = std::move(max_pixels_per_frame);
 }
 
 void VideoSourceRestrictions::set_target_pixels_per_frame(
-    absl::optional<size_t> target_pixels_per_frame) {
+    std::optional<size_t> target_pixels_per_frame) {
   target_pixels_per_frame_ = std::move(target_pixels_per_frame);
 }
 
 void VideoSourceRestrictions::set_max_frame_rate(
-    absl::optional<double> max_frame_rate) {
+    std::optional<double> max_frame_rate) {
   max_frame_rate_ = std::move(max_frame_rate);
 }
 

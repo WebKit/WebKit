@@ -32,8 +32,10 @@
 #include "CSSValueList.h"
 #include "IntRect.h"
 #include "NodeRenderStyle.h"
+#include "RenderStyleDifference.h"
 #include "SVGElement.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -53,7 +55,6 @@ Ref<SVGRenderStyle> SVGRenderStyle::createDefaultStyle()
 SVGRenderStyle::SVGRenderStyle()
     : m_fillData(defaultSVGStyle().m_fillData)
     , m_strokeData(defaultSVGStyle().m_strokeData)
-    , m_textData(defaultSVGStyle().m_textData)
     , m_inheritedResourceData(defaultSVGStyle().m_inheritedResourceData)
     , m_stopData(defaultSVGStyle().m_stopData)
     , m_miscData(defaultSVGStyle().m_miscData)
@@ -65,7 +66,6 @@ SVGRenderStyle::SVGRenderStyle()
 SVGRenderStyle::SVGRenderStyle(CreateDefaultType)
     : m_fillData(StyleFillData::create())
     , m_strokeData(StyleStrokeData::create())
-    , m_textData(StyleTextData::create())
     , m_inheritedResourceData(StyleInheritedResourceData::create())
     , m_stopData(StyleStopData::create())
     , m_miscData(StyleMiscData::create())
@@ -80,12 +80,12 @@ inline SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
     , m_nonInheritedFlags(other.m_nonInheritedFlags)
     , m_fillData(other.m_fillData)
     , m_strokeData(other.m_strokeData)
-    , m_textData(other.m_textData)
     , m_inheritedResourceData(other.m_inheritedResourceData)
     , m_stopData(other.m_stopData)
     , m_miscData(other.m_miscData)
     , m_layoutData(other.m_layoutData)
 {
+    ASSERT(other == *this, "SVGRenderStyle should be properly copied.");
 }
 
 Ref<SVGRenderStyle> SVGRenderStyle::copy() const
@@ -99,7 +99,6 @@ bool SVGRenderStyle::operator==(const SVGRenderStyle& other) const
 {
     return m_fillData == other.m_fillData
         && m_strokeData == other.m_strokeData
-        && m_textData == other.m_textData
         && m_stopData == other.m_stopData
         && m_miscData == other.m_miscData
         && m_layoutData == other.m_layoutData
@@ -112,7 +111,6 @@ bool SVGRenderStyle::inheritedEqual(const SVGRenderStyle& other) const
 {
     return m_fillData == other.m_fillData
         && m_strokeData == other.m_strokeData
-        && m_textData == other.m_textData
         && m_inheritedResourceData == other.m_inheritedResourceData
         && m_inheritedFlags == other.m_inheritedFlags;
 }
@@ -121,7 +119,6 @@ void SVGRenderStyle::inheritFrom(const SVGRenderStyle& other)
 {
     m_fillData = other.m_fillData;
     m_strokeData = other.m_strokeData;
-    m_textData = other.m_textData;
     m_inheritedResourceData = other.m_inheritedResourceData;
 
     m_inheritedFlags = other.m_inheritedFlags;
@@ -135,7 +132,7 @@ void SVGRenderStyle::copyNonInheritedFrom(const SVGRenderStyle& other)
     m_layoutData = other.m_layoutData;
 }
 
-static bool colorChangeRequiresRepaint(const StyleColor& a, const StyleColor& b, bool currentColorDiffers)
+static bool colorChangeRequiresRepaint(const Style::Color& a, const Style::Color& b, bool currentColorDiffers)
 {
     if (a != b)
         return true;
@@ -150,10 +147,6 @@ static bool colorChangeRequiresRepaint(const StyleColor& a, const StyleColor& b,
 
 bool SVGRenderStyle::changeRequiresLayout(const SVGRenderStyle& other) const
 {
-    // If kerning changes, we need a relayout, to force SVGCharacterData to be recalculated in the SVGRootInlineBox.
-    if (m_textData != other.m_textData)
-        return true;
-
     // If markers change, we need a relayout, as marker boundaries are cached in RenderSVGPath.
     if (m_inheritedResourceData != other.m_inheritedResourceData)
         return true;
@@ -264,11 +257,6 @@ void SVGRenderStyle::conservativelyCollectChangedAnimatableProperties(const SVGR
             changingProperties.m_properties.set(CSSPropertyStroke);
     };
 
-    auto conservativelyCollectChangedAnimatablePropertiesViaTextData = [&](auto& first, auto& second) {
-        if (first.kerning != second.kerning)
-            changingProperties.m_properties.set(CSSPropertyKerning);
-    };
-
     auto conservativelyCollectChangedAnimatablePropertiesViaStopData = [&](auto& first, auto& second) {
         if (first.opacity != second.opacity)
             changingProperties.m_properties.set(CSSPropertyStopOpacity);
@@ -302,6 +290,8 @@ void SVGRenderStyle::conservativelyCollectChangedAnimatableProperties(const SVGR
             changingProperties.m_properties.set(CSSPropertyX);
         if (first.y != second.y)
             changingProperties.m_properties.set(CSSPropertyY);
+        if (first.d != second.d)
+            changingProperties.m_properties.set(CSSPropertyD);
     };
 
     auto conservativelyCollectChangedAnimatablePropertiesViaInheritedResourceData = [&](auto& first, auto& second) {
@@ -333,26 +323,24 @@ void SVGRenderStyle::conservativelyCollectChangedAnimatableProperties(const SVGR
     };
 
     auto conservativelyCollectChangedAnimatablePropertiesViaNonInheritedFlags = [&](auto& first, auto& second) {
-        if (first.flagBits.dominantBaseline != second.flagBits.dominantBaseline)
-            changingProperties.m_properties.set(CSSPropertyDominantBaseline);
+        if (first.flagBits.alignmentBaseline != second.flagBits.alignmentBaseline)
+            changingProperties.m_properties.set(CSSPropertyAlignmentBaseline);
         if (first.flagBits.baselineShift != second.flagBits.baselineShift)
             changingProperties.m_properties.set(CSSPropertyBaselineShift);
-        if (first.flagBits.vectorEffect != second.flagBits.vectorEffect)
-            changingProperties.m_properties.set(CSSPropertyVectorEffect);
+        if (first.flagBits.bufferedRendering != second.flagBits.bufferedRendering)
+            changingProperties.m_properties.set(CSSPropertyBufferedRendering);
+        if (first.flagBits.dominantBaseline != second.flagBits.dominantBaseline)
+            changingProperties.m_properties.set(CSSPropertyDominantBaseline);
         if (first.flagBits.maskType != second.flagBits.maskType)
             changingProperties.m_properties.set(CSSPropertyMaskType);
-
-        // Non animated styles are followings.
-        // alignmentBaseline
-        // bufferedRendering
+        if (first.flagBits.vectorEffect != second.flagBits.vectorEffect)
+            changingProperties.m_properties.set(CSSPropertyVectorEffect);
     };
 
     if (m_fillData.ptr() != other.m_fillData.ptr())
         conservativelyCollectChangedAnimatablePropertiesViaFillData(*m_fillData, *other.m_fillData);
     if (m_strokeData != other.m_strokeData)
         conservativelyCollectChangedAnimatablePropertiesViaStrokeData(*m_strokeData, *other.m_strokeData);
-    if (m_textData != other.m_textData)
-        conservativelyCollectChangedAnimatablePropertiesViaTextData(*m_textData, *other.m_textData);
     if (m_stopData != other.m_stopData)
         conservativelyCollectChangedAnimatablePropertiesViaStopData(*m_stopData, *other.m_stopData);
     if (m_miscData != other.m_miscData)
@@ -366,5 +354,44 @@ void SVGRenderStyle::conservativelyCollectChangedAnimatableProperties(const SVGR
     if (m_nonInheritedFlags != other.m_nonInheritedFlags)
         conservativelyCollectChangedAnimatablePropertiesViaNonInheritedFlags(m_nonInheritedFlags, other.m_nonInheritedFlags);
 }
+
+#if !LOG_DISABLED
+
+void SVGRenderStyle::InheritedFlags::dumpDifferences(TextStream& ts, const SVGRenderStyle::InheritedFlags& other) const
+{
+    LOG_IF_DIFFERENT_WITH_CAST(ShapeRendering, shapeRendering);
+    LOG_IF_DIFFERENT_WITH_CAST(WindRule, clipRule);
+    LOG_IF_DIFFERENT_WITH_CAST(WindRule, fillRule);
+    LOG_IF_DIFFERENT_WITH_CAST(TextAnchor, textAnchor);
+    LOG_IF_DIFFERENT_WITH_CAST(ColorInterpolation, colorInterpolation);
+    LOG_IF_DIFFERENT_WITH_CAST(ColorInterpolation, colorInterpolationFilters);
+    LOG_IF_DIFFERENT_WITH_CAST(GlyphOrientation, glyphOrientationHorizontal);
+    LOG_IF_DIFFERENT_WITH_CAST(GlyphOrientation, glyphOrientationVertical);
+}
+
+void SVGRenderStyle::NonInheritedFlags::dumpDifferences(TextStream& ts, const SVGRenderStyle::NonInheritedFlags& other) const
+{
+    LOG_IF_DIFFERENT_WITH_CAST(AlignmentBaseline, flagBits.alignmentBaseline);
+    LOG_IF_DIFFERENT_WITH_CAST(DominantBaseline, flagBits.dominantBaseline);
+    LOG_IF_DIFFERENT_WITH_CAST(BaselineShift, flagBits.baselineShift);
+    LOG_IF_DIFFERENT_WITH_CAST(VectorEffect, flagBits.vectorEffect);
+    LOG_IF_DIFFERENT_WITH_CAST(BufferedRendering, flagBits.bufferedRendering);
+    LOG_IF_DIFFERENT_WITH_CAST(MaskType, flagBits.maskType);
+}
+
+void SVGRenderStyle::dumpDifferences(TextStream& ts, const SVGRenderStyle& other) const
+{
+    m_inheritedFlags.dumpDifferences(ts, other.m_inheritedFlags);
+    m_nonInheritedFlags.dumpDifferences(ts, other.m_nonInheritedFlags);
+
+    m_fillData->dumpDifferences(ts, other.m_fillData);
+    m_strokeData->dumpDifferences(ts, other.m_strokeData);
+    m_inheritedResourceData->dumpDifferences(ts, other.m_inheritedResourceData);
+
+    m_stopData->dumpDifferences(ts, other.m_stopData);
+    m_miscData->dumpDifferences(ts, other.m_miscData);
+    m_layoutData->dumpDifferences(ts, other.m_layoutData);
+}
+#endif
 
 }

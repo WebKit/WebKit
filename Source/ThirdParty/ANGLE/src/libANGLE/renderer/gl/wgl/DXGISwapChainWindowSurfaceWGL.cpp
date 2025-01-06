@@ -249,7 +249,7 @@ egl::Error DXGISwapChainWindowSurfaceWGL::releaseTexImage(const gl::Context *con
     return egl::NoError();
 }
 
-void DXGISwapChainWindowSurfaceWGL::setSwapInterval(EGLint interval)
+void DXGISwapChainWindowSurfaceWGL::setSwapInterval(const egl::Display *display, EGLint interval)
 {
     mSwapInterval = interval;
 }

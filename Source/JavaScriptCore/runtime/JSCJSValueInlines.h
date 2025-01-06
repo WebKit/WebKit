@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "CatchScope.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
@@ -38,7 +42,10 @@
 #include "JSObject.h"
 #include "JSStringInlines.h"
 #include "MathCommon.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringImpl.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace JSC {
 
@@ -563,11 +570,11 @@ inline bool JSValue::isInt32() const
 
 inline int64_t reinterpretDoubleToInt64(double value)
 {
-    return bitwise_cast<int64_t>(value);
+    return std::bit_cast<int64_t>(value);
 }
 inline double reinterpretInt64ToDouble(int64_t value)
 {
-    return bitwise_cast<double>(value);
+    return std::bit_cast<double>(value);
 }
 
 ALWAYS_INLINE JSValue::JSValue(EncodeAsDoubleTag, double d)
@@ -618,7 +625,7 @@ inline JSValue::JSValue(EncodeAsBigInt32Tag, int32_t value)
 #if ENABLE(WEBASSEMBLY) && USE(JSVALUE32_64)
 inline JSValue::JSValue(EncodeAsUnboxedFloatTag, float value)
 {
-    u.asBits.payload = bitwise_cast<int32_t>(value);
+    u.asBits.payload = std::bit_cast<int32_t>(value);
 }
 #endif
 
@@ -732,6 +739,28 @@ inline int32_t JSValue::bigInt32AsInt32() const
     return static_cast<int32_t>(u.asInt64 >> 16);
 }
 #endif // USE(BIGINT32)
+
+inline bool JSValue::isZeroBigInt() const
+{
+    ASSERT(isBigInt());
+#if USE(BIGINT32)
+    if (isBigInt32())
+        return !bigInt32AsInt32();
+#endif
+    ASSERT(isHeapBigInt());
+    return asHeapBigInt()->isZero();
+}
+
+inline bool JSValue::isNegativeBigInt() const
+{
+    ASSERT(isBigInt());
+#if USE(BIGINT32)
+    if (isBigInt32())
+        return bigInt32AsInt32() < 0;
+#endif
+    ASSERT(isHeapBigInt());
+    return asHeapBigInt()->sign();
+}
 
 inline bool JSValue::isSymbol() const
 {
@@ -1447,7 +1476,7 @@ ALWAYS_INLINE bool sameValue(JSGlobalObject* globalObject, JSValue a, JSValue b)
     bool yIsNaN = std::isnan(y);
     if (xIsNaN || yIsNaN)
         return xIsNaN && yIsNaN;
-    return bitwise_cast<uint64_t>(x) == bitwise_cast<uint64_t>(y);
+    return std::bit_cast<uint64_t>(x) == std::bit_cast<uint64_t>(y);
 }
 
 } // namespace JSC

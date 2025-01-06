@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-void MediaSessionCoordinatorPrivate::setLogger(const Logger& logger, const void* logIdentifier)
+void MediaSessionCoordinatorPrivate::setLogger(const Logger& logger, uint64_t logIdentifier)
 {
     m_logger = &logger;
     m_logIdentifier = logIdentifier;

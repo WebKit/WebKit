@@ -30,10 +30,16 @@
 #include <drm_fourcc.h>
 #include <glib.h>
 #include <string.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WPE {
 
 namespace DRM {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Crtc);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Connector);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Plane);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Buffer);
 
 static Property drmPropertyForName(int fd, drmModeObjectProperties* properties, const char* name)
 {
@@ -168,7 +174,9 @@ std::unique_ptr<Plane> Plane::create(int fd, Type type, drmModePlane* plane, boo
         drmPropertyForName(fd, properties.get(), "SRC_X"),
         drmPropertyForName(fd, properties.get(), "SRC_Y"),
         drmPropertyForName(fd, properties.get(), "SRC_W"),
-        drmPropertyForName(fd, properties.get(), "SRC_H")
+        drmPropertyForName(fd, properties.get(), "SRC_H"),
+        drmPropertyForName(fd, properties.get(), "FB_DAMAGE_CLIPS"),
+        drmPropertyForName(fd, properties.get(), "IN_FENCE_FD")
     };
     return makeUnique<Plane>(plane, WTFMove(formats), WTFMove(props));
 }

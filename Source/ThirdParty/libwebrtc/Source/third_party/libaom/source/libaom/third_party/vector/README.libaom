@@ -14,3 +14,4 @@ Local Modifications:
 naming convention.
 2. Removed non-global functions from vector.h.
 3. Made all non-global functions in vector.c static.
+4. Commented out unused code.

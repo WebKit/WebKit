@@ -29,6 +29,7 @@
 
 #include "CSSParserIdioms.h"
 #include <wtf/HexNumber.h>
+#include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -38,21 +39,16 @@ template <typename CharacterType>
 static inline bool isCSSTokenizerIdentifier(std::span<const CharacterType> characters)
 {
     // -?
-    while (!characters.empty() && characters.front() == '-')
-        characters = characters.subspan(1);
+    skipWhile(characters, '-');
 
     // {nmstart}
-    if (characters.empty() || !isNameStartCodePoint(characters.front()))
+    if (!skipExactly<isNameStartCodePoint>(characters))
         return false;
-    characters = characters.subspan(1);
 
     // {nmchar}*
-    for (; !characters.empty(); characters = characters.subspan(1)) {
-        if (!isNameCodePoint(characters.front()))
-            return false;
-    }
+    skipWhile<isNameCodePoint>(characters);
 
-    return true;
+    return characters.empty();
 }
 
 // "ident" from the CSS tokenizer, minus backslash-escape sequences

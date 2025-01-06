@@ -1,4 +1,16 @@
-//go:build
+// Copyright (c) 2022, Google Inc.
+//
+// Permission to use, copy, modify, and/or distribute this software for any
+// purpose with or without fee is hereby granted, provided that the above
+// copyright notice and this permission notice appear in all copies.
+//
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+// SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+// OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 // break-kat corrupts a known-answer-test input in a binary and writes the
 // corrupted binary to stdout. This is used to demonstrate that the KATs in the
@@ -10,7 +22,9 @@ import (
 	"encoding/hex"
 	"flag"
 	"fmt"
+	"io"
 	"os"
+	"os/exec"
 	"sort"
 )
 
@@ -27,7 +41,8 @@ var (
 		"SHA-1":           "132fd9bad5c1826263bafbb699f707a5",
 		"SHA-256":         "ff3b857da7236a2baa0f396b51522217",
 		"SHA-512":         "212512f8d2ad8322781c6c4d69a9daa1",
-		"TLS-KDF":         "abc3657b094c7628a0b282996fe75a75f4984fd94d4ecc2fcf53a2c469a3f731",
+		"TLS10-KDF":       "abc3657b094c7628a0b282996fe75a75f4984fd94d4ecc2fcf53a2c469a3f731",
+		"TLS12-KDF":       "c5438ee26fd4acbd259fc91855dc69bf884ee29322fcbfd2966a4623d42ec781",
 		"TLS13-KDF":       "024a0d80f357f2499a1244dac26dab66fc13ed85fca71dace146211119525874",
 		"RSA-sign":        "d2b56e53306f720d7929d8708bf46f1c22300305582b115bedcac722d8aa5ab2",
 		"RSA-verify":      "abe2cbc13d6bd39d48db5334ddbf8d070a93bdcb104e2cc5d0ee486ee295f6b31bda126c41890b98b73e70e6b65d82f95c663121755a90744c8d1c21148a1960be0eca446e9ff497f1345c537ef8119b9a4398e95c5c6de2b1c955905c5299d8ce7a3b6ab76380d9babdd15f610237e1f3f2aa1c1f1e770b62fbb596381b2ebdd77ecef9c90d4c92f7b6b05fed2936285fa94826e62055322a33b6f04c74ce69e5d8d737fb838b79d2d48e3daf71387531882531a95ac964d02ea413bf85952982bbc089527daff5b845c9a0f4d14ef1956d9c3acae882d12da66da0f35794f5ee32232333517db9315232a183b991654dbea41615345c885325926744a53915",
@@ -50,8 +65,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	if flag.NArg() != 2 || kats[flag.Arg(1)] == "" {
+	if flag.NArg() == 0 || flag.NArg() > 2 || (flag.NArg() == 2 && kats[flag.Arg(1)] == "") {
 		fmt.Fprintln(os.Stderr, "Usage: break-kat <binary path> <test to break> > output")
+		fmt.Fprintln(os.Stderr, "       break-kat <binary path>  (to run all tests)")
 		fmt.Fprintln(os.Stderr, "Possible values for <test to break>:")
 		for _, kat := range sortedKATs() {
 			fmt.Fprintln(os.Stderr, " ", kat)
@@ -60,36 +76,83 @@ func main() {
 	}
 
 	inPath := flag.Arg(0)
-	test := flag.Arg(1)
-	testInputValue, err := hex.DecodeString(kats[test])
-	if err != nil {
-		panic("invalid kat data: " + err.Error())
-	}
-
 	binaryContents, err := os.ReadFile(inPath)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(2)
 	}
 
+	if flag.NArg() == 2 {
+		breakBinary(binaryContents, flag.Arg(1), os.Stdout)
+		return
+	}
+
+	for _, test := range sortedKATs() {
+		const outFile = "test_fips_broken"
+		output, err := os.OpenFile(outFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0755)
+		if err != nil {
+			panic(err)
+		}
+		breakBinary(binaryContents, test, output)
+		output.Close()
+
+		fmt.Printf("\n### Running test for %q\n\n", test)
+		cmd := exec.Command("./" + outFile)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stdout
+		if err := cmd.Run(); err != nil {
+			fmt.Printf("(task failed with: %s)\n", err)
+		} else {
+			fmt.Println("(task exec successful)")
+		}
+		os.Remove(outFile)
+	}
+
+	for _, test := range []string{"ECDSA_PWCT", "RSA_PWCT", "CRNG"} {
+		fmt.Printf("\n### Running test for %q\n\n", test)
+
+		cmd := exec.Command("./" + inPath)
+		cmd.Env = append(cmd.Environ(), "BORINGSSL_FIPS_BREAK_TEST="+test)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stdout
+		if err := cmd.Run(); err != nil {
+			fmt.Printf("(task failed with: %s)\n", err)
+		} else {
+			fmt.Println("(task exec successful)")
+		}
+	}
+}
+
+func breakBinary(binaryContents []byte, test string, output io.Writer) {
+	testInputValue, err := hex.DecodeString(kats[test])
+	if err != nil {
+		panic("invalid KAT data: " + err.Error())
+	}
+
 	i := bytes.Index(binaryContents, testInputValue)
 	if i < 0 {
-		fmt.Fprintln(os.Stderr, "Expected test input value was not found in binary.")
+		fmt.Fprintln(os.Stderr, "Expected test input value for", test, "was not found in binary.")
 		os.Exit(3)
 	}
+
+	brokenContents := make([]byte, len(binaryContents))
+	copy(brokenContents, binaryContents)
 
 	// Zero out the entire value because the compiler may produce code
 	// where parts of the value are embedded in the instructions.
 	for j := range testInputValue {
-		binaryContents[i+j] = 0
+		brokenContents[i+j] = 0
 	}
 
-	if bytes.Index(binaryContents, testInputValue) >= 0 {
+	if bytes.Index(brokenContents, testInputValue) >= 0 {
 		fmt.Fprintln(os.Stderr, "Test input value was still found after erasing it. Second copy?")
 		os.Exit(4)
 	}
 
-	os.Stdout.Write(binaryContents)
+	if n, err := output.Write(brokenContents); err != nil || n != len(brokenContents) {
+		fmt.Fprintf(os.Stderr, "Bad write: %s (%d vs expected %d)\n", err, n, len(brokenContents))
+		os.Exit(1)
+	}
 }
 
 func sortedKATs() []string {

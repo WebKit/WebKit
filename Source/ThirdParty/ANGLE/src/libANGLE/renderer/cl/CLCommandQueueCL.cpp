@@ -40,7 +40,7 @@ void CheckCreateEvent(cl_event nativeEvent, CLEventImpl::CreateFunc *createFunc)
 CLCommandQueueCL::CLCommandQueueCL(const cl::CommandQueue &commandQueue, cl_command_queue native)
     : CLCommandQueueImpl(commandQueue), mNative(native)
 {
-    if (commandQueue.getProperties().isSet(CL_QUEUE_ON_DEVICE))
+    if (commandQueue.getProperties().intersects(CL_QUEUE_ON_DEVICE))
     {
         commandQueue.getContext().getImpl<CLContextCL>().mData->mDeviceQueues.emplace(
             commandQueue.getNative());
@@ -49,7 +49,7 @@ CLCommandQueueCL::CLCommandQueueCL(const cl::CommandQueue &commandQueue, cl_comm
 
 CLCommandQueueCL::~CLCommandQueueCL()
 {
-    if (mCommandQueue.getProperties().isSet(CL_QUEUE_ON_DEVICE))
+    if (mCommandQueue.getProperties().intersects(CL_QUEUE_ON_DEVICE))
     {
         const size_t numRemoved =
             mCommandQueue.getContext().getImpl<CLContextCL>().mData->mDeviceQueues.erase(
@@ -475,7 +475,7 @@ angle::Result CLCommandQueueCL::enqueueMapImage(const cl::Image &image,
         imageSlicePitch, numEvents, nativeEventsPtr, nativeEventPtr, &errorCode);
     ANGLE_CL_TRY(errorCode);
 
-    // TODO(jplate) Remove workaround after bug is fixed http://anglebug.com/6066
+    // TODO(jplate) Remove workaround after bug is fixed http://anglebug.com/42264597
     if (imageSlicePitch != nullptr && (image.getType() == cl::MemObjectType::Image1D ||
                                        image.getType() == cl::MemObjectType::Image1D_Buffer ||
                                        image.getType() == cl::MemObjectType::Image2D))

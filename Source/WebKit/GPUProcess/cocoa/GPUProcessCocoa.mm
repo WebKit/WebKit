@@ -37,6 +37,7 @@
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/MetalSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 #if PLATFORM(MAC)
 #include <pal/spi/cocoa/LaunchServicesSPI.h>
@@ -117,15 +118,28 @@ void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& para
     if (launchServicesExtension)
         launchServicesExtension->revoke();
 #endif // PLATFORM(MAC)
+
+    if (parameters.enableMetalDebugDeviceForTesting) {
+        RELEASE_LOG(Process, "%p - GPUProcess::platformInitializeGPUProcess: enabling Metal debug device", this);
+        setenv("MTL_DEBUG_LAYER", "1", 1);
+    }
+
+    if (parameters.enableMetalShaderValidationForTesting) {
+        RELEASE_LOG(Process, "%p - GPUProcess::platformInitializeGPUProcess: enabling Metal shader validation", this);
+        setenv("MTL_SHADER_VALIDATION", "1", 1);
+        setenv("MTL_SHADER_VALIDATION_ABORT_ON_FAULT", "1", 1);
+        setenv("MTL_SHADER_VALIDATION_REPORT_TO_STDERR", "1", 1);
+    }
+
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS) && USE(EXTENSIONKIT)
     MTLSetShaderCachePath(parameters.containerCachesDirectory);
 #endif
 }
 
 #if USE(EXTENSIONKIT)
-void GPUProcess::resolveBookmarkDataForCacheDirectory(const std::span<const uint8_t>& bookmarkData)
+void GPUProcess::resolveBookmarkDataForCacheDirectory(std::span<const uint8_t> bookmarkData)
 {
-    auto bookmark = adoptNS([[NSData alloc] initWithBytes:bookmarkData.data() length:bookmarkData.size()]);
+    RetainPtr bookmark = toNSData(bookmarkData);
     BOOL bookmarkIsStale = NO;
     NSError* error = nil;
     [NSURL URLByResolvingBookmarkData:bookmark.get() options:NSURLBookmarkResolutionWithoutUI relativeToURL:nil bookmarkDataIsStale:&bookmarkIsStale error:&error];

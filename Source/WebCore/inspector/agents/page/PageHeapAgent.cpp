@@ -25,11 +25,14 @@
 
 #include "config.h"
 #include "PageHeapAgent.h"
+#include <wtf/TZoneMallocInlines.h>
 
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageHeapAgent);
 
 PageHeapAgent::PageHeapAgent(PageAgentContext& context)
     : WebHeapAgent(context)

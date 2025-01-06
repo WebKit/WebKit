@@ -30,6 +30,8 @@
 #include "config.h"
 #include "WindowsKeyNames.h"
 
+#include <wtf/text/MakeString.h>
+
 namespace WebCore {
 
 enum class WindowsKeyNames::KeyModifier : uint8_t {
@@ -466,7 +468,7 @@ String WindowsKeyNames::domCodeFromLParam(LPARAM lParam)
     unsigned extendedScanCode = (lParam >> 16) & 0x1ff;
     const auto* result = std::lower_bound(
         std::begin(cDomCodeMap), std::end(cDomCodeMap), extendedScanCode,
-        [](const auto& entry, int needle) {
+        [](const auto& entry, unsigned needle) {
             return entry.scanCode < needle;
         });
     if (result != std::end(cDomCodeMap) && result->scanCode == extendedScanCode)

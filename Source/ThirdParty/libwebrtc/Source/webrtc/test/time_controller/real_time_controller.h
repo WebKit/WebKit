@@ -13,6 +13,7 @@
 #include <functional>
 #include <memory>
 
+#include "api/field_trials_view.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/test/time_controller.h"
 #include "api/units/time_delta.h"
@@ -21,7 +22,7 @@
 namespace webrtc {
 class RealTimeController : public TimeController {
  public:
-  RealTimeController();
+  RealTimeController(const FieldTrialsView* field_trials = nullptr);
 
   Clock* GetClock() override;
   TaskQueueFactory* GetTaskQueueFactory() override;

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DebuggableInfoData.h"
 
-#include "WebCoreArgumentCoders.h"
 #include <WebCore/InspectorDebuggableType.h>
 
 namespace WebKit {

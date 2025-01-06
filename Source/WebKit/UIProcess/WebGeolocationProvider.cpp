@@ -28,8 +28,11 @@
 
 #include "WKAPICast.h"
 #include "WebGeolocationManagerProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGeolocationProvider);
 
 WebGeolocationProvider::WebGeolocationProvider(const WKGeolocationProviderBase* provider)
 {

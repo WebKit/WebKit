@@ -36,12 +36,12 @@ namespace WebKit::WebGPU {
 
 std::optional<RequestAdapterOptions> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RequestAdapterOptions& requestAdapterOptions)
 {
-    return { { requestAdapterOptions.powerPreference, requestAdapterOptions.forceFallbackAdapter } };
+    return { { requestAdapterOptions.powerPreference, requestAdapterOptions.forceFallbackAdapter, requestAdapterOptions.xrCompatible } };
 }
 
 std::optional<WebCore::WebGPU::RequestAdapterOptions> ConvertFromBackingContext::convertFromBacking(const RequestAdapterOptions& requestAdapterOptions)
 {
-    return { { requestAdapterOptions.powerPreference, requestAdapterOptions.forceFallbackAdapter } };
+    return { { requestAdapterOptions.powerPreference, requestAdapterOptions.forceFallbackAdapter, requestAdapterOptions.xrCompatible } };
 }
 
 } // namespace WebKit

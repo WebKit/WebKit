@@ -35,10 +35,13 @@
 #import <Metal/MTLEvent_Private.h>
 #import <Metal/MTLTexture_Private.h>
 #import <WebCore/PlatformXRPose.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #import "ARKitSoftLink.h"
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ARKitCoordinator);
 
 struct ARKitCoordinator::RenderState {
     RetainPtr<id<WKARPresentationSession>> presentationSession;
@@ -63,7 +66,7 @@ ARKitCoordinator::ARKitCoordinator()
     ASSERT(RunLoop::isMain());
 }
 
-void ARKitCoordinator::getPrimaryDeviceInfo(DeviceInfoCallback&& callback)
+void ARKitCoordinator::getPrimaryDeviceInfo(WebPageProxy&, DeviceInfoCallback&& callback)
 {
     RELEASE_LOG(XR, "ARKitCoordinator::getPrimaryDeviceInfo");
     ASSERT(RunLoop::isMain());
@@ -127,7 +130,7 @@ void ARKitCoordinator::startSession(WebPageProxy& page, WeakPtr<SessionEventClie
             auto presentationSessionDesc = adoptNS([WKARPresentationSessionDescriptor new]);
             [presentationSessionDesc setPresentingViewController:presentingViewController];
 
-            auto presentationSession = adoptNS(createPresesentationSession(m_session.get(), presentationSessionDesc.get()));
+            auto presentationSession = adoptNS(createPresentationSession(m_session.get(), presentationSessionDesc.get()));
 
             auto renderState = Box<RenderState>::create();
             renderState->presentationSession = WTFMove(presentationSession);
@@ -135,15 +138,15 @@ void ARKitCoordinator::startSession(WebPageProxy& page, WeakPtr<SessionEventClie
 
             m_state = Active {
                 .sessionEventClient = WTFMove(sessionEventClient),
-                .pageIdentifier = page.webPageID(),
+                .pageIdentifier = page.webPageIDInMainFrameProcess(),
                 .renderState = renderState,
                 .renderThread = Thread::create("ARKitCoordinator session renderer"_s, [this, renderState] { renderLoop(renderState); }),
             };
         },
         [&](Active&) {
             RELEASE_LOG_ERROR(XR, "ARKitCoordinator: an existing immersive session is active");
-            if (sessionEventClient)
-                sessionEventClient->sessionDidEnd(m_deviceIdentifier);
+            if (RefPtr protectedSessionEventClient = sessionEventClient.get())
+                protectedSessionEventClient->sessionDidEnd(m_deviceIdentifier);
         });
 }
 
@@ -183,10 +186,10 @@ void ARKitCoordinator::endSessionIfExists(std::optional<WebCore::PageIdentifier>
 
 void ARKitCoordinator::endSessionIfExists(WebPageProxy& page)
 {
-    endSessionIfExists(page.webPageID());
+    endSessionIfExists(page.webPageIDInMainFrameProcess());
 }
 
-void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, PlatformXR::Device::RequestFrameCallback&& onFrameUpdateCallback)
+void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&& onFrameUpdateCallback)
 {
     RELEASE_LOG(XR, "ARKitCoordinator::scheduleAnimationFrame");
     WTF::switchOn(m_state,
@@ -195,7 +198,7 @@ void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, PlatformXR::De
             onFrameUpdateCallback({ });
         },
         [&](Active& active) {
-            if (active.pageIdentifier != page.webPageID()) {
+            if (active.pageIdentifier != page.webPageIDInMainFrameProcess()) {
                 RELEASE_LOG(XR, "ARKitCoordinator: trying to schedule frame update for session owned by another page");
                 return;
             }
@@ -218,7 +221,7 @@ void ARKitCoordinator::submitFrame(WebPageProxy& page)
             RELEASE_LOG(XR, "ARKitCoordinator: trying to submit frame update for an inactive session");
         },
         [&](Active& active) {
-            if (active.pageIdentifier != page.webPageID()) {
+            if (active.pageIdentifier != page.webPageIDInMainFrameProcess()) {
                 RELEASE_LOG(XR, "ARKitCoordinator: trying to submit frame update for session owned by another page");
                 return;
             }

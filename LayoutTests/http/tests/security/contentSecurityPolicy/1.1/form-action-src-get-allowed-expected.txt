@@ -5,6 +5,6 @@ Parameters:
 fieldname = fieldvalue
 
 ============== Back Forward List ==============
-        http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/form-action-src-get-allowed.html  **nav target**
-curr->  http://127.0.0.1:8000/navigation/resources/form-target.pl?fieldname=fieldvalue  **nav target**
+        http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/form-action-src-get-allowed.html
+curr->  http://127.0.0.1:8000/navigation/resources/form-target.pl?fieldname=fieldvalue
 ===============================================

@@ -29,8 +29,12 @@
 #include "Filter.h"
 #include "PixelBuffer.h"
 #include <wtf/ParallelJobs.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEMorphologySoftwareApplier);
 
 inline ColorComponents<uint8_t, 4> FEMorphologySoftwareApplier::minOrMax(const ColorComponents<uint8_t, 4>& a, const ColorComponents<uint8_t, 4>& b, MorphologyOperatorType type)
 {
@@ -42,10 +46,10 @@ inline ColorComponents<uint8_t, 4> FEMorphologySoftwareApplier::minOrMax(const C
 
 inline ColorComponents<uint8_t, 4> FEMorphologySoftwareApplier::columnExtremum(const PixelBuffer& srcPixelBuffer, int x, int yStart, int yEnd, int width, MorphologyOperatorType type)
 {
-    auto extremum = makeColorComponentsfromPixelValue(PackedColor::RGBA { *reinterpret_cast<const unsigned*>(srcPixelBuffer.bytes().data() + pixelArrayIndex(x, yStart, width)) });
+    auto extremum = makeColorComponentsfromPixelValue(PackedColor::RGBA { reinterpretCastSpanStartTo<const unsigned>(srcPixelBuffer.bytes().subspan(pixelArrayIndex(x, yStart, width))) });
 
     for (int y = yStart + 1; y < yEnd; ++y) {
-        auto pixel = makeColorComponentsfromPixelValue(PackedColor::RGBA { *reinterpret_cast<const unsigned*>(srcPixelBuffer.bytes().data() + pixelArrayIndex(x, y, width)) });
+        auto pixel = makeColorComponentsfromPixelValue(PackedColor::RGBA { reinterpretCastSpanStartTo<const unsigned>(srcPixelBuffer.bytes().subspan(pixelArrayIndex(x, y, width))) });
         extremum = minOrMax(extremum, pixel, type);
     }
     return extremum;
@@ -96,8 +100,8 @@ void FEMorphologySoftwareApplier::applyPlatformGeneric(const PaintingData& paint
             if (x > radiusX)
                 extrema.remove(0);
 
-            unsigned* destPixel = reinterpret_cast<unsigned*>(dstPixelBuffer.bytes().data() + pixelArrayIndex(x, y, width));
-            *destPixel = makePixelValueFromColorComponents(kernelExtremum(extrema, paintingData.type)).value;
+            unsigned& destPixel = reinterpretCastSpanStartTo<unsigned>(dstPixelBuffer.bytes().subspan(pixelArrayIndex(x, y, width)));
+            destPixel = makePixelValueFromColorComponents(kernelExtremum(extrema, paintingData.type)).value;
         }
     }
 }

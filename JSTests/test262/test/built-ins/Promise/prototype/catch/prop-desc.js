@@ -12,6 +12,8 @@ includes: [propertyHelper.js]
 
 assert.sameValue(typeof Promise.prototype.catch, 'function');
 
-verifyNotEnumerable(Promise.prototype, 'catch');
-verifyWritable(Promise.prototype, 'catch');
-verifyConfigurable(Promise.prototype, 'catch');
+verifyProperty(Promise.prototype, 'catch', {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

@@ -75,6 +75,22 @@ FAIL Bad usages: importKey(pkcs8, {name: X448}, true, [deriveBits, unwrapKey]) a
 FAIL Bad usages: importKey(pkcs8, {name: X448}, false, [deriveBits, unwrapKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
 FAIL Bad usages: importKey(pkcs8, {name: X448}, true, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
 FAIL Bad usages: importKey(pkcs8, {name: X448}, false, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, true, [encrypt]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, false, [encrypt]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, true, [decrypt]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, false, [decrypt]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, true, [sign]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, false, [sign]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, true, [verify]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, false, [verify]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, true, [wrapKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, false, [wrapKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, true, [unwrapKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, false, [unwrapKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, true, [deriveKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, false, [deriveKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, true, [deriveBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Bad usages: importKey(raw, {name: X448}, false, [deriveBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
 FAIL Bad usages: importKey(jwk(private), {name: X448}, true, [encrypt]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
 FAIL Bad usages: importKey(jwk(private), {name: X448}, false, [encrypt]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
 FAIL Bad usages: importKey(jwk(private), {name: X448}, true, [deriveKey, encrypt]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
@@ -151,6 +167,10 @@ FAIL Bad usages: importKey(jwk (public) , {name: X448}, true, [deriveKey]) asser
 FAIL Bad usages: importKey(jwk (public) , {name: X448}, false, [deriveKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
 FAIL Bad usages: importKey(jwk (public) , {name: X448}, true, [deriveBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
 FAIL Bad usages: importKey(jwk (public) , {name: X448}, false, [deriveBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Empty usages: importKey(pkcs8, {name: X448}, true, []) assert_equals: Empty usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Empty usages: importKey(pkcs8, {name: X448}, false, []) assert_equals: Empty usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Empty usages: importKey(jwk(private), {name: X448}, true, []) assert_equals: Empty usages not supported. expected "SyntaxError" but got "NotSupportedError"
+FAIL Empty usages: importKey(jwk(private), {name: X448}, false, []) assert_equals: Empty usages not supported. expected "SyntaxError" but got "NotSupportedError"
 FAIL Bad key length: importKey(spki, {name: X448}, true, []) assert_equals: Bad key length not supported. expected "DataError" but got "NotSupportedError"
 FAIL Bad key length: importKey(spki, {name: X448}, false, []) assert_equals: Bad key length not supported. expected "DataError" but got "NotSupportedError"
 FAIL Bad key length: importKey(pkcs8, {name: X448}, true, [deriveKey]) assert_equals: Bad key length not supported. expected "DataError" but got "NotSupportedError"
@@ -161,6 +181,8 @@ FAIL Bad key length: importKey(pkcs8, {name: X448}, true, [deriveBits]) assert_e
 FAIL Bad key length: importKey(pkcs8, {name: X448}, false, [deriveBits]) assert_equals: Bad key length not supported. expected "DataError" but got "NotSupportedError"
 FAIL Bad key length: importKey(pkcs8, {name: X448}, true, [deriveKey, deriveBits, deriveKey, deriveBits]) assert_equals: Bad key length not supported. expected "DataError" but got "NotSupportedError"
 FAIL Bad key length: importKey(pkcs8, {name: X448}, false, [deriveKey, deriveBits, deriveKey, deriveBits]) assert_equals: Bad key length not supported. expected "DataError" but got "NotSupportedError"
+FAIL Bad key length: importKey(raw, {name: X448}, true, []) assert_equals: Bad key length not supported. expected "DataError" but got "NotSupportedError"
+FAIL Bad key length: importKey(raw, {name: X448}, false, []) assert_equals: Bad key length not supported. expected "DataError" but got "NotSupportedError"
 FAIL Bad key length: importKey(jwk(private), {name: X448}, true, [deriveKey]) assert_equals: Bad key length not supported. expected "DataError" but got "NotSupportedError"
 FAIL Bad key length: importKey(jwk(private), {name: X448}, false, [deriveKey]) assert_equals: Bad key length not supported. expected "DataError" but got "NotSupportedError"
 FAIL Bad key length: importKey(jwk(private), {name: X448}, true, [deriveBits, deriveKey]) assert_equals: Bad key length not supported. expected "DataError" but got "NotSupportedError"
@@ -193,4 +215,19 @@ FAIL Invalid key pair: importKey(jwk(private), {name: X448}, true, [deriveKey]) 
 FAIL Invalid key pair: importKey(jwk(private), {name: X448}, true, [deriveBits, deriveKey]) assert_equals: Invalid key pair not supported. expected "DataError" but got "NotSupportedError"
 FAIL Invalid key pair: importKey(jwk(private), {name: X448}, true, [deriveBits]) assert_equals: Invalid key pair not supported. expected "DataError" but got "NotSupportedError"
 FAIL Invalid key pair: importKey(jwk(private), {name: X448}, true, [deriveKey, deriveBits, deriveKey, deriveBits]) assert_equals: Invalid key pair not supported. expected "DataError" but got "NotSupportedError"
+PASS Missing algorithm name: importKey(pkcs8, {}, true, deriveKey)
+PASS Missing algorithm name: importKey(pkcs8, {}, false, deriveKey)
+PASS Missing algorithm name: importKey(pkcs8, {}, true, deriveBits)
+PASS Missing algorithm name: importKey(pkcs8, {}, false, deriveBits)
+PASS Missing algorithm name: importKey(jwk(private), {}, true, deriveKey)
+PASS Missing algorithm name: importKey(jwk(private), {}, false, deriveKey)
+PASS Missing algorithm name: importKey(jwk(private), {}, true, deriveBits)
+PASS Missing algorithm name: importKey(jwk(private), {}, false, deriveBits)
+FAIL Invalid 'kty' field: importKey(jwk(private), {name: X448}, true, [deriveKey, deriveBits]) assert_equals: Invalid 'kty' field not supported. expected "DataError" but got "NotSupportedError"
+FAIL Invalid 'kty' field: importKey(jwk (public) , {name: X448}, true, []) assert_equals: Invalid 'kty' field not supported. expected "DataError" but got "NotSupportedError"
+FAIL Import from a non-extractable: importKey(jwk(private), {name: X448}, true, [deriveKey, deriveBits]) assert_equals: Import from a non-extractable not supported. expected "DataError" but got "NotSupportedError"
+FAIL Import from a non-extractable: importKey(jwk (public) , {name: X448}, true, []) assert_equals: Import from a non-extractable not supported. expected "DataError" but got "NotSupportedError"
+FAIL Invalid 'use' field: importKey(jwk(private), {name: X448}, true, [deriveKey, deriveBits]) assert_equals: Invalid 'use' field not supported. expected "DataError" but got "NotSupportedError"
+FAIL Invalid 'crv' field: importKey(jwk(private), {name: X448}, true, [deriveKey, deriveBits]) assert_equals: Invalid 'crv' field not supported. expected "DataError" but got "NotSupportedError"
+FAIL Invalid 'crv' field: importKey(jwk (public) , {name: X448}, true, []) assert_equals: Invalid 'crv' field not supported. expected "DataError" but got "NotSupportedError"
 

@@ -26,11 +26,21 @@
 #pragma once
 
 #import <wtf/FastMalloc.h>
+#import <wtf/Lock.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMalloc.h>
 
 struct WGPUSamplerImpl {
 };
+
+@interface SamplerIdentifier : NSObject<NSCopying>
+- (instancetype)initWithFirst:(uint64_t)first second:(uint64_t)second NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+@property (nonatomic) uint64_t first;
+@property (nonatomic) uint64_t second;
+@end
 
 namespace WebGPU {
 
@@ -38,11 +48,11 @@ class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpusampler
 class Sampler : public WGPUSamplerImpl, public RefCounted<Sampler> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Sampler);
 public:
-    static Ref<Sampler> create(id<MTLSamplerState> samplerState, const WGPUSamplerDescriptor& descriptor, Device& device)
+    static Ref<Sampler> create(SamplerIdentifier* samplerIdentifier, const WGPUSamplerDescriptor& descriptor, Device& device)
     {
-        return adoptRef(*new Sampler(samplerState, descriptor, device));
+        return adoptRef(*new Sampler(samplerIdentifier, descriptor, device));
     }
     static Ref<Sampler> createInvalid(Device& device)
     {
@@ -53,9 +63,10 @@ public:
 
     void setLabel(String&&);
 
-    bool isValid() const { return m_samplerState; }
+    bool isValid() const;
 
-    id<MTLSamplerState> samplerState() const { return m_samplerState; }
+    id<MTLSamplerState> cachedSampler() const;
+    id<MTLSamplerState> samplerState() const;
     const WGPUSamplerDescriptor& descriptor() const { return m_descriptor; }
     bool isComparison() const { return descriptor().compare != WGPUCompareFunction_Undefined; }
     bool isFiltering() const { return descriptor().minFilter == WGPUFilterMode_Linear || descriptor().magFilter == WGPUFilterMode_Linear || descriptor().mipmapFilter == WGPUMipmapFilterMode_Linear; }
@@ -63,14 +74,19 @@ public:
     Device& device() const { return m_device; }
 
 private:
-    Sampler(id<MTLSamplerState>, const WGPUSamplerDescriptor&, Device&);
+    Sampler(SamplerIdentifier*, const WGPUSamplerDescriptor&, Device&);
     Sampler(Device&);
 
-    const id<MTLSamplerState> m_samplerState { nil };
-
-    const WGPUSamplerDescriptor m_descriptor { };
+    SamplerIdentifier* m_samplerIdentifier { nil };
+    WGPUSamplerDescriptor m_descriptor { };
 
     const Ref<Device> m_device;
+    // static is intentional here as the limit is per process
+    static Lock samplerStateLock;
+    static NSMutableDictionary<SamplerIdentifier*, id<MTLSamplerState>> *cachedSamplerStates;
+    static NSMutableOrderedSet<SamplerIdentifier*> *lastAccessedKeys;
+
+    mutable __weak id<MTLSamplerState> m_cachedSamplerState { nil };
 };
 
 } // namespace WebGPU

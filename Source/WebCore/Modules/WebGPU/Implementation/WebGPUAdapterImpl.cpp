@@ -32,6 +32,7 @@
 #include "WebGPUDeviceImpl.h"
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
 
@@ -146,6 +147,8 @@ static bool isFallbackAdapter(WGPUAdapter adapter)
     wgpuAdapterGetProperties(adapter, &properties);
     return properties.adapterType == WGPUAdapterType_CPU;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AdapterImpl);
 
 AdapterImpl::AdapterImpl(WebGPUPtr<WGPUAdapter>&& adapter, ConvertToBackingContext& convertToBackingContext)
     : Adapter(adapterName(adapter.get()), supportedFeatures(adapter.get()), supportedLimits(adapter.get()), WebGPU::isFallbackAdapter(adapter.get()))
@@ -324,6 +327,11 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         callback(DeviceImpl::create(adoptWebGPU(device), status == WGPURequestDeviceStatus_Success ? WTFMove(requestedFeatures) : SupportedFeatures::create({ }), WTFMove(requestedLimits), convertToBackingContext));
     });
     wgpuAdapterRequestDevice(m_backing.get(), &backingDescriptor, &requestDeviceCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in requestDeviceCallback().
+}
+
+bool AdapterImpl::xrCompatible()
+{
+    return wgpuAdapterXRCompatible(m_backing.get());
 }
 
 } // namespace WebCore::WebGPU

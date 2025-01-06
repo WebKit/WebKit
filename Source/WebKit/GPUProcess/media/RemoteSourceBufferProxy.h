@@ -35,6 +35,7 @@
 #include <WebCore/SourceBufferPrivate.h>
 #include <WebCore/SourceBufferPrivateClient.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace IPC {
@@ -57,15 +58,23 @@ class RemoteMediaPlayerProxy;
 class RemoteSourceBufferProxy final
     : public WebCore::SourceBufferPrivateClient
     , private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteSourceBufferProxy);
 public:
     static Ref<RemoteSourceBufferProxy> create(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
     virtual ~RemoteSourceBufferProxy();
 
-    void shutdown();
+    void ref() const final { WebCore::SourceBufferPrivateClient::ref(); }
+    void deref() const final { WebCore::SourceBufferPrivateClient::deref(); }
+
+    void setMediaPlayer(RemoteMediaPlayerProxy&);
+
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
     RemoteSourceBufferProxy(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
+
+    RefPtr<IPC::Connection> connection() const;
+    Ref<WebCore::SourceBufferPrivate> protectedSourceBufferPrivate() const { return m_sourceBufferPrivate; }
 
     // SourceBufferPrivateClient
     Ref<WebCore::MediaPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) final;
@@ -75,6 +84,7 @@ private:
     void sourceBufferPrivateDidDropSample() final;
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
     void sourceBufferPrivateEvictionDataChanged(const WebCore::SourceBufferEvictionData&) final;
+    Ref<WebCore::MediaPromise> sourceBufferPrivateDidAttach(InitializationSegment&&) final;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -113,7 +123,10 @@ private:
     void memoryPressure(const MediaTime& currentTime);
     void minimumUpcomingPresentationTimeForTrackID(TrackID, CompletionHandler<void(MediaTime)>&&);
     void setMaximumQueueDepthForTrackID(TrackID, uint64_t);
+    void detach();
+    void attach();
     void disconnect();
+    std::optional<InitializationSegmentInfo> createInitializationSegmentInfo(InitializationSegment&&);
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     RemoteSourceBufferIdentifier m_identifier;

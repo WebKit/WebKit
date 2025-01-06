@@ -3,5 +3,5 @@ This test verifies that setting the iframe.src through javascript to # does not 
 
 
 ============== Back Forward List ==============
-curr->  http://127.0.0.1:8000/navigation/lockedhistory-iframe.html  **nav target**
+curr->  http://127.0.0.1:8000/navigation/lockedhistory-iframe.html
 ===============================================

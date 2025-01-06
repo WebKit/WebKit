@@ -49,7 +49,7 @@ InPlaceAbstractState::InPlaceAbstractState(Graph& graph)
 {
 }
 
-InPlaceAbstractState::~InPlaceAbstractState() { }
+InPlaceAbstractState::~InPlaceAbstractState() = default;
 
 void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
 {

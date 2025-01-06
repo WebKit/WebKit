@@ -30,8 +30,19 @@
 namespace WebCore {
 
 class HTMLTableCellElement final : public HTMLTablePartElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLTableCellElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLTableCellElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTableCellElement);
 public:
+    // These limits are defined in the HTML specification:
+    // - https://html.spec.whatwg.org/#dom-tdth-colspan
+    // - https://html.spec.whatwg.org/#dom-tdth-rowspan
+    static constexpr unsigned minColspan = 1;
+    static constexpr unsigned maxColspan = 1000;
+    static constexpr unsigned defaultColspan = 1;
+    static constexpr unsigned minRowspan = 0;
+    static constexpr unsigned maxRowspan = 65534;
+    static constexpr unsigned defaultRowspan = 1;
+
     static Ref<HTMLTableCellElement> create(const QualifiedName&, Document&);
 
     WEBCORE_EXPORT int cellIndex() const;

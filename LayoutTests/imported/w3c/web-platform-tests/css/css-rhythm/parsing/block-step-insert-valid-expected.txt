@@ -1,4 +1,5 @@
 
-PASS e.style['block-step-insert'] = "margin" should set the property value
-PASS e.style['block-step-insert'] = "padding" should set the property value
+PASS e.style['block-step-insert'] = "margin-box" should set the property value
+PASS e.style['block-step-insert'] = "padding-box" should set the property value
+PASS e.style['block-step-insert'] = "content-box" should set the property value
 

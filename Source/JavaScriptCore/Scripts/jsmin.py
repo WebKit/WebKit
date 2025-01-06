@@ -25,17 +25,8 @@
 
 
 import sys
-is_3 = sys.version_info >= (3, 0)
-if is_3:
-    import io
-    python_text_type = str
-else:
-    import StringIO
-    try:
-        import cStringIO
-    except ImportError:
-        cStringIO = None
-    python_text_type = basestring
+import io
+python_text_type = str
 
 
 __all__ = ['jsmin', 'JavascriptMinify']
@@ -46,15 +37,7 @@ def jsmin(js):
     """
     returns a minified version of the javascript string
     """
-    if not is_3:
-        if cStringIO and not isinstance(js, unicode):
-            # strings can use cStringIO for a 3x performance
-            # improvement, but unicode (in python2) cannot
-            klass = cStringIO.StringIO
-        else:
-            klass = StringIO.StringIO
-    else:
-        klass = io.StringIO
+    klass = io.StringIO
     ins = klass(js)
     outs = klass()
     JavascriptMinify(ins, outs).minify()

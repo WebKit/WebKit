@@ -66,7 +66,7 @@ DidRemoveFrameFromHiearchyInBackForwardCacheTest::DidRemoveFrameFromHiearchyInBa
 void DidRemoveFrameFromHiearchyInBackForwardCacheTest::didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
 {
     WKBundlePageLoaderClientV8 pageLoaderClient;
-    memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
+    zeroBytes(pageLoaderClient);
 
     pageLoaderClient.base.version = 8;
     pageLoaderClient.base.clientInfo = this;

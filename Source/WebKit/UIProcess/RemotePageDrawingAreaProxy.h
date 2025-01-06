@@ -28,30 +28,29 @@
 #include "DrawingAreaInfo.h"
 #include "MessageReceiver.h"
 #include "MessageReceiverMap.h"
-
-namespace WebKit {
-class RemotePageDrawingAreaProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemotePageDrawingAreaProxy> : std::true_type { };
-}
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class DrawingAreaProxy;
 class WebProcessProxy;
 
-class RemotePageDrawingAreaProxy : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+class RemotePageDrawingAreaProxy : public IPC::MessageReceiver, public RefCounted<RemotePageDrawingAreaProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(RemotePageDrawingAreaProxy);
 public:
-    RemotePageDrawingAreaProxy(DrawingAreaProxy&, WebProcessProxy&);
+    static Ref<RemotePageDrawingAreaProxy> create(DrawingAreaProxy&, WebProcessProxy&);
+
     ~RemotePageDrawingAreaProxy();
 
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     WebProcessProxy& process() { return m_process; }
+    Ref<WebProcessProxy> protectedProcess();
 
 private:
+    RemotePageDrawingAreaProxy(DrawingAreaProxy&, WebProcessProxy&);
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 

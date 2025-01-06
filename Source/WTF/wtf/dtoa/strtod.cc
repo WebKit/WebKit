@@ -42,10 +42,10 @@ namespace double_conversion {
 // 2^53 = 9007199254740992.
 // Any integer with at most 15 decimal digits will hence fit into a double
 // (which has a 53bit significand) without loss of precision.
-static const int kMaxExactDoubleIntegerDecimalDigits = 15;
+static constexpr int kMaxExactDoubleIntegerDecimalDigits = 15;
 #endif
 // 2^64 = 18446744073709551616 > 10^19
-static const int kMaxUint64DecimalDigits = 19;
+static constexpr int kMaxUint64DecimalDigits = 19;
 
 // Max double: 1.7976931348623157 x 10^308
 // Min non-zero double: 4.9406564584124654 x 10^-324
@@ -53,15 +53,15 @@ static const int kMaxUint64DecimalDigits = 19;
 // Any x <= 10^-324 is interpreted as 0.
 // Note that 2.5e-324 (despite being smaller than the min double) will be read
 // as non-zero (equal to the min non-zero double).
-static const int kMaxDecimalPower = 309;
-static const int kMinDecimalPower = -324;
+static constexpr int kMaxDecimalPower = 309;
+static constexpr int kMinDecimalPower = -324;
 
 // 2^64 = 18446744073709551616
-static const uint64_t kMaxUint64 = UINT64_2PART_C(0xFFFFFFFF, FFFFFFFF);
+static constexpr uint64_t kMaxUint64 = UINT64_2PART_C(0xFFFFFFFF, FFFFFFFF);
 
 
 #if defined(DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS)
-static const double exact_powers_of_ten[] = {
+static constexpr std::array<double, 23> exact_powers_of_ten {
   1.0,  // 10^0
   10.0,
   100.0,
@@ -87,21 +87,21 @@ static const double exact_powers_of_ten[] = {
   // 10^22 = 0x21e19e0c9bab2400000 = 0x878678326eac9 * 2^22
   10000000000000000000000.0
 };
-static const int kExactPowersOfTenSize = ARRAY_SIZE(exact_powers_of_ten);
+static constexpr int kExactPowersOfTenSize = exact_powers_of_ten.size();
 #endif
 
 // Maximum number of significant digits in the decimal representation.
 // In fact the value is 772 (see conversions.cc), but to give us some margin
 // we round up to 780.
-static const int kMaxSignificantDecimalDigits = 780;
+static constexpr int kMaxSignificantDecimalDigits = 780;
 
 static BufferReference<const char> TrimLeadingZeros(BufferReference<const char> buffer) {
-  for (int i = 0; i < buffer.length(); i++) {
+  for (size_t i = 0; i < buffer.length(); ++i) {
     if (buffer[i] != '0') {
       return buffer.SubBufferReference(i, buffer.length());
     }
   }
-  return BufferReference<const char>(buffer.start(), 0);
+  return BufferReference<const char>(buffer.start().first(0));
 }
 
 
@@ -111,14 +111,14 @@ static BufferReference<const char> TrimTrailingZeros(BufferReference<const char>
       return buffer.SubBufferReference(0, i + 1);
     }
   }
-  return BufferReference<const char>(buffer.start(), 0);
+  return BufferReference<const char>(buffer.start().first(0));
 }
 
 
 static void CutToMaxSignificantDigits(BufferReference<const char> buffer,
                                        int exponent,
-                                       char* significant_buffer,
-                                       int* significant_exponent) {
+                                       std::span<char> significant_buffer,
+                                       int& significant_exponent) {
   for (int i = 0; i < kMaxSignificantDecimalDigits - 1; ++i) {
     significant_buffer[i] = buffer[i];
   }
@@ -128,8 +128,7 @@ static void CutToMaxSignificantDigits(BufferReference<const char> buffer,
   // Set the last digit to be non-zero. This is sufficient to guarantee
   // correct rounding.
   significant_buffer[kMaxSignificantDecimalDigits - 1] = '1';
-  *significant_exponent =
-      exponent + (buffer.length() - kMaxSignificantDecimalDigits);
+  significant_exponent = exponent + (buffer.length() - kMaxSignificantDecimalDigits);
 }
 
 
@@ -138,21 +137,19 @@ static void CutToMaxSignificantDigits(BufferReference<const char> buffer,
 // modified (due to cutting), then the input needs to be copied into the
 // buffer_copy_space.
 static void TrimAndCut(BufferReference<const char> buffer, int exponent,
-                       char* buffer_copy_space, int space_size,
-                       BufferReference<const char>* trimmed, int* updated_exponent) {
+                       std::span<char> buffer_copy_space, int space_size,
+                       BufferReference<const char>& trimmed, int& updated_exponent) {
   BufferReference<const char> left_trimmed = TrimLeadingZeros(buffer);
   BufferReference<const char> right_trimmed = TrimTrailingZeros(left_trimmed);
   exponent += left_trimmed.length() - right_trimmed.length();
   if (right_trimmed.length() > kMaxSignificantDecimalDigits) {
     (void) space_size;  // Mark variable as used.
     ASSERT(space_size >= kMaxSignificantDecimalDigits);
-    CutToMaxSignificantDigits(right_trimmed, exponent,
-                              buffer_copy_space, updated_exponent);
-    *trimmed = BufferReference<const char>(buffer_copy_space,
-                                 kMaxSignificantDecimalDigits);
+    CutToMaxSignificantDigits(right_trimmed, exponent, buffer_copy_space, updated_exponent);
+    trimmed = BufferReference<const char>(buffer_copy_space.first(kMaxSignificantDecimalDigits));
   } else {
-    *trimmed = right_trimmed;
-    *updated_exponent = exponent;
+    trimmed = right_trimmed;
+    updated_exponent = exponent;
   }
 }
 
@@ -162,16 +159,15 @@ static void TrimAndCut(BufferReference<const char> buffer, int exponent,
 // When the string starts with "1844674407370955161" no further digit is read.
 // Since 2^64 = 18446744073709551616 it would still be possible read another
 // digit if it was less or equal than 6, but this would complicate the code.
-static uint64_t ReadUint64(BufferReference<const char> buffer,
-                           int* number_of_read_digits) {
+static uint64_t ReadUint64(BufferReference<const char> buffer, size_t& number_of_read_digits) {
   uint64_t result = 0;
-  int i = 0;
+  size_t i = 0;
   while (i < buffer.length() && result <= (kMaxUint64 / 10 - 1)) {
     int digit = buffer[i++] - '0';
     ASSERT(0 <= digit && digit <= 9);
     result = 10 * result + digit;
   }
-  *number_of_read_digits = i;
+  number_of_read_digits = i;
   return result;
 }
 
@@ -181,13 +177,13 @@ static uint64_t ReadUint64(BufferReference<const char> buffer,
 // If remaining_decimals is zero then the returned DiyFp is accurate.
 // Otherwise it has been rounded and has error of at most 1/2 ulp.
 static void ReadDiyFp(BufferReference<const char> buffer,
-                      DiyFp* result,
-                      int* remaining_decimals) {
-  int read_digits;
-  uint64_t significand = ReadUint64(buffer, &read_digits);
+                      DiyFp& result,
+                      int& remaining_decimals) {
+  size_t read_digits;
+  uint64_t significand = ReadUint64(buffer, read_digits);
   if (buffer.length() == read_digits) {
-    *result = DiyFp(significand, 0);
-    *remaining_decimals = 0;
+    result = DiyFp(significand, 0);
+    remaining_decimals = 0;
   } else {
     // Round the significand.
     if (buffer[read_digits] >= '5') {
@@ -195,15 +191,15 @@ static void ReadDiyFp(BufferReference<const char> buffer,
     }
     // Compute the binary exponent.
     int exponent = 0;
-    *result = DiyFp(significand, exponent);
-    *remaining_decimals = buffer.length() - read_digits;
+    result = DiyFp(significand, exponent);
+    remaining_decimals = buffer.length() - read_digits;
   }
 }
 
 
 static bool DoubleStrtod(BufferReference<const char> trimmed,
                          int exponent,
-                         double* result) {
+                         double& result) {
 #if !defined(DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS)
   UNUSED_PARAM(trimmed);
   UNUSED_PARAM(exponent);
@@ -217,7 +213,7 @@ static bool DoubleStrtod(BufferReference<const char> trimmed,
   return false;
 #else
   if (trimmed.length() <= kMaxExactDoubleIntegerDecimalDigits) {
-    int read_digits;
+    size_t read_digits;
     // The trimmed input fits into a double.
     // If the 10^exponent (resp. 10^-exponent) fits into a double too then we
     // can compute the result-double simply by multiplying (resp. dividing) the
@@ -226,16 +222,16 @@ static bool DoubleStrtod(BufferReference<const char> trimmed,
     // return the best possible approximation.
     if (exponent < 0 && -exponent < kExactPowersOfTenSize) {
       // 10^-exponent fits into a double.
-      *result = static_cast<double>(ReadUint64(trimmed, &read_digits));
+      result = static_cast<double>(ReadUint64(trimmed, read_digits));
       ASSERT(read_digits == trimmed.length());
-      *result /= exact_powers_of_ten[-exponent];
+      result /= exact_powers_of_ten[-exponent];
       return true;
     }
     if (0 <= exponent && exponent < kExactPowersOfTenSize) {
       // 10^exponent fits into a double.
-      *result = static_cast<double>(ReadUint64(trimmed, &read_digits));
+      result = static_cast<double>(ReadUint64(trimmed, read_digits));
       ASSERT(read_digits == trimmed.length());
-      *result *= exact_powers_of_ten[exponent];
+      result *= exact_powers_of_ten[exponent];
       return true;
     }
     int remaining_digits =
@@ -245,10 +241,10 @@ static bool DoubleStrtod(BufferReference<const char> trimmed,
       // The trimmed string was short and we can multiply it with
       // 10^remaining_digits. As a result the remaining exponent now fits
       // into a double too.
-      *result = static_cast<double>(ReadUint64(trimmed, &read_digits));
+      result = static_cast<double>(ReadUint64(trimmed, read_digits));
       ASSERT(read_digits == trimmed.length());
-      *result *= exact_powers_of_ten[remaining_digits];
-      *result *= exact_powers_of_ten[exponent - remaining_digits];
+      result *= exact_powers_of_ten[remaining_digits];
+      result *= exact_powers_of_ten[exponent - remaining_digits];
       return true;
     }
   }
@@ -284,10 +280,10 @@ static DiyFp AdjustmentPowerOfTen(int exponent) {
 // the correct double.
 static bool DiyFpStrtod(BufferReference<const char> buffer,
                         int exponent,
-                        double* result) {
+                        double& result) {
   DiyFp input;
   int remaining_decimals;
-  ReadDiyFp(buffer, &input, &remaining_decimals);
+  ReadDiyFp(buffer, input, remaining_decimals);
   // Since we may have dropped some digits the input is not accurate.
   // If remaining_decimals is different than 0 than the error is at most
   // .5 ulp (unit in the last place).
@@ -305,7 +301,7 @@ static bool DiyFpStrtod(BufferReference<const char> buffer,
 
   ASSERT(exponent <= PowersOfTenCache::kMaxDecimalExponent);
   if (exponent < PowersOfTenCache::kMinDecimalExponent) {
-    *result = 0.0;
+    result = 0.0;
     return true;
   }
   DiyFp cached_power;
@@ -318,7 +314,7 @@ static bool DiyFpStrtod(BufferReference<const char> buffer,
     int adjustment_exponent = exponent - cached_decimal_exponent;
     DiyFp adjustment_power = AdjustmentPowerOfTen(adjustment_exponent);
     input.Multiply(adjustment_power);
-    if (kMaxUint64DecimalDigits - buffer.length() >= adjustment_exponent) {
+    if (kMaxUint64DecimalDigits - static_cast<int>(buffer.length()) >= adjustment_exponent) {
       // The product of input with the adjustment power fits into a 64 bit
       // integer.
       ASSERT(DiyFp::kSignificandSize == 64);
@@ -380,7 +376,7 @@ static bool DiyFpStrtod(BufferReference<const char> buffer,
   // inaccurate and round down. In this case we return false so that we can
   // fall back to a more precise algorithm.
 
-  *result = Double(rounded_input).value();
+  result = Double(rounded_input).value();
   if (half_way - error < precision_bits && precision_bits < half_way + error) {
     // Too imprecise. The caller will have to fall back to a slower version.
     // However the returned number is guaranteed to be either the correct
@@ -404,7 +400,7 @@ static int CompareBufferWithDiyFp(BufferReference<const char> buffer,
                                   int exponent,
                                   DiyFp diy_fp) {
   ASSERT(buffer.length() + exponent <= kMaxDecimalPower + 1);
-  ASSERT(buffer.length() + exponent > kMinDecimalPower);
+  ASSERT(static_cast<int>(buffer.length()) + exponent > kMinDecimalPower);
   ASSERT(buffer.length() <= kMaxSignificantDecimalDigits);
   // Make sure that the Bignum will be able to hold all our numbers.
   // Our Bignum implementation has a separate field for exponents. Shifts will
@@ -432,17 +428,17 @@ static int CompareBufferWithDiyFp(BufferReference<const char> buffer,
 // Returns true if the guess is the correct double.
 // Returns false, when guess is either correct or the next-lower double.
 static bool ComputeGuess(BufferReference<const char> trimmed, int exponent,
-                         double* guess) {
+                         double& guess) {
   if (trimmed.length() == 0) {
-    *guess = 0.0;
+    guess = 0.0;
     return true;
   }
   if (exponent + trimmed.length() - 1 >= kMaxDecimalPower) {
-    *guess = Double::Infinity();
+    guess = Double::Infinity();
     return true;
   }
-  if (exponent + trimmed.length() <= kMinDecimalPower) {
-    *guess = 0.0;
+  if (exponent + static_cast<int>(trimmed.length()) <= kMinDecimalPower) {
+    guess = 0.0;
     return true;
   }
 
@@ -450,22 +446,21 @@ static bool ComputeGuess(BufferReference<const char> trimmed, int exponent,
       DiyFpStrtod(trimmed, exponent, guess)) {
     return true;
   }
-  if (*guess == Double::Infinity()) {
+  if (guess == Double::Infinity()) {
     return true;
   }
   return false;
 }
 
 double Strtod(BufferReference<const char> buffer, int exponent) {
-  char copy_buffer[kMaxSignificantDecimalDigits];
+  std::array<char, kMaxSignificantDecimalDigits> copy_buffer;
   BufferReference<const char> trimmed;
   int updated_exponent;
-  TrimAndCut(buffer, exponent, copy_buffer, kMaxSignificantDecimalDigits,
-             &trimmed, &updated_exponent);
+  TrimAndCut(buffer, exponent, std::span<char> { copy_buffer }, kMaxSignificantDecimalDigits, trimmed, updated_exponent);
   exponent = updated_exponent;
 
   double guess;
-  bool is_correct = ComputeGuess(trimmed, exponent, &guess);
+  bool is_correct = ComputeGuess(trimmed, exponent, guess);
   if (is_correct) return guess;
 
   DiyFp upper_boundary = Double(guess).UpperBoundary();
@@ -503,15 +498,14 @@ static float SanitizedDoubletof(double d) {
 }
 
 float Strtof(BufferReference<const char> buffer, int exponent) {
-  char copy_buffer[kMaxSignificantDecimalDigits];
+  std::array<char, kMaxSignificantDecimalDigits> copy_buffer;
   BufferReference<const char> trimmed;
   int updated_exponent;
-  TrimAndCut(buffer, exponent, copy_buffer, kMaxSignificantDecimalDigits,
-             &trimmed, &updated_exponent);
+  TrimAndCut(buffer, exponent, std::span<char> { copy_buffer }, kMaxSignificantDecimalDigits, trimmed, updated_exponent);
   exponent = updated_exponent;
 
   double double_guess;
-  bool is_correct = ComputeGuess(trimmed, exponent, &double_guess);
+  bool is_correct = ComputeGuess(trimmed, exponent, double_guess);
 
   float float_guess = SanitizedDoubletof(double_guess);
   if (float_guess == double_guess) {

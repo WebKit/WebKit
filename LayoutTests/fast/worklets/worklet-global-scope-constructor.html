@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<p>This test passes if WebKit does not crash.</p>
+<body>
+<script>
+globalThis.testRunner?.dumpAsText();
+
+const iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+const contentCSS = iframe.contentWindow.CSS;
+iframe.remove();
+const moduleURL = {};
+const options = {};
+contentCSS.paintWorklet.addModule(moduleURL, options);
+
+</script>
+</body>
+</html>

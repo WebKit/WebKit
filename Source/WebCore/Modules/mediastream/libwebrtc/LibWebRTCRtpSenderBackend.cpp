@@ -37,8 +37,11 @@
 #include "RTCRtpSender.h"
 #include "RTCRtpTransformBackend.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCRtpSenderBackend);
 
 LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender)
     : m_peerConnectionBackend(backend)
@@ -110,8 +113,13 @@ bool LibWebRTCRtpSenderBackend::replaceTrack(RTCRtpSender& sender, MediaStreamTr
         });
     }
 
-    m_peerConnectionBackend->setSenderSourceFromTrack(*this, *track);
+    protectedPeerConnectionBackend()->setSenderSourceFromTrack(*this, *track);
     return true;
+}
+
+RefPtr<LibWebRTCPeerConnectionBackend> LibWebRTCRtpSenderBackend::protectedPeerConnectionBackend() const
+{
+    return m_peerConnectionBackend.get();
 }
 
 RTCRtpSendParameters LibWebRTCRtpSenderBackend::getParameters() const

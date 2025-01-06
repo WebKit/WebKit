@@ -14,10 +14,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 
@@ -27,6 +27,7 @@ struct RtpPayloadState {
   int16_t picture_id = -1;
   uint8_t tl0_pic_idx = 0;
   int64_t shared_frame_id = 0;
+  int64_t frame_id = 0;
 };
 
 // Settings for LNTF (LossNotification). Still highly experimental.
@@ -65,6 +66,25 @@ struct UlpfecConfig {
 
   // RTX payload type for RED payload.
   int red_rtx_payload_type;
+};
+
+struct RtpStreamConfig {
+  std::string ToString() const;
+
+  uint32_t ssrc = 0;
+  std::string rid;
+  std::string payload_name;
+  int payload_type = -1;
+  bool raw_payload = false;
+  struct Rtx {
+    std::string ToString() const;
+    // SSRC to use for the RTX stream.
+    uint32_t ssrc = 0;
+
+    // Payload type to use for the RTX stream.
+    int payload_type = -1;
+  };
+  std::optional<Rtx> rtx;
 };
 
 static const size_t kDefaultMaxPacketSize = 1500 - 40;  // TCP over IPv4.
@@ -113,6 +133,9 @@ struct RtpConfig {
   // not be added, additional meta data is expected to be present in generic
   // frame descriptor RTP header extension).
   bool raw_payload = false;
+
+  // Configurations for each RTP stream
+  std::vector<RtpStreamConfig> stream_configs;
 
   // See LntfConfig for description.
   LntfConfig lntf;
@@ -165,11 +188,11 @@ struct RtpConfig {
   bool IsMediaSsrc(uint32_t ssrc) const;
   bool IsRtxSsrc(uint32_t ssrc) const;
   bool IsFlexfecSsrc(uint32_t ssrc) const;
-  absl::optional<uint32_t> GetRtxSsrcAssociatedWithMediaSsrc(
+  std::optional<uint32_t> GetRtxSsrcAssociatedWithMediaSsrc(
       uint32_t media_ssrc) const;
   uint32_t GetMediaSsrcAssociatedWithRtxSsrc(uint32_t rtx_ssrc) const;
   uint32_t GetMediaSsrcAssociatedWithFlexfecSsrc(uint32_t flexfec_ssrc) const;
-  absl::optional<std::string> GetRidForSsrc(uint32_t ssrc) const;
+  std::optional<std::string> GetRidForSsrc(uint32_t ssrc) const;
 };
 }  // namespace webrtc
 #endif  // CALL_RTP_CONFIG_H_

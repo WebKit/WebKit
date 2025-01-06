@@ -35,12 +35,12 @@
 #include "RTCRtpScriptTransformer.h"
 #include "RTCRtpTransformBackend.h"
 #include "Worker.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RTCRtpScriptTransform);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCRtpScriptTransform);
 
 ExceptionOr<Ref<RTCRtpScriptTransform>> RTCRtpScriptTransform::create(JSC::JSGlobalObject& state, Worker& worker, JSC::JSValue options, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {

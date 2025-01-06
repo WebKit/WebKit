@@ -1,7 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: Cannot go back
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT back() event ordering for cross-document traversal Test timed out
+PASS back() event ordering for cross-document traversal
 

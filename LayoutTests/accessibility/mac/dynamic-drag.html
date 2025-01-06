@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="input1" type="text" draggable="true" />
+<input id="input2" type="text" draggable="true" />
+
+<script>
+var output = "This test ensures we properly report isGrabbed state to assistive technologies.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("accessibilityController.accessibleElementById('input1').isGrabbed", "false");
+    output += expect("accessibilityController.accessibleElementById('input2').isGrabbed", "false");
+
+    startDrag("input1");
+    setTimeout(async function() {
+        output += await expectAsync("accessibilityController.accessibleElementById('input1').isGrabbed", "true");
+        stopDrag();
+        startDrag("input2");
+        output += await expectAsync("accessibilityController.accessibleElementById('input1').isGrabbed", "false");
+        output += await expectAsync("accessibilityController.accessibleElementById('input2').isGrabbed", "true");
+        startDrag("input1");
+        output += await expectAsync("accessibilityController.accessibleElementById('input2').isGrabbed", "false");
+        output += await expectAsync("accessibilityController.accessibleElementById('input1').isGrabbed", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+
+function startDrag(id) {
+    const element = document.getElementById(id);
+    const centerY = element.offsetTop + element.offsetHeight / 2;
+    const centerX = element.offsetLeft + element.offsetWidth / 2;
+    eventSender.mouseMoveTo(centerX, centerY);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(centerX + 100, centerY + 100)
+}
+function stopDrag() { eventSender.mouseUp(); }
+
+</script>
+</body>
+</html>
+

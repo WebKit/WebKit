@@ -39,7 +39,7 @@ struct DragEventInit : public MouseEventInit {
 };
 
 class DragEvent : public MouseEvent {
-    WTF_MAKE_ISO_ALLOCATED(DragEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DragEvent);
 public:
     using Init = DragEventInit;
 
@@ -49,6 +49,7 @@ public:
         const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
         EventTarget* relatedTarget, double force, SyntheticClickType, DataTransfer* = nullptr, IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
 
+    virtual ~DragEvent();
 
     DataTransfer* dataTransfer() const { return m_dataTransfer.get(); }
 

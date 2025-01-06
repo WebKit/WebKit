@@ -19,19 +19,19 @@ namespace {
 const size_t kHdPixels = 1280 * 720;
 
 const VideoSourceRestrictions kUnlimited;
-const VideoSourceRestrictions k15fps(absl::nullopt, absl::nullopt, 15.0);
-const VideoSourceRestrictions kHd(kHdPixels, kHdPixels, absl::nullopt);
+const VideoSourceRestrictions k15fps(std::nullopt, std::nullopt, 15.0);
+const VideoSourceRestrictions kHd(kHdPixels, kHdPixels, std::nullopt);
 const VideoSourceRestrictions kHd15fps(kHdPixels, kHdPixels, 15.0);
 const VideoSourceRestrictions kVga7fps(kHdPixels / 2, kHdPixels / 2, 7.0);
 
 VideoSourceRestrictions RestrictionsFromMaxPixelsPerFrame(
     size_t max_pixels_per_frame) {
-  return VideoSourceRestrictions(max_pixels_per_frame, absl::nullopt,
-                                 absl::nullopt);
+  return VideoSourceRestrictions(max_pixels_per_frame, std::nullopt,
+                                 std::nullopt);
 }
 
 VideoSourceRestrictions RestrictionsFromMaxFrameRate(double max_frame_rate) {
-  return VideoSourceRestrictions(absl::nullopt, absl::nullopt, max_frame_rate);
+  return VideoSourceRestrictions(std::nullopt, std::nullopt, max_frame_rate);
 }
 
 }  // namespace

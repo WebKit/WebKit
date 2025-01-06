@@ -14,8 +14,10 @@
 #include <string.h>
 
 #include <algorithm>
+#include <optional>
 
-#include "absl/types/optional.h"
+#include "api/array_view.h"
+#include "api/field_trials_view.h"
 #include "api/scoped_refptr.h"
 #include "api/units/data_rate.h"
 #include "api/video_codecs/video_encoder.h"
@@ -30,27 +32,25 @@
 #include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
+namespace {
 
-bool VideoCodecInitializer::SetupCodec(const VideoEncoderConfig& config,
-                                       const std::vector<VideoStream>& streams,
-                                       VideoCodec* codec) {
-  if (config.codec_type == kVideoCodecMultiplex) {
-    VideoEncoderConfig associated_config = config.Copy();
-    associated_config.codec_type = kVideoCodecVP9;
-    if (!SetupCodec(associated_config, streams, codec)) {
-      RTC_LOG(LS_ERROR) << "Failed to create stereo encoder configuration.";
-      return false;
+constexpr ScalabilityMode kH265SupportedScalabilityModes[] = {
+    ScalabilityMode::kL1T1, ScalabilityMode::kL1T2, ScalabilityMode::kL1T3};
+
+bool H265SupportsScalabilityMode(ScalabilityMode scalability_mode) {
+  for (const auto& entry : kH265SupportedScalabilityModes) {
+    if (entry == scalability_mode) {
+      return true;
     }
-    codec->codecType = kVideoCodecMultiplex;
-    return true;
   }
-
-  *codec = VideoEncoderConfigToVideoCodec(config, streams);
-  return true;
+  return false;
 }
 
+}  // namespace
+
 // TODO(sprang): Split this up and separate the codec specific parts.
-VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
+VideoCodec VideoCodecInitializer::SetupCodec(
+    const FieldTrialsView& field_trials,
     const VideoEncoderConfig& config,
     const std::vector<VideoStream>& streams) {
   static const int kEncoderMinBitrateKbps = 30;
@@ -96,8 +96,7 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
 
   int max_framerate = 0;
 
-  absl::optional<ScalabilityMode> scalability_mode =
-      streams[0].scalability_mode;
+  std::optional<ScalabilityMode> scalability_mode = streams[0].scalability_mode;
   for (size_t i = 0; i < streams.size(); ++i) {
     SimulcastStream* sim_stream = &video_codec.simulcastStream[i];
     RTC_DCHECK_GT(streams[i].width, 0);
@@ -316,6 +315,14 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
                           streams.back().num_temporal_layers.value_or(1),
                           /*num_spatial_layers=*/
                           std::max<int>(config.spatial_layers.size(), 1))) {
+        // If min bitrate is set via RtpEncodingParameters, use this value on
+        // lowest spatial layer.
+        if (!config.simulcast_layers.empty() &&
+            config.simulcast_layers[0].min_bitrate_bps > 0) {
+          video_codec.spatialLayers[0].minBitrate = std::min(
+              config.simulcast_layers[0].min_bitrate_bps / 1000,
+              static_cast<int>(video_codec.spatialLayers[0].targetBitrate));
+        }
         for (size_t i = 0; i < config.spatial_layers.size(); ++i) {
           video_codec.spatialLayers[i].active = config.spatial_layers[i].active;
         }
@@ -336,7 +343,22 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
       break;
     }
     case kVideoCodecH265:
-      // TODO(bugs.webrtc.org/13485)
+      RTC_DCHECK(!config.encoder_specific_settings) << "No encoder-specific "
+                                                       "settings for H.265.";
+
+      // Validate specified scalability modes. If some layer has an unsupported
+      // mode, store it as the top-level scalability mode, which will make
+      // InitEncode fail with an appropriate error.
+      for (const auto& stream : streams) {
+        if (stream.scalability_mode.has_value() &&
+            !H265SupportsScalabilityMode(*stream.scalability_mode)) {
+          RTC_LOG(LS_WARNING)
+              << "Invalid scalability mode for H.265: "
+              << ScalabilityModeToString(*stream.scalability_mode);
+          video_codec.SetScalabilityMode(*stream.scalability_mode);
+          break;
+        }
+      }
       break;
     default:
       // TODO(pbos): Support encoder_settings codec-agnostically.
@@ -345,14 +367,18 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
       break;
   }
 
-  const absl::optional<DataRate> experimental_min_bitrate =
-      GetExperimentalMinVideoBitrate(video_codec.codecType);
+  const std::optional<DataRate> experimental_min_bitrate =
+      GetExperimentalMinVideoBitrate(field_trials, video_codec.codecType);
   if (experimental_min_bitrate) {
     const int experimental_min_bitrate_kbps =
         rtc::saturated_cast<int>(experimental_min_bitrate->kbps());
     video_codec.minBitrate = experimental_min_bitrate_kbps;
     video_codec.simulcastStream[0].minBitrate = experimental_min_bitrate_kbps;
-    if (video_codec.codecType == kVideoCodecVP9) {
+    if (video_codec.codecType == kVideoCodecVP9 ||
+#ifdef RTC_ENABLE_H265
+        video_codec.codecType == kVideoCodecH265 ||
+#endif
+        video_codec.codecType == kVideoCodecAV1) {
       video_codec.spatialLayers[0].minBitrate = experimental_min_bitrate_kbps;
     }
   }

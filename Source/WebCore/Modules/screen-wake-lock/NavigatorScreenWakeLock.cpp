@@ -28,8 +28,11 @@
 
 #include "Navigator.h"
 #include "WakeLock.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorScreenWakeLock);
 
 NavigatorScreenWakeLock::NavigatorScreenWakeLock(Navigator& navigator)
     : m_navigator(navigator)

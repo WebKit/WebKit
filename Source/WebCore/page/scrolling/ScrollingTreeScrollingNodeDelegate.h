@@ -29,10 +29,12 @@
 
 #include "ScrollingTreeScrollingNode.h"
 
+#include <wtf/TZoneMalloc.h>
+
 namespace WebCore {
 
 class ScrollingTreeScrollingNodeDelegate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeScrollingNodeDelegate);
 public:
     WEBCORE_EXPORT explicit ScrollingTreeScrollingNodeDelegate(ScrollingTreeScrollingNode&);
     WEBCORE_EXPORT virtual ~ScrollingTreeScrollingNodeDelegate();
@@ -63,7 +65,7 @@ public:
     virtual String scrollbarStateForOrientation(ScrollbarOrientation) const { return ""_s; }
 
 protected:
-    WEBCORE_EXPORT ScrollingTree& scrollingTree() const;
+    WEBCORE_EXPORT RefPtr<ScrollingTree> scrollingTree() const;
 
     WEBCORE_EXPORT FloatPoint lastCommittedScrollPosition() const;
     WEBCORE_EXPORT FloatSize totalContentsSize();

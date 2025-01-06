@@ -11,22 +11,27 @@
 #ifndef CALL_RAMPUP_TESTS_H_
 #define CALL_RAMPUP_TESTS_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
-#include <memory>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/rtc_event_log/rtc_event_log.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/test/metrics/metric.h"
 #include "api/test/simulated_network.h"
+#include "api/transport/bitrate_settings.h"
+#include "call/audio_receive_stream.h"
+#include "call/audio_send_stream.h"
 #include "call/call.h"
-#include "call/simulated_network.h"
-#include "rtc_base/event.h"
+#include "call/flexfec_receive_stream.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "test/call_test.h"
+#include "test/rtp_rtcp_observer.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 

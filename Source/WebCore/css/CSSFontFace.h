@@ -31,6 +31,7 @@
 #include "Settings.h"
 #include "TextFlags.h"
 #include <memory>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakHashSet.h>
@@ -64,7 +65,7 @@ class ScriptExecutionContext;
 class StyleProperties;
 class StyleRuleFontFace;
 
-enum class ExternalResourceDownloadPolicy;
+enum class ExternalResourceDownloadPolicy : bool;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
 class CSSFontFace final : public RefCounted<CSSFontFace> {
@@ -76,16 +77,16 @@ public:
     void setFamilies(CSSValueList&);
     void setStyle(CSSValue&);
     void setWeight(CSSValue&);
-    void setStretch(CSSValue&);
+    void setWidth(CSSValue&);
     void setSizeAdjust(CSSValue&);
     void setUnicodeRange(CSSValueList&);
     void setFeatureSettings(CSSValue&);
-    void setDisplay(CSSPrimitiveValue&);
+    void setDisplay(CSSValue&);
 
     String family() const;
     String style() const;
     String weight() const;
-    String stretch() const;
+    String width() const;
     String unicodeRange() const;
     String featureSettings() const;
     String display() const;
@@ -194,25 +195,23 @@ private:
     FontSelectionSpecifiedCapabilities m_fontSelectionCapabilities;
     
     Status m_status { Status::Pending };
-    bool m_isLocalFallback { false };
-    bool m_sourcesPopulated { false };
-    bool m_mayBePurged { true };
-    bool m_shouldIgnoreFontLoadCompletions { false };
+    bool m_isLocalFallback : 1 { false };
+    bool m_sourcesPopulated : 1 { false };
+    bool m_mayBePurged : 1 { true };
+    bool m_shouldIgnoreFontLoadCompletions : 1 { false };
     FontLoadTimingOverride m_fontLoadTimingOverride { FontLoadTimingOverride::None };
     AllowUserInstalledFonts m_allowUserInstalledFonts { AllowUserInstalledFonts::Yes };
 
     Timer m_timeoutTimer;
 };
 
-class CSSFontFaceClient : public CanMakeWeakPtr<CSSFontFaceClient> {
+class CSSFontFaceClient : public AbstractRefCountedAndCanMakeWeakPtr<CSSFontFaceClient> {
 public:
     virtual ~CSSFontFaceClient() = default;
     virtual void fontLoaded(CSSFontFace&) { }
     virtual void fontStateChanged(CSSFontFace&, CSSFontFace::Status /*oldState*/, CSSFontFace::Status /*newState*/) { }
     virtual void fontPropertyChanged(CSSFontFace&, CSSValueList* /*oldFamilies*/ = nullptr) { }
     virtual void updateStyleIfNeeded(CSSFontFace&) { }
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 };
 
 }

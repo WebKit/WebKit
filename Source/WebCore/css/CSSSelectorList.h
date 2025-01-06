@@ -28,6 +28,7 @@
 #include "CSSSelector.h"
 #include <iterator>
 #include <memory>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueArray.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ class MutableCSSSelector;
 using MutableCSSSelectorList = Vector<std::unique_ptr<MutableCSSSelector>>;
 
 class CSSSelectorList {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CSSSelectorList);
 public:
     CSSSelectorList() = default;
     CSSSelectorList(const CSSSelectorList&);
@@ -68,7 +69,7 @@ public:
         using iterator_category = std::forward_iterator_tag;
         reference operator*() const { return *m_ptr; }
         pointer operator->() const { return m_ptr; }
-        bool operator!=(const const_iterator& other) const { return m_ptr != other.m_ptr; }
+        bool operator==(const const_iterator&) const = default;
         const_iterator() = default;
         const_iterator(pointer ptr) : m_ptr(ptr) { };
         const_iterator& operator++()
@@ -92,12 +93,14 @@ public:
     unsigned listSize() const;
 
     CSSSelectorList& operator=(CSSSelectorList&&) = default;
+
 private:
     // End of a multipart selector is indicated by m_isLastInTagHistory bit in the last item.
     // End of the array is indicated by m_isLastInSelectorList bit in the last item.
     UniqueArray<CSSSelector> m_selectorArray;
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 inline const CSSSelector* CSSSelectorList::next(const CSSSelector* current)
 {
     // Skip subparts of compound selectors.
@@ -105,5 +108,6 @@ inline const CSSSelector* CSSSelectorList::next(const CSSSelector* current)
         current++;
     return current->isLastInSelectorList() ? 0 : current + 1;
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace WebCore

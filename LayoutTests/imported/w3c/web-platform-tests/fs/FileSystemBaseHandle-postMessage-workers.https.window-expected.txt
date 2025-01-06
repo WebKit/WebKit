@@ -1,5 +1,5 @@
 
-FAIL Send and receive messages using a dedicated worker. promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL Send and receive messages using a service worker. promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL Send and receive messages using a shared worker. promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL Send and receive messages using a dedicated worker. promise_test: Unhandled rejection with value: object "TypeError: writer.write is not a function. (In 'writer.write(new Blob([contents]))', 'writer.write' is undefined)"
+FAIL Send and receive messages using a service worker. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL Send and receive messages using a shared worker. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
 

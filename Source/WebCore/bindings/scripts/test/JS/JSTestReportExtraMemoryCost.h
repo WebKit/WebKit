@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestReportExtraMemoryCost>;
     static JSTestReportExtraMemoryCost* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestReportExtraMemoryCost>&& impl)
     {
-        auto& vm = globalObject->vm();
+        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
         JSTestReportExtraMemoryCost* ptr = new (NotNull, JSC::allocateCell<JSTestReportExtraMemoryCost>(vm)) JSTestReportExtraMemoryCost(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

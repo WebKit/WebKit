@@ -308,10 +308,10 @@ variants = ARGV.shift.split(/[,\s]+/)
 
 $options = {}
 OptionParser.new do |opts|
-    opts.banner = "Usage: asm.rb asmFile offsetsFile outputFileName [--assembler=<ASM>] [--webkit-additions-path=<path>] [--binary-format=<format>] [--depfile=<depfile>]"
-    # This option is currently only used to specify the masm assembler
-    opts.on("--assembler=[ASM]", "Specify an assembler to use.") do |assembler|
-        $options[:assembler] = assembler
+    opts.banner = "Usage: asm.rb asmFile offsetsFile outputFileName [--platform=<OS>] [--webkit-additions-path=<path>] [--binary-format=<format>] [--depfile=<depfile>]"
+    # This option is currently only used to specify Windows for label lowering
+    opts.on("--platform=[Windows]", "Specify a specific platform for lowering.") do |platform|
+        $options[:platform] = platform
     end
     opts.on("--webkit-additions-path=PATH", "WebKitAdditions path.") do |path|
         $options[:webkit_additions_path] = path
@@ -338,7 +338,7 @@ inputHash =
     "// offlineasm input hash: " + parseHash(asmFile, $options) +
     " " + Digest::SHA1.hexdigest(configurationList.map{|v| (v[0] + [v[1]]).join(' ')}.join(' ')) +
     " " + selfHash +
-    " " + Digest::SHA1.hexdigest($options.has_key?(:assembler) ? $options[:assembler] : "")
+    " " + Digest::SHA1.hexdigest($options.has_key?(:platform) ? $options[:platform] : "")
 
 if FileTest.exist?(outputFlnm) and (not $options[:depfile] or FileTest.exist?($options[:depfile]))
     lastLine = nil
@@ -384,7 +384,7 @@ File.open(outputFlnm, "w") {
             # There could be multiple backends we are generating for, but the C_LOOP is
             # always by itself so this check to turn off $enableDebugAnnotations won't
             # affect the generation for any other backend.
-            if backend == "C_LOOP" || backend == "C_LOOP_WIN"
+            if backend == "C_LOOP"
                 $enableDebugAnnotations = false
                 $preferredCommentStartColumn = 60
                 $emitELFDebugDirectives = false

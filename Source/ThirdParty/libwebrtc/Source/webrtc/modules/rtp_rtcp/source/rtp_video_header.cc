@@ -59,11 +59,10 @@ VideoFrameMetadata RTPVideoHeader::GetAsMetadata() const {
       metadata.SetRTPVideoHeaderCodecSpecifics(
           absl::get<RTPVideoHeaderH264>(video_type_header));
       break;
+    // These codec types do not have codec-specifics.
     case VideoCodecType::kVideoCodecH265:
-      // TODO(bugs.webrtc.org/13485)
-      break;
-    default:
-      // Codec-specifics are not supported for this codec.
+    case VideoCodecType::kVideoCodecAV1:
+    case VideoCodecType::kVideoCodecGeneric:
       break;
   }
   return metadata;
@@ -76,7 +75,7 @@ void RTPVideoHeader::SetFromMetadata(const VideoFrameMetadata& metadata) {
   rotation = metadata.GetRotation();
   content_type = metadata.GetContentType();
   if (!metadata.GetFrameId().has_value()) {
-    generic = absl::nullopt;
+    generic = std::nullopt;
   } else {
     generic.emplace();
     generic->frame_id = metadata.GetFrameId().value();

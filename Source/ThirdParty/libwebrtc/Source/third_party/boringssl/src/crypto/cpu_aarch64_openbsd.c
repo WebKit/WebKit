@@ -15,20 +15,19 @@
 #include <openssl/cpu.h>
 
 #if defined(OPENSSL_AARCH64) && defined(OPENSSL_OPENBSD) && \
-    !defined(OPENSSL_STATIC_ARMCAP)
+    !defined(OPENSSL_STATIC_ARMCAP) && !defined(OPENSSL_NO_ASM)
 
-#include <sys/sysctl.h>
-#include <machine/cpu.h>
 #include <machine/armreg.h>
+#include <machine/cpu.h>
+#include <sys/sysctl.h>
 
 #include <openssl/arm_arch.h>
 
 #include "internal.h"
 
-extern uint32_t OPENSSL_armcap_P;
 
 void OPENSSL_cpuid_setup(void) {
-  int isar0_mib[] = { CTL_MACHDEP, CPU_ID_AA64ISAR0 };
+  int isar0_mib[] = {CTL_MACHDEP, CPU_ID_AA64ISAR0};
   uint64_t cpu_id = 0;
   size_t len = sizeof(cpu_id);
 

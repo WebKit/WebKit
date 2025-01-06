@@ -73,10 +73,10 @@ public:
     Data(Vector<uint8_t>&& data) : Data(std::variant<Vector<uint8_t>, FileSystem::MappedFileData> { WTFMove(data) }) { }
 #endif
     bool isNull() const;
-    bool isEmpty() const { return !m_size; }
+    bool isEmpty() const { return !size(); }
 
     std::span<const uint8_t> span() const;
-    size_t size() const { return m_size; }
+    size_t size() const;
     bool isMap() const { return m_isMap; }
     RefPtr<WebCore::SharedMemory> tryCreateSharedMemory() const;
 
@@ -96,6 +96,7 @@ public:
 private:
 #if PLATFORM(COCOA)
     mutable OSObjectPtr<dispatch_data_t> m_dispatchData;
+    mutable std::span<const uint8_t> m_data;
 #endif
 #if USE(GLIB)
     mutable GRefPtr<GBytes> m_buffer;
@@ -104,8 +105,6 @@ private:
 #if USE(CURL)
     Box<std::variant<Vector<uint8_t>, FileSystem::MappedFileData>> m_buffer;
 #endif
-    mutable const uint8_t* m_data { nullptr };
-    size_t m_size { 0 };
     bool m_isMap { false };
 };
 

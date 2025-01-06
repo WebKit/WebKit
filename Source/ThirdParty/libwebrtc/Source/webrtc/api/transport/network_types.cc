@@ -11,6 +11,7 @@
 #include "api/transport/network_types.h"
 
 #include <algorithm>
+#include <vector>
 
 namespace webrtc {
 StreamsConfig::StreamsConfig() = default;

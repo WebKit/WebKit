@@ -5,7 +5,7 @@
 esid: sec-temporal.plaindate
 description: >
   Appropriate error thrown when argument cannot be converted to a valid string
-  or object for Calendar
+  for Calendar
 features: [BigInt, Symbol, Temporal]
 ---*/
 
@@ -27,9 +27,8 @@ for (const [arg, description] of primitiveTests) {
 
 const typeErrorTests = [
   [Symbol(), "symbol"],
-  [{}, "plain object that doesn't implement the protocol"],
-  [new Temporal.TimeZone("UTC"), "time zone instance"],
-  [Temporal.Calendar, "Temporal.Calendar, object"],
+  [{}, "object"],
+  [new Temporal.Duration(), "duration instance"],
 ];
 
 for (const [arg, description] of typeErrorTests) {

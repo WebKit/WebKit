@@ -27,6 +27,7 @@
 
 #include "UserMessage.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 typedef struct OpaqueJSContext* JSGlobalContextRef;
 
@@ -42,7 +43,7 @@ class View;
 namespace API {
 
 class ViewClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ViewClient);
 public:
     virtual ~ViewClient() = default;
 

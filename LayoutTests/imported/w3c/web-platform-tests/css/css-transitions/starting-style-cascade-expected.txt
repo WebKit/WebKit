@@ -4,4 +4,5 @@ PASS @starting-style with higher specificity
 PASS Starting style does not inherit from parent starting style
 PASS Starting style inheriting from parent's after-change style
 PASS Starting style inheriting from parent's after-change style while parent transitioning
+PASS Starting style inheriting from parent's after-change style while ancestor is transitioning
 

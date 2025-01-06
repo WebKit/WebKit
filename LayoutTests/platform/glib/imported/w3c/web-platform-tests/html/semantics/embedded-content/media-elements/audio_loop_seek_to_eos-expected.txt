@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT seeking to the end of looping audio Test timed out
+PASS seeking to the end of looping audio
 

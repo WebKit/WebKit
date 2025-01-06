@@ -25,6 +25,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -126,7 +127,7 @@ inline void add(Hasher& hasher, const QualifiedName::QualifiedNameImpl& impl)
 
 inline void add(Hasher& hasher, const QualifiedName& name)
 {
-    add(hasher, bitwise_cast<uintptr_t>(name.impl()));
+    add(hasher, std::bit_cast<uintptr_t>(name.impl()));
 }
 
 extern LazyNeverDestroyed<const QualifiedName> anyName;
@@ -160,7 +161,7 @@ inline String QualifiedName::toString() const
     if (!hasPrefix())
         return localName();
 
-    return prefix().string() + ':' + localName().string();
+    return makeString(prefix().string(), ':', localName().string());
 }
 
 inline AtomString QualifiedName::toAtomString() const

@@ -4,7 +4,6 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-
 #include "src/sksl/codegen/SkSLMetalCodeGenerator.h"
 
 #include "include/core/SkSpan.h"
@@ -31,6 +30,7 @@
 #include "src/sksl/SkSLStringStream.h"
 #include "src/sksl/SkSLUtil.h"
 #include "src/sksl/analysis/SkSLProgramVisitor.h"
+#include "src/sksl/codegen/SkSLCodeGenTypes.h"
 #include "src/sksl/codegen/SkSLCodeGenerator.h"
 #include "src/sksl/ir/SkSLBinaryExpression.h"
 #include "src/sksl/ir/SkSLBlock.h"
@@ -48,6 +48,7 @@
 #include "src/sksl/ir/SkSLFunctionDeclaration.h"
 #include "src/sksl/ir/SkSLFunctionDefinition.h"
 #include "src/sksl/ir/SkSLFunctionPrototype.h"
+#include "src/sksl/ir/SkSLIRHelpers.h"
 #include "src/sksl/ir/SkSLIRNode.h"
 #include "src/sksl/ir/SkSLIfStatement.h"
 #include "src/sksl/ir/SkSLIndexExpression.h"
@@ -95,10 +96,12 @@ public:
     MetalCodeGenerator(const Context* context,
                        const ShaderCaps* caps,
                        const Program* program,
-                       OutputStream* out)
-            : INHERITED(context, caps, program, out)
+                       OutputStream* out,
+                       PrettyPrint pp)
+            : CodeGenerator(context, caps, program, out)
             , fReservedWords({"atan2", "rsqrt", "rint", "dfdx", "dfdy", "vertex", "fragment"})
-            , fLineEnding("\n") {}
+            , fLineEnding("\n")
+            , fPrettyPrint(pp) {}
 
     bool generateCode() override;
 
@@ -134,6 +137,8 @@ protected:
     void writeSampler2DPolyfill();
 
     void writeUniformStruct();
+
+    void writeInterpolatedAttributes(const Variable& var);
 
     void writeInputStruct();
 
@@ -359,13 +364,12 @@ protected:
         bool fCreateSubstitutes = true;
     };
     std::unique_ptr<IndexSubstitutionData> fIndexSubstitutionData;
+    PrettyPrint fPrettyPrint;
 
     // Workaround/polyfill flags
     bool fWrittenInverse2 = false, fWrittenInverse3 = false, fWrittenInverse4 = false;
     bool fWrittenMatrixCompMult = false;
     bool fWrittenOuterProduct = false;
-
-    using INHERITED = CodeGenerator;
 };
 
 static const char* operator_name(Operator op) {
@@ -395,13 +399,11 @@ void MetalCodeGenerator::write(std::string_view s) {
     if (s.empty()) {
         return;
     }
-#if defined(SK_DEBUG) || defined(SKSL_STANDALONE)
-    if (fAtLineStart) {
+    if (fAtLineStart && fPrettyPrint == PrettyPrint::kYes) {
         for (int i = 0; i < fIndentation; i++) {
             fOut->writeText("    ");
         }
     }
-#endif
     fOut->writeText(std::string(s).c_str());
     fAtLineStart = false;
 }
@@ -426,12 +428,15 @@ std::string MetalCodeGenerator::typeName(const Type& raw) {
     // we need to know the modifiers for textures
     const Type& type = raw.resolve().scalarTypeForLiteral();
     switch (type.typeKind()) {
-        case Type::TypeKind::kArray:
-            SkASSERT(!type.isUnsizedArray());
-            SkASSERTF(type.columns() > 0, "invalid array size: %s", type.description().c_str());
-            return String::printf("array<%s, %d>",
-                                  this->typeName(type.componentType()).c_str(), type.columns());
-
+        case Type::TypeKind::kArray: {
+            std::string typeName = this->typeName(type.componentType());
+            if (type.isUnsizedArray()) {
+                return String::printf("const device %s*", typeName.c_str());
+            } else {
+                SkASSERTF(type.columns() > 0, "invalid array size: %s", type.description().c_str());
+                return String::printf("array<%s, %d>", typeName.c_str(), type.columns());
+            }
+        }
         case Type::TypeKind::kVector:
             return this->typeName(type.componentType()) + std::to_string(type.columns());
 
@@ -913,6 +918,16 @@ bool MetalCodeGenerator::writeIntrinsicCall(const FunctionCall& c, IntrinsicKind
             this->write(", " + tmpY + " = ");
             this->writeExpression(*arguments[1], Precedence::kSequence);
             this->write(", " + tmpX + " - " + tmpY + " * floor(" + tmpX + " / " + tmpY + "))");
+            return true;
+        }
+        case k_pow_IntrinsicKind: {
+            // The Metal equivalent to GLSL's pow() is powr(). Metal's pow() allows negative base
+            // values, which is presumably more expensive to compute.
+            this->write("powr(");
+            this->writeExpression(*arguments[0], Precedence::kSequence);
+            this->write(", ");
+            this->writeExpression(*arguments[1], Precedence::kSequence);
+            this->write(")");
             return true;
         }
         // GLSL declares scalar versions of most geometric intrinsics, but these don't exist in MSL
@@ -3106,6 +3121,23 @@ void MetalCodeGenerator::writeUniformStruct() {
     }
 }
 
+void MetalCodeGenerator::writeInterpolatedAttributes(const Variable& var) {
+    SkASSERT((is_output(var) && ProgramConfig::IsVertex(fProgram.fConfig->fKind)) ||
+             (is_input(var) && ProgramConfig::IsFragment(fProgram.fConfig->fKind)));
+    // Always include the location
+    this->write(" [[user(locn");
+    this->write(std::to_string(var.layout().fLocation));
+    this->write(")");
+
+    if (var.modifierFlags().isFlat()) {
+        this->write(" flat");
+    } else if (var.modifierFlags().isNoPerspective()) {
+        this->write(" center_no_perspective");
+    } // else default behavior is center_perspective
+
+    this->write("]]");
+}
+
 void MetalCodeGenerator::writeInputStruct() {
     this->write("struct Inputs {\n");
     for (const ProgramElement* e : fProgram.elements()) {
@@ -3130,8 +3162,9 @@ void MetalCodeGenerator::writeInputStruct() {
                         this->write("  [[attribute(" + std::to_string(var.layout().fLocation) +
                                     ")]]");
                     } else if (ProgramConfig::IsFragment(fProgram.fConfig->fKind)) {
-                        this->write("  [[user(locn" + std::to_string(var.layout().fLocation) +
-                                    ")]]");
+                        // Write attributes for the fragment input that are consistent with
+                        // what's annotated on the vertex output.
+                        this->writeInterpolatedAttributes(var);
                     }
                 }
                 this->write(";\n");
@@ -3180,7 +3213,9 @@ void MetalCodeGenerator::writeOutputStruct() {
                     fContext.fErrors->error(var.fPosition,
                                             "Metal out variables must have 'layout(location=...)'");
                 } else if (ProgramConfig::IsVertex(fProgram.fConfig->fKind)) {
-                    this->write(" [[user(locn" + std::to_string(location) + ")]]");
+                    // Write attributes for the vertex output that are consistent with what's
+                    // annotated on the fragment input.
+                    this->writeInterpolatedAttributes(var);
                 } else if (ProgramConfig::IsFragment(fProgram.fConfig->fKind)) {
                     this->write(" [[color(" + std::to_string(location) + ")");
                     int colorIndex = var.layout().fIndex;
@@ -3554,12 +3589,11 @@ MetalCodeGenerator::Requirements MetalCodeGenerator::requirements(const Statemen
                 default:
                     break;
             }
-            return INHERITED::visitExpression(e);
+            return ProgramVisitor::visitExpression(e);
         }
 
         MetalCodeGenerator* fCodeGen;
         Requirements fRequirements = kNo_Requirements;
-        using INHERITED = ProgramVisitor;
     };
 
     RequirementsVisitor visitor;
@@ -3584,6 +3618,7 @@ MetalCodeGenerator::Requirements MetalCodeGenerator::requirements(const Function
                 }
             }
         }
+
         // We never found a definition for this declared function, but it's legal to prototype a
         // function without ever giving a definition, as long as you don't call it.
         return kNo_Requirements;
@@ -3631,16 +3666,25 @@ bool MetalCodeGenerator::generateCode() {
     return fContext.fErrors->errorCount() == 0;
 }
 
-bool ToMetal(Program& program, const ShaderCaps* caps, OutputStream& out) {
+bool ToMetal(Program& program, const ShaderCaps* caps, OutputStream& out, PrettyPrint pp) {
     TRACE_EVENT0("skia.shaders", "SkSL::ToMetal");
     SkASSERT(caps != nullptr);
 
     program.fContext->fErrors->setSource(*program.fSource);
-    MetalCodeGenerator cg(program.fContext.get(), caps, &program, &out);
+    MetalCodeGenerator cg(program.fContext.get(), caps, &program, &out, pp);
     bool result = cg.generateCode();
     program.fContext->fErrors->setSource(std::string_view());
 
     return result;
+}
+
+bool ToMetal(Program& program, const ShaderCaps* caps, OutputStream& out) {
+#if defined(SK_DEBUG)
+    constexpr PrettyPrint defaultPrintOpts = PrettyPrint::kYes;
+#else
+    constexpr PrettyPrint defaultPrintOpts = PrettyPrint::kNo;
+#endif
+    return ToMetal(program, caps, out, defaultPrintOpts);
 }
 
 bool ToMetal(Program& program, const ShaderCaps* caps, std::string* out) {

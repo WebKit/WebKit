@@ -35,23 +35,27 @@ namespace WebCore {
 
 std::unique_ptr<PlatformDisplayGBM> PlatformDisplayGBM::create(struct gbm_device* device)
 {
-    return std::unique_ptr<PlatformDisplayGBM>(new PlatformDisplayGBM(device));
+    const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
+    if (!GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_gbm"))
+        return nullptr;
+
+    std::unique_ptr<GLDisplay> glDisplay;
+    if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
+        glDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, device, nullptr));
+    else if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
+        glDisplay = GLDisplay::create(eglGetPlatformDisplay(EGL_PLATFORM_GBM_KHR, device, nullptr));
+
+    if (!glDisplay) {
+        WTFLogAlways("Could not create GBM EGL display: %s. Aborting...", GLContext::lastErrorString());
+        CRASH();
+    }
+
+    return std::unique_ptr<PlatformDisplayGBM>(new PlatformDisplayGBM(WTFMove(glDisplay), device));
 }
 
-PlatformDisplayGBM::PlatformDisplayGBM(struct gbm_device* device)
+PlatformDisplayGBM::PlatformDisplayGBM(std::unique_ptr<GLDisplay>&& glDisplay, struct gbm_device* device)
+    : PlatformDisplay(WTFMove(glDisplay))
 {
-#if PLATFORM(GTK)
-    PlatformDisplay::setSharedDisplayForCompositing(*this);
-#endif
-
-    const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
-    if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, device, nullptr);
-    else if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_GBM_KHR, device, nullptr);
-
-    PlatformDisplay::initializeEGLDisplay();
-
 #if ENABLE(WEBGL)
     m_anglePlatform = EGL_PLATFORM_GBM_KHR;
     m_angleNativeDisplay = device;

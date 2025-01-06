@@ -12,16 +12,16 @@
     }
   </style>
   <script type="text/javascript" charset="utf-8">
-    function sendClick(element, clientX, clientY)
+    async function sendClick(element, clientX, clientY)
     {
       if (window.eventSender) {
-        eventSender.mouseMoveTo(clientX, clientY);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(clientX, clientY);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
       }
     }
 
-    function mouseDownOnSelect(selId, translateX, translateY)
+    async function mouseDownOnSelect(selId, translateX, translateY)
     {
       log('Testing clicks on ' + selId);
 
@@ -36,14 +36,14 @@
       var scrollbarTopArrowY = translateY + selectElement.offsetTop + selectElement.offsetHeight - border - scrollbarButtonHeight - 3;
       var scrollbarBottomArrowY = translateY + selectElement.offsetTop + selectElement.offsetHeight - border - 3;
       
-      sendClick(selectElement, scrollbarMidX, scrollbarBottomArrowY);
-      sendClick(selectElement, scrollbarMidX, scrollbarBottomArrowY);
+      await sendClick(selectElement, scrollbarMidX, scrollbarBottomArrowY);
+      await sendClick(selectElement, scrollbarMidX, scrollbarBottomArrowY);
       if (selectElement.scrollTop == 2 * itemHeight)
         log('Scrolled down by itemHeight on down arrow click: PASS');
       else
         log('Failed to scroll down - scrollTop is ' + selectElement.scrollTop + ': FAIL');
 
-      sendClick(selectElement, scrollbarMidX, scrollbarTopArrowY);
+      await sendClick(selectElement, scrollbarMidX, scrollbarTopArrowY);
       if (selectElement.scrollTop == itemHeight)
         log('Scrolled up by itemHeight on up arrow click: PASS');
       else
@@ -71,9 +71,9 @@
       
       // Have to wait for the select to be painted before the
       // scrollbar is sized correctly.
-      setTimeout(function() {
-        mouseDownOnSelect('select1', 0, 0);
-        mouseDownOnSelect('select2', 50, 50);
+      setTimeout(async function() {
+        await mouseDownOnSelect('select1', 0, 0);
+        await mouseDownOnSelect('select2', 50, 50);
         if (window.testRunner)
           testRunner.notifyDone();
       }, 0);

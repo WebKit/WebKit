@@ -29,17 +29,9 @@
 
 #include "RTCNetwork.h"
 #include <WebCore/LibWebRTCProvider.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakHashSet.h>
-
-namespace WebKit {
-class WebRTCMonitorObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebRTCMonitorObserver> : std::true_type { };
-}
 
 namespace IPC {
 class Connection;
@@ -48,18 +40,23 @@ class Decoder;
 
 namespace WebKit {
 
+class LibWebRTCNetwork;
 struct NetworksChangedData;
 
-class WebRTCMonitorObserver : public CanMakeWeakPtr<WebRTCMonitorObserver> {
+class WebRTCMonitorObserver : public AbstractRefCountedAndCanMakeWeakPtr<WebRTCMonitorObserver> {
 public:
     virtual ~WebRTCMonitorObserver() = default;
+
     virtual void networksChanged(const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&) = 0;
     virtual void networkProcessCrashed() = 0;
 };
 
 class WebRTCMonitor {
 public:
-    WebRTCMonitor() = default;
+    explicit WebRTCMonitor(LibWebRTCNetwork&);
+
+    void ref() const;
+    void deref() const;
 
     void addObserver(WebRTCMonitorObserver& observer) { m_observers.add(observer); }
     void removeObserver(WebRTCMonitorObserver& observer) { m_observers.remove(observer); }
@@ -77,6 +74,7 @@ public:
 private:
     void networksChanged(Vector<RTCNetwork>&&, RTCNetwork::IPAddress&&, RTCNetwork::IPAddress&&);
 
+    WeakRef<LibWebRTCNetwork> m_libWebRTCNetwork;
     unsigned m_clientCount { 0 };
     WeakHashSet<WebRTCMonitorObserver> m_observers;
     bool m_didReceiveNetworkList { false };

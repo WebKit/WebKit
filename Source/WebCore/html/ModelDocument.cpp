@@ -43,12 +43,12 @@
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "RawDataDocumentParser.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ModelDocument);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ModelDocument);
 
 using namespace HTMLNames;
 
@@ -82,7 +82,6 @@ void ModelDocumentParser::createDocumentStructure()
     auto rootElement = HTMLHtmlElement::create(document);
     document.appendChild(rootElement);
     document.setCSSTarget(rootElement.ptr());
-    rootElement->insertedByParser();
 
     if (document.frame())
         document.frame()->injectUserScripts(UserScriptInjectionTime::DocumentStart);

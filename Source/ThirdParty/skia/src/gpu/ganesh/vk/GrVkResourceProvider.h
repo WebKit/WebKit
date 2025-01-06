@@ -8,34 +8,39 @@
 #ifndef GrVkResourceProvider_DEFINED
 #define GrVkResourceProvider_DEFINED
 
-#include "include/gpu/vk/GrVkTypes.h"
-#include "include/private/base/SkMutex.h"
+#include "include/core/SkRefCnt.h"
+#include "include/private/base/SkAssert.h"
 #include "include/private/base/SkTArray.h"
-#include "src/base/SkTInternalLList.h"
+#include "include/private/gpu/vk/SkiaVulkan.h"
 #include "src/core/SkChecksum.h"
 #include "src/core/SkLRUCache.h"
 #include "src/core/SkTDynamicHash.h"
-#include "src/gpu/ganesh/GrGpu.h"
-#include "src/gpu/ganesh/GrManagedResource.h"
 #include "src/gpu/ganesh/GrProgramDesc.h"
 #include "src/gpu/ganesh/GrResourceHandle.h"
+#include "src/gpu/ganesh/GrSamplerState.h"
 #include "src/gpu/ganesh/GrThreadSafePipelineBuilder.h"
-#include "src/gpu/ganesh/vk/GrVkDescriptorPool.h"
 #include "src/gpu/ganesh/vk/GrVkDescriptorSetManager.h"
-#include "src/gpu/ganesh/vk/GrVkPipelineStateBuilder.h"
+#include "src/gpu/ganesh/vk/GrVkPipeline.h"
 #include "src/gpu/ganesh/vk/GrVkRenderPass.h"
 #include "src/gpu/ganesh/vk/GrVkSampler.h"
 #include "src/gpu/ganesh/vk/GrVkSamplerYcbcrConversion.h"
-#include "src/gpu/ganesh/vk/GrVkUtil.h"
 
+#include <cstdint>
+#include <memory>
+
+class GrProgramInfo;
+class GrRenderTarget;
 class GrVkCommandPool;
+class GrVkDescriptorPool;
+class GrVkDescriptorSet;
 class GrVkGpu;
-class GrVkPipeline;
 class GrVkPipelineState;
-class GrVkPrimaryCommandBuffer;
 class GrVkRenderTarget;
-class GrVkSecondaryCommandBuffer;
 class GrVkUniformHandler;
+namespace skgpu {
+class RefCntedCallback;
+struct VulkanYcbcrConversionInfo;
+}  // namespace skgpu
 
 class GrVkResourceProvider {
 public:
@@ -128,14 +133,14 @@ public:
     GrVkDescriptorPool* findOrCreateCompatibleDescriptorPool(VkDescriptorType type, uint32_t count);
 
     // Finds or creates a compatible GrVkSampler based on the GrSamplerState and
-    // GrVkYcbcrConversionInfo. The refcount is incremented and a pointer returned.
+    // skgpu::VulkanYcbcrConversionInfo. The refcount is incremented and a pointer returned.
     GrVkSampler* findOrCreateCompatibleSampler(GrSamplerState,
-                                               const GrVkYcbcrConversionInfo& ycbcrInfo);
+                                               const skgpu::VulkanYcbcrConversionInfo& ycbcrInfo);
 
     // Finds or creates a compatible GrVkSamplerYcbcrConversion based on the GrSamplerState and
-    // GrVkYcbcrConversionInfo. The refcount is incremented and a pointer returned.
+    // skgpu::VulkanYcbcrConversionInfo. The refcount is incremented and a pointer returned.
     GrVkSamplerYcbcrConversion* findOrCreateCompatibleSamplerYcbcrConversion(
-            const GrVkYcbcrConversionInfo& ycbcrInfo);
+            const skgpu::VulkanYcbcrConversionInfo& ycbcrInfo);
 
     GrVkPipelineState* findOrCreateCompatiblePipelineState(
             GrRenderTarget*,
@@ -216,7 +221,7 @@ public:
     // objects from the cache are probably not worth the complexity of safely releasing them.
     void releaseUnlockedBackendObjects();
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     void resetShaderCacheForTesting() const { fPipelineStateCache->release(); }
 #endif
 

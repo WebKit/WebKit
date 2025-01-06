@@ -33,11 +33,14 @@
 #include <wtf/dragonbox/dragonbox_to_chars.h>
 #include <wtf/dtoa.h>
 #include <wtf/dtoa/double-conversion.h>
+#include <wtf/text/MakeString.h>
 
 using DoubleToStringConverter = WTF::double_conversion::DoubleToStringConverter;
 
 // To avoid conflict with WTF::StringBuilder.
 typedef WTF::double_conversion::StringBuilder DoubleConversionStringBuilder;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -406,7 +409,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToExponential, (JSGlobalObject* globalOb
 
     // Round if the argument is not undefined, always format as exponential.
     NumberToStringBuffer buffer;
-    DoubleConversionStringBuilder builder { &buffer[0], sizeof(buffer) };
+    DoubleConversionStringBuilder builder { std::span<char> { buffer } };
     builder.Reset();
     if (arg.isUndefined())
         WTF::dragonbox::ToExponential(x, &builder);
@@ -414,7 +417,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToExponential, (JSGlobalObject* globalOb
         const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
         converter.ToExponential(x, decimalPlaces, &builder);
     }
-    return JSValue::encode(jsString(vm, String::fromLatin1(builder.Finalize())));
+    return JSValue::encode(jsString(vm, String { builder.Finalize() }));
 }
 
 // toFixed converts a number to a string, always formatting as an a decimal fraction.
@@ -504,6 +507,20 @@ JSString* NumericStrings::addJSString(VM& vm, int i)
     return entry.jsString;
 }
 
+JSString* NumericStrings::addJSString(VM& vm, double value)
+{
+    auto& entry = lookup(value);
+    if (value != entry.key || entry.value.isNull()) {
+        entry.key = value;
+        entry.value = String::number(value);
+    } else {
+        if (entry.jsString)
+            return entry.jsString;
+    }
+    entry.jsString = jsNontrivialString(vm, entry.value);
+    return entry.jsString;
+}
+
 void NumericStrings::initializeSmallIntCache(VM& vm)
 {
     for (int i = 0; i < 10; ++i) {
@@ -542,7 +559,7 @@ static ALWAYS_INLINE JSString* numberToStringInternal(VM& vm, double doubleValue
         return int32ToStringInternal(vm, integerValue, radix);
 
     if (radix == 10)
-        return jsString(vm, vm.numericStrings.add(doubleValue));
+        return vm.numericStrings.addJSString(vm, doubleValue);
 
     if (!std::isfinite(doubleValue))
         return jsNontrivialString(vm, String::number(doubleValue));
@@ -565,6 +582,9 @@ JSString* int52ToString(VM& vm, int64_t value, int32_t radix)
         ASSERT(value >= 0);
         return vm.smallStrings.singleCharacterString(radixDigits[value]);
     }
+
+    if (isInRange<int64_t>(value, INT32_MIN, INT32_MAX))
+        return int32ToString(vm, static_cast<int32_t>(value), radix);
 
     if (radix == 10)
         return jsNontrivialString(vm, vm.numericStrings.add(static_cast<double>(value)));
@@ -655,3 +675,5 @@ int32_t extractToStringRadixArgument(JSGlobalObject* globalObject, JSValue radix
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -40,6 +40,9 @@ public:
     static Ref<RemoteWebLockRegistry> create(WebProcess& process) { return adoptRef(*new RemoteWebLockRegistry(process)); }
     ~RemoteWebLockRegistry();
 
+    void ref() const final { WebCore::WebLockRegistry::ref(); }
+    void deref() const final { WebCore::WebLockRegistry::deref(); }
+
     // WebCore::WebLockRegistry.
     void requestLock(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, const String& name, WebCore::WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) final;
     void releaseLock(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, const String& name) final;

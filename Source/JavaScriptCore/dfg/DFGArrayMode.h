@@ -75,6 +75,7 @@ enum Type : uint8_t {
     Uint8ClampedArray,
     Uint16Array,
     Uint32Array,
+    Float16Array,
     Float32Array,
     Float64Array,
     BigInt64Array,
@@ -106,12 +107,6 @@ enum Conversion : uint8_t {
 };
 } // namespace Array
 
-const char* arrayActionToString(Array::Action);
-const char* arrayTypeToString(Array::Type);
-const char* arrayClassToString(Array::Class);
-const char* arraySpeculationToString(Array::Speculation);
-const char* arrayConversionToString(Array::Conversion);
-
 IndexingType toIndexingShape(Array::Type);
 
 TypedArrayType toTypedArrayType(Array::Type);
@@ -138,6 +133,17 @@ public:
         u.asBytes.type = type;
         u.asBytes.arrayClass = Array::NonArray;
         u.asBytes.speculation = Array::InBounds;
+        u.asBytes.conversion = Array::AsIs;
+        u.asBytes.action = action;
+        u.asBytes.mayBeLargeTypedArray = false;
+        u.asBytes.mayBeResizableOrGrowableSharedTypedArray = false;
+    }
+
+    ArrayMode(Array::Type type, Array::Action action, Array::Speculation speculation)
+    {
+        u.asBytes.type = type;
+        u.asBytes.arrayClass = Array::NonArray;
+        u.asBytes.speculation = speculation;
         u.asBytes.conversion = Array::AsIs;
         u.asBytes.action = action;
         u.asBytes.mayBeLargeTypedArray = false;
@@ -239,13 +245,28 @@ public:
         Array::Class myArrayClass;
         if (isJSArray()) {
             if (profile->usesOriginalArrayStructures(locker) && benefitsFromOriginalArray()) {
-                ArrayModes arrayModes = profile->observedArrayModes(locker);
-                if (hasSeenCopyOnWriteArray(arrayModes) && !hasSeenWritableArray(arrayModes))
-                    myArrayClass = Array::OriginalCopyOnWriteArray;
-                else if (!hasSeenCopyOnWriteArray(arrayModes) && hasSeenWritableArray(arrayModes))
-                    myArrayClass = Array::OriginalNonCopyOnWriteArray;
-                else
+                switch (type()) {
+                case Array::Int32:
+                case Array::Double:
+                case Array::Contiguous: {
+                    ArrayModes arrayModes = profile->observedArrayModes(locker);
+                    if (hasSeenCopyOnWriteArray(arrayModes) && !hasSeenWritableArray(arrayModes))
+                        myArrayClass = Array::OriginalCopyOnWriteArray;
+                    else if (!hasSeenCopyOnWriteArray(arrayModes) && hasSeenWritableArray(arrayModes))
+                        myArrayClass = Array::OriginalNonCopyOnWriteArray;
+                    else
+                        myArrayClass = Array::OriginalArray;
+                    break;
+                }
+                case Array::Undecided:
+                case Array::ArrayStorage: {
                     myArrayClass = Array::OriginalArray;
+                    break;
+                }
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
             } else
                 myArrayClass = Array::Array;
         } else
@@ -424,6 +445,7 @@ public:
         case Array::Uint8ClampedArray:
         case Array::Uint16Array:
         case Array::Uint32Array:
+        case Array::Float16Array:
         case Array::Float32Array:
         case Array::Float64Array:
         case Array::BigInt64Array:
@@ -507,6 +529,8 @@ public:
             return Uint16ArrayMode;
         case Array::Uint32Array:
             return Uint32ArrayMode;
+        case Array::Float16Array:
+            return Float16ArrayMode;
         case Array::Float32Array:
             return Float32ArrayMode;
         case Array::Float64Array:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,9 @@ public:
 
     unsigned short unitType()  const
     {
+        // Per spec: https://svgwg.org/svg2-draft/types.html#__svg__SVGLength__SVG_LENGTHTYPE_UNKNOWN
+        if (m_value.lengthType() > SVGLengthType::Picas)
+            return 0;
         return static_cast<unsigned>(m_value.lengthType());
     }
 

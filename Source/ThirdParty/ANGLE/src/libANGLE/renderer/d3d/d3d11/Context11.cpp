@@ -45,31 +45,13 @@ ANGLE_INLINE bool DrawCallHasDynamicAttribs(const gl::Context *context)
     return vertexArray11->hasActiveDynamicAttrib(context);
 }
 
-bool InstancedPointSpritesActive(RendererD3D *renderer,
-                                 ProgramExecutableD3D *executableD3D,
-                                 gl::PrimitiveMode mode)
-{
-    return executableD3D->usesPointSize() &&
-           executableD3D->usesInstancedPointSpriteEmulation(renderer) &&
-           mode == gl::PrimitiveMode::Points;
-}
-
 bool DrawCallHasStreamingVertexArrays(const gl::Context *context, gl::PrimitiveMode mode)
 {
-    RendererD3D *renderer = GetImplAs<Context11>(context)->getRenderer();
-
     // Direct drawing doesn't support dynamic attribute storage since it needs the first and count
     // to translate when applyVertexBuffer. GL_LINE_LOOP and GL_TRIANGLE_FAN are not supported
     // either since we need to simulate them in D3D.
     if (DrawCallHasDynamicAttribs(context) || mode == gl::PrimitiveMode::LineLoop ||
         mode == gl::PrimitiveMode::TriangleFan)
-    {
-        return true;
-    }
-
-    ProgramExecutableD3D *executableD3D =
-        GetImplAs<ProgramExecutableD3D>(context->getState().getProgramExecutable());
-    if (InstancedPointSpritesActive(renderer, executableD3D, mode))
     {
         return true;
     }
@@ -159,14 +141,7 @@ void Context11::onDestroy(const gl::Context *context)
 
 CompilerImpl *Context11::createCompiler()
 {
-    if (mRenderer->getRenderer11DeviceCaps().featureLevel <= D3D_FEATURE_LEVEL_9_3)
-    {
-        return new CompilerD3D(SH_HLSL_4_0_FL9_3_OUTPUT);
-    }
-    else
-    {
-        return new CompilerD3D(SH_HLSL_4_1_OUTPUT);
-    }
+    return new CompilerD3D(SH_HLSL_4_1_OUTPUT);
 }
 
 ShaderImpl *Context11::createShader(const gl::ShaderState &data)
@@ -999,6 +974,7 @@ angle::Result Context11::triggerDrawCallProgramRecompilation(const gl::Context *
 
     executableD3D->updateCachedInputLayout(mRenderer, va11->getCurrentStateSerial(), glState);
     executableD3D->updateCachedOutputLayout(context, drawFBO);
+    executableD3D->updateCachedImage2DBindLayout(context, gl::ShaderType::Fragment);
 
     bool recompileVS = !executableD3D->hasVertexExecutableForCachedInputLayout();
     bool recompileGS =
@@ -1071,7 +1047,7 @@ angle::Result Context11::triggerDispatchCallProgramRecompilation(const gl::Conte
     gl::ProgramExecutable *executable   = glState.getProgramExecutable();
     ProgramExecutableD3D *executableD3D = GetImplAs<ProgramExecutableD3D>(executable);
 
-    executableD3D->updateCachedComputeImage2DBindLayout(context);
+    executableD3D->updateCachedImage2DBindLayout(context, gl::ShaderType::Compute);
 
     bool recompileCS = !executableD3D->hasComputeExecutableForCachedImage2DBindLayout();
 

@@ -26,14 +26,13 @@
 #include "config.h"
 #include "CSSMathNegate.h"
 
-#include "CSSCalcNegateNode.h"
 #include "CSSNumericValue.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathNegate);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSMathNegate);
 
 static CSSNumericType copyType(const CSSNumberish& numberish)
 {
@@ -84,11 +83,18 @@ bool CSSMathNegate::equals(const CSSNumericValue& other) const
     return m_value->equals(otherNegate->value());
 }
 
-RefPtr<CSSCalcExpressionNode> CSSMathNegate::toCalcExpressionNode() const
+std::optional<CSSCalc::Child> CSSMathNegate::toCalcTreeNode() const
 {
-    if (auto value = m_value->toCalcExpressionNode())
-        return CSSCalcNegateNode::create(value.releaseNonNull());
-    return nullptr;
+    auto child = m_value->toCalcTreeNode();
+    if (!child)
+        return std::nullopt;
+
+    auto negate = CSSCalc::Negate { .a = WTFMove(*child) };
+    auto type = CSSCalc::toType(negate);
+    if (!type)
+        return std::nullopt;
+
+    return CSSCalc::makeChild(WTFMove(negate), *type);
 }
 
 } // namespace WebCore

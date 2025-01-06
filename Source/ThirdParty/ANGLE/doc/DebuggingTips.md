@@ -51,6 +51,12 @@ To log all GLES and EGL commands submitted by an application, including the foll
 angle_enable_trace_events = true
 ```
 
+If you want to enable `INFO`-level logs (and up) without incuring the log spam
+of `angle_enable_trace`, you can instead use the following flag:
+```
+angle_always_log_info = true
+```
+
 ## Debug Angle on Android
 
 Android is built as an Android APK, which makes it more difficult to debug an APK that is using ANGLE.  The following information can allow you to debug ANGLE with LLDB.
@@ -96,6 +102,23 @@ index 61fac4000..1f43f4f64 100755
 * Start your lldbclient.py from `/your_path_to_chromium_src/out/Debug` folder. This adds the ANGLE source-file paths to what is visible to LLDB, which allows LLDB to show ANGLE's source files. Refer to https://source.android.com/devices/tech/debug/gdb for how to attach the app for debugging.
 * If you are debugging angle_perftests, you can use `--shard-timeout 100000000` to disable the timeout so that the test won't get killed while you are debugging. If the test runs too fast that you don't have time to attach, use `--delay-test-start=60` to give you extra time to attach.
 
+## Forcing GL vendor and renderer strings
+
+Some applications don't recognize ANGLE and lower their settings, refuse to start or even crash.
+In those scenarios, you can force them to be values matching other devices.
+
+On desktop:
+```
+ANGLE_GL_VENDOR="foo"
+ANGLE_GL_RENDERER="bar"
+```
+
+On Android:
+```
+adb shell setprop debug.angle.gl_vendor "foo"
+adb shell setprop debug.angle.gl_renderer "bar"
+```
+
 ## Enabling Debug-Utils Markers
 
 ANGLE can emit debug-utils markers for every GLES API command that are visible to both Android GPU
@@ -131,6 +154,47 @@ variable (set in OS-specific manner):
 * 0: Turned off/disabled (default)
 * 1: Turned on/enabled
 
+## Enable Vulkan Call Logging
+
+ANGLE can output Vulkan API call information including detailed parameter info and state. Vulkan
+call logging is available for ANGLE debug builds, builds with asserts enabled, or can be made
+available on any build by setting the following GN arg:
+```
+angle_enable_vulkan_api_dump_layer = true
+```
+
+By default Vulkan call logging goes to stdout, or logcat on Android. Vulkan call logging can be
+used with trace event and debug marker output as shown in [enabling general logging](#enabling-general-logging)
+ and [enabling Debug-Utils markers](#enabling-debug-utils-markers)
+
+### Vulkan Call Logging on Desktop
+
+To log Vulkan calls on desktop set the environment variable `ANGLE_ENABLE_VULKAN_API_DUMP_LAYER` to 1.
+
+For Vulkan call logging output to a file, set
+the environment variable `VK_APIDUMP_LOG_FILENAME` to the correct location.
+
+To show only Vulkan api calls without verbose parameter details set the environment variable
+`VK_APIDUMP_DETAILED` to `false`
+
+### Vulkan Call Logging on Android
+
+Activate Vulkan call logging on Android by setting this Android debug property  that is
+automatically deleted at the next reboot:
+```
+adb shell setprop debug.angle.enable_vulkan_api_dump_layer 1
+```
+
+For Vulkan call logging to a file on Android, specify the filename with an Android debug property that is
+automatically deleted at the next reboot:
+```
+adb shell setprop debug.apidump.log_filename /data/data/[PACKAGE_NAME, i.e., com.android.angle.test for angle_trace_tests]/api_dump.txt
+```
+
+Similarly, detailed parameter output can be controlled by the following Android debug properties:
+```
+adb shell setprop debug.apidump.detailed false
+```
 
 ## Running ANGLE under GAPID on Linux
 

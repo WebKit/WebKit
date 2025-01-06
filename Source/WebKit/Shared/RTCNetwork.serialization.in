@@ -22,6 +22,14 @@
 
 #if USE(LIBWEBRTC)
 
+header: "RTCNetwork.h"
+enum class WebKit::RTC::Network::EcnMarking : int {
+    kNotEct,
+    kEct1,
+    kEct0,
+    kCe
+}
+
 [CustomHeader] struct WebKit::RTC::Network::IPAddress {
     std::variant<WebKit::RTC::Network::IPAddress::UnspecifiedFamily, uint32_t, std::array<uint32_t, 4>> value;
 };

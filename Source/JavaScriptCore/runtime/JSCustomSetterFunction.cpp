@@ -28,6 +28,7 @@
 
 #include "IdentifierInlines.h"
 #include "JSCJSValueInlines.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

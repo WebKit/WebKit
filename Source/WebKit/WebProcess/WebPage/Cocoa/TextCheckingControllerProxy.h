@@ -31,7 +31,9 @@
 #include "EditingRange.h"
 #include "MessageReceiver.h"
 #include <WebCore/SimpleRange.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 
 namespace IPC {
 class Decoder;
@@ -48,10 +50,13 @@ namespace WebKit {
 class WebPage;
 
 class TextCheckingControllerProxy : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextCheckingControllerProxy);
 public:
     TextCheckingControllerProxy(WebPage&);
     ~TextCheckingControllerProxy();
+
+    void ref() const final;
+    void deref() const final;
 
     static WebCore::AttributedString annotatedSubstringBetweenPositions(const WebCore::VisiblePosition&, const WebCore::VisiblePosition&);
 
@@ -69,7 +74,7 @@ private:
     void replaceRelativeToSelection(const WebCore::AttributedString&, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength);
     void removeAnnotationRelativeToSelection(const String& annotationName, int64_t selectionOffset, uint64_t length);
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
 };
 
 } // namespace WebKit

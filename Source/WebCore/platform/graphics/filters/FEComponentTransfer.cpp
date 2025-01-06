@@ -33,6 +33,12 @@
 #include "FEComponentTransferCoreImageApplier.h"
 #endif
 
+#if USE(SKIA)
+#include "FEComponentTransferSkiaApplier.h"
+#endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 Ref<FEComponentTransfer> FEComponentTransfer::create(const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction, DestinationColorSpace colorSpace)
@@ -65,6 +71,9 @@ bool FEComponentTransfer::operator==(const FEComponentTransfer& other) const
 OptionSet<FilterRenderingMode> FEComponentTransfer::supportedFilterRenderingModes() const
 {
     OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(SKIA)
+    modes.add(FilterRenderingMode::Accelerated);
+#endif
 #if USE(CORE_IMAGE)
     if (FEComponentTransferCoreImageApplier::supportsCoreImageRendering(*this))
         modes.add(FilterRenderingMode::Accelerated);
@@ -76,6 +85,8 @@ std::unique_ptr<FilterEffectApplier> FEComponentTransfer::createAcceleratedAppli
 {
 #if USE(CORE_IMAGE)
     return FilterEffectApplier::create<FEComponentTransferCoreImageApplier>(*this);
+#elif USE(SKIA)
+    return FilterEffectApplier::create<FEComponentTransferSkiaApplier>(*this);
 #else
     return nullptr;
 #endif
@@ -83,7 +94,11 @@ std::unique_ptr<FilterEffectApplier> FEComponentTransfer::createAcceleratedAppli
 
 std::unique_ptr<FilterEffectApplier> FEComponentTransfer::createSoftwareApplier() const
 {
+#if USE(SKIA)
+    return FilterEffectApplier::create<FEComponentTransferSkiaApplier>(*this);
+#else
     return FilterEffectApplier::create<FEComponentTransferSoftwareApplier>(*this);
+#endif
 }
 
 bool FEComponentTransfer::setType(ComponentTransferChannel channel, ComponentTransferType type)
@@ -294,3 +309,5 @@ FEComponentTransfer::LookupTable FEComponentTransfer::computeLookupTable(const C
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

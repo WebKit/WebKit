@@ -27,11 +27,11 @@
 
 #if ENABLE(GAMEPAD)
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(GamepadEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GamepadEvent);
 
 GamepadEvent::GamepadEvent(const AtomString& eventType, Gamepad& gamepad)
     : Event(EventInterfaceType::GamepadEvent, eventType, CanBubble::No, IsCancelable::No)

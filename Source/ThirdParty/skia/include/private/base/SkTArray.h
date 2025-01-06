@@ -79,6 +79,11 @@ public:
     }
 
     /**
+     * Creates a TArray by copying contents from an SkSpan. The new array will be heap allocated.
+     */
+    TArray(SkSpan<const T> data) : TArray(data.begin(), static_cast<int>(data.size())) {}
+
+    /**
      * Creates a TArray by copying contents of an initializer list.
      */
     TArray(std::initializer_list<T> data) : TArray(data.begin(), data.size()) {}
@@ -541,6 +546,11 @@ protected:
             : TArray{storage, size} {
         this->copy(array);
     }
+    template <int InitialCapacity>
+    TArray(SkSpan<const T> data, SkAlignedSTStorage<InitialCapacity, T>* storage)
+            : TArray{storage, static_cast<int>(data.size())} {
+        this->copy(data.begin());
+    }
 
 private:
     // Growth factors for checkRealloc.
@@ -576,9 +586,10 @@ private:
 
     void unpoison() {
 #ifdef SK_SANITIZE_ADDRESS
-        if (fData) {
+        if (fData && fPoisoned) {
             // SkDebugf("UNPOISONING %p : 0 -> %zu\n", fData, Bytes(fCapacity));
             sk_asan_unpoison_memory_region(this->begin(), Bytes(fCapacity));
+            fPoisoned = false;
         }
 #endif
     }
@@ -588,6 +599,7 @@ private:
         if (fData && fCapacity > fSize) {
             // SkDebugf("  POISONING %p : %zu -> %zu\n", fData, Bytes(fSize), Bytes(fCapacity));
             sk_asan_poison_memory_region(this->end(), Bytes(fCapacity - fSize));
+            fPoisoned = true;
         }
 #endif
     }
@@ -605,7 +617,9 @@ private:
     // unpredictable location in memory. Of course, TArray won't actually use fItemArray in this
     // way, and we don't want to construct a T before the user requests one. There's no real risk
     // here, so disable CFI when doing these casts.
-    SK_CLANG_NO_SANITIZE("cfi")
+#ifdef __clang__
+    SK_NO_SANITIZE("cfi")
+#endif
     static T* TCast(void* buffer) {
         return (T*)buffer;
     }
@@ -732,6 +746,9 @@ private:
     int fSize{0};
     uint32_t fOwnMemory : 1;
     uint32_t fCapacity : 31;
+#ifdef SK_SANITIZE_ADDRESS
+    bool fPoisoned = false;
+#endif
 };
 
 template <typename T, bool M> static inline void swap(TArray<T, M>& a, TArray<T, M>& b) {
@@ -759,6 +776,10 @@ public:
     STArray(const T* array, int count)
         : Storage{}
         , TArray<T, MEM_MOVE>{array, count, this} {}
+
+    STArray(SkSpan<const T> data)
+        : Storage{}
+        , TArray<T, MEM_MOVE>{data, this} {}
 
     STArray(std::initializer_list<T> data)
         : STArray{data.begin(), SkToInt(data.size())} {}

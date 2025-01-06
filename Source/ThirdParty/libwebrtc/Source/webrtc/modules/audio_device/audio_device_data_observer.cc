@@ -10,8 +10,8 @@
 
 #include "modules/audio_device/include/audio_device_data_observer.h"
 
+#include "api/audio/audio_device_defines.h"
 #include "api/make_ref_counted.h"
-#include "modules/audio_device/include/audio_device_defines.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -58,7 +58,7 @@ class ADMWrapper : public AudioDeviceModule, public AudioTransport {
     return RecordedDataIsAvailable(
         audioSamples, nSamples, nBytesPerSample, nChannels, samples_per_sec,
         total_delay_ms, clockDrift, currentMicLevel, keyPressed, newMicLevel,
-        /*capture_timestamp_ns=*/absl::nullopt);
+        /*capture_timestamp_ns=*/std::nullopt);
   }
 
   // AudioTransport methods overrides.
@@ -73,7 +73,7 @@ class ADMWrapper : public AudioDeviceModule, public AudioTransport {
       uint32_t currentMicLevel,
       bool keyPressed,
       uint32_t& newMicLevel,
-      absl::optional<int64_t> capture_timestamp_ns) override {
+      std::optional<int64_t> capture_timestamp_ns) override {
     int32_t res = 0;
     // Capture PCM data of locally captured audio.
     if (observer_) {
@@ -122,13 +122,13 @@ class ADMWrapper : public AudioDeviceModule, public AudioTransport {
     return res;
   }
 
-  void PullRenderData(int bits_per_sample,
-                      int sample_rate,
-                      size_t number_of_channels,
-                      size_t number_of_frames,
-                      void* audio_data,
-                      int64_t* elapsed_time_ms,
-                      int64_t* ntp_time_ms) override {
+  void PullRenderData(int /* bits_per_sample */,
+                      int /* sample_rate */,
+                      size_t /* number_of_channels */,
+                      size_t /* number_of_frames */,
+                      void* /* audio_data */,
+                      int64_t* /* elapsed_time_ms */,
+                      int64_t* /* ntp_time_ms */) override {
     RTC_DCHECK_NOTREACHED();
   }
 

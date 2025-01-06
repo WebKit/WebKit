@@ -29,6 +29,7 @@
 #include "StyleChange.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -56,7 +57,7 @@ struct TextUpdate {
 };
 
 class Update final : public CanMakeCheckedPtr<Update> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Update);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Update);
 public:
     Update(Document&);
@@ -93,8 +94,8 @@ private:
     Ref<Document> m_document;
     ListHashSet<RefPtr<ContainerNode>> m_roots;
     ListHashSet<RefPtr<Element>> m_rebuildRoots;
-    HashMap<RefPtr<const Element>, ElementUpdate> m_elements;
-    HashMap<RefPtr<const Text>, TextUpdate> m_texts;
+    UncheckedKeyHashMap<RefPtr<const Element>, ElementUpdate> m_elements;
+    UncheckedKeyHashMap<RefPtr<const Text>, TextUpdate> m_texts;
     std::unique_ptr<RenderStyle> m_initialContainingBlockUpdate;
 };
 

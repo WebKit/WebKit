@@ -29,6 +29,7 @@
 #include "APIPageConfiguration.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "WebProcessPool.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(WPE_BACKEND_PLAYSTATION)
 #include <wpe/playstation.h>
@@ -37,6 +38,8 @@
 namespace WebKit {
 
 #if USE(WPE_BACKEND_PLAYSTATION)
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlayStationWebView);
 
 RefPtr<PlayStationWebView> PlayStationWebView::create(struct wpe_view_backend* backend, const API::PageConfiguration& configuration)
 {
@@ -53,7 +56,9 @@ PlayStationWebView::PlayStationWebView(struct wpe_view_backend* backend, const A
     m_page = pool.createWebPage(*m_pageClient, WTFMove(configuration));
 
     wpe_view_backend_initialize(m_backend);
-    m_page->initializeWebPage();
+
+    auto& pageConfiguration = m_page->configuration();
+    m_page->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags());
 }
 
 #else
@@ -71,7 +76,8 @@ PlayStationWebView::PlayStationWebView(const API::PageConfiguration& conf)
     auto& pool = configuration->processPool();
     m_page = pool.createWebPage(*m_pageClient, WTFMove(configuration));
 
-    m_page->initializeWebPage();
+    auto& pageConfiguration = m_page->configuration();
+    m_page->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags());
 }
 
 #endif // USE(WPE_BACKEND_PLAYSTATION)

@@ -8,20 +8,22 @@
 #include "tools/window/VulkanWindowContext.h"
 
 #include "include/core/SkSurface.h"
-#include "include/gpu/GrBackendSemaphore.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrBackendSemaphore.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "include/gpu/ganesh/vk/GrVkBackendSemaphore.h"
 #include "include/gpu/ganesh/vk/GrVkBackendSurface.h"
 #include "include/gpu/ganesh/vk/GrVkDirectContext.h"
-#include "include/gpu/vk/GrVkTypes.h"
+#include "include/gpu/ganesh/vk/GrVkTypes.h"
 #include "include/gpu/vk/VulkanExtensions.h"
+#include "src/gpu/GpuTypesPriv.h"
 #include "include/gpu/vk/VulkanMutableTextureState.h"
 #include "src/base/SkAutoMalloc.h"
 #include "src/gpu/ganesh/vk/GrVkImage.h"
 #include "src/gpu/ganesh/vk/GrVkUtil.h"
 #include "src/gpu/vk/VulkanInterface.h"
+#include "src/gpu/vk/vulkanmemoryallocator/VulkanAMDMemoryAllocator.h"
 
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 // windows wants to define this as CreateSemaphoreA or CreateSemaphoreW
@@ -35,19 +37,19 @@
 
 namespace skwindow::internal {
 
-VulkanWindowContext::VulkanWindowContext(const DisplayParams& params,
+VulkanWindowContext::VulkanWindowContext(std::unique_ptr<const DisplayParams> params,
                                          CreateVkSurfaceFn createVkSurface,
                                          CanPresentFn canPresent,
                                          PFN_vkGetInstanceProcAddr instProc)
-    : WindowContext(params)
-    , fCreateVkSurfaceFn(std::move(createVkSurface))
-    , fCanPresentFn(std::move(canPresent))
-    , fSurface(VK_NULL_HANDLE)
-    , fSwapchain(VK_NULL_HANDLE)
-    , fImages(nullptr)
-    , fImageLayouts(nullptr)
-    , fSurfaces(nullptr)
-    , fBackbuffers(nullptr) {
+        : WindowContext(std::move(params))
+        , fCreateVkSurfaceFn(std::move(createVkSurface))
+        , fCanPresentFn(std::move(canPresent))
+        , fSurface(VK_NULL_HANDLE)
+        , fSwapchain(VK_NULL_HANDLE)
+        , fImages(nullptr)
+        , fImageLayouts(nullptr)
+        , fSurfaces(nullptr)
+        , fBackbuffers(nullptr) {
     fGetInstanceProcAddr = instProc;
     this->initializeContext();
 }
@@ -57,13 +59,17 @@ void VulkanWindowContext::initializeContext() {
     // any config code here (particularly for msaa)?
 
     PFN_vkGetInstanceProcAddr getInstanceProc = fGetInstanceProcAddr;
-    GrVkBackendContext backendContext;
+    skgpu::VulkanBackendContext backendContext;
     skgpu::VulkanExtensions extensions;
     VkPhysicalDeviceFeatures2 features;
-    if (!sk_gpu_test::CreateVkBackendContext(getInstanceProc, &backendContext, &extensions,
-                                             &features, &fDebugCallback, &fPresentQueueIndex,
+    if (!sk_gpu_test::CreateVkBackendContext(getInstanceProc,
+                                             &backendContext,
+                                             &extensions,
+                                             &features,
+                                             &fDebugCallback,
+                                             &fPresentQueueIndex,
                                              fCanPresentFn,
-                                             fDisplayParams.fCreateProtectedNativeBackend)) {
+                                             fDisplayParams->createProtectedNativeBackend())) {
         sk_gpu_test::FreeVulkanFeaturesStructs(&features);
         return;
     }
@@ -93,8 +99,11 @@ void VulkanWindowContext::initializeContext() {
     localGetPhysicalDeviceProperties(backendContext.fPhysicalDevice, &physDeviceProperties);
     uint32_t physDevVersion = physDeviceProperties.apiVersion;
 
-    fInterface.reset(new skgpu::VulkanInterface(backendContext.fGetProc, fInstance, fDevice,
-                                                backendContext.fInstanceVersion, physDevVersion,
+    fInterface.reset(new skgpu::VulkanInterface(backendContext.fGetProc,
+                                                fInstance,
+                                                fDevice,
+                                                backendContext.fMaxAPIVersion,
+                                                physDevVersion,
                                                 &extensions));
 
     GET_PROC(DestroyInstance);
@@ -116,7 +125,17 @@ void VulkanWindowContext::initializeContext() {
     GET_DEV_PROC(QueuePresentKHR);
     GET_DEV_PROC(GetDeviceQueue);
 
-    fContext = GrDirectContexts::MakeVulkan(backendContext, fDisplayParams.fGrContextOptions);
+    backendContext.fMemoryAllocator =
+            skgpu::VulkanAMDMemoryAllocator::Make(fInstance,
+                                                  backendContext.fPhysicalDevice,
+                                                  backendContext.fDevice,
+                                                  physDevVersion,
+                                                  &extensions,
+                                                  fInterface.get(),
+                                                  skgpu::ThreadSafe::kNo,
+                                                  /*blockSize=*/std::nullopt);
+
+    fContext = GrDirectContexts::MakeVulkan(backendContext, fDisplayParams->grContextOptions());
 
     fSurface = fCreateVkSurfaceFn(fInstance);
     if (VK_NULL_HANDLE == fSurface) {
@@ -134,7 +153,7 @@ void VulkanWindowContext::initializeContext() {
         return;
     }
 
-    if (!this->createSwapchain(-1, -1, fDisplayParams)) {
+    if (!this->createSwapchain(-1, -1)) {
         this->destroyContext();
         sk_gpu_test::FreeVulkanFeaturesStructs(&features);
         return;
@@ -145,8 +164,7 @@ void VulkanWindowContext::initializeContext() {
     sk_gpu_test::FreeVulkanFeaturesStructs(&features);
 }
 
-bool VulkanWindowContext::createSwapchain(int width, int height,
-                                          const DisplayParams& params) {
+bool VulkanWindowContext::createSwapchain(int width, int height) {
     // check for capabilities
     VkSurfaceCapabilitiesKHR caps;
     VkResult res = fGetPhysicalDeviceSurfaceCapabilitiesKHR(fPhysicalDevice, fSurface, &caps);
@@ -242,8 +260,7 @@ bool VulkanWindowContext::createSwapchain(int width, int height,
             break;
         }
     }
-    fDisplayParams = params;
-    fSampleCount = std::max(1, params.fMSAASampleCount);
+    fSampleCount = std::max(1, fDisplayParams->msaaSampleCount());
     fStencilBits = 8;
 
     if (VK_FORMAT_UNDEFINED == surfaceFormat) {
@@ -276,16 +293,16 @@ bool VulkanWindowContext::createSwapchain(int width, int height,
             hasImmediate = true;
         }
     }
-    if (params.fDisableVsync && hasImmediate) {
+    if (fDisplayParams->disableVsync() && hasImmediate) {
         mode = VK_PRESENT_MODE_IMMEDIATE_KHR;
     }
 
     VkSwapchainCreateInfoKHR swapchainCreateInfo;
     memset(&swapchainCreateInfo, 0, sizeof(VkSwapchainCreateInfoKHR));
     swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    swapchainCreateInfo.flags = fDisplayParams.fCreateProtectedNativeBackend
-            ? VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR
-            : 0;
+    swapchainCreateInfo.flags = fDisplayParams->createProtectedNativeBackend()
+                                        ? VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR
+                                        : 0;
     swapchainCreateInfo.surface = fSurface;
     swapchainCreateInfo.minImageCount = imageCount;
     swapchainCreateInfo.imageFormat = surfaceFormat;
@@ -361,7 +378,7 @@ bool VulkanWindowContext::createBuffers(VkFormat format,
         info.fImageUsageFlags = usageFlags;
         info.fLevelCount = 1;
         info.fCurrentQueueFamily = fPresentQueueIndex;
-        info.fProtected = skgpu::Protected(fDisplayParams.fCreateProtectedNativeBackend);
+        info.fProtected = skgpu::Protected(fDisplayParams->createProtectedNativeBackend());
         info.fSharingMode = sharingMode;
 
         if (usageFlags & VK_IMAGE_USAGE_SAMPLED_BIT) {
@@ -369,12 +386,12 @@ bool VulkanWindowContext::createBuffers(VkFormat format,
             fSurfaces[i] = SkSurfaces::WrapBackendTexture(fContext.get(),
                                                           backendTexture,
                                                           kTopLeft_GrSurfaceOrigin,
-                                                          fDisplayParams.fMSAASampleCount,
+                                                          fDisplayParams->msaaSampleCount(),
                                                           colorType,
-                                                          fDisplayParams.fColorSpace,
-                                                          &fDisplayParams.fSurfaceProps);
+                                                          fDisplayParams->colorSpace(),
+                                                          &fDisplayParams->surfaceProps());
         } else {
-            if (fDisplayParams.fMSAASampleCount > 1) {
+            if (fDisplayParams->msaaSampleCount() > 1) {
                 return false;
             }
             info.fSampleCount = fSampleCount;
@@ -383,8 +400,8 @@ bool VulkanWindowContext::createBuffers(VkFormat format,
                                                                backendRT,
                                                                kTopLeft_GrSurfaceOrigin,
                                                                colorType,
-                                                               fDisplayParams.fColorSpace,
-                                                               &fDisplayParams.fSurfaceProps);
+                                                               fDisplayParams->colorSpace(),
+                                                               &fDisplayParams->surfaceProps());
         }
         if (!fSurfaces[i]) {
             return false;
@@ -520,7 +537,7 @@ sk_sp<SkSurface> VulkanWindowContext::getBackbufferSurface() {
     }
     if (VK_ERROR_OUT_OF_DATE_KHR == res) {
         // tear swapchain down and try again
-        if (!this->createSwapchain(-1, -1, fDisplayParams)) {
+        if (!this->createSwapchain(-1, -1)) {
             GR_VK_CALL(fInterface, DestroySemaphore(fDevice, semaphore, nullptr));
             return nullptr;
         }

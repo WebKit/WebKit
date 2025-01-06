@@ -10,6 +10,9 @@
 
 #include "api/video_codecs/simulcast_stream.h"
 
+#include <optional>
+
+#include "api/video_codecs/scalability_mode.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -23,15 +26,26 @@ void SimulcastStream::SetNumberOfTemporalLayers(unsigned char n) {
   numberOfTemporalLayers = n;
 }
 
-ScalabilityMode SimulcastStream::GetScalabilityMode() const {
-  RTC_CHECK_GE(numberOfTemporalLayers, 1);
-  RTC_CHECK_LE(numberOfTemporalLayers, 3);
+std::optional<ScalabilityMode> SimulcastStream::GetScalabilityMode() const {
   static const ScalabilityMode scalability_modes[3] = {
       ScalabilityMode::kL1T1,
       ScalabilityMode::kL1T2,
       ScalabilityMode::kL1T3,
   };
+  if (numberOfTemporalLayers < 1 || numberOfTemporalLayers > 3) {
+    return std::nullopt;
+  }
   return scalability_modes[numberOfTemporalLayers - 1];
+}
+
+bool SimulcastStream::operator==(const SimulcastStream& other) const {
+  return (width == other.width && height == other.height &&
+          maxFramerate == other.maxFramerate &&
+          numberOfTemporalLayers == other.numberOfTemporalLayers &&
+          maxBitrate == other.maxBitrate &&
+          targetBitrate == other.targetBitrate &&
+          minBitrate == other.minBitrate && qpMax == other.qpMax &&
+          active == other.active);
 }
 
 }  // namespace webrtc

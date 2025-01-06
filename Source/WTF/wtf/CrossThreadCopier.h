@@ -202,8 +202,8 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     }
     static Type copy(Type&& source)
     {
-        for (auto iterator = source.begin(), iteratorEnd = source.end(); iterator < iteratorEnd; ++iterator)
-            *iterator = CrossThreadCopier<T>::copy(WTFMove(*iterator));
+        for (auto& item : std::forward<Type>(source))
+            item = CrossThreadCopier<T>::copy(WTFMove(item));
         return WTFMove(source);
     }
 };
@@ -229,10 +229,16 @@ template<typename T> struct CrossThreadCopierBase<false, false, HashSet<T> > {
     }
 };
 
+template<typename T, typename U, typename V>
+struct CrossThreadCopierBase<false, false, HashSet<ObjectIdentifierGeneric<T, U, V>>> {
+    typedef HashSet<ObjectIdentifierGeneric<T, U, V>> Type;
+    static Type copy(const Type& identifiers) { return identifiers; }
+};
+
 // Default specialization for HashMaps of CrossThreadCopyable classes
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg>
-struct CrossThreadCopierBase<false, false, HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg>> {
-    using Type = HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg>;
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg, ShouldValidateKey shouldValidateKey>
+struct CrossThreadCopierBase<false, false, HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey>> {
+    using Type = HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey>;
     static constexpr bool IsNeeded = CrossThreadCopier<KeyArg>::IsNeeded || CrossThreadCopier<MappedArg>::IsNeeded;
     static Type copy(const Type& source)
     {

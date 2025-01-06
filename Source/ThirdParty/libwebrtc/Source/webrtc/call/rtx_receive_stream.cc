@@ -12,9 +12,13 @@
 
 #include <string.h>
 
+#include <cstdint>
+#include <map>
 #include <utility>
 
 #include "api/array_view.h"
+#include "api/sequence_checker.h"
+#include "call/rtp_packet_sink_interface.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"

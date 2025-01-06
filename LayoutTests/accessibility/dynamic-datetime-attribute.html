@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<time id="time" datetime="2017-07-08">July 8</time>
+
+<script>
+var output = "This test ensures that we report the correct datetime value after the attribute is changed dynamically.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var time = accessibilityController.accessibleElementById("time");
+    output += expect("time.dateTimeValue", "'2017-07-08'");
+    if (accessibilityController.platformName === "mac")
+        output += expect("time.isAttributeSupported('AXDateTimeValue')", "true");
+    document.getElementById("time").setAttribute("datetime", "11-12");
+    setTimeout(async function() {
+        output += await expectAsync("time.dateTimeValue", "'11-12'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

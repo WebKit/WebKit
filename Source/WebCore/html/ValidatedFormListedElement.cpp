@@ -50,9 +50,13 @@
 #include "ValidationMessage.h"
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ValidatedFormListedElement);
 
 using namespace HTMLNames;
 
@@ -103,7 +107,7 @@ void ValidatedFormListedElement::updateVisibleValidationMessage(Ref<HTMLElement>
     if (element.renderer() && willValidate())
         message = validationMessage().trim(deprecatedIsSpaceOrNewline);
     if (!m_validationMessage)
-        m_validationMessage = makeUnique<ValidationMessage>(validationAnchor);
+        m_validationMessage = ValidationMessage::create(validationAnchor);
     m_validationMessage->updateValidationMessage(validationAnchor, message);
 }
 
@@ -275,7 +279,7 @@ void ValidatedFormListedElement::updateValidity()
             }
         }
 
-        if (auto* cache = element.document().existingAXObjectCache())
+        if (CheckedPtr cache = element.document().existingAXObjectCache())
             cache->onValidityChange(element);
     }
 

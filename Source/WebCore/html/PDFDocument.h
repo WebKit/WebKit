@@ -35,7 +35,8 @@ class HTMLIFrameElement;
 class PDFDocumentEventListener;
 
 class PDFDocument final : public HTMLDocument {
-    WTF_MAKE_ISO_ALLOCATED(PDFDocument);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PDFDocument);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFDocument);
 public:
     static Ref<PDFDocument> create(LocalFrame& frame, const URL& url)
     {
@@ -43,6 +44,8 @@ public:
         document->addToContextsMap();
         return document;
     }
+
+    ~PDFDocument();
 
     void updateDuringParsing();
     void finishedParsing();

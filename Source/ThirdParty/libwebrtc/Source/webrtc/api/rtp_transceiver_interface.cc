@@ -10,6 +10,10 @@
 
 #include "api/rtp_transceiver_interface.h"
 
+#include <optional>
+
+#include "api/rtc_error.h"
+#include "api/rtp_transceiver_direction.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -20,9 +24,9 @@ RtpTransceiverInit::RtpTransceiverInit(const RtpTransceiverInit& rhs) = default;
 
 RtpTransceiverInit::~RtpTransceiverInit() = default;
 
-absl::optional<RtpTransceiverDirection>
+std::optional<RtpTransceiverDirection>
 RtpTransceiverInterface::fired_direction() const {
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 bool RtpTransceiverInterface::stopping() const {
@@ -52,7 +56,7 @@ void RtpTransceiverInterface::SetDirection(
 }
 
 RTCError RtpTransceiverInterface::SetDirectionWithError(
-    RtpTransceiverDirection new_direction) {
+    RtpTransceiverDirection /* new_direction */) {
   RTC_DCHECK_NOTREACHED() << "Default implementation called";
   return RTCError::OK();
 }

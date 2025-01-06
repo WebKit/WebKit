@@ -120,7 +120,23 @@ cl_mem Context::createBuffer(const cl_mem_properties *properties,
                              size_t size,
                              void *hostPtr)
 {
-    return Object::Create<Buffer>(*this, Memory::PropArray{}, flags, size, hostPtr);
+    // If the properties argument specified in clCreateBufferWithProperties or
+    // clCreateImageWithProperties used to create memobj was not NULL, the implementation must
+    // return the values specified in the properties argument in the same order and without
+    // including additional properties. So pass them as is.
+    Memory::PropArray propArray;
+    if (properties != nullptr)
+    {
+        const cl_mem_properties *propIt = properties;
+        while (*propIt != 0)
+        {
+            propArray.push_back(*propIt);
+            ++propIt;
+        }
+        // there is at least one property - special property 0
+        propArray.push_back(0);
+    }
+    return Object::Create<Buffer>(*this, std::move(propArray), flags, size, hostPtr);
 }
 
 cl_mem Context::createImage(const cl_mem_properties *properties,
@@ -138,7 +154,24 @@ cl_mem Context::createImage(const cl_mem_properties *properties,
                                        desc->image_slice_pitch,
                                        desc->num_mip_levels,
                                        desc->num_samples};
-    return Object::Create<Image>(*this, Memory::PropArray{}, flags, *format, imageDesc,
+    Memory::PropArray propArray;
+
+    // If the properties argument specified in clCreateBufferWithProperties or
+    // clCreateImageWithProperties used to create memobj was not NULL, the implementation must
+    // return the values specified in the properties argument in the same order and without
+    // including additional properties. So Pass them as is.
+    if (properties != nullptr)
+    {
+        const cl_mem_properties *propIt = properties;
+        while (*propIt != 0)
+        {
+            propArray.push_back(*propIt);
+            ++propIt;
+        }
+        // there is at least one property - special property 0
+        propArray.push_back(0);
+    }
+    return Object::Create<Image>(*this, std::move(propArray), flags, *format, imageDesc,
                                  Memory::Cast(desc->buffer), hostPtr);
 }
 
@@ -149,8 +182,8 @@ cl_mem Context::createImage2D(MemFlags flags,
                               size_t rowPitch,
                               void *hostPtr)
 {
-    const ImageDescriptor imageDesc = {
-        MemObjectType::Image2D, width, height, 0u, 0u, rowPitch, 0u, 0u, 0u};
+    const ImageDescriptor imageDesc(MemObjectType::Image2D, width, height, 0u, 0u, rowPitch, 0u, 0u,
+                                    0u);
     return Object::Create<Image>(*this, Memory::PropArray{}, flags, *format, imageDesc, nullptr,
                                  hostPtr);
 }
@@ -164,8 +197,8 @@ cl_mem Context::createImage3D(MemFlags flags,
                               size_t slicePitch,
                               void *hostPtr)
 {
-    const ImageDescriptor imageDesc = {
-        MemObjectType::Image3D, width, height, depth, 0u, rowPitch, slicePitch, 0u, 0u};
+    const ImageDescriptor imageDesc(MemObjectType::Image3D, width, height, depth, 0u, rowPitch,
+                                    slicePitch, 0u, 0u);
     return Object::Create<Image>(*this, Memory::PropArray{}, flags, *format, imageDesc, nullptr,
                                  hostPtr);
 }

@@ -57,6 +57,7 @@ PACKAGES=(
     pulseaudio-libs-devel
     ruby
     sqlite-devel
+    sysprof-capture-devel
     systemd-devel
     unifdef
     wayland-devel

@@ -10,7 +10,8 @@
 
 #include "rtc_base/bitrate_tracker.h"
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/units/data_rate.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/rate_statistics.h"
@@ -20,11 +21,11 @@ namespace webrtc {
 BitrateTracker::BitrateTracker(TimeDelta max_window_size)
     : impl_(max_window_size.ms(), RateStatistics::kBpsScale) {}
 
-absl::optional<DataRate> BitrateTracker::Rate(Timestamp now) const {
-  if (absl::optional<int64_t> rate = impl_.Rate(now.ms())) {
+std::optional<DataRate> BitrateTracker::Rate(Timestamp now) const {
+  if (std::optional<int64_t> rate = impl_.Rate(now.ms())) {
     return DataRate::BitsPerSec(*rate);
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 bool BitrateTracker::SetWindowSize(TimeDelta window_size, Timestamp now) {

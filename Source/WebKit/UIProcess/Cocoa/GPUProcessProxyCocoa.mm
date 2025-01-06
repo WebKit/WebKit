@@ -44,6 +44,9 @@ WTF_WEAK_LINK_FORCE_IMPORT(PLQueryRegistered);
 
 namespace WebKit {
 
+bool GPUProcessProxy::s_enableMetalDebugDeviceInNewGPUProcessesForTesting { false };
+bool GPUProcessProxy::s_enableMetalShaderValidationInNewGPUProcessesForTesting { false };
+
 void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationParameters& parameters)
 {
     parameters.mobileGestaltExtensionHandle = createMobileGestaltSandboxExtensionIfNeeded();
@@ -53,6 +56,8 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
     if (auto launchServicesExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt))
         parameters.launchServicesExtensionHandle = WTFMove(*launchServicesExtensionHandle);
 #endif
+    parameters.enableMetalDebugDeviceForTesting = m_isMetalDebugDeviceEnabledForTesting;
+    parameters.enableMetalShaderValidationForTesting = m_isMetalShaderValidationEnabledForTesting;
 }
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
@@ -93,17 +98,14 @@ Vector<SandboxExtension::Handle> GPUProcessProxy::createGPUToolsSandboxExtension
 #if USE(EXTENSIONKIT)
 void GPUProcessProxy::sendBookmarkDataForCacheDirectory()
 {
-    RefPtr protectedConnection = connection();
-    ASSERT(protectedConnection);
-
+    Ref protectedConnection = connection();
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([protectedConnection = WTFMove(protectedConnection)] () mutable {
         NSError *error = nil;
         RetainPtr directoryURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:&error];
         RetainPtr url = adoptNS([[NSURL alloc] initFileURLWithPath:@"Caches/com.apple.WebKit.GPU/" relativeToURL:directoryURL.get()]);
         error = nil;
         RetainPtr bookmark = [url bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
-        if (protectedConnection)
-            protectedConnection->send(Messages::GPUProcess::ResolveBookmarkDataForCacheDirectory(span(bookmark.get())), 0);
+        protectedConnection->send(Messages::GPUProcess::ResolveBookmarkDataForCacheDirectory(span(bookmark.get())), 0);
     }).get());
 }
 #endif

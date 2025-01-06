@@ -46,20 +46,24 @@ inferred_mode() {
   fi
 }
 
+MODE=`inferred_mode`
 # Prefer mode from command line if present.
-case "$1" in
-  local|device)
-    MODE=$1
-    ;;
+while [ "$1" ]; do
+  case "$1" in
+    local|device)
+      MODE=$1
+      ;;
 
-  "")
-    MODE=`inferred_mode`
-    ;;
+    "32")
+      TEST32BIT="true"
+      ;;
 
-  *)
-    usage
-    ;;
-esac
+    *)
+      usage
+      ;;
+  esac
+  shift
+done
 
 check_directory() {
   test -d "$1" || die "Directory $1 not found."
@@ -145,10 +149,16 @@ else # Device mode
   test "$ANDROID_BUILD_TOP" || die "'lunch aosp_arm64-eng' first"
   check_directory "$ANDROID_PRODUCT_OUT"
 
-  TEST_FIPS_BIN="$ANDROID_PRODUCT_OUT/system/bin/test_fips"
+  if [ "$TEST32BIT" ]; then
+    TEST_FIPS_BIN="$ANDROID_PRODUCT_OUT/system/bin/test_fips32"
+    LIBCRYPTO_BIN="$ANDROID_PRODUCT_OUT/system/lib/libcrypto.so"
+    LIBCRYPTO_BREAK_BIN="$ANDROID_PRODUCT_OUT/system/lib/libcrypto_for_testing.so"
+  else
+    TEST_FIPS_BIN="$ANDROID_PRODUCT_OUT/system/bin/test_fips"
+    LIBCRYPTO_BIN="$ANDROID_PRODUCT_OUT/system/lib64/libcrypto.so"
+    LIBCRYPTO_BREAK_BIN="$ANDROID_PRODUCT_OUT/system/lib64/libcrypto_for_testing.so"
+  fi
   check_file "$TEST_FIPS_BIN"
-  LIBCRYPTO_BIN="$ANDROID_PRODUCT_OUT/system/lib64/libcrypto.so"
-  LIBCRYPTO_BREAK_BIN="libcrypto.so"
   check_file "$LIBCRYPTO_BIN"
   check_file "$LIBCRYPTO_BREAK_BIN"
 

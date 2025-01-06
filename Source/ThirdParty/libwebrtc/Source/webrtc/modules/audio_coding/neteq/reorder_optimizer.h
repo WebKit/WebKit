@@ -11,7 +11,8 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_REORDER_OPTIMIZER_H_
 #define MODULES_AUDIO_CODING_NETEQ_REORDER_OPTIMIZER_H_
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "modules/audio_coding/neteq/histogram.h"
 
 namespace webrtc {
@@ -23,11 +24,11 @@ class ReorderOptimizer {
  public:
   ReorderOptimizer(int forget_factor,
                    int ms_per_loss_percent,
-                   absl::optional<int> start_forget_weight);
+                   std::optional<int> start_forget_weight);
 
   void Update(int relative_delay_ms, bool reordered, int base_delay_ms);
 
-  absl::optional<int> GetOptimalDelayMs() const { return optimal_delay_ms_; }
+  std::optional<int> GetOptimalDelayMs() const { return optimal_delay_ms_; }
 
   void Reset();
 
@@ -36,7 +37,7 @@ class ReorderOptimizer {
 
   Histogram histogram_;
   const int ms_per_loss_percent_;
-  absl::optional<int> optimal_delay_ms_;
+  std::optional<int> optimal_delay_ms_;
 };
 
 }  // namespace webrtc

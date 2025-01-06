@@ -41,6 +41,7 @@
 #include "SharedBuffer.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/TextStream.h>
@@ -100,6 +101,13 @@ Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial i
         m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
     }
 #endif
+}
+
+Font::Font(IsSystemFallbackFontPlaceholder isSystemFontFallbackPlaceholder)
+    : m_isSystemFontFallbackPlaceholder(isSystemFontFallbackPlaceholder == IsSystemFallbackFontPlaceholder::Yes)
+{
+    // This ctor is to be used only for representing a system font fallback placeholder (createSystemFallbackFontPlaceholder)
+    ASSERT(isSystemFontFallbackPlaceholder == IsSystemFallbackFontPlaceholder::Yes);
 }
 
 // Estimates of avgCharWidth and maxCharWidth for platforms that don't support accessing these values from the font.
@@ -175,7 +183,8 @@ void Font::platformGlyphInit()
 
 Font::~Font()
 {
-    SystemFallbackFontCache::forCurrentThread().remove(this);
+    if (auto* cache = SystemFallbackFontCache::forCurrentThreadIfExists())
+        cache->remove(this);
 }
 
 RenderingResourceIdentifier Font::renderingResourceIdentifier() const
@@ -278,7 +287,7 @@ static std::optional<size_t> codePointSupportIndex(char32_t codePoint)
     }
 
 #ifndef NDEBUG
-    char32_t codePointOrder[] = {
+    auto codePointOrder = std::to_array<char32_t>({
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
         0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
         0x7F,
@@ -304,7 +313,7 @@ static std::optional<size_t> codePointSupportIndex(char32_t codePoint)
         firstStrongIsolate,
         objectReplacementCharacter,
         zeroWidthNoBreakSpace
-    };
+    });
     bool found = false;
     for (size_t i = 0; i < std::size(codePointOrder); ++i) {
         if (codePointOrder[i] == codePoint) {
@@ -477,6 +486,19 @@ const Font* Font::smallCapsFont(const FontDescription& fontDescription) const
     return derivedFontData.smallCapsFont.get();
 }
 
+const RefPtr<Font> Font::halfWidthFont() const
+{
+    if (isSystemFontFallbackPlaceholder()) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    DerivedFonts& derivedFontData = ensureDerivedFontData();
+    if (!derivedFontData.halfWidthFont)
+        derivedFontData.halfWidthFont = createHalfWidthFont();
+    ASSERT(derivedFontData.halfWidthFont.get() != this);
+    return derivedFontData.halfWidthFont;
+}
+
 const Font& Font::noSynthesizableFeaturesFont() const
 {
 #if PLATFORM(COCOA)
@@ -547,6 +569,11 @@ const OpenTypeMathData* Font::mathData() const
 RefPtr<Font> Font::createScaledFont(const FontDescription& fontDescription, float scaleFactor) const
 {
     return platformCreateScaledFont(fontDescription, scaleFactor);
+}
+
+RefPtr<Font> Font::createHalfWidthFont() const
+{
+    return platformCreateHalfWidthFont();
 }
 
 #if !USE(CORE_TEXT)

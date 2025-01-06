@@ -10,19 +10,25 @@
 
 #include "logging/rtc_event_log/dependency_descriptor_encoder_decoder.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
+#include "api/array_view.h"
 #include "logging/rtc_event_log/encoder/delta_encoding.h"
 #include "logging/rtc_event_log/encoder/optional_blob_encoding.h"
 #include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
 #include "logging/rtc_event_log/rtc_event_log2_proto_include.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
 
 // static
-absl::optional<rtclog2::DependencyDescriptorsWireInfo>
+std::optional<rtclog2::DependencyDescriptorsWireInfo>
 RtcEventLogDependencyDescriptorEncoderDecoder::Encode(
     const std::vector<rtc::ArrayView<const uint8_t>>& raw_dd_data) {
   if (raw_dd_data.empty()) {
@@ -43,13 +49,13 @@ RtcEventLogDependencyDescriptorEncoderDecoder::Encode(
 
   // Start and end bit.
   {
-    absl::optional<uint32_t> start_end_bit;
+    std::optional<uint32_t> start_end_bit;
     if (!base_dd.empty()) {
       start_end_bit = (base_dd[0] >> 6);
       res.set_start_end_bit(*start_end_bit);
     }
     if (!delta_dds.empty()) {
-      std::vector<absl::optional<uint64_t>> values(delta_dds.size());
+      std::vector<std::optional<uint64_t>> values(delta_dds.size());
       for (size_t i = 0; i < delta_dds.size(); ++i) {
         if (!delta_dds[i].empty()) {
           values[i] = delta_dds[i][0] >> 6;
@@ -64,14 +70,14 @@ RtcEventLogDependencyDescriptorEncoderDecoder::Encode(
 
   // Template IDs.
   {
-    absl::optional<uint32_t> template_id;
+    std::optional<uint32_t> template_id;
     if (!base_dd.empty()) {
       template_id = (base_dd[0] & 0b0011'1111);
       res.set_template_id(*template_id);
     }
 
     if (!delta_dds.empty()) {
-      std::vector<absl::optional<uint64_t>> values(delta_dds.size());
+      std::vector<std::optional<uint64_t>> values(delta_dds.size());
       for (size_t i = 0; i < delta_dds.size(); ++i) {
         if (!delta_dds[i].empty()) {
           values[i] = delta_dds[i][0] & 0b0011'1111;
@@ -86,14 +92,14 @@ RtcEventLogDependencyDescriptorEncoderDecoder::Encode(
 
   // Frame IDs.
   {
-    absl::optional<uint32_t> frame_id;
+    std::optional<uint32_t> frame_id;
     if (!base_dd.empty()) {
       frame_id = (uint16_t{base_dd[1]} << 8) + base_dd[2];
       res.set_frame_id(*frame_id);
     }
 
     if (!delta_dds.empty()) {
-      std::vector<absl::optional<uint64_t>> values(delta_dds.size());
+      std::vector<std::optional<uint64_t>> values(delta_dds.size());
       for (size_t i = 0; i < delta_dds.size(); ++i) {
         if (!delta_dds[i].empty()) {
           values[i] = (uint16_t{delta_dds[i][1]} << 8) + delta_dds[i][2];
@@ -108,7 +114,7 @@ RtcEventLogDependencyDescriptorEncoderDecoder::Encode(
 
   // Extended info
   {
-    std::vector<absl::optional<std::string>> values(raw_dd_data.size());
+    std::vector<std::optional<std::string>> values(raw_dd_data.size());
     for (size_t i = 0; i < raw_dd_data.size(); ++i) {
       if (raw_dd_data[i].size() > 3) {
         auto extended_info = raw_dd_data[i].subview(3);
@@ -137,49 +143,49 @@ RtcEventLogDependencyDescriptorEncoderDecoder::Decode(
 
   std::vector<std::vector<uint8_t>> res(num_packets);
 
-  absl::optional<uint64_t> start_end_bit_base;
+  std::optional<uint64_t> start_end_bit_base;
   if (dd_wire_info.has_start_end_bit()) {
     start_end_bit_base = dd_wire_info.start_end_bit();
   }
-  absl::optional<uint64_t> template_id_base;
+  std::optional<uint64_t> template_id_base;
   if (dd_wire_info.has_template_id()) {
     template_id_base = dd_wire_info.template_id();
   }
-  absl::optional<uint64_t> frame_id_base;
+  std::optional<uint64_t> frame_id_base;
   if (dd_wire_info.has_frame_id()) {
     frame_id_base = dd_wire_info.frame_id();
   }
 
-  std::vector<absl::optional<uint64_t>> start_end_bit_deltas;
+  std::vector<std::optional<uint64_t>> start_end_bit_deltas;
   if (dd_wire_info.has_start_end_bit_deltas()) {
     start_end_bit_deltas = DecodeDeltas(dd_wire_info.start_end_bit_deltas(),
                                         start_end_bit_base, num_packets - 1);
     RTC_DCHECK(start_end_bit_deltas.empty() ||
                start_end_bit_deltas.size() == (num_packets - 1));
   }
-  std::vector<absl::optional<uint64_t>> template_id_deltas;
+  std::vector<std::optional<uint64_t>> template_id_deltas;
   if (dd_wire_info.has_template_id_deltas()) {
     template_id_deltas = DecodeDeltas(dd_wire_info.template_id_deltas(),
                                       template_id_base, num_packets - 1);
     RTC_DCHECK(template_id_deltas.empty() ||
                template_id_deltas.size() == (num_packets - 1));
   }
-  std::vector<absl::optional<uint64_t>> frame_id_deltas;
+  std::vector<std::optional<uint64_t>> frame_id_deltas;
   if (dd_wire_info.has_frame_id_deltas()) {
     frame_id_deltas = DecodeDeltas(dd_wire_info.frame_id_deltas(),
                                    frame_id_base, num_packets - 1);
     RTC_DCHECK(frame_id_deltas.empty() ||
                frame_id_deltas.size() == (num_packets - 1));
   }
-  std::vector<absl::optional<std::string>> extended_infos;
+  std::vector<std::optional<std::string>> extended_infos;
   if (dd_wire_info.has_extended_infos()) {
     extended_infos =
         DecodeOptionalBlobs(dd_wire_info.extended_infos(), num_packets);
   }
 
-  auto recreate_raw_dd = [&](int i, const absl::optional<uint64_t>& be,
-                             const absl::optional<uint64_t>& tid,
-                             const absl::optional<uint64_t>& fid) {
+  auto recreate_raw_dd = [&](int i, const std::optional<uint64_t>& be,
+                             const std::optional<uint64_t>& tid,
+                             const std::optional<uint64_t>& fid) {
     absl::string_view ext;
     if (!extended_infos.empty() && extended_infos[i].has_value()) {
       ext = *extended_infos[i];

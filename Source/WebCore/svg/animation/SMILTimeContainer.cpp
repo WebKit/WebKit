@@ -86,7 +86,7 @@ Seconds SMILTimeContainer::animationFrameDelay() const
     RefPtr page = m_ownerSVGElement->document().page();
     if (!page)
         return SMILAnimationFrameDelay;
-    return page->isLowPowerModeEnabled() ? SMILAnimationFrameThrottledDelay : SMILAnimationFrameDelay;
+    return (page->isLowPowerModeEnabled() || page->isAggressiveThermalMitigationEnabled()) ? SMILAnimationFrameThrottledDelay : SMILAnimationFrameDelay;
 }
 
 SMILTime SMILTimeContainer::elapsed() const

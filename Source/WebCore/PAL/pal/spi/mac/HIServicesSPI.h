@@ -26,6 +26,8 @@
 #pragma once
 
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <span>
+#include <wtf/StdLibExtras.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -157,6 +159,13 @@ extern CFStringRef kAXInterfaceDifferentiateWithoutColorKey;
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#if PLATFORM(MAC)
+inline std::span<const uint8_t> AXTextMarkerGetByteSpan(AXTextMarkerRef marker)
+{
+    return unsafeMakeSpan(AXTextMarkerGetBytePtr(marker), AXTextMarkerGetLength(marker));
+}
+#endif
 
 WTF_EXTERN_C_BEGIN
 

@@ -17,14 +17,31 @@ rtc_source_set("neteq_api") {
   ]
 
   deps = [
+    "..:array_view",
     "..:rtp_headers",
     "..:rtp_packet_info",
     "..:scoped_refptr",
     "../../rtc_base:stringutils",
-    "../../system_wrappers:system_wrappers",
     "../audio_codecs:audio_codecs_api",
+    "../environment",
+    "../units:timestamp",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_source_set("default_neteq_factory") {
+  visibility = [ "*" ]
+  sources = [
+    "default_neteq_factory.cc",
+    "default_neteq_factory.h",
+  ]
+  deps = [
+    ":default_neteq_controller_factory",
+    ":neteq_api",
+    "..:scoped_refptr",
+    "../../modules/audio_coding:neteq",
+    "../audio_codecs:audio_codecs_api",
+    "../environment",
+  ]
 }
 
 rtc_source_set("custom_neteq_factory") {
@@ -39,8 +56,8 @@ rtc_source_set("custom_neteq_factory") {
     ":neteq_controller_api",
     "..:scoped_refptr",
     "../../modules/audio_coding:neteq",
-    "../../system_wrappers:system_wrappers",
     "../audio_codecs:audio_codecs_api",
+    "../environment",
   ]
 }
 
@@ -54,9 +71,8 @@ rtc_source_set("neteq_controller_api") {
   deps = [
     ":neteq_api",
     ":tick_timer",
-    "../../system_wrappers:system_wrappers",
+    "../environment",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_source_set("default_neteq_controller_factory") {
@@ -69,6 +85,7 @@ rtc_source_set("default_neteq_controller_factory") {
   deps = [
     ":neteq_controller_api",
     "../../modules/audio_coding:neteq",
+    "../environment",
   ]
 }
 
@@ -78,9 +95,7 @@ rtc_source_set("tick_timer") {
     "tick_timer.cc",
     "tick_timer.h",
   ]
-  deps = [
-    "../../rtc_base:checks",
-  ]
+  deps = [ "../../rtc_base:checks" ]
 }
 
 rtc_source_set("tick_timer_unittest") {

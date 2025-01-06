@@ -43,7 +43,7 @@ class AudioNodeOutput;
 class AudioParam;
 class BaseAudioContext;
 
-enum class NoiseInjectionPolicy : bool;
+enum class NoiseInjectionPolicy : uint8_t;
 
 // An AudioNode is the basic building block for handling audio within an AudioContext.
 // It may be an audio source, an intermediate processing module, or an audio destination.
@@ -58,7 +58,7 @@ class AudioNode
 #endif
 {
     WTF_MAKE_NONCOPYABLE(AudioNode);
-    WTF_MAKE_ISO_ALLOCATED(AudioNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioNode);
 public:
     enum NodeType {
         NodeTypeDestination,
@@ -197,7 +197,7 @@ public:
     bool isTailProcessing() const { return m_isTailProcessing; }
     void setIsTailProcessing(bool isTailProcessing) { m_isTailProcessing = isTailProcessing; }
 
-    NoiseInjectionPolicy noiseInjectionPolicy() const;
+    OptionSet<NoiseInjectionPolicy> noiseInjectionPolicies() const;
     virtual float noiseInjectionMultiplier() const { return 0; }
 
 protected:
@@ -227,7 +227,7 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "AudioNode"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -275,7 +275,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     mutable Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 
     unsigned m_channelCount { 2 };

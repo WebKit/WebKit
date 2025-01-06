@@ -113,7 +113,12 @@ public:
     virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const { return 1; }
     virtual bool paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*) const { return false; }
 
+    virtual bool isFlushingLayers() const { return false; }
     virtual bool isTrackingRepaints() const { return false; }
+
+#if HAVE(HDR_SUPPORT)
+    virtual bool hdrForImagesEnabled() const { return false; }
+#endif
 
     virtual bool shouldSkipLayerInDump(const GraphicsLayer*, OptionSet<LayerTreeAsTextOptions>) const { return false; }
     virtual bool shouldDumpPropertyForLayer(const GraphicsLayer*, ASCIILiteral, OptionSet<LayerTreeAsTextOptions>) const { return true; }
@@ -127,6 +132,8 @@ public:
     virtual bool needsPixelAligment() const { return false; }
 
     virtual bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer&) const { return false; }
+
+    virtual void dumpProperties(const GraphicsLayer*, TextStream&, OptionSet<LayerTreeAsTextOptions>) const { }
 
     virtual void logFilledVisibleFreshTile(unsigned) { };
 

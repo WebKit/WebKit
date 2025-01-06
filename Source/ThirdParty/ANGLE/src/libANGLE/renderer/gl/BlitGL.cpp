@@ -213,7 +213,7 @@ angle::Result UnbindAttachment(const gl::Context *context,
                                GLenum attachment)
 {
     // Always use framebufferTexture2D as a workaround for an Nvidia driver bug. See
-    // https://anglebug.com/5536 and FeaturesGL.alwaysUnbindFramebufferTexture2D
+    // https://anglebug.com/42264072 and FeaturesGL.alwaysUnbindFramebufferTexture2D
     ANGLE_GL_TRY(context,
                  functions->framebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, 0, 0));
 
@@ -1340,7 +1340,7 @@ angle::Result BlitGL::initializeResources(const gl::Context *context)
                                                  GL_STATIC_DRAW));
 
     VertexArrayStateGL *defaultVAOState = mStateManager->getDefaultVAOState();
-    if (!mFeatures.syncVertexArraysToDefault.enabled)
+    if (!mFeatures.syncAllVertexArraysToDefault.enabled)
     {
         ANGLE_GL_TRY(context, mFunctions->genVertexArrays(1, &mVAO));
         mVAOState     = new VertexArrayStateGL(defaultVAOState->attributes.size(),
@@ -1436,7 +1436,7 @@ angle::Result BlitGL::setScratchTextureParameter(const gl::Context *context,
 angle::Result BlitGL::setVAOState(const gl::Context *context)
 {
     mStateManager->bindVertexArray(mVAO, mVAOState);
-    if (mFeatures.syncVertexArraysToDefault.enabled)
+    if (mFeatures.syncAllVertexArraysToDefault.enabled)
     {
         ANGLE_TRY(initializeVAOState(context));
     }
@@ -1462,7 +1462,7 @@ angle::Result BlitGL::initializeVAOState(const gl::Context *context)
     binding.offset           = 0;
     binding.buffer           = mVertexBuffer;
 
-    if (mFeatures.syncVertexArraysToDefault.enabled)
+    if (mFeatures.syncAllVertexArraysToDefault.enabled)
     {
         mStateManager->setDefaultVAOStateDirty();
     }

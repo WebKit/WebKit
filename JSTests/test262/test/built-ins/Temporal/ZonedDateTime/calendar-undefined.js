@@ -7,16 +7,10 @@ description: Calendar argument defaults to the built-in ISO 8601 calendar
 features: [BigInt, Temporal]
 ---*/
 
-const args = [957270896987654321n, new Temporal.TimeZone("UTC")];
-
-Object.defineProperty(Temporal.Calendar, "from", {
-  get() {
-    throw new Test262Error("Should not get Calendar.from");
-  },
-});
+const args = [957270896987654321n, "UTC"];
 
 const explicit = new Temporal.ZonedDateTime(...args, undefined);
-assert.sameValue(explicit.getISOFields().calendar, "iso8601", "calendar slot should store a string");
+assert.sameValue(explicit.calendarId, "iso8601", "calendar string should be iso8601");
 
 const implicit = new Temporal.ZonedDateTime(...args);
-assert.sameValue(implicit.getISOFields().calendar, "iso8601", "calendar slot should store a string");
+assert.sameValue(implicit.calendarId, "iso8601", "calendar string should be iso8601");

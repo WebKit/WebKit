@@ -132,6 +132,13 @@ using SimpleMutex = priv::MutexOnFutex;
 using SimpleMutex = priv::MutexOnStd;
 #endif
 
+// A no-op mutex to replace SimpleMutex where a lock is not needed.
+struct NoOpMutex
+{
+    void lock() {}
+    void unlock() {}
+    bool try_lock() { return true; }
+};
 }  // namespace angle
 
 #endif  // COMMON_SIMPLEMUTEX_H_

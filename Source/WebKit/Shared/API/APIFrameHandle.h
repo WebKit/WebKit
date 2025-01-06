@@ -33,7 +33,7 @@ namespace API {
 
 class FrameHandle final : public ObjectImpl<Object::Type::FrameHandle> {
 public:
-    static Ref<FrameHandle> create(WebCore::FrameIdentifier frameID)
+    static Ref<FrameHandle> create(std::optional<WebCore::FrameIdentifier> frameID)
     {
         return adoptRef(*new FrameHandle(frameID, false));
     }
@@ -41,22 +41,22 @@ public:
     {
         return adoptRef(*new FrameHandle(frameID, true));
     }
-    static Ref<FrameHandle> create(WebCore::FrameIdentifier frameID, bool autoconverting)
+    static Ref<FrameHandle> create(std::optional<WebCore::FrameIdentifier> frameID, bool autoconverting)
     {
         return adoptRef(*new FrameHandle(frameID, autoconverting));
     }
 
-    explicit FrameHandle(WebCore::FrameIdentifier frameID, bool isAutoconverting)
+    explicit FrameHandle(std::optional<WebCore::FrameIdentifier> frameID, bool isAutoconverting)
         : m_frameID(frameID)
         , m_isAutoconverting(isAutoconverting)
     {
     }
 
-    WebCore::FrameIdentifier frameID() const { return m_frameID; }
+    Markable<WebCore::FrameIdentifier> frameID() const { return m_frameID; }
     bool isAutoconverting() const { return m_isAutoconverting; }
 
 private:
-    const WebCore::FrameIdentifier m_frameID;
+    const Markable<WebCore::FrameIdentifier> m_frameID;
     const bool m_isAutoconverting;
 };
 

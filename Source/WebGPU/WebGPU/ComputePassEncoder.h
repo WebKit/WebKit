@@ -26,10 +26,14 @@
 #pragma once
 
 #import "CommandsMixin.h"
+#import "WebGPU.h"
+#import "WebGPUExt.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RetainReleaseSwift.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
 
@@ -49,7 +53,7 @@ struct BindableResources;
 
 // https://gpuweb.github.io/gpuweb/#gpucomputepassencoder
 class ComputePassEncoder : public WGPUComputePassEncoderImpl, public RefCounted<ComputePassEncoder>, public CommandsMixin {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ComputePassEncoder);
 public:
     static Ref<ComputePassEncoder> create(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor& descriptor, CommandEncoder& parentEncoder, Device& device)
     {
@@ -69,7 +73,7 @@ public:
     void popDebugGroup();
     void pushDebugGroup(String&& groupLabel);
 
-    void setBindGroup(uint32_t groupIndex, const BindGroup&, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets);
+    void setBindGroup(uint32_t groupIndex, const BindGroup&, std::span<const uint32_t> dynamicOffsets);
     void setPipeline(const ComputePipeline&);
     void setLabel(String&&);
 
@@ -88,24 +92,34 @@ private:
     void executePreDispatchCommands(const Buffer* = nullptr);
     id<MTLBuffer> runPredispatchIndirectCallValidation(const Buffer&, uint64_t);
 
+    Ref<CommandEncoder> protectedParentEncoder() { return m_parentEncoder; }
+    Ref<Device> protectedDevice() const { return m_device; }
+
     id<MTLComputeCommandEncoder> m_computeCommandEncoder { nil };
 
-    struct PendingTimestampWrites {
-        Ref<QuerySet> querySet;
-        uint32_t queryIndex;
-    };
     uint64_t m_debugGroupStackSize { 0 };
 
     const Ref<Device> m_device;
     MTLSize m_threadsPerThreadgroup;
     Vector<uint32_t> m_computeDynamicOffsets;
-    WeakPtr<const ComputePipeline> m_pipeline;
+    RefPtr<const ComputePipeline> m_pipeline;
     Ref<CommandEncoder> m_parentEncoder;
     HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;
     HashMap<uint32_t, Vector<const BindableResources*>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupResources;
-    HashMap<uint32_t, WeakPtr<BindGroup>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroups;
+    HashMap<uint32_t, RefPtr<const BindGroup>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroups;
     NSString *m_lastErrorString { nil };
     bool m_passEnded { false };
-};
+} SWIFT_SHARED_REFERENCE(refComputePassEncoder, derefComputePassEncoder);
+
 
 } // namespace WebGPU
+
+inline void refComputePassEncoder(WebGPU::ComputePassEncoder* obj)
+{
+    ref(obj);
+}
+
+inline void derefComputePassEncoder(WebGPU::ComputePassEncoder* obj)
+{
+    deref(obj);
+}

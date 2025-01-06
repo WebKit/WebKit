@@ -1038,6 +1038,16 @@ class CppStyleTest(CppStyleTestBase):
             'instead of static_cast<Text*>'
             '  [readability/check] [4]')
 
+    def test_gst_structure_get(self):
+        error_message = 'Consider using gstStructureGet<T>() instead  [readability/check] [4]'
+        self.assert_lint('gst_structure_get_int(s, "foo", &bar)', error_message)
+        self.assert_lint('gst_structure_get_int64(s, "foo", &bar)', error_message)
+        self.assert_lint('gst_structure_get_uint(s, "foo", &bar)', error_message)
+        self.assert_lint('gst_structure_get_double(s, "foo", &bar)', error_message)
+        self.assert_lint('gst_structure_get_boolean(s, "foo", &bar)', error_message)
+        self.assert_lint('const char* foo = gst_structure_get_string(s, "foo")', 'Consider using gstStructureGetString() instead  [readability/check] [4]')
+        self.assert_lint('const char* foo = gst_structure_get_name(s)', 'Consider using gstStructureGetName() instead  [readability/check] [4]')
+
     # We cannot test this functionality because of difference of
     # function definitions.  Anyway, we may never enable this.
     #
@@ -2035,6 +2045,28 @@ class CppStyleTest(CppStyleTestBase):
             '  [softlink/header] [5]',
             file_name='foo.h')
 
+    def test_inlines_header(self):
+        self.assert_lint(
+            '''#include "FooInlines.h"''',
+            'Never put an Inlines.h header in a non-Inlines.h header.'
+            '  [build-speed/inlines] [4]',
+            file_name='foo.h')
+
+        self.assert_lint(
+            '''#include "FooInlines.h"''',
+            '',
+            file_name='foo.cpp')
+
+        self.assert_lint(
+            '''#include "FooInlines.h"''',
+            '',
+            file_name='foo.mm')
+
+        self.assert_lint(
+            '''#include "FooInlines.h"''',
+            '',
+            file_name='BarInlines.h')
+
     # Variable-length arrays are not permitted.
     def test_variable_length_array_detection(self):
         errmsg = ('Do not use variable-length arrays.  Use an appropriately named '
@@ -2415,6 +2447,7 @@ class CppStyleTest(CppStyleTestBase):
     def test_cpp_lambda_functions(self):
         self.assert_lint('        [&] (Type argument) {', '')
         self.assert_lint('        [] {', '')
+        self.assert_lint('        [foo call:@[ bar, baz ]] completionHandler:^{', '', 'foo.mm')
         self.assert_lint('        [ =] (Type argument) {', 'Extra space in capture list.  [whitespace/brackets] [4]')
         self.assert_lint('        [var, var_ref&] {', '')
         self.assert_lint('        [var , var_ref&] {', 'Extra space in capture list.  [whitespace/brackets] [4]')
@@ -2423,6 +2456,9 @@ class CppStyleTest(CppStyleTestBase):
     def test_objective_c_block(self):
         self.assert_lint('        ^(var, var_ref) {', '', 'foo.mm')
         self.assert_lint('        ^(var, var_ref) {', '', 'foo.m')
+        self.assert_lint('        ^NSArray<id<Protocol>> *(var) {', '', 'foo.mm')
+        self.assert_lint('        ^BOOL(var) {', '', 'foo.mm')
+        self.assert_lint('        ^NSType *(var) {', '', 'foo.mm')
         self.assert_lint('        ^(var , var_ref) {', 'Extra space in block arguments.  [whitespace/brackets] [4]', 'foo.m')
         self.assert_lint('        ^(var,var_ref) {', 'Missing space after ,  [whitespace/comma] [3]', 'foo.m')
         self.assert_lint('        ^(var, var_ref) {', 'Place brace on its own line for function definitions.  [whitespace/braces] [4]', 'foo.cpp')
@@ -2430,6 +2466,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('        ^ {', 'Extra space between ^ and block definition.  [whitespace/brackets] [4]', 'foo.m')
         self.assert_lint('        ^   {', 'Extra space between ^ and block definition.  [whitespace/brackets] [4]', 'foo.m')
         self.assert_lint('        ^ (arg1, arg2) {', 'Extra space between ^ and block arguments.  [whitespace/brackets] [4]', 'foo.m')
+        self.assert_lint('        ^   (arg1, arg2) {', 'Extra space between ^ and block arguments.  [whitespace/brackets] [4]', 'foo.m')
         self.assert_lint('        ^(arg1, arg2){', 'Missing space before {  [whitespace/braces] [5]', 'foo.m')
 
     def test_objective_c_block_as_argument(self):
@@ -4488,6 +4525,148 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                 enum Foo { FOO_ONE, FOO_TWO };''',
             '')
 
+    def test_enum_no_yes(self):
+        self.assert_multi_line_lint(
+            '''\
+                enum { No, Yes };
+                enum {
+                    No, Yes
+                };
+                enum {
+                    No,
+                    Yes
+                };
+                enum Foo { No, Yes };
+                enum Foo {
+                    No, Yes
+                };
+                enum Foo {
+                    No,
+                    Yes
+                };
+                enum class Foo { No, Yes };
+                enum class Foo {
+                    No, Yes
+                };
+                enum class Foo {
+                    No,
+                    Yes
+                };''',
+            '')
+
+        self.assert_multi_line_lint(
+            '''\
+                enum : bool { No, Yes };
+                enum : bool {
+                    No, Yes
+                };
+                enum : bool {
+                    No,
+                    Yes
+                };
+                enum Foo : bool { No, Yes };
+                enum Foo : bool {
+                    No, Yes
+                };
+                enum Foo : bool {
+                    No,
+                    Yes
+                };
+                enum class Foo : bool { No, Yes };
+                enum class Foo : bool {
+                    No, Yes
+                };
+                enum class Foo : bool {
+                    No,
+                    Yes
+                };''',
+            '')
+
+        self.assert_multi_line_lint(
+            '''\
+                enum { Yes, No };
+                enum {
+                    Yes, No
+                };
+                enum {
+                    Yes,
+                    No
+                };
+                enum Foo { Yes, No };
+                enum Foo {
+                    Yes, No
+                };
+                enum Foo {
+                    Yes,
+                    No
+                };
+                enum class Foo { Yes, No };
+                enum class Foo {
+                    Yes, No
+                };
+                enum class Foo {
+                    Yes,
+                    No
+                };''',
+            '')
+
+        self.assert_lint(
+            'enum : bool { Yes, No };',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            '''\
+                enum : bool {
+                    Yes, No
+                };''',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            '''\
+                enum : bool {
+                    Yes,
+                    No
+                };''',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            'enum Foo : bool { Yes, No };',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            '''\
+                enum Foo : bool {
+                    Yes, No
+                };''',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            '''\
+                enum Foo : bool {
+                    Yes,
+                    No
+                };''',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            'enum class Foo : bool { Yes, No };',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            '''\
+                enum class Foo : bool {
+                    Yes, No
+                };''',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            '''\
+                enum class Foo : bool {
+                    Yes,
+                    No
+                };''',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
     def test_enum_trailing_semicolon(self):
         self.assert_lint(
             'enum MyEnum { Value1, Value2 };',
@@ -6008,6 +6187,34 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/lock_guard] [4]",
             'foo.mm')
 
+    def test_log(self):
+        error_string = "Use a channel to log with 'LOG...(MyChannel,...)'.  [runtime/log] [4]"
+
+        self.assert_lint(
+            'LOG_WITH_STREAM(Channel, stream << 2);',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'CUSTOM_MACRO_WTF_ALWAYS_LOG(2);',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            '// WTF_ALWAYS_LOG(2);',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'WTFLogAlways("foo");',
+            error_string,
+            'foo.cpp')
+
+        self.assert_lint(
+            'WTF_ALWAYS_LOG(34);',
+            error_string,
+            'foo.cpp')
+
     def test_once_flag(self):
         self.assert_lint(
             'static std::once_flag onceKey;',
@@ -6076,6 +6283,27 @@ class WebKitStyleTest(CppStyleTestBase):
             "std::once_flag / dispatch_once_t should be in `static` storage."
             "  [runtime/once_flag] [4]",
             'foo.mm')
+
+    def test_safer_cpp(self):
+        self.assert_lint(
+            'template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TimerAlignment> : std::true_type { };',
+            'Do not add IsDeprecatedWeakRefSmartPointerException.  [safercpp/weak_ref_exception] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'IsDeprecatedWeakRefSmartPointerException should be removed',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'template<> struct IsDeprecatedTimerSmartPointerException<WebCore::TimerAlignment> : std::true_type { };',
+            'Do not add IsDeprecatedTimerSmartPointerException.  [safercpp/timer_exception] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'IsDeprecatedTimerSmartPointerException should be removed',
+            '',
+            'foo.cpp')
 
     def test_ctype_fucntion(self):
         self.assert_lint(

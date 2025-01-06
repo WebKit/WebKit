@@ -128,7 +128,7 @@ private:
     template<typename CharacterType> void encodeNonUTF8Query(const Vector<UChar>& source, const URLTextEncoding&, CodePointIterator<CharacterType>);
     void copyASCIIStringUntil(const String&, size_t length);
     bool copyBaseWindowsDriveLetter(const URL&);
-    StringView parsedDataView(size_t start, size_t length);
+    StringView parsedDataView(size_t start, size_t length) LIFETIME_BOUND;
     UChar parsedDataView(size_t position);
     template<typename CharacterType> bool subdomainStartsWithXNDashDash(CodePointIterator<CharacterType>);
     bool subdomainStartsWithXNDashDash(StringImpl&);

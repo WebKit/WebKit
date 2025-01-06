@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AudioHardwareListener.h"
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(MAC)
@@ -34,7 +35,7 @@
 
 namespace WebCore {
 
-class AudioHardwareListenerMac : public AudioHardwareListener, public RefCounted<AudioHardwareListenerMac>, public CanMakeWeakPtr<AudioHardwareListenerMac> {
+class AudioHardwareListenerMac : public RefCountedAndCanMakeWeakPtr<AudioHardwareListenerMac>, public AudioHardwareListener {
 public:
     static Ref<AudioHardwareListenerMac> create(Client&);
     virtual ~AudioHardwareListenerMac();
@@ -47,7 +48,7 @@ private:
     void processIsRunningChanged();
     void outputDeviceChanged();
 
-    void propertyChanged(UInt32, const AudioObjectPropertyAddress[]);
+    void propertyChanged(std::span<const AudioObjectPropertyAddress>);
 
     AudioObjectPropertyListenerBlock m_block;
 };

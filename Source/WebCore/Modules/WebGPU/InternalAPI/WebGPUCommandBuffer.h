@@ -26,12 +26,13 @@
 #pragma once
 
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::WebGPU {
 
-class CommandBuffer : public RefCounted<CommandBuffer> {
+class CommandBuffer : public RefCountedAndCanMakeWeakPtr<CommandBuffer> {
 public:
     virtual ~CommandBuffer() = default;
 

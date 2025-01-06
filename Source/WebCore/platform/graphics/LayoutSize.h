@@ -49,7 +49,7 @@ enum AspectRatioFit {
 
 class LayoutSize {
 public:
-    LayoutSize() { }
+    LayoutSize() = default;
     LayoutSize(const IntSize& size) : m_width(size.width()), m_height(size.height()) { }
     template<typename T, typename U> LayoutSize(T width, U height) : m_width(width), m_height(height) { }
 

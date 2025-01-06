@@ -27,7 +27,7 @@ constexpr size_t kTwoBandFilterSamplesPerFrame = 320;
 
 SplittingFilter::SplittingFilter(size_t num_channels,
                                  size_t num_bands,
-                                 size_t num_frames)
+                                 size_t /* num_frames */)
     : num_bands_(num_bands),
       two_bands_states_(num_bands_ == 2 ? num_channels : 0),
       three_band_filter_banks_(num_bands_ == 3 ? num_channels : 0) {

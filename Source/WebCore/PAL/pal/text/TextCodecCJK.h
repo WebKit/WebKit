@@ -27,10 +27,12 @@
 
 #include "TextCodec.h"
 #include <optional>
+#include <wtf/TZoneMalloc.h>
 
 namespace PAL {
 
 class TextCodecCJK final : public TextCodec {
+    WTF_MAKE_TZONE_ALLOCATED(TextCodecCJK);
 public:
     static void registerEncodingNames(EncodingNameRegistrar);
     static void registerCodecs(TextCodecRegistrar);

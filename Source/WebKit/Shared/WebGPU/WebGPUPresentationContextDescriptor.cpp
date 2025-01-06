@@ -37,15 +37,13 @@ namespace WebKit::WebGPU {
 std::optional<PresentationContextDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::PresentationContextDescriptor& presentationContextDescriptor)
 {
     auto identifier = convertToBacking(presentationContextDescriptor.compositorIntegration);
-    if (!identifier)
-        return std::nullopt;
 
     return { { identifier } };
 }
 
 std::optional<WebCore::WebGPU::PresentationContextDescriptor> ConvertFromBackingContext::convertFromBacking(const PresentationContextDescriptor& presentationContextDescriptor)
 {
-    auto* compositorIntegration = convertCompositorIntegrationFromBacking(presentationContextDescriptor.compositorIntegration);
+    WeakPtr compositorIntegration = convertCompositorIntegrationFromBacking(presentationContextDescriptor.compositorIntegration);
     if (!compositorIntegration)
         return std::nullopt;
 

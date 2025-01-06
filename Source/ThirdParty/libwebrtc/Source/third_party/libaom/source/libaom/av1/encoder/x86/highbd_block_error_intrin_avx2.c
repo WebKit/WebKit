@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include "aom/aom_integer.h"
 #include "av1/common/common.h"
+#include "config/av1_rtcd.h"
 
 int64_t av1_highbd_block_error_avx2(const tran_low_t *coeff,
                                     const tran_low_t *dqcoeff,

@@ -31,6 +31,8 @@
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 void assertInvariants()
@@ -72,9 +74,7 @@ void assertInvariants()
         ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 1);
 #elif USE(JSVALUE32_64)
         ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 1);
-#elif (CPU(X86_64) && !OS(WINDOWS))  || CPU(ARM64)
-        ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 4);
-#elif (CPU(X86_64) && OS(WINDOWS))
+#elif CPU(X86_64) || CPU(ARM64)
         ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 4);
 #endif
 
@@ -85,8 +85,8 @@ void assertInvariants()
 #if ASSERT_ENABLED
     Vector<int> testVector;
     testVector.resize(42);
-    ASSERT(bitwise_cast<uint32_t*>(&testVector)[sizeof(void*) / sizeof(uint32_t) + 1] == 42);
-    ASSERT(bitwise_cast<int**>(&testVector)[0] == testVector.begin());
+    ASSERT(std::bit_cast<uint32_t*>(&testVector)[sizeof(void*) / sizeof(uint32_t) + 1] == 42);
+    ASSERT(std::bit_cast<int**>(&testVector)[0] == testVector.begin());
 #endif
 
     {
@@ -143,3 +143,5 @@ void assertInvariants()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

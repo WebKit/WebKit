@@ -121,7 +121,7 @@ void NetworkLoader::start(URL&& url, RefPtr<JSON::Object>&& jsonPayload, WebCore
         request.get().HTTPMethod = @"POST";
         [request setValue:WebCore::HTTPHeaderValues::applicationJSONContentType() forHTTPHeaderField:@"Content-Type"];
         auto body = jsonPayload->toJSONString().utf8();
-        request.get().HTTPBody = adoptNS([[NSData alloc] initWithBytes:body.data() length:body.length()]).get();
+        request.get().HTTPBody = toNSData(body.span()).get();
     }
 
     setPCMDataCarriedOnRequest(pcmDataCarried, request.get());

@@ -37,26 +37,26 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-AccessibilityARIAGridCell::AccessibilityARIAGridCell(RenderObject& renderer)
-    : AccessibilityTableCell(renderer)
+AccessibilityARIAGridCell::AccessibilityARIAGridCell(AXID axID, RenderObject& renderer)
+    : AccessibilityTableCell(axID, renderer)
 {
 }
 
-AccessibilityARIAGridCell::AccessibilityARIAGridCell(Node& node)
-    : AccessibilityTableCell(node)
+AccessibilityARIAGridCell::AccessibilityARIAGridCell(AXID axID, Node& node)
+    : AccessibilityTableCell(axID, node)
 {
 }
 
 AccessibilityARIAGridCell::~AccessibilityARIAGridCell() = default;
 
-Ref<AccessibilityARIAGridCell> AccessibilityARIAGridCell::create(RenderObject& renderer)
+Ref<AccessibilityARIAGridCell> AccessibilityARIAGridCell::create(AXID axID, RenderObject& renderer)
 {
-    return adoptRef(*new AccessibilityARIAGridCell(renderer));
+    return adoptRef(*new AccessibilityARIAGridCell(axID, renderer));
 }
 
-Ref<AccessibilityARIAGridCell> AccessibilityARIAGridCell::create(Node& node)
+Ref<AccessibilityARIAGridCell> AccessibilityARIAGridCell::create(AXID axID, Node& node)
 {
-    return adoptRef(*new AccessibilityARIAGridCell(node));
+    return adoptRef(*new AccessibilityARIAGridCell(axID, node));
 }
 
 AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
@@ -66,7 +66,7 @@ AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
     // which pass the tests for inclusion.
     return dynamicDowncast<AccessibilityTable>(Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const auto& ancestor) {
         RefPtr ancestorTable = dynamicDowncast<AccessibilityTable>(ancestor);
-        return ancestorTable && ancestorTable->isExposable() && !ancestorTable->accessibilityIsIgnored();
+        return ancestorTable && ancestorTable->isExposable() && !ancestorTable->isIgnored();
     }));
 }
     

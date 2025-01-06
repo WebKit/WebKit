@@ -11,11 +11,11 @@
 #include "rtc_tools/video_file_reader.h"
 
 #include <cstdio>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "absl/strings/match.h"
-#include "absl/types/optional.h"
 #include "api/make_ref_counted.h"
 #include "api/video/i420_buffer.h"
 #include "rtc_base/checks.h"
@@ -144,9 +144,9 @@ rtc::scoped_refptr<Video> OpenY4mFile(const std::string& file_name) {
     header_line.push_back(static_cast<char>(c));
   }
 
-  absl::optional<int> width;
-  absl::optional<int> height;
-  absl::optional<float> fps;
+  std::optional<int> width;
+  std::optional<int> height;
+  std::optional<float> fps;
 
   std::vector<std::string> fields;
   rtc::tokenize(header_line, ' ', &fields);
@@ -173,9 +173,9 @@ rtc::scoped_refptr<Video> OpenY4mFile(const std::string& file_name) {
         std::vector<std::string> fraction;
         rtc::tokenize(suffix, ':', &fraction);
         if (fraction.size() == 2) {
-          const absl::optional<int> numerator =
+          const std::optional<int> numerator =
               rtc::StringToNumber<int>(fraction[0]);
-          const absl::optional<int> denominator =
+          const std::optional<int> denominator =
               rtc::StringToNumber<int>(fraction[1]);
           if (numerator && denominator && *denominator != 0)
             fps = *numerator / static_cast<float>(*denominator);

@@ -29,6 +29,7 @@
 
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudioTypes.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
@@ -38,20 +39,26 @@ class CAAudioStreamDescription;
 class AudioMediaStreamTrackRendererInternalUnit {
 public:
     virtual ~AudioMediaStreamTrackRendererInternalUnit() = default;
-    class Client {
+
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
+
+    class Client : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Client> {
     public:
         virtual ~Client() = default;
+
         virtual OSStatus render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&) = 0;
         virtual void reset() = 0;
     };
-    WEBCORE_EXPORT static UniqueRef<AudioMediaStreamTrackRendererInternalUnit> create(Client&);
+    WEBCORE_EXPORT static Ref<AudioMediaStreamTrackRendererInternalUnit> create(const String&, Client&);
 
-    using CreateFunction = UniqueRef<AudioMediaStreamTrackRendererInternalUnit>(*)(AudioMediaStreamTrackRendererInternalUnit::Client&);
+    using CreateFunction = Ref<AudioMediaStreamTrackRendererInternalUnit>(*)(const String&, AudioMediaStreamTrackRendererInternalUnit::Client&);
     WEBCORE_EXPORT static void setCreateFunction(CreateFunction);
     virtual void start() = 0;
     virtual void stop() = 0;
+    virtual void close() { };
     virtual void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&) = 0;
-    virtual void setAudioOutputDevice(const String&) = 0;
+    virtual void setLastDeviceUsed(const String&) { }
 };
 
 }

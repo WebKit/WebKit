@@ -1,0 +1,25 @@
+[Worker] This test checks truncate() method of FileSystemSyncAccessHandle
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/sync-access-handle-truncate.js
+PASS [Worker] fileSize is 0
+[Worker] Test: truncate size smaller than file size
+PASS [Worker] writeSize is writeBuffer.byteLength
+PASS [Worker] writeSize is writeBuffer.byteLength
+PASS [Worker] fileSize is 7
+PASS [Worker] readSize is readBuffer.byteLength
+PASS [Worker] readText is "abcdxyz"
+[Worker] Test: truncate size bigger than file size
+PASS [Worker] writeSize is writeBuffer.byteLength
+PASS [Worker] writeSize is writeBuffer.byteLength
+PASS [Worker] fileSize is 12
+PASS [Worker] readSize is readBuffer.byteLength
+PASS [Worker] readText is "abcdxyz?!\u0000\u0000\u0000"
+[Worker] Test: truncate size bigger than quota (1MB)
+PASS [Worker] accessHandle.truncate(1024 * 1024 + 1) threw exception QuotaExceededError: The quota has been exceeded..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

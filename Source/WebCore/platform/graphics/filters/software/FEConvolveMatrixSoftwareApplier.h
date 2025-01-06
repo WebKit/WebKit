@@ -28,6 +28,7 @@
 #include "IntSize.h"
 #include "PixelBuffer.h"
 #include <JavaScriptCore/TypedArrayAdaptersForwardDeclarations.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ class FEConvolveMatrix;
 enum class EdgeModeType : uint8_t;
 
 class FEConvolveMatrixSoftwareApplier final : public FilterEffectConcreteApplier<FEConvolveMatrix> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FEConvolveMatrixSoftwareApplier);
     using Base = FilterEffectConcreteApplier<FEConvolveMatrix>;
 
 public:
@@ -61,7 +62,7 @@ private:
     };
 
     static inline uint8_t clampRGBAValue(float channel, uint8_t max = 255);
-    static inline void setDestinationPixels(const PixelBuffer& sourcePixelBuffer, PixelBuffer& destinationPixelBuffer, int& pixel, float* totals, float divisor, float bias, bool preserveAlphaValues);
+    static inline void setDestinationPixels(const PixelBuffer& sourcePixelBuffer, PixelBuffer& destinationPixelBuffer, int& pixel, std::span<float> totals, float divisor, float bias, bool preserveAlphaValues);
 
     static inline int getPixelValue(const PaintingData&, int x, int y);
 

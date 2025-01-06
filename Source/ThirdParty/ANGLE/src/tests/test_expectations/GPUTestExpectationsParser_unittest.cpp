@@ -188,7 +188,7 @@ TEST_P(GPUTestExpectationsParserTest, GPUTestExpectationsParserSingleLineMac)
 
 // A correct entry with a test that has conflicting entries should not lead
 // to any errors, and should default to PASS.
-// (https:anglebug.com/3368) In the future, this condition should cause an
+// (https:anglebug.com/42262036) In the future, this condition should cause an
 // error
 TEST_P(GPUTestExpectationsParserTest, GPUTestExpectationsParserSingleLineConflict)
 {
@@ -310,7 +310,7 @@ TEST_P(GPUTestExpectationsParserTest, GPUTestExpectationsParserInvalidExpectatio
 
 // ChromeOS is reserved as a token, but doesn't actually check any conditions. Any tokens that
 // do not check conditions should return an error and not add the expectation
-// (https://anglebug.com/3363) Remove/update this test when ChromeOS is supported
+// (https://anglebug.com/42262032) Remove/update this test when ChromeOS is supported
 TEST_P(GPUTestExpectationsParserTest, GPUTestExpectationsParserUnimplementedCondition)
 {
     // Does not apply when loading all expectations and not checking the config.

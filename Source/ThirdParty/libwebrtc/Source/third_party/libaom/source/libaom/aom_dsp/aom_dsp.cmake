@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017, Alliance for Open Media. All rights reserved
+# Copyright (c) 2017, Alliance for Open Media. All rights reserved.
 #
 # This source code is subject to the terms of the BSD 2 Clause License and the
 # Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License was
@@ -29,8 +29,6 @@ list(APPEND AOM_DSP_COMMON_SOURCES
             "${AOM_ROOT}/aom_dsp/blend_a64_vmask.c"
             "${AOM_ROOT}/aom_dsp/entcode.c"
             "${AOM_ROOT}/aom_dsp/entcode.h"
-            "${AOM_ROOT}/aom_dsp/fft.c"
-            "${AOM_ROOT}/aom_dsp/fft_common.h"
             "${AOM_ROOT}/aom_dsp/grain_params.h"
             "${AOM_ROOT}/aom_dsp/intrapred.c"
             "${AOM_ROOT}/aom_dsp/intrapred_common.h"
@@ -45,27 +43,22 @@ list(APPEND AOM_DSP_COMMON_SOURCES
             "${AOM_ROOT}/aom_dsp/simd/v256_intrinsics_c.h"
             "${AOM_ROOT}/aom_dsp/simd/v64_intrinsics.h"
             "${AOM_ROOT}/aom_dsp/simd/v64_intrinsics_c.h"
-            "${AOM_ROOT}/aom_dsp/subtract.c"
             "${AOM_ROOT}/aom_dsp/txfm_common.h"
             "${AOM_ROOT}/aom_dsp/x86/convolve_common_intrin.h")
 
 list(APPEND AOM_DSP_COMMON_ASM_SSE2
-            "${AOM_ROOT}/aom_dsp/x86/aom_high_subpixel_8t_sse2.asm"
-            "${AOM_ROOT}/aom_dsp/x86/aom_high_subpixel_bilinear_sse2.asm"
-            "${AOM_ROOT}/aom_dsp/x86/aom_subpixel_8t_sse2.asm"
-            "${AOM_ROOT}/aom_dsp/x86/aom_subpixel_bilinear_sse2.asm"
-            "${AOM_ROOT}/aom_dsp/x86/highbd_intrapred_asm_sse2.asm"
-            "${AOM_ROOT}/aom_dsp/x86/intrapred_asm_sse2.asm"
-            "${AOM_ROOT}/aom_dsp/x86/inv_wht_sse2.asm")
+            "${AOM_ROOT}/aom_dsp/x86/intrapred_asm_sse2.asm")
+if(CONFIG_AV1_HIGHBITDEPTH)
+  list(APPEND AOM_DSP_COMMON_ASM_SSE2
+              "${AOM_ROOT}/aom_dsp/x86/aom_high_subpixel_8t_sse2.asm"
+              "${AOM_ROOT}/aom_dsp/x86/aom_high_subpixel_bilinear_sse2.asm"
+              "${AOM_ROOT}/aom_dsp/x86/highbd_intrapred_asm_sse2.asm")
+endif()
 
 list(APPEND AOM_DSP_COMMON_INTRIN_SSE2
             "${AOM_ROOT}/aom_dsp/x86/aom_convolve_copy_sse2.c"
-            "${AOM_ROOT}/aom_dsp/x86/aom_subpixel_8t_intrin_sse2.c"
-            "${AOM_ROOT}/aom_dsp/x86/aom_asm_stubs.c"
             "${AOM_ROOT}/aom_dsp/x86/convolve.h"
             "${AOM_ROOT}/aom_dsp/x86/convolve_sse2.h"
-            "${AOM_ROOT}/aom_dsp/x86/fft_sse2.c"
-            "${AOM_ROOT}/aom_dsp/x86/highbd_intrapred_sse2.c"
             "${AOM_ROOT}/aom_dsp/x86/intrapred_sse2.c"
             "${AOM_ROOT}/aom_dsp/x86/intrapred_x86.h"
             "${AOM_ROOT}/aom_dsp/x86/loopfilter_sse2.c"
@@ -99,36 +92,40 @@ list(APPEND AOM_DSP_COMMON_INTRIN_AVX2
             "${AOM_ROOT}/aom_dsp/x86/common_avx2.h"
             "${AOM_ROOT}/aom_dsp/x86/txfm_common_avx2.h"
             "${AOM_ROOT}/aom_dsp/x86/convolve_avx2.h"
-            "${AOM_ROOT}/aom_dsp/x86/fft_avx2.c"
             "${AOM_ROOT}/aom_dsp/x86/intrapred_avx2.c"
             "${AOM_ROOT}/aom_dsp/x86/loopfilter_avx2.c"
             "${AOM_ROOT}/aom_dsp/x86/blend_a64_mask_avx2.c"
-            "${AOM_ROOT}/aom_dsp/x86/bitdepth_conversion_avx2.h"
-            "${AOM_ROOT}/third_party/SVT-AV1/convolve_2d_avx2.h"
-            "${AOM_ROOT}/third_party/SVT-AV1/convolve_avx2.h"
-            "${AOM_ROOT}/third_party/SVT-AV1/EbMemory_AVX2.h"
-            "${AOM_ROOT}/third_party/SVT-AV1/EbMemory_SSE4_1.h"
-            "${AOM_ROOT}/third_party/SVT-AV1/synonyms.h")
+            "${AOM_ROOT}/aom_dsp/x86/bitdepth_conversion_avx2.h")
+
+if(CONFIG_SVT_AV1)
+  list(APPEND AOM_DSP_COMMON_INTRIN_AVX2
+              "${AOM_ROOT}/third_party/SVT-AV1/convolve_2d_avx2.h"
+              "${AOM_ROOT}/third_party/SVT-AV1/convolve_avx2.h"
+              "${AOM_ROOT}/third_party/SVT-AV1/EbMemory_AVX2.h"
+              "${AOM_ROOT}/third_party/SVT-AV1/EbMemory_SSE4_1.h"
+              "${AOM_ROOT}/third_party/SVT-AV1/synonyms.h")
+endif()
 
 list(APPEND AOM_DSP_COMMON_INTRIN_NEON
             "${AOM_ROOT}/aom_dsp/arm/aom_convolve_copy_neon.c"
             "${AOM_ROOT}/aom_dsp/arm/aom_convolve8_neon.c"
-            "${AOM_ROOT}/aom_dsp/arm/fwd_txfm_neon.c"
+            "${AOM_ROOT}/aom_dsp/arm/aom_scaled_convolve8_neon.c"
             "${AOM_ROOT}/aom_dsp/arm/loopfilter_neon.c"
             "${AOM_ROOT}/aom_dsp/arm/intrapred_neon.c"
-            "${AOM_ROOT}/aom_dsp/arm/subtract_neon.c"
-            "${AOM_ROOT}/aom_dsp/arm/blend_a64_mask_neon.c"
-            "${AOM_ROOT}/aom_dsp/arm/avg_pred_neon.c")
+            "${AOM_ROOT}/aom_dsp/arm/blend_a64_mask_neon.c")
 
 list(APPEND AOM_DSP_COMMON_INTRIN_NEON_DOTPROD
-            "${AOM_ROOT}/aom_dsp/arm/aom_convolve8_neon_dotprod.c")
+            "${AOM_ROOT}/aom_dsp/arm/aom_convolve8_neon_dotprod.c"
+            "${AOM_ROOT}/aom_dsp/arm/aom_scaled_convolve8_neon_dotprod.c")
 
 list(APPEND AOM_DSP_COMMON_INTRIN_NEON_I8MM
-            "${AOM_ROOT}/aom_dsp/arm/aom_convolve8_neon_i8mm.c")
+            "${AOM_ROOT}/aom_dsp/arm/aom_convolve8_neon_i8mm.c"
+            "${AOM_ROOT}/aom_dsp/arm/aom_scaled_convolve8_neon_i8mm.c")
 
 if(CONFIG_AV1_HIGHBITDEPTH)
   list(APPEND AOM_DSP_COMMON_INTRIN_SSE2
               "${AOM_ROOT}/aom_dsp/x86/highbd_convolve_sse2.c"
+              "${AOM_ROOT}/aom_dsp/x86/highbd_intrapred_sse2.c"
               "${AOM_ROOT}/aom_dsp/x86/highbd_loopfilter_sse2.c")
 
   list(APPEND AOM_DSP_COMMON_INTRIN_SSSE3
@@ -145,6 +142,9 @@ if(CONFIG_AV1_HIGHBITDEPTH)
               "${AOM_ROOT}/aom_dsp/arm/highbd_convolve8_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/highbd_intrapred_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/highbd_loopfilter_neon.c")
+
+  list(APPEND AOM_DSP_COMMON_INTRIN_SVE
+              "${AOM_ROOT}/aom_dsp/arm/highbd_convolve8_sve.c")
 endif()
 
 if(CONFIG_AV1_DECODER)
@@ -159,26 +159,21 @@ endif()
 if(CONFIG_AV1_ENCODER)
   list(APPEND AOM_DSP_ENCODER_SOURCES
               "${AOM_ROOT}/aom_dsp/avg.c"
-              "${AOM_ROOT}/aom_dsp/binary_codes_writer.c"
-              "${AOM_ROOT}/aom_dsp/binary_codes_writer.h"
               "${AOM_ROOT}/aom_dsp/bitwriter.c"
               "${AOM_ROOT}/aom_dsp/bitwriter.h"
               "${AOM_ROOT}/aom_dsp/blk_sse_sum.c"
               "${AOM_ROOT}/aom_dsp/entenc.c"
               "${AOM_ROOT}/aom_dsp/entenc.h"
+              "${AOM_ROOT}/aom_dsp/fft.c"
+              "${AOM_ROOT}/aom_dsp/fft_common.h"
               "${AOM_ROOT}/aom_dsp/fwd_txfm.c"
-              "${AOM_ROOT}/aom_dsp/grain_table.c"
-              "${AOM_ROOT}/aom_dsp/grain_table.h"
-              "${AOM_ROOT}/aom_dsp/noise_model.c"
-              "${AOM_ROOT}/aom_dsp/noise_model.h"
-              "${AOM_ROOT}/aom_dsp/noise_util.c"
-              "${AOM_ROOT}/aom_dsp/noise_util.h"
               "${AOM_ROOT}/aom_dsp/psnr.c"
               "${AOM_ROOT}/aom_dsp/psnr.h"
               "${AOM_ROOT}/aom_dsp/quantize.c"
               "${AOM_ROOT}/aom_dsp/quantize.h"
               "${AOM_ROOT}/aom_dsp/sad.c"
               "${AOM_ROOT}/aom_dsp/sad_av1.c"
+              "${AOM_ROOT}/aom_dsp/subtract.c"
               "${AOM_ROOT}/aom_dsp/sse.c"
               "${AOM_ROOT}/aom_dsp/ssim.c"
               "${AOM_ROOT}/aom_dsp/ssim.h"
@@ -186,13 +181,22 @@ if(CONFIG_AV1_ENCODER)
               "${AOM_ROOT}/aom_dsp/variance.c"
               "${AOM_ROOT}/aom_dsp/variance.h")
 
-  # Flow estimation library
+  # Flow estimation library and grain/noise table/model.
   if(NOT CONFIG_REALTIME_ONLY)
-    list(APPEND AOM_DSP_ENCODER_SOURCES "${AOM_ROOT}/aom_dsp/pyramid.c"
+    list(APPEND AOM_DSP_ENCODER_SOURCES
+                "${AOM_ROOT}/aom_dsp/pyramid.c"
+                "${AOM_ROOT}/aom_dsp/binary_codes_writer.c"
+                "${AOM_ROOT}/aom_dsp/binary_codes_writer.h"
                 "${AOM_ROOT}/aom_dsp/flow_estimation/corner_detect.c"
                 "${AOM_ROOT}/aom_dsp/flow_estimation/corner_match.c"
                 "${AOM_ROOT}/aom_dsp/flow_estimation/disflow.c"
                 "${AOM_ROOT}/aom_dsp/flow_estimation/flow_estimation.c"
+                "${AOM_ROOT}/aom_dsp/grain_table.c"
+                "${AOM_ROOT}/aom_dsp/grain_table.h"
+                "${AOM_ROOT}/aom_dsp/noise_model.c"
+                "${AOM_ROOT}/aom_dsp/noise_model.h"
+                "${AOM_ROOT}/aom_dsp/noise_util.c"
+                "${AOM_ROOT}/aom_dsp/noise_util.h"
                 "${AOM_ROOT}/aom_dsp/flow_estimation/ransac.c")
 
     list(APPEND AOM_DSP_ENCODER_INTRIN_SSE4_1
@@ -200,15 +204,18 @@ if(CONFIG_AV1_ENCODER)
                 "${AOM_ROOT}/aom_dsp/flow_estimation/x86/disflow_sse4.c")
 
     list(APPEND AOM_DSP_ENCODER_INTRIN_AVX2
-                "${AOM_ROOT}/aom_dsp/flow_estimation/x86/corner_match_avx2.c")
+                "${AOM_ROOT}/aom_dsp/flow_estimation/x86/corner_match_avx2.c"
+                "${AOM_ROOT}/aom_dsp/flow_estimation/x86/disflow_avx2.c")
 
     list(APPEND AOM_DSP_ENCODER_INTRIN_NEON
                 "${AOM_ROOT}/aom_dsp/flow_estimation/arm/disflow_neon.c")
+
+    list(APPEND AOM_DSP_ENCODER_INTRIN_SVE
+                "${AOM_ROOT}/aom_dsp/flow_estimation/arm/disflow_sve.c")
   endif()
 
   list(APPEND AOM_DSP_ENCODER_ASM_SSE2 "${AOM_ROOT}/aom_dsp/x86/sad4d_sse2.asm"
               "${AOM_ROOT}/aom_dsp/x86/sad_sse2.asm"
-              "${AOM_ROOT}/aom_dsp/x86/subpel_variance_sse2.asm"
               "${AOM_ROOT}/aom_dsp/x86/subtract_sse2.asm")
 
   list(APPEND AOM_DSP_ENCODER_ASM_SSE2_X86_64
@@ -216,6 +223,7 @@ if(CONFIG_AV1_ENCODER)
 
   list(APPEND AOM_DSP_ENCODER_INTRIN_SSE2
               "${AOM_ROOT}/aom_dsp/x86/avg_intrin_sse2.c"
+              "${AOM_ROOT}/aom_dsp/x86/fft_sse2.c"
               "${AOM_ROOT}/aom_dsp/x86/fwd_txfm_impl_sse2.h"
               "${AOM_ROOT}/aom_dsp/x86/fwd_txfm_sse2.c"
               "${AOM_ROOT}/aom_dsp/x86/fwd_txfm_sse2.h"
@@ -227,21 +235,22 @@ if(CONFIG_AV1_ENCODER)
               "${AOM_ROOT}/aom_dsp/x86/variance_sse2.c"
               "${AOM_ROOT}/aom_dsp/x86/jnt_sad_sse2.c")
 
+  list(APPEND AOM_DSP_ENCODER_ASM_SSSE3
+              "${AOM_ROOT}/aom_dsp/x86/subpel_variance_ssse3.asm")
+
   list(APPEND AOM_DSP_ENCODER_ASM_SSSE3_X86_64
               "${AOM_ROOT}/aom_dsp/x86/fwd_txfm_ssse3_x86_64.asm"
               "${AOM_ROOT}/aom_dsp/x86/quantize_ssse3_x86_64.asm")
 
   list(APPEND AOM_DSP_ENCODER_INTRIN_AVX2
               "${AOM_ROOT}/aom_dsp/x86/avg_intrin_avx2.c"
+              "${AOM_ROOT}/aom_dsp/x86/fft_avx2.c"
               "${AOM_ROOT}/aom_dsp/x86/masked_sad_intrin_avx2.c"
               "${AOM_ROOT}/aom_dsp/x86/subtract_avx2.c"
-              "${AOM_ROOT}/aom_dsp/x86/highbd_quantize_intrin_avx2.c"
               "${AOM_ROOT}/aom_dsp/x86/adaptive_quantize_avx2.c"
-              "${AOM_ROOT}/aom_dsp/x86/highbd_adaptive_quantize_avx2.c"
               "${AOM_ROOT}/aom_dsp/x86/quantize_avx2.c"
               "${AOM_ROOT}/aom_dsp/x86/sad4d_avx2.c"
               "${AOM_ROOT}/aom_dsp/x86/sad_avx2.c"
-              "${AOM_ROOT}/aom_dsp/x86/highbd_sad_avx2.c"
               "${AOM_ROOT}/aom_dsp/x86/sad_impl_avx2.c"
               "${AOM_ROOT}/aom_dsp/x86/variance_avx2.c"
               "${AOM_ROOT}/aom_dsp/x86/sse_avx2.c"
@@ -257,11 +266,11 @@ if(CONFIG_AV1_ENCODER)
   list(APPEND AOM_DSP_ENCODER_INTRIN_SSSE3
               "${AOM_ROOT}/aom_dsp/x86/masked_sad_intrin_ssse3.h"
               "${AOM_ROOT}/aom_dsp/x86/masked_sad_intrin_ssse3.c"
-              "${AOM_ROOT}/aom_dsp/x86/masked_sad4d_ssse3.c"
               "${AOM_ROOT}/aom_dsp/x86/masked_variance_intrin_ssse3.h"
               "${AOM_ROOT}/aom_dsp/x86/masked_variance_intrin_ssse3.c"
               "${AOM_ROOT}/aom_dsp/x86/quantize_ssse3.c"
               "${AOM_ROOT}/aom_dsp/x86/variance_impl_ssse3.c"
+              "${AOM_ROOT}/aom_dsp/x86/variance_ssse3.c"
               "${AOM_ROOT}/aom_dsp/x86/jnt_variance_ssse3.c")
 
   list(APPEND AOM_DSP_ENCODER_INTRIN_SSE4_1
@@ -271,10 +280,11 @@ if(CONFIG_AV1_ENCODER)
               "${AOM_ROOT}/aom_dsp/x86/obmc_variance_sse4.c")
 
   list(APPEND AOM_DSP_ENCODER_INTRIN_NEON
+              "${AOM_ROOT}/aom_dsp/arm/avg_pred_neon.c"
+              "${AOM_ROOT}/aom_dsp/arm/fwd_txfm_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/sadxd_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/sad_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/masked_sad_neon.c"
-              "${AOM_ROOT}/aom_dsp/arm/masked_sad4d_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/subpel_variance_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/variance_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/hadamard_neon.c"
@@ -282,6 +292,7 @@ if(CONFIG_AV1_ENCODER)
               "${AOM_ROOT}/aom_dsp/arm/obmc_variance_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/obmc_sad_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/sse_neon.c"
+              "${AOM_ROOT}/aom_dsp/arm/subtract_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/sum_squares_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/blk_sse_sum_neon.c")
 
@@ -291,6 +302,10 @@ if(CONFIG_AV1_ENCODER)
               "${AOM_ROOT}/aom_dsp/arm/sse_neon_dotprod.c"
               "${AOM_ROOT}/aom_dsp/arm/sum_squares_neon_dotprod.c"
               "${AOM_ROOT}/aom_dsp/arm/variance_neon_dotprod.c")
+
+  list(APPEND AOM_DSP_ENCODER_INTRIN_SVE "${AOM_ROOT}/aom_dsp/arm/avg_sve.c"
+              "${AOM_ROOT}/aom_dsp/arm/blk_sse_sum_sve.c"
+              "${AOM_ROOT}/aom_dsp/arm/sum_squares_sve.c")
 
   if(CONFIG_AV1_HIGHBITDEPTH)
     list(APPEND AOM_DSP_ENCODER_ASM_SSE2
@@ -306,6 +321,9 @@ if(CONFIG_AV1_ENCODER)
                 "${AOM_ROOT}/aom_dsp/x86/highbd_variance_sse2.c")
 
     list(APPEND AOM_DSP_ENCODER_INTRIN_AVX2
+                "${AOM_ROOT}/aom_dsp/x86/highbd_adaptive_quantize_avx2.c"
+                "${AOM_ROOT}/aom_dsp/x86/highbd_quantize_intrin_avx2.c"
+                "${AOM_ROOT}/aom_dsp/x86/highbd_sad_avx2.c"
                 "${AOM_ROOT}/aom_dsp/x86/highbd_variance_avx2.c")
 
     list(APPEND AOM_DSP_ENCODER_INTRIN_SSE4_1
@@ -327,6 +345,10 @@ if(CONFIG_AV1_ENCODER)
 
     list(APPEND AOM_DSP_ENCODER_INTRIN_NEON_DOTPROD
                 "${AOM_ROOT}/aom_dsp/arm/highbd_variance_neon_dotprod.c")
+
+    list(APPEND AOM_DSP_ENCODER_INTRIN_SVE
+                "${AOM_ROOT}/aom_dsp/arm/highbd_sse_sve.c"
+                "${AOM_ROOT}/aom_dsp/arm/highbd_variance_sve.c")
   endif()
 
   if(CONFIG_INTERNAL_STATS)
@@ -347,6 +369,7 @@ if(CONFIG_AV1_ENCODER)
   if(CONFIG_REALTIME_ONLY)
     list(REMOVE_ITEM AOM_DSP_ENCODER_INTRIN_AVX2
                      "${AOM_ROOT}/aom_dsp/x86/adaptive_quantize_avx2.c"
+                     "${AOM_ROOT}/aom_dsp/x86/highbd_adaptive_quantize_avx2.c"
                      "${AOM_ROOT}/aom_dsp/x86/obmc_sad_avx2.c"
                      "${AOM_ROOT}/aom_dsp/x86/obmc_variance_avx2.c")
 
@@ -355,10 +378,13 @@ if(CONFIG_AV1_ENCODER)
                      "${AOM_ROOT}/aom_dsp/x86/obmc_variance_sse4.c")
 
     list(REMOVE_ITEM AOM_DSP_ENCODER_INTRIN_SSE2
-                     "${AOM_ROOT}/aom_dsp/x86/adaptive_quantize_sse2.c")
+                     "${AOM_ROOT}/aom_dsp/x86/adaptive_quantize_sse2.c"
+                     "${AOM_ROOT}/aom_dsp/x86/highbd_adaptive_quantize_sse2.c")
 
     list(REMOVE_ITEM AOM_DSP_ENCODER_INTRIN_NEON
+                     "${AOM_ROOT}/aom_dsp/arm/highbd_obmc_sad_neon.c"
                      "${AOM_ROOT}/aom_dsp/arm/highbd_obmc_variance_neon.c"
+                     "${AOM_ROOT}/aom_dsp/arm/obmc_sad_neon.c"
                      "${AOM_ROOT}/aom_dsp/arm/obmc_variance_neon.c")
   endif()
 endif()
@@ -482,6 +508,15 @@ function(setup_aom_dsp_targets)
     add_intrinsics_object_library("${AOM_NEON_I8MM_FLAG}" "neon_i8mm"
                                   "aom_dsp_common"
                                   "AOM_DSP_COMMON_INTRIN_NEON_I8MM")
+  endif()
+
+  if(HAVE_SVE)
+    add_intrinsics_object_library("${AOM_SVE_FLAG}" "sve" "aom_dsp_common"
+                                  "AOM_DSP_COMMON_INTRIN_SVE")
+    if(CONFIG_AV1_ENCODER)
+      add_intrinsics_object_library("${AOM_SVE_FLAG}" "sve" "aom_dsp_encoder"
+                                    "AOM_DSP_ENCODER_INTRIN_SVE")
+    endif()
   endif()
 
   target_sources(aom PRIVATE $<TARGET_OBJECTS:aom_dsp>)

@@ -25,19 +25,9 @@
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 #include "GStreamerAudioCapturer.h"
 
-#if USE(LIBWEBRTC)
-#include "LibWebRTCAudioFormat.h"
-#endif
-
 #include <gst/app/gstappsink.h>
 
 namespace WebCore {
-
-#if USE(LIBWEBRTC)
-static constexpr size_t s_audioCaptureSampleRate = LibWebRTCAudioFormat::sampleRate;
-#else
-static constexpr size_t s_audioCaptureSampleRate = 48000;
-#endif
 
 GST_DEBUG_CATEGORY(webkit_audio_capturer_debug);
 #define GST_CAT_DEFAULT webkit_audio_capturer_debug
@@ -51,13 +41,13 @@ static void initializeAudioCapturerDebugCategory()
 }
 
 GStreamerAudioCapturer::GStreamerAudioCapturer(GStreamerCaptureDevice&& device)
-    : GStreamerCapturer(WTFMove(device), adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, s_audioCaptureSampleRate, nullptr)))
+    : GStreamerCapturer(WTFMove(device), adoptGRef(gst_caps_new_empty_simple("audio/x-raw")))
 {
     initializeAudioCapturerDebugCategory();
 }
 
 GStreamerAudioCapturer::GStreamerAudioCapturer()
-    : GStreamerCapturer("appsrc", adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, s_audioCaptureSampleRate, nullptr)), CaptureDevice::DeviceType::Microphone)
+    : GStreamerCapturer("appsrc", adoptGRef(gst_caps_new_empty_simple("audio/x-raw")), CaptureDevice::DeviceType::Microphone)
 {
     initializeAudioCapturerDebugCategory();
 }

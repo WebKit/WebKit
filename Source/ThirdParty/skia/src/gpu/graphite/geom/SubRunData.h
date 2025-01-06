@@ -8,11 +8,14 @@
 #ifndef skgpu_graphite_geom_SubRunData_DEFINED
 #define skgpu_graphite_geom_SubRunData_DEFINED
 
+#include "include/core/SkColor.h"
 #include "include/core/SkM44.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkSurfaceProps.h"
 #include "src/gpu/graphite/geom/Rect.h"
 #include "src/text/gpu/SubRunContainer.h"
 
-namespace sktext::gpu { class AtlasSubRun; }
+#include <utility>
 
 namespace skgpu::graphite {
 
@@ -44,6 +47,9 @@ public:
                const SkM44& deviceToLocal,
                int startGlyphIndex,
                int glyphCount,
+               SkColor luminanceColor,
+               bool useGammaCorrectDistanceTable,
+               SkPixelGeometry pixelGeometry,
                Recorder* recorder,
                sktext::gpu::RendererData rendererData)
         : fSubRun(subRun)
@@ -52,6 +58,9 @@ public:
         , fDeviceToLocal(deviceToLocal)
         , fStartGlyphIndex(startGlyphIndex)
         , fGlyphCount(glyphCount)
+        , fLuminanceColor(luminanceColor)
+        , fUseGammaCorrectDistanceTable(useGammaCorrectDistanceTable)
+        , fPixelGeometry(pixelGeometry)
         , fRecorder(recorder)
         , fRendererData(rendererData) {}
 
@@ -72,6 +81,9 @@ public:
     const sktext::gpu::AtlasSubRun* subRun() const { return fSubRun; }
     int startGlyphIndex() const { return fStartGlyphIndex; }
     int glyphCount() const { return fGlyphCount; }
+    SkColor luminanceColor() const { return fLuminanceColor; }
+    bool useGammaCorrectDistanceTable() const { return fUseGammaCorrectDistanceTable; }
+    SkPixelGeometry pixelGeometry() const { return fPixelGeometry; }
     Recorder* recorder() const { return fRecorder; }
     const sktext::gpu::RendererData& rendererData() const { return fRendererData; }
 
@@ -84,6 +96,9 @@ private:
     SkM44 fDeviceToLocal;
     int fStartGlyphIndex;
     int fGlyphCount;
+    SkColor fLuminanceColor;            // only used by SDFTextRenderStep
+    bool fUseGammaCorrectDistanceTable; // only used by SDFTextRenderStep
+    SkPixelGeometry fPixelGeometry;     // only used by SDFTextLCDRenderStep
     Recorder* fRecorder; // this SubRun can only be associated with this Recorder's atlas
     sktext::gpu::RendererData fRendererData;
 };

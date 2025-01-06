@@ -33,13 +33,13 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderStyleInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace MathMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLMath);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLMath);
 
 RenderMathMLMath::RenderMathMLMath(MathMLRowElement& element, RenderStyle&& style)
     : RenderMathMLRow(Type::MathMLMath, element, WTFMove(style))
@@ -57,9 +57,7 @@ void RenderMathMLMath::centerChildren(LayoutUnit contentWidth)
 
     if (!style().isLeftToRightDirection())
         centerBlockOffset = -centerBlockOffset;
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (!child->isInFlow())
-            continue;
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         auto repaintRect = child->checkForRepaintDuringLayout() ? std::make_optional(child->frameRect()) : std::nullopt;
         child->move(centerBlockOffset, { });
         if (repaintRect) {
@@ -78,10 +76,15 @@ void RenderMathMLMath::layoutBlock(bool relayoutChildren, LayoutUnit pageLogical
         return;
     }
 
+    insertPositionedChildrenIntoContainingBlock();
+
     if (!relayoutChildren && simplifiedLayout())
         return;
 
+    layoutFloatingChildren();
+
     recomputeLogicalWidth();
+    computeAndSetBlockDirectionMarginsOfChildren();
 
     setLogicalHeight(borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
 
@@ -96,8 +99,9 @@ void RenderMathMLMath::layoutBlock(bool relayoutChildren, LayoutUnit pageLogical
         centerChildren(width);
     else
         setLogicalWidth(width);
+    shiftInFlowChildren(0_lu, borderAndPaddingBefore());
 
-    setLogicalHeight(borderTop() + paddingTop() + ascent + descent + borderBottom() + paddingBottom() + horizontalScrollbarHeight());
+    setLogicalHeight(ascent + descent + borderAndPaddingLogicalHeight() + horizontalScrollbarHeight());
     updateLogicalHeight();
 
     layoutPositionedObjects(relayoutChildren);

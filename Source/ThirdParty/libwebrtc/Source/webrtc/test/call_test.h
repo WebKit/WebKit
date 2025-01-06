@@ -12,11 +12,13 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/audio/audio_device.h"
+#include "api/environment/environment.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
@@ -26,7 +28,6 @@
 #include "api/units/time_delta.h"
 #include "api/video/video_bitrate_allocator_factory.h"
 #include "call/call.h"
-#include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_device/include/test_audio_device.h"
 #include "test/encoder_settings.h"
 #include "test/fake_decoder.h"
@@ -52,6 +53,11 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
   static const std::map<uint8_t, MediaType> payload_type_map_;
 
  protected:
+  const Environment& env() const { return env_; }
+
+  void SetSendEventLog(std::unique_ptr<RtcEventLog> event_log);
+  void SetRecvEventLog(std::unique_ptr<RtcEventLog> event_log);
+
   void RegisterRtpExtension(const RtpExtension& extension);
   // Returns header extensions that can be parsed by the transport.
   rtc::ArrayView<const RtpExtension> GetRegisteredExtensions() {
@@ -62,12 +68,14 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
   // to simplify test code.
   void RunBaseTest(BaseTest* test);
 
+  CallConfig SendCallConfig() const;
+  CallConfig RecvCallConfig() const;
+
   void CreateCalls();
-  void CreateCalls(const CallConfig& sender_config,
-                   const CallConfig& receiver_config);
+  void CreateCalls(CallConfig sender_config, CallConfig receiver_config);
   void CreateSenderCall();
-  void CreateSenderCall(const CallConfig& config);
-  void CreateReceiverCall(const CallConfig& config);
+  void CreateSenderCall(CallConfig config);
+  void CreateReceiverCall(CallConfig config);
   void DestroyCalls();
 
   void CreateVideoSendConfig(VideoSendStream::Config* video_config,
@@ -107,7 +115,7 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
       const VideoSendStream::Config& video_send_config,
       Transport* rtcp_send_transport,
       VideoDecoderFactory* decoder_factory,
-      absl::optional<size_t> decode_sub_stream,
+      std::optional<size_t> decode_sub_stream,
       bool receiver_reference_time_report,
       int rtp_history_ms);
   void AddMatchingVideoReceiveConfigs(
@@ -115,7 +123,7 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
       const VideoSendStream::Config& video_send_config,
       Transport* rtcp_send_transport,
       VideoDecoderFactory* decoder_factory,
-      absl::optional<size_t> decode_sub_stream,
+      std::optional<size_t> decode_sub_stream,
       bool receiver_reference_time_report,
       int rtp_history_ms);
 
@@ -185,13 +193,11 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
   void OnRtpPacket(const RtpPacketReceived& packet) override;
 
   test::RunLoop loop_;
-
-  Clock* const clock_;
   test::ScopedKeyValueConfig field_trials_;
+  Environment env_;
+  Environment send_env_;
+  Environment recv_env_;
 
-  std::unique_ptr<TaskQueueFactory> task_queue_factory_;
-  std::unique_ptr<webrtc::RtcEventLog> send_event_log_;
-  std::unique_ptr<webrtc::RtcEventLog> recv_event_log_;
   std::unique_ptr<Call> sender_call_;
   std::unique_ptr<PacketTransport> send_transport_;
   SimulatedNetworkInterface* send_simulated_network_ = nullptr;
@@ -235,7 +241,7 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
   test::FakeVideoRenderer fake_renderer_;
 
  private:
-  absl::optional<RtpExtension> GetRtpExtensionByUri(
+  std::optional<RtpExtension> GetRtpExtensionByUri(
       const std::string& uri) const;
 
   void AddRtpExtensionByUri(const std::string& uri,

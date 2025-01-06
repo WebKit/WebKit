@@ -33,9 +33,12 @@
 #include "RenderElement.h"
 #include "SVGElement.h"
 #include "Text.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Update);
 
 Update::Update(Document& document)
     : m_document(document)

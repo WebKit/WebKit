@@ -29,20 +29,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include <objc/objc.h>
 #endif
-
-namespace WebKit {
-class DownloadProxyMap;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::DownloadProxyMap> : std::true_type { };
-}
 
 namespace API {
 class DownloadClient;
@@ -62,9 +54,8 @@ class WebsiteDataStore;
 struct FrameInfoData;
 
 class DownloadProxyMap : public CanMakeWeakPtr<DownloadProxyMap> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DownloadProxyMap);
     WTF_MAKE_NONCOPYABLE(DownloadProxyMap);
-
 public:
     explicit DownloadProxyMap(NetworkProcessProxy&);
     ~DownloadProxyMap();
@@ -74,6 +65,9 @@ public:
 
     bool isEmpty() const { return m_downloads.isEmpty(); }
     void invalidate();
+
+    void ref() const;
+    void deref() const;
 
 private:
     Ref<NetworkProcessProxy> protectedProcess();
@@ -86,7 +80,6 @@ private:
 
     bool m_shouldTakeAssertion { false };
     RefPtr<ProcessAssertion> m_downloadUIAssertion;
-    RefPtr<ProcessAssertion> m_downloadNetworkingAssertion;
 };
 
 } // namespace WebKit

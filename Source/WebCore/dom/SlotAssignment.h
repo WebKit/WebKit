@@ -28,6 +28,7 @@
 #include "ShadowRoot.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
@@ -42,7 +43,8 @@ class HTMLSlotElement;
 class Node;
 
 class SlotAssignment {
-    WTF_MAKE_NONCOPYABLE(SlotAssignment); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SlotAssignment);
+    WTF_MAKE_NONCOPYABLE(SlotAssignment);
 public:
     SlotAssignment() = default;
     virtual ~SlotAssignment() = default;
@@ -76,7 +78,8 @@ protected:
 };
 
 class NamedSlotAssignment : public SlotAssignment {
-    WTF_MAKE_NONCOPYABLE(NamedSlotAssignment); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NamedSlotAssignment);
+    WTF_MAKE_NONCOPYABLE(NamedSlotAssignment);
 public:
     NamedSlotAssignment();
     virtual ~NamedSlotAssignment();
@@ -105,10 +108,8 @@ private:
     void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue, ShadowRoot&) final;
 
     struct Slot {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Slot);
     public:
-        Slot() { }
-
         bool hasSlotElements() { return !!elementCount; }
         bool hasDuplicatedSlotElements() { return elementCount > 1; }
         bool shouldResolveSlotElement() { return !element && elementCount; }
@@ -134,7 +135,7 @@ private:
     unsigned m_slotResolutionVersion { 0 };
     unsigned m_slotElementCount { 0 };
 
-    HashMap<AtomString, std::unique_ptr<Slot>> m_slots;
+    UncheckedKeyHashMap<AtomString, std::unique_ptr<Slot>> m_slots;
 
 #if ASSERT_ENABLED
     WeakHashSet<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_slotElementsForConsistencyCheck;

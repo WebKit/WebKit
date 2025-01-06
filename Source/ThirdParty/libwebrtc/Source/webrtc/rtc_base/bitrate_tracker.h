@@ -14,7 +14,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
@@ -50,7 +51,7 @@ class RTC_EXPORT BitrateTracker {
 
   // Returns bitrate, moving averaging window as needed.
   // Returns nullopt when bitrate can't be measured.
-  absl::optional<DataRate> Rate(Timestamp now) const;
+  std::optional<DataRate> Rate(Timestamp now) const;
 
   // Update the size of the averaging window. The maximum allowed value for
   // `window_size` is `max_window_size` as supplied in the constructor.

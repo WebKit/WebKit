@@ -45,15 +45,15 @@ DesktopCapturer::GetDelegatedSourceListController() {
 }
 
 void DesktopCapturer::SetSharedMemoryFactory(
-    std::unique_ptr<SharedMemoryFactory> shared_memory_factory) {}
+    std::unique_ptr<SharedMemoryFactory> /* shared_memory_factory */) {}
 
-void DesktopCapturer::SetExcludedWindow(WindowId window) {}
+void DesktopCapturer::SetExcludedWindow(WindowId /* window */) {}
 
-bool DesktopCapturer::GetSourceList(SourceList* sources) {
+bool DesktopCapturer::GetSourceList(SourceList* /* sources */) {
   return true;
 }
 
-bool DesktopCapturer::SelectSource(SourceId id) {
+bool DesktopCapturer::SelectSource(SourceId /* id */) {
   return false;
 }
 
@@ -61,7 +61,7 @@ bool DesktopCapturer::FocusOnSelectedSource() {
   return false;
 }
 
-bool DesktopCapturer::IsOccluded(const DesktopVector& pos) {
+bool DesktopCapturer::IsOccluded(const DesktopVector& /* pos */) {
   return false;
 }
 
@@ -109,7 +109,7 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateScreenCapturer(
 
 // static
 std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateGenericCapturer(
-    const DesktopCaptureOptions& options) {
+    [[maybe_unused]] const DesktopCaptureOptions& options) {
   std::unique_ptr<DesktopCapturer> capturer;
 
 #if defined(WEBRTC_USE_PIPEWIRE)

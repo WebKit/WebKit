@@ -33,7 +33,7 @@ namespace WebCore {
 struct BackgroundFetchUIOptions;
 
 class BackgroundFetchUpdateUIEvent final : public BackgroundFetchEvent {
-    WTF_MAKE_ISO_ALLOCATED(BackgroundFetchUpdateUIEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BackgroundFetchUpdateUIEvent);
 public:
     using Init = BackgroundFetchEventInit;
     static Ref<BackgroundFetchUpdateUIEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);

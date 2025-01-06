@@ -27,6 +27,7 @@
 
 #include "CSSToLengthConversionData.h"
 #include "Document.h"
+#include "FontCascade.h"
 #include "MediaQuery.h"
 #include "MediaQueryFeatures.h"
 #include "RenderView.h"
@@ -86,7 +87,6 @@ bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
         fontDescription.setComputedSize(size);
         fontDescription.setSpecifiedSize(size);
         defaultStyle.setFontDescription(WTFMove(fontDescription));
-        defaultStyle.fontCascade().update();
 
         FeatureEvaluationContext context { *document, { *m_rootElementStyle, &defaultStyle, nullptr, document->renderView() }, nullptr };
         return evaluateCondition(*query.condition, context);
@@ -134,8 +134,7 @@ OptionSet<MediaQueryDynamicDependency> MediaQueryEvaluator::collectDynamicDepend
     traverseFeatures(query, [&](const Feature& feature) {
         if (!feature.schema)
             return;
-        if (auto dependency = Features::dynamicDependency(*feature.schema))
-            result.add(*dependency);
+        result.add(feature.schema->dependencies);
     });
 
     return result;

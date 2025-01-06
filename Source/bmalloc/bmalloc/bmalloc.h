@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include "BPlatform.h"
+
+BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "AllocationCounts.h"
 #include "AvailableMemory.h"
 #include "Cache.h"
@@ -45,12 +49,12 @@ namespace bmalloc {
 namespace api {
 
 #if BUSE(LIBPAS)
-extern pas_primitive_heap_ref gigacageHeaps[Gigacage::NumberOfKinds];
+extern pas_primitive_heap_ref gigacageHeaps[static_cast<size_t>(Gigacage::NumberOfKinds)];
 
 inline pas_primitive_heap_ref& heapForKind(Gigacage::Kind kind)
 {
-    RELEASE_BASSERT(static_cast<unsigned>(kind) < Gigacage::NumberOfKinds);
-    return gigacageHeaps[static_cast<unsigned>(kind)];
+    RELEASE_BASSERT(static_cast<size_t>(kind) < static_cast<size_t>(Gigacage::NumberOfKinds));
+    return gigacageHeaps[static_cast<size_t>(kind)];
 }
 #endif
 
@@ -226,6 +230,7 @@ BEXPORT void enableMiniMode();
 
 // Used for debugging only.
 BEXPORT void disableScavenger();
+BEXPORT void forceEnablePGM();
 
 #if BENABLE(MALLOC_SIZE)
 inline size_t mallocSize(const void* object)
@@ -247,3 +252,5 @@ inline size_t mallocGoodSize(size_t size)
 
 } // namespace api
 } // namespace bmalloc
+
+BALLOW_UNSAFE_BUFFER_USAGE_END

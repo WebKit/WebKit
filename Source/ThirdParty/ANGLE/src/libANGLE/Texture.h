@@ -194,6 +194,8 @@ class TextureState final : private angle::NonCopyable
 
     const FoveationState &getFoveationState() const { return mFoveationState; }
 
+    GLenum getSurfaceCompressionFixedRate() const { return mCompressionFixedRate; }
+
   private:
     // Texture needs access to the ImageDesc functions.
     friend class Texture;
@@ -281,6 +283,9 @@ class TextureState final : private angle::NonCopyable
 
     // GL_QCOM_texture_foveated
     FoveationState mFoveationState;
+
+    // GL_EXT_texture_storage_compression
+    GLenum mCompressionFixedRate;
 };
 
 bool operator==(const TextureState &a, const TextureState &b);
@@ -437,6 +442,12 @@ class Texture final : public RefCountObject<TextureID>,
                        float foveaArea);
     const FocalPoint &getFocalPoint(uint32_t layer, uint32_t focalPoint) const;
 
+    GLint getImageCompressionRate(const Context *context) const;
+    GLint getFormatSupportedCompressionRates(const Context *context,
+                                             GLenum internalformat,
+                                             GLsizei bufSize,
+                                             GLint *rates) const;
+
     angle::Result setImage(Context *context,
                            const PixelUnpackState &unpackState,
                            Buffer *unpackBuffer,
@@ -575,7 +586,26 @@ class Texture final : public RefCountObject<TextureID>,
                                            egl::Image *image,
                                            const GLint *attrib_list);
 
+    angle::Result setStorageAttribs(Context *context,
+                                    TextureType type,
+                                    GLsizei levels,
+                                    GLenum internalFormat,
+                                    const Extents &size,
+                                    const GLint *attribList);
+
     angle::Result generateMipmap(Context *context);
+
+    angle::Result clearImage(Context *context,
+                             GLint level,
+                             GLenum format,
+                             GLenum type,
+                             const uint8_t *data);
+    angle::Result clearSubImage(Context *context,
+                                GLint level,
+                                const Box &area,
+                                GLenum format,
+                                GLenum type,
+                                const uint8_t *data);
 
     void onBindAsImageTexture();
 

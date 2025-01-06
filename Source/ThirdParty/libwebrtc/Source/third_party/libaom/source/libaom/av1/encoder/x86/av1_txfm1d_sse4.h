@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,45 +20,15 @@
 extern "C" {
 #endif
 
-void av1_fdct4_sse4_1(const __m128i *input, __m128i *output,
-                      const int8_t cos_bit, const int8_t *stage_range);
-void av1_fdct8_sse4_1(const __m128i *input, __m128i *output,
-                      const int8_t cos_bit, const int8_t *stage_range);
-void av1_fdct16_sse4_1(const __m128i *input, __m128i *output,
-                       const int8_t cos_bit, const int8_t *stage_range);
 void av1_fdct32_sse4_1(__m128i *input, __m128i *output, int cos_bit,
                        const int stride);
 void av1_fdct64_sse4_1(__m128i *input, __m128i *output, int8_t cos_bit,
                        const int instride, const int outstride);
-void av1_fadst4_sse4_1(const __m128i *input, __m128i *output,
-                       const int8_t cos_bit, const int8_t *stage_range);
-void av1_fadst8_sse4_1(const __m128i *input, __m128i *output,
-                       const int8_t cos_bit, const int8_t *stage_range);
-void av1_fadst16_sse4_1(const __m128i *input, __m128i *output,
-                        const int8_t cos_bit, const int8_t *stage_range);
-
-void av1_idct4_sse4_1(const __m128i *input, __m128i *output,
-                      const int8_t cos_bit, const int8_t *stage_range);
-void av1_idct8_sse4_1(const __m128i *input, __m128i *output,
-                      const int8_t cos_bit, const int8_t *stage_range);
-void av1_idct16_sse4_1(const __m128i *input, __m128i *output,
-                       const int8_t cos_bit, const int8_t *stage_range);
-void av1_idct32_sse4_1(const __m128i *input, __m128i *output,
-                       const int8_t cos_bit, const int8_t *stage_range);
-void av1_idct64_sse4_1(const __m128i *input, __m128i *output,
-                       const int8_t cos_bit, const int8_t *stage_range);
-
-void av1_iadst4_sse4_1(const __m128i *input, __m128i *output,
-                       const int8_t cos_bit, const int8_t *stage_range);
-void av1_iadst8_sse4_1(const __m128i *input, __m128i *output,
-                       const int8_t cos_bit, const int8_t *stage_range);
-void av1_iadst16_sse4_1(const __m128i *input, __m128i *output,
-                        const int8_t cos_bit, const int8_t *stage_range);
 
 void av1_idtx32_sse4_1(__m128i *input, __m128i *output, int cos_bit,
                        const int col_num);
 
-static INLINE void transpose_32_4x4(int stride, const __m128i *input,
+static inline void transpose_32_4x4(int stride, const __m128i *input,
                                     __m128i *output) {
   __m128i temp0 = _mm_unpacklo_epi32(input[0 * stride], input[2 * stride]);
   __m128i temp1 = _mm_unpackhi_epi32(input[0 * stride], input[2 * stride]);
@@ -75,7 +45,7 @@ static INLINE void transpose_32_4x4(int stride, const __m128i *input,
 // each 4x4 blocks can be represent by 4 vertical __m128i
 // we first transpose each 4x4 block internally
 // then transpose the grid
-static INLINE void transpose_32(int txfm_size, const __m128i *input,
+static inline void transpose_32(int txfm_size, const __m128i *input,
                                 __m128i *output) {
   const int num_per_128 = 4;
   const int row_size = txfm_size;

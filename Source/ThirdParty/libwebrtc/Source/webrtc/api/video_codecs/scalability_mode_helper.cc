@@ -10,31 +10,35 @@
 
 #include "api/video_codecs/scalability_mode_helper.h"
 
+#include <optional>
+
+#include "absl/strings/string_view.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
 
 namespace webrtc {
 
-absl::optional<int> ScalabilityModeStringToNumSpatialLayers(
+std::optional<int> ScalabilityModeStringToNumSpatialLayers(
     absl::string_view scalability_mode_string) {
-  absl::optional<ScalabilityMode> scalability_mode =
+  std::optional<ScalabilityMode> scalability_mode =
       ScalabilityModeFromString(scalability_mode_string);
   if (!scalability_mode.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return ScalabilityModeToNumSpatialLayers(*scalability_mode);
 }
 
-absl::optional<int> ScalabilityModeStringToNumTemporalLayers(
+std::optional<int> ScalabilityModeStringToNumTemporalLayers(
     absl::string_view scalability_mode_string) {
-  absl::optional<ScalabilityMode> scalability_mode =
+  std::optional<ScalabilityMode> scalability_mode =
       ScalabilityModeFromString(scalability_mode_string);
   if (!scalability_mode.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return ScalabilityModeToNumTemporalLayers(*scalability_mode);
 }
 
-absl::optional<ScalabilityMode> ScalabilityModeStringToEnum(
+std::optional<ScalabilityMode> ScalabilityModeStringToEnum(
     absl::string_view scalability_mode_string) {
   return ScalabilityModeFromString(scalability_mode_string);
 }

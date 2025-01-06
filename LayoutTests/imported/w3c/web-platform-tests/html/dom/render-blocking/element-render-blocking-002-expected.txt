@@ -1,0 +1,3 @@
+
+PASS blocking defers until needed element is parsed
+

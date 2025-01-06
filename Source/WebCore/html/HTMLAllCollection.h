@@ -42,7 +42,7 @@ private:
 static_assert(sizeof(HTMLAllCollection) == sizeof(AllDescendantsCollection));
 
 class HTMLAllNamedSubCollection final : public CachedHTMLCollection<HTMLAllNamedSubCollection, CollectionTraversalType::Descendants> {
-    WTF_MAKE_ISO_ALLOCATED(HTMLAllNamedSubCollection);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLAllNamedSubCollection);
 public:
     static Ref<HTMLAllNamedSubCollection> create(Document& document, CollectionType type, const AtomString& name)
     {

@@ -30,6 +30,7 @@ AXLanguage:
 AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
+AXElementBusy: 0
 AXLinkUIElements: <array of size 0>
 AXLoaded: 1
 AXLayoutCount: 2
@@ -37,7 +38,6 @@ AXLoadingProgress: 1
 AXURL: LayoutTests/accessibility/mac/document-attributes.html
 AXCaretBrowsingEnabled: 0
 AXPreventKeyboardDOMEventDispatch: 0
-AXElementBusy: 0
 
 PASS successfullyParsed is true
 

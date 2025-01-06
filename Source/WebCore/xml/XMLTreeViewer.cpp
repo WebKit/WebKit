@@ -33,6 +33,7 @@
 
 #if ENABLE(XSLT)
 
+#include "CSSPrimitiveValue.h"
 #include "Document.h"
 #include "Element.h"
 #include "FrameDestructionObserverInlines.h"
@@ -56,12 +57,14 @@ XMLTreeViewer::XMLTreeViewer(Document& document)
 void XMLTreeViewer::transformDocumentToTreeView()
 {
     String scriptString = StringImpl::createWithoutCopying(XMLViewer_js);
-    m_document.frame()->script().evaluateIgnoringException(ScriptSourceCode(scriptString, JSC::SourceTaintedOrigin::Untainted));
-    m_document.frame()->script().evaluateIgnoringException(ScriptSourceCode(AtomString("prepareWebKitXMLViewer('This XML file does not appear to have any style information associated with it. The document tree is shown below.');"_s), JSC::SourceTaintedOrigin::Untainted));
+    Ref document = m_document.get();
+    RefPtr frame = document->frame();
+    frame->checkedScript()->evaluateIgnoringException(ScriptSourceCode(scriptString, JSC::SourceTaintedOrigin::Untainted));
+    frame->checkedScript()->evaluateIgnoringException(ScriptSourceCode(AtomString("prepareWebKitXMLViewer('This XML file does not appear to have any style information associated with it. The document tree is shown below.');"_s), JSC::SourceTaintedOrigin::Untainted));
 
     String cssString = StringImpl::createWithoutCopying(XMLViewer_css);
-    auto text = m_document.createTextNode(WTFMove(cssString));
-    m_document.getElementById(String("xml-viewer-style"_s))->appendChild(text);
+    Ref text = document->createTextNode(WTFMove(cssString));
+    document->getElementById(String("xml-viewer-style"_s))->appendChild(WTFMove(text));
 }
 
 } // namespace WebCore

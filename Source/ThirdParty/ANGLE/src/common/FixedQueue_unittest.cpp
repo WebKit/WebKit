@@ -10,6 +10,7 @@
 #include <gtest/gtest.h>
 
 #include "common/FixedQueue.h"
+#include "common/system_utils.h"
 
 #include <chrono>
 #include <thread>
@@ -126,13 +127,12 @@ TEST(FixedQueue, ConcurrentPushPop)
     FixedQueue<uint64_t> q(7);
     double timeOut    = 1.0;
     uint64_t kMaxLoop = 1000000ull;
-    std::atomic<bool> enqueueThreadFinished;
-    enqueueThreadFinished = false;
-    std::atomic<bool> dequeueThreadFinished;
-    dequeueThreadFinished = false;
+    std::atomic<bool> enqueueThreadFinished(false);
+    std::atomic<bool> dequeueThreadFinished(false);
 
     std::thread enqueueThread = std::thread([&]() {
-        std::time_t t1 = std::time(nullptr);
+        double t1      = angle::GetCurrentSystemTime();
+        double elapsed = 0.0;
         uint64_t value = 0;
         do
         {
@@ -140,19 +140,28 @@ TEST(FixedQueue, ConcurrentPushPop)
             {
                 std::this_thread::sleep_for(std::chrono::microseconds(1));
             }
+
+            // No point pushing new values once deque thread is finished.
             if (dequeueThreadFinished)
             {
                 break;
             }
+            ASSERT(!q.full());
+
+            // test push
             q.push(value);
             value++;
-        } while (difftime(std::time(nullptr), t1) < timeOut && value < kMaxLoop);
-        ASSERT(difftime(std::time(nullptr), t1) >= timeOut || value >= kMaxLoop);
+
+            elapsed = angle::GetCurrentSystemTime() - t1;
+        } while (elapsed < timeOut && value < kMaxLoop);
+        // Can exit if: timed out, all values are pushed, or dequeue thread is finished earlier.
+        ASSERT(elapsed >= timeOut || value == kMaxLoop || dequeueThreadFinished);
         enqueueThreadFinished = true;
     });
 
     std::thread dequeueThread = std::thread([&]() {
-        std::time_t t1         = std::time(nullptr);
+        double t1              = angle::GetCurrentSystemTime();
+        double elapsed         = 0.0;
         uint64_t expectedValue = 0;
         do
         {
@@ -161,13 +170,24 @@ TEST(FixedQueue, ConcurrentPushPop)
                 std::this_thread::sleep_for(std::chrono::microseconds(1));
             }
 
+            // Let's continue processing the queue even if enqueue thread is already finished.
+            if (q.empty())
+            {
+                ASSERT(enqueueThreadFinished);
+                break;
+            }
+
             EXPECT_EQ(expectedValue, q.front());
             // test pop
             q.pop();
 
+            ASSERT(expectedValue < kMaxLoop);
             expectedValue++;
-        } while (difftime(std::time(nullptr), t1) < timeOut && expectedValue < kMaxLoop);
-        ASSERT(difftime(std::time(nullptr), t1) >= timeOut || expectedValue >= kMaxLoop);
+
+            elapsed = angle::GetCurrentSystemTime() - t1;
+        } while (elapsed < timeOut);
+        // Can exit if: timed out, or queue is empty and will stay that way.
+        ASSERT(elapsed >= timeOut || (q.empty() && enqueueThreadFinished));
         dequeueThreadFinished = true;
     });
 
@@ -191,7 +211,8 @@ TEST(FixedQueue, ConcurrentPushPopWithResize)
     std::mutex dequeueMutex;
 
     std::thread enqueueThread = std::thread([&]() {
-        std::time_t t1 = std::time(nullptr);
+        double t1      = angle::GetCurrentSystemTime();
+        double elapsed = 0.0;
         uint64_t value = 0;
         do
         {
@@ -203,7 +224,7 @@ TEST(FixedQueue, ConcurrentPushPopWithResize)
                 std::unique_lock<std::mutex> dequeueLock(dequeueMutex);
                 // Check again to see if queue is still full after taking the dequeueMutex.
                 size_t newCapacity = q.capacity() * 2;
-                if (q.full() && newCapacity < kMaxQueueCapacity)
+                if (q.full() && newCapacity <= kMaxQueueCapacity)
                 {
                     // Double the storage size while we took the lock
                     q.updateCapacity(newCapacity);
@@ -218,20 +239,27 @@ TEST(FixedQueue, ConcurrentPushPopWithResize)
                 enqueueLock.lock();
             }
 
+            // No point pushing new values once deque thread is finished.
             if (dequeueThreadFinished)
             {
                 break;
             }
+            ASSERT(!q.full());
 
+            // test push
             q.push(value);
             value++;
-        } while (difftime(std::time(nullptr), t1) < timeOut && value < kMaxLoop &&
-                 !dequeueThreadFinished);
+
+            elapsed = angle::GetCurrentSystemTime() - t1;
+        } while (elapsed < timeOut && value < kMaxLoop);
+        // Can exit if: timed out, all values are pushed, or dequeue thread is finished earlier.
+        ASSERT(elapsed >= timeOut || value == kMaxLoop || dequeueThreadFinished);
         enqueueThreadFinished = true;
     });
 
     std::thread dequeueThread = std::thread([&]() {
-        std::time_t t1         = std::time(nullptr);
+        double t1              = angle::GetCurrentSystemTime();
+        double elapsed         = 0.0;
         uint64_t expectedValue = 0;
         do
         {
@@ -253,7 +281,10 @@ TEST(FixedQueue, ConcurrentPushPopWithResize)
                 newCapacity *= 2;
                 newCapacity = std::max(newCapacity, kInitialQueueCapacity);
 
-                q.updateCapacity(newCapacity);
+                if (newCapacity < q.capacity())
+                {
+                    q.updateCapacity(newCapacity);
+                }
             }
 
             while (q.empty() && !enqueueThreadFinished)
@@ -263,12 +294,24 @@ TEST(FixedQueue, ConcurrentPushPopWithResize)
                 dequeueLock.lock();
             }
 
-            ASSERT(expectedValue == q.front());
+            // Let's continue processing the queue even if enqueue thread is already finished.
+            if (q.empty())
+            {
+                ASSERT(enqueueThreadFinished);
+                break;
+            }
+
+            EXPECT_EQ(expectedValue, q.front());
             // test pop
             q.pop();
+
+            ASSERT(expectedValue < kMaxLoop);
             expectedValue++;
-        } while (difftime(std::time(nullptr), t1) < timeOut && expectedValue < kMaxLoop &&
-                 !enqueueThreadFinished);
+
+            elapsed = angle::GetCurrentSystemTime() - t1;
+        } while (elapsed < timeOut);
+        // Can exit if: timed out, or queue is empty and will stay that way.
+        ASSERT(elapsed >= timeOut || (q.empty() && enqueueThreadFinished));
         dequeueThreadFinished = true;
     });
 

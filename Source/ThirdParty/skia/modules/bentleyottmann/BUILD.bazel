@@ -1,4 +1,4 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library")
+load("//bazel:skia_rules.bzl", "skia_cc_library")
 
 package(
     default_applicable_licenses = ["//:license"],
@@ -6,14 +6,13 @@ package(
 
 licenses(["notice"])
 
-exports_files_legacy()
-
 skia_cc_library(
     name = "bentleyottmann",
     srcs = ["//modules/bentleyottmann/src:srcs"],
     hdrs = ["//modules/bentleyottmann/include:hdrs"],
     visibility = ["//:__subpackages__"],
     deps = [
-        "//:skia_internal",
+        "//:core",
+        "//src/base",
     ],
 )

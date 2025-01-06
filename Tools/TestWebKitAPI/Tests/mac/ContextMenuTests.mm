@@ -118,6 +118,18 @@ static NSMenuItem *itemMatchingFilter(NSMenu *menu, MenuItemFilter filter)
     return nil;
 }
 
+static RetainPtr<NSArray> lastSharingServicePickerItems;
+
+@implementation NSSharingServicePicker (ContextMenuTests)
+
+- (instancetype)swizzled_initWithItems:(NSArray *)items
+{
+    lastSharingServicePickerItems = items;
+    return [self swizzled_initWithItems:items];
+}
+
+@end
+
 @interface TestWKWebView (ContextMenuTests)
 
 @end
@@ -210,7 +222,7 @@ TEST(ContextMenuTests, NavigationTypeWhenOpeningLink)
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
     [webView setNavigationDelegate:navigationDelegate.get()];
-    [webView loadHTMLString:@"<a href='simple.html' style='font-size: 100px;'>Hello world</a>" baseURL:[NSBundle.mainBundle.bundleURL URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
+    [webView loadHTMLString:@"<a href='simple.html' style='font-size: 100px;'>Hello world</a>" baseURL:NSBundle.test_resourcesBundle.resourceURL];
     [navigationDelegate waitForDidFinishNavigation];
 
     __block bool didDecideNavigationPolicy = false;
@@ -246,7 +258,52 @@ TEST(ContextMenuTests, ShowColorPanel)
     Util::run(&calledOrderFrontColorPanel);
 }
 
-#if HAVE(SHARING_SERVICE_PICKER_POPOVER_SPI)
+TEST(ContextMenuTests, ShowSharePopoverForImage)
+{
+    bool didShowPopover = false;
+    RetainPtr listener = adoptNS([[PopoverNotificationListener alloc] initWithCallback:[&](NSNotification *notification) {
+        if ([notification.name isEqualToString:NSPopoverDidShowNotification])
+            didShowPopover = true;
+    }]);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto presentingViewSwizzler = InstanceMethodSwizzler {
+        NSMenu.class,
+        @selector(_presentingView),
+        imp_implementationWithBlock([&](NSMenu *) {
+            return webView.get();
+        })
+    };
+
+    auto originalMethod = class_getInstanceMethod(NSSharingServicePicker.class, @selector(initWithItems:));
+    auto swizzledMethod = class_getInstanceMethod(NSSharingServicePicker.class, @selector(swizzled_initWithItems:));
+    auto originalImplementation = method_getImplementation(originalMethod);
+    auto swizzledImplementation = method_getImplementation(swizzledMethod);
+    class_replaceMethod(NSSharingServicePicker.class, @selector(swizzled_initWithItems:), originalImplementation, method_getTypeEncoding(originalMethod));
+    class_replaceMethod(NSSharingServicePicker.class, @selector(initWithItems:), swizzledImplementation, method_getTypeEncoding(swizzledMethod));
+
+    [webView synchronouslyLoadHTMLString:@"<img src='sunset-in-cupertino-600px.jpg'></img>"];
+    [webView waitForNextPresentationUpdate];
+    [webView rightClick:NSMakePoint(200, 200) andSelectItemMatching:^BOOL(NSMenuItem *item) {
+        return [item.title containsString:@"Share"];
+    }];
+
+    TestWebKitAPI::Util::run(&didShowPopover);
+
+    EXPECT_EQ([lastSharingServicePickerItems count], 1U);
+
+    RetainPtr<NSPreviewRepresentingActivityItem> activityItem = [lastSharingServicePickerItems firstObject];
+    EXPECT_TRUE([activityItem isKindOfClass:NSPreviewRepresentingActivityItem.class]);
+
+    RetainPtr<NSImage> image = [activityItem item];
+    EXPECT_TRUE([image isKindOfClass:NSImage.class]);
+
+    EXPECT_TRUE(NSEqualSizes([image size], NSMakeSize(600, 450)));
+
+    class_replaceMethod(NSSharingServicePicker.class, @selector(swizzled_initWithItems:), swizzledImplementation, method_getTypeEncoding(originalMethod));
+    class_replaceMethod(NSSharingServicePicker.class, @selector(initWithItems:), originalImplementation, method_getTypeEncoding(swizzledMethod));
+    lastSharingServicePickerItems = nil;
+}
 
 TEST(ContextMenuTests, SharePopoverDoesNotClearSelection)
 {
@@ -277,8 +334,6 @@ TEST(ContextMenuTests, SharePopoverDoesNotClearSelection)
     TestWebKitAPI::Util::run(&didShowPopover);
     EXPECT_WK_STREQ("Hello world this is a test", [webView selectedText]);
 }
-
-#endif // HAVE(SHARING_SERVICE_PICKER_POPOVER_SPI)
 
 TEST(ContextMenuTests, ContextMenuElementInfoContainsHitTestResult)
 {

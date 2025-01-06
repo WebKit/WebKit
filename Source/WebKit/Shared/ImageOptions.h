@@ -25,39 +25,40 @@
 
 #pragma once
 
+#include <wtf/OptionSet.h>
+
 namespace WebKit {
 
-enum ImageOptions {
-    ImageOptionsShareable = 1 << 0,
+enum class ImageOption : uint8_t {
+    Shareable = 1 << 0,
     // Makes local in process buffer
-    ImageOptionsLocal = 1 << 1,
+    Local = 1 << 1,
 };
 
-enum {
-    SnapshotOptionsShareable = 1 << 0,
-    SnapshotOptionsExcludeSelectionHighlighting = 1 << 1,
-    SnapshotOptionsInViewCoordinates = 1 << 2,
-    SnapshotOptionsPaintSelectionRectangle = 1 << 3,
-    SnapshotOptionsExcludeDeviceScaleFactor = 1 << 5,
-    SnapshotOptionsForceBlackText = 1 << 6,
-    SnapshotOptionsForceWhiteText = 1 << 7,
-    SnapshotOptionsPrinting = 1 << 8,
-    SnapshotOptionsUseScreenColorSpace = 1 << 9,
-    SnapshotOptionsVisibleContentRect = 1 << 10,
-    SnapshotOptionsFullContentRect = 1 << 11,
-    SnapshotOptionsTransparentBackground = 1 << 12
+using ImageOptions = OptionSet<ImageOption>;
+
+enum class SnapshotOption : uint16_t {
+    Shareable = 1 << 0,
+    ExcludeSelectionHighlighting = 1 << 1,
+    InViewCoordinates = 1 << 2,
+    PaintSelectionRectangle = 1 << 3,
+    ExcludeDeviceScaleFactor = 1 << 5,
+    ForceBlackText = 1 << 6,
+    ForceWhiteText = 1 << 7,
+    Printing = 1 << 8,
+    UseScreenColorSpace = 1 << 9,
+    VisibleContentRect = 1 << 10,
+    FullContentRect = 1 << 11,
+    TransparentBackground = 1 << 12,
 };
-// FIXME: This should be enum class SnapshotOptions : uint16_t.
-using SnapshotOptions = uint32_t;
+
+using SnapshotOptions = OptionSet<SnapshotOption>;
 
 inline ImageOptions snapshotOptionsToImageOptions(SnapshotOptions snapshotOptions)
 {
-    unsigned imageOptions = 0;
-
-    if (snapshotOptions & SnapshotOptionsShareable)
-        imageOptions |= ImageOptionsShareable;
-
-    return static_cast<ImageOptions>(imageOptions);
+    if (snapshotOptions.contains(SnapshotOption::Shareable))
+        return ImageOption::Shareable;
+    return { };
 }
 
 } // namespace WebKit

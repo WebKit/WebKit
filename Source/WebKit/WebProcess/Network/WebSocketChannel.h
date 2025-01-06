@@ -52,6 +52,9 @@ public:
     static Ref<WebSocketChannel> create(WebPageProxyIdentifier, WebCore::Document&, WebCore::WebSocketChannelClient&);
     ~WebSocketChannel();
 
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     void networkProcessCrashed();
@@ -108,7 +111,7 @@ private:
     const WebCore::ResourceResponse& serverHandshakeResponse() const final { return m_handshakeResponse; }
 
     WeakPtr<WebCore::Document, WebCore::WeakPtrImplWithEventTargetData> m_document;
-    WeakPtr<WebCore::WebSocketChannelClient> m_client;
+    ThreadSafeWeakPtr<WebCore::WebSocketChannelClient> m_client;
     URL m_url;
     String m_subprotocol;
     String m_extensions;

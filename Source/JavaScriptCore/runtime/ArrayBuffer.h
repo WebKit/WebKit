@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,10 @@
  */
 
 #pragma once
+
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #include "ArrayBufferSharingMode.h"
 #include "BufferMemoryHandle.h"
@@ -334,6 +338,7 @@ public:
     Expected<int64_t, GrowFailReason> grow(VM&, size_t newByteLength);
     Expected<int64_t, GrowFailReason> resize(VM&, size_t newByteLength);
 
+    std::span<uint8_t> mutableSpan() { return { static_cast<uint8_t*>(data()), byteLength() }; }
     std::span<const uint8_t> span() const { return { static_cast<const uint8_t*>(data()), byteLength() }; }
     Vector<uint8_t> toVector() const { return { span() }; }
 
@@ -435,7 +440,7 @@ JS_EXPORT_PRIVATE ASCIILiteral errorMessageForTransfer(ArrayBuffer*);
 // https://tc39.es/proposal-resizablearraybuffer/#sec-makeidempotentarraybufferbytelengthgetter
 template<std::memory_order order>
 class IdempotentArrayBufferByteLengthGetter {
-    WTF_MAKE_TZONE_ALLOCATED(IdempotentArrayBufferByteLengthGetter);
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(IdempotentArrayBufferByteLengthGetter);
 public:
     IdempotentArrayBufferByteLengthGetter() = default;
 
@@ -452,6 +457,10 @@ private:
     std::optional<size_t> m_byteLength;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<std::memory_order order>, IdempotentArrayBufferByteLengthGetter<order>);
+
 } // namespace JSC
 
 using JSC::ArrayBuffer;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

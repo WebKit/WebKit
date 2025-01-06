@@ -14,6 +14,8 @@ list(APPEND WebDriver_SOURCES
     gtk/WebDriverServiceGtk.cpp
 
     soup/HTTPServerSoup.cpp
+
+    unix/LoggingUnix.cpp
 )
 
 list(APPEND WebDriver_LIBRARIES

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,13 @@
 #include "TableGrid.h"
 
 #include "RenderObject.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TableGrid);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TableGrid);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TableGridCell);
 
 TableGrid::Column::Column(const ElementBox* columnBox)
     : m_layoutBox(columnBox)

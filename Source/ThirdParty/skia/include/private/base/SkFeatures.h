@@ -69,6 +69,10 @@
   #define SK_CPU_LOONGARCH 1
 #endif
 
+#if defined(__powerpc__) || defined (__powerpc64__)
+  #define SK_CPU_PPC 1
+#endif
+
 /**
  *  SK_CPU_SSE_LEVEL
  *
@@ -94,7 +98,7 @@
 #define SK_CPU_LSX_LEVEL_LSX      70
 #define SK_CPU_LSX_LEVEL_LASX     80
 
-// TODO(brianosman,kjlubick) clean up these checks
+// TODO(kjlubick) clean up these checks
 
 // Are we in GCC/Clang?
 #ifndef SK_CPU_SSE_LEVEL

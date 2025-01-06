@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -329,7 +329,7 @@ static void get_current_gop_end(THIRD_PASS_DEC_CTX *ctx, int max_num,
 }
 #endif
 
-static AOM_INLINE void read_gop_frames(THIRD_PASS_DEC_CTX *ctx) {
+static inline void read_gop_frames(THIRD_PASS_DEC_CTX *ctx) {
   int cur_idx = 0;
   while (cur_idx < ctx->gop_info.num_frames) {
     assert(cur_idx < MAX_THIRD_PASS_BUF);

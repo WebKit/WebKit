@@ -46,23 +46,20 @@ PageLoadState::~PageLoadState()
 }
 
 PageLoadState::Transaction::Transaction(PageLoadState& pageLoadState)
-    : m_webPageProxy(&pageLoadState.m_webPageProxy)
-    , m_pageLoadState(&pageLoadState)
+    : m_pageLoadState(&pageLoadState)
 {
-    m_pageLoadState->beginTransaction();
+    pageLoadState.beginTransaction();
 }
 
 PageLoadState::Transaction::Transaction(Transaction&& other)
-    : m_webPageProxy(WTFMove(other.m_webPageProxy))
-    , m_pageLoadState(other.m_pageLoadState)
+    : m_pageLoadState(std::exchange(other.m_pageLoadState, nullptr))
 {
-    other.m_pageLoadState = nullptr;
 }
 
 PageLoadState::Transaction::~Transaction()
 {
-    if (m_pageLoadState)
-        m_pageLoadState->endTransaction();
+    if (RefPtr pageLoadState = m_pageLoadState)
+        pageLoadState->endTransaction();
 }
 
 void PageLoadState::addObserver(Observer& observer)
@@ -86,6 +83,21 @@ void PageLoadState::endTransaction()
         commitChanges();
 }
 
+Ref<WebPageProxy> PageLoadState::protectedPage() const
+{
+    return m_webPageProxy.get();
+}
+
+void PageLoadState::ref() const
+{
+    m_webPageProxy->ref();
+}
+
+void PageLoadState::deref() const
+{
+    m_webPageProxy->deref();
+}
+
 void PageLoadState::commitChanges()
 {
     if (!m_mayHaveUncommittedChanges)
@@ -96,7 +108,7 @@ void PageLoadState::commitChanges()
     bool canGoBackChanged = m_committedState.canGoBack != m_uncommittedState.canGoBack;
     bool canGoForwardChanged = m_committedState.canGoForward != m_uncommittedState.canGoForward;
     bool titleChanged = m_committedState.title != m_uncommittedState.title
-        || m_committedState.titleFromSafeBrowsingWarning != m_uncommittedState.titleFromSafeBrowsingWarning;
+        || m_committedState.titleFromBrowsingWarning != m_uncommittedState.titleFromBrowsingWarning;
     bool isLoadingChanged = isLoading(m_committedState) != isLoading(m_uncommittedState);
     bool activeURLChanged = activeURL(m_committedState) != activeURL(m_uncommittedState);
     bool hasOnlySecureContentChanged = hasOnlySecureContent(m_committedState) != hasOnlySecureContent(m_uncommittedState);
@@ -131,7 +143,7 @@ void PageLoadState::commitChanges()
 
     m_committedState = m_uncommittedState;
 
-    m_webPageProxy.isLoadingChanged();
+    protectedPage()->isLoadingChanged();
 
     // The "did" ordering is the reverse of the "will". This is a requirement of Cocoa Key-Value Observing.
     if (certificateInfoChanged)
@@ -174,20 +186,10 @@ void PageLoadState::reset(const Transaction::Token& token)
     m_lastUnreachableURL = String();
 
     m_uncommittedState.title = String();
-    m_uncommittedState.titleFromSafeBrowsingWarning = { };
+    m_uncommittedState.titleFromBrowsingWarning = { };
 
     m_uncommittedState.estimatedProgress = 0;
     m_uncommittedState.networkRequestsInProgress = false;
-}
-
-bool PageLoadState::isLoading() const
-{
-    return isLoading(m_committedState);
-}
-
-bool PageLoadState::hasUncommittedLoad() const
-{
-    return isLoading(m_uncommittedState);
 }
 
 String PageLoadState::activeURL(const Data& data)
@@ -211,11 +213,6 @@ String PageLoadState::activeURL(const Data& data)
 
     ASSERT_NOT_REACHED();
     return String();
-}
-
-String PageLoadState::activeURL() const
-{
-    return activeURL(m_committedState);
 }
 
 bool PageLoadState::hasOnlySecureContent(const Data& data)
@@ -245,11 +242,6 @@ void PageLoadState::negotiatedLegacyTLS(const Transaction::Token& token)
     m_uncommittedState.negotiatedLegacyTLS = true;
 }
 
-bool PageLoadState::wasPrivateRelayed() const
-{
-    return m_committedState.wasPrivateRelayed;
-}
-
 double PageLoadState::estimatedProgress(const Data& data)
 {
     if (!data.pendingAPIRequest.url.isNull())
@@ -261,21 +253,6 @@ double PageLoadState::estimatedProgress(const Data& data)
 double PageLoadState::estimatedProgress() const
 {
     return estimatedProgress(m_committedState);
-}
-
-const String& PageLoadState::pendingAPIRequestURL() const
-{
-    return m_committedState.pendingAPIRequest.url;
-}
-
-auto PageLoadState::pendingAPIRequest() const -> const PendingAPIRequest&
-{
-    return m_committedState.pendingAPIRequest;
-}
-
-const URL& PageLoadState::resourceDirectoryURL() const
-{
-    return m_committedState.resourceDirectoryURL;
 }
 
 void PageLoadState::setPendingAPIRequest(const Transaction::Token& token, PendingAPIRequest&& pendingAPIRequest, const URL& resourceDirectoryURL)
@@ -347,7 +324,7 @@ void PageLoadState::didCommitLoad(const Transaction::Token& token, const WebCore
     m_uncommittedState.origin = origin;
 
     m_uncommittedState.title = String();
-    m_uncommittedState.titleFromSafeBrowsingWarning = { };
+    m_uncommittedState.titleFromBrowsingWarning = { };
 }
 
 void PageLoadState::didFinishLoad(const Transaction::Token& token)
@@ -392,8 +369,8 @@ void PageLoadState::setUnreachableURL(const Transaction::Token& token, const Str
 
 const String& PageLoadState::title() const
 {
-    if (!m_committedState.titleFromSafeBrowsingWarning.isNull())
-        return m_committedState.titleFromSafeBrowsingWarning;
+    if (!m_committedState.titleFromBrowsingWarning.isNull())
+        return m_committedState.titleFromBrowsingWarning;
 
     return m_committedState.title;
 }
@@ -404,10 +381,10 @@ void PageLoadState::setTitle(const Transaction::Token& token, const String& titl
     m_uncommittedState.title = title;
 }
 
-void PageLoadState::setTitleFromSafeBrowsingWarning(const Transaction::Token& token, const String& title)
+void PageLoadState::setTitleFromBrowsingWarning(const Transaction::Token& token, const String& title)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-    m_uncommittedState.titleFromSafeBrowsingWarning = title;
+    m_uncommittedState.titleFromBrowsingWarning = title;
 }
 
 bool PageLoadState::canGoBack() const
@@ -456,6 +433,17 @@ void PageLoadState::setNetworkRequestsInProgress(const Transaction::Token& token
     m_uncommittedState.networkRequestsInProgress = networkRequestsInProgress;
 }
 
+void PageLoadState::setHTTPFallbackInProgress(const Transaction::Token& token, bool isHTTPFallbackInProgress)
+{
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    m_uncommittedState.isHTTPFallbackInProgress = isHTTPFallbackInProgress;
+}
+
+bool PageLoadState::httpFallbackInProgress()
+{
+    return m_uncommittedState.isHTTPFallbackInProgress;
+}
+
 bool PageLoadState::isLoading(const Data& data)
 {
     if (!data.pendingAPIRequest.url.isNull())
@@ -491,12 +479,12 @@ void PageLoadState::didChangeProcessIsResponsive()
 
 void PageLoadState::callObserverCallback(void (Observer::*callback)())
 {
-    Ref protectedPage { m_webPageProxy };
+    Ref protectedPage { m_webPageProxy.get() };
 
     for (auto& observer : copyToVector(m_observers)) {
         // This appears potentially inefficient on the surface (searching in a Vector)
         // but in practice - using only API - there will only ever be (1) observer.
-        if (!observer || !m_observers.contains(*observer))
+        if (RefPtr protectedObserver = observer.get(); !protectedObserver || !m_observers.contains(*protectedObserver))
             continue;
 
         ((*observer).*callback)();

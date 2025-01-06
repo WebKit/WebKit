@@ -27,6 +27,7 @@
 #include "config.h"
 #include "HTMLScriptRunner.h"
 
+#include "CSSTokenizerInputStream.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventLoop.h"
@@ -42,8 +43,11 @@
 #include "NestingLevelIncrementer.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLScriptRunner);
 
 using namespace HTMLNames;
 

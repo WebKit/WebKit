@@ -86,7 +86,7 @@ TEST(WebKit, DISABLED_DOMWindowExtensionNoCache)
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DOMWindowExtensionNoCache"));
 
     WKContextInjectedBundleClientV1 injectedBundleClient;
-    memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+    zeroBytes(injectedBundleClient);
 
     injectedBundleClient.base.version = 1;
     injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;

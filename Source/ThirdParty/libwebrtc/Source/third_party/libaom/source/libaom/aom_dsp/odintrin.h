@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2001-2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -68,20 +68,6 @@ extern uint32_t OD_DIVU_SMALL_CONSTS[OD_DIVU_DMAX][2];
 #define OD_ARG_NONNULL(x) __attribute__((__nonnull__(x)))
 #else
 #define OD_ARG_NONNULL(x)
-#endif
-
-/** Copy n elements of memory from src to dst. The 0* term provides
-    compile-time type checking  */
-#if !defined(OVERRIDE_OD_COPY)
-#define OD_COPY(dst, src, n) \
-  (memcpy((dst), (src), sizeof(*(dst)) * (n) + 0 * ((dst) - (src))))
-#endif
-
-/** Copy n elements of memory from src to dst, allowing overlapping regions.
-    The 0* term provides compile-time type checking */
-#if !defined(OVERRIDE_OD_MOVE)
-# define OD_MOVE(dst, src, n) \
- (memmove((dst), (src), sizeof(*(dst))*(n) + 0*((dst) - (src)) ))
 #endif
 
 /*All of these macros should expect floats as arguments.*/

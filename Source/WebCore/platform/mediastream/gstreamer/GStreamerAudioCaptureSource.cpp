@@ -32,6 +32,7 @@
 #include <gst/app/gstappsink.h>
 #include <gst/gst.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -46,7 +47,7 @@ GST_DEBUG_CATEGORY(webkit_audio_capture_source_debug);
 
 class GStreamerAudioCaptureSourceFactory : public AudioCaptureFactory {
 public:
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier) final
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier>) final
     {
         return GStreamerAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalts), constraints);
     }
@@ -97,7 +98,7 @@ GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice&
     });
 
     auto& singleton = GStreamerAudioCaptureDeviceManager::singleton();
-    singleton.registerCapturer(m_capturer);
+    singleton.registerCapturer(m_capturer.copyRef());
 }
 
 GStreamerAudioCaptureSource::~GStreamerAudioCaptureSource()
@@ -110,6 +111,14 @@ void GStreamerAudioCaptureSource::captureEnded()
 {
     m_capturer->stop();
     captureFailed();
+}
+
+std::pair<GstClockTime, GstClockTime> GStreamerAudioCaptureSource::queryCaptureLatency() const
+{
+    if (!m_capturer)
+        return { GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE };
+
+    return m_capturer->queryLatency();
 }
 
 void GStreamerAudioCaptureSource::startProducingData()

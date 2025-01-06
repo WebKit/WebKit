@@ -27,6 +27,7 @@
 #define APIAutomationSessionClient_h
 
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -40,8 +41,16 @@ enum AutomationSessionBrowsingContextOptions : uint16_t {
     AutomationSessionBrowsingContextOptionsPreferNewTab = 1 << 0,
 };
 
+#if ENABLE(WK_WEB_EXTENSIONS_IN_WEBDRIVER)
+enum AutomationSessionWebExtensionResourceOptions : uint16_t {
+    AutomationSessionWebExtensionResourceOptionsPath = 1 << 0,
+    AutomationSessionWebExtensionResourceOptionsArchivePath = 1 << 1,
+    AutomationSessionWebExtensionResourceOptionsBase64 = 1 << 2,
+};
+#endif
+
 class AutomationSessionClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AutomationSessionClient);
 public:
     enum class JavaScriptDialogType {
         Alert,
@@ -54,6 +63,14 @@ public:
         Tab,
         Window,
     };
+
+#if ENABLE(WK_WEB_EXTENSIONS_IN_WEBDRIVER)
+    enum class WebExtensionResourceOptions {
+        Path,
+        ArchivePath,
+        Base64,
+    };
+#endif
 
     virtual ~AutomationSessionClient() { }
 
@@ -71,6 +88,10 @@ public:
     virtual void setUserInputForCurrentJavaScriptPromptOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, const WTF::String&) { }
     virtual std::optional<JavaScriptDialogType> typeOfCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return std::nullopt; }
     virtual BrowsingContextPresentation currentPresentationOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return BrowsingContextPresentation::Window; }
+#if ENABLE(WK_WEB_EXTENSIONS_IN_WEBDRIVER)
+    virtual void loadWebExtensionWithOptions(WebKit::WebAutomationSession&, API::AutomationSessionWebExtensionResourceOptions, const WTF::String& resource, CompletionHandler<void(const WTF::String&)>&& completionHandler) { completionHandler(WTF::String()); }
+    virtual void unloadWebExtension(WebKit::WebAutomationSession&, const WTF::String& identifier, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
+#endif
 };
 
 } // namespace API

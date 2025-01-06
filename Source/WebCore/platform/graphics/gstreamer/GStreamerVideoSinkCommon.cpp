@@ -23,6 +23,7 @@
 
 #include "MediaPlayerPrivateGStreamer.h"
 #include <gst/app/gstappsink.h>
+#include <wtf/TZoneMallocInlines.h>
 
 using namespace WebCore;
 
@@ -30,7 +31,7 @@ GST_DEBUG_CATEGORY(webkit_gst_video_sink_common_debug);
 #define GST_CAT_DEFAULT webkit_gst_video_sink_common_debug
 
 class WebKitVideoSinkProbe {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebKitVideoSinkProbe);
 public:
 
     WebKitVideoSinkProbe(MediaPlayerPrivateGStreamer* player)
@@ -43,7 +44,7 @@ public:
         delete static_cast<WebKitVideoSinkProbe*>(userData);
     }
 
-    static GstPadProbeReturn doProbe(GstPad* pad, GstPadProbeInfo* info, gpointer userData)
+    static GstPadProbeReturn doProbe([[maybe_unused]] GstPad* pad, GstPadProbeInfo* info, gpointer userData)
     {
         auto* self = static_cast<WebKitVideoSinkProbe*>(userData);
         auto* player = self->m_player;
@@ -54,6 +55,10 @@ public:
                     GST_DEBUG_OBJECT(pad, "FLUSH_START received, aborting all pending tasks in the player sinkTaskQueue.");
                     self->m_isFlushing = true;
                     player->sinkTaskQueue().startAborting();
+#if USE(GSTREAMER_GL)
+                    GST_DEBUG_OBJECT(pad, "Flushing current buffer in response to %" GST_PTR_FORMAT, info->data);
+                    player->flushCurrentBuffer();
+#endif
                 } else
                     GST_DEBUG_OBJECT(pad, "Received FLUSH_START while already flushing, ignoring.");
             } else if (GST_EVENT_TYPE(GST_PAD_PROBE_INFO_EVENT(info)) == GST_EVENT_FLUSH_STOP) {
@@ -65,6 +70,8 @@ public:
                     GST_DEBUG_OBJECT(pad, "Received FLUSH_STOP without a FLUSH_START, ignoring.");
             }
         }
+        if (self->m_isFlushing)
+            return GST_PAD_PROBE_OK; // do not process regular (non-flush) events during a flush
 
         if (info->type & GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM && GST_EVENT_TYPE(GST_PAD_PROBE_INFO_EVENT(info)) == GST_EVENT_TAG) {
             GstTagList* tagList;
@@ -73,33 +80,43 @@ public:
             player->updateVideoOrientation(tagList);
         }
 
-        if (info->type & GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM && GST_QUERY_TYPE(GST_PAD_PROBE_INFO_QUERY(info)) == GST_QUERY_ALLOCATION)
-            gst_query_add_allocation_meta(GST_PAD_PROBE_INFO_QUERY(info), GST_VIDEO_META_API_TYPE, nullptr);
+        if (info->type & GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM && GST_QUERY_TYPE(GST_PAD_PROBE_INFO_QUERY(info)) == GST_QUERY_ALLOCATION) {
+            auto query = GST_PAD_PROBE_INFO_QUERY(info);
+            gst_query_add_allocation_meta(query, GST_VIDEO_META_API_TYPE, nullptr);
 
-#if USE(GSTREAMER_GL)
-        // FIXME: Verify the following comment. Investigate what actually should be done here.
-        //
+            GstCaps* caps;
+            gboolean needPool;
+            gst_query_parse_allocation(query, &caps, &needPool);
+            if (UNLIKELY(!caps) || !needPool)
+                return GST_PAD_PROBE_OK;
+
+            unsigned size;
+#if GST_CHECK_VERSION(1, 24, 0)
+            if (gst_video_is_dma_drm_caps(caps)) {
+                GstVideoInfoDmaDrm drmInfo;
+                if (!gst_video_info_dma_drm_from_caps(&drmInfo, caps))
+                    return GST_PAD_PROBE_OK;
+                size = GST_VIDEO_INFO_SIZE(&drmInfo.vinfo);
+            } else
+#endif
+            {
+                GstVideoInfo info;
+                if (!gst_video_info_from_caps(&info, caps))
+                    return GST_PAD_PROBE_OK;
+                size = GST_VIDEO_INFO_SIZE(&info);
+            }
+            gst_query_add_allocation_pool(query, nullptr, size, 3, 0);
+        }
+
         // In some platforms (e.g. OpenMAX on the Raspberry Pi) when a resolution change occurs the
         // pipeline has to be drained before a frame with the new resolution can be decoded.
         // In this context, it's important that we don't hold references to any previous frame
         // (e.g. m_sample) so that decoding can continue.
         // We are also not supposed to keep the original frame after a flush.
-        //
-        // FIXME: We used to have code to call flushCurrentBuffer() on FLUSH_START. That code became
-        // accidentally unreachable in r287349. The current code doesn't preserve that call, partly
-        // because of a refactor of this probe function, partly because it seemed to caused test
-        // regressions that were out of the scope of that change.
-        //
-        // FIXME: flushCurrentBuffer(), when called, causes the video element to become blank for the
-        // user, and has been having this issue for a long time. This is definitely a bug, and needs
-        // to be fixed eventually.
-        //
-        // For more info: https://github.com/WebKit/WebKit/pull/3802#issuecomment-1234529142
         if (info->type & GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM && GST_QUERY_TYPE(GST_PAD_PROBE_INFO_QUERY(info)) == GST_QUERY_DRAIN) {
             GST_DEBUG_OBJECT(pad, "Flushing current buffer in response to %" GST_PTR_FORMAT, info->data);
             player->flushCurrentBuffer();
         }
-#endif
 
         return GST_PAD_PROBE_OK;
     }
@@ -118,15 +135,19 @@ void webKitVideoSinkSetMediaPlayerPrivate(GstElement* appSink, MediaPlayerPrivat
 
     g_signal_connect(appSink, "new-sample", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateGStreamer* player) -> GstFlowReturn {
         GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
+#ifndef GST_DISABLE_GST_DEBUG
         GstBuffer* buffer = gst_sample_get_buffer(sample.get());
         GST_TRACE_OBJECT(sink, "new-sample with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
+#endif
         player->triggerRepaint(WTFMove(sample));
         return GST_FLOW_OK;
     }), player);
     g_signal_connect(appSink, "new-preroll", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateGStreamer* player) -> GstFlowReturn {
         GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_preroll(GST_APP_SINK(sink)));
+#ifndef GST_DISABLE_GST_DEBUG
         GstBuffer* buffer = gst_sample_get_buffer(sample.get());
         GST_DEBUG_OBJECT(sink, "new-preroll with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
+#endif
         player->triggerRepaint(WTFMove(sample));
         return GST_FLOW_OK;
     }), player);

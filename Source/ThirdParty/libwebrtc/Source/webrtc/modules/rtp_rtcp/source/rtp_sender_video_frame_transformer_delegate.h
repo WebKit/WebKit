@@ -21,7 +21,9 @@
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "api/video/encoded_image.h"
 #include "api/video/video_layers_allocation.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
@@ -31,7 +33,7 @@ namespace webrtc {
 class RTPVideoFrameSenderInterface {
  public:
   virtual bool SendVideo(int payload_type,
-                         absl::optional<VideoCodecType> codec_type,
+                         std::optional<VideoCodecType> codec_type,
                          uint32_t rtp_timestamp,
                          Timestamp capture_time,
                          rtc::ArrayView<const uint8_t> payload,
@@ -64,7 +66,7 @@ class RTPSenderVideoFrameTransformerDelegate : public TransformedFrameCallback {
 
   // Delegates the call to FrameTransformerInterface::TransformFrame.
   bool TransformFrame(int payload_type,
-                      absl::optional<VideoCodecType> codec_type,
+                      std::optional<VideoCodecType> codec_type,
                       uint32_t rtp_timestamp,
                       const EncodedImage& encoded_image,
                       RTPVideoHeader video_header,
@@ -74,6 +76,8 @@ class RTPSenderVideoFrameTransformerDelegate : public TransformedFrameCallback {
   // the transformed frame to be sent on the `encoder_queue_`.
   void OnTransformedFrame(
       std::unique_ptr<TransformableFrameInterface> frame) override;
+
+  void StartShortCircuiting() override;
 
   // Delegates the call to RTPSendVideo::SendVideo on the `encoder_queue_`.
   void SendVideo(std::unique_ptr<TransformableFrameInterface> frame) const
@@ -107,6 +111,7 @@ class RTPSenderVideoFrameTransformerDelegate : public TransformedFrameCallback {
   // Used when the encoded frames arrives without a current task queue. This can
   // happen if a hardware encoder was used.
   std::unique_ptr<TaskQueueBase, TaskQueueDeleter> transformation_queue_;
+  bool short_circuit_ RTC_GUARDED_BY(sender_lock_) = false;
 };
 
 // Method to support cloning a Sender frame from another frame

@@ -31,10 +31,12 @@
 #include "LegacyCustomProtocolManagerProxyMessages.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessCreationParameters.h"
-#include "WebCoreArgumentCoders.h"
 #include <WebCore/ResourceRequest.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyCustomProtocolManager);
 
 ASCIILiteral LegacyCustomProtocolManager::supplementName()
 {
@@ -45,6 +47,16 @@ LegacyCustomProtocolManager::LegacyCustomProtocolManager(NetworkProcess& network
     : m_networkProcess(networkProcess)
 {
     m_networkProcess->addMessageReceiver(Messages::LegacyCustomProtocolManager::messageReceiverName(), *this);
+}
+
+void LegacyCustomProtocolManager::ref() const
+{
+    m_networkProcess->ref();
+}
+
+void LegacyCustomProtocolManager::deref() const
+{
+    m_networkProcess->deref();
 }
 
 Ref<NetworkProcess> LegacyCustomProtocolManager::protectedNetworkProcess() const

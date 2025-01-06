@@ -12,6 +12,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AutomationProtocolObjects.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AutomationProtocolObjects.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AuxiliaryProcessMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AuxiliaryProcessMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DigitalCredentialsCoordinatorProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DigitalCredentialsCoordinatorProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DownloadProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DownloadProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DrawingAreaMessageReceiver.cpp
@@ -86,6 +88,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIRuntime.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIRuntime.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIScripting.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIScripting.mm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPISidePanel.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPISidePanel.mm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPISidebarAction.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPISidebarAction.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIStorage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIStorage.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIStorageArea.h
@@ -94,6 +100,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPITabs.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPITabs.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPITest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPITest.mm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIUnified.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebNavigation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebNavigation.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebNavigationEvent.h
@@ -122,6 +129,11 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LibWebRTCNetworkMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LibWebRTCNetworkMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LibWebRTCRemoteCodecsMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LibWebRTCRemoteCodecsMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogMessagesDeclarations.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogMessagesImplementations.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStream.messages.in
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStreamMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStreamMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaPlayerPrivateRemoteMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaPlayerPrivateRemoteMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaSourcePrivateRemoteMessageReceiverMessageReceiver.cpp
@@ -306,10 +318,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaPlayerManagerProxyMessage
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaPlayerManagerProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaPlayerProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaPlayerProxyMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaRecorderManagerMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaRecorderManagerMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaRecorderMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaRecorderMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaRecorderPrivateWriterManagerMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaRecorderPrivateWriterManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaResourceManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaResourceManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteMediaSessionCoordinatorMessageReceiver.cpp
@@ -388,6 +398,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteWebInspectorUIProxyMessageRece
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteWebInspectorUIProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteWebLockRegistryMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteWebLockRegistryMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRBindingMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRBindingMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRProjectionLayerMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRProjectionLayerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRSubImageMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRSubImageMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRViewMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRViewMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SampleBufferDisplayLayerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SampleBufferDisplayLayerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SecItemShimProxyMessageReceiver.cpp
@@ -398,6 +416,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerDownloadTaskMessageRece
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerDownloadTaskMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerFetchTaskMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerFetchTaskMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SharedPreferencesForWebProcess.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SharedPreferencesForWebProcess.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SharedPreferencesForWebProcess.serialization.in
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SmartMagnificationControllerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SmartMagnificationControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SourceBufferPrivateRemoteMessageReceiver.cpp
@@ -433,6 +454,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/VisitedLinkStoreMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/VisitedLinkTableControllerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/VisitedLinkTableControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WKApplicationUtilities.swift
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WKSeparatedImageView.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WKWebView+TextExtraction.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebAuthenticatorCoordinatorMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebAuthenticatorCoordinatorMessages.h
@@ -452,10 +474,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebAutomationSessionProxyScriptSourc
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebBroadcastChannelRegistryMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebBroadcastChannelRegistryMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCacheStorageConnectionMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebConnectionMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCookieManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCookieManagerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCoreLogClientDeclarations.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCoreLogDefinitions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDeviceOrientationUpdateProviderMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDeviceOrientationUpdateProviderMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp
@@ -497,6 +519,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKitLogClientDeclarations.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKitLogDefinitions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKitPlatformGeneratedSerializers.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebLockRegistryProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebLockRegistryProxyMessages.h
@@ -507,6 +531,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageTestingMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageTestingMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageUpdatePreferences.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPasteboardProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPasteboardProxyMessages.h

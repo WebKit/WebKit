@@ -31,7 +31,7 @@
 #include "LengthBox.h"
 #include "ReducedResolutionSeconds.h"
 #include <variant>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -65,8 +65,8 @@ struct IntersectionObserverData {
     Vector<IntersectionObserverRegistration> registrations;
 };
 
-class IntersectionObserver : public RefCounted<IntersectionObserver>, public CanMakeWeakPtr<IntersectionObserver> {
-    WTF_MAKE_ISO_ALLOCATED(IntersectionObserver);
+class IntersectionObserver : public RefCountedAndCanMakeWeakPtr<IntersectionObserver> {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IntersectionObserver);
 public:
     struct Init {
         std::optional<std::variant<RefPtr<Element>, RefPtr<Document>>> root;

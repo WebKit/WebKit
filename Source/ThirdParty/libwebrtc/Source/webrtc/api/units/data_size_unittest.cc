@@ -10,6 +10,7 @@
 
 #include "api/units/data_size.h"
 
+#include <cstdint>
 #include <limits>
 
 #include "test/gtest.h"

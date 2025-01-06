@@ -54,10 +54,12 @@ add_definitions(-DLIBDIR="${LIB_INSTALL_DIR}")
 add_definitions(-DPKGLIBDIR="${LIB_INSTALL_DIR}/wpe-webkit-${WPE_API_VERSION}")
 add_definitions(-DPKGLIBEXECDIR="${LIBEXEC_INSTALL_DIR}")
 add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}")
+add_definitions(-DPKGDATADIR="${CMAKE_INSTALL_FULL_DATADIR}/wpe-webkit-${WPE_API_VERSION}")
 add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 
 if (NOT DEVELOPER_MODE AND NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
     WEBKIT_ADD_TARGET_PROPERTIES(WebKit LINK_FLAGS "-Wl,--version-script,${CMAKE_CURRENT_SOURCE_DIR}/webkitglib-symbols.map")
+    set_property(TARGET WebKit APPEND PROPERTY LINK_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/webkitglib-symbols.map")
 endif ()
 
 set(WebKit_USE_PREFIX_HEADER ON)
@@ -104,9 +106,14 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 
 list(APPEND WebKit_SERIALIZATION_IN_FILES Shared/glib/DMABufRendererBufferFormat.serialization.in)
 
+if (USE_GBM)
+  list(APPEND WebKit_SERIALIZATION_IN_FILES Shared/gbm/DMABufBuffer.serialization.in)
+endif ()
+
 list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/glib/DMABufRendererBufferMode.serialization.in
     Shared/glib/InputMethodState.serialization.in
+    Shared/glib/SystemSettings.serialization.in
     Shared/glib/UserMessage.serialization.in
 
     Shared/soup/WebCoreArgumentCodersSoup.serialization.in
@@ -235,6 +242,7 @@ set(WPE_WEB_PROCESS_EXTENSION_API_INSTALLED_HEADERS
 )
 
 set(WPE_WEB_PROCESS_EXTENSION_API_HEADER_TEMPLATES
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitFrame.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebEditor.h.in
@@ -293,6 +301,7 @@ GENERATE_GLIB_API_HEADERS(WebKit WPE_API_HEADER_TEMPLATES
     "-DWTF_PLATFORM_WPE=1"
     "-DUSE_GTK4=0"
     "-DENABLE_2022_GLIB_API=$<BOOL:${ENABLE_2022_GLIB_API}>"
+    "-DENABLE_WPE_PLATFORM=$<BOOL:${ENABLE_WPE_PLATFORM}>"
     "-DUSE_GI_FINISH_FUNC_ANNOTATION=${USE_GI_FINISH_FUNC_ANNOTATION}"
 )
 unset(USE_GI_FINISH_FUNC_ANNOTATION)
@@ -380,14 +389,11 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Platform/generic"
     "${WEBKIT_DIR}/Shared/API/c/wpe"
     "${WEBKIT_DIR}/Shared/API/glib"
-    "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
-    "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/Extensions"
     "${WEBKIT_DIR}/Shared/glib"
     "${WEBKIT_DIR}/Shared/libwpe"
     "${WEBKIT_DIR}/Shared/soup"
     "${WEBKIT_DIR}/Shared/wpe"
-    "${WEBKIT_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT_DIR}/UIProcess/API/C/glib"
     "${WEBKIT_DIR}/UIProcess/API/C/wpe"
     "${WEBKIT_DIR}/UIProcess/API/glib"
@@ -445,15 +451,9 @@ if (USE_ATK)
 endif ()
 
 if (USE_CAIRO)
+    include(Platform/Cairo.cmake)
     list(APPEND WebKit_LIBRARIES
-        Cairo::Cairo
         Freetype::Freetype
-    )
-
-    list(APPEND WebKit_SOURCES
-        Shared/API/c/cairo/WKImageCairo.cpp
-
-        UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
     )
 endif ()
 
@@ -479,6 +479,10 @@ else ()
         ${GSTREAMER_LIBRARIES}
     )
 endif ()
+
+list(APPEND WebKit_MESSAGES_IN_FILES
+    WebProcess/glib/SystemSettingsManager
+)
 
 if (ENABLE_WPE_PLATFORM)
     list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
@@ -522,24 +526,12 @@ if (ENABLE_BREAKPAD)
     )
 endif ()
 
-WEBKIT_BUILD_INSPECTOR_GRESOURCES(${WebInspectorUI_DERIVED_SOURCES_DIR})
-list(APPEND WPEWebInspectorResources_DERIVED_SOURCES
-    ${WebInspectorUI_DERIVED_SOURCES_DIR}/InspectorGResourceBundle.c
+WEBKIT_BUILD_INSPECTOR_GRESOURCES(
+    "${WebInspectorUI_DERIVED_SOURCES_DIR}"
+    "${CMAKE_BINARY_DIR}/share/inspector.gresource"
 )
 
-list(APPEND WPEWebInspectorResources_LIBRARIES
-    ${GLIB_GIO_LIBRARIES}
-)
-
-list(APPEND WPEWebInspectorResources_SYSTEM_INCLUDE_DIRECTORIES
-    ${GLIB_INCLUDE_DIRS}
-)
-
-add_library(WPEWebInspectorResources SHARED ${WPEWebInspectorResources_DERIVED_SOURCES})
-add_dependencies(WPEWebInspectorResources WebKit)
-target_link_libraries(WPEWebInspectorResources ${WPEWebInspectorResources_LIBRARIES})
-target_include_directories(WPEWebInspectorResources SYSTEM PUBLIC ${WPEWebInspectorResources_SYSTEM_INCLUDE_DIRECTORIES})
-install(TARGETS WPEWebInspectorResources DESTINATION "${LIB_INSTALL_DIR}/wpe-webkit-${WPE_API_VERSION}")
+install(FILES "${CMAKE_BINARY_DIR}/share/inspector.gresource" DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/wpe-webkit-${WPE_API_VERSION}")
 
 add_library(WPEInjectedBundle MODULE "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitInjectedBundleMain.cpp")
 ADD_WEBKIT_PREFIX_HEADER(WPEInjectedBundle)
@@ -562,8 +554,9 @@ if (ENABLE_WPE_QT_API)
         #        SHARED here works on Linux and probably some other systems, but
         #        not on MacOS or Windows.
         add_library(qtwpe SHARED
-            UIProcess/API/wpe/qt6/WPEViewQtQuick.cpp
             UIProcess/API/wpe/qt6/WPEDisplayQtQuick.cpp
+            UIProcess/API/wpe/qt6/WPEToplevelQtQuick.cpp
+            UIProcess/API/wpe/qt6/WPEViewQtQuick.cpp
             UIProcess/API/wpe/qt6/WPEQmlExtensionPlugin.cpp
             UIProcess/API/wpe/qt6/WPEQtView.cpp
             UIProcess/API/wpe/qt6/WPEQtViewLoadRequest.cpp
@@ -574,6 +567,7 @@ if (ENABLE_WPE_QT_API)
         )
         target_compile_definitions(qtwpe PUBLIC
             QT_NO_KEYWORDS=1
+            QT_WPE_LIBRARY
         )
         target_link_libraries(qtwpe
             PUBLIC
@@ -765,7 +759,11 @@ GI_INTROSPECT(WPEWebKit ${WPE_API_VERSION} wpe/webkit.h
         UIProcess/API/glib
     NO_IMPLICIT_SOURCES
 )
-GI_DOCGEN(WPEWebKit wpe/wpewebkit.toml.in)
+GI_DOCGEN(WPEWebKit wpe/wpewebkit.toml.in
+    CONTENT_TEMPLATES
+        glib/environment-variables.md
+        glib/profiling.md
+)
 
 if (ENABLE_2022_GLIB_API)
     set(WPE_WEB_PROCESS_EXTENSION_API_NAME "WPEWebProcessExtension")

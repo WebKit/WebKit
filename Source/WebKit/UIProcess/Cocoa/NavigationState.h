@@ -34,6 +34,7 @@
 #import "ProcessThrottler.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/UniqueRef.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
@@ -41,15 +42,6 @@
 @class WKWebView;
 @protocol WKHistoryDelegatePrivate;
 @protocol WKNavigationDelegate;
-
-namespace WebKit {
-class NavigationState;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NavigationState> : std::true_type { };
-}
 
 namespace API {
 class Navigation;
@@ -62,12 +54,16 @@ class SecurityOriginData;
 namespace WebKit {
 
 struct WebNavigationDataStore;
+class WebPageLoadTiming;
 
 class NavigationState final : public PageLoadState::Observer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigationState);
 public:
     explicit NavigationState(WKWebView *);
     ~NavigationState();
+
+    void ref() const final;
+    void deref() const final;
 
     static NavigationState* fromWebPage(WebPageProxy&);
 
@@ -99,8 +95,11 @@ public:
     void releaseNetworkActivity(NetworkActivityReleaseReason);
 #endif
 
+    void didGeneratePageLoadTiming(const WebPageLoadTiming&);
+
 private:
     class NavigationClient final : public API::NavigationClient {
+        WTF_MAKE_TZONE_ALLOCATED(NavigationClient);
     public:
         explicit NavigationClient(NavigationState&);
         ~NavigationClient();
@@ -137,7 +136,7 @@ private:
         void processDidBecomeResponsive(WebPageProxy&) override;
         void processDidBecomeUnresponsive(WebPageProxy&) override;
 
-        RefPtr<API::Data> webCryptoMasterKey(WebPageProxy&) override;
+        void legacyWebCryptoMasterKey(WebPageProxy&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&) override;
 
         void navigationActionDidBecomeDownload(WebPageProxy&, API::NavigationAction&, DownloadProxy&) final;
         void navigationResponseDidBecomeDownload(WebPageProxy&, API::NavigationResponse&, DownloadProxy&) final;
@@ -148,9 +147,7 @@ private:
         void didFinishLoadForQuickLookDocumentInMainFrame(const WebCore::FragmentedSharedBuffer&) override;
 #endif
 
-#if PLATFORM(MAC)
         bool didChangeBackForwardList(WebPageProxy&, WebBackForwardListItem*, const Vector<Ref<WebBackForwardListItem>>&) final;
-#endif
         bool willGoToBackForwardListItem(WebPageProxy&, WebBackForwardListItem&, bool inBackForwardCache) final;
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -167,6 +164,7 @@ private:
     };
     
     class HistoryClient final : public API::HistoryClient {
+        WTF_MAKE_TZONE_ALLOCATED(HistoryClient);
     public:
         explicit HistoryClient(NavigationState&);
         ~HistoryClient();
@@ -256,6 +254,7 @@ private:
         bool webViewWebProcessDidBecomeResponsive : 1;
         bool webViewWebProcessDidBecomeUnresponsive : 1;
         bool webCryptoMasterKeyForWebView : 1;
+        bool webCryptoMasterKeyForWebViewCompletionHandler : 1;
         bool navigationActionDidBecomeDownload : 1;
         bool navigationResponseDidBecomeDownload : 1;
         bool contextMenuDidCreateDownload;
@@ -273,14 +272,13 @@ private:
         bool webViewDidRequestPasswordForQuickLookDocument : 1;
         bool webViewDidStopRequestingPasswordForQuickLookDocument : 1;
 
-#if PLATFORM(MAC)
         bool webViewBackForwardListItemAddedRemoved : 1;
-#endif
         bool webViewWillGoToBackForwardListItemInBackForwardCache : 1;
 
 #if HAVE(APP_SSO)
         bool webViewDecidePolicyForSOAuthorizationLoadWithCurrentPolicyForExtensionCompletionHandler : 1;
 #endif
+        bool webViewDidGeneratePageLoadTiming : 1;
     } m_navigationDelegateMethods;
 
     WeakObjCPtr<id<WKHistoryDelegatePrivate>> m_historyDelegate;
@@ -292,7 +290,7 @@ private:
     } m_historyDelegateMethods;
 
 #if USE(RUNNINGBOARD)
-    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_networkActivity;
+    RefPtr<ProcessThrottler::BackgroundActivity> m_networkActivity;
     RunLoop::Timer m_releaseNetworkActivityTimer;
 #endif
 };

@@ -27,6 +27,7 @@
 #import "WebProcess.h"
 
 #import "AccessibilitySupportSPI.h"
+#import "AdditionalFonts.h"
 #import "ArgumentCodersCocoa.h"
 #import "CoreIPCAuditToken.h"
 #import "DefaultWebBrowserChecks.h"
@@ -35,7 +36,6 @@
 #import "Logging.h"
 #import "NetworkConnectionToWebProcessMessages.h"
 #import "NetworkProcessConnection.h"
-#import "ObjCObjectGraph.h"
 #import "ProcessAssertion.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
@@ -45,7 +45,7 @@
 #import "WKFullKeyboardAccessWatcher.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import "WebFrame.h"
-#import "WebInspector.h"
+#import "WebInspectorInternal.h"
 #import "WebPage.h"
 #import "WebPageGroupProxy.h"
 #import "WebProcessCreationParameters.h"
@@ -92,7 +92,6 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ProcessCapabilities.h>
 #import <WebCore/PublicSuffixStore.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SWContextManager.h>
 #import <WebCore/SystemBattery.h>
 #import <WebCore/SystemSoundManager.h>
@@ -119,8 +118,10 @@
 #import <wtf/FileSystem.h>
 #import <wtf/Language.h>
 #import <wtf/LogInitialization.h>
+#import <wtf/MachSendRight.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/NSURLExtras.h>
@@ -129,6 +130,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/OSLogSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
+#import <wtf/text/MakeString.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
@@ -161,9 +163,7 @@
 #if PLATFORM(MAC)
 #import "AppKitSPI.h"
 #import "WKAccessibilityWebPageObjectMac.h"
-#import "WebSwitchingGPUClient.h"
 #import <Security/SecStaticCode.h>
-#import <WebCore/DisplayConfigurationMonitor.h>
 #import <WebCore/ScrollbarThemeMac.h>
 #import <pal/spi/cf/CoreTextSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
@@ -176,6 +176,10 @@
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #import "WebCaptionPreferencesDelegate.h"
 #import <WebCore/CaptionUserPreferencesMediaAF.h>
+#endif
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#import "LogStreamMessages.h"
 #endif
 
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
@@ -215,8 +219,7 @@ void WebProcess::bindAccessibilityFrameWithData(WebCore::FrameIdentifier frameID
         m_accessibilityRemoteFrameTokenCache = adoptNS([[NSMutableDictionary alloc] init]);
 
     auto frameInt = frameID.object().toUInt64();
-    NSData *nsData = [NSData dataWithBytes:data.data() length:data.size()];
-    [m_accessibilityRemoteFrameTokenCache setObject:nsData forKey:@(frameInt)];
+    [m_accessibilityRemoteFrameTokenCache setObject:toNSData(data).get() forKey:@(frameInt)];
 }
 
 id WebProcess::accessibilityFocusedUIElement()
@@ -335,7 +338,11 @@ static void setVideoDecoderBehaviors(OptionSet<VideoDecoderBehavior> videoDecode
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    WEBPROCESS_RELEASE_LOG(Process, "WebProcess::platformInitializeWebProcess");
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    setupLogStream();
+#endif
+
+    RELEASE_LOG_FORWARDABLE(Process, PLATFORM_INITIALIZE_WEBPROCESS);
 
 #if USE(EXTENSIONKIT)
     // Workaround for crash seen when running tests. See rdar://118186487.
@@ -355,7 +362,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
 
-    WebCore::setPresentingApplicationBundleIdentifier(parameters.presentingApplicationBundleIdentifier);
+    setPresentingApplicationBundleIdentifier(parameters.presentingApplicationBundleIdentifier);
 
 #if ENABLE(SANDBOX_EXTENSIONS)
     SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);
@@ -365,7 +372,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
-#if PLATFORM(MAC) && !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
+#if (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
     OSObjectPtr<dispatch_semaphore_t> codeCheckSemaphore;
     if (SandboxExtension::consumePermanently(parameters.trustdExtensionHandle)) {
         // Open up a Mach connection to trustd by doing a code check validation on the main bundle.
@@ -421,8 +428,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if PLATFORM(MAC)
     WebCore::FontCache::setFontAllowlist(parameters.fontAllowList);
 #endif
-
-    m_compositingRenderServerPort = WTFMove(parameters.acceleratedCompositingPort);
 
     WebCore::registerMemoryReleaseNotifyCallbacks();
     MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
@@ -493,10 +498,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if TARGET_OS_IPHONE
     // Priority decay on iOS 9 is impacting page load time so we fix the priority of the WebProcess' main thread (rdar://problem/22003112).
     pthread_set_fixedpriority_self();
-#endif
-
-#if ENABLE(WEBM_FORMAT_READER)
-    PlatformMediaSessionManager::setWebMFormatReaderEnabled(DeprecatedGlobalSettings::webMFormatReaderEnabled());
 #endif
 
 #if ENABLE(VORBIS)
@@ -582,9 +583,13 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 #endif
 
-#if HAVE(VIDEO_RESTRICTED_DECODING) && PLATFORM(MAC) && !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
+#if HAVE(VIDEO_RESTRICTED_DECODING) && (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
     if (codeCheckSemaphore)
         dispatch_semaphore_wait(codeCheckSemaphore.get(), DISPATCH_TIME_FOREVER);
+#endif
+
+#if ENABLE(CLOSE_WEBCONTENT_XPC_CONNECTION_POST_LAUNCH)
+    xpc_connection_cancel(parentProcessConnection()->xpcConnection());
 #endif
 }
 
@@ -611,7 +616,7 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
 #endif
 
     if (!parameters.javaScriptConfigurationDirectory.isEmpty()) {
-        String javaScriptConfigFile = parameters.javaScriptConfigurationDirectory + "/JSC.config"_s;
+        auto javaScriptConfigFile = makeString(parameters.javaScriptConfigurationDirectory, "/JSC.config"_s);
         JSC::processConfigFile(javaScriptConfigFile.latin1().data(), "com.apple.WebKit.WebContent", m_uiProcessBundleIdentifier.latin1().data());
     }
 }
@@ -806,21 +811,8 @@ static void prewarmLogs()
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-static Ref<WorkQueue> logQueue()
+void WebProcess::registerLogHook()
 {
-    static LazyNeverDestroyed<Ref<WorkQueue>> queue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, [&] {
-        queue.construct(WorkQueue::create("Log Queue"_s, WorkQueue::QOS::Background));
-    });
-    return queue.get();
-}
-
-static void registerLogHook()
-{
-    if (os_trace_get_mode() != OS_TRACE_MODE_DISABLE && os_trace_get_mode() != OS_TRACE_MODE_OFF)
-        return;
-
     static os_log_hook_t prevHook = nullptr;
 
 #ifdef NDEBUG
@@ -831,7 +823,7 @@ static void registerLogHook()
     constexpr auto minimumType = OS_LOG_TYPE_DEBUG;
 #endif
 
-    prevHook = os_log_set_hook(minimumType, ^(os_log_type_t type, os_log_message_t msg) {
+    prevHook = os_log_set_hook(minimumType, makeBlockPtr([](os_log_type_t type, os_log_message_t msg) {
         if (prevHook)
             prevHook(type, msg);
 
@@ -845,45 +837,57 @@ static void registerLogHook()
             return;
 #endif
 
-        CString logFormat(msg->format);
-        CString logChannel(msg->subsystem);
-        CString logCategory(msg->category);
+        auto logChannel = span8IncludingNullTerminator(msg->subsystem);
+        auto logCategory = span8IncludingNullTerminator(msg->category);
 
-        auto qos = Thread::QOS::Background;
-
-        // Send fault logs with high priority. If the WebContent process is terminated, we might not be able to send the log in time.
-        if (type == OS_LOG_TYPE_FAULT) {
+        if (type == OS_LOG_TYPE_FAULT)
             type = OS_LOG_TYPE_ERROR;
-            qos = Thread::QOS::UserInteractive;
-        }
 
-        Vector<uint8_t> buffer(std::span { msg->buffer, msg->buffer_sz });
-        Vector<uint8_t> privdata(std::span { msg->privdata, msg->privdata_sz });
-
-        logQueue()->dispatchWithQOS([logFormat = WTFMove(logFormat), logChannel = WTFMove(logChannel), logCategory = WTFMove(logCategory), type = type, buffer = WTFMove(buffer), privdata = WTFMove(privdata), qos] {
-            os_log_message_s msg;
-            memset(&msg, 0, sizeof(msg));
-
-            msg.format = logFormat.data();
-            msg.buffer = buffer.data();
-            msg.buffer_sz = buffer.size();
-            msg.privdata = privdata.data();
-            msg.privdata_sz = privdata.size();
-
-            char* messageString = os_log_copy_message_string(&msg);
-            if (!messageString)
-                return;
-            std::span logStringIncludingNullTerminator(messageString, strlen(messageString) + 1);
-
-            auto connectionID = WebProcess::singleton().networkProcessConnectionID();
-            if (connectionID)
-                IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.spanIncludingNullTerminator(), logCategory.spanIncludingNullTerminator(), logStringIncludingNullTerminator, type, getpid()), 0, { }, qos);
-
+        if (char* messageString = os_log_copy_message_string(msg)) {
+            auto logString = span8IncludingNullTerminator(messageString);
+            WebProcess::singleton().sendLogOnStream(logChannel, logCategory, logString, type);
             free(messageString);
-        }, qos);
-    });
+        }
+    }).get());
 
     WTFSignpostIndirectLoggingEnabled = true;
+}
+
+void WebProcess::setupLogStream()
+{
+    if (os_trace_get_mode() != OS_TRACE_MODE_OFF)
+        return;
+
+    static constexpr auto connectionBufferSizeLog2 = 21;
+    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2, 1_s);
+    if (!connectionPair)
+        CRASH();
+    auto [streamConnection, serverHandle] = WTFMove(*connectionPair);
+
+    LogStreamIdentifier logStreamIdentifier { LogStreamIdentifier::generate() };
+
+    RefPtr logStreamConnection = WTFMove(streamConnection);
+    if (!logStreamConnection)
+        return;
+
+    logStreamConnection->open(*this, RunLoop::protectedCurrent());
+
+    parentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::SetupLogStream(getpid(), WTFMove(serverHandle), logStreamIdentifier), [logStreamConnection, logStreamIdentifier] (IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore) {
+        logStreamConnection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
+#if PLATFORM(IOS_FAMILY)
+        prewarmLogs();
+#endif
+        RELEASE_ASSERT(!logClient());
+        logClient() = makeUnique<LogClient>(*logStreamConnection, logStreamIdentifier);
+
+        WebProcess::singleton().registerLogHook();
+    });
+}
+
+void WebProcess::sendLogOnStream(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, os_log_type_t type)
+{
+    if (auto& client = logClient())
+        client->log(logChannel, logCategory, logString, type);
 }
 #endif
 
@@ -891,20 +895,12 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
 {
     WebCore::PublicSuffixStore::singleton().enablePublicSuffixCache();
 
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-#if PLATFORM(IOS_FAMILY)
-    prewarmLogs();
-#endif
-    registerLogHook();
-#endif
-
 #if PLATFORM(MAC)
     // Deny the WebContent process access to the WindowServer.
     // This call will not succeed if there are open WindowServer connections at this point.
     auto retval = CGSSetDenyWindowServerConnections(true);
     RELEASE_ASSERT(retval == kCGErrorSuccess);
 
-    SwitchingGPUClient::setSingleton(WebSwitchingGPUClient::singleton());
     MainThreadSharedTimer::shouldSetupPowerObserver() = false;
 #endif // PLATFORM(MAC)
 
@@ -1104,52 +1100,6 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason reason)
 #endif
 }
 
-RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& objectGraph)
-{
-    struct Transformer final : ObjCObjectGraph::Transformer {
-        bool shouldTransformObject(id object) const override
-        {
-            if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
-                return true;
-            return false;
-        }
-
-        RetainPtr<id> transformObject(id object) const override
-        {
-            if (auto* handle = dynamic_objc_cast<WKBrowsingContextHandle>(object)) {
-                if (auto* webPage = WebProcess::singleton().webPage(ObjectIdentifier<WebCore::PageIdentifierType>(handle._webPageID)))
-                    return wrapper(*webPage);
-
-                return [NSNull null];
-            }
-            return object;
-        }
-    };
-
-    return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer()).get());
-}
-
-RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& objectGraph)
-{
-    struct Transformer final : ObjCObjectGraph::Transformer {
-        bool shouldTransformObject(id object) const override
-        {
-            if (dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
-                return true;
-            return false;
-        }
-
-        RetainPtr<id> transformObject(id object) const override
-        {
-            if (auto* controller = dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
-                return controller.handle;
-            return object;
-        }
-    };
-
-    return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer()).get());
-}
-
 void WebProcess::destroyRenderingResources()
 {
 #if !RELEASE_LOG_DISABLED
@@ -1238,10 +1188,6 @@ void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
     [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:style];
 }
 
-void WebProcess::displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags)
-{
-    DisplayConfigurationMonitor::singleton().dispatchDisplayWasReconfigured(flags);
-}
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
@@ -1529,14 +1475,14 @@ void WebProcess::systemWillPowerOn()
 
 void WebProcess::systemWillSleep()
 {
-    if (PlatformMediaSessionManager::sharedManagerIfExists())
-        PlatformMediaSessionManager::sharedManager().processSystemWillSleep();
+    if (PlatformMediaSessionManager::singletonIfExists())
+        PlatformMediaSessionManager::singleton().processSystemWillSleep();
 }
 
 void WebProcess::systemDidWake()
 {
-    if (PlatformMediaSessionManager::sharedManagerIfExists())
-        PlatformMediaSessionManager::sharedManager().processSystemDidWake();
+    if (PlatformMediaSessionManager::singletonIfExists())
+        PlatformMediaSessionManager::singleton().processSystemDidWake();
 }
 #endif
 
@@ -1588,6 +1534,24 @@ void WebProcess::postObserverNotification(const String& message)
 }
 
 #endif
+
+void WebProcess::registerAdditionalFonts(AdditionalFonts&& fonts)
+{
+    RetainPtr<NSMutableArray> fontURLs = [NSMutableArray array];
+    for (auto& fontData : fonts.fontDataList) {
+        SandboxExtension::consumePermanently(fontData.sandboxExtensionHandle);
+
+        RetainPtr<CFURLRef> cfURL = fontData.fontURL.createCFURL();
+        [fontURLs addObject:(__bridge NSURL *)cfURL.get()];
+    }
+
+    auto blockPtr = makeBlockPtr([fontURLs](CFArrayRef errors, bool done) {
+        RELEASE_LOG(Process, "Register font URLs %@ errors=%@ done=%d", fontURLs.get(), (__bridge id)errors, done);
+        return true;
+    });
+
+    CTFontManagerRegisterFontURLs((__bridge CFArrayRef)fontURLs.get(), kCTFontManagerScopeProcess, true, blockPtr.get());
+}
 
 } // namespace WebKit
 

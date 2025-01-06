@@ -1,0 +1,76 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter()
+    let device = await adapter.requestDevice({ requiredLimits: { maxInterStageShaderVariables: 40, maxInterStageShaderComponents: 88 }});
+    let shaderModule = device.createShaderModule({ code: `
+    struct d {
+        @location(21) e: vec3<f16>,
+        @location(23) f: vec3<f32>,
+        @location(10) g: vec3<f32>,
+        @location(11) aa: vec2<u32>,
+        @location(29) h: vec4<f32>,
+        @location(25) i: u32,
+        @builtin(position) j: vec4<f32>,
+        @location(18) k: vec4<u32>,
+        @location(5) l: vec3<u32>,
+        @location(32) ab: vec2<f32>,
+        @location(19) m: vec4<f16>,
+        @location(2) n: vec3<i32>,
+        @location(4) o: vec2<u32>,
+        @location(30) p: vec3<u32>,
+        @location(16) ac: vec2<f16>,
+        @location(33) q: vec2<f16>,
+        @location(28) r: vec2<f16>,
+        @location(20) s: vec3<i32>,
+        @location(36) t: vec2<f16>,
+        @location(8) u: vec4<f16>,
+        @location(26) v: f16,
+        @location(22) w: vec2<i32>,
+        @location(24) x: vec2<f16>,
+        @location(39) y: i32,
+        @location(1) z: vec3<f32>,
+        @location(31) ad: vec2<u32>,
+        @location(38) ae: u32,
+        @location(27) af: vec4<u32>,
+        @location(13) ag: vec3<f32>,
+        @location(9) ah: vec3<i32>,
+        @location(15) ai: vec3<f16>,
+        @location(17) aj: f16,
+        @location(14) ak: f32,
+        @location(0) al: vec2<f16>,
+        @location(37) am: u32,
+        @location(34) an: vec2<u32>,
+        @location(12) ao: vec2<u32>
+    }
+    @vertex fn ap() -> d {
+        return d();
+    }
+    `
+    })
+    let texture = device.createTexture({ size: [], format: 'depth24plus-stencil8', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let textureView = texture.createView({ aspect: 'stencil-only' });
+    let renderPipeline;
+    try {
+        renderPipeline = device.createRenderPipeline({
+            layout: 'auto',
+            vertex: { module: shaderModule },
+            depthStencil: { format: 'stencil8' }
+        });
+    } catch {
+    }
+    if (renderPipeline) {
+        let commandEncoder = device.createCommandEncoder()
+        let renderPass = commandEncoder.beginRenderPass({
+            colorAttachments: [],
+            depthStencilAttachment: { view: textureView, stencilLoadOp: 'clear', stencilStoreOp: 'discard' }
+        });
+        renderPass.setPipeline(renderPipeline);
+        renderPass.drawIndexed(0);
+    }
+    await device.queue.onSubmittedWorkDone();
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.waitUntilDone();
+run();
+</script>

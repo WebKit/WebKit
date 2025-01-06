@@ -1,6 +1,6 @@
 import struct
 import time
-from mod_pywebsocket import common
+from pywebsocket3 import common
 
 
 def web_socket_do_extra_handshake(request):

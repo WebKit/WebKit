@@ -39,7 +39,7 @@ class SocketServer : public SocketFactory {
   // to allow the socket server to use the thread's message queue for any
   // messaging that it might need to perform. It is also called with a null
   // argument before the thread is destroyed.
-  virtual void SetMessageQueue(Thread* queue) {}
+  virtual void SetMessageQueue(Thread* /* queue */) {}
 
   // Sleeps until:
   //  1) `max_wait_duration` has elapsed (unless `max_wait_duration` ==

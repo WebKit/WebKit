@@ -61,14 +61,14 @@ public:
 
     void setRegExp(VM& vm, RegExp* regExp)
     {
-        uintptr_t result = (m_regExpAndFlags & flagsMask) | bitwise_cast<uintptr_t>(regExp);
+        uintptr_t result = (m_regExpAndFlags & flagsMask) | std::bit_cast<uintptr_t>(regExp);
         m_regExpAndFlags = result;
         vm.writeBarrier(this, regExp);
     }
 
     RegExp* regExp() const
     {
-        return bitwise_cast<RegExp*>(m_regExpAndFlags & regExpMask);
+        return std::bit_cast<RegExp*>(m_regExpAndFlags & regExpMask);
     }
 
     bool setLastIndex(JSGlobalObject* globalObject, size_t lastIndex)
@@ -101,7 +101,7 @@ public:
 
     bool test(JSGlobalObject* globalObject, JSString* string) { return !!match(globalObject, string); }
     bool testInline(JSGlobalObject* globalObject, JSString* string) { return !!matchInline(globalObject, string); }
-    JSValue exec(JSGlobalObject*, JSString*);
+    JS_EXPORT_PRIVATE JSValue exec(JSGlobalObject*, JSString*);
     JSValue execInline(JSGlobalObject*, JSString*);
     MatchResult match(JSGlobalObject*, JSString*);
     JSValue matchGlobal(JSGlobalObject*, JSString*);

@@ -66,8 +66,8 @@ public:
     // This method is called whenever style has been computed for an element and the appearance
     // property has been set to a value other than "none".  The theme should map in all of the appropriate
     // metrics and defaults given the contents of the style.  This includes sophisticated operations like
-    // selection of control size based off the font, the disabling of appearance when certain other properties like
-    // "border" are set, or if the appearance is not supported by the theme.
+    // selection of control size based off the font, the disabling of appearance when CSS properties that
+    // disable native appearance are set, or if the appearance is not supported by the theme.
     void adjustStyle(RenderStyle&, const Element*, const RenderStyle* userAgentAppearanceStyle);
 
     virtual bool canCreateControlPartForRenderer(const RenderObject&) const { return false; }
@@ -403,7 +403,7 @@ public:
 
 protected:
     struct ColorCache {
-        HashMap<int, Color> systemStyleColors;
+        UncheckedKeyHashMap<int, Color> systemStyleColors;
 
         Color systemLinkColor;
         Color systemActiveLinkColor;
@@ -444,7 +444,7 @@ private:
     Color dictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const;
     Color grammarMarkerColor(OptionSet<StyleColorOptions>) const;
 
-    mutable HashMap<uint8_t, ColorCache, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;
+    mutable UncheckedKeyHashMap<uint8_t, ColorCache, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;
 
     bool m_useFormSemanticContext { false };
 };

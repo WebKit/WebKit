@@ -27,11 +27,12 @@
 
 #include "NavigationPreloadState.h"
 #include "ServiceWorkerRegistration.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class NavigationPreloadManager {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigationPreloadManager);
 public:
     friend class ServiceWorkerRegistration;
 

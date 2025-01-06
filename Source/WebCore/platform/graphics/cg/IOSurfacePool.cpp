@@ -32,6 +32,7 @@
 #include "GraphicsContextCG.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 static const Seconds collectionInterval { 500_ms };
@@ -46,6 +47,8 @@ static const Seconds surfaceAgeBeforeMarkingPurgeable { 2_s };
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IOSurfacePool);
+
 IOSurfacePool::IOSurfacePool()
     : m_collectionTimer(RunLoop::main(), this, &IOSurfacePool::collectionTimerFired)
 {
@@ -58,7 +61,7 @@ IOSurfacePool::~IOSurfacePool()
     });
 }
 
-IOSurfacePool& IOSurfacePool::sharedPool()
+IOSurfacePool& IOSurfacePool::sharedPoolSingleton()
 {
     static LazyNeverDestroyed<IOSurfacePool> pool;
     static std::once_flag s_onceFlag;

@@ -45,6 +45,8 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace PerfLogInternal {
@@ -211,8 +213,8 @@ void PerfLog::log(CString&& name, const uint8_t* executableAddress, size_t size)
     record.header.totalSize = sizeof(JITDump::CodeLoadRecord) + (name.length() + 1) + size;
     record.pid = getCurrentProcessID();
     record.tid = getCurrentThreadID();
-    record.vma = bitwise_cast<uintptr_t>(executableAddress);
-    record.codeAddress = bitwise_cast<uintptr_t>(executableAddress);
+    record.vma = std::bit_cast<uintptr_t>(executableAddress);
+    record.codeAddress = std::bit_cast<uintptr_t>(executableAddress);
     record.codeSize = size;
     record.codeIndex = logger.m_codeIndex++;
 
@@ -231,5 +233,7 @@ void PerfLog::flush()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER) && (OS(LINUX) || OS(DARWIN))

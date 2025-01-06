@@ -27,20 +27,10 @@
 
 #if HAVE(SEC_KEY_PROXY)
 
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/WeakPtr.h>
 
 OBJC_CLASS SecKeyProxy;
-
-namespace WebKit {
-class SecKeyProxyStore;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SecKeyProxyStore> : std::true_type { };
-}
 
 namespace WebCore {
 class Credential;
@@ -48,7 +38,7 @@ class Credential;
 
 namespace WebKit {
 
-class SecKeyProxyStore : public RefCounted<SecKeyProxyStore>, public CanMakeWeakPtr<SecKeyProxyStore> {
+class SecKeyProxyStore : public RefCountedAndCanMakeWeakPtr<SecKeyProxyStore> {
 public:
     static Ref<SecKeyProxyStore> create() { return adoptRef(* new SecKeyProxyStore()); }
 

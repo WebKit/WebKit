@@ -10,9 +10,11 @@
 
 #include "logging/rtc_event_log/encoder/blob_encoding.h"
 
+#include <cstddef>
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "logging/rtc_event_log/encoder/var_int.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"

@@ -37,6 +37,7 @@
 #import <WebKit/WKWebProcessPlugInFrame.h>
 #import <WebKit/WKWebProcessPlugInNodeHandlePrivate.h>
 #import <WebKit/WKWebProcessPlugInScriptWorld.h>
+#import <wtf/StdLibExtras.h>
 
 void didResignInputElementStrongPasswordAppearance(WKBundlePageRef, WKBundleNodeHandleRef, WKTypeRef* userData, const void *)
 {
@@ -51,7 +52,7 @@ void didResignInputElementStrongPasswordAppearance(WKBundlePageRef, WKBundleNode
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
 {
     WKBundlePageUIClientV4 client;
-    memset(&client, 0, sizeof(client));
+    zeroBytes(client);
     client.base.version = 4;
     client.didResignInputElementStrongPasswordAppearance = didResignInputElementStrongPasswordAppearance;
     WKBundlePageSetUIClient([browserContextController _bundlePageRef], &client.base);

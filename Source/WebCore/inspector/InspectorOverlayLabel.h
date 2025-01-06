@@ -31,6 +31,7 @@
 #include "Color.h"
 #include "FloatPoint.h"
 #include <wtf/ArgumentCoder.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,7 +42,7 @@ class GraphicsContext;
 class Path;
 
 class InspectorOverlayLabel {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorOverlayLabel);
 public:
     struct Arrow {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;

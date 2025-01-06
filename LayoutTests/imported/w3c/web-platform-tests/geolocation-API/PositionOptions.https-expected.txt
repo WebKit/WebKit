@@ -1,8 +1,0 @@
-
-PASS Call getCurrentPosition with wrong type for enableHighAccuracy. No exception expected.
-PASS Call watchPosition with wrong type for enableHighAccuracy. No exception expected.
-PASS Set timeout and maximumAge to 0, check that timeout error raised (getCurrentPosition)
-PASS Set timeout and maximumAge to 0, check that timeout error raised (watchPosition)
-PASS Check that a negative timeout and maxAge values are clamped to 0 (getCurrentPosition)
-PASS Check that a negative timeout and maxAge values are clamped to 0 (watchPosition)
-

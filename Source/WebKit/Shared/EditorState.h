@@ -31,6 +31,8 @@
 #include <WebCore/ElementContext.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/PlatformLayerIdentifier.h>
+#include <WebCore/ScrollTypes.h>
 #include <WebCore/WritingDirection.h>
 #include <wtf/text/WTFString.h>
 
@@ -70,6 +72,8 @@ enum class ListType : uint8_t {
 };
 
 struct EditorState {
+    void move(float x, float y);
+
     EditorStateIdentifier identifier;
     bool shouldIgnoreSelectionChanges { false };
     bool selectionIsNone { true }; // This will be false when there is a caret selection.
@@ -79,9 +83,9 @@ struct EditorState {
     bool isContentEditable { false };
     bool isContentRichlyEditable { false };
     bool isInPasswordField { false };
-    bool isInPlugin { false };
     bool hasComposition { false };
     bool triggeredByAccessibilitySelectionChange { false };
+    bool isInPlugin { false };
 #if PLATFORM(MAC)
     bool canEnableAutomaticSpellingCorrection { true };
 #endif
@@ -94,7 +98,7 @@ struct EditorState {
         WebCore::Color textColor { WebCore::Color::black }; // FIXME: Maybe this should be on VisualData?
         ListType enclosingListType { ListType::None };
         WebCore::WritingDirection baseWritingDirection { WebCore::WritingDirection::Natural };
-        bool editableRootIsTransparentOrFullyClipped { false };
+        bool selectionIsTransparentOrFullyClipped { false };
         bool canEnableWritingSuggestions { false };
 #endif
 #if PLATFORM(IOS_FAMILY)
@@ -147,12 +151,18 @@ struct EditorState {
 #endif
 #if PLATFORM(IOS_FAMILY)
         WebCore::IntRect selectionClipRect;
+        WebCore::IntRect editableRootBounds;
         WebCore::IntRect caretRectAtEnd;
         Vector<WebCore::SelectionGeometry> selectionGeometries;
         Vector<WebCore::SelectionGeometry> markedTextRects;
         WebCore::IntRect markedTextCaretRectAtStart;
         WebCore::IntRect markedTextCaretRectAtEnd;
-#endif
+        std::optional<WebCore::PlatformLayerIdentifier> enclosingLayerID;
+        std::optional<WebCore::ScrollingNodeID> enclosingScrollingNodeID;
+        std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtStart;
+        std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtEnd;
+        WebCore::ScrollPosition enclosingScrollPosition;
+#endif // PLATFORM(IOS_FAMILY)
     };
 
     bool hasVisualData() const { return !!visualData; }

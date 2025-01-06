@@ -28,6 +28,8 @@
 #include "Connection.h"
 #include <WebCore/IDBDatabaseConnectionIdentifier.h>
 #include <WebCore/IDBResourceIdentifier.h>
+#include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -41,10 +43,12 @@ namespace WebKit {
 
 class IDBStorageConnectionToClient;
 
-class IDBStorageRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
+class IDBStorageRegistry : public CanMakeThreadSafeCheckedPtr<IDBStorageRegistry> {
+    WTF_MAKE_TZONE_ALLOCATED(IDBStorageRegistry);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBStorageRegistry);
 public:
     IDBStorageRegistry();
+    ~IDBStorageRegistry();
     WebCore::IDBServer::IDBConnectionToClient& ensureConnectionToClient(IPC::Connection::UniqueID, WebCore::IDBConnectionIdentifier);
     void removeConnectionToClient(IPC::Connection::UniqueID);
     void registerConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);

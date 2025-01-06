@@ -132,6 +132,8 @@ class RTC_EXPORT CopyOnWriteBuffer {
     return buffer_->data<T>() + offset_;
   }
 
+  bool empty() const { return size_ == 0; }
+
   size_t size() const {
     RTC_DCHECK(IsConsistent());
     return size_;
@@ -141,6 +143,9 @@ class RTC_EXPORT CopyOnWriteBuffer {
     RTC_DCHECK(IsConsistent());
     return buffer_ ? buffer_->capacity() - offset_ : 0;
   }
+
+  const uint8_t* begin() const { return data(); }
+  const uint8_t* end() const { return data() + size_; }
 
   CopyOnWriteBuffer& operator=(const CopyOnWriteBuffer& buf) {
     RTC_DCHECK(IsConsistent());

@@ -16,7 +16,7 @@ COMMONENV = {
     'JS_SHELL_WAIT_FOR_SIGUSR2_TO_EXIT': '1'
 }
 
-JSCRELEASE = ['/Volumes/WebKit/DebugVersion/OpenSource/WebKitBuild/Release/jsc', '--validateOptions=1', '--useWebAssemblySIMD=0']
+JSCRELEASE = ['/Volumes/WebKit/DebugVersion/OpenSource/WebKitBuild/Release/jsc', '--validateOptions=1', '--useWasmSIMD=0']
 IPINT_RUNS = ['--useWasmIPInt=1', '--useBBQJIT=0', '--useOMGJIT=0']
 LLINT_RUNS = ['--useBBQJIT=0', '--useOMGJIT=0']
 BBQJIT_RUNS = ['--useWasmLLInt=0', '--useBBQJIT=1', '--useOMGJIT=0']

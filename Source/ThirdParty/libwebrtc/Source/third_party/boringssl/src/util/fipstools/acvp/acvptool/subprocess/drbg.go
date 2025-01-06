@@ -84,6 +84,7 @@ func (d *drbg) Process(vectorSet []byte, m Transactable) (any, error) {
 	// https://pages.nist.gov/ACVP/draft-vassilev-acvp-drbg.html#name-test-vectors
 	// for details about the tests.
 	for _, group := range parsed.Groups {
+		group := group
 		response := drbgTestGroupResponse{
 			ID: group.ID,
 		}
@@ -97,6 +98,8 @@ func (d *drbg) Process(vectorSet []byte, m Transactable) (any, error) {
 		}
 
 		for _, test := range group.Tests {
+			test := test
+
 			ent, err := extractField(test.EntropyHex, group.EntropyBits)
 			if err != nil {
 				return nil, fmt.Errorf("failed to extract entropy hex from test case %d/%d: %s", group.ID, test.ID, err)

@@ -27,8 +27,11 @@
 #include "SleepDisabler.h"
 
 #include "SleepDisablerClient.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SleepDisabler);
 
 SleepDisabler::SleepDisabler(const String& reason, PAL::SleepDisabler::Type type, std::optional<PageIdentifier> pageID)
     : m_type(type)
@@ -36,7 +39,7 @@ SleepDisabler::SleepDisabler(const String& reason, PAL::SleepDisabler::Type type
 {
     if (sleepDisablerClient()) {
         m_identifier = SleepDisablerIdentifier::generate();
-        sleepDisablerClient()->didCreateSleepDisabler(m_identifier, reason, type == PAL::SleepDisabler::Type::Display, pageID);
+        sleepDisablerClient()->didCreateSleepDisabler(*m_identifier, reason, type == PAL::SleepDisabler::Type::Display, pageID);
         return;
     }
 
@@ -46,7 +49,7 @@ SleepDisabler::SleepDisabler(const String& reason, PAL::SleepDisabler::Type type
 SleepDisabler::~SleepDisabler()
 {
     if (sleepDisablerClient())
-        sleepDisablerClient()->didDestroySleepDisabler(m_identifier, m_pageID);
+        sleepDisablerClient()->didDestroySleepDisabler(*m_identifier, m_pageID);
 }
 
 } // namespace WebCore

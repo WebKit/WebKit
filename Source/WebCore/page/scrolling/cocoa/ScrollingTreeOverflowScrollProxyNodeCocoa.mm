@@ -31,8 +31,11 @@
 #import "ScrollingStateOverflowScrollProxyNode.h"
 #import "ScrollingStateTree.h"
 #import "WebCoreCALayerExtras.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingTreeOverflowScrollProxyNodeCocoa);
 
 Ref<ScrollingTreeOverflowScrollProxyNodeCocoa> ScrollingTreeOverflowScrollProxyNodeCocoa::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
 {

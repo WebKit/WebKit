@@ -12,10 +12,10 @@
 #define TEST_PC_E2E_ANALYZER_VIDEO_DVQA_FRAMES_STORAGE_H_
 
 #include <cstdint>
+#include <optional>
 #include <unordered_map>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_frame.h"
@@ -41,7 +41,7 @@ class FramesStorage {
   void Add(const VideoFrame& frame, Timestamp captured_time);
 
   // Complexity: O(1)
-  absl::optional<VideoFrame> Get(uint16_t frame_id);
+  std::optional<VideoFrame> Get(uint16_t frame_id);
 
   // Removes the frame identified by `frame_id` from the storage. No error
   // happens in case there isn't a frame identified by `frame_id`.

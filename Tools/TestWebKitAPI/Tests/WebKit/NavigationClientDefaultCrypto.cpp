@@ -62,7 +62,7 @@ TEST(WebKit, NavigationClientDefaultCrypto)
     // The navigationClient quite explicitly does *not* have a copyWebCryptoMasterKey callback,
     // which allows this test to make sure that WebKit2 instead creates a default crypto master key.
     WKPageNavigationClientV0 navigationClient;
-    memset(&navigationClient, 0, sizeof(navigationClient));
+    zeroBytes(navigationClient);
     navigationClient.base.version = 0;
     navigationClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
     navigationClient.decidePolicyForNavigationResponse = decidePolicyForNavigationResponse;
@@ -70,7 +70,7 @@ TEST(WebKit, NavigationClientDefaultCrypto)
     WKPageSetPageNavigationClient(webView.page(), &navigationClient.base);
 
     WKPageUIClientV5 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
+    zeroBytes(uiClient);
     uiClient.base.version = 5;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
 

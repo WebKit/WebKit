@@ -40,7 +40,7 @@ static bool view_callback(pas_enumerator* enumerator,
                           size_t index,
                           void* arg)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BITFIT_HEAPS);
     
     pas_bitfit_view* view;
     pas_bitfit_directory* directory;

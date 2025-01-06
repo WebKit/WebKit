@@ -15,12 +15,12 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/crypto/crypto_options.h"
 #include "api/jsep.h"
 #include "api/media_types.h"
@@ -149,6 +149,7 @@ class BaseChannel : public ChannelInterface,
 
   // Used for latency measurements.
   void SetFirstPacketReceivedCallback(std::function<void()> callback) override;
+  void SetFirstPacketSentCallback(std::function<void()> callback) override;
 
   // From RtpTransport - public for testing only
   void OnTransportReadyToSend(bool ready);
@@ -228,7 +229,7 @@ class BaseChannel : public ChannelInterface,
   // From RtpTransportInternal
   void OnWritableState(bool writable);
 
-  void OnNetworkRouteChanged(absl::optional<rtc::NetworkRoute> network_route);
+  void OnNetworkRouteChanged(std::optional<rtc::NetworkRoute> network_route);
 
   bool SendPacket(bool rtcp,
                   rtc::CopyOnWriteBuffer* packet,
@@ -295,7 +296,7 @@ class BaseChannel : public ChannelInterface,
   // failed, which needs to be treated as an error.
   bool MaybeUpdateDemuxerAndRtpExtensions_w(
       bool update_demuxer,
-      absl::optional<RtpHeaderExtensions> extensions,
+      std::optional<RtpHeaderExtensions> extensions,
       std::string& error_desc) RTC_RUN_ON(worker_thread());
 
   bool RegisterRtpDemuxerSink_w() RTC_RUN_ON(worker_thread());
@@ -316,8 +317,10 @@ class BaseChannel : public ChannelInterface,
   webrtc::TaskQueueBase* const signaling_thread_;
   rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> alive_;
 
+  // The functions are deleted after they have been called.
   std::function<void()> on_first_packet_received_
       RTC_GUARDED_BY(network_thread());
+  std::function<void()> on_first_packet_sent_ RTC_GUARDED_BY(network_thread());
 
   webrtc::RtpTransportInternal* rtp_transport_
       RTC_GUARDED_BY(network_thread()) = nullptr;

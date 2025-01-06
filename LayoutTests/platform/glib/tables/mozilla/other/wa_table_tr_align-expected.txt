@@ -128,10 +128,10 @@ layer at (0,0) size 785x1310
           RenderText {#text} at (0,0) size 130x17
             text run at (0,0) width 130: "Verify reload works."
       RenderBlock {P} at (0,553) size 769x63
-        RenderTable {TABLE} at (0,0) size 769x62 [bgcolor=#F08080] [border: (1px outset #808080)]
+        RenderTable {TABLE} at (0,0) size 769x62 [bgcolor=#F08080] [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 767x60
             RenderTableRow {TR} at (0,2) size 767x56
-              RenderTableCell {TH} at (2,2) size 763x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TH} at (2,2) size 763x56 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderInline {A} at (15,11) size 0x17
                 RenderText {#text} at (15,11) size 95x17
                   text run at (15,11) width 95: "Test Case #1: "
@@ -147,36 +147,36 @@ layer at (0,0) size 785x1310
                       text run at (353,29) width 57: "<TR> tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,631) size 769x71
-        RenderTable {TABLE} at (0,0) size 347x70 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
+        RenderTable {TABLE} at (0,0) size 347x70 [bgcolor=#FFE4C4] [border: (1px outset #000000)]
           RenderBlock {CAPTION} at (0,0) size 347x18
             RenderText {#text} at (61,0) size 225x17
               text run at (61,0) width 225: "Default Horizontal Row Alignment"
           RenderTableSection {TBODY} at (1,19) size 345x50
             RenderTableRow {TR} at (0,2) size 345x22
-              RenderTableCell {TH} at (2,2) size 113x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TH} at (2,2) size 113x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (18,2) size 76x17
                   text run at (18,2) width 76: "row head 1"
-              RenderTableCell {TH} at (116,2) size 113x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TH} at (116,2) size 113x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (18,2) size 76x17
                   text run at (18,2) width 76: "row head 2"
-              RenderTableCell {TH} at (230,2) size 113x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TH} at (230,2) size 113x22 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (18,2) size 76x17
                   text run at (18,2) width 76: "row head 3"
             RenderTableRow {TR} at (0,26) size 345x22
-              RenderTableCell {TD} at (2,26) size 113x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,26) size 113x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 67x17
                   text run at (2,2) width 67: "row data 1"
-              RenderTableCell {TD} at (116,26) size 113x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (116,26) size 113x22 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 67x17
                   text run at (2,2) width 67: "row data 2"
-              RenderTableCell {TD} at (230,26) size 113x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (230,26) size 113x22 [border: (1px inset #000000)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 67x17
                   text run at (2,2) width 67: "row data 3"
       RenderBlock {P} at (0,735) size 769x63
-        RenderTable {TABLE} at (0,0) size 769x62 [bgcolor=#F08080] [border: (1px outset #808080)]
+        RenderTable {TABLE} at (0,0) size 769x62 [bgcolor=#F08080] [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 767x60
             RenderTableRow {TR} at (0,2) size 767x56
-              RenderTableCell {TH} at (2,2) size 763x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TH} at (2,2) size 763x56 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderInline {A} at (18,11) size 0x17
                 RenderText {#text} at (18,11) size 95x17
                   text run at (18,11) width 95: "Test Case #2: "
@@ -192,33 +192,33 @@ layer at (0,0) size 785x1310
                       text run at (261,29) width 241: "<TR ALIGN=LEFT|CENTER|RIGHT> tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,813) size 769x147
-        RenderTable {TABLE} at (0,0) size 347x146 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
+        RenderTable {TABLE} at (0,0) size 347x146 [bgcolor=#FFE4C4] [border: (1px outset #000000)]
           RenderBlock {CAPTION} at (0,0) size 347x18
             RenderText {#text} at (62,0) size 222x17
               text run at (62,0) width 222: "Horizontal Row Alignment=LEFT"
           RenderTableSection {TBODY} at (1,19) size 345x126
             RenderTableRow {TR} at (0,2) size 345x22
-              RenderTableCell {TH} at (2,2) size 113x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TH} at (2,2) size 113x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 76x17
                   text run at (2,2) width 76: "row head 1"
-              RenderTableCell {TH} at (116,2) size 113x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TH} at (116,2) size 113x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 76x17
                   text run at (2,2) width 76: "row head 2"
-              RenderTableCell {TH} at (230,2) size 113x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TH} at (230,2) size 113x22 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 76x17
                   text run at (2,2) width 76: "row head 3"
             RenderTableRow {TR} at (0,26) size 345x22
-              RenderTableCell {TD} at (2,26) size 113x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,26) size 113x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 67x17
                   text run at (2,2) width 67: "row data 1"
-              RenderTableCell {TD} at (116,26) size 113x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (116,26) size 113x22 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 67x17
                   text run at (2,2) width 67: "row data 2"
-              RenderTableCell {TD} at (230,26) size 113x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (230,26) size 113x22 [border: (1px inset #000000)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 67x17
                   text run at (2,2) width 67: "row data 3"
             RenderTableRow {TR} at (0,50) size 345x74 [bgcolor=#FFD700]
-              RenderTableCell {TD} at (2,50) size 341x74 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
+              RenderTableCell {TD} at (2,50) size 341x74 [border: (1px inset #000000)] [r=2 c=0 rs=1 cs=3]
                 RenderBlock (anonymous) at (2,2) size 337x54
                   RenderInline {B} at (0,0) size 319x53
                     RenderInline {FONT} at (0,0) size 319x53 [color=#FF0000]
@@ -236,33 +236,33 @@ layer at (0,0) size 785x1310
                     RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
                   RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,975) size 769x147
-        RenderTable {TABLE} at (0,0) size 347x146 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
+        RenderTable {TABLE} at (0,0) size 347x146 [bgcolor=#FFE4C4] [border: (1px outset #000000)]
           RenderBlock {CAPTION} at (0,0) size 347x18
             RenderText {#text} at (50,0) size 247x17
               text run at (50,0) width 247: "Horizontal Row Alignment=CENTER"
           RenderTableSection {TBODY} at (1,19) size 345x126
             RenderTableRow {TR} at (0,2) size 345x22
-              RenderTableCell {TH} at (2,2) size 113x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TH} at (2,2) size 113x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (18,2) size 76x17
                   text run at (18,2) width 76: "row head 1"
-              RenderTableCell {TH} at (116,2) size 113x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TH} at (116,2) size 113x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (18,2) size 76x17
                   text run at (18,2) width 76: "row head 2"
-              RenderTableCell {TH} at (230,2) size 113x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TH} at (230,2) size 113x22 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (18,2) size 76x17
                   text run at (18,2) width 76: "row head 3"
             RenderTableRow {TR} at (0,26) size 345x22
-              RenderTableCell {TD} at (2,26) size 113x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,26) size 113x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (22,2) size 68x17
                   text run at (22,2) width 68: "row data 1"
-              RenderTableCell {TD} at (116,26) size 113x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (116,26) size 113x22 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (22,2) size 68x17
                   text run at (22,2) width 68: "row data 2"
-              RenderTableCell {TD} at (230,26) size 113x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (230,26) size 113x22 [border: (1px inset #000000)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (22,2) size 68x17
                   text run at (22,2) width 68: "row data 3"
             RenderTableRow {TR} at (0,50) size 345x74 [bgcolor=#FFD700]
-              RenderTableCell {TD} at (2,50) size 341x74 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
+              RenderTableCell {TD} at (2,50) size 341x74 [border: (1px inset #000000)] [r=2 c=0 rs=1 cs=3]
                 RenderBlock (anonymous) at (2,2) size 337x54
                   RenderInline {B} at (0,0) size 319x53
                     RenderInline {FONT} at (0,0) size 319x53 [color=#FF0000]
@@ -280,29 +280,29 @@ layer at (0,0) size 785x1310
                     RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
                   RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,1137) size 769x71
-        RenderTable {TABLE} at (0,0) size 347x70 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
+        RenderTable {TABLE} at (0,0) size 347x70 [bgcolor=#FFE4C4] [border: (1px outset #000000)]
           RenderBlock {CAPTION} at (0,0) size 347x18
             RenderText {#text} at (57,0) size 233x17
               text run at (57,0) width 233: "Horizontal Row Alignment=RIGHT"
           RenderTableSection {TBODY} at (1,19) size 345x50
             RenderTableRow {TR} at (0,2) size 345x22
-              RenderTableCell {TH} at (2,2) size 113x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TH} at (2,2) size 113x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (34,2) size 77x17
                   text run at (34,2) width 77: "row head 1"
-              RenderTableCell {TH} at (116,2) size 113x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TH} at (116,2) size 113x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (34,2) size 77x17
                   text run at (34,2) width 77: "row head 2"
-              RenderTableCell {TH} at (230,2) size 113x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TH} at (230,2) size 113x22 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (34,2) size 77x17
                   text run at (34,2) width 77: "row head 3"
             RenderTableRow {TR} at (0,26) size 345x22
-              RenderTableCell {TD} at (2,26) size 113x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,26) size 113x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (43,2) size 68x17
                   text run at (43,2) width 68: "row data 1"
-              RenderTableCell {TD} at (116,26) size 113x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (116,26) size 113x22 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (43,2) size 68x17
                   text run at (43,2) width 68: "row data 2"
-              RenderTableCell {TD} at (230,26) size 113x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (230,26) size 113x22 [border: (1px inset #000000)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (43,2) size 68x17
                   text run at (43,2) width 68: "row data 3"
       RenderBlock {P} at (0,1223) size 769x0

@@ -31,8 +31,11 @@
 #include "Document.h"
 #include "LocalFrame.h"
 #include "Navigator.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorIdentity);
 
 NavigatorIdentity::NavigatorIdentity() = default;
 

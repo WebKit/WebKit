@@ -3346,7 +3346,7 @@ PAUSES AT: 217:0
     219    true && (
     220        a(),
 LOCATIONS FROM 217:0 to 217:32
-    217    |true && (a(), b(), c()) && true;
+    217    |true && (|a(), |b(), |c()) && true;
 
 INSERTING AT: 218:0
 PAUSES AT: 219:0
@@ -3374,55 +3374,40 @@ LOCATIONS FROM 219:0 to 219:9
     219    |true && (
 
 INSERTING AT: 220:0
-PAUSES AT: 226:4
+PAUSES AT: 220:4
     217    true && (a(), b(), c()) && true;
     218
     219    true && (
- -> 220    #    a(),
+-=> 220    #    |a(),
     221        b(),
     222        c()
     223    ) && true;
-    224
-    225    try {
- => 226        |throw a(), b(), c();
-    227    } catch { }
-    228
-    229    try {
 LOCATIONS FROM 220:0 to 220:8
-    220    #    a(),
+    220    #    |a(),
 
 INSERTING AT: 221:0
-PAUSES AT: 226:4
+PAUSES AT: 221:4
     218
     219    true && (
     220        a(),
- -> 221    #    b(),
+-=> 221    #    |b(),
     222        c()
     223    ) && true;
     224
-    225    try {
- => 226        |throw a(), b(), c();
-    227    } catch { }
-    228
-    229    try {
 LOCATIONS FROM 221:0 to 221:8
-    221    #    b(),
+    221    #    |b(),
 
 INSERTING AT: 222:0
-PAUSES AT: 226:4
+PAUSES AT: 222:4
     219    true && (
     220        a(),
     221        b(),
- -> 222    #    c()
+-=> 222    #    |c()
     223    ) && true;
     224
     225    try {
- => 226        |throw a(), b(), c();
-    227    } catch { }
-    228
-    229    try {
 LOCATIONS FROM 222:0 to 222:7
-    222    #    c()
+    222    #    |c()
 
 INSERTING AT: 223:0
 PAUSES AT: 226:4

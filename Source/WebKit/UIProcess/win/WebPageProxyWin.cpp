@@ -49,7 +49,7 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
     return WebCore::standardUserAgent(applicationNameForUserAgent);
 }
 
-void WebPageProxy::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>& searchItems)
+void WebPageProxy::saveRecentSearches(IPC::Connection&, const String& name, const Vector<WebCore::RecentSearch>& searchItems)
 {
     if (!name)
         return;
@@ -57,7 +57,7 @@ void WebPageProxy::saveRecentSearches(const String& name, const Vector<WebCore::
     return WebCore::SearchPopupMenuDB::singleton().saveRecentSearches(name, searchItems);
 }
 
-void WebPageProxy::loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
+void WebPageProxy::loadRecentSearches(IPC::Connection&, const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
     if (!name)
         return completionHandler({ });
@@ -74,7 +74,7 @@ void WebPageProxy::didUpdateEditorState(const EditorState&, const EditorState&)
 #if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
 uint64_t WebPageProxy::viewWidget()
 {
-    return reinterpret_cast<uint64_t>(static_cast<PageClientImpl&>(pageClient()).viewWidget());
+    return reinterpret_cast<uint64_t>(static_cast<PageClientImpl&>(*pageClient()).viewWidget());
 }
 #endif
 

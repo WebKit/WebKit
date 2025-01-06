@@ -60,9 +60,14 @@ ASCIILiteral DOMCSSPaintWorklet::supplementName()
 // FIXME: Get rid of this override and rely on the standard-compliant Worklet::addModule() instead.
 void PaintWorklet::addModule(const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&& promise)
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document) {
         promise.reject(Exception { ExceptionCode::InvalidStateError, "This frame is detached"_s });
+        return;
+    }
+
+    if (!document->hasBrowsingContext()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "This document does not have a browsing context"_s });
         return;
     }
 

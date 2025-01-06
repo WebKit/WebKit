@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmInstance.h"
+#include "JSWebAssemblyInstance.h"
 #include "WasmTag.h"
 
 namespace JSC {
@@ -46,10 +46,14 @@ void HandlerInfo::initialize(const UnlinkedHandlerInfo& unlinkedInfo, CodePtr<Ex
 
     switch (m_type) {
     case HandlerType::Catch:
+    case HandlerType::TryTableCatch:
+    case HandlerType::TryTableCatchRef:
         m_tag = unlinkedInfo.m_exceptionIndexOrDelegateTarget;
         break;
 
     case HandlerType::CatchAll:
+    case HandlerType::TryTableCatchAll:
+    case HandlerType::TryTableCatchAllRef:
         break;
 
     case HandlerType::Delegate:
@@ -58,11 +62,11 @@ void HandlerInfo::initialize(const UnlinkedHandlerInfo& unlinkedInfo, CodePtr<Ex
     }
 }
 
-const HandlerInfo* HandlerInfo::handlerForIndex(Instance& instance, const FixedVector<HandlerInfo>& exeptionHandlers, unsigned index, const Wasm::Tag* exceptionTag)
+const HandlerInfo* HandlerInfo::handlerForIndex(JSWebAssemblyInstance& instance, const FixedVector<HandlerInfo>& exceptionHandlers, unsigned index, const Wasm::Tag* exceptionTag)
 {
     bool delegating = false;
     unsigned delegateTarget = 0;
-    for (auto& handler : exeptionHandlers) {
+    for (auto& handler : exceptionHandlers) {
         // Handlers are ordered innermost first, so the first handler we encounter
         // that contains the source address is the correct handler to use.
         // This index used is either the BytecodeOffset or a CallSiteIndex.
@@ -76,9 +80,13 @@ const HandlerInfo* HandlerInfo::handlerForIndex(Instance& instance, const FixedV
             bool match = false;
             switch (handler.m_type) {
             case HandlerType::Catch:
+            case HandlerType::TryTableCatch:
+            case HandlerType::TryTableCatchRef:
                 match = exceptionTag && instance.tag(handler.m_tag) == *exceptionTag;
                 break;
             case HandlerType::CatchAll:
+            case HandlerType::TryTableCatchAll:
+            case HandlerType::TryTableCatchAllRef:
                 match = true;
                 break;
             case HandlerType::Delegate:

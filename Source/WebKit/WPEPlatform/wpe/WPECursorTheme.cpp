@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WPE {
 
@@ -69,6 +70,8 @@ static GUniquePtr<char> cursorsPath(const char* basePath, Vector<GUniquePtr<char
 
     return nullptr;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CursorTheme);
 
 std::unique_ptr<CursorTheme> CursorTheme::create(const char* name, uint32_t size)
 {

@@ -80,7 +80,9 @@ struct SigInfo {
 };
 
 using SignalHandler = Function<SignalAction(Signal, SigInfo&, PlatformRegisters&)>;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 using SignalHandlerMemory = std::aligned_storage<sizeof(SignalHandler), std::alignment_of<SignalHandler>::value>::type;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 struct SignalHandlers {
     static void initialize();
@@ -88,7 +90,7 @@ struct SignalHandlers {
 
     void add(Signal, SignalHandler&&);
     template<typename Func>
-    void forEachHandler(Signal, const Func&) const;
+    void forEachHandler(Signal, NOESCAPE const Func&) const;
 
     // We intentionally disallow presigning the return PC on platforms that can't authenticate it so
     // we don't accidentally leave an unfrozen pointer in the heap somewhere.

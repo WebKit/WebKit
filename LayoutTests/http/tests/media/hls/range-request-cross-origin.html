@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setAlwaysAcceptCookies(true);
+    testRunner.waitUntilDone();
+}
+
+var registration;
+async function doSetup()
+{
+    if (!navigator.serviceWorker)
+        return;
+
+    registration = await navigator.serviceWorker.register("range-request-cross-origin-worker.js", { scope : "." });
+
+    activeWorker = registration.active;
+    if (!activeWorker) {
+       activeWorker = registration.installing;
+        await new Promise(resolve => {
+            activeWorker.addEventListener('statechange', () => {
+                if (activeWorker.state === "activated")
+                    resolve();
+            });
+        });
+    }
+    return registration;
+}
+
+function seeked() {
+    if (registration)
+        registration.unregister();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function playing() {
+    waitForEventOnce("seeked", seeked);
+    video.fastSeek(4);
+}
+
+async function start() {
+    registration = await doSetup();
+
+    video = document.getElementById('video');
+    video.autoplay = true
+    waitForEventOnce("playing", playing);
+    video.src = "../resources/hls/range-request-playlist-cross-origin.m3u8";
+}
+        </script>
+    </head>
+    <body onload="start()">
+        <video id="video" controls></video>
+    </body>
+</html>

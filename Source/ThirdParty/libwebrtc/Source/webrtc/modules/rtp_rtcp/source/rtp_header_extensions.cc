@@ -16,11 +16,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/rtp_headers.h"
 #include "api/video/color_space.h"
@@ -119,7 +119,7 @@ bool AbsoluteCaptureTimeExtension::Parse(rtc::ArrayView<const uint8_t> data,
 
 size_t AbsoluteCaptureTimeExtension::ValueSize(
     const AbsoluteCaptureTime& extension) {
-  if (extension.estimated_capture_clock_offset != absl::nullopt) {
+  if (extension.estimated_capture_clock_offset != std::nullopt) {
     return kValueSizeBytes;
   } else {
     return kValueSizeBytesWithoutEstimatedCaptureClockOffset;
@@ -160,24 +160,24 @@ bool AbsoluteCaptureTimeExtension::Write(rtc::ArrayView<uint8_t> data,
 // |      ID       |     len=1     |V|    level    |
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // Sample Audio Level Encoding Using the Two-Byte Header Format
-bool AudioLevel::Parse(rtc::ArrayView<const uint8_t> data,
-                       bool* voice_activity,
-                       uint8_t* audio_level) {
+bool AudioLevelExtension::Parse(rtc::ArrayView<const uint8_t> data,
+                                AudioLevel* extension) {
   // One-byte and two-byte format share the same data definition.
   if (data.size() != 1)
     return false;
-  *voice_activity = (data[0] & 0x80) != 0;
-  *audio_level = data[0] & 0x7F;
+  bool voice_activity = (data[0] & 0x80) != 0;
+  int audio_level = data[0] & 0x7F;
+  *extension = AudioLevel(voice_activity, audio_level);
   return true;
 }
 
-bool AudioLevel::Write(rtc::ArrayView<uint8_t> data,
-                       bool voice_activity,
-                       uint8_t audio_level) {
+bool AudioLevelExtension::Write(rtc::ArrayView<uint8_t> data,
+                                const AudioLevel& extension) {
   // One-byte and two-byte format share the same data definition.
   RTC_DCHECK_EQ(data.size(), 1);
-  RTC_CHECK_LE(audio_level, 0x7f);
-  data[0] = (voice_activity ? 0x80 : 0x00) | audio_level;
+  RTC_CHECK_GE(extension.level(), 0);
+  RTC_CHECK_LE(extension.level(), 0x7f);
+  data[0] = (extension.voice_activity() ? 0x80 : 0x00) | extension.level();
   return true;
 }
 
@@ -304,14 +304,14 @@ bool TransportSequenceNumber::Write(rtc::ArrayView<uint8_t> data,
 bool TransportSequenceNumberV2::Parse(
     rtc::ArrayView<const uint8_t> data,
     uint16_t* transport_sequence_number,
-    absl::optional<FeedbackRequest>* feedback_request) {
+    std::optional<FeedbackRequest>* feedback_request) {
   if (data.size() != kValueSizeBytes &&
       data.size() != kValueSizeBytesWithoutFeedbackRequest)
     return false;
 
   *transport_sequence_number = ByteReader<uint16_t>::ReadBigEndian(data.data());
 
-  *feedback_request = absl::nullopt;
+  *feedback_request = std::nullopt;
   if (data.size() == kValueSizeBytes) {
     uint16_t feedback_request_raw =
         ByteReader<uint16_t>::ReadBigEndian(data.data() + 2);
@@ -330,7 +330,7 @@ bool TransportSequenceNumberV2::Parse(
 bool TransportSequenceNumberV2::Write(
     rtc::ArrayView<uint8_t> data,
     uint16_t transport_sequence_number,
-    const absl::optional<FeedbackRequest>& feedback_request) {
+    const std::optional<FeedbackRequest>& feedback_request) {
   RTC_DCHECK_EQ(data.size(),
                 ValueSize(transport_sequence_number, feedback_request));
 
@@ -792,17 +792,17 @@ bool BaseRtpStringExtension::Write(rtc::ArrayView<uint8_t> data,
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // Sample Audio Level Encoding Using the Two-Byte Header Format
 bool InbandComfortNoiseExtension::Parse(rtc::ArrayView<const uint8_t> data,
-                                        absl::optional<uint8_t>* level) {
+                                        std::optional<uint8_t>* level) {
   if (data.size() != kValueSizeBytes)
     return false;
   *level = (data[0] & 0b1000'0000) != 0
-               ? absl::nullopt
-               : absl::make_optional(data[0] & 0b0111'1111);
+               ? std::nullopt
+               : std::make_optional(data[0] & 0b0111'1111);
   return true;
 }
 
 bool InbandComfortNoiseExtension::Write(rtc::ArrayView<uint8_t> data,
-                                        absl::optional<uint8_t> level) {
+                                        std::optional<uint8_t> level) {
   RTC_DCHECK_EQ(data.size(), kValueSizeBytes);
   data[0] = 0b0000'0000;
   if (level) {

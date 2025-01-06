@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,17 +31,19 @@
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutPhase.h"
+#include "LayoutShape.h"
 #include "LayoutState.h"
 #include "RenderObject.h"
 #include "RenderStyleInlines.h"
-#include "Shape.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Box);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Box::BoxRareData);
+
 
 Box::Box(ElementAttributes&& elementAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag> baseTypeFlags)
     : m_nodeType(elementAttributes.nodeType)
@@ -82,6 +84,8 @@ void Box::updateStyle(RenderStyle&& newStyle, std::unique_ptr<RenderStyle>&& new
     m_style = WTFMove(newStyle);
     if (newFirstLineStyle)
         ensureRareData().firstLineStyle = WTFMove(newFirstLineStyle);
+    else if (hasRareData())
+        rareData().firstLineStyle = { };
 }
 
 bool Box::establishesFormattingContext() const
@@ -92,6 +96,7 @@ bool Box::establishesFormattingContext() const
         || establishesBlockFormattingContext()
         || establishesTableFormattingContext()
         || establishesFlexFormattingContext()
+        || establishesGridFormattingContext()
         || establishesIndependentFormattingContext();
 }
 
@@ -118,7 +123,7 @@ bool Box::establishesBlockFormattingContext() const
     if (isFloatingPositioned()) {
         // Not all floating or out-of-positioned block level boxes establish BFC.
         // See [9.7 Relationships between 'display', 'position', and 'float'] for details.
-        return style().display() == DisplayType::Block;
+        return isBlockContainer();
     }
 
     if (isBlockContainer() && !isBlockBox())
@@ -160,6 +165,11 @@ bool Box::establishesTableFormattingContext() const
 bool Box::establishesFlexFormattingContext() const
 {
     return isFlexBox();
+}
+
+bool Box::establishesGridFormattingContext() const
+{
+    return isGridBox();
 }
 
 bool Box::establishesIndependentFormattingContext() const
@@ -259,7 +269,7 @@ bool Box::isInlineBox() const
     return (display == DisplayType::Inline || display == DisplayType::Ruby || display == DisplayType::RubyBase) && !isReplacedBox();
 }
 
-bool Box::isAtomicInlineLevelBox() const
+bool Box::isAtomicInlineBox() const
 {
     // Inline-level boxes that are not inline boxes (such as replaced inline-level elements, inline-block elements, and inline-table elements)
     // are called atomic inline-level boxes because they participate in their inline formatting context as a single opaque box.
@@ -295,7 +305,7 @@ bool Box::isLayoutContainmentBox() const
         if (isInternalRubyBox())
             return false;
         if (isInlineLevelBox())
-            return isAtomicInlineLevelBox();
+            return isAtomicInlineBox();
         return true;
     };
     return m_style.usedContain().contains(Containment::Layout) && supportsLayoutContainment();
@@ -308,7 +318,7 @@ bool Box::isRubyAnnotationBox() const
 
 bool Box::isInterlinearRubyAnnotationBox() const
 {
-    return isRubyAnnotationBox() && m_style.rubyPosition() != RubyPosition::InterCharacter;
+    return isRubyAnnotationBox() && !m_style.isInterCharacterRubyPosition();
 }
 
 bool Box::isInternalRubyBox() const
@@ -327,7 +337,7 @@ bool Box::isSizeContainmentBox() const
         if (isInternalRubyBox())
             return false;
         if (isInlineLevelBox())
-            return isAtomicInlineLevelBox();
+            return isAtomicInlineBox();
         return true;
     };
     return m_style.usedContain().contains(Containment::Size) && supportsSizeContainment();
@@ -356,6 +366,14 @@ const Box* Box::nextInFlowOrFloatingSibling() const
     return nextSibling;
 }
 
+const Box* Box::nextOutOfFlowSibling() const
+{
+    auto* nextSibling = this->nextSibling();
+    while (nextSibling && !nextSibling->isOutOfFlowPositioned())
+        nextSibling = nextSibling->nextSibling();
+    return nextSibling;
+}
+
 const Box* Box::previousInFlowSibling() const
 {
     auto* previousSibling = this->previousSibling();
@@ -372,6 +390,14 @@ const Box* Box::previousInFlowOrFloatingSibling() const
     return previousSibling;
 }
 
+const Box* Box::previousOutOfFlowSibling() const
+{
+    auto* previousSibling = this->previousSibling();
+    while (previousSibling && !previousSibling->isOutOfFlowPositioned())
+        previousSibling = previousSibling->previousSibling();
+    return previousSibling;
+}
+
 bool Box::isDescendantOf(const ElementBox& ancestor) const
 {
     if (ancestor.isInitialContainingBlock())
@@ -381,6 +407,19 @@ bool Box::isDescendantOf(const ElementBox& ancestor) const
             return true;
     }
     return false;
+}
+
+bool Box::isInFormattingContextEstablishedBy(const ElementBox& formattingContextRoot) const
+{
+    ASSERT(formattingContextRoot.establishesFormattingContext());
+
+    auto* ancestor = &parent();
+    while (true) {
+        if (ancestor->establishesFormattingContext())
+            break;
+        ancestor = &ancestor->parent();
+    }
+    return ancestor == &formattingContextRoot;
 }
 
 bool Box::isOverflowVisible() const
@@ -471,14 +510,14 @@ std::optional<LayoutUnit> Box::columnWidth() const
     return rareData().columnWidth;
 }
 
-const Shape* Box::shape() const
+const LayoutShape* Box::shape() const
 {
     if (!hasRareData())
         return nullptr;
     return rareData().shape.get();
 }
 
-void Box::setShape(RefPtr<const Shape> shape)
+void Box::setShape(RefPtr<const LayoutShape> shape)
 {
     ensureRareData().shape = WTFMove(shape);
 }
@@ -502,6 +541,12 @@ Box::RareDataMap& Box::rareDataMap()
 }
 
 const Box::BoxRareData& Box::rareData() const
+{
+    ASSERT(hasRareData());
+    return *rareDataMap().get(this);
+}
+
+Box::BoxRareData& Box::rareData()
 {
     ASSERT(hasRareData());
     return *rareDataMap().get(this);

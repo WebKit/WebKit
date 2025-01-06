@@ -7,6 +7,5 @@ description: Checking day of year for a "normal" case (non-undefined, non-bounda
 features: [Temporal]
 ---*/
 
-const calendar = Temporal.Calendar.from("iso8601");
-const datetime = new Temporal.PlainDateTime(1976, 11, 18, 15, 23, 30, 123, 456, 789, calendar);
+const datetime = new Temporal.PlainDateTime(1976, 11, 18, 15, 23, 30, 123, 456, 789, "iso8601");
 assert.sameValue(datetime.dayOfYear, 323, "check day of year information");

@@ -100,6 +100,8 @@ class WebKit::WebKeyboardEvent : WebKit::WebEvent {
 #if ENABLE(TOUCH_EVENTS)
 class WebKit::WebTouchEvent : WebKit::WebEvent {
     Vector<WebKit::WebPlatformTouchPoint> touchPoints();
+    Vector<WebKit::WebTouchEvent> coalescedEvents();
+    Vector<WebKit::WebTouchEvent> predictedEvents();
 #if PLATFORM(IOS_FAMILY)
     WebCore::IntPoint position();
     bool isPotentialTap();
@@ -121,7 +123,8 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
 [CustomHeader] class WebKit::WebPlatformTouchPoint {
 #if PLATFORM(IOS_FAMILY)
     unsigned identifier()
-    WebCore::IntPoint location()
+    WebCore::IntPoint locationInRootView()
+    WebCore::IntPoint locationInViewport()
     WebKit::WebPlatformTouchPoint::State phase()
 #endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
@@ -184,7 +187,12 @@ class WebKit::WebMouseEvent : WebKit::WebEvent {
 #endif
     WebKit::GestureWasCancelled gestureWasCancelled();
     WebCore::IntPoint unadjustedMovementDelta();
-}
+    Vector<WebKit::WebMouseEvent> coalescedEvents();
+};
+
+#if !PLATFORM(MAC) && PLATFORM(GTK)
+[Nested] enum class WebCore::PlatformMouseEvent::IsTouch : bool
+#endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
 class WebKit::WebGestureEvent : WebKit::WebEvent {

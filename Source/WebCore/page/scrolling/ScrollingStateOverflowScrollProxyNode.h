@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class ScrollingStateOverflowScrollProxyNode : public ScrollingStateNode {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStateOverflowScrollProxyNode, WEBCORE_EXPORT);
 public:
     template<typename... Args> static Ref<ScrollingStateOverflowScrollProxyNode> create(Args&&... args) { return adoptRef(*new ScrollingStateOverflowScrollProxyNode(std::forward<Args>(args)...)); }
 
@@ -40,18 +41,18 @@ public:
     virtual ~ScrollingStateOverflowScrollProxyNode();
 
     // This is the node we get our scroll position from.
-    ScrollingNodeID overflowScrollingNode() const { return m_overflowScrollingNodeID; }
-    WEBCORE_EXPORT void setOverflowScrollingNode(ScrollingNodeID);
+    std::optional<ScrollingNodeID> overflowScrollingNode() const { return m_overflowScrollingNodeID; }
+    WEBCORE_EXPORT void setOverflowScrollingNode(std::optional<ScrollingNodeID>);
 
 private:
-    WEBCORE_EXPORT ScrollingStateOverflowScrollProxyNode(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>, ScrollingNodeID overflowScrollingNode);
+    WEBCORE_EXPORT ScrollingStateOverflowScrollProxyNode(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>, std::optional<ScrollingNodeID> overflowScrollingNode);
     ScrollingStateOverflowScrollProxyNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateOverflowScrollProxyNode(const ScrollingStateOverflowScrollProxyNode&, ScrollingStateTree&);
 
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const final;
     OptionSet<ScrollingStateNode::Property> applicableProperties() const final;
 
-    ScrollingNodeID m_overflowScrollingNodeID;
+    Markable<ScrollingNodeID> m_overflowScrollingNodeID;
 };
 
 } // namespace WebCore

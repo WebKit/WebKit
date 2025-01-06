@@ -183,7 +183,7 @@ class TextureWgpu : public TextureImpl
                                const uint8_t *pixels);
 
     angle::Result setSubImageImpl(const gl::Context *context,
-                                  GLenum internalFormat,
+                                  const webgpu::Format &webgpuFormat,
                                   GLenum type,
                                   const gl::ImageIndex &index,
                                   const gl::Box &area,
@@ -193,6 +193,7 @@ class TextureWgpu : public TextureImpl
     angle::Result initializeImage(ContextWgpu *contextWgpu, ImageMipLevels mipLevels);
 
     angle::Result redefineLevel(const gl::Context *context,
+                                const webgpu::Format &webgpuFormat,
                                 const gl::ImageIndex &index,
                                 const gl::Extents &size);
 
@@ -202,10 +203,12 @@ class TextureWgpu : public TextureImpl
     angle::Result respecifyImageStorageIfNecessary(ContextWgpu *contextWgpu, gl::Command source);
     void prepareForGenerateMipmap(ContextWgpu *contextWgpu);
     angle::Result maybeUpdateBaseMaxLevels(ContextWgpu *contextWgpu);
-    void initSingleLayerRenderTargets(ContextWgpu *contextWgpu,
-                                      GLuint layerCount,
-                                      gl::LevelIndex levelIndex,
-                                      gl::RenderToTextureImageIndex renderToTextureIndex);
+    angle::Result initSingleLayerRenderTargets(ContextWgpu *contextWgpu,
+                                               GLuint layerCount,
+                                               gl::LevelIndex levelIndex,
+                                               gl::RenderToTextureImageIndex renderToTextureIndex);
+    const webgpu::Format &getBaseLevelFormat(ContextWgpu *contextWgpu) const;
+
     webgpu::ImageHelper *mImage;
     gl::LevelIndex mCurrentBaseLevel;
     gl::LevelIndex mCurrentMaxLevel;

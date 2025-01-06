@@ -22,6 +22,7 @@
 #include "p2p/base/port.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/containers/flat_map.h"
+#include "rtc_base/network/received_packet.h"
 
 namespace cricket {
 
@@ -35,20 +36,32 @@ class TCPConnection;
 // call this TCPPort::OnReadPacket (3 arg) to dispatch to a connection.
 class TCPPort : public Port {
  public:
-  static std::unique_ptr<TCPPort> Create(
-      rtc::Thread* thread,
-      rtc::PacketSocketFactory* factory,
-      const rtc::Network* network,
-      uint16_t min_port,
-      uint16_t max_port,
-      absl::string_view username,
-      absl::string_view password,
-      bool allow_listen,
-      const webrtc::FieldTrialsView* field_trials = nullptr) {
+  static std::unique_ptr<TCPPort> Create(const PortParametersRef& args,
+                                         uint16_t min_port,
+                                         uint16_t max_port,
+                                         bool allow_listen) {
     // Using `new` to access a non-public constructor.
-    return absl::WrapUnique(new TCPPort(thread, factory, network, min_port,
-                                        max_port, username, password,
-                                        allow_listen, field_trials));
+    return absl::WrapUnique(
+        new TCPPort(args, min_port, max_port, allow_listen));
+  }
+  [[deprecated("Pass arguments using PortParametersRef")]] static std::
+      unique_ptr<TCPPort>
+      Create(webrtc::TaskQueueBase* thread,
+             rtc::PacketSocketFactory* factory,
+             const rtc::Network* network,
+             uint16_t min_port,
+             uint16_t max_port,
+             absl::string_view username,
+             absl::string_view password,
+             bool allow_listen,
+             const webrtc::FieldTrialsView* field_trials = nullptr) {
+    return Create({.network_thread = thread,
+                   .socket_factory = factory,
+                   .network = network,
+                   .ice_username_fragment = username,
+                   .ice_password = password,
+                   .field_trials = field_trials},
+                  min_port, max_port, allow_listen);
   }
   ~TCPPort() override;
 
@@ -67,15 +80,10 @@ class TCPPort : public Port {
   ProtocolType GetProtocol() const override;
 
  protected:
-  TCPPort(rtc::Thread* thread,
-          rtc::PacketSocketFactory* factory,
-          const rtc::Network* network,
+  TCPPort(const PortParametersRef& args,
           uint16_t min_port,
           uint16_t max_port,
-          absl::string_view username,
-          absl::string_view password,
-          bool allow_listen,
-          const webrtc::FieldTrialsView* field_trials);
+          bool allow_listen);
 
   // Handles sending using the local TCP socket.
   int SendTo(const void* data,
@@ -101,10 +109,7 @@ class TCPPort : public Port {
 
   // Receives packet signal from the local TCP Socket.
   void OnReadPacket(rtc::AsyncPacketSocket* socket,
-                    const char* data,
-                    size_t size,
-                    const rtc::SocketAddress& remote_addr,
-                    const int64_t& packet_time_us);
+                    const rtc::ReceivedPacket& packet);
 
   void OnSentPacket(rtc::AsyncPacketSocket* socket,
                     const rtc::SentPacket& sent_packet) override;
@@ -169,11 +174,10 @@ class TCPConnection : public Connection, public sigslot::has_slots<> {
 
   void OnConnect(rtc::AsyncPacketSocket* socket);
   void OnClose(rtc::AsyncPacketSocket* socket, int error);
+  void OnSentPacket(rtc::AsyncPacketSocket* socket,
+                    const rtc::SentPacket& sent_packet);
   void OnReadPacket(rtc::AsyncPacketSocket* socket,
-                    const char* data,
-                    size_t size,
-                    const rtc::SocketAddress& remote_addr,
-                    const int64_t& packet_time_us);
+                    const rtc::ReceivedPacket& packet);
   void OnReadyToSend(rtc::AsyncPacketSocket* socket);
   void OnDestroyed(Connection* c);
 

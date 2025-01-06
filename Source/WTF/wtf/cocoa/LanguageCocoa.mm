@@ -42,7 +42,7 @@ size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<St
     auto matchedLanguages = retainPtr([NSLocale matchedLanguagesFromAvailableLanguages:createNSArray(languageList).get() forPreferredLanguages:@[ static_cast<NSString *>(language) ]]);
     if (![matchedLanguages count]) {
         exactMatch = false;
-        return languageList.size();
+        return notFound;
     }
 
     String firstMatchedLanguage = [matchedLanguages firstObject];
@@ -52,6 +52,17 @@ size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<St
     auto index = languageList.find(firstMatchedLanguage);
     ASSERT(index < languageList.size());
     return index;
+}
+
+LocaleComponents parseLocale(const String& localeIdentifier)
+{
+    auto locale = retainPtr([NSLocale localeWithLocaleIdentifier:localeIdentifier]);
+
+    return {
+        locale.get().languageCode,
+        locale.get().scriptCode,
+        locale.get().countryCode
+    };
 }
 
 bool canMinimizeLanguages()

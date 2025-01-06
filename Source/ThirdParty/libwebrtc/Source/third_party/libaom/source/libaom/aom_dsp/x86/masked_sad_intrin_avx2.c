@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -9,7 +9,7 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
-#include <tmmintrin.h>
+#include <immintrin.h>
 
 #include "config/aom_config.h"
 #include "config/aom_dsp_rtcd.h"
@@ -17,9 +17,10 @@
 #include "aom_dsp/blend.h"
 #include "aom/aom_integer.h"
 #include "aom_dsp/x86/synonyms.h"
+#include "aom_dsp/x86/synonyms_avx2.h"
 #include "aom_dsp/x86/masked_sad_intrin_ssse3.h"
 
-static INLINE unsigned int masked_sad32xh_avx2(
+static inline unsigned int masked_sad32xh_avx2(
     const uint8_t *src_ptr, int src_stride, const uint8_t *a_ptr, int a_stride,
     const uint8_t *b_ptr, int b_stride, const uint8_t *m_ptr, int m_stride,
     int width, int height) {
@@ -67,14 +68,7 @@ static INLINE unsigned int masked_sad32xh_avx2(
   return sad;
 }
 
-static INLINE __m256i xx_loadu2_m128i(const void *hi, const void *lo) {
-  __m128i a0 = _mm_lddqu_si128((const __m128i *)(lo));
-  __m128i a1 = _mm_lddqu_si128((const __m128i *)(hi));
-  __m256i a = _mm256_castsi128_si256(a0);
-  return _mm256_inserti128_si256(a, a1, 1);
-}
-
-static INLINE unsigned int masked_sad16xh_avx2(
+static inline unsigned int masked_sad16xh_avx2(
     const uint8_t *src_ptr, int src_stride, const uint8_t *a_ptr, int a_stride,
     const uint8_t *b_ptr, int b_stride, const uint8_t *m_ptr, int m_stride,
     int height) {
@@ -84,10 +78,10 @@ static INLINE unsigned int masked_sad16xh_avx2(
   const __m256i round_scale =
       _mm256_set1_epi16(1 << (15 - AOM_BLEND_A64_ROUND_BITS));
   for (y = 0; y < height; y += 2) {
-    const __m256i src = xx_loadu2_m128i(src_ptr + src_stride, src_ptr);
-    const __m256i a = xx_loadu2_m128i(a_ptr + a_stride, a_ptr);
-    const __m256i b = xx_loadu2_m128i(b_ptr + b_stride, b_ptr);
-    const __m256i m = xx_loadu2_m128i(m_ptr + m_stride, m_ptr);
+    const __m256i src = yy_loadu2_128(src_ptr + src_stride, src_ptr);
+    const __m256i a = yy_loadu2_128(a_ptr + a_stride, a_ptr);
+    const __m256i b = yy_loadu2_128(b_ptr + b_stride, b_ptr);
+    const __m256i m = yy_loadu2_128(m_ptr + m_stride, m_ptr);
     const __m256i m_inv = _mm256_sub_epi8(mask_max, m);
 
     // Calculate 16 predicted pixels.
@@ -120,7 +114,7 @@ static INLINE unsigned int masked_sad16xh_avx2(
   return sad;
 }
 
-static INLINE unsigned int aom_masked_sad_avx2(
+static inline unsigned int aom_masked_sad_avx2(
     const uint8_t *src, int src_stride, const uint8_t *ref, int ref_stride,
     const uint8_t *second_pred, const uint8_t *msk, int msk_stride,
     int invert_mask, int m, int n) {
@@ -192,14 +186,18 @@ MASKSADMXN_AVX2(64, 64)
 MASKSADMXN_AVX2(64, 128)
 MASKSADMXN_AVX2(128, 64)
 MASKSADMXN_AVX2(128, 128)
+
+#if !CONFIG_REALTIME_ONLY
 MASKSADMXN_AVX2(4, 16)
 MASKSADMXN_AVX2(16, 4)
 MASKSADMXN_AVX2(8, 32)
 MASKSADMXN_AVX2(32, 8)
 MASKSADMXN_AVX2(16, 64)
 MASKSADMXN_AVX2(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY
 
-static INLINE unsigned int highbd_masked_sad8xh_avx2(
+#if CONFIG_AV1_HIGHBITDEPTH
+static inline unsigned int highbd_masked_sad8xh_avx2(
     const uint8_t *src8, int src_stride, const uint8_t *a8, int a_stride,
     const uint8_t *b8, int b_stride, const uint8_t *m_ptr, int m_stride,
     int height) {
@@ -214,9 +212,9 @@ static INLINE unsigned int highbd_masked_sad8xh_avx2(
   const __m256i one = _mm256_set1_epi16(1);
 
   for (y = 0; y < height; y += 2) {
-    const __m256i src = xx_loadu2_m128i(src_ptr + src_stride, src_ptr);
-    const __m256i a = xx_loadu2_m128i(a_ptr + a_stride, a_ptr);
-    const __m256i b = xx_loadu2_m128i(b_ptr + b_stride, b_ptr);
+    const __m256i src = yy_loadu2_128(src_ptr + src_stride, src_ptr);
+    const __m256i a = yy_loadu2_128(a_ptr + a_stride, a_ptr);
+    const __m256i b = yy_loadu2_128(b_ptr + b_stride, b_ptr);
     // Zero-extend mask to 16 bits
     const __m256i m = _mm256_cvtepu8_epi16(_mm_unpacklo_epi64(
         _mm_loadl_epi64((const __m128i *)(m_ptr)),
@@ -256,7 +254,7 @@ static INLINE unsigned int highbd_masked_sad8xh_avx2(
   return sad;
 }
 
-static INLINE unsigned int highbd_masked_sad16xh_avx2(
+static inline unsigned int highbd_masked_sad16xh_avx2(
     const uint8_t *src8, int src_stride, const uint8_t *a8, int a_stride,
     const uint8_t *b8, int b_stride, const uint8_t *m_ptr, int m_stride,
     int width, int height) {
@@ -314,7 +312,7 @@ static INLINE unsigned int highbd_masked_sad16xh_avx2(
   return sad;
 }
 
-static INLINE unsigned int aom_highbd_masked_sad_avx2(
+static inline unsigned int aom_highbd_masked_sad_avx2(
     const uint8_t *src, int src_stride, const uint8_t *ref, int ref_stride,
     const uint8_t *second_pred, const uint8_t *msk, int msk_stride,
     int invert_mask, int m, int n) {
@@ -381,9 +379,13 @@ HIGHBD_MASKSADMXN_AVX2(64, 64)
 HIGHBD_MASKSADMXN_AVX2(64, 128)
 HIGHBD_MASKSADMXN_AVX2(128, 64)
 HIGHBD_MASKSADMXN_AVX2(128, 128)
+
+#if !CONFIG_REALTIME_ONLY
 HIGHBD_MASKSADMXN_AVX2(4, 16)
 HIGHBD_MASKSADMXN_AVX2(16, 4)
 HIGHBD_MASKSADMXN_AVX2(8, 32)
 HIGHBD_MASKSADMXN_AVX2(32, 8)
 HIGHBD_MASKSADMXN_AVX2(16, 64)
 HIGHBD_MASKSADMXN_AVX2(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY
+#endif  // CONFIG_AV1_HIGHBITDEPTH

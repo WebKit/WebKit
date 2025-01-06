@@ -15,7 +15,7 @@ const tests = [
   ["t12:34:56.987654321", "time-only lowercase T"],
 ];
 
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const instance = new Temporal.ZonedDateTime(0n, timeZone);
 
 tests.forEach(([arg, description]) => {

@@ -41,11 +41,10 @@ public:
 
     WKBundlePageRef page() const { return m_page; }
 
+    void notifyDone();
+    void forceImmediateCompletion();
     void dump(bool forceRepaint);
 
-    void stopLoading();
-
-    void prepare();
     void resetAfterTest();
 
     String dumpHistory();

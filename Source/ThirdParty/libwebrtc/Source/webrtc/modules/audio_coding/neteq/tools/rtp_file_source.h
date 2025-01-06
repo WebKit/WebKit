@@ -14,10 +14,10 @@
 #include <stdio.h>
 
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/tools/packet_source.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
@@ -33,7 +33,7 @@ class RtpFileSource : public PacketSource {
   // opened, or has the wrong format, NULL will be returned.
   static RtpFileSource* Create(
       absl::string_view file_name,
-      absl::optional<uint32_t> ssrc_filter = absl::nullopt);
+      std::optional<uint32_t> ssrc_filter = std::nullopt);
 
   // Checks whether a files is a valid RTP dump or PCAP (Wireshark) file.
   static bool ValidRtpDump(absl::string_view file_name);
@@ -54,12 +54,12 @@ class RtpFileSource : public PacketSource {
   static const int kRtpFileHeaderSize = 4 + 4 + 4 + 2 + 2;
   static const size_t kPacketHeaderSize = 8;
 
-  explicit RtpFileSource(absl::optional<uint32_t> ssrc_filter);
+  explicit RtpFileSource(std::optional<uint32_t> ssrc_filter);
 
   bool OpenFile(absl::string_view file_name);
 
   std::unique_ptr<RtpFileReader> rtp_reader_;
-  const absl::optional<uint32_t> ssrc_filter_;
+  const std::optional<uint32_t> ssrc_filter_;
   RtpHeaderExtensionMap rtp_header_extension_map_;
 };
 

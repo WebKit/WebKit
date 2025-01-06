@@ -1,0 +1,57 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-anywhere-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-anywhere-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-anywhere-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-loose-011-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-loose-012-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-loose-013-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-loose-014-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-loose-015-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-loose-016a-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-loose-016b-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-loose-017a-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-loose-017b-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-loose-018-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-loose-hyphens-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-loose-hyphens-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-loose-hyphens-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-011-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-012-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-013-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-014-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-015a-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-015b-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-016a-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-016b-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-017a-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-017b-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-018-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-hyphens-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-hyphens-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-shaping-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-strict-011-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-strict-012-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-strict-013-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-strict-014-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-strict-015a-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-strict-015b-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-strict-016a-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-strict-016b-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-strict-017a-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-strict-017b-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-strict-018-ref.xht

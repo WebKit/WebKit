@@ -14,13 +14,10 @@
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-SET ABSL_GOOGLETEST_COMMIT=2dd1c131950043a8ad5ab0d2dda0e0970596586a
-
-IF EXIST %KOKORO_GFILE_DIR%\distdir\%ABSL_GOOGLETEST_COMMIT%.zip (
-  SET ABSL_GOOGLETEST_DOWNLOAD_URL=file://%KOKORO_GFILE_DIR%\distdir\%ABSL_GOOGLETEST_COMMIT%.zip
-) ELSE (
-  SET ABSL_GOOGLETEST_DOWNLOAD_URL=https://github.com/google/googletest/archive/%ABSL_GOOGLETEST_COMMIT%.zip
-)
+:: The version of GoogleTest to be used in the CMake tests in this directory.
+:: Keep this in sync with the version in the WORKSPACE file.
+SET ABSL_GOOGLETEST_VERSION=1.15.2
+SET ABSL_GOOGLETEST_DOWNLOAD_URL=https://github.com/google/googletest/releases/download/v%ABSL_GOOGLETEST_VERSION%/googletest-%ABSL_GOOGLETEST_VERSION%.tar.gz
 
 :: Replace '\' with '/' in Windows paths for CMake.
 :: Note that this cannot go inside the IF block above, because BAT files are weird.
@@ -50,7 +47,6 @@ CD "build"
 SET CXXFLAGS="/WX"
 
 %CMAKE_BIN% ^
-  -DABSL_BUILD_TEST_HELPERS=ON ^
   -DABSL_BUILD_TESTING=ON ^
   -DABSL_GOOGLETEST_DOWNLOAD_URL=%ABSL_GOOGLETEST_DOWNLOAD_URL% ^
   -DBUILD_SHARED_LIBS=%ABSL_CMAKE_BUILD_SHARED% ^

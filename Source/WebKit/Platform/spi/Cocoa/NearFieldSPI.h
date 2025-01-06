@@ -90,9 +90,14 @@ typedef NS_ENUM(uint32_t, NFNdefAvailability) {
 
 @protocol NFReaderSessionDelegate;
 
+typedef NS_ENUM(NSInteger, NFReaderSessionUI) {
+    NFReaderSessionUINone
+};
+
 @interface NFReaderSession : NFSession
 @property (assign) id<NFReaderSessionDelegate> delegate;
 
+- (instancetype)initWithUIType:(NFReaderSessionUI)uiType;
 - (BOOL)startPollingWithError:(NSError **)outError;
 - (BOOL)stopPolling;
 - (BOOL)connectTag:(NFTag*)tag;

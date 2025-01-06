@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ScalableImageDecoder.h"
+#include <array>
 #include <png.h>
 
 #if USE(LCMS)
@@ -124,9 +125,9 @@ namespace WebCore {
         unsigned m_delayDenominator;
         unsigned m_dispose;
         unsigned m_blend;
-        png_byte m_dataIHDR[12 + 13];
-        png_byte m_dataPLTE[12 + 256 * 3];
-        png_byte m_datatRNS[12 + 256];
+        std::array<png_byte, 12 + 13> m_dataIHDR;
+        std::array<png_byte, 12 + 256 * 3> m_dataPLTE;
+        std::array<png_byte, 12 + 256> m_datatRNS;
 #if USE(LCMS)
     LCMSTransformPtr m_iccTransform;
 #endif

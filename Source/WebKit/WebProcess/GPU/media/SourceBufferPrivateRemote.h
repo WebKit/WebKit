@@ -39,6 +39,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -60,9 +61,9 @@ class MediaSourcePrivateRemote;
 class SourceBufferPrivateRemote final
     : public WebCore::SourceBufferPrivate
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SourceBufferPrivateRemote);
 public:
-    static Ref<SourceBufferPrivateRemote> create(GPUProcessConnection&, RemoteSourceBufferIdentifier, MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
+    static Ref<SourceBufferPrivateRemote> create(GPUProcessConnection&, RemoteSourceBufferIdentifier, MediaSourcePrivateRemote&);
     virtual ~SourceBufferPrivateRemote();
 
     constexpr WebCore::MediaPlatformType platformType() const final { return WebCore::MediaPlatformType::Remote; }
@@ -87,13 +88,14 @@ public:
         void sourceBufferPrivateDidDropSample();
         void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode);
         void sourceBufferPrivateEvictionDataChanged(WebCore::SourceBufferEvictionData&&);
-        void sourceBufferPrivateShuttingDown(CompletionHandler<void()>&&);
+        void sourceBufferPrivateDidAttach(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&&);
         RefPtr<WebCore::SourceBufferPrivateClient> client() const;
+        WebCore::SourceBufferPrivateClient::InitializationSegment createInitializationSegment(MediaPlayerPrivateRemote&, InitializationSegmentInfo&&) const;
         ThreadSafeWeakPtr<SourceBufferPrivateRemote> m_parent;
     };
 
 private:
-    SourceBufferPrivateRemote(GPUProcessConnection&, RemoteSourceBufferIdentifier, MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
+    SourceBufferPrivateRemote(GPUProcessConnection&, RemoteSourceBufferIdentifier, MediaSourcePrivateRemote&);
 
     // SourceBufferPrivate overrides
     void setActive(bool) final;
@@ -135,6 +137,9 @@ private:
 
     void memoryPressure(const MediaTime& currentTime) final;
 
+    void detach() final;
+    void attach() final;
+
     // Internals Utility methods
     Ref<SamplesPromise> bufferedSamplesForTrackId(TrackID) final;
     Ref<SamplesPromise> enqueuedSamplesForTrackID(TrackID) final;
@@ -143,21 +148,23 @@ private:
 
     void ensureOnDispatcherSync(Function<void()>&&);
     void ensureWeakOnDispatcher(Function<void()>&&);
-    template<typename T> Ref<typename T::Promise> sendWithPromisedReply(T&& message)
+
+    RefPtr<MediaPlayerPrivateRemote> player() const;
+
+    template<typename PC = IPC::Connection::NoOpPromiseConverter, typename T>
+    auto sendWithPromisedReply(T&& message)
     {
-        return m_gpuProcessConnection.get()->connection().sendWithPromisedReply(std::forward<T>(message), m_remoteSourceBufferIdentifier);
+        return m_gpuProcessConnection.get()->connection().sendWithPromisedReply<PC, T>(std::forward<T>(message), m_remoteSourceBufferIdentifier);
     }
 
     friend class MessageReceiver;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     Ref<MessageReceiver> m_receiver;
     const RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;
-    ThreadSafeWeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
 
     std::atomic<uint64_t> m_totalTrackBufferSizeInBytes = { 0 };
 
-    bool isGPURunning() const { return !m_shutdown && !m_removed; }
-    std::atomic<bool> m_shutdown { false };
+    bool isGPURunning() const { return !m_removed; }
     std::atomic<bool> m_removed { false };
 
     mutable Lock m_lock;
@@ -168,13 +175,13 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const override { return "SourceBufferPrivateRemote"_s; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
     const Logger& sourceBufferLogger() const final { return m_logger.get(); }
-    const void* sourceBufferLogIdentifier() final { return logIdentifier(); }
+    uint64_t sourceBufferLogIdentifier() final { return logIdentifier(); }
 
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

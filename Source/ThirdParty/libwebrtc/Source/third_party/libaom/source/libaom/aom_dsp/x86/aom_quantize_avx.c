@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,7 +16,7 @@
 #include "aom_dsp/x86/bitdepth_conversion_sse2.h"
 #include "aom_dsp/x86/quantize_x86.h"
 
-static INLINE void calculate_dqcoeff_and_store(__m128i qcoeff, __m128i dequant,
+static inline void calculate_dqcoeff_and_store(__m128i qcoeff, __m128i dequant,
                                                tran_low_t *dqcoeff) {
   const __m128i low = _mm_mullo_epi16(qcoeff, dequant);
   const __m128i high = _mm_mulhi_epi16(qcoeff, dequant);

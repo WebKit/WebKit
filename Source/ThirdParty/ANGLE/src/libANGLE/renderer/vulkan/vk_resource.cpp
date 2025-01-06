@@ -23,7 +23,7 @@ angle::Result Resource::waitForIdle(ContextVk *contextVk,
     // If there are pending commands for the resource, flush them.
     if (contextVk->hasUnsubmittedUse(mUse))
     {
-        ANGLE_TRY(contextVk->flushImpl(nullptr, nullptr, reason));
+        ANGLE_TRY(contextVk->flushAndSubmitCommands(nullptr, nullptr, reason));
     }
 
     Renderer *renderer = contextVk->getRenderer();

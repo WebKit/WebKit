@@ -1,0 +1,53 @@
+
+FAIL flatMap(): Flattens simple source Observable properly source.flatMap is not a function. (In 'source.flatMap(value => {
+    projectionCalls++;
+    return new Observable((subscriber) => {
+      subscriber.next(value * 10);
+      subscriber.next(value * 100);
+      subscriber.complete();
+    });
+  })', 'source.flatMap' is undefined)
+FAIL flatMap(): Returned Observable passes through source Observable errors source.flatMap is not a function. (In 'source.flatMap(value => {
+    return new Observable(subscriber => {
+      subscriber.next(value * 10);
+      subscriber.next(value * 100);
+      subscriber.complete();
+    });
+  })', 'source.flatMap' is undefined)
+FAIL flatMap(): Outer Subscription synchronously becomes inactive when an 'inner' Observable emits an error source.flatMap is not a function. (In 'source.flatMap((value) => {
+    return new Observable((subscriber) => {
+      subscriber.next(value * 10);
+      subscriber.next(value * 100);
+      if (value === 2) {
+        subscriber.error(error);
+      } else {
+        subscriber.complete();
+      }
+    });
+  })', 'source.flatMap' is undefined)
+FAIL flatMap(): Outer Subscription synchronously becomes inactive when an 'inner' Observable throws an error source.flatMap is not a function. (In 'source.flatMap(value => {
+    if (value === 3) {
+      throw error;
+    }
+    return new Observable(subscriber => {
+      subscriber.next(value * 10);
+      subscriber.next(value * 100);
+      subscriber.complete();
+    });
+  })', 'source.flatMap' is undefined)
+FAIL flatMap(): result Observable does not complete until source and inner Observables all complete source.flatMap is not a function. (In 'source.flatMap(value => {
+    if (value === 1) {
+      return inner1;
+    }
+
+    return inner2;
+  })', 'source.flatMap' is undefined)
+FAIL flatMap(): result Observable does not complete after source Observable completes while there are still queued inner Observables to process Observables all complete source.flatMap is not a function. (In 'source.flatMap(value => {
+    if (value === 1) {
+      return inner1;
+    }
+
+    return inner2;
+  })', 'source.flatMap' is undefined)
+FAIL flatMap(): source and inner active Observables are both unsubscribed from once the outer subscription signal is aborted source.flatMap is not a function. (In 'source.flatMap(() => inner)', 'source.flatMap' is undefined)
+

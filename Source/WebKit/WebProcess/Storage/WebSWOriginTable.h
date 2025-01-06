@@ -27,6 +27,7 @@
 
 #include "SharedStringHashTableReadOnly.h"
 #include <WebCore/SharedMemory.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class SecurityOriginData;
@@ -35,7 +36,7 @@ class SecurityOriginData;
 namespace WebKit {
 
 class WebSWOriginTable {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebSWOriginTable);
 public:
     WebSWOriginTable() = default;
 

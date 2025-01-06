@@ -29,8 +29,9 @@
 #include "DeviceOrientationClient.h"
 #include "DeviceOrientationData.h"
 #include "Timer.h"
-
+#include <wtf/CheckedPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,14 +40,16 @@ class DeviceOrientationController;
 // A mock implementation of DeviceOrientationClient used to test the feature in
 // DumpRenderTree. Embedders should should configure the Page object to use this
 // client when running DumpRenderTree.
-class DeviceOrientationClientMock : public DeviceOrientationClient {
+class DeviceOrientationClientMock final : public DeviceOrientationClient, public CanMakeCheckedPtr<DeviceOrientationClientMock> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DeviceOrientationClientMock, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceOrientationClientMock);
 public:
     WEBCORE_EXPORT DeviceOrientationClientMock();
 
     // DeviceOrientationClient
-    void setController(DeviceOrientationController*) override;
-    void startUpdating() override;
-    void stopUpdating() override;
+    WEBCORE_EXPORT void setController(DeviceOrientationController*) override;
+    WEBCORE_EXPORT void startUpdating() override;
+    WEBCORE_EXPORT void stopUpdating() override;
     DeviceOrientationData* lastOrientation() const override { return m_orientation.get(); }
     void deviceOrientationControllerDestroyed() override { }
 

@@ -37,14 +37,13 @@ InterleavedReassemblyStreams::InterleavedReassemblyStreams(
 
 size_t InterleavedReassemblyStreams::Stream::TryToAssembleMessage(
     UnwrappedMID mid) {
-  std::map<UnwrappedMID, ChunkMap>::const_iterator it =
-      chunks_by_mid_.find(mid);
+  std::map<UnwrappedMID, ChunkMap>::iterator it = chunks_by_mid_.find(mid);
   if (it == chunks_by_mid_.end()) {
     RTC_DLOG(LS_VERBOSE) << parent_.log_prefix_ << "TryToAssembleMessage "
                          << *mid.Wrap() << " - no chunks";
     return 0;
   }
-  const ChunkMap& chunks = it->second;
+  ChunkMap& chunks = it->second;
   if (!chunks.begin()->second.second.is_beginning ||
       !chunks.rbegin()->second.second.is_end) {
     RTC_DLOG(LS_VERBOSE) << parent_.log_prefix_ << "TryToAssembleMessage "
@@ -69,17 +68,22 @@ size_t InterleavedReassemblyStreams::Stream::TryToAssembleMessage(
   return removed_bytes;
 }
 
+size_t InterleavedReassemblyStreams::Stream::AssembleMessage(UnwrappedTSN tsn,
+                                                             Data data) {
+  size_t payload_size = data.size();
+  UnwrappedTSN tsns[1] = {tsn};
+  DcSctpMessage message(data.stream_id, data.ppid, std::move(data.payload));
+  parent_.on_assembled_message_(tsns, std::move(message));
+  return payload_size;
+}
+
 size_t InterleavedReassemblyStreams::Stream::AssembleMessage(
-    const ChunkMap& tsn_chunks) {
+    ChunkMap& tsn_chunks) {
   size_t count = tsn_chunks.size();
   if (count == 1) {
     // Fast path - zero-copy
-    const Data& data = tsn_chunks.begin()->second.second;
-    size_t payload_size = data.size();
-    UnwrappedTSN tsns[1] = {tsn_chunks.begin()->second.first};
-    DcSctpMessage message(data.stream_id, data.ppid, std::move(data.payload));
-    parent_.on_assembled_message_(tsns, std::move(message));
-    return payload_size;
+    return AssembleMessage(tsn_chunks.begin()->second.first,
+                           std::move(tsn_chunks.begin()->second.second));
   }
 
   // Slow path - will need to concatenate the payload.
@@ -137,6 +141,21 @@ int InterleavedReassemblyStreams::Stream::Add(UnwrappedTSN tsn, Data data) {
   int queued_bytes = data.size();
   UnwrappedMID mid = mid_unwrapper_.Unwrap(data.mid);
   FSN fsn = data.fsn;
+
+  // Avoid inserting it into any map if it can be delivered directly.
+  if (stream_id_.unordered && data.is_beginning && data.is_end) {
+    AssembleMessage(tsn, std::move(data));
+    return 0;
+
+  } else if (!stream_id_.unordered && mid == next_mid_ && data.is_beginning &&
+             data.is_end) {
+    AssembleMessage(tsn, std::move(data));
+    next_mid_.Increment();
+    // This might unblock assembling more messages.
+    return -TryToAssembleMessages();
+  }
+
+  // Slow path.
   auto [unused, inserted] =
       chunks_by_mid_[mid].emplace(fsn, std::make_pair(tsn, std::move(data)));
   if (!inserted) {

@@ -31,9 +31,13 @@
 #import <WebCore/FrameSelection.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/Range.h>
+#import <WebCore/markup.h>
 #import <pal/spi/mac/NSSharingServiceSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSelectionServiceController);
 
 WebSelectionServiceController::WebSelectionServiceController(WebView *webView) 
     : WebSharingServicePickerClient(webView)
@@ -50,7 +54,7 @@ void WebSelectionServiceController::handleSelectionServiceClick(WebCore::FrameSe
     if (!range)
         return;
 
-    auto attributedSelection = attributedString(*range).nsAttributedString();
+    auto attributedSelection = attributedString(*range, WebCore::IgnoreUserSelectNone::Yes).nsAttributedString();
     if (!attributedSelection)
         return;
 

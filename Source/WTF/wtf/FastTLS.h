@@ -28,7 +28,7 @@
 #if HAVE(FAST_TLS)
 
 #include <pthread.h>
-#include <System/pthread_machdep.h>
+#include <pthread/tsd_private.h>
 #include <wtf/Platform.h>
 
 namespace WTF {

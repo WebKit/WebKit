@@ -12,6 +12,8 @@ includes: [propertyHelper.js]
 features: [String.fromCodePoint]
 ---*/
 
-verifyNotEnumerable(String, 'fromCodePoint');
-verifyWritable(String, 'fromCodePoint');
-verifyConfigurable(String, 'fromCodePoint');
+verifyProperty(String, 'fromCodePoint', {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

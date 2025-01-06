@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "RemoteDisplayListRecorder.h"
+#include "SharedPreferencesForWebProcess.h"
 
 #if ENABLE(GPU_PROCESS)
 
@@ -66,9 +67,16 @@ RemoteResourceCache& RemoteDisplayListRecorder::resourceCache() const
     return m_renderingBackend->remoteResourceCache();
 }
 
+ControlFactory& RemoteDisplayListRecorder::controlFactory()
+{
+    if (!m_controlFactory)
+        m_controlFactory = ControlFactory::create();
+    return *m_controlFactory;
+}
+
 RefPtr<ImageBuffer> RemoteDisplayListRecorder::imageBuffer(RenderingResourceIdentifier identifier) const
 {
-    return m_renderingBackend->imageBuffer(identifier);
+    return protectedRenderingBackend()->imageBuffer(identifier);
 }
 
 std::optional<SourceImage> RemoteDisplayListRecorder::sourceImage(RenderingResourceIdentifier identifier) const
@@ -84,13 +92,13 @@ std::optional<SourceImage> RemoteDisplayListRecorder::sourceImage(RenderingResou
 
 void RemoteDisplayListRecorder::startListeningForIPC()
 {
-    m_renderingBackend->streamConnection().startReceivingMessages(*this, Messages::RemoteDisplayListRecorder::messageReceiverName(), m_imageBufferIdentifier.toUInt64());
+    protectedRenderingBackend()->protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteDisplayListRecorder::messageReceiverName(), m_imageBufferIdentifier.toUInt64());
 }
 
 void RemoteDisplayListRecorder::stopListeningForIPC()
 {
-    if (auto renderingBackend = std::exchange(m_renderingBackend, { }))
-        renderingBackend->streamConnection().stopReceivingMessages(Messages::RemoteDisplayListRecorder::messageReceiverName(), m_imageBufferIdentifier.toUInt64());
+    if (RefPtr renderingBackend = std::exchange(m_renderingBackend, nullptr))
+        renderingBackend->protectedStreamConnection()->stopReceivingMessages(Messages::RemoteDisplayListRecorder::messageReceiverName(), m_imageBufferIdentifier.toUInt64());
 }
 
 void RemoteDisplayListRecorder::save()
@@ -165,10 +173,10 @@ void RemoteDisplayListRecorder::setState(DisplayList::SetState&& item)
         return true;
     };
 
-    if (!fixPatternTileImage(item.state().fillBrush().pattern()) || !fixBrushGradient(item.state().fillBrush()))
+    if (!fixPatternTileImage(item.state().fillBrush().protectedPattern().get()) || !fixBrushGradient(item.state().fillBrush()))
         return;
 
-    if (!fixPatternTileImage(item.state().strokeBrush().pattern()) || !fixBrushGradient(item.state().strokeBrush()))
+    if (!fixPatternTileImage(item.state().strokeBrush().protectedPattern().get()) || !fixBrushGradient(item.state().strokeBrush()))
         return;
 
     handleItem(WTFMove(item));
@@ -258,15 +266,15 @@ void RemoteDisplayListRecorder::drawFilteredImageBufferInternal(std::optional<Re
     }
 
     for (auto& effect : filter.effectsOfType(FilterEffect::Type::FEImage)) {
-        auto& feImage = downcast<FEImage>(effect.get());
+        Ref feImage = downcast<FEImage>(effect.get());
 
-        auto effectImage = sourceImage(feImage.sourceImage().imageIdentifier());
+        auto effectImage = sourceImage(feImage->sourceImage().imageIdentifier());
         if (!effectImage) {
             ASSERT_NOT_REACHED();
             return;
         }
 
-        feImage.setImageSource(WTFMove(*effectImage));
+        feImage->setImageSource(WTFMove(*effectImage));
     }
 
     handleItem(DisplayList::DrawFilteredImageBuffer(sourceImageIdentifier, sourceImageRect, filter), sourceImageBuffer.get(), results);
@@ -330,7 +338,7 @@ void RemoteDisplayListRecorder::drawDecomposedGlyphs(RenderingResourceIdentifier
 
 void RemoteDisplayListRecorder::drawDisplayListItems(Vector<WebCore::DisplayList::Item>&& items, const FloatPoint& destination)
 {
-    handleItem(DisplayList::DrawDisplayListItems(WTFMove(items), destination), resourceCache().resourceHeap());
+    handleItem(DisplayList::DrawDisplayListItems(WTFMove(items), destination), resourceCache().resourceHeap(), protectedControlFactory());
 }
 
 void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, ImagePaintingOptions options)
@@ -386,6 +394,11 @@ void RemoteDisplayListRecorder::beginTransparencyLayer(float opacity)
     handleItem(DisplayList::BeginTransparencyLayer(opacity));
 }
 
+void RemoteDisplayListRecorder::beginTransparencyLayerWithCompositeMode(CompositeMode compositeMode)
+{
+    handleItem(DisplayList::BeginTransparencyLayerWithCompositeMode(compositeMode));
+}
+
 void RemoteDisplayListRecorder::endTransparencyLayer()
 {
     handleItem(DisplayList::EndTransparencyLayer());
@@ -431,9 +444,9 @@ void RemoteDisplayListRecorder::drawFocusRingRects(const Vector<FloatRect>& rect
     handleItem(DisplayList::DrawFocusRingRects(rects, outlineOffset, outlineWidth, color));
 }
 
-void RemoteDisplayListRecorder::fillRect(const FloatRect& rect)
+void RemoteDisplayListRecorder::fillRect(const FloatRect& rect, GraphicsContext::RequiresClipToRect requiresClipToRect)
 {
-    handleItem(DisplayList::FillRect(rect));
+    handleItem(DisplayList::FillRect(rect, requiresClipToRect));
 }
 
 void RemoteDisplayListRecorder::fillRectWithColor(const FloatRect& rect, const Color& color)
@@ -510,31 +523,21 @@ void RemoteDisplayListRecorder::fillEllipse(const FloatRect& rect)
     handleItem(DisplayList::FillEllipse(rect));
 }
 
-#if ENABLE(VIDEO)
-void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
-{
-    m_renderingBackend->gpuConnectionToWebProcess().performWithMediaPlayerOnMainThread(identifier, [imageBuffer = m_imageBuffer, destination](MediaPlayer& player) {
-        // It is currently not safe to call paintFrameForMedia() off the main thread.
-        imageBuffer->context().paintFrameForMedia(player, destination);
-    });
-}
-#endif
-
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 SharedVideoFrameReader& RemoteDisplayListRecorder::sharedVideoFrameReader()
 {
-    if (!m_sharedVideoFrameReader)
-        m_sharedVideoFrameReader = makeUnique<SharedVideoFrameReader>(Ref { m_renderingBackend->gpuConnectionToWebProcess().videoFrameObjectHeap() }, m_renderingBackend->gpuConnectionToWebProcess().webProcessIdentity());
-
+    if (!m_sharedVideoFrameReader) {
+        Ref gpuConnectionToWebProcess = m_renderingBackend->gpuConnectionToWebProcess();
+        m_sharedVideoFrameReader = makeUnique<SharedVideoFrameReader>(Ref { gpuConnectionToWebProcess->videoFrameObjectHeap() }, gpuConnectionToWebProcess->webProcessIdentity());
+    }
     return *m_sharedVideoFrameReader;
 }
 
-void RemoteDisplayListRecorder::paintVideoFrame(SharedVideoFrame&& frame, const WebCore::FloatRect& destination, bool shouldDiscardAlpha)
+void RemoteDisplayListRecorder::drawVideoFrame(SharedVideoFrame&& frame, const FloatRect& destination, ImageOrientation orientation, bool shouldDiscardAlpha)
 {
     if (auto videoFrame = sharedVideoFrameReader().read(WTFMove(frame)))
-        drawingContext().paintVideoFrame(*videoFrame, destination, shouldDiscardAlpha);
+        drawingContext().drawVideoFrame(*videoFrame, destination, orientation, shouldDiscardAlpha);
 }
-
 
 void RemoteDisplayListRecorder::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
 {
@@ -609,10 +612,7 @@ void RemoteDisplayListRecorder::clearRect(const FloatRect& rect)
 
 void RemoteDisplayListRecorder::drawControlPart(Ref<ControlPart> part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
-    if (!m_controlFactory)
-        m_controlFactory = ControlFactory::createControlFactory();
-    part->setControlFactory(m_controlFactory.get());
-    handleItem(DisplayList::DrawControlPart(WTFMove(part), borderRect, deviceScaleFactor, style));
+    handleItem(DisplayList::DrawControlPart(WTFMove(part), borderRect, deviceScaleFactor, style), protectedControlFactory());
 }
 
 #if USE(CG)
@@ -632,6 +632,25 @@ void RemoteDisplayListRecorder::applyFillPattern()
 void RemoteDisplayListRecorder::applyDeviceScaleFactor(float scaleFactor)
 {
     handleItem(DisplayList::ApplyDeviceScaleFactor(scaleFactor));
+}
+
+void RemoteDisplayListRecorder::beginPage(const IntSize& pageSize)
+{
+    handleItem(DisplayList::BeginPage(pageSize));
+}
+
+void RemoteDisplayListRecorder::endPage()
+{
+    handleItem(DisplayList::EndPage());
+}
+
+std::optional<SharedPreferencesForWebProcess> RemoteDisplayListRecorder::sharedPreferencesForWebProcess() const
+{
+    RefPtr renderingBackend = m_renderingBackend;
+    if (renderingBackend)
+        return renderingBackend->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
 }
 
 } // namespace WebKit

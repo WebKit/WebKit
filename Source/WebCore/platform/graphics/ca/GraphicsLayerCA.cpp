@@ -51,6 +51,7 @@
 #include "ScaleTransformOperation.h"
 #include "Settings.h"
 #include "TiledBacking.h"
+#include "TransformOperationsSharedPrimitivesPrefix.h"
 #include "TransformState.h"
 #include "TranslateTransformOperation.h"
 #include <QuartzCore/CATransform3D.h>
@@ -63,8 +64,9 @@
 #include <wtf/PointerComparison.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -77,7 +79,13 @@
 #include "AcceleratedEffectStack.h"
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+#include "ModelContext.h"
+#endif
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsLayerCA);
 
 // The threshold width or height above which a tiled layer will be used. This should be
 // large enough to avoid tiled layers for most GraphicsLayers, but less than the OpenGL
@@ -207,7 +215,7 @@ static void getTransformFunctionValue(const TransformOperation* transformOp, Tra
     case TransformOperation::Type::Identity:
     case TransformOperation::Type::None:
         if (transformOp)
-            transformOp->apply(value, size);
+            transformOp->applyUnrounded(value, size);
         else
             value.makeIdentity();
         break;
@@ -328,10 +336,10 @@ bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
 Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {
     auto result = PlatformCALayerCocoa::create(layerType, owner);
-    
+
     if (result->canHaveBackingStore())
-        result->setWantsDeepColorBackingStore(screenSupportsExtendedColor());
-    
+        result->setContentsFormat(screenContentsFormat(nullptr, owner));
+
     return result;
 }
     
@@ -340,11 +348,13 @@ Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platf
     return PlatformCALayerCocoa::create(platformLayer, owner);
 }
 
-Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(LayerHostingContextIdentifier, PlatformCALayerClient* owner)
+#if ENABLE(MODEL_PROCESS)
+Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(Ref<ModelContext>, PlatformCALayerClient* owner)
 {
     ASSERT_NOT_REACHED_WITH_MESSAGE("GraphicsLayerCARemote::createPlatformCALayer should always be called instead of this, but this symbol is needed to compile WebKitLegacy.");
     return GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, owner);
 }
+#endif
 
 #if ENABLE(MODEL_ELEMENT)
 Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(Ref<WebCore::Model>, PlatformCALayerClient* owner)
@@ -371,7 +381,7 @@ Ref<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAn
     return PlatformCAAnimationCocoa::create(type, keyPath);
 }
 
-typedef HashMap<const GraphicsLayerCA*, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>> LayerDisplayListHashMap;
+typedef UncheckedKeyHashMap<const GraphicsLayerCA*, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>> LayerDisplayListHashMap;
 
 static LayerDisplayListHashMap& layerDisplayListMap()
 {
@@ -480,13 +490,13 @@ String GraphicsLayerCA::debugName() const
     String caLayerDescription;
     if (m_layer->type() == PlatformCALayer::Type::Cocoa)
         caLayerDescription = makeString("CALayer(0x"_s, hex(reinterpret_cast<uintptr_t>(m_layer->platformLayer()), Lowercase), ") "_s);
-    return makeString(caLayerDescription, "GraphicsLayer(0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", "_s, primaryLayerID().object(), ") "_s, name());
+    return makeString(caLayerDescription, "GraphicsLayer(0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", "_s, primaryLayerID()->object(), ") "_s, name());
 #else
     return name();
 #endif
 }
 
-PlatformLayerIdentifier GraphicsLayerCA::primaryLayerID() const
+std::optional<PlatformLayerIdentifier> GraphicsLayerCA::primaryLayerID() const
 {
     return primaryLayer()->layerID();
 }
@@ -768,6 +778,16 @@ void GraphicsLayerCA::setIsSeparated(bool isSeparated)
     noteLayerPropertyChanged(SeparatedChanged);
 }
 
+void GraphicsLayerCA::setIsSeparatedImage(bool isSeparatedImage)
+{
+    if (isSeparatedImage == m_isSeparatedImage)
+        return;
+
+    GraphicsLayer::setIsSeparatedImage(isSeparatedImage);
+    // Impacts layer type not properties.
+    noteLayerPropertyChanged(SeparatedChanged);
+}
+
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
 void GraphicsLayerCA::setIsSeparatedPortal(bool isSeparatedPortal)
 {
@@ -788,6 +808,24 @@ void GraphicsLayerCA::setIsDescendentOfSeparatedPortal(bool isDescendentOfSepara
     noteLayerPropertyChanged(DescendentOfSeparatedPortalChanged);
 }
 #endif
+#endif
+
+#if HAVE(CORE_MATERIAL)
+void GraphicsLayerCA::setAppleVisualEffect(AppleVisualEffect effect)
+{
+    if (effect == m_appleVisualEffect)
+        return;
+
+    bool backdropFiltersChanged = appleVisualEffectNeedsBackdrop(effect) != appleVisualEffectNeedsBackdrop(m_appleVisualEffect);
+
+    GraphicsLayer::setAppleVisualEffect(effect);
+
+    LayerChangeFlags changes = AppleVisualEffectChanged;
+    if (backdropFiltersChanged)
+        changes |= BackdropFiltersChanged;
+
+    noteLayerPropertyChanged(changes);
+}
 #endif
 
 void GraphicsLayerCA::setBackgroundColor(const Color& color)
@@ -1017,7 +1055,7 @@ void GraphicsLayerCA::setEventRegion(EventRegion&& eventRegion)
 }
 
 #if ENABLE(SCROLLING_THREAD)
-void GraphicsLayerCA::setScrollingNodeID(ScrollingNodeID nodeID)
+void GraphicsLayerCA::setScrollingNodeID(std::optional<ScrollingNodeID> nodeID)
 {
     if (nodeID == m_scrollingNodeID)
         return;
@@ -1225,24 +1263,44 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
         if (!newImage)
             return;
 
-        // FIXME: probably don't need m_uncorrectedContentsImage at all now.
-        if (m_uncorrectedContentsImage == newImage)
+        if (m_pendingContentsImage == newImage)
             return;
-        
-        m_uncorrectedContentsImage = WTFMove(newImage);
-        m_pendingContentsImage = m_uncorrectedContentsImage;
 
+        m_pendingContentsImage = WTFMove(newImage);
         m_contentsLayerPurpose = ContentsLayerPurpose::Image;
         if (!m_contentsLayer)
             noteSublayersChanged();
     } else {
-        m_uncorrectedContentsImage = nullptr;
         m_pendingContentsImage = nullptr;
         m_contentsLayerPurpose = ContentsLayerPurpose::None;
         if (m_contentsLayer)
             noteSublayersChanged();
     }
     m_contentsDisplayDelegate = nullptr;
+    m_pendingContentsImageBuffer = nullptr;
+
+    noteLayerPropertyChanged(ContentsImageChanged);
+}
+
+void GraphicsLayerCA::setContentsToImageBuffer(ImageBuffer* image)
+{
+    if (image) {
+        if (m_pendingContentsImageBuffer == image)
+            return;
+
+        m_pendingContentsImageBuffer = image;
+
+        m_contentsLayerPurpose = ContentsLayerPurpose::Image;
+        if (!m_contentsLayer)
+            noteSublayersChanged();
+    } else {
+        m_pendingContentsImageBuffer = nullptr;
+        m_contentsLayerPurpose = ContentsLayerPurpose::None;
+        if (m_contentsLayer)
+            noteSublayersChanged();
+    }
+    m_contentsDisplayDelegate = nullptr;
+    m_pendingContentsImage = nullptr;
 
     noteLayerPropertyChanged(ContentsImageChanged);
 }
@@ -1282,9 +1340,9 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model, ModelInteraction
     noteLayerPropertyChanged(ContentsRectsChanged | OpacityChanged);
 }
 
-PlatformLayerIdentifier GraphicsLayerCA::contentsLayerIDForModel() const
+std::optional<PlatformLayerIdentifier> GraphicsLayerCA::contentsLayerIDForModel() const
 {
-    return m_contentsLayerPurpose == ContentsLayerPurpose::Model ? m_contentsLayer->layerID() : PlatformLayerIdentifier { };
+    return m_contentsLayerPurpose == ContentsLayerPurpose::Model ? std::optional { m_contentsLayer->layerID() } : std::nullopt;
 }
 
 #endif
@@ -1329,17 +1387,19 @@ void GraphicsLayerCA::setContentsToPlatformLayerHost(LayerHostingContextIdentifi
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);
 }
 
-void GraphicsLayerCA::setContentsToRemotePlatformContext(LayerHostingContextIdentifier identifier, ContentsLayerPurpose purpose)
+#if ENABLE(MODEL_PROCESS)
+void GraphicsLayerCA::setContentsToModelContext(Ref<ModelContext> modelContext, ContentsLayerPurpose purpose)
 {
-    if (m_contentsLayer && m_contentsLayer->hostingContextIdentifier() == identifier)
+    if (m_contentsLayer && m_contentsLayer->hostingContextIdentifier() == modelContext->modelContentsLayerHostingContextIdentifier())
         return;
 
-    m_contentsLayer = createPlatformCALayer(identifier, this);
+    m_contentsLayer = createPlatformCALayer(modelContext, this);
     m_contentsLayerPurpose = purpose;
     m_contentsDisplayDelegate = nullptr;
     noteSublayersChanged();
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);
 }
+#endif
 
 void GraphicsLayerCA::setContentsToVideoElement(HTMLVideoElement& videoElement, ContentsLayerPurpose purpose)
 {
@@ -1486,6 +1546,7 @@ void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
     CommitState commitState;
 
     FloatPoint offset = computePositionRelativeToBase(pageScaleFactor);
+    commitLayerTypeChangesBeforeSublayers(commitState, pageScaleFactor, layerTypeChanged);
     commitLayerChangesBeforeSublayers(commitState, pageScaleFactor, offset, layerTypeChanged);
     commitLayerChangesAfterSublayers(commitState);
 
@@ -1770,6 +1831,9 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
 
 bool GraphicsLayerCA::needsCommit(const CommitState& commitState)
 {
+    if (renderingIsSuppressedIncludingDescendants())
+        return false;
+
     if (commitState.ancestorHadChanges)
         return true;
     if (m_uncommittedChanges)
@@ -1796,6 +1860,9 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     ++childCommitState.treeDepth;
     if (structuralLayerPurpose() != NoStructuralLayer)
         ++childCommitState.treeDepth;
+
+    bool layerTypeChanged = false;
+    commitLayerTypeChangesBeforeSublayers(childCommitState, pageScaleFactor, layerTypeChanged);
 
     bool affectedByTransformAnimation = commitState.ancestorHasTransformAnimation;
 
@@ -1849,8 +1916,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
         baseRelativePosition += m_position;
 
     bool wasRunningTransformAnimation = isRunningTransformAnimation();
-    bool layerTypeChanged = false;
-    
+
     commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, layerTypeChanged);
 
     bool nowRunningTransformAnimation = wasRunningTransformAnimation;
@@ -1868,10 +1934,11 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     }
 
     if (isBackdropRoot())
-        commitState.backdropRootIsOpaque = backgroundColor().isOpaque();
+        childCommitState.backdropRootIsOpaque = backgroundColor().isOpaque();
 
     if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer.get())) {
         maskLayer->setVisibleAndCoverageRects(rects);
+        maskLayer->commitLayerTypeChangesBeforeSublayers(childCommitState, pageScaleFactor, layerTypeChanged);
         maskLayer->commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, layerTypeChanged);
     }
 
@@ -1995,19 +2062,46 @@ void GraphicsLayerCA::platformCALayerLogFilledVisibleFreshTile(unsigned blankPix
 
 bool GraphicsLayerCA::platformCALayerDelegatesDisplay(PlatformCALayer* layer) const
 {
-    return m_contentsDisplayDelegate && m_contentsLayer == layer;
+    return (m_contentsDisplayDelegate || m_contentsLayerPurpose == ContentsLayerPurpose::Image) && m_contentsLayer == layer;
 }
 
 void GraphicsLayerCA::platformCALayerLayerDisplay(PlatformCALayer* layer)
 {
-    ASSERT(m_contentsDisplayDelegate);
+    ASSERT(m_contentsDisplayDelegate || m_contentsLayerPurpose == ContentsLayerPurpose::Image);
     ASSERT(layer == m_contentsLayer);
-    m_contentsDisplayDelegate->display(*layer);
+    if (m_contentsDisplayDelegate)
+        m_contentsDisplayDelegate->display(*layer);
 }
 
 bool GraphicsLayerCA::platformCALayerNeedsPlatformContext(const PlatformCALayer*) const
 {
     return client().layerNeedsPlatformContext(this);
+}
+
+void GraphicsLayerCA::commitLayerTypeChangesBeforeSublayers(CommitState&, float pageScaleFactor, bool& layerTypeChanged)
+{
+    SetForScope committingChangesChange(m_isCommittingChanges, true);
+
+    bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
+
+    PlatformCALayer::LayerType currentLayerType = m_layer->layerType();
+    PlatformCALayer::LayerType neededLayerType = currentLayerType;
+
+    if (needTiledLayer)
+        neededLayerType = PlatformCALayer::LayerType::LayerTypeTiledBackingLayer;
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    else if (m_isSeparatedImage)
+        neededLayerType = PlatformCALayer::LayerType::LayerTypeSeparatedImageLayer;
+    else if (currentLayerType == PlatformCALayer::LayerType::LayerTypeSeparatedImageLayer)
+        neededLayerType = PlatformCALayer::LayerType::LayerTypeWebLayer;
+#endif
+    else if (currentLayerType == PlatformCALayer::LayerType::LayerTypeTiledBackingLayer)
+        neededLayerType = PlatformCALayer::LayerType::LayerTypeWebLayer;
+
+    if (neededLayerType != m_layer->layerType()) {
+        changeLayerTypeTo(neededLayerType);
+        layerTypeChanged = true;
+    }
 }
 
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool& layerChanged)
@@ -2018,21 +2112,6 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
         // Ensure that we cap layer depth in commitLayerChangesAfterSublayers().
         if (commitState.treeDepth > cMaxLayerTreeDepth)
             addUncommittedChanges(ChildrenChanged);
-    }
-
-    bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
-
-    PlatformCALayer::LayerType currentLayerType = m_layer->layerType();
-    PlatformCALayer::LayerType neededLayerType = currentLayerType;
-
-    if (needTiledLayer)
-        neededLayerType = PlatformCALayer::LayerType::LayerTypeTiledBackingLayer;
-    else if (currentLayerType == PlatformCALayer::LayerType::LayerTypeTiledBackingLayer)
-        neededLayerType = PlatformCALayer::LayerType::LayerTypeWebLayer;
-
-    if (neededLayerType != m_layer->layerType()) {
-        changeLayerTypeTo(neededLayerType);
-        layerChanged = true;
     }
 
     // Need to handle Preserves3DChanged first, because it affects which layers subsequent properties are applied to
@@ -2094,6 +2173,11 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     // because something up the tree may have changed its usage.
     if (m_uncommittedChanges & BackdropFiltersChanged || needsBackdrop())
         updateBackdropFilters(commitState);
+
+#if HAVE(CORE_MATERIAL)
+    if (m_uncommittedChanges & AppleVisualEffectChanged)
+        updateAppleVisualEffect();
+#endif
 
     if (m_uncommittedChanges & BackdropRootChanged)
         updateBackdropRoot();
@@ -2530,34 +2614,55 @@ void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
     }
 
     // If nothing actually changed, no need to touch the layer properties.
-    if (!(m_uncommittedChanges & BackdropFiltersChanged)) {
+    if (!(m_uncommittedChanges & BackdropFiltersChanged) && m_backdropLayer) {
         // Opaque state depends on ancestor state, and is cheap to set, so just unconditionally update it.
-        if (m_backdropLayer)
-            m_backdropLayer->setBackdropRootIsOpaque(commitState.backdropRootIsOpaque);
+        m_backdropLayer->setBackdropRootIsOpaque(commitState.backdropRootIsOpaque);
         return;
     }
 
-    bool madeLayer = !m_backdropLayer;
-    if (!m_backdropLayer) {
-        m_backdropLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeBackdropLayer, this);
+    auto expectedLayerType = PlatformCALayer::LayerType::LayerTypeBackdropLayer;
+#if HAVE(CORE_MATERIAL)
+    if (appleVisualEffectNeedsBackdrop(m_appleVisualEffect))
+        expectedLayerType = PlatformCALayer::LayerType::LayerTypeMaterialLayer;
+#endif
+
+    bool makeLayer = !m_backdropLayer || (m_backdropLayer->layerType() != expectedLayerType);
+    if (makeLayer) {
+        m_backdropLayer = createPlatformCALayer(expectedLayerType, this);
         m_backdropLayer->setAnchorPoint(FloatPoint3D());
         m_backdropLayer->setMasksToBounds(true);
-        m_backdropLayer->setName(MAKE_STATIC_STRING_IMPL("backdrop"));
+#if HAVE(CORE_MATERIAL)
+        if (expectedLayerType == PlatformCALayer::LayerType::LayerTypeMaterialLayer)
+            m_backdropLayer->setName(MAKE_STATIC_STRING_IMPL("material"));
+        else
+#endif
+            m_backdropLayer->setName(MAKE_STATIC_STRING_IMPL("backdrop"));
     }
 
     m_backdropLayer->setHidden(!m_contentsVisible);
     m_backdropLayer->setBackdropRootIsOpaque(commitState.backdropRootIsOpaque);
-    m_backdropLayer->setFilters(m_backdropFilters);
+
+    bool shouldSetFilters = true;
+#if HAVE(CORE_MATERIAL)
+    if (m_appleVisualEffect != AppleVisualEffect::None) {
+        m_backdropLayer->setAppleVisualEffect(m_appleVisualEffect);
+        shouldSetFilters = false;
+    }
+#endif
+
+    if (shouldSetFilters)
+        m_backdropLayer->setFilters(m_backdropFilters);
 
     if (m_layerClones) {
         for (auto& clone : m_layerClones->backdropLayerClones.values()) {
             clone->setHidden(!m_contentsVisible);
             clone->setBackdropRootIsOpaque(commitState.backdropRootIsOpaque);
-            clone->setFilters(m_backdropFilters);
+            if (shouldSetFilters)
+                clone->setFilters(m_backdropFilters);
         }
     }
 
-    if (madeLayer) {
+    if (makeLayer) {
         updateBackdropFiltersRect();
         noteSublayersChanged(DontScheduleFlush);
     }
@@ -2652,6 +2757,14 @@ void GraphicsLayerCA::updateIsDescendentOfSeparatedPortal()
     m_layer->setIsDescendentOfSeparatedPortal(m_isDescendentOfSeparatedPortal);
 }
 #endif
+#endif
+
+#if HAVE(CORE_MATERIAL)
+void GraphicsLayerCA::updateAppleVisualEffect()
+{
+    if (m_backdropLayer && (appleVisualEffectNeedsBackdrop(m_backdropLayer->appleVisualEffect()) || appleVisualEffectNeedsBackdrop(m_appleVisualEffect)))
+        m_backdropLayer->setAppleVisualEffect(m_appleVisualEffect);
+}
 #endif
 
 void GraphicsLayerCA::updateContentsScalingFilters()
@@ -2790,7 +2903,7 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
         backing->setCoverageRect(m_coverageRect);
     }
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     m_layer->setVisibleRect(m_visibleRect);
 #endif
 
@@ -2895,7 +3008,7 @@ void GraphicsLayerCA::updateBackgroundColor()
 
 void GraphicsLayerCA::updateContentsImage()
 {
-    if (m_pendingContentsImage) {
+    if (m_pendingContentsImage || m_pendingContentsImageBuffer) {
         if (!m_contentsLayer.get()) {
             m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, this);
 #if ENABLE(TREE_DEBUGGING)
@@ -2910,14 +3023,24 @@ void GraphicsLayerCA::updateContentsImage()
         // FIXME: maybe only do trilinear if the image is being scaled down,
         // but then what if the layer size changes?
         m_contentsLayer->setMinificationFilter(PlatformCALayer::FilterType::Trilinear);
-        m_contentsLayer->setContents(m_pendingContentsImage->platformImage().get());
-        m_pendingContentsImage = nullptr;
+
+        if (m_pendingContentsImage) {
+            m_contentsLayer->setContents(m_pendingContentsImage->platformImage().get());
+            m_pendingContentsImage = nullptr;
+        } else
+            setLayerContentsToImageBuffer(m_contentsLayer.get(), m_pendingContentsImageBuffer.get());
 
         if (m_layerClones) {
-            for (auto& layer : m_layerClones->contentsLayerClones.values())
-                layer->setContents(m_contentsLayer->contents());
+            for (auto& layer : m_layerClones->contentsLayerClones.values()) {
+                if (m_pendingContentsImageBuffer)
+                    setLayerContentsToImageBuffer(layer.get(), m_pendingContentsImageBuffer.get());
+                else
+                    layer->setContents(m_contentsLayer->contents());
+            }
         }
-        
+
+        m_pendingContentsImageBuffer = nullptr;
+
         updateContentsRects();
     } else {
         // No image.
@@ -2963,6 +3086,14 @@ void GraphicsLayerCA::updateContentsColorLayer()
 // roundedRect is in the coordinate space of clippingLayer.
 void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect& roundedRect)
 {
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    if (m_isSeparated && roundedRect.radii().hasEvenCorners() && clippingLayer.bounds() == roundedRect.rect()) {
+        m_layer->setCornerRadius(roundedRect.radii().topLeft().width());
+        return;
+    }
+    m_layer->setCornerRadius(0);
+#endif
+
     if (roundedRect.radii().isUniformCornerRadius() && clippingLayer.bounds() == roundedRect.rect()) {
         clippingLayer.setMaskLayer(nullptr);
         if (shapeMaskLayer) {
@@ -3566,7 +3697,7 @@ static const TransformOperations& transformationAnimationValueAt(const KeyframeV
     return static_cast<const TransformAnimationValue&>(valueList.at(i)).value();
 }
 
-static bool hasBig3DRotation(const KeyframeValueList& valueList, const SharedPrimitivesPrefix& prefix)
+static bool hasBig3DRotation(const KeyframeValueList& valueList, const TransformOperationsSharedPrimitivesPrefix& prefix)
 {
     // Hardware non-matrix animations are used for every function in the shared primitives prefix.
     // These kind of animations have issues with large rotation angles, so for every function that
@@ -3606,7 +3737,7 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     // FIXME: Currently, this only supports situations where every keyframe shares the same prefix of shared
     // transformation primitives, but the specification says direct interpolation should be determined by
     // the primitives shared between any two adjacent keyframes.
-    SharedPrimitivesPrefix prefix;
+    TransformOperationsSharedPrimitivesPrefix prefix;
     for (size_t i = 0; i < valueList.size(); ++i)
         prefix.update(transformationAnimationValueAt(valueList, i));
 
@@ -3710,7 +3841,7 @@ Ref<PlatformCAAnimation> GraphicsLayerCA::createSpringAnimation(const Animation*
 
 void GraphicsLayerCA::setupAnimation(PlatformCAAnimation* propertyAnim, const Animation* anim, bool additive, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    double duration = anim->duration();
+    double duration = anim->duration().value_or(0);
     if (duration <= 0)
         duration = cAnimationAlmostZeroDuration;
 
@@ -3838,8 +3969,8 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
 
     if (isMatrixAnimation) {
         TransformationMatrix fromTransform, toTransform;
-        startValue.apply(boxSize, fromTransform);
-        endValue.apply(boxSize, toTransform);
+        startValue.apply(fromTransform, boxSize);
+        endValue.apply(toTransform, boxSize);
 
         // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
         if (!fromTransform.isInvertible() || !toTransform.isInvertible())
@@ -3899,7 +4030,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
 
         if (isMatrixAnimation) {
             TransformationMatrix transform;
-            curValue.value().apply(functionIndex, boxSize, transform);
+            curValue.value().apply(transform, boxSize, functionIndex);
 
             // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
             if (!transform.isInvertible())
@@ -4272,8 +4403,13 @@ ASCIILiteral GraphicsLayerCA::purposeNameForInnerLayer(PlatformCALayer& layer) c
     }
     if (&layer == m_contentsShapeMaskLayer.get())
         return "contents shape mask layer"_s;
-    if (&layer == m_backdropLayer.get())
+    if (&layer == m_backdropLayer.get()) {
+#if HAVE(CORE_MATERIAL)
+        if (m_backdropLayer->appleVisualEffect() != AppleVisualEffect::None)
+            return "backdrop layer (material)"_s;
+#endif
         return "backdrop layer"_s;
+    }
     return "platform layer"_s;
 }
 
@@ -4423,6 +4559,9 @@ ASCIILiteral GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
     case LayerChange::ContentsScalingFiltersChanged: return "ContentsScalingFiltersChanged"_s;
     case LayerChange::VideoGravityChanged: return "VideoGravityChanged"_s;
     case LayerChange::BackdropRootChanged: return "BackdropRootChanged"_s;
+#if HAVE(CORE_MATERIAL)
+    case LayerChange::AppleVisualEffectChanged: return "AppleVisualEffectChanged"_s;
+#endif
     }
     ASSERT_NOT_REACHED();
     return ""_s;
@@ -4474,8 +4613,8 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, OptionSet
     if (options & LayerTreeAsTextOptions::IncludeDeviceScale)
         textStream << indent << "(device scale " << deviceScaleFactor() << ")\n";
 
-    if ((options & LayerTreeAsTextOptions::IncludeDeepColor) && m_layer->wantsDeepColorBackingStore())
-        textStream << indent << "(deep color 1)\n";
+    if ((options & LayerTreeAsTextOptions::IncludeExtendedColor) && m_layer->contentsFormat() != ContentsFormat::RGBA8)
+        textStream << indent << "(contentsFormat " << m_layer->contentsFormat() << ")\n";
 
     if (options & LayerTreeAsTextOptions::IncludeContentLayers) {
         OptionSet<PlatformLayerTreeAsTextFlags> platformFlags = { PlatformLayerTreeAsTextFlags::IgnoreChildren };
@@ -4544,6 +4683,12 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 #endif
 }
 
+void GraphicsLayerCA::setTileCoverage(TileCoverage coverage)
+{
+    m_tileCoverage = coverage;
+    GraphicsLayer::setTileCoverage(coverage);
+}
+
 void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
 {
     PlatformCALayer::LayerType oldLayerType = m_layer->layerType();
@@ -4555,6 +4700,9 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
 
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     m_layer = createPlatformCALayer(newLayerType, this);
+
+    if (auto* backing = tiledBacking())
+        backing->setTileCoverage(m_tileCoverage);
 
     m_layer->adoptSublayers(*oldLayer);
 
@@ -4588,12 +4736,20 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | FiltersChanged
         | BackdropFiltersChanged
         | BackdropRootChanged
+        | BlendModeChanged
         | MaskLayerChanged
         | OpacityChanged
         | EventRegionChanged
         | NameChanged
         | DebugIndicatorsChanged
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if HAVE(CORE_MATERIAL)
+        | AppleVisualEffectChanged
+#endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+        | ContentsRectsChanged
+        | SeparatedChanged
+#endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         | CoverageRectChanged);
 #else
         );
@@ -4611,6 +4767,8 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
 
     if (wasTiledLayer || isTiledLayer)
         client().tiledBackingUsageChanged(this, isTiledLayer);
+
+    oldLayer->setOwner(nullptr);
 }
 
 void GraphicsLayerCA::setupContentsLayer(PlatformCALayer* contentsLayer, CompositingCoordinatesOrientation orientation)

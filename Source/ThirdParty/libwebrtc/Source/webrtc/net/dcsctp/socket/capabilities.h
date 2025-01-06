@@ -21,7 +21,7 @@ struct Capabilities {
   bool message_interleaving = false;
   // RFC6525 Stream Reconfiguration
   bool reconfig = false;
-  // https://datatracker.ietf.org/doc/draft-tuexen-tsvwg-sctp-zero-checksum/
+  // https://datatracker.ietf.org/doc/draft-ietf-tsvwg-sctp-zero-checksum/
   bool zero_checksum = false;
   // Negotiated maximum incoming and outgoing stream count.
   uint16_t negotiated_maximum_incoming_streams = 0;

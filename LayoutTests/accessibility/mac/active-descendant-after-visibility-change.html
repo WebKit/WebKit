@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+
+<body>
+
+<div id="all">
+    <div>
+        <button id="open">Open</button>
+    </div>
+    <div id="listbox" tabindex="0" role="listbox" hidden>
+        <div id="option1" tabindex="-1" role="option">Red</div>
+        <div id="option2" tabindex="-1" role="option">Orange</div>
+    </div>
+</div>
+
+<script>
+var output = "This test ensures objects that aria-activedescendant is correct after a visibility change.\n\n";
+
+document.getElementById("open").addEventListener("click", () => {
+    document.getElementById("listbox").hidden = false;
+    document.getElementById("listbox").setAttribute("aria-activedescendant", "option1");
+    setTimeout(() => {
+        document.getElementById("listbox").focus();
+    }, 0);
+});
+
+function notifyCallback(element, notification) {
+    if (notification == "AXFocusChanged") {
+        var axFocused = accessibilityController.focusedElement;
+
+        // Ignore focus on the button, wait for focus on the listbox option.
+        if (axFocused.role == "AXRole: AXButton") {
+            return;
+        }
+
+        output += `The listbox option should be focused: ${axFocused.role} ${axFocused.title}\n`;
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        document.getElementById("all").hidden = true;
+        finishJSTest();
+    }
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    accessibilityController.addNotificationListener(notifyCallback);
+
+    setTimeout(() => {
+        var axOpenButton = accessibilityController.accessibleElementById("open");
+        axOpenButton.press();
+    }, 100);
+}
+
+</script>
+
+</body>
+</html>

@@ -20,6 +20,7 @@
 #include "include/private/base/SkDebug.h"
 #include "include/private/base/SkTPin.h"
 #include "include/private/base/SkTo.h"
+#include "modules/jsonreader/SkJSONReader.h"
 #include "modules/skottie/include/ExternalLayer.h"
 #include "modules/skottie/include/Skottie.h"
 #include "modules/skottie/include/SkottieProperty.h"
@@ -33,7 +34,6 @@
 #include "src/base/SkUTF.h"
 #include "src/core/SkGeometry.h"
 #include "src/core/SkPathPriv.h"
-#include "src/utils/SkJSON.h"
 
 #include <cstddef>
 #include <iostream>
@@ -46,13 +46,12 @@
 
 using ResourceProvider = skresources::ResourceProvider;
 
-using skjson::Value;
-using skjson::NullValue;
+using skjson::ArrayValue;
 using skjson::BoolValue;
 using skjson::NumberValue;
-using skjson::ArrayValue;
-using skjson::StringValue;
 using skjson::ObjectValue;
+using skjson::StringValue;
+using skjson::Value;
 
 namespace {
 

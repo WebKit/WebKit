@@ -31,6 +31,7 @@
 #include "PropertyCascade.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
+#include "StyleForVisitedLink.h"
 #include <wtf/BitSet.h>
 
 namespace WebCore {
@@ -38,18 +39,22 @@ namespace WebCore {
 class FilterOperations;
 class FontCascadeDescription;
 class RenderStyle;
-class StyleColor;
 class StyleImage;
 class StyleResolver;
+
+namespace CSS {
+struct AppleColorFilterProperty;
+struct FilterProperty;
+}
 
 namespace Style {
 
 class Builder;
 class BuilderState;
+struct Color;
 
 void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
 
-enum class ForVisitedLink : bool { No, Yes };
 enum class ApplyValueType : uint8_t { Value, Initial, Inherit };
 
 struct BuilderContext {
@@ -66,6 +71,8 @@ public:
     Builder& builder() { return m_builder; }
 
     RenderStyle& style() { return m_style; }
+    const RenderStyle& style() const { return m_style; }
+
     const RenderStyle& parentStyle() const { return m_context.parentStyle; }
     const RenderStyle* rootElementStyle() const { return m_context.rootElementStyle; }
 
@@ -76,7 +83,7 @@ public:
     void setFontSize(FontCascadeDescription&, float size);
     inline void setZoom(float);
     inline void setUsedZoom(float);
-    inline void setWritingMode(WritingMode);
+    inline void setWritingMode(StyleWritingMode);
     inline void setTextOrientation(TextOrientation);
 
     bool fontDirty() const { return m_fontDirty; }
@@ -92,17 +99,18 @@ public:
     bool useSVGZoomRulesForLength() const;
     ScopeOrdinal styleScopeOrdinal() const { return m_currentProperty->styleScopeOrdinal; }
 
-    RefPtr<StyleImage> createStyleImage(const CSSValue&);
-    std::optional<FilterOperations> createFilterOperations(const CSSValue&);
-
-    static bool isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue&);
-    StyleColor colorFromPrimitiveValue(const CSSPrimitiveValue&, ForVisitedLink = ForVisitedLink::No) const;
+    RefPtr<StyleImage> createStyleImage(const CSSValue&) const;
+    FilterOperations createFilterOperations(const CSS::FilterProperty&) const;
+    FilterOperations createFilterOperations(const CSSValue&) const;
+    FilterOperations createAppleColorFilterOperations(const CSS::AppleColorFilterProperty&) const;
+    FilterOperations createAppleColorFilterOperations(const CSSValue&) const;
+    Color createStyleColor(const CSSValue&, ForVisitedLink = ForVisitedLink::No) const;
 
     const Vector<AtomString>& registeredContentAttributes() const { return m_registeredContentAttributes; }
     void registerContentAttribute(const AtomString& attributeLocalName);
 
     const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
-    CSSToStyleMap& styleMap() { return m_styleMap; }
+    const CSSToStyleMap& styleMap() const { return m_styleMap; }
 
     void setIsBuildingKeyframeStyle() { m_isBuildingKeyframeStyle = true; }
 
@@ -110,6 +118,11 @@ public:
     {
         return m_currentProperty && m_currentProperty->cascadeLevel == CascadeLevel::Author;
     }
+
+    CSSPropertyID cssPropertyID() const;
+
+    bool isCurrentPropertyInvalidAtComputedValueTime() const;
+    void setCurrentPropertyInvalidAtComputedValueTime();
 
 private:
     // See the comment in maybeUpdateFontForLetterSpacing() about why this needs to be a friend.
@@ -139,7 +152,7 @@ private:
     HashSet<AtomString> m_inProgressCustomProperties;
     HashSet<AtomString> m_inCycleCustomProperties;
     WTF::BitSet<numCSSProperties> m_inProgressProperties;
-    WTF::BitSet<numCSSProperties> m_inUnitCycleProperties;
+    WTF::BitSet<numCSSProperties> m_invalidAtComputedValueTimeProperties;
 
     const PropertyCascade::Property* m_currentProperty { nullptr };
     SelectorChecker::LinkMatchMask m_linkMatch { };

@@ -10,41 +10,46 @@
 
 #include "rtc_base/ssl_adapter.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "api/sequence_checker.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/ip_address.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/message_digest.h"
-#include "rtc_base/socket_stream.h"
+#include "rtc_base/socket.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
-#include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/stream.h"
 #include "rtc_base/string_encode.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
+#include "rtc_base/thread.h"
 #include "rtc_base/virtual_socket_server.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 using ::testing::_;
 using ::testing::Return;
 
 static const int kTimeout = 5000;
 
-static rtc::Socket* CreateSocket(const rtc::SSLMode& ssl_mode) {
+static rtc::Socket* CreateSocket() {
   rtc::SocketAddress address(rtc::IPAddress(INADDR_ANY), 0);
 
   rtc::Socket* socket = rtc::Thread::Current()->socketserver()->CreateSocket(
-      address.family(),
-      (ssl_mode == rtc::SSL_MODE_DTLS) ? SOCK_DGRAM : SOCK_STREAM);
+      address.family(), SOCK_STREAM);
   socket->Bind(address);
 
   return socket;
-}
-
-static std::string GetSSLProtocolName(const rtc::SSLMode& ssl_mode) {
-  return (ssl_mode == rtc::SSL_MODE_DTLS) ? "DTLS" : "TLS";
 }
 
 // Simple mock for the certificate verifier.
@@ -56,15 +61,13 @@ class MockCertVerifier : public rtc::SSLCertificateVerifier {
 
 // TODO(benwright) - Move to using INSTANTIATE_TEST_SUITE_P instead of using
 // duplicate test cases for simple parameter changes.
-class SSLAdapterTestDummyClient : public sigslot::has_slots<> {
+class SSLAdapterTestDummy : public sigslot::has_slots<> {
  public:
-  explicit SSLAdapterTestDummyClient(const rtc::SSLMode& ssl_mode)
-      : ssl_mode_(ssl_mode) {
-    rtc::Socket* socket = CreateSocket(ssl_mode_);
+  explicit SSLAdapterTestDummy() : socket_(CreateSocket()) {}
+  virtual ~SSLAdapterTestDummy() = default;
 
+  void CreateSSLAdapter(rtc::Socket* socket, rtc::SSLRole role) {
     ssl_adapter_.reset(rtc::SSLAdapter::Create(socket));
-
-    ssl_adapter_->SetMode(ssl_mode_);
 
     // Ignore any certificate errors for the purpose of testing.
     // Note: We do this only because we don't have a real certificate.
@@ -72,9 +75,10 @@ class SSLAdapterTestDummyClient : public sigslot::has_slots<> {
     ssl_adapter_->SetIgnoreBadCert(true);
 
     ssl_adapter_->SignalReadEvent.connect(
-        this, &SSLAdapterTestDummyClient::OnSSLAdapterReadEvent);
+        this, &SSLAdapterTestDummy::OnSSLAdapterReadEvent);
     ssl_adapter_->SignalCloseEvent.connect(
-        this, &SSLAdapterTestDummyClient::OnSSLAdapterCloseEvent);
+        this, &SSLAdapterTestDummy::OnSSLAdapterCloseEvent);
+    ssl_adapter_->SetRole(role);
   }
 
   void SetIgnoreBadCert(bool ignore_bad_cert) {
@@ -101,27 +105,10 @@ class SSLAdapterTestDummyClient : public sigslot::has_slots<> {
 
   const std::string& GetReceivedData() const { return data_; }
 
-  int Connect(absl::string_view hostname, const rtc::SocketAddress& address) {
-    RTC_LOG(LS_INFO) << "Initiating connection with " << address.ToString();
-
-    int rv = ssl_adapter_->Connect(address);
-
-    if (rv == 0) {
-      RTC_LOG(LS_INFO) << "Starting " << GetSSLProtocolName(ssl_mode_)
-                       << " handshake with " << hostname;
-
-      if (ssl_adapter_->StartSSL(hostname) != 0) {
-        return -1;
-      }
-    }
-
-    return rv;
-  }
-
   int Close() { return ssl_adapter_->Close(); }
 
   int Send(absl::string_view message) {
-    RTC_LOG(LS_INFO) << "Client sending '" << message << "'";
+    RTC_LOG(LS_INFO) << "Sending '" << message << "'";
 
     return ssl_adapter_->Send(message.data(), message.length());
   }
@@ -134,7 +121,7 @@ class SSLAdapterTestDummyClient : public sigslot::has_slots<> {
     if (read != -1) {
       buffer[read] = '\0';
 
-      RTC_LOG(LS_INFO) << "Client received '" << buffer << "'";
+      RTC_LOG(LS_INFO) << "Received '" << buffer << "'";
 
       data_ += buffer;
     }
@@ -149,39 +136,50 @@ class SSLAdapterTestDummyClient : public sigslot::has_slots<> {
     }
   }
 
- private:
-  const rtc::SSLMode ssl_mode_;
-
+ protected:
   std::unique_ptr<rtc::SSLAdapter> ssl_adapter_;
+  std::unique_ptr<rtc::Socket> socket_;
 
+ private:
   std::string data_;
 };
 
-class SSLAdapterTestDummyServer : public sigslot::has_slots<> {
+class SSLAdapterTestDummyClient : public SSLAdapterTestDummy {
  public:
-  explicit SSLAdapterTestDummyServer(const rtc::SSLMode& ssl_mode,
-                                     const rtc::KeyParams& key_params)
-      : ssl_mode_(ssl_mode) {
-    // Generate a key pair and a certificate for this host.
-    ssl_identity_ = rtc::SSLIdentity::Create(GetHostname(), key_params);
+  explicit SSLAdapterTestDummyClient() : SSLAdapterTestDummy() {
+    CreateSSLAdapter(socket_.release(), rtc::SSL_CLIENT);
+  }
 
-    server_socket_.reset(CreateSocket(ssl_mode_));
+  int Connect(absl::string_view hostname, const rtc::SocketAddress& address) {
+    RTC_LOG(LS_INFO) << "Initiating connection with " << address.ToString();
+    int rv = ssl_adapter_->Connect(address);
 
-    if (ssl_mode_ == rtc::SSL_MODE_TLS) {
-      server_socket_->SignalReadEvent.connect(
-          this, &SSLAdapterTestDummyServer::OnServerSocketReadEvent);
+    if (rv == 0) {
+      RTC_LOG(LS_INFO) << "Starting TLS handshake with " << hostname;
 
-      server_socket_->Listen(1);
+      if (ssl_adapter_->StartSSL(hostname) != 0) {
+        return -1;
+      }
     }
 
-    RTC_LOG(LS_INFO) << ((ssl_mode_ == rtc::SSL_MODE_DTLS) ? "UDP" : "TCP")
-                     << " server listening on "
-                     << server_socket_->GetLocalAddress().ToString();
+    return rv;
+  }
+};
+
+class SSLAdapterTestDummyServer : public SSLAdapterTestDummy {
+ public:
+  explicit SSLAdapterTestDummyServer(const rtc::KeyParams& key_params)
+      : SSLAdapterTestDummy(),
+        ssl_identity_(rtc::SSLIdentity::Create(GetHostname(), key_params)) {
+    socket_->Listen(1);
+    socket_->SignalReadEvent.connect(this,
+                                     &SSLAdapterTestDummyServer::OnReadEvent);
+
+    RTC_LOG(LS_INFO) << "TCP server listening on "
+                     << socket_->GetLocalAddress().ToString();
   }
 
-  rtc::SocketAddress GetAddress() const {
-    return server_socket_->GetLocalAddress();
-  }
+  rtc::SocketAddress GetAddress() const { return socket_->GetLocalAddress(); }
 
   std::string GetHostname() const {
     // Since we don't have a real certificate anyway, the value here doesn't
@@ -189,120 +187,26 @@ class SSLAdapterTestDummyServer : public sigslot::has_slots<> {
     return "example.com";
   }
 
-  const std::string& GetReceivedData() const { return data_; }
-
-  int Send(absl::string_view message) {
-    if (ssl_stream_adapter_ == nullptr ||
-        ssl_stream_adapter_->GetState() != rtc::SS_OPEN) {
-      // No connection yet.
-      return -1;
-    }
-
-    RTC_LOG(LS_INFO) << "Server sending '" << message << "'";
-
-    size_t written;
-    int error;
-
-    rtc::StreamResult r = ssl_stream_adapter_->Write(
-        rtc::MakeArrayView(reinterpret_cast<const uint8_t*>(message.data()),
-                           message.size()),
-        written, error);
-    if (r == rtc::SR_SUCCESS) {
-      return written;
-    } else {
-      return -1;
-    }
-  }
-
-  void AcceptConnection(const rtc::SocketAddress& address) {
-    // Only a single connection is supported.
-    ASSERT_TRUE(ssl_stream_adapter_ == nullptr);
-
-    // This is only for DTLS.
-    ASSERT_EQ(rtc::SSL_MODE_DTLS, ssl_mode_);
-
-    // Transfer ownership of the socket to the SSLStreamAdapter object.
-    rtc::Socket* socket = server_socket_.release();
-
-    socket->Connect(address);
-
-    DoHandshake(socket);
-  }
-
-  void OnServerSocketReadEvent(rtc::Socket* socket) {
-    // Only a single connection is supported.
-    ASSERT_TRUE(ssl_stream_adapter_ == nullptr);
-
-    DoHandshake(server_socket_->Accept(nullptr));
-  }
-
-  void OnSSLStreamAdapterEvent(rtc::StreamInterface* stream, int sig, int err) {
-    if (sig & rtc::SE_READ) {
-      uint8_t buffer[4096] = "";
-      size_t read;
-      int error;
-
-      // Read data received from the client and store it in our internal
-      // buffer.
-      rtc::StreamResult r = stream->Read(buffer, read, error);
-      if (r == rtc::SR_SUCCESS) {
-        buffer[read] = '\0';
-        // Here we assume that the buffer is interpretable as string.
-        char* buffer_as_char = reinterpret_cast<char*>(buffer);
-        RTC_LOG(LS_INFO) << "Server received '" << buffer_as_char << "'";
-        data_ += buffer_as_char;
-      }
+ protected:
+  void OnReadEvent(rtc::Socket* socket) {
+    CreateSSLAdapter(socket_->Accept(nullptr), rtc::SSL_SERVER);
+    ssl_adapter_->SetIdentity(ssl_identity_->Clone());
+    if (ssl_adapter_->StartSSL(GetHostname()) != 0) {
+      RTC_LOG(LS_ERROR) << "Starting SSL from server failed.";
     }
   }
 
  private:
-  void DoHandshake(rtc::Socket* socket) {
-    ssl_stream_adapter_ = rtc::SSLStreamAdapter::Create(
-        std::make_unique<rtc::SocketStream>(socket));
-
-    ssl_stream_adapter_->SetMode(ssl_mode_);
-    ssl_stream_adapter_->SetServerRole();
-
-    // SSLStreamAdapter is normally used for peer-to-peer communication, but
-    // here we're testing communication between a client and a server
-    // (e.g. a WebRTC-based application and an RFC 5766 TURN server), where
-    // clients are not required to provide a certificate during handshake.
-    // Accordingly, we must disable client authentication here.
-    ssl_stream_adapter_->SetClientAuthEnabledForTesting(false);
-
-    ssl_stream_adapter_->SetIdentity(ssl_identity_->Clone());
-
-    // Set a bogus peer certificate digest.
-    unsigned char digest[20];
-    size_t digest_len = sizeof(digest);
-    ssl_stream_adapter_->SetPeerCertificateDigest(rtc::DIGEST_SHA_1, digest,
-                                                  digest_len);
-
-    ssl_stream_adapter_->StartSSL();
-
-    ssl_stream_adapter_->SignalEvent.connect(
-        this, &SSLAdapterTestDummyServer::OnSSLStreamAdapterEvent);
-  }
-
-  const rtc::SSLMode ssl_mode_;
-
-  std::unique_ptr<rtc::Socket> server_socket_;
-  std::unique_ptr<rtc::SSLStreamAdapter> ssl_stream_adapter_;
-
   std::unique_ptr<rtc::SSLIdentity> ssl_identity_;
-
-  std::string data_;
 };
 
 class SSLAdapterTestBase : public ::testing::Test, public sigslot::has_slots<> {
  public:
-  explicit SSLAdapterTestBase(const rtc::SSLMode& ssl_mode,
-                              const rtc::KeyParams& key_params)
-      : ssl_mode_(ssl_mode),
-        vss_(new rtc::VirtualSocketServer()),
+  explicit SSLAdapterTestBase(const rtc::KeyParams& key_params)
+      : vss_(new rtc::VirtualSocketServer()),
         thread_(vss_.get()),
-        server_(new SSLAdapterTestDummyServer(ssl_mode_, key_params)),
-        client_(new SSLAdapterTestDummyClient(ssl_mode_)),
+        server_(new SSLAdapterTestDummyServer(key_params)),
+        client_(new SSLAdapterTestDummyClient()),
         handshake_wait_(kTimeout) {}
 
   void SetHandshakeWait(int wait) { handshake_wait_ = wait; }
@@ -345,26 +249,20 @@ class SSLAdapterTestBase : public ::testing::Test, public sigslot::has_slots<> {
     // Now the state should be CS_CONNECTING
     ASSERT_EQ(rtc::Socket::CS_CONNECTING, client_->GetState());
 
-    if (ssl_mode_ == rtc::SSL_MODE_DTLS) {
-      // For DTLS, call AcceptConnection() with the client's address.
-      server_->AcceptConnection(client_->GetAddress());
-    }
-
     if (expect_success) {
       // If expecting success, the client should end up in the CS_CONNECTED
       // state after handshake.
       EXPECT_EQ_WAIT(rtc::Socket::CS_CONNECTED, client_->GetState(),
                      handshake_wait_);
 
-      RTC_LOG(LS_INFO) << GetSSLProtocolName(ssl_mode_)
-                       << " handshake complete.";
+      RTC_LOG(LS_INFO) << "TLS handshake complete.";
 
     } else {
       // On handshake failure the client should end up in the CS_CLOSED state.
       EXPECT_EQ_WAIT(rtc::Socket::CS_CLOSED, client_->GetState(),
                      handshake_wait_);
 
-      RTC_LOG(LS_INFO) << GetSSLProtocolName(ssl_mode_) << " handshake failed.";
+      RTC_LOG(LS_INFO) << "TLS handshake failed.";
     }
   }
 
@@ -387,8 +285,6 @@ class SSLAdapterTestBase : public ::testing::Test, public sigslot::has_slots<> {
   }
 
  protected:
-  const rtc::SSLMode ssl_mode_;
-
   std::unique_ptr<rtc::VirtualSocketServer> vss_;
   rtc::AutoSocketServerThread thread_;
   std::unique_ptr<SSLAdapterTestDummyServer> server_;
@@ -400,29 +296,13 @@ class SSLAdapterTestBase : public ::testing::Test, public sigslot::has_slots<> {
 
 class SSLAdapterTestTLS_RSA : public SSLAdapterTestBase {
  public:
-  SSLAdapterTestTLS_RSA()
-      : SSLAdapterTestBase(rtc::SSL_MODE_TLS, rtc::KeyParams::RSA()) {}
+  SSLAdapterTestTLS_RSA() : SSLAdapterTestBase(rtc::KeyParams::RSA()) {}
 };
 
 class SSLAdapterTestTLS_ECDSA : public SSLAdapterTestBase {
  public:
-  SSLAdapterTestTLS_ECDSA()
-      : SSLAdapterTestBase(rtc::SSL_MODE_TLS, rtc::KeyParams::ECDSA()) {}
+  SSLAdapterTestTLS_ECDSA() : SSLAdapterTestBase(rtc::KeyParams::ECDSA()) {}
 };
-
-class SSLAdapterTestDTLS_RSA : public SSLAdapterTestBase {
- public:
-  SSLAdapterTestDTLS_RSA()
-      : SSLAdapterTestBase(rtc::SSL_MODE_DTLS, rtc::KeyParams::RSA()) {}
-};
-
-class SSLAdapterTestDTLS_ECDSA : public SSLAdapterTestBase {
- public:
-  SSLAdapterTestDTLS_ECDSA()
-      : SSLAdapterTestBase(rtc::SSL_MODE_DTLS, rtc::KeyParams::ECDSA()) {}
-};
-
-// Basic tests: TLS
 
 // Test that handshake works, using RSA
 TEST_F(SSLAdapterTestTLS_RSA, TestTLSConnect) {
@@ -540,71 +420,5 @@ TEST_F(SSLAdapterTestTLS_ECDSA, TestTLSEllipticCurves) {
   std::vector<std::string> elliptic_curves{"X25519", "P-256", "P-384", "P-521"};
   SetEllipticCurves(elliptic_curves);
   TestHandshake(true);
-  TestTransfer("Hello, world!");
-}
-
-// Basic tests: DTLS
-
-// Test that handshake works, using RSA
-TEST_F(SSLAdapterTestDTLS_RSA, TestDTLSConnect) {
-  TestHandshake(true);
-}
-
-// Test that handshake works with a custom verifier that returns true. DTLS_RSA.
-TEST_F(SSLAdapterTestDTLS_RSA, TestDTLSConnectCustomCertVerifierSucceeds) {
-  SetMockCertVerifier(/*return_value=*/true);
-  TestHandshake(/*expect_success=*/true);
-}
-
-// Test that handshake fails with a custom verifier that returns false.
-// DTLS_RSA.
-TEST_F(SSLAdapterTestDTLS_RSA, TestTLSConnectCustomCertVerifierFails) {
-  SetMockCertVerifier(/*return_value=*/false);
-  TestHandshake(/*expect_success=*/false);
-}
-
-// Test that handshake works, using ECDSA
-TEST_F(SSLAdapterTestDTLS_ECDSA, TestDTLSConnect) {
-  TestHandshake(true);
-}
-
-// Test that handshake works with a custom verifier that returns true.
-// DTLS_ECDSA.
-TEST_F(SSLAdapterTestDTLS_ECDSA, TestDTLSConnectCustomCertVerifierSucceeds) {
-  SetMockCertVerifier(/*return_value=*/true);
-  TestHandshake(/*expect_success=*/true);
-}
-
-// Test that handshake fails with a custom verifier that returns false.
-// DTLS_ECDSA.
-TEST_F(SSLAdapterTestDTLS_ECDSA, TestTLSConnectCustomCertVerifierFails) {
-  SetMockCertVerifier(/*return_value=*/false);
-  TestHandshake(/*expect_success=*/false);
-}
-
-// Test transfer between client and server, using RSA
-TEST_F(SSLAdapterTestDTLS_RSA, TestDTLSTransfer) {
-  TestHandshake(true);
-  TestTransfer("Hello, world!");
-}
-
-// Test transfer between client and server, using RSA with custom cert verifier.
-TEST_F(SSLAdapterTestDTLS_RSA, TestDTLSTransferCustomCertVerifier) {
-  SetMockCertVerifier(/*return_value=*/true);
-  TestHandshake(/*expect_success=*/true);
-  TestTransfer("Hello, world!");
-}
-
-// Test transfer between client and server, using ECDSA
-TEST_F(SSLAdapterTestDTLS_ECDSA, TestDTLSTransfer) {
-  TestHandshake(true);
-  TestTransfer("Hello, world!");
-}
-
-// Test transfer between client and server, using ECDSA with custom cert
-// verifier.
-TEST_F(SSLAdapterTestDTLS_ECDSA, TestDTLSTransferCustomCertVerifier) {
-  SetMockCertVerifier(/*return_value=*/true);
-  TestHandshake(/*expect_success=*/true);
   TestTransfer("Hello, world!");
 }

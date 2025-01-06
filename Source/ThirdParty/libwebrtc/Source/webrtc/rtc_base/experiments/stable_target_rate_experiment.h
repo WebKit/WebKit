@@ -18,22 +18,15 @@ namespace webrtc {
 
 class StableTargetRateExperiment {
  public:
+  explicit StableTargetRateExperiment(const FieldTrialsView& field_trials);
   StableTargetRateExperiment(const StableTargetRateExperiment&);
   StableTargetRateExperiment(StableTargetRateExperiment&&);
-  static StableTargetRateExperiment ParseFromFieldTrials();
-  static StableTargetRateExperiment ParseFromKeyValueConfig(
-      const FieldTrialsView* const key_value_config);
 
   bool IsEnabled() const;
   double GetVideoHysteresisFactor() const;
   double GetScreenshareHysteresisFactor() const;
 
  private:
-  explicit StableTargetRateExperiment(
-      const FieldTrialsView* const key_value_config,
-      double default_video_hysteresis,
-      double default_screenshare_hysteresis);
-
   FieldTrialParameter<bool> enabled_;
   FieldTrialParameter<double> video_hysteresis_factor_;
   FieldTrialParameter<double> screenshare_hysteresis_factor_;

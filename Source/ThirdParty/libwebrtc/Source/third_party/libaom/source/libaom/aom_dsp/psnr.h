@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -13,6 +13,7 @@
 #define AOM_AOM_DSP_PSNR_H_
 
 #include "aom_scale/yv12config.h"
+#include "config/aom_config.h"
 
 #define MAX_PSNR 100.0
 
@@ -29,15 +30,17 @@ typedef struct {
   uint32_t samples_hbd[4];  // total/y/u/v when input-bit-depth < bit-depth
 } PSNR_STATS;
 
+#if CONFIG_INTERNAL_STATS
 /*!\brief Converts SSE to PSNR
  *
- * Converts sum of squared errros (SSE) to peak signal-to-noise ratio (PNSR).
+ * Converts sum of squared errros (SSE) to peak signal-to-noise ratio (PSNR).
  *
  * \param[in]    samples       Number of samples
  * \param[in]    peak          Max sample value
  * \param[in]    sse           Sum of squared errors
  */
 double aom_sse_to_psnr(double samples, double peak, double sse);
+#endif  // CONFIG_INTERNAL_STATS
 uint64_t aom_get_y_var(const YV12_BUFFER_CONFIG *a, int hstart, int width,
                        int vstart, int height);
 uint64_t aom_get_u_var(const YV12_BUFFER_CONFIG *a, int hstart, int width,

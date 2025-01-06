@@ -26,13 +26,14 @@
 #include "config.h"
 #include "LayoutElementBox.h"
 
+#include "RenderElement.h"
 #include "RenderStyleInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ElementBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ElementBox);
 
 ElementBox::ElementBox(ElementAttributes&& attributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag> baseTypeFlags)
     : Box(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle), baseTypeFlags | ElementBoxFlag)
@@ -81,6 +82,16 @@ const Box* ElementBox::firstInFlowOrFloatingChild() const
     return nullptr;
 }
 
+const Box* ElementBox::firstOutOfFlowChild() const
+{
+    if (auto* firstChild = this->firstChild()) {
+        if (firstChild->isOutOfFlowPositioned())
+            return firstChild;
+        return firstChild->nextOutOfFlowSibling();
+    }
+    return nullptr;
+}
+
 const Box* ElementBox::lastInFlowChild() const
 {
     if (auto* lastChild = this->lastChild()) {
@@ -101,13 +112,19 @@ const Box* ElementBox::lastInFlowOrFloatingChild() const
     return nullptr;
 }
 
+const Box* ElementBox::lastOutOfFlowChild() const
+{
+    if (auto* lastChild = this->lastChild()) {
+        if (lastChild->isOutOfFlowPositioned())
+            return lastChild;
+        return lastChild->previousOutOfFlowSibling();
+    }
+    return nullptr;
+}
+
 bool ElementBox::hasOutOfFlowChild() const
 {
-    for (auto* child = this->firstChild(); child; child = child->nextSibling()) {
-        if (child->isOutOfFlowPositioned())
-            return true;
-    }
-    return false;
+    return !!firstOutOfFlowChild();
 }
 
 void ElementBox::appendChild(UniqueRef<Box> childRef)
@@ -215,6 +232,11 @@ LayoutUnit ElementBox::intrinsicRatio() const
 bool ElementBox::hasAspectRatio() const
 {
     return isImage();
+}
+
+RenderElement* ElementBox::rendererForIntegration() const
+{
+    return downcast<RenderElement>(Box::rendererForIntegration());
 }
 
 }

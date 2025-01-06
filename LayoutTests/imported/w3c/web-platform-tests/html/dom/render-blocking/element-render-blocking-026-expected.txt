@@ -1,0 +1,3 @@
+
+PASS removing id after it was renderer keeps render block satisfied
+

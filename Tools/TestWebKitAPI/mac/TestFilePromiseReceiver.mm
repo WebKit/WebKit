@@ -33,40 +33,39 @@
 #import <wtf/WeakObjCPtr.h>
 
 @implementation TestFilePromiseReceiver {
-    RetainPtr<NSArray<NSString *>> _promisedTypeIdentifiers;
-    RetainPtr<NSMutableArray<NSURL *>> _destinationURLs;
+    RetainPtr<NSString> _promisedTypeIdentifier;
+    RetainPtr<NSURL> _promisedFileURL;
+    RetainPtr<NSURL> _destinationURL;
     WeakObjCPtr<id> _draggingSource;
-    WeakObjCPtr<DragAndDropSimulator> _dragAndDropSimulator;
 }
 
-- (instancetype)initWithPromisedTypeIdentifiers:(NSArray<NSString *> *)promisedTypeIdentifiers dragAndDropSimulator:(DragAndDropSimulator *)simulator
+- (instancetype)initWithTypeIdentifier:(NSString *)promisedTypeIdentifier fileURL:(NSURL *)promisedFileURL
 {
     if (!(self = [super init]))
         return nil;
 
-    _dragAndDropSimulator = simulator;
-    _promisedTypeIdentifiers = adoptNS([promisedTypeIdentifiers copy]);
-    _destinationURLs = adoptNS([NSMutableArray new]);
+    _promisedFileURL = adoptNS([promisedFileURL copy]);
+    _promisedTypeIdentifier = adoptNS([promisedTypeIdentifier copy]);
     return self;
 }
 
 - (NSArray<NSString *> *)fileTypes
 {
-    return _promisedTypeIdentifiers.get();
+    return @[ _promisedTypeIdentifier.get() ];
 }
 
 - (NSArray<NSString *> *)fileNames
 {
-    NSMutableArray *fileNames = [NSMutableArray arrayWithCapacity:[_destinationURLs count]];
-    for (NSURL *url in _destinationURLs.get())
-        [fileNames addObject:url.lastPathComponent];
-    return fileNames;
+    if (_destinationURL)
+        return @[ [_destinationURL lastPathComponent] ];
+
+    return @[ ];
 }
 
 - (void)dealloc
 {
-    for (NSURL *destinationURL in _destinationURLs.get())
-        [[NSFileManager defaultManager] removeItemAtURL:destinationURL error:nil];
+    if (_destinationURL)
+        [[NSFileManager defaultManager] removeItemAtURL:_destinationURL.get() error:nil];
 
     [super dealloc];
 }
@@ -114,22 +113,20 @@ static NSURL *copyFile(NSURL *sourceURL, NSURL *destinationDirectory, NSError **
 
 - (void)receivePromisedFilesAtDestination:(NSURL *)destinationDirectory options:(NSDictionary *)options operationQueue:(NSOperationQueue *)queue reader:(void (^)(NSURL *, NSError *))reader
 {
-    for (NSURL *sourceURL in [_dragAndDropSimulator externalPromisedFiles]) {
-        [queue addOperationWithBlock:^{
-            NSError *error = nil;
-            NSURL *destination = nil;
-            if (sourceURL.isFileURL)
-                destination = copyFile(sourceURL, destinationDirectory, &error);
-            else
-                destination = writeToWebLoc(sourceURL, destinationDirectory, &error);
-            if (destination) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [_destinationURLs addObject:destination];
-                });
-            }
-            reader(destination, error);
-        }];
-    }
+    [queue addOperationWithBlock:^{
+        NSError *error = nil;
+        NSURL *destination = nil;
+        if ([_promisedFileURL isFileURL])
+            destination = copyFile(_promisedFileURL.get(), destinationDirectory, &error);
+        else
+            destination = writeToWebLoc(_promisedFileURL.get(), destinationDirectory, &error);
+        if (destination) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                _destinationURL = destination;
+            });
+        }
+        reader(destination, error);
+    }];
 }
 
 @end

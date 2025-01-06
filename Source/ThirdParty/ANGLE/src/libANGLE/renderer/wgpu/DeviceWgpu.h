@@ -11,6 +11,7 @@
 #define LIBANGLE_RENDERER_WGPU_DEVICEWGPU_H_
 
 #include "libANGLE/renderer/DeviceImpl.h"
+#include "libANGLE/renderer/wgpu/wgpu_helpers.h"
 
 namespace rx
 {
@@ -25,7 +26,6 @@ class DeviceWgpu : public DeviceImpl
     egl::Error getAttribute(const egl::Display *display,
                             EGLint attribute,
                             void **outValue) override;
-    EGLint getType() override;
     void generateExtensions(egl::DeviceExtensions *outExtensions) const override;
 };
 

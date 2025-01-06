@@ -33,8 +33,13 @@
 #include "PathStream.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMallocInlines.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PathCG);
 
 Ref<PathCG> PathCG::create()
 {
@@ -70,6 +75,23 @@ PathCG::PathCG(RetainPtr<CGMutablePathRef>&& platformPath)
     : m_platformPath(WTFMove(platformPath))
 {
     ASSERT(m_platformPath);
+}
+
+bool PathCG::definitelyEqual(const PathImpl& otherImpl) const
+{
+    RefPtr otherAsPathCGImpl = dynamicDowncast<PathCG>(otherImpl);
+    if (!otherAsPathCGImpl) {
+        // We could convert other to a CG path to compare, but that would be expensive.
+        return false;
+    }
+
+    if (otherAsPathCGImpl.get() == this)
+        return true;
+
+    if (!m_platformPath && !otherAsPathCGImpl->platformPath())
+        return true;
+
+    return CGPathEqualToPath(m_platformPath.get(), otherAsPathCGImpl->platformPath());
 }
 
 Ref<PathImpl> PathCG::copy() const
@@ -547,5 +569,7 @@ void addToCGContextPath(CGContextRef context, const Path& path)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CG)

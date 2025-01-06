@@ -529,28 +529,6 @@ func uploadFromFile(file string, config *Config, sessionTokensCacheDir string) {
 func main() {
 	flag.Parse()
 
-	var config Config
-	if err := jsonFromFile(&config, *configFilename); err != nil {
-		log.Fatalf("Failed to load config file: %s", err)
-	}
-
-	var sessionTokensCacheDir string
-	if len(config.SessionTokensCache) > 0 {
-		sessionTokensCacheDir = config.SessionTokensCache
-		if strings.HasPrefix(sessionTokensCacheDir, "~/") {
-			home := os.Getenv("HOME")
-			if len(home) == 0 {
-				log.Fatal("~ used in config file but $HOME not set")
-			}
-			sessionTokensCacheDir = filepath.Join(home, sessionTokensCacheDir[2:])
-		}
-	}
-
-	if len(*uploadInputFile) > 0 {
-		uploadFromFile(*uploadInputFile, &config, sessionTokensCacheDir)
-		return
-	}
-
 	middle, err := subprocess.New(*wrapperPath)
 	if err != nil {
 		log.Fatalf("failed to initialise middle: %s", err)
@@ -598,14 +576,14 @@ func main() {
 		}
 		os.Stdout.Write(regcapBytes)
 		os.Stdout.WriteString("\n")
-		os.Exit(0)
+		return
 	}
 
 	if len(*jsonInputFile) > 0 {
 		if err := processFile(*jsonInputFile, supportedAlgos, middle); err != nil {
 			log.Fatalf("failed to process input file: %s", err)
 		}
-		os.Exit(0)
+		return
 	}
 
 	var requestedAlgosFlag string
@@ -665,6 +643,28 @@ func main() {
 		if !recognised {
 			log.Fatalf("requested algorithm %q was not recognised", algo)
 		}
+	}
+
+	var config Config
+	if err := jsonFromFile(&config, *configFilename); err != nil {
+		log.Fatalf("Failed to load config file: %s", err)
+	}
+
+	var sessionTokensCacheDir string
+	if len(config.SessionTokensCache) > 0 {
+		sessionTokensCacheDir = config.SessionTokensCache
+		if strings.HasPrefix(sessionTokensCacheDir, "~/") {
+			home := os.Getenv("HOME")
+			if len(home) == 0 {
+				log.Fatal("~ used in config file but $HOME not set")
+			}
+			sessionTokensCacheDir = filepath.Join(home, sessionTokensCacheDir[2:])
+		}
+	}
+
+	if len(*uploadInputFile) > 0 {
+		uploadFromFile(*uploadInputFile, &config, sessionTokensCacheDir)
+		return
 	}
 
 	server, err := connect(&config, sessionTokensCacheDir)
@@ -789,7 +789,7 @@ func main() {
 
 	if len(*fetchFlag) > 0 {
 		io.WriteString(fetchOutputTee, "]\n")
-		os.Exit(0)
+		return
 	}
 
 	if ok, err := getResultsWithRetry(server, url); err != nil {

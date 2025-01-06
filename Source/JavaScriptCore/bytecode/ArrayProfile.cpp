@@ -44,6 +44,7 @@ const ArrayModes typedArrayModes[NumberOfTypedArrayTypesExcludingDataView] = {
     Uint16ArrayMode,
     Int32ArrayMode,
     Uint32ArrayMode,
+    Float16ArrayMode,
     Float32ArrayMode,
     Float64ArrayMode,
     BigInt64ArrayMode,
@@ -110,6 +111,8 @@ void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
         out.print(comma, "Uint16ArrayMode"_s);
     if (arrayModes & Uint32ArrayMode)
         out.print(comma, "Uint32ArrayMode"_s);
+    if (arrayModes & Float16ArrayMode)
+        out.print(comma, "Float16ArrayMode"_s);
     if (arrayModes & Float32ArrayMode)
         out.print(comma, "Float32ArrayMode"_s);
     if (arrayModes & Float64ArrayMode)
@@ -122,11 +125,10 @@ void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
 
 void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock)
 {
-    auto lastSeenStructureID = std::exchange(m_lastSeenStructureID, StructureID());
-    if (!lastSeenStructureID)
-        return;
-
-    computeUpdatedPrediction(codeBlock, lastSeenStructureID.decode());
+    if (auto structureID = std::exchange(m_lastSeenStructureID, StructureID()))
+        computeUpdatedPrediction(codeBlock, structureID.decode());
+    if (auto structureID = std::exchange(m_speculationFailureStructureID, StructureID()))
+        computeUpdatedPrediction(codeBlock, structureID.decode());
 }
 
 void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, Structure* lastSeenStructure)

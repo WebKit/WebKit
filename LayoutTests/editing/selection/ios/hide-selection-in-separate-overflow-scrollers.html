@@ -1,0 +1,79 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true SelectionHonorsOverflowScrolling=false ] -->
+<html>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body, html {
+    font-family: system-ui;
+    font-size: 20px;
+    margin: 0;
+}
+
+.scroller {
+    overflow-y: scroll;
+    width: 300px;
+    height: 300px;
+    border: 1px solid tomato;
+}
+
+.tall-content {
+    height: 5000px;
+}
+
+.start {
+    border: 1px solid lightblue;
+}
+
+.end {
+    border: 1px solid teal;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that selection rects are hidden when scrolling an overflow scrollable container, if the selection spans across separate scroll views. To manually test, select the text below and scroll the red box; the selection should hide when scrolling and reappear when scrolling ends.")
+    if (!window.testRunner)
+        return;
+
+    const start = document.querySelector(".start");
+    const end = document.querySelector(".end");
+    const scroller = document.querySelector(".scroller");
+    const midpoint = UIHelper.midPointOfRect(scroller.getBoundingClientRect());
+
+    await UIHelper.longPressElement(start);
+    await UIHelper.waitForSelectionToAppear();
+    testPassed("Selection appeared");
+
+    // Make the selection start in the main scroll view and end in an overflow scroller.
+    getSelection().setBaseAndExtent(start, 0, end, 1);
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(midpoint.x, midpoint.y + 100)
+        .move(midpoint.x, midpoint.y - 100, 0.25)
+        .takeResult());
+    testPassed("Scrolled down");
+
+    await UIHelper.waitForSelectionToDisappear();
+    testPassed("Selection disappeared");
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder().end().takeResult());
+    testPassed("Ended touch");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p><span class="start">Select</span> me</p>
+    <div class="scroller">
+        <p>More <span class="end">text</span></p>
+        <div class="tall-content"></div>
+    </div>
+    <pre id="description"></pre>
+    <pre id="console"></pre>
+</body>
+</html>

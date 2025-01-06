@@ -50,8 +50,8 @@ public:
 
 private:
     CoreAudioCaptureDeviceManager() = default;
-    ~CoreAudioCaptureDeviceManager() = default;
-    
+    virtual ~CoreAudioCaptureDeviceManager();
+
     Vector<CoreAudioCaptureDevice>& coreAudioCaptureDevices();
 
     enum class NotifyIfDevicesHaveChanged { Notify, DoNotNotify };

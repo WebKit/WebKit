@@ -58,8 +58,8 @@ public:
     // ImageFrame
     virtual unsigned currentFrameIndex() const { return primaryFrameIndex(); }
 
-    virtual const ImageFrame& primaryImageFrame() = 0;
-    virtual const ImageFrame& currentImageFrame() { return primaryImageFrame(); }
+    virtual const ImageFrame& primaryImageFrame(const std::optional<SubsamplingLevel>& = std::nullopt) = 0;
+    virtual const ImageFrame& currentImageFrame(const std::optional<SubsamplingLevel>& subsamplingLevel = std::nullopt) { return primaryImageFrame(subsamplingLevel); }
 
     // NativeImage
     virtual RefPtr<NativeImage> primaryNativeImage() = 0;
@@ -94,9 +94,14 @@ public:
     virtual bool shouldUseQuickLookForFullscreen() const { return false; }
 #endif
 
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    virtual bool isSpatial() const { return false; }
+#endif
+
     // ImageFrame Metadata
     virtual Seconds frameDurationAtIndex(unsigned) const { RELEASE_ASSERT_NOT_REACHED(); return 0_s; }
     virtual ImageOrientation frameOrientationAtIndex(unsigned) const { RELEASE_ASSERT_NOT_REACHED(); return ImageOrientation::Orientation::None; }
+    virtual Headroom frameHeadroomAtIndex(unsigned) const { RELEASE_ASSERT_NOT_REACHED(); return Headroom::None; }
     virtual DecodingStatus frameDecodingStatusAtIndex(unsigned) const { RELEASE_ASSERT_NOT_REACHED(); return DecodingStatus::Invalid; }
 
     // Testing support

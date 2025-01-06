@@ -40,7 +40,7 @@
 
 namespace WebKit {
 
-bool WebExtensionAPIStorage::isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&)
+bool WebExtensionAPIStorage::isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*)
 {
     if (UNLIKELY(extensionContext().isUnsupportedAPI(propertyPath(), propertyName)))
         return false;
@@ -107,16 +107,17 @@ WebExtensionAPIEvent& WebExtensionAPIStorage::onChanged()
     return *m_onChanged;
 }
 
-void WebExtensionContextProxy::dispatchStorageChangedEvent(const String& onChangedJSON, WebExtensionDataType dataType, WebExtensionContentWorldType contentWorldType)
+void WebExtensionContextProxy::dispatchStorageChangedEvent(const String& changesJSON, WebExtensionDataType dataType, WebExtensionContentWorldType contentWorldType)
 {
     if (!hasDOMWrapperWorld(contentWorldType))
         return;
 
-    NSDictionary *onChangedData = parseJSON(onChangedJSON);
+    id changes = parseJSON(changesJSON);
+    auto areaName = toAPIString(dataType);
 
     enumerateFramesAndNamespaceObjects([&](WebFrame&, auto& namespaceObject) {
-        namespaceObject.storage().onChanged().invokeListenersWithArgument(onChangedData);
-        namespaceObject.storage().storageAreaForType(dataType).onChanged().invokeListenersWithArgument(onChangedData);
+        namespaceObject.storage().onChanged().invokeListenersWithArgument(changes, areaName);
+        namespaceObject.storage().storageAreaForType(dataType).onChanged().invokeListenersWithArgument(changes, areaName);
     }, toDOMWrapperWorld(contentWorldType));
 }
 

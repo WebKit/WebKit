@@ -23,5 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[EnabledBySetting=NavigationAPIEnabled] 
-callback NavigationInterceptHandler = Promise<undefined> ();
+[
+    EnabledBySetting=NavigationAPIEnabled,
+    GenerateIsReachable=ImplScriptExecutionContext,
+    SkipCallbackInvokeCheck
+] callback NavigationInterceptHandler = Promise<undefined> ();

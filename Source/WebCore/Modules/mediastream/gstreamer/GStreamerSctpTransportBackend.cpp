@@ -24,11 +24,14 @@
 
 #include "GStreamerDtlsTransportBackend.h"
 #include "GStreamerWebRTCUtils.h"
+#include <wtf/TZoneMallocInlines.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_sctp_transport_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_sctp_transport_debug
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCSctpTransportState);
 
 static inline RTCSctpTransportState toRTCSctpTransportState(GstWebRTCSCTPTransportState state)
 {

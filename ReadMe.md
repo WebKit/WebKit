@@ -1,6 +1,6 @@
 # WebKit
 
-WebKit is a cross-platform web browser engine. On iOS and macOS, it powers Safari, Mail, iBooks, and many other applications. For more information about WebKit, see the [WebKit project website](https://webkit.org/).
+WebKit is a cross-platform web browser engine. On iOS and macOS, it powers Safari, Mail, Apple Books, and many other applications. For more information about WebKit, see the [WebKit project website](https://webkit.org/).
 
 ## Trying the Latest
 
@@ -22,6 +22,8 @@ Run the following command to clone WebKit's Git repository:
 git clone https://github.com/WebKit/WebKit.git WebKit
 ```
 
+You can enable [git fsmonitor](https://git-scm.com/docs/git-config#Documentation/git-config.txt-corefsmonitor) to make many git commands faster (such as `git status`) with `git config core.fsmonitor true`
+
 ## Building WebKit
 
 ### Building for Apple platforms
@@ -42,7 +44,7 @@ For performance testing, and other purposes, use `--release` instead.
 #### Embedded Builds
 
 To build for an embedded platform like iOS, tvOS, or watchOS, pass a platform
-argument to `build-webkit`. 
+argument to `build-webkit`.
 
 For example, to build a debug build with debugging symbols and assertions for
 embedded simulators:
@@ -110,7 +112,7 @@ Tools/Scripts/build-webkit --wpe --debug
 
 ### Building Windows Port
 
-For building WebKit on Windows, see the [WebKit on Windows page](https://webkit.org/webkit-on-windows/).
+For building WebKit on Windows, see the [WebKit on Windows page](https://docs.webkit.org/Ports/WindowsPort.html).
 
 ## Running WebKit
 
@@ -140,6 +142,16 @@ run-safari --debug --ios-simulator
 
 In both cases, if you have built release builds instead, use `--release` instead of `--debug`.
 
+To run other applications, for example MobileMiniBrowser, with your local build of WebKit, run the following command:
+
+``` shell
+Tools/Scripts/run-webkit-app --debug --iphone-simulator <application-path>
+```
+
+#### Using Xcode
+
+Open `WebKit.xcworkspace`, select intended scheme such as MobileMiniBrowser and an iOS simulator as target, click run.
+
 ### Linux Ports
 
 If you have a development build, you can use the `run-minibrowser` script, e.g.:
@@ -153,4 +165,3 @@ Pass one of `--gtk`, `--jsc-only`, or `--wpe` to indicate the port to use.
 ## Contribute
 
 Congratulations! You’re up and running. Now you can begin coding in WebKit and contribute your fixes and new features to the project. For details on submitting your code to the project, read [Contributing Code](https://webkit.org/contributing-code/).
-

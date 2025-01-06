@@ -4,7 +4,7 @@
 
 import("//third_party/OpenCL-CTS/gn/angle_ocl_cts.gni")
 
-ocl_cts_binary("relationals") {
+ocl_cts_source_set("relationals") {
   include_dirs =
       [ "$angle_root/third_party/OpenCL-CTS/src/test_conformance/relationals" ]
   sources = [

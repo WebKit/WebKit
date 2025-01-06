@@ -50,6 +50,8 @@ class Device final : public _cl_device_id, public Object
     bool supportsBuiltInKernel(const std::string &name) const;
     bool supportsNativeImageDimensions(const cl_image_desc &desc) const;
     bool supportsImageDimensions(const ImageDescriptor &desc) const;
+    bool hasDeviceEnqueueCaps() const;
+    bool supportsNonUniformWorkGroups() const;
 
     static bool IsValidType(DeviceType type);
 

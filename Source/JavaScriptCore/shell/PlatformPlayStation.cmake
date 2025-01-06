@@ -40,12 +40,3 @@ if (DEVELOPER_MODE)
     list(APPEND testair_LIBRARIES ${MEMORY_EXTRA_LIB})
     list(APPEND testdfg_LIBRARIES ${MEMORY_EXTRA_LIB})
 endif ()
-
-if (${CMAKE_GENERATOR} MATCHES "Visual Studio")
-    # With the VisualStudio generator, the compiler complains about -std=c++* for C sources.
-    set_source_files_properties(
-        ../API/tests/CustomGlobalObjectClassTest.c
-        ../API/tests/testapi.c
-        PROPERTIES COMPILE_FLAGS --std=gnu2a
-    )
-endif ()

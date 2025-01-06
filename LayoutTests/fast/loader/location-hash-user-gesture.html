@@ -18,20 +18,20 @@ function test()
     finishJSTest();
 }
 
-function clickOn(element)
+async function clickOn(element)
 {
     if (!window.eventSender)
         return;
     var rect = element.getBoundingClientRect();
     var x = rect.left + rect.width / 2;
     var y = rect.top + rect.height / 2;
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 }
 
-onload = function() {
-    clickOn(document.getElementsByTagName("button")[0]);
+onload = async function() {
+    await clickOn(document.getElementsByTagName("button")[0]);
 }
 
 </script>

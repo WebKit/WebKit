@@ -34,6 +34,7 @@
 #include "WebFrame.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -44,6 +45,8 @@ static HashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionControllerP
     static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionControllerProxy>>> controllers;
     return controllers;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionControllerProxy);
 
 RefPtr<WebExtensionControllerProxy> WebExtensionControllerProxy::get(WebExtensionControllerIdentifier identifier)
 {

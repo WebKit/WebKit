@@ -89,8 +89,8 @@ static std::optional<SRGBA<uint8_t>> makeSimpleColorFromNSColor(NSColor *color)
             LocalCurrentCGContext localContext { [NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep.get()].CGContext };
             [color drawSwatchInRect:NSMakeRect(0, 0, 1, 1)];
         }
-        NSUInteger pixel[4];
-        [offscreenRep getPixel:pixel atX:0 y:0];
+        std::array<NSUInteger, 4> pixel;
+        [offscreenRep getPixel:pixel.data() atX:0 y:0];
 
         return makeFromComponentsClamping<SRGBA<uint8_t>>(pixel[0], pixel[1], pixel[2], pixel[3]);
     }

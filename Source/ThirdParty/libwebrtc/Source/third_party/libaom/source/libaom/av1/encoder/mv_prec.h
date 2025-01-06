@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,7 +20,7 @@
 #if !CONFIG_REALTIME_ONLY
 void av1_collect_mv_stats(AV1_COMP *cpi, int current_q);
 
-static AOM_INLINE int av1_frame_allows_smart_mv(const AV1_COMP *cpi) {
+static inline int av1_frame_allows_smart_mv(const AV1_COMP *cpi) {
   const int gf_group_index = cpi->gf_frame_index;
   const int gf_update_type = cpi->ppi->gf_group.update_type[gf_group_index];
   return !frame_is_intra_only(&cpi->common) &&
@@ -29,9 +29,9 @@ static AOM_INLINE int av1_frame_allows_smart_mv(const AV1_COMP *cpi) {
 }
 #endif  // !CONFIG_REALTIME_ONLY
 
-static AOM_INLINE void av1_set_high_precision_mv(
-    AV1_COMP *cpi, int allow_high_precision_mv,
-    int cur_frame_force_integer_mv) {
+static inline void av1_set_high_precision_mv(AV1_COMP *cpi,
+                                             int allow_high_precision_mv,
+                                             int cur_frame_force_integer_mv) {
   MvCosts *const mv_costs = cpi->td.mb.mv_costs;
   // Avoid accessing 'mv_costs' when it is not allocated.
   if (mv_costs == NULL) return;

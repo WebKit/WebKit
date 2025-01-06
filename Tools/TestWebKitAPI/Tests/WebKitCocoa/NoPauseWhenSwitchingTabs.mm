@@ -37,7 +37,12 @@
 
 namespace TestWebKitAPI {
 
+// rdar://137241352
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+TEST(WebKit, DISABLED_NoPauseWhenSwitchingTabs)
+#else
 TEST(WebKit, NoPauseWhenSwitchingTabs)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 #if PLATFORM(IOS) || PLATFORM(VISION)

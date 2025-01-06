@@ -45,7 +45,7 @@ namespace WebCore {
 
 class LayoutRect {
 public:
-    LayoutRect() { }
+    LayoutRect() = default;
     LayoutRect(const LayoutPoint& location, const LayoutSize& size)
         : m_location(location), m_size(size) { }
     template<typename T1, typename T2, typename U1, typename U2>

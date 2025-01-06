@@ -31,7 +31,8 @@
 #include "InlineLayoutState.h"
 #include "InlineQuirks.h"
 #include "IntrinsicWidthHandler.h"
-#include <wtf/IsoMalloc.h>
+#include "LayoutIntegrationUtils.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Layout {
@@ -53,7 +54,7 @@ struct InlineLayoutResult {
 // This class implements the layout logic for inline formatting context.
 // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
 class InlineFormattingContext {
-    WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InlineFormattingContext);
 public:
     InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);
 
@@ -75,17 +76,19 @@ public:
         InkOverflowNeedsInitialContiningBlockForStrokeWidth
     };
     const BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt) const;
-    BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt);
+    BoxGeometry& geometryForBox(const Box&);
+
+    const IntegrationUtils& integrationUtils() const { return m_integrationUtils; }
 
 private:
     InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItemList&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
     void layoutFloatContentOnly(const ConstraintsForInlineContent&);
 
     void collectContentIfNeeded();
-    InlineRect createDisplayContentForInlineContent(const LineBox&, const LineLayoutResult&, const ConstraintsForInlineContent&, InlineDisplay::Content&, size_t numberOfPreviousLinesWithInlineContent = 0);
+    InlineRect createDisplayContentForInlineContent(const LineBox&, const LineLayoutResult&, const ConstraintsForInlineContent&, InlineDisplay::Content&, size_t& numberOfPreviousLContentfulLines);
     void updateInlineLayoutStateWithLineLayoutResult(const LineLayoutResult&, const InlineRect& lineLogicalRect, const FloatingContext&);
     void updateBoxGeometryForPlacedFloats(const LineLayoutResult::PlacedFloatList&);
-    void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineLayoutResult::SuspendedFloatList& suspendedFloats, LayoutPoint topleft);
+    void resetBoxGeometriesForDiscardedContent(const InlineItemRange& discardedRange, const LineLayoutResult::SuspendedFloatList& suspendedFloats);
     bool createDisplayContentForLineFromCachedContent(const ConstraintsForInlineContent&, InlineLayoutResult&);
     void createDisplayContentForEmptyInlineContent(const ConstraintsForInlineContent&, InlineLayoutResult&);
     void initializeInlineLayoutState(const LayoutState&);
@@ -95,10 +98,11 @@ private:
 
 private:
     const ElementBox& m_rootBlockContainer;
-    LayoutState& m_layoutState;
+    LayoutState& m_globalLayoutState;
     const FloatingContext m_floatingContext;
     const InlineFormattingUtils m_inlineFormattingUtils;
     const InlineQuirks m_inlineQuirks;
+    const IntegrationUtils m_integrationUtils;
     InlineContentCache& m_inlineContentCache;
     InlineLayoutState m_inlineLayoutState;
 };

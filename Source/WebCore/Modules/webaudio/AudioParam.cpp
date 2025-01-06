@@ -35,15 +35,17 @@
 #include "FloatConversion.h"
 #include "Logging.h"
 #include "VectorMath.h"
+#include <algorithm>
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-static void replaceNaNValues(float* values, unsigned numberOfValues, float defaultValue)
+static void replaceNaNValues(std::span<float> values, float defaultValue)
 {
-    for (unsigned i = 0; i < numberOfValues; ++i) {
-        if (std::isnan(values[i]))
-            values[i] = defaultValue;
+    for (auto& value : values) {
+        if (std::isnan(value))
+            value = defaultValue;
     }
 }
 
@@ -268,23 +270,23 @@ bool AudioParam::hasSampleAccurateValues() const
 float AudioParam::finalValue()
 {
     float value;
-    calculateFinalValues(&value, 1, false);
+    calculateFinalValues(singleElementSpan(value), false);
     return value;
 }
 
-void AudioParam::calculateSampleAccurateValues(float* values, unsigned numberOfValues)
+void AudioParam::calculateSampleAccurateValues(std::span<float> values)
 {
-    bool isSafe = context() && context()->isAudioThread() && values && numberOfValues;
+    bool isSafe = context() && context()->isAudioThread() && !values.empty();
     ASSERT(isSafe);
     if (!isSafe)
         return;
 
-    calculateFinalValues(values, numberOfValues, automationRate() == AutomationRate::ARate);
+    calculateFinalValues(values, automationRate() == AutomationRate::ARate);
 }
 
-void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bool sampleAccurate)
+void AudioParam::calculateFinalValues(std::span<float> values, bool sampleAccurate)
 {
-    bool isGood = context() && context()->isAudioThread() && values && numberOfValues;
+    bool isGood = context() && context()->isAudioThread() && !values.empty();
     ASSERT(isGood);
     if (!isGood)
         return;
@@ -293,14 +295,14 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
 
     if (sampleAccurate) {
         // Calculate sample-accurate (a-rate) intrinsic values.
-        calculateTimelineValues(values, numberOfValues);
+        calculateTimelineValues(values);
     } else {
         // Calculate control-rate (k-rate) intrinsic value.
         auto timelineValue = m_timeline.valueForContextTime(*context(), m_value, minValue(), maxValue());
 
         if (timelineValue)
             m_value = *timelineValue;
-        std::fill_n(values, numberOfValues, m_value);
+        std::ranges::fill(values, m_value);
     }
 
     if (!numberOfRenderingConnections())
@@ -311,8 +313,8 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
     // If we're not sample accurate, we only need one value, so make the summing
     // bus have length 1. When the connections are added in, only the first
     // value will be added. Which is exactly what we want.
-    ASSERT(numberOfValues <= AudioUtilities::renderQuantumSize);
-    m_summingBus->setChannelMemory(0, values, sampleAccurate ? numberOfValues : 1);
+    ASSERT(values.size() <= AudioUtilities::renderQuantumSize);
+    m_summingBus->setChannelMemory(0, values.first(sampleAccurate ? values.size() : 1));
 
     for (auto& output : m_renderingOutputs) {
         ASSERT(output);
@@ -326,17 +328,17 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
 
     // If we're not sample accurate, duplicate the first element of |values| to all of the elements.
     if (!sampleAccurate)
-        std::fill_n(values + 1, numberOfValues - 1, values[0]);
+        std::ranges::fill(values.subspan(1), values[0]);
 
     // As per https://webaudio.github.io/web-audio-api/#computation-of-value, we should replace NaN values
     // with the default value.
-    replaceNaNValues(values, numberOfValues, m_defaultValue);
+    replaceNaNValues(values, m_defaultValue);
 
     // Clamp values based on range allowed by AudioParam's min and max values.
-    VectorMath::clamp(values, minValue(), maxValue(), values, numberOfValues);
+    VectorMath::clamp(values, minValue(), maxValue(), values);
 }
 
-void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
+void AudioParam::calculateTimelineValues(std::span<float> values)
 {
     if (!context())
         return;
@@ -345,11 +347,11 @@ void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
     // Normally numberOfValues will equal AudioUtilities::renderQuantumSize (the render quantum size).
     double sampleRate = context()->sampleRate();
     size_t startFrame = context()->currentSampleFrame();
-    size_t endFrame = startFrame + numberOfValues;
+    size_t endFrame = startFrame + values.size();
 
     // Note we're running control rate at the sample-rate.
     // Pass in the current value as default value.
-    m_value = m_timeline.valuesForFrameRange(startFrame, endFrame, m_value, minValue(), maxValue(), values, numberOfValues, sampleRate, sampleRate);
+    m_value = m_timeline.valuesForFrameRange(startFrame, endFrame, m_value, minValue(), maxValue(), values, sampleRate, sampleRate);
 }
 
 void AudioParam::connect(AudioNodeOutput* output)

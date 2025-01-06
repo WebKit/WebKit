@@ -42,7 +42,7 @@ typedef enum {
   VPX_CPU_LAST
 } vpx_cpu_t;
 
-#if defined(__GNUC__) && __GNUC__ || defined(__ANDROID__)
+#if defined(__GNUC__) || defined(__ANDROID__)
 #if VPX_ARCH_X86_64
 #define cpuid(func, func2, ax, bx, cx, dx)                      \
   __asm__ __volatile__("cpuid           \n\t"                   \
@@ -249,7 +249,7 @@ static INLINE int x86_simd_caps(void) {
 // x86_readtsc64 to read the timestamp counter in a 64-bit integer. The
 // out-of-order leakage that can occur is minimal compared to total runtime.
 static INLINE unsigned int x86_readtsc(void) {
-#if defined(__GNUC__) && __GNUC__
+#if defined(__GNUC__)
   unsigned int tsc;
   __asm__ __volatile__("rdtsc\n\t" : "=a"(tsc) :);
   return tsc;
@@ -267,7 +267,7 @@ static INLINE unsigned int x86_readtsc(void) {
 }
 // 64-bit CPU cycle counter
 static INLINE uint64_t x86_readtsc64(void) {
-#if defined(__GNUC__) && __GNUC__
+#if defined(__GNUC__)
   uint32_t hi, lo;
   __asm__ __volatile__("rdtsc" : "=a"(lo), "=d"(hi));
   return ((uint64_t)hi << 32) | lo;
@@ -286,7 +286,7 @@ static INLINE uint64_t x86_readtsc64(void) {
 
 // 32-bit CPU cycle counter with a partial fence against out-of-order execution.
 static INLINE unsigned int x86_readtscp(void) {
-#if defined(__GNUC__) && __GNUC__
+#if defined(__GNUC__)
   unsigned int tscp;
   __asm__ __volatile__("rdtscp\n\t" : "=a"(tscp) :);
   return tscp;
@@ -331,7 +331,7 @@ static INLINE unsigned int x86_tsc_end(void) {
   return v;
 }
 
-#if defined(__GNUC__) && __GNUC__
+#if defined(__GNUC__)
 #define x86_pause_hint() __asm__ __volatile__("pause \n\t")
 #elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
 #define x86_pause_hint() asm volatile("pause \n\t")
@@ -343,7 +343,7 @@ static INLINE unsigned int x86_tsc_end(void) {
 #endif
 #endif
 
-#if defined(__GNUC__) && __GNUC__
+#if defined(__GNUC__)
 static void x87_set_control_word(unsigned short mode) {
   __asm__ __volatile__("fldcw %0" : : "m"(*&mode));
 }

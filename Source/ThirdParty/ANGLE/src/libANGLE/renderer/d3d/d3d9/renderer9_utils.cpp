@@ -726,6 +726,7 @@ void GenerateCaps(IDirect3D9 *d3d9,
 
     extensions->disjointTimerQueryEXT = false;
     extensions->robustnessEXT         = true;
+    extensions->robustnessKHR         = true;
     // It seems that only DirectX 10 and higher enforce the well-defined behavior of always
     // returning zero values when out-of-bounds reads. See
     // https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_robustness.txt
@@ -828,7 +829,6 @@ void InitializeFeatures(angle::FeaturesD3D *features, DWORD vendorID)
 {
     ANGLE_FEATURE_CONDITION(features, mrtPerfWorkaround, true);
     ANGLE_FEATURE_CONDITION(features, setDataFasterThanImageUpload, false);
-    ANGLE_FEATURE_CONDITION(features, useInstancedPointSpriteEmulation, false);
 
     // TODO(jmadill): Disable workaround when we have a fixed compiler DLL.
     ANGLE_FEATURE_CONDITION(features, expandIntegerPowExpressions, true);

@@ -27,12 +27,13 @@
 #include "CSSValuePair.h"
 
 #include <wtf/Hasher.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 CSSValuePair::CSSValuePair(ValueSeparator separator, Ref<CSSValue> first, Ref<CSSValue> second, IdenticalValueSerialization serialization)
-    : CSSValue(ValuePairClass)
+    : CSSValue(ClassType::ValuePair)
     , m_coalesceIdenticalValues(serialization != IdenticalValueSerialization::DoNotCoalesce)
     , m_first(WTFMove(first))
     , m_second(WTFMove(second))

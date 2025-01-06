@@ -27,11 +27,11 @@
 #include "SpeechRecognitionEvent.h"
 
 #include "SpeechRecognitionResultList.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechRecognitionEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SpeechRecognitionEvent);
 
 Ref<SpeechRecognitionEvent> SpeechRecognitionEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
@@ -56,5 +56,7 @@ SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomString& type, uint64_t 
     , m_results(WTFMove(results))
 {
 }
+
+SpeechRecognitionEvent::~SpeechRecognitionEvent() = default;
 
 } // namespace WebCore

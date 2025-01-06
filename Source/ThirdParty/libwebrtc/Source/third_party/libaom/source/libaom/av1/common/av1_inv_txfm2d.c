@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -111,7 +111,7 @@ void av1_highbd_iwht4x4_1_add_c(const tran_low_t *in, uint8_t *dest8,
   }
 }
 
-static INLINE TxfmFunc inv_txfm_type_to_func(TXFM_TYPE txfm_type) {
+static inline TxfmFunc inv_txfm_type_to_func(TXFM_TYPE txfm_type) {
   switch (txfm_type) {
     case TXFM_TYPE_DCT4: return av1_idct4;
     case TXFM_TYPE_DCT8: return av1_idct8;
@@ -231,7 +231,7 @@ void av1_gen_inv_stage_range(int8_t *stage_range_col, int8_t *stage_range_row,
   }
 }
 
-static INLINE void inv_txfm2d_add_c(const int32_t *input, uint16_t *output,
+static inline void inv_txfm2d_add_c(const int32_t *input, uint16_t *output,
                                     int stride, TXFM_2D_FLIP_CFG *cfg,
                                     int32_t *txfm_buf, TX_SIZE tx_size,
                                     int bd) {
@@ -315,7 +315,7 @@ static INLINE void inv_txfm2d_add_c(const int32_t *input, uint16_t *output,
   }
 }
 
-static INLINE void inv_txfm2d_add_facade(const int32_t *input, uint16_t *output,
+static inline void inv_txfm2d_add_facade(const int32_t *input, uint16_t *output,
                                          int stride, int32_t *txfm_buf,
                                          TX_TYPE tx_type, TX_SIZE tx_size,
                                          int bd) {

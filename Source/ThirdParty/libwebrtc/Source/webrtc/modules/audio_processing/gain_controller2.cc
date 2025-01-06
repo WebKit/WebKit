@@ -13,6 +13,7 @@
 #include <memory>
 #include <utility>
 
+#include "api/audio/audio_frame.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
@@ -63,11 +64,11 @@ struct SpeechLevel {
 };
 
 // Computes the audio levels for the first channel in `frame`.
-AudioLevels ComputeAudioLevels(AudioFrameView<float> frame,
+AudioLevels ComputeAudioLevels(DeinterleavedView<float> frame,
                                ApmDataDumper& data_dumper) {
   float peak = 0.0f;
   float rms = 0.0f;
-  for (const auto& x : frame.channel(0)) {
+  for (const auto& x : frame[0]) {
     peak = std::max(std::fabs(x), peak);
     rms += x * x;
   }
@@ -94,7 +95,9 @@ GainController2::GainController2(
       fixed_gain_applier_(
           /*hard_clip_samples=*/false,
           /*initial_gain_factor=*/DbToRatio(config.fixed_digital.gain_db)),
-      limiter_(sample_rate_hz, &data_dumper_, /*histogram_name_prefix=*/"Agc2"),
+      limiter_(&data_dumper_,
+               SampleRateToDefaultChannelSize(sample_rate_hz),
+               /*histogram_name_prefix=*/"Agc2"),
       calls_since_last_limiter_log_(0) {
   RTC_DCHECK(Validate(config));
   data_dumper_.InitiateNewSetOfRecordings();
@@ -153,7 +156,7 @@ void GainController2::SetFixedGainDb(float gain_db) {
 
 void GainController2::Analyze(int applied_input_volume,
                               const AudioBuffer& audio_buffer) {
-  recommended_input_volume_ = absl::nullopt;
+  recommended_input_volume_ = std::nullopt;
 
   RTC_DCHECK_GE(applied_input_volume, 0);
   RTC_DCHECK_LE(applied_input_volume, 255);
@@ -164,10 +167,10 @@ void GainController2::Analyze(int applied_input_volume,
   }
 }
 
-void GainController2::Process(absl::optional<float> speech_probability,
+void GainController2::Process(std::optional<float> speech_probability,
                               bool input_volume_changed,
                               AudioBuffer* audio) {
-  recommended_input_volume_ = absl::nullopt;
+  recommended_input_volume_ = std::nullopt;
 
   data_dumper_.DumpRaw("agc2_applied_input_volume_changed",
                        input_volume_changed);
@@ -179,8 +182,8 @@ void GainController2::Process(absl::optional<float> speech_probability,
       saturation_protector_->Reset();
   }
 
-  AudioFrameView<float> float_frame(audio->channels(), audio->num_channels(),
-                                    audio->num_frames());
+  DeinterleavedView<float> float_frame = audio->view();
+
   // Compute speech probability.
   if (vad_) {
     // When the VAD component runs, `speech_probability` should not be specified
@@ -200,13 +203,13 @@ void GainController2::Process(absl::optional<float> speech_probability,
 
   // Compute audio, noise and speech levels.
   AudioLevels audio_levels = ComputeAudioLevels(float_frame, data_dumper_);
-  absl::optional<float> noise_rms_dbfs;
+  std::optional<float> noise_rms_dbfs;
   if (noise_level_estimator_) {
     // TODO(bugs.webrtc.org/7494): Pass `audio_levels` to remove duplicated
     // computation in `noise_level_estimator_`.
     noise_rms_dbfs = noise_level_estimator_->Analyze(float_frame);
   }
-  absl::optional<SpeechLevel> speech_level;
+  std::optional<SpeechLevel> speech_level;
   if (speech_level_estimator_) {
     RTC_DCHECK(speech_probability.has_value());
     speech_level_estimator_->Update(
@@ -225,8 +228,8 @@ void GainController2::Process(absl::optional<float> speech_probability,
           input_volume_controller_->RecommendInputVolume(
               *speech_probability,
               speech_level->is_confident
-                  ? absl::optional<float>(speech_level->rms_dbfs)
-                  : absl::nullopt);
+                  ? std::optional<float>(speech_level->rms_dbfs)
+                  : std::nullopt);
     }
   }
 

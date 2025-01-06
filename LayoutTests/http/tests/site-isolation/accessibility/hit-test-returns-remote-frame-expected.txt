@@ -1,0 +1,13 @@
+This test ensures that hit testing with site isolation enabled returns a remote element.
+
+Heading rect: 8, 8
+iframe rect: 8, 66.4375
+Hit test at "heading" returns a remote element? NO
+Hit test at "iframe" returns a remote element? YES
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Example heading
+
+

@@ -9,13 +9,18 @@
 #define SkSVGFeLightSource_DEFINED
 
 #include "include/core/SkPoint3.h"
+#include "include/core/SkRefCnt.h"
+#include "include/private/base/SkAPI.h"
+#include "include/private/base/SkDebug.h"
 #include "modules/svg/include/SkSVGHiddenContainer.h"
+#include "modules/svg/include/SkSVGNode.h"
 #include "modules/svg/include/SkSVGTypes.h"
+#include "src/base/SkTLazy.h"
 
 class SK_API SkSVGFeLightSource : public SkSVGHiddenContainer {
 public:
     void appendChild(sk_sp<SkSVGNode>) final {
-        SkDebugf("cannot append child nodes to an SVG light source.\n");
+        SkDEBUGF("cannot append child nodes to an SVG light source.\n");
     }
 
 protected:

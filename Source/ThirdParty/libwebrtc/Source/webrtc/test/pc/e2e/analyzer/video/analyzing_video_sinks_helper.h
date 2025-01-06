@@ -14,12 +14,12 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <utility>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/video/video_frame_writer.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -35,7 +35,7 @@ class AnalyzingVideoSinksHelper {
   // Adds config in the registry. If config with such stream label was
   // registered before, the new value will override the old one.
   void AddConfig(absl::string_view sender_peer_name, VideoConfig config);
-  absl::optional<std::pair<std::string, VideoConfig>> GetPeerAndConfig(
+  std::optional<std::pair<std::string, VideoConfig>> GetPeerAndConfig(
       absl::string_view stream_label);
   // Removes video config for specified stream label. If there are no know video
   // config for such stream label - does nothing.

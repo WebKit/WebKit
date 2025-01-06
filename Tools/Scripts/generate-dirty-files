@@ -26,15 +26,22 @@ import subprocess
 import argparse
 import json
 import sys
+import re
 
 CHECKER_MAP = {
     'Member variable is a raw-pointer/reference to reference-countable type': 'NoUncountedMemberChecker',
+    'Member variable is a raw-pointer/reference to checked-pointer capable type': 'NoUncheckedPtrMemberChecker',
+    'Lambda capture of uncounted variable': 'UncountedLambdaCapturesChecker',
     "Reference-countable base class doesn't have virtual destructor": 'RefCntblBaseVirtualDtor',
+    'Unchecked call argument for a raw pointer/reference parameter': 'UncheckedCallArgsChecker',
+    'Unchecked raw pointer or reference not provably backed by checked variable': 'UncheckedLocalVarsChecker',
     'Uncounted call argument for a raw pointer/reference parameter': 'UncountedCallArgsChecker',
-    'Uncounted raw pointer or reference not provably backed by ref-counted variable': 'UncountedLocalVarsChecker'
+    'Uncounted raw pointer or reference not provably backed by ref-counted variable': 'UncountedLocalVarsChecker',
+    'Unsafe cast': 'MemoryUnsafeCastChecker',
 }
 
-PROJECTS = ['WebCore', 'WebKit']
+PROJECTS = ['JavaScriptCore', 'WebCore', 'WebDriver', 'WebGPU', 'WebInspectorUI', 'WebKit', 'WebKitLegacy', 'WTF']
+DERIVED_SOURCES_RE = r'.*\/DerivedSources\/.*\/JS.*'
 
 
 def parser():
@@ -85,39 +92,52 @@ def parse_results_file(args, file_path):
     return None, None, None, None
 
 
-def find_project_results(args, project, file_list, results_data):
+def find_project_results(args, project, file_list, results_data, issue_to_report):
     bug_counts = {}
+    files_per_project = {key: set() for key in CHECKER_MAP.values()}
 
     for result_file in file_list:
-        if result_file:
-            file_name, issue_hash, bug_type, bug_line = parse_results_file(args, result_file)
-            if not file_name:
-                continue
+        file_name, issue_hash, bug_type, _ = parse_results_file(args, result_file)
+        if not file_name:
+            continue
 
-            if bug_type not in bug_counts:
-                bug_counts[bug_type] = 0
-            bug_counts[bug_type] += 1
+        if bug_type not in bug_counts:
+            bug_counts[bug_type] = 0
+        bug_counts[bug_type] += 1
 
-            # Truncates path after project name to match the expectations file
-            try:
-                file_name = file_name.split(f'{project}/')[1]
-            except IndexError:
-                continue
+        if f'{project.lower()}/' not in file_name.lower():
+            # Ignore WebKitBuild/Debug files that are included in other projects
+            continue
+        elif not re.match(DERIVED_SOURCES_RE, file_name):
+            # Truncate path after project name to match the expectations file
+            file_name = file_name.split(f'{project}/')[-1]
 
-            # Maps filename to issues for each bug type
-            file_dict = results_data.get(CHECKER_MAP[bug_type], {})
-            if not file_name in file_dict:
-                file_dict[file_name] = []
-            file_dict[file_name].append(issue_hash)
-            results_data[CHECKER_MAP[bug_type]] = file_dict
+        # Map filename to issues for each bug type
+        file_dict = results_data.get(CHECKER_MAP[bug_type], {})
+        if not file_name in file_dict:
+            file_dict[file_name] = {}
 
-            output_file_name = os.path.abspath(f'{args.output_dir}/{project}/{CHECKER_MAP[bug_type]}-issues.txt')
-            with open(output_file_name, 'a') as f:
-                f.write(f'{issue_hash}\n')
+        # Map issue to its report path
+        if not issue_hash in file_dict[file_name]:
+            file_dict[file_name][issue_hash] = result_file
+        results_data[CHECKER_MAP[bug_type]] = file_dict
 
-            output_file_name_2 = os.path.abspath(f'{args.output_dir}/{project}/{CHECKER_MAP[bug_type]}-files.txt')
-            with open(output_file_name_2, 'a') as f:
-                f.write(f'{file_name}\n')
+        # Add direct mapping from issue hash to report path
+        if not CHECKER_MAP[bug_type] in issue_to_report.keys():
+            issue_to_report[CHECKER_MAP[bug_type]] = {}
+        issue_to_report[CHECKER_MAP[bug_type]][issue_hash] = result_file
+
+        output_file_name = os.path.abspath(f'{args.output_dir}/{project}/{CHECKER_MAP[bug_type]}Issues')
+        with open(output_file_name, 'a') as f:
+            f.write(f'{issue_hash}\n')
+
+        # Map checker to all files with bugs of that type
+        files_per_project[CHECKER_MAP[bug_type]].add(file_name)
+
+    for checker in CHECKER_MAP.values():
+        output_file_name_2 = os.path.abspath(f'{args.output_dir}/{project}/{checker}Files')
+        with open(output_file_name_2, 'a') as f:
+            f.write('\n'.join(sorted(files_per_project[checker])))
 
     for type, count in bug_counts.items():
         print(f'    {type}: {count}')
@@ -128,8 +148,10 @@ def find_all_results(args):
     file_list = []
     results_data = {}
     result_counts = {}
+    issue_to_report = {}
 
     for project in PROJECTS:
+        print('\n')
         subprocess.run(['mkdir', os.path.abspath(f'{args.output_dir}/{project}')])
         path = os.path.abspath(os.path.join(args.results_dir, 'StaticAnalyzer', project))
         command = 'find {} -name report\\*.html -print'.format(path)
@@ -137,21 +159,26 @@ def find_all_results(args):
             result_files = subprocess.check_output(command, shell=True, text=True)
         except subprocess.CalledProcessError as e:
             sys.stderr.write(f'{e.output}')
-            sys.stderr.write(f'Could not find results for {project}\n')
-            return -1
+            sys.stderr.write(f'No results for {project}\n')
+            continue
         project_files = result_files.splitlines()
         file_list.extend(project_files)
         result_counts[project] = len(project_files)
 
         print(f'\n------ {project} ------\n')
         print(f'TOTAL ISSUES: {len(project_files)}')
-        find_project_results(args, project, project_files, results_data)
+        find_project_results(args, project, project_files, results_data, issue_to_report)
 
     print("\nWriting results files...")
+    # Checker -> File -> Issue -> Report
     results_data_file = os.path.abspath(f'{args.output_dir}/issues_per_file.json')
     with open(results_data_file, "w") as f:
         results_data_obj = json.dumps(results_data, indent=4)
         f.write(results_data_obj)
+    # Checker -> Issue -> Report
+    issue_to_report_file = os.path.abspath(f'{args.output_dir}/issue_to_report.json')
+    with open(issue_to_report_file, "w") as f:
+        f.write(json.dumps(issue_to_report, indent=4))
     print(f'Done! Find them in {os.path.abspath(args.output_dir)}\n')
 
     results_msg = f'Total ({sum([c for c in result_counts.values()])}) '

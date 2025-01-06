@@ -11,16 +11,16 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,18) size 730x35
             text run at (710,18) width 20: "5.0"
             text run at (0,36) width 147: "renders this correctly."
-      RenderTable {TABLE} at (0,70) size 784x28 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,70) size 784x28 [border: (1px outset #000000)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 782x26
           RenderTableRow {TR} at (0,2) size 782x22
-            RenderTableCell {TD} at (2,2) size 388x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 388x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x17
                 text run at (2,2) width 26: "Test"
-            RenderTableCell {TD} at (392,2) size 388x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (392,2) size 388x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x17
                 text run at (2,2) width 26: "Test"
       RenderBlock (anonymous) at (0,98) size 784x36
@@ -33,12 +33,12 @@ layer at (0,0) size 800x600
         RenderInline {B} at (360,18) size 62x17
           RenderText {#text} at (360,18) size 62x17
             text run at (360,18) width 62: "Problem."
-      RenderTable {TABLE} at (0,202) size 784x28 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,202) size 784x28 [border: (1px outset #000000)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 782x26
           RenderTableRow {TR} at (0,2) size 782x22
-            RenderTableCell {TD} at (2,2) size 778x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 778x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x17
                 text run at (2,2) width 26: "Test"
       RenderBlock (anonymous) at (0,230) size 784x36
@@ -52,15 +52,15 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,18) size 770x35
             text run at (743,18) width 27: "The"
             text run at (0,36) width 697: "first column is rendered properly, but there seems to be a problem with the width of the second column."
-      RenderTable {TABLE} at (0,352) size 784x28 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,352) size 784x28 [border: (1px outset #000000)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 782x26
           RenderTableRow {TR} at (0,2) size 782x22
-            RenderTableCell {TD} at (2,2) size 388x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 388x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x17
                 text run at (2,2) width 26: "Test"
-            RenderTableCell {TD} at (392,2) size 388x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (392,2) size 388x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x17
                 text run at (2,2) width 26: "Test"

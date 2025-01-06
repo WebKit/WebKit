@@ -13,8 +13,8 @@
 #include <stdint.h>
 
 #include <limits>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/units/frequency.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -40,7 +40,7 @@ TEST(TimestampExtrapolatorTest, ExtrapolationOccursAfter2Packets) {
   TimestampExtrapolator ts_extrapolator(clock.CurrentTime());
 
   // No packets so no timestamp.
-  EXPECT_THAT(ts_extrapolator.ExtrapolateLocalTime(90000), Eq(absl::nullopt));
+  EXPECT_THAT(ts_extrapolator.ExtrapolateLocalTime(90000), Eq(std::nullopt));
 
   uint32_t rtp = 90000;
   clock.AdvanceTime(k25FpsDelay);
@@ -143,7 +143,7 @@ TEST(TimestampExtrapolatorTest, NegativeRtpTimestampWrapAroundSecondScenario) {
   // Go backwards! Static cast to avoid undefined behaviour with -=.
   rtp -= static_cast<uint32_t>(kRtpHz * TimeDelta::Seconds(10));
   ts_extrapolator.Update(clock.CurrentTime(), rtp);
-  EXPECT_THAT(ts_extrapolator.ExtrapolateLocalTime(rtp), absl::nullopt);
+  EXPECT_THAT(ts_extrapolator.ExtrapolateLocalTime(rtp), std::nullopt);
 }
 
 TEST(TimestampExtrapolatorTest, Slow90KHzClock) {
@@ -228,6 +228,22 @@ TEST(TimestampExtrapolatorTest, TimestampJump) {
   clock.AdvanceTime(k25FpsDelay);
   ts_extrapolator.Update(clock.CurrentTime(), new_rtp);
   EXPECT_THAT(ts_extrapolator.ExtrapolateLocalTime(new_rtp),
+              Optional(clock.CurrentTime()));
+}
+
+TEST(TimestampExtrapolatorTest, GapInReceivedFrames) {
+  SimulatedClock clock(
+      Timestamp::Seconds(std::numeric_limits<uint32_t>::max() / 90000 - 31));
+  TimestampExtrapolator ts_extrapolator(clock.CurrentTime());
+
+  uint32_t rtp = std::numeric_limits<uint32_t>::max();
+  clock.AdvanceTime(k25FpsDelay);
+  ts_extrapolator.Update(clock.CurrentTime(), rtp);
+
+  rtp += 30 * 90000;
+  clock.AdvanceTime(TimeDelta::Seconds(30));
+  ts_extrapolator.Update(clock.CurrentTime(), rtp);
+  EXPECT_THAT(ts_extrapolator.ExtrapolateLocalTime(rtp),
               Optional(clock.CurrentTime()));
 }
 

@@ -47,6 +47,9 @@ public:
 private:
     explicit QuotesData(const Vector<std::pair<String, String>>& quotes);
 
+    std::span<const std::pair<String, String>> quotePairs() const;
+    std::span<std::pair<String, String>> quotePairs();
+
     unsigned m_quoteCount;
     std::pair<String, String> m_quotePairs[0];
 };

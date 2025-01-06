@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,6 +11,7 @@
 
 #include "av1/common/common.h"
 #include "av1/encoder/external_partition.h"
+#include "config/aom_config.h"
 
 aom_codec_err_t av1_ext_part_create(aom_ext_part_funcs_t funcs,
                                     aom_ext_part_config_t config,
@@ -35,7 +36,7 @@ aom_codec_err_t av1_ext_part_create(aom_ext_part_funcs_t funcs,
   return AOM_CODEC_OK;
 }
 
-aom_codec_err_t av1_ext_part_init(ExtPartController *ext_part_controller) {
+static aom_codec_err_t ext_part_init(ExtPartController *ext_part_controller) {
   if (ext_part_controller == NULL) {
     return AOM_CODEC_INVALID_PARAM;
   }
@@ -54,7 +55,7 @@ aom_codec_err_t av1_ext_part_delete(ExtPartController *ext_part_controller) {
       return AOM_CODEC_ERROR;
     }
   }
-  return av1_ext_part_init(ext_part_controller);
+  return ext_part_init(ext_part_controller);
 }
 
 bool av1_ext_part_get_partition_decision(ExtPartController *ext_part_controller,
@@ -65,18 +66,6 @@ bool av1_ext_part_get_partition_decision(ExtPartController *ext_part_controller,
   const aom_ext_part_status_t status =
       ext_part_controller->funcs.get_partition_decision(
           ext_part_controller->model, decision);
-  if (status != AOM_EXT_PART_OK) return false;
-  return true;
-}
-
-bool av1_ext_part_send_partition_stats(ExtPartController *ext_part_controller,
-                                       const aom_partition_stats_t *stats) {
-  assert(ext_part_controller != NULL);
-  assert(ext_part_controller->ready);
-  assert(stats != NULL);
-  const aom_ext_part_status_t status =
-      ext_part_controller->funcs.send_partition_stats(
-          ext_part_controller->model, stats);
   if (status != AOM_EXT_PART_OK) return false;
   return true;
 }
@@ -92,7 +81,21 @@ bool av1_ext_part_send_features(ExtPartController *ext_part_controller,
   return true;
 }
 
+#if CONFIG_PARTITION_SEARCH_ORDER
+bool av1_ext_part_send_partition_stats(ExtPartController *ext_part_controller,
+                                       const aom_partition_stats_t *stats) {
+  assert(ext_part_controller != NULL);
+  assert(ext_part_controller->ready);
+  assert(stats != NULL);
+  const aom_ext_part_status_t status =
+      ext_part_controller->funcs.send_partition_stats(
+          ext_part_controller->model, stats);
+  if (status != AOM_EXT_PART_OK) return false;
+  return true;
+}
+
 aom_ext_part_decision_mode_t av1_get_ext_part_decision_mode(
     const ExtPartController *ext_part_controller) {
   return ext_part_controller->funcs.decision_mode;
 }
+#endif  // CONFIG_PARTITION_SEARCH_ORDER

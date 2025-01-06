@@ -71,6 +71,8 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTag, (JSGlobalObject* globalObjec
             type = Wasm::Types::F32;
         else if (valueString == "f64"_s)
             type = Wasm::Types::F64;
+        else if (valueString == "v128"_s)
+            type = Wasm::Types::V128;
         else if (valueString == "funcref"_s || valueString == "anyfunc"_s)
             type = Wasm::funcrefType();
         else if (valueString == "externref"_s)

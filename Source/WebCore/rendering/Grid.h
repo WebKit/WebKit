@@ -107,7 +107,7 @@ private:
 
     GridAsMatrix m_grid;
 
-    HashMap<SingleThreadWeakRef<const RenderBox>, GridArea> m_gridItemArea;
+    UncheckedKeyHashMap<SingleThreadWeakRef<const RenderBox>, GridArea> m_gridItemArea;
 
     std::unique_ptr<OrderedTrackIndexSet> m_autoRepeatEmptyColumns;
     std::unique_ptr<OrderedTrackIndexSet> m_autoRepeatEmptyRows;
@@ -136,7 +136,7 @@ private:
     GridTrackSizingDirection m_direction;
     unsigned m_rowIndex;
     unsigned m_columnIndex;
-    unsigned m_childIndex;
+    unsigned m_gridItemIndex;
 };
 
 } // namespace WebCore

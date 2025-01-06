@@ -688,7 +688,7 @@ class Instruction
         when "bdneq"
             $asm.puts "vcmpe.f64 #{armOperands(operands[0..1])}"
             $asm.puts "vmrs apsr_nzcv, fpscr"
-            isUnordered = LocalLabel.unique("bdneq")
+            isUnordered = LocalLabel.unique(codeOrigin, "bdneq")
             $asm.puts "bvs #{LocalLabelReference.new(codeOrigin, isUnordered).asmLabel}"
             $asm.puts "bne #{operands[2].asmLabel}"
             isUnordered.lower("ARM")

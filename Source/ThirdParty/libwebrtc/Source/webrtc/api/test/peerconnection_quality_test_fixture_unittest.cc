@@ -8,15 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "api/test/peerconnection_quality_test_fixture.h"
-
+#include <cstddef>
+#include <memory>
+#include <optional>
+#include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
+#include "absl/strings/string_view.h"
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/video/video_frame_writer.h"
-#include "rtc_base/gunit.h"
+#include "api/video/video_frame.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
 namespace webrtc {
@@ -57,7 +60,7 @@ TEST(PclfVideoSubscriptionTest, WhenSpecIsNotSetFieldsAreCompared) {
 }
 
 TEST(PclfVideoSubscriptionTest, GetMaxResolutionForEmptyReturnsNullopt) {
-  absl::optional<VideoResolution> resolution =
+  std::optional<VideoResolution> resolution =
       VideoSubscription::GetMaxResolution(std::vector<VideoConfig>{});
   ASSERT_FALSE(resolution.has_value());
 }
@@ -67,7 +70,7 @@ TEST(PclfVideoSubscriptionTest, GetMaxResolutionSelectMaxForEachDimention) {
   VideoConfig max_height(/*width=*/1, /*height=*/100, /*fps=*/1);
   VideoConfig max_fps(/*width=*/1, /*height=*/1, /*fps=*/10);
 
-  absl::optional<VideoResolution> resolution =
+  std::optional<VideoResolution> resolution =
       VideoSubscription::GetMaxResolution(
           std::vector<VideoConfig>{max_width, max_height, max_fps});
   ASSERT_TRUE(resolution.has_value());
@@ -82,7 +85,7 @@ struct TestVideoFrameWriter : public test::VideoFrameWriter {
                        const VideoResolution& resolution)
       : file_name_prefix(file_name_prefix), resolution(resolution) {}
 
-  bool WriteFrame(const VideoFrame& frame) override { return true; }
+  bool WriteFrame(const VideoFrame& /* frame */) override { return true; }
 
   void Close() override {}
 

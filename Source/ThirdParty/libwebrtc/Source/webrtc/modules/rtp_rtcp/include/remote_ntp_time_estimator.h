@@ -13,7 +13,8 @@
 
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/numerics/moving_percentile_filter.h"
@@ -58,7 +59,7 @@ class RemoteNtpTimeEstimator {
   // local one. This is equal to local NTP clock - remote NTP clock.
   // The offset is returned in ntp time resolution, i.e. 1/2^32 sec ~= 0.2 ns.
   // Returns nullopt on failure.
-  absl::optional<int64_t> EstimateRemoteToLocalClockOffset();
+  std::optional<int64_t> EstimateRemoteToLocalClockOffset();
 
  private:
   Clock* clock_;

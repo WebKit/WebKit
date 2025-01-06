@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -108,7 +108,7 @@ static uint16_t
 static int frame_stride = MAX_FRAME_STRIDE;
 static int frame_height = MAX_FRAME_HEIGHT;
 static int frame_size = MAX_FRAME_STRIDE * MAX_FRAME_HEIGHT;
-void mismatch_move_frame_idx_w() {
+void mismatch_move_frame_idx_w(void) {
   frame_buf_idx_w = (frame_buf_idx_w + 1) % max_frame_buf_num;
   if (frame_buf_idx_w == frame_buf_idx_r) {
     printf("frame_buf overflow\n");
@@ -125,7 +125,7 @@ void mismatch_reset_frame(int num_planes) {
   }
 }
 
-void mismatch_move_frame_idx_r() {
+void mismatch_move_frame_idx_r(void) {
   if (frame_buf_idx_w == frame_buf_idx_r) {
     printf("frame_buf underflow\n");
     assert(0);

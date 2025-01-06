@@ -15,7 +15,7 @@
 #include "aom_dsp/x86/mem_sse2.h"
 #include "aom_dsp/x86/synonyms.h"
 
-static INLINE __m128i load_u8_8x2_sse2(const uint8_t *const src,
+static inline __m128i load_u8_8x2_sse2(const uint8_t *const src,
                                        const ptrdiff_t stride) {
   return load_8bit_8x2_to_1_reg_sse2(src, (int)(sizeof(*src) * stride));
 }

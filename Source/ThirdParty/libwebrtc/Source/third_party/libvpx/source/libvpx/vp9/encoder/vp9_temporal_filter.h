@@ -16,7 +16,8 @@ extern "C" {
 #endif
 
 #define ARNR_FILT_QINDEX 128
-static const MV kZeroMv = { 0, 0 };
+struct VP9_COMP;
+struct ThreadData;
 
 // Block size used in temporal filtering
 #define TF_BLOCK BLOCK_32X32
@@ -31,13 +32,37 @@ static const MV kZeroMv = { 0, 0 };
 #define TF_SUB_BLOCK BLOCK_16X16
 #define SUB_BH 16
 #define SUB_BW 16
+#define MAX_FILTER_TAP 12
+
+typedef int16_t InterpKernel12[MAX_FILTER_TAP];
+
+// 12-tap filter (used by the encoder only).
+DECLARE_ALIGNED(256, static const InterpKernel12,
+                sub_pel_filters_12[SUBPEL_SHIFTS]) = {
+  { 0, 0, 0, 0, 0, 128, 0, 0, 0, 0, 0, 0 },
+  { 0, 1, -2, 3, -7, 127, 8, -4, 2, -1, 1, 0 },
+  { -1, 2, -3, 6, -13, 124, 18, -8, 4, -2, 2, -1 },
+  { -1, 3, -4, 8, -18, 120, 28, -12, 7, -4, 2, -1 },
+  { -1, 3, -6, 10, -21, 115, 38, -15, 8, -5, 3, -1 },
+  { -2, 4, -6, 12, -24, 108, 49, -18, 10, -6, 3, -2 },
+  { -2, 4, -7, 13, -25, 100, 60, -21, 11, -7, 4, -2 },
+  { -2, 4, -7, 13, -26, 91, 71, -24, 13, -7, 4, -2 },
+  { -2, 4, -7, 13, -25, 81, 81, -25, 13, -7, 4, -2 },
+  { -2, 4, -7, 13, -24, 71, 91, -26, 13, -7, 4, -2 },
+  { -2, 4, -7, 11, -21, 60, 100, -25, 13, -7, 4, -2 },
+  { -2, 3, -6, 10, -18, 49, 108, -24, 12, -6, 4, -2 },
+  { -1, 3, -5, 8, -15, 38, 115, -21, 10, -6, 3, -1 },
+  { -1, 2, -4, 7, -12, 28, 120, -18, 8, -4, 3, -1 },
+  { -1, 2, -2, 4, -8, 18, 124, -13, 6, -3, 2, -1 },
+  { 0, 1, -1, 2, -4, 8, 127, -7, 3, -2, 1, 0 }
+};
 
 void vp9_temporal_filter_init(void);
-void vp9_temporal_filter(VP9_COMP *cpi, int distance);
+void vp9_temporal_filter(struct VP9_COMP *cpi, int distance);
 
-void vp9_temporal_filter_iterate_row_c(VP9_COMP *cpi, ThreadData *td,
-                                       int mb_row, int mb_col_start,
-                                       int mb_col_end);
+void vp9_temporal_filter_iterate_row_c(struct VP9_COMP *cpi,
+                                       struct ThreadData *td, int mb_row,
+                                       int mb_col_start, int mb_col_end);
 
 #ifdef __cplusplus
 }  // extern "C"

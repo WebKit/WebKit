@@ -53,8 +53,8 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
 
     bool enablePrivateClickMeasurement
     bool ftpEnabled
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
-    bool builtInNotificationsEnabled
+#if PLATFORM(COCOA)
+    bool enableModernDownloadProgress
 #endif
 
     Vector<WebKit::WebsiteDataStoreParameters> websiteDataStoreParameters
@@ -62,3 +62,12 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
     HashSet<String> localhostAliasesForTesting;
     Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
 }
+
+enum class WebKit::LoadedWebArchive : bool
+enum class WebKit::DidFilterKnownLinkDecoration : bool
+enum class WebKit::ShouldGrandfatherStatistics : bool
+enum class WebKit::PrivateRelayed : bool
+enum class WebKit::ContentAsStringIncludesChildFrames : bool
+enum class WebKit::CallDownloadDidStart : bool
+enum class WebKit::AllowOverwrite : bool
+enum class WebKit::UseDownloadPlaceholder : bool

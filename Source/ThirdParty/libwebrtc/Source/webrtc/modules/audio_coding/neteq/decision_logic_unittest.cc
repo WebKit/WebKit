@@ -14,16 +14,18 @@
 
 #include "api/neteq/neteq_controller.h"
 #include "api/neteq/tick_timer.h"
-#include "modules/audio_coding/neteq/buffer_level_filter.h"
 #include "modules/audio_coding/neteq/delay_manager.h"
 #include "modules/audio_coding/neteq/mock/mock_buffer_level_filter.h"
 #include "modules/audio_coding/neteq/mock/mock_delay_manager.h"
-#include "test/field_trial.h"
+#include "modules/audio_coding/neteq/mock/mock_packet_arrival_history.h"
+#include "test/explicit_key_value_config.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
 namespace {
+
+using test::ExplicitKeyValueConfig;
 
 constexpr int kSampleRate = 8000;
 constexpr int kSamplesPerMs = kSampleRate / 1000;
@@ -44,9 +46,11 @@ NetEqController::NetEqStatus CreateNetEqStatus(NetEq::Mode last_mode,
       current_delay_ms * kSamplesPerMs;
   status.packet_buffer_info.dtx_or_cng = false;
   status.next_packet = {status.target_timestamp, false, false};
+  status.sync_buffer_samples = 0;
   return status;
 }
 
+using ::testing::_;
 using ::testing::Return;
 
 }  // namespace
@@ -54,18 +58,22 @@ using ::testing::Return;
 class DecisionLogicTest : public ::testing::Test {
  protected:
   DecisionLogicTest() {
-    test::ScopedFieldTrials trials(
-        "WebRTC-Audio-NetEqDecisionLogicConfig/cng_timeout_ms:1000/");
     NetEqController::Config config;
     config.tick_timer = &tick_timer_;
     config.allow_time_stretching = true;
+    config.max_packets_in_buffer = 200;
+    config.base_min_delay_ms = 0;
     auto delay_manager = std::make_unique<MockDelayManager>(
-        DelayManager::Config(), config.tick_timer);
+        DelayManager::Config(ExplicitKeyValueConfig("")), config.tick_timer);
     mock_delay_manager_ = delay_manager.get();
     auto buffer_level_filter = std::make_unique<MockBufferLevelFilter>();
     mock_buffer_level_filter_ = buffer_level_filter.get();
+    auto packet_arrival_history =
+        std::make_unique<MockPacketArrivalHistory>(&tick_timer_);
+    mock_packet_arrival_history_ = packet_arrival_history.get();
     decision_logic_ = std::make_unique<DecisionLogic>(
-        config, std::move(delay_manager), std::move(buffer_level_filter));
+        config, std::move(delay_manager), std::move(buffer_level_filter),
+        std::move(packet_arrival_history));
     decision_logic_->SetSampleRate(kSampleRate, kOutputSizeSamples);
   }
 
@@ -73,13 +81,16 @@ class DecisionLogicTest : public ::testing::Test {
   std::unique_ptr<DecisionLogic> decision_logic_;
   MockDelayManager* mock_delay_manager_;
   MockBufferLevelFilter* mock_buffer_level_filter_;
+  MockPacketArrivalHistory* mock_packet_arrival_history_;
 };
 
 TEST_F(DecisionLogicTest, NormalOperation) {
   EXPECT_CALL(*mock_delay_manager_, TargetDelayMs())
       .WillRepeatedly(Return(100));
-  EXPECT_CALL(*mock_buffer_level_filter_, filtered_current_level())
-      .WillRepeatedly(Return(90 * kSamplesPerMs));
+  EXPECT_CALL(*mock_packet_arrival_history_, GetDelayMs(_))
+      .WillRepeatedly(Return(100));
+  EXPECT_CALL(*mock_packet_arrival_history_, GetMaxDelayMs())
+      .WillRepeatedly(Return(0));
 
   bool reset_decoder = false;
   tick_timer_.Increment(kMinTimescaleInterval + 1);
@@ -92,8 +103,10 @@ TEST_F(DecisionLogicTest, NormalOperation) {
 TEST_F(DecisionLogicTest, Accelerate) {
   EXPECT_CALL(*mock_delay_manager_, TargetDelayMs())
       .WillRepeatedly(Return(100));
-  EXPECT_CALL(*mock_buffer_level_filter_, filtered_current_level())
-      .WillRepeatedly(Return(110 * kSamplesPerMs));
+  EXPECT_CALL(*mock_packet_arrival_history_, GetDelayMs(_))
+      .WillRepeatedly(Return(150));
+  EXPECT_CALL(*mock_packet_arrival_history_, GetMaxDelayMs())
+      .WillRepeatedly(Return(0));
 
   bool reset_decoder = false;
   tick_timer_.Increment(kMinTimescaleInterval + 1);
@@ -106,8 +119,10 @@ TEST_F(DecisionLogicTest, Accelerate) {
 TEST_F(DecisionLogicTest, FastAccelerate) {
   EXPECT_CALL(*mock_delay_manager_, TargetDelayMs())
       .WillRepeatedly(Return(100));
-  EXPECT_CALL(*mock_buffer_level_filter_, filtered_current_level())
-      .WillRepeatedly(Return(400 * kSamplesPerMs));
+  EXPECT_CALL(*mock_packet_arrival_history_, GetDelayMs(_))
+      .WillRepeatedly(Return(500));
+  EXPECT_CALL(*mock_packet_arrival_history_, GetMaxDelayMs())
+      .WillRepeatedly(Return(0));
 
   bool reset_decoder = false;
   tick_timer_.Increment(kMinTimescaleInterval + 1);
@@ -120,27 +135,15 @@ TEST_F(DecisionLogicTest, FastAccelerate) {
 TEST_F(DecisionLogicTest, PreemptiveExpand) {
   EXPECT_CALL(*mock_delay_manager_, TargetDelayMs())
       .WillRepeatedly(Return(100));
-  EXPECT_CALL(*mock_buffer_level_filter_, filtered_current_level())
-      .WillRepeatedly(Return(50 * kSamplesPerMs));
+  EXPECT_CALL(*mock_packet_arrival_history_, GetDelayMs(_))
+      .WillRepeatedly(Return(50));
+  EXPECT_CALL(*mock_packet_arrival_history_, GetMaxDelayMs())
+      .WillRepeatedly(Return(0));
 
   bool reset_decoder = false;
   tick_timer_.Increment(kMinTimescaleInterval + 1);
   EXPECT_EQ(decision_logic_->GetDecision(
                 CreateNetEqStatus(NetEq::Mode::kNormal, 100), &reset_decoder),
-            NetEq::Operation::kPreemptiveExpand);
-  EXPECT_FALSE(reset_decoder);
-}
-
-TEST_F(DecisionLogicTest, DecelerationTargetLevelOffset) {
-  EXPECT_CALL(*mock_delay_manager_, TargetDelayMs())
-      .WillRepeatedly(Return(500));
-  EXPECT_CALL(*mock_buffer_level_filter_, filtered_current_level())
-      .WillRepeatedly(Return(400 * kSamplesPerMs));
-
-  bool reset_decoder = false;
-  tick_timer_.Increment(kMinTimescaleInterval + 1);
-  EXPECT_EQ(decision_logic_->GetDecision(
-                CreateNetEqStatus(NetEq::Mode::kNormal, 400), &reset_decoder),
             NetEq::Operation::kPreemptiveExpand);
   EXPECT_FALSE(reset_decoder);
 }
@@ -170,7 +173,7 @@ TEST_F(DecisionLogicTest, TimeStrechComfortNoise) {
   {
     bool reset_decoder = false;
     // Below target window.
-    auto status = CreateNetEqStatus(NetEq::Mode::kCodecInternalCng, 400);
+    auto status = CreateNetEqStatus(NetEq::Mode::kCodecInternalCng, 200);
     status.generated_noise_samples = 400 * kSamplesPerMs;
     status.next_packet->timestamp =
         status.target_timestamp + 400 * kSamplesPerMs;
@@ -189,24 +192,12 @@ TEST_F(DecisionLogicTest, TimeStrechComfortNoise) {
     EXPECT_EQ(decision_logic_->GetDecision(status, &reset_decoder),
               NetEq::Operation::kNormal);
     EXPECT_FALSE(reset_decoder);
-
-    // The buffer level filter should be adjusted with the number of samples
-    // that was skipped.
-    int timestamp_leap = status.next_packet->timestamp -
-                         status.target_timestamp -
-                         status.generated_noise_samples;
-    EXPECT_CALL(*mock_buffer_level_filter_,
-                Update(400 * kSamplesPerMs, timestamp_leap));
-    EXPECT_EQ(decision_logic_->GetDecision(
-                  CreateNetEqStatus(NetEq::Mode::kNormal, 400), &reset_decoder),
-              NetEq::Operation::kNormal);
-    EXPECT_FALSE(reset_decoder);
   }
 }
 
 TEST_F(DecisionLogicTest, CngTimeout) {
   auto status = CreateNetEqStatus(NetEq::Mode::kCodecInternalCng, 0);
-  status.next_packet = absl::nullopt;
+  status.next_packet = std::nullopt;
   status.generated_noise_samples = kSamplesPerMs * 500;
   bool reset_decoder = false;
   EXPECT_EQ(decision_logic_->GetDecision(status, &reset_decoder),

@@ -50,12 +50,6 @@ void GPUProcess::initializeProcess(const AuxiliaryProcessInitializationParameter
 {
     setApplicationIsDaemon();
 
-#if ENABLE(LOWER_FORMATREADERBUNDLE_CODESIGNING_REQUIREMENTS)
-    // For testing in engineering builds, allow CoreMedia to load the MediaFormatReader bundle no matter its code signature.
-    auto userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:@"com.apple.coremedia"]);
-    [userDefaults registerDefaults:@{ @"pluginformatreader_unsigned": @YES }];
-#endif
-
 #if HAVE(CSCHECKFIXDISABLE)
     _CSCheckFixDisable();
 #endif

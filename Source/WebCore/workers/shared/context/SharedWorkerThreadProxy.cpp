@@ -50,6 +50,7 @@
 #include "WorkerInitializationData.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -98,7 +99,7 @@ bool SharedWorkerThreadProxy::hasInstances()
 
 SharedWorkerThreadProxy::SharedWorkerThreadProxy(Ref<Page>&& page, SharedWorkerIdentifier sharedWorkerIdentifier, const ClientOrigin& clientOrigin, WorkerFetchResult&& workerFetchResult, WorkerOptions&& workerOptions, WorkerInitializationData&& initializationData, CacheStorageProvider& cacheStorageProvider)
     : m_page(WTFMove(page))
-    , m_document(*dynamicDowncast<LocalFrame>(m_page->mainFrame())->document())
+    , m_document(*m_page->localTopDocument())
     , m_contextIdentifier(*initializationData.clientIdentifier)
     , m_workerThread(SharedWorkerThread::create(sharedWorkerIdentifier, generateWorkerParameters(workerFetchResult, WTFMove(workerOptions), WTFMove(initializationData), m_document), WTFMove(workerFetchResult.script), *this, *this, *this, *this, WorkerThreadStartMode::Normal, clientOrigin.topOrigin.securityOrigin(), m_document->idbConnectionProxy(), m_document->socketProvider(), JSC::RuntimeFlags::createAllEnabled()))
     , m_cacheStorageProvider(cacheStorageProvider)
@@ -152,7 +153,7 @@ void SharedWorkerThreadProxy::postExceptionToWorkerObject(const String& errorMes
 
     callOnMainThread([sharedWorkerIdentifier = m_workerThread->identifier(), errorMessage = errorMessage.isolatedCopy(), lineNumber, columnNumber, sourceURL = sourceURL.isolatedCopy()] {
         bool isErrorEvent = true;
-        if (auto* connection = SharedWorkerContextManager::singleton().connection())
+        if (RefPtr connection = SharedWorkerContextManager::singleton().connection())
             connection->postErrorToWorkerObject(sharedWorkerIdentifier, errorMessage, lineNumber, columnNumber, sourceURL, isErrorEvent);
     });
 }
@@ -163,7 +164,7 @@ void SharedWorkerThreadProxy::reportErrorToWorkerObject(const String& errorMessa
 
     callOnMainThread([sharedWorkerIdentifier = m_workerThread->identifier(), errorMessage = errorMessage.isolatedCopy()] {
         bool isErrorEvent = false;
-        if (auto* connection = SharedWorkerContextManager::singleton().connection())
+        if (RefPtr connection = SharedWorkerContextManager::singleton().connection())
             connection->postErrorToWorkerObject(sharedWorkerIdentifier, errorMessage, 0, 0, { }, isErrorEvent);
     });
 }

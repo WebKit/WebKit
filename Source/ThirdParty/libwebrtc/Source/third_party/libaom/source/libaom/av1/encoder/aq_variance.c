@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,7 +20,9 @@
 #include "av1/encoder/rd.h"
 #include "av1/encoder/segmentation.h"
 #include "av1/encoder/dwt.h"
+#include "config/aom_config.h"
 
+#if !CONFIG_REALTIME_ONLY
 static const double rate_ratio[MAX_SEGMENTS] = { 2.2, 1.7, 1.3, 1.0,
                                                  0.9, .8,  .7,  .6 };
 
@@ -31,11 +33,6 @@ static const double deltaq_rate_ratio[MAX_SEGMENTS] = { 2.5,  2.0, 1.5, 1.0,
 #define ENERGY_SPAN (ENERGY_MAX - ENERGY_MIN + 1)
 #define ENERGY_IN_BOUNDS(energy) \
   assert((energy) >= ENERGY_MIN && (energy) <= ENERGY_MAX)
-
-DECLARE_ALIGNED(16, static const uint8_t, av1_all_zeros[MAX_SB_SIZE]) = { 0 };
-
-DECLARE_ALIGNED(16, static const uint16_t,
-                av1_highbd_all_zeros[MAX_SB_SIZE]) = { 0 };
 
 static const int segment_id[ENERGY_SPAN] = { 0, 1, 1, 2, 3, 4 };
 
@@ -90,52 +87,6 @@ void av1_vaq_frame_setup(AV1_COMP *cpi) {
       av1_enable_segfeature(seg, i, SEG_LVL_ALT_Q);
     }
   }
-}
-
-int av1_log_block_var(const AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bs) {
-  // This functions returns a score for the blocks local variance as calculated
-  // by: sum of the log of the (4x4 variances) of each subblock to the current
-  // block (x,bs)
-  // * 32 / number of pixels in the block_size.
-  // This is used for segmentation because to avoid situations in which a large
-  // block with a gentle gradient gets marked high variance even though each
-  // subblock has a low variance.   This allows us to assign the same segment
-  // number for the same sorts of area regardless of how the partitioning goes.
-
-  MACROBLOCKD *xd = &x->e_mbd;
-  double var = 0;
-  unsigned int sse;
-  int i, j;
-
-  int right_overflow =
-      (xd->mb_to_right_edge < 0) ? ((-xd->mb_to_right_edge) >> 3) : 0;
-  int bottom_overflow =
-      (xd->mb_to_bottom_edge < 0) ? ((-xd->mb_to_bottom_edge) >> 3) : 0;
-
-  const int bw = MI_SIZE * mi_size_wide[bs] - right_overflow;
-  const int bh = MI_SIZE * mi_size_high[bs] - bottom_overflow;
-
-  for (i = 0; i < bh; i += 4) {
-    for (j = 0; j < bw; j += 4) {
-      if (is_cur_buf_hbd(xd)) {
-        var += log1p(cpi->ppi->fn_ptr[BLOCK_4X4].vf(
-                         x->plane[0].src.buf + i * x->plane[0].src.stride + j,
-                         x->plane[0].src.stride,
-                         CONVERT_TO_BYTEPTR(av1_highbd_all_zeros), 0, &sse) /
-                     16.0);
-      } else {
-        var += log1p(cpi->ppi->fn_ptr[BLOCK_4X4].vf(
-                         x->plane[0].src.buf + i * x->plane[0].src.stride + j,
-                         x->plane[0].src.stride, av1_all_zeros, 0, &sse) /
-                     16.0);
-      }
-    }
-  }
-  // Use average of 4x4 log variance. The range for 8 bit 0 - 9.704121561.
-  var /= (bw / 4 * bh / 4);
-  if (var > 7) var = 7;
-
-  return (int)(var);
 }
 
 int av1_log_block_avg(const AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bs,
@@ -217,4 +168,55 @@ int av1_compute_q_from_energy_level_deltaq_mode(const AV1_COMP *const cpi,
     qindex_delta = -base_qindex + 1;
   }
   return base_qindex + qindex_delta;
+}
+#endif  // !CONFIG_REALTIME_ONLY
+
+int av1_log_block_var(const AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bs) {
+  DECLARE_ALIGNED(16, static const uint16_t,
+                  av1_highbd_all_zeros[MAX_SB_SIZE]) = { 0 };
+  DECLARE_ALIGNED(16, static const uint8_t, av1_all_zeros[MAX_SB_SIZE]) = { 0 };
+
+  // This function returns a score for the blocks local variance as calculated
+  // by: sum of the log of the (4x4 variances) of each subblock to the current
+  // block (x,bs)
+  // * 32 / number of pixels in the block_size.
+  // This is used for segmentation because to avoid situations in which a large
+  // block with a gentle gradient gets marked high variance even though each
+  // subblock has a low variance.   This allows us to assign the same segment
+  // number for the same sorts of area regardless of how the partitioning goes.
+
+  MACROBLOCKD *xd = &x->e_mbd;
+  double var = 0;
+  unsigned int sse;
+  int i, j;
+
+  int right_overflow =
+      (xd->mb_to_right_edge < 0) ? ((-xd->mb_to_right_edge) >> 3) : 0;
+  int bottom_overflow =
+      (xd->mb_to_bottom_edge < 0) ? ((-xd->mb_to_bottom_edge) >> 3) : 0;
+
+  const int bw = MI_SIZE * mi_size_wide[bs] - right_overflow;
+  const int bh = MI_SIZE * mi_size_high[bs] - bottom_overflow;
+
+  for (i = 0; i < bh; i += 4) {
+    for (j = 0; j < bw; j += 4) {
+      if (is_cur_buf_hbd(xd)) {
+        var += log1p(cpi->ppi->fn_ptr[BLOCK_4X4].vf(
+                         x->plane[0].src.buf + i * x->plane[0].src.stride + j,
+                         x->plane[0].src.stride,
+                         CONVERT_TO_BYTEPTR(av1_highbd_all_zeros), 0, &sse) /
+                     16.0);
+      } else {
+        var += log1p(cpi->ppi->fn_ptr[BLOCK_4X4].vf(
+                         x->plane[0].src.buf + i * x->plane[0].src.stride + j,
+                         x->plane[0].src.stride, av1_all_zeros, 0, &sse) /
+                     16.0);
+      }
+    }
+  }
+  // Use average of 4x4 log variance. The range for 8 bit 0 - 9.704121561.
+  var /= (bw / 4 * bh / 4);
+  if (var > 7) var = 7;
+
+  return (int)(var);
 }

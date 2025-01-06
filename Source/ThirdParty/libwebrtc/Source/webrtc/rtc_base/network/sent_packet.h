@@ -14,7 +14,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
@@ -43,10 +44,13 @@ struct RTC_EXPORT PacketInfo {
 
   bool included_in_feedback = false;
   bool included_in_allocation = false;
+  // `is_media` is true if this is an audio or video packet, excluding
+  // retransmissions.
+  bool is_media = false;
   PacketType packet_type = PacketType::kUnknown;
   PacketInfoProtocolType protocol = PacketInfoProtocolType::kUnknown;
-  // A unique id assigned by the network manager, and absl::nullopt if not set.
-  absl::optional<uint16_t> network_id;
+  // A unique id assigned by the network manager, and std::nullopt if not set.
+  std::optional<uint16_t> network_id;
   size_t packet_size_bytes = 0;
   size_t turn_overhead_bytes = 0;
   size_t ip_overhead_bytes = 0;

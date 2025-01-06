@@ -28,7 +28,7 @@
 namespace WebCore {
 
 BorderValue::BorderValue()
-    : m_color(StyleColor::currentColor())
+    : m_color(Style::Color::currentColor())
     , m_style(static_cast<unsigned>(BorderStyle::None))
     , m_isAuto(static_cast<unsigned>(OutlineIsAuto::Off))
 {
@@ -36,7 +36,7 @@ BorderValue::BorderValue()
 
 bool BorderValue::isTransparent() const
 {
-    return m_color.isAbsoluteColor() && m_color.absoluteColor().isValid() && !m_color.absoluteColor().isVisible();
+    return m_color.isResolvedColor() && m_color.resolvedColor().isValid() && !m_color.resolvedColor().isVisible();
 }
 
 bool BorderValue::isVisible() const

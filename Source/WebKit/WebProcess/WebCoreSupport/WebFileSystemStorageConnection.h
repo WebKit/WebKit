@@ -90,6 +90,9 @@ private:
     void registerSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier, WebCore::ScriptExecutionContextIdentifier) final;
     void unregisterSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier) final;
     void invalidateAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier) final;
+    void createWritable(WebCore::FileSystemHandleIdentifier, bool keepExistingData, WebCore::FileSystemStorageConnection::VoidCallback&&) final;
+    void closeWritable(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemWriteCloseReason, WebCore::FileSystemStorageConnection::VoidCallback&&) final;
+    void executeCommandForWritable(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, WebCore::FileSystemStorageConnection::VoidCallback&&) final;
 
     HashMap<WebCore::FileSystemSyncAccessHandleIdentifier, WebCore::ScriptExecutionContextIdentifier> m_syncAccessHandles;
     RefPtr<IPC::Connection> m_connection;

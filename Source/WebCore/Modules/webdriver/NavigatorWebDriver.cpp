@@ -29,9 +29,12 @@
 #include "LocalFrame.h"
 #include "Navigator.h"
 #include "Page.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorWebDriver);
 
 NavigatorWebDriver::NavigatorWebDriver() = default;
 

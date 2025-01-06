@@ -10,78 +10,71 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
+#if HAVE(AVKIT_CONTENT_SOURCE)
 
 #include "VideoPresentationInterfaceIOS.h"
-
-OBJC_CLASS AVPlayerViewController;
-OBJC_CLASS WebAVPlayerController;
-OBJC_CLASS WebAVPlayerLayerView;
-OBJC_CLASS WebAVPlayerLayer;
-OBJC_CLASS WebAVPlayerViewController;
-OBJC_CLASS WebAVPlayerViewControllerDelegate;
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class PlaybackSessionInterfaceIOS;
-
 class VideoPresentationInterfaceAVKit final : public VideoPresentationInterfaceIOS {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(VideoPresentationInterfaceAVKit);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceAVKit);
 public:
     WEBCORE_EXPORT static Ref<VideoPresentationInterfaceAVKit> create(PlaybackSessionInterfaceIOS&);
-    WEBCORE_EXPORT ~VideoPresentationInterfaceAVKit();
-
-    WEBCORE_EXPORT void hasVideoChanged(bool) final;
+    ~VideoPresentationInterfaceAVKit();
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const { return "VideoPresentationInterfaceAVKit"_s; };
 #endif
 
-    WEBCORE_EXPORT AVPlayerViewController *avPlayerViewController() const final;
-    WEBCORE_EXPORT void setupFullscreen(UIView& videoView, const FloatRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
-    WEBCORE_EXPORT bool pictureInPictureWasStartedWhenEnteringBackground() const final;
-    WEBCORE_EXPORT void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) final;
-    WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const;
-    bool isPlayingVideoInEnhancedFullscreen() const;
-    bool allowsPictureInPicturePlayback() const { return m_allowsPictureInPicturePlayback; }
-    void presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;
-    void dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;
-
 private:
-    WEBCORE_EXPORT VideoPresentationInterfaceAVKit(PlaybackSessionInterfaceIOS&);
+    VideoPresentationInterfaceAVKit(PlaybackSessionInterfaceIOS&);
 
-    void updateRouteSharingPolicy() final;
-    void setupPlayerViewController() final;
-    void invalidatePlayerViewController() final;
-    UIViewController *playerViewController() const final;
-    void tryToStartPictureInPicture() final;
-    void stopPictureInPicture() final;
-    void setShowsPlaybackControls(bool) final;
-    void setContentDimensions(const FloatSize&) final;
-    void setAllowsPictureInPicturePlayback(bool) final;
-    bool isExternalPlaybackActive() const final;
-    bool willRenderToLayer() const final;
-
-    RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;
-    RetainPtr<WebAVPlayerViewController> m_playerViewController;
+    // VideoPresentationInterfaceIOS overrides
+    bool pictureInPictureWasStartedWhenEnteringBackground() const final { return false; }
+    bool mayAutomaticallyShowVideoPictureInPicture() const final { return false; }
+    bool isPlayingVideoInEnhancedFullscreen() const final { return false; }
+    void setupFullscreen(UIView&, const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) final { }
+    void hasVideoChanged(bool) final { }
+    void finalizeSetup() final { }
+    void updateRouteSharingPolicy() final { }
+    void setupPlayerViewController() final { }
+    void invalidatePlayerViewController() final { }
+    UIViewController *playerViewController() const final { return nullptr; }
+    void tryToStartPictureInPicture() final { }
+    void stopPictureInPicture() final { }
+    void presentFullscreen(bool, Function<void(BOOL, NSError *)>&&) final { }
+    void dismissFullscreen(bool, Function<void(BOOL, NSError *)>&&) final { }
+    void setShowsPlaybackControls(bool) final { }
+    void setContentDimensions(const FloatSize&) final { }
+    void setAllowsPictureInPicturePlayback(bool) final { }
+    bool isExternalPlaybackActive() const final { return false; }
+    bool willRenderToLayer() const final { return false; }
+    AVPlayerViewController *avPlayerViewController() const final { return nullptr; }
+    CALayer *captionsLayer() final { return nullptr; }
+    void setupCaptionsLayer(CALayer *, const FloatSize&) final { }
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    LMPlayableViewController *playableViewController() final { return nullptr; }
+#endif
+    void setSpatialImmersive(bool) final { }
 };
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
+#endif // HAVE(AVKIT_CONTENT_SOURCE)

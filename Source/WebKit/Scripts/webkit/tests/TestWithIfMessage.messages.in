@@ -22,6 +22,7 @@
 
 # Tests scenario where #if'ed message should generate isValidMessageName() == true for
 # both cases.
+[ExceptionForEnabledBy]
 messages -> TestWithIfMessage {
 #if PLATFORM(COCOA)
     void LoadURL(String url)

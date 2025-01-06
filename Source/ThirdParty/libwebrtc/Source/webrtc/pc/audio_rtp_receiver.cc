@@ -165,7 +165,7 @@ void AudioRtpReceiver::Stop() {
   track_->internal()->set_ended();
 }
 
-void AudioRtpReceiver::RestartMediaChannel(absl::optional<uint32_t> ssrc) {
+void AudioRtpReceiver::RestartMediaChannel(std::optional<uint32_t> ssrc) {
   RTC_DCHECK_RUN_ON(&signaling_thread_checker_);
   bool enabled = track_->internal()->enabled();
   MediaSourceInterface::SourceState state = source_->state();
@@ -177,7 +177,7 @@ void AudioRtpReceiver::RestartMediaChannel(absl::optional<uint32_t> ssrc) {
 }
 
 void AudioRtpReceiver::RestartMediaChannel_w(
-    absl::optional<uint32_t> ssrc,
+    std::optional<uint32_t> ssrc,
     bool track_enabled,
     MediaSourceInterface::SourceState state) {
   RTC_DCHECK_RUN_ON(worker_thread_);
@@ -212,10 +212,10 @@ void AudioRtpReceiver::SetupMediaChannel(uint32_t ssrc) {
 
 void AudioRtpReceiver::SetupUnsignaledMediaChannel() {
   RTC_DCHECK_RUN_ON(&signaling_thread_checker_);
-  RestartMediaChannel(absl::nullopt);
+  RestartMediaChannel(std::nullopt);
 }
 
-absl::optional<uint32_t> AudioRtpReceiver::ssrc() const {
+std::optional<uint32_t> AudioRtpReceiver::ssrc() const {
   RTC_DCHECK_RUN_ON(worker_thread_);
   if (!signaled_ssrc_.has_value() && media_channel_) {
     return media_channel_->GetUnsignaledSsrc();
@@ -277,8 +277,8 @@ std::vector<RtpSource> AudioRtpReceiver::GetSources() const {
   return media_channel_->GetSources(current_ssrc.value());
 }
 
-void AudioRtpReceiver::SetDepacketizerToDecoderFrameTransformer(
-    rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer) {
+void AudioRtpReceiver::SetFrameTransformer(
+    rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) {
   RTC_DCHECK_RUN_ON(worker_thread_);
   if (media_channel_) {
     media_channel_->SetDepacketizerToDecoderFrameTransformer(
@@ -314,7 +314,7 @@ void AudioRtpReceiver::SetObserver(RtpReceiverObserverInterface* observer) {
 }
 
 void AudioRtpReceiver::SetJitterBufferMinimumDelay(
-    absl::optional<double> delay_seconds) {
+    std::optional<double> delay_seconds) {
   RTC_DCHECK_RUN_ON(worker_thread_);
   delay_.Set(delay_seconds);
   if (media_channel_ && signaled_ssrc_)

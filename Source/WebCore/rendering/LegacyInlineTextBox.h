@@ -35,7 +35,7 @@ class BoxLegacyPath;
 }
 
 class LegacyInlineTextBox : public LegacyInlineBox {
-    WTF_MAKE_ISO_ALLOCATED(LegacyInlineTextBox);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyInlineTextBox);
 public:
     explicit LegacyInlineTextBox(RenderText& renderer)
         : LegacyInlineBox(renderer)
@@ -96,10 +96,6 @@ private:
 public:
     virtual LayoutRect localSelectionRect(unsigned startPos, unsigned endPos) const;
     std::pair<unsigned, unsigned> selectionStartEnd() const;
-
-protected:
-    void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
 private:
     void deleteLine() final;

@@ -33,6 +33,7 @@
 
 #include <stdint.h>
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -47,7 +48,7 @@ class SpecialValueHandler;
 // class to compiler supported one. See below URI for current status of decimal
 // type for C++: // http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n1977.html
 class Decimal {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Decimal);
 public:
     static constexpr int ExponentMax = 1023;
     static constexpr int ExponentMin = -1023;

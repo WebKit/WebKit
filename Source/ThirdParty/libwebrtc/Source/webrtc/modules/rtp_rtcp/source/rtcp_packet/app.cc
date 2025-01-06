@@ -21,8 +21,6 @@
 
 namespace webrtc {
 namespace rtcp {
-constexpr uint8_t App::kPacketType;
-constexpr size_t App::kMaxDataSize;
 // Application-Defined packet (APP) (RFC 3550).
 //
 //     0                   1                   2                   3

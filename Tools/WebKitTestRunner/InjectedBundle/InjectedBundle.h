@@ -70,7 +70,7 @@ public:
     void setPixelResultIsPending(bool isPending) { m_pixelResultIsPending = isPending; }
     void setRepaintRects(WKArrayRef rects) { m_repaintRects = rects; }
 
-    bool isTestRunning() { return m_state == Testing; }
+    bool isTestRunning() { return !!testRunner(); }
 
     WKBundleFrameRef topLoadingFrame() { return m_topLoadingFrame; }
     void setTopLoadingFrame(WKBundleFrameRef frame) { m_topLoadingFrame = frame; }
@@ -131,7 +131,7 @@ public:
 
     void setAllowsAnySSLCertificate(bool);
 
-    bool statisticsNotifyObserver();
+    void statisticsNotifyObserver(CompletionHandler<void()>&&);
 
     void textDidChangeInTextField();
     void textFieldDidBeginEditing();
@@ -185,13 +185,6 @@ private:
     RefPtr<TextInputController> m_textInputController;
 
     WKBundleFrameRef m_topLoadingFrame { nullptr };
-
-    enum State {
-        Idle,
-        Testing,
-        Stopping
-    };
-    State m_state { Idle };
 
     bool m_dumpPixels { false };
     bool m_useWorkQueue { false };

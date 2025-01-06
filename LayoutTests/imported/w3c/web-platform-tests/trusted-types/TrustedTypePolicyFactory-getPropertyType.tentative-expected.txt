@@ -22,4 +22,9 @@ PASS IFRAME.srcdoc is maybe defined
 PASS iFrAmE[srcdoc] is defined
 PASS iFrAmE.srcdoc is maybe defined
 PASS getPropertyType vs getAttributeType for event handler.
+PASS ASCII case-insensitivity of tag name and attribute parameters
+PASS getPropertyType with an explicit elementNs parameter
+PASS getAttributeType with explicit elementNs and attrNs parameters
+PASS getAttributeType with qualified attribute name
+PASS getPropertyType/getAttributeType with explicit null elementNs/attrNs
 

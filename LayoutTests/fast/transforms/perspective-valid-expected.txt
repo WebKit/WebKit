@@ -1,0 +1,20 @@
+
+PASS e.style['perspective'] = "10px" should set the property value
+PASS e.style['perspective'] = "10em" should set the property value
+PASS e.style['perspective'] = "calc(10px)" should set the property value
+PASS e.style['perspective'] = "calc(-10px)" should set the property value
+PASS e.style['perspective'] = "calc(10em)" should set the property value
+PASS e.style['perspective'] = "calc(-10em)" should set the property value
+PASS e.style['perspective'] = "calc(10px + (5px * sign(2cqw - 10px)))" should set the property value
+PASS e.style['-webkit-perspective'] = "10px" should set the property value
+PASS e.style['-webkit-perspective'] = "10em" should set the property value
+PASS e.style['-webkit-perspective'] = "calc(10px)" should set the property value
+PASS e.style['-webkit-perspective'] = "calc(-10px)" should set the property value
+PASS e.style['-webkit-perspective'] = "calc(10em)" should set the property value
+PASS e.style['-webkit-perspective'] = "calc(-10em)" should set the property value
+PASS e.style['-webkit-perspective'] = "calc(10px + (5px * sign(2cqw - 10px)))" should set the property value
+PASS e.style['-webkit-perspective'] = "10" should set the property value
+PASS e.style['-webkit-perspective'] = "calc(10)" should set the property value
+PASS e.style['-webkit-perspective'] = "calc(-10)" should set the property value
+PASS e.style['-webkit-perspective'] = "calc(10 + (5 * sign(2cqw - 10px)))" should set the property value
+

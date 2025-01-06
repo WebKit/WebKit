@@ -33,6 +33,8 @@
 #include <wtf/Hasher.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 class TextStream;
 }
@@ -144,3 +146,5 @@ TextStream& operator<<(TextStream&, const FontTaggedSettings<int>&);
 TextStream& operator<<(TextStream&, const FontTaggedSettings<float>&);
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

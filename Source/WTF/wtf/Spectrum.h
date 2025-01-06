@@ -35,8 +35,8 @@ template<typename T, typename CounterType = unsigned>
 class Spectrum {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef typename HashMap<T, CounterType>::iterator iterator;
-    typedef typename HashMap<T, CounterType>::const_iterator const_iterator;
+    typedef typename UncheckedKeyHashMap<T, CounterType>::iterator iterator;
+    typedef typename UncheckedKeyHashMap<T, CounterType>::const_iterator const_iterator;
     
     Spectrum() { }
     
@@ -45,7 +45,7 @@ public:
         Locker locker(m_lock);
         if (!count)
             return;
-        typename HashMap<T, CounterType>::AddResult result = m_map.add(key, count);
+        typename UncheckedKeyHashMap<T, CounterType>::AddResult result = m_map.add(key, count);
         if (!result.isNewEntry)
             result.iterator->value += count;
     }
@@ -118,14 +118,14 @@ public:
     void removeIf(const Functor& functor)
     {
         Locker locker(m_lock);
-        m_map.removeIf([&functor] (typename HashMap<T, CounterType>::KeyValuePairType& pair) {
+        m_map.removeIf([&functor] (typename UncheckedKeyHashMap<T, CounterType>::KeyValuePairType& pair) {
                 return functor(KeyAndCount(pair.key, pair.value));
             });
     }
     
 private:
     mutable Lock m_lock;
-    HashMap<T, CounterType> m_map;
+    UncheckedKeyHashMap<T, CounterType> m_map;
 };
 
 } // namespace WTF

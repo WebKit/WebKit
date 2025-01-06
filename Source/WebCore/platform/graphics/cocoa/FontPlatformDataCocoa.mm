@@ -28,7 +28,6 @@
 #import "SharedBuffer.h"
 #import <pal/spi/cf/CoreTextSPI.h>
 #import <wtf/Hasher.h>
-#import <wtf/text/StringConcatenateNumbers.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <CoreText/CoreText.h>

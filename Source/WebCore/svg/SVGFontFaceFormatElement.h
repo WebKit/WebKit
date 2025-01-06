@@ -24,7 +24,8 @@
 namespace WebCore {
 
 class SVGFontFaceFormatElement final : public SVGElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGFontFaceFormatElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFontFaceFormatElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFontFaceFormatElement);
 public:
     static Ref<SVGFontFaceFormatElement> create(const QualifiedName&, Document&);
 

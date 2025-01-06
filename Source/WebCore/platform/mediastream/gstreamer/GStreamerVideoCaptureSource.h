@@ -50,6 +50,8 @@ public:
     void sourceCapsChanged(const GstCaps*) final;
     void captureEnded() final;
 
+    std::pair<GstClockTime, GstClockTime> queryCaptureLatency() const final;
+
 protected:
     GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const gchar* source_factory, CaptureDevice::DeviceType, const NodeAndFD&);
     GStreamerVideoCaptureSource(GStreamerCaptureDevice&&, MediaDeviceHashSalts&&);
@@ -58,7 +60,7 @@ protected:
     void stopProducingData() override;
     bool canResizeVideoFrames() const final { return true; }
     void generatePresets() override;
-    void setSizeFrameRateAndZoom(std::optional<int>, std::optional<int>, std::optional<double>, std::optional<double>) override;
+    void setSizeFrameRateAndZoom(const VideoPresetConstraints&) override;
 
     mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;

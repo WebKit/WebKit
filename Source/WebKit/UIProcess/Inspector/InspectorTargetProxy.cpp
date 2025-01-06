@@ -33,10 +33,13 @@
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorTargetProxy);
 
 std::unique_ptr<InspectorTargetProxy> InspectorTargetProxy::create(WebPageProxy& page, const String& targetId, Inspector::InspectorTargetType type)
 {
@@ -45,8 +48,11 @@ std::unique_ptr<InspectorTargetProxy> InspectorTargetProxy::create(WebPageProxy&
 
 std::unique_ptr<InspectorTargetProxy> InspectorTargetProxy::create(ProvisionalPageProxy& provisionalPage, const String& targetId, Inspector::InspectorTargetType type)
 {
-    Ref page = provisionalPage.page();
-    auto target = InspectorTargetProxy::create(page, targetId, type);
+    RefPtr page = provisionalPage.page();
+    if (!page)
+        return nullptr;
+
+    auto target = InspectorTargetProxy::create(*page, targetId, type);
     target->m_provisionalPage = provisionalPage;
     return target;
 }
@@ -60,13 +66,13 @@ InspectorTargetProxy::InspectorTargetProxy(WebPageProxy& page, const String& tar
 
 void InspectorTargetProxy::connect(Inspector::FrontendChannel::ConnectionType connectionType)
 {
-    if (m_provisionalPage) {
-        m_provisionalPage->send(Messages::WebPage::ConnectInspector(identifier(), connectionType));
+    if (RefPtr provisionalPage = m_provisionalPage.get()) {
+        provisionalPage->send(Messages::WebPage::ConnectInspector(identifier(), connectionType));
         return;
     }
 
-    if (m_page.hasRunningProcess())
-        m_page.send(Messages::WebPage::ConnectInspector(identifier(), connectionType));
+    if (m_page->hasRunningProcess())
+        m_page->legacyMainFrameProcess().send(Messages::WebPage::ConnectInspector(identifier(), connectionType), m_page->webPageIDInMainFrameProcess());
 }
 
 void InspectorTargetProxy::disconnect()
@@ -74,24 +80,24 @@ void InspectorTargetProxy::disconnect()
     if (isPaused())
         resume();
 
-    if (m_provisionalPage) {
-        m_provisionalPage->send(Messages::WebPage::DisconnectInspector(identifier()));
+    if (RefPtr provisionalPage = m_provisionalPage.get()) {
+        provisionalPage->send(Messages::WebPage::DisconnectInspector(identifier()));
         return;
     }
 
-    if (m_page.hasRunningProcess())
-        m_page.send(Messages::WebPage::DisconnectInspector(identifier()));
+    if (m_page->hasRunningProcess())
+        m_page->legacyMainFrameProcess().send(Messages::WebPage::DisconnectInspector(identifier()), m_page->webPageIDInMainFrameProcess());
 }
 
 void InspectorTargetProxy::sendMessageToTargetBackend(const String& message)
 {
-    if (m_provisionalPage) {
-        m_provisionalPage->send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message));
+    if (RefPtr provisionalPage = m_provisionalPage.get()) {
+        provisionalPage->send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message));
         return;
     }
 
-    if (m_page.hasRunningProcess())
-        m_page.send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message));
+    if (m_page->hasRunningProcess())
+        m_page->legacyMainFrameProcess().send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message), m_page->webPageIDInMainFrameProcess());
 }
 
 void InspectorTargetProxy::didCommitProvisionalTarget()

@@ -28,10 +28,15 @@
 
 #if USE(SKIA)
 #include "AffineTransform.h"
+#include "ImageBuffer.h"
+#include "NativeImage.h"
 #include <skia/core/SkImage.h>
-#include <skia/core/SkMatrix.h>
 #include <skia/core/SkSamplingOptions.h>
 #include <skia/core/SkTileMode.h>
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkMatrix.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 

@@ -74,7 +74,7 @@ layer at (0,0) size 785x1432
           RenderImage {IMG} at (753,0) size 16x15
         RenderText {#text} at (0,19) size 4x18
           text run at (0,19) width 4: "."
-      RenderTable {TABLE} at (0,633) size 769x113 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,633) size 769x113 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x111
           RenderTableRow {TR} at (0,5) size 767x42
             RenderTableCell {TD} at (5,5) size 758x42 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
@@ -90,7 +90,7 @@ layer at (0,0) size 785x1432
               RenderBlock (anonymous) at (3,3) size 554x18
                 RenderText {#text} at (0,0) size 55x18
                   text run at (0,0) width 55: "Cell two"
-              RenderTable {TABLE} at (3,21) size 168x30 [border: (1px outset #808080)]
+              RenderTable {TABLE} at (3,21) size 168x30 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 166x28
                   RenderTableRow {TR} at (0,2) size 166x24
                     RenderTableCell {TD} at (2,2) size 162x24 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=1]
@@ -99,7 +99,7 @@ layer at (0,0) size 785x1432
       RenderBlock {P} at (0,762) size 769x18
         RenderText {#text} at (0,0) size 180x18
           text run at (0,0) width 180: "This is an unstyled element."
-      RenderTable {TABLE} at (0,796) size 769x620 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,796) size 769x620 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x618
           RenderTableRow {TR} at (0,0) size 767x28
             RenderTableCell {TD} at (0,0) size 767x28 [bgcolor=#C0C0C0] [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
@@ -160,7 +160,7 @@ layer at (0,0) size 785x1432
                   RenderImage {IMG} at (17,18) size 16x15
                 RenderText {#text} at (32,19) size 5x18
                   text run at (32,19) width 5: "."
-              RenderTable {TABLE} at (5,438) size 743x113 [border: (1px outset #808080)]
+              RenderTable {TABLE} at (5,438) size 743x113 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 741x111
                   RenderTableRow {TR} at (0,5) size 741x42
                     RenderTableCell {TD} at (5,5) size 732x42 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
@@ -176,7 +176,7 @@ layer at (0,0) size 785x1432
                       RenderBlock (anonymous) at (3,3) size 534x18
                         RenderText {#text} at (0,0) size 55x18
                           text run at (0,0) width 55: "Cell two"
-                      RenderTable {TABLE} at (3,21) size 168x30 [border: (1px outset #808080)]
+                      RenderTable {TABLE} at (3,21) size 168x30 [border: (1px outset #000000)]
                         RenderTableSection {TBODY} at (1,1) size 166x28
                           RenderTableRow {TR} at (0,2) size 166x24
                             RenderTableCell {TD} at (2,2) size 162x24 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=1]

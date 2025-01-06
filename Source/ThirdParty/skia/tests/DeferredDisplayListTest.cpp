@@ -20,11 +20,11 @@
 #include "include/core/SkSurfaceProps.h"
 #include "include/core/SkTypes.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrContextThreadSafeProxy.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrRecordingContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrContextThreadSafeProxy.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/ganesh/SkImageGanesh.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "include/private/chromium/GrDeferredDisplayList.h"
@@ -53,13 +53,13 @@ struct GrContextOptions;
 
 #ifdef SK_GL
 #include "include/gpu/ganesh/gl/GrGLBackendSurface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #include "src/gpu/ganesh/gl/GrGLDefines.h"
 #endif
 
 #ifdef SK_VULKAN
 #include "include/gpu/ganesh/vk/GrVkBackendSurface.h"
-#include "include/gpu/vk/GrVkTypes.h"
+#include "include/gpu/ganesh/vk/GrVkTypes.h"
 #include "include/private/chromium/GrVkSecondaryCBDrawContext.h"
 #include "src/gpu/ganesh/vk/GrVkCaps.h"
 #include "tools/gpu/vk/VkTestHelper.h"
@@ -118,9 +118,9 @@ static bool is_compatible(const GrSurfaceCharacterization& gsc, const GrBackendT
 
 class SurfaceParameters {
 public:
-    static const int kNumParams      = 13;
+    static const int kNumParams      = 12;
     static const int kFBO0Count      = 9;
-    static const int kVkSCBCount     = 12;
+    static const int kVkSCBCount     = 11;
 
     SurfaceParameters(GrRecordingContext* rContext)
             : fBackend(rContext->backend())
@@ -138,16 +138,17 @@ public:
             , fIsProtected(skgpu::Protected::kNo)
             , fVkRTSupportsInputAttachment(false)
             , fForVulkanSecondaryCommandBuffer(false) {
-#ifdef SK_VULKAN
-        if (rContext->backend() == GrBackendApi::kVulkan) {
-            auto vkCaps = static_cast<const GrVkCaps*>(rContext->priv().caps());
-            fCanBeProtected = vkCaps->supportsProtectedContent();
+        const GrCaps* caps = rContext->priv().caps();
+
+        if (rContext->backend() == GrBackendApi::kOpenGL ||
+            rContext->backend() == GrBackendApi::kVulkan) {
+            fCanBeProtected = caps->supportsProtectedContent();
             if (fCanBeProtected) {
                 fIsProtected = skgpu::Protected::kYes;
             }
         }
-#endif
-        if (!rContext->priv().caps()->mipmapSupport()) {
+
+        if (!caps->mipmapSupport()) {
             fShouldCreateMipMaps = skgpu::Mipmapped::kNo;
         }
     }
@@ -227,11 +228,6 @@ public:
             set(fIsTextureable, false);
             break;
         case 11:
-            if (fCanBeProtected) {
-                set(fIsProtected, skgpu::Protected(!static_cast<bool>(fIsProtected)));
-            }
-            break;
-        case 12:
             if (GrBackendApi::kVulkan == fBackend) {
                 set(fForVulkanSecondaryCommandBuffer, true);
                 set(fUsesGLFBO0, false);
@@ -299,7 +295,7 @@ public:
             GrGLFramebufferInfo fboInfo;
             fboInfo.fFBOID = 0;
             fboInfo.fFormat = GR_GL_RGBA8;
-            fboInfo.fProtected = skgpu::Protected::kNo;
+            fboInfo.fProtected = fIsProtected;
             static constexpr int kStencilBits = 8;
             GrBackendRenderTarget backendRT =
                     GrBackendRenderTargets::MakeGL(fWidth, fHeight, 1, kStencilBits, fboInfo);

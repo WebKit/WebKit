@@ -41,17 +41,6 @@ static RetainPtr<TestWKWebView> createInWindowFullscreenWebView()
     return webView;
 }
 
-template <typename Callable>
-static void testEventually(Callable&& c)
-{
-    int tries = 0;
-    do {
-        if (c())
-            break;
-        TestWebKitAPI::Util::runFor(0.1_s);
-    } while (++tries <= 100);
-}
-
 TEST(InWindowFullscreen, EmptyDocument)
 {
     auto webView = createInWindowFullscreenWebView();
@@ -62,7 +51,12 @@ TEST(InWindowFullscreen, EmptyDocument)
     [webView _close];
 }
 
+// rdar://136551692
+#if PLATFORM(MAC)
+TEST(InWindowFullscreen, DISABLED_CanToggleAfterPlaybackStarts)
+#else
 TEST(InWindowFullscreen, CanToggleAfterPlaybackStarts)
+#endif
 {
     auto webView = createInWindowFullscreenWebView();
     [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
@@ -73,7 +67,7 @@ TEST(InWindowFullscreen, CanToggleAfterPlaybackStarts)
     TestWebKitAPI::Util::run(&isPlaying);
 
     [webView _updateMediaPlaybackControlsManager];
-    testEventually([&] {
+    TestWebKitAPI::Util::waitFor([&] {
         [webView _updateMediaPlaybackControlsManager];
         return [webView _canToggleInWindow];
     });
@@ -82,7 +76,12 @@ TEST(InWindowFullscreen, CanToggleAfterPlaybackStarts)
     [webView _close];
 }
 
+// rdar://136551692
+#if PLATFORM(MAC)
+TEST(InWindowFullscreen, DISABLED_ToggleChangesIsActive)
+#else
 TEST(InWindowFullscreen, ToggleChangesIsActive)
+#endif
 {
     auto webView = createInWindowFullscreenWebView();
     [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
@@ -92,20 +91,20 @@ TEST(InWindowFullscreen, ToggleChangesIsActive)
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"go()"];
     TestWebKitAPI::Util::run(&isPlaying);
 
-    testEventually([&] {
+    TestWebKitAPI::Util::waitFor([&] {
         [webView _updateMediaPlaybackControlsManager];
         return [webView _canToggleInWindow];
     });
     EXPECT_TRUE([webView _canToggleInWindow]);
 
     [webView _toggleInWindow];
-    testEventually([&] {
+    TestWebKitAPI::Util::waitFor([&] {
         return [webView _isInWindowActive];
     });
     EXPECT_TRUE([webView _isInWindowActive]);
 
     [webView _toggleInWindow];
-    testEventually([&] {
+    TestWebKitAPI::Util::waitFor([&] {
         return ![webView _isInWindowActive];
     });
     EXPECT_FALSE([webView _isInWindowActive]);
@@ -113,7 +112,12 @@ TEST(InWindowFullscreen, ToggleChangesIsActive)
     [webView _close];
 }
 
-TEST(InWindowFullscreen, ToggleChangesIsActiveWithoutUserGesture)
+// rdar://136551692
+#if PLATFORM(MAC)
+TEST(InWindowFullscreen, DISABLED_EnterAndExitChangeIsActive)
+#else
+TEST(InWindowFullscreen, EnterAndExitChangeIsActive)
+#endif
 {
     auto webView = createInWindowFullscreenWebView();
     [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
@@ -123,7 +127,43 @@ TEST(InWindowFullscreen, ToggleChangesIsActiveWithoutUserGesture)
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"go()"];
     TestWebKitAPI::Util::run(&isPlaying);
 
-    testEventually([&] {
+    TestWebKitAPI::Util::waitFor([&] {
+        [webView _updateMediaPlaybackControlsManager];
+        return [webView _canToggleInWindow];
+    });
+    EXPECT_TRUE([webView _canToggleInWindow]);
+
+    [webView _enterInWindow];
+    TestWebKitAPI::Util::waitFor([&] {
+        return [webView _isInWindowActive];
+    });
+    EXPECT_TRUE([webView _isInWindowActive]);
+
+    [webView _exitInWindow];
+    TestWebKitAPI::Util::waitFor([&] {
+        return ![webView _isInWindowActive];
+    });
+    EXPECT_FALSE([webView _isInWindowActive]);
+
+    [webView _close];
+}
+
+// rdar://136551692
+#if PLATFORM(MAC)
+TEST(InWindowFullscreen, DISABLED_EnterChangesIsActiveWithoutUserGesture)
+#else
+TEST(InWindowFullscreen, EnterChangesIsActiveWithoutUserGesture)
+#endif
+{
+    auto webView = createInWindowFullscreenWebView();
+    [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
+
+    bool isPlaying = false;
+    [webView performAfterReceivingMessage:@"playing" action:[&] { isPlaying = true; }];
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"go()"];
+    TestWebKitAPI::Util::run(&isPlaying);
+
+    TestWebKitAPI::Util::waitFor([&] {
         [webView _updateMediaPlaybackControlsManager];
         return [webView _canToggleInWindow];
     });
@@ -131,11 +171,11 @@ TEST(InWindowFullscreen, ToggleChangesIsActiveWithoutUserGesture)
 
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"internals.consumeTransientActivation()"];
 
-    [webView _toggleInWindow];
-    testEventually([&] {
+    [webView _enterInWindow];
+    TestWebKitAPI::Util::waitFor([&] {
         return [webView _isInWindowActive];
     });
     EXPECT_TRUE([webView _isInWindowActive]);
 }
 
-}
+} // namespace TestWebKitAPI

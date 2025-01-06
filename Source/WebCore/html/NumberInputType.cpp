@@ -48,8 +48,11 @@
 #include <limits>
 #include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NumberInputType);
 
 using namespace HTMLNames;
 
@@ -141,9 +144,7 @@ StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) cons
     static NeverDestroyed<const StepRange::StepDescription> stepDescription(numberDefaultStep, numberDefaultStepBase, numberStepScaleFactor);
 
     ASSERT(element());
-    Decimal stepBase = parseToDecimalForNumberType(element()->attributeWithoutSynchronization(minAttr), Decimal::nan());
-    if (stepBase.isNaN())
-        stepBase = parseToDecimalForNumberType(element()->attributeWithoutSynchronization(valueAttr), numberDefaultStepBase);
+    const Decimal stepBase = findStepBase(numberDefaultStepBase);
 
     const Decimal doubleMax = Decimal::doubleMax();
     const Element& element = *this->element();

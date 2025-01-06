@@ -105,6 +105,7 @@ class FramebufferVk : public FramebufferImpl
     // Returns render area with deferred clears in consideration. When deferred clear is used
     // in the render pass, the render area must cover the whole framebuffer.
     gl::Rectangle getRenderArea(ContextVk *contextVk) const;
+    uint32_t getLayerCount() const { return mCurrentFramebufferDesc.getLayerCount(); }
 
     const gl::DrawBufferMask &getEmulatedAlphaAttachmentMask() const;
     RenderTargetVk *getColorDrawRenderTarget(size_t colorIndexGL) const;
@@ -122,9 +123,12 @@ class FramebufferVk : public FramebufferImpl
     angle::Result getFramebuffer(ContextVk *contextVk, vk::RenderPassFramebuffer *framebufferOut);
 
     bool hasDeferredClears() const { return !mDeferredClears.empty(); }
-    angle::Result flushDeferredClears(ContextVk *contextVk);
+    bool hasDeferredDepthClear() const { return mDeferredClears.testDepth(); }
+    bool hasDeferredStencilClear() const { return mDeferredClears.testStencil(); }
+    angle::Result flushDepthStencilDeferredClear(ContextVk *contextVk,
+                                                 VkImageAspectFlagBits aspect);
 
-    void switchToFramebufferFetchMode(ContextVk *contextVk, bool hasFramebufferFetch);
+    void switchToColorFramebufferFetchMode(ContextVk *contextVk, bool hasColorFramebufferFetch);
 
     bool updateLegacyDither(ContextVk *contextVk);
 
@@ -239,6 +243,7 @@ class FramebufferVk : public FramebufferImpl
     void restageDeferredClears(ContextVk *contextVk);
     void restageDeferredClearsForReadFramebuffer(ContextVk *contextVk);
     void restageDeferredClearsImpl(ContextVk *contextVk);
+    angle::Result flushDeferredClears(ContextVk *contextVk);
     void clearWithCommand(ContextVk *contextVk,
                           const gl::Rectangle &scissoredRenderArea,
                           ClearWithCommand behavior,
@@ -247,6 +252,7 @@ class FramebufferVk : public FramebufferImpl
     void updateActiveColorMasks(size_t colorIndex, bool r, bool g, bool b, bool a);
     void updateRenderPassDesc(ContextVk *contextVk);
     angle::Result updateColorAttachment(const gl::Context *context, uint32_t colorIndex);
+    void updateColorAttachmentColorspace(gl::SrgbWriteControlMode srgbWriteControlMode);
     angle::Result updateDepthStencilAttachment(const gl::Context *context);
     void updateDepthStencilAttachmentSerial(ContextVk *contextVk);
     angle::Result flushColorAttachmentUpdates(const gl::Context *context,
@@ -273,7 +279,15 @@ class FramebufferVk : public FramebufferImpl
         const uint32_t fragmentShadingRateAttachmentHeight);
     angle::Result generateFragmentShadingRateWithCPU(
         ContextVk *contextVk,
-        const bool isGainZero,
+        const uint32_t fragmentShadingRateWidth,
+        const uint32_t fragmentShadingRateHeight,
+        const uint32_t fragmentShadingRateBlockWidth,
+        const uint32_t fragmentShadingRateBlockHeight,
+        const uint32_t foveatedAttachmentWidth,
+        const uint32_t foveatedAttachmentHeight,
+        const std::vector<gl::FocalPoint> &activeFocalPoints);
+    angle::Result generateFragmentShadingRateWithCompute(
+        ContextVk *contextVk,
         const uint32_t fragmentShadingRateWidth,
         const uint32_t fragmentShadingRateHeight,
         const uint32_t fragmentShadingRateBlockWidth,

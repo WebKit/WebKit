@@ -33,9 +33,14 @@
 #include "FFTConvolver.h"
 
 #include "VectorMath.h"
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/ParsingUtilities.h>
 
 namespace WebCore {
     
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FFTConvolver);
+
 FFTConvolver::FFTConvolver(size_t fftSize)
     : m_frame(fftSize)
     , m_inputBuffer(fftSize) // 2nd half of buffer is always zeroed
@@ -44,53 +49,55 @@ FFTConvolver::FFTConvolver(size_t fftSize)
 {
 }
 
-void FFTConvolver::process(FFTFrame* fftKernel, const float* sourceP, float* destP, size_t framesToProcess)
+void FFTConvolver::process(FFTFrame* fftKernel, std::span<const float> source, std::span<float> destination)
 {
     size_t halfSize = fftSize() / 2;
 
-    // framesToProcess must be an exact multiple of halfSize,
-    // or halfSize is a multiple of framesToProcess when halfSize > framesToProcess.
-    bool isGood = !(halfSize % framesToProcess && framesToProcess % halfSize);
+    // source.size() must be an exact multiple of halfSize,
+    // or halfSize is a multiple of source.size() when halfSize > source.size().
+    bool isGood = !(halfSize % source.size() && source.size() % halfSize);
     ASSERT(isGood);
     if (!isGood)
         return;
 
-    size_t numberOfDivisions = halfSize <= framesToProcess ? (framesToProcess / halfSize) : 1;
-    size_t divisionSize = numberOfDivisions == 1 ? framesToProcess : halfSize;
+    size_t numberOfDivisions = halfSize <= source.size() ? (source.size() / halfSize) : 1;
+    size_t divisionSize = numberOfDivisions == 1 ? source.size() : halfSize;
 
-    for (size_t i = 0; i < numberOfDivisions; ++i, sourceP += divisionSize, destP += divisionSize) {
+    for (size_t i = 0; i < numberOfDivisions; ++i, skip(source, divisionSize), skip(destination, divisionSize)) {
         // Copy samples to input buffer (note contraint above!)
-        float* inputP = m_inputBuffer.data();
+        auto inputP = m_inputBuffer.span();
 
         // Sanity check
-        bool isCopyGood1 = sourceP && inputP && m_readWriteIndex + divisionSize <= m_inputBuffer.size();
+        bool isCopyGood1 = source.data() && inputP.data() && m_readWriteIndex + divisionSize <= m_inputBuffer.size();
         ASSERT(isCopyGood1);
         if (!isCopyGood1)
             return;
 
-        memcpy(inputP + m_readWriteIndex, sourceP, sizeof(float) * divisionSize);
+        IGNORE_WARNINGS_BEGIN("restrict")
+        memcpySpan(inputP.subspan(m_readWriteIndex), source.first(divisionSize));
+        IGNORE_WARNINGS_END
 
         // Copy samples from output buffer
-        float* outputP = m_outputBuffer.data();
+        auto outputP = m_outputBuffer.span();
 
         // Sanity check
-        bool isCopyGood2 = destP && outputP && m_readWriteIndex + divisionSize <= m_outputBuffer.size();
+        bool isCopyGood2 = destination.data() && outputP.data() && m_readWriteIndex + divisionSize <= m_outputBuffer.size();
         ASSERT(isCopyGood2);
         if (!isCopyGood2)
             return;
 
-        memcpy(destP, outputP + m_readWriteIndex, sizeof(float) * divisionSize);
+        memcpySpan(destination, outputP.subspan(m_readWriteIndex, divisionSize));
         m_readWriteIndex += divisionSize;
 
         // Check if it's time to perform the next FFT
         if (m_readWriteIndex == halfSize) {
             // The input buffer is now filled (get frequency-domain version)
-            m_frame.doFFT(m_inputBuffer.data());
+            m_frame.doFFT(m_inputBuffer.span());
             m_frame.multiply(*fftKernel);
-            m_frame.doInverseFFT(m_outputBuffer.data());
+            m_frame.doInverseFFT(m_outputBuffer.span());
 
             // Overlap-add 1st half from previous time
-            VectorMath::add(m_outputBuffer.data(), m_lastOverlapBuffer.data(), m_outputBuffer.data(), halfSize);
+            VectorMath::add(m_outputBuffer.span().first(halfSize), m_lastOverlapBuffer.span().first(halfSize), m_outputBuffer.span());
 
             // Finally, save 2nd half of result
             bool isCopyGood3 = m_outputBuffer.size() == 2 * halfSize && m_lastOverlapBuffer.size() == halfSize;
@@ -98,7 +105,7 @@ void FFTConvolver::process(FFTFrame* fftKernel, const float* sourceP, float* des
             if (!isCopyGood3)
                 return;
 
-            memcpy(m_lastOverlapBuffer.data(), m_outputBuffer.data() + halfSize, sizeof(float) * halfSize);
+            memcpySpan(m_lastOverlapBuffer.span(), m_outputBuffer.span().subspan(halfSize, halfSize));
 
             // Reset index back to start for next time
             m_readWriteIndex = 0;

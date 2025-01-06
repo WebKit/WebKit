@@ -490,7 +490,7 @@ void Debug::insertMessage(EGLenum error,
         INFO() << messageStream.str();
     }
 
-    // TODO(geofflang): Lock before checking the callback. http://anglebug.com/2464
+    // TODO(geofflang): Lock before checking the callback. http://anglebug.com/40096492
     if (mCallback && isMessageTypeEnabled(messageType))
     {
         mCallback(error, command, egl::ToEGLenum(messageType), threadLabel, objectLabel,

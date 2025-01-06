@@ -24,21 +24,21 @@
 
 #pragma once
 
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include <optional>
-#include <wtf/RefPtr.h>
+#include "CSSPropertyParserOptions.h"
+#include "Length.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 class CSSPrimitiveValue;
 class CSSParserTokenRange;
+struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 
 // MARK: - Consumer functions
 
-std::optional<NumberRaw> consumeNumberRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
-RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange = ValueRange::All);
+RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, const CSSParserContext&, ValueRange = ValueRange::All);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

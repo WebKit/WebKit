@@ -1,6 +1,6 @@
 /* 
  * Copyright (c) 2013 The Chromium Authors. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -75,9 +75,9 @@ static const CGFloat colorPickerMatrixSwatchWidth = 13.0;
 
 namespace WebKit {
 
-Ref<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, Vector<WebCore::Color>&& suggestions, NSView *view)
+Ref<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, WebKit::ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&& suggestions, NSView *view)
 {
-    return adoptRef(*new WebColorPickerMac(client, initialColor, rect, WTFMove(suggestions), view));
+    return adoptRef(*new WebColorPickerMac(client, initialColor, rect, supportsAlpha, WTFMove(suggestions), view));
 }
 
 WebColorPickerMac::~WebColorPickerMac()
@@ -88,8 +88,9 @@ WebColorPickerMac::~WebColorPickerMac()
     }
 }
 
-WebColorPickerMac::WebColorPickerMac(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, Vector<WebCore::Color>&& suggestions, NSView *view)
+WebColorPickerMac::WebColorPickerMac(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, WebKit::ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&& suggestions, NSView *view)
     : WebColorPicker(client)
+    , m_supportsAlpha(supportsAlpha)
     , m_suggestions(WTFMove(suggestions))
 {
     m_colorPickerUI = adoptNS([[WKColorPopoverMac alloc] initWithFrame:rect inView:view]);
@@ -104,7 +105,7 @@ void WebColorPickerMac::endPicker()
 
 void WebColorPickerMac::setSelectedColor(const WebCore::Color& color)
 {
-    if (!m_client || !m_colorPickerUI)
+    if (!client() || !m_colorPickerUI)
         return;
     
     [m_colorPickerUI setColor:cocoaColor(color).get()];
@@ -112,18 +113,16 @@ void WebColorPickerMac::setSelectedColor(const WebCore::Color& color)
 
 void WebColorPickerMac::didChooseColor(const WebCore::Color& color)
 {
-    if (!m_client)
-        return;
-    
-    m_client->didChooseColor(color);
+    if (CheckedPtr client = this->client())
+        client->didChooseColor(color);
 }
 
 void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
 {
-    if (!m_client)
+    if (!client())
         return;
 
-    [m_colorPickerUI setAndShowPicker:this withColor:cocoaColor(color).get() suggestions:WTFMove(m_suggestions)];
+    [m_colorPickerUI setAndShowPicker:this withColor:cocoaColor(color).get() supportsAlpha:m_supportsAlpha suggestions:WTFMove(m_suggestions)];
 }
 
 } // namespace WebKit
@@ -224,7 +223,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     return self;
 }
 
-- (void)setAndShowPicker:(WebKit::WebColorPickerMac*)picker withColor:(NSColor *)color suggestions:(Vector<WebCore::Color>&&)suggestions
+- (void)setAndShowPicker:(WebKit::WebColorPickerMac*)picker withColor:(NSColor *)color supportsAlpha:(WebKit::ColorControlSupportsAlpha)supportsAlpha suggestions:(Vector<WebCore::Color>&&)suggestions
 {
     _picker = picker;
 
@@ -233,7 +232,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     [_popoverWell setAction:@selector(didChooseColor:)];
     [_popoverWell setColor:color];
 #if HAVE(NSCOLORWELL_SUPPORTS_ALPHA)
-    [_popoverWell setSupportsAlpha:NO];
+    [_popoverWell setSupportsAlpha:supportsAlpha == WebKit::ColorControlSupportsAlpha::Yes];
 #endif
 
     RetainPtr<NSColorList> suggestedColors;

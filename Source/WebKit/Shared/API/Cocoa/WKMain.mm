@@ -27,18 +27,12 @@
 #import "WKMain.h"
 
 #import "PCMDaemonEntryPoint.h"
-#import "RegisterTZoneTypes.h"
 #import "WebPushDaemonMain.h"
 #import "WebPushToolMain.h"
-#import <JavaScriptCore/TZoneInit.h>
 #import "XPCServiceEntryPoint.h"
 
-int WKXPCServiceMain(int argc, const char** argv, const char**, const char** darwinEnvp)
+int WKXPCServiceMain(int argc, const char** argv)
 {
-    TZoneInit(darwinEnvp);
-    WebKit::registerTZoneTypes();
-    TZoneRegistrationDone();
-
     return WebKit::XPCServiceMain(argc, argv);
 }
 
@@ -49,7 +43,7 @@ int WKAdAttributionDaemonMain(int argc, const char** argv)
 
 int WKWebPushDaemonMain(int argc, char** argv)
 {
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
     return WebKit::WebPushDaemonMain(argc, argv);
 #else
     return -1;
@@ -58,7 +52,7 @@ int WKWebPushDaemonMain(int argc, char** argv)
 
 int WKWebPushToolMain(int argc, char** argv)
 {
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
     return WebKit::WebPushToolMain(argc, argv);
 #else
     return -1;

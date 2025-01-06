@@ -43,12 +43,16 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(GLIB)
 #include <glib.h>
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -61,7 +65,7 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPer
     if (fsRep.isNull())
         return invalidPlatformFileHandle;
 
-    int platformFlag = 0;
+    int platformFlag = O_CLOEXEC;
     switch (mode) {
     case FileOpenMode::Read:
         platformFlag |= O_RDONLY;
@@ -144,10 +148,10 @@ int64_t writeToFile(PlatformFileHandle handle, std::span<const uint8_t> data)
     return -1;
 }
 
-int64_t readFromFile(PlatformFileHandle handle, void* data, size_t length)
+int64_t readFromFile(PlatformFileHandle handle, std::span<uint8_t> data)
 {
     do {
-        auto bytesRead = read(handle, data, length);
+        auto bytesRead = read(handle, data.data(), data.size());
         if (bytesRead >= 0)
             return bytesRead;
     } while (errno == EINTR);
@@ -270,7 +274,7 @@ std::pair<String, PlatformFileHandle> openTemporaryFile(StringView prefix, Strin
     if (snprintf(buffer, PATH_MAX, "%s/%sXXXXXX", temporaryFileDirectory(), prefix.utf8().data()) >= PATH_MAX)
         goto end;
 
-    handle = mkstemp(buffer);
+    handle = mkostemp(buffer, O_CLOEXEC);
     if (handle < 0)
         goto end;
 
@@ -324,17 +328,17 @@ bool makeAllDirectories(const String& path)
     if (!access(fullPath.data(), F_OK))
         return true;
 
-    char* p = fullPath.mutableData() + 1;
+    auto p = fullPath.mutableSpanIncludingNullTerminator().subspan(1);
     if (p[length - 1] == '/')
         p[length - 1] = '\0';
-    for (; *p; ++p) {
-        if (*p == '/') {
-            *p = '\0';
+    for (; p[0]; skip(p, 1)) {
+        if (p[0] == '/') {
+            p[0] = '\0';
             if (access(fullPath.data(), F_OK)) {
                 if (mkdir(fullPath.data(), S_IRWXU))
                     return false;
             }
-            *p = '/';
+            p[0] = '/';
         }
     }
     if (access(fullPath.data(), F_OK)) {
@@ -374,3 +378,5 @@ String pathByAppendingComponents(StringView path, const Vector<StringView>& comp
 
 } // namespace FileSystemImpl
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

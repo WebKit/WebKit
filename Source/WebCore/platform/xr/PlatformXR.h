@@ -29,6 +29,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -222,6 +223,15 @@ enum class HandJoint : unsigned {
 
 class TrackingAndRenderingClient;
 
+struct DepthRange {
+    float near { 0.1f };
+    float far { 1000.0f };
+};
+
+struct RequestData {
+    DepthRange depthRange;
+};
+
 struct FrameData {
     struct FloatQuaternion {
         float x { 0.0f };
@@ -260,10 +270,11 @@ struct FrameData {
 
 #if PLATFORM(COCOA)
     struct RateMapDescription {
-        WebCore::IntSize screenSize;
-        std::array<std::span<const float>, 2> horizontalSamples;
+        WebCore::IntSize screenSize = { 0, 0 };
+        Vector<float> horizontalSamplesLeft;
+        Vector<float> horizontalSamplesRight;
         // Vertical samples is shared by both horizontalSamples
-        std::span<const float> verticalSamples;
+        Vector<float> verticalSamples;
     };
 
     static constexpr auto LayerSetupSizeMax = std::numeric_limits<uint16_t>::max();
@@ -276,13 +287,13 @@ struct FrameData {
 
     struct ExternalTexture {
         MachSendRight handle;
-        bool isSharedTexture;
+        bool isSharedTexture { false };
     };
 
     struct ExternalTextureData {
         size_t reusableTextureIndex = 0;
-        ExternalTexture colorTexture = { MachSendRight(), false };
-        ExternalTexture depthStencilBuffer = { MachSendRight(), false };
+        ExternalTexture colorTexture;
+        ExternalTexture depthStencilBuffer;
     };
 #endif
 
@@ -292,6 +303,8 @@ struct FrameData {
         std::optional<LayerSetupData> layerSetup = { std::nullopt };
         uint64_t renderingFrameIndex { 0 };
         std::optional<ExternalTextureData> textureData;
+        // FIXME: <rdar://134998122> Remove when new CC lands.
+        bool requestDepth { false };
 #else
         WebCore::IntSize framebufferSize;
         PlatformGLObject opaqueTexture { 0 };
@@ -320,7 +333,7 @@ struct FrameData {
 
     struct InputSource {
         InputSourceHandle handle { 0 };
-        XRHandedness handeness { XRHandedness::None };
+        XRHandedness handedness { XRHandedness::None };
         XRTargetRayMode targetRayMode { XRTargetRayMode::Gaze };
         Vector<String> profiles;
         InputSourcePose pointerOrigin;
@@ -348,14 +361,10 @@ struct FrameData {
 };
 
 class Device : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Device);
     WTF_MAKE_NONCOPYABLE(Device);
 public:
     virtual ~Device() = default;
-
-    void ref() const { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device>::ref(); }
-    void deref() const { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device>::deref(); }
-    ThreadSafeWeakPtrControlBlock& controlBlock() const { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device>::controlBlock(); }
 
     using FeatureList = Vector<SessionFeature>;
     bool supports(SessionMode mode) const { return m_supportedFeaturesMap.contains(mode); }
@@ -365,6 +374,7 @@ public:
     FeatureList enabledFeatures(SessionMode mode) const { return m_enabledFeaturesMap.get(mode); }
 
     virtual WebCore::IntSize recommendedResolution(SessionMode) { return { 1, 1 }; }
+    virtual double minimumNearClipPlane() const { return 0.1; }
 
     bool supportsOrientationTracking() const { return m_supportsOrientationTracking; }
     bool supportsViewportScaling() const { return m_supportsViewportScaling; }
@@ -379,6 +389,7 @@ public:
 
     virtual void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, SessionMode, const FeatureList&) = 0;
     virtual void shutDownTrackingAndRendering() = 0;
+    virtual void didCompleteShutdownTriggeredBySystem() { }
     TrackingAndRenderingClient* trackingAndRenderingClient() const { return m_trackingAndRenderingClient.get(); }
     void setTrackingAndRenderingClient(WeakPtr<TrackingAndRenderingClient>&& client) { m_trackingAndRenderingClient = WTFMove(client); }
 
@@ -408,7 +419,7 @@ public:
     virtual Vector<ViewData> views(SessionMode) const = 0;
 
     using RequestFrameCallback = Function<void(FrameData&&)>;
-    virtual void requestFrame(RequestFrameCallback&&) = 0;
+    virtual void requestFrame(std::optional<RequestData>&&, RequestFrameCallback&&) = 0;
     virtual void submitFrame(Vector<Layer>&&) { };
 protected:
     Device() = default;

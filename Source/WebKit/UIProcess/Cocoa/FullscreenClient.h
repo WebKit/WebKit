@@ -30,26 +30,32 @@
 #import "APIFullscreenClient.h"
 #import "WKWebView.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
 @protocol _WKFullscreenDelegate;
 
 namespace WebKit {
 
-class FullscreenClient : public API::FullscreenClient {
+class FullscreenClient final : public API::FullscreenClient {
+    WTF_MAKE_TZONE_ALLOCATED(FullscreenClient);
 public:
     explicit FullscreenClient(WKWebView *);
     ~FullscreenClient() { };
 
-    bool isType(API::FullscreenClient::Type target) const override { return target == API::FullscreenClient::WebKitType; };
+    bool isType(API::FullscreenClient::Type target) const final { return target == API::FullscreenClient::WebKitType; };
 
     RetainPtr<id<_WKFullscreenDelegate>> delegate();
     void setDelegate(id<_WKFullscreenDelegate>);
 
-    void willEnterFullscreen(WebPageProxy*) override;
-    void didEnterFullscreen(WebPageProxy*) override;
-    void willExitFullscreen(WebPageProxy*) override;
-    void didExitFullscreen(WebPageProxy*) override;
+    void willEnterFullscreen(WebPageProxy*) final;
+    void didEnterFullscreen(WebPageProxy*) final;
+    void willExitFullscreen(WebPageProxy*) final;
+    void didExitFullscreen(WebPageProxy*) final;
+
+#if PLATFORM(IOS_FAMILY)
+    void requestPresentingViewController(CompletionHandler<void(UIViewController *, NSError *)>&&) final;
+#endif
 
 private:
     WKWebView *m_webView;
@@ -57,15 +63,21 @@ private:
 
     struct {
 #if PLATFORM(MAC)
-        bool webViewWillEnterFullscreen : 1;
-        bool webViewDidEnterFullscreen : 1;
-        bool webViewWillExitFullscreen : 1;
-        bool webViewDidExitFullscreen : 1;
+        bool webViewWillEnterFullscreen : 1 { false };
+        bool webViewDidEnterFullscreen : 1 { false };
+        bool webViewWillExitFullscreen : 1 { false };
+        bool webViewDidExitFullscreen : 1 { false };
 #else
-        bool webViewWillEnterElementFullscreen : 1;
-        bool webViewDidEnterElementFullscreen : 1;
-        bool webViewWillExitElementFullscreen : 1;
-        bool webViewDidExitElementFullscreen : 1;
+        bool webViewWillEnterElementFullscreen : 1 { false };
+        bool webViewDidEnterElementFullscreen : 1 { false };
+        bool webViewWillExitElementFullscreen : 1 { false };
+        bool webViewDidExitElementFullscreen : 1 { false };
+#endif
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+        bool webViewDidFullscreenImageWithQuickLook : 1 { false };
+#endif
+#if PLATFORM(IOS_FAMILY)
+        bool webViewRequestPresentingViewController : 1 { false };
 #endif
     } m_delegateMethods;
 };

@@ -64,6 +64,7 @@ enum DeviceType {
     readonly attribute boolean supportsSeeking;
     readonly attribute boolean inWindowFullscreen;
     readonly attribute boolean supportsRewind;
+    readonly attribute boolean needsChromeMediaControlsPseudoElement;
 
     readonly attribute DOMString externalDeviceDisplayName;
     readonly attribute DeviceType externalDeviceType;
@@ -73,6 +74,7 @@ enum DeviceType {
     undefined updateTextTrackContainer();
     undefined enteredFullscreen();
     undefined exitedFullscreen();
+    undefined presentationModeChanged();
 
     DOMString generateUUID();
 
@@ -82,4 +84,6 @@ enum DeviceType {
     [Conditional=MODERN_MEDIA_CONTROLS] DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);
     [Conditional=MODERN_MEDIA_CONTROLS] DOMString formattedStringForDuration(unrestricted double durationInSeconds);
     [Conditional=MODERN_MEDIA_CONTROLS&MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled] boolean showMediaControlsContextMenu(HTMLElement target, JSON options, VoidCallback callback);
+
+    [Conditional=MEDIA_SESSION] undefined ensureMediaSessionObserver();
 };

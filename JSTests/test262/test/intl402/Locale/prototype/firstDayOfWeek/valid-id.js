@@ -13,13 +13,13 @@ features: [Intl.Locale,Intl.Locale-info]
 ---*/
 
 const validIds = [
-  ["en-u-fw-mon", 1],
-  ["en-u-fw-tue", 2],
-  ["en-u-fw-wed", 3],
-  ["en-u-fw-thu", 4],
-  ["en-u-fw-fri", 5],
-  ["en-u-fw-sat", 6],
-  ["en-u-fw-sun", 7],
+  ["en-u-fw-mon", "mon"],
+  ["en-u-fw-tue", "tue"],
+  ["en-u-fw-wed", "wed"],
+  ["en-u-fw-thu", "thu"],
+  ["en-u-fw-fri", "fri"],
+  ["en-u-fw-sat", "sat"],
+  ["en-u-fw-sun", "sun"],
 ];
 for (const [id, expected] of validIds) {
   assert.sameValue(

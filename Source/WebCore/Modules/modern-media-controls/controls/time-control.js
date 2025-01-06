@@ -58,6 +58,7 @@ class TimeControl extends LayoutItem
         this._duration = 0;
         this._currentTime = 0;
         this._loading = false;
+        this._supportsSeeking = true;
 
         if (this._shouldShowDurationTimeLabel) {
             this.durationTimeLabel.element.addEventListener("click", this);
@@ -96,7 +97,22 @@ class TimeControl extends LayoutItem
             return;
 
         this._loading = flag;
-        this.scrubber.disabled = flag;
+        this.scrubber.disabled = this._loading || !this._supportsSeeking;
+        this.needsLayout = true;
+    }
+
+    get supportsSeeking()
+    {
+        return this._supportsSeeking;
+    }
+    
+    set supportsSeeking(flag)
+    {
+        if (this._supportsSeeking === flag)
+            return;
+
+        this._supportsSeeking = flag;
+        this.scrubber.disabled = this._loading || !this._supportsSeeking;
         this.needsLayout = true;
     }
 
@@ -242,11 +258,17 @@ class TimeControl extends LayoutItem
             return this.width;
         })();
 
+        if (this._timeLabelsAttachment == TimeControl.TimeLabelsAttachment.Below)
+            this.elapsedTimeLabel.y = this.scrubber.height;
+
         durationOrRemainingTimeLabel.x = (() => {
             if (this._timeLabelsDisplayOnScrubberSide)
                 return this.scrubber.x + this.scrubber.width + scrubberMargin;
             return this.width - durationOrRemainingTimeLabel.width;
         })();
+
+        if (this._timeLabelsAttachment == TimeControl.TimeLabelsAttachment.Below)
+            durationOrRemainingTimeLabel.y = this.scrubber.height;
 
         this.children = [this._loading ? this.activityIndicator : this.elapsedTimeLabel, this.scrubber, durationOrRemainingTimeLabel];
     }
@@ -260,5 +282,6 @@ class TimeControl extends LayoutItem
 
 TimeControl.TimeLabelsAttachment = {
     Above: 1 << 0,
-    Side:  1 << 1
+    Side:  1 << 1,
+    Below: 1 << 2
 };

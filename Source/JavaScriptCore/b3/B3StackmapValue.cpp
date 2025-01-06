@@ -36,9 +36,7 @@ namespace B3StackmapValueInternal {
 constexpr bool dumpRegisters = false;
 }
 
-StackmapValue::~StackmapValue()
-{
-}
+StackmapValue::~StackmapValue() = default;
 
 void StackmapValue::append(Value* value, const ValueRep& rep)
 {

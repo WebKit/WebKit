@@ -12,25 +12,25 @@ if (!window.internals)
     testFailed("Must be run in WebKitTestRunner or DumpRenderTree");
 else {
     var inputElement = document.getElementById("input");
-    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "None");
-    evalAndLog("internals.setShowAutoFillButton(inputElement, 'Credentials')");
-    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "Credentials");
-    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "None");
-    evalAndLog("internals.setShowAutoFillButton(inputElement, 'Contacts')");
-    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "Contacts");
-    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "Credentials");
-    evalAndLog("internals.setShowAutoFillButton(inputElement, 'StrongPassword')");
-    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "StrongPassword");
-    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "Contacts");
-    evalAndLog("internals.setShowAutoFillButton(inputElement, 'Credentials')");
-    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "Credentials");
-    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "StrongPassword");
-    evalAndLog("internals.setShowAutoFillButton(inputElement, 'CreditCard')");
-    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "CreditCard");
-    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "Credentials");
-    evalAndLog("internals.setShowAutoFillButton(inputElement, 'None')");
-    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "None");
-    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "CreditCard");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "None");
+    evalAndLog("internals.setAutofillButtonType(inputElement, 'Credentials')");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "Credentials");
+    shouldBeEqualToString("internals.lastAutofillButtonType(inputElement)", "None");
+    evalAndLog("internals.setAutofillButtonType(inputElement, 'Contacts')");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "Contacts");
+    shouldBeEqualToString("internals.lastAutofillButtonType(inputElement)", "Credentials");
+    evalAndLog("internals.setAutofillButtonType(inputElement, 'StrongPassword')");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "StrongPassword");
+    shouldBeEqualToString("internals.lastAutofillButtonType(inputElement)", "Contacts");
+    evalAndLog("internals.setAutofillButtonType(inputElement, 'Credentials')");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "Credentials");
+    shouldBeEqualToString("internals.lastAutofillButtonType(inputElement)", "StrongPassword");
+    evalAndLog("internals.setAutofillButtonType(inputElement, 'CreditCard')");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "CreditCard");
+    shouldBeEqualToString("internals.lastAutofillButtonType(inputElement)", "Credentials");
+    evalAndLog("internals.setAutofillButtonType(inputElement, 'None')");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "None");
+    shouldBeEqualToString("internals.lastAutofillButtonType(inputElement)", "CreditCard");
 }
 </script>
 </body>

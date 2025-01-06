@@ -39,10 +39,10 @@ layer at (0,0) size 800x600
                   text run at (2,182) width 64: "some info"
                   text run at (2,202) width 55: "from the"
             RenderTableCell {TD} at (81,114) size 701x2 [r=0 c=1 rs=1 cs=1]
-      RenderTable {TABLE} at (0,460) size 784x72 [border: (2px outset #808080)]
+      RenderTable {TABLE} at (0,460) size 784x72 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 780x68
           RenderTableRow {TR} at (0,2) size 780x64
-            RenderTableCell {TD} at (2,2) size 584x64 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 584x64 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 136x19
                 text run at (2,2) width 136: "This is a test to see if"
               RenderInline {SPAN} at (2,2) size 580x59
@@ -53,4 +53,4 @@ layer at (0,0) size 800x600
                   text run at (581,22) width 1: " "
                   text run at (2,42) width 32: "Is it?"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (587,32) size 191x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (587,32) size 191x4 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]

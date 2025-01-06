@@ -46,8 +46,8 @@ template<typename T, typename WeakPtrImpl>
 class WeakRef {
 public:
     template<typename = std::enable_if_t<!IsSmartPtr<T>::value && !std::is_pointer_v<T>>>
-    WeakRef(T& object, EnableWeakPtrThreadingAssertions shouldEnableAssertions = EnableWeakPtrThreadingAssertions::Yes)
-        : m_impl(implForObject(object))
+    WeakRef(const T& object, EnableWeakPtrThreadingAssertions shouldEnableAssertions = EnableWeakPtrThreadingAssertions::Yes)
+        : m_impl(object.weakImpl())
 #if ASSERT_ENABLED
         , m_shouldEnableAssertions(shouldEnableAssertions == EnableWeakPtrThreadingAssertions::Yes)
 #endif
@@ -76,7 +76,7 @@ public:
     T* ptrAllowingHashTableEmptyValue() const
     {
         static_assert(
-            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
 
         return !m_impl.isHashTableEmptyValue() ? static_cast<T*>(m_impl->template get<T>()) : nullptr;
@@ -85,22 +85,22 @@ public:
     T* ptr() const
     {
         static_assert(
-            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
 
         auto* ptr = static_cast<T*>(m_impl->template get<T>());
-        ASSERT(ptr);
+        RELEASE_ASSERT(ptr);
         return ptr;
     }
 
     T& get() const
     {
         static_assert(
-            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
 
         auto* ptr = static_cast<T*>(m_impl->template get<T>());
-        ASSERT(ptr);
+        RELEASE_ASSERT(ptr);
         return *ptr;
     }
 
@@ -132,12 +132,6 @@ private:
             || m_impl->wasConstructedOnMainThread() == isMainThread();
     }
 #endif
-
-    template<typename U> static WeakPtrImpl& implForObject(const U& object)
-    {
-        object.weakPtrFactory().initializeIfNeeded(object);
-        return *object.weakPtrFactory().impl();
-    }
 
     Ref<WeakPtrImpl> m_impl;
 #if ASSERT_ENABLED

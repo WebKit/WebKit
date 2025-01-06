@@ -1,0 +1,135 @@
+<!DOCTYPE html><!-- webkit-test-runner [ OptInPartitionedCookiesEnabled=true CFNetworkNetworkLoaderEnabled=false ] -->
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+    <script>
+        description("Tests that a cross-site iframe can request and be granted storage access under general third-party cookie blocking.");
+        jsTestIsAsync = true;
+
+        const firstPartyUrl = "https://127.0.0.1:8443";
+        const thirdPartyUrl = "https://localhost:8443";
+
+        testRunner.dumpChildFramesAsText();
+
+        function receiveMessage(event) {
+            if (event.origin === "https://localhost:8443") {
+                if (event.data.indexOf("PASS ") !== -1)
+                    testPassed(event.data.replace("PASS ", ""));
+                else
+                    testFailed(event.data.replace("FAIL ", ""));
+            } else
+                testFailed("Received a message from an unexpected origin: " + event.origin);
+
+            switch (document.location.hash) {
+                case "#firstTest":
+                    document.location.hash = "secondTest";
+                    // Clear all data so that the previous grant doesn't count toward the next test.
+                    testRunner.statisticsClearInMemoryAndPersistentStore(runTest);
+                    break;
+                case "#secondTest":
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+                        setEnableFeature(false, finishJSTest);
+                    });
+                    break;
+                default:
+                    testFailed("Message handler called under unknown circumstances.");
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+                        setEnableFeature(false, finishJSTest);
+                    });
+            }
+        }
+
+        window.addEventListener("message", receiveMessage, false);
+
+        function activateElement(elementId) {
+            var element = document.getElementById(elementId);
+            var centerX = element.offsetLeft + element.offsetWidth / 2;
+            var centerY = element.offsetTop + element.offsetHeight / 2;
+            UIHelper.activateAt(centerX, centerY).then(
+                function () {
+                    if (window.eventSender)
+                        eventSender.keyDown("escape");
+                    else {
+                        testFailed("No eventSender.");
+                        testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+                            setEnableFeature(false, finishJSTest);
+                        });
+                    }
+                },
+                function () {
+                    testFailed("Promise rejected.");
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+                        setEnableFeature(false, finishJSTest);
+                    });
+                }
+            );
+        }
+
+        function runTest() {
+            switch (document.location.hash) {
+                case "":
+                    setEnableFeature(true, function() {
+                        // Set first-party cookie for the domain that will be loaded as a third-party iframe
+                        document.location.href = `${thirdPartyUrl}/storageAccess/resources/set-cookie.py?dummy=${Math.random()}&name=firstPartyCookie&value=value#${firstPartyUrl}${document.location.pathname}#partitionedCookies`;
+                    });
+                    break;
+                case "#partitionedCookies":
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function() {
+                        let partitionedCookiesIframeElement = document.createElement("iframe");
+                        partitionedCookiesIframeElement.onload = function() {
+                            document.location.href = `${firstPartyUrl}${document.location.pathname}#firstTest`;
+                            runTest();
+                        };
+                        // Set partitioned cookie and echo it in Frame 1.
+                        partitionedCookiesIframeElement.src = `${thirdPartyUrl}/cookies/resources/set-cookie-and-redirect-back.py?isPartitioned=True&redirectBackTo=${thirdPartyUrl}/cookies/resources/echo-http-and-dom-cookies-and-notify-done.py?skipNotifyDone=1`;
+                        document.body.appendChild(partitionedCookiesIframeElement);
+                    }, true);
+                    break;
+                case "#firstTest":
+                    // Test that the request is granted if third-party cookies are blocked under first-parties without
+                    // user interaction.
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function() {
+                        if (testRunner.isStatisticsPrevalentResource(thirdPartyUrl))
+                            testFailed("Third-party set as prevalent resource.");
+                            if (testRunner.isStatisticsHasHadUserInteraction(firstPartyUrl))
+                                testFailed("First-party was logged for user interaction.");
+                            testRunner.setStatisticsHasHadUserInteraction(thirdPartyUrl, true, function() {
+                                if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyUrl))
+                                    testFailed("Third-party did not get logged for user interaction.");
+                                let iframeElement = document.createElement("iframe");
+                                iframeElement.onload = function() {
+                                    activateElement("TheFirstIframeThatRequestsStorageAccess");
+                                };
+                                iframeElement.id = "TheFirstIframeThatRequestsStorageAccess";
+                                iframeElement.src = "https://localhost:8443/storageAccess/resources/request-storage-access-iframe.html?dummy=" + Math.random() + "#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe";
+                                document.body.appendChild(iframeElement);
+                            });
+                    }, true);
+                    break;
+                case "#secondTest":
+                    // Test that the request is granted if third-party cookies are blocked unconditionally.
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function() {
+                        if (testRunner.isStatisticsPrevalentResource(thirdPartyUrl))
+                            testFailed("Third-party set as prevalent resource.");
+                        testRunner.setStatisticsHasHadUserInteraction(thirdPartyUrl, true, function() {
+                            if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyUrl))
+                                testFailed("Third-party did not get logged for user interaction.");
+                            let iframeElement = document.createElement("iframe");
+                            iframeElement.onload = function() {
+                                activateElement("TheSecondIframeThatRequestsStorageAccess");
+                            };
+                            iframeElement.id = "TheSecondIframeThatRequestsStorageAccess";
+                            iframeElement.src = "https://localhost:8443/storageAccess/resources/request-storage-access-iframe.html?dummy=" + Math.random() + "#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe";
+                            document.body.appendChild(iframeElement);
+                        });
+                    }, false);
+                    break;
+            }
+        }
+    </script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

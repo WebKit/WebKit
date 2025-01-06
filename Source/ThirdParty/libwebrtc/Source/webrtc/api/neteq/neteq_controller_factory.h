@@ -13,6 +13,7 @@
 
 #include <memory>
 
+#include "api/environment/environment.h"
 #include "api/neteq/neteq_controller.h"
 
 namespace webrtc {
@@ -24,7 +25,8 @@ class NetEqControllerFactory {
   virtual ~NetEqControllerFactory() = default;
 
   // Creates a new NetEqController object, with parameters set in `config`.
-  virtual std::unique_ptr<NetEqController> CreateNetEqController(
+  virtual std::unique_ptr<NetEqController> Create(
+      const Environment& env,
       const NetEqController::Config& config) const = 0;
 };
 

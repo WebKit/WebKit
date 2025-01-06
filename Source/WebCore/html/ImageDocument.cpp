@@ -49,12 +49,12 @@
 #include "RawDataDocumentParser.h"
 #include "RenderElement.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageDocument);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageDocument);
 
 using namespace HTMLNames;
 
@@ -97,7 +97,8 @@ private:
 };
 
 class ImageDocumentElement final : public HTMLImageElement {
-    WTF_MAKE_ISO_ALLOCATED_INLINE(ImageDocumentElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageDocumentElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImageDocumentElement);
 public:
     static Ref<ImageDocumentElement> create(ImageDocument&);
 
@@ -113,6 +114,8 @@ private:
 
     WeakPtr<ImageDocument, WeakPtrImplWithEventTargetData> m_imageDocument;
 };
+
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageDocumentElement);
 
 inline Ref<ImageDocumentElement> ImageDocumentElement::create(ImageDocument& document)
 {
@@ -230,7 +233,6 @@ void ImageDocument::createDocumentStructure()
 {
     auto rootElement = HTMLHtmlElement::create(*this);
     appendChild(rootElement);
-    rootElement->insertedByParser();
     rootElement->setInlineStyleProperty(CSSPropertyHeight, 100, CSSUnitType::CSS_PERCENTAGE);
 
     if (RefPtr localFrame = frame())
@@ -428,7 +430,7 @@ void ImageDocument::imageClicked(int x, int y)
 void ImageEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
     RefPtr document = m_document.get();
-    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && event.type() == eventNames().clickEvent && document)
+    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && isAnyClick(event) && document)
         document->imageClicked(mouseEvent->offsetX(), mouseEvent->offsetY());
 }
 

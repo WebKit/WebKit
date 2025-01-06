@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,18 +30,19 @@
 
 #include "GPUConnectionToWebProcessMessages.h"
 #include "IPCEvent.h"
+#include "ImageBufferRemotePDFDocumentBackend.h"
 #include "ImageBufferShareableBitmapBackend.h"
 #include "Logging.h"
 #include "RemoteImageBufferMessages.h"
 #include "RemoteImageBufferProxyMessages.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RemoteSharedResourceCacheMessages.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebWorkerClient.h"
 #include <WebCore/Document.h>
 #include <WebCore/WorkerGlobalScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if HAVE(IOSURFACE)
 #include "ImageBufferRemoteIOSurfaceBackend.h"
@@ -50,6 +51,9 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageBufferProxy);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSerializedImageBufferProxy);
 
 RemoteImageBufferProxy::RemoteImageBufferProxy(Parameters parameters, const ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier identifier)
     : ImageBuffer(parameters, info, { }, WTFMove(backend), identifier)
@@ -62,55 +66,65 @@ RemoteImageBufferProxy::RemoteImageBufferProxy(Parameters parameters, const Imag
 
 RemoteImageBufferProxy::~RemoteImageBufferProxy()
 {
-    if (!m_remoteRenderingBackendProxy || m_remoteRenderingBackendProxy->isGPUProcessConnectionClosed()) {
+    RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get();
+    if (!remoteRenderingBackendProxy || remoteRenderingBackendProxy->isGPUProcessConnectionClosed()) {
         m_needsFlush = false;
         return;
     }
 
     flushDrawingContextAsync();
-    m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(renderingResourceIdentifier());
-    m_remoteRenderingBackendProxy->releaseImageBuffer(renderingResourceIdentifier());
+    remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(renderingResourceIdentifier());
+    remoteRenderingBackendProxy->releaseImageBuffer(renderingResourceIdentifier());
 }
 
 void RemoteImageBufferProxy::assertDispatcherIsCurrent() const
 {
-    if (m_remoteRenderingBackendProxy)
-        assertIsCurrent(m_remoteRenderingBackendProxy->dispatcher());
+    ASSERT(!m_remoteRenderingBackendProxy || m_remoteRenderingBackendProxy->isCurrent());
 }
 
 template<typename T>
 ALWAYS_INLINE void RemoteImageBufferProxy::send(T&& message)
 {
-    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+    RefPtr connection = this->connection();
+    if (UNLIKELY(!connection))
         return;
 
-    auto result = m_remoteRenderingBackendProxy->streamConnection().send(std::forward<T>(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
-#if !RELEASE_LOG_DISABLED
+    auto result = connection->send(std::forward<T>(message), renderingResourceIdentifier());
     if (UNLIKELY(result != IPC::Error::NoError)) {
-        auto& parameters = m_remoteRenderingBackendProxy->parameters();
-        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteImageBufferProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
-            parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
+        RELEASE_LOG(RemoteLayerBuffers, "RemoteImageBufferProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING, IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
+        didBecomeUnresponsive();
     }
-#else
-    UNUSED_VARIABLE(result);
-#endif
 }
 
 template<typename T>
 ALWAYS_INLINE auto RemoteImageBufferProxy::sendSync(T&& message)
 {
-    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+    RefPtr connection = this->connection();
+    if (UNLIKELY(!connection))
         return IPC::StreamClientConnection::SendSyncResult<T> { IPC::Error::InvalidConnection };
 
-    auto result = m_remoteRenderingBackendProxy->streamConnection().sendSync(std::forward<T>(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
-#if !RELEASE_LOG_DISABLED
+    auto result = connection->sendSync(std::forward<T>(message), renderingResourceIdentifier());
     if (UNLIKELY(!result.succeeded())) {
-        auto& parameters = m_remoteRenderingBackendProxy->parameters();
-        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteDisplayListRecorderProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
-            parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result.error()).characters());
+        RELEASE_LOG(RemoteLayerBuffers, "RemoteDisplayListRecorderProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING, IPC::description(T::name()).characters(), IPC::errorAsString(result.error()).characters());
+        didBecomeUnresponsive();
     }
-#endif
     return result;
+}
+
+ALWAYS_INLINE RefPtr<IPC::StreamClientConnection> RemoteImageBufferProxy::connection() const
+{
+    RefPtr backend = m_remoteRenderingBackendProxy.get();
+    if (UNLIKELY(!backend))
+        return nullptr;
+    return backend->connection();
+}
+
+void RemoteImageBufferProxy::didBecomeUnresponsive() const
+{
+    RefPtr backend = m_remoteRenderingBackendProxy.get();
+    if (UNLIKELY(!backend))
+        return;
+    backend->didBecomeUnresponsive();
 }
 
 void RemoteImageBufferProxy::backingStoreWillChange()
@@ -133,27 +147,42 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
     // This should match RemoteImageBufferProxy::create<>() call site and RemoteImageBuffer::create<>() call site.
     // FIXME: this will be removed and backend be constructed in the contructor.
     std::unique_ptr<ImageBufferBackend> backend;
-    if (backendHandle) {
-        auto backendParameters = this->backendParameters(parameters());
+    auto backendParameters = this->backendParameters(parameters());
+
+    switch (renderingMode()) {
+    case RenderingMode::Accelerated:
 #if HAVE(IOSURFACE)
-        if (std::holds_alternative<MachSendRight>(*backendHandle)) {
+        if (backendHandle && std::holds_alternative<MachSendRight>(*backendHandle)) {
             if (RemoteRenderingBackendProxy::canMapRemoteImageBufferBackendBackingStore())
                 backend = ImageBufferShareableMappedIOSurfaceBackend::create(backendParameters, WTFMove(*backendHandle));
             else
                 backend = ImageBufferRemoteIOSurfaceBackend::create(backendParameters, WTFMove(*backendHandle));
         }
 #endif
-        if (std::holds_alternative<ShareableBitmap::Handle>(*backendHandle)) {
+        [[fallthrough]];
+
+    case RenderingMode::Unaccelerated:
+        if (backendHandle && std::holds_alternative<ShareableBitmap::Handle>(*backendHandle)) {
             m_backendInfo = ImageBuffer::populateBackendInfo<ImageBufferShareableBitmapBackend>(backendParameters);
             auto handle = std::get<ShareableBitmap::Handle>(WTFMove(*backendHandle));
             handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
             backend = ImageBufferShareableBitmapBackend::create(backendParameters, WTFMove(handle));
         }
+        break;
+
+    case RenderingMode::PDFDocument:
+        backend = ImageBufferRemotePDFDocumentBackend::create(backendParameters);
+        break;
+
+    case RenderingMode::DisplayList:
+        break;
     }
+
     if (!backend) {
         m_remoteDisplayList.disconnect();
-        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(renderingResourceIdentifier());
-        m_remoteRenderingBackendProxy->releaseImageBuffer(renderingResourceIdentifier());
+        RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get();
+        remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(renderingResourceIdentifier());
+        remoteRenderingBackendProxy->releaseImageBuffer(renderingResourceIdentifier());
         m_remoteRenderingBackendProxy = nullptr;
         return;
     }
@@ -163,14 +192,15 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
 
 ImageBufferBackend* RemoteImageBufferProxy::ensureBackend() const
 {
-    if (!m_backend && m_remoteRenderingBackendProxy) {
-        auto error = streamConnection().waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
+    if (m_backend)
+        return m_backend.get();
+    RefPtr connection = this->connection();
+    if (connection) {
+        auto error = connection->waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier);
         if (error != IPC::Error::NoError) {
-#if !RELEASE_LOG_DISABLED
-            auto& parameters = m_remoteRenderingBackendProxy->parameters();
-#endif
-            RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteImageBufferProxy::ensureBackendCreated - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING,
-                parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::errorAsString(error).characters());
+            RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteImageBufferProxy::ensureBackendCreated - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING,
+                m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64(), IPC::errorAsString(error).characters());
+            didBecomeUnresponsive();
             return nullptr;
         }
     }
@@ -186,10 +216,11 @@ RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage() const
         const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
         return ImageBuffer::copyNativeImage();
     }
-    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+    RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get();
+    if (UNLIKELY(!remoteRenderingBackendProxy))
         return { };
 
-    auto bitmap = m_remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, PreserveResolution::Yes);
+    auto bitmap = remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, PreserveResolution::Yes);
     if (!bitmap)
         return { };
     return NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore));
@@ -216,7 +247,7 @@ RefPtr<ImageBuffer> RemoteImageBufferProxy::sinkIntoBufferForDifferentThread()
 {
     ASSERT(hasOneRef());
     // We can't use these on a different thread, so make a local clone instead.
-    auto copyBuffer = ImageBuffer::create(logicalSize(), renderingPurpose(), resolutionScale(), colorSpace(), pixelFormat());
+    auto copyBuffer = ImageBuffer::create(logicalSize(), RenderingMode::Unaccelerated, renderingPurpose(), resolutionScale(), colorSpace(), pixelFormat());
     if (!copyBuffer)
         return nullptr;
 
@@ -253,8 +284,8 @@ RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferForm
     auto pixelBuffer = allocator.createPixelBuffer(destinationFormat, sourceRect.size());
     if (UNLIKELY(!pixelBuffer))
         return nullptr;
-    if (LIKELY(m_remoteRenderingBackendProxy)) {
-        if (m_remoteRenderingBackendProxy->getPixelBufferForImageBuffer(m_renderingResourceIdentifier, destinationFormat, sourceRect, pixelBuffer->bytes()))
+    if (RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get()) {
+        if (remoteRenderingBackendProxy->getPixelBufferForImageBuffer(m_renderingResourceIdentifier, destinationFormat, sourceRect, pixelBuffer->bytes()))
             return pixelBuffer;
     }
     pixelBuffer->zeroFill();
@@ -287,13 +318,14 @@ void RemoteImageBufferProxy::putPixelBuffer(const PixelBuffer& pixelBuffer, cons
         return;
     }
 
-    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+    RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get();
+    if (UNLIKELY(!remoteRenderingBackendProxy))
         return;
     // The math inside PixelBuffer::create() doesn't agree with the math inside ImageBufferBackend::putPixelBuffer() about how m_resolutionScale interacts with the data in the ImageBuffer.
     // This means that putPixelBuffer() is only called when resolutionScale() == 1.
     ASSERT(resolutionScale() == 1);
     backingStoreWillChange();
-    m_remoteRenderingBackendProxy->putPixelBufferForImageBuffer(m_renderingResourceIdentifier, pixelBuffer, srcRect, destPoint, destFormat);
+    remoteRenderingBackendProxy->putPixelBufferForImageBuffer(m_renderingResourceIdentifier, pixelBuffer, srcRect, destPoint, destFormat);
 }
 
 void RemoteImageBufferProxy::convertToLuminanceMask()
@@ -345,7 +377,8 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
     flushDrawingContext();
     m_remoteDisplayList.disconnect();
 
-    if (!m_remoteRenderingBackendProxy)
+    RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get();
+    if (!remoteRenderingBackendProxy)
         return nullptr;
 
     prepareForBackingStoreChange();
@@ -353,9 +386,9 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
     if (!ensureBackend())
         return nullptr;
 
-    m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
+    remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
 
-    auto result = makeUnique<RemoteSerializedImageBufferProxy>(parameters(), backendInfo(), m_renderingResourceIdentifier, *m_remoteRenderingBackendProxy);
+    auto result = makeUnique<RemoteSerializedImageBufferProxy>(parameters(), backendInfo(), m_renderingResourceIdentifier, *remoteRenderingBackendProxy);
 
     clearBackend();
     m_remoteRenderingBackendProxy = nullptr;
@@ -364,17 +397,11 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
     return ret;
 }
 
-IPC::StreamClientConnection& RemoteImageBufferProxy::streamConnection() const
-{
-    ASSERT(m_remoteRenderingBackendProxy);
-    return m_remoteRenderingBackendProxy->streamConnection();
-}
-
 RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(WebCore::ImageBuffer::Parameters parameters, const WebCore::ImageBufferBackend::Info& info, const WebCore::RenderingResourceIdentifier& renderingResourceIdentifier, RemoteRenderingBackendProxy& backend)
     : m_parameters(parameters)
     , m_info(info)
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
-    , m_connection(backend.connection())
+    , m_connection(nullptr/*backend.connection()*/)
 {
     backend.moveToSerializedBuffer(m_renderingResourceIdentifier);
 }
@@ -389,8 +416,8 @@ RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::u
 
 RemoteSerializedImageBufferProxy::~RemoteSerializedImageBufferProxy()
 {
-    if (m_connection)
-        m_connection->send(Messages::RemoteSharedResourceCache::ReleaseSerializedImageBuffer(m_renderingResourceIdentifier), 0);
+    if (RefPtr connection = m_connection)
+        connection->send(Messages::RemoteSharedResourceCache::ReleaseSerializedImageBuffer(m_renderingResourceIdentifier), 0);
 }
 
 } // namespace WebKit

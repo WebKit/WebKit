@@ -45,12 +45,18 @@
     }
 </style>
 <script>
-    function doTest()
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    async function doTest()
     {
-        if (window.eventSender)
-            eventSender.scalePageBy(1.5);
+        if (window.testRunner)
+            await testRunner.setPageScaleFactor(1.5, 0, 0);
 
         window.scrollTo(0, 100);
+
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     window.addEventListener('load', doTest, false);
 </script>

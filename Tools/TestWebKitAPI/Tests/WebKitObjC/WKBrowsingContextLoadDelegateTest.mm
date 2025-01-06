@@ -100,7 +100,7 @@ TEST_F(WKBrowsingContextLoadDelegateTest, SimpleLoad)
     view.get().navigationDelegate = loadDelegate.get();
 
     // Load the file.
-    NSURL *nsURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *nsURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
     [view.get() loadFileURL:nsURL allowingReadAccessToURL:nsURL];
 
     // Wait for the load to finish.

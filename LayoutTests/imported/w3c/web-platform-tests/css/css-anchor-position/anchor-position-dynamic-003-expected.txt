@@ -1,0 +1,12 @@
+
+PASS .target 1
+PASS .target 2
+PASS .target 3
+PASS .target 4
+PASS .target 5
+PASS .after .target 6
+PASS .after .target 7
+PASS .after .target 8
+PASS .after .target 9
+PASS .after .target 10
+

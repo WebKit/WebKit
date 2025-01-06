@@ -27,6 +27,7 @@
 
 #include <concepts>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if __has_include(<coroutine>)
 #include <coroutine>
@@ -140,7 +141,7 @@ struct Task {
 };
 
 class CoroutineCaller {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CoroutineCaller);
 public:
     CoroutineCaller() = default;
     void setCoroutine(Function<Task()>&& coroutine)

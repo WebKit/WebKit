@@ -21,7 +21,7 @@ info: |
       WhiteSpaceSequence[opt] SingleLineDelimitedCommentSequence[opt] --> SingleLineCommentChars[opt]
 negative:
   phase: runtime
-  type: Test262Error
+  type: EvalError
 ---*/
 
 // Because this test concerns the interpretation of non-executable character
@@ -31,4 +31,4 @@ negative:
 // Express the intended behavior by intentionally throwing an error; this
 // guarantees that test runners will only consider the test "passing" if
 // executable sequences are correctly interpreted as such.
-throw new Test262Error("This is not in a comment");
+throw new EvalError("This is not in a comment");

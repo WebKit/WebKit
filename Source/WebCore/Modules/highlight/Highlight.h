@@ -29,7 +29,7 @@
 #include "Position.h"
 #include "Range.h"
 #include "StaticRange.h"
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ class CSSStyleDeclaration;
 class DOMSetAdapter;
 class PropertySetCSSStyleDeclaration;
 
-class HighlightRange : public RefCounted<HighlightRange>, public CanMakeWeakPtr<HighlightRange> {
+class HighlightRange : public RefCountedAndCanMakeWeakPtr<HighlightRange> {
 public:
     static Ref<HighlightRange> create(Ref<AbstractRange>&& range)
     {

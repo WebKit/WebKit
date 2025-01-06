@@ -44,12 +44,6 @@ struct MediaQueryResult {
     bool result;
 };
 
-enum class MediaQueryDynamicDependency : uint8_t  {
-    Viewport = 1 << 0,
-    Appearance = 1 << 1,
-    Accessibility = 1 << 2,
-};
-
 template<typename TraverseFunction>
 void traverseFeatures(const MediaQuery& query, TraverseFunction&& function)
 {

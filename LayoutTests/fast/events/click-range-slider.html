@@ -18,10 +18,12 @@ function onClick(e)
     clickCount++;
 }
 
-window.onload = function()
+window.onload = async function()
 {
     if (!window.testRunner)
         return;
+
+    testRunner.waitUntilDone();
 
     slider = document.getElementById("slider");
     slider.addEventListener("click", onClick);
@@ -31,19 +33,20 @@ window.onload = function()
     var x = slider.offsetLeft + 1;
     var y = slider.offsetTop + slider.clientHeight / 2;
 
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 
-    eventSender.mouseMoveTo(x + slider.clientWidth - 2, y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(x + slider.clientWidth - 2, y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 
-    eventSender.mouseMoveTo(x + slider.clientWidth / 2, y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(x + slider.clientWidth / 2, y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 
     shouldBe("clickCount", "3");
+    testRunner.notifyDone();
 }
 </script>
 </body>

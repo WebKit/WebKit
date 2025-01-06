@@ -1,19 +1,15 @@
-# Additional interop for things like macros and inlined functions.
-add_library(rust_wrapper STATIC rust_wrapper.c)
-target_link_libraries(rust_wrapper crypto)
-
 # Generate architecture-specific wrappers. bindgen must be called from
 # ${CMAKE_BINARY_DIR}, with the output path as a relative path. bindgen writes
 # the depfile using the same syntax as the command-line argument, and ninja
 # requires a path relative to the top-level build directory.
-set(wrapper wrapper_${RUST_BINDINGS}.rs)
-binary_dir_relative_path(${wrapper} wrapper_relative)
-binary_dir_relative_path(${wrapper}.d depfile_relative)
+set(wrapper_rs wrapper_${RUST_BINDINGS}.rs)
+binary_dir_relative_path(${wrapper_rs} wrapper_rs_relative)
+binary_dir_relative_path(${wrapper_rs}.d depfile_relative)
 
 add_custom_command(
-  OUTPUT ${wrapper}
+  OUTPUT ${wrapper_rs} wrapper.c
   COMMAND ${BINDGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/wrapper.h
-          -o ${wrapper_relative}
+          -o ${wrapper_rs_relative}
           --depfile=${depfile_relative}
           --no-derive-default
           --enable-function-attribute-detection
@@ -37,13 +33,23 @@ add_custom_command(
           # https://github.com/rust-lang/rust-bindgen/issues/2508), we can
           # switch to that.
           --allowlist-file=".*[[:punct:]]include[[:punct:]]openssl[[:punct:]].*\\.h"
-          --allowlist-file=".*[[:punct:]]rust_wrapper\\.h"
+          --experimental
+          --wrap-static-fns
+          --wrap-static-fns-path="${CMAKE_CURRENT_BINARY_DIR}/wrapper.c"
           -- # these are LLVM arg passthroughs
           -I${PROJECT_SOURCE_DIR}/include
           # https://doc.rust-lang.org/nightly/rustc/platform-support.html
           --target=${RUST_BINDINGS}
   DEPENDS wrapper.h
-  DEPFILE ${CMAKE_CURRENT_BINARY_DIR}/${wrapper}.d
+  DEPFILE ${CMAKE_CURRENT_BINARY_DIR}/${wrapper_rs}.d
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
-add_custom_target(bssl_sys ALL DEPENDS ${wrapper})
+
+add_library(rust_wrapper STATIC wrapper.c)
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_COMPILER_IS_GNUCXX)
+  target_compile_options(rust_wrapper PRIVATE "-Wno-missing-prototypes")
+endif()
+target_include_directories(rust_wrapper PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(rust_wrapper crypto ssl)
+
+add_custom_target(bssl_sys ALL DEPENDS ${wrapper_rs} rust_wrapper)

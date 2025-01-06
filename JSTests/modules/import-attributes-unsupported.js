@@ -1,4 +1,3 @@
-//@ requireOptions("--useImportAttributes=1")
 import { shouldBe } from "./resources/assert.js";
 
 {

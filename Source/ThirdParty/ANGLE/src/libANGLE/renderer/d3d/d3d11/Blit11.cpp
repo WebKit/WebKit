@@ -66,7 +66,7 @@ void StretchedBlitNearest_RowByRow(const gl::Box &sourceArea,
 
     for (int y = clippedDestArea.y; y < clippedDestArea.y + clippedDestArea.height; y++)
     {
-        // TODO: Fix divide by zero when height == 1. http://anglebug.com/6099
+        // TODO: Fix divide by zero when height == 1. http://anglebug.com/42264628
         float yPerc = static_cast<float>(y - destArea.y) / (destArea.height - 1);
 
         // Interpolate using the original source rectangle to determine which row to sample from

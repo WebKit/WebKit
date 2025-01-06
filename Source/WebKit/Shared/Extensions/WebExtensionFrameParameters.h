@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include <wtf/URL.h>
+#include <wtf/UUID.h>
 
 namespace WebKit {
 
@@ -36,6 +37,7 @@ struct WebExtensionFrameParameters {
     std::optional<URL> url;
     WebKit::WebExtensionFrameIdentifier parentFrameIdentifier;
     std::optional<WebKit::WebExtensionFrameIdentifier> frameIdentifier;
+    Markable<WTF::UUID> documentIdentifier;
 };
 
 } // namespace WebKit

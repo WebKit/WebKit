@@ -1,0 +1,21 @@
+This test ensures that we compute the right final role for a role='menu' item with menuitem grandchildren.
+
+
+{MenuItem}
+
+{MenuItem}
+
+{MenuItem}
+
+{MenuItem}
+
+{MenuItem}
+
+{MenuItem}
+
+{MenuItem}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Inbox Archive Trash Custom Folder 1 Custom Folder 2 Custom Folder 3 New Folder

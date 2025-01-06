@@ -11,14 +11,13 @@
 #ifndef API_RTC_ERROR_H_
 #define API_RTC_ERROR_H_
 
-#ifdef WEBRTC_UNIT_TEST
-#include <ostream>
-#endif  // WEBRTC_UNIT_TEST
+#include <stdint.h>
+
+#include <optional>
 #include <string>
 #include <utility>  // For std::move.
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/system/rtc_export.h"
@@ -138,7 +137,7 @@ class RTC_EXPORT RTCError {
 
   RTCErrorDetailType error_detail() const { return error_detail_; }
   void set_error_detail(RTCErrorDetailType detail) { error_detail_ = detail; }
-  absl::optional<uint16_t> sctp_cause_code() const { return sctp_cause_code_; }
+  std::optional<uint16_t> sctp_cause_code() const { return sctp_cause_code_; }
   void set_sctp_cause_code(uint16_t cause_code) {
     sctp_cause_code_ = cause_code;
   }
@@ -151,7 +150,7 @@ class RTC_EXPORT RTCError {
   RTCErrorType type_ = RTCErrorType::NONE;
   std::string message_;
   RTCErrorDetailType error_detail_ = RTCErrorDetailType::NONE;
-  absl::optional<uint16_t> sctp_cause_code_;
+  std::optional<uint16_t> sctp_cause_code_;
 };
 
 // Outputs the error as a friendly string. Update this method when adding a new
@@ -161,20 +160,6 @@ class RTC_EXPORT RTCError {
 // to literal string that lives for the whole duration of the program.
 RTC_EXPORT absl::string_view ToString(RTCErrorType error);
 RTC_EXPORT absl::string_view ToString(RTCErrorDetailType error);
-
-#ifdef WEBRTC_UNIT_TEST
-inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
-    std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
-    RTCErrorType error) {
-  return stream << ToString(error);
-}
-
-inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
-    std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
-    RTCErrorDetailType error) {
-  return stream << ToString(error);
-}
-#endif  // WEBRTC_UNIT_TEST
 
 // Helper macro that can be used by implementations to create an error with a
 // message and log it. `message` should be a string literal or movable
@@ -324,7 +309,7 @@ class RTCErrorOr {
 
  private:
   RTCError error_;
-  absl::optional<T> value_;
+  std::optional<T> value_;
 };
 
 }  // namespace webrtc

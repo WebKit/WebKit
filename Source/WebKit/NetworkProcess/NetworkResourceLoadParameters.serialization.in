@@ -26,9 +26,9 @@ enum class WebKit::PreconnectOnly : bool;
 enum class WebKit::NavigatingToAppBoundDomain : bool;
 
 class WebKit::NetworkLoadParameters {
-    WebKit::WebPageProxyIdentifier webPageProxyID;
-    WebCore::PageIdentifier webPageID;
-    WebCore::FrameIdentifier webFrameID;
+    Markable<WebKit::WebPageProxyIdentifier> webPageProxyID;
+    Markable<WebCore::PageIdentifier> webPageID;
+    Markable<WebCore::FrameIdentifier> webFrameID;
     RefPtr<WebCore::SecurityOrigin> topOrigin;
     RefPtr<WebCore::SecurityOrigin> sourceOrigin;
     WTF::ProcessID parentPID;
@@ -57,7 +57,7 @@ class WebKit::NetworkLoadParameters {
 }
 
 class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
-    WebCore::ResourceLoaderIdentifier identifier;
+    Markable<WebCore::ResourceLoaderIdentifier> identifier;
     
     RefPtr<WebCore::FormData> request.httpBody();
     std::optional<Vector<WebKit::SandboxExtensionHandle>> sandboxExtensionsIfHttpBody();
@@ -89,12 +89,13 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
 
     bool isCrossOriginOpenerPolicyEnabled;
     bool isClearSiteDataHeaderEnabled;
+    bool isClearSiteDataExecutionContextEnabled;
     bool isDisplayingInitialEmptyDocument;
     WebCore::SandboxFlags effectiveSandboxFlags;
     URL openerURL;
     WebCore::CrossOriginOpenerPolicy sourceCrossOriginOpenerPolicy;
     
-    uint64_t navigationID;
+    std::optional<WebCore::NavigationIdentifier> navigationID;
     std::optional<WebCore::NavigationRequester> navigationRequester;
     
     WebCore::ServiceWorkersMode serviceWorkersMode;

@@ -38,6 +38,7 @@
 #include "ProcessWarming.h"
 #include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::ContentExtensions {
@@ -196,6 +197,9 @@ static Expected<Trigger, std::error_code> loadTrigger(const JSON::Object& ruleOb
         return makeUnexpected(error);
 
     if (auto error = checkCondition("if-frame-url"_s, getStringList, ActionCondition::IfFrameURL))
+        return makeUnexpected(error);
+
+    if (auto error = checkCondition("unless-frame-url"_s, getStringList, ActionCondition::UnlessFrameURL))
         return makeUnexpected(error);
 
     trigger.checkValidity();

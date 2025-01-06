@@ -77,8 +77,8 @@ current thread when Skia calls are made.
 
 <!--?prettify lang=cc?-->
 
-    #include "include/gpu/GrDirectContext.h"
-    #include "include/gpu/gl/GrGLInterface.h"
+    #include "include/gpu/ganesh/GrDirectContext.h"
+    #include "include/gpu/ganesh/gl/GrGLInterface.h"
     #include "include/gpu/ganesh/gl/GrGLInterface.h"
     #include "include/core/SkData.h"
     #include "include/core/SkImage.h"

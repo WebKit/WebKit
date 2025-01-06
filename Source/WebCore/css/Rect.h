@@ -21,6 +21,7 @@
 #pragma once
 
 #include "RectBase.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

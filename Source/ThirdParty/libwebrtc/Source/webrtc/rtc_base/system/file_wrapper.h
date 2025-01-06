@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
@@ -89,7 +90,7 @@ class FileWrapper final {
   // Returns the file size or -1 if a size could not be determined.
   // (A file size might not exists for non-seekable files or file-like
   // objects, for example /dev/tty on unix.)
-  long FileSize();
+  std::optional<size_t> FileSize();
 
   // Returns number of bytes read. Short count indicates EOF or error.
   size_t Read(void* buf, size_t length);

@@ -50,7 +50,7 @@ class PlaybackSessionModelMediaElement;
 
 class VideoPresentationModelVideoElement final : public VideoPresentationModel {
 public:
-    static RefPtr<VideoPresentationModelVideoElement> create()
+    static Ref<VideoPresentationModelVideoElement> create()
     {
         return adoptRef(*new VideoPresentationModelVideoElement());
     }
@@ -80,8 +80,8 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger* loggerPtr() const final;
-    WEBCORE_EXPORT const void* logIdentifier() const final;
-    WEBCORE_EXPORT const void* nextChildIdentifier() const final;
+    WEBCORE_EXPORT uint64_t logIdentifier() const final;
+    WEBCORE_EXPORT uint64_t nextChildIdentifier() const final;
     ASCIILiteral logClassName() const { return "VideoPresentationModelVideoElement"_s; }
     WTFLogChannel& logChannel() const;
 #endif
@@ -114,10 +114,12 @@ private:
     void didExitPictureInPicture() final;
 
     static std::span<const AtomString> observedEventNames();
+    static std::span<const AtomString> documentObservedEventNames();
     const AtomString& eventNameAll();
     friend class VideoListener;
     void updateForEventName(const AtomString&);
     void cleanVideoListeners();
+    void documentVisibilityChanged();
 
     Ref<VideoListener> m_videoListener;
     RefPtr<HTMLVideoElement> m_videoElement;
@@ -125,6 +127,7 @@ private:
     bool m_isListening { false };
     HashSet<CheckedPtr<VideoPresentationModelClient>> m_clients;
     bool m_hasVideo { false };
+    bool m_documentIsVisible { true };
     FloatSize m_videoDimensions;
     FloatRect m_videoFrame;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;

@@ -29,6 +29,8 @@
 #include <mutex>
 #include <unicode/uvernum.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 namespace ICU {
 
@@ -55,3 +57,5 @@ unsigned minorVersion()
 }
 
 } } // namespace WTF::ICU
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

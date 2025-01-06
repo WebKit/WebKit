@@ -25,6 +25,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import re
+from subprocess import check_output
 
 from webkitpy.benchmark_runner.browser_driver.linux_browser_driver import LinuxBrowserDriver
 
@@ -33,23 +35,33 @@ class LinuxChromeDriver(LinuxBrowserDriver):
     browser_name = 'chrome'
     process_search_list = ['chromium', 'chromium-browser', 'chrome', 'google-chrome']
 
+    def prepare_env(self, config):
+        super().prepare_env(config)
+        self._default_browser_arguments = ['--start-maximized', '--disable-extensions', '--no-first-run', '--no-default-browser-check']
+
     def launch_url(self, url, options, browser_build_path, browser_path):
-        self._default_browser_arguments = ['--temp-profile', '--start-maximized',
-                                   '--homepage', url]
-        super(LinuxChromeDriver, self).launch_url(url, options, browser_build_path, browser_path)
+        self._default_browser_arguments += ['--homepage', url]
+        super().launch_url(url, options, browser_build_path, browser_path)
 
     def launch_driver(self, url, options, browser_build_path):
         from selenium import webdriver
         from selenium.webdriver.chrome.options import Options
         options = Options()
-        options.add_argument("--disable-web-security")
-        options.add_argument("--user-data-dir")
-        options.add_argument("--disable-extensions")
-        options.add_argument("--start-maximized")
+        for option_switch in self._default_browser_arguments:
+            options.add_argument(option_switch)
         if browser_build_path:
             binary_path = os.path.join(browser_build_path, 'chromium-browser')
             options.binary_location = binary_path
         driver_executable = self.webdriver_binary_path
         driver = webdriver.Chrome(chrome_options=options, executable_path=driver_executable)
-        super(LinuxChromeDriver, self).launch_webdriver(url, driver)
+        super().launch_webdriver(url, driver)
         return driver
+
+    def browser_version(self):
+        version_cmd = [self.process_name, '--version']
+        version_output = check_output(version_cmd, timeout=3).decode('utf-8', errors='ignore').strip()
+        m = re.match(r'([a-zA-Z ]*)(Chrome|Chromium)([a-zA-Z ]+)([0-9.]+)', version_output)
+        if m:
+            return m.groups()[-1]
+        version_cmd = ' '.join(version_cmd)
+        raise ValueError(f'Unable to parse browser version. Command "{version_cmd}" returned "{version_output}"')

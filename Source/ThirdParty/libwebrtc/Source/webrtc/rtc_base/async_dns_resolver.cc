@@ -155,9 +155,9 @@ void AsyncDnsResolver::Start(const rtc::SocketAddress& addr,
     // We assume that the caller task queue is still around if the
     // AsyncDnsResolver has not been destroyed.
     state->Finish([this, error, flag, caller_task_queue,
-                   addresses = std::move(addresses)]() {
+                   addresses = std::move(addresses)]() mutable {
       caller_task_queue->PostTask(
-          SafeTask(flag, [this, error, addresses = std::move(addresses)] {
+          SafeTask(flag, [this, error, addresses = std::move(addresses)]() {
             RTC_DCHECK_RUN_ON(&result_.sequence_checker_);
             result_.addresses_ = addresses;
             result_.error_ = error;

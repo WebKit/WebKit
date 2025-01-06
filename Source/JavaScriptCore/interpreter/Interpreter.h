@@ -121,8 +121,10 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
         uint32_t m_tryDepthForThrow { 0 };
     };
 
+    typedef uint8_t LexicallyScopedFeatures;
+
     class Interpreter {
-        WTF_MAKE_TZONE_ALLOCATED(Interpreter);
+        WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(Interpreter);
         friend class CachedCall;
         friend class LLIntOffsetsExtractor;
         friend class JIT;
@@ -183,12 +185,12 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
         
 #if ENABLE(COMPUTED_GOTO_OPCODES)
 #if !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
-        static HashMap<Opcode, OpcodeID>& opcodeIDTable(); // Maps Opcode => OpcodeID.
+        static UncheckedKeyHashMap<Opcode, OpcodeID>& opcodeIDTable(); // Maps Opcode => OpcodeID.
 #endif // !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
 #endif // ENABLE(COMPUTED_GOTO_OPCODES)
     };
 
-    JSValue eval(CallFrame*, JSValue thisValue, JSScope*, ECMAMode);
+    JSValue eval(CallFrame*, JSValue thisValue, JSScope*, LexicallyScopedFeatures);
 
     inline CallFrame* calleeFrameForVarargs(CallFrame*, unsigned numUsedStackSlots, unsigned argumentCountIncludingThis);
 

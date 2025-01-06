@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,12 +29,12 @@
 #include "NetworkResourceLoadIdentifier.h"
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/URL.h>
+#include <wtf/UUID.h>
 #include <wtf/WallTime.h>
 
 namespace WebKit {
 
 struct ResourceLoadInfo {
-
     enum class Type : uint8_t {
         ApplicationManifest,
         Beacon,
@@ -52,10 +52,11 @@ struct ResourceLoadInfo {
         XMLHTTPRequest,
         XSLT
     };
-    
+
     NetworkResourceLoadIdentifier resourceLoadID;
     std::optional<WebCore::FrameIdentifier> frameID;
     std::optional<WebCore::FrameIdentifier> parentFrameID;
+    Markable<WTF::UUID> documentID;
     URL originalURL;
     String originalHTTPMethod;
     WallTime eventTimestamp;

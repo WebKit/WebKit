@@ -160,14 +160,12 @@ extern "C" {
 typedef uint64_t BN_ULONG;
 #define BN_BITS2 64
 #define BN_DEC_FMT1 "%" PRIu64
-#define BN_DEC_FMT2 "%019" PRIu64
 #define BN_HEX_FMT1 "%" PRIx64
 #define BN_HEX_FMT2 "%016" PRIx64
 #elif defined(OPENSSL_32_BIT)
 typedef uint32_t BN_ULONG;
 #define BN_BITS2 32
 #define BN_DEC_FMT1 "%" PRIu32
-#define BN_DEC_FMT2 "%09" PRIu32
 #define BN_HEX_FMT1 "%" PRIx32
 #define BN_HEX_FMT2 "%08" PRIx32
 #else
@@ -256,11 +254,11 @@ OPENSSL_EXPORT BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret);
 // |in| is secret, use |BN_bn2bin_padded| instead.
 OPENSSL_EXPORT size_t BN_bn2bin(const BIGNUM *in, uint8_t *out);
 
-// BN_le2bn sets |*ret| to the value of |len| bytes from |in|, interpreted as
+// BN_lebin2bn sets |*ret| to the value of |len| bytes from |in|, interpreted as
 // a little-endian number, and returns |ret|. If |ret| is NULL then a fresh
 // |BIGNUM| is allocated and returned. It returns NULL on allocation
 // failure.
-OPENSSL_EXPORT BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret);
+OPENSSL_EXPORT BIGNUM *BN_lebin2bn(const uint8_t *in, size_t len, BIGNUM *ret);
 
 // BN_bn2le_padded serialises the absolute value of |in| to |out| as a
 // little-endian integer, which must have |len| of space available, padding
@@ -389,9 +387,9 @@ OPENSSL_EXPORT void BN_CTX_end(BN_CTX *ctx);
 // or |b|. It returns one on success and zero on allocation failure.
 OPENSSL_EXPORT int BN_add(BIGNUM *r, const BIGNUM *a, const BIGNUM *b);
 
-// BN_uadd sets |r| = |a| + |b|, where |a| and |b| are non-negative and |r| may
-// be the same pointer as either |a| or |b|. It returns one on success and zero
-// on allocation failure.
+// BN_uadd sets |r| = |a| + |b|, considering only the absolute values of |a| and
+// |b|. |r| may be the same pointer as either |a| or |b|. It returns one on
+// success and zero on allocation failure.
 OPENSSL_EXPORT int BN_uadd(BIGNUM *r, const BIGNUM *a, const BIGNUM *b);
 
 // BN_add_word adds |w| to |a|. It returns one on success and zero otherwise.
@@ -401,9 +399,9 @@ OPENSSL_EXPORT int BN_add_word(BIGNUM *a, BN_ULONG w);
 // or |b|. It returns one on success and zero on allocation failure.
 OPENSSL_EXPORT int BN_sub(BIGNUM *r, const BIGNUM *a, const BIGNUM *b);
 
-// BN_usub sets |r| = |a| - |b|, where |a| and |b| are non-negative integers,
-// |b| < |a| and |r| may be the same pointer as either |a| or |b|. It returns
-// one on success and zero on allocation failure.
+// BN_usub sets |r| = |a| - |b|, considering only the absolute values of |a| and
+// |b|. The result must be non-negative, i.e. |b| <= |a|. |r| may be the same
+// pointer as either |a| or |b|. It returns one on success and zero on error.
 OPENSSL_EXPORT int BN_usub(BIGNUM *r, const BIGNUM *a, const BIGNUM *b);
 
 // BN_sub_word subtracts |w| from |a|. It returns one on success and zero on
@@ -426,9 +424,14 @@ OPENSSL_EXPORT int BN_sqr(BIGNUM *r, const BIGNUM *a, BN_CTX *ctx);
 
 // BN_div divides |numerator| by |divisor| and places the result in |quotient|
 // and the remainder in |rem|. Either of |quotient| or |rem| may be NULL, in
-// which case the respective value is not returned. The result is rounded
-// towards zero; thus if |numerator| is negative, the remainder will be zero or
-// negative. It returns one on success or zero on error.
+// which case the respective value is not returned. It returns one on success or
+// zero on error. It is an error condition if |divisor| is zero.
+//
+// The outputs will be such that |quotient| * |divisor| + |rem| = |numerator|,
+// with the quotient rounded towards zero. Thus, if |numerator| is negative,
+// |rem| will be zero or negative. If |divisor| is negative, the sign of
+// |quotient| will be flipped to compensate but otherwise rounding will be as if
+// |divisor| were its absolute value.
 OPENSSL_EXPORT int BN_div(BIGNUM *quotient, BIGNUM *rem,
                           const BIGNUM *numerator, const BIGNUM *divisor,
                           BN_CTX *ctx);
@@ -668,11 +671,11 @@ OPENSSL_EXPORT int BN_pseudo_rand_range(BIGNUM *rnd, const BIGNUM *range);
 // The callback receives the address of that |BN_GENCB| structure as its last
 // argument and the user is free to put an arbitrary pointer in |arg|. The other
 // arguments are set as follows:
-//   event=BN_GENCB_GENERATED, n=i:   after generating the i'th possible prime
+// - event=BN_GENCB_GENERATED, n=i:   after generating the i'th possible prime
 //                                    number.
-//   event=BN_GENCB_PRIME_TEST, n=-1: when finished trial division primality
+// - event=BN_GENCB_PRIME_TEST, n=-1: when finished trial division primality
 //                                    checks.
-//   event=BN_GENCB_PRIME_TEST, n=i:  when the i'th primality test has finished.
+// - event=BN_GENCB_PRIME_TEST, n=i:  when the i'th primality test has finished.
 //
 // The callback can return zero to abort the generation progress or one to
 // allow it to continue.
@@ -974,6 +977,12 @@ OPENSSL_EXPORT int BN_MONT_CTX_set(BN_MONT_CTX *mont, const BIGNUM *mod,
 // Use |BN_bn2bin_padded| instead. It is |size_t|-clean.
 OPENSSL_EXPORT int BN_bn2binpad(const BIGNUM *in, uint8_t *out, int len);
 
+// BN_bn2lebinpad behaves like |BN_bn2le_padded|, but it returns |len| on
+// success and -1 on error.
+//
+// Use |BN_bn2le_padded| instead. It is |size_t|-clean.
+OPENSSL_EXPORT int BN_bn2lebinpad(const BIGNUM *in, uint8_t *out, int len);
+
 // BN_prime_checks is a deprecated alias for |BN_prime_checks_for_validation|.
 // Use |BN_prime_checks_for_generation| or |BN_prime_checks_for_validation|
 // instead. (This defaults to the |_for_validation| value in order to be
@@ -982,6 +991,9 @@ OPENSSL_EXPORT int BN_bn2binpad(const BIGNUM *in, uint8_t *out, int len);
 
 // BN_secure_new calls |BN_new|.
 OPENSSL_EXPORT BIGNUM *BN_secure_new(void);
+
+// BN_le2bn calls |BN_lebin2bn|.
+OPENSSL_EXPORT BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret);
 
 
 // Private functions

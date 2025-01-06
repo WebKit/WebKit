@@ -55,6 +55,7 @@ namespace StringWrapperCFAllocator {
         return CFSTR("WTF::String-based allocator");
     }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     static void* allocate(CFIndex size, CFOptionFlags, void*)
     {
         StringImpl* underlyingString = nullptr;
@@ -93,6 +94,7 @@ namespace StringWrapperCFAllocator {
             });
         }
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     static CFIndex preferredSize(CFIndex size, CFOptionFlags, void*)
     {

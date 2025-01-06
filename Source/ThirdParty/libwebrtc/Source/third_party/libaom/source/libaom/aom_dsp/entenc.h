@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2001-2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -63,8 +63,6 @@ void od_ec_encode_cdf_q15(od_ec_enc *enc, int s, const uint16_t *cdf, int nsyms)
 void od_ec_enc_bits(od_ec_enc *enc, uint32_t fl, unsigned ftb)
     OD_ARG_NONNULL(1);
 
-void od_ec_enc_patch_initial_bits(od_ec_enc *enc, unsigned val, int nbits)
-    OD_ARG_NONNULL(1);
 OD_WARN_UNUSED_RESULT unsigned char *od_ec_enc_done(od_ec_enc *enc,
                                                     uint32_t *nbytes)
     OD_ARG_NONNULL(1) OD_ARG_NONNULL(2);
@@ -74,11 +72,8 @@ OD_WARN_UNUSED_RESULT int od_ec_enc_tell(const od_ec_enc *enc)
 OD_WARN_UNUSED_RESULT uint32_t od_ec_enc_tell_frac(const od_ec_enc *enc)
     OD_ARG_NONNULL(1);
 
-void od_ec_enc_checkpoint(od_ec_enc *dst, const od_ec_enc *src);
-void od_ec_enc_rollback(od_ec_enc *dst, const od_ec_enc *src);
-
 // buf is the frame bitbuffer, offs is where carry to be added
-static AOM_INLINE void propagate_carry_bwd(unsigned char *buf, uint32_t offs) {
+static inline void propagate_carry_bwd(unsigned char *buf, uint32_t offs) {
   uint16_t sum, carry = 1;
   do {
     sum = (uint16_t)buf[offs] + 1;
@@ -89,11 +84,10 @@ static AOM_INLINE void propagate_carry_bwd(unsigned char *buf, uint32_t offs) {
 
 // Convert to big-endian byte order and write data to buffer adding the
 // carry-bit
-static AOM_INLINE void write_enc_data_to_out_buf(unsigned char *out,
-                                                 uint32_t offs, uint64_t output,
-                                                 uint64_t carry,
-                                                 uint32_t *enc_offs,
-                                                 uint8_t num_bytes_ready) {
+static inline void write_enc_data_to_out_buf(unsigned char *out, uint32_t offs,
+                                             uint64_t output, uint64_t carry,
+                                             uint32_t *enc_offs,
+                                             uint8_t num_bytes_ready) {
   const uint64_t reg = HToBE64(output << ((8 - num_bytes_ready) << 3));
   memcpy(&out[offs], &reg, 8);
   // Propagate carry backwards if exists

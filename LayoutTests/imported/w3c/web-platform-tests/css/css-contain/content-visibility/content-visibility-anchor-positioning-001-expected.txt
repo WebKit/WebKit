@@ -1,0 +1,4 @@
+
+PASS CSS Content Visibility: auto prevents existing anchors to unskipped content
+from becoming skipped
+

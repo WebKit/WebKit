@@ -55,7 +55,7 @@ function configWithOneTesterTwoBuilders(testConfigurationsOverride = [{types: ['
             },
             'builder-3': {
                 builder: 'other builder',
-                properties: {forcescheduler: 'force-ab-builds'},
+                properties: {forcescheduler: 'force-ab-builds-1'},
                 supportedRepetitionTypes: ['alternating', 'sequential', 'paired-parallel']
             },
         },
@@ -107,7 +107,7 @@ const configWithPlatformName = {
         },
         'builder-3': {
             builder: 'other builder',
-            properties: {forcescheduler: 'force-ab-builds'},
+            properties: {forcescheduler: 'force-ab-builds-1'},
             supportedRepetitionTypes: ['alternating', 'sequential', 'paired-parallel']
         },
     },
@@ -264,13 +264,13 @@ function createTestGroupWihOwnedCommit()
     });
 }
 
-function uploadRoot(buildRequestId, buildTag, repositoryList = ["WebKit"], buildTime = '2017-05-10T02:54:08.666')
+function uploadRoot(buildRequestId, buildTag, repositoryList = ["WebKit"], buildTime = '2017-05-10T02:54:08.666', builderName='some builder')
 {
     return TemporaryFile.makeTemporaryFile(`root${buildTag}.dat`, `root for build ${buildTag} and repository list at ${buildTime}`).then((rootFile) => {
         return TestServer.remoteAPI().postFormData('/api/upload-root/', {
             workerName: 'sync-worker',
             workerPassword: 'password',
-            builderName: 'some builder',
+            builderName: builderName,
             buildTag: buildTag,
             buildTime: buildTime,
             buildRequest: buildRequestId,
@@ -496,18 +496,26 @@ describe('sync-buildbot', function () {
                 {'wk': '191622', 'wk-patch': RemoteAPI.url('/api/uploaded-file/1.dat'), 'checkbox': 'build-wk', 'build-wk': true, 'build-request-id': '1', 'forcescheduler': 'force-ab-builds'}});
         await MockRemoteAPI.waitForRequest();
 
-        assert.strictEqual(requests.length, 10);
-        assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some tester'), {});
-        assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some builder'),
-            MockData.pendingBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
-        assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+        assert.strictEqual(requests.length, 8);
+        assertAndResolveRequest(requests[7], 'POST', '/api/v2/forceschedulers/force-ab-builds-1', 'OK');
+        assert.deepEqual(requests[7].data, {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params':
+                {'wk': '191622', 'checkbox': 'build-wk', 'build-wk': true, 'build-request-id': '2', 'forcescheduler': 'force-ab-builds-1'}});
         await MockRemoteAPI.waitForRequest();
 
-        assert.strictEqual(requests.length, 13);
-        assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
-        assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2),
+        assert.strictEqual(requests.length, 11);
+        assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+        assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('some builder'),
+            MockData.pendingBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
+        assertAndResolveRequest(requests[10], 'GET', MockData.pendingBuildsUrl('other builder'),
+            MockData.pendingBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2}));
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 14);
+        assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+        assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('some builder', 2),
             MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildNumber: firstBuildNumber, statusDescription: 'Building WebKit'}));
-        assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+        assertAndResolveRequest(requests[13], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildNumber: secondBuildNumber, statusDescription: 'Building WebKit'}));
         await syncPromise;
 
         let testGroups = await TestGroup.fetchForTask(taskId, true);
@@ -536,9 +544,9 @@ describe('sync-buildbot', function () {
         otherBuildRequest = testGroup.buildRequests()[1];
         assert(otherBuildRequest.isBuild());
         assert(!otherBuildRequest.isTest());
-        assert.strictEqual(otherBuildRequest.statusLabel(), 'Waiting');
-        assert.strictEqual(otherBuildRequest.statusUrl(), null);
-        assert.strictEqual(otherBuildRequest.statusDescription(), null);
+        assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
+        assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', 124));
+        assert.strictEqual(otherBuildRequest.statusDescription(), 'Building WebKit');
         assert.strictEqual(otherBuildRequest.buildId(), null);
 
         otherCommitSet = otherBuildRequest.commitSet();
@@ -563,7 +571,8 @@ describe('sync-buildbot', function () {
         assertAndResolveRequest(requests[3], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
         assertAndResolveRequest(requests[4], 'GET', MockData.recentBuildsUrl('some builder', 2),
             MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber, statusDescription: 'Compiling WTF'}));
-        assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+        assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber, statusDescription: 'Compiling WTF'}));
         await MockRemoteAPI.waitForRequest();
 
         assert.strictEqual(requests.length, 9);
@@ -576,7 +585,8 @@ describe('sync-buildbot', function () {
         assertAndResolveRequest(requests[9], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
         assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some builder', 2),
             MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber, statusDescription: 'Compiling WTF'}));
-        assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+        assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber, statusDescription: 'Compiling WTF'}));
         await syncPromise;
 
         await TestGroup.fetchForTask(taskId, true);
@@ -605,9 +615,9 @@ describe('sync-buildbot', function () {
         otherBuildRequest = testGroup.buildRequests()[1];
         assert(otherBuildRequest.isBuild());
         assert(!otherBuildRequest.isTest());
-        assert.strictEqual(otherBuildRequest.statusLabel(), 'Waiting');
-        assert.strictEqual(otherBuildRequest.statusUrl(), null);
-        assert.strictEqual(otherBuildRequest.statusDescription(), null);
+        assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
+        assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildNumber));
+        assert.strictEqual(otherBuildRequest.statusDescription(), 'Compiling WTF');
         assert.strictEqual(otherBuildRequest.buildId(), null);
 
         otherCommitSet = otherBuildRequest.commitSet();
@@ -615,6 +625,516 @@ describe('sync-buildbot', function () {
         assert.strictEqual(otherCommitSet.patchForRepository(webkit), null);
         assert.strictEqual(otherCommitSet.rootForRepository(webkit), null);
         assert.deepEqual(otherCommitSet.allRootFiles(), []);
+
+        await uploadRoot(parseInt(buildRequest.id()), firstBuildNumber);
+        await uploadRoot(parseInt(otherBuildRequest.id()), secondBuildNumber, ["WebKit"], '2017-05-10T02:54:08.666', 'other builder');
+
+        testGroups = await TestGroup.fetchForTask(taskId, true);
+
+        assert.strictEqual(testGroups.length, 1);
+        testGroup = testGroups[0];
+        webkit = Repository.findById(MockData.webkitRepositoryId());
+        assert.strictEqual(testGroup.buildRequests().length, 6);
+
+        buildRequest = testGroup.buildRequests()[0];
+        assert(buildRequest.isBuild());
+        assert(!buildRequest.isTest());
+        assert.strictEqual(buildRequest.statusLabel(), 'Completed');
+        assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildNumber));
+        assert.strictEqual(buildRequest.statusDescription(), 'Compiling WTF');
+        assert.notEqual(buildRequest.buildId(), null);
+
+        commitSet = buildRequest.commitSet();
+        assert.strictEqual(commitSet.revisionForRepository(webkit), '191622');
+        webkitPatch = commitSet.patchForRepository(webkit);
+        assert(webkitPatch instanceof UploadedFile);
+        assert.strictEqual(webkitPatch.filename(), 'patch.dat');
+        let webkitRoot = commitSet.rootForRepository(webkit);
+        assert(webkitRoot instanceof UploadedFile);
+        assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+        assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
+
+        otherBuildRequest = testGroup.buildRequests()[1];
+        assert(otherBuildRequest.isBuild());
+        assert(!otherBuildRequest.isTest());
+        assert.strictEqual(otherBuildRequest.statusLabel(), 'Completed');
+        assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildNumber));
+        assert.strictEqual(otherBuildRequest.statusDescription(), 'Compiling WTF');
+        assert.notEqual(otherBuildRequest.buildId(), null);
+
+        otherCommitSet = otherBuildRequest.commitSet();
+        assert.strictEqual(otherCommitSet.revisionForRepository(webkit), '191622');
+        assert.strictEqual(otherCommitSet.patchForRepository(webkit), null);
+        let otherWebkitRoot = otherCommitSet.rootForRepository(webkit);
+        assert(otherWebkitRoot instanceof UploadedFile);
+        assert.strictEqual(otherWebkitRoot.filename(), 'root124.dat');
+        assert.deepEqual(otherCommitSet.allRootFiles(), [otherWebkitRoot]);
+
+        MockRemoteAPI.reset();
+        const firstTestBuildTag = 100;
+        syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+        assertAndResolveRequest(requests[0], 'GET', MockData.buildbotBuildersURL(), MockData.mockBuildbotBuilders());
+        MockRemoteAPI.reset();
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 3);
+        assertAndResolveRequest(requests[0], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+        assertAndResolveRequest(requests[1], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+        assertAndResolveRequest(requests[2], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 6);
+        assertAndResolveRequest(requests[3], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+        assertAndResolveRequest(requests[4], 'GET', MockData.recentBuildsUrl('some builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber}));
+        assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}));
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 7);
+        assertAndResolveRequest(requests[6], 'POST', '/api/v2/forceschedulers/force-ab-tests', 'OK');
+        assert.deepEqual(requests[6].data, {'id': '3', 'jsonrpc': '2.0', 'method': 'force', 'params':
+                {'wk': '191622', 'build-request-id': '3', 'forcescheduler': 'force-ab-tests', 'test': 'some-test',
+                    'roots': '[{"url":"http://localhost:8180/api/uploaded-file/2.dat"}]'}});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 10);
+        assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+        assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+        assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 13);
+        assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('some tester'), buildRequestId: 3, buildTag: firstTestBuildTag}));
+        assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber}));
+        assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}));
+        await syncPromise;
+
+        await TestGroup.fetchForTask(taskId, true);
+
+        assert.strictEqual(testGroups.length, 1);
+        testGroup = testGroups[0];
+        assert.strictEqual(testGroup.buildRequests().length, 6);
+
+        buildRequest = testGroup.buildRequests()[0];
+        assert(buildRequest.isBuild());
+        assert(!buildRequest.isTest());
+        assert.strictEqual(buildRequest.statusLabel(), 'Completed');
+        assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildNumber));
+        assert.strictEqual(buildRequest.statusDescription(), null);
+        assert.notEqual(buildRequest.buildId(), null);
+
+        otherBuildRequest = testGroup.buildRequests()[1];
+        assert(otherBuildRequest.isBuild());
+        assert(!otherBuildRequest.isTest());
+        assert.strictEqual(otherBuildRequest.statusLabel(), 'Completed');
+        assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildNumber));
+        assert.strictEqual(otherBuildRequest.statusDescription(), null);
+        assert.notEqual(otherBuildRequest.buildId(), null);
+
+        let firstTestRequest = testGroup.buildRequests()[2];
+        assert(!firstTestRequest.isBuild());
+        assert(firstTestRequest.isTest());
+        assert.strictEqual(firstTestRequest.statusLabel(), 'Running');
+        assert.strictEqual(firstTestRequest.statusUrl(), MockData.statusUrl('some tester', firstTestBuildTag));
+        assert.strictEqual(firstTestRequest.statusDescription(), null);
+        assert.strictEqual(firstTestRequest.buildId(), null);
+
+        let secondTestRequest = testGroup.buildRequests()[3];
+        assert(!secondTestRequest.isBuild());
+        assert(secondTestRequest.isTest());
+        assert.strictEqual(secondTestRequest.statusLabel(), 'Waiting');
+        assert.strictEqual(secondTestRequest.statusUrl(), null);
+        assert.strictEqual(secondTestRequest.statusDescription(), null);
+        assert.strictEqual(secondTestRequest.buildId(), null);
+
+        MockRemoteAPI.reset();
+        syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+        assertAndResolveRequest(requests[0], 'GET', MockData.buildbotBuildersURL(), MockData.mockBuildbotBuilders());
+        MockRemoteAPI.reset();
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 3);
+        assertAndResolveRequest(requests[0], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+        assertAndResolveRequest(requests[1], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+        assertAndResolveRequest(requests[2], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 6);
+
+        assertAndResolveRequest(requests[3], 'GET', MockData.recentBuildsUrl('some tester', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('some tester'), buildRequestId: 3, buildTag: firstTestBuildTag}));
+        assertAndResolveRequest(requests[4], 'GET', MockData.recentBuildsUrl('some builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber}));
+        assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}));
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 7);
+        assertAndResolveRequest(requests[6], 'POST', '/api/v2/forceschedulers/force-ab-tests', 'OK');
+        assert.deepEqual(requests[6].data, {'id': '4', 'jsonrpc': '2.0', 'method': 'force', 'params':
+                {'wk': '191622', 'build-request-id': '4', 'forcescheduler': 'force-ab-tests', 'test': 'some-test',
+                    'roots': '[{"url":"http://localhost:8180/api/uploaded-file/3.dat"}]'}});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 10);
+        assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some tester'),
+            MockData.pendingBuild({builderId: MockData.builderIDForName('some tester'), buildRequestId: 4,
+                buildbotBuildRequestId: 2}));
+        assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+        assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 13);
+        assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('some tester'), buildRequestId: 3, buildTag: firstTestBuildTag}));
+        assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber}));
+        assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}));
+        await syncPromise;
+
+        await TestGroup.fetchForTask(taskId, true);
+
+        assert.strictEqual(testGroups.length, 1);
+        testGroup = testGroups[0];
+        assert.strictEqual(testGroup.buildRequests().length, 6);
+
+        buildRequest = testGroup.buildRequests()[0];
+        assert.strictEqual(buildRequest.statusLabel(), 'Completed');
+
+        otherBuildRequest = testGroup.buildRequests()[1];
+        assert.strictEqual(otherBuildRequest.statusLabel(), 'Completed');
+
+        firstTestRequest = testGroup.buildRequests()[2];
+        assert(!firstTestRequest.isBuild());
+        assert(firstTestRequest.isTest());
+        assert.strictEqual(firstTestRequest.statusLabel(), 'Running');
+        assert.strictEqual(firstTestRequest.statusUrl(), MockData.statusUrl('some tester', firstTestBuildTag));
+        assert.strictEqual(firstTestRequest.statusDescription(), null);
+        assert.strictEqual(firstTestRequest.buildId(), null);
+
+        secondTestRequest = testGroup.buildRequests()[3];
+        assert(!secondTestRequest.isBuild());
+        assert(secondTestRequest.isTest());
+        assert.strictEqual(secondTestRequest.statusLabel(), 'Scheduled');
+        assert.strictEqual(secondTestRequest.statusUrl(), 'http://build.webkit.org/#/buildrequests/2');
+        assert.strictEqual(secondTestRequest.statusDescription(), null);
+        assert.strictEqual(secondTestRequest.buildId(), null);
+    });
+
+    it('should not process test type requests until all building tasks are completed even if the second building task completes before the first one', async () => {
+        const requests = MockRemoteAPI.requests;
+        let syncPromise;
+        const triggerable = await createTriggerable();
+        const firstBuildNumber = 123;
+        const secondBuildNumber = 124;
+        let testGroup = await createTestGroupWithPatch();
+
+        const taskId = testGroup.task().id();
+        let webkit = Repository.findById(MockData.webkitRepositoryId());
+        assert.strictEqual(testGroup.buildRequests().length, 6);
+
+        let buildRequest = testGroup.buildRequests()[0];
+        assert(buildRequest.isBuild());
+        assert(!buildRequest.isTest());
+        assert.strictEqual(buildRequest.statusLabel(), 'Waiting');
+        assert.strictEqual(buildRequest.statusUrl(), null);
+        assert.strictEqual(buildRequest.statusDescription(), null);
+        assert.strictEqual(buildRequest.buildId(), null);
+
+        let commitSet = buildRequest.commitSet();
+        assert.strictEqual(commitSet.revisionForRepository(webkit), '191622');
+        let webkitPatch = commitSet.patchForRepository(webkit);
+        assert(webkitPatch instanceof UploadedFile);
+        assert.strictEqual(webkitPatch.filename(), 'patch.dat');
+        assert.strictEqual(commitSet.rootForRepository(webkit), null);
+        assert.deepEqual(commitSet.allRootFiles(), []);
+
+        let otherBuildRequest = testGroup.buildRequests()[1];
+        assert(otherBuildRequest.isBuild());
+        assert(!otherBuildRequest.isTest());
+        assert.strictEqual(otherBuildRequest.statusLabel(), 'Waiting');
+        assert.strictEqual(otherBuildRequest.statusUrl(), null);
+        assert.strictEqual(otherBuildRequest.statusDescription(), null);
+        assert.strictEqual(otherBuildRequest.buildId(), null);
+
+        let otherCommitSet = otherBuildRequest.commitSet();
+        assert.strictEqual(otherCommitSet.revisionForRepository(webkit), '191622');
+        assert.strictEqual(otherCommitSet.patchForRepository(webkit), null);
+        assert.strictEqual(otherCommitSet.rootForRepository(webkit), null);
+        assert.deepEqual(otherCommitSet.allRootFiles(), []);
+
+        syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+        assertAndResolveRequest(requests[0], 'GET', MockData.buildbotBuildersURL(), MockData.mockBuildbotBuilders());
+        MockRemoteAPI.reset();
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 3);
+        assertAndResolveRequest(requests[0], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+        assertAndResolveRequest(requests[1], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+        assertAndResolveRequest(requests[2], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 6);
+        assertAndResolveRequest(requests[3], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+        assertAndResolveRequest(requests[4], 'GET', MockData.recentBuildsUrl('some builder', 2), {});
+        assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 7);
+        assertAndResolveRequest(requests[6], 'POST', '/api/v2/forceschedulers/force-ab-builds', 'OK');
+        assert.deepEqual(requests[6].data, {'id': '1', 'jsonrpc': '2.0', 'method': 'force', 'params':
+                {'wk': '191622', 'wk-patch': RemoteAPI.url('/api/uploaded-file/1.dat'), 'checkbox': 'build-wk', 'build-wk': true, 'build-request-id': '1', 'forcescheduler': 'force-ab-builds'}});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 8);
+        assertAndResolveRequest(requests[7], 'POST', '/api/v2/forceschedulers/force-ab-builds-1', 'OK');
+        assert.deepEqual(requests[7].data, {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params':
+                {'wk': '191622', 'checkbox': 'build-wk', 'build-wk': true, 'build-request-id': '2', 'forcescheduler': 'force-ab-builds-1'}});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 11);
+        assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+        assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('some builder'),
+            MockData.pendingBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
+        assertAndResolveRequest(requests[10], 'GET', MockData.pendingBuildsUrl('other builder'),
+            MockData.pendingBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2}));
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 14);
+        assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+        assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('some builder', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildNumber: firstBuildNumber, statusDescription: 'Building WebKit'}));
+        assertAndResolveRequest(requests[13], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildNumber: secondBuildNumber, statusDescription: 'Building WebKit'}));
+        await syncPromise;
+
+        let testGroups = await TestGroup.fetchForTask(taskId, true);
+
+        assert.strictEqual(testGroups.length, 1);
+        testGroup = testGroups[0];
+        webkit = Repository.findById(MockData.webkitRepositoryId());
+        assert.strictEqual(testGroup.buildRequests().length, 6);
+
+        buildRequest = testGroup.buildRequests()[0];
+        assert(buildRequest.isBuild());
+        assert(!buildRequest.isTest());
+        assert.strictEqual(buildRequest.statusLabel(), 'Running');
+        assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+        assert.strictEqual(buildRequest.statusDescription(), 'Building WebKit');
+        assert.strictEqual(buildRequest.buildId(), null);
+
+        commitSet = buildRequest.commitSet();
+        assert.strictEqual(commitSet.revisionForRepository(webkit), '191622');
+        webkitPatch = commitSet.patchForRepository(webkit);
+        assert(webkitPatch instanceof UploadedFile);
+        assert.strictEqual(webkitPatch.filename(), 'patch.dat');
+        assert.strictEqual(commitSet.rootForRepository(webkit), null);
+        assert.deepEqual(commitSet.allRootFiles(), []);
+
+        otherBuildRequest = testGroup.buildRequests()[1];
+        assert(otherBuildRequest.isBuild());
+        assert(!otherBuildRequest.isTest());
+        assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
+        assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', 124));
+        assert.strictEqual(otherBuildRequest.statusDescription(), 'Building WebKit');
+        assert.strictEqual(otherBuildRequest.buildId(), null);
+
+        otherCommitSet = otherBuildRequest.commitSet();
+        assert.strictEqual(otherCommitSet.revisionForRepository(webkit), '191622');
+        assert.strictEqual(otherCommitSet.patchForRepository(webkit), null);
+        assert.strictEqual(otherCommitSet.rootForRepository(webkit), null);
+        assert.deepEqual(otherCommitSet.allRootFiles(), []);
+
+        MockRemoteAPI.reset();
+        syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+        assertAndResolveRequest(requests[0], 'GET', MockData.buildbotBuildersURL(), MockData.mockBuildbotBuilders());
+        MockRemoteAPI.reset();
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 3);
+        assertAndResolveRequest(requests[0], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+        assertAndResolveRequest(requests[1], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+        assertAndResolveRequest(requests[2], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 6);
+        assertAndResolveRequest(requests[3], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+        assertAndResolveRequest(requests[4], 'GET', MockData.recentBuildsUrl('some builder', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber, statusDescription: 'Compiling WTF'}));
+        assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber, statusDescription: 'Compiling WTF'}));
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 9);
+        assertAndResolveRequest(requests[6], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+        assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+        assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 12);
+        assertAndResolveRequest(requests[9], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+        assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some builder', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber, statusDescription: 'Compiling WTF'}));
+        assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber, statusDescription: 'Compiling WTF'}));
+        await syncPromise;
+
+        await TestGroup.fetchForTask(taskId, true);
+
+        assert.strictEqual(testGroups.length, 1);
+        testGroup = testGroups[0];
+        webkit = Repository.findById(MockData.webkitRepositoryId());
+        assert.strictEqual(testGroup.buildRequests().length, 6);
+
+        buildRequest = testGroup.buildRequests()[0];
+        assert(buildRequest.isBuild());
+        assert(!buildRequest.isTest());
+        assert.strictEqual(buildRequest.statusLabel(), 'Running');
+        assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildNumber));
+        assert.strictEqual(buildRequest.statusDescription(), 'Compiling WTF');
+        assert.strictEqual(buildRequest.buildId(), null);
+
+        commitSet = buildRequest.commitSet();
+        assert.strictEqual(commitSet.revisionForRepository(webkit), '191622');
+        webkitPatch = commitSet.patchForRepository(webkit);
+        assert(webkitPatch instanceof UploadedFile);
+        assert.strictEqual(webkitPatch.filename(), 'patch.dat');
+        assert.strictEqual(commitSet.rootForRepository(webkit), null);
+        assert.deepEqual(commitSet.allRootFiles(), []);
+
+        otherBuildRequest = testGroup.buildRequests()[1];
+        assert(otherBuildRequest.isBuild());
+        assert(!otherBuildRequest.isTest());
+        assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
+        assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildNumber));
+        assert.strictEqual(otherBuildRequest.statusDescription(), 'Compiling WTF');
+        assert.strictEqual(otherBuildRequest.buildId(), null);
+
+        otherCommitSet = otherBuildRequest.commitSet();
+        assert.strictEqual(otherCommitSet.revisionForRepository(webkit), '191622');
+        assert.strictEqual(otherCommitSet.patchForRepository(webkit), null);
+        assert.strictEqual(otherCommitSet.rootForRepository(webkit), null);
+        assert.deepEqual(otherCommitSet.allRootFiles(), []);
+
+        await uploadRoot(parseInt(otherBuildRequest.id()), secondBuildNumber, ["WebKit"], '2017-05-10T02:54:08.666', 'other builder');
+
+        testGroups = await TestGroup.fetchForTask(taskId, true);
+
+        assert.strictEqual(testGroups.length, 1);
+        testGroup = testGroups[0];
+        webkit = Repository.findById(MockData.webkitRepositoryId());
+        assert.strictEqual(testGroup.buildRequests().length, 6);
+
+        buildRequest = testGroup.buildRequests()[0];
+        assert(buildRequest.isBuild());
+        assert(!buildRequest.isTest());
+        assert.strictEqual(buildRequest.statusLabel(), 'Running');
+        assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildNumber));
+        assert.strictEqual(buildRequest.statusDescription(), 'Compiling WTF');
+        assert.strictEqual(buildRequest.buildId(), null);
+
+        commitSet = buildRequest.commitSet();
+        assert.strictEqual(commitSet.revisionForRepository(webkit), '191622');
+        webkitPatch = commitSet.patchForRepository(webkit);
+        assert(webkitPatch instanceof UploadedFile);
+        assert.strictEqual(webkitPatch.filename(), 'patch.dat');
+        assert.strictEqual(commitSet.rootForRepository(webkit), null);
+        assert.deepEqual(commitSet.allRootFiles(), []);
+
+        otherBuildRequest = testGroup.buildRequests()[1];
+        assert(otherBuildRequest.isBuild());
+        assert(!otherBuildRequest.isTest());
+        assert.strictEqual(otherBuildRequest.statusLabel(), 'Completed');
+        assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildNumber));
+        assert.strictEqual(otherBuildRequest.statusDescription(), 'Compiling WTF');
+        assert.notEqual(otherBuildRequest.buildId(), null);
+
+        otherCommitSet = otherBuildRequest.commitSet();
+        assert.strictEqual(otherCommitSet.revisionForRepository(webkit), '191622');
+        assert.strictEqual(otherCommitSet.patchForRepository(webkit), null);
+        let otherWebkitRoot = otherCommitSet.rootForRepository(webkit);
+        assert(otherWebkitRoot instanceof UploadedFile);
+        assert.strictEqual(otherWebkitRoot.filename(), 'root124.dat');
+        assert.deepEqual(otherCommitSet.allRootFiles(), [otherWebkitRoot]);
+
+        MockRemoteAPI.reset();
+        const firstTestBuildTag = 100;
+        syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+        assertAndResolveRequest(requests[0], 'GET', MockData.buildbotBuildersURL(), MockData.mockBuildbotBuilders());
+        MockRemoteAPI.reset();
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 3);
+        assertAndResolveRequest(requests[0], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+        assertAndResolveRequest(requests[1], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+        assertAndResolveRequest(requests[2], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 6);
+        assertAndResolveRequest(requests[3], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+        assertAndResolveRequest(requests[4], 'GET', MockData.recentBuildsUrl('some builder', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber, statusDescription: 'Compiling WTF'}));
+        assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}));
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 9);
+        assertAndResolveRequest(requests[6], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+        assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+        assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 12);
+        assertAndResolveRequest(requests[9], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+        assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some builder', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber, statusDescription: 'Compiling WTF'}));
+        assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}));
+        await syncPromise;
+
+        await TestGroup.fetchForTask(taskId, true);
+
+        assert.strictEqual(testGroups.length, 1);
+        testGroup = testGroups[0];
+        assert.strictEqual(testGroup.buildRequests().length, 6);
+
+        buildRequest = testGroup.buildRequests()[0];
+        assert(buildRequest.isBuild());
+        assert(!buildRequest.isTest());
+        assert.strictEqual(buildRequest.statusLabel(), 'Running');
+        assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildNumber));
+        assert.strictEqual(buildRequest.statusDescription(), 'Compiling WTF');
+        assert.strictEqual(buildRequest.buildId(), null);
+
+        otherBuildRequest = testGroup.buildRequests()[1];
+        assert(otherBuildRequest.isBuild());
+        assert(!otherBuildRequest.isTest());
+        assert.strictEqual(otherBuildRequest.statusLabel(), 'Completed');
+        assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildNumber));
+        assert.strictEqual(otherBuildRequest.statusDescription(), null);
+        assert.notEqual(otherBuildRequest.buildId(), null);
+
+        let firstTestRequest = testGroup.buildRequests()[2];
+        assert(!firstTestRequest.isBuild());
+        assert(firstTestRequest.isTest());
+        assert.strictEqual(firstTestRequest.statusLabel(), 'Waiting');
+        assert.strictEqual(firstTestRequest.statusUrl(), null);
+        assert.strictEqual(firstTestRequest.statusDescription(), null);
+        assert.strictEqual(firstTestRequest.buildId(), null);
+
+        let secondTestRequest = testGroup.buildRequests()[3];
+        assert(!secondTestRequest.isBuild());
+        assert(secondTestRequest.isTest());
+        assert.strictEqual(secondTestRequest.statusLabel(), 'Waiting');
+        assert.strictEqual(secondTestRequest.statusUrl(), null);
+        assert.strictEqual(secondTestRequest.statusDescription(), null);
+        assert.strictEqual(secondTestRequest.buildId(), null);
 
         await uploadRoot(parseInt(buildRequest.id()), firstBuildNumber);
 
@@ -646,16 +1166,18 @@ describe('sync-buildbot', function () {
         otherBuildRequest = testGroup.buildRequests()[1];
         assert(otherBuildRequest.isBuild());
         assert(!otherBuildRequest.isTest());
-        assert.strictEqual(otherBuildRequest.statusLabel(), 'Waiting');
-        assert.strictEqual(otherBuildRequest.statusUrl(), null);
+        assert.strictEqual(otherBuildRequest.statusLabel(), 'Completed');
+        assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildNumber));
         assert.strictEqual(otherBuildRequest.statusDescription(), null);
-        assert.strictEqual(otherBuildRequest.buildId(), null);
+        assert.notEqual(otherBuildRequest.buildId(), null);
 
         otherCommitSet = otherBuildRequest.commitSet();
         assert.strictEqual(otherCommitSet.revisionForRepository(webkit), '191622');
         assert.strictEqual(otherCommitSet.patchForRepository(webkit), null);
-        assert.strictEqual(otherCommitSet.rootForRepository(webkit), null);
-        assert.deepEqual(otherCommitSet.allRootFiles(), []);
+        otherWebkitRoot = otherCommitSet.rootForRepository(webkit);
+        assert(otherWebkitRoot instanceof UploadedFile);
+        assert.strictEqual(otherWebkitRoot.filename(), 'root124.dat');
+        assert.deepEqual(otherCommitSet.allRootFiles(), [otherWebkitRoot]);
 
         MockRemoteAPI.reset();
         syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
@@ -673,13 +1195,15 @@ describe('sync-buildbot', function () {
         assertAndResolveRequest(requests[3], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
         assertAndResolveRequest(requests[4], 'GET', MockData.recentBuildsUrl('some builder', 2),
             MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber}));
-        assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+        assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}));
         await MockRemoteAPI.waitForRequest();
 
         assert.strictEqual(requests.length, 7);
-        assertAndResolveRequest(requests[6], 'POST', '/api/v2/forceschedulers/force-ab-builds', 'OK');
-        assert.deepEqual(requests[6].data, {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params':
-                {'wk': '191622', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'build-wk': true}});
+        assertAndResolveRequest(requests[6], 'POST', '/api/v2/forceschedulers/force-ab-tests', 'OK');
+        assert.deepEqual(requests[6].data, {'id': '3', 'jsonrpc': '2.0', 'method': 'force', 'params':
+                {'wk': '191622', 'build-request-id': '3', 'forcescheduler': 'force-ab-tests', 'test': 'some-test',
+                    'roots': `[{"url":"http://localhost:8180/api/uploaded-file/${webkitRoot.id()}.dat"}]`}});
         await MockRemoteAPI.waitForRequest();
 
         assert.strictEqual(requests.length, 10);
@@ -689,20 +1213,18 @@ describe('sync-buildbot', function () {
         await MockRemoteAPI.waitForRequest();
 
         assert.strictEqual(requests.length, 13);
-        assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
-        assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2), {
-            'builds': [
-                MockData.runningBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2, buildTag: secondBuildNumber}),
-                MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber})]
-        });
-        assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+        assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('some tester'), buildRequestId: 3, buildTag: firstTestBuildTag}));
+        assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber}));
+        assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}));
         await syncPromise;
 
         await TestGroup.fetchForTask(taskId, true);
 
         assert.strictEqual(testGroups.length, 1);
         testGroup = testGroups[0];
-        webkit = Repository.findById(MockData.webkitRepositoryId());
         assert.strictEqual(testGroup.buildRequests().length, 6);
 
         buildRequest = testGroup.buildRequests()[0];
@@ -712,72 +1234,104 @@ describe('sync-buildbot', function () {
         assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildNumber));
         assert.strictEqual(buildRequest.statusDescription(), null);
         assert.notEqual(buildRequest.buildId(), null);
-
-        commitSet = buildRequest.commitSet();
-        assert.strictEqual(commitSet.revisionForRepository(webkit), '191622');
-        webkitPatch = commitSet.patchForRepository(webkit);
-        assert(webkitPatch instanceof UploadedFile);
-        assert.strictEqual(webkitPatch.filename(), 'patch.dat');
-        webkitRoot = commitSet.rootForRepository(webkit);
-        assert(webkitRoot instanceof UploadedFile);
-        assert.strictEqual(webkitRoot.filename(), 'root123.dat');
-        assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
-
-        otherBuildRequest = testGroup.buildRequests()[1];
-        assert(otherBuildRequest.isBuild());
-        assert(!otherBuildRequest.isTest());
-        assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
-        assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('some builder', secondBuildNumber));
-        assert.strictEqual(otherBuildRequest.statusDescription(), null);
-        assert.strictEqual(otherBuildRequest.buildId(), null);
-
-        otherCommitSet = otherBuildRequest.commitSet();
-        assert.strictEqual(otherCommitSet.revisionForRepository(webkit), '191622');
-        assert.strictEqual(otherCommitSet.patchForRepository(webkit), null);
-        assert.strictEqual(otherCommitSet.rootForRepository(webkit), null);
-        assert.deepEqual(otherCommitSet.allRootFiles(), []);
-        await uploadRoot(parseInt(otherBuildRequest.id()), 124);
-
-        testGroups = await TestGroup.fetchForTask(taskId, true);
-
-        assert.strictEqual(testGroups.length, 1);
-        testGroup = testGroups[0];
-        webkit = Repository.findById(MockData.webkitRepositoryId());
-        assert.strictEqual(testGroup.buildRequests().length, 6);
-
-        buildRequest = testGroup.buildRequests()[0];
-        assert(buildRequest.isBuild());
-        assert(!buildRequest.isTest());
-        assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-        assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildNumber));
-        assert.strictEqual(buildRequest.statusDescription(), null);
-        assert.notEqual(buildRequest.buildId(), null);
-
-        commitSet = buildRequest.commitSet();
-        assert.strictEqual(commitSet.revisionForRepository(webkit), '191622');
-        webkitPatch = commitSet.patchForRepository(webkit);
-        assert(webkitPatch instanceof UploadedFile);
-        assert.strictEqual(webkitPatch.filename(), 'patch.dat');
-        webkitRoot = commitSet.rootForRepository(webkit);
-        assert(webkitRoot instanceof UploadedFile);
-        assert.strictEqual(webkitRoot.filename(), 'root123.dat');
-        assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
 
         otherBuildRequest = testGroup.buildRequests()[1];
         assert(otherBuildRequest.isBuild());
         assert(!otherBuildRequest.isTest());
         assert.strictEqual(otherBuildRequest.statusLabel(), 'Completed');
-        assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('some builder', secondBuildNumber));
+        assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildNumber));
         assert.strictEqual(otherBuildRequest.statusDescription(), null);
         assert.notEqual(otherBuildRequest.buildId(), null);
 
-        otherCommitSet = otherBuildRequest.commitSet();
-        assert.strictEqual(otherCommitSet.revisionForRepository(webkit), '191622');
-        assert.strictEqual(otherCommitSet.patchForRepository(webkit), null);
-        const otherWebkitRoot = otherCommitSet.rootForRepository(webkit);
-        assert(otherWebkitRoot instanceof UploadedFile);
-        assert.strictEqual(otherWebkitRoot.filename(), 'root124.dat');
-        assert.deepEqual(otherCommitSet.allRootFiles(), [otherWebkitRoot]);
+        firstTestRequest = testGroup.buildRequests()[2];
+        assert(!firstTestRequest.isBuild());
+        assert(firstTestRequest.isTest());
+        assert.strictEqual(firstTestRequest.statusLabel(), 'Running');
+        assert.strictEqual(firstTestRequest.statusUrl(), MockData.statusUrl('some tester', firstTestBuildTag));
+        assert.strictEqual(firstTestRequest.statusDescription(), null);
+        assert.strictEqual(firstTestRequest.buildId(), null);
+
+        secondTestRequest = testGroup.buildRequests()[3];
+        assert(!secondTestRequest.isBuild());
+        assert(secondTestRequest.isTest());
+        assert.strictEqual(secondTestRequest.statusLabel(), 'Waiting');
+        assert.strictEqual(secondTestRequest.statusUrl(), null);
+        assert.strictEqual(secondTestRequest.statusDescription(), null);
+        assert.strictEqual(secondTestRequest.buildId(), null);
+
+        MockRemoteAPI.reset();
+        syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+        assertAndResolveRequest(requests[0], 'GET', MockData.buildbotBuildersURL(), MockData.mockBuildbotBuilders());
+        MockRemoteAPI.reset();
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 3);
+        assertAndResolveRequest(requests[0], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+        assertAndResolveRequest(requests[1], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+        assertAndResolveRequest(requests[2], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 6);
+
+        assertAndResolveRequest(requests[3], 'GET', MockData.recentBuildsUrl('some tester', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('some tester'), buildRequestId: 3, buildTag: firstTestBuildTag}));
+        assertAndResolveRequest(requests[4], 'GET', MockData.recentBuildsUrl('some builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber}));
+        assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}));
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 7);
+        assertAndResolveRequest(requests[6], 'POST', '/api/v2/forceschedulers/force-ab-tests', 'OK');
+        assert.deepEqual(requests[6].data, {'id': '4', 'jsonrpc': '2.0', 'method': 'force', 'params':
+                {'wk': '191622', 'build-request-id': '4', 'forcescheduler': 'force-ab-tests', 'test': 'some-test',
+                    'roots': `[{"url":"http://localhost:8180/api/uploaded-file/${otherWebkitRoot.id()}.dat"}]`}});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 10);
+        assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some tester'),
+            MockData.pendingBuild({builderId: MockData.builderIDForName('some tester'), buildRequestId: 4,
+                buildbotBuildRequestId: 2}));
+        assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+        assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+        await MockRemoteAPI.waitForRequest();
+
+        assert.strictEqual(requests.length, 13);
+        assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2),
+            MockData.runningBuild({builderId: MockData.builderIDForName('some tester'), buildRequestId: 3, buildTag: firstTestBuildTag}));
+        assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber}));
+        assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}));
+        await syncPromise;
+
+        await TestGroup.fetchForTask(taskId, true);
+
+        assert.strictEqual(testGroups.length, 1);
+        testGroup = testGroups[0];
+        assert.strictEqual(testGroup.buildRequests().length, 6);
+
+        buildRequest = testGroup.buildRequests()[0];
+        assert.strictEqual(buildRequest.statusLabel(), 'Completed');
+
+        otherBuildRequest = testGroup.buildRequests()[1];
+        assert.strictEqual(otherBuildRequest.statusLabel(), 'Completed');
+
+        firstTestRequest = testGroup.buildRequests()[2];
+        assert(!firstTestRequest.isBuild());
+        assert(firstTestRequest.isTest());
+        assert.strictEqual(firstTestRequest.statusLabel(), 'Running');
+        assert.strictEqual(firstTestRequest.statusUrl(), MockData.statusUrl('some tester', firstTestBuildTag));
+        assert.strictEqual(firstTestRequest.statusDescription(), null);
+        assert.strictEqual(firstTestRequest.buildId(), null);
+
+        secondTestRequest = testGroup.buildRequests()[3];
+        assert(!secondTestRequest.isBuild());
+        assert(secondTestRequest.isTest());
+        assert.strictEqual(secondTestRequest.statusLabel(), 'Scheduled');
+        assert.strictEqual(secondTestRequest.statusUrl(), 'http://build.webkit.org/#/buildrequests/2');
+        assert.strictEqual(secondTestRequest.statusDescription(), null);
+        assert.strictEqual(secondTestRequest.buildId(), null);
     });
 
     async function resolveSyncerToBuildBotRequests(requestResolutionList)
@@ -877,7 +1431,7 @@ describe('sync-buildbot', function () {
             [
                 { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
                 { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber, statusDescription: 'Compiling WTF'}) },
-                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber, statusDescription: 'Compiling WTF'}) },
             ],
             [
                 { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
@@ -887,7 +1441,7 @@ describe('sync-buildbot', function () {
             [
                 { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
                 { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber, statusDescription: 'Compiling WTF'}) },
-                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber, statusDescription: 'Compiling WTF'}) },
             ]
         ]);
         await syncPromise;
@@ -895,12 +1449,16 @@ describe('sync-buildbot', function () {
         let testGroups = await TestGroup.fetchForTask(taskId, true);
         assert.strictEqual(testGroups.length, 1);
         assert.strictEqual(testGroups[0].buildRequests().length, 6);
-        validateFirstTwoBuildRequestsInTestGroup(testGroups[0], {statusLabel: 'Running', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), statusDescription: 'Compiling WTF'});
+        validateFirstTwoBuildRequestsInTestGroup(testGroups[0],
+            {statusLabel: 'Running', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), statusDescription: 'Compiling WTF'},
+            {statusLabel: 'Running', statusUrl: MockData.statusUrl('other builder', secondBuildNumber), statusDescription: 'Compiling WTF'});
 
         await uploadRoot(parseInt(testGroups[0].buildRequests()[0].id()), firstBuildNumber);
         testGroups = await TestGroup.fetchForTask(taskId, true);
         assert.strictEqual(testGroups.length, 1);
-        validateFirstTwoBuildRequestsInTestGroup(testGroups[0], {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), statusDescription: 'Compiling WTF', buildId: '1', webkitRootUploaded: true});
+        validateFirstTwoBuildRequestsInTestGroup(testGroups[0],
+            {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), statusDescription: 'Compiling WTF', buildId: '1', webkitRootUploaded: true},
+            {statusLabel: 'Running', statusUrl: MockData.statusUrl('other builder', secondBuildNumber), statusDescription: 'Compiling WTF'});
 
         syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
         await resolveSyncerToBuildBotRequests([
@@ -918,38 +1476,30 @@ describe('sync-buildbot', function () {
                 { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
             ],
             [
-                {
-                    method: 'POST', url: '/api/v2/forceschedulers/force-ab-builds', resolve: 'OK',
-                    data: {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params': {'wk': '191622', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'build-wk': true}}
-                },
-            ],
-            [
                 { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
                 { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
                 { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
             ],
             [
                 { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
-                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: {
-                    builds: [
-                        MockData.runningBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2, buildTag: secondBuildNumber}),
-                        MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber})
-                    ]} },
-                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: '1', buildTag: firstBuildNumber}) },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber, statusDescription: 'Compiling WTF'}) },
             ]
         ]);
         await syncPromise;
 
         await TestGroup.fetchForTask(taskId, true);
         assert.strictEqual(testGroups.length, 1);
-        validateFirstTwoBuildRequestsInTestGroup(testGroups[0], {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), buildId: '1', webkitRootUploaded: true},
-            {statusLabel: 'Running', statusUrl: MockData.statusUrl('some builder', secondBuildNumber)});
+        validateFirstTwoBuildRequestsInTestGroup(testGroups[0],
+            {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), buildId: '1', webkitRootUploaded: true},
+            {statusLabel: 'Running', statusUrl: MockData.statusUrl('other builder', secondBuildNumber), statusDescription: 'Compiling WTF'});
 
-        await uploadRoot(parseInt(testGroups[0].buildRequests()[1].id()), 124);
+        await uploadRoot(parseInt(testGroups[0].buildRequests()[1].id()), secondBuildNumber);
         testGroups = await TestGroup.fetchForTask(taskId, true);
         assert.strictEqual(testGroups.length, 1);
-        validateFirstTwoBuildRequestsInTestGroup(testGroups[0], {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), buildId: '1', webkitRootUploaded: true},
-            {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', secondBuildNumber), buildId: '2', webkitRootUploaded: true});
+        validateFirstTwoBuildRequestsInTestGroup(testGroups[0],
+            {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), buildId: '1', webkitRootUploaded: true},
+            {statusLabel: 'Completed', statusUrl: MockData.statusUrl('other builder', secondBuildNumber), buildId: '2', webkitRootUploaded: true, statusDescription: 'Compiling WTF'});
 
         syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
         await resolveSyncerToBuildBotRequests([
@@ -963,9 +1513,104 @@ describe('sync-buildbot', function () {
             ],
             [
                 { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
-                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: { builds: [
-                    MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2, buildTag: secondBuildNumber}),
-                    MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber})]}},
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: '1', buildTag: firstBuildNumber}) },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}) },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: '1', buildTag: firstBuildNumber}) },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}) },
+            ]
+        ]);
+        await syncPromise;
+
+        await TestGroup.fetchForTask(taskId, true);
+        assert.strictEqual(testGroups.length, 1);
+        assert.strictEqual(testGroups[0].buildRequests().length, 6);
+
+        const buildRequest = testGroups[0].buildRequests()[2];
+        assert(buildRequest.isTest());
+        assert.strictEqual(buildRequest.statusLabel(), 'Waiting');
+    });
+
+    it('should still schedule other build type requests even when a build request has not finished', async () => {
+        let syncPromise;
+        const triggerable = await createTriggerable(configWithOneTesterTwoBuilders([
+            { builders: ['builder-1'], types: ['some'], platforms: ['some platform'], supportedRepetitionTypes: ['alternating', 'paired-parallel'] }]));
+        const firstBuildNumber = 123;
+        const secondBuildNumber = 124;
+        let testGroup = await createTestGroupWithPatch('paired-parallel');
+
+        const taskId = testGroup.task().id();
+        assert.strictEqual(testGroup.buildRequests().length, 6);
+        validateFirstTwoBuildRequestsInTestGroup(testGroup);
+
+        syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+        await resolveSyncerToBuildBotRequests([
+            [
+                { method: 'GET', url: MockData.buildbotBuildersURL(), resolve: MockData.mockBuildbotBuilders() },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber, statusDescription: 'Compiling WTF'}) },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
+            ],
+            [
+                {
+                    method: 'POST', url: '/api/v2/forceschedulers/force-ab-builds-1', resolve: 'OK',
+                    data: {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params': {'wk': '191622', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds-1', 'checkbox': 'build-wk', 'build-wk': true}}
+                },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber, statusDescription: 'Compiling WTF'}) },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber, statusDescription: 'Compiling WTF'}) },
+            ]
+        ]);
+        await syncPromise;
+
+        let testGroups = await TestGroup.fetchForTask(taskId, true);
+        assert.strictEqual(testGroups.length, 1);
+        assert.strictEqual(testGroups[0].buildRequests().length, 6);
+        validateFirstTwoBuildRequestsInTestGroup(testGroups[0],
+            {statusLabel: 'Running', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), statusDescription: 'Compiling WTF'},
+            {statusLabel: 'Running', statusUrl: MockData.statusUrl('other builder', secondBuildNumber), statusDescription: 'Compiling WTF'});
+
+        await uploadRoot(parseInt(testGroups[0].buildRequests()[0].id()), firstBuildNumber);
+        testGroups = await TestGroup.fetchForTask(taskId, true);
+        assert.strictEqual(testGroups.length, 1);
+        validateFirstTwoBuildRequestsInTestGroup(testGroups[0],
+            {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), statusDescription: 'Compiling WTF', buildId: '1', webkitRootUploaded: true},
+            {statusLabel: 'Running', statusUrl: MockData.statusUrl('other builder', secondBuildNumber), statusDescription: 'Compiling WTF'});
+
+        syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+        await resolveSyncerToBuildBotRequests([
+            [
+                { method: 'GET', url: MockData.buildbotBuildersURL(), resolve: MockData.mockBuildbotBuilders() },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: '1', buildTag: firstBuildNumber}) },
                 { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
             ],
             [
@@ -975,10 +1620,49 @@ describe('sync-buildbot', function () {
             ],
             [
                 { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
-                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: { builds: [
-                    MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2, buildTag: secondBuildNumber}),
-                    MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber})]}},
-                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: '1', buildTag: firstBuildNumber}) },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber, statusDescription: 'Compiling WTF'}) },
+            ]
+        ]);
+        await syncPromise;
+
+        await TestGroup.fetchForTask(taskId, true);
+        assert.strictEqual(testGroups.length, 1);
+        validateFirstTwoBuildRequestsInTestGroup(testGroups[0],
+            {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), buildId: '1', webkitRootUploaded: true},
+            {statusLabel: 'Running', statusUrl: MockData.statusUrl('other builder', secondBuildNumber), statusDescription: 'Compiling WTF'});
+
+        await uploadRoot(parseInt(testGroups[0].buildRequests()[1].id()), secondBuildNumber);
+        testGroups = await TestGroup.fetchForTask(taskId, true);
+        assert.strictEqual(testGroups.length, 1);
+        validateFirstTwoBuildRequestsInTestGroup(testGroups[0],
+            {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), buildId: '1', webkitRootUploaded: true},
+            {statusLabel: 'Completed', statusUrl: MockData.statusUrl('other builder', secondBuildNumber), buildId: '2', webkitRootUploaded: true, statusDescription: 'Compiling WTF'});
+
+        syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+        await resolveSyncerToBuildBotRequests([
+            [
+                { method: 'GET', url: MockData.buildbotBuildersURL(), resolve: MockData.mockBuildbotBuilders() },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: '1', buildTag: firstBuildNumber}) },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}) },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: '1', buildTag: firstBuildNumber}) },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildNumber}) },
             ]
         ]);
         await syncPromise;
@@ -997,6 +1681,8 @@ describe('sync-buildbot', function () {
         let triggerable;
         let taskId = null;
         let syncPromise;
+        const firstBuildTag = 12;
+        const secondBuildTag = 24;
         return createTriggerable().then((newTriggerable) => {
             triggerable = newTriggerable;
             return createTestGroupWithPatch();
@@ -1056,18 +1742,26 @@ describe('sync-buildbot', function () {
                 {'wk': '191622', 'wk-patch': RemoteAPI.url('/api/uploaded-file/1.dat'), 'checkbox': 'build-wk', 'build-wk': true, 'build-request-id': '1', 'forcescheduler': 'force-ab-builds'}});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 10);
-            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some tester'), {});
-            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some builder'),
-                MockData.pendingBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
-            assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+            assert.strictEqual(requests.length, 8);
+            assertAndResolveRequest(requests[7], 'POST', '/api/v2/forceschedulers/force-ab-builds-1', 'OK');
+            assert.deepEqual(requests[7].data, {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params':
+                    {'wk': '191622', 'checkbox': 'build-wk', 'build-wk': true, 'build-request-id': '2', 'forcescheduler': 'force-ab-builds-1'}});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 13);
-            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
-            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2),
-                MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
-            assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+            assert.strictEqual(requests.length, 11);
+            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+            assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('some builder'),
+                MockData.pendingBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
+            assertAndResolveRequest(requests[10], 'GET', MockData.pendingBuildsUrl('other builder'),
+                MockData.pendingBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2}));
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.strictEqual(requests.length, 14);
+            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+            assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('some builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildTag}));
+            assertAndResolveRequest(requests[13], 'GET', MockData.recentBuildsUrl('other builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildTag}));
             return syncPromise;
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
@@ -1081,7 +1775,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Running');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.strictEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -1095,8 +1789,8 @@ describe('sync-buildbot', function () {
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
-            assert.strictEqual(otherBuildRequest.statusLabel(), 'Waiting');
-            assert.strictEqual(otherBuildRequest.statusUrl(), null);
+            assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -1105,7 +1799,7 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.rootForRepository(webkit), null);
             assert.deepEqual(otherCommitSet.allRootFiles(), []);
 
-            return uploadRoot(parseInt(buildRequest.id()), 123);
+            return uploadRoot(parseInt(buildRequest.id()), firstBuildTag);
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
@@ -1118,7 +1812,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.notEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -1128,14 +1822,14 @@ describe('sync-buildbot', function () {
             assert.strictEqual(webkitPatch.filename(), 'patch.dat');
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
-            assert.strictEqual(otherBuildRequest.statusLabel(), 'Waiting');
-            assert.strictEqual(otherBuildRequest.statusUrl(), null);
+            assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -1160,29 +1854,22 @@ describe('sync-buildbot', function () {
             assertAndResolveRequest(requests[3], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
             assertAndResolveRequest(requests[4], 'GET', MockData.recentBuildsUrl('some builder', 2),
                 MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
-            assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+            assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2}));
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 7);
-            assertAndResolveRequest(requests[6], 'POST', '/api/v2/forceschedulers/force-ab-builds', 'OK');
-            assert.deepEqual(requests[6].data, {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params':
-                {'wk': '191622', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'build-wk': true}});
+            assert.strictEqual(requests.length, 9);
+            assertAndResolveRequest(requests[6], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('other builder'), {});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 10);
-            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some tester'), {});
-            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some builder'), {});
-            assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('other builder'), {});
-            return MockRemoteAPI.waitForRequest();
-        }).then(() => {
-            assert.strictEqual(requests.length, 13);
-            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
-            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2), {
-                'builds': [
-                    MockData.runningBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2}),
-                    MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1})]
-            });
-            assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+            assert.strictEqual(requests.length, 12);
+            assertAndResolveRequest(requests[9], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some builder', 2),
+                MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
+            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('other builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2}));
             return syncPromise;
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
@@ -1196,7 +1883,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.notEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -1206,14 +1893,14 @@ describe('sync-buildbot', function () {
             assert.strictEqual(webkitPatch.filename(), 'patch.dat');
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
             assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
-            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -1222,7 +1909,7 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.rootForRepository(webkit), null);
             assert.deepEqual(otherCommitSet.allRootFiles(), []);
 
-            return uploadRoot(parseInt(otherBuildRequest.id()), 124);
+            return uploadRoot(parseInt(otherBuildRequest.id()), secondBuildTag);
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
@@ -1235,7 +1922,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.notEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -1245,14 +1932,14 @@ describe('sync-buildbot', function () {
             assert.strictEqual(webkitPatch.filename(), 'patch.dat');
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
             assert.strictEqual(otherBuildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.notEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -1260,7 +1947,7 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.patchForRepository(webkit), null);
             const otherWebkitRoot = otherCommitSet.rootForRepository(webkit);
             assert(otherWebkitRoot instanceof UploadedFile);
-            assert.strictEqual(otherWebkitRoot.filename(), 'root124.dat');
+            assert.strictEqual(otherWebkitRoot.filename(), `root${secondBuildTag}.dat`);
             assert.deepEqual(otherCommitSet.allRootFiles(), [otherWebkitRoot]);
         });
     });
@@ -1270,6 +1957,8 @@ describe('sync-buildbot', function () {
         let triggerable;
         let taskId = null;
         let syncPromise;
+        let firstBuildTag = 12;
+        let secondBuildTag = 24;
         return createTriggerable(configWithPlatformName).then((newTriggerable) => {
             triggerable = newTriggerable;
             return createTestGroupWithPatch();
@@ -1329,18 +2018,26 @@ describe('sync-buildbot', function () {
                 {'wk': '191622', 'wk-patch': RemoteAPI.url('/api/uploaded-file/1.dat'), 'build-request-id': '1', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'build-wk': true, 'platform-name': 'some platform'}});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 10);
-            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some tester'), {});
-            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some builder'),
-                MockData.pendingBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
-            assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+            assert.strictEqual(requests.length, 8);
+            assertAndResolveRequest(requests[7], 'POST', '/api/v2/forceschedulers/force-ab-builds-1', 'OK');
+            assert.deepEqual(requests[7].data, {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params':
+                    {'wk': '191622', 'checkbox': 'build-wk', 'build-wk': true, 'build-request-id': '2', 'forcescheduler': 'force-ab-builds-1', 'platform-name': 'some platform'}});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 13);
-            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
-            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2),
-                MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
-            assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+            assert.strictEqual(requests.length, 11);
+            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+            assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('some builder'),
+                MockData.pendingBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
+            assertAndResolveRequest(requests[10], 'GET', MockData.pendingBuildsUrl('other builder'),
+                MockData.pendingBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2}));
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.strictEqual(requests.length, 14);
+            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+            assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('some builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildTag}));
+            assertAndResolveRequest(requests[13], 'GET', MockData.recentBuildsUrl('other builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildTag}));
             return syncPromise;
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
@@ -1354,7 +2051,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Running');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.strictEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -1368,8 +2065,8 @@ describe('sync-buildbot', function () {
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
-            assert.strictEqual(otherBuildRequest.statusLabel(), 'Waiting');
-            assert.strictEqual(otherBuildRequest.statusUrl(), null);
+            assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -1378,7 +2075,7 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.rootForRepository(webkit), null);
             assert.deepEqual(otherCommitSet.allRootFiles(), []);
 
-            return uploadRoot(parseInt(buildRequest.id()), 123);
+            return uploadRoot(parseInt(buildRequest.id()), firstBuildTag);
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
@@ -1391,7 +2088,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.notEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -1401,14 +2098,14 @@ describe('sync-buildbot', function () {
             assert.strictEqual(webkitPatch.filename(), 'patch.dat');
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
-            assert.strictEqual(otherBuildRequest.statusLabel(), 'Waiting');
-            assert.strictEqual(otherBuildRequest.statusUrl(), null);
+            assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -1432,30 +2129,23 @@ describe('sync-buildbot', function () {
             assert.strictEqual(requests.length, 6);
             assertAndResolveRequest(requests[3], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
             assertAndResolveRequest(requests[4], 'GET', MockData.recentBuildsUrl('some builder', 2),
-                MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
-            assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+                MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildTag}));
+            assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildTag}));
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 7);
-            assertAndResolveRequest(requests[6], 'POST', '/api/v2/forceschedulers/force-ab-builds', 'OK');
-            assert.deepEqual(requests[6].data, {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params':
-                {'wk': '191622', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'build-wk': true, 'platform-name': 'some platform'}});
+            assert.strictEqual(requests.length, 9);
+            assertAndResolveRequest(requests[6], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('other builder'), {});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 10);
-            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some tester'), {});
-            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some builder'), {});
-            assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('other builder'), {});
-            return MockRemoteAPI.waitForRequest();
-        }).then(() => {
-            assert.strictEqual(requests.length, 13);
-            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
-            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2), {
-                'builds': [
-                    MockData.runningBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2}),
-                    MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1})]
-            });
-            assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+            assert.strictEqual(requests.length, 12);
+            assertAndResolveRequest(requests[9], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some builder', 2),
+                MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildTag}));
+            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('other builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildTag}));
             return syncPromise;
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
@@ -1469,7 +2159,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.notEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -1479,14 +2169,14 @@ describe('sync-buildbot', function () {
             assert.strictEqual(webkitPatch.filename(), 'patch.dat');
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
             assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
-            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -1495,7 +2185,7 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.rootForRepository(webkit), null);
             assert.deepEqual(otherCommitSet.allRootFiles(), []);
 
-            return uploadRoot(parseInt(otherBuildRequest.id()), 124);
+            return uploadRoot(parseInt(otherBuildRequest.id()), secondBuildTag);
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
@@ -1508,7 +2198,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.notEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -1518,14 +2208,14 @@ describe('sync-buildbot', function () {
             assert.strictEqual(webkitPatch.filename(), 'patch.dat');
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
             assert.strictEqual(otherBuildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.notEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -1533,7 +2223,7 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.patchForRepository(webkit), null);
             const otherWebkitRoot = otherCommitSet.rootForRepository(webkit);
             assert(otherWebkitRoot instanceof UploadedFile);
-            assert.strictEqual(otherWebkitRoot.filename(), 'root124.dat');
+            assert.strictEqual(otherWebkitRoot.filename(), `root${secondBuildTag}.dat`);
             assert.deepEqual(otherCommitSet.allRootFiles(), [otherWebkitRoot]);
         });
     });
@@ -1731,7 +2421,7 @@ describe('sync-buildbot', function () {
         });
     });
 
-    it('should cancel builds for testing when a build to build a patch fails', () => {
+    it('should cancel all test type requests for testing when a build to build a patch fails', () => {
         const requests = MockRemoteAPI.requests;
         let triggerable;
         let taskId = null;
@@ -1777,16 +2467,23 @@ describe('sync-buildbot', function () {
                 MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 1, buildTag: 312}));
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 9);
-            assertAndResolveRequest(requests[6], 'GET', MockData.pendingBuildsUrl('some tester'), {});
-            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some builder'), {});
-            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+            assert.strictEqual(requests.length, 7);
+            assertAndResolveRequest(requests[6], 'POST', '/api/v2/forceschedulers/force-ab-builds', 'OK');
+            assert.deepEqual(requests[6].data, {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params':
+                    {'wk': '191622', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'build-wk': true}});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 12);
-            assertAndResolveRequest(requests[9], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
-            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some builder', 2), {});
-            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('other builder', 2),
+            assert.strictEqual(requests.length, 10);
+            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some builder'),
+                MockData.pendingBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2, buildbotBuildRequestId: 20}));
+            assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.strictEqual(requests.length, 13);
+            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2), {});
+            assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2),
                 MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 1, buildTag: 312}));
             return syncPromise;
         }).then(() => {
@@ -1803,9 +2500,21 @@ describe('sync-buildbot', function () {
 
             assert(buildReqeusts[1].isBuild());
             assert(!buildReqeusts[1].isTest());
-            assert.strictEqual(buildReqeusts[1].statusLabel(), 'Failed');
-            assert.strictEqual(buildReqeusts[1].statusUrl(), null);
+            assert.strictEqual(buildReqeusts[1].statusLabel(), 'Scheduled');
+            assert.strictEqual(buildReqeusts[1].statusUrl(), 'http://build.webkit.org/#/buildrequests/20');
             assert.strictEqual(buildReqeusts[1].buildId(), null);
+
+            assert(!buildReqeusts[2].isBuild());
+            assert(buildReqeusts[2].isTest());
+            assert.strictEqual(buildReqeusts[2].statusLabel(), 'Failed');
+            assert.strictEqual(buildReqeusts[2].statusUrl(), null);
+            assert.strictEqual(buildReqeusts[2].buildId(), null);
+
+            assert(!buildReqeusts[3].isBuild());
+            assert(buildReqeusts[3].isTest());
+            assert.strictEqual(buildReqeusts[3].statusLabel(), 'Failed');
+            assert.strictEqual(buildReqeusts[3].statusUrl(), null);
+            assert.strictEqual(buildReqeusts[3].buildId(), null);
 
             function assertTestBuildHasFailed(request)
             {
@@ -1826,6 +2535,8 @@ describe('sync-buildbot', function () {
         let triggerable;
         let taskId = null;
         let syncPromise;
+        const firstBuildTag = 12;
+        const secondBuildTag = 24;
         return createTriggerable().then((newTriggerable) => {
             triggerable = newTriggerable;
             return createTestGroupWihOwnedCommit();
@@ -1888,18 +2599,26 @@ describe('sync-buildbot', function () {
                 {'wk': '191622', 'build-request-id': '1', 'forcescheduler': 'force-ab-builds', 'owned-commits': `{"WebKit":[{"revision":"owned-jsc-6161","repository":"JavaScriptCore","ownerRevision":"191622"}]}`}});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 10);
-            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some tester'), {});
-            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some builder'),
-                MockData.pendingBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
-            assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+            assert.strictEqual(requests.length, 8);
+            assertAndResolveRequest(requests[7], 'POST', '/api/v2/forceschedulers/force-ab-builds-1', 'OK');
+            assert.deepEqual(requests[7].data, {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params':
+                    {'wk': '192736', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds-1', 'owned-commits': `{"WebKit":[{"revision":"owned-jsc-9191","repository":"JavaScriptCore","ownerRevision":"192736"}]}`}});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 13);
-            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
-            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2),
-                MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
-            assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+            assert.strictEqual(requests.length, 11);
+            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+            assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('some builder'),
+                MockData.pendingBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
+            assertAndResolveRequest(requests[10], 'GET', MockData.pendingBuildsUrl('other builder'),
+                MockData.pendingBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2}));
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.strictEqual(requests.length, 14);
+            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+            assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('some builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildTag}));
+            assertAndResolveRequest(requests[13], 'GET', MockData.recentBuildsUrl('other builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildTag}));
             return syncPromise;
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
@@ -1914,7 +2633,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Running');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.strictEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -1928,8 +2647,8 @@ describe('sync-buildbot', function () {
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
-            assert.strictEqual(otherBuildRequest.statusLabel(), 'Waiting');
-            assert.strictEqual(otherBuildRequest.statusUrl(), null);
+            assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -1940,7 +2659,7 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.ownerRevisionForRepository(ownedJSC), otherCommitSet.revisionForRepository(webkit));
             assert.deepEqual(otherCommitSet.allRootFiles(), []);
 
-            return uploadRoot(parseInt(buildRequest.id()), 123).then(() => uploadRoot(parseInt(buildRequest.id()), 123, [{ownerRepository: 'WebKit', ownedRepository: 'JavaScriptCore'}], '2017-05-10T02:54:09.666'));
+            return uploadRoot(parseInt(buildRequest.id()), firstBuildTag).then(() => uploadRoot(parseInt(buildRequest.id()), firstBuildTag, [{ownerRepository: 'WebKit', ownedRepository: 'JavaScriptCore'}], '2017-05-10T02:54:09.666'));
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
@@ -1954,7 +2673,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.notEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -1964,17 +2683,17 @@ describe('sync-buildbot', function () {
             assert.strictEqual(commitSet.ownerRevisionForRepository(ownedJSC), commitSet.revisionForRepository(webkit));
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             const jscRoot = commitSet.rootForRepository(ownedJSC);
             assert(jscRoot instanceof UploadedFile);
-            assert.strictEqual(jscRoot.filename(), 'root123.dat');
+            assert.strictEqual(jscRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot, jscRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
-            assert.strictEqual(otherBuildRequest.statusLabel(), 'Waiting');
-            assert.strictEqual(otherBuildRequest.statusUrl(), null);
+            assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -2004,26 +2723,20 @@ describe('sync-buildbot', function () {
             assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 7);
-            assertAndResolveRequest(requests[6], 'POST', '/api/v2/forceschedulers/force-ab-builds', 'OK');
-            assert.deepEqual(requests[6].data, {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params':
-                {'wk': '192736', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'owned-commits': `{"WebKit":[{"revision":"owned-jsc-9191","repository":"JavaScriptCore","ownerRevision":"192736"}]}`}});
+            assert.strictEqual(requests.length, 9);
+            assertAndResolveRequest(requests[6], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some builder'),
+                MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildTag}));
+            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('other builder'),
+                MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildTag}));
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 10);
-            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some tester'), {});
-            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some builder'), {});
-            assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('other builder'), {});
-            return MockRemoteAPI.waitForRequest();
-        }).then(() => {
-            assert.strictEqual(requests.length, 13);
-            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
-            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2), {
-                'builds': [
-                    MockData.runningBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2}),
-                    MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1})]
-            });
-            assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+            assert.strictEqual(requests.length, 12);
+            assertAndResolveRequest(requests[9], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some builder', 2),
+                MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildTag}));
+            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('other builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildTag}));
             return syncPromise;
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
@@ -2038,7 +2751,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.notEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -2048,17 +2761,17 @@ describe('sync-buildbot', function () {
             assert.strictEqual(commitSet.ownerRevisionForRepository(ownedJSC), commitSet.revisionForRepository(webkit));
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             const jscRoot = commitSet.rootForRepository(ownedJSC);
             assert(jscRoot instanceof UploadedFile);
-            assert.strictEqual(jscRoot.filename(), 'root123.dat');
+            assert.strictEqual(jscRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot, jscRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
             assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
-            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -2069,7 +2782,7 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.ownerRevisionForRepository(ownedJSC), otherCommitSet.revisionForRepository(webkit));
             assert.deepEqual(otherCommitSet.allRootFiles(), []);
 
-            return uploadRoot(parseInt(otherBuildRequest.id()), 124).then(() => uploadRoot(parseInt(otherBuildRequest.id()), 124, [{ownerRepository: 'WebKit', ownedRepository: 'JavaScriptCore'}], '2017-05-10T02:54:09.666'));
+            return uploadRoot(parseInt(otherBuildRequest.id()), secondBuildTag).then(() => uploadRoot(parseInt(otherBuildRequest.id()), secondBuildTag, [{ownerRepository: 'WebKit', ownedRepository: 'JavaScriptCore'}], '2017-05-10T02:54:09.666'));
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
@@ -2083,7 +2796,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.notEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -2093,17 +2806,17 @@ describe('sync-buildbot', function () {
             assert.strictEqual(commitSet.ownerRevisionForRepository(ownedJSC), commitSet.revisionForRepository(webkit));
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             const jscRoot = commitSet.rootForRepository(ownedJSC);
             assert(jscRoot instanceof UploadedFile);
-            assert.strictEqual(jscRoot.filename(), 'root123.dat');
+            assert.strictEqual(jscRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot, jscRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
             assert.strictEqual(otherBuildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.notEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -2113,10 +2826,10 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.ownerRevisionForRepository(ownedJSC), otherCommitSet.revisionForRepository(webkit));
             const otherWebkitRoot = otherCommitSet.rootForRepository(webkit);
             assert(otherWebkitRoot instanceof UploadedFile);
-            assert.strictEqual(otherWebkitRoot.filename(), 'root124.dat');
+            assert.strictEqual(otherWebkitRoot.filename(), `root${secondBuildTag}.dat`);
             const otherJSCRoot = otherCommitSet.rootForRepository(ownedJSC);
             assert(otherJSCRoot instanceof UploadedFile);
-            assert.strictEqual(otherJSCRoot.filename(), 'root124.dat');
+            assert.strictEqual(otherJSCRoot.filename(), `root${secondBuildTag}.dat`);
             assert.deepEqual(otherCommitSet.allRootFiles(), [otherWebkitRoot, otherJSCRoot]);
         });
     });
@@ -2126,6 +2839,8 @@ describe('sync-buildbot', function () {
         let triggerable;
         let taskId = null;
         let syncPromise;
+        const firstBuildTag = 12;
+        const secondBuildTag = 24;
         return createTriggerable().then((newTriggerable) => {
             triggerable = newTriggerable;
             return createTestGroupWihOwnedCommit();
@@ -2185,21 +2900,29 @@ describe('sync-buildbot', function () {
             assert.strictEqual(requests.length, 7);
             assertAndResolveRequest(requests[6], 'POST', '/api/v2/forceschedulers/force-ab-builds', 'OK');
             assert.deepEqual(requests[6].data, {'id': '1', 'jsonrpc': '2.0', 'method': 'force', 'params':
-                {'wk': '191622', 'build-request-id': '1', 'forcescheduler': 'force-ab-builds', 'owned-commits': `{"WebKit":[{"revision":"owned-jsc-6161","repository":"JavaScriptCore","ownerRevision":"191622"}]}`}});
+                    {'wk': '191622', 'build-request-id': '1', 'forcescheduler': 'force-ab-builds', 'owned-commits': `{"WebKit":[{"revision":"owned-jsc-6161","repository":"JavaScriptCore","ownerRevision":"191622"}]}`}});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 10);
-            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some tester'), {});
-            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some builder'),
+            assert.strictEqual(requests.length, 8);
+            assertAndResolveRequest(requests[7], 'POST', '/api/v2/forceschedulers/force-ab-builds-1', 'OK');
+            assert.deepEqual(requests[7].data, {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params':
+                    {'wk': '192736', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds-1', 'owned-commits': `{"WebKit":[{"revision":"owned-jsc-9191","repository":"JavaScriptCore","ownerRevision":"192736"}]}`}});
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.strictEqual(requests.length, 11);
+            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+            assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('some builder'),
                 MockData.pendingBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
-            assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('other builder'), {});
+            assertAndResolveRequest(requests[10], 'GET', MockData.pendingBuildsUrl('other builder'),
+                MockData.pendingBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2}));
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 13);
-            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
-            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2),
-                MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
-            assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+            assert.strictEqual(requests.length, 14);
+            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+            assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('some builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildTag}));
+            assertAndResolveRequest(requests[13], 'GET', MockData.recentBuildsUrl('other builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildTag}));
             return syncPromise;
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
@@ -2214,7 +2937,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Running');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.strictEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -2228,8 +2951,8 @@ describe('sync-buildbot', function () {
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
-            assert.strictEqual(otherBuildRequest.statusLabel(), 'Waiting');
-            assert.strictEqual(otherBuildRequest.statusUrl(), null);
+            assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -2240,7 +2963,7 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.ownerRevisionForRepository(ownedJSC), otherCommitSet.revisionForRepository(webkit));
             assert.deepEqual(otherCommitSet.allRootFiles(), []);
 
-            return uploadRoot(parseInt(buildRequest.id()), 123);
+            return uploadRoot(parseInt(buildRequest.id()), firstBuildTag);
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
@@ -2254,7 +2977,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Running');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.strictEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -2264,14 +2987,14 @@ describe('sync-buildbot', function () {
             assert.strictEqual(commitSet.ownerRevisionForRepository(ownedJSC), commitSet.revisionForRepository(webkit));
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
-            assert.strictEqual(otherBuildRequest.statusLabel(), 'Waiting');
-            assert.strictEqual(otherBuildRequest.statusUrl(), null);
+            assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -2281,7 +3004,7 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.ownerRevisionForRepository(webkit), null);
             assert.strictEqual(otherCommitSet.ownerRevisionForRepository(ownedJSC), otherCommitSet.revisionForRepository(webkit));
             assert.deepEqual(otherCommitSet.allRootFiles(), []);
-            return uploadRoot(parseInt(buildRequest.id()), 123, [{ownerRepository: 'WebKit', ownedRepository: 'JavaScriptCore'}], '2017-05-10T02:54:09.666');
+            return uploadRoot(parseInt(buildRequest.id()), firstBuildTag, [{ownerRepository: 'WebKit', ownedRepository: 'JavaScriptCore'}], '2017-05-10T02:54:09.666');
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
@@ -2295,7 +3018,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.notEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -2305,17 +3028,17 @@ describe('sync-buildbot', function () {
             assert.strictEqual(commitSet.ownerRevisionForRepository(ownedJSC), commitSet.revisionForRepository(webkit));
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             const jscRoot = commitSet.rootForRepository((ownedJSC));
             assert(jscRoot instanceof UploadedFile);
-            assert.strictEqual(jscRoot.filename(), 'root123.dat');
+            assert.strictEqual(jscRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot, jscRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
-            assert.strictEqual(otherBuildRequest.statusLabel(), 'Waiting');
-            assert.strictEqual(otherBuildRequest.statusUrl(), null);
+            assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -2340,31 +3063,25 @@ describe('sync-buildbot', function () {
         }).then(() => {
             assert.strictEqual(requests.length, 6);
             assertAndResolveRequest(requests[3], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+
             assertAndResolveRequest(requests[4], 'GET', MockData.recentBuildsUrl('some builder', 2),
-                MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1}));
-            assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+                MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildTag}));
+            assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildTag}));
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 7);
-            assertAndResolveRequest(requests[6], 'POST', '/api/v2/forceschedulers/force-ab-builds', 'OK');
-            assert.deepEqual(requests[6].data, {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params':
-                {'wk': '192736', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'owned-commits': `{"WebKit":[{"revision":"owned-jsc-9191","repository":"JavaScriptCore","ownerRevision":"192736"}]}`}});
+            assert.strictEqual(requests.length, 9);
+            assertAndResolveRequest(requests[6], 'GET', MockData.pendingBuildsUrl('some tester'), {});
+            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some builder'), {});
+            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('other builder'), {});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
-            assert.strictEqual(requests.length, 10);
-            assertAndResolveRequest(requests[7], 'GET', MockData.pendingBuildsUrl('some tester'), {});
-            assertAndResolveRequest(requests[8], 'GET', MockData.pendingBuildsUrl('some builder'), {});
-            assertAndResolveRequest(requests[9], 'GET', MockData.pendingBuildsUrl('other builder'), {});
-            return MockRemoteAPI.waitForRequest();
-        }).then(() => {
-            assert.strictEqual(requests.length, 13);
-            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
-            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('some builder', 2), {
-                'builds': [
-                    MockData.runningBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2}),
-                    MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1})]
-            });
-            assertAndResolveRequest(requests[12], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
+            assert.strictEqual(requests.length, 12);
+            assertAndResolveRequest(requests[9], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
+            assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some builder', 2),
+                MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildTag}));
+            assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('other builder', 2),
+                MockData.runningBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 2, buildTag: secondBuildTag}));
             return syncPromise;
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
@@ -2379,7 +3096,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.notEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -2389,17 +3106,17 @@ describe('sync-buildbot', function () {
             assert.strictEqual(commitSet.ownerRevisionForRepository(ownedJSC), commitSet.revisionForRepository(webkit));
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             const jscRoot = commitSet.rootForRepository(ownedJSC);
             assert(jscRoot instanceof UploadedFile);
-            assert.strictEqual(jscRoot.filename(), 'root123.dat');
+            assert.strictEqual(jscRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot, jscRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
             assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
-            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -2410,7 +3127,7 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.ownerRevisionForRepository(ownedJSC), otherCommitSet.revisionForRepository(webkit));
             assert.deepEqual(otherCommitSet.allRootFiles(), []);
 
-            return uploadRoot(parseInt(otherBuildRequest.id()), 124);
+            return uploadRoot(parseInt(otherBuildRequest.id()), secondBuildTag);
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
@@ -2424,7 +3141,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.notEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -2434,17 +3151,17 @@ describe('sync-buildbot', function () {
             assert.strictEqual(commitSet.ownerRevisionForRepository(ownedJSC), commitSet.revisionForRepository(webkit));
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             const jscRoot = commitSet.rootForRepository(ownedJSC);
             assert(jscRoot instanceof UploadedFile);
-            assert.strictEqual(jscRoot.filename(), 'root123.dat');
+            assert.strictEqual(jscRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot, jscRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
             assert.strictEqual(otherBuildRequest.statusLabel(), 'Running');
-            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.strictEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -2454,9 +3171,9 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.ownerRevisionForRepository(ownedJSC), otherCommitSet.revisionForRepository(webkit));
             const otherWebkitRoot = otherCommitSet.rootForRepository(webkit);
             assert(otherWebkitRoot instanceof UploadedFile);
-            assert.strictEqual(otherWebkitRoot.filename(), 'root124.dat');
+            assert.strictEqual(otherWebkitRoot.filename(), `root${secondBuildTag}.dat`);
             assert.deepEqual(otherCommitSet.allRootFiles(), [otherWebkitRoot]);
-            return uploadRoot(parseInt(otherBuildRequest.id()), 124, [{ownerRepository: 'WebKit', ownedRepository: 'JavaScriptCore'}], '2017-05-10T02:54:09.666');
+            return uploadRoot(parseInt(otherBuildRequest.id()), secondBuildTag, [{ownerRepository: 'WebKit', ownedRepository: 'JavaScriptCore'}], '2017-05-10T02:54:09.666');
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
@@ -2470,7 +3187,7 @@ describe('sync-buildbot', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert.strictEqual(buildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(buildRequest.statusUrl(), MockData.statusUrl('some builder', firstBuildTag));
             assert.notEqual(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -2480,17 +3197,17 @@ describe('sync-buildbot', function () {
             assert.strictEqual(commitSet.ownerRevisionForRepository(ownedJSC), commitSet.revisionForRepository(webkit));
             const webkitRoot = commitSet.rootForRepository(webkit);
             assert(webkitRoot instanceof UploadedFile);
-            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.strictEqual(webkitRoot.filename(), `root${firstBuildTag}.dat`);
             const jscRoot = commitSet.rootForRepository(ownedJSC);
             assert(jscRoot instanceof UploadedFile);
-            assert.strictEqual(jscRoot.filename(), 'root123.dat');
+            assert.strictEqual(jscRoot.filename(), `root${firstBuildTag}.dat`);
             assert.deepEqual(commitSet.allRootFiles(), [webkitRoot, jscRoot]);
 
             const otherBuildRequest = testGroup.buildRequests()[1];
             assert(otherBuildRequest.isBuild());
             assert(!otherBuildRequest.isTest());
             assert.strictEqual(otherBuildRequest.statusLabel(), 'Completed');
-            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('some builder', 124));
+            assert.strictEqual(otherBuildRequest.statusUrl(), MockData.statusUrl('other builder', secondBuildTag));
             assert.notEqual(otherBuildRequest.buildId(), null);
 
             const otherCommitSet = otherBuildRequest.commitSet();
@@ -2500,10 +3217,10 @@ describe('sync-buildbot', function () {
             assert.strictEqual(otherCommitSet.ownerRevisionForRepository(ownedJSC), otherCommitSet.revisionForRepository(webkit));
             const otherWebkitRoot = otherCommitSet.rootForRepository(webkit);
             assert(otherWebkitRoot instanceof UploadedFile);
-            assert.strictEqual(otherWebkitRoot.filename(), 'root124.dat');
+            assert.strictEqual(otherWebkitRoot.filename(), `root${secondBuildTag}.dat`);
             const otherJSCRoot = otherCommitSet.rootForRepository(ownedJSC);
             assert(otherJSCRoot instanceof UploadedFile);
-            assert.strictEqual(otherJSCRoot.filename(), 'root124.dat');
+            assert.strictEqual(otherJSCRoot.filename(), `root${secondBuildTag}.dat`);
             assert.deepEqual(otherCommitSet.allRootFiles(), [otherWebkitRoot, otherJSCRoot]);
         });
     });

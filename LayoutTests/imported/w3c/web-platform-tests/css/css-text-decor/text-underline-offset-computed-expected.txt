@@ -1,4 +1,17 @@
 
 PASS Property text-underline-offset value 'auto'
 PASS Property text-underline-offset value 'calc(10px - 8px)'
+PASS Property text-underline-offset value '32px'
+PASS Property text-underline-offset value '2em'
+PASS Property text-underline-offset value '200%'
+PASS Property text-underline-offset value 'calc(2em - 0px)'
+PASS Property text-underline-offset value 'calc(200% - 0px)'
+PASS Property text-underline-offset value 'calc(0.5em - 0px)'
+PASS Property text-underline-offset value 'calc(50% - 0px)'
+PASS Property text-underline-offset value 'calc(2em - 8px)'
+PASS Property text-underline-offset value 'calc(2em - 0.5em)'
+PASS Property text-underline-offset value 'calc(2em - 50%)'
+PASS Property text-underline-offset value 'calc(200% - 8px)'
+PASS Property text-underline-offset value 'calc(200% - 0.5em)'
+PASS Property text-underline-offset value 'calc(200% - 50%)'
 

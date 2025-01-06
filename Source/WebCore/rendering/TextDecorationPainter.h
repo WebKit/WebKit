@@ -40,7 +40,7 @@ class TextRun;
     
 class TextDecorationPainter {
 public:
-    TextDecorationPainter(GraphicsContext&, const FontCascade&, const ShadowData*, const FilterOperations*, bool isPrinting, bool isHorizontal);
+    TextDecorationPainter(GraphicsContext&, const FontCascade&, const ShadowData*, const FilterOperations*, bool isPrinting, WritingMode);
 
     struct Styles {
         bool operator==(const Styles&) const;
@@ -52,8 +52,6 @@ public:
         DecorationStyleAndColor underline;
         DecorationStyleAndColor overline;
         DecorationStyleAndColor linethrough;
-
-        TextDecorationSkipInk skipInk { TextDecorationSkipInk::None };
     };
     struct BackgroundDecorationGeometry {
         FloatPoint textOrigin;
@@ -86,7 +84,7 @@ private:
 
     GraphicsContext& m_context;
     bool m_isPrinting { false };
-    bool m_isHorizontal { true };
+    WritingMode m_writingMode;
     const ShadowData* m_shadow { nullptr };
     const FilterOperations* m_shadowColorFilter { nullptr };
     const FontCascade& m_font;

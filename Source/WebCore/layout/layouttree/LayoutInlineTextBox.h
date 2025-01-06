@@ -26,15 +26,15 @@
 #pragma once
 
 #include "LayoutBox.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 namespace Layout {
 
 class InlineTextBox : public Box {
-    WTF_MAKE_ISO_ALLOCATED(InlineTextBox);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InlineTextBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InlineTextBox);
 public:
     enum class ContentCharacteristic : uint8_t {

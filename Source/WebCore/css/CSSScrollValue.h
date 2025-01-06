@@ -49,8 +49,8 @@ public:
 
     String customCSSText() const;
 
-    RefPtr<CSSValue> scroller() const { return m_scroller; }
-    RefPtr<CSSValue> axis() const { return m_axis; }
+    const RefPtr<CSSValue>& scroller() const { return m_scroller; }
+    const RefPtr<CSSValue>& axis() const { return m_axis; }
 
     bool equals(const CSSScrollValue&) const;
 
@@ -69,7 +69,7 @@ public:
 
 private:
     CSSScrollValue(RefPtr<CSSValue>&& scroller, RefPtr<CSSValue>&& axis)
-        : CSSValue(ScrollClass)
+        : CSSValue(ClassType::Scroll)
         , m_scroller(WTFMove(scroller))
         , m_axis(WTFMove(axis))
     {

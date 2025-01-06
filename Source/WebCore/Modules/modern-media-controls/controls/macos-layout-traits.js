@@ -32,11 +32,6 @@ class MacOSLayoutTraits extends LayoutTraits
         return MacOSInlineMediaControls;
     }
 
-    overridenSupportingObjectClasses()
-    {
-        return null;
-    }
-
     resourceDirectory()
     {
         return "macOS";

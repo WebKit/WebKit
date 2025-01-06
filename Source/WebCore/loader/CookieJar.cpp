@@ -29,7 +29,7 @@
 #include "Cookie.h"
 #include "CookieRequestHeaderFieldProxy.h"
 #include "CookieStoreGetOptions.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
@@ -179,7 +179,7 @@ String CookieJar::cookieRequestHeaderFieldValue(Document& document, const URL& u
     return result.first;
 }
 
-bool CookieJar::getRawCookies(const Document& document, const URL& url, Vector<Cookie>& cookies) const
+bool CookieJar::getRawCookies(Document& document, const URL& url, Vector<Cookie>& cookies) const
 {
     auto pageID = document.pageID();
     std::optional<FrameIdentifier> frameID;
@@ -193,7 +193,7 @@ bool CookieJar::getRawCookies(const Document& document, const URL& url, Vector<C
     return false;
 }
 
-void CookieJar::setRawCookie(const Document&, const Cookie& cookie)
+void CookieJar::setRawCookie(const Document&, const Cookie& cookie, ShouldPartitionCookie)
 {
     if (CheckedPtr session = protectedStorageSessionProvider()->storageSession())
         session->setCookie(cookie);
@@ -227,7 +227,7 @@ Ref<StorageSessionProvider> CookieJar::protectedStorageSessionProvider() const
 }
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-void CookieJar::addChangeListener(const String&, const CookieChangeListener&)
+void CookieJar::addChangeListener(const WebCore::Document&, const CookieChangeListener&)
 {
 }
 

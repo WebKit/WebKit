@@ -30,7 +30,6 @@
 #include "VariableEnvironment.h"
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
-#include <wtf/MallocPtr.h>
 
 namespace JSC {
 
@@ -47,22 +46,22 @@ enum class SourceCodeType;
 // cache, since this will only be filled in when we parse the function
 struct CachedFunctionExecutableMetadata {
     CodeFeatures m_features;
-    LexicalScopeFeatures m_lexicalScopeFeatures;
+    LexicallyScopedFeatures m_lexicallyScopedFeatures;
     bool m_hasCapturedVariables;
 };
 
 struct CachedFunctionExecutableOffsets {
-    static constexpr ptrdiff_t codeBlockForCallOffset();
-    static constexpr ptrdiff_t codeBlockForConstructOffset();
-    static constexpr ptrdiff_t metadataOffset();
+    static ptrdiff_t codeBlockForCallOffset();
+    static ptrdiff_t codeBlockForConstructOffset();
+    static ptrdiff_t metadataOffset();
 };
 
 struct CachedWriteBarrierOffsets {
-    static constexpr ptrdiff_t ptrOffset();
+    static ptrdiff_t ptrOffset();
 };
 
 struct CachedPtrOffsets {
-    static constexpr ptrdiff_t offsetOffset();
+    static ptrdiff_t offsetOffset();
 };
 
 class VariableLengthObjectBase {
@@ -105,9 +104,9 @@ private:
 
     VM& m_vm;
     Ref<CachedBytecode> m_cachedBytecode;
-    HashMap<ptrdiff_t, void*> m_offsetToPtrMap;
+    UncheckedKeyHashMap<ptrdiff_t, void*> m_offsetToPtrMap;
     Vector<std::function<void()>> m_finalizers;
-    HashMap<CompactTDZEnvironment*, CompactTDZEnvironmentMap::Handle> m_environmentToHandleMap;
+    UncheckedKeyHashMap<CompactTDZEnvironment*, CompactTDZEnvironmentMap::Handle> m_environmentToHandleMap;
     RefPtr<SourceProvider> m_provider;
 };
 

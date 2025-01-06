@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,24 +16,6 @@
 
 #include "aom_dsp/ssim.h"
 #include "aom_ports/mem.h"
-
-#if CONFIG_INTERNAL_STATS
-void aom_ssim_parms_16x16_c(const uint8_t *s, int sp, const uint8_t *r, int rp,
-                            uint32_t *sum_s, uint32_t *sum_r,
-                            uint32_t *sum_sq_s, uint32_t *sum_sq_r,
-                            uint32_t *sum_sxr) {
-  int i, j;
-  for (i = 0; i < 16; i++, s += sp, r += rp) {
-    for (j = 0; j < 16; j++) {
-      *sum_s += s[j];
-      *sum_r += r[j];
-      *sum_sq_s += s[j] * s[j];
-      *sum_sq_r += r[j] * r[j];
-      *sum_sxr += s[j] * r[j];
-    }
-  }
-}
-#endif  // CONFIG_INTERNAL_STATS
 
 void aom_ssim_parms_8x8_c(const uint8_t *s, int sp, const uint8_t *r, int rp,
                           uint32_t *sum_s, uint32_t *sum_r, uint32_t *sum_sq_s,

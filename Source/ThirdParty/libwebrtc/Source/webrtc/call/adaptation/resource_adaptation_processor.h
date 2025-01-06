@@ -13,12 +13,12 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/adaptation/resource.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
@@ -84,7 +84,7 @@ class ResourceAdaptationProcessor : public ResourceAdaptationProcessorInterface,
   // If resource usage measurements happens off the adaptation task queue, this
   // class takes care of posting the measurement for the processor to handle it
   // on the adaptation task queue.
-  class ResourceListenerDelegate : public rtc::RefCountInterface,
+  class ResourceListenerDelegate : public RefCountInterface,
                                    public ResourceListener {
    public:
     explicit ResourceListenerDelegate(ResourceAdaptationProcessor* processor);

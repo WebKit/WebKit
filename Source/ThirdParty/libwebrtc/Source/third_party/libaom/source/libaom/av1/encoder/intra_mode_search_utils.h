@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -103,7 +103,7 @@ static const NN_CONFIG av1_intra_hog_model_nnconfig = {
 };
 
 #define FIX_PREC_BITS (16)
-static AOM_INLINE int get_hist_bin_idx(int dx, int dy) {
+static inline int get_hist_bin_idx(int dx, int dy) {
   const int32_t ratio = (dy * (1 << FIX_PREC_BITS)) / dx;
 
   // Find index by bisection
@@ -142,12 +142,12 @@ static AOM_INLINE int get_hist_bin_idx(int dx, int dy) {
 #undef FIX_PREC_BITS
 
 // Normalizes the hog data.
-static AOM_INLINE void normalize_hog(float total, float *hist) {
+static inline void normalize_hog(float total, float *hist) {
   for (int i = 0; i < BINS; ++i) hist[i] /= total;
 }
 
-static AOM_INLINE void lowbd_generate_hog(const uint8_t *src, int stride,
-                                          int rows, int cols, float *hist) {
+static inline void lowbd_generate_hog(const uint8_t *src, int stride, int rows,
+                                      int cols, float *hist) {
   float total = 0.1f;
   src += stride;
   for (int r = 1; r < rows - 1; ++r) {
@@ -182,9 +182,9 @@ static AOM_INLINE void lowbd_generate_hog(const uint8_t *src, int stride,
 
 // Computes and stores pixel level gradient information of a given superblock
 // for LBD encode.
-static AOM_INLINE void lowbd_compute_gradient_info_sb(MACROBLOCK *const x,
-                                                      BLOCK_SIZE sb_size,
-                                                      PLANE_TYPE plane) {
+static inline void lowbd_compute_gradient_info_sb(MACROBLOCK *const x,
+                                                  BLOCK_SIZE sb_size,
+                                                  PLANE_TYPE plane) {
   PixelLevelGradientInfo *const grad_info_sb =
       x->pixel_gradient_info + plane * MAX_SB_SQUARE;
   const uint8_t *src = x->plane[plane].src.buf;
@@ -216,8 +216,8 @@ static AOM_INLINE void lowbd_compute_gradient_info_sb(MACROBLOCK *const x,
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static AOM_INLINE void highbd_generate_hog(const uint8_t *src8, int stride,
-                                           int rows, int cols, float *hist) {
+static inline void highbd_generate_hog(const uint8_t *src8, int stride,
+                                       int rows, int cols, float *hist) {
   float total = 0.1f;
   const uint16_t *src = CONVERT_TO_SHORTPTR(src8);
   src += stride;
@@ -253,9 +253,9 @@ static AOM_INLINE void highbd_generate_hog(const uint8_t *src8, int stride,
 
 // Computes and stores pixel level gradient information of a given superblock
 // for HBD encode.
-static AOM_INLINE void highbd_compute_gradient_info_sb(MACROBLOCK *const x,
-                                                       BLOCK_SIZE sb_size,
-                                                       PLANE_TYPE plane) {
+static inline void highbd_compute_gradient_info_sb(MACROBLOCK *const x,
+                                                   BLOCK_SIZE sb_size,
+                                                   PLANE_TYPE plane) {
   PixelLevelGradientInfo *const grad_info_sb =
       x->pixel_gradient_info + plane * MAX_SB_SQUARE;
   const uint16_t *src = CONVERT_TO_SHORTPTR(x->plane[plane].src.buf);
@@ -287,8 +287,8 @@ static AOM_INLINE void highbd_compute_gradient_info_sb(MACROBLOCK *const x,
 }
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
-static AOM_INLINE void generate_hog(const uint8_t *src8, int stride, int rows,
-                                    int cols, float *hist, int highbd) {
+static inline void generate_hog(const uint8_t *src8, int stride, int rows,
+                                int cols, float *hist, int highbd) {
 #if CONFIG_AV1_HIGHBITDEPTH
   if (highbd) {
     highbd_generate_hog(src8, stride, rows, cols, hist);
@@ -300,9 +300,9 @@ static AOM_INLINE void generate_hog(const uint8_t *src8, int stride, int rows,
   lowbd_generate_hog(src8, stride, rows, cols, hist);
 }
 
-static AOM_INLINE void compute_gradient_info_sb(MACROBLOCK *const x,
-                                                BLOCK_SIZE sb_size,
-                                                PLANE_TYPE plane) {
+static inline void compute_gradient_info_sb(MACROBLOCK *const x,
+                                            BLOCK_SIZE sb_size,
+                                            PLANE_TYPE plane) {
 #if CONFIG_AV1_HIGHBITDEPTH
   if (is_cur_buf_hbd(&x->e_mbd)) {
     highbd_compute_gradient_info_sb(x, sb_size, plane);
@@ -324,7 +324,7 @@ static AOM_INLINE void compute_gradient_info_sb(MACROBLOCK *const x,
 // (1) Inter frames (due to early intra gating)
 // (2) When partition_search_type is not SEARCH_PARTITION
 // Hence, gradient data is computed at block level in such cases.
-static AOM_INLINE bool is_gradient_caching_for_hog_enabled(
+static inline bool is_gradient_caching_for_hog_enabled(
     const AV1_COMP *const cpi) {
   const SPEED_FEATURES *const sf = &cpi->sf;
   return frame_is_intra_only(&cpi->common) && !sf->rt_sf.use_nonrd_pick_mode &&
@@ -336,9 +336,9 @@ static AOM_INLINE bool is_gradient_caching_for_hog_enabled(
 // Function to generate pixel level gradient information for a given superblock.
 // Sets the flags 'is_sb_gradient_cached' for the specific plane-type if
 // gradient info is generated for the same.
-static AOM_INLINE void produce_gradients_for_sb(AV1_COMP *cpi, MACROBLOCK *x,
-                                                BLOCK_SIZE sb_size, int mi_row,
-                                                int mi_col) {
+static inline void produce_gradients_for_sb(AV1_COMP *cpi, MACROBLOCK *x,
+                                            BLOCK_SIZE sb_size, int mi_row,
+                                            int mi_col) {
   // Initialise flags related to hog data caching.
   x->is_sb_gradient_cached[PLANE_TYPE_Y] = false;
   x->is_sb_gradient_cached[PLANE_TYPE_UV] = false;
@@ -361,11 +361,11 @@ static AOM_INLINE void produce_gradients_for_sb(AV1_COMP *cpi, MACROBLOCK *x,
 
 // Reuses the pixel level gradient data generated at superblock level for block
 // level histogram computation.
-static AOM_INLINE void generate_hog_using_gradient_cache(const MACROBLOCK *x,
-                                                         int rows, int cols,
-                                                         BLOCK_SIZE sb_size,
-                                                         PLANE_TYPE plane,
-                                                         float *hist) {
+static inline void generate_hog_using_gradient_cache(const MACROBLOCK *x,
+                                                     int rows, int cols,
+                                                     BLOCK_SIZE sb_size,
+                                                     PLANE_TYPE plane,
+                                                     float *hist) {
   float total = 0.1f;
   const int ss_x = x->e_mbd.plane[plane].subsampling_x;
   const int ss_y = x->e_mbd.plane[plane].subsampling_y;
@@ -403,7 +403,7 @@ static AOM_INLINE void generate_hog_using_gradient_cache(const MACROBLOCK *x,
   normalize_hog(total, hist);
 }
 
-static INLINE void collect_hog_data(const MACROBLOCK *x, BLOCK_SIZE bsize,
+static inline void collect_hog_data(const MACROBLOCK *x, BLOCK_SIZE bsize,
                                     BLOCK_SIZE sb_size, int plane, float *hog) {
   const MACROBLOCKD *xd = &x->e_mbd;
   const struct macroblockd_plane *const pd = &xd->plane[plane];
@@ -434,7 +434,7 @@ static INLINE void collect_hog_data(const MACROBLOCK *x, BLOCK_SIZE bsize,
   }
 }
 
-static AOM_INLINE void prune_intra_mode_with_hog(
+static inline void prune_intra_mode_with_hog(
     const MACROBLOCK *x, BLOCK_SIZE bsize, BLOCK_SIZE sb_size, float th,
     uint8_t *directional_mode_skip_mask, int is_chroma) {
   const int plane = is_chroma ? AOM_PLANE_U : AOM_PLANE_Y;
@@ -457,7 +457,7 @@ int av1_calc_normalized_variance(aom_variance_fn_t vf, const uint8_t *const buf,
                                  const int stride, const int is_hbd);
 
 // Returns whether caching of source variance for 4x4 sub-blocks is allowed.
-static AOM_INLINE bool is_src_var_for_4x4_sub_blocks_caching_enabled(
+static inline bool is_src_var_for_4x4_sub_blocks_caching_enabled(
     const AV1_COMP *const cpi) {
   const SPEED_FEATURES *const sf = &cpi->sf;
   if (cpi->oxcf.mode != ALLINTRA) return false;
@@ -473,7 +473,7 @@ static AOM_INLINE bool is_src_var_for_4x4_sub_blocks_caching_enabled(
 
 // Initialize the members of Block4x4VarInfo structure to -1 at the start
 // of every superblock.
-static AOM_INLINE void init_src_var_info_of_4x4_sub_blocks(
+static inline void init_src_var_info_of_4x4_sub_blocks(
     const AV1_COMP *const cpi, Block4x4VarInfo *src_var_info_of_4x4_sub_blocks,
     const BLOCK_SIZE sb_size) {
   if (!is_src_var_for_4x4_sub_blocks_caching_enabled(cpi)) return;
@@ -486,7 +486,7 @@ static AOM_INLINE void init_src_var_info_of_4x4_sub_blocks(
 }
 
 // Returns the cost needed to send a uniformly distributed r.v.
-static AOM_INLINE int write_uniform_cost(int n, int v) {
+static inline int write_uniform_cost(int n, int v) {
   const int l = get_unsigned_bits(n);
   const int m = (1 << l) - n;
   if (l == 0) return 0;
@@ -501,11 +501,11 @@ static AOM_INLINE int write_uniform_cost(int n, int v) {
  *
  * \callergraph
  */
-static AOM_INLINE int intra_mode_info_cost_y(const AV1_COMP *cpi,
-                                             const MACROBLOCK *x,
-                                             const MB_MODE_INFO *mbmi,
-                                             BLOCK_SIZE bsize, int mode_cost,
-                                             int discount_color_cost) {
+static inline int intra_mode_info_cost_y(const AV1_COMP *cpi,
+                                         const MACROBLOCK *x,
+                                         const MB_MODE_INFO *mbmi,
+                                         BLOCK_SIZE bsize, int mode_cost,
+                                         int discount_color_cost) {
   int total_rate = mode_cost;
   const ModeCosts *mode_costs = &x->mode_costs;
   const int use_palette = mbmi->palette_mode_info.palette_size[0] > 0;
@@ -569,10 +569,10 @@ static AOM_INLINE int intra_mode_info_cost_y(const AV1_COMP *cpi,
  *
  * \callergraph
  */
-static AOM_INLINE int intra_mode_info_cost_uv(const AV1_COMP *cpi,
-                                              const MACROBLOCK *x,
-                                              const MB_MODE_INFO *mbmi,
-                                              BLOCK_SIZE bsize, int mode_cost) {
+static inline int intra_mode_info_cost_uv(const AV1_COMP *cpi,
+                                          const MACROBLOCK *x,
+                                          const MB_MODE_INFO *mbmi,
+                                          BLOCK_SIZE bsize, int mode_cost) {
   int total_rate = mode_cost;
   const ModeCosts *mode_costs = &x->mode_costs;
   const int use_palette = mbmi->palette_mode_info.palette_size[1] > 0;
@@ -604,11 +604,11 @@ static AOM_INLINE int intra_mode_info_cost_uv(const AV1_COMP *cpi,
       total_rate += palette_mode_cost;
     }
   }
-  const PREDICTION_MODE equiv_mode = get_uv_mode(uv_mode);
-  if (av1_is_directional_mode(equiv_mode)) {
+  const PREDICTION_MODE intra_mode = get_uv_mode(uv_mode);
+  if (av1_is_directional_mode(intra_mode)) {
     if (av1_use_angle_delta(bsize)) {
       total_rate +=
-          mode_costs->angle_delta_cost[equiv_mode - V_PRED]
+          mode_costs->angle_delta_cost[intra_mode - V_PRED]
                                       [mbmi->angle_delta[PLANE_TYPE_UV] +
                                        MAX_ANGLE_DELTA];
     }
@@ -666,9 +666,9 @@ static int64_t intra_model_rd(const AV1_COMMON *cm, MACROBLOCK *const x,
  *
  * \return Returns 1 if the given mode is prune; 0 otherwise.
  */
-static AOM_INLINE int model_intra_yrd_and_prune(const AV1_COMP *const cpi,
-                                                MACROBLOCK *x, BLOCK_SIZE bsize,
-                                                int64_t *best_model_rd) {
+static inline int model_intra_yrd_and_prune(const AV1_COMP *const cpi,
+                                            MACROBLOCK *x, BLOCK_SIZE bsize,
+                                            int64_t *best_model_rd) {
   const TX_SIZE tx_size = AOMMIN(TX_32X32, max_txsize_lookup[bsize]);
   const int plane = 0;
   const AV1_COMMON *cm = &cpi->common;

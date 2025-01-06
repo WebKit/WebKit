@@ -91,18 +91,14 @@ inline String axisTypetoString(OpenXRAxisType type)
 struct OpenXRAxis {
     OpenXRAxisType type;
     OpenXRButtonPath path;
-}; 
+};
 
 struct OpenXRInputProfile {
     const char* const path { nullptr };
-    const OpenXRProfileId* profileIds { nullptr };
-    size_t profileIdsSize { 0 };
-    const OpenXRButton* leftButtons { nullptr };
-    size_t leftButtonsSize { 0 };
-    const OpenXRButton* rightButtons { nullptr };
-    size_t rightButtonsSize { 0 };
-    const OpenXRAxis* axes { nullptr };
-    size_t axesSize { 0 };
+    std::span<const OpenXRProfileId> profileIds;
+    std::span<const OpenXRButton> leftButtons;
+    std::span<const OpenXRButton> rightButtons;
+    std::span<const OpenXRAxis> axes;
 };
 
 // https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/htc/htc-vive.json
@@ -120,14 +116,10 @@ constexpr std::array<OpenXRAxis, 1> HTCViveAxes {
 
 constexpr OpenXRInputProfile HTCViveInputProfile {
     "/interaction_profiles/htc/vive_controller",
-    HTCViveProfileIds.data(),
-    HTCViveProfileIds.size(),
-    HTCViveButtons.data(),
-    HTCViveButtons.size(),
-    HTCViveButtons.data(),
-    HTCViveButtons.size(),
-    HTCViveAxes.data(),
-    HTCViveAxes.size()
+    HTCViveProfileIds,
+    HTCViveButtons,
+    HTCViveButtons,
+    HTCViveAxes,
 };
 
 // Default fallback when there isn't a specific controller binding.
@@ -139,14 +131,10 @@ constexpr std::array<OpenXRButton, 1> KHRSimpleButtons {
 
 constexpr OpenXRInputProfile KHRSimpleInputProfile {
     "/interaction_profiles/khr/simple_controller",
-    KHRSimpleProfileIds.data(),
-    KHRSimpleProfileIds.size(),
-    KHRSimpleButtons.data(),
-    KHRSimpleButtons.size(),
-    KHRSimpleButtons.data(),
-    KHRSimpleButtons.size(),
-    nullptr,
-    0
+    KHRSimpleProfileIds,
+    KHRSimpleButtons,
+    KHRSimpleButtons,
+    { }
 };
 
 constexpr std::array<OpenXRInputProfile, 2> openXRInputProfiles { HTCViveInputProfile, KHRSimpleInputProfile };

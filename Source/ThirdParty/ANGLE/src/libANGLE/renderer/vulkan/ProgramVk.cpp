@@ -112,11 +112,13 @@ class LinkTaskVk final : public vk::Context, public LinkTask
         // the share group use this program, they will lazily switch to this mode.
         //
         // This is purely an optimization (to avoid creating and later releasing) non-framebuffer
-        // fetch render passes.
-        if (contextVk->getFeatures().permanentlySwitchToFramebufferFetchMode.enabled &&
-            mExecutable->usesFramebufferFetch())
+        // fetch render passes.  The optimization is unnecessary for and does not apply to dynamic
+        // rendering.
+        if (!contextVk->getFeatures().preferDynamicRendering.enabled &&
+            contextVk->getFeatures().permanentlySwitchToFramebufferFetchMode.enabled &&
+            mExecutable->usesColorFramebufferFetch())
         {
-            ANGLE_TRY(contextVk->switchToFramebufferFetchMode(true));
+            ANGLE_TRY(contextVk->switchToColorFramebufferFetchMode(true));
         }
 
         // Forward any errors
@@ -216,15 +218,8 @@ angle::Result LinkTaskVk::linkImpl(const gl::ProgramLinkedResources &resources,
     // - Individual GLES1 tests are long, and this adds a considerable overhead to those tests
     if (!mState.isSeparable() && !mIsGLES1 && getFeatures().warmUpPipelineCacheAtLink.enabled)
     {
-        // Only build the shaders subset of the pipeline if VK_EXT_graphics_pipeline_library is
-        // supported.
-        const vk::GraphicsPipelineSubset subset =
-            getFeatures().supportsGraphicsPipelineLibrary.enabled
-                ? vk::GraphicsPipelineSubset::Shaders
-                : vk::GraphicsPipelineSubset::Complete;
-
         ANGLE_TRY(executableVk->getPipelineCacheWarmUpTasks(
-            mRenderer, mPipelineRobustness, mPipelineProtectedAccess, subset, postLinkSubTasksOut));
+            mRenderer, mPipelineRobustness, mPipelineProtectedAccess, postLinkSubTasksOut));
     }
 
     return angle::Result::Continue;
@@ -267,16 +262,7 @@ void InitDefaultUniformBlock(const std::vector<sh::ShaderVariable> &uniforms,
     VulkanDefaultBlockEncoder blockEncoder;
     sh::GetActiveUniformBlockInfo(uniforms, "", &blockEncoder, blockLayoutMapOut);
 
-    size_t blockSize = blockEncoder.getCurrentOffset();
-
-    // TODO(jmadill): I think we still need a valid block for the pipeline even if zero sized.
-    if (blockSize == 0)
-    {
-        *blockSizeOut = 0;
-        return;
-    }
-
-    *blockSizeOut = blockSize;
+    *blockSizeOut = blockEncoder.getCurrentOffset();
     return;
 }
 
@@ -364,7 +350,7 @@ angle::Result ProgramVk::load(const gl::Context *context,
 {
     ContextVk *contextVk = vk::GetImpl(context);
 
-    // TODO: parallelize program load.  http://anglebug.com/8297
+    // TODO: parallelize program load.  http://anglebug.com/41488637
     *loadTaskOut = {};
 
     return getExecutable()->load(contextVk, mState.isSeparable(), stream, resultOut);

@@ -39,6 +39,7 @@
 #import <WebCore/ScrollableArea.h>
 #import <WebCore/ScrollingTreeScrollingNode.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 @interface WebScrollerImpPairDelegateMac : NSObject <NSScrollerImpPairDelegate> {
     ThreadSafeWeakPtr<WebCore::ScrollerPairMac> _scrollerPair;
@@ -132,6 +133,8 @@
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollerPairMac);
 
 ScrollerPairMac::ScrollerPairMac(ScrollingTreeScrollingNode& node)
     : m_scrollingNode(node)
@@ -276,20 +279,12 @@ FloatSize ScrollerPairMac::visibleSize() const
 
 bool ScrollerPairMac::useDarkAppearance() const
 {
-    RefPtr node = m_scrollingNode.get();
-    if (!node)
-        return false;
-
-    return node->useDarkAppearanceForScrollbars();
+    return m_useDarkAppearance;
 }
 
 ScrollbarWidth ScrollerPairMac::scrollbarWidthStyle() const
 {
-    RefPtr node = m_scrollingNode.get();
-    if (!node)
-        return ScrollbarWidth::Auto;
-
-    return node->scrollbarWidthStyle();
+    return m_scrollbarWidth;
 }
 
 ScrollerPairMac::Values ScrollerPairMac::valuesForOrientation(ScrollbarOrientation orientation)
@@ -427,6 +422,26 @@ void ScrollerPairMac::mouseIsInScrollbar(ScrollbarHoverState hoverState)
             horizontalScroller().mouseExitedScrollbar();
     }
     m_scrollbarHoverState = hoverState;
+}
+
+void ScrollerPairMac::setUseDarkAppearance(bool useDarkAppearance)
+{
+    if (m_useDarkAppearance == useDarkAppearance)
+        return;
+    m_useDarkAppearance = useDarkAppearance;
+
+    horizontalScroller().setNeedsDisplay();
+    verticalScroller().setNeedsDisplay();
+}
+
+void ScrollerPairMac::setScrollbarWidth(ScrollbarWidth scrollbarWidth)
+{
+    if (m_scrollbarWidth == scrollbarWidth)
+        return;
+    m_scrollbarWidth = scrollbarWidth;
+
+    horizontalScroller().updateScrollbarStyle();
+    verticalScroller().updateScrollbarStyle();
 }
 
 } // namespace WebCore

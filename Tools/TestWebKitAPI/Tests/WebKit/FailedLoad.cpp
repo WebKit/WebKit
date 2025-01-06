@@ -55,7 +55,7 @@ TEST(WebKit, FailedLoad)
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
 
     loaderClient.base.version = 0;
     loaderClient.didFailProvisionalNavigation = didFailProvisionalNavigation;

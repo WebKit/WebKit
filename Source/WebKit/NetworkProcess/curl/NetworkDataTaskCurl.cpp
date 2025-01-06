@@ -195,7 +195,7 @@ void NetworkDataTaskCurl::curlDidReceiveData(CurlRequest&, Ref<SharedBuffer>&& b
         return;
 
     if (isDownload()) {
-        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
+        auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
         RELEASE_ASSERT(download);
         uint64_t bytesWritten = 0;
         for (auto& segment : buffer.get()) {
@@ -220,7 +220,7 @@ void NetworkDataTaskCurl::curlDidComplete(CurlRequest&, NetworkLoadMetrics&& net
         return;
 
     if (isDownload()) {
-        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
+        auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
         RELEASE_ASSERT(download);
         FileSystem::closeFile(m_downloadDestinationFile);
         m_downloadDestinationFile = FileSystem::invalidPlatformFileHandle;
@@ -245,9 +245,13 @@ void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceErr
 
     if (isDownload()) {
         deleteDownloadFile();
-        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
-        RELEASE_ASSERT(download);
-        download->didFail(resourceError, { });
+        if (m_client)
+            m_client->didCompleteWithError(resourceError);
+        else {
+            auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
+            RELEASE_ASSERT(download);
+            download->didFail(resourceError, { });
+        }
         return;
     }
 
@@ -314,10 +318,9 @@ void NetworkDataTaskCurl::invokeDidReceiveResponse()
             }
 
             auto& downloadManager = m_session->networkProcess().downloadManager();
-            auto download = makeUnique<Download>(downloadManager, m_pendingDownloadID, *this, *m_session, suggestedFilename());
-            auto* downloadPtr = download.get();
-            downloadManager.dataTaskBecameDownloadTask(m_pendingDownloadID, WTFMove(download));
-            downloadPtr->didCreateDestination(m_pendingDownloadLocation);
+            Ref download = Download::create(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
+            downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, download.copyRef());
+            download->didCreateDestination(m_pendingDownloadLocation);
             if (m_curlRequest)
                 m_curlRequest->completeDidReceiveResponse();
             break;

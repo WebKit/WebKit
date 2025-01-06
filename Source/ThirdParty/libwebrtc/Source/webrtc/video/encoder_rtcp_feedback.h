@@ -13,13 +13,13 @@
 #include <functional>
 #include <vector>
 
+#include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "call/rtp_video_sender_interface.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/system/no_unique_address.h"
-#include "system_wrappers/include/clock.h"
 #include "video/video_stream_encoder_interface.h"
 
 namespace webrtc {
@@ -32,7 +32,8 @@ class EncoderRtcpFeedback : public RtcpIntraFrameObserver,
                             public RtcpLossNotificationObserver {
  public:
   EncoderRtcpFeedback(
-      Clock* clock,
+      const Environment& env,
+      bool per_layer_keyframes,
       const std::vector<uint32_t>& ssrcs,
       VideoStreamEncoderInterface* encoder,
       std::function<std::vector<RtpSequenceNumberMap::Info>(
@@ -49,8 +50,9 @@ class EncoderRtcpFeedback : public RtcpIntraFrameObserver,
                                   bool decodability_flag) override;
 
  private:
-  Clock* const clock_;
+  const Environment env_;
   const std::vector<uint32_t> ssrcs_;
+  const bool per_layer_keyframes_;
   const std::function<std::vector<RtpSequenceNumberMap::Info>(
       uint32_t ssrc,
       const std::vector<uint16_t>& seq_nums)>
@@ -58,7 +60,7 @@ class EncoderRtcpFeedback : public RtcpIntraFrameObserver,
   VideoStreamEncoderInterface* const video_stream_encoder_;
 
   RTC_NO_UNIQUE_ADDRESS SequenceChecker packet_delivery_queue_;
-  Timestamp time_last_packet_delivery_queue_
+  std::vector<Timestamp> time_last_packet_delivery_queue_
       RTC_GUARDED_BY(packet_delivery_queue_);
 
   const TimeDelta min_keyframe_send_interval_;

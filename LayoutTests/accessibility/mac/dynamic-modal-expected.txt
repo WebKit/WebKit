@@ -1,0 +1,18 @@
+This tests nested aria-modal dialogs
+
+Initial focus: show
+Show button reachable: true
+
+Clicking on show button
+
+New focus: dialog_ok
+Show button reachable: false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Show
+
+Inside dialog
+
+OK

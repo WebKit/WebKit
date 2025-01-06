@@ -10,10 +10,15 @@
 #ifndef API_TRANSPORT_TEST_FEEDBACK_GENERATOR_INTERFACE_H_
 #define API_TRANSPORT_TEST_FEEDBACK_GENERATOR_INTERFACE_H_
 
+#include <cstddef>
 #include <vector>
 
 #include "api/test/simulated_network.h"
 #include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 
 namespace webrtc {
 class FeedbackGenerator {

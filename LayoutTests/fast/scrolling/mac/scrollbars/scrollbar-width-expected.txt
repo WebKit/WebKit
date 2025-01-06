@@ -1,0 +1,13 @@
+Test scrollbar-width on overflow and main document
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Overflow should have scrollbar-width:thin
+PASS Scrollbar state: enabled,thin
+Document should have scrollbar-width:thin
+PASS Scrollbar state: enabled,thin
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -44,8 +44,9 @@ enum class StyleRuleType : uint8_t {
     CounterStyle = 11,
     Supports = 12,
     FontFeatureValues = 14,
-    // Numbers above 15 are not exposed to the web.
-    LayerBlock = 16,
+    // Numbers above 14 are not exposed to the web.
+    ViewTransition = 15,
+    LayerBlock,
     LayerStatement,
     Container,
     FontPaletteValues,
@@ -54,8 +55,10 @@ enum class StyleRuleType : uint8_t {
     StyleWithNesting,
     Scope,
     StartingStyle,
+    NestedDeclarations,
+    PositionTry
 };
 
-static constexpr auto firstUnexposedStyleRuleType = StyleRuleType::LayerBlock;
+static constexpr auto firstUnexposedStyleRuleType = StyleRuleType::ViewTransition;
 
 } // namespace WebCore

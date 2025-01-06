@@ -88,30 +88,10 @@ Vector<uint8_t> CryptoDigest::computeHash()
     size_t digestLen = gcry_md_get_algo_dlen(m_context->algorithm);
 
     gcry_md_final(m_context->md);
-    Vector<uint8_t> result(std::span<uint8_t> { gcry_md_read(m_context->md, 0), digestLen });
+    Vector<uint8_t> result(unsafeMakeSpan<uint8_t>(gcry_md_read(m_context->md, 0), digestLen));
     gcry_md_close(m_context->md);
 
     return result;
 }
 
-std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, const Vector<uint8_t>& input, UseCryptoKit)
-{
-    std::unique_ptr<CryptoDigest> digest = WTF::makeUnique<CryptoDigest>();
-    auto gcryptAlgorithm = getGcryptAlgorithm(algo);
-    digest->m_context->algorithm = gcryptAlgorithm;
-
-    gcry_md_open(&digest->m_context->md, gcryptAlgorithm, 0);
-    if (!digest->m_context->md)
-        return { };
-
-    size_t digestLen = gcry_md_get_algo_dlen(gcryptAlgorithm);
-
-    gcry_md_write(digest->m_context->md, input.data(), input.size());
-    gcry_md_final(digest->m_context->md);
-    Vector<uint8_t> result(std::span<uint8_t> { gcry_md_read(digest->m_context->md, 0), digestLen });
-    gcry_md_close(digest->m_context->md);
-
-    return result;
-
-}
 } // namespace PAL

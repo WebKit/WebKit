@@ -12,6 +12,6 @@
 
 // TODO(bugs.webrtc.org/10335): Remove once all migrated to
 // api/field_trials_view.h
-#include "api/field_trials_view.h"
+#include "api/field_trials_view.h"  // IWYU pragma: keep
 
 #endif  // API_WEBRTC_KEY_VALUE_CONFIG_H_

@@ -11,9 +11,9 @@
 #include "api/video_codecs/h264_profile_level_id.h"
 
 #include <map>
-#include <string>
+#include <optional>
 
-#include "absl/types/optional.h"
+#include "api/rtp_parameters.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -144,8 +144,8 @@ TEST(H264ProfileLevelId, TestToStringInvalid) {
 }
 
 TEST(H264ProfileLevelId, TestParseSdpProfileLevelIdEmpty) {
-  const absl::optional<H264ProfileLevelId> profile_level_id =
-      ParseSdpForH264ProfileLevelId(SdpVideoFormat::Parameters());
+  const std::optional<H264ProfileLevelId> profile_level_id =
+      ParseSdpForH264ProfileLevelId(CodecParameterMap());
   EXPECT_TRUE(profile_level_id);
   EXPECT_EQ(H264Profile::kProfileConstrainedBaseline,
             profile_level_id->profile);
@@ -153,9 +153,9 @@ TEST(H264ProfileLevelId, TestParseSdpProfileLevelIdEmpty) {
 }
 
 TEST(H264ProfileLevelId, TestParseSdpProfileLevelIdConstrainedHigh) {
-  SdpVideoFormat::Parameters params;
+  CodecParameterMap params;
   params["profile-level-id"] = "640c2a";
-  const absl::optional<H264ProfileLevelId> profile_level_id =
+  const std::optional<H264ProfileLevelId> profile_level_id =
       ParseSdpForH264ProfileLevelId(params);
   EXPECT_TRUE(profile_level_id);
   EXPECT_EQ(H264Profile::kProfileConstrainedHigh, profile_level_id->profile);
@@ -163,7 +163,7 @@ TEST(H264ProfileLevelId, TestParseSdpProfileLevelIdConstrainedHigh) {
 }
 
 TEST(H264ProfileLevelId, TestParseSdpProfileLevelIdInvalid) {
-  SdpVideoFormat::Parameters params;
+  CodecParameterMap params;
   params["profile-level-id"] = "foobar";
   EXPECT_FALSE(ParseSdpForH264ProfileLevelId(params));
 }

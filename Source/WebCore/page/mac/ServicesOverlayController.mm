@@ -48,9 +48,12 @@
 #import "Settings.h"
 #import "TextIterator.h"
 #import <QuartzCore/QuartzCore.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServicesOverlayController);
 
 ServicesOverlayController::ServicesOverlayController(Page& page)
     : m_page(page)
@@ -60,6 +63,16 @@ ServicesOverlayController::ServicesOverlayController(Page& page)
 }
 
 ServicesOverlayController::~ServicesOverlayController() = default;
+
+void ServicesOverlayController::ref() const
+{
+    m_page->ref();
+}
+
+void ServicesOverlayController::deref() const
+{
+    m_page->deref();
+}
 
 void ServicesOverlayController::willMoveToPage(PageOverlay&, Page* page)
 {
@@ -78,7 +91,7 @@ static const uint8_t AlignmentNone = 0;
 static const uint8_t AlignmentLeft = 1 << 0;
 static const uint8_t AlignmentRight = 1 << 1;
 
-static void expandForGap(Vector<LayoutRect>& rects, uint8_t* alignments, const GapRects& gap)
+static void expandForGap(Vector<LayoutRect>& rects, std::span<uint8_t> alignments, const GapRects& gap)
 {
     if (!gap.left().isEmpty()) {
         LayoutUnit leftEdge = gap.left().x();
@@ -156,7 +169,7 @@ static void compactRectsWithGapRects(Vector<LayoutRect>& rects, const Vector<Gap
     
     // FIXME: The following alignments are correct for LTR text.
     // We should also account for RTL.
-    uint8_t alignments[3];
+    std::array<uint8_t, 3> alignments;
     if (rects.size() == 1) {
         alignments[0] = AlignmentLeft | AlignmentRight;
         alignments[1] = AlignmentNone;
@@ -279,7 +292,7 @@ Seconds ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown(Data
         return 0_s;
 
     Ref page = m_page.get();
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    RefPtr localMainFrame = page->localMainFrame();
     if (!localMainFrame)
         return 0_s;
 
@@ -339,7 +352,7 @@ void ServicesOverlayController::removeAllPotentialHighlightsOfType(DataDetectorH
 void ServicesOverlayController::buildPhoneNumberHighlights()
 {
     Ref page = m_page.get();
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    RefPtr localMainFrame = page->localMainFrame();
     if (!localMainFrame)
         return;
 

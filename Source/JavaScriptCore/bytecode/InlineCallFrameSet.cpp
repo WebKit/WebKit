@@ -30,8 +30,8 @@
 
 namespace JSC {
 
-InlineCallFrameSet::InlineCallFrameSet() { }
-InlineCallFrameSet::~InlineCallFrameSet() { }
+InlineCallFrameSet::InlineCallFrameSet() = default;
+InlineCallFrameSet::~InlineCallFrameSet() = default;
 
 InlineCallFrame* InlineCallFrameSet::add()
 {

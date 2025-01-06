@@ -10,7 +10,12 @@
 
 #include "logging/rtc_event_log/events/rtc_event_frame_decoded.h"
 
+#include <cstdint>
+#include <memory>
+
 #include "absl/memory/memory.h"
+#include "api/rtc_event_log/rtc_event.h"
+#include "api/video/video_codec_type.h"
 
 namespace webrtc {
 

@@ -10,9 +10,12 @@
 
 #include "logging/rtc_event_log/ice_logger.h"
 
+#include <cstdint>
 #include <memory>
 
 #include "api/rtc_event_log/rtc_event_log.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
 
 namespace webrtc {
 
@@ -26,7 +29,8 @@ void IceEventLog::LogCandidatePairConfig(
   if (event_log_ == nullptr) {
     return;
   }
-  candidate_pair_desc_by_id_[candidate_pair_id] = candidate_pair_desc;
+
+  candidate_pair_desc_by_id_.emplace(candidate_pair_id, candidate_pair_desc);
   event_log_->Log(std::make_unique<RtcEventIceCandidatePairConfig>(
       type, candidate_pair_id, candidate_pair_desc));
 }

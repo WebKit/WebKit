@@ -141,8 +141,29 @@ static void removeChildIfInfoBar(GtkWidget *child, GtkContainer *tab)
 }
 #endif
 
+static void toggleAboutDataScriptMessageHandler(WebKitWebView *webView)
+{
+    WebKitUserContentManager *userContentManager = webkit_web_view_get_user_content_manager(webView);
+    if (g_str_has_prefix(webkit_web_view_get_uri(webView), BROWSER_ABOUT_SCHEME)) {
+#if GTK_CHECK_VERSION(3, 98, 0)
+        webkit_user_content_manager_register_script_message_handler(userContentManager, "aboutData", NULL);
+#else
+        webkit_user_content_manager_register_script_message_handler(userContentManager, "aboutData");
+#endif
+    } else {
+#if GTK_CHECK_VERSION(3, 98, 0)
+        webkit_user_content_manager_unregister_script_message_handler(userContentManager, "aboutData", NULL);
+#else
+        webkit_user_content_manager_unregister_script_message_handler(userContentManager, "aboutData");
+#endif
+    }
+}
+
 static void loadChanged(WebKitWebView *webView, WebKitLoadEvent loadEvent, BrowserTab *tab)
 {
+    if (loadEvent == WEBKIT_LOAD_COMMITTED)
+        toggleAboutDataScriptMessageHandler(webView);
+
     if (loadEvent != WEBKIT_LOAD_STARTED)
         return;
 
@@ -645,7 +666,12 @@ static void browserTabConstructed(GObject *gObject)
     gtk_overlay_add_overlay(GTK_OVERLAY(overlay), tab->pointerLockMessageLabel);
 
     gtk_widget_set_vexpand(GTK_WIDGET(tab->webView), TRUE);
-#if GTK_CHECK_VERSION(3, 98, 5)
+
+#if GTK_CHECK_VERSION(4, 14, 0)
+    GtkWidget *offload = gtk_graphics_offload_new(GTK_WIDGET(tab->webView));
+    gtk_overlay_set_child(GTK_OVERLAY(overlay), offload);
+    gtk_widget_set_vexpand(offload, TRUE);
+#elif GTK_CHECK_VERSION(3, 98, 5)
     gtk_overlay_set_child(GTK_OVERLAY(overlay), GTK_WIDGET(tab->webView));
 #else
     gtk_container_add(GTK_CONTAINER(overlay), GTK_WIDGET(tab->webView));

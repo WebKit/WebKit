@@ -36,11 +36,11 @@
 #include "ShadowRoot.h"
 #include "UserAgentParts.h"
 #include "UserAgentStyleSheets.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMeterElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLMeterElement);
 
 using namespace HTMLNames;
 

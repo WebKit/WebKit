@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IntersectionObserver.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ class Document;
 class Element;
 
 class LazyLoadImageObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LazyLoadImageObserver);
 public:
     static void observe(Element&);
     static void unobserve(Element&, Document&);

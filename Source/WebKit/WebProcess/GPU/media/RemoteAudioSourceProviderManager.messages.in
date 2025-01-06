@@ -25,7 +25,11 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
-messages -> RemoteAudioSourceProviderManager NotRefCounted {
+[
+    DispatchedFrom=GPU,
+    DispatchedTo=WebContent
+]
+messages -> RemoteAudioSourceProviderManager {
     AudioStorageChanged(WebCore::MediaPlayerIdentifier id, struct WebKit::ConsumerSharedCARingBufferHandle storageHandle, WebCore::CAAudioStreamDescription description)
     AudioSamplesAvailable(WebCore::MediaPlayerIdentifier id, uint64_t startFrame, uint64_t numberOfFrames)
 }

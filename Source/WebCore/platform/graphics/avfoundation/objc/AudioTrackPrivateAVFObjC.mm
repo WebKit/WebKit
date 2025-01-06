@@ -27,10 +27,13 @@
 #import "AudioTrackPrivateAVFObjC.h"
 #import "AVTrackPrivateAVFObjCImpl.h"
 #import "MediaSelectionGroupAVFObjC.h"
+#import <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioTrackPrivateAVFObjC);
 
 AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(AVPlayerItemTrack* track)
     : AudioTrackPrivateAVFObjC(makeUnique<AVTrackPrivateAVFObjCImpl>(track))
@@ -55,6 +58,7 @@ AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(std::unique_ptr<AVTrackPrivat
     resetPropertiesFromTrack();
 }
 
+AudioTrackPrivateAVFObjC::~AudioTrackPrivateAVFObjC() = default;
 
 void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
 {

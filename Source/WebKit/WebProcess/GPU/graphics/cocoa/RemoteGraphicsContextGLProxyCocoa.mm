@@ -130,24 +130,27 @@ private:
 };
 
 class RemoteGraphicsContextGLProxyCocoa final : public RemoteGraphicsContextGLProxy {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGraphicsContextGLProxyCocoa);
 public:
     // RemoteGraphicsContextGLProxy overrides.
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
     void prepareForDisplay() final;
     void forceContextLost() final;
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
-    WebCore::GraphicsContextGLCV* asCV() final { return nullptr; }
-#endif
+
 private:
-    RemoteGraphicsContextGLProxyCocoa(IPC::Connection& connection,  Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
-        : RemoteGraphicsContextGLProxy(connection, WTFMove(streamConnection), attributes, WTFMove(videoFrameObjectHeapProxy))
+    explicit RemoteGraphicsContextGLProxyCocoa(const WebCore::GraphicsContextGLAttributes& attributes)
+        : RemoteGraphicsContextGLProxy(attributes)
         , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha))
     {
     }
+
+    Ref<DisplayBufferDisplayDelegate> protectedLayerContentsDisplayDelegate() const { return m_layerContentsDisplayDelegate; }
+
     void addNewFence(Ref<DisplayBufferFence> newFence);
     static constexpr size_t maxPendingFences = 3;
     size_t m_oldestFenceIndex { 0 };
-    RefPtr<DisplayBufferFence> m_frameCompletionFences[maxPendingFences];
+    std::array<RefPtr<DisplayBufferFence>, maxPendingFences> m_frameCompletionFences;
 
     Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
     friend class RemoteGraphicsContextGLProxy;
@@ -168,7 +171,7 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
         return;
     auto finishedFence = DisplayBufferFence::create(WTFMove(finishedSignaller));
     addNewFence(finishedFence);
-    m_layerContentsDisplayDelegate->setDisplayBuffer(WTFMove(displayBufferSendRight), WTFMove(finishedFence));
+    protectedLayerContentsDisplayDelegate()->setDisplayBuffer(WTFMove(displayBufferSendRight), WTFMove(finishedFence));
 }
 
 void RemoteGraphicsContextGLProxyCocoa::forceContextLost()
@@ -191,9 +194,9 @@ void RemoteGraphicsContextGLProxyCocoa::addNewFence(Ref<DisplayBufferFence> newF
 
 }
 
-Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(IPC::Connection& connection,  Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
+Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(const WebCore::GraphicsContextGLAttributes& attributes)
 {
-    return adoptRef(*new RemoteGraphicsContextGLProxyCocoa(connection, WTFMove(streamConnection), attributes, WTFMove(videoFrameObjectHeapProxy)));
+    return adoptRef(*new RemoteGraphicsContextGLProxyCocoa(attributes));
 }
 
 }

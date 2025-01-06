@@ -36,17 +36,21 @@
 #include <WebCore/GeolocationPositionData.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 static RegistrableDomain registrableDomainForPage(WebPage& page)
 {
-    auto* document = page.corePage() && dynamicDowncast<LocalFrame>(page.corePage()->mainFrame()) ? dynamicDowncast<LocalFrame>(page.corePage()->mainFrame())->document() : nullptr;
-    if (!document)
+    RefPtr corePage = page.protectedCorePage();
+    if (!corePage)
         return { };
-    return RegistrableDomain { document->url() };
+
+    return RegistrableDomain { corePage->mainFrameURL() };
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGeolocationManager);
 
 ASCIILiteral WebGeolocationManager::supplementName()
 {
@@ -54,11 +58,22 @@ ASCIILiteral WebGeolocationManager::supplementName()
 }
 
 WebGeolocationManager::WebGeolocationManager(WebProcess& process)
+    : m_process(process)
 {
     process.addMessageReceiver(Messages::WebGeolocationManager::messageReceiverName(), *this);
 }
 
 WebGeolocationManager::~WebGeolocationManager() = default;
+
+void WebGeolocationManager::ref() const
+{
+    m_process->ref();
+}
+
+void WebGeolocationManager::deref() const
+{
+    m_process->deref();
+}
 
 void WebGeolocationManager::registerWebPage(WebPage& page, const String& authorizationToken, bool needsHighAccuracy)
 {
@@ -188,7 +203,7 @@ void WebGeolocationManager::resetPermissions(const WebCore::RegistrableDomain& r
         return;
 
     for (auto& page : copyToVector(it->value.pageSet)) {
-        if (auto* mainFrame = page->corePage() ? dynamicDowncast<LocalFrame>(page->corePage()->mainFrame()) : nullptr)
+        if (RefPtr mainFrame = page->localMainFrame())
             mainFrame->resetAllGeolocationPermission();
     }
 }

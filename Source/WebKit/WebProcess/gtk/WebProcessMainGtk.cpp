@@ -41,7 +41,16 @@
 #endif
 
 #if USE(SKIA)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkGraphics.h>
+#if USE(SKIA_OPENTYPE_SVG)
+#include <skia/modules/svg/SkSVGOpenTypeSVGDecoder.h>
+#endif
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
+
+#if USE(SYSPROF_CAPTURE)
+#include <wtf/SystemTracing.h>
 #endif
 
 namespace WebKit {
@@ -51,12 +60,19 @@ class WebProcessMainGtk final: public AuxiliaryProcessMainBase<WebProcess> {
 public:
     bool platformInitialize() override
     {
+#if USE(SYSPROF_CAPTURE)
+        SysprofAnnotator::createIfNeeded("WebKit (Web)"_s);
+#endif
+
 #if USE(GCRYPT)
         PAL::GCrypt::initialize();
 #endif
 
 #if USE(SKIA)
         SkGraphics::Init();
+#if USE(SKIA_OPENTYPE_SVG)
+        SkGraphics::SetOpenTypeSVGDecoderFactory(SkSVGOpenTypeSVGDecoder::Make);
+#endif
 #endif
 
 #if ENABLE(DEVELOPER_MODE)

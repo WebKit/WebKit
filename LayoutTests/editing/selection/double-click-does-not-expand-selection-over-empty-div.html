@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+
+div.container {
+    width: 100px;
+    height: 100px;
+    border: 1px solid tomato;
+    border-radius: 6px;
+    position: relative;
+}
+
+div.hidden {
+    width: 1px;
+    visibility: hidden;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("To manually run this test, double click inside the red box below and verify that no selection appears.");
+    await UIHelper.doubleActivateAt(50, 90);
+    shouldNotBe("getSelection().type", "'Range'")
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p id="description"></p>
+    <p id="console"></p>
+    <div class="container"></div>
+    <div class="hidden"></div>
+</body>
+</html>

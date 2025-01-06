@@ -1,0 +1,31 @@
+<html>
+<script src="../../resources/js-test.js"></script>
+<script>
+    window.jsTestIsAsync = true;
+    async function a() {
+        let h = await navigator.storage.getDirectory();
+        h.move(h, `\u0480`).then(() => {
+            debug("This should not be. This API should return a rejection because we are trying to move a parent directory recursively inside itself.");
+            finishJSTest(e);
+        }, async (e) => {
+            let h = await navigator.storage.getDirectory();
+            // if the directory recursion did not happen this should not print anything.
+            for await(let v of h.entries()){
+                debug(v);
+            }
+            finishJSTest(e);
+        });
+    }
+    async function runTest(){
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+        await a();
+    }
+
+</script>
+<body onload="runTest()">
+Test Passes if there are no files inside the root storage location. This is verified by the absence of an output from the `debug(v)`
+statement above.
+</body>
+</script>
+</html>

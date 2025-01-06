@@ -33,8 +33,12 @@
 #include "DownSampler.h"
 
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DownSampler);
 
 DownSampler::DownSampler(size_t inputBlockSize)
     : m_inputBlockSize(inputBlockSize)
@@ -79,14 +83,14 @@ void DownSampler::initializeKernel()
     }
 }
 
-void DownSampler::process(const float* sourceP, float* destP, size_t sourceFramesToProcess)
+void DownSampler::process(std::span<const float> source, std::span<float> destination)
 {
-    bool isInputBlockSizeGood = sourceFramesToProcess == m_inputBlockSize;
+    bool isInputBlockSizeGood = source.size() == m_inputBlockSize;
     ASSERT(isInputBlockSizeGood);
     if (!isInputBlockSizeGood)
         return;
 
-    size_t destFramesToProcess = sourceFramesToProcess / 2;
+    size_t destFramesToProcess = source.size() / 2;
 
     bool isTempBufferGood = destFramesToProcess == m_tempBuffer.size();
     ASSERT(isTempBufferGood);
@@ -101,34 +105,38 @@ void DownSampler::process(const float* sourceP, float* destP, size_t sourceFrame
     size_t halfSize = DefaultKernelSize / 2;
 
     // Copy source samples to 2nd half of input buffer.
-    bool isInputBufferGood = m_inputBuffer.size() == sourceFramesToProcess * 2 && halfSize <= sourceFramesToProcess;
+    bool isInputBufferGood = m_inputBuffer.size() == source.size() * 2 && halfSize <= source.size();
     ASSERT(isInputBufferGood);
     if (!isInputBufferGood)
         return;
 
-    float* inputP = m_inputBuffer.data() + sourceFramesToProcess;
-    memcpy(inputP, sourceP, sizeof(float) * sourceFramesToProcess);
+    auto inputP = m_inputBuffer.span().subspan(source.size());
+    memcpySpan(inputP, source);
 
-    // Copy the odd sample-frames from sourceP, delayed by one sample-frame (destination sample-rate)
+    // Copy the odd sample-frames from source, delayed by one sample-frame (destination sample-rate)
     // to match shifting forward in time in m_reducedKernel.
-    float* oddSamplesP = m_tempBuffer.data();
-    for (unsigned i = 0; i < destFramesToProcess; ++i)
-        oddSamplesP[i] = *((inputP - 1) + i * 2);
+    auto oddSamplesP = m_tempBuffer.span().first(destFramesToProcess);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    for (size_t i = 0; i < oddSamplesP.size(); ++i)
+        oddSamplesP[i] = *((inputP.data() - 1) + i * 2);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     // Actually process oddSamplesP with m_reducedKernel for efficiency.
     // The theoretical kernel is double this size with 0 values for even terms (except center).
-    m_convolver.process(&m_reducedKernel, oddSamplesP, destP, destFramesToProcess);
+    m_convolver.process(&m_reducedKernel, oddSamplesP, destination);
 
     // Now, account for the 0.5 term right in the middle of the kernel.
     // This amounts to a delay-line of length halfSize (at the source sample-rate),
     // scaled by 0.5.
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     // Sum into the destination.
-    for (unsigned i = 0; i < destFramesToProcess; ++i)
-        destP[i] += 0.5 * *((inputP - halfSize) + i * 2);
+    for (size_t i = 0; i < destFramesToProcess; ++i)
+        destination[i] += 0.5 * *((inputP.data() - halfSize) + i * 2);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     // Copy 2nd half of input buffer to 1st half.
-    memcpy(m_inputBuffer.data(), inputP, sizeof(float) * sourceFramesToProcess);
+    memcpySpan(m_inputBuffer.span(), inputP);
 }
 
 void DownSampler::reset()

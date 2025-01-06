@@ -27,7 +27,7 @@ namespace
 // Test getting the executable path
 TEST(SystemUtils, ExecutablePath)
 {
-    // TODO: fuchsia support. http://anglebug.com/3161
+    // TODO: fuchsia support. http://anglebug.com/42261836
 #if !defined(ANGLE_PLATFORM_FUCHSIA)
     std::string executablePath = GetExecutablePath();
     EXPECT_NE("", executablePath);
@@ -37,7 +37,7 @@ TEST(SystemUtils, ExecutablePath)
 // Test getting the executable directory
 TEST(SystemUtils, ExecutableDir)
 {
-    // TODO: fuchsia support. http://anglebug.com/3161
+    // TODO: fuchsia support. http://anglebug.com/42261836
 #if !defined(ANGLE_PLATFORM_FUCHSIA)
     std::string executableDir = GetExecutableDirectory();
     EXPECT_NE("", executableDir);

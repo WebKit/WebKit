@@ -31,6 +31,7 @@
 #include "PlatformPath.h"
 #include "WindRule.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 typedef struct CGContext* CGContextRef;
 
@@ -41,6 +42,7 @@ class Path;
 class PathStream;
 
 class PathCG final : public PathImpl {
+    WTF_MAKE_TZONE_ALLOCATED(PathCG);
 public:
     static Ref<PathCG> create();
     static Ref<PathCG> create(const PathSegment&);
@@ -51,6 +53,7 @@ public:
 
     void addPath(const PathCG&, const AffineTransform&);
 
+    bool definitelyEqual(const PathImpl&) const final;
     Ref<PathImpl> copy() const final;
     void add(PathMoveTo) final;
     void add(PathLineTo) final;

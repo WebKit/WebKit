@@ -9,17 +9,13 @@ features: [Temporal]
 ---*/
 
 const expected = [
-  "ownKeys options",
-  "getOwnPropertyDescriptor options.disambiguation",
   "get options.disambiguation",
-  "getOwnPropertyDescriptor options.offset",
-  "get options.offset",
-  "getOwnPropertyDescriptor options.overflow",
-  "get options.overflow",
   "get options.disambiguation.toString",
   "call options.disambiguation.toString",
+  "get options.offset",
   "get options.offset.toString",
   "call options.offset.toString",
+  "get options.overflow",
   "get options.overflow.toString",
   "call options.overflow.toString",
 ];
@@ -36,14 +32,11 @@ assert.compareArray(actual, expected, "Successful call");
 assert.sameValue(result.epochNanoseconds, 1_000_000_000_000_000_000n);
 
 actual.splice(0);  // empty it for the next check
-const failureExpected = [
-  "ownKeys options",
-  "getOwnPropertyDescriptor options.disambiguation",
-  "get options.disambiguation",
-  "getOwnPropertyDescriptor options.offset",
-  "get options.offset",
-  "getOwnPropertyDescriptor options.overflow",
-  "get options.overflow",
-];
+
 assert.throws(TypeError, () => Temporal.ZonedDateTime.from(7, options));
-assert.compareArray(actual, failureExpected, "Failing call");
+assert.compareArray(actual, [], "Failing call before options is processed");
+
+actual.splice(0);
+
+assert.throws(RangeError, () => Temporal.ZonedDateTime.from({ year: 2021, month: 2, day: 29, timeZone: "UTC" }, options));
+assert.compareArray(actual, expected, "Failing call after options is processed");

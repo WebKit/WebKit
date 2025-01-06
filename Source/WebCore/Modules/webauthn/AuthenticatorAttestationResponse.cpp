@@ -33,6 +33,7 @@
 #include "CryptoAlgorithmECDH.h"
 #include "CryptoKeyEC.h"
 #include "WebAuthenticationUtils.h"
+#include <wtf/text/Base64.h>
 
 namespace WebCore {
 
@@ -60,10 +61,7 @@ static std::optional<cbor::CBORValue> coseKeyForAttestationObject(Ref<ArrayBuffe
         return std::nullopt;
 
     const size_t cosePublicKeyLength = authData.size() - cosePublicKeyOffset;
-    Vector<uint8_t> cosePublicKey;
-    auto beginIt = authData.begin() + cosePublicKeyOffset;
-    cosePublicKey.appendRange(beginIt, beginIt + cosePublicKeyLength);
-
+    Vector<uint8_t> cosePublicKey(authData.subspan(cosePublicKeyOffset, cosePublicKeyLength));
     return cbor::CBORReader::read(cosePublicKey);
 }
 
@@ -169,12 +167,11 @@ RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getPublicKey() const
             return nullptr;
         }
         auto y = it->second.getByteString();
-        // FIXME: Enable cryptoKit here after it's enabled in SubtleCryptoAPI rdar://126352502
-        auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits, UseCryptoKit::No);
+        auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits);
 
         if (!peerKey)
             return nullptr;
-        auto keySpki = peerKey->exportSpki(UseCryptoKit::No).releaseReturnValue();
+        auto keySpki = peerKey->exportSpki().releaseReturnValue();
         return ArrayBuffer::tryCreate(keySpki);
     }
     default:
@@ -182,6 +179,26 @@ RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getPublicKey() const
     }
 
     return nullptr;
+}
+
+RegistrationResponseJSON::AuthenticatorAttestationResponseJSON AuthenticatorAttestationResponse::toJSON()
+{
+    Vector<String> transports;
+    for (auto transport : getTransports())
+        transports.append(toString(transport));
+    RegistrationResponseJSON::AuthenticatorAttestationResponseJSON value;
+    if (auto clientData = clientDataJSON())
+        value.clientDataJSON = base64EncodeToString(clientData->span());
+    value.transports = transports;
+    if (auto authData = getAuthenticatorData())
+        value.authenticatorData = base64EncodeToString(authData->span());
+    if (auto publicKey = getPublicKey())
+        value.publicKey = base64EncodeToString(publicKey->span());
+    if (auto attestationObj = attestationObject())
+        value.attestationObject = base64EncodeToString(attestationObj->span());
+    value.publicKeyAlgorithm = getPublicKeyAlgorithm();
+
+    return value;
 }
 
 } // namespace WebCore

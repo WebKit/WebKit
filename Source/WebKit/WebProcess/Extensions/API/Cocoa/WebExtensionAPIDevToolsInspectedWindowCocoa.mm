@@ -49,7 +49,7 @@ static NSString * const valueKey = @"value";
 
 namespace WebKit {
 
-void WebExtensionAPIDevToolsInspectedWindow::eval(WebPage& page, NSString *expression, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIDevToolsInspectedWindow::eval(WebPageProxyIdentifier webPageProxyIdentifier, NSString *expression, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/inspectedWindow/eval
 
@@ -72,7 +72,7 @@ void WebExtensionAPIDevToolsInspectedWindow::eval(WebPage& page, NSString *expre
         }
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsInspectedWindowEval(page.webPageProxyIdentifier(), expression, frameURL), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Expected<std::span<const uint8_t>, WebCore::ExceptionDetails>, WebExtensionError>&& result) mutable {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsInspectedWindowEval(webPageProxyIdentifier, expression, frameURL), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Expected<std::span<const uint8_t>, WebCore::ExceptionDetails>, WebExtensionError>&& result) mutable {
         if (!result) {
             callback->reportError(result.error());
             return;
@@ -87,14 +87,14 @@ void WebExtensionAPIDevToolsInspectedWindow::eval(WebPage& page, NSString *expre
         }
 
         Ref serializedValue = API::SerializedScriptValue::createFromWireBytes(result.value().value());
-        id scriptResult = API::SerializedScriptValue::deserialize(serializedValue->internalRepresentation(), nullptr);
+        id scriptResult = API::SerializedScriptValue::deserialize(serializedValue->internalRepresentation());
 
         // If no error occurred, element 0 will contain the result of evaluating the expression, and element 1 will be undefined.
         callback->call(@[ scriptResult ?: undefinedValue, undefinedValue ]);
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIDevToolsInspectedWindow::reload(WebPage& page, NSDictionary *options, NSString **outExceptionString)
+void WebExtensionAPIDevToolsInspectedWindow::reload(WebPageProxyIdentifier webPageProxyIdentifier, NSDictionary *options, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/inspectedWindow/reload
 
@@ -111,7 +111,7 @@ void WebExtensionAPIDevToolsInspectedWindow::reload(WebPage& page, NSDictionary 
     if (NSNumber *value = options[ignoreCacheKey])
         ignoreCache = value.boolValue;
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::DevToolsInspectedWindowReload(page.webPageProxyIdentifier(), ignoreCache), extensionContext().identifier());
+    WebProcess::singleton().send(Messages::WebExtensionContext::DevToolsInspectedWindowReload(webPageProxyIdentifier, ignoreCache), extensionContext().identifier());
 }
 
 double WebExtensionAPIDevToolsInspectedWindow::tabId(WebPage& page)

@@ -92,10 +92,6 @@ class ResourcesHLSL : angle::NonCopyable
     TString uniformBlockStructString(const TInterfaceBlock &interfaceBlock);
     const ShaderVariable *findUniformByName(const ImmutableString &name) const;
 
-    void outputHLSL4_0_FL9_3Sampler(TInfoSinkBase &out,
-                                    const TType &type,
-                                    const TVariable &variable,
-                                    const unsigned int registerIndex);
     void outputUniform(TInfoSinkBase &out,
                        const TType &type,
                        const TVariable &variable,
@@ -147,8 +143,8 @@ class ResourcesHLSL : angle::NonCopyable
     std::map<std::string, unsigned int> mShaderStorageBlockRegisterMap;
     std::map<std::string, unsigned int> mUniformRegisterMap;
     std::map<std::string, bool> mUniformBlockUseStructuredBufferMap;
-    unsigned int mReadonlyImage2DRegisterIndex;
-    unsigned int mImage2DRegisterIndex;
+    unsigned int mReadonlyImage2DRegisterIndex = 0;
+    unsigned int mImage2DRegisterIndex         = 0;
 };
 }  // namespace sh
 

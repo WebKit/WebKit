@@ -18,7 +18,6 @@
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/units/data_rate.h"
 #include "api/units/frequency.h"
 #include "api/video/video_frame_type.h"

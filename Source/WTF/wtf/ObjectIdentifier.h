@@ -25,12 +25,15 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
 #include <wtf/HashTraits.h>
 #include <wtf/UUID.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
+
+class PrintStream;
 
 template<typename RawValue>
 struct ObjectIdentifierThreadSafeAccessTraits {
@@ -71,18 +74,16 @@ public:
     using RawValue = uint64_t;
 
     bool isHashTableDeletedValue() const { return m_identifier == hashTableDeletedValue(); }
-    bool isValid() const { return isValidIdentifier(m_identifier); }
 
-    RawValue toUInt64() const { return m_identifier; } // Use `toRawValue` instead.
+    RawValue toUInt64() const { return toRawValue(); } // Use `toRawValue` instead.
     RawValue toRawValue() const { return m_identifier; }
-    explicit operator bool() const { return m_identifier; }
 
     String loggingString() const
     {
         return String::number(m_identifier);
     }
 
-    static bool isValidIdentifier(RawValue identifier) { return identifier && identifier != hashTableDeletedValue(); }
+    static constexpr bool isValidIdentifier(RawValue identifier) { return identifier && identifier != hashTableDeletedValue(); }
 
 protected:
     explicit constexpr ObjectIdentifierGenericBase(RawValue identifier)
@@ -94,7 +95,7 @@ protected:
     ~ObjectIdentifierGenericBase() = default;
     ObjectIdentifierGenericBase(HashTableDeletedValueType) : m_identifier(hashTableDeletedValue()) { }
 
-    static RawValue hashTableDeletedValue() { return std::numeric_limits<RawValue>::max(); }
+    static constexpr RawValue hashTableDeletedValue() { return std::numeric_limits<RawValue>::max(); }
 
 private:
     RawValue m_identifier { 0 };
@@ -106,17 +107,15 @@ public:
     using RawValue = UUID;
 
     bool isHashTableDeletedValue() const { return m_identifier == hashTableDeletedValue(); }
-    bool isValid() const { return isValidIdentifier(m_identifier); }
 
     RawValue toRawValue() const { return m_identifier; }
-    explicit operator bool() const { return m_identifier; }
 
     String loggingString() const
     {
         return m_identifier.toString();
     }
 
-    static bool isValidIdentifier(RawValue identifier) { return identifier && identifier != hashTableDeletedValue(); }
+    static constexpr bool isValidIdentifier(RawValue identifier) { return identifier && !identifier.isHashTableDeletedValue(); }
 
 protected:
     explicit constexpr ObjectIdentifierGenericBase(RawValue identifier)
@@ -140,7 +139,7 @@ public:
     static ObjectIdentifierGeneric generate()
     {
         RELEASE_ASSERT(!m_generationProtected);
-        return ObjectIdentifierGeneric { ThreadSafety::generateIdentifierInternal() };
+        return ObjectIdentifierGeneric { ThreadSafety::generateIdentifierInternal(), AssumeValidIdValue };
     }
 
     static void enableGenerationProtection()
@@ -151,19 +150,34 @@ public:
     explicit constexpr ObjectIdentifierGeneric(RawValue identifier)
         : ObjectIdentifierGenericBase<RawValue>(identifier)
     {
+        RELEASE_ASSERT(ObjectIdentifierGenericBase<RawValue>::isValidIdentifier(identifier));
     }
 
-    ObjectIdentifierGeneric() = default;
+    bool isHashTableEmptyValue() const { return !ObjectIdentifierGenericBase<RawValue>::toRawValue(); }
+
+    // Do not call this constructor explicitly, it should only be used by the Hashtable implementation.
     ObjectIdentifierGeneric(HashTableDeletedValueType) : ObjectIdentifierGenericBase<RawValue>(HashTableDeletedValue) { }
 
     struct MarkableTraits {
-        static bool isEmptyValue(ObjectIdentifierGeneric identifier) { return !identifier; }
-        static constexpr ObjectIdentifierGeneric emptyValue() { return ObjectIdentifierGeneric(); }
+        static bool isEmptyValue(ObjectIdentifierGeneric identifier) { return !identifier.toRawValue(); }
+        static constexpr ObjectIdentifierGeneric emptyValue() { return ObjectIdentifierGeneric(InvalidIdValue); }
     };
 
 private:
     friend struct HashTraits<ObjectIdentifierGeneric>;
     template<typename U, typename V> friend struct ObjectIdentifierGenericHash;
+
+    enum AssumeValidId { AssumeValidIdValue };
+    explicit constexpr ObjectIdentifierGeneric(RawValue identifier, AssumeValidId)
+        : ObjectIdentifierGenericBase<RawValue>(identifier)
+    {
+        ASSERT(!!identifier);
+    }
+
+    enum InvalidId { InvalidIdValue };
+    ObjectIdentifierGeneric(InvalidId)
+    {
+    }
 
     inline static bool m_generationProtected { false };
 };
@@ -199,13 +213,38 @@ struct ObjectIdentifierGenericBaseHash<UUID> {
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-template<typename T, typename U, typename V> struct HashTraits<ObjectIdentifierGeneric<T, U, V>> : SimpleClassHashTraits<ObjectIdentifierGeneric<T, U, V>> { };
+template<typename T, typename U, typename V> struct HashTraits<ObjectIdentifierGeneric<T, U, V>> : SimpleClassHashTraits<ObjectIdentifierGeneric<T, U, V>> {
+    using ValueType = ObjectIdentifierGeneric<T, U, V>;
+    using PeekType = std::optional<ValueType>;
+    using TakeType = std::optional<ValueType>;
+
+    static ValueType emptyValue() { return ValueType { ValueType::InvalidIdValue }; }
+    static bool isEmptyValue(ValueType value) { return value.isHashTableEmptyValue(); }
+
+    static PeekType peek(ValueType identifier)
+    {
+        if (isEmptyValue(identifier))
+            return std::nullopt;
+        return identifier;
+    }
+
+    static TakeType take(ValueType identifier)
+    {
+        if (isEmptyValue(identifier))
+            return std::nullopt;
+        return identifier;
+    }
+};
 
 template<typename T, typename U, typename V> struct DefaultHash<ObjectIdentifierGeneric<T, U, V>> : ObjectIdentifierGenericBaseHash<V> { };
 
 WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const ObjectIdentifierGenericBase<uint64_t>&);
 
 WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const ObjectIdentifierGenericBase<UUID>&);
+
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const ObjectIdentifierGenericBase<uint64_t>&);
+
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const ObjectIdentifierGenericBase<UUID>&);
 
 template<typename RawValue>
 class ObjectIdentifierGenericBaseStringTypeAdapter {
@@ -216,7 +255,7 @@ class ObjectIdentifierGenericBaseStringTypeAdapter<uint64_t> {
 public:
     unsigned length() const { return lengthOfIntegerAsString(m_identifier); }
     bool is8Bit() const { return true; }
-    template<typename CharacterType> void writeTo(CharacterType* destination) const { writeIntegerToBuffer(m_identifier, destination); }
+    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const { writeIntegerToBuffer(m_identifier, destination); }
 protected:
     explicit ObjectIdentifierGenericBaseStringTypeAdapter(uint64_t identifier)
         : m_identifier(identifier) { }

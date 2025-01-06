@@ -29,21 +29,21 @@ uint32_t AbsoluteCaptureTimeInterpolator::GetSource(
   return csrcs[0];
 }
 
-absl::optional<AbsoluteCaptureTime>
+std::optional<AbsoluteCaptureTime>
 AbsoluteCaptureTimeInterpolator::OnReceivePacket(
     uint32_t source,
     uint32_t rtp_timestamp,
     int rtp_clock_frequency_hz,
-    const absl::optional<AbsoluteCaptureTime>& received_extension) {
+    const std::optional<AbsoluteCaptureTime>& received_extension) {
   const Timestamp receive_time = clock_->CurrentTime();
 
   MutexLock lock(&mutex_);
 
-  if (received_extension == absl::nullopt) {
+  if (received_extension == std::nullopt) {
     if (!ShouldInterpolateExtension(receive_time, source, rtp_timestamp,
                                     rtp_clock_frequency_hz)) {
       last_receive_time_ = Timestamp::MinusInfinity();
-      return absl::nullopt;
+      return std::nullopt;
     }
 
     return AbsoluteCaptureTime{

@@ -32,12 +32,17 @@
 namespace WebCore {
 namespace CQ {
 
+struct ContainerProgressProviding;
+
 struct ContainerQueryParser : MQ::GenericMediaQueryParser<ContainerQueryParser>  {
     static std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&, const MediaQueryParserContext&);
 
     static bool isValidFunctionId(CSSValueID);
     static const MQ::FeatureSchema* schemaForFeatureName(const AtomString&, const MediaQueryParserContext&, State&);
     static Vector<const MQ::FeatureSchema*> featureSchemas();
+
+    // Accessor used by calc()'s container-progress() function to find a ContainerProgressProviding by name.
+    static const ContainerProgressProviding* containerProgressProvidingSchemaForFeatureName(const AtomString&, const MediaQueryParserContext&);
 };
 
 }

@@ -29,6 +29,7 @@
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -38,13 +39,12 @@ class URLRegistry;
 class URLRegistrable;
 
 class PublicURLManager final : public RefCounted<PublicURLManager>, public ActiveDOMObject {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PublicURLManager);
 public:
-    static Ref<PublicURLManager> create(ScriptExecutionContext*);
-
-    // ActiveDOMObject.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+
+    static Ref<PublicURLManager> create(ScriptExecutionContext*);
 
     void registerURL(const URL&, URLRegistrable&);
     void revoke(const URL&);

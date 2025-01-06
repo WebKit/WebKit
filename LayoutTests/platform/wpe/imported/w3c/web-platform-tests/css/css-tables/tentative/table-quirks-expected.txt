@@ -16,13 +16,7 @@ The table cell width calculation quirk
 PASS decoration does not propagate into table
 PASS table 1
 PASS table 2
-FAIL table 3 assert_equals:
-<table>
-  <tbody><tr>
-    <td nowrap="" style="width:50px;font: 20px/1 Ahem" data-expected-width="580">nowrap nowrap nowrap nowrap</td>
-  </tr>
-</tbody></table>
-width expected 580 but got 295
+PASS table 3
 PASS table 4
 PASS table 5
 PASS table 6

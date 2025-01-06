@@ -140,6 +140,7 @@ extern JS_EXPORT_PRIVATE const ASCIILiteral SymbolCoercionError;
 extern JS_EXPORT_PRIVATE std::atomic<unsigned> activeJSGlobalObjectSignpostIntervalCount;
 
 class JSValue {
+    friend struct OrderedHashTableTraits;
     friend struct EncodedJSValueHashTraits;
     friend struct EncodedJSValueWithRepresentationHashTraits;
     friend class AssemblyHelpers;
@@ -180,7 +181,11 @@ public:
     /* read a JSValue from storage not owned by this thread
      * on 64-bit ports, or when JIT is not enabled, equivalent to
      * JSValue::decode(*ptr) */
-    static JSValue decodeConcurrent(const volatile EncodedJSValue *);
+#if USE(JSVALUE64) || !ENABLE(CONCURRENT_JS)
+    static JSValue decodeConcurrent(const EncodedJSValue*);
+#else
+    static JSValue decodeConcurrent(const volatile EncodedJSValue*);
+#endif
 
     enum JSNullTag { JSNull };
     enum JSUndefinedTag { JSUndefined };
@@ -266,6 +271,8 @@ public:
     bool isBigInt() const;
     bool isHeapBigInt() const;
     bool isBigInt32() const;
+    bool isZeroBigInt() const;
+    bool isNegativeBigInt() const;
     bool isSymbol() const;
     bool isPrimitive() const;
     bool isGetterSetter() const;
@@ -472,6 +479,7 @@ public:
     // with a 15-bit pattern within the range 0x0002..0xFFFC.
     static constexpr size_t DoubleEncodeOffsetBit = 49;
     static constexpr int64_t DoubleEncodeOffset = 1ll << DoubleEncodeOffsetBit;
+
     // If all bits in the mask are set, this indicates an integer number,
     // if any but not all are set this value is a double precision number.
     static constexpr int64_t NumberTag = 0xfffe000000000000ll;
@@ -543,6 +551,43 @@ private:
 
     EncodedValueDescriptor u;
 };
+
+#if USE(JSVALUE32_64)
+struct OrderedHashTableTraits {
+    ALWAYS_INLINE static void set(JSValue* value, uint32_t number)
+    {
+        value->u.asBits.tag = JSValue::Int32Tag;
+        value->u.asBits.payload = number;
+    }
+    ALWAYS_INLINE static void increment(JSValue* value)
+    {
+        ASSERT(value->isInt32());
+        value->u.asBits.payload++;
+    }
+    ALWAYS_INLINE static void decrement(JSValue* value)
+    {
+        ASSERT(value->isInt32());
+        value->u.asBits.payload--;
+    }
+};
+#else
+struct OrderedHashTableTraits {
+    ALWAYS_INLINE static void set(JSValue* value, uint32_t number)
+    {
+        value->u.asInt64 = JSValue::NumberTag | number;
+    }
+    ALWAYS_INLINE static void increment(JSValue* value)
+    {
+        ASSERT(value->isInt32());
+        value->u.asInt64++;
+    }
+    ALWAYS_INLINE static void decrement(JSValue* value)
+    {
+        ASSERT(value->isInt32());
+        value->u.asInt64--;
+    }
+};
+#endif
 
 typedef IntHash<EncodedJSValue> EncodedJSValueHash;
 
@@ -705,7 +750,7 @@ bool sameValue(JSGlobalObject*, JSValue a, JSValue b);
 ALWAYS_INLINE void ensureStillAliveHere(JSValue value)
 {
 #if USE(JSVALUE64)
-    asm volatile ("" : : "g"(bitwise_cast<uint64_t>(value)) : "memory");
+    asm volatile ("" : : "g"(std::bit_cast<uint64_t>(value)) : "memory");
 #else
     asm volatile ("" : : "g"(value.payload()) : "memory");
 #endif
@@ -737,17 +782,17 @@ private:
 
 #if USE(JSVALUE64) || !ENABLE(CONCURRENT_JS)
 
-inline JSValue JSValue::decodeConcurrent(const volatile EncodedJSValue* encodedJSValue)
+ALWAYS_INLINE JSValue JSValue::decodeConcurrent(const EncodedJSValue* encodedJSValue)
 {
     return JSValue::decode(*encodedJSValue);
 }
 
-inline void updateEncodedJSValueConcurrent(EncodedJSValue& dest, EncodedJSValue value)
+ALWAYS_INLINE void updateEncodedJSValueConcurrent(EncodedJSValue& dest, EncodedJSValue value)
 {
     dest = value;
 }
 
-inline void clearEncodedJSValueConcurrent(EncodedJSValue& dest)
+ALWAYS_INLINE void clearEncodedJSValueConcurrent(EncodedJSValue& dest)
 {
     dest = JSValue::encode(JSValue());
 }

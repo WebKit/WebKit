@@ -19,7 +19,7 @@ declare_args() {
   if (!build_with_chromium && is_android) {
     assert(
         !is_official_build,
-        "is_official_build not supported by ANGLE for Android (https://anglebug.com/7381)")
+        "is_official_build not supported by ANGLE for Android (https://anglebug.com/42265853)")
   }
 }
 
@@ -92,9 +92,6 @@ angle_static_library("angle_test_expectations") {
 config("angle_common_test_utils_config") {
   include_dirs = [ "." ]
   defines = []
-  if (angle_enable_gl_desktop_backend) {
-    defines += [ "ANGLE_ENABLE_GL_DESKTOP_BACKEND" ]
-  }
   if (angle_enable_swiftshader) {
     defines += [ "ANGLE_ENABLE_SWIFTSHADER" ]
   }
@@ -145,6 +142,9 @@ template("angle_common_test_utils") {
     if (angle_enable_vulkan_validation_layers) {
       data_deps += [ "$angle_root/src/common/vulkan:vulkan_validation_layers" ]
     }
+    if (angle_enable_vulkan_api_dump_layer) {
+      data_deps += [ "$angle_root/src/common/vulkan:lunarg_vulkantools" ]
+    }
   }
 }
 
@@ -193,13 +193,20 @@ angle_test("angle_unittests") {
     sources += angle_unittests_gl_sources
   }
 
+  if (angle_enable_wgpu) {
+    sources += angle_unittests_wgsl_sources
+  }
+
   deps = [
     ":angle_test_expectations",
-    "$angle_root:angle_json_serializer",
     "$angle_root:angle_static",
     "$angle_root:libfeature_support",
     "$angle_root/util:angle_util_static",
   ]
+
+  if (angle_has_rapidjson) {
+    deps += [ "$angle_root:angle_json_serializer" ]
+  }
 
   if (angle_enable_vulkan) {
     sources += [ "compiler_tests/Precise_test.cpp" ]
@@ -292,24 +299,34 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
       deps += [ "$angle_root:angle_json_serializer" ]
     }
 
-    if (is_android) {
-      include_dirs += [ "${android_ndk_root}/sysroot/usr/includes" ]
+    if (build_angle_end2end_tests_aosp) {
+      # AOSP end2end tests builds don't bundle ANGLE libs or Vulkan tests and don't need the NDK path
+    } else {
+      if (is_android) {
+        include_dirs += [ "${android_ndk_root}/sysroot/usr/includes" ]
+      }
+
+      data_deps = [ "$angle_root:angle" ]
+
+      if (angle_enable_vulkan) {
+        sources += [
+          "gl_tests/VulkanExternalImageTest.cpp",
+          "gl_tests/VulkanImageTest.cpp",
+          "test_utils/VulkanHelper.cpp",
+          "test_utils/VulkanHelper.h",
+        ]
+        deps += [ "$angle_root/src/common/vulkan" ]
+      }
     }
 
-    data_deps = [ "$angle_root:angle" ]
+    if (is_android) {
+      android_test_runner_script =
+          "$angle_root/src/tests/angle_android_test_runner.py"
+      data += [ "$android_test_runner_script" ]
+    }
 
     if (angle_build_mesa) {
       data_deps += [ "$angle_root/third_party/mesa" ]
-    }
-
-    if (angle_enable_vulkan) {
-      sources += [
-        "gl_tests/VulkanExternalImageTest.cpp",
-        "gl_tests/VulkanImageTest.cpp",
-        "test_utils/VulkanHelper.cpp",
-        "test_utils/VulkanHelper.h",
-      ]
-      deps += [ "$angle_root/src/common/vulkan" ]
     }
 
     if (is_fuchsia) {
@@ -330,9 +347,143 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
       # Need to bundle the libraries inside the .app.
       deps += [ "$angle_root:angle" ]
     }
+  }
+}
 
-    if (angle_enable_gl_desktop_frontend) {
-      defines += [ "ANGLE_ENABLE_GL_DESKTOP_FRONTEND" ]
+if (angle_enable_cl_testing) {
+  copy("opencl_icd") {
+    sources = [ "$angle_root/src/tests/cl_support/ancle.icd" ]
+    outputs = [ "$root_out_dir/$angle_data_dir/{{source_file_part}}" ]
+  }
+
+  template("angle_oclcts_test") {
+    angle_test("angle_oclcts_${target_name}") {
+      testonly = true
+      sources = [ "$angle_root/src/tests/cl_support/angle_oclcts_gtest.cpp" ]
+
+      deps = [
+        "$angle_root:angle_common",
+        "$angle_root:cl_includes",
+        "$angle_root/third_party/OpenCL-CTS/gn:test_common",
+        "$angle_root/third_party/OpenCL-CTS/gn/${invoker.group}:${invoker.suite}",
+        "$angle_root/third_party/OpenCL-ICD-Loader:opencl_icd_loader",
+        "//third_party/googletest:gtest",
+      ]
+      defines = [
+        "CL_TARGET_OPENCL_VERSION=300",
+        "ANGLE_CL_SUITE_NAME=\"${invoker.suite}\"",
+      ]
+      if (!is_android) {
+        defines += [ "ANGLE_OPENCL_ICD_PATH=\"$angle_data_dir\"" ]
+      }
+      cflags = [
+        "-Wno-deprecated-declarations",
+        "-Wno-#warnings",
+        "-Wno-format",
+        "-Wno-vla-cxx-extension",
+        "-Wno-deprecated-volatile",
+        "-Wno-c++11-narrowing",
+      ]
+      include_dirs = [
+        "$angle_root/third_party/OpenCL-CTS/src/test_common",
+        "$angle_root/third_party/OpenCL-CTS/src/test_common/autotest",
+        "$angle_root/third_party/OpenCL-CTS/src/test_common/harness",
+        "$angle_root/third_party/OpenCL-CTS/src/test_common/miniz",
+        "$angle_root/third_party/OpenCL-CTS/src/test_conformance/",
+        "$angle_root/third_party/OpenCL-CTS/",
+        "$angle_root/src/tests/",
+      ]
+      configs += [ "${angle_root}:libANGLE_config" ]
+
+      deps += [
+        ":angle_common_test_utils_static",
+        "$angle_root:angle_static",
+      ]
+      data = [
+        "$angle_root/src/tests/cl_support/openclcts_expectations.txt",
+        "$angle_root/src/tests/cl_support/openclcts_mustpass.txt",
+      ]
+
+      data_deps += [
+        ":opencl_icd",
+        "$angle_root:libEGL",
+        "$angle_root:libGLESv2",
+        "$angle_root/src/libOpenCL:angle_cl",
+      ]
+    }
+  }
+
+  oclcts_targets = [
+    "SVM svm",
+    "allocations allocations",
+    "api api",
+    "atomics atomics",
+    "basic basic",
+    "buffers buffers",
+    "c11_atomics c11_atomics",
+    "commonfns commonfns",
+    "compiler compiler",
+    "computeinfo computeinfo",
+    "contractions contractions",
+    "conversions conversions",
+    "device_execution device_execution",
+    "device_partition device_partition",
+    "device_timer device_timer",
+    "events events",
+    "extensions/cl_ext_cxx_for_opencl cl_ext_cxx_for_opencl",
+    "extensions/cl_khr_command_buffer cl_khr_command_buffer",
+    "extensions/cl_khr_semaphore cl_khr_semaphore",
+    "generic_address_space generic_address_space",
+    "geometrics geometrics",
+    "half half",
+    "images/clCopyImage cl_copy_images",
+    "images/clFillImage cl_fill_images",
+    "images/clGetInfo cl_get_info",
+    "images/clReadWriteImage cl_read_write_images",
+    "images/kernel_image_methods kernel_image_methods",
+    "images/kernel_read_write image_streams",
+    "images/samplerlessReads samplerless_reads",
+    "integer_ops integer_ops",
+    "math_brute_force bruteforce",
+    "mem_host_flags mem_host_flags",
+    "multiple_device_context multiples",
+    "non_uniform_work_group non_uniform_work_group",
+    "pipes pipes",
+    "printf printf",
+    "profiling profiling",
+    "relationals relationals",
+    "select select",
+    "spir spir",
+    "spirv_new spirv_new",
+
+    # CTS build error, fixed in https://github.com/KhronosGroup/OpenCL-CTS/pull/1906
+    #"subgroups subgroups",
+    "thread_dimensions thread_dimensions",
+    "vectors vectors",
+    "workgroups workgroups",
+  ]
+
+  foreach(_group_and_suite_joined, oclcts_targets) {
+    _group_and_suite = []
+    _group_and_suite = string_split(_group_and_suite_joined)
+    _group = _group_and_suite[0]
+    _suite = _group_and_suite[1]
+
+    angle_oclcts_test(_suite) {
+      group = _group
+      suite = _suite
+    }
+  }
+
+  group("angle_openclcts") {
+    testonly = true
+    deps = []
+    foreach(_group_and_suite_joined, oclcts_targets) {
+      _group_and_suite = []
+      _group_and_suite = string_split(_group_and_suite_joined)
+      _suite = _group_and_suite[1]
+
+      deps += [ ":angle_oclcts_${_suite}" ]
     }
   }
 }
@@ -511,7 +662,7 @@ if (build_angle_perftests) {
 
 if (build_angle_trace_tests) {
   angle_test("angle_trace_tests") {
-    # http://anglebug.com/6009: Traces with long shaders are hitting string literal
+    # http://anglebug.com/42264541: Traces with long shaders are hitting string literal
     # limit in MSVC, so only compile them when using clang
     assert(is_clang, "angle trace tests require clang")
 
@@ -527,14 +678,18 @@ if (build_angle_trace_tests) {
 
     deps = [
       ":angle_perftests_shared",
+      ":wrap_restricted_trace_gold_tests",
+      ":wrap_restricted_trace_perf",
       "$angle_root:angle_compression",
       "$angle_root/util:angle_frame_capture_test_utils",
       "$angle_root/util:angle_png_utils",
+      "restricted_traces:gen_trace_list_json",
     ]
 
     # If this flag is set, we want to build the trace libraries independent of the APK, i.e. not packaged.
     # We're doing this for size reasons - the APK is too large if you include all the traces.
     if (restricted_traces_outside_of_apk) {
+      defines = [ "ANGLE_TRACE_EXTERNAL_BINARIES" ]
       deps += [ "$angle_root/util:angle_trace_loader" ]
     } else {
       deps += [
@@ -546,9 +701,9 @@ if (build_angle_trace_tests) {
     data = [ "$angle_root/src/tests/py_utils/android_helper.py" ]
 
     if (is_android) {
-      data += [ "$angle_root/src/tests/angle_android_test_runner.py" ]
       android_test_runner_script =
           "$angle_root/src/tests/angle_android_test_runner.py"
+      data += [ "$android_test_runner_script" ]
     }
 
     data_deps = [ "${angle_root}:angle" ]
@@ -566,6 +721,7 @@ if (build_angle_trace_tests) {
       "$angle_root/scripts/process_angle_perf_results.py",
       "$angle_root/src/tests/py_utils/angle_metrics.py",
       "$angle_root/src/tests/py_utils/angle_path_util.py",
+      "$angle_root/src/tests/restricted_traces/restricted_trace_perf.py",
       "$angle_root/src/tests/run_perf_tests.py",
     ]
 
@@ -598,6 +754,26 @@ if (build_angle_trace_tests) {
       data += [ "$angle_root/src/tests/angle_android_test_runner.py" ]
     }
     data_deps = [ ":angle_end2end_tests" ]
+  }
+
+  action("wrap_restricted_trace_perf") {
+    script = "//scripts/angle_test_wrapper.py"
+
+    outputs = [ "$root_build_dir/restricted_trace_perf" ]
+    args = [
+      rebase_path(outputs[0], root_build_dir),
+      "src/tests/restricted_traces/restricted_trace_perf.py",
+    ]
+  }
+
+  action("wrap_restricted_trace_gold_tests") {
+    script = "//scripts/angle_test_wrapper.py"
+
+    outputs = [ "$root_build_dir/restricted_trace_gold_tests" ]
+    args = [
+      rebase_path(outputs[0], root_build_dir),
+      "src/tests/restricted_traces/restricted_trace_gold_tests.py",
+    ]
   }
 }
 
@@ -1149,9 +1325,12 @@ if (build_angle_deqp_tests && !is_fuchsia) {
       # This has to be GNU_SOURCE as on Linux dEQP uses syscall()
       defines += [ "_GNU_SOURCE" ]
     }
-    if (is_android || is_apple) {
+    if (is_android) {
       # _XOPEN_SOURCE=600 is what is used in deqp/src/Android.mk
       defines += [ "_XOPEN_SOURCE=600" ]
+    } else if (is_apple) {
+      # Work-around for https://github.com/llvm/llvm-project/issues/117630
+      defines += [ "_XOPEN_SOURCE=700" ]
     }
   }
 
@@ -1678,10 +1857,6 @@ if (build_angle_deqp_tests && !is_fuchsia) {
       } else if (api == "gles32") {
         data = angle_deqp_external_openglcts_data_gl_cts_data_gles32
         mustpass_dir = _khronos_gles_mustpass
-      } else if (api == "gl46") {
-        # Use this as a placeholder, the gl46 test suite does not need data
-        data = [ "$root_gen_dir/vk_gl_cts_data/data/gles2/shaders/misc.test" ]
-        mustpass_dir = _khronos_gl_mustpass
       } else {
         assert(false)
       }
@@ -1710,13 +1885,6 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     defines = [ "ANGLE_DEQP_KHR_GLES32_TESTS" ]
     mustpass_name = "gles32-khr-main.txt"
     api = "gles32"
-  }
-
-  # The core Desktop GL CTS is in the same category as these KHR tests.
-  angle_deqp_khr_gtest("gl46") {
-    defines = [ "ANGLE_DEQP_GL_TESTS" ]
-    mustpass_name = "gl46-main.txt"
-    api = "gl46"
   }
 
   template("angle_deqp_khr_noctx_gtest") {
@@ -1850,14 +2018,18 @@ group("angle_tests") {
     ":angle_system_info_test",
     ":angle_unittests",
   ]
+  if (angle_enable_cl_testing) {
+    deps += [ ":angle_openclcts" ]
+  }
   if (build_angle_perftests) {
     deps += [ ":angle_perftests" ]
   }
   if (build_angle_trace_tests) {
     deps += [ ":angle_trace_perf_tests" ]
-    deps += [ "capture_tests:angle_capture_tests_trace" ]
+    deps += [ "capture_tests:angle_capture_tests_multi_frame_trace" ]
+    deps += [ "capture_tests:angle_capture_tests_active_textures_trace" ]
   }
-  if (is_clang) {
+  if (is_clang && angle_has_frame_capture) {
     deps += [ "capture_replay_tests" ]
   }
   if (!is_fuchsia) {
@@ -1869,7 +2041,6 @@ group("angle_tests") {
   if (build_angle_deqp_tests && !is_fuchsia) {
     deps += [
       ":angle_deqp_egl_tests",
-      ":angle_deqp_gl46_tests",
       ":angle_deqp_gles2_tests",
       ":angle_deqp_gles31_multisample_tests",
       ":angle_deqp_gles31_rotate180_tests",

@@ -33,10 +33,10 @@ esid: sec-compileatom
 features: [regexp-modifiers]
 ---*/
 
-var re1 = /(?-i:a(?i:b))c/i;
-assert(!re1.test("ABC"), "a should not match A in ABC");
-assert(!re1.test("ABc"), "a should not match A in ABc");
-assert(!re1.test("Abc"), "a should not match A in Abc");
-assert(re1.test("aBc"), "b should match B in aBc");
-assert(re1.test("abC"), "c should match C in abC");
+var re1 = /(?i:a(?-i:b))c/;
+assert(!re1.test("ABC"), "b should not match B in ABC");
+assert(!re1.test("ABc"), "b should not match B in ABc");
+assert(re1.test("Abc"), "a should match A in Abc");
+assert(!re1.test("aBc"), "b should not match B in aBc");
+assert(!re1.test("abC"), "c should not match C in abC");
 assert(re1.test("abc"), "should match abc");

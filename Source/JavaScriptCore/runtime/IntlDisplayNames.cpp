@@ -34,6 +34,8 @@
 #include <unicode/uloc.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ClassInfo IntlDisplayNames::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDisplayNames) };
@@ -154,19 +156,19 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
         case Type::Region: {
             // Let code be the result of mapping code to upper case as described in 6.1.
             auto result = code.ascii();
-            char* mutableData = result.mutableData();
-            for (unsigned index = 0; index < result.length(); ++index)
-                mutableData[index] = toASCIIUpper(mutableData[index]);
+            for (auto& character : result.mutableSpan())
+                character = toASCIIUpper(character);
             return result;
         }
         case Type::Script: {
             // Let code be the result of mapping the first character in code to upper case, and mapping the second, third and fourth character in code to lower case, as described in 6.1.
             auto result = code.ascii();
-            char* mutableData = result.mutableData();
-            if (result.length() >= 1)
+            auto mutableData = result.mutableSpan();
+            if (mutableData.size() >= 1) {
                 mutableData[0] = toASCIIUpper(mutableData[0]);
-            for (unsigned index = 1; index < result.length(); ++index)
-                mutableData[index] = toASCIILower(mutableData[index]);
+                for (auto& character : mutableData.subspan(1))
+                    character = toASCIILower(character);
+            }
             return result;
         }
         case Type::Currency:
@@ -419,3 +421,5 @@ ASCIILiteral IntlDisplayNames::languageDisplayString(LanguageDisplay languageDis
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

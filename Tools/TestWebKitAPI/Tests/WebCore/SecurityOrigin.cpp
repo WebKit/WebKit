@@ -32,6 +32,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/URL.h>
+#include <wtf/text/MakeString.h>
 
 using namespace WebCore;
 

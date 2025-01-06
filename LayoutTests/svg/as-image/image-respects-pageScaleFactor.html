@@ -1,11 +1,14 @@
 <html>
 <head>
     <script>
-    function init() {
-        if (!window.internals)
+    if (window.testRunner)
+        window.testRunner.waitUntilDone();
+    async function init() {
+        if (!window.testRunner)
             return;
 
-        window.internals.setPageScaleFactor(2, 0, 0);
+        await window.testRunner.setPageScaleFactor(2, 0, 0);
+        window.testRunner.notifyDone();
     }
     window.onload = init;
     </script>

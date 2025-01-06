@@ -28,7 +28,6 @@
 
 #import "APIData.h"
 #import "APINavigation.h"
-#import "ObjCObjectGraph.h"
 #import "PageLoadStateObserver.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
@@ -62,6 +61,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/CheckedPtr.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cf/CFURLExtras.h>
 #import <wtf/cocoa/SpanCocoa.h>
@@ -143,7 +143,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)loadRequest:(NSURLRequest *)request userData:(id)userData
 {
     ASSERT(!userData);
-    _page->loadRequest(request, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow, { });
+    _page->loadRequest(request, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 }
 
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory
@@ -169,13 +169,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     ASSERT(!userData);
     NSData *data = [HTMLString dataUsingEncoding:NSUTF8StringEncoding];
-    _page->loadData(span(data), "text/html"_s, "UTF-8"_s, bytesAsString(bridge_cast(baseURL)), { });
+    _page->loadData(WebCore::SharedBuffer::create(data), "text/html"_s, "UTF-8"_s, bytesAsString(bridge_cast(baseURL)), { });
 }
 
 - (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
 {
-    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    _page->loadAlternateHTML(WebCore::DataSegment::create((__bridge CFDataRef)data), "UTF-8"_s, baseURL, unreachableURL);
+    RetainPtr data = bridge_cast([string dataUsingEncoding:NSUTF8StringEncoding]);
+    _page->loadAlternateHTML(WebCore::DataSegment::create(WTFMove(data)), "UTF-8"_s, baseURL, unreachableURL);
 }
 
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL
@@ -186,7 +186,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL userData:(id)userData
 {
     ASSERT(!userData);
-    _page->loadData(span(data), MIMEType, encodingName, bytesAsString(bridge_cast(baseURL)), { });
+    _page->loadData(WebCore::SharedBuffer::create(data), MIMEType, encodingName, bytesAsString(bridge_cast(baseURL)), { });
 }
 
 - (void)stopLoading
@@ -439,7 +439,7 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
 ALLOW_DEPRECATED_DECLARATIONS_END
 {
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
 
     loaderClient.base.version = 0;
     loaderClient.base.clientInfo = (__bridge void*)browsingContext;
@@ -478,7 +478,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 ALLOW_DEPRECATED_DECLARATIONS_END
 {
     WKPagePolicyClientInternal policyClient;
-    memset(&policyClient, 0, sizeof(policyClient));
+    zeroBytes(policyClient);
 
     policyClient.base.version = 2;
     policyClient.base.clientInfo = (__bridge void*)browsingContext;
@@ -613,7 +613,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _page = WebKit::toImpl(pageRef);
 
-    _pageLoadStateObserver = makeUnique<WebKit::PageLoadStateObserver>(self);
+    _pageLoadStateObserver = makeUniqueWithoutRefCountedCheck<WebKit::PageLoadStateObserver>(self);
     _page->pageLoadState().addObserver(*_pageLoadStateObserver);
 
     ASSERT(!browsingContextControllerMap().contains(*_page));
@@ -744,13 +744,27 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (pid_t)processIdentifier
 {
-    return _page->processID();
+    return _page->legacyMainFrameProcessID();
 }
 
 - (BOOL)_webProcessIsResponsive
 {
-    return _page->process().isResponsive();
+    return _page->legacyMainFrameProcess().isResponsive();
 }
 
 @end
 ALLOW_DEPRECATED_DECLARATIONS_END
+
+namespace WebKit {
+
+void PageLoadStateObserver::ref() const
+{
+    [m_object.get() retain];
+}
+
+void PageLoadStateObserver::deref() const
+{
+    [m_object.get() release];
+}
+
+}

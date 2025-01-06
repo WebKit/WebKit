@@ -21,9 +21,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(FULLSCREEN_API)
-messages -> WebFullScreenManagerProxy NotRefCounted {
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=UI,
+    EnabledBy=FullScreenEnabled || VideoFullscreenRequiresElementFullscreen
+]
+messages -> WebFullScreenManagerProxy {
     SupportsFullScreen(bool withKeyboard) -> (bool supportsFullScreen) Synchronous
     EnterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, struct WebKit::FullScreenMediaDetails mediaDetails)
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    UpdateImageSource(struct WebKit::FullScreenMediaDetails mediaDetails)
+#endif
     ExitFullScreen()
     BeganEnterFullScreen(WebCore::IntRect initialRect, WebCore::IntRect finalRect)
     BeganExitFullScreen(WebCore::IntRect initialRect, WebCore::IntRect finalRect)

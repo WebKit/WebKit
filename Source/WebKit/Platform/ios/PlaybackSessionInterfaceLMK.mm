@@ -34,8 +34,10 @@
 #import <WebCore/NowPlayingInfo.h>
 #import <WebCore/PlaybackSessionModel.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/SpatialVideoMetadata.h>
 #import <WebCore/TimeRanges.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakPtr.h>
 
 #import "WebKitSwiftSoftLink.h"
@@ -110,6 +112,15 @@
 
     model->seekToTime(destination);
     return destination;
+}
+
+- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player seekThumbnailToTime:(NSTimeInterval)time
+{
+    // FIXME: The intent of this method is to seek the contents of LinearMediaPlayer's thumbnailLayer,
+    // which LMPlayableViewController displays in a popover when scrubbing. Since we don't currently
+    // provide a thumbnail layer, fast seek the main content instead.
+    if (auto model = _model.get())
+        model->fastSeek(time);
 }
 
 - (void)linearMediaPlayerBeginScrubbing:(WKSLinearMediaPlayer *)player
@@ -207,6 +218,8 @@
 @end
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionInterfaceLMK);
 
 Ref<PlaybackSessionInterfaceLMK> PlaybackSessionInterfaceLMK::create(WebCore::PlaybackSessionModel& model)
 {
@@ -330,6 +343,35 @@ void PlaybackSessionInterfaceLMK::mutedChanged(bool muted)
 void PlaybackSessionInterfaceLMK::volumeChanged(double volume)
 {
     [m_player setVolume:volume];
+}
+
+void PlaybackSessionInterfaceLMK::supportsLinearMediaPlayerChanged(bool supportsLinearMediaPlayer)
+{
+    if (supportsLinearMediaPlayer)
+        return;
+
+    switch ([m_player presentationState]) {
+    case WKSLinearMediaPresentationStateEnteringFullscreen:
+    case WKSLinearMediaPresentationStateFullscreen:
+        // If the player is in (or is entering) fullscreen but the current media engine does not
+        // support LinearMediaPlayer, exit fullscreen.
+        if (m_playbackSessionModel)
+            m_playbackSessionModel->exitFullscreen();
+        break;
+    case WKSLinearMediaPresentationStateInline:
+    case WKSLinearMediaPresentationStateExitingFullscreen:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+void PlaybackSessionInterfaceLMK::spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>& metadata)
+{
+    RetainPtr<WKSLinearMediaSpatialVideoMetadata> spatialVideoMetadata;
+    if (metadata && spatialVideoEnabled())
+        spatialVideoMetadata = [allocWKSLinearMediaSpatialVideoMetadataInstance() initWithWidth:metadata->size.width() height:metadata->size.height() horizontalFOVDegrees:metadata->horizontalFOVDegrees baseline:metadata->baseline disparityAdjustment:metadata->disparityAdjustment];
+    [m_player setSpatialVideoMetadata:spatialVideoMetadata.get()];
 }
 
 void PlaybackSessionInterfaceLMK::startObservingNowPlayingMetadata()

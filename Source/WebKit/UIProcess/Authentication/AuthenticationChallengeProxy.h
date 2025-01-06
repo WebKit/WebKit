@@ -54,10 +54,13 @@ public:
         return adoptRef(*new AuthenticationChallengeProxy(WTFMove(authenticationChallenge), challengeID, WTFMove(connection), WTFMove(secKeyProxyStore)));
     }
 
+    virtual ~AuthenticationChallengeProxy();
+
     WebCredential* proposedCredential() const;
     WebProtectionSpace* protectionSpace() const;
 
     AuthenticationDecisionListener& listener() const { return m_listener.get(); }
+    Ref<AuthenticationDecisionListener> protectedListener() const;
     const WebCore::AuthenticationChallenge& core() { return m_coreAuthenticationChallenge; }
 
 private:

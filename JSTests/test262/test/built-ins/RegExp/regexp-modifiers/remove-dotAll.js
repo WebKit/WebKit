@@ -66,3 +66,15 @@ assert(!re2.test("\u2028"), "Pattern character '.' should not match '\\u2028' in
 assert(!re2.test("\u2029"), "Pattern character '.' should not match '\\u2029' in modified group");
 assert(re2.test("\uD800"), "Pattern character '.' should match non-line terminators in modified group");
 assert(re2.test("\uDFFF"), "Pattern character '.' should match non-line terminators in modified group");
+
+var re3 = /a.(?-s:b.b).c/s;
+assert(re3.test("a,b,b,c"), "Pattern character '.' should match non-line terminators in modified group");
+assert(re3.test("a\nb,b\nc"), "Pattern character '.' should match line terminators outside modified group");
+assert(!re3.test("a,b\nb,c"), "Pattern character '.' should not match line terminators in modified group");
+assert(!re3.test("a\nb\nb\nc"), "Pattern character '.' should not match line terminators in modified group");
+
+var re4 = new RegExp("a.(?-s:b.b).c", "s");
+assert(re4.test("a,b,b,c"), "Pattern character '.' should match non-line terminators in modified group");
+assert(re4.test("a\nb,b\nc"), "Pattern character '.' should match line terminators outside modified group");
+assert(!re4.test("a,b\nb,c"), "Pattern character '.' should not match line terminators in modified group");
+assert(!re4.test("a\nb\nb\nc"), "Pattern character '.' should not match line terminators in modified group");

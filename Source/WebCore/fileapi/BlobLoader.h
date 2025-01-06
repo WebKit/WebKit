@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "ExceptionCode.h"
 #include "FileReaderLoader.h"
 #include "FileReaderLoaderClient.h"
+#include "Logging.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/CompletionHandler.h>
@@ -37,16 +38,18 @@
 namespace WebCore {
 
 class BlobLoader final : public FileReaderLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BlobLoader);
 public:
-    explicit BlobLoader(CompletionHandler<void(BlobLoader&)>&&);
+    // CompleteCallback is always called except if BlobLoader is cancelled/deallocated.
+    using CompleteCallback = Function<void(BlobLoader&)>;
+    explicit BlobLoader(CompleteCallback&&);
     ~BlobLoader();
 
     void start(Blob&, ScriptExecutionContext*, FileReaderLoader::ReadType);
     void start(const URL&, ScriptExecutionContext*, FileReaderLoader::ReadType);
 
     void cancel();
-    bool isLoading() const { return m_loader && m_completionHandler; }
+    bool isLoading() const { return m_loader && m_completeCallback; }
     String stringResult() const { return m_loader ? m_loader->stringResult() : String(); }
     RefPtr<JSC::ArrayBuffer> arrayBufferResult() const { return m_loader ? m_loader->arrayBufferResult() : nullptr; }
     std::optional<ExceptionCode> errorCode() const { return m_loader ? m_loader->errorCode() : std::nullopt; }
@@ -60,11 +63,11 @@ private:
     void complete();
 
     std::unique_ptr<FileReaderLoader> m_loader;
-    CompletionHandler<void(BlobLoader&)> m_completionHandler;
+    CompleteCallback m_completeCallback;
 };
 
-inline BlobLoader::BlobLoader(CompletionHandler<void(BlobLoader&)>&& completionHandler)
-    : m_completionHandler(WTFMove(completionHandler))
+inline BlobLoader::BlobLoader(CompleteCallback&& completeCallback)
+    : m_completeCallback(WTFMove(completeCallback))
 {
 }
 
@@ -76,11 +79,9 @@ inline BlobLoader::~BlobLoader()
 
 inline void BlobLoader::cancel()
 {
+    RELEASE_LOG_INFO_IF(m_completeCallback, Loading, "Cancelling ongoing blob loader");
     if (m_loader)
         m_loader->cancel();
-
-    if (m_completionHandler)
-        m_completionHandler(*this);
 }
 
 inline void BlobLoader::start(Blob& blob, ScriptExecutionContext* context, FileReaderLoader::ReadType readType)
@@ -99,12 +100,12 @@ inline void BlobLoader::start(const URL& blobURL, ScriptExecutionContext* contex
 
 inline void BlobLoader::didFinishLoading()
 {
-    m_completionHandler(*this);
+    std::exchange(m_completeCallback, { })(*this);
 }
 
 inline void BlobLoader::didFail(ExceptionCode)
 {
-    m_completionHandler(*this);
+    std::exchange(m_completeCallback, { })(*this);
 }
 
 } // namespace WebCore

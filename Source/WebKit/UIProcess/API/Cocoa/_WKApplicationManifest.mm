@@ -267,6 +267,9 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     String rawJSON = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"raw_json"];
+    NSInteger dir = [aDecoder decodeIntegerForKey:@"dir"];
+    // FIXME: <https://webkit.org/b/278619> Remove this assert after further manifest IPC hardening.
+    RELEASE_ASSERT(dir >= 0 && dir <= 2);
     String name = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"name"];
     String shortName = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"short_name"];
     String description = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"description"];
@@ -288,6 +291,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 
     WebCore::ApplicationManifest coreApplicationManifest {
         WTFMove(rawJSON),
+        static_cast<WebCore::ApplicationManifest::Direction>(dir),
         WTFMove(name),
         WTFMove(shortName),
         WTFMove(description),
@@ -323,6 +327,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeObject:self.rawJSON forKey:@"raw_json"];
+    [aCoder encodeInteger:static_cast<NSInteger>(_applicationManifest->applicationManifest().dir) forKey:@"dir"];
     [aCoder encodeObject:self.name forKey:@"name"];
     [aCoder encodeObject:self.shortName forKey:@"short_name"];
     [aCoder encodeObject:self.applicationDescription forKey:@"description"];
@@ -362,6 +367,22 @@ static NSString *nullableNSString(const WTF::String& string)
 - (NSString *)rawJSON
 {
     return nullableNSString(_applicationManifest->applicationManifest().rawJSON);
+}
+
+- (_WKApplicationManifestDirection)direction
+{
+    using enum WebCore::ApplicationManifest::Direction;
+
+    switch (_applicationManifest->applicationManifest().dir) {
+    case Auto:
+        return _WKApplicationManifestDirectionAuto;
+    case LTR:
+        return _WKApplicationManifestDirectionLTR;
+    case RTL:
+        return _WKApplicationManifestDirectionRTL;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 - (NSString *)name

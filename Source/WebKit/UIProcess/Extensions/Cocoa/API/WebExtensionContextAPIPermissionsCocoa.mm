@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,17 +33,17 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WKWebExtensionContext.h"
+#import "WKWebExtensionControllerDelegatePrivate.h"
+#import "WKWebExtensionControllerInternal.h"
+#import "WKWebExtensionMatchPattern.h"
+#import "WKWebExtensionMatchPatternInternal.h"
+#import "WKWebExtensionPermission.h"
 #import "WKWebViewInternal.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionController.h"
 #import "WebExtensionMatchPattern.h"
-#import "_WKWebExtensionControllerInternal.h"
-#import "_WKWebExtensionMatchPatternInternal.h"
-#import <WebKit/_WKWebExtensionContext.h>
-#import <WebKit/_WKWebExtensionControllerDelegatePrivate.h>
-#import <WebKit/_WKWebExtensionMatchPattern.h>
-#import <WebKit/_WKWebExtensionPermission.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
 

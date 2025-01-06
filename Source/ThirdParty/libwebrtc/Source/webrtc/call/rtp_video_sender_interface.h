@@ -11,18 +11,19 @@
 #ifndef CALL_RTP_VIDEO_SENDER_INTERFACE_H_
 #define CALL_RTP_VIDEO_SENDER_INTERFACE_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/call/bitrate_allocation.h"
 #include "api/fec_controller_override.h"
 #include "api/video/video_layers_allocation.h"
+#include "api/video_codecs/video_encoder.h"
 #include "call/rtp_config.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_sequence_number_map.h"
-#include "modules/video_coding/include/video_codec_interface.h"
 
 namespace webrtc {
 class VideoBitrateAllocation;
@@ -31,12 +32,8 @@ struct FecProtectionParams;
 class RtpVideoSenderInterface : public EncodedImageCallback,
                                 public FecControllerOverride {
  public:
-  // Sets the sending status of the rtp modules and appropriately sets the
-  // RtpVideoSender to active if any rtp modules are active.
-  // A module will only send packet if beeing active.
-  virtual void SetActiveModules(const std::vector<bool>& active_modules) = 0;
-  // Set the sending status of all rtp modules to inactive.
-  virtual void Stop() = 0;
+  // Sets weather or not RTP packets is allowed to be sent on this sender.
+  virtual void SetSending(bool enabled) = 0;
   virtual bool IsActive() = 0;
 
   virtual void OnNetworkAvailability(bool network_available) = 0;

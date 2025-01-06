@@ -1,4 +1,6 @@
 
 
-FAIL Dispose events should fire when entries are removed by a navigation in a different frame assert_equals: expected 0 but got 3
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Dispose events should fire when entries are removed by a navigation in a different frame Test timed out
 

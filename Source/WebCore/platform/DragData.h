@@ -68,7 +68,7 @@ enum class DragApplicationFlags : uint8_t {
 class PasteboardContext;
 
 #if PLATFORM(WIN)
-typedef HashMap<unsigned, Vector<String>> DragDataMap;
+typedef UncheckedKeyHashMap<unsigned, Vector<String>> DragDataMap;
 #endif
 
 class DragData {
@@ -123,6 +123,8 @@ public:
     bool containsURLTypeIdentifier() const;
     bool containsPromise() const;
 #endif
+
+    bool shouldMatchStyleOnDrop() const;
 
     std::optional<PageIdentifier> pageID() const { return m_pageID; }
 

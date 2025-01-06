@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebTransportReceiveStreamSource.h"
 
+#include "JSWebTransportReceiveStream.h"
+
 namespace WebCore {
 
 void WebTransportReceiveStreamSource::doCancel()
@@ -33,11 +35,24 @@ void WebTransportReceiveStreamSource::doCancel()
     m_isCancelled = true;
 }
 
-void WebTransportReceiveStreamSource::receiveIncomingStream()
+void WebTransportReceiveStreamSource::receiveIncomingStream(JSC::JSGlobalObject& globalObject, Ref<WebTransportReceiveStream>&& stream)
 {
     if (m_isCancelled)
         return;
-    // FIXME: Add parameters and implement.
+    auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(&globalObject);
+    Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
+    auto value = toJS(&globalObject, &jsDOMGlobalObject, stream.get());
+    if (!controller().enqueue(value))
+        doCancel();
+}
+
+void WebTransportReceiveStreamSource::receiveBytes(std::span<const uint8_t> bytes, bool)
+{
+    if (m_isCancelled)
+        return;
+    auto arrayBuffer = ArrayBuffer::tryCreate(bytes);
+    if (!controller().enqueue(WTFMove(arrayBuffer)))
+        doCancel();
 }
 
 }

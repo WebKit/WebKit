@@ -31,19 +31,19 @@
 
 namespace WebCore {
 
-std::optional<const char*> hashAlgorithmName(CryptoAlgorithmIdentifier identifier)
+std::optional<ASCIILiteral> hashAlgorithmName(CryptoAlgorithmIdentifier identifier)
 {
     switch (identifier) {
     case CryptoAlgorithmIdentifier::SHA_1:
-        return "sha1";
+        return "sha1"_s;
     case CryptoAlgorithmIdentifier::SHA_224:
-        return "sha224";
+        return "sha224"_s;
     case CryptoAlgorithmIdentifier::SHA_256:
-        return "sha256";
+        return "sha256"_s;
     case CryptoAlgorithmIdentifier::SHA_384:
-        return "sha384";
+        return "sha384"_s;
     case CryptoAlgorithmIdentifier::SHA_512:
-        return "sha512";
+        return "sha512"_s;
     default:
         return std::nullopt;
     }
@@ -155,7 +155,7 @@ std::optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_mpi_t paramMPI, size_t t
     // and copy the MPI data into memory area following the prefix (if any).
     Vector<uint8_t> output(targetLength, 0);
     size_t prefixLength = targetLength - *length;
-    gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, output.data() + prefixLength, targetLength, nullptr, paramMPI);
+    gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, const_cast<uint8_t*>(output.subspan(prefixLength).data()), targetLength, nullptr, paramMPI);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;

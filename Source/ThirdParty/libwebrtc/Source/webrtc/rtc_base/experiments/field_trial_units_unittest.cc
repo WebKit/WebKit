@@ -9,10 +9,10 @@
  */
 #include "rtc_base/experiments/field_trial_units.h"
 
+#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "test/gtest.h"
 
@@ -24,7 +24,7 @@ struct DummyExperiment {
   FieldTrialParameter<TimeDelta> period =
       FieldTrialParameter<TimeDelta>("p", TimeDelta::Millis(100));
   FieldTrialOptional<DataSize> max_buffer =
-      FieldTrialOptional<DataSize>("b", absl::nullopt);
+      FieldTrialOptional<DataSize>("b", std::nullopt);
 
   explicit DummyExperiment(absl::string_view field_trial) {
     ParseFieldTrial({&target_rate, &max_buffer, &period}, field_trial);

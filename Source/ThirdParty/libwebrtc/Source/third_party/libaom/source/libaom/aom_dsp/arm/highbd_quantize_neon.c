@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2022, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -14,10 +14,11 @@
 #include <string.h>
 
 #include "config/aom_config.h"
+#include "config/aom_dsp_rtcd.h"
 
 #include "aom_dsp/quantize.h"
 
-static INLINE uint32_t sum_abs_coeff(const uint32x4_t a) {
+static inline uint32_t sum_abs_coeff(const uint32x4_t a) {
 #if AOM_ARCH_AARCH64
   return vaddvq_u32(a);
 #else
@@ -27,11 +28,11 @@ static INLINE uint32_t sum_abs_coeff(const uint32x4_t a) {
 #endif
 }
 
-static INLINE uint16x4_t
-quantize_4(const tran_low_t *coeff_ptr, tran_low_t *qcoeff_ptr,
-           tran_low_t *dqcoeff_ptr, int32x4_t v_quant_s32,
-           int32x4_t v_dequant_s32, int32x4_t v_round_s32, int32x4_t v_zbin_s32,
-           int32x4_t v_quant_shift_s32, int log_scale) {
+static inline uint16x4_t quantize_4(
+    const tran_low_t *coeff_ptr, tran_low_t *qcoeff_ptr,
+    tran_low_t *dqcoeff_ptr, int32x4_t v_quant_s32, int32x4_t v_dequant_s32,
+    int32x4_t v_round_s32, int32x4_t v_zbin_s32, int32x4_t v_quant_shift_s32,
+    int log_scale) {
   const int32x4_t v_coeff = vld1q_s32(coeff_ptr);
   const int32x4_t v_coeff_sign =
       vreinterpretq_s32_u32(vcltq_s32(v_coeff, vdupq_n_s32(0)));
@@ -71,7 +72,7 @@ quantize_4(const tran_low_t *coeff_ptr, tran_low_t *qcoeff_ptr,
   return vmovn_u32(nz_qcoeff_mask);
 }
 
-static INLINE int16x8_t get_max_lane_eob(const int16_t *iscan,
+static inline int16x8_t get_max_lane_eob(const int16_t *iscan,
                                          int16x8_t v_eobmax,
                                          uint16x8_t v_mask) {
   const int16x8_t v_iscan = vld1q_s16(&iscan[0]);
@@ -81,7 +82,7 @@ static INLINE int16x8_t get_max_lane_eob(const int16_t *iscan,
 }
 
 #if !CONFIG_REALTIME_ONLY
-static INLINE void get_min_max_lane_eob(const int16_t *iscan,
+static inline void get_min_max_lane_eob(const int16_t *iscan,
                                         int16x8_t *v_eobmin,
                                         int16x8_t *v_eobmax, uint16x8_t v_mask,
                                         intptr_t n_coeffs) {
@@ -98,7 +99,7 @@ static INLINE void get_min_max_lane_eob(const int16_t *iscan,
 }
 #endif  // !CONFIG_REALTIME_ONLY
 
-static INLINE uint16_t get_max_eob(int16x8_t v_eobmax) {
+static inline uint16_t get_max_eob(int16x8_t v_eobmax) {
 #if AOM_ARCH_AARCH64
   return (uint16_t)vmaxvq_s16(v_eobmax);
 #else
@@ -117,7 +118,7 @@ static INLINE uint16_t get_max_eob(int16x8_t v_eobmax) {
 }
 
 #if SKIP_EOB_FACTOR_ADJUST && !CONFIG_REALTIME_ONLY
-static INLINE uint16_t get_min_eob(int16x8_t v_eobmin) {
+static inline uint16_t get_min_eob(int16x8_t v_eobmin) {
 #if AOM_ARCH_AARCH64
   return (uint16_t)vminvq_s16(v_eobmin);
 #else

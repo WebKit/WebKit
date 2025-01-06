@@ -1183,13 +1183,21 @@ TEST_P(DrawBaseInstanceTest, DrawElementsInstancedBaseVertexBaseInstance)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBaseVertexBaseInstanceTest);
 
+#define ANGLE_ALL_BASEVERTEXBASEINTANCE_TEST_PLATFORMS_ES3                                 \
+    ES3_D3D11().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),                  \
+        ES3_OPENGL().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),             \
+        ES3_OPENGLES().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),           \
+        ES3_VULKAN().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),             \
+        ES3_VULKAN_SWIFTSHADER().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions), \
+        ES3_METAL().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions)
+
 ANGLE_INSTANTIATE_TEST_COMBINE_3(
     DrawBaseVertexBaseInstanceTest,
     PrintToStringParamName(),
     testing::Values(BaseVertexOption::NoBaseVertex, BaseVertexOption::UseBaseVertex),
     testing::Values(BaseInstanceOption::NoBaseInstance, BaseInstanceOption::UseBaseInstance),
     testing::Values(BufferDataUsageOption::StaticDraw, BufferDataUsageOption::DynamicDraw),
-    ANGLE_ALL_TEST_PLATFORMS_ES3);
+    ANGLE_ALL_BASEVERTEXBASEINTANCE_TEST_PLATFORMS_ES3);
 
 ANGLE_INSTANTIATE_TEST_COMBINE_3(
     DrawBaseInstanceTest,
@@ -1197,6 +1205,6 @@ ANGLE_INSTANTIATE_TEST_COMBINE_3(
     testing::Values(BaseVertexOption::NoBaseVertex, BaseVertexOption::UseBaseVertex),
     testing::Values(BaseInstanceOption::NoBaseInstance, BaseInstanceOption::UseBaseInstance),
     testing::Values(BufferDataUsageOption::StaticDraw, BufferDataUsageOption::DynamicDraw),
-    ANGLE_ALL_TEST_PLATFORMS_ES3);
+    ANGLE_ALL_BASEVERTEXBASEINTANCE_TEST_PLATFORMS_ES3);
 
 }  // namespace

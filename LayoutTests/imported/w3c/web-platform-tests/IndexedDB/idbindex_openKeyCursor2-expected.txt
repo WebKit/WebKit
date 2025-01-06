@@ -1,3 +1,0 @@
-
-PASS IDBIndex.openKeyCursor() - throw InvalidStateError when the index is deleted
-

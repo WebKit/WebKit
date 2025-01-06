@@ -29,7 +29,7 @@
 #include "ResizeObservation.h"
 #include "ResizeObserverCallback.h"
 #include <wtf/Lock.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
@@ -52,8 +52,8 @@ struct ResizeObserverData {
 using NativeResizeObserverCallback = void (*)(const Vector<Ref<ResizeObserverEntry>>&, ResizeObserver&);
 using JSOrNativeResizeObserverCallback = std::variant<RefPtr<ResizeObserverCallback>, NativeResizeObserverCallback>;
 
-class ResizeObserver : public RefCounted<ResizeObserver>, public CanMakeWeakPtr<ResizeObserver> {
-    WTF_MAKE_ISO_ALLOCATED(ResizeObserver);
+class ResizeObserver : public RefCountedAndCanMakeWeakPtr<ResizeObserver> {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ResizeObserver);
 public:
     static Ref<ResizeObserver> create(Document&, Ref<ResizeObserverCallback>&&);
     static Ref<ResizeObserver> createNativeObserver(Document&, NativeResizeObserverCallback&&);

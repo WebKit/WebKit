@@ -30,6 +30,7 @@
 
 #import "CoreIPCNSCFObject.h"
 #import "CoreIPCNSURLCredential.h"
+#import "CoreIPCNSURLRequest.h"
 #import "CoreIPCTypes.h"
 #import "CoreTextHelpers.h"
 #import "LegacyGlobalSettings.h"
@@ -40,10 +41,10 @@
 #import <CoreText/CTFontDescriptor.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/FontCocoa.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashSet.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cf/CFURLExtras.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -201,7 +202,7 @@
     }
 
     if (!m_wrappedURL)
-        m_wrappedURL = [NSURL URLWithString:@""];
+        m_wrappedURL = adoptNS([[NSURL alloc] initWithString:@""]);
 
     return self;
 }
@@ -453,10 +454,9 @@ template<> void encodeObjectDirectly<NSObject<NSSecureCoding>>(Encoder& encoder,
     encoder << (__bridge CFDataRef)[archiver encodedData];
 }
 
-static bool shouldEnableStrictMode(Decoder& decoder, const HashSet<Class>& allowedClasses)
+static bool shouldEnableStrictMode(Decoder& decoder, const AllowedClassHashSet& allowedClasses)
 {
-#if HAVE(STRICT_DECODABLE_NSTEXTTABLE) \
-    && HAVE(STRICT_DECODABLE_PKCONTACT) \
+#if HAVE(STRICT_DECODABLE_PKCONTACT) \
     && HAVE(STRICT_DECODABLE_CNCONTACT) \
     && (HAVE(STRICT_DECODABLE_PKPAYMENTPASS) || !HAVE(PKPAYMENTPASS))
     // Shortcut the following unnecessary Class checks on newer OSes to fix rdar://111926152.
@@ -535,15 +535,6 @@ static constexpr bool haveSecureActionContext = false;
         return haveStrictDecodablePKContact;
 #endif // ENABLE(APPLE_PAY)
 
-    // rdar://107553230 don't reintroduce rdar://108038436
-#if HAVE(STRICT_DECODABLE_NSTEXTTABLE)
-    static constexpr bool haveStrictDecodableNSTextTable = true;
-#else
-    static constexpr bool haveStrictDecodableNSTextTable = false;
-#endif
-    if (allowedClasses.contains(NSParagraphStyle.class))
-        return haveStrictDecodableNSTextTable;
-
     // rdar://107553194, Don't reintroduce rdar://108339450
     if (allowedClasses.contains(NSMutableURLRequest.class))
         return true;
@@ -561,8 +552,8 @@ static constexpr bool haveSecureActionContext = false;
     // If you want to serialize something new, extract its contents into a
     // struct and use a *.serialization.in file to serialize its contents.
     RetainPtr<NSMutableArray> nsAllowedClasses = adoptNS([[NSMutableArray alloc] initWithCapacity:allowedClasses.size()]);
-    for (auto classPtr : allowedClasses)
-        [nsAllowedClasses addObject:classPtr];
+    for (auto& classPtr : allowedClasses)
+        [nsAllowedClasses addObject:classPtr.get()];
     RELEASE_LOG_FAULT(SecureCoding, "Strict mode check found unknown classes %@", nsAllowedClasses.get());
     ASSERT_NOT_REACHED();
     return true;
@@ -591,10 +582,8 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
         allowedClasses.add(NSMutableArray.class);
         allowedClasses.add(NSMutableDictionary.class);
         allowedClasses.add(NSMutableData.class);
+        allowedClasses.add(NSMutableURLRequest.class);
     }
-
-    if (allowedClasses.contains(NSParagraphStyle.class))
-        allowedClasses.add(NSMutableParagraphStyle.class);
 
 #if USE(PASSKIT)
     // FIXME: Remove these exceptions for PKSecureElementPass
@@ -612,8 +601,8 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
 #endif
 
     auto allowedClassSet = adoptNS([[NSMutableSet alloc] initWithCapacity:allowedClasses.size()]);
-    for (auto allowedClass : allowedClasses)
-        [allowedClassSet addObject:allowedClass];
+    for (auto& allowedClass : allowedClasses)
+        [allowedClassSet addObject:allowedClass.get()];
 
     if (shouldEnableStrictMode(decoder, allowedClasses))
         [unarchiver _enableStrictSecureDecodingMode];
@@ -632,57 +621,6 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
     }
 }
 
-// This method helps us bridge the gap between classic NSSecureCoding types and new WebKit coding types
-// as we get more and more support in various classes.
-// The eventual goal is to remove the CoreIPCSecureCoding wrapper altogether, but for now this runtime
-// fork in behavior is necessary.
-//
-// FIXME: This isn't needed on all OSes. Some of them we can compile it so we just release assert that
-// conformsToWebKitSecureCoding is true and only use a wrapper.
-template <typename WebKitSecureCodingWrapper, typename ObjCType> std::optional<std::variant<WebKit::CoreIPCSecureCoding, WebKitSecureCodingWrapper>> secureCodingOrWrapper(ObjCType object)
-{
-    if (!object)
-        return std::nullopt;
-    if (WebKit::CoreIPCSecureCoding::conformsToWebKitSecureCoding(object))
-        return WebKitSecureCodingWrapper(object);
-    if (WebKit::CoreIPCSecureCoding::conformsToSecureCoding(object))
-        return WebKit::CoreIPCSecureCoding(object);
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-template<typename WebKitSecureCodingWrapper> std::optional<RetainPtr<id>> decodeSecureCodingOrWrapper(IPC::Decoder& decoder)
-{
-    auto result = decoder.decode<std::optional<std::variant<WebKit::CoreIPCSecureCoding, WebKitSecureCodingWrapper>>>();
-    if (!result)
-        return std::nullopt;
-    if (!*result)
-        return nullptr;
-    return WTF::switchOn(**result, [] (const auto& wrapper) {
-        return wrapper.toID();
-    });
-}
-
-#if ENABLE(DATA_DETECTION)
-template<> void encodeObjectDirectly<DDScannerResult>(IPC::Encoder& encoder, DDScannerResult *instance)
-{
-    encoder << secureCodingOrWrapper<WebKit::CoreIPCDDScannerResult>(instance);
-}
-template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<DDScannerResult>(IPC::Decoder& decoder)
-{
-    return decodeSecureCodingOrWrapper<WebKit::CoreIPCDDScannerResult>(decoder);
-}
-#if PLATFORM(MAC)
-template<> void encodeObjectDirectly<WKDDActionContext>(IPC::Encoder& encoder, WKDDActionContext *instance)
-{
-    encoder << secureCodingOrWrapper<WebKit::CoreIPCDDActionContext>(instance);
-}
-template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<WKDDActionContext>(IPC::Decoder& decoder)
-{
-    return decodeSecureCodingOrWrapper<WebKit::CoreIPCDDActionContext>(decoder);
-}
-#endif
-#endif
-
 #define ENCODE_AS_SECURE_CODING(c) \
 template<> void encodeObjectDirectly<c>(IPC::Encoder& encoder, c *instance) \
 { \
@@ -696,10 +634,19 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
     return *result ? (*result)->toID() : nullptr; \
 }
 
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
 ENCODE_AS_SECURE_CODING(NSURLRequest);
-ENCODE_AS_SECURE_CODING(NSParagraphStyle);
+#endif
+
 #if USE(PASSKIT)
 ENCODE_AS_SECURE_CODING(PKSecureElementPass);
+#endif
+
+#if ENABLE(DATA_DETECTION) && !HAVE(WK_SECURE_CODING_DATA_DETECTORS)
+ENCODE_AS_SECURE_CODING(DDScannerResult);
+#if PLATFORM(MAC)
+ENCODE_AS_SECURE_CODING(WKDDActionContext);
+#endif
 #endif
 
 #undef ENCODE_AS_SECURE_CODING

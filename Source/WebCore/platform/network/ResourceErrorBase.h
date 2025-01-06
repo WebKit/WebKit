@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,7 +46,7 @@ enum class ResourceErrorBaseType : uint8_t {
 };
 
 class ResourceErrorBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ResourceErrorBase, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT ResourceError isolatedCopy() const;
 

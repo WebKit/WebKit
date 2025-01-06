@@ -1,6 +1,0 @@
-If the page does not trigger a crash the test passed.
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

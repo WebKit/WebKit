@@ -29,8 +29,11 @@
 #include "FEImage.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEImageSoftwareApplier);
 
 bool FEImageSoftwareApplier::apply(const Filter& filter, const FilterImageVector&, FilterImage& result) const
 {

@@ -30,10 +30,11 @@
 #include "MessageSender.h"
 #include "SandboxExtension.h"
 #include <WebCore/ProcessIdentifier.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/UserActivity.h>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -56,9 +57,10 @@ struct AuxiliaryProcessCreationParameters;
 
 class AuxiliaryProcess : public IPC::Connection::Client, public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcess);
-
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AuxiliaryProcess);
 public:
-    void initialize(const AuxiliaryProcessInitializationParameters&);
+    void initialize(AuxiliaryProcessInitializationParameters&&);
 
     // disable and enable termination of the process. when disableTermination is called, the
     // process won't terminate unless a corresponding enableTermination call is made.
@@ -109,7 +111,6 @@ public:
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
     virtual void preferenceDidUpdate(const String& domain, const String& key, const std::optional<String>& encodedValue);
-    void preferencesDidUpdate(HashMap<String, std::optional<String>> domainlessPreferences, HashMap<std::pair<String, String>, std::optional<String>> preferences);
 #endif
     static void setNotifyOptions();
 
@@ -126,6 +127,7 @@ protected:
     virtual void terminate();
 
     virtual void stopRunLoop();
+    virtual bool filterUnhandledMessage(IPC::Connection&, IPC::Decoder&);
 
 #if USE(OS_STATE)
     void registerWithStateDumper(ASCIILiteral title);
@@ -141,6 +143,9 @@ protected:
 #endif
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
+    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
 #if OS(LINUX)
     void didReceiveMemoryPressureEvent(bool isCritical);
@@ -181,7 +186,7 @@ private:
     uint64_t messageSenderDestinationID() const override;
 
     // IPC::Connection::Client.
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) final;
 
     void shutDown();
 
@@ -206,10 +211,7 @@ struct AuxiliaryProcessInitializationParameters {
     std::optional<WebCore::ProcessIdentifier> processIdentifier;
     IPC::Connection::Identifier connectionIdentifier;
     HashMap<String, String> extraInitializationData;
-    WebCore::AuxiliaryProcessType processType;
-#if PLATFORM(COCOA)
-    SDKAlignedBehaviors clientSDKAlignedBehaviors;
-#endif
+    WTF::AuxiliaryProcessType processType;
 };
 
 } // namespace WebKit

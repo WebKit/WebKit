@@ -35,6 +35,10 @@
 #include "FontFamilySpecificationNull.h"
 #endif
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 #if PLATFORM(COCOA)
@@ -126,7 +130,7 @@ public:
     static std::optional<FontSelectionValue> initialItalic() { return std::nullopt; }
     static FontStyleAxis initialFontStyleAxis() { return FontStyleAxis::slnt; }
     static FontSelectionValue initialWeight() { return normalWeightValue(); }
-    static FontSelectionValue initialStretch() { return normalStretchValue(); }
+    static FontSelectionValue initialWidth() { return normalWidthValue(); }
     static FontSmallCaps initialSmallCaps() { return FontSmallCaps::Off; }
     static Kerning initialKerning() { return Kerning::Auto; }
     static FontSmoothingMode initialFontSmoothing() { return FontSmoothingMode::AutoSmoothing; }
@@ -173,5 +177,7 @@ inline bool FontCascadeDescription::operator==(const FontCascadeDescription& oth
         && m_fontSmoothing == other.m_fontSmoothing
         && m_isSpecifiedFont == other.m_isSpecifiedFont;
 }
+
+WTF::TextStream& operator<<(WTF::TextStream&, const FontCascadeDescription&);
 
 }

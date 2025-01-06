@@ -5,6 +5,10 @@ Test form interactions (reset / submit):
 
 
 
+
+
 FAIL :user-valid selector should respond to user action assert_true: Typed a valid email, :user-valid now matches expected true got false
 PASS :user-valid selector properly interacts with submit & reset buttons
+PASS Checkboxes should match :user-valid after the user clicks on it.
+FAIL Date inputs should match :user-valid after the user types a value into it. assert_not_equals: Pressing tab twice after typing in the date should have blurred the input. got disallowed value Element node <input type="date" id="optional-date"></input>
 

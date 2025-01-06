@@ -52,7 +52,7 @@ TEST(WebKit, EnumerateDevices)
     auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     WKPageUIClientV6 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
+    zeroBytes(uiClient);
     uiClient.base.version = 6;
     uiClient.checkUserMediaPermissionForOrigin = checkUserMediaPermissionCallback;
 

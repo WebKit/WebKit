@@ -24,16 +24,22 @@
 #include "AffineTransform.h"
 #include "RenderSVGBlock.h"
 #include "SVGBoundingBoxComputation.h"
+#include "SVGTextChunk.h"
 #include "SVGTextLayoutAttributesBuilder.h"
 
 namespace WebCore {
 
+namespace InlineIterator {
+class InlineBoxIterator;
+}
+
 class RenderSVGInlineText;
+class SVGRootInlineBox;
 class SVGTextElement;
-class RenderSVGInlineText;
+class SVGTextLayoutEngine;
 
 class RenderSVGText final : public RenderSVGBlock {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGText);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGText);
 public:
     RenderSVGText(SVGTextElement&, RenderStyle&&);
@@ -69,13 +75,18 @@ public:
 
     void updatePositionAndOverflow(const FloatRect&);
 
+    SVGRootInlineBox* legacyRootBox() const;
+
 private:
     void graphicsElement() const = delete;
 
     ASCIILiteral renderName() const override { return "RenderSVGText"_s; }
 
     void paint(PaintInfo&, const LayoutPoint&) override;
+    void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
+
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+    bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const final;
     VisiblePosition positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
@@ -88,6 +99,12 @@ private:
     }
 
     void layout() override;
+
+    void computePerCharacterLayoutInformation();
+    void layoutCharactersInTextBoxes(const InlineIterator::InlineBoxIterator&, SVGTextLayoutEngine&);
+    FloatRect layoutChildBoxes(LegacyInlineFlowBox*, SVGTextFragmentMap&);
+    void layoutRootBox(const FloatRect&);
+    void reorderValueListsToLogicalOrder();
 
     void willBeDestroyed() override;
 
@@ -105,6 +122,7 @@ private:
     bool m_needsPositioningValuesUpdate : 1 { false };
     bool m_needsTransformUpdate : 1 { true }; // FIXME: [LBSE] Only needed for legacy SVG engine.
     bool m_needsTextMetricsUpdate : 1 { false };
+    bool m_hasPerformedLayout : 1 { false }; // Needed to distinguish between when we perform a full pass of layout and everHadLayout (which can be set be content visibility for skipped content).
     AffineTransform m_localTransform; // FIXME: [LBSE] Only needed for legacy SVG engine.
     SVGTextLayoutAttributesBuilder m_layoutAttributesBuilder;
     Vector<SVGTextLayoutAttributes*> m_layoutAttributes;

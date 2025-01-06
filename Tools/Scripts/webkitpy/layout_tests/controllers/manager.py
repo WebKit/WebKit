@@ -754,14 +754,33 @@ class Manager(object):
 
     def _print_expectation_line_for_test(self, format_string, test, device_type):
         test_path = test.test_path
-        line = self._expectations[device_type].model().get_expectation_line(test_path)
-        print(format_string.format(test_path,
-                                   line.expected_behavior,
-                                   self._expectations[device_type].readable_filename_and_line_number(line),
-                                   line.original_string or ''))
+        main_line = self._expectations[device_type].model().get_expectation_line(test_path)
+        if not self._options.verbose:
+            print(format_string.format(test_path,
+                                       "",
+                                       main_line.expected_behavior,
+                                       self._expectations[device_type].readable_filename_and_line_number(main_line),
+                                       main_line.original_string or ''))
+        else:
+            lines = self._expectations[device_type].model().get_expectation_lines(test_path)
+            before_main_line = True
+            decision = ""
+            for line in lines:
+                if line == main_line:
+                    decision = "-> "
+                    before_main_line = False
+                elif before_main_line:
+                    decision = "v  "
+                else:
+                    decision = "^  "
+                print(format_string.format(test_path,
+                                           decision,
+                                           line.expected_behavior,
+                                           self._expectations[device_type].readable_filename_and_line_number(line),
+                                           line.original_string or ''))
 
     def _print_expectations_for_subset(self, device_type, test_col_width, tests_to_run, tests_to_skip=None):
-        format_string = '{{:{width}}} {{}} {{}} {{}}'.format(width=test_col_width)
+        format_string = '{{:{width}}} {{}}{{}} {{}} {{}}'.format(width=test_col_width)
         if tests_to_skip:
             print('')
             print('Tests to skip ({})'.format(len(tests_to_skip)))

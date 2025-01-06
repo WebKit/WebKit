@@ -34,6 +34,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 OBJC_CLASS AVPlayer;
@@ -48,7 +49,7 @@ namespace WebCore {
 class QueuedVideoOutput
     : public RefCounted<QueuedVideoOutput>
     , public CanMakeWeakPtr<QueuedVideoOutput> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(QueuedVideoOutput);
 public:
     static RefPtr<QueuedVideoOutput> create(AVPlayerItem*, AVPlayer*);
     ~QueuedVideoOutput();

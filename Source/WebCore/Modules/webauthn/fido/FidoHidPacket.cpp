@@ -33,8 +33,14 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <algorithm>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace fido {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FidoHidPacket);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FidoHidInitPacket);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FidoHidContinuationPacket);
 
 FidoHidPacket::FidoHidPacket(Vector<uint8_t>&& data, uint32_t channelId)
     : m_data(WTFMove(data))
@@ -99,7 +105,7 @@ Vector<uint8_t> FidoHidInitPacket::getSerializedData() const
     serialized.appendVector(m_data);
     auto offset = serialized.size();
     serialized.grow(kHidPacketSize);
-    memset(serialized.data() + offset, 0, kHidPacketSize - offset);
+    zeroSpan(serialized.mutableSpan().subspan(offset, kHidPacketSize - offset));
 
     return serialized;
 }
@@ -147,7 +153,7 @@ Vector<uint8_t> FidoHidContinuationPacket::getSerializedData() const
     serialized.appendVector(m_data);
     auto offset = serialized.size();
     serialized.grow(kHidPacketSize);
-    memset(serialized.data() + offset, 0, kHidPacketSize - offset);
+    zeroSpan(serialized.mutableSpan().subspan(offset, kHidPacketSize - offset));
 
     return serialized;
 }

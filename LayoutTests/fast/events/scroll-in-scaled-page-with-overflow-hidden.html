@@ -25,8 +25,8 @@
         // Force a layout.
         document.body.offsetLeft;
 
-        if (window.internals)
-            window.internals.setPageScaleFactor(2, 0, 0);
+        if (window.testRunner)
+            await window.testRunner.setPageScaleFactor(2, 0, 0);
 
         // Note that with CSSOMViewScrollingAPI enabled, the HTML body is potentially scrollable.
         // Hence document.scrollingElement is null and we can't use document.body.scrollTop to

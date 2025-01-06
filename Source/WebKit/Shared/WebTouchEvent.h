@@ -52,16 +52,18 @@ public:
     };
 
     WebPlatformTouchPoint() = default;
-    WebPlatformTouchPoint(unsigned identifier, WebCore::IntPoint location, State phase)
+    WebPlatformTouchPoint(unsigned identifier, WebCore::IntPoint locationInRootView, WebCore::IntPoint locationInViewport, State phase)
         : m_identifier(identifier)
-        , m_location(location)
+        , m_locationInRootView(locationInRootView)
+        , m_locationInViewport(locationInViewport)
         , m_phase(phase)
     {
     }
 #if ENABLE(IOS_TOUCH_EVENTS)
-    WebPlatformTouchPoint(unsigned identifier, WebCore::IntPoint location, State phase, double radiusX, double radiusY, double rotationAngle, double force, double altitudeAngle, double azimuthAngle, TouchType touchType)
+    WebPlatformTouchPoint(unsigned identifier, WebCore::IntPoint locationInRootView, WebCore::IntPoint locationInViewport, State phase, double radiusX, double radiusY, double rotationAngle, double force, double altitudeAngle, double azimuthAngle, TouchType touchType)
         : m_identifier(identifier)
-        , m_location(location)
+        , m_locationInRootView(locationInRootView)
+        , m_locationInViewport(locationInViewport)
         , m_phase(phase)
         , m_radiusX(radiusX)
         , m_radiusY(radiusY)
@@ -75,7 +77,8 @@ public:
 #endif
 
     unsigned identifier() const { return m_identifier; }
-    WebCore::IntPoint location() const { return m_location; }
+    WebCore::IntPoint locationInRootView() const { return m_locationInRootView; }
+    WebCore::IntPoint locationInViewport() const { return m_locationInViewport; }
     State phase() const { return m_phase; }
     State state() const { return phase(); }
 
@@ -99,7 +102,8 @@ public:
 
 private:
     unsigned m_identifier { 0 };
-    WebCore::IntPoint m_location;
+    WebCore::IntPoint m_locationInRootView;
+    WebCore::IntPoint m_locationInViewport;
     State m_phase { State::Released };
 #if ENABLE(IOS_TOUCH_EVENTS)
     double m_radiusX { 0 };
@@ -114,9 +118,11 @@ private:
 
 class WebTouchEvent : public WebEvent {
 public:
-    WebTouchEvent(WebEvent&& event, const Vector<WebPlatformTouchPoint>& touchPoints, WebCore::IntPoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation, bool canPreventNativeGestures = true)
+    WebTouchEvent(WebEvent&& event, const Vector<WebPlatformTouchPoint>& touchPoints, const Vector<WebTouchEvent>& coalescedEvents, const Vector<WebTouchEvent>& predictedEvents, WebCore::IntPoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation, bool canPreventNativeGestures = true)
         : WebEvent(WTFMove(event))
         , m_touchPoints(touchPoints)
+        , m_coalescedEvents(coalescedEvents)
+        , m_predictedEvents(predictedEvents)
         , m_position(position)
         , m_canPreventNativeGestures(canPreventNativeGestures)
         , m_isPotentialTap(isPotentialTap)
@@ -128,6 +134,12 @@ public:
     }
 
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
+
+    const Vector<WebTouchEvent>& coalescedEvents() const { return m_coalescedEvents; }
+    void setCoalescedEvents(const Vector<WebTouchEvent>& coalescedEvents) { m_coalescedEvents = coalescedEvents; }
+
+    const Vector<WebTouchEvent>& predictedEvents() const { return m_predictedEvents; }
+    void setPredictedEvents(const Vector<WebTouchEvent>& predictedEvents) { m_predictedEvents = predictedEvents; }
 
     WebCore::IntPoint position() const { return m_position; }
     void setPosition(WebCore::IntPoint position) { m_position = position; }
@@ -145,7 +157,9 @@ public:
     
 private:
     Vector<WebPlatformTouchPoint> m_touchPoints;
-    
+    Vector<WebTouchEvent> m_coalescedEvents;
+    Vector<WebTouchEvent> m_predictedEvents;
+
     WebCore::IntPoint m_position;
     bool m_canPreventNativeGestures { false };
     bool m_isPotentialTap { false };
@@ -196,9 +210,13 @@ private:
 
 class WebTouchEvent : public WebEvent {
 public:
-    WebTouchEvent(WebEvent&&, Vector<WebPlatformTouchPoint>&&);
+    WebTouchEvent(WebEvent&&, Vector<WebPlatformTouchPoint>&&, Vector<WebTouchEvent>&&, Vector<WebTouchEvent>&&);
 
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
+
+    const Vector<WebTouchEvent>& coalescedEvents() const { return m_coalescedEvents; }
+
+    const Vector<WebTouchEvent>& predictedEvents() const { return m_predictedEvents; }
 
     bool allTouchPointsAreReleased() const;
 
@@ -206,6 +224,8 @@ private:
     static bool isTouchEventType(WebEventType);
 
     Vector<WebPlatformTouchPoint> m_touchPoints;
+    Vector<WebTouchEvent> m_coalescedEvents;
+    Vector<WebTouchEvent> m_predictedEvents;
 };
 
 #endif // PLATFORM(IOS_FAMILY)

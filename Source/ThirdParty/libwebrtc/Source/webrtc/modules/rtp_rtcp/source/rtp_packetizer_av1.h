@@ -27,7 +27,8 @@ class RtpPacketizerAv1 : public RtpPacketizer {
   RtpPacketizerAv1(rtc::ArrayView<const uint8_t> payload,
                    PayloadSizeLimits limits,
                    VideoFrameType frame_type,
-                   bool is_last_frame_in_picture);
+                   bool is_last_frame_in_picture,
+                   bool even_distribution);
   ~RtpPacketizerAv1() override = default;
 
   size_t NumPackets() const override { return packets_.size() - packet_index_; }
@@ -57,8 +58,13 @@ class RtpPacketizerAv1 : public RtpPacketizer {
   // Returns the number of additional bytes needed to store the previous OBU
   // element if an additonal OBU element is added to the packet.
   static int AdditionalBytesForPreviousObuElement(const Packet& packet);
+  // Packetize and try to distribute the payload evenly across packets.
+  static std::vector<Packet> PacketizeAboutEqually(
+      rtc::ArrayView<const Obu> obus,
+      PayloadSizeLimits limits);
   static std::vector<Packet> Packetize(rtc::ArrayView<const Obu> obus,
                                        PayloadSizeLimits limits);
+
   uint8_t AggregationHeader() const;
 
   const VideoFrameType frame_type_;

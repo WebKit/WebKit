@@ -33,11 +33,13 @@
 
 namespace JSC {
 
+#define CODEBLOCK_MAGIC 0xc0deb10c
+
 template<typename Functor>
 void CodeBlock::forEachValueProfile(const Functor& func)
 {
-    for (unsigned i = 0; i < numberOfArgumentValueProfiles(); ++i)
-        func(valueProfileForArgument(i), true);
+    for (auto& profile : argumentValueProfiles())
+        func(profile, true);
 
     if (m_metadata) {
         auto wrapper = [&] (ValueProfile& profile) {
@@ -117,6 +119,13 @@ ALWAYS_INLINE StringJumpTable& CodeBlock::dfgStringSwitchJumpTable(int tableInde
 {
     ASSERT(jitType() == JITType::DFGJIT);
     return static_cast<DFG::JITCode*>(m_jitCode.get())->m_stringSwitchJumpTables[tableIndex];
+}
+#endif
+
+#if ASSERT_ENABLED
+ALWAYS_INLINE bool CodeBlock::wasDestructed()
+{
+    return m_magic != CODEBLOCK_MAGIC;
 }
 #endif
 

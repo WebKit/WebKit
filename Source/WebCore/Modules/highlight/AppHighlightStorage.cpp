@@ -44,6 +44,7 @@
 #include "StaticRange.h"
 #include "TextIndicator.h"
 #include "TextIterator.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 
 namespace WebCore {
@@ -216,12 +217,24 @@ static AppHighlightRangeData createAppHighlightRangeData(const StaticRange& rang
     };
 }
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AppHighlightStorage);
+
 AppHighlightStorage::AppHighlightStorage(Document& document)
     : m_document(document)
 {
 }
 
 AppHighlightStorage::~AppHighlightStorage() = default;
+
+bool AppHighlightStorage::shouldRestoreHighlights(MonotonicTime timestamp)
+{
+    static constexpr auto highlightRestorationCheckDelay = 1_s;
+    if (timestamp - m_timeAtLastRangeSearch < highlightRestorationCheckDelay)
+        return false;
+
+    m_timeAtLastRangeSearch = timestamp;
+    return true;
+}
 
 void AppHighlightStorage::storeAppHighlight(Ref<StaticRange>&& range, CompletionHandler<void(AppHighlight&&)>&& completionHandler)
 {

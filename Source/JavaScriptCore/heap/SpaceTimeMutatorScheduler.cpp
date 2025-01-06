@@ -61,9 +61,7 @@ SpaceTimeMutatorScheduler::SpaceTimeMutatorScheduler(JSC::Heap& heap)
 {
 }
 
-SpaceTimeMutatorScheduler::~SpaceTimeMutatorScheduler()
-{
-}
+SpaceTimeMutatorScheduler::~SpaceTimeMutatorScheduler() = default;
 
 MutatorScheduler::State SpaceTimeMutatorScheduler::state() const
 {
@@ -76,7 +74,7 @@ void SpaceTimeMutatorScheduler::beginCollection()
     m_state = Stopped;
     m_startTime = MonotonicTime::now();
 
-    m_bytesAllocatedThisCycleAtTheBeginning = m_heap.m_bytesAllocatedThisCycle;
+    m_bytesAllocatedThisCycleAtTheBeginning = bytesAllocatedThisCycleImpl();
     m_bytesAllocatedThisCycleAtTheEnd = 
         Options::concurrentGCMaxHeadroom() *
         std::max<double>(m_bytesAllocatedThisCycleAtTheBeginning, m_heap.m_maxEdenSize);
@@ -158,7 +156,7 @@ void SpaceTimeMutatorScheduler::endCollection()
 
 double SpaceTimeMutatorScheduler::bytesAllocatedThisCycleImpl()
 {
-    return m_heap.m_bytesAllocatedThisCycle;
+    return m_heap.totalBytesAllocatedThisCycle();
 }
 
 double SpaceTimeMutatorScheduler::bytesSinceBeginningOfCycle(const Snapshot& snapshot)

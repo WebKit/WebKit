@@ -41,7 +41,6 @@ class CSSStyleDeclaration;
 class CookieStore;
 class Crypto;
 class CustomElementRegistry;
-class DOMApplicationCache;
 class DOMSelection;
 class DOMWrapperWorld;
 class Document;
@@ -64,6 +63,7 @@ class NodeList;
 class Page;
 class PageConsoleClient;
 class Performance;
+class PushManager;
 class RequestAnimationFrameCallback;
 class RequestIdleCallback;
 class ScheduledAction;
@@ -96,7 +96,7 @@ enum class NavigationHistoryBehavior : uint8_t;
 using IntDegrees = int32_t;
 
 class DOMWindow : public RefCounted<DOMWindow>, public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(DOMWindow);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DOMWindow);
 public:
     virtual ~DOMWindow();
 
@@ -157,7 +157,6 @@ public:
     ExceptionOr<int> scrollY() const;
     ExceptionOr<HTMLFrameOwnerElement*> frameElement() const;
     ExceptionOr<Navigator&> navigator();
-    ExceptionOr<DOMApplicationCache&> applicationCache();
     ExceptionOr<bool> offscreenBuffering() const;
     ExceptionOr<CookieStore&> cookieStore();
     ExceptionOr<Screen&> screen();
@@ -217,6 +216,10 @@ public:
     ExceptionOr<JSC::JSValue> structuredClone(JSDOMGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& relevantGlobalObject, JSC::JSValue, StructuredSerializeOptions&&);
     ExceptionOr<String> btoa(const String&);
     ExceptionOr<String> atob(const String&);
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    ExceptionOr<PushManager&> pushManager();
+#endif
 
 protected:
     explicit DOMWindow(GlobalWindowIdentifier&&, DOMWindowType);

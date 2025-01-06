@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -17,12 +17,11 @@
 #include <string.h>
 
 #include "aom_dsp/aom_dsp_common.h"
-#include "aom_mem/aom_mem.h"
 
 static const double TINY_NEAR_ZERO = 1.0E-16;
 
 // Solves Ax = b, where x and b are column vectors of size nx1 and A is nxn
-static INLINE int linsolve(int n, double *A, int stride, double *b, double *x) {
+static inline int linsolve(int n, double *A, int stride, double *b, double *x) {
   int i, j, k;
   double c;
   // Forward elimination
@@ -82,7 +81,7 @@ static INLINE int linsolve(int n, double *A, int stride, double *b, double *x) {
 // * a, b are the coefficients of each individual equation,
 // * x is the result vector
 // * and n is the problem size
-static INLINE void least_squares_init(double *mat, double *y, int n) {
+static inline void least_squares_init(double *mat, double *y, int n) {
   memset(mat, 0, n * n * sizeof(double));
   memset(y, 0, n * sizeof(double));
 }
@@ -93,7 +92,7 @@ static AOM_FORCE_INLINE int iroundpf(float x) {
   return (int)(x + 0.5f);
 }
 
-static INLINE void least_squares_accumulate(double *mat, double *y,
+static inline void least_squares_accumulate(double *mat, double *y,
                                             const double *a, double b, int n) {
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
@@ -105,13 +104,13 @@ static INLINE void least_squares_accumulate(double *mat, double *y,
   }
 }
 
-static INLINE int least_squares_solve(double *mat, double *y, double *x,
+static inline int least_squares_solve(double *mat, double *y, double *x,
                                       int n) {
   return linsolve(n, mat, n, y, x);
 }
 
 // Matrix multiply
-static INLINE void multiply_mat(const double *m1, const double *m2, double *res,
+static inline void multiply_mat(const double *m1, const double *m2, double *res,
                                 const int m1_rows, const int inner_dim,
                                 const int m2_cols) {
   double sum;
@@ -127,7 +126,7 @@ static INLINE void multiply_mat(const double *m1, const double *m2, double *res,
   }
 }
 
-static AOM_INLINE float approx_exp(float y) {
+static inline float approx_exp(float y) {
 #define A ((1 << 23) / 0.69314718056f)  // (1 << 23) / ln(2)
 #define B \
   127  // Offset for the exponent according to IEEE floating point standard.

@@ -15,7 +15,7 @@
 #include <string>
 #include <tuple>
 
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "../tools_common.h"
 #include "./vpx_config.h"
 #include "test/codec_factory.h"

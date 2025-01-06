@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -31,7 +31,7 @@ uint64_t av1_wedge_sse_from_residuals_avx2(const int16_t *r1, const int16_t *d,
   uint64_t csse;
 
   const __m256i v_mask_max_w = _mm256_set1_epi16(MAX_MASK_VALUE);
-  const __m256i v_zext_q = yy_set1_64_from_32i(~0);
+  const __m256i v_zext_q = _mm256_set1_epi64x(~0u);
 
   __m256i v_acc0_q = _mm256_setzero_si256();
 

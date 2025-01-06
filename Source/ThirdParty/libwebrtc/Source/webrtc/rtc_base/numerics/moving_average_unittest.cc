@@ -10,6 +10,8 @@
 
 #include "rtc_base/numerics/moving_average.h"
 
+#include <optional>
+
 #include "test/gtest.h"
 
 namespace test {
@@ -17,7 +19,7 @@ namespace test {
 TEST(MovingAverageTest, EmptyAverage) {
   rtc::MovingAverage moving_average(1);
   EXPECT_EQ(0u, moving_average.Size());
-  EXPECT_EQ(absl::nullopt, moving_average.GetAverageRoundedDown());
+  EXPECT_EQ(std::nullopt, moving_average.GetAverageRoundedDown());
 }
 
 // Test single value.

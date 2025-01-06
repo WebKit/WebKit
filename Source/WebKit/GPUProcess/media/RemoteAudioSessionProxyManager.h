@@ -29,17 +29,9 @@
 
 #include <WebCore/AudioSession.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakRef.h>
-
-namespace WebKit {
-class RemoteAudioSessionProxyManager;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteAudioSessionProxyManager> : std::true_type { };
-}
 
 namespace WebKit {
 
@@ -47,11 +39,16 @@ class GPUProcess;
 class RemoteAudioSessionProxy;
 
 class RemoteAudioSessionProxyManager
-    : public WebCore::AudioSessionInterruptionObserver
+    : public RefCounted<RemoteAudioSessionProxyManager>
+    , public WebCore::AudioSessionInterruptionObserver
     , private WebCore::AudioSessionConfigurationChangeObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteAudioSessionProxyManager);
 public:
-    RemoteAudioSessionProxyManager(GPUProcess&);
+    static Ref<RemoteAudioSessionProxyManager> create(GPUProcess& gpuProcess)
+    {
+        return adoptRef(*new RemoteAudioSessionProxyManager(gpuProcess));
+    }
+
     ~RemoteAudioSessionProxyManager();
 
     void addProxy(RemoteAudioSessionProxy&, std::optional<audit_token_t>);
@@ -68,14 +65,16 @@ public:
 
     WebCore::AudioSession& session() { return WebCore::AudioSession::sharedSession(); }
     const WebCore::AudioSession& session() const { return WebCore::AudioSession::sharedSession(); }
+    Ref<WebCore::AudioSession> protectedSession() { return WebCore::AudioSession::sharedSession(); }
+    Ref<const WebCore::AudioSession> protectedSession() const { return WebCore::AudioSession::sharedSession(); }
 
     void updatePresentingProcesses();
 
-    using WebCore::AudioSessionInterruptionObserver::weakPtrFactory;
-    using WebCore::AudioSessionInterruptionObserver::WeakValueType;
-    using WebCore::AudioSessionInterruptionObserver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(WebCore::AudioSessionInterruptionObserver);
 
 private:
+    RemoteAudioSessionProxyManager(GPUProcess&);
+
     void beginAudioSessionInterruption() final;
     void endAudioSessionInterruption(WebCore::AudioSession::MayResume) final;
 

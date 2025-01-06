@@ -105,7 +105,7 @@ void CheckChannelEstimatesWithoutValue(int num_channels,
     SCOPED_TRACE(i);
     EXPECT_EQ(predictor.EstimateClippedLevelStep(i, level, default_step,
                                                  min_mic_level, max_mic_level),
-              absl::nullopt);
+              std::nullopt);
   }
 }
 

@@ -24,10 +24,11 @@
  */
 
 #include "config.h"
-#include "ObjectIdentifier.h"
+#include <wtf/ObjectIdentifier.h>
 
-#include "MainThread.h"
 #include <atomic>
+#include <wtf/MainThread.h>
+#include <wtf/PrintStream.h>
 
 namespace WTF {
 
@@ -38,16 +39,21 @@ uint64_t ObjectIdentifierMainThreadAccessTraits<uint64_t>::generateIdentifierInt
     return ++current;
 }
 
-uint64_t ObjectIdentifierThreadSafeAccessTraits<uint64_t>::generateIdentifierInternal()
-{
-    static std::atomic<uint64_t> current;
-    return ++current;
-}
-
 TextStream& operator<<(TextStream& ts, const ObjectIdentifierGenericBase<uint64_t>& identifier)
 {
     ts << identifier.toRawValue();
     return ts;
+}
+
+void printInternal(PrintStream& out, const ObjectIdentifierGenericBase<uint64_t>& identifier)
+{
+    out.print(identifier.toRawValue());
+}
+
+uint64_t ObjectIdentifierThreadSafeAccessTraits<uint64_t>::generateIdentifierInternal()
+{
+    static std::atomic<uint64_t> current;
+    return ++current;
 }
 
 UUID ObjectIdentifierMainThreadAccessTraits<UUID>::generateIdentifierInternal()
@@ -65,6 +71,11 @@ TextStream& operator<<(TextStream& ts, const ObjectIdentifierGenericBase<UUID>& 
 {
     ts << identifier.toRawValue();
     return ts;
+}
+
+void printInternal(PrintStream& out, const ObjectIdentifierGenericBase<UUID>& identifier)
+{
+    out.print(identifier.toRawValue());
 }
 
 } // namespace WTF

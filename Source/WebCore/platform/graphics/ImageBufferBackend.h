@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #include "PlatformLayer.h"
 #include "RenderingMode.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 #if USE(CAIRO)
@@ -47,6 +48,10 @@
 
 #if HAVE(IOSURFACE)
 #include "IOSurface.h"
+#endif
+
+#if USE(SKIA)
+class GrDirectContext;
 #endif
 
 namespace WTF {
@@ -65,6 +70,7 @@ class Image;
 class NativeImage;
 class PixelBuffer;
 class ProcessIdentity;
+class SharedBuffer;
 
 enum class PreserveResolution : bool {
     No,
@@ -82,7 +88,7 @@ enum class VolatilityState : uint8_t {
 };
 
 class ThreadSafeImageBufferFlusher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ThreadSafeImageBufferFlusher);
     WTF_MAKE_NONCOPYABLE(ThreadSafeImageBufferFlusher);
 public:
     ThreadSafeImageBufferFlusher() = default;
@@ -108,6 +114,7 @@ public:
 
     WEBCORE_EXPORT virtual ~ImageBufferBackend();
 
+    WEBCORE_EXPORT static IntSize calculateSafeBackendSize(const Parameters&);
     WEBCORE_EXPORT static size_t calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
     WEBCORE_EXPORT static AffineTransform calculateBaseTransform(const Parameters&);
 
@@ -124,12 +131,22 @@ public:
     virtual void getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination) = 0;
     virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
 
+    WEBCORE_EXPORT virtual RefPtr<SharedBuffer> sinkIntoPDFDocument();
+
 #if HAVE(IOSURFACE)
     virtual IOSurface* surface() { return nullptr; }
 #endif
 
 #if USE(CAIRO)
     virtual RefPtr<cairo_surface_t> createCairoSurface() { return nullptr; }
+#endif
+
+#if USE(SKIA)
+    virtual void finishAcceleratedRenderingAndCreateFence() { }
+    virtual void waitForAcceleratedRenderingFenceCompletion() { }
+
+    virtual const GrDirectContext* skiaGrContext() const { return nullptr; }
+    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> copyAcceleratedImageBufferBorrowingBackendRenderTarget(const ImageBuffer&) const;
 #endif
 
     virtual bool isInUse() const { return false; }
@@ -154,7 +171,7 @@ public:
 
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() const { return nullptr; }
 
-    const Parameters& parameters() { return m_parameters; }
+    const Parameters& parameters() const { return m_parameters; }
 
     WEBCORE_EXPORT virtual String debugDescription() const = 0;
 
@@ -166,10 +183,10 @@ protected:
     IntSize size() const { return m_parameters.backendSize; };
     float resolutionScale() const { return m_parameters.resolutionScale; }
     const DestinationColorSpace& colorSpace() const { return m_parameters.colorSpace; }
-    PixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
+    ImageBufferPixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
 
-    WEBCORE_EXPORT void getPixelBuffer(const IntRect& srcRect, void* data, PixelBuffer& destination);
-    WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, void* destination);
+    WEBCORE_EXPORT void getPixelBuffer(const IntRect& srcRect, const uint8_t* data, PixelBuffer& destination);
+    WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, uint8_t* destination);
 
     Parameters m_parameters;
 };

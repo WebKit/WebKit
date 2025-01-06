@@ -27,13 +27,13 @@
 #include "LiveNodeListInlines.h"
 #include "NodeRareData.h"
 #include "Quirks.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(NameNodeList);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NameNodeList);
 
 NameNodeList::NameNodeList(ContainerNode& rootNode, const AtomString& name)
     : CachedLiveNodeList(rootNode, NodeListInvalidationType::InvalidateOnNameAttrChange)

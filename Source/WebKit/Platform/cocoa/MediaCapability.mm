@@ -41,6 +41,11 @@ static RetainPtr<BEMediaEnvironment> createMediaEnvironment(const URL& webPageUR
     return adoptNS([[BEMediaEnvironment alloc] initWithWebPageURL:protocolHostAndPortURL]);
 }
 
+Ref<MediaCapability> MediaCapability::create(URL&& url)
+{
+    return adoptRef(*new MediaCapability(WTFMove(url)));
+}
+
 MediaCapability::MediaCapability(URL&& webPageURL)
     : m_webPageURL { WTFMove(webPageURL) }
     , m_mediaEnvironment { createMediaEnvironment(m_webPageURL) }

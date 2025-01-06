@@ -37,13 +37,9 @@ open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
 $avx = 2;
 
 $code.=<<___;
-.text
-.extern OPENSSL_ia32cap_P
-
-chacha20_poly1305_constants:
-
 .section .rodata
 .align 64
+chacha20_poly1305_constants:
 .Lchacha20_consts:
 .byte 'e','x','p','a','n','d',' ','3','2','-','b','y','t','e',' ','k'
 .byte 'e','x','p','a','n','d',' ','3','2','-','b','y','t','e',' ','k'
@@ -444,11 +440,12 @@ poly_hash_ad_internal:
 #                             union chacha20_poly1305_open_data *aead_data)
 #
 $code.="
-.globl chacha20_poly1305_open
-.type chacha20_poly1305_open,\@function,6
+.globl chacha20_poly1305_open_nohw
+.type chacha20_poly1305_open_nohw,\@function,6
 .align 64
-chacha20_poly1305_open:
+chacha20_poly1305_open_nohw:
 .cfi_startproc
+    _CET_ENDBR
     push %rbp
 .cfi_push %rbp
     push %rbx
@@ -484,13 +481,8 @@ $code.="
 $code.="
     mov %rdx, $inl
     mov $adl, 0+$len_store
-    mov $inl, 8+$len_store\n";
-$code.="
-    mov OPENSSL_ia32cap_P+8(%rip), %eax
-    and \$`(1<<5) + (1<<8)`, %eax # Check both BMI2 and AVX2 are present
-    xor \$`(1<<5) + (1<<8)`, %eax
-    jz chacha20_poly1305_open_avx2\n" if ($avx>1);
-$code.="
+    mov $inl, 8+$len_store
+
     cmp \$128, $inl
     jbe .Lopen_sse_128
     # For long buffers, prepare the poly key first
@@ -857,7 +849,7 @@ $code.="
         movdqa $C2, $B2
         movdqa $D2, $C2
     jmp .Lopen_sse_128_xor_hash
-.size chacha20_poly1305_open, .-chacha20_poly1305_open
+.size chacha20_poly1305_open_nohw, .-chacha20_poly1305_open_nohw
 .cfi_endproc
 
 ################################################################################
@@ -866,11 +858,12 @@ $code.="
 #                             size_t plaintext_len, const uint8_t *ad,
 #                             size_t ad_len,
 #                             union chacha20_poly1305_seal_data *data);
-.globl  chacha20_poly1305_seal
-.type chacha20_poly1305_seal,\@function,6
+.globl  chacha20_poly1305_seal_nohw
+.type chacha20_poly1305_seal_nohw,\@function,6
 .align 64
-chacha20_poly1305_seal:
+chacha20_poly1305_seal_nohw:
 .cfi_startproc
+    _CET_ENDBR
     push %rbp
 .cfi_push %rbp
     push %rbx
@@ -907,13 +900,8 @@ $code.="
     addq %rdx, $inl
     mov $adl, 0+$len_store
     mov $inl, 8+$len_store
-    mov %rdx, $inl\n";
-$code.="
-    mov OPENSSL_ia32cap_P+8(%rip), %eax
-    and \$`(1<<5) + (1<<8)`, %eax # Check both BMI2 and AVX2 are present
-    xor \$`(1<<5) + (1<<8)`, %eax
-    jz chacha20_poly1305_seal_avx2\n" if ($avx>1);
-$code.="
+    mov %rdx, $inl
+
     cmp \$128, $inl
     jbe .Lseal_sse_128
     # For longer buffers, prepare the poly key + some stream
@@ -1369,7 +1357,7 @@ $code.="
     mov %r8, $itr2
     call poly_hash_ad_internal
     jmp .Lseal_sse_128_tail_xor
-.size chacha20_poly1305_seal, .-chacha20_poly1305_seal
+.size chacha20_poly1305_seal_nohw, .-chacha20_poly1305_seal_nohw
 .cfi_endproc\n";
 }
 
@@ -1641,20 +1629,48 @@ $chacha_body = &gen_chacha_round_avx2(20, ".Lrol16(%rip)") .
 
 $code.="
 ###############################################################################
-.type chacha20_poly1305_open_avx2,\@abi-omnipotent
+.globl chacha20_poly1305_open_avx2
+.type chacha20_poly1305_open_avx2,\@function,6
 .align 64
 chacha20_poly1305_open_avx2:
 .cfi_startproc
-
-# Since the AVX2 function operates in the frame of the SSE function, we just copy the frame state to over here
+    _CET_ENDBR
+    push %rbp
 .cfi_push %rbp
+    push %rbx
 .cfi_push %rbx
+    push %r12
 .cfi_push %r12
+    push %r13
 .cfi_push %r13
+    push %r14
 .cfi_push %r14
+    push %r15
 .cfi_push %r15
+    # We write the calculated authenticator back to keyp at the end, so save
+    # the pointer on the stack too.
+    push $keyp
 .cfi_push $keyp
+    sub \$288 + $xmm_storage + 32, %rsp
 .cfi_adjust_cfa_offset 288 + 32
+
+    lea 32(%rsp), %rbp
+    and \$-32, %rbp\n";
+$code.="
+    movaps %xmm6,16*0+$xmm_store
+    movaps %xmm7,16*1+$xmm_store
+    movaps %xmm8,16*2+$xmm_store
+    movaps %xmm9,16*3+$xmm_store
+    movaps %xmm10,16*4+$xmm_store
+    movaps %xmm11,16*5+$xmm_store
+    movaps %xmm12,16*6+$xmm_store
+    movaps %xmm13,16*7+$xmm_store
+    movaps %xmm14,16*8+$xmm_store
+    movaps %xmm15,16*9+$xmm_store\n" if ($win64);
+$code.="
+    mov %rdx, $inl
+    mov $adl, 0+$len_store
+    mov $inl, 8+$len_store
 
     vzeroupper
     vmovdqa .Lchacha20_consts(%rip), $A0
@@ -2111,20 +2127,49 @@ chacha20_poly1305_open_avx2:
 .cfi_endproc
 ###############################################################################
 ###############################################################################
-.type chacha20_poly1305_seal_avx2,\@abi-omnipotent
+.globl chacha20_poly1305_seal_avx2
+.type chacha20_poly1305_seal_avx2,\@function,6
 .align 64
 chacha20_poly1305_seal_avx2:
 .cfi_startproc
-
-# Since the AVX2 function operates in the frame of the SSE function, we just copy the frame state to over here
+    _CET_ENDBR
+    push %rbp
 .cfi_push %rbp
+    push %rbx
 .cfi_push %rbx
+    push %r12
 .cfi_push %r12
+    push %r13
 .cfi_push %r13
+    push %r14
 .cfi_push %r14
-.cfi_push %r15
+    push %r15
+.cfi_push %r15   
+# We write the calculated authenticator back to keyp at the end, so save
+# the pointer on the stack too.
+    push $keyp
 .cfi_push $keyp
+    sub \$288 + $xmm_storage + 32, %rsp
 .cfi_adjust_cfa_offset 288 + 32
+    lea 32(%rsp), %rbp
+    and \$-32, %rbp\n";
+$code.="
+    movaps %xmm6,16*0+$xmm_store
+    movaps %xmm7,16*1+$xmm_store
+    movaps %xmm8,16*2+$xmm_store
+    movaps %xmm9,16*3+$xmm_store
+    movaps %xmm10,16*4+$xmm_store
+    movaps %xmm11,16*5+$xmm_store
+    movaps %xmm12,16*6+$xmm_store
+    movaps %xmm13,16*7+$xmm_store
+    movaps %xmm14,16*8+$xmm_store
+    movaps %xmm15,16*9+$xmm_store\n" if ($win64);
+$code.="
+    mov 56($keyp), $inl  # extra_in_len
+    addq %rdx, $inl
+    mov $adl, 0+$len_store
+    mov $inl, 8+$len_store
+    mov %rdx, $inl
 
     vzeroupper
     vmovdqa .Lchacha20_consts(%rip), $A0

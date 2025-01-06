@@ -30,20 +30,22 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "PlatformLayer.h"
 #include "ScrollingConstraints.h"
+#include "ScrollingPlatformLayer.h"
 #include "ScrollingTreeNode.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ScrollingTreeStickyNode : public ScrollingTreeNode {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeStickyNode);
 public:
     virtual ~ScrollingTreeStickyNode();
 
     FloatSize scrollDeltaSinceLastCommit() const;
 
-    virtual PlatformLayer* layer() const = 0;
+    virtual ScrollingPlatformLayer* layer() const = 0;
 
 protected:
     ScrollingTreeStickyNode(ScrollingTree&, ScrollingNodeID);

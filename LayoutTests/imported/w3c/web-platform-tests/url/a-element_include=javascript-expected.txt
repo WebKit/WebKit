@@ -1,5 +1,6 @@
 
 PASS Loading data…
+PASS Test that embedded 0x0A is stripped
 PASS Parsing: <javascript:/example.com/> against <http://example.org/foo/bar>
 PASS Parsing: <javascript:example.com/> against <http://example.org/foo/bar>
 PASS Parsing: <javascript:/example.com/> against <about:blank>
@@ -12,4 +13,4 @@ PASS Parsing: <javascript://test/a/../b> against <about:blank>
 FAIL Parsing: <javascript://:443> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
 FAIL Parsing: <javascript://test:test> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
 FAIL Parsing: <javascript://[:1]> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
-
+Link with embedded \n is parsed correctly

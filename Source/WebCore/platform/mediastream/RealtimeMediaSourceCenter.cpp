@@ -134,13 +134,13 @@ void RealtimeMediaSourceCenter::getMediaStreamDevices(CompletionHandler<void(Vec
 std::optional<RealtimeMediaSourceCapabilities> RealtimeMediaSourceCenter::getCapabilities(const CaptureDevice& device)
 {
     if (device.type() == CaptureDevice::DeviceType::Camera) {
-        auto source = videoCaptureFactory().createVideoCaptureSource({ device },  { "fake"_s, "fake"_s }, nullptr, { });
+        auto source = videoCaptureFactory().createVideoCaptureSource({ device },  { "fake"_s, "fake"_s }, nullptr, std::nullopt);
         if (!source)
             return std::nullopt;
         return source.source()->capabilities();
     }
     if (device.type() == CaptureDevice::DeviceType::Microphone) {
-        auto source = audioCaptureFactory().createAudioCaptureSource({ device }, { "fake"_s, "fake"_s }, nullptr, { });
+        auto source = audioCaptureFactory().createAudioCaptureSource({ device }, { "fake"_s, "fake"_s }, nullptr, std::nullopt);
         if (!source)
             return std::nullopt;
         return source.source()->capabilities();
@@ -202,16 +202,16 @@ void RealtimeMediaSourceCenter::captureDevicesChanged()
 void RealtimeMediaSourceCenter::captureDeviceWillBeRemoved(const String& persistentId)
 {
     Ref protectedThis { *this };
-    m_observers.forEach([&](auto& observer) {
-        observer.deviceWillBeRemoved(persistentId);
+    m_observers.forEach([&](Ref<RealtimeMediaSourceCenterObserver> observer) {
+        observer->deviceWillBeRemoved(persistentId);
     });
 }
 
 void RealtimeMediaSourceCenter::triggerDevicesChangedObservers()
 {
     Ref protectedThis { *this };
-    m_observers.forEach([](auto& observer) {
-        observer.devicesChanged();
+    m_observers.forEach([](Ref<RealtimeMediaSourceCenterObserver> observer) {
+        observer->devicesChanged();
     });
 }
 
@@ -241,6 +241,8 @@ void RealtimeMediaSourceCenter::getDisplayMediaDevices(const MediaStreamRequest&
 void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& request, MediaDeviceHashSalts&& hashSalts, Vector<DeviceInfo>& audioDeviceInfo, Vector<DeviceInfo>& videoDeviceInfo, MediaConstraintType& firstInvalidConstraint)
 {
     if (request.audioConstraints.isValid) {
+        bool sameFitnessScore = true;
+        std::optional<double> fitnessScore;
         for (auto& device : audioCaptureFactory().audioCaptureDeviceManager().captureDevices()) {
             if (!device.enabled())
                 continue;
@@ -255,8 +257,19 @@ void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& re
                 continue;
             }
 
+            if (sameFitnessScore) {
+                if (!fitnessScore)
+                    fitnessScore = sourceOrError.captureSource->fitnessScore();
+                else
+                    sameFitnessScore = *fitnessScore == sourceOrError.captureSource->fitnessScore();
+            }
             audioDeviceInfo.append({ sourceOrError.captureSource->fitnessScore(), device });
         }
+
+        // We mark the device as default if no constraint was applied to selecting the device.
+        // This gives the capture process or the OS the freedom to select the best microphone.
+        if (!audioDeviceInfo.isEmpty())
+            audioDeviceInfo[0].device.setIsDefault(sameFitnessScore && firstInvalidConstraint == MediaConstraintType::Unknown);
     }
 
     if (request.videoConstraints.isValid) {

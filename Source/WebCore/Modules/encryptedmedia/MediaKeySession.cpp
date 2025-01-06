@@ -52,12 +52,12 @@
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include <wtf/HashCountedSet.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaKeySession);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaKeySession);
 
 Ref<MediaKeySession> MediaKeySession::create(Document& document, WeakPtr<MediaKeys>&& keys, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstanceSession>&& instanceSession)
 {
@@ -70,7 +70,7 @@ MediaKeySession::MediaKeySession(Document& document, WeakPtr<MediaKeys>&& keys, 
     : ActiveDOMObject(&document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
-    , m_logIdentifier(keys ? keys->nextChildIdentifier() : nullptr)
+    , m_logIdentifier(keys ? keys->nextChildIdentifier() : 0)
 #endif
     , m_keys(WTFMove(keys))
     , m_expiration(std::numeric_limits<double>::quiet_NaN())
@@ -327,6 +327,12 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
         // 8.7. Let cdm be the CDM instance represented by this object's cdm instance value.
         // 8.8. Use the cdm to execute the following steps:
         m_instanceSession->loadSession(m_sessionType, *sanitizedSessionId, origin, [this, weakThis, promise = WTFMove(promise), sanitizedSessionId = *sanitizedSessionId, identifier = WTFMove(identifier)] (std::optional<CDMInstanceSession::KeyStatusVector>&& knownKeys, std::optional<double>&& expiration, std::optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded, CDMInstanceSession::SessionLoadFailure failure) mutable {
+            auto protectedThis = RefPtr { weakThis.get() };
+            if (!protectedThis) {
+                promise->reject(ExceptionCode::InvalidStateError);
+                return;
+            }
+
             // 8.8.1. If there is no data stored for the sanitized session ID in the origin, resolve promise with false and abort these steps.
             // 8.8.2. If the stored session's session type is not the same as the current MediaKeySession session type, reject promise with a newly created TypeError.
             // 8.8.3. Let session data be the data stored for the sanitized session ID in the origin. This must not include data from other origin(s) or that is not associated with an origin.
@@ -799,9 +805,9 @@ String MediaKeySession::mediaKeysStorageDirectory() const
 
 CDMKeyGroupingStrategy MediaKeySession::keyGroupingStrategy() const
 {
-#if HAVE(AVCONTENTKEYSPECIFIER)
+#if USE(MODERN_AVCONTENTKEYSESSION)
     RefPtr document = downcast<Document>(scriptExecutionContext());
-    if (document && document->settings().sampleBufferContentKeySessionSupportEnabled())
+    if (document && document->settings().shouldUseModernAVContentKeySession())
         return CDMKeyGroupingStrategy::BuiltIn;
 #endif
 

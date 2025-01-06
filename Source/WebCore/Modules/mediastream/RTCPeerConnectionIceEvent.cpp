@@ -29,11 +29,11 @@
 
 #include "EventNames.h"
 #include "RTCIceCandidate.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RTCPeerConnectionIceEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCPeerConnectionIceEvent);
 
 Ref<RTCPeerConnectionIceEvent> RTCPeerConnectionIceEvent::create(CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCIceCandidate>&& candidate, String&& serverURL)
 {

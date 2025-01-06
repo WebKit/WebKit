@@ -10,10 +10,10 @@
 
 #include "pc/dtls_transport.h"
 
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/make_ref_counted.h"
 #include "api/rtc_error.h"
 #include "p2p/base/fake_dtls_transport.h"

@@ -1,0 +1,11 @@
+This test ensures that an element with aria-describedby when the text of the target changes.
+
+PASS: button.customContent.includes('New text') === false
+PASS: button.customContent.includes('New text') === true
+PASS: button.customContent.includes('Final text') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo
+Final text

@@ -730,10 +730,10 @@ TTypeQualifier GetParameterTypeQualifierFromSortedSequence(
     switch (typeQualifier.qualifier)
     {
         case EvqParamIn:
-        case EvqParamConst:  // const in
         case EvqParamOut:
         case EvqParamInOut:
             break;
+        case EvqParamConst:  // const in
         case EvqConst:
             // Opaque parameters can only be |in|.  |const| is allowed, but is meaningless and is
             // dropped.

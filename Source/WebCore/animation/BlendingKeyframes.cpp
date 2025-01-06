@@ -31,6 +31,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "CompositeOperation.h"
+#include "ComputedStyleDependencies.h"
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "RenderObject.h"
@@ -39,6 +40,7 @@
 #include "StyleResolver.h"
 #include "TransformOperations.h"
 #include "TranslateTransformOperation.h"
+#include <wtf/ZippedRange.h>
 
 namespace WebCore {
 
@@ -52,6 +54,7 @@ void BlendingKeyframes::clear()
     m_propertiesSetToCurrentColor.clear();
     m_usesRelativeFontWeight = false;
     m_containsCSSVariableReferences = false;
+    m_usesAnchorFunctions = false;
 }
 
 bool BlendingKeyframes::operator==(const BlendingKeyframes& o) const
@@ -59,11 +62,10 @@ bool BlendingKeyframes::operator==(const BlendingKeyframes& o) const
     if (m_keyframes.size() != o.m_keyframes.size())
         return false;
 
-    auto it2 = o.m_keyframes.begin();
-    for (auto it1 = m_keyframes.begin(); it1 != m_keyframes.end(); ++it1, ++it2) {
-        if (it1->offset() != it2->offset())
+    for (auto [keyframe1, keyframe2] : zippedRange(m_keyframes, o.m_keyframes)) {
+        if (keyframe1.offset() != keyframe2.offset())
             return false;
-        if (*it1->style() != *it2->style())
+        if (keyframe1.style() != keyframe2.style())
             return false;
     }
 
@@ -147,6 +149,9 @@ void BlendingKeyframes::fillImplicitKeyframes(const KeyframeEffect& effect, cons
 
     ASSERT(effect.target());
     auto& element = *effect.target();
+    if (!element.isConnected())
+        return;
+
     auto& styleResolver = element.styleResolver();
 
     // We need to establish which properties are implicit for 0% and 100%.
@@ -311,6 +316,11 @@ void BlendingKeyframes::updatePropertiesMetadata(const StyleProperties& properti
                 m_propertiesSetToCurrentColor.add(propertyReference.id());
             else if (!m_usesRelativeFontWeight && propertyReference.id() == CSSPropertyFontWeight && (valueId == CSSValueBolder || valueId == CSSValueLighter))
                 m_usesRelativeFontWeight = true;
+            if (CSSProperty::isInsetProperty(propertyReference.id())) {
+                auto dependencies = cssValue->computedStyleDependencies();
+                if (dependencies.anchors)
+                    m_usesAnchorFunctions = true;
+            }
         } else if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {
             if (customPropertyValue->isInherit())
                 m_propertiesSetToInherit.add(customPropertyValue->name());
@@ -331,8 +341,8 @@ void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
             return;
 
         if (keyframe.animatesProperty(CSSPropertyTransform)) {
-            for (auto& operation : style->transform().operations()) {
-                if (auto* translate = dynamicDowncast<TranslateTransformOperation>(operation.get())) {
+            for (auto& operation : style->transform()) {
+                if (RefPtr translate = dynamicDowncast<TranslateTransformOperation>(operation.get())) {
                     if (translate->x().isPercent())
                         m_hasWidthDependentTransform = true;
                     if (translate->y().isPercent())
@@ -351,6 +361,11 @@ void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
         }
     };
 
+    auto analyzeDiscreteTransformInterval = [&] {
+        if (!m_hasDiscreteTransformInterval && keyframe.animatesProperty(CSSPropertyTransform))
+            m_hasDiscreteTransformInterval = style->transform().containsNonInvertibleMatrix({ });
+    };
+
     auto analyzeExplicitlyInheritedKeyframeProperty = [&] {
         if (!m_hasExplicitlyInheritedKeyframeProperty)
             m_hasExplicitlyInheritedKeyframeProperty = style->hasExplicitlyInheritedProperties();
@@ -365,6 +380,7 @@ void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
     };
 
     analyzeSizeDependentTransform();
+    analyzeDiscreteTransformInterval();
     analyzeExplicitlyInheritedKeyframeProperty();
     analyzeKeyframeForExplicitProperties();
 }

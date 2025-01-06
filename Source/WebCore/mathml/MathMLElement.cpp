@@ -38,17 +38,18 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLTableCellElement.h"
 #include "MathMLNames.h"
 #include "MouseEvent.h"
 #include "NodeName.h"
 #include "RenderTableCell.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLElement);
 
 using namespace MathMLNames;
 
@@ -75,8 +76,7 @@ unsigned MathMLElement::rowSpan() const
     if (!hasTagName(mtdTag))
         return 1u;
     auto& rowSpanValue = attributeWithoutSynchronization(rowspanAttr);
-    static const unsigned maxRowspan = 8190; // This constant comes from HTMLTableCellElement.
-    return std::max(1u, std::min(limitToOnlyHTMLNonNegative(rowSpanValue, 1u), maxRowspan));
+    return std::max(1u, std::min(limitToOnlyHTMLNonNegative(rowSpanValue, 1u), HTMLTableCellElement::maxRowspan));
 }
 
 void MathMLElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -247,7 +247,7 @@ void MathMLElement::defaultEventHandler(Event& event)
             const auto& href = attributeWithoutSynchronization(hrefAttr);
             event.setDefaultHandled();
             if (RefPtr frame = document().frame())
-                frame->checkedLoader()->changeLocation(document().completeURL(href), selfTargetFrameName(), &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
+                frame->protectedLoader()->changeLocation(document().completeURL(href), selfTargetFrameName(), &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
             return;
         }
     }

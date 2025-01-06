@@ -1,0 +1,48 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/anonymous-grid-items-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/display-grid-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/display-inline-grid-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/flex-item-grid-container-percentage-rows-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/fr-unit-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/fr-unit-with-percentage-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-2x2-blue-yellow-lime-magenta.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-auto-repeat-multiple-values-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-block-axis-alignment-auto-margins-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-container-auto-margins-scrollbars-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-container-baseline-synthesized-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-container-scrollbars-sizing-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-container-scrollbars-sizing-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-different-gutters-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-equal-gutters-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-filled-blue-yellow-green-overlapped-100px-squares.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-first-letter-green-margin-no-collapse-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-inline-axis-alignment-auto-margins-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-inline-baseline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-item-script-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-layout-auto-tracks-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-layout-basic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-layout-grid-in-grid-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-layout-repeat-notation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-layout-z-order-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-percentage-gap-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-support-grid-auto-columns-rows-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-support-grid-auto-columns-rows-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-support-grid-auto-columns-rows-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-template-areas-must-keep-named-columns-order-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-text-green-margin-no-collapse-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/replaced-element-015-ref.html

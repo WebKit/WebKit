@@ -733,6 +733,11 @@ shouldBe("converter.testLongRecord()['key']", "1");
 shouldBeTrue("converter.testLongRecord().hasOwnProperty('otherKey')");
 shouldBe("converter.testLongRecord()['otherKey']", "2");
 shouldThrow("var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { get: function() { throw new Error(); }, enumerable: true }); converter.setTestLongRecord(o);");
+evalAndLog("converter.setTestLongRecord({ '1': 1 })");
+shouldBeType("converter.testLongRecord()", "Object");
+shouldBeTrue("converter.testLongRecord().hasOwnProperty('1')");
+shouldBeTrue("'1' in converter.testLongRecord()");
+shouldBe("converter.testLongRecord()['1']", "1");
 
 evalAndLog("converter.setTestNodeRecord({ key: document, key2: document.documentElement })");
 shouldBeTrue("converter.testNodeRecord().hasOwnProperty('key')");

@@ -45,6 +45,7 @@ PutByVariant& PutByVariant::operator=(const PutByVariant& other)
     m_newStructure = other.m_newStructure;
     m_conditionSet = other.m_conditionSet;
     m_offset = other.m_offset;
+    m_viaGlobalProxy = other.m_viaGlobalProxy;
     if (other.m_callLinkStatus)
         m_callLinkStatus = makeUnique<CallLinkStatus>(*other.m_callLinkStatus);
     else
@@ -58,12 +59,13 @@ PutByVariant& PutByVariant::operator=(const PutByVariant& other)
     return *this;
 }
 
-PutByVariant PutByVariant::replace(CacheableIdentifier identifier, const StructureSet& structure, PropertyOffset offset)
+PutByVariant PutByVariant::replace(CacheableIdentifier identifier, const StructureSet& structure, PropertyOffset offset, bool viaGlobalProxy)
 {
     PutByVariant result(WTFMove(identifier));
     result.m_kind = Replace;
     result.m_oldStructure = structure;
     result.m_offset = offset;
+    result.m_viaGlobalProxy = viaGlobalProxy;
     return result;
 }
 
@@ -78,24 +80,26 @@ PutByVariant PutByVariant::transition(CacheableIdentifier identifier, const Stru
     return result;
 }
 
-PutByVariant PutByVariant::setter(CacheableIdentifier identifier, const StructureSet& structure, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<CallLinkStatus> callLinkStatus)
+PutByVariant PutByVariant::setter(CacheableIdentifier identifier, const StructureSet& structure, PropertyOffset offset, bool viaGlobalProxy, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<CallLinkStatus> callLinkStatus)
 {
     PutByVariant result(WTFMove(identifier));
     result.m_kind = Setter;
     result.m_oldStructure = structure;
     result.m_conditionSet = conditionSet;
     result.m_offset = offset;
+    result.m_viaGlobalProxy = viaGlobalProxy;
     result.m_callLinkStatus = WTFMove(callLinkStatus);
     return result;
 }
 
-PutByVariant PutByVariant::customSetter(CacheableIdentifier identifier, const StructureSet& structure, const ObjectPropertyConditionSet& conditionSet, CodePtr<CustomAccessorPtrTag> customAccessorSetter, std::unique_ptr<DOMAttributeAnnotation>&& domAttribute)
+PutByVariant PutByVariant::customSetter(CacheableIdentifier identifier, const StructureSet& structure, bool viaGlobalProxy, const ObjectPropertyConditionSet& conditionSet, CodePtr<CustomAccessorPtrTag> customAccessorSetter, std::unique_ptr<DOMAttributeAnnotation>&& domAttribute)
 {
     PutByVariant result(WTFMove(identifier));
     result.m_kind = CustomAccessorSetter;
     result.m_oldStructure = structure;
     result.m_conditionSet = conditionSet;
     result.m_offset = invalidOffset;
+    result.m_viaGlobalProxy = viaGlobalProxy;
     result.m_customAccessorSetter = customAccessorSetter;
     result.m_domAttribute = WTFMove(domAttribute);
     return result;
@@ -183,6 +187,9 @@ bool PutByVariant::attemptToMerge(const PutByVariant& other)
         return false;
 
     if (m_offset != other.m_offset)
+        return false;
+
+    if (m_viaGlobalProxy != other.m_viaGlobalProxy)
         return false;
 
     switch (m_kind) {
@@ -325,6 +332,7 @@ bool PutByVariant::attemptToMergeTransitionWithReplace(const PutByVariant& repla
     ASSERT(m_kind == Transition);
     ASSERT(replace.m_kind == Replace);
     ASSERT(m_offset == replace.m_offset);
+    ASSERT(!replace.viaGlobalProxy());
     ASSERT(!replace.writesStructures());
     ASSERT(!replace.reallocatesStorage());
     ASSERT(replace.conditionSet().isEmpty());
@@ -383,15 +391,17 @@ void PutByVariant::dump(PrintStream& out) const
 void PutByVariant::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     out.print("<");
-    out.print("id='", m_identifier, "', ");
+    out.print("id='", m_identifier, "'");
     switch (kind()) {
     case NotSet:
         out.print("empty>");
         return;
         
     case Replace:
-        out.print(
-            "Replace: ", inContext(structure(), context), ", offset = ", offset(), ", ", ">");
+        out.print("Replace: ", inContext(structure(), context));
+        out.print(", offset = ", m_offset);
+        out.print(", viaGlobalProxy = ", m_viaGlobalProxy);
+        out.print(">");
         return;
         
     case Transition:
@@ -406,6 +416,7 @@ void PutByVariant::dumpInContext(PrintStream& out, DumpContext* context) const
             "Setter: ", inContext(structure(), context), ", [",
             inContext(m_conditionSet, context), "]");
         out.print(", offset = ", m_offset);
+        out.print(", viaGlobalProxy = ", m_viaGlobalProxy);
         out.print(", call = ", *m_callLinkStatus);
         out.print(">");
         return;
@@ -414,6 +425,7 @@ void PutByVariant::dumpInContext(PrintStream& out, DumpContext* context) const
         out.print(
             "CustomAccessorSetter: ", inContext(structure(), context), ", [",
             inContext(m_conditionSet, context), "]");
+        out.print(", viaGlobalProxy = ", m_viaGlobalProxy);
         out.print(">");
         return;
 

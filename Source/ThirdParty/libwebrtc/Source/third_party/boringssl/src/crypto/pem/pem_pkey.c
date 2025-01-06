@@ -98,26 +98,26 @@ EVP_PKEY *PEM_read_bio_PrivateKey(BIO *bp, EVP_PKEY **x, pem_password_cb *cb,
   } else if (strcmp(nm, PEM_STRING_PKCS8) == 0) {
     PKCS8_PRIV_KEY_INFO *p8inf;
     X509_SIG *p8;
-    int klen;
+    int pass_len;
     char psbuf[PEM_BUFSIZE];
     p8 = d2i_X509_SIG(NULL, &p, len);
     if (!p8) {
       goto p8err;
     }
 
-    klen = 0;
+    pass_len = 0;
     if (!cb) {
       cb = PEM_def_callback;
     }
-    klen = cb(psbuf, PEM_BUFSIZE, 0, u);
-    if (klen <= 0) {
+    pass_len = cb(psbuf, PEM_BUFSIZE, 0, u);
+    if (pass_len < 0) {
       OPENSSL_PUT_ERROR(PEM, PEM_R_BAD_PASSWORD_READ);
       X509_SIG_free(p8);
       goto err;
     }
-    p8inf = PKCS8_decrypt(p8, psbuf, klen);
+    p8inf = PKCS8_decrypt(p8, psbuf, pass_len);
     X509_SIG_free(p8);
-    OPENSSL_cleanse(psbuf, klen);
+    OPENSSL_cleanse(psbuf, pass_len);
     if (!p8inf) {
       goto p8err;
     }
@@ -151,9 +151,10 @@ err:
 }
 
 int PEM_write_bio_PrivateKey(BIO *bp, EVP_PKEY *x, const EVP_CIPHER *enc,
-                             unsigned char *kstr, int klen, pem_password_cb *cb,
-                             void *u) {
-  return PEM_write_bio_PKCS8PrivateKey(bp, x, enc, (char *)kstr, klen, cb, u);
+                             const unsigned char *pass, int pass_len,
+                             pem_password_cb *cb, void *u) {
+  return PEM_write_bio_PKCS8PrivateKey(bp, x, enc, (const char *)pass, pass_len,
+                                       cb, u);
 }
 
 EVP_PKEY *PEM_read_PrivateKey(FILE *fp, EVP_PKEY **x, pem_password_cb *cb,
@@ -169,14 +170,14 @@ EVP_PKEY *PEM_read_PrivateKey(FILE *fp, EVP_PKEY **x, pem_password_cb *cb,
 }
 
 int PEM_write_PrivateKey(FILE *fp, EVP_PKEY *x, const EVP_CIPHER *enc,
-                         unsigned char *kstr, int klen, pem_password_cb *cb,
-                         void *u) {
+                         const unsigned char *pass, int pass_len,
+                         pem_password_cb *cb, void *u) {
   BIO *b = BIO_new_fp(fp, BIO_NOCLOSE);
   if (b == NULL) {
     OPENSSL_PUT_ERROR(PEM, ERR_R_BUF_LIB);
     return 0;
   }
-  int ret = PEM_write_bio_PrivateKey(b, x, enc, kstr, klen, cb, u);
+  int ret = PEM_write_bio_PrivateKey(b, x, enc, pass, pass_len, cb, u);
   BIO_free(b);
   return ret;
 }

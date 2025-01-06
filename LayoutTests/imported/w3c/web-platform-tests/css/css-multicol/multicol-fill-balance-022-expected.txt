@@ -1,0 +1,4 @@
+
+FAIL Nested balancing outer height assert_equals: expected 100 but got 50
+PASS Nested balancing inner height
+

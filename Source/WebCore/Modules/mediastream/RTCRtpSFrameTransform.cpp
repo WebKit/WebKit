@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,11 +47,11 @@
 #include "SharedBuffer.h"
 #include "WritableStream.h"
 #include <wtf/EnumTraits.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RTCRtpSFrameTransform);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCRtpSFrameTransform);
 
 Ref<RTCRtpSFrameTransform> RTCRtpSFrameTransform::create(ScriptExecutionContext& context, Options options)
 {
@@ -116,8 +116,6 @@ static RTCRtpSFrameTransformErrorEvent::Type errorTypeFromInformation(const RTCR
         return RTCRtpSFrameTransformErrorEvent::Type::Authentication;
     case RTCRtpSFrameTransformer::Error::Syntax:
         return RTCRtpSFrameTransformErrorEvent::Type::Syntax;
-    case RTCRtpSFrameTransformer::Error::Other:
-        return RTCRtpSFrameTransformErrorEvent::Type::Other;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -211,7 +209,7 @@ void transformFrame(Frame& frame, JSDOMGlobalObject& globalObject, RTCRtpSFrameT
     auto result = processFrame(chunk, transformer, identifier, weakTransform);
     std::span<const uint8_t> transformedChunk;
     if (result)
-        transformedChunk = { result->data(), result->size() };
+        transformedChunk = result->span();
     rtcFrame->setData(transformedChunk);
     source.enqueue(toJS(&globalObject, &globalObject, frame));
 }

@@ -106,6 +106,10 @@ config("default") {
       "/utf-8",  # Set Source and Executable character sets to UTF-8.
     ]
     cflags_cc += [ "/std:c++17" ]
+    if (!is_clang) {
+      # https://developercommunity.visualstudio.com/t/Incorrect-C4573-when-taking-address-of-m/10662923
+      cflags_cc += [ "/Zc:lambda" ]
+    }
     defines += [
       "_CRT_SECURE_NO_WARNINGS",  # Disables warnings about sscanf().
       "_HAS_EXCEPTIONS=0",  # Disables exceptions in MSVC STL.
@@ -139,7 +143,6 @@ config("default") {
     ]
   } else {
     cflags += [
-      "-fstrict-aliasing",
       "-fPIC",
       "-fvisibility=hidden",
     ]
@@ -166,7 +169,6 @@ config("default") {
   } else if (current_cpu == "loong64") {
     cflags += [
       "-mlsx",
-      "-mlasx",
       "-Wno-switch-default",
     ]
   }
@@ -250,9 +252,15 @@ config("default") {
                ] + _arch_flags
     libs += [ "objc" ]
     if (ios_min_target != "") {
-      cflags += [ "-miphoneos-version-min=$ios_min_target" ]
-      asmflags += [ "-miphoneos-version-min=$ios_min_target" ]
-      ldflags += [ "-miphoneos-version-min=$ios_min_target" ]
+      if (ios_use_simulator) {
+        cflags += [ "-miphonesimulator-version-min=$ios_min_target" ]
+        asmflags += [ "-miphonesimulator-version-min=$ios_min_target" ]
+        ldflags += [ "-miphonesimulator-version-min=$ios_min_target" ]
+      } else {
+        cflags += [ "-miphoneos-version-min=$ios_min_target" ]
+        asmflags += [ "-miphoneos-version-min=$ios_min_target" ]
+        ldflags += [ "-miphoneos-version-min=$ios_min_target" ]
+      }
     }
   }
 
@@ -303,15 +311,15 @@ config("default") {
     } else {
       asmflags += [
         "-target",
-        "x86_64-apple-macos10.13",
+        "x86_64-apple-macos10.15",
       ]
       cflags += [
         "-target",
-        "x86_64-apple-macos10.13",
+        "x86_64-apple-macos10.15",
       ]
       ldflags += [
         "-target",
-        "x86_64-apple-macos10.13",
+        "x86_64-apple-macos10.15",
       ]
     }
   }
@@ -357,6 +365,10 @@ config("default") {
       "-fno-sanitize-recover=$sanitizers",
       "-fsanitize-blacklist=$_suppressions",
     ]
+    if (is_mac) {
+      # https://github.com/llvm/llvm-project/issues/109074
+      cflags += [ "-fno-sanitize=function" ]
+    }
 
     if (is_win) {
       cflags += [
@@ -706,20 +718,14 @@ config("optimize") {
     ]
   } else {
     if (skia_enable_optimize_size) {
-      cflags = [
-        "-Oz",
-
-        # We currently use bloaty 1.0 on the CI. Newer versions of Bloaty do not
-        # seem to handle newer DWARF data as well.
-        "-gdwarf-4",
-      ]
+      cflags = [ "-Oz" ]
       if (!is_android) {
         cflags += [
           # Clang 15 turns PIE (Position-indendendent Executable) on by default.
           "-fno-PIE",
           "-fno-pie",
         ]
-        ldflags += [ "-nopie" ]
+        ldflags += [ "-no-pie" ]
       }
     } else {
       cflags = [ "-O3" ]
@@ -743,6 +749,23 @@ config("NDEBUG") {
 config("trivial_abi") {
   if (is_clang) {
     defines = [ "SK_TRIVIAL_ABI=[[clang::trivial_abi]]" ]
+  }
+}
+
+# PartitionAlloc, Chrome, and many other C++ projects are written assuming
+# different types may freely point to the same location in memory. This is
+# undefined behavior in C/C++. With `-fstrict-aliasing`, some compiler will
+# optimize code in a way that would crash those projects.
+#
+# As of 2024, only GCC is aggressive about strict aliasing. Clang isn't.
+config("strict_aliasing") {
+  if (!is_win) {
+    cflags = [ "-fstrict-aliasing" ]
+  }
+}
+config("no_strict_aliasing") {
+  if (!is_win) {
+    cflags = [ "-fno-strict-aliasing" ]
   }
 }
 

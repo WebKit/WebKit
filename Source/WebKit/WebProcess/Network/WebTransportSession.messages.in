@@ -20,9 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+[
+    DispatchedFrom=Networking,
+    DispatchedTo=WebContent
+]
 messages -> WebTransportSession {
     ReceiveDatagram(std::span<const uint8_t> datagram)
-    ReceiveIncomingUnidirectionalStream(WebKit::WebTransportStreamIdentifier identifier)
-    ReceiveBidirectionalStream(WebKit::WebTransportStreamIdentifier identifier)
-    StreamReceiveBytes(WebKit::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin)
+    ReceiveIncomingUnidirectionalStream(WebCore::WebTransportStreamIdentifier identifier)
+    ReceiveBidirectionalStream(WebCore::WebTransportStreamIdentifier identifier)
+    StreamReceiveBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin)
 }

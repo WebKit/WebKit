@@ -218,9 +218,6 @@ void GlobalSimulatedTimeController::SkipForwardBy(TimeDelta duration) {
   impl_.AdvanceTime(target_time);
   sim_clock_.AdvanceTimeMicroseconds(duration.us());
   global_clock_.AdvanceTime(duration);
-
-  // Run tasks that were pending during the skip.
-  impl_.RunReadyRunners();
 }
 
 void GlobalSimulatedTimeController::Register(

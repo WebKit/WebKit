@@ -42,6 +42,10 @@
 #include <wtf/MachSendRight.h>
 #endif
 
+#if PLATFORM(COCOA)
+OBJC_CLASS NSData;
+#endif
+
 namespace WebCore {
 
 class FragmentedSharedBuffer;
@@ -49,6 +53,8 @@ class ProcessIdentity;
 class SharedBuffer;
 
 enum class MemoryLedger { None, Default, Network, Media, Graphics, Neural };
+
+WEBCORE_EXPORT bool isMemoryAttributionDisabled();
 
 class SharedMemoryHandle {
 public:
@@ -62,7 +68,11 @@ public:
 #endif
 
     SharedMemoryHandle(SharedMemoryHandle&&) = default;
+#if USE(UNIX_DOMAIN_SOCKETS)
+    explicit SharedMemoryHandle(const SharedMemoryHandle&);
+#else
     explicit SharedMemoryHandle(const SharedMemoryHandle&) = default;
+#endif
     WEBCORE_EXPORT SharedMemoryHandle(SharedMemoryHandle::Type&&, size_t);
 
     SharedMemoryHandle& operator=(SharedMemoryHandle&&) = default;
@@ -95,6 +105,7 @@ public:
     // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.
     WEBCORE_EXPORT static RefPtr<SharedMemory> allocate(size_t);
     WEBCORE_EXPORT static RefPtr<SharedMemory> copyBuffer(const WebCore::FragmentedSharedBuffer&);
+    WEBCORE_EXPORT static RefPtr<SharedMemory> copySpan(std::span<const uint8_t>);
     WEBCORE_EXPORT static RefPtr<SharedMemory> map(Handle&&, Protection);
 #if USE(UNIX_DOMAIN_SOCKETS)
     WEBCORE_EXPORT static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);
@@ -107,14 +118,9 @@ public:
     WEBCORE_EXPORT std::optional<Handle> createHandle(Protection);
 
     size_t size() const { return m_size; }
-    void* data() const
-    {
-        ASSERT(m_data);
-        return m_data;
-    }
 
-    std::span<const uint8_t> span() const { return { static_cast<const uint8_t*>(m_data), m_size }; }
-    std::span<uint8_t> mutableSpan() const { return { static_cast<uint8_t*>(m_data), m_size }; }
+    std::span<const uint8_t> span() const { return unsafeMakeSpan(static_cast<const uint8_t*>(m_data), m_size); }
+    std::span<uint8_t> mutableSpan() const { return unsafeMakeSpan(static_cast<uint8_t*>(m_data), m_size); }
 
 #if OS(WINDOWS)
     HANDLE handle() const { return m_handle.get(); }
@@ -122,6 +128,7 @@ public:
 
 #if PLATFORM(COCOA)
     Protection protection() const { return m_protection; }
+    WEBCORE_EXPORT RetainPtr<NSData> toNSData() const;
 #endif
 
     WEBCORE_EXPORT Ref<WebCore::SharedBuffer> createSharedBuffer(size_t) const;

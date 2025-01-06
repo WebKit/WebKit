@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -144,7 +144,7 @@ protected:
     enum Color { Red, Black };
 
     class Node {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(Node);
         WTF_MAKE_NONCOPYABLE(Node);
     public:
         explicit Node(T&& data)
@@ -631,5 +631,13 @@ private:
     bool m_verboseDebugging { false };
 #endif
 };
+
+#define TZONE_TEMPLATE_PARAMS template<typename T, typename NodeUpdaterType>
+#define TZONE_TYPE PODRedBlackTree<T, NodeUpdaterType>::Node
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS();
+
+#undef TZONE_TEMPLATE_PARAMS
+#undef TZONE_TYPE
 
 } // namespace WebCore

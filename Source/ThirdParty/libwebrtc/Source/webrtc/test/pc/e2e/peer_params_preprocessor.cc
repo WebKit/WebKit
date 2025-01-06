@@ -10,17 +10,26 @@
 
 #include "test/pc/e2e/peer_params_preprocessor.h"
 
+#include <stddef.h>
+
+#include <optional>
 #include <set>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "api/rtp_parameters.h"
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/pclf/media_quality_test_params.h"
 #include "api/test/pclf/peer_configurer.h"
-#include "api/test/peer_network_dependencies.h"
+#include "api/video_codecs/scalability_mode.h"
+#include "media/base/media_constants.h"
 #include "modules/video_coding/svc/create_scalability_structure.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
-#include "rtc_base/arraysize.h"
+#include "modules/video_coding/svc/scalable_video_controller.h"
+#include "rtc_base/checks.h"
 #include "test/testsupport/file_utils.h"
 
 namespace webrtc {
@@ -43,7 +52,7 @@ class PeerParamsPreprocessor::DefaultNamesProvider {
       rtc::ArrayView<const absl::string_view> default_names = {})
       : prefix_(prefix), default_names_(default_names) {}
 
-  void MaybeSetName(absl::optional<std::string>& name) {
+  void MaybeSetName(std::optional<std::string>& name) {
     if (name.has_value()) {
       known_names_.insert(name.value());
     } else {
@@ -159,11 +168,11 @@ void PeerParamsPreprocessor::ValidateParams(const PeerConfigurer& peer) {
           if (!encoding_param.scalability_mode)
             continue;
 
-          absl::optional<ScalabilityMode> scalability_mode =
+          std::optional<ScalabilityMode> scalability_mode =
               ScalabilityModeFromString(*encoding_param.scalability_mode);
           RTC_CHECK(scalability_mode) << "Unknown scalability_mode requested";
 
-          absl::optional<ScalableVideoController::StreamLayersConfig>
+          std::optional<ScalableVideoController::StreamLayersConfig>
               stream_layers_config =
                   ScalabilityStructureConfig(*scalability_mode);
           is_svc |= stream_layers_config->num_spatial_layers > 1;

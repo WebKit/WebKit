@@ -27,7 +27,7 @@
 
 #include "IDLTypes.h"
 #include <JavaScriptCore/Strong.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
@@ -49,7 +49,7 @@ enum class PermissionQuerySource : uint8_t;
 template<typename IDLType> class DOMPromiseDeferred;
 
 class Permissions : public RefCounted<Permissions> {
-    WTF_MAKE_ISO_ALLOCATED(Permissions);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Permissions);
 public:
     static Ref<Permissions> create(NavigatorBase&);
     ~Permissions();

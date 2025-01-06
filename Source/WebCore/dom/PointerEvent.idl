@@ -32,13 +32,19 @@ dictionary PointerEventInit : MouseEventInit {
     long tiltX = 0;
     long tiltY = 0;
     long twist = 0;
+    [EnabledBySetting=AltitudeAngleEnabled] double altitudeAngle;
+    [EnabledBySetting=AzimuthAngleEnabled] double azimuthAngle;
     DOMString pointerType = "";
     boolean isPrimary = false;
+    [EnabledBySetting=GetCoalescedEventsEnabled] sequence<PointerEvent> coalescedEvents = [];
+    [EnabledBySetting=GetPredictedEventsEnabled] sequence<PointerEvent> predictedEvents = [];
 };
 
 [
     DisabledByQuirk=shouldDisablePointerEvents,
-    Exposed=Window
+    Exposed=Window,
+    JSGenerateToNativeObject,
+    ExportToWrappedFunction
 ] interface PointerEvent : MouseEvent {
     constructor([AtomString] DOMString type, optional PointerEventInit eventInitDict);
 
@@ -50,7 +56,12 @@ dictionary PointerEventInit : MouseEventInit {
     readonly attribute long tiltX;
     readonly attribute long tiltY;
     readonly attribute long twist;
+    [EnabledBySetting=AltitudeAngleEnabled] readonly attribute double altitudeAngle;
+    [EnabledBySetting=AzimuthAngleEnabled] readonly attribute double azimuthAngle;
     readonly attribute DOMString pointerType;
     readonly attribute boolean isPrimary;
+
+    [SecureContext, EnabledBySetting=GetCoalescedEventsEnabled] sequence<PointerEvent> getCoalescedEvents();
+    [EnabledBySetting=GetPredictedEventsEnabled] sequence<PointerEvent> getPredictedEvents();
 };
 

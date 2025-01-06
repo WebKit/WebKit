@@ -52,7 +52,7 @@
 #import <wtf/Threading.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/WTFString.h>
@@ -735,11 +735,10 @@ TEST(URLSchemeHandler, XHRPost)
             EXPECT_TRUE(!!stream);
             [stream open];
             EXPECT_TRUE(stream.hasBytesAvailable);
-            uint8_t buffer[9];
-            memset(buffer, 0, 9);
-            auto length = [stream read:buffer maxLength:9];
+            std::array<uint8_t, 9> buffer = { };
+            auto length = [stream read:buffer.data() maxLength:buffer.size()];
             EXPECT_EQ(length, 8);
-            EXPECT_STREQ(reinterpret_cast<const char*>(buffer), "foo=bar2");
+            EXPECT_STREQ(reinterpret_cast<const char*>(buffer.data()), "foo=bar2");
             EXPECT_FALSE(stream.hasBytesAvailable);
             [stream close];
         } else if ([task.request.URL.absoluteString isEqualToString:@"xhrpost://example/arraybuffer"]) {
@@ -1090,7 +1089,7 @@ TEST(URLSchemeHandler, DisableCORSCanvas)
             done = true;
         } else if ([task.request.URL.path isEqualToString:@"/image.png"]) {
             mimeType = @"image/png";
-            response = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+            response = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
         } else
             ASSERT_NOT_REACHED();
 
@@ -1574,7 +1573,10 @@ TEST(URLSchemeHandler, Frames)
         [webView _callAsyncJavaScript:@"window.customProperty = 'customValue'" arguments:nil inFrame:grandchild1.info inContentWorld:[WKContentWorld defaultClientWorld] completionHandler:^(id, NSError *error) {
             [webView _evaluateJavaScript:@"window.location.href + window.customProperty" inFrame:grandchild1.info inContentWorld:[WKContentWorld defaultClientWorld] completionHandler:^(id result, NSError *error) {
                 EXPECT_WK_STREQ(result, "frame://host3/customValue");
-                done = true;
+                [webView _frameInfoFromHandle:grandchild1.info._handle completionHandler:^(WKFrameInfo *fetchedInfo) {
+                    EXPECT_WK_STREQ(fetchedInfo.request.URL.host, "host3");
+                    done = true;
+                }];
             }];
         }];
     }];
@@ -1690,7 +1692,7 @@ TEST(URLSchemeHandler, APIRedirect)
 
 TEST(URLSchemeHandler, Ranges)
 {
-    RetainPtr<NSData> videoData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr<NSData> videoData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"mp4"]];
 
     auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

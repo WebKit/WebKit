@@ -29,7 +29,6 @@
 
 #import <CoreSVG/CGSVGDocument.h>
 #import <UIKit/NSTextAlternatives.h>
-#import <UIKit/UIActivityViewController_Private.h>
 #import <UIKit/UIAlertController_Private.h>
 #import <UIKit/UIApplication+iOSMac_Private.h>
 #import <UIKit/UIApplication_Private.h>
@@ -46,6 +45,7 @@
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIGeometry_Private.h>
 #import <UIKit/UIGestureRecognizer_Private.h>
+#import <UIKit/UIImageAsset_Private.h>
 #import <UIKit/UIImagePickerController_Private.h>
 #import <UIKit/UIImage_Private.h>
 #import <UIKit/UIInterface_Private.h>
@@ -86,14 +86,17 @@
 #import <UIKit/UIVisualEffect_Private.h>
 #import <UIKit/UIWKTextInteractionAssistant.h>
 #import <UIKit/UIWebBrowserView.h>
+#import <UIKit/UIWebClip.h>
 #import <UIKit/UIWebDocumentView.h>
 #import <UIKit/UIWebTiledView.h>
 #import <UIKit/UIWindowScene_Private.h>
 #import <UIKit/UIWindow_Private.h>
+#import <UIKit/_UIApplicationBSActionHandler.h>
 #import <UIKit/_UIApplicationRotationFollowing.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
 #import <UIKit/_UISheetPresentationController.h>
+#import <UIKitServices/UISApplicationState.h>
 
 #if HAVE(LINK_PREVIEW)
 #import <UIKit/UIPreviewAction_Private.h>
@@ -139,10 +142,31 @@
 #endif
 
 #if PLATFORM(VISION)
+#import <UIKit/UIActivityViewController_Private.h>
 #import <UIKit/UIView+SpatialComputing.h>
 #endif
 
+#if PLATFORM(IOS)
+@interface UIWebClip(Staging_134304426)
++ (NSString *)pathForWebClipWithIdentifier:(NSString *)identifier;
+@end
+
+@interface UIWebClip(Staging_131961097)
+@property (nonatomic, readonly) NSSet<NSString *> *trustedClientBundleIdentifiers;
+@end
+#endif
+
 #else // USE(APPLE_INTERNAL_SDK)
+
+@interface UIWebClip : NSObject
++ (UIWebClip *)webClipWithIdentifier:(NSString *)identifier;
++ (NSArray *)webClips;
++ (NSString *)pathForWebClipWithIdentifier:(NSString *)identifier;
+@property (copy) NSString *identifier;
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, retain) NSURL *pageURL;
+@property (nonatomic, readonly) NSSet<NSString *> *trustedClientBundleIdentifiers;
+@end
 
 #if ENABLE(DRAG_SUPPORT)
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
@@ -204,12 +228,19 @@ typedef struct __IOHIDEvent* IOHIDEventRef;
 typedef struct __GSKeyboard* GSKeyboardRef;
 WTF_EXTERN_C_END
 
+@class BSAction;
+@class FBSSceneTransitionContext;
+@protocol _UIApplicationBSActionHandler <NSObject>
+- (NSSet<BSAction *> *)_respondToApplicationActions:(NSSet<BSAction *> *)applicationActions fromTransitionContext:(FBSSceneTransitionContext *)transitionContext;
+@end
+
 @interface UIApplication ()
 - (UIInterfaceOrientation)interfaceOrientation;
 - (void)_cancelAllTouches;
 - (BOOL)isSuspendedUnderLock;
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
 - (BOOL)_appAdoptsUISceneLifecycle;
+- (void)_registerBSActionHandler:(id<_UIApplicationBSActionHandler>)handler;
 @end
 
 @interface UIColor ()
@@ -313,6 +344,10 @@ typedef enum {
 @property (nonatomic, setter=_setShowsFileSizePicker:) BOOL _showsFileSizePicker;
 @end
 
+@interface UIImageAsset ()
++ (instancetype)_dynamicAssetNamed:(NSString *)name generator:(UIImage *(^)(UIImageAsset *, UIImageConfiguration *, UIImage *))block;
+@end
+
 typedef struct CGSVGDocument *CGSVGDocumentRef;
 
 @interface UIImage ()
@@ -320,6 +355,7 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 - (UIImage *)_flatImageWithColor:(UIColor *)color;
 + (UIImage *)_systemImageNamed:(NSString *)name;
 + (UIImage *)_imageWithCGSVGDocument:(CGSVGDocumentRef)cgSVGDocument;
++ (UIImage *)_imageWithCGSVGDocument:(CGSVGDocumentRef)cgSVGDocument scale:(CGFloat)scale orientation:(UIImageOrientation)orientation;
 @end
 
 @protocol UIKeyboardImplGeometryDelegate
@@ -584,9 +620,11 @@ extern NSString * const UIPresentationControllerDismissalTransitionDidEndComplet
 - (UIWindow *)window;
 @end
 
+#if PLATFORM(VISION)
 @interface UIActivityViewController ()
 @property (nonatomic) BOOL allowsCustomPresentationStyle;
 @end
+#endif // PLATFORM(VISION)
 
 @interface UIView ()
 + (BOOL)_isInAnimationBlock;
@@ -959,13 +997,13 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, strong) UIImage *image;
 @end
 
-#if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU)
 @interface _UIClickInteraction : NSObject <UIInteraction>
 @end
 
 @interface _UIClickPresentationInteraction : NSObject <UIInteraction>
 @end
-#endif // HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+#endif // USE(UICONTEXTMENU)
 
 @interface NSTextAlternatives : NSObject
 - (id)initWithPrimaryString:(NSString *)primaryString alternativeStrings:(NSArray<NSString *> *)alternativeStrings;
@@ -1014,6 +1052,11 @@ extern NSNotificationName const _UIWindowSceneDidEndLiveResizeNotification;
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
 extern void _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor(UIUserInterfaceIdiom, CGFloat scaleFactor);
 #endif
+
+@interface UISApplicationState : NSObject
+- (instancetype)initWithBundleIdentifier:(NSString *)bundleIdentifier;
+@property (nonatomic, copy) id badgeValue;
+@end
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
@@ -1071,6 +1114,10 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 
 @interface UIColor (IPI)
 + (UIColor *)insertionPointColor;
+@end
+
+@interface UIImage ()
+- (UIImage *)_rasterizedImage;
 @end
 
 @interface UIView (IPI)
@@ -1214,6 +1261,10 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @end
 
 @class UITextInputArrowKeyHistory;
+
+@interface UIApplication (InternalBSAction)
+- (void)_registerInternalBSActionHandler:(id<_UIApplicationBSActionHandler>)handler;
+@end
 
 WTF_EXTERN_C_BEGIN
 

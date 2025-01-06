@@ -41,3 +41,5 @@ enum class WebKit::PCM::MessageType : uint8_t {
     DestroyStoreForTesting,
     AllowTLSCertificateChainForLocalPCMTesting
 }
+
+enum class WebKit::PrivateClickMeasurementAttributionType : bool

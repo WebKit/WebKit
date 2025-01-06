@@ -23,11 +23,11 @@
 #include "config.h"
 #include "MutationEvent.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MutationEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MutationEvent);
 
 MutationEvent::MutationEvent()
     : Event(EventInterfaceType::MutationEvent)

@@ -28,6 +28,7 @@
 #include <unicode/utypes.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/LChar.h>
+#include <wtf/text/ParsingUtilities.h>
 
 namespace WTF {
 
@@ -85,7 +86,7 @@ ALWAYS_INLINE char32_t CodePointIterator<LChar>::operator*() const
 template<>
 ALWAYS_INLINE auto CodePointIterator<LChar>::operator++() -> CodePointIterator&
 {
-    m_data = m_data.subspan(1);
+    skip(m_data, 1);
     return *this;
 }
 
@@ -104,7 +105,7 @@ ALWAYS_INLINE auto CodePointIterator<UChar>::operator++() -> CodePointIterator&
     unsigned i = 0;
     size_t length = m_data.size();
     U16_FWD_1(m_data, i, length);
-    m_data = m_data.subspan(i);
+    skip(m_data, i);
     return *this;
 }
 

@@ -105,6 +105,7 @@ vpx_codec_err_t vpx_codec_decode(vpx_codec_ctx_t *ctx, const uint8_t *data,
                                  unsigned int data_sz, void *user_priv,
                                  long deadline) {
   vpx_codec_err_t res;
+  (void)deadline;
 
   /* Sanity checks */
   /* NULL data ptr allowed if data_sz is 0 too */
@@ -112,10 +113,8 @@ vpx_codec_err_t vpx_codec_decode(vpx_codec_ctx_t *ctx, const uint8_t *data,
     res = VPX_CODEC_INVALID_PARAM;
   else if (!ctx->iface || !ctx->priv)
     res = VPX_CODEC_ERROR;
-  else {
-    res = ctx->iface->dec.decode(get_alg_priv(ctx), data, data_sz, user_priv,
-                                 deadline);
-  }
+  else
+    res = ctx->iface->dec.decode(get_alg_priv(ctx), data, data_sz, user_priv);
 
   return SAVE_STATUS(ctx, res);
 }

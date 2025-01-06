@@ -39,18 +39,18 @@ layer at (0,0) size 785x1360
         RenderText {#text} at (0,72) size 379x36
           text run at (0,72) width 379: "property without the need for the user to resize the viewing"
           text run at (0,90) width 55: "window."
-      RenderTable {TABLE} at (0,760) size 385x584 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,760) size 385x584 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 383x582
           RenderTableRow {TR} at (0,0) size 383x26
-            RenderTableCell {TD} at (0,0) size 383x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 383x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 383x556
-            RenderTableCell {TD} at (0,290) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,290) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,268) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 371x556 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 371x556 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (4,4) size 363x50
                 RenderImage {IMG} at (0,0) size 50x50
                 RenderText {#text} at (0,0) size 0x0

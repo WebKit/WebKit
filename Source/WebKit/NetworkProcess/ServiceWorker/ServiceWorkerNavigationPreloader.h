@@ -31,6 +31,7 @@
 #include "NetworkLoadParameters.h"
 #include <WebCore/NavigationPreloadState.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -45,7 +46,7 @@ class NetworkLoad;
 class NetworkSession;
 
 class ServiceWorkerNavigationPreloader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerNavigationPreloader>, public CanMakeCheckedPtr<ServiceWorkerNavigationPreloader> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerNavigationPreloader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ServiceWorkerNavigationPreloader);
 public:
     ServiceWorkerNavigationPreloader(NetworkSession&, NetworkLoadParameters&&, const WebCore::NavigationPreloadState&, bool shouldCaptureExtraNetworkLoadMetrics);
@@ -62,6 +63,7 @@ public:
     const WebCore::ResourceResponse& response() const { return m_response; }
     const WebCore::NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
     bool isServiceWorkerNavigationPreloadEnabled() const { return m_state.enabled; }
+    bool didReceiveResponseOrError() const { return m_didReceiveResponseOrError; }
 
     bool convertToDownload(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
@@ -84,7 +86,7 @@ private:
     void loadFromNetwork();
     void didComplete();
 
-    std::unique_ptr<NetworkLoad> m_networkLoad;
+    RefPtr<NetworkLoad> m_networkLoad;
     WeakPtr<NetworkSession> m_session;
 
     NetworkLoadParameters m_parameters;
@@ -102,6 +104,7 @@ private:
     bool m_isStarted { false };
     bool m_isCancelled { false };
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
+    bool m_didReceiveResponseOrError { false };
     MonotonicTime m_startTime;
 };
 

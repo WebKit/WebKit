@@ -28,7 +28,7 @@
 
 #if ENABLE(JIT)
 
-#include "CodeBlock.h"
+#include "CodeBlockInlines.h"
 #include "JSCellInlines.h"
 #include "StructureStubInfo.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -39,16 +39,22 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(StructureStubInfoClearingWatchpoint);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AdaptiveValueStructureStubClearingWatchpoint);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(StructureTransitionStructureStubClearingWatchpoint);
 
+StructureStubInfoClearingWatchpoint::~StructureStubInfoClearingWatchpoint()
+{
+    ASSERT(!m_owner->wasDestructed());
+}
+
 void StructureStubInfoClearingWatchpoint::fireInternal(VM&, const FireDetail&)
 {
-    if (!m_owner->isLive())
+    ASSERT(!m_owner->wasDestructed());
+    if (m_owner->isPendingDestruction())
         return;
 
     // This will implicitly cause my own demise: stub reset removes all watchpoints.
     // That works, because deleting a watchpoint removes it from the set's list, and
     // the set's list traversal for firing is robust against the set changing.
     ConcurrentJSLocker locker(m_owner->m_lock);
-    m_stubInfo->reset(locker, m_owner.get());
+    m_stubInfo.reset(locker, m_owner.get());
 }
 
 void StructureTransitionStructureStubClearingWatchpoint::fireInternal(VM& vm, const FireDetail&)

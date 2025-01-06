@@ -23,11 +23,10 @@ Collapsed borders should not disappear.
         </style>
     <head>
         <script type="text/javascript">
-            function test() {
+            async function test() {
                 document.body.offsetTop;
-                if (window.testRunner) {
-                    testRunner.displayAndTrackRepaints();
-                }
+                testRunner?.waitUntilDone();
+                await testRunner?.displayAndTrackRepaints();
                 if (window.eventSender) {
                     row = document.getElementById('row1');
                     rowRect = row.getBoundingClientRect();
@@ -36,6 +35,7 @@ Collapsed borders should not disappear.
                     eventSender.mouseMoveTo(x, y + 1);
                     eventSender.mouseMoveTo(x, y - 1);
                 }
+                testRunner?.notifyDone();
             }
         </script>
     </head>

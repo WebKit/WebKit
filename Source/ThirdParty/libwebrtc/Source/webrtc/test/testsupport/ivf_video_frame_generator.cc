@@ -12,6 +12,7 @@
 
 #include <limits>
 
+#include "api/environment/environment.h"
 #include "api/video/encoded_image.h"
 #include "api/video/i420_buffer.h"
 #include "api/video_codecs/video_codec.h"
@@ -30,12 +31,32 @@ namespace {
 
 constexpr TimeDelta kMaxNextFrameWaitTimeout = TimeDelta::Seconds(1);
 
+std::unique_ptr<VideoDecoder> CreateDecoder(const Environment& env,
+                                            VideoCodecType codec_type) {
+  switch (codec_type) {
+    case VideoCodecType::kVideoCodecVP8:
+      return CreateVp8Decoder(env);
+    case VideoCodecType::kVideoCodecVP9:
+      return VP9Decoder::Create();
+    case VideoCodecType::kVideoCodecH264:
+      return H264Decoder::Create();
+    case VideoCodecType::kVideoCodecAV1:
+      return CreateDav1dDecoder();
+    case VideoCodecType::kVideoCodecH265:
+      // No H.265 SW decoder implementation will be provided.
+      return nullptr;
+    case VideoCodecType::kVideoCodecGeneric:
+      return nullptr;
+  }
+}
+
 }  // namespace
 
-IvfVideoFrameGenerator::IvfVideoFrameGenerator(const std::string& file_name)
+IvfVideoFrameGenerator::IvfVideoFrameGenerator(const Environment& env,
+                                               absl::string_view file_name)
     : callback_(this),
       file_reader_(IvfFileReader::Create(FileWrapper::OpenReadOnly(file_name))),
-      video_decoder_(CreateVideoDecoder(file_reader_->GetVideoCodecType())),
+      video_decoder_(CreateDecoder(env, file_reader_->GetVideoCodecType())),
       width_(file_reader_->GetFrameWidth()),
       height_(file_reader_->GetFrameHeight()) {
   RTC_CHECK(video_decoder_) << "No decoder found for file's video codec type";
@@ -62,7 +83,7 @@ IvfVideoFrameGenerator::~IvfVideoFrameGenerator() {
   video_decoder_.reset();
   {
     MutexLock frame_lock(&frame_decode_lock_);
-    next_frame_ = absl::nullopt;
+    next_frame_ = std::nullopt;
     // Set event in case another thread is waiting on it.
     next_frame_decoded_.Set();
   }
@@ -75,7 +96,7 @@ FrameGeneratorInterface::VideoFrameData IvfVideoFrameGenerator::NextFrame() {
   if (!file_reader_->HasMoreFrames()) {
     file_reader_->Reset();
   }
-  absl::optional<EncodedImage> image = file_reader_->NextFrame();
+  std::optional<EncodedImage> image = file_reader_->NextFrame();
   RTC_CHECK(image);
   // Last parameter is undocumented and there is no usage of it found.
   RTC_CHECK_EQ(WEBRTC_VIDEO_CODEC_OK,
@@ -97,6 +118,21 @@ FrameGeneratorInterface::VideoFrameData IvfVideoFrameGenerator::NextFrame() {
     buffer = scaled_buffer;
   }
   return VideoFrameData(buffer, next_frame_->update_rect());
+}
+
+void IvfVideoFrameGenerator::SkipNextFrame() {
+  MutexLock lock(&lock_);
+  next_frame_decoded_.Reset();
+  RTC_CHECK(file_reader_);
+  if (!file_reader_->HasMoreFrames()) {
+    file_reader_->Reset();
+  }
+  std::optional<EncodedImage> image = file_reader_->NextFrame();
+  RTC_CHECK(image);
+  // Last parameter is undocumented and there is no usage of it found.
+  // Frame has to be decoded in case it is a key frame.
+  RTC_CHECK_EQ(WEBRTC_VIDEO_CODEC_OK,
+               video_decoder_->Decode(*image, /*render_time_ms=*/0));
 }
 
 void IvfVideoFrameGenerator::ChangeResolution(size_t width, size_t height) {
@@ -123,8 +159,8 @@ int32_t IvfVideoFrameGenerator::DecodedCallback::Decoded(
 }
 void IvfVideoFrameGenerator::DecodedCallback::Decoded(
     VideoFrame& decoded_image,
-    absl::optional<int32_t> decode_time_ms,
-    absl::optional<uint8_t> qp) {
+    std::optional<int32_t> decode_time_ms,
+    std::optional<uint8_t> qp) {
   reader_->OnFrameDecoded(decoded_image);
 }
 
@@ -132,26 +168,6 @@ void IvfVideoFrameGenerator::OnFrameDecoded(const VideoFrame& decoded_frame) {
   MutexLock lock(&frame_decode_lock_);
   next_frame_ = decoded_frame;
   next_frame_decoded_.Set();
-}
-
-std::unique_ptr<VideoDecoder> IvfVideoFrameGenerator::CreateVideoDecoder(
-    VideoCodecType codec_type) {
-  if (codec_type == VideoCodecType::kVideoCodecVP8) {
-    return VP8Decoder::Create();
-  }
-  if (codec_type == VideoCodecType::kVideoCodecVP9) {
-    return VP9Decoder::Create();
-  }
-  if (codec_type == VideoCodecType::kVideoCodecH264) {
-    return H264Decoder::Create();
-  }
-  if (codec_type == VideoCodecType::kVideoCodecAV1) {
-    return CreateDav1dDecoder();
-  }
-  if (codec_type == VideoCodecType::kVideoCodecH265) {
-    // TODO(bugs.webrtc.org/13485): implement H265 decoder
-  }
-  return nullptr;
 }
 
 }  // namespace test

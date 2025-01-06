@@ -96,10 +96,6 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame& frame, const IntRect& 
 
     ScopedFramePaintingState state(frame, nullptr);
 
-    OptionSet<ImageBufferOptions> bufferOptions;
-    if (options.flags.contains(SnapshotFlags::Accelerated))
-        bufferOptions.add(ImageBufferOptions::Accelerated);
-
     auto paintBehavior = state.paintBehavior;
     if (options.flags.contains(SnapshotFlags::ForceBlackText))
         paintBehavior.add(PaintBehavior::ForceBlackText);
@@ -116,6 +112,8 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame& frame, const IntRect& 
     frame.view()->setPaintBehavior(paintBehavior);
 
     float scaleFactor = frame.page()->deviceScaleFactor();
+    if (options.flags.contains(SnapshotFlags::PaintWith3xBaseScale))
+        scaleFactor = 3;
 
     if (frame.page()->delegatesScaling())
         scaleFactor *= frame.page()->pageScaleFactor();
@@ -123,10 +121,11 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame& frame, const IntRect& 
     if (options.flags.contains(SnapshotFlags::PaintWithIntegralScaleFactor))
         scaleFactor = ceilf(scaleFactor);
 
+    auto renderingMode = options.flags.contains(SnapshotFlags::Accelerated) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
     auto purpose = options.flags.contains(SnapshotFlags::Shareable) ? RenderingPurpose::ShareableSnapshot : RenderingPurpose::Snapshot;
     auto hostWindow = (document->view() && document->view()->root()) ? document->view()->root()->hostWindow() : nullptr;
 
-    auto buffer = ImageBuffer::create(imageRect.size(), purpose, scaleFactor, options.colorSpace, options.pixelFormat, bufferOptions, hostWindow);
+    auto buffer = ImageBuffer::create(imageRect.size(), renderingMode, purpose, scaleFactor, options.colorSpace, options.pixelFormat, hostWindow);
     if (!buffer)
         return nullptr;
 
@@ -176,7 +175,12 @@ RefPtr<ImageBuffer> snapshotNode(LocalFrame& frame, Node& node, SnapshotOptions&
 
 static bool styleContainsComplexBackground(const RenderStyle& style)
 {
-    return style.hasBlendMode() || style.hasBackgroundImage() || style.hasBackdropFilter();
+    return style.hasBlendMode()
+        || style.hasBackgroundImage()
+#if HAVE(CORE_MATERIAL)
+        || style.hasAppleVisualEffectRequiringBackdropFilter()
+#endif
+        || style.hasBackdropFilter();
 }
 
 Color estimatedBackgroundColorForRange(const SimpleRange& range, const LocalFrame& frame)

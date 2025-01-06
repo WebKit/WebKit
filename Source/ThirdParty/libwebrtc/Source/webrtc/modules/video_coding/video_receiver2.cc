@@ -19,6 +19,7 @@
 #include "absl/algorithm/container.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_decoder.h"
+#include "common_video/include/corruption_score_calculator.h"
 #include "modules/video_coding/decoder_database.h"
 #include "modules/video_coding/generic_decoder.h"
 #include "modules/video_coding/include/video_coding_defines.h"
@@ -29,11 +30,16 @@
 
 namespace webrtc {
 
-VideoReceiver2::VideoReceiver2(Clock* clock,
-                               VCMTiming* timing,
-                               const FieldTrialsView& field_trials)
+VideoReceiver2::VideoReceiver2(
+    Clock* clock,
+    VCMTiming* timing,
+    const FieldTrialsView& field_trials,
+    CorruptionScoreCalculator* corruption_score_calculator)
     : clock_(clock),
-      decoded_frame_callback_(timing, clock_, field_trials),
+      decoded_frame_callback_(timing,
+                              clock_,
+                              field_trials,
+                              corruption_score_calculator),
       codec_database_() {
   decoder_sequence_checker_.Detach();
 }

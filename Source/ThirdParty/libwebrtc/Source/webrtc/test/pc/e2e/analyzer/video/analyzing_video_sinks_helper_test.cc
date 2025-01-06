@@ -10,10 +10,10 @@
 #include "test/pc/e2e/analyzer/video/analyzing_video_sinks_helper.h"
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "api/test/pclf/media_configuration.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -40,7 +40,7 @@ TEST(AnalyzingVideoSinksHelperTest, ConfigsCanBeAdded) {
   AnalyzingVideoSinksHelper helper;
   helper.AddConfig("alice", config);
 
-  absl::optional<std::pair<std::string, VideoConfig>> registred_config =
+  std::optional<std::pair<std::string, VideoConfig>> registred_config =
       helper.GetPeerAndConfig("alice_video");
   ASSERT_TRUE(registred_config.has_value());
   EXPECT_THAT(registred_config->first, Eq("alice"));
@@ -56,7 +56,7 @@ TEST(AnalyzingVideoSinksHelperTest, AddingForExistingLabelWillOverwriteValue) {
   AnalyzingVideoSinksHelper helper;
   helper.AddConfig("alice", config_before);
 
-  absl::optional<std::pair<std::string, VideoConfig>> registred_config =
+  std::optional<std::pair<std::string, VideoConfig>> registred_config =
       helper.GetPeerAndConfig("alice_video");
   ASSERT_TRUE(registred_config.has_value());
   EXPECT_THAT(registred_config->first, Eq("alice"));

@@ -8,7 +8,10 @@
 #include "src/gpu/graphite/PaintParamsKey.h"
 
 #include "src/base/SkArenaAlloc.h"
+#include "src/base/SkAutoMalloc.h"
+#include "src/base/SkBase64.h"
 #include "src/base/SkStringView.h"
+#include "src/gpu/graphite/Caps.h"
 #include "src/gpu/graphite/KeyHelpers.h"
 #include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/ShaderCodeDictionary.h"
@@ -40,9 +43,22 @@ void PaintParamsKeyBuilder::pushStack(int32_t codeSnippetID) {
     fStack.push_back({codeSnippetID, snippet->fNumChildren});
 }
 
+void PaintParamsKeyBuilder::validateData(size_t dataSize) {
+    SkASSERT(!fStack.empty()); // addData() called within code snippet block
+    // Check that addData() is only called for snippets that support it and is only called once
+    const ShaderSnippet* snippet = fDict->getEntry(fStack.back().fCodeSnippetID);
+    SkASSERT(snippet->storesSamplerDescData());
+    SkASSERT(fStack.back().fDataSize < 0);
+
+    fStack.back().fDataSize = SkTo<int>(dataSize);
+}
+
 void PaintParamsKeyBuilder::popStack() {
     SkASSERT(!fStack.empty());
     SkASSERT(fStack.back().fNumActualChildren == fStack.back().fNumExpectedChildren);
+    const bool expectsData = fDict->getEntry(fStack.back().fCodeSnippetID)->storesSamplerDescData();
+    const bool hasData = fStack.back().fDataSize >= 0;
+    SkASSERT(expectsData == hasData);
     fStack.pop_back();
 }
 
@@ -52,7 +68,7 @@ void PaintParamsKeyBuilder::popStack() {
 // PaintParamsKey
 
 PaintParamsKey PaintParamsKey::clone(SkArenaAlloc* arena) const {
-    int32_t* newData = arena->makeArrayDefault<int32_t>(fData.size());
+    uint32_t* newData = arena->makeArrayDefault<uint32_t>(fData.size());
     memcpy(newData, fData.data(), fData.size_bytes());
     return PaintParamsKey({newData, fData.size()});
 }
@@ -71,6 +87,21 @@ const ShaderNode* PaintParamsKey::createNode(const ShaderCodeDictionary* dict,
         return nullptr;
     }
 
+    SkSpan<const uint32_t> dataSpan = {};
+    if (entry->storesSamplerDescData()) {
+        // If a snippet stores data, then the subsequent paint key index signifies the length of
+        // its data. Determine this data length and iterate currentIndex past it.
+        const int storedDataLengthIdx = (*currentIndex)++;
+        SkASSERT(storedDataLengthIdx < SkTo<int>(fData.size()));
+        const int dataLength = fData[storedDataLengthIdx];
+        SkASSERT(storedDataLengthIdx + dataLength < SkTo<int>(fData.size()));
+
+        // Gather the data contents (length can now be inferred by the consumers of the data) to
+        // pass into ShaderNode creation. Iterate the paint key index past the data indices.
+        dataSpan = fData.subspan(storedDataLengthIdx + 1, dataLength);
+        *currentIndex += dataLength;
+    }
+
     const ShaderNode** childArray = arena->makeArray<const ShaderNode*>(entry->fNumChildren);
     for (int i = 0; i < entry->fNumChildren; ++i) {
         const ShaderNode* child = this->createNode(dict, currentIndex, arena);
@@ -80,7 +111,11 @@ const ShaderNode* PaintParamsKey::createNode(const ShaderCodeDictionary* dict,
         childArray[i] = child;
     }
 
-    return arena->make<ShaderNode>(entry, SkSpan(childArray, entry->fNumChildren), id, index);
+    return arena->make<ShaderNode>(entry,
+                                   SkSpan(childArray, entry->fNumChildren),
+                                   id,
+                                   index,
+                                   dataSpan);
 }
 
 SkSpan<const ShaderNode*> PaintParamsKey::getRootNodes(const ShaderCodeDictionary* dict,
@@ -110,11 +145,19 @@ SkSpan<const ShaderNode*> PaintParamsKey::getRootNodes(const ShaderCodeDictionar
 
 static int key_to_string(SkString* str,
                          const ShaderCodeDictionary* dict,
-                         SkSpan<const int32_t> keyData,
-                         int currentIndex) {
+                         SkSpan<const uint32_t> keyData,
+                         int currentIndex,
+                         bool includeData,
+                         int indent) {
     SkASSERT(currentIndex < SkTo<int>(keyData.size()));
 
-    int32_t id = keyData[currentIndex++];
+    const bool multiline = indent >= 0;
+    if (multiline) {
+        // Format for multi-line printing
+        str->appendf("%*c", 2 * indent, ' ');
+    }
+
+    uint32_t id = keyData[currentIndex++];
     auto entry = dict->getEntry(id);
     if (!entry) {
         str->append("UnknownCodeSnippetID:");
@@ -129,60 +172,81 @@ static int key_to_string(SkString* str,
     }
     str->append(name);
 
-    if (entry->fNumChildren > 0) {
-        str->append(" [ ");
-        for (int i = 0; i < entry->fNumChildren; ++i) {
-            currentIndex = key_to_string(str, dict, keyData, currentIndex);
+    if (entry->storesSamplerDescData()) {
+        SkASSERT(currentIndex + 1 < SkTo<int>(keyData.size()));
+        const int dataLength = keyData[currentIndex++];
+        SkASSERT(currentIndex + dataLength < SkTo<int>(keyData.size()));
+
+        // Define a compact representation for the common case of shader snippets using just one
+        // dynamic sampler. Immutable samplers require a data length > 1 to be represented while a
+        // dynamic sampler is represented with just one, so we can simply consult the data length.
+        if (dataLength == 1) {
+            str->append("(0)");
+        } else {
+            str->append("(");
+            str->appendU32(dataLength);
+            if (includeData) {
+                // Encode data in base64 to shorten it
+                str->append(": ");
+                SkAutoMalloc encodedData{SkBase64::EncodedSize(dataLength)};
+                char* dst = static_cast<char*>(encodedData.get());
+                size_t encodedLen = SkBase64::Encode(&keyData[currentIndex], dataLength, dst);
+                str->append(dst, encodedLen);
+            }
+            str->append(")");
         }
-        str->append("]");
+
+        currentIndex += dataLength;
     }
 
-    str->append(" ");
+    if (entry->fNumChildren > 0) {
+        if (multiline) {
+            str->append(":\n");
+            indent++;
+        } else {
+            str->append(" [ ");
+        }
+
+        for (int i = 0; i < entry->fNumChildren; ++i) {
+            currentIndex = key_to_string(str, dict, keyData, currentIndex, includeData, indent);
+        }
+
+        if (!multiline) {
+            str->append("]");
+        }
+    }
+
+    if (!multiline) {
+        str->append(" ");
+    } else if (entry->fNumChildren == 0) {
+        str->append("\n");
+    }
     return currentIndex;
 }
 
-SkString PaintParamsKey::toString(const ShaderCodeDictionary* dict) const {
+SkString PaintParamsKey::toString(const ShaderCodeDictionary* dict, bool includeData) const {
     SkString str;
     const int keySize = SkTo<int>(fData.size());
-    for (int currentIndex = 0; currentIndex < keySize; ) {
-        currentIndex = key_to_string(&str, dict, fData, currentIndex);
+    for (int currentIndex = 0; currentIndex < keySize;) {
+        currentIndex = key_to_string(&str, dict, fData, currentIndex, includeData, /*indent=*/-1);
     }
     return str.isEmpty() ? SkString("(empty)") : str;
 }
 
 #ifdef SK_DEBUG
 
-static int dump_node(const ShaderCodeDictionary* dict,
-                     SkSpan<const int32_t> keyData,
-                     int currentIndex,
-                     int indent) {
-    SkASSERT(currentIndex < SkTo<int>(keyData.size()));
-
-    SkDebugf("%*c", 2 * indent, ' ');
-
-    int32_t id = keyData[currentIndex++];
-    auto entry = dict->getEntry(id);
-    if (!entry) {
-        SkDebugf("[%d] unknown block!\n", id);
-        return currentIndex;
-    }
-
-    SkDebugf("[%d] %s\n", id, entry->fStaticFunctionName);
-    for (int i = 0; i < entry->fNumChildren; ++i) {
-        currentIndex = dump_node(dict, keyData, currentIndex, indent + 1);
-    }
-    return currentIndex;
-}
-
-void PaintParamsKey::dump(const ShaderCodeDictionary* dict) const {
+void PaintParamsKey::dump(const ShaderCodeDictionary* dict, UniquePaintParamsID id) const {
     const int keySize = SkTo<int>(fData.size());
 
     SkDebugf("--------------------------------------\n");
-    SkDebugf("PaintParamsKey (keySize: %d):\n", keySize);
+    SkDebugf("PaintParamsKey %u (keySize: %d):\n", id.asUInt(), keySize);
 
     int currentIndex = 0;
     while (currentIndex < keySize) {
-        currentIndex = dump_node(dict, fData, currentIndex, 1);
+        SkString nodeStr;
+        currentIndex = key_to_string(&nodeStr, dict, fData, currentIndex,
+                                     /*includeData=*/true, /*indent=*/1);
+        SkDebugf("%s", nodeStr.c_str());
     }
 }
 

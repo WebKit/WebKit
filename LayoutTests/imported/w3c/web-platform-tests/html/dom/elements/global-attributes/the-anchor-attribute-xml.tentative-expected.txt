@@ -1,0 +1,3 @@
+
+FAIL the-anchor-attribute-xml assert_equals: Setting the anchor attribute in XML should work. expected (object) Element node <div id="target">target</div> but got (undefined) undefined
+

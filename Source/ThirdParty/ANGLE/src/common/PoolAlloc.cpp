@@ -288,8 +288,8 @@ void PoolAllocator::push()
 // Do a mass-deallocation of all the individual allocations that have occurred since the last
 // push(), or since the last pop(), or since the object's creation.
 //
-// The deallocated pages are saved for future allocations.
-void PoolAllocator::pop()
+// Single-page allocations are saved for future use unless the release strategy is All.
+void PoolAllocator::pop(ReleaseStrategy releaseStrategy)
 {
     if (mStack.size() < 1)
     {
@@ -310,7 +310,7 @@ void PoolAllocator::pop()
         // invoke destructor to free allocation list
         mInUseList->~PageHeader();
 
-        if (pageCount > 1)
+        if (pageCount > 1 || releaseStrategy == ReleaseStrategy::All)
         {
             delete[] reinterpret_cast<char *>(mInUseList);
         }

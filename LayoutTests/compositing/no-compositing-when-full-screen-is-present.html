@@ -42,11 +42,14 @@ host.addEventListener('webkitfullscreenchange', finalizeTest);
 let button = document.querySelector('button');
 button.onclick = goFullscreen;
 
-if (window.eventSender) {
-    jsTestIsAsync = true;
-    eventSender.mouseMoveTo(button.offsetLeft + 5, button.offsetTop + 5);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+jsTestIsAsync = true;
+
+onload = async () => {
+    if (window.eventSender) {
+        await eventSender.asyncMouseMoveTo(button.offsetLeft + 5, button.offsetTop + 5);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+    }
 }
 
 </script>

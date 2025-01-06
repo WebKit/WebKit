@@ -27,11 +27,11 @@
 #include "CSSLCH.h"
 
 #include "ExceptionOr.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSLCH);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSLCH);
 
 ExceptionOr<Ref<CSSLCH>> CSSLCH::create(CSSColorPercent&& lightness, CSSColorPercent&& chroma, CSSColorAngle&& hue, CSSColorPercent&& alpha)
 {

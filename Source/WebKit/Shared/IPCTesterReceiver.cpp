@@ -30,6 +30,11 @@
 
 namespace WebKit {
 
+Ref<IPCTesterReceiver> IPCTesterReceiver::create()
+{
+    return adoptRef(*new IPCTesterReceiver);
+}
+
 void IPCTesterReceiver::asyncMessage(uint32_t arg0, CompletionHandler<void(uint32_t)>&& completionHandler)
 {
     completionHandler(arg0 + 1u);

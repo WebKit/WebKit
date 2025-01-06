@@ -1,3 +1,0 @@
-
-PASS IDBDatabase.deleteObjectStore() - object store's name is removed from database's list
-

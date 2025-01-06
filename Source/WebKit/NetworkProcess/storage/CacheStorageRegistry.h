@@ -26,21 +26,26 @@
 #pragma once
 
 #include <WebCore/DOMCacheIdentifier.h>
+#include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class CacheStorageCache;
 
-class CacheStorageRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
+class CacheStorageRegistry : public ThreadSafeRefCounted<CacheStorageRegistry> {
+    WTF_MAKE_TZONE_ALLOCATED(CacheStorageRegistry);
 public:
-    CacheStorageRegistry();
+    static Ref<CacheStorageRegistry> create();
+
     void registerCache(WebCore::DOMCacheIdentifier, CacheStorageCache&);
     void unregisterCache(WebCore::DOMCacheIdentifier);
     CacheStorageCache* cache(WebCore::DOMCacheIdentifier);
 
 private:
+    CacheStorageRegistry();
     HashMap<WebCore::DOMCacheIdentifier, WeakPtr<CacheStorageCache>> m_caches;
 };
 

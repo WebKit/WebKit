@@ -21,13 +21,16 @@
     <div></div>
 
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
+        onload = async () => {
+            testRunner?.dumpAsText();
+            testRunner?.waitUntilDone();
             // Force a paint so that the content will be painted at the current scroll offset (0x0)
             // before we scroll.
-            testRunner.displayAndTrackRepaints();
+            await testRunner?.displayAndTrackRepaints();
+            
+            window.scrollBy(300, 0);
+            testRunner?.notifyDone();
         }
-        window.scrollBy(300, 0);
     </script>
 </body>
 </html>

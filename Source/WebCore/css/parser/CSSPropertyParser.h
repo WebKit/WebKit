@@ -23,9 +23,8 @@
 #pragma once
 
 #include "CSSCustomPropertySyntax.h"
+#include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
-#include "CSSPropertyParserHelpers.h"
-#include "CSSPropertyParserWorkerSafe.h"
 #include "StyleRuleType.h"
 #include <wtf/text/StringView.h>
 
@@ -84,8 +83,17 @@ private:
     // @keyframe descriptors.
     bool parseKeyframeDescriptor(CSSPropertyID, bool important);
 
+    // @page descriptors.
+    bool parsePageDescriptor(CSSPropertyID, bool important);
+
     // @property descriptors.
     bool parsePropertyDescriptor(CSSPropertyID);
+
+    // @view-transition descriptors.
+    bool parseViewTransitionDescriptor(CSSPropertyID);
+
+    // @position-try descriptors.
+    bool parsePositionTryDescriptor(CSSPropertyID, bool important);
 
     void addProperty(CSSPropertyID longhand, CSSPropertyID shorthand, RefPtr<CSSValue>&&, bool important, bool implicit = false);
     void addExpandedProperty(CSSPropertyID shorthand, RefPtr<CSSValue>&&, bool important, bool implicit = false);
@@ -112,9 +120,9 @@ private:
     bool consumeGridShorthand(bool important);
     bool consumeGridAreaShorthand(bool important);
 
-    bool consumePlaceContentShorthand(bool important);
-    bool consumePlaceItemsShorthand(bool important);
-    bool consumePlaceSelfShorthand(bool important);
+    bool consumeAlignShorthand(const StylePropertyShorthand&, bool important);
+
+    bool consumeBlockStepShorthand(bool important);
 
     bool consumeFont(bool important);
     bool consumeTextDecorationSkip(bool important);
@@ -125,6 +133,7 @@ private:
 
     // CSS3 Parsing Routines (for properties specific to CSS3)
     bool consumeBorderImage(CSSPropertyID, bool important);
+    bool consumeBorderRadius(CSSPropertyID, bool important);
 
     bool consumeFlex(bool important);
 
@@ -142,8 +151,13 @@ private:
     bool consumeContainerShorthand(bool important);
     bool consumeContainIntrinsicSizeShorthand(bool important);
 
+    bool consumeAnimationRangeShorthand(bool important);
     bool consumeScrollTimelineShorthand(bool important);
     bool consumeViewTimelineShorthand(bool important);
+
+    bool consumeLineClampShorthand(bool important);
+
+    bool consumeTextBoxShorthand(bool important);
 
     bool consumeTextWrapShorthand(bool important);
     bool consumeWhiteSpaceShorthand(bool important);

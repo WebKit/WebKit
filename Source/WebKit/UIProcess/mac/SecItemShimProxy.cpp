@@ -36,6 +36,7 @@
 #include <Security/SecBase.h>
 #include <Security/SecIdentity.h>
 #include <Security/SecItem.h>
+#include <WebCore/CertificateInfo.h>
 #include <wtf/cf/VectorCF.h>
 
 #if HAVE(SEC_KEYCHAIN)
@@ -47,7 +48,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 namespace WebKit {
 
-#define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, &connection, completion)
+#define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
 
 // We received these dictionaries over IPC so they shouldn't contain any "in-memory" objects (rdar://104253249).
 static bool dictionaryContainsInMemoryObject(CFDictionaryRef dictionary)
@@ -158,6 +159,8 @@ void SecItemShimProxy::secItemRequestSync(IPC::Connection& connection, const Sec
 {
     secItemRequest(connection, data, WTFMove(completionHandler));
 }
+
+#undef MESSAGE_CHECK_COMPLETION
 
 } // namespace WebKit
 

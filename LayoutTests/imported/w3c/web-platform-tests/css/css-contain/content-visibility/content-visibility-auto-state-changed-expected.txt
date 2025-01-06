@@ -1,6 +1,9 @@
 
 PASS ContentVisibilityAutoStateChange fires when relevant element gains `content-visibility:auto`
+PASS ContentVisibilityAutoStateChange fires when relevant element gains `content-visibility:auto` (oncontentvisibilityautostatechange syntax)
 PASS ContentVisibilityAutoStateChange fires when not relevant element gains `content-visibility:auto`
+PASS ContentVisibilityAutoStateChange content attribute test
+PASS ContentVisibilityAutoStateChange content attribute test on svg
 PASS ContentVisibilityAutoStateChange fires when skipped
 PASS ContentVisibilityAutoStateChange fires when not skipped
 

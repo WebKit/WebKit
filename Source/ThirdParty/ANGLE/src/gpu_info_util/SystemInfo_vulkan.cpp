@@ -5,7 +5,7 @@
 //
 
 // SystemInfo_vulkan.cpp: Generic vulkan implementation of SystemInfo.h
-// TODO: Use VK_KHR_driver_properties. http://anglebug.com/5103
+// TODO: Use VK_KHR_driver_properties. http://anglebug.com/42263671
 
 #include "gpu_info_util/SystemInfo_vulkan.h"
 
@@ -255,9 +255,9 @@ bool GetSystemInfoVulkanWithICD(SystemInfo *info, vk::ICD preferredICD)
         // Need to parse/re-format properties.driverVersion.
         //
         // TODO(ianelliott): Determine the formatting used for each vendor
-        // (http://anglebug.com/2677)
-        // TODO(http://anglebug.com/7677): Use driverID instead of the hardware vendorID to detect
-        // driveVendor, etc.
+        // (http://anglebug.com/42261385)
+        // TODO(http://anglebug.com/42266143): Use driverID instead of the hardware vendorID to
+        // detect driveVendor, etc.
         switch (properties.vendorID)
         {
             case kVendorID_AMD:

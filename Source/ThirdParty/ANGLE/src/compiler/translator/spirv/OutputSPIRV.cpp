@@ -398,7 +398,9 @@ class OutputSPIRVTraverser : public TIntermTraverser
     spirv::IdRef mCurrentFunctionId;
 };
 
-spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
+spv::StorageClass GetStorageClass(const ShCompileOptions &compileOptions,
+                                  const TType &type,
+                                  GLenum shaderType)
 {
     // Opaque uniforms (samplers, images and subpass inputs) have the UniformConstant storage class
     if (IsOpaqueType(type.getBasicType()))
@@ -460,6 +462,8 @@ spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
         case EvqViewIDOVR:
         case EvqLayerIn:
         case EvqLastFragColor:
+        case EvqLastFragDepth:
+        case EvqLastFragStencil:
             return spv::StorageClassInput;
 
         case EvqPosition:
@@ -488,9 +492,10 @@ spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
                                                     : spv::StorageClassInput;
 
         default:
-            // Uniform and storage buffers have the Uniform storage class.  Default uniforms are
-            // gathered in a uniform block as well. Push constants use the PushConstant storage
-            // class instead.
+            // Uniform buffers have the Uniform storage class.  Storage buffers have the Uniform
+            // storage class in SPIR-V 1.3, and the StorageBuffer storage class in SPIR-V 1.4.
+            // Default uniforms are gathered in a uniform block as well.  Push constants use the
+            // PushConstant storage class instead.
             ASSERT(type.getInterfaceBlock() != nullptr || qualifier == EvqUniform);
             // I/O blocks must have already been classified as input or output above.
             ASSERT(!IsShaderIoBlock(qualifier));
@@ -500,7 +505,9 @@ spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
                 ASSERT(type.getInterfaceBlock() != nullptr);
                 return spv::StorageClassPushConstant;
             }
-            return spv::StorageClassUniform;
+            return compileOptions.emitSPIRV14 && qualifier == EvqBuffer
+                       ? spv::StorageClassStorageBuffer
+                       : spv::StorageClassUniform;
     }
 }
 
@@ -523,7 +530,7 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
                                                               const TType &type,
                                                               spv::StorageClass *storageClass)
 {
-    *storageClass = GetStorageClass(type, mCompiler->getShaderType());
+    *storageClass = GetStorageClass(mCompileOptions, type, mCompiler->getShaderType());
     auto iter     = mSymbolIdMap.find(symbol);
     if (iter != mSymbolIdMap.end())
     {
@@ -701,7 +708,6 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
     const spirv::IdRef varId  = mBuilder.declareVariable(
         typeId, *storageClass, mBuilder.getDecorations(type), nullptr, name, uniqueId);
 
-    mBuilder.addEntryPointInterfaceVariableId(varId);
     spirv::WriteDecorate(mBuilder.getSpirvDecorations(), varId, spv::DecorationBuiltIn,
                          {spirv::LiteralInteger(builtInDecoration)});
 
@@ -814,6 +820,9 @@ void OutputSPIRVTraverser::accessChainPushLiteral(NodeData *data,
     // Add the literal integer in the chain of indices.  Since this is an id list, fake it as an id.
     data->idList.emplace_back(index);
     data->accessChain.preSwizzleTypeId = typeId;
+
+    // Literal index of a swizzle must be already folded in the AST.
+    ASSERT(data->accessChain.swizzles.empty());
 }
 
 void OutputSPIRVTraverser::accessChainPushSwizzle(NodeData *data,
@@ -1027,9 +1036,6 @@ spirv::IdRef OutputSPIRVTraverser::accessChainLoad(NodeData *data,
 
     if (accessChain.dynamicComponent.valid())
     {
-        // Dynamic component in combination with swizzle is already folded.
-        ASSERT(accessChain.swizzles.empty());
-
         // Use OpVectorExtractDynamic to select the component.
         const spirv::IdRef result = mBuilder.getNewId(decorations);
         spirv::WriteVectorExtractDynamic(mBuilder.getSpirvCurrentFunctionBlock(),
@@ -2262,7 +2268,7 @@ bool IsShortCircuitNeeded(TIntermOperator *node)
     // TODO: experiment with the performance of OpLogicalAnd/Or vs short-circuit based on the
     // complexity of the right hand side expression.  We could potentially only allow
     // OpLogicalAnd/Or if the right hand side is a constant or an access chain and have more complex
-    // expressions be placed inside an if block.  http://anglebug.com/4889
+    // expressions be placed inside an if block.  http://anglebug.com/40096715
     return node->getChildNode(1)->getAsTyped()->hasSideEffects();
 }
 
@@ -2327,7 +2333,7 @@ spirv::IdRef OutputSPIRVTraverser::visitOperator(TIntermOperator *node, spirv::I
 
     const TType &firstOperandType = firstChild->getType();
     const TBasicType basicType    = firstOperandType.getBasicType();
-    const bool isFloat            = basicType == EbtFloat || basicType == EbtDouble;
+    const bool isFloat            = basicType == EbtFloat;
     const bool isUnsigned         = basicType == EbtUInt;
     const bool isBool             = basicType == EbtBool;
     // Whether this is a pre/post increment/decrement operator.
@@ -2777,16 +2783,6 @@ spirv::IdRef OutputSPIRVTraverser::visitOperator(TIntermOperator *node, spirv::I
             extendedInst         = spv::GLSLstd450UnpackSnorm4x8;
             extendScalarToVector = false;
             break;
-        case EOpPackDouble2x32:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
-            UNIMPLEMENTED();
-            break;
-
-        case EOpUnpackDouble2x32:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
-            UNIMPLEMENTED();
-            extendScalarToVector = false;
-            break;
 
         case EOpLength:
             extendedInst = spv::GLSLstd450Length;
@@ -2823,11 +2819,6 @@ spirv::IdRef OutputSPIRVTraverser::visitOperator(TIntermOperator *node, spirv::I
         case EOpRefract:
             extendedInst         = spv::GLSLstd450Refract;
             extendScalarToVector = false;
-            break;
-
-        case EOpFtransform:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
-            UNIMPLEMENTED();
             break;
 
         case EOpOuterProduct:
@@ -2905,38 +2896,6 @@ spirv::IdRef OutputSPIRVTraverser::visitOperator(TIntermOperator *node, spirv::I
             break;
         case EOpFwidth:
             writeUnaryOp = spirv::WriteFwidth;
-            break;
-        case EOpDFdxFine:
-            writeUnaryOp = spirv::WriteDPdxFine;
-            break;
-        case EOpDFdyFine:
-            writeUnaryOp = spirv::WriteDPdyFine;
-            break;
-        case EOpDFdxCoarse:
-            writeUnaryOp = spirv::WriteDPdxCoarse;
-            break;
-        case EOpDFdyCoarse:
-            writeUnaryOp = spirv::WriteDPdyCoarse;
-            break;
-        case EOpFwidthFine:
-            writeUnaryOp = spirv::WriteFwidthFine;
-            break;
-        case EOpFwidthCoarse:
-            writeUnaryOp = spirv::WriteFwidthCoarse;
-            break;
-
-        case EOpNoise1:
-        case EOpNoise2:
-        case EOpNoise3:
-        case EOpNoise4:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
-            UNIMPLEMENTED();
-            break;
-
-        case EOpAnyInvocation:
-        case EOpAllInvocations:
-        case EOpAllInvocationsEqual:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
             break;
 
         default:
@@ -3444,10 +3403,7 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
     {
         case EOpTexture2D:
         case EOpTextureCube:
-        case EOpTexture1D:
         case EOpTexture3D:
-        case EOpShadow1D:
-        case EOpShadow2D:
         case EOpShadow2DEXT:
         case EOpTexture2DRect:
         case EOpTextureVideoWEBGL:
@@ -3456,9 +3412,6 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
         case EOpTexture2DBias:
         case EOpTextureCubeBias:
         case EOpTexture3DBias:
-        case EOpTexture1DBias:
-        case EOpShadow1DBias:
-        case EOpShadow2DBias:
         case EOpTextureBias:
 
             // For shadow cube arrays, the compare value is specified through an additional
@@ -3474,22 +3427,22 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
                     biasIndex = 2;
                 }
             }
+            else if (function->getParamCount() == 4 &&
+                     samplerBasicType == EbtSamplerCubeArrayShadow)
+            {
+                compareIndex = 2;
+                biasIndex    = 3;
+            }
             break;
 
         case EOpTexture2DProj:
-        case EOpTexture1DProj:
         case EOpTexture3DProj:
-        case EOpShadow1DProj:
-        case EOpShadow2DProj:
         case EOpShadow2DProjEXT:
         case EOpTexture2DRectProj:
         case EOpTextureProj:
 
         case EOpTexture2DProjBias:
         case EOpTexture3DProjBias:
-        case EOpTexture1DProjBias:
-        case EOpShadow1DProjBias:
-        case EOpShadow2DProjBias:
         case EOpTextureProjBias:
 
             isProj = true;
@@ -3499,11 +3452,6 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
             }
             break;
 
-        case EOpTexture2DLod:
-        case EOpTextureCubeLod:
-        case EOpTexture1DLod:
-        case EOpShadow1DLod:
-        case EOpShadow2DLod:
         case EOpTexture3DLod:
 
         case EOpTexture2DLodVS:
@@ -3513,14 +3461,19 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
         case EOpTextureCubeLodEXTFS:
         case EOpTextureLod:
 
-            ASSERT(function->getParamCount() == 3);
-            lodIndex = 2;
+            if (samplerBasicType == EbtSamplerCubeArrayShadow)
+            {
+                ASSERT(function->getParamCount() == 4);
+                compareIndex = 2;
+                lodIndex     = 3;
+            }
+            else
+            {
+                ASSERT(function->getParamCount() == 3);
+                lodIndex = 2;
+            }
             break;
 
-        case EOpTexture2DProjLod:
-        case EOpTexture1DProjLod:
-        case EOpShadow1DProjLod:
-        case EOpShadow2DProjLod:
         case EOpTexture3DProjLod:
 
         case EOpTexture2DProjLodVS:
@@ -3751,31 +3704,6 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
             isDref = false;
             break;
 
-        case EOpTextureSamples:
-        case EOpImageSamples:
-            extractImageFromSampledImage = true;
-            spirvOp                      = spv::OpImageQuerySamples;
-            // No coordinates parameter.
-            coordinatesIndex = 0;
-            // No dref parameter.
-            isDref = false;
-            break;
-
-        case EOpTextureQueryLevels:
-            extractImageFromSampledImage = true;
-            spirvOp                      = spv::OpImageQueryLevels;
-            // No coordinates parameter.
-            coordinatesIndex = 0;
-            // No dref parameter.
-            isDref = false;
-            break;
-
-        case EOpTextureQueryLod:
-            spirvOp = spv::OpImageQueryLod;
-            // No dref parameter.
-            isDref = false;
-            break;
-
         default:
             UNREACHABLE();
     }
@@ -3945,26 +3873,19 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
         uint8_t requiredChannelCount = coordinatesChannelCount;
         // texture*Proj* operate on the following parameters:
         //
-        // - sampler1D, vec2 P
-        // - sampler1D, vec4 P
         // - sampler2D, vec3 P
         // - sampler2D, vec4 P
         // - sampler2DRect, vec3 P
         // - sampler2DRect, vec4 P
         // - sampler3D, vec4 P
-        // - sampler1DShadow, vec4 P
         // - sampler2DShadow, vec4 P
         // - sampler2DRectShadow, vec4 P
         //
-        // Of these cases, only (sampler1D*, vec4 P) and (sampler2D*, vec4 P) require moving the
-        // proj channel from .w to the appropriate location (.y for 1D and .z for 2D).
+        // Of these cases, only (sampler2D*, vec4 P) requires moving the proj channel from .w to the
+        // appropriate location (.y for 1D and .z for 2D).
         if (IsSampler2D(samplerBasicType))
         {
             requiredChannelCount = 3;
-        }
-        else if (IsSampler1D(samplerBasicType))
-        {
-            requiredChannelCount = 2;
         }
         if (requiredChannelCount != coordinatesChannelCount)
         {
@@ -4130,12 +4051,6 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
         default:
             UNREACHABLE();
     }
-
-    // In Desktop GLSL, the legacy shadow* built-ins produce a vec4, while SPIR-V
-    // OpImageSample*Dref* instructions produce a scalar.  EXT_shadow_samplers in ESSL introduces
-    // similar functions but which return a scalar.
-    //
-    // TODO: For desktop GLSL, the result must be turned into a vec4.  http://anglebug.com/6197.
 
     return result;
 }
@@ -4313,8 +4228,7 @@ spirv::IdRef OutputSPIRVTraverser::castBasicType(spirv::IdRef value,
             break;
 
         default:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
-            UNIMPLEMENTED();
+            UNREACHABLE();
     }
 
     if (writeUnaryOp)
@@ -4360,9 +4274,29 @@ spirv::IdRef OutputSPIRVTraverser::cast(spirv::IdRef value,
     // At this point, a value is loaded with the |valueType| GLSL type which is of a SPIR-V type
     // specialized by |valueTypeSpec|.  However, it's being assigned (for example through operator=,
     // used in a constructor or passed as a function argument) where the same GLSL type is expected
-    // but with different SPIR-V type specialization (|expectedTypeSpec|).  SPIR-V 1.4 has
-    // OpCopyLogical that does exactly that, but we generate SPIR-V 1.0 at the moment.
+    // but with different SPIR-V type specialization (|expectedTypeSpec|).
     //
+    // If SPIR-V 1.4 is available, use OpCopyLogical if possible.  OpCopyLogical works on arrays and
+    // structs, and only if the types are logically the same.  This means that arrays and structs
+    // can be copied with this instruction despite their SpirvTypeSpec being different.  The only
+    // exception is if there is a mismatch in the isOrHasBoolInInterfaceBlock type specialization
+    // as it actually changes the type of the struct members.
+    if (mCompileOptions.emitSPIRV14 && (valueType.isArray() || valueType.getStruct() != nullptr) &&
+        valueTypeSpec.isOrHasBoolInInterfaceBlock == expectedTypeSpec.isOrHasBoolInInterfaceBlock)
+    {
+        const spirv::IdRef expectedTypeId =
+            mBuilder.getTypeDataOverrideTypeSpec(valueType, expectedTypeSpec).id;
+        const spirv::IdRef expectedId = mBuilder.getNewId(mBuilder.getDecorations(valueType));
+
+        spirv::WriteCopyLogical(mBuilder.getSpirvCurrentFunctionBlock(), expectedTypeId, expectedId,
+                                value);
+        if (resultTypeIdOut)
+        {
+            *resultTypeIdOut = expectedTypeId;
+        }
+        return expectedId;
+    }
+
     // The following code recursively copies the array elements or struct fields and then constructs
     // the final result with the expected SPIR-V type.
 
@@ -4550,7 +4484,7 @@ void OutputSPIRVTraverser::createCompareImpl(TOperator op,
                                              spirv::IdRefList *intermediateResultsOut)
 {
     const TBasicType basicType = operandType.getBasicType();
-    const bool isFloat         = basicType == EbtFloat || basicType == EbtDouble;
+    const bool isFloat         = basicType == EbtFloat;
     const bool isBool          = basicType == EbtBool;
 
     WriteBinaryOp writeBinaryOp = nullptr;
@@ -5142,10 +5076,10 @@ bool OutputSPIRVTraverser::visitTernary(Visit visit, TIntermTernary *node)
     size_t lastChildIndex = getLastTraversedChildIndex(visit);
 
     // If the condition was just visited, evaluate it and decide if OpSelect could be used or an
-    // if-else must be emitted.  OpSelect is only used if the type is scalar or vector (required by
-    // OpSelect) and if neither side has a side effect.
+    // if-else must be emitted.  OpSelect is only used if neither side has a side effect.  SPIR-V
+    // prior to 1.4 requires the type to be either scalar or vector.
     const TType &type   = node->getType();
-    bool canUseOpSelect = (type.isScalar() || type.isVector()) &&
+    bool canUseOpSelect = (type.isScalar() || type.isVector() || mCompileOptions.emitSPIRV14) &&
                           !node->getTrueExpression()->hasSideEffects() &&
                           !node->getFalseExpression()->hasSideEffects();
 
@@ -5166,9 +5100,9 @@ bool OutputSPIRVTraverser::visitTernary(Visit visit, TIntermTernary *node)
         // If OpSelect can be used, keep the condition for later usage.
         if (canUseOpSelect)
         {
-            // SPIR-V 1.0 requires that the condition value have as many components as the result.
-            // So when selecting between vectors, we must replicate the condition scalar.
-            if (type.isVector())
+            // SPIR-V prior to 1.4 requires that the condition value have as many components as the
+            // result.  So when selecting between vectors, we must replicate the condition scalar.
+            if (!mCompileOptions.emitSPIRV14 && type.isVector())
             {
                 const TType &boolVectorType =
                     *StaticType::GetForVec<EbtBool, EbpUndefined>(EvqGlobal, type.getNominalSize());
@@ -5404,6 +5338,17 @@ bool OutputSPIRVTraverser::visitSwitch(Visit visit, TIntermSwitch *node)
 
     if (visit == PreVisit)
     {
+        // Artificially add `if (true)` around switches as a driver bug workaround
+        if (mCompileOptions.wrapSwitchInIfTrue)
+        {
+            const spirv::IdRef conditionValue = mBuilder.getBoolConstant(true);
+            mBuilder.startConditional(2, false, false);
+            const SpirvConditional *conditional = mBuilder.getCurrentConditional();
+            const spirv::IdRef trueBlock        = conditional->blockIds[0];
+            const spirv::IdRef mergeBlock       = conditional->blockIds[1];
+            mBuilder.writeBranchConditional(conditionValue, trueBlock, mergeBlock, mergeBlock);
+        }
+
         // Don't add an entry to the stack.  The condition will create one, which we won't pop.
         return true;
     }
@@ -5505,6 +5450,12 @@ bool OutputSPIRVTraverser::visitSwitch(Visit visit, TIntermSwitch *node)
     // Terminate the last block if not already and end the conditional.
     mBuilder.writeSwitchCaseBlockEnd();
     mBuilder.endConditional();
+
+    if (mCompileOptions.wrapSwitchInIfTrue)
+    {
+        mBuilder.writeBranchConditionalBlockEnd();
+        mBuilder.endConditional();
+    }
 
     return true;
 }
@@ -5878,12 +5829,6 @@ bool OutputSPIRVTraverser::visitAggregate(Visit visit, TIntermAggregate *node)
             spirv::WriteEndPrimitive(mBuilder.getSpirvCurrentFunctionBlock());
             break;
 
-        case EOpEmitStreamVertex:
-        case EOpEndStreamPrimitive:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
-            UNIMPLEMENTED();
-            break;
-
         case EOpBeginInvocationInterlockARB:
             // Set up a "pixel_interlock_ordered" execution mode, as that is the default
             // interlocked execution mode in GLSL, and we don't currently expose an option to change
@@ -6056,7 +6001,8 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
 
     const spirv::IdRef typeId = mBuilder.getTypeData(type, {}).id;
 
-    spv::StorageClass storageClass = GetStorageClass(type, mCompiler->getShaderType());
+    spv::StorageClass storageClass =
+        GetStorageClass(mCompileOptions, type, mCompiler->getShaderType());
 
     SpirvDecorations decorations = mBuilder.getDecorations(type);
     if (mBuilder.isInvariantOutput(type))
@@ -6122,9 +6068,6 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
 
     if (isShaderInOut)
     {
-        // Add in and out variables to the list of interface variables.
-        mBuilder.addEntryPointInterfaceVariableId(variableId);
-
         if (IsShaderIoBlock(type.getQualifier()) && type.isInterfaceBlock())
         {
             // For gl_PerVertex in particular, write the necessary BuiltIn decorations
@@ -6147,9 +6090,12 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
     }
     else if (isInterfaceBlock)
     {
-        // For uniform and buffer variables, add Block and BufferBlock decorations respectively.
+        // For uniform and buffer variables, with SPIR-V 1.3 add Block and BufferBlock decorations
+        // respectively.  With SPIR-V 1.4, always add Block.
         const spv::Decoration decoration =
-            type.getQualifier() == EvqUniform ? spv::DecorationBlock : spv::DecorationBufferBlock;
+            mCompileOptions.emitSPIRV14 || type.getQualifier() == EvqUniform
+                ? spv::DecorationBlock
+                : spv::DecorationBufferBlock;
         spirv::WriteDecorate(mBuilder.getSpirvDecorations(), nonArrayTypeId, decoration, {});
 
         if (type.getQualifier() == EvqBuffer && !memoryQualifier.restrictQualifier &&
@@ -6522,9 +6468,12 @@ spirv::Blob OutputSPIRVTraverser::getSpirv()
 
 #if ANGLE_DEBUG_SPIRV_GENERATION
     // Disassemble and log the generated SPIR-V for debugging.
-    spvtools::SpirvTools spirvTools(SPV_ENV_VULKAN_1_1);
+    spvtools::SpirvTools spirvTools(mCompileOptions.emitSPIRV14 ? SPV_ENV_VULKAN_1_1_SPIRV_1_4
+                                                                : SPV_ENV_VULKAN_1_1);
     std::string readableSpirv;
-    spirvTools.Disassemble(result, &readableSpirv, 0);
+    spirvTools.Disassemble(result, &readableSpirv,
+                           SPV_BINARY_TO_TEXT_OPTION_COMMENT | SPV_BINARY_TO_TEXT_OPTION_INDENT |
+                               SPV_BINARY_TO_TEXT_OPTION_NESTED_INDENT);
     fprintf(stderr, "%s\n", readableSpirv.c_str());
 #endif  // ANGLE_DEBUG_SPIRV_GENERATION
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "config/aom_config.h"
 
@@ -59,7 +59,7 @@ TEST(AV1, TestPrimitiveRefsubexpfin) {
       }
     }
   }
-  aom_stop_encode(&bw);
+  GTEST_ASSERT_GE(aom_stop_encode(&bw), 0);
   aom_reader br;
   aom_reader_init(&br, bw_buffer, bw.pos);
   GTEST_ASSERT_GE(aom_reader_tell(&br), 0u);

@@ -1,3 +1,0 @@
-
-PASS Ensure per-origin supported plugins origin
-

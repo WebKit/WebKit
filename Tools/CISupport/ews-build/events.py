@@ -56,6 +56,7 @@ class Events(service.BuildbotService):
         'run-layout-tests-without-change', 'layout-tests-repeat-failures-without-change',
         'run-layout-tests-in-stress-mode', 'run-layout-tests-in-guard-malloc-stress-mode',
         'run-api-tests', 'run-api-tests-without-change', 're-run-api-tests',
+        'scan-build', 'find-unexpected-results', 'display-safer-cpp-results',
         'jscore-test', 'jscore-test-without-change',
         'add-reviewer-to-commit-message', 'commit-patch', 'push-commit-to-webkit-repo', 'canonicalize-commit',
         'build-webkit-org-unit-tests', 'buildbot-check-config', 'buildbot-check-config-for-build-webkit', 'buildbot-check-config-for-ews',
@@ -529,6 +530,11 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
 
         if sender in self.ACCOUNTS_TO_IGNORE:
             log.msg(f"PR #{pr_number} ({head_sha}) was updated by '{sender}', ignoring it")
+            return defer.returnValue(([], 'git'))
+
+        if custom_suffix != '' and pr_number % 10 != 0:
+            # To trigger testing environment on every PR, please comment out this if block and restart buildbot
+            log.msg(f'Ignoring PR {pr_number} ({head_sha}) on testing environment.')
             return defer.returnValue(([], 'git'))
 
         if action == 'labeled' and GitHub.UNSAFE_MERGE_QUEUE_LABEL in labels:

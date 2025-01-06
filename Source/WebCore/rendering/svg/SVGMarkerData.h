@@ -21,6 +21,7 @@
 
 #include "FloatConversion.h"
 #include "Path.h"
+#include <array>
 
 namespace WebCore {
 
@@ -155,8 +156,8 @@ private:
     unsigned m_elementIndex { 0 };
     FloatPoint m_origin;
     FloatPoint m_subpathStart;
-    FloatPoint m_inslopePoints[2];
-    FloatPoint m_outslopePoints[2];
+    std::array<FloatPoint, 2> m_inslopePoints;
+    std::array<FloatPoint, 2> m_outslopePoints;
     bool m_reverseStart;
     bool m_previousWasMoveTo { false };
 };

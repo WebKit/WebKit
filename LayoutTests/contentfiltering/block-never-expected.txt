@@ -21,6 +21,6 @@ Frame: '<!--frame1-->'
 PASS
 
 ============== Back Forward List ==============
-curr->  (file test):contentfiltering/block-never.html  **nav target**
+curr->  (file test):contentfiltering/block-never.html
             (file test):contentfiltering/resources/pass.html (in frame "<!--frame1-->")
 ===============================================

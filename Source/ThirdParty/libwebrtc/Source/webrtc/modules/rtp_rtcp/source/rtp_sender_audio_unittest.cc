@@ -13,6 +13,8 @@
 #include <memory>
 #include <vector>
 
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
@@ -39,7 +41,7 @@ using ::testing::ElementsAreArray;
 class LoopbackTransportTest : public webrtc::Transport {
  public:
   LoopbackTransportTest() {
-    receivers_extensions_.Register<AudioLevel>(kAudioLevelExtensionId);
+    receivers_extensions_.Register<AudioLevelExtension>(kAudioLevelExtensionId);
     receivers_extensions_.Register<AbsoluteCaptureTimeExtension>(
         kAbsoluteCaptureTimeExtensionId);
   }
@@ -65,24 +67,22 @@ class RtpSenderAudioTest : public ::testing::Test {
  public:
   RtpSenderAudioTest()
       : fake_clock_(kStartTime),
-        rtp_module_(ModuleRtpRtcpImpl2::Create([&] {
-          RtpRtcpInterface::Configuration config;
-          config.audio = true;
-          config.clock = &fake_clock_;
-          config.outgoing_transport = &transport_;
-          config.local_media_ssrc = kSsrc;
-          return config;
-        }())),
+        env_(CreateEnvironment(&fake_clock_)),
+        rtp_module_(env_,
+                    {.audio = true,
+                     .outgoing_transport = &transport_,
+                     .local_media_ssrc = kSsrc}),
         rtp_sender_audio_(
             std::make_unique<RTPSenderAudio>(&fake_clock_,
-                                             rtp_module_->RtpSender())) {
-    rtp_module_->SetSequenceNumber(kSeqNum);
+                                             rtp_module_.RtpSender())) {
+    rtp_module_.SetSequenceNumber(kSeqNum);
   }
 
   rtc::AutoThread main_thread_;
   SimulatedClock fake_clock_;
+  const Environment env_;
   LoopbackTransportTest transport_;
-  std::unique_ptr<ModuleRtpRtcpImpl2> rtp_module_;
+  ModuleRtpRtcpImpl2 rtp_module_;
   std::unique_ptr<RTPSenderAudio> rtp_sender_audio_;
 };
 
@@ -102,8 +102,8 @@ TEST_F(RtpSenderAudioTest, SendAudio) {
 
 TEST_F(RtpSenderAudioTest, SendAudioWithAudioLevelExtension) {
   const uint8_t kAudioLevel = 0x5a;
-  rtp_module_->RegisterRtpHeaderExtension(AudioLevel::Uri(),
-                                          kAudioLevelExtensionId);
+  rtp_module_.RegisterRtpHeaderExtension(AudioLevelExtension::Uri(),
+                                         kAudioLevelExtensionId);
 
   const char payload_name[] = "PAYLOAD_NAME";
   const uint8_t payload_type = 127;
@@ -121,12 +121,11 @@ TEST_F(RtpSenderAudioTest, SendAudioWithAudioLevelExtension) {
   auto sent_payload = transport_.last_sent_packet().payload();
   EXPECT_THAT(sent_payload, ElementsAreArray(payload));
   // Verify AudioLevel extension.
-  bool voice_activity;
-  uint8_t audio_level;
-  EXPECT_TRUE(transport_.last_sent_packet().GetExtension<AudioLevel>(
-      &voice_activity, &audio_level));
-  EXPECT_EQ(kAudioLevel, audio_level);
-  EXPECT_FALSE(voice_activity);
+  AudioLevel audio_level;
+  EXPECT_TRUE(transport_.last_sent_packet().GetExtension<AudioLevelExtension>(
+      &audio_level));
+  EXPECT_EQ(kAudioLevel, audio_level.level());
+  EXPECT_FALSE(audio_level.voice_activity());
 }
 
 TEST_F(RtpSenderAudioTest, SendAudioWithoutAbsoluteCaptureTime) {
@@ -149,8 +148,8 @@ TEST_F(RtpSenderAudioTest, SendAudioWithoutAbsoluteCaptureTime) {
 
 TEST_F(RtpSenderAudioTest,
        SendAudioWithAbsoluteCaptureTimeWithCaptureClockOffset) {
-  rtp_module_->RegisterRtpHeaderExtension(AbsoluteCaptureTimeExtension::Uri(),
-                                          kAbsoluteCaptureTimeExtensionId);
+  rtp_module_.RegisterRtpHeaderExtension(AbsoluteCaptureTimeExtension::Uri(),
+                                         kAbsoluteCaptureTimeExtensionId);
   constexpr Timestamp kAbsoluteCaptureTimestamp = Timestamp::Millis(521);
   const char payload_name[] = "audio";
   const uint8_t payload_type = 127;
@@ -220,6 +219,21 @@ TEST_F(RtpSenderAudioTest, CheckMarkerBitForTelephoneEvents) {
 
   // Marker Bit should be set to 0 for rest of the packets.
   EXPECT_FALSE(transport_.last_sent_packet().Marker());
+}
+
+TEST_F(RtpSenderAudioTest, SendsCsrcs) {
+  const char payload_name[] = "audio";
+  const uint8_t payload_type = 127;
+  ASSERT_EQ(0, rtp_sender_audio_->RegisterAudioPayload(
+                   payload_name, payload_type, 48000, 0, 1500));
+  uint8_t payload[] = {47, 11, 32, 93, 89};
+
+  std::vector<uint32_t> csrcs({123, 456, 789});
+
+  ASSERT_TRUE(rtp_sender_audio_->SendAudio(
+      {.payload = payload, .payload_id = payload_type, .csrcs = csrcs}));
+
+  EXPECT_EQ(transport_.last_sent_packet().Csrcs(), csrcs);
 }
 
 }  // namespace webrtc

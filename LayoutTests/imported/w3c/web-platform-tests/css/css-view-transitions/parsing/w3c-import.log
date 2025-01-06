@@ -21,6 +21,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/parsing/view-transition-class-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/parsing/view-transition-class-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/parsing/view-transition-class-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/parsing/view-transition-group-invalid.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/parsing/view-transition-group-valid.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/parsing/view-transition-name-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/parsing/view-transition-name-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/parsing/view-transition-name-valid.html

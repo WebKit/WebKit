@@ -47,16 +47,16 @@ void GeolocationPermissionRequestManagerProxy::invalidateRequests()
     m_pendingRequests.clear();
 }
 
-Ref<GeolocationPermissionRequestProxy> GeolocationPermissionRequestManagerProxy::createRequest(GeolocationIdentifier geolocationID)
+Ref<GeolocationPermissionRequestProxy> GeolocationPermissionRequestManagerProxy::createRequest(GeolocationIdentifier geolocationID, WebProcessProxy& process)
 {
-    auto request = GeolocationPermissionRequestProxy::create(this, geolocationID);
+    Ref request = GeolocationPermissionRequestProxy::create(*this, geolocationID, process);
     m_pendingRequests.add(geolocationID, request.ptr());
     return request;
 }
 
 void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDecision(GeolocationIdentifier geolocationID, bool allowed)
 {
-    if (!m_page.hasRunningProcess())
+    if (!m_page->hasRunningProcess())
         return;
 
     auto it = m_pendingRequests.find(geolocationID);
@@ -67,7 +67,8 @@ void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDe
     String authorizationToken = allowed ? createVersion4UUIDString() : String();
     if (!authorizationToken.isNull())
         m_validAuthorizationTokens.add(authorizationToken);
-    m_page.send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, authorizationToken));
+    if (RefPtr process = it->value->process())
+        process->send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, authorizationToken), m_page->webPageIDInProcess(*process));
 #else
     UNUSED_PARAM(allowed);
 #endif
@@ -86,6 +87,16 @@ void GeolocationPermissionRequestManagerProxy::revokeAuthorizationToken(const St
     if (!isValidAuthorizationToken(authorizationToken))
         return;
     m_validAuthorizationTokens.remove(authorizationToken);
+}
+
+void GeolocationPermissionRequestManagerProxy::ref() const
+{
+    m_page->ref();
+}
+
+void GeolocationPermissionRequestManagerProxy::deref() const
+{
+    m_page->deref();
 }
 
 } // namespace WebKit

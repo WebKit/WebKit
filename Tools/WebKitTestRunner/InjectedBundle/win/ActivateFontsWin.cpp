@@ -26,12 +26,15 @@
 #include "config.h"
 #include "ActivateFonts.h"
 
+#if USE(CAIRO)
 #include <string>
 #include <vector>
 #include <windows.h>
+#endif
 
 namespace WTR {
 
+#if USE(CAIRO)
 static const wchar_t* fontsEnvironmentVariable = L"WEBKIT_TESTFONTS";
 
 static const std::wstring& fontsPath()
@@ -78,6 +81,12 @@ void activateFonts()
         }
     }
 }
+#else
+void activateFonts()
+{
+    // Load the test fonts in WebCore::FontCache::createDWriteFactory()
+}
+#endif
 
 void installFakeHelvetica(WKStringRef)
 {

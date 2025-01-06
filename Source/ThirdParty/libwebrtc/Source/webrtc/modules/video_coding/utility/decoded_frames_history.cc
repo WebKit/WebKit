@@ -74,11 +74,11 @@ void DecodedFramesHistory::Clear() {
   last_frame_id_.reset();
 }
 
-absl::optional<int64_t> DecodedFramesHistory::GetLastDecodedFrameId() const {
+std::optional<int64_t> DecodedFramesHistory::GetLastDecodedFrameId() const {
   return last_decoded_frame_;
 }
 
-absl::optional<uint32_t> DecodedFramesHistory::GetLastDecodedFrameTimestamp()
+std::optional<uint32_t> DecodedFramesHistory::GetLastDecodedFrameTimestamp()
     const {
   return last_decoded_frame_timestamp_;
 }

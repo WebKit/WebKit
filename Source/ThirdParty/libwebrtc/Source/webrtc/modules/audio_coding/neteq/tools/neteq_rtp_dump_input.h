@@ -13,9 +13,9 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
@@ -25,7 +25,7 @@ namespace test {
 std::unique_ptr<NetEqInput> CreateNetEqRtpDumpInput(
     absl::string_view file_name,
     const std::map<int, RTPExtensionType>& hdr_ext_map,
-    absl::optional<uint32_t> ssrc_filter);
+    std::optional<uint32_t> ssrc_filter);
 
 }  // namespace test
 }  // namespace webrtc

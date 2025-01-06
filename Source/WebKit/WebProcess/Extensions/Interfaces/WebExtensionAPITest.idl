@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,14 @@
     // Notifies that test passed.
     [NeedsScriptContext] void notifyPass([Optional] DOMString message);
 
-    // Yields the running of the extension for external testing.
+    // Yields the running of the extension back to the test harness.
     [NeedsScriptContext] void yield([Optional] DOMString message);
+
+    // Sends a message to the test harness.
+    [NeedsScriptContext] void sendMessage(DOMString message, [Optional, ValuesAllowed] any argument);
+
+    // Event for receiving messages from the test harness.
+    readonly attribute WebExtensionAPIEvent onMessage;
 
     // Logs a message during testing.
     [NeedsScriptContext] void log([ValuesAllowed] any message);
@@ -67,10 +73,10 @@
     // Asserts the function throws an exception.
     [NeedsScriptContext, ProcessArgumentsLeftToRight] void assertThrows(any function, [Optional, ValuesAllowed] any expectedError, [Optional] DOMString message);
 
-    // Asserts the function does not thow an exception.
+    // Asserts the function does not throw an exception.
     [NeedsScriptContext] any assertSafe(any function, [Optional] DOMString message);
 
-    // Asserts the function does not thow an exception and the result promise is resolved.
+    // Asserts the function does not throw an exception and the result promise is resolved.
     [NeedsScriptContext] any assertSafeResolve(any function, [Optional] DOMString message);
 
 };

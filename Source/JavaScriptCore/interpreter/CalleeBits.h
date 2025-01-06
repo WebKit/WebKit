@@ -76,7 +76,7 @@ public:
         EncodedValueDescriptor ret;
         ret.asBits.tag = JSValue::NativeCalleeTag;
         ret.asBits.payload = reinterpret_cast<intptr_t>(boxedCallee);
-        return bitwise_cast<EncodedJSValue>(ret);
+        return std::bit_cast<EncodedJSValue>(ret);
     }
 
 #elif USE(JSVALUE64)
@@ -114,14 +114,23 @@ public:
         return nullptr;
     }
 
+#if CPU(ARM64)
+    // NativeCallees are sometimes stored in ThreadSafeWeakOrStrongPtr, which relies on top byte ignore, so we need to strip the top byte on ARM64.
+    static constexpr uintptr_t nativeCalleeTopByteMask = std::numeric_limits<uintptr_t>::max() >> CHAR_BIT;
+#endif
+
     static void* boxNativeCallee(NativeCallee* callee)
     {
 #if USE(JSVALUE64)
-        CalleeBits result { static_cast<int64_t>((bitwise_cast<uintptr_t>(callee) - lowestAccessibleAddress()) | JSValue::NativeCalleeTag) };
+        auto bits = std::bit_cast<uintptr_t>(callee);
+#if CPU(ARM64)
+        bits &= nativeCalleeTopByteMask;
+#endif
+        CalleeBits result { static_cast<int64_t>((bits - lowestAccessibleAddress()) | JSValue::NativeCalleeTag) };
         ASSERT(result.isNativeCallee());
         return result.rawPtr();
 #elif USE(JSVALUE32_64)
-        return bitwise_cast<void*>(bitwise_cast<uintptr_t>(callee) - lowestAccessibleAddress());
+        return std::bit_cast<void*>(std::bit_cast<uintptr_t>(callee) - lowestAccessibleAddress());
 #endif
     }
 
@@ -145,9 +154,9 @@ public:
     {
         ASSERT(isNativeCallee());
 #if USE(JSVALUE64)
-        return bitwise_cast<NativeCallee*>(static_cast<uintptr_t>(bitwise_cast<uintptr_t>(m_ptr) & ~JSValue::NativeCalleeTag) + lowestAccessibleAddress());
+        return std::bit_cast<NativeCallee*>(static_cast<uintptr_t>(std::bit_cast<uintptr_t>(m_ptr) & ~JSValue::NativeCalleeTag) + lowestAccessibleAddress());
 #elif USE(JSVALUE32_64)
-        return bitwise_cast<NativeCallee*>(bitwise_cast<uintptr_t>(m_ptr) + lowestAccessibleAddress());
+        return std::bit_cast<NativeCallee*>(std::bit_cast<uintptr_t>(m_ptr) + lowestAccessibleAddress());
 #endif
     }
 

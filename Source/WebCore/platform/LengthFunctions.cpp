@@ -126,7 +126,7 @@ LayoutSize sizeForLengthSize(const LengthSize& length, const LayoutSize& maximum
 
 LayoutPoint pointForLengthPoint(const LengthPoint& lengthPoint, const LayoutSize& maximumValue)
 {
-    return { valueForLength(lengthPoint.x(), maximumValue.width()), valueForLength(lengthPoint.y(), maximumValue.height()) };
+    return { valueForLength(lengthPoint.x, maximumValue.width()), valueForLength(lengthPoint.y, maximumValue.height()) };
 }
 
 FloatSize floatSizeForLengthSize(const LengthSize& lengthSize, const FloatSize& boxSize)
@@ -136,7 +136,7 @@ FloatSize floatSizeForLengthSize(const LengthSize& lengthSize, const FloatSize& 
 
 FloatPoint floatPointForLengthPoint(const LengthPoint& lengthPoint, const FloatSize& boxSize)
 {
-    return { floatValueForLength(lengthPoint.x(), boxSize.width()), floatValueForLength(lengthPoint.y(), boxSize.height()) };
+    return { floatValueForLength(lengthPoint.x, boxSize.width()), floatValueForLength(lengthPoint.y, boxSize.height()) };
 }
 
 } // namespace WebCore

@@ -1,0 +1,79 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+}
+
+input {
+    position: relative;
+    font-size: 24px;
+    width: 250px;
+}
+
+.container {
+    width: 300px;
+    height: 300px;
+    border: solid 1px lightgray;
+    border-radius: 6px;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    line-height: 1.5em;
+    outline: none;
+    padding: 1em;
+    margin-top: 100px;
+}
+
+.tall {
+    height: 400px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the selection is clipped inside of a horizontally scrollable text field, that's inside an overflow: scroll; container. To manually test, select all the text inside of the text field below and scroll down in the subscrollable container.");
+
+    let input = document.querySelector("input");
+    scroller = document.querySelector(".container");
+
+    await UIHelper.activateElementAndWaitForInputSession(input);
+    document.execCommand("SelectAll");
+    selectionRectBeforeScrolling = (await UIHelper.waitForSelectionToAppear())[0];
+
+    shouldBeGreaterThanOrEqual("scroller.getBoundingClientRect().width", "selectionRectBeforeScrolling.width");
+
+    let {x, y} = UIHelper.midPointOfRect(scroller.getBoundingClientRect());
+    while (scroller.scrollTop < 120) {
+        await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+            .begin(x, y + 60)
+            .move(x, y - 60, 0.25)
+            .end()
+            .takeResult());
+    }
+
+    selectionRectAfterScrolling = (await UIHelper.getUISelectionViewRects())[0];
+    shouldBe("selectionRectAfterScrolling?.width || 0", "0");
+    shouldBe("selectionRectAfterScrolling?.height || 0", "0");
+
+    input.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="container">
+        <input type="text" value="The quick brown fox jumped over the lazy dog.">
+        <div class="tall"></div>
+    </div>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

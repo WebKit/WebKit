@@ -109,7 +109,7 @@ static void drawTestPattern(ImageBuffer& buffer, int seed)
 
 static RefPtr<PixelBuffer> createPixelBufferTestPattern(IntSize size, AlphaPremultiplication alphaFormat, int seed)
 {
-    auto pattern = ImageBuffer::create(size, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto pattern = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
     if (!pattern)
         return nullptr;
     drawTestPattern(*pattern, 1);
@@ -127,11 +127,11 @@ static RefPtr<PixelBuffer> createPixelBufferTestPattern(IntSize size, AlphaPremu
 TEST(ImageBufferTests, ImageBufferSubTypeCreateCreatesSubtypes)
 {
     auto colorSpace = DestinationColorSpace::SRGB();
-    auto pixelFormat = PixelFormat::BGRA8;
+    auto pixelFormat = ImageBufferPixelFormat::BGRA8;
     FloatSize size { 1.f, 1.f };
     float scale = 1.f;
-    RefPtr<ImageBuffer> unaccelerated = ImageBuffer::create(size, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
-    RefPtr<ImageBuffer> accelerated = ImageBuffer::create(size, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, { ImageBufferOptions::Accelerated });
+    RefPtr<ImageBuffer> unaccelerated = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    RefPtr<ImageBuffer> accelerated = ImageBuffer::create(size, RenderingMode::Accelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
 
     EXPECT_NE(nullptr, accelerated);
     EXPECT_NE(nullptr, unaccelerated);
@@ -140,11 +140,11 @@ TEST(ImageBufferTests, ImageBufferSubTypeCreateCreatesSubtypes)
 TEST(ImageBufferTests, ImageBufferSubPixelDrawing)
 {
     auto colorSpace = DestinationColorSpace::SRGB();
-    auto pixelFormat = PixelFormat::BGRA8;
+    auto pixelFormat = ImageBufferPixelFormat::BGRA8;
     FloatSize logicalSize { 392, 44 };
     float scale = 1.91326535;
-    auto frontImageBuffer = ImageBuffer::create(logicalSize, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, { ImageBufferOptions::Accelerated });
-    auto backImageBuffer = ImageBuffer::create(logicalSize, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, { ImageBufferOptions::Accelerated });
+    auto frontImageBuffer = ImageBuffer::create(logicalSize, RenderingMode::Accelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    auto backImageBuffer = ImageBuffer::create(logicalSize, RenderingMode::Accelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
 
     auto strokeRect = FloatRect { { }, logicalSize };
     strokeRect.inflate(-0.5);
@@ -188,7 +188,7 @@ TEST(ImageBufferTests, ImageBufferSubPixelDrawing)
 TEST(ImageBufferTests, DISABLED_DrawImageBufferDoesNotReferenceExtraMemory)
 {
     auto colorSpace = DestinationColorSpace::SRGB();
-    auto pixelFormat = PixelFormat::BGRA8;
+    auto pixelFormat = ImageBufferPixelFormat::BGRA8;
     FloatSize logicalSize { 4096, 4096 };
     float scale = 1;
     size_t footprintError = 1024 * 1024;
@@ -202,7 +202,7 @@ TEST(ImageBufferTests, DISABLED_DrawImageBufferDoesNotReferenceExtraMemory)
 
     {
         // Make potential accelerated drawing backend instantiate roughly the global structures needed for this test.
-        auto accelerated = ImageBuffer::create(logicalSize, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, { ImageBufferOptions::Accelerated });
+        auto accelerated = ImageBuffer::create(logicalSize, RenderingMode::Accelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
         auto fillRect = FloatRect { { }, logicalSize };
         accelerated->context().fillRect(fillRect, Color::green);
         EXPECT_TRUE(imageBufferPixelIs(Color::green, *accelerated, fillRect.maxX() - 1, fillRect.maxY() - 1));
@@ -212,13 +212,13 @@ TEST(ImageBufferTests, DISABLED_DrawImageBufferDoesNotReferenceExtraMemory)
     auto lastFootprint = initialFootprint;
     EXPECT_GT(lastFootprint, 0u);
 
-    auto accelerated = ImageBuffer::create(logicalSize, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, { ImageBufferOptions::Accelerated });
+    auto accelerated = ImageBuffer::create(logicalSize, RenderingMode::Accelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
     auto fillRect = FloatRect { { }, logicalSize };
     accelerated->context().fillRect(fillRect, Color::green);
     accelerated->flushDrawingContext();
     EXPECT_TRUE(memoryFootprintChangedBy(lastFootprint, logicalSizeBytes, footprintError));
 
-    auto unaccelerated = ImageBuffer::create(logicalSize, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    auto unaccelerated = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
     unaccelerated->context().fillRect(fillRect, Color::yellow);
     EXPECT_TRUE(imageBufferPixelIs(Color::yellow, *unaccelerated, fillRect.maxX() - 1, fillRect.maxY() - 1));
     EXPECT_TRUE(memoryFootprintChangedBy(lastFootprint, logicalSizeBytes, footprintError));
@@ -235,27 +235,6 @@ TEST(ImageBufferTests, DISABLED_DrawImageBufferDoesNotReferenceExtraMemory)
     EXPECT_TRUE(memoryFootprintChangedBy(lastFootprint, 0, footprintError));
 }
 
-enum class TestImageBufferOptions {
-    Accelerated, NoOptions
-};
-
-OptionSet<ImageBufferOptions> toImageBufferOptions(TestImageBufferOptions testOptions)
-{
-    if (testOptions == TestImageBufferOptions::Accelerated)
-        return ImageBufferOptions::Accelerated;
-    return { };
-} 
-
-void PrintTo(TestImageBufferOptions value, ::std::ostream* o)
-{
-    if (value == TestImageBufferOptions::Accelerated)
-        *o << "Accelerated";
-    else if (value == TestImageBufferOptions::NoOptions)
-        *o << "NoOptions";
-    else
-        *o << "Unknown";
-}
-
 enum class TestPreserveResolution : bool { No, Yes };
 
 void PrintTo(TestPreserveResolution value, ::std::ostream* o)
@@ -269,13 +248,10 @@ void PrintTo(TestPreserveResolution value, ::std::ostream* o)
 }
 
 // ImageBuffer test fixture for tests that are variant to the image buffer device scale factor and options
-class AnyScaleTest : public testing::TestWithParam<std::tuple<float, TestImageBufferOptions>> {
+class AnyScaleTest : public testing::TestWithParam<std::tuple<float, RenderingMode>> {
 public:
     float deviceScaleFactor() const { return std::get<0>(GetParam()); }
-    OptionSet<ImageBufferOptions> imageBufferOptions() const
-    {
-        return toImageBufferOptions(std::get<1>(GetParam()));
-    }
+    RenderingMode renderingMode() const { return std::get<1>(GetParam()); }
 };
 
 // Test that ImageBuffer::sinkIntoNativeImage() returns NativeImage that contains the ImageBuffer contents and
@@ -283,9 +259,9 @@ public:
 TEST_P(AnyScaleTest, SinkIntoNativeImageWorks)
 {
     FloatSize testSize { 50, 57 };
-    auto buffer = ImageBuffer::create(testSize, RenderingPurpose::Unspecified, deviceScaleFactor(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8, imageBufferOptions());
+    auto buffer = ImageBuffer::create(testSize, renderingMode(), RenderingPurpose::Unspecified, deviceScaleFactor(), DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
     ASSERT_NE(buffer, nullptr);
-    auto verifyBuffer = ImageBuffer::create(buffer->logicalSize(), RenderingPurpose::Unspecified, 1.f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto verifyBuffer = ImageBuffer::create(buffer->logicalSize(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.f, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
     ASSERT_NE(verifyBuffer, nullptr);
     drawTestPattern(*buffer, 0);
 
@@ -301,7 +277,7 @@ TEST_P(AnyScaleTest, SinkIntoNativeImageWorks)
 TEST_P(AnyScaleTest, GetPixelBufferDimensionsContainScale)
 {
     IntSize testSize { 50, 57 };
-    auto buffer = ImageBuffer::create(testSize, RenderingPurpose::Unspecified, deviceScaleFactor(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8, imageBufferOptions());
+    auto buffer = ImageBuffer::create(testSize, renderingMode(), RenderingPurpose::Unspecified, deviceScaleFactor(), DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
     ASSERT_NE(buffer, nullptr);
     drawTestPattern(*buffer, 0);
 
@@ -313,7 +289,7 @@ TEST_P(AnyScaleTest, GetPixelBufferDimensionsContainScale)
     EXPECT_EQ(expectedSize, pixelBuffer->size());
 
     // Test that the contents of the pixel buffer was as expected.
-    auto verifyBuffer = ImageBuffer::create(pixelBuffer->size(), RenderingPurpose::Unspecified, 1.f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto verifyBuffer = ImageBuffer::create(pixelBuffer->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.f, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
     ASSERT_NE(verifyBuffer, nullptr);
     verifyBuffer->putPixelBuffer(*pixelBuffer, { { }, pixelBuffer->size() });
     EXPECT_TRUE(hasTestPattern(*verifyBuffer, 0));
@@ -321,24 +297,18 @@ TEST_P(AnyScaleTest, GetPixelBufferDimensionsContainScale)
 
 // ImageBuffer test fixture for tests that are variant to two image buffer options. Mostly useful
 // for example source - destination tests
-class AnyTwoImageBufferOptionsTest : public testing::TestWithParam<std::tuple<TestImageBufferOptions, TestImageBufferOptions>> {
+class AnyTwoImageBufferOptionsTest : public testing::TestWithParam<std::tuple<RenderingMode, RenderingMode>> {
 public:
-    OptionSet<ImageBufferOptions> imageBufferOptions0() const
-    {
-        return toImageBufferOptions(std::get<0>(GetParam()));
-    }
-    OptionSet<ImageBufferOptions> imageBufferOptions1() const
-    {
-        return toImageBufferOptions(std::get<1>(GetParam()));
-    }
+    RenderingMode renderingMode0() const { return std::get<0>(GetParam()); }
+    RenderingMode renderingMode1() const { return std::get<1>(GetParam()); }
 };
 
 TEST_P(AnyTwoImageBufferOptionsTest, PutPixelBufferAffectsDrawOutput)
 {
     IntSize testSize { 50, 57 };
-    auto source = ImageBuffer::create(testSize, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, imageBufferOptions0());
+    auto source = ImageBuffer::create(testSize, renderingMode0(), RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
     ASSERT_NE(source, nullptr);
-    auto destination = ImageBuffer::create(testSize, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, imageBufferOptions1());
+    auto destination = ImageBuffer::create(testSize, renderingMode1(), RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
     ASSERT_NE(destination, nullptr);
     auto pattern1Buffer = createPixelBufferTestPattern(testSize, AlphaPremultiplication::Unpremultiplied, 1);
     ASSERT_NE(pattern1Buffer, nullptr);
@@ -356,14 +326,14 @@ INSTANTIATE_TEST_SUITE_P(ImageBufferTests,
     AnyScaleTest,
     testing::Combine(
         testing::Values(0.5f, 1.f, 2.f, 5.f),
-        testing::Values(TestImageBufferOptions::NoOptions, TestImageBufferOptions::Accelerated)),
+        testing::Values(RenderingMode::Unaccelerated, RenderingMode::Accelerated)),
     TestParametersToStringFormatter());
 
 INSTANTIATE_TEST_SUITE_P(ImageBufferTests,
     AnyTwoImageBufferOptionsTest,
     testing::Combine(
-        testing::Values(TestImageBufferOptions::NoOptions, TestImageBufferOptions::Accelerated),
-        testing::Values(TestImageBufferOptions::NoOptions, TestImageBufferOptions::Accelerated)),
+        testing::Values(RenderingMode::Unaccelerated, RenderingMode::Accelerated),
+        testing::Values(RenderingMode::Unaccelerated, RenderingMode::Accelerated)),
     TestParametersToStringFormatter());
 
 }

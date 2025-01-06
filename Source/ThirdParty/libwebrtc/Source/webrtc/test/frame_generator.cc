@@ -100,7 +100,7 @@ FrameGeneratorInterface::VideoFrameData SquareGenerator::NextFrame() {
     buffer = NV12Buffer::Copy(*buffer->ToI420());
   }
 
-  return VideoFrameData(buffer, absl::nullopt);
+  return VideoFrameData(buffer, std::nullopt);
 }
 
 SquareGenerator::Square::Square(int width, int height, int seed)
@@ -298,7 +298,7 @@ FrameGeneratorInterface::VideoFrameData SlideGenerator::NextFrame() {
   if (++current_display_count_ >= frame_display_count_)
     current_display_count_ = 0;
 
-  return VideoFrameData(buffer_, absl::nullopt);
+  return VideoFrameData(buffer_, std::nullopt);
 }
 
 FrameGeneratorInterface::Resolution SlideGenerator::GetResolution() const {
@@ -363,8 +363,8 @@ ScrollingImageFrameGenerator::ScrollingImageFrameGenerator(
       target_height_(static_cast<int>(target_height)),
       current_frame_num_(num_frames_ - 1),
       prev_frame_not_scrolled_(false),
-      current_source_frame_(nullptr, absl::nullopt),
-      current_frame_(nullptr, absl::nullopt),
+      current_source_frame_(nullptr, std::nullopt),
+      current_frame_(nullptr, std::nullopt),
       file_generator_(files, source_width, source_height, 1) {
   RTC_DCHECK(clock_ != nullptr);
   RTC_DCHECK_GT(num_frames_, 0);

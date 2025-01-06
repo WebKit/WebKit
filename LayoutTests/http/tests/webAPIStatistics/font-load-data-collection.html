@@ -19,8 +19,6 @@
     }
 
     function runTestRunnerTest() {
-        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-
         var body = document.getElementsByTagName('body')[0]
     
         var span = document.createElement('span');
@@ -30,8 +28,9 @@
         span.style.fontFamily = 'Andale, Fransiscan, notARealFont, serif';
         body.appendChild(span);
         // Adds a timeout to allow font loads to be recorded.
-        setTimeout(function() {
-            testRunner.statisticsNotifyObserver();
+        setTimeout(async function() {
+            await testRunner.statisticsNotifyObserver();
+            completeTest();
         }, 0);
     }
 

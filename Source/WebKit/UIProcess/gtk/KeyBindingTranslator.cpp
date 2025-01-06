@@ -82,24 +82,21 @@ static void showHelpCallback(GtkWidget* widget, KeyBindingTranslator*)
 }
 #endif
 
-static const char* const gtkDeleteCommands[][2] = {
-    { "DeleteBackward",               "DeleteForward"                        }, // Characters
-    { "DeleteWordBackward",           "DeleteWordForward"                    }, // Word ends
-    { "DeleteWordBackward",           "DeleteWordForward"                    }, // Words
-    { "DeleteToBeginningOfLine",      "DeleteToEndOfLine"                    }, // Lines
-    { "DeleteToBeginningOfLine",      "DeleteToEndOfLine"                    }, // Line ends
-    { "DeleteToBeginningOfParagraph", "DeleteToEndOfParagraph"               }, // Paragraph ends
-    { "DeleteToBeginningOfParagraph", "DeleteToEndOfParagraph"               }, // Paragraphs
-    { 0,                              0                                      } // Whitespace (M-\ in Emacs)
-};
+static constexpr auto gtkDeleteCommands = std::to_array<std::array<ASCIILiteral, 2>>({
+    { "DeleteBackward"_s,               "DeleteForward"_s          }, // Characters
+    { "DeleteWordBackward"_s,           "DeleteWordForward"_s      }, // Word ends
+    { "DeleteWordBackward"_s,           "DeleteWordForward"_s      }, // Words
+    { "DeleteToBeginningOfLine"_s,      "DeleteToEndOfLine"_s      }, // Lines
+    { "DeleteToBeginningOfLine"_s,      "DeleteToEndOfLine"_s      }, // Line ends
+    { "DeleteToBeginningOfParagraph"_s, "DeleteToEndOfParagraph"_s }, // Paragraph ends
+    { "DeleteToBeginningOfParagraph"_s, "DeleteToEndOfParagraph"_s }, // Paragraphs
+    { nullptr,                          nullptr                    } // Whitespace (M-\ in Emacs)
+});
 
 static void deleteFromCursorCallback(GtkWidget* widget, GtkDeleteType deleteType, gint count, KeyBindingTranslator* translator)
 {
     g_signal_stop_emission_by_name(widget, "delete-from-cursor");
     int direction = count > 0 ? 1 : 0;
-
-    // Ensuring that deleteType <= G_N_ELEMENTS here results in a compiler warning
-    // that the condition is always true.
 
     if (deleteType == GTK_DELETE_WORDS) {
         if (!direction) {
@@ -129,28 +126,18 @@ static void deleteFromCursorCallback(GtkWidget* widget, GtkDeleteType deleteType
         translator->addPendingEditorCommand(rawCommand);
 }
 
-static const char* const gtkMoveCommands[][4] = {
-    { "MoveBackward",                                   "MoveForward",
-      "MoveBackwardAndModifySelection",                 "MoveForwardAndModifySelection"             }, // Forward/backward grapheme
-    { "MoveLeft",                                       "MoveRight",
-      "MoveBackwardAndModifySelection",                 "MoveForwardAndModifySelection"             }, // Left/right grapheme
-    { "MoveWordBackward",                               "MoveWordForward",
-      "MoveWordBackwardAndModifySelection",             "MoveWordForwardAndModifySelection"         }, // Forward/backward word
-    { "MoveUp",                                         "MoveDown",
-      "MoveUpAndModifySelection",                       "MoveDownAndModifySelection"                }, // Up/down line
-    { "MoveToBeginningOfLine",                          "MoveToEndOfLine",
-      "MoveToBeginningOfLineAndModifySelection",        "MoveToEndOfLineAndModifySelection"         }, // Up/down line ends
-    { 0,                                                0,
-      "MoveParagraphBackwardAndModifySelection",        "MoveParagraphForwardAndModifySelection"    }, // Up/down paragraphs
-    { "MoveToBeginningOfParagraph",                     "MoveToEndOfParagraph",
-      "MoveToBeginningOfParagraphAndModifySelection",   "MoveToEndOfParagraphAndModifySelection"    }, // Up/down paragraph ends.
-    { "MovePageUp",                                     "MovePageDown",
-      "MovePageUpAndModifySelection",                   "MovePageDownAndModifySelection"            }, // Up/down page
-    { "MoveToBeginningOfDocument",                      "MoveToEndOfDocument",
-      "MoveToBeginningOfDocumentAndModifySelection",    "MoveToEndOfDocumentAndModifySelection"     }, // Begin/end of buffer
-    { 0,                                                0,
-      0,                                                0                                           } // Horizontal page movement
-};
+static constexpr auto gtkMoveCommands = std::to_array<std::array<ASCIILiteral, 4>>({
+    { "MoveBackward"_s,               "MoveForward"_s,          "MoveBackwardAndModifySelection"_s,               "MoveForwardAndModifySelection"_s          }, // Forward/backward grapheme
+    { "MoveLeft"_s,                   "MoveRight"_s,            "MoveBackwardAndModifySelection"_s,               "MoveForwardAndModifySelection"_s          }, // Left/right grapheme
+    { "MoveWordBackward"_s,           "MoveWordForward"_s,      "MoveWordBackwardAndModifySelection"_s,           "MoveWordForwardAndModifySelection"_s      }, // Forward/backward word
+    { "MoveUp"_s,                     "MoveDown"_s,             "MoveUpAndModifySelection"_s,                     "MoveDownAndModifySelection"_s             }, // Up/down line
+    { "MoveToBeginningOfLine"_s,      "MoveToEndOfLine"_s,      "MoveToBeginningOfLineAndModifySelection"_s,      "MoveToEndOfLineAndModifySelection"_s      }, // Up/down line ends
+    { nullptr,                        nullptr,                  "MoveParagraphBackwardAndModifySelection"_s,      "MoveParagraphForwardAndModifySelection"_s }, // Up/down paragraphs
+    { "MoveToBeginningOfParagraph"_s, "MoveToEndOfParagraph"_s, "MoveToBeginningOfParagraphAndModifySelection"_s, "MoveToEndOfParagraphAndModifySelection"_s }, // Up/down paragraph ends.
+    { "MovePageUp"_s,                 "MovePageDown"_s,         "MovePageUpAndModifySelection"_s,                 "MovePageDownAndModifySelection"_s         }, // Up/down page
+    { "MoveToBeginningOfDocument"_s,  "MoveToEndOfDocument"_s,  "MoveToBeginningOfDocumentAndModifySelection"_s,  "MoveToEndOfDocumentAndModifySelection"_s  }, // Begin/end of buffer
+    { nullptr,                        nullptr,                  nullptr,                                          nullptr                                    }, // Horizontal page movement
+});
 
 static void moveCursorCallback(GtkWidget* widget, GtkMovementStep step, gint count, gboolean extendSelection, KeyBindingTranslator* translator)
 {
@@ -204,32 +191,32 @@ struct KeyCombinationEntry {
     ASCIILiteral name;
 };
 
-static const KeyCombinationEntry customKeyBindings[] = {
-    { GDK_KEY_b,         GDK_CONTROL_MASK,                  "ToggleBold"_s      },
-    { GDK_KEY_i,         GDK_CONTROL_MASK,                  "ToggleItalic"_s    },
-    { GDK_KEY_Escape,    0,                                 "Cancel"_s          },
-    { GDK_KEY_greater,   GDK_CONTROL_MASK,                  "Cancel"_s          },
-    { GDK_KEY_Tab,       0,                                 "InsertTab"_s       },
-    { GDK_KEY_Tab,       GDK_SHIFT_MASK,                    "InsertBacktab"_s   },
-    { GDK_KEY_Return,    0,                                 "InsertNewLine"_s   },
-    { GDK_KEY_KP_Enter,  0,                                 "InsertNewLine"_s   },
-    { GDK_KEY_ISO_Enter, 0,                                 "InsertNewLine"_s   },
-    { GDK_KEY_Return,    GDK_SHIFT_MASK,                    "InsertLineBreak"_s },
-    { GDK_KEY_KP_Enter,  GDK_SHIFT_MASK,                    "InsertLineBreak"_s },
-    { GDK_KEY_ISO_Enter, GDK_SHIFT_MASK,                    "InsertLineBreak"_s },
-    { GDK_KEY_V,         GDK_CONTROL_MASK | GDK_SHIFT_MASK, "PasteAsPlainText"_s },
-};
+static constexpr auto customKeyBindings = std::to_array<const KeyCombinationEntry>({
+    { GDK_KEY_b,         GDK_CONTROL_MASK,                  "ToggleBold"_s       },
+    { GDK_KEY_i,         GDK_CONTROL_MASK,                  "ToggleItalic"_s     },
+    { GDK_KEY_Escape,    0,                                 "Cancel"_s           },
+    { GDK_KEY_greater,   GDK_CONTROL_MASK,                  "Cancel"_s           },
+    { GDK_KEY_Tab,       0,                                 "InsertTab"_s        },
+    { GDK_KEY_Tab,       GDK_SHIFT_MASK,                    "InsertBacktab"_s    },
+    { GDK_KEY_Return,    0,                                 "InsertNewLine"_s    },
+    { GDK_KEY_KP_Enter,  0,                                 "InsertNewLine"_s    },
+    { GDK_KEY_ISO_Enter, 0,                                 "InsertNewLine"_s    },
+    { GDK_KEY_Return,    GDK_SHIFT_MASK,                    "InsertLineBreak"_s  },
+    { GDK_KEY_KP_Enter,  GDK_SHIFT_MASK,                    "InsertLineBreak"_s  },
+    { GDK_KEY_ISO_Enter, GDK_SHIFT_MASK,                    "InsertLineBreak"_s  },
+    { GDK_KEY_V,         GDK_CONTROL_MASK | GDK_SHIFT_MASK, "PasteAsPlainText"_s }
+});
 
-static Vector<String> handleKeyBindingsForMap(const KeyCombinationEntry* map, unsigned mapSize, unsigned keyval, GdkModifierType state)
+static Vector<String> handleKeyBindingsForMap(const std::span<const KeyCombinationEntry> mapping, unsigned keyval, GdkModifierType state)
 {
     // For keypress events, we want charCode(), but keyCode() does that.
     unsigned mapKey = (state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK | GDK_MOD1_MASK)) << 16 | keyval;
     if (!mapKey)
         return { };
 
-    for (unsigned i = 0; i < mapSize; ++i) {
-        if (mapKey == (map[i].state << 16 | map[i].gdkKeyCode))
-            return { map[i].name };
+    for (const auto& item : mapping) {
+        if (mapKey == (item.state << 16 | item.gdkKeyCode))
+            return { item.name };
     }
 
     return { };
@@ -237,7 +224,7 @@ static Vector<String> handleKeyBindingsForMap(const KeyCombinationEntry* map, un
 
 static Vector<String> handleCustomKeyBindings(unsigned keyval, GdkModifierType state)
 {
-    return handleKeyBindingsForMap(customKeyBindings, G_N_ELEMENTS(customKeyBindings), keyval, state);
+    return handleKeyBindingsForMap(std::span(customKeyBindings), keyval, state);
 }
 
 #if USE(GTK4)
@@ -269,7 +256,7 @@ Vector<String> KeyBindingTranslator::commandsForKeyEvent(GdkEventKey* event)
 }
 #endif
 
-static const KeyCombinationEntry predefinedKeyBindings[] = {
+static constexpr auto predefinedKeyBindings = std::to_array<const KeyCombinationEntry>({
     { GDK_KEY_Left,         0,                                 "MoveLeft"_s },
     { GDK_KEY_KP_Left,      0,                                 "MoveLeft"_s },
     { GDK_KEY_Left,         GDK_SHIFT_MASK,                    "MoveBackwardAndModifySelection"_s },
@@ -335,11 +322,11 @@ static const KeyCombinationEntry predefinedKeyBindings[] = {
     { GDK_KEY_KP_Delete,    GDK_SHIFT_MASK,                    "Cut"_s },
     { GDK_KEY_KP_Insert,    GDK_CONTROL_MASK,                  "Copy"_s },
     { GDK_KEY_KP_Insert,    GDK_SHIFT_MASK,                    "Paste"_s }
-};
+});
 
 Vector<String> KeyBindingTranslator::commandsForKeyval(unsigned keyval, unsigned modifiers)
 {
-    auto commands = handleKeyBindingsForMap(predefinedKeyBindings, G_N_ELEMENTS(predefinedKeyBindings), keyval, static_cast<GdkModifierType>(modifiers));
+    auto commands = handleKeyBindingsForMap(predefinedKeyBindings, keyval, static_cast<GdkModifierType>(modifiers));
     if (!commands.isEmpty())
         return commands;
 

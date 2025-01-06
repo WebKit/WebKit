@@ -43,12 +43,12 @@
 #include "TextTrackList.h"
 #include "VTTRegion.h"
 #include "VTTRegionList.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrack);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrack);
 
 static const AtomString& descriptionsKeyword()
 {
@@ -151,7 +151,8 @@ void TextTrack::didMoveToNewDocument(Document& newDocument)
 {
     TrackBase::didMoveToNewDocument(newDocument);
     ActiveDOMObject::didMoveToNewDocument(newDocument);
-    protectedCues()->didMoveToNewDocument(newDocument);
+    if (RefPtr cues = protectedCues())
+        cues->didMoveToNewDocument(newDocument);
 }
 
 TextTrackList* TextTrack::textTrackList() const
@@ -485,12 +486,6 @@ int TextTrack::trackIndex()
         m_trackIndex = textTrackList()->getTrackIndex(*this);
     }
     return m_trackIndex.value();
-}
-
-void TextTrack::invalidateTrackIndex()
-{
-    m_trackIndex = std::nullopt;
-    m_renderedTrackIndex = std::nullopt;
 }
 
 bool TextTrack::isRendered()

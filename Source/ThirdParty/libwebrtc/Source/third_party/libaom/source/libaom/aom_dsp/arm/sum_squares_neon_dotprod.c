@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,7 +16,7 @@
 #include "aom_dsp/arm/sum_neon.h"
 #include "config/aom_dsp_rtcd.h"
 
-static INLINE uint64_t aom_var_2d_u8_4xh_neon_dotprod(uint8_t *src,
+static inline uint64_t aom_var_2d_u8_4xh_neon_dotprod(uint8_t *src,
                                                       int src_stride, int width,
                                                       int height) {
   uint64_t sum = 0;
@@ -57,7 +57,7 @@ static INLINE uint64_t aom_var_2d_u8_4xh_neon_dotprod(uint8_t *src,
   return sse - sum * sum / (width * height);
 }
 
-static INLINE uint64_t aom_var_2d_u8_8xh_neon_dotprod(uint8_t *src,
+static inline uint64_t aom_var_2d_u8_8xh_neon_dotprod(uint8_t *src,
                                                       int src_stride, int width,
                                                       int height) {
   uint64_t sum = 0;
@@ -98,7 +98,7 @@ static INLINE uint64_t aom_var_2d_u8_8xh_neon_dotprod(uint8_t *src,
   return sse - sum * sum / (width * height);
 }
 
-static INLINE uint64_t aom_var_2d_u8_16xh_neon_dotprod(uint8_t *src,
+static inline uint64_t aom_var_2d_u8_16xh_neon_dotprod(uint8_t *src,
                                                        int src_stride,
                                                        int width, int height) {
   uint64_t sum = 0;

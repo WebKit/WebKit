@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,17 @@
  */
 
 #import "config.h"
+#import "WebKitSwiftOverlayMacros.h"
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST) || PLATFORM(IOS) || PLATFORM(VISION)
+
+#define DEFINE_MIGRATED_SYMBOL(Symbol, macOSVersion, iOSVersion, visionOSVersion) \
+    const char migrated_symbol_##Symbol = 0
+FOR_EACH_MIGRATED_SWIFT_OVERLAY_SYMBOL(DEFINE_MIGRATED_SYMBOL);
+
+char _swift_FORCE_LOAD_$_swiftWebKit = 0;
+
+#endif // PLATFORM(MAC) || PLATFORM(MACCATALYST) || PLATFORM(IOS) || PLATFORM(VISION)
 
 #if PLATFORM(IOS) || PLATFORM(IOS_SIMULATOR)
 

@@ -55,12 +55,12 @@ PASS PointerEvent interface: attribute tangentialPressure
 PASS PointerEvent interface: attribute tiltX
 PASS PointerEvent interface: attribute tiltY
 PASS PointerEvent interface: attribute twist
-FAIL PointerEvent interface: attribute altitudeAngle assert_true: The prototype object must have a property "altitudeAngle" expected true got false
-FAIL PointerEvent interface: attribute azimuthAngle assert_true: The prototype object must have a property "azimuthAngle" expected true got false
+PASS PointerEvent interface: attribute altitudeAngle
+PASS PointerEvent interface: attribute azimuthAngle
 PASS PointerEvent interface: attribute pointerType
 PASS PointerEvent interface: attribute isPrimary
-FAIL PointerEvent interface: operation getCoalescedEvents() assert_own_property: interface prototype object missing non-static operation expected property "getCoalescedEvents" missing
-FAIL PointerEvent interface: operation getPredictedEvents() assert_own_property: interface prototype object missing non-static operation expected property "getPredictedEvents" missing
+PASS PointerEvent interface: operation getCoalescedEvents()
+PASS PointerEvent interface: operation getPredictedEvents()
 PASS PointerEvent must be primary interface of new PointerEvent("type")
 PASS Stringification of new PointerEvent("type")
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "pointerId" with the proper type
@@ -71,12 +71,12 @@ PASS PointerEvent interface: new PointerEvent("type") must inherit property "tan
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "tiltX" with the proper type
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "tiltY" with the proper type
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "twist" with the proper type
-FAIL PointerEvent interface: new PointerEvent("type") must inherit property "altitudeAngle" with the proper type assert_inherits: property "altitudeAngle" not found in prototype chain
-FAIL PointerEvent interface: new PointerEvent("type") must inherit property "azimuthAngle" with the proper type assert_inherits: property "azimuthAngle" not found in prototype chain
+PASS PointerEvent interface: new PointerEvent("type") must inherit property "altitudeAngle" with the proper type
+PASS PointerEvent interface: new PointerEvent("type") must inherit property "azimuthAngle" with the proper type
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "pointerType" with the proper type
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "isPrimary" with the proper type
-FAIL PointerEvent interface: new PointerEvent("type") must inherit property "getCoalescedEvents()" with the proper type assert_inherits: property "getCoalescedEvents" not found in prototype chain
-FAIL PointerEvent interface: new PointerEvent("type") must inherit property "getPredictedEvents()" with the proper type assert_inherits: property "getPredictedEvents" not found in prototype chain
+PASS PointerEvent interface: new PointerEvent("type") must inherit property "getCoalescedEvents()" with the proper type
+PASS PointerEvent interface: new PointerEvent("type") must inherit property "getPredictedEvents()" with the proper type
 PASS HTMLElement interface: attribute ongotpointercapture
 PASS HTMLElement interface: attribute onlostpointercapture
 PASS HTMLElement interface: attribute onpointerdown

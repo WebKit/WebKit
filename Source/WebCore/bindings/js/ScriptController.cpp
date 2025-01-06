@@ -31,6 +31,7 @@
 #include "Event.h"
 #include "FrameLoader.h"
 #include "HTMLPlugInElement.h"
+#include "HistoryController.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMExceptionHandling.h"
@@ -43,12 +44,13 @@
 #include "Logging.h"
 #include "ModuleFetchFailureKind.h"
 #include "ModuleFetchParameters.h"
+#include "NavigationAction.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include "PaymentCoordinator.h"
+#include "Quirks.h"
 #include "RunJavaScriptParameters.h"
-#include "RuntimeApplicationChecks.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptSourceCode.h"
 #include "ScriptableDocumentParser.h"
@@ -75,9 +77,12 @@
 #include <JavaScriptCore/SyntheticModuleRecord.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
 #include <JavaScriptCore/WebAssemblyModuleRecord.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SharedTask.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextPosition.h>
 
 #define SCRIPTCONTROLLER_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - ScriptController::" fmt, this, ##__VA_ARGS__)
@@ -90,6 +95,8 @@ namespace WebCore {
 using namespace JSC;
 
 enum class WebCoreProfileTag { };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptController);
 
 void ScriptController::initializeMainThread()
 {
@@ -152,6 +159,11 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
 
     Ref protector { m_frame };
     SetForScope sourceURLScope(m_sourceURL, &sourceURL);
+
+    if (RefPtr document = m_frame.document()) {
+        if (auto script = document->quirks().scriptToEvaluateBeforeRunningScriptFromURL(sourceURL); !script.isEmpty())
+            evaluateIgnoringException({ WTFMove(script), JSC::SourceTaintedOrigin::Untainted });
+    }
 
     InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 
@@ -308,7 +320,7 @@ void ScriptController::initScriptForWindowProxy(JSWindowProxy& windowProxy)
         windowProxy.window()->setConsoleClient(page->console());
     }
 
-    protectedFrame()->checkedLoader()->dispatchDidClearWindowObjectInWorld(world);
+    protectedFrame()->protectedLoader()->dispatchDidClearWindowObjectInWorld(world);
 }
 
 Ref<LocalFrame> ScriptController::protectedFrame() const
@@ -468,7 +480,7 @@ bool ScriptController::canAccessFromCurrentOrigin(LocalFrame* frame, Document& a
     // If the current lexicalGlobalObject is null we should use the accessing document for the security check.
     if (!lexicalGlobalObject) {
         auto* targetDocument = frame ? frame->document() : nullptr;
-        return targetDocument && accessingDocument.securityOrigin().isSameOriginDomain(targetDocument->securityOrigin());
+        return targetDocument && accessingDocument.protectedSecurityOrigin()->isSameOriginDomain(targetDocument->securityOrigin());
     }
 
     return BindingSecurity::shouldAllowAccessToFrame(lexicalGlobalObject, frame);
@@ -604,7 +616,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
 {
 #if ENABLE(APP_BOUND_DOMAINS)
     if (m_frame.loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
-        if (auto* document = m_frame.document())
+        if (RefPtr document = m_frame.document())
             document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain."_s);
         SCRIPTCONTROLLER_RELEASE_LOG_ERROR(Loading, "executeScriptInWorld: Ignoring user script injection for non app-bound domain");
         return makeUnexpected(ExceptionDetails { "Ignoring user script injection for non-app bound domain"_s });
@@ -617,7 +629,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
     if (parameters.forceUserGesture == ForceUserGesture::Yes && UserGestureIndicator::currentUserGesture() && parameters.removeTransientActivation == RemoveTransientActivation::Yes) {
         UserGestureIndicator::currentUserGesture()->addDestructionObserver([](UserGestureToken& token) {
             token.forEachImpactedDocument([](Document& document) {
-                if (auto* window = document.domWindow())
+                if (RefPtr window = document.domWindow())
                     window->consumeTransientActivation();
             });
         });
@@ -806,10 +818,10 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
     if (reason == ReasonForCallingCanExecuteScripts::AboutToExecuteScript)
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
 
-    if (m_frame.document() && m_frame.document()->isSandboxed(SandboxScripts)) {
+    if (m_frame.document() && m_frame.document()->isSandboxed(SandboxFlag::Scripts)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
         if (reason == ReasonForCallingCanExecuteScripts::AboutToExecuteScript || reason == ReasonForCallingCanExecuteScripts::AboutToCreateEventListener)
-            m_frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked script execution in '"_s, m_frame.document()->url().stringCenterEllipsizedToLength(), "' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."_s));
+            m_frame.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked script execution in '"_s, m_frame.document()->url().stringCenterEllipsizedToLength(), "' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."_s));
         return false;
     }
 
@@ -819,13 +831,7 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
     return m_frame.loader().client().allowScript(m_frame.settings().isScriptEnabled());
 }
 
-void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigin> securityOrigin, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL)
-{
-    bool didReplaceDocument = false;
-    executeJavaScriptURL(url, securityOrigin, shouldReplaceDocumentIfJavaScriptURL, didReplaceDocument);
-}
-
-void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigin> requesterSecurityOrigin, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL, bool& didReplaceDocument)
+void ScriptController::executeJavaScriptURL(const URL& url, const NavigationAction& action, bool& didReplaceDocument)
 {
     ASSERT(url.protocolIsJavaScript());
 
@@ -834,6 +840,7 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
     Ref frame = m_frame;
     RefPtr ownerDocument = m_frame.document();
 
+    RefPtr requesterSecurityOrigin = action.requester() ? action.requester()->securityOrigin.ptr() : nullptr;
     if (requesterSecurityOrigin && !requesterSecurityOrigin->isSameOriginDomain(ownerDocument->securityOrigin()))
         return;
 
@@ -862,7 +869,7 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
 
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
     String decodedURL = PAL::decodeURLEscapeSequences(preNavigationCheckURLString);
-    // FIXME: This probably needs to figure out if the origin is considered tanited.
+    // FIXME: This probably needs to figure out if the origin is considered tainted.
     auto result = executeScriptIgnoringException(decodedURL.substring(javascriptSchemeLength), JSC::SourceTaintedOrigin::Untainted);
     RELEASE_ASSERT(&vm == &jsWindowProxy(mainThreadNormalWorld()).window()->vm());
 
@@ -884,9 +891,22 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
     // FIXME: We should always replace the document, but doing so
     //        synchronously can cause crashes:
     //        http://bugs.webkit.org/show_bug.cgi?id=16782
-    if (shouldReplaceDocumentIfJavaScriptURL == ReplaceDocumentIfJavaScriptURL) {
+    if (action.shouldReplaceDocumentIfJavaScriptURL() == ReplaceDocumentIfJavaScriptURL) {
+        RefPtr documentLoader = m_frame.document()->loader();
+
         // We're still in a frame, so there should be a DocumentLoader.
-        ASSERT(m_frame.document()->loader());
+        ASSERT(documentLoader);
+
+        // If there is no current history item, create one since we're about to commit a document
+        // from the JS URL.
+        if (!m_frame.loader().history().currentItem())
+            m_frame.loader().checkedHistory()->updateForRedirectWithLockedBackForwardList();
+
+        // Since we're replacing the document, this JavaScript URL load acts as a "Replace" navigation.
+        // Make sure the triggering action get set on the DocumentLoader since some logic in
+        // FrameLoader::didBeginDocument() relies on it for example.
+        if (documentLoader)
+            documentLoader->setTriggeringAction(NavigationAction { action });
 
         // Signal to FrameLoader to disable navigations within this frame while replacing it with the result of executing javascript
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=200523
@@ -894,10 +914,8 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
         // some will load synchronously. We'd like to remove those synchronous loads and then change this.
         SetForScope willBeReplaced(m_willReplaceWithResultOfExecutingJavascriptURL, true);
 
-        // DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL can cause the DocumentLoader to get deref'ed and possible destroyed,
-        // so protect it with a RefPtr.
-        if (RefPtr loader = m_frame.document()->loader()) {
-            loader->writer().replaceDocumentWithResultOfExecutingJavascriptURL(scriptResult, ownerDocument.get());
+        if (documentLoader) {
+            documentLoader->writer().replaceDocumentWithResultOfExecutingJavascriptURL(scriptResult, ownerDocument.get());
             didReplaceDocument = true;
         }
     }
@@ -915,17 +933,22 @@ void ScriptController::reportExceptionFromScriptError(LoadableScript::Error erro
     reportException(&lexicalGlobalObject, error.errorValue.get(), nullptr, isModule);
 }
 
-class ImportMapWarningReporter final : public JSC::ImportMap::Reporter {
+class ImportMapLogReporter final : public JSC::ImportMap::Reporter {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    ImportMapWarningReporter(JSDOMGlobalObject* globalObject)
+    ImportMapLogReporter(JSDOMGlobalObject* globalObject)
         : m_globalObject(globalObject)
     {
     }
 
-    void reportWarning(const String& message) final
+    void reportWarning(const String& message) const final
     {
         m_globalObject->scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
+    }
+
+    void reportError(const String& message) const final
+    {
+        m_globalObject->scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);
     }
 
 private:
@@ -938,43 +961,11 @@ void ScriptController::registerImportMap(const ScriptSourceCode& sourceCode, con
     JSC::VM& vm = world.vm();
     JSLockHolder lock(vm);
     JSDOMGlobalObject* globalObject = jsWindowProxy(world).window();
-    ImportMapWarningReporter reporter(globalObject);
-    auto result = globalObject->importMap().registerImportMap(sourceCode.jsSourceCode(), baseURL, &reporter);
-    if (!result)
-        globalObject->scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, result.error());
-    globalObject->clearPendingImportMaps();
-}
+    ImportMapLogReporter reporter(globalObject);
+    auto newImportMap = ImportMap::parseImportMapString(sourceCode.jsSourceCode(), baseURL, reporter);
 
-bool ScriptController::isAcquiringImportMaps()
-{
-    auto& world = mainThreadNormalWorld();
-    JSC::VM& vm = world.vm();
-    JSLockHolder lock(vm);
-    return jsWindowProxy(world).window()->isAcquiringImportMaps();
-}
-
-void ScriptController::setAcquiringImportMaps()
-{
-    auto& world = mainThreadNormalWorld();
-    JSC::VM& vm = world.vm();
-    JSLockHolder lock(vm);
-    jsWindowProxy(world).window()->setAcquiringImportMaps();
-}
-
-void ScriptController::setPendingImportMaps()
-{
-    auto& world = mainThreadNormalWorld();
-    JSC::VM& vm = world.vm();
-    JSLockHolder lock(vm);
-    jsWindowProxy(world).window()->setPendingImportMaps();
-}
-
-void ScriptController::clearPendingImportMaps()
-{
-    auto& world = mainThreadNormalWorld();
-    JSC::VM& vm = world.vm();
-    JSLockHolder lock(vm);
-    jsWindowProxy(world).window()->clearPendingImportMaps();
+    if (newImportMap)
+        globalObject->importMap().mergeExistingAndNewImportMaps(WTFMove(newImportMap.value()), reporter);
 }
 
 } // namespace WebCore

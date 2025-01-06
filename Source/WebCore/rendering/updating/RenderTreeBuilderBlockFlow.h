@@ -26,13 +26,14 @@
 #pragma once
 
 #include "RenderTreeBuilder.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class RenderBlockFlow;
 
 class RenderTreeBuilder::BlockFlow {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BlockFlow);
 public:
     BlockFlow(RenderTreeBuilder&);
 

@@ -124,11 +124,12 @@ class BitstreamReader {
 };
 
 inline BitstreamReader::BitstreamReader(rtc::ArrayView<const uint8_t> bytes)
-    : bytes_(bytes.data()), remaining_bits_(bytes.size() * 8) {}
+    : bytes_(bytes.data()),
+      remaining_bits_(rtc::checked_cast<int>(bytes.size() * 8)) {}
 
 inline BitstreamReader::BitstreamReader(absl::string_view bytes)
     : bytes_(reinterpret_cast<const uint8_t*>(bytes.data())),
-      remaining_bits_(bytes.size() * 8) {}
+      remaining_bits_(rtc::checked_cast<int>(bytes.size() * 8)) {}
 
 inline BitstreamReader::~BitstreamReader() {
   RTC_DCHECK(last_read_is_verified_) << "Latest calls to Read or ConsumeBit "

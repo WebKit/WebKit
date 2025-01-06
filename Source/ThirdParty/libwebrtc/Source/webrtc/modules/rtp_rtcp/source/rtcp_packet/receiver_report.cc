@@ -19,8 +19,6 @@
 
 namespace webrtc {
 namespace rtcp {
-constexpr uint8_t ReceiverReport::kPacketType;
-constexpr size_t ReceiverReport::kMaxNumberOfReportBlocks;
 // RTCP receiver report (RFC 3550).
 //
 //   0                   1                   2                   3

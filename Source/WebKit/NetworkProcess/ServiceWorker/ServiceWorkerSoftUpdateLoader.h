@@ -33,6 +33,7 @@
 #include <WebCore/ServiceWorkerJobData.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -47,7 +48,7 @@ class NetworkLoad;
 class NetworkSession;
 
 class ServiceWorkerSoftUpdateLoader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerSoftUpdateLoader>, public CanMakeCheckedPtr<ServiceWorkerSoftUpdateLoader> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerSoftUpdateLoader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ServiceWorkerSoftUpdateLoader);
 public:
     using Handler = CompletionHandler<void(WebCore::WorkerFetchResult&&)>;
@@ -73,7 +74,7 @@ private:
 
     Handler m_completionHandler;
     WebCore::ServiceWorkerJobData m_jobData;
-    std::unique_ptr<NetworkLoad> m_networkLoad;
+    RefPtr<NetworkLoad> m_networkLoad;
     WeakPtr<NetworkSession> m_session;
 
     String m_responseEncoding;

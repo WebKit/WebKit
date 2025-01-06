@@ -44,7 +44,7 @@ std::vector<float> RunSubtractorTest(
 
   Subtractor subtractor(config, num_render_channels, num_capture_channels,
                         &data_dumper, DetectOptimization());
-  absl::optional<DelayEstimate> delay_estimate;
+  std::optional<DelayEstimate> delay_estimate;
   Block x(kNumBands, num_render_channels);
   Block y(/*num_bands=*/1, num_capture_channels);
   std::array<float, kBlockSize> x_old;

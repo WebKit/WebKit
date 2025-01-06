@@ -1,22 +1,24 @@
-<!DOCTYPE html>
 <script>
-if (window.testRunner) {
-  testRunner.waitUntilDone();
-  testRunner.dumpAsText();
+if (document.URL.indexOf('?') == -1) {
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
 }
 function runTest() {
   form.submit();
-  p.appendChild(object);
-  object.foo;
-  setTimeout(function() {
+  p.appendChild(form);
+  object.codeType = "image/gif";
+  if (document.URL.indexOf('?') == -1) {
     document.write("PASS if no crash");
-    testRunner.notifyDone();
-  }, 10);
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }
 }
 </script>
 <body onload=runTest()>
-  <p id="p"></p>
-  <object id="object" data="?foo=bar">
-    <form id="form"></form>
-  </object>
+<p id="p"></p>
+  <form action="?" id="form">
+    <object id="object" data="?">
+  </form>
 </body>

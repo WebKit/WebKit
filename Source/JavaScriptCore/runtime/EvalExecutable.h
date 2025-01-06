@@ -40,12 +40,12 @@ public:
     
     EvalCodeBlock* codeBlock() const
     {
-        return bitwise_cast<EvalCodeBlock*>(Base::codeBlock());
+        return std::bit_cast<EvalCodeBlock*>(Base::codeBlock());
     }
 
     UnlinkedEvalCodeBlock* unlinkedCodeBlock() const
     {
-        return bitwise_cast<UnlinkedEvalCodeBlock*>(Base::unlinkedCodeBlock());
+        return std::bit_cast<UnlinkedEvalCodeBlock*>(Base::unlinkedCodeBlock());
     }
 
     Ref<JSC::JITCode> generatedJITCode()
@@ -76,7 +76,7 @@ protected:
     friend class ScriptExecutable;
 
     using Base::finishCreation;
-    EvalExecutable(JSGlobalObject*, const SourceCode&, bool inStrictContext, DerivedContextType, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType, NeedsClassFieldInitializer, PrivateBrandRequirement);
+    EvalExecutable(JSGlobalObject*, const SourceCode&, LexicallyScopedFeatures, DerivedContextType, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType, NeedsClassFieldInitializer, PrivateBrandRequirement);
 
     DECLARE_VISIT_CHILDREN;
 

@@ -20,6 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+[
+    DispatchedFrom=Networking,
+    DispatchedTo=WebContent
+]
 messages -> WebSharedWorkerObjectConnection {
     FetchScriptInClient(URL url, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, struct WebCore::WorkerOptions workerOptions) -> (struct WebCore::WorkerFetchResult fetchResult, struct WebCore::WorkerInitializationData initializationData)
     NotifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::ResourceError error)

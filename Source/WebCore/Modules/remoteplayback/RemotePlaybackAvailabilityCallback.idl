@@ -25,4 +25,5 @@
 [
     Conditional=WIRELESS_PLAYBACK_TARGET,
     EnabledBySetting=RemotePlaybackEnabled,
+    GenerateIsReachable=ImplScriptExecutionContext
 ] callback RemotePlaybackAvailabilityCallback = boolean (boolean available);

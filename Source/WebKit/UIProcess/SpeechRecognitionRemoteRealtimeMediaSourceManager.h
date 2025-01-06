@@ -30,19 +30,12 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 #if PLATFORM(COCOA)
 #include "SharedCARingBuffer.h"
 #endif
-
-namespace WebKit {
-class SpeechRecognitionRemoteRealtimeMediaSourceManager;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager> : std::true_type { };
-}
 
 namespace WTF {
 class MediaTime;
@@ -55,13 +48,21 @@ class CaptureDevice;
 namespace WebKit {
 
 class SpeechRecognitionRemoteRealtimeMediaSource;
+class WebProcessProxy;
+struct SharedPreferencesForWebProcess;
 
 class SpeechRecognitionRemoteRealtimeMediaSourceManager final : public IPC::MessageReceiver, public IPC::MessageSender {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SpeechRecognitionRemoteRealtimeMediaSourceManager);
 public:
-    explicit SpeechRecognitionRemoteRealtimeMediaSourceManager(Ref<IPC::Connection>&&);
+    explicit SpeechRecognitionRemoteRealtimeMediaSourceManager(const WebProcessProxy&);
+
+    void ref() const final;
+    void deref() const final;
+
     void addSource(SpeechRecognitionRemoteRealtimeMediaSource&, const WebCore::CaptureDevice&);
     void removeSource(SpeechRecognitionRemoteRealtimeMediaSource&);
+
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
     // Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager
@@ -79,7 +80,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    Ref<IPC::Connection> m_connection;
+    WeakRef<const WebProcessProxy> m_process;
     HashMap<WebCore::RealtimeMediaSourceIdentifier, ThreadSafeWeakPtr<SpeechRecognitionRemoteRealtimeMediaSource>> m_sources;
 };
 

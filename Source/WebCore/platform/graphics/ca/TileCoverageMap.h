@@ -31,8 +31,10 @@
 #include "PlatformCALayer.h"
 #include "PlatformCALayerClient.h"
 #include "Timer.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,8 +43,10 @@ class IntPoint;
 class IntRect;
 class TileController;
 
-class TileCoverageMap : public PlatformCALayerClient {
-    WTF_MAKE_NONCOPYABLE(TileCoverageMap); WTF_MAKE_FAST_ALLOCATED;
+class TileCoverageMap final : public PlatformCALayerClient, public CanMakeCheckedPtr<TileCoverageMap> {
+    WTF_MAKE_TZONE_ALLOCATED(TileCoverageMap);
+    WTF_MAKE_NONCOPYABLE(TileCoverageMap);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TileCoverageMap);
 public:
     TileCoverageMap(const TileController&);
     ~TileCoverageMap();
@@ -58,6 +62,7 @@ public:
 
 private:
     // PlatformCALayerClient
+    PlatformLayerIdentifier platformCALayerIdentifier() const override;
     GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return GraphicsLayer::CompositingCoordinatesOrientation::TopDown; }
     bool platformCALayerContentsOpaque() const override { return true; }
     bool platformCALayerDrawsContent() const override { return true; }

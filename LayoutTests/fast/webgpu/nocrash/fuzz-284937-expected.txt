@@ -1,0 +1,62 @@
+CONSOLE MESSAGE: promises created
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: Unhandled Promise Rejection: GPUPipelineError
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: the end
+CONSOLE MESSAGE: the end
+CONSOLE MESSAGE: repro_284937.html
+CONSOLE MESSAGE: notify done
+layer at (0,0) size 785x4861
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x4861
+  RenderBlock {HTML} at (0,0) size 785x4861 [color=#99DDBBCC] [bgcolor=#102030E0]
+    RenderBody {BODY} at (8,8) size 769x4845
+      RenderHTMLCanvas {CANVAS} at (0,4395) size 300x150
+      RenderImage {IMG} at (300,4543) size 26x2
+      RenderImage {IMG} at (300,4694) size 5x1
+      RenderImage {IMG} at (605,4638) size 32x57
+      RenderImage {IMG} at (637,4654) size 76x41
+      RenderImage {IMG} at (713,4682) size 38x13
+      RenderImage {IMG} at (0,4828) size 54x17
+      RenderImage {IMG} at (54,4794) size 189x51
+      RenderImage {IMG} at (243,4830) size 1x15
+      RenderImage {IMG} at (244,4838) size 20x7
+      RenderImage {IMG} at (264,4725) size 15x120
+layer at (334,8) size 396x4545
+  RenderHTMLCanvas {CANVAS} at (326,0) size 396x4545
+layer at (8,4553) size 300x150
+  RenderHTMLCanvas {CANVAS} at (0,4545) size 300x150
+layer at (313,4553) size 300x150
+  RenderHTMLCanvas {CANVAS} at (305,4545) size 300x150
+layer at (287,4703) size 300x150
+  RenderHTMLCanvas {CANVAS} at (279,4695) size 300x150

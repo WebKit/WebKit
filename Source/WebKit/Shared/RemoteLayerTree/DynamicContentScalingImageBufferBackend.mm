@@ -35,10 +35,11 @@
 #import <WebCore/PixelBuffer.h>
 #import <WebCore/SharedMemory.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/IsoMallocInlines.h>
 #import <wtf/MachSendRight.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/StringConcatenate.h>
 
 template<> struct WTF::CFTypeTrait<CAMachPortRef> {
     static inline CFTypeID typeID(void) { return CAMachPortGetTypeID(); }
@@ -68,7 +69,7 @@ public:
     bool canUseShadowBlur() const final { return false; }
 };
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DynamicContentScalingImageBufferBackend);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DynamicContentScalingImageBufferBackend);
 
 size_t DynamicContentScalingImageBufferBackend::calculateMemoryCost(const Parameters& parameters)
 {
@@ -96,6 +97,8 @@ DynamicContentScalingImageBufferBackend::DynamicContentScalingImageBufferBackend
         m_resourceCache = bridge_id_cast(adoptCF(RECGCommandsCacheCreate(nullptr)));
 }
 
+DynamicContentScalingImageBufferBackend::~DynamicContentScalingImageBufferBackend() = default;
+
 std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend::createBackendHandle(WebCore::SharedMemory::Protection) const
 {
     if (!m_context)
@@ -116,7 +119,7 @@ std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend:
 
     Vector<MachSendRight> sendRights;
     if (m_resourceCache) {
-        sendRights = makeVector(ports.get(), [] (id port) -> std::optional<MachSendRight> {
+        sendRights = makeVector(ports.get(), [] (CFTypeRef port) -> std::optional<MachSendRight> {
             // We `create` instead of `adopt` because CAMachPort has no API to leak its reference.
             return { MachSendRight::create(CAMachPortGetPort(checked_cf_cast<CAMachPortRef>(port))) };
         });

@@ -11,14 +11,12 @@
 #ifndef API_UNITS_TIME_DELTA_H_
 #define API_UNITS_TIME_DELTA_H_
 
-#ifdef WEBRTC_UNIT_TEST
-#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
-#endif              // WEBRTC_UNIT_TEST
-
+#include <cstdint>
 #include <cstdlib>
 #include <string>
 #include <type_traits>
 
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/units/unit_base.h"  // IWYU pragma: export
 
 namespace webrtc {
@@ -54,6 +52,9 @@ class TimeDelta final : public rtc_units_impl::RelativeUnit<TimeDelta> {
   }
 
   TimeDelta() = delete;
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, TimeDelta value);
 
   template <typename T = int64_t>
   constexpr T seconds() const {
@@ -92,18 +93,12 @@ class TimeDelta final : public rtc_units_impl::RelativeUnit<TimeDelta> {
   static constexpr bool one_sided = false;
 };
 
-std::string ToString(TimeDelta value);
-inline std::string ToLogString(TimeDelta value) {
-  return ToString(value);
-}
+RTC_EXPORT std::string ToString(TimeDelta value);
 
-#ifdef WEBRTC_UNIT_TEST
-inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
-    std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
-    TimeDelta value) {
-  return stream << ToString(value);
+template <typename Sink>
+void AbslStringify(Sink& sink, TimeDelta value) {
+  sink.Append(ToString(value));
 }
-#endif  // WEBRTC_UNIT_TEST
 
 }  // namespace webrtc
 

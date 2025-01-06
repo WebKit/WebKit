@@ -1,3 +1,0 @@
-All three of these small canvases should be green, not red.
-
-

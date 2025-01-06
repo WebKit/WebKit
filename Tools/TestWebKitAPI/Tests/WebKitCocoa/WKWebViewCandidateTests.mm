@@ -165,7 +165,12 @@ TEST(WKWebViewCandidateTests, InsertCharactersAfterCandidateInsertionWithSoftSpa
     EXPECT_WK_STREQ("foo a", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
 }
 
+// rdar://137237282
+#if (!defined(NDEBUG) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000)
+TEST(WKWebViewCandidateTests, DISABLED_InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
+#else
 TEST(WKWebViewCandidateTests, InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
+#endif
 {
     auto wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
 
@@ -250,6 +255,20 @@ TEST(WKWebViewCandidateTests, CandidateRectForEmptyParagraph)
     auto wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
     NSRect candidateRect = [wkWebView _candidateRect];
     EXPECT_NE(0, candidateRect.origin.y);
+}
+
+TEST(WKWebViewCandidateTests, CandidateRectForMultipleLines)
+{
+    RetainPtr wkWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [wkWebView synchronouslyLoadHTMLString:@"<body contenteditable><p>AAA</p><p>BBB</p></body>"];
+
+    [wkWebView waitForNextPresentationUpdate];
+    [wkWebView _setEditable:YES];
+    [wkWebView selectAll:nil];
+    [wkWebView waitForNextPresentationUpdate];
+
+    NSRect candidateRect = [wkWebView _candidateRect];
+    EXPECT_EQ(52, candidateRect.size.height);
 }
 
 #endif // PLATFORM(MAC)

@@ -37,9 +37,9 @@ namespace WebCore {
 struct ElementContext {
     FloatRect boundingRect;
 
-    PageIdentifier webPageIdentifier;
-    ScriptExecutionContextIdentifier documentIdentifier;
-    ElementIdentifier elementIdentifier;
+    Markable<PageIdentifier> webPageIdentifier;
+    Markable<ScriptExecutionContextIdentifier> documentIdentifier;
+    Markable<ElementIdentifier> elementIdentifier;
 
     ~ElementContext() = default;
 

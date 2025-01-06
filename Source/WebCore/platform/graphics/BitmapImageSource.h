@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BitmapImageDescriptor.h"
 #include "ImageFrameWorkQueue.h"
 #include "ImageSource.h"
 #include <wtf/Expected.h>
@@ -41,13 +42,17 @@ class BitmapImageSource : public ImageSource {
 public:
     static Ref<BitmapImageSource> create(BitmapImage&, AlphaOption, GammaAndColorProfileOption);
 
+    virtual ~BitmapImageSource();
+
     // State
     ImageDecoder* decoder(FragmentedSharedBuffer* = nullptr) const;
+    ImageDecoder* decoderIfExists() const { return m_decoder.get(); }
 
     // Encoded and decoded data
     void destroyDecodedData(bool destroyAll) final;
     void resetData();
     unsigned decodedSize() const { return m_decodedSize; }
+    void didDecodeProperties(unsigned decodedPropertiesSize);
 
     // Animation
     bool isAnimationAllowed() const;
@@ -59,9 +64,10 @@ public:
     void imageFrameDecodeAtIndexHasFinished(unsigned index, SubsamplingLevel, ImageAnimatingState, const DecodingOptions&, RefPtr<NativeImage>&&);
 
     // ImageFrame
-    unsigned primaryFrameIndex() const final;
+    unsigned primaryFrameIndex() const final { return m_descriptor.primaryFrameIndex(); }
 
-    const ImageFrame& primaryImageFrame() final { return frameAtIndexCacheIfNeeded(primaryFrameIndex()); }
+    const Vector<ImageFrame>& frames() const { return m_frames; }
+    const ImageFrame& primaryImageFrame(const std::optional<SubsamplingLevel>& subsamplingLevel = std::nullopt) final { return frameAtIndexCacheIfNeeded(primaryFrameIndex(), subsamplingLevel); }
 
     // NativeImage
     DecodingStatus requestNativeImageAtIndexIfNeeded(unsigned index, SubsamplingLevel, ImageAnimatingState, const DecodingOptions&);
@@ -69,10 +75,11 @@ public:
     RefPtr<NativeImage> primaryNativeImage() final { return nativeImageAtIndex(primaryFrameIndex()); }
 
     // Image Metadata
-    unsigned frameCount() const final;
-    RepetitionCount repetitionCount() const;
+    unsigned frameCount() const final { return m_descriptor.frameCount(); }
+    RepetitionCount repetitionCount() const { return m_descriptor.repetitionCount(); }
 
     // ImageFrame metadata
+    IntSize frameSizeAtIndex(unsigned index, SubsamplingLevel = SubsamplingLevel::Default) const;
     Seconds frameDurationAtIndex(unsigned index) const final;
     DecodingStatus frameDecodingStatusAtIndex(unsigned index) const final;
 
@@ -80,24 +87,6 @@ public:
     const char* sourceUTF8() const;
 
 private:
-    enum class CachedFlag : uint16_t {
-        EncodedDataStatus           = 1 << 0,
-        Size                        = 1 << 1,
-        DensityCorrectedSize        = 1 << 2,
-        Orientation                 = 1 << 3,
-        PrimaryFrameIndex           = 1 << 4,
-        FrameCount                  = 1 << 5,
-        RepetitionCount             = 1 << 6,
-        ColorSpace                  = 1 << 7,
-        SinglePixelSolidColor       = 1 << 8,
-
-        UTI                         = 1 << 9,
-        FilenameExtension           = 1 << 10,
-        AccessibilityDescription    = 1 << 11,
-        HotSpot                     = 1 << 12,
-        MaximumSubsamplingLevel     = 1 << 13,
-    };
-
     BitmapImageSource(BitmapImage&, AlphaOption, GammaAndColorProfileOption);
 
     // State
@@ -115,7 +104,6 @@ private:
     void decodedSizeReset(unsigned decodedSize);
     bool canDestroyDecodedData() const;
 
-    void didDecodeProperties(unsigned decodedPropertiesSize);
     void clearFrameBufferCache();
 
     // Animation
@@ -144,7 +132,7 @@ private:
 
     const ImageFrame& frameAtIndex(unsigned index) const;
     const ImageFrame& frameAtIndexCacheIfNeeded(unsigned index, const std::optional<SubsamplingLevel>& = std::nullopt);
-    const ImageFrame& currentImageFrame() final { return frameAtIndexCacheIfNeeded(currentFrameIndex()); }
+    const ImageFrame& currentImageFrame(const std::optional<SubsamplingLevel>& subsamplingLevel = std::nullopt) final { return frameAtIndexCacheIfNeeded(currentFrameIndex(), subsamplingLevel); }
 
     // NativeImage
     DecodingStatus requestNativeImageAtIndex(unsigned index, SubsamplingLevel, ImageAnimatingState, const DecodingOptions&);
@@ -161,40 +149,33 @@ private:
     RefPtr<NativeImage> currentNativeImage() final { return nativeImageAtIndex(currentFrameIndex()); }
     RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation orientation) final { return preTransformedNativeImageAtIndex(currentFrameIndex(), orientation); }
 
-    // Image Metadata
-    template<typename MetadataType>
-    MetadataType imageMetadata(MetadataType& cachedValue, const MetadataType& defaultValue, CachedFlag, MetadataType (ImageDecoder::*functor)() const) const;
-
-    template<typename MetadataType>
-    MetadataType primaryNativeImageMetadata(MetadataType& cachedValue, const MetadataType& defaultValue, CachedFlag, MetadataType (NativeImage::*functor)() const) const;
-
-    template<typename MetadataType>
-    MetadataType primaryImageFrameMetadata(MetadataType& cachedValue, CachedFlag, MetadataType (ImageFrame::*functor)() const) const;
-
-    EncodedDataStatus encodedDataStatus() const;
-    IntSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const final;
-    IntSize sourceSize(ImageOrientation = ImageOrientation::Orientation::FromImage) const final;
-    std::optional<IntSize> densityCorrectedSize() const;
+    EncodedDataStatus encodedDataStatus() const { return m_descriptor.encodedDataStatus(); }
+    IntSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const final { return m_descriptor.size(orientation); }
+    IntSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const final { return m_descriptor.sourceSize(orientation); }
+    std::optional<IntSize> densityCorrectedSize() const { return m_descriptor.densityCorrectedSize(); }
     bool hasDensityCorrectedSize() const final { return densityCorrectedSize().has_value(); }
-    ImageOrientation orientation() const final;
-    DestinationColorSpace colorSpace() const final;
-    std::optional<Color> singlePixelSolidColor() const final;
+    ImageOrientation orientation() const final { return m_descriptor.orientation(); }
+    DestinationColorSpace colorSpace() const final { return m_descriptor.colorSpace(); }
+    std::optional<Color> singlePixelSolidColor() const final { return m_descriptor.singlePixelSolidColor(); }
 
-    String uti() const final;
-    String filenameExtension() const final;
-    String accessibilityDescription() const final;
-    std::optional<IntPoint> hotSpot() const final;
-    SubsamplingLevel maximumSubsamplingLevel() const;
-
-    SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext&, const FloatSize& scaleFactor, AllowImageSubsampling) final;
+    String uti() const final { return m_descriptor.uti(); }
+    String filenameExtension() const final { return m_descriptor.filenameExtension(); }
+    String accessibilityDescription() const final { return m_descriptor.accessibilityDescription(); }
+    std::optional<IntPoint> hotSpot() const final { return m_descriptor.hotSpot(); }
+    SubsamplingLevel maximumSubsamplingLevel() const { return m_descriptor.maximumSubsamplingLevel(); }
+    SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext& context, const FloatSize& scaleFactor, AllowImageSubsampling allowImageSubsampling) final { return m_descriptor.subsamplingLevelForScaleFactor(context, scaleFactor, allowImageSubsampling); }
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
-    bool shouldUseQuickLookForFullscreen() const;
+    bool shouldUseQuickLookForFullscreen() const final { return m_descriptor.shouldUseQuickLookForFullscreen(); }
+#endif
+
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    bool isSpatial() const final { return m_descriptor.isSpatial(); }
 #endif
 
     // ImageFrame metadata
-    IntSize frameSizeAtIndex(unsigned index, SubsamplingLevel = SubsamplingLevel::Default) const;
     ImageOrientation frameOrientationAtIndex(unsigned index) const final;
+    Headroom frameHeadroomAtIndex(unsigned index) const final;
 
     // BitmapImage metadata
     RefPtr<ImageObserver> imageObserver() const;
@@ -217,29 +198,11 @@ private:
     GammaAndColorProfileOption m_gammaAndColorProfileOption { GammaAndColorProfileOption::Applied };
     bool m_allDataReceived { false };
 
+    BitmapImageDescriptor m_descriptor;
     mutable RefPtr<ImageDecoder> m_decoder;
     mutable std::unique_ptr<ImageFrameAnimator> m_frameAnimator;
     mutable RefPtr<ImageFrameWorkQueue> m_workQueue;
     Vector<Function<void(DecodingStatus)>> m_decodeCallbacks;
-
-    // Metadata
-    mutable OptionSet<CachedFlag> m_cachedFlags;
-
-    mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
-    mutable IntSize m_size;
-    mutable std::optional<IntSize> m_densityCorrectedSize;
-    mutable ImageOrientation m_orientation;
-    mutable size_t m_primaryFrameIndex { 0 };
-    mutable size_t m_frameCount { 0 };
-    mutable RepetitionCount m_repetitionCount { RepetitionCountNone };
-    mutable DestinationColorSpace m_colorSpace { DestinationColorSpace::SRGB() };
-    mutable std::optional<Color> m_singlePixelSolidColor;
-
-    mutable String m_uti;
-    mutable String m_filenameExtension;
-    mutable String m_accessibilityDescription;
-    mutable std::optional<IntPoint> m_hotSpot;
-    mutable SubsamplingLevel m_maximumSubsamplingLevel { SubsamplingLevel::Default };
 
     // ImageFrame
     Vector<ImageFrame> m_frames;

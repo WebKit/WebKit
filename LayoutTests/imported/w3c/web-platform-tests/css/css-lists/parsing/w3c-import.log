@@ -15,8 +15,10 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/content-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-increment-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-increment-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-increment-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-reset-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-reset-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-reset-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-set-computed.html

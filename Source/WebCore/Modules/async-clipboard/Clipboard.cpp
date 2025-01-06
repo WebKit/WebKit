@@ -44,11 +44,11 @@
 #include "UserGestureIndicator.h"
 #include "WebContentReader.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Clipboard);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Clipboard);
 
 static bool shouldProceedWithClipboardWrite(const LocalFrame& frame)
 {
@@ -254,7 +254,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
         return;
     }
 
-    if (auto* page = frame->page())
+    if (RefPtr page = frame->page())
         resultAsString = page->applyLinkDecorationFiltering(resultAsString, LinkDecorationFilteringTrigger::Paste);
 
     promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(frame->document(), resultAsString, type));

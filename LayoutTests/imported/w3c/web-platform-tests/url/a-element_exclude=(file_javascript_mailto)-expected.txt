@@ -1,5 +1,6 @@
 
 PASS Loading data…
+PASS Test that embedded 0x0A is stripped
 PASS Parsing: <http://example	.
 org> against <http://example.org/foo/bar>
 PASS Parsing: <http://user:pass@foo:21/bar;par?b#c> against <http://example.org/foo/bar>
@@ -330,7 +331,6 @@ PASS Parsing: <sc::a@example.net> against <about:blank>
 PASS Parsing: <wow:%NBD> against <about:blank>
 PASS Parsing: <wow:%1G> against <about:blank>
 PASS Parsing: <wow:￿> against <about:blank>
-PASS Parsing: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> against <about:blank>
 PASS Parsing: <sc://a\0b/> against <about:blank>
 PASS Parsing: <sc://a b/> against <about:blank>
 PASS Parsing: <sc://a<b> against <about:blank>
@@ -684,6 +684,19 @@ PASS Parsing: <stun://test:test> against <about:blank>
 PASS Parsing: <stun://[:1]> against <about:blank>
 PASS Parsing: <w://x:0> against <about:blank>
 PASS Parsing: <west://x:0> against <about:blank>
+PASS Parsing: <android://x:0/a> against <about:blank>
+PASS Parsing: <drivefs://x:0/a> against <about:blank>
+PASS Parsing: <chromeos-steam://x:0/a> against <about:blank>
+PASS Parsing: <steam://x:0/a> against <about:blank>
+PASS Parsing: <materialized-view://x:0/a> against <about:blank>
+PASS Parsing: <android-app://x:0> against <about:blank>
+PASS Parsing: <chrome-distiller://x:0> against <about:blank>
+PASS Parsing: <chrome-extension://x:0> against <about:blank>
+PASS Parsing: <chrome-native://x:0> against <about:blank>
+PASS Parsing: <chrome-resource://x:0> against <about:blank>
+PASS Parsing: <chrome-search://x:0> against <about:blank>
+PASS Parsing: <fuchsia-dir://x:0> against <about:blank>
+PASS Parsing: <isolated-app://x:0> against <about:blank>
 PASS Parsing: <///test> against <http://example.org/>
 PASS Parsing: <///\//\//test> against <http://example.org/>
 PASS Parsing: <///example.org/path> against <http://example.org/>
@@ -692,4 +705,12 @@ PASS Parsing: <///example.org/../../> against <http://example.org/>
 PASS Parsing: <///example.org/../path/../../> against <http://example.org/>
 PASS Parsing: <///example.org/../path/../../path> against <http://example.org/>
 PASS Parsing: </\/\//example.org/../path> against <http://example.org/>
-
+PASS Parsing: <non-special:\\opaque> against <about:blank>
+PASS Parsing: <non-special:\\opaque/path> against <about:blank>
+PASS Parsing: <non-special:\\opaque\path> against <about:blank>
+PASS Parsing: <non-special:\/opaque> against <about:blank>
+PASS Parsing: <non-special:/\path> against <about:blank>
+PASS Parsing: <non-special://host\a> against <about:blank>
+PASS Parsing: <non-special://host/a\b> against <about:blank>
+PASS Parsing: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> against <about:blank>
+Link with embedded \n is parsed correctly

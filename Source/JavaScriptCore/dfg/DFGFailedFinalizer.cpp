@@ -38,9 +38,7 @@ FailedFinalizer::FailedFinalizer(Plan& plan)
 {
 }
 
-FailedFinalizer::~FailedFinalizer()
-{
-}
+FailedFinalizer::~FailedFinalizer() = default;
 
 size_t FailedFinalizer::codeSize()
 {

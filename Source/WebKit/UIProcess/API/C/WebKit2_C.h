@@ -32,7 +32,6 @@
 #include <WebKit/WKArray.h>
 #include <WebKit/WKBackForwardListRef.h>
 #include <WebKit/WKBackForwardListItemRef.h>
-#include <WebKit/WKConnectionRef.h>
 #include <WebKit/WKContext.h>
 #include <WebKit/WKData.h>
 #include <WebKit/WKDictionary.h>

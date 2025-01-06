@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="support/utils.js"></script>
+<title>link rel=expect: render blocking stops waiting when the document finishes loading</title>
+
+<link rel=expect href="#invalid" blocking="render">
+<script>
+var timeoutHit = false;
+setTimeout(() => { timeoutHit = true; }, 3000);
+
+async_test((t) => {
+  requestAnimationFrame(() => {
+    t.step(() => assert_false(timeoutHit, "requestAnimationFrame should not have been delayed by the link that didn't find its target"));
+    t.done();
+  });
+}, "");
+</script>
+</head>
+<body>
+  <div id="first"></div>
+  <div id="last"></div>
+</body>

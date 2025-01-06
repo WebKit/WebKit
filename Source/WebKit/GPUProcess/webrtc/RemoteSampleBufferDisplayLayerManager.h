@@ -30,11 +30,14 @@
 #include "Connection.h"
 #include "LayerHostingContext.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntSize.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
+#include <wtf/WorkQueue.h>
 
 namespace IPC {
 class Decoder;
@@ -50,23 +53,28 @@ class GPUConnectionToWebProcess;
 class RemoteSampleBufferDisplayLayer;
 
 class RemoteSampleBufferDisplayLayerManager final : public IPC::WorkQueueMessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteSampleBufferDisplayLayerManager);
 public:
-    static Ref<RemoteSampleBufferDisplayLayerManager> create(GPUConnectionToWebProcess& connection)
+    static Ref<RemoteSampleBufferDisplayLayerManager> create(GPUConnectionToWebProcess& connection, SharedPreferencesForWebProcess& sharedPreferencesForWebProcess)
     {
-        auto instance = adoptRef(*new RemoteSampleBufferDisplayLayerManager(connection));
+        auto instance = adoptRef(*new RemoteSampleBufferDisplayLayerManager(connection, sharedPreferencesForWebProcess));
         instance->startListeningForIPC();
         return instance;
     }
     ~RemoteSampleBufferDisplayLayerManager();
 
+    void ref() const final { IPC::WorkQueueMessageReceiver::ref(); }
+    void deref() const final { IPC::WorkQueueMessageReceiver::deref(); }
+
     void close();
 
     bool allowsExitUnderMemoryPressure() const;
     void updateSampleBufferDisplayLayerBoundsAndPosition(SampleBufferDisplayLayerIdentifier, WebCore::FloatRect, std::optional<MachSendRight>&&);
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess);
 
 private:
-    explicit RemoteSampleBufferDisplayLayerManager(GPUConnectionToWebProcess&);
+    explicit RemoteSampleBufferDisplayLayerManager(GPUConnectionToWebProcess&, SharedPreferencesForWebProcess&);
     void startListeningForIPC();
 
     // IPC::WorkQueueMessageReceiver overrides.
@@ -75,14 +83,17 @@ private:
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
 
     using LayerCreationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>&&;
-    void createLayer(SampleBufferDisplayLayerIdentifier, bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, LayerCreationCallback);
+    void createLayer(SampleBufferDisplayLayerIdentifier, bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, bool canShowWhileLocked, LayerCreationCallback);
     void releaseLayer(SampleBufferDisplayLayerIdentifier);
+
+    Ref<WorkQueue> protectedQueue() const { return m_queue; }
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     Ref<IPC::Connection> m_connection;
+    SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
     Ref<WorkQueue> m_queue;
     mutable Lock m_layersLock;
-    HashMap<SampleBufferDisplayLayerIdentifier, std::unique_ptr<RemoteSampleBufferDisplayLayer>> m_layers WTF_GUARDED_BY_LOCK(m_layersLock);
+    HashMap<SampleBufferDisplayLayerIdentifier, Ref<RemoteSampleBufferDisplayLayer>> m_layers WTF_GUARDED_BY_LOCK(m_layersLock);
 };
 
 }

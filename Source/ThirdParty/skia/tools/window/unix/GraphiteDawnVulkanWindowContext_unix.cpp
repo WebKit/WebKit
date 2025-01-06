@@ -4,9 +4,15 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
+// Important to put this first because webgpu_cpp.h and X.h don't get along.
+// Include these first, before X11 defines None, Success, Status etc.
+#include "dawn/native/DawnNative.h"  // NO_G3_REWRITE
+#include "webgpu/webgpu_cpp.h"       // NO_G3_REWRITE
+
+#include "tools/window/unix/GraphiteDawnVulkanWindowContext_unix.h"
 
 #include "tools/window/GraphiteDawnWindowContext.h"
-#include "tools/window/unix/WindowContextFactory_unix.h"
+#include "tools/window/unix/XlibWindowInfo.h"
 
 using skwindow::XlibWindowInfo;
 using skwindow::DisplayParams;
@@ -16,7 +22,8 @@ namespace {
 
 class GraphiteDawnVulkanWindowContext_unix : public GraphiteDawnWindowContext {
 public:
-    GraphiteDawnVulkanWindowContext_unix(const XlibWindowInfo& info, const DisplayParams& params);
+    GraphiteDawnVulkanWindowContext_unix(const XlibWindowInfo& info,
+                                         std::unique_ptr<const DisplayParams> params);
 
     ~GraphiteDawnVulkanWindowContext_unix() override;
 
@@ -30,11 +37,10 @@ private:
 };
 
 GraphiteDawnVulkanWindowContext_unix::GraphiteDawnVulkanWindowContext_unix(
-    const XlibWindowInfo& info,
-    const DisplayParams& params)
-        : GraphiteDawnWindowContext(params, wgpu::TextureFormat::BGRA8Unorm)
+        const XlibWindowInfo& info, std::unique_ptr<const DisplayParams> params)
+        : GraphiteDawnWindowContext(std::move(params), wgpu::TextureFormat::BGRA8Unorm)
         , fDisplay(info.fDisplay)
-        , fWindow(info.fWindow)  {
+        , fWindow(info.fWindow) {
     XWindow root;
     int x, y;
     unsigned int border_width, depth;
@@ -71,7 +77,7 @@ bool GraphiteDawnVulkanWindowContext_unix::onInitializeContext() {
 
     fDevice = std::move(device);
     fSurface = std::move(surface);
-    fSwapChain = this->createSwapChain();
+    configureSurface();
 
     return true;
 }
@@ -79,16 +85,17 @@ bool GraphiteDawnVulkanWindowContext_unix::onInitializeContext() {
 void GraphiteDawnVulkanWindowContext_unix::onDestroyContext() {}
 
 void GraphiteDawnVulkanWindowContext_unix::resize(int w, int h) {
-    fSwapChain = this->createSwapChain();
+    configureSurface();
 }
 
 }  // anonymous namespace
 
 namespace skwindow {
 
-std::unique_ptr<WindowContext> MakeGraphiteDawnVulkanForXlib(const XlibWindowInfo& info,
-                                                             const DisplayParams& params) {
-    std::unique_ptr<WindowContext> ctx(new GraphiteDawnVulkanWindowContext_unix(info, params));
+std::unique_ptr<WindowContext> MakeGraphiteDawnVulkanForXlib(
+        const XlibWindowInfo& info, std::unique_ptr<const DisplayParams> params) {
+    std::unique_ptr<WindowContext> ctx(
+            new GraphiteDawnVulkanWindowContext_unix(info, std::move(params)));
     if (!ctx->isValid()) {
         return nullptr;
     }

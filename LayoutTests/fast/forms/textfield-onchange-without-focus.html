@@ -1,6 +1,7 @@
 <!DOCTYPE html>
+<html class="reftest-wait">
 <script>
-function test() {
+onload = async () => {
   const select = document.querySelector('select');
   select.setCustomValidity('validity');
   select.reportValidity();
@@ -9,14 +10,19 @@ function test() {
   textarea.setRangeText('lol');
   select.autofocus = true;
 
-  setTimeout(() => {
-    select.reportValidity();
-    textarea.blur();
-  }, 0);
+  await new Promise(resolve => setTimeout(resolve, 0));
+
+  select.reportValidity();
+  textarea.blur();
+
+  await new Promise(resolve => requestAnimationFrame(resolve));
+
+  document.documentElement.classList.remove('reftest-wait');
 }
 </script>
-<body onload='test()'>
+<body>
   <p>The onchange should not be triggered by textarea when it got something changed without being focused. Pass if not crashed, and the focused select box is displayed.</p>
   <select></select>
   <textarea onchange="document.all[2].appendChild(document.querySelector('select'));"></textarea>
 </body>
+</html>

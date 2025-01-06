@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -13,6 +13,8 @@
 #define AOM_AV1_ENCODER_TEMPORAL_FILTER_H_
 
 #include <stdbool.h>
+
+#include "aom_util/aom_pthread.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -204,8 +206,10 @@ int av1_is_temporal_filter_on(const struct AV1EncoderConfig *oxcf);
 /*!\brief Allocate buffers for TEMPORAL_FILTER_INFO
  * \param[in,out]   tf_info           Temporal filter info for a gop
  * \param[in,out]   cpi               Top level encoder instance structure
+ *
+ * \return True on success, false on memory allocation failure.
  */
-void av1_tf_info_alloc(TEMPORAL_FILTER_INFO *tf_info,
+bool av1_tf_info_alloc(TEMPORAL_FILTER_INFO *tf_info,
                        const struct AV1_COMP *cpi);
 
 /*!\brief Free buffers for TEMPORAL_FILTER_INFO
@@ -347,9 +351,6 @@ int av1_check_show_filtered_frame(const YV12_BUFFER_CONFIG *frame,
                                   aom_bit_depth_t bit_depth);
 
 /*!\cond */
-// Helper function to get `q` used for encoding.
-int av1_get_q(const struct AV1_COMP *cpi);
-
 // Allocates memory for members of TemporalFilterData.
 // Inputs:
 //   tf_data: Pointer to the structure containing temporal filter related data.
@@ -357,10 +358,9 @@ int av1_get_q(const struct AV1_COMP *cpi);
 //   is_high_bitdepth: Whether the frame is high-bitdepth or not.
 // Returns:
 //   True if allocation is successful and false otherwise.
-static AOM_INLINE bool tf_alloc_and_reset_data(TemporalFilterData *tf_data,
-                                               int num_pels,
-                                               int is_high_bitdepth) {
-  tf_data->tmp_mbmi = (MB_MODE_INFO *)aom_malloc(sizeof(*tf_data->tmp_mbmi));
+static inline bool tf_alloc_and_reset_data(TemporalFilterData *tf_data,
+                                           int num_pels, int is_high_bitdepth) {
+  tf_data->tmp_mbmi = (MB_MODE_INFO *)aom_calloc(1, sizeof(*tf_data->tmp_mbmi));
   tf_data->accum =
       (uint32_t *)aom_memalign(16, num_pels * sizeof(*tf_data->accum));
   tf_data->count =
@@ -375,7 +375,6 @@ static AOM_INLINE bool tf_alloc_and_reset_data(TemporalFilterData *tf_data,
   // be freed by the tf_dealloc_data() call in encoder_destroy().
   if (!(tf_data->tmp_mbmi && tf_data->accum && tf_data->count && tf_data->pred))
     return false;
-  memset(tf_data->tmp_mbmi, 0, sizeof(*tf_data->tmp_mbmi));
   memset(&tf_data->diff, 0, sizeof(tf_data->diff));
   return true;
 }
@@ -387,9 +386,9 @@ static AOM_INLINE bool tf_alloc_and_reset_data(TemporalFilterData *tf_data,
 //   scale: Scaling factor.
 // Returns:
 //   Nothing will be returned. Contents of mbd will be modified.
-static AOM_INLINE void tf_setup_macroblockd(MACROBLOCKD *mbd,
-                                            TemporalFilterData *tf_data,
-                                            const struct scale_factors *scale) {
+static inline void tf_setup_macroblockd(MACROBLOCKD *mbd,
+                                        TemporalFilterData *tf_data,
+                                        const struct scale_factors *scale) {
   mbd->block_ref_scale_factors[0] = scale;
   mbd->block_ref_scale_factors[1] = scale;
   mbd->mi = &tf_data->tmp_mbmi;
@@ -402,8 +401,8 @@ static AOM_INLINE void tf_setup_macroblockd(MACROBLOCKD *mbd,
 //   is_high_bitdepth: Whether the frame is high-bitdepth or not.
 // Returns:
 //   Nothing will be returned.
-static AOM_INLINE void tf_dealloc_data(TemporalFilterData *tf_data,
-                                       int is_high_bitdepth) {
+static inline void tf_dealloc_data(TemporalFilterData *tf_data,
+                                   int is_high_bitdepth) {
   if (is_high_bitdepth)
     tf_data->pred = (uint8_t *)CONVERT_TO_SHORTPTR(tf_data->pred);
   aom_free(tf_data->tmp_mbmi);
@@ -425,7 +424,7 @@ static AOM_INLINE void tf_dealloc_data(TemporalFilterData *tf_data,
 // Returns:
 //   Nothing will be returned. Contents of input_mbmi and input_buffer will be
 //   modified.
-static INLINE void tf_save_state(MACROBLOCKD *mbd, MB_MODE_INFO ***input_mbmi,
+static inline void tf_save_state(MACROBLOCKD *mbd, MB_MODE_INFO ***input_mbmi,
                                  uint8_t **input_buffer, int num_planes) {
   for (int i = 0; i < num_planes; i++) {
     input_buffer[i] = mbd->plane[i].pre[0].buf;
@@ -441,7 +440,7 @@ static INLINE void tf_save_state(MACROBLOCKD *mbd, MB_MODE_INFO ***input_mbmi,
 //   num_planes: Number of planes.
 // Returns:
 //   Nothing will be returned. Contents of mbd will be modified.
-static INLINE void tf_restore_state(MACROBLOCKD *mbd, MB_MODE_INFO **input_mbmi,
+static inline void tf_restore_state(MACROBLOCKD *mbd, MB_MODE_INFO **input_mbmi,
                                     uint8_t **input_buffer, int num_planes) {
   for (int i = 0; i < num_planes; i++) {
     mbd->plane[i].pre[0].buf = input_buffer[i];

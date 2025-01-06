@@ -51,16 +51,6 @@ extern "C" {
     out3 = (v16u8)__msa_ilvl_d((v2i64)in3, (v2i64)in2);     \
   }
 
-void TransposeWx16_C(const uint8_t* src,
-                     int src_stride,
-                     uint8_t* dst,
-                     int dst_stride,
-                     int width) {
-  TransposeWx8_C(src, src_stride, dst, dst_stride, width);
-  TransposeWx8_C((src + 8 * src_stride), src_stride, (dst + 8), dst_stride,
-                 width);
-}
-
 void TransposeUVWx16_C(const uint8_t* src,
                        int src_stride,
                        uint8_t* dst_a,

@@ -199,43 +199,6 @@ function some(callback /*, thisArg */)
     return false;
 }
 
-function fill(value /* [, start [, end]] */)
-{
-    "use strict";
-
-    var array = @toObject(this, "Array.prototype.fill requires that |this| not be null or undefined");
-    var length = @toLength(array.length);
-
-    var relativeStart = @toIntegerOrInfinity(@argument(1));
-    var k = 0;
-    if (relativeStart < 0) {
-        k = length + relativeStart;
-        if (k < 0)
-            k = 0;
-    } else {
-        k = relativeStart;
-        if (k > length)
-            k = length;
-    }
-    var relativeEnd = length;
-    var end = @argument(2);
-    if (end !== @undefined)
-        relativeEnd = @toIntegerOrInfinity(end);
-    var final = 0;
-    if (relativeEnd < 0) {
-        final = length + relativeEnd;
-        if (final < 0)
-            final = 0;
-    } else {
-        final = relativeEnd;
-        if (final > length)
-            final = length;
-    }
-    for (; k < final; k++)
-        array[k] = value;
-    return array;
-}
-
 function find(callback /*, thisArg */)
 {
     "use strict";
@@ -342,65 +305,6 @@ function includes(searchElement /*, fromIndex*/)
             return true;
     }
     return false;
-}
-
-@linkTimeConstant
-function concatSlowPath()
-{
-    "use strict";
-
-    var currentElement = @toObject(this, "Array.prototype.concat requires that |this| not be null or undefined");
-    var argCount = arguments.length;
-
-    var result = @newArrayWithSpecies(0, currentElement);
-    var resultIsArray = @isJSArray(result);
-
-    var resultIndex = 0;
-    var argIndex = 0;
-
-    do {
-        var spreadable = @isObject(currentElement) && currentElement.@@isConcatSpreadable;
-        if ((spreadable === @undefined && @isArray(currentElement)) || spreadable) {
-            var length = @toLength(currentElement.length);
-            if (length + resultIndex > @MAX_SAFE_INTEGER)
-                @throwTypeError("Length exceeded the maximum array length");
-            if (resultIsArray && @isJSArray(currentElement) && length + resultIndex <= @MAX_ARRAY_INDEX) {
-                @appendMemcpy(result, currentElement, resultIndex);
-                resultIndex += length;
-            } else {
-                for (var i = 0; i < length; i++) {
-                    if (i in currentElement)
-                        @putByValDirect(result, resultIndex, currentElement[i]);
-                    resultIndex++;
-                }
-            }
-        } else {
-            if (resultIndex >= @MAX_SAFE_INTEGER)
-                @throwTypeError("Length exceeded the maximum array length");
-            @putByValDirect(result, resultIndex++, currentElement);
-        }
-        currentElement = arguments[argIndex];
-    } while (argIndex++ < argCount);
-
-    result.length = resultIndex;
-    return result;
-}
-
-function concat(first)
-{
-    "use strict";
-
-    if (@argumentCount() === 1
-        && @isJSArray(this)
-        && @tryGetByIdWithWellKnownSymbol(this, "isConcatSpreadable") === @undefined
-        && (!@isObject(first) || @tryGetByIdWithWellKnownSymbol(first, "isConcatSpreadable") === @undefined)) {
-
-        var result = @concatMemcpy(this, first);
-        if (result !== null)
-            return result;
-    }
-
-    return @tailCallForwardArguments(@concatSlowPath, this);
 }
 
 @linkTimeConstant
@@ -551,55 +455,6 @@ function at(index)
     return (k >= 0 && k < length) ? array[k] : @undefined;
 }
 
-function toReversed()
-{
-    "use strict";
-
-    // Step 1.
-    var array = @toObject(this, "Array.prototype.toReversed requires that |this| not be null or undefined");
-
-    // Step 2.
-    var length = @toLength(array.length);
-
-    // Step 3.
-    var result = @newArrayWithSize(length);
-
-    // Step 4-5.
-    for (var k = 0; k < length; k++) {
-        var fromValue = array[length - k - 1];
-        @putByValDirect(result, k, fromValue);
-    }
-
-    return result;
-}
-
-function toSorted(comparator)
-{
-    "use strict";
-
-    // Step 1.
-    if (comparator !== @undefined && !@isCallable(comparator))
-        @throwTypeError("Array.prototype.toSorted requires the comparator argument to be a function or undefined");
-
-    // Step 2.
-    var array = @toObject(this, "Array.prototype.toSorted requires that |this| not be null or undefined");
-
-    // Step 3.
-    var length = @toLength(array.length);
-
-    // Step 4.
-    var result = @newArrayWithSize(length);
-
-    // Step 8.
-    for (var k = 0; k < length; k++)
-        @putByValDirect(result, k, array[k]);
-
-    // Step 6.
-    @arraySort.@call(result, comparator);
-
-    return result;
-}
-
 function toSpliced(start, deleteCount /*, ...items */)
 {
     "use strict"
@@ -627,12 +482,13 @@ function toSpliced(start, deleteCount /*, ...items */)
     var actualDeleteCount;
 
     // Step 8-10.
-    if (arguments.length === 0)
+    var argCount = @argumentCount();
+    if (argCount === 0)
         actualDeleteCount = 0;
-    else if (arguments.length === 1)
+    else if (argCount === 1)
         actualDeleteCount = length - actualStart;
     else {
-        insertCount = arguments.length - 2;
+        insertCount = argCount - 2;
         var tempDeleteCount = @toIntegerOrInfinity(deleteCount);
         tempDeleteCount = tempDeleteCount > 0 ? tempDeleteCount : 0;
         actualDeleteCount = @min(tempDeleteCount, length - actualStart);
@@ -667,42 +523,4 @@ function toSpliced(start, deleteCount /*, ...items */)
 
     return result;
 
-}
-
-function with(index, value)
-{
-    "use strict";
-
-    // Step 1.
-    var array = @toObject(this, "Array.prototype.with requires that |this| not be null or undefined");
-
-    // Step 2.
-    var length = @toLength(array.length);
-
-    // Step 3.
-    var relativeIndex = @toIntegerOrInfinity(index);
-
-    // Step 4-5.
-    var actualIndex;
-    if (relativeIndex >= 0)
-        actualIndex = relativeIndex;
-    else
-        actualIndex = length + relativeIndex;
-
-    // Step 6.
-    if (actualIndex >= length || actualIndex < 0)
-        @throwRangeError("Array index out of Range");
-
-    // Step 7.
-    var result = @newArrayWithSize(length);
-
-    // Step 8-9
-    for (var k = 0; k < length; k++) {
-        if (k === actualIndex)
-            @putByValDirect(result, k, value);
-        else
-            @putByValDirect(result, k, array[k]);
-    }
-
-    return result;
 }

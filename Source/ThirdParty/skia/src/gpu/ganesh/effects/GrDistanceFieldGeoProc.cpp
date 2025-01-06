@@ -176,10 +176,9 @@ private:
                                         "dist_grad = dist_grad*half(inversesqrt(dg_len2));"
                                     "}");
 
-            fragBuilder->codeAppendf("half4 jacobian = half4(dFdx(%s), dFdy(%s));",
+            fragBuilder->codeAppendf("float2x2 jacobian = float2x2(dFdx(%s), dFdy(%s));",
                                      st.fsIn(), st.fsIn());
-            fragBuilder->codeAppend("half2 grad = half2(dot(dist_grad, jacobian.xz),"
-                                                       "dot(dist_grad, jacobian.yw));");
+            fragBuilder->codeAppend("half2 grad = half2(jacobian * dist_grad);");
 
             // this gives us a smooth step across approximately one fragment
             fragBuilder->codeAppend("afwidth = " SK_DistanceFieldAAFactor "*length(grad);");
@@ -297,7 +296,7 @@ std::unique_ptr<GrGeometryProcessor::ProgramImpl> GrDistanceFieldA8TextGeoProc::
 
 GR_DEFINE_GEOMETRY_PROCESSOR_TEST(GrDistanceFieldA8TextGeoProc)
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 GrGeometryProcessor* GrDistanceFieldA8TextGeoProc::TestCreate(GrProcessorTestData* d) {
     auto [view, ct, at] = d->randomAlphaOnlyView();
 
@@ -448,10 +447,9 @@ private:
                                         "dist_grad = dist_grad*half(inversesqrt(dg_len2));"
                                     "}");
 
-            fragBuilder->codeAppendf("half4 jacobian = half4(dFdx(%s), dFdy(%s));",
+            fragBuilder->codeAppendf("float2x2 jacobian = float2x2(dFdx(%s), dFdy(%s));",
                                      st.fsIn(), st.fsIn());
-            fragBuilder->codeAppend("half2 grad = half2(dot(dist_grad, jacobian.xz),"
-                                                       "dot(dist_grad, jacobian.yw));");
+            fragBuilder->codeAppend("half2 grad = half2(jacobian * dist_grad);");
 
             // this gives us a smooth step across approximately one fragment
             fragBuilder->codeAppend("afwidth = " SK_DistanceFieldAAFactor "*length(grad);");
@@ -551,7 +549,7 @@ std::unique_ptr<GrGeometryProcessor::ProgramImpl> GrDistanceFieldPathGeoProc::ma
 
 GR_DEFINE_GEOMETRY_PROCESSOR_TEST(GrDistanceFieldPathGeoProc)
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 GrGeometryProcessor* GrDistanceFieldPathGeoProc::TestCreate(GrProcessorTestData* d) {
     auto [view, ct, at] = d->randomAlphaOnlyView();
 
@@ -652,10 +650,18 @@ private:
 
         GrGLSLVarying delta(SkSLType::kFloat);
         varyingHandler->addVarying("Delta", &delta);
-        if (dfTexEffect.fFlags & kBGR_DistanceFieldEffectFlag) {
-            vertBuilder->codeAppendf("%s = -%s.x/3.0;", delta.vsOut(), atlasDimensionsInvName);
+        if (dfTexEffect.fFlags & kPortrait_DistanceFieldEffectFlag) {
+            if (dfTexEffect.fFlags & kBGR_DistanceFieldEffectFlag) {
+                vertBuilder->codeAppendf("%s = -%s.y/3.0;", delta.vsOut(), atlasDimensionsInvName);
+            } else {
+                vertBuilder->codeAppendf("%s = %s.y/3.0;", delta.vsOut(), atlasDimensionsInvName);
+            }
         } else {
-            vertBuilder->codeAppendf("%s = %s.x/3.0;", delta.vsOut(), atlasDimensionsInvName);
+            if (dfTexEffect.fFlags & kBGR_DistanceFieldEffectFlag) {
+                vertBuilder->codeAppendf("%s = -%s.x/3.0;", delta.vsOut(), atlasDimensionsInvName);
+            } else {
+                vertBuilder->codeAppendf("%s = %s.x/3.0;", delta.vsOut(), atlasDimensionsInvName);
+            }
         }
 
         // add frag shader code
@@ -674,8 +680,13 @@ private:
             } else {
                 fragBuilder->codeAppendf("half st_grad_len = half(abs(dFdx(%s.x)));", st.fsIn());
             }
-            fragBuilder->codeAppendf("half2 offset = half2(half(st_grad_len*%s), 0.0);",
-                                     delta.fsIn());
+            if (dfTexEffect.fFlags & kPortrait_DistanceFieldEffectFlag) {
+                fragBuilder->codeAppendf("half2 offset = half2(0.0, half(st_grad_len*%s));",
+                                         delta.fsIn());
+            } else {
+                fragBuilder->codeAppendf("half2 offset = half2(half(st_grad_len*%s), 0.0);",
+                                         delta.fsIn());
+            }
         } else if (isSimilarity) {
             // For a similarity matrix with rotation, the gradient will not be aligned
             // with the texel coordinate axes, so we need to calculate it.
@@ -683,39 +694,39 @@ private:
                 // We use dFdy instead and rotate -90 degrees to get the gradient in the x
                 // direction.
                 fragBuilder->codeAppendf("half2 st_grad = half2(dFdy(%s));", st.fsIn());
-                fragBuilder->codeAppendf("half2 offset = half2(%s*float2(st_grad.y, -st_grad.x));",
-                                         delta.fsIn());
+                if (dfTexEffect.fFlags & kPortrait_DistanceFieldEffectFlag) {
+                    fragBuilder->codeAppendf("half2 offset = half2(%s)*st_grad;", delta.fsIn());
+                } else {
+                    fragBuilder->codeAppendf(
+                            "half2 offset = half2(%s*float2(st_grad.y,-st_grad.x));", delta.fsIn());
+                }
             } else {
                 fragBuilder->codeAppendf("half2 st_grad = half2(dFdx(%s));", st.fsIn());
-                fragBuilder->codeAppendf("half2 offset = half(%s)*st_grad;", delta.fsIn());
+                if (dfTexEffect.fFlags & kPortrait_DistanceFieldEffectFlag) {
+                    fragBuilder->codeAppendf(
+                            "half2 offset = half2(%s*float2(-st_grad.y,st_grad.x));", delta.fsIn());
+                } else {
+                    fragBuilder->codeAppendf("half2 offset = half(%s)*st_grad;", delta.fsIn());
+                }
             }
             fragBuilder->codeAppend("half st_grad_len = length(st_grad);");
         } else {
             fragBuilder->codeAppendf("half2 st = half2(%s);\n", st.fsIn());
 
-            fragBuilder->codeAppend("half4 jacobian = half4(dFdx(st), dFdy(st));");
-            fragBuilder->codeAppendf("half2 offset = half2(%s)*jacobian.xy;", delta.fsIn());
+            fragBuilder->codeAppend("float2x2 jacobian = float2x2(dFdx(st), dFdy(st));");
+            if (dfTexEffect.fFlags & kPortrait_DistanceFieldEffectFlag) {
+                fragBuilder->codeAppendf("half2 offset = half2(jacobian * half2(0, %s));",
+                                         delta.fsIn());
+            } else {
+                fragBuilder->codeAppendf("half2 offset = half2(jacobian * half2(%s, 0));",
+                                         delta.fsIn());
+            }
         }
 
         // sample the texture by index
-        fragBuilder->codeAppend("half4 texColor;");
-        append_multitexture_lookup(args, dfTexEffect.numTextureSamplers(),
-                                   texIdx, "uv", "texColor");
-
-        // green is distance to uv center
         fragBuilder->codeAppend("half3 distance;");
-        fragBuilder->codeAppend("distance.y = texColor.r;");
-        // red is distance to left offset
-        fragBuilder->codeAppend("half2 uv_adjusted = half2(uv) - offset;");
-        append_multitexture_lookup(args, dfTexEffect.numTextureSamplers(),
-                                   texIdx, "uv_adjusted", "texColor");
-        fragBuilder->codeAppend("distance.x = texColor.r;");
-        // blue is distance to right offset
-        fragBuilder->codeAppend("uv_adjusted = half2(uv) + offset;");
-        append_multitexture_lookup(args, dfTexEffect.numTextureSamplers(),
-                                   texIdx, "uv_adjusted", "texColor");
-        fragBuilder->codeAppend("distance.z = texColor.r;");
-
+        append_multitexture_lookup_lcd(args, dfTexEffect.numTextureSamplers(),
+                                       texIdx, "uv", "offset", "distance");
         fragBuilder->codeAppend("distance = "
            "half3(" SK_DistanceFieldMultiplier ")*(distance - half3(" SK_DistanceFieldThreshold"));");
 
@@ -752,8 +763,7 @@ private:
                                     "} else {"
                                         "dist_grad = dist_grad*half(inversesqrt(dg_len2));"
                                     "}"
-                                    "half2 grad = half2(dot(dist_grad, jacobian.xz),"
-                                                       "dot(dist_grad, jacobian.yw));");
+                                    "half2 grad = half2(jacobian * dist_grad);");
 
             // this gives us a smooth step across approximately one fragment
             fragBuilder->codeAppend("afwidth = " SK_DistanceFieldAAFactor "*length(grad);");
@@ -862,7 +872,7 @@ std::unique_ptr<GrGeometryProcessor::ProgramImpl> GrDistanceFieldLCDTextGeoProc:
 
 GR_DEFINE_GEOMETRY_PROCESSOR_TEST(GrDistanceFieldLCDTextGeoProc)
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 GrGeometryProcessor* GrDistanceFieldLCDTextGeoProc::TestCreate(GrProcessorTestData* d) {
     auto [view, ct, at] = d->randomView();
 

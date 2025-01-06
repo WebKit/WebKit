@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<style id="s">
+    @supports(text-transform: capitalize
+full-width) {
+        div {
+            color: green;
+        }
+    }
+</style>
+<div>Text should be green to PASS, with PASS written below.</div>
+<div id="test_result"></div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    const styleRule = document.getElementById('s').sheet.cssRules[0];
+
+    var testDiv = document.getElementById('test_result');
+    if (styleRule.conditionText == "(text-transform: capitalize full-width)")
+        testDiv.innerHTML = "PASS";
+    else
+        testDiv.innerHTML = "FAIL";
+</script>
+</html>

@@ -138,7 +138,7 @@ egl::Error WindowSurfaceWGL::releaseTexImage(const gl::Context *context, EGLint 
     return egl::NoError();
 }
 
-void WindowSurfaceWGL::setSwapInterval(EGLint interval)
+void WindowSurfaceWGL::setSwapInterval(const egl::Display *display, EGLint interval)
 {
     if (mFunctionsWGL->swapIntervalEXT)
     {

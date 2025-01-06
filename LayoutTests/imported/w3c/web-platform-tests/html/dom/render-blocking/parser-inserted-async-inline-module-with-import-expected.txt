@@ -1,0 +1,4 @@
+some text
+
+PASS Parser-inserted async inline module script elements with "blocking=render" are render-blocking
+

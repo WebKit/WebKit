@@ -28,13 +28,13 @@
 
 #include "CookieChangeEventInit.h"
 #include "CookieListItem.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CookieChangeEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CookieChangeEvent);
 
 Ref<CookieChangeEvent> CookieChangeEvent::create(const AtomString& type, CookieChangeEventInit&& eventInitDict, IsTrusted isTrusted)
 {

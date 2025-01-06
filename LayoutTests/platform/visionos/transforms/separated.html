@@ -1,0 +1,48 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ CSSTransformStyleSeparatedEnabled=true useFlexibleViewport=false ] -->
+<html>
+<style>
+    body { margin: 0; }
+
+    .transformed {
+      width: 200px;
+      height: 200px;
+      background: purple;
+      translate: 0 0 20px;
+      border-radius: 24px;
+    }
+    .separated {
+      transform-style: separated;
+    }
+    .offscreen {
+        margin-top: 2000px;
+    }
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<body>
+<section id="test">
+  <div class="transformed"></div>
+  <div class="transformed separated"></div>
+  <div class="transformed separated offscreen"></div>
+</section>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    await UIHelper.ensureStablePresentationUpdate();
+    results.textContent = await UIHelper.getCALayerTree();
+    document.getElementById('test').remove();
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
+

@@ -59,7 +59,7 @@ VCMPacket::VCMPacket(const uint8_t* ptr,
 
   // Playout decisions are made entirely based on first packet in a frame.
   if (!is_first_packet_in_frame()) {
-    video_header.playout_delay = absl::nullopt;
+    video_header.playout_delay = std::nullopt;
   }
 }
 

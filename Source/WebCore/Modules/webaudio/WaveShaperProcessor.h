@@ -31,12 +31,14 @@
 #include <memory>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // WaveShaperProcessor is an AudioDSPKernelProcessor which uses WaveShaperDSPKernel objects to implement non-linear distortion effects.
 
 class WaveShaperProcessor final : public AudioDSPKernelProcessor {
+    WTF_MAKE_TZONE_ALLOCATED(WaveShaperProcessor);
 public:
     enum OverSampleType {
         OverSampleNone,
@@ -63,6 +65,8 @@ public:
     Lock& processLock() const WTF_RETURNS_LOCK(m_processLock) { return m_processLock; }
 
 private:
+    Type processorType() const final { return Type::WaveShaper; }
+
     // m_curve represents the non-linear shaping curve.
     RefPtr<Float32Array> m_curve WTF_GUARDED_BY_LOCK(m_processLock);
 
@@ -73,3 +77,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WaveShaperProcessor) \
+    static bool isType(const WebCore::AudioProcessor& processor) { return processor.processorType() == WebCore::AudioProcessor::Type::WaveShaper; } \
+SPECIALIZE_TYPE_TRAITS_END()

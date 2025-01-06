@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,6 @@ OBJC_CLASS NSString;
 
 namespace WebKit {
 
-class WebPage;
-
 class WebExtensionAPITest : public WebExtensionAPIObject, public JSWebExtensionWrappable {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPITest, test, test);
 
@@ -47,6 +45,9 @@ public:
     void notifyPass(JSContextRef, NSString *message);
 
     void yield(JSContextRef, NSString *message);
+
+    void sendMessage(JSContextRef, NSString *message, JSValue *argument);
+    WebExtensionAPIEvent& onMessage();
 
     void log(JSContextRef, JSValue *);
 
@@ -66,6 +67,9 @@ public:
     JSValue *assertSafe(JSContextRef, JSValue *function, NSString *message);
 
     JSValue *assertSafeResolve(JSContextRef, JSValue *function, NSString *message);
+
+private:
+    RefPtr<WebExtensionAPIEvent> m_onMessage;
 #endif
 };
 

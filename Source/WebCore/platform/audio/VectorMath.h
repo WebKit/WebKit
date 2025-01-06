@@ -34,43 +34,46 @@ namespace VectorMath {
 // Multiples inputVector by scalar then adds the result to outputVector (simplified vsma).
 // for (n = 0; n < numberOfElementsToProcess; ++n)
 //     outputVector[n] += inputVector[n] * scalar;
-void multiplyByScalarThenAddToOutput(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess);
+void multiplyByScalarThenAddToOutput(std::span<const float> inputVector, float scalar, std::span<float> outputVector);
 
 // Adds a vector inputVector2 to the product of a scalar value and a single-precision vector inputVector1 (vsma).
 // for (n = 0; n < numberOfElementsToProcess; ++n)
 //     outputVector[n] = inputVector1[n] * scalar + inputVector2[n];
-void multiplyByScalarThenAddToVector(const float* inputVector1, float scalar, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess);
+void multiplyByScalarThenAddToVector(std::span<const float> inputVector1, float scalar, std::span<const float> inputVector2, std::span<float> outputVector);
 
 // Multiplies the sum of two vectors by a scalar value (vasm).
-void addVectorsThenMultiplyByScalar(const float* inputVector1, const float* inputVector2, float scalar, float* outputVector, size_t numberOfElementsToProcess);
+void addVectorsThenMultiplyByScalar(std::span<const float> inputVector1, std::span<const float> inputVector2, float scalar, std::span<float> outputVector);
 
-void multiplyByScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess);
-void addScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess);
-void add(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess);
-void substract(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess);
+void multiplyByScalar(std::span<const float> inputVector, float scalar, std::span<float> outputVector);
+void addScalar(std::span<const float> inputVector, float scalar, std::span<float> outputVector);
+void substract(std::span<const float> inputVector1, std::span<const float> inputVector2, std::span<float> outputVector);
+
+void add(std::span<const int> inputVector1, std::span<const int> inputVector2, std::span<int> outputVector);
+void add(std::span<const float> inputVector1, std::span<const float> inputVector2, std::span<float> outputVector);
+void add(std::span<const double> inputVector1, std::span<const double> inputVector2, std::span<double> outputVector);
 
 // Finds the maximum magnitude of a float vector.
-float maximumMagnitude(const float* inputVector, size_t numberOfElementsToProcess);
+float maximumMagnitude(std::span<const float> inputVector);
 
 // Sums the squares of a float vector's elements (svesq).
-float sumOfSquares(const float* inputVector, size_t numberOfElementsToProcess);
+float sumOfSquares(std::span<const float> inputVector);
 
 // For an element-by-element multiply of two float vectors.
-void multiply(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess);
+void multiply(std::span<const float> inputVector1, std::span<const float> inputVector2, std::span<float> outputVector);
 
 // Multiplies two complex vectors (zvmul).
-void multiplyComplex(const float* realVector1, const float* imagVector1, const float* realVector2, const float* imagVector2, float* realOutputVector, float* imagOutputVector, size_t numberOfElementsToProcess);
+void multiplyComplex(std::span<const float> realVector1, std::span<const float> imagVector1, std::span<const float> realVector2, std::span<const float> imagVector2, std::span<float> realOutputVector, std::span<float> imagOutputVector);
 
 // Copies elements while clipping values to the threshold inputs.
-void clamp(const float* inputVector, float mininum, float maximum, float* outputVector, size_t numberOfElementsToProcess);
+void clamp(std::span<const float> inputVector, float mininum, float maximum, std::span<float> outputVector);
 
-void linearToDecibels(const float* inputVector, float* outputVector, size_t numberOfElementsToProcess);
+void linearToDecibels(std::span<const float> inputVector, std::span<float> outputVector);
 
 // Calculates the linear interpolation between the supplied single-precision vectors
 // for (n = 0; n < numberOfElementsToProcess; ++n)
 //     outputVector[n] = inputVector1[n] + interpolationFactor * (inputVector2[n] - inputVector1[n]);
 // NOTE: Internal implementation may modify inputVector2.
-void interpolate(const float* inputVector1, float* inputVector2, float interpolationFactor, float* outputVector, size_t numberOfElementsToProcess);
+void interpolate(std::span<const float> inputVector1, std::span<float> inputVector2, float interpolationFactor, std::span<float> outputVector);
 
 } // namespace VectorMath
 

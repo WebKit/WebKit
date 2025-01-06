@@ -44,6 +44,9 @@ public:
     static Ref<RemoteCDMInstanceSession> create(WeakPtr<RemoteCDMFactory>&&, RemoteCDMInstanceSessionIdentifier&&);
     virtual ~RemoteCDMInstanceSession();
 
+    void ref() const final { WebCore::CDMInstanceSession::ref(); }
+    void deref() const final { WebCore::CDMInstanceSession::deref(); }
+
     RemoteCDMInstanceSessionIdentifier identifier() const { return m_identifier; }
 
 private:
@@ -51,7 +54,7 @@ private:
     RemoteCDMInstanceSession(WeakPtr<RemoteCDMFactory>&&, RemoteCDMInstanceSessionIdentifier&&);
 
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(const void*) final;
+    void setLogIdentifier(uint64_t) final;
 #endif
 
     // IPC::MessageReceiver
@@ -70,6 +73,8 @@ private:
     void closeSession(const String& sessionId, CloseSessionCallback&&) final;
     void removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback&&) final;
     void storeRecordOfKeyUsage(const String& sessionId) final;
+
+    RefPtr<RemoteCDMFactory> protectedFactory() const;
 
     WeakPtr<RemoteCDMFactory> m_factory;
     RemoteCDMInstanceSessionIdentifier m_identifier;

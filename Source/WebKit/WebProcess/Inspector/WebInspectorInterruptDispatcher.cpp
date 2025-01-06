@@ -28,20 +28,32 @@
 
 #include "Connection.h"
 #include "WebInspectorInterruptDispatcherMessages.h"
+#include "WebProcess.h"
 #include <JavaScriptCore/VM.h>
 #include <WebCore/CommonVM.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
 
-WebInspectorInterruptDispatcher::WebInspectorInterruptDispatcher()
-    : m_queue(WorkQueue::create("com.apple.WebKit.WebInspectorInterruptDispatcher"_s))
+WebInspectorInterruptDispatcher::WebInspectorInterruptDispatcher(WebProcess& process)
+    : m_process(process)
+    , m_queue(WorkQueue::create("com.apple.WebKit.WebInspectorInterruptDispatcher"_s))
 {
 }
 
 WebInspectorInterruptDispatcher::~WebInspectorInterruptDispatcher()
 {
     ASSERT_NOT_REACHED();
+}
+
+void WebInspectorInterruptDispatcher::ref() const
+{
+    m_process->ref();
+}
+
+void WebInspectorInterruptDispatcher::deref() const
+{
+    m_process->deref();
 }
 
 void WebInspectorInterruptDispatcher::initializeConnection(IPC::Connection& connection)

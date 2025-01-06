@@ -47,31 +47,19 @@ namespace WebKit {
 void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::SharedVideoFrame&& frame, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    UNUSED_VARIABLE(premultiplyAlpha);
-    ASSERT_UNUSED(target, target == WebCore::GraphicsContextGL::TEXTURE_2D);
-
-    auto videoFrame = m_sharedVideoFrameReader.read(WTFMove(frame));
+    RefPtr videoFrame = m_sharedVideoFrameReader.read(WTFMove(frame));
     if (!videoFrame) {
         ASSERT_IS_TESTING_IPC();
         completionHandler(false);
         return;
     }
-
-    auto videoFrameCV = videoFrame->asVideoFrameCV();
-    if (!videoFrameCV) {
-        ASSERT_NOT_REACHED(); // Programming error, not a IPC attack.
-        completionHandler(false);
-        return;
-    }
-
-    auto contextCV = m_context->asCV();
-    if (!contextCV) {
-        ASSERT_NOT_REACHED();
-        completionHandler(false);
+    if (!m_objectNames.isValidKey(texture)) {
+        ASSERT_IS_TESTING_IPC();
         return;
     }
     texture = m_objectNames.get(texture);
-    completionHandler(contextCV->copyVideoSampleToTexture(*videoFrameCV, texture, level, internalFormat, format, type, WebCore::GraphicsContextGL::FlipY(flipY)));
+    bool result = protectedContext()->copyTextureFromVideoFrame(*videoFrame, texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY);
+    completionHandler(result);
 }
 
 void RemoteGraphicsContextGL::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
@@ -121,11 +109,13 @@ void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::Graphics
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(IPC::Semaphore&& finishedSemaphore, CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    m_context->prepareForDisplayWithFinishedSignal([finishedSemaphore = WTFMove(finishedSemaphore)]() mutable { 
+    RefPtr context = m_context;
+
+    context->prepareForDisplayWithFinishedSignal([finishedSemaphore = WTFMove(finishedSemaphore)]() mutable {
         finishedSemaphore.signal();
     });
     MachSendRight sendRight;
-    if (WebCore::IOSurface* surface = m_context->displayBufferSurface())
+    if (WebCore::IOSurface* surface = context->displayBufferSurface())
         sendRight = surface->createSendRight();
     completionHandler(WTFMove(sendRight));
 }

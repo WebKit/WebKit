@@ -360,8 +360,8 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             swizzlePromises.push(recording.swizzle(this._payloadStackTrace, WI.Recording.Swizzle.CallStack));
         else {
             // COMPATIBILITY (iOS 12.1): "stackTrace" was sent as an array of call frames instead of a single call stack
-            let stackTracePromise = Promise.all(this._payloadStackTrace.map((item) => recording.swizzle(item, WI.Recording.Swizzle.CallFrame)))
-                .then((callFrames) => WI.StackTrace.fromPayload(WI.assumingMainTarget(), callFrames));
+            let stackTracePromise = Promise.all(this._payloadStackTrace.map((item) => recording.swizzle(item, WI.Recording.Swizzle.CallFramePayload)))
+                .then((callFrames) => WI.StackTrace.fromPayload(WI.assumingMainTarget(), {callFrames}));
             swizzlePromises.push(stackTracePromise);
         }
 

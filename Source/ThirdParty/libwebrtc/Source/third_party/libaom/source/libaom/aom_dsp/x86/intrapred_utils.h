@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -53,7 +53,7 @@ static DECLARE_ALIGNED(32, int, LoadMaskz2[8][8]) = {
   { -1, -1, -1, -1, -1, -1, -1, 0 }, { -1, -1, -1, -1, -1, -1, -1, -1 },
 };
 
-static INLINE void transpose4x16_sse2(__m128i *x, __m128i *d) {
+static inline void transpose4x16_sse2(__m128i *x, __m128i *d) {
   __m128i w0, w1, w2, w3, ww0, ww1, ww2, ww3;
   w0 = _mm_unpacklo_epi8(x[0], x[1]);
   w1 = _mm_unpacklo_epi8(x[2], x[3]);
@@ -91,7 +91,7 @@ static INLINE void transpose4x16_sse2(__m128i *x, __m128i *d) {
   d[15] = _mm_srli_si128(d[3], 12);
 }
 
-static INLINE void transpose16x16_sse2(__m128i *x, __m128i *d) {
+static inline void transpose16x16_sse2(__m128i *x, __m128i *d) {
   __m128i w0, w1, w2, w3, w4, w5, w6, w7, w8, w9;
   __m128i w10, w11, w12, w13, w14, w15;
 

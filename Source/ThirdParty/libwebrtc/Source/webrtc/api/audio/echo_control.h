@@ -53,7 +53,7 @@ class EchoControl {
   // resulting output is anyway not used, for instance when the endpoint is
   // muted.
   // TODO(b/177830919): Make pure virtual.
-  virtual void SetCaptureOutputUsage(bool capture_output_used) {}
+  virtual void SetCaptureOutputUsage(bool /* capture_output_used */) {}
 
   // Returns wheter the signal is altered.
   virtual bool ActiveProcessing() const = 0;

@@ -48,6 +48,10 @@ enum class LayerChangeIndex : size_t {
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     VisibleRectChanged,
 #endif
+    ContentsFormatChanged,
+#if HAVE(CORE_MATERIAL)
+    AppleVisualEffectChanged,
+#endif
 };
 
 enum class LayerChange : uint64_t {
@@ -105,6 +109,10 @@ enum class LayerChange : uint64_t {
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     VisibleRectChanged                  = 1LLU << static_cast<size_t>(LayerChangeIndex::VisibleRectChanged),
 #endif
+    ContentsFormatChanged               = 1LLU << static_cast<size_t>(LayerChangeIndex::ContentsFormatChanged),
+#if HAVE(CORE_MATERIAL)
+    AppleVisualEffectChanged            = 1LLU << static_cast<size_t>(LayerChangeIndex::AppleVisualEffectChanged),
+#endif
 };
 
 struct RemoteLayerBackingStoreOrProperties {
@@ -112,8 +120,7 @@ struct RemoteLayerBackingStoreOrProperties {
     ~RemoteLayerBackingStoreOrProperties();
     RemoteLayerBackingStoreOrProperties(RemoteLayerBackingStoreOrProperties&&) = default;
     RemoteLayerBackingStoreOrProperties& operator=(RemoteLayerBackingStoreOrProperties&&) = default;
-    RemoteLayerBackingStoreOrProperties(std::unique_ptr<RemoteLayerBackingStoreProperties>&& properties)
-        : properties(WTFMove(properties)) { }
+    RemoteLayerBackingStoreOrProperties(std::unique_ptr<RemoteLayerBackingStoreProperties>&&);
 
     // Used in the WebContent process.
     std::unique_ptr<RemoteLayerBackingStore> store;
@@ -202,6 +209,10 @@ struct LayerProperties {
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     WebCore::FloatRect visibleRect;
+#endif
+    WebCore::ContentsFormat contentsFormat { WebCore::ContentsFormat::RGBA8 };
+#if HAVE(CORE_MATERIAL)
+    WebCore::AppleVisualEffect appleVisualEffect { WebCore::AppleVisualEffect::None };
 #endif
 };
 

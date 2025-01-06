@@ -1,27 +1,6 @@
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
 Blocked access to external URL https://www1.localhost:9443/import-maps/resources/log.js?pipe=sub&name=cross-origin-bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
 Blocked access to external URL https://www1.localhost:9443/import-maps/resources/log.js?pipe=sub&name=cross-origin-bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
 Blocked access to external URL https://www1.localhost:9443/import-maps/resources/log.js?pipe=sub&name=cross-origin-bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: TypeError: Module name, 'bare/to-bare' does not resolve to a valid URL.
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
 
 
 PASS bare/bare: <script src type=module>

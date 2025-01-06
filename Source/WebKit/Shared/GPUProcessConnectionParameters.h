@@ -27,26 +27,29 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "GPUProcessPreferencesForWebProcess.h"
-#include "WebCoreArgumentCoders.h"
+#include "SharedPreferencesForWebProcess.h"
 #include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
 
 #if HAVE(AUDIT_TOKEN)
 #include "CoreIPCAuditToken.h"
+#include <WebCore/PageIdentifier.h>
 #endif
 
 namespace WebKit {
 
 struct GPUProcessConnectionParameters {
     WebCore::ProcessIdentity webProcessIdentity;
-    GPUProcessPreferencesForWebProcess preferences;
+    SharedPreferencesForWebProcess sharedPreferencesForWebProcess;
     bool isLockdownModeEnabled { false };
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting { false };
 #endif
 #if HAVE(AUDIT_TOKEN)
-    std::optional<CoreIPCAuditToken> presentingApplicationAuditToken;
+    HashMap<WebCore::PageIdentifier, CoreIPCAuditToken> presentingApplicationAuditTokens;
+#endif
+#if PLATFORM(COCOA)
+    String applicationBundleIdentifier;
 #endif
 #if ENABLE(VP9)
     std::optional<bool> hasVP9HardwareDecoder;

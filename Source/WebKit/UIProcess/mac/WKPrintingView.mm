@@ -39,6 +39,7 @@
 #import <WebCore/LocalDefaultSystemAppearance.h>
 #import <WebCore/ShareableBitmap.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 #import "PDFKitSoftLink.h"
 
@@ -211,18 +212,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return lastPage;
 }
 
-- (IPC::Connection::AsyncReplyID)_expectedPreviewCallbackForRect:(const WebCore::IntRect&)rect
+- (std::optional<IPC::Connection::AsyncReplyID>)_expectedPreviewCallbackForRect:(const WebCore::IntRect&)rect
 {
     for (auto iter = _expectedPreviewCallbacks.begin(); iter != _expectedPreviewCallbacks.end(); ++iter) {
         if (iter->value  == rect)
             return iter->key;
     }
-    return { };
+    return std::nullopt;
 }
 
 struct IPCCallbackContext {
     RetainPtr<WKPrintingView> view;
-    IPC::Connection::AsyncReplyID callbackID;
+    Markable<IPC::Connection::AsyncReplyID> callbackID;
 };
 
 static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle, IPCCallbackContext* context)
@@ -233,7 +234,7 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
 
     // If the user has already changed print setup, then this response is obsolete. And if this callback is not in response to the latest request,
     // then the user has already moved to another page - we'll cache the response, but won't draw it.
-    auto iter = view->_expectedPreviewCallbacks.find(context->callbackID);
+    auto iter = view->_expectedPreviewCallbacks.find(*context->callbackID);
     if (iter != view->_expectedPreviewCallbacks.end()) {
         ASSERT([view _isPrintingPreview]);
 
@@ -244,10 +245,10 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
                 view->_pagePreviews.add(iter->value, image);
         }
 
-        view->_expectedPreviewCallbacks.remove(context->callbackID);
+        view->_expectedPreviewCallbacks.remove(*context->callbackID);
         bool receivedResponseToLatestRequest = view->_latestExpectedPreviewCallback == context->callbackID;
         if (receivedResponseToLatestRequest) {
-            view->_latestExpectedPreviewCallback = { };
+            view->_latestExpectedPreviewCallback = std::nullopt;
             [view _updatePreview];
         }
     }
@@ -297,7 +298,7 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
             view->_printingCallbackCondition.notifyOne();
         }
     };
-    _expectedPrintCallback = _webFrame->page()->drawPagesToPDF(_webFrame.get(), printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
+    _expectedPrintCallback = _webFrame->page()->drawPagesToPDF(*_webFrame, printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
     context->view = self;
     context->callbackID = _expectedPrintCallback;
 }
@@ -317,7 +318,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
         ASSERT(!view->_latestExpectedPreviewCallback);
         ASSERT(!view->_expectedPrintCallback);
         ASSERT(view->_pagePreviews.isEmpty());
-        view->_expectedComputedPagesCallback = { };
+        view->_expectedComputedPagesCallback = std::nullopt;
 
         view->_printingPageRects = pageRects;
         view->_totalScaleFactorForPrinting = totalScaleFactorForPrinting;
@@ -489,17 +490,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     for (PDFAnnotation *annotation in [pdfPage annotations]) {
-        if (![annotation isKindOfClass:WebKit::getPDFAnnotationLinkClass()])
+        if (![[annotation valueForAnnotationKey:WebKit::get_PDFKit_PDFAnnotationKeySubtype()] isEqualToString:WebKit::get_PDFKit_PDFAnnotationSubtypeLink()])
             continue;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        PDFAnnotationLink *linkAnnotation = (PDFAnnotationLink *)annotation;
-ALLOW_DEPRECATED_DECLARATIONS_END
-        NSURL *url = [linkAnnotation URL];
-        CGRect transformedRect = CGRectApplyAffineTransform(NSRectToCGRect([linkAnnotation bounds]), transform);
+        NSURL *url = annotation.URL;
+        CGRect transformedRect = CGRectApplyAffineTransform(NSRectToCGRect(annotation.bounds), transform);
 
         if (!url) {
-            PDFDestination *destination = [linkAnnotation destination];
+            PDFDestination *destination = annotation.destination;
             if (!destination)
                 continue;
             CGPDFContextSetDestinationForRect(context, (__bridge CFStringRef)linkDestinationName(pdfDocument, destination), transformedRect);
@@ -530,7 +528,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             if (auto existingCallback = [self _expectedPreviewCallbackForRect:scaledPrintingRect]) {
                 // We've already asked for a preview of this page, and are waiting for response.
                 // There is no need to ask again.
-                _latestExpectedPreviewCallback = existingCallback;
+                _latestExpectedPreviewCallback = *existingCallback;
             } else {
                 if (!_printOperation)
                     return;
@@ -544,8 +542,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     std::unique_ptr<IPCCallbackContext> contextDeleter(context);
                     pageDidDrawToImage(WTFMove(imageHandle), context);
                 };
-                _latestExpectedPreviewCallback = _webFrame->page()->drawRectToImage(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
-                _expectedPreviewCallbacks.add(_latestExpectedPreviewCallback, scaledPrintingRect);
+                _latestExpectedPreviewCallback = _webFrame->page()->drawRectToImage(*_webFrame, WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
+                _expectedPreviewCallbacks.add(*_latestExpectedPreviewCallback, scaledPrintingRect);
 
                 context->view = self;
                 context->callbackID = _latestExpectedPreviewCallback;
@@ -586,7 +584,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(!_printedPagesData.isEmpty()); // Prepared by knowsPageRange:
 
     if (!_printedPagesPDFDocument) {
-        RetainPtr<NSData> pdfData = adoptNS([[NSData alloc] initWithBytes:_printedPagesData.data() length:_printedPagesData.size()]);
+        RetainPtr pdfData = toNSData(_printedPagesData.span());
         _printedPagesPDFDocument = adoptNS([WebKit::allocPDFDocumentInstance() initWithData:pdfData.get()]);
 
         unsigned pageCount = [_printedPagesPDFDocument pageCount];
@@ -595,16 +593,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         for (unsigned i = 0; i < pageCount; i++) {
             PDFPage *page = [_printedPagesPDFDocument pageAtIndex:i];
             for (PDFAnnotation *annotation in page.annotations) {
-                if (![annotation isKindOfClass:WebKit::getPDFAnnotationLinkClass()])
+                if (![[annotation valueForAnnotationKey:WebKit::get_PDFKit_PDFAnnotationKeySubtype()] isEqualToString:WebKit::get_PDFKit_PDFAnnotationSubtypeLink()])
                     continue;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-                PDFAnnotationLink *linkAnnotation = (PDFAnnotationLink *)annotation;
-ALLOW_DEPRECATED_DECLARATIONS_END
-                if (linkAnnotation.URL)
+                if (annotation.URL)
                     continue;
 
-                PDFDestination *destination = linkAnnotation.destination;
+                PDFDestination *destination = annotation.destination;
                 if (!destination)
                     continue;
 
@@ -764,10 +759,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _pagePreviews.clear();
     _printedPagesData.clear();
     _printedPagesPDFDocument = nullptr;
-    _expectedComputedPagesCallback = { };
+    _expectedComputedPagesCallback = std::nullopt;
     _expectedPreviewCallbacks.clear();
-    _latestExpectedPreviewCallback = { };
-    _expectedPrintCallback = { };
+    _latestExpectedPreviewCallback = std::nullopt;
+    _expectedPrintCallback = std::nullopt;
 
     [self _delayedResumeAutodisplay];
     

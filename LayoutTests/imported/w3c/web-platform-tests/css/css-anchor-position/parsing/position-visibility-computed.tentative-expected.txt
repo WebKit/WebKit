@@ -1,0 +1,12 @@
+
+FAIL Property position-visibility value 'always' assert_true: position-visibility doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-visibility value 'anchors-valid' assert_true: position-visibility doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-visibility value 'anchors-visible' assert_true: position-visibility doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-visibility value 'no-overflow' assert_true: position-visibility doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-visibility value 'anchors-valid no-overflow' assert_true: position-visibility doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-visibility value 'anchors-visible no-overflow' assert_true: position-visibility doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-visibility value 'no-overflow anchors-valid' assert_true: position-visibility doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-visibility value 'no-overflow anchors-visible' assert_true: position-visibility doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-visibility has initial value always assert_true: position-visibility doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-visibility does not inherit assert_true: expected true got false
+

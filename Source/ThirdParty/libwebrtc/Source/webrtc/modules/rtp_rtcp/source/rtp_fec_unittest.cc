@@ -173,7 +173,7 @@ bool RtpFecTest<ForwardErrorCorrectionType>::IsRecoveryComplete() {
 
 class FlexfecForwardErrorCorrection : public ForwardErrorCorrection {
  public:
-  static const uint32_t kFecSsrc = kFlexfecSsrc;
+  static constexpr uint32_t kFecSsrc = kFlexfecSsrc;
 
   FlexfecForwardErrorCorrection()
       : ForwardErrorCorrection(
@@ -192,7 +192,7 @@ class FlexfecForwardErrorCorrection : public ForwardErrorCorrection {
 
 class UlpfecForwardErrorCorrection : public ForwardErrorCorrection {
  public:
-  static const uint32_t kFecSsrc = kMediaSsrc;
+  static constexpr uint32_t kFecSsrc = kMediaSsrc;
 
   UlpfecForwardErrorCorrection()
       : ForwardErrorCorrection(

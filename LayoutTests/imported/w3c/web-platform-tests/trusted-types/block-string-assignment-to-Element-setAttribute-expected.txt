@@ -18,6 +18,7 @@ PASS iframe.srcdoc's mutationobservers receive the default policy's value.
 PASS div.onclick's mutationobservers receive the default policy's value.
 PASS iframe.srcdoc accepts string and null after default policy was created.
 PASS div.onclick accepts string and null after default policy was created.
+PASS a.rel accepts a Trusted Type
 PASS a.rel accepts strings
 PASS a.rel accepts null
 PASS `script.src = setAttributeNode(embed.src)` with string works.

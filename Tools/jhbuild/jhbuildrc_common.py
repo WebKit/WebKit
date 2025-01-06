@@ -88,6 +88,7 @@ def init(jhbuildrc_globals, jhbuild_platform):
 
     jhbuildrc_globals["nonotify"] = True
     jhbuildrc_globals["notrayicon"] = True
+    jhbuildrc_globals["shallow_clone"] = True
 
     if 'NUMBER_OF_PROCESSORS' in os.environ:
         jhbuildrc_globals['jobs'] = os.environ['NUMBER_OF_PROCESSORS']

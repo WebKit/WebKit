@@ -456,7 +456,7 @@ SkISize SkAndroidCodec::getSampledDimensions(int sampleSize) const {
 }
 
 bool SkAndroidCodec::getSupportedSubset(SkIRect* desiredSubset) const {
-    if (!desiredSubset || !is_valid_subset(*desiredSubset, fCodec->dimensions())) {
+    if (!desiredSubset || !SkCodecPriv::IsValidSubset(*desiredSubset, fCodec->dimensions())) {
         return false;
     }
 
@@ -483,8 +483,8 @@ SkISize SkAndroidCodec::getSampledSubsetDimensions(int sampleSize, const SkIRect
 
     // This should perhaps call a virtual function, but currently both of our subclasses
     // want the same implementation.
-    return {get_scaled_dimension(subset.width(), sampleSize),
-            get_scaled_dimension(subset.height(), sampleSize)};
+    return {SkCodecPriv::GetSampledDimension(subset.width(), sampleSize),
+            SkCodecPriv::GetSampledDimension(subset.height(), sampleSize)};
 }
 
 SkCodec::Result SkAndroidCodec::getAndroidPixels(const SkImageInfo& requestInfo,
@@ -501,7 +501,7 @@ SkCodec::Result SkAndroidCodec::getAndroidPixels(const SkImageInfo& requestInfo,
         options = &defaultOptions;
     } else {
         if (options->fSubset) {
-            if (!is_valid_subset(*options->fSubset, fCodec->dimensions())) {
+            if (!SkCodecPriv::IsValidSubset(*options->fSubset, fCodec->dimensions())) {
                 return SkCodec::kInvalidParameters;
             }
 
@@ -539,6 +539,19 @@ SkCodec::Result SkAndroidCodec::getAndroidPixels(const SkImageInfo& requestInfo,
 SkCodec::Result SkAndroidCodec::getAndroidPixels(const SkImageInfo& info, void* pixels,
         size_t rowBytes) {
     return this->getAndroidPixels(info, pixels, rowBytes, nullptr);
+}
+
+bool SkAndroidCodec::getGainmapAndroidCodec(SkGainmapInfo* info,
+                                            std::unique_ptr<SkAndroidCodec>* outCodec) {
+    if (outCodec) {
+        std::unique_ptr<SkCodec> gainmapCodec;
+        if (!fCodec->onGetGainmapCodec(info, &gainmapCodec)) {
+            return false;
+        }
+        *outCodec = MakeFromCodec(std::move(gainmapCodec));
+        return true;
+    }
+    return fCodec->onGetGainmapCodec(info, nullptr);
 }
 
 bool SkAndroidCodec::getAndroidGainmap(SkGainmapInfo* info,

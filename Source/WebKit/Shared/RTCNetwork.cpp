@@ -26,24 +26,11 @@
 #include "config.h"
 #include "RTCNetwork.h"
 
+#include <wtf/StdLibExtras.h>
+
 #if USE(LIBWEBRTC)
 
 namespace WebKit {
-
-RTCNetwork::RTCNetwork(const rtc::Network& network)
-    : name(std::span { network.name() })
-    , description(std::span { network.description() })
-    , prefix(network.prefix())
-    , prefixLength(network.prefix_length())
-    , type(network.type())
-    , id(network.id())
-    , preference(network.preference())
-    , active(network.active())
-    , ignored(network.ignored())
-    , scopeID(network.scope_id())
-    , ips(WTF::map(network.GetIPs(), [] (const auto& ip) {
-        return InterfaceAddress(ip);
-    })) { }
 
 RTCNetwork::RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips)
     : name(WTFMove(name))
@@ -78,17 +65,6 @@ rtc::Network RTCNetwork::value() const
 
 namespace RTC::Network {
 
-rtc::SocketAddress SocketAddress::isolatedCopy(const rtc::SocketAddress& value)
-{
-    rtc::SocketAddress copy;
-    copy.SetPort(value.port());
-    copy.SetScopeID(value.scope_id());
-    copy.SetIP(std::string(value.hostname().data(), value.hostname().size()));
-    if (!value.IsUnresolvedIP())
-        copy.SetResolvedIP(value.ipaddr());
-    return rtc::SocketAddress(copy);
-}
-
 rtc::SocketAddress SocketAddress::rtcAddress() const
 {
     rtc::SocketAddress result;
@@ -104,25 +80,47 @@ SocketAddress::SocketAddress(const rtc::SocketAddress& value)
     : port(value.port())
     , scopeID(value.scope_id())
     , hostname(std::span { value.hostname() })
-    , ipAddress(value.IsUnresolvedIP() ? std::nullopt : std::optional(IPAddress(value.ipaddr()))) { }
+    , ipAddress(value.IsUnresolvedIP() ? std::nullopt : std::optional(IPAddress(value.ipaddr())))
+{
+}
+
+static std::array<uint32_t, 4> fromIPv6Address(const struct in6_addr& address)
+{
+    std::array<uint32_t, 4> array;
+    static_assert(sizeof(array) == sizeof(address));
+    memcpySpan(asMutableByteSpan(array), asByteSpan(address));
+    return array;
+}
 
 IPAddress::IPAddress(const rtc::IPAddress& input)
 {
     switch (input.family()) {
-    case AF_INET6: {
-        in6_addr addr = input.ipv6_address();
-        std::array<uint32_t, 4> array;
-        static_assert(sizeof(array) == sizeof(addr));
-        memcpy(array.data(), &addr, sizeof(array));
-        value = array;
-        return;
-    }
+    case AF_INET6:
+        value = fromIPv6Address(input.ipv6_address());
+        break;
     case AF_INET:
         value = input.ipv4_address().s_addr;
-        return;
+        break;
     case AF_UNSPEC:
         value = UnspecifiedFamily { };
-        return;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+IPAddress::IPAddress(const struct sockaddr& address)
+{
+    switch (address.sa_family) {
+    case AF_INET6:
+        value = fromIPv6Address(reinterpret_cast<const sockaddr_in6*>(&address)->sin6_addr);
+        break;
+    case AF_INET:
+        value = reinterpret_cast<const sockaddr_in*>(&address)->sin_addr.s_addr;
+        break;
+    case AF_UNSPEC:
+        value = UnspecifiedFamily { };
+        break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -139,14 +137,10 @@ rtc::IPAddress IPAddress::rtcAddress() const
     }, [] (std::array<uint32_t, 4> ipv6) {
         in6_addr result;
         static_assert(sizeof(ipv6) == sizeof(result));
-        memcpy(&result, ipv6.data(), sizeof(ipv6));
+        memcpySpan(asMutableByteSpan(result), asByteSpan(ipv6));
         return rtc::IPAddress(result);
     });
 }
-
-InterfaceAddress::InterfaceAddress(const rtc::InterfaceAddress& address)
-    : address(address)
-    , ipv6Flags(address.ipv6_flags()) { }
 
 rtc::InterfaceAddress InterfaceAddress::rtcAddress() const
 {

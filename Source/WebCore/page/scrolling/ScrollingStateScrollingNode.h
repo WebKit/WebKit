@@ -56,6 +56,7 @@ struct ScrollbarEnabledState {
 };
 
 class ScrollingStateScrollingNode : public ScrollingStateNode {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStateScrollingNode, WEBCORE_EXPORT);
 public:
     virtual ~ScrollingStateScrollingNode();
 
@@ -139,6 +140,12 @@ public:
     WEBCORE_EXPORT void setScrollbarLayoutDirection(UserInterfaceLayoutDirection);
     UserInterfaceLayoutDirection scrollbarLayoutDirection() const { return m_scrollbarLayoutDirection; }
 
+    WEBCORE_EXPORT void setScrollbarWidth(ScrollbarWidth);
+    ScrollbarWidth scrollbarWidth() const { return m_scrollbarWidth; }
+
+    WEBCORE_EXPORT void setUseDarkAppearanceForScrollbars(bool);
+    bool useDarkAppearanceForScrollbars() const { return m_useDarkAppearanceForScrollbars; }
+
 protected:
     ScrollingStateScrollingNode(
         ScrollingNodeType,
@@ -169,6 +176,8 @@ protected:
         ScrollbarHoverState&&,
         ScrollbarEnabledState&&,
         UserInterfaceLayoutDirection,
+        ScrollbarWidth,
+        bool useDarkAppearanceForScrollbars,
         RequestedKeyboardScrollData&&
     );
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
@@ -209,7 +218,9 @@ private:
     OptionSet<SynchronousScrollingReason> m_synchronousScrollingReasons;
 #endif
     UserInterfaceLayoutDirection m_scrollbarLayoutDirection { UserInterfaceLayoutDirection::LTR };
+    ScrollbarWidth m_scrollbarWidth { ScrollbarWidth::Auto };
 
+    bool m_useDarkAppearanceForScrollbars { false };
     bool m_isMonitoringWheelEvents { false };
     bool m_mouseIsOverContentArea { false };
 

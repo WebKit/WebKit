@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,7 +16,7 @@
 #include "av1/common/blockd.h"
 
 // Can we use CfL for the current block?
-static INLINE CFL_ALLOWED_TYPE is_cfl_allowed(const MACROBLOCKD *xd) {
+static inline CFL_ALLOWED_TYPE is_cfl_allowed(const MACROBLOCKD *xd) {
   const MB_MODE_INFO *mbmi = xd->mi[0];
   const BLOCK_SIZE bsize = mbmi->bsize;
   assert(bsize < BLOCK_SIZES_ALL);
@@ -35,7 +35,7 @@ static INLINE CFL_ALLOWED_TYPE is_cfl_allowed(const MACROBLOCKD *xd) {
 
 // Do we need to save the luma pixels from the current block,
 // for a possible future CfL prediction?
-static INLINE CFL_ALLOWED_TYPE store_cfl_required(const AV1_COMMON *cm,
+static inline CFL_ALLOWED_TYPE store_cfl_required(const AV1_COMMON *cm,
                                                   const MACROBLOCKD *xd) {
   const MB_MODE_INFO *mbmi = xd->mi[0];
 
@@ -56,17 +56,17 @@ static INLINE CFL_ALLOWED_TYPE store_cfl_required(const AV1_COMMON *cm,
                             mbmi->uv_mode == UV_CFL_PRED);
 }
 
-static INLINE int get_scaled_luma_q0(int alpha_q3, int16_t pred_buf_q3) {
+static inline int get_scaled_luma_q0(int alpha_q3, int16_t pred_buf_q3) {
   int scaled_luma_q6 = alpha_q3 * pred_buf_q3;
   return ROUND_POWER_OF_TWO_SIGNED(scaled_luma_q6, 6);
 }
 
-static INLINE CFL_PRED_TYPE get_cfl_pred_type(int plane) {
+static inline CFL_PRED_TYPE get_cfl_pred_type(int plane) {
   assert(plane > 0);
   return (CFL_PRED_TYPE)(plane - 1);
 }
 
-static INLINE void clear_cfl_dc_pred_cache_flags(CFL_CTX *cfl) {
+static inline void clear_cfl_dc_pred_cache_flags(CFL_CTX *cfl) {
   cfl->use_dc_pred_cache = false;
   cfl->dc_pred_is_cached[CFL_PRED_U] = false;
   cfl->dc_pred_is_cached[CFL_PRED_V] = false;
@@ -95,6 +95,8 @@ void cfl_load_dc_pred(MACROBLOCKD *const xd, uint8_t *dst, int dst_stride,
 // will be constant allowing for loop unrolling and other constant propagated
 // goodness.
 #define CFL_SUBSAMPLE(arch, sub, bd, width, height)                       \
+  void cfl_subsample_##bd##_##sub##_##width##x##height##_##arch(          \
+      const CFL_##bd##_TYPE, int input_stride, uint16_t *output_q3);      \
   void cfl_subsample_##bd##_##sub##_##width##x##height##_##arch(          \
       const CFL_##bd##_TYPE, int input_stride, uint16_t *output_q3) {     \
     cfl_luma_subsampling_##sub##_##bd##_##arch(cfl_type, input_stride,    \
@@ -171,6 +173,8 @@ void cfl_load_dc_pred(MACROBLOCKD *const xd, uint8_t *dst, int dst_stride,
 // goodness.
 #define CFL_SUB_AVG_X(arch, width, height, round_offset, num_pel_log2)       \
   void cfl_subtract_average_##width##x##height##_##arch(const uint16_t *src, \
+                                                        int16_t *dst);       \
+  void cfl_subtract_average_##width##x##height##_##arch(const uint16_t *src, \
                                                         int16_t *dst) {      \
     subtract_average_##arch(src, dst, width, height, round_offset,           \
                             num_pel_log2);                                   \
@@ -220,22 +224,21 @@ void cfl_load_dc_pred(MACROBLOCKD *const xd, uint8_t *dst, int dst_stride,
     return sub_avg[tx_size % TX_SIZES_ALL];                               \
   }
 
-// For VSX SIMD optimization, the C versions of width == 4 subtract are
-// faster than the VSX. As such, the VSX code calls the C versions.
-void cfl_subtract_average_4x4_c(const uint16_t *src, int16_t *dst);
-void cfl_subtract_average_4x8_c(const uint16_t *src, int16_t *dst);
-void cfl_subtract_average_4x16_c(const uint16_t *src, int16_t *dst);
-
-#define CFL_PREDICT_lbd(arch, width, height)                              \
-  void cfl_predict_lbd_##width##x##height##_##arch(                       \
-      const int16_t *pred_buf_q3, uint8_t *dst, int dst_stride,           \
-      int alpha_q3) {                                                     \
-    cfl_predict_lbd_##arch(pred_buf_q3, dst, dst_stride, alpha_q3, width, \
-                           height);                                       \
+#define CFL_PREDICT_lbd(arch, width, height)                                   \
+  void cfl_predict_lbd_##width##x##height##_##arch(                            \
+      const int16_t *pred_buf_q3, uint8_t *dst, int dst_stride, int alpha_q3); \
+  void cfl_predict_lbd_##width##x##height##_##arch(                            \
+      const int16_t *pred_buf_q3, uint8_t *dst, int dst_stride,                \
+      int alpha_q3) {                                                          \
+    cfl_predict_lbd_##arch(pred_buf_q3, dst, dst_stride, alpha_q3, width,      \
+                           height);                                            \
   }
 
 #if CONFIG_AV1_HIGHBITDEPTH
 #define CFL_PREDICT_hbd(arch, width, height)                                   \
+  void cfl_predict_hbd_##width##x##height##_##arch(                            \
+      const int16_t *pred_buf_q3, uint16_t *dst, int dst_stride, int alpha_q3, \
+      int bd);                                                                 \
   void cfl_predict_hbd_##width##x##height##_##arch(                            \
       const int16_t *pred_buf_q3, uint16_t *dst, int dst_stride, int alpha_q3, \
       int bd) {                                                                \

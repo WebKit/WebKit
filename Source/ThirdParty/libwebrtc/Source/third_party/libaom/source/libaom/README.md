@@ -30,7 +30,8 @@ README.md                {#LREADME}
         - [Running tests directly](#running-test_libaom-directly)
         - [Running tests via CMake](#running-the-tests-via-the-cmake-build)
 3. [Coding style](#coding-style)
-4. [Submitting patches](#submitting-patches)
+4. [License header](#license-header)
+5. [Submitting patches](#submitting-patches)
     - [Login cookie](#login-cookie)
     - [Contributor agreement](#contributor-agreement)
     - [Testing your code](#testing-your-code)
@@ -39,24 +40,30 @@ README.md                {#LREADME}
     - [Incorporating Reviewer Comments](#incorporating-reviewer-comments)
     - [Submitting your change](#submitting-your-change)
     - [Viewing change status](#viewing-the-status-of-uploaded-changes)
-5. [Support](#support)
-6. [Bug reports](#bug-reports)
+6. [Support](#support)
+7. [Bug reports](#bug-reports)
 
 ## Building the library and applications {#building-the-library-and-applications}
 
 ### Prerequisites {#prerequisites}
 
- 1. [CMake](https://cmake.org). See CMakeLists.txt for the minimum version
-    required.
- 2. [Git](https://git-scm.com/).
- 3. [Perl](https://www.perl.org/).
- 4. For x86 targets, [yasm](http://yasm.tortall.net/), which is preferred, or a
-    recent version of [nasm](http://www.nasm.us/). If you download yasm with
-    the intention to work with Visual Studio, please download win32.exe or
-    win64.exe and rename it into yasm.exe. DO NOT download or use vsyasm.exe.
- 5. Building the documentation requires
+1. [CMake](https://cmake.org). See CMakeLists.txt for the minimum version
+   required.
+2. [Git](https://git-scm.com/).
+3. A modern C compiler. gcc 6+, clang 7+, Microsoft Visual Studio 2019+ or
+   the latest version of MinGW-w64 (clang64 or ucrt toolchains) are
+   recommended. A C++ compiler is necessary to build the unit tests and some
+   features contained in the examples.
+4. [Perl](https://www.perl.org/).
+5. For x86 targets, [yasm](http://yasm.tortall.net/) or a recent version (2.14
+   or later) of [nasm](http://www.nasm.us/). (If both yasm and nasm are
+   present, yasm will be used by default. Pass -DENABLE_NASM=ON to cmake to
+   select nasm.) If you download yasm with the intention to work with Visual
+   Studio, please download win32.exe or win64.exe and rename it into yasm.exe.
+   DO NOT download or use vsyasm.exe.
+6. Building the documentation requires
    [doxygen version 1.8.10 or newer](http://doxygen.org).
- 6. Emscripten builds require the portable
+7. Emscripten builds require the portable
    [EMSDK](https://kripken.github.io/emscripten-site/index.html).
 
 ### Get the code {#get-the-code}
@@ -561,6 +568,25 @@ Some Git installations have clang-format integration. Here are some examples:
     $ git clang-format -f -p
 ~~~
 
+## License header {#license-header}
+
+Use the following comment block in new C/C++ source files, replacing "${year}"
+with the current year. The same comment should be added to other file types,
+adjusting the comment syntax as necessary.
+
+```
+/*
+ * Copyright (c) ${year}, Alliance for Open Media. All rights reserved.
+ *
+ * This source code is subject to the terms of the BSD 2 Clause License and
+ * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
+ * was not distributed with this source code in the LICENSE file, you can
+ * obtain it at www.aomedia.org/license/software. If the Alliance for Open
+ * Media Patent License 1.0 was not distributed with this source code in the
+ * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
+ */
+```
+
 ## Submitting patches {#submitting-patches}
 
 We manage the submission of patches using the
@@ -674,4 +700,5 @@ please email aomediacodec@jointdevelopment.kavi.com for help.
 ## Bug reports {#bug-reports}
 
 Bug reports can be filed in the Alliance for Open Media
-[issue tracker](https://bugs.chromium.org/p/aomedia/issues/list).
+[issue tracker](https://aomedia.issues.chromium.org/). For security reports,
+select 'Security report' from the Template dropdown.

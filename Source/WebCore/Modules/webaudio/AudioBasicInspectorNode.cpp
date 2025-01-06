@@ -30,11 +30,11 @@
 
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AudioBasicInspectorNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioBasicInspectorNode);
 
 AudioBasicInspectorNode::AudioBasicInspectorNode(BaseAudioContext& context, NodeType type)
     : AudioNode(context, type)

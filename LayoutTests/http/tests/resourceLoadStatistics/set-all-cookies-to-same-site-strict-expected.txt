@@ -1,12 +1,12 @@
 Tests setting all of a site's cookies to SameSite=strict.
 
-'clientSideCookie' 1 Before Change -- domain: '127.0.0.1' isSession: 'true'
+'clientSideCookie' 1 Before Change -- domain: '127.0.0.1' isSession: 'true' isSameSiteLax: 'true'
 'clientSideCookie' 2 After Change --- domain: '127.0.0.1' isSession: 'true' isSameSiteStrict: 'true'
 
-'persistentCookie' 1 Before Change -- domain: '127.0.0.1' expiry set
+'persistentCookie' 1 Before Change -- domain: '127.0.0.1' expiry set isSameSiteLax: 'true'
 'persistentCookie' 2 After Change --- domain: '127.0.0.1' expiry set isSameSiteStrict: 'true'
 
-'persistentHttpOnlyCookie' 1 Before Change -- domain: '127.0.0.1' expiry set isHttpOnly: 'true'
+'persistentHttpOnlyCookie' 1 Before Change -- domain: '127.0.0.1' expiry set isHttpOnly: 'true' isSameSiteLax: 'true'
 'persistentHttpOnlyCookie' 2 After Change --- domain: '127.0.0.1' expiry set isHttpOnly: 'true' isSameSiteStrict: 'true'
 
 'persistentSameSiteLaxCookie' 1 Before Change -- domain: '127.0.0.1' expiry set isSameSiteLax: 'true'
@@ -15,10 +15,10 @@ Tests setting all of a site's cookies to SameSite=strict.
 'persistentSameSiteStrictCookie' 1 Before Change -- domain: '127.0.0.1' expiry set isSameSiteStrict: 'true'
 'persistentSameSiteStrictCookie' 2 After Change --- domain: '127.0.0.1' expiry set isSameSiteStrict: 'true'
 
-'sessionCookie' 1 Before Change -- domain: '127.0.0.1' isSession: 'true'
+'sessionCookie' 1 Before Change -- domain: '127.0.0.1' isSession: 'true' isSameSiteLax: 'true'
 'sessionCookie' 2 After Change --- domain: '127.0.0.1' isSession: 'true' isSameSiteStrict: 'true'
 
-'sessionHttpOnlyCookie' 1 Before Change -- domain: '127.0.0.1' isHttpOnly: 'true' isSession: 'true'
+'sessionHttpOnlyCookie' 1 Before Change -- domain: '127.0.0.1' isHttpOnly: 'true' isSession: 'true' isSameSiteLax: 'true'
 'sessionHttpOnlyCookie' 2 After Change --- domain: '127.0.0.1' isHttpOnly: 'true' isSession: 'true' isSameSiteStrict: 'true'
 
 'sessionSameSiteLaxCookie' 1 Before Change -- domain: '127.0.0.1' isSession: 'true' isSameSiteLax: 'true'

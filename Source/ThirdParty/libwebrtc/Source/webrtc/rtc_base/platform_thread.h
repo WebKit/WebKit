@@ -17,8 +17,9 @@
 #include <pthread.h>
 #endif
 
+#include <optional>
+
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "rtc_base/platform_thread_types.h"
 
 namespace rtc {
@@ -97,7 +98,7 @@ class PlatformThread final {
       ThreadAttributes attributes = ThreadAttributes());
 
   // Returns the base platform thread handle of this thread.
-  absl::optional<Handle> GetHandle() const;
+  std::optional<Handle> GetHandle() const;
 
 #if defined(WEBRTC_WIN)
   // Queue a Windows APC function that runs when the thread is alertable.
@@ -111,7 +112,7 @@ class PlatformThread final {
                                     ThreadAttributes attributes,
                                     bool joinable);
 
-  absl::optional<Handle> handle_;
+  std::optional<Handle> handle_;
   bool joinable_ = false;
 };
 

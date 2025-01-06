@@ -31,6 +31,8 @@
 #include <stddef.h>
 
 #ifdef __cplusplus
+#include <span>
+
 extern "C" {
 #endif
 
@@ -43,6 +45,9 @@ WK_EXPORT size_t WKDataGetSize(WKDataRef data);
 
 #ifdef __cplusplus
 }
+
+WK_EXPORT std::span<const uint8_t> WKDataGetSpan(WKDataRef data);
+
 #endif
 
 #endif // WKData_h

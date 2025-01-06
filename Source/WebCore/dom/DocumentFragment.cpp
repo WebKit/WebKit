@@ -23,6 +23,7 @@
 #include "config.h"
 #include "DocumentFragment.h"
 
+#include "CSSTokenizerInputStream.h"
 #include "Document.h"
 #include "ElementIterator.h"
 #include "HTMLDocumentParser.h"
@@ -31,11 +32,11 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #include "XMLDocumentParser.h"
 #include "markup.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DocumentFragment);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DocumentFragment);
 
 DocumentFragment::DocumentFragment(Document& document, OptionSet<TypeFlag> typeFlags)
     : ContainerNode(document, DOCUMENT_FRAGMENT_NODE, typeFlags)
@@ -49,7 +50,8 @@ Ref<DocumentFragment> DocumentFragment::create(Document& document)
 
 Ref<DocumentFragment> DocumentFragment::createForInnerOuterHTML(Document& document)
 {
-    auto node = adoptRef(*new DocumentFragment(document, TypeFlag::IsSpecialInternalNode));
+    auto node = adoptRef(*new DocumentFragment(document));
+    node->setStateFlag(StateFlag::IsSpecialInternalNode);
     ASSERT(node->isDocumentFragmentForInnerOuterHTML());
     return node;
 }
@@ -73,21 +75,21 @@ bool DocumentFragment::childTypeAllowed(NodeType type) const
     }
 }
 
-Ref<Node> DocumentFragment::cloneNodeInternal(Document& targetDocument, CloningOperation type)
+Ref<Node> DocumentFragment::cloneNodeInternal(TreeScope& treeScope, CloningOperation type)
 {
-    Ref clone = create(targetDocument);
+    Ref clone = create(treeScope.documentScope());
     switch (type) {
     case CloningOperation::OnlySelf:
     case CloningOperation::SelfWithTemplateContent:
         break;
     case CloningOperation::Everything:
-        cloneChildNodes(clone);
+        cloneChildNodes(treeScope, clone);
         break;
     }
     return clone;
 }
 
-void DocumentFragment::parseHTML(const String& source, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
+void DocumentFragment::parseHTML(const String& source, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry)
 {
     Ref document = this->document();
     if (tryFastParsingHTMLFragment(source, document, *this, contextElement, parserContentPolicy)) {
@@ -102,7 +104,7 @@ void DocumentFragment::parseHTML(const String& source, Element& contextElement, 
     if (hasChildNodes())
         removeChildren();
 
-    HTMLDocumentParser::parseDocumentFragment(source, *this, contextElement, parserContentPolicy);
+    HTMLDocumentParser::parseDocumentFragment(source, *this, contextElement, parserContentPolicy, registry);
 }
 
 bool DocumentFragment::parseXML(const String& source, Element* contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)

@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "CSSColorValue.h"
+#include "CSSOMColorValue.h"
 
 namespace WebCore {
 
-class CSSHWB final : public CSSColorValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSHWB);
+class CSSHWB final : public CSSOMColorValue {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSHWB);
 public:
     static ExceptionOr<Ref<CSSHWB>> create(Ref<CSSNumericValue>&& hue, CSSNumberish&& whiteness, CSSNumberish&& blackness, CSSNumberish&& alpha);
 

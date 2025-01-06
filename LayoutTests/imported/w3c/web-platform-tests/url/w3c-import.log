@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/IdnaTestV2.window.js
 /LayoutTests/imported/w3c/web-platform-tests/url/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/url/README.md
+/LayoutTests/imported/w3c/web-platform-tests/url/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element-origin-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml
@@ -24,7 +25,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/data-uri-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/url/failure.html
 /LayoutTests/imported/w3c/web-platform-tests/url/historical.any.js
-/LayoutTests/imported/w3c/web-platform-tests/url/idlharness-shadowrealm.window.js
 /LayoutTests/imported/w3c/web-platform-tests/url/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/javascript-urls.window.js
 /LayoutTests/imported/w3c/web-platform-tests/url/percent-encoding.window.js

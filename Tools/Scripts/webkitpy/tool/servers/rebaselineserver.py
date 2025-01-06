@@ -29,16 +29,12 @@
 import fnmatch
 import os
 import os.path
-import sys
 
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.port.base import Port
 from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
 
-if sys.version_info > (3, 0):
-    from http.server import HTTPServer
-else:
-    from BaseHTTPServer import HTTPServer
+from http.server import HTTPServer
 
 
 STATE_NEEDS_REBASELINE = 'needs_rebaseline'

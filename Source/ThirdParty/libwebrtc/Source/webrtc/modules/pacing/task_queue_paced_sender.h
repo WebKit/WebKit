@@ -15,19 +15,22 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/field_trials_view.h"
+#include "api/rtp_packet_sender.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/pacing/pacing_controller.h"
 #include "modules/pacing/rtp_packet_pacer.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
-#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/numerics/exp_filter.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -45,22 +48,23 @@ class TaskQueuePacedSender : public RtpPacketPacer, public RtpPacketSender {
   // processed. Increasing this reduces thread wakeups at the expense of higher
   // latency.
   //
-  // If the `burst_interval` parameter is set, the pacer is allowed to build up
-  // a packet "debt" that correspond to approximately the send rate during the
-  // specified interval. This greatly reduced wake ups by not pacing packets
-  // within the allowed burst budget.
-  //
   // The taskqueue used when constructing a TaskQueuePacedSender will also be
   // used for pacing.
-  TaskQueuePacedSender(
-      Clock* clock,
-      PacingController::PacketSender* packet_sender,
-      const FieldTrialsView& field_trials,
-      TimeDelta max_hold_back_window,
-      int max_hold_back_window_in_packets,
-      absl::optional<TimeDelta> burst_interval = absl::nullopt);
+  TaskQueuePacedSender(Clock* clock,
+                       PacingController::PacketSender* packet_sender,
+                       const FieldTrialsView& field_trials,
+                       TimeDelta max_hold_back_window,
+                       int max_hold_back_window_in_packets);
 
   ~TaskQueuePacedSender() override;
+
+  // The pacer is allowed to send enqued packets in bursts and can build up a
+  // packet "debt" that correspond to approximately the send rate during
+  // 'burst_interval'.
+  void SetSendBurstInterval(TimeDelta burst_interval);
+
+  // A probe may be sent without first waing for a media packet.
+  void SetAllowProbeWithoutMediaPacket(bool allow);
 
   // Ensure that necessary delayed tasks are scheduled.
   void EnsureStarted();
@@ -106,7 +110,7 @@ class TaskQueuePacedSender : public RtpPacketPacer, public RtpPacketSender {
   DataSize QueueSizeData() const override;
 
   // Returns the time when the first packet was sent;
-  absl::optional<Timestamp> FirstSentPacketTime() const override;
+  std::optional<Timestamp> FirstSentPacketTime() const override;
 
   // Returns the number of milliseconds it will take to send the current
   // packets in the queue, given the current size and bitrate, ignoring prio.
@@ -126,7 +130,7 @@ class TaskQueuePacedSender : public RtpPacketPacer, public RtpPacketSender {
     Timestamp oldest_packet_enqueue_time;
     DataSize queue_size;
     TimeDelta expected_queue_time;
-    absl::optional<Timestamp> first_sent_packet_time;
+    std::optional<Timestamp> first_sent_packet_time;
   };
   void OnStatsUpdated(const Stats& stats);
 
@@ -145,15 +149,6 @@ class TaskQueuePacedSender : public RtpPacketPacer, public RtpPacketSender {
   Stats GetStats() const;
 
   Clock* const clock_;
-  struct BurstyPacerFlags {
-    // Parses `kBurstyPacerFieldTrial`. Example:
-    // --force-fieldtrials=WebRTC-BurstyPacer/burst:20ms/
-    explicit BurstyPacerFlags(const FieldTrialsView& field_trials);
-    // If set, the pacer is allowed to build up a packet "debt" that correspond
-    // to approximately the send rate during the specified interval.
-    FieldTrialOptional<TimeDelta> burst;
-  };
-  const BurstyPacerFlags bursty_pacer_flags_;
 
   // The holdback window prevents too frequent delayed MaybeProcessPackets()
   // calls. These are only applicable if `allow_low_precision` is false.

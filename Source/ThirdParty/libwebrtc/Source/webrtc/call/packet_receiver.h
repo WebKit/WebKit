@@ -13,7 +13,6 @@
 #include "absl/functional/any_invocable.h"
 #include "api/media_types.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
 
 namespace webrtc {
@@ -23,7 +22,7 @@ class PacketReceiver {
   // Demux RTCP packets. Must be called on the worker thread.
   virtual void DeliverRtcpPacket(rtc::CopyOnWriteBuffer packet) = 0;
 
-  // Invoked once when a packet packet is received that can not be demuxed.
+  // Invoked once when a packet is received that can not be demuxed.
   // If the method returns true, a new attempt is made to demux the packet.
   using OnUndemuxablePacketHandler =
       absl::AnyInvocable<bool(const RtpPacketReceived& parsed_packet)>;

@@ -34,8 +34,11 @@
 
 #include "EqualPowerPanner.h"
 #include "HRTFPanner.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Panner);
 
 std::unique_ptr<Panner> Panner::create(PanningModelType model, float sampleRate, HRTFDatabaseLoader* databaseLoader)
 {

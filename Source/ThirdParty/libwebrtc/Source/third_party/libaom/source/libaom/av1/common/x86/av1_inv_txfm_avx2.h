@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -35,7 +35,7 @@ extern "C" {
     out1 = _mm256_mulhrs_epi16(_in, _w1);          \
   } while (0)
 
-static INLINE void round_shift_avx2(const __m256i *input, __m256i *output,
+static inline void round_shift_avx2(const __m256i *input, __m256i *output,
                                     int size) {
   const __m256i scale = _mm256_set1_epi16(NewInvSqrt2 * 8);
   for (int i = 0; i < size; ++i) {
@@ -43,7 +43,7 @@ static INLINE void round_shift_avx2(const __m256i *input, __m256i *output,
   }
 }
 
-static INLINE void write_recon_w16_avx2(__m256i res, uint8_t *output) {
+static inline void write_recon_w16_avx2(__m256i res, uint8_t *output) {
   __m128i pred = _mm_loadu_si128((__m128i const *)(output));
   __m256i u = _mm256_adds_epi16(_mm256_cvtepu8_epi16(pred), res);
   __m128i y = _mm256_castsi256_si128(
@@ -51,7 +51,7 @@ static INLINE void write_recon_w16_avx2(__m256i res, uint8_t *output) {
   _mm_storeu_si128((__m128i *)(output), y);
 }
 
-static INLINE void lowbd_write_buffer_16xn_avx2(__m256i *in, uint8_t *output,
+static inline void lowbd_write_buffer_16xn_avx2(__m256i *in, uint8_t *output,
                                                 int stride, int flipud,
                                                 int height) {
   int j = flipud ? (height - 1) : 0;

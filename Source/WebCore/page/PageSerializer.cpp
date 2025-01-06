@@ -63,6 +63,7 @@
 #include "Text.h"
 #include <pal/text/TextEncoding.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
@@ -172,8 +173,8 @@ PageSerializer::PageSerializer(Vector<PageSerializer::Resource>& resources)
 
 void PageSerializer::serialize(Page& page)
 {
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame()))
-        serializeFrame(localMainFrame);
+    if (RefPtr localMainFrame = page.localMainFrame())
+        serializeFrame(localMainFrame.get());
 }
 
 void PageSerializer::serializeFrame(LocalFrame* frame)
@@ -228,8 +229,8 @@ void PageSerializer::serializeFrame(LocalFrame* frame)
         }
     }
 
-    for (auto* childFrame = frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(childFrame);
+    for (RefPtr childFrame = frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(childFrame.get());
         if (!localFrame)
             continue;
         serializeFrame(localFrame);

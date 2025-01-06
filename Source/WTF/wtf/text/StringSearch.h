@@ -81,7 +81,7 @@ private:
             for (auto& element : m_table)
                 element = length;
             for (unsigned i = 0; i < (pattern.size() - 1); ++i) {
-                unsigned index = pattern.data()[i] & 0xff;
+                unsigned index = pattern[i] & 0xff;
                 m_table[index] = length - 1 - i;
             }
         }
@@ -90,17 +90,17 @@ private:
     template <typename SearchCharacterType, typename MatchCharacterType>
     ALWAYS_INLINE size_t findInner(std::span<const SearchCharacterType> characters, std::span<const MatchCharacterType> matchCharacters) const
     {
-        auto* cursor = characters.data();
-        auto* last = characters.data() + characters.size() - matchCharacters.size();
+        size_t cursor = 0;
+        size_t last = characters.size() - matchCharacters.size();
         while (cursor <= last) {
-            if (equal(cursor, matchCharacters))
-                return cursor - characters.data();
-            cursor += m_table[static_cast<uint8_t>(cursor[matchCharacters.size() - 1])];
+            if (equal(characters.subspan(cursor).data(), matchCharacters))
+                return cursor;
+            cursor += m_table[static_cast<uint8_t>(characters[cursor + matchCharacters.size() - 1])];
         }
         return notFound;
     }
 
-    OffsetType m_table[size];
+    std::array<OffsetType, size> m_table;
 };
 
 }

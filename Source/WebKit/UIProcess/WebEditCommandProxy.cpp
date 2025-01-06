@@ -56,7 +56,7 @@ void WebEditCommandProxy::unapply()
     if (!m_page || !m_page->hasRunningProcess())
         return;
 
-    m_page->send(Messages::WebPage::UnapplyEditCommand(m_commandID), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_page->legacyMainFrameProcess().send(Messages::WebPage::UnapplyEditCommand(m_commandID), m_page->webPageIDInMainFrameProcess(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     m_page->registerEditCommand(*this, UndoOrRedo::Redo);
 }
 
@@ -65,7 +65,7 @@ void WebEditCommandProxy::reapply()
     if (!m_page || !m_page->hasRunningProcess())
         return;
 
-    m_page->send(Messages::WebPage::ReapplyEditCommand(m_commandID), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_page->legacyMainFrameProcess().send(Messages::WebPage::ReapplyEditCommand(m_commandID), m_page->webPageIDInMainFrameProcess(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     m_page->registerEditCommand(*this, UndoOrRedo::Undo);
 }
 

@@ -501,12 +501,12 @@ PASS CanvasRenderingContext2D interface: attribute font
 PASS CanvasRenderingContext2D interface: attribute textAlign
 PASS CanvasRenderingContext2D interface: attribute textBaseline
 PASS CanvasRenderingContext2D interface: attribute direction
-FAIL CanvasRenderingContext2D interface: attribute letterSpacing assert_true: The prototype object must have a property "letterSpacing" expected true got false
+PASS CanvasRenderingContext2D interface: attribute letterSpacing
 FAIL CanvasRenderingContext2D interface: attribute fontKerning assert_true: The prototype object must have a property "fontKerning" expected true got false
 FAIL CanvasRenderingContext2D interface: attribute fontStretch assert_true: The prototype object must have a property "fontStretch" expected true got false
 FAIL CanvasRenderingContext2D interface: attribute fontVariantCaps assert_true: The prototype object must have a property "fontVariantCaps" expected true got false
 FAIL CanvasRenderingContext2D interface: attribute textRendering assert_true: The prototype object must have a property "textRendering" expected true got false
-FAIL CanvasRenderingContext2D interface: attribute wordSpacing assert_true: The prototype object must have a property "wordSpacing" expected true got false
+PASS CanvasRenderingContext2D interface: attribute wordSpacing
 PASS CanvasRenderingContext2D interface: operation closePath()
 PASS CanvasRenderingContext2D interface: operation moveTo(unrestricted double, unrestricted double)
 PASS CanvasRenderingContext2D interface: operation lineTo(unrestricted double, unrestricted double)
@@ -625,12 +625,12 @@ PASS CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textAlign" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textBaseline" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "direction" with the proper type
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "letterSpacing" with the proper type assert_inherits: property "letterSpacing" not found in prototype chain
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "letterSpacing" with the proper type
 FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fontKerning" with the proper type assert_inherits: property "fontKerning" not found in prototype chain
 FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fontStretch" with the proper type assert_inherits: property "fontStretch" not found in prototype chain
 FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fontVariantCaps" with the proper type assert_inherits: property "fontVariantCaps" not found in prototype chain
 FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textRendering" with the proper type assert_inherits: property "textRendering" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "wordSpacing" with the proper type assert_inherits: property "wordSpacing" not found in prototype chain
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "wordSpacing" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "closePath()" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "moveTo(unrestricted double, unrestricted double)" with the proper type
 PASS CanvasRenderingContext2D interface: calling moveTo(unrestricted double, unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
@@ -748,7 +748,6 @@ PASS OffscreenCanvasRenderingContext2D interface object name
 PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object
 PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property
 PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object's @@unscopables property
-PASS OffscreenCanvasRenderingContext2D interface: operation commit()
 PASS OffscreenCanvasRenderingContext2D interface: attribute canvas
 PASS OffscreenCanvasRenderingContext2D interface: operation save()
 PASS OffscreenCanvasRenderingContext2D interface: operation restore()
@@ -813,12 +812,12 @@ PASS OffscreenCanvasRenderingContext2D interface: attribute font
 PASS OffscreenCanvasRenderingContext2D interface: attribute textAlign
 PASS OffscreenCanvasRenderingContext2D interface: attribute textBaseline
 PASS OffscreenCanvasRenderingContext2D interface: attribute direction
-FAIL OffscreenCanvasRenderingContext2D interface: attribute letterSpacing assert_true: The prototype object must have a property "letterSpacing" expected true got false
+PASS OffscreenCanvasRenderingContext2D interface: attribute letterSpacing
 FAIL OffscreenCanvasRenderingContext2D interface: attribute fontKerning assert_true: The prototype object must have a property "fontKerning" expected true got false
 FAIL OffscreenCanvasRenderingContext2D interface: attribute fontStretch assert_true: The prototype object must have a property "fontStretch" expected true got false
 FAIL OffscreenCanvasRenderingContext2D interface: attribute fontVariantCaps assert_true: The prototype object must have a property "fontVariantCaps" expected true got false
 FAIL OffscreenCanvasRenderingContext2D interface: attribute textRendering assert_true: The prototype object must have a property "textRendering" expected true got false
-FAIL OffscreenCanvasRenderingContext2D interface: attribute wordSpacing assert_true: The prototype object must have a property "wordSpacing" expected true got false
+PASS OffscreenCanvasRenderingContext2D interface: attribute wordSpacing
 PASS OffscreenCanvasRenderingContext2D interface: operation closePath()
 PASS OffscreenCanvasRenderingContext2D interface: operation moveTo(unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation lineTo(unrestricted double, unrestricted double)
@@ -829,7 +828,9 @@ PASS OffscreenCanvasRenderingContext2D interface: operation rect(unrestricted do
 PASS OffscreenCanvasRenderingContext2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>)
 PASS OffscreenCanvasRenderingContext2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS OffscreenCanvasRenderingContext2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
-PASS CustomElementRegistry interface: existence and properties of interface object
+FAIL CustomElementRegistry interface: existence and properties of interface object assert_throws_js: interface object didn't throw TypeError when called as a constructor function "function() {
+                new interface_object();
+            }" did not throw
 PASS CustomElementRegistry interface object length
 PASS CustomElementRegistry interface object name
 PASS CustomElementRegistry interface: existence and properties of interface prototype object
@@ -1346,7 +1347,9 @@ FAIL Stringification of window.external assert_equals: wrong typeof object expec
 FAIL External interface: window.external must inherit property "AddSearchProvider()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
 FAIL External interface: window.external must inherit property "IsSearchProviderInstalled()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
 PASS SVGElement interface: attribute onabort
-FAIL SVGElement interface: attribute onauxclick assert_true: The prototype object must have a property "onauxclick" expected true got false
+PASS SVGElement interface: attribute onauxclick
+PASS SVGElement interface: attribute onbeforeinput
+PASS SVGElement interface: attribute onbeforetoggle
 PASS SVGElement interface: attribute onblur
 PASS SVGElement interface: attribute oncancel
 PASS SVGElement interface: attribute oncanplay

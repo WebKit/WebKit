@@ -27,6 +27,7 @@
 #include "SerializedNFA.h"
 
 #include "NFA.h"
+#include <wtf/text/ParsingUtilities.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -36,15 +37,12 @@ namespace ContentExtensions {
 template<typename T>
 bool writeAllToFile(FileSystem::PlatformFileHandle file, const T& container)
 {
-    auto bytes = reinterpret_cast<const uint8_t*>(container.data());
-    size_t bytesLength = container.size() * sizeof(container[0]);
-    auto end = bytes + bytesLength;
-    while (bytes < end) {
-        auto written = FileSystem::writeToFile(file, { bytes, bytesLength });
+    auto bytes = spanReinterpretCast<const uint8_t>(container.span());
+    while (!bytes.empty()) {
+        auto written = FileSystem::writeToFile(file, bytes);
         if (written == -1)
             return false;
-        bytes += written;
-        bytesLength -= written;
+        skip(bytes, written);
     }
     return true;
 }
@@ -104,34 +102,34 @@ SerializedNFA::SerializedNFA(FileSystem::MappedFileData&& file, Metadata&& metad
 }
 
 template<typename T>
-const T* SerializedNFA::pointerAtOffsetInFile(size_t offset) const
+std::span<const T> SerializedNFA::spanAtOffsetInFile(size_t offset, size_t length) const
 {
-    return reinterpret_cast<const T*>(static_cast<const uint8_t*>(m_file.data()) + offset);
+    return spanReinterpretCast<const T>(m_file.span().subspan(offset).first(length * sizeof(T)));
 }
 
 auto SerializedNFA::nodes() const -> const Range<ImmutableNFANode>
 {
-    return { pointerAtOffsetInFile<ImmutableNFANode>(m_metadata.nodesOffset), m_metadata.nodesSize };
+    return spanAtOffsetInFile<ImmutableNFANode>(m_metadata.nodesOffset, m_metadata.nodesSize);
 }
 
 auto SerializedNFA::transitions() const -> const Range<ImmutableRange<char>>
 {
-    return { pointerAtOffsetInFile<ImmutableRange<char>>(m_metadata.transitionsOffset), m_metadata.transitionsSize };
+    return spanAtOffsetInFile<ImmutableRange<char>>(m_metadata.transitionsOffset, m_metadata.transitionsSize);
 }
 
 auto SerializedNFA::targets() const -> const Range<uint32_t>
 {
-    return { pointerAtOffsetInFile<uint32_t>(m_metadata.targetsOffset), m_metadata.targetsSize };
+    return spanAtOffsetInFile<uint32_t>(m_metadata.targetsOffset, m_metadata.targetsSize);
 }
 
 auto SerializedNFA::epsilonTransitionsTargets() const -> const Range<uint32_t>
 {
-    return { pointerAtOffsetInFile<uint32_t>(m_metadata.epsilonTransitionsTargetsOffset), m_metadata.epsilonTransitionsTargetsSize };
+    return spanAtOffsetInFile<uint32_t>(m_metadata.epsilonTransitionsTargetsOffset, m_metadata.epsilonTransitionsTargetsSize);
 }
 
 auto SerializedNFA::actions() const -> const Range<uint64_t>
 {
-    return { pointerAtOffsetInFile<uint64_t>(m_metadata.actionsOffset), m_metadata.actionsSize };
+    return spanAtOffsetInFile<uint64_t>(m_metadata.actionsOffset, m_metadata.actionsSize);
 }
 
 } // namespace ContentExtensions

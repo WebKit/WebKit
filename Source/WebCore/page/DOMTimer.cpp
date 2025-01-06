@@ -40,6 +40,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 #include "ContentChangeObserver.h"
@@ -54,6 +55,8 @@ static constexpr Seconds minIntervalForRepeatingTimers { 1_ms };
 static constexpr int maxTimerNestingLevel = 10;
 static constexpr int maxTimerNestingLevelForOneShotTimers = 10;
 static constexpr int maxTimerNestingLevelForRepeatingTimers = 5;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMTimer);
 
 class DOMTimerFireState {
 public:
@@ -105,7 +108,7 @@ private:
 DOMTimerFireState* DOMTimerFireState::current = nullptr;
 
 struct NestedTimersMap {
-    typedef HashMap<int, Ref<DOMTimer>>::const_iterator const_iterator;
+    typedef UncheckedKeyHashMap<int, Ref<DOMTimer>>::const_iterator const_iterator;
 
     static NestedTimersMap* instanceForContext(ScriptExecutionContext& context)
     {
@@ -118,7 +121,7 @@ struct NestedTimersMap {
 
     void startTracking()
     {
-        // Make sure we start with an empty HashMap. In theory, it is possible the HashMap is not
+        // Make sure we start with an empty UncheckedKeyHashMap. In theory, it is possible the UncheckedKeyHashMap is not
         // empty if a timer fires during the execution of another timer (may happen with the
         // in-process Web Inspector).
         nestedTimers.clear();
@@ -154,7 +157,7 @@ private:
     }
 
     static bool isTrackingNestedTimers;
-    HashMap<int /* timeoutId */, Ref<DOMTimer>> nestedTimers;
+    UncheckedKeyHashMap<int /* timeoutId */, Ref<DOMTimer>> nestedTimers;
 };
 
 bool NestedTimersMap::isTrackingNestedTimers = false;

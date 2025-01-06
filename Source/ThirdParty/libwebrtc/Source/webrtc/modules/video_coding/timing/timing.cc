@@ -292,13 +292,13 @@ void VCMTiming::SetTimingFrameInfo(const TimingFrameInfo& info) {
   timing_frame_info_.emplace(info);
 }
 
-absl::optional<TimingFrameInfo> VCMTiming::GetTimingFrameInfo() {
+std::optional<TimingFrameInfo> VCMTiming::GetTimingFrameInfo() {
   MutexLock lock(&mutex_);
   return timing_frame_info_;
 }
 
 void VCMTiming::SetMaxCompositionDelayInFrames(
-    absl::optional<int> max_composition_delay_in_frames) {
+    std::optional<int> max_composition_delay_in_frames) {
   MutexLock lock(&mutex_);
   max_composition_delay_in_frames_ = max_composition_delay_in_frames;
 }

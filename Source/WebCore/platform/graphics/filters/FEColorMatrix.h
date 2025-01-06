@@ -47,8 +47,8 @@ public:
     const Vector<float>& values() const { return m_values; }
     bool setValues(const Vector<float>&);
 
-    static void calculateSaturateComponents(float* components, float value);
-    static void calculateHueRotateComponents(float* components, float value);
+    static void calculateSaturateComponents(std::span<float> components, float value);
+    static void calculateHueRotateComponents(std::span<float> components, float value);
     static Vector<float> normalizedFloats(const Vector<float>& values);
 
 private:
@@ -62,7 +62,7 @@ private:
 
     std::unique_ptr<FilterEffectApplier> createAcceleratedApplier() const override;
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
-    std::optional<GraphicsStyle> createGraphicsStyle(const Filter&) const override;
+    std::optional<GraphicsStyle> createGraphicsStyle(GraphicsContext&, const Filter&) const override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 

@@ -84,7 +84,7 @@ static void tls_on_handshake_complete(SSL *ssl) {
 
 static bool tls_set_read_state(SSL *ssl, ssl_encryption_level_t level,
                                UniquePtr<SSLAEADContext> aead_ctx,
-                               Span<const uint8_t> secret_for_quic) {
+                               Span<const uint8_t> traffic_secret) {
   // Cipher changes are forbidden if the current epoch has leftover data.
   if (tls_has_unprocessed_handshake_data(ssl)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_EXCESS_HANDSHAKE_DATA);
@@ -95,8 +95,8 @@ static bool tls_set_read_state(SSL *ssl, ssl_encryption_level_t level,
   if (ssl->quic_method != nullptr) {
     if ((ssl->s3->hs == nullptr || !ssl->s3->hs->hints_requested) &&
         !ssl->quic_method->set_read_secret(ssl, level, aead_ctx->cipher(),
-                                           secret_for_quic.data(),
-                                           secret_for_quic.size())) {
+                                           traffic_secret.data(),
+                                           traffic_secret.size())) {
       return false;
     }
 
@@ -106,17 +106,17 @@ static bool tls_set_read_state(SSL *ssl, ssl_encryption_level_t level,
     if (level == ssl_encryption_early_data) {
       return true;
     }
+    ssl->s3->quic_read_level = level;
   }
 
   ssl->s3->read_sequence = 0;
   ssl->s3->aead_read_ctx = std::move(aead_ctx);
-  ssl->s3->read_level = level;
   return true;
 }
 
 static bool tls_set_write_state(SSL *ssl, ssl_encryption_level_t level,
                                 UniquePtr<SSLAEADContext> aead_ctx,
-                                Span<const uint8_t> secret_for_quic) {
+                                Span<const uint8_t> traffic_secret) {
   if (!tls_flush_pending_hs_data(ssl)) {
     return false;
   }
@@ -124,8 +124,8 @@ static bool tls_set_write_state(SSL *ssl, ssl_encryption_level_t level,
   if (ssl->quic_method != nullptr) {
     if ((ssl->s3->hs == nullptr || !ssl->s3->hs->hints_requested) &&
         !ssl->quic_method->set_write_secret(ssl, level, aead_ctx->cipher(),
-                                            secret_for_quic.data(),
-                                            secret_for_quic.size())) {
+                                            traffic_secret.data(),
+                                            traffic_secret.size())) {
       return false;
     }
 
@@ -135,11 +135,11 @@ static bool tls_set_write_state(SSL *ssl, ssl_encryption_level_t level,
     if (level == ssl_encryption_early_data) {
       return true;
     }
+    ssl->s3->quic_write_level = level;
   }
 
   ssl->s3->write_sequence = 0;
   ssl->s3->aead_write_ctx = std::move(aead_ctx);
-  ssl->s3->write_level = level;
   return true;
 }
 

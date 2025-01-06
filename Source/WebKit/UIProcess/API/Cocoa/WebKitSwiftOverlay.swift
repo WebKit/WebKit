@@ -23,7 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@_exported import WebKit
+#if !os(tvOS) && !os(watchOS)
+
+#if USE_APPLE_INTERNAL_SDK
+@_spi(CTypeConversion) import Network
+#endif
 
 @available(iOS 14.0, macOS 10.16, *)
 extension WKPDFConfiguration {
@@ -35,28 +39,32 @@ extension WKPDFConfiguration {
 
 @available(iOS 14.0, macOS 10.16, *)
 extension WKWebView {
-    public func callAsyncJavaScript(_ functionBody: String, arguments: [String:Any] = [:], in frame: WKFrameInfo? = nil, in contentWorld: WKContentWorld, completionHandler: ((Result<Any, Error>) -> Void)? = nil) {
-        __callAsyncJavaScript(functionBody, arguments: arguments, inFrame: frame, in: contentWorld, completionHandler: completionHandler.map(ObjCBlockConversion.boxingNilAsAnyForCompatibility))
+    @preconcurrency public func callAsyncJavaScript(_ functionBody: String, arguments: [String:Any] = [:], in frame: WKFrameInfo? = nil, in contentWorld: WKContentWorld, completionHandler: (@MainActor (Result<Any, Error>) -> Void)? = nil) {
+        let thunk = completionHandler.map { ObjCBlockConversion.boxingNilAsAnyForCompatibility($0) }
+        __callAsyncJavaScript(functionBody, arguments: arguments, inFrame: frame, in: contentWorld, completionHandler: thunk)
     }
 
-    public func createPDF(configuration: WKPDFConfiguration = .init(), completionHandler: @escaping (Result<Data, Error>) -> Void) {
+    @preconcurrency public func createPDF(configuration: WKPDFConfiguration = .init(), completionHandler: @MainActor @escaping (Result<Data, Error>) -> Void) {
         __createPDF(with: configuration, completionHandler: ObjCBlockConversion.exclusive(completionHandler))
     }
 
-    public func createWebArchiveData(completionHandler: @escaping (Result<Data, Error>) -> Void) {
+    @preconcurrency public func createWebArchiveData(completionHandler: @MainActor @escaping (Result<Data, Error>) -> Void) {
         __createWebArchiveData(completionHandler: ObjCBlockConversion.exclusive(completionHandler))
     }
 
-    public func evaluateJavaScript(_ javaScript: String, in frame: WKFrameInfo? = nil, in contentWorld: WKContentWorld, completionHandler: ((Result<Any, Error>) -> Void)? = nil) {
-        __evaluateJavaScript(javaScript, inFrame: frame, in: contentWorld, completionHandler: completionHandler.map(ObjCBlockConversion.boxingNilAsAnyForCompatibility))
+    @preconcurrency public func evaluateJavaScript(_ javaScript: String, in frame: WKFrameInfo? = nil, in contentWorld: WKContentWorld, completionHandler: (@MainActor (Result<Any, Error>) -> Void)? = nil) {
+        let thunk = completionHandler.map { ObjCBlockConversion.boxingNilAsAnyForCompatibility($0) }
+        __evaluateJavaScript(javaScript, inFrame: frame, in: contentWorld, completionHandler: thunk)
     }
 
-    public func find(_ string: String, configuration: WKFindConfiguration = .init(), completionHandler: @escaping (WKFindResult) -> Void) {
+    @preconcurrency public func find(_ string: String, configuration: WKFindConfiguration = .init(), completionHandler: @MainActor @escaping (WKFindResult) -> Void) {
         __find(string, with: configuration, completionHandler: completionHandler)
     }
 }
 
-#if swift(>=5.5)
+// Concurrency diagnostics are incorrectly promoted to errors on older public
+// versions of Swift. Remove when dropping support for macOS Ventura.
+#if (swift(>=5.5) && USE_APPLE_INTERNAL_SDK && NDEBUG) || swift(>=5.10)
 @available(iOS 15.0, macOS 12.0, *)
 extension WKWebView {
     public func callAsyncJavaScript(_ functionBody: String, arguments: [String:Any] = [:], in frame: WKFrameInfo? = nil, contentWorld: WKContentWorld) async throws -> Any? {
@@ -76,3 +84,49 @@ extension WKWebView {
     }
 }
 #endif
+
+@available(iOS 18.4, macOS 15.4, visionOS 2.4, *)
+extension WKWebExtensionController {
+    public func didCloseTab(_ closedTab: WKWebExtensionTab, windowIsClosing: Bool = false) {
+        __didClose(closedTab, windowIsClosing: windowIsClosing)
+    }
+
+    public func didActivateTab(_ activatedTab: any WKWebExtensionTab, previousActiveTab previousTab: (any WKWebExtensionTab)? = nil) {
+        __didActivate(activatedTab, previousActiveTab: previousTab)
+    }
+
+    public func didMoveTab(_ movedTab: any WKWebExtensionTab, from index: Int, in oldWindow: (any WKWebExtensionWindow)? = nil) {
+        __didMove(movedTab, from: index, in: oldWindow)
+    }
+}
+
+@available(iOS 18.4, macOS 15.4, visionOS 2.4, *)
+extension WKWebExtensionContext {
+    public func didCloseTab(_ closedTab: WKWebExtensionTab, windowIsClosing: Bool = false) {
+        __didClose(closedTab, windowIsClosing: windowIsClosing)
+    }
+
+    public func didActivateTab(_ activatedTab: any WKWebExtensionTab, previousActiveTab previousTab: (any WKWebExtensionTab)? = nil) {
+        __didActivate(activatedTab, previousActiveTab: previousTab)
+    }
+
+    public func didMoveTab(_ movedTab: any WKWebExtensionTab, from index: Int, in oldWindow: (any WKWebExtensionWindow)? = nil) {
+        __didMove(movedTab, from: index, in: oldWindow)
+    }
+}
+
+// FIXME: Need to declare ProxyConfiguration SPI in order to build and test
+// this with public SDKs (https://bugs.webkit.org/show_bug.cgi?id=280911).
+#if USE_APPLE_INTERNAL_SDK
+#if canImport(Network, _version: "3623.0.0.0")
+@available(iOS 17.0, macOS 14.0, *)
+extension WKWebsiteDataStore {
+    public var proxyConfigurations: [ProxyConfiguration] {
+        get { __proxyConfigurations?.map(ProxyConfiguration.init(_:)) ?? [] }
+        set { __proxyConfigurations = newValue.map(\.nw) }
+    }
+}
+#endif
+#endif
+
+#endif // !os(tvOS) && !os(watchOS)

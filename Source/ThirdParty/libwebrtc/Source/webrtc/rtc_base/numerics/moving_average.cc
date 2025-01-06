@@ -11,6 +11,9 @@
 #include "rtc_base/numerics/moving_average.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 
 #include "rtc_base/checks.h"
 
@@ -31,21 +34,21 @@ void MovingAverage::AddSample(int sample) {
   history_[index] = sample;
 }
 
-absl::optional<int> MovingAverage::GetAverageRoundedDown() const {
+std::optional<int> MovingAverage::GetAverageRoundedDown() const {
   if (count_ == 0)
-    return absl::nullopt;
+    return std::nullopt;
   return sum_ / Size();
 }
 
-absl::optional<int> MovingAverage::GetAverageRoundedToClosest() const {
+std::optional<int> MovingAverage::GetAverageRoundedToClosest() const {
   if (count_ == 0)
-    return absl::nullopt;
+    return std::nullopt;
   return (sum_ + Size() / 2) / Size();
 }
 
-absl::optional<double> MovingAverage::GetUnroundedAverage() const {
+std::optional<double> MovingAverage::GetUnroundedAverage() const {
   if (count_ == 0)
-    return absl::nullopt;
+    return std::nullopt;
   return sum_ / static_cast<double>(Size());
 }
 

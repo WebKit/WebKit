@@ -61,7 +61,7 @@ void determineMallocFallbackState()
 
 MallocResult tryMalloc(
     size_t size,
-    CompactAllocationMode mode
+    [[maybe_unused]] CompactAllocationMode mode
 #if BENABLE_MALLOC_HEAP_BREAKDOWN
     , malloc_zone_t* zone
 #endif

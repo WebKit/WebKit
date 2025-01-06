@@ -41,7 +41,7 @@ void AttachmentAssociatedElement::setAttachmentElement(Ref<HTMLAttachmentElement
     if (auto existingAttachment = attachmentElement())
         existingAttachment->remove();
 
-    attachment->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
+    attachment->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, IsImportant::Yes);
     asHTMLElement().ensureUserAgentShadowRoot().appendChild(WTFMove(attachment));
 }
 

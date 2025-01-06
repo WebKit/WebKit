@@ -36,12 +36,13 @@
 #include "TextTrackCueList.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/StrongInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DataCue);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DataCue);
 
 DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, ArrayBuffer& data, const String& type)
     : TextTrackCue(document, start, end)
@@ -124,9 +125,7 @@ bool DataCue::cueContentsMatch(const TextTrackCue& cue) const
     RefPtr<ArrayBuffer> otherData = dataCue->data();
     if ((otherData && !m_data) || (!otherData && m_data))
         return false;
-    if (m_data && m_data->byteLength() != otherData->byteLength())
-        return false;
-    if (m_data && m_data->data() && memcmp(m_data->data(), otherData->data(), m_data->byteLength()))
+    if (m_data && m_data->data() && !equalSpans(m_data->span(), otherData->span()))
         return false;
 
     auto otherPlatformValue = dataCue->platformValue();

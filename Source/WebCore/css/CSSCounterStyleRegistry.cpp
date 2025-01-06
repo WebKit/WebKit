@@ -77,7 +77,7 @@ void CSSCounterStyleRegistry::resolveExtendsReference(CSSCounterStyle& counter, 
     if (countersInChain.contains(&counter)) {
         // Chain of references forms a circle. Treat all as extending decimal (https://www.w3.org/TR/css-counter-styles-3/#extends-system).
         auto decimal = decimalCounter();
-        for (const auto counterInChain : countersInChain) {
+        for (const RefPtr counterInChain : countersInChain) {
             ASSERT(counterInChain);
             if (!counterInChain)
                 continue;
@@ -135,13 +135,12 @@ RefPtr<CSSCounterStyle> CSSCounterStyleRegistry::counterStyle(const AtomString& 
 
     auto getCounter = [&](const AtomString& counterName, const CounterStyleMap& map) {
         auto counterIterator = map.find(counterName);
-        return counterIterator != map.end() ? counterIterator->value.get() : nullptr;
+        return counterIterator != map.end() ? counterIterator->value : nullptr;
     };
 
     // If there is a map, the search starts from the given map.
     if (map) {
-        auto counter = getCounter(name, *map);
-        if (counter)
+        if (RefPtr counter = getCounter(name, *map))
             return counter;
     }
     // If there was no map (called for user-agent references resolution), or the counter was not found in the given map, we search at the user-agent map.

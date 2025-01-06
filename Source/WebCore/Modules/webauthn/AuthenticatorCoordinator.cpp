@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,8 @@
 #include "JSCredentialCreationOptions.h"
 #include "JSCredentialRequestOptions.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LoginStatus.h"
+#include "Page.h"
 #include "PermissionsPolicy.h"
 #include "PublicKeyCredential.h"
 #include "PublicKeyCredentialCreationOptions.h"
@@ -49,8 +51,11 @@
 #include "WebAuthenticationUtils.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorCoordinatorClient);
 
 namespace AuthenticatorCoordinatorInternal {
 
@@ -86,7 +91,29 @@ static String processAppIdExtension(const SecurityOrigin& facetId, const String&
     return appId;
 }
 
+static ScopeAndCrossOriginParent scopeAndCrossOriginParent(const Document& document)
+{
+    bool isSameSite = true;
+    Ref origin = document.securityOrigin();
+    auto url = document.url();
+    std::optional<SecurityOriginData> crossOriginParent;
+    for (RefPtr parentDocument = document.parentDocument(); parentDocument; parentDocument = parentDocument->parentDocument()) {
+        if (!origin->isSameOriginDomain(parentDocument->securityOrigin()) && !areRegistrableDomainsEqual(url, parentDocument->url()))
+            isSameSite = false;
+        if (!crossOriginParent && !origin->isSameOriginAs(parentDocument->securityOrigin()))
+            crossOriginParent = parentDocument->securityOrigin().data();
+    }
+
+    if (!crossOriginParent)
+        return std::pair { WebAuthn::Scope::SameOrigin, std::nullopt };
+    if (isSameSite)
+        return std::pair { WebAuthn::Scope::SameSite, crossOriginParent };
+    return std::pair { WebAuthn::Scope::CrossOrigin, crossOriginParent };
+}
+
 } // namespace AuthenticatorCoordinatorInternal
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorCoordinator);
 
 AuthenticatorCoordinator::AuthenticatorCoordinator(std::unique_ptr<AuthenticatorCoordinatorClient>&& client)
     : m_client(WTFMove(client))
@@ -98,18 +125,24 @@ void AuthenticatorCoordinator::setClient(std::unique_ptr<AuthenticatorCoordinato
     m_client = WTFMove(client);
 }
 
-void AuthenticatorCoordinator::create(const Document& document, CredentialCreationOptions&& createOptions, WebAuthn::Scope scope, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise)
+void AuthenticatorCoordinator::create(const Document& document, CredentialCreationOptions&& createOptions, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise)
 {
     using namespace AuthenticatorCoordinatorInternal;
 
     const auto& callerOrigin = document.securityOrigin();
     auto* frame = document.frame();
-    const auto& options = createOptions.publicKey.value();
     ASSERT(frame);
     // The following implements https://www.w3.org/TR/webauthn-2/#createCredential as of 28 June 2022.
     // Step 1, 3, 16 are handled by the caller.
+    // Step 1
+    if (!createOptions.publicKey) {
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "Only PublicKeyCredential is supported."_s });
+        return;
+    }
+    const auto& options = createOptions.publicKey.value();
+
     // Step 2.
-    if (scope != WebAuthn::Scope::SameOrigin) {
+    if (scopeAndCrossOriginParent(document).first != WebAuthn::Scope::SameOrigin) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
         return;
     }
@@ -222,19 +255,31 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     m_client->makeCredential(*frame, options, createOptions.mediation, WTFMove(callback));
 }
 
-void AuthenticatorCoordinator::discoverFromExternalSource(const Document& document, CredentialRequestOptions&& requestOptions, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, CredentialPromise&& promise)
+void AuthenticatorCoordinator::discoverFromExternalSource(const Document& document, CredentialRequestOptions&& requestOptions, CredentialPromise&& promise)
 {
     using namespace AuthenticatorCoordinatorInternal;
 
     auto& callerOrigin = document.securityOrigin();
     RefPtr frame = document.frame();
-    const auto& options = requestOptions.publicKey.value();
     ASSERT(frame);
     // The following implements https://www.w3.org/TR/webauthn/#createCredential as of 5 December 2017.
-    // Step 1, 3, 13 are handled by the caller.
+    // Step 3, 13 are handled by the caller.
     // Step 2.
     // This implements https://www.w3.org/TR/webauthn-2/#sctn-permissions-policy
-    if (scopeAndCrossOriginParent.first != WebAuthn::Scope::SameOrigin && !PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::PublickeyCredentialsGetRule, document, PermissionsPolicy::ShouldReportViolation::No)) {
+    if (!requestOptions.publicKey) {
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "Only PublicKeyCredential is supported."_s });
+        return;
+    }
+
+    // The request will be aborted in WebAuthenticatorCoordinatorProxy if conditional mediation is not available.
+    if (requestOptions.mediation != MediationRequirement::Conditional && !document.hasFocus()) {
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_s });
+        return;
+    }
+
+    const auto& options = requestOptions.publicKey.value();
+    auto scopeCrossOriginParent = scopeAndCrossOriginParent(document);
+    if (scopeCrossOriginParent.first != WebAuthn::Scope::SameOrigin && !PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::PublickeyCredentialsGetRule, document, PermissionsPolicy::ShouldReportViolation::No)) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
         return;
     }
@@ -299,13 +344,15 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         });
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal), weakPage = WeakPtr { document.page() }] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
+            if (RefPtr page = weakPage.get())
+                page->setLastAuthentication(LoginStatus::AuthenticationType::WebAuthn);
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
         }
@@ -314,19 +361,19 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     };
 
     if (m_isCancelling) {
-        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, requestOptions = WTFMove(requestOptions), scopeAndCrossOriginParent, callback = WTFMove(callback)]() mutable {
+        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, requestOptions = WTFMove(requestOptions), scopeCrossOriginParent, callback = WTFMove(callback)]() mutable {
             if (!weakThis || !weakFrame)
                 return;
             const auto options = requestOptions.publicKey.value();
             RefPtr frame = weakFrame.get();
             if (!frame)
                 return;
-            weakThis->m_client->getAssertion(*weakFrame, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
+            weakThis->m_client->getAssertion(*weakFrame, options, requestOptions.mediation, scopeCrossOriginParent, WTFMove(callback));
         };
         return;
     }
     // Async operations are dispatched and handled in the messenger.
-    m_client->getAssertion(*frame, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
+    m_client->getAssertion(*frame, options, requestOptions.mediation, scopeCrossOriginParent, WTFMove(callback));
 }
 
 void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(const Document& document, DOMPromiseDeferred<IDLBoolean>&& promise) const

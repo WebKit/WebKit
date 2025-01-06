@@ -35,6 +35,11 @@ bool setCloseOnExec(int)
     return true;
 }
 
+bool unsetCloseOnExec(int)
+{
+    return true;
+}
+
 int dupCloseOnExec(int fileDescriptor)
 {
     int duplicatedFileDescriptor = -1;

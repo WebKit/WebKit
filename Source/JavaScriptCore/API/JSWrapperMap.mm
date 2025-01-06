@@ -52,6 +52,8 @@
 static constexpr int32_t firstJavaScriptCoreVersionWithInitConstructorSupport = 0x21A0400; // 538.4.0
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 @class JSObjCClassInfo;
 
 @interface JSWrapperMap () 
@@ -430,7 +432,7 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
         return constructorWithCustomBrand(context, [NSString stringWithFormat:@"%sConstructor", className], cls);
 
     // For each protocol that the class implements, gather all of the init family methods into a hash table.
-    __block HashMap<String, CFTypeRef> initTable;
+    __block UncheckedKeyHashMap<String, CFTypeRef> initTable;
     Protocol *exportProtocol = getJSExportProtocol();
     for (Class currentClass = cls; currentClass; currentClass = class_getSuperclass(currentClass)) {
         forEachProtocolImplementingProtocol(currentClass, exportProtocol, ^(Protocol *protocol, bool&) {
@@ -721,5 +723,7 @@ Class getNSBlockClass()
     static Class cls = objc_getClass("NSBlock");
     return cls;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

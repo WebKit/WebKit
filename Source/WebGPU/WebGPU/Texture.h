@@ -25,11 +25,14 @@
 
 #pragma once
 
+#import <Metal/Metal.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
+#import <wtf/RefCountedAndCanMakeWeakPtr.h>
+#import <wtf/RetainReleaseSwift.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
@@ -44,8 +47,8 @@ class Device;
 class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gputexture
-class Texture : public WGPUTextureImpl, public RefCounted<Texture> {
-    WTF_MAKE_FAST_ALLOCATED;
+class Texture : public RefCountedAndCanMakeWeakPtr<Texture>, public WGPUTextureImpl {
+    WTF_MAKE_TZONE_ALLOCATED(Texture);
 public:
     static Ref<Texture> create(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor, Vector<WGPUTextureFormat>&& viewFormats, Device& device)
     {
@@ -71,7 +74,7 @@ public:
 
     // For depth-stencil textures, the input value to texelBlockSize()
     // needs to be the output of aspectSpecificFormat().
-    static uint32_t texelBlockSize(WGPUTextureFormat); // Bytes
+    static Checked<uint32_t> texelBlockSize(WGPUTextureFormat); // Bytes
     static bool containsDepthAspect(WGPUTextureFormat);
     static bool containsStencilAspect(WGPUTextureFormat);
     static bool isDepthOrStencilFormat(WGPUTextureFormat);
@@ -113,7 +116,8 @@ public:
 
     bool previouslyCleared(uint32_t mipLevel, uint32_t slice) const;
     void setPreviouslyCleared(uint32_t mipLevel, uint32_t slice, bool = true);
-    bool isDestroyed() const;
+    bool isDestroyed() const { return m_destroyed; }
+
     static bool hasStorageBindingCapability(WGPUTextureFormat, const Device&, WGPUStorageTextureAccess = WGPUStorageTextureAccess_Undefined);
     static bool supportsMultisampling(WGPUTextureFormat, const Device&);
     static bool supportsResolve(WGPUTextureFormat, const Device&);
@@ -122,8 +126,12 @@ public:
     void makeCanvasBacking();
     void setCommandEncoder(CommandEncoder&) const;
     static ASCIILiteral formatToString(WGPUTextureFormat);
-    bool isCanvasBacking() const;
-    void waitForCommandBufferCompletion();
+    bool isCanvasBacking() const { return m_canvasBacking; }
+
+    bool waitForCommandBufferCompletion();
+    void updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t>&);
+    id<MTLSharedEvent> sharedEvent() const;
+    uint64_t sharedEventSignalValue() const;
 
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
@@ -154,6 +162,18 @@ private:
     bool m_destroyed { false };
     bool m_canvasBacking { false };
     mutable WeakHashSet<CommandEncoder> m_commandEncoders;
-};
+    id<MTLSharedEvent> m_sharedEvent { nil };
+    uint64_t m_sharedEventSignalValue { 0 };
+} SWIFT_SHARED_REFERENCE(refTexture, derefTexture);
 
 } // namespace WebGPU
+
+inline void refTexture(WebGPU::Texture* obj)
+{
+    WTF::ref(obj);
+}
+
+inline void derefTexture(WebGPU::Texture* obj)
+{
+    WTF::deref(obj);
+}

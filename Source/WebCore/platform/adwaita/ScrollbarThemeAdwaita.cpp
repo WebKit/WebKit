@@ -36,9 +36,12 @@
 #include "Scrollbar.h"
 #include "ThemeAdwaita.h"
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include "SystemSettings.h"
+#endif
+
 #if PLATFORM(GTK)
 #include "GtkUtilities.h"
-#include <gtk/gtk.h>
 #endif
 
 namespace WebCore {
@@ -75,16 +78,20 @@ void ScrollbarThemeAdwaita::updateScrollbarOverlayStyle(Scrollbar& scrollbar)
 
 bool ScrollbarThemeAdwaita::usesOverlayScrollbars() const
 {
-#if PLATFORM(GTK)
-    return shouldUseOverlayScrollbars();
+#if PLATFORM(GTK) && !USE(GTK4)
+    if (!g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "0"))
+        return false;
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    return SystemSettings::singleton().overlayScrolling().value_or(true);
 #else
     return true;
 #endif
 }
 
-int ScrollbarThemeAdwaita::scrollbarThickness(ScrollbarWidth scrollbarWidth, ScrollbarExpansionState)
+int ScrollbarThemeAdwaita::scrollbarThickness(ScrollbarWidth scrollbarWidth, ScrollbarExpansionState, OverlayScrollbarSizeRelevancy overlayRelevancy)
 {
-    if (scrollbarWidth == ScrollbarWidth::None)
+    if (scrollbarWidth == ScrollbarWidth::None || (usesOverlayScrollbars() && overlayRelevancy == OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize))
         return 0;
     return scrollbarSize;
 }
@@ -323,14 +330,8 @@ ScrollbarButtonPressAction ScrollbarThemeAdwaita::handleMousePressEvent(Scrollba
     switch (pressedPart) {
     case BackTrackPart:
     case ForwardTrackPart:
-#if PLATFORM(GTK)
-        warpSlider = [] {
-            gboolean gtkWarpsSlader = FALSE;
-            g_object_get(gtk_settings_get_default(),
-                "gtk-primary-button-warps-slider",
-                &gtkWarpsSlader, nullptr);
-            return gtkWarpsSlader;
-        }();
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        warpSlider = SystemSettings::singleton().primaryButtonWarpsSlider().value_or(true);
 #endif
         // The shift key or middle/right button reverses the sense.
         if (event.shiftKey() || event.button() != MouseButton::Left)

@@ -30,6 +30,7 @@
 #import "Buffer.h"
 #import "CommandEncoder.h"
 #import "Device.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
 
@@ -46,9 +47,22 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
     auto type = descriptor.type;
 
     switch (type) {
-    case WGPUQueryType_Timestamp:
+    case WGPUQueryType_Timestamp: {
+#if !PLATFORM(WATCHOS)
+        MTLCounterSampleBufferDescriptor* sampleBufferDesc = [MTLCounterSampleBufferDescriptor new];
+        sampleBufferDesc.sampleCount = count;
+        sampleBufferDesc.storageMode = MTLStorageModeShared;
+        sampleBufferDesc.counterSet = m_capabilities.baseCapabilities.timestampCounterSet;
+
+        NSError* error = nil;
+        id<MTLCounterSampleBuffer> buffer = [m_device newCounterSampleBufferWithDescriptor:sampleBufferDesc error:&error];
+        if (error)
+            return QuerySet::createInvalid(*this);
+        return QuerySet::create(buffer, count, type, *this);
+#else
         return QuerySet::createInvalid(*this);
-    case WGPUQueryType_Occlusion: {
+#endif
+    } case WGPUQueryType_Occlusion: {
         auto buffer = safeCreateBuffer(sizeof(uint64_t) * count, MTLStorageModePrivate);
         buffer.label = fromAPI(label);
         return QuerySet::create(buffer, count, type, *this);
@@ -57,6 +71,8 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
         return QuerySet::createInvalid(*this);
     }
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(QuerySet);
 
 QuerySet::QuerySet(id<MTLBuffer> buffer, uint32_t count, WGPUQueryType type, Device& device)
     : m_device(device)
@@ -100,8 +116,8 @@ void QuerySet::destroy()
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueryset-destroy
     m_visibilityBuffer = nil;
     m_timestampBuffer = nil;
-    for (auto& commandEncoder : m_commandEncoders)
-        commandEncoder.makeSubmitInvalid();
+    for (Ref commandEncoder : m_commandEncoders)
+        commandEncoder->makeSubmitInvalid();
 
     m_commandEncoders.clear();
 }
@@ -118,7 +134,8 @@ void QuerySet::setOverrideLocation(QuerySet&, uint32_t, uint32_t)
 
 void QuerySet::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
-    m_commandEncoders.add(commandEncoder);
+    CommandEncoder::trackEncoder(commandEncoder, m_commandEncoders);
+    commandEncoder.addBuffer(m_visibilityBuffer);
     if (isDestroyed())
         commandEncoder.makeSubmitInvalid();
 }
@@ -139,20 +156,20 @@ void wgpuQuerySetRelease(WGPUQuerySet querySet)
 
 void wgpuQuerySetDestroy(WGPUQuerySet querySet)
 {
-    WebGPU::fromAPI(querySet).destroy();
+    WebGPU::protectedFromAPI(querySet)->destroy();
 }
 
 void wgpuQuerySetSetLabel(WGPUQuerySet querySet, const char* label)
 {
-    WebGPU::fromAPI(querySet).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(querySet)->setLabel(WebGPU::fromAPI(label));
 }
 
 uint32_t wgpuQuerySetGetCount(WGPUQuerySet querySet)
 {
-    return WebGPU::fromAPI(querySet).count();
+    return WebGPU::protectedFromAPI(querySet)->count();
 }
 
 WGPUQueryType wgpuQuerySetGetType(WGPUQuerySet querySet)
 {
-    return WebGPU::fromAPI(querySet).type();
+    return WebGPU::protectedFromAPI(querySet)->type();
 }

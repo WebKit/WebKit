@@ -119,7 +119,10 @@ pas_heap_config_utils_allocate_aligned(
 
     runtime_config = (pas_basic_heap_runtime_config*)
         pas_heap_for_large_heap(large_heap)->segregated_heap.runtime_config;
-    cache = &runtime_config->page_caches->large_heap_cache;
+    if (large_heap->is_megapage_heap)
+        cache = &runtime_config->page_caches->megapage_large_heap_cache;
+    else
+        cache = &runtime_config->page_caches->large_heap_cache;
     
     allocation_result =
         pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment(

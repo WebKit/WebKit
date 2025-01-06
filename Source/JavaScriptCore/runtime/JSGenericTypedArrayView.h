@@ -105,6 +105,9 @@ public:
     inline const typename Adaptor::Type* typedVector() const;
     inline typename Adaptor::Type* typedVector();
 
+    std::span<const typename Adaptor::Type> typedSpan() const { return unsafeMakeSpan(typedVector(), length()); }
+    std::span<typename Adaptor::Type> typedSpan() { return unsafeMakeSpan(typedVector(), length()); }
+
     inline bool inBounds(size_t) const;
 
     // These methods are meant to match indexed access methods that JSObject
@@ -223,6 +226,8 @@ public:
 
     static inline const ClassInfo* info();
     static inline Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+
+    static bool preventExtensions(JSObject*, JSGlobalObject*);
 };
 
 template<typename Adaptor> inline RefPtr<typename Adaptor::ViewType> toPossiblySharedNativeTypedView(VM&, JSValue);

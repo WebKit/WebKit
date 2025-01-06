@@ -40,7 +40,7 @@ class MissingMandatoryParameterCause
       : missing_parameter_types_(missing_parameter_types.begin(),
                                  missing_parameter_types.end()) {}
 
-  static absl::optional<MissingMandatoryParameterCause> Parse(
+  static std::optional<MissingMandatoryParameterCause> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

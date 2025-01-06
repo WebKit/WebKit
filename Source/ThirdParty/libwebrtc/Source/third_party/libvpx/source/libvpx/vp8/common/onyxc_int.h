@@ -167,7 +167,6 @@ typedef struct VP8Common {
 #if CONFIG_POSTPROC
   struct postproc_state postproc_state;
 #endif
-  int cpu_caps;
 } VP8_COMMON;
 
 #ifdef __cplusplus

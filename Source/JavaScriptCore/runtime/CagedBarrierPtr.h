@@ -28,6 +28,8 @@
 #include "AuxiliaryBarrier.h"
 #include <wtf/CagedPtr.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class JSCell;
@@ -90,3 +92,5 @@ private:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -58,12 +58,11 @@ class RTCRtpScriptTransformer
     , public ActiveDOMObject
     , public CanMakeWeakPtr<RTCRtpScriptTransformer> {
 public:
-    static ExceptionOr<Ref<RTCRtpScriptTransformer>> create(ScriptExecutionContext&, MessageWithMessagePorts&&);
-    ~RTCRtpScriptTransformer();
-
-    // ActiveDOMObject.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+
+    static ExceptionOr<Ref<RTCRtpScriptTransformer>> create(ScriptExecutionContext&, MessageWithMessagePorts&&);
+    ~RTCRtpScriptTransformer();
 
     ReadableStream& readable();
     ExceptionOr<Ref<WritableStream>> writable();

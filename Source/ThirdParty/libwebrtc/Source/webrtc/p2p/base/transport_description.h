@@ -12,29 +12,18 @@
 #define P2P_BASE_TRANSPORT_DESCRIPTION_H_
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/rtc_error.h"
 #include "p2p/base/p2p_constants.h"
 #include "rtc_base/ssl_fingerprint.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace cricket {
-
-// SEC_ENABLED and SEC_REQUIRED should only be used if the session
-// was negotiated over TLS, to protect the inline crypto material
-// exchange.
-// SEC_DISABLED: No crypto in outgoing offer, ignore any supplied crypto.
-// SEC_ENABLED:  Crypto in outgoing offer and answer (if supplied in offer).
-// SEC_REQUIRED: Crypto in outgoing offer and answer. Fail any offer with absent
-//               or unsupported crypto.
-// TODO(deadbeef): Remove this or rename it to something more appropriate, like
-// SdesPolicy.
-enum SecurePolicy { SEC_DISABLED, SEC_ENABLED, SEC_REQUIRED };
 
 // Whether our side of the call is driving the negotiation, or the other side.
 enum IceRole { ICEROLE_CONTROLLING = 0, ICEROLE_CONTROLLED, ICEROLE_UNKNOWN };
@@ -98,7 +87,7 @@ extern const char CONNECTIONROLE_HOLDCONN_STR[];
 constexpr auto* ICE_OPTION_TRICKLE = "trickle";
 constexpr auto* ICE_OPTION_RENOMINATION = "renomination";
 
-absl::optional<ConnectionRole> StringToConnectionRole(
+std::optional<ConnectionRole> StringToConnectionRole(
     absl::string_view role_str);
 bool ConnectionRoleToString(const ConnectionRole& role, std::string* role_str);
 

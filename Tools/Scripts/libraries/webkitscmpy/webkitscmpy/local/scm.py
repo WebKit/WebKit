@@ -31,11 +31,6 @@ from webkitscmpy import ScmBase, Contributor, CommitClassifier
 
 
 class Scm(ScmBase):
-    # Projects can define for themselves what constitutes a development vs a production branch,
-    # the following idioms seem common enough to be shared.
-    DEV_BRANCHES = re.compile(r'.*[(eng)(dev)(bug)]/.+')
-    PROD_BRANCHES = re.compile(r'\S+-[\d+\.]+-branch')
-
     @classmethod
     def executable(cls, program):
         path = shutil.which(program)

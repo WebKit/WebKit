@@ -48,6 +48,7 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include <wtf/SortedArrayMap.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -81,7 +82,7 @@ protected:
     virtual bool updateRegion() = 0;
     void drawRegion(GraphicsContext&, const Region&, const Color&, const IntRect& dirtyRect);
     
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
     RefPtr<PageOverlay> m_overlay;
     std::unique_ptr<Region> m_region;
     Color m_color;
@@ -328,11 +329,11 @@ std::optional<std::pair<RenderLayer&, GraphicsLayer&>> InteractionRegionOverlay:
         HitTestRequest::Type::AllowChildFrameContent
     };
     HitTestResult result(m_mouseLocationInContentCoordinates);
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
-    if (!localMainFrame)
+    RefPtr localTopDocument = page->localTopDocument();
+    if (!localTopDocument)
         return std::nullopt;
 
-    localMainFrame->document()->hitTest(hitType, result);
+    localTopDocument->hitTest(hitType, result);
 
     RefPtr hitNode = result.innerNode();
     if (!hitNode || !hitNode->renderer())
@@ -372,7 +373,7 @@ std::optional<InteractionRegion> InteractionRegionOverlay::activeRegion() const
     IntRect hitRectInOverlayCoordinates;
     float hitRegionArea = 0;
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    RefPtr localMainFrame = page->localMainFrame();
     if (!localMainFrame)
         return std::nullopt;
 
@@ -610,7 +611,7 @@ bool InteractionRegionOverlay::mouseEvent(PageOverlay& overlay, const PlatformMo
     RefPtr page = m_page.get();
     if (!page)
         return false;
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    RefPtr localMainFrame = page->localMainFrame();
     if (!localMainFrame)
         return false;
     RefPtr mainFrameView = localMainFrame->view();

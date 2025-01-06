@@ -10,16 +10,22 @@
 
 #include "rtc_base/ssl_stream_adapter.h"
 
-#include "absl/memory/memory.h"
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
 #include "rtc_base/openssl_stream_adapter.h"
-
-///////////////////////////////////////////////////////////////////////////////
+#include "rtc_base/ssl_identity.h"
+#include "rtc_base/stream.h"
 
 namespace rtc {
 
-// TODO(guoweis): Move this to SDP layer and use int form internally.
-// webrtc:5043.
+// Deprecated, prefer SrtpCryptoSuiteToName.
 const char kCsAesCm128HmacSha1_80[] = "AES_CM_128_HMAC_SHA1_80";
 const char kCsAesCm128HmacSha1_32[] = "AES_CM_128_HMAC_SHA1_32";
 const char kCsAeadAes128Gcm[] = "AEAD_AES_128_GCM";
@@ -27,29 +33,17 @@ const char kCsAeadAes256Gcm[] = "AEAD_AES_256_GCM";
 
 std::string SrtpCryptoSuiteToName(int crypto_suite) {
   switch (crypto_suite) {
-    case kSrtpAes128CmSha1_32:
-      return kCsAesCm128HmacSha1_32;
     case kSrtpAes128CmSha1_80:
-      return kCsAesCm128HmacSha1_80;
+      return "AES_CM_128_HMAC_SHA1_80";
+    case kSrtpAes128CmSha1_32:
+      return "AES_CM_128_HMAC_SHA1_32";
     case kSrtpAeadAes128Gcm:
-      return kCsAeadAes128Gcm;
+      return "AEAD_AES_128_GCM";
     case kSrtpAeadAes256Gcm:
-      return kCsAeadAes256Gcm;
+      return "AEAD_AES_256_GCM";
     default:
       return std::string();
   }
-}
-
-int SrtpCryptoSuiteFromName(absl::string_view crypto_suite) {
-  if (crypto_suite == kCsAesCm128HmacSha1_32)
-    return kSrtpAes128CmSha1_32;
-  if (crypto_suite == kCsAesCm128HmacSha1_80)
-    return kSrtpAes128CmSha1_80;
-  if (crypto_suite == kCsAeadAes128Gcm)
-    return kSrtpAeadAes128Gcm;
-  if (crypto_suite == kCsAeadAes256Gcm)
-    return kSrtpAeadAes256Gcm;
-  return kSrtpInvalidCryptoSuite;
 }
 
 bool GetSrtpKeyAndSaltLengths(int crypto_suite,
@@ -86,37 +80,11 @@ bool IsGcmCryptoSuite(int crypto_suite) {
           crypto_suite == kSrtpAeadAes128Gcm);
 }
 
-bool IsGcmCryptoSuiteName(absl::string_view crypto_suite) {
-  return (crypto_suite == kCsAeadAes256Gcm || crypto_suite == kCsAeadAes128Gcm);
-}
-
 std::unique_ptr<SSLStreamAdapter> SSLStreamAdapter::Create(
     std::unique_ptr<StreamInterface> stream,
     absl::AnyInvocable<void(SSLHandshakeError)> handshake_error) {
   return std::make_unique<OpenSSLStreamAdapter>(std::move(stream),
                                                 std::move(handshake_error));
-}
-
-bool SSLStreamAdapter::GetSslCipherSuite(int* cipher_suite) {
-  return false;
-}
-
-bool SSLStreamAdapter::ExportKeyingMaterial(absl::string_view label,
-                                            const uint8_t* context,
-                                            size_t context_len,
-                                            bool use_context,
-                                            uint8_t* result,
-                                            size_t result_len) {
-  return false;  // Default is unsupported
-}
-
-bool SSLStreamAdapter::SetDtlsSrtpCryptoSuites(
-    const std::vector<int>& crypto_suites) {
-  return false;
-}
-
-bool SSLStreamAdapter::GetDtlsSrtpCryptoSuite(int* crypto_suite) {
-  return false;
 }
 
 bool SSLStreamAdapter::IsBoringSsl() {
@@ -128,9 +96,6 @@ bool SSLStreamAdapter::IsAcceptableCipher(int cipher, KeyType key_type) {
 bool SSLStreamAdapter::IsAcceptableCipher(absl::string_view cipher,
                                           KeyType key_type) {
   return OpenSSLStreamAdapter::IsAcceptableCipher(cipher, key_type);
-}
-std::string SSLStreamAdapter::SslCipherSuiteToName(int cipher_suite) {
-  return OpenSSLStreamAdapter::SslCipherSuiteToName(cipher_suite);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -27,8 +27,11 @@
 #include "PathStream.h"
 
 #include "GeometryUtilities.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PathStream);
 
 Ref<PathStream> PathStream::create()
 {
@@ -77,6 +80,18 @@ PathStream::PathStream(const Vector<PathSegment>& segments)
 PathStream::PathStream(PathSegment&& segment)
     : m_segments({ WTFMove(segment) })
 {
+}
+
+bool PathStream::definitelyEqual(const PathImpl& other) const
+{
+    RefPtr otherAsPathStream = dynamicDowncast<PathStream>(other);
+    if (!otherAsPathStream)
+        return false;
+
+    if (otherAsPathStream.get() == this)
+        return true;
+
+    return segments() == otherAsPathStream->segments();
 }
 
 Ref<PathImpl> PathStream::copy() const
@@ -219,6 +234,16 @@ std::optional<DataType> PathStream::singleDataType() const
 std::optional<PathDataLine> PathStream::singleDataLine() const
 {
     return singleDataType<PathDataLine>();
+}
+
+std::optional<PathRect> PathStream::singleRect() const
+{
+    return singleDataType<PathRect>();
+}
+
+std::optional<PathRoundedRect> PathStream::singleRoundedRect() const
+{
+    return singleDataType<PathRoundedRect>();
 }
 
 std::optional<PathArc> PathStream::singleArc() const

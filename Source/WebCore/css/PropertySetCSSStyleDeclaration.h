@@ -44,11 +44,14 @@ class StyleSheetContents;
 class StyledElement;
 
 class PropertySetCSSStyleDeclaration : public CSSStyleDeclaration {
-    WTF_MAKE_ISO_ALLOCATED(PropertySetCSSStyleDeclaration);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PropertySetCSSStyleDeclaration);
 public:
     explicit PropertySetCSSStyleDeclaration(MutableStyleProperties& propertySet)
         : m_propertySet(&propertySet)
     { }
+
+    void ref() const override;
+    void deref() const override;
 
     StyleSheetContents* contextStyleSheet() const;
 
@@ -58,12 +61,9 @@ protected:
     virtual CSSParserContext cssParserContext() const;
 
     MutableStyleProperties* m_propertySet;
-    HashMap<CSSValue*, WeakPtr<DeprecatedCSSOMValue>> m_cssomValueWrappers;
+    UncheckedKeyHashMap<CSSValue*, WeakPtr<DeprecatedCSSOMValue>> m_cssomValueWrappers;
 
 private:
-    void ref() override;
-    void deref() override;
-
     CSSRule* parentRule() const override { return nullptr; }
     // FIXME: To implement.
     CSSRule* cssRules() const override { return nullptr; }
@@ -79,7 +79,7 @@ private:
     String cssText() const final;
     ExceptionOr<void> setCssText(const String&) final;
     String getPropertyValueInternal(CSSPropertyID) final;
-    ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, bool important) final;
+    ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant) final;
     
     Ref<MutableStyleProperties> copyProperties() const final;
     bool isExposed(CSSPropertyID) const;
@@ -91,8 +91,11 @@ private:
 };
 
 class StyleRuleCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration, public RefCounted<StyleRuleCSSStyleDeclaration> {
-    WTF_MAKE_ISO_ALLOCATED(StyleRuleCSSStyleDeclaration);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StyleRuleCSSStyleDeclaration);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<StyleRuleCSSStyleDeclaration> create(MutableStyleProperties& propertySet, CSSRule& parentRule)
     {
         return adoptRef(*new StyleRuleCSSStyleDeclaration(propertySet, parentRule));
@@ -100,9 +103,6 @@ public:
     virtual ~StyleRuleCSSStyleDeclaration();
 
     void clearParentRule() { m_parentRule = nullptr; }
-
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
 
     void reattach(MutableStyleProperties&);
 
@@ -122,7 +122,7 @@ private:
 };
 
 class InlineCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration {
-    WTF_MAKE_ISO_ALLOCATED(InlineCSSStyleDeclaration);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InlineCSSStyleDeclaration);
 public:
     InlineCSSStyleDeclaration(MutableStyleProperties& propertySet, StyledElement& parentElement)
         : PropertySetCSSStyleDeclaration(propertySet)

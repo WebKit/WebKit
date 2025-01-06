@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.createIndex() - returns an IDBIndex and the properties are set correctly
-

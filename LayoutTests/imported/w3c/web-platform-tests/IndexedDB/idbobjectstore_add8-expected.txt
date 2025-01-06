@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.add() - object store has autoIncrement:true and the key path is an object attribute
-

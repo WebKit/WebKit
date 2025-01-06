@@ -1,3 +1,0 @@
-This tests that we won't crash if a full-frame plugin returns an error from its NPP_NewStream callback
-SUCCESS - Didn't crash
-

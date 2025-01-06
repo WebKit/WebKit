@@ -13,8 +13,8 @@
 #include <algorithm>
 #include <memory>
 #include <numeric>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
@@ -142,7 +142,7 @@ void FullBandErleEstimator::ErleInstantaneous::Reset() {
 }
 
 void FullBandErleEstimator::ErleInstantaneous::ResetAccumulators() {
-  erle_log2_ = absl::nullopt;
+  erle_log2_ = std::nullopt;
   inst_quality_estimate_ = 0.f;
   num_points_ = 0;
   E2_acum_ = 0.f;

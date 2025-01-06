@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -130,7 +130,7 @@ static void integral_images_highbd(const uint16_t *src, int src_stride,
 
 // Compute 4 values of boxsum from the given integral image. ii should point
 // at the middle of the box (for the first value). r is the box radius.
-static INLINE __m128i boxsum_from_ii(const int32_t *ii, int stride, int r) {
+static inline __m128i boxsum_from_ii(const int32_t *ii, int stride, int r) {
   const __m128i tl = xx_loadu_128(ii - (r + 1) - (r + 1) * stride);
   const __m128i tr = xx_loadu_128(ii + (r + 0) - (r + 1) * stride);
   const __m128i bl = xx_loadu_128(ii - (r + 1) + r * stride);
@@ -256,7 +256,7 @@ static void calc_ab(int32_t *A, int32_t *B, const int32_t *C, const int32_t *D,
 // cross_sum = 4 * fours + 3 * threes
 //           = 4 * (fours + threes) - threes
 //           = (fours + threes) << 2 - threes
-static INLINE __m128i cross_sum(const int32_t *buf, int stride) {
+static inline __m128i cross_sum(const int32_t *buf, int stride) {
   const __m128i xtl = xx_loadu_128(buf - 1 - stride);
   const __m128i xt = xx_loadu_128(buf - stride);
   const __m128i xtr = xx_loadu_128(buf + 1 - stride);
@@ -398,7 +398,7 @@ static void calc_ab_fast(int32_t *A, int32_t *B, const int32_t *C,
 // cross_sum = 6 * sixes + 5 * fives
 //           = 5 * (fives + sixes) - sixes
 //           = (fives + sixes) << 2 + (fives + sixes) + sixes
-static INLINE __m128i cross_sum_fast_even_row(const int32_t *buf, int stride) {
+static inline __m128i cross_sum_fast_even_row(const int32_t *buf, int stride) {
   const __m128i xtl = xx_loadu_128(buf - 1 - stride);
   const __m128i xt = xx_loadu_128(buf - stride);
   const __m128i xtr = xx_loadu_128(buf + 1 - stride);
@@ -431,7 +431,7 @@ static INLINE __m128i cross_sum_fast_even_row(const int32_t *buf, int stride) {
 // cross_sum = 5 * fives + 6 * sixes
 //           = 4 * (fives + sixes) + (fives + sixes) + sixes
 //           = (fives + sixes) << 2 + (fives + sixes) + sixes
-static INLINE __m128i cross_sum_fast_odd_row(const int32_t *buf) {
+static inline __m128i cross_sum_fast_odd_row(const int32_t *buf) {
   const __m128i xl = xx_loadu_128(buf - 1);
   const __m128i x = xx_loadu_128(buf);
   const __m128i xr = xx_loadu_128(buf + 1);
@@ -582,18 +582,17 @@ int av1_selfguided_restoration_sse4_1(const uint8_t *dgd8, int width,
   return 0;
 }
 
-void av1_apply_selfguided_restoration_sse4_1(const uint8_t *dat8, int width,
-                                             int height, int stride, int eps,
-                                             const int *xqd, uint8_t *dst8,
-                                             int dst_stride, int32_t *tmpbuf,
-                                             int bit_depth, int highbd) {
+int av1_apply_selfguided_restoration_sse4_1(const uint8_t *dat8, int width,
+                                            int height, int stride, int eps,
+                                            const int *xqd, uint8_t *dst8,
+                                            int dst_stride, int32_t *tmpbuf,
+                                            int bit_depth, int highbd) {
   int32_t *flt0 = tmpbuf;
   int32_t *flt1 = flt0 + RESTORATION_UNITPELS_MAX;
   assert(width * height <= RESTORATION_UNITPELS_MAX);
   const int ret = av1_selfguided_restoration_sse4_1(
       dat8, width, height, stride, flt0, flt1, width, eps, bit_depth, highbd);
-  (void)ret;
-  assert(!ret);
+  if (ret != 0) return ret;
   const sgr_params_type *const params = &av1_sgr_params[eps];
   int xq[2];
   av1_decode_xq(xqd, xq, params);
@@ -659,4 +658,5 @@ void av1_apply_selfguided_restoration_sse4_1(const uint8_t *dat8, int width,
       }
     }
   }
+  return 0;
 }

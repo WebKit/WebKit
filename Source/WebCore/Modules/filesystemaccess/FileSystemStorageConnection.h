@@ -28,6 +28,8 @@
 #include "FileHandle.h"
 #include "FileSystemHandleIdentifier.h"
 #include "FileSystemSyncAccessHandleIdentifier.h"
+#include "FileSystemWriteCloseReason.h"
+#include "FileSystemWriteCommandType.h"
 #include "ProcessQualified.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include <wtf/CompletionHandler.h>
@@ -77,6 +79,9 @@ public:
     virtual void registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, ScriptExecutionContextIdentifier) = 0;
     virtual void unregisterSyncAccessHandle(FileSystemSyncAccessHandleIdentifier) = 0;
     virtual void invalidateAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier) = 0;
+    virtual void createWritable(FileSystemHandleIdentifier, bool keepExistingData, VoidCallback&&) = 0;
+    virtual void closeWritable(FileSystemHandleIdentifier, FileSystemWriteCloseReason, VoidCallback&&) = 0;
+    virtual void executeCommandForWritable(FileSystemHandleIdentifier, FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, VoidCallback&&) = 0;
     virtual void getHandleNames(FileSystemHandleIdentifier, GetHandleNamesCallback&&) = 0;
     virtual void getHandle(FileSystemHandleIdentifier, const String& name, GetHandleCallback&&) = 0;
 };

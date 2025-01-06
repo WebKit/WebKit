@@ -411,6 +411,7 @@ ARM64_INSTRUCTIONS =
      "pcrtoaddr",   # Address from PC relative offset - adr instruction
      "globaladdr",
      "notq",
+     "loadqinc",
      "loadlinkacqb",
      "loadlinkacqh",
      "loadlinkacqi",

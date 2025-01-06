@@ -66,7 +66,9 @@ CString currentExecutablePath()
     ssize_t result = readlink("/proc/self/exe", readLinkBuffer, PATH_MAX);
     if (result == -1)
         return { };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Linux port
     return CString({ readLinkBuffer, static_cast<size_t>(result) });
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 #elif OS(HURD)
 CString currentExecutablePath()
@@ -115,6 +117,22 @@ String userDataDirectory()
 {
     return stringFromFileSystemRepresentation(g_get_user_data_dir());
 }
+
+#if ENABLE(DEVELOPER_MODE)
+CString webkitTopLevelDirectory()
+{
+    if (const char* topLevelDirectory = g_getenv("WEBKIT_TOP_LEVEL")) {
+        if (g_file_test(topLevelDirectory, G_FILE_TEST_IS_DIR))
+            return topLevelDirectory;
+    }
+    // The tooling to run tests should provide the above environment variable with
+    // the right value, but if that was not the case, then do an attempt to guess
+    // it assuming that we were built in the standard WebKitBuild subdirectory.
+    GUniquePtr<char*> parentPath(g_strsplit(currentExecutablePath().data(), "/WebKitBuild", -1));
+    GUniquePtr<char> absoluteTopLevelPath(realpath(parentPath.get()[0], nullptr));
+    return absoluteTopLevelPath.get();
+}
+#endif
 
 } // namespace FileSystemImpl
 } // namespace WTF

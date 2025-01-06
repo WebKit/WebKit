@@ -4,7 +4,7 @@
 
 import("//third_party/OpenCL-CTS/gn/angle_ocl_cts.gni")
 
-ocl_cts_binary("cl_ext_cxx_for_opencl") {
+ocl_cts_source_set("cl_ext_cxx_for_opencl") {
   include_dirs = [ "$angle_root/third_party/OpenCL-CTS/src/test_conformance/extensions/cl_ext_cxx_for_opencl" ]
   sources = [
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/extensions/cl_ext_cxx_for_opencl/cxx_for_opencl_ext.cpp",

@@ -10,16 +10,23 @@
 
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
 
+#include <cstdint>
+#include <memory>
+
 #include "absl/memory/memory.h"
+#include "api/candidate.h"
+#include "api/rtc_event_log/rtc_event.h"
 
 namespace webrtc {
 
-IceCandidatePairDescription::IceCandidatePairDescription() {
-  local_candidate_type = IceCandidateType::kUnknown;
+IceCandidatePairDescription::IceCandidatePairDescription(
+    IceCandidateType local_candidate_type,
+    IceCandidateType remote_candidate_type)
+    : local_candidate_type(local_candidate_type),
+      remote_candidate_type(remote_candidate_type) {
   local_relay_protocol = IceCandidatePairProtocol::kUnknown;
   local_network_type = IceCandidateNetworkType::kUnknown;
   local_address_family = IceCandidatePairAddressFamily::kUnknown;
-  remote_candidate_type = IceCandidateType::kUnknown;
   remote_address_family = IceCandidatePairAddressFamily::kUnknown;
   candidate_pair_protocol = IceCandidatePairProtocol::kUnknown;
 }

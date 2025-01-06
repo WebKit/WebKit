@@ -12,8 +12,8 @@
 #define MODULES_DESKTOP_CAPTURE_LINUX_WAYLAND_SHARED_SCREENCAST_STREAM_H_
 
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/ref_counted_base.h"
 #include "api/scoped_refptr.h"
 #include "modules/desktop_capture/desktop_capturer.h"
@@ -35,6 +35,9 @@ class RTC_EXPORT SharedScreenCastStream
     virtual void OnCursorShapeChanged() = 0;
     virtual void OnDesktopFrameChanged() = 0;
     virtual void OnFailedToProcessBuffer() = 0;
+    virtual void OnBufferCorruptedMetadata() = 0;
+    virtual void OnBufferCorruptedData() = 0;
+    virtual void OnEmptyBuffer() = 0;
     virtual void OnStreamConfigured() = 0;
     virtual void OnFrameRateChanged(uint32_t frame_rate) = 0;
 
@@ -78,7 +81,7 @@ class RTC_EXPORT SharedScreenCastStream
 
   // Returns the most recent mouse cursor position. Will not return a value in
   // case we didn't manage to get it from PipeWire buffer.
-  absl::optional<DesktopVector> CaptureCursorPosition();
+  std::optional<DesktopVector> CaptureCursorPosition();
 
   ~SharedScreenCastStream();
 

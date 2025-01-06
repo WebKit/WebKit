@@ -29,11 +29,11 @@
 #include "RenderBoxFragmentInfo.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderFragmentedFlow.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFragmentContainerSet);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderFragmentContainerSet);
 
 RenderFragmentContainerSet::RenderFragmentContainerSet(Type type, Document& document, RenderStyle&& style, RenderFragmentedFlow& fragmentedFlow)
     : RenderFragmentContainer(type, document, WTFMove(style), &fragmentedFlow)

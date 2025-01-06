@@ -31,10 +31,12 @@
 #import <WebCore/FidoConstants.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace fido;
 
+#if HAVE(SECURITY_KEY_API)
 // FIXME(191518)
 static void reportReceived(void* context, IOReturn status, void*, IOHIDReportType type, uint32_t reportID, uint8_t* report, CFIndex reportLength)
 {
@@ -51,7 +53,13 @@ static void reportReceived(void* context, IOReturn status, void*, IOHIDReportTyp
     ASSERT(reportID == kHidReportId);
     ASSERT(reportLength == kHidMaxPacketSize);
 
-    connection->receiveReport(std::span { report, static_cast<size_t>(reportLength) });
+    connection->receiveReport(unsafeMakeSpan(report, reportLength));
+}
+#endif // HAVE(SECURITY_KEY_API)
+
+Ref<HidConnection> HidConnection::create(IOHIDDeviceRef device)
+{
+    return adoptRef(*new HidConnection(device));
 }
 
 HidConnection::HidConnection(IOHIDDeviceRef device)
@@ -66,23 +74,28 @@ HidConnection::~HidConnection()
 
 void HidConnection::initialize()
 {
+#if HAVE(SECURITY_KEY_API)
     IOHIDDeviceOpen(m_device.get(), kIOHIDOptionsTypeSeizeDevice);
     IOHIDDeviceScheduleWithRunLoop(m_device.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     m_inputBuffer.resize(kHidMaxPacketSize);
     IOHIDDeviceRegisterInputReportCallback(m_device.get(), m_inputBuffer.data(), m_inputBuffer.size(), &reportReceived, this);
+#endif
     m_isInitialized = true;
 }
 
 void HidConnection::terminate()
 {
+#if HAVE(SECURITY_KEY_API)
     IOHIDDeviceRegisterInputReportCallback(m_device.get(), m_inputBuffer.data(), m_inputBuffer.size(), nullptr, nullptr);
     IOHIDDeviceUnscheduleFromRunLoop(m_device.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     IOHIDDeviceClose(m_device.get(), kIOHIDOptionsTypeNone);
+#endif
     m_isInitialized = false;
 }
 
 auto HidConnection::sendSync(const Vector<uint8_t>& data) -> DataSent
 {
+#if HAVE(SECURITY_KEY_API)
     ASSERT(m_isInitialized);
     auto status = IOHIDDeviceSetReport(m_device.get(), kIOHIDReportTypeOutput, kHidReportId, data.data(), data.size());
     if (status) {
@@ -90,6 +103,9 @@ auto HidConnection::sendSync(const Vector<uint8_t>& data) -> DataSent
         return DataSent::No;
     }
     return DataSent::Yes;
+#else
+    return DataSent::No;
+#endif
 }
 
 void HidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
@@ -98,12 +114,16 @@ void HidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
     auto task = makeBlockPtr([device = m_device, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
 
+#if HAVE(SECURITY_KEY_API)
         DataSent sent = DataSent::Yes;
         auto status = IOHIDDeviceSetReport(device.get(), kIOHIDReportTypeOutput, kHidReportId, data.data(), data.size());
         if (status) {
             LOG_ERROR("Couldn't send report to the authenticator: %d", status);
             sent = DataSent::No;
         }
+#else
+        DataSent sent = DataSent::No;
+#endif
         RunLoop::main().dispatch([callback = WTFMove(callback), sent]() mutable {
             callback(sent);
         });
@@ -144,4 +164,3 @@ void HidConnection::registerDataReceivedCallbackInternal()
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)
-

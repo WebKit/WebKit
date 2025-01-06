@@ -14,10 +14,12 @@
 #include <stdint.h>
 
 #include "api/video_codecs/video_codec.h"
+#include "rtc_base/system/rtc_export.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 
-class SimulcastUtility {
+class RTC_EXPORT SimulcastUtility {
  public:
   static uint32_t SumStreamMaxBitrate(int streams, const VideoCodec& codec);
   static int NumberOfSimulcastStreams(const VideoCodec& codec);
@@ -26,6 +28,8 @@ class SimulcastUtility {
   static int NumberOfTemporalLayers(const VideoCodec& codec, int spatial_id);
   // TODO(sprang): Remove this hack when ScreenshareLayers is gone.
   static bool IsConferenceModeScreenshare(const VideoCodec& codec);
+  static bool IsConferenceModeScreenshare(
+      const VideoEncoderConfig& encoder_config);
 };
 
 }  // namespace webrtc

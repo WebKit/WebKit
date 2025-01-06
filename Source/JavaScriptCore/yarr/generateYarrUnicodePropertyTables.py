@@ -27,7 +27,6 @@
 # canonicalization table as decribed in ECMAScript 6 standard in section
 # "21.2.2.8.2 Runtime Semantics: Canonicalize()", step 2.
 
-import sys
 import copy
 import optparse
 import os
@@ -99,10 +98,7 @@ aliases = None
 
 def openOrExit(path, mode):
     try:
-        if sys.version_info.major >= 3:
-            return open(path, mode, encoding="UTF-8")
-        else:
-            return open(path, mode)
+        return open(path, mode, encoding="UTF-8")
     except IOError as e:
         print("I/O error opening {0}, ({1}): {2}".format(path, e.errno, e.strerror))
         exit(1)

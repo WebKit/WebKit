@@ -11,13 +11,13 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/units/time_delta.h"
 #include "net/dcsctp/common/internal_types.h"
-#include "net/dcsctp/common/str_join.h"
 #include "net/dcsctp/packet/chunk/reconfig_chunk.h"
 #include "net/dcsctp/packet/parameter/add_incoming_streams_request_parameter.h"
 #include "net/dcsctp/packet/parameter/add_outgoing_streams_request_parameter.h"
@@ -35,9 +35,11 @@
 #include "net/dcsctp/timer/timer.h"
 #include "net/dcsctp/tx/retransmission_queue.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/str_join.h"
 
 namespace dcsctp {
 namespace {
+using ::webrtc::TimeDelta;
 using ResponseResult = ReconfigurationResponseParameter::Result;
 
 bool DescriptorsAre(const std::vector<ParameterDescriptor>& c,
@@ -82,10 +84,10 @@ bool StreamResetHandler::Validate(const ReConfigChunk& chunk) {
   return false;
 }
 
-absl::optional<std::vector<ReconfigurationResponseParameter>>
+std::optional<std::vector<ReconfigurationResponseParameter>>
 StreamResetHandler::Process(const ReConfigChunk& chunk) {
   if (!Validate(chunk)) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   std::vector<ReconfigurationResponseParameter> responses;
@@ -110,7 +112,7 @@ StreamResetHandler::Process(const ReConfigChunk& chunk) {
 }
 
 void StreamResetHandler::HandleReConfig(ReConfigChunk chunk) {
-  absl::optional<std::vector<ReconfigurationResponseParameter>> responses =
+  std::optional<std::vector<ReconfigurationResponseParameter>> responses =
       Process(chunk);
 
   if (!responses.has_value()) {
@@ -166,7 +168,7 @@ bool StreamResetHandler::ValidateReqSeqNbr(
 void StreamResetHandler::HandleResetOutgoing(
     const ParameterDescriptor& descriptor,
     std::vector<ReconfigurationResponseParameter>& responses) {
-  absl::optional<OutgoingSSNResetRequestParameter> req =
+  std::optional<OutgoingSSNResetRequestParameter> req =
       OutgoingSSNResetRequestParameter::Parse(descriptor.data);
   if (!req.has_value()) {
     ctx_->callbacks().OnError(ErrorKind::kParseFailed,
@@ -220,7 +222,7 @@ void StreamResetHandler::HandleResetOutgoing(
 void StreamResetHandler::HandleResetIncoming(
     const ParameterDescriptor& descriptor,
     std::vector<ReconfigurationResponseParameter>& responses) {
-  absl::optional<IncomingSSNResetRequestParameter> req =
+  std::optional<IncomingSSNResetRequestParameter> req =
       IncomingSSNResetRequestParameter::Parse(descriptor.data);
   if (!req.has_value()) {
     ctx_->callbacks().OnError(ErrorKind::kParseFailed,
@@ -240,7 +242,7 @@ void StreamResetHandler::HandleResetIncoming(
 }
 
 void StreamResetHandler::HandleResponse(const ParameterDescriptor& descriptor) {
-  absl::optional<ReconfigurationResponseParameter> resp =
+  std::optional<ReconfigurationResponseParameter> resp =
       ReconfigurationResponseParameter::Parse(descriptor.data);
   if (!resp.has_value()) {
     ctx_->callbacks().OnError(
@@ -259,22 +261,22 @@ void StreamResetHandler::HandleResponse(const ParameterDescriptor& descriptor) {
         RTC_DLOG(LS_VERBOSE)
             << log_prefix_ << "Reset stream success, req_seq_nbr="
             << *current_request_->req_seq_nbr() << ", streams="
-            << StrJoin(current_request_->streams(), ",",
-                       [](rtc::StringBuilder& sb, StreamID stream_id) {
-                         sb << *stream_id;
-                       });
+            << webrtc::StrJoin(current_request_->streams(), ",",
+                               [](rtc::StringBuilder& sb, StreamID stream_id) {
+                                 sb << *stream_id;
+                               });
         ctx_->callbacks().OnStreamsResetPerformed(current_request_->streams());
-        current_request_ = absl::nullopt;
+        current_request_ = std::nullopt;
         retransmission_queue_->CommitResetStreams();
         break;
       case ResponseResult::kInProgress:
         RTC_DLOG(LS_VERBOSE)
             << log_prefix_ << "Reset stream still pending, req_seq_nbr="
             << *current_request_->req_seq_nbr() << ", streams="
-            << StrJoin(current_request_->streams(), ",",
-                       [](rtc::StringBuilder& sb, StreamID stream_id) {
-                         sb << *stream_id;
-                       });
+            << webrtc::StrJoin(current_request_->streams(), ",",
+                               [](rtc::StringBuilder& sb, StreamID stream_id) {
+                                 sb << *stream_id;
+                               });
         // Force this request to be sent again, but with new req_seq_nbr.
         current_request_->PrepareRetransmission();
         reconfig_timer_->set_duration(ctx_->current_rto());
@@ -288,26 +290,26 @@ void StreamResetHandler::HandleResponse(const ParameterDescriptor& descriptor) {
             << log_prefix_ << "Reset stream error=" << ToString(resp->result())
             << ", req_seq_nbr=" << *current_request_->req_seq_nbr()
             << ", streams="
-            << StrJoin(current_request_->streams(), ",",
-                       [](rtc::StringBuilder& sb, StreamID stream_id) {
-                         sb << *stream_id;
-                       });
+            << webrtc::StrJoin(current_request_->streams(), ",",
+                               [](rtc::StringBuilder& sb, StreamID stream_id) {
+                                 sb << *stream_id;
+                               });
         ctx_->callbacks().OnStreamsResetFailed(current_request_->streams(),
                                                ToString(resp->result()));
-        current_request_ = absl::nullopt;
+        current_request_ = std::nullopt;
         retransmission_queue_->RollbackResetStreams();
         break;
     }
   }
 }
 
-absl::optional<ReConfigChunk> StreamResetHandler::MakeStreamResetRequest() {
+std::optional<ReConfigChunk> StreamResetHandler::MakeStreamResetRequest() {
   // Only send stream resets if there are streams to reset, and no current
   // ongoing request (there can only be one at a time), and if the stream
   // can be reset.
   if (current_request_.has_value() ||
       !retransmission_queue_->HasStreamsReadyToBeReset()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   current_request_.emplace(retransmission_queue_->last_assigned_tsn(),
@@ -347,13 +349,13 @@ void StreamResetHandler::ResetStreams(
   }
 }
 
-absl::optional<DurationMs> StreamResetHandler::OnReconfigTimerExpiry() {
+TimeDelta StreamResetHandler::OnReconfigTimerExpiry() {
   if (current_request_->has_been_sent()) {
     // There is an outstanding request, which timed out while waiting for a
     // response.
     if (!ctx_->IncrementTxErrorCounter("RECONFIG timeout")) {
       // Timed out. The connection will close after processing the timers.
-      return absl::nullopt;
+      return TimeDelta::Zero();
     }
   } else {
     // There is no outstanding request, but there is a prepared one. This means

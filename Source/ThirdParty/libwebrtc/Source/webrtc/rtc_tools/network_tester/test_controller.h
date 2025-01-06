@@ -16,25 +16,24 @@
 
 #include <array>
 #include <memory>
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "api/sequence_checker.h"
 #include "p2p/base/basic_packet_socket_factory.h"
 #include "rtc_base/async_packet_socket.h"
-#include "rtc_base/ignore_wundef.h"
+#include "rtc_base/network/received_packet.h"
 #include "rtc_base/socket_address.h"
+#include "rtc_base/socket_server.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/no_unique_address.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
+#include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_tools/network_tester/packet_logger.h"
 #include "rtc_tools/network_tester/packet_sender.h"
 
 #ifdef WEBRTC_NETWORK_TESTER_PROTO
-RTC_PUSH_IGNORING_WUNDEF()
 #include "rtc_tools/network_tester/network_tester_packet.pb.h"
-RTC_POP_IGNORING_WUNDEF()
 using webrtc::network_tester::packet::NetworkTesterPacket;
 #else
 class NetworkTesterPacket;
@@ -44,13 +43,13 @@ namespace webrtc {
 
 constexpr size_t kEthernetMtu = 1500;
 
-class TestController : public sigslot::has_slots<> {
+class TestController {
  public:
   TestController(int min_port,
                  int max_port,
                  const std::string& config_file_path,
                  const std::string& log_file_path);
-  ~TestController() override;
+  ~TestController();
 
   TestController(const TestController&) = delete;
   TestController& operator=(const TestController&) = delete;
@@ -58,7 +57,7 @@ class TestController : public sigslot::has_slots<> {
   void SendConnectTo(const std::string& hostname, int port);
 
   void SendData(const NetworkTesterPacket& packet,
-                absl::optional<size_t> data_size);
+                std::optional<size_t> data_size);
 
   void OnTestDone();
 
@@ -66,10 +65,7 @@ class TestController : public sigslot::has_slots<> {
 
  private:
   void OnReadPacket(rtc::AsyncPacketSocket* socket,
-                    const char* data,
-                    size_t len,
-                    const rtc::SocketAddress& remote_addr,
-                    const int64_t& packet_time_us);
+                    const rtc::ReceivedPacket& received_packet);
   RTC_NO_UNIQUE_ADDRESS SequenceChecker test_controller_thread_checker_;
   std::unique_ptr<rtc::SocketServer> socket_server_;
   std::unique_ptr<rtc::Thread> packet_sender_thread_;

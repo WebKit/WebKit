@@ -30,9 +30,12 @@
 #include "ColorSerialization.h"
 #include <cmath>
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Color);
 
 static constexpr auto lightenedBlack = SRGBA<uint8_t> { 84, 84, 84 };
 static constexpr auto darkenedWhite = SRGBA<uint8_t> { 171, 171, 171 };
@@ -170,9 +173,7 @@ double Color::lightness() const
 
 double Color::luminance() const
 {
-    return callOnUnderlyingType([&] (const auto& underlyingColor) {
-        return WebCore::relativeLuminance(underlyingColor);
-    });
+    return WebCore::relativeLuminance(*this);
 }
 
 bool Color::anyComponentIsNone() const

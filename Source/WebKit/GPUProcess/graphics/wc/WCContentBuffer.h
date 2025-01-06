@@ -31,11 +31,12 @@
 #include "WCContentBufferManager.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/TextureMapperPlatformLayer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 class WCContentBuffer final : WebCore::TextureMapperPlatformLayer::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WCContentBuffer);
 public:
     class Client {
     public:

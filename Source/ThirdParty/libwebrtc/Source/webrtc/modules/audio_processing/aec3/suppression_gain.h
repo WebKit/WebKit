@@ -14,9 +14,9 @@
 #include <array>
 #include <atomic>
 #include <memory>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
@@ -70,7 +70,7 @@ class SuppressionGain {
       rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> echo_spectrum,
       rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
           comfort_noise_spectrum,
-      const absl::optional<int>& narrow_peak_band,
+      const std::optional<int>& narrow_peak_band,
       bool saturated_echo,
       const Block& render,
       const std::array<float, kFftLengthBy2Plus1>& low_band_gain) const;

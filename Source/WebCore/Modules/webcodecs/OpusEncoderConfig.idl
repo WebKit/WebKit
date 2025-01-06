@@ -28,9 +28,10 @@ typedef [EnforceRange] unsigned long WebCodecsAudioOpusEncoderConfigParameter;
 typedef [EnforceRange] unsigned long long WebCodecsAudioOpusEncoderConfigFrameDuration;
 
 [
- Conditional=WEB_CODECS,
- JSGenerateToJSObject,
- ] dictionary OpusEncoderConfig {
+    Conditional=WEB_CODECS,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject
+] dictionary OpusEncoderConfig {
     OpusBitstreamFormat format = "opus";
     WebCodecsAudioOpusEncoderConfigFrameDuration frameDuration = 20000;
     WebCodecsAudioOpusEncoderConfigParameter complexity;

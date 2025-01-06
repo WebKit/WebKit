@@ -141,26 +141,26 @@ public:
     // when placing a URL in an if statment.
     operator bool() const = delete;
 
-    const String& string() const { return m_string; }
+    const String& string() const LIFETIME_BOUND { return m_string; }
     WTF_EXPORT_PRIVATE String stringCenterEllipsizedToLength(unsigned length = 1024) const;
 
     // Unlike user() and password(), encodedUser() and encodedPassword() don't decode escape sequences.
     // This is necessary for accurate round-tripping, because encoding doesn't encode '%' characters.
 
-    WTF_EXPORT_PRIVATE StringView protocol() const;
-    WTF_EXPORT_PRIVATE StringView encodedUser() const;
-    WTF_EXPORT_PRIVATE StringView encodedPassword() const;
-    WTF_EXPORT_PRIVATE StringView host() const;
+    WTF_EXPORT_PRIVATE StringView protocol() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView encodedUser() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView encodedPassword() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView host() const LIFETIME_BOUND;
     WTF_EXPORT_PRIVATE std::optional<uint16_t> port() const;
-    WTF_EXPORT_PRIVATE StringView path() const;
-    WTF_EXPORT_PRIVATE StringView lastPathComponent() const;
-    WTF_EXPORT_PRIVATE StringView query() const;
-    WTF_EXPORT_PRIVATE StringView fragmentIdentifier() const;
+    WTF_EXPORT_PRIVATE StringView path() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView lastPathComponent() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView query() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView fragmentIdentifier() const LIFETIME_BOUND;
 
-    WTF_EXPORT_PRIVATE StringView queryWithLeadingQuestionMark() const;
-    WTF_EXPORT_PRIVATE StringView fragmentIdentifierWithLeadingNumberSign() const;
-    WTF_EXPORT_PRIVATE StringView viewWithoutQueryOrFragmentIdentifier() const;
-    WTF_EXPORT_PRIVATE StringView viewWithoutFragmentIdentifier() const;
+    WTF_EXPORT_PRIVATE StringView queryWithLeadingQuestionMark() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView fragmentIdentifierWithLeadingNumberSign() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView viewWithoutQueryOrFragmentIdentifier() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView viewWithoutFragmentIdentifier() const LIFETIME_BOUND;
     WTF_EXPORT_PRIVATE String stringWithoutFragmentIdentifier() const;
 
     WTF_EXPORT_PRIVATE String protocolHostAndPort() const;
@@ -221,6 +221,7 @@ public:
     WTF_EXPORT_PRIVATE void removeQueryAndFragmentIdentifier();
 
     WTF_EXPORT_PRIVATE static bool hostIsIPAddress(StringView);
+    WTF_EXPORT_PRIVATE static bool isIPv6Address(StringView);
 
     WTF_EXPORT_PRIVATE unsigned pathStart() const;
     unsigned pathEnd() const;

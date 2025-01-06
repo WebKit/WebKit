@@ -24,7 +24,7 @@ import shlex
 import subprocess
 import sys
 
-jhbuild_revision = '388cbc7a5a79566534441702c7f599973a05f3c9'
+jhbuild_revision = 'ab7ea13059856e8fcce1bea26f91ffd3a0724852'
 
 def determine_platform():
     if '--gtk' in sys.argv:

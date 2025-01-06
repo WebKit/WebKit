@@ -7,18 +7,28 @@
 
 #include "modules/svg/include/SkSVGRenderContext.h"
 
+#include "include/core/SkBlendMode.h"
 #include "include/core/SkCanvas.h"
+#include "include/core/SkColor.h"
 #include "include/core/SkImageFilter.h"
+#include "include/core/SkPaint.h"
 #include "include/core/SkPath.h"
 #include "include/core/SkPathEffect.h"
+#include "include/core/SkString.h"
 #include "include/effects/SkDashPathEffect.h"
-#include "include/private/base/SkTo.h"
+#include "include/private/base/SkDebug.h"
+#include "include/private/base/SkSpan_impl.h"
+#include "include/private/base/SkTArray.h"
+#include "include/private/base/SkTPin.h"
 #include "modules/svg/include/SkSVGAttribute.h"
 #include "modules/svg/include/SkSVGClipPath.h"
 #include "modules/svg/include/SkSVGFilter.h"
 #include "modules/svg/include/SkSVGMask.h"
 #include "modules/svg/include/SkSVGNode.h"
 #include "modules/svg/include/SkSVGTypes.h"
+
+#include <cstring>
+#include <vector>
 
 using namespace skia_private;
 
@@ -70,7 +80,7 @@ SkScalar SkSVGLengthContext::resolve(const SkSVGLength& l, LengthType t) const {
     case SkSVGLength::Unit::kPC:
         return l.value() * fDPI * kPCMultiplier;
     default:
-        SkDebugf("unsupported unit type: <%d>\n", (int)l.unit());
+        SkDEBUGF("unsupported unit type: <%d>\n", (int)l.unit());
         return 0;
     }
 }
@@ -200,7 +210,7 @@ SkSVGRenderContext::~SkSVGRenderContext() {
 
 SkSVGRenderContext::BorrowedNode SkSVGRenderContext::findNodeById(const SkSVGIRI& iri) const {
     if (iri.type() != SkSVGIRI::Type::kLocal) {
-        SkDebugf("non-local iri references not currently supported");
+        SkDEBUGF("non-local iri references not currently supported");
         return BorrowedNode(nullptr);
     }
     return BorrowedNode(fIDMapper.find(iri.iri()));
@@ -483,7 +493,7 @@ SkSVGColorType SkSVGRenderContext::resolveSvgColor(const SkSVGColor& color) cons
         case SkSVGColor::Type::kCurrentColor:
             return *fPresentationContext->fInherited.fColor;
         case SkSVGColor::Type::kICCColor:
-            SkDebugf("ICC color unimplemented");
+            SkDEBUGF("ICC color unimplemented");
             return SK_ColorBLACK;
     }
     SkUNREACHABLE;

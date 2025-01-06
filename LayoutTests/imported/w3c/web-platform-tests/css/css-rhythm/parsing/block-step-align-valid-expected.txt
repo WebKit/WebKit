@@ -1,0 +1,6 @@
+
+PASS e.style['block-step-align'] = "auto" should set the property value
+PASS e.style['block-step-align'] = "center" should set the property value
+PASS e.style['block-step-align'] = "start" should set the property value
+PASS e.style['block-step-align'] = "end" should set the property value
+

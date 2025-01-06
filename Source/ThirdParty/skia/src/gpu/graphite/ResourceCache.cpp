@@ -15,7 +15,7 @@
 #include "src/gpu/graphite/ProxyCache.h"
 #include "src/gpu/graphite/Resource.h"
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 #include "src/gpu/graphite/Texture.h"
 #endif
 
@@ -62,7 +62,7 @@ void ResourceCache::shutdown() {
 
     this->processReturnedResources();
 
-    while (fNonpurgeableResources.size()) {
+    while (!fNonpurgeableResources.empty()) {
         Resource* back = *(fNonpurgeableResources.end() - 1);
         SkASSERT(!back->wasDestroyed());
         this->removeFromNonpurgeableArray(back);
@@ -307,6 +307,7 @@ void ResourceCache::returnResourceToCache(Resource* resource, LastRemovedRef rem
             SkASSERT(fResourceMap.find(resource->key()));
         } else {
             SkDEBUGCODE(resource->fNonShareableInCache = true;)
+            resource->setLabel("Scratch");
             fResourceMap.insert(resource->key(), resource);
             if (resource->budgeted() == skgpu::Budgeted::kNo) {
                 resource->makeBudgeted();
@@ -341,6 +342,7 @@ void ResourceCache::returnResourceToCache(Resource* resource, LastRemovedRef rem
     } else {
         resource->updateAccessTime();
         fPurgeableQueue.insert(resource);
+        fPurgeableBytes += resource->gpuMemorySize();
     }
     this->validate();
 }
@@ -365,6 +367,7 @@ void ResourceCache::removeFromNonpurgeableArray(Resource* resource) {
 
 void ResourceCache::removeFromPurgeableQueue(Resource* resource) {
     fPurgeableQueue.remove(resource);
+    fPurgeableBytes -= resource->gpuMemorySize();
     // SkTDPQueue will set the index back to -1 in debug builds, but we are using the index as a
     // flag for whether the Resource has been purged from the cache or not. So we need to make sure
     // it always gets set.
@@ -456,7 +459,7 @@ void ResourceCache::purgeResources(const StdSteadyClock::time_point* purgeTime) 
     fPurgeableQueue.sort();
 
     // Make a list of the scratch resources to delete
-    SkTDArray<Resource*> nonZeroSizedResources;
+    SkTDArray<Resource*> resourcesToPurge;
     for (int i = 0; i < fPurgeableQueue.count(); i++) {
         Resource* resource = fPurgeableQueue.at(i);
 
@@ -466,15 +469,13 @@ void ResourceCache::purgeResources(const StdSteadyClock::time_point* purgeTime) 
             break;
         }
         SkASSERT(resource->isPurgeable());
-        if (resource->gpuMemorySize() > 0) {
-            *nonZeroSizedResources.append() = resource;
-        }
+        *resourcesToPurge.append() = resource;
     }
 
     // Delete the scratch resources. This must be done as a separate pass
     // to avoid messing up the sorted order of the queue
-    for (int i = 0; i < nonZeroSizedResources.size(); i++) {
-        this->purgeResource(nonZeroSizedResources[i]);
+    for (int i = 0; i < resourcesToPurge.size(); i++) {
+        this->purgeResource(resourcesToPurge[i]);
     }
 
     // Since we called process returned resources at the start of this call, we could still end up
@@ -556,12 +557,25 @@ void ResourceCache::setResourceTimestamp(Resource* resource, uint32_t timestamp)
 }
 
 void ResourceCache::dumpMemoryStatistics(SkTraceMemoryDump* traceMemoryDump) const {
+    ASSERT_SINGLE_OWNER
+
+    // There is no need to process the return queue here. Resources in the queue are still in
+    // either the purgeable queue or the nonpurgeable resources list (likely to be moved to the
+    // purgeable queue). However, the Resource's own ref counts are used to report its purgeable
+    // state to the memory dump, which is accurate without draining the return queue.
+
     for (int i = 0; i < fNonpurgeableResources.size(); ++i) {
         fNonpurgeableResources[i]->dumpMemoryStatistics(traceMemoryDump);
     }
     for (int i = 0; i < fPurgeableQueue.count(); ++i) {
         fPurgeableQueue.at(i)->dumpMemoryStatistics(traceMemoryDump);
     }
+}
+
+void ResourceCache::setMaxBudget(size_t bytes) {
+    fMaxBytes = bytes;
+    this->processReturnedResources();
+    this->purgeAsNeeded();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -595,11 +609,14 @@ void ResourceCache::validate() const {
         int fShareable;
         int fScratch;
         size_t fBudgetedBytes;
+        size_t fPurgeableBytes;
         const ResourceMap* fResourceMap;
+        const PurgeableQueue* fPurgeableQueue;
 
         Stats(const ResourceCache* cache) {
             memset(this, 0, sizeof(*this));
             fResourceMap = &cache->fResourceMap;
+            fPurgeableQueue = &cache->fPurgeableQueue;
         }
 
         void update(Resource* resource) {
@@ -641,6 +658,12 @@ void ResourceCache::validate() const {
                 SkASSERT(resource->timestamp() == kMaxTimestamp);
             } else {
                 SkASSERT(resource->timestamp() < kMaxTimestamp);
+            }
+
+            int index = *resource->accessCacheIndex();
+            if (index < fPurgeableQueue->count() && fPurgeableQueue->at(index) == resource) {
+                SkASSERT(resource->isPurgeable());
+                fPurgeableBytes += resource->gpuMemorySize();
             }
         }
     };
@@ -692,6 +715,7 @@ void ResourceCache::validate() const {
 
     SkASSERT((stats.fScratch + stats.fShareable) == fResourceMap.count());
     SkASSERT(stats.fBudgetedBytes == fBudgetedBytes);
+    SkASSERT(stats.fPurgeableBytes == fPurgeableBytes);
 }
 
 bool ResourceCache::isInCache(const Resource* resource) const {
@@ -711,16 +735,10 @@ bool ResourceCache::isInCache(const Resource* resource) const {
 
 #endif // SK_DEBUG
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 int ResourceCache::numFindableResources() const {
     return fResourceMap.count();
-}
-
-void ResourceCache::setMaxBudget(size_t bytes) {
-    fMaxBytes = bytes;
-    this->processReturnedResources();
-    this->purgeAsNeeded();
 }
 
 Resource* ResourceCache::topOfPurgeableQueue() {
@@ -744,6 +762,6 @@ void ResourceCache::visitTextures(
     }
 }
 
-#endif // defined(GRAPHITE_TEST_UTILS)
+#endif // defined(GPU_TEST_UTILS)
 
 } // namespace skgpu::graphite

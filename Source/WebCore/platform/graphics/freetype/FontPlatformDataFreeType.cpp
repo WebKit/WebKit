@@ -359,4 +359,16 @@ FontPlatformData::Attributes FontPlatformData::attributes() const
     return Attributes(m_size, m_orientation, m_widthVariant, m_textRenderingMode, m_syntheticBold, m_syntheticOblique);
 }
 
+std::optional<FontPlatformData> FontPlatformData::fromIPCData(float, FontOrientation&&, FontWidthVariant&&, TextRenderingMode&&, bool, bool, IPCData&&)
+{
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+FontPlatformData::IPCData FontPlatformData::toIPCData() const
+{
+    ASSERT_NOT_REACHED();
+    return FontPlatformSerializedData { };
+}
+
 } // namespace WebCore

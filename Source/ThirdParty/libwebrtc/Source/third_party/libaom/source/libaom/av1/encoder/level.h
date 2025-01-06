@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -166,7 +166,7 @@ typedef struct AV1LevelParams {
   AV1LevelInfo *level_info[MAX_NUM_OPERATING_POINTS];
 } AV1LevelParams;
 
-static INLINE int is_in_operating_point(int operating_point,
+static inline int is_in_operating_point(int operating_point,
                                         int temporal_layer_id,
                                         int spatial_layer_id) {
   if (!operating_point) return 1;
@@ -188,16 +188,6 @@ aom_codec_err_t av1_get_seq_level_idx(const SequenceHeader *seq_params,
 aom_codec_err_t av1_get_target_seq_level_idx(const SequenceHeader *seq_params,
                                              const AV1LevelParams *level_params,
                                              int *target_seq_level_idx);
-
-// Print the status of the decoder model(for debugging).
-void av1_decoder_model_print_status(const DECODER_MODEL *const decoder_model);
-
-void av1_decoder_model_init(const struct AV1_COMP *const cpi, AV1_LEVEL level,
-                            int op_index, DECODER_MODEL *const decoder_model);
-
-void av1_decoder_model_process_frame(const struct AV1_COMP *const cpi,
-                                     size_t coded_bits,
-                                     DECODER_MODEL *const decoder_model);
 
 // This function uses the decoder model to check whether there could be
 // SMOOTHING_BUFFER_UNDERFLOW or SMOOTHING_BUFFER_OVERFLOW. It does not

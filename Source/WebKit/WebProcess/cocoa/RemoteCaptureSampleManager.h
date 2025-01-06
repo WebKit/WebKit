@@ -39,8 +39,10 @@
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
@@ -49,13 +51,19 @@ enum class VideoFrameRotation : uint16_t;
 }
 
 namespace WebKit {
+
 class RemoteVideoFrameObjectHeapProxy;
+class UserMediaCaptureManager;
 
 class RemoteCaptureSampleManager : public IPC::WorkQueueMessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteCaptureSampleManager);
 public:
-    RemoteCaptureSampleManager();
+    explicit RemoteCaptureSampleManager(UserMediaCaptureManager&);
     ~RemoteCaptureSampleManager();
+
+    void ref() const;
+    void deref() const;
+
     void stopListeningForIPC();
 
     void addSource(Ref<RemoteRealtimeAudioSource>&&);
@@ -79,7 +87,7 @@ private:
     void setConnection(RefPtr<IPC::Connection>&&);
 
     class RemoteAudio {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(RemoteAudio);
     public:
         explicit RemoteAudio(Ref<RemoteRealtimeAudioSource>&&);
         ~RemoteAudio();
@@ -103,6 +111,7 @@ private:
         std::atomic<bool> m_shouldStopThread { false };
     };
 
+    CheckedRef<UserMediaCaptureManager> m_manager;
     bool m_isRegisteredToParentProcessConnection { false };
     Ref<WorkQueue> m_queue;
     RefPtr<IPC::Connection> m_connection;

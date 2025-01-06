@@ -35,13 +35,14 @@
 #include "StreamConnectionWorkQueue.h"
 #include "WCScene.h"
 #include "WCUpdateInfo.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 IPC::StreamConnectionWorkQueue& remoteGraphicsStreamWorkQueue()
 {
 #if ENABLE(WEBGL)
-    return remoteGraphicsContextGLStreamWorkQueue();
+    return remoteGraphicsContextGLStreamWorkQueueSingleton();
 #else
     static LazyNeverDestroyed<IPC::StreamConnectionWorkQueue> instance;
     static std::once_flag onceKey;
@@ -52,9 +53,11 @@ IPC::StreamConnectionWorkQueue& remoteGraphicsStreamWorkQueue()
 #endif
 }
 
-std::unique_ptr<RemoteWCLayerTreeHost> RemoteWCLayerTreeHost::create(GPUConnectionToWebProcess& connectionToWebProcess, WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteWCLayerTreeHost);
+
+Ref<RemoteWCLayerTreeHost> RemoteWCLayerTreeHost::create(GPUConnectionToWebProcess& connectionToWebProcess, WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering)
 {
-    return makeUnique<RemoteWCLayerTreeHost>(connectionToWebProcess, identifier, nativeWindow, usesOffscreenRendering);
+    return adoptRef(*new RemoteWCLayerTreeHost(connectionToWebProcess, identifier, nativeWindow, usesOffscreenRendering));
 }
 
 RemoteWCLayerTreeHost::RemoteWCLayerTreeHost(GPUConnectionToWebProcess& connectionToWebProcess, WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering)

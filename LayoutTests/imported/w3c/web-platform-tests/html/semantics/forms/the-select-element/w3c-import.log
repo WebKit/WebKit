@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection-add.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection-namedItem.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection.html
@@ -34,8 +35,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-value.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-willvalidate-readonly-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/selected-index.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-cross-origin-iframe.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-disabled.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-multiple.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-size.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-user-gesture.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-being-cv-hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-being-rendered.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-cross-origin-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-disabled.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-size.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-user-gesture.html

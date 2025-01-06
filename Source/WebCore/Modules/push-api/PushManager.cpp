@@ -39,13 +39,13 @@
 #include "PushSubscriptionOwner.h"
 #include "ScriptExecutionContext.h"
 #include "ServiceWorkerRegistration.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PushManager);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PushManager);
 
 PushManager::PushManager(PushSubscriptionOwner& pushSubscriptionOwner)
     : m_pushSubscriptionOwner(pushSubscriptionOwner)

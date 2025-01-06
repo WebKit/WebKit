@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: RangeError: Maximum call stack size exceeded.
-
-Harness Error (FAIL), message = RangeError: Maximum call stack size exceeded.
 
 PASS replaceState inside a navigate event for navigation.back()
 

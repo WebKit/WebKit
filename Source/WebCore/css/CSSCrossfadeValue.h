@@ -49,7 +49,7 @@ public:
     String customCSSText() const;
     bool isPrefixed() const { return m_isPrefixed; }
 
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
+    RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
     {

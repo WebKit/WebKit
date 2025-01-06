@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -19,7 +19,7 @@
 #include "aom_dsp/x86/synonyms.h"
 #include "aom_dsp/x86/synonyms_avx2.h"
 
-static INLINE void sse_w32_avx2(__m256i *sum, const uint8_t *a,
+static inline void sse_w32_avx2(__m256i *sum, const uint8_t *a,
                                 const uint8_t *b) {
   const __m256i v_a0 = yy_loadu_256(a);
   const __m256i v_b0 = yy_loadu_256(b);
@@ -34,7 +34,7 @@ static INLINE void sse_w32_avx2(__m256i *sum, const uint8_t *a,
   *sum = _mm256_add_epi32(*sum, _mm256_madd_epi16(v_d01_w, v_d01_w));
 }
 
-static INLINE int64_t summary_all_avx2(const __m256i *sum_all) {
+static inline int64_t summary_all_avx2(const __m256i *sum_all) {
   int64_t sum;
   __m256i zero = _mm256_setzero_si256();
   const __m256i sum0_4x64 = _mm256_unpacklo_epi32(*sum_all, zero);
@@ -48,7 +48,7 @@ static INLINE int64_t summary_all_avx2(const __m256i *sum_all) {
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE void summary_32_avx2(const __m256i *sum32, __m256i *sum) {
+static inline void summary_32_avx2(const __m256i *sum32, __m256i *sum) {
   const __m256i sum0_4x64 =
       _mm256_cvtepu32_epi64(_mm256_castsi256_si128(*sum32));
   const __m256i sum1_4x64 =
@@ -57,7 +57,7 @@ static INLINE void summary_32_avx2(const __m256i *sum32, __m256i *sum) {
   *sum = _mm256_add_epi64(*sum, sum_4x64);
 }
 
-static INLINE int64_t summary_4x64_avx2(const __m256i sum_4x64) {
+static inline int64_t summary_4x64_avx2(const __m256i sum_4x64) {
   int64_t sum;
   const __m128i sum_2x64 = _mm_add_epi64(_mm256_castsi256_si128(sum_4x64),
                                          _mm256_extracti128_si256(sum_4x64, 1));
@@ -68,7 +68,7 @@ static INLINE int64_t summary_4x64_avx2(const __m256i sum_4x64) {
 }
 #endif
 
-static INLINE void sse_w4x4_avx2(const uint8_t *a, int a_stride,
+static inline void sse_w4x4_avx2(const uint8_t *a, int a_stride,
                                  const uint8_t *b, int b_stride, __m256i *sum) {
   const __m128i v_a0 = xx_loadl_32(a);
   const __m128i v_a1 = xx_loadl_32(a + a_stride);
@@ -88,7 +88,7 @@ static INLINE void sse_w4x4_avx2(const uint8_t *a, int a_stride,
   *sum = _mm256_add_epi32(*sum, _mm256_madd_epi16(v_d_w, v_d_w));
 }
 
-static INLINE void sse_w8x2_avx2(const uint8_t *a, int a_stride,
+static inline void sse_w8x2_avx2(const uint8_t *a, int a_stride,
                                  const uint8_t *b, int b_stride, __m256i *sum) {
   const __m128i v_a0 = xx_loadl_64(a);
   const __m128i v_a1 = xx_loadl_64(a + a_stride);
@@ -218,7 +218,7 @@ int64_t aom_sse_avx2(const uint8_t *a, int a_stride, const uint8_t *b,
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE void highbd_sse_w16_avx2(__m256i *sum, const uint16_t *a,
+static inline void highbd_sse_w16_avx2(__m256i *sum, const uint16_t *a,
                                        const uint16_t *b) {
   const __m256i v_a_w = yy_loadu_256(a);
   const __m256i v_b_w = yy_loadu_256(b);
@@ -226,7 +226,7 @@ static INLINE void highbd_sse_w16_avx2(__m256i *sum, const uint16_t *a,
   *sum = _mm256_add_epi32(*sum, _mm256_madd_epi16(v_d_w, v_d_w));
 }
 
-static INLINE void highbd_sse_w4x4_avx2(__m256i *sum, const uint16_t *a,
+static inline void highbd_sse_w4x4_avx2(__m256i *sum, const uint16_t *a,
                                         int a_stride, const uint16_t *b,
                                         int b_stride) {
   const __m128i v_a0 = xx_loadl_64(a);
@@ -245,7 +245,7 @@ static INLINE void highbd_sse_w4x4_avx2(__m256i *sum, const uint16_t *a,
   *sum = _mm256_add_epi32(*sum, _mm256_madd_epi16(v_d_w, v_d_w));
 }
 
-static INLINE void highbd_sse_w8x2_avx2(__m256i *sum, const uint16_t *a,
+static inline void highbd_sse_w8x2_avx2(__m256i *sum, const uint16_t *a,
                                         int a_stride, const uint16_t *b,
                                         int b_stride) {
   const __m256i v_a_w = yy_loadu2_128(a + a_stride, a);

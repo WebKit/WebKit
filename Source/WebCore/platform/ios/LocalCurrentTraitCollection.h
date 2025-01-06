@@ -48,6 +48,8 @@ private:
     RetainPtr<UITraitCollection> m_savedTraitCollection;
 };
 
+WEBCORE_EXPORT UITraitCollection *traitCollectionWithAdjustedIdiomForSystemColors(UITraitCollection *);
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

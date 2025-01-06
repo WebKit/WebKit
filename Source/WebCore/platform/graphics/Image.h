@@ -37,7 +37,7 @@
 #include "ImageTypes.h"
 #include "NativeImage.h"
 #include "Timer.h"
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TypeCasts.h>
@@ -56,7 +56,7 @@ struct Length;
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
 class ImageObserver;
 
-class Image : public RefCounted<Image>, public CanMakeWeakPtr<Image> {
+class Image : public RefCountedAndCanMakeWeakPtr<Image> {
     friend class CachedSubimage;
     friend class GraphicsContext;
 public:
@@ -160,6 +160,10 @@ public:
 #endif
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     virtual bool shouldUseQuickLookForFullscreen() const { return false; }
+#endif
+
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    virtual bool isSpatial() const { return false; }
 #endif
 
     virtual void dump(WTF::TextStream&) const;

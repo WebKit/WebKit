@@ -31,6 +31,7 @@
 #include "IntRect.h"
 #include "SimpleRange.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakRef.h>
 
@@ -56,7 +57,8 @@ struct PromisedAttachmentInfo;
 struct RemoteUserInputEventData;
 
 class DragController {
-    WTF_MAKE_NONCOPYABLE(DragController); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DragController);
+    WTF_MAKE_NONCOPYABLE(DragController);
 public:
     DragController(Page&, std::unique_ptr<DragClient>&&);
     ~DragController();
@@ -87,7 +89,7 @@ public:
     OptionSet<DragDestinationAction> dragDestinationActionMask() const { return m_dragDestinationActionMask; }
     OptionSet<DragSourceAction> delegateDragSourceAction(const IntPoint& rootViewPoint);
 
-    Element* draggableElement(const LocalFrame*, Element* start, const IntPoint&, DragState&) const;
+    RefPtr<Element> draggableElement(const LocalFrame*, Element* start, const IntPoint&, DragState&) const;
     WEBCORE_EXPORT void dragEnded();
 
     WEBCORE_EXPORT void placeDragCaret(const IntPoint&);
@@ -149,7 +151,7 @@ private:
     void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
     Ref<Page> protectedPage() const;
 
-    SingleThreadWeakRef<Page> m_page;
+    WeakRef<Page> m_page;
     std::unique_ptr<DragClient> m_client;
 
     RefPtr<Document> m_documentUnderMouse; // The document the mouse was last dragged over.

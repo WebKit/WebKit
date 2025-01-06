@@ -29,7 +29,8 @@
 #include "FlexFormattingUtils.h"
 #include "FlexLayout.h"
 #include "FlexRect.h"
-#include <wtf/IsoMalloc.h>
+#include "LayoutIntegrationUtils.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Layout {
@@ -37,7 +38,7 @@ namespace Layout {
 // This class implements the layout logic for flex formatting contexts.
 // https://www.w3.org/TR/css-flexbox-1/
 class FlexFormattingContext {
-    WTF_MAKE_ISO_ALLOCATED(FlexFormattingContext);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FlexFormattingContext);
 public:
     FlexFormattingContext(const ElementBox& flexBox, LayoutState&);
 
@@ -50,19 +51,20 @@ public:
     const BoxGeometry& geometryForFlexItem(const Box&) const;
     BoxGeometry& geometryForFlexItem(const Box&);
 
-    const LayoutState& layoutState() const { return m_layoutState; }
-    LayoutState& layoutState() { return m_layoutState; }
+    const IntegrationUtils& integrationUtils() const { return m_integrationUtils; }
 
 private:
     FlexLayout::LogicalFlexItems convertFlexItemsToLogicalSpace(const ConstraintsForFlexContent&);
     void setFlexItemsGeometry(const FlexLayout::LogicalFlexItems&, const FlexLayout::LogicalFlexItemRects&, const ConstraintsForFlexContent&);
+    void positionOutOfFlowChildren();
 
     std::optional<LayoutUnit> computedAutoMarginValueForFlexItems(const ConstraintsForFlexContent&);
 
 private:
     const ElementBox& m_flexBox;
-    LayoutState& m_layoutState;
+    LayoutState& m_globalLayoutState;
     const FlexFormattingUtils m_flexFormattingUtils;
+    const IntegrationUtils m_integrationUtils;
 };
 
 }

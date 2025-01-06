@@ -11,8 +11,4 @@ layer at (8,48) size 82x22 clip at (9,49) size 80x20 scrollWidth 242
   RenderBlock {DIV} at (0,40) size 82x22 [border: (1px solid #000000)]
     RenderText {#text} at (1,1) size 240x19
       text run at (1,1) width 240: "012345678901234567890123456789"
-layer at (8,48) size 8x20
-  RenderBlock (positioned) {SPAN} at (8,48) size 8x20
-    RenderText {#text} at (0,0) size 8x19
-      text run at (0,0) width 8: "0"
 caret: position 0 of child 0 {#text} of child 5 {DIV} of body

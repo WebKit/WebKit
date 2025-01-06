@@ -32,7 +32,8 @@ namespace WebCore {
 class SVGLegacyAnimatedProperty;
 
 class SVGAnimateElement final : public SVGAnimateElementBase {
-    WTF_MAKE_ISO_ALLOCATED(SVGAnimateElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGAnimateElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAnimateElement);
 public:
     static Ref<SVGAnimateElement> create(const QualifiedName&, Document&);
 

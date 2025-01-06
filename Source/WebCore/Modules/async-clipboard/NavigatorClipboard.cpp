@@ -29,8 +29,11 @@
 #include "Clipboard.h"
 #include "Navigator.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorClipboard);
 
 NavigatorClipboard::NavigatorClipboard(Navigator& navigator)
     : m_navigator(navigator)
@@ -47,7 +50,7 @@ RefPtr<Clipboard> NavigatorClipboard::clipboard(Navigator& navigator)
 RefPtr<Clipboard> NavigatorClipboard::clipboard()
 {
     if (!m_clipboard)
-        m_clipboard = Clipboard::create(m_navigator);
+        m_clipboard = Clipboard::create(Ref { m_navigator.get() });
     return m_clipboard;
 }
 

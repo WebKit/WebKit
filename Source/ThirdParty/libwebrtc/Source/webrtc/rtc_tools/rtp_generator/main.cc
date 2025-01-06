@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  absl::optional<webrtc::RtpGeneratorOptions> options =
+  std::optional<webrtc::RtpGeneratorOptions> options =
       webrtc::ParseRtpGeneratorOptionsFromFile(config_path);
   if (!options.has_value()) {
     return EXIT_FAILURE;

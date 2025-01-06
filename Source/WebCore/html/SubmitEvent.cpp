@@ -28,11 +28,11 @@
 
 #include "EventNames.h"
 #include "HTMLElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SubmitEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SubmitEvent);
 
 Ref<SubmitEvent> SubmitEvent::create(const AtomString& type, Init&& init)
 {

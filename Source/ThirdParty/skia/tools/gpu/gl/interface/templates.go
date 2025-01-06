@@ -15,8 +15,14 @@ const ASSEMBLE_INTERFACE_GL_ES = `/*
  * be overwritten.
  */
 
-#include "include/gpu/gl/GrGLAssembleHelpers.h"
-#include "include/gpu/gl/GrGLAssembleInterface.h"
+#include "include/core/SkRefCnt.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleHelpers.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleInterface.h"
+#include "include/gpu/ganesh/gl/GrGLExtensions.h"
+#include "include/gpu/ganesh/gl/GrGLFunctions.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
+#include "src/gpu/ganesh/gl/GrGLDefines.h"
 #include "src/gpu/ganesh/gl/GrGLUtil.h"
 
 #define GET_PROC(F) functions->f##F = (GrGL##F##Fn*)get(ctx, "gl" #F)
@@ -92,8 +98,14 @@ const ASSEMBLE_INTERFACE_GL = `/*
  * be overwritten.
  */
 
-#include "include/gpu/gl/GrGLAssembleHelpers.h"
-#include "include/gpu/gl/GrGLAssembleInterface.h"
+#include "include/core/SkRefCnt.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleHelpers.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleInterface.h"
+#include "include/gpu/ganesh/gl/GrGLExtensions.h"
+#include "include/gpu/ganesh/gl/GrGLFunctions.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
+#include "src/gpu/ganesh/gl/GrGLDefines.h"
 #include "src/gpu/ganesh/gl/GrGLUtil.h"
 
 #define GET_PROC(F) functions->f##F = (GrGL##F##Fn*)get(ctx, "gl" #F)
@@ -158,25 +170,27 @@ const ASSEMBLE_INTERFACE_WEBGL = `/*
  * Make edits to tools/gpu/gl/interface/templates.go or they will
  * be overwritten.
  */
-
-#include "include/gpu/gl/GrGLAssembleHelpers.h"
-#include "include/gpu/gl/GrGLAssembleInterface.h"
-#include "src/gpu/ganesh/gl/GrGLUtil.h"
+#include "include/core/SkRefCnt.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleInterface.h"
 
 #if SK_DISABLE_WEBGL_INTERFACE || !defined(__EMSCRIPTEN__)
+struct GrGLInterface;
 sk_sp<const GrGLInterface> GrGLMakeAssembledWebGLInterface(void *ctx, GrGLGetProc get) {
     return nullptr;
 }
 #else
 
-// Located https://github.com/emscripten-core/emscripten/tree/7ba7700902c46734987585409502f3c63beb650f/system/include/GLES3
-#define GL_GLEXT_PROTOTYPES
-#include <GLES3/gl32.h>
-#include <GLES3/gl2ext.h>
+#include "include/gpu/ganesh/gl/GrGLAssembleHelpers.h"
+#include "src/gpu/ganesh/gl/GrGLUtil.h"
+
+// Located https://github.com/emscripten-core/emscripten/tree/7ba7700902c46734987585409502f3c63beb650f/system/include/webgl
+#include <webgl/webgl1.h>
+#include <webgl/webgl1_ext.h>
+#include <webgl/webgl2.h>
 #include <webgl/webgl2_ext.h>
 
-#define GET_PROC(F) functions->f##F = gl##F
-#define GET_PROC_SUFFIX(F, S) functions->f##F = gl##F##S
+#define GET_PROC(F) functions->f##F = emscripten_gl##F
+#define GET_PROC_SUFFIX(F, S) functions->f##F = emscripten_gl##F##S
 
 sk_sp<const GrGLInterface> GrGLMakeAssembledWebGLInterface(void *ctx, GrGLGetProc get) {
     const char* verStr = reinterpret_cast<const char*>(glGetString(GR_GL_VERSION));
@@ -216,11 +230,14 @@ const VALIDATE_INTERFACE = `/*
  * be overwritten.
  */
 
-#include "include/gpu/gl/GrGLExtensions.h"
-#include "include/gpu/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLConfig.h"
+#include "include/gpu/ganesh/gl/GrGLExtensions.h"
+#include "include/gpu/ganesh/gl/GrGLFunctions.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
+#include "include/private/base/SkDebug.h"
+#include "src/gpu/ganesh/gl/GrGLDefines.h"
 #include "src/gpu/ganesh/gl/GrGLUtil.h"
-
-#include <stdio.h>
 
 GrGLInterface::GrGLInterface() {
     fStandard = kNone_GrGLStandard;
@@ -298,11 +315,11 @@ bool GrGLInterface::validate() const {
     return true;
 }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 void GrGLInterface::abandon() const {
     const_cast<GrGLInterface*>(this)->fFunctions = GrGLInterface::Functions();
 }
 
-#endif // defined(GR_TEST_UTILS)
+#endif // defined(GPU_TEST_UTILS)
 `

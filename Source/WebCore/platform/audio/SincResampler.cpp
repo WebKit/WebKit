@@ -36,6 +36,8 @@
 #include "AudioUtilities.h"
 #include <wtf/Algorithms.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/ParsingUtilities.h>
 
 #if USE(ACCELERATE)
 #include <Accelerate/Accelerate.h>
@@ -116,6 +118,8 @@
 // note: we're glossing over how the sub-sample handling works with m_virtualSourceIndex, etc.
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SincResampler);
 
 constexpr unsigned kernelSize { 32 };
 constexpr unsigned numberOfKernelOffsets { 32 };
@@ -209,20 +213,19 @@ void SincResampler::processBuffer(std::span<const float> source, std::span<float
         size_t framesToCopy = std::min(source.size(), framesToProcess);
 
         IGNORE_WARNINGS_BEGIN("restrict")
-        memcpySpan(buffer.first(framesToCopy), source.first(framesToCopy));
+        memcpySpan(buffer, source.first(framesToCopy));
         IGNORE_WARNINGS_END
 
         // Zero-pad if necessary.
         if (framesToCopy < framesToProcess)
-            memsetSpan(buffer.subspan(framesToCopy, framesToProcess - framesToCopy), 0);
+            zeroSpan(buffer.subspan(framesToCopy, framesToProcess - framesToCopy));
 
-        source = source.subspan(framesToCopy);
+        skip(source, framesToCopy);
     });
 
     while (!destination.empty()) {
         unsigned framesThisTime = std::min<size_t>(destination.size(), AudioUtilities::renderQuantumSize);
-        resampler.process(destination, framesThisTime);
-        destination = destination.subspan(framesThisTime);
+        resampler.process(consumeSpan(destination, framesThisTime), framesThisTime);
     }
 }
 
@@ -278,7 +281,7 @@ void SincResampler::process(std::span<float> destination, size_t framesToProcess
 
         // Step (3) Copy r3 to r1.
         // This wraps the last input frames back to the start of the buffer.
-        memcpySpan(m_r1.first(kernelSize), m_r3.first(kernelSize));
+        memcpySpan(m_r1, m_r3.first(kernelSize));
 
         // Step (4) -- Reinitialize regions if necessary.
         if (m_r0.data() == m_r2.data())
@@ -290,7 +293,9 @@ void SincResampler::process(std::span<float> destination, size_t framesToProcess
     }
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 float SincResampler::convolve(const float* inputP, const float* k1, const float* k2, float kernelInterpolationFactor)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 {
 #if USE(ACCELERATE)
     float sum1;

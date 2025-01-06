@@ -83,7 +83,7 @@ class OSXSafariDriver(OSXBrowserDriver):
             process = subprocess.Popen(
                 ['/usr/sbin/lsof', '-a', '-p', str(self._safari_process.pid), '+D', browser_build_absolute_path],
                 stdout=subprocess.PIPE,
-                **(dict(encoding='utf-8') if sys.version_info >= (3, 6) else dict())
+                encoding='utf-8',
             )
             output = process.communicate()[0]
             if has_safari_binary:

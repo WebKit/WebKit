@@ -9,6 +9,9 @@
  */
 #include "api/transport/field_trial_based_config.h"
 
+#include <string>
+
+#include "absl/strings/string_view.h"
 #include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {

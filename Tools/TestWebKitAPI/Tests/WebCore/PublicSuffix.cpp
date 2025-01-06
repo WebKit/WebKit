@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -184,6 +184,39 @@ TEST_F(PublicSuffix, TopPrivatelyControlledDomain)
     EXPECT_EQ(String::fromUTF8("ÅÄÖ"), publicSuffixStore.topPrivatelyControlledDomain(String::fromUTF8("ÅÄÖ")));
     EXPECT_EQ(String("test.com"_s), publicSuffixStore.topPrivatelyControlledDomain(".test.com"_s));
     EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomain("...."_s));
+}
+
+TEST_F(PublicSuffix, topPrivatelyControlledDomainWithoutPublicSuffix)
+{
+    auto& publicSuffixStore = PublicSuffixStore::singleton();
+    EXPECT_EQ(String(utf16String(u"example")), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(utf16String(u"example.\u6803\u6728.jp")));
+    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(String()));
+    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(""_s));
+    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("test.com"_s));
+    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("com.test.com"_s));
+    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("subdomain.test.com"_s));
+    EXPECT_EQ(String("com"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("www.com.com"_s));
+    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("test.co.uk"_s));
+    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("subdomain.test.co.uk"_s));
+    EXPECT_EQ(String("bl"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("bl.uk"_s));
+    EXPECT_EQ(String("bl"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("subdomain.bl.uk"_s));
+    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("test.xn--zf0ao64a.tw"_s));
+    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("www.test.xn--zf0ao64a.tw"_s));
+    EXPECT_EQ(String("127.0.0.1"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("127.0.0.1"_s));
+    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("1"_s));
+    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("com"_s));
+    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("r4---asdf.test.com"_s));
+    EXPECT_EQ(String("r4---asdf"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("r4---asdf.com"_s));
+    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("r4---asdf"_s));
+    EXPECT_EQ(utf16String(bidirectionalDomain), utf16String(bidirectionalDomain));
+    EXPECT_EQ(String("example"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("ExamPle.com"_s));
+    EXPECT_EQ(String("example"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("SUB.dOmain.ExamPle.com"_s));
+    EXPECT_EQ(String("localhost"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("localhost"_s));
+    EXPECT_EQ(String("localhost"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("LocalHost"_s));
+    EXPECT_EQ(String::fromUTF8("åäö"), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(String::fromUTF8("åäö")));
+    EXPECT_EQ(String::fromUTF8("ÅÄÖ"), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(String::fromUTF8("ÅÄÖ")));
+    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(".test.com"_s));
+    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("...."_s));
 }
 
 #if PLATFORM(COCOA)

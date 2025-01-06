@@ -1,5 +1,5 @@
 <!-- go/cmark -->
-<!--* freshness: {owner: 'hta' reviewed: '2021-05-31'} *-->
+<!--* freshness: {owner: 'hta' reviewed: '2024-09-09'} *-->
 
 # Basic concepts and primitives
 
@@ -54,7 +54,7 @@ behave as follows:
 * FooBuilder: Has a Build function that returns ownership of a Foo object (as
   above). The Builder can only be used once, and resources given to the Builder
   before the Build function is called are either released or owned by the Foo
-  object. The Create function may be reference-qualified (declared as ```Foo
+  object. The Build function may be reference-qualified (declared as ```Foo
   Build() &&```), which means it is invoked as ```std::move(builder).Build()```,
   and C++ will ensure that it is not used again.
 
@@ -104,7 +104,7 @@ associated classes.
 ### Synchronization primitives to be used when needed
 
 When it is absolutely necessary to let one thread wait for another thread
-to do something, Thread::Invoke can be used. This function is DISCOURAGED,
+to do something, Thread::BlockingCall can be used. This function is DISCOURAGED,
 since it leads to performance issues, but is currently still widespread.
 
 When it is absolutely necessary to access one variable from multiple threads,

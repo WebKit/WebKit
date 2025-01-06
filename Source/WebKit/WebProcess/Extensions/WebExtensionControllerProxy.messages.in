@@ -25,6 +25,10 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+[
+    DispatchedFrom=UI,
+    DispatchedTo=WebContent
+]
 messages -> WebExtensionControllerProxy {
     Load(struct WebKit::WebExtensionContextParameters contextParameters)
     Unload(WebKit::WebExtensionContextIdentifier contextIdentifier)

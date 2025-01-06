@@ -71,18 +71,15 @@ class SourceBuffer
     , private LoggerHelper
 #endif
 {
-    WTF_MAKE_ISO_ALLOCATED(SourceBuffer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SourceBuffer);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<SourceBuffer> create(Ref<SourceBufferPrivate>&&, MediaSource&);
     virtual ~SourceBuffer();
 
-    using CanMakeWeakPtr<SourceBuffer>::weakPtrFactory;
-    using CanMakeWeakPtr<SourceBuffer>::WeakValueType;
-    using CanMakeWeakPtr<SourceBuffer>::WeakPtrImplType;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<SourceBuffer>);
 
     static bool enabledForContext(ScriptExecutionContext&);
 
@@ -142,7 +139,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "SourceBuffer"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -151,6 +148,10 @@ public:
 
     virtual bool isManaged() const { return false; }
     void memoryPressure();
+
+    // Detachable MSE methods.
+    void detach();
+    void attach();
 
 protected:
     SourceBuffer(Ref<SourceBufferPrivate>&&, MediaSource&);
@@ -170,6 +171,7 @@ private:
     Ref<MediaPromise> sourceBufferPrivateDurationChanged(const MediaTime& duration);
     void sourceBufferPrivateDidDropSample();
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode);
+    Ref<MediaPromise> sourceBufferPrivateDidAttach(SourceBufferPrivateClient::InitializationSegment&&);
 
     // AudioTrackClient
     void audioTrackEnabledChanged(AudioTrack&) final;
@@ -213,12 +215,13 @@ private:
     void rangeRemoval(const MediaTime&, const MediaTime&);
 
     friend class Internals;
-    using SamplesPromise = NativePromise<Vector<String>, int>;
+    using SamplesPromise = NativePromise<Vector<String>, PlatformMediaError>;
     WEBCORE_EXPORT Ref<SamplesPromise> bufferedSamplesForTrackId(TrackID);
     WEBCORE_EXPORT Ref<SamplesPromise> enqueuedSamplesForTrackID(TrackID);
     WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID);
     WEBCORE_EXPORT void setMaximumQueueDepthForTrackID(TrackID, uint64_t);
     WEBCORE_EXPORT Ref<GenericPromise> setMaximumSourceBufferSize(uint64_t);
+    WEBCORE_EXPORT size_t evictableSize() const;
 
     void updateBuffered();
 
@@ -269,7 +272,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

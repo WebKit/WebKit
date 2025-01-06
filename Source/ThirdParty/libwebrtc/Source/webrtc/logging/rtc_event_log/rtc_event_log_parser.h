@@ -10,18 +10,23 @@
 #ifndef LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG_PARSER_H_
 #define LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG_PARSER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <limits>
 #include <map>
 #include <set>
-#include <string>
+#include <type_traits>
 #include <vector>
 
 #include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
-#include "api/rtc_event_log/rtc_event_log.h"
-#include "call/video_receive_stream.h"
-#include "call/video_send_stream.h"
+#include "api/candidate.h"
+#include "api/dtls_transport_interface.h"
+#include "api/rtp_parameters.h"
+#include "api/transport/bandwidth_usage.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
 #include "logging/rtc_event_log/events/rtc_event_alr_state.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_network_adaptation.h"
@@ -40,24 +45,20 @@
 #include "logging/rtc_event_log/events/rtc_event_generic_packet_sent.h"
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
+#include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
 #include "logging/rtc_event_log/events/rtc_event_neteq_set_minimum_delay.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
 #include "logging/rtc_event_log/events/rtc_event_remote_estimate.h"
 #include "logging/rtc_event_log/events/rtc_event_route_change.h"
-#include "logging/rtc_event_log/events/rtc_event_rtcp_packet_incoming.h"
-#include "logging/rtc_event_log/events/rtc_event_rtcp_packet_outgoing.h"
-#include "logging/rtc_event_log/events/rtc_event_rtp_packet_incoming.h"
-#include "logging/rtc_event_log/events/rtc_event_rtp_packet_outgoing.h"
 #include "logging/rtc_event_log/events/rtc_event_video_receive_stream_config.h"
 #include "logging/rtc_event_log/events/rtc_event_video_send_stream_config.h"
+#include "logging/rtc_event_log/rtc_stream_config.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
-#include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
-#include "rtc_base/ignore_wundef.h"
+#include "rtc_base/checks.h"
 
 // Files generated at build-time by the protobuf compiler.
-RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/logging/rtc_event_log/rtc_event_log.pb.h"
 #include "external/webrtc/webrtc/logging/rtc_event_log/rtc_event_log2.pb.h"
@@ -65,7 +66,6 @@ RTC_PUSH_IGNORING_WUNDEF()
 #include "logging/rtc_event_log/rtc_event_log.pb.h"
 #include "logging/rtc_event_log/rtc_event_log2.pb.h"
 #endif
-RTC_POP_IGNORING_WUNDEF()
 
 namespace webrtc {
 
@@ -74,12 +74,15 @@ enum PacketDirection { kIncomingPacket = 0, kOutgoingPacket };
 enum class LoggedMediaType : uint8_t { kUnknown, kAudio, kVideo };
 
 struct LoggedPacketInfo {
+  static LoggedPacketInfo CreateEmptyForTesting() { return LoggedPacketInfo(); }
+
   LoggedPacketInfo(const LoggedRtpPacket& rtp,
                    LoggedMediaType media_type,
                    bool rtx,
                    Timestamp capture_time);
   LoggedPacketInfo(const LoggedPacketInfo&);
   ~LoggedPacketInfo();
+
   int64_t log_time_ms() const { return log_packet_time.ms(); }
   int64_t log_time_us() const { return log_packet_time.us(); }
   uint32_t ssrc;
@@ -117,6 +120,12 @@ struct LoggedPacketInfo {
   // time, and this is instead calculated as the difference in reported receive
   // time between this packet and the last packet in the same feedback message.
   TimeDelta feedback_hold_duration = TimeDelta::MinusInfinity();
+
+ private:
+  LoggedPacketInfo()
+      : capture_time(Timestamp::MinusInfinity()),
+        log_packet_time(Timestamp::MinusInfinity()),
+        reported_send_time(Timestamp::MinusInfinity()) {}
 };
 
 struct InferredRouteChangeEvent {
@@ -381,7 +390,7 @@ class ParsedRtcEventLog {
   void Clear();
 
   // Reads an RtcEventLog file and returns success if parsing was successful.
-  ParseStatus ParseFile(absl::string_view file_name);
+  ParseStatus ParseFile(absl::string_view filename);
 
   // Reads an RtcEventLog from a string and returns success if successful.
   ParseStatus ParseString(absl::string_view s);
@@ -774,7 +783,7 @@ class ParsedRtcEventLog {
   ParseStatus StoreOutgoingRtcpPackets(
       const rtclog2::OutgoingRtcpPackets& proto);
   ParseStatus StoreOutgoingRtpPackets(const rtclog2::OutgoingRtpPackets& proto);
-  ParseStatus StoreParsedNewFormatEvent(const rtclog2::EventStream& event);
+  ParseStatus StoreParsedNewFormatEvent(const rtclog2::EventStream& stream);
   ParseStatus StoreRouteChangeEvent(const rtclog2::RouteChange& proto);
   ParseStatus StoreRemoteEstimateEvent(const rtclog2::RemoteEstimates& proto);
   ParseStatus StoreStartEvent(const rtclog2::BeginLogEvent& proto);
@@ -933,7 +942,8 @@ struct MatchedSendArrivalTimes {
   int64_t arrival_time_ms;  // kNotReceived for lost packets.
   int64_t payload_size;
 };
-const std::vector<MatchedSendArrivalTimes> GetNetworkTrace(
+
+std::vector<MatchedSendArrivalTimes> GetNetworkTrace(
     const ParsedRtcEventLog& parsed_log);
 
 }  // namespace webrtc

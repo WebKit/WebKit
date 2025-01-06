@@ -24,12 +24,12 @@
 #pragma once
 
 #include "FilterResults.h"
-#include "FilterTargetSwitcher.h"
+#include "GraphicsContextSwitcher.h"
 #include "LegacyRenderSVGResourceContainer.h"
 #include "SVGFilter.h"
 #include "SVGUnitTypes.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ class GraphicsContext;
 class SVGFilterElement;
 
 struct FilterData {
-    WTF_MAKE_ISO_ALLOCATED(FilterData);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FilterData);
     WTF_MAKE_NONCOPYABLE(FilterData);
 public:
     enum FilterDataState { PaintingSource, Applying, Built, CycleDetected, MarkedForRemoval };
@@ -46,7 +46,7 @@ public:
 
     RefPtr<SVGFilter> filter;
 
-    std::unique_ptr<FilterTargetSwitcher> targetSwitcher;
+    std::unique_ptr<GraphicsContextSwitcher> targetSwitcher;
     FloatRect sourceImageRect;
 
     GraphicsContext* savedContext { nullptr };
@@ -54,7 +54,7 @@ public:
 };
 
 class LegacyRenderSVGResourceFilter final : public LegacyRenderSVGResourceContainer {
-    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceFilter);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGResourceFilter);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFilter);
 public:
     LegacyRenderSVGResourceFilter(SVGFilterElement&, RenderStyle&&);
@@ -67,7 +67,7 @@ public:
     void removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers) override;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
 
-    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
+    OptionSet<ApplyResult> applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
     void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) override;
 
     FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) override;
@@ -87,7 +87,7 @@ private:
 
     ASCIILiteral renderName() const override { return "RenderSVGResourceFilter"_s; }
 
-    HashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<FilterData>> m_rendererFilterDataMap;
+    UncheckedKeyHashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<FilterData>> m_rendererFilterDataMap;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, FilterData::FilterDataState);
@@ -95,6 +95,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, FilterData::FilterDataState);
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LegacyRenderSVGResourceFilter)
-    static bool isType(const WebCore::RenderObject& renderer) { return renderer.isRenderSVGResourceFilter(); }
+    static bool isType(const WebCore::RenderObject& renderer) { return renderer.isLegacyRenderSVGResourceFilter(); }
     static bool isType(const WebCore::LegacyRenderSVGResource& resource) { return resource.resourceType() == WebCore::FilterResourceType; }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -51,6 +51,7 @@
 #include "DFGLiveCatchVariablePreservationPhase.h"
 #include "DFGLivenessAnalysisPhase.h"
 #include "DFGLoopPreHeaderCreationPhase.h"
+#include "DFGLoopUnrollingPhase.h"
 #include "DFGMovHintRemovalPhase.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSREntrypointCreationPhase.h"
@@ -147,9 +148,7 @@ Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     m_inlineCallFrames->disableThreadingChecks();
 }
 
-Plan::~Plan()
-{
-}
+Plan::~Plan() = default;
 
 size_t Plan::codeSize() const
 {
@@ -178,10 +177,7 @@ void Plan::cancel()
     m_mustHandleValues.clear();
     m_compilation = nullptr;
     m_finalizer = nullptr;
-    if (m_inlineCallFrames) {
-        for (auto i : *m_inlineCallFrames)
-            i->baselineCodeBlock.clear();
-    }
+    m_inlineCallFrames = nullptr;
     m_watchpoints = DesiredWatchpoints();
     m_identifiers = DesiredIdentifiers();
     m_weakReferences = DesiredWeakReferences();
@@ -374,6 +370,9 @@ Plan::CompilationPath Plan::compileInThreadImpl()
             m_finalizer = makeUnique<FailedFinalizer>(*this);
             return FailPath;
         }
+
+        if (Options::useLoopUnrolling())
+            RUN_PHASE(performLoopUnrolling);
         
         RUN_PHASE(performCleanUp); // Reduce the graph size a bit.
         RUN_PHASE(performCriticalEdgeBreaking);
@@ -691,6 +690,9 @@ bool Plan::checkLivenessAndVisitChildren(AbstractSlotVisitor& visitor)
 
 bool Plan::isKnownToBeLiveDuringGC(AbstractSlotVisitor& visitor)
 {
+    if (safepointKeepsDependenciesLive())
+        return true;
+
     if (!Base::isKnownToBeLiveDuringGC(visitor))
         return false;
     if (!visitor.isMarked(m_codeBlock->alternative()))
@@ -702,6 +704,9 @@ bool Plan::isKnownToBeLiveDuringGC(AbstractSlotVisitor& visitor)
 
 bool Plan::isKnownToBeLiveAfterGC()
 {
+    if (safepointKeepsDependenciesLive())
+        return true;
+
     if (!Base::isKnownToBeLiveAfterGC())
         return false;
     if (!m_vm->heap.isMarked(m_codeBlock->alternative()))

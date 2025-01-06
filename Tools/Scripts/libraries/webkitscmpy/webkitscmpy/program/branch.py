@@ -53,10 +53,7 @@ class Branch(Command):
             action=arguments.NoAction,
         )
 
-        if sys.version_info > (3, 0):
-            has_radar = bool(radar.Tracker.radarclient())
-        else:
-            has_radar = bool(radar.Tracker().radarclient())
+        has_radar = bool(radar.Tracker.radarclient())
         if has_radar:
             parser.add_argument(
                 '--cc-radar', '--no-cc-radar',
@@ -91,16 +88,10 @@ class Branch(Command):
 
     @classmethod
     def to_branch_name(cls, value):
-        result = ''
-        for c in string_utils.decode(value):
-            if c in [u'-', u' ', u'\n', u'\t', u'.']:
-                result += u'-'
-            elif c.isalnum() or c == u'_':
-                result += c
-        return string_utils.encode(result, target_type=str)
+        return string_utils.encode(re.sub(r'\W+', '-', string_utils.decode(value)).strip('-'), target_type=str)
 
     @classmethod
-    def cc_radar(cls, args, repository, issue):
+    def cc_radar(cls, args, repository, issue, rdar=None):
         needs_radar = issue and not isinstance(issue.tracker, radar.Tracker) and getattr(args, 'update_issue', True)
         needs_radar = needs_radar and any([
             isinstance(tracker, radar.Tracker) and tracker.radarclient()
@@ -113,14 +104,14 @@ class Branch(Command):
 
         radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
         if needs_radar and (args.cc_radar or (radar_cc_default and args.cc_radar is not False)):
-            rdar = None
-            if not getattr(args, 'defaults', None):
-                sys.stdout.write('Existing radar to CC (leave empty to create new radar)')
-                sys.stdout.flush()
-                input = Terminal.input(': ')
-                if re.match(r'\d+', input):
-                    input = '<rdar://problem/{}>'.format(input)
-                rdar = Tracker.from_string(input)
+            if rdar is None:
+                if not getattr(args, 'defaults', None):
+                    sys.stdout.write('Existing radar to CC (leave empty to create new radar)')
+                    sys.stdout.flush()
+                    input = Terminal.input(': ')
+                    if re.match(r'\d+', input):
+                        input = '<rdar://problem/{}>'.format(input)
+                    rdar = Tracker.from_string(input)
             cced = issue.cc_radar(block=True, radar=rdar)
             if cced and rdar and cced.id != rdar.id:
                 print('Duping {} to {}'.format(cced.link, rdar.link))
@@ -152,13 +143,37 @@ class Branch(Command):
             elif issue:
                 args.issue = str(issue.id)
 
+        rdar_to_cc = None
         if not issue and Tracker.instance() and getattr(args, 'update_issue', True):
             if ' ' in args.issue:
                 if getattr(Tracker.instance(), 'credentials', None):
                     Tracker.instance().credentials(required=True, validate=True)
+                description = Terminal.input('Issue description: ')
+
+                # Asking for a radar here will prevent race conditions with the bug importer
+                needs_radar = any([isinstance(tracker, radar.Tracker) and tracker.radarclient() for tracker in Tracker._trackers])
+                radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
+                if not getattr(args, 'defaults', None) and needs_radar and not isinstance(Tracker.instance(), radar.Tracker):
+                    if args.cc_radar or (radar_cc_default and args.cc_radar is not False):
+                        sys.stdout.write('Existing radar to CC (leave empty to create new radar)')
+                        sys.stdout.flush()
+                        input = Terminal.input(': ')
+                        if re.match(r'\d+', input):
+                            input = '<rdar://problem/{}>'.format(input)
+                        rdar_to_cc = Tracker.from_string(input) or False
+
+                default_proj = list(Tracker.instance().projects.keys())[0] if rdar_to_cc and rdar_to_cc.redacted else None
+                if default_proj and Terminal.choose(
+                    f"Automatically classifying bug as {default_proj}.",
+                    default='Continue', options=('Continue', 'Modify')
+                ) == 'Modify':
+                    default_proj = None
+
                 issue = Tracker.instance().create(
                     title=args.issue,
-                    description=Terminal.input('Issue description: '),
+                    description=description,
+                    project=default_proj,
+                    keywords=['InRadar'] if rdar_to_cc else None
                 )
                 if not issue:
                     sys.stderr.write('Failed to create new issue\n')
@@ -171,12 +186,15 @@ class Branch(Command):
             else:
                 log.warning("'{}' has no spaces, assuming user intends it to be a branch name".format(args.issue))
 
-        cls.cc_radar(args, repository, issue)
+        cls.cc_radar(args, repository, issue, rdar_to_cc)
 
         if issue and not issue.tracker.hide_title:
             args._title = issue.title
         if issue:
             args._bug_urls = Commit.bug_urls(issue)
+        elif not (repository or local.Scm).DEV_BRANCHES.match(args.issue):
+            # Support creating a branch from PR or revert when update_issue is False
+            args.issue = cls.to_branch_name(args.issue)
 
         args.issue = cls.normalize_branch_name(args.issue)
 

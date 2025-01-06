@@ -32,12 +32,12 @@
 
 - (NSObject *)_web_createTarget
 {
-    return [static_cast<API::URLRequest*>(&self._apiObject)->resourceRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) copy];
+    return [downcast<API::URLRequest>(&self._apiObject)->resourceRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) copy];
 }
 
 - (NSURL *)URL
 {
-    return static_cast<API::URLRequest*>(&self._apiObject)->resourceRequest().url();
+    return downcast<API::URLRequest>(&self._apiObject)->resourceRequest().url();
 }
 
 #pragma mark NSCopying protocol implementation

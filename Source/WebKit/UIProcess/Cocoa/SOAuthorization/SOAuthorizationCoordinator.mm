@@ -37,15 +37,18 @@
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import <WebCore/ResourceRequest.h>
-#import <pal/cocoa/AppSSOSoftLink.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/AuthKitSPI.h>
 #import <wtf/Function.h>
+#import <wtf/TZoneMallocInlines.h>
+#import <pal/cocoa/AppSSOSoftLink.h>
 
 #define AUTHORIZATIONCOORDINATOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - SOAuthorizationCoordinator::" fmt, this, ##__VA_ARGS__)
 #define AUTHORIZATIONCOORDINATOR_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(AppSSO, "%p - SOAuthorizationCoordinator::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SOAuthorizationCoordinator);
 
 SOAuthorizationCoordinator::SOAuthorizationCoordinator()
 {
@@ -86,7 +89,7 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navig
     [m_soAuthorizationDelegate setSession:WTFMove(session)];
 }
 
-void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
+void SOAuthorizationCoordinator::tryAuthorize(Ref<API::PageConfiguration>&& configuration, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
 {
     AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize (2)");
     if (!canAuthorize(navigationAction->request().url())) {
@@ -108,7 +111,7 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navig
         return;
     }
 
-    auto session = PopUpSOAuthorizationSession::create(m_soAuthorizationDelegate, page, WTFMove(navigationAction), WTFMove(newPageCallback), WTFMove(uiClientCallback));
+    auto session = PopUpSOAuthorizationSession::create(WTFMove(configuration), m_soAuthorizationDelegate, page, WTFMove(navigationAction), WTFMove(newPageCallback), WTFMove(uiClientCallback));
     [m_soAuthorizationDelegate setSession:WTFMove(session)];
 }
 

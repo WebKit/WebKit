@@ -1,4 +1,4 @@
 
 
-FAIL entries() and currentEntry should be set in a new javascript: URL iframe assert_not_equals: got disallowed value null
+PASS entries() and currentEntry should be set in a new javascript: URL iframe
 

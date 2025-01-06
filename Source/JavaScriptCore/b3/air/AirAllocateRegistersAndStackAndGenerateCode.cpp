@@ -41,10 +41,12 @@
 #include <wtf/ListDump.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 { namespace Air {
 
 namespace GenerateAndAllocateRegistersInternal {
-static bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GenerateAndAllocateRegisters);
@@ -117,7 +119,7 @@ void GenerateAndAllocateRegisters::insertBlocksForFlushAfterTerminalPatchpoints(
         if (inst.kind.opcode != Patch)
             continue;
 
-        HashMap<Tmp, Arg*> needToDef;
+        UncheckedKeyHashMap<Tmp, Arg*> needToDef;
 
         inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width) {
             if (!arg.isTmp())
@@ -741,7 +743,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             checkConsistency();
 
             inst.forEachTmp([&] (const Tmp& tmp, Arg::Role role, Bank, Width width) {
-                ASSERT(width <= Width64 || Options::useWebAssemblySIMD());
+                ASSERT(width <= Width64 || Options::useWasmSIMD());
                 if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
                     return;
 
@@ -754,7 +756,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             });
 
             inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width width) {
-                ASSERT_UNUSED(width, width <= Width64 || Options::useWebAssemblySIMD());
+                ASSERT_UNUSED(width, width <= Width64 || Options::useWasmSIMD());
                 if (!arg.isTmp())
                     return;
 
@@ -1000,7 +1002,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
     for (auto& entry : m_blocksAfterTerminalPatchForSpilling) {
         entry.value.jump.linkTo(m_jit->label(), m_jit);
-        const HashMap<Tmp, Arg*>& spills = entry.value.defdTmps;
+        const UncheckedKeyHashMap<Tmp, Arg*>& spills = entry.value.defdTmps;
         for (auto& entry : spills) {
             Arg* arg = entry.value;
             if (!arg->isTmp())
@@ -1033,5 +1035,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 }
 
 } } } // namespace JSC::B3::Air
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(B3_JIT)

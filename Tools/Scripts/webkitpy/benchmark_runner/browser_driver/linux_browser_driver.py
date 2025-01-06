@@ -112,7 +112,7 @@ class LinuxBrowserDriver(BrowserDriver):
         # So do not capture stdout/stderr, let the subprocess flush it to the default stdout/stderr.
         self._browser_process = subprocess.Popen(
             exec_args, env=self._test_environ,
-            **(dict(encoding='utf-8') if sys.version_info >= (3, 6) else dict())
+            encoding='utf-8',
         )
 
     def launch_webdriver(self, url, driver):

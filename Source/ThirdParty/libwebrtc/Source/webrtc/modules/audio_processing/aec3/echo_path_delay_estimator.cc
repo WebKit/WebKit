@@ -58,7 +58,7 @@ void EchoPathDelayEstimator::Reset(bool reset_delay_confidence) {
   Reset(true, reset_delay_confidence);
 }
 
-absl::optional<DelayEstimate> EchoPathDelayEstimator::EstimateDelay(
+std::optional<DelayEstimate> EchoPathDelayEstimator::EstimateDelay(
     const DownsampledRenderBuffer& render_buffer,
     const Block& capture) {
   std::array<float, kBlockSize> downsampled_capture_data;
@@ -74,7 +74,7 @@ absl::optional<DelayEstimate> EchoPathDelayEstimator::EstimateDelay(
   matched_filter_.Update(render_buffer, downsampled_capture,
                          matched_filter_lag_aggregator_.ReliableDelayFound());
 
-  absl::optional<DelayEstimate> aggregated_matched_filter_lag =
+  std::optional<DelayEstimate> aggregated_matched_filter_lag =
       matched_filter_lag_aggregator_.Aggregate(
           matched_filter_.GetBestLagEstimate());
 
@@ -121,7 +121,7 @@ void EchoPathDelayEstimator::Reset(bool reset_lag_aggregator,
     matched_filter_lag_aggregator_.Reset(reset_delay_confidence);
   }
   matched_filter_.Reset(/*full_reset=*/reset_lag_aggregator);
-  old_aggregated_lag_ = absl::nullopt;
+  old_aggregated_lag_ = std::nullopt;
   consistent_estimate_counter_ = 0;
 }
 }  // namespace webrtc

@@ -19,17 +19,15 @@
 
 #pragma once
 
+#include "Damage.h"
 #include "FilterOperations.h"
-#include "FloatRect.h"
-#include "NicosiaAnimation.h"
+#include "TextureMapperAnimation.h"
 #include "TextureMapperSolidColorLayer.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
-#if USE(COORDINATED_GRAPHICS)
-#include "NicosiaAnimatedBackingStoreClient.h"
-#endif
-
 namespace WebCore {
+class CoordinatedAnimatedBackingStoreClient;
 class TextureMapperLayer;
 }
 
@@ -40,17 +38,17 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TextureMappe
 
 namespace WebCore {
 
-class Region;
 class TextureMapper;
+class TextureMapperFlattenedLayer;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
 
-class WEBCORE_EXPORT TextureMapperLayer : public CanMakeWeakPtr<TextureMapperLayer> {
+class TextureMapperLayer : public CanMakeWeakPtr<TextureMapperLayer> {
+    WTF_MAKE_TZONE_ALLOCATED(TextureMapperLayer);
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperLayer();
-    virtual ~TextureMapperLayer();
+    WEBCORE_EXPORT TextureMapperLayer();
+    WEBCORE_EXPORT virtual ~TextureMapperLayer();
 
 #if USE(COORDINATED_GRAPHICS)
     void setID(uint32_t id) { m_id = id; }
@@ -59,37 +57,38 @@ public:
 
     const Vector<TextureMapperLayer*>& children() const { return m_children; }
 
-    void setChildren(const Vector<TextureMapperLayer*>&);
-    void setMaskLayer(TextureMapperLayer*);
-    void setReplicaLayer(TextureMapperLayer*);
-    void setBackdropLayer(TextureMapperLayer*);
-    void setBackdropFiltersRect(const FloatRoundedRect&);
-    void setPosition(const FloatPoint&);
-    void setBoundsOrigin(const FloatPoint&);
-    void setSize(const FloatSize&);
-    void setAnchorPoint(const FloatPoint3D&);
-    void setPreserves3D(bool);
-    void setTransform(const TransformationMatrix&);
-    void setChildrenTransform(const TransformationMatrix&);
-    void setContentsRect(const FloatRect&);
-    void setMasksToBounds(bool);
-    void setDrawsContent(bool);
+    WEBCORE_EXPORT void setChildren(const Vector<TextureMapperLayer*>&);
+    WEBCORE_EXPORT void setMaskLayer(TextureMapperLayer*);
+    WEBCORE_EXPORT void setReplicaLayer(TextureMapperLayer*);
+    WEBCORE_EXPORT void setBackdropLayer(TextureMapperLayer*);
+    WEBCORE_EXPORT void setBackdropFiltersRect(const FloatRoundedRect&);
+    WEBCORE_EXPORT void setPosition(const FloatPoint&);
+    WEBCORE_EXPORT void setBoundsOrigin(const FloatPoint&);
+    WEBCORE_EXPORT void setSize(const FloatSize&);
+    WEBCORE_EXPORT void setAnchorPoint(const FloatPoint3D&);
+    WEBCORE_EXPORT void setPreserves3D(bool);
+    WEBCORE_EXPORT void setTransform(const TransformationMatrix&);
+    WEBCORE_EXPORT void setChildrenTransform(const TransformationMatrix&);
+    WEBCORE_EXPORT void setContentsRect(const FloatRect&);
+    WEBCORE_EXPORT void setMasksToBounds(bool);
+    WEBCORE_EXPORT void setDrawsContent(bool);
     bool drawsContent() const { return m_state.drawsContent; }
     bool contentsAreVisible() const { return m_state.contentsVisible; }
     FloatSize size() const { return m_state.size; }
     float opacity() const { return m_state.opacity; }
     TransformationMatrix transform() const { return m_state.transform; }
-    void setContentsVisible(bool);
-    void setContentsOpaque(bool);
-    void setBackfaceVisibility(bool);
-    void setOpacity(float);
-    void setSolidColor(const Color&);
-    void setBackgroundColor(const Color&);
-    void setContentsTileSize(const FloatSize&);
-    void setContentsTilePhase(const FloatSize&);
-    void setContentsClippingRect(const FloatRoundedRect&);
-    void setContentsRectClipsDescendants(bool);
-    void setFilters(const FilterOperations&);
+    const TransformationMatrix& toSurfaceTransform() const { return m_layerTransforms.combined; }
+    WEBCORE_EXPORT void setContentsVisible(bool);
+    WEBCORE_EXPORT void setContentsOpaque(bool);
+    WEBCORE_EXPORT void setBackfaceVisibility(bool);
+    WEBCORE_EXPORT void setOpacity(float);
+    WEBCORE_EXPORT void setSolidColor(const Color&);
+    WEBCORE_EXPORT void setBackgroundColor(const Color&);
+    WEBCORE_EXPORT void setContentsTileSize(const FloatSize&);
+    WEBCORE_EXPORT void setContentsTilePhase(const FloatSize&);
+    WEBCORE_EXPORT void setContentsClippingRect(const FloatRoundedRect&);
+    WEBCORE_EXPORT void setContentsRectClipsDescendants(bool);
+    WEBCORE_EXPORT void setFilters(const FilterOperations&);
 
     bool hasFilters() const
     {
@@ -103,35 +102,53 @@ public:
     void setShowRepaintCounter(bool showRepaintCounter) { m_state.showRepaintCounter = showRepaintCounter; }
     void setRepaintCount(int repaintCount) { m_state.repaintCount = repaintCount; }
 
-    void setContentsLayer(TextureMapperPlatformLayer*);
-    void setAnimations(const Nicosia::Animations&);
-    void setBackingStore(TextureMapperBackingStore*);
+    WEBCORE_EXPORT void setContentsLayer(TextureMapperPlatformLayer*);
+    void setAnimations(const TextureMapperAnimations&);
+    WEBCORE_EXPORT void setBackingStore(TextureMapperBackingStore*);
 #if USE(COORDINATED_GRAPHICS)
-    void setAnimatedBackingStoreClient(Nicosia::AnimatedBackingStoreClient*);
+    void setAnimatedBackingStoreClient(CoordinatedAnimatedBackingStoreClient*);
 #endif
 
-    bool applyAnimationsRecursively(MonotonicTime);
+    WEBCORE_EXPORT bool applyAnimationsRecursively(MonotonicTime);
     bool syncAnimations(MonotonicTime);
-    bool descendantsOrSelfHaveRunningAnimations() const;
+    WEBCORE_EXPORT bool descendantsOrSelfHaveRunningAnimations() const;
 
-    void paint(TextureMapper&);
+    WEBCORE_EXPORT void paint(TextureMapper&);
 
     void addChild(TextureMapperLayer*);
 
+#if ENABLE(DAMAGE_TRACKING)
+    void setDamage(const Damage&);
+    void collectDamage(TextureMapper&, Damage&);
+#endif
+
+    FloatRect effectiveLayerRect() const;
+
 private:
-    TextureMapperLayer& rootLayer() const
+    TextureMapperLayer& backdropRootLayer() const
     {
         if (m_effectTarget)
-            return m_effectTarget->rootLayer();
-        if (m_parent)
-            return m_parent->rootLayer();
+            return m_effectTarget->backdropRootLayer();
+        if (m_parent) {
+            if (m_parent->flattensAsLeafOf3DSceneOr3DPerspective()
+                || m_parent->m_state.opacity < 1
+                || m_parent->hasMask()
+                || m_parent->hasFilters()) {
+                return *m_parent;
+            }
+
+            return m_parent->backdropRootLayer();
+        }
         return const_cast<TextureMapperLayer&>(*this);
     }
 
+    void processDescendantLayersFlatteningRequirements();
+    void processFlatteningRequirements();
+    void computeFlattenedRegion(Region&, bool) const;
+    void destroyFlattenedDescendantLayers();
+
     struct ComputeTransformData;
     void computeTransformsRecursive(ComputeTransformData&);
-
-    static void sortByZOrder(Vector<TextureMapperLayer* >& array);
 
     TransformationMatrix replicaTransform();
     void removeFromParent();
@@ -151,6 +168,7 @@ private:
     void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix&, bool includesReplica = true);
 
     void paintRecursive(TextureMapperPaintOptions&);
+    void paintFlattened(TextureMapperPaintOptions&);
     void paintWith3DRenderingContext(TextureMapperPaintOptions&);
     void paintSelfChildrenReplicaFilterAndMask(TextureMapperPaintOptions&);
     void paintUsingOverlapRegions(TextureMapperPaintOptions&);
@@ -161,11 +179,27 @@ private:
     void paintSelf(TextureMapperPaintOptions&);
     void paintSelfAndChildren(TextureMapperPaintOptions&);
     void paintSelfAndChildrenWithReplica(TextureMapperPaintOptions&);
+    void paintBackdrop(TextureMapperPaintOptions&);
     void applyMask(TextureMapperPaintOptions&);
+    void collect3DRenderingContextLayers(Vector<TextureMapperLayer*>&);
+
+#if ENABLE(DAMAGE_TRACKING)
+    void collectDamageRecursive(TextureMapperPaintOptions&, Damage&);
+    void collectDamageSelf(TextureMapperPaintOptions&, Damage&);
+    FloatRect transformRectForDamage(const FloatRect&, const TransformationMatrix&, const TextureMapperPaintOptions&);
+#endif
 
     bool isVisible() const;
 
     bool shouldBlend() const;
+
+    bool flattensAsLeafOf3DSceneOr3DPerspective() const;
+
+    bool preserves3D() const { return m_state.preserves3D; }
+    bool isLeafOf3DRenderingContext() const { return !m_state.preserves3D && (m_parent && m_parent->preserves3D()); }
+    bool isFlattened() const { return !!m_flattenedLayer; }
+    bool hasMask() const { return !!m_state.maskLayer; }
+    bool hasBackdrop() const  { return !!m_state.backdropLayer; }
 
     inline FloatRect layerRect() const
     {
@@ -177,9 +211,9 @@ private:
     WeakPtr<TextureMapperLayer> m_effectTarget;
     TextureMapperBackingStore* m_backingStore { nullptr };
     TextureMapperPlatformLayer* m_contentsLayer { nullptr };
+    std::unique_ptr<TextureMapperFlattenedLayer> m_flattenedLayer;
     float m_currentOpacity { 1.0 };
     FilterOperations m_currentFilters;
-    float m_centerZ { 0 };
 
     struct State {
         FloatPoint pos;
@@ -235,13 +269,17 @@ private:
     };
 
     State m_state;
-    Nicosia::Animations m_animations;
+    TextureMapperAnimations m_animations;
 #if USE(COORDINATED_GRAPHICS)
     uint32_t m_id { 0 };
-    RefPtr<Nicosia::AnimatedBackingStoreClient> m_animatedBackingStoreClient;
+    RefPtr<CoordinatedAnimatedBackingStoreClient> m_animatedBackingStoreClient;
 #endif
     bool m_isBackdrop { false };
     bool m_isReplica { false };
+
+#if ENABLE(DAMAGE_TRACKING)
+    Damage m_damage;
+#endif
 
     struct {
         TransformationMatrix localTransform;

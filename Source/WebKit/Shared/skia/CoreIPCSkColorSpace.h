@@ -27,33 +27,38 @@
 
 #if USE(SKIA)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Skia port
 #include <skia/core/SkColorSpace.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WebKit {
 
 class CoreIPCSkColorSpace {
 public:
-    CoreIPCSkColorSpace(sk_sp<SkColorSpace> skColorSpace)
+    explicit CoreIPCSkColorSpace(sk_sp<SkColorSpace> skColorSpace)
         : m_skColorSpace(WTFMove(skColorSpace))
     {
     }
 
-    CoreIPCSkColorSpace(std::span<const uint8_t> data)
-        : m_skColorSpace(SkColorSpace::Deserialize(data.data(), data.size()))
+    static sk_sp<SkColorSpace> create(std::span<const uint8_t> data)
     {
+        return SkColorSpace::Deserialize(data.data(), data.size());
     }
-
-    sk_sp<SkColorSpace> skColorSpace() const { return m_skColorSpace; }
 
     std::span<const uint8_t> dataReference() const
     {
-        if (auto data = m_skColorSpace->serialize())
-            return { data->bytes(), data->size() };
+        if (!m_serializedColorSpace)
+            m_serializedColorSpace = m_skColorSpace->serialize();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Skia port
+        if (m_serializedColorSpace)
+            return { m_serializedColorSpace->bytes(), m_serializedColorSpace->size() };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return { };
     }
 
 private:
     sk_sp<SkColorSpace> m_skColorSpace;
+    mutable sk_sp<SkData> m_serializedColorSpace;
 };
 
 } // namespace WebKit

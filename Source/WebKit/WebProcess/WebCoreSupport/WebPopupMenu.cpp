@@ -23,7 +23,6 @@
 #include "WebPopupMenu.h"
 
 #include "PlatformPopupMenuData.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
@@ -56,7 +55,7 @@ WebPage* WebPopupMenu::page()
 
 void WebPopupMenu::disconnectClient()
 {
-    m_popupClient = 0;
+    m_popupClient = nullptr;
 }
 
 void WebPopupMenu::didChangeSelectedIndex(int newIndex)

@@ -31,7 +31,7 @@ class CLEventVk : public CLEventImpl, public vk::Resource
     ~CLEventVk() override;
 
     cl_int getCommandType() const { return mEvent.getCommandType(); }
-    bool isUserEvent() const { return getCommandType() == CL_COMMAND_USER; }
+    bool isUserEvent() const { return mEvent.isUserEvent(); }
     cl::Event &getFrontendObject() { return const_cast<cl::Event &>(mEvent); }
 
     angle::Result getCommandExecutionStatus(cl_int &executionStatus) override;
@@ -47,12 +47,24 @@ class CLEventVk : public CLEventImpl, public vk::Resource
 
     angle::Result waitForUserEventStatus();
     angle::Result setStatusAndExecuteCallback(cl_int status);
+    angle::Result setTimestamp(cl_int status);
 
   private:
     std::mutex mUserEventMutex;
     angle::SynchronizedValue<cl_int> mStatus;
     std::condition_variable mUserEventCondition;
     angle::SynchronizedValue<cl::EventStatusMap<bool>> mHaveCallbacks;
+
+    // Event profiling timestamps
+    struct ProfilingTimestamps
+    {
+        cl_ulong commandEndTS;
+        cl_ulong commandStartTS;
+        cl_ulong commandQueuedTS;
+        cl_ulong commandSubmitTS;
+        cl_ulong commandCompleteTS;
+    };
+    angle::SynchronizedValue<ProfilingTimestamps> mProfilingTimestamps;
 };
 
 }  // namespace rx

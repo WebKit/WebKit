@@ -29,6 +29,7 @@
 #include "GraphicsLayerClient.h"
 #include "PageOverlay.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
 
@@ -39,7 +40,7 @@ class Page;
 class PlatformMouseEvent;
 
 class PageOverlayController final : public GraphicsLayerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PageOverlayController);
     friend class MockPageOverlayClient;
 public:
     PageOverlayController(Page&);
@@ -103,7 +104,7 @@ private:
 
     Ref<Page> protectedPage() const;
 
-    SingleThreadWeakRef<Page> m_page;
+    WeakRef<Page> m_page;
     RefPtr<GraphicsLayer> m_documentOverlayRootLayer;
     RefPtr<GraphicsLayer> m_viewOverlayRootLayer;
 

@@ -28,6 +28,7 @@
 
 #include "LibWebRTCRtpTransformBackend.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -46,7 +47,7 @@ namespace WebCore {
 class LibWebRTCSenderTransformer;
 
 class LibWebRTCRtpSenderTransformBackend final : public LibWebRTCRtpTransformBackend {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCRtpSenderTransformBackend);
 public:
     static Ref<LibWebRTCRtpSenderTransformBackend> create(rtc::scoped_refptr<webrtc::RtpSenderInterface> sender) { return adoptRef(*new LibWebRTCRtpSenderTransformBackend(WTFMove(sender))); }
     ~LibWebRTCRtpSenderTransformBackend();

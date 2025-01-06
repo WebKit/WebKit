@@ -47,7 +47,8 @@ public:
     void registerCallee(NativeCallee* callee)
     {
         Locker locker { m_lock };
-        m_calleeSet.add(callee);
+        auto addResult = m_calleeSet.add(callee);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
 
     void unregisterCallee(NativeCallee* callee)
@@ -96,7 +97,7 @@ private:
     Lock m_lock;
     HashSet<NativeCallee*> m_calleeSet WTF_GUARDED_BY_LOCK(m_lock);
 #if ENABLE(JIT)
-    HashMap<NativeCallee*, Box<PCToCodeOriginMap>> m_pcToCodeOriginMaps WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<NativeCallee*, Box<PCToCodeOriginMap>> m_pcToCodeOriginMaps WTF_GUARDED_BY_LOCK(m_lock);
 #endif
 };
 

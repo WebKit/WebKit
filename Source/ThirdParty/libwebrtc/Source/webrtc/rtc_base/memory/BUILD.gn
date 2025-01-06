@@ -33,10 +33,12 @@ rtc_library("fifo_buffer") {
     "fifo_buffer.h",
   ]
   deps = [
+    "..:macromagic",
     "..:stream",
     "..:threading",
+    "../../api:array_view",
+    "../../api:sequence_checker",
     "../../api/task_queue:pending_task_safety_flag",
-    "../synchronization:mutex",
   ]
 }
 

@@ -30,33 +30,85 @@
 
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "HTMLCanvasElement.h"
-#include "ImageBufferPipe.h"
 #include "OffscreenCanvas.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PlaceholderRenderingContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaceholderRenderingContextSource);
 
-PlaceholderRenderingContext::PlaceholderRenderingContext(CanvasBase& canvas)
-    : CanvasRenderingContext(canvas)
+Ref<PlaceholderRenderingContextSource> PlaceholderRenderingContextSource::create(PlaceholderRenderingContext& context)
 {
-    m_imageBufferPipe = ImageBufferPipe::create();
+    return adoptRef(*new PlaceholderRenderingContextSource(context));
 }
 
-HTMLCanvasElement* PlaceholderRenderingContext::canvas() const
+PlaceholderRenderingContextSource::PlaceholderRenderingContextSource(PlaceholderRenderingContext& placeholder)
+    : m_placeholder(placeholder)
 {
-    return dynamicDowncast<HTMLCanvasElement>(canvasBase());
+}
+
+void PlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& imageBuffer)
+{
+    {
+        Locker locker { m_lock };
+        if (m_delegate)
+            m_delegate->tryCopyToLayer(imageBuffer);
+    }
+
+    RefPtr clone = imageBuffer.clone();
+    if (!clone)
+        return;
+    std::unique_ptr serializedClone = ImageBuffer::sinkIntoSerializedImageBuffer(WTFMove(clone));
+    if (!serializedClone)
+        return;
+    callOnMainThread([weakPlaceholder = m_placeholder, buffer = WTFMove(serializedClone)] () mutable {
+        RefPtr placeholder = weakPlaceholder.get();
+        if (!placeholder)
+            return;
+        RefPtr imageBuffer = SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(buffer), placeholder->canvas().scriptExecutionContext()->graphicsClient());
+        if (!imageBuffer)
+            return;
+        placeholder->setPlaceholderBuffer(imageBuffer.releaseNonNull());
+    });
+}
+
+void PlaceholderRenderingContextSource::setContentsToLayer(GraphicsLayer& layer)
+{
+    Locker locker { m_lock };
+    m_delegate = layer.createAsyncContentsDisplayDelegate(m_delegate.get());
+}
+
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PlaceholderRenderingContext);
+
+std::unique_ptr<PlaceholderRenderingContext> PlaceholderRenderingContext::create(HTMLCanvasElement& element)
+{
+    return std::unique_ptr<PlaceholderRenderingContext> { new PlaceholderRenderingContext(element) };
+}
+
+PlaceholderRenderingContext::PlaceholderRenderingContext(HTMLCanvasElement& canvas)
+    : CanvasRenderingContext(canvas, Type::Placeholder)
+    , m_source(PlaceholderRenderingContextSource::create(*this))
+{
+}
+
+HTMLCanvasElement& PlaceholderRenderingContext::canvas() const
+{
+    return static_cast<HTMLCanvasElement&>(canvasBase());
+}
+
+IntSize PlaceholderRenderingContext::size() const
+{
+    return canvas().size();
 }
 
 void PlaceholderRenderingContext::setContentsToLayer(GraphicsLayer& layer)
 {
-    if (m_imageBufferPipe) {
-        m_imageBufferPipe->setContentsToLayer(layer);
-        return;
-    }
+    m_source->setContentsToLayer(layer);
+}
 
-    return CanvasRenderingContext::setContentsToLayer(layer);
+void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& buffer)
+{
+    canvasBase().setImageBufferAndMarkDirty(WTFMove(buffer));
 }
 
 }

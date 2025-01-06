@@ -1,27 +1,6 @@
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
 Blocked access to external URL https://www1.localhost:9443/import-maps/resources/log.js?pipe=sub&name=cross-origin-foo
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
 Blocked access to external URL https://www1.localhost:9443/import-maps/resources/log.js?pipe=sub&name=cross-origin-foo
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
 Blocked access to external URL https://www1.localhost:9443/import-maps/resources/log.js?pipe=sub&name=cross-origin-foo
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: TypeError: Module name, 'data:text/javascript,log.push('data:to-bare')' does not resolve to a valid URL.
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
 
 
 PASS data:text/javascript,log.push('data:foo'): <script src type=module>

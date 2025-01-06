@@ -34,6 +34,7 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 
@@ -44,6 +45,7 @@ class TextDetector;
 
 namespace WebKit {
 class RemoteRenderingBackend;
+struct SharedPreferencesForWebProcess;
 
 namespace ShapeDetection {
 class ObjectHeap;
@@ -51,12 +53,14 @@ class ObjectHeap;
 
 class RemoteTextDetector : public IPC::StreamMessageReceiver {
 public:
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteTextDetector);
 public:
     static Ref<RemoteTextDetector> create(Ref<WebCore::ShapeDetection::TextDetector>&& textDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteRenderingBackend& backend, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
     {
         return adoptRef(*new RemoteTextDetector(WTFMove(textDetector), objectHeap, backend, identifier, webProcessIdentifier));
     }
+
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     virtual ~RemoteTextDetector();
 
@@ -68,9 +72,9 @@ private:
     RemoteTextDetector& operator=(const RemoteTextDetector&) = delete;
     RemoteTextDetector& operator=(RemoteTextDetector&&) = delete;
 
-    WebCore::ShapeDetection::TextDetector& backing() { return m_backing; }
-    Ref<WebCore::ShapeDetection::TextDetector> protectedBacking();
-    Ref<RemoteRenderingBackend> protectedBackend();
+    WebCore::ShapeDetection::TextDetector& backing() const { return m_backing; }
+    Ref<WebCore::ShapeDetection::TextDetector> protectedBacking() const;
+    Ref<RemoteRenderingBackend> protectedBackend() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

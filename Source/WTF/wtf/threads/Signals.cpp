@@ -26,6 +26,8 @@
 #include "config.h"
 #include <wtf/threads/Signals.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if OS(UNIX)
 
 #if HAVE(MACH_EXCEPTIONS)
@@ -92,13 +94,13 @@ void SignalHandlers::add(Signal signal, SignalHandler&& handler)
 }
 
 template<typename Func>
-inline void SignalHandlers::forEachHandler(Signal signal, const Func& func) const
+inline void SignalHandlers::forEachHandler(Signal signal, NOESCAPE const Func& func) const
 {
     size_t signalIndex = static_cast<size_t>(signal);
     size_t handlerIndex = numberOfHandlers[signalIndex];
     while (handlerIndex--) {
         auto* memory = const_cast<SignalHandlerMemory*>(&handlers[signalIndex][handlerIndex]);
-        const SignalHandler& handler = *bitwise_cast<SignalHandler*>(memory);
+        const SignalHandler& handler = *std::bit_cast<SignalHandler*>(memory);
         func(handler);
     }
 }
@@ -273,7 +275,7 @@ static kern_return_t runSignalHandlers(Signal signal, PlatformRegisters& registe
         // not have any reason to handle it. Just let the default handler take care of it.
         static constexpr unsigned validAddressBits = OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
         static constexpr uintptr_t invalidAddressMask = ~((1ull << validAddressBits) - 1);
-        if (bitwise_cast<uintptr_t>(info.faultingAddress) & invalidAddressMask)
+        if (std::bit_cast<uintptr_t>(info.faultingAddress) & invalidAddressMask)
             return KERN_FAILURE;
 #endif
     }
@@ -610,3 +612,5 @@ void SignalHandlers::finalize()
 } // namespace WTF
 
 #endif // OS(UNIX)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -31,7 +31,9 @@
 #include "WebExtensionControllerParameters.h"
 #include "WebExtensionControllerProxyMessages.h"
 #include "WebPageProxy.h"
+#if PLATFORM(COCOA)
 #include <wtf/BlockPtr.h>
+#endif
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -62,12 +64,14 @@ WebExtensionController::WebExtensionController(Ref<WebExtensionControllerConfigu
     // should be fired for any loaded extensions during a brief time window. Start a timer
     // when the first extension is about to be loaded.
 
+#if PLATFORM(COCOA)
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(freshlyCreatedTimeout.seconds() * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([this, weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
 
         m_freshlyCreated = false;
     }).get());
+#endif
 }
 
 WebExtensionController::~WebExtensionController()
@@ -77,23 +81,26 @@ WebExtensionController::~WebExtensionController()
 
 WebExtensionControllerParameters WebExtensionController::parameters() const
 {
-    WebExtensionControllerParameters parameters;
-
-    parameters.identifier = identifier();
-    parameters.testingMode = inTestingMode();
-    parameters.contextParameters = WTF::map(extensionContexts(), [](auto& context) {
-        return context->parameters();
-    });
-
-    return parameters;
+    return {
+        .identifier = identifier(),
+        .testingMode = inTestingMode(),
+        .contextParameters = WTF::map(extensionContexts(), [](auto& context) {
+            return context->parameters();
+        })
+    };
 }
 
 WebExtensionController::WebProcessProxySet WebExtensionController::allProcesses() const
 {
-    WebProcessProxySet processes;
-    for (auto& page : m_pages)
-        processes.add(page.process());
-    return processes;
+    WebProcessProxySet result;
+
+    for (Ref page : m_pages) {
+        page->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+            result.addVoid(webProcess);
+        });
+    }
+
+    return result;
 }
 
 } // namespace WebKit

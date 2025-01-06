@@ -50,13 +50,13 @@ static void mouseDidMoveOverElement(WKPageRef, WKHitTestResultRef, WKEventModifi
 static void setClients(WKPageRef page)
 {
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
     loaderClient.base.version = 0;
     loaderClient.didFinishNavigation = didFinishNavigation;
     WKPageSetPageNavigationClient(page, &loaderClient.base);
     
     WKPageUIClientV1 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
+    zeroBytes(uiClient);
     uiClient.base.version = 1;
     uiClient.mouseDidMoveOverElement = mouseDidMoveOverElement;
     WKPageSetPageUIClient(page, &uiClient.base);

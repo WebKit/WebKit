@@ -106,8 +106,8 @@ TEST_F(AudioEncoderCopyRedTest, CheckMaxFrameSizePropagation) {
 
 TEST_F(AudioEncoderCopyRedTest, CheckTargetAudioBitratePropagation) {
   EXPECT_CALL(*mock_encoder_,
-              OnReceivedUplinkBandwidth(4711, absl::optional<int64_t>()));
-  red_->OnReceivedUplinkBandwidth(4711, absl::nullopt);
+              OnReceivedUplinkBandwidth(4711, std::optional<int64_t>()));
+  red_->OnReceivedUplinkBandwidth(4711, std::nullopt);
 }
 
 TEST_F(AudioEncoderCopyRedTest, CheckPacketLossFractionPropagation) {
@@ -119,7 +119,7 @@ TEST_F(AudioEncoderCopyRedTest, CheckGetFrameLengthRangePropagation) {
   auto expected_range =
       std::make_pair(TimeDelta::Millis(20), TimeDelta::Millis(20));
   EXPECT_CALL(*mock_encoder_, GetFrameLengthRange())
-      .WillRepeatedly(Return(absl::make_optional(expected_range)));
+      .WillRepeatedly(Return(std::make_optional(expected_range)));
   EXPECT_THAT(red_->GetFrameLengthRange(), Optional(Eq(expected_range)));
 }
 

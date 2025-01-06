@@ -7,6 +7,8 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(WeakSet, 'prototype');
-verifyNotWritable(WeakSet, 'prototype');
-verifyNotConfigurable(WeakSet, 'prototype');
+verifyProperty(WeakSet, 'prototype', {
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

@@ -24,11 +24,11 @@ TEST(VideoStreamInputStateProviderTest, DefaultValues) {
   VideoStreamInputStateProvider input_state_provider(&frame_rate_provider);
   VideoStreamInputState input_state = input_state_provider.InputState();
   EXPECT_EQ(false, input_state.has_input());
-  EXPECT_EQ(absl::nullopt, input_state.frame_size_pixels());
+  EXPECT_EQ(std::nullopt, input_state.frame_size_pixels());
   EXPECT_EQ(0, input_state.frames_per_second());
   EXPECT_EQ(VideoCodecType::kVideoCodecGeneric, input_state.video_codec_type());
   EXPECT_EQ(kDefaultMinPixelsPerFrame, input_state.min_pixels_per_frame());
-  EXPECT_EQ(absl::nullopt, input_state.single_active_stream_pixels());
+  EXPECT_EQ(std::nullopt, input_state.single_active_stream_pixels());
 }
 
 TEST(VideoStreamInputStateProviderTest, ValuesSet) {

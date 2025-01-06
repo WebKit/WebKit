@@ -38,7 +38,7 @@ GST_DEBUG_CATEGORY_STATIC(webkitGstMockDeviceProviderDebug);
 #define webkit_mock_device_provider_parent_class parent_class
 WEBKIT_DEFINE_TYPE_WITH_CODE(GStreamerMockDeviceProvider, webkit_mock_device_provider, GST_TYPE_DEVICE_PROVIDER, GST_DEBUG_CATEGORY_INIT(webkitGstMockDeviceProviderDebug, "webkitmockdeviceprovider", 0, "Mock Device Provider"))
 
-static GList* webkitMockDeviceProviderProbe(GstDeviceProvider* provider)
+static GList* webkitMockDeviceProviderProbe([[maybe_unused]] GstDeviceProvider* provider)
 {
     if (!MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled()) {
         GST_INFO_OBJECT(provider, "Mock capture sources are disabled, returning empty device list");

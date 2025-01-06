@@ -48,11 +48,11 @@ RefPtr<WebExtensionAPIDevToolsExtensionPanel> WebExtensionAPIDevToolsPanels::ext
     return m_extensionPanels.get(identifier);
 }
 
-void WebExtensionAPIDevToolsPanels::createPanel(WebPage& page, NSString *title, NSString *iconPath, NSString *pagePath, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIDevToolsPanels::createPanel(WebPageProxyIdentifier webPageProxyIdentifier, NSString *title, NSString *iconPath, NSString *pagePath, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/create
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsPanelsCreate(page.webPageProxyIdentifier(), title, iconPath, pagePath), [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Inspector::ExtensionTabID, WebExtensionError>&& result) mutable {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsPanelsCreate(webPageProxyIdentifier, title, iconPath, pagePath), [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Inspector::ExtensionTabID, WebExtensionError>&& result) mutable {
         if (!result) {
             callback->reportError(result.error());
             return;
@@ -72,7 +72,7 @@ NSString *WebExtensionAPIDevToolsPanels::themeName()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/themeName
 
-    switch (m_theme) {
+    switch (extensionContext().inspectorAppearance()) {
     case Inspector::ExtensionAppearance::Light:
         return @"light";
 
@@ -95,9 +95,10 @@ void WebExtensionContextProxy::dispatchDevToolsPanelsThemeChangedEvent(Inspector
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/onThemeChanged
 
+    setInspectorAppearance(appearance);
+
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         auto& panels = namespaceObject.devtools().panels();
-        panels.setTheme(appearance);
         panels.onThemeChanged().invokeListenersWithArgument(panels.themeName());
     });
 }

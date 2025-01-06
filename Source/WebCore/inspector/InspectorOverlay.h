@@ -36,9 +36,11 @@
 #include "InspectorOverlayLabel.h"
 #include "Path.h"
 #include "Timer.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Deque.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
@@ -58,6 +60,7 @@ class FontCascade;
 class FloatPoint;
 class GraphicsContext;
 class InspectorClient;
+class InspectorController;
 class Node;
 class NodeList;
 class Page;
@@ -137,11 +140,14 @@ struct InspectorOverlayHighlight {
     using Bounds = FloatRect;
 };
 
-class InspectorOverlay {
-    WTF_MAKE_FAST_ALLOCATED;
+class InspectorOverlay : public CanMakeWeakPtr<InspectorOverlay> {
+    WTF_MAKE_TZONE_ALLOCATED(InspectorOverlay);
 public:
-    InspectorOverlay(Page&, InspectorClient*);
+    InspectorOverlay(InspectorController&, InspectorClient*);
     ~InspectorOverlay();
+
+    void ref() const;
+    void deref() const;
 
     using Highlight = InspectorOverlayHighlight;
 
@@ -244,7 +250,9 @@ private:
     bool removeGridOverlayForNode(Node&);
     bool removeFlexOverlayForNode(Node&);
 
-    Page& m_page;
+    Page& page() const;
+
+    const WeakRef<InspectorController> m_controller;
     InspectorClient* m_client;
 
     RefPtr<Node> m_highlightNode;

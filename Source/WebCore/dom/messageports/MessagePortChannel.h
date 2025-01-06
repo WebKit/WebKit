@@ -30,15 +30,16 @@
 #include "MessageWithMessagePorts.h"
 #include "ProcessIdentifier.h"
 #include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class MessagePortChannelRegistry;
 
-class MessagePortChannel : public RefCounted<MessagePortChannel>, public CanMakeWeakPtr<MessagePortChannel> {
+class MessagePortChannel : public RefCountedAndCanMakeWeakPtr<MessagePortChannel> {
 public:
     static Ref<MessagePortChannel> create(MessagePortChannelRegistry&, const MessagePortIdentifier& port1, const MessagePortIdentifier& port2);
 
@@ -69,13 +70,13 @@ private:
 
     CheckedRef<MessagePortChannelRegistry> checkedRegistry() const;
 
-    MessagePortIdentifier m_ports[2];
-    bool m_isClosed[2] { false, false };
-    std::optional<ProcessIdentifier> m_processes[2];
-    RefPtr<MessagePortChannel> m_entangledToProcessProtectors[2];
-    Vector<MessageWithMessagePorts> m_pendingMessages[2];
-    HashSet<RefPtr<MessagePortChannel>> m_pendingMessagePortTransfers[2];
-    RefPtr<MessagePortChannel> m_pendingMessageProtectors[2];
+    std::array<MessagePortIdentifier, 2> m_ports;
+    std::array<bool, 2> m_isClosed { false, false };
+    std::array<std::optional<ProcessIdentifier>, 2> m_processes;
+    std::array<RefPtr<MessagePortChannel>, 2> m_entangledToProcessProtectors;
+    std::array<Vector<MessageWithMessagePorts>, 2> m_pendingMessages;
+    std::array<HashSet<RefPtr<MessagePortChannel>>, 2> m_pendingMessagePortTransfers;
+    std::array<RefPtr<MessagePortChannel>, 2> m_pendingMessageProtectors;
     uint64_t m_messageBatchesInFlight { 0 };
 
     CheckedRef<MessagePortChannelRegistry> m_registry;

@@ -33,9 +33,9 @@
 namespace WebCore {
 
 class CustomEffect final : public AnimationEffect {
-    WTF_MAKE_ISO_ALLOCATED(CustomEffect);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CustomEffect);
 public:
-    static ExceptionOr<Ref<CustomEffect>> create(Ref<CustomEffectCallback>&&, std::optional<std::variant<double, EffectTiming>>&&);
+    static ExceptionOr<Ref<CustomEffect>> create(Document&, Ref<CustomEffectCallback>&&, std::optional<std::variant<double, EffectTiming>>&&);
     ~CustomEffect() { }
 
 private:

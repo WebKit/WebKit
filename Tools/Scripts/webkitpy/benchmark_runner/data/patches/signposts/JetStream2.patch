@@ -1,22 +1,172 @@
 diff --git a/PerformanceTests/JetStream2/JetStreamDriver.js b/PerformanceTests/JetStream2/JetStreamDriver.js
-index 0bc36c9e62a1..ec4aaa0c2f1d 100644
+index 42a9848dec0d..7e75662d1326 100644
 --- a/JetStreamDriver.js
 +++ b/JetStreamDriver.js
-@@ -645,6 +645,8 @@ class Benchmark {
-         if (RAMification)
-             resetMemoryPeak();
+@@ -542,16 +542,22 @@ get runnerCode() {
+         return `
+             let __benchmark = new Benchmark(${this.iterations});
+             let results = [];
++            let testName = ${JSON.stringify(this.name)};
++            __signpostStart(testName);
+             for (let i = 0; i < ${this.iterations}; i++) {
+                 if (__benchmark.prepareForNextIteration)
+                     __benchmark.prepareForNextIteration();
  
-+        __signpostStart(this.name)
++                let iterationName = testName + "-" + i;
+                 let start = Date.now();
++                __signpostStart(iterationName);
+                 __benchmark.runIteration();
++                __signpostStop(iterationName);
+                 let end = Date.now();
+ 
+                 results.push(Math.max(1, end - start));
+             }
++            __signpostStop(testName);
+             if (__benchmark.validate)
+                 __benchmark.validate();
+             top.currentResolve(results);`;
+@@ -950,13 +956,19 @@ get runnerCode() {
+         return `
+         async function doRun() {
+             let __benchmark = new Benchmark();
++            let testName = ${JSON.stringify(this.name)};
++            __signpostStart(testName);
+             let results = [];
+             for (let i = 0; i < ${this.iterations}; i++) {
++                let iterationName = testName + "-" + i;
+                 let start = Date.now();
++                __signpostStart(iterationName);
+                 await __benchmark.runIteration();
++                __signpostStop(iterationName);
+                 let end = Date.now();
+                 results.push(Math.max(1, end - start));
+             }
++            __signpostStop(testName);
+             if (__benchmark.validate)
+                 __benchmark.validate();
+             top.currentResolve(results);
+@@ -986,17 +998,26 @@ get runnerCode() {
+         return `
+             let benchmark = new Benchmark();
+             let results = [];
++            let testName = ${JSON.stringify(this.name)};
++            __signpostStart(testName);
+             {
++                let subtestName = testName + "-Stdlib";
+                 let start = Date.now();
++                __signpostStart(subtestName);
+                 benchmark.buildStdlib();
++                __signpostStop(subtestName);
+                 results.push(Date.now() - start);
+             }
+ 
+             {
++                let subtestName = testName + "-Main";
+                 let start = Date.now();
++                __signpostStart(subtestName);
+                 benchmark.run();
++                __signpostStop(subtestName);
+                 results.push(Date.now() - start);
+             }
++            __signpostStop(testName);
+ 
+             top.currentResolve(results);
+             `;
+@@ -1074,12 +1095,19 @@ get prerunCode() {
+                 if (compileTime !== null)
+                     throw new Error("called report compile time twice");
+                 compileTime = t;
++                __signpostStop(${JSON.stringify(this.name)} + "-Compile");
++            };
 +
-         let magicFrame;
-         try {
-             magicFrame = JetStream.runCode(code);
-@@ -654,6 +656,8 @@ class Benchmark {
-         }
-         let results = await promise;
++            globalObject.startRunTime = (t) => {
++                __signpostStart(${JSON.stringify(this.name)} + "-Run");
+             };
  
-+        __signpostStop(this.name)
-+
-         this.endTime = new Date();
+             globalObject.reportRunTime = (t) => {
+                 if (runTime !== null)
+                     throw new Error("called report run time twice")
+                 runTime = t;
++                __signpostStop(${JSON.stringify(this.name)} + "-Run");
++                __signpostStop(${JSON.stringify(this.name)});
+                 top.currentResolve([compileTime, runTime]);
+             };
  
-         if (RAMification) {
+@@ -1121,6 +1149,8 @@ get runnerCode() {
+                 xhr.responseType = 'arraybuffer';
+                 xhr.onload = function() {
+                     Module.wasmBinary = xhr.response;
++                    __signpostStart(${JSON.stringify(this.name)});
++                    __signpostStart(${JSON.stringify(this.name)} + "-Compile");
+                     doRun();
+                 };
+                 xhr.send(null);
+@@ -1137,6 +1167,8 @@ get runnerCode() {
+             Module.monitorRunDependencies = null;
+ 
+             Promise.resolve(42).then(() => {
++                __signpostStart(${JSON.stringify(this.name)});
++                __signpostStart(${JSON.stringify(this.name)} + "-Compile");
+                 try {
+                     doRun();
+                 } catch(e) {
+diff --git a/PerformanceTests/JetStream2/wasm/HashSet.js b/PerformanceTests/JetStream2/wasm/HashSet.js
+index 9507abd12320..ca0cba97497c 100644
+--- a/wasm/HashSet.js
++++ b/wasm/HashSet.js
+@@ -1006,6 +1006,7 @@ function ___setErrNo(value) {
+ });
+ var _main = Module["_main"] = (function() {
+  let start = benchmarkTime();
++ startRunTime(start);
+  let ret = Module["asm"]["_main"].apply(null, arguments);
+  reportRunTime(benchmarkTime() - start);
+  return ret;
+diff --git a/PerformanceTests/JetStream2/wasm/gcc-loops.js b/PerformanceTests/JetStream2/wasm/gcc-loops.js
+index 7ae84663b4fc..287fcc9b13cf 100644
+--- a/wasm/gcc-loops.js
++++ b/wasm/gcc-loops.js
+@@ -5204,6 +5204,7 @@ function invoke_viijii(index, a1, a2, a3, a4, a5, a6) {
+ });
+ var _main = Module["_main"] = (function() {
+  let start = benchmarkTime();
++ startRunTime(start);
+  let ret = Module["asm"]["_main"].apply(null, arguments);
+  reportRunTime(benchmarkTime() - start);
+  return ret;
+diff --git a/PerformanceTests/JetStream2/wasm/quicksort.js b/PerformanceTests/JetStream2/wasm/quicksort.js
+index 23bbb485e676..a650ef4c0e07 100644
+--- a/wasm/quicksort.js
++++ b/wasm/quicksort.js
+@@ -1028,6 +1028,7 @@ function invoke_iiii(index, a1, a2, a3) {
+ });
+ var _main = Module["_main"] = (function() {
+  let start = benchmarkTime();
++ startRunTime(start);
+  let result = Module["asm"]["_main"].apply(null, arguments);
+  reportRunTime(benchmarkTime() - start);
+  return result;
+diff --git a/PerformanceTests/JetStream2/wasm/richards.js b/PerformanceTests/JetStream2/wasm/richards.js
+index a04c0b795166..bb66e96b165d 100644
+--- a/wasm/richards.js
++++ b/wasm/richards.js
+@@ -930,6 +930,7 @@ function invoke_ii(index, a1) {
+ });
+ var _main = Module["_main"] = (function() {
+  let start = benchmarkTime();
++ startRunTime(start);
+  let ret = Module["asm"]["_main"].apply(null, arguments);
+  reportRunTime(benchmarkTime() - start);
+  return ret;
+diff --git a/PerformanceTests/JetStream2/wasm/tsf.js b/PerformanceTests/JetStream2/wasm/tsf.js
+index 4ff2ab80ede6..0148299c80eb 100644
+--- a/wasm/tsf.js
++++ b/wasm/tsf.js
+@@ -4747,6 +4747,7 @@ function invoke_viii(index, a1, a2, a3) {
+ });
+ var _main = Module["_main"] = (function() {
+  let start = benchmarkTime();
++ startRunTime(start);
+  let ret = Module["asm"]["_main"].apply(null, arguments);
+  reportRunTime(benchmarkTime() - start);
+  return ret;

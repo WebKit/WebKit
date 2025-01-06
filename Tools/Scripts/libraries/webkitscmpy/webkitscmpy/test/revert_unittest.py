@@ -236,6 +236,34 @@ class TestRevert(testing.PathTestCase):
             ],
         )
 
+    def test_no_issue(self):
+        with MockTerminal.input('reason for revert'), OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ),
+        ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
+            result = program.main(
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--no-issue', '-v', '--no-pr'),
+                path=self.path,
+            )
+            self.assertEqual(0, result)
+            self.assertDictEqual(repo.modified, dict())
+            self.assertDictEqual(repo.staged, dict())
+            self.assertEqual(True, 'Unreviewed, reverting 5@main (d8bce26fa65c)' in repo.head.message)
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Enter a reason for the revert: \n'
+            "Created the local development branch 'eng/reason-for-revert'\n",
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
     def test_modified(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
             mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn(), \

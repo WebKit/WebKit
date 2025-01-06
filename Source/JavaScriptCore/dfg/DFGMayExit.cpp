@@ -105,11 +105,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case PutClosureVar:
     case PutInternalField:
     case PutGlobalVariable:
-    case GetByOffset:
-    case GetClosureVar:
     case GetInternalField:
-    case GetGlobalLexicalVariable:
-    case GetGlobalVar:
     case RecordRegExpCachedResult:
     case NukeStructureAndSetButterfly:
     case GetButterfly:
@@ -126,6 +122,15 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case CompareBelowEq:
     case CompareEqPtr:
         break;
+
+    case GetByOffset:
+    case GetClosureVar:
+    case GetGlobalLexicalVariable:
+    case GetGlobalVar: {
+        if (node->hasDoubleResult())
+            return Exits;
+        break;
+    }
 
     case EnumeratorNextUpdatePropertyName:
     case StrCat:
@@ -225,11 +230,11 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
         return Exits;
 
     case CompareStrictEq:
-        if (node->isBinaryUseKind(BooleanUse) || node->isReflexiveBinaryUseKind(BooleanUse, UntypedUse))
+        if (node->isBinaryUseKind(BooleanUse) || node->isSymmetricBinaryUseKind(BooleanUse, UntypedUse))
             break;
-        if (node->isBinaryUseKind(MiscUse) || node->isReflexiveBinaryUseKind(MiscUse, UntypedUse))
+        if (node->isBinaryUseKind(MiscUse) || node->isSymmetricBinaryUseKind(MiscUse, UntypedUse))
             break;
-        if (node->isBinaryUseKind(OtherUse) || node->isReflexiveBinaryUseKind(OtherUse, UntypedUse))
+        if (node->isBinaryUseKind(OtherUse) || node->isSymmetricBinaryUseKind(OtherUse, UntypedUse))
             break;
         FALLTHROUGH;
     case CompareEq:
@@ -265,6 +270,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case ArithSqrt:
     case ArithUnary:
     case ArithFRound:
+    case ArithF16Round:
         if (node->child1().useKind() == DoubleRepUse)
             break;
         return Exits;
@@ -302,6 +308,14 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
             return Exits;
         }
         break;
+
+    case StringReplaceString: {
+        if (node->child3().useKind() == StringUse) {
+            result = ExitsForExceptions;
+            break;
+        }
+        return Exits;
+    }
 
     default:
         // If in doubt, return true.

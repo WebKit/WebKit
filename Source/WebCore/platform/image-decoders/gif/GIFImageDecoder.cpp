@@ -230,7 +230,9 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned 
     if ((buffer.isInvalid() && !initFrameBuffer(frameIndex)) || !buffer.hasBackingStore())
         return false;
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     auto* currentAddress = buffer.backingStore()->pixelAt(xBegin, yBegin);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     // Write one row's worth of data into the frame.  
     for (int x = xBegin; x < xEnd; ++x) {
         const unsigned char sourceValue = rowBuffer[x - frameContext->xOffset];

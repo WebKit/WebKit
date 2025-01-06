@@ -43,6 +43,7 @@ enum class PlatformMediaError : uint8_t {
     DecoderCreationError,
     NotSupportedError,
     NetworkError,
+    NotReady
 };
 
 using MediaPromise = NativePromise<void, PlatformMediaError>;

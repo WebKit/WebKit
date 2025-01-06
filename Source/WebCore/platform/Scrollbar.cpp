@@ -549,7 +549,8 @@ int Scrollbar::minimumThumbLength() const
 
 void Scrollbar::updateScrollbarThickness()
 {
-    if (!isCustomScrollbar()) {
+    m_widthStyle = m_scrollableArea.scrollbarWidthStyle();
+    if (!isCustomScrollbar() || isMockScrollbar()) {
         int thickness = ScrollbarTheme::theme().scrollbarThickness(widthStyle());
         setFrameRect(IntRect(0, 0, thickness, thickness));
     }

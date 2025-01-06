@@ -1,4 +1,5 @@
 
+PASS the length of brotli data should be shorter than that of the original data
 PASS the length of deflated data should be shorter than that of the original data
 PASS the length of gzipped data should be shorter than that of the original data
 PASS the length of deflated (with -raw) data should be shorter than that of the original data

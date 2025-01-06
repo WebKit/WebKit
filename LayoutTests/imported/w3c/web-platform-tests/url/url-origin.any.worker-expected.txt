@@ -266,7 +266,6 @@ PASS Origin parsing: <sc::a@example.net> without base
 PASS Origin parsing: <wow:%NBD> without base
 PASS Origin parsing: <wow:%1G> without base
 PASS Origin parsing: <wow:￿> without base
-PASS Origin parsing: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> without base
 PASS Origin parsing: <http://!"$&'()*+,-.;=_`{}~/> without base
 PASS Origin parsing: <sc://!"$%&'()*+,-.;=_`{}~/> without base
 PASS Origin parsing: <ftp://%e2%98%83> without base
@@ -374,4 +373,24 @@ PASS Origin parsing: <stun:///test> without base
 PASS Origin parsing: <stun://test/a/../b> without base
 PASS Origin parsing: <w://x:0> without base
 PASS Origin parsing: <west://x:0> without base
+PASS Origin parsing: <android://x:0/a> without base
+PASS Origin parsing: <drivefs://x:0/a> without base
+PASS Origin parsing: <chromeos-steam://x:0/a> without base
+PASS Origin parsing: <steam://x:0/a> without base
+PASS Origin parsing: <materialized-view://x:0/a> without base
+PASS Origin parsing: <android-app://x:0> without base
+PASS Origin parsing: <chrome-distiller://x:0> without base
+PASS Origin parsing: <chrome-extension://x:0> without base
+PASS Origin parsing: <chrome-native://x:0> without base
+PASS Origin parsing: <chrome-resource://x:0> without base
+PASS Origin parsing: <chrome-search://x:0> without base
+PASS Origin parsing: <fuchsia-dir://x:0> without base
+PASS Origin parsing: <isolated-app://x:0> without base
+PASS Origin parsing: <non-special:\\opaque> without base
+PASS Origin parsing: <non-special:\\opaque/path> without base
+PASS Origin parsing: <non-special:\\opaque\path> without base
+PASS Origin parsing: <non-special:\/opaque> without base
+PASS Origin parsing: <non-special:/\path> without base
+PASS Origin parsing: <non-special://host/a\b> without base
+PASS Origin parsing: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> without base
 

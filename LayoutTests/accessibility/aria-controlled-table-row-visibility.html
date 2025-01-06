@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<table id="table">
+<caption>This is a table caption</caption>
+<thead>
+    <tr id="r0">
+        <th id="r0c0">Author</th>
+        <th id="r0c1">Title</th>
+    </tr>
+</thead>
+<tbody>
+    <tr id="r1">
+        <td id="r1c0"><button aria-controls="r2">Toggle second row</button></td>
+        <td id="r1c1">A Brief History of Time</td>
+    </tr>
+    <tr id="r2" style="display:none">
+        <td id="r2c0">Carl Sagan</td>
+        <td id="r2c1">Cosmos</td>
+    </tr>
+</tbody>
+</table>
+
+<script>
+var output = "This test ensures the accessibility tree is correct after table rows with an aria-controls relationship dynamically change their hidden status.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    const isiOS = accessibilityController.platformName === "ios";
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    var table = !isiOS ? accessibilityController.accessibleElementById("table") : null;
+    output += `${dumpAXSearchTraversal(webarea)}\n`;
+    output += expect("output.includes('Carl Sagan')", "false");
+    if (!isiOS)
+        output += expect("table.rowCount === 2", "true");
+
+    document.getElementById("r2").removeAttribute("style");
+    var searchOutput = "";
+    setTimeout(async function() {
+        await waitFor(() => {
+            searchOutput = dumpAXSearchTraversal(webarea);
+            return searchOutput.includes("Carl Sagan");
+        });
+        output += `\n\nTraversal after un-hiding #r2:\n${searchOutput}\n`;
+        if (!isiOS)
+            output += expect("table.rowCount === 3", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

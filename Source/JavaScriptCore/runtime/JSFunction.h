@@ -82,10 +82,11 @@ public:
 
     JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, unsigned length, const String& name, NativeFunction, ImplementationVisibility, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor, const DOMJIT::Signature* = nullptr);
     
-    static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, FunctionExecutable*, JSScope*);
+    static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
+    static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
 
-    JS_EXPORT_PRIVATE static JSFunction* create(VM&, FunctionExecutable*, JSScope*);
-    static JSFunction* create(VM&, FunctionExecutable*, JSScope*, Structure*);
+    JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
+    static JSFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
 
     JS_EXPORT_PRIVATE String name(VM&);
     JS_EXPORT_PRIVATE String displayName(VM&);
@@ -100,8 +101,8 @@ public:
     {
         uintptr_t executableOrRareData = m_executableOrRareData;
         if (executableOrRareData & rareDataTag)
-            return bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag)->executable();
-        return bitwise_cast<ExecutableBase*>(executableOrRareData);
+            return std::bit_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag)->executable();
+        return std::bit_cast<ExecutableBase*>(executableOrRareData);
     }
 
     // To call any of these methods include JSFunctionInlines.h
@@ -122,7 +123,7 @@ public:
     JS_EXPORT_PRIVATE static CallData getConstructData(JSCell*);
     JS_EXPORT_PRIVATE static CallData getCallData(JSCell*);
 
-    static inline ptrdiff_t offsetOfExecutableOrRareData()
+    static constexpr ptrdiff_t offsetOfExecutableOrRareData()
     {
         return OBJECT_OFFSETOF(JSFunction, m_executableOrRareData);
     }
@@ -132,7 +133,7 @@ public:
         uintptr_t executableOrRareData = m_executableOrRareData;
         if (UNLIKELY(!(executableOrRareData & rareDataTag)))
             return allocateRareData(vm);
-        return bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
+        return std::bit_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
     }
 
     FunctionRareData* ensureRareDataAndObjectAllocationProfile(JSGlobalObject*, unsigned inlineCapacity);
@@ -141,7 +142,7 @@ public:
     {
         uintptr_t executableOrRareData = m_executableOrRareData;
         if (executableOrRareData & rareDataTag)
-            return bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
+            return std::bit_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
         return nullptr;
     }
 

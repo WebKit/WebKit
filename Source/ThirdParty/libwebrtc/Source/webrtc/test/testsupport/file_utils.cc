@@ -20,7 +20,6 @@
 #include <windows.h>
 
 #include <algorithm>
-#include <codecvt>
 #include <locale>
 
 #include "Shlwapi.h"
@@ -36,7 +35,7 @@
 
 #include <sys/stat.h>  // To check for directory existence.
 #ifndef S_ISDIR        // Not defined in stat.h on Windows.
-#define S_ISDIR(mode) (((mode)&S_IFMT) == S_IFDIR)
+#define S_ISDIR(mode) (((mode) & S_IFMT) == S_IFDIR)
 #endif
 
 #include <stdio.h>
@@ -54,6 +53,7 @@
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/string_utils.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/testsupport/file_utils_override.h"
@@ -94,6 +94,13 @@ std::string OutputPath() {
   return webrtc::test::internal::OutputPath();
 }
 
+std::string OutputPathWithRandomDirectory() {
+  std::string path = webrtc::test::internal::OutputPath();
+  std::string rand_dir = path + rtc::CreateRandomUuid();
+
+  return CreateDir(rand_dir) ? rand_dir + std::string(kPathDelimiter) : path;
+}
+
 std::string WorkingDir() {
   return webrtc::test::internal::WorkingDir();
 }
@@ -131,9 +138,9 @@ std::string GenerateTempFilename(absl::string_view dir,
   return filename;
 }
 
-absl::optional<std::vector<std::string>> ReadDirectory(absl::string_view path) {
+std::optional<std::vector<std::string>> ReadDirectory(absl::string_view path) {
   if (path.length() == 0)
-    return absl::optional<std::vector<std::string>>();
+    return std::optional<std::vector<std::string>>();
 
   std::string path_str(path);
 
@@ -146,7 +153,7 @@ absl::optional<std::vector<std::string>> ReadDirectory(absl::string_view path) {
   WIN32_FIND_DATAW data;
   HANDLE handle = ::FindFirstFileW(rtc::ToUtf16(path_str + '*').c_str(), &data);
   if (handle == INVALID_HANDLE_VALUE)
-    return absl::optional<std::vector<std::string>>();
+    return std::optional<std::vector<std::string>>();
 
   // Populate output.
   std::vector<std::string> found_entries;
@@ -167,7 +174,7 @@ absl::optional<std::vector<std::string>> ReadDirectory(absl::string_view path) {
   // Init.
   DIR* dir = ::opendir(path_str.c_str());
   if (dir == nullptr)
-    return absl::optional<std::vector<std::string>>();
+    return std::optional<std::vector<std::string>>();
 
   // Populate output.
   std::vector<std::string> found_entries;
@@ -181,7 +188,7 @@ absl::optional<std::vector<std::string>> ReadDirectory(absl::string_view path) {
   closedir(dir);
 #endif
 
-  return absl::optional<std::vector<std::string>>(std::move(found_entries));
+  return std::optional<std::vector<std::string>>(std::move(found_entries));
 }
 
 bool CreateDir(absl::string_view directory_name) {
@@ -229,7 +236,12 @@ std::string ResourcePath(absl::string_view name, absl::string_view extension) {
 std::string JoinFilename(absl::string_view dir, absl::string_view name) {
   RTC_CHECK(!dir.empty()) << "Special cases not implemented.";
   rtc::StringBuilder os;
-  os << dir << kPathDelimiter << name;
+  os << dir;
+  // If the directory path already ends with a path delimiter don't append it
+  if (dir.back() != kPathDelimiter.back()) {
+    os << kPathDelimiter;
+  }
+  os << name;
   return os.Release();
 }
 

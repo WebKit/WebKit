@@ -34,6 +34,7 @@
 #include <wtf/SharedTask.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 
@@ -89,11 +90,19 @@ public:
         Completed // We should only move to Completed if we are holding the lock.
     };
 
+    // FIXME: This seems like it should be `m_state == State::Prepared`?
     bool multiThreaded() const override { return m_state >= State::Prepared; }
+
+    bool completeSyncIfPossible();
+
+    virtual void completeInStreaming() = 0;
+    virtual void didCompileFunctionInStreaming() = 0;
+    virtual void didFailInStreaming(String&&) = 0;
 
 private:
     class ThreadCountHolder;
     friend class ThreadCountHolder;
+    friend class StreamingPlan;
 
 protected:
     // For some reason friendship doesn't extend to parent classes...
@@ -107,7 +116,7 @@ protected:
     void complete() WTF_REQUIRES_LOCK(m_lock) override;
 
     virtual bool prepareImpl() = 0;
-    virtual void compileFunction(uint32_t functionIndex) = 0;
+    virtual void compileFunction(FunctionCodeIndex functionIndex) = 0;
     virtual void didCompleteCompilation() WTF_REQUIRES_LOCK(m_lock) = 0;
 
     template<typename T>
@@ -121,10 +130,9 @@ protected:
         return true;
     }
 
-#if ENABLE(JIT)
     bool generateWasmToJSStubs();
     bool generateWasmToWasmStubs();
-#endif
+
     void generateStubsIfNecessary() WTF_REQUIRES_LOCK(m_lock);
 
     Vector<uint8_t> m_source;

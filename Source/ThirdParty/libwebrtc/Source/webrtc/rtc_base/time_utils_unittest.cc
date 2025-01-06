@@ -13,9 +13,9 @@
 #include <memory>
 
 #include "api/units/time_delta.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/event.h"
 #include "rtc_base/fake_clock.h"
-#include "rtc_base/helpers.h"
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "InspectorCanvasAgent.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,7 +35,8 @@ class Page;
 
 class PageCanvasAgent final : public InspectorCanvasAgent {
     WTF_MAKE_NONCOPYABLE(PageCanvasAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PageCanvasAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageCanvasAgent);
 public:
     PageCanvasAgent(PageAgentContext&);
     ~PageCanvasAgent();

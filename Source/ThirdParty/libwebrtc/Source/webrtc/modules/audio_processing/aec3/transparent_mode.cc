@@ -19,6 +19,7 @@ namespace {
 
 constexpr size_t kBlocksSinceConvergencedFilterInit = 10000;
 constexpr size_t kBlocksSinceConsistentEstimateInit = 10000;
+constexpr float kInitialTransparentStateProbability = 0.2f;
 
 bool DeactivateTransparentMode() {
   return field_trial::IsEnabled("WebRTC-Aec3TransparentModeKillSwitch");
@@ -41,16 +42,16 @@ class TransparentModeImpl : public TransparentMode {
     transparency_activated_ = false;
 
     // The estimated probability of being transparent mode.
-    prob_transparent_state_ = 0.f;
+    prob_transparent_state_ = kInitialTransparentStateProbability;
   }
 
-  void Update(int filter_delay_blocks,
-              bool any_filter_consistent,
-              bool any_filter_converged,
+  void Update(int /* filter_delay_blocks */,
+              bool /* any_filter_consistent */,
+              bool /* any_filter_converged */,
               bool any_coarse_filter_converged,
-              bool all_filters_diverged,
+              bool /* all_filters_diverged */,
               bool active_render,
-              bool saturated_capture) override {
+              bool /* saturated_capture */) override {
     // The classifier is implemented as a Hidden Markov Model (HMM) with two
     // hidden states: "normal" and "transparent". The estimated probabilities of
     // the two states are updated by observing filter convergence during active
@@ -118,7 +119,7 @@ class TransparentModeImpl : public TransparentMode {
 
  private:
   bool transparency_activated_ = false;
-  float prob_transparent_state_ = 0.f;
+  float prob_transparent_state_ = kInitialTransparentStateProbability;
 };
 
 // Legacy classifier for toggling transparent mode.
@@ -144,7 +145,7 @@ class LegacyTransparentModeImpl : public TransparentMode {
   void Update(int filter_delay_blocks,
               bool any_filter_consistent,
               bool any_filter_converged,
-              bool any_coarse_filter_converged,
+              bool /* any_coarse_filter_converged */,
               bool all_filters_diverged,
               bool active_render,
               bool saturated_capture) override {

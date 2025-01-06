@@ -31,12 +31,14 @@ namespace WebCore {
 
 class CSSValueList;
 
+enum class IsImportant : bool { No, Yes };
+
 struct StylePropertyMetadata {
-    StylePropertyMetadata(CSSPropertyID propertyID, bool isSetFromShorthand, int indexInShorthandsVector, bool important, bool implicit, bool inherited)
+    StylePropertyMetadata(CSSPropertyID propertyID, bool isSetFromShorthand, int indexInShorthandsVector, IsImportant important, bool implicit, bool inherited)
         : m_propertyID(propertyID)
         , m_isSetFromShorthand(isSetFromShorthand)
         , m_indexInShorthandsVector(indexInShorthandsVector)
-        , m_important(important)
+        , m_important(important == IsImportant::Yes)
         , m_implicit(implicit)
         , m_inherited(inherited)
     {
@@ -48,17 +50,17 @@ struct StylePropertyMetadata {
     
     friend bool operator==(const StylePropertyMetadata&, const StylePropertyMetadata&) = default;
 
-    uint16_t m_propertyID : 10;
-    uint16_t m_isSetFromShorthand : 1;
-    uint16_t m_indexInShorthandsVector : 2; // If this property was set as part of an ambiguous shorthand, gives the index in the shorthands vector.
-    uint16_t m_important : 1;
-    uint16_t m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
-    uint16_t m_inherited : 1;
+    unsigned m_propertyID : 10;
+    unsigned m_isSetFromShorthand : 1;
+    unsigned m_indexInShorthandsVector : 2; // If this property was set as part of an ambiguous shorthand, gives the index in the shorthands vector.
+    unsigned m_important : 1;
+    unsigned m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
+    unsigned m_inherited : 1;
 };
 
 class CSSProperty {
 public:
-    CSSProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, bool important = false, bool isSetFromShorthand = false, int indexInShorthandsVector = 0, bool implicit = false)
+    CSSProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, IsImportant important = IsImportant::No, bool isSetFromShorthand = false, int indexInShorthandsVector = 0, bool implicit = false)
         : m_metadata(propertyID, isSetFromShorthand, indexInShorthandsVector, important, implicit, isInheritedProperty(propertyID))
         , m_value(WTFMove(value))
     {
@@ -72,8 +74,8 @@ public:
     CSSValue* value() const { return m_value.get(); }
     RefPtr<CSSValue> protectedValue() const { return m_value; }
 
-    static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, TextDirection, WritingMode);
-    static CSSPropertyID unresolvePhysicalProperty(CSSPropertyID, TextDirection, WritingMode);
+    static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, WritingMode);
+    static CSSPropertyID unresolvePhysicalProperty(CSSPropertyID, WritingMode);
     static bool isInheritedProperty(CSSPropertyID);
     static Vector<String> aliasesForProperty(CSSPropertyID);
     static bool isDirectionAwareProperty(CSSPropertyID);
@@ -83,6 +85,22 @@ public:
     static UChar listValuedPropertySeparator(CSSPropertyID);
     static bool isListValuedProperty(CSSPropertyID propertyID) { return !!listValuedPropertySeparator(propertyID); }
     static bool allowsNumberOrIntegerInput(CSSPropertyID);
+
+    // FIXME: Generate from logical property groups.
+
+    // Check if a property is an inset property, as defined in:
+    // https://drafts.csswg.org/css-logical-1/#inset-properties
+    static bool isInsetProperty(CSSPropertyID);
+
+    // Check if a property is a margin property, as defined in:
+    // https://drafts.csswg.org/css-box-4/#margin-properties
+    static bool isMarginProperty(CSSPropertyID);
+
+    // Check if a property is a sizing property, as defined in:
+    // https://drafts.csswg.org/css-sizing-3/#sizing-property
+    static bool isSizingProperty(CSSPropertyID);
+
+    static bool disablesNativeAppearance(CSSPropertyID);
 
     const StylePropertyMetadata& metadata() const { return m_metadata; }
     static bool isColorProperty(CSSPropertyID propertyId)

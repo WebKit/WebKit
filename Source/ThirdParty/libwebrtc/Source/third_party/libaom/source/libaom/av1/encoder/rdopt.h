@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -166,17 +166,17 @@ void av1_rd_pick_inter_mode_sb_seg_skip(
 void av1_inter_mode_data_init(struct TileDataEnc *tile_data);
 void av1_inter_mode_data_fit(TileDataEnc *tile_data, int rdmult);
 
-static INLINE int coded_to_superres_mi(int mi_col, int denom) {
+static inline int coded_to_superres_mi(int mi_col, int denom) {
   return (mi_col * denom + SCALE_NUMERATOR / 2) / SCALE_NUMERATOR;
 }
 
-static INLINE int av1_encoder_get_relative_dist(int a, int b) {
+static inline int av1_encoder_get_relative_dist(int a, int b) {
   assert(a >= 0 && b >= 0);
   return (a - b);
 }
 
 // This function will return number of mi's in a superblock.
-static INLINE int av1_get_sb_mi_size(const AV1_COMMON *const cm) {
+static inline int av1_get_sb_mi_size(const AV1_COMMON *const cm) {
   const int mi_alloc_size_1d = mi_size_wide[cm->mi_params.mi_alloc_bsize];
   int sb_mi_rows =
       (mi_size_wide[cm->seq_params->sb_size] + mi_alloc_size_1d - 1) /
@@ -190,7 +190,7 @@ static INLINE int av1_get_sb_mi_size(const AV1_COMMON *const cm) {
 
 // This function prunes the mode if either of the reference frame falls in the
 // pruning list
-static INLINE int prune_ref(const MV_REFERENCE_FRAME *const ref_frame,
+static inline int prune_ref(const MV_REFERENCE_FRAME *const ref_frame,
                             const unsigned int *const ref_display_order_hint,
                             const unsigned int frame_display_order_hint,
                             const int *ref_frame_list) {
@@ -208,7 +208,7 @@ static INLINE int prune_ref(const MV_REFERENCE_FRAME *const ref_frame,
   return 0;
 }
 
-static INLINE int has_closest_ref_frames(const MV_REFERENCE_FRAME *ref_frame,
+static inline int has_closest_ref_frames(const MV_REFERENCE_FRAME *ref_frame,
                                          int8_t closest_past_ref,
                                          int8_t closest_future_ref) {
   int has_closest_past_ref =
@@ -218,7 +218,7 @@ static INLINE int has_closest_ref_frames(const MV_REFERENCE_FRAME *ref_frame,
   return (has_closest_past_ref && has_closest_future_ref);
 }
 
-static INLINE int has_best_pred_mv_sad(const MV_REFERENCE_FRAME *ref_frame,
+static inline int has_best_pred_mv_sad(const MV_REFERENCE_FRAME *ref_frame,
                                        const MACROBLOCK *const x) {
   int has_best_past_pred_mv_sad = 0;
   int has_best_future_pred_mv_sad = 0;
@@ -233,7 +233,7 @@ static INLINE int has_best_pred_mv_sad(const MV_REFERENCE_FRAME *ref_frame,
   return (has_best_past_pred_mv_sad && has_best_future_pred_mv_sad);
 }
 
-static INLINE int prune_ref_by_selective_ref_frame(
+static inline int prune_ref_by_selective_ref_frame(
     const AV1_COMP *const cpi, const MACROBLOCK *const x,
     const MV_REFERENCE_FRAME *const ref_frame,
     const unsigned int *const ref_display_order_hint) {
@@ -307,7 +307,7 @@ static INLINE int prune_ref_by_selective_ref_frame(
 
 // This function will copy the best reference mode information from
 // MB_MODE_INFO_EXT to MB_MODE_INFO_EXT_FRAME.
-static INLINE void av1_copy_mbmi_ext_to_mbmi_ext_frame(
+static inline void av1_copy_mbmi_ext_to_mbmi_ext_frame(
     MB_MODE_INFO_EXT_FRAME *mbmi_ext_best,
     const MB_MODE_INFO_EXT *const mbmi_ext, uint8_t ref_frame_type) {
   memcpy(mbmi_ext_best->ref_mv_stack, mbmi_ext->ref_mv_stack[ref_frame_type],

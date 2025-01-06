@@ -38,6 +38,7 @@ namespace WebCore {
 
 class NotificationJSONParser {
 public:
+    WEBCORE_EXPORT static bool hasDeclarativeMessageHeader(const String& message);
     WEBCORE_EXPORT static ExceptionOr<NotificationPayload> parseNotificationPayload(const JSON::Object&);
     WEBCORE_EXPORT static ExceptionOr<NotificationOptionsPayload> parseNotificationOptions(const JSON::Object&);
 };

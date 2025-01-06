@@ -7,6 +7,7 @@
 
 #include "libANGLE/cl_utils.h"
 
+#include "common/PackedCLEnums_autogen.h"
 #include "libANGLE/renderer/CLExtensions.h"
 
 namespace cl
@@ -181,6 +182,16 @@ bool IsValidImageFormat(const cl_image_format *imageFormat, const rx::CLExtensio
             return false;
     }
     return true;
+}
+
+bool IsImageType(cl::MemObjectType type)
+{
+    return (type >= cl::MemObjectType::Image2D && type <= cl::MemObjectType::Image1D_Buffer);
+}
+
+bool IsBufferType(cl::MemObjectType type)
+{
+    return type == cl::MemObjectType::Buffer;
 }
 
 thread_local cl_int gClErrorTls;

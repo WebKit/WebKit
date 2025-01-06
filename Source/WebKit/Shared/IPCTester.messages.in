@@ -22,7 +22,8 @@
 
 #if ENABLE(IPC_TESTING_API)
 
-messages -> IPCTester NotRefCounted {
+[ExceptionForEnabledBy]
+messages -> IPCTester {
     StartMessageTesting(String driverName)
     StopMessageTesting() -> () Synchronous
     CreateStreamTester(WebKit::IPCStreamTesterIdentifier identifier, IPC::StreamServerConnectionHandle serverConnection)
@@ -40,6 +41,7 @@ messages -> IPCTester NotRefCounted {
     SyncPingEmptyReply(uint32_t value) -> () Synchronous
 
     SendAsyncMessageToReceiver(uint32_t arg0)
+    AsyncOptionalExceptionData(bool sendEngaged) -> (std::optional<WebCore::ExceptionData> exceptionData, String other)
 }
 
 #endif

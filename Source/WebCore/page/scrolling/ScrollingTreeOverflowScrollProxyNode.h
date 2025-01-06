@@ -27,18 +27,20 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "PlatformLayer.h"
+#include "ScrollingPlatformLayer.h"
 #include "ScrollingTreeNode.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ScrollingTreeOverflowScrollProxyNode : public ScrollingTreeNode {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreeOverflowScrollProxyNode, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT virtual ~ScrollingTreeOverflowScrollProxyNode();
 
-    ScrollingNodeID overflowScrollingNodeID() const { return m_overflowScrollingNodeID; }
+    std::optional<ScrollingNodeID> overflowScrollingNodeID() const { return m_overflowScrollingNodeID; }
 
-    virtual PlatformLayer* layer() const = 0;
+    virtual ScrollingPlatformLayer* layer() const = 0;
 
     FloatSize scrollDeltaSinceLastCommit() const;
 
@@ -51,7 +53,7 @@ protected:
 
     WEBCORE_EXPORT void dumpProperties(TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
-    ScrollingNodeID m_overflowScrollingNodeID;
+    Markable<ScrollingNodeID> m_overflowScrollingNodeID;
 };
 
 } // namespace WebCore

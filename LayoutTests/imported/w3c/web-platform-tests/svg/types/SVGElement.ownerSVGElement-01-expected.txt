@@ -1,0 +1,20 @@
+
+PASS outer <svg> element (in document)
+PASS non-<svg> child of outer <svg> element (in document)
+PASS non-<svg> descendant of outer <svg> element (in document)
+PASS inner <svg> descendant of outer <svg> element (in document)
+PASS non-<svg> descendant of inner <svg> element (in document)
+FAIL outer <svg> in foreignObject (in document) assert_equals: expected null but got Element node <svg id="top-svg">
+      <rect width="10" height="10"></r...
+PASS inner <svg> child of outer <svg> in foreignObject (in document)
+PASS outer <svg> element (not in document)
+PASS non-<svg> child of outer <svg> element (not in document)
+PASS non-<svg> descendant of outer <svg> element (not in document)
+PASS inner <svg> descendant of outer <svg> element (not in document)
+PASS non-<svg> descendant of inner <svg> element (not in document)
+FAIL outer <svg> in foreignObject (not in document) assert_equals: expected null but got Element node <svg id="top-svg">
+      <rect width="10" height="10"></r...
+PASS inner <svg> child of outer <svg> in foreignObject (not in document)
+PASS non-svg element with no parent
+PASS svg element with no parent
+

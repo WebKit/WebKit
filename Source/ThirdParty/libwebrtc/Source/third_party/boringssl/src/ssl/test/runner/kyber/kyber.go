@@ -18,14 +18,15 @@ package kyber
 
 import (
 	"crypto/subtle"
-	"golang.org/x/crypto/sha3"
 	"io"
+
+	"golang.org/x/crypto/sha3"
 )
 
-const(
-	CiphertextSize       = 1088
-	PublicKeySize        = 1184
-	PrivateKeySize       = 2400
+const (
+	CiphertextSize = 1088
+	PublicKeySize  = 1184
+	PrivateKeySize = 2400
 )
 
 const (
@@ -104,9 +105,7 @@ func decompress(x uint16, bits int) uint16 {
 type scalar [degree]uint16
 
 func (s *scalar) zero() {
-	for i := range s {
-		s[i] = 0
-	}
+	clear(s[:])
 }
 
 // This bit of Python will be referenced in some of the following comments:

@@ -25,13 +25,15 @@
 
 #pragma once
 
-#if PLATFORM(MAC)
+#if ENABLE(PDF_PLUGIN)
 
 #include "PDFPluginAnnotation.h"
 
 namespace WebKit {
 
 class PDFPluginPasswordForm : public PDFPluginAnnotation {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFPluginPasswordForm);
 public:
     static Ref<PDFPluginPasswordForm> create(PDFPluginBase*);
     virtual ~PDFPluginPasswordForm();
@@ -53,4 +55,4 @@ private:
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(PDF_PLUGIN)

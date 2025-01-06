@@ -128,6 +128,8 @@ generators = {
         'src/libANGLE/renderer/vulkan/gen_vk_internal_shaders.py',
     'Vulkan mandatory format support table':
         'src/libANGLE/renderer/vulkan/gen_vk_mandatory_format_support_table.py',
+    'WebGPU format':
+        'src/libANGLE/renderer/wgpu/gen_wgpu_format_table.py',
 }
 
 
@@ -207,6 +209,7 @@ def main():
     all_old_hashes = load_hashes()
     all_new_hashes = {}
     any_dirty = False
+    format_workaround = False
 
     parser = argparse.ArgumentParser(description='Generate ANGLE internal code.')
     parser.add_argument(
@@ -245,6 +248,8 @@ def main():
             all_old_hashes[fname] = {}
         if any_hash_dirty(name, filenames, new_hashes, all_old_hashes[fname]):
             any_dirty = True
+            if "preprocessor" in name:
+                format_workaround = True
 
             if not args.verify_only:
                 print('Running ' + name + ' code generator')
@@ -281,6 +286,13 @@ def main():
         args += ['cl', 'format']
         print('Calling git cl format')
         subprocess.check_call(args)
+        if format_workaround:
+            # Some formattings fail, and thus we can never submit such a cl because
+            # of vicious circle of needing clean formatting but formatting not generating
+            # clean formatting.
+            print('Calling git cl format again')
+            subprocess.check_call(args)
+
 
         # Update the output hashes again since they can be formatted.
         for name, script in sorted(ranGenerators.items()):

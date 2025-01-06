@@ -26,16 +26,22 @@
 #import "config.h"
 #import "PageClientImplCocoa.h"
 
-#import "TextIndicatorStyle.h"
-#import "WKTextIndicatorStyleType.h"
+
+#import "WKTextAnimationType.h"
 #import "WKWebViewInternal.h"
 #import <WebCore/AlternativeTextUIController.h>
+#import <WebCore/TextAnimationTypes.h>
+#import <WebCore/WritingToolsTypes.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
+
+#if ENABLE(SCREEN_TIME)
+#import <pal/cocoa/ScreenTimeSoftLink.h>
+#endif
 
 namespace WebKit {
 
@@ -156,18 +162,6 @@ void PageClientImplCocoa::storeAppHighlight(const WebCore::AppHighlight &highlig
 }
 #endif // ENABLE(APP_HIGHLIGHTS)
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void PageClientImplCocoa::addTextIndicatorStyleForID(const WTF::UUID& uuid, const WebKit::TextIndicatorStyleData& data)
-{
-    [m_webView _addTextIndicatorStyleForID:uuid withData:data];
-}
-
-void PageClientImplCocoa::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
-{
-    [m_webView _removeTextIndicatorStyleForID:uuid];
-}
-#endif
-
 void PageClientImplCocoa::pageClosed()
 {
     m_alternativeTextUIController->clear();
@@ -201,7 +195,7 @@ void PageClientImplCocoa::modelProcessDidExit()
 }
 #endif
 
-WebCore::DictationContext PageClientImplCocoa::addDictationAlternatives(PlatformTextAlternatives *alternatives)
+std::optional<WebCore::DictationContext> PageClientImplCocoa::addDictationAlternatives(PlatformTextAlternatives *alternatives)
 {
     return m_alternativeTextUIController->addAlternatives(alternatives);
 }
@@ -286,25 +280,78 @@ WindowKind PageClientImplCocoa::windowKind()
     return WindowKind::Normal;
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void PageClientImplCocoa::textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView)
+#if ENABLE(WRITING_TOOLS)
+void PageClientImplCocoa::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
-    [m_webView _textReplacementSession:sessionUUID showInformationForReplacementWithUUID:replacementUUID relativeToRect:selectionBoundsInRootView];
+    [m_webView _proofreadingSessionShowDetailsForSuggestionWithUUID:replacementID relativeToRect:selectionBoundsInRootView];
 }
 
-void PageClientImplCocoa::textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState state, const WTF::UUID& replacementUUID)
+void PageClientImplCocoa::proofreadingSessionUpdateStateForSuggestionWithID(WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
 {
-    [m_webView _textReplacementSession:sessionUUID updateState:state forReplacementWithUUID:replacementUUID];
+    [m_webView _proofreadingSessionUpdateState:state forSuggestionWithUUID:replacementID];
 }
 
-void PageClientImplCocoa::unifiedTextReplacementActiveWillChange()
+static NSString *writingToolsActiveKey = @"writingToolsActive";
+
+void PageClientImplCocoa::writingToolsActiveWillChange()
 {
-    [m_webView willChangeValueForKey:unifiedTextReplacementActiveKey];
+    [m_webView willChangeValueForKey:writingToolsActiveKey];
 }
 
-void PageClientImplCocoa::unifiedTextReplacementActiveDidChange()
+void PageClientImplCocoa::writingToolsActiveDidChange()
 {
-    [m_webView didChangeValueForKey:unifiedTextReplacementActiveKey];
+    [m_webView didChangeValueForKey:writingToolsActiveKey];
+}
+
+void PageClientImplCocoa::didEndPartialIntelligenceTextAnimation()
+{
+    [m_webView _didEndPartialIntelligenceTextAnimation];
+}
+
+bool PageClientImplCocoa::writingToolsTextReplacementsFinished()
+{
+    return [m_webView _writingToolsTextReplacementsFinished];
+}
+
+void PageClientImplCocoa::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebCore::TextAnimationData& data)
+{
+    [m_webView _addTextAnimationForAnimationID:uuid withData:data];
+}
+
+void PageClientImplCocoa::removeTextAnimationForAnimationID(const WTF::UUID& uuid)
+{
+    [m_webView _removeTextAnimationForAnimationID:uuid];
+}
+
+#endif
+
+#if ENABLE(SCREEN_TIME)
+void PageClientImplCocoa::installScreenTimeWebpageController()
+{
+    [m_webView _installScreenTimeWebpageController];
+}
+
+void PageClientImplCocoa::didChangeScreenTimeWebpageControllerURL()
+{
+    updateScreenTimeWebpageControllerURL(webView().get());
+}
+
+void PageClientImplCocoa::updateScreenTimeWebpageControllerURL(WKWebView *webView)
+{
+    if (!PAL::isScreenTimeFrameworkAvailable())
+        return;
+
+    RetainPtr screenTimeWebpageController = [webView _screenTimeWebpageController];
+    if (!screenTimeWebpageController)
+        return;
+
+    NakedPtr<WebKit::WebPageProxy> pageProxy = [webView _page];
+    if (pageProxy && !pageProxy->preferences().screenTimeEnabled()) {
+        [webView _uninstallScreenTimeWebpageController];
+        return;
+    }
+
+    [screenTimeWebpageController setURL:[webView _mainFrameURL]];
 }
 #endif
 
@@ -313,6 +360,43 @@ void PageClientImplCocoa::setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed g
 {
     [m_webView _setGamepadsRecentlyAccessed:(gamepadsRecentlyAccessed == GamepadsRecentlyAccessed::No) ? NO : YES];
 }
+
+#if PLATFORM(VISION)
+void PageClientImplCocoa::gamepadsConnectedStateChanged()
+{
+    [m_webView _gamepadsConnectedStateChanged];
+}
+#endif
 #endif
 
+void PageClientImplCocoa::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
+{
+    if ([m_webView _hasActiveNowPlayingSession] == hasActiveNowPlayingSession)
+        return;
+
+    RELEASE_LOG(ViewState, "%p PageClientImplCocoa::hasActiveNowPlayingSessionChanged %d", m_webView.get().get(), hasActiveNowPlayingSession);
+
+    [m_webView willChangeValueForKey:@"_hasActiveNowPlayingSession"];
+    [m_webView _setHasActiveNowPlayingSession:hasActiveNowPlayingSession];
+    [m_webView didChangeValueForKey:@"_hasActiveNowPlayingSession"];
 }
+
+void PageClientImplCocoa::videoControlsManagerDidChange()
+{
+    RELEASE_LOG(ViewState, "%p PageClientImplCocoa::videoControlsManagerDidChange %d", m_webView.get().get(), [m_webView _canEnterFullscreen]);
+    [m_webView willChangeValueForKey:@"_canEnterFullscreen"];
+    [m_webView didChangeValueForKey:@"_canEnterFullscreen"];
+}
+
+CocoaWindow *PageClientImplCocoa::platformWindow() const
+{
+    return [m_webView window];
+}
+
+void PageClientImplCocoa::processDidUpdateThrottleState()
+{
+    [m_webView willChangeValueForKey:@"_webProcessState"];
+    [m_webView didChangeValueForKey:@"_webProcessState"];
+}
+
+} // namespace WebKit

@@ -45,14 +45,15 @@
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
 #include <wtf/Algorithms.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSTransformValue);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSTransformValue);
 
-static ExceptionOr<Ref<CSSTransformComponent>> createTransformComponent(CSSFunctionValue& functionValue)
+static ExceptionOr<Ref<CSSTransformComponent>> createTransformComponent(Ref<const CSSFunctionValue> functionValue)
 {
     auto makeTransformComponent = [&](auto exceptionOrTransformComponent) -> ExceptionOr<Ref<CSSTransformComponent>> {
         if (exceptionOrTransformComponent.hasException())
@@ -60,49 +61,49 @@ static ExceptionOr<Ref<CSSTransformComponent>> createTransformComponent(CSSFunct
         return Ref<CSSTransformComponent> { exceptionOrTransformComponent.releaseReturnValue() };
     };
 
-    switch (functionValue.name()) {
+    switch (functionValue->name()) {
     case CSSValueTranslateX:
     case CSSValueTranslateY:
     case CSSValueTranslateZ:
     case CSSValueTranslate:
     case CSSValueTranslate3d:
-        return makeTransformComponent(CSSTranslate::create(functionValue));
+        return makeTransformComponent(CSSTranslate::create(WTFMove(functionValue)));
     case CSSValueScaleX:
     case CSSValueScaleY:
     case CSSValueScaleZ:
     case CSSValueScale:
     case CSSValueScale3d:
-        return makeTransformComponent(CSSScale::create(functionValue));
+        return makeTransformComponent(CSSScale::create(WTFMove(functionValue)));
     case CSSValueRotateX:
     case CSSValueRotateY:
     case CSSValueRotateZ:
     case CSSValueRotate:
     case CSSValueRotate3d:
-        return makeTransformComponent(CSSRotate::create(functionValue));
+        return makeTransformComponent(CSSRotate::create(WTFMove(functionValue)));
     case CSSValueSkewX:
-        return makeTransformComponent(CSSSkewX::create(functionValue));
+        return makeTransformComponent(CSSSkewX::create(WTFMove(functionValue)));
     case CSSValueSkewY:
-        return makeTransformComponent(CSSSkewY::create(functionValue));
+        return makeTransformComponent(CSSSkewY::create(WTFMove(functionValue)));
     case CSSValueSkew:
-        return makeTransformComponent(CSSSkew::create(functionValue));
+        return makeTransformComponent(CSSSkew::create(WTFMove(functionValue)));
     case CSSValuePerspective:
-        return makeTransformComponent(CSSPerspective::create(functionValue));
+        return makeTransformComponent(CSSPerspective::create(WTFMove(functionValue)));
     case CSSValueMatrix:
     case CSSValueMatrix3d:
-        return makeTransformComponent(CSSMatrixComponent::create(functionValue));
+        return makeTransformComponent(CSSMatrixComponent::create(WTFMove(functionValue)));
     default:
         return Exception { ExceptionCode::TypeError, "Unexpected function value type"_s };
     }
 }
 
-ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(const CSSTransformListValue& list)
+ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(Ref<const CSSTransformListValue> list)
 {
     Vector<Ref<CSSTransformComponent>> components;
-    for (auto& value : list) {
-        auto* functionValue = dynamicDowncast<CSSFunctionValue>(value);
+    for (auto& value : list.get()) {
+        RefPtr functionValue = dynamicDowncast<CSSFunctionValue>(value);
         if (!functionValue)
             return Exception { ExceptionCode::TypeError, "Expected only function values in a transform list."_s };
-        auto component = createTransformComponent(const_cast<CSSFunctionValue&>(*functionValue));
+        auto component = createTransformComponent(functionValue.releaseNonNull());
         if (component.hasException())
             return component.releaseException();
         components.append(component.releaseReturnValue());
@@ -167,14 +168,12 @@ CSSTransformValue::CSSTransformValue(Vector<Ref<CSSTransformComponent>>&& transf
 {
 }
 
+CSSTransformValue::~CSSTransformValue() = default;
+
 void CSSTransformValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments>) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-csstransformvalue
-    for (size_t i = 0; i < m_components.size(); ++i) {
-        if (i)
-            builder.append(' ');
-        m_components[i]->serialize(builder);
-    }
+    builder.append(interleave(m_components, [](auto& builder, auto& transform) { transform->serialize(builder); }, ' '));
 }
 
 RefPtr<CSSValue> CSSTransformValue::toCSSValue() const

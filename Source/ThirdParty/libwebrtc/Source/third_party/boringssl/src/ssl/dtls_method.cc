@@ -79,8 +79,7 @@ static void dtls1_on_handshake_complete(SSL *ssl) {
 
 static bool dtls1_set_read_state(SSL *ssl, ssl_encryption_level_t level,
                                  UniquePtr<SSLAEADContext> aead_ctx,
-                                 Span<const uint8_t> secret_for_quic) {
-  assert(secret_for_quic.empty());  // QUIC does not use DTLS.
+                                 Span<const uint8_t> traffic_secret) {
   // Cipher changes are forbidden if the current epoch has leftover data.
   if (dtls_has_unprocessed_handshake_data(ssl)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_EXCESS_HANDSHAKE_DATA);
@@ -88,27 +87,60 @@ static bool dtls1_set_read_state(SSL *ssl, ssl_encryption_level_t level,
     return false;
   }
 
-  ssl->d1->r_epoch++;
-  OPENSSL_memset(&ssl->d1->bitmap, 0, sizeof(ssl->d1->bitmap));
-  ssl->s3->read_sequence = 0;
+  DTLSReadEpoch new_epoch;
+  new_epoch.aead = std::move(aead_ctx);
+  if (ssl_protocol_version(ssl) > TLS1_2_VERSION) {
+    // TODO(crbug.com/42290594): Handle the additional epochs used for key
+    // update.
+    new_epoch.epoch = level;
+    new_epoch.rn_encrypter =
+        RecordNumberEncrypter::Create(new_epoch.aead->cipher(), traffic_secret);
+    if (new_epoch.rn_encrypter == nullptr) {
+      return false;
+    }
 
-  ssl->s3->aead_read_ctx = std::move(aead_ctx);
-  ssl->s3->read_level = level;
-  ssl->d1->has_change_cipher_spec = false;
+    // In DTLS 1.3, new read epochs are not applied immediately. In principle,
+    // we could do the same in DTLS 1.2, but we would ignore every record from
+    // the previous epoch anyway.
+    assert(ssl->d1->next_read_epoch == nullptr);
+    ssl->d1->next_read_epoch = MakeUnique<DTLSReadEpoch>(std::move(new_epoch));
+    if (ssl->d1->next_read_epoch == nullptr) {
+      return false;
+    }
+  } else {
+    new_epoch.epoch = ssl->d1->read_epoch.epoch + 1;
+    ssl->d1->read_epoch = std::move(new_epoch);
+    ssl->d1->has_change_cipher_spec = false;
+  }
   return true;
 }
 
 static bool dtls1_set_write_state(SSL *ssl, ssl_encryption_level_t level,
                                   UniquePtr<SSLAEADContext> aead_ctx,
-                                  Span<const uint8_t> secret_for_quic) {
-  assert(secret_for_quic.empty());  // QUIC does not use DTLS.
-  ssl->d1->w_epoch++;
-  ssl->d1->last_write_sequence = ssl->s3->write_sequence;
-  ssl->s3->write_sequence = 0;
+                                  Span<const uint8_t> traffic_secret) {
+  DTLSWriteEpoch new_epoch;
+  if (ssl_protocol_version(ssl) > TLS1_2_VERSION) {
+    // TODO(crbug.com/42290594): See above.
+    new_epoch.next_record = DTLSRecordNumber(level, 0);
+    new_epoch.rn_encrypter =
+        RecordNumberEncrypter::Create(aead_ctx->cipher(), traffic_secret);
+    if (new_epoch.rn_encrypter == nullptr) {
+      return false;
+    }
+  } else {
+    new_epoch.next_record =
+        DTLSRecordNumber(ssl->d1->write_epoch.epoch() + 1, 0);
+  }
+  new_epoch.aead = std::move(aead_ctx);
 
-  ssl->d1->last_aead_write_ctx = std::move(ssl->s3->aead_write_ctx);
-  ssl->s3->aead_write_ctx = std::move(aead_ctx);
-  ssl->s3->write_level = level;
+  auto current = MakeUnique<DTLSWriteEpoch>(std::move(ssl->d1->write_epoch));
+  if (current == nullptr) {
+    return false;
+  }
+
+  ssl->d1->write_epoch = std::move(new_epoch);
+  ssl->d1->extra_write_epochs.PushBack(std::move(current));
+  dtls_clear_unused_write_epochs(ssl);
   return true;
 }
 

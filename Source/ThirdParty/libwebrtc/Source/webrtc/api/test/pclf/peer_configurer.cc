@@ -12,14 +12,15 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/async_dns_resolver.h"
 #include "api/audio/audio_mixer.h"
+#include "api/audio/audio_processing.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
 #include "api/fec_controller.h"
@@ -38,7 +39,6 @@
 #include "api/transport/network_control.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/rtc_certificate_generator.h"
 #include "rtc_base/ssl_certificate.h"
@@ -122,7 +122,7 @@ PeerConfigurer* PeerConfigurer::SetSSLCertificateVerifier(
 
 PeerConfigurer* PeerConfigurer::AddVideoConfig(VideoConfig config) {
   video_sources_.push_back(
-      CreateSquareFrameGenerator(config, /*type=*/absl::nullopt));
+      CreateSquareFrameGenerator(config, /*type=*/std::nullopt));
   configurable_params_->video_configs.push_back(std::move(config));
   return this;
 }
@@ -205,6 +205,11 @@ PeerConfigurer* PeerConfigurer::SetAecDumpPath(absl::string_view path) {
   params_->aec_dump_path = std::string(path);
   return this;
 }
+PeerConfigurer* PeerConfigurer::SetPCFOptions(
+    PeerConnectionFactoryInterface::Options options) {
+  params_->peer_connection_factory_options = std::move(options);
+  return this;
+}
 PeerConfigurer* PeerConfigurer::SetRTCConfiguration(
     PeerConnectionInterface::RTCConfiguration configuration) {
   params_->rtc_configuration = std::move(configuration);
@@ -235,9 +240,17 @@ PeerConfigurer* PeerConfigurer::SetFieldTrials(
 
 PeerConfigurer* PeerConfigurer::SetPortAllocatorExtraFlags(
     uint32_t extra_flags) {
-  params_->port_allocator_extra_flags = extra_flags;
+  params_->port_allocator_flags = cricket::kDefaultPortAllocatorFlags |
+                                  cricket::PORTALLOCATOR_DISABLE_TCP |
+                                  extra_flags;
   return this;
 }
+
+PeerConfigurer* PeerConfigurer::SetPortAllocatorFlags(uint32_t flags) {
+  params_->port_allocator_flags = flags;
+  return this;
+}
+
 std::unique_ptr<InjectableComponents> PeerConfigurer::ReleaseComponents() {
   RTC_CHECK(components_);
   auto components = std::move(components_);

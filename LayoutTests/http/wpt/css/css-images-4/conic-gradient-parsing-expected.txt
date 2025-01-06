@@ -1,4 +1,0 @@
-
-PASS Test conic-gradient parsing
-PASS Test repeating-conic-gradient parsing
-

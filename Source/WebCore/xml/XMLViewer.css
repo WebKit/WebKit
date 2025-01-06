@@ -85,11 +85,11 @@ div.collapsible > div.hidden {
 }
 
 .collapse-button {
-    background-image: -webkit-canvas(arrowDown);
+    background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' fill='%235a5a5a' width='10' height='10'><path d='M0 0 L8 0 L4 7 Z'/></svg>");
     height: 10px;
 }
 
 .expand-button {
-    background-image: -webkit-canvas(arrowRight);
-    height: 11px;
+    background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' fill='%235a5a5a' width='10' height='10'><path d='M0 0 L0 8 L7 4 Z'/></svg>");
+    height: 10px;
 }

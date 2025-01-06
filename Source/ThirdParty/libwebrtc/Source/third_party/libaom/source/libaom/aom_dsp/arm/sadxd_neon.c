@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -18,13 +18,13 @@
 #include "aom_dsp/arm/mem_neon.h"
 #include "aom_dsp/arm/sum_neon.h"
 
-static INLINE void sad16_neon(uint8x16_t src, uint8x16_t ref,
+static inline void sad16_neon(uint8x16_t src, uint8x16_t ref,
                               uint16x8_t *const sad_sum) {
   uint8x16_t abs_diff = vabdq_u8(src, ref);
   *sad_sum = vpadalq_u8(*sad_sum, abs_diff);
 }
 
-static INLINE void sadwxhx3d_large_neon(const uint8_t *src, int src_stride,
+static inline void sadwxhx3d_large_neon(const uint8_t *src, int src_stride,
                                         const uint8_t *const ref[3],
                                         int ref_stride, uint32_t res[3], int w,
                                         int h, int h_overflow) {
@@ -72,19 +72,19 @@ static INLINE void sadwxhx3d_large_neon(const uint8_t *src, int src_stride,
   res[2] = horizontal_add_u32x4(sum[2]);
 }
 
-static INLINE void sad128xhx3d_neon(const uint8_t *src, int src_stride,
+static inline void sad128xhx3d_neon(const uint8_t *src, int src_stride,
                                     const uint8_t *const ref[3], int ref_stride,
                                     uint32_t res[3], int h) {
   sadwxhx3d_large_neon(src, src_stride, ref, ref_stride, res, 128, h, 32);
 }
 
-static INLINE void sad64xhx3d_neon(const uint8_t *src, int src_stride,
+static inline void sad64xhx3d_neon(const uint8_t *src, int src_stride,
                                    const uint8_t *const ref[3], int ref_stride,
                                    uint32_t res[3], int h) {
   sadwxhx3d_large_neon(src, src_stride, ref, ref_stride, res, 64, h, 64);
 }
 
-static INLINE void sad32xhx3d_neon(const uint8_t *src, int src_stride,
+static inline void sad32xhx3d_neon(const uint8_t *src, int src_stride,
                                    const uint8_t *const ref[3], int ref_stride,
                                    uint32_t res[3], int h) {
   uint16x8_t sum_lo[3] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0) };
@@ -112,7 +112,7 @@ static INLINE void sad32xhx3d_neon(const uint8_t *src, int src_stride,
   res[2] = horizontal_long_add_u16x8(sum_lo[2], sum_hi[2]);
 }
 
-static INLINE void sad16xhx3d_neon(const uint8_t *src, int src_stride,
+static inline void sad16xhx3d_neon(const uint8_t *src, int src_stride,
                                    const uint8_t *const ref[3], int ref_stride,
                                    uint32_t res[3], int h) {
   uint16x8_t sum[3] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0) };
@@ -134,7 +134,7 @@ static INLINE void sad16xhx3d_neon(const uint8_t *src, int src_stride,
   res[2] = horizontal_add_u16x8(sum[2]);
 }
 
-static INLINE void sad8xhx3d_neon(const uint8_t *src, int src_stride,
+static inline void sad8xhx3d_neon(const uint8_t *src, int src_stride,
                                   const uint8_t *const ref[3], int ref_stride,
                                   uint32_t res[3], int h) {
   uint16x8_t sum[3];
@@ -162,7 +162,7 @@ static INLINE void sad8xhx3d_neon(const uint8_t *src, int src_stride,
   res[2] = horizontal_add_u16x8(sum[2]);
 }
 
-static INLINE void sad4xhx3d_neon(const uint8_t *src, int src_stride,
+static inline void sad4xhx3d_neon(const uint8_t *src, int src_stride,
                                   const uint8_t *const ref[3], int ref_stride,
                                   uint32_t res[3], int h) {
   assert(h % 2 == 0);
@@ -239,7 +239,7 @@ SAD_WXH_3D_NEON(64, 16)
 
 #undef SAD_WXH_3D_NEON
 
-static INLINE void sadwxhx4d_large_neon(const uint8_t *src, int src_stride,
+static inline void sadwxhx4d_large_neon(const uint8_t *src, int src_stride,
                                         const uint8_t *const ref[4],
                                         int ref_stride, uint32_t res[4], int w,
                                         int h, int h_overflow) {
@@ -292,19 +292,19 @@ static INLINE void sadwxhx4d_large_neon(const uint8_t *src, int src_stride,
   vst1q_u32(res, horizontal_add_4d_u32x4(sum));
 }
 
-static INLINE void sad128xhx4d_neon(const uint8_t *src, int src_stride,
+static inline void sad128xhx4d_neon(const uint8_t *src, int src_stride,
                                     const uint8_t *const ref[4], int ref_stride,
                                     uint32_t res[4], int h) {
   sadwxhx4d_large_neon(src, src_stride, ref, ref_stride, res, 128, h, 32);
 }
 
-static INLINE void sad64xhx4d_neon(const uint8_t *src, int src_stride,
+static inline void sad64xhx4d_neon(const uint8_t *src, int src_stride,
                                    const uint8_t *const ref[4], int ref_stride,
                                    uint32_t res[4], int h) {
   sadwxhx4d_large_neon(src, src_stride, ref, ref_stride, res, 64, h, 64);
 }
 
-static INLINE void sad32xhx4d_neon(const uint8_t *src, int src_stride,
+static inline void sad32xhx4d_neon(const uint8_t *src, int src_stride,
                                    const uint8_t *const ref[4], int ref_stride,
                                    uint32_t res[4], int h) {
   uint16x8_t sum_lo[4] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
@@ -334,7 +334,7 @@ static INLINE void sad32xhx4d_neon(const uint8_t *src, int src_stride,
   vst1q_u32(res, horizontal_long_add_4d_u16x8(sum_lo, sum_hi));
 }
 
-static INLINE void sad16xhx4d_neon(const uint8_t *src, int src_stride,
+static inline void sad16xhx4d_neon(const uint8_t *src, int src_stride,
                                    const uint8_t *const ref[4], int ref_stride,
                                    uint32_t res[4], int h) {
   uint16x8_t sum_u16[4] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
@@ -362,7 +362,7 @@ static INLINE void sad16xhx4d_neon(const uint8_t *src, int src_stride,
   vst1q_u32(res, horizontal_add_4d_u32x4(sum_u32));
 }
 
-static INLINE void sad8xhx4d_neon(const uint8_t *src, int src_stride,
+static inline void sad8xhx4d_neon(const uint8_t *src, int src_stride,
                                   const uint8_t *const ref[4], int ref_stride,
                                   uint32_t res[4], int h) {
   uint16x8_t sum[4];
@@ -390,7 +390,7 @@ static INLINE void sad8xhx4d_neon(const uint8_t *src, int src_stride,
   vst1q_u32(res, horizontal_add_4d_u16x8(sum));
 }
 
-static INLINE void sad4xhx4d_neon(const uint8_t *src, int src_stride,
+static inline void sad4xhx4d_neon(const uint8_t *src, int src_stride,
                                   const uint8_t *const ref[4], int ref_stride,
                                   uint32_t res[4], int h) {
   uint16x8_t sum[4];
@@ -480,14 +480,8 @@ SAD_WXH_4D_NEON(64, 16)
     res[3] <<= 1;                                                           \
   }
 
-SAD_SKIP_WXH_4D_NEON(4, 4)
-SAD_SKIP_WXH_4D_NEON(4, 8)
-
-SAD_SKIP_WXH_4D_NEON(8, 4)
-SAD_SKIP_WXH_4D_NEON(8, 8)
 SAD_SKIP_WXH_4D_NEON(8, 16)
 
-SAD_SKIP_WXH_4D_NEON(16, 8)
 SAD_SKIP_WXH_4D_NEON(16, 16)
 SAD_SKIP_WXH_4D_NEON(16, 32)
 
@@ -505,9 +499,7 @@ SAD_SKIP_WXH_4D_NEON(128, 128)
 #if !CONFIG_REALTIME_ONLY
 SAD_SKIP_WXH_4D_NEON(4, 16)
 SAD_SKIP_WXH_4D_NEON(8, 32)
-SAD_SKIP_WXH_4D_NEON(16, 4)
 SAD_SKIP_WXH_4D_NEON(16, 64)
-SAD_SKIP_WXH_4D_NEON(32, 8)
 SAD_SKIP_WXH_4D_NEON(64, 16)
 #endif  // !CONFIG_REALTIME_ONLY
 

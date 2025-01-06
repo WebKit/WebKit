@@ -13,7 +13,7 @@ if (window.testRunner) {
 
 var iframe = document.getElementsByTagName("iframe")[0];
 
-function startTest()
+async function startTest()
 {
     var doc = iframe.contentDocument;
     var a = doc.createElement('a');
@@ -28,21 +28,21 @@ function startTest()
     if (window.eventSender) {
        var x = iframe.offsetLeft + a.offsetLeft + 7;
        var y = iframe.offsetTop + a.offsetTop + 7;
-       eventSender.mouseMoveTo(x, y);
-       eventSender.mouseDown();
-       eventSender.mouseUp();
+       await eventSender.asyncMouseMoveTo(x, y);
+       await eventSender.asyncMouseDown();
+       await eventSender.asyncMouseUp();
        setTimeout(click2, 10);
     }
 }
 
-function click2()
+async function click2()
 {
     var foo = document.getElementById("foo");
     var x = foo.offsetLeft + 7;
     var y = foo.offsetTop + 7;
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 }
 
 function pass()

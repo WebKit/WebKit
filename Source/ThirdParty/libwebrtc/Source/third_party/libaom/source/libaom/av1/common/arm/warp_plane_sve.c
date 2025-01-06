@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -9,9 +9,10 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
-#include "warp_plane_neon.h"
+#include <arm_neon.h>
 
-#include <arm_neon_sve_bridge.h>
+#include "aom_dsp/arm/aom_neon_sve_bridge.h"
+#include "warp_plane_neon.h"
 
 DECLARE_ALIGNED(16, static const uint8_t, usdot_permute_idx[48]) = {
   0, 1, 2,  3,  1, 2,  3,  4,  2,  3,  4,  5,  3,  4,  5,  6,
@@ -19,23 +20,12 @@ DECLARE_ALIGNED(16, static const uint8_t, usdot_permute_idx[48]) = {
   8, 9, 10, 11, 9, 10, 11, 12, 10, 11, 12, 13, 11, 12, 13, 14
 };
 
-static INLINE int64x2_t aom_sdotq_s16(int64x2_t acc, int16x8_t x, int16x8_t y) {
-  // The 16-bit dot product instructions only exist in SVE and not Neon.
-  // We can get away without rewriting the existing Neon code by making use of
-  // the Neon-SVE bridge intrinsics to reinterpret a Neon vector as a SVE
-  // vector with the high part of the vector being "don't care", and then
-  // operating on that instead.
-  // This is clearly suboptimal in machines with a SVE vector length above
-  // 128-bits as the remainder of the vector is wasted, however this appears to
-  // still be beneficial compared to not using the instruction.
-  return svget_neonq_s64(svdot_s64(svset_neonq_s64(svundef_s64(), acc),
-                                   svset_neonq_s16(svundef_s16(), x),
-                                   svset_neonq_s16(svundef_s16(), y)));
-}
-
-static INLINE int16x8_t horizontal_filter_4x1_f4(const uint8x16_t in, int sx,
-                                                 int alpha) {
-  const int32x4_t add_const = vdupq_n_s32(1 << (8 + FILTER_BITS - 1));
+static AOM_FORCE_INLINE int16x8_t horizontal_filter_4x1_f4(const uint8x16_t in,
+                                                           int sx, int alpha) {
+  // Only put the constant in every other lane to avoid double-counting when
+  // performing the pairwise add later.
+  const int32x4_t add_const =
+      vreinterpretq_s32_u64(vdupq_n_u64(1 << (8 + FILTER_BITS - 1)));
 
   // Loading the 8 filter taps
   int16x8_t f[4];
@@ -49,21 +39,22 @@ static INLINE int16x8_t horizontal_filter_4x1_f4(const uint8x16_t in, int sx,
   uint8x8_t in2 = vget_low_u8(vextq_u8(in, in, 2));
   uint8x8_t in3 = vget_low_u8(vextq_u8(in, in, 3));
 
-  int32x4_t m01 = vusdotq_s32(vdupq_n_s32(0), vcombine_u8(in0, in1), f01_u8);
-  int32x4_t m23 = vusdotq_s32(vdupq_n_s32(0), vcombine_u8(in2, in3), f23_u8);
+  int32x4_t m01 = vusdotq_s32(add_const, vcombine_u8(in0, in1), f01_u8);
+  int32x4_t m23 = vusdotq_s32(add_const, vcombine_u8(in2, in3), f23_u8);
 
-  int32x4_t tmp_res_low = vpaddq_s32(m01, m23);
-
-  tmp_res_low = vaddq_s32(tmp_res_low, add_const);
+  int32x4_t m0123 = vpaddq_s32(m01, m23);
 
   uint16x8_t res =
-      vcombine_u16(vqrshrun_n_s32(tmp_res_low, ROUND0_BITS), vdup_n_u16(0));
+      vcombine_u16(vqrshrun_n_s32(m0123, ROUND0_BITS), vdup_n_u16(0));
   return vreinterpretq_s16_u16(res);
 }
 
-static INLINE int16x8_t horizontal_filter_8x1_f8(const uint8x16_t in, int sx,
-                                                 int alpha) {
-  const int32x4_t add_const = vdupq_n_s32(1 << (8 + FILTER_BITS - 1));
+static AOM_FORCE_INLINE int16x8_t horizontal_filter_8x1_f8(const uint8x16_t in,
+                                                           int sx, int alpha) {
+  // Only put the constant in every other lane to avoid double-counting when
+  // performing the pairwise add later.
+  const int32x4_t add_const =
+      vreinterpretq_s32_u64(vdupq_n_u64(1 << (8 + FILTER_BITS - 1)));
 
   // Loading the 8 filter taps
   int16x8_t f[8];
@@ -83,27 +74,22 @@ static INLINE int16x8_t horizontal_filter_8x1_f8(const uint8x16_t in, int sx,
   uint8x8_t in6 = vget_low_u8(vextq_u8(in, in, 6));
   uint8x8_t in7 = vget_low_u8(vextq_u8(in, in, 7));
 
-  int32x4_t m01 = vusdotq_s32(vdupq_n_s32(0), vcombine_u8(in0, in1), f01_u8);
-  int32x4_t m23 = vusdotq_s32(vdupq_n_s32(0), vcombine_u8(in2, in3), f23_u8);
-  int32x4_t m45 = vusdotq_s32(vdupq_n_s32(0), vcombine_u8(in4, in5), f45_u8);
-  int32x4_t m67 = vusdotq_s32(vdupq_n_s32(0), vcombine_u8(in6, in7), f67_u8);
+  int32x4_t m01 = vusdotq_s32(add_const, vcombine_u8(in0, in1), f01_u8);
+  int32x4_t m23 = vusdotq_s32(add_const, vcombine_u8(in2, in3), f23_u8);
+  int32x4_t m45 = vusdotq_s32(add_const, vcombine_u8(in4, in5), f45_u8);
+  int32x4_t m67 = vusdotq_s32(add_const, vcombine_u8(in6, in7), f67_u8);
 
-  int32x4_t tmp_res_low = vpaddq_s32(m01, m23);
-  int32x4_t tmp_res_high = vpaddq_s32(m45, m67);
+  int32x4_t m0123 = vpaddq_s32(m01, m23);
+  int32x4_t m4567 = vpaddq_s32(m45, m67);
 
-  tmp_res_low = vaddq_s32(tmp_res_low, add_const);
-  tmp_res_high = vaddq_s32(tmp_res_high, add_const);
-
-  uint16x8_t res = vcombine_u16(vqrshrun_n_s32(tmp_res_low, ROUND0_BITS),
-                                vqrshrun_n_s32(tmp_res_high, ROUND0_BITS));
+  uint16x8_t res = vcombine_u16(vqrshrun_n_s32(m0123, ROUND0_BITS),
+                                vqrshrun_n_s32(m4567, ROUND0_BITS));
   return vreinterpretq_s16_u16(res);
 }
 
-static INLINE int16x8_t horizontal_filter_4x1_f1(const uint8x16_t in, int sx) {
+static AOM_FORCE_INLINE int16x8_t
+horizontal_filter_4x1_f1_beta0(const uint8x16_t in, int16x8_t f_s16) {
   const int32x4_t add_const = vdupq_n_s32(1 << (8 + FILTER_BITS - 1));
-
-  int16x8_t f_s16 =
-      vld1q_s16((int16_t *)(av1_warped_filter + (sx >> WARPEDDIFF_PREC_BITS)));
 
   int8x16_t f_s8 = vcombine_s8(vmovn_s16(f_s16), vmovn_s16(f_s16));
 
@@ -116,23 +102,24 @@ static INLINE int16x8_t horizontal_filter_4x1_f1(const uint8x16_t in, int sx) {
   uint8x16_t in_0123 = vqtbl1q_u8(in, perm0);
   uint8x16_t in_4567 = vqtbl1q_u8(in, perm1);
 
-  int32x4_t m0123 = vusdotq_laneq_s32(vdupq_n_s32(0), in_0123, f_s8, 0);
+  int32x4_t m0123 = vusdotq_laneq_s32(add_const, in_0123, f_s8, 0);
   m0123 = vusdotq_laneq_s32(m0123, in_4567, f_s8, 1);
 
-  int32x4_t tmp_res_low = m0123;
-
-  tmp_res_low = vaddq_s32(tmp_res_low, add_const);
-
   uint16x8_t res =
-      vcombine_u16(vqrshrun_n_s32(tmp_res_low, ROUND0_BITS), vdup_n_u16(0));
+      vcombine_u16(vqrshrun_n_s32(m0123, ROUND0_BITS), vdup_n_u16(0));
   return vreinterpretq_s16_u16(res);
 }
 
-static INLINE int16x8_t horizontal_filter_8x1_f1(const uint8x16_t in, int sx) {
-  const int32x4_t add_const = vdupq_n_s32(1 << (8 + FILTER_BITS - 1));
-
+static AOM_FORCE_INLINE int16x8_t horizontal_filter_4x1_f1(const uint8x16_t in,
+                                                           int sx) {
   int16x8_t f_s16 =
       vld1q_s16((int16_t *)(av1_warped_filter + (sx >> WARPEDDIFF_PREC_BITS)));
+  return horizontal_filter_4x1_f1_beta0(in, f_s16);
+}
+
+static AOM_FORCE_INLINE int16x8_t
+horizontal_filter_8x1_f1_beta0(const uint8x16_t in, int16x8_t f_s16) {
+  const int32x4_t add_const = vdupq_n_s32(1 << (8 + FILTER_BITS - 1));
 
   int8x16_t f_s8 = vcombine_s8(vmovn_s16(f_s16), vmovn_s16(f_s16));
 
@@ -148,25 +135,26 @@ static INLINE int16x8_t horizontal_filter_8x1_f1(const uint8x16_t in, int sx) {
   uint8x16_t in_4567 = vqtbl1q_u8(in, perm1);
   uint8x16_t in_89ab = vqtbl1q_u8(in, perm2);
 
-  int32x4_t m0123 = vusdotq_laneq_s32(vdupq_n_s32(0), in_0123, f_s8, 0);
+  int32x4_t m0123 = vusdotq_laneq_s32(add_const, in_0123, f_s8, 0);
   m0123 = vusdotq_laneq_s32(m0123, in_4567, f_s8, 1);
 
-  int32x4_t m4567 = vusdotq_laneq_s32(vdupq_n_s32(0), in_4567, f_s8, 0);
+  int32x4_t m4567 = vusdotq_laneq_s32(add_const, in_4567, f_s8, 0);
   m4567 = vusdotq_laneq_s32(m4567, in_89ab, f_s8, 1);
 
-  int32x4_t tmp_res_low = m0123;
-  int32x4_t tmp_res_high = m4567;
-
-  tmp_res_low = vaddq_s32(tmp_res_low, add_const);
-  tmp_res_high = vaddq_s32(tmp_res_high, add_const);
-
-  uint16x8_t res = vcombine_u16(vqrshrun_n_s32(tmp_res_low, ROUND0_BITS),
-                                vqrshrun_n_s32(tmp_res_high, ROUND0_BITS));
+  uint16x8_t res = vcombine_u16(vqrshrun_n_s32(m0123, ROUND0_BITS),
+                                vqrshrun_n_s32(m4567, ROUND0_BITS));
   return vreinterpretq_s16_u16(res);
 }
 
-static INLINE void vertical_filter_4x1_f1(const int16x8_t *src, int32x4_t *res,
-                                          int sy) {
+static AOM_FORCE_INLINE int16x8_t horizontal_filter_8x1_f1(const uint8x16_t in,
+                                                           int sx) {
+  int16x8_t f_s16 =
+      vld1q_s16((int16_t *)(av1_warped_filter + (sx >> WARPEDDIFF_PREC_BITS)));
+  return horizontal_filter_8x1_f1_beta0(in, f_s16);
+}
+
+static AOM_FORCE_INLINE void vertical_filter_4x1_f1(const int16x8_t *src,
+                                                    int32x4_t *res, int sy) {
   int16x4_t s0 = vget_low_s16(src[0]);
   int16x4_t s1 = vget_low_s16(src[1]);
   int16x4_t s2 = vget_low_s16(src[2]);
@@ -191,8 +179,9 @@ static INLINE void vertical_filter_4x1_f1(const int16x8_t *src, int32x4_t *res,
   *res = m0123;
 }
 
-static INLINE void vertical_filter_4x1_f4(const int16x8_t *src, int32x4_t *res,
-                                          int sy, int gamma) {
+static AOM_FORCE_INLINE void vertical_filter_4x1_f4(const int16x8_t *src,
+                                                    int32x4_t *res, int sy,
+                                                    int gamma) {
   int16x8_t s0, s1, s2, s3;
   transpose_elems_s16_4x8(
       vget_low_s16(src[0]), vget_low_s16(src[1]), vget_low_s16(src[2]),
@@ -213,9 +202,10 @@ static INLINE void vertical_filter_4x1_f4(const int16x8_t *src, int32x4_t *res,
   *res = vcombine_s32(vmovn_s64(m01), vmovn_s64(m23));
 }
 
-static INLINE void vertical_filter_8x1_f1(const int16x8_t *src,
-                                          int32x4_t *res_low,
-                                          int32x4_t *res_high, int sy) {
+static AOM_FORCE_INLINE void vertical_filter_8x1_f1(const int16x8_t *src,
+                                                    int32x4_t *res_low,
+                                                    int32x4_t *res_high,
+                                                    int sy) {
   int16x8_t s0 = src[0];
   int16x8_t s1 = src[1];
   int16x8_t s2 = src[2];
@@ -250,10 +240,10 @@ static INLINE void vertical_filter_8x1_f1(const int16x8_t *src,
   *res_high = m4567;
 }
 
-static INLINE void vertical_filter_8x1_f8(const int16x8_t *src,
-                                          int32x4_t *res_low,
-                                          int32x4_t *res_high, int sy,
-                                          int gamma) {
+static AOM_FORCE_INLINE void vertical_filter_8x1_f8(const int16x8_t *src,
+                                                    int32x4_t *res_low,
+                                                    int32x4_t *res_high, int sy,
+                                                    int gamma) {
   int16x8_t s0 = src[0];
   int16x8_t s1 = src[1];
   int16x8_t s2 = src[2];

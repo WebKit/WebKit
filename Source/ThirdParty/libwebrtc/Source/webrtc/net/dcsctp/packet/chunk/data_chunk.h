@@ -59,7 +59,7 @@ class DataChunk : public AnyDataChunk, public TLVTrait<DataChunkConfig> {
   DataChunk(TSN tsn, Data&& data, bool immediate_ack)
       : AnyDataChunk(tsn, std::move(data), immediate_ack) {}
 
-  static absl::optional<DataChunk> Parse(rtc::ArrayView<const uint8_t> data);
+  static std::optional<DataChunk> Parse(rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

@@ -26,7 +26,8 @@ namespace WebCore {
 class CSSValueList;
 
 class SVGFontFaceSrcElement final : public SVGElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGFontFaceSrcElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFontFaceSrcElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFontFaceSrcElement);
 public:
     static Ref<SVGFontFaceSrcElement> create(const QualifiedName&, Document&);
 

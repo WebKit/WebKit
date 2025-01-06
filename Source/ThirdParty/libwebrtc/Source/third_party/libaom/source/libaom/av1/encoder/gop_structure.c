@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -59,7 +59,7 @@ static void set_src_offset(GF_GROUP *const gf_group, int *first_frame_index,
 }
 
 // Sets the GF_GROUP params for LF_UPDATE frames.
-static AOM_INLINE void set_params_for_leaf_frames(
+static inline void set_params_for_leaf_frames(
     const TWO_PASS *twopass, const TWO_PASS_FRAME *twopass_frame,
     const PRIMARY_RATE_CONTROL *p_rc, FRAME_INFO *frame_info,
     GF_GROUP *const gf_group, int *cur_frame_idx, int *frame_ind,
@@ -93,7 +93,7 @@ static AOM_INLINE void set_params_for_leaf_frames(
 }
 
 // Sets the GF_GROUP params for INTNL_OVERLAY_UPDATE frames.
-static AOM_INLINE void set_params_for_intnl_overlay_frames(
+static inline void set_params_for_intnl_overlay_frames(
     GF_GROUP *const gf_group, int *cur_frame_idx, int *frame_ind,
     int *first_frame_index, int *cur_disp_index, int layer_depth) {
   gf_group->update_type[*frame_ind] = INTNL_OVERLAY_UPDATE;
@@ -111,7 +111,7 @@ static AOM_INLINE void set_params_for_intnl_overlay_frames(
 }
 
 // Sets the GF_GROUP params for INTNL_ARF_UPDATE frames.
-static AOM_INLINE void set_params_for_internal_arfs(
+static inline void set_params_for_internal_arfs(
     const TWO_PASS *twopass, const TWO_PASS_FRAME *twopass_frame,
     const PRIMARY_RATE_CONTROL *p_rc, FRAME_INFO *frame_info,
     GF_GROUP *const gf_group, int *cur_frame_idx, int *frame_ind,
@@ -279,10 +279,9 @@ typedef struct {
 } FRAME_REORDER_INFO;
 
 // Updates the stats required to configure the GF_GROUP.
-static AOM_INLINE void fill_arf_frame_stats(FRAME_REORDER_INFO *arf_frame_stats,
-                                            int arf_frame_index,
-                                            int display_idx, int start,
-                                            int end) {
+static inline void fill_arf_frame_stats(FRAME_REORDER_INFO *arf_frame_stats,
+                                        int arf_frame_index, int display_idx,
+                                        int start, int end) {
   arf_frame_stats[arf_frame_index].start = start;
   arf_frame_stats[arf_frame_index].end = end;
   arf_frame_stats[arf_frame_index].display_index = display_idx;
@@ -290,7 +289,7 @@ static AOM_INLINE void fill_arf_frame_stats(FRAME_REORDER_INFO *arf_frame_stats,
 
 // Sets GF_GROUP params for INTNL_ARF_UPDATE frames. Also populates
 // doh_gf_index_map and arf_frame_stats.
-static AOM_INLINE void set_params_for_internal_arfs_in_gf14(
+static inline void set_params_for_internal_arfs_in_gf14(
     GF_GROUP *const gf_group, FRAME_REORDER_INFO *arf_frame_stats,
     int *cur_frame_idx, int *cur_disp_idx, int *frame_ind,
     int *count_arf_frames, int *doh_gf_index_map, int start, int end,
@@ -333,7 +332,7 @@ static AOM_INLINE void set_params_for_internal_arfs_in_gf14(
 
 // Sets GF_GROUP params for all INTNL_ARF_UPDATE frames in the given layer
 // dpeth.
-static AOM_INLINE void set_params_for_cur_layer_frames(
+static inline void set_params_for_cur_layer_frames(
     GF_GROUP *const gf_group, FRAME_REORDER_INFO *arf_frame_stats,
     int *cur_frame_idx, int *cur_disp_idx, int *frame_ind,
     int *count_arf_frames, int *doh_gf_index_map, int num_dir, int node_start,
@@ -373,7 +372,7 @@ static AOM_INLINE void set_params_for_cur_layer_frames(
 
 // Configures multi-layers of the GF_GROUP when consecutive encode of frames in
 // the same layer depth is enbaled.
-static AOM_INLINE void set_multi_layer_params_for_gf14(
+static inline void set_multi_layer_params_for_gf14(
     const TWO_PASS *twopass, const TWO_PASS_FRAME *twopass_frame,
     const PRIMARY_RATE_CONTROL *p_rc, FRAME_INFO *frame_info,
     GF_GROUP *const gf_group, FRAME_REORDER_INFO *arf_frame_stats,

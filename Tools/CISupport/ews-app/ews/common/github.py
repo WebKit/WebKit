@@ -1,4 +1,4 @@
-# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ GITHUB_URL = 'https://github.com/'
 GITHUB_PROJECTS = ['WebKit/WebKit', 'apple/WebKit', 'WebKit/WebKit-security']
 
 is_test_mode_enabled = util.load_password('EWS_PRODUCTION') is None
-is_dev_instance = (util.load_password('DEV_INSTANCE', default='').lower() == 'true')
+is_dev_instance = (util.get_custom_suffix() != '')
 
 
 class GitHub(object):
@@ -205,15 +205,18 @@ class GitHubEWS(GitHub):
     ICON_EMPTY_SPACE = u'\U00002003'
     STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
     STATUS_BUBBLE_END = u'<!--EWS-Status-Bubble-End-->'
-    STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'wincairo'],  # FIXME: generate this list dynamically to have merge queue show up on top
-                          ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', 'wincairo-tests'],
+    STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'win'],  # FIXME: generate this list dynamically to have merge queue show up on top
+                          ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', 'win-tests'],
                           ['webkitperl', 'ios-wk2', 'api-mac', 'api-wpe', ''],
                           ['webkitpy', 'ios-wk2-wpt', 'mac-wk1', 'wpe-cairo', ''],
                           ['jsc', 'api-ios', 'mac-wk2', 'gtk', ''],
-                          ['jsc-arm64', 'tv', 'mac-AS-debug-wk2', 'gtk-wk2', ''],
-                          ['services', 'tv-sim', 'mac-wk2-stress', 'api-gtk', ''],
-                          ['merge', 'watch', '', 'jsc-armv7', ''],
-                          ['unsafe-merge', 'watch-sim', '', 'jsc-armv7-tests', '']]
+                          ['jsc-arm64', 'vision', 'mac-AS-debug-wk2', 'gtk-wk2', ''],
+                          ['services', 'vision-sim', 'mac-wk2-stress', 'api-gtk', ''],
+                          ['merge', 'vision-wk2', 'mac-intel-wk2', 'playstation', ''],
+                          ['unsafe-merge', 'tv', 'mac-safer-cpp', 'jsc-armv7', ''],
+                          ['', 'tv-sim', '', 'jsc-armv7-tests', ''],
+                          ['', 'watch', '', '', ''],
+                          ['', 'watch-sim', '', '', '']]
 
     @classmethod
     def generate_updated_pr_description(self, description, ews_comment):
@@ -224,7 +227,7 @@ class GitHubEWS(GitHub):
         repository_url = 'https://github.com/{}'.format(change.pr_project)
         hash_url = '{}/commit/{}'.format(repository_url, change.change_id)
 
-        comment = '\n\n| Misc | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
+        comment = '\n\n| Misc | iOS, visionOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
         comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
 
         for row in self.STATUS_BUBBLE_ROWS:
@@ -247,6 +250,10 @@ class GitHubEWS(GitHub):
             folded_comment = u'Starting EWS tests for {}. Live statuses available at the PR page, {}'.format(hash_url, pr_url)
 
         return (regular_comment, folded_comment)
+
+    @classmethod
+    def escape_github_markdown(cls, string):
+        return string.replace('|', '\\|')
 
     def github_status_for_queue(self, change, queue):
         name = queue
@@ -337,6 +344,8 @@ class GitHubEWS(GitHub):
             icon = GitHubEWS.ICON_BUILD_ERROR
             hover_over_text = 'An unexpected error occured. Recent messages:' + self._steps_messages(build)
 
+        # Hover-over text comes from buildbot and can conceivable contain a |, escape it
+        hover_over_text = self.escape_github_markdown(hover_over_text)
         return u'| [{icon} {name}]({url} "{hover_over_text}") '.format(icon=icon, name=name, url=url, hover_over_text=hover_over_text)
 
     @classmethod

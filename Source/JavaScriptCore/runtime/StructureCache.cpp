@@ -39,7 +39,7 @@ void StructureCache::clear()
 
 inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObject, JSObject* prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable* executable)
 {
-    RELEASE_ASSERT(!!prototype); // We use nullptr inside the HashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.
+    RELEASE_ASSERT(!!prototype); // We use nullptr inside the UncheckedKeyHashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.
 
     // We don't need to lock here because only the main thread can get here, and only the main thread can mutate the cache
     ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
@@ -72,7 +72,7 @@ inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObj
 
 Structure* StructureCache::emptyObjectStructureConcurrently(JSObject* prototype, unsigned inlineCapacity)
 {
-    RELEASE_ASSERT(!!prototype); // We use nullptr inside the HashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.
+    RELEASE_ASSERT(!!prototype); // We use nullptr inside the UncheckedKeyHashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.
     
     PrototypeKey key { prototype, nullptr, inlineCapacity, JSFinalObject::info() };
     Locker locker { m_lock };

@@ -9,7 +9,6 @@
 
 #include "include/core/SkPaint.h"
 #include "include/core/SkPath.h"
-#include "include/core/SkPathEffect.h"
 #include "include/core/SkPathMeasure.h"
 #include "include/core/SkPoint.h"
 #include "include/core/SkRect.h"
@@ -19,6 +18,7 @@
 #include "include/private/base/SkAlign.h"
 #include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkTo.h"
+#include "src/core/SkPathEffectBase.h"
 #include "src/core/SkPathEnums.h"
 #include "src/core/SkPathPriv.h"
 #include "src/core/SkPointPriv.h"
@@ -331,11 +331,7 @@ bool SkDashPath::InternalFilter(SkPath* dst, const SkPath& src, SkStrokeRec* rec
         // potentially a better fix is described here: bug.skia.org/7445
         if (src.isRect(nullptr) && src.isLastContourClosed() && is_even(initialDashIndex)) {
             SkScalar pathLength = SkPathMeasure(src, false, rec->getResScale()).getLength();
-#if defined(SK_LEGACY_RECT_DASHING_BUG)
-            SkScalar endPhase = SkScalarMod(pathLength + initialDashLength, intervalLength);
-#else
             SkScalar endPhase = SkScalarMod(pathLength + startPhase, intervalLength);
-#endif
             int index = 0;
             while (endPhase > intervals[index]) {
                 endPhase -= intervals[index++];
@@ -460,7 +456,7 @@ bool SkDashPath::InternalFilter(SkPath* dst, const SkPath& src, SkStrokeRec* rec
 }
 
 bool SkDashPath::FilterDashPath(SkPath* dst, const SkPath& src, SkStrokeRec* rec,
-                                const SkRect* cullRect, const SkPathEffect::DashInfo& info) {
+                                const SkRect* cullRect, const SkPathEffectBase::DashInfo& info) {
     if (!ValidDashPath(info.fPhase, info.fIntervals, info.fCount)) {
         return false;
     }

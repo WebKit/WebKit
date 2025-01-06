@@ -38,30 +38,37 @@ MATCHER(HasConsistentVideoDelayTimings, "") {
   // Delays should be internally consistent.
   bool m1 = arg.minimum_delay <= arg.target_delay;
   if (!m1) {
-    *result_listener << "\nminimum_delay: " << arg.minimum_delay << ", "
-                     << "target_delay: " << arg.target_delay << "\n";
+    *result_listener << "\nminimum_delay: " << ToString(arg.minimum_delay)
+                     << ", " << "target_delay: " << ToString(arg.target_delay)
+                     << "\n";
   }
   bool m2 = arg.minimum_delay <= arg.current_delay;
   if (!m2) {
-    *result_listener << "\nminimum_delay: " << arg.minimum_delay << ", "
-                     << "current_delay: " << arg.current_delay;
+    *result_listener << "\nminimum_delay: " << ToString(arg.minimum_delay)
+                     << ", "
+                     << "current_delay: " << ToString(arg.current_delay);
   }
   bool m3 = arg.target_delay >= arg.min_playout_delay;
   if (!m3) {
-    *result_listener << "\ntarget_delay: " << arg.target_delay << ", "
-                     << "min_playout_delay: " << arg.min_playout_delay << "\n";
+    *result_listener << "\ntarget_delay: " << ToString(arg.target_delay) << ", "
+                     << "min_playout_delay: " << ToString(arg.min_playout_delay)
+                     << "\n";
   }
   // TODO(crbug.com/webrtc/15197): Uncomment when this is guaranteed.
   // bool m4 = arg.target_delay <= arg.max_playout_delay;
   bool m5 = arg.current_delay >= arg.min_playout_delay;
   if (!m5) {
-    *result_listener << "\ncurrent_delay: " << arg.current_delay << ", "
-                     << "min_playout_delay: " << arg.min_playout_delay << "\n";
+    *result_listener << "\ncurrent_delay: " << ToString(arg.current_delay)
+                     << ", "
+                     << "min_playout_delay: " << ToString(arg.min_playout_delay)
+                     << "\n";
   }
   bool m6 = arg.current_delay <= arg.max_playout_delay;
   if (!m6) {
-    *result_listener << "\ncurrent_delay: " << arg.current_delay << ", "
-                     << "max_playout_delay: " << arg.max_playout_delay << "\n";
+    *result_listener << "\ncurrent_delay: " << ToString(arg.current_delay)
+                     << ", "
+                     << "max_playout_delay: " << ToString(arg.max_playout_delay)
+                     << "\n";
   }
   bool m = m1 && m2 && m3 && m5 && m6;
 

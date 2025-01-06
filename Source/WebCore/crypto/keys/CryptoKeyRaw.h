@@ -42,8 +42,8 @@ private:
     CryptoKeyRaw(CryptoAlgorithmIdentifier, Vector<uint8_t>&& keyData, CryptoKeyUsageBitmap);
 
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::Raw; }
-
     KeyAlgorithm algorithm() const final;
+    CryptoKey::Data data() const final;
 
     Vector<uint8_t> m_key;
 };

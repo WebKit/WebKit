@@ -20,10 +20,10 @@
 
 #include <vector>
 
+#include "modules/video_capture/linux/pipewire_session.h"
 #include "modules/video_capture/video_capture.h"
 #include "modules/video_capture/video_capture_defines.h"
 #include "modules/video_capture/video_capture_impl.h"
-#include "modules/video_capture/video_capture_options.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
@@ -38,6 +38,8 @@ int32_t DeviceInfoPipeWire::Init() {
 DeviceInfoPipeWire::~DeviceInfoPipeWire() = default;
 
 uint32_t DeviceInfoPipeWire::NumberOfDevices() {
+  RTC_CHECK(pipewire_session_);
+
   return pipewire_session_->nodes().size();
 }
 
@@ -48,34 +50,36 @@ int32_t DeviceInfoPipeWire::GetDeviceName(uint32_t deviceNumber,
                                           uint32_t deviceUniqueIdUTF8Length,
                                           char* productUniqueIdUTF8,
                                           uint32_t productUniqueIdUTF8Length) {
+  RTC_CHECK(pipewire_session_);
+
   if (deviceNumber >= NumberOfDevices())
     return -1;
 
-  const PipeWireNode& node = pipewire_session_->nodes().at(deviceNumber);
+  const auto& node = pipewire_session_->nodes().at(deviceNumber);
 
-  if (deviceNameLength <= node.display_name().length()) {
+  if (deviceNameLength <= node->display_name().length()) {
     RTC_LOG(LS_INFO) << "deviceNameUTF8 buffer passed is too small";
     return -1;
   }
-  if (deviceUniqueIdUTF8Length <= node.unique_id().length()) {
+  if (deviceUniqueIdUTF8Length <= node->unique_id().length()) {
     RTC_LOG(LS_INFO) << "deviceUniqueIdUTF8 buffer passed is too small";
     return -1;
   }
   if (productUniqueIdUTF8 &&
-      productUniqueIdUTF8Length <= node.model_id().length()) {
+      productUniqueIdUTF8Length <= node->model_id().length()) {
     RTC_LOG(LS_INFO) << "productUniqueIdUTF8 buffer passed is too small";
     return -1;
   }
 
   memset(deviceNameUTF8, 0, deviceNameLength);
-  node.display_name().copy(deviceNameUTF8, deviceNameLength);
+  node->display_name().copy(deviceNameUTF8, deviceNameLength);
 
   memset(deviceUniqueIdUTF8, 0, deviceUniqueIdUTF8Length);
-  node.unique_id().copy(deviceUniqueIdUTF8, deviceUniqueIdUTF8Length);
+  node->unique_id().copy(deviceUniqueIdUTF8, deviceUniqueIdUTF8Length);
 
   if (productUniqueIdUTF8) {
     memset(productUniqueIdUTF8, 0, productUniqueIdUTF8Length);
-    node.model_id().copy(productUniqueIdUTF8, productUniqueIdUTF8Length);
+    node->model_id().copy(productUniqueIdUTF8, productUniqueIdUTF8Length);
   }
 
   return 0;
@@ -83,12 +87,14 @@ int32_t DeviceInfoPipeWire::GetDeviceName(uint32_t deviceNumber,
 
 int32_t DeviceInfoPipeWire::CreateCapabilityMap(
     const char* deviceUniqueIdUTF8) {
+  RTC_CHECK(pipewire_session_);
+
   for (auto& node : pipewire_session_->nodes()) {
-    if (node.unique_id().compare(deviceUniqueIdUTF8) != 0)
+    if (node->unique_id().compare(deviceUniqueIdUTF8) != 0)
       continue;
 
-    _captureCapabilities = node.capabilities();
-    _lastUsedDeviceNameLength = node.display_name().length();
+    _captureCapabilities = node->capabilities();
+    _lastUsedDeviceNameLength = node->unique_id().length();
     _lastUsedDeviceName = static_cast<char*>(
         realloc(_lastUsedDeviceName, _lastUsedDeviceNameLength + 1));
     memcpy(_lastUsedDeviceName, deviceUniqueIdUTF8,

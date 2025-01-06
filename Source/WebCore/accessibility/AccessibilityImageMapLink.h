@@ -36,7 +36,7 @@ namespace WebCore {
     
 class AccessibilityImageMapLink final : public AccessibilityMockObject {
 public:
-    static Ref<AccessibilityImageMapLink> create();
+    static Ref<AccessibilityImageMapLink> create(AXID);
     virtual ~AccessibilityImageMapLink();
     
     void setHTMLAreaElement(HTMLAreaElement*);
@@ -45,30 +45,29 @@ public:
     void setHTMLMapElement(HTMLMapElement* element) { m_mapElement = element; }    
     HTMLMapElement* mapElement() const { return m_mapElement.get(); }
     
-    Node* node() const override { return m_areaElement.get(); }
-        
+    Node* node() const final { return m_areaElement.get(); }
+
     AccessibilityRole determineAccessibilityRole() final;
-    bool isEnabled() const override { return true; }
-    
-    Element* anchorElement() const override;
-    Element* actionElement() const override;
-    URL url() const override;
-    bool isLink() const override { return true; }
-    String title() const override;
-    String description() const override;
-    AccessibilityObject* parentObject() const override;
-    
-    LayoutRect elementRect() const override;
+    bool isEnabled() const final { return true; }
+
+    Element* anchorElement() const final;
+    Element* actionElement() const final;
+    URL url() const final;
+    String title() const final;
+    String description() const final;
+    AccessibilityObject* parentObject() const final;
+
+    LayoutRect elementRect() const final;
 
 private:
-    AccessibilityImageMapLink();
+    explicit AccessibilityImageMapLink(AXID);
 
-    void detachFromParent() override;
-    Path elementPath() const override;
+    void detachFromParent() final;
+    Path elementPath() const final;
     RenderElement* imageMapLinkRenderer() const;
-    void accessibilityText(Vector<AccessibilityText>&) const override;
+    void accessibilityText(Vector<AccessibilityText>&) const final;
     bool isImageMapLink() const final { return true; }
-    bool supportsPath() const override { return true; }
+    bool supportsPath() const final { return true; }
 
     WeakPtr<HTMLAreaElement, WeakPtrImplWithEventTargetData> m_areaElement;
     WeakPtr<HTMLMapElement, WeakPtrImplWithEventTargetData> m_mapElement;

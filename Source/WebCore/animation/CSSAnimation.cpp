@@ -27,15 +27,18 @@
 #include "CSSAnimation.h"
 
 #include "AnimationEffect.h"
+#include "AnimationTimelinesController.h"
 #include "CSSAnimationEvent.h"
+#include "DocumentTimeline.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"
 #include "RenderStyle.h"
-#include <wtf/IsoMallocInlines.h>
+#include "ViewTimeline.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSAnimation);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSAnimation);
 
 Ref<CSSAnimation> CSSAnimation::create(const Styleable& owningElement, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext)
 {
@@ -107,15 +110,44 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     if (!m_overriddenProperties.contains(Property::Delay))
         animationEffect->setDelay(Seconds(animation.delay()));
 
-    if (!m_overriddenProperties.contains(Property::Duration))
-        animationEffect->setIterationDuration(Seconds(animation.duration()));
+    if (!m_overriddenProperties.contains(Property::Duration)) {
+        if (auto duration = animation.duration())
+            animationEffect->setIterationDuration(Seconds(*duration));
+        else
+            animationEffect->setIterationDuration(std::nullopt);
+    }
 
     if (!m_overriddenProperties.contains(Property::CompositeOperation)) {
         if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(animationEffect))
             keyframeEffect->setComposite(animation.compositeOperation());
     }
 
-    animationEffect->updateStaticTimingProperties();
+    if (!m_overriddenProperties.contains(Property::Timeline)) {
+        ASSERT(owningElement());
+        Ref target = owningElement()->element;
+        Ref document = owningElement()->element.document();
+        WTF::switchOn(animation.timeline(),
+            [&] (Animation::TimelineKeyword keyword) {
+                setTimeline(keyword == Animation::TimelineKeyword::None ? nullptr : RefPtr { document->existingTimeline() });
+            }, [&] (const AtomString& name) {
+                CheckedRef timelinesController = document->ensureTimelinesController();
+                timelinesController->setTimelineForName(name, target, *this);
+            }, [&] (const Animation::AnonymousScrollTimeline& anonymousScrollTimeline) {
+                auto scrollTimeline = ScrollTimeline::create(anonymousScrollTimeline.scroller, anonymousScrollTimeline.axis);
+                scrollTimeline->setSource(target.ptr());
+                setTimeline(WTFMove(scrollTimeline));
+            }, [&] (const Animation::AnonymousViewTimeline& anonymousViewTimeline) {
+                auto insets = anonymousViewTimeline.insets;
+                auto viewTimeline = ViewTimeline::create(nullAtom(), anonymousViewTimeline.axis, WTFMove(insets));
+                viewTimeline->setSubject(target.ptr());
+                setTimeline(WTFMove(viewTimeline));
+            }
+        );
+    }
+
+    if (!m_overriddenProperties.contains(Property::Range))
+        setRange(animation.range());
+
     effectTimingDidChange();
 
     // Synchronize the play state
@@ -127,6 +159,30 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     }
 
     unsuspendEffectInvalidation();
+}
+
+AnimationTimeline* CSSAnimation::bindingsTimeline() const
+{
+    flushPendingStyleChanges();
+    return StyleOriginatedAnimation::bindingsTimeline();
+}
+
+void CSSAnimation::setBindingsTimeline(RefPtr<AnimationTimeline>&& timeline)
+{
+    m_overriddenProperties.add(Property::Timeline);
+    StyleOriginatedAnimation::setBindingsTimeline(WTFMove(timeline));
+}
+
+void CSSAnimation::setBindingsRangeStart(TimelineRangeValue&& range)
+{
+    m_overriddenProperties.add(Property::Range);
+    StyleOriginatedAnimation::setBindingsRangeStart(WTFMove(range));
+}
+
+void CSSAnimation::setBindingsRangeEnd(TimelineRangeValue&& range)
+{
+    m_overriddenProperties.add(Property::Range);
+    StyleOriginatedAnimation::setBindingsRangeEnd(WTFMove(range));
 }
 
 ExceptionOr<void> CSSAnimation::bindingsPlay()
@@ -178,7 +234,7 @@ void CSSAnimation::setBindingsEffect(RefPtr<AnimationEffect>&& newEffect)
     }
 }
 
-ExceptionOr<void> CSSAnimation::setBindingsStartTime(const std::optional<CSSNumberish>& startTime)
+ExceptionOr<void> CSSAnimation::setBindingsStartTime(const std::optional<WebAnimationTime>& startTime)
 {
     // https://drafts.csswg.org/css-animations-2/#animations
 

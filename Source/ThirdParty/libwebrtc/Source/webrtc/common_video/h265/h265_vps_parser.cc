@@ -28,14 +28,12 @@ H265VpsParser::VpsState::VpsState() = default;
 // http://www.itu.int/rec/T-REC-H.265
 
 // Unpack RBSP and parse VPS state from the supplied buffer.
-absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseVps(
-    const uint8_t* data,
-    size_t length) {
-  RTC_DCHECK(data);
-  return ParseInternal(H265::ParseRbsp(data, length));
+std::optional<H265VpsParser::VpsState> H265VpsParser::ParseVps(
+    rtc::ArrayView<const uint8_t> data) {
+  return ParseInternal(H265::ParseRbsp(data));
 }
 
-absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(
+std::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(
     rtc::ArrayView<const uint8_t> buffer) {
   BitstreamReader reader(buffer);
 
@@ -48,7 +46,7 @@ absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(
   vps.id = reader.ReadBits(4);
 
   if (!reader.Ok()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
 #if WEBRTC_WEBKIT_BUILD
@@ -60,7 +58,7 @@ absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(
   vps.vps_max_sub_layers_minus1 = reader.ReadBits(6);
 
   if (!reader.Ok() || (vps.vps_max_sub_layers_minus1 >= kMaxSubLayers)) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   //  vps_max_sub_layers_minus1 u(3)
@@ -72,7 +70,7 @@ absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(
 
   auto profile_tier_level = H265SpsParser::ParseProfileTierLevel(true, vps.vps_max_sub_layers_minus1, reader);
   if (!reader.Ok() || !profile_tier_level) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   bool vps_sub_layer_ordering_info_present_flag = reader.Read<bool>();
@@ -82,7 +80,7 @@ absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(
     // vps_max_num_reorder_pics[ i ]: ue(v)
     vps.vps_max_num_reorder_pics[i] = reader.ReadExponentialGolomb();
     if (!reader.Ok() || (i > 0 && vps.vps_max_num_reorder_pics[i] < vps.vps_max_num_reorder_pics[i - 1])) {
-      return absl::nullopt;
+      return std::nullopt;
     }
 
     // vps_max_latency_increase_plus1: ue(v)
@@ -94,7 +92,7 @@ absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(
     }
   }
   if (!reader.Ok() || !profile_tier_level) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 #endif
 

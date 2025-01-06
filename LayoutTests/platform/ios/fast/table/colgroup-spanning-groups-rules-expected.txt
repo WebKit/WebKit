@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 240x226 [border: (0.50px solid #808080)]
+      RenderTable {TABLE} at (0,0) size 240x226 [border: (0.50px solid #000000)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: none (1px solid #000000) none (1px solid #000000)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: none (1px solid #000000) none (1px solid #000000)]
-        RenderTableSection {TBODY} at (0,0) size 239x226 [border: (1px solid #808080) none (1px solid #808080) none]
+        RenderTableSection {TBODY} at (0,0) size 239x226 [border: (1px solid #000000) none (1px solid #000000) none]
           RenderTableRow {TR} at (0,0) size 239x29
             RenderTableCell {TH} at (0,0) size 83x29 [border: (0.50px none #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (9,4) size 64x20

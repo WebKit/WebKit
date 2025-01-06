@@ -30,7 +30,9 @@
 #include "PathImpl.h"
 #include "PlatformPath.h"
 #include "WindRule.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkPath.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/Function.h>
 
 namespace WebCore {
@@ -49,6 +51,7 @@ public:
 
     void addPath(const PathSkia&, const AffineTransform&);
 
+    bool definitelyEqual(const PathImpl&) const final;
     Ref<PathImpl> copy() const final;
     void add(PathMoveTo) final;
     void add(PathLineTo) final;

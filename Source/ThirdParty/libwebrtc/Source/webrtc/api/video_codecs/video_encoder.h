@@ -11,21 +11,23 @@
 #ifndef API_VIDEO_CODECS_VIDEO_ENCODER_H_
 #define API_VIDEO_CODECS_VIDEO_ENCODER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <limits>
-#include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
-#include "absl/types/optional.h"
 #include "api/fec_controller_override.h"
 #include "api/units/data_rate.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_codec_constants.h"
 #include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
+#include "api/video/video_frame_type.h"
 #include "api/video_codecs/video_codec.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -80,7 +82,7 @@ class RTC_EXPORT EncodedImageCallback {
       const EncodedImage& encoded_image,
       const CodecSpecificInfo* codec_specific_info) = 0;
 
-  virtual void OnDroppedFrame(DropReason reason) {}
+  virtual void OnDroppedFrame(DropReason /* reason */) {}
 };
 
 class RTC_EXPORT VideoEncoder {
@@ -100,7 +102,7 @@ class RTC_EXPORT VideoEncoder {
     struct KOff {};
 
    public:
-    // TODO(bugs.webrtc.org/9078): Since absl::optional should be trivially copy
+    // TODO(bugs.webrtc.org/9078): Since std::optional should be trivially copy
     // constructible, this magic value can likely be replaced by a constexpr
     // ScalingSettings value.
     static constexpr KOff kOff = {};
@@ -111,7 +113,7 @@ class RTC_EXPORT VideoEncoder {
     ScalingSettings(KOff);  // NOLINT(runtime/explicit)
     ~ScalingSettings();
 
-    absl::optional<QpThresholds> thresholds;
+    std::optional<QpThresholds> thresholds;
 
     // We will never ask for a resolution lower than this.
     // TODO(kthelgason): Lower this limit when better testing
@@ -240,8 +242,8 @@ class RTC_EXPORT VideoEncoder {
 
     // Obtains the limits from `resolution_bitrate_limits` that best matches the
     // `frame_size_pixels`.
-    absl::optional<ResolutionBitrateLimits>
-    GetEncoderBitrateLimitsForResolution(int frame_size_pixels) const;
+    std::optional<ResolutionBitrateLimits> GetEncoderBitrateLimitsForResolution(
+        int frame_size_pixels) const;
 
     // If true, this encoder has internal support for generating simulcast
     // streams. Otherwise, an adapter class will be needed.
@@ -258,7 +260,12 @@ class RTC_EXPORT VideoEncoder {
 
     // Indicates whether or not QP value encoder writes into frame/slice/tile
     // header can be interpreted as average frame/slice/tile QP.
-    absl::optional<bool> is_qp_trusted;
+    std::optional<bool> is_qp_trusted;
+
+    // The minimum QP that the encoder is expected to use with the current
+    // configuration. This may be used to determine if the encoder has reached
+    // its target video quality for static screenshare content.
+    std::optional<int> min_qp;
   };
 
   struct RTC_EXPORT RateControlParameters {
@@ -300,7 +307,7 @@ class RTC_EXPORT VideoEncoder {
     // all decodable.
     // `false` if some dependencies were undecodable, `true` if all dependencies
     // were decodable, and `nullopt` if the dependencies are unknown.
-    absl::optional<bool> dependencies_of_last_received_decodable;
+    std::optional<bool> dependencies_of_last_received_decodable;
     // Describes whether the received frame was decodable.
     // `false` if some dependency was undecodable or if some packet belonging
     // to the last received frame was missed.
@@ -308,7 +315,7 @@ class RTC_EXPORT VideoEncoder {
     // to the last received frame were received.
     // `nullopt` if no packet belonging to the last frame was missed, but the
     // last packet in the frame was not yet received.
-    absl::optional<bool> last_received_decodable;
+    std::optional<bool> last_received_decodable;
   };
 
   // Negotiated capabilities which the VideoEncoder may expect the other
@@ -332,7 +339,7 @@ class RTC_EXPORT VideoEncoder {
     size_t max_payload_size;
     // Experimental API - currently only supported by LibvpxVp8Encoder and
     // the OpenH264 encoder. If set, limits the number of encoder threads.
-    absl::optional<int> encoder_thread_limit;
+    std::optional<int> encoder_thread_limit;
   };
 
   static VideoCodecVP8 GetDefaultVp8Settings();

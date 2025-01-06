@@ -154,3 +154,6 @@ MediaTime/
 
 # https://bugs.webkit.org/show_bug.cgi?id=241729
 Layout/nested-flexbox.html
+
+# Bug 275581 - [Sonoma-Release-WK2-Perf] - AudioContext/audio-context-creation.html is failing
+AudioContext/audio-context-creation.html

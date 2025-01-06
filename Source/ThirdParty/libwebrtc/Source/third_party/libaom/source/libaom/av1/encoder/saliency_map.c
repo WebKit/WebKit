@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -176,7 +176,7 @@ static void get_color_intensity(const YV12_BUFFER_CONFIG *src,
   }
 }
 
-static INLINE double convolve_map(const double *filter, const double *map,
+static inline double convolve_map(const double *filter, const double *map,
                                   const int size) {
   double result = 0;
   for (int i = 0; i < size; ++i) {
@@ -187,7 +187,7 @@ static INLINE double convolve_map(const double *filter, const double *map,
 
 // This function is to decimate the map by half, and apply Gaussian filter on
 // top of the downsampled map.
-static INLINE void decimate_map(const double *map, int height, int width,
+static inline void decimate_map(const double *map, int height, int width,
                                 int stride, double *downsampled_map) {
   const int new_width = width / 2;
   const int window_size = 5;
@@ -217,7 +217,7 @@ static INLINE void decimate_map(const double *map, int height, int width,
 
 // This function is to upscale the map from in_level size to out_level size.
 // Note that the map at "level-1" will upscale the map at "level" by x2.
-static INLINE int upscale_map(const double *input, int in_level, int out_level,
+static inline int upscale_map(const double *input, int in_level, int out_level,
                               int height[9], int width[9], double *output) {
   for (int level = in_level; level > out_level; level--) {
     const int cur_width = width[level];
@@ -503,7 +503,7 @@ static int get_feature_map_rgb(double *cr, double *cg, double *cb, int width[9],
   return 1;
 }
 
-static INLINE void filter2d(const double *input, const double kernel[9][9],
+static inline void filter2d(const double *input, const double kernel[9][9],
                             int width, int height, double *output) {
   const int window_size = 9;
   double map_section[81];
@@ -617,7 +617,7 @@ static int get_feature_map_orientation(const double *intensity, int width[9],
   return 1;
 }
 
-static INLINE void find_min_max(const saliency_feature_map *input,
+static inline void find_min_max(const saliency_feature_map *input,
                                 double *max_value, double *min_value) {
   assert(input && input->buf);
   *min_value = DBL_MAX;
@@ -632,7 +632,7 @@ static INLINE void find_min_max(const saliency_feature_map *input,
   }
 }
 
-static INLINE double average_local_max(const saliency_feature_map *input,
+static inline double average_local_max(const saliency_feature_map *input,
                                        int stepsize) {
   int numlocal = 0;
   double lmaxmean = 0, lmax = 0, dummy = 0;

@@ -31,7 +31,6 @@
 #import "RemoteAudioSourceProvider.h"
 #import "RemoteMediaPlayerProxyMessages.h"
 #import "VideoLayerRemote.h"
-#import "WebCoreArgumentCoders.h"
 #import <WebCore/ColorSpaceCG.h>
 #import <WebCore/VideoLayerManager.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -63,7 +62,7 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
     if (readyState() < MediaPlayer::ReadyState::HaveCurrentData)
         return { };
 
-    auto videoFrame = m_videoFrameGatheredWithVideoFrameMetadata ? RefPtr<WebCore::VideoFrame>(m_videoFrameGatheredWithVideoFrameMetadata) : videoFrameForCurrentTime();
+    RefPtr videoFrame = videoFrameForCurrentTime();
     if (!videoFrame)
         return nullptr;
 

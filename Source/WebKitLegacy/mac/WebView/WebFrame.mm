@@ -111,7 +111,6 @@
 #import <WebCore/RenderWidget.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/ReportingScope.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SmartReplace.h>
@@ -122,6 +121,7 @@
 #import <WebCore/markup.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/text/TextEncoding.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -191,7 +191,6 @@ NSString *WebFrameHasPlugins = @"WebFrameHasPluginsKey";
 NSString *WebFrameHasUnloadListener = @"WebFrameHasUnloadListenerKey";
 NSString *WebFrameUsesDatabases = @"WebFrameUsesDatabasesKey";
 NSString *WebFrameUsesGeolocation = @"WebFrameUsesGeolocationKey";
-NSString *WebFrameUsesApplicationCache = @"WebFrameUsesApplicationCacheKey";
 NSString *WebFrameCanSuspendActiveDOMObjects = @"WebFrameCanSuspendActiveDOMObjectsKey";
 
 // FIXME: Remove when this key becomes publicly defined
@@ -310,9 +309,14 @@ WebView *getWebView(WebFrame *webFrame)
     WebView *webView = kit(&page);
 
     RetainPtr<WebFrame> frame = adoptNS([[self alloc] _initWithWebFrameView:frameView webView:webView]);
-    auto coreFrame = WebCore::LocalFrame::createSubframe(page, [frame] (auto&) {
-        return makeUniqueRef<WebFrameLoaderClient>(frame.get());
-    }, WebCore::FrameIdentifier::generate(), ownerElement);
+
+    auto effectiveSandboxFlags = ownerElement.sandboxFlags();
+    if (RefPtr parentLocalFrame = ownerElement.document().frame())
+        effectiveSandboxFlags.add(parentLocalFrame->effectiveSandboxFlags());
+
+    auto coreFrame = WebCore::LocalFrame::createSubframe(page, [frame] (auto&, auto& frameLoader) {
+        return makeUniqueRefWithoutRefCountedCheck<WebFrameLoaderClient>(frameLoader, frame.get());
+    }, WebCore::FrameIdentifier::generate(), effectiveSandboxFlags, ownerElement);
     frame->_private->coreFrame = coreFrame.ptr();
 
     coreFrame.get().tree().setSpecifiedName(name);
@@ -487,7 +491,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (!frame)
             continue;
         if (auto* document = frame->document())
-            document->markers().removeMarkers(WebCore::DocumentMarker::Type::Grammar);
+            document->markers().removeMarkers(WebCore::DocumentMarkerType::Grammar);
     }
 }
 
@@ -500,7 +504,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (!frame)
             continue;
         if (auto* document = frame->document())
-            document->markers().removeMarkers(WebCore::DocumentMarker::Type::Spelling);
+            document->markers().removeMarkers(WebCore::DocumentMarkerType::Spelling);
     }
 #endif
 }
@@ -1235,7 +1239,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 {
     ASSERT(!WebThreadIsEnabled() || WebThreadIsLocked());
     auto& frameLoader = _private->coreFrame->loader();
-    auto* item = _private->coreFrame->history().currentItem();
+    auto* item = frameLoader.history().currentItem();
     if (item)
         frameLoader.client().saveViewStateToItem(*item);
 }
@@ -1409,7 +1413,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     WebCore::LocalFrame *frame = core(self);
     if (!frame || !frame->view())
         return 0;
-    return frame->view()->layoutContext().layoutCount();
+    return frame->view()->layoutUpdateCount();
 }
 
 - (BOOL)isTelephoneNumberParsingAllowed
@@ -1708,7 +1712,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     for (WebCore::Node* node = root; node; node = WebCore::NodeTraversal::next(*node)) {
         auto markers = document->markers().markersFor(*node);
         for (auto& marker : markers) {
-            if (marker->type() != WebCore::DocumentMarker::Type::DictationResult)
+            if (marker->type() != WebCore::DocumentMarkerType::DictationResult)
                 continue;
 
             id metadata = std::get<RetainPtr<id>>(marker->data()).get();
@@ -1749,7 +1753,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!range)
         return nil;
 
-    auto markers = core(self)->document()->markers().markersInRange(makeSimpleRange(*core(range)), WebCore::DocumentMarker::Type::DictationResult);
+    auto markers = core(self)->document()->markers().markersInRange(makeSimpleRange(*core(range)), WebCore::DocumentMarkerType::DictationResult);
 
     // UIKit should only ever give us a DOMRange for a phrase with alternatives, which should not be part of more than one result.
     ASSERT(markers.size() <= 1);
@@ -2040,8 +2044,6 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (auto* domWindow = _private->coreFrame->document()->domWindow()) {
         if (domWindow->hasEventListeners(WebCore::eventNames().unloadEvent))
             [result setObject:@YES forKey:WebFrameHasUnloadListener];
-        if (domWindow->optionalApplicationCache())
-            [result setObject:@YES forKey:WebFrameUsesApplicationCache];
     }
     
     if (auto* document = _private->coreFrame->document()) {
@@ -2204,7 +2206,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_clearOpener
 {
     if (auto coreFrame = _private->coreFrame)
-        coreFrame->setOpener(nullptr);
+        coreFrame->disownOpener();
 }
 
 - (BOOL)hasRichlyEditableDragCaret
@@ -2236,8 +2238,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return @[];
 
     const auto& documentRect = root->documentRect();
-    float printWidth = root->style().isHorizontalWritingMode() ? static_cast<float>(documentRect.width()) / printScaleFactor : pageSize.width;
-    float printHeight = root->style().isHorizontalWritingMode() ? pageSize.height : static_cast<float>(documentRect.height()) / printScaleFactor;
+    float printWidth = root->writingMode().isHorizontal() ? static_cast<float>(documentRect.width()) / printScaleFactor : pageSize.width;
+    float printHeight = root->writingMode().isHorizontal() ? pageSize.height : static_cast<float>(documentRect.height()) / printScaleFactor;
 
     WebCore::PrintContext printContext(_private->coreFrame);
     printContext.computePageRectsWithPageSize(WebCore::FloatSize(printWidth, printHeight), true);

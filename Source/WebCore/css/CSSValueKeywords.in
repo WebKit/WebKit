@@ -321,7 +321,7 @@ accentcolortext
 -apple-system-opaque-tertiary-fill enable-if=WTF_PLATFORM_IOS_FAMILY
 -apple-system-quaternary-fill enable-if=WTF_PLATFORM_IOS_FAMILY
 -apple-system-opaque-separator enable-if=WTF_PLATFORM_IOS_FAMILY
--webkit-control-background enable-if=WTF_PLATFORM_COCOA|HAVE_OS_DARK_MODE_SUPPORT
+-webkit-control-background enable-if=WTF_PLATFORM_COCOA
 activebuttontext
 -webkit-activelink
 -webkit-link
@@ -606,18 +606,27 @@ full-size-kana
 visible
 //hidden
 collapse
-//
-// Unordered rest
-//
+
+// @page size
 a3
 a4
 a5
+b4
+b5
+jis-b4
+jis-b5
+landscape
+ledger
+legal
+letter
+
+//
+// Unordered rest
+//
 above
 absolute
 always
 avoid
-b4
-b5
 below
 bidi-override
 blink
@@ -637,10 +646,6 @@ plaintext
 -webkit-isolate
 -webkit-isolate-override
 -webkit-plaintext
-landscape
-ledger
-legal
-letter
 level
 line-through
 local
@@ -898,7 +903,8 @@ anywhere
 
 // -webkit-appearance
 // The order here must match the order in the StyleAppearance enum in StyleAppearance.h.
-// All appearance values that should be accepted by the parser should be listed between 'checkbox' and 'textarea':
+// All appearance values that should be accepted by the parser should be listed between 'base' and 'textarea':
+base
 checkbox
 radio
 push-button
@@ -933,6 +939,7 @@ round
 // border-box/content-box/padding-box should be used instead.
 //
 border
+border-area
 border-box
 content
 content-box
@@ -940,9 +947,6 @@ padding
 padding-box
 // text
 -webkit-text
-
-// block-step-insert
-margin
 
 //
 // CSS_PROP_MASK_CLIP
@@ -1027,7 +1031,7 @@ paused
 //
 flat
 preserve-3d
-optimized-3d enable-if=ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D
+separated enable-if=HAVE_CORE_ANIMATION_SEPARATED_LAYERS
 
 //
 // CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION
@@ -1064,11 +1068,16 @@ nearest
 root
 self
 view
+// cover
+// contain
+entry
+exit
+entry-crossing
+exit-crossing
 
 //
 // CSS_PROP_ZOOM
 //
-document
 reset
 
 //
@@ -1153,6 +1162,7 @@ horizontal-bt
 after
 before
 inter-character
+legacy-inter-character
 
 // -webkit-text-combine
 // horizontal
@@ -1341,6 +1351,28 @@ rect
 
 // shapes
 polygon
+shape
+
+// shape function
+line
+// move
+hline
+vline
+curve
+// smooth
+arc
+cw
+ccw
+// large
+// small
+by
+close
+with
+of
+// from
+// start
+// end
+origin
 
 // @font-face src
 format
@@ -1381,6 +1413,21 @@ cubic-bezier
 spring
 steps
 apple-invert-lightness
+
+// -apple-visual-effect
+-apple-system-blur-material-ultra-thin enable-if=HAVE_CORE_MATERIAL
+-apple-system-blur-material-thin enable-if=HAVE_CORE_MATERIAL
+-apple-system-blur-material enable-if=HAVE_CORE_MATERIAL
+-apple-system-blur-material-thick enable-if=HAVE_CORE_MATERIAL
+-apple-system-blur-material-chrome enable-if=HAVE_CORE_MATERIAL
+-apple-system-vibrancy-label enable-if=HAVE_CORE_MATERIAL
+-apple-system-vibrancy-secondary-label enable-if=HAVE_CORE_MATERIAL
+-apple-system-vibrancy-tertiary-label enable-if=HAVE_CORE_MATERIAL
+-apple-system-vibrancy-quaternary-label enable-if=HAVE_CORE_MATERIAL
+-apple-system-vibrancy-fill enable-if=HAVE_CORE_MATERIAL
+-apple-system-vibrancy-secondary-fill enable-if=HAVE_CORE_MATERIAL
+-apple-system-vibrancy-tertiary-fill enable-if=HAVE_CORE_MATERIAL
+-apple-system-vibrancy-separator enable-if=HAVE_CORE_MATERIAL
 
 // colors
 rgb
@@ -1471,6 +1518,9 @@ mod
 rem
 to-zero
 // nearest
+// progress
+media-progress
+container-progress
 infinity
 -infinity id=NegativeInfinity
 NaN
@@ -1577,16 +1627,15 @@ xyz
 xyz-d50
 xyz-d65
 
-// color-contast()
-color-contrast
-vs
-AA
-AA-large
-AAA
-AAA-large
+// color-layers()
+color-layers
 
 // color-mix()
 color-mix
+
+// contrast-color()
+contrast-color
+// max
 
 // light-dark()
 light-dark
@@ -1621,6 +1670,7 @@ no-preference
 // prefers-contrast
 more
 less
+custom
 // no-preference
 
 // prefers-color-scheme, font-palette
@@ -1665,6 +1715,7 @@ symbolic
 additive
 // fixed
 -internal-disclosure-closed
+-internal-disclosure-open
 -internal-simplified-chinese-informal
 -internal-simplified-chinese-formal
 -internal-traditional-chinese-informal
@@ -1740,8 +1791,12 @@ false
 
 // text-spacing-trim
 space-all
+trim-all
 // text-autospace
+// normal
 no-autospace
+ideograph-alpha
+ideograph-numeric
 
 // scrollbar-gutter
 // auto
@@ -1760,3 +1815,25 @@ allow-discrete
 // block
 // inline
 -internal-textarea-auto
+
+// CSS Anchor Positioning
+anchor
+anchor-size
+width
+height
+self-block
+self-inline
+anchor-center
+// position-try-order
+// normal
+most-width
+most-height
+most-block-size
+most-inline-size
+// position-try-fallbacks
+// none
+flip-block
+flip-inline
+flip-start
+// view-transition-name
+match-element

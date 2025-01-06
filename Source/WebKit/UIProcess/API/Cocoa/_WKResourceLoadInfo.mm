@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,6 +103,13 @@ static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType(WebKit::
     return nil;
 }
 
+- (NSUUID *)documentID
+{
+    if (auto documentID = _info->documentID())
+        return documentID.value();
+    return nil;
+}
+
 - (NSURL *)originalURL
 {
     return _info->originalURL();
@@ -158,6 +165,9 @@ static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType(WebKit::
     _WKFrameHandle *parentFrame = [coder decodeObjectOfClass:[_WKFrameHandle class] forKey:@"parentFrame"];
     // parentFrame is nullable, so decoding null is ok.
 
+    NSUUID *documentID = [coder decodeObjectOfClass:NSUUID.class forKey:@"documentID"];
+    // documentID is nullable, so decoding null is ok.
+
     NSURL *originalURL = [coder decodeObjectOfClass:[NSURL class] forKey:@"originalURL"];
     if (!originalURL) {
         [self release];
@@ -191,7 +201,8 @@ static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType(WebKit::
     WebKit::ResourceLoadInfo info {
         ObjectIdentifier<WebKit::NetworkResourceLoadIdentifierType>(resourceLoadID.unsignedLongLongValue),
         frame->_frameHandle->frameID(),
-        parentFrame ? std::optional<WebCore::FrameIdentifier>(parentFrame->_frameHandle->frameID()) : std::nullopt,
+        parentFrame ? parentFrame->_frameHandle->frameID() : std::nullopt,
+        documentID ? WTF::UUID::fromNSUUID(documentID) : std::nullopt,
         originalURL,
         originalHTTPMethod,
         WallTime::fromRawSeconds(eventTimestamp.timeIntervalSince1970),
@@ -209,6 +220,7 @@ static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType(WebKit::
     [coder encodeObject:@(self.resourceLoadID) forKey:@"resourceLoadID"];
     [coder encodeObject:self.frame forKey:@"frame"];
     [coder encodeObject:self.parentFrame forKey:@"parentFrame"];
+    [coder encodeObject:self.documentID forKey:@"documentID"];
     [coder encodeObject:self.originalURL forKey:@"originalURL"];
     [coder encodeObject:self.originalHTTPMethod forKey:@"originalHTTPMethod"];
     [coder encodeObject:self.eventTimestamp forKey:@"eventTimestamp"];

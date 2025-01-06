@@ -24,7 +24,7 @@
 #include "src/gpu/graphite/TextureUtils.h"
 #include "src/gpu/graphite/task/CopyTask.h"
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 #include "include/gpu/graphite/Context.h"
 #include "src/gpu/graphite/ContextPriv.h"
 #endif
@@ -145,11 +145,8 @@ sk_sp<SkImage> Image::onReinterpretColorSpace(sk_sp<SkColorSpace> newCS) const {
     return view;
 }
 
-#if defined(GRAPHITE_TEST_UTILS)
-bool Image::onReadPixelsGraphite(Recorder* recorder,
-                                 const SkPixmap& dst,
-                                 int srcX,
-                                 int srcY) const {
+#if defined(GPU_TEST_UTILS)
+bool Image::readPixelsGraphite(Recorder* recorder, const SkPixmap& dst, int srcX, int srcY) const {
     if (Context* context = recorder->priv().context()) {
         // Add all previous commands generated to the command buffer.
         // If the client snaps later they'll only get post-read commands in their Recording,

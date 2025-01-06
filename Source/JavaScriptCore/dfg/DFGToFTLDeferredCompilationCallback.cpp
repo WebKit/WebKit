@@ -33,11 +33,9 @@
 
 namespace JSC { namespace DFG {
 
-ToFTLDeferredCompilationCallback::ToFTLDeferredCompilationCallback()
-{
-}
+ToFTLDeferredCompilationCallback::ToFTLDeferredCompilationCallback() = default;
 
-ToFTLDeferredCompilationCallback::~ToFTLDeferredCompilationCallback() { }
+ToFTLDeferredCompilationCallback::~ToFTLDeferredCompilationCallback() = default;
 
 Ref<ToFTLDeferredCompilationCallback> ToFTLDeferredCompilationCallback::create()
 {

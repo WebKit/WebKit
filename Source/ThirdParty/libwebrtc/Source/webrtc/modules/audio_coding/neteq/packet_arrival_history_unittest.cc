@@ -21,32 +21,36 @@ namespace {
 constexpr int kFs = 8000;
 constexpr int kFsKhz = kFs / 1000;
 constexpr int kFrameSizeMs = 20;
+constexpr int kFrameSizeSamples = kFrameSizeMs * kFsKhz;
 constexpr int kWindowSizeMs = 1000;
 
 class PacketArrivalHistoryTest : public testing::Test {
  public:
-  PacketArrivalHistoryTest() : history_(kWindowSizeMs) {
+  PacketArrivalHistoryTest() : history_(&tick_timer_, kWindowSizeMs) {
     history_.set_sample_rate(kFs);
   }
-  void IncrementTime(int delta_ms) { time_ms_ += delta_ms; }
+  void IncrementTime(int delta_ms) {
+    tick_timer_.Increment(delta_ms / tick_timer_.ms_per_tick());
+  }
   int InsertPacketAndGetDelay(int timestamp_delta_ms) {
     uint32_t timestamp = timestamp_ + timestamp_delta_ms * kFsKhz;
     if (timestamp_delta_ms > 0) {
       timestamp_ = timestamp;
     }
-    history_.Insert(timestamp, time_ms_);
+    EXPECT_TRUE(history_.Insert(timestamp, kFrameSizeSamples));
     EXPECT_EQ(history_.IsNewestRtpTimestamp(timestamp),
               timestamp_delta_ms >= 0);
-    return history_.GetDelayMs(timestamp, time_ms_);
+    return history_.GetDelayMs(timestamp);
   }
 
  protected:
-  int64_t time_ms_ = 0;
+  TickTimer tick_timer_;
   PacketArrivalHistory history_;
   uint32_t timestamp_ = 0x12345678;
 };
 
 TEST_F(PacketArrivalHistoryTest, RelativeArrivalDelay) {
+  // Insert first packet.
   EXPECT_EQ(InsertPacketAndGetDelay(0), 0);
 
   IncrementTime(kFrameSizeMs);
@@ -56,7 +60,7 @@ TEST_F(PacketArrivalHistoryTest, RelativeArrivalDelay) {
   EXPECT_EQ(InsertPacketAndGetDelay(kFrameSizeMs), 20);
 
   // Reordered packet.
-  EXPECT_EQ(InsertPacketAndGetDelay(-2 * kFrameSizeMs), 60);
+  EXPECT_EQ(InsertPacketAndGetDelay(-3 * kFrameSizeMs), 80);
 
   IncrementTime(2 * kFrameSizeMs);
   EXPECT_EQ(InsertPacketAndGetDelay(kFrameSizeMs), 40);
@@ -68,7 +72,7 @@ TEST_F(PacketArrivalHistoryTest, RelativeArrivalDelay) {
   EXPECT_EQ(InsertPacketAndGetDelay(kFrameSizeMs), 20);
 
   // Earlier packet is now more delayed due to the new reference packet.
-  EXPECT_EQ(history_.GetMaxDelayMs(), 100);
+  EXPECT_EQ(history_.GetMaxDelayMs(), 80);
 }
 
 TEST_F(PacketArrivalHistoryTest, ReorderedPackets) {
@@ -86,7 +90,7 @@ TEST_F(PacketArrivalHistoryTest, ReorderedPackets) {
   IncrementTime(4 * kFrameSizeMs);
   EXPECT_EQ(InsertPacketAndGetDelay(kFrameSizeMs), 60);
 
-  EXPECT_EQ(history_.GetMaxDelayMs(), 80);
+  EXPECT_EQ(history_.GetMaxDelayMs(), 60);
 }
 
 TEST_F(PacketArrivalHistoryTest, MaxHistorySize) {
@@ -117,7 +121,7 @@ TEST_F(PacketArrivalHistoryTest, TimestampWraparound) {
   // Insert another in-order packet after the wraparound.
   EXPECT_EQ(InsertPacketAndGetDelay(kFrameSizeMs), 0);
 
-  EXPECT_EQ(history_.GetMaxDelayMs(), 3 * kFrameSizeMs);
+  EXPECT_EQ(history_.GetMaxDelayMs(), kFrameSizeMs);
 }
 
 TEST_F(PacketArrivalHistoryTest, TimestampWraparoundBackwards) {
@@ -134,7 +138,33 @@ TEST_F(PacketArrivalHistoryTest, TimestampWraparoundBackwards) {
   // Insert another in-order packet after the wraparound.
   EXPECT_EQ(InsertPacketAndGetDelay(kFrameSizeMs), 0);
 
-  EXPECT_EQ(history_.GetMaxDelayMs(), 3 * kFrameSizeMs);
+  EXPECT_EQ(history_.GetMaxDelayMs(), kFrameSizeMs);
+}
+
+TEST_F(PacketArrivalHistoryTest, OldPacketShouldNotBeInserted) {
+  // Insert first packet as reference.
+  EXPECT_EQ(InsertPacketAndGetDelay(0), 0);
+  // Insert packet with timestamp older than the window size compared to the
+  // first packet.
+  EXPECT_FALSE(history_.Insert(timestamp_ - kWindowSizeMs * kFsKhz - 1,
+                               kFrameSizeSamples));
+}
+
+TEST_F(PacketArrivalHistoryTest, DuplicatePacketShouldNotBeInserted) {
+  // Insert first packet as reference.
+  uint32_t first_timestamp = timestamp_;
+  EXPECT_EQ(InsertPacketAndGetDelay(0), 0);
+  EXPECT_EQ(InsertPacketAndGetDelay(kFrameSizeMs), 0);
+  // Same timestamp as the first packet.
+  EXPECT_FALSE(history_.Insert(first_timestamp, kFrameSizeSamples));
+}
+
+TEST_F(PacketArrivalHistoryTest, OverlappingPacketShouldNotBeInserted) {
+  // Insert first packet as reference.
+  EXPECT_EQ(InsertPacketAndGetDelay(0), 0);
+  // 10 ms overlap with the previous packet.
+  EXPECT_FALSE(history_.Insert(timestamp_ + kFrameSizeSamples / 2,
+                               kFrameSizeSamples / 2));
 }
 
 }  // namespace

@@ -268,7 +268,7 @@ angle::Result BufferManager::queueBlitCopyDataToBuffer(ContextMtl *contextMtl,
         size_t subSizeToCopy = std::min(kMaxStagingBufferSize, sizeToCopy - srcOffset);
 
         mtl::BufferRef bufferRef;
-        // TODO(anglebug.com/7544): Here we pass DynamicDraw to get managed buffer for the
+        // TODO(anglebug.com/40644888): Here we pass DynamicDraw to get managed buffer for the
         // operation. This should be checked to see if this makes sense.
         auto storageMode = Buffer::getStorageModeForUsage(contextMtl, Buffer::Usage::DynamicDraw);
         ANGLE_TRY(getBuffer(contextMtl, storageMode, subSizeToCopy, bufferRef));

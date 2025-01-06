@@ -41,7 +41,7 @@ static WebView *testView = nullptr;
     EXPECT_FALSE(didFailProvisionalLoad);
     didFailProvisionalLoad = true;
 
-    [[testView mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple3" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[testView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple3" withExtension:@"html"]]];
 }
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
@@ -59,14 +59,14 @@ TEST(WebKitLegacy, StartLoadInDidFailProvisionalLoad)
     testView = webView.get();
     auto frameLoadDelegate = adoptNS([[StartLoadInDidFailProvisionalLoadDelegate alloc] init]);
     webView.get().frameLoadDelegate = frameLoadDelegate.get();
-    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
 
     // Start another load before the first one has a chance to complete. This should cancel the previous load and call didFailProvisionalLoadWithError.
-    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"]]];
     Util::run(&finished);
     EXPECT_TRUE(didFailProvisionalLoad);
 
-    EXPECT_WK_STREQ([[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"] absoluteString], webView.get().mainFrameURL);
+    EXPECT_WK_STREQ([[NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"] absoluteString], webView.get().mainFrameURL);
 }
 
 } // namespace TestWebKitAPI

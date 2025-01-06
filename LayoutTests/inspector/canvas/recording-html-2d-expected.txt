@@ -56,7 +56,7 @@ let frames = [
         context.textAlign = "start";
         context.textBaseline = "alphabetic";
         context.transform(1, 0, 0, 1, 0, 0);
-        context.webkitImageSmoothingEnabled = true;
+        context.webkitImageSmoothingEnabled = undefined;
         context.webkitLineDash = [];
         context.webkitLineDashOffset = 0;
         if ("setPath" in context)
@@ -84,7 +84,7 @@ let frames = [
         context.textAlign = "start";
         context.textBaseline = "alphabetic";
         context.transform(1, 0, 0, 1, 0, 0);
-        context.webkitImageSmoothingEnabled = true;
+        context.webkitImageSmoothingEnabled = undefined;
         context.webkitLineDash = [];
         context.webkitLineDashOffset = 0;
         if ("setPath" in context)
@@ -112,7 +112,7 @@ let frames = [
         context.textAlign = "start";
         context.textBaseline = "alphabetic";
         context.transform(1, 0, 0, 1, 0, 0);
-        context.webkitImageSmoothingEnabled = true;
+        context.webkitImageSmoothingEnabled = undefined;
         context.webkitLineDash = [];
         context.webkitLineDashOffset = 0;
         if ("setPath" in context)

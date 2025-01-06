@@ -98,16 +98,16 @@ FFTFrame::FFTFrame(const FFTFrame& frame)
     m_frame.imagp = m_imagData.data();
 
     // Copy/setup frame data
-    memcpy(realData().data(), frame.m_frame.realp, sizeof(float) * realData().size());
-    memcpy(imagData().data(), frame.m_frame.imagp, sizeof(float) * imagData().size());
+    memcpySpan(realData().span(), unsafeMakeSpan(frame.m_frame.realp, realData().size()));
+    memcpySpan(imagData().span(), unsafeMakeSpan(frame.m_frame.imagp, imagData().size()));
 }
 
 FFTFrame::~FFTFrame() = default;
 
-void FFTFrame::doFFT(const float* data)
+void FFTFrame::doFFT(std::span<const float> data)
 {
     unsigned halfSize = m_FFTSize / 2;
-    vDSP_ctoz(reinterpret_cast<const DSPComplex*>(data), 2, &m_frame, 1, halfSize);
+    vDSP_ctoz(&reinterpretCastSpanStartTo<const DSPComplex>(data), 2, &m_frame, 1, halfSize);
     vDSP_fft_zrip(m_FFTSetup, &m_frame, 1, m_log2FFTSize, FFT_FORWARD);
 
     RELEASE_ASSERT(realData().size() >= halfSize);
@@ -118,17 +118,17 @@ void FFTFrame::doFFT(const float* data)
     // (See https://developer.apple.com/library/archive/documentation/Performance/Conceptual/vDSP_Programming_Guide/UsingFourierTransforms/UsingFourierTransforms.html#//apple_ref/doc/uid/TP40005147-CH3-SW5)
     // In the case of a Real forward Transform like above: RFimp = RFmath * 2 so we need to divide the output
     // by 2 to get the correct value.
-    VectorMath::multiplyByScalar(realData().data(), 0.5, realData().data(), halfSize);
-    VectorMath::multiplyByScalar(imagData().data(), 0.5, imagData().data(), halfSize);
+    VectorMath::multiplyByScalar(realData().span().first(halfSize), 0.5, realData().span());
+    VectorMath::multiplyByScalar(imagData().span().first(halfSize), 0.5, imagData().span());
 }
 
-void FFTFrame::doInverseFFT(float* data)
+void FFTFrame::doInverseFFT(std::span<float> data)
 {
     vDSP_fft_zrip(m_FFTSetup, &m_frame, 1, m_log2FFTSize, FFT_INVERSE);
-    vDSP_ztoc(&m_frame, 1, (DSPComplex*)data, 2, m_FFTSize / 2);
+    vDSP_ztoc(&m_frame, 1, &reinterpretCastSpanStartTo<DSPComplex>(data), 2, m_FFTSize / 2);
 
     // Do final scaling so that x == IFFT(FFT(x))
-    VectorMath::multiplyByScalar(data, 1.0f / m_FFTSize, data, m_FFTSize);
+    VectorMath::multiplyByScalar(data.first(m_FFTSize), 1.0f / m_FFTSize, data);
 }
 
 FFTSetup FFTFrame::fftSetupForSize(unsigned fftSize)

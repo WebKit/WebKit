@@ -58,13 +58,13 @@ enum RunLoopSourcePriority {
     ReleaseUnusedResourcesTimer = 200,
 
     // Rendering timer in the threaded compositor.
-    CompositingThreadUpdateTimer = 110,
+    CompositingThreadUpdateTimer = 100,
 
     // Layer flush.
-    LayerFlushTimer = 110,
+    LayerFlushTimer = 100,
 
     // DisplayRefreshMonitor timer, should have the same value as the LayerFlushTimer.
-    DisplayRefreshMonitorTimer = 110,
+    DisplayRefreshMonitorTimer = 100,
 
     // Rendering timer in the main thread when accelerated compositing is not used.
     NonAcceleratedDrawingTimer = 100,

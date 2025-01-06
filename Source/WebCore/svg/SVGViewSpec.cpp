@@ -28,9 +28,12 @@
 #include "SVGParserUtilities.h"
 #include "SVGTransformList.h"
 #include "SVGTransformable.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGViewSpec);
 
 SVGViewSpec::SVGViewSpec(SVGElement& contextElement)
     : SVGFitToViewBox(&contextElement, SVGPropertyAccess::ReadOnly)
@@ -64,12 +67,12 @@ void SVGViewSpec::reset()
     SVGZoomAndPan::reset();
 }
 
-template<typename CharacterType> static constexpr CharacterType svgViewSpec[] = {'s', 'v', 'g', 'V', 'i', 'e', 'w'};
-template<typename CharacterType> static constexpr CharacterType viewBoxSpec[] = {'v', 'i', 'e', 'w', 'B', 'o', 'x'};
-template<typename CharacterType> static constexpr CharacterType preserveAspectRatioSpec[] = {'p', 'r', 'e', 's', 'e', 'r', 'v', 'e', 'A', 's', 'p', 'e', 'c', 't', 'R', 'a', 't', 'i', 'o'};
-template<typename CharacterType> static constexpr CharacterType transformSpec[] = {'t', 'r', 'a', 'n', 's', 'f', 'o', 'r', 'm'};
-template<typename CharacterType> static constexpr CharacterType zoomAndPanSpec[] = {'z', 'o', 'o', 'm', 'A', 'n', 'd', 'P', 'a', 'n'};
-template<typename CharacterType> static constexpr CharacterType viewTargetSpec[] =  {'v', 'i', 'e', 'w', 'T', 'a', 'r', 'g', 'e', 't'};
+template<typename CharacterType> static constexpr std::array<CharacterType, 7> svgViewSpec { 's', 'v', 'g', 'V', 'i', 'e', 'w' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 7> viewBoxSpec { 'v', 'i', 'e', 'w', 'B', 'o', 'x' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 19> preserveAspectRatioSpec { 'p', 'r', 'e', 's', 'e', 'r', 'v', 'e', 'A', 's', 'p', 'e', 'c', 't', 'R', 'a', 't', 'i', 'o' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 9> transformSpec { 't', 'r', 'a', 'n', 's', 'f', 'o', 'r', 'm' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 10> zoomAndPanSpec { 'z', 'o', 'o', 'm', 'A', 'n', 'd', 'P', 'a', 'n' };
+template<typename CharacterType> static constexpr std::array<CharacterType, 10> viewTargetSpec  { 'v', 'i', 'e', 'w', 'T', 'a', 'r', 'g', 'e', 't' };
 
 bool SVGViewSpec::parseViewSpec(StringView string)
 {
@@ -77,7 +80,7 @@ bool SVGViewSpec::parseViewSpec(StringView string)
         if (buffer.atEnd() || !m_contextElement)
             return false;
 
-        if (!skipCharactersExactly(buffer, svgViewSpec<CharacterType>))
+        if (!skipCharactersExactly(buffer, std::span { svgViewSpec<CharacterType> }))
             return false;
 
         if (!skipExactly(buffer, '('))
@@ -85,7 +88,7 @@ bool SVGViewSpec::parseViewSpec(StringView string)
 
         while (buffer.hasCharactersRemaining() && *buffer != ')') {
             if (*buffer == 'v') {
-                if (skipCharactersExactly(buffer, viewBoxSpec<CharacterType>)) {
+                if (skipCharactersExactly(buffer, std::span { viewBoxSpec<CharacterType> })) {
                     if (!skipExactly(buffer, '('))
                         return false;
                     auto viewBox = SVGFitToViewBox::parseViewBox(buffer, false);
@@ -94,7 +97,7 @@ bool SVGViewSpec::parseViewSpec(StringView string)
                     setViewBox(WTFMove(*viewBox));
                     if (!skipExactly(buffer, ')'))
                         return false;
-                } else if (skipCharactersExactly(buffer, viewTargetSpec<CharacterType>)) {
+                } else if (skipCharactersExactly(buffer, std::span { viewTargetSpec<CharacterType> })) {
                     if (!skipExactly(buffer, '('))
                         return false;
                     auto viewTargetStart = buffer.position();
@@ -106,7 +109,7 @@ bool SVGViewSpec::parseViewSpec(StringView string)
                 } else
                     return false;
             } else if (*buffer == 'z') {
-                if (!skipCharactersExactly(buffer, zoomAndPanSpec<CharacterType>))
+                if (!skipCharactersExactly(buffer, std::span { zoomAndPanSpec<CharacterType> }))
                     return false;
                 if (!skipExactly(buffer, '('))
                     return false;
@@ -117,7 +120,7 @@ bool SVGViewSpec::parseViewSpec(StringView string)
                 if (!skipExactly(buffer, ')'))
                     return false;
             } else if (*buffer == 'p') {
-                if (!skipCharactersExactly(buffer, preserveAspectRatioSpec<CharacterType>))
+                if (!skipCharactersExactly(buffer, std::span { preserveAspectRatioSpec<CharacterType> }))
                     return false;
                 if (!skipExactly(buffer, '('))
                     return false;
@@ -128,7 +131,7 @@ bool SVGViewSpec::parseViewSpec(StringView string)
                 if (!skipExactly(buffer, ')'))
                     return false;
             } else if (*buffer == 't') {
-                if (!skipCharactersExactly(buffer, transformSpec<CharacterType>))
+                if (!skipCharactersExactly(buffer, std::span { transformSpec<CharacterType> }))
                     return false;
                 if (!skipExactly(buffer, '('))
                     return false;

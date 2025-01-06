@@ -1,0 +1,157 @@
+From db93844bb1f807d7acad0384e7804d6283079fdf Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Wed, 6 Mar 2024 12:17:24 +0000
+Subject: [PATCH] Bump to GStreamer 1.24.9
+
+---
+ elements/components/gstreamer-plugins-bad.bst |  1 +
+ .../components/gstreamer-plugins-base.bst     |  1 +
+ .../components/gstreamer-plugins-good.bst     |  4 +++
+ elements/components/gstreamer.bst             |  1 +
+ elements/include/gstreamer-source.yml         |  2 +-
+ .../gstreamer/graceful-error-noopenh264.patch | 35 -------------------
+ ...ins-bad-Optional-LRDF-dep-for-ladspa.patch | 13 -------
+ 7 files changed, 8 insertions(+), 49 deletions(-)
+ delete mode 100644 patches/gstreamer/graceful-error-noopenh264.patch
+ delete mode 100644 patches/gstreamer/gst-plugins-bad-Optional-LRDF-dep-for-ladspa.patch
+
+diff --git a/elements/components/gstreamer-plugins-bad.bst b/elements/components/gstreamer-plugins-bad.bst
+index a8599f9..2cc21e6 100644
+--- a/elements/components/gstreamer-plugins-bad.bst
++++ b/elements/components/gstreamer-plugins-bad.bst
+@@ -2,6 +2,7 @@ kind: meson
+ 
+ depends:
+ - bootstrap-import.bst
++- components/xorg-lib-xtst.bst
+ - components/aom.bst
+ - components/orc.bst
+ - components/frei0r.bst
+diff --git a/elements/components/gstreamer-plugins-base.bst b/elements/components/gstreamer-plugins-base.bst
+index 439d350..856b4cb 100644
+--- a/elements/components/gstreamer-plugins-base.bst
++++ b/elements/components/gstreamer-plugins-base.bst
+@@ -11,6 +11,7 @@ depends:
+ - components/graphene.bst
+ - components/gstreamer.bst
+ - components/jpeg.bst
++- components/libdrm.bst
+ - components/pango.bst
+ - components/xorg-lib-xv.bst
+ - components/libogg.bst
+diff --git a/elements/components/gstreamer-plugins-good.bst b/elements/components/gstreamer-plugins-good.bst
+index cea2a32..67359a2 100644
+--- a/elements/components/gstreamer-plugins-good.bst
++++ b/elements/components/gstreamer-plugins-good.bst
+@@ -9,6 +9,7 @@ build-depends:
+ depends:
+ - bootstrap-import.bst
+ - components/cairo.bst
++- components/xorg-lib-xtst.bst
+ - components/jpeg.bst
+ - components/orc.bst
+ - components/lame.bst
+@@ -31,6 +32,8 @@ variables:
+ 
+   meson-local: >-
+     -Dpackage-origin="freedesktop-sdk"
++    -Damrnb=disabled
++    -Damrwbdec=disabled
+     -Dv4l2-libv4l2=enabled
+     -Dv4l2-gudev=disabled
+     -Daalib=disabled
+@@ -45,6 +48,7 @@ variables:
+     -Dtwolame=disabled
+     -Dexamples=disabled
+     -Drpicamsrc=disabled
++    -Dqt6=disabled
+ 
+ public:
+   cpe:
+diff --git a/elements/components/gstreamer.bst b/elements/components/gstreamer.bst
+index 7760976..b8163e1 100644
+--- a/elements/components/gstreamer.bst
++++ b/elements/components/gstreamer.bst
+@@ -6,6 +6,7 @@ build-depends:
+ - components/flex.bst
+ - components/bison.bst
+ - components/hotdoc.bst
++- components/rust.bst
+ 
+ depends:
+ - bootstrap-import.bst
+diff --git a/elements/include/gstreamer-source.yml b/elements/include/gstreamer-source.yml
+index f36b91e..2d73091 100644
+--- a/elements/include/gstreamer-source.yml
++++ b/elements/include/gstreamer-source.yml
+@@ -2,6 +2,6 @@ sources:
+ - kind: git_repo
+   url: freedesktop:gstreamer/gstreamer.git
+   track: 1.*[02468].*
+-  ref: 1.22.5-0-gbf6ce1d64a0697e7910826147b48f8f658366a5a
++  ref: 1.24.9-0-gb309f90bfde36e6d175b70bfa0c941f2829dd6a5
+ - kind: patch_queue
+   path: patches/gstreamer
+diff --git a/patches/gstreamer/graceful-error-noopenh264.patch b/patches/gstreamer/graceful-error-noopenh264.patch
+deleted file mode 100644
+index 8fbe833..0000000
+--- a/patches/gstreamer/graceful-error-noopenh264.patch
++++ /dev/null
+@@ -1,35 +0,0 @@
+-diff --git a/subprojects/gst-plugins-bad/ext/openh264/gstopenh264dec.cpp b/subprojects/gst-plugins-bad/ext/openh264/gstopenh264dec.cpp
+-index e42dc093b7..06e92c15f4 100644
+---- a/subprojects/gst-plugins-bad/ext/openh264/gstopenh264dec.cpp
+-+++ b/subprojects/gst-plugins-bad/ext/openh264/gstopenh264dec.cpp
+-@@ -162,7 +162,11 @@ gst_openh264dec_start (GstVideoDecoder * decoder)
+-     WelsDestroyDecoder (openh264dec->decoder);
+-     openh264dec->decoder = NULL;
+-   }
+--  WelsCreateDecoder (&(openh264dec->decoder));
+-+
+-+  if (WelsCreateDecoder (&(openh264dec->decoder)) != 0) {
+-+    GST_DEBUG_OBJECT (openh264dec, "openh264dec_start, cannot create decoder");
+-+    return 0;
+-+  }
+- 
+- #ifndef GST_DISABLE_GST_DEBUG
+-   {
+-diff --git a/subprojects/gst-plugins-bad/ext/openh264/gstopenh264enc.cpp b/subprojects/gst-plugins-bad/ext/openh264/gstopenh264enc.cpp
+-index 30af8e2677..b51d6e7fed 100644
+---- a/subprojects/gst-plugins-bad/ext/openh264/gstopenh264enc.cpp
+-+++ b/subprojects/gst-plugins-bad/ext/openh264/gstopenh264enc.cpp
+-@@ -761,7 +761,12 @@ gst_openh264enc_set_format (GstVideoEncoder * encoder,
+-     WelsDestroySVCEncoder (openh264enc->encoder);
+-     openh264enc->encoder = NULL;
+-   }
+--  WelsCreateSVCEncoder (&openh264enc->encoder);
+-+
+-+  if (WelsCreateSVCEncoder (&openh264enc->encoder) != 0) {
+-+    GST_ERROR_OBJECT (openh264enc, "openh264enc_set_format, cannot create encoder");
+-+    return 0;
+-+  }
+-+
+-   unsigned int uiTraceLevel = WELS_LOG_ERROR;
+-   openh264enc->encoder->SetOption (ENCODER_OPTION_TRACE_LEVEL, &uiTraceLevel);
+- 
+diff --git a/patches/gstreamer/gst-plugins-bad-Optional-LRDF-dep-for-ladspa.patch b/patches/gstreamer/gst-plugins-bad-Optional-LRDF-dep-for-ladspa.patch
+deleted file mode 100644
+index a91cf04..0000000
+--- a/patches/gstreamer/gst-plugins-bad-Optional-LRDF-dep-for-ladspa.patch
++++ /dev/null
+@@ -1,13 +0,0 @@
+-diff --git a/subprojects/gst-plugins-bad/ext/ladspa/meson.build b/subprojects/gst-plugins-bad/ext/ladspa/meson.build
+-index adfd3459e2..3e8060796d 100644
+---- a/subprojects/gst-plugins-bad/ext/ladspa/meson.build
+-+++ b/subprojects/gst-plugins-bad/ext/ladspa/meson.build
+-@@ -13,7 +13,7 @@ if get_option('ladspa').disabled()
+- endif
+- 
+- # This is an optional dep, but we make it optional only in auto mode
+--lrdf_dep = dependency('lrdf', required : get_option('ladspa'))
+-+lrdf_dep = dependency('lrdf', required: false)
+- if lrdf_dep.found()
+-   ladspa_cargs = ['-DHAVE_LRDF']
+- endif
+-- 
+2.44.0
+

@@ -141,6 +141,7 @@ my $code = <<____;
 abi_test_trampoline:
 .cfi_startproc
 .seh_startproc
+	_CET_ENDBR
 	# Stack layout:
 	#   8 bytes - align
 	#   $caller_state_size bytes - saved caller registers
@@ -178,7 +179,7 @@ my $caller_state_offset = $scratch_offset + 8;
 $code .= <<____;
 	subq	\$$stack_alloc_size, %rsp
 .cfi_adjust_cfa_offset	$stack_alloc_size
-.seh_allocstack	$stack_alloc_size
+.seh_stackalloc	$stack_alloc_size
 ____
 $code .= <<____ if (!$win64);
 	movq	$unwind, $unwind_offset(%rsp)
@@ -194,12 +195,13 @@ $code .= store_caller_state($caller_state_offset, "%rsp", sub {
   # pointer just before the call.
   my $cfi_off = $off - $stack_alloc_size - 8;
   my $seh_dir = ".seh_savereg";
-  $seh_dir = ".seh_savexmm128" if ($reg =~ /^xmm/);
+  $seh_dir = ".seh_savexmm" if ($reg =~ /^xmm/);
   return <<____;
 .cfi_offset	$reg, $cfi_off
 $seh_dir	\%$reg, $off
 ____
 });
+$code .= ".seh_endprologue\n";
 
 $code .= load_caller_state(0, $state);
 $code .= <<____;
@@ -307,6 +309,7 @@ foreach ("ax", "bx", "cx", "dx", "di", "si", "bp", 8..15) {
 .globl	abi_test_clobber_r$_
 .align	16
 abi_test_clobber_r$_:
+	_CET_ENDBR
 	xorq	%r$_, %r$_
 	ret
 .size	abi_test_clobber_r$_,.-abi_test_clobber_r$_
@@ -319,6 +322,7 @@ foreach (0..15) {
 .globl	abi_test_clobber_xmm$_
 .align	16
 abi_test_clobber_xmm$_:
+	_CET_ENDBR
 	pxor	%xmm$_, %xmm$_
 	ret
 .size	abi_test_clobber_xmm$_,.-abi_test_clobber_xmm$_
@@ -335,9 +339,11 @@ $code .= <<____;
 abi_test_bad_unwind_wrong_register:
 .cfi_startproc
 .seh_startproc
+	_CET_ENDBR
 	pushq	%r12
 .cfi_push	%r13	# This should be %r13
 .seh_pushreg	%r13	# This should be %r13
+.seh_endprologue
 	# Windows evaluates epilogs directly in the unwinder, rather than using
 	# unwind codes. Add a nop so there is one non-epilog point (immediately
 	# before the nop) where the unwinder can observe the mistake.
@@ -358,9 +364,11 @@ abi_test_bad_unwind_wrong_register:
 abi_test_bad_unwind_temporary:
 .cfi_startproc
 .seh_startproc
+	_CET_ENDBR
 	pushq	%r12
 .cfi_push	%r12
 .seh_pushreg	%r12
+.seh_endprologue
 
 	movq	%r12, %rax
 	inc	%rax
@@ -384,6 +392,7 @@ abi_test_bad_unwind_temporary:
 .type	abi_test_set_direction_flag, \@abi-omnipotent
 .globl	abi_test_get_and_clear_direction_flag
 abi_test_get_and_clear_direction_flag:
+	_CET_ENDBR
 	pushfq
 	popq	%rax
 	andq	\$0x400, %rax
@@ -397,6 +406,7 @@ abi_test_get_and_clear_direction_flag:
 .type	abi_test_set_direction_flag, \@abi-omnipotent
 .globl	abi_test_set_direction_flag
 abi_test_set_direction_flag:
+	_CET_ENDBR
 	std
 	ret
 .size abi_test_set_direction_flag,.-abi_test_set_direction_flag
@@ -415,6 +425,7 @@ abi_test_bad_unwind_epilog:
 .seh_startproc
 	pushq	%r12
 .seh_pushreg	%r12
+.seh_endprologue
 
 	nop
 

@@ -91,7 +91,7 @@ TEST_F(MediaStreamTest, GetTrackInfo) {
   ASSERT_EQ(1u, stream_->GetAudioTracks().size());
 
   // Verify the video track.
-  scoped_refptr<webrtc::MediaStreamTrackInterface> video_track(
+  scoped_refptr<MediaStreamTrackInterface> video_track(
       stream_->GetVideoTracks()[0]);
   EXPECT_EQ(0, video_track->id().compare(kVideoTrackId));
   EXPECT_TRUE(video_track->enabled());
@@ -105,7 +105,7 @@ TEST_F(MediaStreamTest, GetTrackInfo) {
   EXPECT_TRUE(video_track->enabled());
 
   // Verify the audio track.
-  scoped_refptr<webrtc::MediaStreamTrackInterface> audio_track(
+  scoped_refptr<MediaStreamTrackInterface> audio_track(
       stream_->GetAudioTracks()[0]);
   EXPECT_EQ(0, audio_track->id().compare(kAudioTrackId));
   EXPECT_TRUE(audio_track->enabled());
@@ -139,14 +139,12 @@ TEST_F(MediaStreamTest, RemoveTrack) {
 }
 
 TEST_F(MediaStreamTest, ChangeVideoTrack) {
-  scoped_refptr<webrtc::VideoTrackInterface> video_track(
-      stream_->GetVideoTracks()[0]);
+  scoped_refptr<VideoTrackInterface> video_track(stream_->GetVideoTracks()[0]);
   ChangeTrack(video_track.get());
 }
 
 TEST_F(MediaStreamTest, ChangeAudioTrack) {
-  scoped_refptr<webrtc::AudioTrackInterface> audio_track(
-      stream_->GetAudioTracks()[0]);
+  scoped_refptr<AudioTrackInterface> audio_track(stream_->GetAudioTracks()[0]);
   ChangeTrack(audio_track.get());
 }
 

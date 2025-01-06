@@ -29,10 +29,13 @@
 #if ENABLE(MODEL_PROCESS)
 
 #include "ModelProcessModelPlayerProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelProcessModelPlayerManagerProxy);
 
 ModelProcessModelPlayerManagerProxy::ModelProcessModelPlayerManagerProxy(ModelConnectionToWebProcess& connection)
     : m_modelConnectionToWebProcess(connection)
@@ -42,6 +45,14 @@ ModelProcessModelPlayerManagerProxy::ModelProcessModelPlayerManagerProxy(ModelCo
 ModelProcessModelPlayerManagerProxy::~ModelProcessModelPlayerManagerProxy()
 {
     clear();
+}
+
+std::optional<SharedPreferencesForWebProcess> ModelProcessModelPlayerManagerProxy::sharedPreferencesForWebProcess() const
+{
+    if (!m_modelConnectionToWebProcess)
+        return std::nullopt;
+
+    return m_modelConnectionToWebProcess->sharedPreferencesForWebProcess();
 }
 
 void ModelProcessModelPlayerManagerProxy::clear()

@@ -201,7 +201,7 @@ TEST_P(FogBlendTest, ShadowEffect)
     glLoadIdentity();
     glShadeModel(GL_FLAT);
 
-    // TODO(http://anglebug.com/7598): This currently renders incorrectly on ANGLE
+    // TODO(http://anglebug.com/42266063): This currently renders incorrectly on ANGLE
     // Draw shadow effect
     glEnable(GL_FOG);
     const GLfloat fogColor[4] = {0.0f, 0.0f, 0.0f, 1.0f};

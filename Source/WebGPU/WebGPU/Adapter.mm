@@ -31,18 +31,22 @@
 #import "Instance.h"
 #import <algorithm>
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
 
-Adapter::Adapter(id<MTLDevice> device, Instance& instance, HardwareCapabilities&& capabilities)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Adapter);
+
+Adapter::Adapter(id<MTLDevice> device, Instance& instance, bool xrCompatible, HardwareCapabilities&& capabilities)
     : m_device(device)
-    , m_instance(instance)
+    , m_instance(&instance)
     , m_capabilities(WTFMove(capabilities))
+    , m_xrCompatible(xrCompatible)
 {
 }
 
 Adapter::Adapter(Instance& instance)
-    : m_instance(instance)
+    : m_instance(&instance)
 {
 }
 
@@ -117,7 +121,7 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
     } else
         limits = defaultLimits();
 
-    Vector<WGPUFeatureName> features(std::span { descriptor.requiredFeatures, descriptor.requiredFeatureCount });
+    Vector<WGPUFeatureName> features(descriptor.requiredFeaturesSpan());
     if (includesUnsupportedFeatures(features, m_capabilities.features)) {
         callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Device does not support requested features"_s);
         return;
@@ -133,6 +137,11 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
     m_deviceRequested = true;
     // FIXME: this should be asynchronous - https://bugs.webkit.org/show_bug.cgi?id=233621
     callback(WGPURequestDeviceStatus_Success, Device::create(this->m_device, WTFMove(label), WTFMove(capabilities), *this), { });
+}
+
+bool Adapter::isXRCompatible() const
+{
+    return m_xrCompatible;
 }
 
 } // namespace WebGPU
@@ -151,35 +160,39 @@ void wgpuAdapterRelease(WGPUAdapter adapter)
 
 size_t wgpuAdapterEnumerateFeatures(WGPUAdapter adapter, WGPUFeatureName* features)
 {
-    return WebGPU::fromAPI(adapter).enumerateFeatures(features);
+    return WebGPU::protectedFromAPI(adapter)->enumerateFeatures(features);
 }
 
 WGPUBool wgpuAdapterGetLimits(WGPUAdapter adapter, WGPUSupportedLimits* limits)
 {
-    return WebGPU::fromAPI(adapter).getLimits(*limits);
+    return WebGPU::protectedFromAPI(adapter)->getLimits(*limits);
 }
 
 void wgpuAdapterGetProperties(WGPUAdapter adapter, WGPUAdapterProperties* properties)
 {
-    WebGPU::fromAPI(adapter).getProperties(*properties);
+    WebGPU::protectedFromAPI(adapter)->getProperties(*properties);
 }
 
 WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 {
-    return WebGPU::fromAPI(adapter).hasFeature(feature);
+    return WebGPU::protectedFromAPI(adapter)->hasFeature(feature);
 }
 
 void wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallback callback, void* userdata)
 {
-    WebGPU::fromAPI(adapter).requestDevice(*descriptor, [callback, userdata](WGPURequestDeviceStatus status, Ref<WebGPU::Device>&& device, String&& message) {
+    WebGPU::protectedFromAPI(adapter)->requestDevice(*descriptor, [callback, userdata](WGPURequestDeviceStatus status, Ref<WebGPU::Device>&& device, String&& message) {
         callback(status, WebGPU::releaseToAPI(WTFMove(device)), message.utf8().data(), userdata);
     });
 }
 
 void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor const * descriptor, WGPURequestDeviceBlockCallback callback)
 {
-    WebGPU::fromAPI(adapter).requestDevice(*descriptor, [callback = WebGPU::fromAPI(WTFMove(callback))](WGPURequestDeviceStatus status, Ref<WebGPU::Device>&& device, String&& message) {
+    WebGPU::protectedFromAPI(adapter)->requestDevice(*descriptor, [callback = WebGPU::fromAPI(WTFMove(callback))](WGPURequestDeviceStatus status, Ref<WebGPU::Device>&& device, String&& message) {
         callback(status, WebGPU::releaseToAPI(WTFMove(device)), message.utf8().data());
     });
 }
 
+WGPUBool wgpuAdapterXRCompatible(WGPUAdapter adapter)
+{
+    return WebGPU::protectedFromAPI(adapter)->isXRCompatible();
+}

@@ -31,7 +31,12 @@
 #include "config.h"
 #include "BMPImageReader.h"
 
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BMPImageReader);
 
 BMPImageReader::BMPImageReader(ScalableImageDecoder* parent, size_t decodedAndHeaderOffset, size_t imgDataOffset, bool usesAndMask)
     : m_parent(parent)
@@ -49,7 +54,7 @@ BMPImageReader::BMPImageReader(ScalableImageDecoder* parent, size_t decodedAndHe
     , m_andMaskState(usesAndMask ? NotYetDecoded : None)
 {
     // Clue-in decodeBMP() that we need to detect the correct info header size.
-    memset(&m_infoHeader, 0, sizeof(m_infoHeader));
+    zeroBytes(m_infoHeader);
 }
 
 bool BMPImageReader::decodeBMP(bool onlySize)
@@ -618,7 +623,7 @@ bool BMPImageReader::processRLEData()
                 // RLE8 has one color index that gets repeated; RLE4 has two
                 // color indexes in the upper and lower 4 bits of the byte,
                 // which are alternated.
-                size_t colorIndexes[2] = {code, code};
+                std::array<size_t, 2> colorIndexes { code, code };
                 if (m_infoHeader.biCompression == RLE4) {
                     colorIndexes[0] = (colorIndexes[0] >> 4) & 0xf;
                     colorIndexes[1] &= 0xf;

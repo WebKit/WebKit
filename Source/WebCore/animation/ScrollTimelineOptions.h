@@ -31,7 +31,7 @@
 namespace WebCore {
 
 struct ScrollTimelineOptions {
-    RefPtr<Element> source;
+    std::optional<RefPtr<Element>> source;
     ScrollAxis axis;
 };
 

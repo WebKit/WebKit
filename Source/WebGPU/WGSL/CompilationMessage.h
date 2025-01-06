@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,16 +26,22 @@
 #pragma once
 
 #include "SourceSpan.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WGSL {
 
 class CompilationMessage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CompilationMessage);
 public:
     CompilationMessage(String&& message, SourceSpan span)
         : m_message(WTFMove(message))
+        , m_span(span)
+    {
+    }
+
+    CompilationMessage(const String& message, SourceSpan span)
+        : m_message(message)
         , m_span(span)
     {
     }

@@ -32,6 +32,7 @@
 #include "CryptoKeyAES.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FlipBytes.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -39,8 +40,8 @@ namespace CryptoAlgorithmAESCTRInternal {
 static constexpr auto ALG128 = "A128CTR"_s;
 static constexpr auto ALG192 = "A192CTR"_s;
 static constexpr auto ALG256 = "A256CTR"_s;
-static const size_t CounterSize = 16;
-static const uint64_t AllBitsSet = ~(uint64_t)0;
+static constexpr size_t counterSize = 16;
+static constexpr uint64_t allBitsSet = ~(uint64_t)0;
 }
 
 static inline bool usagesAreInvalidForCryptoAlgorithmAESCTR(CryptoKeyUsageBitmap usages)
@@ -51,7 +52,7 @@ static inline bool usagesAreInvalidForCryptoAlgorithmAESCTR(CryptoKeyUsageBitmap
 static bool parametersAreValid(const CryptoAlgorithmAesCtrParams& parameters)
 {
     using namespace CryptoAlgorithmAESCTRInternal;
-    if (parameters.counterVector().size() != CounterSize)
+    if (parameters.counterVector().size() != counterSize)
         return false;
     if (!parameters.length || parameters.length > 128)
         return false;
@@ -114,7 +115,7 @@ void CryptoAlgorithmAESCTR::generateKey(const CryptoAlgorithmParameters& paramet
     callback(WTFMove(result));
 }
 
-void CryptoAlgorithmAESCTR::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit)
+void CryptoAlgorithmAESCTR::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     using namespace CryptoAlgorithmAESCTRInternal;
 
@@ -155,7 +156,7 @@ void CryptoAlgorithmAESCTR::importKey(CryptoKeyFormat format, KeyData&& data, co
     callback(*result);
 }
 
-void CryptoAlgorithmAESCTR::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit)
+void CryptoAlgorithmAESCTR::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     using namespace CryptoAlgorithmAESCTRInternal;
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());
@@ -196,7 +197,7 @@ void CryptoAlgorithmAESCTR::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& k
     callback(format, WTFMove(result));
 }
 
-ExceptionOr<size_t> CryptoAlgorithmAESCTR::getKeyLength(const CryptoAlgorithmParameters& parameters)
+ExceptionOr<std::optional<size_t>> CryptoAlgorithmAESCTR::getKeyLength(const CryptoAlgorithmParameters& parameters)
 {
     return CryptoKeyAES::getKeyLength(parameters);
 }
@@ -206,12 +207,12 @@ CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockHelper(const Vector<uint8
 {
     using namespace CryptoAlgorithmAESCTRInternal;
 
-    ASSERT(counterVector.size() == CounterSize);
-    ASSERT(counterLength <= CounterSize * 8);
+    ASSERT(counterVector.size() == counterSize);
+    ASSERT(counterLength <= counterSize * 8);
     bool littleEndian = false; // counterVector is stored in big-endian.
-    memcpy(&m_bits.m_hi, counterVector.data(), 8);
+    memcpySpan(asMutableByteSpan(m_bits.m_hi), counterVector.span().first(8));
     m_bits.m_hi = flipBytesIfLittleEndian(m_bits.m_hi, littleEndian);
-    memcpy(&m_bits.m_lo, counterVector.data() + 8, 8);
+    memcpySpan(asMutableByteSpan(m_bits.m_lo), counterVector.subspan(8));
     m_bits.m_lo = flipBytesIfLittleEndian(m_bits.m_lo, littleEndian);
 }
 
@@ -253,11 +254,11 @@ Vector<uint8_t> CryptoAlgorithmAESCTR::CounterBlockHelper::counterVectorAfterOve
     auto bits = m_bits & nonceMask;
 
     bool littleEndian = false; // counterVector is stored in big-endian.
-    Vector<uint8_t> counterVector(CounterSize);
+    Vector<uint8_t> counterVector(counterSize);
     uint64_t hi = flipBytesIfLittleEndian(bits.m_hi, littleEndian);
-    memcpy(counterVector.data(), &hi, 8);
+    memcpySpan(counterVector.mutableSpan(), asByteSpan(hi));
     uint64_t lo = flipBytesIfLittleEndian(bits.m_lo, littleEndian);
-    memcpy(counterVector.data() + 8, &lo, 8);
+    memcpySpan(counterVector.mutableSpan().subspan(8), asByteSpan(lo));
 
     return counterVector;
 }
@@ -265,14 +266,14 @@ Vector<uint8_t> CryptoAlgorithmAESCTR::CounterBlockHelper::counterVectorAfterOve
 void CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockBits::set()
 {
     using namespace CryptoAlgorithmAESCTRInternal;
-    m_hi = AllBitsSet;
-    m_lo = AllBitsSet;
+    m_hi = allBitsSet;
+    m_lo = allBitsSet;
 }
 
 bool CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockBits::all() const
 {
     using namespace CryptoAlgorithmAESCTRInternal;
-    return m_hi == AllBitsSet && m_lo == AllBitsSet;
+    return m_hi == allBitsSet && m_lo == allBitsSet;
 }
 
 bool CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockBits::any() const

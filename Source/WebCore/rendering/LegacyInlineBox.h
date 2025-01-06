@@ -24,7 +24,7 @@
 #include "RenderBoxModelObject.h"
 #include "RenderText.h"
 #include "TextFlags.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakPtr.h>
 
@@ -37,7 +37,7 @@ class LegacyRootInlineBox;
 // LegacyInlineBox represents a rectangle that occurs on a line. It corresponds to
 // some RenderObject (i.e., it represents a portion of that RenderObject).
 class LegacyInlineBox {
-    WTF_MAKE_ISO_ALLOCATED(LegacyInlineBox);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyInlineBox);
 public:
     virtual ~LegacyInlineBox();
 
@@ -71,9 +71,6 @@ public:
         else
             adjustPosition(delta, 0);
     }
-
-    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) = 0;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) = 0;
 
 #if ENABLE(TREE_DEBUGGING)
     void showNodeTreeForThis() const;

@@ -12,9 +12,9 @@
 
 #include <bitset>
 #include <cstdint>
+#include <optional>
 
 #include "absl/container/inlined_vector.h"
-#include "absl/types/optional.h"
 #include "absl/types/variant.h"
 #include "api/rtp_headers.h"
 #include "api/transport/rtp/dependency_descriptor.h"
@@ -25,10 +25,8 @@
 #include "api/video/video_frame_type.h"
 #include "api/video/video_rotation.h"
 #include "api/video/video_timing.h"
+#include "common_video/frame_instrumentation_data.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
-#ifdef WEBRTC_USE_H265
-#include "modules/video_coding/codecs/h265/include/h265_globals.h"
-#endif
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 
@@ -44,9 +42,6 @@ using RTPVideoTypeHeader = absl::variant<absl::monostate,
                                          RTPVideoHeaderVP8,
                                          RTPVideoHeaderVP9,
                                          RTPVideoHeaderH264,
-#ifdef WEBRTC_USE_H265
-                                         RTPVideoHeaderH265,
-#endif
                                          RTPVideoHeaderLegacyGeneric>;
 
 struct RTPVideoHeader {
@@ -75,7 +70,7 @@ struct RTPVideoHeader {
   VideoFrameMetadata GetAsMetadata() const;
   void SetFromMetadata(const VideoFrameMetadata& metadata);
 
-  absl::optional<GenericDescriptorInfo> generic;
+  std::optional<GenericDescriptorInfo> generic;
 
   VideoFrameType frame_type = VideoFrameType::kEmptyFrame;
   uint16_t width = 0;
@@ -88,18 +83,23 @@ struct RTPVideoHeader {
   uint8_t simulcastIdx = 0;
   VideoCodecType codec = VideoCodecType::kVideoCodecGeneric;
 
-  absl::optional<VideoPlayoutDelay> playout_delay;
+  std::optional<VideoPlayoutDelay> playout_delay;
   VideoSendTiming video_timing;
-  absl::optional<ColorSpace> color_space;
+  std::optional<ColorSpace> color_space;
   // This field is meant for media quality testing purpose only. When enabled it
   // carries the webrtc::VideoFrame id field from the sender to the receiver.
-  absl::optional<uint16_t> video_frame_tracking_id;
+  std::optional<uint16_t> video_frame_tracking_id;
   RTPVideoTypeHeader video_type_header;
 
   // When provided, is sent as is as an RTP header extension according to
   // http://www.webrtc.org/experiments/rtp-hdrext/abs-capture-time.
   // Otherwise, it is derived from other relevant information.
-  absl::optional<AbsoluteCaptureTime> absolute_capture_time;
+  std::optional<AbsoluteCaptureTime> absolute_capture_time;
+
+  // Required for automatic corruption detection.
+  std::optional<
+      absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+      frame_instrumentation_data;
 };
 
 }  // namespace webrtc

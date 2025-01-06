@@ -30,7 +30,8 @@
 namespace WebCore {
 
 class HTMLArticleElement final : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLArticleElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLArticleElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLArticleElement);
 public:
     static Ref<HTMLArticleElement> create(const QualifiedName&, Document&);
 

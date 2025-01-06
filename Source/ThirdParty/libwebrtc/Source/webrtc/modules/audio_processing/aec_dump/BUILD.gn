@@ -14,10 +14,12 @@ rtc_source_set("aec_dump") {
 
   deps = [
     "..:aec_dump_interface",
+    "../../../api/task_queue",
     "../../../rtc_base/system:file_wrapper",
     "../../../rtc_base/system:rtc_export",
+    "//third_party/abseil-cpp/absl/base:nullability",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 if (rtc_include_tests) {
@@ -43,9 +45,11 @@ if (rtc_include_tests) {
 
     deps = [
       ":mock_aec_dump",
-      "..:api",
       "..:audioproc_test_utils",
       "../",
+      "../../../api/audio:audio_processing",
+      "../../../api/audio:builtin_audio_processing_builder",
+      "../../../api/environment:environment_factory",
       "//testing/gtest",
     ]
   }
@@ -66,17 +70,16 @@ if (rtc_enable_protobuf) {
       "../../../api/audio:audio_frame_api",
       "../../../api/task_queue",
       "../../../rtc_base:checks",
-      "../../../rtc_base:ignore_wundef",
       "../../../rtc_base:logging",
       "../../../rtc_base:macromagic",
       "../../../rtc_base:protobuf_utils",
       "../../../rtc_base:race_checker",
       "../../../rtc_base:rtc_event",
-      "../../../rtc_base:rtc_task_queue",
       "../../../rtc_base/system:file_wrapper",
       "../../../system_wrappers",
+      "//third_party/abseil-cpp/absl/base:nullability",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 
     deps += [ "../:audioproc_debug_proto" ]
   }
@@ -107,6 +110,8 @@ rtc_library("null_aec_dump_factory") {
   deps = [
     ":aec_dump",
     "..:aec_dump_interface",
+    "../../../api/task_queue",
+    "//third_party/abseil-cpp/absl/base:nullability",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }

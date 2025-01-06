@@ -11,7 +11,7 @@ info: |
 ---*/
 
 let dateRegExp = /^(Sun|Mon|Tue|Wed|Thu|Fri|Sat) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{2} [0-9]{4}$/
-let match = dateRegExp.exec(new Date().toDateString());
+let match = dateRegExp.exec(new Date(0).toDateString());
 assert.notSameValue(null, match);
 
 // Years are padded to the left with zeroes

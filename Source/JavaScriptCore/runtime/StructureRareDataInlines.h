@@ -31,6 +31,8 @@
 #include "StructureChain.h"
 #include "StructureRareData.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 // FIXME: Use ObjectPropertyConditionSet instead.
@@ -97,7 +99,7 @@ inline JSValue StructureRareData::cachedSpecialProperty(CachedSpecialPropertyKey
 
 inline JSPropertyNameEnumerator* StructureRareData::cachedPropertyNameEnumerator() const
 {
-    return bitwise_cast<JSPropertyNameEnumerator*>(m_cachedPropertyNameEnumeratorAndFlag & cachedPropertyNameEnumeratorMask);
+    return std::bit_cast<JSPropertyNameEnumerator*>(m_cachedPropertyNameEnumeratorAndFlag & cachedPropertyNameEnumeratorMask);
 }
 
 inline uintptr_t StructureRareData::cachedPropertyNameEnumeratorAndFlag() const
@@ -109,7 +111,7 @@ inline void StructureRareData::setCachedPropertyNameEnumerator(VM& vm, Structure
 {
     m_cachedPropertyNameEnumeratorWatchpoints = FixedVector<StructureChainInvalidationWatchpoint>();
     bool validatedViaWatchpoint = tryCachePropertyNameEnumeratorViaWatchpoint(vm, baseStructure, chain);
-    m_cachedPropertyNameEnumeratorAndFlag = ((validatedViaWatchpoint ? 0 : cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag) | bitwise_cast<uintptr_t>(enumerator));
+    m_cachedPropertyNameEnumeratorAndFlag = ((validatedViaWatchpoint ? 0 : cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag) | std::bit_cast<uintptr_t>(enumerator));
     vm.writeBarrier(this, enumerator);
 }
 
@@ -179,9 +181,8 @@ inline void StructureChainInvalidationWatchpoint::install(StructureRareData* str
 
 inline void StructureChainInvalidationWatchpoint::fireInternal(VM&, const FireDetail&)
 {
-    if (!m_structureRareData->isLive())
-        return;
-    m_structureRareData->clearCachedPropertyNameEnumerator();
+    if (!m_structureRareData->isPendingDestruction())
+        m_structureRareData->clearCachedPropertyNameEnumerator();
 }
 
 inline bool StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint(VM&, Structure* baseStructure, StructureChain* chain)
@@ -215,3 +216,5 @@ inline void StructureRareData::clearCachedPropertyNameEnumerator()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

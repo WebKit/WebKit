@@ -28,6 +28,7 @@
 #if PLATFORM(COCOA)
 
 #include <wtf/ArgumentCoder.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,7 +37,7 @@ OBJC_CLASS NSPresentationIntent;
 namespace WebKit {
 
 class CoreIPCPresentationIntent {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CoreIPCPresentationIntent);
 public:
     CoreIPCPresentationIntent(NSPresentationIntent *);
 

@@ -13,8 +13,9 @@
 
 #include <stdint.h>
 
+#include <optional>
+
 #include "absl/functional/any_invocable.h"
-#include "absl/types/optional.h"
 #include "api/units/timestamp.h"
 #include "video/frame_decode_timing.h"
 
@@ -31,7 +32,7 @@ class FrameDecodeScheduler {
 
   // Returns the rtp timestamp of the next frame scheduled for release, or
   // `nullopt` if no frame is currently scheduled.
-  virtual absl::optional<uint32_t> ScheduledRtpTimestamp() = 0;
+  virtual std::optional<uint32_t> ScheduledRtpTimestamp() = 0;
 
   // Schedules a frame for release based on `schedule`. When released,
   // `callback` will be invoked with the `rtp` timestamp of the frame and the

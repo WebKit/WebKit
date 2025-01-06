@@ -37,6 +37,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/mac/NSColorSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 @interface WebTextIndicatorView : NSView
 
@@ -55,6 +56,8 @@
 using namespace WebCore;
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextIndicatorWindow);
 
 TextIndicatorWindow::TextIndicatorWindow(NSView *targetView)
     : m_targetView(targetView)

@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include <wtf/Assertions.h>
-#include <wtf/FastMalloc.h>
 #include <string.h>
+#include <wtf/Assertions.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
     
 class IdentifierRep {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IdentifierRep);
 public:
     WEBCORE_EXPORT static IdentifierRep* get(int);
     WEBCORE_EXPORT static IdentifierRep* get(const char*);

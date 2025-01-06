@@ -134,6 +134,27 @@ angle::Result TextureImpl::setBuffer(const gl::Context *context, GLenum internal
     return angle::Result::Stop;
 }
 
+angle::Result TextureImpl::clearImage(const gl::Context *context,
+                                      GLint level,
+                                      GLenum format,
+                                      GLenum type,
+                                      const uint8_t *data)
+{
+    UNREACHABLE();
+    return angle::Result::Stop;
+}
+
+angle::Result TextureImpl::clearSubImage(const gl::Context *context,
+                                         GLint level,
+                                         const gl::Box &area,
+                                         GLenum format,
+                                         GLenum type,
+                                         const uint8_t *data)
+{
+    UNREACHABLE();
+    return angle::Result::Stop;
+}
+
 GLint TextureImpl::getMemorySize() const
 {
     return 0;
@@ -141,6 +162,32 @@ GLint TextureImpl::getMemorySize() const
 
 GLint TextureImpl::getLevelMemorySize(gl::TextureTarget target, GLint level)
 {
+    return 0;
+}
+
+angle::Result TextureImpl::setStorageAttribs(const gl::Context *context,
+                                             gl::TextureType type,
+                                             size_t levels,
+                                             GLint internalformat,
+                                             const gl::Extents &size,
+                                             const GLint *attribList)
+{
+    UNREACHABLE();
+    return angle::Result::Stop;
+}
+
+GLint TextureImpl::getImageCompressionRate(const gl::Context *context)
+{
+    UNREACHABLE();
+    return 0;
+}
+
+GLint TextureImpl::getFormatSupportedCompressionRates(const gl::Context *context,
+                                                      GLenum internalformat,
+                                                      GLsizei bufSize,
+                                                      GLint *rates)
+{
+    UNREACHABLE();
     return 0;
 }
 

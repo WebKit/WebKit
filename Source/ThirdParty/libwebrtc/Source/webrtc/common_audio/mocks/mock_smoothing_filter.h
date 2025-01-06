@@ -19,7 +19,7 @@ namespace webrtc {
 class MockSmoothingFilter : public SmoothingFilter {
  public:
   MOCK_METHOD(void, AddSample, (float), (override));
-  MOCK_METHOD(absl::optional<float>, GetAverage, (), (override));
+  MOCK_METHOD(std::optional<float>, GetAverage, (), (override));
   MOCK_METHOD(bool, SetTimeConstantMs, (int), (override));
 };
 

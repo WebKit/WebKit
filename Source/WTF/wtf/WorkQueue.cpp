@@ -177,6 +177,7 @@ WorkQueue& WorkQueue::main()
     static NeverDestroyed<RefPtr<WorkQueue>> mainWorkQueue;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
+        WTF::initialize();
         mainWorkQueue.get() = adoptRef(*new WorkQueue(CreateMain));
     });
     return *mainWorkQueue.get();
@@ -200,16 +201,6 @@ void WorkQueue::dispatch(Function<void()>&& function)
 bool WorkQueue::isCurrent() const
 {
     return currentSequence() == m_threadID;
-}
-
-void WorkQueue::ref() const
-{
-    ThreadSafeRefCounted::ref();
-}
-
-void WorkQueue::deref() const
-{
-    ThreadSafeRefCounted::deref();
 }
 
 ConcurrentWorkQueue::ConcurrentWorkQueue(ASCIILiteral name, QOS qos)

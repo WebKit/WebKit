@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,7 +20,7 @@
 #include "av1/encoder/pickrst.h"
 
 #if CONFIG_AV1_HIGHBITDEPTH
-static INLINE void acc_stat_highbd_avx2(int64_t *dst, const uint16_t *dgd,
+static inline void acc_stat_highbd_avx2(int64_t *dst, const uint16_t *dgd,
                                         const __m256i *shuffle,
                                         const __m256i *dgd_ijkl) {
   // Load two 128-bit chunks from dgd
@@ -55,7 +55,7 @@ static INLINE void acc_stat_highbd_avx2(int64_t *dst, const uint16_t *dgd,
   yy_store_256(dst + 4, _mm256_add_epi64(d0h, dst1));
 }
 
-static INLINE void acc_stat_highbd_win7_one_line_avx2(
+static inline void acc_stat_highbd_win7_one_line_avx2(
     const uint16_t *dgd, const uint16_t *src, int h_start, int h_end,
     int dgd_stride, const __m256i *shuffle, int32_t *sumX,
     int32_t sumY[WIENER_WIN][WIENER_WIN], int64_t M_int[WIENER_WIN][WIENER_WIN],
@@ -145,7 +145,7 @@ static INLINE void acc_stat_highbd_win7_one_line_avx2(
   }
 }
 
-static INLINE void compute_stats_highbd_win7_opt_avx2(
+static inline void compute_stats_highbd_win7_opt_avx2(
     const uint8_t *dgd8, const uint8_t *src8, int h_start, int h_end,
     int v_start, int v_end, int dgd_stride, int src_stride, int64_t *M,
     int64_t *H, aom_bit_depth_t bit_depth) {
@@ -202,7 +202,7 @@ static INLINE void compute_stats_highbd_win7_opt_avx2(
   }
 }
 
-static INLINE void acc_stat_highbd_win5_one_line_avx2(
+static inline void acc_stat_highbd_win5_one_line_avx2(
     const uint16_t *dgd, const uint16_t *src, int h_start, int h_end,
     int dgd_stride, const __m256i *shuffle, int32_t *sumX,
     int32_t sumY[WIENER_WIN_CHROMA][WIENER_WIN_CHROMA],
@@ -285,7 +285,7 @@ static INLINE void acc_stat_highbd_win5_one_line_avx2(
   }
 }
 
-static INLINE void compute_stats_highbd_win5_opt_avx2(
+static inline void compute_stats_highbd_win5_opt_avx2(
     const uint8_t *dgd8, const uint8_t *src8, int h_start, int h_end,
     int v_start, int v_end, int dgd_stride, int src_stride, int64_t *M,
     int64_t *H, aom_bit_depth_t bit_depth) {
@@ -345,36 +345,42 @@ static INLINE void compute_stats_highbd_win5_opt_avx2(
 }
 
 void av1_compute_stats_highbd_avx2(int wiener_win, const uint8_t *dgd8,
-                                   const uint8_t *src8, int h_start, int h_end,
+                                   const uint8_t *src8, int16_t *dgd_avg,
+                                   int16_t *src_avg, int h_start, int h_end,
                                    int v_start, int v_end, int dgd_stride,
                                    int src_stride, int64_t *M, int64_t *H,
                                    aom_bit_depth_t bit_depth) {
   if (wiener_win == WIENER_WIN) {
+    (void)dgd_avg;
+    (void)src_avg;
     compute_stats_highbd_win7_opt_avx2(dgd8, src8, h_start, h_end, v_start,
                                        v_end, dgd_stride, src_stride, M, H,
                                        bit_depth);
   } else if (wiener_win == WIENER_WIN_CHROMA) {
+    (void)dgd_avg;
+    (void)src_avg;
     compute_stats_highbd_win5_opt_avx2(dgd8, src8, h_start, h_end, v_start,
                                        v_end, dgd_stride, src_stride, M, H,
                                        bit_depth);
   } else {
-    av1_compute_stats_highbd_c(wiener_win, dgd8, src8, h_start, h_end, v_start,
-                               v_end, dgd_stride, src_stride, M, H, bit_depth);
+    av1_compute_stats_highbd_c(wiener_win, dgd8, src8, dgd_avg, src_avg,
+                               h_start, h_end, v_start, v_end, dgd_stride,
+                               src_stride, M, H, bit_depth);
   }
 }
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
-static INLINE void madd_and_accum_avx2(__m256i src, __m256i dgd, __m256i *sum) {
+static inline void madd_and_accum_avx2(__m256i src, __m256i dgd, __m256i *sum) {
   *sum = _mm256_add_epi32(*sum, _mm256_madd_epi16(src, dgd));
 }
 
-static INLINE __m256i convert_and_add_avx2(__m256i src) {
+static inline __m256i convert_and_add_avx2(__m256i src) {
   const __m256i s0 = _mm256_cvtepi32_epi64(_mm256_castsi256_si128(src));
   const __m256i s1 = _mm256_cvtepi32_epi64(_mm256_extracti128_si256(src, 1));
   return _mm256_add_epi64(s0, s1);
 }
 
-static INLINE __m256i hadd_four_32_to_64_avx2(__m256i src0, __m256i src1,
+static inline __m256i hadd_four_32_to_64_avx2(__m256i src0, __m256i src1,
                                               __m256i *src2, __m256i *src3) {
   // 00 01 10 11 02 03 12 13
   const __m256i s_0 = _mm256_hadd_epi32(src0, src1);
@@ -385,7 +391,7 @@ static INLINE __m256i hadd_four_32_to_64_avx2(__m256i src0, __m256i src1,
   return convert_and_add_avx2(s_2);
 }
 
-static INLINE __m128i add_64bit_lvl_avx2(__m256i src0, __m256i src1) {
+static inline __m128i add_64bit_lvl_avx2(__m256i src0, __m256i src1) {
   // 00 10 02 12
   const __m256i t0 = _mm256_unpacklo_epi64(src0, src1);
   // 01 11 03 13
@@ -400,7 +406,7 @@ static INLINE __m128i add_64bit_lvl_avx2(__m256i src0, __m256i src1) {
   return _mm_add_epi64(sum0, sum1);
 }
 
-static INLINE __m128i convert_32_to_64_add_avx2(__m256i src0, __m256i src1) {
+static inline __m128i convert_32_to_64_add_avx2(__m256i src0, __m256i src1) {
   // 00 01 02 03
   const __m256i s0 = convert_and_add_avx2(src0);
   // 10 11 12 13
@@ -408,7 +414,7 @@ static INLINE __m128i convert_32_to_64_add_avx2(__m256i src0, __m256i src1) {
   return add_64bit_lvl_avx2(s0, s1);
 }
 
-static INLINE int32_t calc_sum_of_register(__m256i src) {
+static inline int32_t calc_sum_of_register(__m256i src) {
   const __m128i src_l = _mm256_castsi256_si128(src);
   const __m128i src_h = _mm256_extracti128_si256(src, 1);
   const __m128i sum = _mm_add_epi32(src_l, src_h);
@@ -417,7 +423,7 @@ static INLINE int32_t calc_sum_of_register(__m256i src) {
   return _mm_cvtsi128_si32(dst1);
 }
 
-static INLINE void transpose_64bit_4x4_avx2(const __m256i *const src,
+static inline void transpose_64bit_4x4_avx2(const __m256i *const src,
                                             __m256i *const dst) {
   // Unpack 64 bit elements. Goes from:
   // src[0]: 00 01 02 03
@@ -459,7 +465,7 @@ static const int16_t mask_16bit[32] = {
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,   // 16 bytes
 };
 
-static INLINE uint8_t calc_dgd_buf_avg_avx2(const uint8_t *src, int32_t h_start,
+static inline uint8_t calc_dgd_buf_avg_avx2(const uint8_t *src, int32_t h_start,
                                             int32_t h_end, int32_t v_start,
                                             int32_t v_end, int32_t stride) {
   const uint8_t *src_temp = src + v_start * stride + h_start;
@@ -512,7 +518,7 @@ static INLINE uint8_t calc_dgd_buf_avg_avx2(const uint8_t *src, int32_t h_start,
 
 // Fill (src-avg) or (dgd-avg) buffers. Note that when n = (width % 16) is not
 // 0, it writes (16 - n) more data than required.
-static INLINE void sub_avg_block_avx2(const uint8_t *src, int32_t src_stride,
+static inline void sub_avg_block_avx2(const uint8_t *src, int32_t src_stride,
                                       uint8_t avg, int32_t width,
                                       int32_t height, int16_t *dst,
                                       int32_t dst_stride,
@@ -545,7 +551,7 @@ static INLINE void sub_avg_block_avx2(const uint8_t *src, int32_t src_stride,
 
 // Fills lower-triangular elements of H buffer from upper triangular elements of
 // the same
-static INLINE void fill_lower_triag_elements_avx2(const int32_t wiener_win2,
+static inline void fill_lower_triag_elements_avx2(const int32_t wiener_win2,
                                                   int64_t *const H) {
   for (int32_t i = 0; i < wiener_win2 - 1; i += 4) {
     __m256i in[4], out[4];
@@ -1534,9 +1540,9 @@ void av1_compute_stats_avx2(int wiener_win, const uint8_t *dgd,
   }
 }
 
-static INLINE __m256i pair_set_epi16(int a, int b) {
+static inline __m256i pair_set_epi16(int a, int b) {
   return _mm256_set1_epi32(
-      (int32_t)(((uint16_t)(a)) | (((uint32_t)(b)) << 16)));
+      (int32_t)(((uint16_t)(a)) | (((uint32_t)(uint16_t)(b)) << 16)));
 }
 
 int64_t av1_lowbd_pixel_proj_error_avx2(
@@ -1673,7 +1679,7 @@ int64_t av1_lowbd_pixel_proj_error_avx2(
 
 // When params->r[0] > 0 and params->r[1] > 0. In this case all elements of
 // C and H need to be computed.
-static AOM_INLINE void calc_proj_params_r0_r1_avx2(
+static inline void calc_proj_params_r0_r1_avx2(
     const uint8_t *src8, int width, int height, int src_stride,
     const uint8_t *dat8, int dat_stride, int32_t *flt0, int flt0_stride,
     int32_t *flt1, int flt1_stride, int64_t H[2][2], int64_t C[2]) {
@@ -1766,12 +1772,11 @@ static AOM_INLINE void calc_proj_params_r0_r1_avx2(
 
 // When only params->r[0] > 0. In this case only H[0][0] and C[0] are
 // non-zero and need to be computed.
-static AOM_INLINE void calc_proj_params_r0_avx2(const uint8_t *src8, int width,
-                                                int height, int src_stride,
-                                                const uint8_t *dat8,
-                                                int dat_stride, int32_t *flt0,
-                                                int flt0_stride,
-                                                int64_t H[2][2], int64_t C[2]) {
+static inline void calc_proj_params_r0_avx2(const uint8_t *src8, int width,
+                                            int height, int src_stride,
+                                            const uint8_t *dat8, int dat_stride,
+                                            int32_t *flt0, int flt0_stride,
+                                            int64_t H[2][2], int64_t C[2]) {
   const int size = width * height;
   const uint8_t *src = src8;
   const uint8_t *dat = dat8;
@@ -1825,12 +1830,11 @@ static AOM_INLINE void calc_proj_params_r0_avx2(const uint8_t *src8, int width,
 
 // When only params->r[1] > 0. In this case only H[1][1] and C[1] are
 // non-zero and need to be computed.
-static AOM_INLINE void calc_proj_params_r1_avx2(const uint8_t *src8, int width,
-                                                int height, int src_stride,
-                                                const uint8_t *dat8,
-                                                int dat_stride, int32_t *flt1,
-                                                int flt1_stride,
-                                                int64_t H[2][2], int64_t C[2]) {
+static inline void calc_proj_params_r1_avx2(const uint8_t *src8, int width,
+                                            int height, int src_stride,
+                                            const uint8_t *dat8, int dat_stride,
+                                            int32_t *flt1, int flt1_stride,
+                                            int64_t H[2][2], int64_t C[2]) {
   const int size = width * height;
   const uint8_t *src = src8;
   const uint8_t *dat = dat8;
@@ -1902,7 +1906,8 @@ void av1_calc_proj_params_avx2(const uint8_t *src8, int width, int height,
   }
 }
 
-static AOM_INLINE void calc_proj_params_r0_r1_high_bd_avx2(
+#if CONFIG_AV1_HIGHBITDEPTH
+static inline void calc_proj_params_r0_r1_high_bd_avx2(
     const uint8_t *src8, int width, int height, int src_stride,
     const uint8_t *dat8, int dat_stride, int32_t *flt0, int flt0_stride,
     int32_t *flt1, int flt1_stride, int64_t H[2][2], int64_t C[2]) {
@@ -1993,7 +1998,7 @@ static AOM_INLINE void calc_proj_params_r0_r1_high_bd_avx2(
   C[1] /= size;
 }
 
-static AOM_INLINE void calc_proj_params_r0_high_bd_avx2(
+static inline void calc_proj_params_r0_high_bd_avx2(
     const uint8_t *src8, int width, int height, int src_stride,
     const uint8_t *dat8, int dat_stride, int32_t *flt0, int flt0_stride,
     int64_t H[2][2], int64_t C[2]) {
@@ -2048,7 +2053,7 @@ static AOM_INLINE void calc_proj_params_r0_high_bd_avx2(
   C[0] /= size;
 }
 
-static AOM_INLINE void calc_proj_params_r1_high_bd_avx2(
+static inline void calc_proj_params_r1_high_bd_avx2(
     const uint8_t *src8, int width, int height, int src_stride,
     const uint8_t *dat8, int dat_stride, int32_t *flt1, int flt1_stride,
     int64_t H[2][2], int64_t C[2]) {
@@ -2125,7 +2130,6 @@ void av1_calc_proj_params_high_bd_avx2(const uint8_t *src8, int width,
   }
 }
 
-#if CONFIG_AV1_HIGHBITDEPTH
 int64_t av1_highbd_pixel_proj_error_avx2(
     const uint8_t *src8, int width, int height, int src_stride,
     const uint8_t *dat8, int dat_stride, int32_t *flt0, int flt0_stride,

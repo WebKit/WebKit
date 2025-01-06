@@ -11,9 +11,9 @@
 #ifndef API_TEST_VIDEO_TEST_VIDEO_TRACK_SOURCE_H_
 #define API_TEST_VIDEO_TEST_VIDEO_TRACK_SOURCE_H_
 
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "api/media_stream_interface.h"
 #include "api/notifier.h"
 #include "api/sequence_checker.h"
@@ -32,7 +32,7 @@ class TestVideoTrackSource : public Notifier<VideoTrackSourceInterface> {
  public:
   explicit TestVideoTrackSource(
       bool remote,
-      absl::optional<std::string> stream_label = absl::nullopt);
+      std::optional<std::string> stream_label = std::nullopt);
   ~TestVideoTrackSource() override = default;
 
   void SetState(SourceState new_state);
@@ -41,11 +41,9 @@ class TestVideoTrackSource : public Notifier<VideoTrackSourceInterface> {
   bool remote() const override { return remote_; }
 
   bool is_screencast() const override { return false; }
-  absl::optional<bool> needs_denoising() const override {
-    return absl::nullopt;
-  }
+  std::optional<bool> needs_denoising() const override { return std::nullopt; }
 
-  bool GetStats(Stats* stats) override { return false; }
+  bool GetStats(Stats* /* stats */) override { return false; }
 
   void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
                        const rtc::VideoSinkWants& wants) override;
@@ -54,9 +52,9 @@ class TestVideoTrackSource : public Notifier<VideoTrackSourceInterface> {
   bool SupportsEncodedOutput() const override { return false; }
   void GenerateKeyFrame() override {}
   void AddEncodedSink(
-      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) override {}
+      rtc::VideoSinkInterface<RecordableEncodedFrame>* /* sink */) override {}
   void RemoveEncodedSink(
-      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) override {}
+      rtc::VideoSinkInterface<RecordableEncodedFrame>* /* sink */) override {}
 
   // Starts producing video.
   virtual void Start() = 0;
@@ -67,24 +65,24 @@ class TestVideoTrackSource : public Notifier<VideoTrackSourceInterface> {
   virtual void SetScreencast(bool is_screencast) = 0;
 
   // TODO(titovartem): make next 4 methods pure virtual.
-  virtual void SetEnableAdaptation(bool enable_adaptation) {}
+  virtual void SetEnableAdaptation(bool /* enable_adaptation */) {}
 
   virtual int GetFrameWidth() const { return 0; }
   virtual int GetFrameHeight() const { return 0; }
 
-  virtual void OnOutputFormatRequest(int width,
-                                     int height,
-                                     const absl::optional<int>& max_fps) {}
+  virtual void OnOutputFormatRequest(int /* width */,
+                                     int /* height */,
+                                     const std::optional<int>& /* max_fps */) {}
 
   // Returns stream label for this video source if present. Implementations
   // may override this method to increase debugability and testability.
-  virtual absl::optional<std::string> GetStreamLabel() { return stream_label_; }
+  virtual std::optional<std::string> GetStreamLabel() { return stream_label_; }
 
  protected:
   virtual rtc::VideoSourceInterface<VideoFrame>* source() = 0;
 
  private:
-  const absl::optional<std::string> stream_label_;
+  const std::optional<std::string> stream_label_;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker worker_thread_checker_;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker signaling_thread_checker_;
   SourceState state_ RTC_GUARDED_BY(&signaling_thread_checker_);

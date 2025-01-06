@@ -127,6 +127,7 @@ void PrintStackBacktrace()
 static void Handler(int sig)
 {
     printf("\nSignal %d:\n", sig);
+    fflush(stdout);
 
     if (gCrashHandlerCallback)
     {
@@ -134,6 +135,7 @@ static void Handler(int sig)
     }
 
     PrintStackBacktrace();
+    fflush(stdout);
 
     // Exit NOW.  Don't notify other threads, don't call anything registered with atexit().
     _Exit(sig);

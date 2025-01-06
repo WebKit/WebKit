@@ -28,8 +28,11 @@
 
 #include "MemoryStorageArea.h"
 #include "StorageAreaRegistry.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SessionStorageManager);
 
 SessionStorageManager::SessionStorageManager(StorageAreaRegistry& registry)
     : m_registry(registry)
@@ -52,47 +55,45 @@ bool SessionStorageManager::hasDataInMemory() const
 
 void SessionStorageManager::clearData()
 {
-    for (auto& storageArea : m_storageAreas.values())
+    for (Ref storageArea : m_storageAreas.values())
         storageArea->clear();
 }
 
 void SessionStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
 {
-    for (auto& storageArea : m_storageAreas.values())
+    for (Ref storageArea : m_storageAreas.values())
         storageArea->removeListener(connection);
 }
 
 void SessionStorageManager::removeNamespace(StorageNamespaceIdentifier namespaceIdentifier)
 {
-    auto identifier = m_storageAreasByNamespace.take(namespaceIdentifier);
-    if (!identifier.isValid())
+    auto identifier = m_storageAreasByNamespace.takeOptional(namespaceIdentifier);
+    if (!identifier)
         return;
 
-    m_storageAreas.remove(identifier);
-    m_registry.unregisterStorageArea(identifier);
+    m_storageAreas.remove(*identifier);
+    m_registry->unregisterStorageArea(*identifier);
 }
 
-StorageAreaIdentifier SessionStorageManager::addStorageArea(std::unique_ptr<MemoryStorageArea> storageArea, StorageNamespaceIdentifier namespaceIdentifier)
+StorageAreaIdentifier SessionStorageManager::addStorageArea(Ref<MemoryStorageArea>&& storageArea, StorageNamespaceIdentifier namespaceIdentifier)
 {
     auto identifier = storageArea->identifier();
-    m_registry.registerStorageArea(identifier, *storageArea);
+    m_registry->registerStorageArea(identifier, storageArea);
     m_storageAreasByNamespace.add(namespaceIdentifier, identifier);
     m_storageAreas.add(identifier, WTFMove(storageArea));
 
     return identifier;
 }
 
-StorageAreaIdentifier SessionStorageManager::connectToSessionStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin, StorageNamespaceIdentifier namespaceIdentifier)
+std::optional<StorageAreaIdentifier> SessionStorageManager::connectToSessionStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin, StorageNamespaceIdentifier namespaceIdentifier)
 {
-    auto identifier = m_storageAreasByNamespace.get(namespaceIdentifier);
-    if (!identifier.isValid()) {
-        auto newStorageArea = makeUnique<MemoryStorageArea>(origin);
-        identifier = addStorageArea(WTFMove(newStorageArea), namespaceIdentifier);
-    }
+    auto identifier = m_storageAreasByNamespace.getOptional(namespaceIdentifier);
+    if (!identifier)
+        identifier = addStorageArea(MemoryStorageArea::create(origin), namespaceIdentifier);
 
-    auto storageArea = m_storageAreas.get(identifier);
+    RefPtr storageArea = m_storageAreas.get(*identifier);
     if (!storageArea)
-        return StorageAreaIdentifier { };
+        return std::nullopt;
 
     storageArea->addListener(connection, sourceIdentifier);
 
@@ -101,11 +102,11 @@ StorageAreaIdentifier SessionStorageManager::connectToSessionStorageArea(IPC::Co
 
 void SessionStorageManager::cancelConnectToSessionStorageArea(IPC::Connection::UniqueID connection, StorageNamespaceIdentifier namespaceIdentifier)
 {
-    auto identifier = m_storageAreasByNamespace.get(namespaceIdentifier);
-    if (!identifier.isValid())
+    auto identifier = m_storageAreasByNamespace.getOptional(namespaceIdentifier);
+    if (!identifier)
         return;
 
-    auto* storageArea = m_storageAreas.get(identifier);
+    RefPtr storageArea = m_storageAreas.get(*identifier);
     if (!storageArea)
         return;
 
@@ -114,18 +115,50 @@ void SessionStorageManager::cancelConnectToSessionStorageArea(IPC::Connection::U
 
 void SessionStorageManager::disconnectFromStorageArea(IPC::Connection::UniqueID connection, StorageAreaIdentifier identifier)
 {
-    if (auto* storageArea = m_storageAreas.get(identifier))
+    if (RefPtr storageArea = m_storageAreas.get(identifier))
         storageArea->removeListener(connection);
 }
 
 void SessionStorageManager::cloneStorageArea(StorageNamespaceIdentifier sourceNamespaceIdentifier, StorageNamespaceIdentifier targetNamespaceIdentifier)
 {
-    auto identifier = m_storageAreasByNamespace.get(sourceNamespaceIdentifier);
-    if (!identifier.isValid())
+    auto identifier = m_storageAreasByNamespace.getOptional(sourceNamespaceIdentifier);
+    if (!identifier)
         return;
 
-    if (auto storageArea = m_storageAreas.get(identifier))
+    if (RefPtr storageArea = m_storageAreas.get(*identifier))
         addStorageArea(storageArea->clone(), targetNamespaceIdentifier);
+}
+
+HashMap<String, String> SessionStorageManager::fetchStorageMap(StorageNamespaceIdentifier namespaceIdentifier)
+{
+    auto identifier = m_storageAreasByNamespace.getOptional(namespaceIdentifier);
+    if (!identifier)
+        return { };
+
+    RefPtr storageArea = m_storageAreas.get(*identifier);
+    if (!storageArea)
+        return { };
+
+    return storageArea->allItems();
+}
+
+bool SessionStorageManager::setStorageMap(StorageNamespaceIdentifier storageNamespaceIdentifier, WebCore::ClientOrigin clientOrigin, HashMap<String, String>&& storageMap)
+{
+    auto identifier = m_storageAreasByNamespace.getOptional(storageNamespaceIdentifier);
+    if (!identifier)
+        identifier = addStorageArea(MemoryStorageArea::create(clientOrigin), storageNamespaceIdentifier);
+
+    RefPtr storageArea = m_storageAreas.get(*identifier);
+    if (!storageArea)
+        return false;
+
+    bool succeeded = true;
+    for (auto& [key, value] : storageMap) {
+        if (!storageArea->setItem({ }, { }, WTFMove(key), WTFMove(value), { }))
+            succeeded = false;
+    }
+
+    return succeeded;
 }
 
 } // namespace WebKit

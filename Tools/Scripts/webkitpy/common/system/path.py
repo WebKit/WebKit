@@ -38,10 +38,7 @@ import threading
 
 from webkitcorepy import string_utils
 
-if sys.version_info > (3, 0):
-    from urllib.parse import quote as urllib_quote
-else:
-    from urllib import quote as urllib_quote
+from urllib.parse import quote as urllib_quote
 
 _log = logging.getLogger(__name__)
 

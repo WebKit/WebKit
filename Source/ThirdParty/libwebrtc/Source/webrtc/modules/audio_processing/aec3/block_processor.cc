@@ -13,10 +13,10 @@
 
 #include <atomic>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
@@ -76,7 +76,7 @@ class BlockProcessorImpl final : public BlockProcessor {
   BlockProcessorMetrics metrics_;
   RenderDelayBuffer::BufferingEvent render_event_;
   size_t capture_call_counter_ = 0;
-  absl::optional<DelayEstimate> estimated_delay_;
+  std::optional<DelayEstimate> estimated_delay_;
 };
 
 std::atomic<int> BlockProcessorImpl::instance_count_(0);
@@ -84,8 +84,8 @@ std::atomic<int> BlockProcessorImpl::instance_count_(0);
 BlockProcessorImpl::BlockProcessorImpl(
     const EchoCanceller3Config& config,
     int sample_rate_hz,
-    size_t num_render_channels,
-    size_t num_capture_channels,
+    size_t /* num_render_channels */,
+    size_t /* num_capture_channels */,
     std::unique_ptr<RenderDelayBuffer> render_buffer,
     std::unique_ptr<RenderDelayController> delay_controller,
     std::unique_ptr<EchoRemover> echo_remover)
@@ -223,7 +223,7 @@ void BlockProcessorImpl::UpdateEchoLeakageStatus(bool leakage_detected) {
 void BlockProcessorImpl::GetMetrics(EchoControl::Metrics* metrics) const {
   echo_remover_->GetMetrics(metrics);
   constexpr int block_size_ms = 4;
-  absl::optional<size_t> delay = render_buffer_->Delay();
+  std::optional<size_t> delay = render_buffer_->Delay();
   metrics->delay_ms = delay ? static_cast<int>(*delay) * block_size_ms : 0;
 }
 

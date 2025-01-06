@@ -31,7 +31,7 @@ namespace WebCore {
 class HTMLInputElement;
 
 class RenderSearchField final : public RenderTextControlSingleLine, private PopupMenuClient {
-    WTF_MAKE_ISO_ALLOCATED(RenderSearchField);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSearchField);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSearchField);
 public:
     RenderSearchField(HTMLInputElement&, RenderStyle&&);
@@ -45,6 +45,12 @@ public:
     void showPopup();
     void hidePopup();
     WEBCORE_EXPORT std::span<const RecentSearch> recentSearches();
+
+    // CheckedPtr interface.
+    uint32_t checkedPtrCount() const final { return RenderTextControlSingleLine::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return RenderTextControlSingleLine::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { RenderTextControlSingleLine::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { RenderTextControlSingleLine::decrementCheckedPtrCount(); }
 
 private:
     void willBeDestroyed() override;

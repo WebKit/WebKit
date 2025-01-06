@@ -47,6 +47,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/cocoa/VectorCocoa.h>
 #include <wtf/text/WTFString.h>
@@ -56,6 +57,8 @@
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFDataDetectorOverlayController);
 
 PDFDataDetectorOverlayController::PDFDataDetectorOverlayController(UnifiedPDFPlugin& plugin)
     : m_plugin(plugin)
@@ -75,7 +78,7 @@ PageOverlay& PDFDataDetectorOverlayController::installOverlayIfNeeded()
         return *m_overlay;
 
     m_overlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
-    protectedPlugin()->installDataDetectorOverlay(*m_overlay);
+    protectedPlugin()->installDataDetectorOverlay(Ref { *m_overlay });
 
     return *m_overlay;
 }
@@ -89,7 +92,7 @@ void PDFDataDetectorOverlayController::uninstallOverlay()
     if (!plugin)
         return;
 
-    plugin->uninstallDataDetectorOverlay(*std::exchange(m_overlay, nullptr));
+    plugin->uninstallDataDetectorOverlay(Ref { *std::exchange(m_overlay, nullptr) });
 }
 
 void PDFDataDetectorOverlayController::teardown()
@@ -134,6 +137,9 @@ bool PDFDataDetectorOverlayController::handleMouseEvent(const WebMouseEvent& eve
     if (!plugin)
         return false;
 
+    if (plugin->isLocked())
+        return false;
+
     RefPtr mainFrameView = plugin->mainFrameView();
     if (!mainFrameView)
         return false;
@@ -170,7 +176,7 @@ bool PDFDataDetectorOverlayController::handleMouseEvent(const WebMouseEvent& eve
             previousActiveHighlight->fadeOut();
 
         if (activeHighlight) {
-            installOverlayIfNeeded().layer().addChild(activeHighlight->layer());
+            installOverlayIfNeeded().layer().addChild(activeHighlight->protectedLayer());
             activeHighlight->fadeIn();
         }
 
@@ -178,7 +184,7 @@ bool PDFDataDetectorOverlayController::handleMouseEvent(const WebMouseEvent& eve
     }
 
     if (event.type() == WebEventType::MouseDown && mouseIsOverActiveHighlightButton)
-        return handleDataDetectorAction(mousePositionInWindowSpace, *m_activeDataDetectorItemWithHighlight.first);
+        return handleDataDetectorAction(mousePositionInWindowSpace, Ref { *m_activeDataDetectorItemWithHighlight.first });
 
     return false;
 }
@@ -243,8 +249,14 @@ void PDFDataDetectorOverlayController::updatePlatformHighlightData(PDFDocumentLa
 {
     WTF::forEach(m_pdfDataDetectorItemsWithHighlightsMap.get(pageIndex), [&](auto& dataDetectorItemWithHighlight) {
         auto& [dataDetectorItem, coreHighlight] = dataDetectorItemWithHighlight;
-        coreHighlight->setHighlight(createPlatformDataDetectorHighlight(dataDetectorItem.get()).get());
+        coreHighlight->setHighlight(createPlatformDataDetectorHighlight(Ref { dataDetectorItem }).get());
     });
+}
+
+void PDFDataDetectorOverlayController::hideActiveHighlightOverlay()
+{
+    if (RefPtr activeHighlight = m_activeDataDetectorItemWithHighlight.second)
+        activeHighlight->dismissImmediately();
 }
 
 void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(std::optional<PDFDocumentLayout::PageIndex> pageIndex, ShouldUpdatePlatformHighlightData shouldUpdatePlatformHighlightData, ActiveHighlightChanged activeHighlightChanged)
@@ -254,11 +266,15 @@ void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(std::o
         m_staleDataDetectorItemWithHighlight = { { }, { } };
     });
 
+    RefPtr plugin = protectedPlugin();
+    if (!plugin)
+        return;
+
     auto [previousDataDetectorItem, previousActiveHighlight] = m_staleDataDetectorItemWithHighlight;
     auto [activeDataDetectorItem, activeHighlight] = m_activeDataDetectorItemWithHighlight;
 
     bool shouldUpdateHighlights = activeHighlightChanged == ActiveHighlightChanged::Yes || activeHighlight || previousActiveHighlight;
-    if (!shouldUpdateHighlights)
+    if (!shouldUpdateHighlights || !plugin->canShowDataDetectorHighlightOverlays())
         return;
 
     if (shouldUpdatePlatformHighlightData == ShouldUpdatePlatformHighlightData::No)

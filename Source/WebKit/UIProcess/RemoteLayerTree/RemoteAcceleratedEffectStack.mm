@@ -30,11 +30,11 @@
 
 #import <WebCore/AcceleratedEffectStack.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/IsoMallocInlines.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RemoteAcceleratedEffectStack);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RemoteAcceleratedEffectStack);
 
 Ref<RemoteAcceleratedEffectStack> RemoteAcceleratedEffectStack::create(WebCore::FloatRect bounds, Seconds acceleratedTimelineTimeOrigin)
 {

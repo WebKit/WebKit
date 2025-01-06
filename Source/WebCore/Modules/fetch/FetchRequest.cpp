@@ -40,6 +40,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WebCoreOpaqueRoot.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -65,7 +66,7 @@ static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, cons
     if (referrerURL.protocolIsAbout() && referrerURL.path() == "client"_s)
         return "client"_str;
 
-    if (!(context.securityOrigin() && context.securityOrigin()->canRequest(referrerURL, OriginAccessPatternsForWebProcess::singleton())))
+    if (!(context.securityOrigin() && context.protectedSecurityOrigin()->canRequest(referrerURL, OriginAccessPatternsForWebProcess::singleton())))
         return "client"_str;
 
     return String { referrerURL.string() };
@@ -246,7 +247,7 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
         auto fillResult = init.headers ? m_headers->fill(*init.headers) : m_headers->fill(input.headers());
         if (fillResult.hasException())
             return fillResult;
-        m_navigationPreloadIdentifier = { };
+        m_navigationPreloadIdentifier = std::nullopt;
     } else {
         m_headers->setInternalHeaders(HTTPHeaderMap { input.headers().internalHeaders() });
         m_navigationPreloadIdentifier = input.m_navigationPreloadIdentifier;

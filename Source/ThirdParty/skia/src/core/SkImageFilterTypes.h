@@ -880,7 +880,8 @@ private:
     enum class BoundsScope : int {
         kDeferred,        // The bounds analysis won't be used for any rendering yet
         kCanDrawDirectly, // The rendering may draw the image directly if analysis allows it
-        kShaderOnly       // The rendering will always use a filling shader, e.g. drawPaint()
+        kShaderOnly,      // The rendering will always use a filling shader, e.g. drawPaint()
+        kRescale          // The rendering is controlled by rescaling logic, so ignores decal size
     };
 
     // Determine what effects are visible based on the target 'dstBounds' and extra transform that
@@ -917,7 +918,6 @@ private:
     FilterResult rescale(const Context& ctx,
                          const LayerSpace<SkSize>& scale,
                          bool enforceDecal) const;
-
     // Draw directly to the device, which draws the same image as produced by resolve() but can be
     // useful if multiple operations need to be performed on the canvas.
     //
@@ -933,14 +933,6 @@ private:
               SkDevice* device,
               bool preserveDeviceState,
               const SkBlender* blender=nullptr) const;
-
-    // This variant should only be called after analysis and final sampling has been determined,
-    // and there's no need to fall back to filling the device with shader.
-    void drawAnalyzedImage(const Context& ctx,
-                           SkDevice* device,
-                           const SkSamplingOptions& finalSampling,
-                           SkEnumBitMask<BoundsAnalysis> analysis,
-                           const SkBlender* blender=nullptr) const;
 
     // Returns the FilterResult as a shader, ideally without resolving to an axis-aligned image.
     // 'xtraSampling' is the sampling that any parent shader applies to the FilterResult.
@@ -1101,6 +1093,10 @@ public:
 
     // TODO: Once all Backends provide a blur engine, maybe just have Backend extend it.
     virtual const SkBlurEngine* getBlurEngine() const = 0;
+
+    // TODO: Can be removed once all blur engines rely on FilterResult::rescale and not their own
+    // rescale implementations.
+    virtual bool useLegacyFilterResultBlur() const { return true; }
 
     // Properties controlling the pixel data for offscreen surfaces rendered to during filtering.
     const SkSurfaceProps& surfaceProps() const { return fSurfaceProps; }

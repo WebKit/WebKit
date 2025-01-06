@@ -58,7 +58,7 @@ struct WebKit2TextFieldBeginAndEditEditingTest : public ::testing::Test {
     static void setInjectedBundleClient(WKContextRef context, const void* clientInfo)
     {
         WKContextInjectedBundleClientV1 injectedBundleClient;
-        memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+        zeroBytes(injectedBundleClient);
 
         injectedBundleClient.base.version = 1;
         injectedBundleClient.base.clientInfo = clientInfo;
@@ -70,7 +70,7 @@ struct WebKit2TextFieldBeginAndEditEditingTest : public ::testing::Test {
     static void setPageLoaderClient(WKPageRef page, const void* clientInfo)
     {
         WKPageNavigationClientV0 loaderClient;
-        memset(&loaderClient, 0, sizeof(loaderClient));
+        zeroBytes(loaderClient);
 
         loaderClient.base.version = 0;
         loaderClient.base.clientInfo = clientInfo;
@@ -79,14 +79,10 @@ struct WebKit2TextFieldBeginAndEditEditingTest : public ::testing::Test {
         WKPageSetPageNavigationClient(page, &loaderClient.base);
     }
 
-    static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef, void*)
-    {
-    }
-
     void executeJavaScriptAndCheckDidReceiveMessage(const char* javaScriptCode, const char* expectedMessageName)
     {
         didReceiveMessage = false;
-        WKPageRunJavaScriptInMainFrame(webView->page(), Util::toWK(javaScriptCode).get(), 0, nullJavaScriptCallback);
+        WKPageEvaluateJavaScriptInMainFrame(webView->page(), Util::toWK(javaScriptCode).get(), nullptr, nullptr);
         Util::run(&didReceiveMessage);
         EXPECT_WK_STREQ(expectedMessageName, messageName);
     }

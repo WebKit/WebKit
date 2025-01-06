@@ -29,7 +29,8 @@ struct WebKit::WebExtensionScriptInjectionParameters {
 
     std::optional<Ref<API::Data>> arguments;
     std::optional<Vector<String>> files;
-    std::optional<Vector<WebKit::WebExtensionFrameIdentifier>> frameIDs;
+    std::optional<Vector<WebKit::WebExtensionFrameIdentifier>> frameIdentifiers;
+    std::optional<Vector<WTF::UUID>> documentIdentifiers;
 
     std::optional<String> code;
     std::optional<String> css;
@@ -42,7 +43,8 @@ struct WebKit::WebExtensionScriptInjectionParameters {
 struct WebKit::WebExtensionScriptInjectionResultParameters {
     std::optional<String> error;
     std::optional<String> resultJSON;
-    std::optional<WebKit::WebExtensionFrameIdentifier> frameID;
+    std::optional<WebKit::WebExtensionFrameIdentifier> frameIdentifier;
+    Markable<WTF::UUID> documentIdentifier;
 }
 
 struct WebKit::WebExtensionRegisteredScriptParameters {

@@ -45,15 +45,15 @@ public:
         double value;
         CSSUnitType unitType;
 
-        friend bool operator==(const NumericSyntaxValue&, const NumericSyntaxValue&) = default;
+        bool operator==(const NumericSyntaxValue&) const = default;
     };
 
     struct TransformSyntaxValue {
-        RefPtr<TransformOperation> transform;
-        bool operator==(const TransformSyntaxValue& other) const { return arePointingToEqualData(transform, other.transform); }
+        Ref<TransformOperation> transform;
+        bool operator==(const TransformSyntaxValue& other) const { return transform.get() == other.transform.get(); }
     };
 
-    using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, RefPtr<StyleImage>, URL, String, TransformSyntaxValue>;
+    using SyntaxValue = std::variant<Length, NumericSyntaxValue, Style::Color, RefPtr<StyleImage>, URL, String, TransformSyntaxValue>;
 
     struct SyntaxValueList {
         Vector<SyntaxValue> values;
@@ -107,8 +107,7 @@ public:
 
     Ref<const CSSVariableData> asVariableData() const;
 
-    // Say true conservatively.
-    bool customMayDependOnBaseURL() const { return true; }
+    bool customMayDependOnBaseURL() const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
     {
@@ -121,7 +120,7 @@ public:
 
 private:
     CSSCustomPropertyValue(const AtomString& name, VariantValue&& value)
-        : CSSValue(CustomPropertyClass)
+        : CSSValue(ClassType::CustomProperty)
         , m_name(name)
         , m_value(WTFMove(value))
     {

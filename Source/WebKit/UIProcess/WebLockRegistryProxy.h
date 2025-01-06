@@ -26,18 +26,11 @@
 #pragma once
 
 #include "MessageReceiver.h"
+#include "WebProcessProxy.h"
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/WebLockIdentifier.h>
 #include <WebCore/WebLockMode.h>
-
-namespace WebKit {
-class WebLockRegistryProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebLockRegistryProxy> : std::true_type { };
-}
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 struct ClientOrigin;
@@ -46,13 +39,19 @@ struct WebLockManagerSnapshot;
 
 namespace WebKit {
 
-class WebProcessProxy;
+struct SharedPreferencesForWebProcess;
 
 class WebLockRegistryProxy final : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebLockRegistryProxy);
 public:
     explicit WebLockRegistryProxy(WebProcessProxy&);
     ~WebLockRegistryProxy();
+
+    void ref() const final { m_process->ref(); }
+    void deref() const final { m_process->deref(); }
+
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() { return m_process->sharedPreferencesForWebProcess(); }
 
     void processDidExit();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -65,7 +64,9 @@ private:
     void snapshot(WebCore::ClientOrigin&&, CompletionHandler<void(WebCore::WebLockManagerSnapshot&&)>&&);
     void clientIsGoingAway(WebCore::ClientOrigin&&, WebCore::ScriptExecutionContextIdentifier);
 
-    WebProcessProxy& m_process;
+    Ref<WebProcessProxy> protectedProcess() const { return m_process.get(); }
+
+    CheckedRef<WebProcessProxy> m_process;
     bool m_hasEverRequestedLocks { false };
 };
 

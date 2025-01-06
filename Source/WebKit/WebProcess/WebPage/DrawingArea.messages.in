@@ -20,7 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> DrawingArea NotRefCounted {
+[
+    DispatchedFrom=UI,
+    DispatchedTo=WebContent
+]
+messages -> DrawingArea {
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     UpdateGeometry(WebCore::IntSize size) -> ()
     SetDeviceScaleFactor(float deviceScaleFactor)
@@ -32,18 +36,20 @@ messages -> DrawingArea NotRefCounted {
 
 #if PLATFORM(COCOA)
     UpdateGeometry(WebCore::IntSize viewSize, bool flushSynchronously, MachSendRight fencePort) -> ()
-    SetDeviceScaleFactor(float deviceScaleFactor)
+    SetDeviceScaleFactor(float deviceScaleFactor) -> ()
     SetColorSpace(struct std::optional<WebCore::DestinationColorSpace> colorSpace)
     SetViewExposedRect(std::optional<WebCore::FloatRect> viewExposedRect)
 
     AcceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, String key, MonotonicTime startTime)
     AcceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier layerID, String key)
-    
+#endif
+
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     DispatchAfterEnsuringDrawing() -> () CallWithReplyID
 #endif
 
 #if USE(GRAPHICS_LAYER_WC)
-    UpdateGeometryWC(uint64_t backingStoreStateID, WebCore::IntSize viewSize)
+    UpdateGeometryWC(uint64_t backingStoreStateID, WebCore::IntSize viewSize, float deviceScaleFactor)
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)

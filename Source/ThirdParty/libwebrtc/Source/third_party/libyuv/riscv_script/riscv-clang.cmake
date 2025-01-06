@@ -28,18 +28,22 @@ set(CMAKE_OBJDUMP "${TOOLCHAIN_PATH}/bin/llvm-objdump")
 set(CMAKE_OBJCOPY "${TOOLCHAIN_PATH}/bin/llvm-objcopy")
 
 # compile options
-message(STATUS "USE_RVV: ${USE_RVV}")
-message(STATUS "USE_AUTO_VECTORIZER: ${USE_AUTO_VECTORIZER}")
-set(RISCV_COMPILER_FLAGS)
-if(USE_RVV)
-  list(APPEND RISCV_COMPILER_FLAGS "-march=rv64gcv")
-  if(NOT USE_AUTO_VECTORIZER)
-    # Disable auto-vectorizer
-    add_compile_options(-fno-vectorize -fno-slp-vectorize)
+set(RISCV_COMPILER_FLAGS "" CACHE STRING "Compile flags")
+# if user provides RISCV_COMPILER_FLAGS, appeding compile flags is avoided.
+if(RISCV_COMPILER_FLAGS STREQUAL "")
+  message(STATUS "USE_RVV: ${USE_RVV}")
+  message(STATUS "USE_AUTO_VECTORIZER: ${USE_AUTO_VECTORIZER}")
+  if(USE_RVV)
+    list(APPEND RISCV_COMPILER_FLAGS "-march=rv64gcv")
+    if(NOT USE_AUTO_VECTORIZER)
+      # Disable auto-vectorizer
+      add_compile_options(-fno-vectorize -fno-slp-vectorize)
+    endif()
+  else()
+    list(APPEND RISCV_COMPILER_FLAGS "-march=rv64gc")
   endif()
-else()
-  list(APPEND RISCV_COMPILER_FLAGS "-march=rv64gc")
 endif()
+add_compile_options("-Wuninitialized")
 message(STATUS "RISCV_COMPILER_FLAGS: ${RISCV_COMPILER_FLAGS}")
 
 set(CMAKE_C_FLAGS             "${RISCV_COMPILER_FLAGS} ${CMAKE_C_FLAGS}")

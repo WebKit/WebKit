@@ -36,11 +36,12 @@ using ReceivedFecPacket = ForwardErrorCorrection::ReceivedFecPacket;
 using ::testing::Each;
 using ::testing::ElementsAreArray;
 
-constexpr uint8_t kMask0[] = {0xAB, 0xCD};              // First K bit is set.
-constexpr uint8_t kMask1[] = {0x12, 0x34,               // First K bit cleared.
-                              0xF6, 0x78, 0x9A, 0xBC};  // Second K bit set.
-constexpr uint8_t kMask2[] = {0x12, 0x34,               //  First K bit cleared.
-                              0x56, 0x78, 0x9A, 0xBC,   // Second K bit cleared.
+constexpr uint8_t kKBit = 1 << 7;
+constexpr uint8_t kMask0[] = {0x2B, 0xCD};  // First K bit is cleared.
+constexpr uint8_t kMask1[] = {0x92, 0x34,   // First K bit set.
+                              0x76, 0x78, 0x9A, 0xBC};  // Second K bit cleared.
+constexpr uint8_t kMask2[] = {0x92, 0x34,               //  First K bit set.
+                              0xD6, 0x78, 0x9A, 0xBC,   // Second K bit set.
                               0xDE, 0xF0, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC};
 
 constexpr size_t kMediaPacketLength = 1234;
@@ -186,11 +187,10 @@ void VerifyWrittenAndReadHeaders(
 
 }  // namespace
 
-TEST(FlexfecHeaderReaderTest, ReadsHeaderWithKBit0SetSingleStream) {
-  constexpr uint8_t kKBit0 = 1 << 7;
+TEST(FlexfecHeaderReaderTest, ReadsHeaderWithKBit0ClearSingleStream) {
   constexpr size_t kExpectedFecHeaderSize = 12;
   constexpr uint16_t kSnBase = 0x0102;
-  constexpr uint8_t kFlexfecPktMask[] = {kKBit0 | 0x08, 0x81};
+  constexpr uint8_t kFlexfecPktMask[] = {0x08, 0x81};
   constexpr uint8_t kUlpfecPacketMask[] = {0x11, 0x02};
   constexpr uint8_t kPacketData[] = {
       kFlexible,      kPtRecovery,    kLengthRecovery[0], kLengthRecovery[1],
@@ -215,13 +215,11 @@ TEST(FlexfecHeaderReaderTest, ReadsHeaderWithKBit0SetSingleStream) {
   VerifyReadHeaders(kExpectedFecHeaderSize, read_packet, expected);
 }
 
-TEST(FlexfecHeaderReaderTest, ReadsHeaderWithKBit1SetSingleStream) {
-  constexpr uint8_t kKBit0 = 0 << 7;
-  constexpr uint8_t kKBit1 = 1 << 7;
+TEST(FlexfecHeaderReaderTest, ReadsHeaderWithKBit1ClearSingleStream) {
   constexpr size_t kExpectedFecHeaderSize = 16;
   constexpr uint16_t kSnBase = 0x0102;
-  constexpr uint8_t kFlexfecPktMask[] = {kKBit0 | 0x48, 0x81,  //
-                                         kKBit1 | 0x02, 0x11, 0x00, 0x21};
+  constexpr uint8_t kFlexfecPktMask[] = {kKBit | 0x48, 0x81,  //
+                                         0x02,         0x11, 0x00, 0x21};
   constexpr uint8_t kUlpfecPacketMask[] = {0x91, 0x02,  //
                                            0x08, 0x44, 0x00, 0x84};
   constexpr uint8_t kPacketData[] = {
@@ -250,15 +248,13 @@ TEST(FlexfecHeaderReaderTest, ReadsHeaderWithKBit1SetSingleStream) {
   VerifyReadHeaders(kExpectedFecHeaderSize, read_packet, expected);
 }
 
-TEST(FlexfecHeaderReaderTest, ReadsHeaderWithNoKBitsSetSingleStream) {
-  constexpr uint8_t kKBit0 = 0 << 7;
-  constexpr uint8_t kKBit1 = 0 << 7;
+TEST(FlexfecHeaderReaderTest, ReadsHeaderWithBothKBitsSetSingleStream) {
   constexpr size_t kExpectedFecHeaderSize = 24;
   constexpr uint16_t kSnBase = 0x0102;
-  constexpr uint8_t kFlexfecPacketMask[] = {kKBit0 | 0x48, 0x81,              //
-                                            kKBit1 | 0x02, 0x11, 0x00, 0x21,  //
-                                            0x01,          0x11, 0x11, 0x11,
-                                            0x11,          0x11, 0x11, 0x11};
+  constexpr uint8_t kFlexfecPacketMask[] = {kKBit | 0x48, 0x81,              //
+                                            kKBit | 0x02, 0x11, 0x00, 0x21,  //
+                                            0x01,         0x11, 0x11, 0x11,
+                                            0x11,         0x11, 0x11, 0x11};
   constexpr uint8_t kUlpfecPacketMask[] = {0x91, 0x02,              //
                                            0x08, 0x44, 0x00, 0x84,  //
                                            0x04, 0x44, 0x44, 0x44,
@@ -309,14 +305,13 @@ TEST(FlexfecHeaderReaderTest, ReadsHeaderWithNoKBitsSetSingleStream) {
   VerifyReadHeaders(kExpectedFecHeaderSize, read_packet, expected);
 }
 
-TEST(FlexfecHeaderReaderTest, ReadsHeaderWithKBit0Set2Streams) {
-  constexpr uint8_t kKBit0 = 1 << 7;
+TEST(FlexfecHeaderReaderTest, ReadsHeaderWithKBit0Clear2Streams) {
   constexpr size_t kExpectedFecHeaderSize = 16;
   constexpr uint16_t kSnBase0 = 0x0102;
   constexpr uint16_t kSnBase1 = 0x0304;
-  constexpr uint8_t kFlexfecPktMask1[] = {kKBit0 | 0x08, 0x81};
+  constexpr uint8_t kFlexfecPktMask1[] = {0x08, 0x81};
   constexpr uint8_t kUlpfecPacketMask1[] = {0x11, 0x02};
-  constexpr uint8_t kFlexfecPktMask2[] = {kKBit0 | 0x04, 0x41};
+  constexpr uint8_t kFlexfecPktMask2[] = {0x04, 0x41};
   constexpr uint8_t kUlpfecPacketMask2[] = {0x08, 0x82};
 
   constexpr uint8_t kPacketData[] = {
@@ -349,18 +344,16 @@ TEST(FlexfecHeaderReaderTest, ReadsHeaderWithKBit0Set2Streams) {
   VerifyReadHeaders(kExpectedFecHeaderSize, read_packet, expected);
 }
 
-TEST(FlexfecHeaderReaderTest, ReadsHeaderWithKBit1Set2Streams) {
-  constexpr uint8_t kKBit0 = 0 << 7;
-  constexpr uint8_t kKBit1 = 1 << 7;
+TEST(FlexfecHeaderReaderTest, ReadsHeaderWithKBit1Clear2Streams) {
   constexpr size_t kExpectedFecHeaderSize = 24;
   constexpr uint16_t kSnBase0 = 0x0102;
   constexpr uint16_t kSnBase1 = 0x0304;
-  constexpr uint8_t kFlexfecPktMask1[] = {kKBit0 | 0x48, 0x81,  //
-                                          kKBit1 | 0x02, 0x11, 0x00, 0x21};
+  constexpr uint8_t kFlexfecPktMask1[] = {kKBit | 0x48, 0x81,  //
+                                          0x02,         0x11, 0x00, 0x21};
   constexpr uint8_t kUlpfecPacketMask1[] = {0x91, 0x02,  //
                                             0x08, 0x44, 0x00, 0x84};
-  constexpr uint8_t kFlexfecPktMask2[] = {kKBit0 | 0x57, 0x82,  //
-                                          kKBit1 | 0x04, 0x33, 0x00, 0x51};
+  constexpr uint8_t kFlexfecPktMask2[] = {kKBit | 0x57, 0x82,  //
+                                          0x04,         0x33, 0x00, 0x51};
   constexpr uint8_t kUlpfecPacketMask2[] = {0xAF, 0x04,  //
                                             0x10, 0xCC, 0x01, 0x44};
   constexpr uint8_t kPacketData[] = {
@@ -398,24 +391,22 @@ TEST(FlexfecHeaderReaderTest, ReadsHeaderWithKBit1Set2Streams) {
   VerifyReadHeaders(kExpectedFecHeaderSize, read_packet, expected);
 }
 
-TEST(FlexfecHeaderReaderTest, ReadsHeaderWithNoKBitsSet2Streams) {
-  constexpr uint8_t kKBit0 = 0 << 7;
-  constexpr uint8_t kKBit1 = 0 << 7;
+TEST(FlexfecHeaderReaderTest, ReadsHeaderWithBothKBitsSet2Streams) {
   constexpr size_t kExpectedFecHeaderSize = 40;
   constexpr uint16_t kSnBase0 = 0x0102;
   constexpr uint16_t kSnBase1 = 0x0304;
-  constexpr uint8_t kFlexfecPktMask1[] = {kKBit0 | 0x48, 0x81,              //
-                                          kKBit1 | 0x02, 0x11, 0x00, 0x21,  //
-                                          0x01,          0x11, 0x11, 0x11,
-                                          0x11,          0x11, 0x11, 0x11};
+  constexpr uint8_t kFlexfecPktMask1[] = {kKBit | 0x48, 0x81,              //
+                                          kKBit | 0x02, 0x11, 0x00, 0x21,  //
+                                          0x01,         0x11, 0x11, 0x11,
+                                          0x11,         0x11, 0x11, 0x11};
   constexpr uint8_t kUlpfecPacketMask1[] = {0x91, 0x02,              //
                                             0x08, 0x44, 0x00, 0x84,  //
                                             0x04, 0x44, 0x44, 0x44,
                                             0x44, 0x44, 0x44, 0x44};
-  constexpr uint8_t kFlexfecPktMask2[] = {kKBit0 | 0x32, 0x84,              //
-                                          kKBit1 | 0x05, 0x23, 0x00, 0x55,  //
-                                          0xA3,          0x22, 0x22, 0x22,
-                                          0x22,          0x22, 0x22, 0x35};
+  constexpr uint8_t kFlexfecPktMask2[] = {kKBit | 0x32, 0x84,              //
+                                          kKBit | 0x05, 0x23, 0x00, 0x55,  //
+                                          0xA3,         0x22, 0x22, 0x22,
+                                          0x22,         0x22, 0x22, 0x35};
   constexpr uint8_t kUlpfecPacketMask2[] = {0x65, 0x08,              //
                                             0x14, 0x8C, 0x01, 0x56,  //
                                             0x8C, 0x88, 0x88, 0x88,
@@ -490,29 +481,27 @@ TEST(FlexfecHeaderReaderTest, ReadsHeaderWithNoKBitsSet2Streams) {
 }
 
 TEST(FlexfecHeaderReaderTest, ReadsHeaderWithMultipleStreamsMultipleMasks) {
-  constexpr uint8_t kBit0 = 0 << 7;
-  constexpr uint8_t kBit1 = 1 << 7;
   constexpr size_t kExpectedFecHeaderSize = 44;
   constexpr uint16_t kSnBase0 = 0x0102;
   constexpr uint16_t kSnBase1 = 0x0304;
   constexpr uint16_t kSnBase2 = 0x0506;
   constexpr uint16_t kSnBase3 = 0x0708;
-  constexpr uint8_t kFlexfecPacketMask1[] = {kBit1 | 0x29, 0x91};
+  constexpr uint8_t kFlexfecPacketMask1[] = {0x29, 0x91};
   constexpr uint8_t kUlpfecPacketMask1[] = {0x53, 0x22};
-  constexpr uint8_t kFlexfecPacketMask2[] = {kBit0 | 0x32, 0xA1,  //
-                                             kBit1 | 0x02, 0x11, 0x00, 0x21};
+  constexpr uint8_t kFlexfecPacketMask2[] = {kKBit | 0x32, 0xA1,  //
+                                             0x02,         0x11, 0x00, 0x21};
   constexpr uint8_t kUlpfecPacketMask2[] = {0x65, 0x42,  //
                                             0x08, 0x44, 0x00, 0x84};
-  constexpr uint8_t kFlexfecPacketMask3[] = {kBit0 | 0x48, 0x81,              //
-                                             kBit0 | 0x02, 0x11, 0x00, 0x21,  //
+  constexpr uint8_t kFlexfecPacketMask3[] = {kKBit | 0x48, 0x81,              //
+                                             kKBit | 0x02, 0x11, 0x00, 0x21,  //
                                              0x01,         0x11, 0x11, 0x11,
                                              0x11,         0x11, 0x11, 0x11};
   constexpr uint8_t kUlpfecPacketMask3[] = {0x91, 0x02,              //
                                             0x08, 0x44, 0x00, 0x84,  //
                                             0x04, 0x44, 0x44, 0x44,
                                             0x44, 0x44, 0x44, 0x44};
-  constexpr uint8_t kFlexfecPacketMask4[] = {kBit0 | 0x32, 0x84,  //
-                                             kBit1 | 0x05, 0x23, 0x00, 0x55};
+  constexpr uint8_t kFlexfecPacketMask4[] = {kKBit | 0x32, 0x84,  //
+                                             0x05,         0x23, 0x00, 0x55};
   constexpr uint8_t kUlpfecPacketMask4[] = {0x65, 0x08,  //
                                             0x14, 0x8C, 0x01, 0x54};
   constexpr uint8_t kPacketData[] = {kFlexible,
@@ -642,7 +631,7 @@ TEST(FlexfecHeaderReaderTest, ReadShortPacketWithKBit0SetShouldFail) {
   EXPECT_FALSE(reader.ReadFecHeader(&read_packet));
 }
 
-TEST(FlexfecHeaderReaderTest, ReadShortPacketWithKBit1SetShouldFail) {
+TEST(FlexfecHeaderReaderTest, ReadShortPacketWithKBit1ClearShouldFail) {
   // Simulate short received packet.
   constexpr uint8_t kPacketData[] = {
       kFlexible,      kPtRecovery,    kLengthRecovery[0], kLengthRecovery[1],
@@ -659,7 +648,7 @@ TEST(FlexfecHeaderReaderTest, ReadShortPacketWithKBit1SetShouldFail) {
   EXPECT_FALSE(reader.ReadFecHeader(&read_packet));
 }
 
-TEST(FlexfecHeaderReaderTest, ReadShortPacketWithKBit1ClearedShouldFail) {
+TEST(FlexfecHeaderReaderTest, ReadShortPacketWithKBit1SetShouldFail) {
   // Simulate short received packet.
   constexpr uint8_t kPacketData[] = {
       kFlexible,      kPtRecovery,    kLengthRecovery[0], kLengthRecovery[1],
@@ -698,8 +687,8 @@ TEST(FlexfecHeaderReaderTest, ReadShortPacketMultipleStreamsShouldFail) {
   EXPECT_FALSE(reader.ReadFecHeader(&read_packet));
 }
 
-TEST(FlexfecHeaderWriterTest, FinalizesHeaderWithKBit0SetSingleStream) {
-  constexpr uint8_t kFlexfecPacketMask[] = {0x88, 0x81};
+TEST(FlexfecHeaderWriterTest, FinalizesHeaderWithKBit0ClearSingleStream) {
+  constexpr uint8_t kFlexfecPacketMask[] = {0x08, 0x81};
   constexpr uint8_t kUlpfecPacketMask[] = {0x11, 0x02};
   constexpr uint16_t kMediaStartSeqNum = 1234;
   Packet written_packet = WritePacket({{.ssrc = 0x01,
@@ -714,8 +703,8 @@ TEST(FlexfecHeaderWriterTest, FinalizesHeaderWithKBit0SetSingleStream) {
   VerifyFinalizedHeaders(written_packet, expected);
 }
 
-TEST(FlexfecHeaderWriterTest, FinalizesHeaderWithKBit1SetSingleStream) {
-  constexpr uint8_t kFlexfecPacketMask[] = {0x48, 0x81, 0x82, 0x11, 0x00, 0x21};
+TEST(FlexfecHeaderWriterTest, FinalizesHeaderWithKBit1ClearSingleStream) {
+  constexpr uint8_t kFlexfecPacketMask[] = {0xC8, 0x81, 0x02, 0x11, 0x00, 0x21};
   constexpr uint8_t kUlpfecPacketMask[] = {0x91, 0x02, 0x08, 0x44, 0x00, 0x84};
   constexpr uint16_t kMediaStartSeqNum = 1234;
   Packet written_packet = WritePacket({{.ssrc = 0x01,
@@ -730,10 +719,10 @@ TEST(FlexfecHeaderWriterTest, FinalizesHeaderWithKBit1SetSingleStream) {
   VerifyFinalizedHeaders(written_packet, expected);
 }
 
-TEST(FlexfecHeaderWriterTest, FinalizesHeaderWithNoKBitsSetSingleStream) {
+TEST(FlexfecHeaderWriterTest, FinalizesHeaderWithBothKBitsSetSingleStream) {
   constexpr uint8_t kFlexfecPacketMask[] = {
-      0x11, 0x11,                                     // K-bit 0 clear.
-      0x11, 0x11, 0x11, 0x10,                         // K-bit 1 clear.
+      0x91, 0x11,                                     // K-bit 0 set.
+      0x91, 0x11, 0x11, 0x10,                         // K-bit 1 set.
       0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  //
   };
   constexpr uint8_t kUlpfecPacketMask[] = {0x22, 0x22, 0x44, 0x44, 0x44, 0x41};
@@ -752,22 +741,22 @@ TEST(FlexfecHeaderWriterTest, FinalizesHeaderWithNoKBitsSetSingleStream) {
 
 TEST(FlexfecHeaderWriterTest, FinalizesHeaderMultipleStreamsMultipleMasks) {
   constexpr uint8_t kFlexfecPacketMask1[] = {
-      0x11, 0x11,                                     // K-bit 0 clear.
-      0x11, 0x11, 0x11, 0x10,                         // K-bit 1 clear.
+      0x91, 0x11,                                     // K-bit 0 set.
+      0x91, 0x11, 0x11, 0x10,                         // K-bit 1 set.
       0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  //
   };
   constexpr uint8_t kUlpfecPacketMask1[] = {0x22, 0x22, 0x44, 0x44, 0x44, 0x41};
   constexpr uint16_t kMediaStartSeqNum1 = 1234;
-  constexpr uint8_t kFlexfecPacketMask2[] = {0x88, 0x81};
+  constexpr uint8_t kFlexfecPacketMask2[] = {0x08, 0x81};
   constexpr uint8_t kUlpfecPacketMask2[] = {0x11, 0x02};
   constexpr uint16_t kMediaStartSeqNum2 = 2345;
-  constexpr uint8_t kFlexfecPacketMask3[] = {0x48, 0x81, 0x82,
+  constexpr uint8_t kFlexfecPacketMask3[] = {0xC8, 0x81, 0x02,
                                              0x11, 0x00, 0x21};
   constexpr uint8_t kUlpfecPacketMask3[] = {0x91, 0x02, 0x08, 0x44, 0x00, 0x84};
   constexpr uint16_t kMediaStartSeqNum3 = 3456;
   constexpr uint8_t kFlexfecPacketMask4[] = {
-      0x55, 0xAA,                                     // K-bit 0 clear.
-      0x22, 0xAB, 0xCD, 0xEF,                         // K-bit 1 clear.
+      0xD5, 0xAA,                                     // K-bit 0 set.
+      0xA2, 0xAB, 0xCD, 0xEF,                         // K-bit 1 set.
       0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  //
   };
   constexpr uint8_t kUlpfecPacketMask4[] = {0xAB, 0x54, 0x8A, 0xAF, 0x37, 0xBF};

@@ -70,7 +70,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globa
     // Any GC'd values in here will be marked by the MarkedArugementBuffer until stored in the Exception.
     FixedVector<uint64_t> payload(values.size());
     for (unsigned i = 0; i < values.size(); ++i) {
-        payload[i] = fromJSValue(globalObject, tagFunctionType.argumentType(i), values.at(i));
+        payload[i] = toWebAssemblyValue(globalObject, tagFunctionType.argumentType(i), values.at(i));
         RETURN_IF_EXCEPTION(scope, { });
     }
 

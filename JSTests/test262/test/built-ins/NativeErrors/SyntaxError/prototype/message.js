@@ -18,6 +18,8 @@ includes: [propertyHelper.js]
 
 assert.sameValue(SyntaxError.prototype.message, "");
 
-verifyNotEnumerable(SyntaxError.prototype, "message");
-verifyWritable(SyntaxError.prototype, "message");
-verifyConfigurable(SyntaxError.prototype, "message");
+verifyProperty(SyntaxError.prototype, "message", {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

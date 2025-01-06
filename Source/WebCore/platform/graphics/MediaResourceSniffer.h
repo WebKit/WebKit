@@ -31,11 +31,12 @@
 #include "MediaPromiseTypes.h"
 #include "PlatformMediaResourceLoader.h"
 #include <wtf/NativePromise.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MediaResourceSniffer final : public PlatformMediaResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaResourceSniffer);
 public:
     static Ref<MediaResourceSniffer> create(PlatformMediaResourceLoader&, ResourceRequest&&, std::optional<size_t> maxSize);
     ~MediaResourceSniffer();

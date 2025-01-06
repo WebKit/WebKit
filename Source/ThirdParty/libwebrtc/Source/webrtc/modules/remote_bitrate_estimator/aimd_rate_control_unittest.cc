@@ -165,7 +165,7 @@ TEST(AimdRateControlTest, SendingRateBoundedWhenThroughputNotEstimated) {
   now += (kInitializationTime + TimeDelta::Millis(1));
   aimd_rate_control.Update({BandwidthUsage::kBwNormal, kInitialBitrate}, now);
   for (int i = 0; i < 100; ++i) {
-    aimd_rate_control.Update({BandwidthUsage::kBwNormal, absl::nullopt}, now);
+    aimd_rate_control.Update({BandwidthUsage::kBwNormal, std::nullopt}, now);
     now += TimeDelta::Millis(100);
   }
   EXPECT_LE(aimd_rate_control.LatestEstimate(),
@@ -187,7 +187,7 @@ TEST(AimdRateControlTest, EstimateDoesNotIncreaseInAlr) {
   ASSERT_EQ(aimd_rate_control.LatestEstimate(), kInitialBitrate);
 
   for (int i = 0; i < 100; ++i) {
-    aimd_rate_control.Update({BandwidthUsage::kBwNormal, absl::nullopt}, now);
+    aimd_rate_control.Update({BandwidthUsage::kBwNormal, std::nullopt}, now);
     now += TimeDelta::Millis(100);
   }
   EXPECT_EQ(aimd_rate_control.LatestEstimate(), kInitialBitrate);
@@ -208,6 +208,7 @@ TEST(AimdRateControlTest, SetEstimateIncreaseBweInAlr) {
 TEST(AimdRateControlTest, SetEstimateUpperLimitedByNetworkEstimate) {
   AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""),
                                     /*send_side=*/true);
+  aimd_rate_control.SetEstimate(DataRate::BitsPerSec(300'000), kInitialTime);
   NetworkStateEstimate network_estimate;
   network_estimate.link_capacity_upper = DataRate::BitsPerSec(400'000);
   aimd_rate_control.SetNetworkStateEstimate(network_estimate);
@@ -217,11 +218,9 @@ TEST(AimdRateControlTest, SetEstimateUpperLimitedByNetworkEstimate) {
 }
 
 TEST(AimdRateControlTest,
-     SetEstimateUpperLimitedByCurrentBitrateIfNetworkEstimateIsLow) {
-  AimdRateControl aimd_rate_control(
-      ExplicitKeyValueConfig(
-          "WebRTC-Bwe-EstimateBoundedIncrease/c_upper:true/"),
-      /*send_side=*/true);
+     SetEstimateDefaultUpperLimitedByCurrentBitrateIfNetworkEstimateIsLow) {
+  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""),
+                                    /*send_side=*/true);
   aimd_rate_control.SetEstimate(DataRate::BitsPerSec(500'000), kInitialTime);
   ASSERT_EQ(aimd_rate_control.LatestEstimate(), DataRate::BitsPerSec(500'000));
 
@@ -233,9 +232,12 @@ TEST(AimdRateControlTest,
 }
 
 TEST(AimdRateControlTest,
-     SetEstimateDefaultNotUpperLimitedByCurrentBitrateIfNetworkEstimateIsLow) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""),
-                                    /*send_side=*/true);
+     SetEstimateNotUpperLimitedByCurrentBitrateIfNetworkEstimateIsLowIf) {
+  AimdRateControl aimd_rate_control(
+      ExplicitKeyValueConfig(
+          "WebRTC-Bwe-EstimateBoundedIncrease/c_upper:false/"),
+      /*send_side=*/true);
+
   aimd_rate_control.SetEstimate(DataRate::BitsPerSec(500'000), kInitialTime);
   ASSERT_EQ(aimd_rate_control.LatestEstimate(), DataRate::BitsPerSec(500'000));
 
@@ -285,7 +287,7 @@ TEST(AimdRateControlTest, EstimateIncreaseWhileNotInAlr) {
   aimd_rate_control.SetInApplicationLimitedRegion(false);
   aimd_rate_control.Update({BandwidthUsage::kBwNormal, kInitialBitrate}, now);
   for (int i = 0; i < 100; ++i) {
-    aimd_rate_control.Update({BandwidthUsage::kBwNormal, absl::nullopt}, now);
+    aimd_rate_control.Update({BandwidthUsage::kBwNormal, std::nullopt}, now);
     now += TimeDelta::Millis(100);
   }
   EXPECT_GT(aimd_rate_control.LatestEstimate(), kInitialBitrate);
@@ -304,7 +306,7 @@ TEST(AimdRateControlTest, EstimateNotLimitedByNetworkEstimateIfDisabled) {
   aimd_rate_control.SetNetworkStateEstimate(network_estimate);
 
   for (int i = 0; i < 100; ++i) {
-    aimd_rate_control.Update({BandwidthUsage::kBwNormal, absl::nullopt}, now);
+    aimd_rate_control.Update({BandwidthUsage::kBwNormal, std::nullopt}, now);
     now += TimeDelta::Millis(100);
   }
   EXPECT_GT(aimd_rate_control.LatestEstimate(),

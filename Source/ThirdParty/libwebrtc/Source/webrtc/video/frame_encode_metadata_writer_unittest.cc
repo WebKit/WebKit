@@ -92,7 +92,7 @@ std::vector<std::vector<FrameType>> GetTimingFrames(
   for (int i = 0; i < num_frames; ++i) {
     current_timestamp += 1;
     VideoFrame frame = VideoFrame::Builder()
-                           .set_timestamp_rtp(current_timestamp * 90)
+                           .set_rtp_timestamp(current_timestamp * 90)
                            .set_timestamp_ms(current_timestamp)
                            .set_video_frame_buffer(kFrameBuffer)
                            .build();
@@ -113,7 +113,7 @@ std::vector<std::vector<FrameType>> GetTimingFrames(
         continue;
       }
 
-      encode_timer.FillTimingInfo(si, &image);
+      encode_timer.FillMetadataAndTimingInfo(si, &image);
 
       if (IsTimingFrame(image)) {
         result[si].push_back(FrameType::kTiming);
@@ -213,18 +213,18 @@ TEST(FrameEncodeMetadataWriterTest, NoTimingFrameIfNoEncodeStartTime) {
   // Verify a single frame works with encode start time set.
   VideoFrame frame = VideoFrame::Builder()
                          .set_timestamp_ms(timestamp)
-                         .set_timestamp_rtp(timestamp * 90)
+                         .set_rtp_timestamp(timestamp * 90)
                          .set_video_frame_buffer(kFrameBuffer)
                          .build();
   encode_timer.OnEncodeStarted(frame);
-  encode_timer.FillTimingInfo(0, &image);
+  encode_timer.FillMetadataAndTimingInfo(0, &image);
   EXPECT_TRUE(IsTimingFrame(image));
 
   // New frame, now skip OnEncodeStarted. Should not result in timing frame.
   image.capture_time_ms_ = ++timestamp;
   image.SetRtpTimestamp(static_cast<uint32_t>(timestamp * 90));
   image.timing_ = EncodedImage::Timing();
-  encode_timer.FillTimingInfo(0, &image);
+  encode_timer.FillMetadataAndTimingInfo(0, &image);
   EXPECT_FALSE(IsTimingFrame(image));
 }
 
@@ -244,24 +244,24 @@ TEST(FrameEncodeMetadataWriterTest, NotifiesAboutDroppedFrames) {
 
   EncodedImage image;
   VideoFrame frame = VideoFrame::Builder()
-                         .set_timestamp_rtp(kTimestampMs1 * 90)
+                         .set_rtp_timestamp(kTimestampMs1 * 90)
                          .set_timestamp_ms(kTimestampMs1)
                          .set_video_frame_buffer(kFrameBuffer)
                          .build();
 
   image.capture_time_ms_ = kTimestampMs1;
   image.SetRtpTimestamp(static_cast<uint32_t>(image.capture_time_ms_ * 90));
-  frame.set_timestamp(image.capture_time_ms_ * 90);
+  frame.set_rtp_timestamp(image.capture_time_ms_ * 90);
   frame.set_timestamp_us(image.capture_time_ms_ * 1000);
   encode_timer.OnEncodeStarted(frame);
 
   EXPECT_EQ(0u, sink.GetNumFramesDropped());
-  encode_timer.FillTimingInfo(0, &image);
+  encode_timer.FillMetadataAndTimingInfo(0, &image);
 
   image.capture_time_ms_ = kTimestampMs2;
   image.SetRtpTimestamp(static_cast<uint32_t>(image.capture_time_ms_ * 90));
   image.timing_ = EncodedImage::Timing();
-  frame.set_timestamp(image.capture_time_ms_ * 90);
+  frame.set_rtp_timestamp(image.capture_time_ms_ * 90);
   frame.set_timestamp_us(image.capture_time_ms_ * 1000);
   encode_timer.OnEncodeStarted(frame);
   // No OnEncodedImageCall for timestamp2. Yet, at this moment it's not known
@@ -271,19 +271,19 @@ TEST(FrameEncodeMetadataWriterTest, NotifiesAboutDroppedFrames) {
   image.capture_time_ms_ = kTimestampMs3;
   image.SetRtpTimestamp(static_cast<uint32_t>(image.capture_time_ms_ * 90));
   image.timing_ = EncodedImage::Timing();
-  frame.set_timestamp(image.capture_time_ms_ * 90);
+  frame.set_rtp_timestamp(image.capture_time_ms_ * 90);
   frame.set_timestamp_us(image.capture_time_ms_ * 1000);
   encode_timer.OnEncodeStarted(frame);
-  encode_timer.FillTimingInfo(0, &image);
+  encode_timer.FillMetadataAndTimingInfo(0, &image);
   EXPECT_EQ(1u, sink.GetNumFramesDropped());
 
   image.capture_time_ms_ = kTimestampMs4;
   image.SetRtpTimestamp(static_cast<uint32_t>(image.capture_time_ms_ * 90));
   image.timing_ = EncodedImage::Timing();
-  frame.set_timestamp(image.capture_time_ms_ * 90);
+  frame.set_rtp_timestamp(image.capture_time_ms_ * 90);
   frame.set_timestamp_us(image.capture_time_ms_ * 1000);
   encode_timer.OnEncodeStarted(frame);
-  encode_timer.FillTimingInfo(0, &image);
+  encode_timer.FillMetadataAndTimingInfo(0, &image);
   EXPECT_EQ(1u, sink.GetNumFramesDropped());
 }
 
@@ -303,12 +303,12 @@ TEST(FrameEncodeMetadataWriterTest, RestoresCaptureTimestamps) {
   image.SetRtpTimestamp(static_cast<uint32_t>(image.capture_time_ms_ * 90));
   VideoFrame frame = VideoFrame::Builder()
                          .set_timestamp_ms(image.capture_time_ms_)
-                         .set_timestamp_rtp(image.capture_time_ms_ * 90)
+                         .set_rtp_timestamp(image.capture_time_ms_ * 90)
                          .set_video_frame_buffer(kFrameBuffer)
                          .build();
   encode_timer.OnEncodeStarted(frame);
   image.capture_time_ms_ = 0;  // Incorrect timestamp.
-  encode_timer.FillTimingInfo(0, &image);
+  encode_timer.FillMetadataAndTimingInfo(0, &image);
   EXPECT_EQ(kTimestampMs, image.capture_time_ms_);
 }
 
@@ -327,12 +327,12 @@ TEST(FrameEncodeMetadataWriterTest, CopiesRotation) {
   image.SetRtpTimestamp(static_cast<uint32_t>(kTimestampMs * 90));
   VideoFrame frame = VideoFrame::Builder()
                          .set_timestamp_ms(kTimestampMs)
-                         .set_timestamp_rtp(kTimestampMs * 90)
+                         .set_rtp_timestamp(kTimestampMs * 90)
                          .set_rotation(kVideoRotation_180)
                          .set_video_frame_buffer(kFrameBuffer)
                          .build();
   encode_timer.OnEncodeStarted(frame);
-  encode_timer.FillTimingInfo(0, &image);
+  encode_timer.FillMetadataAndTimingInfo(0, &image);
   EXPECT_EQ(kVideoRotation_180, image.rotation_);
 }
 
@@ -353,12 +353,12 @@ TEST(FrameEncodeMetadataWriterTest, SetsContentType) {
   image.SetRtpTimestamp(static_cast<uint32_t>(kTimestampMs * 90));
   VideoFrame frame = VideoFrame::Builder()
                          .set_timestamp_ms(kTimestampMs)
-                         .set_timestamp_rtp(kTimestampMs * 90)
+                         .set_rtp_timestamp(kTimestampMs * 90)
                          .set_rotation(kVideoRotation_180)
                          .set_video_frame_buffer(kFrameBuffer)
                          .build();
   encode_timer.OnEncodeStarted(frame);
-  encode_timer.FillTimingInfo(0, &image);
+  encode_timer.FillMetadataAndTimingInfo(0, &image);
   EXPECT_EQ(VideoContentType::SCREENSHARE, image.content_type_);
 }
 
@@ -379,14 +379,49 @@ TEST(FrameEncodeMetadataWriterTest, CopiesColorSpace) {
   image.SetRtpTimestamp(static_cast<uint32_t>(kTimestampMs * 90));
   VideoFrame frame = VideoFrame::Builder()
                          .set_timestamp_ms(kTimestampMs)
-                         .set_timestamp_rtp(kTimestampMs * 90)
+                         .set_rtp_timestamp(kTimestampMs * 90)
                          .set_color_space(color_space)
                          .set_video_frame_buffer(kFrameBuffer)
                          .build();
   encode_timer.OnEncodeStarted(frame);
-  encode_timer.FillTimingInfo(0, &image);
+  encode_timer.FillMetadataAndTimingInfo(0, &image);
   ASSERT_NE(image.ColorSpace(), nullptr);
   EXPECT_EQ(color_space, *image.ColorSpace());
+}
+
+TEST(FrameEncodeMetadataWriterTest, SetsIsSteadyStateRefreshFrame) {
+  EncodedImage image;
+  const int64_t kTimestampMs = 123456;
+  FakeEncodedImageCallback sink;
+
+  FrameEncodeMetadataWriter encode_timer(&sink);
+  encode_timer.OnEncoderInit(VideoCodec());
+  // Any non-zero bitrate needed to be set before the first frame.
+  VideoBitrateAllocation bitrate_allocation;
+  bitrate_allocation.SetBitrate(0, 0, 500000);
+  encode_timer.OnSetRates(bitrate_allocation, 30);
+
+  image.SetRtpTimestamp(static_cast<uint32_t>(kTimestampMs * 90));
+  VideoFrame not_refresh_frame = VideoFrame::Builder()
+                                     .set_timestamp_ms(kTimestampMs)
+                                     .set_rtp_timestamp(kTimestampMs * 90)
+                                     .set_video_frame_buffer(kFrameBuffer)
+                                     .build();
+  encode_timer.OnEncodeStarted(not_refresh_frame);
+  encode_timer.FillMetadataAndTimingInfo(0, &image);
+  EXPECT_FALSE(image.IsSteadyStateRefreshFrame());
+
+  VideoFrame::UpdateRect empty_update_rect;
+  empty_update_rect.MakeEmptyUpdate();
+  VideoFrame refresh_frame = VideoFrame::Builder()
+                                 .set_timestamp_ms(kTimestampMs)
+                                 .set_rtp_timestamp(kTimestampMs * 90)
+                                 .set_update_rect(empty_update_rect)
+                                 .set_video_frame_buffer(kFrameBuffer)
+                                 .build();
+  encode_timer.OnEncodeStarted(refresh_frame);
+  encode_timer.FillMetadataAndTimingInfo(0, &image);
+  EXPECT_TRUE(image.IsSteadyStateRefreshFrame());
 }
 
 TEST(FrameEncodeMetadataWriterTest, CopiesPacketInfos) {
@@ -405,12 +440,12 @@ TEST(FrameEncodeMetadataWriterTest, CopiesPacketInfos) {
   image.SetRtpTimestamp(static_cast<uint32_t>(kTimestampMs * 90));
   VideoFrame frame = VideoFrame::Builder()
                          .set_timestamp_ms(kTimestampMs)
-                         .set_timestamp_rtp(kTimestampMs * 90)
+                         .set_rtp_timestamp(kTimestampMs * 90)
                          .set_packet_infos(packet_infos)
                          .set_video_frame_buffer(kFrameBuffer)
                          .build();
   encode_timer.OnEncodeStarted(frame);
-  encode_timer.FillTimingInfo(0, &image);
+  encode_timer.FillMetadataAndTimingInfo(0, &image);
   EXPECT_EQ(image.PacketInfos().size(), 3U);
 }
 

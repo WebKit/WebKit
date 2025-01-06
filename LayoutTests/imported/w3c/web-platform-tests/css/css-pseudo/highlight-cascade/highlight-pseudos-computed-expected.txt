@@ -1,0 +1,43 @@
+
+PASS getComputedStyle() for ::selection
+PASS getComputedStyle() for ::selection: should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::selection) should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::selection( should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::selection(foo) should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::selection() should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for :::selection should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::selection. should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::target-text
+PASS getComputedStyle() for ::target-text: should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::target-text) should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::target-text( should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::target-text(foo) should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::target-text() should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for :::target-text should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::target-text. should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::spelling-error
+PASS getComputedStyle() for ::spelling-error: should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::spelling-error) should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::spelling-error( should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::spelling-error(foo) should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::spelling-error() should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for :::spelling-error should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::spelling-error. should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::grammar-error
+PASS getComputedStyle() for ::grammar-error: should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::grammar-error) should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::grammar-error( should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::grammar-error(foo) should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::grammar-error() should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for :::grammar-error should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::grammar-error. should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::highlight(foo)
+PASS getComputedStyle() for ::highlight(foo): should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::highlight(foo)) should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::highlight(foo)( should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::highlight(foo)(foo) should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::highlight(foo)() should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for :::highlight(foo) should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::highlight(foo). should return an empty CSSStyleDeclaration
+PASS Different getComputedStyle() for ::highlight(bar) and same element
+

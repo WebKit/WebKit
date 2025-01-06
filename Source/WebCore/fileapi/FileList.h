@@ -27,15 +27,15 @@
 
 #include "File.h"
 #include "ScriptWrappable.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class FileList final : public ScriptWrappable, public RefCounted<FileList> {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(FileList, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(FileList, WEBCORE_EXPORT);
 public:
     static Ref<FileList> create()
     {

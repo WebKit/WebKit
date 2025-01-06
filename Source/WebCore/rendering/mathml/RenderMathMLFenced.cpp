@@ -38,14 +38,14 @@
 #include "RenderMathMLFencedOperator.h"
 #include "RenderText.h"
 #include "RenderTreeBuilder.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 using namespace MathMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLFenced);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLFenced);
 
 static constexpr auto gOpeningBraceChar = "("_s;
 static constexpr auto gClosingBraceChar = ")"_s;

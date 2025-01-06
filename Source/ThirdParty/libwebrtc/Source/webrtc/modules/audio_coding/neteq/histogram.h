@@ -13,9 +13,8 @@
 
 #include <string.h>  // Provide access to size_t.
 
+#include <optional>
 #include <vector>
-
-#include "absl/types/optional.h"
 
 namespace webrtc {
 
@@ -24,7 +23,7 @@ class Histogram {
   // Creates histogram with capacity `num_buckets` and `forget_factor` in Q15.
   Histogram(size_t num_buckets,
             int forget_factor,
-            absl::optional<double> start_forget_weight = absl::nullopt);
+            std::optional<double> start_forget_weight = std::nullopt);
 
   virtual ~Histogram();
 
@@ -47,7 +46,7 @@ class Histogram {
   // Accessors only intended for testing purposes.
   int base_forget_factor_for_testing() const { return base_forget_factor_; }
   int forget_factor_for_testing() const { return forget_factor_; }
-  absl::optional<double> start_forget_weight_for_testing() const {
+  std::optional<double> start_forget_weight_for_testing() const {
     return start_forget_weight_;
   }
 
@@ -56,7 +55,7 @@ class Histogram {
   int forget_factor_;  // Q15
   const int base_forget_factor_;
   int add_count_;
-  const absl::optional<double> start_forget_weight_;
+  const std::optional<double> start_forget_weight_;
 };
 
 }  // namespace webrtc

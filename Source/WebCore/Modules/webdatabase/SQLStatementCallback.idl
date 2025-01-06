@@ -26,4 +26,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-callback SQLStatementCallback = undefined (SQLTransaction transaction, SQLResultSet resultSet);
+[ GenerateIsReachable=ImplScriptExecutionContext ] callback SQLStatementCallback = undefined (SQLTransaction transaction, SQLResultSet resultSet);

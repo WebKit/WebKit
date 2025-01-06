@@ -48,7 +48,7 @@ namespace TestWebKitAPI {
 using namespace WebCore;
 using namespace fido;
 
-constexpr uint8_t kTestAuthenticatorGetInfoResponseWithNoVersion[] = {
+constexpr auto kTestAuthenticatorGetInfoResponseWithNoVersion = std::to_array<uint8_t>({
     // Success status byte
     0x00,
     // Map of 6 elements
@@ -102,9 +102,9 @@ constexpr uint8_t kTestAuthenticatorGetInfoResponseWithNoVersion[] = {
     0x06,
     // Array[1]
     0x81, 0x01,
-};
+});
 
-constexpr uint8_t kTestAuthenticatorGetInfoResponseWithDuplicateVersion[] = {
+constexpr auto kTestAuthenticatorGetInfoResponseWithDuplicateVersion = std::to_array<uint8_t>({
     // Success status byte
     0x00,
     // Map of 6 elements
@@ -162,9 +162,9 @@ constexpr uint8_t kTestAuthenticatorGetInfoResponseWithDuplicateVersion[] = {
     0x06,
     // Array[1]
     0x81, 0x01,
-};
+});
 
-constexpr uint8_t kTestAuthenticatorGetInfoResponseWithIncorrectAaguid[] = {
+constexpr auto kTestAuthenticatorGetInfoResponseWithIncorrectAaguid = std::to_array<uint8_t>({
     // Success status byte
     0x00,
     // Map of 6 elements
@@ -221,11 +221,11 @@ constexpr uint8_t kTestAuthenticatorGetInfoResponseWithIncorrectAaguid[] = {
     0x06,
     // Array[1]
     0x81, 0x01,
-};
+});
 
 // The attested credential data, excluding the public key bytes. Append
 // with kTestECPublicKeyCOSE to get the complete attestation data.
-constexpr uint8_t kTestAttestedCredentialDataPrefix[] = {
+constexpr auto kTestAttestedCredentialDataPrefix = std::to_array<uint8_t>({
     // 16-byte aaguid
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00,
@@ -238,11 +238,11 @@ constexpr uint8_t kTestAttestedCredentialDataPrefix[] = {
     0x5F, 0x50, 0xB5, 0xCC, 0x4E, 0x78, 0x05, 0x5B, 0xDD, 0x39, 0x6B, 0x64,
     0xF7, 0x8D, 0xA2, 0xC5, 0xF9, 0x62, 0x00, 0xCC, 0xD4, 0x15, 0xCD, 0x08,
     0xFE, 0x42, 0x00, 0x38,
-};
+});
 
 // The authenticator data, excluding the attested credential data bytes. Append
 // with attested credential data to get the complete authenticator data.
-constexpr uint8_t kTestAuthenticatorDataPrefix[] = {
+constexpr auto kTestAuthenticatorDataPrefix = std::to_array<uint8_t>({
     // sha256 hash of rp id.
     0x11, 0x94, 0x22, 0x8D, 0xA8, 0xFD, 0xBD, 0xEE, 0xFD, 0x26, 0x1B, 0xD7,
     0xB6, 0x59, 0x5C, 0xFD, 0x70, 0xA5, 0x0D, 0x70, 0xC6, 0x40, 0x7B, 0xCF,
@@ -251,12 +251,12 @@ constexpr uint8_t kTestAuthenticatorDataPrefix[] = {
     0x41,
     // counter
     0x00, 0x00, 0x00, 0x00
-};
+});
 
 // Components of the CBOR needed to form an authenticator object.
 // Combined diagnostic notation:
 // {"fmt": "fido-u2f", "attStmt": {"sig": h'30...}, "authData": h'D4C9D9...'}
-constexpr uint8_t kFormatFidoU2fCBOR[] = {
+constexpr auto kFormatFidoU2fCBOR = std::to_array<uint8_t>({
     // map(3)
     0xA3,
     // text(3)
@@ -267,16 +267,16 @@ constexpr uint8_t kFormatFidoU2fCBOR[] = {
     0x68,
     // "fido-u2f"
     0x66, 0x69, 0x64, 0x6F, 0x2D, 0x75, 0x32, 0x66
-};
+});
 
-constexpr uint8_t kAttStmtCBOR[] = {
+constexpr auto kAttStmtCBOR = std::to_array<uint8_t>({
     // text(7)
     0x67,
     // "attStmt"
     0x61, 0x74, 0x74, 0x53, 0x74, 0x6D, 0x74
-};
+});
 
-constexpr uint8_t kAuthDataCBOR[] = {
+constexpr auto kAuthDataCBOR = std::to_array<uint8_t>({
     // text(8)
     0x68,
     // "authData"
@@ -285,16 +285,16 @@ constexpr uint8_t kAuthDataCBOR[] = {
     // kTestAuthenticatorDataPrefix|, |kTestAttestedCredentialDataPrefix|,
     // and test_data::kTestECPublicKeyCOSE.
     0x58, 0xC4
-};
+});
 
-constexpr uint8_t kTestDeviceAaguid[] = {
+constexpr auto kTestDeviceAaguid = std::to_array<uint8_t>({
     0xF8, 0xA0, 0x11, 0xF3, 0x8C, 0x0A, 0x4D, 0x15, 0x80, 0x06, 0x17, 0x11, 0x1F, 0x9E, 0xDC, 0x7D
-};
+});
 
 Vector<uint8_t> getTestAttestedCredentialDataBytes()
 {
     // Combine kTestAttestedCredentialDataPrefix and kTestECPublicKeyCOSE.
-    auto testAttestedData = convertBytesToVector(kTestAttestedCredentialDataPrefix, sizeof(kTestAttestedCredentialDataPrefix));
+    Vector<uint8_t> testAttestedData { kTestAttestedCredentialDataPrefix };
     testAttestedData.append(std::span { TestData::kTestECPublicKeyCOSE });
     return testAttestedData;
 }
@@ -302,7 +302,7 @@ Vector<uint8_t> getTestAttestedCredentialDataBytes()
 Vector<uint8_t> getTestAuthenticatorDataBytes()
 {
     // Build the test authenticator data.
-    auto testAuthenticatorData = convertBytesToVector(kTestAuthenticatorDataPrefix, sizeof(kTestAuthenticatorDataPrefix));
+    Vector<uint8_t> testAuthenticatorData { kTestAuthenticatorDataPrefix };
     auto testAttestedData = getTestAttestedCredentialDataBytes();
     testAuthenticatorData.appendVector(testAttestedData);
     return testAuthenticatorData;
@@ -310,7 +310,7 @@ Vector<uint8_t> getTestAuthenticatorDataBytes()
 
 Vector<uint8_t> getTestAttestationObjectBytes()
 {
-    auto testAuthenticatorObject = convertBytesToVector(kFormatFidoU2fCBOR, sizeof(kFormatFidoU2fCBOR));
+    Vector<uint8_t> testAuthenticatorObject { kFormatFidoU2fCBOR };
     testAuthenticatorObject.append(std::span { kAttStmtCBOR });
     testAuthenticatorObject.append(std::span { TestData::kU2fAttestationStatementCBOR });
     testAuthenticatorObject.append(std::span { kAuthDataCBOR });
@@ -321,7 +321,7 @@ Vector<uint8_t> getTestAttestationObjectBytes()
 
 Vector<uint8_t> getTestSignResponse()
 {
-    return convertBytesToVector(TestData::kTestU2fSignResponse, sizeof(TestData::kTestU2fSignResponse));
+    return std::span { TestData::kTestU2fSignResponse };
 }
 
 // Get a subset of the response for testing error handling.
@@ -330,7 +330,7 @@ Vector<uint8_t> getTestCorruptedSignResponse(size_t length)
     ASSERT(length < sizeof(TestData::kTestU2fSignResponse));
     Vector<uint8_t> testCorruptedSignResponse;
     testCorruptedSignResponse.reserveInitialCapacity(length);
-    testCorruptedSignResponse.append(std::span { TestData::kTestU2fSignResponse, length });
+    testCorruptedSignResponse.append(std::span { TestData::kTestU2fSignResponse }.first(length));
     return testCorruptedSignResponse;
 }
 
@@ -345,7 +345,7 @@ Vector<uint8_t> getTestU2fRegisterResponse(size_t prefixSize, const uint8_t appe
 {
     Vector<uint8_t> result;
     result.reserveInitialCapacity(prefixSize + appendixSize);
-    result.append(std::span { TestData::kTestU2fRegisterResponse, prefixSize });
+    result.append(std::span { TestData::kTestU2fRegisterResponse }.first(prefixSize));
     result.append(std::span { appendix, appendixSize });
     return result;
 }
@@ -354,7 +354,7 @@ Vector<uint8_t> getTestU2fRegisterResponse(size_t prefixSize, const uint8_t appe
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#commands
 TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
 {
-    auto makeCredentialResponse = readCTAPMakeCredentialResponse(convertBytesToVector(TestData::kTestMakeCredentialResponse, sizeof(TestData::kTestMakeCredentialResponse)), AuthenticatorAttachment::CrossPlatform, { });
+    auto makeCredentialResponse = readCTAPMakeCredentialResponse(std::span { TestData::kTestMakeCredentialResponse }, AuthenticatorAttachment::CrossPlatform, { });
     ASSERT_TRUE(makeCredentialResponse);
     auto cborAttestationObject = cbor::CBORReader::read(makeCredentialResponse->attestationObject()->toVector());
     ASSERT_TRUE(cborAttestationObject);
@@ -369,7 +369,7 @@ TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
     it = attestationObjectMap.find(cbor::CBORValue(kAuthDataKey));
     ASSERT_TRUE(it != attestationObjectMap.end());
     ASSERT_TRUE(it->second.isByteString());
-    EXPECT_EQ(it->second.getByteString(), convertBytesToVector(TestData::kCtap2MakeCredentialAuthData, sizeof(TestData::kCtap2MakeCredentialAuthData)));
+    EXPECT_EQ(it->second.getByteString(), Vector<uint8_t> { TestData::kCtap2MakeCredentialAuthData });
 
     it = attestationObjectMap.find(cbor::CBORValue(kAttestationStatementKey));
     ASSERT_TRUE(it != attestationObjectMap.end());
@@ -385,7 +385,7 @@ TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
     attStmtIt = attestationStatementMap.find(cbor::CBORValue("sig"));
     ASSERT_TRUE(attStmtIt != attestationStatementMap.end());
     ASSERT_TRUE(attStmtIt->second.isByteString());
-    EXPECT_EQ(attStmtIt->second.getByteString(), convertBytesToVector(TestData::kCtap2MakeCredentialSignature, sizeof(TestData::kCtap2MakeCredentialSignature)));
+    EXPECT_EQ(attStmtIt->second.getByteString(), Vector<uint8_t> { TestData::kCtap2MakeCredentialSignature });
 
     attStmtIt = attestationStatementMap.find(cbor::CBORValue("x5c"));
     ASSERT_TRUE(attStmtIt != attestationStatementMap.end());
@@ -393,48 +393,48 @@ TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
     ASSERT_TRUE(certificate.isArray());
     ASSERT_EQ(certificate.getArray().size(), 1u);
     ASSERT_TRUE(certificate.getArray()[0].isByteString());
-    EXPECT_EQ(certificate.getArray()[0].getByteString(), convertBytesToVector(TestData::kCtap2MakeCredentialCertificate, sizeof(TestData::kCtap2MakeCredentialCertificate)));
+    EXPECT_EQ(certificate.getArray()[0].getByteString(), Vector<uint8_t> { TestData::kCtap2MakeCredentialCertificate });
     EXPECT_EQ(makeCredentialResponse->rawId()->byteLength(), sizeof(TestData::kCtap2MakeCredentialCredentialId));
-    EXPECT_EQ(memcmp(makeCredentialResponse->rawId()->data(), TestData::kCtap2MakeCredentialCredentialId, sizeof(TestData::kCtap2MakeCredentialCredentialId)), 0);
+    EXPECT_TRUE(equalSpans(makeCredentialResponse->rawId()->span(), std::span { TestData::kCtap2MakeCredentialCredentialId }));
 }
 
 // Leveraging example 5 of section 6.1 of the CTAP spec.
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html
 TEST(CTAPResponseTest, TestReadGetAssertionResponse1)
 {
-    auto getAssertionResponse = readCTAPGetAssertionResponse(convertBytesToVector(TestData::kDeviceGetAssertionResponseShort, sizeof(TestData::kDeviceGetAssertionResponseShort)), AuthenticatorAttachment::CrossPlatform);
+    auto getAssertionResponse = readCTAPGetAssertionResponse(std::span { TestData::kDeviceGetAssertionResponseShort }, AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(getAssertionResponse);
 
     EXPECT_EQ(getAssertionResponse->authenticatorData()->byteLength(), sizeof(TestData::kCtap2GetAssertionAuthData));
-    EXPECT_EQ(memcmp(getAssertionResponse->authenticatorData()->data(), TestData::kCtap2GetAssertionAuthData, sizeof(TestData::kCtap2GetAssertionAuthData)), 0);
+    EXPECT_TRUE(equalSpans(getAssertionResponse->authenticatorData()->span(), std::span { TestData::kCtap2GetAssertionAuthData }));
     EXPECT_EQ(getAssertionResponse->signature()->byteLength(), sizeof(TestData::kCtap2GetAssertionSignature));
-    EXPECT_EQ(memcmp(getAssertionResponse->signature()->data(), TestData::kCtap2GetAssertionSignature, sizeof(TestData::kCtap2GetAssertionSignature)), 0);
+    EXPECT_TRUE(equalSpans(getAssertionResponse->signature()->span(), std::span { TestData::kCtap2GetAssertionSignature }));
 }
 
 TEST(CTAPResponseTest, TestReadGetAssertionResponse2)
 {
-    auto getAssertionResponse = readCTAPGetAssertionResponse(convertBytesToVector(TestData::kDeviceGetAssertionResponse, sizeof(TestData::kDeviceGetAssertionResponse)), AuthenticatorAttachment::CrossPlatform);
+    auto getAssertionResponse = readCTAPGetAssertionResponse(std::span { TestData::kDeviceGetAssertionResponse }, AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(getAssertionResponse);
 
     EXPECT_EQ(getAssertionResponse->authenticatorData()->byteLength(), sizeof(TestData::kCtap2GetAssertionAuthData));
-    EXPECT_EQ(memcmp(getAssertionResponse->authenticatorData()->data(), TestData::kCtap2GetAssertionAuthData, sizeof(TestData::kCtap2GetAssertionAuthData)), 0);
+    EXPECT_TRUE(equalSpans(getAssertionResponse->authenticatorData()->span(), std::span { TestData::kCtap2GetAssertionAuthData }));
     EXPECT_EQ(getAssertionResponse->signature()->byteLength(), sizeof(TestData::kCtap2GetAssertionSignature));
-    EXPECT_EQ(memcmp(getAssertionResponse->signature()->data(), TestData::kCtap2GetAssertionSignature, sizeof(TestData::kCtap2GetAssertionSignature)), 0);
+    EXPECT_TRUE(equalSpans(getAssertionResponse->signature()->span(), std::span { TestData::kCtap2GetAssertionSignature }));
     EXPECT_EQ(getAssertionResponse->userHandle()->byteLength(), sizeof(TestData::kCtap2GetAssertionUserHandle));
-    EXPECT_EQ(memcmp(getAssertionResponse->userHandle()->data(), TestData::kCtap2GetAssertionUserHandle, sizeof(TestData::kCtap2GetAssertionUserHandle)), 0);
+    EXPECT_TRUE(equalSpans(getAssertionResponse->userHandle()->span(), std::span { TestData::kCtap2GetAssertionUserHandle }));
 }
 
 TEST(CTAPResponseTest, TestReadGetAssertionResponse3)
 {
-    auto getAssertionResponse = readCTAPGetAssertionResponse(convertBytesToVector(TestData::kDeviceGetAssertionResponseLong, sizeof(TestData::kDeviceGetAssertionResponseLong)), AuthenticatorAttachment::CrossPlatform);
+    auto getAssertionResponse = readCTAPGetAssertionResponse(std::span { TestData::kDeviceGetAssertionResponseLong }, AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(getAssertionResponse);
 
     EXPECT_EQ(getAssertionResponse->authenticatorData()->byteLength(), sizeof(TestData::kCtap2GetAssertionAuthData));
-    EXPECT_EQ(memcmp(getAssertionResponse->authenticatorData()->data(), TestData::kCtap2GetAssertionAuthData, sizeof(TestData::kCtap2GetAssertionAuthData)), 0);
+    EXPECT_TRUE(equalSpans(getAssertionResponse->authenticatorData()->span(), std::span { TestData::kCtap2GetAssertionAuthData }));
     EXPECT_EQ(getAssertionResponse->signature()->byteLength(), sizeof(TestData::kCtap2GetAssertionSignature));
-    EXPECT_EQ(memcmp(getAssertionResponse->signature()->data(), TestData::kCtap2GetAssertionSignature, sizeof(TestData::kCtap2GetAssertionSignature)), 0);
+    EXPECT_TRUE(equalSpans(getAssertionResponse->signature()->span(), std::span { TestData::kCtap2GetAssertionSignature }));
     EXPECT_EQ(getAssertionResponse->userHandle()->byteLength(), sizeof(TestData::kCtap2GetAssertionUserHandle));
-    EXPECT_EQ(memcmp(getAssertionResponse->userHandle()->data(), TestData::kCtap2GetAssertionUserHandle, sizeof(TestData::kCtap2GetAssertionUserHandle)), 0);
+    EXPECT_TRUE(equalSpans(getAssertionResponse->userHandle()->span(), std::span { TestData::kCtap2GetAssertionUserHandle }));
     EXPECT_STREQ(getAssertionResponse->name().utf8().data(), "johnpsmith@example.com");
     EXPECT_STREQ(getAssertionResponse->displayName().utf8().data(), "John P. Smith");
     EXPECT_EQ(getAssertionResponse->numberOfCredentials(), 1u);
@@ -443,28 +443,28 @@ TEST(CTAPResponseTest, TestReadGetAssertionResponse3)
 // Test that U2F register response is properly parsed.
 TEST(CTAPResponseTest, TestParseRegisterResponseData)
 {
-    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, convertBytesToVector(TestData::kTestU2fRegisterResponse, sizeof(TestData::kTestU2fRegisterResponse)), AuthenticatorAttachment::CrossPlatform);
+    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, std::span { TestData::kTestU2fRegisterResponse }, AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(response);
     EXPECT_EQ(response->rawId()->byteLength(), sizeof(TestData::kU2fSignKeyHandle));
-    EXPECT_EQ(memcmp(response->rawId()->data(), TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), 0);
+    EXPECT_TRUE(equalSpans(response->rawId()->span(), std::span { TestData::kU2fSignKeyHandle }));
     auto expectedAttestationObject = getTestAttestationObjectBytes();
     EXPECT_EQ(response->attestationObject()->byteLength(), expectedAttestationObject.size());
-    EXPECT_EQ(memcmp(response->attestationObject()->data(), expectedAttestationObject.data(), expectedAttestationObject.size()), 0);
+    EXPECT_TRUE(equalSpans(response->attestationObject()->span(), expectedAttestationObject.span()));
 }
 
 // Test malformed user public key.
 TEST(CTAPResponseTest, TestParseIncorrectRegisterResponseData1)
 {
     const uint8_t testData1[] = { 0x05 };
-    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, convertBytesToVector(testData1, sizeof(testData1)), AuthenticatorAttachment::CrossPlatform);
+    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, std::span { testData1 }, AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 
     const uint8_t testData2[] = { 0x05, 0x00 };
-    response = readU2fRegisterResponse(TestData::kRelyingPartyId, convertBytesToVector(testData2, sizeof(testData2)), AuthenticatorAttachment::CrossPlatform);
+    response = readU2fRegisterResponse(TestData::kRelyingPartyId, std::span { testData2 }, AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 
     const uint8_t testData3[] = { 0x05, 0x04, 0x00 };
-    response = readU2fRegisterResponse(TestData::kRelyingPartyId, convertBytesToVector(testData3, sizeof(testData3)), AuthenticatorAttachment::CrossPlatform);
+    response = readU2fRegisterResponse(TestData::kRelyingPartyId, std::span { testData3 }, AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 }
 
@@ -523,21 +523,21 @@ TEST(CTAPResponseTest, TestParseIncorrectRegisterResponseData5)
     const auto suffix = sizeof(TestData::kTestU2fRegisterResponse) - signatureSize;
 
     Vector<uint8_t> testData1;
-    testData1.append(std::span { TestData::kTestU2fRegisterResponse, prefix });
+    testData1.append(std::span { TestData::kTestU2fRegisterResponse }.first(prefix));
     testData1.append(0x30);
     testData1.append(0x01);
     testData1.append(0x00);
-    testData1.append(std::span { TestData::kTestU2fRegisterResponse + suffix, signatureSize });
+    testData1.append(std::span { TestData::kTestU2fRegisterResponse }.subspan(suffix, signatureSize));
     auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, testData1, AuthenticatorAttachment::CrossPlatform);
     EXPECT_TRUE(response);
 
     Vector<uint8_t> testData2;
-    testData2.append(std::span { TestData::kTestU2fRegisterResponse, prefix });
+    testData2.append(std::span { TestData::kTestU2fRegisterResponse }.first(prefix));
     testData2.append(0x30);
     testData2.append(0x81);
     testData2.append(0x01);
     testData2.append(0x00);
-    testData2.append(std::span { TestData::kTestU2fRegisterResponse + suffix, signatureSize });
+    testData2.append(std::span { TestData::kTestU2fRegisterResponse }.subspan(suffix, signatureSize));
     response = readU2fRegisterResponse(TestData::kRelyingPartyId, testData2, AuthenticatorAttachment::CrossPlatform);
     EXPECT_TRUE(response);
 }
@@ -548,11 +548,11 @@ TEST(CTAPResponseTest, TestParseSignResponseData)
     auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestSignResponse(), AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(response);
     EXPECT_EQ(response->rawId()->byteLength(), sizeof(TestData::kU2fSignKeyHandle));
-    EXPECT_EQ(memcmp(response->rawId()->data(), TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), 0);
+    EXPECT_TRUE(equalSpans(response->rawId()->span(), std::span { TestData::kU2fSignKeyHandle }));
     EXPECT_EQ(response->authenticatorData()->byteLength(), sizeof(TestData::kTestSignAuthenticatorData));
-    EXPECT_EQ(memcmp(response->authenticatorData()->data(), TestData::kTestSignAuthenticatorData, sizeof(TestData::kTestSignAuthenticatorData)), 0);
+    EXPECT_TRUE(equalSpans(response->authenticatorData()->span(), std::span { TestData::kTestSignAuthenticatorData }));
     EXPECT_EQ(response->signature()->byteLength(), sizeof(TestData::kU2fSignature));
-    EXPECT_EQ(memcmp(response->signature()->data(), TestData::kU2fSignature, sizeof(TestData::kU2fSignature)), 0);
+    EXPECT_TRUE(equalSpans(response->signature()->span(), std::span { TestData::kU2fSignature }));
 }
 
 TEST(CTAPResponseTest, TestParseU2fSignWithNullKeyHandle)
@@ -583,11 +583,11 @@ TEST(CTAPResponseTest, TestParseU2fSignWithCorruptedSignature)
 
 TEST(CTAPResponseTest, TestReadGetInfoResponse)
 {
-    auto getInfoResponse = readCTAPGetInfoResponse(convertBytesToVector(TestData::kTestGetInfoResponsePlatformDevice, sizeof(TestData::kTestGetInfoResponsePlatformDevice)));
+    auto getInfoResponse = readCTAPGetInfoResponse(std::span { TestData::kTestGetInfoResponsePlatformDevice });
     ASSERT_TRUE(getInfoResponse);
     ASSERT_TRUE(getInfoResponse->maxMsgSize());
     EXPECT_EQ(*getInfoResponse->maxMsgSize(), 1200u);
-    EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kCtap), getInfoResponse->versions().end());
+    EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kCtap2), getInfoResponse->versions().end());
     EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kU2f), getInfoResponse->versions().end());
     EXPECT_TRUE(getInfoResponse->options().isPlatformDevice());
     EXPECT_EQ(AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, getInfoResponse->options().residentKeyAvailability());
@@ -598,11 +598,11 @@ TEST(CTAPResponseTest, TestReadGetInfoResponse)
 
 TEST(CTAPResponseTest, TestReadGetInfoResponse2)
 {
-    auto getInfoResponse = readCTAPGetInfoResponse(convertBytesToVector(TestData::kTestGetInfoResponsePlatformDevice2, sizeof(TestData::kTestGetInfoResponsePlatformDevice2)));
+    auto getInfoResponse = readCTAPGetInfoResponse(std::span { TestData::kTestGetInfoResponsePlatformDevice2 });
     ASSERT_TRUE(getInfoResponse);
     ASSERT_TRUE(getInfoResponse->maxMsgSize());
     EXPECT_EQ(*getInfoResponse->maxMsgSize(), 1200u);
-    EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kCtap), getInfoResponse->versions().end());
+    EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kCtap2), getInfoResponse->versions().end());
     EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kU2f), getInfoResponse->versions().end());
     EXPECT_TRUE(getInfoResponse->options().isPlatformDevice());
     EXPECT_EQ(AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, getInfoResponse->options().residentKeyAvailability());
@@ -613,11 +613,11 @@ TEST(CTAPResponseTest, TestReadGetInfoResponse2)
 
 TEST(CTAPResponseTest, TestReadGetInfoResponseDeviceYubikey5c)
 {
-    auto getInfoResponse = readCTAPGetInfoResponse(convertBytesToVector(TestData::kTestGetInfoResponseDeviceYubikey5c, sizeof(TestData::kTestGetInfoResponseDeviceYubikey5c)));
+    auto getInfoResponse = readCTAPGetInfoResponse(std::span { TestData::kTestGetInfoResponseDeviceYubikey5c });
     ASSERT_TRUE(getInfoResponse);
     ASSERT_TRUE(getInfoResponse->maxMsgSize());
     EXPECT_EQ(*getInfoResponse->maxMsgSize(), 1200u);
-    EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kCtap), getInfoResponse->versions().end());
+    EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kCtap2), getInfoResponse->versions().end());
     EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kU2f), getInfoResponse->versions().end());
     EXPECT_FALSE(getInfoResponse->options().isPlatformDevice());
     EXPECT_EQ(AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, getInfoResponse->options().residentKeyAvailability());
@@ -631,14 +631,14 @@ TEST(CTAPResponseTest, TestReadGetInfoResponseDeviceYubikey5c)
 
 TEST(CTAPResponseTest, TestReadGetInfoResponseWithIncorrectFormat)
 {
-    EXPECT_FALSE(readCTAPGetInfoResponse(convertBytesToVector(kTestAuthenticatorGetInfoResponseWithNoVersion, sizeof(kTestAuthenticatorGetInfoResponseWithNoVersion))));
-    EXPECT_FALSE(readCTAPGetInfoResponse(convertBytesToVector(kTestAuthenticatorGetInfoResponseWithDuplicateVersion, sizeof(kTestAuthenticatorGetInfoResponseWithDuplicateVersion))));
-    EXPECT_FALSE(readCTAPGetInfoResponse(convertBytesToVector(kTestAuthenticatorGetInfoResponseWithIncorrectAaguid, sizeof(kTestAuthenticatorGetInfoResponseWithIncorrectAaguid))));
+    EXPECT_FALSE(readCTAPGetInfoResponse(std::span { kTestAuthenticatorGetInfoResponseWithNoVersion }));
+    EXPECT_FALSE(readCTAPGetInfoResponse(std::span { kTestAuthenticatorGetInfoResponseWithDuplicateVersion }));
+    EXPECT_FALSE(readCTAPGetInfoResponse(std::span { kTestAuthenticatorGetInfoResponseWithIncorrectAaguid }));
 }
 
 TEST(CTAPResponseTest, TestSerializeGetInfoResponse)
 {
-    AuthenticatorGetInfoResponse response({ ProtocolVersion::kCtap, ProtocolVersion::kU2f }, convertBytesToVector(kTestDeviceAaguid, sizeof(kTestDeviceAaguid)));
+    AuthenticatorGetInfoResponse response({ ProtocolVersion::kCtap2, ProtocolVersion::kU2f }, std::span { kTestDeviceAaguid });
     response.setExtensions({ "uvm"_s, "hmac-secret"_s });
     AuthenticatorSupportedOptions options;
     options.setResidentKeyAvailability(AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported);
@@ -651,7 +651,7 @@ TEST(CTAPResponseTest, TestSerializeGetInfoResponse)
 
     auto responseAsCBOR = encodeAsCBOR(response);
     EXPECT_EQ(responseAsCBOR.size(), sizeof(TestData::kTestGetInfoResponsePlatformDevice) - 1);
-    EXPECT_EQ(memcmp(responseAsCBOR.data(), TestData::kTestGetInfoResponsePlatformDevice + 1, responseAsCBOR.size()), 0);
+    EXPECT_TRUE(equalSpans(responseAsCBOR.span(), std::span { TestData::kTestGetInfoResponsePlatformDevice }.subspan(1)));
 }
 
 } // namespace TestWebKitAPI

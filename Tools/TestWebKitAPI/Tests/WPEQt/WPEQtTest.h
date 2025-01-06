@@ -112,6 +112,7 @@ public:
     {
         g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
         g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
+        g_setenv("WEBKIT_INSPECTOR_RESOURCES_PATH", WEBKIT_INSPECTOR_RESOURCES_PATH, FALSE);
 
         QQmlComponent component(&m_engine);
         component.setData("import QtQuick 2.11\n"

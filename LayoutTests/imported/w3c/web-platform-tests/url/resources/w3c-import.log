@@ -21,4 +21,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/resources/percent-encoding.py
 /LayoutTests/imported/w3c/web-platform-tests/url/resources/setters_tests.json
 /LayoutTests/imported/w3c/web-platform-tests/url/resources/toascii.json
+/LayoutTests/imported/w3c/web-platform-tests/url/resources/urltestdata-javascript-only.json
 /LayoutTests/imported/w3c/web-platform-tests/url/resources/urltestdata.json

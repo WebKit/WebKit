@@ -16,7 +16,7 @@
 
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
 
 namespace webrtc {
 
@@ -34,7 +34,7 @@ class Syncable {
   virtual ~Syncable();
 
   virtual uint32_t id() const = 0;
-  virtual absl::optional<Info> GetInfo() const = 0;
+  virtual std::optional<Info> GetInfo() const = 0;
   virtual bool GetPlayoutRtpTimestamp(uint32_t* rtp_timestamp,
                                       int64_t* time_ms) const = 0;
   virtual bool SetMinimumPlayoutDelay(int delay_ms) = 0;

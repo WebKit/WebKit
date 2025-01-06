@@ -29,6 +29,10 @@
 
 namespace WebCore {
 class PlatformCALayerClient;
+
+#if ENABLE(MODEL_PROCESS)
+class ModelContext;
+#endif
 }
 
 namespace WebKit {
@@ -40,7 +44,9 @@ class PlatformCALayerRemoteCustom final : public PlatformCALayerRemote {
     friend class PlatformCALayerRemote;
 public:
     static Ref<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
-    static Ref<PlatformCALayerRemote> create(LayerHostingContextID, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
+#if ENABLE(MODEL_PROCESS)
+    static Ref<PlatformCALayerRemote> create(Ref<WebCore::ModelContext>, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
+#endif
 #if HAVE(AVKIT)
     static Ref<PlatformCALayerRemote> create(WebCore::HTMLVideoElement&, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
 #endif
@@ -60,6 +66,9 @@ private:
     PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType, PlatformLayer *, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
     PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType, LayerHostingContextID, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
     PlatformCALayerRemoteCustom(WebCore::HTMLVideoElement&, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
+#if ENABLE(MODEL_PROCESS)
+    PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType, Ref<WebCore::ModelContext>, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
+#endif
 
     Ref<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
     
@@ -73,6 +82,9 @@ private:
     bool m_hasVideo { false };
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     RetainPtr<PlatformLayer> m_platformLayer;
+#if ENABLE(MODEL_PROCESS)
+    RefPtr<WebCore::ModelContext> m_modelContext;
+#endif
 };
 
 } // namespace WebKit

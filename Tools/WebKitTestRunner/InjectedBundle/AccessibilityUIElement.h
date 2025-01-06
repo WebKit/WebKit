@@ -89,8 +89,12 @@ public:
     JSRetainPtr<JSStringRef> domIdentifier() const;
 
     RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
+    RefPtr<AccessibilityUIElement> elementAtPointWithRemoteElement(int x, int y);
+    void elementAtPointResolvingRemoteFrame(JSContextRef, int x, int y, JSValueRef callback);
+
     JSValueRef children(JSContextRef);
     RefPtr<AccessibilityUIElement> childAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> childAtIndexWithRemoteElement(unsigned);
     unsigned indexOfChild(AccessibilityUIElement*);
     unsigned childrenCount();
     RefPtr<AccessibilityUIElement> titleUIElement();
@@ -121,6 +125,7 @@ public:
     RefPtr<AccessibilityUIElement> focusableAncestor();
     RefPtr<AccessibilityUIElement> editableAncestor();
     RefPtr<AccessibilityUIElement> highestEditableAncestor();
+    JSRetainPtr<JSStringRef> selectedText();
 #else
     void syncPress() { press(); }
     void asyncIncrement() { }
@@ -128,7 +133,14 @@ public:
     RefPtr<AccessibilityUIElement> focusableAncestor() { return nullptr; }
     RefPtr<AccessibilityUIElement> editableAncestor() { return nullptr; }
     RefPtr<AccessibilityUIElement> highestEditableAncestor() { return nullptr; }
-#endif
+    JSRetainPtr<JSStringRef> selectedText() { return nullptr; }
+#endif // PLATFORM(MAC)
+
+#if PLATFORM(COCOA)
+    JSRetainPtr<JSStringRef> dateTimeValue() const;
+#else
+    JSRetainPtr<JSStringRef> dateTimeValue() const { return nullptr; }
+#endif // PLATFORM(COCOA)
 
     // Attributes - platform-independent implementations
     JSRetainPtr<JSStringRef> stringDescriptionOfAttributeValue(JSStringRef attribute);
@@ -278,8 +290,8 @@ public:
     RefPtr<AccessibilityUIElement> ownerElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
 
-    // ARIA Drag and Drop
-    bool ariaIsGrabbed() const;
+    // Drag and drop
+    bool isGrabbed() const;
     // A space concatentated string of all the drop effects.
     JSRetainPtr<JSStringRef> ariaDropEffects() const;
     
@@ -298,6 +310,7 @@ public:
     RefPtr<AccessibilityUIElement> uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
     JSRetainPtr<JSStringRef> selectTextWithCriteria(JSContextRef, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity);
     JSValueRef searchTextWithCriteria(JSContextRef, JSValueRef searchStrings, JSStringRef startFrom, JSStringRef direction);
+    JSValueRef performTextOperation(JSContextRef, JSStringRef operationType, JSValueRef markerRanges, JSValueRef replacementStrings, bool shouldSmartReplace);
 
     // Text-specific
     JSRetainPtr<JSStringRef> characterAtOffset(int offset);
@@ -323,6 +336,8 @@ public:
     RefPtr<AccessibilityTextMarker> previousLineStartTextMarkerForTextMarker(AccessibilityTextMarker*);
     RefPtr<AccessibilityTextMarker> nextLineEndTextMarkerForTextMarker(AccessibilityTextMarker*);
     int lineIndexForTextMarker(AccessibilityTextMarker*) const;
+    RefPtr<AccessibilityTextMarkerRange> styleTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForSearchPredicate(JSContextRef, AccessibilityTextMarkerRange* startRange, bool forward, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
     RefPtr<AccessibilityTextMarkerRange> misspellingTextMarkerRange(AccessibilityTextMarkerRange* start, bool forward);
     RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForElement(AccessibilityUIElement*);
     RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForMarkers(AccessibilityTextMarker*, AccessibilityTextMarker*);
@@ -415,6 +430,7 @@ public:
     bool isDeletion() const;
     bool isFirstItemInSuggestion() const;
     bool isLastItemInSuggestion() const;
+    bool isRemoteFrame() const;
     
     bool isMarkAnnotation() const;
 private:

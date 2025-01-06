@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,8 +42,11 @@
 #include "RenderView.h"
 #include "StyleTreeResolver.h"
 #include "WritingSuggestionData.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTreeUpdater::GeneratedContent);
 
 RenderTreeUpdater::GeneratedContent::GeneratedContent(RenderTreeUpdater& updater)
     : m_updater(updater)
@@ -304,13 +307,13 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         return;
     }
 
-    CheckedPtr nodeBeforeWritingSuggestionsTextRenderer = dynamicDowncast<RenderText>(nodeBeforeWritingSuggestions->renderer());
+    WeakPtr nodeBeforeWritingSuggestionsTextRenderer = dynamicDowncast<RenderText>(nodeBeforeWritingSuggestions->renderer());
     if (!nodeBeforeWritingSuggestionsTextRenderer) {
         destroyWritingSuggestionsIfNeeded();
         return;
     }
 
-    CheckedPtr parentForWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->parent();
+    WeakPtr parentForWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->parent();
     if (!parentForWritingSuggestions) {
         destroyWritingSuggestionsIfNeeded();
         return;
@@ -318,13 +321,19 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
 
     auto textWithoutSuggestion = nodeBeforeWritingSuggestionsTextRenderer->text();
 
-    auto offset = writingSuggestionData->offset();
-    auto prefix = textWithoutSuggestion.substring(0, offset);
-    auto suffix = textWithoutSuggestion.substring(offset);
+    auto [prefix, suffix] = [&] -> std::pair<String, String> {
+        if (!writingSuggestionData->supportsSuffix())
+            return { textWithoutSuggestion, emptyString() };
+
+        auto offset = writingSuggestionData->offset();
+        return { textWithoutSuggestion.substring(0, offset), textWithoutSuggestion.substring(offset) };
+    }();
 
     nodeBeforeWritingSuggestionsTextRenderer->setText(prefix);
 
     auto newStyle = RenderStyle::clone(*style);
+    newStyle.setDisplay(DisplayType::Inline);
+
     if (auto writingSuggestionsRenderer = editor.writingSuggestionRenderer()) {
         writingSuggestionsRenderer->setStyle(WTFMove(newStyle), minimalStyleDifference);
 
@@ -351,13 +360,18 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         auto newWritingSuggestionsRenderer = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, renderer.document(), WTFMove(newStyle));
         newWritingSuggestionsRenderer->initializeStyle();
 
-        CheckedPtr rendererAfterWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->nextSibling();
+        WeakPtr rendererAfterWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->nextSibling();
 
         auto writingSuggestionsText = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, renderer.document(), writingSuggestionData->content());
         m_updater.m_builder.attach(*newWritingSuggestionsRenderer, WTFMove(writingSuggestionsText));
 
         editor.setWritingSuggestionRenderer(*newWritingSuggestionsRenderer.get());
         m_updater.m_builder.attach(*parentForWritingSuggestions, WTFMove(newWritingSuggestionsRenderer), rendererAfterWritingSuggestions.get());
+
+        if (!parentForWritingSuggestions) {
+            destroyWritingSuggestionsIfNeeded();
+            return;
+        }
 
         auto* prefixNode = nodeBeforeWritingSuggestionsTextRenderer->textNode();
         if (!prefixNode) {

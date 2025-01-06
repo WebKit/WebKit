@@ -30,8 +30,11 @@
 
 #import <AppKit/AppKit.h>
 #import <wtf/MainThread.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace PAL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SystemSleepListenerMac);
 
 std::unique_ptr<SystemSleepListener> SystemSleepListener::create(Client& client)
 {

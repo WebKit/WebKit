@@ -27,9 +27,10 @@
 
 #include "NetworkResourceLoadIdentifier.h"
 #include "SandboxExtension.h"
+#include "SessionState.h"
 #include "WebsitePoliciesData.h"
-#include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/NavigationIdentifier.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <wtf/text/WTFString.h>
@@ -37,8 +38,8 @@
 namespace WebKit {
 
 struct GoToBackForwardItemParameters {
-    uint64_t navigationID;
-    WebCore::BackForwardItemIdentifier backForwardItemID;
+    WebCore::NavigationIdentifier navigationID;
+    Ref<FrameState> frameState;
     WebCore::FrameLoadType backForwardType;
     WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad;
     std::optional<WebsitePoliciesData> websitePolicies;

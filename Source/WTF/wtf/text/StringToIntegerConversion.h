@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringView.h>
 
 namespace WTF {
@@ -47,15 +48,13 @@ template<typename IntegralType, typename CharacterType> std::optional<IntegralTy
     if (!data.data())
         return std::nullopt;
 
-    while (!data.empty() && isUnicodeCompatibleASCIIWhitespace(data.front()))
-        data = data.subspan(1);
+    skipWhile<isUnicodeCompatibleASCIIWhitespace>(data);
 
     bool isNegative = false;
-    if (std::is_signed_v<IntegralType> && !data.empty() && data.front() == '-') {
-        data = data.subspan(1);
+    if (std::is_signed_v<IntegralType> && skipExactly(data, '-'))
         isNegative = true;
-    } else if (!data.empty() && data.front() == '+')
-        data = data.subspan(1);
+    else
+        skipExactly(data, '+');
 
     auto isCharacterAllowedInBase = [] (auto character, auto base) {
         if (isASCIIDigit(character))
@@ -68,8 +67,8 @@ template<typename IntegralType, typename CharacterType> std::optional<IntegralTy
 
     Checked<IntegralType, RecordOverflow> value;
     do {
-        IntegralType digitValue = isASCIIDigit(data.front()) ? data.front() - '0' : toASCIILowerUnchecked(data.front()) - 'a' + 10;
-        data = data.subspan(1);
+        auto c = consume(data);
+        IntegralType digitValue = isASCIIDigit(c) ? c - '0' : toASCIILowerUnchecked(c) - 'a' + 10;
         value *= static_cast<IntegralType>(base);
         if (isNegative)
             value -= digitValue;
@@ -81,8 +80,7 @@ template<typename IntegralType, typename CharacterType> std::optional<IntegralTy
         return std::nullopt;
 
     if (policy == TrailingJunkPolicy::Disallow) {
-        while (!data.empty() && isUnicodeCompatibleASCIIWhitespace(data.front()))
-            data = data.subspan(1);
+        skipWhile<isUnicodeCompatibleASCIIWhitespace>(data);
         if (!data.empty())
             return std::nullopt;
     }

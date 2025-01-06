@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,10 @@ private:
 inline HeapIterationScope::HeapIterationScope(JSC::Heap& heap)
     : m_heap(heap)
 {
+    // FIXME: It would be nice to assert we're holding the API lock when iterating the heap so we know no other thread is mutating the heap
+    // but adding `ASSERT_WITH_MESSAGE(heap.vm().currentThreadIsHoldingAPILock(), "Trying to iterate the JS heap without the API lock");`
+    // causes spurious crashes since the only thing technically needed is just heap.hasAccess() but that doesn't verify this thread is
+    // the one with access only that *some* thread has access.
     m_heap.willStartIterating();
 }
 

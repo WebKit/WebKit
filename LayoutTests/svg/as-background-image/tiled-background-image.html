@@ -35,9 +35,13 @@
   }
 </style>
 <script>
-  function setScale() {
-    if (window.internals)
-      window.internals.setPageScaleFactor(2, 0, 0);
+  if (window.testRunner)
+      window.testRunner.waitUntilDone();
+  async function setScale() {
+    if (window.testRunner) {
+      await window.testRunner.setPageScaleFactor(2, 0, 0);
+      window.testRunner.notifyDone();
+    }
   }
 </script>
 </head>

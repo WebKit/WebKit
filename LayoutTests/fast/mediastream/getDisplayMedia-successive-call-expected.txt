@@ -1,0 +1,3 @@
+
+PASS Validate that a pending getDisplayMedia is cancelled when a new getDisplayMedia call is made
+

@@ -11,9 +11,9 @@
 #ifndef PC_VIDEO_TRACK_H_
 #define PC_VIDEO_TRACK_H_
 
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "api/media_stream_interface.h"
 #include "api/media_stream_track.h"
 #include "api/scoped_refptr.h"
@@ -70,7 +70,7 @@ class VideoTrack : public MediaStreamTrack<VideoTrackInterface>,
   // Implements ObserverInterface. Observes `video_source_` state.
   void OnChanged() override;
 
-  RTC_NO_UNIQUE_ADDRESS webrtc::SequenceChecker signaling_thread_;
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker signaling_thread_;
   rtc::Thread* const worker_thread_;
   const rtc::scoped_refptr<
       VideoTrackSourceProxyWithInternal<VideoTrackSourceInterface>>

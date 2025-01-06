@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -172,36 +172,7 @@ void isoType::freeAfterDestruction(void* p) \
     bisoHeap().deallocate(p); \
 } \
 \
-struct MakeBisoMallocedImplMacroSemicolonifier##isoType { }
-
-#define MAKE_BISO_MALLOCED_IMPL_TEMPLATE(isoType, heapType) \
-template<> \
-::bmalloc::api::heapType<isoType>& isoType::bisoHeap() \
-{ \
-    static ::bmalloc::api::heapType<isoType> heap("WebKit_"#isoType); \
-    return heap; \
-} \
-\
-template<> \
-void* isoType::operator new(size_t size) \
-{ \
-    RELEASE_BASSERT(size == sizeof(isoType)); \
-    return bisoHeap().allocate(); \
-} \
-\
-template<> \
-void isoType::operator delete(void* p) \
-{ \
-    bisoHeap().deallocate(p); \
-} \
-\
-template<> \
-void isoType::freeAfterDestruction(void* p) \
-{ \
-    bisoHeap().deallocate(p); \
-} \
-\
-struct MakeBisoMallocedImplMacroSemicolonifier##isoType { }
+using __makeBisoMallocedInlineMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
 } } // namespace bmalloc::api
 

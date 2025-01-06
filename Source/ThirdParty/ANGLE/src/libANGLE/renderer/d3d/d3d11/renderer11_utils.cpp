@@ -975,8 +975,10 @@ void SetUAVRelatedResourceLimits(D3D_FEATURE_LEVEL featureLevel, gl::Caps *caps)
     // https://docs.microsoft.com/en-us/windows/desktop/direct3d11/overviews-direct3d-11-resources-limits
     // Resource size (in MB) for any of the preceding resources is min(max(128,0.25f * (amount of
     // dedicated VRAM)), 2048) MB. So we set it to 128MB to keep same with GL backend.
-    caps->maxShaderStorageBlockSize =
-        D3D11_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024 * 1024;
+    GLint maxResourceSize = D3D11_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024 * 1024;
+    caps->maxShaderStorageBlockSize = maxResourceSize;
+
+    caps->maxAtomicCounterBufferSize = maxResourceSize;
 
     // Allocate the remaining slots for images and shader storage blocks.
     // The maximum number of fragment shader outputs depends on the current context version, so we
@@ -1631,6 +1633,7 @@ void GenerateCaps(ID3D11Device *device,
     extensions->fenceNV                     = GetEventQuerySupport(featureLevel);
     extensions->disjointTimerQueryEXT       = true;
     extensions->robustnessEXT               = true;
+    extensions->robustnessKHR               = true;
     // Direct3D guarantees to return zero for any resource that is accessed out of bounds.
     // See https://msdn.microsoft.com/en-us/library/windows/desktop/ff476332(v=vs.85).aspx
     // and https://msdn.microsoft.com/en-us/library/windows/desktop/ff476900(v=vs.85).aspx
@@ -1696,7 +1699,7 @@ void GenerateCaps(ID3D11Device *device,
     extensions->textureMultisampleANGLE = true;
     extensions->provokingVertexANGLE    = true;
     extensions->blendFuncExtendedEXT    = true;
-    // http://anglebug.com/4926
+    // http://anglebug.com/42263500
     extensions->texture3DOES                             = false;
     extensions->baseInstanceEXT                          = true;
     extensions->baseVertexBaseInstanceANGLE              = true;
@@ -1719,7 +1722,7 @@ void GenerateCaps(ID3D11Device *device,
     extensions->depthBufferFloat2NV = false;
 
     // GL_EXT_clip_control
-    extensions->clipControlEXT = (featureLevel >= D3D_FEATURE_LEVEL_9_3);
+    extensions->clipControlEXT = (featureLevel >= D3D_FEATURE_LEVEL_10_0);
 
     // GL_APPLE_clip_distance / GL_EXT_clip_cull_distance / GL_ANGLE_clip_cull_distance
     extensions->clipDistanceAPPLE         = true;
@@ -1748,8 +1751,8 @@ void GenerateCaps(ID3D11Device *device,
             extensions->shaderPixelLocalStorageCoherentANGLE = true;
             plsOptions->fragmentSyncType = ShFragmentSynchronizationType::RasterizerOrderViews_D3D;
         }
-        // TODO(anglebug.com/7279): If we add RG* support to pixel local storage, these are *NOT*
-        // in the set of common formats, so we need to query support for each individualy:
+        // TODO(anglebug.com/40096838): If we add RG* support to pixel local storage, these are
+        // *NOT* in the set of common formats, so we need to query support for each individualy:
         // https://learn.microsoft.com/en-us/windows/win32/direct3d11/typed-unordered-access-view-loads
         plsOptions->supportsNativeRGBA8ImageFormats =
             renderer11DeviceCaps.supportsUAVLoadStoreCommonFormats;
@@ -2530,7 +2533,6 @@ void InitializeFeatures(const Renderer11DeviceCaps &deviceCaps,
 
     ANGLE_FEATURE_CONDITION(features, mrtPerfWorkaround, true);
     ANGLE_FEATURE_CONDITION(features, zeroMaxLodWorkaround, isFeatureLevel9_3);
-    ANGLE_FEATURE_CONDITION(features, useInstancedPointSpriteEmulation, isFeatureLevel9_3);
     ANGLE_FEATURE_CONDITION(features, allowES3OnFL100, false);
 
     // TODO(jmadill): Disable workaround when we have a fixed compiler DLL.
@@ -2572,7 +2574,7 @@ void InitializeFeatures(const Renderer11DeviceCaps &deviceCaps,
     // The tiny stencil texture workaround involves using CopySubresource or UpdateSubresource on a
     // depth stencil texture.  This is not allowed until feature level 10.1 but since it is not
     // possible to support ES3 on these devices, there is no need for the workaround to begin with
-    // (anglebug.com/1572).
+    // (anglebug.com/42260536).
     ANGLE_FEATURE_CONDITION(features, emulateTinyStencilTextures,
                             isAMD && !(deviceCaps.featureLevel < D3D_FEATURE_LEVEL_10_1));
 

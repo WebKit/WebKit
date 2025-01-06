@@ -15,7 +15,9 @@
 namespace webrtc {
 
 TEST(LifetimeStatistics, TotalSamplesReceived) {
-  StatisticsCalculator stats;
+  TickTimer timer;
+  StatisticsCalculator stats(&timer);
+  stats.DecodedOutputPlayed();
   for (int i = 0; i < 10; ++i) {
     stats.IncreaseCounter(480, 48000);  // 10 ms at 48 kHz.
   }
@@ -23,7 +25,9 @@ TEST(LifetimeStatistics, TotalSamplesReceived) {
 }
 
 TEST(LifetimeStatistics, SamplesConcealed) {
-  StatisticsCalculator stats;
+  TickTimer timer;
+  StatisticsCalculator stats(&timer);
+  stats.DecodedOutputPlayed();
   stats.ExpandedVoiceSamples(100, false);
   stats.ExpandedNoiseSamples(17, false);
   EXPECT_EQ(100u + 17u, stats.GetLifetimeStatistics().concealed_samples);
@@ -34,7 +38,9 @@ TEST(LifetimeStatistics, SamplesConcealed) {
 // would not expect the value to decrease). Instead, the correction should be
 // made to future increments to the stat.
 TEST(LifetimeStatistics, SamplesConcealedCorrection) {
-  StatisticsCalculator stats;
+  TickTimer timer;
+  StatisticsCalculator stats(&timer);
+  stats.DecodedOutputPlayed();
   stats.ExpandedVoiceSamples(100, false);
   EXPECT_EQ(100u, stats.GetLifetimeStatistics().concealed_samples);
   stats.ExpandedVoiceSamplesCorrection(-10);
@@ -55,7 +61,9 @@ TEST(LifetimeStatistics, SamplesConcealedCorrection) {
 // in a modification to concealed_samples stats. Only PLC operations (i.e.,
 // "expand" and "merge") should affect the stat.
 TEST(LifetimeStatistics, NoUpdateOnTimeStretch) {
-  StatisticsCalculator stats;
+  TickTimer timer;
+  StatisticsCalculator stats(&timer);
+  stats.DecodedOutputPlayed();
   stats.ExpandedVoiceSamples(100, false);
   stats.AcceleratedSamples(4711);
   stats.PreemptiveExpandedSamples(17);
@@ -64,7 +72,9 @@ TEST(LifetimeStatistics, NoUpdateOnTimeStretch) {
 }
 
 TEST(StatisticsCalculator, ExpandedSamplesCorrection) {
-  StatisticsCalculator stats;
+  TickTimer timer;
+  StatisticsCalculator stats(&timer);
+  stats.DecodedOutputPlayed();
   NetEqNetworkStatistics stats_output;
   constexpr int kSampleRateHz = 48000;
   constexpr int k10MsSamples = kSampleRateHz / 100;
@@ -100,7 +110,8 @@ TEST(StatisticsCalculator, ExpandedSamplesCorrection) {
 }
 
 TEST(StatisticsCalculator, RelativePacketArrivalDelay) {
-  StatisticsCalculator stats;
+  TickTimer timer;
+  StatisticsCalculator stats(&timer);
 
   stats.RelativePacketArrivalDelay(50);
   NetEqLifetimeStatistics stats_output = stats.GetLifetimeStatistics();
@@ -112,7 +123,8 @@ TEST(StatisticsCalculator, RelativePacketArrivalDelay) {
 }
 
 TEST(StatisticsCalculator, ReceivedPacket) {
-  StatisticsCalculator stats;
+  TickTimer timer;
+  StatisticsCalculator stats(&timer);
 
   stats.ReceivedPacket();
   NetEqLifetimeStatistics stats_output = stats.GetLifetimeStatistics();
@@ -126,7 +138,8 @@ TEST(StatisticsCalculator, ReceivedPacket) {
 TEST(StatisticsCalculator, InterruptionCounter) {
   constexpr int fs_khz = 48;
   constexpr int fs_hz = fs_khz * 1000;
-  StatisticsCalculator stats;
+  TickTimer timer;
+  StatisticsCalculator stats(&timer);
   stats.DecodedOutputPlayed();
   stats.EndExpandEvent(fs_hz);
   auto lts = stats.GetLifetimeStatistics();
@@ -160,7 +173,8 @@ TEST(StatisticsCalculator, InterruptionCounter) {
 TEST(StatisticsCalculator, InterruptionCounterDoNotLogBeforeDecoding) {
   constexpr int fs_khz = 48;
   constexpr int fs_hz = fs_khz * 1000;
-  StatisticsCalculator stats;
+  TickTimer timer;
+  StatisticsCalculator stats(&timer);
 
   // Add an event that is longer than 150 ms. Should normally be logged, but we
   // have not called DecodedOutputPlayed() yet, so it shouldn't this time.
@@ -180,7 +194,8 @@ TEST(StatisticsCalculator, InterruptionCounterDoNotLogBeforeDecoding) {
 }
 
 TEST(StatisticsCalculator, DiscardedPackets) {
-  StatisticsCalculator statistics_calculator;
+  TickTimer timer;
+  StatisticsCalculator statistics_calculator(&timer);
   EXPECT_EQ(0u,
             statistics_calculator.GetLifetimeStatistics().packets_discarded);
 
@@ -201,6 +216,51 @@ TEST(StatisticsCalculator, DiscardedPackets) {
   statistics_calculator.FlushedPacketBuffer();
   EXPECT_EQ(11u,
             statistics_calculator.GetLifetimeStatistics().packets_discarded);
+}
+
+TEST(StatisticsCalculator, JitterBufferDelay) {
+  TickTimer timer;
+  StatisticsCalculator stats(&timer);
+  NetEqLifetimeStatistics lts;
+  lts = stats.GetLifetimeStatistics();
+  EXPECT_EQ(lts.total_processing_delay_us, 0ul);
+  stats.JitterBufferDelay(/*num_samples=*/480,
+                          /*waiting_time_ms=*/90ul,
+                          /*target_delay_ms=*/80ul,
+                          /*unlimited_target_delay_ms=*/70,
+                          /*processing_delay_us=*/100 * 1000ul);
+  lts = stats.GetLifetimeStatistics();
+  EXPECT_EQ(lts.jitter_buffer_delay_ms / 480, 90ul);
+  EXPECT_EQ(lts.jitter_buffer_target_delay_ms / 480, 80ul);
+  EXPECT_EQ(lts.jitter_buffer_minimum_delay_ms / 480, 70ul);
+  EXPECT_EQ(lts.total_processing_delay_us / 480, 100 * 1000ul);
+  EXPECT_EQ(lts.jitter_buffer_emitted_count, 480ul);
+  stats.JitterBufferDelay(/*num_samples=*/480,
+                          /*waiting_time_ms=*/90ul,
+                          /*target_delay_ms=*/80ul,
+                          /*unlimited_target_delay_ms=*/70,
+                          /*processing_delay_us=*/100 * 1000ul);
+  lts = stats.GetLifetimeStatistics();
+  EXPECT_EQ(lts.jitter_buffer_delay_ms / 960, 90ul);
+  EXPECT_EQ(lts.jitter_buffer_target_delay_ms / 960, 80ul);
+  EXPECT_EQ(lts.jitter_buffer_minimum_delay_ms / 960, 70ul);
+  EXPECT_EQ(lts.total_processing_delay_us / 960, 100 * 1000ul);
+  EXPECT_EQ(lts.jitter_buffer_emitted_count, 960ul);
+}
+
+TEST(StatisticsCalculator, CountStatsAfterFirstDecodedPacket) {
+  TickTimer timer;
+  StatisticsCalculator stats(&timer);
+  stats.IncreaseCounter(/*num_samples=*/480, /*fs_hz=*/48000);
+  stats.ExpandedVoiceSamples(/*num_samples=*/480,
+                             /*is_new_concealment_event=*/true);
+  NetEqLifetimeStatistics lts = stats.GetLifetimeStatistics();
+  EXPECT_EQ(lts.total_samples_received, 0u);
+  EXPECT_EQ(lts.concealed_samples, 0u);
+  stats.DecodedOutputPlayed();
+  stats.IncreaseCounter(/*num_samples=*/480, /*fs_hz=*/48000);
+  lts = stats.GetLifetimeStatistics();
+  EXPECT_EQ(lts.total_samples_received, 480u);
 }
 
 }  // namespace webrtc

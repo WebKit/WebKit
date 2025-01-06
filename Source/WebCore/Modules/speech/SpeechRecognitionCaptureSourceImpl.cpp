@@ -30,6 +30,7 @@
 
 #include "SpeechRecognitionUpdate.h"
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "CAAudioStreamDescription.h"
@@ -39,10 +40,10 @@
 namespace WebCore {
 
 #if !RELEASE_LOG_DISABLED
-static const void* nextLogIdentifier()
+static uint64_t nextLogIdentifier()
 {
     static uint64_t logIdentifier = cryptographicallyRandomNumber<uint32_t>();
-    return reinterpret_cast<const void*>(++logIdentifier);
+    return ++logIdentifier;
 }
 
 static RefPtr<Logger>& nullLogger()
@@ -51,6 +52,8 @@ static RefPtr<Logger>& nullLogger()
     return logger;
 }
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionCaptureSourceImpl);
 
 SpeechRecognitionCaptureSourceImpl::SpeechRecognitionCaptureSourceImpl(SpeechRecognitionConnectionClientIdentifier identifier, DataCallback&& dataCallback, StateUpdateCallback&& stateUpdateCallback, Ref<RealtimeMediaSource>&& source)
     : m_clientIdentifier(identifier)

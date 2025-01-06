@@ -66,7 +66,7 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
         
         // But always use the initial fill paint server.
         LegacyRenderSVGResourceSolidColor* colorResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
-        colorResource->setColor(SVGRenderStyle::initialFillPaintColor().absoluteColor());
+        colorResource->setColor(SVGRenderStyle::initialFillPaintColor().resolvedColor());
         return colorResource;
     }
 

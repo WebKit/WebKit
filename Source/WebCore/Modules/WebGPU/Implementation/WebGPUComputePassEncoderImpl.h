@@ -30,13 +30,14 @@
 #include "WebGPUComputePassEncoder.h"
 #include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
 
 class ConvertToBackingContext;
 
 class ComputePassEncoderImpl final : public ComputePassEncoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ComputePassEncoderImpl);
 public:
     static Ref<ComputePassEncoderImpl> create(WebGPUPtr<WGPUComputePassEncoder>&& computePassEncoder, ConvertToBackingContext& convertToBackingContext)
     {
@@ -67,8 +68,7 @@ private:
         std::optional<Vector<BufferDynamicOffset>>&&) final;
 
     void setBindGroup(Index32, const BindGroup&,
-        const uint32_t* dynamicOffsetsArrayBuffer,
-        size_t dynamicOffsetsArrayBufferLength,
+        std::span<const uint32_t> dynamicOffsetsArrayBuffer,
         Size64 dynamicOffsetsDataStart,
         Size32 dynamicOffsetsDataLength) final;
 
@@ -77,6 +77,8 @@ private:
     void insertDebugMarker(String&& markerLabel) final;
 
     void setLabelInternal(const String&) final;
+
+    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const { return m_convertToBackingContext; }
 
     WebGPUPtr<WGPUComputePassEncoder> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

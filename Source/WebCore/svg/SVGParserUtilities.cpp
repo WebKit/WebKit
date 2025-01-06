@@ -70,6 +70,7 @@ template <typename CharacterType, typename FloatType = float> static std::option
     // Advance to first non-digit.
     skipWhile<isASCIIDigit>(buffer);
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     if (buffer.position() != ptrStartIntPart) {
         auto ptrScanIntPart = buffer.position() - 1;
         FloatType multiplier = 1;
@@ -81,6 +82,7 @@ template <typename CharacterType, typename FloatType = float> static std::option
         if (!isValidRange(integer))
             return std::nullopt;
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     // read the decimals
     if (buffer.hasCharactersRemaining() && *buffer == '.') {
@@ -95,7 +97,7 @@ template <typename CharacterType, typename FloatType = float> static std::option
     }
 
     // read the exponent part
-    if (buffer.position() != start && buffer.position() + 1 < buffer.end() && (*buffer == 'e' || *buffer == 'E')
+    if (buffer.position() != start && buffer.span().size() > 1 && (*buffer == 'e' || *buffer == 'E')
         && (buffer[1] != 'x' && buffer[1] != 'm')) {
         ++buffer;
 
@@ -269,19 +271,21 @@ std::optional<HashSet<String>> parseGlyphName(StringView string)
 
         while (buffer.hasCharactersRemaining()) {
             // Leading and trailing white space, and white space before and after separators, will be ignored.
-            auto inputStart = buffer.position();
+            auto inputStart = buffer.span();
 
             skipUntil(buffer, ',');
 
-            if (buffer.position() == inputStart)
+            if (buffer.position() == inputStart.data())
                 break;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             // walk backwards from the ; to ignore any whitespace
             auto inputEnd = buffer.position() - 1;
-            while (inputStart < inputEnd && isASCIIWhitespace(*inputEnd))
+            while (inputStart.data() < inputEnd && isASCIIWhitespace(*inputEnd))
                 --inputEnd;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-            values.add(String({ inputStart, static_cast<size_t>(inputEnd - inputStart + 1) }));
+            values.add(inputStart.first(inputEnd - inputStart.data() + 1));
             skipOptionalSVGSpacesOrDelimiter(buffer, ',');
         }
         return values;

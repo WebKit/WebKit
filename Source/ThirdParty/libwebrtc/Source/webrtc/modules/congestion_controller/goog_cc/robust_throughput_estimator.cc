@@ -13,10 +13,10 @@
 #include <stddef.h>
 
 #include <algorithm>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
@@ -101,9 +101,9 @@ void RobustThroughputEstimator::IncomingPacketFeedbackVector(
   }
 }
 
-absl::optional<DataRate> RobustThroughputEstimator::bitrate() const {
+std::optional<DataRate> RobustThroughputEstimator::bitrate() const {
   if (window_.empty() || window_.size() < settings_.required_packets)
-    return absl::nullopt;
+    return std::nullopt;
 
   TimeDelta largest_recv_gap(TimeDelta::Zero());
   TimeDelta second_largest_recv_gap(TimeDelta::Zero());

@@ -24,7 +24,7 @@ void AnalyzerHelper::AddTrackToStreamMapping(
     absl::string_view track_id,
     absl::string_view receiver_peer,
     absl::string_view stream_label,
-    absl::optional<std::string> sync_group) {
+    std::optional<std::string> sync_group) {
   RTC_DCHECK_RUN_ON(&signaling_sequence_checker_);
   track_to_stream_map_.insert(
       {std::string(track_id),

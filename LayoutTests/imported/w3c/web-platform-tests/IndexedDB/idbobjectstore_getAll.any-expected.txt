@@ -11,4 +11,5 @@ PASS Get lower excluded
 PASS Get bound range (generated) with maxCount
 PASS Non existent key
 PASS zero maxCount
+PASS Get all values with transaction.commit()
 

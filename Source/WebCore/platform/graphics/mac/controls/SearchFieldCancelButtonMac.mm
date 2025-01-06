@@ -44,11 +44,11 @@ SearchFieldCancelButtonMac::SearchFieldCancelButtonMac(SearchFieldCancelButtonPa
 
 IntSize SearchFieldCancelButtonMac::cellSize(NSControlSize controlSize, const ControlStyle&) const
 {
-    static const IntSize sizes[] = {
-        { 22, 22 },
-        { 19, 19 },
-        { 15, 15 },
-        { 22, 22 }
+    static constexpr std::array sizes {
+        IntSize { 22, 22 },
+        IntSize { 19, 19 },
+        IntSize { 15, 15 },
+        IntSize { 22, 22 }
     };
     return sizes[controlSize];
 }

@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Elements with different tabindex must be focused sequentially when pressing 'Tab' keys Test timed out
-tabindex(omitted)  tabindex(empty)  tabindex(a)  tabindex(-1)  tabindex(0)  tabindex(3)  tabindex(2)  tabindex(2) tabindex(2)  tabindex(1)
+PASS Elements with different tabindex must be focused sequentially when pressing 'Tab' keys
+tabindex(omitted)  tabindex(empty)  tabindex(a)  tabindex(-1)  tabindex(0)  tabindex(3)  tabindex(2)  tabindex(2)  tabindex(2) tabindex(1)

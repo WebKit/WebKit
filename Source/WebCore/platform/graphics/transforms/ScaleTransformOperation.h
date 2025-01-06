@@ -40,7 +40,7 @@ public:
 
     WEBCORE_EXPORT static Ref<ScaleTransformOperation> create(double, double, double, TransformOperation::Type);
 
-    Ref<TransformOperation> clone() const override
+    Ref<TransformOperation> clone() const final
     {
         return adoptRef(*new ScaleTransformOperation(m_x, m_y, m_z, type()));
     }
@@ -60,10 +60,9 @@ public:
 
     bool isRepresentableIn2D() const final { return m_z == 1; }
 
-private:
-    bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
+    bool isAffectedByTransformOrigin() const final { return !isIdentity(); }
 
-    bool apply(TransformationMatrix& transform, const FloatSize&) const override
+    bool apply(TransformationMatrix& transform, const FloatSize&) const final
     {
         transform.scale3d(m_x, m_y, m_z);
         return false;
@@ -71,6 +70,7 @@ private:
 
     void dump(WTF::TextStream&) const final;
 
+private:
     ScaleTransformOperation(double, double, double, TransformOperation::Type);
 
     double m_x;

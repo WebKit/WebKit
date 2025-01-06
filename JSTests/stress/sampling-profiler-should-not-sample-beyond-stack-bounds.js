@@ -1,5 +1,10 @@
+//@ skip if $platform == "tvos"
 //@ requireOptions("--useSamplingProfiler=true", "--useObjectAllocationSinking=false", "--sampleInterval=30")
 // Note that original test was using --useProbeOSRExit=1 --sampleInterval=10
+
+// On tvos devices, this tests will use more than the 600M cap from JSCTEST_memoryLimit.
+// Skip it to avoid the crash as a result of exceeding that limit.
+
 
 function foo(ranges) {
     const CHUNK_SIZE = 95;

@@ -22,11 +22,13 @@
 #pragma once
 
 #include "SVGElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGStopElement final : public SVGElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGStopElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGStopElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGStopElement);
 public:
     static Ref<SVGStopElement> create(const QualifiedName&, Document&);
 
@@ -35,10 +37,10 @@ public:
     float offset() const { return m_offset->currentValue(); }
     SVGAnimatedNumber& offsetAnimated() { return m_offset; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGStopElement, SVGElement>;
+
 private:
     SVGStopElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGStopElement, SVGElement>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

@@ -1,25 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-68; totalPixels=0-885">
 <style>
-  div {
-    display: inline-block;
-    border: 1px solid black;
-  }
-  span {
-    font-size: 100px;
-    background-color: gray;
-    line-height: 1.5em;
-    border: 2px solid black;
-    border-radius: 50%;
-  }
+    .test {
+        position: relative;
+        display: inline-block;
+        border: 1px solid black;
+        margin: 20px 50px;
+    }
+    span {
+        font-size: 80px;
+        background-color: green;
+        line-height: 1.5em;
+        border: 10px solid black;
+        border-radius: 1px;
+    }
+    
+    .vertical {
+        -webkit-writing-mode: vertical-rl;
+    }
   
-  .vertical {
-    -webkit-writing-mode: vertical-rl;
-  }
+    .obscurer {
+        position: absolute;
+        background-color: gray;
+    }
+    
+    .horizontal .obscurer {
+        top: 0px;
+        left: -1px;
+        width: 3px;
+        height: 100%;
+    }
+
+    .horizontal .obscurer.right {
+        left: auto;
+        right: -1px;
+    }
+
+    .vertical .obscurer {
+        top: -1x;
+        left: 0px;
+        width: 100%;
+        height: 3px;
+    }
+
+    .vertical .obscurer.bottom {
+        top: auto;
+        bottom: -1px;
+    }
 </style>
+</head>
 <body>
-  <div class="horizontal">
-    <span>&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-  </div>
-  <div class="vertical">
-    <span>&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-  </div>
+    <div class="test horizontal">
+        <span>&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <div class="obscurer left"></div>
+        <div class="obscurer right"></div>
+    </div>
+    <div class="test vertical">
+        <span>&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <div class="obscurer top"></div>
+        <div class="obscurer bottom"></div>
+    </div>
 </div>
+</body>
+</html>

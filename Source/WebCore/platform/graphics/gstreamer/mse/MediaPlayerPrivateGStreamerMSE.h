@@ -47,6 +47,8 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::GStreamerMSE; }
+
     void load(const String&) override;
     void load(const URL&, const ContentType&, MediaSourcePrivateClient&) override;
 
@@ -84,8 +86,15 @@ public:
     void startSource(const Vector<RefPtr<MediaSourceTrackGStreamer>>& tracks);
     WebKitMediaSrc* webKitMediaSrc() { return reinterpret_cast<WebKitMediaSrc*>(m_source.get()); }
 
+    void setEosWithNoBuffers(bool);
+
 #if !RELEASE_LOG_DISABLED
     WTFLogChannel& logChannel() const final { return WebCore::LogMediaSource; }
+#endif
+
+    void checkPlayingConsistency() final;
+#ifndef GST_DISABLE_GST_DEBUG
+    void setShouldDisableSleep(bool) final;
 #endif
 
 private:
@@ -115,10 +124,17 @@ private:
     Vector<RefPtr<MediaSourceTrackGStreamer>> m_tracks;
 
     bool m_isWaitingForPreroll = true;
+    bool m_isEosWithNoBuffers = false;
     MediaPlayer::ReadyState m_mediaSourceReadyState = MediaPlayer::ReadyState::HaveNothing;
     MediaPlayer::NetworkState m_mediaSourceNetworkState = MediaPlayer::NetworkState::Empty;
+
+    bool m_playbackStateChangedNotificationPending { false };
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaPlayerPrivateGStreamerMSE)
+static bool isType(const WebCore::MediaPlayerPrivateInterface& player) { return player.mediaPlayerType() == WebCore::MediaPlayerType::GStreamerMSE; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // USE(GSTREAMER)

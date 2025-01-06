@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,12 +12,14 @@
 #ifndef AOM_AV1_COMMON_AV1_COMMON_INT_H_
 #define AOM_AV1_COMMON_AV1_COMMON_INT_H_
 
+#include <stdbool.h>
+
 #include "config/aom_config.h"
 #include "config/av1_rtcd.h"
 
 #include "aom/internal/aom_codec_internal.h"
 #include "aom_dsp/flow_estimation/corner_detect.h"
-#include "aom_util/aom_thread.h"
+#include "aom_util/aom_pthread.h"
 #include "av1/common/alloccommon.h"
 #include "av1/common/av1_loopfilter.h"
 #include "av1/common/entropy.h"
@@ -317,6 +319,9 @@ typedef struct SequenceHeader {
   // Operating point info.
   int operating_points_cnt_minus_1;
   int operating_point_idc[MAX_NUM_OPERATING_POINTS];
+  // True if operating_point_idc[op] is not equal to 0 for any value of op from
+  // 0 to operating_points_cnt_minus_1.
+  bool has_nonzero_operating_point_idc;
   int timing_info_present;
   aom_timing_info_t timing_info;
   uint8_t decoder_model_info_present_flag;
@@ -1083,13 +1088,13 @@ static void unlock_buffer_pool(BufferPool *const pool) {
 #endif
 }
 
-static INLINE YV12_BUFFER_CONFIG *get_ref_frame(AV1_COMMON *cm, int index) {
+static inline YV12_BUFFER_CONFIG *get_ref_frame(AV1_COMMON *cm, int index) {
   if (index < 0 || index >= REF_FRAMES) return NULL;
   if (cm->ref_frame_map[index] == NULL) return NULL;
   return &cm->ref_frame_map[index]->buf;
 }
 
-static INLINE int get_free_fb(AV1_COMMON *cm) {
+static inline int get_free_fb(AV1_COMMON *cm) {
   RefCntBuffer *const frame_bufs = cm->buffer_pool->frame_bufs;
   int i;
 
@@ -1123,7 +1128,7 @@ static INLINE int get_free_fb(AV1_COMMON *cm) {
   return i;
 }
 
-static INLINE RefCntBuffer *assign_cur_frame_new_fb(AV1_COMMON *const cm) {
+static inline RefCntBuffer *assign_cur_frame_new_fb(AV1_COMMON *const cm) {
   // Release the previously-used frame-buffer
   if (cm->cur_frame != NULL) {
     --cm->cur_frame->ref_count;
@@ -1145,7 +1150,7 @@ static INLINE RefCntBuffer *assign_cur_frame_new_fb(AV1_COMMON *const cm) {
 
 // Modify 'lhs_ptr' to reference the buffer at 'rhs_ptr', and update the ref
 // counts accordingly.
-static INLINE void assign_frame_buffer_p(RefCntBuffer **lhs_ptr,
+static inline void assign_frame_buffer_p(RefCntBuffer **lhs_ptr,
                                          RefCntBuffer *rhs_ptr) {
   RefCntBuffer *const old_ptr = *lhs_ptr;
   if (old_ptr != NULL) {
@@ -1159,26 +1164,26 @@ static INLINE void assign_frame_buffer_p(RefCntBuffer **lhs_ptr,
   ++rhs_ptr->ref_count;
 }
 
-static INLINE int frame_is_intra_only(const AV1_COMMON *const cm) {
+static inline int frame_is_intra_only(const AV1_COMMON *const cm) {
   return cm->current_frame.frame_type == KEY_FRAME ||
          cm->current_frame.frame_type == INTRA_ONLY_FRAME;
 }
 
-static INLINE int frame_is_sframe(const AV1_COMMON *cm) {
+static inline int frame_is_sframe(const AV1_COMMON *cm) {
   return cm->current_frame.frame_type == S_FRAME;
 }
 
 // These functions take a reference frame label between LAST_FRAME and
 // EXTREF_FRAME inclusive.  Note that this is different to the indexing
 // previously used by the frame_refs[] array.
-static INLINE int get_ref_frame_map_idx(const AV1_COMMON *const cm,
+static inline int get_ref_frame_map_idx(const AV1_COMMON *const cm,
                                         const MV_REFERENCE_FRAME ref_frame) {
   return (ref_frame >= LAST_FRAME && ref_frame <= EXTREF_FRAME)
              ? cm->remapped_ref_idx[ref_frame - LAST_FRAME]
              : INVALID_IDX;
 }
 
-static INLINE RefCntBuffer *get_ref_frame_buf(
+static inline RefCntBuffer *get_ref_frame_buf(
     const AV1_COMMON *const cm, const MV_REFERENCE_FRAME ref_frame) {
   const int map_idx = get_ref_frame_map_idx(cm, ref_frame);
   return (map_idx != INVALID_IDX) ? cm->ref_frame_map[map_idx] : NULL;
@@ -1186,19 +1191,19 @@ static INLINE RefCntBuffer *get_ref_frame_buf(
 
 // Both const and non-const versions of this function are provided so that it
 // can be used with a const AV1_COMMON if needed.
-static INLINE const struct scale_factors *get_ref_scale_factors_const(
+static inline const struct scale_factors *get_ref_scale_factors_const(
     const AV1_COMMON *const cm, const MV_REFERENCE_FRAME ref_frame) {
   const int map_idx = get_ref_frame_map_idx(cm, ref_frame);
   return (map_idx != INVALID_IDX) ? &cm->ref_scale_factors[map_idx] : NULL;
 }
 
-static INLINE struct scale_factors *get_ref_scale_factors(
+static inline struct scale_factors *get_ref_scale_factors(
     AV1_COMMON *const cm, const MV_REFERENCE_FRAME ref_frame) {
   const int map_idx = get_ref_frame_map_idx(cm, ref_frame);
   return (map_idx != INVALID_IDX) ? &cm->ref_scale_factors[map_idx] : NULL;
 }
 
-static INLINE RefCntBuffer *get_primary_ref_frame_buf(
+static inline RefCntBuffer *get_primary_ref_frame_buf(
     const AV1_COMMON *const cm) {
   const int primary_ref_frame = cm->features.primary_ref_frame;
   if (primary_ref_frame == PRIMARY_REF_NONE) return NULL;
@@ -1207,7 +1212,7 @@ static INLINE RefCntBuffer *get_primary_ref_frame_buf(
 }
 
 // Returns 1 if this frame might allow mvs from some reference frame.
-static INLINE int frame_might_allow_ref_frame_mvs(const AV1_COMMON *cm) {
+static inline int frame_might_allow_ref_frame_mvs(const AV1_COMMON *cm) {
   return !cm->features.error_resilient_mode &&
          cm->seq_params->order_hint_info.enable_ref_frame_mvs &&
          cm->seq_params->order_hint_info.enable_order_hint &&
@@ -1215,12 +1220,12 @@ static INLINE int frame_might_allow_ref_frame_mvs(const AV1_COMMON *cm) {
 }
 
 // Returns 1 if this frame might use warped_motion
-static INLINE int frame_might_allow_warped_motion(const AV1_COMMON *cm) {
+static inline int frame_might_allow_warped_motion(const AV1_COMMON *cm) {
   return !cm->features.error_resilient_mode && !frame_is_intra_only(cm) &&
          cm->seq_params->enable_warped_motion;
 }
 
-static INLINE void ensure_mv_buffer(RefCntBuffer *buf, AV1_COMMON *cm) {
+static inline void ensure_mv_buffer(RefCntBuffer *buf, AV1_COMMON *cm) {
   const int buf_rows = buf->mi_rows;
   const int buf_cols = buf->mi_cols;
   const CommonModeInfoParams *const mi_params = &cm->mi_params;
@@ -1252,13 +1257,15 @@ static INLINE void ensure_mv_buffer(RefCntBuffer *buf, AV1_COMMON *cm) {
   }
 }
 
+#if !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
 void cfl_init(CFL_CTX *cfl, const SequenceHeader *seq_params);
+#endif
 
-static INLINE int av1_num_planes(const AV1_COMMON *cm) {
+static inline int av1_num_planes(const AV1_COMMON *cm) {
   return cm->seq_params->monochrome ? 1 : MAX_MB_PLANE;
 }
 
-static INLINE void av1_init_above_context(CommonContexts *above_contexts,
+static inline void av1_init_above_context(CommonContexts *above_contexts,
                                           int num_planes, int tile_row,
                                           MACROBLOCKD *xd) {
   for (int i = 0; i < num_planes; ++i) {
@@ -1268,7 +1275,7 @@ static INLINE void av1_init_above_context(CommonContexts *above_contexts,
   xd->above_txfm_context = above_contexts->txfm[tile_row];
 }
 
-static INLINE void av1_init_macroblockd(AV1_COMMON *cm, MACROBLOCKD *xd) {
+static inline void av1_init_macroblockd(AV1_COMMON *cm, MACROBLOCKD *xd) {
   const int num_planes = av1_num_planes(cm);
   const CommonQuantParams *const quant_params = &cm->quant_params;
 
@@ -1295,10 +1302,12 @@ static INLINE void av1_init_macroblockd(AV1_COMMON *cm, MACROBLOCKD *xd) {
   }
   xd->mi_stride = cm->mi_params.mi_stride;
   xd->error_info = cm->error;
+#if !CONFIG_REALTIME_ONLY || CONFIG_AV1_DECODER
   cfl_init(&xd->cfl, cm->seq_params);
+#endif
 }
 
-static INLINE void set_entropy_context(MACROBLOCKD *xd, int mi_row, int mi_col,
+static inline void set_entropy_context(MACROBLOCKD *xd, int mi_row, int mi_col,
                                        const int num_planes) {
   int i;
   int row_offset = mi_row;
@@ -1320,12 +1329,12 @@ static INLINE void set_entropy_context(MACROBLOCKD *xd, int mi_row, int mi_col,
   }
 }
 
-static INLINE int calc_mi_size(int len) {
+static inline int calc_mi_size(int len) {
   // len is in mi units. Align to a multiple of SBs.
   return ALIGN_POWER_OF_TWO(len, MAX_MIB_SIZE_LOG2);
 }
 
-static INLINE void set_plane_n4(MACROBLOCKD *const xd, int bw, int bh,
+static inline void set_plane_n4(MACROBLOCKD *const xd, int bw, int bh,
                                 const int num_planes) {
   int i;
   for (i = 0; i < num_planes; i++) {
@@ -1337,7 +1346,7 @@ static INLINE void set_plane_n4(MACROBLOCKD *const xd, int bw, int bh,
   }
 }
 
-static INLINE void set_mi_row_col(MACROBLOCKD *xd, const TileInfo *const tile,
+static inline void set_mi_row_col(MACROBLOCKD *xd, const TileInfo *const tile,
                                   int mi_row, int bh, int mi_col, int bw,
                                   int mi_rows, int mi_cols) {
   xd->mb_to_top_edge = -GET_MV_SUBPEL(mi_row * MI_SIZE);
@@ -1412,7 +1421,7 @@ static INLINE void set_mi_row_col(MACROBLOCKD *xd, const TileInfo *const tile,
     if (!(mi_row & (xd->width - 1))) xd->is_first_horizontal_rect = 1;
 }
 
-static INLINE aom_cdf_prob *get_y_mode_cdf(FRAME_CONTEXT *tile_ctx,
+static inline aom_cdf_prob *get_y_mode_cdf(FRAME_CONTEXT *tile_ctx,
                                            const MB_MODE_INFO *above_mi,
                                            const MB_MODE_INFO *left_mi) {
   const PREDICTION_MODE above = av1_above_block_mode(above_mi);
@@ -1422,7 +1431,7 @@ static INLINE aom_cdf_prob *get_y_mode_cdf(FRAME_CONTEXT *tile_ctx,
   return tile_ctx->kf_y_cdf[above_ctx][left_ctx];
 }
 
-static INLINE void update_partition_context(MACROBLOCKD *xd, int mi_row,
+static inline void update_partition_context(MACROBLOCKD *xd, int mi_row,
                                             int mi_col, BLOCK_SIZE subsize,
                                             BLOCK_SIZE bsize) {
   PARTITION_CONTEXT *const above_ctx = xd->above_partition_context + mi_col;
@@ -1435,7 +1444,7 @@ static INLINE void update_partition_context(MACROBLOCKD *xd, int mi_row,
   memset(left_ctx, partition_context_lookup[subsize].left, bh);
 }
 
-static INLINE int is_chroma_reference(int mi_row, int mi_col, BLOCK_SIZE bsize,
+static inline int is_chroma_reference(int mi_row, int mi_col, BLOCK_SIZE bsize,
                                       int subsampling_x, int subsampling_y) {
   assert(bsize < BLOCK_SIZES_ALL);
   const int bw = mi_size_wide[bsize];
@@ -1445,13 +1454,13 @@ static INLINE int is_chroma_reference(int mi_row, int mi_col, BLOCK_SIZE bsize,
   return ref_pos;
 }
 
-static INLINE aom_cdf_prob cdf_element_prob(const aom_cdf_prob *cdf,
+static inline aom_cdf_prob cdf_element_prob(const aom_cdf_prob *cdf,
                                             size_t element) {
   assert(cdf != NULL);
   return (element > 0 ? cdf[element - 1] : CDF_PROB_TOP) - cdf[element];
 }
 
-static INLINE void partition_gather_horz_alike(aom_cdf_prob *out,
+static inline void partition_gather_horz_alike(aom_cdf_prob *out,
                                                const aom_cdf_prob *const in,
                                                BLOCK_SIZE bsize) {
   (void)bsize;
@@ -1466,7 +1475,7 @@ static INLINE void partition_gather_horz_alike(aom_cdf_prob *out,
   out[1] = AOM_ICDF(CDF_PROB_TOP);
 }
 
-static INLINE void partition_gather_vert_alike(aom_cdf_prob *out,
+static inline void partition_gather_vert_alike(aom_cdf_prob *out,
                                                const aom_cdf_prob *const in,
                                                BLOCK_SIZE bsize) {
   (void)bsize;
@@ -1481,7 +1490,7 @@ static INLINE void partition_gather_vert_alike(aom_cdf_prob *out,
   out[1] = AOM_ICDF(CDF_PROB_TOP);
 }
 
-static INLINE void update_ext_partition_context(MACROBLOCKD *xd, int mi_row,
+static inline void update_ext_partition_context(MACROBLOCKD *xd, int mi_row,
                                                 int mi_col, BLOCK_SIZE subsize,
                                                 BLOCK_SIZE bsize,
                                                 PARTITION_TYPE partition) {
@@ -1520,7 +1529,7 @@ static INLINE void update_ext_partition_context(MACROBLOCKD *xd, int mi_row,
   }
 }
 
-static INLINE int partition_plane_context(const MACROBLOCKD *xd, int mi_row,
+static inline int partition_plane_context(const MACROBLOCKD *xd, int mi_row,
                                           int mi_col, BLOCK_SIZE bsize) {
   const PARTITION_CONTEXT *above_ctx = xd->above_partition_context + mi_col;
   const PARTITION_CONTEXT *left_ctx =
@@ -1537,7 +1546,7 @@ static INLINE int partition_plane_context(const MACROBLOCKD *xd, int mi_row,
 
 // Return the number of elements in the partition CDF when
 // partitioning the (square) block with luma block size of bsize.
-static INLINE int partition_cdf_length(BLOCK_SIZE bsize) {
+static inline int partition_cdf_length(BLOCK_SIZE bsize) {
   if (bsize <= BLOCK_8X8)
     return PARTITION_TYPES;
   else if (bsize == BLOCK_128X128)
@@ -1546,7 +1555,7 @@ static INLINE int partition_cdf_length(BLOCK_SIZE bsize) {
     return EXT_PARTITION_TYPES;
 }
 
-static INLINE int max_block_wide(const MACROBLOCKD *xd, BLOCK_SIZE bsize,
+static inline int max_block_wide(const MACROBLOCKD *xd, BLOCK_SIZE bsize,
                                  int plane) {
   assert(bsize < BLOCK_SIZES_ALL);
   int max_blocks_wide = block_size_wide[bsize];
@@ -1560,7 +1569,7 @@ static INLINE int max_block_wide(const MACROBLOCKD *xd, BLOCK_SIZE bsize,
   return max_blocks_wide >> MI_SIZE_LOG2;
 }
 
-static INLINE int max_block_high(const MACROBLOCKD *xd, BLOCK_SIZE bsize,
+static inline int max_block_high(const MACROBLOCKD *xd, BLOCK_SIZE bsize,
                                  int plane) {
   int max_blocks_high = block_size_high[bsize];
 
@@ -1573,7 +1582,7 @@ static INLINE int max_block_high(const MACROBLOCKD *xd, BLOCK_SIZE bsize,
   return max_blocks_high >> MI_SIZE_LOG2;
 }
 
-static INLINE void av1_zero_above_context(AV1_COMMON *const cm,
+static inline void av1_zero_above_context(AV1_COMMON *const cm,
                                           const MACROBLOCKD *xd,
                                           int mi_col_start, int mi_col_end,
                                           const int tile_row) {
@@ -1609,7 +1618,7 @@ static INLINE void av1_zero_above_context(AV1_COMMON *const cm,
          tx_size_wide[TX_SIZES_LARGEST], aligned_width * sizeof(TXFM_CONTEXT));
 }
 
-static INLINE void av1_zero_left_context(MACROBLOCKD *const xd) {
+static inline void av1_zero_left_context(MACROBLOCKD *const xd) {
   av1_zero(xd->left_entropy_context);
   av1_zero(xd->left_partition_context);
 
@@ -1617,12 +1626,12 @@ static INLINE void av1_zero_left_context(MACROBLOCKD *const xd) {
          sizeof(xd->left_txfm_context_buffer));
 }
 
-static INLINE void set_txfm_ctx(TXFM_CONTEXT *txfm_ctx, uint8_t txs, int len) {
+static inline void set_txfm_ctx(TXFM_CONTEXT *txfm_ctx, uint8_t txs, int len) {
   int i;
   for (i = 0; i < len; ++i) txfm_ctx[i] = txs;
 }
 
-static INLINE void set_txfm_ctxs(TX_SIZE tx_size, int n4_w, int n4_h, int skip,
+static inline void set_txfm_ctxs(TX_SIZE tx_size, int n4_w, int n4_h, int skip,
                                  const MACROBLOCKD *xd) {
   uint8_t bw = tx_size_wide[tx_size];
   uint8_t bh = tx_size_high[tx_size];
@@ -1636,12 +1645,12 @@ static INLINE void set_txfm_ctxs(TX_SIZE tx_size, int n4_w, int n4_h, int skip,
   set_txfm_ctx(xd->left_txfm_context, bh, n4_h);
 }
 
-static INLINE int get_mi_grid_idx(const CommonModeInfoParams *const mi_params,
+static inline int get_mi_grid_idx(const CommonModeInfoParams *const mi_params,
                                   int mi_row, int mi_col) {
   return mi_row * mi_params->mi_stride + mi_col;
 }
 
-static INLINE int get_alloc_mi_idx(const CommonModeInfoParams *const mi_params,
+static inline int get_alloc_mi_idx(const CommonModeInfoParams *const mi_params,
                                    int mi_row, int mi_col) {
   const int mi_alloc_size_1d = mi_size_wide[mi_params->mi_alloc_bsize];
   const int mi_alloc_row = mi_row / mi_alloc_size_1d;
@@ -1651,7 +1660,7 @@ static INLINE int get_alloc_mi_idx(const CommonModeInfoParams *const mi_params,
 }
 
 // For this partition block, set pointers in mi_params->mi_grid_base and xd->mi.
-static INLINE void set_mi_offsets(const CommonModeInfoParams *const mi_params,
+static inline void set_mi_offsets(const CommonModeInfoParams *const mi_params,
                                   MACROBLOCKD *const xd, int mi_row,
                                   int mi_col) {
   // 'mi_grid_base' should point to appropriate memory in 'mi'.
@@ -1665,7 +1674,7 @@ static INLINE void set_mi_offsets(const CommonModeInfoParams *const mi_params,
   xd->tx_type_map_stride = mi_params->mi_stride;
 }
 
-static INLINE void txfm_partition_update(TXFM_CONTEXT *above_ctx,
+static inline void txfm_partition_update(TXFM_CONTEXT *above_ctx,
                                          TXFM_CONTEXT *left_ctx,
                                          TX_SIZE tx_size, TX_SIZE txb_size) {
   BLOCK_SIZE bsize = txsize_to_bsize[txb_size];
@@ -1678,7 +1687,7 @@ static INLINE void txfm_partition_update(TXFM_CONTEXT *above_ctx,
   for (i = 0; i < bw; ++i) above_ctx[i] = txw;
 }
 
-static INLINE TX_SIZE get_sqr_tx_size(int tx_dim) {
+static inline TX_SIZE get_sqr_tx_size(int tx_dim) {
   switch (tx_dim) {
     case 128:
     case 64: return TX_64X64; break;
@@ -1689,7 +1698,7 @@ static INLINE TX_SIZE get_sqr_tx_size(int tx_dim) {
   }
 }
 
-static INLINE TX_SIZE get_tx_size(int width, int height) {
+static inline TX_SIZE get_tx_size(int width, int height) {
   if (width == height) {
     return get_sqr_tx_size(width);
   }
@@ -1728,7 +1737,7 @@ static INLINE TX_SIZE get_tx_size(int width, int height) {
   return TX_4X4;
 }
 
-static INLINE int txfm_partition_context(const TXFM_CONTEXT *const above_ctx,
+static inline int txfm_partition_context(const TXFM_CONTEXT *const above_ctx,
                                          const TXFM_CONTEXT *const left_ctx,
                                          BLOCK_SIZE bsize, TX_SIZE tx_size) {
   const uint8_t txw = tx_size_wide[tx_size];
@@ -1754,7 +1763,7 @@ static INLINE int txfm_partition_context(const TXFM_CONTEXT *const above_ctx,
 
 // Compute the next partition in the direction of the sb_type stored in the mi
 // array, starting with bsize.
-static INLINE PARTITION_TYPE get_partition(const AV1_COMMON *const cm,
+static inline PARTITION_TYPE get_partition(const AV1_COMMON *const cm,
                                            int mi_row, int mi_col,
                                            BLOCK_SIZE bsize) {
   const CommonModeInfoParams *const mi_params = &cm->mi_params;
@@ -1797,7 +1806,7 @@ static INLINE PARTITION_TYPE get_partition(const AV1_COMMON *const cm,
       // PARTITION_VERT_B. To distinguish the latter two, check if the right
       // half was split.
       if (sswide * 4 == bwide) return PARTITION_VERT_4;
-      assert(sswide * 2 == bhigh);
+      assert(sswide * 2 == bwide);
 
       if (mbmi_right->bsize == subsize)
         return PARTITION_VERT;
@@ -1831,7 +1840,7 @@ static INLINE PARTITION_TYPE get_partition(const AV1_COMMON *const cm,
   return base_partitions[split_idx];
 }
 
-static INLINE void set_sb_size(SequenceHeader *const seq_params,
+static inline void set_sb_size(SequenceHeader *const seq_params,
                                BLOCK_SIZE sb_size) {
   seq_params->sb_size = sb_size;
   seq_params->mib_size = mi_size_wide[seq_params->sb_size];
@@ -1841,7 +1850,7 @@ static INLINE void set_sb_size(SequenceHeader *const seq_params,
 // Returns true if the frame is fully lossless at the coded resolution.
 // Note: If super-resolution is used, such a frame will still NOT be lossless at
 // the upscaled resolution.
-static INLINE int is_coded_lossless(const AV1_COMMON *cm,
+static inline int is_coded_lossless(const AV1_COMMON *cm,
                                     const MACROBLOCKD *xd) {
   int coded_lossless = 1;
   if (cm->seg.enabled) {
@@ -1857,7 +1866,7 @@ static INLINE int is_coded_lossless(const AV1_COMMON *cm,
   return coded_lossless;
 }
 
-static INLINE int is_valid_seq_level_idx(AV1_LEVEL seq_level_idx) {
+static inline int is_valid_seq_level_idx(AV1_LEVEL seq_level_idx) {
   return seq_level_idx == SEQ_LEVEL_MAX ||
          (seq_level_idx < SEQ_LEVELS &&
           // The following levels are currently undefined.

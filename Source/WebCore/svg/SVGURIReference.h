@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008, 2009 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,12 +24,14 @@
 #include "Document.h"
 #include "QualifiedName.h"
 #include "SVGPropertyOwnerRegistry.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGElement;
 
 class SVGURIReference {
+    WTF_MAKE_TZONE_ALLOCATED(SVGURIReference);
     WTF_MAKE_NONCOPYABLE(SVGURIReference);
 public:
     virtual ~SVGURIReference() = default;

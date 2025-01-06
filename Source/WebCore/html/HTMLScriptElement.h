@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "DOMTokenList.h"
 #include "HTMLElement.h"
 #include "ScriptElement.h"
 
@@ -34,7 +35,8 @@ class TrustedScriptURL;
 enum class RequestPriority : uint8_t;
 
 class HTMLScriptElement final : public HTMLElement, public ScriptElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLScriptElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLScriptElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLScriptElement);
 public:
     static Ref<HTMLScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted = false);
 
@@ -70,6 +72,8 @@ public:
     String fetchPriorityForBindings() const;
     RequestPriority fetchPriorityHint() const override;
 
+    WEBCORE_EXPORT DOMTokenList& blocking();
+
 private:
     HTMLScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 
@@ -78,6 +82,11 @@ private:
     void didFinishInsertingNode() final;
     void childrenChanged(const ChildChange&) final;
     void finishParsingChildren() final;
+    void removedFromAncestor(RemovalType, ContainerNode&) final;
+
+    void potentiallyBlockRendering() final;
+    void unblockRendering() final;
+    bool isImplicitlyPotentiallyRenderBlocking() const;
 
     ExceptionOr<void> setTextContent(ExceptionOr<String>);
 
@@ -86,7 +95,7 @@ private:
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
     String sourceAttributeValue() const final;
-    String charsetAttributeValue() const final;
+    AtomString charsetAttributeValue() const final;
     String typeAttributeValue() const final;
     String languageAttributeValue() const final;
     bool hasAsyncAttribute() const final;
@@ -98,7 +107,10 @@ private:
 
     bool isScriptPreventedByAttributes() const final;
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(TreeScope&) final;
+
+    std::unique_ptr<DOMTokenList> m_blockingList;
+    bool m_isRenderBlocking { false };
 };
 
 } //namespace

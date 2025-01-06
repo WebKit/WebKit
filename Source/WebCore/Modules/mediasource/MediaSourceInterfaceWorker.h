@@ -47,10 +47,12 @@ private:
     bool isStreamingContent() const final;
     bool attachToElement(WeakPtr<HTMLMediaElement>&&) final;
     void detachFromElement() final;
+    void elementIsShuttingDown() final;
     void openIfDeferredOpen() final;
     bool isManaged() const final;
     void setAsSrcObject(bool) final;
     void memoryPressure() final;
+    bool detachable() const final;
 
     explicit MediaSourceInterfaceWorker(Ref<MediaSourceHandle>&&);
 

@@ -11,9 +11,9 @@
 #ifndef API_VIDEO_VIDEO_STREAM_ENCODER_SETTINGS_H_
 #define API_VIDEO_VIDEO_STREAM_ENCODER_SETTINGS_H_
 
-#include <string>
 
 #include "api/video/video_bitrate_allocator_factory.h"
+#include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/video_encoder_factory.h"
 
@@ -53,6 +53,10 @@ struct VideoStreamEncoderSettings {
   // Negotiated capabilities which the VideoEncoder may expect the other
   // side to use.
   VideoEncoder::Capabilities capabilities;
+
+  // Enables the frame instrumentation generator that is required for automatic
+  // corruption detection.
+  bool enable_frame_instrumentation_generator = false;
 };
 
 }  // namespace webrtc

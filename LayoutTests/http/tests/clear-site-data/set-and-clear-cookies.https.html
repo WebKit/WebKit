@@ -1,0 +1,108 @@
+<html><!-- webkit-test-runner [ OptInPartitionedCookiesEnabled=true CFNetworkNetworkLoaderEnabled=false ] -->
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/cookies/resources/resources/resetCookies.js"></script>
+    <script>
+        description("Tests that first and third-party partitioned cookies are accepted.");
+        jsTestIsAsync = true;
+
+        const iframeUrls = {
+            echoCookies : "https://localhost:8443/cookies/resources/echo-cookies.py",
+            resetCookies : "https://localhost:8443/cookies/resources/reset-cookies.html"
+        };
+
+        function injectThirdPartyIframe(url) {
+            let iframeElement = document.createElement("iframe");
+            iframeElement.src = url;
+            iframeElement.onload = runNextTestOrFinish;
+            document.body.appendChild(iframeElement);
+        }
+
+        function runNextTestOrFinish() {
+            if (!window.testRunner) {
+                testFailed("No testRunner.");
+                finishJSTest();
+            }
+
+            switch (document.location.hash) {
+                case "":
+                    internals.setTrackingPreventionEnabled(true);
+                    testRunner.setStatisticsIsRunningTest(true);
+                    testRunner.setOnlyAcceptFirstPartyCookies(false);
+                    testRunner.dumpChildFramesAsText();
+                    document.location.hash = "1";
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(true, () => {
+                        testRunner.setStatisticsHasHadUserInteraction("https://127.0.0.1:8443", true, () => {
+                            // Should see one cookie.
+                            injectThirdPartyIframe(iframeUrls.resetCookies);
+                        });
+                    }, true);
+                    document.cookie = "test_first_party_cookie=1";
+                    // Should output one cookie in the console message
+                    console.log(`First party cookies before clear-site-data: ${document.cookie}`);
+                    break;
+                case "#1":
+                    document.location.hash = "2";
+                    // Should see one cookie in Frame 2.
+                    injectThirdPartyIframe(`https://localhost:8443/cookies/resources/set-cookie-and-redirect-back.py?isPartitioned=True&redirectBackTo=${iframeUrls.echoCookies}`);
+                    break;
+                case "#2":
+                    document.location.hash = "3";
+                    fetch(`/clear-site-data/resources/clear-site-data-cookies.py`).then((r) => {
+                        setTimeout(runNextTestOrFinish, 100);
+                    });
+                    break;
+                case "#3":
+                    document.location.hash = "4";
+                    // Should not output any cookies in the console message
+                    console.log(`First party cookies after clear-site-data: ${document.cookie}`);
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(false, () => {
+                        // Should see one cookie in Frame 3.
+                        injectThirdPartyIframe(iframeUrls.echoCookies);
+                    }, true);
+                    break;
+                case "#4":
+                    document.location.hash = "5";
+
+                    document.cookie = "test_first_party_cookie=1";
+                    // Should output one cookie in the console message
+                    console.log(`First party cookies before clear-site-data: ${document.cookie}`);
+
+                    // Should see one cookie in Frame 4.
+                    injectThirdPartyIframe(`https://localhost:8443/cookies/resources/set-cookie-and-redirect-back.py?isPartitioned=True&redirectBackTo=${iframeUrls.echoCookies}`);
+                    break;
+                case "#5":
+                    document.location.hash = "6";
+                    // Should see Foo in Frame 5.
+                    injectThirdPartyIframe(`https://localhost:8443/clear-site-data/resources/clear-site-data-cookies.py`);
+                    break;
+                case "#6":
+                    document.location.hash = "7";
+
+                    // Should output one cookie in the console message
+                    console.log(`First party cookies after third-party clear-site-data: ${document.cookie}`);
+
+                    // Should not have cookies in Frame 6.
+                    injectThirdPartyIframe(iframeUrls.echoCookies);
+                    break;
+                case "#7":
+                    document.location.hash = "8";
+                    injectThirdPartyIframe(iframeUrls.resetCookies);
+                    break;
+                case "#8":
+                    internals.setTrackingPreventionEnabled(false);
+                    testRunner.setStatisticsIsRunningTest(false);
+                    finishJSTest();
+                    break;
+                default:
+                    internals.setTrackingPreventionEnabled(false);
+                    testRunner.setStatisticsIsRunningTest(false);
+                    testFailed("Unknown location hash value.");
+                    finishJSTest();
+            }
+        }
+    </script>
+</head>
+<body onload="runNextTestOrFinish()">
+</body>
+</html>

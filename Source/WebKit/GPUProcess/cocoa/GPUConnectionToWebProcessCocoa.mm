@@ -87,18 +87,18 @@ void GPUConnectionToWebProcess::setTCCIdentity()
 
     NSError *error = nil;
     auto bundleProxy = [LSBundleProxy bundleProxyWithAuditToken:*auditToken error:&error];
-    if (error) {
-        RELEASE_LOG_ERROR(WebRTC, "-[LSBundleProxy bundleProxyWithAuditToken:error:] failed with error %s", [[error localizedDescription] UTF8String]);
+    RELEASE_LOG_ERROR_IF(error, WebRTC, "-[LSBundleProxy bundleProxyWithAuditToken:error:] failed with error %s", [[error localizedDescription] UTF8String]);
+
+    String bundleIdentifier = bundleProxy.bundleIdentifier;
+    if (bundleIdentifier.isNull())
+        bundleIdentifier = m_applicationBundleIdentifier;
+
+    if (bundleIdentifier.isNull()) {
+        RELEASE_LOG_ERROR(WebRTC, "Unable to get the bundle identifier");
         return;
     }
 
-    const auto* bundleIdentifier = [bundleProxy.bundleIdentifier UTF8String];
-    if (!bundleIdentifier) {
-        RELEASE_LOG_ERROR(WebRTC, "Unable to get the bundle identifier, bundle is %d", !!bundleProxy);
-        return;
-    }
-
-    auto identity = adoptOSObject(tcc_identity_create(TCC_IDENTITY_CODE_BUNDLE_ID, bundleIdentifier));
+    auto identity = adoptOSObject(tcc_identity_create(TCC_IDENTITY_CODE_BUNDLE_ID, bundleIdentifier.utf8().data()));
     if (!identity) {
         RELEASE_LOG_ERROR(WebRTC, "tcc_identity_create returned null");
         return;

@@ -3,6 +3,9 @@ Select multiple options with mouse drag with no. of options less than the size a
 Also test mouse drag on select element without multiple attribute select only the option under mouse
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 Test for select element with multiple attribute
 Dragging down
 PASS document.getElementById("selectId").options[0].selected is true
@@ -45,7 +48,4 @@ PASS document.getElementById("nonmultiple").options[0].selected is true
 PASS document.getElementById("nonmultiple").options[1].selected is false
 PASS document.getElementById("nonmultiple").options[2].selected is false
 PASS document.getElementById("nonmultiple").options[3].selected is false
-PASS successfullyParsed is true
-
-TEST COMPLETE
 

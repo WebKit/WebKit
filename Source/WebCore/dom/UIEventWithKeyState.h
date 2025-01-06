@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class UIEventWithKeyState : public UIEvent {
-    WTF_MAKE_ISO_ALLOCATED(UIEventWithKeyState);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(UIEventWithKeyState);
 public:
     using Modifier = PlatformEvent::Modifier;
 

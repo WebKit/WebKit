@@ -35,6 +35,7 @@
 #import "WKWebViewInternal.h"
 #import "_WKInspectorConfigurationInternal.h"
 #import "_WKInspectorDebuggableInfoInternal.h"
+#import <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 #import "APIInspectorExtension.h"
@@ -53,7 +54,7 @@
 namespace WebKit {
 
 class _WKRemoteWebInspectorUIProxyClient final : public RemoteWebInspectorUIProxyClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(_WKRemoteWebInspectorUIProxyClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(_WKRemoteWebInspectorUIProxyClient);
 public:
     _WKRemoteWebInspectorUIProxyClient(_WKRemoteWebInspectorViewController *controller)
@@ -77,7 +78,7 @@ public:
     
     Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorUIProxy& inspector) override
     {
-        return static_cast<API::InspectorConfiguration&>([m_controller.configuration _apiObject]);
+        return downcast<API::InspectorConfiguration>([m_controller.configuration _apiObject]);
     }
 
 private:
@@ -124,7 +125,7 @@ private:
 
 - (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL
 {
-    m_remoteInspectorProxy->initialize(static_cast<API::DebuggableInfo&>([debuggableInfo _apiObject]), backendCommandsURL.absoluteString);
+    m_remoteInspectorProxy->initialize(downcast<API::DebuggableInfo>([debuggableInfo _apiObject]), backendCommandsURL.absoluteString);
 }
 
 - (void)close

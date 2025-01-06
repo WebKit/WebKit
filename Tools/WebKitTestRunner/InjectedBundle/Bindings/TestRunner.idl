@@ -28,6 +28,7 @@ interface TestRunner {
     readonly attribute boolean isIOSFamily;
     readonly attribute boolean isMac;
     readonly attribute boolean isKeyboardImmediatelyAvailable;
+    readonly attribute boolean keyboardAppearsOverContent;
 
     // The basics.
     undefined dumpAsText(boolean dumpPixels);
@@ -101,11 +102,12 @@ interface TestRunner {
     undefined setShouldDecideResponsePolicyAfterDelay(boolean value);
     undefined setNavigationGesturesEnabled(boolean value);
     undefined setIgnoresViewportScaleLimits(boolean value);
+    undefined setUseDarkAppearanceForTesting(boolean useDarkAppearance);
     undefined setShouldDownloadUndisplayableMIMETypes(boolean value);
     undefined stopLoading();
 
     // Special DOM functions.
-    undefined clearBackForwardList();
+    Promise<undefined> clearBackForwardList();
     undefined execCommand(DOMString name, DOMString showUI, DOMString value);
     boolean isCommandEnabled(DOMString name);
     unsigned long windowCount();
@@ -120,7 +122,7 @@ interface TestRunner {
     undefined testRepaint();
     undefined repaintSweepHorizontally();
     undefined display();
-    undefined displayAndTrackRepaints();
+    Promise<undefined> displayAndTrackRepaints();
     undefined displayOnLoadFinish();
     undefined dontForceRepaint();
 
@@ -312,8 +314,6 @@ interface TestRunner {
     boolean doesStatisticsDomainIDExistInDatabase(unsigned long domainID);
     undefined setStatisticsEnabled(boolean value);
     boolean isStatisticsEphemeral();
-    undefined installStatisticsDidModifyDataRecordsCallback(object callback);
-    undefined installStatisticsDidScanDataRecordsCallback(object callback);
     undefined setStatisticsDebugMode(boolean value, object completionHandler);
     undefined setStatisticsPrevalentResourceForDebugMode(DOMString hostName, object completionHandler);
     Promise<undefined> setStatisticsLastSeen(DOMString hostName, double seconds);
@@ -339,8 +339,8 @@ interface TestRunner {
     undefined setStatisticsTopFrameUniqueRedirectFrom(DOMString hostName, DOMString hostNameRedirectedTo);
     undefined setStatisticsCrossSiteLoadWithLinkDecoration(DOMString fromHost, DOMString toHost, boolean wasFiltered);
     undefined setStatisticsTimeToLiveUserInteraction(double seconds);
-    boolean statisticsNotifyObserver();
-    undefined statisticsProcessStatisticsAndDataRecords();
+    Promise<undefined> statisticsNotifyObserver();
+    Promise<undefined> statisticsProcessStatisticsAndDataRecords();
     undefined statisticsUpdateCookieBlocking(object completionHandler);
     undefined setStatisticsTimeAdvanceForTesting(double value);
     undefined setStatisticsIsRunningTest(boolean value);
@@ -352,13 +352,13 @@ interface TestRunner {
     undefined statisticsClearInMemoryAndPersistentStore(object callback);
     undefined statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned long hours, object callback);
     undefined statisticsClearThroughWebsiteDataRemoval(object callback);
-    undefined statisticsDeleteCookiesForHost(DOMString hostName, boolean includeHttpOnlyCookies);
+    Promise<undefined> statisticsDeleteCookiesForHost(DOMString hostName, boolean includeHttpOnlyCookies);
     boolean isStatisticsHasLocalStorage(DOMString hostName);
     undefined setStatisticsCacheMaxAgeCap(double seconds);
     undefined statisticsResetToConsistentState(object completionHandler);
     boolean hasStatisticsIsolatedSession(DOMString hostName);
     undefined setStatisticsShouldDowngradeReferrer(boolean value, object callback);
-    undefined setStatisticsShouldBlockThirdPartyCookies(boolean value, object callback, optional boolean onlyOnSitesWithoutUserInteraction);
+    undefined setStatisticsShouldBlockThirdPartyCookies(boolean value, object callback, optional boolean onlyOnSitesWithoutUserInteraction, optional boolean onlyUnpartitionedCookies);
     undefined setStatisticsFirstPartyWebsiteDataRemovalMode(boolean value, object callback);
     undefined statisticsSetToSameSiteStrictCookies(DOMString hostName, object callback);
     undefined statisticsSetFirstPartyHostCNAMEDomain(DOMString firstPartyURLString, DOMString cnameURLString, object callback);
@@ -408,10 +408,12 @@ interface TestRunner {
     undefined removeMockMediaDevice(DOMString persistentId);
     undefined setMockMediaDeviceIsEphemeral(DOMString persistentId, boolean isEphemeral);
     undefined resetMockMediaDevices();
-    undefined setMockCameraOrientation(unsigned long orientation);
+    undefined setMockCameraOrientation(unsigned long orientation, DOMString persistentId);
     boolean isMockRealtimeMediaSourceCenterEnabled();
     undefined setMockCaptureDevicesInterrupted(boolean isCameraInterrupted, boolean isMicrophoneInterrupted);
     undefined triggerMockCaptureConfigurationChange(boolean forMicrophone, boolean forDisplay);
+
+    undefined setCaptureState(boolean cameraState, boolean microphoneState, boolean displayState);
 
     boolean hasAppBoundSession();
     undefined clearAppBoundSession();
@@ -460,4 +462,7 @@ interface TestRunner {
 
     undefined getAndClearReportedWindowProxyAccessDomains(object callback);
     Promise<undefined> flushConsoleLogs();
+
+    Promise<undefined> setTopContentInset(double contentInset);
+    Promise<undefined> setPageScaleFactor(unrestricted double scaleFactor, long x, long y);
 };

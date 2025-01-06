@@ -36,17 +36,20 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/ScopedLambda.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
 using PutBytesCallback = size_t(std::span<const uint8_t>);
 
-uint8_t verifyImageBufferIsBigEnough(const void* buffer, size_t bufferSize)
+uint8_t verifyImageBufferIsBigEnough(std::span<const uint8_t> buffer)
 {
-    RELEASE_ASSERT(bufferSize);
+    RELEASE_ASSERT(!buffer.empty());
 
     uintptr_t lastByte;
-    bool isSafe = WTF::safeAdd((uintptr_t)buffer, bufferSize - 1, lastByte);
+    bool isSafe = WTF::safeAdd((uintptr_t)buffer.data(), buffer.size() - 1, lastByte);
     RELEASE_ASSERT(isSafe);
 
     return *(uint8_t*)lastByte;
@@ -174,7 +177,7 @@ static bool encode(const PixelBuffer& source, const String& mimeType, std::optio
         data = premultipliedData.mutableSpan();
     }
 
-    verifyImageBufferIsBigEnough(data.data(), dataSize);
+    verifyImageBufferIsBigEnough(data);
 
     auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, data.data(), dataSize, nullptr));
     if (!dataProvider)
@@ -271,5 +274,7 @@ String dataURL(const PixelBuffer& pixelBuffer, const String& mimeType, std::opti
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CG)

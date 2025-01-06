@@ -8,7 +8,7 @@
 #define GLWindowContext_DEFINED
 
 
-#include "include/gpu/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
 
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSurface.h"
@@ -25,10 +25,10 @@ public:
 
     void resize(int w, int h) override;
 
-    void setDisplayParams(const DisplayParams& params) override;
+    void setDisplayParams(std::unique_ptr<const DisplayParams> params) override;
 
 protected:
-    GLWindowContext(const DisplayParams&);
+    GLWindowContext(std::unique_ptr<const DisplayParams>);
     // This should be called by subclass constructor. It is also called when window/display
     // parameters change. This will in turn call onInitializeContext().
     void initializeContext();

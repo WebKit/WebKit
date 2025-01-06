@@ -26,6 +26,7 @@
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -54,7 +55,7 @@ String CSSFontFaceRule::cssText() const
     return cssTextInternal(m_fontFaceRule->properties().asText());
 }
 
-String CSSFontFaceRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>&) const
+String CSSFontFaceRule::cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>&) const
 {
     auto mutableStyleProperties = m_fontFaceRule->properties().mutableCopy();
     mutableStyleProperties->setReplacementURLForSubresources(replacementURLStrings);

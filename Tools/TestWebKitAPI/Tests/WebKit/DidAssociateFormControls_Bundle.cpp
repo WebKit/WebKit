@@ -68,7 +68,7 @@ DidAssociateFormControlsTest::DidAssociateFormControlsTest(const std::string& id
 void DidAssociateFormControlsTest::didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
 {
     WKBundlePageFormClientV2 formClient;
-    memset(&formClient, 0, sizeof(formClient));
+    zeroBytes(formClient);
 
     formClient.base.version = 2;
     formClient.base.clientInfo = this;

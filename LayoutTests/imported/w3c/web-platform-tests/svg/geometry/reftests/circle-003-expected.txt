@@ -1,5 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 340x140
-  RenderSVGRoot {svg} at (139,0) size 130x121
-    RenderSVGEllipse {circle} at (139,0) size 130x121 [fill={[type=SOLID] [color=#0000FF]}] [cx=0.00] [cy=0.00] [r=0.00]

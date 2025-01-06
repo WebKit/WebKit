@@ -13,6 +13,8 @@ includes: [propertyHelper.js]
 features: [Reflect]
 ---*/
 
-verifyNotEnumerable(Reflect, 'isExtensible');
-verifyWritable(Reflect, 'isExtensible');
-verifyConfigurable(Reflect, 'isExtensible');
+verifyProperty(Reflect, 'isExtensible', {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

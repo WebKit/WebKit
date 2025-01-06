@@ -396,6 +396,11 @@ public:
 
     void generateTestReport(JSStringRef message, JSStringRef group);
 
+    void setTopContentInset(double);
+
+    void setPageScaleFactor(double scaleFactor, long x, long y);
+    static JSValueRef alwaysResolvePromise(JSContextRef);
+
 private:
     TestRunner(const std::string& testURL, const std::string& expectedPixelHash);
 

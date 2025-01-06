@@ -37,7 +37,13 @@
 #import "Logging.h"
 #import "WebExtensionAPITabs.h"
 #import "WebExtensionMessageSenderParameters.h"
+#import "WebFrame.h"
+#import <WebCore/LocalFrame.h>
 #import <objc/runtime.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIKit.h>
+#endif
 
 namespace WebKit {
 
@@ -332,7 +338,7 @@ NSString *toErrorString(NSString *callingAPIName, NSString *sourceKey, NSString 
     va_start(arguments, underlyingErrorString);
 
     ALLOW_NONLITERAL_FORMAT_BEGIN
-    NSString *formattedUnderlyingErrorString = [[NSString alloc] initWithFormat:trimTrailingPeriod(underlyingErrorString) arguments:arguments];
+    NSString *formattedUnderlyingErrorString = trimTrailingPeriod([[NSString alloc] initWithFormat:underlyingErrorString arguments:arguments]);
     ALLOW_NONLITERAL_FORMAT_END
 
     va_end(arguments);
@@ -359,14 +365,24 @@ JSObjectRef toJSError(JSContextRef context, NSString *callingAPIName, NSString *
     return toJSError(context, toErrorString(callingAPIName, sourceKey, underlyingErrorString));
 }
 
+JSObjectRef toJSRejectedPromise(JSContextRef context, NSString *callingAPIName, NSString *sourceKey, NSString *underlyingErrorString)
+{
+    auto *error = toJSValue(context, toJSError(context, callingAPIName, sourceKey, underlyingErrorString));
+    auto *promise = [JSValue valueWithNewPromiseRejectedWithReason:error inContext:toJSContext(context)];
+    return JSValueToObject(context, promise.JSValueRef, nullptr);
+}
+
 NSString *toWebAPI(NSLocale *locale)
 {
-    if (!locale.languageCode)
-        return nil;
+    if (!locale.languageCode.length)
+        return @"und";
 
+    NSMutableString *result = [locale.languageCode mutableCopy];
+    if (locale.scriptCode.length)
+        [result appendFormat:@"-%@", locale.scriptCode];
     if (locale.countryCode.length)
-        return [NSString stringWithFormat:@"%@-%@", locale.languageCode, locale.countryCode];
-    return locale.languageCode;
+        [result appendFormat:@"-%@", locale.countryCode];
+    return [result copy];
 }
 
 size_t storageSizeOf(NSString *keyOrValue)
@@ -407,6 +423,36 @@ bool anyItemsExceedQuota(NSDictionary *items, size_t quota, NSString **outKeyWit
         *outKeyWithError = keyWithError;
 
     return itemExceededQuota;
+}
+
+Markable<WTF::UUID> toDocumentIdentifier(WebFrame& frame)
+{
+    RefPtr coreFrame = frame.coreLocalFrame();
+    RefPtr document = coreFrame ? coreFrame->document() : nullptr;
+    if (!document)
+        return { };
+    return document->identifier().object();
+}
+
+Vector<double> availableScreenScales()
+{
+    Vector<double> screenScales;
+
+#if USE(APPKIT)
+    for (NSScreen *screen in NSScreen.screens)
+        screenScales.append(screen.backingScaleFactor);
+#else
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    for (UIScreen *screen in UIScreen.screens)
+        screenScales.append(screen.scale);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
+
+    if (screenScales.size())
+        return screenScales;
+
+    // Assume 1x if we got no results. This can happen on headless devices (bots).
+    return { 1.0 };
 }
 
 } // namespace WebKit

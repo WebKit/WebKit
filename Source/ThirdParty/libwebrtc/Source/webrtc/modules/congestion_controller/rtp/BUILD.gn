@@ -8,14 +8,6 @@
 
 import("../../../webrtc.gni")
 
-config("bwe_test_logging") {
-  if (rtc_enable_bwe_test_logging) {
-    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=1" ]
-  } else {
-    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
-  }
-}
-
 rtc_library("control_handler") {
   visibility = [ "*" ]
   sources = [
@@ -34,10 +26,8 @@ rtc_library("control_handler") {
     "../../../rtc_base:safe_conversions",
     "../../../rtc_base:safe_minmax",
     "../../../rtc_base/system:no_unique_address",
-    "../../../system_wrappers:field_trial",
     "../../pacing",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 rtc_library("transport_feedback") {
   visibility = [ "*" ]
@@ -53,6 +43,7 @@ rtc_library("transport_feedback") {
     "../../../api:sequence_checker",
     "../../../api/transport:network_control",
     "../../../api/units:data_size",
+    "../../../api/units:time_delta",
     "../../../api/units:timestamp",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
@@ -64,11 +55,9 @@ rtc_library("transport_feedback") {
     "../../../rtc_base/system:no_unique_address",
     "../../../system_wrappers",
     "../../../system_wrappers:field_trial",
+    "../../rtp_rtcp:ntp_time_util",
     "../../rtp_rtcp:rtp_rtcp_format",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -83,9 +72,16 @@ if (rtc_include_tests) {
     deps = [
       ":transport_feedback",
       "../:congestion_controller",
+      "../../../api:array_view",
+      "../../../api/transport:ecn_marking",
       "../../../api/transport:network_control",
+      "../../../api/units:data_size",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
       "../../../logging:mocks",
+      "../../../rtc_base:buffer",
       "../../../rtc_base:checks",
+      "../../../rtc_base:logging",
       "../../../rtc_base:safe_conversions",
       "../../../rtc_base/network:sent_packet",
       "../../../system_wrappers",
@@ -93,6 +89,7 @@ if (rtc_include_tests) {
       "../../../test:test_support",
       "../../pacing",
       "../../remote_bitrate_estimator",
+      "../../rtp_rtcp:ntp_time_util",
       "../../rtp_rtcp:rtp_rtcp_format",
       "//testing/gmock",
     ]

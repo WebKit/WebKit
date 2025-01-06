@@ -178,7 +178,7 @@ static Ref<Protocol::ScriptProfiler::Samples> buildSamples(VM& vm, Vector<Sampli
         auto frames = JSON::ArrayOf<Protocol::ScriptProfiler::StackFrame>::create();
         for (SamplingProfiler::StackFrame& stackFrame : stackTrace.frames) {
             auto frameObject = Protocol::ScriptProfiler::StackFrame::create()
-                .setSourceID(String::number(stackFrame.sourceID()))
+                .setSourceID(String::number(std::get<1>(stackFrame.sourceProviderAndID())))
                 .setName(stackFrame.displayName(vm))
                 .setLine(stackFrame.functionStartLine())
                 .setColumn(stackFrame.functionStartColumn())

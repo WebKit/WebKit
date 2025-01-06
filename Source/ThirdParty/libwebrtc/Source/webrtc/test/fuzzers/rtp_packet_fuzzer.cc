@@ -9,10 +9,12 @@
  */
 
 #include <bitset>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
+#include "common_video/corruption_detection_message.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/source/corruption_detection_extension.h"
 #include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor_extension.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
@@ -72,11 +74,11 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         int32_t offset;
         packet.GetExtension<TransmissionOffset>(&offset);
         break;
-      case kRtpExtensionAudioLevel:
-        bool voice_activity;
-        uint8_t audio_level;
-        packet.GetExtension<AudioLevel>(&voice_activity, &audio_level);
+      case kRtpExtensionAudioLevel: {
+        AudioLevel audio_level;
+        packet.GetExtension<AudioLevelExtension>(&audio_level);
         break;
+      }
       case kRtpExtensionCsrcAudioLevel: {
         std::vector<uint8_t> audio_levels;
         packet.GetExtension<CsrcAudioLevel>(&audio_levels);
@@ -101,7 +103,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         break;
       case kRtpExtensionTransportSequenceNumber02: {
         uint16_t seqnum;
-        absl::optional<FeedbackRequest> feedback_request;
+        std::optional<FeedbackRequest> feedback_request;
         packet.GetExtension<TransportSequenceNumberV2>(&seqnum,
                                                        &feedback_request);
         break;
@@ -146,7 +148,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         break;
       }
       case kRtpExtensionInbandComfortNoise: {
-        absl::optional<uint8_t> noise_level;
+        std::optional<uint8_t> noise_level;
         packet.GetExtension<InbandComfortNoiseExtension>(&noise_level);
         break;
       }
@@ -164,6 +166,11 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         // This extension requires state to read and so complicated that
         // deserves own fuzzer.
         break;
+      case kRtpExtensionCorruptionDetection: {
+        CorruptionDetectionMessage message;
+        packet.GetExtension<CorruptionDetectionExtension>(&message);
+        break;
+      }
     }
   }
 

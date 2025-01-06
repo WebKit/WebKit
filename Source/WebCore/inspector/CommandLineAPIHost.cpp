@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
@@ -51,6 +51,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEB_RTC)
 #include "JSRTCPeerConnection.h"
@@ -61,6 +62,8 @@ namespace WebCore {
 
 using namespace JSC;
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CommandLineAPIHost::InspectableObject);
 
 Ref<CommandLineAPIHost> CommandLineAPIHost::create()
 {

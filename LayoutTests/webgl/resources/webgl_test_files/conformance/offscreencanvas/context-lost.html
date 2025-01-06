@@ -33,11 +33,11 @@ function init()
         return;
     }
 
-    extension = gl.getExtension("WEBGL_lose_context");
+    WEBGL_lose_context = gl.getExtension("WEBGL_lose_context");
     // need an extension that exposes new API methods.
     OES_vertex_array_object = gl.getExtension("OES_vertex_array_object");
-    if (extension == null || OES_vertex_array_object == null) {
-        testFailed("Some tests failed");
+    if (WEBGL_lose_context == null || OES_vertex_array_object == null) {
+        testFailed("extension && OES_vertex_array_object failed");
         finishTest();
         return;
     }
@@ -45,7 +45,7 @@ function init()
     // We need to initialize |uniformLocation| before losing context.
     // Otherwise gl.getUniform() when context is lost will throw.
     uniformLocation = gl.getUniformLocation(program, "tex");
-    extension.loseContext();
+    WEBGL_lose_context.loseContext();
 
     canvas.addEventListener("webglcontextlost", function() {
         if (testLostContextWithoutRestore()) {
@@ -53,7 +53,7 @@ function init()
             finishTest();
             return;
         } else {
-            testFailed("Some tests failed");
+            testFailed("testLostContextWithoutRestore failed");
             finishTest();
             return;
         }

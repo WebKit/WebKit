@@ -34,6 +34,7 @@
 #import <WebKit/WKStringCF.h>
 #import <WebKit/WKWebProcessPlugIn.h>
 #import <WebKit/WKWebProcessPlugInBrowserContextControllerPrivate.h>
+#import <wtf/StdLibExtras.h>
 
 static NSArray<NSString *> *stringsArrayFromWKArrayRef(WKArrayRef wkArray)
 {
@@ -69,7 +70,7 @@ static void willAddMessageWithDetailsToConsoleCallback(WKBundlePageRef page, WKS
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
 {
     WKBundlePageUIClientV5 client;
-    memset(&client, 0, sizeof(client));
+    zeroBytes(client);
     client.base.version = 5;
     client.willAddMessageWithDetailsToConsole = willAddMessageWithDetailsToConsoleCallback;
     WKBundlePageSetUIClient([browserContextController _bundlePageRef], &client.base);

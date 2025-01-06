@@ -1,5 +1,5 @@
 2d.text.font.weight
 Actual output:
 
-FAIL Canvas test: 2d.text.font.weight assert_equals: ctx.font === 'italic 300 12px serif' (got italic 12px serif[string], expected italic 300 12px serif[string]) expected "italic 300 12px serif" but got "italic 12px serif"
+PASS Canvas test: 2d.text.font.weight
 

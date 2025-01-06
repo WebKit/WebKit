@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <span>
 #include <string>
@@ -37,19 +38,17 @@ template<typename> struct IntegerToStringConversionTrait;
 template<typename T, typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType, typename AdditionalArgumentType>
 static typename IntegerToStringConversionTrait<T>::ReturnType numberToStringImpl(UnsignedIntegerType number, AdditionalArgumentType additionalArgument)
 {
-    LChar buf[sizeof(UnsignedIntegerType) * 3 + 1];
-    LChar* end = std::end(buf);
-    LChar* p = end;
-
+    std::array<LChar, sizeof(UnsignedIntegerType) * 3 + 1> buffer;
+    auto index = buffer.size();
     do {
-        *--p = static_cast<LChar>((number % 10) + '0');
+        buffer[--index] = static_cast<LChar>((number % 10) + '0');
         number /= 10;
     } while (number);
 
     if (NumberType == NegativeNumber)
-        *--p = '-';
+        buffer[--index] = '-';
 
-    return IntegerToStringConversionTrait<T>::flush({ p, end }, additionalArgument);
+    return IntegerToStringConversionTrait<T>::flush(std::span { buffer }.subspan(index), additionalArgument);
 }
 
 template<typename T, typename SignedIntegerType>
@@ -67,27 +66,25 @@ inline typename IntegerToStringConversionTrait<T>::ReturnType numberToStringUnsi
 }
 
 template<typename CharacterType, typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType>
-static void writeIntegerToBufferImpl(UnsignedIntegerType number, CharacterType* destination)
+static void writeIntegerToBufferImpl(UnsignedIntegerType number, std::span<CharacterType> destination)
 {
     static_assert(!std::is_same_v<bool, std::remove_cv_t<UnsignedIntegerType>>, "'bool' not supported");
-    LChar buf[sizeof(UnsignedIntegerType) * 3 + 1];
-    LChar* end = std::end(buf);
-    LChar* p = end;
-
+    std::array<LChar, sizeof(UnsignedIntegerType) * 3 + 1> buffer;
+    auto index = buffer.size();
     do {
-        *--p = static_cast<LChar>((number % 10) + '0');
+        buffer[--index] = static_cast<LChar>((number % 10) + '0');
         number /= 10;
     } while (number);
 
     if (NumberType == NegativeNumber)
-        *--p = '-';
+        buffer[--index] = '-';
     
-    while (p < end)
-        *destination++ = static_cast<CharacterType>(*p++);
+    for (size_t i = 0; i < buffer.size() - index; ++i)
+        destination[i] = static_cast<CharacterType>(buffer[index + i]);
 }
 
 template<typename CharacterType, typename IntegerType>
-inline void writeIntegerToBuffer(IntegerType integer, CharacterType* destination)
+inline void writeIntegerToBuffer(IntegerType integer, std::span<CharacterType> destination)
 {
     static_assert(std::is_integral_v<IntegerType>);
     if constexpr (std::is_same_v<IntegerType, bool>)

@@ -70,7 +70,7 @@ struct IDLError;
 struct IDLDOMException;
 
 template<typename...> struct IDLUnion;
-template<typename> struct IDLBufferSource;
+template<typename> struct IDLBufferSourceBase;
 
 struct IDLArrayBuffer;
 struct IDLArrayBufferView;

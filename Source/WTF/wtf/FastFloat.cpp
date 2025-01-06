@@ -28,6 +28,8 @@
 
 #include "fast_float/fast_float.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 double parseDouble(std::span<const LChar> string, size_t& parsedLength)
@@ -48,4 +50,24 @@ double parseDouble(std::span<const UChar> string, size_t& parsedLength)
     return doubleValue;
 }
 
+double parseHexDouble(std::span<const LChar> string, size_t& parsedLength)
+{
+    double doubleValue = 0;
+    auto stringData = byteCast<char>(string.data());
+    auto result = fast_float::from_chars(stringData, stringData + string.size(), doubleValue, fast_float::chars_format::hex);
+    parsedLength = result.ptr - stringData;
+    return doubleValue;
+}
+
+double parseHexDouble(std::span<const UChar> string, size_t& parsedLength)
+{
+    double doubleValue = 0;
+    auto stringData = reinterpret_cast<const char16_t*>(string.data());
+    auto result = fast_float::from_chars(stringData, stringData + string.size(), doubleValue, fast_float::chars_format::hex);
+    parsedLength = result.ptr - stringData;
+    return doubleValue;
+}
+
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

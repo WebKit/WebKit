@@ -3,7 +3,7 @@ ALERT: /main frame focused/
 This test PASSED if there is no assertion failure and you see two JavaScript alerts with messages "iframe blurred" and "main frame focused" in order. Otherwise, it FAILED.
 
 ============== Back Forward List ==============
-curr->  (file test):fast/history/back-from-page-with-focused-iframe.html  **nav target**
-        data:text/html,<!DOCTYPE html><html><iframe srcdoc="<script>                window.onfocus = function() {                    window.onblur = function () { alert(/iframe blurred/); };                    window.top.onfocus = function () { alert(/main frame focused/); };                    window.top.history.back();                };                window.focus();                </script>"></iframe></html>  **nav target**
+curr->  (file test):fast/history/back-from-page-with-focused-iframe.html
+        data:text/html,<!DOCTYPE html><html><iframe srcdoc="<script>                window.onfocus = function() {                    window.onblur = function () { alert(/iframe blurred/); };                    window.top.onfocus = function () { alert(/main frame focused/); };                    window.top.history.back();                };                window.focus();                </script>"></iframe></html>
             about:srcdoc (in frame "<!--frame1-->")
 ===============================================

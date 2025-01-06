@@ -14,9 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/getcharnumatposition-slr.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/getcharnumatposition.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/getextentofchar.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/getrotationofchar.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/getstartpositionofchar-dominant-baseline.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/getstartpositionofchar.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/getsubstringlength-emoji-ligatures.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/lengthadjust.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/reattach-crash.html

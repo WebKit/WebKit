@@ -31,8 +31,11 @@
 #include "APIWebsitePolicies.h"
 #include "WKWebpagePreferencesInternal.h"
 #include "WebProcessPool.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPagePreferencesLockdownModeObserver);
 
 WebPagePreferencesLockdownModeObserver::WebPagePreferencesLockdownModeObserver(API::WebsitePolicies& policies)
     : m_policies(policies)
@@ -45,9 +48,14 @@ WebPagePreferencesLockdownModeObserver::~WebPagePreferencesLockdownModeObserver(
     removeLockdownModeObserver(*this);
 }
 
+RefPtr<API::WebsitePolicies> WebPagePreferencesLockdownModeObserver::protectedPolicies()
+{
+    return m_policies.get();
+}
+
 void WebPagePreferencesLockdownModeObserver::willChangeLockdownMode()
 {
-    if (auto preferences = wrapper(m_policies.get())) {
+    if (auto preferences = wrapper(protectedPolicies().get())) {
         [preferences willChangeValueForKey:@"_captivePortalModeEnabled"];
         [preferences willChangeValueForKey:@"lockdownModeEnabled"];
     }
@@ -55,10 +63,20 @@ void WebPagePreferencesLockdownModeObserver::willChangeLockdownMode()
 
 void WebPagePreferencesLockdownModeObserver::didChangeLockdownMode()
 {
-    if (auto preferences = wrapper(m_policies.get())) {
+    if (auto preferences = wrapper(protectedPolicies().get())) {
         [preferences didChangeValueForKey:@"_captivePortalModeEnabled"];
         [preferences didChangeValueForKey:@"lockdownModeEnabled"];
     }
 }
 
+void WebPagePreferencesLockdownModeObserver::ref() const
+{
+    m_policies->ref();
 }
+
+void WebPagePreferencesLockdownModeObserver::deref() const
+{
+    m_policies->deref();
+}
+
+} // namespace WebKit

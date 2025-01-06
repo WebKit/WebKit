@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,7 +12,7 @@
 
 #include "config/aom_dsp_rtcd.h"
 
-static INLINE void subtract32_avx2(int16_t *diff_ptr, const uint8_t *src_ptr,
+static inline void subtract32_avx2(int16_t *diff_ptr, const uint8_t *src_ptr,
                                    const uint8_t *pred_ptr) {
   __m256i s = _mm256_lddqu_si256((__m256i *)(src_ptr));
   __m256i p = _mm256_lddqu_si256((__m256i *)(pred_ptr));
@@ -27,7 +27,7 @@ static INLINE void subtract32_avx2(int16_t *diff_ptr, const uint8_t *src_ptr,
                      _mm256_permute2x128_si256(diff0, diff1, 0x31));
 }
 
-static INLINE void subtract_block_16xn_avx2(
+static inline void subtract_block_16xn_avx2(
     int rows, int16_t *diff_ptr, ptrdiff_t diff_stride, const uint8_t *src_ptr,
     ptrdiff_t src_stride, const uint8_t *pred_ptr, ptrdiff_t pred_stride) {
   for (int32_t j = 0; j < rows; ++j) {
@@ -43,7 +43,7 @@ static INLINE void subtract_block_16xn_avx2(
   }
 }
 
-static INLINE void subtract_block_32xn_avx2(
+static inline void subtract_block_32xn_avx2(
     int rows, int16_t *diff_ptr, ptrdiff_t diff_stride, const uint8_t *src_ptr,
     ptrdiff_t src_stride, const uint8_t *pred_ptr, ptrdiff_t pred_stride) {
   for (int32_t j = 0; j < rows; ++j) {
@@ -54,7 +54,7 @@ static INLINE void subtract_block_32xn_avx2(
   }
 }
 
-static INLINE void subtract_block_64xn_avx2(
+static inline void subtract_block_64xn_avx2(
     int rows, int16_t *diff_ptr, ptrdiff_t diff_stride, const uint8_t *src_ptr,
     ptrdiff_t src_stride, const uint8_t *pred_ptr, ptrdiff_t pred_stride) {
   for (int32_t j = 0; j < rows; ++j) {
@@ -66,7 +66,7 @@ static INLINE void subtract_block_64xn_avx2(
   }
 }
 
-static INLINE void subtract_block_128xn_avx2(
+static inline void subtract_block_128xn_avx2(
     int rows, int16_t *diff_ptr, ptrdiff_t diff_stride, const uint8_t *src_ptr,
     ptrdiff_t src_stride, const uint8_t *pred_ptr, ptrdiff_t pred_stride) {
   for (int32_t j = 0; j < rows; ++j) {

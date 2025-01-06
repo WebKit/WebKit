@@ -33,9 +33,11 @@
 #include "ServiceWorkerClientQueryOptions.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerThreadProxy.h"
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 
 namespace WebCore {
@@ -49,7 +51,7 @@ class SWContextManager {
 public:
     WEBCORE_EXPORT static SWContextManager& singleton();
 
-    class Connection {
+    class Connection : public AbstractRefCounted {
     public:
         virtual ~Connection() { }
 
@@ -82,13 +84,13 @@ public:
         virtual bool isThrottleable() const = 0;
         virtual PageIdentifier pageIdentifier() const = 0;
 
-        virtual void ref() const = 0;
-        virtual void deref() const = 0;
         virtual void stop() = 0;
 
         virtual void reportConsoleMessage(ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) = 0;
 
         bool isClosed() const { return m_isClosed; }
+
+        virtual void removeNavigationFetch(SWServerConnectionIdentifier, FetchIdentifier) = 0;
 
     protected:
         void setAsClosed() { m_isClosed = true; }
@@ -133,6 +135,7 @@ public:
     WEBCORE_EXPORT void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
     WEBCORE_EXPORT void setRegistrationLastUpdateTime(ServiceWorkerRegistrationIdentifier, WallTime);
     WEBCORE_EXPORT void setRegistrationUpdateViaCache(ServiceWorkerRegistrationIdentifier, ServiceWorkerUpdateViaCache);
+    WEBCORE_EXPORT void removeFetch(ServiceWorkerIdentifier, SWServerConnectionIdentifier, FetchIdentifier, bool isNavigationFetch);
 
 private:
     SWContextManager() = default;
@@ -148,7 +151,7 @@ private:
     ServiceWorkerCreationCallback* m_serviceWorkerCreationCallback { nullptr };
 
     class ServiceWorkerTerminationRequest {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerTerminationRequest);
     public:
         ServiceWorkerTerminationRequest(SWContextManager&, ServiceWorkerIdentifier, Seconds timeout);
 

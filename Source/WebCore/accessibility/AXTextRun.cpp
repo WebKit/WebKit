@@ -27,19 +27,14 @@
 #include "AXTextRun.h"
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
+
+#include <wtf/text/MakeString.h>
+
 namespace WebCore {
 
 String AXTextRuns::debugDescription() const
 {
-    StringBuilder result;
-    result.append('[');
-    for (unsigned i = 0; i < runs.size(); i++) {
-        result.append(runs[i].debugDescription(containingBlock));
-        if (i != runs.size() - 1)
-            result.append(", ");
-    }
-    result.append(']');
-    return result.toString();
+    return makeString('[', interleave(runs, [&](auto& run) { return run.debugDescription(containingBlock); }, ", "_s), ']');
 }
 
 size_t AXTextRuns::indexForOffset(unsigned textOffset) const

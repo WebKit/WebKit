@@ -38,7 +38,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 
 @interface ProxyDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 - (NSString *)waitForAlert;
@@ -342,6 +342,38 @@ TEST(WebKit, HTTPProxyAuthentication)
     EXPECT_WK_STREQ([delegate waitForAlert], "success!");
 }
 
+// rdar://136531022
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+#if USE(APPLE_INTERNAL_SDK)
+TEST(WebKit, ProxyConfigurationAuthentication)
+#else
+TEST(WebKit, DISABLED_ProxyConfigurationAuthentication)
+#endif
+{
+    auto server = proxyAuthenticationServer();
+    auto webView = adoptNS([WKWebView new]);
+
+    auto endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(server.port()).c_str()));
+    auto proxyConfiguration = adoptNS(nw_proxy_config_create_http_connect(endpoint.get(), nil));
+    webView.get().configuration.websiteDataStore.proxyConfigurations = @[ proxyConfiguration.get() ];
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    __block bool challenged { false };
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust])
+            return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+        challenged = true;
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodHTTPBasic);
+        return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialWithUser:@"testuser" password:@"testpassword" persistence:NSURLCredentialPersistenceNone]);
+    };
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
+    EXPECT_TRUE(challenged);
+}
+#endif
+
 TEST(WebKit, HTTPProxyAuthenticationCrossOrigin)
 {
     auto server = proxyAuthenticationServer();
@@ -391,7 +423,12 @@ TEST(WebKit, SecureProxyConnection)
     TestWebKitAPI::Util::run(&receivedValidClientHello);
 }
 
+// rdar://136531022
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000)
+TEST(WebKit, DISABLED_RelaxThirdPartyCookieBlocking)
+#else
 TEST(WebKit, RelaxThirdPartyCookieBlocking)
+#endif
 {
     __block bool setDefaultCookieAcceptPolicy = false;
     [[WKWebsiteDataStore defaultDataStore].httpCookieStore _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain completionHandler:^{

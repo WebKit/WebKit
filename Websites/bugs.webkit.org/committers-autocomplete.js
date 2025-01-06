@@ -41,7 +41,7 @@ WebKitCommitters = (function() {
             m_committers.push({
                 name: contributor.name,
                 emails: contributor.emails,
-                irc: contributor.nicks,
+                nicks: contributor.nicks,
                 type: statusToType(contributor.status),
             });
         })
@@ -118,7 +118,7 @@ WebKitCommitters = (function() {
         if (startsWithAny(contact.emails, prefix))
             return true;
 
-        if (contact.irc && startsWithAny(contact.irc, prefix))
+        if (contact.nicks && startsWithAny(contact.nicks, prefix))
             return true;
 
         var names = contact.name.split(' ');
@@ -160,12 +160,12 @@ WebKitCommitters = (function() {
         var html = [];
         for (var i = 0; i < contacts.length; i++) {
             var contact = contacts[i];
-            html.push('<div style="padding:1px 2px;" ' + 'email=' +
-                contact.emails[0] + '>' + contact.name + ' - ' + contact.emails[0]);
-            if (contact.irc)
-                html.push(' (:' + contact.irc + ')');
+            html.push('<div class="committer-suggestion" ' + 'email=' +
+                contact.emails[0] + '><span class="committer-name">' + contact.name + '</span> <span class="committer-email">&lt;' + contact.emails[0] + '&gt;</span> ');
+            if (contact.nicks)
+                html.push(' <span class="committer-nick">@' + contact.nicks.join(', @') + '</span>');
             if (contact.type)
-                html.push(' (' + contact.type + ')');
+                html.push(' <span class="committer-type">' + contact.type + '</span>');
             html.push('</div>');
         }
         getMenu().innerHTML = html.join('');
@@ -188,8 +188,7 @@ WebKitCommitters = (function() {
     function createMenu(name, input) {
         if (!m_menus[name]) {
             var menu = document.createElement('div');
-            menu.style.cssText =
-                "position:absolute;border:1px solid black;background-color:white;-webkit-box-shadow:3px 3px 3px #888;";
+            menu.classList.add('committers-autocomplete');
             menu.style.minWidth = m_focusedInput.offsetWidth + 'px';
             m_focusedInput.parentNode.insertBefore(menu, m_focusedInput.nextSibling);
 
@@ -230,12 +229,9 @@ WebKitCommitters = (function() {
             return;
 
         if (m_selectedIndex != undefined) {
-            getItem(m_selectedIndex).style.backgroundColor = '';
-            getItem(m_selectedIndex).style.color = '';
+            getItem(m_selectedIndex).classList.remove('committer-selected');
         }
-
-        getItem(index).style.backgroundColor = '#039';
-        getItem(index).style.color = 'white';
+        getItem(index).classList.add('committer-selected');
 
         m_selectedIndex = index;
     }

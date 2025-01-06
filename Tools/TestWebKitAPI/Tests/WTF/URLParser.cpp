@@ -29,7 +29,9 @@
 #include "WTFTestUtilities.h"
 #include <wtf/MainThread.h>
 #include <wtf/URLParser.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace TestWebKitAPI {
 
@@ -943,8 +945,13 @@ TEST_F(WTF_URLParser, ParserDifferences)
     checkURL(utf16String(u"http://ԛәлп.com"), { "http"_s, ""_s, ""_s, "xn--k1ai47bhi.com"_s, 0, "/"_s, ""_s, ""_s, "http://xn--k1ai47bhi.com/"_s });
     checkURLDifferences(utf16String(u"http://Ⱥbby.com"),
         { "http"_s, ""_s, ""_s, "xn--bby-iy0b.com"_s, 0, "/"_s, ""_s, ""_s, "http://xn--bby-iy0b.com/"_s });
-    checkURLDifferences(utf16String(u"http://\u2132"),
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, utf16String(u"http://Ⅎ") });
+    if (WTF::ICU::majorVersion() >= 76) {
+        checkURLDifferences(utf16String(u"http://\u2132"),
+            { "http"_s, ""_s, ""_s, "xn--73g"_s, 0, "/"_s, ""_s, ""_s, utf16String(u"http://xn--73g/") });
+    } else {
+        checkURLDifferences(utf16String(u"http://\u2132"),
+            { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, utf16String(u"http://Ⅎ") });
+    }
     checkURLDifferences(utf16String(u"http://\u05D9\u05B4\u05D5\u05D0\u05B8/"),
         { "http"_s, ""_s, ""_s, "xn--cdbi5etas"_s, 0, "/"_s, ""_s, ""_s, "http://xn--cdbi5etas/"_s }, TestTabs::No);
     checkURLDifferences(utf16String(u"http://bidirectional\u0786\u07AE\u0782\u07B0\u0795\u07A9\u0793\u07A6\u0783\u07AA/"),

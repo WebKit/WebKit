@@ -39,6 +39,7 @@ public:
     }
 
     CallbackResult<unsigned short> acceptNode(Node&) override;
+    CallbackResult<unsigned short> acceptNodeRethrowingException(Node&) override;
 
 private:
     WEBCORE_EXPORT explicit NativeNodeFilter(ScriptExecutionContext*, Ref<NodeFilterCondition>&&);

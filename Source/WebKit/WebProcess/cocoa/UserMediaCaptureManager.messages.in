@@ -23,7 +23,11 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-messages -> UserMediaCaptureManager NotRefCounted {
+// rdar://140690546 - Can currently be dispatchedFrom UI & GPU
+[
+    DispatchedTo=WebContent
+]
+messages -> UserMediaCaptureManager {
     SourceStopped(WebCore::RealtimeMediaSourceIdentifier id, bool didFail)
     SourceMutedChanged(WebCore::RealtimeMediaSourceIdentifier id, bool muted, bool interrupted)
     SourceSettingsChanged(WebCore::RealtimeMediaSourceIdentifier id, WebCore::RealtimeMediaSourceSettings settings)

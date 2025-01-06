@@ -28,24 +28,27 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include <WebCore/MediaKeySystemClient.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPage;
 
-class WebMediaKeySystemClient : public WebCore::MediaKeySystemClient {
-    WTF_MAKE_FAST_ALLOCATED;
+class WebMediaKeySystemClient final : public WebCore::MediaKeySystemClient {
+    WTF_MAKE_TZONE_ALLOCATED(WebMediaKeySystemClient);
 public:
     WebMediaKeySystemClient(WebPage&);
     ~WebMediaKeySystemClient() { }
 
 private:
-    void pageDestroyed() override { }
+    void pageDestroyed() final;
 
-    void requestMediaKeySystem(WebCore::MediaKeySystemRequest&) override;
-    void cancelMediaKeySystemRequest(WebCore::MediaKeySystemRequest&) override;
+    void requestMediaKeySystem(WebCore::MediaKeySystemRequest&) final;
+    void cancelMediaKeySystemRequest(WebCore::MediaKeySystemRequest&) final;
 
-    WebPage& m_page;
+    Ref<WebPage> protectedPage() const;
+
+    WeakRef<WebPage> m_page;
 };
 
 } // namespace WebCore

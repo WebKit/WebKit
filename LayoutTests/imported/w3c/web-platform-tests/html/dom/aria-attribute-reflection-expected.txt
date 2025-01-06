@@ -3,10 +3,13 @@
 PASS role attribute reflects.
 PASS aria-atomic attribute reflects.
 PASS aria-autocomplete attribute reflects.
+PASS aria-braillelabel attribute reflects.
+PASS aria-brailleroledescription attribute reflects.
 PASS aria-busy attribute reflects.
 PASS aria-checked attribute reflects.
 PASS aria-colcount attribute reflects.
 PASS aria-colindex attribute reflects.
+FAIL aria-colindextext attribute reflects. assert_equals: expected (string) "x" but got (undefined) undefined
 PASS aria-colspan attribute reflects.
 PASS aria-current attribute reflects.
 PASS aria-description attribute reflects.
@@ -32,6 +35,7 @@ PASS aria-required attribute reflects.
 PASS aria-roledescription attribute reflects.
 PASS aria-rowcount attribute reflects.
 PASS aria-rowindex attribute reflects.
+FAIL aria-rowindextext attribute reflects. assert_equals: expected (string) "x" but got (undefined) undefined
 PASS aria-rowspan attribute reflects.
 PASS aria-selected attribute reflects.
 PASS aria-setsize attribute reflects.
@@ -40,6 +44,4 @@ PASS aria-valuemax attribute reflects.
 PASS aria-valuemin attribute reflects.
 PASS aria-valuenow attribute reflects.
 PASS aria-valuetext attribute reflects.
-PASS aria-braillelabel attribute reflects.
-PASS aria-brailleroledescription attribute reflects.
 

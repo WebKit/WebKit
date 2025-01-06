@@ -26,7 +26,7 @@
 #import <WebKit/WKFoundation.h>
 
 #if TARGET_OS_IPHONE
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #else
 #import <AppKit/AppKit.h>
 #endif
@@ -81,7 +81,17 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 */
 @property (nonatomic, readonly) BOOL shouldPerformDownload WK_API_AVAILABLE(macos(11.3), ios(14.5));
 
-#if !TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
+
+/*! @abstract The modifier keys that were in effect when the navigation was requested.
+ */
+@property (nonatomic, readonly) UIKeyModifierFlags modifierFlags WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+/*! @abstract The button mask of the index of the mouse button causing the navigation to be requested.
+ */
+@property (nonatomic, readonly) UIEventButtonMask buttonNumber WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+#else
 
 /*! @abstract The modifier keys that were in effect when the navigation was requested.
  */

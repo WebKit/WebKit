@@ -3,11 +3,11 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <script src="../../../resources/ui-helper.js"></script>
   <script type="text/javascript">
-      function scrollAndRepaint()
+      async function scrollAndRepaint()
       {
           if (window.testRunner) {
               document.body.offsetTop;
-              testRunner.displayAndTrackRepaints();
+              await testRunner.displayAndTrackRepaints();
               repaintTest();
           } else {
               setTimeout(repaintTest, 15);
@@ -28,7 +28,7 @@
       window.addEventListener('load', async () => {
           await UIHelper.startMonitoringWheelEvents();
           await UIHelper.waitForScrollCompletion();
-          scrollAndRepaint();
+          await scrollAndRepaint();
       }, false);
   </script>
 </head>

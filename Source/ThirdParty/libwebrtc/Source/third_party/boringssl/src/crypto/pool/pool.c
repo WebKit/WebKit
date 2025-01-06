@@ -42,12 +42,11 @@ static int CRYPTO_BUFFER_cmp(const CRYPTO_BUFFER *a, const CRYPTO_BUFFER *b) {
 }
 
 CRYPTO_BUFFER_POOL* CRYPTO_BUFFER_POOL_new(void) {
-  CRYPTO_BUFFER_POOL *pool = OPENSSL_malloc(sizeof(CRYPTO_BUFFER_POOL));
+  CRYPTO_BUFFER_POOL *pool = OPENSSL_zalloc(sizeof(CRYPTO_BUFFER_POOL));
   if (pool == NULL) {
     return NULL;
   }
 
-  OPENSSL_memset(pool, 0, sizeof(CRYPTO_BUFFER_POOL));
   pool->bufs = lh_CRYPTO_BUFFER_new(CRYPTO_BUFFER_hash, CRYPTO_BUFFER_cmp);
   if (pool->bufs == NULL) {
     OPENSSL_free(pool);
@@ -109,11 +108,10 @@ static CRYPTO_BUFFER *crypto_buffer_new(const uint8_t *data, size_t len,
     }
   }
 
-  CRYPTO_BUFFER *const buf = OPENSSL_malloc(sizeof(CRYPTO_BUFFER));
+  CRYPTO_BUFFER *const buf = OPENSSL_zalloc(sizeof(CRYPTO_BUFFER));
   if (buf == NULL) {
     return NULL;
   }
-  OPENSSL_memset(buf, 0, sizeof(CRYPTO_BUFFER));
 
   if (data_is_static) {
     buf->data = (uint8_t *)data;
@@ -170,11 +168,10 @@ CRYPTO_BUFFER *CRYPTO_BUFFER_new(const uint8_t *data, size_t len,
 }
 
 CRYPTO_BUFFER *CRYPTO_BUFFER_alloc(uint8_t **out_data, size_t len) {
-  CRYPTO_BUFFER *const buf = OPENSSL_malloc(sizeof(CRYPTO_BUFFER));
+  CRYPTO_BUFFER *const buf = OPENSSL_zalloc(sizeof(CRYPTO_BUFFER));
   if (buf == NULL) {
     return NULL;
   }
-  OPENSSL_memset(buf, 0, sizeof(CRYPTO_BUFFER));
 
   buf->data = OPENSSL_malloc(len);
   if (len != 0 && buf->data == NULL) {

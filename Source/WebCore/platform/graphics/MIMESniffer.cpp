@@ -28,6 +28,8 @@
 
 #include <array>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 namespace MIMESniffer {
@@ -345,3 +347,5 @@ String getMIMETypeFromContent(std::span<const uint8_t> sequence)
 } // namespace MIMESniffer
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

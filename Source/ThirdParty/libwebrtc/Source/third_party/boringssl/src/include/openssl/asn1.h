@@ -468,7 +468,8 @@ DECLARE_ASN1_ITEM(ASN1_FBOOLEAN)
 
 // An asn1_string_st (aka |ASN1_STRING|) represents a value of a string-like
 // ASN.1 type. It contains a |type| field, and a byte string |data| field with a
-// type-specific representation.
+// type-specific representation. This type-specific representation does not
+// always correspond to the DER encoding of the type.
 //
 // If |type| is one of |V_ASN1_OCTET_STRING|, |V_ASN1_UTF8STRING|,
 // |V_ASN1_NUMERICSTRING|, |V_ASN1_PRINTABLESTRING|, |V_ASN1_T61STRING|,
@@ -568,6 +569,10 @@ OPENSSL_EXPORT int ASN1_STRING_type(const ASN1_STRING *str);
 // ASN1_STRING_get0_data returns a pointer to |str|'s contents. Callers should
 // use |ASN1_STRING_length| to determine the length of the string. The string
 // may have embedded NUL bytes and may not be NUL-terminated.
+//
+// The contents of an |ASN1_STRING| encode the value in some type-specific
+// representation that does not always correspond to the DER encoding of the
+// type. See the documentation for |ASN1_STRING| for details.
 OPENSSL_EXPORT const unsigned char *ASN1_STRING_get0_data(
     const ASN1_STRING *str);
 
@@ -575,10 +580,18 @@ OPENSSL_EXPORT const unsigned char *ASN1_STRING_get0_data(
 // should use |ASN1_STRING_length| to determine the length of the string. The
 // string may have embedded NUL bytes and may not be NUL-terminated.
 //
+// The contents of an |ASN1_STRING| encode the value in some type-specific
+// representation that does not always correspond to the DER encoding of the
+// type. See the documentation for |ASN1_STRING| for details.
+//
 // Prefer |ASN1_STRING_get0_data|.
 OPENSSL_EXPORT unsigned char *ASN1_STRING_data(ASN1_STRING *str);
 
 // ASN1_STRING_length returns the length of |str|, in bytes.
+//
+// The contents of an |ASN1_STRING| encode the value in some type-specific
+// representation that does not always correspond to the DER encoding of the
+// type. See the documentation for |ASN1_STRING| for details.
 OPENSSL_EXPORT int ASN1_STRING_length(const ASN1_STRING *str);
 
 // ASN1_STRING_cmp compares |a| and |b|'s type and contents. It returns an
@@ -1355,6 +1368,11 @@ OPENSSL_EXPORT ASN1_GENERALIZEDTIME *ASN1_TIME_to_generalizedtime(
 // GeneralizedTime. If |str| is neither, it returns zero.
 OPENSSL_EXPORT int ASN1_TIME_set_string(ASN1_TIME *s, const char *str);
 
+// ASN1_TIME_set_string_X509 behaves like |ASN1_TIME_set_string| except it
+// additionally converts GeneralizedTime to UTCTime if it is in the range where
+// UTCTime is used. See RFC 5280, section 4.1.2.5.
+OPENSSL_EXPORT int ASN1_TIME_set_string_X509(ASN1_TIME *s, const char *str);
+
 // ASN1_TIME_to_time_t converts |t| to a time_t value in |out|. On
 // success, one is returned. On failure zero is returned. This function
 // will fail if the time can not be represented in a time_t.
@@ -1631,18 +1649,18 @@ OPENSSL_EXPORT int ASN1_STRING_print(BIO *out, const ASN1_STRING *str);
 
 // ASN1_STRFLGS_ESC_2253 causes characters to be escaped as in RFC 2253, section
 // 2.4.
-#define ASN1_STRFLGS_ESC_2253 1
+#define ASN1_STRFLGS_ESC_2253 1ul
 
 // ASN1_STRFLGS_ESC_CTRL causes all control characters to be escaped.
-#define ASN1_STRFLGS_ESC_CTRL 2
+#define ASN1_STRFLGS_ESC_CTRL 2ul
 
 // ASN1_STRFLGS_ESC_MSB causes all characters above 127 to be escaped.
-#define ASN1_STRFLGS_ESC_MSB 4
+#define ASN1_STRFLGS_ESC_MSB 4ul
 
 // ASN1_STRFLGS_ESC_QUOTE causes the string to be surrounded by quotes, rather
 // than using backslashes, when characters are escaped. Fewer characters will
 // require escapes in this case.
-#define ASN1_STRFLGS_ESC_QUOTE 8
+#define ASN1_STRFLGS_ESC_QUOTE 8ul
 
 // ASN1_STRFLGS_UTF8_CONVERT causes the string to be encoded as UTF-8, with each
 // byte in the UTF-8 encoding treated as an individual character for purposes of
@@ -1650,29 +1668,29 @@ OPENSSL_EXPORT int ASN1_STRING_print(BIO *out, const ASN1_STRING *str);
 // as a character, with wide characters escaped as "\Uxxxx" or "\Wxxxxxxxx".
 // Note this can be ambiguous if |ASN1_STRFLGS_ESC_*| are all unset. In that
 // case, backslashes are not escaped, but wide characters are.
-#define ASN1_STRFLGS_UTF8_CONVERT 0x10
+#define ASN1_STRFLGS_UTF8_CONVERT 0x10ul
 
 // ASN1_STRFLGS_IGNORE_TYPE causes the string type to be ignored. The
 // |ASN1_STRING| in-memory representation will be printed directly.
-#define ASN1_STRFLGS_IGNORE_TYPE 0x20
+#define ASN1_STRFLGS_IGNORE_TYPE 0x20ul
 
 // ASN1_STRFLGS_SHOW_TYPE causes the string type to be included in the output.
-#define ASN1_STRFLGS_SHOW_TYPE 0x40
+#define ASN1_STRFLGS_SHOW_TYPE 0x40ul
 
 // ASN1_STRFLGS_DUMP_ALL causes all strings to be printed as a hexdump, using
 // RFC 2253 hexstring notation, such as "#0123456789ABCDEF".
-#define ASN1_STRFLGS_DUMP_ALL 0x80
+#define ASN1_STRFLGS_DUMP_ALL 0x80ul
 
 // ASN1_STRFLGS_DUMP_UNKNOWN behaves like |ASN1_STRFLGS_DUMP_ALL| but only
 // applies to values of unknown type. If unset, unknown values will print
 // their contents as single-byte characters with escape sequences.
-#define ASN1_STRFLGS_DUMP_UNKNOWN 0x100
+#define ASN1_STRFLGS_DUMP_UNKNOWN 0x100ul
 
 // ASN1_STRFLGS_DUMP_DER causes hexdumped strings (as determined by
 // |ASN1_STRFLGS_DUMP_ALL| or |ASN1_STRFLGS_DUMP_UNKNOWN|) to print the entire
 // DER element as in RFC 2253, rather than only the contents of the
 // |ASN1_STRING|.
-#define ASN1_STRFLGS_DUMP_DER 0x200
+#define ASN1_STRFLGS_DUMP_DER 0x200ul
 
 // ASN1_STRFLGS_RFC2253 causes the string to be escaped as in RFC 2253,
 // additionally escaping control characters.

@@ -32,16 +32,8 @@
 #include "WebProcessSupplement.h"
 #include <WebCore/LegacyCDM.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class RemoteLegacyCDMFactory;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLegacyCDMFactory> : std::true_type { };
-}
 
 namespace IPC {
 class Connection;
@@ -68,7 +60,7 @@ class WebProcess;
 class RemoteLegacyCDMFactory final
     : public WebProcessSupplement
     , public CanMakeWeakPtr<RemoteLegacyCDMFactory> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLegacyCDMFactory);
 public:
     explicit RemoteLegacyCDMFactory(WebProcess&);
     virtual ~RemoteLegacyCDMFactory();
@@ -84,11 +76,15 @@ public:
 
     RemoteLegacyCDM* findCDM(WebCore::CDMPrivateInterface*) const;
 
+    void ref() const;
+    void deref() const;
+
 private:
     bool supportsKeySystem(const String&);
     bool supportsKeySystemAndMimeType(const String&, const String&);
-    std::unique_ptr<WebCore::CDMPrivateInterface> createCDM(WebCore::LegacyCDM*);
+    std::unique_ptr<WebCore::CDMPrivateInterface> createCDM(WebCore::LegacyCDM&);
 
+    WeakRef<WebProcess> m_webProcess;
     HashMap<RemoteLegacyCDMSessionIdentifier, WeakPtr<RemoteLegacyCDMSession>> m_sessions;
     HashMap<RemoteLegacyCDMIdentifier, WeakPtr<RemoteLegacyCDM>> m_cdms;
     HashMap<String, bool> m_supportsKeySystemCache;

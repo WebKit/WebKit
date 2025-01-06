@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,7 +11,7 @@
 
 #include <unordered_map>
 
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
@@ -30,11 +30,11 @@ const std::unordered_map<
     kPsnrThreshold = { { static_cast<int>(::libaom_test::kTwoPassGood),
                          { { 2, { { 2, 37.6 }, { 5, 37.6 } } },
                            { 4, { { 2, 37.5 }, { 5, 37.5 } } },
-                           { 6, { { 2, 37.5 }, { 5, 37.5 } } } } },
+                           { 6, { { 2, 37.3 }, { 5, 37.3 } } } } },
                        { static_cast<int>(::libaom_test::kAllIntra),
                          { { 3, { { 2, 42.2 }, { 5, 42.2 } } },
                            { 6, { { 2, 41.8 }, { 4, 41.9 }, { 5, 41.9 } } },
-                           { 9, { { 2, 41.0 }, { 5, 41.0 } } } } } };
+                           { 9, { { 2, 40.9 }, { 5, 40.9 } } } } } };
 
 // This class is used to test sharpness parameter configured through control
 // call using AOME_SET_SHARPNESS for different encoder configurations.

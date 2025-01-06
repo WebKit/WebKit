@@ -1,0 +1,6 @@
+bbase annotation
+
+PASS position:relative on a ruby should move the annotation together
+PASS position:relative on a ruby parent should move the ruby and the annotation
+FAIL Accumulate position:relative offsets assert_equals: expected 123 but got 133
+

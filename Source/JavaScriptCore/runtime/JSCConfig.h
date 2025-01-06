@@ -91,6 +91,7 @@ struct Config {
     uintptr_t startOfStructureHeap;
     uintptr_t sizeOfStructureHeap;
     void* defaultCallThunk;
+    void* arityFixupThunk;
 
 #if ENABLE(SEPARATED_WX_HEAP)
     JITWriteSeparateHeapsFunction jitWriteSeparateHeaps;
@@ -115,23 +116,20 @@ struct Config {
 #endif
 };
 
-#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-
 constexpr size_t alignmentOfJSCConfig = std::alignment_of<JSC::Config>::value;
 
 static_assert(WTF::offsetOfWTFConfigExtension + sizeof(JSC::Config) <= WTF::ConfigSizeToProtect);
 static_assert(roundUpToMultipleOf<alignmentOfJSCConfig>(WTF::offsetOfWTFConfigExtension) == WTF::offsetOfWTFConfigExtension);
 
-#define g_jscConfig (*bitwise_cast<JSC::Config*>(&g_wtfConfig.spaceForExtensions))
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-#else // not ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+// Workaround to localize bounds safety warnings to this file.
+// FIXME: Use real types to make materializing JSC::Config* bounds-safe and type-safe.
+inline Config* addressOfJSCConfig() { return std::bit_cast<Config*>(&g_wtfConfig.spaceForExtensions); }
 
-extern "C" JS_EXPORT_PRIVATE Config g_jscConfig;
-#if OS(WINDOWS) && ENABLE(WEBASSEMBLY)
-extern "C" JS_EXPORT_PRIVATE WTF::Config g_wtfConfigForLLInt;
-#endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+#define g_jscConfig (*JSC::addressOfJSCConfig())
 
 constexpr size_t offsetOfJSCConfigInitializeHasBeenCalled = offsetof(JSC::Config, initializeHasBeenCalled);
 constexpr size_t offsetOfJSCConfigGateMap = offsetof(JSC::Config, llint.gateMap);
@@ -144,7 +142,3 @@ ALWAYS_INLINE PURE_FUNCTION uintptr_t startOfStructureHeap()
 }
 
 } // namespace JSC
-
-#if !ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-using JSC::g_jscConfig;
-#endif

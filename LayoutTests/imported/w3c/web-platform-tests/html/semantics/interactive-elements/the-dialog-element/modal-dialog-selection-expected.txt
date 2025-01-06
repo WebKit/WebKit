@@ -1,6 +1,6 @@
 123456789A
 
-FAIL By default, text inside a modal dialog can be selected assert_equals: expected "345678" but got "123456789A"
+PASS By default, text inside a modal dialog can be selected
 PASS Clicking on backdrop doesn't select text
-FAIL 'user-select: none' prevents text from being selected assert_equals: expected "" but got "123456789A"
+FAIL 'user-select: none' prevents text from being selected assert_equals: expected "" but got "345678"
 

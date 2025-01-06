@@ -39,7 +39,7 @@ class ShadowData;
 struct PaintInfo;
 
 struct TextPaintStyle {
-    TextPaintStyle() { }
+    TextPaintStyle() = default;
     TextPaintStyle(const Color&);
 
     bool operator==(const TextPaintStyle&) const;
@@ -50,9 +50,7 @@ struct TextPaintStyle {
     float strokeWidth { 0 };
     // This is not set for -webkit-text-fill-color.
     bool hasExplicitlySetFillColor { false };
-#if HAVE(OS_DARK_MODE_SUPPORT)
     bool useDarkAppearance { false };
-#endif
     PaintOrder paintOrder { PaintOrder::Normal };
     LineJoin lineJoin { LineJoin::Miter };
     LineCap lineCap { LineCap::Butt };

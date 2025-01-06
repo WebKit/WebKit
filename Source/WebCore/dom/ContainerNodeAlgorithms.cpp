@@ -64,7 +64,7 @@ static void notifyNodeInsertedIntoTree(ContainerNode& parentOfInsertedTree, Node
 
     for (RefPtr currentNode = &node; currentNode; currentNode = NodeTraversal::next(*currentNode, &node)) {
         auto result = currentNode->insertedIntoAncestor(Node::InsertionType { /* connectedToDocument */ false, treeScopeChange == TreeScopeChange::Changed }, parentOfInsertedTree);
-        ASSERT_UNUSED(result, result == Node::InsertedIntoAncestorResult::Done);
+        UNUSED_PARAM(result);
         if (RefPtr root = currentNode->shadowRoot())
             notifyNodeInsertedIntoTree(parentOfInsertedTree, *root, TreeScopeChange::DidNotChange);
     }
@@ -147,6 +147,8 @@ RemovedSubtreeObservability notifyChildNodeRemoved(ContainerNode& oldParentOfRem
 
 void removeDetachedChildrenInContainer(ContainerNode& container)
 {
+    container.setLastChild(nullptr);
+
     RefPtr<Node> next;
     for (RefPtr node = container.firstChild(); node; node = WTFMove(next)) {
         ASSERT(!node->deletionHasBegun());
@@ -158,13 +160,11 @@ void removeDetachedChildrenInContainer(ContainerNode& container)
         if (next)
             next->setPreviousSibling(nullptr);
 
-        node->setTreeScopeRecursively(RefAllowingPartiallyDestroyed<Document> { container.document() });
+        node->setTreeScopeRecursively(Ref<Document> { container.document() });
         if (node->isInTreeScope())
             notifyChildNodeRemoved(container, *node);
         ASSERT_WITH_SECURITY_IMPLICATION(!node->isInTreeScope());
     }
-
-    container.setLastChild(nullptr);
 }
 
 #ifndef NDEBUG
@@ -212,7 +212,7 @@ static void collectFrameOwners(Vector<Ref<HTMLFrameOwnerElement>>& frameOwners, 
         if (RefPtr frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(element))
             frameOwners.append(frameOwnerElement.releaseNonNull());
 
-        if (ShadowRoot* shadowRoot = element.shadowRoot())
+        if (RefPtr shadowRoot = element.shadowRoot())
             collectFrameOwners(frameOwners, *shadowRoot);
         ++it;
     }
@@ -234,7 +234,7 @@ void disconnectSubframes(ContainerNode& root, SubframeDisconnectPolicy policy)
 
     collectFrameOwners(frameOwners, root);
 
-    if (auto* shadowRoot = root.shadowRoot())
+    if (RefPtr shadowRoot = root.shadowRoot())
         collectFrameOwners(frameOwners, *shadowRoot);
 
     // Must disable frame loading in the subtree so an unload handler cannot

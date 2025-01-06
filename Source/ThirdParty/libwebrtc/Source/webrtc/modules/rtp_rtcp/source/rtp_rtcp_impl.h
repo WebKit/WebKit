@@ -15,31 +15,38 @@
 #include <stdint.h>
 
 #include <memory>
-#include <set>
-#include <string>
+#include <optional>
 #include <vector>
 
+#include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
+#include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "api/rtp_headers.h"
+#include "api/units/time_delta.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "modules/include/module_fec_types.h"
+#include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"  // RTCPPacketType
 #include "modules/rtp_rtcp/source/deprecated/deprecated_rtp_sender_egress.h"
 #include "modules/rtp_rtcp/source/packet_sequencer.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
 #include "modules/rtp_rtcp/source/rtcp_receiver.h"
 #include "modules/rtp_rtcp/source/rtcp_sender.h"
 #include "modules/rtp_rtcp/source/rtp_packet_history.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "modules/rtp_rtcp/source/rtp_sender.h"
+#include "modules/rtp_rtcp/source/rtp_sequence_number_map.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/gtest_prod_util.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
-class Clock;
 struct PacedPacketInfo;
 struct RTPVideoHeader;
 
@@ -50,8 +57,8 @@ class ABSL_DEPRECATED("") ModuleRtpRtcpImpl
       public RTCPReceiver::ModuleRtpRtcp {
 #pragma clang diagnostic pop
  public:
-  explicit ModuleRtpRtcpImpl(
-      const RtpRtcpInterface::Configuration& configuration);
+  ModuleRtpRtcpImpl(const Environment& env,
+                    const RtpRtcpInterface::Configuration& configuration);
   ~ModuleRtpRtcpImpl() override;
 
   // Process any pending tasks such as timeouts.
@@ -106,12 +113,12 @@ class ABSL_DEPRECATED("") ModuleRtpRtcpImpl
 
   void SetRtxSendStatus(int mode) override;
   int RtxSendStatus() const override;
-  absl::optional<uint32_t> RtxSsrc() const override;
+  std::optional<uint32_t> RtxSsrc() const override;
 
   void SetRtxSendPayloadType(int payload_type,
                              int associated_payload_type) override;
 
-  absl::optional<uint32_t> FlexfecSsrc() const override;
+  std::optional<uint32_t> FlexfecSsrc() const override;
 
   // Sends kRtcpByeCode when going from true to false.
   int32_t SetSendingStatus(bool sending) override;
@@ -134,6 +141,20 @@ class ABSL_DEPRECATED("") ModuleRtpRtcpImpl
 
   bool TrySendPacket(std::unique_ptr<RtpPacketToSend> packet,
                      const PacedPacketInfo& pacing_info) override;
+
+  bool CanSendPacket(const RtpPacketToSend& packet) const override {
+    RTC_DCHECK_NOTREACHED() << "Not implemented";
+    return false;
+  }
+
+  void AssignSequenceNumber(RtpPacketToSend& packet) override {
+    RTC_DCHECK_NOTREACHED() << "Not implemented";
+  }
+
+  void SendPacket(std::unique_ptr<RtpPacketToSend> packet,
+                  const PacedPacketInfo& pacing_info) override {
+    RTC_DCHECK_NOTREACHED() << "Not implemented";
+  }
 
   void OnBatchComplete() override {}
 
@@ -170,7 +191,7 @@ class ABSL_DEPRECATED("") ModuleRtpRtcpImpl
   int32_t SetCNAME(absl::string_view c_name) override;
 
   // Get RoundTripTime.
-  absl::optional<TimeDelta> LastRtt() const override;
+  std::optional<TimeDelta> LastRtt() const override;
 
   TimeDelta ExpectedRetransmissionTime() const override;
 
@@ -187,10 +208,10 @@ class ABSL_DEPRECATED("") ModuleRtpRtcpImpl
   // Within this list, the `ReportBlockData::source_ssrc()`, which is the SSRC
   // of the corresponding outbound RTP stream, is unique.
   std::vector<ReportBlockData> GetLatestReportBlockData() const override;
-  absl::optional<SenderReportStats> GetSenderReportStats() const override;
+  std::optional<SenderReportStats> GetSenderReportStats() const override;
   // Round trip time statistics computed from the XR block contained in the last
   // report.
-  absl::optional<NonSenderRttStats> GetNonSenderRttStats() const override;
+  std::optional<NonSenderRttStats> GetNonSenderRttStats() const override;
 
   // (REMB) Receiver Estimated Max Bitrate.
   void SetRemb(int64_t bitrate_bps, std::vector<uint32_t> ssrcs) override;
@@ -257,14 +278,13 @@ class ABSL_DEPRECATED("") ModuleRtpRtcpImpl
     rtp_sender_->packet_sender.SetMediaHasBeenSent(media_has_been_sent);
   }
 
-  Clock* clock() const { return clock_; }
-
  private:
   FRIEND_TEST_ALL_PREFIXES(RtpRtcpImplTest, Rtt);
   FRIEND_TEST_ALL_PREFIXES(RtpRtcpImplTest, RttForReceiverOnly);
 
   struct RtpSenderContext {
-    explicit RtpSenderContext(const RtpRtcpInterface::Configuration& config);
+    RtpSenderContext(const Environment& env,
+                     const RtpRtcpInterface::Configuration& config);
     // Storage of packets, for retransmissions and padding, if applicable.
     RtpPacketHistory packet_history;
     // Handles sequence number assignment and padding timestamp generation.
@@ -290,12 +310,11 @@ class ABSL_DEPRECATED("") ModuleRtpRtcpImpl
   // Returns current Receiver Reference Time Report (RTTR) status.
   bool RtcpXrRrtrStatus() const;
 
+  const Environment env_;
   std::unique_ptr<RtpSenderContext> rtp_sender_;
 
   RTCPSender rtcp_sender_;
   RTCPReceiver rtcp_receiver_;
-
-  Clock* const clock_;
 
   int64_t last_bitrate_process_time_;
   int64_t last_rtt_process_time_;

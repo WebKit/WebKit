@@ -14,13 +14,11 @@
 #include "test/video_test_constants.h"
 
 #if WEBRTC_ENABLE_PROTOBUF
-RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/modules/audio_coding/audio_network_adaptor/config.pb.h"
 #else
 #include "modules/audio_coding/audio_network_adaptor/config.pb.h"
 #endif
-RTC_POP_IGNORING_WUNDEF()
 #endif
 
 namespace webrtc {
@@ -31,7 +29,7 @@ enum : int {  // The first valid value is 1.
   kAbsSendTimeExtensionId
 };
 
-absl::optional<std::string> CreateAdaptationString(
+std::optional<std::string> CreateAdaptationString(
     AudioStreamConfig::NetworkAdaptation config) {
 #if WEBRTC_ENABLE_PROTOBUF
 
@@ -63,7 +61,7 @@ absl::optional<std::string> CreateAdaptationString(
   RTC_LOG(LS_ERROR) << "audio_network_adaptation is enabled"
                        " but WEBRTC_ENABLE_PROTOBUF is false.\n"
                        "Ignoring settings.";
-  return absl::nullopt;
+  return std::nullopt;
 #endif  // WEBRTC_ENABLE_PROTOBUF
 }
 }  // namespace
@@ -91,7 +89,7 @@ SendAudioStream::SendAudioStream(
   AudioSendStream::Config send_config(send_transport);
   ssrc_ = sender->GetNextAudioSsrc();
   send_config.rtp.ssrc = ssrc_;
-  SdpAudioFormat::Parameters sdp_params;
+  CodecParameterMap sdp_params;
   if (config.source.channels == 2)
     sdp_params["stereo"] = "1";
   if (config.encoder.initial_frame_length != TimeDelta::Millis(20))

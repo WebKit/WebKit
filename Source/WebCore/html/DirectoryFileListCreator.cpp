@@ -31,6 +31,7 @@
 #include "FileList.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

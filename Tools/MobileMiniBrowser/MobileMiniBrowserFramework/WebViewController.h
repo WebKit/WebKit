@@ -26,6 +26,7 @@
 #import <UIKit/UIKit.h>
 
 @class WKWebView;
+@class WKWebsiteDataStore;
 @class TabViewController;
 @class SettingsViewController;
 
@@ -38,8 +39,10 @@
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *settingsButton;
 @property (strong, nonatomic) IBOutlet TabViewController *tabViewController;
 @property (strong, nonatomic) IBOutlet SettingsViewController *settingsViewController;
+@property (strong, nonatomic) NSURL *initialURL;
 @property (strong, nonatomic) WKWebView *currentWebView;
 @property (strong, nonatomic) NSMutableArray<WKWebView *> *webViews;
+@property (strong, nonatomic, readonly) WKWebsiteDataStore *dataStore;
 
 
 - (IBAction)reload:(id)sender;

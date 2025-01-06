@@ -22,9 +22,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/module-parse-error.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resolve-export.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resolve-export.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/script-src-allows-wasm.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/script-src-blocks-wasm.tentative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/source-phase.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/wasm-import-wasm-export.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/wasm-import.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/wasm-js-cycle.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/wasm-to-wasm-link-error.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/worker-import-source-phase.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/worker-import.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/worker.tentative.html

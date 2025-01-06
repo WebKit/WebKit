@@ -26,14 +26,15 @@
 [
     Conditional=WK_WEB_EXTENSIONS,
     ReturnsPromiseWhenCallbackIsOmitted,
-    NeedsPageWithCallbackHandler,
+    NeedsPageIdentifierWithCallbackHandler,
 ] interface WebExtensionAPIStorageArea {
 
-    [RaisesException] void get([Optional, NSObject, DOMString] any items, [Optional, CallbackHandler] function callback);
+    [RaisesException] void get([Optional, NSObject=StopAtTopLevel, DOMString] any items, [Optional, CallbackHandler] function callback);
+    [RaisesException] void getKeys([Optional, CallbackHandler] function callback);
     [RaisesException] void getBytesInUse([Optional, NSObject, DOMString] any keys, [Optional, CallbackHandler] function callback);
     [RaisesException] void set([NSDictionary=StopAtTopLevel] any items, [Optional, CallbackHandler] function callback);
     [RaisesException] void remove([NSObject] any keys, [Optional, CallbackHandler] function callback);
-    [NeedsPage] void clear([Optional, CallbackHandler] function callback);
+    void clear([Optional, CallbackHandler] function callback);
 
     [RaisesException, Dynamic, MainWorldOnly] void setAccessLevel([NSDictionary] any accessOptions, [Optional, CallbackHandler] function callback);
 

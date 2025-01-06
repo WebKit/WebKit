@@ -94,13 +94,13 @@ private:
     JSCell* singleton() const
     {
         ASSERT(hasSingleton());
-        return bitwise_cast<JSCell*>(m_encodedPointer & ~singletonFlag());
+        return std::bit_cast<JSCell*>(m_encodedPointer & ~singletonFlag());
     }
     
     Vector<JSCell*>* vectorOfCells() const
     {
         ASSERT(hasVectorOfCells());
-        return bitwise_cast<Vector<JSCell*>*>(m_encodedPointer);
+        return std::bit_cast<Vector<JSCell*>*>(m_encodedPointer);
     }
     
     // Singleton flag is set: this is a JSCell*.

@@ -20,7 +20,7 @@
 
 namespace {
 const std::string& DefaultArtifactPath() {
-  static const std::string path = webrtc::test::OutputPath();
+  static const std::string path = webrtc::test::OutputPathWithRandomDirectory();
   return path;
 }
 }  // namespace
@@ -55,8 +55,11 @@ bool WriteToTestArtifactsDir(const char* filename,
     return false;
   }
 
-  FileWrapper output = FileWrapper::OpenWriteOnly(
-      JoinFilename(absl::GetFlag(FLAGS_test_artifacts_dir), filename));
+  std::string full_path =
+      JoinFilename(absl::GetFlag(FLAGS_test_artifacts_dir), filename);
+  FileWrapper output = FileWrapper::OpenWriteOnly(full_path);
+
+  RTC_LOG(LS_INFO) << "Writing test artifacts in: " << full_path;
 
   return output.is_open() && output.Write(buffer, length);
 }

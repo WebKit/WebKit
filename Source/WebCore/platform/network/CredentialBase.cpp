@@ -28,6 +28,7 @@
 
 #include "Credential.h"
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

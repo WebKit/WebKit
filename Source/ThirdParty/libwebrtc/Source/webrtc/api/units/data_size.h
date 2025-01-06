@@ -11,13 +11,11 @@
 #ifndef API_UNITS_DATA_SIZE_H_
 #define API_UNITS_DATA_SIZE_H_
 
-#ifdef WEBRTC_UNIT_TEST
-#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
-#endif              // WEBRTC_UNIT_TEST
-
+#include <cstdint>
 #include <string>
 #include <type_traits>
 
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/units/unit_base.h"  // IWYU pragma: export
 
 namespace webrtc {
@@ -32,6 +30,9 @@ class DataSize final : public rtc_units_impl::RelativeUnit<DataSize> {
   static constexpr DataSize Infinity() { return PlusInfinity(); }
 
   DataSize() = delete;
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, DataSize value);
 
   template <typename T = int64_t>
   constexpr T bytes() const {
@@ -48,18 +49,12 @@ class DataSize final : public rtc_units_impl::RelativeUnit<DataSize> {
   static constexpr bool one_sided = true;
 };
 
-std::string ToString(DataSize value);
-inline std::string ToLogString(DataSize value) {
-  return ToString(value);
-}
+RTC_EXPORT std::string ToString(DataSize value);
 
-#ifdef WEBRTC_UNIT_TEST
-inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
-    std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
-    DataSize value) {
-  return stream << ToString(value);
+template <typename Sink>
+void AbslStringify(Sink& sink, DataSize value) {
+  sink.Append(ToString(value));
 }
-#endif  // WEBRTC_UNIT_TEST
 
 }  // namespace webrtc
 

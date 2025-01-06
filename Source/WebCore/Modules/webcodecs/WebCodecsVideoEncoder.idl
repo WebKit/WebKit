@@ -30,6 +30,7 @@
     EnabledBySetting=WebCodecsVideoEnabled,
     Exposed=(Window,DedicatedWorker),
     InterfaceName=VideoEncoder,
+    JSCustomMarkFunction
 ] interface WebCodecsVideoEncoder : EventTarget {
     [CallWith=CurrentScriptExecutionContext] constructor(WebCodecsVideoEncoderInit init);
 

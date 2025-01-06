@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,6 +55,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
 
@@ -63,7 +64,7 @@ namespace Inspector {
 const ASCIILiteral InspectorDebuggerAgent::backtraceObjectGroup = "backtrace"_s;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDebuggerAgent);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorDebuggerAgentProtocolBreakpoint, InspectorDebuggerAgent::ProtocolBreakpoint);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDebuggerAgent::ProtocolBreakpoint);
 
 // Objects created and retained by evaluating breakpoint actions are put into object groups
 // according to the breakpoint action identifier assigned by the frontend. A breakpoint may
@@ -77,6 +78,14 @@ static String objectGroupForBreakpointAction(JSC::BreakpointActionID id)
 static bool isWebKitInjectedScript(const String& sourceURL)
 {
     return sourceURL.startsWith("__InjectedScript_"_s) && sourceURL.endsWith(".js"_s);
+}
+
+static JSC::Debugger::BlackboxRange blackboxRange(const JSC::Debugger::Script& script)
+{
+    return {
+        { OrdinalNumber::fromZeroBasedInt(script.startLine), OrdinalNumber::fromZeroBasedInt(script.startColumn) },
+        { OrdinalNumber::fromZeroBasedInt(script.endLine), OrdinalNumber::fromZeroBasedInt(script.endColumn) },
+    };
 }
 
 static std::optional<JSC::Breakpoint::Action::Type> breakpointActionTypeForString(Protocol::ErrorString& errorString, const String& typeString)
@@ -114,9 +123,9 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
     size_t ignoreCount = 0;
 
     if (options) {
-        condition = options->getString(Protocol::Debugger::BreakpointOptions::conditionKey);
+        condition = options->getString("condition"_s);
 
-        auto actionsPayload = options->getArray(Protocol::Debugger::BreakpointOptions::actionsKey);
+        auto actionsPayload = options->getArray("actions"_s);
         if (auto count = actionsPayload ? actionsPayload->length() : 0) {
             actions.reserveInitialCapacity(count);
 
@@ -127,7 +136,7 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
                     return { };
                 }
 
-                auto actionTypeString = actionObject->getString(Protocol::Debugger::BreakpointAction::typeKey);
+                auto actionTypeString = actionObject->getString("type"_s);
                 if (!actionTypeString) {
                     errorString = "Missing type for item in given actions"_s;
                     return { };
@@ -139,20 +148,20 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
 
                 JSC::Breakpoint::Action action(*actionType);
 
-                action.data = actionObject->getString(Protocol::Debugger::BreakpointAction::dataKey);
+                action.data = actionObject->getString("data"_s);
 
                 // Specifying an identifier is optional. They are used to correlate probe samples
                 // in the frontend across multiple backend probe actions and segregate object groups.
-                action.id = actionObject->getInteger(Protocol::Debugger::BreakpointAction::idKey).value_or(JSC::noBreakpointActionID);
+                action.id = actionObject->getInteger("id"_s).value_or(JSC::noBreakpointActionID);
 
-                action.emulateUserGesture = actionObject->getBoolean(Protocol::Debugger::BreakpointAction::emulateUserGestureKey).value_or(false);
+                action.emulateUserGesture = actionObject->getBoolean("emulateUserGesture"_s).value_or(false);
 
                 actions.append(WTFMove(action));
             }
         }
 
-        autoContinue = options->getBoolean(Protocol::Debugger::BreakpointOptions::autoContinueKey).value_or(false);
-        ignoreCount = options->getInteger(Protocol::Debugger::BreakpointOptions::ignoreCountKey).value_or(0);
+        autoContinue = options->getBoolean("autoContinue"_s).value_or(false);
+        ignoreCount = options->getInteger("ignoreCount"_s).value_or(0);
     }
 
     return callback(condition, WTFMove(actions), autoContinue, ignoreCount);
@@ -263,15 +272,8 @@ void InspectorDebuggerAgent::internalEnable()
     for (auto* listener : copyToVector(m_listeners))
         listener->debuggerWasEnabled();
 
-    for (auto& [sourceID, script] : m_scripts) {
-        std::optional<JSC::Debugger::BlackboxType> blackboxType;
-        if (isWebKitInjectedScript(script.sourceURL)) {
-            if (!m_pauseForInternalScripts)
-                blackboxType = JSC::Debugger::BlackboxType::Ignored;
-        } else if (shouldBlackboxURL(script.sourceURL) || shouldBlackboxURL(script.url))
-            blackboxType = JSC::Debugger::BlackboxType::Deferred;
-        m_debugger.setBlackboxType(sourceID, blackboxType);
-    }
+    for (auto& [sourceID, script] : m_scripts)
+        setBlackboxConfiguration(sourceID, script);
 }
 
 void InspectorDebuggerAgent::internalDisable(bool isBeingDestroyed)
@@ -440,16 +442,8 @@ void InspectorDebuggerAgent::didScheduleAsyncCall(JSC::JSGlobalObject* globalObj
     if (!callStack->size())
         return;
 
-    RefPtr<AsyncStackTrace> parentStackTrace;
-    if (!m_currentAsyncCallIdentifierStack.isEmpty()) {
-        auto it = m_pendingAsyncCalls.find(m_currentAsyncCallIdentifierStack.last());
-        ASSERT(it != m_pendingAsyncCalls.end());
-        if (LIKELY(it != m_pendingAsyncCalls.end()))
-            parentStackTrace = it->value;
-    }
-
     auto identifier = asyncCallIdentifier(asyncCallType, callbackId);
-    auto asyncStackTrace = AsyncStackTrace::create(WTFMove(callStack), singleShot, WTFMove(parentStackTrace));
+    auto asyncStackTrace = AsyncStackTrace::create(WTFMove(callStack), singleShot, currentParentStackTrace());
 
     m_pendingAsyncCalls.set(identifier, WTFMove(asyncStackTrace));
 }
@@ -460,11 +454,10 @@ void InspectorDebuggerAgent::didCancelAsyncCall(AsyncCallType asyncCallType, uin
         return;
 
     auto identifier = asyncCallIdentifier(asyncCallType, callbackId);
-    auto it = m_pendingAsyncCalls.find(identifier);
-    if (it == m_pendingAsyncCalls.end())
+    auto asyncStackTrace = m_pendingAsyncCalls.get(identifier);
+    if (!asyncStackTrace)
         return;
 
-    auto& asyncStackTrace = it->value;
     asyncStackTrace->didCancelAsyncCall();
 
     if (m_currentAsyncCallIdentifierStack.contains(identifier))
@@ -481,14 +474,12 @@ void InspectorDebuggerAgent::willDispatchAsyncCall(AsyncCallType asyncCallType, 
     // A call can be scheduled before the Inspector is opened, or while async stack
     // traces are disabled. If no call data exists, do nothing.
     auto identifier = asyncCallIdentifier(asyncCallType, callbackId);
-    auto it = m_pendingAsyncCalls.find(identifier);
-    if (it == m_pendingAsyncCalls.end())
+    auto asyncStackTrace = m_pendingAsyncCalls.get(identifier);
+    if (!asyncStackTrace)
         return;
 
-    auto& asyncStackTrace = it->value;
     asyncStackTrace->willDispatchAsyncCall(m_asyncStackTraceDepth);
 
-    ASSERT(!m_currentAsyncCallIdentifierStack.contains(identifier));
     m_currentAsyncCallIdentifierStack.append(WTFMove(identifier));
 }
 
@@ -497,22 +488,19 @@ void InspectorDebuggerAgent::didDispatchAsyncCall(AsyncCallType asyncCallType, u
     if (!m_asyncStackTraceDepth)
         return;
 
-    if (m_currentAsyncCallIdentifierStack.isEmpty())
-        return;
-
     auto identifier = asyncCallIdentifier(asyncCallType, callbackId);
-    auto it = m_pendingAsyncCalls.find(identifier);
-    if (it == m_pendingAsyncCalls.end())
+    auto asyncStackTrace = m_pendingAsyncCalls.get(identifier);
+    if (!asyncStackTrace)
         return;
 
-    auto& asyncStackTrace = it->value;
     asyncStackTrace->didDispatchAsyncCall();
 
     m_currentAsyncCallIdentifierStack.removeLast(identifier);
-    ASSERT(!m_currentAsyncCallIdentifierStack.contains(identifier));
 
-    if (!asyncStackTrace->isPending())
-        m_pendingAsyncCalls.remove(identifier);
+    if (asyncStackTrace->isPending() || m_currentAsyncCallIdentifierStack.contains(identifier))
+        return;
+
+    m_pendingAsyncCalls.remove(identifier);
 }
 
 AsyncStackTrace* InspectorDebuggerAgent::currentParentStackTrace() const
@@ -538,7 +526,7 @@ static Ref<Protocol::Debugger::Location> buildDebuggerLocation(const JSC::Breakp
 
 static bool parseLocation(Protocol::ErrorString& errorString, const JSON::Object& location, JSC::SourceID& sourceID, unsigned& lineNumber, unsigned& columnNumber)
 {
-    auto lineNumberValue = location.getInteger(Protocol::Debugger::Location::lineNumberKey);
+    auto lineNumberValue = location.getInteger("lineNumber"_s);
     if (!lineNumberValue) {
         errorString = "Unexpected non-integer lineNumber in given location"_s;
         sourceID = JSC::noSourceID;
@@ -547,7 +535,7 @@ static bool parseLocation(Protocol::ErrorString& errorString, const JSON::Object
 
     lineNumber = *lineNumberValue;
 
-    auto scriptIDStr = location.getString(Protocol::Debugger::Location::scriptIdKey);
+    auto scriptIDStr = location.getString("scriptId"_s);
     if (!scriptIDStr) {
         sourceID = JSC::noSourceID;
         errorString = "Unexepcted non-string scriptId in given location"_s;
@@ -555,7 +543,7 @@ static bool parseLocation(Protocol::ErrorString& errorString, const JSON::Object
     }
 
     sourceID = parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptIDStr).value_or(0);
-    columnNumber = location.getInteger(Protocol::Debugger::Location::columnNumberKey).value_or(0);
+    columnNumber = location.getInteger("columnNumber"_s).value_or(0);
     return true;
 }
 
@@ -1309,7 +1297,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::op
     return { { result.releaseNonNull(), WTFMove(wasThrown), WTFMove(savedResultIndex) } };
 }
 
-Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const String& url, bool shouldBlackbox, std::optional<bool>&& optionalCaseSensitive, std::optional<bool>&& optionalIsRegex)
+Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const String& url, bool shouldBlackbox, std::optional<bool>&& optionalCaseSensitive, std::optional<bool>&& optionalIsRegex, RefPtr<JSON::Array>&& protocolSourceRanges)
 {
     if (url.isEmpty())
         return makeUnexpected("URL must not be empty"_s);
@@ -1320,36 +1308,105 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const
     if (!caseSensitive && !isRegex && isWebKitInjectedScript(url))
         return makeUnexpected("Blackboxing of internal scripts is controlled by 'Debugger.setPauseForInternalScripts'"_s);
 
-    BlackboxConfig config { url, caseSensitive, isRegex };
-    if (shouldBlackbox)
-        m_blackboxedURLs.appendIfNotContains(config);
-    else
-        m_blackboxedURLs.removeAll(config);
+    if (shouldBlackbox) {
+        HashSet<JSC::Debugger::BlackboxRange> blackboxRanges;
+        if (protocolSourceRanges) {
+            if (protocolSourceRanges->length() % 4)
+                return makeUnexpected("Unexpected format for given sourceRanges"_s);
+
+            int startLine = -1;
+            int startColumn = -1;
+            int endLine = -1;
+            for (auto&& value : WTFMove(*protocolSourceRanges)) {
+                auto integer = value->asInteger();
+                if (!integer)
+                    return makeUnexpected("Unexpected non-integer item in given sourceRanges"_s);
+                if (*integer < 0)
+                    return makeUnexpected("Unexpected negative item in given sourceRanges"_s);
+
+                if (startLine == -1) {
+                    startLine = *integer;
+                    continue;
+                }
+                if (startColumn == -1) {
+                    startColumn = *integer;
+                    continue;
+                }
+                if (endLine == -1) {
+                    endLine = *integer;
+                    continue;
+                }
+                int endColumn = *integer;
+
+                if (startLine > endLine)
+                    return makeUnexpected("Unexpected endLine before startLine in given sourceRanges"_s);
+
+                if (startLine == endLine && startColumn >= endColumn)
+                    return makeUnexpected("Unexpected endColumn before startColumn in given sourceRanges"_s);
+
+                blackboxRanges.add({
+                    { OrdinalNumber::fromZeroBasedInt(startLine), OrdinalNumber::fromZeroBasedInt(startColumn) },
+                    { OrdinalNumber::fromZeroBasedInt(endLine), OrdinalNumber::fromZeroBasedInt(endColumn) },
+                });
+
+                startLine = -1;
+                startColumn = -1;
+                endLine = -1;
+            }
+            ASSERT(startLine == -1);
+            ASSERT(startColumn == -1);
+            ASSERT(endLine == -1);
+        }
+        m_blackboxedURLs.set({ url, caseSensitive, isRegex }, WTFMove(blackboxRanges));
+    } else
+        m_blackboxedURLs.remove({ url, caseSensitive, isRegex });
 
     for (auto& [sourceID, script] : m_scripts) {
         if (isWebKitInjectedScript(script.sourceURL))
             continue;
 
-        std::optional<JSC::Debugger::BlackboxType> blackboxType;
-        if (shouldBlackboxURL(script.sourceURL) || shouldBlackboxURL(script.url))
-            blackboxType = JSC::Debugger::BlackboxType::Deferred;
-        m_debugger.setBlackboxType(sourceID, blackboxType);
+        setBlackboxConfiguration(sourceID, script);
     }
 
     return { };
 }
 
-bool InspectorDebuggerAgent::shouldBlackboxURL(const String& url) const
+void InspectorDebuggerAgent::setBlackboxConfiguration(JSC::SourceID sourceID, const JSC::Debugger::Script& script)
 {
-    if (!url.isEmpty()) {
-        for (const auto& blackboxConfig : m_blackboxedURLs) {
-            auto searchStringType = blackboxConfig.isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ExactString;
-            auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(blackboxConfig.url, blackboxConfig.caseSensitive, searchStringType);
-            if (regex.match(url) != -1)
-                return true;
+    JSC::Debugger::BlackboxConfiguration blackboxConfiguration;
+
+    if (!m_pauseForInternalScripts && isWebKitInjectedScript(script.sourceURL)) {
+        auto& blackboxFlags = blackboxConfiguration.ensure(blackboxRange(script), [] {
+            return JSC::Debugger::BlackboxFlags();
+        }).iterator->value;
+        blackboxFlags.add(JSC::Debugger::BlackboxFlag::Ignore);
+    }
+
+    for (const auto& [blackboxParameters, blackboxRanges] : m_blackboxedURLs) {
+        const auto& [url, caseSensitive, isRegex] = blackboxParameters;
+
+        auto searchStringType = isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ExactString;
+        auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(url, caseSensitive, searchStringType);
+        if ((script.sourceURL.isEmpty() || regex.match(script.sourceURL) == -1) && (script.url.isEmpty() || regex.match(script.url) == -1))
+            continue;
+
+        if (blackboxRanges.isEmpty()) {
+            auto& blackboxFlags = blackboxConfiguration.ensure(blackboxRange(script), [] {
+                return JSC::Debugger::BlackboxFlags();
+            }).iterator->value;
+            blackboxFlags.add(JSC::Debugger::BlackboxFlag::Defer);
+            continue;
+        }
+
+        for (const auto& blackboxRange : blackboxRanges) {
+            auto& blackboxFlags = blackboxConfiguration.ensure(blackboxRange, [] {
+                return JSC::Debugger::BlackboxFlags();
+            }).iterator->value;
+            blackboxFlags.add(JSC::Debugger::BlackboxFlag::Defer);
         }
     }
-    return false;
+
+    m_debugger.setBlackboxConfiguration(sourceID, WTFMove(blackboxConfiguration));
 }
 
 Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setBlackboxBreakpointEvaluations(bool blackboxBreakpointEvaluations)
@@ -1386,11 +1443,11 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseForInternalScripts
 
     m_pauseForInternalScripts = shouldPause;
 
-    auto blackboxType = !m_pauseForInternalScripts ? std::optional<JSC::Debugger::BlackboxType>(JSC::Debugger::BlackboxType::Ignored) : std::nullopt;
     for (auto& [sourceID, script] : m_scripts) {
         if (!isWebKitInjectedScript(script.sourceURL))
             continue;
-        m_debugger.setBlackboxType(sourceID, blackboxType);
+
+        setBlackboxConfiguration(sourceID, script);
     }
 
     return { };
@@ -1408,6 +1465,7 @@ void InspectorDebuggerAgent::didCreateNativeExecutable(JSC::NativeExecutable& na
     if (m_symbolicBreakpoints.isEmpty())
         return;
 
+    JSC::JSLockHolder apiLocker(vm);
     auto symbol = functionName(nativeExecutable);
     if (symbol.isEmpty())
         return;
@@ -1549,15 +1607,11 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const JSC::D
 
     m_scripts.set(sourceID, script);
 
-    if (isWebKitInjectedScript(sourceURL)) {
-        if (!m_pauseForInternalScripts)
-            m_debugger.setBlackboxType(sourceID, JSC::Debugger::BlackboxType::Ignored);
-    } else if (shouldBlackboxURL(sourceURL) || shouldBlackboxURL(script.url))
-        m_debugger.setBlackboxType(sourceID, JSC::Debugger::BlackboxType::Deferred);
-
     String scriptURLForBreakpoints = hasSourceURL ? script.sourceURL : script.url;
     if (scriptURLForBreakpoints.isEmpty())
         return;
+
+    setBlackboxConfiguration(sourceID, script);
 
     for (auto& protocolBreakpoint : m_protocolBreakpointForProtocolBreakpointID.values()) {
         if (!protocolBreakpoint.matchesScriptURL(scriptURLForBreakpoints))
@@ -1708,11 +1762,8 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
     m_enablePauseWhenIdle = false;
 
     RefPtr<Protocol::Console::StackTrace> asyncStackTrace;
-    if (!m_currentAsyncCallIdentifierStack.isEmpty()) {
-        auto it = m_pendingAsyncCalls.find(m_currentAsyncCallIdentifierStack.last());
-        if (it != m_pendingAsyncCalls.end())
-            asyncStackTrace = it->value->buildInspectorObject();
-    }
+    if (auto* parentStackTrace = currentParentStackTrace())
+        asyncStackTrace = parentStackTrace->buildInspectorObject();
 
     m_frontendDispatcher->paused(currentCallFrames(injectedScript), Protocol::Helpers::getEnumConstantValue(m_pauseReason), m_pauseData.copyRef(), WTFMove(asyncStackTrace));
 

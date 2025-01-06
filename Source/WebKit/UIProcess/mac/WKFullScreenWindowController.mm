@@ -38,6 +38,7 @@
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/CGWindowUtilities.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/IntRect.h>
@@ -83,7 +84,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
 static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSResponder *responder, NSView *view)
 {
-    if ([responder isKindOfClass:[NSView class]] && [(NSView *)responder isDescendantOf:view])
+    if (auto *responderView = dynamic_objc_cast<NSView>(responder); responderView && [responderView isDescendantOf:view])
         [window makeFirstResponder:responder];
 }
 
@@ -236,9 +237,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     webViewFrame.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(webViewFrame);
 
     CGWindowID windowID = [[_webView window] windowNumber];
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr<CGImageRef> webViewContents = adoptCF(CGWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque));
-ALLOW_DEPRECATED_DECLARATIONS_END
+    RetainPtr webViewContents = WebCore::cgWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque);
 
     // Using the returned CGImage directly would result in calls to the WindowServer every time
     // the image was painted. Instead, copy the image data into our own process to eliminate that
@@ -249,6 +248,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[self window] setAutodisplay:NO];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
+    _page->startDeferringResizeEvents();
+    _page->startDeferringScrollEvents();
     [self _manager]->saveScrollPosition();
     _savedTopContentInset = _page->topContentInset();
     _page->setTopContentInset(0);
@@ -274,7 +275,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _webView.frame = NSInsetRect(contentView.bounds, 0, -_page->topContentInset());
 
     _savedScale = _page->pageScaleFactor();
-    _page->scalePage(1, WebCore::IntPoint());
+    _page->scalePageRelativeToScrollPosition(1, { });
     [self _manager]->setAnimatingFullScreen(true);
     [self _manager]->willEnterFullScreen();
 }
@@ -365,7 +366,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         makeResponderFirstResponderIfDescendantOfView(_webView.window, firstResponder, _webView);
         [[_webView window] makeKeyAndOrderFront:self];
 
-        _page->scalePage(_savedScale, WebCore::IntPoint());
+        _page->scalePageRelativeToScrollPosition(_savedScale, { });
         [self _manager]->restoreScrollPosition();
         _page->setTopContentInset(_savedTopContentInset);
         [self _manager]->setAnimatingFullScreen(false);
@@ -384,6 +385,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         WebKit::NativeWebMouseEvent webEvent(fakeEvent, nil, _webView);
         _page->handleMouseEvent(webEvent);
     }
+    _page->flushDeferredResizeEvents();
+    _page->flushDeferredScrollEvents();
 
     if (_requestedExitFullScreen) {
         _requestedExitFullScreen = NO;
@@ -420,6 +423,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // See the related comment in enterFullScreen:
     // We will resume the normal behavior in _startExitFullScreenAnimationWithDuration:
     _page->setSuppressVisibilityUpdates(true);
+    _page->startDeferringResizeEvents();
+    _page->startDeferringScrollEvents();
     [_webViewPlaceholder setTarget:nil];
 
     [self _manager]->setAnimatingFullScreen(true);
@@ -475,9 +480,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     CGWindowImageOption imageOptions = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
     if (captureAtNominalResolution)
         imageOptions |= kCGWindowImageNominalResolution;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
-ALLOW_DEPRECATED_DECLARATIONS_END
+    return WebCore::cgWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions);
 }
 
 - (void)finishedExitFullScreenAnimationAndExitImmediately:(bool)immediately
@@ -539,9 +542,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // These messages must be sent after the swap or flashing will occur during forceRepaint:
     [self _manager]->setAnimatingFullScreen(false);
     [self _manager]->didExitFullScreen();
-    _page->scalePage(_savedScale, WebCore::IntPoint());
+    _page->scalePageRelativeToScrollPosition(_savedScale, { });
     [self _manager]->restoreScrollPosition();
     _page->setTopContentInset(_savedTopContentInset);
+    _page->flushDeferredResizeEvents();
+    _page->flushDeferredScrollEvents();
 
     [CATransaction commit];
     [CATransaction flush];

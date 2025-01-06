@@ -1,5 +1,6 @@
 
-PASS CSSUnparsedValue containing strings serializes to its concatenated contents
-PASS CSSUnparsedValue containing variable references serializes its concatenated contents
-PASS CSSUnparsedValue containing mix of strings and variable references serializes to its concatenated contents
+FAIL CSSUnparsedValue containing strings serializes to its tokenized contents assert_equals: expected "lem/**/on/**/ade" but got "lemonade"
+PASS CSSUnparsedValue containing variable references serializes its tokenized contents
+FAIL CSSUnparsedValue containing mix of strings and variable references serializes to its tokenized contents assert_equals: expected "foo/**/bar var(--A,baz var(--B)lemon)var(--C,ade)" but got "foobar var(--A,baz var(--B)lemon)var(--C,ade)"
+FAIL attributeStyleMap round-trips correctly, though the comment is gone assert_equals: expected "bar/**/var(--foo)" but got "barvar(--foo)"
 

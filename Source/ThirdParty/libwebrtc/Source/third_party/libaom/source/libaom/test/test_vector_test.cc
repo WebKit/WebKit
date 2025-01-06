@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,9 +15,9 @@
 #include <set>
 #include <string>
 #include <tuple>
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
 #include "common/tools_common.h"
 #include "config/aom_config.h"
+#include "gtest/gtest.h"
 #include "test/codec_factory.h"
 #include "test/decode_test_driver.h"
 #include "test/ivf_video_source.h"

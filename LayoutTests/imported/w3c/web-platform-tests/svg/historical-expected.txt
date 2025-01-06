@@ -7,7 +7,7 @@ PASS SVGColor interface must be removed
 PASS SVGColorProfileElement interface must be removed
 PASS SVGColorProfileRule interface must be removed
 PASS SVGCursorElement interface must be removed
-FAIL SVGDocument interface must be removed assert_false: expected false got true
+PASS SVGDocument interface must be removed
 PASS SVGElementInstanceList interface must be removed
 PASS SVGExternalResourcesRequired interface must be removed
 PASS SVGFontElement interface must be removed
@@ -42,9 +42,9 @@ PASS SVGElement.prototype.getPresentationAttribute must be removed
 PASS SVGElement.prototype.xmlbase must be removed
 PASS SVGElement.prototype.xmllang must be removed
 PASS SVGElement.prototype.xmlspace must be removed
-FAIL SVGGraphicsElement.prototype.getTransformToElement must be removed assert_false: expected false got true
-FAIL SVGGraphicsElement.prototype.hasExtension must be removed assert_false: expected false got true
-FAIL SVGGraphicsElement.prototype.requiredFeatures must be removed assert_false: expected false got true
+PASS SVGGraphicsElement.prototype.getTransformToElement must be removed
+PASS SVGGraphicsElement.prototype.hasExtension must be removed
+PASS SVGGraphicsElement.prototype.requiredFeatures must be removed
 FAIL SVGSVGElement.prototype.currentView must be removed assert_false: expected false got true
 PASS SVGSVGElement.prototype.pixelUnitToMillimeterX must be removed
 PASS SVGSVGElement.prototype.pixelUnitToMillimeterY must be removed

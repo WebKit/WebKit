@@ -34,6 +34,8 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Yarr {
 
 enum class CreateDisjunctionPurpose : uint8_t { NotForNextAlternative, ForNextAlternative };
@@ -1572,11 +1574,6 @@ private:
         ASSERT(!hasError(m_errorCode));
         ASSERT(min <= max);
 
-        if (min == UINT_MAX) {
-            m_errorCode = ErrorCode::QuantifierTooLarge;
-            return;
-        }
-
         if (lastTokenType == TokenType::Atom)
             m_delegate.quantifyAtom(min, max, !tryConsume('?'));
         else if (lastTokenType == TokenType::Lookbehind)
@@ -1680,16 +1677,20 @@ private:
 
                 consume();
                 if (peekIsDigit()) {
-                    unsigned min = consumeNumber();
-                    unsigned max = min;
+                    uint64_t min = consumeNumber64();
+                    uint64_t max = min;
                     
                     if (tryConsume(','))
-                        max = peekIsDigit() ? consumeNumber() : quantifyInfinite;
+                        max = peekIsDigit() ? consumeNumber64() : quantifyInfinite64;
 
                     if (tryConsume('}')) {
-                        if (min <= max)
-                            parseQuantifier(lastTokenType, min, max);
-                        else
+                        if (min == quantifyInfinite64) {
+                            m_errorCode = ErrorCode::QuantifierTooLarge;
+                        } else if (min <= max) {
+                            min = std::min<uint64_t>(min, quantifyInfinite);
+                            max = std::min<uint64_t>(max, quantifyInfinite);
+                            parseQuantifier(lastTokenType, static_cast<unsigned>(min), static_cast<unsigned>(max));
+                        } else
                             m_errorCode = ErrorCode::QuantifierOutOfOrder;
                         lastTokenType = TokenType::NotAtom;
                         break;
@@ -1955,6 +1956,14 @@ private:
         return n.hasOverflowed() ? quantifyInfinite : n.value();
     }
 
+    uint64_t consumeNumber64()
+    {
+        CheckedUint64 n = consumeDigit();
+        while (peekIsDigit())
+            n = n * static_cast<uint64_t>(10) + consumeDigit();
+        return n.hasOverflowed() ? quantifyInfinite64 : n.value();
+    }
+
     // https://tc39.es/ecma262/#prod-annexB-LegacyOctalEscapeSequence
     unsigned consumeOctal(unsigned count)
     {
@@ -2184,3 +2193,5 @@ ErrorCode parse(Delegate& delegate, const StringView pattern, CompileMode compil
 }
 
 } } // namespace JSC::Yarr
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -31,7 +31,7 @@
 
 @interface TestFilePromiseReceiver : NSFilePromiseReceiver
 
-- (instancetype)initWithPromisedTypeIdentifiers:(NSArray<NSString *> *)promisedTypeIdentifiers dragAndDropSimulator:(DragAndDropSimulator *)simulator NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithTypeIdentifier:(NSString *)promisedTypeIdentifier fileURL:(NSURL *)promisedFileURL NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
 @property (nonatomic, weak) id draggingSource;

@@ -26,9 +26,8 @@
 #pragma once
 
 #include "SVGNames.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -53,7 +52,7 @@ class StyleImage;
 class TreeScope;
 
 class ReferencedSVGResources {
-    WTF_MAKE_ISO_ALLOCATED(ReferencedSVGResources);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ReferencedSVGResources);
 public:
     ReferencedSVGResources(RenderElement&);
     ~ReferencedSVGResources();
@@ -84,7 +83,7 @@ private:
     void addClientForTarget(SVGElement& targetElement, const AtomString&);
     void removeClientForTarget(TreeScope&, const AtomString&);
 
-    RenderElement& m_renderer;
+    CheckedRef<RenderElement> m_renderer;
     MemoryCompactRobinHoodHashMap<AtomString, std::unique_ptr<CSSSVGResourceElementClient>> m_elementClients;
 };
 

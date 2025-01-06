@@ -12,14 +12,10 @@ const expected = [
   "get options.calendarName",
   "get options.calendarName.toString",
   "call options.calendarName.toString",
-  "get this.calendar.id",
 ];
 const actual = [];
 
-const calendar = TemporalHelpers.calendarObserver(actual, "this.calendar");
-const instance = new Temporal.PlainYearMonth(2000, 5, calendar);
-// clear observable operations that occurred during the constructor call
-actual.splice(0);
+const instance = new Temporal.PlainYearMonth(2000, 5);
 
 const options = TemporalHelpers.propertyBagObserver(actual, {
   calendarName: "auto",

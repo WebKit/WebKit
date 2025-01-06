@@ -21,7 +21,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(FULLSCREEN_API)
-messages -> WebFullScreenManager LegacyReceiver {
+[
+    DispatchedFrom=UI,
+    DispatchedTo=WebContent
+]
+messages -> WebFullScreenManager {
     RequestRestoreFullScreen() -> (bool succeeded) Async
     RequestExitFullScreen()
     WillEnterFullScreen(WebCore::MediaPlayerEnums::VideoFullscreenMode mode);
@@ -31,7 +35,7 @@ messages -> WebFullScreenManager LegacyReceiver {
     SetAnimatingFullScreen(bool animating)
     SaveScrollPosition()
     RestoreScrollPosition()
-    SetFullscreenInsets(WebCore::RectEdges<float> insets)
+    SetFullscreenInsets(WebCore::FloatBoxExtent insets)
     SetFullscreenAutoHideDuration(Seconds duration)
 }
 #endif

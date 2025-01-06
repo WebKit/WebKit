@@ -31,9 +31,12 @@
 #include "AudioBus.h"
 #include "CAAudioStreamDescription.h"
 #include "Logging.h"
+#include "SpanCoreAudio.h"
 #include "WebAudioBufferList.h"
 #include <CoreAudio/CoreAudioTypes.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <wtf/StdLibExtras.h>
+
 #include <pal/cf/CoreMediaSoftLink.h>
 #include "CoreVideoSoftLink.h"
 
@@ -56,10 +59,10 @@ static inline void copyChannelData(AudioChannel& channel, AudioBuffer& buffer, s
     buffer.mDataByteSize = numberOfFrames * sizeof(float);
     buffer.mNumberChannels = 1;
     if (isMuted) {
-        memset(buffer.mData, 0, buffer.mDataByteSize);
+        zeroSpan(mutableSpan<uint8_t>(buffer));
         return;
     }
-    memcpy(buffer.mData, channel.data(), buffer.mDataByteSize);
+    memcpySpan(mutableSpan<uint8_t>(buffer), asByteSpan(channel.span()).first(buffer.mDataByteSize));
 }
 
 void MediaStreamAudioSource::consumeAudio(AudioBus& bus, size_t numberOfFrames)

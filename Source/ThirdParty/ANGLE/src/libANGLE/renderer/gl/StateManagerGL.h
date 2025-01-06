@@ -36,6 +36,16 @@ class TransformFeedbackGL;
 class VertexArrayGL;
 class QueryGL;
 
+struct ExternalContextVertexAttribute
+{
+    bool enabled;
+    const angle::Format *format;
+    GLuint stride;
+    GLvoid *pointer;
+    GLuint buffer;
+    gl::VertexAttribCurrentValueData currentData;
+};
+
 // TODO(penghuang): use gl::State?
 struct ExternalContextState
 {
@@ -65,6 +75,7 @@ struct ExternalContextState
     bool sampleCoverageInvert;
     GLenum blendEquationRgb;
     GLenum blendEquationAlpha;
+    bool enableBlendEquationAdvancedCoherent;
 
     bool enableDither;
     GLenum polygonMode;
@@ -121,6 +132,9 @@ struct ExternalContextState
     std::vector<TextureBindings> textureBindings;
 
     GLenum vertexArrayBinding;
+
+    angle::FixedVector<ExternalContextVertexAttribute, gl::MAX_VERTEX_ATTRIBS>
+        defaultVertexArrayAttributes;
 };
 
 struct VertexAttributeGL
@@ -213,6 +227,7 @@ class StateManagerGL final : angle::NonCopyable
     void setBlendColor(const gl::ColorF &blendColor);
     void setBlendFuncs(const gl::BlendStateExt &blendStateExt);
     void setBlendEquations(const gl::BlendStateExt &blendStateExt);
+    void setBlendAdvancedCoherent(bool enabled);
     void setColorMask(bool red, bool green, bool blue, bool alpha);
     void setSampleAlphaToCoverageEnabled(bool enabled);
     void setSampleCoverageEnabled(bool enabled);
@@ -327,6 +342,8 @@ class StateManagerGL final : angle::NonCopyable
     void restoreNativeContext(const gl::Extensions &extensions, const ExternalContextState *state);
 
   private:
+    void forceBindVertexArray(GLuint vao, VertexArrayStateGL *vaoState);
+
     void setTextureCubemapSeamlessEnabled(bool enabled);
 
     void setClipControlWithEmulatedClipOrigin(const gl::ProgramExecutable *executable,
@@ -489,6 +506,7 @@ class StateManagerGL final : angle::NonCopyable
 
     gl::ColorF mBlendColor;
     gl::BlendStateExt mBlendStateExt;
+    bool mBlendAdvancedCoherent;
     const bool mIndependentBlendStates;
 
     bool mSampleAlphaToCoverageEnabled;

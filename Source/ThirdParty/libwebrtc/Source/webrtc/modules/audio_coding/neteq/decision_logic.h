@@ -11,25 +11,31 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_DECISION_LOGIC_H_
 #define MODULES_AUDIO_CODING_NETEQ_DECISION_LOGIC_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 
+#include "api/environment/environment.h"
 #include "api/neteq/neteq.h"
 #include "api/neteq/neteq_controller.h"
 #include "api/neteq/tick_timer.h"
 #include "modules/audio_coding/neteq/buffer_level_filter.h"
+#include "modules/audio_coding/neteq/delay_constraints.h"
 #include "modules/audio_coding/neteq/delay_manager.h"
 #include "modules/audio_coding/neteq/packet_arrival_history.h"
-#include "rtc_base/experiments/field_trial_parser.h"
 
 namespace webrtc {
 
 // This is the class for the decision tree implementation.
 class DecisionLogic : public NetEqController {
  public:
-  DecisionLogic(NetEqController::Config config);
-  DecisionLogic(NetEqController::Config config,
-                std::unique_ptr<DelayManager> delay_manager,
-                std::unique_ptr<BufferLevelFilter> buffer_level_filter);
+  DecisionLogic(const Environment& env, NetEqController::Config config);
+  DecisionLogic(
+      NetEqController::Config config,
+      std::unique_ptr<DelayManager> delay_manager,
+      std::unique_ptr<BufferLevelFilter> buffer_level_filter,
+      std::unique_ptr<PacketArrivalHistory> packet_arrival_history = nullptr);
 
   ~DecisionLogic() override;
 
@@ -58,7 +64,7 @@ class DecisionLogic : public NetEqController {
   NetEq::Operation GetDecision(const NetEqController::NetEqStatus& status,
                                bool* reset_decoder) override;
 
-  void ExpandDecision(NetEq::Operation operation) override {}
+  void ExpandDecision(NetEq::Operation /* operation */) override {}
 
   // Adds `value` to `sample_memory_`.
   void AddSampleMemory(int32_t value) override { sample_memory_ += value; }
@@ -67,23 +73,23 @@ class DecisionLogic : public NetEqController {
 
   int UnlimitedTargetLevelMs() const override;
 
-  absl::optional<int> PacketArrived(int fs_hz,
-                                    bool should_update_stats,
-                                    const PacketArrivedInfo& info) override;
+  std::optional<int> PacketArrived(int fs_hz,
+                                   bool should_update_stats,
+                                   const PacketArrivedInfo& info) override;
 
   void RegisterEmptyPacket() override {}
 
   bool SetMaximumDelay(int delay_ms) override {
-    return delay_manager_->SetMaximumDelay(delay_ms);
+    return delay_constraints_.SetMaximumDelay(delay_ms);
   }
   bool SetMinimumDelay(int delay_ms) override {
-    return delay_manager_->SetMinimumDelay(delay_ms);
+    return delay_constraints_.SetMinimumDelay(delay_ms);
   }
   bool SetBaseMinimumDelay(int delay_ms) override {
-    return delay_manager_->SetBaseMinimumDelay(delay_ms);
+    return delay_constraints_.SetBaseMinimumDelay(delay_ms);
   }
   int GetBaseMinimumDelay() const override {
-    return delay_manager_->GetBaseMinimumDelay();
+    return delay_constraints_.GetBaseMinimumDelay();
   }
   bool PeakFound() const override { return false; }
 
@@ -138,32 +144,16 @@ class DecisionLogic : public NetEqController {
   // level, even though the next packet is available.
   bool PostponeDecode(NetEqController::NetEqStatus status) const;
 
-  // Checks if the timestamp leap is so long into the future that a reset due
-  // to exceeding the expand limit will be done.
-  bool ReinitAfterExpands(NetEqController::NetEqStatus status) const;
-
   // Checks if we still have not done enough expands to cover the distance from
   // the last decoded packet to the next available packet.
   bool PacketTooEarly(NetEqController::NetEqStatus status) const;
-  bool MaxWaitForPacket(NetEqController::NetEqStatus status) const;
-  bool ShouldContinueExpand(NetEqController::NetEqStatus status) const;
+
   int GetPlayoutDelayMs(NetEqController::NetEqStatus status) const;
 
-  // Runtime configurable options through field trial
-  // WebRTC-Audio-NetEqDecisionLogicConfig.
-  struct Config {
-    Config();
-
-    bool enable_stable_delay_mode = false;
-    bool combine_concealment_decision = false;
-    int deceleration_target_level_offset_ms = 85;
-    int packet_history_size_ms = 2000;
-    absl::optional<int> cng_timeout_ms;
-  };
-  Config config_;
   std::unique_ptr<DelayManager> delay_manager_;
+  DelayConstraints delay_constraints_;
   std::unique_ptr<BufferLevelFilter> buffer_level_filter_;
-  PacketArrivalHistory packet_arrival_history_;
+  std::unique_ptr<PacketArrivalHistory> packet_arrival_history_;
   const TickTimer* tick_timer_;
   int sample_rate_khz_;
   size_t output_size_samples_;

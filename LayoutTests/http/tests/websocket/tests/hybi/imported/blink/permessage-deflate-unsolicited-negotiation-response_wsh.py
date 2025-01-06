@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from mod_pywebsocket.extensions import PerMessageDeflateExtensionProcessor
+from pywebsocket3.extensions import PerMessageDeflateExtensionProcessor
 
 
 def _get_permessage_deflate_extension_processor(request):

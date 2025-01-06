@@ -13,12 +13,12 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <queue>
 #include <set>
 #include <type_traits>
 #include <utility>
 
-#include "absl/types/optional.h"
 #include "api/ref_counted_base.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
@@ -194,7 +194,7 @@ class OperationsChain final : public RefCountedNonVirtual<OperationsChain> {
   // to it.
   std::queue<std::unique_ptr<rtc_operations_chain_internal::Operation>>
       chained_operations_ RTC_GUARDED_BY(sequence_checker_);
-  absl::optional<std::function<void()>> on_chain_empty_callback_
+  std::optional<std::function<void()>> on_chain_empty_callback_
       RTC_GUARDED_BY(sequence_checker_);
 };
 

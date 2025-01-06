@@ -35,6 +35,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
@@ -55,7 +56,7 @@ class UnifiedPDFPlugin;
 class WebMouseEvent;
 
 class PDFDataDetectorOverlayController final : private WebCore::PageOverlayClient, WebCore::DataDetectorHighlightClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PDFDataDetectorOverlayController);
     WTF_MAKE_NONCOPYABLE(PDFDataDetectorOverlayController);
 public:
     explicit PDFDataDetectorOverlayController(UnifiedPDFPlugin&);
@@ -68,6 +69,7 @@ public:
     enum class ShouldUpdatePlatformHighlightData : bool { No, Yes };
     enum class ActiveHighlightChanged : bool { No, Yes };
     void didInvalidateHighlightOverlayRects(std::optional<PDFDocumentLayout::PageIndex> = { }, ShouldUpdatePlatformHighlightData = ShouldUpdatePlatformHighlightData::Yes, ActiveHighlightChanged = ActiveHighlightChanged::No);
+    void hideActiveHighlightOverlay();
 
 private:
     // PageOverlayClient

@@ -82,7 +82,7 @@ TEST(WebKit, ProcessDidTerminateRequestedByClient)
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV1 navigationClient;
-    memset(&navigationClient, 0, sizeof(navigationClient));
+    zeroBytes(navigationClient);
     navigationClient.base.version = 1;
     navigationClient.didFinishNavigation = didFinishNavigation;
     navigationClient.webProcessDidTerminate = webProcessWasTerminatedByClient;
@@ -106,7 +106,7 @@ TEST(WebKit, ProcessDidTerminateWithReasonCrash)
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV1 navigationClient;
-    memset(&navigationClient, 0, sizeof(navigationClient));
+    zeroBytes(navigationClient);
     navigationClient.base.version = 1;
     navigationClient.didFinishNavigation = didFinishNavigation;
     navigationClient.webProcessDidTerminate = webProcessCrashed;

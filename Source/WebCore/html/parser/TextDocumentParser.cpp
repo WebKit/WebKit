@@ -25,6 +25,7 @@
 #include "config.h"
 #include "TextDocumentParser.h"
 
+#include "CSSTokenizerInputStream.h"
 #include "HTMLTreeBuilder.h"
 #include "ScriptElement.h"
 

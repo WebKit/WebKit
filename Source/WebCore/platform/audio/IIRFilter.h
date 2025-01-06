@@ -25,20 +25,21 @@
 
 #pragma once
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class IIRFilter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IIRFilter);
 public:
     static constexpr size_t maxOrder { 20 };
     IIRFilter(const Vector<double>& feedforward, const Vector<double>& feedback);
 
     void reset();
 
-    void process(const float* source, float* destination, size_t framesToProcess);
-    void getFrequencyResponse(unsigned length, const float* frequency, float* magResponse, float* phaseResponse);
+    void process(std::span<const float> source, std::span<float> destination);
+    void getFrequencyResponse(unsigned length, std::span<const float> frequency, std::span<float> magResponse, std::span<float> phaseResponse);
     double tailTime(double sampleRate, bool isFilterStable);
 
     const Vector<double>& feedforward() const { return m_feedforward; }

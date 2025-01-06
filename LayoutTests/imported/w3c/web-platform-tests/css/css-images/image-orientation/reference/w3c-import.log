@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-background-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-background-position-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-background-properties-border-radius-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-background-properties-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-border-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-default-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-exif-png-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-from-image-content-images-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-from-image-embedded-content-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-from-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-iframe-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-img-object-fit-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-list-style-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-mask-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-none-content-images-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-none-cross-origin-canvas-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-none-cross-origin-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-none-cross-origin-svg-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-none-image-document-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-none-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/svg-image-orientation-aspect-ratio-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/svg-image-orientation-none-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/svg-image-orientation-ref.html

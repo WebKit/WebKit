@@ -61,6 +61,8 @@
 
 namespace Inspector {
 
+RemoteInspector::~RemoteInspector() = default;
+
 static void convertNSNullToNil(__strong NSNumber *& number)
 {
     if ([number isEqual:[NSNull null]])
@@ -344,6 +346,13 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
             sendAutomaticInspectionCandidateMessage(targetID);
     } else
         pushListingsSoon();
+}
+
+void RemoteInspector::connectToWebInspector()
+{
+    dispatch_async(m_xpcQueue, ^{
+        RemoteInspector::singleton().setupXPCConnectionIfNeeded();
+    });
 }
 
 #pragma mark - Proxy Application Information
@@ -843,6 +852,11 @@ void RemoteInspector::receivedAutomationSessionRequestMessage(NSDictionary *user
 void RemoteInspector::receivedPingSuccessMessage()
 {
     m_shouldReconnectToRelayOnFailure = false;
+}
+
+void RemoteInspector::setNeedMachSandboxExtension(bool needExtension)
+{
+    needMachSandboxExtension = needExtension;
 }
 
 } // namespace Inspector

@@ -1,0 +1,141 @@
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<iframe src="resources/toggleCapture-iframe.html" id=frame1></iframe>
+<iframe src="resources/toggleCapture-iframe.html" id=frame2></iframe>
+<script>
+
+promise_test(async () => {
+    return Promise.all([
+        new Promise(resolve => frame1.onload = resolve),
+        new Promise(resolve => frame2.onload = resolve),
+    ]);
+}, "Setup tests");
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return;
+
+    let actionCount = 0;
+    navigator.mediaSession.setActionHandler("togglecamera", () => actionCount++);
+    navigator.mediaSession.setActionHandler("togglemicrophone", () => actionCount++);
+    navigator.mediaSession.setActionHandler("togglescreenshare", () => actionCount++);
+
+    await Promise.all([
+        frame1.contentWindow.startCapture(true, true),
+        frame2.contentWindow.startCapture(true, false)
+    ]);
+
+    let resultsPromise = Promise.all([
+        frame1.contentWindow.waitForToggleAction("togglecamera"),
+        frame1.contentWindow.waitForToggleAction("togglemicrophone"),
+        frame2.contentWindow.waitForNoToggleAction("togglecamera"),
+        frame2.contentWindow.waitForToggleAction("togglemicrophone"),
+    ]);
+    internals.setPageMuted("capturedevices");
+    assert_array_equals(await resultsPromise, [false, false, null, false]);
+
+    assert_equals(actionCount, 0);
+
+    resultsPromise = Promise.all([
+        frame1.contentWindow.waitForToggleAction("togglecamera"),
+        frame1.contentWindow.waitForToggleAction("togglemicrophone"),
+        frame2.contentWindow.waitForNoToggleAction("togglecamera"),
+        frame2.contentWindow.waitForToggleAction("togglemicrophone"),
+    ]);
+    internals.setPageMuted("");
+    assert_array_equals(await resultsPromise, [true, true, null, true]);
+
+    assert_equals(actionCount, 0);
+
+   frame1.contentWindow.stopCapture();
+   frame2.contentWindow.stopCapture();
+}, "togglecamera and togglemicrophone on various iframes");
+
+async function testActionEventOrder(track, action)
+{
+    if (!window.internals)
+        return;
+
+    let isActionHandled = false;
+    let isMuteEventFired = false;
+    let promiseAction = new Promise((resolve, reject) => {
+        setTimeout(() => reject("promiseAction timed out"), 5000);
+        navigator.mediaSession.setActionHandler(action, details => {
+            isActionHandled = true;
+            assert_false(isMuteEventFired);
+            resolve(details.isActivating);
+        });
+    });
+
+    let promiseMuteEvent = new Promise((resolve, reject) => {
+        setTimeout(() => reject("promiseMuteEvent mute timed out"), 5000);
+        track.onmute = () => {
+            isMuteEventFired = true;
+            assert_true(isActionHandled);
+            resolve();
+        };
+    });
+
+    internals.setPageMuted(action === "togglescreenshare" ? "screencapture" : "capturedevices");
+    await Promise.all([promiseAction, promiseMuteEvent]);
+
+    isActionHandled = false;
+    isMuteEventFired = false;
+    promiseAction = new Promise((resolve, reject) => {
+        setTimeout(() => reject("promiseAction timed out"), 5000);
+        navigator.mediaSession.setActionHandler(action, details => {
+            isActionHandled = true;
+            assert_false(isMuteEventFired);
+            resolve(details.isActivating);
+        });
+    });
+
+    promiseMuteEvent = new Promise((resolve, reject) => {
+        setTimeout(() => reject("promiseMuteEvent unmmute timed out"), 5000);
+        track.onunmute = () => {
+            isMuteEventFired = true;
+            assert_true(isActionHandled);
+            resolve();
+        };
+    });
+
+    internals.setPageMuted("");
+    await Promise.all([promiseAction, promiseMuteEvent]);
+}
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const track = stream.getTracks()[0];
+
+    await testActionEventOrder(track, "togglecamera");
+    track.stop();
+}, "togglecamera and mute/unmute events order");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const track = stream.getTracks()[0];
+
+    await testActionEventOrder(track, "togglemicrophone");
+    track.stop();
+}, "togglemicrophone and mute/unmute events order");
+
+promise_test(async () => {
+    if (!window.internals)
+        return;
+
+    let promise;
+    internals.withUserGesture(() => {
+        promise = navigator.mediaDevices.getDisplayMedia({ video: true });
+    });
+    const stream = await promise;
+    const track = stream.getTracks()[0];
+
+    await testActionEventOrder(track, "togglescreenshare");
+    track.stop();
+}, "togglescreenshare and mute/unmute events order");
+
+</script>
+</body>
+</html>

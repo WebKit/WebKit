@@ -41,18 +41,8 @@ class Waiter final : public WTF::BasicRawSentinelNode<Waiter>, public ThreadSafe
     WTF_MAKE_TZONE_ALLOCATED(Waiter);
 
 public:
-    Waiter(VM* vm)
-        : m_vm(vm)
-        , m_isAsync(false)
-    {
-    }
-
-    Waiter(JSPromise* promise)
-        : m_vm(&promise->vm())
-        , m_ticket(m_vm->deferredWorkTimer->addPendingWork(*m_vm, promise, { }))
-        , m_isAsync(true)
-    {
-    }
+    Waiter(VM*);
+    Waiter(JSPromise*);
 
     bool isAsync() const
     {
@@ -64,32 +54,22 @@ public:
         return m_vm;
     }
 
-    void setVM(VM* vm)
-    {
-        m_vm = vm;
-    }
-
-    void clearVM(const AbstractLocker&)
-    {
-        m_vm = nullptr;
-    }
-
     Condition& condition()
     {
         ASSERT(!m_isAsync);
         return m_condition;
     }
 
-    DeferredWorkTimer::Ticket ticket(const AbstractLocker&) const
+    RefPtr<DeferredWorkTimer::TicketData> ticket(const AbstractLocker&) const
     {
         ASSERT(m_isAsync);
-        return m_ticket;
+        return m_ticket.get();
     }
 
-    DeferredWorkTimer::Ticket takeTicket(const AbstractLocker&)
+    void clearTicket(const AbstractLocker&)
     {
         ASSERT(m_isAsync);
-        return std::exchange(m_ticket, nullptr);
+        m_ticket = nullptr;
     }
 
     void setTimer(const AbstractLocker&, Ref<RunLoop::DispatchTimer>&& timer)
@@ -103,19 +83,25 @@ public:
         return !!m_timer;
     }
 
-    void cancelTimer(const AbstractLocker&)
+    void clearTimer(const AbstractLocker&)
     {
         ASSERT(m_isAsync);
         // If the timeout for AsyncWaiter is infinity, we won't dispatch any timer.
         if (!m_timer)
             return;
         m_timer->stop();
+        // The AsyncWaiter's timer holds the waiter's reference. This
+        // releases the strong reference to the Waiter in the timer.
         m_timer = nullptr;
     }
 
+    void scheduleWorkAndClear(const AbstractLocker&, DeferredWorkTimer::Task&&);
+    void cancelAndClear(const AbstractLocker&);
+    void dump(PrintStream&) const;
+
 private:
     VM* m_vm { nullptr };
-    DeferredWorkTimer::Ticket m_ticket { nullptr };
+    ThreadSafeWeakPtr<DeferredWorkTimer::TicketData> m_ticket { nullptr };
     RefPtr<RunLoop::DispatchTimer> m_timer { nullptr };
     Condition m_condition;
     bool m_isAsync { false };
@@ -144,7 +130,7 @@ public:
         // `takeFisrt` is used to consume a waiter (either notify, timeout, or remove).
         // So, the waiter must not be removed and belong to this list.
         Waiter& waiter = *m_waiters.begin();
-        ASSERT((waiter.vm() || waiter.ticket(NoLockingNecessary)) && waiter.isOnList());
+        ASSERT((!waiter.isAsync() || waiter.ticket(NoLockingNecessary)) && waiter.vm() && waiter.isOnList());
         Ref<Waiter> protectedWaiter = Ref { waiter };
         removeWithUpdate(waiter);
         return protectedWaiter;
@@ -212,6 +198,7 @@ public:
         OK = 0,
         NotEqual = 1,
         TimedOut = 2,
+        Terminated = 3,
     };
 
     JS_EXPORT_PRIVATE WaitSyncResult waitSync(VM&, int32_t* ptr, int32_t expected, Seconds timeout);
@@ -224,9 +211,11 @@ public:
 
     size_t waiterListSize(void* ptr);
 
-    void unregisterVM(VM*);
+    size_t totalWaiterCount();
 
-    void unregisterSharedArrayBuffer(uint8_t* arrayPtr, size_t);
+    void unregister(VM*);
+    void unregister(JSGlobalObject*);
+    void unregister(uint8_t* arrayPtr, size_t);
 
 private:
     template <typename ValueType>
@@ -234,6 +223,7 @@ private:
     template <typename ValueType>
     JSValue waitAsyncImpl(JSGlobalObject*, VM&, ValueType* ptr, ValueType expectedValue, Seconds timeout);
 
+    // Notify the waiter if its ticket is not canceled.
     void notifyWaiterImpl(const AbstractLocker&, Ref<Waiter>&&, const ResolveResult);
 
     void timeoutAsyncWaiter(void* ptr, Ref<Waiter>&&);
@@ -245,7 +235,7 @@ private:
     RefPtr<WaiterList> findList(void* ptr);
 
     Lock m_waiterListsLock;
-    HashMap<void*, Ref<WaiterList>> m_waiterLists;
+    UncheckedKeyHashMap<void*, Ref<WaiterList>> m_waiterLists;
 };
 
 } // namespace JSC

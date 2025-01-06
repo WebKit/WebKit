@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class RenderMultiColumnSpannerPlaceholder final : public RenderBox {
-    WTF_MAKE_ISO_ALLOCATED(RenderMultiColumnSpannerPlaceholder);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMultiColumnSpannerPlaceholder);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMultiColumnSpannerPlaceholder);
 public:
     static RenderPtr<RenderMultiColumnSpannerPlaceholder> createAnonymous(RenderMultiColumnFlow&, RenderBox& spanner, const RenderStyle& parentStyle);
@@ -48,6 +48,7 @@ private:
     template<class T, class... Args> friend RenderPtr<T> createRenderer(Args&&...);
 
     RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlow&, RenderBox& spanner, RenderStyle&&);
+    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { ASSERT_NOT_REACHED(); }
 
     bool canHaveChildren() const override { return false; }
     void paint(PaintInfo&, const LayoutPoint&) override { }

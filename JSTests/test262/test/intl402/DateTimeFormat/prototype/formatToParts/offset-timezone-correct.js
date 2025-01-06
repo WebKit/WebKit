@@ -13,9 +13,9 @@ let tests = {
     '+13:49': {hour: "5", minute: "13"},
     '-07:56': {hour: "7", minute: "28"},
     '-12': {hour: "3", minute: "24"},
-    '−0914': {hour: "6", minute: "10"},
-    '−10:03': {hour: "5", minute: "21"},
-    '−0509': {hour: "10", minute: "15"},
+    '-0914': {hour: "6", minute: "10"},
+    '-10:03': {hour: "5", minute: "21"},
+    '-0509': {hour: "10", minute: "15"},
 };
 Object.entries(tests).forEach(([timeZone, expected]) => {
     let df = new Intl.DateTimeFormat("en",

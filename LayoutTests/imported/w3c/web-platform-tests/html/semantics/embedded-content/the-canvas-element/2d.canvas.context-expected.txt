@@ -1,6 +1,0 @@
-2d.canvas.context
-checks CanvasRenderingContext2D prototype
-Actual output:
-
-PASS checks CanvasRenderingContext2D prototype
-

@@ -26,32 +26,29 @@
 #include "config.h"
 #include "WebPushDaemonConnection.h"
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 #include "DaemonDecoder.h"
 #include "DaemonEncoder.h"
 #include "NetworkSession.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebPushD {
 
-Connection::Connection(CString&& machServiceName, NetworkNotificationManager& manager, WebPushDaemonConnectionConfiguration&& configuration)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Connection);
+
+Ref<Connection> Connection::create(CString&& machServiceName, WebPushDaemonConnectionConfiguration&& configuration)
+{
+    return adoptRef(*new Connection(WTFMove(machServiceName), WTFMove(configuration)));
+}
+
+Connection::Connection(CString&& machServiceName, WebPushDaemonConnectionConfiguration&& configuration)
     : Daemon::ConnectionToMachService<ConnectionTraits>(WTFMove(machServiceName))
-    , m_notificationManager(manager)
     , m_configuration(WTFMove(configuration))
 {
     LOG(Push, "Creating WebPushD connection to mach service: %s", this->machServiceName().data());
 }
 
-NetworkSession& Connection::networkSession() const
-{
-    return m_notificationManager.networkSession();
-}
-
-void Connection::debugMessage(const String& message)
-{
-    networkSession().networkProcess().broadcastConsoleMessage(networkSession().sessionID(), MessageSource::Other, JSC::MessageLevel::Info, message);
-}
-
 } // namespace WebKit::WebPushD
 
-#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

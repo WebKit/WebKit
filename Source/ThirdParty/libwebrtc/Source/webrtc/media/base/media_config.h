@@ -22,6 +22,17 @@ struct MediaConfig {
   // and delete this flag.
   bool enable_dscp = true;
 
+  // If true, RTCStats timestamps are sourced from the monotonically increasing
+  // environment Clock, where the epoch is unspecified (i.e. up to the Clock
+  // implementation). If false, RTCStats timestamps are either sourced from
+  // system clock via rtc::TimeUTCMicros() which is relative to 1970 but not
+  // necessarily monotonically increasing, or from a monotonic clock that is
+  // set to rtc::TimeUTCMicros() at first call, and then procceeds to increase
+  // monotonically.
+  // TODO: bugs.webrtc.org/370535296 - Change default value to true and delete
+  // this flag once downstream projects have migrated.
+  bool stats_timestamp_with_environment_clock = false;
+
   // Video-specific config.
   struct Video {
     // Enable WebRTC CPU Overuse Detection. This flag comes from the

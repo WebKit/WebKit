@@ -16,6 +16,7 @@
 
 #include "p2p/base/packet_transport_internal.h"
 #include "rtc_base/copy_on_write_buffer.h"
+#include "rtc_base/time_utils.h"
 
 namespace rtc {
 
@@ -60,11 +61,11 @@ class FakePacketTransport : public PacketTransportInternal {
                  size_t len,
                  const PacketOptions& options,
                  int flags) override {
-    if (!dest_) {
+    if (!dest_ || error_ != 0) {
       return -1;
     }
     CopyOnWriteBuffer packet(data, len);
-    SendPacketInternal(packet);
+    SendPacketInternal(packet, options);
 
     SentPacket sent_packet(options.packet_id, TimeMillis());
     SignalSentPacket(this, sent_packet);
@@ -90,13 +91,16 @@ class FakePacketTransport : public PacketTransportInternal {
 
   const CopyOnWriteBuffer* last_sent_packet() { return &last_sent_packet_; }
 
-  absl::optional<NetworkRoute> network_route() const override {
+  std::optional<NetworkRoute> network_route() const override {
     return network_route_;
   }
-  void SetNetworkRoute(absl::optional<NetworkRoute> network_route) {
+  void SetNetworkRoute(std::optional<NetworkRoute> network_route) {
     network_route_ = network_route;
     SignalNetworkRouteChanged(network_route);
   }
+
+  using PacketTransportInternal::NotifyOnClose;
+  using PacketTransportInternal::NotifyPacketReceived;
 
  private:
   void set_writable(bool writable) {
@@ -118,11 +122,13 @@ class FakePacketTransport : public PacketTransportInternal {
     SignalReceivingState(this);
   }
 
-  void SendPacketInternal(const CopyOnWriteBuffer& packet) {
+  void SendPacketInternal(const CopyOnWriteBuffer& packet,
+                          const rtc::PacketOptions& options) {
     last_sent_packet_ = packet;
     if (dest_) {
-      dest_->SignalReadPacket(dest_, packet.data<char>(), packet.size(),
-                              TimeMicros(), 0);
+      dest_->NotifyPacketReceived(rtc::ReceivedPacket(
+          packet, SocketAddress(), webrtc::Timestamp::Micros(rtc::TimeMicros()),
+          options.ecn_1 ? EcnMarking::kEct1 : EcnMarking::kNotEct));
     }
   }
 
@@ -135,7 +141,7 @@ class FakePacketTransport : public PacketTransportInternal {
   std::map<Socket::Option, int> options_;
   int error_ = 0;
 
-  absl::optional<NetworkRoute> network_route_;
+  std::optional<NetworkRoute> network_route_;
 };
 
 }  // namespace rtc

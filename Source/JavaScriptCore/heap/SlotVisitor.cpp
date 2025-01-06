@@ -44,6 +44,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SlotVisitor);
@@ -160,7 +162,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
 #endif
                     out.print("Object contents:");
                     for (unsigned i = 0; i < 2; ++i)
-                        out.print(" ", format("0x%016llx", bitwise_cast<uint64_t*>(jsCell)[i]));
+                        out.print(" ", format("0x%016llx", std::bit_cast<uint64_t*>(jsCell)[i]));
                     out.print("\n");
                     CellContainer container = jsCell->cellContainer();
                     out.print("Is marked: ", container.isMarked(jsCell), "\n");
@@ -296,7 +298,7 @@ ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCe
 
 void SlotVisitor::markAuxiliary(const void* base)
 {
-    HeapCell* cell = bitwise_cast<HeapCell*>(base);
+    HeapCell* cell = std::bit_cast<HeapCell*>(base);
     
     ASSERT(cell->heap() == heap());
     
@@ -818,3 +820,5 @@ void SlotVisitor::addParallelConstraintTask(RefPtr<SharedTask<void(SlotVisitor&)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

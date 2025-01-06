@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,7 +46,7 @@ class WebNotification;
 
 class NotificationService {
     WTF_MAKE_NONCOPYABLE(NotificationService);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NotificationService);
     friend LazyNeverDestroyed<NotificationService>;
 public:
     static NotificationService& singleton();
@@ -86,12 +87,12 @@ private:
     void processCapabilities(GVariant*);
 
     void setNotificationID(WebNotificationIdentifier, uint32_t);
-    WebNotificationIdentifier findNotification(uint32_t);
-    WebNotificationIdentifier findNotification(const String&);
+    std::optional<WebNotificationIdentifier> findNotification(uint32_t);
+    std::optional<WebNotificationIdentifier> findNotification(const String&);
 
     static void handleSignal(GDBusProxy*, char*, char*, GVariant*, NotificationService*);
-    void didClickNotification(WebNotificationIdentifier);
-    void didCloseNotification(WebNotificationIdentifier);
+    void didClickNotification(std::optional<WebNotificationIdentifier>);
+    void didCloseNotification(std::optional<WebNotificationIdentifier>);
 
     GRefPtr<GDBusProxy> m_proxy;
     OptionSet<Capabilities> m_capabilities;

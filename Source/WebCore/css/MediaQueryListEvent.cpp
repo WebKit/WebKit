@@ -26,11 +26,11 @@
 #include "config.h"
 #include "MediaQueryListEvent.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaQueryListEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaQueryListEvent);
 
 MediaQueryListEvent::MediaQueryListEvent(const AtomString& type, const String& media, bool matches)
     : Event(EventInterfaceType::MediaQueryListEvent, type, CanBubble::No, IsCancelable::No)

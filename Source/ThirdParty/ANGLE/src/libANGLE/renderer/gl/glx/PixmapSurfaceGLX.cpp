@@ -180,7 +180,7 @@ egl::Error PixmapSurfaceGLX::releaseTexImage(const gl::Context *context, EGLint 
     return egl::NoError();
 }
 
-void PixmapSurfaceGLX::setSwapInterval(EGLint interval) {}
+void PixmapSurfaceGLX::setSwapInterval(const egl::Display *display, EGLint interval) {}
 
 EGLint PixmapSurfaceGLX::getWidth() const
 {

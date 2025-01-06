@@ -47,15 +47,18 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/StdMap.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtcenc_debug);
 #define GST_CAT_DEFAULT webkit_webrtcenc_debug
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerVideoEncoderFactory);
+
 class GStreamerEncodedImageBuffer : public webrtc::EncodedImageBufferInterface {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(x);
 
 public:
     static rtc::scoped_refptr<GStreamerEncodedImageBuffer> create(GRefPtr<GstSample>&& sample)
@@ -84,7 +87,7 @@ protected:
 };
 
 class GStreamerVideoEncoder : public webrtc::VideoEncoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GStreamerVideoEncoder);
 public:
     GStreamerVideoEncoder(const webrtc::SdpVideoFormat&)
         : GStreamerVideoEncoder()
@@ -268,12 +271,11 @@ public:
         m_encodedFrame._encodedHeight = resolution->height();
         m_encodedFrame._frameType = GST_BUFFER_FLAG_IS_SET(encodedBuffer, GST_BUFFER_FLAG_DELTA_UNIT) ? webrtc::VideoFrameType::kVideoFrameDelta : webrtc::VideoFrameType::kVideoFrameKey;
         m_encodedFrame.capture_time_ms_ = frame.render_time_ms();
-        m_encodedFrame.SetRtpTimestamp(frame.timestamp());
+        m_encodedFrame.SetRtpTimestamp(frame.rtp_timestamp());
 
         GST_LOG_OBJECT(m_pipeline.get(), "Got buffer capture_time_ms: %" G_GINT64_FORMAT " _timestamp: %u", m_encodedFrame.capture_time_ms_, m_encodedFrame.RtpTimestamp());
 
         webrtc::CodecSpecificInfo codecInfo;
-        PopulateCodecSpecific(&codecInfo, encodedBuffer);
         webrtc::EncodedImageCallback::Result result = m_imageReadyCb->OnEncodedImage(m_encodedFrame, &codecInfo);
         if (result.error != webrtc::EncodedImageCallback::Result::OK)
             GST_ERROR_OBJECT(m_pipeline.get(), "Encode callback failed: %d", result.error);
@@ -311,12 +313,12 @@ public:
 
     virtual std::vector<webrtc::SdpVideoFormat> ConfigureSupportedCodec()
     {
-        return { webrtc::SdpVideoFormat(Name()) };
+        return { sdpVideoFormat() };
     }
 
     virtual webrtc::VideoCodecType CodecType() = 0;
-    virtual void PopulateCodecSpecific(webrtc::CodecSpecificInfo*, const GstBuffer*) = 0;
     virtual const gchar* Name() = 0;
+    virtual webrtc::SdpVideoFormat sdpVideoFormat() = 0;
     virtual int KeyframeInterval(const webrtc::VideoCodec* codecSettings) = 0;
 
     void SetRestrictionCaps(GRefPtr<GstCaps> caps)
@@ -345,15 +347,6 @@ class GStreamerH264Encoder : public GStreamerVideoEncoder {
 public:
     GStreamerH264Encoder() { }
 
-    GStreamerH264Encoder(const webrtc::SdpVideoFormat& format)
-        : packetizationMode(webrtc::H264PacketizationMode::NonInterleaved)
-    {
-        auto it = format.parameters.find(cricket::kH264FmtpPacketizationMode);
-
-        if (it != format.parameters.end() && it->second == "1")
-            packetizationMode = webrtc::H264PacketizationMode::NonInterleaved;
-    }
-
     int KeyframeInterval(const webrtc::VideoCodec* codecSettings) final
     {
         return codecSettings->H264().keyFrameInterval;
@@ -365,41 +358,37 @@ public:
     }
 
     const gchar* Caps() final { return "video/x-h264"; }
-    const gchar* Name() final { return cricket::kH264CodecName; }
+    const gchar* Name() final { return "h264"; }
+    webrtc::SdpVideoFormat sdpVideoFormat() final { return webrtc::SdpVideoFormat::H264(); }
     webrtc::VideoCodecType CodecType() final { return webrtc::kVideoCodecH264; }
-
-    void PopulateCodecSpecific(webrtc::CodecSpecificInfo* codecSpecificInfos, const GstBuffer*) final
-    {
-        codecSpecificInfos->codecType = CodecType();
-        webrtc::CodecSpecificInfoH264* h264Info = &(codecSpecificInfos->codecSpecific.H264);
-        h264Info->packetization_mode = packetizationMode;
-    }
-
-    webrtc::H264PacketizationMode packetizationMode;
 };
 
-std::unique_ptr<webrtc::VideoEncoder> GStreamerVideoEncoderFactory::CreateVideoEncoder(const webrtc::SdpVideoFormat& format)
+std::unique_ptr<webrtc::VideoEncoder> GStreamerVideoEncoderFactory::Create(const webrtc::Environment& environment, const webrtc::SdpVideoFormat& format)
 {
     // FIXME: vpxenc doesn't support simulcast nor SVC. vp9enc supports only profile 0. These
     // shortcomings trigger webrtc/vp9.html and webrtc/simulcast-h264.html timeouts and most likely
     // bad UX in WPE/GTK browsers. So for now we prefer to use LibWebRTC's VPx encoders.
-    if (format.name == cricket::kVp9CodecName) {
+    if (format == webrtc::SdpVideoFormat::VP9Profile0()) {
         GST_INFO("Using VP9 Encoder from LibWebRTC.");
-        return webrtc::VP9Encoder::Create(cricket::CreateVideoCodec(format));
+        return webrtc::CreateVp9Encoder(environment);
+    }
+    if (format == webrtc::SdpVideoFormat::VP9Profile2()) {
+        GST_INFO("Using VP9 P2 Encoder from LibWebRTC.");
+        return webrtc::CreateVp9Encoder(environment, { webrtc::VP9Profile::kProfile2 });
     }
 
-    if (format.name == cricket::kVp8CodecName) {
+    if (format == webrtc::SdpVideoFormat::VP8()) {
         GST_INFO("Using VP8 Encoder from LibWebRTC.");
-        return makeUniqueWithoutFastMallocCheck<webrtc::LibvpxVp8Encoder>(webrtc::LibvpxInterface::Create(), webrtc::VP8Encoder::Settings());
+        return webrtc::CreateVp8Encoder(environment);
     }
 
-    if (format.name == cricket::kH264CodecName) {
+    if (format.name == "H264") {
 #if WEBKIT_LIBWEBRTC_OPENH264_ENCODER
         GST_INFO("Using OpenH264 libwebrtc encoder.");
-        return webrtc::H264Encoder::Create(cricket::CreateVideoCodec(format));
+        return webrtc::CreateH264Encoder(environment, webrtc::H264EncoderSettings::Parse(format));
 #else
         GST_INFO("Using H264 GStreamer encoder.");
-        return makeUnique<GStreamerH264Encoder>(format);
+        return makeUnique<GStreamerH264Encoder>();
 #endif
     }
 
@@ -422,11 +411,11 @@ std::vector<webrtc::SdpVideoFormat> GStreamerVideoEncoderFactory::GetSupportedFo
 {
     std::vector<webrtc::SdpVideoFormat> supportedCodecs;
 
-    supportedCodecs.push_back(webrtc::SdpVideoFormat(cricket::kVp8CodecName));
+    supportedCodecs.push_back(webrtc::SdpVideoFormat::VP8());
     if (m_isSupportingVP9Profile0)
-        supportedCodecs.push_back(webrtc::SdpVideoFormat(cricket::kVp9CodecName, {{"profile-id", "0"}}));
+        supportedCodecs.push_back(webrtc::SdpVideoFormat::VP9Profile0());
     if (m_isSupportingVP9Profile2)
-        supportedCodecs.push_back(webrtc::SdpVideoFormat(cricket::kVp9CodecName, {{"profile-id", "2"}}));
+        supportedCodecs.push_back(webrtc::SdpVideoFormat::VP9Profile2());
 
     // If OpenH264 is present, prefer it over the GStreamer encoders (x264enc, usually).
 #if WEBKIT_LIBWEBRTC_OPENH264_ENCODER

@@ -25,7 +25,6 @@
 
 [
     Exposed=Window,
-    EnabledBySetting=CustomStateSetEnabled,
 ] interface CustomStateSet {
     setlike<[AtomString] DOMString>;
 };

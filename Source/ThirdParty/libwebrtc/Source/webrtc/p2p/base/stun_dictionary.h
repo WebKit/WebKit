@@ -81,7 +81,7 @@ class StunDictionaryView {
 
   const StunAttribute* GetOrNull(
       int key,
-      absl::optional<StunAttributeValueType> = absl::nullopt) const;
+      std::optional<StunAttributeValueType> = std::nullopt) const;
   size_t GetLength(int key) const;
   static webrtc::RTCErrorOr<
       std::pair<uint64_t, std::deque<std::unique_ptr<StunAttribute>>>>

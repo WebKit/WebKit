@@ -188,8 +188,8 @@ void HTTPCookieStore::unregisterObserver(HTTPCookieStoreObserver& observer)
 
 void HTTPCookieStore::cookiesDidChange()
 {
-    for (auto& observer : m_observers)
-        observer.cookiesDidChange(*this);
+    for (Ref observer : m_observers)
+        observer->cookiesDidChange(*this);
 }
 
 WebKit::NetworkProcessProxy* HTTPCookieStore::networkProcessIfExists()

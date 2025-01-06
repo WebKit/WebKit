@@ -40,7 +40,11 @@ struct LifecycleLogger {
 
     void setName(const char*);
 
+    const char* get() const { return name; }
+
     const char* name { "<default>" };
+
+    bool operator==(const LifecycleLogger&) const = default;
 };
 
 }

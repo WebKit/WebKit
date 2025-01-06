@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003-2015, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -35,8 +35,11 @@
 #include "RenderTreeBuilderBlock.h"
 #include "RenderView.h"
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTreeBuilder::MultiColumn);
 
 static RenderMultiColumnSet* findSetRendering(const RenderMultiColumnFlow& fragmentedFlow, const RenderObject& renderer)
 {
@@ -185,10 +188,10 @@ void RenderTreeBuilder::MultiColumn::restoreColumnSpannersForContainer(const Ren
     auto& spanners = multiColumnFlow.spannerMap();
     Vector<RenderMultiColumnSpannerPlaceholder*> placeholdersToRestore;
     for (auto& spannerAndPlaceholder : spanners) {
-        auto& placeholder = *spannerAndPlaceholder.value;
-        if (!placeholder.isDescendantOf(&container))
+        auto& placeholder = spannerAndPlaceholder.value;
+        if (!placeholder || !placeholder->isDescendantOf(&container))
             continue;
-        placeholdersToRestore.append(&placeholder);
+        placeholdersToRestore.append(placeholder.get());
     }
     for (auto* placeholder : placeholdersToRestore) {
         auto* spanner = placeholder->spanner();

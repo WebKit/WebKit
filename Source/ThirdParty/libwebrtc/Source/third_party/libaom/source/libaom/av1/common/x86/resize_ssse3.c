@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,7 +20,7 @@
 #include "aom_dsp/x86/transpose_sse2.h"
 #include "av1/common/resize.h"
 
-static INLINE __m128i scale_plane_2_to_1_phase_0_kernel(
+static inline __m128i scale_plane_2_to_1_phase_0_kernel(
     const uint8_t *const src, const __m128i *const mask) {
   const __m128i a = _mm_loadu_si128((const __m128i *)(&src[0]));
   const __m128i b = _mm_loadu_si128((const __m128i *)(&src[16]));
@@ -29,7 +29,7 @@ static INLINE __m128i scale_plane_2_to_1_phase_0_kernel(
   return _mm_packus_epi16(a_and, b_and);
 }
 
-static INLINE void shuffle_filter_odd_ssse3(const int16_t *const filter,
+static inline void shuffle_filter_odd_ssse3(const int16_t *const filter,
                                             __m128i *const f) {
   const __m128i f_values = _mm_load_si128((const __m128i *)filter);
   // pack and duplicate the filter values
@@ -43,7 +43,7 @@ static INLINE void shuffle_filter_odd_ssse3(const int16_t *const filter,
   f[4] = _mm_shuffle_epi8(f_values, _mm_set1_epi16(0x070eu));
 }
 
-static INLINE __m128i convolve8_8_even_offset_ssse3(const __m128i *const s,
+static inline __m128i convolve8_8_even_offset_ssse3(const __m128i *const s,
                                                     const __m128i *const f) {
   // multiply 2 adjacent elements with the filter and add the result
   const __m128i k_64 = _mm_set1_epi16(1 << 6);
@@ -64,7 +64,7 @@ static INLINE __m128i convolve8_8_even_offset_ssse3(const __m128i *const s,
   return temp;
 }
 
-static INLINE __m128i convolve8_8_odd_offset_ssse3(const __m128i *const s,
+static inline __m128i convolve8_8_odd_offset_ssse3(const __m128i *const s,
                                                    const __m128i *const f) {
   // multiply 2 adjacent elements with the filter and add the result
   const __m128i k_64 = _mm_set1_epi16(1 << 6);
@@ -135,7 +135,7 @@ static void scale_plane_4_to_1_phase_0(const uint8_t *src,
   } while (--y);
 }
 
-static INLINE __m128i scale_plane_bilinear_kernel(const __m128i *const s,
+static inline __m128i scale_plane_bilinear_kernel(const __m128i *const s,
                                                   const __m128i c0c1) {
   const __m128i k_64 = _mm_set1_epi16(1 << 6);
   const __m128i t0 = _mm_maddubs_epi16(s[0], c0c1);
@@ -696,7 +696,7 @@ static void scale_plane_4_to_3_general(const uint8_t *src, const int src_stride,
   } while (x);
 }
 
-static INLINE __m128i scale_1_to_2_phase_0_kernel(const __m128i *const s,
+static inline __m128i scale_1_to_2_phase_0_kernel(const __m128i *const s,
                                                   const __m128i *const f) {
   __m128i ss[4], temp;
 
@@ -811,7 +811,7 @@ static void scale_plane_1_to_2_phase_0(const uint8_t *src,
 
 // There's SIMD optimizations for 1/4, 1/2 and 3/4 downscaling and 2x upscaling
 // in SSSE3.
-static INLINE bool has_normative_scaler_ssse3(const int src_width,
+static inline bool has_normative_scaler_ssse3(const int src_width,
                                               const int src_height,
                                               const int dst_width,
                                               const int dst_height) {

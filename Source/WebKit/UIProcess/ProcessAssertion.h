@@ -28,6 +28,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/ProcessID.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -75,7 +76,7 @@ ASCIILiteral processAssertionTypeDescription(ProcessAssertionType);
 class AuxiliaryProcessProxy;
 
 class ProcessAssertion : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ProcessAssertion> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ProcessAssertion);
 public:
     enum class Mode : bool { Sync, Async };
 #if USE(EXTENSIONKIT)
@@ -131,6 +132,7 @@ private:
 };
 
 class ProcessAndUIAssertion final : public ProcessAssertion {
+    WTF_MAKE_TZONE_ALLOCATED(ProcessAndUIAssertion);
 public:
     static Ref<ProcessAndUIAssertion> create(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType type, Mode mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr)
     {

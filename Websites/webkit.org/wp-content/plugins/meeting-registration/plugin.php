@@ -23,6 +23,7 @@ class WebKit_Meeting_Registration {
         'affiliation' => FILTER_SANITIZE_STRING,
         'interests'   => FILTER_SANITIZE_STRING,
         'claim'       => FILTER_SANITIZE_STRING,
+        'attendance'  => FILTER_SANITIZE_STRING,
         'optingame'   => FILTER_SANITIZE_STRING
     ];
 
@@ -118,7 +119,7 @@ class WebKit_Meeting_Registration {
         add_shortcode('contributors-meeting-registration-form', ['WebKit_Meeting_Registration', 'form_shortcode']);
     }
 
-    public function registration_shortcode($atts, $content) {
+    public static function registration_shortcode($atts, $content) {
         $registration = self::registration();
 
         if (!empty($registration))
@@ -131,7 +132,7 @@ class WebKit_Meeting_Registration {
             return '<p>' . $content . '</p>';
     }
 
-    public function form_shortcode($atts, $content) {
+    public static function form_shortcode($atts, $content) {
         if (!class_exists('GitHubOAuthPlugin'))
             return '';
 

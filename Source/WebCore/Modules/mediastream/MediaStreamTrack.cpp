@@ -59,13 +59,13 @@
 #include "Settings.h"
 #include "WebAudioSourceProvider.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NativePromise.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamTrack);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStreamTrack);
 
 Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack, RegisterCaptureTrackToOwner registerCaptureTrackToOwner)
 {
@@ -104,7 +104,7 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     m_isInterrupted = m_private->interrupted();
 
     if (m_private->isAudio())
-        PlatformMediaSessionManager::sharedManager().addAudioCaptureSource(*this);
+        PlatformMediaSessionManager::singleton().addAudioCaptureSource(*this);
 }
 
 MediaStreamTrack::~MediaStreamTrack()
@@ -115,7 +115,7 @@ MediaStreamTrack::~MediaStreamTrack()
         return;
 
     if (m_private->isAudio())
-        PlatformMediaSessionManager::sharedManager().removeAudioCaptureSource(*this);
+        PlatformMediaSessionManager::singleton().removeAudioCaptureSource(*this);
 }
 
 const AtomString& MediaStreamTrack::kind() const
@@ -252,6 +252,9 @@ void MediaStreamTrack::stopTrack(StopMode mode)
     m_private->endTrack();
     m_ended = true;
 
+    if (isAudio() && isCaptureTrack())
+        PlatformMediaSessionManager::singleton().audioCaptureSourceStateChanged();
+
     configureTrackRendering();
 }
 
@@ -293,6 +296,9 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
 
     if (settings.supportsBackgroundBlur())
         result.backgroundBlur = settings.backgroundBlur();
+
+    if (settings.supportsPowerEfficient())
+        result.powerEfficient = settings.powerEfficient();
 
     return result;
 }
@@ -477,7 +483,7 @@ void MediaStreamTrack::trackStarted(MediaStreamTrackPrivate&)
 void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
 {
     if (m_isCaptureTrack && m_private->isAudio())
-        PlatformMediaSessionManager::sharedManager().removeAudioCaptureSource(*this);
+        PlatformMediaSessionManager::singleton().removeAudioCaptureSource(*this);
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -526,6 +532,10 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
             return;
 
         m_muted = muted;
+
+        if (isAudio() && isCaptureTrack())
+            PlatformMediaSessionManager::singleton().audioCaptureSourceStateChanged();
+
         dispatchEvent(Event::create(muted ? eventNames().muteEvent : eventNames().unmuteEvent, Event::CanBubble::No, Event::IsCancelable::No));
     };
     if (m_shouldFireMuteEventImmediately)
@@ -625,7 +635,14 @@ Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, 
         });
     });
 
-    return MediaStreamTrack::create(context, WTFMove(privateTrack), RegisterCaptureTrackToOwner::No);
+    bool isEnded = privateTrack->ended();
+    Ref track = MediaStreamTrack::create(context, WTFMove(privateTrack), RegisterCaptureTrackToOwner::No);
+    if (isEnded) {
+        track->m_ended = true;
+        track->m_readyState = State::Ended;
+    }
+
+    return track;
 }
 
 #if !RELEASE_LOG_DISABLED

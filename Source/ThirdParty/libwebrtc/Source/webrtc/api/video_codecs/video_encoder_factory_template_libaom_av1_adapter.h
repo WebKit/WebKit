@@ -15,7 +15,10 @@
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
+#include "api/environment/environment.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_encoder.h"
 #include "modules/video_coding/codecs/av1/av1_svc_config.h"
 #include "modules/video_coding/codecs/av1/libaom_av1_encoder.h"
 
@@ -24,13 +27,13 @@ struct LibaomAv1EncoderTemplateAdapter {
   static std::vector<SdpVideoFormat> SupportedFormats() {
     absl::InlinedVector<ScalabilityMode, kScalabilityModeCount>
         scalability_modes = LibaomAv1EncoderSupportedScalabilityModes();
-    return {
-        SdpVideoFormat("AV1", SdpVideoFormat::Parameters(), scalability_modes)};
+    return {SdpVideoFormat(SdpVideoFormat::AV1Profile0(), scalability_modes)};
   }
 
   static std::unique_ptr<VideoEncoder> CreateEncoder(
-      const SdpVideoFormat& format) {
-    return CreateLibaomAv1Encoder();
+      const Environment& env,
+      const SdpVideoFormat& /* format */) {
+    return CreateLibaomAv1Encoder(env);
   }
 
   static bool IsScalabilityModeSupported(ScalabilityMode scalability_mode) {

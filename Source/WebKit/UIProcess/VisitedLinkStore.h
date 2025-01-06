@@ -46,6 +46,9 @@ public:
 
     virtual ~VisitedLinkStore();
 
+    void ref() const final { API::ObjectImpl<API::Object::Type::VisitedLinkStore>::ref(); }
+    void deref() const final { API::ObjectImpl<API::Object::Type::VisitedLinkStore>::deref(); }
+
     void addProcess(WebProcessProxy&);
     void removeProcess(WebProcessProxy&);
 

@@ -51,7 +51,7 @@ static void loadAlternateHTMLString(WKURLRef baseURL, WKURLRef unreachableURL)
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
     
     loaderClient.base.version = 0;
     loaderClient.didFinishNavigation = didFinishNavigation;

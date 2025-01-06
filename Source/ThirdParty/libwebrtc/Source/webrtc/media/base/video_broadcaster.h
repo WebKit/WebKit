@@ -73,7 +73,7 @@ class VideoBroadcaster : public VideoSourceBase,
   rtc::scoped_refptr<webrtc::VideoFrameBuffer> black_frame_buffer_;
   bool previous_frame_sent_to_all_sinks_ RTC_GUARDED_BY(sinks_and_wants_lock_) =
       true;
-  absl::optional<webrtc::VideoTrackSourceConstraints> last_constraints_
+  std::optional<webrtc::VideoTrackSourceConstraints> last_constraints_
       RTC_GUARDED_BY(sinks_and_wants_lock_);
 };
 

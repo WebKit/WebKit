@@ -32,9 +32,9 @@
 #include <WebCore/DisplayUpdate.h>
 #include <WebCore/PlatformScreen.h>
 #include <wtf/CheckedPtr.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(MAC)
 #include <CoreVideo/CVDisplayLink.h>
@@ -51,10 +51,10 @@ struct wpe_playstation_display;
 namespace WebKit {
 
 class DisplayLink {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DisplayLink);
 public:
     class Client : public CanMakeThreadSafeCheckedPtr<Client> {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Client);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Client);
     friend class DisplayLink;
     public:

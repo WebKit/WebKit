@@ -151,11 +151,11 @@ std::set<std::string> VideoStreamsInfo::GetStreams(
   return it->second;
 }
 
-absl::optional<std::string> VideoStreamsInfo::GetSender(
+std::optional<std::string> VideoStreamsInfo::GetSender(
     absl::string_view stream_label) const {
   auto it = stream_to_sender_.find(std::string(stream_label));
   if (it == stream_to_sender_.end()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return it->second;
 }

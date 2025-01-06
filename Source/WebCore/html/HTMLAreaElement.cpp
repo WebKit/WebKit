@@ -33,11 +33,11 @@
 #include "Path.h"
 #include "RenderImage.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLAreaElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLAreaElement);
 
 using namespace HTMLNames;
 
@@ -46,6 +46,8 @@ inline HTMLAreaElement::HTMLAreaElement(const QualifiedName& tagName, Document& 
 {
     ASSERT(hasTagName(areaTag));
 }
+
+HTMLAreaElement::~HTMLAreaElement() = default;
 
 Ref<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Document& document)
 {

@@ -76,7 +76,8 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (WKFrameInfo *)_frame
 {
-    return wrapper(_navigationResponse->frame());
+    // FIXME: This RefPtr should not be necessary. Remove it once clang static analyzer is fixed.
+    return wrapper(RefPtr { _navigationResponse.get() }->protectedFrame().get());
 }
 
 - (NSURLRequest *)_request

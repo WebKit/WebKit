@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -14,9 +14,10 @@
 #include "config/aom_dsp_rtcd.h"
 #include "aom/aom_integer.h"
 #include "aom_dsp/x86/bitdepth_conversion_avx2.h"
+#include "aom_dsp/x86/synonyms_avx2.h"
 #include "aom_ports/mem.h"
 
-static INLINE void sign_extend_16bit_to_32bit_avx2(__m256i in, __m256i zero,
+static inline void sign_extend_16bit_to_32bit_avx2(__m256i in, __m256i zero,
                                                    __m256i *out_lo,
                                                    __m256i *out_hi) {
   const __m256i sign_bits = _mm256_cmpgt_epi16(zero, in);
@@ -140,7 +141,7 @@ void aom_hadamard_lp_8x8_dual_avx2(const int16_t *src_diff,
                       _mm256_permute2x128_si256(src[6], src[7], 0x31));
 }
 
-static INLINE void hadamard_16x16_avx2(const int16_t *src_diff,
+static inline void hadamard_16x16_avx2(const int16_t *src_diff,
                                        ptrdiff_t src_stride, tran_low_t *coeff,
                                        int is_final) {
   DECLARE_ALIGNED(32, int16_t, temp_coeff[16 * 16]);
@@ -542,28 +543,22 @@ int aom_satd_lp_avx2(const int16_t *coeff, int length) {
   }
 }
 
-static INLINE __m256i xx_loadu2_mi128(const void *hi, const void *lo) {
-  __m256i a = _mm256_castsi128_si256(_mm_loadu_si128((const __m128i *)(lo)));
-  a = _mm256_inserti128_si256(a, _mm_loadu_si128((const __m128i *)(hi)), 1);
-  return a;
-}
-
 void aom_avg_8x8_quad_avx2(const uint8_t *s, int p, int x16_idx, int y16_idx,
                            int *avg) {
   const uint8_t *s_y0 = s + y16_idx * p + x16_idx;
   const uint8_t *s_y1 = s_y0 + 8 * p;
   __m256i sum0, sum1, s0, s1, s2, s3, u0;
   u0 = _mm256_setzero_si256();
-  s0 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1, s_y0), u0);
-  s1 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + p, s_y0 + p), u0);
-  s2 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + 2 * p, s_y0 + 2 * p), u0);
-  s3 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + 3 * p, s_y0 + 3 * p), u0);
+  s0 = _mm256_sad_epu8(yy_loadu2_128(s_y1, s_y0), u0);
+  s1 = _mm256_sad_epu8(yy_loadu2_128(s_y1 + p, s_y0 + p), u0);
+  s2 = _mm256_sad_epu8(yy_loadu2_128(s_y1 + 2 * p, s_y0 + 2 * p), u0);
+  s3 = _mm256_sad_epu8(yy_loadu2_128(s_y1 + 3 * p, s_y0 + 3 * p), u0);
   sum0 = _mm256_add_epi16(s0, s1);
   sum1 = _mm256_add_epi16(s2, s3);
-  s0 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + 4 * p, s_y0 + 4 * p), u0);
-  s1 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + 5 * p, s_y0 + 5 * p), u0);
-  s2 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + 6 * p, s_y0 + 6 * p), u0);
-  s3 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + 7 * p, s_y0 + 7 * p), u0);
+  s0 = _mm256_sad_epu8(yy_loadu2_128(s_y1 + 4 * p, s_y0 + 4 * p), u0);
+  s1 = _mm256_sad_epu8(yy_loadu2_128(s_y1 + 5 * p, s_y0 + 5 * p), u0);
+  s2 = _mm256_sad_epu8(yy_loadu2_128(s_y1 + 6 * p, s_y0 + 6 * p), u0);
+  s3 = _mm256_sad_epu8(yy_loadu2_128(s_y1 + 7 * p, s_y0 + 7 * p), u0);
   sum0 = _mm256_add_epi16(sum0, _mm256_add_epi16(s0, s1));
   sum1 = _mm256_add_epi16(sum1, _mm256_add_epi16(s2, s3));
   sum0 = _mm256_add_epi16(sum0, sum1);
@@ -625,7 +620,7 @@ void aom_int_pro_row_avx2(int16_t *hbuf, const uint8_t *ref,
   }
 }
 
-static INLINE void load_from_src_buf(const uint8_t *ref1, __m256i *src,
+static inline void load_from_src_buf(const uint8_t *ref1, __m256i *src,
                                      const int stride) {
   src[0] = _mm256_loadu_si256((const __m256i *)ref1);
   src[1] = _mm256_loadu_si256((const __m256i *)(ref1 + stride));
@@ -647,7 +642,7 @@ static INLINE void load_from_src_buf(const uint8_t *ref1, __m256i *src,
       _mm_add_epi16(results0, _mm_srli_si128(results0, 8));                   \
   _mm_storel_epi64((__m128i *)vbuf, _mm_srli_epi16(results1, norm_factor));
 
-static INLINE void aom_int_pro_col_16wd_avx2(int16_t *vbuf, const uint8_t *ref,
+static inline void aom_int_pro_col_16wd_avx2(int16_t *vbuf, const uint8_t *ref,
                                              const int ref_stride,
                                              const int height,
                                              int norm_factor) {

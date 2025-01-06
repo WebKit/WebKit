@@ -49,7 +49,7 @@ public:
     }
     
     PureValue(NodeType op, const AdjacencyList& children, const void* ptr)
-        : PureValue(op, children, bitwise_cast<uintptr_t>(ptr))
+        : PureValue(op, children, std::bit_cast<uintptr_t>(ptr))
     {
     }
     
@@ -164,8 +164,8 @@ template<> struct HashTraits<JSC::DFG::PureValue> : SimpleClassHashTraits<JSC::D
 
 namespace JSC { namespace DFG {
 
-typedef HashMap<PureValue, Node*> PureMap;
-typedef HashMap<PureValue, Vector<Node*>> PureMultiMap;
+typedef UncheckedKeyHashMap<PureValue, Node*> PureMap;
+typedef UncheckedKeyHashMap<PureValue, Vector<Node*>> PureMultiMap;
 
 } } // namespace JSC::DFG
 

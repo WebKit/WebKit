@@ -51,13 +51,13 @@ TEST(WKWebView, PageZoomAfterPDF)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
     webView.get().pageZoom = 2.0;
     auto beforePageZoom = webView.get().pageZoom;
 
-    NSURLRequest *pdfRequest = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *pdfRequest = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
     [webView loadRequest:pdfRequest];
     [webView _test_waitForDidFinishNavigation];
 
@@ -67,5 +67,29 @@ TEST(WKWebView, PageZoomAfterPDF)
     auto afterPageZoom = webView.get().pageZoom;
     EXPECT_EQ(beforePageZoom, afterPageZoom);
 }
+
+#if PLATFORM(MAC)
+
+TEST(WKWebView, MinimumMagnification)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<body>TEST</body>" baseURL:nil];
+
+    EXPECT_EQ([webView minimumMagnification], 1.00);
+}
+
+TEST(WKWebView, MinimumMagnificationPDF)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+
+    NSURLRequest *pdfRequest = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+    [webView loadRequest:pdfRequest];
+    [webView _test_waitForDidFinishNavigation];
+
+    // See PDFPluginBase::minScaleFactor()
+    EXPECT_LT([webView minimumMagnification], 1.00);
+}
+
+#endif
 
 } // namespace TestWebKitAPI

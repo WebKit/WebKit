@@ -23,15 +23,13 @@ rtc_source_set("voip_api") {
     "..:array_view",
     "../audio_codecs:audio_codecs_api",
     "../neteq:neteq_api",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/base:core_headers",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
 rtc_library("voip_engine_factory") {
   visibility = [ "*" ]
+  allow_poison = [ "environment_construction" ]
   sources = [
     "voip_engine_factory.cc",
     "voip_engine_factory.h",
@@ -40,10 +38,13 @@ rtc_library("voip_engine_factory") {
     ":voip_api",
     "..:scoped_refptr",
     "../../audio/voip:voip_core",
-    "../../modules/audio_device:audio_device_api",
-    "../../modules/audio_processing:api",
+    "../../rtc_base:checks",
     "../../rtc_base:logging",
+    "../audio:audio_device",
+    "../audio:audio_processing",
     "../audio_codecs:audio_codecs_api",
+    "../environment",
+    "../environment:environment_factory",
     "../task_queue",
   ]
 }
@@ -57,8 +58,8 @@ if (rtc_include_tests) {
       ":voip_api",
       "..:array_view",
       "../../test:test_support",
+      "../audio_codecs:audio_codecs_api",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
   }
 
   rtc_library("voip_engine_factory_unittests") {
@@ -66,6 +67,7 @@ if (rtc_include_tests) {
     sources = [ "test/voip_engine_factory_unittest.cc" ]
     deps = [
       ":voip_engine_factory",
+      "..:make_ref_counted",
       "../../modules/audio_device:mock_audio_device",
       "../../modules/audio_processing:mocks",
       "../../test:audio_codec_mocks",

@@ -50,20 +50,20 @@ static ExceptionOr<Vector<uint8_t>> platformDeriveBitsCryptoKit(const CryptoAlgo
     if (!isValidHashParameter(parameters.hashIdentifier))
         return Exception { ExceptionCode::OperationError };
     auto rv = PAL::HKDF::deriveBits(key.key().span(), parameters.saltVector().span(), parameters.infoVector().span(), length, toCKHashFunction(parameters.hashIdentifier));
-    if (!rv.getErrorCode().isSuccess() || !rv.getKey())
+    if (rv.errorCode != Cpp::ErrorCodes::Success)
         return Exception { ExceptionCode::OperationError };
-    return *rv.getKey();
+    return WTFMove(rv.result);
 }
 #endif
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length, UseCryptoKit useCryptoKit)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
 {
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes)
+    if (parameters.hashIdentifier != CryptoAlgorithmIdentifier::SHA_224)
         return platformDeriveBitsCryptoKit(parameters, key, length);
-#else
-UNUSED_PARAM(useCryptoKit);
-#endif
     return platformDeriveBitsCC(parameters, key, length);
+#else
+    return platformDeriveBitsCC(parameters, key, length);
+#endif
 }
 } // namespace WebCore

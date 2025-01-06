@@ -7,23 +7,26 @@
 </head>
 <body></body>
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 var iframe1;
-function boom() {
+async function boom() {
     iframe1 = document.createElement('iframe');
     document.documentElement.appendChild(iframe1);
     document.documentElement.appendChild(document.createElement('li'));
     document.documentElement.appendChild(document.createElement('iframe'));
     iframe1.setAttribute('class', 'c3');
-    eventSender.mouseMoveTo(1000, 100);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseMoveTo(100, 100);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseMoveTo(1000, 100);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+    await eventSender.asyncMouseMoveTo(100, 100);
+    await eventSender.asyncMouseDown();
     document.body.innerHTML = 'Test passes if it does not crash.'
+    testRunner.notifyDone();
 }
 window.onload = boom;
 </script>

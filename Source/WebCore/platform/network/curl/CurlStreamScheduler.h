@@ -28,11 +28,12 @@
 #include "CurlStream.h"
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CurlStreamScheduler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CurlStreamScheduler);
     WTF_MAKE_NONCOPYABLE(CurlStreamScheduler);
 public:
     CurlStreamScheduler();

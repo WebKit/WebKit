@@ -8,15 +8,18 @@
 #ifndef SkImageEncoderFns_DEFINED
 #define SkImageEncoderFns_DEFINED
 
+#include "include/codec/SkEncodedOrigin.h"
 #include "include/core/SkColorSpace.h"
 #include "include/core/SkData.h"
 #include "include/core/SkImageInfo.h"
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkTypes.h"
 #include "include/encode/SkICC.h"
+#include "include/private/SkExif.h"
 #include "modules/skcms/skcms.h"
 
 #include <cstring>
+#include <optional>
 
 typedef void (*transform_scanline_proc)(char* dst, const char* src, int width, int bpp);
 
@@ -135,16 +138,34 @@ static inline void transform_scanline_bgr_101010x_xr(char* dst, const char* src,
           skcms_PixelFormat_RGB_161616BE,   skcms_AlphaFormat_Unpremul);
 }
 
+static inline void transform_scanline_bgra_10101010_xr(char* dst, const char* src, int width, int) {
+    skcms(dst, src, width,
+          skcms_PixelFormat_BGRA_10101010_XR, skcms_AlphaFormat_Unpremul,
+          skcms_PixelFormat_RGBA_16161616BE,  skcms_AlphaFormat_Unpremul);
+}
+
 static inline void transform_scanline_bgra_1010102_premul(char* dst, const char* src, int width, int) {
     skcms(dst, src, width,
           skcms_PixelFormat_BGRA_1010102,    skcms_AlphaFormat_PremulAsEncoded,
           skcms_PixelFormat_RGBA_16161616BE, skcms_AlphaFormat_Unpremul);
 }
 
+static inline void transform_scanline_bgra_10101010_xr_premul(char* dst, const char* src, int width, int) {
+    skcms(dst, src, width,
+          skcms_PixelFormat_BGRA_10101010_XR, skcms_AlphaFormat_PremulAsEncoded,
+          skcms_PixelFormat_RGBA_16161616BE,  skcms_AlphaFormat_Unpremul);
+}
+
 static inline void transform_scanline_F16(char* dst, const char* src, int width, int) {
     skcms(dst, src, width,
           skcms_PixelFormat_RGBA_hhhh,       skcms_AlphaFormat_Unpremul,
           skcms_PixelFormat_RGBA_16161616BE, skcms_AlphaFormat_Unpremul);
+}
+
+static inline void transform_scanline_F16F16F16x(char* dst, const char* src, int width, int) {
+    skcms(dst, src, width,
+          skcms_PixelFormat_RGBA_hhhh,      skcms_AlphaFormat_Unpremul,
+          skcms_PixelFormat_RGB_161616BE,   skcms_AlphaFormat_Unpremul);
 }
 
 static inline void transform_scanline_F16_premul(char* dst, const char* src, int width, int) {
@@ -214,6 +235,12 @@ static inline sk_sp<SkData> icc_from_color_space(const SkImageInfo& info,
                                                  const skcms_ICCProfile* profile,
                                                  const char* profile_description) {
     return icc_from_color_space(info.colorSpace(), profile, profile_description);
+}
+
+static inline sk_sp<SkData> exif_from_origin(const SkEncodedOrigin origin) {
+    SkExif::Metadata metadata;
+    metadata.fOrigin = origin;
+    return SkExif::WriteExif(metadata);
 }
 
 #endif  // SkImageEncoderFns_DEFINED

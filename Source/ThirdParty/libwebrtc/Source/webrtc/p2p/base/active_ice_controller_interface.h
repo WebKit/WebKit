@@ -11,7 +11,8 @@
 #ifndef P2P_BASE_ACTIVE_ICE_CONTROLLER_INTERFACE_H_
 #define P2P_BASE_ACTIVE_ICE_CONTROLLER_INTERFACE_H_
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/array_view.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/ice_switch_reason.h"

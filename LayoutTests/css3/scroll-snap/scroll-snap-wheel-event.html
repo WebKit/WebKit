@@ -33,20 +33,20 @@
                 return;
             }
             try {
-                eventSender.mouseMoveTo(20, 190);
-                eventSender.mouseDown();
-                eventSender.mouseMoveTo(80, 190);
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(20, 190);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseMoveTo(80, 190);
+                await eventSender.asyncMouseUp();
 
                 await UIHelper.statelessMouseWheelScrollAt(80, 190, -1, 0);
 
                 let horizontalContainer = document.getElementById("horizontal-container");
                 expectTrue(horizontalContainer.scrollLeft == 200, "horizontal mouse wheel event snapped");
 
-                eventSender.mouseMoveTo(190, 220);
-                eventSender.mouseDown();
-                eventSender.mouseMoveTo(190, 270);
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(190, 220);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseMoveTo(190, 270);
+                await eventSender.asyncMouseUp();
 
                 await UIHelper.statelessMouseWheelScrollAt(190, 270, 0, -1);
 

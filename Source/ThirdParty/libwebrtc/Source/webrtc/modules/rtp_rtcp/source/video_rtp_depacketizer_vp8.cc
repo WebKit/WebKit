@@ -13,7 +13,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "rtc_base/checks.h"
@@ -131,14 +132,14 @@ int ParseVP8Descriptor(RTPVideoHeaderVP8* vp8,
 
 }  // namespace
 
-absl::optional<VideoRtpDepacketizer::ParsedRtpPayload>
+std::optional<VideoRtpDepacketizer::ParsedRtpPayload>
 VideoRtpDepacketizerVp8::Parse(rtc::CopyOnWriteBuffer rtp_payload) {
   rtc::ArrayView<const uint8_t> payload(rtp_payload.cdata(),
                                         rtp_payload.size());
-  absl::optional<ParsedRtpPayload> result(absl::in_place);
+  std::optional<ParsedRtpPayload> result(std::in_place);
   int offset = ParseRtpPayload(payload, &result->video_header);
   if (offset == kFailedToParse)
-    return absl::nullopt;
+    return std::nullopt;
   RTC_DCHECK_LT(offset, rtp_payload.size());
   result->video_payload =
       rtp_payload.Slice(offset, rtp_payload.size() - offset);

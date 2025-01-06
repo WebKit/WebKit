@@ -33,7 +33,7 @@ class FileSystemFileHandle;
 template<typename> class ExceptionOr;
 
 class FileSystemDirectoryHandle final : public FileSystemHandle {
-    WTF_MAKE_ISO_ALLOCATED(FileSystemDirectoryHandle);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FileSystemDirectoryHandle);
 public:
     struct GetFileOptions {
         bool create { false };

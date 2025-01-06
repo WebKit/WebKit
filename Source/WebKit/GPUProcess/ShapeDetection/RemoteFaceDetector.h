@@ -28,12 +28,14 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
+#include "RemoteRenderingBackend.h"
 #include "ShapeDetectionIdentifier.h"
 #include "StreamMessageReceiver.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 
@@ -44,6 +46,7 @@ class FaceDetector;
 
 namespace WebKit {
 class RemoteRenderingBackend;
+struct SharedPreferencesForWebProcess;
 
 namespace ShapeDetection {
 class ObjectHeap;
@@ -51,12 +54,14 @@ class ObjectHeap;
 
 class RemoteFaceDetector : public IPC::StreamMessageReceiver {
 public:
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteFaceDetector);
 public:
     static Ref<RemoteFaceDetector> create(Ref<WebCore::ShapeDetection::FaceDetector>&& faceDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteRenderingBackend& backend, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
     {
         return adoptRef(*new RemoteFaceDetector(WTFMove(faceDetector), objectHeap, backend, identifier, webProcessIdentifier));
     }
+
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     virtual ~RemoteFaceDetector();
 
@@ -69,6 +74,7 @@ private:
     RemoteFaceDetector& operator=(RemoteFaceDetector&&) = delete;
 
     WebCore::ShapeDetection::FaceDetector& backing() { return m_backing; }
+    Ref<RemoteRenderingBackend> protectedBackend() const { return m_backend.get(); }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

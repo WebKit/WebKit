@@ -79,7 +79,12 @@ static void cycleRunLoop()
     }
 }
 
+// rdar://137526107 REGRESSION(284791@main): [ Debug ] 2x TestWebKitAPI.JavaScriptCore.Incremental* (api-tests) are constant asserts
+#if !defined(NDEBUG)
+TEST(JavaScriptCore, DISABLED_IncrementalSweeperMainThread)
+#else
 TEST(JavaScriptCore, IncrementalSweeperMainThread)
+#endif
 {
     auto context = adoptNS([JSContext new]);
     s_expectedRunLoop = &RunLoop::current();
@@ -90,7 +95,12 @@ TEST(JavaScriptCore, IncrementalSweeperMainThread)
     }
 }
 
+// rdar://137526107 REGRESSION(284791@main): [ Debug ] 2x TestWebKitAPI.JavaScriptCore.Incremental* (api-tests) are constant asserts
+#if !defined(NDEBUG)
+TEST(JavaScriptCore, DISABLED_IncrementalSweeperSecondaryThread)
+#else
 TEST(JavaScriptCore, IncrementalSweeperSecondaryThread)
+#endif
 {
     auto context = adoptNS([JSContext new]);
     s_expectedRunLoop = &RunLoop::current();

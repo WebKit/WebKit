@@ -29,8 +29,11 @@
 #include "ContactsManager.h"
 #include "Navigator.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorContacts);
 
 NavigatorContacts::NavigatorContacts(Navigator& navigator)
     : m_navigator(navigator)
@@ -47,7 +50,7 @@ RefPtr<ContactsManager> NavigatorContacts::contacts(Navigator& navigator)
 RefPtr<ContactsManager> NavigatorContacts::contacts()
 {
     if (!m_contactsManager)
-        m_contactsManager = ContactsManager::create(m_navigator);
+        m_contactsManager = ContactsManager::create(Ref { m_navigator.get() });
     return m_contactsManager;
 }
 

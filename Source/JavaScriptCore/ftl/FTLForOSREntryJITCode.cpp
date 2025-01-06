@@ -35,9 +35,7 @@ ForOSREntryJITCode::ForOSREntryJITCode()
 {
 }
 
-ForOSREntryJITCode::~ForOSREntryJITCode()
-{
-}
+ForOSREntryJITCode::~ForOSREntryJITCode() = default;
 
 ForOSREntryJITCode* ForOSREntryJITCode::ftlForOSREntry()
 {

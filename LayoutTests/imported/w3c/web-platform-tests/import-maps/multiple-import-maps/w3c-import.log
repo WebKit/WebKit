@@ -14,5 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/multiple-import-maps/already-resolved-dropped.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/multiple-import-maps/basic.html
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/multiple-import-maps/conflict-first-persists.html
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/multiple-import-maps/resolution-consistency-in-module-tree-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/multiple-import-maps/resolution-consistency-in-module-tree.html
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/multiple-import-maps/url-resolution-conflict.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/multiple-import-maps/with-errors.html

@@ -11,7 +11,7 @@ description: >
 var obj = {};
 
 Object.defineProperty(obj, "property", {
-  writable: new Date()
+  writable: new Date(0)
 });
 
 var beforeWrite = obj.hasOwnProperty("property");

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,34 +35,18 @@
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/TZoneMallocInlines.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(WebContentAnalysis);
 SOFT_LINK_CLASS_OPTIONAL(WebContentAnalysis, WebFilterEvaluator);
 
 namespace WebCore {
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
-ParentalControlsContentFilter::SandboxExtensionState ParentalControlsContentFilter::m_sandboxExtensionState = SandboxExtensionState::NotSet;
-#endif
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ParentalControlsContentFilter);
 
 bool ParentalControlsContentFilter::enabled()
 {
-#if PLATFORM(IOS) || PLATFORM(VISION)
-    bool enabled = false;
-    switch (m_sandboxExtensionState) {
-    case SandboxExtensionState::Consumed:
-        enabled = true;
-        break;
-    case SandboxExtensionState::NotConsumed:
-        enabled = false;
-        break;
-    case SandboxExtensionState::NotSet:
-        enabled = [getWebFilterEvaluatorClass() isManagedSession];
-        break;
-    }
-#else
     bool enabled = [getWebFilterEvaluatorClass() isManagedSession];
-#endif
     LOG(ContentFiltering, "ParentalControlsContentFilter is %s.\n", enabled ? "enabled" : "not enabled");
     return enabled;
 }
@@ -91,6 +75,10 @@ void ParentalControlsContentFilter::responseReceived(const ResourceResponse& res
     }
 
     m_webFilterEvaluator = adoptNS([allocWebFilterEvaluatorInstance() initWithResponse:response.nsURLResponse()]);
+#if HAVE(WEBFILTEREVALUATOR_AUDIT_TOKEN)
+    if (m_hostProcessAuditToken)
+        m_webFilterEvaluator.get().browserAuditToken = *m_hostProcessAuditToken;
+#endif
     updateFilterState();
 }
 
@@ -146,16 +134,6 @@ void ParentalControlsContentFilter::updateFilterState()
         LOG(ContentFiltering, "ParentalControlsContentFilter stopped buffering with state %d and replacement data length %zu.\n", m_state, [m_replacementData length]);
 #endif
 }
-
-#if PLATFORM(IOS) || PLATFORM(VISION)
-void ParentalControlsContentFilter::setHasConsumedSandboxExtension(bool hasConsumedSandboxExtension)
-{
-    if (m_sandboxExtensionState == SandboxExtensionState::Consumed)
-        return;
-
-    m_sandboxExtensionState = (hasConsumedSandboxExtension ? SandboxExtensionState::Consumed : SandboxExtensionState::NotConsumed);
-}
-#endif
 
 } // namespace WebCore
 

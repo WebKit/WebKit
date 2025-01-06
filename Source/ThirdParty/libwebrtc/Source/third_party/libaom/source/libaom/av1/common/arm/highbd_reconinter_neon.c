@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -19,7 +19,7 @@
 #include "aom_ports/mem.h"
 #include "config/av1_rtcd.h"
 
-static INLINE void diffwtd_mask_highbd_neon(uint8_t *mask, bool inverse,
+static inline void diffwtd_mask_highbd_neon(uint8_t *mask, bool inverse,
                                             const uint16_t *src0,
                                             int src0_stride,
                                             const uint16_t *src1,
@@ -113,8 +113,7 @@ static INLINE void diffwtd_mask_highbd_neon(uint8_t *mask, bool inverse,
                       vget_low_u8(max_alpha));
         }
 
-        store_u8_4x1(mask, m, 0);
-        store_u8_4x1(mask + w, m, 1);
+        store_u8x4_strided_x2(mask, w, m);
 
         src0 += 2 * src0_stride;
         src1 += 2 * src1_stride;
@@ -205,8 +204,7 @@ static INLINE void diffwtd_mask_highbd_neon(uint8_t *mask, bool inverse,
                       vget_low_u8(max_alpha));
         }
 
-        store_u8_4x1(mask, m, 0);
-        store_u8_4x1(mask + w, m, 1);
+        store_u8x4_strided_x2(mask, w, m);
 
         src0 += 2 * src0_stride;
         src1 += 2 * src1_stride;
@@ -298,8 +296,7 @@ static INLINE void diffwtd_mask_highbd_neon(uint8_t *mask, bool inverse,
                       vget_low_u8(max_alpha));
         }
 
-        store_u8_4x1(mask, m, 0);
-        store_u8_4x1(mask + w, m, 1);
+        store_u8x4_strided_x2(mask, w, m);
 
         src0 += 2 * src0_stride;
         src1 += 2 * src1_stride;

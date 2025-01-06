@@ -62,7 +62,7 @@ static inline bool isAlignedForPreciseAllocation(void* memory)
     // Checks if the allocated pointer is 16 byte aligned. If it's 16 byte aligned,
     // then the object will have halfAlignment because headerSize() ensures that it
     // has an odd halfAlignment at the end.
-    uintptr_t allocatedPointer = bitwise_cast<uintptr_t>(memory);
+    uintptr_t allocatedPointer = std::bit_cast<uintptr_t>(memory);
     uintptr_t maskedPointer = allocatedPointer & (PreciseAllocation::alignment - 1);
     ASSERT(!maskedPointer || maskedPointer == PreciseAllocation::halfAlignment);
     return maskedPointer;
@@ -70,7 +70,7 @@ static inline bool isAlignedForPreciseAllocation(void* memory)
 
 static inline bool isCacheAlignedForPreciseAllocation(void* memory)
 {
-    uintptr_t allocatedPointer = bitwise_cast<uintptr_t>(memory);
+    uintptr_t allocatedPointer = std::bit_cast<uintptr_t>(memory);
     uintptr_t cellStart = allocatedPointer + PreciseAllocation::headerSize();
     uintptr_t cacheLineOffsetForCellStart = cellStart % dataCacheLineSize();
     return dataCacheLineSize() - cacheLineOffsetForCellStart >= PreciseAllocation::cacheLineAdjustment;
@@ -90,15 +90,15 @@ PreciseAllocation* PreciseAllocation::tryCreate(JSC::Heap& heap, size_t size, Su
         return nullptr;
 
     unsigned adjustment = halfAlignment;
-    space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) + halfAlignment);
+    space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(space) + halfAlignment);
     if (UNLIKELY(!isAlignedForPreciseAllocation(space))) {
-        space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) - halfAlignment);
+        space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(space) - halfAlignment);
         adjustment -= halfAlignment;
         ASSERT(isAlignedForPreciseAllocation(space));
     }
 
     if (!isCacheAlignedForPreciseAllocation(space)) {
-        space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) + cacheLineAdjustment);
+        space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(space) + cacheLineAdjustment);
         adjustment += cacheLineAdjustment;
         ASSERT(isCacheAlignedForPreciseAllocation(space));
         ASSERT(isAlignedForPreciseAllocation(space));
@@ -111,7 +111,7 @@ PreciseAllocation* PreciseAllocation::tryCreate(JSC::Heap& heap, size_t size, Su
 
 PreciseAllocation* PreciseAllocation::tryReallocate(size_t size, Subspace* subspace)
 {
-    ASSERT(!isLowerTier());
+    ASSERT(!isLowerTierPrecise());
     size_t adjustedAlignmentAllocationSize = headerSize() + size + halfAlignment + cacheLineAdjustment;
     static_assert(halfAlignment == 8, "We assume that memory returned by malloc has alignment >= 8.");
 
@@ -127,23 +127,23 @@ PreciseAllocation* PreciseAllocation::tryReallocate(size_t size, Subspace* subsp
 
     void* newBasePointer = newSpace;
     unsigned newAdjustment = halfAlignment;
-    newBasePointer = bitwise_cast<void*>(bitwise_cast<uintptr_t>(newBasePointer) + halfAlignment);
+    newBasePointer = std::bit_cast<void*>(std::bit_cast<uintptr_t>(newBasePointer) + halfAlignment);
     if (UNLIKELY(!isAlignedForPreciseAllocation(newBasePointer))) {
-        newBasePointer = bitwise_cast<void*>(bitwise_cast<uintptr_t>(newBasePointer) - halfAlignment);
+        newBasePointer = std::bit_cast<void*>(std::bit_cast<uintptr_t>(newBasePointer) - halfAlignment);
         newAdjustment -= halfAlignment;
         ASSERT(isAlignedForPreciseAllocation(newBasePointer));
     }
 
     if (!isCacheAlignedForPreciseAllocation(newBasePointer)) {
-        newBasePointer = bitwise_cast<void*>(bitwise_cast<uintptr_t>(newBasePointer) + cacheLineAdjustment);
+        newBasePointer = std::bit_cast<void*>(std::bit_cast<uintptr_t>(newBasePointer) + cacheLineAdjustment);
         newAdjustment += cacheLineAdjustment;
         ASSERT(isCacheAlignedForPreciseAllocation(newBasePointer));
         ASSERT(isAlignedForPreciseAllocation(newBasePointer));
     }
 
-    PreciseAllocation* newAllocation = bitwise_cast<PreciseAllocation*>(newBasePointer);
+    PreciseAllocation* newAllocation = std::bit_cast<PreciseAllocation*>(newBasePointer);
     if (oldAdjustment != newAdjustment) {
-        void* basePointerAfterRealloc = bitwise_cast<void*>(bitwise_cast<uintptr_t>(newSpace) + oldAdjustment);
+        void* basePointerAfterRealloc = std::bit_cast<void*>(std::bit_cast<uintptr_t>(newSpace) + oldAdjustment);
         memmove(newBasePointer, basePointerAfterRealloc, oldCellSize + PreciseAllocation::headerSize());
     }
 
@@ -153,10 +153,11 @@ PreciseAllocation* PreciseAllocation::tryReallocate(size_t size, Subspace* subsp
 }
 
 
-PreciseAllocation* PreciseAllocation::tryCreateForLowerTier(JSC::Heap& heap, size_t size, Subspace* subspace, uint8_t lowerTierIndex)
+PreciseAllocation* PreciseAllocation::tryCreateForLowerTierPrecise(JSC::Heap& heap, size_t size, Subspace* subspace, uint8_t lowerTierPreciseIndex)
 {
     if constexpr (validateDFGDoesGC)
         heap.vm().verifyCanGC();
+
 
     size_t adjustedAlignmentAllocationSize = headerSize() + size + halfAlignment + cacheLineAdjustment;
     static_assert(halfAlignment == 8, "We assume that memory returned by malloc has alignment >= 8.");
@@ -165,15 +166,15 @@ PreciseAllocation* PreciseAllocation::tryCreateForLowerTier(JSC::Heap& heap, siz
     RELEASE_ASSERT(space);
 
     unsigned adjustment = halfAlignment;
-    space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) + halfAlignment);
+    space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(space) + halfAlignment);
     if (UNLIKELY(!isAlignedForPreciseAllocation(space))) {
-        space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) - halfAlignment);
+        space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(space) - halfAlignment);
         adjustment -= halfAlignment;
         ASSERT(isAlignedForPreciseAllocation(space));
     }
 
     if (!isCacheAlignedForPreciseAllocation(space)) {
-        space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) + cacheLineAdjustment);
+        space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(space) + cacheLineAdjustment);
         adjustment += cacheLineAdjustment;
         ASSERT(isCacheAlignedForPreciseAllocation(space));
         ASSERT(isAlignedForPreciseAllocation(space));
@@ -182,25 +183,25 @@ PreciseAllocation* PreciseAllocation::tryCreateForLowerTier(JSC::Heap& heap, siz
     if (UNLIKELY(scribbleFreeCells()))
         scribble(space, size);
     PreciseAllocation* preciseAllocation = new (NotNull, space) PreciseAllocation(heap, size, subspace, 0, adjustment);
-    preciseAllocation->m_lowerTierIndex = lowerTierIndex;
+    preciseAllocation->m_lowerTierPreciseIndex = lowerTierPreciseIndex;
     return preciseAllocation;
 }
 
-PreciseAllocation* PreciseAllocation::reuseForLowerTier()
+PreciseAllocation* PreciseAllocation::reuseForLowerTierPrecise()
 {
     JSC::Heap& heap = *this->heap();
     size_t size = m_cellSize;
     Subspace* subspace = m_subspace;
     unsigned adjustment = m_adjustment;
-    uint8_t lowerTierIndex = m_lowerTierIndex;
+    uint8_t lowerTierPreciseIndex = m_lowerTierPreciseIndex;
     void* basePointer = this->basePointer();
 
     this->~PreciseAllocation();
 
-    void* space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(basePointer) + adjustment);
+    void* space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(basePointer) + adjustment);
 
     PreciseAllocation* preciseAllocation = new (NotNull, space) PreciseAllocation(heap, size, subspace, 0, adjustment);
-    preciseAllocation->m_lowerTierIndex = lowerTierIndex;
+    preciseAllocation->m_lowerTierPreciseIndex = lowerTierPreciseIndex;
     preciseAllocation->m_hasValidCell = false;
     return preciseAllocation;
 }
@@ -273,7 +274,7 @@ void PreciseAllocation::sweep()
             m_subspace->destroy(vm(), static_cast<JSCell*>(cell()));
         // We should clear IsoCellSet's bit before actually destroying PreciseAllocation
         // since PreciseAllocation's destruction can be delayed until its WeakSet is cleared.
-        if (isLowerTier())
+        if (isLowerTierPrecise())
             static_cast<IsoSubspace*>(m_subspace)->clearIsoCellSetBit(this);
         m_hasValidCell = false;
     }

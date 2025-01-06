@@ -7,6 +7,11 @@
 
 <script>
 if (window.testRunner)
-    window.testRunner.dumpSelectionRect();
+    testRunner.dumpSelectionRect();
+var range = document.createRange();
+range.selectNode(window.document.documentElement);
+var selection = window.getSelection();
+selection.removeAllRanges();
+selection.addRange(range);
 </script>
 </svg>

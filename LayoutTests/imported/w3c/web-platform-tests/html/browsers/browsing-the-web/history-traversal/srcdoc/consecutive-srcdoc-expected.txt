@@ -1,4 +1,6 @@
 
-FAIL changing srcdoc does a replace navigation since the URL is still about:srcdoc assert_equals: expected 2 but got 1
-FAIL changing srcdoc to about:srcdoc#yo then another srcdoc does two push navigations and we can navigate back assert_equals: expected 2 but got 1
+Harness Error (TIMEOUT), message = null
+
+PASS changing srcdoc does a replace navigation since the URL is still about:srcdoc
+TIMEOUT changing srcdoc to about:srcdoc#yo then another srcdoc does two push navigations and we can navigate back Test timed out
 

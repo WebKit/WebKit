@@ -30,6 +30,7 @@
 #if BUSE(LIBPAS)
 
 #include "bmalloc_heap_inlines.h"
+#include "bmalloc_heap_internal.h"
 #include "pas_allocation_mode.h"
 
 #include "IsoMallocFallback.h"
@@ -87,7 +88,7 @@ void* isoAllocateCompact(pas_heap_ref& heapRef)
         }
     }
 
-    void* result = bmalloc_iso_allocate_inline(&heapRef, pas_compact_allocation_mode);
+    void* result = bmalloc_iso_allocate_inline(&heapRef, pas_maybe_compact_allocation_mode);
     BPROFILE_ALLOCATION(COMPACTIBLE, result, typeSize);
     return result;
 }
@@ -103,7 +104,7 @@ void* isoTryAllocateCompact(pas_heap_ref& heapRef)
         }
     }
 
-    void* result = bmalloc_try_iso_allocate_inline(&heapRef, pas_compact_allocation_mode);
+    void* result = bmalloc_try_iso_allocate_inline(&heapRef, pas_maybe_compact_allocation_mode);
     BPROFILE_TRY_ALLOCATION(COMPACTIBLE, result, typeSize);
     return result;
 }

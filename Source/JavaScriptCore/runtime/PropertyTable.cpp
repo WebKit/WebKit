@@ -28,6 +28,8 @@
 
 #include "JSCJSValueInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyTable);
@@ -79,7 +81,7 @@ PropertyTable::PropertyTable(VM& vm, const PropertyTable& other)
 {
     ASSERT(isPowerOf2(m_indexSize));
     ASSERT(isCompact() == other.isCompact());
-    memcpy(bitwise_cast<void*>(m_indexVector & indexVectorMask), bitwise_cast<void*>(other.m_indexVector & indexVectorMask), dataSize(isCompact()));
+    memcpy(std::bit_cast<void*>(m_indexVector & indexVectorMask), std::bit_cast<void*>(other.m_indexVector & indexVectorMask), dataSize(isCompact()));
 
     forEachProperty([&](auto& entry) {
         entry.key()->ref();
@@ -235,3 +237,4 @@ inline void PropertyTable::forEachPropertyMutable(const Functor& functor)
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

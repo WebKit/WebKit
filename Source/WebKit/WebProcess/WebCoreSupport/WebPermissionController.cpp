@@ -32,6 +32,7 @@
 #include "WebPermissionControllerMessages.h"
 #include "WebPermissionControllerProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>
 #include <WebCore/Page.h>
 #include <WebCore/PermissionObserver.h>
@@ -40,6 +41,12 @@
 #include <WebCore/Permissions.h>
 #include <WebCore/SecurityOriginData.h>
 #include <optional>
+
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+#include "NetworkProcessConnection.h"
+#include "NotificationManagerMessageHandlerMessages.h"
+#include <WebCore/PushPermissionState.h>
+#endif
 
 namespace WebKit {
 
@@ -58,8 +65,27 @@ WebPermissionController::~WebPermissionController()
     WebProcess::singleton().removeMessageReceiver(Messages::WebPermissionController::messageReceiverName());
 }
 
-void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor descriptor, const SingleThreadWeakPtr<WebCore::Page>& page, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
+void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor descriptor, const WeakPtr<WebCore::Page>& page, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    if (DeprecatedGlobalSettings::builtInNotificationsEnabled() && (descriptor.name == PermissionName::Notifications || descriptor.name == PermissionName::Push)) {
+        Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        auto notificationPermissionHandler = [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState pushPermissionState) mutable {
+            auto state = [pushPermissionState]() -> WebCore::PermissionState {
+                switch (pushPermissionState) {
+                case WebCore::PushPermissionState::Granted: return WebCore::PermissionState::Granted;
+                case WebCore::PushPermissionState::Denied: return WebCore::PermissionState::Denied;
+                case WebCore::PushPermissionState::Prompt: return WebCore::PermissionState::Prompt;
+                default: RELEASE_ASSERT_NOT_REACHED();
+                }
+            }();
+            completionHandler(state);
+        };
+        connection->sendWithAsyncReply(Messages::NotificationManagerMessageHandler::GetPermissionState(origin.clientOrigin), WTFMove(notificationPermissionHandler), WebProcess::singleton().sessionID().toUInt64());
+        return;
+    }
+#endif
+
     std::optional<WebPageProxyIdentifier> proxyIdentifier;
     if (source == WebCore::PermissionQuerySource::Window || source == WebCore::PermissionQuerySource::DedicatedWorker) {
         ASSERT(page);

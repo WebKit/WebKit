@@ -135,7 +135,7 @@ public:
     Value* addIntConstant(Origin, Type, int64_t value);
     Value* addIntConstant(Value*, int64_t value);
 
-    // bits is a bitwise_cast of the constant you want.
+    // bits is a std::bit_cast of the constant you want.
     JS_EXPORT_PRIVATE Value* addConstant(Origin, Type, uint64_t bits);
     JS_EXPORT_PRIVATE Value* addConstant(Origin, Type, v128_t bits);
 
@@ -282,17 +282,17 @@ public:
     JS_EXPORT_PRIVATE void freeUnneededB3ValuesAfterLowering();
 
     bool shouldDumpIR() const { return m_shouldDumpIR; }
-    void setShouldDumpIR();
+    JS_EXPORT_PRIVATE void setShouldDumpIR();
 
     void setUsessSIMD()
     { 
-        RELEASE_ASSERT(Options::useWebAssemblySIMD());
+        RELEASE_ASSERT(Options::useWasmSIMD());
         m_usesSIMD = true;
     }
     bool usesSIMD() const
     {
         // See also: WasmModuleInformation::usesSIMD().
-        if (!Options::useWebAssemblySIMD())
+        if (!Options::useWasmSIMD())
             return false;
         if (Options::forceAllFunctionsToUseSIMD())
             return true;

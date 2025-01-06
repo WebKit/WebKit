@@ -60,8 +60,8 @@ TEST(WebKitLegacy, HTMLTableCellElementCellAbove)
     RetainPtr<HTMLTableCellElementCellAboveTest> testController = adoptNS([HTMLTableCellElementCellAboveTest new]);
 
     webView.get().frameLoadDelegate = testController.get();
-    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle]
-        URLForResource:@"DOMHTMLTableCellElementCellAbove" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle
+        URLForResource:@"DOMHTMLTableCellElementCellAbove" withExtension:@"html"]]];
 
     Util::run(&didFinishLoad);
     didFinishLoad = false;

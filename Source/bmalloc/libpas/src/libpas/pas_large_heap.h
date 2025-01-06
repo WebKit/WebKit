@@ -44,12 +44,13 @@ struct pas_large_heap {
     pas_fast_large_free_heap free_heap;
     uint16_t index;
     pas_heap_table_state table_state : 8;
+    bool is_megapage_heap;
 };
 
 /* Note that all of these functions have to be called with the heap lock held. */
 
 /* NOTE: it's only valid to construct a large heap that is a member of a pas_heap. */
-PAS_API void pas_large_heap_construct(pas_large_heap* heap);
+PAS_API void pas_large_heap_construct(pas_large_heap* heap, bool is_megapage_heap);
 
 PAS_API pas_allocation_result
 pas_large_heap_try_allocate_and_forget(pas_large_heap* heap,

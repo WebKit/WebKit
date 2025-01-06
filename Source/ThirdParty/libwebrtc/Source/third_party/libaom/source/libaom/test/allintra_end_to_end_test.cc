@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2022, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,7 +12,7 @@
 #include <memory>
 #include <ostream>
 
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
@@ -125,11 +125,28 @@ class AllIntraEndToEndTest
   int enable_tx_size_search_;
 };
 
+using AllIntraEndToEndTestLarge = AllIntraEndToEndTest;
+using AllIntraEndToEndTestLarge2 = AllIntraEndToEndTestLarge;
+
 TEST_P(AllIntraEndToEndTest, EndToEndNoFailure) { DoTest(); }
+TEST_P(AllIntraEndToEndTestLarge, EndToEndNoFailure) { DoTest(); }
+TEST_P(AllIntraEndToEndTestLarge2, EndToEndNoFailure) { DoTest(); }
 
 AV1_INSTANTIATE_TEST_SUITE(AllIntraEndToEndTest,
                            ::testing::ValuesIn(kTestVectors),
-                           ::testing::Range(5, 9), ::testing::Range(0, 4),
+                           ::testing::Range(6, 9), ::testing::Values(0, 3),
+                           ::testing::Values(1), ::testing::Values(1),
+                           ::testing::Values(0, 1));
+
+AV1_INSTANTIATE_TEST_SUITE(AllIntraEndToEndTestLarge,
+                           ::testing::ValuesIn(kTestVectors),
+                           ::testing::Range(6, 9), ::testing::Values(1, 2),
+                           ::testing::Values(1), ::testing::Values(1),
+                           ::testing::Values(0, 1));
+
+AV1_INSTANTIATE_TEST_SUITE(AllIntraEndToEndTestLarge2,
+                           ::testing::ValuesIn(kTestVectors),
+                           ::testing::Values(5), ::testing::Range(0, 4),
                            ::testing::Values(1), ::testing::Values(1),
                            ::testing::Values(0, 1));
 
@@ -138,7 +155,25 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Combine(
         ::testing::Values(
             static_cast<const libaom_test::CodecFactory *>(&libaom_test::kAV1)),
-        ::testing::ValuesIn(kTestVectors), ::testing::Range(5, 9),
+        ::testing::ValuesIn(kTestVectors), ::testing::Range(6, 9),
+        ::testing::Values(0, 3), ::testing::Values(6), ::testing::Values(1),
+        ::testing::Values(0, 1)));
+
+INSTANTIATE_TEST_SUITE_P(
+    AV1MultiThreaded, AllIntraEndToEndTestLarge,
+    ::testing::Combine(
+        ::testing::Values(
+            static_cast<const libaom_test::CodecFactory *>(&libaom_test::kAV1)),
+        ::testing::ValuesIn(kTestVectors), ::testing::Range(6, 9),
+        ::testing::Values(1, 2), ::testing::Values(6), ::testing::Values(1),
+        ::testing::Values(0, 1)));
+
+INSTANTIATE_TEST_SUITE_P(
+    AV1MultiThreaded, AllIntraEndToEndTestLarge2,
+    ::testing::Combine(
+        ::testing::Values(
+            static_cast<const libaom_test::CodecFactory *>(&libaom_test::kAV1)),
+        ::testing::ValuesIn(kTestVectors), ::testing::Values(5),
         ::testing::Range(0, 4), ::testing::Values(6), ::testing::Values(1),
         ::testing::Values(0, 1)));
 

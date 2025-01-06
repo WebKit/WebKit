@@ -36,6 +36,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
+#include "RenderSVGInline.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 
@@ -145,232 +146,35 @@ void RenderLineBoxList::deleteLineBoxes()
 
 void RenderLineBoxList::dirtyLineBoxes()
 {
-    for (auto* curr = firstLineBox(); curr; curr = curr->nextLineBox())
+    for (auto* curr = firstLegacyLineBox(); curr; curr = curr->nextLineBox())
         curr->dirtyLineBoxes();
 }
 
 void RenderLineBoxList::shiftLinesBy(LayoutUnit shiftX, LayoutUnit shiftY)
 {
-    for (auto* box = firstLineBox(); box; box = box->nextLineBox())
+    for (auto* box = firstLegacyLineBox(); box; box = box->nextLineBox())
         box->adjustPosition(shiftX, shiftY);
 }
 
-// FIXME: This should take a RenderBoxModelObject&.
-bool RenderLineBoxList::rangeIntersectsRect(RenderBoxModelObject* renderer, LayoutUnit logicalTop, LayoutUnit logicalBottom, const LayoutRect& rect, const LayoutPoint& offset) const
-{
-    LayoutUnit physicalStart = logicalTop;
-    LayoutUnit physicalEnd = logicalBottom;
-    if (renderer->view().frameView().hasFlippedBlockRenderers()) {
-        RenderBox* block;
-        if (auto* box = dynamicDowncast<RenderBox>(*renderer))
-            block = box;
-        else
-            block = renderer->containingBlock();
-        physicalStart = block->flipForWritingMode(logicalTop);
-        physicalEnd = block->flipForWritingMode(logicalBottom);
-    }
-
-    LayoutUnit physicalExtent = absoluteValue(physicalEnd - physicalStart);
-    physicalStart = std::min(physicalStart, physicalEnd);
-    
-    if (renderer->style().isHorizontalWritingMode()) {
-        physicalStart += offset.y();
-        if (physicalStart >= rect.maxY() || physicalStart + physicalExtent <= rect.y())
-            return false;
-    } else {
-        physicalStart += offset.x();
-        if (physicalStart >= rect.maxX() || physicalStart + physicalExtent <= rect.x())
-            return false;
-    }
-    
-    return true;
-}
-
-bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, const LayoutRect& rect, const LayoutPoint& offset, bool usePrintRect) const
-{
-    // We can check the first box and last box and avoid painting/hit testing if we don't
-    // intersect.  This is a quick short-circuit that we can take to avoid walking any lines.
-    // FIXME: This check is flawed in the following extremely obscure way:
-    // if some line in the middle has a huge overflow, it might actually extend below the last line.
-    const LegacyRootInlineBox& firstRootBox = firstLineBox()->root();
-    const LegacyRootInlineBox& lastRootBox = lastLineBox()->root();
-    LayoutUnit firstLineTop = firstLineBox()->logicalTopVisualOverflow(firstRootBox.lineTop());
-    if (usePrintRect && !firstLineBox()->parent())
-        firstLineTop = std::min(firstLineTop, firstRootBox.lineTop());
-    LayoutUnit lastLineBottom = lastLineBox()->logicalBottomVisualOverflow(lastRootBox.lineBottom());
-    if (usePrintRect && !lastLineBox()->parent())
-        lastLineBottom = std::max(lastLineBottom, lastRootBox.lineBottom());
-    return rangeIntersectsRect(renderer, firstLineTop, lastLineBottom, rect, offset);
-}
-
-bool RenderLineBoxList::lineIntersectsDirtyRect(RenderBoxModelObject* renderer, LegacyInlineFlowBox* box, const PaintInfo& paintInfo, const LayoutPoint& offset) const
-{
-    const LegacyRootInlineBox& rootBox = box->root();
-    LayoutUnit logicalTop = std::min(box->logicalTopVisualOverflow(rootBox.lineTop()), rootBox.selectionTop());
-    LayoutUnit logicalBottom = box->logicalBottomVisualOverflow(rootBox.lineBottom());
-    return rangeIntersectsRect(renderer, logicalTop, logicalBottom, paintInfo.rect, offset);
-}
-
-void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintInfo, const LayoutPoint& paintOffset) const
-{
-    ASSERT(renderer->isRenderBlock() || (renderer->isRenderInline() && renderer->hasLayer())); // The only way an inline could paint like this is if it has a layer.
-
-    // If we have no lines then we have no work to do.
-    if (!firstLineBox())
-        return;
-
-    // FIXME: Paint-time pagination is obsolete and is now only used by embedded WebViews inside AppKit
-    // NSViews.  Do not add any more code for this.
-    RenderView& v = renderer->view();
-    bool usePrintRect = !v.printRect().isEmpty();
-    if (!anyLineIntersectsRect(renderer, paintInfo.rect, paintOffset, usePrintRect))
-        return;
-
-    PaintInfo info(paintInfo);
-    SingleThreadWeakListHashSet<RenderInline> outlineObjects;
-    info.outlineObjects = &outlineObjects;
-
-    // See if our root lines intersect with the dirty rect.  If so, then we paint
-    // them.  Note that boxes can easily overlap, so we can't make any assumptions
-    // based off positions of our first line box or our last line box.
-    for (auto* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-        if (usePrintRect) {
-            // FIXME: This is the deprecated pagination model that is still needed
-            // for embedded views inside AppKit.  AppKit is incapable of paginating vertical
-            // text pages, so we don't have to deal with vertical lines at all here.
-            const LegacyRootInlineBox& rootBox = curr->root();
-            LayoutUnit topForPaginationCheck = curr->logicalTopVisualOverflow(rootBox.lineTop());
-            LayoutUnit bottomForPaginationCheck = curr->logicalLeftVisualOverflow();
-            if (!curr->parent()) {
-                // We're a root box.  Use lineTop and lineBottom as well here.
-                topForPaginationCheck = std::min(topForPaginationCheck, rootBox.lineTop());
-                bottomForPaginationCheck = std::max(bottomForPaginationCheck, rootBox.lineBottom());
-            }
-            if (bottomForPaginationCheck - topForPaginationCheck <= v.printRect().height()) {
-                if (paintOffset.y() + bottomForPaginationCheck > v.printRect().maxY()) {
-                    if (LegacyRootInlineBox* nextRootBox = rootBox.nextRootBox())
-                        bottomForPaginationCheck = std::min(bottomForPaginationCheck, std::min<LayoutUnit>(nextRootBox->logicalTopVisualOverflow(), nextRootBox->lineTop()));
-                }
-                if (paintOffset.y() + bottomForPaginationCheck > v.printRect().maxY()) {
-                    if (paintOffset.y() + topForPaginationCheck < v.truncatedAt())
-                        v.setBestTruncatedAt(paintOffset.y() + topForPaginationCheck, renderer);
-                    // If we were able to truncate, don't paint.
-                    if (paintOffset.y() + topForPaginationCheck >= v.truncatedAt())
-                        break;
-                }
-            }
-        }
-
-        if (lineIntersectsDirtyRect(renderer, curr, info, paintOffset)) {
-            const LegacyRootInlineBox& rootBox = curr->root();
-            curr->paint(info, paintOffset, rootBox.lineTop(), rootBox.lineBottom());
-        }
-    }
-
-    if (info.phase == PaintPhase::Outline || info.phase == PaintPhase::SelfOutline || info.phase == PaintPhase::ChildOutlines) {
-        auto end = info.outlineObjects->end();
-        for (auto it = info.outlineObjects->begin(); it != end; ++it) {
-            RenderInline& flow = *it;
-            flow.paintOutline(info, paintOffset);
-        }
-        info.outlineObjects->clear();
-    }
-}
-
-bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction) const
-{
-    ASSERT(renderer->isRenderBlock() || (renderer->isRenderInline() && renderer->hasLayer())); // The only way an inline could hit test like this is if it has a layer.
-
-    // If we have no lines then we have no work to do.
-    if (!firstLineBox())
-        return false;
-
-    LayoutPoint point = locationInContainer.point();
-    LayoutRect rect = firstLineBox()->isHorizontal() ?
-        IntRect(point.x(), point.y() - locationInContainer.topPadding(), 1, locationInContainer.topPadding() + locationInContainer.bottomPadding() + 1) :
-        IntRect(point.x() - locationInContainer.leftPadding(), point.y(), locationInContainer.rightPadding() + locationInContainer.leftPadding() + 1, 1);
-
-    if (!anyLineIntersectsRect(renderer, rect, accumulatedOffset))
-        return false;
-
-    // See if our root lines contain the point.  If so, then we hit test
-    // them further.  Note that boxes can easily overlap, so we can't make any assumptions
-    // based off positions of our first line box or our last line box.
-    for (auto* curr = lastLineBox(); curr; curr = curr->prevLineBox()) {
-        const LegacyRootInlineBox& rootBox = curr->root();
-        if (rangeIntersectsRect(renderer, curr->logicalTopVisualOverflow(rootBox.lineTop()), curr->logicalBottomVisualOverflow(rootBox.lineBottom()), rect, accumulatedOffset)) {
-            bool inside = curr->nodeAtPoint(request, result, locationInContainer, accumulatedOffset, rootBox.lineTop(), rootBox.lineBottom(), hitTestAction);
-            if (inside) {
-                renderer->updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& container, RenderObject& child)
+void RenderLineBoxList::dirtyLineFromChangedChild(RenderBoxModelObject& container)
 {
     ASSERT(is<RenderInline>(container) || is<RenderBlockFlow>(container));
+    if (!container.isSVGRenderer())
+        return;
+
     if (!container.parent() || (is<RenderBlockFlow>(container) && container.selfNeedsLayout()))
         return;
 
-    auto* inlineContainer = dynamicDowncast<RenderInline>(container);
-    LegacyInlineBox* firstBox = inlineContainer ? inlineContainer->firstLineBox() : firstLineBox();
-
-    // If we have no first line box, then just bail early.
-    if (!firstBox) {
-        // For an empty inline, propagate the check up to our parent, unless the parent is already dirty.
-        if (container.isInline() && !container.ancestorLineBoxDirty()) {
-            container.parent()->dirtyLinesFromChangedChild(container);
-            container.setAncestorLineBoxDirty(); // Mark the container to avoid dirtying the same lines again across multiple destroy() calls of the same subtree.
-        }
+    auto* inlineContainer = dynamicDowncast<RenderSVGInline>(container);
+    if (auto* lineBox = inlineContainer ? inlineContainer->firstLegacyInlineBox() : firstLegacyLineBox()) {
+        lineBox->root().markDirty();
         return;
     }
-
-    // Try to figure out which line box we belong in. First try to find a previous
-    // line box by examining our siblings. If we didn't find a line box, then use our
-    // parent's first line box.
-    LegacyRootInlineBox* box = nullptr;
-    RenderObject* current;
-    for (current = child.previousSibling(); current; current = current->previousSibling()) {
-        if (current->isFloatingOrOutOfFlowPositioned())
-            continue;
-
-        if (auto* textRenderer = dynamicDowncast<RenderText>(*current)) {
-            if (auto* textBox = textRenderer->lastTextBox())
-                box = &textBox->root();
-        } else if (auto* renderInline = dynamicDowncast<RenderInline>(*current)) {
-            auto* lastSiblingBox = renderInline->lastLineBox();
-            if (lastSiblingBox)
-                box = &lastSiblingBox->root();
-        }
-
-        if (box)
-            break;
-    }
-    if (!box)
-        box = &firstBox->root();
-
-    // If we found a line box, then dirty it.
-    if (box) {
-        box->markDirty();
-
-        // Dirty the adjacent lines that might be affected.
-        // NOTE: we dirty the previous line because RootInlineBox objects cache
-        // the address of the first object on the next line after a BR, which we may be
-        // invalidating here. For more info, see how RenderBlock::layoutInlineChildren
-        // calls setLineBreakInfo with the result of findNextLineBreak. findNextLineBreak,
-        // despite the name, actually returns the first RenderObject after the BR.
-        // <rdar://problem/3849947> "Typing after pasting line does not appear until after window resize."
-        if (LegacyRootInlineBox* prevBox = box->prevRootBox())
-            prevBox->markDirty();
-
-        // FIXME: We shouldn't need to always dirty the next line. This is only strictly 
-        // necessary some of the time, in situations involving BRs.
-        if (LegacyRootInlineBox* nextBox = box->nextRootBox())
-            nextBox->markDirty();
+    // For an empty inline, propagate the check up to our parent.
+    if (inlineContainer && inlineContainer->everHadLayout()) {
+        auto* parent = inlineContainer->parent();
+        parent->dirtyLineFromChangedChild();
+        parent->setNeedsLayout();
     }
 }
 

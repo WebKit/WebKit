@@ -63,10 +63,10 @@ void AdaptiveInferredPropertyValueWatchpoint::handleFire(VM&, const FireDetail& 
 
 bool AdaptiveInferredPropertyValueWatchpoint::isValid() const
 {
-    return m_codeBlock->isLive();
+    ASSERT(!m_codeBlock->wasDestructed());
+    return !m_codeBlock->isPendingDestruction();
 }
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-

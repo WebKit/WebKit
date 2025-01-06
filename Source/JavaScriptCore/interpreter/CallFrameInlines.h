@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,8 @@
 #include "CallFrame.h"
 #include "JSCalleeInlines.h"
 #include "RegisterInlines.h"
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -74,14 +76,6 @@ inline JSGlobalObject* CallFrame::lexicalGlobalObject(VM& vm) const
     return jsCallee()->globalObject();
 }
 
-#if ENABLE(WEBASSEMBLY)
-inline Wasm::Instance* CallFrame::wasmInstance() const
-{
-    ASSERT(callee().isNativeCallee());
-    return bitwise_cast<Wasm::Instance*>(const_cast<CallFrame*>(this)->uncheckedR(CallFrameSlot::codeBlock).asanUnsafePointer());
-}
-#endif
-
 inline JSCell* CallFrame::codeOwnerCell() const
 {
     if (callee().isNativeCallee())
@@ -104,6 +98,11 @@ inline bool CallFrame::isNativeCalleeFrame() const
 inline void CallFrame::setCallee(JSObject* callee)
 {
     static_cast<Register*>(this)[static_cast<int>(CallFrameSlot::callee)] = callee;
+}
+
+inline void CallFrame::setCallee(NativeCallee* callee)
+{
+    reinterpret_cast<uint64_t*>(this)[static_cast<int>(CallFrameSlot::callee)] = CalleeBits::encodeNativeCallee(callee);
 }
 
 inline void CallFrame::setCodeBlock(CodeBlock* codeBlock)
@@ -135,3 +134,5 @@ SUPPRESS_ASAN ALWAYS_INLINE void CallFrame::setCallSiteIndex(CallSiteIndex callS
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

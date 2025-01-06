@@ -25,9 +25,13 @@
 
 #pragma once
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "JSCast.h"
 #include "WeakSetInlines.h"
 #include <wtf/Assertions.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace JSC {
 
@@ -66,6 +70,12 @@ template<typename T> inline auto Weak<T>::operator=(Weak&& other) -> Weak&
     Weak weak = WTFMove(other);
     swap(weak);
     return *this;
+}
+
+template <typename T>
+inline void Weak<T>::set(VM&, T* value)
+{
+    *this = value;
 }
 
 template<typename T> inline T* Weak<T>::operator->() const
@@ -124,6 +134,16 @@ template<typename T> inline WeakImpl* Weak<T>::hashTableDeletedValue()
 template <typename T> inline bool operator==(const Weak<T>& lhs, const Weak<T>& rhs)
 {
     return lhs.get() == rhs.get();
+}
+
+template<typename T> inline bool operator==(const Weak<T>& lhs, const T* rhs)
+{
+    return lhs.get() == rhs;
+}
+
+template<typename T> inline bool operator==(const T* lhs, const Weak<T>& rhs)
+{
+    return lhs == rhs.get();
 }
 
 // This function helps avoid modifying a weak table while holding an iterator into it. (Object allocation

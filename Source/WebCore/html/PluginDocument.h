@@ -32,7 +32,7 @@ class HTMLPlugInElement;
 class PluginViewBase;
 
 class PluginDocument final : public HTMLDocument {
-    WTF_MAKE_ISO_ALLOCATED(PluginDocument);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PluginDocument);
 public:
     static Ref<PluginDocument> create(LocalFrame& frame, const URL& url)
     {
@@ -40,6 +40,8 @@ public:
         document->addToContextsMap();
         return document;
     }
+
+    virtual ~PluginDocument();
 
     WEBCORE_EXPORT PluginViewBase* pluginWidget();
     HTMLPlugInElement* pluginElement() { return m_pluginElement.get(); }

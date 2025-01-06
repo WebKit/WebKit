@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,7 +40,7 @@ public:
     template<typename T>
     static FloatRect resolveRectangle(const T* context, SVGUnitTypes::SVGUnitType type, const FloatRect& viewport)
     {
-        return SVGLengthContext::resolveRectangle(context, type, viewport, context->x(), context->y(), context->width(), context->height());
+        return resolveRectangle(context, type, viewport, context->x(), context->y(), context->width(), context->height());
     }
 
     static FloatRect resolveRectangle(const SVGElement*, SVGUnitTypes::SVGUnitType, const FloatRect& viewport, const SVGLengthValue& x, const SVGLengthValue& y, const SVGLengthValue& width, const SVGLengthValue& height);
@@ -54,10 +54,9 @@ public:
     std::optional<FloatSize> viewportSize() const;
 
 private:
-    SVGLengthContext(const SVGElement*, const FloatRect& viewport);
-
     ExceptionOr<float> convertValueFromUserUnitsToPercentage(float value, SVGLengthMode) const;
     ExceptionOr<float> convertValueFromPercentageToUserUnits(float value, SVGLengthMode) const;
+    static float convertValueFromPercentageToUserUnits(float value, SVGLengthMode, FloatSize);
 
     ExceptionOr<float> convertValueFromUserUnitsToEMS(float value) const;
     ExceptionOr<float> convertValueFromEMSToUserUnits(float value) const;
@@ -65,12 +64,14 @@ private:
     ExceptionOr<float> convertValueFromUserUnitsToEXS(float value) const;
     ExceptionOr<float> convertValueFromEXSToUserUnits(float value) const;
 
+    ExceptionOr<float> convertValueFromUserUnitsToLh(float value) const;
+    ExceptionOr<float> convertValueFromLhToUserUnits(float value) const;
+
     std::optional<FloatSize> computeViewportSize() const;
 
     RefPtr<const SVGElement> protectedContext() const;
 
     WeakPtr<const SVGElement, WeakPtrImplWithEventTargetData> m_context;
-    FloatRect m_overriddenViewport; // Ideally this would be std::optional<FloatRect>, but some tests depend on the behavior of it being a zero rect.
     mutable std::optional<FloatSize> m_viewportSize;
 };
 

@@ -13,8 +13,8 @@
 #include <algorithm>
 #include <cstdlib>
 #include <numeric>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
@@ -22,7 +22,7 @@ namespace webrtc {
 
 Histogram::Histogram(size_t num_buckets,
                      int forget_factor,
-                     absl::optional<double> start_forget_weight)
+                     std::optional<double> start_forget_weight)
     : buckets_(num_buckets, 0),
       forget_factor_(0),
       base_forget_factor_(forget_factor),

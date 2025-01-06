@@ -38,6 +38,7 @@
 #include "MacroAssemblerCodeRef.h"
 #include "VMEntryScopeInlines.h"
 #include "VMTrapsInlines.h"
+#include "WaiterListManager.h"
 #include "Watchdog.h"
 #include <wtf/ProcessID.h>
 #include <wtf/ThreadMessage.h>
@@ -301,6 +302,11 @@ private:
         }
 
         {
+            if (vm.traps().hasTrapBit(NeedTermination))
+                vm.syncWaiter()->condition().notifyOne();
+        }
+
+        {
             Locker locker { *traps().m_lock };
             if (traps().m_isShuttingDown)
                 return WorkResult::Stop;
@@ -362,6 +368,9 @@ void VMTraps::fireTrap(VMTraps::Event event)
         m_condition->notifyAll(locker);
     }
 #endif
+
+    if (event == NeedTermination)
+        vm().syncWaiter()->condition().notifyOne();
 }
 
 void VMTraps::handleTraps(VMTraps::BitField mask)

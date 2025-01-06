@@ -20,6 +20,8 @@
 namespace angle
 {
 
+// Note: this could rely on std::aligned_alloc() but it has caveats, see this note and bug:
+// https://crsrc.org/c/base/memory/aligned_memory.h;drc=ae6a934f4a7cdedb3f5433ef9571d8be4b841f35;l=42
 void *AlignedAlloc(size_t size, size_t alignment)
 {
     ASSERT(size > 0);
@@ -43,8 +45,8 @@ void *AlignedAlloc(size_t size, size_t alignment)
     // crash if we encounter a failed allocation.
     if (!ptr)
     {
-        ERR() << "If you crashed here, your aligned allocation is incorrect: "
-              << "size=" << size << ", alignment=" << alignment;
+        ERR() << "If you crashed here, your aligned allocation is incorrect: " << "size=" << size
+              << ", alignment=" << alignment;
         ASSERT(false);
     }
     // Confidence check alignment just to be safe.

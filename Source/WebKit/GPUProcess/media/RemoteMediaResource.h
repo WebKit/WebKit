@@ -31,6 +31,7 @@
 #include <WebCore/PlatformMediaResourceLoader.h>
 #include <atomic>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -45,6 +46,7 @@ class RemoteMediaPlayerProxy;
 class RemoteMediaResourceManager;
 
 class RemoteMediaResource : public WebCore::PlatformMediaResource {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaResource);
 public:
     // Called on the main thread.
     static Ref<RemoteMediaResource> create(RemoteMediaResourceManager&, RemoteMediaPlayerProxy&, RemoteMediaResourceIdentifier);

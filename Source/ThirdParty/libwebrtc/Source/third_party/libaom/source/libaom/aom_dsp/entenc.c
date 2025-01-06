@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2001-2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -58,6 +58,7 @@ static void od_ec_enc_normalize(od_ec_enc *enc, od_ec_enc_window low,
   int d;
   int c;
   int s;
+  if (enc->error) return;
   c = enc->cnt;
   assert(rng <= 65535U);
   /*The number of leading zeros in the 16-bit binary representation of rng.*/
@@ -83,7 +84,6 @@ static void od_ec_enc_normalize(od_ec_enc *enc, od_ec_enc_window low,
       out = (unsigned char *)realloc(out, sizeof(*out) * storage);
       if (out == NULL) {
         enc->error = -1;
-        enc->offs = 0;
         return;
       }
       enc->buf = out;
@@ -228,41 +228,6 @@ void od_ec_encode_cdf_q15(od_ec_enc *enc, int s, const uint16_t *icdf,
   od_ec_encode_q15(enc, s > 0 ? icdf[s - 1] : OD_ICDF(0), icdf[s], s, nsyms);
 }
 
-/*Overwrites a few bits at the very start of an existing stream, after they
-   have already been encoded.
-  This makes it possible to have a few flags up front, where it is easy for
-   decoders to access them without parsing the whole stream, even if their
-   values are not determined until late in the encoding process, without having
-   to buffer all the intermediate symbols in the encoder.
-  In order for this to work, at least nbits bits must have already been encoded
-   using probabilities that are an exact power of two.
-  The encoder can verify the number of encoded bits is sufficient, but cannot
-   check this latter condition.
-  val: The bits to encode (in the least nbits significant bits).
-       They will be decoded in order from most-significant to least.
-  nbits: The number of bits to overwrite.
-         This must be no more than 8.*/
-void od_ec_enc_patch_initial_bits(od_ec_enc *enc, unsigned val, int nbits) {
-  int shift;
-  unsigned mask;
-  assert(nbits >= 0);
-  assert(nbits <= 8);
-  assert(val < 1U << nbits);
-  shift = 8 - nbits;
-  mask = ((1U << nbits) - 1) << shift;
-  if (enc->offs > 0) {
-    /*The first byte has been finalized.*/
-    enc->buf[0] = (unsigned char)((enc->buf[0] & ~mask) | val << shift);
-  } else if (9 + enc->cnt + (enc->rng == 0x8000) > nbits) {
-    /*The first byte has yet to be output.*/
-    enc->low = (enc->low & ~((od_ec_enc_window)mask << (16 + enc->cnt))) |
-               (od_ec_enc_window)val << (16 + enc->cnt + shift);
-  } else {
-    /*The encoder hasn't even encoded _nbits of data yet.*/
-    enc->error = -1;
-  }
-}
-
 #if OD_MEASURE_EC_OVERHEAD
 #include <stdio.h>
 #endif
@@ -371,29 +336,4 @@ int od_ec_enc_tell(const od_ec_enc *enc) {
            rounding error is in the positive direction).*/
 uint32_t od_ec_enc_tell_frac(const od_ec_enc *enc) {
   return od_ec_tell_frac(od_ec_enc_tell(enc), enc->rng);
-}
-
-/*Saves a entropy coder checkpoint to dst.
-  This allows an encoder to reverse a series of entropy coder
-   decisions if it decides that the information would have been
-   better coded some other way.*/
-void od_ec_enc_checkpoint(od_ec_enc *dst, const od_ec_enc *src) {
-  OD_COPY(dst, src, 1);
-}
-
-/*Restores an entropy coder checkpoint saved by od_ec_enc_checkpoint.
-  This can only be used to restore from checkpoints earlier in the target
-   state's history: you can not switch backwards and forwards or otherwise
-   switch to a state which isn't a casual ancestor of the current state.
-  Restore is also incompatible with patching the initial bits, as the
-   changes will remain in the restored version.*/
-void od_ec_enc_rollback(od_ec_enc *dst, const od_ec_enc *src) {
-  unsigned char *buf;
-  uint32_t storage;
-  assert(dst->storage >= src->storage);
-  buf = dst->buf;
-  storage = dst->storage;
-  OD_COPY(dst, src, 1);
-  dst->buf = buf;
-  dst->storage = storage;
 }

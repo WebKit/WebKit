@@ -33,6 +33,7 @@
 #include "FormListedElement.h"
 #include "HTMLElement.h"
 #include "ValidationMessage.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TriState.h>
 
 namespace WebCore {
@@ -40,8 +41,8 @@ namespace WebCore {
 class HTMLMaybeFormAssociatedCustomElement;
 
 class ValidatedFormListedElement : public FormListedElement {
+    WTF_MAKE_TZONE_ALLOCATED(ValidatedFormListedElement);
     WTF_MAKE_NONCOPYABLE(ValidatedFormListedElement);
-    WTF_MAKE_FAST_ALLOCATED;
     friend class DelayedUpdateValidityScope;
     friend class HTMLMaybeFormAssociatedCustomElement;
 public:
@@ -127,7 +128,7 @@ private:
     void startDelayingUpdateValidity() { ++m_delayedUpdateValidityCount; }
     void endDelayingUpdateValidity();
 
-    std::unique_ptr<ValidationMessage> m_validationMessage;
+    RefPtr<ValidationMessage> m_validationMessage;
 
     // Cache of validity()->valid().
     // But "candidate for constraint validation" doesn't affect isValid.
@@ -154,19 +155,19 @@ private:
 
 class DelayedUpdateValidityScope {
 public:
-    DelayedUpdateValidityScope(ValidatedFormListedElement& element)
+    explicit DelayedUpdateValidityScope(ValidatedFormListedElement& element)
         : m_element { element }
     {
-        m_element.startDelayingUpdateValidity();
+        m_element->startDelayingUpdateValidity();
     }
     
     ~DelayedUpdateValidityScope()
     {
-        m_element.endDelayingUpdateValidity();
+        m_element->endDelayingUpdateValidity();
     }
 
 private:
-    ValidatedFormListedElement& m_element;
+    Ref<ValidatedFormListedElement> m_element;
 };
 
 } // namespace WebCore

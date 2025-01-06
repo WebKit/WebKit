@@ -79,6 +79,7 @@ for std in ${STD}; do
           --copt=-Werror \
           --define="absl=1" \
           --distdir="/bazel-distdir" \
+          --enable_bzlmod=false \
           --features=external_include_paths \
           --keep_going \
           --show_timestamps \

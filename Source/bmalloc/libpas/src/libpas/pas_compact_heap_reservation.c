@@ -71,7 +71,7 @@ pas_aligned_allocation_result pas_compact_heap_reservation_try_allocate(size_t s
         PAS_ASSERT(page_result.result);
 #else
         page_result = pas_page_malloc_try_allocate_without_deallocating_padding(
-            pas_compact_heap_reservation_size, pas_alignment_create_trivial());
+            pas_compact_heap_reservation_size, pas_alignment_create_trivial(), false);
         PAS_ASSERT(!page_result.left_padding_size);
         PAS_ASSERT(!page_result.right_padding_size);
         PAS_ASSERT(page_result.result);

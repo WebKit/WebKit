@@ -144,27 +144,15 @@ PASS grid-24.gridTemplateRows
 PASS img-24.width
 PASS img-24.height
 
-ITEM
 
-ITEM
 
-ITEM
 
-ITEM
 
-ITEM
 
-ITEM
 
-ITEM
 
-ITEM
 
-ITEM
 
-ITEM
 
-ITEM
 
-ITEM
 

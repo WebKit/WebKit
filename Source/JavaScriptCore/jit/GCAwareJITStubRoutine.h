@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(JIT)
-
 #include "DFGCodeOriginPool.h"
 #include "JITStubRoutine.h"
 #include "JSObject.h"
@@ -92,6 +90,8 @@ protected:
     bool m_isInSharedJITStubSet : 1 { false };
 };
 
+#if ENABLE(JIT)
+
 class PolymorphicAccessJITStubRoutine : public GCAwareJITStubRoutine {
 public:
     using Base = GCAwareJITStubRoutine;
@@ -109,7 +109,7 @@ public:
     unsigned hash() const
     {
         if (!m_hash)
-            m_hash = computeHash(m_cases);
+            m_hash = computeHash(m_cases.span());
         return m_hash;
     }
 
@@ -144,6 +144,7 @@ public:
 
 protected:
     void observeZeroRefCountImpl();
+    VM& vm() { return m_vm; }
 
 private:
     VM& m_vm;
@@ -234,6 +235,6 @@ Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
 
 Ref<PolymorphicAccessJITStubRoutine> createPreCompiledICJITStubRoutine(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&);
 
-} // namespace JSC
-
 #endif // ENABLE(JIT)
+
+} // namespace JSC

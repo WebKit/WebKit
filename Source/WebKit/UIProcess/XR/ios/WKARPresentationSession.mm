@@ -352,7 +352,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
-id<WKARPresentationSession> createPresesentationSession(ARSession *session, WKARPresentationSessionDescriptor *descriptor)
+id<WKARPresentationSession> createPresentationSession(ARSession *session, WKARPresentationSessionDescriptor *descriptor)
 {
     return [[_WKARPresentationSession alloc] initWithSession:session descriptor:descriptor];
 }
@@ -503,7 +503,7 @@ id<WKARPresentationSession> createPresesentationSession(ARSession *session, WKAR
     PlatformXRPose pose(transientAction.pose);
 
     PlatformXR::FrameData::InputSource data;
-    data.handeness = PlatformXR::XRHandedness::None;
+    data.handedness = PlatformXR::XRHandedness::None;
     data.handle = actionIdentifier;
     data.profiles = Vector<String> { "generic-button-invisible"_s, "generic-button"_s };
     data.targetRayMode = PlatformXR::XRTargetRayMode::TransientPointer;

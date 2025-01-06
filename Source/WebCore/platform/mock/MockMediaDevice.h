@@ -48,7 +48,7 @@ struct MockSpeakerProperties {
 struct MockCameraProperties {
     double defaultFrameRate { 30 };
     VideoFacingMode facingMode { VideoFacingMode::User };
-    Vector<VideoPresetData> presets { { { 640, 480 }, { { 30, 30}, { 15, 15 } }, 1, 2 } };
+    Vector<VideoPresetData> presets { { { 640, 480 }, { { 30, 30 }, { 15, 15 } }, 1, 2, false } };
     Color fillColor { Color::black };
     Vector<MeteringMode> whiteBalanceMode { MeteringMode::None };
     bool hasTorch { false };

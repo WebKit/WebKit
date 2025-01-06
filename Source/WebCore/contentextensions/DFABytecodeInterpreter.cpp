@@ -27,6 +27,7 @@
 #include "DFABytecodeInterpreter.h"
 
 #include "ContentExtensionsDebugging.h"
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -36,8 +37,7 @@ namespace WebCore::ContentExtensions {
 template <typename IntType>
 static IntType getBits(std::span<const uint8_t> bytecode, uint32_t index)
 {
-    ASSERT(index + sizeof(IntType) <= bytecode.size());
-    return *reinterpret_cast<const IntType*>(bytecode.data() + index);
+    return reinterpretCastSpanStartTo<const IntType>(bytecode.subspan(index));
 }
 
 static uint32_t get24BitsUnsigned(std::span<const uint8_t> bytecode, uint32_t index)

@@ -982,7 +982,7 @@ TEST(WTF, StringViewContainsOnlyASCII)
     EXPECT_FALSE(StringView(String::fromLatin1("📱")).containsOnlyASCII());
     EXPECT_FALSE(StringView(String::fromLatin1("\u0080")).containsOnlyASCII());
     constexpr size_t zeroLength = 0;
-    EXPECT_TRUE(StringView(String({ bitwise_cast<const UChar*>(u"Hello"), zeroLength })).containsOnlyASCII());
+    EXPECT_TRUE(StringView(String({ reinterpret_cast<const UChar*>(u"Hello"), zeroLength })).containsOnlyASCII());
 }
 
 TEST(WTF, StringViewUpconvert)

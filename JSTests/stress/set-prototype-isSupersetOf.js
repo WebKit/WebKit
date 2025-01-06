@@ -1,5 +1,3 @@
-//@ runDefault("--useSetMethods=1")
-
 function assert(a, e, m) {
     if (a !== e)
         throw new Error(m);
@@ -88,5 +86,5 @@ try {
         throw e;
 }
 
-assert(set1.isSupersetOf({ size:1, has(v) { return set1.has(v); }, keys() { return set1.keys() } }), true);
-assert(set4.isSupersetOf({ size:1, has(v) { return set1.has(v); }, keys() { return set1.keys() } }), true);
+assert(set1.isSupersetOf({ size:1, has(v) { return set1.has(v); }, keys() { assert(arguments.length, 0, "keys() arguments.length"); return set1.keys() } }), true);
+assert(set4.isSupersetOf({ size:1, has(v) { return set1.has(v); }, keys() { assert(arguments.length, 0, "keys() arguments.length"); return set1.keys() } }), true);

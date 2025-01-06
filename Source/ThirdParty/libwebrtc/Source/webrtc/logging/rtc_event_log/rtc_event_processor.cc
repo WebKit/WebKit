@@ -9,6 +9,10 @@
  */
 #include "logging/rtc_event_log/rtc_event_processor.h"
 
+#include <algorithm>
+#include <cstdint>
+#include <optional>
+
 #include "rtc_base/numerics/sequence_number_util.h"
 
 namespace webrtc {
@@ -43,8 +47,8 @@ bool RtcEventProcessor::Cmp(const RtcEventProcessor::ListPtrType& a,
   if (a->GetTypeOrder() != b->GetTypeOrder())
     return a->GetTypeOrder() > b->GetTypeOrder();
 
-  absl::optional<uint16_t> wrapped_seq_num_a = a->GetTransportSeqNum();
-  absl::optional<uint16_t> wrapped_seq_num_b = b->GetTransportSeqNum();
+  std::optional<uint16_t> wrapped_seq_num_a = a->GetTransportSeqNum();
+  std::optional<uint16_t> wrapped_seq_num_b = b->GetTransportSeqNum();
   if (wrapped_seq_num_a && wrapped_seq_num_b) {
     return AheadOf<uint16_t>(*wrapped_seq_num_a, *wrapped_seq_num_b);
   } else if (wrapped_seq_num_a.has_value() != wrapped_seq_num_b.has_value()) {

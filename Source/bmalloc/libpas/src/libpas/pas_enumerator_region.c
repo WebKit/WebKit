@@ -52,7 +52,7 @@ void* pas_enumerator_region_allocate(pas_enumerator_region** region_ptr,
         PAS_ASSERT_WITH_DETAIL(pas_is_aligned(allocation_size, PAS_INTERNAL_MIN_ALIGN));
 
         allocation_result = pas_page_malloc_try_allocate_without_deallocating_padding(
-            allocation_size, pas_alignment_create_trivial());
+            allocation_size, pas_alignment_create_trivial(), false);
 
         PAS_ASSERT_WITH_DETAIL(allocation_result.result);
         PAS_ASSERT_WITH_DETAIL(allocation_result.result == allocation_result.left_padding);

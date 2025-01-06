@@ -7,6 +7,8 @@ list(APPEND WebDriver_SOURCES
     socket/HTTPParser.cpp
     socket/HTTPServerSocket.cpp
     socket/SessionHostSocket.cpp
+
+    unix/LoggingUnix.cpp
 )
 
 list(APPEND WebDriver_PRIVATE_INCLUDE_DIRECTORIES

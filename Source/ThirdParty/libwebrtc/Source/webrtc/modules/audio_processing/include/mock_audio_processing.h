@@ -13,10 +13,14 @@
 
 #include <memory>
 
+#include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
+#include "api/audio/audio_processing.h"
+#include "api/audio/audio_processing_statistics.h"
+#include "api/environment/environment.h"
+#include "api/scoped_refptr.h"
+#include "api/task_queue/task_queue_base.h"
 #include "modules/audio_processing/include/aec_dump.h"
-#include "modules/audio_processing/include/audio_processing.h"
-#include "modules/audio_processing/include/audio_processing_statistics.h"
 #include "test/gmock.h"
 
 namespace webrtc {
@@ -155,13 +159,13 @@ class MockAudioProcessing : public AudioProcessing {
               CreateAndAttachAecDump,
               (absl::string_view file_name,
                int64_t max_log_size_bytes,
-               rtc::TaskQueue* worker_queue),
+               absl::Nonnull<TaskQueueBase*> worker_queue),
               (override));
   MOCK_METHOD(bool,
               CreateAndAttachAecDump,
               (FILE * handle,
                int64_t max_log_size_bytes,
-               rtc::TaskQueue* worker_queue),
+               absl::Nonnull<TaskQueueBase*> worker_queue),
               (override));
   MOCK_METHOD(void, AttachAecDump, (std::unique_ptr<AecDump>), (override));
   MOCK_METHOD(void, DetachAecDump, (), (override));
@@ -170,6 +174,14 @@ class MockAudioProcessing : public AudioProcessing {
   MOCK_METHOD(AudioProcessingStats, GetStatistics, (bool), (override));
 
   MOCK_METHOD(AudioProcessing::Config, GetConfig, (), (const, override));
+};
+
+class MockAudioProcessingBuilder : public AudioProcessingBuilderInterface {
+ public:
+  MOCK_METHOD(scoped_refptr<AudioProcessing>,
+              Build,
+              (const Environment&),
+              (override));
 };
 
 }  // namespace test

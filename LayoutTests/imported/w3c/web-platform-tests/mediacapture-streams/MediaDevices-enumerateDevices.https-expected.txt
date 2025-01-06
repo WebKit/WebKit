@@ -4,7 +4,7 @@ This test checks for the presence of the navigator.mediaDevices.enumerateDevices
 
 
 PASS mediaDevices.enumerateDevices() is present and working - before capture
-FAIL mediaDevices.enumerateDevices() is working - after video capture assert_equals: audio deviceId should be empty. expected 0 but got 40
+PASS mediaDevices.enumerateDevices() is working - after video capture
 PASS mediaDevices.enumerateDevices() is working - after video then audio capture
 PASS InputDeviceInfo is supported
 

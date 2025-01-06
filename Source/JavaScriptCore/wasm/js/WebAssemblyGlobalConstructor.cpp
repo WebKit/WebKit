@@ -102,7 +102,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         if (!argument.isUndefined()) {
             int32_t value = argument.toInt32(globalObject);
             RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-            initialValue = static_cast<uint64_t>(bitwise_cast<uint32_t>(value));
+            initialValue = static_cast<uint64_t>(std::bit_cast<uint32_t>(value));
         }
         break;
     }
@@ -118,7 +118,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         if (!argument.isUndefined()) {
             float value = argument.toFloat(globalObject);
             RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-            initialValue = static_cast<uint64_t>(bitwise_cast<uint32_t>(value));
+            initialValue = static_cast<uint64_t>(std::bit_cast<uint32_t>(value));
         }
         break;
     }
@@ -126,7 +126,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         if (!argument.isUndefined()) {
             double value = argument.toNumber(globalObject);
             RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-            initialValue = bitwise_cast<uint64_t>(value);
+            initialValue = std::bit_cast<uint64_t>(value);
         }
         break;
     }
@@ -138,7 +138,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
             if (argument.isUndefined())
                 argument = defaultValueForReferenceType(type);
             if (!isWebAssemblyHostFunction(argument) && !argument.isNull())
-                return throwVMTypeError(globalObject, throwScope, "Funcref must be an exported wasm function"_s);
+                return throwVMTypeError(globalObject, throwScope, "Argument value did not match the reference type"_s);
             initialValue = JSValue::encode(argument);
         } else if (Wasm::isExternref(type)) {
             if (argument.isUndefined())

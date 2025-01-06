@@ -360,7 +360,7 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
 
     // For command line execution run connection for <runTimeMs> and exit.
     if (commandLineRun && runTimeMs > 0) {
-      (new Handler()).postDelayed(new Runnable() {
+      new Handler().postDelayed(new Runnable() {
         @Override
         public void run() {
           disconnect();

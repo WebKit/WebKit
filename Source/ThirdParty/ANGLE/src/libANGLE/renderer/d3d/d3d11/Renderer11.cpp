@@ -27,7 +27,6 @@
 #include "libANGLE/formatutils.h"
 #include "libANGLE/histogram_macros.h"
 #include "libANGLE/renderer/d3d/CompilerD3D.h"
-#include "libANGLE/renderer/d3d/DeviceD3D.h"
 #include "libANGLE/renderer/d3d/DisplayD3D.h"
 #include "libANGLE/renderer/d3d/FramebufferD3D.h"
 #include "libANGLE/renderer/d3d/IndexDataManager.h"
@@ -40,6 +39,7 @@
 #include "libANGLE/renderer/d3d/d3d11/Buffer11.h"
 #include "libANGLE/renderer/d3d/d3d11/Clear11.h"
 #include "libANGLE/renderer/d3d/d3d11/Context11.h"
+#include "libANGLE/renderer/d3d/d3d11/Device11.h"
 #include "libANGLE/renderer/d3d/d3d11/ExternalImageSiblingImpl11.h"
 #include "libANGLE/renderer/d3d/d3d11/Fence11.h"
 #include "libANGLE/renderer/d3d/d3d11/Framebuffer11.h"
@@ -483,24 +483,6 @@ Renderer11::Renderer11(egl::Display *display)
             }
         }
 
-        if (requestedMajorVersion == EGL_DONT_CARE || requestedMajorVersion >= 9)
-        {
-            if (requestedMinorVersion == EGL_DONT_CARE || requestedMinorVersion >= 3)
-            {
-                mAvailableFeatureLevels.push_back(D3D_FEATURE_LEVEL_9_3);
-            }
-#if defined(ANGLE_ENABLE_WINDOWS_UWP)
-            if (requestedMinorVersion == EGL_DONT_CARE || requestedMinorVersion >= 2)
-            {
-                mAvailableFeatureLevels.push_back(D3D_FEATURE_LEVEL_9_2);
-            }
-            if (requestedMinorVersion == EGL_DONT_CARE || requestedMinorVersion >= 1)
-            {
-                mAvailableFeatureLevels.push_back(D3D_FEATURE_LEVEL_9_1);
-            }
-#endif
-        }
-
         EGLint requestedDeviceType = static_cast<EGLint>(attributes.get(
             EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE));
         switch (requestedDeviceType)
@@ -701,14 +683,10 @@ egl::Error Renderer11::initializeDXGIAdapter()
     {
         ASSERT(mRequestedDriverType == D3D_DRIVER_TYPE_UNKNOWN);
 
-        DeviceD3D *deviceD3D = GetImplAs<DeviceD3D>(mDisplay->getDevice());
-        ASSERT(deviceD3D != nullptr);
+        Device11 *device11 = GetImplAs<Device11>(mDisplay->getDevice());
+        ASSERT(device11 != nullptr);
 
-        // We should use the inputted D3D11 device instead
-        void *device = nullptr;
-        ANGLE_TRY(deviceD3D->getAttribute(mDisplay, EGL_D3D11_DEVICE_ANGLE, &device));
-
-        ID3D11Device *d3dDevice = static_cast<ID3D11Device *>(device);
+        ID3D11Device *d3dDevice = device11->getDevice();
         if (FAILED(d3dDevice->GetDeviceRemovedReason()))
         {
             return egl::EglNotInitialized() << "Inputted D3D11 device has been lost.";
@@ -1896,40 +1874,6 @@ angle::Result Renderer11::drawArrays(const gl::Context *context,
         case gl::PrimitiveMode::TriangleFan:
             return drawTriangleFan(context, clampedVertexCount, gl::DrawElementsType::InvalidEnum,
                                    nullptr, 0, adjustedInstanceCount);
-        case gl::PrimitiveMode::Points:
-            if (getFeatures().useInstancedPointSpriteEmulation.enabled)
-            {
-                // This code should not be reachable by multi-view programs.
-                ASSERT(executableD3D->getExecutable()->usesMultiview() == false);
-
-                // If the shader is writing to gl_PointSize, then pointsprites are being rendered.
-                // Emulating instanced point sprites for FL9_3 requires the topology to be
-                // D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST and DrawIndexedInstanced is called instead.
-                if (adjustedInstanceCount == 0)
-                {
-                    mDeviceContext->DrawIndexedInstanced(6, clampedVertexCount, 0, 0, baseInstance);
-                    return angle::Result::Continue;
-                }
-
-                // If pointsprite emulation is used with glDrawArraysInstanced then we need to take
-                // a less efficent code path. Instanced rendering of emulated pointsprites requires
-                // a loop to draw each batch of points. An offset into the instanced data buffer is
-                // calculated and applied on each iteration to ensure all instances are rendered
-                // correctly. Each instance being rendered requires the inputlayout cache to reapply
-                // buffers and offsets.
-                for (GLsizei i = 0; i < instanceCount; i++)
-                {
-                    ANGLE_TRY(mStateManager.updateVertexOffsetsForPointSpritesEmulation(
-                        context, firstVertex, i));
-                    mDeviceContext->DrawIndexedInstanced(6, clampedVertexCount, 0, 0, baseInstance);
-                }
-
-                // This required by updateVertexOffsets... above but is outside of the loop for
-                // speed.
-                mStateManager.invalidateVertexBuffer();
-                return angle::Result::Continue;
-            }
-            break;
         default:
             break;
     }
@@ -1962,8 +1906,6 @@ angle::Result Renderer11::drawElements(const gl::Context *context,
         return angle::Result::Continue;
     }
 
-    Context11 *context11 = GetImplAs<Context11>(context);
-
     ANGLE_TRY(markRawBufferUsage(context));
 
     // Transform feedback is not allowed for DrawElements, this error should have been caught at the
@@ -1989,59 +1931,15 @@ angle::Result Renderer11::drawElements(const gl::Context *context,
                                adjustedInstanceCount);
     }
 
-    if (mode != gl::PrimitiveMode::Points ||
-        !executableD3D->usesInstancedPointSpriteEmulation(context11->getRenderer()))
+    if (!isInstancedDraw && adjustedInstanceCount == 0)
     {
-        if (!isInstancedDraw && adjustedInstanceCount == 0)
-        {
-            mDeviceContext->DrawIndexed(indexCount, 0, baseVertexAdjusted);
-        }
-        else
-        {
-            mDeviceContext->DrawIndexedInstanced(indexCount, adjustedInstanceCount, 0,
-                                                 baseVertexAdjusted, baseInstance);
-        }
-        return angle::Result::Continue;
+        mDeviceContext->DrawIndexed(indexCount, 0, baseVertexAdjusted);
     }
-
-    // This code should not be reachable by multi-view programs.
-    ASSERT(executableD3D->getExecutable()->usesMultiview() == false);
-
-    // If the shader is writing to gl_PointSize, then pointsprites are being rendered.
-    // Emulating instanced point sprites for FL9_3 requires the topology to be
-    // D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST and DrawIndexedInstanced is called instead.
-    //
-    // The count parameter passed to drawElements represents the total number of instances to be
-    // rendered. Each instance is referenced by the bound index buffer from the the caller.
-    //
-    // Indexed pointsprite emulation replicates data for duplicate entries found in the index
-    // buffer. This is not an efficent rendering mechanism and is only used on downlevel renderers
-    // that do not support geometry shaders.
-    if (instanceCount == 0)
+    else
     {
-        mDeviceContext->DrawIndexedInstanced(6, indexCount, 0, baseVertexAdjusted, baseInstance);
-        return angle::Result::Continue;
+        mDeviceContext->DrawIndexedInstanced(indexCount, adjustedInstanceCount, 0,
+                                             baseVertexAdjusted, baseInstance);
     }
-
-    // If pointsprite emulation is used with glDrawElementsInstanced then we need to take a less
-    // efficent code path. Instanced rendering of emulated pointsprites requires a loop to draw each
-    // batch of points. An offset into the instanced data buffer is calculated and applied on each
-    // iteration to ensure all instances are rendered correctly.
-    gl::IndexRange indexRange;
-    ANGLE_TRY(glState.getVertexArray()->getIndexRange(context, indexType, indexCount, indices,
-                                                      &indexRange));
-
-    UINT clampedVertexCount = gl::clampCast<UINT>(indexRange.vertexCount());
-
-    // Each instance being rendered requires the inputlayout cache to reapply buffers and offsets.
-    for (GLsizei i = 0; i < instanceCount; i++)
-    {
-        ANGLE_TRY(
-            mStateManager.updateVertexOffsetsForPointSpritesEmulation(context, startVertex, i));
-        mDeviceContext->DrawIndexedInstanced(6, clampedVertexCount, 0, baseVertexAdjusted,
-                                             baseInstance);
-    }
-    mStateManager.invalidateVertexBuffer();
     return angle::Result::Continue;
 }
 
@@ -4227,7 +4125,7 @@ void Renderer11::initializeFrontendFeatures(angle::FrontendFeatures *features) c
 
 DeviceImpl *Renderer11::createEGLDevice()
 {
-    return new DeviceD3D(EGL_D3D11_DEVICE_ANGLE, mDevice.Get());
+    return new Device11(mDevice.Get());
 }
 
 ContextImpl *Renderer11::createContext(const gl::State &state, gl::ErrorSet *errorSet)
@@ -4300,7 +4198,7 @@ angle::Result Renderer11::dispatchComputeIndirect(const gl::Context *context, GL
     // TODO(jie.a.chen@intel.com): num_groups_x,y,z have to be written into the driver constant
     // buffer for the built-in variable gl_NumWorkGroups. There is an opportunity for optimization
     // to use GPU->GPU copy instead.
-    // http://anglebug.com/2807
+    // http://anglebug.com/42261508
     ANGLE_TRY(storage->getData(context, &bufferData));
     const GLuint *groups = reinterpret_cast<const GLuint *>(bufferData + indirect);
     ANGLE_TRY(mStateManager.updateStateForCompute(context, groups[0], groups[1], groups[2]));

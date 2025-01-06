@@ -32,6 +32,7 @@
 #include <limits>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace rtc {
 class SocketAddress;
@@ -58,14 +59,12 @@ namespace WebKit {
 class NetworkRTCUDPSocketCocoaConnections;
 
 class NetworkRTCUDPSocketCocoa final : public NetworkRTCProvider::Socket {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkRTCUDPSocketCocoa);
 public:
     static std::unique_ptr<NetworkRTCProvider::Socket> createUDPSocket(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, Ref<IPC::Connection>&&, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
 
     NetworkRTCUDPSocketCocoa(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, Ref<IPC::Connection>&&, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
     ~NetworkRTCUDPSocketCocoa();
-
-    void setListeningPort(int);
 
 private:
     // NetworkRTCProvider::Socket.
@@ -75,7 +74,7 @@ private:
     void setOption(int option, int value) final;
     void sendTo(std::span<const uint8_t>, const rtc::SocketAddress&, const rtc::PacketOptions&) final;
 
-    NetworkRTCProvider& m_rtcProvider;
+    CheckedRef<NetworkRTCProvider> m_rtcProvider;
     WebCore::LibWebRTCSocketIdentifier m_identifier;
     Ref<NetworkRTCUDPSocketCocoaConnections> m_connections;
 };

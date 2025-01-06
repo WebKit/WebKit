@@ -35,6 +35,11 @@
 
 namespace WebCore {
 
+bool NotificationPayload::hasDeclarativeMessageHeader(const String& json)
+{
+    return NotificationJSONParser::hasDeclarativeMessageHeader(json);
+}
+
 ExceptionOr<NotificationPayload> NotificationPayload::parseJSON(const String& json)
 {
     auto value = JSON::Value::parseJSON(json);
@@ -52,7 +57,25 @@ NotificationPayload NotificationPayload::fromNotificationData(const Notification
 {
     NotificationOptionsPayload options { data.direction, data.language, data.body, data.tag, data.iconURL, { }, data.silent };
 
-    return { data.defaultActionURL, data.title, std::nullopt, WTFMove(options), false };
+    return { data.navigateURL, data.title, std::nullopt, WTFMove(options), false };
+}
+
+NotificationData NotificationPayload::toNotificationData() const
+{
+    NotificationData data;
+    data.navigateURL = defaultActionURL;
+    data.title = title;
+
+    if (options) {
+        data.direction = options->dir;
+        data.language = options->lang;
+        data.body = options->body;
+        data.tag = options->tag;
+        data.iconURL = options->icon;
+        data.silent = options->silent;
+    }
+
+    return data;
 }
 
 } // namespace WebCore

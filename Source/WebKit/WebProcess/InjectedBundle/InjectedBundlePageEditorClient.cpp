@@ -39,10 +39,13 @@
 #include "WebPage.h"
 #include <WebCore/DocumentFragment.h>
 #include <WebCore/MutableStyleProperties.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InjectedBundlePageEditorClient);
 
 static RefPtr<InjectedBundleCSSStyleDeclarationHandle> createHandle(const StyleProperties& style)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2023 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ bool isValidAudioDataInit(const WebCodecsAudioData::Init& init)
     return init.data.length() >= totalSize;
 }
 
-bool isAudioSampleFormatInterleaved(const AudioSampleFormat& format)
+bool isAudioSampleFormatInterleaved(AudioSampleFormat format)
 {
     switch (format) {
     case AudioSampleFormat::U8:
@@ -75,7 +75,7 @@ bool isAudioSampleFormatInterleaved(const AudioSampleFormat& format)
     return false;
 }
 
-size_t computeBytesPerSample(const AudioSampleFormat& format)
+size_t computeBytesPerSample(AudioSampleFormat format)
 {
     switch (format) {
     case AudioSampleFormat::U8:
@@ -101,40 +101,95 @@ ExceptionOr<size_t> computeCopyElementCount(const WebCodecsAudioData& data, cons
     if (!platformData)
         return Exception { ExceptionCode::InvalidAccessError, "Internal AudioData storage is null"_s };
 
+    // 1. Let destFormat be the value of [[format]].
+    // 2. If options.format exists, assign options.format to destFormat.
     auto destFormat = options.format.value_or(platformData->format());
 
-    auto isInterleaved = isAudioSampleFormatInterleaved(destFormat);
+    // 3. If destFormat describes an interleaved AudioSampleFormat and options.planeIndex is greater than 0, throw a RangeError.
+    bool isInterleaved = isAudioSampleFormatInterleaved(destFormat);
     if (isInterleaved && options.planeIndex > 0)
         return Exception { ExceptionCode::RangeError, "Invalid planeIndex for interleaved format"_s };
-    if (options.planeIndex >= data.numberOfChannels())
+    // 4. Otherwise, if destFormat describes a planar AudioSampleFormat and if options.planeIndex is greater or equal to [[number of channels]], throw a RangeError.
+    else if (options.planeIndex >= data.numberOfChannels())
         return Exception { ExceptionCode::RangeError, "Invalid planeIndex for planar format"_s };
 
+#if !USE(AVFOUNDATION)
+    // 5. If [[format]] does not equal destFormat and the User Agent does not support the requested AudioSampleFormat conversion, throw a NotSupportedError DOMException. Conversion to f32-planar must always be supported.
     if (options.format && *options.format != destFormat && destFormat != AudioSampleFormat::F32Planar)
         return Exception { ExceptionCode::NotSupportedError, "AudioData currently only supports copy conversion to f32-planar"_s };
+#endif
 
-    auto frameCount = data.numberOfFrames() / data.numberOfChannels();
+    // 6. Let frameCount be the number of frames in the plane identified by options.planeIndex.
+    // All planes have the same number of frames, always
+    auto frameCount = data.numberOfFrames();
+    // 7. If options.frameOffset is greater than or equal to frameCount, throw a RangeError.
     if (options.frameOffset && *options.frameOffset > frameCount)
         return Exception { ExceptionCode::RangeError, "frameOffset is too large"_s };
 
+    // 8. Let copyFrameCount be the difference of subtracting options.frameOffset from frameCount.
     auto copyFrameCount = frameCount;
     if (options.frameOffset)
         copyFrameCount -= *options.frameOffset;
+    // 9. If options.frameCount exists:
     if (options.frameCount) {
+        // 9.1 If options.frameCount is greater than copyFrameCount, throw a RangeError.
         if (*options.frameCount > copyFrameCount)
             return Exception { ExceptionCode::RangeError, "frameCount is too large"_s };
-
+        // 9.2 Otherwise, assign options.frameCount to copyFrameCount.
         copyFrameCount = *options.frameCount;
     }
 
+    // 10. Let elementCount be copyFrameCount.
+    // 11. If destFormat describes an interleaved AudioSampleFormat, multiply elementCount by [[number of channels]]
     if (isInterleaved) {
-        size_t aggregatedFrameCount;
-        if (!WTF::safeMultiply(copyFrameCount, data.numberOfChannels(), aggregatedFrameCount))
+        size_t elementCount;
+        if (!WTF::safeMultiply(copyFrameCount, data.numberOfChannels(), elementCount))
             return Exception { ExceptionCode::RangeError, "Provided options are causing an overflow"_s };
 
-        return aggregatedFrameCount;
+        return elementCount;
     }
 
     return copyFrameCount;
+}
+
+AudioSampleFormat audioSampleElementFormat(AudioSampleFormat format)
+{
+    switch (format) {
+    case AudioSampleFormat::U8:
+    case AudioSampleFormat::U8Planar:
+        return AudioSampleFormat::U8;
+    case AudioSampleFormat::S16:
+    case AudioSampleFormat::S16Planar:
+        return AudioSampleFormat::S16;
+    case AudioSampleFormat::S32:
+    case AudioSampleFormat::S32Planar:
+        return AudioSampleFormat::S32;
+    case AudioSampleFormat::F32:
+    case AudioSampleFormat::F32Planar:
+        return AudioSampleFormat::F32;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return AudioSampleFormat::U8;
+}
+
+AudioSampleFormatSpan audioElementSpan(AudioSampleFormat format, std::span<uint8_t> buffer)
+{
+    switch (format) {
+    case AudioSampleFormat::U8:
+    case AudioSampleFormat::U8Planar:
+        return buffer;
+    case AudioSampleFormat::S16:
+    case AudioSampleFormat::S16Planar:
+        return spanReinterpretCast<int16_t>(buffer);
+    case AudioSampleFormat::S32:
+    case AudioSampleFormat::S32Planar:
+        return spanReinterpretCast<int32_t>(buffer);
+    case AudioSampleFormat::F32:
+    case AudioSampleFormat::F32Planar:
+        return spanReinterpretCast<float>(buffer);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return buffer;
 }
 
 } // namespace WebCore

@@ -19,7 +19,6 @@
 #include <unordered_map>
 
 using namespace skia_private;
-using sk_gpu_test::GrContextFactory;
 
 #if defined(SK_BUILD_FOR_ANDROID) || defined(SK_BUILD_FOR_IOS)
 #define DEFAULT_GPU_CONFIG "gles"
@@ -137,7 +136,6 @@ static const struct {
     { "grd3d",                 "graphite", "api=direct3d" },
 #endif
 #ifdef SK_DAWN
-    { "grdawn_fakeWGPU",       "graphite", "api=dawn_mtl,fakeWGPU=true" },
     { "grdawn_d3d11",          "graphite", "api=dawn_d3d11" },
     { "grdawn_d3d12",          "graphite", "api=dawn_d3d12" },
     { "grdawn_mtl",            "graphite", "api=dawn_mtl" },
@@ -173,7 +171,7 @@ static const struct {
 // clang-format on
 
 static const char configHelp[] =
-        "Options: 565 4444 8888 rgba bgra rgbx 1010102 101010x bgra1010102 bgr101010x f16 f16norm "
+        "Options: 565 4444 8888 rgba bgra rgbx 1010102 101010x bgra1010102 bgr101010x f16 f16norm f16f16f16x "
         "f32 nonrendering null pdf pdfa pdf300 skp svg xps";
 
 static const char* config_help_fn() {
@@ -695,34 +693,22 @@ SkCommandLineConfigGraphite* parse_command_line_config_graphite(const SkString& 
     SkAlphaType alphaType      = kPremul_SkAlphaType;
     bool        testPrecompile = false;
 
-    skiatest::graphite::TestOptions testOptions;
-
     bool parseSucceeded = false;
     ExtendedOptions extendedOptions(options, &parseSucceeded);
     if (!parseSucceeded) {
         return nullptr;
     }
 
-    bool fakeWGPU = false;
     bool validOptions = extendedOptions.get_option_graphite_api("api", &contextType) &&
                         extendedOptions.get_option_gpu_color("color", &colorType, &alphaType) &&
-                        extendedOptions.get_option_bool("fakeWGPU", &fakeWGPU) &&
                         extendedOptions.get_option_bool("precompile", &testPrecompile);
     if (!validOptions) {
         return nullptr;
     }
 
-    auto surfaceType = SkCommandLineConfigGraphite::SurfaceType::kDefault;
-    if (fakeWGPU) {
-        testOptions.fNeverYieldToWebGPU = true;
-        surfaceType = SkCommandLineConfigGraphite::SurfaceType::kWrapTextureView;
-    }
-
     return new SkCommandLineConfigGraphite(tag,
                                            vias,
                                            contextType,
-                                           surfaceType,
-                                           testOptions,
                                            colorType,
                                            alphaType,
                                            testPrecompile);

@@ -23,19 +23,20 @@
 #if USE(LIBWEBRTC) && USE(GSTREAMER)
 #include "LibWebRTCMacros.h"
 #include "api/video_codecs/video_encoder_factory.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class GStreamerVideoEncoderFactory final : public webrtc::VideoEncoderFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerVideoEncoderFactory);
 
 public:
     GStreamerVideoEncoderFactory(bool isSupportingVP9Profile0, bool isSupportingVP9Profile2);
 
-private:
-    std::vector<webrtc::SdpVideoFormat> GetSupportedFormats() const override;
-    std::unique_ptr<webrtc::VideoEncoder> CreateVideoEncoder(const webrtc::SdpVideoFormat&) final;
+    std::vector<webrtc::SdpVideoFormat> GetSupportedFormats() const final;
+    std::unique_ptr<webrtc::VideoEncoder> Create(const webrtc::Environment&, const webrtc::SdpVideoFormat&) final;
 
+private:
     bool m_isSupportingVP9Profile0;
     bool m_isSupportingVP9Profile2;
 };

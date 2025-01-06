@@ -13,7 +13,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "./vpx_config.h"
 #include "test/codec_factory.h"
 #include "test/decode_test_driver.h"

@@ -22,11 +22,13 @@
 #pragma once
 
 #include "SVGTextContentElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGTextPositioningElement : public SVGTextContentElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGTextPositioningElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGTextPositioningElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGTextPositioningElement);
 public:
     static SVGTextPositioningElement* elementFromRenderer(RenderBoxModelObject&);
 

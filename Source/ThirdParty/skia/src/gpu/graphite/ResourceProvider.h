@@ -13,6 +13,7 @@
 #include "src/core/SkLRUCache.h"
 #include "src/gpu/ResourceKey.h"
 #include "src/gpu/graphite/CommandBuffer.h"
+#include "src/gpu/graphite/GraphicsPipeline.h"
 #include "src/gpu/graphite/ResourceCache.h"
 #include "src/gpu/graphite/ResourceTypes.h"
 
@@ -36,7 +37,6 @@ class Caps;
 class ComputePipeline;
 class ComputePipelineDesc;
 class GlobalCache;
-class GraphicsPipeline;
 class GraphicsPipelineDesc;
 class GraphiteResourceKey;
 class ResourceCache;
@@ -53,9 +53,11 @@ public:
 
     // The runtime effect dictionary provides a link between SkCodeSnippetIds referenced in the
     // paint key and the current SkRuntimeEffect that provides the SkSL for that id.
-    sk_sp<GraphicsPipeline> findOrCreateGraphicsPipeline(const RuntimeEffectDictionary*,
-                                                         const GraphicsPipelineDesc&,
-                                                         const RenderPassDesc&);
+    sk_sp<GraphicsPipeline> findOrCreateGraphicsPipeline(
+            const RuntimeEffectDictionary*,
+            const GraphicsPipelineDesc&,
+            const RenderPassDesc&,
+            SkEnumBitMask<PipelineCreationFlags> = PipelineCreationFlags::kNone);
 
     sk_sp<ComputePipeline> findOrCreateComputePipeline(const ComputePipelineDesc&);
 
@@ -63,10 +65,8 @@ public:
                                               const TextureInfo&,
                                               std::string_view label,
                                               skgpu::Budgeted);
-    // TODO: Consider having this take a label that is provided by the client. If we do this,
-    // should we be setting the label on the backend object or do we assume the client already did
-    // that if they wanted to?
-    virtual sk_sp<Texture> createWrappedTexture(const BackendTexture&) = 0;
+
+    sk_sp<Texture> createWrappedTexture(const BackendTexture&, std::string_view label);
 
     sk_sp<Texture> findOrCreateDepthStencilAttachment(SkISize dimensions,
                                                       const TextureInfo&);
@@ -86,9 +86,13 @@ public:
 
     ProxyCache* proxyCache() { return fResourceCache->proxyCache(); }
 
+    void setResourceCacheLimit(size_t bytes) { return fResourceCache->setMaxBudget(bytes); }
     size_t getResourceCacheLimit() const { return fResourceCache->getMaxBudget(); }
     size_t getResourceCacheCurrentBudgetedBytes() const {
         return fResourceCache->currentBudgetedBytes();
+    }
+    size_t getResourceCacheCurrentPurgeableBytes() const {
+        return fResourceCache->currentPurgeableBytes();
     }
 
     void dumpMemoryStatistics(SkTraceMemoryDump* traceMemoryDump) const {
@@ -98,7 +102,7 @@ public:
     void freeGpuResources();
     void purgeResourcesNotUsedSince(StdSteadyClock::time_point purgeTime);
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     ResourceCache* resourceCache() { return fResourceCache.get(); }
     const SharedContext* sharedContext() { return fSharedContext; }
 #endif
@@ -123,18 +127,18 @@ protected:
     sk_sp<ResourceCache> fResourceCache;
 
 private:
-    virtual sk_sp<GraphicsPipeline> createGraphicsPipeline(const RuntimeEffectDictionary*,
-                                                           const GraphicsPipelineDesc&,
-                                                           const RenderPassDesc&) = 0;
+    virtual sk_sp<GraphicsPipeline> createGraphicsPipeline(
+            const RuntimeEffectDictionary*,
+            const UniqueKey&,
+            const GraphicsPipelineDesc&,
+            const RenderPassDesc&,
+            SkEnumBitMask<PipelineCreationFlags>,
+            uint32_t compilationID) = 0;
     virtual sk_sp<ComputePipeline> createComputePipeline(const ComputePipelineDesc&) = 0;
     virtual sk_sp<Texture> createTexture(SkISize,
                                          const TextureInfo&,
-                                         std::string_view label,
                                          skgpu::Budgeted) = 0;
-    virtual sk_sp<Buffer> createBuffer(size_t size,
-                                       BufferType type,
-                                       AccessPattern,
-                                       std::string_view label) = 0;
+    virtual sk_sp<Buffer> createBuffer(size_t size, BufferType type, AccessPattern) = 0;
     virtual sk_sp<Sampler> createSampler(const SamplerDesc&) = 0;
 
     sk_sp<Texture> findOrCreateTextureWithKey(SkISize dimensions,
@@ -142,6 +146,8 @@ private:
                                               const GraphiteResourceKey& key,
                                               std::string_view label,
                                               skgpu::Budgeted);
+
+    virtual sk_sp<Texture> onCreateWrappedTexture(const BackendTexture&) = 0;
 
     virtual BackendTexture onCreateBackendTexture(SkISize dimensions, const TextureInfo&) = 0;
 #ifdef SK_BUILD_FOR_ANDROID
@@ -152,6 +158,9 @@ private:
                                                   bool fromAndroidWindow) const;
 #endif
     virtual void onDeleteBackendTexture(const BackendTexture&) = 0;
+
+    virtual void onFreeGpuResources() {}
+    virtual void onPurgeResourcesNotUsedSince(StdSteadyClock::time_point purgeTime) {}
 };
 
 } // namespace skgpu::graphite

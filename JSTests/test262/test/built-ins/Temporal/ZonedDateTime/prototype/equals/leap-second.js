@@ -7,7 +7,7 @@ description: Leap second is a valid ISO string for ZonedDateTime
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const instance = new Temporal.ZonedDateTime(1_483_228_799_000_000_000n, timeZone);
 
 let arg = "2016-12-31T23:59:60+00:00[UTC]";

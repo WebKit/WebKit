@@ -364,11 +364,11 @@ void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifie
                                       clickCount:m_clickCount 
                                         pressure:WebCore::ForceAtClick];
 
-    NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
-    if (targetView) {
+    m_targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
+    if (m_targetView) {
         auto eventPressedMouseButtonsSwizzler = makeUnique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons));
         [NSApp _setCurrentEvent:event];
-        [targetView mouseDown:event];
+        [m_targetView mouseDown:event];
         [NSApp _setCurrentEvent:nil];
         if (buttonNumber == LeftMouseButton)
             m_leftMouseButtonDown = true;
@@ -390,17 +390,17 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
                                       clickCount:m_clickCount 
                                         pressure:0.0];
 
-    NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
+    m_targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
     // FIXME: Silly hack to teach WKTR to respect capturing mouse events outside the WKView.
     // The right solution is just to use NSApplication's built-in event sending methods, 
     // instead of rolling our own algorithm for selecting an event target.
-    if (!targetView)
-        targetView = m_testController->mainWebView()->platformView();
+    if (!m_targetView)
+        m_targetView = m_testController->mainWebView()->platformView();
 
-    ASSERT(targetView);
+    ASSERT(m_targetView);
     auto eventPressedMouseButtonsSwizzler = makeUnique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons));
     [NSApp _setCurrentEvent:event];
-    [targetView mouseUp:event];
+    [m_targetView mouseUp:event];
     [NSApp _setCurrentEvent:nil];
     if (buttonNumber == LeftMouseButton)
         m_leftMouseButtonDown = false;
@@ -632,14 +632,14 @@ void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType)
 
     NSPoint windowLocation = event.locationInWindow;
     // Always target drags at the WKWebView to allow for drag-scrolling outside the view.
-    NSView *targetView = isDrag ? m_testController->mainWebView()->platformView() : [m_testController->mainWebView()->platformView() hitTest:windowLocation];
-    if (targetView) {
+    m_targetView = isDrag ? m_testController->mainWebView()->platformView() : [m_testController->mainWebView()->platformView() hitTest:windowLocation];
+    if (m_targetView) {
         auto eventPressedMouseButtonsSwizzler = makeUnique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons));
         [NSApp _setCurrentEvent:event];
         if (isDrag)
-            [targetView mouseDragged:event];
+            [m_targetView mouseDragged:event];
         else
-            [checked_objc_cast<WKWebView>(targetView) _simulateMouseMove:event];
+            [checked_objc_cast<WKWebView>(m_targetView.get()) _simulateMouseMove:event];
         [NSApp _setCurrentEvent:nil];
     } else
         WTFLogAlways("mouseMoveTo failed to find a target view at %f,%f\n", windowLocation.x, windowLocation.y);
@@ -949,5 +949,16 @@ void EventSenderProxy::scaleGestureEnd(double scale)
 }
 
 #endif // ENABLE(MAC_GESTURE_EVENTS)
+
+void EventSenderProxy::waitForPendingMouseEvents()
+{
+    if (RetainPtr targetView = std::exchange(m_targetView, nullptr)) {
+        __block bool doneProcessingMouseEvents = false;
+        [checked_objc_cast<WKWebView>(targetView.get()) _doAfterProcessingAllPendingMouseEvents:^{
+            doneProcessingMouseEvents = true;
+        }];
+        m_testController->runUntil(doneProcessingMouseEvents, 100_ms);
+    }
+}
 
 } // namespace WTR

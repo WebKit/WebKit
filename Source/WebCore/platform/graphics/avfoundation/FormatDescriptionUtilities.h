@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "SpatialVideoMetadata.h"
+#include <optional>
 #include <wtf/Forward.h>
 
 typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
@@ -37,5 +39,6 @@ struct PlatformVideoColorSpace;
 FloatSize presentationSizeFromFormatDescription(CMFormatDescriptionRef);
 std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatDescriptionRef);
 String codecFromFormatDescription(CMFormatDescriptionRef);
+std::optional<SpatialVideoMetadata> videoMetadataFromFormatDescription(CMFormatDescriptionRef);
 
-}
+} // namespace WebCore

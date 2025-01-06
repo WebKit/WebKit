@@ -35,7 +35,7 @@ namespace WebCore {
 // OscillatorNode is an audio generator of periodic waveforms.
 
 class OscillatorNode final : public AudioScheduledSourceNode {
-    WTF_MAKE_ISO_ALLOCATED(OscillatorNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(OscillatorNode);
 public:
     static ExceptionOr<Ref<OscillatorNode>> create(BaseAudioContext&, const OscillatorOptions& = { });
 
@@ -60,8 +60,8 @@ private:
     // Returns true if there are sample-accurate timeline parameter changes.
     bool calculateSampleAccuratePhaseIncrements(size_t framesToProcess) WTF_REQUIRES_LOCK(m_processLock);
 
-    double processARate(int, float* destP, double virtualReadIndex, float* phaseIncrements) WTF_REQUIRES_LOCK(m_processLock);
-    double processKRate(int, float* destP, double virtualReadIndex) WTF_REQUIRES_LOCK(m_processLock);
+    double processARate(int, std::span<float> destP, double virtualReadIndex, std::span<float> phaseIncrements) WTF_REQUIRES_LOCK(m_processLock);
+    double processKRate(int, std::span<float> destP, double virtualReadIndex) WTF_REQUIRES_LOCK(m_processLock);
 
     bool propagatesSilence() const final;
 

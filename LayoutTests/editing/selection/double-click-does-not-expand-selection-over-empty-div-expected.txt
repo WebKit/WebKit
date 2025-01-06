@@ -1,0 +1,11 @@
+To manually run this test, double click inside the red box below and verify that no selection appears.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSelection().type is not 'Range'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

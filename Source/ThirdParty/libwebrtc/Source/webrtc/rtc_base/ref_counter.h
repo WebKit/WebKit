@@ -34,7 +34,7 @@ class RefCounter {
   // Otherwise, returns kOtherRefsRemained (note that in case of multithreading,
   // some other caller may have dropped the last reference by the time this call
   // returns; all we know is that we didn't do it).
-  rtc::RefCountReleaseStatus DecRef() {
+  RefCountReleaseStatus DecRef() {
     // Use release-acquire barrier to ensure all actions on the protected
     // resource are finished before the resource can be freed.
     // When ref_count_after_subtract > 0, this function require
@@ -47,8 +47,8 @@ class RefCounter {
     int ref_count_after_subtract =
         ref_count_.fetch_sub(1, std::memory_order_acq_rel) - 1;
     return ref_count_after_subtract == 0
-               ? rtc::RefCountReleaseStatus::kDroppedLastRef
-               : rtc::RefCountReleaseStatus::kOtherRefsRemained;
+               ? RefCountReleaseStatus::kDroppedLastRef
+               : RefCountReleaseStatus::kOtherRefsRemained;
   }
 
   // Return whether the reference count is one. If the reference count is used

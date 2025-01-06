@@ -31,6 +31,8 @@
 
 #if ENABLE(ASSEMBLER)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace Probe {
 
@@ -126,7 +128,7 @@ template<typename T, SavedFPWidth savedFPWidth>
 T CPUState::fpr(FPRegisterID id) const
 {
     CPUState* cpu = const_cast<CPUState*>(this);
-    return bitwise_cast<T>(cpu->fpr<savedFPWidth>(id));
+    return std::bit_cast<T>(cpu->fpr<savedFPWidth>(id));
 }
 
 inline void*& CPUState::pc()
@@ -196,7 +198,7 @@ T CPUState::sp() const
 }
 
 struct State;
-typedef void (*StackInitializationFunction)(State*);
+typedef void (SYSV_ABI *StackInitializationFunction)(State*);
 
 #if CPU(ARM64E)
 #define PROBE_FUNCTION_PTRAUTH __ptrauth(ptrauth_key_process_dependent_code, 0, JITProbePtrTag)
@@ -215,7 +217,7 @@ struct State {
 };
 
 class Context {
-    WTF_MAKE_TZONE_ALLOCATED(Context);
+    WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(Context);
 public:
     using RegisterID = MacroAssembler::RegisterID;
     using SPRegisterID = MacroAssembler::SPRegisterID;
@@ -274,9 +276,11 @@ private:
     friend JS_EXPORT_PRIVATE void* probeStateForContext(Context&); // Not for general use. This should only be for writing tests.
 };
 
-extern "C" void executeJSCJITProbe(State*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" void SYSV_ABI executeJSCJITProbe(State*) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 } // namespace Probe
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER)

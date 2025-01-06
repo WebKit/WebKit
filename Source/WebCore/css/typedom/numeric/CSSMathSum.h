@@ -34,13 +34,13 @@ namespace WebCore {
 class CSSNumericArray;
 
 class CSSMathSum final : public CSSMathValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSMathSum);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSMathSum);
 public:
     static ExceptionOr<Ref<CSSMathSum>> create(FixedVector<CSSNumberish>);
     static ExceptionOr<Ref<CSSMathSum>> create(Vector<Ref<CSSNumericValue>>);
     const CSSNumericArray& values() const { return m_values.get(); }
 
-    RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const final;
+    std::optional<CSSCalc::Child> toCalcTreeNode() const final;
 
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Sum; }

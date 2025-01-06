@@ -25,10 +25,13 @@
 
 #include "config.h"
 #include "DOMTimerHoldingTank.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMTimerHoldingTank);
 
 #if PLATFORM(IOS_SIMULATOR)
 constexpr Seconds maximumHoldTimeLimit { 50_ms };

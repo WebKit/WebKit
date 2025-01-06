@@ -16,14 +16,14 @@ Pixel 6 (ARM based) specific script that measures the following for each restric
 Setup:
 
   autoninja -C out/<config> angle_trace_perf_tests angle_apks
-  adb install -r --force-queryable ./out/<config>/apks/AngleLibraries.apk
-  adb install -r out/<config>/angle_trace_tests_apk/angle_trace_tests-debug.apk
-  (cd out/<config>; ../../src/tests/run_angle_android_test.py angle_trace_tests \
-   --verbose --local-output --verbose-logging --max-steps-performed 1 --log=debug)
 
 Recommended command to run:
 
-  python3 restricted_trace_perf.py --fixedtime 10 --power --output-tag android.$(date '+%Y%m%d') --loop-count 5
+  out/<config>/restricted_trace_perf --fixedtime 10 --power --memory --output-tag android.$(date '+%Y%m%d') --loop-count 5
+
+Alternatively, you can pass the build directory and run from anywhere:
+
+  python3 restricted_trace_perf.py --fixedtime 10 --power --output-tag android.$(date '+%Y%m%d') --loop-count 5 --build-dir ../../../out/<config>
 
 - This will run through all the traces 5 times with the native driver, then 5 times with vulkan (via ANGLE)
 - 10 second run time with one warmup loop
@@ -34,6 +34,7 @@ Of the 5 runs, the high and low for each data point will be dropped, average of 
 '''
 
 import argparse
+import contextlib
 import copy
 import csv
 import fcntl
@@ -41,6 +42,7 @@ import fnmatch
 import json
 import logging
 import os
+import pathlib
 import re
 import statistics
 import subprocess
@@ -52,11 +54,32 @@ from collections import defaultdict, namedtuple
 from datetime import datetime
 from psutil import process_iter
 
+PY_UTILS = str(pathlib.Path(__file__).resolve().parents[1] / 'py_utils')
+if PY_UTILS not in sys.path:
+    os.stat(PY_UTILS) and sys.path.insert(0, PY_UTILS)
+import android_helper
+import angle_path_util
+import angle_test_util
+
 DEFAULT_TEST_DIR = '.'
-DEFAULT_TEST_JSON = 'restricted_traces.json'
 DEFAULT_LOG_LEVEL = 'info'
+DEFAULT_ANGLE_PACKAGE = 'com.android.angle.test'
 
 Result = namedtuple('Result', ['stdout', 'stderr', 'time'])
+
+
+class _global(object):
+    current_user = None
+    storage_dir = None
+    cache_dir = None
+
+
+def init():
+    _global.current_user = run_adb_command('shell am get-current-user').stdout.strip()
+    _global.storage_dir = '/data/user/' + _global.current_user + '/com.android.angle.test/files'
+    _global.cache_dir = '/data/user_de/' + _global.current_user + '/com.android.angle.test/cache'
+    logging.debug('Running with user %s, storage %s, cache %s', _global.current_user,
+                  _global.storage_dir, _global.cache_dir)
 
 
 def run_command(args):
@@ -110,12 +133,12 @@ def run_async_adb_command(args):
 
 
 def cleanup():
-    run_adb_command('shell rm -f /sdcard/Download/out.txt /sdcard/Download/gpumem.txt')
+    run_adb_command('shell rm -f ' + _global.storage_dir + '/out.txt ' + _global.storage_dir +
+                    '/gpumem.txt')
 
 
 def clear_blob_cache():
-    run_adb_command(
-        'shell run-as com.android.angle.test rm -rf /data/user_de/0/com.android.angle.test/cache')
+    run_adb_command('shell run-as com.android.angle.test rm -rf ' + _global.cache_dir)
 
 
 def select_device(device_arg):
@@ -186,6 +209,24 @@ def get_trace_width(mode):
     return width
 
 
+# This function changes to the target directory, then 'yield' passes execution to the inner part of
+# the 'with' block that invoked it. The 'finally' block is executed at the end of the 'with' block,
+# including when exceptions are raised.
+@contextlib.contextmanager
+def run_from_dir(dir):
+    # If not set, just run the command and return
+    if not dir:
+        yield
+        return
+    # Otherwise, change directories
+    cwd = os.getcwd()
+    os.chdir(dir)
+    try:
+        yield
+    finally:
+        os.chdir(cwd)
+
+
 def run_trace(trace, args):
     mode = get_mode(args)
 
@@ -193,7 +234,7 @@ def run_trace(trace, args):
     # Note the 0.25 below is the delay (in seconds) between memory checks
     if args.memory:
         run_adb_command('push gpumem.sh /data/local/tmp')
-        memory_command = 'shell sh /data/local/tmp/gpumem.sh 0.25'
+        memory_command = 'shell sh /data/local/tmp/gpumem.sh 0.25 ' + _global.storage_dir
         memory_process = run_async_adb_command(memory_command)
 
     flags = [
@@ -211,22 +252,24 @@ def run_trace(trace, args):
     # Build a command that can be run directly over ADB, for example:
     r'''
 adb shell am instrument -w \
-    -e org.chromium.native_test.NativeTestInstrumentationTestRunner.StdoutFile /sdcard/Download/out.txt \
+    -e org.chromium.native_test.NativeTestInstrumentationTestRunner.StdoutFile /data/user/0/com.android.angle.test/files/out.txt \
     -e org.chromium.native_test.NativeTest.CommandLineFlags \
-    "--gtest_filter=TraceTest.empires_and_puzzles\ --use-angle=vulkan\ --screenshot-dir\ /sdcard\ --screenshot-frame\ 2\ --max-steps-performed\ 2\ --no-warmup" \
+    "--gtest_filter=TraceTest.empires_and_puzzles\ --use-angle=vulkan\ --screenshot-dir\ /data/user/0/com.android.angle.test/files\ --screenshot-frame\ 2\ --max-steps-performed\ 2\ --no-warmup" \
     -e org.chromium.native_test.NativeTestInstrumentationTestRunner.ShardNanoTimeout "1000000000000000000" \
     -e org.chromium.native_test.NativeTestInstrumentationTestRunner.NativeTestActivity com.android.angle.test.AngleUnitTestActivity \
     com.android.angle.test/org.chromium.build.gtest_apk.NativeTestInstrumentationTestRunner
     '''
     adb_command = r'''
 shell am instrument -w \
-    -e org.chromium.native_test.NativeTestInstrumentationTestRunner.StdoutFile /sdcard/Download/out.txt \
+    -e org.chromium.native_test.NativeTestInstrumentationTestRunner.StdoutFile {storage}/out.txt \
     -e org.chromium.native_test.NativeTest.CommandLineFlags "{flags}" \
     -e org.chromium.native_test.NativeTestInstrumentationTestRunner.ShardNanoTimeout "1000000000000000000" \
     -e org.chromium.native_test.NativeTestInstrumentationTestRunner.NativeTestActivity \
     com.android.angle.test.AngleUnitTestActivity \
     com.android.angle.test/org.chromium.build.gtest_apk.NativeTestInstrumentationTestRunner
-    '''.format(flags=r'\ '.join(flags)).strip()  # Note: space escaped due to subprocess shell=True
+    '''.format(
+        flags=r'\ '.join(flags),
+        storage=_global.storage_dir).strip()  # Note: space escaped due to subprocess shell=True
 
     result = run_adb_command(adb_command)
 
@@ -239,7 +282,8 @@ shell am instrument -w \
 
 def get_test_time():
     # Pull the results from the device and parse
-    result = run_adb_command('shell cat /sdcard/Download/out.txt | grep -v Error | grep -v Frame')
+    result = run_adb_command('shell cat ' + _global.storage_dir +
+                             '/out.txt | grep -v Error | grep -v Frame')
 
     measured_time = None
 
@@ -270,7 +314,7 @@ def get_test_time():
 
 def get_gpu_memory(trace_duration):
     # Pull the results from the device and parse
-    result = run_adb_command('shell cat /sdcard/Download/gpumem.txt | awk "NF"')
+    result = run_adb_command('shell cat ' + _global.storage_dir + '/gpumem.txt | awk "NF"')
 
     # The gpumem script grabs snapshots of memory per process
     # Output looks like this, repeated once per sleep_duration of the test:
@@ -338,7 +382,7 @@ def get_gpu_memory(trace_duration):
 
 def get_proc_memory():
     # Pull the results from the device and parse
-    result = run_adb_command('shell cat /sdcard/Download/out.txt')
+    result = run_adb_command('shell cat ' + _global.storage_dir + '/out.txt')
     memory_median = ''
     memory_max = ''
 
@@ -359,7 +403,7 @@ def get_proc_memory():
 
 def get_gpu_time():
     # Pull the results from the device and parse
-    result = run_adb_command('shell cat /sdcard/Download/out.txt')
+    result = run_adb_command('shell cat ' + _global.storage_dir + '/out.txt')
     gpu_time = '0'
 
     for line in result.stdout.splitlines():
@@ -375,7 +419,7 @@ def get_gpu_time():
 
 def get_cpu_time():
     # Pull the results from the device and parse
-    result = run_adb_command('shell cat /sdcard/Download/out.txt')
+    result = run_adb_command('shell cat ' + _global.storage_dir + '/out.txt')
     cpu_time = '0'
 
     for line in result.stdout.splitlines():
@@ -391,7 +435,8 @@ def get_cpu_time():
 
 def get_frame_count():
     # Pull the results from the device and parse
-    result = run_adb_command('shell cat /sdcard/Download/out.txt | grep -v Error | grep -v Frame')
+    result = run_adb_command('shell cat ' + _global.storage_dir +
+                             '/out.txt | grep -v Error | grep -v Frame')
 
     frame_count = 0
 
@@ -446,10 +491,10 @@ class GPUPowerStats():
         # CH7(T=16086645)[S1M_VDD_MIF], 196512891
 
         id_map = {
-            'S2S_VDD_G3D': 'gpu',
-            'S2M_VDD_CPUCL2': 'big_cpu',
-            'S3M_VDD_CPUCL1': 'mid_cpu',
-            'S4M_VDD_CPUCL0': 'little_cpu',
+            r'S2S_VDD_G3D\b|S2S_VDD_GPU\b': 'gpu',
+            r'S\d+M_VDD_CPUCL2\b|S2M_VDD_CPU2\b': 'big_cpu',
+            r'S\d+M_VDD_CPUCL1\b|S3M_VDD_CPU1\b': 'mid_cpu',
+            r'S\d+M_VDD_CPUCL0\b|S4M_VDD_CPU\b': 'little_cpu',
         }
 
         for m in id_map.values():
@@ -457,7 +502,7 @@ class GPUPowerStats():
 
         for line in energy_value_result.stdout.splitlines():
             for mid, m in id_map.items():
-                if mid in line:
+                if re.search(mid, line):
                     value = int(line.split()[1])
                     logging.debug('Power metric %s (%s): %d', mid, m, value)
                     assert self.power[m] == 0, 'Duplicate power metric: %s (%s)' % (mid, m)
@@ -525,7 +570,15 @@ def collect_power(done_event, test_fixedtime, results):
 
 def get_thermal_info():
     out = run_adb_command('shell dumpsys android.hardware.thermal.IThermal/default').stdout
-    result = [l for l in out.splitlines() if ('VIRTUAL-SKIN' in l and 'ThrottlingStatus:' in l)]
+    result = []
+    for line in out.splitlines():
+        if 'ThrottlingStatus:' in line:
+            name = re.search('Name: ([^ ]*)', line).group(1)
+            if ('VIRTUAL-SKIN' in name and
+                    '-CHARGE-' not in name and  # only supposed to affect charging speed
+                    'MODEL' not in name.split('-')):  # different units and not used for throttling
+                result.append(line)
+
     if not result:
         logging.error('Unexpected dumpsys IThermal response:\n%s', out)
         raise RuntimeError('Unexpected dumpsys IThermal response, logged above')
@@ -539,8 +592,7 @@ def set_vendor_thermal_control(disabled=None):
         while waiting:
             waiting = False
             for line in get_thermal_info():
-                is_charge = 'VIRTUAL-SKIN-CHARGE-' in line  # Only supposed to affect charging speed
-                if 'ThrottlingStatus: NONE' not in line and not is_charge:
+                if 'ThrottlingStatus: NONE' not in line:
                     logging.info('Waiting for vendor throttling to finish: %s', line.strip())
                     time.sleep(10)
                     waiting = True
@@ -554,9 +606,28 @@ def sleep_until_temps_below(limit_temp):
     while waiting:
         waiting = False
         for line in get_thermal_info():
-            v = float(line.split('CurrentValue:')[1].strip().split(' ')[0])
+            v = float(re.search('CurrentValue: ([^ ]*)', line).group(1))
             if v > limit_temp:
                 logging.info('Waiting for device temps below %.1f: %s', limit_temp, line.strip())
+                time.sleep(5)
+                waiting = True
+                break
+
+
+def sleep_until_temps_below_thermalservice(limit_temp):
+    waiting = True
+    while waiting:
+        waiting = False
+        lines = run_adb_command('shell dumpsys thermalservice').stdout.splitlines()
+        assert 'HAL Ready: true' in lines
+        for l in lines[lines.index('Current temperatures from HAL:') + 1:]:
+            if 'Temperature{' not in l:
+                break
+            v = re.search(r'mValue=([^,}]+)', l).group(1)
+            # Note: on some Pixel devices odd component temps are also reported here
+            # but some other key ones are not (e.g. CPU ODPM controlling cpu freqs)
+            if float(v) > limit_temp:
+                logging.info('Waiting for device temps below %.1f: %s', limit_temp, l.strip())
                 time.sleep(5)
                 waiting = True
                 break
@@ -650,9 +721,19 @@ def main():
         help='Custom thermal throttling with limit set to this temperature (off by default)',
         type=float)
     parser.add_argument(
+        '--custom-throttling-thermalservice-temp',
+        help='Custom thermal throttling (thermalservice) with limit set to this temperature (off by default)',
+        type=float)
+    parser.add_argument(
         '--min-battery-level',
         help='Sleep between tests if battery level drops below this value (off by default)',
         type=int)
+    parser.add_argument(
+        '--angle-package',
+        help='Where to load ANGLE libraries from. This will load from the test APK by default, ' +
+        'but you can point to any APK that contains ANGLE. Specify \'system\' to use libraries ' +
+        'already on the device',
+        default=DEFAULT_ANGLE_PACKAGE)
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -665,12 +746,21 @@ def main():
         help='Whether to run the trace in offscreen mode',
         action='store_true',
         default=False)
+    parser.add_argument(
+        '--build-dir',
+        help='Where to find the APK on the host, i.e. out/Android. If unset, it is assumed you ' +
+        'are running from the build dir already, or are using the wrapper script ' +
+        'out/<config>/restricted_trace_perf.',
+        default='')
 
     args = parser.parse_args()
 
-    logging.basicConfig(level=args.log.upper())
+    angle_test_util.SetupLogging(args.log.upper())
 
     run_adb_command('root')
+
+    # Determine some starting parameters
+    init()
 
     try:
         if args.custom_throttling_temp:
@@ -696,12 +786,9 @@ def logged_args():
 
 def run_traces(args):
     # Load trace names
-    with open(os.path.join(DEFAULT_TEST_DIR, DEFAULT_TEST_JSON)) as f:
+    test_json = os.path.join(args.build_dir, 'gen/trace_list.json')
+    with open(os.path.join(DEFAULT_TEST_DIR, test_json)) as f:
         traces = json.loads(f.read())
-
-    # Have to split the 'trace version' thing up
-    trace_and_version = traces['traces']
-    traces = [i.split(' ',)[0] for i in trace_and_version]
 
     failures = []
 
@@ -769,34 +856,146 @@ def run_traces(args):
     proc_mem_medians = defaultdict(dict)
     proc_mem_peaks = defaultdict(dict)
 
-    for renderer in renderers:
+    # Organize the data for writing out
+    rows = defaultdict(dict)
 
-        if renderer == "native":
-            # Force the settings to native
-            run_adb_command('shell settings put global angle_debug_package org.chromium.angle')
-            run_adb_command(
-                'shell settings put global angle_gl_driver_selection_pkgs com.android.angle.test')
-            run_adb_command('shell settings put global angle_gl_driver_selection_values native')
-        elif renderer == "vulkan":
-            # Force the settings to ANGLE
-            run_adb_command('shell settings put global angle_debug_package org.chromium.angle')
-            run_adb_command(
-                'shell settings put global angle_gl_driver_selection_pkgs com.android.angle.test')
-            run_adb_command('shell settings put global angle_gl_driver_selection_values angle')
-        elif renderer == "default":
-            logging.info('Deleting Android settings for forcing selection of GLES driver, ' +
-                         'allowing system to load the default')
-            run_adb_command('shell settings delete global angle_debug_package')
-            run_adb_command('shell settings delete global angle_gl_driver_selection_pkgs')
-            run_adb_command('shell settings delete global angle_gl_driver_selection_values')
-        else:
-            logging.error('Unsupported renderer {}'.format(renderer))
-            exit()
+    def populate_row(rows, name, results):
+        if len(rows[name]) == 0:
+            rows[name] = defaultdict(list)
+        for renderer, wtimes in results.items():
+            average, variance = drop_high_low_and_average(wtimes)
+            rows[name][renderer].append(average)
+            rows[name][renderer].append(variance)
+
+    # Generate the SUMMARY output
+    summary_file = open("summary." + args.output_tag + ".csv", 'w', newline='')
+    summary_writer = csv.writer(summary_file)
+
+    android_version = run_adb_command('shell getprop ro.build.fingerprint').stdout.strip()
+    angle_version = run_command('git rev-parse HEAD').stdout.strip()
+    origin_main_version = run_command('git rev-parse origin/main').stdout.strip()
+    if origin_main_version != angle_version:
+        angle_version += ' (origin/main %s)' % origin_main_version
+    # test_time = run_command('date \"+%Y%m%d\"').stdout.read().strip()
+
+    summary_writer.writerow([
+        "\"Android: " + android_version + "\n" + "ANGLE: " + angle_version + "\n" +
+        #  "Date: " + test_time + "\n" +
+        "Source: " + raw_data_filename + "\n" + "Args: " + logged_args() + "\""
+    ])
+
+    trace_number = 0
+
+    if (len(renderers) == 1) and (renderers[0] != "both"):
+        renderer_name = renderers[0]
+        summary_writer.writerow([
+            "#", "\"Trace\"", f"\"{renderer_name}\nwall\ntime\nper\nframe\n(ms)\"",
+            f"\"{renderer_name}\nwall\ntime\nvariance\"",
+            f"\"{renderer_name}\nGPU\ntime\nper\nframe\n(ms)\"",
+            f"\"{renderer_name}\nGPU\ntime\nvariance\"",
+            f"\"{renderer_name}\nCPU\ntime\nper\nframe\n(ms)\"",
+            f"\"{renderer_name}\nCPU\ntime\nvariance\"", f"\"{renderer_name}\nGPU\npower\n(W)\"",
+            f"\"{renderer_name}\nGPU\npower\nvariance\"", f"\"{renderer_name}\nCPU\npower\n(W)\"",
+            f"\"{renderer_name}\nCPU\npower\nvariance\"", f"\"{renderer_name}\nGPU\nmem\n(B)\"",
+            f"\"{renderer_name}\nGPU\nmem\nvariance\"",
+            f"\"{renderer_name}\npeak\nGPU\nmem\n(B)\"",
+            f"\"{renderer_name}\npeak\nGPU\nmem\nvariance\"",
+            f"\"{renderer_name}\nprocess\nmem\n(B)\"",
+            f"\"{renderer_name}\nprocess\nmem\nvariance\"",
+            f"\"{renderer_name}\npeak\nprocess\nmem\n(B)\"",
+            f"\"{renderer_name}\npeak\nprocess\nmem\nvariance\""
+        ])
+    else:
+        summary_writer.writerow([
+            "#", "\"Trace\"", "\"Native\nwall\ntime\nper\nframe\n(ms)\"",
+            "\"Native\nwall\ntime\nvariance\"", "\"ANGLE\nwall\ntime\nper\nframe\n(ms)\"",
+            "\"ANGLE\nwall\ntime\nvariance\"", "\"wall\ntime\ncompare\"",
+            "\"Native\nGPU\ntime\nper\nframe\n(ms)\"", "\"Native\nGPU\ntime\nvariance\"",
+            "\"ANGLE\nGPU\ntime\nper\nframe\n(ms)\"", "\"ANGLE\nGPU\ntime\nvariance\"",
+            "\"GPU\ntime\ncompare\"", "\"Native\nCPU\ntime\nper\nframe\n(ms)\"",
+            "\"Native\nCPU\ntime\nvariance\"", "\"ANGLE\nCPU\ntime\nper\nframe\n(ms)\"",
+            "\"ANGLE\nCPU\ntime\nvariance\"", "\"CPU\ntime\ncompare\"",
+            "\"Native\nGPU\npower\n(W)\"", "\"Native\nGPU\npower\nvariance\"",
+            "\"ANGLE\nGPU\npower\n(W)\"", "\"ANGLE\nGPU\npower\nvariance\"",
+            "\"GPU\npower\ncompare\"", "\"Native\nCPU\npower\n(W)\"",
+            "\"Native\nCPU\npower\nvariance\"", "\"ANGLE\nCPU\npower\n(W)\"",
+            "\"ANGLE\nCPU\npower\nvariance\"", "\"CPU\npower\ncompare\"",
+            "\"Native\nGPU\nmem\n(B)\"", "\"Native\nGPU\nmem\nvariance\"",
+            "\"ANGLE\nGPU\nmem\n(B)\"", "\"ANGLE\nGPU\nmem\nvariance\"", "\"GPU\nmem\ncompare\"",
+            "\"Native\npeak\nGPU\nmem\n(B)\"", "\"Native\npeak\nGPU\nmem\nvariance\"",
+            "\"ANGLE\npeak\nGPU\nmem\n(B)\"", "\"ANGLE\npeak\nGPU\nmem\nvariance\"",
+            "\"GPU\npeak\nmem\ncompare\"", "\"Native\nprocess\nmem\n(B)\"",
+            "\"Native\nprocess\nmem\nvariance\"", "\"ANGLE\nprocess\nmem\n(B)\"",
+            "\"ANGLE\nprocess\nmem\nvariance\"", "\"process\nmem\ncompare\"",
+            "\"Native\npeak\nprocess\nmem\n(B)\"", "\"Native\npeak\nprocess\nmem\nvariance\"",
+            "\"ANGLE\npeak\nprocess\nmem\n(B)\"", "\"ANGLE\npeak\nprocess\nmem\nvariance\"",
+            "\"process\npeak\nmem\ncompare\""
+        ])
+
+    with run_from_dir(args.build_dir):
+        android_helper.Initialize("angle_trace_tests")
+        android_helper.PrepareTestSuite("angle_trace_tests")
+
+    for trace in fnmatch.filter(traces, args.filter):
+
+        print(
+            "\nStarting run for %s loopcount %i with %s at %s\n" %
+            (trace, int(args.loop_count), renderers, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+
+        with run_from_dir(args.build_dir):
+            android_helper.PrepareRestrictedTraces([trace])
+
+        # Start with clean data containers for each trace
+        rows.clear()
+        wall_times.clear()
+        gpu_times.clear()
+        cpu_times.clear()
+        gpu_powers.clear()
+        cpu_powers.clear()
+        gpu_mem_sustaineds.clear()
+        gpu_mem_peaks.clear()
+        proc_mem_medians.clear()
+        proc_mem_peaks.clear()
 
         for i in range(int(args.loop_count)):
-            print("\nStarting run %i with %s at %s\n" %
-                  (i + 1, renderer, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-            for trace in fnmatch.filter(traces, args.filter):
+
+            for renderer in renderers:
+
+                if renderer == "native":
+                    # Force the settings to native
+                    run_adb_command(
+                        'shell settings put global angle_gl_driver_selection_pkgs com.android.angle.test'
+                    )
+                    run_adb_command(
+                        'shell settings put global angle_gl_driver_selection_values native')
+                elif renderer == "vulkan":
+                    # Force the settings to ANGLE
+                    run_adb_command(
+                        'shell settings put global angle_gl_driver_selection_pkgs com.android.angle.test'
+                    )
+                    run_adb_command(
+                        'shell settings put global angle_gl_driver_selection_values angle')
+                elif renderer == "default":
+                    logging.info(
+                        'Deleting Android settings for forcing selection of GLES driver, ' +
+                        'allowing system to load the default')
+                    run_adb_command('shell settings delete global angle_debug_package')
+                    run_adb_command('shell settings delete global angle_gl_driver_all_angle')
+                    run_adb_command('shell settings delete global angle_gl_driver_selection_pkgs')
+                    run_adb_command(
+                        'shell settings delete global angle_gl_driver_selection_values')
+                else:
+                    logging.error('Unsupported renderer {}'.format(renderer))
+                    exit()
+
+                if args.angle_package == 'system':
+                    # Clear the debug package so ANGLE will be loaded from /system/lib64
+                    run_adb_command('shell settings delete global angle_debug_package')
+                else:
+                    # Otherwise, load ANGLE from the specified APK
+                    run_adb_command('shell settings put global angle_debug_package ' +
+                                    args.angle_package)
+
                 # Remove any previous perf results
                 cleanup()
                 # Clear blob cache to avoid post-warmup cache eviction b/298028816
@@ -914,204 +1113,138 @@ def run_traces(args):
                 if args.custom_throttling_temp:
                     sleep_until_temps_below(args.custom_throttling_temp)
 
+                if args.custom_throttling_thermalservice_temp:
+                    sleep_until_temps_below_thermalservice(
+                        args.custom_throttling_thermalservice_temp)
+
                 if args.min_battery_level:
                     sleep_until_battery_level(args.min_battery_level)
 
-    # Organize the data for writing out
-    rows = defaultdict(dict)
+            print()  # New line for readability
 
-    def populate_row(rows, name, results):
-        if len(rows[name]) == 0:
-            rows[name] = defaultdict(list)
-        for renderer, wtimes in results.items():
-            average, variance = drop_high_low_and_average(wtimes)
-            rows[name][renderer].append(average)
-            rows[name][renderer].append(variance)
+        for name, results in wall_times.items():
+            populate_row(rows, name, results)
 
-    for name, results in wall_times.items():
-        populate_row(rows, name, results)
+        for name, results in gpu_times.items():
+            populate_row(rows, name, results)
 
-    for name, results in gpu_times.items():
-        populate_row(rows, name, results)
+        for name, results in cpu_times.items():
+            populate_row(rows, name, results)
 
-    for name, results in cpu_times.items():
-        populate_row(rows, name, results)
+        for name, results in gpu_powers.items():
+            populate_row(rows, name, results)
 
-    for name, results in gpu_powers.items():
-        populate_row(rows, name, results)
+        for name, results in cpu_powers.items():
+            populate_row(rows, name, results)
 
-    for name, results in cpu_powers.items():
-        populate_row(rows, name, results)
+        for name, results in gpu_mem_sustaineds.items():
+            populate_row(rows, name, results)
 
-    for name, results in gpu_mem_sustaineds.items():
-        populate_row(rows, name, results)
+        for name, results in gpu_mem_peaks.items():
+            populate_row(rows, name, results)
 
-    for name, results in gpu_mem_peaks.items():
-        populate_row(rows, name, results)
+        for name, results in proc_mem_medians.items():
+            populate_row(rows, name, results)
 
-    for name, results in proc_mem_medians.items():
-        populate_row(rows, name, results)
+        for name, results in proc_mem_peaks.items():
+            populate_row(rows, name, results)
 
-    for name, results in proc_mem_peaks.items():
-        populate_row(rows, name, results)
-
-    # Generate the SUMMARY output
-    summary_file = open("summary." + args.output_tag + ".csv", 'w', newline='')
-    summary_writer = csv.writer(summary_file)
-
-    android_version = run_adb_command('shell getprop ro.build.fingerprint').stdout.strip()
-    angle_version = run_command('git rev-parse HEAD').stdout.strip()
-    # test_time = run_command('date \"+%Y%m%d\"').stdout.read().strip()
-
-    summary_writer.writerow([
-        "\"Android: " + android_version + "\n" + "ANGLE: " + angle_version + "\n" +
-        #  "Date: " + test_time + "\n" +
-        "Source: " + raw_data_filename + "\n" + "Args: " + logged_args() + "\""
-    ])
-
-    # Write the summary file
-    trace_number = 0
-
-    if (len(renderers) == 1) and (renderers[0] != "both"):
-        renderer_name = renderers[0]
-        summary_writer.writerow([
-            "#", "\"Trace\"", f"\"{renderer_name}\nwall\ntime\nper\nframe\n(ms)\"",
-            f"\"{renderer_name}\nwall\ntime\nvariance\"",
-            f"\"{renderer_name}\nGPU\ntime\nper\nframe\n(ms)\"",
-            f"\"{renderer_name}\nGPU\ntime\nvariance\"",
-            f"\"{renderer_name}\nCPU\ntime\nper\nframe\n(ms)\"",
-            f"\"{renderer_name}\nCPU\ntime\nvariance\"", f"\"{renderer_name}\nGPU\npower\n(W)\"",
-            f"\"{renderer_name}\nGPU\npower\nvariance\"", f"\"{renderer_name}\nCPU\npower\n(W)\"",
-            f"\"{renderer_name}\nCPU\npower\nvariance\"", f"\"{renderer_name}\nGPU\nmem\n(B)\"",
-            f"\"{renderer_name}\nGPU\nmem\nvariance\"",
-            f"\"{renderer_name}\npeak\nGPU\nmem\n(B)\"",
-            f"\"{renderer_name}\npeak\nGPU\nmem\nvariance\"",
-            f"\"{renderer_name}\nprocess\nmem\n(B)\"",
-            f"\"{renderer_name}\nprocess\nmem\nvariance\"",
-            f"\"{renderer_name}\npeak\nprocess\nmem\n(B)\"",
-            f"\"{renderer_name}\npeak\nprocess\nmem\nvariance\""
-        ])
-
-        for name, data in rows.items():
-            trace_number += 1
-            summary_writer.writerow([
-                trace_number,
-                name,
-                # wall_time
-                "%.3f" % data[renderer_name][0],
-                percent(data[renderer_name][1]),
-                # GPU time
-                "%.3f" % data[renderer_name][2],
-                percent(data[renderer_name][3]),
-                # CPU time
-                "%.3f" % data[renderer_name][4],
-                percent(data[renderer_name][5]),
-                # GPU power
-                "%.3f" % data[renderer_name][6],
-                percent(data[renderer_name][7]),
-                # CPU power
-                "%.3f" % data[renderer_name][8],
-                percent(data[renderer_name][9]),
-                # GPU mem
-                int(data[renderer_name][10]),
-                percent(data[renderer_name][11]),
-                # GPU peak mem
-                int(data[renderer_name][12]),
-                percent(data[renderer_name][13]),
-                # process mem
-                int(data[renderer_name][14]),
-                percent(data[renderer_name][15]),
-                # process peak mem
-                int(data[renderer_name][16]),
-                percent(data[renderer_name][17]),
-            ])
-    else:
-        summary_writer.writerow([
-            "#", "\"Trace\"", "\"Native\nwall\ntime\nper\nframe\n(ms)\"",
-            "\"Native\nwall\ntime\nvariance\"", "\"ANGLE\nwall\ntime\nper\nframe\n(ms)\"",
-            "\"ANGLE\nwall\ntime\nvariance\"", "\"wall\ntime\ncompare\"",
-            "\"Native\nGPU\ntime\nper\nframe\n(ms)\"", "\"Native\nGPU\ntime\nvariance\"",
-            "\"ANGLE\nGPU\ntime\nper\nframe\n(ms)\"", "\"ANGLE\nGPU\ntime\nvariance\"",
-            "\"GPU\ntime\ncompare\"", "\"Native\nCPU\ntime\nper\nframe\n(ms)\"",
-            "\"Native\nCPU\ntime\nvariance\"", "\"ANGLE\nCPU\ntime\nper\nframe\n(ms)\"",
-            "\"ANGLE\nCPU\ntime\nvariance\"", "\"CPU\ntime\ncompare\"",
-            "\"Native\nGPU\npower\n(W)\"", "\"Native\nGPU\npower\nvariance\"",
-            "\"ANGLE\nGPU\npower\n(W)\"", "\"ANGLE\nGPU\npower\nvariance\"",
-            "\"GPU\npower\ncompare\"", "\"Native\nCPU\npower\n(W)\"",
-            "\"Native\nCPU\npower\nvariance\"", "\"ANGLE\nCPU\npower\n(W)\"",
-            "\"ANGLE\nCPU\npower\nvariance\"", "\"CPU\npower\ncompare\"",
-            "\"Native\nGPU\nmem\n(B)\"", "\"Native\nGPU\nmem\nvariance\"",
-            "\"ANGLE\nGPU\nmem\n(B)\"", "\"ANGLE\nGPU\nmem\nvariance\"", "\"GPU\nmem\ncompare\"",
-            "\"Native\npeak\nGPU\nmem\n(B)\"", "\"Native\npeak\nGPU\nmem\nvariance\"",
-            "\"ANGLE\npeak\nGPU\nmem\n(B)\"", "\"ANGLE\npeak\nGPU\nmem\nvariance\"",
-            "\"GPU\npeak\nmem\ncompare\"", "\"Native\nprocess\nmem\n(B)\"",
-            "\"Native\nprocess\nmem\nvariance\"", "\"ANGLE\nprocess\nmem\n(B)\"",
-            "\"ANGLE\nprocess\nmem\nvariance\"", "\"process\nmem\ncompare\"",
-            "\"Native\npeak\nprocess\nmem\n(B)\"", "\"Native\npeak\nprocess\nmem\nvariance\"",
-            "\"ANGLE\npeak\nprocess\nmem\n(B)\"", "\"ANGLE\npeak\nprocess\nmem\nvariance\"",
-            "\"process\npeak\nmem\ncompare\""
-        ])
-
-        for name, data in rows.items():
-            trace_number += 1
-            summary_writer.writerow([
-                trace_number,
-                name,
-                # wall_time
-                "%.3f" % data["native"][0],
-                percent(data["native"][1]),
-                "%.3f" % data["vulkan"][0],
-                percent(data["vulkan"][1]),
-                percent(safe_divide(data["native"][0], data["vulkan"][0])),
-                # GPU time
-                "%.3f" % data["native"][2],
-                percent(data["native"][3]),
-                "%.3f" % data["vulkan"][2],
-                percent(data["vulkan"][3]),
-                percent(safe_divide(data["native"][2], data["vulkan"][2])),
-                # CPU time
-                "%.3f" % data["native"][4],
-                percent(data["native"][5]),
-                "%.3f" % data["vulkan"][4],
-                percent(data["vulkan"][5]),
-                percent(safe_divide(data["native"][4], data["vulkan"][4])),
-                # GPU power
-                "%.3f" % data["native"][6],
-                percent(data["native"][7]),
-                "%.3f" % data["vulkan"][6],
-                percent(data["vulkan"][7]),
-                percent(safe_divide(data["native"][6], data["vulkan"][6])),
-                # CPU power
-                "%.3f" % data["native"][8],
-                percent(data["native"][9]),
-                "%.3f" % data["vulkan"][8],
-                percent(data["vulkan"][9]),
-                percent(safe_divide(data["native"][8], data["vulkan"][8])),
-                # GPU mem
-                int(data["native"][10]),
-                percent(data["native"][11]),
-                int(data["vulkan"][10]),
-                percent(data["vulkan"][11]),
-                percent(safe_divide(data["native"][10], data["vulkan"][10])),
-                # GPU peak mem
-                int(data["native"][12]),
-                percent(data["native"][13]),
-                int(data["vulkan"][12]),
-                percent(data["vulkan"][13]),
-                percent(safe_divide(data["native"][12], data["vulkan"][12])),
-                # process mem
-                int(data["native"][14]),
-                percent(data["native"][15]),
-                int(data["vulkan"][14]),
-                percent(data["vulkan"][15]),
-                percent(safe_divide(data["native"][14], data["vulkan"][14])),
-                # process peak mem
-                int(data["native"][16]),
-                percent(data["native"][17]),
-                int(data["vulkan"][16]),
-                percent(data["vulkan"][17]),
-                percent(safe_divide(data["native"][16], data["vulkan"][16]))
-            ])
+        if (len(renderers) == 1) and (renderers[0] != "both"):
+            renderer_name = renderers[0]
+            for name, data in rows.items():
+                trace_number += 1
+                summary_writer.writerow([
+                    trace_number,
+                    name,
+                    # wall_time
+                    "%.3f" % data[renderer_name][0],
+                    percent(data[renderer_name][1]),
+                    # GPU time
+                    "%.3f" % data[renderer_name][2],
+                    percent(data[renderer_name][3]),
+                    # CPU time
+                    "%.3f" % data[renderer_name][4],
+                    percent(data[renderer_name][5]),
+                    # GPU power
+                    "%.3f" % data[renderer_name][6],
+                    percent(data[renderer_name][7]),
+                    # CPU power
+                    "%.3f" % data[renderer_name][8],
+                    percent(data[renderer_name][9]),
+                    # GPU mem
+                    int(data[renderer_name][10]),
+                    percent(data[renderer_name][11]),
+                    # GPU peak mem
+                    int(data[renderer_name][12]),
+                    percent(data[renderer_name][13]),
+                    # process mem
+                    int(data[renderer_name][14]),
+                    percent(data[renderer_name][15]),
+                    # process peak mem
+                    int(data[renderer_name][16]),
+                    percent(data[renderer_name][17]),
+                ])
+        else:
+            for name, data in rows.items():
+                trace_number += 1
+                summary_writer.writerow([
+                    trace_number,
+                    name,
+                    # wall_time
+                    "%.3f" % data["native"][0],
+                    percent(data["native"][1]),
+                    "%.3f" % data["vulkan"][0],
+                    percent(data["vulkan"][1]),
+                    percent(safe_divide(data["native"][0], data["vulkan"][0])),
+                    # GPU time
+                    "%.3f" % data["native"][2],
+                    percent(data["native"][3]),
+                    "%.3f" % data["vulkan"][2],
+                    percent(data["vulkan"][3]),
+                    percent(safe_divide(data["native"][2], data["vulkan"][2])),
+                    # CPU time
+                    "%.3f" % data["native"][4],
+                    percent(data["native"][5]),
+                    "%.3f" % data["vulkan"][4],
+                    percent(data["vulkan"][5]),
+                    percent(safe_divide(data["native"][4], data["vulkan"][4])),
+                    # GPU power
+                    "%.3f" % data["native"][6],
+                    percent(data["native"][7]),
+                    "%.3f" % data["vulkan"][6],
+                    percent(data["vulkan"][7]),
+                    percent(safe_divide(data["native"][6], data["vulkan"][6])),
+                    # CPU power
+                    "%.3f" % data["native"][8],
+                    percent(data["native"][9]),
+                    "%.3f" % data["vulkan"][8],
+                    percent(data["vulkan"][9]),
+                    percent(safe_divide(data["native"][8], data["vulkan"][8])),
+                    # GPU mem
+                    int(data["native"][10]),
+                    percent(data["native"][11]),
+                    int(data["vulkan"][10]),
+                    percent(data["vulkan"][11]),
+                    percent(safe_divide(data["native"][10], data["vulkan"][10])),
+                    # GPU peak mem
+                    int(data["native"][12]),
+                    percent(data["native"][13]),
+                    int(data["vulkan"][12]),
+                    percent(data["vulkan"][13]),
+                    percent(safe_divide(data["native"][12], data["vulkan"][12])),
+                    # process mem
+                    int(data["native"][14]),
+                    percent(data["native"][15]),
+                    int(data["vulkan"][14]),
+                    percent(data["vulkan"][15]),
+                    percent(safe_divide(data["native"][14], data["vulkan"][14])),
+                    # process peak mem
+                    int(data["native"][16]),
+                    percent(data["native"][17]),
+                    int(data["vulkan"][16]),
+                    percent(data["vulkan"][17]),
+                    percent(safe_divide(data["native"][16], data["vulkan"][16]))
+                ])
 
 
 if __name__ == '__main__':

@@ -130,15 +130,7 @@
     self.insertionPointColor = nil;
     self.selectionHandleColor = nil;
     self.selectionHighlightColor = nil;
-
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    [self restoreDefaultUnifiedTextReplacementBehaviorValue];
-#endif
 }
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKExtendedTextInputTraitsAdditions.mm>
-#endif
 
 @end
 

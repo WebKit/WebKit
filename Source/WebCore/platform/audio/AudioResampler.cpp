@@ -31,8 +31,11 @@
 #include "AudioBus.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioResampler);
 
 AudioResampler::AudioResampler()
 {
@@ -84,12 +87,12 @@ void AudioResampler::process(AudioSourceProvider* provider, AudioBus* destinatio
     for (unsigned i = 0; i < numberOfChannels; ++i) {
         // Figure out how many frames we need to get from the provider, and a pointer to the buffer.
         size_t framesNeeded;
-        float* fillPointer = m_kernels[i]->getSourcePointer(framesToProcess, &framesNeeded);
-        ASSERT(fillPointer);
-        if (!fillPointer)
+        std::span<float> fillSpan = m_kernels[i]->getSourceSpan(framesToProcess, &framesNeeded);
+        ASSERT(!fillSpan.empty());
+        if (fillSpan.empty())
             return;
-            
-        m_sourceBus->setChannelMemory(i, fillPointer, framesNeeded);
+
+        m_sourceBus->setChannelMemory(i, fillSpan.first(framesNeeded));
     }
 
     // Ask the provider to supply the desired number of source frames.
@@ -98,7 +101,7 @@ void AudioResampler::process(AudioSourceProvider* provider, AudioBus* destinatio
     // Now that we have the source data, resample each channel into the destination bus.
     // FIXME: optimize for the common stereo case where it's faster to process both left/right channels in the same inner loop.
     for (unsigned i = 0; i < numberOfChannels; ++i) {
-        float* destination = destinationBus->channel(i)->mutableData();
+        auto destination = destinationBus->channel(i)->mutableSpan();
         m_kernels[i]->process(destination, framesToProcess);
     }
 }

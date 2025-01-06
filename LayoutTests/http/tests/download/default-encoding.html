@@ -5,17 +5,20 @@ if (window.testRunner) {
     internals.settings.setDefaultTextEncodingName("koi8-r");
     testRunner.setCustomPolicyDelegate(true, true);
     testRunner.waitForPolicyDelegate();
+    testRunner.waitUntilDone();
 }
 </script>
 <p>Downloaded file name should be "SUССЕSS.txt" (letters "CCE" are Cyrillic).</p>
 <a href="resources/literal-koi8-r.py" id=link>Click Me</a>
 
 <script>
-if (window.eventSender) {
-    var link = document.getElementById("link");
-    eventSender.mouseMoveTo(link.offsetLeft + 2,
-                            link.offsetTop + 2);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+onload = async () => {
+    if (window.eventSender && window.testRunner) {
+        var link = document.getElementById("link");
+        await eventSender.asyncMouseMoveTo(link.offsetLeft + 2, link.offsetTop + 2);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        testRunner.notifyDone();
+    }
 }
 </script>

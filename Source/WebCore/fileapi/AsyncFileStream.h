@@ -33,6 +33,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WallTime.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ class FileStreamClient;
 class FileStream;
 
 class WEBCORE_EXPORT AsyncFileStream {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AsyncFileStream, WEBCORE_EXPORT);
 public:
     explicit AsyncFileStream(FileStreamClient&);
     ~AsyncFileStream();
@@ -49,7 +50,7 @@ public:
     void getSize(const String& path, std::optional<WallTime> expectedModificationTime);
     void openForRead(const String& path, long long offset, long long length);
     void close();
-    void read(void* buffer, int length);
+    void read(std::span<uint8_t> buffer);
 
 private:
     void start();

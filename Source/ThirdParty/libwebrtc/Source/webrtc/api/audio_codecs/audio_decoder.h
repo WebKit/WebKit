@@ -15,9 +15,9 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "rtc_base/buffer.h"
 
@@ -57,11 +57,11 @@ class AudioDecoder {
 
     // Decodes this frame of audio and writes the result in `decoded`.
     // `decoded` must be large enough to store as many samples as indicated by a
-    // call to Duration() . On success, returns an absl::optional containing the
+    // call to Duration() . On success, returns an std::optional containing the
     // total number of samples across all channels, as well as whether the
     // decoder produced comfort noise or speech. On failure, returns an empty
-    // absl::optional. Decode may be called at most once per frame object.
-    virtual absl::optional<DecodeResult> Decode(
+    // std::optional. Decode may be called at most once per frame object.
+    virtual std::optional<DecodeResult> Decode(
         rtc::ArrayView<int16_t> decoded) const = 0;
   };
 

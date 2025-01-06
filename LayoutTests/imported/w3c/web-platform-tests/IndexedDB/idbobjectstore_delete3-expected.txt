@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.delete() - object store's key path is an object attribute
-

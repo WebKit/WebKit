@@ -31,6 +31,7 @@
 #include "LibWebRTCProvider.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <webrtc/api/dtls_transport_interface.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -131,6 +132,8 @@ void LibWebRTCDtlsTransportBackendObserver::OnError(webrtc::RTCError)
             protectedThis->m_client->onError();
     });
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCDtlsTransportBackend);
 
 LibWebRTCDtlsTransportBackend::LibWebRTCDtlsTransportBackend(rtc::scoped_refptr<webrtc::DtlsTransportInterface>&& backend)
     : m_backend(WTFMove(backend))

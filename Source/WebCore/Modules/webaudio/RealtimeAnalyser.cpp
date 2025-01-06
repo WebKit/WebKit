@@ -39,13 +39,16 @@
 #include <complex>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-RealtimeAnalyser::RealtimeAnalyser(NoiseInjectionPolicy policy)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RealtimeAnalyser);
+
+RealtimeAnalyser::RealtimeAnalyser(OptionSet<NoiseInjectionPolicy> policies)
     : m_inputBuffer(InputBufferSize)
     , m_downmixBus(AudioBus::create(1, AudioUtilities::renderQuantumSize))
-    , m_noiseInjectionPolicy(policy)
+    , m_noiseInjectionPolicies(policies)
 {
     m_analysisFrame = makeUnique<FFTFrame>(DefaultFFTSize);
 }
@@ -87,13 +90,13 @@ void RealtimeAnalyser::writeInput(AudioBus* bus, size_t framesToProcess)
         return;    
     
     // Perform real-time analysis
-    float* dest = m_inputBuffer.data() + m_writeIndex;
+    auto destination = m_inputBuffer.span().subspan(m_writeIndex);
 
     // Clear the bus and downmix the input according to the down mixing rules.
     // Then save the result in the m_inputBuffer at the appropriate place.
     m_downmixBus->zero();
     m_downmixBus->sumFrom(*bus);
-    memcpy(dest, m_downmixBus->channel(0)->data(), sizeof(float) * framesToProcess);
+    memcpySpan(destination, m_downmixBus->channel(0)->span().first(framesToProcess));
 
     m_writeIndex += framesToProcess;
     if (m_writeIndex >= InputBufferSize)
@@ -105,7 +108,7 @@ void RealtimeAnalyser::writeInput(AudioBus* bus, size_t framesToProcess)
 
 namespace {
 
-void applyWindow(float* p, size_t n)
+void applyWindow(std::span<float> p, size_t n)
 {
     ASSERT(isMainThread());
     
@@ -137,16 +140,16 @@ void RealtimeAnalyser::doFFTAnalysisIfNecessary()
     size_t fftSize = this->fftSize();
     
     AudioFloatArray temporaryBuffer(fftSize);
-    float* inputBuffer = m_inputBuffer.data();
-    float* tempP = temporaryBuffer.data();
+    auto inputBuffer = m_inputBuffer.span();
+    auto tempP = temporaryBuffer.span();
 
     // Take the previous fftSize values from the input buffer and copy into the temporary buffer.
     unsigned writeIndex = m_writeIndex;
     if (writeIndex < fftSize) {
-        memcpy(tempP, inputBuffer + writeIndex - fftSize + InputBufferSize, sizeof(*tempP) * (fftSize - writeIndex));
-        memcpy(tempP + fftSize - writeIndex, inputBuffer, sizeof(*tempP) * writeIndex);
+        memcpySpan(tempP, inputBuffer.subspan(writeIndex - fftSize + InputBufferSize, fftSize - writeIndex));
+        memcpySpan(tempP.subspan(fftSize - writeIndex), inputBuffer.first(writeIndex));
     } else 
-        memcpy(tempP, inputBuffer + writeIndex - fftSize, sizeof(*tempP) * fftSize);
+        memcpySpan(tempP, inputBuffer.subspan(writeIndex - fftSize, fftSize));
 
     
     // Window the input samples.
@@ -170,16 +173,15 @@ void RealtimeAnalyser::doFFTAnalysisIfNecessary()
     k = std::min(1.0, k);    
     
     // Convert the analysis data from complex to magnitude and average with the previous result.
-    float* destination = magnitudeBuffer().data();
-    size_t n = magnitudeBuffer().size();
-    for (size_t i = 0; i < n; ++i) {
+    auto destination = magnitudeBuffer().span();
+    for (size_t i = 0; i < destination.size(); ++i) {
         std::complex<double> c(realP[i], imagP[i]);
         double scalarMagnitude = std::abs(c) * magnitudeScale;        
         destination[i] = static_cast<float>(k * destination[i] + (1 - k) * scalarMagnitude);
     }
 
-    if (m_noiseInjectionPolicy == NoiseInjectionPolicy::Minimal)
-        AudioUtilities::applyNoise(destination, n, 0.25);
+    if (m_noiseInjectionPolicies)
+        AudioUtilities::applyNoise(destination, 0.25);
 }
 
 void RealtimeAnalyser::getFloatFrequencyData(Float32Array& destinationArray)
@@ -190,7 +192,7 @@ void RealtimeAnalyser::getFloatFrequencyData(Float32Array& destinationArray)
     
     // Convert from linear magnitude to floating-point decibels.
     size_t length = std::min<size_t>(magnitudeBuffer().size(), destinationArray.length());
-    VectorMath::linearToDecibels(magnitudeBuffer().data(), destinationArray.data(), length);
+    VectorMath::linearToDecibels(magnitudeBuffer().span().first(length), destinationArray.typedMutableSpan());
 }
 
 void RealtimeAnalyser::getByteFrequencyData(Uint8Array& destinationArray)
@@ -207,8 +209,8 @@ void RealtimeAnalyser::getByteFrequencyData(Uint8Array& destinationArray)
         const double rangeScaleFactor = m_maxDecibels == m_minDecibels ? 1 : 1 / (m_maxDecibels - m_minDecibels);
         const double minDecibels = m_minDecibels;
 
-        const float* source = magnitudeBuffer().data();
-        unsigned char* destination = destinationArray.data();
+        auto source = magnitudeBuffer().span();
+        auto destination = destinationArray.mutableSpan();
         
         for (size_t i = 0; i < length; ++i) {
             float linearValue = source[i];
@@ -241,8 +243,8 @@ void RealtimeAnalyser::getFloatTimeDomainData(Float32Array& destinationArray)
         if (!isInputBufferGood)
             return;
         
-        float* inputBuffer = m_inputBuffer.data();
-        float* destination = destinationArray.data();
+        auto inputBuffer = m_inputBuffer.span();
+        auto destination = destinationArray.typedMutableSpan();
         
         unsigned writeIndex = m_writeIndex;
         
@@ -266,8 +268,8 @@ void RealtimeAnalyser::getByteTimeDomainData(Uint8Array& destinationArray)
         if (!isInputBufferGood)
             return;
 
-        float* inputBuffer = m_inputBuffer.data();        
-        unsigned char* destination = destinationArray.data();
+        auto inputBuffer = m_inputBuffer.span();
+        auto destination = destinationArray.mutableSpan();
         
         unsigned writeIndex = m_writeIndex;
 

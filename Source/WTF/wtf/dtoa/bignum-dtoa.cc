@@ -57,40 +57,40 @@ static void InitialScaledStartValues(uint64_t significand,
                                      bool lower_boundary_is_closer,
                                      int estimated_power,
                                      bool need_boundary_deltas,
-                                     Bignum* numerator,
-                                     Bignum* denominator,
-                                     Bignum* delta_minus,
-                                     Bignum* delta_plus);
+                                     Bignum& numerator,
+                                     Bignum& denominator,
+                                      Bignum& delta_minus,
+                                      Bignum& delta_plus);
 // Multiplies numerator/denominator so that its values lies in the range 1-10.
 // Returns decimal_point s.t.
 //  v = numerator'/denominator' * 10^(decimal_point-1)
 //     where numerator' and denominator' are the values of numerator and
 //     denominator after the call to this function.
 static void FixupMultiply10(int estimated_power, bool is_even,
-                            int* decimal_point,
-                            Bignum* numerator, Bignum* denominator,
-                            Bignum* delta_minus, Bignum* delta_plus);
+                            int& decimal_point,
+                             Bignum& numerator,  Bignum& denominator,
+                             Bignum& delta_minus,  Bignum& delta_plus);
 // Generates digits from the left to the right and stops when the generated
 // digits yield the shortest decimal representation of v.
-static void GenerateShortestDigits(Bignum* numerator, Bignum* denominator,
-                                   Bignum* delta_minus, Bignum* delta_plus,
+static void GenerateShortestDigits( Bignum& numerator,  Bignum& denominator,
+                                    Bignum& delta_minus,  Bignum& delta_plus,
                                    bool is_even,
-                                   BufferReference<char> buffer, int* length);
+                                   BufferReference<char> buffer, int& length);
 // Generates 'requested_digits' after the decimal point.
-static void BignumToFixed(int requested_digits, int* decimal_point,
-                          Bignum* numerator, Bignum* denominator,
-                          BufferReference<char>(buffer), int* length);
+static void BignumToFixed(int requested_digits, int& decimal_point,
+                           Bignum& numerator,  Bignum& denominator,
+                          BufferReference<char>(buffer), int& length);
 // Generates 'count' digits of numerator/denominator.
 // Once 'count' digits have been produced rounds the result depending on the
 // remainder (remainders of exactly .5 round upwards). Might update the
 // decimal_point when rounding up (for example for 0.9999).
-static void GenerateCountedDigits(int count, int* decimal_point,
-                                  Bignum* numerator, Bignum* denominator,
-                                  BufferReference<char>(buffer), int* length);
+static void GenerateCountedDigits(int count, int& decimal_point,
+                                   Bignum& numerator,  Bignum& denominator,
+                                  BufferReference<char>(buffer), int& length);
 
 
 void BignumDtoa(double v, BignumDtoaMode mode, int requested_digits,
-                BufferReference<char> buffer, int* length, int* decimal_point) {
+                BufferReference<char> buffer, int& length, int& decimal_point) {
   ASSERT(v > 0);
   ASSERT(!Double(v).IsSpecial());
   uint64_t significand;
@@ -121,11 +121,11 @@ void BignumDtoa(double v, BignumDtoaMode mode, int requested_digits,
   // digits.
   if (mode == BIGNUM_DTOA_FIXED && -estimated_power - 1 > requested_digits) {
     buffer[0] = '\0';
-    *length = 0;
+    length = 0;
     // Set decimal-point to -requested_digits. This is what Gay does.
     // Note that it should not have any effect anyways since the string is
     // empty.
-    *decimal_point = -requested_digits;
+    decimal_point = -requested_digits;
     return;
   }
 
@@ -140,35 +140,27 @@ void BignumDtoa(double v, BignumDtoaMode mode, int requested_digits,
   ASSERT(Bignum::kMaxSignificantBits >= 324*4);
   InitialScaledStartValues(significand, exponent, lower_boundary_is_closer,
                            estimated_power, need_boundary_deltas,
-                           &numerator, &denominator,
-                           &delta_minus, &delta_plus);
+                           numerator, denominator,
+                           delta_minus, delta_plus);
   // We now have v = (numerator / denominator) * 10^estimated_power.
-  FixupMultiply10(estimated_power, is_even, decimal_point,
-                  &numerator, &denominator,
-                  &delta_minus, &delta_plus);
+  FixupMultiply10(estimated_power, is_even, decimal_point, numerator, denominator, delta_minus, delta_plus);
   // We now have v = (numerator / denominator) * 10^(decimal_point-1), and
   //  1 <= (numerator + delta_plus) / denominator < 10
   switch (mode) {
     case BIGNUM_DTOA_SHORTEST:
     case BIGNUM_DTOA_SHORTEST_SINGLE:
-      GenerateShortestDigits(&numerator, &denominator,
-                             &delta_minus, &delta_plus,
-                             is_even, buffer, length);
+      GenerateShortestDigits(numerator, denominator, delta_minus, delta_plus, is_even, buffer, length);
       break;
     case BIGNUM_DTOA_FIXED:
-      BignumToFixed(requested_digits, decimal_point,
-                    &numerator, &denominator,
-                    buffer, length);
+      BignumToFixed(requested_digits, decimal_point, numerator, denominator, buffer, length);
       break;
     case BIGNUM_DTOA_PRECISION:
-      GenerateCountedDigits(requested_digits, decimal_point,
-                            &numerator, &denominator,
-                            buffer, length);
+      GenerateCountedDigits(requested_digits, decimal_point, numerator, denominator, buffer, length);
       break;
     default:
       UNREACHABLE();
   }
-  buffer[*length] = '\0';
+  buffer[length] = '\0';
 }
 
 
@@ -185,23 +177,22 @@ void BignumDtoa(double v, BignumDtoaMode mode, int requested_digits,
 // Precondition: 0 <= (numerator+delta_plus) / denominator < 10.
 //   If 1 <= (numerator+delta_plus) / denominator < 10 then no leading 0 digit
 //   will be produced. This should be the standard precondition.
-static void GenerateShortestDigits(Bignum* numerator, Bignum* denominator,
-                                   Bignum* delta_minus, Bignum* delta_plus,
+static void GenerateShortestDigits(Bignum& numerator, Bignum& denominator,
+                                   Bignum& input_delta_minus, Bignum& input_delta_plus,
                                    bool is_even,
-                                   BufferReference<char> buffer, int* length) {
+                                   BufferReference<char> buffer, int& length) {
   // Small optimization: if delta_minus and delta_plus are the same just reuse
   // one of the two bignums.
-  if (Bignum::Equal(*delta_minus, *delta_plus)) {
-    delta_plus = delta_minus;
-  }
-  *length = 0;
+  auto& delta_minus = input_delta_minus;
+  auto& delta_plus = Bignum::Equal(input_delta_minus, input_delta_plus) ? input_delta_minus : input_delta_plus;
+  length = 0;
   for (;;) {
     uint16_t digit;
-    digit = numerator->DivideModuloIntBignum(*denominator);
+    digit = numerator.DivideModuloIntBignum(denominator);
     ASSERT(digit <= 9);  // digit is a uint16_t and therefore always positive.
     // digit = numerator / denominator (integer division).
     // numerator = numerator % denominator.
-    buffer[(*length)++] = static_cast<char>(digit + '0');
+    buffer[length++] = static_cast<char>(digit + '0');
 
     // Can we stop already?
     // If the remainder of the division is less than the distance to the lower
@@ -211,31 +202,30 @@ static void GenerateShortestDigits(Bignum* numerator, Bignum* denominator,
     bool in_delta_room_minus;
     bool in_delta_room_plus;
     if (is_even) {
-      in_delta_room_minus = Bignum::LessEqual(*numerator, *delta_minus);
+      in_delta_room_minus = Bignum::LessEqual(numerator, delta_minus);
     } else {
-      in_delta_room_minus = Bignum::Less(*numerator, *delta_minus);
+      in_delta_room_minus = Bignum::Less(numerator, delta_minus);
     }
     if (is_even) {
       in_delta_room_plus =
-          Bignum::PlusCompare(*numerator, *delta_plus, *denominator) >= 0;
+          Bignum::PlusCompare(numerator, delta_plus, denominator) >= 0;
     } else {
       in_delta_room_plus =
-          Bignum::PlusCompare(*numerator, *delta_plus, *denominator) > 0;
+          Bignum::PlusCompare(numerator, delta_plus, denominator) > 0;
     }
     if (!in_delta_room_minus && !in_delta_room_plus) {
       // Prepare for next iteration.
-      numerator->Times10();
-      delta_minus->Times10();
+      numerator.Times10();
+      delta_minus.Times10();
       // We optimized delta_plus to be equal to delta_minus (if they share the
       // same value). So don't multiply delta_plus if they point to the same
       // object.
-      if (delta_minus != delta_plus) {
-        delta_plus->Times10();
-      }
+      if (&delta_minus != &delta_plus)
+        delta_plus.Times10();
     } else if (in_delta_room_minus && in_delta_room_plus) {
       // Let's see if 2*numerator < denominator.
       // If yes, then the next digit would be < 5 and we can round down.
-      int compare = Bignum::PlusCompare(*numerator, *numerator, *denominator);
+      int compare = Bignum::PlusCompare(numerator, numerator, denominator);
       if (compare < 0) {
         // Remaining digits are less than .5. -> Round down (== do nothing).
       } else if (compare > 0) {
@@ -244,19 +234,19 @@ static void GenerateShortestDigits(Bignum* numerator, Bignum* denominator,
         // loop would have stopped earlier.
         // We still have an assert here in case the preconditions were not
         // satisfied.
-        ASSERT(buffer[(*length) - 1] != '9');
-        buffer[(*length) - 1]++;
+        ASSERT(buffer[length - 1] != '9');
+        buffer[length - 1]++;
       } else {
         // Halfway case.
         // TODO(floitsch): need a way to solve half-way cases.
         //   For now let's round towards even (since this is what Gay seems to
         //   do).
 
-        if ((buffer[(*length) - 1] - '0') % 2 == 0) {
+        if ((buffer[length - 1] - '0') % 2 == 0) {
           // Round down => Do nothing.
         } else {
-          ASSERT(buffer[(*length) - 1] != '9');
-          buffer[(*length) - 1]++;
+          ASSERT(buffer[length - 1] != '9');
+          buffer[length - 1]++;
         }
       }
       return;
@@ -269,8 +259,8 @@ static void GenerateShortestDigits(Bignum* numerator, Bignum* denominator,
       // stopped the loop earlier.
       // We still have an ASSERT here, in case the preconditions were not
       // satisfied.
-      ASSERT(buffer[(*length) -1] != '9');
-      buffer[(*length) - 1]++;
+      ASSERT(buffer[length - 1] != '9');
+      buffer[length - 1]++;
       return;
     }
   }
@@ -283,24 +273,24 @@ static void GenerateShortestDigits(Bignum* numerator, Bignum* denominator,
 // to round up or down. Remainders of exactly .5 round upwards. Numbers such
 // as 9.999999 propagate a carry all the way, and change the
 // exponent (decimal_point), when rounding upwards.
-static void GenerateCountedDigits(int count, int* decimal_point,
-                                  Bignum* numerator, Bignum* denominator,
-                                  BufferReference<char> buffer, int* length) {
+static void GenerateCountedDigits(int count, int& decimal_point,
+                                  Bignum& numerator, Bignum& denominator,
+                                  BufferReference<char> buffer, int& length) {
   ASSERT(count >= 0);
   for (int i = 0; i < count - 1; ++i) {
     uint16_t digit;
-    digit = numerator->DivideModuloIntBignum(*denominator);
+    digit = numerator.DivideModuloIntBignum(denominator);
     ASSERT(digit <= 9);  // digit is a uint16_t and therefore always positive.
     // digit = numerator / denominator (integer division).
     // numerator = numerator % denominator.
     buffer[i] = static_cast<char>(digit + '0');
     // Prepare for next iteration.
-    numerator->Times10();
+    numerator.Times10();
   }
   // Generate the last digit.
   uint16_t digit;
-  digit = numerator->DivideModuloIntBignum(*denominator);
-  if (Bignum::PlusCompare(*numerator, *numerator, *denominator) >= 0) {
+  digit = numerator.DivideModuloIntBignum(denominator);
+  if (Bignum::PlusCompare(numerator, numerator, denominator) >= 0) {
     digit++;
   }
   ASSERT(digit <= 10);
@@ -315,9 +305,9 @@ static void GenerateCountedDigits(int count, int* decimal_point,
   if (buffer[0] == '0' + 10) {
     // Propagate a carry past the top place.
     buffer[0] = '1';
-    (*decimal_point)++;
+    decimal_point++;
   }
-  *length = count;
+  length = count;
 }
 
 
@@ -326,43 +316,43 @@ static void GenerateCountedDigits(int count, int* decimal_point,
 // generated (ex.: 2 fixed digits for 0.00001).
 //
 // Input verifies:  1 <= (numerator + delta) / denominator < 10.
-static void BignumToFixed(int requested_digits, int* decimal_point,
-                          Bignum* numerator, Bignum* denominator,
-                          BufferReference<char>(buffer), int* length) {
+static void BignumToFixed(int requested_digits, int& decimal_point,
+                          Bignum& numerator, Bignum& denominator,
+                          BufferReference<char>(buffer), int& length) {
   // Note that we have to look at more than just the requested_digits, since
   // a number could be rounded up. Example: v=0.5 with requested_digits=0.
   // Even though the power of v equals 0 we can't just stop here.
-  if (-(*decimal_point) > requested_digits) {
+  if (-decimal_point > requested_digits) {
     // The number is definitively too small.
     // Ex: 0.001 with requested_digits == 1.
     // Set decimal-point to -requested_digits. This is what Gay does.
     // Note that it should not have any effect anyways since the string is
     // empty.
-    *decimal_point = -requested_digits;
-    *length = 0;
+    decimal_point = -requested_digits;
+    length = 0;
     return;
-  } else if (-(*decimal_point) == requested_digits) {
+  } else if (-decimal_point == requested_digits) {
     // We only need to verify if the number rounds down or up.
     // Ex: 0.04 and 0.06 with requested_digits == 1.
-    ASSERT(*decimal_point == -requested_digits);
+    ASSERT(decimal_point == -requested_digits);
     // Initially the fraction lies in range (1, 10]. Multiply the denominator
     // by 10 so that we can compare more easily.
-    denominator->Times10();
-    if (Bignum::PlusCompare(*numerator, *numerator, *denominator) >= 0) {
+    denominator.Times10();
+    if (Bignum::PlusCompare(numerator, numerator, denominator) >= 0) {
       // If the fraction is >= 0.5 then we have to include the rounded
       // digit.
       buffer[0] = '1';
-      *length = 1;
-      (*decimal_point)++;
+      length = 1;
+      decimal_point++;
     } else {
       // Note that we caught most of similar cases earlier.
-      *length = 0;
+      length = 0;
     }
     return;
   } else {
     // The requested digits correspond to the digits after the point.
     // The variable 'needed_digits' includes the digits before the point.
-    int needed_digits = (*decimal_point) + requested_digits;
+    int needed_digits = decimal_point + requested_digits;
     GenerateCountedDigits(needed_digits, decimal_point,
                           numerator, denominator,
                           buffer, length);
@@ -420,31 +410,31 @@ static int EstimatePower(int exponent) {
 static void InitialScaledStartValuesPositiveExponent(
     uint64_t significand, int exponent,
     int estimated_power, bool need_boundary_deltas,
-    Bignum* numerator, Bignum* denominator,
-    Bignum* delta_minus, Bignum* delta_plus) {
+    Bignum& numerator, Bignum& denominator,
+    Bignum& delta_minus, Bignum& delta_plus) {
   // A positive exponent implies a positive power.
   ASSERT(estimated_power >= 0);
   // Since the estimated_power is positive we simply multiply the denominator
   // by 10^estimated_power.
 
   // numerator = v.
-  numerator->AssignUInt64(significand);
-  numerator->ShiftLeft(exponent);
+  numerator.AssignUInt64(significand);
+  numerator.ShiftLeft(exponent);
   // denominator = 10^estimated_power.
-  denominator->AssignPowerUInt16(10, estimated_power);
+  denominator.AssignPowerUInt16(10, estimated_power);
 
   if (need_boundary_deltas) {
     // Introduce a common denominator so that the deltas to the boundaries are
     // integers.
-    denominator->ShiftLeft(1);
-    numerator->ShiftLeft(1);
+    denominator.ShiftLeft(1);
+    numerator.ShiftLeft(1);
     // Let v = f * 2^e, then m+ - v = 1/2 * 2^e; With the common
     // denominator (of 2) delta_plus equals 2^e.
-    delta_plus->AssignUInt16(1);
-    delta_plus->ShiftLeft(exponent);
+    delta_plus.AssignUInt16(1);
+    delta_plus.ShiftLeft(exponent);
     // Same for delta_minus. The adjustments if f == 2^p-1 are done later.
-    delta_minus->AssignUInt16(1);
-    delta_minus->ShiftLeft(exponent);
+    delta_minus.AssignUInt16(1);
+    delta_minus.ShiftLeft(exponent);
   }
 }
 
@@ -453,8 +443,8 @@ static void InitialScaledStartValuesPositiveExponent(
 static void InitialScaledStartValuesNegativeExponentPositivePower(
     uint64_t significand, int exponent,
     int estimated_power, bool need_boundary_deltas,
-    Bignum* numerator, Bignum* denominator,
-    Bignum* delta_minus, Bignum* delta_plus) {
+    Bignum& numerator, Bignum& denominator,
+    Bignum& delta_minus, Bignum& delta_plus) {
   // v = f * 2^e with e < 0, and with estimated_power >= 0.
   // This means that e is close to 0 (have a look at how estimated_power is
   // computed).
@@ -462,23 +452,23 @@ static void InitialScaledStartValuesNegativeExponentPositivePower(
   // numerator = significand
   //  since v = significand * 2^exponent this is equivalent to
   //  numerator = v * / 2^-exponent
-  numerator->AssignUInt64(significand);
+  numerator.AssignUInt64(significand);
   // denominator = 10^estimated_power * 2^-exponent (with exponent < 0)
-  denominator->AssignPowerUInt16(10, estimated_power);
-  denominator->ShiftLeft(-exponent);
+  denominator.AssignPowerUInt16(10, estimated_power);
+  denominator.ShiftLeft(-exponent);
 
   if (need_boundary_deltas) {
     // Introduce a common denominator so that the deltas to the boundaries are
     // integers.
-    denominator->ShiftLeft(1);
-    numerator->ShiftLeft(1);
+    denominator.ShiftLeft(1);
+    numerator.ShiftLeft(1);
     // Let v = f * 2^e, then m+ - v = 1/2 * 2^e; With the common
     // denominator (of 2) delta_plus equals 2^e.
     // Given that the denominator already includes v's exponent the distance
     // to the boundaries is simply 1.
-    delta_plus->AssignUInt16(1);
+    delta_plus.AssignUInt16(1);
     // Same for delta_minus. The adjustments if f == 2^p-1 are done later.
-    delta_minus->AssignUInt16(1);
+    delta_minus.AssignUInt16(1);
   }
 }
 
@@ -487,21 +477,21 @@ static void InitialScaledStartValuesNegativeExponentPositivePower(
 static void InitialScaledStartValuesNegativeExponentNegativePower(
     uint64_t significand, int exponent,
     int estimated_power, bool need_boundary_deltas,
-    Bignum* numerator, Bignum* denominator,
-    Bignum* delta_minus, Bignum* delta_plus) {
+    Bignum& numerator, Bignum& denominator,
+    Bignum& delta_minus, Bignum& delta_plus) {
   // Instead of multiplying the denominator with 10^estimated_power we
   // multiply all values (numerator and deltas) by 10^-estimated_power.
 
   // Use numerator as temporary container for power_ten.
-  Bignum* power_ten = numerator;
-  power_ten->AssignPowerUInt16(10, -estimated_power);
+  Bignum& power_ten = numerator;
+  power_ten.AssignPowerUInt16(10, -estimated_power);
 
   if (need_boundary_deltas) {
     // Since power_ten == numerator we must make a copy of 10^estimated_power
     // before we complete the computation of the numerator.
     // delta_plus = delta_minus = 10^estimated_power
-    delta_plus->AssignBignum(*power_ten);
-    delta_minus->AssignBignum(*power_ten);
+    delta_plus.AssignBignum(power_ten);
+    delta_minus.AssignBignum(power_ten);
   }
 
   // numerator = significand * 2 * 10^-estimated_power
@@ -509,18 +499,18 @@ static void InitialScaledStartValuesNegativeExponentNegativePower(
   // numerator = v * 10^-estimated_power * 2 * 2^-exponent.
   // Remember: numerator has been abused as power_ten. So no need to assign it
   //  to itself.
-  ASSERT(numerator == power_ten);
-  numerator->MultiplyByUInt64(significand);
+  ASSERT(&numerator == &power_ten);
+  numerator.MultiplyByUInt64(significand);
 
   // denominator = 2 * 2^-exponent with exponent < 0.
-  denominator->AssignUInt16(1);
-  denominator->ShiftLeft(-exponent);
+  denominator.AssignUInt16(1);
+  denominator.ShiftLeft(-exponent);
 
   if (need_boundary_deltas) {
     // Introduce a common denominator so that the deltas to the boundaries are
     // integers.
-    numerator->ShiftLeft(1);
-    denominator->ShiftLeft(1);
+    numerator.ShiftLeft(1);
+    denominator.ShiftLeft(1);
     // With this shift the boundaries have their correct value, since
     // delta_plus = 10^-estimated_power, and
     // delta_minus = 10^-estimated_power.
@@ -573,10 +563,10 @@ static void InitialScaledStartValues(uint64_t significand,
                                      bool lower_boundary_is_closer,
                                      int estimated_power,
                                      bool need_boundary_deltas,
-                                     Bignum* numerator,
-                                     Bignum* denominator,
-                                     Bignum* delta_minus,
-                                     Bignum* delta_plus) {
+                                     Bignum& numerator,
+                                     Bignum& denominator,
+                                     Bignum& delta_minus,
+                                     Bignum& delta_plus) {
   if (exponent >= 0) {
     InitialScaledStartValuesPositiveExponent(
         significand, exponent, estimated_power, need_boundary_deltas,
@@ -594,9 +584,9 @@ static void InitialScaledStartValues(uint64_t significand,
   if (need_boundary_deltas && lower_boundary_is_closer) {
     // The lower boundary is closer at half the distance of "normal" numbers.
     // Increase the common denominator and adapt all but the delta_minus.
-    denominator->ShiftLeft(1);  // *2
-    numerator->ShiftLeft(1);    // *2
-    delta_plus->ShiftLeft(1);   // *2
+    denominator.ShiftLeft(1);  // *2
+    numerator.ShiftLeft(1);    // *2
+    delta_plus.ShiftLeft(1);   // *2
   }
 }
 
@@ -613,30 +603,30 @@ static void InitialScaledStartValues(uint64_t significand,
 // estimated_power) but do not touch the numerator or denominator.
 // Otherwise the routine multiplies the numerator and the deltas by 10.
 static void FixupMultiply10(int estimated_power, bool is_even,
-                            int* decimal_point,
-                            Bignum* numerator, Bignum* denominator,
-                            Bignum* delta_minus, Bignum* delta_plus) {
+                            int& decimal_point,
+                            Bignum& numerator, Bignum& denominator,
+                            Bignum& delta_minus, Bignum& delta_plus) {
   bool in_range;
   if (is_even) {
     // For IEEE doubles half-way cases (in decimal system numbers ending with 5)
     // are rounded to the closest floating-point number with even significand.
-    in_range = Bignum::PlusCompare(*numerator, *delta_plus, *denominator) >= 0;
+    in_range = Bignum::PlusCompare(numerator, delta_plus, denominator) >= 0;
   } else {
-    in_range = Bignum::PlusCompare(*numerator, *delta_plus, *denominator) > 0;
+    in_range = Bignum::PlusCompare(numerator, delta_plus, denominator) > 0;
   }
   if (in_range) {
     // Since numerator + delta_plus >= denominator we already have
     // 1 <= numerator/denominator < 10. Simply update the estimated_power.
-    *decimal_point = estimated_power + 1;
+    decimal_point = estimated_power + 1;
   } else {
-    *decimal_point = estimated_power;
-    numerator->Times10();
-    if (Bignum::Equal(*delta_minus, *delta_plus)) {
-      delta_minus->Times10();
-      delta_plus->AssignBignum(*delta_minus);
+    decimal_point = estimated_power;
+    numerator.Times10();
+    if (Bignum::Equal(delta_minus, delta_plus)) {
+      delta_minus.Times10();
+      delta_plus.AssignBignum(delta_minus);
     } else {
-      delta_minus->Times10();
-      delta_plus->Times10();
+      delta_minus.Times10();
+      delta_plus.Times10();
     }
   }
 }

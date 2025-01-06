@@ -26,6 +26,7 @@
 #import "config.h"
 #import "TestRunnerWKWebView.h"
 
+#import "PlatformViewHelpers.h"
 #import "TestController.h"
 #import "WebKitTestRunnerDraggingInfo.h"
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -34,6 +35,8 @@
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
@@ -48,7 +51,12 @@
 - (void)_scheduleVisibleContentRectUpdate;
 
 @end
+
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIEditMenuInteraction)
 #endif
+#endif // PLATFORM(IOS_FAMILY)
 
 struct CustomMenuActionInfo {
     RetainPtr<NSString> name;
@@ -378,14 +386,11 @@ IGNORE_WARNINGS_END
     }
 }
 
-- (BOOL)isZoomingOrScrolling
+static bool isZoomingOrScrolling(UIScrollView *scroller)
 {
-    auto scroller = self.scrollView;
     if (scroller.isZooming || scroller.isAnimatingZoom || scroller.isAnimatingScroll
-        || scroller.isVerticalBouncing || scroller.isHorizontalBouncing || scroller.isZoomBouncing)
-        return YES;
-
-    if (self._keyboardScrollingAnimationRunning)
+        || scroller.isVerticalBouncing || scroller.isHorizontalBouncing || scroller.isZoomBouncing
+        || scroller.decelerating || scroller.dragging || scroller.scrollAnimating || scroller.tracking)
         return YES;
 
     static NeverDestroyed<RetainPtr<NSSet>> animationKeyNames = [NSSet setWithArray:@[
@@ -397,6 +402,19 @@ IGNORE_WARNINGS_END
 
     for (NSString *key in scroller.layer.animationKeys) {
         if ([animationKeyNames.get() containsObject:key])
+            return YES;
+    }
+
+    return NO;
+}
+
+- (BOOL)isZoomingOrScrolling
+{
+    if (self._keyboardScrollingAnimationRunning)
+        return YES;
+
+    for (UIScrollView *scroller in findAllViewsInHierarchyOfType(self, UIScrollView.class)) {
+        if (isZoomingOrScrolling(scroller))
             return YES;
     }
 
@@ -499,8 +517,8 @@ IGNORE_WARNINGS_END
 {
     _overrideSafeAreaInsets = insets;
 
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
     [self _updateSafeAreaInsets];
 #endif
 }
@@ -640,8 +658,8 @@ static bool isQuickboardViewController(UIViewController *viewController)
 
     [UIView performWithoutAnimation:^{
         for (id<UIInteraction> interaction in self.contentView.interactions) {
-            if (auto *editMenuInteraction = dynamic_objc_cast<UIEditMenuInteraction>(interaction))
-                [editMenuInteraction dismissMenu];
+            if ([interaction isKindOfClass:getUIEditMenuInteractionClass()])
+                [(UIEditMenuInteraction *)interaction dismissMenu];
         }
     }];
 }

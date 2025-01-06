@@ -36,11 +36,11 @@
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSCast.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AbortSignal);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AbortSignal);
 
 Ref<AbortSignal> AbortSignal::create(ScriptExecutionContext* context)
 {
@@ -68,8 +68,7 @@ Ref<AbortSignal> AbortSignal::timeout(ScriptExecutionContext& context, uint64_t 
         if (!globalObject)
             return;
 
-        auto& vm = globalObject->vm();
-        Locker locker { vm.apiLock() };
+        Locker locker { globalObject->vm().apiLock() };
         signal->signalAbort(toJS(globalObject, globalObject, DOMException::create(ExceptionCode::TimeoutError)));
     };
     DOMTimer::install(context, WTFMove(action), Seconds::fromMilliseconds(milliseconds), DOMTimer::Type::SingleShot);
@@ -80,7 +79,9 @@ Ref<AbortSignal> AbortSignal::any(ScriptExecutionContext& context, const Vector<
 {
     Ref resultSignal = AbortSignal::create(&context);
 
-    auto abortedSignalIndex = signals.findIf([](auto& signal) { return signal->aborted(); });
+    auto abortedSignalIndex = signals.findIf([](auto& signal) {
+        return signal->aborted();
+    });
     if (abortedSignalIndex != notFound) {
         resultSignal->signalAbort(signals[abortedSignalIndex]->reason().getValue());
         return resultSignal;
@@ -127,8 +128,38 @@ void AbortSignal::signalAbort(JSC::JSValue reason)
     // 1. If signal's aborted flag is set, then return.
     if (m_aborted)
         return;
-    
-    // 2. Set signal’s aborted flag.
+
+    // 2. ... if the reason is not given, set it to a new "AbortError" DOMException.
+    ASSERT(reason);
+    if (reason.isUndefined()) {
+        auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(protectedScriptExecutionContext()->globalObject());
+        if (!globalObject)
+            return;
+        reason = toJS(globalObject, globalObject, DOMException::create(ExceptionCode::AbortError));
+    }
+
+    // 2. Set signal’s abort reason to reason if it is given; otherwise to a new "AbortError" DOMException.
+    markAborted(reason);
+
+    Vector<Ref<AbortSignal>> dependentSignalsToAbort;
+
+    for (Ref dependentSignal : std::exchange(m_dependentSignals, { })) {
+        if (!dependentSignal->aborted()) {
+            dependentSignal->markAborted(reason);
+            dependentSignalsToAbort.append(WTFMove(dependentSignal));
+        }
+    }
+
+    // 5. Run the abort steps
+    runAbortSteps();
+
+    // 6. For each dependentSignal of dependentSignalsToAbort, run the abort steps for dependentSignal.
+    for (auto& dependentSignal : dependentSignalsToAbort)
+        dependentSignal->runAbortSteps();
+}
+
+void AbortSignal::markAborted(JSC::JSValue reason)
+{
     m_aborted = true;
     m_sourceSignals.clear();
 
@@ -136,16 +167,20 @@ void AbortSignal::signalAbort(JSC::JSValue reason)
     // https://bugs.webkit.org/show_bug.cgi?id=236353
     ASSERT(reason);
     m_reason.setWeakly(reason);
+}
 
-    auto algorithms = std::exchange(m_algorithms, { });
-    for (auto& algorithm : algorithms)
+void AbortSignal::runAbortSteps()
+{
+    auto reason = m_reason.getValue();
+    ASSERT(reason);
+
+    // 1. For each algorithm of signal's abort algorithms: run algorithm.
+    //    2. Empty signal's abort algorithms. (std::exchange empties)
+    for (auto& algorithm : std::exchange(m_algorithms, { }))
         algorithm.second(reason);
 
-    // 5. Fire an event named abort at signal.
+    // 3. Fire an event named abort at signal.
     dispatchEvent(Event::create(eventNames().abortEvent, Event::CanBubble::No, Event::IsCancelable::No));
-
-    for (Ref dependentSignal : std::exchange(m_dependentSignals, { }))
-        dependentSignal->signalAbort(reason);
 }
 
 // https://dom.spec.whatwg.org/#abortsignal-follow

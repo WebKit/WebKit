@@ -61,7 +61,7 @@ public:
     // at this fundamental frequency. The lower wave is the next range containing fewer partials than the higher wave.
     // Interpolation between these two tables can be made according to tableInterpolationFactor.
     // Where values from 0 -> 1 interpolate between lower -> higher.
-    void waveDataForFundamentalFrequency(float, float* &lowerWaveData, float* &higherWaveData, float& tableInterpolationFactor);
+    void waveDataForFundamentalFrequency(float, std::span<float>& lowerWaveData, std::span<float>& higherWaveData, float& tableInterpolationFactor);
 
     // Returns the scalar multiplier to the oscillator frequency to calculate wave table phase increment.
     float rateScale() const { return m_rateScale; }
@@ -99,7 +99,7 @@ private:
     unsigned numberOfPartialsForRange(unsigned rangeIndex) const;
 
     // Creates tables based on numberOfComponents Fourier coefficients.
-    void createBandLimitedTables(const float* real, const float* imag, unsigned numberOfComponents, ShouldDisableNormalization = ShouldDisableNormalization::No);
+    void createBandLimitedTables(std::span<const float> real, std::span<const float> imag, ShouldDisableNormalization = ShouldDisableNormalization::No);
     Vector<std::unique_ptr<AudioFloatArray>> m_bandLimitedTables;
 };
 

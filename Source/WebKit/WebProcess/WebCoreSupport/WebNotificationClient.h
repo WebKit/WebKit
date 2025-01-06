@@ -30,13 +30,14 @@
 #include <WebCore/NotificationClient.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class WebNotificationClient final : public WebCore::NotificationClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebNotificationClient);
 public:
     WebNotificationClient(WebPage*);
     virtual ~WebNotificationClient();

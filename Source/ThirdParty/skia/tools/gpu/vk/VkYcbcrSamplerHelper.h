@@ -22,8 +22,9 @@ class VulkanSharedContext;
 #endif
 
 
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/vk/GrVkTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/vk/GrVkTypes.h"
+#include "include/gpu/vk/VulkanTypes.h"
 
 class GrDirectContext;
 class GrVkGpu;
@@ -33,10 +34,8 @@ class GrVkGpu;
 class VkYcbcrSamplerHelper {
 public:
 #if defined(SK_GRAPHITE)
-    VkYcbcrSamplerHelper(const skgpu::graphite::VulkanSharedContext* ctxt,
-                         VkPhysicalDevice physDev)
-            : fSharedCtxt(ctxt)
-            , fPhysDev(physDev) {
+    VkYcbcrSamplerHelper(const skgpu::graphite::VulkanSharedContext* ctxt)
+            : fSharedCtxt(ctxt) {
         SkASSERT(ctxt);
         fDContext = nullptr;
         fGrTexture = {};
@@ -64,8 +63,6 @@ private:
 #if defined(SK_GRAPHITE)
     skgpu::graphite::BackendTexture             fTexture;
     const skgpu::graphite::VulkanSharedContext* fSharedCtxt;
-    // Needed to query PhysicalDeviceFormatProperties for relevant VkFormat(s)
-    VkPhysicalDevice                            fPhysDev;
 #endif
 
     GrVkGpu* vkGpu();

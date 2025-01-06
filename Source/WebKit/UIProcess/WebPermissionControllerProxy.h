@@ -27,6 +27,8 @@
 
 #include "MessageReceiver.h"
 #include "WebPageProxyIdentifier.h"
+#include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 enum class PermissionQuerySource : uint8_t;
@@ -42,7 +44,7 @@ class WebPageProxy;
 class WebProcessProxy;
 
 class WebPermissionControllerProxy final : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPermissionControllerProxy);
 public:
     explicit WebPermissionControllerProxy(WebProcessProxy&);
     ~WebPermissionControllerProxy();
@@ -50,13 +52,18 @@ public:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
+    void ref() const final;
+    void deref() const final;
+
 private:
     RefPtr<WebPageProxy> mostReasonableWebPageProxy(const WebCore::SecurityOriginData&, WebCore::PermissionQuerySource) const;
 
     // IPC Message handlers.
     void query(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, std::optional<WebPageProxyIdentifier>, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);
 
-    WebProcessProxy& m_process;
+    Ref<WebProcessProxy> protectedProcess() const;
+
+    CheckedRef<WebProcessProxy> m_process;
 };
 
 } // namespace WebKit

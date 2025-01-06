@@ -1,0 +1,35 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<style>
+</style>
+</head>
+<body id="body">
+
+<iframe id="iframe" onload="runTest()" src="http://localhost:8000/site-isolation/resources/iframe.html"></iframe>
+
+<script>
+var output = "This test ensures that hit testing with site isolation enabled returns the right accessibility element when the remote element is resolved.\n\n";
+
+function runTest() {
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        const iframeRect = document.getElementById("iframe").getBoundingClientRect();
+
+        output += `iframe rect: ${iframeRect.x}, ${iframeRect.y}\n`;
+
+        setTimeout(async function() {
+            var axElement = accessibilityController.rootElement.elementAtPointResolvingRemoteFrame(iframeRect.x + 50, iframeRect.y + 50, function (result) {
+                output += `Element at (${iframeRect.x + 50}, ${iframeRect.y + 50}): ${result}\n`;
+
+                debug(output);
+                finishJSTest();
+            });
+        }, 0);
+    }
+}
+</script>
+</body>
+</html>
+

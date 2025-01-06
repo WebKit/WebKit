@@ -12,10 +12,10 @@
 #define API_RTP_PACKET_INFO_H_
 
 #include <cstdint>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -56,26 +56,26 @@ class RTC_EXPORT RtpPacketInfo {
   Timestamp receive_time() const { return receive_time_; }
   void set_receive_time(Timestamp value) { receive_time_ = value; }
 
-  absl::optional<uint8_t> audio_level() const { return audio_level_; }
-  RtpPacketInfo& set_audio_level(absl::optional<uint8_t> value) {
+  std::optional<uint8_t> audio_level() const { return audio_level_; }
+  RtpPacketInfo& set_audio_level(std::optional<uint8_t> value) {
     audio_level_ = value;
     return *this;
   }
 
-  const absl::optional<AbsoluteCaptureTime>& absolute_capture_time() const {
+  const std::optional<AbsoluteCaptureTime>& absolute_capture_time() const {
     return absolute_capture_time_;
   }
   RtpPacketInfo& set_absolute_capture_time(
-      const absl::optional<AbsoluteCaptureTime>& value) {
+      const std::optional<AbsoluteCaptureTime>& value) {
     absolute_capture_time_ = value;
     return *this;
   }
 
-  const absl::optional<TimeDelta>& local_capture_clock_offset() const {
+  const std::optional<TimeDelta>& local_capture_clock_offset() const {
     return local_capture_clock_offset_;
   }
   RtpPacketInfo& set_local_capture_clock_offset(
-      absl::optional<TimeDelta> value) {
+      std::optional<TimeDelta> value) {
     local_capture_clock_offset_ = value;
     return *this;
   }
@@ -92,18 +92,18 @@ class RTC_EXPORT RtpPacketInfo {
 
   // Fields from the Audio Level header extension:
   // https://tools.ietf.org/html/rfc6464#section-3
-  absl::optional<uint8_t> audio_level_;
+  std::optional<uint8_t> audio_level_;
 
   // Fields from the Absolute Capture Time header extension:
   // http://www.webrtc.org/experiments/rtp-hdrext/abs-capture-time
-  absl::optional<AbsoluteCaptureTime> absolute_capture_time_;
+  std::optional<AbsoluteCaptureTime> absolute_capture_time_;
 
   // Clock offset between the local clock and the capturer's clock.
   // Do not confuse with `AbsoluteCaptureTime::estimated_capture_clock_offset`
   // which instead represents the clock offset between a remote sender and the
   // capturer. The following holds:
   //   Capture's NTP Clock = Local NTP Clock + Local-Capture Clock Offset
-  absl::optional<TimeDelta> local_capture_clock_offset_;
+  std::optional<TimeDelta> local_capture_clock_offset_;
 };
 
 bool operator==(const RtpPacketInfo& lhs, const RtpPacketInfo& rhs);

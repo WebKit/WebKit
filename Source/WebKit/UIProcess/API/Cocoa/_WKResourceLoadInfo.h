@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +56,7 @@ WK_CLASS_AVAILABLE(macos(11.0), ios(14.0))
 @property (nonatomic, readonly) uint64_t resourceLoadID;
 @property (nonatomic, readonly) _WKFrameHandle *frame;
 @property (nonatomic, readonly, nullable) _WKFrameHandle *parentFrame;
+@property (nonatomic, readonly, nullable) NSUUID *documentID;
 @property (nonatomic, readonly) NSURL *originalURL;
 @property (nonatomic, readonly) NSString *originalHTTPMethod;
 @property (nonatomic, readonly) NSDate *eventTimestamp;

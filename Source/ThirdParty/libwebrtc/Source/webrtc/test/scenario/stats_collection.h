@@ -12,8 +12,8 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "call/call.h"
 #include "rtc_base/thread.h"
 #include "test/logging/log_writer.h"
@@ -59,7 +59,7 @@ class VideoQualityAnalyzer {
   const VideoQualityAnalyzerConfig config_;
   std::map<int, VideoLayerAnalyzer> layer_analyzers_;
   const std::unique_ptr<RtcEventLogOutput> writer_;
-  absl::optional<VideoQualityStats> cached_;
+  std::optional<VideoQualityStats> cached_;
 };
 
 class CallStatsCollector {

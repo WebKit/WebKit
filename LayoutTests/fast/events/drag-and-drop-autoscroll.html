@@ -19,13 +19,13 @@
 <script>
 function $(id) { return document.getElementById(id); }
 
-function finishTest() {
-    eventSender.mouseUp();
+async function finishTest() {
+    await eventSender.asyncMouseUp();
     $('container').innerHTML = '';
     window.testRunner.notifyDone();
 }
 
-function testIt() {
+async function testIt() {
     var draggable = $('draggable');
     var scrollable = $('scrollable');
 
@@ -35,11 +35,11 @@ function testIt() {
     eventSender.dragMode = false;
 
     // Grab draggable
-    eventSender.mouseMoveTo(draggable.offsetLeft + 5, draggable.offsetTop + 5);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseMoveTo(draggable.offsetLeft + 5, draggable.offsetTop + 5);
+    await eventSender.asyncMouseDown();
 
     // Move mouse to autoscroll border belt.
-    eventSender.mouseMoveTo(scrollable.offsetLeft + 5, scrollable.offsetTop + scrollable.offsetHeight - 10);
+    await eventSender.asyncMouseMoveTo(scrollable.offsetLeft + 5, scrollable.offsetTop + scrollable.offsetHeight - 10);
 
     var retryCount = 0;
     var lastScrollTop = 0;

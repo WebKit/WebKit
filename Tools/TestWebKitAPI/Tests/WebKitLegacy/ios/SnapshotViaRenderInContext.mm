@@ -89,7 +89,7 @@ TEST(WebKitLegacy, RenderInContextSnapshot)
     RetainPtr<RenderInContextWebViewDelegate> uiDelegate = adoptNS([[RenderInContextWebViewDelegate alloc] init]);
     uiWebView.get().delegate = uiDelegate.get();
     
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"large-red-square-image" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"large-red-square-image" withExtension:@"html"];
     NSLog(@"Loading %@", url);
     [uiWebView loadRequest:[NSURLRequest requestWithURL:url]];
     

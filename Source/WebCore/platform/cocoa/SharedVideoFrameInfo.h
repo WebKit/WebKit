@@ -44,20 +44,20 @@ public:
     SharedVideoFrameInfo() = default;
     SharedVideoFrameInfo(OSType, uint32_t width, uint32_t height, uint32_t bytesPerRow, uint32_t widthPlaneB = 0, uint32_t heightPlaneB = 0, uint32_t bytesPerRowPlaneB = 0, uint32_t bytesPerRowPlaneA = 0);
 
-    WEBCORE_EXPORT void encode(uint8_t*);
+    WEBCORE_EXPORT void encode(std::span<uint8_t>);
     WEBCORE_EXPORT static std::optional<SharedVideoFrameInfo> decode(std::span<const uint8_t>);
 
     WEBCORE_EXPORT static SharedVideoFrameInfo fromCVPixelBuffer(CVPixelBufferRef);
-    WEBCORE_EXPORT bool writePixelBuffer(CVPixelBufferRef, uint8_t* data);
+    WEBCORE_EXPORT bool writePixelBuffer(CVPixelBufferRef, std::span<uint8_t> data);
 
 #if USE(LIBWEBRTC)
     WEBCORE_EXPORT static SharedVideoFrameInfo fromVideoFrameBuffer(const webrtc::VideoFrameBuffer&);
-    WEBCORE_EXPORT bool writeVideoFrameBuffer(webrtc::VideoFrameBuffer&, uint8_t* data);
+    WEBCORE_EXPORT bool writeVideoFrameBuffer(webrtc::VideoFrameBuffer&, std::span<uint8_t> data);
 #endif
 
     WEBCORE_EXPORT size_t storageSize() const;
 
-    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBufferFromMemory(const uint8_t* data, CVPixelBufferPoolRef = nullptr);
+    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBufferFromMemory(std::span<const uint8_t> data, CVPixelBufferPoolRef = nullptr);
 
     WEBCORE_EXPORT bool isReadWriteSupported() const;
     WEBCORE_EXPORT RetainPtr<CVPixelBufferPoolRef> createCompatibleBufferPool() const;

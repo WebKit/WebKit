@@ -40,6 +40,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

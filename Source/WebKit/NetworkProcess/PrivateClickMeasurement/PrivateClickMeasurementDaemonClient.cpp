@@ -25,12 +25,15 @@
 
 #include "config.h"
 #include "PrivateClickMeasurementDaemonClient.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "PCMDaemonConnectionSet.h"
 #endif
 
 namespace WebKit::PCM {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DaemonClient);
 
 void DaemonClient::broadcastConsoleMessage(JSC::MessageLevel level, const String& message)
 {

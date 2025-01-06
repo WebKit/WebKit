@@ -26,6 +26,7 @@
 
 #include "StyleImage.h"
 #include "StyleInvalidImage.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ inline bool operator==(const ImageWithScale& a, const ImageWithScale& b)
 }
 
 class StyleMultiImage : public StyleImage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StyleMultiImage);
 public:
     virtual ~StyleMultiImage();
 

@@ -20,30 +20,20 @@ declare_args() {
   # Enables OpenCL support, off by default.
   angle_enable_cl = false
 
-  # Enables OpenCL testing support, off by default.
-  angle_enable_cl_testing = false
-
   angle_restricted_traces = []
 
   # Don't build dEQP by default.
   build_angle_deqp_tests = false
 
-  # Enable Desktop GL frontend support.
-  angle_enable_gl_desktop_frontend = false
+  build_angle_end2end_tests_aosp = false
 }
 
 declare_args() {
-  # Expose WGL entry points, which is necessary for running windows desktop GL applications against ANGLE.
-  # TODO(http://anglebug.com/7628): This condition should be `angle_enable_gl_desktop_frontend && is_win`
-  # This is disabled by default on Windows because it was causing some test failures. Once the WGL frontend
-  # has more functionality implemented, we can re-enable this.
-  angle_expose_wgl_entry_points = false
-
-  # Expose GLX entry points by default when using Desktop GL on Linux.
-  angle_expose_glx_entry_points = angle_enable_gl_desktop_frontend && is_linux
-
   # Only bundle traces in the APK if we're building a subset
   restricted_traces_outside_of_apk = is_android && angle_restricted_traces == []
+
+  # Enables OpenCL testing support
+  angle_enable_cl_testing = angle_enable_cl && (is_linux || is_android)
 }
 
 if (angle_has_build) {
@@ -145,7 +135,7 @@ declare_args() {
         (angle_64bit_current_cpu && android64_ndk_api_level >= 26)
   }
 
-  # Vulkan loader is statically linked on Mac. http://anglebug.com/4477
+  # Vulkan loader is statically linked on Mac. http://anglebug.com/40096682
   angle_shared_libvulkan = !is_mac
 
   # There's no "is_winuwp" helper in BUILDCONFIG.gn, so we define one ourselves
@@ -183,11 +173,10 @@ declare_args() {
   angle_enable_gl =
       (ozone_platform_gbm || ozone_platform_wayland || !is_linux ||
        ((angle_use_x11 && !is_chromeos) || angle_use_wayland || is_castos)) &&
-      !is_fuchsia && !angle_is_winuwp && !is_ggp && !is_win_arm64
+      !is_fuchsia && !angle_is_winuwp && !is_ggp && !is_win_arm64 && !is_ios
 
   angle_enable_vulkan =
       angle_has_build &&
-      !(is_android && build_with_chromium && is_official_build) &&
       ((is_win && !angle_is_winuwp) ||
        ((is_linux || is_chromeos) &&
         (angle_use_x11 || angle_use_wayland || angle_use_vulkan_display)) ||
@@ -201,18 +190,19 @@ declare_args() {
   angle_enable_null = !is_official_build
   angle_enable_gl_desktop_backend = !is_android && !is_ios
 
-  # http://anglebug.com/2634
+  # http://anglebug.com/40096506
   angle_enable_metal = is_apple
 
   # Enables the OpenCL pass-through back end
   angle_enable_cl_passthrough = angle_enable_cl
 
   # Disable WGPU backend.
-  # Currently disabled on Android, Fuschia, WinUWP, and Win MSVC.
-  # anglebug.com/8541
+  # Currently disabled on Android, Fuschia, WinUWP, and Win MSVC. X11 required on Linux.
+  # anglebug.com/42266968
   angle_enable_wgpu =
       !is_official_build && !(is_android || is_fuchsia || angle_is_winuwp) &&
-      (!is_win || is_clang) && defined(angle_dawn_dir)
+      (!is_win || is_clang) && (!is_linux || angle_use_x11) &&
+      defined(angle_dawn_dir)
 }
 
 declare_args() {
@@ -246,9 +236,6 @@ declare_args() {
   angle_enable_swiftshader =
       angle_enable_vulkan && !is_android && !is_ggp && is_clang
 
-  # Translator frontend support:
-  angle_enable_desktop_glsl = angle_enable_gl_desktop_frontend
-
   # Translator backend support:
   angle_enable_hlsl = angle_enable_d3d9 || angle_enable_d3d11
   angle_enable_essl = angle_enable_gl || use_ozone
@@ -257,6 +244,8 @@ declare_args() {
   angle_enable_trace_android_logcat = false
   angle_enable_trace_events = false
   angle_dump_pipeline_cache_graph = false
+
+  angle_always_log_info = false
 
   # Unwind backtrace support. This feature is currently only implemented
   # on Android for debugging purposes. Disabled by default.
@@ -276,6 +265,9 @@ declare_args() {
       angle_enable_vulkan && !is_ubsan && !is_tsan && !is_asan &&
       angle_debug_layers_enabled &&
       (!is_android || (ndk_api_level_at_least_26 && !build_with_chromium))
+  angle_enable_vulkan_api_dump_layer =
+      angle_enable_vulkan && angle_debug_layers_enabled && angle_standalone &&
+      !is_apple && (is_linux || is_android)
 
   # ISpriteVisual windows cannot be validated and can lead to crashes if an invalid window is
   # provided to ANGLE. Disable them for non-standalone ANGLE builds. crbug.com/1176118
@@ -285,22 +277,16 @@ declare_args() {
   # Disable performance counter output by default
   angle_enable_perf_counter_output = false
 
-  # We should use EAGL (ES) on iOS except on Mac Catalyst on Intel CPUs, which uses CGL (desktop GL).
-  angle_enable_eagl = angle_enable_gl && is_ios &&
-                      !(target_environment == "catalyst" &&
-                        (target_cpu == "x86" || target_cpu == "x64"))
-
   # Directory where to find wayland source files
   angle_wayland_dir = "$angle_root/third_party/wayland"
 
-  angle_vulkan_headers_dir =
-      "$angle_root/third_party/vulkan-deps/vulkan-headers/src"
-  angle_vulkan_loader_dir =
-      "$angle_root/third_party/vulkan-deps/vulkan-loader/src"
-  angle_vulkan_tools_dir =
-      "$angle_root/third_party/vulkan-deps/vulkan-tools/src"
+  angle_vulkan_headers_dir = "$angle_root/third_party/vulkan-headers/src"
+  angle_vulkan_loader_dir = "$angle_root/third_party/vulkan-loader/src"
+  angle_vulkan_tools_dir = "$angle_root/third_party/vulkan-tools/src"
   angle_vulkan_validation_layers_dir =
-      "$angle_root/third_party/vulkan-deps/vulkan-validation-layers/src"
+      "$angle_root/third_party/vulkan-validation-layers/src"
+  angle_lunarg_vulkantools_dir =
+      "$angle_root/third_party/lunarg-vulkantools/src"
 
   angle_build_vulkan_system_info = angle_has_build && !angle_is_winuwp
 
@@ -312,8 +298,7 @@ declare_args() {
 }
 
 declare_args() {
-  # TODO(jdarpinian): Support enabling CGL and EAGL at the same time using the soft linking code. Also support disabling both for Metal-only builds.
-  angle_enable_cgl = angle_enable_gl && !angle_enable_eagl && is_apple
+  angle_enable_cgl = angle_enable_gl && is_mac
 
   angle_enable_apple_translator_workarounds =
       is_apple && (angle_enable_glsl || use_fuzzing_engine)
@@ -345,7 +330,7 @@ angle_remove_configs = []
 if (angle_has_build) {
   angle_remove_configs += [ "//build/config/compiler:default_include_dirs" ]
 
-  if (is_clang) {
+  if (is_clang && !is_nacl) {
     angle_remove_configs += [ "//build/config/clang:find_bad_constructs" ]
   }
 
@@ -539,7 +524,7 @@ template("angle_static_library") {
   }
 }
 
-if (angle_standalone || build_with_chromium) {
+if (angle_standalone || build_with_chromium || build_angle_end2end_tests_aosp) {
   template("angle_test") {
     test(target_name) {
       forward_variables_from(invoker,
@@ -570,13 +555,15 @@ if (angle_standalone || build_with_chromium) {
                       "$angle_root:angle_common",
                       "$angle_root:includes",
                       "$angle_root/src/tests:angle_test_expectations",
-                      "$angle_root/third_party/rapidjson:rapidjson",
                       "$angle_root/util:angle_test_utils",
                       "//testing/gmock",
                       "//testing/gtest",
                       "//third_party/googletest:gmock",
                       "//third_party/googletest:gtest",
                     ]
+      if (angle_has_rapidjson) {
+        public_deps += [ "$angle_root/third_party/rapidjson:rapidjson" ]
+      }
 
       data = invoker.data + [
                "$angle_root/src/tests/py_utils/android_helper.py",
@@ -586,11 +573,13 @@ if (angle_standalone || build_with_chromium) {
                "//testing/xvfb.py",
              ]
 
-      sources += [
-        "$angle_root/src/tests/test_utils/runner/HistogramWriter.h",
-        "$angle_root/src/tests/test_utils/runner/TestSuite.cpp",
-        "$angle_root/src/tests/test_utils/runner/TestSuite.h",
-      ]
+      if (angle_has_rapidjson) {
+        sources += [
+          "$angle_root/src/tests/test_utils/runner/HistogramWriter.h",
+          "$angle_root/src/tests/test_utils/runner/TestSuite.cpp",
+          "$angle_root/src/tests/test_utils/runner/TestSuite.h",
+        ]
+      }
 
       if (angle_has_histograms) {
         sources +=

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,13 +15,13 @@
 #include "aom/aom_integer.h"
 #include "aom_dsp/aom_dsp_common.h"
 
-static INLINE __m256i load_tran_low(const tran_low_t *a) {
+static inline __m256i load_tran_low(const tran_low_t *a) {
   const __m256i a_low = _mm256_loadu_si256((const __m256i *)a);
   const __m256i a_high = _mm256_loadu_si256((const __m256i *)(a + 8));
   return _mm256_packs_epi32(a_low, a_high);
 }
 
-static INLINE void store_tran_low(__m256i a, tran_low_t *b) {
+static inline void store_tran_low(__m256i a, tran_low_t *b) {
   const __m256i one = _mm256_set1_epi16(1);
   const __m256i a_hi = _mm256_mulhi_epi16(a, one);
   const __m256i a_lo = _mm256_mullo_epi16(a, one);

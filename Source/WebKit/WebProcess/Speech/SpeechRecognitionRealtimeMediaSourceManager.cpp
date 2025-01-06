@@ -36,6 +36,7 @@
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/SpeechRecognitionCaptureSource.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "SharedCARingBuffer.h"
@@ -59,7 +60,7 @@ class SpeechRecognitionRealtimeMediaSourceManager::Source final
     , private RealtimeMediaSource::AudioSampleObserver
     , public CanMakeCheckedPtr<SpeechRecognitionRealtimeMediaSourceManager::Source>
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SpeechRecognitionRealtimeMediaSourceManager);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Source);
 public:
     Source(RealtimeMediaSourceIdentifier identifier, Ref<RealtimeMediaSource>&& source, Ref<IPC::Connection>&& connection)
@@ -89,10 +90,10 @@ public:
 
 private:
     // CheckedPtr interface
-    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
-    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     void sourceStopped() final
     {
@@ -149,15 +150,37 @@ private:
 #endif
 };
 
-SpeechRecognitionRealtimeMediaSourceManager::SpeechRecognitionRealtimeMediaSourceManager(Ref<IPC::Connection>&& connection)
-    : m_connection(WTFMove(connection))
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionRealtimeMediaSourceManager);
+
+SpeechRecognitionRealtimeMediaSourceManager::SpeechRecognitionRealtimeMediaSourceManager(WebProcess& process)
+    : m_process(process)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::SpeechRecognitionRealtimeMediaSourceManager::messageReceiverName(), *this);
+    process.addMessageReceiver(Messages::SpeechRecognitionRealtimeMediaSourceManager::messageReceiverName(), *this);
 }
 
 SpeechRecognitionRealtimeMediaSourceManager::~SpeechRecognitionRealtimeMediaSourceManager()
 {
-    WebProcess::singleton().removeMessageReceiver(*this);
+    m_process->removeMessageReceiver(*this);
+}
+
+IPC::Connection& SpeechRecognitionRealtimeMediaSourceManager::connection() const
+{
+    return *m_process->parentProcessConnection();
+}
+
+Ref<IPC::Connection> SpeechRecognitionRealtimeMediaSourceManager::protectedConnection() const
+{
+    return *m_process->parentProcessConnection();
+}
+
+void SpeechRecognitionRealtimeMediaSourceManager::ref() const
+{
+    m_process->ref();
+}
+
+void SpeechRecognitionRealtimeMediaSourceManager::deref() const
+{
+    m_process->deref();
 }
 
 void SpeechRecognitionRealtimeMediaSourceManager::createSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, PageIdentifier pageIdentifier)
@@ -170,7 +193,7 @@ void SpeechRecognitionRealtimeMediaSourceManager::createSource(RealtimeMediaSour
     }
 
     ASSERT(!m_sources.contains(identifier));
-    m_sources.add(identifier, makeUnique<Source>(identifier, result.source(), m_connection.copyRef()));
+    m_sources.add(identifier, makeUnique<Source>(identifier, result.source(), protectedConnection()));
 }
 
 void SpeechRecognitionRealtimeMediaSourceManager::deleteSource(RealtimeMediaSourceIdentifier identifier)
@@ -192,7 +215,7 @@ void SpeechRecognitionRealtimeMediaSourceManager::stop(RealtimeMediaSourceIdenti
 
 IPC::Connection* SpeechRecognitionRealtimeMediaSourceManager::messageSenderConnection() const
 {
-    return m_connection.ptr();
+    return &connection();
 }
 
 uint64_t SpeechRecognitionRealtimeMediaSourceManager::messageSenderDestinationID() const

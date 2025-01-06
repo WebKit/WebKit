@@ -1745,10 +1745,10 @@ void MemoryBarrierTestBase::transformFeedbackBitBufferWriteThenCapture(
 
     GLBuffer xfbBuffer;
     GLTexture xfbTextureBuffer;
-    constexpr size_t kOneInstanceDataSize                                       = 4;
-    constexpr size_t kInstanceCount                                             = 6;
-    constexpr std::array<float, kOneInstanceDataSize *kInstanceCount> kInitData = {12.34, 5.6,
-                                                                                   78.91, 123.456};
+    constexpr size_t kOneInstanceDataSize                                        = 4;
+    constexpr size_t kInstanceCount                                              = 6;
+    constexpr std::array<float, kOneInstanceDataSize * kInstanceCount> kInitData = {12.34, 5.6,
+                                                                                    78.91, 123.456};
     createStorageBuffer(writeResource, xfbBuffer, xfbTextureBuffer,
                         sizeof(kInitData[0]) * kInitData.size(), kInitData.data());
 
@@ -1802,10 +1802,10 @@ void MemoryBarrierTestBase::transformFeedbackBitCaptureThenBufferWrite(
 
     GLBuffer xfbBuffer;
     GLTexture xfbTextureBuffer;
-    constexpr size_t kOneInstanceDataSize                                       = 4;
-    constexpr size_t kInstanceCount                                             = 6;
-    constexpr std::array<float, kOneInstanceDataSize *kInstanceCount> kInitData = {12.34, 5.6,
-                                                                                   78.91, 123.456};
+    constexpr size_t kOneInstanceDataSize                                        = 4;
+    constexpr size_t kInstanceCount                                              = 6;
+    constexpr std::array<float, kOneInstanceDataSize * kInstanceCount> kInitData = {12.34, 5.6,
+                                                                                    78.91, 123.456};
     createStorageBuffer(writeResource, xfbBuffer, xfbTextureBuffer,
                         sizeof(kInitData[0]) * kInitData.size(), kInitData.data());
 
@@ -3316,7 +3316,7 @@ TEST_P(MemoryBarrierImageTest, ShaderImageAccessBitImageReadThenWrite)
     // > accesses (e.g., loads, stores, texture fetches, vertex fetches) initiated prior to the
     // > barrier complete.
     //
-    // http://anglebug.com/5650
+    // http://anglebug.com/42264187
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsNVIDIA() && writeResource == WriteResource::Image);
 
     shaderImageAccessBitImageReadThenImageWrite(writePipeline, writeResource, preBarrierOp,

@@ -1,6 +1,5 @@
-# These are the layout test expectations for Apple's macOS Monterey port of WebKit.
+# These are the layout test expectations for Apple's macOS Ventura port of WebKit.
 #
-
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Platform-specific directories. Skipped globally, then re-enabled here.
@@ -33,9 +32,6 @@ webkit.org/b/261444 [ Debug x86_64 ] http/tests/security/referrer-policy-header.
 # Asserts on pre-Sonoma macOS: rdar://116291539
 [ Debug ] http/tests/site-isolation/window-properties.html [ Skip ]
 
-# webkit.org/b/263955 Twelve css WPTs are failing with async overflow scrolling enabled on macOS
-imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html [ Failure ]
-
 # This feature was introduced in macOS Sonoma.
 http/tests/paymentrequest/paymentrequest-applePayLaterAvailability.https.html [ Skip ]
 
@@ -49,3 +45,42 @@ imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-scroll-within.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Skip ]
+
+# webkit.org/b/279236 [ Ventura wk2 ] view-gestures/smart-magnify/double-tap-zoom-scroll-above-top.html is a flaky timeout.
+view-gestures/smart-magnify/double-tap-zoom-scroll-above-top.html [ Timeout Pass ] 
+
+# webkit.org/b/279274 ([ macOS-Ventura-Release-WK2-Intel-Tests-EWS] [EWS] Multiple tests in media/media-source are constantly failing/timeout)
+[ Release x86_64 ] media/media-source/media-managedmse-multipletracks-bufferedchange.html [ Skip ]
+[ Release x86_64 ] media/media-source/media-managedmse-video-with-poster.html [ Skip ]
+[ Release x86_64 ] media/media-source/media-source-seek-back-after-ended.html [ Skip ]
+[ Release x86_64 ] media/media-source/media-source-webm-append-buffer-after-abort.html [ Skip ]
+[ Release x86_64 ] media/media-source/media-source-webm-configuration-change.html [ Skip ]
+[ Release x86_64 ] media/media-source/media-source-webm-configuration-framerate.html [ Skip ]
+[ Release x86_64 ] media/media-source/media-source-webm-configuration-vp9-header-color.html [ Skip ]
+[ Release x86_64 ] media/media-source/media-source-webm-init-inside-segment.html [ Skip ]
+[ Release x86_64 ] media/media-source/media-source-webm.html [ Skip ]
+[ Release x86_64 ] media/mediacapabilities/vp9.html [ Skip ]
+[ Release x86_64 ] platform/mac/media/media-source/is-type-supported-vp9-codec-check.html [ Skip ]
+[ Release x86_64 ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
+[ Release x86_64 ] media/media-source/media-managedmse-resume-after-remove.html [ Skip ]
+
+# webkit.org/b/280019 [EWS] fast/canvas/offscreen-giant.html is constant failure in Ventura Intel EWS
+[ Release x86_64 ] fast/canvas/offscreen-giant.html [ Skip ]
+
+# webkit.org/b/280024 [EWS] fast/canvas/webgl/drawingbuffer-test.html is a constant failure in Ventura Intel EWS
+[ Release x86_64 ] fast/canvas/webgl/drawingbuffer-test.html [ Skip ]
+
+# webkit.org/b/280098 4 tests in imported/w3c/web-platform-tests/css/ are constant failures in Ventura Intel EWS
+[ Release x86_64 ] imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-border-radius-001.html [ Skip ]
+[ Release x86_64 ] imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties.html [ Skip ]
+[ Release x86_64 ] imported/w3c/web-platform-tests/css/css-images/tiled-radial-gradients.html [ Skip ]
+[ Release x86_64 ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-old.html [ Skip ]
+
+# webkit.org/b/280186 [EWS] imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html is failing on Ventura Intel EWS
+[ Release x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html [ Skip ]
+
+# webkit.org/b/280187 [EWS] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html is constant failure on Ventura Intel EWS
+[ Release x86_64 ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html [ Skip ]
+
+# webkit.org/b/280189 [EWS] imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.any.html is a constant failure on Ventura Intel EWS
+[ Release x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.any.html [ Skip ]

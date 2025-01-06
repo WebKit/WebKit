@@ -8,6 +8,8 @@ include(platform/TextureMapper.cmake)
 
 if (USE_CAIRO)
     include(platform/Cairo.cmake)
+elseif (USE_SKIA)
+    include(platform/Skia.cmake)
 endif ()
 
 if (USE_DAWN)
@@ -23,6 +25,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/win"
     "${WEBCORE_DIR}/platform/mediacapabilities"
     "${WEBCORE_DIR}/platform/network/win"
+    "${WEBCORE_DIR}/platform/video-codecs"
     "${WEBCORE_DIR}/platform/win"
 )
 
@@ -56,23 +59,18 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/egl/GLContext.cpp
     platform/graphics/egl/GLContextWrapper.cpp
+    platform/graphics/egl/GLDisplay.cpp
     platform/graphics/egl/GLFence.cpp
+    platform/graphics/egl/GLFenceEGL.cpp
+    platform/graphics/egl/GLFenceGL.cpp
 
     platform/graphics/opentype/OpenTypeUtilities.cpp
 
-    platform/graphics/win/ComplexTextControllerUniscribe.cpp
     platform/graphics/win/DIBPixelData.cpp
     platform/graphics/win/DisplayRefreshMonitorWin.cpp
-    platform/graphics/win/DrawGlyphsRecorderWin.cpp
     platform/graphics/win/FloatRectWin.cpp
-    platform/graphics/win/FontCacheWin.cpp
-    platform/graphics/win/FontCustomPlatformDataWin.cpp
-    platform/graphics/win/FontDescriptionWin.cpp
-    platform/graphics/win/FontPlatformDataWin.cpp
-    platform/graphics/win/FontWin.cpp
     platform/graphics/win/FullScreenController.cpp
     platform/graphics/win/FullScreenWindow.cpp
-    platform/graphics/win/GlyphPageTreeNodeWin.cpp
     platform/graphics/win/GraphicsContextWin.cpp
     platform/graphics/win/IconWin.cpp
     platform/graphics/win/ImageAdapterWin.cpp
@@ -81,7 +79,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/IntSizeWin.cpp
     platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp
     platform/graphics/win/PlatformDisplayWin.cpp
-    platform/graphics/win/SimpleFontDataWin.cpp
     platform/graphics/win/SystemFontDatabaseWin.cpp
     platform/graphics/win/TransformationMatrixWin.cpp
 
@@ -89,7 +86,7 @@ list(APPEND WebCore_SOURCES
     platform/network/win/NetworkStateNotifierWin.cpp
 
     platform/text/Hyphenation.cpp
-    platform/text/win/LocaleWin.cpp
+    platform/text/LocaleICU.cpp
 
     platform/win/BString.cpp
     platform/win/BitmapInfo.cpp
@@ -203,6 +200,16 @@ endif ()
 
 if (USE_CAIRO)
     list(APPEND WebCore_SOURCES
+        platform/graphics/win/ComplexTextControllerUniscribe.cpp
+        platform/graphics/win/DrawGlyphsRecorderWin.cpp
+        platform/graphics/win/FontCacheWin.cpp
+        platform/graphics/win/FontCustomPlatformDataWin.cpp
+        platform/graphics/win/FontDescriptionWin.cpp
+        platform/graphics/win/FontPlatformDataWin.cpp
+        platform/graphics/win/FontWin.cpp
+        platform/graphics/win/GlyphPageTreeNodeWin.cpp
+        platform/graphics/win/SimpleFontDataWin.cpp
+
         platform/graphics/win/cairo/FontCacheWinCairo.cpp
         platform/graphics/win/cairo/FontCustomPlatformDataWinCairo.cpp
         platform/graphics/win/cairo/FontPlatformDataWinCairo.cpp
@@ -211,6 +218,10 @@ if (USE_CAIRO)
         platform/graphics/win/cairo/MediaPlayerPrivateMediaFoundationCairo.cpp
 
         platform/win/cairo/DragImageWinCairo.cpp
+    )
+elseif (USE_SKIA)
+    list(APPEND WebCore_SOURCES
+        platform/graphics/win/FontCacheSkiaWin.cpp
     )
 endif ()
 
@@ -221,4 +232,8 @@ if (USE_WOFF2)
         Brotli::dec
         WOFF2::common
     )
+endif ()
+
+if (USE_SKIA)
+    list(APPEND WebCore_PRIVATE_LIBRARIES ${SHARPYUV_LIBS})
 endif ()

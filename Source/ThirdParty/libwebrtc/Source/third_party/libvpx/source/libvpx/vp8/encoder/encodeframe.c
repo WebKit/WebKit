@@ -7,36 +7,35 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+#include <limits.h>
+#include <stdio.h>
 
 #include "vpx_config.h"
-#include "vp8_rtcd.h"
-#include "./vpx_dsp_rtcd.h"
-#include "bitstream.h"
-#include "encodemb.h"
-#include "encodemv.h"
-#if CONFIG_MULTITHREAD
-#include "ethreading.h"
-#endif
+
 #include "vp8/common/common.h"
-#include "onyx_int.h"
-#include "vp8/common/extend.h"
 #include "vp8/common/entropymode.h"
-#include "vp8/common/quant_common.h"
-#include "segmentation.h"
-#include "vp8/common/setupintrarecon.h"
-#include "encodeintra.h"
-#include "vp8/common/reconinter.h"
-#include "rdopt.h"
-#include "pickinter.h"
-#include "vp8/common/findnearmv.h"
-#include <stdio.h>
-#include <limits.h>
+#include "vp8/common/extend.h"
 #include "vp8/common/invtrans.h"
+#include "vp8/common/quant_common.h"
+#include "vp8/common/reconinter.h"
+#include "vp8/common/setupintrarecon.h"
+#include "vp8/common/threading.h"
+#include "vp8/encoder/bitstream.h"
+#include "vp8/encoder/encodeframe.h"
+#include "vp8/encoder/encodeintra.h"
+#include "vp8/encoder/encodemb.h"
+#include "vp8/encoder/onyx_int.h"
+#include "vp8/encoder/pickinter.h"
+#include "vp8/encoder/rdopt.h"
+#include "vp8_rtcd.h"
+#include "vpx/internal/vpx_codec_internal.h"
+#include "vpx_dsp_rtcd.h"
+#include "vpx_mem/vpx_mem.h"
 #include "vpx_ports/vpx_timer.h"
-#if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
-#include "bitstream.h"
+
+#if CONFIG_MULTITHREAD
+#include "vp8/encoder/ethreading.h"
 #endif
-#include "encodeframe.h"
 
 extern void vp8_stuff_mb(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t);
 static void adjust_act_zbin(VP8_COMP *cpi, MACROBLOCK *x);
@@ -771,7 +770,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         vpx_atomic_store_release(&cpi->mt_current_mb_col[i], -1);
 
       for (i = 0; i < cpi->encoding_thread_count; ++i) {
-        sem_post(&cpi->h_event_start_encoding[i]);
+        vp8_sem_post(&cpi->h_event_start_encoding[i]);
       }
 
       for (mb_row = 0; mb_row < cm->mb_rows;
@@ -804,7 +803,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
       }
       /* Wait for all the threads to finish. */
       for (i = 0; i < cpi->encoding_thread_count; ++i) {
-        sem_wait(&cpi->h_event_end_encoding[i]);
+        vp8_sem_wait(&cpi->h_event_end_encoding[i]);
       }
 
       for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {

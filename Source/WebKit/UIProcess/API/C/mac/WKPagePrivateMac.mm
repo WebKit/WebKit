@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKPagePrivateMac.h"
 
+#import "APIPageConfiguration.h"
 #import "FullscreenClient.h"
 #import "PageLoadStateObserver.h"
 #import "WKAPICast.h"
@@ -54,7 +55,7 @@
         return nil;
 
     _page = WTFMove(page);
-    _observer = makeUnique<WebKit::PageLoadStateObserver>(self, @"URL");
+    _observer = makeUniqueWithoutRefCountedCheck<WebKit::PageLoadStateObserver>(self, @"URL");
     _page->pageLoadState().addObserver(*_observer);
 
     return self;
@@ -93,7 +94,7 @@
 
 - (BOOL)_webProcessIsResponsive
 {
-    return _page->process().isResponsive();
+    return _page->legacyMainFrameProcess().isResponsive();
 }
 
 - (double)estimatedProgress
@@ -131,7 +132,7 @@ bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url)
 {
     WebKit::WebPageProxy* webPageProxy = WebKit::toImpl(page);
 
-    return webPageProxy->process().processPool().isURLKnownHSTSHost(WebKit::toImpl(url)->string());
+    return webPageProxy->configuration().processPool().isURLKnownHSTSHost(WebKit::toImpl(url)->string());
 }
 
 WKNavigation *WKPageLoadURLRequestReturningNavigation(WKPageRef pageRef, WKURLRequestRef urlRequestRef)

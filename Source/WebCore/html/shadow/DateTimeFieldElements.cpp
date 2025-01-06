@@ -35,11 +35,11 @@
 #include "LocalizedStrings.h"
 #include "ScriptDisallowedScope.h"
 #include "UserAgentParts.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeDayFieldElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeDayFieldElement);
 
 DateTimeDayFieldElement::DateTimeDayFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(1, 31), fieldOwner.placeholderDate().monthDay())
@@ -69,7 +69,7 @@ void DateTimeDayFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.monthDay());
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeHourFieldElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeHourFieldElement);
 
 DateTimeHourFieldElement::DateTimeHourFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, int minimum, int maximum)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(minimum, maximum), (maximum >= 12) ? 12 : 11)
@@ -136,7 +136,7 @@ void DateTimeHourFieldElement::setValueAsDate(const DateComponents& date)
     }
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMeridiemFieldElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeMeridiemFieldElement);
 
 DateTimeMeridiemFieldElement::DateTimeMeridiemFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& labels)
     : DateTimeSymbolicFieldElement(document, fieldOwner, labels, labels.size() - 1)
@@ -185,7 +185,7 @@ void DateTimeMeridiemFieldElement::setEmptyValue(EventBehavior eventBehavior)
     updateAriaValueAttributes();
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMillisecondFieldElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeMillisecondFieldElement);
 
 DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(0, 999), 0)
@@ -215,7 +215,7 @@ void DateTimeMillisecondFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.millisecond());
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMinuteFieldElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeMinuteFieldElement);
 
 DateTimeMinuteFieldElement::DateTimeMinuteFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(0, 59), 30)
@@ -245,7 +245,7 @@ void DateTimeMinuteFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.minute());
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMonthFieldElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeMonthFieldElement);
 
 DateTimeMonthFieldElement::DateTimeMonthFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(1, 12), fieldOwner.placeholderDate().month() + 1)
@@ -276,7 +276,7 @@ void DateTimeMonthFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.month() + 1);
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeSecondFieldElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeSecondFieldElement);
 
 DateTimeSecondFieldElement::DateTimeSecondFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(0, 59), 0)
@@ -306,7 +306,7 @@ void DateTimeSecondFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.second());
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeSymbolicMonthFieldElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeSymbolicMonthFieldElement);
 
 DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& labels)
     : DateTimeSymbolicFieldElement(document, fieldOwner, labels, fieldOwner.placeholderDate().month())
@@ -336,7 +336,7 @@ void DateTimeSymbolicMonthFieldElement::setValueAsDate(const DateComponents& dat
     setValueAsInteger(date.month());
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeYearFieldElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeYearFieldElement);
 
 DateTimeYearFieldElement::DateTimeYearFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(DateComponents::minimumYear(), DateComponents::maximumYear()), fieldOwner.placeholderDate().year())

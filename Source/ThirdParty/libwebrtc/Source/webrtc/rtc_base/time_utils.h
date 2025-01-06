@@ -129,11 +129,11 @@ int64_t TmToSeconds(const tm& tm);
 // system time is changed, e.g., by some other process calling
 // settimeofday. Always use rtc::TimeMicros(), not this function, for
 // measuring time intervals and timeouts.
-int64_t TimeUTCMicros();
+RTC_EXPORT int64_t TimeUTCMicros();
 
 // Return the number of milliseconds since January 1, 1970, UTC.
 // See above.
-int64_t TimeUTCMillis();
+RTC_EXPORT int64_t TimeUTCMillis();
 
 }  // namespace rtc
 

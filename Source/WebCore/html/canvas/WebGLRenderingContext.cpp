@@ -106,15 +106,15 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSCellInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLRenderingContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLRenderingContext);
 
 std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(CanvasBase& canvas, WebGLContextAttributes&& attributes)
 {
-    return std::unique_ptr<WebGLRenderingContext>(new WebGLRenderingContext(canvas, WTFMove(attributes)));
+    return std::unique_ptr<WebGLRenderingContext>(new WebGLRenderingContext(canvas, Type::WebGL1, WTFMove(attributes)));
 }
 
 WebGLRenderingContext::~WebGLRenderingContext()
@@ -340,26 +340,6 @@ GCGLint WebGLRenderingContext::maxColorAttachments()
     if (!m_maxColorAttachments)
         m_maxColorAttachments = m_context->getInteger(GraphicsContextGL::MAX_COLOR_ATTACHMENTS_EXT);
     return m_maxColorAttachments;
-}
-
-bool WebGLRenderingContext::validateBlendEquation(ASCIILiteral functionName, GCGLenum mode)
-{
-    switch (mode) {
-    case GraphicsContextGL::FUNC_ADD:
-    case GraphicsContextGL::FUNC_SUBTRACT:
-    case GraphicsContextGL::FUNC_REVERSE_SUBTRACT:
-    case GraphicsContextGL::MIN_EXT:
-    case GraphicsContextGL::MAX_EXT:
-        if ((mode == GraphicsContextGL::MIN_EXT || mode == GraphicsContextGL::MAX_EXT) && !m_extBlendMinMax) {
-            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid mode"_s);
-            return false;
-        }
-        return true;
-        break;
-    default:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid mode"_s);
-        return false;
-    }
 }
 
 void WebGLRenderingContext::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor& visitor)

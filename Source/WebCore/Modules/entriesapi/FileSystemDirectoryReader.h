@@ -39,14 +39,13 @@ class FileSystemEntriesCallback;
 class ScriptExecutionContext;
 
 class FileSystemDirectoryReader final : public ScriptWrappable, public ActiveDOMObject, public RefCounted<FileSystemDirectoryReader> {
-    WTF_MAKE_ISO_ALLOCATED(FileSystemDirectoryReader);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FileSystemDirectoryReader);
 public:
-    static Ref<FileSystemDirectoryReader> create(ScriptExecutionContext&, FileSystemDirectoryEntry&);
-    ~FileSystemDirectoryReader();
-
-    // ActiveDOMObject.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+
+    static Ref<FileSystemDirectoryReader> create(ScriptExecutionContext&, FileSystemDirectoryEntry&);
+    ~FileSystemDirectoryReader();
 
     void readEntries(ScriptExecutionContext&, Ref<FileSystemEntriesCallback>&&, RefPtr<ErrorCallback>&&);
 

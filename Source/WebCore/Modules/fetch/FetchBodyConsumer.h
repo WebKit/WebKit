@@ -45,7 +45,9 @@ class FetchBodySource;
 class FormData;
 class ReadableStream;
 
-class FetchBodyConsumer {
+class FetchBodyConsumer final : public CanMakeCheckedPtr<FetchBodyConsumer> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FetchBodyConsumer);
 public:
     enum class Type { None, ArrayBuffer, Blob, Bytes, JSON, Text, FormData };
 
@@ -65,6 +67,8 @@ public:
     RefPtr<FragmentedSharedBuffer> takeData();
     RefPtr<JSC::ArrayBuffer> takeAsArrayBuffer();
     String takeAsText();
+
+    bool hasPendingActivity() const { return m_formDataConsumer ? m_formDataConsumer->hasPendingActivity() : false; }
 
     void setType(Type type) { m_type = type; }
 
@@ -97,7 +101,7 @@ private:
     RefPtr<FetchBodySource> m_source;
     bool m_isLoading { false };
     RefPtr<UserGestureToken> m_userGestureToken;
-    std::unique_ptr<FormDataConsumer> m_formDataConsumer;
+    RefPtr<FormDataConsumer> m_formDataConsumer;
 };
 
 } // namespace WebCore

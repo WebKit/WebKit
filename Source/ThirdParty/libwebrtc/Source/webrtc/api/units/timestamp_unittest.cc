@@ -10,8 +10,10 @@
 
 #include "api/units/timestamp.h"
 
+#include <cstdint>
 #include <limits>
 
+#include "api/units/time_delta.h"
 #include "test/gtest.h"
 
 namespace webrtc {

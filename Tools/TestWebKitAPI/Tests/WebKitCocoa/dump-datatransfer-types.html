@@ -125,6 +125,7 @@ function select(element) {
         element.setSelectionRange(0, element.value.length);
     else
         getSelection().setBaseAndExtent(element, 0, element, 1);
+    element.focus();
 }
 
 checkbox.addEventListener("change", () => window.writeCustomData = checkbox.checked);

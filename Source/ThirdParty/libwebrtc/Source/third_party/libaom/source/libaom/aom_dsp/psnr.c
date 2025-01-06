@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,12 +12,19 @@
 #include <assert.h>
 #include <math.h>
 
+#include "config/aom_config.h"
 #include "config/aom_dsp_rtcd.h"
 
 #include "aom_dsp/psnr.h"
 #include "aom_scale/yv12config.h"
 
-double aom_sse_to_psnr(double samples, double peak, double sse) {
+#if CONFIG_INTERNAL_STATS
+#define STATIC
+#else
+#define STATIC static
+#endif  // CONFIG_INTERNAL_STATS
+
+STATIC double aom_sse_to_psnr(double samples, double peak, double sse) {
   if (sse > 0.0) {
     const double psnr = 10.0 * log10(samples * peak * peak / sse);
     return psnr > MAX_PSNR ? MAX_PSNR : psnr;
@@ -25,6 +32,8 @@ double aom_sse_to_psnr(double samples, double peak, double sse) {
     return MAX_PSNR;
   }
 }
+
+#undef STATIC
 
 static int64_t encoder_sse(const uint8_t *a, int a_stride, const uint8_t *b,
                            int b_stride, int w, int h) {
@@ -349,7 +358,11 @@ void aom_calc_highbd_psnr(const YV12_BUFFER_CONFIG *a,
   int i;
   uint64_t total_sse = 0;
   uint32_t total_samples = 0;
+#if CONFIG_LIBVMAF_PSNR_PEAK
+  double peak = (double)(255 << (in_bit_depth - 8));
+#else
   double peak = (double)((1 << in_bit_depth) - 1);
+#endif  // CONFIG_LIBVMAF_PSNR_PEAK
   const unsigned int input_shift = bit_depth - in_bit_depth;
 
   for (i = 0; i < 3; ++i) {
@@ -384,7 +397,11 @@ void aom_calc_highbd_psnr(const YV12_BUFFER_CONFIG *a,
 
   // Compute PSNR based on stream bit depth
   if ((a->flags & YV12_FLAG_HIGHBITDEPTH) && (in_bit_depth < bit_depth)) {
+#if CONFIG_LIBVMAF_PSNR_PEAK
+    peak = (double)(255 << (bit_depth - 8));
+#else
     peak = (double)((1 << bit_depth) - 1);
+#endif  // CONFIG_LIBVMAF_PSNR_PEAK
     total_sse = 0;
     total_samples = 0;
     for (i = 0; i < 3; ++i) {

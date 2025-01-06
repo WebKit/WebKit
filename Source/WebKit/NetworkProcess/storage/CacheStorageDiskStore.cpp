@@ -29,6 +29,7 @@
 #include "CacheStorageRecord.h"
 #include "Logging.h"
 #include "NetworkCacheCoders.h"
+#include <WebCore/DOMCacheEngine.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/PageBlock.h>
 #include <wtf/RefCounted.h>
@@ -36,6 +37,7 @@
 #include <wtf/persistence/PersistentCoders.h>
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 
@@ -59,6 +61,11 @@ static SHA1::Digest computeSHA1(std::span<const uint8_t> span, FileSystem::Salt 
     SHA1::Digest digest;
     sha1.computeHash(digest);
     return digest;
+}
+
+static String recordFilePathWithDirectory(const String& directory, const NetworkCache::Key& key)
+{
+    return FileSystem::pathByAppendingComponents(directory, { key.partitionHashAsString(), key.type(), key.hashAsString() });
 }
 
 struct RecordMetaData {
@@ -130,12 +137,12 @@ String CacheStorageDiskStore::recordsDirectoryPath() const
 
 String CacheStorageDiskStore::recordFilePath(const NetworkCache::Key& key) const
 {
-    return FileSystem::pathByAppendingComponents(recordsDirectoryPath(), { key.partitionHashAsString(), key.type(), key.hashAsString() });
+    return recordFilePathWithDirectory(recordsDirectoryPath(), key);
 }
 
 String CacheStorageDiskStore::recordBlobFilePath(const String& recordPath) const
 {
-    return recordPath + blobSuffix;
+    return makeString(recordPath, blobSuffix);
 }
 
 String CacheStorageDiskStore::blobsDirectoryPath() const
@@ -295,7 +302,9 @@ static std::optional<StoredRecordInformation> readRecordInfoFromFileData(const F
     if (!header)
         return std::nullopt;
 
-    CacheStorageRecordInformation info { metaData->key, header->insertionTime, 0, 0, header->responseBodySize, header->request.url(), false, { } };
+    auto key = metaData->key;
+    auto url = header->request.url();
+    CacheStorageRecordInformation info { WTFMove(key), header->insertionTime, 0, 0, header->responseBodySize, WTFMove(url), false, { } };
     info.updateVaryHeaders(header->request, header->responseData);
     return StoredRecordInformation { info, WTFMove(*metaData), WTFMove(*header) };
 }
@@ -337,11 +346,10 @@ std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(
     return CacheStorageRecord { storedInfo->info, storedInfo->header.requestHeadersGuard, storedInfo->header.request, storedInfo->header.options, storedInfo->header.referrer, storedInfo->header.responseHeadersGuard, WTFMove(storedInfo->header.responseData), storedInfo->header.responseBodySize, WTFMove(*responseBody) };
 }
 
-void CacheStorageDiskStore::readAllRecordInfosInternal(CompletionHandler<void(FileDatas&&)>&& callback)
+void CacheStorageDiskStore::readAllRecordInfosInternal(ReadAllRecordInfosCallback&& callback)
 {
-    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordsDirectory = recordsDirectoryPath().isolatedCopy(), cacheName = m_cacheName.isolatedCopy(), callback = WTFMove(callback)]() mutable {
-        FileDatas fileDatas;
-        FileDatas blobDatas;
+    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordsDirectory = recordsDirectoryPath().isolatedCopy(), cacheName = m_cacheName.isolatedCopy(), salt = m_salt, callback = WTFMove(callback)]() mutable {
+        Vector<CacheStorageRecordInformation> recordInfos;
         auto partitionNames = FileSystem::listDirectory(recordsDirectory);
         for (auto& partitionName : partitionNames) {
             auto partitionDirectoryPath = FileSystem::pathByAppendingComponent(recordsDirectory, partitionName);
@@ -352,84 +360,69 @@ void CacheStorageDiskStore::readAllRecordInfosInternal(CompletionHandler<void(Fi
 
                 auto recordFile = FileSystem::pathByAppendingComponent(cacheDirectory, recordName);
                 auto fileData = FileSystem::MappedFileData::create(recordFile, FileSystem::MappedFileMode::Private);
-                if (fileData)
-                    fileDatas.append(WTFMove(*fileData));
+                if (!fileData)
+                    continue;
+
+                if (auto storedRecordInfo = readRecordInfoFromFileData(salt, fileData->span()))
+                    recordInfos.append(WTFMove(storedRecordInfo->info));
             }
         }
-
-        m_callbackQueue->dispatch([protectedThis = WTFMove(protectedThis), fileDatas = WTFMove(fileDatas), callback = WTFMove(callback)]() mutable {
-            callback(WTFMove(fileDatas));
+        m_callbackQueue->dispatch([protectedThis = WTFMove(protectedThis), recordInfos = crossThreadCopy(WTFMove(recordInfos)), callback = WTFMove(callback)]() mutable {
+            callback(WTFMove(recordInfos));
         });
     });
 }
 
 void CacheStorageDiskStore::readAllRecordInfos(ReadAllRecordInfosCallback&& callback)
 {
-    readAllRecordInfosInternal([this, protectedThis = Ref { *this }, callback = WTFMove(callback)](auto fileDatas) mutable {
-        auto result = WTF::compactMap(fileDatas, [&](auto& fileData) -> std::optional<CacheStorageRecordInformation> {
-            if (auto storedInfo = readRecordInfoFromFileData(m_salt, fileData.span()))
-                return WTFMove(storedInfo->info);
-            RELEASE_LOG(CacheStorage, "%p - CacheStorageDiskStore::readAllRecordInfos fails to decode record from file", this);
-            return std::nullopt;
-        });
-        callback(WTFMove(result));
-    });
+    readAllRecordInfosInternal(WTFMove(callback));
 }
 
-void CacheStorageDiskStore::readRecordsInternal(Vector<String>&& recordFiles, CompletionHandler<void(FileDatas&&, FileDatas&&)>&& callback)
+void CacheStorageDiskStore::readRecordsInternal(const Vector<CacheStorageRecordInformation>& recordInfos, ReadRecordsCallback&& callback)
 {
-    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordFiles = crossThreadCopy(WTFMove(recordFiles)), callback = WTFMove(callback)]() mutable {
-        FileDatas fileDatas;
-        FileDatas blobDatas;
-        for (auto& recordFile : recordFiles) {
+    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, directory = crossThreadCopy(recordsDirectoryPath()), recordInfos = crossThreadCopy(recordInfos), callback = WTFMove(callback)]() mutable {
+        Vector<std::optional<CacheStorageRecord>> records;
+        for (auto& recordInfo : recordInfos) {
+            auto recordFile = recordFilePathWithDirectory(directory, recordInfo.key());
             auto fileData = valueOrDefault(FileSystem::MappedFileData::create(recordFile, FileSystem::MappedFileMode::Private));
             auto blobData = !fileData.size() ? FileSystem::MappedFileData { } : valueOrDefault(FileSystem::MappedFileData::create(recordBlobFilePath(recordFile), FileSystem::MappedFileMode::Private));
-            fileDatas.append(WTFMove(fileData));
-            blobDatas.append(WTFMove(blobData));
+            auto record = readRecordFromFileData(fileData.span(), WTFMove(blobData));
+            if (!record) {
+                RELEASE_LOG(CacheStorage, "%p - CacheStorageDiskStore::readRecordsInternal fails to decode record from file", this);
+                records.append(std::nullopt);
+                continue;
+            }
+
+            if (recordInfo.insertionTime() != record->info.insertionTime() || recordInfo.size() != record->info.size() || recordInfo.url() != record->info.url()) {
+                records.append(std::nullopt);
+                continue;
+            }
+
+            if (recordFilePath(recordInfo.key()) != recordFilePath(record->info.key())) {
+                records.append(std::nullopt);
+                continue;
+            }
+
+            record->info.setIdentifier(recordInfo.identifier());
+            record->info.setUpdateResponseCounter(recordInfo.updateResponseCounter());
+            records.append(WTFMove(record));
         }
 
-        m_callbackQueue->dispatch([protectedThis = WTFMove(protectedThis), fileDatas = WTFMove(fileDatas), blobDatas = WTFMove(blobDatas), callback = WTFMove(callback)]() mutable {
-            callback(WTFMove(fileDatas), WTFMove(blobDatas));
+        m_callbackQueue->dispatch([protectedThis = WTFMove(protectedThis), records = crossThreadCopy(WTFMove(records)), callback = WTFMove(callback)]() mutable {
+            callback(WTFMove(records));
         });
     });
 }
 
 void CacheStorageDiskStore::readRecords(const Vector<CacheStorageRecordInformation>& recordInfos, ReadRecordsCallback&& callback)
 {
-    auto recordFiles = WTF::map(recordInfos, [this](const auto& recordInfo) {
-        return recordFilePath(recordInfo.key);
-    });
-
-    readRecordsInternal(WTFMove(recordFiles), [this, protectedThis = Ref { *this }, recordInfos, callback = WTFMove(callback)](auto fileDatas, auto blobDatas) mutable {
-        ASSERT(recordInfos.size() == fileDatas.size());
-        ASSERT(recordInfos.size() == blobDatas.size());
-
-        Vector<std::optional<CacheStorageRecord>> result;
-        for (size_t index = 0; index < recordInfos.size(); ++index) {
-            auto record = readRecordFromFileData(fileDatas[index].span(), WTFMove(blobDatas[index]));
-            if (record) {
-                auto recordInfo = recordInfos[index];
-                if (recordInfo.insertionTime != record->info.insertionTime || recordInfo.size != record->info.size || recordInfo.url != record->info.url)
-                    record = std::nullopt;
-                else if (recordFilePath(recordInfo.key) != recordFilePath(record->info.key))
-                    record = std::nullopt;
-                else {
-                    record->info.identifier = recordInfo.identifier;
-                    record->info.updateResponseCounter = recordInfo.updateResponseCounter;
-                }
-            } else
-                RELEASE_LOG(CacheStorage, "%p - CacheStorageDiskStore::readRecords fails to decode record from file", this);
-
-            result.append(WTFMove(record));
-        }
-        callback(WTFMove(result));
-    });
+    readRecordsInternal(recordInfos, WTFMove(callback));
 }
 
 void CacheStorageDiskStore::deleteRecords(const Vector<CacheStorageRecordInformation>& recordInfos, WriteRecordsCallback&& callback)
 {
     auto recordFiles = WTF::map(recordInfos, [&](auto recordInfo) {
-        return recordFilePath(recordInfo.key);
+        return recordFilePath(recordInfo.key());
     });
 
     m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordFiles = crossThreadCopy(WTFMove(recordFiles)), callback = WTFMove(callback)]() mutable {
@@ -451,8 +444,8 @@ void CacheStorageDiskStore::deleteRecords(const Vector<CacheStorageRecordInforma
 static Vector<uint8_t> encodeRecordHeader(CacheStorageRecord&& record)
 {
     WTF::Persistence::Encoder encoder;
-    encoder << record.info.insertionTime;
-    encoder << record.info.size;
+    encoder << record.info.insertionTime();
+    encoder << record.info.size();
     encoder << record.requestHeadersGuard;
     encoder << record.request;
     record.options.encodePersistent(encoder);
@@ -469,9 +462,9 @@ static Vector<uint8_t> encodeRecordHeader(CacheStorageRecord&& record)
     return { encoder.span() };
 }
 
-static Vector<uint8_t> encodeRecordBody(const CacheStorageRecord& record)
+static Vector<uint8_t> encodeRecordBody(const WebCore::DOMCacheEngine::ResponseBody& body)
 {
-    return WTF::switchOn(record.responseBody, [](const Ref<WebCore::FormData>& formData) {
+    return WTF::switchOn(body, [](const Ref<WebCore::FormData>& formData) {
         // FIXME: Store form data body.
         return Vector<uint8_t> { };
     }, [&](const Ref<WebCore::SharedBuffer>& buffer) {
@@ -479,6 +472,11 @@ static Vector<uint8_t> encodeRecordBody(const CacheStorageRecord& record)
     }, [](const std::nullptr_t&) {
         return Vector<uint8_t> { };
     });
+}
+
+size_t CacheStorageDiskStore::computeRealBodySizeForStorage(const WebCore::DOMCacheEngine::ResponseBody& body)
+{
+    return encodeRecordBody(body).size();
 }
 
 static Vector<uint8_t> encodeRecord(const NetworkCache::Key& key, const Vector<uint8_t>& headerData, bool isBodyInline, const Vector<uint8_t>& bodyData, const SHA1::Digest& bodyHash, FileSystem::Salt salt)
@@ -511,11 +509,11 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
     Vector<Vector<uint8_t>> recordDatas;
     Vector<Vector<uint8_t>> recordBlobDatas;
     for (auto&& record : records) {
-        recordFiles.append(recordFilePath(record.info.key));
-        auto bodyData = encodeRecordBody(record);
+        recordFiles.append(recordFilePath(record.info.key()));
+        auto bodyData = encodeRecordBody(record.responseBody);
         auto bodyHash = computeSHA1(bodyData.span(), m_salt);
         bool shouldCreateBlob = shouldStoreBodyAsBlob(bodyData);
-        auto recordInfoKey = record.info.key;
+        auto recordInfoKey = record.info.key();
         auto headerData = encodeRecordHeader(WTFMove(record));
         auto recordData = encodeRecord(recordInfoKey, headerData, !shouldCreateBlob, bodyData, bodyHash, m_salt);
         recordDatas.append(WTFMove(recordData));
@@ -533,12 +531,12 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
             auto recordBlobData = recordBlobDatas[index];
             FileSystem::makeAllDirectories(FileSystem::parentPath(recordFile));
             if (!recordBlobData.isEmpty())  {
-                if (FileSystem::overwriteEntireFile(recordBlobFilePath(recordFile), std::span(recordBlobData.data(), recordBlobData.size())) == -1) {
+                if (FileSystem::overwriteEntireFile(recordBlobFilePath(recordFile), recordBlobData) == -1) {
                     result = false;
                     continue;
                 }
             }
-            if (FileSystem::overwriteEntireFile(recordFile, std::span(recordData.data(), recordData.size())) == -1)
+            if (FileSystem::overwriteEntireFile(recordFile, recordData) == -1)
                 result = false;
         }
 
@@ -549,4 +547,3 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
 }
 
 } // namespace WebKit
-

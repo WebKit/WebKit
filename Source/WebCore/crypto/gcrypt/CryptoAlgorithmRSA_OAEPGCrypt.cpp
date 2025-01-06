@@ -44,7 +44,7 @@ static std::optional<Vector<uint8_t>> gcryptEncrypt(CryptoAlgorithmIdentifier ha
             return std::nullopt;
 
         gcry_error_t error = gcry_sexp_build(&dataSexp, nullptr, "(data(flags oaep)(hash-algo %s)(label %b)(value %b))",
-            *shaAlgorithm, labelVector.size(), labelVector.data(), plainText.size(), plainText.data());
+            shaAlgorithm->characters(), labelVector.size(), labelVector.data(), plainText.size(), plainText.data());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return std::nullopt;
@@ -82,7 +82,7 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(CryptoAlgorithmIdentifier ha
             return std::nullopt;
 
         gcry_error_t error = gcry_sexp_build(&encValSexp, nullptr, "(enc-val(flags oaep)(hash-algo %s)(label %b)(rsa(a %b)))",
-            *shaAlgorithm, labelVector.size(), labelVector.data(), cipherText.size(), cipherText.data());
+            shaAlgorithm->characters(), labelVector.size(), labelVector.data(), cipherText.size(), cipherText.data());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return std::nullopt;

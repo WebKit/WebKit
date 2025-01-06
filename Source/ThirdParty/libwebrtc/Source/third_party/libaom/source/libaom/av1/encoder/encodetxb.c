@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -10,6 +10,8 @@
  */
 
 #include "av1/encoder/encodetxb.h"
+
+#include <stdint.h>
 
 #include "aom_ports/mem.h"
 #include "av1/common/blockd.h"
@@ -38,20 +40,37 @@ void av1_alloc_txb_buf(AV1_COMP *cpi) {
       1 << num_pels_log2_lookup[cm->seq_params->sb_size];
   const int chroma_max_sb_square =
       luma_max_sb_square >> (subsampling_x + subsampling_y);
-  const int num_tcoeffs =
-      size * (luma_max_sb_square + (num_planes - 1) * chroma_max_sb_square);
+  const int total_max_sb_square =
+      (luma_max_sb_square + (num_planes - 1) * chroma_max_sb_square);
+  if ((size_t)size > SIZE_MAX / (size_t)total_max_sb_square) {
+    aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                       "A multiplication would overflow size_t");
+  }
+  const size_t num_tcoeffs = (size_t)size * (size_t)total_max_sb_square;
   const int txb_unit_size = TX_SIZE_W_MIN * TX_SIZE_H_MIN;
 
   av1_free_txb_buf(cpi);
   // TODO(jingning): This should be further reduced.
   CHECK_MEM_ERROR(cm, cpi->coeff_buffer_base,
                   aom_malloc(sizeof(*cpi->coeff_buffer_base) * size));
+  if (sizeof(*coeff_buf_pool->tcoeff) > SIZE_MAX / num_tcoeffs) {
+    aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                       "A multiplication would overflow size_t");
+  }
   CHECK_MEM_ERROR(
       cm, coeff_buf_pool->tcoeff,
       aom_memalign(32, sizeof(*coeff_buf_pool->tcoeff) * num_tcoeffs));
+  if (sizeof(*coeff_buf_pool->eobs) > SIZE_MAX / num_tcoeffs) {
+    aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                       "A multiplication would overflow size_t");
+  }
   CHECK_MEM_ERROR(
       cm, coeff_buf_pool->eobs,
       aom_malloc(sizeof(*coeff_buf_pool->eobs) * num_tcoeffs / txb_unit_size));
+  if (sizeof(*coeff_buf_pool->entropy_ctx) > SIZE_MAX / num_tcoeffs) {
+    aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                       "A multiplication would overflow size_t");
+  }
   CHECK_MEM_ERROR(cm, coeff_buf_pool->entropy_ctx,
                   aom_malloc(sizeof(*coeff_buf_pool->entropy_ctx) *
                              num_tcoeffs / txb_unit_size));
@@ -76,9 +95,13 @@ void av1_alloc_txb_buf(AV1_COMP *cpi) {
 void av1_free_txb_buf(AV1_COMP *cpi) {
   CoeffBufferPool *coeff_buf_pool = &cpi->coeff_buffer_pool;
   aom_free(cpi->coeff_buffer_base);
+  cpi->coeff_buffer_base = NULL;
   aom_free(coeff_buf_pool->tcoeff);
+  coeff_buf_pool->tcoeff = NULL;
   aom_free(coeff_buf_pool->eobs);
+  coeff_buf_pool->eobs = NULL;
   aom_free(coeff_buf_pool->entropy_ctx);
+  coeff_buf_pool->entropy_ctx = NULL;
 }
 
 static void write_golomb(aom_writer *w, int level) {
@@ -130,14 +153,14 @@ int av1_get_eob_pos_token(const int eob, int *const extra) {
 }
 
 #if CONFIG_ENTROPY_STATS
-void av1_update_eob_context(int cdf_idx, int eob, TX_SIZE tx_size,
-                            TX_CLASS tx_class, PLANE_TYPE plane,
-                            FRAME_CONTEXT *ec_ctx, FRAME_COUNTS *counts,
-                            uint8_t allow_update_cdf) {
+static void update_eob_context(int cdf_idx, int eob, TX_SIZE tx_size,
+                               TX_CLASS tx_class, PLANE_TYPE plane,
+                               FRAME_CONTEXT *ec_ctx, FRAME_COUNTS *counts,
+                               uint8_t allow_update_cdf) {
 #else
-void av1_update_eob_context(int eob, TX_SIZE tx_size, TX_CLASS tx_class,
-                            PLANE_TYPE plane, FRAME_CONTEXT *ec_ctx,
-                            uint8_t allow_update_cdf) {
+static void update_eob_context(int eob, TX_SIZE tx_size, TX_CLASS tx_class,
+                               PLANE_TYPE plane, FRAME_CONTEXT *ec_ctx,
+                               uint8_t allow_update_cdf) {
 #endif
   int eob_extra;
   const int eob_pt = av1_get_eob_pos_token(eob, &eob_extra);
@@ -219,7 +242,7 @@ void av1_update_eob_context(int eob, TX_SIZE tx_size, TX_CLASS tx_class,
   }
 }
 
-static INLINE int get_nz_map_ctx(const uint8_t *const levels,
+static inline int get_nz_map_ctx(const uint8_t *const levels,
                                  const int coeff_idx, const int bhl,
                                  const int width, const int scan_idx,
                                  const int is_eob, const TX_SIZE tx_size,
@@ -619,11 +642,11 @@ void av1_update_and_record_txb_context(int plane, int block, int blk_row,
     td->rd_counts.tx_type_used[tx_size][tx_type]++;
 
 #if CONFIG_ENTROPY_STATS
-    av1_update_eob_context(cdf_idx, eob, tx_size, tx_class, plane_type, ec_ctx,
-                           td->counts, allow_update_cdf);
+    update_eob_context(cdf_idx, eob, tx_size, tx_class, plane_type, ec_ctx,
+                       td->counts, allow_update_cdf);
 #else
-    av1_update_eob_context(eob, tx_size, tx_class, plane_type, ec_ctx,
-                           allow_update_cdf);
+    update_eob_context(eob, tx_size, tx_class, plane_type, ec_ctx,
+                       allow_update_cdf);
 #endif
 
     DECLARE_ALIGNED(16, int8_t, coeff_contexts[MAX_TX_SQUARE]);
@@ -781,8 +804,8 @@ void av1_record_txb_context(int plane, int block, int blk_row, int blk_col,
 
 #if CONFIG_ENTROPY_STATS
     FRAME_CONTEXT *ec_ctx = xd->tile_ctx;
-    av1_update_eob_context(cdf_idx, eob, tx_size, tx_class, plane_type, ec_ctx,
-                           td->counts, 0 /*allow_update_cdf*/);
+    update_eob_context(cdf_idx, eob, tx_size, tx_class, plane_type, ec_ctx,
+                       td->counts, 0 /*allow_update_cdf*/);
 
     DECLARE_ALIGNED(16, int8_t, coeff_contexts[MAX_TX_SQUARE]);
     av1_get_nz_map_contexts(levels, scan, eob, tx_size, tx_class,

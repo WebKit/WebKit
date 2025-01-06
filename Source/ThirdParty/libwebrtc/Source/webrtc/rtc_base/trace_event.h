@@ -1,24 +1,49 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file under third_party_mods/chromium or at:
-// http://src.chromium.org/svn/trunk/src/LICENSE
+/*
+ *  Copyright (c) 2024 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
 
 #ifndef RTC_BASE_TRACE_EVENT_H_
 #define RTC_BASE_TRACE_EVENT_H_
-
-#include <string>
-
-#include "rtc_base/event_tracer.h"
-
-#if defined(TRACE_EVENT0)
-#error "Another copy of trace_event.h has already been included."
-#endif
 
 #if defined(RTC_DISABLE_TRACE_EVENTS)
 #define RTC_TRACE_EVENTS_ENABLED 0
 #else
 #define RTC_TRACE_EVENTS_ENABLED 1
 #endif
+
+// IWYU pragma: begin_exports
+#if defined(RTC_USE_PERFETTO)
+#include "rtc_base/trace_categories.h"
+#endif
+#if !defined(WEBRTC_WEBKIT_BUILD)
+#include "third_party/perfetto/include/perfetto/tracing/event_context.h"
+#include "third_party/perfetto/include/perfetto/tracing/track.h"
+#include "third_party/perfetto/include/perfetto/tracing/track_event_args.h"
+#endif
+// IWYU pragma: end_exports
+
+#if !defined(RTC_USE_PERFETTO)
+#include <string>
+
+#include "rtc_base/event_tracer.h"
+
+#define RTC_NOOP() \
+  do {             \
+  } while (0)
+
+// TODO(b/42226290): Add implementation for these events with Perfetto.
+#define TRACE_EVENT_BEGIN(category, name, ...) RTC_NOOP();
+#define TRACE_EVENT_END(category, ...) RTC_NOOP();
+#define TRACE_EVENT(category, name, ...) RTC_NOOP();
+#define TRACE_EVENT_INSTANT(category, name, ...) RTC_NOOP();
+#define TRACE_EVENT_CATEGORY_ENABLED(category) RTC_NOOP();
+#define TRACE_COUNTER(category, track, ...) RTC_NOOP();
 
 // Type values for identifying types in the TraceValue union.
 #define TRACE_VALUE_TYPE_BOOL (static_cast<unsigned char>(1))
@@ -28,6 +53,10 @@
 #define TRACE_VALUE_TYPE_POINTER (static_cast<unsigned char>(5))
 #define TRACE_VALUE_TYPE_STRING (static_cast<unsigned char>(6))
 #define TRACE_VALUE_TYPE_COPY_STRING (static_cast<unsigned char>(7))
+
+#if defined(TRACE_EVENT0)
+#error "Another copy of trace_event.h has already been included."
+#endif
 
 #if RTC_TRACE_EVENTS_ENABLED
 
@@ -127,21 +156,6 @@
 // application. In Chrome's case, navigating to about:tracing will turn on
 // tracing and display data collected across all active processes.
 //
-//
-// Memory scoping note:
-// Tracing copies the pointers, not the string content, of the strings passed
-// in for category, name, and arg_names.  Thus, the following code will
-// cause problems:
-//     char* str = strdup("impprtantName");
-//     TRACE_EVENT_INSTANT0("SUBSYSTEM", str);  // BAD!
-//     free(str);                   // Trace system now has dangling pointer
-//
-// To avoid this issue with the `name` and `arg_name` parameters, use the
-// TRACE_EVENT_COPY_XXX overloads of the macros at additional runtime overhead.
-// Notes: The category must always be in a long-lived char* (i.e. static const).
-//        The `arg_values`, when used, are always deep copied with the _COPY
-//        macros.
-//
 // When are string argument values copied:
 // const char* arg_values are only referenced by default:
 //     TRACE_EVENT1("category", "name",
@@ -185,32 +199,27 @@
   INTERNAL_TRACE_EVENT_ADD_SCOPED(category, name, arg1_name, arg1_val,         \
                                   arg2_name, arg2_val)
 
+// Enum reflecting the scope of an INSTANT event. Must fit within
+// TRACE_EVENT_FLAG_SCOPE_MASK.
+static constexpr uint8_t TRACE_EVENT_SCOPE_GLOBAL = 0u << 2;
+static constexpr uint8_t TRACE_EVENT_SCOPE_PROCESS = 1u << 2;
+static constexpr uint8_t TRACE_EVENT_SCOPE_THREAD = 2u << 2;
+
 // Records a single event called "name" immediately, with 0, 1 or 2
 // associated arguments. If the category is not enabled, then this
 // does nothing.
 // - category and name strings must have application lifetime (statics or
 //   literals). They may not include " chars.
-#define TRACE_EVENT_INSTANT0(category, name)                          \
+#define TRACE_EVENT_INSTANT0(category, name, scope)                   \
   INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_INSTANT, category, name, \
                            TRACE_EVENT_FLAG_NONE)
-#define TRACE_EVENT_INSTANT1(category, name, arg1_name, arg1_val)     \
-  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_INSTANT, category, name, \
+#define TRACE_EVENT_INSTANT1(category, name, scope, arg1_name, arg1_val) \
+  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_INSTANT, category, name,    \
                            TRACE_EVENT_FLAG_NONE, arg1_name, arg1_val)
-#define TRACE_EVENT_INSTANT2(category, name, arg1_name, arg1_val, arg2_name, \
-                             arg2_val)                                       \
-  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_INSTANT, category, name,        \
-                           TRACE_EVENT_FLAG_NONE, arg1_name, arg1_val,       \
-                           arg2_name, arg2_val)
-#define TRACE_EVENT_COPY_INSTANT0(category, name)                     \
-  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_INSTANT, category, name, \
-                           TRACE_EVENT_FLAG_COPY)
-#define TRACE_EVENT_COPY_INSTANT1(category, name, arg1_name, arg1_val) \
-  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_INSTANT, category, name,  \
-                           TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val)
-#define TRACE_EVENT_COPY_INSTANT2(category, name, arg1_name, arg1_val, \
-                                  arg2_name, arg2_val)                 \
-  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_INSTANT, category, name,  \
-                           TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val, \
+#define TRACE_EVENT_INSTANT2(category, name, scope, arg1_name, arg1_val, \
+                             arg2_name, arg2_val)                        \
+  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_INSTANT, category, name,    \
+                           TRACE_EVENT_FLAG_NONE, arg1_name, arg1_val,   \
                            arg2_name, arg2_val)
 
 // Records a single BEGIN event called "name" immediately, with 0, 1 or 2
@@ -229,17 +238,6 @@
   INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_BEGIN, category, name,        \
                            TRACE_EVENT_FLAG_NONE, arg1_name, arg1_val,     \
                            arg2_name, arg2_val)
-#define TRACE_EVENT_COPY_BEGIN0(category, name)                     \
-  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_BEGIN, category, name, \
-                           TRACE_EVENT_FLAG_COPY)
-#define TRACE_EVENT_COPY_BEGIN1(category, name, arg1_name, arg1_val) \
-  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_BEGIN, category, name,  \
-                           TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val)
-#define TRACE_EVENT_COPY_BEGIN2(category, name, arg1_name, arg1_val,   \
-                                arg2_name, arg2_val)                   \
-  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_BEGIN, category, name,    \
-                           TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val, \
-                           arg2_name, arg2_val)
 
 // Records a single END event for "name" immediately. If the category
 // is not enabled, then this does nothing.
@@ -256,17 +254,6 @@
   INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_END, category, name,        \
                            TRACE_EVENT_FLAG_NONE, arg1_name, arg1_val,   \
                            arg2_name, arg2_val)
-#define TRACE_EVENT_COPY_END0(category, name)                     \
-  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_END, category, name, \
-                           TRACE_EVENT_FLAG_COPY)
-#define TRACE_EVENT_COPY_END1(category, name, arg1_name, arg1_val) \
-  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_END, category, name,  \
-                           TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val)
-#define TRACE_EVENT_COPY_END2(category, name, arg1_name, arg1_val, arg2_name, \
-                              arg2_val)                                       \
-  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_END, category, name,             \
-                           TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val,        \
-                           arg2_name, arg2_val)
 
 // Records the value of a counter called "name" immediately. Value
 // must be representable as a 32 bit integer.
@@ -275,10 +262,6 @@
 #define TRACE_COUNTER1(category, name, value)                         \
   INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_COUNTER, category, name, \
                            TRACE_EVENT_FLAG_NONE, "value",            \
-                           static_cast<int>(value))
-#define TRACE_COPY_COUNTER1(category, name, value)                    \
-  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_COUNTER, category, name, \
-                           TRACE_EVENT_FLAG_COPY, "value",            \
                            static_cast<int>(value))
 
 // Records the values of a multi-parted counter called "name" immediately.
@@ -292,12 +275,6 @@
                            TRACE_EVENT_FLAG_NONE, value1_name,               \
                            static_cast<int>(value1_val), value2_name,        \
                            static_cast<int>(value2_val))
-#define TRACE_COPY_COUNTER2(category, name, value1_name, value1_val,  \
-                            value2_name, value2_val)                  \
-  INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_COUNTER, category, name, \
-                           TRACE_EVENT_FLAG_COPY, value1_name,        \
-                           static_cast<int>(value1_val), value2_name, \
-                           static_cast<int>(value2_val))
 
 // Records the value of a counter called "name" immediately. Value
 // must be representable as a 32 bit integer.
@@ -310,10 +287,6 @@
 #define TRACE_COUNTER_ID1(category, name, id, value)                          \
   INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_COUNTER, category, name, \
                                    id, TRACE_EVENT_FLAG_NONE, "value",        \
-                                   static_cast<int>(value))
-#define TRACE_COPY_COUNTER_ID1(category, name, id, value)                     \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_COUNTER, category, name, \
-                                   id, TRACE_EVENT_FLAG_COPY, "value",        \
                                    static_cast<int>(value))
 
 // Records the values of a multi-parted counter called "name" immediately.
@@ -329,12 +302,6 @@
                           value2_name, value2_val)                            \
   INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_COUNTER, category, name, \
                                    id, TRACE_EVENT_FLAG_NONE, value1_name,    \
-                                   static_cast<int>(value1_val), value2_name, \
-                                   static_cast<int>(value2_val))
-#define TRACE_COPY_COUNTER_ID2(category, name, id, value1_name, value1_val,   \
-                               value2_name, value2_val)                       \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_COUNTER, category, name, \
-                                   id, TRACE_EVENT_FLAG_COPY, value1_name,    \
                                    static_cast<int>(value1_val), value2_name, \
                                    static_cast<int>(value2_val))
 
@@ -367,40 +334,20 @@
   INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_ASYNC_BEGIN, category,    \
                                    name, id, TRACE_EVENT_FLAG_NONE, arg1_name, \
                                    arg1_val, arg2_name, arg2_val)
-#define TRACE_EVENT_COPY_ASYNC_BEGIN0(category, name, id)                   \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_ASYNC_BEGIN, category, \
-                                   name, id, TRACE_EVENT_FLAG_COPY)
-#define TRACE_EVENT_COPY_ASYNC_BEGIN1(category, name, id, arg1_name, arg1_val) \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_ASYNC_BEGIN, category,    \
-                                   name, id, TRACE_EVENT_FLAG_COPY, arg1_name, \
-                                   arg1_val)
-#define TRACE_EVENT_COPY_ASYNC_BEGIN2(category, name, id, arg1_name, arg1_val, \
-                                      arg2_name, arg2_val)                     \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_ASYNC_BEGIN, category,    \
-                                   name, id, TRACE_EVENT_FLAG_COPY, arg1_name, \
-                                   arg1_val, arg2_name, arg2_val)
 
 // Records a single ASYNC_STEP event for `step` immediately. If the category
 // is not enabled, then this does nothing. The `name` and `id` must match the
 // ASYNC_BEGIN event above. The `step` param identifies this step within the
 // async event. This should be called at the beginning of the next phase of an
 // asynchronous operation.
-#define TRACE_EVENT_ASYNC_STEP0(category, name, id, step)                   \
+#define TRACE_EVENT_ASYNC_STEP_INTO0(category, name, id, step)              \
   INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_ASYNC_STEP, category,  \
                                    name, id, TRACE_EVENT_FLAG_NONE, "step", \
                                    step)
-#define TRACE_EVENT_ASYNC_STEP1(category, name, id, step, arg1_name, arg1_val) \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_ASYNC_STEP, category,     \
-                                   name, id, TRACE_EVENT_FLAG_NONE, "step",    \
-                                   step, arg1_name, arg1_val)
-#define TRACE_EVENT_COPY_ASYNC_STEP0(category, name, id, step)              \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_ASYNC_STEP, category,  \
-                                   name, id, TRACE_EVENT_FLAG_COPY, "step", \
-                                   step)
-#define TRACE_EVENT_COPY_ASYNC_STEP1(category, name, id, step, arg1_name,   \
+#define TRACE_EVENT_ASYNC_STEP_INTO1(category, name, id, step, arg1_name,   \
                                      arg1_val)                              \
   INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_ASYNC_STEP, category,  \
-                                   name, id, TRACE_EVENT_FLAG_COPY, "step", \
+                                   name, id, TRACE_EVENT_FLAG_NONE, "step", \
                                    step, arg1_name, arg1_val)
 
 // Records a single ASYNC_END event for "name" immediately. If the category
@@ -416,112 +363,6 @@
                                arg2_name, arg2_val)                            \
   INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_ASYNC_END, category,      \
                                    name, id, TRACE_EVENT_FLAG_NONE, arg1_name, \
-                                   arg1_val, arg2_name, arg2_val)
-#define TRACE_EVENT_COPY_ASYNC_END0(category, name, id)                   \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_ASYNC_END, category, \
-                                   name, id, TRACE_EVENT_FLAG_COPY)
-#define TRACE_EVENT_COPY_ASYNC_END1(category, name, id, arg1_name, arg1_val)   \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_ASYNC_END, category,      \
-                                   name, id, TRACE_EVENT_FLAG_COPY, arg1_name, \
-                                   arg1_val)
-#define TRACE_EVENT_COPY_ASYNC_END2(category, name, id, arg1_name, arg1_val,   \
-                                    arg2_name, arg2_val)                       \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_ASYNC_END, category,      \
-                                   name, id, TRACE_EVENT_FLAG_COPY, arg1_name, \
-                                   arg1_val, arg2_name, arg2_val)
-
-// Records a single FLOW_BEGIN event called "name" immediately, with 0, 1 or 2
-// associated arguments. If the category is not enabled, then this
-// does nothing.
-// - category and name strings must have application lifetime (statics or
-//   literals). They may not include " chars.
-// - `id` is used to match the FLOW_BEGIN event with the FLOW_END event. FLOW
-//   events are considered to match if their category, name and id values all
-//   match. `id` must either be a pointer or an integer value up to 64 bits. If
-//   it's a pointer, the bits will be xored with a hash of the process ID so
-//   that the same pointer on two different processes will not collide.
-// FLOW events are different from ASYNC events in how they are drawn by the
-// tracing UI. A FLOW defines asynchronous data flow, such as posting a task
-// (FLOW_BEGIN) and later executing that task (FLOW_END). Expect FLOWs to be
-// drawn as lines or arrows from FLOW_BEGIN scopes to FLOW_END scopes. Similar
-// to ASYNC, a FLOW can consist of multiple phases. The first phase is defined
-// by the FLOW_BEGIN calls. Additional phases can be defined using the FLOW_STEP
-// macros. When the operation completes, call FLOW_END. An async operation can
-// span threads and processes, but all events in that operation must use the
-// same `name` and `id`. Each event can have its own args.
-#define TRACE_EVENT_FLOW_BEGIN0(category, name, id)                        \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_BEGIN, category, \
-                                   name, id, TRACE_EVENT_FLAG_NONE)
-#define TRACE_EVENT_FLOW_BEGIN1(category, name, id, arg1_name, arg1_val)       \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_BEGIN, category,     \
-                                   name, id, TRACE_EVENT_FLAG_NONE, arg1_name, \
-                                   arg1_val)
-#define TRACE_EVENT_FLOW_BEGIN2(category, name, id, arg1_name, arg1_val,       \
-                                arg2_name, arg2_val)                           \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_BEGIN, category,     \
-                                   name, id, TRACE_EVENT_FLAG_NONE, arg1_name, \
-                                   arg1_val, arg2_name, arg2_val)
-#define TRACE_EVENT_COPY_FLOW_BEGIN0(category, name, id)                   \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_BEGIN, category, \
-                                   name, id, TRACE_EVENT_FLAG_COPY)
-#define TRACE_EVENT_COPY_FLOW_BEGIN1(category, name, id, arg1_name, arg1_val)  \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_BEGIN, category,     \
-                                   name, id, TRACE_EVENT_FLAG_COPY, arg1_name, \
-                                   arg1_val)
-#define TRACE_EVENT_COPY_FLOW_BEGIN2(category, name, id, arg1_name, arg1_val,  \
-                                     arg2_name, arg2_val)                      \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_BEGIN, category,     \
-                                   name, id, TRACE_EVENT_FLAG_COPY, arg1_name, \
-                                   arg1_val, arg2_name, arg2_val)
-
-// Records a single FLOW_STEP event for `step` immediately. If the category
-// is not enabled, then this does nothing. The `name` and `id` must match the
-// FLOW_BEGIN event above. The `step` param identifies this step within the
-// async event. This should be called at the beginning of the next phase of an
-// asynchronous operation.
-#define TRACE_EVENT_FLOW_STEP0(category, name, id, step)                    \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_STEP, category,   \
-                                   name, id, TRACE_EVENT_FLAG_NONE, "step", \
-                                   step)
-#define TRACE_EVENT_FLOW_STEP1(category, name, id, step, arg1_name, arg1_val) \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_STEP, category,     \
-                                   name, id, TRACE_EVENT_FLAG_NONE, "step",   \
-                                   step, arg1_name, arg1_val)
-#define TRACE_EVENT_COPY_FLOW_STEP0(category, name, id, step)               \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_STEP, category,   \
-                                   name, id, TRACE_EVENT_FLAG_COPY, "step", \
-                                   step)
-#define TRACE_EVENT_COPY_FLOW_STEP1(category, name, id, step, arg1_name,    \
-                                    arg1_val)                               \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_STEP, category,   \
-                                   name, id, TRACE_EVENT_FLAG_COPY, "step", \
-                                   step, arg1_name, arg1_val)
-
-// Records a single FLOW_END event for "name" immediately. If the category
-// is not enabled, then this does nothing.
-#define TRACE_EVENT_FLOW_END0(category, name, id)                              \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_END, category, name, \
-                                   id, TRACE_EVENT_FLAG_NONE)
-#define TRACE_EVENT_FLOW_END1(category, name, id, arg1_name, arg1_val)         \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_END, category, name, \
-                                   id, TRACE_EVENT_FLAG_NONE, arg1_name,       \
-                                   arg1_val)
-#define TRACE_EVENT_FLOW_END2(category, name, id, arg1_name, arg1_val,         \
-                              arg2_name, arg2_val)                             \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_END, category, name, \
-                                   id, TRACE_EVENT_FLAG_NONE, arg1_name,       \
-                                   arg1_val, arg2_name, arg2_val)
-#define TRACE_EVENT_COPY_FLOW_END0(category, name, id)                         \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_END, category, name, \
-                                   id, TRACE_EVENT_FLAG_COPY)
-#define TRACE_EVENT_COPY_FLOW_END1(category, name, id, arg1_name, arg1_val)    \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_END, category, name, \
-                                   id, TRACE_EVENT_FLAG_COPY, arg1_name,       \
-                                   arg1_val)
-#define TRACE_EVENT_COPY_FLOW_END2(category, name, id, arg1_name, arg1_val,    \
-                                   arg2_name, arg2_val)                        \
-  INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_FLOW_END, category, name, \
-                                   id, TRACE_EVENT_FLAG_COPY, arg1_name,       \
                                    arg1_val, arg2_name, arg2_val)
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -630,15 +471,11 @@
 #define TRACE_EVENT_PHASE_ASYNC_BEGIN ('S')
 #define TRACE_EVENT_PHASE_ASYNC_STEP ('T')
 #define TRACE_EVENT_PHASE_ASYNC_END ('F')
-#define TRACE_EVENT_PHASE_FLOW_BEGIN ('s')
-#define TRACE_EVENT_PHASE_FLOW_STEP ('t')
-#define TRACE_EVENT_PHASE_FLOW_END ('f')
 #define TRACE_EVENT_PHASE_METADATA ('M')
 #define TRACE_EVENT_PHASE_COUNTER ('C')
 
 // Flags for changing the behavior of TRACE_EVENT_API_ADD_TRACE_EVENT.
 #define TRACE_EVENT_FLAG_NONE (static_cast<unsigned char>(0))
-#define TRACE_EVENT_FLAG_COPY (static_cast<unsigned char>(1 << 0))
 #define TRACE_EVENT_FLAG_HAS_ID (static_cast<unsigned char>(1 << 1))
 #define TRACE_EVENT_FLAG_MANGLE_ID (static_cast<unsigned char>(1 << 2))
 
@@ -898,17 +735,12 @@ class TraceEndOnScopeClose {
 
 }  // namespace trace_event_internal
 }  // namespace webrtc
+
 #else
 
 ////////////////////////////////////////////////////////////////////////////////
 // This section defines no-op alternatives to the tracing macros when
 // RTC_DISABLE_TRACE_EVENTS is defined.
-
-#define RTC_NOOP() \
-  do {             \
-  } while (0)
-
-#define TRACE_STR_COPY(str) RTC_NOOP()
 
 #define TRACE_DISABLED_BY_DEFAULT(name) "disabled-by-default-" name
 
@@ -919,18 +751,12 @@ class TraceEndOnScopeClose {
 #define TRACE_EVENT2(category, name, arg1_name, arg1_val, arg2_name, arg2_val) \
   RTC_NOOP()
 
-#define TRACE_EVENT_INSTANT0(category, name) RTC_NOOP()
-#define TRACE_EVENT_INSTANT1(category, name, arg1_name, arg1_val) RTC_NOOP()
-
-#define TRACE_EVENT_INSTANT2(category, name, arg1_name, arg1_val, arg2_name, \
-                             arg2_val)                                       \
+#define TRACE_EVENT_INSTANT0(category, name, scope) RTC_NOOP()
+#define TRACE_EVENT_INSTANT1(category, name, scope, arg1_name, arg1_val) \
   RTC_NOOP()
 
-#define TRACE_EVENT_COPY_INSTANT0(category, name) RTC_NOOP()
-#define TRACE_EVENT_COPY_INSTANT1(category, name, arg1_name, arg1_val) \
-  RTC_NOOP()
-#define TRACE_EVENT_COPY_INSTANT2(category, name, arg1_name, arg1_val, \
-                                  arg2_name, arg2_val)                 \
+#define TRACE_EVENT_INSTANT2(category, name, scope, arg1_name, arg1_val, \
+                             arg2_name, arg2_val)                        \
   RTC_NOOP()
 
 #define TRACE_EVENT_BEGIN0(category, name) RTC_NOOP()
@@ -938,41 +764,23 @@ class TraceEndOnScopeClose {
 #define TRACE_EVENT_BEGIN2(category, name, arg1_name, arg1_val, arg2_name, \
                            arg2_val)                                       \
   RTC_NOOP()
-#define TRACE_EVENT_COPY_BEGIN0(category, name) RTC_NOOP()
-#define TRACE_EVENT_COPY_BEGIN1(category, name, arg1_name, arg1_val) RTC_NOOP()
-#define TRACE_EVENT_COPY_BEGIN2(category, name, arg1_name, arg1_val, \
-                                arg2_name, arg2_val)                 \
-  RTC_NOOP()
 
 #define TRACE_EVENT_END0(category, name) RTC_NOOP()
 #define TRACE_EVENT_END1(category, name, arg1_name, arg1_val) RTC_NOOP()
 #define TRACE_EVENT_END2(category, name, arg1_name, arg1_val, arg2_name, \
                          arg2_val)                                       \
   RTC_NOOP()
-#define TRACE_EVENT_COPY_END0(category, name) RTC_NOOP()
-#define TRACE_EVENT_COPY_END1(category, name, arg1_name, arg1_val) RTC_NOOP()
-#define TRACE_EVENT_COPY_END2(category, name, arg1_name, arg1_val, arg2_name, \
-                              arg2_val)                                       \
-  RTC_NOOP()
 
 #define TRACE_COUNTER1(category, name, value) RTC_NOOP()
-#define TRACE_COPY_COUNTER1(category, name, value) RTC_NOOP()
 
 #define TRACE_COUNTER2(category, name, value1_name, value1_val, value2_name, \
                        value2_val)                                           \
   RTC_NOOP()
-#define TRACE_COPY_COUNTER2(category, name, value1_name, value1_val, \
-                            value2_name, value2_val)                 \
-  RTC_NOOP()
 
 #define TRACE_COUNTER_ID1(category, name, id, value) RTC_NOOP()
-#define TRACE_COPY_COUNTER_ID1(category, name, id, value) RTC_NOOP()
 
 #define TRACE_COUNTER_ID2(category, name, id, value1_name, value1_val, \
                           value2_name, value2_val)                     \
-  RTC_NOOP()
-#define TRACE_COPY_COUNTER_ID2(category, name, id, value1_name, value1_val, \
-                               value2_name, value2_val)                     \
   RTC_NOOP()
 
 #define TRACE_EVENT_ASYNC_BEGIN0(category, name, id) RTC_NOOP()
@@ -981,18 +789,9 @@ class TraceEndOnScopeClose {
 #define TRACE_EVENT_ASYNC_BEGIN2(category, name, id, arg1_name, arg1_val, \
                                  arg2_name, arg2_val)                     \
   RTC_NOOP()
-#define TRACE_EVENT_COPY_ASYNC_BEGIN0(category, name, id) RTC_NOOP()
-#define TRACE_EVENT_COPY_ASYNC_BEGIN1(category, name, id, arg1_name, arg1_val) \
-  RTC_NOOP()
-#define TRACE_EVENT_COPY_ASYNC_BEGIN2(category, name, id, arg1_name, arg1_val, \
-                                      arg2_name, arg2_val)                     \
-  RTC_NOOP()
 
-#define TRACE_EVENT_ASYNC_STEP0(category, name, id, step) RTC_NOOP()
-#define TRACE_EVENT_ASYNC_STEP1(category, name, id, step, arg1_name, arg1_val) \
-  RTC_NOOP()
-#define TRACE_EVENT_COPY_ASYNC_STEP0(category, name, id, step) RTC_NOOP()
-#define TRACE_EVENT_COPY_ASYNC_STEP1(category, name, id, step, arg1_name, \
+#define TRACE_EVENT_ASYNC_STEP_INTO0(category, name, id, step) RTC_NOOP()
+#define TRACE_EVENT_ASYNC_STEP_INTO1(category, name, id, step, arg1_name, \
                                      arg1_val)                            \
   RTC_NOOP()
 
@@ -1002,51 +801,12 @@ class TraceEndOnScopeClose {
 #define TRACE_EVENT_ASYNC_END2(category, name, id, arg1_name, arg1_val, \
                                arg2_name, arg2_val)                     \
   RTC_NOOP()
-#define TRACE_EVENT_COPY_ASYNC_END0(category, name, id) RTC_NOOP()
-#define TRACE_EVENT_COPY_ASYNC_END1(category, name, id, arg1_name, arg1_val) \
-  RTC_NOOP()
-#define TRACE_EVENT_COPY_ASYNC_END2(category, name, id, arg1_name, arg1_val, \
-                                    arg2_name, arg2_val)                     \
-  RTC_NOOP()
-
-#define TRACE_EVENT_FLOW_BEGIN0(category, name, id) RTC_NOOP()
-#define TRACE_EVENT_FLOW_BEGIN1(category, name, id, arg1_name, arg1_val) \
-  RTC_NOOP()
-#define TRACE_EVENT_FLOW_BEGIN2(category, name, id, arg1_name, arg1_val, \
-                                arg2_name, arg2_val)                     \
-  RTC_NOOP()
-#define TRACE_EVENT_COPY_FLOW_BEGIN0(category, name, id) RTC_NOOP()
-#define TRACE_EVENT_COPY_FLOW_BEGIN1(category, name, id, arg1_name, arg1_val) \
-  RTC_NOOP()
-#define TRACE_EVENT_COPY_FLOW_BEGIN2(category, name, id, arg1_name, arg1_val, \
-                                     arg2_name, arg2_val)                     \
-  RTC_NOOP()
-
-#define TRACE_EVENT_FLOW_STEP0(category, name, id, step) RTC_NOOP()
-#define TRACE_EVENT_FLOW_STEP1(category, name, id, step, arg1_name, arg1_val) \
-  RTC_NOOP()
-#define TRACE_EVENT_COPY_FLOW_STEP0(category, name, id, step) RTC_NOOP()
-#define TRACE_EVENT_COPY_FLOW_STEP1(category, name, id, step, arg1_name, \
-                                    arg1_val)                            \
-  RTC_NOOP()
-
-#define TRACE_EVENT_FLOW_END0(category, name, id) RTC_NOOP()
-#define TRACE_EVENT_FLOW_END1(category, name, id, arg1_name, arg1_val) \
-  RTC_NOOP()
-#define TRACE_EVENT_FLOW_END2(category, name, id, arg1_name, arg1_val, \
-                              arg2_name, arg2_val)                     \
-  RTC_NOOP()
-#define TRACE_EVENT_COPY_FLOW_END0(category, name, id) RTC_NOOP()
-#define TRACE_EVENT_COPY_FLOW_END1(category, name, id, arg1_name, arg1_val) \
-  RTC_NOOP()
-#define TRACE_EVENT_COPY_FLOW_END2(category, name, id, arg1_name, arg1_val, \
-                                   arg2_name, arg2_val)                     \
-  RTC_NOOP()
 
 #define TRACE_EVENT_API_GET_CATEGORY_ENABLED ""
 
 #define TRACE_EVENT_API_ADD_TRACE_EVENT RTC_NOOP()
 
 #endif  // RTC_TRACE_EVENTS_ENABLED
+#endif  // RTC_USE_PERFETTO
 
 #endif  // RTC_BASE_TRACE_EVENT_H_

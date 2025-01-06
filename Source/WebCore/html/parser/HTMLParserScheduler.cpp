@@ -35,8 +35,11 @@
 #include "Page.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLParserScheduler);
 
 static Seconds parserTimeLimit(Page* page)
 {
@@ -72,9 +75,14 @@ PumpSession::PumpSession(unsigned& nestingLevel, Document* document)
 
 PumpSession::~PumpSession() = default;
 
+Ref<HTMLParserScheduler> HTMLParserScheduler::create(HTMLDocumentParser& parser)
+{
+    return adoptRef(*new HTMLParserScheduler(parser));
+}
+
 HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser& parser)
-    : m_parser(parser)
-    , m_parserTimeLimit(parserTimeLimit(m_parser.document()->page()))
+    : m_parser(&parser)
+    , m_parserTimeLimit(parserTimeLimit(parser.document()->page()))
     , m_continueNextChunkTimer(*this, &HTMLParserScheduler::continueNextChunkTimerFired)
     , m_isSuspendedWithActiveTimer(false)
 #if ASSERT_ENABLED
@@ -83,22 +91,26 @@ HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser& parser)
 {
 }
 
-HTMLParserScheduler::~HTMLParserScheduler()
+HTMLParserScheduler::~HTMLParserScheduler() = default;
+
+void HTMLParserScheduler::detach()
 {
     m_continueNextChunkTimer.stop();
+    m_parser = nullptr;
 }
 
 void HTMLParserScheduler::continueNextChunkTimerFired()
 {
     ASSERT(!m_suspended);
+    ASSERT(m_parser);
 
     // FIXME: The timer class should handle timer priorities instead of this code.
     // If a layout is scheduled, wait again to let the layout timer run first.
-    if (m_parser.document()->isLayoutPending()) {
+    if (m_parser->document()->isLayoutPending()) {
         m_continueNextChunkTimer.startOneShot(0_s);
         return;
     }
-    m_parser.resumeParsingAfterYield();
+    m_parser->resumeParsingAfterYield();
 }
 
 static bool parsingProgressedSinceLastYield(PumpSession& session)
@@ -115,7 +127,7 @@ bool HTMLParserScheduler::shouldYieldBeforeExecutingScript(const ScriptElement* 
 {
     // If we've never painted before and a layout is pending, yield prior to running
     // scripts to give the page a chance to paint earlier.
-    RefPtr<Document> document = m_parser.document();
+    RefPtr<Document> document = m_parser->document();
 
     session.didSeeScript = true;
 

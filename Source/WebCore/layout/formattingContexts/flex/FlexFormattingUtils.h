@@ -31,14 +31,30 @@ namespace WebCore {
 namespace Layout {
 
 class FlexFormattingContext;
+class LogicalFlexItem;
 
 // Helper class for flex layout.
 class FlexFormattingUtils {
 public:
     FlexFormattingUtils(const FlexFormattingContext&);
 
-    static bool isMainAxisParallelWithInlineAxis(const ElementBox& flexBox);
-    static bool isReversedToContentDirection(const ElementBox& flexBox);
+    static bool isMainAxisParallelWithInlineAxis(const ElementBox& flexContainer);
+    static bool isMainReversedToContentDirection(const ElementBox& flexContainer);
+    static bool areFlexLinesReversedInCrossAxis(const ElementBox& flexContainer);
+
+    // FIXME: These values should probably be computed by FlexFormattingContext and get passed in to FlexLayout.
+    static LayoutUnit mainAxisGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxWidth);
+    static LayoutUnit crossAxisGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxHeight);
+
+    static ContentPosition logicalJustifyContentPosition(const ElementBox& flexContainer, ContentPosition);
+
+    LayoutUnit usedMinimumSizeInMainAxis(const LogicalFlexItem&) const;
+    std::optional<LayoutUnit> usedMaximumSizeInMainAxis(const LogicalFlexItem&) const;
+    LayoutUnit usedMaxContentSizeInMainAxis(const LogicalFlexItem&) const;
+    LayoutUnit usedSizeInCrossAxis(const LogicalFlexItem&, LayoutUnit maxAxisConstraint) const;
+
+private:
+    const FlexFormattingContext& formattingContext() const { return m_flexFormattingContext; }
 
 private:
     const FlexFormattingContext& m_flexFormattingContext;

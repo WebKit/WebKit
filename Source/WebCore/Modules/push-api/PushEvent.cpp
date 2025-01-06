@@ -30,11 +30,11 @@
 #include <JavaScriptCore/JSArrayBuffer.h>
 #include <JavaScriptCore/JSArrayBufferView.h>
 #include <JavaScriptCore/JSCInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PushEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PushEvent);
 
 static Vector<uint8_t> dataFromPushMessageDataInit(PushMessageDataInit& data)
 {
@@ -56,7 +56,7 @@ Ref<PushEvent> PushEvent::create(const AtomString& type, PushEventInit&& initial
     std::optional<Vector<uint8_t>> data;
     if (initializer.data)
         data = dataFromPushMessageDataInit(*initializer.data);
-    return create(type, WTFMove(initializer), WTFMove(data), isTrusted);
+    return adoptRef(*new PushEvent(type, WTFMove(initializer), WTFMove(data), isTrusted));
 }
 
 Ref<PushEvent> PushEvent::create(const AtomString& type, ExtendableEventInit&& initializer, std::optional<Vector<uint8_t>>&& data, IsTrusted isTrusted)
@@ -71,12 +71,58 @@ static inline RefPtr<PushMessageData> pushMessageDataFromOptionalVector(std::opt
     return PushMessageData::create(WTFMove(*data));
 }
 
+
+PushEvent::~PushEvent() = default;
+
 PushEvent::PushEvent(const AtomString& type, ExtendableEventInit&& eventInit, std::optional<Vector<uint8_t>>&& data, IsTrusted isTrusted)
+#if ENABLE(DECLARATIVE_WEB_PUSH) && ENABLE(NOTIFICATIONS)
+    : PushEvent(type, WTFMove(eventInit), WTFMove(data), nullptr, std::nullopt, isTrusted)
+#else
     : ExtendableEvent(EventInterfaceType::PushEvent, type, WTFMove(eventInit), isTrusted)
     , m_data(pushMessageDataFromOptionalVector(WTFMove(data)))
+#endif
 {
 }
 
-PushEvent::~PushEvent() = default;
+#if ENABLE(DECLARATIVE_WEB_PUSH) && ENABLE(NOTIFICATIONS)
+
+Ref<PushEvent> PushEvent::create(const AtomString& type, ExtendableEventInit&& initializer, Ref<Notification> proposedNotification, std::optional<uint64_t> proposedAppBadge, IsTrusted isTrusted)
+{
+    return adoptRef(*new PushEvent(type, WTFMove(initializer), std::nullopt, WTFMove(proposedNotification), proposedAppBadge, isTrusted));
+}
+
+PushEvent::PushEvent(const AtomString& type, ExtendableEventInit&& eventInit, std::optional<Vector<uint8_t>>&& data, RefPtr<Notification> proposedNotification, std::optional<uint64_t> proposedAppBadge, IsTrusted isTrusted)
+    : ExtendableEvent(EventInterfaceType::PushEvent, type, WTFMove(eventInit), isTrusted)
+    , m_data(pushMessageDataFromOptionalVector(WTFMove(data)))
+    , m_proposedNotification(proposedNotification)
+    , m_proposedAppBadge(proposedAppBadge)
+{
+}
+
+Notification* PushEvent::notification()
+{
+    if (m_updatedNotification)
+        return m_updatedNotification.get();
+
+    return m_proposedNotification.get();
+}
+
+std::optional<uint64_t> PushEvent::appBadge()
+{
+    if (m_updatedAppBadge.has_value())
+        return m_updatedAppBadge.value();
+
+    return m_proposedAppBadge;
+}
+
+std::optional<NotificationData> PushEvent::updatedNotificationData() const
+{
+    if (RefPtr updatedNotification = m_updatedNotification)
+        return updatedNotification->data();
+
+    return std::nullopt;
+}
+
+#endif // ENABLE(DECLARATIVE_WEB_PUSH) && ENABLE(NOTIFICATIONS)
 
 } // namespace WebCore

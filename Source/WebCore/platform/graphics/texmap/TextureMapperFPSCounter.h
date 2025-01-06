@@ -26,16 +26,18 @@
 #include "TransformationMatrix.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class TextureMapper;
 
 class TextureMapperFPSCounter {
+    WTF_MAKE_TZONE_ALLOCATED(TextureMapperFPSCounter);
     WTF_MAKE_NONCOPYABLE(TextureMapperFPSCounter);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT TextureMapperFPSCounter();
     WEBCORE_EXPORT void updateFPSAndDisplay(TextureMapper&, const FloatPoint& = FloatPoint::zero(), const TransformationMatrix& = TransformationMatrix());
+    bool isActive() const { return m_isShowingFPS; }
 
 private:
     bool m_isShowingFPS;

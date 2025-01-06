@@ -49,6 +49,7 @@
 #include "WebProcessPool.h"
 #include <WebCore/GamepadProvider.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 // Supplements
@@ -104,6 +105,7 @@ void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextIn
 void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryClientBase* wkClient)
 {
     class HistoryClient final : public API::Client<WKContextHistoryClientBase>, public API::LegacyContextHistoryClient {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(HistoryClient);
     public:
         explicit HistoryClient(const WKContextHistoryClientBase* client)
         {
@@ -169,6 +171,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
     }
 }
 
+// FIXME: Remove when rdar://133503931 is complete.
 void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadClientBase* wkClient)
 {
     class LegacyDownloadClient final : public API::Client<WKContextDownloadClientBase>, public API::DownloadClient {
@@ -251,11 +254,6 @@ void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadCli
         WKContextRef m_context;
     };
     WebKit::toImpl(context)->setLegacyDownloadClient(adoptRef(*new LegacyDownloadClient(wkClient, context)));
-}
-
-void WKContextSetConnectionClient(WKContextRef contextRef, const WKContextConnectionClientBase* wkClient)
-{
-    WebKit::toImpl(contextRef)->initializeConnectionClient(wkClient);
 }
 
 WKDownloadRef WKContextDownloadURLRequest(WKContextRef, WKURLRequestRef)

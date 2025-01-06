@@ -54,17 +54,20 @@
 #import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-std::unique_ptr<ControlFactory> ControlFactory::createControlFactory()
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ControlFactoryMac);
+
+RefPtr<ControlFactory> ControlFactory::create()
 {
-    return makeUnique<ControlFactoryMac>();
+    return adoptRef(new ControlFactoryMac());
 }
 
-ControlFactoryMac& ControlFactoryMac::sharedControlFactory()
+ControlFactoryMac& ControlFactoryMac::shared()
 {
-    return static_cast<ControlFactoryMac&>(ControlFactory::sharedControlFactory());
+    return static_cast<ControlFactoryMac&>(ControlFactory::shared());
 }
 
 NSView *ControlFactoryMac::drawingView(const FloatRect& rect, const ControlStyle& style) const
@@ -211,6 +214,13 @@ NSSliderCell *ControlFactoryMac::sliderCell() const
     return m_sliderCell.get();
 }
 
+NSStepperCell *ControlFactoryMac::stepperCell() const
+{
+    if (!m_stepperCell)
+        m_stepperCell = adoptNS([[NSStepperCell alloc] init]);
+    return m_stepperCell.get();
+}
+
 NSTextFieldCell *ControlFactoryMac::textFieldCell() const
 {
     if (!m_textFieldCell) {
@@ -249,7 +259,7 @@ std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformImageControlsB
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformInnerSpinButton(InnerSpinButtonPart& part)
 {
-    return makeUnique<InnerSpinButtonMac>(part, *this);
+    return makeUnique<InnerSpinButtonMac>(part, *this, stepperCell());
 }
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMenuList(MenuListPart& part)

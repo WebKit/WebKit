@@ -28,6 +28,21 @@
 
 #include "pas_config_prefix.h"
 
+#include "stdbool.h"
+
+#define PAS_LOG_NONE (0)
+#define PAS_LOG_HEAP_INFRASTRUCTURE (1 << 0)
+#define PAS_LOG_BOOTSTRAP_HEAPS (1 << 1)
+#define PAS_LOG_IMMORTAL_HEAPS (1 << 2)
+#define PAS_LOG_SEGREGATED_HEAPS (1 << 3)
+#define PAS_LOG_BITFIT_HEAPS (1 << 4)
+#define PAS_LOG_LARGE_HEAPS (1 << 5)
+#define PAS_LOG_JIT_HEAPS (1 << 6)
+#define PAS_LOG_OTHER (1 << 7)  /* Heap-type agnostic */
+
+#define PAS_LOG_LEVEL (PAS_LOG_NONE)
+#define PAS_SHOULD_LOG(level) (PAS_LOG_LEVEL & level)
+
 #define LIBPAS_ENABLED 1
 
 #if defined(PAS_BMALLOC)

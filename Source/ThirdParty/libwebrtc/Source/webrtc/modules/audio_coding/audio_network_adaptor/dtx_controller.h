@@ -11,7 +11,8 @@
 #ifndef MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_DTX_CONTROLLER_H_
 #define MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_DTX_CONTROLLER_H_
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "modules/audio_coding/audio_network_adaptor/controller.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 
@@ -44,7 +45,7 @@ class DtxController final : public Controller {
  private:
   const Config config_;
   bool dtx_enabled_;
-  absl::optional<int> uplink_bandwidth_bps_;
+  std::optional<int> uplink_bandwidth_bps_;
 };
 
 }  // namespace webrtc

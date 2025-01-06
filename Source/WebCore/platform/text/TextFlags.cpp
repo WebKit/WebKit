@@ -74,6 +74,15 @@ WTF::TextStream& operator<<(TextStream& ts, Kerning kerning)
     return ts;
 }
 
+WTF::TextStream& operator<<(TextStream& ts, FontOpticalSizing opticalSizing)
+{
+    switch (opticalSizing) {
+    case FontOpticalSizing::Enabled: ts << "auto"; break;
+    case FontOpticalSizing::Disabled: ts << "none"; break;
+    }
+    return ts;
+}
+
 WTF::TextStream& operator<<(TextStream& ts, const FontVariantAlternates& alternates)
 {
     if (alternates.isNormal())
@@ -81,7 +90,7 @@ WTF::TextStream& operator<<(TextStream& ts, const FontVariantAlternates& alterna
     else {
         auto values = alternates.values();
         StringBuilder builder;
-        auto append = [&builder] <typename ...Ts> (Ts&& ...args) {
+        auto append = [&builder]<typename ...Ts>(Ts&& ...args) {
             // Separate elements with a space.
             builder.append(builder.isEmpty() ? ""_s: " "_s, std::forward<Ts>(args)...);
         };
@@ -91,9 +100,9 @@ WTF::TextStream& operator<<(TextStream& ts, const FontVariantAlternates& alterna
         if (values.historicalForms)
             append("historical-forms"_s);
         if (!values.styleset.isEmpty())
-            append("styleset("_s, makeStringByJoining(values.styleset, ", "_s), ')');
+            append("styleset("_s, interleave(values.styleset, ", "_s), ')');
         if (!values.characterVariant.isEmpty())
-            append("character-variant("_s, makeStringByJoining(values.characterVariant, ", "_s), ')');
+            append("character-variant("_s, interleave(values.characterVariant, ", "_s), ')');
         if (!values.swash.isNull())
             append("swash("_s, values.swash, ')');
         if (!values.ornaments.isNull())

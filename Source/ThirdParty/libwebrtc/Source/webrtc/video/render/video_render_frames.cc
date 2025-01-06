@@ -55,14 +55,15 @@ int32_t VideoRenderFrames::AddFrame(VideoFrame&& new_frame) {
   // really slow system never renders any frames.
   if (!incoming_frames_.empty() &&
       new_frame.render_time_ms() + kOldRenderTimestampMS < time_now) {
-    RTC_LOG(LS_WARNING) << "Too old frame, timestamp=" << new_frame.timestamp();
+    RTC_LOG(LS_WARNING) << "Too old frame, timestamp="
+                        << new_frame.rtp_timestamp();
     ++frames_dropped_;
     return -1;
   }
 
   if (new_frame.render_time_ms() > time_now + kFutureRenderTimestampMS) {
     RTC_LOG(LS_WARNING) << "Frame too long into the future, timestamp="
-                        << new_frame.timestamp();
+                        << new_frame.rtp_timestamp();
     ++frames_dropped_;
     return -1;
   }
@@ -87,8 +88,8 @@ int32_t VideoRenderFrames::AddFrame(VideoFrame&& new_frame) {
   return static_cast<int32_t>(incoming_frames_.size());
 }
 
-absl::optional<VideoFrame> VideoRenderFrames::FrameToRender() {
-  absl::optional<VideoFrame> render_frame;
+std::optional<VideoFrame> VideoRenderFrames::FrameToRender() {
+  std::optional<VideoFrame> render_frame;
   // Get the newest frame that can be released for rendering.
   while (!incoming_frames_.empty() && TimeToNextFrameRelease() <= 0) {
     if (render_frame) {

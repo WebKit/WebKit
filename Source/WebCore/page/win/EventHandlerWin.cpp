@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
+HandleUserInputEventResult EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
 {
 #if ENABLE(DRAG_SUPPORT)
     if (m_mouseDownMayStartDrag && !m_mouseDownWasInSubframe)

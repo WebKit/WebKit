@@ -33,13 +33,14 @@
 #include "WebGPUTextureDimension.h"
 #include "WebGPUTextureFormat.h"
 #include <WebGPU/WebGPU.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
 
 class ConvertToBackingContext;
 
 class TextureImpl final : public Texture {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextureImpl);
 public:
     static Ref<TextureImpl> create(WebGPUPtr<WGPUTexture>&& texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext)
     {
@@ -63,6 +64,7 @@ private:
     RefPtr<TextureView> createView(const std::optional<TextureViewDescriptor>&) final;
 
     void destroy() final;
+    void undestroy() final;
 
     void setLabelInternal(const String&) final;
 

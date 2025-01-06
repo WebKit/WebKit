@@ -27,7 +27,6 @@
 #import "WKWebProcessPlugInInternal.h"
 
 #import "APIArray.h"
-#import "WKConnectionInternal.h"
 #import "WKBundle.h"
 #import "WKBundleAPICast.h"
 #import "WKRetainPtr.h"
@@ -35,6 +34,7 @@
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 
 @interface WKWebProcessPlugInController () {
     API::ObjectStorage<WebKit::InjectedBundle> _bundle;
@@ -75,7 +75,7 @@ static void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void
 static void setUpBundleClient(WKWebProcessPlugInController *plugInController, WebKit::InjectedBundle& bundle)
 {
     WKBundleClientV1 bundleClient;
-    memset(&bundleClient, 0, sizeof(bundleClient));
+    zeroBytes(bundleClient);
 
     bundleClient.base.version = 1;
     bundleClient.base.clientInfo = (__bridge void*)plugInController;
@@ -92,13 +92,6 @@ static void setUpBundleClient(WKWebProcessPlugInController *plugInController, We
 
     setUpBundleClient(self, *_bundle);
 }
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-- (WKConnection *)connection
-{
-    return wrapper(*_bundle->webConnectionToUIProcess());
-}
-ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)parameters
 {

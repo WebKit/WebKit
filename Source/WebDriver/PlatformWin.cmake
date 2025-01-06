@@ -6,6 +6,7 @@ list(APPEND WebDriver_SOURCES
     socket/HTTPServerSocket.cpp
     socket/SessionHostSocket.cpp
 
+    win/LoggingWin.cpp
     win/WebDriverServiceWin.cpp
 )
 

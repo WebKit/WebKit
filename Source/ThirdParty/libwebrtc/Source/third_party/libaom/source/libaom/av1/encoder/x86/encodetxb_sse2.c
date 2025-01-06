@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -17,7 +17,7 @@
 #include "av1/common/av1_common_int.h"
 #include "av1/common/txb_common.h"
 
-static INLINE void load_levels_4x4x5_sse2(const uint8_t *const src,
+static inline void load_levels_4x4x5_sse2(const uint8_t *const src,
                                           const int stride,
                                           const ptrdiff_t *const offsets,
                                           __m128i *const level) {
@@ -28,7 +28,7 @@ static INLINE void load_levels_4x4x5_sse2(const uint8_t *const src,
   level[4] = load_8bit_4x4_to_1_reg_sse2(src + offsets[2], stride);
 }
 
-static INLINE void load_levels_8x2x5_sse2(const uint8_t *const src,
+static inline void load_levels_8x2x5_sse2(const uint8_t *const src,
                                           const int stride,
                                           const ptrdiff_t *const offsets,
                                           __m128i *const level) {
@@ -39,7 +39,7 @@ static INLINE void load_levels_8x2x5_sse2(const uint8_t *const src,
   level[4] = load_8bit_8x2_to_1_reg_sse2(src + offsets[2], stride);
 }
 
-static INLINE void load_levels_16x1x5_sse2(const uint8_t *const src,
+static inline void load_levels_16x1x5_sse2(const uint8_t *const src,
                                            const int stride,
                                            const ptrdiff_t *const offsets,
                                            __m128i *const level) {
@@ -50,7 +50,7 @@ static INLINE void load_levels_16x1x5_sse2(const uint8_t *const src,
   level[4] = _mm_loadu_si128((__m128i *)(src + offsets[2]));
 }
 
-static INLINE __m128i get_coeff_contexts_kernel_sse2(__m128i *const level) {
+static inline __m128i get_coeff_contexts_kernel_sse2(__m128i *const level) {
   const __m128i const_3 = _mm_set1_epi8(3);
   const __m128i const_4 = _mm_set1_epi8(4);
   __m128i count;
@@ -69,7 +69,7 @@ static INLINE __m128i get_coeff_contexts_kernel_sse2(__m128i *const level) {
   return count;
 }
 
-static INLINE void get_4_nz_map_contexts_2d(const uint8_t *levels,
+static inline void get_4_nz_map_contexts_2d(const uint8_t *levels,
                                             const int width,
                                             const ptrdiff_t *const offsets,
                                             int8_t *const coeff_contexts) {
@@ -101,7 +101,7 @@ static INLINE void get_4_nz_map_contexts_2d(const uint8_t *levels,
   coeff_contexts[0] = 0;
 }
 
-static INLINE void get_4_nz_map_contexts_ver(const uint8_t *levels,
+static inline void get_4_nz_map_contexts_ver(const uint8_t *levels,
                                              const int width,
                                              const ptrdiff_t *const offsets,
                                              int8_t *coeff_contexts) {
@@ -132,7 +132,7 @@ static INLINE void get_4_nz_map_contexts_ver(const uint8_t *levels,
   } while (col);
 }
 
-static INLINE void get_4_nz_map_contexts_hor(const uint8_t *levels,
+static inline void get_4_nz_map_contexts_hor(const uint8_t *levels,
                                              const int width,
                                              const ptrdiff_t *const offsets,
                                              int8_t *coeff_contexts) {
@@ -165,7 +165,7 @@ static INLINE void get_4_nz_map_contexts_hor(const uint8_t *levels,
   } while (col);
 }
 
-static INLINE void get_8_coeff_contexts_2d(const uint8_t *levels,
+static inline void get_8_coeff_contexts_2d(const uint8_t *levels,
                                            const int width,
                                            const ptrdiff_t *const offsets,
                                            int8_t *coeff_contexts) {
@@ -211,7 +211,7 @@ static INLINE void get_8_coeff_contexts_2d(const uint8_t *levels,
   coeff_contexts[0] = 0;
 }
 
-static INLINE void get_8_coeff_contexts_ver(const uint8_t *levels,
+static inline void get_8_coeff_contexts_ver(const uint8_t *levels,
                                             const int width,
                                             const ptrdiff_t *const offsets,
                                             int8_t *coeff_contexts) {
@@ -242,7 +242,7 @@ static INLINE void get_8_coeff_contexts_ver(const uint8_t *levels,
   } while (col);
 }
 
-static INLINE void get_8_coeff_contexts_hor(const uint8_t *levels,
+static inline void get_8_coeff_contexts_hor(const uint8_t *levels,
                                             const int width,
                                             const ptrdiff_t *const offsets,
                                             int8_t *coeff_contexts) {
@@ -275,7 +275,7 @@ static INLINE void get_8_coeff_contexts_hor(const uint8_t *levels,
   } while (col);
 }
 
-static INLINE void get_16n_coeff_contexts_2d(const uint8_t *levels,
+static inline void get_16n_coeff_contexts_2d(const uint8_t *levels,
                                              const int real_width,
                                              const int real_height,
                                              const int width, const int height,
@@ -348,7 +348,7 @@ static INLINE void get_16n_coeff_contexts_2d(const uint8_t *levels,
   coeff_contexts[0] = 0;
 }
 
-static INLINE void get_16n_coeff_contexts_ver(const uint8_t *levels,
+static inline void get_16n_coeff_contexts_ver(const uint8_t *levels,
                                               const int width, const int height,
                                               const ptrdiff_t *const offsets,
                                               int8_t *coeff_contexts) {
@@ -395,7 +395,7 @@ static INLINE void get_16n_coeff_contexts_ver(const uint8_t *levels,
   } while (--col);
 }
 
-static INLINE void get_16n_coeff_contexts_hor(const uint8_t *levels,
+static inline void get_16n_coeff_contexts_hor(const uint8_t *levels,
                                               const int width, const int height,
                                               const ptrdiff_t *const offsets,
                                               int8_t *coeff_contexts) {

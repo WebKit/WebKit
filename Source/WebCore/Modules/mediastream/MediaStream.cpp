@@ -37,11 +37,11 @@
 #include "MediaStreamTrackEvent.h"
 #include "Page.h"
 #include "RealtimeMediaSource.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStream);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStream);
 
 Ref<MediaStream> MediaStream::create(Document& document)
 {
@@ -81,8 +81,10 @@ MediaStream::MediaStream(Document& document, const Vector<Ref<MediaStreamTrack>>
     // This constructor preserves MediaStreamTrack instances and must be used by calls originating
     // from the JavaScript MediaStream constructor.
 
-    for (auto& track : tracks)
+    for (auto& track : tracks) {
+        track->setMediaStreamId(id());
         m_trackMap.add(track->id(), track);
+    }
 
     setIsActive(m_private->active());
     m_private->addObserver(*this);
@@ -94,8 +96,11 @@ MediaStream::MediaStream(Document& document, Ref<MediaStreamPrivate>&& streamPri
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    for (auto& trackPrivate : m_private->tracks())
-        m_trackMap.add(trackPrivate->id(), MediaStreamTrack::create(document, trackPrivate.get()));
+    for (auto& trackPrivate : m_private->tracks()) {
+        auto track = MediaStreamTrack::create(document, trackPrivate.get());
+        track->setMediaStreamId(id());
+        m_trackMap.add(trackPrivate->id(), WTFMove(track));
+    }
 
     setIsActive(m_private->active());
     m_private->addObserver(*this);

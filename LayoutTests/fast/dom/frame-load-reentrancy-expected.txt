@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: first error HierarchyRequestError: The operation would yield an incorrect node tree.
+CONSOLE MESSAGE: This test passes if it does not crash or overly recurse.
+CONSOLE MESSAGE: first error HierarchyRequestError: The operation would yield an incorrect node tree.
+CONSOLE MESSAGE: This test passes if it does not crash or overly recurse.
+CONSOLE MESSAGE: first error HierarchyRequestError: The operation would yield an incorrect node tree.
+CONSOLE MESSAGE: second error TypeError: Argument 1 ('node') to Node.appendChild must be an instance of Node
+CONSOLE MESSAGE: This test passes if it does not crash or overly recurse.
+

@@ -1,0 +1,29 @@
+
+PASS Property mask value 'none'
+FAIL Property mask value 'linear-gradient(to left bottom, red, blue)' assert_equals: expected "linear-gradient(to left bottom, rgb(255, 0, 0), rgb(0, 0, 255))" but got "linear-gradient(to left bottom, rgb(255, 0, 0), rgb(0, 0, 255)) 0% 0% / auto repeat border-box border-box add match-source"
+FAIL Property mask value 'linear-gradient(to left bottom, red, blue) luminance' assert_equals: expected "linear-gradient(to left bottom, rgb(255, 0, 0), rgb(0, 0, 255)) luminance" but got "linear-gradient(to left bottom, rgb(255, 0, 0), rgb(0, 0, 255)) 0% 0% / auto repeat border-box border-box add luminance"
+FAIL Property mask value 'url("https://example.com/")' assert_equals: expected "url(\"https://example.com/\")" but got "url(\"https://example.com/\") 0% 0% / auto repeat border-box border-box add match-source"
+FAIL Property mask value 'linear-gradient(to left bottom, red, blue) 1px 2px' assert_equals: expected "linear-gradient(to left bottom, rgb(255, 0, 0), rgb(0, 0, 255)) 1px 2px" but got "linear-gradient(to left bottom, rgb(255, 0, 0), rgb(0, 0, 255)) 1px 2px / auto repeat border-box border-box add match-source"
+FAIL Property mask value 'url("https://example.com/") 1px 2px / contain' assert_equals: expected "url(\"https://example.com/\") 1px 2px / contain" but got "url(\"https://example.com/\") 1px 2px / contain repeat border-box border-box add match-source"
+FAIL Property mask value 'repeat-y' assert_equals: expected "repeat-y" but got "none"
+PASS Property mask value 'border-box'
+FAIL Property mask value 'linear-gradient(to left bottom, red, blue) padding-box' assert_equals: expected "linear-gradient(to left bottom, rgb(255, 0, 0), rgb(0, 0, 255)) padding-box" but got "linear-gradient(to left bottom, rgb(255, 0, 0), rgb(0, 0, 255)) 0% 0% / auto repeat padding-box padding-box add match-source"
+FAIL Property mask value 'content-box' assert_equals: expected "content-box" but got "none"
+FAIL Property mask value 'url("https://example.com/") fill-box' assert_true: 'url("https://example.com/") fill-box' is a supported value for mask. expected true got false
+FAIL Property mask value 'linear-gradient(to left bottom, red, blue) stroke-box' assert_true: 'linear-gradient(to left bottom, red, blue) stroke-box' is a supported value for mask. expected true got false
+FAIL Property mask value 'view-box' assert_true: 'view-box' is a supported value for mask. expected true got false
+FAIL Property mask value 'no-clip' assert_equals: expected "no-clip" but got "none"
+FAIL Property mask value 'url("https://example.com/") add' assert_equals: expected "url(\"https://example.com/\")" but got "url(\"https://example.com/\") 0% 0% / auto repeat border-box border-box add match-source"
+FAIL Property mask value 'subtract' assert_equals: expected "subtract" but got "none"
+FAIL Property mask value 'url("https://example.com/") intersect' assert_equals: expected "url(\"https://example.com/\") intersect" but got "url(\"https://example.com/\") 0% 0% / auto repeat border-box border-box intersect match-source"
+FAIL Property mask value 'linear-gradient(to left bottom, red, blue) exclude' assert_equals: expected "linear-gradient(to left bottom, rgb(255, 0, 0), rgb(0, 0, 255)) exclude" but got "linear-gradient(to left bottom, rgb(255, 0, 0), rgb(0, 0, 255)) 0% 0% / auto repeat border-box border-box exclude match-source"
+FAIL Property mask value 'alpha' assert_equals: expected "alpha" but got "none"
+FAIL Property mask value 'url("https://example.com/") alpha' assert_equals: expected "url(\"https://example.com/\") alpha" but got "url(\"https://example.com/\") 0% 0% / auto repeat border-box border-box add alpha"
+PASS Property mask value 'border-box border-box'
+FAIL Property mask value 'content-box content-box' assert_equals: expected "content-box" but got "none"
+FAIL Property mask value 'border-box content-box' assert_equals: expected "border-box content-box" but got "none"
+FAIL Property mask value 'border-box no-clip' assert_equals: expected "no-clip" but got "none"
+FAIL Property mask value 'intersect no-clip space round 1px 2px / contain stroke-box linear-gradient(to left bottom, red, blue) luminance' assert_true: 'intersect no-clip space round 1px 2px / contain stroke-box linear-gradient(to left bottom, red, blue) luminance' is a supported value for mask. expected true got false
+FAIL Property mask value 'intersect no-clip space round 1px 2px / contain view-box, stroke-box linear-gradient(to left bottom, red, blue) luminance' assert_true: 'intersect no-clip space round 1px 2px / contain view-box, stroke-box linear-gradient(to left bottom, red, blue) luminance' is a supported value for mask. expected true got false
+FAIL Property mask value 'none alpha' assert_equals: expected "alpha" but got "none"
+

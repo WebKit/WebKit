@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -102,7 +102,7 @@ extern "C" {
 
 /*!\brief Decorator indicating a function is deprecated */
 #ifndef AOM_DEPRECATED
-#if defined(__GNUC__) && __GNUC__
+#if defined(__GNUC__)
 #define AOM_DEPRECATED __attribute__((deprecated))
 #elif defined(_MSC_VER)
 #define AOM_DEPRECATED
@@ -112,7 +112,7 @@ extern "C" {
 #endif /* AOM_DEPRECATED */
 
 #ifndef AOM_DECLSPEC_DEPRECATED
-#if defined(__GNUC__) && __GNUC__
+#if defined(__GNUC__)
 #define AOM_DECLSPEC_DEPRECATED /**< \copydoc #AOM_DEPRECATED */
 #elif defined(_MSC_VER)
 /*!\brief \copydoc #AOM_DEPRECATED */
@@ -132,7 +132,7 @@ extern "C" {
 
 /*!\brief Decorator indicating that given struct/union/enum is packed */
 #ifndef ATTRIBUTE_PACKED
-#if defined(__GNUC__) && __GNUC__
+#if defined(__GNUC__)
 #define ATTRIBUTE_PACKED __attribute__((packed))
 #elif defined(_MSC_VER)
 #define ATTRIBUTE_PACKED
@@ -223,9 +223,26 @@ typedef long aom_codec_caps_t;
  *  Certain codec features must be known at initialization time, to allow for
  *  proper memory allocation.
  *
- *  The available flags are specified by AOM_CODEC_USE_* defines.
+ *  The available flags are specified by AOM_CODEC_USE_* defines. The bits are
+ *  allocated as follows:
+ *      0x1 -     0x80: codec (common to decoder and encoder)
+ *    0x100 -   0x8000: decoder
+ *  0x10000 - 0x800000: encoder
  */
 typedef long aom_codec_flags_t;
+
+// Experimental feature policy
+//
+// New features may be marked as experimental. Experimental features are not
+// part of the stable API and may be modified or removed in a future release.
+// Experimental features are made available only if you pass the
+// AOM_CODEC_USE_EXPERIMENTAL flag to the codec init function.
+//
+// If you use experimental features, you must rebuild your code whenever you
+// update to a new libaom release, and you must be prepared to modify your code
+// when an experimental feature you use is modified or removed. If you are not
+// sure, DO NOT use experimental features.
+#define AOM_CODEC_USE_EXPERIMENTAL 0x1 /**< Enables experimental features */
 
 /*!\brief Time Stamp Type
  *

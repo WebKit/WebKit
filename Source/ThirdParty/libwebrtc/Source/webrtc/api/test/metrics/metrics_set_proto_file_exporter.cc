@@ -15,6 +15,8 @@
 #include <string>
 #include <utility>
 
+#include "absl/strings/string_view.h"
+#include "api/array_view.h"
 #include "api/test/metrics/metric.h"
 #include "rtc_base/logging.h"
 #include "test/testsupport/file_utils.h"

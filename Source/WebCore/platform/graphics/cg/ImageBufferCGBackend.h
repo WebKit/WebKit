@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,11 @@
 
 #if USE(CG)
 
+#include "GraphicsContextCG.h"
 #include "ImageBufferBackend.h"
-#include <memory>
 #include <wtf/Forward.h>
 
 namespace WebCore {
-
-class GraphicsContextCG;
 
 class WEBCORE_EXPORT ImageBufferCGBackend : public ImageBufferBackend {
 public:
@@ -41,14 +39,14 @@ public:
     static unsigned calculateBytesPerRow(const IntSize& backendSize);
 
 protected:
-    using ImageBufferBackend::ImageBufferBackend;
+    ImageBufferCGBackend(const Parameters&, std::unique_ptr<GraphicsContextCG>&& = nullptr);
     void applyBaseTransform(GraphicsContextCG&) const;
 
     std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() override;
 
     String debugDescription() const override;
 
-    mutable std::unique_ptr<GraphicsContextCG> m_context;
+    std::unique_ptr<GraphicsContextCG> m_context;
 };
 
 } // namespace WebCore

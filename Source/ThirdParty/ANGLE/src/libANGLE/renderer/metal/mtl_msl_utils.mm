@@ -11,7 +11,7 @@
 #include <variant>
 #include "common/string_utils.h"
 #include "common/utilities.h"
-#include "compiler/translator/msl/Name.h"
+#include "compiler/translator/Name.h"
 #include "compiler/translator/msl/TranslatorMSL.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/ShaderMtl.h"
@@ -140,6 +140,7 @@ void TranslatedShaderInfo::reset()
     metalShaderSource    = nullptr;
     metalLibrary         = nil;
     hasUBOArgumentBuffer = false;
+    hasIsnanOrIsinf      = false;
     hasInvariant         = false;
     for (mtl::SamplerBinding &binding : actualSamplerBindings)
     {
@@ -595,9 +596,8 @@ void GenerateTransformFeedbackEmulationOutputs(
     *vertexShader = SubstituteTransformFeedbackMarkers(*vertexShader, xfbBindings, xfbOut);
 }
 
-angle::Result MTLGetMSL(Context *context,
+angle::Result MTLGetMSL(const angle::FeaturesMtl &features,
                         const gl::ProgramExecutable &executable,
-                        const gl::Caps &glCaps,
                         const gl::ShaderMap<std::string> &shaderSources,
                         const gl::ShaderMap<SharedCompiledShaderStateMtl> &shadersState,
                         gl::ShaderMap<TranslatedShaderInfo> *mslShaderInfoOut)
@@ -660,9 +660,8 @@ angle::Result MTLGetMSL(Context *context,
         else
         {
             ASSERT(type == gl::ShaderType::Fragment);
-            bool defineAlpha0 =
-                context->getDisplay()->getFeatures().emulateAlphaToCoverage.enabled ||
-                context->getDisplay()->getFeatures().generateShareableShaders.enabled;
+            const bool defineAlpha0 = features.emulateAlphaToCoverage.enabled ||
+                                      features.generateShareableShaders.enabled;
             source = UpdateFragmentShaderOutputs(shaderSources[type], executable, defineAlpha0);
         }
         (*mslShaderInfoOut)[type].metalShaderSource =
@@ -699,7 +698,8 @@ angle::Result MTLGetMSL(Context *context,
         {
             mslShaderInfoOut->at(type).actualImageBindings[i] = reflection->getRWTextureBinding(i);
         }
-        (*mslShaderInfoOut)[type].hasInvariant = reflection->hasInvariance;
+        (*mslShaderInfoOut)[type].hasIsnanOrIsinf = reflection->hasIsnanOrIsinf;
+        (*mslShaderInfoOut)[type].hasInvariant    = reflection->hasInvariance;
     }
     return angle::Result::Continue;
 }

@@ -33,7 +33,7 @@
 #include <WebCore/MDNSRegisterError.h>
 #include <pal/SessionID.h>
 #include <wtf/UUID.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 
@@ -46,6 +46,16 @@ NetworkMDNSRegister::NetworkMDNSRegister(NetworkConnectionToWebProcess& connecti
 }
 
 NetworkMDNSRegister::~NetworkMDNSRegister() = default;
+
+void NetworkMDNSRegister::ref() const
+{
+    m_connection->ref();
+}
+
+void NetworkMDNSRegister::deref() const
+{
+    m_connection->deref();
+}
 
 bool NetworkMDNSRegister::hasRegisteredName(const String& name) const
 {
@@ -104,7 +114,7 @@ static void registerMDNSNameCallback(DNSServiceRef service, DNSRecordRef record,
     MDNS_RELEASE_LOG_IN_CALLBACK(request->sessionID, "registerMDNSNameCallback with error %d", errorCode);
 
     if (errorCode) {
-        request->connection->mdnsRegister().closeAndForgetService(service);
+        request->connection->protectedMDNSRegister()->closeAndForgetService(service);
         request->completionHandler(request->name, WebCore::MDNSRegisterError::DNSSD);
         return;
     }

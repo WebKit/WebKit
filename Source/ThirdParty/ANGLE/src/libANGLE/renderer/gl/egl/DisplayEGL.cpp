@@ -41,10 +41,6 @@ std::vector<EGLint> RenderableTypesFromPlatformAttrib(const rx::FunctionsEGL *eg
     std::vector<EGLint> renderableTypes;
     switch (platformAttrib)
     {
-        case EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE:
-            renderableTypes.push_back(EGL_OPENGL_BIT);
-            break;
-
         case EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE:
         {
             static_assert(EGL_OPENGL_ES3_BIT == EGL_OPENGL_ES3_BIT_KHR,
@@ -324,7 +320,7 @@ egl::Error DisplayEGL::initialize(egl::Display *display)
         return egl::EglNotInitialized() << "EGL >= 1.4 is required";
     }
 
-    // https://anglebug.com/7664
+    // https://anglebug.com/42266130
     // TODO: turn this into a feature so we can communicate that this is disabled on purpose.
     mSupportsDmaBufImportModifiers = mEGL->hasExtension("EGL_EXT_image_dma_buf_import_modifiers");
 
@@ -941,7 +937,7 @@ egl::Error DisplayEGL::createRenderer(EGLContext shareContext,
         ASSERT(shareContext == EGL_NO_CONTEXT);
         ASSERT(!makeNewContextCurrent);
         // TODO(penghuang): Should we consider creating a share context to avoid querying and
-        // restoring GL context state? http://anglebug.com/5509
+        // restoring GL context state? http://anglebug.com/42264046
         context = mEGL->getCurrentContext();
         ASSERT(context != EGL_NO_CONTEXT);
     }

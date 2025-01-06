@@ -20,9 +20,9 @@
 #include "include/core/SkSurface.h"
 #include "include/core/SkTypes.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #if defined(SK_GRAPHITE)
 #include "include/gpu/graphite/Context.h"
 #include "include/gpu/graphite/Surface.h"
@@ -169,7 +169,7 @@ static uint32_t premul(uint32_t color) {
     c0 = SkMulDiv255Ceiling(c0, a);
     c1 = SkMulDiv255Ceiling(c1, a);
     c2 = SkMulDiv255Ceiling(c2, a);
-    return SkPackARGB32NoCheck(a, c0, c1, c2);
+    return SkPackARGB32(a, c0, c1, c2);
 }
 
 static SkPMColor convert_to_PMColor(SkColorType ct, SkAlphaType at, uint32_t color) {
@@ -502,7 +502,7 @@ static void test_write_pixels(skiatest::Reporter* reporter,
 DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(WritePixels_Graphite,
                                          reporter,
                                          context,
-                                         CtsEnforcement::kNextRelease) {
+                                         CtsEnforcement::kApiLevel_V) {
     std::unique_ptr<skgpu::graphite::Recorder> recorder = context->makeRecorder();
     test_write_pixels(reporter, recorder.get(), 1);
 }

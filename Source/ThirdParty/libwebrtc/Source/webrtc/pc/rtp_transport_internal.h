@@ -72,7 +72,7 @@ class RtpTransportInternal : public sigslot::has_slots<> {
   // Called whenever a RTP packet that can not be demuxed by the transport is
   // received.
   void SetUnDemuxableRtpPacketReceivedHandler(
-      absl::AnyInvocable<void(webrtc::RtpPacketReceived&)> callback) {
+      absl::AnyInvocable<void(RtpPacketReceived&)> callback) {
     callback_undemuxable_rtp_packet_received_ = std::move(callback);
   }
 
@@ -80,7 +80,7 @@ class RtpTransportInternal : public sigslot::has_slots<> {
   // The argument is an optional network route.
   void SubscribeNetworkRouteChanged(
       const void* tag,
-      absl::AnyInvocable<void(absl::optional<rtc::NetworkRoute>)> callback) {
+      absl::AnyInvocable<void(std::optional<rtc::NetworkRoute>)> callback) {
     callback_list_network_route_changed_.AddReceiver(tag, std::move(callback));
   }
   void UnsubscribeNetworkRouteChanged(const void* tag) {
@@ -146,7 +146,7 @@ class RtpTransportInternal : public sigslot::has_slots<> {
   void NotifyUnDemuxableRtpPacketReceived(RtpPacketReceived& packet) {
     callback_undemuxable_rtp_packet_received_(packet);
   }
-  void SendNetworkRouteChanged(absl::optional<rtc::NetworkRoute> route) {
+  void SendNetworkRouteChanged(std::optional<rtc::NetworkRoute> route) {
     callback_list_network_route_changed_.Send(route);
   }
   void SendWritableState(bool state) {
@@ -160,10 +160,10 @@ class RtpTransportInternal : public sigslot::has_slots<> {
   CallbackList<bool> callback_list_ready_to_send_;
   CallbackList<rtc::CopyOnWriteBuffer*, int64_t>
       callback_list_rtcp_packet_received_;
-  absl::AnyInvocable<void(webrtc::RtpPacketReceived&)>
+  absl::AnyInvocable<void(RtpPacketReceived&)>
       callback_undemuxable_rtp_packet_received_ =
           [](RtpPacketReceived& packet) {};
-  CallbackList<absl::optional<rtc::NetworkRoute>>
+  CallbackList<std::optional<rtc::NetworkRoute>>
       callback_list_network_route_changed_;
   CallbackList<bool> callback_list_writable_state_;
   CallbackList<const rtc::SentPacket&> callback_list_sent_packet_;

@@ -110,11 +110,8 @@ private:
     bool isSimpleEditCommand() const override { return true; }
 };
 
-inline SimpleEditCommand* toSimpleEditCommand(EditCommand* command)
-{
-    ASSERT(command);
-    ASSERT_WITH_SECURITY_IMPLICATION(command->isSimpleEditCommand());
-    return static_cast<SimpleEditCommand*>(command);
-}
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SimpleEditCommand)
+    static bool isType(const WebCore::EditCommand& command) { return command.isSimpleEditCommand(); }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -8,9 +8,13 @@
 #ifndef TriangulatingPathRenderer_DEFINED
 #define TriangulatingPathRenderer_DEFINED
 
+#include "include/core/SkTypes.h"
+
 #if !defined(SK_ENABLE_OPTIMIZE_SIZE)
 
 #include "src/gpu/ganesh/PathRenderer.h"
+
+class GrStyledShape;
 
 namespace skgpu::ganesh {
 
@@ -21,7 +25,7 @@ namespace skgpu::ganesh {
 class TriangulatingPathRenderer final : public PathRenderer {
 public:
     TriangulatingPathRenderer();
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     void setMaxVerbCount(int maxVerbCount) { fMaxVerbCount = maxVerbCount; }
 #endif
 

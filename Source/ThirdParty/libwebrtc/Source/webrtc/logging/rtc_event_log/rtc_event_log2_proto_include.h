@@ -11,15 +11,11 @@
 #ifndef LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG2_PROTO_INCLUDE_H_
 #define LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG2_PROTO_INCLUDE_H_
 
-#include "rtc_base/ignore_wundef.h"
-
 // *.pb.h files are generated at build-time by the protobuf compiler.
-RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/logging/rtc_event_log/rtc_event_log2.pb.h"
 #else
 #include "logging/rtc_event_log/rtc_event_log2.pb.h"
 #endif
-RTC_POP_IGNORING_WUNDEF()
 
 #endif  //  LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG2_PROTO_INCLUDE_H_

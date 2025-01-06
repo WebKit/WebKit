@@ -1,4 +1,4 @@
-add_definitions("-ObjC++ -std=c++2a -D__STDC_WANT_LIB_EXT1__")
+add_definitions("-ObjC++ -std=c++2b -D__STDC_WANT_LIB_EXT1__")
 find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(CARBON_LIBRARY Carbon)
 find_library(CORESERVICES_LIBRARY CoreServices)
@@ -141,11 +141,11 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/Daemon"
     "${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/XPCService"
     "${WEBKIT_DIR}/Shared/mac"
-    "${WEBKIT_DIR}/Shared/mac/MediaFormatReader"
     "${WEBKIT_DIR}/Shared/Scrolling"
     "${WEBKIT_DIR}/UIProcess/Cocoa/GroupActivities"
     "${WEBKIT_DIR}/UIProcess/Media"
     "${WEBKIT_DIR}/UIProcess/WebAuthentication/fido"
+    "${WEBKIT_DIR}/WebProcess/DigitalCredentials"
     "${WEBKIT_DIR}/WebProcess/WebAuthentication"
     "${WEBKIT_DIR}/WebProcess/cocoa"
     "${WEBKIT_DIR}/WebProcess/mac"
@@ -295,7 +295,6 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
 
     Shared/API/c/mac/WKBaseMac.h
     Shared/API/c/mac/WKCertificateInfoMac.h
-    Shared/API/c/mac/WKMediaFormatReader.h
     Shared/API/c/mac/WKObjCTypeWrapperRef.h
     Shared/API/c/mac/WKURLRequestNS.h
     Shared/API/c/mac/WKURLResponseNS.h
@@ -329,6 +328,7 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/WKContentRuleListStore.h
     UIProcess/API/Cocoa/WKContentRuleListStorePrivate.h
     UIProcess/API/Cocoa/WKContentWorld.h
+    UIProcess/API/Cocoa/WKContentWorldConfiguration.h
     UIProcess/API/Cocoa/WKContentWorldPrivate.h
     UIProcess/API/Cocoa/WKContextMenuElementInfo.h
     UIProcess/API/Cocoa/WKContextMenuElementInfoPrivate.h
@@ -811,7 +811,7 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
             VERBATIM)
         list(APPEND WebKit_SB_FILES ${WebKit_RESOURCES_DIR}/com.apple.WebKit.GPUProcess.sb)
     endif ()
-    if (ENABLE_BUILT_IN_NOTIFICATIONS)
+    if (ENABLE_WEB_PUSH_NOTIFICATIONS)
         add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebKit.webpushd.mac.sb COMMAND
             grep -o "^[^;]*" ${WEBKIT_DIR}/webpushd/mac/com.apple.WebKit.webpushd.mac.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} -I ${WEBKIT_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebKit.webpushd.mac.sb
             VERBATIM)

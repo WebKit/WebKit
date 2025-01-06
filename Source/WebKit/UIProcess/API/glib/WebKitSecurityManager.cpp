@@ -70,7 +70,7 @@ WebKitSecurityManager* webkitSecurityManagerCreate(WebKitWebContext* webContext)
 static void registerSecurityPolicyForURIScheme(WebKitSecurityManager* manager, const char* scheme, SecurityPolicy policy)
 {
     String urlScheme = String::fromUTF8(scheme);
-    auto& processPool = webkitWebContextGetProcessPool(manager->priv->webContext);
+    Ref processPool = webkitWebContextGetProcessPool(manager->priv->webContext);
 
     // We keep the WebCore::LegacySchemeRegistry of the UI process in sync with the
     // web process one, so that we can return the SecurityPolicy for
@@ -78,27 +78,27 @@ static void registerSecurityPolicyForURIScheme(WebKitSecurityManager* manager, c
     switch (policy) {
     case SecurityPolicyLocal:
         WebCore::LegacySchemeRegistry::registerURLSchemeAsLocal(urlScheme);
-        processPool.registerURLSchemeAsLocal(urlScheme);
+        processPool->registerURLSchemeAsLocal(urlScheme);
         break;
     case SecurityPolicyNoAccess:
         WebCore::LegacySchemeRegistry::registerURLSchemeAsNoAccess(urlScheme);
-        processPool.registerURLSchemeAsNoAccess(urlScheme);
+        processPool->registerURLSchemeAsNoAccess(urlScheme);
         break;
     case SecurityPolicyDisplayIsolated:
         WebCore::LegacySchemeRegistry::registerURLSchemeAsDisplayIsolated(urlScheme);
-        processPool.registerURLSchemeAsDisplayIsolated(urlScheme);
+        processPool->registerURLSchemeAsDisplayIsolated(urlScheme);
         break;
     case SecurityPolicySecure:
         WebCore::LegacySchemeRegistry::registerURLSchemeAsSecure(urlScheme);
-        processPool.registerURLSchemeAsSecure(urlScheme);
+        processPool->registerURLSchemeAsSecure(urlScheme);
         break;
     case SecurityPolicyCORSEnabled:
         WebCore::LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
-        processPool.registerURLSchemeAsCORSEnabled(urlScheme);
+        processPool->registerURLSchemeAsCORSEnabled(urlScheme);
         break;
     case SecurityPolicyEmptyDocument:
         WebCore::LegacySchemeRegistry::registerURLSchemeAsEmptyDocument(urlScheme);
-        processPool.registerURLSchemeAsEmptyDocument(urlScheme);
+        processPool->registerURLSchemeAsEmptyDocument(urlScheme);
         break;
     }
 }

@@ -45,10 +45,8 @@ static char const* textItem(size_t index)
 static CString toUpper(const CString& lower)
 {
     CString upper = lower;
-
-    for (char* buffer = upper.mutableData(); *buffer; ++buffer)
-        *buffer = toASCIIUpper(*buffer);
-
+    for (auto& character : upper.mutableSpan())
+        character = toASCIIUpper(character);
     return upper;
 }
 

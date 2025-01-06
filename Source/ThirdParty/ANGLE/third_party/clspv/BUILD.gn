@@ -222,7 +222,7 @@ source_set("clspv_passes") {
     ":clspv_reflection",
     "gn/llvm/config:llvm-config",
     "gn/llvm/sources:clspv_llvm_components",
-    "//third_party/vulkan-deps/spirv-headers/src:spv_headers",
+    "//third_party/spirv-headers/src:spv_headers",
   ]
 
   configs += [
@@ -359,7 +359,7 @@ executable("clspv-reflection") {
     ":clspv_core",
     ":clspv_reflection",
     "${spirv_tools_dir}:spvtools_link",
-    "//third_party/vulkan-deps/spirv-headers/src:spv_headers",
+    "//third_party/spirv-headers/src:spv_headers",
   ]
 
   include_dirs = [

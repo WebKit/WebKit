@@ -28,9 +28,10 @@
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(2022_GLIB_API)
 #include "WebKitNetworkSession.h"
@@ -61,6 +62,7 @@ enum {
 
 enum {
     CREATE_WEB_VIEW,
+    WILL_CLOSE,
 
     LAST_SIGNAL
 };
@@ -72,12 +74,12 @@ struct _WebKitAutomationSessionPrivate {
     CString id;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitAutomationSession, webkit_automation_session, G_TYPE_OBJECT, GObject)
 
 class AutomationSessionClient final : public API::AutomationSessionClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AutomationSessionClient);
 public:
     explicit AutomationSessionClient(WebKitAutomationSession* session)
         : m_session(session)
@@ -319,6 +321,26 @@ static void webkit_automation_session_class_init(WebKitAutomationSessionClass* s
         g_cclosure_marshal_generic,
         WEBKIT_TYPE_WEB_VIEW, 0,
         G_TYPE_NONE);
+
+
+    /**
+     * WebKitAutomationSession::will-close:
+     * @session: a #WebKitAutomationSession
+     *
+     * This signal is emitted when the given automation session is about to finish.
+     * It allows clients to perform any cleanup tasks before the session is destroyed.
+     *
+     * Since: 2.46
+     */
+    signals[WILL_CLOSE] = g_signal_new(
+        "will-close",
+        G_TYPE_FROM_CLASS(gObjectClass),
+        G_SIGNAL_RUN_LAST,
+        0,
+        nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 0,
+        G_TYPE_NONE);
 }
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -331,11 +353,11 @@ static WebKitNetworkProxyMode parseProxyCapabilities(const Inspector::RemoteInsp
         return WEBKIT_NETWORK_PROXY_MODE_NO_PROXY;
 
     if (!proxy.ignoreAddressList.isEmpty()) {
-        GUniquePtr<char*> ignoreAddressList(static_cast<char**>(g_new0(char*, proxy.ignoreAddressList.size() + 1)));
+        Vector<const char*> ignoreAddressList(proxy.ignoreAddressList.size() + 1);
         unsigned i = 0;
         for (const auto& ignoreAddress : proxy.ignoreAddressList)
-            ignoreAddressList.get()[i++] = g_strdup(ignoreAddress.utf8().data());
-        *settings = webkit_network_proxy_settings_new(nullptr, ignoreAddressList.get());
+            ignoreAddressList[i++] = ignoreAddress.utf8().data();
+        *settings = webkit_network_proxy_settings_new(nullptr, ignoreAddressList.data());
     } else
         *settings = webkit_network_proxy_settings_new(nullptr, nullptr);
 
@@ -385,11 +407,11 @@ WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webCont
                 settings.defaultProxyURL = capabilities.proxy->autoconfigURL->utf8();
             if (!settings.isEmpty()) {
 #if ENABLE(2022_GLIB_API)
-                auto& dataStore = webkitWebsiteDataManagerGetDataStore(webkit_network_session_get_website_data_manager(networkSession));
+                Ref dataStore = webkitWebsiteDataManagerGetDataStore(webkit_network_session_get_website_data_manager(networkSession));
 #else
-                auto& dataStore = webkitWebsiteDataManagerGetDataStore(webkit_web_context_get_website_data_manager(webContext));
+                Ref dataStore = webkitWebsiteDataManagerGetDataStore(webkit_web_context_get_website_data_manager(webContext));
 #endif
-                dataStore.setNetworkProxySettings(WTFMove(settings));
+                dataStore->setNetworkProxySettings(WTFMove(settings));
             }
         } else {
             WebKitNetworkProxySettings* proxySettings = nullptr;

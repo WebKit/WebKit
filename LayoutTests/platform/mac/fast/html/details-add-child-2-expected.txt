@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DETAILS} at (0,0) size 784x36
-        RenderBlock {SUMMARY} at (0,0) size 784x18
-          RenderDetailsMarker {DIV} at (0,3) size 11x11: down
-          RenderText {#text} at (16,0) size 61x18
-            text run at (16,0) width 61: "summary"
-        RenderBlock (anonymous) at (0,18) size 784x18
+        RenderListItem {SUMMARY} at (0,0) size 784x18
+          RenderListMarker at (0,0) size 15x18: "\x{25BE}"
+          RenderText {#text} at (14,0) size 60x18
+            text run at (14,0) width 60: "summary"
+        RenderBlock {SLOT} at (0,18) size 784x18
           RenderInline {B} at (0,0) size 144x18
             RenderText {#text} at (0,0) size 144x18
               text run at (0,0) width 144: "should have bold test"

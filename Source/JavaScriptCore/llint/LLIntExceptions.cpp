@@ -143,6 +143,24 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchAll(OpcodeSize size
     RELEASE_ASSERT_NOT_REACHED();
     return { };
 }
+
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmTryTable(WasmOpcodeID opcode, OpcodeSize size)
+{
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        return handleWasmTryTableThunk(opcode, size);
+#endif
+    switch (size) {
+    case OpcodeSize::Narrow:
+        return LLInt::getCodeRef<ExceptionHandlerPtrTag>(opcode);
+    case OpcodeSize::Wide16:
+        return LLInt::getWide16CodeRef<ExceptionHandlerPtrTag>(opcode);
+    case OpcodeSize::Wide32:
+        return LLInt::getWide32CodeRef<ExceptionHandlerPtrTag>(opcode);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
 #endif // ENABLE(WEBASSEMBLY)
 
 } } // namespace JSC::LLInt

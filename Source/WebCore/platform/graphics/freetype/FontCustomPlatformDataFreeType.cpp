@@ -116,7 +116,7 @@ static bool initializeFreeTypeLibrary(FT_Library& library)
     // https://www.freetype.org/freetype2/docs/design/design-4.html
     // https://lists.nongnu.org/archive/html/freetype-devel/2004-10/msg00022.html
 
-    FT_Memory memory = bitwise_cast<FT_Memory>(ft_smalloc(sizeof(*memory)));
+    FT_Memory memory = std::bit_cast<FT_Memory>(ft_smalloc(sizeof(*memory)));
     if (!memory)
         return false;
 
@@ -210,6 +210,18 @@ bool FontCustomPlatformData::supportsTechnology(const FontTechnology& technology
 #endif
 
     return false;
+}
+
+std::optional<Ref<FontCustomPlatformData>> FontCustomPlatformData::tryMakeFromSerializationData(FontCustomPlatformSerializedData&&, bool)
+{
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+FontCustomPlatformSerializedData FontCustomPlatformData::serializedData() const
+{
+    ASSERT_NOT_REACHED();
+    return FontCustomPlatformSerializedData { creationData.fontFaceData, creationData.itemInCollection, m_renderingResourceIdentifier };
 }
 
 }

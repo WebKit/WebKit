@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-decoration-color-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-decoration-color-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-decoration-color-valid.html
@@ -32,6 +33,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-decoration-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-emphasis-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-emphasis-position-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-emphasis-position-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-emphasis-position-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-emphasis-style-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-underline-position-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-underline-position-invalid.html

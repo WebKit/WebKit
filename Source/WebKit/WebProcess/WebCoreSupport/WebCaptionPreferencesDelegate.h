@@ -28,11 +28,12 @@
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
 #include <WebCore/CaptionPreferencesDelegate.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebCaptionPreferencesDelegate final : public WebCore::CaptionPreferencesDelegate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebCaptionPreferencesDelegate);
 public:
     virtual ~WebCaptionPreferencesDelegate() { }
 

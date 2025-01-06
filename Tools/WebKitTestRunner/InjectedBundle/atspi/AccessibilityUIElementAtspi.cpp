@@ -39,6 +39,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -113,11 +114,8 @@ static RefPtr<AccessibilityUIElement> elementForRelationAtIndex(WebCore::Accessi
     if (targets.isEmpty() || index >= targets.size())
         return nullptr;
 
-    auto target = targets[index];
-    if (!target)
-        return nullptr;
-
-    return AccessibilityUIElement::create(target.get());
+    Ref target = targets[index];
+    return AccessibilityUIElement::create(target.ptr());
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedUIElementAtIndex(unsigned index)
@@ -210,7 +208,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned index
     if (index >= rows.size())
         return nullptr;
 
-    return AccessibilityUIElement::create(rows[index].get());
+    return AccessibilityUIElement::create(rows[index].ptr());
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedChildAtIndex(unsigned index) const
@@ -340,24 +338,24 @@ static String attributesOfElement(AccessibilityUIElement& element)
     return builder.toString();
 }
 
-static String attributesOfElements(Vector<RefPtr<AccessibilityUIElement>>& elements)
+static String attributesOfElements(Vector<Ref<AccessibilityUIElement>>& elements)
 {
     StringBuilder builder;
     for (auto& element : elements)
-        builder.append(attributesOfElement(*element), "\n------------\n"_s);
+        builder.append(attributesOfElement(element), "\n------------\n"_s);
     return builder.toString();
 }
 
-static Vector<RefPtr<AccessibilityUIElement>> elementsVector(const Vector<RefPtr<WebCore::AccessibilityObjectAtspi>>& wrappers)
+static Vector<Ref<AccessibilityUIElement>> elementsVector(const Vector<Ref<WebCore::AccessibilityObjectAtspi>>& wrappers)
 {
-    Vector<RefPtr<AccessibilityUIElement>> elements;
+    Vector<Ref<AccessibilityUIElement>> elements;
     elements.reserveInitialCapacity(wrappers.size());
     for (auto& wrapper : wrappers)
-        elements.append(AccessibilityUIElement::create(wrapper.get()));
+        elements.append(AccessibilityUIElement::create(wrapper.ptr()));
     return elements;
 }
 
-static String attributesOfElements(const Vector<RefPtr<WebCore::AccessibilityObjectAtspi>>& wrappers)
+static String attributesOfElements(const Vector<Ref<WebCore::AccessibilityObjectAtspi>>& wrappers)
 {
     auto elements = elementsVector(wrappers);
     return attributesOfElements(elements);
@@ -484,12 +482,12 @@ JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSContextRef, JS
     return nullptr;
 }
 
-static JSValueRef makeJSArray(JSContextRef context, const Vector<RefPtr<AccessibilityUIElement>>& elements)
+static JSValueRef makeJSArray(JSContextRef context, const Vector<Ref<AccessibilityUIElement>>& elements)
 {
     size_t elementCount = elements.size();
     auto valueElements = makeUniqueArray<JSValueRef>(elementCount);
     for (size_t i = 0; i < elementCount; i++)
-        valueElements[i] = JSObjectMake(context, elements[i]->wrapperClass(), elements[i].get());
+        valueElements[i] = JSObjectMake(context, elements[i]->wrapperClass(), elements[i].ptr());
 
     return JSObjectMakeArray(context, elementCount, valueElements.get(), nullptr);
 }
@@ -565,6 +563,8 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
         return checkElementState(m_element.get(), WebCore::Atspi::State::Modal);
     if (attributeName == "AXSupportsAutoCompletion"_s)
         return checkElementState(m_element.get(), WebCore::Atspi::State::SupportsAutocompletion);
+    if (attributeName == "AXVisited"_s)
+        return checkElementState(m_element.get(), WebCore::Atspi::State::Visited);
     if (attributeName == "AXInterfaceTable"_s)
         return m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Table);
     if (attributeName == "AXInterfaceTableCell"_s)
@@ -1165,7 +1165,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()
     return JSStringCreateWithCharacters(nullptr, 0);
 }
 
-bool AccessibilityUIElement::ariaIsGrabbed() const
+bool AccessibilityUIElement::isGrabbed() const
 {
     m_element->updateBackingStore();
     return m_element->attributes().get("grabbed"_s) == "true"_s;

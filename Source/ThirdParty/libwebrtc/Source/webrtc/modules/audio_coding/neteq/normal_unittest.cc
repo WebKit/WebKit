@@ -48,7 +48,8 @@ TEST(Normal, CreateAndDestroy) {
   BackgroundNoise bgn(channels);
   SyncBuffer sync_buffer(1, 1000);
   RandomVector random_vector;
-  StatisticsCalculator statistics;
+  TickTimer timer;
+  StatisticsCalculator statistics(&timer);
   Expand expand(&bgn, &sync_buffer, &random_vector, &statistics, fs, channels);
   Normal normal(fs, &db, bgn, &expand, &statistics);
   EXPECT_CALL(db, Die());  // Called when `db` goes out of scope.
@@ -61,7 +62,8 @@ TEST(Normal, AvoidDivideByZero) {
   BackgroundNoise bgn(channels);
   SyncBuffer sync_buffer(1, 1000);
   RandomVector random_vector;
-  StatisticsCalculator statistics;
+  TickTimer timer;
+  StatisticsCalculator statistics(&timer);
   MockExpand expand(&bgn, &sync_buffer, &random_vector, &statistics, fs,
                     channels);
   Normal normal(fs, &db, bgn, &expand, &statistics);
@@ -96,7 +98,8 @@ TEST(Normal, InputLengthAndChannelsDoNotMatch) {
   BackgroundNoise bgn(channels);
   SyncBuffer sync_buffer(channels, 1000);
   RandomVector random_vector;
-  StatisticsCalculator statistics;
+  TickTimer timer;
+  StatisticsCalculator statistics(&timer);
   MockExpand expand(&bgn, &sync_buffer, &random_vector, &statistics, fs,
                     channels);
   Normal normal(fs, &db, bgn, &expand, &statistics);
@@ -121,7 +124,8 @@ TEST(Normal, LastModeExpand120msPacket) {
   BackgroundNoise bgn(kChannels);
   SyncBuffer sync_buffer(kChannels, 1000);
   RandomVector random_vector;
-  StatisticsCalculator statistics;
+  TickTimer timer;
+  StatisticsCalculator statistics(&timer);
   MockExpand expand(&bgn, &sync_buffer, &random_vector, &statistics, kFs,
                     kChannels);
   Normal normal(kFs, &db, bgn, &expand, &statistics);

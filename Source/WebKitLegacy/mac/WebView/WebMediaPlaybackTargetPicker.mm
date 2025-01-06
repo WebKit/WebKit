@@ -31,6 +31,9 @@
 #import <WebCore/MediaPlaybackTarget.h>
 #import <WebCore/Page.h>
 #import <WebCore/WebMediaSessionManager.h>
+#import <wtf/TZoneMallocInlines.h>
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMediaPlaybackTargetPicker);
 
 std::unique_ptr<WebMediaPlaybackTargetPicker> WebMediaPlaybackTargetPicker::create(WebView *webView, WebCore::Page& page)
 {

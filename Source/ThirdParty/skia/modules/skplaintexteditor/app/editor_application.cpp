@@ -5,6 +5,7 @@
 // https://bugs.skia.org/9020
 
 #include "include/core/SkCanvas.h"
+#include "include/core/SkData.h"
 #include "include/core/SkFontMgr.h"
 #include "include/core/SkSurface.h"
 #include "src/base/SkTime.h"
@@ -15,8 +16,9 @@
 
 #include "modules/skplaintexteditor/include/editor.h"
 
-#if defined(SK_FONTMGR_FONTCONFIG_AVAILABLE)
+#if defined(SK_FONTMGR_FONTCONFIG_AVAILABLE) && defined(SK_TYPEFACE_FACTORY_FREETYPE)
 #include "include/ports/SkFontMgr_fontconfig.h"
+#include "include/ports/SkFontScanner_FreeType.h"
 #endif
 
 #if defined(SK_FONTMGR_CORETEXT_AVAILABLE)
@@ -103,8 +105,8 @@ sk_sp<SkFontMgr> fontMgr() {
     static bool init = false;
     static sk_sp<SkFontMgr> fontMgr = nullptr;
     if (!init) {
-#if defined(SK_FONTMGR_FONTCONFIG_AVAILABLE)
-        fontMgr = SkFontMgr_New_FontConfig(nullptr);
+#if defined(SK_FONTMGR_FONTCONFIG_AVAILABLE) && defined(SK_TYPEFACE_FACTORY_FREETYPE)
+        fontMgr = SkFontMgr_New_FontConfig(nullptr, SkFontScanner_Make_FreeType());
 #elif defined(SK_FONTMGR_CORETEXT_AVAILABLE)
         fontMgr = SkFontMgr_New_CoreText(nullptr);
 #elif defined(SK_FONTMGR_DIRECTWRITE_AVAILABLE)
@@ -445,7 +447,7 @@ struct EditorApplication : public sk_app::Application {
 }  // namespace
 
 sk_app::Application* sk_app::Application::Create(int argc, char** argv, void* dat) {
-    std::unique_ptr<sk_app::Window> win(sk_app::Window::CreateNativeWindow(dat));
+    std::unique_ptr<sk_app::Window> win(sk_app::Windows::CreateNativeWindow(dat));
     if (!win) {
         SK_ABORT("CreateNativeWindow failed.");
     }

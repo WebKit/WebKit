@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,10 +46,15 @@
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/TextStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextCG);
 
 static void setCGFillColor(CGContextRef context, const Color& color)
 {
@@ -191,6 +196,8 @@ static RenderingMode renderingModeForCGContext(CGContextRef cgContext, GraphicsC
     auto type = CGContextGetType(cgContext);
     if (type == kCGContextTypeIOSurface || (source == GraphicsContextCG::CGContextFromCALayer && type == kCGContextTypeUnknown))
         return RenderingMode::Accelerated;
+    if (type == kCGContextTypePDF)
+        return RenderingMode::PDFDocument;
     return RenderingMode::Unaccelerated;
 }
 
@@ -325,8 +332,6 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
     CGContextStateSaver stateSaver(context, false);
     auto transform = CGContextGetCTM(context);
 
-    convertToDestinationColorSpaceIfNeeded(image);
-
     auto subImage = image;
 
     auto adjustedDestRect = normalizedDestRect;
@@ -371,6 +376,12 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
     auto oldBlendMode = blendMode();
     setCGBlendMode(context, options.compositeOperator(), options.blendMode());
 
+#if HAVE(HDR_SUPPORT)
+    auto oldHeadroom = CGContextGetEDRTargetHeadroom(context);
+    if (auto headroom = options.headroom(); headroom > 1)
+        CGContextSetEDRTargetHeadroom(context, headroom);
+#endif
+
     // Make the origin be at adjustedDestRect.location()
     CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.y());
     adjustedDestRect.setLocation(FloatPoint::zero());
@@ -397,6 +408,9 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
         CGContextSetShouldAntialias(context, wasAntialiased);
 #endif
         setCGBlendMode(context, oldCompositeOperator, oldBlendMode);
+#if HAVE(HDR_SUPPORT)
+        CGContextSetEDRTargetHeadroom(context, oldHeadroom);
+#endif
     }
 
     LOG_WITH_STREAM(Images, stream << "GraphicsContextCG::drawNativeImageInternal " << image.get() << " size " << imageSize << " into " << destRect << " took " << (MonotonicTime::now() - startTime).milliseconds() << "ms");
@@ -785,12 +799,12 @@ void GraphicsContextCG::strokePath(const Path& path)
     drawPathWithCGContext(context, kCGPathStroke, path);
 }
 
-void GraphicsContextCG::fillRect(const FloatRect& rect)
+void GraphicsContextCG::fillRect(const FloatRect& rect, RequiresClipToRect requiresClipToRect)
 {
     CGContextRef context = platformContext();
 
     if (auto* fillGradient = this->fillGradient()) {
-        fillRect(rect, *fillGradient, fillGradientSpaceTransform());
+        fillRect(rect, *fillGradient, fillGradientSpaceTransform(), requiresClipToRect);
         return;
     }
 
@@ -812,7 +826,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect)
     CGContextFillRect(context, rect);
 }
 
-void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
 {
     CGContextRef context = platformContext();
 
@@ -832,7 +846,9 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient, cons
         gradient.paint(layerContext);
         CGContextDrawLayerInRect(context, rect, layer.get());
     } else {
-        CGContextClipToRect(context, rect);
+        if (requiresClipToRect == RequiresClipToRect::Yes)
+            CGContextClipToRect(context, rect);
+
         CGContextConcatCTM(context, gradientSpaceTransform);
         gradient.paint(*this);
     }
@@ -1028,6 +1044,13 @@ void GraphicsContextCG::beginTransparencyLayer(float opacity)
     CGContextBeginTransparencyLayer(context, 0);
 
     m_userToDeviceTransformKnownToBeIdentity = false;
+}
+
+void GraphicsContextCG::beginTransparencyLayer(CompositeOperator, BlendMode)
+{
+    // Passing state().alpha() to beginTransparencyLayer(opacity) will
+    // preserve the current global alpha.
+    beginTransparencyLayer(state().alpha());
 }
 
 void GraphicsContextCG::endTransparencyLayer()
@@ -1497,6 +1520,37 @@ void GraphicsContextCG::strokeEllipse(const FloatRect& ellipse)
     CGContextStrokeEllipseInRect(context, ellipse);
 }
 
+void GraphicsContextCG::beginPage(const IntSize& pageSize)
+{
+    CGContextRef context = platformContext();
+
+    if (CGContextGetType(context) != kCGContextTypePDF) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto mediaBox = CGRectMake(0, 0, pageSize.width(), pageSize.height());
+    auto mediaBoxData = adoptCF(CFDataCreate(nullptr, (const UInt8 *)&mediaBox, sizeof(CGRect)));
+
+    const void* key = kCGPDFContextMediaBox;
+    const void* value = mediaBoxData.get();
+    auto pageInfo = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, &key, &value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    CGPDFContextBeginPage(context, pageInfo.get());
+}
+
+void GraphicsContextCG::endPage()
+{
+    CGContextRef context = platformContext();
+
+    if (CGContextGetType(context) != kCGContextTypePDF) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    CGPDFContextEndPage(context);
+}
+
 bool GraphicsContextCG::supportsInternalLinks() const
 {
     return true;
@@ -1533,5 +1587,7 @@ bool GraphicsContextCG::consumeHasDrawn()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

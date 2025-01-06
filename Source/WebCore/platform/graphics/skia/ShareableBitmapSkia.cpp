@@ -31,9 +31,9 @@
 #include "GraphicsContextSkia.h"
 #include "NotImplemented.h"
 
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN // GLib/Win ports
 #include <skia/core/SkSurface.h>
-IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
@@ -56,7 +56,7 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     ref();
     SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
-    auto surface = SkSurfaces::WrapPixels(m_configuration.imageInfo(), data(), bytesPerRow(), [](void*, void* context) {
+    auto surface = SkSurfaces::WrapPixels(m_configuration.imageInfo(), mutableSpan().data(), bytesPerRow(), [](void*, void* context) {
         static_cast<ShareableBitmap*>(context)->deref();
     }, this, &properties);
 
@@ -91,10 +91,10 @@ PlatformImagePtr ShareableBitmap::createPlatformImage(BackingStoreCopy backingSt
 {
     sk_sp<SkData> pixelData;
     if (backingStoreCopy == BackingStoreCopy::CopyBackingStore)
-        pixelData = SkData::MakeWithCopy(data(), sizeInBytes());
+        pixelData = SkData::MakeWithCopy(span().data(), sizeInBytes());
     else {
         ref();
-        pixelData = SkData::MakeWithProc(data(), sizeInBytes(), [](const void*, void* bitmap) -> void {
+        pixelData = SkData::MakeWithProc(span().data(), sizeInBytes(), [](const void*, void* bitmap) -> void {
             static_cast<ShareableBitmap*>(bitmap)->deref();
         }, this);
     }

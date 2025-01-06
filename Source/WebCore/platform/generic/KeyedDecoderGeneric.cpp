@@ -29,14 +29,16 @@
 #include "KeyedEncoderGeneric.h"
 #include <variant>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
+typedef KeyedDecoderGeneric::Dictionary KeyedDecoderGenericDictionary;
 class KeyedDecoderGeneric::Dictionary {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(KeyedDecoderGenericDictionary);
 public:
     using Node = std::variant<Vector<uint8_t>, bool, uint32_t, uint64_t, int32_t, int64_t, float, double, String, std::unique_ptr<Dictionary>, std::unique_ptr<Array>>;
 
@@ -45,7 +47,7 @@ public:
     Node* get(const String& key) { return m_map.get(key); }
 
 private:
-    HashMap<String, std::unique_ptr<Node>> m_map;
+    UncheckedKeyHashMap<String, std::unique_ptr<Node>> m_map;
 };
 
 static std::optional<String> readString(WTF::Persistence::Decoder& decoder)

@@ -17,9 +17,9 @@
 #include <cmath>
 #include <memory>
 #include <numeric>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
@@ -80,7 +80,7 @@ class RenderDelayBufferImpl final : public RenderDelayBuffer {
   BlockBuffer blocks_;
   SpectrumBuffer spectra_;
   FftBuffer ffts_;
-  absl::optional<size_t> delay_;
+  std::optional<size_t> delay_;
   RenderBuffer echo_remover_buffer_;
   DownsampledRenderBuffer low_rate_;
   AlignmentMixer render_mixer_;
@@ -95,7 +95,7 @@ class RenderDelayBufferImpl final : public RenderDelayBuffer {
   int64_t render_call_counter_ = 0;
   bool render_activity_ = false;
   size_t render_activity_counter_ = 0;
-  absl::optional<int> external_audio_buffer_delay_;
+  std::optional<int> external_audio_buffer_delay_;
   bool external_audio_buffer_delay_verified_after_reset_ = false;
   size_t min_latency_blocks_ = 0;
   size_t excess_render_detection_counter_ = 0;
@@ -193,7 +193,7 @@ void RenderDelayBufferImpl::Reset() {
     ApplyTotalDelay(config_.delay.default_delay);
 
     // Unset the delays which are set by AlignFromDelay.
-    delay_ = absl::nullopt;
+    delay_ = std::nullopt;
   }
 }
 

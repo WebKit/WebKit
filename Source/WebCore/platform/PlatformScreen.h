@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ContentsFormat.h"
 #include <wtf/Forward.h>
 
 #if PLATFORM(MAC)
@@ -58,11 +59,12 @@ namespace WebCore {
 class DestinationColorSpace;
 class FloatRect;
 class FloatSize;
+class PlatformCALayerClient;
 class Widget;
 
 using PlatformDisplayID = uint32_t;
 
-using PlatformGPUID = uint64_t; // On MAC, MACCATALYST, global IOKit registryID that can identify a GPU across process boundaries.
+using PlatformGPUID = uint64_t; // On MAC, global IOKit registryID that can identify a GPU across process boundaries.
 
 int screenDepth(Widget*);
 int screenDepthPerComponent(Widget*);
@@ -79,6 +81,7 @@ double screenDPI(PlatformDisplayID); // dpi of the display device, corrected for
 FloatRect screenRect(Widget*);
 FloatRect screenAvailableRect(Widget*);
 
+WEBCORE_EXPORT ContentsFormat screenContentsFormat(Widget* = nullptr, PlatformCALayerClient* = nullptr);
 WEBCORE_EXPORT bool screenSupportsExtendedColor(Widget* = nullptr);
 
 enum class DynamicRangeMode : uint8_t {

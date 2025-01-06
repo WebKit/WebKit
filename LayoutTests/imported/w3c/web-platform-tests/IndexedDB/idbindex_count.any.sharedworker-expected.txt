@@ -1,0 +1,6 @@
+
+PASS count() returns the number of records in the index
+PASS count() returns the number of records that have keys within the range
+PASS count() returns the number of records that have keys with the key
+PASS count() throws DataError when using invalid key
+

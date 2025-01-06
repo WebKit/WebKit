@@ -36,6 +36,7 @@
 #import "WebProcessProxy.h"
 #import "WebViewImpl.h"
 #import "_WKFrameHandleInternal.h"
+#import <WebCore/ColorCocoa.h>
 
 @implementation WKWebView (WKTestingMac)
 
@@ -135,6 +136,16 @@
 - (void)_setSelectedColorForColorPicker:(NSColor *)color
 {
     _page->colorPickerClient().didChooseColor(WebCore::colorFromCocoaColor(color));
+}
+
+- (void)_createFlagsChangedEventMonitorForTesting
+{
+    _impl->createFlagsChangedEventMonitor();
+}
+
+- (BOOL)_hasFlagsChangedEventMonitorForTesting
+{
+    return _impl->hasFlagsChangedEventMonitor();
 }
 
 @end

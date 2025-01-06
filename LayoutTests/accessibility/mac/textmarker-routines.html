@@ -13,7 +13,6 @@ text
 <div id="console"></div>
 
 <script>
-
     description("This verifies usage of isTextMarkerValid, indexForTextMarker and textMarkerForIndex.");
 
     if (window.accessibilityController) {
@@ -35,13 +34,9 @@ text
 
         shouldBeTrue("item2.isTextMarkerValid(secondTextMarker)");
         shouldBe("item2.indexForTextMarker(secondTextMarker)", "5");
-        shouldBeTrue("item2.textMarkerForIndex(item2.indexForTextMarker(secondTextMarker)).isEqual(secondTextMarker)");       
+        shouldBeTrue("item2.textMarkerForIndex(item2.indexForTextMarker(secondTextMarker)).isEqual(secondTextMarker)");
     }
-
 </script>
-
 <script src="../../resources/js-test-post.js"></script>
-
 </body>
 </html>
-

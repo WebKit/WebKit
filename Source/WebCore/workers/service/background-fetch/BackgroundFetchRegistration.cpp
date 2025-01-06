@@ -39,7 +39,7 @@
 #include "SWClientConnection.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerRegistrationBackgroundFetchAPI.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 class BackgroundFetchResponseBodyLoader;
@@ -52,7 +52,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::BackgroundFe
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(BackgroundFetchRegistration);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BackgroundFetchRegistration);
 
 void BackgroundFetchRegistration::updateIfExisting(ScriptExecutionContext& context, const BackgroundFetchInformation& information)
 {

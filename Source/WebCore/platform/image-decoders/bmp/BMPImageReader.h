@@ -32,20 +32,22 @@
 
 #include "ScalableImageDecoder.h"
 #include <stdint.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // This class decodes a BMP image. It is used in the BMP and ICO decoders,
 // which wrap it in the appropriate code to read file headers, etc.
 class BMPImageReader {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BMPImageReader);
 public:
     // Read a value from |data[offset]|, converting from little to native
     // endianness.
     static inline uint16_t readUint16(const SharedBuffer& data, int offset)
     {
         uint16_t result;
-        memcpy(&result, &data.span()[offset], 2);
+        memcpySpan(asMutableByteSpan(result), data.span().subspan(offset, 2));
 #if CPU(BIG_ENDIAN)
         result = ((result & 0xff) << 8) | ((result & 0xff00) >> 8);
 #endif
@@ -55,7 +57,7 @@ public:
     static inline uint32_t readUint32(const SharedBuffer& data, int offset)
     {
         uint32_t result;
-        memcpy(&result, &data.span()[offset], 4);
+        memcpySpan(asMutableByteSpan(result), data.span().subspan(offset, 4));
 #if CPU(BIG_ENDIAN)
         result = ((result & 0xff) << 24) | ((result & 0xff00) << 8) | ((result & 0xff0000) >> 8) | ((result & 0xff000000) >> 24);
 #endif
@@ -204,7 +206,7 @@ private:
             // of the return value here in little-endian mode, the caller
             // won't read it.
             uint32_t pixel;
-            memcpy(&pixel, &m_data->span()[m_decodedOffset + offset], 3);
+            memcpySpan(asMutableByteSpan(pixel), m_data->span().subspan(m_decodedOffset + offset, 3));
 #if CPU(BIG_ENDIAN)
             pixel = ((pixel & 0xff00) << 8) | ((pixel & 0xff0000) >> 8) | ((pixel & 0xff000000) >> 24);
 #endif
@@ -320,9 +322,9 @@ private:
     // just combine these into one shift value because the net shift amount
     // could go either direction. (If only "<< -x" were equivalent to
     // ">> x"...)
-    uint32_t m_bitMasks[4];
-    int m_bitShiftsRight[4];
-    int m_bitShiftsLeft[4];
+    std::array<uint32_t, 4> m_bitMasks;
+    std::array<int, 4> m_bitShiftsRight;
+    std::array<int, 4> m_bitShiftsLeft;
 
     // The color palette, for paletted formats.
     Vector<RGBTriple> m_colorTable;

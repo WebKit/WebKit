@@ -34,6 +34,7 @@
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
 #include "XMLNames.h"
+#include <wtf/ZippedRange.h>
 
 namespace WebCore {
 
@@ -84,16 +85,14 @@ Ref<UniqueElementData> UniqueElementData::create()
 ShareableElementData::ShareableElementData(std::span<const Attribute> attributes)
     : ElementData(attributes.size())
 {
-    unsigned attributeArraySize = arraySize();
-    for (unsigned i = 0; i < attributeArraySize; ++i)
-        new (NotNull, &m_attributeArray[i]) Attribute(attributes[i]);
+    for (auto [sourceAttribute, destinationAttribute] : zippedRange(attributes, span()))
+        new (NotNull, &destinationAttribute) Attribute(sourceAttribute);
 }
 
 ShareableElementData::~ShareableElementData()
 {
-    unsigned attributeArraySize = arraySize();
-    for (unsigned i = 0; i < attributeArraySize; ++i)
-        m_attributeArray[i].~Attribute();
+    for (auto& attribute : span())
+        attribute.~Attribute();
 }
 
 ShareableElementData::ShareableElementData(const UniqueElementData& other)
@@ -106,9 +105,8 @@ ShareableElementData::ShareableElementData(const UniqueElementData& other)
         m_inlineStyle = other.m_inlineStyle->immutableCopyIfNeeded();
     }
 
-    unsigned attributeArraySize = arraySize();
-    for (unsigned i = 0; i < attributeArraySize; ++i)
-        new (NotNull, &m_attributeArray[i]) Attribute(other.m_attributeVector.at(i));
+    for (auto [sourceAttribute, destinationAttribute] : zippedRange(other.m_attributeVector.span(), span()))
+        new (NotNull, &destinationAttribute) Attribute(sourceAttribute);
 }
 
 inline uint32_t ElementData::arraySizeAndFlagsFromOther(const ElementData& other, bool isUnique)
@@ -153,9 +151,9 @@ UniqueElementData::UniqueElementData(const ShareableElementData& other)
 
 Ref<UniqueElementData> ElementData::makeUniqueCopy() const
 {
-    if (isUnique())
-        return adoptRef(*new UniqueElementData(static_cast<const UniqueElementData&>(*this)));
-    return adoptRef(*new UniqueElementData(static_cast<const ShareableElementData&>(*this)));
+    if (auto* uniqueData = dynamicDowncast<const UniqueElementData>(*this))
+        return adoptRef(*new UniqueElementData(*uniqueData));
+    return adoptRef(*new UniqueElementData(downcast<const ShareableElementData>(*this)));
 }
 
 Ref<ShareableElementData> UniqueElementData::makeShareableCopy() const

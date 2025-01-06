@@ -25,7 +25,7 @@ def main():
         if not os.path.isfile(path) or not filename.endswith('.json'):
             continue
 
-        with open(os.path.join(maintenance_dir, path)) as submitted_json_file:
+        with open(os.path.join(maintenance_dir, path), 'rb') as submitted_json_file:
             submitted_content = submitted_json_file.read()
 
         print(f'{filename}...')

@@ -44,9 +44,12 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptCachedFrameData);
 
 ScriptCachedFrameData::ScriptCachedFrameData(LocalFrame& frame)
 {

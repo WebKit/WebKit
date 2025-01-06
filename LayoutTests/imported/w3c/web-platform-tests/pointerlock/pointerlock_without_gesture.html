@@ -12,13 +12,13 @@
     <h2>Description</h2>
     <p>This test validates that pointer lock does not work without user activation.</p>
     <hr/>
-    
+
     <div id="target">Target</div>
 
     <script type="text/javascript" >
         promise_test(async t => {
             const target = document.getElementById('target');
-            
+
             document.addEventListener('pointerlockchange', t.unreached_func("Must not acquire pointer lock."));
 
             // Request pointer lock twice to ensure two failing promises are returned and both are rejected.

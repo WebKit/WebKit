@@ -24,6 +24,7 @@
 #if ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 
 #include <gst/gst.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 class MediaStreamPrivate;
@@ -52,7 +53,8 @@ struct _WebKitMediaStreamSrcClass {
 
 GstElement* webkitMediaStreamSrcNew();
 void webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc*, WebCore::MediaStreamPrivate*, bool isVideoPlayer);
-void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc*, WebCore::MediaStreamTrackPrivate*, bool onlyTrack, bool consumerIsVideoPlayer = false);
+void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc*, WebCore::MediaStreamTrackPrivate*, bool consumerIsVideoPlayer = false);
+void webkitMediaStreamSrcReplaceTrack(WebKitMediaStreamSrc*, WTF::RefPtr<WebCore::MediaStreamTrackPrivate>&&);
 void webkitMediaStreamSrcConfigureAudioTracks(WebKitMediaStreamSrc*, float volume, bool isMuted, bool isPlaying);
 void webkitMediaStreamSrcSignalEndOfStream(WebKitMediaStreamSrc*);
 

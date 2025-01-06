@@ -39,6 +39,7 @@
 #include "TemporalDuration.h"
 #include "TemporalObject.h"
 #include "TemporalTimeZone.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 
@@ -179,26 +180,6 @@ TemporalInstant* TemporalInstant::from(JSGlobalObject* globalObject, JSValue ite
     return toInstant(globalObject, itemValue);
 }
 
-// Temporal.Instant.fromEpochSeconds ( epochSeconds )
-// https://tc39.es/proposal-temporal/#sec-temporal.instant.fromepochseconds
-TemporalInstant* TemporalInstant::fromEpochSeconds(JSGlobalObject* globalObject, JSValue epochSecondsValue)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    double epochSeconds = epochSecondsValue.toNumber(globalObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-
-    // NumberToBigInt step 1
-    if (!isInteger(epochSeconds)) {
-        throwRangeError(globalObject, scope, makeString(epochSeconds, " is not a valid integer number of epoch seconds"_s));
-        return nullptr;
-    }
-
-    ISO8601::ExactTime exactTime = ISO8601::ExactTime::fromEpochSeconds(epochSeconds);
-    RELEASE_AND_RETURN(scope, tryCreateIfValid(globalObject, exactTime));
-}
-
 // Temporal.Instant.fromEpochMilliseconds ( epochMilliseconds )
 // https://tc39.es/proposal-temporal/#sec-temporal.instant.fromepochmilliseconds
 TemporalInstant* TemporalInstant::fromEpochMilliseconds(JSGlobalObject* globalObject, JSValue epochMillisecondsValue)
@@ -217,58 +198,6 @@ TemporalInstant* TemporalInstant::fromEpochMilliseconds(JSGlobalObject* globalOb
 
     ISO8601::ExactTime exactTime = ISO8601::ExactTime::fromEpochMilliseconds(epochMilliseconds);
     RELEASE_AND_RETURN(scope, tryCreateIfValid(globalObject, exactTime));
-}
-
-// Temporal.Instant.fromEpochMicroseconds ( epochMicroseconds )
-// https://tc39.es/proposal-temporal/#sec-temporal.instant.fromepochmicroseconds
-TemporalInstant* TemporalInstant::fromEpochMicroseconds(JSGlobalObject* globalObject, JSValue epochMicrosecondsValue)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue epochMicroseconds = epochMicrosecondsValue.toBigInt(globalObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-
-#if USE(BIGINT32)
-    if (epochMicroseconds.isBigInt32()) {
-        int32_t microseconds = epochMicroseconds.bigInt32AsInt32();
-        auto exactTime = ISO8601::ExactTime::fromEpochMicroseconds(microseconds);
-        ASSERT(exactTime.isValid());
-        return create(vm, globalObject->instantStructure(), exactTime);
-    }
-#endif
-
-    JSBigInt* bigint = asHeapBigInt(epochMicroseconds);
-    bool bigIntTooLong;
-    if constexpr (sizeof(JSBigInt::Digit) == 4) {
-        bigIntTooLong = bigint->length() > 2;
-        // Handle maxint64 < abs(bigint) <= maxuint64 explicitly, otherwise the
-        // cast to int64 below is undefined
-        if (bigint->length() == 2 && (bigint->digit(1) & 0x8000'0000))
-            bigIntTooLong = true;
-    } else {
-        ASSERT(sizeof(JSBigInt::Digit) == 8);
-        bigIntTooLong = bigint->length() > 1;
-        // Handle maxint64 < abs(bigint) <= maxuint64 explicitly, otherwise the
-        // cast to int64 below is undefined
-        if (bigint->length() == 1 && (bigint->digit(0) & 0x8000'0000'0000'0000))
-            bigIntTooLong = true;
-    }
-    int64_t microseconds = bigIntTooLong ? 0 : JSBigInt::toBigInt64(bigint);
-    auto exactTime = ISO8601::ExactTime::fromEpochMicroseconds(microseconds);
-
-    if (bigIntTooLong || !exactTime.isValid()) {
-        String argAsString = bigint->toString(globalObject, 10);
-        if (scope.exception()) {
-            scope.clearException();
-            argAsString = "The given number of"_s;
-        }
-
-        throwRangeError(globalObject, scope, makeString(ellipsizeAt(100, argAsString), " epoch microseconds is outside of supported range for Temporal.Instant"_s));
-        return nullptr;
-    }
-
-    return create(vm, globalObject->instantStructure(), exactTime);
 }
 
 // Temporal.Instant.fromEpochNanoseconds ( epochNanoseconds )

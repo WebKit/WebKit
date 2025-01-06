@@ -29,6 +29,7 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace Inspector {
 class ApplicationCacheFrontendDispatcher;
@@ -41,7 +42,7 @@ class Page;
 
 class InspectorApplicationCacheAgent final : public InspectorAgentBase, public Inspector::ApplicationCacheBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorApplicationCacheAgent);
 public:
     InspectorApplicationCacheAgent(PageAgentContext&);
     ~InspectorApplicationCacheAgent();

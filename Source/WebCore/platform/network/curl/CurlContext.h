@@ -35,6 +35,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 #include <wtf/URL.h>
 
@@ -164,7 +165,7 @@ private:
 // CurlMultiHandle --------------------------------------------
 
 class CurlMultiHandle {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CurlMultiHandle);
     WTF_MAKE_NONCOPYABLE(CurlMultiHandle);
 
 public:
@@ -221,7 +222,7 @@ class HTTPHeaderMap;
 class NetworkLoadMetrics;
 
 class CurlHandle {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CurlHandle);
     WTF_MAKE_NONCOPYABLE(CurlHandle);
 
 public:

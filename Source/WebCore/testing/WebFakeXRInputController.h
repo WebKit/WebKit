@@ -47,7 +47,7 @@ class WebFakeXRInputController final : public RefCounted<WebFakeXRInputControlle
 public:
     static Ref<WebFakeXRInputController> create(PlatformXR::InputSourceHandle, const FakeXRInputSourceInit&);
 
-    void setHandedness(XRHandedness handeness) { m_handeness = handeness; }
+    void setHandedness(XRHandedness handedness) { m_handedness = handedness; }
     void setTargetRayMode(XRTargetRayMode mode) { m_targetRayMode = mode; }
     void setProfiles(Vector<String>&& profiles) { m_profiles = WTFMove(profiles); }
     void setGripOrigin(FakeXRRigidTransformInit gripOrigin, bool emulatedPosition = false);
@@ -78,7 +78,7 @@ private:
     ButtonOrPlaceholder getButtonOrPlaceholder(FakeXRButtonStateInit::Type) const;
 
     PlatformXR::InputSourceHandle m_handle { 0 };
-    XRHandedness m_handeness { XRHandedness::None };
+    XRHandedness m_handedness { XRHandedness::None };
     XRTargetRayMode m_targetRayMode { XRTargetRayMode::Gaze };
     Vector<String> m_profiles;
     PlatformXR::FrameData::InputSourcePose m_pointerOrigin;

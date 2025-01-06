@@ -12,11 +12,13 @@
 #define MEDIA_SCTP_DCSCTP_TRANSPORT_H_
 
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/environment/environment.h"
+#include "api/priority.h"
 #include "api/task_queue/task_queue_base.h"
 #include "media/sctp/sctp_transport_internal.h"
 #include "net/dcsctp/public/dcsctp_options.h"
@@ -27,6 +29,7 @@
 #include "p2p/base/packet_transport_internal.h"
 #include "rtc_base/containers/flat_map.h"
 #include "rtc_base/copy_on_write_buffer.h"
+#include "rtc_base/network/received_packet.h"
 #include "rtc_base/random.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
@@ -39,12 +42,12 @@ class DcSctpTransport : public cricket::SctpTransportInternal,
                         public dcsctp::DcSctpSocketCallbacks,
                         public sigslot::has_slots<> {
  public:
-  DcSctpTransport(rtc::Thread* network_thread,
+  DcSctpTransport(const Environment& env,
+                  rtc::Thread* network_thread,
+                  rtc::PacketTransportInternal* transport);
+  DcSctpTransport(const Environment& env,
+                  rtc::Thread* network_thread,
                   rtc::PacketTransportInternal* transport,
-                  Clock* clock);
-  DcSctpTransport(rtc::Thread* network_thread,
-                  rtc::PacketTransportInternal* transport,
-                  Clock* clock,
                   std::unique_ptr<dcsctp::DcSctpSocketFactory> socket_factory);
   ~DcSctpTransport() override;
 
@@ -55,15 +58,18 @@ class DcSctpTransport : public cricket::SctpTransportInternal,
   bool Start(int local_sctp_port,
              int remote_sctp_port,
              int max_message_size) override;
-  bool OpenStream(int sid) override;
+  bool OpenStream(int sid, PriorityValue priority) override;
   bool ResetStream(int sid) override;
   RTCError SendData(int sid,
                     const SendDataParams& params,
                     const rtc::CopyOnWriteBuffer& payload) override;
   bool ReadyToSendData() override;
   int max_message_size() const override;
-  absl::optional<int> max_outbound_streams() const override;
-  absl::optional<int> max_inbound_streams() const override;
+  std::optional<int> max_outbound_streams() const override;
+  std::optional<int> max_inbound_streams() const override;
+  size_t buffered_amount(int sid) const override;
+  size_t buffered_amount_low_threshold(int sid) const override;
+  void SetBufferedAmountLowThreshold(int sid, size_t bytes) override;
   void set_debug_name_for_testing(const char* debug_name) override;
 
  private:
@@ -75,6 +81,7 @@ class DcSctpTransport : public cricket::SctpTransportInternal,
   dcsctp::TimeMs TimeMillis() override;
   uint32_t GetRandomInt(uint32_t low, uint32_t high) override;
   void OnTotalBufferedAmountLow() override;
+  void OnBufferedAmountLow(dcsctp::StreamID stream_id) override;
   void OnMessageReceived(dcsctp::DcSctpMessage message) override;
   void OnError(dcsctp::ErrorKind error, absl::string_view message) override;
   void OnAborted(dcsctp::ErrorKind error, absl::string_view message) override;
@@ -94,17 +101,12 @@ class DcSctpTransport : public cricket::SctpTransportInternal,
   void DisconnectTransportSignals();
   void OnTransportWritableState(rtc::PacketTransportInternal* transport);
   void OnTransportReadPacket(rtc::PacketTransportInternal* transport,
-                             const char* data,
-                             size_t length,
-                             const int64_t& /* packet_time_us */,
-                             int flags);
-  void OnTransportClosed(rtc::PacketTransportInternal* transport);
-
+                             const rtc::ReceivedPacket& packet);
   void MaybeConnectSocket();
 
   rtc::Thread* network_thread_;
   rtc::PacketTransportInternal* transport_;
-  Clock* clock_;
+  Environment env_;
   Random random_;
 
   std::unique_ptr<dcsctp::DcSctpSocketFactory> socket_factory_;
@@ -126,6 +128,9 @@ class DcSctpTransport : public cricket::SctpTransportInternal,
     bool incoming_reset_done = false;
     // True when the local connection received OnStreamsResetPerformed
     bool outgoing_reset_done = false;
+    // Priority of the stream according to RFC 8831, section 6.4
+    dcsctp::StreamPriority priority =
+        dcsctp::StreamPriority(PriorityValue(webrtc::Priority::kLow).value());
   };
 
   // Map of all currently open or closing data channels

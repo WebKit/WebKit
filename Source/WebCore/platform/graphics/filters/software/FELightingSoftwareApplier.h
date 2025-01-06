@@ -32,13 +32,14 @@
 #include "FilterEffectApplier.h"
 #include "FilterImageVector.h"
 #include "LightSource.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FELighting;
 
 class FELightingSoftwareApplier : public FilterEffectConcreteApplier<FELighting> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FELightingSoftwareApplier);
     using Base = FilterEffectConcreteApplier<FELighting>;
 
 protected:
@@ -56,7 +57,7 @@ protected:
     static constexpr float cFactor2div3 = -2 / 3.f;
 
     struct AlphaWindow {
-        uint8_t alpha[3][3] { };
+        std::array<std::array<uint8_t, 3>, 3> alpha = { };
     
         // The implementations are lined up to make comparing indices easier.
         uint8_t topLeft() const             { return alpha[0][0]; }
@@ -75,7 +76,7 @@ protected:
         void setRight(uint8_t value)        { alpha[1][2] = value; }
         void setBottomRight(uint8_t value)  { alpha[2][2] = value; }
 
-        static void shiftRow(uint8_t alpha[3])
+        static void shiftRow(std::array<uint8_t, 3>& alpha)
         {
             alpha[0] = alpha[1];
             alpha[1] = alpha[2];

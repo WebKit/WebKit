@@ -34,8 +34,8 @@
 
 #include <optional>
 #include <variant>
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -49,7 +49,7 @@ class ScriptExecutionContext;
 class ServiceWorkerContainer;
 
 class PushSubscription : public RefCounted<PushSubscription> {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(PushSubscription, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(PushSubscription, WEBCORE_EXPORT);
 public:
     template<typename... Args> static Ref<PushSubscription> create(Args&&... args) { return adoptRef(*new PushSubscription(std::forward<Args>(args)...)); }
     WEBCORE_EXPORT ~PushSubscription();

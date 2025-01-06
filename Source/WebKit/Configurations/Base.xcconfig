@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+// Copyright (C) 2010-2024 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@ ENABLE_DAEMON_SYMLINKS[sdk=embedded*] = NO
 
 ALWAYS_SEARCH_USER_PATHS = NO;
 
-CLANG_CXX_LANGUAGE_STANDARD = c++2a;
+CLANG_CXX_LANGUAGE_STANDARD = c++2b;
 CLANG_CXX_LIBRARY = libc++;
 CLANG_ENABLE_EXPLICIT_MODULES = NO;
 CLANG_ENABLE_OBJC_WEAK = YES;
@@ -74,7 +74,6 @@ GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 GCC_WARN_ABOUT_RETURN_TYPE = YES;
-GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 GCC_WARN_SIGN_COMPARE = YES;
 GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -85,12 +84,10 @@ GCC_WARN_UNUSED_FUNCTION = YES;
 GCC_WARN_UNUSED_VARIABLE = YES;
 OTHER_MIGFLAGS = -F$(BUILT_PRODUCTS_DIR);
 PREBINDING = NO;
-WARNING_CFLAGS = $(inherited) $(WK_FIXME_WARNING_CFLAGS) -Wcast-qual -Wchar-subscripts -Wextra-tokens -Winit-self -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wliteral-conversion -Wthread-safety -Wno-profile-instr-out-of-date -Wno-profile-instr-unprofiled;
+WARNING_CFLAGS = $(inherited) $(WK_FIXME_WARNING_CFLAGS) -Wcast-qual -Wchar-subscripts -Wextra-tokens -Winit-self -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wliteral-conversion -Wthread-safety -Wno-profile-instr-out-of-date -Wno-profile-instr-unprofiled -Wunsafe-buffer-usage $(WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL) -Wno-missing-field-initializers;
 
 // Remove WK_FIXME_WARNING_CFLAGS once all warnings are fixed.
 WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter;
-
-SWIFT_VERSION = 5.0;
 
 COPY_PHASE_STRIP = NO;
 // Dead code stripping needs to be on in the debug variant to avoid link errors.  This is due to unconditionally
@@ -99,7 +96,7 @@ COPY_PHASE_STRIP = NO;
 DEAD_CODE_STRIPPING = YES;
 
 DEBUG_DEFINES = NDEBUG;
-DEBUG_DEFINES[config=Debug] = ;
+DEBUG_DEFINES[config=Debug] = $(WK_ENABLE_CONJECTURE_ASSERT_YES);
 
 WK_DEFAULT_GCC_OPTIMIZATION_LEVEL = s;
 WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
@@ -115,6 +112,17 @@ AD_HOC_CODE_SIGNING_ALLOWED = YES;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
+
+// Can't enable objcxx mode until rdar://135979809 is resolved.
+SWIFT_OBJC_INTEROP_MODE = objc;
+
+SWIFT_VERSION = $(SWIFT_VERSION$(WK_XCODE_16));
+SWIFT_VERSION_XCODE_BEFORE_16 = 5.0;
+SWIFT_VERSION_XCODE_SINCE_16 = 6.0;
+
+OTHER_SWIFT_FLAGS = $(inherited) -no-warnings-as-errors -Xfrontend -experimental-spi-only-imports $(OTHER_SWIFT_FLAGS$(WK_XCODE_16)) $(OTHER_SWIFT_FLAGS_AVAILABILITY_$(USE_INTERNAL_SDK));
+OTHER_SWIFT_FLAGS_AVAILABILITY_YES = @$(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/Scripts/availability-definitions.txt;
+OTHER_SWIFT_FLAGS_XCODE_BEFORE_16 = -Xfrontend -enable-experimental-concurrency -Xfrontend -enable-upcoming-feature -Xfrontend IsolatedDefaultValues;
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
@@ -134,8 +142,6 @@ WK_MACOS_WEAK_FRAMEWORK_cocoatouch = -framework
 WK_MACOS_WEAK_FRAMEWORK_ = -weak_framework
 
 WK_USE_RESTRICTED_ENTITLEMENTS = $(USE_INTERNAL_SDK);
-
-EXCLUDED_SOURCE_FILE_NAMES = libWebKitAdditions.a JavaScriptCore.framework;
 
 WK_WEBKIT_DERIVEDSOURCES_INPUT_XCFILELIST_ADDITIONS = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/WebKit/DerivedSources-input.xcfilelist;
 WK_WEBKIT_DERIVEDSOURCES_OUTPUT_XCFILELIST_ADDITIONS = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/WebKit/DerivedSources-output.xcfilelist;

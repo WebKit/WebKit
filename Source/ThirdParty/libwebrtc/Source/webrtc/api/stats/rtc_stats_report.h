@@ -124,7 +124,7 @@ class RTC_EXPORT RTCStatsReport final
   std::string ToJson() const;
 
  protected:
-  friend class rtc::RefCountedNonVirtual<RTCStatsReport>;
+  friend class RefCountedNonVirtual<RTCStatsReport>;
   ~RTCStatsReport() = default;
 
  private:

@@ -29,12 +29,13 @@
 #include "CertificateInfo.h"
 #include "OpenSSLHelper.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CurlSSLVerifier {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CurlSSLVerifier);
     WTF_MAKE_NONCOPYABLE(CurlSSLVerifier);
 public:
     CurlSSLVerifier(void* sslCtx);

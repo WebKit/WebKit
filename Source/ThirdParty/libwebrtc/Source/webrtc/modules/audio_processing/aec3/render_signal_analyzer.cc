@@ -27,7 +27,7 @@ constexpr size_t kCounterThreshold = 5;
 // Identifies local bands with narrow characteristics.
 void IdentifySmallNarrowBandRegions(
     const RenderBuffer& render_buffer,
-    const absl::optional<size_t>& delay_partitions,
+    const std::optional<size_t>& delay_partitions,
     std::array<size_t, kFftLengthBy2 - 1>* narrow_band_counters) {
   RTC_DCHECK(narrow_band_counters);
 
@@ -56,14 +56,14 @@ void IdentifySmallNarrowBandRegions(
 // Identifies whether the signal has a single strong narrow-band component.
 void IdentifyStrongNarrowBandComponent(const RenderBuffer& render_buffer,
                                        int strong_peak_freeze_duration,
-                                       absl::optional<int>* narrow_peak_band,
+                                       std::optional<int>* narrow_peak_band,
                                        size_t* narrow_peak_counter) {
   RTC_DCHECK(narrow_peak_band);
   RTC_DCHECK(narrow_peak_counter);
   if (*narrow_peak_band &&
       ++(*narrow_peak_counter) >
           static_cast<size_t>(strong_peak_freeze_duration)) {
-    *narrow_peak_band = absl::nullopt;
+    *narrow_peak_band = std::nullopt;
   }
 
   const Block& x_latest = render_buffer.GetBlock(0);
@@ -125,7 +125,7 @@ RenderSignalAnalyzer::~RenderSignalAnalyzer() = default;
 
 void RenderSignalAnalyzer::Update(
     const RenderBuffer& render_buffer,
-    const absl::optional<size_t>& delay_partitions) {
+    const std::optional<size_t>& delay_partitions) {
   // Identify bands of narrow nature.
   IdentifySmallNarrowBandRegions(render_buffer, delay_partitions,
                                  &narrow_band_counters_);

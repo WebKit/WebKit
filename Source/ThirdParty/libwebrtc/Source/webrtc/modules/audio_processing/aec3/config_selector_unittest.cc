@@ -10,9 +10,9 @@
 
 #include "modules/audio_processing/aec3/config_selector.h"
 
+#include <optional>
 #include <tuple>
 
-#include "absl/types/optional.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "test/gtest.h"
 
@@ -39,7 +39,7 @@ TEST_P(ConfigSelectorChannelsAndContentDetection,
   const auto [num_channels, detect_stereo_content] = GetParam();
   EchoCanceller3Config config;
   config.multi_channel.detect_stereo_content = detect_stereo_content;
-  absl::optional<EchoCanceller3Config> multichannel_config;
+  std::optional<EchoCanceller3Config> multichannel_config;
 
   config.delay.default_delay = config.delay.default_delay + 1;
   const size_t custom_delay_value_in_config = config.delay.default_delay;
@@ -63,7 +63,7 @@ TEST_P(ConfigSelectorChannelsAndContentDetection,
   const auto [num_channels, detect_stereo_content] = GetParam();
   EchoCanceller3Config config;
   config.multi_channel.detect_stereo_content = detect_stereo_content;
-  absl::optional<EchoCanceller3Config> multichannel_config = config;
+  std::optional<EchoCanceller3Config> multichannel_config = config;
 
   config.delay.default_delay += 1;
   const size_t custom_delay_value_in_config = config.delay.default_delay;
@@ -87,7 +87,7 @@ TEST_P(ConfigSelectorChannels, CorrectConfigUpdateBehavior) {
   const int num_channels = GetParam();
   EchoCanceller3Config config;
   config.multi_channel.detect_stereo_content = true;
-  absl::optional<EchoCanceller3Config> multichannel_config = config;
+  std::optional<EchoCanceller3Config> multichannel_config = config;
 
   config.delay.default_delay += 1;
   const size_t custom_delay_value_in_config = config.delay.default_delay;

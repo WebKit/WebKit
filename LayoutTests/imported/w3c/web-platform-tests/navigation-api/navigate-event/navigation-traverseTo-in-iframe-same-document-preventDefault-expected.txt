@@ -1,4 +1,4 @@
 
 
-FAIL navigation.traverseTo() in an iframe with same-document preventDefault in its parent assert_unreached: navigate event should not fire in the iframe, because the traversal was cancelled in the top window Reached unreachable code
+PASS navigation.traverseTo() in an iframe with same-document preventDefault in its parent
 

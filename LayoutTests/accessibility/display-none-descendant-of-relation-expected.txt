@@ -1,0 +1,17 @@
+This test ensures we do not expose display:none descendants in the accessibility tree, even if they are a target of a relationship.
+
+
+{#div AXRole: AXGroup}
+
+{AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: Text}
+
+{AXRole: AXButton}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Text
+
+foo

@@ -127,19 +127,45 @@
 
 BSSL_NAMESPACE_BEGIN
 
+ssl_open_record_t dtls1_process_ack(SSL *ssl, uint8_t *out_alert) {
+  // ACKs are only allowed in DTLS 1.3. Reject them if we've negotiated a
+  // version and it's not 1.3. (It's theoretically possible to receive an ACK
+  // before version negotiation, e.g. due to packet loss or a server ACKing a
+  // ClientHello prior to sending the ServerHello, so if we don't have a version
+  // we'll accept the ACK.)
+  if (ssl->s3->version != 0 && ssl_protocol_version(ssl) < TLS1_3_VERSION) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_UNEXPECTED_RECORD);
+    *out_alert = SSL_AD_UNEXPECTED_MESSAGE;
+    return ssl_open_record_error;
+  }
+  // TODO(crbug.com/42290594): Implement proper support for ACKs. Currently,
+  // this just drops the ACK on the floor.
+  return ssl_open_record_discard;
+}
+
 ssl_open_record_t dtls1_open_app_data(SSL *ssl, Span<uint8_t> *out,
                                       size_t *out_consumed, uint8_t *out_alert,
                                       Span<uint8_t> in) {
   assert(!SSL_in_init(ssl));
 
   uint8_t type;
+  DTLSRecordNumber record_number;
   Span<uint8_t> record;
-  auto ret = dtls_open_record(ssl, &type, &record, out_consumed, out_alert, in);
+  auto ret = dtls_open_record(ssl, &type, &record_number, &record, out_consumed,
+                              out_alert, in);
   if (ret != ssl_open_record_success) {
     return ret;
   }
 
   if (type == SSL3_RT_HANDSHAKE) {
+    // Process handshake fragments for DTLS 1.3 post-handshake messages.
+    if (ssl_protocol_version(ssl) >= TLS1_3_VERSION) {
+      if (!dtls1_process_handshake_fragments(ssl, out_alert, record)) {
+        return ssl_open_record_error;
+      }
+      return ssl_open_record_discard;
+    }
+
     // Parse the first fragment header to determine if this is a pre-CCS or
     // post-CCS handshake record. DTLS resets handshake message numbers on each
     // handshake, so renegotiations and retransmissions are ambiguous.
@@ -170,6 +196,10 @@ ssl_open_record_t dtls1_open_app_data(SSL *ssl, Span<uint8_t> *out,
 
     // Otherwise, this is a pre-CCS handshake message from an unsupported
     // renegotiation attempt. Fall through to the error path.
+  }
+
+  if (type == SSL3_RT_ACK) {
+    return dtls1_process_ack(ssl, out_alert);
   }
 
   if (type != SSL3_RT_APPLICATION_DATA) {
@@ -207,8 +237,9 @@ int dtls1_write_app_data(SSL *ssl, bool *out_needs_handshake,
     return 1;
   }
 
+  // TODO(crbug.com/42290594): Use the 0-RTT epoch if writing 0-RTT.
   int ret = dtls1_write_record(ssl, SSL3_RT_APPLICATION_DATA, in,
-                               dtls1_use_current_epoch);
+                               ssl->d1->write_epoch.epoch());
   if (ret <= 0) {
     return ret;
   }
@@ -217,7 +248,7 @@ int dtls1_write_app_data(SSL *ssl, bool *out_needs_handshake,
 }
 
 int dtls1_write_record(SSL *ssl, int type, Span<const uint8_t> in,
-                       enum dtls1_use_epoch_t use_epoch) {
+                       uint16_t epoch) {
   SSLBuffer *buf = &ssl->s3->write_buffer;
   assert(in.size() <= SSL3_RT_MAX_PLAIN_LENGTH);
   // There should never be a pending write buffer in DTLS. One can't write half
@@ -230,12 +261,13 @@ int dtls1_write_record(SSL *ssl, int type, Span<const uint8_t> in,
     return -1;
   }
 
+  DTLSRecordNumber record_number;
   size_t ciphertext_len;
-  if (!buf->EnsureCap(ssl_seal_align_prefix_len(ssl),
+  if (!buf->EnsureCap(dtls_seal_prefix_len(ssl, epoch),
                       in.size() + SSL_max_seal_overhead(ssl)) ||
-      !dtls_seal_record(ssl, buf->remaining().data(), &ciphertext_len,
-                        buf->remaining().size(), type, in.data(), in.size(),
-                        use_epoch)) {
+      !dtls_seal_record(ssl, &record_number, buf->remaining().data(),
+                        &ciphertext_len, buf->remaining().size(), type,
+                        in.data(), in.size(), epoch)) {
     buf->Clear();
     return -1;
   }
@@ -250,7 +282,7 @@ int dtls1_write_record(SSL *ssl, int type, Span<const uint8_t> in,
 
 int dtls1_dispatch_alert(SSL *ssl) {
   int ret = dtls1_write_record(ssl, SSL3_RT_ALERT, ssl->s3->send_alert,
-                               dtls1_use_current_epoch);
+                               ssl->d1->write_epoch.epoch());
   if (ret <= 0) {
     return ret;
   }

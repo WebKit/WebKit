@@ -47,7 +47,7 @@ bool IfAddrsConverter::ConvertIfAddrsToIPAddress(
 }
 
 bool IfAddrsConverter::ConvertNativeAttributesToIPAttributes(
-    const struct ifaddrs* interface,
+    const struct ifaddrs* /* interface */,
     int* ip_attributes) {
   *ip_attributes = IPV6_ADDRESS_FLAG_NONE;
   return true;

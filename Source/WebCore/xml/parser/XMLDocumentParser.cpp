@@ -55,10 +55,13 @@
 #include "TextResourceDecoder.h"
 #include "XMLNSNames.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XMLDocumentParser);
 
 using namespace HTMLNames;
 
@@ -70,8 +73,7 @@ void XMLDocumentParser::pushCurrentNode(ContainerNode* n)
     ASSERT(m_currentNode);
     if (n != document())
         n->ref();
-    m_currentNodeStack.append(m_currentNode);
-    m_currentNode = n;
+    m_currentNodeStack.append(std::exchange(m_currentNode, n));
     if (m_currentNodeStack.size() > maxXMLTreeDepth)
         handleError(XMLErrors::fatal, "Excessive node nesting.", textPosition());
 }
@@ -85,8 +87,7 @@ void XMLDocumentParser::popCurrentNode()
     if (m_currentNode != document())
         m_currentNode->deref();
 
-    m_currentNode = m_currentNodeStack.last();
-    m_currentNodeStack.removeLast();
+    m_currentNode = m_currentNodeStack.takeLast();
 }
 
 void XMLDocumentParser::clearCurrentNodeStack()
@@ -158,8 +159,12 @@ bool XMLDocumentParser::updateLeafTextNode()
     if (!m_leafTextNode)
         return true;
 
-    // This operation might fire mutation event, see below.
-    m_leafTextNode->appendData(String::fromUTF8(m_bufferedText.span()));
+    if (isXHTMLDocument())
+        m_leafTextNode->parserAppendData(String::fromUTF8(m_bufferedText.span()));
+    else {
+        // This operation might fire mutation event, see below.
+        m_leafTextNode->appendData(String::fromUTF8(m_bufferedText.span()));
+    }
     m_bufferedText = { };
 
     m_leafTextNode = nullptr;

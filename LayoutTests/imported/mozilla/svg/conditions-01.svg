@@ -14,7 +14,5 @@
 	<rect x="200" y="100" width="50" height="50" fill="red"/>
 	<rect requiredFeatures="http://www.w3.org/TR/SVG11/feature#Gradient" x="200" y="100" width="50" height="50" fill="lime"/>
 
-	<rect requiredFeatures="foo" x="50" y="200" width="50" height="50" fill="red"/>
-
 	<rect requiredExtensions="foo" x="200" y="200" width="50" height="50" fill="red"/>
 </svg>

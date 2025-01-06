@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,7 +15,7 @@ s * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 #include "aom_dsp/aom_dsp_common.h"
 #include "aom_dsp/fft_common.h"
 
-static INLINE void transpose4x4(const float *A, float *B, const int lda,
+static inline void transpose4x4(const float *A, float *B, const int lda,
                                 const int ldb) {
   __m128 row1 = _mm_load_ps(&A[0 * lda]);
   __m128 row2 = _mm_load_ps(&A[1 * lda]);
@@ -111,13 +111,13 @@ void aom_fft_unpack_2d_output_sse2(const float *packed, float *output, int n) {
 }
 
 // Generate definitions for 1d transforms using float and __mm128
-GEN_FFT_4(static INLINE void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
+GEN_FFT_4(static inline void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
           _mm_set1_ps, _mm_add_ps, _mm_sub_ps)
-GEN_FFT_8(static INLINE void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
+GEN_FFT_8(static inline void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
           _mm_set1_ps, _mm_add_ps, _mm_sub_ps, _mm_mul_ps)
-GEN_FFT_16(static INLINE void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
+GEN_FFT_16(static inline void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
            _mm_set1_ps, _mm_add_ps, _mm_sub_ps, _mm_mul_ps)
-GEN_FFT_32(static INLINE void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
+GEN_FFT_32(static inline void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
            _mm_set1_ps, _mm_add_ps, _mm_sub_ps, _mm_mul_ps)
 
 void aom_fft4x4_float_sse2(const float *input, float *temp, float *output) {
@@ -141,13 +141,13 @@ void aom_fft32x32_float_sse2(const float *input, float *temp, float *output) {
 }
 
 // Generate definitions for 1d inverse transforms using float and mm128
-GEN_IFFT_4(static INLINE void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
+GEN_IFFT_4(static inline void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
            _mm_set1_ps, _mm_add_ps, _mm_sub_ps)
-GEN_IFFT_8(static INLINE void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
+GEN_IFFT_8(static inline void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
            _mm_set1_ps, _mm_add_ps, _mm_sub_ps, _mm_mul_ps)
-GEN_IFFT_16(static INLINE void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
+GEN_IFFT_16(static inline void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
             _mm_set1_ps, _mm_add_ps, _mm_sub_ps, _mm_mul_ps)
-GEN_IFFT_32(static INLINE void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
+GEN_IFFT_32(static inline void, sse2, float, __m128, _mm_load_ps, _mm_store_ps,
             _mm_set1_ps, _mm_add_ps, _mm_sub_ps, _mm_mul_ps)
 
 void aom_ifft4x4_float_sse2(const float *input, float *temp, float *output) {

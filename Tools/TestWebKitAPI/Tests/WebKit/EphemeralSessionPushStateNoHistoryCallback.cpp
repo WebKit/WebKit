@@ -62,7 +62,7 @@ TEST(WebKit, EphemeralSessionPushStateNoHistoryCallback)
     WKPageConfigurationSetWebsiteDataStore(configuration.get(), websiteDataStore.get());
 
     WKContextHistoryClientV0 historyClient;
-    memset(&historyClient, 0, sizeof(historyClient));
+    zeroBytes(historyClient);
 
     historyClient.base.version = 0;
     historyClient.didNavigateWithNavigationData = didNavigateWithNavigationData;
@@ -72,7 +72,7 @@ TEST(WebKit, EphemeralSessionPushStateNoHistoryCallback)
     PlatformWebView webView(configuration.get());
 
     WKPageNavigationClientV0 pageLoaderClient;
-    memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
+    zeroBytes(pageLoaderClient);
 
     pageLoaderClient.base.version = 0;
     pageLoaderClient.didSameDocumentNavigation = didSameDocumentNavigation;

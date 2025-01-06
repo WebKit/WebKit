@@ -25,11 +25,11 @@
 #include "DocumentSVG.h"
 #include "SVGSVGElement.h"
 #include "SVGViewSpec.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGDocument);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGDocument);
 
 SVGDocument::SVGDocument(LocalFrame* frame, const Settings& settings, const URL& url)
     : XMLDocument(frame, settings, url, { DocumentClass::SVG })

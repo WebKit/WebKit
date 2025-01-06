@@ -14,9 +14,9 @@
 #include <stdint.h>
 
 #include <map>
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "api/numerics/samples_stats_counter.h"
 #include "api/test/metrics/metrics_logger.h"
 #include "api/units/data_size.h"
@@ -56,9 +56,9 @@ class DelayVariationCalculator {
   void Insert(uint32_t rtp_timestamp,
               Timestamp arrival_time,
               DataSize size,
-              absl::optional<int> spatial_layer = absl::nullopt,
-              absl::optional<int> temporal_layer = absl::nullopt,
-              absl::optional<VideoFrameType> frame_type = absl::nullopt);
+              std::optional<int> spatial_layer = std::nullopt,
+              std::optional<int> temporal_layer = std::nullopt,
+              std::optional<VideoFrameType> frame_type = std::nullopt);
 
   const TimeSeries& time_series() const { return time_series_; }
 
@@ -68,9 +68,9 @@ class DelayVariationCalculator {
     int64_t unwrapped_rtp_timestamp;
     Timestamp arrival_time;
     DataSize size;
-    absl::optional<int> spatial_layer;
-    absl::optional<int> temporal_layer;
-    absl::optional<VideoFrameType> frame_type;
+    std::optional<int> spatial_layer;
+    std::optional<int> temporal_layer;
+    std::optional<VideoFrameType> frame_type;
   };
   using MetadataT = std::map<std::string, std::string>;
 
@@ -84,7 +84,7 @@ class DelayVariationCalculator {
   MetadataT BuildMetadata(const Frame& frame);
 
   RtpTimestampUnwrapper unwrapper_;
-  absl::optional<Frame> prev_frame_ = absl::nullopt;
+  std::optional<Frame> prev_frame_ = std::nullopt;
   TimeSeries time_series_;
 };
 

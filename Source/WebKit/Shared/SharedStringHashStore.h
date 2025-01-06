@@ -28,11 +28,14 @@
 #include "SharedStringHashTable.h"
 #include <WebCore/SharedMemory.h>
 #include <WebCore/SharedStringHash.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
 
-class SharedStringHashStore {
+class SharedStringHashStore : public CanMakeCheckedPtr<SharedStringHashStore> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SharedStringHashStore);
 public:
     class Client {
     public:

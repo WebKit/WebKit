@@ -27,7 +27,6 @@
 
 #import "PlatformUtilities.h"
 #import "UserContentWorldProtocol.h"
-#import <WebKit/WKConnection.h>
 #import <WebKit/WKWebProcessPlugIn.h>
 #import <WebKit/WKWebProcessPlugInBrowserContextController.h>
 #import <WebKit/WKWebProcessPlugInBrowserContextControllerPrivate.h>

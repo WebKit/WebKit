@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<a id="link">link</a>
+
+<script>
+var output = "This test ensures that we properly report AXVisited after dynamic page changes.\n\n";
+// Set a random href. This ensures that running this test repeatedly doesn't fail, as testRunner.keepWebHistory() causes
+// visited state to carry over between test runs.
+document.getElementById("link").setAttribute("href", `#${(Math.random() + 1).toString(36).substring(2)}`);
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    window.testRunner.keepWebHistory();
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    output += expect("webArea.childAtIndex(0).boolAttributeValue('AXVisited')", "false");
+    document.getElementById("link").click();
+    setTimeout(async function() {
+        output += await expectAsync("webArea.childAtIndex(0).boolAttributeValue('AXVisited')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

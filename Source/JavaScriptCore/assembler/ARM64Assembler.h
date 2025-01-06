@@ -44,12 +44,14 @@
 
 #define CHECK_DATASIZE_OF(datasize) static_assert(datasize == 32 || datasize == 64)
 #define CHECK_DATASIZE_OF_SIMD(datasize) static_assert(datasize == 32 || datasize == 64 || datasize == 128)
+#define CHECK_DATASIZE_OF_FP(datasize) static_assert(datasize == 16 || datasize == 32 || datasize == 64)
 #define CHECK_MEMOPSIZE_OF(size) static_assert(size == 8 || size == 16 || size == 32 || size == 64);
 #define CHECK_MEMOPSIZE_OF_SIMD(size) static_assert(size == 8 || size == 16 || size == 32 || size == 64 || size == 128);
-#define DATASIZE_OF(datasize) ((datasize == 64) ? Datasize_64 : ((datasize == 128) ? Datasize_128 : Datasize_32))
+#define DATASIZE_OF(datasize) ((datasize == 64) ? Datasize_64 : ((datasize == 128) ? Datasize_128 : ((datasize == 16) ? Datasize_16 : Datasize_32)))
 #define MEMOPSIZE_OF(datasize) ((datasize == 8 || datasize == 128) ? MemOpSize_8_or_128 : (datasize == 16) ? MemOpSize_16 : (datasize == 32) ? MemOpSize_32 : MemOpSize_64)
 #define CHECK_DATASIZE() CHECK_DATASIZE_OF(datasize)
 #define CHECK_DATASIZE_SIMD() CHECK_DATASIZE_OF_SIMD(datasize)
+#define CHECK_DATASIZE_FP() CHECK_DATASIZE_OF_FP(datasize)
 #define CHECK_MEMOPSIZE() CHECK_MEMOPSIZE_OF(datasize)
 #define CHECK_MEMOPSIZE_SIMD() CHECK_MEMOPSIZE_OF_SIMD(datasize)
 #define CHECK_VECTOR_DATASIZE() ASSERT(datasize == 64 || datasize == 128)
@@ -58,6 +60,8 @@
 #define CHECK_FP_MEMOP_DATASIZE() ASSERT(datasize == 8 || datasize == 16 || datasize == 32 || datasize == 64 || datasize == 128)
 #define MEMPAIROPSIZE_INT(datasize) ((datasize == 64) ? MemPairOp_64 : MemPairOp_32)
 #define MEMPAIROPSIZE_FP(datasize) ((datasize == 128) ? MemPairOp_V128 : (datasize == 64) ? MemPairOp_V64 : MemPairOp_32)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -351,7 +355,7 @@ public:
         {
             data.realTypes.m_from = from;
 #if CPU(ARM64E)
-            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ bitwise_cast<intptr_t>(assembler)));
+            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ std::bit_cast<intptr_t>(assembler)));
 #else
             UNUSED_PARAM(assembler);
             data.realTypes.m_to = to;
@@ -364,7 +368,7 @@ public:
         {
             data.realTypes.m_from = from;
 #if CPU(ARM64E)
-            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ bitwise_cast<intptr_t>(assembler)));
+            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ std::bit_cast<intptr_t>(assembler)));
 #else
             UNUSED_PARAM(assembler);
             data.realTypes.m_to = to;
@@ -377,7 +381,7 @@ public:
         {
             data.realTypes.m_from = from;
 #if CPU(ARM64E)
-            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ bitwise_cast<intptr_t>(assembler)));
+            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ std::bit_cast<intptr_t>(assembler)));
 #else
             UNUSED_PARAM(assembler);
             data.realTypes.m_to = to;
@@ -392,7 +396,7 @@ public:
         {
             data.realTypes.m_from = from;
 #if CPU(ARM64E)
-            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ bitwise_cast<intptr_t>(assembler)));
+            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ std::bit_cast<intptr_t>(assembler)));
 #else
             UNUSED_PARAM(assembler);
             data.realTypes.m_to = to;
@@ -419,7 +423,7 @@ public:
         void setFrom(const ARM64Assembler* assembler, intptr_t from)
         {
 #if CPU(ARM64E)
-            data.realTypes.m_to = tagInt(to(assembler), static_cast<PtrTag>(from ^ bitwise_cast<intptr_t>(assembler)));
+            data.realTypes.m_to = tagInt(to(assembler), static_cast<PtrTag>(from ^ std::bit_cast<intptr_t>(assembler)));
 #else
             UNUSED_PARAM(assembler);
 #endif
@@ -428,7 +432,7 @@ public:
         intptr_t to(const ARM64Assembler* assembler) const
         {
 #if CPU(ARM64E)
-            return untagInt(data.realTypes.m_to, static_cast<PtrTag>(data.realTypes.m_from ^ bitwise_cast<intptr_t>(assembler)));
+            return untagInt(data.realTypes.m_to, static_cast<PtrTag>(data.realTypes.m_from ^ std::bit_cast<intptr_t>(assembler)));
 #else
             UNUSED_PARAM(assembler);
             return data.realTypes.m_to;
@@ -502,12 +506,36 @@ public:
     // immediate the remainder of the mantissa must be zero, and the high part
     // of the exponent must match the top bit retained, bar the highest bit
     // which must be its inverse.
-    static bool canEncodeFPImm(double d)
+    template<int datasize>
+    static bool canEncodeFPImm(uint64_t u64)
     {
-        // Discard the sign bit, the low two bits of the exponent & the highest
-        // four bits of the mantissa.
-        uint64_t masked = bitwise_cast<uint64_t>(d) & 0x7fc0ffffffffffffull;
-        return (masked == 0x3fc0000000000000ull) || (masked == 0x4000000000000000ull);
+        if constexpr (datasize == 64) {
+            // Discard the sign bit, the low two bits of the exponent & the highest
+            // four bits of the mantissa.
+            // sign 1 bit, exponent 11 bits, mantissa 52 bits
+            uint64_t masked = u64 & 0b0'11111111100'0000111111111111111111111111111111111111111111111111ULL;
+            if (masked == 0b0'01111111100'0000000000000000000000000000000000000000000000000000ULL)
+                return true;
+            if (masked == 0b0'10000000000'0000000000000000000000000000000000000000000000000000ULL)
+                return true;
+            return false;
+        } else if constexpr (datasize == 32) {
+            // sign 1 bit, exponent 8 bits, mantissa 23 bits
+            uint32_t masked = static_cast<uint32_t>(u64) & 0b0'11111100'00001111111111111111111U;
+            if (masked == 0b0'01111100'00000000000000000000000U)
+                return true;
+            if (masked == 0b0'10000000'00000000000000000000000U)
+                return true;
+            return false;
+        } else {
+            // sign 1 bit, exponent 5 bits, mantissa 10 bits
+            uint16_t masked = static_cast<uint16_t>(u64) & 0b0'11100'0000111111U;
+            if (masked == 0b0'01100'0000000000U)
+                return true;
+            if (masked == 0b0'10000'0000000000U)
+                return true;
+            return false;
+        }
     }
 
     template<int datasize>
@@ -522,11 +550,16 @@ public:
     }
 
 protected:
-    int encodeFPImm(double d)
+    template<int datasize>
+    int encodeFPImm(uint64_t u64)
     {
-        ASSERT(canEncodeFPImm(d));
-        uint64_t u64 = bitwise_cast<uint64_t>(d);
-        return (static_cast<int>(u64 >> 56) & 0x80) | (static_cast<int>(u64 >> 48) & 0x7f);
+        ASSERT(canEncodeFPImm<datasize>(u64));
+        if constexpr (datasize == 64)
+            return (static_cast<int>(u64 >> 56) & 0x80) | (static_cast<int>(u64 >> 48) & 0x7f);
+        else if constexpr (datasize == 32)
+            return (static_cast<int>(u64 >> 24) & 0x80) | (static_cast<int>(u64 >> 19) & 0x7f);
+        else
+            return (static_cast<int>(u64 >> 8) & 0x80) | (static_cast<int>(u64 >> 6) & 0x7f);
     }
 
     template<int datasize>
@@ -643,6 +676,13 @@ protected:
         FPDataOp_FMAXNM,
         FPDataOp_FMINNM,
         FPDataOp_FNMUL
+    };
+
+    enum FPDataOp4Source {
+        FPDataOp_FRINT32Z = 0b00,
+        FPDataOp_FRINT32X = 0b01,
+        FPDataOp_FRINT64Z = 0b10,
+        FPDataOp_FRINT64X = 0b11,
     };
 
     enum SIMD3Same {
@@ -784,6 +824,11 @@ public:
             add<datasize, setFlags>(rd, rn, rm, UXTX, amount);
         } else
             insn(addSubtractShiftedRegister(DATASIZE, AddOp_ADD, setFlags, shift, rm, amount, rn, rd));
+    }
+
+    ALWAYS_INLINE void add(FPRegisterID rd, FPRegisterID rn, FPRegisterID rm)
+    {
+        insn(0b01'0'11110'11'1'00000'10000'1'00000'00000 | (rm << 16) | (rn << 5) | rd);
     }
 
     ALWAYS_INLINE void adr(RegisterID rd, int offset)
@@ -2302,7 +2347,7 @@ public:
     ALWAYS_INLINE static void fillNearTailCall(void* from, void* to)
     {
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
-        intptr_t offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(from)) >> 2;
+        intptr_t offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(from)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
         ASSERT(isInt<26>(offset));
         constexpr bool isCall = false;
@@ -2723,6 +2768,11 @@ public:
         insn(addSubtractShiftedRegister(DATASIZE, AddOp_SUB, setFlags, shift, rm, amount, rn, rd));
     }
 
+    ALWAYS_INLINE void sub(FPRegisterID rd, FPRegisterID rn, FPRegisterID rm)
+    {
+        insn(0b01'1'11110'11'1'00000'10000'1'00000'00000 | (rm << 16) | (rn << 5) | rd);
+    }
+
     template<int datasize>
     ALWAYS_INLINE void sxtb(RegisterID rd, RegisterID rn)
     {
@@ -2908,9 +2958,9 @@ public:
     template<int dstsize, int srcsize>
     ALWAYS_INLINE void fcvt(FPRegisterID vd, FPRegisterID vn)
     {
-        ASSERT(dstsize == 16 || dstsize == 32 || dstsize == 64);
-        ASSERT(srcsize == 16 || srcsize == 32 || srcsize == 64);
-        ASSERT(dstsize != srcsize);
+        CHECK_DATASIZE_OF_FP(dstsize);
+        CHECK_DATASIZE_OF_FP(srcsize);
+        static_assert(dstsize != srcsize);
         Datasize type = (srcsize == 64) ? Datasize_64 : (srcsize == 32) ? Datasize_32 : Datasize_16;
         FPDataOp1Source opcode = (dstsize == 64) ? FPDataOp_FCVT_toDouble : (dstsize == 32) ? FPDataOp_FCVT_toSingle : FPDataOp_FCVT_toHalf;
         insn(floatingPointDataProcessing1Source(type, opcode, vn, vd));
@@ -3041,29 +3091,29 @@ public:
     template<int datasize>
     ALWAYS_INLINE void fmov(FPRegisterID vd, FPRegisterID vn)
     {
-        CHECK_DATASIZE();
+        CHECK_DATASIZE_FP();
         insn(floatingPointDataProcessing1Source(DATASIZE, FPDataOp_FMOV, vn, vd));
     }
 
     template<int datasize>
     ALWAYS_INLINE void fmov(FPRegisterID vd, RegisterID rn)
     {
-        CHECK_DATASIZE();
+        CHECK_DATASIZE_FP();
         insn(floatingPointIntegerConversions(DATASIZE, DATASIZE, FPIntConvOp_FMOV_XtoQ, rn, vd));
     }
 
     template<int datasize>
     ALWAYS_INLINE void fmov(RegisterID rd, FPRegisterID vn)
     {
-        CHECK_DATASIZE();
+        CHECK_DATASIZE_FP();
         insn(floatingPointIntegerConversions(DATASIZE, DATASIZE, FPIntConvOp_FMOV_QtoX, vn, rd));
     }
 
     template<int datasize>
-    ALWAYS_INLINE void fmov(FPRegisterID vd, double imm)
+    ALWAYS_INLINE void fmov(FPRegisterID vd, uint64_t imm)
     {
-        CHECK_DATASIZE();
-        insn(floatingPointImmediate(DATASIZE, encodeFPImm(imm), vd));
+        CHECK_DATASIZE_FP();
+        insn(floatingPointImmediate(DATASIZE, encodeFPImm<datasize>(imm), vd));
     }
 
     ALWAYS_INLINE void fmov_top(FPRegisterID vd, RegisterID rn)
@@ -3189,6 +3239,34 @@ public:
     }
 
     template<int datasize>
+    ALWAYS_INLINE void frint32x(FPRegisterID vd, FPRegisterID vn)
+    {
+        CHECK_DATASIZE();
+        insn(floatingPointDataProcessing4Source(DATASIZE, FPDataOp_FRINT32X, vn, vd));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void frint32z(FPRegisterID vd, FPRegisterID vn)
+    {
+        CHECK_DATASIZE();
+        insn(floatingPointDataProcessing4Source(DATASIZE, FPDataOp_FRINT32Z, vn, vd));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void frint64x(FPRegisterID vd, FPRegisterID vn)
+    {
+        CHECK_DATASIZE();
+        insn(floatingPointDataProcessing4Source(DATASIZE, FPDataOp_FRINT64X, vn, vd));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void frint64z(FPRegisterID vd, FPRegisterID vn)
+    {
+        CHECK_DATASIZE();
+        insn(floatingPointDataProcessing4Source(DATASIZE, FPDataOp_FRINT64Z, vn, vd));
+    }
+
+    template<int datasize>
     ALWAYS_INLINE void fsqrt(FPRegisterID vd, FPRegisterID vn)
     {
         CHECK_DATASIZE();
@@ -3297,7 +3375,7 @@ public:
     template<int datasize>
     ALWAYS_INLINE void stur(FPRegisterID rt, RegisterID rn, int simm)
     {
-        CHECK_DATASIZE_SIMD();
+        CHECK_FP_MEMOP_DATASIZE();
         insn(loadStoreRegisterUnscaledImmediate(MEMOPSIZE, true, datasize == 128 ? MemOp_STORE_V128 : MemOp_STORE, simm, rn, rt));
     }
 
@@ -3467,28 +3545,28 @@ public:
     {
         ASSERT(to);
         ASSERT(from.isSet());
-        m_jumpsToLink.append(LinkRecord(this, from.offset(), bitwise_cast<intptr_t>(to), type, condition, ThunkOrNot::Thunk));
+        m_jumpsToLink.append(LinkRecord(this, from.offset(), std::bit_cast<intptr_t>(to), type, condition, ThunkOrNot::Thunk));
     }
 
     void linkJumpThunk(AssemblerLabel from, void* to, JumpType type, Condition condition, bool is64Bit, RegisterID compareRegister)
     {
         ASSERT(to);
         ASSERT(from.isSet());
-        m_jumpsToLink.append(LinkRecord(this, from.offset(), bitwise_cast<intptr_t>(to), type, condition, is64Bit, compareRegister, ThunkOrNot::Thunk));
+        m_jumpsToLink.append(LinkRecord(this, from.offset(), std::bit_cast<intptr_t>(to), type, condition, is64Bit, compareRegister, ThunkOrNot::Thunk));
     }
 
     void linkJumpThunk(AssemblerLabel from, void* to, JumpType type, Condition condition, unsigned bitNumber, RegisterID compareRegister)
     {
         ASSERT(to);
         ASSERT(from.isSet());
-        m_jumpsToLink.append(LinkRecord(this, from.offset(), bitwise_cast<intptr_t>(to), type, condition, bitNumber, compareRegister, ThunkOrNot::Thunk));
+        m_jumpsToLink.append(LinkRecord(this, from.offset(), std::bit_cast<intptr_t>(to), type, condition, bitNumber, compareRegister, ThunkOrNot::Thunk));
     }
 
     void linkNearCallThunk(AssemblerLabel from, void* to)
     {
         ASSERT(to);
         ASSERT(from.isSet());
-        m_jumpsToLink.append(LinkRecord(this, from.offset() - sizeof(int), bitwise_cast<intptr_t>(to), ThunkOrNot::Thunk));
+        m_jumpsToLink.append(LinkRecord(this, from.offset() - sizeof(int), std::bit_cast<intptr_t>(to), ThunkOrNot::Thunk));
     }
 
     static void linkJump(void* code, AssemblerLabel from, void* to)
@@ -3525,7 +3603,7 @@ public:
 #if ENABLE(JUMP_ISLANDS)
         if (!isInt<26>(offset)) {
             to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(where, to);
-            offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(where)) >> 2;
+            offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(where)) >> 2;
             RELEASE_ASSERT(isInt<26>(offset));
         }
 #endif
@@ -3638,7 +3716,7 @@ public:
 #if ENABLE(JUMP_ISLANDS)
     static void* prepareForAtomicRelinkJumpConcurrently(void* from, void* to)
     {
-        intptr_t offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(from)) >> 2;
+        intptr_t offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(from)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
 
         if (isInt<26>(offset))
@@ -3649,7 +3727,7 @@ public:
 
     static void* prepareForAtomicRelinkCallConcurrently(void* from, void* to)
     {
-        from = static_cast<void*>(bitwise_cast<int*>(from) - 1);
+        from = static_cast<void*>(std::bit_cast<int*>(from) - 1);
         return prepareForAtomicRelinkJumpConcurrently(from, to);
     }
 #endif
@@ -3826,7 +3904,7 @@ public:
 
     static ALWAYS_INLINE bool canEmitJump(void* from, void* to)
     {
-        intptr_t diff = (bitwise_cast<intptr_t>(from) - bitwise_cast<intptr_t>(to)) >> 2;
+        intptr_t diff = (std::bit_cast<intptr_t>(from) - std::bit_cast<intptr_t>(to)) >> 2;
         return isInt<26>(diff);
     }
 
@@ -3882,16 +3960,16 @@ protected:
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
         assertIsNotTagged(to);
         assertIsNotTagged(fromInstruction);
-        intptr_t offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction)) >> 2;
+        intptr_t offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(fromInstruction)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
 
 #if ENABLE(JUMP_ISLANDS)
         if (!isInt<26>(offset)) {
             if constexpr (copy == MachineCodeCopyMode::JITMemcpy)
-                to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(bitwise_cast<void*>(fromInstruction), to);
+                to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(std::bit_cast<void*>(fromInstruction), to);
             else
-                to = ExecutableAllocator::singleton().getJumpIslandToUsingMemcpy(bitwise_cast<void*>(fromInstruction), to);
-            offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction)) >> 2;
+                to = ExecutableAllocator::singleton().getJumpIslandToUsingMemcpy(std::bit_cast<void*>(fromInstruction), to);
+            offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(fromInstruction)) >> 2;
             RELEASE_ASSERT(isInt<26>(offset));
         }
 #endif
@@ -4337,6 +4415,13 @@ protected:
         return (0x1f000000 | M << 31 | S << 29 | type << 22 | o1 << 21 | rm << 16 | o2 << 15 | ra << 10 | rn << 5 | rd);
     }
 
+    ALWAYS_INLINE static int floatingPointDataProcessing4Source(Datasize type, FPDataOp4Source opcode, FPRegisterID rn, FPRegisterID rd)
+    {
+        const int M = 0;
+        const int S = 0;
+        return (0b0'0'0'11110'00'10100'00'10000'00000'00000 | M << 31 | S << 29 | type << 22 | opcode << 15 | rn << 5 | rd);
+    }
+
     // 'V' means vector
     ALWAYS_INLINE static int loadRegisterLiteral(LdrLiteralOp opc, bool V, int imm19, FPRegisterID rt)
     {
@@ -4632,5 +4717,7 @@ public:
 #undef DATASIZE
 #undef MEMOPSIZE
 #undef CHECK_FP_MEMOP_DATASIZE
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER) && CPU(ARM64)

@@ -27,7 +27,6 @@ Resource::Resource(const SharedContext* sharedContext,
                    Ownership ownership,
                    skgpu::Budgeted budgeted,
                    size_t gpuMemorySize,
-                   std::string_view label,
                    bool commandBufferRefsAsUsageRefs)
         : fSharedContext(sharedContext)
         , fUsageRefCnt(1)
@@ -41,8 +40,6 @@ Resource::Resource(const SharedContext* sharedContext,
     // If we don't own the resource that must mean its wrapped in a client object. Thus we should
     // not be budgeted
     SkASSERT(fOwnership == Ownership::kOwned || fBudgeted == skgpu::Budgeted::kNo);
-
-    this->setLabel(label);
 }
 
 Resource::~Resource() {
@@ -107,10 +104,10 @@ void Resource::dumpMemoryStatistics(SkTraceMemoryDump* traceMemoryDump) const {
 
     size_t size = this->gpuMemorySize();
 
-    // Avoid dumping objects without a size (e.g. Samplers, pipelines, etc).
+    // Avoid dumping zero-sized objects (e.g. Samplers, pipelines, etc) except memoryless textures.
     // TODO: Would a client ever actually want to see all of this? Wouldn't be hard to add it as an
     // option.
-    if (size == 0) {
+    if (size == 0 && this->asTexture() == nullptr) {
         return;
     }
 

@@ -33,11 +33,9 @@
 namespace JSC {
 namespace Probe {
 
-static void flushDirtyStackPages(State*);
+static void SYSV_ABI flushDirtyStackPages(State*);
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(Context);
-
-void executeJSCJITProbe(State* state)
+extern "C" void SYSV_ABI executeJSCJITProbe(State* state)
 {
     Context context(state);
 #if CPU(ARM64)
@@ -65,7 +63,7 @@ void executeJSCJITProbe(State* state)
     }
 }
 
-static void flushDirtyStackPages(State* state)
+static void SYSV_ABI flushDirtyStackPages(State* state)
 {
     std::unique_ptr<Stack> stack(reinterpret_cast<Probe::Stack*>(state->initializeStackArg));
     stack->flushWrites();

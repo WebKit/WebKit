@@ -4,34 +4,77 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-
 #include "src/gpu/ganesh/ops/AAConvexPathRenderer.h"
 
+#include "include/core/SkMatrix.h"
+#include "include/core/SkPath.h"
+#include "include/core/SkPoint.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkScalar.h"
 #include "include/core/SkString.h"
 #include "include/core/SkTypes.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#include "include/private/SkColorData.h"
+#include "include/private/base/SkDebug.h"
+#include "include/private/base/SkFloatingPoint.h"
+#include "include/private/base/SkMath.h"
+#include "include/private/base/SkTArray.h"
+#include "include/private/base/SkTDArray.h"
+#include "include/private/gpu/ganesh/GrTypesPriv.h"
+#include "src/base/SkArenaAlloc.h"
+#include "src/base/SkTLazy.h"
 #include "src/core/SkGeometry.h"
 #include "src/core/SkMatrixPriv.h"
+#include "src/core/SkPathEnums.h"
 #include "src/core/SkPathPriv.h"
 #include "src/core/SkPointPriv.h"
+#include "src/core/SkSLTypeShared.h"
 #include "src/gpu/BufferWriter.h"
 #include "src/gpu/KeyBuilder.h"
+#include "src/gpu/ganesh/GrAppliedClip.h"
 #include "src/gpu/ganesh/GrAuditTrail.h"
+#include "src/gpu/ganesh/GrBuffer.h"
 #include "src/gpu/ganesh/GrCaps.h"
 #include "src/gpu/ganesh/GrDrawOpTest.h"
 #include "src/gpu/ganesh/GrGeometryProcessor.h"
-#include "src/gpu/ganesh/GrProcessor.h"
+#include "src/gpu/ganesh/GrMeshDrawTarget.h"
+#include "src/gpu/ganesh/GrOpFlushState.h"
+#include "src/gpu/ganesh/GrPaint.h"
+#include "src/gpu/ganesh/GrProcessorAnalysis.h"
+#include "src/gpu/ganesh/GrProcessorSet.h"
 #include "src/gpu/ganesh/GrProcessorUnitTest.h"
 #include "src/gpu/ganesh/GrProgramInfo.h"
+#include "src/gpu/ganesh/GrRecordingContextPriv.h"
+#include "src/gpu/ganesh/GrShaderCaps.h"
+#include "src/gpu/ganesh/GrSimpleMesh.h"
+#include "src/gpu/ganesh/GrStyle.h"
 #include "src/gpu/ganesh/SurfaceDrawContext.h"
 #include "src/gpu/ganesh/geometry/GrPathUtils.h"
 #include "src/gpu/ganesh/geometry/GrStyledShape.h"
 #include "src/gpu/ganesh/glsl/GrGLSLFragmentShaderBuilder.h"
-#include "src/gpu/ganesh/glsl/GrGLSLProgramDataManager.h"
-#include "src/gpu/ganesh/glsl/GrGLSLUniformHandler.h"
 #include "src/gpu/ganesh/glsl/GrGLSLVarying.h"
 #include "src/gpu/ganesh/glsl/GrGLSLVertexGeoBuilder.h"
 #include "src/gpu/ganesh/ops/GrMeshDrawOp.h"
+#include "src/gpu/ganesh/ops/GrOp.h"
 #include "src/gpu/ganesh/ops/GrSimpleMeshDrawOpHelperWithStencil.h"
+
+#if defined(GPU_TEST_UTILS)
+#include "src/base/SkRandom.h"
+#include "src/gpu/ganesh/GrTestUtils.h"
+#endif
+
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <utility>
+
+class GrDstProxyView;
+class GrGLSLProgramDataManager;
+class GrGLSLUniformHandler;
+class GrSurfaceProxyView;
+enum class GrXferBarrierFlags;
+struct GrUserStencilSettings;
+struct SkRect;
 
 using namespace skia_private;
 
@@ -41,10 +84,11 @@ namespace {
 
 struct Segment {
     enum {
-        // These enum values are assumed in member functions below.
         kLine = 0,
         kQuad = 1,
     } fType;
+    // These enum values are assumed in member functions below.
+    static_assert(0 == kLine && 1 == kQuad);
 
     // line uses one pt, quad uses 2 pts
     SkPoint fPts[2];
@@ -54,16 +98,16 @@ struct Segment {
     // sharp. If so, fMid is a normalized bisector facing outward.
     SkVector fMid;
 
-    int countPoints() {
-        static_assert(0 == kLine && 1 == kQuad);
+    int countPoints() const {
+        SkASSERT(fType == kLine || fType == kQuad);
         return fType + 1;
     }
     const SkPoint& endPt() const {
-        static_assert(0 == kLine && 1 == kQuad);
+        SkASSERT(fType == kLine || fType == kQuad);
         return fPts[fType];
     }
     const SkPoint& endNorm() const {
-        static_assert(0 == kLine && 1 == kQuad);
+        SkASSERT(fType == kLine || fType == kQuad);
         return fNorms[fType];
     }
 };
@@ -187,14 +231,14 @@ bool compute_vectors(SegmentArray* segments,
 }
 
 struct DegenerateTestData {
-    DegenerateTestData() { fStage = kInitial; }
-    bool isDegenerate() const { return kNonDegenerate != fStage; }
-    enum {
+    bool isDegenerate() const { return Stage::kNonDegenerate != fStage; }
+    enum class Stage {
         kInitial,
         kPoint,
         kLine,
-        kNonDegenerate
-    }           fStage;
+        kNonDegenerate,
+    };
+    Stage       fStage = Stage::kInitial;
     SkPoint     fFirstPoint;
     SkVector    fLineNormal;
     SkScalar    fLineC;
@@ -205,25 +249,25 @@ static const SkScalar kCloseSqd = kClose * kClose;
 
 void update_degenerate_test(DegenerateTestData* data, const SkPoint& pt) {
     switch (data->fStage) {
-        case DegenerateTestData::kInitial:
+        case DegenerateTestData::Stage::kInitial:
             data->fFirstPoint = pt;
-            data->fStage = DegenerateTestData::kPoint;
+            data->fStage = DegenerateTestData::Stage::kPoint;
             break;
-        case DegenerateTestData::kPoint:
+        case DegenerateTestData::Stage::kPoint:
             if (SkPointPriv::DistanceToSqd(pt, data->fFirstPoint) > kCloseSqd) {
                 data->fLineNormal = pt - data->fFirstPoint;
                 data->fLineNormal.normalize();
                 data->fLineNormal = SkPointPriv::MakeOrthog(data->fLineNormal);
                 data->fLineC = -data->fLineNormal.dot(data->fFirstPoint);
-                data->fStage = DegenerateTestData::kLine;
+                data->fStage = DegenerateTestData::Stage::kLine;
             }
             break;
-        case DegenerateTestData::kLine:
+        case DegenerateTestData::Stage::kLine:
             if (SkScalarAbs(data->fLineNormal.dot(pt) + data->fLineC) > kClose) {
-                data->fStage = DegenerateTestData::kNonDegenerate;
+                data->fStage = DegenerateTestData::Stage::kNonDegenerate;
             }
             break;
-        case DegenerateTestData::kNonDegenerate:
+        case DegenerateTestData::Stage::kNonDegenerate:
             break;
         default:
             SK_ABORT("Unexpected degenerate test stage.");
@@ -675,7 +719,7 @@ std::unique_ptr<GrGeometryProcessor::ProgramImpl> QuadEdgeEffect::makeProgramImp
 
 GR_DEFINE_GEOMETRY_PROCESSOR_TEST(QuadEdgeEffect)
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 GrGeometryProcessor* QuadEdgeEffect::TestCreate(GrProcessorTestData* d) {
     SkMatrix localMatrix = GrTest::TestMatrix(d->fRandom);
     bool usesLocalCoords = d->fRandom->nextBool();
@@ -794,10 +838,9 @@ private:
 
             int vertexCount;
             int indexCount;
-            enum {
-                kPreallocSegmentCnt = 512 / sizeof(Segment),
-                kPreallocDrawCnt = 4,
-            };
+            static constexpr size_t kPreallocSegmentCnt = 512 / sizeof(Segment);
+            static constexpr size_t kPreallocDrawCnt = 4;
+
             STArray<kPreallocSegmentCnt, Segment, true> segments;
             SkPoint fanPt;
 
@@ -875,7 +918,7 @@ private:
         return CombineResult::kMerged;
     }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     SkString onDumpInfo() const override {
         return SkStringPrintf("Count: %d\n%s", fPaths.size(), fHelper.dumpInfo().c_str());
     }
@@ -936,7 +979,7 @@ bool AAConvexPathRenderer::onDrawPath(const DrawPathArgs& args) {
 
 }  // namespace skgpu::ganesh
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 GR_DRAW_OP_TEST_DEFINE(AAConvexPathOp) {
     SkMatrix viewMatrix = GrTest::TestMatrixInvertible(random);

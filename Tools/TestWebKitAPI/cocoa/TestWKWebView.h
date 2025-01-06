@@ -24,8 +24,10 @@
  */
 
 #import <WebKit/WebKit.h>
+#import <wtf/Forward.h>
 #import <wtf/RetainPtr.h>
 
+@class _WKFrameTreeNode;
 @class _WKProcessPoolConfiguration;
 
 #if PLATFORM(IOS_FAMILY)
@@ -33,6 +35,8 @@
 @class _WKActivatedElementInfo;
 @class _WKTextInputContext;
 @class UITextSuggestion;
+@class UIWKDocumentContext;
+@class UIWKDocumentRequest;
 @protocol UITextInputInternal;
 @protocol UITextInputMultiDocument;
 @protocol UITextInputPrivate;
@@ -65,6 +69,10 @@ struct AutocorrectionContext {
 
 } // namespace TestWebKitAPI
 
+namespace WebCore {
+class Color;
+}
+
 @interface WKWebView (TestWebKitAPI)
 #if PLATFORM(IOS_FAMILY)
 @property (nonatomic, readonly) CGRect selectionClipRect;
@@ -85,6 +93,7 @@ struct AutocorrectionContext {
 - (void)insertText:(NSString *)primaryString alternatives:(NSArray<NSString *> *)alternatives;
 - (void)handleKeyEvent:(WebEvent *)event completion:(void (^)(WebEvent *theEvent, BOOL handled))completion;
 - (void)selectTextForContextMenuWithLocationInView:(CGPoint)locationInView completion:(void(^)(BOOL shouldPresent))completion;
+- (void)selectTextInGranularity:(UITextGranularity)granularity atPoint:(CGPoint)locationInView;
 - (void)defineSelection;
 - (void)shareSelection;
 - (void)moveSelectionToStartOfParagraph;
@@ -92,6 +101,9 @@ struct AutocorrectionContext {
 - (void)moveSelectionToEndOfParagraph;
 - (void)extendSelectionToEndOfParagraph;
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion;
+#if HAVE(UI_WK_DOCUMENT_CONTEXT)
+- (UIWKDocumentContext *)synchronouslyRequestDocumentContext:(UIWKDocumentRequest *)request;
+#endif
 #endif // PLATFORM(IOS_FAMILY)
 
 @property (nonatomic, readonly) CGImageRef snapshotAfterScreenUpdates;
@@ -107,9 +119,11 @@ struct AutocorrectionContext {
 - (void)synchronouslyLoadHTMLString:(NSString *)html baseURL:(NSURL *)url;
 - (void)synchronouslyLoadHTMLString:(NSString *)html preferences:(WKWebpagePreferences *)preferences;
 - (void)synchronouslyLoadRequest:(NSURLRequest *)request;
+- (void)synchronouslyLoadSimulatedRequest:(NSURLRequest *)request responseHTMLString:(NSString *)htmlString;
 - (void)synchronouslyLoadRequest:(NSURLRequest *)request preferences:(WKWebpagePreferences *)preferences;
 - (void)synchronouslyLoadRequestIgnoringSSLErrors:(NSURLRequest *)request;
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName;
+- (void)synchronouslyLoadTestPageNamed:(NSString *)pageName asStringWithBaseURL:(NSURL *)url;
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName preferences:(WKWebpagePreferences *)preferences;
 - (BOOL)_synchronouslyExecuteEditCommand:(NSString *)command argument:(NSString *)argument;
 - (void)expectElementTagsInOrder:(NSArray<NSString *> *)tagNames;
@@ -117,8 +131,10 @@ struct AutocorrectionContext {
 - (void)expectElementTag:(NSString *)tagName toComeBefore:(NSString *)otherTagName;
 - (BOOL)evaluateMediaQuery:(NSString *)query;
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
+- (NSString *)stringByEvaluatingJavaScript:(NSString *)script inFrame:(WKFrameInfo *)frame;
 - (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script;
 - (id)objectByEvaluatingJavaScript:(NSString *)script;
+- (id)objectByEvaluatingJavaScript:(NSString *)script inFrame:(WKFrameInfo *)frame;
 - (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments error:(NSError **)errorOut;
 - (unsigned)waitUntilClientWidthIs:(unsigned)expectedClientWidth;
 - (CGRect)elementRectFromSelector:(NSString *)selector;
@@ -127,7 +143,7 @@ struct AutocorrectionContext {
 
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>
 - (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler;
-- (void)setWildcardMessageHandler:(void (^)(NSString *))handler;
+@property (nonatomic, copy) void (^didReceiveScriptMessage)(NSString *);
 @end
 
 @interface TestWKWebView : WKWebView
@@ -138,6 +154,7 @@ struct AutocorrectionContext {
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action;
 - (void)performAfterReceivingAnyMessage:(void (^)(NSString *))action;
 - (void)waitForMessage:(NSString *)message;
+- (void)waitForMessages:(NSArray<NSString *> *)messages;
 
 // This function waits until a DOM load event is fired.
 // FIXME: Rename this function to better describe what "after loading" means.
@@ -152,12 +169,15 @@ struct AutocorrectionContext {
 - (void)collapseToStart;
 - (void)collapseToEnd;
 - (void)addToTestWindow;
+- (void)removeFromTestWindow;
 - (BOOL)selectionRangeHasStartOffset:(int)start endOffset:(int)end;
 - (BOOL)selectionRangeHasStartOffset:(int)start endOffset:(int)end inFrame:(WKFrameInfo *)frameInfo;
 - (void)clickOnElementID:(NSString *)elementID;
 - (void)waitForPendingMouseEvents;
 - (void)focus;
 - (std::optional<CGPoint>)getElementMidpoint:(NSString *)selector;
+- (Vector<WebCore::Color>)sampleColors;
+- (Vector<WebCore::Color>)sampleColorsWithInterval:(unsigned)interval;
 @end
 
 #if PLATFORM(IOS_FAMILY)
@@ -175,6 +195,7 @@ struct AutocorrectionContext {
 @property (nonatomic) UIEdgeInsets overrideSafeAreaInset;
 @property (nonatomic, readonly) CGRect caretViewRectInContentCoordinates;
 @property (nonatomic, readonly) NSArray<NSValue *> *selectionViewRectsInContentCoordinates;
+@property (nonatomic, readonly) NSString *textForSpeakSelection;
 - (_WKActivatedElementInfo *)activatedElementAtPosition:(CGPoint)position;
 - (void)evaluateJavaScriptAndWaitForInputSessionToChange:(NSString *)script;
 - (WKContentView *)wkContentView;
@@ -206,4 +227,12 @@ struct AutocorrectionContext {
 @property (nonatomic) BOOL forceWindowToBecomeKey;
 @end
 #endif
+
+@interface TestWKWebView (SiteIsolation)
+- (_WKFrameTreeNode *)mainFrame;
+- (WKFrameInfo *)firstChildFrame;
+- (WKFrameInfo *)secondChildFrame;
+- (void)evaluateJavaScript:(NSString *)string inFrame:(WKFrameInfo *)frame completionHandler:(void(^)(id, NSError *))completionHandler;
+- (WKFindResult *)findStringAndWait:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration;
+@end
 

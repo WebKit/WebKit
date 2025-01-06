@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -29,7 +29,7 @@ void av1_fdct8x32_new_sse2(const __m128i *input, __m128i *output,
 void av1_fdct8x64_new_sse2(const __m128i *input, __m128i *output,
                            int8_t cos_bit);
 
-static INLINE void fidentity4x4_new_sse2(const __m128i *const input,
+static inline void fidentity4x4_new_sse2(const __m128i *const input,
                                          __m128i *const output,
                                          const int8_t cos_bit) {
   (void)cos_bit;
@@ -42,7 +42,7 @@ static INLINE void fidentity4x4_new_sse2(const __m128i *const input,
   }
 }
 
-static INLINE void fidentity8x4_new_sse2(const __m128i *const input,
+static inline void fidentity8x4_new_sse2(const __m128i *const input,
                                          __m128i *const output,
                                          const int8_t cos_bit) {
   (void)cos_bit;
@@ -57,7 +57,7 @@ static INLINE void fidentity8x4_new_sse2(const __m128i *const input,
   }
 }
 
-static INLINE void fidentity8x8_new_sse2(const __m128i *input, __m128i *output,
+static inline void fidentity8x8_new_sse2(const __m128i *input, __m128i *output,
                                          int8_t cos_bit) {
   (void)cos_bit;
 
@@ -71,7 +71,7 @@ static INLINE void fidentity8x8_new_sse2(const __m128i *input, __m128i *output,
   output[7] = _mm_adds_epi16(input[7], input[7]);
 }
 
-static INLINE void fdct8x8_new_sse2(const __m128i *input, __m128i *output,
+static inline void fdct8x8_new_sse2(const __m128i *input, __m128i *output,
                                     int8_t cos_bit) {
   const int32_t *cospi = cospi_arr(cos_bit);
   const __m128i __rounding = _mm_set1_epi32(1 << (cos_bit - 1));
@@ -125,7 +125,7 @@ static INLINE void fdct8x8_new_sse2(const __m128i *input, __m128i *output,
   btf_16_sse2(cospi_p24_p40, cospi_m40_p24, x3[5], x3[6], output[5], output[3]);
 }
 
-static INLINE void fadst8x8_new_sse2(const __m128i *input, __m128i *output,
+static inline void fadst8x8_new_sse2(const __m128i *input, __m128i *output,
                                      int8_t cos_bit) {
   const int32_t *cospi = cospi_arr(cos_bit);
   const __m128i __zero = _mm_setzero_si128();
@@ -205,7 +205,7 @@ static INLINE void fadst8x8_new_sse2(const __m128i *input, __m128i *output,
               output[6]);
 }
 
-static INLINE void fidentity8x16_new_sse2(const __m128i *input, __m128i *output,
+static inline void fidentity8x16_new_sse2(const __m128i *input, __m128i *output,
                                           int8_t cos_bit) {
   (void)cos_bit;
   const __m128i one = _mm_set1_epi16(1);
@@ -219,7 +219,7 @@ static INLINE void fidentity8x16_new_sse2(const __m128i *input, __m128i *output,
   }
 }
 
-static INLINE void fidentity8x32_new_sse2(const __m128i *input, __m128i *output,
+static inline void fidentity8x32_new_sse2(const __m128i *input, __m128i *output,
                                           int8_t cos_bit) {
   (void)cos_bit;
   for (int i = 0; i < 32; ++i) {

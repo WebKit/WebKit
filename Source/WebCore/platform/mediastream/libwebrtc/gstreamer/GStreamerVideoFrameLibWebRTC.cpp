@@ -61,6 +61,10 @@ GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::Vid
     }));
 
     gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_I420, frame.width(), frame.height(), 3, offsets, strides);
+    if (auto pts = frame.presentation_timestamp())
+        GST_BUFFER_PTS(buffer.get()) = toGstClockTime(MediaTime(pts->us(), G_USEC_PER_SEC));
+    else
+        GST_BUFFER_PTS(buffer.get()) = toGstClockTime(MediaTime(frame.timestamp_us(), G_USEC_PER_SEC));
 
     auto caps = adoptGRef(gst_video_info_to_caps(&info));
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));

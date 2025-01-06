@@ -6,9 +6,11 @@
 <script>
 function end() {
     document.documentElement.removeAttribute("class");
+    testRunner?.notifyDone();
 }
 
-window.onload = () => {
+window.onload = async () => {
+    testRunner?.waitUntilDone();
     if (UIHelper.isIOSFamily()) {
         const eventStreamData = new UIHelper.EventStreamBuilder()
             .begin(10, 10)
@@ -16,8 +18,8 @@ window.onload = () => {
         UIHelper.sendEventStream(eventStreamData).then(() => end());
         return;
     }
-    window.eventSender.mouseMoveTo(10, 10);
-    window.eventSender.mouseDown();
+    await eventSender.asyncMouseMoveTo(10, 10);
+    await eventSender.asyncMouseDown();
     end();
 }
 </script>

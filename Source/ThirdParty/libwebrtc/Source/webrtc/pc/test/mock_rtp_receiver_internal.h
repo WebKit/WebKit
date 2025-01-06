@@ -11,10 +11,10 @@
 #ifndef PC_TEST_MOCK_RTP_RECEIVER_INTERNAL_H_
 #define PC_TEST_MOCK_RTP_RECEIVER_INTERNAL_H_
 
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "pc/rtp_receiver.h"
 #include "test/gmock.h"
 
@@ -43,7 +43,7 @@ class MockRtpReceiverInternal : public RtpReceiverInternal {
   MOCK_METHOD(void, SetObserver, (RtpReceiverObserverInterface*), (override));
   MOCK_METHOD(void,
               SetJitterBufferMinimumDelay,
-              (absl::optional<double>),
+              (std::optional<double>),
               (override));
   MOCK_METHOD(std::vector<RtpSource>, GetSources, (), (const, override));
   MOCK_METHOD(void,
@@ -63,7 +63,7 @@ class MockRtpReceiverInternal : public RtpReceiverInternal {
               (override));
   MOCK_METHOD(void, SetupMediaChannel, (uint32_t), (override));
   MOCK_METHOD(void, SetupUnsignaledMediaChannel, (), (override));
-  MOCK_METHOD(absl::optional<uint32_t>, ssrc, (), (const, override));
+  MOCK_METHOD(std::optional<uint32_t>, ssrc, (), (const, override));
   MOCK_METHOD(void, NotifyFirstPacketReceived, (), (override));
   MOCK_METHOD(void, set_stream_ids, (std::vector<std::string>), (override));
   MOCK_METHOD(void,

@@ -13,8 +13,8 @@
 
 #include <array>
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/aec_state.h"

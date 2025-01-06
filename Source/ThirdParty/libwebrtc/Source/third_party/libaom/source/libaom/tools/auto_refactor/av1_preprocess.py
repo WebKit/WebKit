@@ -1,4 +1,4 @@
-# Copyright (c) 2021, Alliance for Open Media. All rights reserved
+# Copyright (c) 2021, Alliance for Open Media. All rights reserved.
 #
 # This source code is subject to the terms of the BSD 2 Clause License and
 # the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -65,10 +65,6 @@ def get_av1_pp_command(fake_header_dir, code_file_list):
                                                                          "-D'volatile='"
                                                                          " "
                                                                          "-D'AV1_K_MEANS_DIM=2'"
-                                                                         " "
-                                                                         "-D'INLINE='"
-                                                                         " "
-                                                                         "-D'AOM_INLINE='"
                                                                          " "
                                                                          "-D'AOM_FORCE_INLINE='"
                                                                          " "

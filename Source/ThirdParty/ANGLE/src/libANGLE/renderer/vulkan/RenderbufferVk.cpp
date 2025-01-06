@@ -86,8 +86,7 @@ angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
 
     const bool isRenderToTexture = mode == gl::MultisamplingMode::MultisampledRenderToTexture;
     const bool hasRenderToTextureEXT =
-        renderer->getFeatures().supportsMultisampledRenderToSingleSampled.enabled ||
-        renderer->getFeatures().supportsMultisampledRenderToSingleSampledGOOGLEX.enabled;
+        renderer->getFeatures().supportsMultisampledRenderToSingleSampled.enabled;
 
     // Transfer and sampled usage are used for various utilities such as readback or blit.
     VkImageUsageFlags usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
@@ -104,7 +103,9 @@ angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
     }
 
     // For framebuffer fetch and advanced blend emulation, color will be read as input attachment.
-    if (!isDepthStencilFormat)
+    // For depth/stencil framebuffer fetch, depth/stencil will also be read as input attachment.
+    if (!isDepthStencilFormat ||
+        renderer->getFeatures().supportsShaderFramebufferFetchDepthStencil.enabled)
     {
         usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
     }
@@ -129,7 +130,7 @@ angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
     ANGLE_TRY(mImage->initExternal(
         contextVk, gl::TextureType::_2D, extents, format.getIntendedFormatID(), textureFormatID,
         imageSamples, usage, createFlags, vk::ImageLayout::Undefined, nullptr, gl::LevelIndex(0), 1,
-        1, robustInit, false, vk::YcbcrConversionDesc{}));
+        1, robustInit, false, vk::YcbcrConversionDesc{}, nullptr));
 
     VkMemoryPropertyFlags flags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
     ANGLE_TRY(contextVk->initImageAllocation(mImage, false, renderer->getMemoryProperties(), flags,
@@ -144,7 +145,7 @@ angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
 
         ANGLE_TRY(mMultisampledImage.initImplicitMultisampledRenderToTexture(
             contextVk, false, renderer->getMemoryProperties(), gl::TextureType::_2D, samples,
-            *mImage, robustInit));
+            *mImage, mImage->getExtents(), robustInit));
 
         mRenderTarget.init(&mMultisampledImage, &mMultisampledImageViews, mImage, &mImageViews,
                            mImageSiblingSerial, gl::LevelIndex(0), 0, 1,
@@ -197,21 +198,32 @@ angle::Result RenderbufferVk::setStorageEGLImageTarget(const gl::Context *contex
     mImageObserverBinding.bind(mImage);
     mImageViews.init(renderer);
 
-    const vk::Format &vkFormat = renderer->getFormat(image->getFormat().info->sizedInternalFormat);
-    const angle::Format &textureFormat = vkFormat.getActualRenderableImageFormat();
-
-    VkImageAspectFlags aspect = vk::GetFormatAspectFlags(textureFormat);
+    // Update ImageViewHelper's colorspace related state
+    EGLenum imageColorspaceAttribute = image->getColorspaceAttribute();
+    if (imageColorspaceAttribute != EGL_GL_COLORSPACE_DEFAULT_EXT)
+    {
+        egl::ImageColorspace imageColorspace =
+            (imageColorspaceAttribute == EGL_GL_COLORSPACE_SRGB_KHR) ? egl::ImageColorspace::SRGB
+                                                                     : egl::ImageColorspace::Linear;
+        ASSERT(mImage != nullptr);
+        mImageViews.updateEglImageColorspace(*mImage, imageColorspace);
+    }
 
     // Transfer the image to this queue if needed
-    uint32_t rendererQueueFamilyIndex = contextVk->getRenderer()->getQueueFamilyIndex();
-    if (mImage->isQueueChangeNeccesary(rendererQueueFamilyIndex))
+    if (mImage->isQueueFamilyChangeNeccesary(contextVk->getDeviceQueueIndex()))
     {
         vk::OutsideRenderPassCommandBuffer *commandBuffer;
         vk::CommandBufferAccess access;
         access.onExternalAcquireRelease(mImage);
         ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
+
+        const vk::Format &vkFormat =
+            renderer->getFormat(image->getFormat().info->sizedInternalFormat);
+        const angle::Format &textureFormat = vkFormat.getActualRenderableImageFormat();
+        VkImageAspectFlags aspect          = vk::GetFormatAspectFlags(textureFormat);
+
         mImage->changeLayoutAndQueue(contextVk, aspect, vk::ImageLayout::ColorWrite,
-                                     rendererQueueFamilyIndex, commandBuffer);
+                                     contextVk->getDeviceQueueIndex(), commandBuffer);
 
         ANGLE_TRY(contextVk->onEGLImageQueueChange());
     }
@@ -321,7 +333,7 @@ void RenderbufferVk::releaseImage(ContextVk *contextVk)
     }
     else
     {
-        mRenderTarget.release(contextVk);
+        mRenderTarget.releaseImageAndViews(contextVk);
         mImageViews.release(renderer, mImage->getResourceUse());
         mMultisampledImageViews.release(renderer, mImage->getResourceUse());
     }

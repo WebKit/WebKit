@@ -28,6 +28,7 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WindowsExtras.h>
 
 namespace WebCore {
@@ -40,7 +41,7 @@ protected:
 };
 
 class FullScreenWindow {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FullScreenWindow);
 public:
     FullScreenWindow(FullScreenClient*);
     ~FullScreenWindow();

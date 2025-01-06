@@ -29,7 +29,7 @@
 
 #import <AVFoundation/AVPlayer.h>
 #import <WebCore/HTMLVideoElement.h>
-#import <WebCore/PlaybackSessionInterfaceAVKit.h>
+#import <WebCore/PlaybackSessionInterfaceAVKitLegacy.h>
 #import <WebCore/PlaybackSessionModelMediaElement.h>
 #import <WebCore/WebAVPlayerController.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
@@ -148,7 +148,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     if (!self)
         return nil;
     _playbackModel = WebCore::PlaybackSessionModelMediaElement::create();
-    _playbackInterface = WebCore::PlaybackSessionInterfaceAVKit::create(*_playbackModel);
+    _playbackInterface = WebCore::PlaybackSessionInterfaceAVKitLegacy::create(*_playbackModel);
     _contentOverlay = adoptNS([[NSView alloc] initWithFrame:NSZeroRect]);
     _contentOverlay.get().layerContentsRedrawPolicy = NSViewLayerContentsRedrawNever;
     _contentOverlay.get().layer = adoptNS([[WebVideoFullscreenOverlayLayer alloc] init]).get();

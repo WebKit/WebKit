@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-[RValue] struct WebKit::WebProcessCreationParameters {
+[RValue, DebugDecodingFailure] struct WebKit::WebProcessCreationParameters {
     WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
     String injectedBundlePath;
     WebKit::SandboxExtensionHandle injectedBundlePathExtensionHandle;
@@ -74,7 +74,6 @@
     bool attrStyleEnabled;
     bool shouldThrowExceptionForGlobalConstantRedeclaration;
     WebCore::CrossOriginMode crossOriginMode;
-    bool isLockdownModeEnabled;
 
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageServices;
@@ -82,7 +81,7 @@
     bool hasRichContentServices;
 #endif
 
-    WebKit::TextCheckerState textCheckerState;
+    OptionSet<WebKit::TextCheckerState> textCheckerState;
 
 #if PLATFORM(COCOA)
     String uiProcessBundleIdentifier;
@@ -94,8 +93,6 @@
     ProcessID presentingApplicationPID;
 
 #if PLATFORM(COCOA)
-    MachSendRight acceleratedCompositingPort;
-
     String uiProcessBundleResourcePath;
     WebKit::SandboxExtensionHandle uiProcessBundleResourcePathExtensionHandle;
 
@@ -148,7 +145,7 @@
 
     std::optional<WebKit::SandboxExtensionHandle> mobileGestaltExtensionHandle;
     std::optional<WebKit::SandboxExtensionHandle> launchServicesExtensionHandle;
-#if PLATFORM(MAC) && HAVE(VIDEO_RESTRICTED_DECODING)
+#if (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && HAVE(VIDEO_RESTRICTED_DECODING)
     WebKit::SandboxExtensionHandle trustdExtensionHandle;
 #endif
 #if HAVE(VIDEO_RESTRICTED_DECODING)
@@ -184,11 +181,11 @@
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     OptionSet<WebKit::DMABufRendererBufferMode> dmaBufRendererBufferMode;
+    WebCore::SystemSettings::State systemSettings;
 #endif
 
 #if PLATFORM(GTK)
     bool useSystemAppearanceForScrollbars;
-    WebKit::GtkSettingsState gtkSettings;
 #endif
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
@@ -220,12 +217,14 @@
 
 #if USE(ATSPI)
     String accessibilityBusAddress;
+    String accessibilityBusName;
 #endif
 
     String timeZoneOverride;
 
     HashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
     HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
+    WebKit::ScriptTelemetryRules scriptTelemetryRules;
 
     Seconds memoryFootprintPollIntervalForTesting;
     Vector<size_t> memoryFootprintNotificationThresholds;

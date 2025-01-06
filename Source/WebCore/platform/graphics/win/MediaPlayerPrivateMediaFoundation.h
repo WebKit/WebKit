@@ -43,6 +43,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/win/Win32Handle.h>
@@ -53,13 +54,15 @@ class MediaPlayerPrivateMediaFoundation final
     : public MediaPlayerPrivateInterface
     , public CanMakeWeakPtr<MediaPlayerPrivateMediaFoundation>
     , public RefCounted<MediaPlayerPrivateMediaFoundation> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateMediaFoundation);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     explicit MediaPlayerPrivateMediaFoundation(MediaPlayer*);
     ~MediaPlayerPrivateMediaFoundation();
 
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::MediaFoundation; }
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
@@ -106,8 +109,6 @@ public:
 
     bool didLoadingProgress() const final;
 
-    void setPresentationSize(const IntSize&) final;
-
     void paint(GraphicsContext&, const FloatRect&) final;
 
     DestinationColorSpace colorSpace() final;
@@ -127,7 +128,6 @@ private:
 
     WeakPtr<MediaPlayerPrivateMediaFoundation> m_weakThis;
     ThreadSafeWeakPtr<MediaPlayer> m_player;
-    IntSize m_size;
     bool m_visible;
     bool m_loadingProgress;
     bool m_paused;
@@ -148,7 +148,6 @@ private:
     mutable Lock m_cachedNaturalSizeLock;
 
     COMPtr<IMFMediaSession> m_mediaSession;
-    COMPtr<IMFSourceResolver> m_sourceResolver;
     COMPtr<IMFMediaSource> m_mediaSource;
     COMPtr<IMFTopology> m_topology;
     COMPtr<IMFPresentationDescriptor> m_sourcePD;
@@ -190,7 +189,7 @@ private:
     typedef Deque<COMPtr<IMFSample>> VideoSampleList;
 
     class VideoSamplePool {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(VideoSamplePool);
     public:
         VideoSamplePool() = default;
         virtual ~VideoSamplePool() = default;
@@ -212,7 +211,7 @@ private:
     class Direct3DPresenter;
 
     class VideoScheduler {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(VideoScheduler);
     public:
         VideoScheduler() = default;
         virtual ~VideoScheduler() = default;
@@ -258,7 +257,7 @@ private:
     };
 
     class Direct3DPresenter {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Direct3DPresenter);
     public:
         Direct3DPresenter();
         ~Direct3DPresenter();
@@ -321,7 +320,7 @@ private:
         , public IMFVideoDisplayControl
         , public IMFAsyncCallback
         , public MediaPlayerListener {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(CustomVideoPresenter);
     public:
         CustomVideoPresenter(MediaPlayerPrivateMediaFoundation*);
         ~CustomVideoPresenter();

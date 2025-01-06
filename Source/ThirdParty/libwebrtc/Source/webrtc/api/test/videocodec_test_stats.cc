@@ -10,6 +10,10 @@
 
 #include "api/test/videocodec_test_stats.h"
 
+#include <cstddef>
+#include <map>
+#include <string>
+
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {

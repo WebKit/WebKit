@@ -20,13 +20,17 @@
 #include "config.h"
 #include "GLVideoSinkGStreamer.h"
 
-#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
 #include "GStreamerVideoSinkCommon.h"
 #include "PlatformDisplay.h"
 #include <gst/gl/gl.h>
 #include <wtf/glib/WTFGType.h>
+
+#if USE(GBM)
+#include "DRMDeviceManager.h"
+#endif
 
 // gstglapi.h may include eglplatform.h and it includes X.h, which
 // defines None, breaking MediaPlayer::None enum
@@ -56,6 +60,24 @@ static GstStaticPadTemplate sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_P
 #define webkit_gl_video_sink_parent_class parent_class
 WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitGLVideoSink, webkit_gl_video_sink, GST_TYPE_BIN,
     GST_DEBUG_CATEGORY_INIT(webkit_gl_video_sink_debug, "webkitglvideosink", 0, "GL video sink element"))
+
+#if USE(GBM)
+static bool s_isDMABufDisabled;
+
+static void initializeDMABufAvailability()
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        if (!webkitGstCheckVersion(1, 20, 0))
+            return;
+
+        auto value = WTF::span(g_getenv("WEBKIT_GST_DMABUF_SINK_DISABLED"));
+        s_isDMABufDisabled = value.data() && (equalLettersIgnoringASCIICase(value, "true"_s) || equalLettersIgnoringASCIICase(value, "1"_s));
+        if (!s_isDMABufDisabled && !DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render))
+            s_isDMABufDisabled = true;
+    });
+}
+#endif
 
 static void webKitGLVideoSinkConstructed(GObject* object)
 {
@@ -88,8 +110,15 @@ static void webKitGLVideoSinkConstructed(GObject* object)
     ASSERT(colorconvert);
     gst_bin_add_many(GST_BIN_CAST(sink), upload, colorconvert, sink->priv->appSink.get(), nullptr);
 
-    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) " GST_GL_CAPS_FORMAT));
-    gst_caps_set_features(caps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
+    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_empty());
+#if USE(GBM)
+    if (!s_isDMABufDisabled)
+        gst_caps_append(caps.get(), buildDMABufCaps().leakRef());
+#endif
+    GRefPtr<GstCaps> glCaps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) " GST_GL_CAPS_FORMAT));
+    gst_caps_set_features(glCaps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
+    gst_caps_append(caps.get(), glCaps.leakRef());
+
     g_object_set(sink->priv->appSink.get(), "caps", caps.get(), nullptr);
 
     if (imxVideoConvertG2D)
@@ -125,7 +154,7 @@ void webKitGLVideoSinkFinalize(GObject* object)
 
 std::optional<GRefPtr<GstContext>> requestGLContext(const char* contextType)
 {
-    auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
+    auto& sharedDisplay = PlatformDisplay::sharedDisplay();
     auto* gstGLDisplay = sharedDisplay.gstGLDisplay();
     auto* gstGLContext = sharedDisplay.gstGLContext();
 
@@ -227,10 +256,14 @@ void webKitGLVideoSinkSetMediaPlayerPrivate(WebKitGLVideoSink* sink, MediaPlayer
 
 bool webKitGLVideoSinkProbePlatform()
 {
-    if (!PlatformDisplay::sharedDisplayForCompositing().gstGLContext()) {
+    if (!PlatformDisplay::sharedDisplay().gstGLContext()) {
         GST_WARNING("WebKit shared GL context is not available.");
         return false;
     }
+
+#if USE(GBM)
+    initializeDMABufAvailability();
+#endif
 
     return isGStreamerPluginAvailable("app") && isGStreamerPluginAvailable("opengl");
 }

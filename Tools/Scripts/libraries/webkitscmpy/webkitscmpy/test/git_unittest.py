@@ -599,6 +599,21 @@ CommitDate: {time_c}
                 '2@main',
             )
 
+    def test_is_suitable_branch_for_pull_request(self):
+        with mocks.local.Git(self.path, remotes={
+            'origin': 'git@github.example.com:WebKit/WebKit.git'
+        }):
+            repo = local.Git(self.path)
+            source_remote = repo.source_remotes()[0]
+            self.assertEqual(repo.is_suitable_branch_for_pull_request('eng/12345', source_remote=source_remote), True)
+            self.assertEqual(repo.is_suitable_branch_for_pull_request('eng/squash-branch', source_remote=source_remote), True)
+            self.assertEqual(repo.is_suitable_branch_for_pull_request('integration/branch', source_remote=source_remote), True)
+            self.assertEqual(repo.is_suitable_branch_for_pull_request('not-default-branch', source_remote=source_remote), True)
+            self.assertEqual(repo.is_suitable_branch_for_pull_request('main', source_remote=source_remote), False)
+            self.assertEqual(repo.is_suitable_branch_for_pull_request('safari-610-branch', source_remote=source_remote), False)
+            self.assertEqual(repo.is_suitable_branch_for_pull_request('branch-a', source_remote=source_remote), False)
+            self.assertEqual(repo.is_suitable_branch_for_pull_request(None, source_remote=source_remote), False)
+
 
 class TestGitHub(testing.TestCase):
     remote = 'https://github.example.com/WebKit/WebKit'

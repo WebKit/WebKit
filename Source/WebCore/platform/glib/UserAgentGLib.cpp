@@ -32,6 +32,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
 #include <wtf/glib/ChassisType.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 #if OS(UNIX)
@@ -101,10 +102,16 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     // not advertise Version/X.
     if (quirks.contains(UserAgentQuirks::NeedsChromeBrowser)) {
         uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsChromeBrowser), ' ');
-    // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
-    // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
     } else
-        uaString.append("Version/17.0 "_s);
+        // Version/X is mandatory *before* Safari/X to be a valid Safari UA.
+        //
+        // Many websites discriminate against relatively recent Safari versions,
+        // so we need to pick a higher version number than real Safari.
+        // https://github.com/nextcloud/server/issues/40793#issuecomment-1750678596
+        //
+        // But beware, because some websites also discriminate against high Safari versions.
+        // https://webkit.org/b/284775
+        uaString.append("Version/60.5 "_s);
 
     if (chassisType() == WTF::ChassisType::Mobile)
         uaString.append("Mobile "_s);
@@ -137,7 +144,7 @@ String standardUserAgent(const String& applicationName, const String& applicatio
         String finalApplicationVersion = applicationVersion;
         if (finalApplicationVersion.isEmpty())
             finalApplicationVersion = "605.1.15"_s;
-        userAgent = standardUserAgentStatic() + ' ' + applicationName + '/' + finalApplicationVersion;
+        userAgent = makeString(standardUserAgentStatic(), ' ', applicationName, '/', finalApplicationVersion);
     }
 
     static bool checked = false;

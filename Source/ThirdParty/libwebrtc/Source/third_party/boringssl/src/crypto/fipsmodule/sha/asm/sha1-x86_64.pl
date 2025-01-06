@@ -237,41 +237,13 @@ push(@xi,shift(@xi));
 
 $code.=<<___;
 .text
-.extern	OPENSSL_ia32cap_P
 
-.globl	sha1_block_data_order
-.type	sha1_block_data_order,\@function,3
+.globl	sha1_block_data_order_nohw
+.type	sha1_block_data_order_nohw,\@function,3
 .align	16
-sha1_block_data_order:
+sha1_block_data_order_nohw:
 .cfi_startproc
-	leaq	OPENSSL_ia32cap_P(%rip),%r10
-	mov	0(%r10),%r9d
-	mov	4(%r10),%r8d
-	mov	8(%r10),%r10d
-	test	\$`1<<9`,%r8d		# check SSSE3 bit
-	jz	.Lialu
-___
-$code.=<<___ if ($shaext);
-	test	\$`1<<29`,%r10d		# check SHA bit
-	jnz	_shaext_shortcut
-___
-$code.=<<___ if ($avx>1);
-	and	\$`1<<3|1<<5|1<<8`,%r10d	# check AVX2+BMI1+BMI2
-	cmp	\$`1<<3|1<<5|1<<8`,%r10d
-	je	_avx2_shortcut
-___
-$code.=<<___ if ($avx);
-	and	\$`1<<28`,%r8d		# mask AVX bit
-	and	\$`1<<30`,%r9d		# mask "Intel CPU" bit
-	or	%r9d,%r8d
-	cmp	\$`1<<28|1<<30`,%r8d
-	je	_avx_shortcut
-___
-$code.=<<___;
-	jmp	_ssse3_shortcut
-
-.align	16
-.Lialu:
+	_CET_ENDBR
 	mov	%rsp,%rax
 .cfi_def_cfa_register	%rax
 	push	%rbx
@@ -340,7 +312,7 @@ $code.=<<___;
 .Lepilogue:
 	ret
 .cfi_endproc
-.size	sha1_block_data_order,.-sha1_block_data_order
+.size	sha1_block_data_order_nohw,.-sha1_block_data_order_nohw
 ___
 if ($shaext) {{{
 ######################################################################
@@ -351,11 +323,12 @@ my ($ABCD,$E,$E_,$BSWAP,$ABCD_SAVE,$E_SAVE)=map("%xmm$_",(0..3,8,9));
 my @MSG=map("%xmm$_",(4..7));
 
 $code.=<<___;
-.type	sha1_block_data_order_shaext,\@function,3
+.globl	sha1_block_data_order_hw
+.type	sha1_block_data_order_hw,\@function,3
 .align	32
-sha1_block_data_order_shaext:
-_shaext_shortcut:
+sha1_block_data_order_hw:
 .cfi_startproc
+	_CET_ENDBR
 ___
 $code.=<<___ if ($win64);
 	lea	`-8-4*16`(%rsp),%rsp
@@ -456,7 +429,7 @@ ___
 $code.=<<___;
 	ret
 .cfi_endproc
-.size	sha1_block_data_order_shaext,.-sha1_block_data_order_shaext
+.size	sha1_block_data_order_hw,.-sha1_block_data_order_hw
 ___
 }}}
 {{{
@@ -486,11 +459,12 @@ ___
 }
 
 $code.=<<___;
+.globl	sha1_block_data_order_ssse3
 .type	sha1_block_data_order_ssse3,\@function,3
 .align	16
 sha1_block_data_order_ssse3:
-_ssse3_shortcut:
 .cfi_startproc
+	_CET_ENDBR
 	mov	%rsp,$fp	# frame pointer
 .cfi_def_cfa_register	$fp
 	push	%rbx
@@ -960,11 +934,12 @@ my $_rol=sub { &shld(@_[0],@_) };
 my $_ror=sub { &shrd(@_[0],@_) };
 
 $code.=<<___;
+.globl	sha1_block_data_order_avx
 .type	sha1_block_data_order_avx,\@function,3
 .align	16
 sha1_block_data_order_avx:
-_avx_shortcut:
 .cfi_startproc
+	_CET_ENDBR
 	mov	%rsp,$fp
 .cfi_def_cfa_register	$fp
 	push	%rbx
@@ -1339,11 +1314,12 @@ my $rx=0;
 my $frame="%r13";
 
 $code.=<<___;
+.globl	sha1_block_data_order_avx2
 .type	sha1_block_data_order_avx2,\@function,3
 .align	16
 sha1_block_data_order_avx2:
-_avx2_shortcut:
 .cfi_startproc
+	_CET_ENDBR
 	mov	%rsp,$fp
 .cfi_def_cfa_register	$fp
 	push	%rbx
@@ -2018,14 +1994,14 @@ ssse3_handler:
 
 .section	.pdata
 .align	4
-	.rva	.LSEH_begin_sha1_block_data_order
-	.rva	.LSEH_end_sha1_block_data_order
-	.rva	.LSEH_info_sha1_block_data_order
+	.rva	.LSEH_begin_sha1_block_data_order_nohw
+	.rva	.LSEH_end_sha1_block_data_order_nohw
+	.rva	.LSEH_info_sha1_block_data_order_nohw
 ___
 $code.=<<___ if ($shaext);
-	.rva	.LSEH_begin_sha1_block_data_order_shaext
-	.rva	.LSEH_end_sha1_block_data_order_shaext
-	.rva	.LSEH_info_sha1_block_data_order_shaext
+	.rva	.LSEH_begin_sha1_block_data_order_hw
+	.rva	.LSEH_end_sha1_block_data_order_hw
+	.rva	.LSEH_info_sha1_block_data_order_hw
 ___
 $code.=<<___;
 	.rva	.LSEH_begin_sha1_block_data_order_ssse3
@@ -2045,12 +2021,12 @@ ___
 $code.=<<___;
 .section	.xdata
 .align	8
-.LSEH_info_sha1_block_data_order:
+.LSEH_info_sha1_block_data_order_nohw:
 	.byte	9,0,0,0
 	.rva	se_handler
 ___
 $code.=<<___ if ($shaext);
-.LSEH_info_sha1_block_data_order_shaext:
+.LSEH_info_sha1_block_data_order_hw:
 	.byte	9,0,0,0
 	.rva	shaext_handler
 ___

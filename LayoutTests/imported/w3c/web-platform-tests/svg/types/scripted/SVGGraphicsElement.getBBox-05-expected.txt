@@ -1,0 +1,31 @@
+99
+99
+99
+99
+99
+99
+There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
+There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
+There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
+There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
+There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
+There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
+There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
+There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
+
+PASS text with fill
+PASS text with fill, stroke, markers and clipping
+PASS text with clipping
+FAIL image with fill, stroke, markers and clipping assert_approx_equals: image1.getBBox().x {"fill":true,"stroke":true,"markers":true,"clipped":true} expected 160 +/- 0.1 but got 150
+PASS image with fill
+FAIL path with fill, stroke, markers and clipping assert_approx_equals: path1.getBBox().x {"fill":true,"stroke":true,"markers":true,"clipped":true} expected 6.2 +/- 0.1 but got 10
+FAIL path with fill and clipping assert_approx_equals: path4.getBBox().width {"fill":true,"stroke":false,"markers":false,"clipped":true} expected 90 +/- 0.1 but got 100
+PASS path with fill
+FAIL path with stroke assert_approx_equals: path1.getBBox().x {"fill":false,"stroke":true,"markers":false,"clipped":false} expected 6.2 +/- 0.1 but got 10
+FAIL path with markers assert_approx_equals: path1.getBBox().width {"fill":false,"stroke":false,"markers":true,"clipped":false} expected 112 +/- 0.1 but got 100
+FAIL use with fill assert_approx_equals: use1.getBBox().x {"fill":true,"stroke":false,"markers":false,"clipped":false} expected 70 +/- 0.1 but got 20
+FAIL use with fill, stroke, markers and clipping assert_approx_equals: use1.getBBox().x {"fill":true,"stroke":true,"markers":true,"clipped":true} expected 70 +/- 0.1 but got 20
+FAIL foreignObject with fill assert_approx_equals: fo1.getBBox().x {"fill":true,"stroke":false,"markers":false,"clipped":false} expected 2 +/- 0.1 but got 0
+FAIL foreignObject with fill, stroke, markers and clipping assert_approx_equals: fo1.getBBox().x {"fill":true,"stroke":true,"markers":true,"clipped":true} expected 53 +/- 0.1 but got 0
+FAIL masking-path-07-b.html with fill, stroke, markers and clipping assert_approx_equals: rect-1.getBBox().x {"fill":true,"stroke":true,"markers":true,"clipped":true} expected 10 +/- 0.1 but got 0
+

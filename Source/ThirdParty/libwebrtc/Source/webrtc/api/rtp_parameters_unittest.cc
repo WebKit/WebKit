@@ -10,6 +10,8 @@
 
 #include "api/rtp_parameters.h"
 
+#include <vector>
+
 #include "test/gtest.h"
 
 namespace webrtc {

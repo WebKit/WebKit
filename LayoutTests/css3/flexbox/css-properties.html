@@ -228,23 +228,22 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexWrap', 'wrap-r
 
 flexbox.style.flexFlow = '';
 shouldBeEqualToString('flexbox.style.flexFlow', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', 'row nowrap');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', 'row');
 
 flexbox.style.flexFlow = 'foo';
 shouldBeEqualToString('flexbox.style.flexFlow', '');
 
-function testFlexFlowValue(value, expected, expectedComputed)
+function testFlexFlowValue(value, expected)
 {
     flexbox.style.flexFlow = value;
     shouldBeEqualToString('flexbox.style.flexFlow', expected);
-    shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', expectedComputed);
+    shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', expected == '' ? "row" : expected);
 }
 
 var directions = ['', 'row', 'row-reverse', 'column', 'column-reverse'];
 var wraps = ['', 'nowrap', 'wrap', 'wrap-reverse'];
 directions.forEach(function(direction) {
     wraps.forEach(function(wrap) {
-        var expectedComputed = (direction || 'row') + ' ' + (wrap || 'nowrap');
         var isInitialDirection = direction == '' || direction == 'row';
         var isInitialWrap = wrap == '' || wrap == 'nowrap';
         var expected;
@@ -256,8 +255,8 @@ directions.forEach(function(direction) {
             expected = direction;
         else
             expected = direction + ' ' + wrap;
-        testFlexFlowValue(direction + ' ' + wrap, expected, expectedComputed);
-        testFlexFlowValue(wrap + ' ' + direction, expected, expectedComputed);
+        testFlexFlowValue(direction + ' ' + wrap, expected);
+        testFlexFlowValue(wrap + ' ' + direction, expected);
     });
 });
 
@@ -270,11 +269,11 @@ shouldBeEqualToString('flexbox.style.flexFlow', '');
 
 flexbox.style.flexFlow = '';
 shouldBeEqualToString('flexbox.style.flexFlow', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', 'row nowrap');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', 'row');
 flexbox.style.flexDirection = 'column';
 flexbox.style.flexWrap = 'initial';
 shouldBeEqualToString('flexbox.style.flexFlow', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', 'column nowrap');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', 'column');
 flexbox.style.flexWrap = 'wrap';
 shouldBeEqualToString('flexbox.style.flexFlow', 'column wrap');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', 'column wrap');

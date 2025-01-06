@@ -30,6 +30,7 @@
 #define ReverbAccumulationBuffer_h
 
 #include "AudioArray.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,18 +38,18 @@ namespace WebCore {
 // writing/accumulating to it at different delay offsets from the read position.  The read operation will zero the memory
 // just read from the buffer, so it will be ready for accumulation the next time around.
 class ReverbAccumulationBuffer final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ReverbAccumulationBuffer);
 public:
     explicit ReverbAccumulationBuffer(size_t length);
 
     // This will read from, then clear-out numberOfFrames
-    void readAndClear(float* destination, size_t numberOfFrames);
+    void readAndClear(std::span<float> destination, size_t numberOfFrames);
 
     // Each ReverbConvolverStage will accumulate its output at the appropriate delay from the read position.
     // We need to pass in and update readIndex here, since each ReverbConvolverStage may be running in
     // a different thread than the realtime thread calling ReadAndClear() and maintaining m_readIndex
     // Returns the writeIndex where the accumulation took place
-    int accumulate(float* source, size_t numberOfFrames, int* readIndex, size_t delayFrames);
+    int accumulate(std::span<float> source, size_t numberOfFrames, int* readIndex, size_t delayFrames);
 
     size_t readIndex() const { return m_readIndex; }
     void updateReadIndex(int* readIndex, size_t numberOfFrames) const;

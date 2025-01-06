@@ -42,16 +42,20 @@
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 static const Seconds CommandTimeTolerance = 50_ms;
 
 namespace WebCore {
 
-static const void* nextCoordinatorLogIdentifier()
+static uint64_t nextCoordinatorLogIdentifier()
 {
     static uint64_t logIdentifier = cryptographicallyRandomNumber<uint32_t>();
-    return reinterpret_cast<const void*>(++logIdentifier);
+    return ++logIdentifier;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSessionCoordinator);
 
 Ref<MediaSessionCoordinator> MediaSessionCoordinator::create(ScriptExecutionContext* context)
 {

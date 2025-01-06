@@ -42,24 +42,24 @@ class LoggingHashMap final {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    typedef WTF::HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMap;
+    typedef WTF::UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> UncheckedKeyHashMap;
     
-    typedef typename HashMap::KeyType KeyType;
-    typedef typename HashMap::MappedType MappedType;
-    typedef typename HashMap::KeyValuePairType KeyValuePairType;
+    typedef typename UncheckedKeyHashMap::KeyType KeyType;
+    typedef typename UncheckedKeyHashMap::MappedType MappedType;
+    typedef typename UncheckedKeyHashMap::KeyValuePairType KeyValuePairType;
     
-    typedef typename HashMap::iterator iterator;
-    typedef typename HashMap::const_iterator const_iterator;
-    typedef typename HashMap::AddResult AddResult;
+    typedef typename UncheckedKeyHashMap::iterator iterator;
+    typedef typename UncheckedKeyHashMap::const_iterator const_iterator;
+    typedef typename UncheckedKeyHashMap::AddResult AddResult;
 
 private:
-    typedef typename HashMap::MappedTraits::PeekType MappedPeekType;
+    typedef typename UncheckedKeyHashMap::MappedTraits::PeekType MappedPeekType;
 
 public:
 
     LoggingHashMap()
     {
-        dataLog("auto* ", m_id, " = new HashMap<", typeArguments, ">();\n");
+        dataLog("auto* ", m_id, " = new UncheckedKeyHashMap<", typeArguments, ">();\n");
     }
     
     ~LoggingHashMap()
@@ -70,13 +70,13 @@ public:
     LoggingHashMap(const LoggingHashMap& other)
         : m_map(other.m_map)
     {
-        dataLog("auto* ", m_id, " = new HashMap(*", other.m_id, ");");
+        dataLog("auto* ", m_id, " = new UncheckedKeyHashMap(*", other.m_id, ");");
     }
     
     LoggingHashMap(LoggingHashMap&& other)
         : m_map(other.m_map)
     {
-        dataLog("auto* ", m_id, " = new HashMap(WTFMove(*", other.m_id, "));");
+        dataLog("auto* ", m_id, " = new UncheckedKeyHashMap(WTFMove(*", other.m_id, "));");
     }
     
     LoggingHashMap& operator=(const LoggingHashMap& other)
@@ -307,7 +307,7 @@ public:
     // FIXME: Implement the no-convert overloads.
     
 private:
-    HashMap m_map;
+    UncheckedKeyHashMap m_map;
     LoggingHashID m_id;
 };
 

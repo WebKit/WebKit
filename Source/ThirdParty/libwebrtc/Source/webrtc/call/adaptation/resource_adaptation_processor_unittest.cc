@@ -65,7 +65,7 @@ class VideoSourceRestrictionsListenerForTesting
       VideoSourceRestrictions restrictions,
       const VideoAdaptationCounters& adaptation_counters,
       rtc::scoped_refptr<Resource> reason,
-      const VideoSourceRestrictions& unfiltered_restrictions) override {
+      const VideoSourceRestrictions& /* unfiltered_restrictions */) override {
     RTC_DCHECK_RUN_ON(&sequence_checker_);
     ++restrictions_updated_count_;
     restrictions_ = restrictions;

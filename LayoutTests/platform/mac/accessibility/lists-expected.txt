@@ -42,12 +42,12 @@ AXFocusableAncestor: <AXList>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 14}
+AXElementBusy: 0
 AXActiveElement: (null)
 AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXActiveElement: (null)
-AXElementBusy: 0
 
 ------------
 AXHasDocumentRoleAncestor: 0
@@ -81,12 +81,12 @@ AXFocusableAncestor: <AXList>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 14}
+AXElementBusy: 0
 AXActiveElement: (null)
 AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXActiveElement: (null)
-AXElementBusy: 0
 
 ------------
 AXHasDocumentRoleAncestor: 0
@@ -120,11 +120,11 @@ AXFocusableAncestor: <AXList>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 44}
+AXElementBusy: 0
 AXActiveElement: (null)
 AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 5>
 AXOrientation: AXVerticalOrientation
-AXElementBusy: 0
 
 ------------
 
@@ -160,8 +160,8 @@ AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 6}
-AXInlineText: 0
 AXElementBusy: 0
+AXInlineText: 0
 
 ------------
 AXHasDocumentRoleAncestor: 0
@@ -195,8 +195,8 @@ AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 6}
-AXInlineText: 0
 AXElementBusy: 0
+AXInlineText: 0
 
 ------------
 
@@ -232,8 +232,8 @@ AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 6}
-AXInlineText: 0
 AXElementBusy: 0
+AXInlineText: 0
 
 ------------
 AXHasDocumentRoleAncestor: 0
@@ -267,8 +267,8 @@ AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 6}
-AXInlineText: 0
 AXElementBusy: 0
+AXInlineText: 0
 
 ------------
 

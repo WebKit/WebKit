@@ -27,6 +27,7 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
@@ -42,8 +43,8 @@ class WorkerThread;
 enum class WorkerThreadStartMode;
 
 class WorkerInspectorProxy : public RefCounted<WorkerInspectorProxy>, public CanMakeWeakPtr<WorkerInspectorProxy, WeakPtrFactoryInitialization::Eager> {
+    WTF_MAKE_TZONE_ALLOCATED(WorkerInspectorProxy);
     WTF_MAKE_NONCOPYABLE(WorkerInspectorProxy);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<WorkerInspectorProxy> create(const String& identifier)
     {

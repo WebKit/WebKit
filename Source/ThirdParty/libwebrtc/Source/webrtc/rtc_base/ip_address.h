@@ -11,16 +11,15 @@
 #ifndef RTC_BASE_IP_ADDRESS_H_
 #define RTC_BASE_IP_ADDRESS_H_
 
+#include <cstdint>
 #if defined(WEBRTC_POSIX)
 #include <arpa/inet.h>
 #include <netdb.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
+#include <netinet/in.h>  // IWYU pragma: export
 
 #include "absl/strings/string_view.h"
 #endif
 #if defined(WEBRTC_WIN)
-#include <winsock2.h>
 #include <ws2tcpip.h>
 #endif
 #include <string.h>
@@ -32,6 +31,7 @@
 #include "rtc_base/win32.h"
 #endif
 #include "absl/strings/string_view.h"
+#include "rtc_base/net_helpers.h"
 #include "rtc_base/system/rtc_export.h"
 namespace rtc {
 
@@ -81,13 +81,6 @@ class RTC_EXPORT IPAddress {
   bool operator!=(const IPAddress& other) const;
   bool operator<(const IPAddress& other) const;
   bool operator>(const IPAddress& other) const;
-
-#ifdef WEBRTC_UNIT_TEST
-  inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
-      std::ostream& os) {           // no-presubmit-check TODO(webrtc:8982)
-    return os << ToString();
-  }
-#endif  // WEBRTC_UNIT_TEST
 
   int family() const { return family_; }
   in_addr ipv4_address() const;
@@ -162,8 +155,8 @@ RTC_EXPORT bool IPFromString(absl::string_view str,
                              int flags,
                              InterfaceAddress* out);
 bool IPIsAny(const IPAddress& ip);
-bool IPIsLoopback(const IPAddress& ip);
-bool IPIsLinkLocal(const IPAddress& ip);
+RTC_EXPORT bool IPIsLoopback(const IPAddress& ip);
+RTC_EXPORT bool IPIsLinkLocal(const IPAddress& ip);
 // Identify a private network address like "192.168.111.222"
 // (see https://en.wikipedia.org/wiki/Private_network )
 bool IPIsPrivateNetwork(const IPAddress& ip);

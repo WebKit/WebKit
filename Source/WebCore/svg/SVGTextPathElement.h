@@ -24,6 +24,7 @@
 #include "SVGNames.h"
 #include "SVGTextContentElement.h"
 #include "SVGURIReference.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -98,7 +99,8 @@ struct SVGPropertyTraits<SVGTextPathSpacingType> {
 };
 
 class SVGTextPathElement final : public SVGTextContentElement, public SVGURIReference {
-    WTF_MAKE_ISO_ALLOCATED(SVGTextPathElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGTextPathElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGTextPathElement);
 public:
     // Forward declare enumerations in the W3C naming scheme, for IDL generation.
     enum {
@@ -120,13 +122,13 @@ public:
     SVGAnimatedEnumeration& methodAnimated() { return m_method; }
     SVGAnimatedEnumeration& spacingAnimated() { return m_spacing; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextPathElement, SVGTextContentElement, SVGURIReference>;
+
 private:
     SVGTextPathElement(const QualifiedName&, Document&);
     virtual ~SVGTextPathElement();
 
     void didFinishInsertingNode() override;
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextPathElement, SVGTextContentElement, SVGURIReference>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

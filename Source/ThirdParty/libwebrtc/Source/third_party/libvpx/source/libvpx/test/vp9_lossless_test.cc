@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "./vpx_config.h"
 #include "test/codec_factory.h"
@@ -118,8 +118,13 @@ TEST_P(LosslessTest, TestLossLessEncodingCtrl) {
   EXPECT_GE(psnr_lossless, kMaxPsnr);
 }
 
+#if CONFIG_REALTIME_ONLY
+VP9_INSTANTIATE_TEST_SUITE(LosslessTest,
+                           ::testing::Values(::libvpx_test::kRealTime));
+#else
 VP9_INSTANTIATE_TEST_SUITE(LosslessTest,
                            ::testing::Values(::libvpx_test::kRealTime,
                                              ::libvpx_test::kOnePassGood,
                                              ::libvpx_test::kTwoPassGood));
+#endif
 }  // namespace

@@ -1,8 +1,7 @@
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 
-FAIL Focus should be reset before navigatesuccess assert_equals: Focus must be reset before navigatesuccess expected Element node <body>
-<script>
-promise_test(async t => {
-  navigation.ad... but got Element node <button></button>
-FAIL Focus should be reset before navigateerror assert_unreached: Should have rejected: undefined Reached unreachable code
+Harness Error (FAIL), message = Unhandled rejection
+
+PASS Focus should be reset before navigatesuccess
+PASS Focus should be reset before navigateerror
 

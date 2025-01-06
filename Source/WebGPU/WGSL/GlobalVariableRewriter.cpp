@@ -36,7 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/SetForScope.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WGSL {
 
@@ -62,6 +62,7 @@ public:
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::VariableStatement&) override;
     void visit(AST::PhonyAssignmentStatement&) override;
+    void visit(AST::CompoundAssignmentStatement&) override;
 
     void visit(AST::Expression&) override;
 
@@ -101,7 +102,7 @@ private:
     std::optional<Error> collectGlobals();
     std::optional<Error> visitEntryPoint(const CallGraph::EntryPoint&);
     void visitCallee(const CallGraph::Callee&);
-    Result<UsedGlobals> determineUsedGlobals();
+    Result<UsedGlobals> determineUsedGlobals(const AST::Function&);
     void collectDynamicOffsetGlobals(const PipelineLayout&);
     void usesOverride(AST::Variable&);
     Vector<unsigned> insertStructs(const UsedResources&);
@@ -173,6 +174,7 @@ private:
     AST::Function* m_currentFunction { nullptr };
     HashMap<std::pair<unsigned, unsigned>, unsigned> m_globalsUsingDynamicOffset;
     HashSet<AST::Expression*> m_doNotUnpack;
+    CheckedUint32 m_combinedFunctionVariablesSize;
 };
 
 std::optional<Error> RewriteGlobalVariables::run()
@@ -311,16 +313,26 @@ void RewriteGlobalVariables::visit(AST::Function& function)
     ListHashSet<String> reads;
     for (auto& callee : m_shaderModule.callGraph().callees(function)) {
         visitCallee(callee);
+
+        if (hasError())
+            return;
+
         for (const auto& read : m_reads)
             reads.add(read);
     }
     m_reads = WTFMove(reads);
     m_defs.clear();
+    m_combinedFunctionVariablesSize = 0;
 
     def(function.name(), nullptr);
     m_currentFunction = &function;
     AST::Visitor::visit(function);
     m_currentFunction = nullptr;
+
+    // https://www.w3.org/TR/WGSL/#limits
+    constexpr unsigned maximumCombinedFunctionVariablesSize = 8192;
+    if (UNLIKELY(m_combinedFunctionVariablesSize.hasOverflowed() || m_combinedFunctionVariablesSize.value() > maximumCombinedFunctionVariablesSize))
+        setError(Error(makeString("The combined byte size of all variables in this function exceeds "_s, String::number(maximumCombinedFunctionVariablesSize), " bytes"_s), function.span()));
 }
 
 void RewriteGlobalVariables::visit(AST::Parameter& parameter)
@@ -352,6 +364,12 @@ void RewriteGlobalVariables::visit(AST::CompoundStatement& statement)
     }
 }
 
+void RewriteGlobalVariables::visit(AST::CompoundAssignmentStatement& statement)
+{
+    Packing lhsPacking = pack(Packing::Unpacked, statement.leftExpression());
+    pack(lhsPacking, statement.rightExpression());
+}
+
 void RewriteGlobalVariables::visit(AST::AssignmentStatement& statement)
 {
     Packing lhsPacking = pack(Packing::Either, statement.lhs());
@@ -363,6 +381,8 @@ void RewriteGlobalVariables::visit(AST::AssignmentStatement& statement)
 
 void RewriteGlobalVariables::visit(AST::VariableStatement& statement)
 {
+    if (statement.variable().flavor() == AST::VariableFlavor::Var)
+        m_combinedFunctionVariablesSize += statement.variable().storeType()->size();
     if (auto* initializer = statement.variable().maybeInitializer())
         pack(static_cast<Packing>(Packing::Unpacked), *initializer);
 }
@@ -467,6 +487,8 @@ Packing RewriteGlobalVariables::getPacking(AST::FieldAccessExpression& expressio
     auto* baseType = expression.base().inferredType();
     if (auto* referenceType = std::get_if<Types::Reference>(baseType))
         baseType = referenceType->element;
+    if (auto* pointerType = std::get_if<Types::Pointer>(baseType))
+        baseType = pointerType->element;
     if (std::holds_alternative<Types::Vector>(*baseType))
         return Packing::Unpacked;
     ASSERT(std::holds_alternative<Types::Struct>(*baseType));
@@ -665,6 +687,9 @@ std::optional<Error> RewriteGlobalVariables::collectGlobals()
                 bufferLengths.append({ globalVar, resource->group });
         }
     }
+
+    for (auto& [_, vector] : m_groupBindingMap)
+        std::sort(vector.begin(), vector.end(), [&](auto& a, auto& b) { return a.first < b.first; });
 
     if (!bufferLengths.isEmpty()) {
         for (const auto& [variable, group] : bufferLengths) {
@@ -942,12 +967,15 @@ std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::En
     }
 
     visit(entryPoint.function);
+    if (hasError())
+        return AST::Visitor::result().error();
+
     if (m_reads.isEmpty()) {
         insertDynamicOffsetsBufferIfNeeded(entryPoint.function);
         return std::nullopt;
     }
 
-    auto maybeUsedGlobals = determineUsedGlobals();
+    auto maybeUsedGlobals = determineUsedGlobals(entryPoint.function);
     if (!maybeUsedGlobals) {
         insertDynamicOffsetsBufferIfNeeded(entryPoint.function);
         return maybeUsedGlobals.error();
@@ -1203,9 +1231,16 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
     });
 }
 
-auto RewriteGlobalVariables::determineUsedGlobals() -> Result<UsedGlobals>
+auto RewriteGlobalVariables::determineUsedGlobals(const AST::Function& function) -> Result<UsedGlobals>
 {
     UsedGlobals usedGlobals;
+
+    // https://www.w3.org/TR/WGSL/#limits
+    CheckedUint32 combinedPrivateVariablesSize = 0;
+    CheckedUint32 combinedWorkgroupVariablesSize = 0;
+    constexpr unsigned maximumCombinedPrivateVariablesSize = 8192;
+    unsigned maximumCombinedWorkgroupVariablesSize = m_shaderModule.configuration().maximumCombinedWorkgroupVariablesSize;
+
     for (const auto& globalName : m_reads) {
         auto it = m_globals.find(globalName);
         RELEASE_ASSERT(it != m_globals.end());
@@ -1220,6 +1255,11 @@ auto RewriteGlobalVariables::determineUsedGlobals() -> Result<UsedGlobals>
         case AST::VariableFlavor::Const:
             if (!global.resource.has_value()) {
                 usedGlobals.privateGlobals.append(&global);
+
+                if (auto* qualifier = variable.maybeQualifier(); qualifier && qualifier->addressSpace() == AddressSpace::Workgroup)
+                    combinedWorkgroupVariablesSize += variable.storeType()->size();
+                else
+                    combinedPrivateVariablesSize += variable.storeType()->size();
                 continue;
             }
             break;
@@ -1232,8 +1272,15 @@ auto RewriteGlobalVariables::determineUsedGlobals() -> Result<UsedGlobals>
 
         // FIXME: this check needs to occur during WGSL::staticCheck
         if (!bindingResult.isNewEntry)
-            return makeUnexpected(Error(makeString("entry point '"_s, m_entryPointInformation->originalName, "' uses variables '"_s, bindingResult.iterator->value->declaration->originalName(), "' and '"_s, variable.originalName(), "', both which use the same resource binding: @group("_s, group, ") @binding("_s, binding, ')'), SourceSpan::empty()));
+            return makeUnexpected(Error(makeString("entry point '"_s, m_entryPointInformation->originalName, "' uses variables '"_s, bindingResult.iterator->value->declaration->originalName(), "' and '"_s, variable.originalName(), "', both which use the same resource binding: @group("_s, group, ") @binding("_s, binding, ')'), variable.span()));
     }
+
+    if (UNLIKELY(combinedPrivateVariablesSize.hasOverflowed() || combinedPrivateVariablesSize.value() > maximumCombinedPrivateVariablesSize))
+        return makeUnexpected(Error(makeString("The combined byte size of all variables in the private address space exceeds "_s, String::number(maximumCombinedPrivateVariablesSize), " bytes"_s), function.span()));
+
+    if (UNLIKELY(combinedWorkgroupVariablesSize.hasOverflowed() || combinedWorkgroupVariablesSize.value() > maximumCombinedWorkgroupVariablesSize))
+        return makeUnexpected(Error(makeString("The combined byte size of all variables in the workgroup address space exceeds "_s, String::number(maximumCombinedWorkgroupVariablesSize), " bytes"_s), function.span()));
+
     return usedGlobals;
 }
 
@@ -1320,7 +1367,16 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const UsedResources& used
                 .webBinding = global.resource->binding,
                 .visibility = m_stage,
                 .bindingMember = bindingMemberForGlobal(global),
-                .name = global.declaration->name()
+                .name = global.declaration->name(),
+                .vertexArgumentBufferIndex = std::nullopt,
+                .vertexArgumentBufferSizeIndex = std::nullopt,
+                .vertexBufferDynamicOffset = std::nullopt,
+                .fragmentArgumentBufferIndex = std::nullopt,
+                .fragmentArgumentBufferSizeIndex = std::nullopt,
+                .fragmentBufferDynamicOffset = std::nullopt,
+                .computeArgumentBufferIndex = std::nullopt,
+                .computeArgumentBufferSizeIndex = std::nullopt,
+                .computeBufferDynamicOffset = std::nullopt
             };
 
             auto bufferSizeIt = m_bufferLengthMap.find(global.declaration);
@@ -1556,14 +1612,278 @@ static bool isSampler(const AST::Variable& variable, SamplerBindingType bindingT
     }
 }
 
-static bool isTexture(const AST::Variable& variable, bool isMultisampled)
+static bool textureKindEqualsViewDimension(Types::Texture::Kind kind, TextureViewDimension viewDimension, bool isMultisampled, TextureSampleType sampleType)
 {
-    return bindingTypeForType(variable.storeType()) == (isMultisampled ? BindingType::TextureMultisampled : BindingType::Texture);
+    if (isMultisampled)
+        return kind == Types::Texture::Kind::TextureMultisampled2d && viewDimension == TextureViewDimension::TwoDimensional;
+
+    switch (viewDimension) {
+    case TextureViewDimension::OneDimensional:
+        return kind == Types::Texture::Kind::Texture1d && sampleType != TextureSampleType::Depth;
+    case TextureViewDimension::TwoDimensional:
+        return kind == Types::Texture::Kind::Texture2d;
+    case TextureViewDimension::TwoDimensionalArray:
+        return kind == Types::Texture::Kind::Texture2dArray;
+    case TextureViewDimension::Cube:
+        return kind == Types::Texture::Kind::TextureCube;
+    case TextureViewDimension::CubeArray:
+        return kind == Types::Texture::Kind::TextureCubeArray;
+    case TextureViewDimension::ThreeDimensional:
+        return kind == Types::Texture::Kind::Texture3d && sampleType != TextureSampleType::Depth;
+    }
+
+    return false;
 }
 
-static bool isStorageTexture(const AST::Variable& variable, StorageTextureAccess textureAccess)
+static bool depthTextureKindEqualsViewDimension(Types::TextureDepth::Kind kind, TextureViewDimension viewDimension, bool isMultisampled)
 {
-    switch (bindingTypeForType(variable.storeType())) {
+    if (isMultisampled)
+        return kind == Types::TextureDepth::Kind::TextureDepthMultisampled2d && viewDimension == TextureViewDimension::TwoDimensional;
+
+    switch (viewDimension) {
+    case TextureViewDimension::OneDimensional:
+        return false;
+    case TextureViewDimension::TwoDimensional:
+        return kind == Types::TextureDepth::Kind::TextureDepth2d;
+    case TextureViewDimension::TwoDimensionalArray:
+        return kind == Types::TextureDepth::Kind::TextureDepth2dArray;
+    case TextureViewDimension::Cube:
+        return kind == Types::TextureDepth::Kind::TextureDepthCube;
+    case TextureViewDimension::CubeArray:
+        return kind == Types::TextureDepth::Kind::TextureDepthCubeArray;
+    case TextureViewDimension::ThreeDimensional:
+        return false;
+    }
+
+    return false;
+}
+
+static ASCIILiteral nameForBindingType(BindingType bindingType)
+{
+    switch (bindingType) {
+    default:
+    case BindingType::Undefined:
+        return "Undefined"_s;
+    case BindingType::Buffer:
+        return "Buffer"_s;
+    case BindingType::Texture:
+        return "Texture"_s;
+    case BindingType::TextureMultisampled:
+        return "TextureMultisampled"_s;
+    case BindingType::TextureStorageReadOnly:
+        return "TextureStorageReadOnly"_s;
+    case BindingType::TextureStorageReadWrite:
+        return "TextureStorageReadWrite"_s;
+    case BindingType::TextureStorageWriteOnly:
+        return "TextureStorageWriteOnly"_s;
+    case BindingType::Sampler:
+        return "Sampler"_s;
+    case BindingType::SamplerComparison:
+        return "SamplerComparison"_s;
+    case BindingType::TextureExternal:
+        return "TextureExternal"_s;
+    }
+}
+
+static ASCIILiteral nameForTextureSampleType(TextureSampleType sampleType)
+{
+    switch (sampleType) {
+    case TextureSampleType::Float:
+        return "Float"_s;
+    case TextureSampleType::UnfilterableFloat:
+        return "UnfilterableFloat"_s;
+    case TextureSampleType::Depth:
+        return "Depth"_s;
+    case TextureSampleType::SignedInt:
+        return "SignedInt"_s;
+    case TextureSampleType::UnsignedInt:
+        return "UnsignedInt"_s;
+    default:
+        return "Undefined"_s;
+    }
+}
+
+static ASCIILiteral nameForTextureDepthKind(Types::TextureDepth::Kind kind)
+{
+    switch (kind) {
+    case Types::TextureDepth::Kind::TextureDepth2d:
+        return "TextureDepth2d"_s;
+    case Types::TextureDepth::Kind::TextureDepth2dArray:
+        return "TextureDepth2d"_s;
+    case Types::TextureDepth::Kind::TextureDepthCube:
+        return "TextureDepth2d"_s;
+    case Types::TextureDepth::Kind::TextureDepthCubeArray:
+        return "TextureDepth2d"_s;
+    case Types::TextureDepth::Kind::TextureDepthMultisampled2d:
+        return "Texture2d"_s;
+    default:
+        return "Undefined"_s;
+    }
+}
+
+static ASCIILiteral nameForTextureKind(Types::Texture::Kind kind)
+{
+    switch (kind) {
+    case Types::Texture::Kind::Texture1d:
+        return "Texture1d"_s;
+    case Types::Texture::Kind::Texture2d:
+        return "Texture2d"_s;
+    case Types::Texture::Kind::Texture2dArray:
+        return "Texture2d"_s;
+    case Types::Texture::Kind::TextureCube:
+        return "Texture2d"_s;
+    case Types::Texture::Kind::TextureCubeArray:
+        return "Texture2d"_s;
+    case Types::Texture::Kind::TextureMultisampled2d:
+        return "Texture2d"_s;
+    case Types::Texture::Kind::Texture3d:
+        return "Texture3d"_s;
+    default:
+        return "Undefined"_s;
+    }
+}
+
+static ASCIILiteral nameForTextureViewDimension(TextureViewDimension viewDimension)
+{
+    switch (viewDimension) {
+    case TextureViewDimension::OneDimensional:
+        return "1d"_s;
+    case TextureViewDimension::TwoDimensional:
+        return "2d"_s;
+    case TextureViewDimension::TwoDimensionalArray:
+        return "2d_array"_s;
+    case TextureViewDimension::Cube:
+        return "cube"_s;
+    case TextureViewDimension::CubeArray:
+        return "cube-array"_s;
+    case TextureViewDimension::ThreeDimensional:
+        return "3d"_s;
+    }
+
+    return "undefined"_s;
+}
+
+static ASCIILiteral nameForPrimitiveKind(Types::Primitive::Kind primitiveKind)
+{
+    switch (primitiveKind) {
+    case Types::Primitive::AbstractInt:
+        return "<AbstractInt>"_s;
+    case Types::Primitive::I32:
+        return "int32"_s;
+    case Types::Primitive::U32:
+        return "uint32"_s;
+    case Types::Primitive::AbstractFloat:
+        return "<AbstractFloat>"_s;
+    case Types::Primitive::F16:
+        return "f16"_s;
+    case Types::Primitive::F32:
+        return "f32"_s;
+    case Types::Primitive::Void:
+        return "void"_s;
+    case Types::Primitive::Bool:
+        return "bool"_s;
+    case Types::Primitive::Sampler:
+        return "sampler"_s;
+    case Types::Primitive::SamplerComparison:
+        return "sampler_comparion"_s;
+    case Types::Primitive::TextureExternal:
+        return "texture_external"_s;
+    case Types::Primitive::AccessMode:
+        return "access_mode"_s;
+    case Types::Primitive::TexelFormat:
+        return "texel_format"_s;
+    case Types::Primitive::AddressSpace:
+        return "address_space"_s;
+    }
+
+    return "undefined"_s;
+}
+
+static String errorValidatingTexture(const AST::Variable& variable, const TextureBindingLayout& textureBinding)
+{
+    bool isMultisampled = textureBinding.multisampled;
+    auto targetValue = isMultisampled ? BindingType::TextureMultisampled : BindingType::Texture;
+    auto storeType = variable.storeType();
+    auto bindingForType = bindingTypeForType(storeType);
+    if (bindingForType != targetValue)
+        return makeString("types don't match: WGSL type "_s, nameForBindingType(bindingForType), " target type "_s, nameForBindingType(targetValue));
+
+    auto sampleType = textureBinding.sampleType;
+    const Types::Texture* possibleTexture = std::get_if<Types::Texture>(storeType);
+    if (!possibleTexture) {
+        const Types::TextureDepth* possibleTextureDepth = std::get_if<Types::TextureDepth>(storeType);
+        if (!possibleTextureDepth || sampleType != TextureSampleType::Depth)
+            return makeString("depth validation failed: "_s, nameForTextureSampleType(sampleType));
+
+        bool result = depthTextureKindEqualsViewDimension(possibleTextureDepth->kind, textureBinding.viewDimension, isMultisampled);
+        if (!result)
+            return makeString("viewDimensions don't match: "_s, nameForTextureDepthKind(possibleTextureDepth->kind), ", textureBinding view dimension "_s, nameForTextureViewDimension(textureBinding.viewDimension), ", multisampled = "_s, isMultisampled ? "yes"_s : "no"_s);
+
+        return emptyString();
+    }
+
+    if (!textureKindEqualsViewDimension(possibleTexture->kind, textureBinding.viewDimension, isMultisampled, sampleType) || !possibleTexture->element)
+        return makeString("viewDimensions don't match: "_s, nameForTextureKind(possibleTexture->kind), ", bindingViewDimension = "_s, nameForTextureViewDimension(textureBinding.viewDimension), ", multisampled = "_s, isMultisampled ? "yes"_s : "no"_s, ", bindingSampleType = "_s, nameForTextureSampleType(sampleType));
+
+    bool result = false;
+    if (const auto* primitive = std::get_if<Types::Primitive>(possibleTexture->element)) {
+        switch (sampleType) {
+        case TextureSampleType::Float:
+        case TextureSampleType::UnfilterableFloat:
+            result = primitive->kind == Types::Primitive::F32 || primitive->kind == Types::Primitive::F16;
+            break;
+        case TextureSampleType::Depth:
+            break;
+        case TextureSampleType::SignedInt:
+            result = primitive->kind == Types::Primitive::I32;
+            break;
+        case TextureSampleType::UnsignedInt:
+            result = primitive->kind == Types::Primitive::U32;
+            break;
+        }
+
+        if (!result)
+            return makeString("element types don't match: sampleType "_s, nameForTextureSampleType(sampleType), ", primitive->kind "_s, nameForPrimitiveKind(primitive->kind));
+    }
+
+    if (!result)
+        return makeString("WGSL texture has no elementType: sampleType "_s, nameForTextureSampleType(sampleType));
+
+    return emptyString();
+}
+
+static bool storageTextureKindEqualsViewDimension(Types::TextureStorage::Kind kind, TextureViewDimension viewDimension)
+{
+    switch (viewDimension) {
+    case TextureViewDimension::OneDimensional:
+        return kind == Types::TextureStorage::Kind::TextureStorage1d;
+    case TextureViewDimension::TwoDimensional:
+        return kind == Types::TextureStorage::Kind::TextureStorage2d;
+    case TextureViewDimension::TwoDimensionalArray:
+        return kind == Types::TextureStorage::Kind::TextureStorage2dArray;
+    case TextureViewDimension::Cube:
+        return false;
+    case TextureViewDimension::CubeArray:
+        return false;
+    case TextureViewDimension::ThreeDimensional:
+        return kind == Types::TextureStorage::Kind::TextureStorage3d;
+    }
+
+    return false;
+}
+
+static bool isStorageTexture(const AST::Variable& variable, const StorageTextureBindingLayout& storageTexture)
+{
+    auto textureAccess = storageTexture.access;
+    auto storeType = variable.storeType();
+    const Types::TextureStorage* possibleStorageTexture = std::get_if<Types::TextureStorage>(storeType);
+    if (!possibleStorageTexture)
+        return false;
+
+    if (!storageTextureKindEqualsViewDimension(possibleStorageTexture->kind, storageTexture.viewDimension) || possibleStorageTexture->format != storageTexture.format)
+        return false;
+
+    switch (bindingTypeForType(storeType)) {
     case BindingType::TextureStorageReadOnly:
         return textureAccess == StorageTextureAccess::ReadOnly;
     case BindingType::TextureStorageReadWrite:
@@ -1580,37 +1900,37 @@ static bool isExternalTexture(const AST::Variable& variable)
     return bindingTypeForType(variable.storeType()) == BindingType::TextureExternal;
 }
 
-static bool typesMatch(const AST::Variable& variable, const BindGroupLayoutEntry::BindingMember& bindingMember)
+static String errorValidatingTypes(const AST::Variable& variable, const BindGroupLayoutEntry::BindingMember& bindingMember)
 {
     return WTF::switchOn(bindingMember, [&](const BufferBindingLayout&) {
-        return isBuffer(variable);
+        return isBuffer(variable) ? emptyString() : "WGSL variable is not a buffer"_s;
     }, [&](const SamplerBindingLayout& samplerBinding) {
-        return isSampler(variable, samplerBinding.type);
+        return isSampler(variable, samplerBinding.type) ? emptyString() : "WGSL variable is not a sampler"_s;
     }, [&](const TextureBindingLayout& textureBinding) {
-        return isTexture(variable, textureBinding.multisampled);
+        return errorValidatingTexture(variable, textureBinding);
     }, [&](const StorageTextureBindingLayout& storageTexture) {
-        return isStorageTexture(variable, storageTexture.access);
+        return isStorageTexture(variable, storageTexture) ? emptyString() : "WGSL variable is not a storage texture"_s;
     }, [&](const ExternalTextureBindingLayout&) {
-        return isExternalTexture(variable);
+        return isExternalTexture(variable) ? emptyString() : "WGSL variable is not an external texture"_s;
     });
 }
 
-static bool variableAndEntryMatch(const AST::Variable& variable, const BindGroupLayoutEntry& entry)
+static String errorValidatingVariableAndEntryMatch(const AST::Variable& variable, const BindGroupLayoutEntry& entry)
 {
-    if (!typesMatch(variable, entry.bindingMember))
-        return false;
+    if (auto error = errorValidatingTypes(variable, entry.bindingMember); error.length())
+        return error;
 
     auto variableAddressSpace = variable.addressSpace();
     auto entryAddressSpace = addressSpaceForBindingMember(entry.bindingMember);
     if (variableAddressSpace && *variableAddressSpace != entryAddressSpace)
-        return false;
+        return "variableAddressSpace != entryAddressSpace"_s;
 
     auto variableAccessMode = variable.accessMode();
     auto entryAccessMode = accessModeForBindingMember(entry.bindingMember);
     if (variableAccessMode && *variableAccessMode != entryAccessMode)
-        return false;
+        return "variableAccessMode != entryAccessMode"_s;
 
-    return true;
+    return emptyString();
 }
 
 Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(PipelineLayout& layout, const UsedResources& usedResources)
@@ -1647,23 +1967,127 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(PipelineLayout& l
             }();
 
             AST::Variable* variable = nullptr;
-            auto it = m_globalsByBinding.find({ group + 1, entry.binding + 1 });
-            if (it != m_globalsByBinding.end()) {
-                variable = it->value;
-                serializedVariables.add(variable, &entry);
-                entries.append({ entry.binding, &createArgumentBufferEntry(*argumentBufferIndex, *variable) });
-            } else {
-                auto& type = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("u32"_s));
-                type.m_inferredType = m_shaderModule.types().u32Type();
 
-                auto& referenceType = m_shaderModule.astBuilder().construct<AST::ReferenceTypeExpression>(
-                    SourceSpan::empty(),
-                    type
-                );
-                referenceType.m_inferredType = m_shaderModule.types().referenceType(AddressSpace::Storage, m_shaderModule.types().u32Type(), AccessMode::Read);
+            auto globalIt = m_globalsByBinding.find({ group + 1, entry.binding + 1 });
+            if (globalIt != m_globalsByBinding.end()) {
+                auto groupIt = usedResources.find(group);
+                if (groupIt != usedResources.end()) {
+                    auto& bindings = groupIt->value;
+                    auto bindingIt = bindings.find(entry.binding);
+                    if (bindingIt != bindings.end()) {
+                        variable = bindingIt->value->declaration;
+                        serializedVariables.add(variable, &entry);
+                        entries.append({ *argumentBufferIndex, &createArgumentBufferEntry(*argumentBufferIndex, *variable) });
+                    }
+                }
+            }
+
+            if (!variable) {
+                auto& type = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("void"_s));
+                type.m_inferredType = WTF::switchOn(entry.bindingMember,
+                    [&](const BufferBindingLayout& buffer) -> const Type* {
+                        AddressSpace addressSpace;
+                        AccessMode accessMode;
+                        switch (buffer.type) {
+                        case BufferBindingType::Uniform:
+                            addressSpace = AddressSpace::Uniform;
+                            accessMode = AccessMode::Read;
+                            break;
+                        case BufferBindingType::Storage:
+                            addressSpace = AddressSpace::Storage;
+                            accessMode = AccessMode::ReadWrite;
+                            break;
+                        case BufferBindingType::ReadOnlyStorage:
+                            addressSpace = AddressSpace::Storage;
+                            accessMode = AccessMode::Read;
+                            break;
+                        }
+                        return m_shaderModule.types().pointerType(addressSpace, m_shaderModule.types().voidType(), accessMode);
+                    },
+                    [&](const SamplerBindingLayout&) -> const Type* {
+                        return m_shaderModule.types().samplerType();
+                    },
+                    [&](const TextureBindingLayout& layout) -> const Type* {
+                        const Type* sampleType;
+                        switch (layout.sampleType) {
+                        case TextureSampleType::Float:
+                        case TextureSampleType::UnfilterableFloat:
+                        case TextureSampleType::Depth:
+                            sampleType = m_shaderModule.types().f32Type();
+                            break;
+                        case TextureSampleType::SignedInt:
+                            sampleType = m_shaderModule.types().i32Type();
+                            break;
+                        case TextureSampleType::UnsignedInt:
+                            sampleType = m_shaderModule.types().u32Type();
+                            break;
+                        }
+                        Types::Texture::Kind textureKind;
+                        switch (layout.viewDimension) {
+                        case TextureViewDimension::OneDimensional:
+                            textureKind = Types::Texture::Kind::Texture1d;
+                            break;
+                        case TextureViewDimension::TwoDimensional:
+                            if (layout.multisampled)
+                                textureKind = Types::Texture::Kind::TextureMultisampled2d;
+                            else
+                                textureKind = Types::Texture::Kind::Texture2d;
+                            break;
+                        case TextureViewDimension::TwoDimensionalArray:
+                            textureKind = Types::Texture::Kind::Texture2dArray;
+                            break;
+                        case TextureViewDimension::Cube:
+                            textureKind = Types::Texture::Kind::TextureCube;
+                            break;
+                        case TextureViewDimension::CubeArray:
+                            textureKind = Types::Texture::Kind::TextureCubeArray;
+                            break;
+                        case TextureViewDimension::ThreeDimensional:
+                            textureKind = Types::Texture::Kind::Texture3d;
+                            break;
+                        }
+                        return m_shaderModule.types().textureType(textureKind, sampleType);
+                    },
+                    [&](const StorageTextureBindingLayout& layout) -> const Type* {
+                        Types::TextureStorage::Kind textureStorageKind;
+                        switch (layout.viewDimension) {
+                        case TextureViewDimension::OneDimensional:
+                            textureStorageKind = Types::TextureStorage::Kind::TextureStorage1d;
+                            break;
+                        case TextureViewDimension::TwoDimensional:
+                            textureStorageKind = Types::TextureStorage::Kind::TextureStorage2d;
+                            break;
+                        case TextureViewDimension::TwoDimensionalArray:
+                            textureStorageKind = Types::TextureStorage::Kind::TextureStorage2dArray;
+                            break;
+                        case TextureViewDimension::ThreeDimensional:
+                            textureStorageKind = Types::TextureStorage::Kind::TextureStorage3d;
+                            break;
+                        default:
+                            RELEASE_ASSERT_NOT_REACHED();
+                        }
+                        AccessMode accessMode;
+                        switch (layout.access) {
+                        case StorageTextureAccess::WriteOnly:
+                            accessMode = AccessMode::Write;
+                            break;
+                        case StorageTextureAccess::ReadOnly:
+                            accessMode = AccessMode::Read;
+                            break;
+                        case StorageTextureAccess::ReadWrite:
+                            accessMode = AccessMode::ReadWrite;
+                            break;
+                        }
+                        return m_shaderModule.types().textureStorageType(textureStorageKind, layout.format, accessMode);
+                    },
+                    [&](const ExternalTextureBindingLayout&) -> const Type* {
+                        m_shaderModule.setUsesExternalTextures();
+                        return m_shaderModule.types().textureExternalType();
+                    });
+
                 entries.append({
-                    entry.binding,
-                    &createArgumentBufferEntry(*argumentBufferIndex, SourceSpan::empty(), makeString("__ArgumentBufferPlaceholder_"_s, entry.binding), referenceType)
+                    *argumentBufferIndex,
+                    &createArgumentBufferEntry(*argumentBufferIndex, SourceSpan::empty(), makeString("__ArgumentBufferPlaceholder_"_s, entry.binding), type)
                 });
             }
 
@@ -1698,8 +2122,8 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(PipelineLayout& l
         for (auto [_, global] : bindingGlobalMap) {
             auto* variable = global->declaration;
             if (auto entryIt = serializedVariables.find(variable); entryIt != serializedVariables.end() && entryIt->value) {
-                if (!variableAndEntryMatch(*variable, *entryIt->value))
-                    return makeUnexpected(Error("Shader is incompatible with layout pipeline"_s, SourceSpan::empty()));
+                if (auto error = errorValidatingVariableAndEntryMatch(*variable, *entryIt->value); error.length())
+                    return makeUnexpected(Error(makeString("Shader is incompatible with layout pipeline: "_s, error), SourceSpan::empty()));
 
                 if (auto* bufferBindingLayout = std::get_if<BufferBindingLayout>(&entryIt->value->bindingMember))
                     bufferBindingLayout->minBindingSize = variable->storeType()->size();
@@ -1776,7 +2200,7 @@ void RewriteGlobalVariables::insertMaterializations(AST::Function& function, con
             );
             AST::Expression* initializer = &access;
 
-            auto it = m_globalsUsingDynamicOffset.find({ group + 1, binding + 1 });
+            auto it = global->declaration->binding() ? m_globalsUsingDynamicOffset.find({ group + 1, binding + 1 }) : m_globalsUsingDynamicOffset.end();
             if (it != m_globalsUsingDynamicOffset.end()) {
                 auto offset = it->value;
                 auto& target = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(

@@ -38,6 +38,8 @@ class Event final : public _cl_event, public Object
                                    void *value,
                                    size_t *valueSizeRet);
 
+    bool isUserEvent() const { return mCommandType == CL_COMMAND_USER; }
+
   public:
     ~Event() override;
 

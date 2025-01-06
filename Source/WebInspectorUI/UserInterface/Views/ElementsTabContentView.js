@@ -40,6 +40,7 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
         if (InspectorBackend.hasCommand("CSS.getFontDataForNode"))
             detailsSidebarPanelConstructors.push(WI.FontDetailsSidebarPanel);
 
+        // COMPATIBILITY (iOS 18.0, macOS 15.0): `DOM.getMediaStats` did not exist yet.
         if (InspectorBackend.hasCommand("DOM.getMediaStats"))
             detailsSidebarPanelConstructors.push(WI.MediaDetailsSidebarPanel)
 

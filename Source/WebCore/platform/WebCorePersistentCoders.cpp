@@ -45,6 +45,10 @@
 #include <wtf/spi/cocoa/SecuritySPI.h>
 #endif
 
+#if USE(GLIB)
+#include <wtf/glib/GSpanExtras.h>
+#endif
+
 namespace WTF::Persistence {
 
 #if ENABLE(APP_HIGHLIGHTS)
@@ -337,11 +341,11 @@ static std::optional<RetainPtr<CFDataRef>> decodeCFData(Decoder& decoder)
     if (UNLIKELY(!isInBounds<size_t>(*size)))
         return std::nullopt;
 
-    auto pointer = decoder.bufferPointerForDirectRead(static_cast<size_t>(*size));
-    if (!pointer)
+    auto buffer = decoder.bufferPointerForDirectRead(static_cast<size_t>(*size));
+    if (!buffer.data())
         return std::nullopt;
 
-    return adoptCF(CFDataCreate(nullptr, pointer, *size));
+    return toCFData(buffer);
 }
 
 static void encodeSecTrustRef(Encoder& encoder, SecTrustRef trust)
@@ -434,7 +438,7 @@ template<> struct Coder<GRefPtr<GByteArray>> {
     static void encodeForPersistence(Encoder &encoder, const GRefPtr<GByteArray>& byteArray)
     {
         encoder << static_cast<uint32_t>(byteArray->len);
-        encoder.encodeFixedLengthData({ byteArray->data, byteArray->len });
+        encoder.encodeFixedLengthData(span(byteArray));
     }
 
     static std::optional<GRefPtr<GByteArray>> decodeForPersistence(Decoder& decoder)
@@ -446,7 +450,8 @@ template<> struct Coder<GRefPtr<GByteArray>> {
 
         GRefPtr<GByteArray> byteArray = adoptGRef(g_byte_array_sized_new(*size));
         g_byte_array_set_size(byteArray.get(), *size);
-        if (!decoder.decodeFixedLengthData({ byteArray->data, *size }))
+
+        if (!decoder.decodeFixedLengthData(spanConstCast<uint8_t>(span(byteArray))))
             return std::nullopt;
         return byteArray;
     }

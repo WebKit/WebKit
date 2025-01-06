@@ -77,16 +77,16 @@ TEST(WTF, CStringEmptyRegularConstructor)
 
 TEST(WTF, CStringUninitializedConstructor)
 {
-    char* buffer;
+    std::span<char> buffer;
     CString emptyString = CString::newUninitialized(0, buffer);
     ASSERT_FALSE(emptyString.isNull());
-    ASSERT_EQ(buffer, emptyString.data());
-    ASSERT_EQ(buffer[0], 0);
+    ASSERT_EQ(buffer.data(), emptyString.data());
+    ASSERT_TRUE(buffer.empty());
 
     const size_t length = 25;
     CString uninitializedString = CString::newUninitialized(length, buffer);
     ASSERT_FALSE(uninitializedString.isNull());
-    ASSERT_EQ(buffer, uninitializedString.data());
+    ASSERT_EQ(buffer.data(), uninitializedString.data());
     ASSERT_EQ(uninitializedString.data()[length], 0);
 }
 
@@ -103,7 +103,7 @@ TEST(WTF, CStringCopyOnWrite)
     CString string(initialString);
     CString copy = string;
 
-    string.mutableData()[3] = 'K';
+    string.mutableSpan()[3] = 'K';
     ASSERT_TRUE(string != copy);
     ASSERT_STREQ(string.data(), "WebKit");
     ASSERT_STREQ(copy.data(), initialString);

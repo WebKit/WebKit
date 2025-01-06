@@ -29,12 +29,14 @@
 #ifndef ZeroPole_h
 #define ZeroPole_h
 
+#include <wtf/TZoneMalloc.h>
+
 namespace WebCore {
 
 // ZeroPole is a simple filter with one zero and one pole.
 
 class ZeroPole final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ZeroPole);
 public:
     ZeroPole()
         : m_zero(0)
@@ -44,7 +46,7 @@ public:
     {
     }
 
-    void process(const float *source, float *destination, unsigned framesToProcess);
+    void process(std::span<const float> source, std::span<float> destination, unsigned framesToProcess);
 
     // Reset filter state.
     void reset() { m_lastX = 0; m_lastY = 0; }

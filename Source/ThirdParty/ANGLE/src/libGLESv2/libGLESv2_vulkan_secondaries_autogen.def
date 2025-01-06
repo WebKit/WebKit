@@ -481,6 +481,10 @@ EXPORTS
     glMultiDrawArraysInstancedBaseInstanceANGLE
     glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE
 
+    ; GL_ANGLE_blob_cache
+    glBlobCacheCallbacksANGLE
+    glGetPointervANGLE
+
     ; GL_ANGLE_client_arrays
 
     ; GL_ANGLE_clip_cull_distance
@@ -681,7 +685,11 @@ EXPORTS
 
     ; GL_ARB_sync
 
+    ; GL_ARM_rgba8
+
     ; GL_ARM_shader_framebuffer_fetch
+
+    ; GL_ARM_shader_framebuffer_fetch_depth_stencil
 
     ; GL_CHROMIUM_bind_uniform_location
     glBindUniformLocationCHROMIUM
@@ -705,6 +713,8 @@ EXPORTS
     glEGLImageTargetTexStorageEXT
     glEGLImageTargetTextureStorageEXT
 
+    ; GL_EXT_EGL_image_storage_compression
+
     ; GL_EXT_YUV_target
 
     ; GL_EXT_base_instance
@@ -722,6 +732,10 @@ EXPORTS
 
     ; GL_EXT_buffer_storage
     glBufferStorageEXT
+
+    ; GL_EXT_clear_texture
+    glClearTexImageEXT
+    glClearTexSubImageEXT
 
     ; GL_EXT_clip_control
     glClipControlEXT
@@ -869,6 +883,8 @@ EXPORTS
     ; GL_EXT_semaphore_fd
     glImportSemaphoreFdEXT
 
+    ; GL_EXT_separate_depth_stencil
+
     ; GL_EXT_separate_shader_objects
     glActiveShaderProgramEXT
     glBindProgramPipelineEXT
@@ -971,6 +987,8 @@ EXPORTS
 
     ; GL_EXT_texture_norm16
 
+    ; GL_EXT_texture_query_lod
+
     ; GL_EXT_texture_rg
 
     ; GL_EXT_texture_sRGB_R8
@@ -979,10 +997,16 @@ EXPORTS
 
     ; GL_EXT_texture_sRGB_decode
 
+    ; GL_EXT_texture_shadow_lod
+
     ; GL_EXT_texture_storage
     glTexStorage1DEXT
     glTexStorage2DEXT
     glTexStorage3DEXT
+
+    ; GL_EXT_texture_storage_compression
+    glTexStorageAttribs2DEXT
+    glTexStorageAttribs3DEXT
 
     ; GL_EXT_texture_type_2_10_10_10_REV
 
@@ -994,6 +1018,8 @@ EXPORTS
 
     ; GL_KHR_blend_equation_advanced
     glBlendBarrierKHR
+
+    ; GL_KHR_blend_equation_advanced_coherent
 
     ; GL_KHR_debug
     glDebugMessageCallbackKHR
@@ -1014,6 +1040,13 @@ EXPORTS
     glMaxShaderCompilerThreadsKHR
 
     ; GL_KHR_robust_buffer_access_behavior
+
+    ; GL_KHR_robustness
+    glGetGraphicsResetStatusKHR
+    glGetnUniformfvKHR
+    glGetnUniformivKHR
+    glGetnUniformuivKHR
+    glReadnPixelsKHR
 
     ; GL_KHR_texture_compression_astc_hdr
 
@@ -1059,6 +1092,9 @@ EXPORTS
     ; GL_OES_EGL_image_external
 
     ; GL_OES_EGL_image_external_essl3
+
+    ; GL_OES_blend_subtract
+    glBlendEquationOES
 
     ; GL_OES_compressed_ETC1_RGB8_texture
 
@@ -1126,6 +1162,8 @@ EXPORTS
     glGetProgramBinaryOES
     glProgramBinaryOES
 
+    ; GL_OES_gpu_shader5
+
     ; GL_OES_mapbuffer
     glGetBufferPointervOES
     glMapBufferOES
@@ -1166,6 +1204,9 @@ EXPORTS
     ; GL_OES_standard_derivatives
 
     ; GL_OES_surfaceless_context
+
+    ; GL_OES_tessellation_shader
+    glPatchParameteriOES
 
     ; GL_OES_texture_3D
     glCompressedTexImage3DOES
@@ -1212,6 +1253,8 @@ EXPORTS
 
     ; GL_OES_texture_half_float_linear
 
+    ; GL_OES_texture_mirrored_repeat
+
     ; GL_OES_texture_npot
 
     ; GL_OES_texture_stencil8
@@ -1245,6 +1288,13 @@ EXPORTS
 
     ; GL_QCOM_texture_foveated
     glTextureFoveationParametersQCOM
+
+    ; GL_QCOM_tiled_rendering
+    glEndTilingQCOM
+    glStartTilingQCOM
+
+    ; GL_WEBKIT_explicit_resolve_target
+    glFramebufferResolveRenderbufferWEBKIT
 
     ; EGL 1.0
     EGL_ChooseConfig

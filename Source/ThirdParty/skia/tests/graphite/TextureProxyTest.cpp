@@ -25,7 +25,7 @@
 namespace skgpu::graphite {
 
 DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(GraphiteTextureProxyTest, reporter, context,
-                                   CtsEnforcement::kNextRelease) {
+                                   CtsEnforcement::kApiLevel_V) {
     const Caps* caps = context->priv().caps();
     constexpr SkISize kValidSize = SkISize::Make(1, 1);
     constexpr SkISize kInvalidSize = SkISize::MakeEmpty();
@@ -39,7 +39,8 @@ DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(GraphiteTextureProxyTest, reporter, context,
     const TextureInfo textureInfo = caps->getDefaultSampledTextureInfo(
             kValidColorType, Mipmapped::kNo, isProtected, Renderable::kNo);
     BackendTexture backendTexture = recorder->createBackendTexture(kValidSize, textureInfo);
-    sk_sp<Texture> texture = resourceProvider->createWrappedTexture(backendTexture);
+    sk_sp<Texture> texture = resourceProvider->createWrappedTexture(backendTexture,
+                                                                    "TextureProxyTestWrappedTex");
 
     auto makeProxy = [&](SkISize dimensions, SkColorType colorType, Mipmapped mipmapped,
                          Protected isProtected, Renderable renderable, Budgeted budgeted) {
@@ -173,7 +174,8 @@ DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(GraphiteTextureProxyTest, reporter, context,
     constexpr SkISize kLargerSize = SkISize::Make(2, 2);
     BackendTexture largerBackendTexture =
             recorder->createBackendTexture(kLargerSize, textureInfo);
-    assignableTexture = resourceProvider->createWrappedTexture(largerBackendTexture);
+    assignableTexture = resourceProvider->createWrappedTexture(largerBackendTexture,
+                                                               "TextureProxyTestWrappedTex");
     instantiateSuccess = textureProxy->lazyInstantiate(resourceProvider);
     REPORTER_ASSERT(reporter, instantiateSuccess);
     REPORTER_ASSERT(reporter, textureProxy->dimensions() == kLargerSize);
@@ -198,7 +200,7 @@ DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(GraphiteTextureProxyTest, reporter, context,
 }
 
 DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(GraphiteTextureTooLargeTest, reporter, context,
-                                   CtsEnforcement::kNextRelease) {
+                                   CtsEnforcement::kApiLevel_V) {
     std::unique_ptr<Recorder> recorder = context->makeRecorder();
     const Caps* caps = context->priv().caps();
 
@@ -219,7 +221,7 @@ DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(GraphiteTextureTooLargeTest, reporter, contex
 }
 
 DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(GraphiteLazyTextureInvalidDimensions, reporter, context,
-                                   CtsEnforcement::kNextRelease) {
+                                   CtsEnforcement::kApiLevel_V) {
     class FulfillContext {
     public:
         FulfillContext(BackendTexture backendTexture) : fBackendTexture(backendTexture) {}

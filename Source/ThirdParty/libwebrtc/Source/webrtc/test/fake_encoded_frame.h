@@ -12,7 +12,6 @@
 #define TEST_FAKE_ENCODED_FRAME_H_
 
 #include <memory>
-#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
 #include <vector>
 
 #include "api/rtp_packet_infos.h"
@@ -21,11 +20,6 @@
 #include "test/gmock.h"
 
 namespace webrtc {
-
-// For test printing.
-void PrintTo(const EncodedFrame& frame,
-             std::ostream* os);  // no-presubmit-check TODO(webrtc:8982)
-
 namespace test {
 
 class FakeEncodedFrame : public EncodedFrame {
@@ -71,15 +65,15 @@ class FakeFrameBuilder {
   std::unique_ptr<FakeEncodedFrame> Build();
 
  private:
-  absl::optional<uint32_t> rtp_timestamp_;
-  absl::optional<int64_t> frame_id_;
-  absl::optional<VideoPlayoutDelay> playout_delay_;
-  absl::optional<int> spatial_layer_;
-  absl::optional<Timestamp> received_time_;
-  absl::optional<int> payload_type_;
-  absl::optional<Timestamp> ntp_time_;
-  absl::optional<VideoRotation> rotation_;
-  absl::optional<RtpPacketInfos> packet_infos_;
+  std::optional<uint32_t> rtp_timestamp_;
+  std::optional<int64_t> frame_id_;
+  std::optional<VideoPlayoutDelay> playout_delay_;
+  std::optional<int> spatial_layer_;
+  std::optional<Timestamp> received_time_;
+  std::optional<int> payload_type_;
+  std::optional<Timestamp> ntp_time_;
+  std::optional<VideoRotation> rotation_;
+  std::optional<RtpPacketInfos> packet_infos_;
   std::vector<int64_t> references_;
   bool last_spatial_layer_ = false;
   size_t size_ = 10;

@@ -34,6 +34,7 @@
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/PasteboardCustomData.h>
 #include <gtk/gtk.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
@@ -131,30 +132,30 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
         }, this);
     }
 
-    static const char* const portalMIMETypes[] = {
-        "application/vnd.portal.filetransfer",
-        "application/vnd.portal.files", // Deprecated, but added for compatibility
+    static constexpr std::array portalMIMETypes = {
+        "application/vnd.portal.filetransfer"_s,
+        "application/vnd.portal.files"_s, // Deprecated, but added for compatibility
     };
 
-    static const char* const supportedMimeTypes[] = {
-        "application/vnd.portal.filetransfer",
-        "application/vnd.portal.files", // Deprecated, but added for compatibility
-        "text/html",
-        "_NETSCAPE_URL",
-        "text/uri-list",
-        "application/vnd.webkitgtk.smartpaste",
-        "org.webkitgtk.WebKit.custom-pasteboard-data"
+    static constexpr std::array supportedMimeTypes = {
+        "application/vnd.portal.filetransfer"_s,
+        "application/vnd.portal.files"_s, // Deprecated, but added for compatibility
+        "text/html"_s,
+        "_NETSCAPE_URL"_s,
+        "text/uri-list"_s,
+        "application/vnd.webkitgtk.smartpaste"_s,
+        "org.webkitgtk.WebKit.custom-pasteboard-data"_s,
     };
 
     bool transferredFilesFromPortal = false;
-    for (unsigned i = 0; i < G_N_ELEMENTS(supportedMimeTypes); ++i) {
-        if (!gdk_content_formats_contain_mime_type(formats, supportedMimeTypes[i]))
+    for (const ASCIILiteral& mimeType : supportedMimeTypes) {
+        if (!gdk_content_formats_contain_mime_type(formats, mimeType))
             continue;
 
         // Reading from the File Transfer portal is a bit special. When either portal
         // mimetypes are present, GTK serializes them using the GdkFileList type. If
         // this type is present, ignore file:// URIs from the "text/uri-list" later on.
-        if (!transferredFilesFromPortal && g_strv_contains(portalMIMETypes, supportedMimeTypes[i])) {
+        if (!transferredFilesFromPortal && std::ranges::find(portalMIMETypes, mimeType) != portalMIMETypes.end()) {
             ASSERT(gdk_content_formats_contain_gtype(formats, GDK_TYPE_FILE_LIST));
 
             m_dataRequestCount++;
@@ -176,7 +177,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
         }
 
         m_dataRequestCount++;
-        loadData(supportedMimeTypes[i], [this, transferredFilesFromPortal, mimeType = String::fromUTF8(supportedMimeTypes[i]), cancellable = m_cancellable](GRefPtr<GBytes>&& data) {
+        loadData(mimeType, [this, transferredFilesFromPortal, mimeType, cancellable = m_cancellable](GRefPtr<GBytes>&& data) {
             if (g_cancellable_is_cancelled(cancellable.get()))
                 return;
 
@@ -189,26 +190,26 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                 gsize length;
                 const auto* markupData = g_bytes_get_data(data.get(), &length);
                 if (length) {
+                    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
                     // If data starts with UTF-16 BOM assume it's UTF-16, otherwise assume UTF-8.
                     if (length >= 2 && reinterpret_cast<const UChar*>(markupData)[0] == 0xFEFF)
                         m_selectionData->setMarkup(String({ reinterpret_cast<const UChar*>(markupData) + 1, (length / 2) - 1 }));
                     else
                         m_selectionData->setMarkup(String::fromUTF8(std::span(static_cast<const char*>(markupData), length)));
+                    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 }
             } else if (mimeType == "_NETSCAPE_URL"_s) {
-                gsize length;
-                const auto* urlData = static_cast<const char*>(g_bytes_get_data(data.get(), &length));
-                if (length) {
-                    Vector<String> tokens = String::fromUTF8(std::span(urlData, length)).split('\n');
+                auto urlData = span(data);
+                if (urlData.size()) {
+                    Vector<String> tokens = String::fromUTF8(urlData).split('\n');
                     URL url({ }, tokens[0]);
                     if (url.isValid())
                         m_selectionData->setURL(url, tokens.size() > 1 ? tokens[1] : String());
                 }
             } else if (mimeType == "text/uri-list"_s) {
-                gsize length;
-                const auto* uriListData = static_cast<const char*>(g_bytes_get_data(data.get(), &length));
-                if (length) {
-                    String uriListString(String::fromUTF8(std::span(uriListData, length)));
+                auto urlListData = span(data);
+                if (urlListData.size()) {
+                    String uriListString(String::fromUTF8(urlListData));
                     for (auto& line : uriListString.split('\n')) {
                         line = line.trim(deprecatedIsSpaceOrNewline);
                         if (line.isEmpty())

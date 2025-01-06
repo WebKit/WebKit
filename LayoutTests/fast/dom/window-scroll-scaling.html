@@ -1,11 +1,12 @@
 <html>
-<body>
+<body onload="runTest();">
     <script src="../../resources/js-test-pre.js"></script>
     <script>
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
         description("This test ensures that document content width (height) as reported by scrollWidth (scrollHeight) is invariant to changes in page scale factor.");
 
         var body = document.body;
-
         // According to CSSOM (http://dev.w3.org/csswg/cssom-view/#dom-element-scrollwidth)
         // the scrollWidth of the body element (in Quirks mode) is defined as
         //    max(document content width, value of innerWidth).
@@ -20,16 +21,18 @@
         var originalScrollHeight = body.scrollHeight;
 
         var scale = 1.1;
-        if (window.internals)
-            window.internals.setPageScaleFactor(scale, 0, 0);
-
-        // As we have increased the scale factor, the innerWidth will be less
-        // as fewer CSS pixels will be rendered in the same viewport, so
-        // body.scrollWidth (scrollHeight) will still be measuring the document
-        // content width (height).
-
-        shouldBe("body.scrollWidth", "originalScrollWidth");
-        shouldBe("body.scrollHeight", "originalScrollHeight");
+        function runTest (){
+        if (window.testRunner)
+            testRunner.setPageScaleFactor(scale, 0, 0).then(() =>  {
+                // As we have increased the scale factor, the innerWidth will be less
+                // as fewer CSS pixels will be rendered in the same viewport, so
+                // body.scrollWidth (scrollHeight) will still be measuring the document
+                // content width (height).
+                shouldBe("body.scrollWidth", "originalScrollWidth");
+                shouldBe("body.scrollHeight", "originalScrollHeight");
+                testRunner.notifyDone();
+            });
+        }
     </script>
     <script src="../../resources/js-test-post.js"></script>
 </body>

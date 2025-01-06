@@ -54,6 +54,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/support/test-tr.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/support/tile-bg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/support/transform-iframe-001-contents.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/support/transform-iframe-002-contents.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/support/transform-iframe-scroll-position-contents.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/support/transform-lime-square.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/support/transform-lime-square.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/support/transform-triangle-down.svg

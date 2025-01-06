@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "gtest/gtest.h"
 #include "test/init_vpx_test.h"
-#include "third_party/googletest/src/include/gtest/gtest.h"
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

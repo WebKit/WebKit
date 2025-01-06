@@ -32,7 +32,7 @@ uint64_t BitstreamReader::ReadBits(int bits) {
   }
 #else
   if (remaining_bits_ < bits) {
-    remaining_bits_ -= bits;
+    Invalidate();
     return 0;
   }
 #endif
@@ -71,10 +71,11 @@ uint64_t BitstreamReader::ReadBits(int bits) {
 
 int BitstreamReader::ReadBit() {
   set_last_read_is_verified(false);
-  --remaining_bits_;
-  if (remaining_bits_ < 0) {
+  if (remaining_bits_ <= 0) {
+    Invalidate();
     return 0;
   }
+  --remaining_bits_;
 
   int bit_position = remaining_bits_ % 8;
   if (bit_position == 0) {

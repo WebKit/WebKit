@@ -23,6 +23,7 @@
 
 #include "FEColorMatrix.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -64,7 +65,8 @@ struct SVGPropertyTraits<ColorMatrixType> {
 };
 
 class SVGFEColorMatrixElement final : public SVGFilterPrimitiveStandardAttributes {
-    WTF_MAKE_ISO_ALLOCATED(SVGFEColorMatrixElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEColorMatrixElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEColorMatrixElement);
 public:
     static Ref<SVGFEColorMatrixElement> create(const QualifiedName&, Document&);
 
@@ -76,10 +78,10 @@ public:
     SVGAnimatedEnumeration& typeAnimated() { return m_type; }
     SVGAnimatedNumberList& valuesAnimated() { return m_values; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEColorMatrixElement, SVGFilterPrimitiveStandardAttributes>;
+
 private:
     SVGFEColorMatrixElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEColorMatrixElement, SVGFilterPrimitiveStandardAttributes>;
 
     bool isInvalidValuesLength() const;
 

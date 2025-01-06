@@ -54,7 +54,12 @@ bool VadTest::ValidRatesAndFrameLengths(int rate, size_t frame_length) {
 namespace webrtc {
 namespace test {
 
+// TODO(bugs.webrtc.org/345674542): Fix/enable.
+#if defined(__has_feature) && __has_feature(undefined_behavior_sanitizer)
+TEST_F(VadTest, DISABLED_ApiTest) {
+#else
 TEST_F(VadTest, ApiTest) {
+#endif
   // This API test runs through the APIs for all possible valid and invalid
   // combinations.
 

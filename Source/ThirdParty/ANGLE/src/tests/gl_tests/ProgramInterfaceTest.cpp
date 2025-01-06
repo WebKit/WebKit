@@ -316,7 +316,7 @@ TEST_P(ProgramInterfaceTestES31, GetResource)
 TEST_P(ProgramInterfaceTestES31, GetProgramInterface)
 {
     // TODO(jiajia.qin@intel.com): Don't skip this test once SSBO are supported on render pipeline.
-    // http://anglebug.com/1951
+    // http://anglebug.com/40644618
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     constexpr char kFS[] =
@@ -665,7 +665,7 @@ TEST_P(ProgramInterfaceTestES31, QueryAtomicCounteBuffer)
 TEST_P(ProgramInterfaceTestES31, GetBufferVariableProperties)
 {
     // TODO(jiajia.qin@intel.com): Don't skip this test once non-simple SSBO sentences are supported
-    // on d3d backend. http://anglebug.com/1951
+    // on d3d backend. http://anglebug.com/40644618
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     // Check SSBO support
@@ -900,7 +900,7 @@ void main()
     EXPECT_EQ(0, params[7]);  // referenced_by_vertex_shader
     EXPECT_EQ(0, params[8]);  // referenced_by_fragment_shader
     // TODO(jiajia.qin@intel.com): referenced_by_compute_shader is not
-    // correctly handled. http://anglebug.com/1920.
+    // correctly handled. http://anglebug.com/42260711.
     // EXPECT_EQ(1, params[9]);   // referenced_by_compute_shader
 
     EXPECT_EQ(1, params[10]);              // top_level_array_size
@@ -984,7 +984,7 @@ void main()
     EXPECT_EQ(0, params[7]);  // referenced_by_vertex_shader
     EXPECT_EQ(0, params[8]);  // referenced_by_fragment_shader
     // TODO(jiajia.qin@intel.com): referenced_by_compute_shader is not
-    // correctly handled. http://anglebug.com/1920.
+    // correctly handled. http://anglebug.com/42260711.
     // EXPECT_EQ(1, params[9]);   // referenced_by_compute_shader
     EXPECT_EQ(3, params[10]);              // top_level_array_size
     EXPECT_EQ(48, params[11]);             // top_level_array_stride
@@ -1023,7 +1023,7 @@ void main()
 TEST_P(ProgramInterfaceTestES31, GetShaderStorageBlockProperties)
 {
     // TODO(jiajia.qin@intel.com): Don't skip this test once non-simple SSBO sentences are supported
-    // on d3d backend. http://anglebug.com/1951
+    // on d3d backend. http://anglebug.com/40644618
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     // Check SSBO support
@@ -1285,11 +1285,13 @@ void main() {
     glDeleteProgram(program);
 }
 
-// Regression test for crash report in http://anglebug.com/6073.
+// Regression test for crash report in http://anglebug.com/42264603.
 TEST_P(ProgramInterfaceTestES31, ReloadFromCacheShouldNotCrash)
 {
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_multi_draw"));
+
     // TODO(jiajia.qin@intel.com): Don't skip this test once non-simple SSBO sentences are supported
-    // on d3d backend. http://anglebug.com/1951
+    // on d3d backend. http://anglebug.com/40644618
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     constexpr char kVS[] = R"(#version 310 es

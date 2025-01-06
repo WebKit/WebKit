@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include "MediaPlayer.h"
 #include "WebKitMediaKeys.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(AVCONTENTKEYSESSION) && ENABLE(MEDIA_SOURCE)
@@ -42,6 +43,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMPrivateInterface);
 
 struct LegacyCDMFactory {
     CreateCDM constructor;
@@ -51,11 +54,11 @@ struct LegacyCDMFactory {
 
 static void platformRegisterFactories(Vector<LegacyCDMFactory>& factories)
 {
-    factories.append({ [](LegacyCDM* cdm) { return makeUnique<LegacyCDMPrivateClearKey>(cdm); }, LegacyCDMPrivateClearKey::supportsKeySystem, LegacyCDMPrivateClearKey::supportsKeySystemAndMimeType });
+    factories.append({ [](LegacyCDM& cdm) { return makeUniqueWithoutRefCountedCheck<LegacyCDMPrivateClearKey>(cdm); }, LegacyCDMPrivateClearKey::supportsKeySystem, LegacyCDMPrivateClearKey::supportsKeySystemAndMimeType });
     // FIXME: initialize specific UA CDMs. http://webkit.org/b/109318, http://webkit.org/b/109320
-    factories.append({ [](LegacyCDM* cdm) { return makeUnique<CDMPrivateMediaPlayer>(cdm); }, CDMPrivateMediaPlayer::supportsKeySystem, CDMPrivateMediaPlayer::supportsKeySystemAndMimeType });
+    factories.append({ [](LegacyCDM& cdm) { return makeUniqueWithoutRefCountedCheck<CDMPrivateMediaPlayer>(cdm); }, CDMPrivateMediaPlayer::supportsKeySystem, CDMPrivateMediaPlayer::supportsKeySystemAndMimeType });
 #if HAVE(AVCONTENTKEYSESSION) && ENABLE(MEDIA_SOURCE)
-    factories.append({ [](LegacyCDM* cdm) { return makeUnique<CDMPrivateMediaSourceAVFObjC>(cdm); }, CDMPrivateMediaSourceAVFObjC::supportsKeySystem, CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType });
+    factories.append({ [](LegacyCDM& cdm) { return makeUniqueWithoutRefCountedCheck<CDMPrivateMediaSourceAVFObjC>(cdm); }, CDMPrivateMediaSourceAVFObjC::supportsKeySystem, CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType });
 #endif
 }
 
@@ -68,6 +71,8 @@ static Vector<LegacyCDMFactory>& installedCDMFactories()
     });
     return cdms;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyCDM);
 
 void LegacyCDM::resetFactories()
 {
@@ -106,31 +111,35 @@ bool LegacyCDM::keySystemSupportsMimeType(const String& keySystem, const String&
     return false;
 }
 
-std::unique_ptr<LegacyCDM> LegacyCDM::create(const String& keySystem)
+RefPtr<LegacyCDM> LegacyCDM::create(const String& keySystem)
 {
     if (!supportsKeySystem(keySystem))
         return nullptr;
 
-    return makeUnique<LegacyCDM>(keySystem);
+    return adoptRef(*new LegacyCDM(keySystem));
 }
 
 LegacyCDM::LegacyCDM(const String& keySystem)
     : m_keySystem(keySystem)
-    , m_client(nullptr)
+    , m_private(CDMFactoryForKeySystem(keySystem)->constructor(*this))
 {
-    m_private = CDMFactoryForKeySystem(keySystem)->constructor(this);
 }
 
 LegacyCDM::~LegacyCDM() = default;
 
 bool LegacyCDM::supportsMIMEType(const String& mimeType) const
 {
-    return m_private->supportsMIMEType(mimeType);
+    return protectedCDMPrivate()->supportsMIMEType(mimeType);
 }
 
-std::unique_ptr<LegacyCDMSession> LegacyCDM::createSession(LegacyCDMSessionClient& client)
+RefPtr<CDMPrivateInterface> LegacyCDM::protectedCDMPrivate() const
 {
-    auto session = m_private->createSession(client);
+    return cdmPrivate();
+}
+
+RefPtr<LegacyCDMSession> LegacyCDM::createSession(LegacyCDMSessionClient& client)
+{
+    RefPtr session = protectedCDMPrivate()->createSession(client);
     if (mediaPlayer())
         mediaPlayer()->setCDMSession(session.get());
     return session;

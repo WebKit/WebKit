@@ -63,7 +63,7 @@ using CallbackId = int;
 using TransferredMessagePort = std::pair<WebCore::MessagePortIdentifier, WebCore::MessagePortIdentifier>;
 
 class DedicatedWorkerGlobalScope final : public WorkerGlobalScope {
-    WTF_MAKE_ISO_ALLOCATED(DedicatedWorkerGlobalScope);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DedicatedWorkerGlobalScope);
 public:
     static Ref<DedicatedWorkerGlobalScope> create(const WorkerParameters&, Ref<SecurityOrigin>&&, DedicatedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);
     virtual ~DedicatedWorkerGlobalScope();

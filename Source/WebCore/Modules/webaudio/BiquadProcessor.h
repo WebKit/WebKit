@@ -32,13 +32,14 @@
 #include "BiquadFilterType.h"
 #include <memory>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // BiquadProcessor is an AudioDSPKernelProcessor which uses Biquad objects to implement several common filters.
 
 class BiquadProcessor final : public AudioDSPKernelProcessor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BiquadProcessor);
 public:
     BiquadProcessor(BaseAudioContext&, float sampleRate, size_t numberOfChannels, bool autoInitialize);
 
@@ -51,7 +52,7 @@ public:
 
     // Get the magnitude and phase response of the filter at the given
     // set of frequencies (in Hz). The phase response is in radians.
-    void getFrequencyResponse(unsigned nFrequencies, const float* frequencyHz, float* magResponse, float* phaseResponse);
+    void getFrequencyResponse(unsigned nFrequencies, std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse);
 
     void checkForDirtyCoefficients();
     
@@ -69,6 +70,8 @@ public:
     bool shouldUseARate() const { return m_shouldUseARate; }
 
 private:
+    Type processorType() const final { return Type::Biquad; }
+
     BiquadFilterType m_type { BiquadFilterType::Lowpass };
 
     Ref<AudioParam> m_parameter1;
@@ -86,3 +89,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::BiquadProcessor) \
+    static bool isType(const WebCore::AudioProcessor& processor) { return processor.processorType() == WebCore::AudioProcessor::Type::Biquad; } \
+SPECIALIZE_TYPE_TRAITS_END()

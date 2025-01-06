@@ -39,6 +39,7 @@ WK_EXPORT WKBundleRangeHandleRef WKBundleRangeHandleCreate(JSContextRef context,
 
 WK_EXPORT WKRect WKBundleRangeHandleGetBoundingRectInWindowCoordinates(WKBundleRangeHandleRef rangeHandle);
 WK_EXPORT WKImageRef WKBundleRangeHandleCopySnapshotWithOptions(WKBundleRangeHandleRef rangeHandle, WKSnapshotOptions options);
+WK_EXPORT WKBundleFrameRef WKBundleRangeHandleCopyDocumentFrame(WKBundleRangeHandleRef);
 
 #ifdef __cplusplus
 }

@@ -11,10 +11,10 @@
 #ifndef CALL_RTP_DEMUXER_H_
 #define CALL_RTP_DEMUXER_H_
 
+#include <cstdint>
 #include <map>
 #include <string>
 #include <utility>
-#include <vector>
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/containers/flat_map.h"
@@ -150,6 +150,9 @@ class RtpDemuxer {
   // Removes a sink. Return value reports if anything was actually removed.
   // Null pointer is not allowed.
   bool RemoveSink(const RtpPacketSinkInterface* sink);
+
+  // Returns the set of SSRCs associated with a sink.
+  flat_set<uint32_t> GetSsrcsForSink(const RtpPacketSinkInterface* sink) const;
 
   // Demuxes the given packet and forwards it to the chosen sink. Returns true
   // if the packet was forwarded and false if the packet was dropped.

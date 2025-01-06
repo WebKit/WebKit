@@ -6,8 +6,11 @@
 </head>
 <body>
 <script>
-if (window.testRunner)
-    testRunner.displayAndTrackRepaints();
+onload = async () => {
+    testRunner?.waitUntilDone();
+    await testRunner?.displayAndTrackRepaints();
+    testRunner?.notifyDone();
+}
 </script>
 
 The textareas below should not overlap.

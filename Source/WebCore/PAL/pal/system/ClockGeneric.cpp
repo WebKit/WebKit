@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc.  All rights reserved.
  * Copyright (C) 2013 Google Inc.  All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
@@ -28,8 +28,11 @@
 #include "config.h"
 #include "ClockGeneric.h"
 
+#include <wtf/TZoneMallocInlines.h>
 
 namespace PAL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ClockGeneric);
 
 std::unique_ptr<Clock> Clock::create()
 {

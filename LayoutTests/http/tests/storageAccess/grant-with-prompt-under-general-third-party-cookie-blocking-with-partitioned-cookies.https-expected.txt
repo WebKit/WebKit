@@ -1,0 +1,32 @@
+Tests that a cross-site iframe can request and be granted storage access under general third-party cookie blocking.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Storage access was granted. document.cookie == test_cookie=1; firstPartyCookie=value, cookies seen server-side == {"test_cookie":"1","firstPartyCookie":"value"}
+PASS Storage access was granted. document.cookie == test_cookie=1; firstPartyCookie=value, cookies seen server-side == {"test_cookie":"1","firstPartyCookie":"value"}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+HTTP sent cookies:
+
+test_cookie = 1
+DOM cookies:
+
+test_cookie = 1
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+
+
+--------
+Frame: '<!--frame3-->'
+--------
+

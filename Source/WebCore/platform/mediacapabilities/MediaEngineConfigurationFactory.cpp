@@ -97,6 +97,8 @@ bool MediaEngineConfigurationFactory::hasEncodingConfigurationFactory()
     return mockEnabled() || WTF::anyOf(factories(), [] (auto& factory) { return (bool)factory.createEncodingConfiguration; });
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 void MediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingConfiguration&& config, DecodingConfigurationCallback&& callback)
 {
     if (mockEnabled()) {
@@ -158,6 +160,8 @@ void MediaEngineConfigurationFactory::createEncodingConfiguration(MediaEncodingC
     };
     factoryCallback(factoryCallback, factories().begin(), WTFMove(config), WTFMove(callback));
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void MediaEngineConfigurationFactory::enableMock()
 {

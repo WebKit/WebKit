@@ -1,0 +1,40 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- This is a new test added as part of the AccessibilityThreadTextApisEnabled effort. When the feature is enabled by default, move it to LayoutTests/accessibility/mac. -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p>First text</p>
+<p id="p1">Foo and bar</p>
+
+<script>
+var output = "This test ensures basic left-line text marker functionality works.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    var marker, markerRange;
+    setTimeout(async function() {
+        markerRange = await selectElementTextById("p1", webArea);
+        marker = webArea.startTextMarkerForTextMarkerRange(markerRange);
+
+        // When we're on a line start, left-line should return the previous line.
+        output += expect("webArea.stringForTextMarkerRange(webArea.leftLineTextMarkerRangeForTextMarker(marker))", "'First text'");
+        // Move forwards off the line-start, making the left-line return the current line range.
+        marker = webArea.nextTextMarker(marker);
+        output += expect("webArea.stringForTextMarkerRange(webArea.leftLineTextMarkerRangeForTextMarker(marker))", "'Foo and bar'");
+        // For left-line, a marker pointing to the end of the line returns the current line range.
+        output += expect("webArea.stringForTextMarkerRange(webArea.leftLineTextMarkerRangeForTextMarker(webArea.endTextMarkerForTextMarkerRange(markerRange)))", "'Foo and bar'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

@@ -8,7 +8,7 @@ query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
 
 sys.stdout.buffer.write(
     'Content-Type: text/html\r\n'
-    'Set-Cookie: WK-xhr-cookie-storage=MySpecialValue;{}\r\n'.format(
+    'Set-Cookie: WK-xhr-cookie-storage=MySpecialValue; SameSite=None; Secure;{}\r\n'.format(
     'expires=Thu, 19 Mar 1982 11:22:11 GMT' if query.get('clear') is not None else '',
     ).encode())
 

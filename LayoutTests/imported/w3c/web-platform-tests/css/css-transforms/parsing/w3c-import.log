@@ -14,14 +14,17 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/backface-visibility-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/backface-visibility-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/backface-visibility-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/perspective-origin-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/perspective-origin-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/perspective-origin-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/rotate-parsing-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/rotate-parsing-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/rotate-parsing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/scale-parsing-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/scale-parsing-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/scale-parsing-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-box-computed.html
@@ -33,5 +36,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-origin-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-origin-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/translate-parsing-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/translate-parsing-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/translate-parsing-valid.html

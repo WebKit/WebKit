@@ -30,11 +30,11 @@
 #include "SVGRenderSupport.h"
 #include "SVGResourcesCache.h"
 #include "StyleInheritedData.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGBlock);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGBlock);
 
 RenderSVGBlock::RenderSVGBlock(Type type, SVGGraphicsElement& element, RenderStyle&& style)
     : RenderBlockFlow(type, element, WTFMove(style), BlockFlowFlag::IsSVGBlock)

@@ -28,6 +28,7 @@
 #if ENABLE(PDF_PLUGIN) && HAVE(INCREMENTAL_PDF_APIS)
 
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -53,7 +54,7 @@ using DataRequestCompletionHandler = Function<void(std::span<const uint8_t>)>;
 enum class CheckValidRanges : bool;
 
 class PDFIncrementalLoader : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFIncrementalLoader> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PDFIncrementalLoader);
     WTF_MAKE_NONCOPYABLE(PDFIncrementalLoader);
     friend class ByteRangeRequest;
     friend class PDFPluginStreamLoaderClient;
@@ -78,7 +79,7 @@ public:
 
     // Only public for the callbacks
     size_t dataProviderGetBytesAtPosition(std::span<uint8_t> buffer, off_t position);
-    void dataProviderGetByteRanges(CFMutableArrayRef buffers, const CFRange* ranges, size_t count);
+    void dataProviderGetByteRanges(CFMutableArrayRef buffers, std::span<const CFRange> ranges);
 
 private:
     PDFIncrementalLoader(PDFPluginBase&);
@@ -102,7 +103,7 @@ private:
     void forgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
     void cancelAndForgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
 
-    ByteRangeRequestIdentifier identifierForLoader(WebCore::NetscapePlugInStreamLoader*);
+    std::optional<ByteRangeRequestIdentifier> identifierForLoader(WebCore::NetscapePlugInStreamLoader*);
     void removeOutstandingByteRangeRequest(ByteRangeRequestIdentifier);
 
 

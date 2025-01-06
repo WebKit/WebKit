@@ -51,19 +51,19 @@ const char* BlendFuncName(SkBlendMode mode) {
 }
 
 SkSpan<const float> GetPorterDuffBlendConstants(SkBlendMode mode) {
-    static constexpr float kClear[]      = {0, 0,  0,  0};
-    static constexpr float kSrc[]        = {1, 0,  0,  0};
-    static constexpr float kDst[]        = {0, 1,  0,  0};
-    static constexpr float kSrcOver[]    = {1, 0,  0, -1};
-    static constexpr float kDstOver[]    = {0, 1, -1,  0};
-    static constexpr float kSrcIn[]      = {0, 0,  1,  0};
-    static constexpr float kDstIn[]      = {0, 0,  0,  1};
-    static constexpr float kSrcOut[]     = {0, 0, -1,  0};
-    static constexpr float kDstOut[]     = {0, 0,  0, -1};
-    static constexpr float kSrcATop[]    = {0, 0,  1, -1};
-    static constexpr float kDstATop[]    = {0, 0, -1,  1};
-    static constexpr float kXor[]        = {0, 0, -1, -1};
-    static constexpr float kPlus[]       = {1, 1,  0,  0};
+    // See sksl_gpu.sksl's blend_porter_duff function for explanation of values
+    static constexpr float kClear[]      = {0,  0,  0,  0};
+    static constexpr float kSrc[]        = {1,  0,  0,  0};
+    static constexpr float kDst[]        = {0,  1,  0,  0};
+    static constexpr float kSrcOver[]    = {1,  1,  0, -1};
+    static constexpr float kDstOver[]    = {1,  1, -1,  0};
+    static constexpr float kSrcIn[]      = {0,  0,  1,  0};
+    static constexpr float kDstIn[]      = {0,  0,  0,  1};
+    static constexpr float kSrcOut[]     = {1,  0, -1,  0};
+    static constexpr float kDstOut[]     = {0,  1,  0, -1};
+    static constexpr float kSrcATop[]    = {0,  1,  1, -1};
+    static constexpr float kDstATop[]    = {1,  0, -1,  1};
+    static constexpr float kXor[]        = {1,  1, -1, -1};
 
     switch (mode) {
         case SkBlendMode::kClear:      return SkSpan(kClear);
@@ -78,7 +78,6 @@ SkSpan<const float> GetPorterDuffBlendConstants(SkBlendMode mode) {
         case SkBlendMode::kSrcATop:    return SkSpan(kSrcATop);
         case SkBlendMode::kDstATop:    return SkSpan(kDstATop);
         case SkBlendMode::kXor:        return SkSpan(kXor);
-        case SkBlendMode::kPlus:       return SkSpan(kPlus);
         default:                       return {};
     }
 }
@@ -95,6 +94,7 @@ ReducedBlendModeInfo GetReducedBlendModeInfo(SkBlendMode mode) {
     static constexpr float kDarken[]     = {1};
     static constexpr float kLighten[]    = {-1};
 
+    // This switch must be kept in sync with BlendKey() in src/ganesh/glsl/GrGLSLBlend.cpp.
     switch (mode) {
         // Clear/src/dst are intentionally omitted; using the built-in blend_xxxxx functions is
         // preferable, since that gives us an opportunity to eliminate the src/dst entirely.
@@ -107,8 +107,8 @@ ReducedBlendModeInfo GetReducedBlendModeInfo(SkBlendMode mode) {
         case SkBlendMode::kDstOut:
         case SkBlendMode::kSrcATop:
         case SkBlendMode::kDstATop:
-        case SkBlendMode::kXor:
-        case SkBlendMode::kPlus:    return {"blend_porter_duff", GetPorterDuffBlendConstants(mode)};
+        case SkBlendMode::kXor:        return {"blend_porter_duff",
+                                               GetPorterDuffBlendConstants(mode)};
 
         case SkBlendMode::kHue:        return {"blend_hslc", SkSpan(kHue)};
         case SkBlendMode::kSaturation: return {"blend_hslc", SkSpan(kSaturation)};

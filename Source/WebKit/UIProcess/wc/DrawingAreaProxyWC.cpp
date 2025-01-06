@@ -34,11 +34,17 @@
 #include "DrawingAreaMessages.h"
 #include "MessageSenderInlines.h"
 #include "UpdateInfo.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebPageProxy.h"
 #include <WebCore/Region.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DrawingAreaProxyWC);
+
+Ref<DrawingAreaProxyWC> DrawingAreaProxyWC::create(WebPageProxy& page, WebProcessProxy& webProcessProxy)
+{
+    return adoptRef(*new DrawingAreaProxyWC(page, webProcessProxy));
+}
 
 DrawingAreaProxyWC::DrawingAreaProxyWC(WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
     : DrawingAreaProxy(DrawingAreaType::WC, webPageProxy, webProcessProxy)
@@ -55,11 +61,18 @@ void DrawingAreaProxyWC::paint(PlatformPaintContextPtr context, const WebCore::I
     unpaintedRegion.subtract(WebCore::IntRect({ }, m_backingStore->size()));
 }
 
+void DrawingAreaProxyWC::deviceScaleFactorDidChange(CompletionHandler<void()>&& completionHandler)
+{
+    sizeDidChange();
+    completionHandler();
+}
+
 void DrawingAreaProxyWC::sizeDidChange()
 {
     discardBackingStore();
     m_currentBackingStoreStateID++;
-    send(Messages::DrawingArea::UpdateGeometryWC(m_currentBackingStoreStateID, m_size));
+    if (m_webPageProxy)
+        send(Messages::DrawingArea::UpdateGeometryWC(m_currentBackingStoreStateID, m_size, m_webPageProxy->deviceScaleFactor()));
 }
 
 void DrawingAreaProxyWC::update(uint64_t backingStoreStateID, UpdateInfo&& updateInfo)
@@ -82,16 +95,20 @@ void DrawingAreaProxyWC::incorporateUpdate(UpdateInfo&& updateInfo)
     if (!m_backingStore)
         m_backingStore.emplace(updateInfo.viewSize, updateInfo.deviceScaleFactor);
 
+    RefPtr page = m_webPageProxy.get();
+    if (!page)
+        return;
+
     WebCore::Region damageRegion;
     if (updateInfo.scrollRect.isEmpty()) {
         for (const auto& rect : updateInfo.updateRects)
             damageRegion.unite(rect);
     } else
-        damageRegion = WebCore::IntRect({ }, m_webPageProxy->viewSize());
+        damageRegion = WebCore::IntRect({ }, page->viewSize());
 
     m_backingStore->incorporateUpdate(WTFMove(updateInfo));
 
-    protectedWebPageProxy()->setViewNeedsDisplay(damageRegion);
+    page->setViewNeedsDisplay(damageRegion);
 }
 
 void DrawingAreaProxyWC::discardBackingStore()

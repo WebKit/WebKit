@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,8 @@
 #include "ValueProfile.h"
 #include <wtf/ProcessID.h>
 #include <wtf/TZoneMallocInlines.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -175,7 +177,8 @@ bool HeapVerifier::verifyCellList(Phase phase, CellList& list)
             continue;
 
         JSCell* cell = profile.jsCell();
-        success |= validateJSCell(&vm, cell, &profile, &list, printHeaderIfNeeded, "  ");
+        if (!validateJSCell(&vm, cell, &profile, &list, printHeaderIfNeeded, "  "))
+            success = false;
     }
 
     return success;
@@ -439,7 +442,7 @@ void HeapVerifier::checkIfRecorded(uintptr_t candidateCell)
 {
     HeapCell* candidateHeapCell = reinterpret_cast<HeapCell*>(candidateCell);
     
-    auto& inspector = VMInspector::instance();
+    auto& inspector = VMInspector::singleton();
     if (!inspector.getLock().tryLockWithTimeout(2_s)) {
         dataLog("ERROR: Timed out while waiting to iterate VMs.");
         return;
@@ -460,3 +463,5 @@ void HeapVerifier::checkIfRecorded(uintptr_t candidateCell)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

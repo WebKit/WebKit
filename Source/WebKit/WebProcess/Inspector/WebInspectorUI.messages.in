@@ -20,6 +20,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+[
+    DispatchedTo=WebContent
+]
 messages -> WebInspectorUI {
     EstablishConnection(WebKit::WebPageProxyIdentifier inspectedPageIdentifier, struct WebKit::DebuggableInfoData debuggableInfo, bool underTest, unsigned inspectionLevel)
     UpdateConnection()

@@ -239,6 +239,7 @@ TextureType ImageTypeToTextureType(GLenum imageType);
 
 bool IsMultisampled(gl::TextureType type);
 bool IsArrayTextureType(gl::TextureType type);
+bool IsLayeredTextureType(gl::TextureType type);
 
 bool IsStaticBufferUsage(BufferUsage useage);
 
@@ -783,12 +784,6 @@ typename std::enable_if<IsResourceIDType<T>::value, bool>::type operator<(const 
 // Used to unbox typed values.
 template <typename ResourceIDType>
 GLuint GetIDValue(ResourceIDType id);
-
-template <>
-inline GLuint GetIDValue(GLuint id)
-{
-    return id;
-}
 
 template <typename ResourceIDType>
 inline GLuint GetIDValue(ResourceIDType id)

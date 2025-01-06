@@ -36,7 +36,9 @@ interface mixin WindowEventHandlers {
     [WindowEventHandler] attribute EventHandler onoffline;
     [WindowEventHandler] attribute EventHandler ononline;
     [WindowEventHandler] attribute EventHandler onpagehide;
+    [WindowEventHandler] attribute EventHandler onpagereveal;
     [WindowEventHandler] attribute EventHandler onpageshow;
+    [WindowEventHandler] attribute EventHandler onpageswap;
     [WindowEventHandler] attribute EventHandler onpopstate;
     [WindowEventHandler] attribute EventHandler onrejectionhandled;
     [WindowEventHandler] attribute EventHandler onstorage;

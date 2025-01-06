@@ -101,7 +101,9 @@ struct RangeCheckImpl {};
 // Dst range always contains the result: nothing to check.
 template <typename Dst, typename Src, DstSign IsDstSigned, SrcSign IsSrcSigned>
 struct RangeCheckImpl<Dst, Src, IsDstSigned, IsSrcSigned, CONTAINS_RANGE> {
-  static constexpr RangeCheckResult Check(Src value) { return TYPE_VALID; }
+  static constexpr RangeCheckResult Check(Src /* value */) {
+    return TYPE_VALID;
+  }
 };
 
 // Signed to signed narrowing.

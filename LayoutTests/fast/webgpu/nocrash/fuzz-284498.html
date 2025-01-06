@@ -1,0 +1,279 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+async function gc() {
+  await 0;
+  if (globalThis.GCController) {
+    globalThis.GCController.collect();
+  } else if (globalThis.$vm) {
+    globalThis.$vm.gc();
+  } else {
+    log('no GC available');
+  }
+}
+
+/**
+ * @param {GPUDevice} device
+ * @param {GPUComputePassEncoder} computePassEncoder
+ */
+function clearResourceUsages(device, computePassEncoder) {
+  let code = `@compute @workgroup_size(1) fn c() {}`;
+  let module = device.createShaderModule({code});
+  computePassEncoder.setPipeline(device.createComputePipeline(
+    {
+      layout: 'auto',
+      compute: {module},
+    }));
+  computePassEncoder.dispatchWorkgroups(1);
+}
+
+/**
+ * @template {any} T
+ * @param {GPUDevice} device
+ * @param {string} label
+ * @param {()=>T} payload
+ * @returns {Promise<T>}
+ */
+async function validationWrapper(device, label, payload)  {
+  device.pushErrorScope('internal');
+  device.pushErrorScope('out-of-memory');
+  device.pushErrorScope('validation');
+  let result = payload();
+  let validationError = await device.popErrorScope();
+  let outOfMemoryError = await device.popErrorScope();
+  let internalError = await device.popErrorScope();
+  let error = validationError ?? outOfMemoryError ?? internalError;
+  if (error) {
+    log('*'.repeat(25));
+    log(error[Symbol.toStringTag]);
+    log(error.message);
+    log(label);
+    if (error.stack != `_`) {
+      log(error.stack);
+    }
+    log(location);
+    log('*'.repeat(25));
+    throw error;
+  }
+  return result;
+}
+
+const videoUrls = [
+
+];
+
+/**
+ * @param {number} index
+ * @returns {Promise<HTMLVideoElement>}
+ */
+function videoWithData(index) {
+  let video = document.createElement('video');
+  video.src = videoUrls[index % videoUrls.length];
+  return new Promise(resolve => {
+    video.onloadeddata = () => {
+      resolve(video);
+    };
+  });
+}
+
+/**
+* @returns {Promise<string>}
+*/
+async function makeDataUrl(width, height, color0, color1) {
+  let offscreenCanvas = new OffscreenCanvas(width, height);
+  let ctx = offscreenCanvas.getContext('2d');
+  let gradient = ctx.createLinearGradient(0, 0, width, height);
+  gradient.addColorStop(0, color0);
+  gradient.addColorStop(0.1, color1);
+  gradient.addColorStop(0.3, color0);
+  gradient.addColorStop(0.7, color1);
+  gradient.addColorStop(0.9, color0);
+  gradient.addColorStop(1, color1);
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+  let blob = await offscreenCanvas.convertToBlob();
+  let fileReader = new FileReader();
+  fileReader.readAsDataURL(blob);
+  return new Promise(resolve => {
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+  });
+}
+
+async function imageWithData(width, height, color0, color1) {
+  let dataUrl = await makeDataUrl(width, height, color0, color1);
+  let img = document.createElement('img');
+  img.src = dataUrl;
+  await img.decode();
+  return img;
+}
+
+/**
+ * @param {string} payload
+ * @returns {string}
+ */
+function toBlobUrl(payload) {
+  let blob = new Blob([payload], {type: 'text/javascript'});
+  return URL.createObjectURL(blob);
+}
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+// START
+adapter0 = await navigator.gpu.requestAdapter();
+device0 = await adapter0.requestDevice();
+buffer0 = device0.createBuffer({size : 23142, usage : GPUBufferUsage.STORAGE});
+bindGroupLayout0 = device0.createBindGroupLayout({
+  entries : [
+    {binding : 121, visibility : GPUShaderStage.VERTEX, externalTexture : {}}, {
+      binding : 999,
+      visibility : GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+      buffer : {type : 'read-only-storage'}
+    },
+    {
+      binding : 34,
+      visibility : GPUShaderStage | GPUShaderStage,
+      texture : {viewDimension : '1d', sampleType : 'sint'}
+    }
+  ]
+});
+texture0 = device0.createTexture({
+  size : {width : 840},
+  dimension : '1d',
+  format : 'r32sint',
+  usage : GPUTextureUsage.TEXTURE_BINDING
+});
+textureView0 = texture0.createView();
+videoFrame0 = new VideoFrame(
+    new ArrayBuffer(16),
+    {codedWidth : 2, codedHeight : 2, format : 'NV12', timestamp : 0});
+externalTexture0 = device0.importExternalTexture({source : videoFrame0});
+texture4 = device0.createTexture({
+  size : {width : 6060},
+  format : 'rgb10a2uint',
+  usage : GPUTextureUsage.RENDER_ATTACHMENT
+});
+pipelineLayout3 =
+    device0.createPipelineLayout({bindGroupLayouts : [ bindGroupLayout0 ]});
+bindGroup9 = device0.createBindGroup({
+  layout : bindGroupLayout0,
+  entries : [
+    {binding : 34, resource : textureView0},
+    {binding : 121, resource : externalTexture0},
+    {binding : 999, resource : {buffer : buffer0, size : 2740}} // 3584
+  ]
+});
+textureView15 = texture4.createView();
+commandEncoder18 = device0.createCommandEncoder();
+renderPassEncoder4 = commandEncoder18.beginRenderPass({
+  colorAttachments :
+      [ {view : textureView15, loadOp : 'load', storeOp : 'discard'} ]
+});
+try {
+  renderPassEncoder4.setBindGroup(0, bindGroup9)
+} catch {
+}
+shaderModule4 = device0.createShaderModule({
+  code :
+      ` @group(0) @binding(999) var<storage> buffer30: array<array<FragmentOutput5, 224>>;
+                            struct VertexOutput5 {
+                          @builtin(position) f10: vec4f}
+                            struct FragmentOutput5 {
+                          f0: f32,   @location(0) f1: vec2f}
+                            @vertex fn vertex5() -> VertexOutput5 {
+                          var out: VertexOutput5;
+                          let vf90f32 = (buffer30)[bitcast<u32>((buffer30)[((28))][223].f0)];
+                          return out;
+                        }
+                           `});
+shaderModule8 = device0.createShaderModule({
+  code :
+      ` @group(0) @binding(999) var<storage> buffer55: array<array<array<array<f16, 7>, 3>, 64>>;
+                            struct FragmentOutput9 {
+                          @location(0) f0: vec4u}
+                            @fragment fn fragment9() -> FragmentOutput9 {
+                          var out: FragmentOutput9;
+                          let ptr114= &(buffer55)[arrayLength(&(buffer55))][63][2][u32()];
+                          out.f0 -= (u32((*ptr114)));
+                          return out;
+                        }
+                           `});
+pipeline12 = await device0.createRenderPipelineAsync({
+  layout : pipelineLayout3,
+  fragment : {
+    module : shaderModule8,
+    targets : [ {
+      format : 'rgb10a2uint'} ]
+  },
+  vertex : {
+    module : shaderModule4}
+});
+try {
+  renderPassEncoder4.setPipeline(pipeline12)
+  renderPassEncoder4.draw(72305);
+  renderPassEncoder4.end()
+} catch {
+}
+commandBuffer16 = commandEncoder18.finish();
+try {
+  device0.queue.submit([ commandBuffer16 ])
+} catch {
+}
+// END
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  log('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  log('the end')
+  log(location);
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.notifyDone();
+};
+</script>

@@ -27,6 +27,7 @@
 
 #include "JSDOMPromiseDeferredForward.h"
 #include "PushSubscription.h"
+#include <wtf/AbstractRefCounted.h>
 
 namespace WebCore {
 
@@ -34,17 +35,14 @@ class PushSubscription;
 
 enum class PushPermissionState : uint8_t;
 
-class PushSubscriptionOwner {
+class PushSubscriptionOwner : public AbstractRefCounted {
 public:
     virtual ~PushSubscriptionOwner() = default;
-
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 
     virtual bool isActive() const = 0;
 
     virtual void subscribeToPushService(const Vector<uint8_t>& applicationServerKey, DOMPromiseDeferred<IDLInterface<PushSubscription>>&&) = 0;
-    virtual void unsubscribeFromPushService(PushSubscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&&) = 0;
+    virtual void unsubscribeFromPushService(std::optional<PushSubscriptionIdentifier>, DOMPromiseDeferred<IDLBoolean>&&) = 0;
     virtual void getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&&) = 0;
     virtual void getPushPermissionState(DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&) = 0;
 };

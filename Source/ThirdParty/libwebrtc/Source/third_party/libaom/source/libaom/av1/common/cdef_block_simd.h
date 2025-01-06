@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,6 +12,7 @@
 #ifndef AOM_AV1_COMMON_CDEF_BLOCK_SIMD_H_
 #define AOM_AV1_COMMON_CDEF_BLOCK_SIMD_H_
 
+#include "config/aom_config.h"
 #include "config/av1_rtcd.h"
 
 #include "av1/common/cdef_block.h"
@@ -22,7 +23,7 @@
    This function computes (x1^2+y1^2)*C1 + (x2^2+y2^2)*C2 + ...
    (x7^2+y2^7)*C7 + (x8^2+0^2)*C8 where the C1..C8 constants are in const1
    and const2. */
-static INLINE v128 fold_mul_and_sum(v128 partiala, v128 partialb, v128 const1,
+static inline v128 fold_mul_and_sum(v128 partiala, v128 partialb, v128 const1,
                                     v128 const2) {
   v128 tmp;
   /* Reverse partial B. */
@@ -43,7 +44,7 @@ static INLINE v128 fold_mul_and_sum(v128 partiala, v128 partialb, v128 const1,
   return partiala;
 }
 
-static INLINE v128 hsum4(v128 x0, v128 x1, v128 x2, v128 x3) {
+static inline v128 hsum4(v128 x0, v128 x1, v128 x2, v128 x3) {
   v128 t0, t1, t2, t3;
   t0 = v128_ziplo_32(x1, x0);
   t1 = v128_ziplo_32(x3, x2);
@@ -58,7 +59,7 @@ static INLINE v128 hsum4(v128 x0, v128 x1, v128 x2, v128 x3) {
 
 /* Computes cost for directions 0, 5, 6 and 7. We can call this function again
    to compute the remaining directions. */
-static INLINE v128 compute_directions(v128 lines[8], int32_t tmp_cost1[4]) {
+static inline v128 compute_directions(v128 lines[8], int32_t tmp_cost1[4]) {
   v128 partial4a, partial4b, partial5a, partial5b, partial7a, partial7b;
   v128 partial6;
   v128 tmp;
@@ -129,7 +130,7 @@ static INLINE v128 compute_directions(v128 lines[8], int32_t tmp_cost1[4]) {
 
 /* transpose and reverse the order of the lines -- equivalent to a 90-degree
    counter-clockwise rotation of the pixels. */
-static INLINE void array_reverse_transpose_8x8(v128 *in, v128 *res) {
+static inline void array_reverse_transpose_8x8(v128 *in, v128 *res) {
   const v128 tr0_0 = v128_ziplo_16(in[1], in[0]);
   const v128 tr0_1 = v128_ziplo_16(in[3], in[2]);
   const v128 tr0_2 = v128_ziphi_16(in[1], in[0]);
@@ -198,9 +199,9 @@ int SIMD_FUNC(cdef_find_dir)(const uint16_t *img, int stride, int32_t *var,
 }
 
 // Work around compiler out of memory issues with Win32 builds. This issue has
-// been observed with Visual Studio 2017, 2019, and 2022 (version 17.4).
-#if defined(_MSC_VER) && defined(_M_IX86) && _MSC_VER < 1940
-#define CDEF_INLINE static INLINE
+// been observed with Visual Studio 2017, 2019, and 2022 (version 17.10.3).
+#if defined(_MSC_VER) && defined(_M_IX86)
+#define CDEF_INLINE static inline
 #else
 #define CDEF_INLINE SIMD_INLINE
 #endif
@@ -824,6 +825,7 @@ void SIMD_FUNC(cdef_filter_16_3)(void *dest, int dstride, const uint16_t *in,
   }
 }
 
+#if CONFIG_AV1_HIGHBITDEPTH
 void SIMD_FUNC(cdef_copy_rect8_16bit_to_16bit)(uint16_t *dst, int dstride,
                                                const uint16_t *src, int sstride,
                                                int width, int height) {
@@ -838,6 +840,7 @@ void SIMD_FUNC(cdef_copy_rect8_16bit_to_16bit)(uint16_t *dst, int dstride,
     }
   }
 }
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 
 #undef CDEF_INLINE
 

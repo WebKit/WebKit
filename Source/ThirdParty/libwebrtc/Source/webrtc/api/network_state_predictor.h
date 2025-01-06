@@ -11,17 +11,12 @@
 #ifndef API_NETWORK_STATE_PREDICTOR_H_
 #define API_NETWORK_STATE_PREDICTOR_H_
 
+#include <cstdint>
 #include <memory>
-#include <vector>
+
+#include "api/transport/bandwidth_usage.h"
 
 namespace webrtc {
-
-enum class BandwidthUsage {
-  kBwNormal = 0,
-  kBwUnderusing = 1,
-  kBwOverusing = 2,
-  kLast
-};
 
 // TODO(yinwa): work in progress. API in class NetworkStatePredictor should not
 // be used by other users until this comment is removed.

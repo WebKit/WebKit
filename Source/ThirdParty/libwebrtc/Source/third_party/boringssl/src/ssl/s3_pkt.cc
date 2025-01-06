@@ -198,6 +198,26 @@ int tls_write_app_data(SSL *ssl, bool *out_needs_handshake,
   }
 }
 
+// tls_seal_align_prefix_len returns the length of the prefix before the start
+// of the bulk of the ciphertext when sealing a record with |ssl|. Callers may
+// use this to align buffers.
+//
+// Note when TLS 1.0 CBC record-splitting is enabled, this includes the one byte
+// record and is the offset into second record's ciphertext. Thus sealing a
+// small record may result in a smaller output than this value.
+//
+// TODO(davidben): Is this alignment valuable? Record-splitting makes this a
+// mess.
+static size_t tls_seal_align_prefix_len(const SSL *ssl) {
+  size_t ret =
+      SSL3_RT_HEADER_LENGTH + ssl->s3->aead_write_ctx->ExplicitNonceLen();
+  if (ssl_needs_record_splitting(ssl)) {
+    ret += SSL3_RT_HEADER_LENGTH;
+    ret += ssl_cipher_get_record_split_len(ssl->s3->aead_write_ctx->cipher());
+  }
+  return ret;
+}
+
 // do_tls_write writes an SSL record of the given type. On success, it sets
 // |*out_bytes_written| to number of bytes successfully written and returns one.
 // On error, it returns a value <= 0 from the underlying |BIO|.
@@ -265,7 +285,7 @@ static int do_tls_write(SSL *ssl, size_t *out_bytes_written, uint8_t type,
     return 1;
   }
 
-  if (!buf->EnsureCap(pending_flight.size() + ssl_seal_align_prefix_len(ssl),
+  if (!buf->EnsureCap(pending_flight.size() + tls_seal_align_prefix_len(ssl),
                       max_out)) {
     return -1;
   }
@@ -436,7 +456,7 @@ int ssl_send_alert_impl(SSL *ssl, int level, int desc) {
 
 int tls_dispatch_alert(SSL *ssl) {
   if (ssl->quic_method) {
-    if (!ssl->quic_method->send_alert(ssl, ssl->s3->write_level,
+    if (!ssl->quic_method->send_alert(ssl, ssl->s3->quic_write_level,
                                       ssl->s3->send_alert[1])) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_QUIC_INTERNAL_ERROR);
       return 0;

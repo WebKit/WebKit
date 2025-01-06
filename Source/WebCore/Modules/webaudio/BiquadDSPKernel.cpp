@@ -34,6 +34,7 @@
 #include "BiquadProcessor.h"
 #include "FloatConversion.h"
 #include <limits.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 #if CPU(X86_SSE2)
@@ -46,7 +47,9 @@
 
 namespace WebCore {
 
-static bool hasConstantValue(float* values, int framesToProcess)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BiquadDSPKernel);
+
+static bool hasConstantValue(std::span<float> values)
 {
     // Load the initial value
     const float value = values[0];
@@ -55,13 +58,13 @@ static bool hasConstantValue(float* values, int framesToProcess)
     // the first frame from the subsequent comparisons in the non-SIMD paths
     // it guarantees that we don't redundantly compare the first frame again
     // during the loop execution.
-    int processedFrames = 1;
+    size_t processedFrames = 1;
 
 #if CPU(X86_SSE2)
     // Process 4 floats at a time using SIMD.
     __m128 valueVec = _mm_set1_ps(value);
     // Start at 0 for byte alignment
-    for (processedFrames = 0; processedFrames < framesToProcess - 3; processedFrames += 4) {
+    for (processedFrames = 0; processedFrames < values.size() - 3; processedFrames += 4) {
         // Load 4 floats from memory.
         __m128 inputVec = _mm_loadu_ps(&values[processedFrames]);
         // Compare the 4 floats with the value.
@@ -74,7 +77,7 @@ static bool hasConstantValue(float* values, int framesToProcess)
     // Process 4 floats at a time using SIMD.
     float32x4_t valueVec = vdupq_n_f32(value);
     // Start at 0 for byte alignment.
-    for (processedFrames = 0; processedFrames < framesToProcess - 3; processedFrames += 4) {
+    for (processedFrames = 0; processedFrames < values.size() - 3; processedFrames += 4) {
         // Load 4 floats from memory.
         float32x4_t inputVec = vld1q_f32(&values[processedFrames]);
         // Compare the 4 floats with the value.
@@ -87,7 +90,7 @@ static bool hasConstantValue(float* values, int framesToProcess)
     }
 #endif
     // Fallback implementation without SIMD optimization.
-    while (processedFrames < framesToProcess) {
+    while (processedFrames < values.size()) {
         if (values[processedFrames] != value)
             return false;
         ++processedFrames;
@@ -100,26 +103,31 @@ void BiquadDSPKernel::updateCoefficientsIfNecessary(size_t framesToProcess)
     if (biquadProcessor()->filterCoefficientsDirty()) {
         if (biquadProcessor()->hasSampleAccurateValues() && biquadProcessor()->shouldUseARate()) {
             // Use float arrays instead of AudioFloatArray to avoid heap allocations on the audio thread.
-            float cutoffFrequency[AudioUtilities::renderQuantumSize];
-            float q[AudioUtilities::renderQuantumSize];
-            float gain[AudioUtilities::renderQuantumSize];
-            float detune[AudioUtilities::renderQuantumSize]; // in Cents
+            std::array<float, AudioUtilities::renderQuantumSize> cutoffFrequency;
+            std::array<float, AudioUtilities::renderQuantumSize> q;
+            std::array<float, AudioUtilities::renderQuantumSize> gain;
+            std::array<float, AudioUtilities::renderQuantumSize> detune; // in Cents
 
             RELEASE_ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
 
-            biquadProcessor()->parameter1().calculateSampleAccurateValues(cutoffFrequency, framesToProcess);
-            biquadProcessor()->parameter2().calculateSampleAccurateValues(q, framesToProcess);
-            biquadProcessor()->parameter3().calculateSampleAccurateValues(gain, framesToProcess);
-            biquadProcessor()->parameter4().calculateSampleAccurateValues(detune, framesToProcess);
+            auto cutoffFrequencySpan = std::span { cutoffFrequency }.first(framesToProcess);
+            auto qSpan = std::span { q }.first(framesToProcess);
+            auto gainSpan = std::span { gain }.first(framesToProcess);
+            auto detuneSpan = std::span { detune }.first(framesToProcess);
+
+            biquadProcessor()->parameter1().calculateSampleAccurateValues(cutoffFrequencySpan);
+            biquadProcessor()->parameter2().calculateSampleAccurateValues(qSpan);
+            biquadProcessor()->parameter3().calculateSampleAccurateValues(gainSpan);
+            biquadProcessor()->parameter4().calculateSampleAccurateValues(detuneSpan);
 
             // If all the values are actually constant for this render (or the
             // automation rate is "k-rate" for all of the AudioParams), we don't need
             // to compute filter coefficients for each frame since they would be the
             // same as the first.
-            bool isConstant = hasConstantValue(cutoffFrequency, framesToProcess)
-                && hasConstantValue(q, framesToProcess)
-                && hasConstantValue(gain, framesToProcess)
-                && hasConstantValue(detune, framesToProcess);
+            bool isConstant = hasConstantValue(cutoffFrequencySpan)
+                && hasConstantValue(qSpan)
+                && hasConstantValue(gainSpan)
+                && hasConstantValue(detuneSpan);
 
             updateCoefficients(isConstant ? 1 : framesToProcess, cutoffFrequency, q, gain, detune);
         } else {
@@ -127,12 +135,12 @@ void BiquadDSPKernel::updateCoefficientsIfNecessary(size_t framesToProcess)
             float q = biquadProcessor()->parameter2().finalValue();
             float gain = biquadProcessor()->parameter3().finalValue();
             float detune = biquadProcessor()->parameter4().finalValue();
-            updateCoefficients(1, &cutoffFrequency, &q, &gain, &detune);
+            updateCoefficients(1, singleElementSpan(cutoffFrequency), singleElementSpan(q), singleElementSpan(gain), singleElementSpan(detune));
         }
     }
 }
 
-void BiquadDSPKernel::updateCoefficients(size_t numberOfFrames, const float* cutoffFrequency, const float* q, const float* gain, const float* detune)
+void BiquadDSPKernel::updateCoefficients(size_t numberOfFrames, std::span<const float> cutoffFrequency, std::span<const float> q, std::span<const float> gain, std::span<const float> detune)
 {
     // Convert from Hertz to normalized frequency 0 -> 1.
     double nyquist = this->nyquist();
@@ -189,22 +197,22 @@ void BiquadDSPKernel::updateCoefficients(size_t numberOfFrames, const float* cut
     updateTailTime(numberOfFrames - 1);
 }
 
-void BiquadDSPKernel::process(const float* source, float* destination, size_t framesToProcess)
+void BiquadDSPKernel::process(std::span<const float> source, std::span<float> destination)
 {
-    ASSERT(source && destination && biquadProcessor());
+    ASSERT(source.data() && destination.data() && biquadProcessor());
     
     // Recompute filter coefficients if any of the parameters have changed.
     // FIXME: as an optimization, implement a way that a Biquad object can simply copy its internal filter coefficients from another Biquad object.
     // Then re-factor this code to only run for the first BiquadDSPKernel of each BiquadProcessor.
 
-    updateCoefficientsIfNecessary(framesToProcess);
+    updateCoefficientsIfNecessary(source.size());
 
-    m_biquad.process(source, destination, framesToProcess);
+    m_biquad.process(source, destination);
 }
 
-void BiquadDSPKernel::getFrequencyResponse(unsigned nFrequencies, const float* frequencyHz, float* magResponse, float* phaseResponse)
+void BiquadDSPKernel::getFrequencyResponse(unsigned nFrequencies, std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
 {
-    bool isGood = nFrequencies > 0 && frequencyHz && magResponse && phaseResponse;
+    bool isGood = nFrequencies > 0 && frequencyHz.data() && magResponse.data() && phaseResponse.data();
     ASSERT(isGood);
     if (!isGood)
         return;
@@ -218,7 +226,7 @@ void BiquadDSPKernel::getFrequencyResponse(unsigned nFrequencies, const float* f
     for (unsigned k = 0; k < nFrequencies; ++k)
         frequency[k] = frequencyHz[k] / nyquist;
 
-    m_biquad.getFrequencyResponse(nFrequencies, frequency.data(), magResponse, phaseResponse);
+    m_biquad.getFrequencyResponse(nFrequencies, frequency.span(), magResponse, phaseResponse);
 }
 
 double BiquadDSPKernel::tailTime() const

@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-backdrop-filter
+None
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -102,6 +102,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-fixed-scroll-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-fixed-scroll-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-fixed-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-foreignobject-non-zero-xy-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-foreignobject-non-zero-xy.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-geometryBox-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-geometryBox-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-geometryBox-2-ref.html
@@ -236,10 +238,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-foreignobject-non-zero-xy-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-foreignobject-non-zero-xy.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1a.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1b.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1c-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1c.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-invalidate-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-invalidate-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-invalidate.html
@@ -258,6 +268,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change-from-empty-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change-from-empty.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-svg-foreignobject-zoomed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-svg-foreignobject-zoomed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1a.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1b-expected.html

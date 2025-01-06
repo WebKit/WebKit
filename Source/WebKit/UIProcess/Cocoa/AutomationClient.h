@@ -29,6 +29,7 @@
 
 #import "APIAutomationClient.h"
 #import <JavaScriptCore/RemoteInspector.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
 @class WKProcessPool;
@@ -38,7 +39,7 @@
 namespace WebKit {
 
 class AutomationClient final : public API::AutomationClient, Inspector::RemoteInspector::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AutomationClient);
 public:
     explicit AutomationClient(WKProcessPool *, id <_WKAutomationDelegate>);
     virtual ~AutomationClient();

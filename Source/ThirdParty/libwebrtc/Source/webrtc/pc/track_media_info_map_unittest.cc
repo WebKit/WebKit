@@ -325,7 +325,7 @@ TEST_F(TrackMediaInfoMapTest, GetAttachmentIdByTrack) {
   InitializeMap();
   EXPECT_EQ(rtp_senders_[0]->AttachmentId(),
             map_.GetAttachmentIdByTrack(local_audio_track_.get()));
-  EXPECT_EQ(absl::nullopt,
+  EXPECT_EQ(std::nullopt,
             map_.GetAttachmentIdByTrack(local_video_track_.get()));
 }
 

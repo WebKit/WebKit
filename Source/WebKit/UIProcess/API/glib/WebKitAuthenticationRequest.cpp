@@ -75,7 +75,7 @@ struct _WebKitAuthenticationRequestPrivate {
     std::optional<bool> canSaveCredentials;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitAuthenticationRequest, webkit_authentication_request, G_TYPE_OBJECT, GObject)
 

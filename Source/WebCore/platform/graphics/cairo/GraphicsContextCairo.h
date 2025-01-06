@@ -59,8 +59,8 @@ public:
     void setMiterLimit(float) final;
 
     using GraphicsContext::fillRect;
-    void fillRect(const FloatRect&) final;
-    void fillRect(const FloatRect&, Gradient&, const AffineTransform&) final;
+    void fillRect(const FloatRect&, RequiresClipToRect = RequiresClipToRect::Yes) final;
+    void fillRect(const FloatRect&, Gradient&, const AffineTransform&, RequiresClipToRect = RequiresClipToRect::Yes) final;
     void fillRect(const FloatRect&, const Color&) final;
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final;
     void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) final;

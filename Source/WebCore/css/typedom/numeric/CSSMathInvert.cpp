@@ -26,15 +26,14 @@
 #include "config.h"
 #include "CSSMathInvert.h"
 
-#include "CSSCalcInvertNode.h"
 #include "CSSNumericValue.h"
 #include "CSSPrimitiveValue.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathInvert);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSMathInvert);
 
 Ref<CSSMathInvert> CSSMathInvert::create(CSSNumberish&& numberish)
 {
@@ -113,11 +112,18 @@ bool CSSMathInvert::equals(const CSSNumericValue& other) const
     return m_value->equals(otherInvert->value());
 }
 
-RefPtr<CSSCalcExpressionNode> CSSMathInvert::toCalcExpressionNode() const
+std::optional<CSSCalc::Child> CSSMathInvert::toCalcTreeNode() const
 {
-    if (auto value = m_value->toCalcExpressionNode())
-        return CSSCalcInvertNode::create(value.releaseNonNull());
-    return nullptr;
+    auto child = m_value->toCalcTreeNode();
+    if (!child)
+        return std::nullopt;
+
+    auto invert = CSSCalc::Invert { .a = WTFMove(*child) };
+    auto type = CSSCalc::toType(invert);
+    if (!type)
+        return std::nullopt;
+
+    return CSSCalc::makeChild(WTFMove(invert), *type);
 }
 
 } // namespace WebCore

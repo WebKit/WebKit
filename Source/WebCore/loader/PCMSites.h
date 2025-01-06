@@ -116,6 +116,7 @@ template<typename T> struct DefaultHash;
 template<> struct DefaultHash<WebCore::PCM::SourceSite> : WebCore::PCM::SourceSiteHash { };
 template<> struct HashTraits<WebCore::PCM::SourceSite> : GenericHashTraits<WebCore::PCM::SourceSite> {
     static WebCore::PCM::SourceSite emptyValue() { return WebCore::PCM::SourceSite(WebCore::RegistrableDomain()); }
+    static bool isEmptyValue(const WebCore::PCM::SourceSite& value) { return value.registrableDomain.string().isNull(); }
     static void constructDeletedValue(WebCore::PCM::SourceSite& slot) { new (NotNull, &slot.registrableDomain) WebCore::RegistrableDomain(WTF::HashTableDeletedValue); }
     static bool isDeletedValue(const WebCore::PCM::SourceSite& slot) { return slot.registrableDomain.isHashTableDeletedValue(); }
 };
@@ -123,6 +124,7 @@ template<> struct HashTraits<WebCore::PCM::SourceSite> : GenericHashTraits<WebCo
 template<> struct DefaultHash<WebCore::PCM::AttributionDestinationSite> : WebCore::PCM::AttributionDestinationSiteHash { };
 template<> struct HashTraits<WebCore::PCM::AttributionDestinationSite> : GenericHashTraits<WebCore::PCM::AttributionDestinationSite> {
     static WebCore::PCM::AttributionDestinationSite emptyValue() { return { }; }
+    static bool isEmptyValue(const WebCore::PCM::AttributionDestinationSite& value) { return value.registrableDomain.string().isNull(); }
     static void constructDeletedValue(WebCore::PCM::AttributionDestinationSite& slot) { new (NotNull, &slot.registrableDomain) WebCore::RegistrableDomain(WTF::HashTableDeletedValue); }
     static bool isDeletedValue(const WebCore::PCM::AttributionDestinationSite& slot) { return slot.registrableDomain.isHashTableDeletedValue(); }
 };

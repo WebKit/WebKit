@@ -35,24 +35,23 @@
 #include "../test/wycheproof_util.h"
 
 
-static bssl::UniquePtr<EC_GROUP> GetCurve(FileTest *t, const char *key) {
+static const EC_GROUP *GetCurve(FileTest *t, const char *key) {
   std::string curve_name;
   if (!t->GetAttribute(&curve_name, key)) {
     return nullptr;
   }
 
   if (curve_name == "P-224") {
-    return bssl::UniquePtr<EC_GROUP>(EC_GROUP_new_by_curve_name(NID_secp224r1));
+    return EC_group_p224();
   }
   if (curve_name == "P-256") {
-    return bssl::UniquePtr<EC_GROUP>(EC_GROUP_new_by_curve_name(
-        NID_X9_62_prime256v1));
+    return EC_group_p256();
   }
   if (curve_name == "P-384") {
-    return bssl::UniquePtr<EC_GROUP>(EC_GROUP_new_by_curve_name(NID_secp384r1));
+    return EC_group_p384();
   }
   if (curve_name == "P-521") {
-    return bssl::UniquePtr<EC_GROUP>(EC_GROUP_new_by_curve_name(NID_secp521r1));
+    return EC_group_p521();
   }
 
   t->PrintLine("Unknown curve '%s'", curve_name.c_str());
@@ -70,7 +69,7 @@ static bssl::UniquePtr<BIGNUM> GetBIGNUM(FileTest *t, const char *key) {
 
 TEST(ECDHTest, TestVectors) {
   FileTestGTest("crypto/ecdh_extra/ecdh_tests.txt", [](FileTest *t) {
-    bssl::UniquePtr<EC_GROUP> group = GetCurve(t, "Curve");
+    const EC_GROUP *group = GetCurve(t, "Curve");
     ASSERT_TRUE(group);
     bssl::UniquePtr<BIGNUM> priv_key = GetBIGNUM(t, "Private");
     ASSERT_TRUE(priv_key);
@@ -87,16 +86,16 @@ TEST(ECDHTest, TestVectors) {
 
     bssl::UniquePtr<EC_KEY> key(EC_KEY_new());
     ASSERT_TRUE(key);
-    bssl::UniquePtr<EC_POINT> pub_key(EC_POINT_new(group.get()));
+    bssl::UniquePtr<EC_POINT> pub_key(EC_POINT_new(group));
     ASSERT_TRUE(pub_key);
-    bssl::UniquePtr<EC_POINT> peer_pub_key(EC_POINT_new(group.get()));
+    bssl::UniquePtr<EC_POINT> peer_pub_key(EC_POINT_new(group));
     ASSERT_TRUE(peer_pub_key);
-    ASSERT_TRUE(EC_KEY_set_group(key.get(), group.get()));
+    ASSERT_TRUE(EC_KEY_set_group(key.get(), group));
     ASSERT_TRUE(EC_KEY_set_private_key(key.get(), priv_key.get()));
-    ASSERT_TRUE(EC_POINT_set_affine_coordinates_GFp(group.get(), pub_key.get(),
+    ASSERT_TRUE(EC_POINT_set_affine_coordinates_GFp(group, pub_key.get(),
                                                     x.get(), y.get(), nullptr));
     ASSERT_TRUE(EC_POINT_set_affine_coordinates_GFp(
-        group.get(), peer_pub_key.get(), peer_x.get(), peer_y.get(), nullptr));
+        group, peer_pub_key.get(), peer_x.get(), peer_y.get(), nullptr));
     ASSERT_TRUE(EC_KEY_set_public_key(key.get(), pub_key.get()));
     ASSERT_TRUE(EC_KEY_check_key(key.get()));
 
@@ -130,7 +129,7 @@ TEST(ECDHTest, TestVectors) {
 static void RunWycheproofTest(FileTest *t) {
   t->IgnoreInstruction("encoding");
 
-  bssl::UniquePtr<EC_GROUP> group = GetWycheproofCurve(t, "curve", true);
+  const EC_GROUP *group = GetWycheproofCurve(t, "curve", true);
   ASSERT_TRUE(group);
   bssl::UniquePtr<BIGNUM> priv_key = GetWycheproofBIGNUM(t, "private", false);
   ASSERT_TRUE(priv_key);
@@ -157,10 +156,10 @@ static void RunWycheproofTest(FileTest *t) {
 
   bssl::UniquePtr<EC_KEY> key(EC_KEY_new());
   ASSERT_TRUE(key);
-  ASSERT_TRUE(EC_KEY_set_group(key.get(), group.get()));
+  ASSERT_TRUE(EC_KEY_set_group(key.get(), group));
   ASSERT_TRUE(EC_KEY_set_private_key(key.get(), priv_key.get()));
 
-  std::vector<uint8_t> actual((EC_GROUP_get_degree(group.get()) + 7) / 8);
+  std::vector<uint8_t> actual((EC_GROUP_get_degree(group) + 7) / 8);
   int ret =
       ECDH_compute_key(actual.data(), actual.size(),
                        EC_KEY_get0_public_key(peer_ec), key.get(), nullptr);

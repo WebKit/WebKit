@@ -39,6 +39,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Yarr {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BytecodePattern);
@@ -183,7 +185,7 @@ public:
 
         DisjunctionContext* getDisjunctionContext()
         {
-            return bitwise_cast<DisjunctionContext*>(bitwise_cast<uintptr_t>(this) + allocationSize(m_numBackupIds));
+            return std::bit_cast<DisjunctionContext*>(std::bit_cast<uintptr_t>(this) + allocationSize(m_numBackupIds));
         }
 
         unsigned backupOffsetForDuplicateNamedGroup(unsigned duplicateNamedGroup)
@@ -352,8 +354,12 @@ public:
         {
             ASSERT(from < length);
             auto result = input[from];
-            if (U16_IS_LEAD(result) && decodeSurrogatePairs && from + 1 < length && U16_IS_TRAIL(input[from + 1]))
-                return U16_GET_SUPPLEMENTARY(result, input[from + 1]);
+            if (decodeSurrogatePairs && from + 1 < length) {
+                if (U16_IS_LEAD(result) && U16_IS_TRAIL(input[from + 1]))
+                    return U16_GET_SUPPLEMENTARY(result, input[from + 1]);
+                if (U16_IS_TRAIL(result) && U16_IS_LEAD(input[from + 1]))
+                    return errorCodePoint;
+            }
             return result;
         }
 
@@ -620,13 +626,16 @@ public:
             if (term.matchDirection() == Backward && negativeInputOffset > input.getPos())
                 return false;
 
-            int oldCh = input.reread(matchBegin + i);
-            int ch;
+            char32_t oldCh = input.reread(matchBegin + i);
+            char32_t ch;
             if (!U_IS_BMP(oldCh)) {
                 ch = input.readSurrogatePairChecked(negativeInputOffset);
                 ++i;
             } else
                 ch = term.matchDirection() == Forward ? input.readChecked(negativeInputOffset) : input.tryReadBackward(negativeInputOffset);
+
+            if (oldCh == errorCodePoint || ch == errorCodePoint)
+                return false;
 
             if (oldCh == ch)
                 continue;
@@ -955,6 +964,21 @@ public:
         ASSERT(term.type == ByteTerm::Type::BackReference);
         BackTrackInfoBackReference* backTrack = reinterpret_cast<BackTrackInfoBackReference*>(context->frame + term.frameLocation);
 
+        // Initialize backtracking info first before we check for possible null matches.
+        switch (term.atom.quantityType) {
+        case QuantifierType::NonGreedy:
+            backTrack->matchAmount = 0;
+            FALLTHROUGH;
+
+        case QuantifierType::FixedCount:
+            backTrack->begin = input.getPos();
+            break;
+
+        case QuantifierType::Greedy:
+            backTrack->matchAmount = 0;
+            break;
+        }
+
         unsigned subpatternId;
 
         if (auto duplicateNamedGroupId = term.duplicateNamedGroupId()) {
@@ -985,7 +1009,6 @@ public:
 
         switch (term.atom.quantityType) {
         case QuantifierType::FixedCount: {
-            backTrack->begin = input.getPos();
             for (unsigned matchAmount = 0; matchAmount < term.atom.quantityMaxCount; ++matchAmount) {
                 if (!tryConsumeBackReference(matchBegin, matchEnd, term)) {
                     input.setPos(backTrack->begin);
@@ -1000,13 +1023,10 @@ public:
             while ((matchAmount < term.atom.quantityMaxCount) && tryConsumeBackReference(matchBegin, matchEnd, term))
                 ++matchAmount;
             backTrack->matchAmount = matchAmount;
-            backTrack->backReferenceSize = matchEnd - matchBegin;
             return true;
         }
 
         case QuantifierType::NonGreedy:
-            backTrack->begin = input.getPos();
-            backTrack->matchAmount = 0;
             return true;
         }
 
@@ -1019,8 +1039,19 @@ public:
         ASSERT(term.type == ByteTerm::Type::BackReference);
         BackTrackInfoBackReference* backTrack = reinterpret_cast<BackTrackInfoBackReference*>(context->frame + term.frameLocation);
 
-        unsigned matchBegin = output[(term.subpatternId() << 1)];
-        unsigned matchEnd = output[(term.subpatternId() << 1) + 1];
+        unsigned subpatternId;
+
+        if (auto duplicateNamedGroupId = term.duplicateNamedGroupId()) {
+            subpatternId = output[pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)];
+            if (subpatternId < 1) {
+                // If we don't have a subpattern that matched, then the string to match is empty.
+                return false;
+            }
+        } else
+            subpatternId = term.subpatternId();
+
+        unsigned matchBegin = output[(subpatternId << 1)];
+        unsigned matchEnd = output[(subpatternId << 1) + 1];
 
         if (matchBegin == offsetNoMatch)
             return false;
@@ -3138,3 +3169,5 @@ static_assert(sizeof(Interpreter<UChar>::BackTrackInfoParentheses) <= (YarrStack
 
 
 } }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

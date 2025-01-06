@@ -35,6 +35,8 @@
 #include <WebCore/LayerPool.h>
 #include <WebCore/PlatformCALayer.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -46,8 +48,8 @@ class WebFrame;
 class WebPage;
 
 // FIXME: This class doesn't do much now. Roll into RemoteLayerTreeDrawingArea?
-class RemoteLayerTreeContext : public WebCore::GraphicsLayerFactory,  public RefCounted<RemoteLayerTreeContext>, public CanMakeWeakPtr<RemoteLayerTreeContext> {
-    WTF_MAKE_FAST_ALLOCATED;
+class RemoteLayerTreeContext : public RefCountedAndCanMakeWeakPtr<RemoteLayerTreeContext>, public WebCore::GraphicsLayerFactory {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeContext);
 public:
     static Ref<RemoteLayerTreeContext> create(WebPage& webpage)
     {
@@ -73,7 +75,7 @@ public:
     
     std::optional<WebCore::DestinationColorSpace> displayColorSpace() const;
 
-    DrawingAreaIdentifier drawingAreaIdentifier() const;
+    std::optional<DrawingAreaIdentifier> drawingAreaIdentifier() const;
 
     void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer, WebCore::FrameIdentifier);
 
@@ -103,7 +105,8 @@ public:
     bool canShowWhileLocked() const;
 #endif
 
-    WebPage& webPage() { return m_webPage; }
+    WebPage& webPage();
+    Ref<WebPage> protectedWebPage();
 
 private:
     explicit RemoteLayerTreeContext(WebPage&);
@@ -111,7 +114,7 @@ private:
     // WebCore::GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
 
-    WebPage& m_webPage;
+    WeakRef<WebPage> m_webPage;
 
     HashMap<WebCore::PlatformLayerIdentifier, RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
     Vector<WebCore::PlatformLayerIdentifier> m_destroyedLayers;
@@ -124,11 +127,11 @@ private:
 
     HashSet<WeakRef<GraphicsLayerCARemote>> m_liveGraphicsLayers;
 
-    std::unique_ptr<RemoteLayerBackingStoreCollection> m_backingStoreCollection;
+    UniqueRef<RemoteLayerBackingStoreCollection> m_backingStoreCollection;
 
     WebCore::LayerPool m_layerPool;
 
-    RemoteLayerTreeTransaction* m_currentTransaction { nullptr };
+    CheckedPtr<RemoteLayerTreeTransaction> m_currentTransaction;
 
     bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };
     bool m_useDynamicContentScalingDisplayListsForDOMRendering { false };

@@ -56,7 +56,9 @@ public:
     {
         static dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         dispatch_apply(m_numberOfJobs, globalQueue, ^(size_t i) { (*m_threadFunction)(parameters + (m_sizeOfParameter * i)); });
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
 private:

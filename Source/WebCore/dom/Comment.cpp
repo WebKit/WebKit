@@ -23,11 +23,11 @@
 #include "Comment.h"
 
 #include "Document.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Comment);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Comment);
 
 inline Comment::Comment(Document& document, String&& text)
     : CharacterData(document, WTFMove(text), COMMENT_NODE)
@@ -44,9 +44,10 @@ String Comment::nodeName() const
     return "#comment"_s;
 }
 
-Ref<Node> Comment::cloneNodeInternal(Document& targetDocument, CloningOperation)
+Ref<Node> Comment::cloneNodeInternal(TreeScope& treeScope, CloningOperation)
 {
-    return create(targetDocument, String { data() });
+    Ref document = treeScope.documentScope();
+    return create(document, String { data() });
 }
 
 } // namespace WebCore

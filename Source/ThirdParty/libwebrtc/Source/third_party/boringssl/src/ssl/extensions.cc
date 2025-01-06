@@ -175,7 +175,7 @@ static bool tls1_check_duplicate_extensions(const CBS *cbs) {
   }
 
   Array<uint16_t> extension_types;
-  if (!extension_types.Init(num_extensions)) {
+  if (!extension_types.InitForOverwrite(num_extensions)) {
     return false;
   }
 
@@ -206,7 +206,8 @@ static bool tls1_check_duplicate_extensions(const CBS *cbs) {
 
 static bool is_post_quantum_group(uint16_t id) {
   switch (id) {
-    case SSL_CURVE_X25519_KYBER768_DRAFT00:
+    case SSL_GROUP_X25519_KYBER768_DRAFT00:
+    case SSL_GROUP_X25519_MLKEM768:
       return true;
     default:
       return false;
@@ -307,9 +308,9 @@ bool ssl_client_hello_get_extension(const SSL_CLIENT_HELLO *client_hello,
 }
 
 static const uint16_t kDefaultGroups[] = {
-    SSL_CURVE_X25519,
-    SSL_CURVE_SECP256R1,
-    SSL_CURVE_SECP384R1,
+    SSL_GROUP_X25519,
+    SSL_GROUP_SECP256R1,
+    SSL_GROUP_SECP384R1,
 };
 
 Span<const uint16_t> tls1_get_grouplist(const SSL_HANDSHAKE *hs) {
@@ -356,57 +357,6 @@ bool tls1_get_shared_group(SSL_HANDSHAKE *hs, uint16_t *out_group_id) {
   }
 
   return false;
-}
-
-bool tls1_set_curves(Array<uint16_t> *out_group_ids, Span<const int> curves) {
-  Array<uint16_t> group_ids;
-  if (!group_ids.Init(curves.size())) {
-    return false;
-  }
-
-  for (size_t i = 0; i < curves.size(); i++) {
-    if (!ssl_nid_to_group_id(&group_ids[i], curves[i])) {
-      return false;
-    }
-  }
-
-  *out_group_ids = std::move(group_ids);
-  return true;
-}
-
-bool tls1_set_curves_list(Array<uint16_t> *out_group_ids, const char *curves) {
-  // Count the number of curves in the list.
-  size_t count = 0;
-  const char *ptr = curves, *col;
-  do {
-    col = strchr(ptr, ':');
-    count++;
-    if (col) {
-      ptr = col + 1;
-    }
-  } while (col);
-
-  Array<uint16_t> group_ids;
-  if (!group_ids.Init(count)) {
-    return false;
-  }
-
-  size_t i = 0;
-  ptr = curves;
-  do {
-    col = strchr(ptr, ':');
-    if (!ssl_name_to_group_id(&group_ids[i++], ptr,
-                              col ? (size_t)(col - ptr) : strlen(ptr))) {
-      return false;
-    }
-    if (col) {
-      ptr = col + 1;
-    }
-  } while (col);
-
-  assert(i == count);
-  *out_group_ids = std::move(group_ids);
-  return true;
 }
 
 bool tls1_check_group_id(const SSL_HANDSHAKE *hs, uint16_t group_id) {
@@ -492,16 +442,18 @@ bool tls12_add_verify_sigalgs(const SSL_HANDSHAKE *hs, CBB *out) {
 }
 
 bool tls12_check_peer_sigalg(const SSL_HANDSHAKE *hs, uint8_t *out_alert,
-                             uint16_t sigalg) {
-  for (uint16_t verify_sigalg : tls12_get_verify_sigalgs(hs)) {
-    if (verify_sigalg == sigalg) {
-      return true;
-    }
+                             uint16_t sigalg, EVP_PKEY *pkey) {
+  // The peer must have selected an algorithm that is consistent with its public
+  // key, the TLS version, and what we advertised.
+  Span<const uint16_t> sigalgs = tls12_get_verify_sigalgs(hs);
+  if (std::find(sigalgs.begin(), sigalgs.end(), sigalg) == sigalgs.end() ||
+      !ssl_pkey_supports_algorithm(hs->ssl, pkey, sigalg, /*is_verify=*/true)) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_SIGNATURE_TYPE);
+    *out_alert = SSL_AD_ILLEGAL_PARAMETER;
+    return false;
   }
 
-  OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_SIGNATURE_TYPE);
-  *out_alert = SSL_AD_ILLEGAL_PARAMETER;
-  return false;
+  return true;
 }
 
 // tls_extension represents a TLS extension that is handled internally.
@@ -757,14 +709,14 @@ static bool ext_ri_add_clienthello(const SSL_HANDSHAKE *hs, CBB *out,
   }
 
   assert(ssl->s3->initial_handshake_complete ==
-         (ssl->s3->previous_client_finished_len != 0));
+         !ssl->s3->previous_client_finished.empty());
 
   CBB contents, prev_finished;
   if (!CBB_add_u16(out, TLSEXT_TYPE_renegotiate) ||
       !CBB_add_u16_length_prefixed(out, &contents) ||
       !CBB_add_u8_length_prefixed(&contents, &prev_finished) ||
-      !CBB_add_bytes(&prev_finished, ssl->s3->previous_client_finished,
-                     ssl->s3->previous_client_finished_len) ||
+      !CBB_add_bytes(&prev_finished, ssl->s3->previous_client_finished.data(),
+                     ssl->s3->previous_client_finished.size()) ||
       !CBB_flush(out)) {
     return false;
   }
@@ -800,16 +752,11 @@ static bool ext_ri_parse_serverhello(SSL_HANDSHAKE *hs, uint8_t *out_alert,
     return true;
   }
 
-  const size_t expected_len = ssl->s3->previous_client_finished_len +
-                              ssl->s3->previous_server_finished_len;
-
-  // Check for logic errors
-  assert(!expected_len || ssl->s3->previous_client_finished_len);
-  assert(!expected_len || ssl->s3->previous_server_finished_len);
+  // Check for logic errors.
+  assert(ssl->s3->previous_client_finished.size() ==
+         ssl->s3->previous_server_finished.size());
   assert(ssl->s3->initial_handshake_complete ==
-         (ssl->s3->previous_client_finished_len != 0));
-  assert(ssl->s3->initial_handshake_complete ==
-         (ssl->s3->previous_server_finished_len != 0));
+         !ssl->s3->previous_client_finished.empty());
 
   // Parse out the extension contents.
   CBS renegotiated_connection;
@@ -821,15 +768,22 @@ static bool ext_ri_parse_serverhello(SSL_HANDSHAKE *hs, uint8_t *out_alert,
   }
 
   // Check that the extension matches.
-  if (CBS_len(&renegotiated_connection) != expected_len) {
+  CBS client_verify, server_verify;
+  if (!CBS_get_bytes(&renegotiated_connection, &client_verify,
+                     ssl->s3->previous_client_finished.size()) ||
+      !CBS_get_bytes(&renegotiated_connection, &server_verify,
+                     ssl->s3->previous_server_finished.size()) ||
+      CBS_len(&renegotiated_connection) != 0) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_RENEGOTIATION_MISMATCH);
     *out_alert = SSL_AD_HANDSHAKE_FAILURE;
     return false;
   }
 
-  const uint8_t *d = CBS_data(&renegotiated_connection);
-  bool ok = CRYPTO_memcmp(d, ssl->s3->previous_client_finished,
-                          ssl->s3->previous_client_finished_len) == 0;
+  bool ok =
+      CBS_mem_equal(&client_verify, ssl->s3->previous_client_finished.data(),
+                    ssl->s3->previous_client_finished.size()) &&
+      CBS_mem_equal(&server_verify, ssl->s3->previous_server_finished.data(),
+                    ssl->s3->previous_server_finished.size());
 #if defined(BORINGSSL_UNSAFE_FUZZER_MODE)
   ok = true;
 #endif
@@ -838,20 +792,8 @@ static bool ext_ri_parse_serverhello(SSL_HANDSHAKE *hs, uint8_t *out_alert,
     *out_alert = SSL_AD_HANDSHAKE_FAILURE;
     return false;
   }
-  d += ssl->s3->previous_client_finished_len;
 
-  ok = CRYPTO_memcmp(d, ssl->s3->previous_server_finished,
-                     ssl->s3->previous_server_finished_len) == 0;
-#if defined(BORINGSSL_UNSAFE_FUZZER_MODE)
-  ok = true;
-#endif
-  if (!ok) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_RENEGOTIATION_MISMATCH);
-    *out_alert = SSL_AD_HANDSHAKE_FAILURE;
-    return false;
-  }
   ssl->s3->send_connection_binding = true;
-
   return true;
 }
 
@@ -1179,9 +1121,9 @@ static bool ext_ocsp_parse_clienthello(SSL_HANDSHAKE *hs, uint8_t *out_alert,
 static bool ext_ocsp_add_serverhello(SSL_HANDSHAKE *hs, CBB *out) {
   SSL *const ssl = hs->ssl;
   if (ssl_protocol_version(ssl) >= TLS1_3_VERSION ||
-      !hs->ocsp_stapling_requested || hs->config->cert->ocsp_response == NULL ||
-      ssl->s3->session_reused ||
-      !ssl_cipher_uses_certificate_auth(hs->new_cipher)) {
+      !hs->ocsp_stapling_requested || ssl->s3->session_reused ||
+      !ssl_cipher_uses_certificate_auth(hs->new_cipher) ||
+      hs->credential->ocsp_response == nullptr) {
     return true;
   }
 
@@ -1396,21 +1338,22 @@ static bool ext_sct_parse_clienthello(SSL_HANDSHAKE *hs, uint8_t *out_alert,
 
 static bool ext_sct_add_serverhello(SSL_HANDSHAKE *hs, CBB *out) {
   SSL *const ssl = hs->ssl;
+  assert(hs->scts_requested);
   // The extension shouldn't be sent when resuming sessions.
   if (ssl_protocol_version(ssl) >= TLS1_3_VERSION || ssl->s3->session_reused ||
-      hs->config->cert->signed_cert_timestamp_list == NULL) {
+      !ssl_cipher_uses_certificate_auth(hs->new_cipher) ||
+      hs->credential->signed_cert_timestamp_list == nullptr) {
     return true;
   }
 
   CBB contents;
   return CBB_add_u16(out, TLSEXT_TYPE_certificate_timestamp) &&
          CBB_add_u16_length_prefixed(out, &contents) &&
-         CBB_add_bytes(
-             &contents,
-             CRYPTO_BUFFER_data(
-                 hs->config->cert->signed_cert_timestamp_list.get()),
-             CRYPTO_BUFFER_len(
-                 hs->config->cert->signed_cert_timestamp_list.get())) &&
+         CBB_add_bytes(&contents,
+                       CRYPTO_BUFFER_data(
+                           hs->credential->signed_cert_timestamp_list.get()),
+                       CRYPTO_BUFFER_len(
+                           hs->credential->signed_cert_timestamp_list.get())) &&
          CBB_flush(out);
 }
 
@@ -1524,16 +1467,19 @@ bool ssl_is_alpn_protocol_allowed(const SSL_HANDSHAKE *hs,
   }
 
   // Check that the protocol name is one of the ones we advertised.
-  CBS client_protocol_name_list =
-          MakeConstSpan(hs->config->alpn_client_proto_list),
-      client_protocol_name;
-  while (CBS_len(&client_protocol_name_list) > 0) {
-    if (!CBS_get_u8_length_prefixed(&client_protocol_name_list,
-                                    &client_protocol_name)) {
+  return ssl_alpn_list_contains_protocol(hs->config->alpn_client_proto_list,
+                                         protocol);
+}
+
+bool ssl_alpn_list_contains_protocol(Span<const uint8_t> list,
+                                     Span<const uint8_t> protocol) {
+  CBS cbs = list, candidate;
+  while (CBS_len(&cbs) > 0) {
+    if (!CBS_get_u8_length_prefixed(&cbs, &candidate)) {
       return false;
     }
 
-    if (client_protocol_name == protocol) {
+    if (candidate == protocol) {
       return true;
     }
   }
@@ -2580,7 +2526,7 @@ static bool parse_u16_array(const CBS *cbs, Array<uint16_t> *out) {
   }
 
   Array<uint16_t> ret;
-  if (!ret.Init(CBS_len(&copy) / 2)) {
+  if (!ret.InitForOverwrite(CBS_len(&copy) / 2)) {
     return false;
   }
   for (size_t i = 0; i < ret.size(); i++) {
@@ -2607,6 +2553,45 @@ static bool ext_supported_groups_parse_clienthello(SSL_HANDSHAKE *hs,
       CBS_len(&supported_group_list) == 0 ||
       CBS_len(contents) != 0 ||
       !parse_u16_array(&supported_group_list, &hs->peer_supported_group_list)) {
+    return false;
+  }
+
+  return true;
+}
+
+
+// Certificate Authorities.
+//
+// https://tools.ietf.org/html/rfc8446#section-4.2.4
+
+static bool ext_certificate_authorities_add_clienthello(
+    const SSL_HANDSHAKE *hs, CBB *out, CBB *out_compressible,
+    ssl_client_hello_type_t type) {
+  if (ssl_has_CA_names(hs->config)) {
+    CBB ca_contents;
+    if (!CBB_add_u16(out, TLSEXT_TYPE_certificate_authorities) || //
+        !CBB_add_u16_length_prefixed(out, &ca_contents) || //
+        !ssl_add_CA_names(hs, &ca_contents) || //
+        !CBB_flush(out)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+static bool ext_certificate_authorities_parse_clienthello(SSL_HANDSHAKE *hs,
+                                                          uint8_t *out_alert,
+                                                          CBS *contents) {
+  if (contents == NULL) {
+    return true;
+  }
+
+  if (CBS_len(contents) == 0) {
+    return false;
+  }
+
+  hs->ca_names = SSL_parse_CA_list(hs->ssl, out_alert, contents);
+  if (!hs->ca_names) {
     return false;
   }
 
@@ -2803,7 +2788,7 @@ static bool ext_quic_transport_params_add_serverhello_legacy(SSL_HANDSHAKE *hs,
 
 // Delegated credentials.
 //
-// https://tools.ietf.org/html/draft-ietf-tls-subcerts
+// https://www.rfc-editor.org/rfc/rfc9345.html
 
 static bool ext_delegated_credential_add_clienthello(
     const SSL_HANDSHAKE *hs, CBB *out, CBB *out_compressible,
@@ -2830,7 +2815,6 @@ static bool ext_delegated_credential_parse_clienthello(SSL_HANDSHAKE *hs,
     return false;
   }
 
-  hs->delegated_credential_requested = true;
   return true;
 }
 
@@ -2894,7 +2878,7 @@ static bool cert_compression_parse_clienthello(SSL_HANDSHAKE *hs,
 
   const size_t num_given_alg_ids = CBS_len(&alg_ids) / 2;
   Array<uint16_t> given_alg_ids;
-  if (!given_alg_ids.Init(num_given_alg_ids)) {
+  if (!given_alg_ids.InitForOverwrite(num_given_alg_ids)) {
     return false;
   }
 
@@ -2957,9 +2941,10 @@ bool ssl_get_local_application_settings(const SSL_HANDSHAKE *hs,
   return false;
 }
 
-static bool ext_alps_add_clienthello(const SSL_HANDSHAKE *hs, CBB *out,
-                                     CBB *out_compressible,
-                                     ssl_client_hello_type_t type) {
+static bool ext_alps_add_clienthello_impl(const SSL_HANDSHAKE *hs, CBB *out,
+                                          CBB *out_compressible,
+                                          ssl_client_hello_type_t type,
+                                          bool use_new_codepoint) {
   const SSL *const ssl = hs->ssl;
   if (// ALPS requires TLS 1.3.
       hs->max_version < TLS1_3_VERSION ||
@@ -2972,8 +2957,18 @@ static bool ext_alps_add_clienthello(const SSL_HANDSHAKE *hs, CBB *out,
     return true;
   }
 
+  if (use_new_codepoint != hs->config->alps_use_new_codepoint) {
+    // Do nothing, we'll send the other codepoint.
+    return true;
+  }
+
+  uint16_t extension_type = TLSEXT_TYPE_application_settings_old;
+  if (hs->config->alps_use_new_codepoint) {
+    extension_type = TLSEXT_TYPE_application_settings;
+  }
+
   CBB contents, proto_list, proto;
-  if (!CBB_add_u16(out_compressible, TLSEXT_TYPE_application_settings) ||
+  if (!CBB_add_u16(out_compressible, extension_type) ||
       !CBB_add_u16_length_prefixed(out_compressible, &contents) ||
       !CBB_add_u16_length_prefixed(&contents, &proto_list)) {
     return false;
@@ -2990,8 +2985,24 @@ static bool ext_alps_add_clienthello(const SSL_HANDSHAKE *hs, CBB *out,
   return CBB_flush(out_compressible);
 }
 
-static bool ext_alps_parse_serverhello(SSL_HANDSHAKE *hs, uint8_t *out_alert,
-                                       CBS *contents) {
+static bool ext_alps_add_clienthello(const SSL_HANDSHAKE *hs, CBB *out,
+                                     CBB *out_compressible,
+                                     ssl_client_hello_type_t type) {
+  return ext_alps_add_clienthello_impl(hs, out, out_compressible, type,
+                                       /*use_new_codepoint=*/true);
+}
+
+static bool ext_alps_add_clienthello_old(const SSL_HANDSHAKE *hs, CBB *out,
+                                         CBB *out_compressible,
+                                         ssl_client_hello_type_t type) {
+  return ext_alps_add_clienthello_impl(hs, out, out_compressible, type,
+                                       /*use_new_codepoint=*/false);
+}
+
+static bool ext_alps_parse_serverhello_impl(SSL_HANDSHAKE *hs,
+                                            uint8_t *out_alert,
+                                            CBS *contents,
+                                            bool use_new_codepoint) {
   SSL *const ssl = hs->ssl;
   if (contents == nullptr) {
     return true;
@@ -3000,6 +3011,7 @@ static bool ext_alps_parse_serverhello(SSL_HANDSHAKE *hs, uint8_t *out_alert,
   assert(!ssl->s3->initial_handshake_complete);
   assert(!hs->config->alpn_client_proto_list.empty());
   assert(!hs->config->alps_configs.empty());
+  assert(use_new_codepoint == hs->config->alps_use_new_codepoint);
 
   // ALPS requires TLS 1.3.
   if (ssl_protocol_version(ssl) < TLS1_3_VERSION) {
@@ -3019,7 +3031,22 @@ static bool ext_alps_parse_serverhello(SSL_HANDSHAKE *hs, uint8_t *out_alert,
   return true;
 }
 
-static bool ext_alps_add_serverhello(SSL_HANDSHAKE *hs, CBB *out) {
+static bool ext_alps_parse_serverhello(SSL_HANDSHAKE *hs,
+                                       uint8_t *out_alert,
+                                       CBS *contents) {
+  return ext_alps_parse_serverhello_impl(hs, out_alert, contents,
+                                         /*use_new_codepoint=*/true);
+}
+
+static bool ext_alps_parse_serverhello_old(SSL_HANDSHAKE *hs,
+                                           uint8_t *out_alert,
+                                           CBS *contents) {
+  return ext_alps_parse_serverhello_impl(hs, out_alert, contents,
+                                         /*use_new_codepoint=*/false);
+}
+
+static bool ext_alps_add_serverhello_impl(SSL_HANDSHAKE *hs, CBB *out,
+                                          bool use_new_codepoint) {
   SSL *const ssl = hs->ssl;
   // If early data is accepted, we omit the ALPS extension. It is implicitly
   // carried over from the previous connection.
@@ -3029,8 +3056,18 @@ static bool ext_alps_add_serverhello(SSL_HANDSHAKE *hs, CBB *out) {
     return true;
   }
 
+   if (use_new_codepoint != hs->config->alps_use_new_codepoint) {
+    // Do nothing, we'll send the other codepoint.
+    return true;
+  }
+
+  uint16_t extension_type = TLSEXT_TYPE_application_settings_old;
+  if (hs->config->alps_use_new_codepoint) {
+    extension_type = TLSEXT_TYPE_application_settings;
+  }
+
   CBB contents;
-  if (!CBB_add_u16(out, TLSEXT_TYPE_application_settings) ||
+  if (!CBB_add_u16(out, extension_type) ||
       !CBB_add_u16_length_prefixed(out, &contents) ||
       !CBB_add_bytes(&contents,
                      hs->new_session->local_application_settings.data(),
@@ -3040,6 +3077,14 @@ static bool ext_alps_add_serverhello(SSL_HANDSHAKE *hs, CBB *out) {
   }
 
   return true;
+}
+
+static bool ext_alps_add_serverhello(SSL_HANDSHAKE *hs, CBB *out) {
+  return ext_alps_add_serverhello_impl(hs, out, /*use_new_codepoint=*/true);
+}
+
+static bool ext_alps_add_serverhello_old(SSL_HANDSHAKE *hs, CBB *out) {
+  return ext_alps_add_serverhello_impl(hs, out, /*use_new_codepoint=*/false);
 }
 
 bool ssl_negotiate_alps(SSL_HANDSHAKE *hs, uint8_t *out_alert,
@@ -3052,11 +3097,15 @@ bool ssl_negotiate_alps(SSL_HANDSHAKE *hs, uint8_t *out_alert,
   // If we negotiate ALPN over TLS 1.3, try to negotiate ALPS.
   CBS alps_contents;
   Span<const uint8_t> settings;
+  uint16_t extension_type = TLSEXT_TYPE_application_settings_old;
+  if (hs->config->alps_use_new_codepoint) {
+    extension_type = TLSEXT_TYPE_application_settings;
+  }
   if (ssl_protocol_version(ssl) >= TLS1_3_VERSION &&
       ssl_get_local_application_settings(hs, &settings,
                                          ssl->s3->alpn_selected) &&
       ssl_client_hello_get_extension(client_hello, &alps_contents,
-                                     TLSEXT_TYPE_application_settings)) {
+                                     extension_type)) {
     // Check if the client supports ALPS with the selected ALPN.
     bool found = false;
     CBS alps_list;
@@ -3267,6 +3316,21 @@ static const struct tls_extension kExtensions[] = {
     ignore_parse_clienthello,
     ext_alps_add_serverhello,
   },
+  {
+    TLSEXT_TYPE_application_settings_old,
+    ext_alps_add_clienthello_old,
+    ext_alps_parse_serverhello_old,
+    // ALPS is negotiated late in |ssl_negotiate_alpn|.
+    ignore_parse_clienthello,
+    ext_alps_add_serverhello_old,
+  },
+  {
+    TLSEXT_TYPE_certificate_authorities,
+    ext_certificate_authorities_add_clienthello,
+    forbid_parse_serverhello,
+    ext_certificate_authorities_parse_clienthello,
+    dont_add_serverhello,
+  },
 };
 
 #define kNumExtensions (sizeof(kExtensions) / sizeof(struct tls_extension))
@@ -3288,7 +3352,7 @@ bool ssl_setup_extension_permutation(SSL_HANDSHAKE *hs) {
   uint32_t seeds[kNumExtensions - 1];
   Array<uint8_t> permutation;
   if (!RAND_bytes(reinterpret_cast<uint8_t *>(seeds), sizeof(seeds)) ||
-      !permutation.Init(kNumExtensions)) {
+      !permutation.InitForOverwrite(kNumExtensions)) {
     return false;
   }
   for (size_t i = 0; i < kNumExtensions; i++) {
@@ -3767,6 +3831,7 @@ static bool ssl_check_clienthello_tlsext(SSL_HANDSHAKE *hs) {
       return true;
 
     default:
+      hs->should_ack_sni = ssl->s3->hostname != nullptr;
       return true;
   }
 }
@@ -3853,7 +3918,7 @@ static enum ssl_ticket_aead_result_t decrypt_ticket_with_cipher_ctx(
   if (ciphertext.size() >= INT_MAX) {
     return ssl_ticket_aead_ignore_ticket;
   }
-  if (!plaintext.Init(ciphertext.size())) {
+  if (!plaintext.InitForOverwrite(ciphertext.size())) {
     return ssl_ticket_aead_error;
   }
   int len1, len2;
@@ -3941,7 +4006,7 @@ static enum ssl_ticket_aead_result_t ssl_decrypt_ticket_with_method(
     SSL_HANDSHAKE *hs, Array<uint8_t> *out, bool *out_renew_ticket,
     Span<const uint8_t> ticket) {
   Array<uint8_t> plaintext;
-  if (!plaintext.Init(ticket.size())) {
+  if (!plaintext.InitForOverwrite(ticket.size())) {
     return ssl_ticket_aead_error;
   }
 
@@ -4050,9 +4115,8 @@ enum ssl_ticket_aead_result_t ssl_process_ticket(
   // Envoy's tests expect the session to have a session ID that matches the
   // placeholder used by the client. It's unclear whether this is a good idea,
   // but we maintain it for now.
-  SHA256(ticket.data(), ticket.size(), session->session_id);
-  // Other consumers may expect a non-empty session ID to indicate resumption.
-  session->session_id_length = SHA256_DIGEST_LENGTH;
+  session->session_id.ResizeForOverwrite(SHA256_DIGEST_LENGTH);
+  SHA256(ticket.data(), ticket.size(), session->session_id.data());
 
   *out_session = std::move(session);
   return ssl_ticket_aead_success;
@@ -4083,58 +4147,59 @@ bool tls1_get_legacy_signature_algorithm(uint16_t *out, const EVP_PKEY *pkey) {
   }
 }
 
-bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs, uint16_t *out) {
+bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs,
+                                     const SSL_CREDENTIAL *cred,
+                                     uint16_t *out) {
   SSL *const ssl = hs->ssl;
-  CERT *cert = hs->config->cert.get();
-  DC *dc = cert->dc.get();
+  if (!cred->UsesPrivateKey()) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_UNKNOWN_CERTIFICATE_TYPE);
+    return false;
+  }
 
   // Before TLS 1.2, the signature algorithm isn't negotiated as part of the
   // handshake.
-  if (ssl_protocol_version(ssl) < TLS1_2_VERSION) {
-    if (!tls1_get_legacy_signature_algorithm(out, hs->local_pubkey.get())) {
+  uint16_t version = ssl_protocol_version(ssl);
+  if (version < TLS1_2_VERSION) {
+    if (!tls1_get_legacy_signature_algorithm(out, cred->pubkey.get())) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_NO_COMMON_SIGNATURE_ALGORITHMS);
       return false;
     }
     return true;
   }
 
-  Span<const uint16_t> sigalgs = kSignSignatureAlgorithms;
-  if (ssl_signing_with_dc(hs)) {
-    sigalgs = MakeConstSpan(&dc->expected_cert_verify_algorithm, 1);
-  } else if (!cert->sigalgs.empty()) {
-    sigalgs = cert->sigalgs;
+  Span<const uint16_t> peer_sigalgs;
+  if (cred->type == SSLCredentialType::kDelegated) {
+    peer_sigalgs = hs->peer_delegated_credential_sigalgs;
+  } else {
+    peer_sigalgs = hs->peer_sigalgs;
+    if (peer_sigalgs.empty() && version == TLS1_2_VERSION) {
+      // If the client didn't specify any signature_algorithms extension, it is
+      // interpreted as SHA-1. See
+      // http://tools.ietf.org/html/rfc5246#section-7.4.1.4.1
+      static const uint16_t kTLS12Default[] = {SSL_SIGN_RSA_PKCS1_SHA1,
+                                               SSL_SIGN_ECDSA_SHA1};
+      peer_sigalgs = kTLS12Default;
+    }
   }
 
-  Span<const uint16_t> peer_sigalgs = tls1_get_peer_verify_algorithms(hs);
-
+  Span<const uint16_t> sigalgs = cred->sigalgs.empty()
+                                     ? MakeConstSpan(kSignSignatureAlgorithms)
+                                     : cred->sigalgs;
   for (uint16_t sigalg : sigalgs) {
-    if (!ssl_private_key_supports_signature_algorithm(hs, sigalg)) {
+    if (!ssl_pkey_supports_algorithm(ssl, cred->pubkey.get(), sigalg,
+                                     /*is_verify=*/false)) {
       continue;
     }
 
-    for (uint16_t peer_sigalg : peer_sigalgs) {
-      if (sigalg == peer_sigalg) {
-        *out = sigalg;
-        return true;
-      }
+    if (std::find(peer_sigalgs.begin(), peer_sigalgs.end(), sigalg) !=
+        peer_sigalgs.end()) {
+      *out = sigalg;
+      return true;
     }
   }
 
   OPENSSL_PUT_ERROR(SSL, SSL_R_NO_COMMON_SIGNATURE_ALGORITHMS);
   return false;
-}
-
-Span<const uint16_t> tls1_get_peer_verify_algorithms(const SSL_HANDSHAKE *hs) {
-  Span<const uint16_t> peer_sigalgs = hs->peer_sigalgs;
-  if (peer_sigalgs.empty() && ssl_protocol_version(hs->ssl) < TLS1_3_VERSION) {
-    // If the client didn't specify any signature_algorithms extension then
-    // we can assume that it supports SHA1. See
-    // http://tools.ietf.org/html/rfc5246#section-7.4.1.4.1
-    static const uint16_t kDefaultPeerAlgorithms[] = {SSL_SIGN_RSA_PKCS1_SHA1,
-                                                      SSL_SIGN_ECDSA_SHA1};
-    peer_sigalgs = kDefaultPeerAlgorithms;
-  }
-  return peer_sigalgs;
 }
 
 bool tls1_verify_channel_id(SSL_HANDSHAKE *hs, const SSLMessage &msg) {
@@ -4153,12 +4218,7 @@ bool tls1_verify_channel_id(SSL_HANDSHAKE *hs, const SSLMessage &msg) {
     return false;
   }
 
-  UniquePtr<EC_GROUP> p256(EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1));
-  if (!p256) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_P256_SUPPORT);
-    return false;
-  }
-
+  const EC_GROUP *p256 = EC_group_p256();
   UniquePtr<ECDSA_SIG> sig(ECDSA_SIG_new());
   UniquePtr<BIGNUM> x(BN_new()), y(BN_new());
   if (!sig || !x || !y) {
@@ -4174,11 +4234,11 @@ bool tls1_verify_channel_id(SSL_HANDSHAKE *hs, const SSLMessage &msg) {
   }
 
   UniquePtr<EC_KEY> key(EC_KEY_new());
-  UniquePtr<EC_POINT> point(EC_POINT_new(p256.get()));
+  UniquePtr<EC_POINT> point(EC_POINT_new(p256));
   if (!key || !point ||
-      !EC_POINT_set_affine_coordinates_GFp(p256.get(), point.get(), x.get(),
-                                           y.get(), nullptr) ||
-      !EC_KEY_set_group(key.get(), p256.get()) ||
+      !EC_POINT_set_affine_coordinates_GFp(p256, point.get(), x.get(), y.get(),
+                                           nullptr) ||
+      !EC_KEY_set_group(key.get(), p256) ||
       !EC_KEY_set_public_key(key.get(), point.get())) {
     return false;
   }
@@ -4267,12 +4327,12 @@ bool tls1_channel_id_hash(SSL_HANDSHAKE *hs, uint8_t *out, size_t *out_len) {
   if (ssl->session != NULL) {
     static const char kResumptionMagic[] = "Resumption";
     SHA256_Update(&ctx, kResumptionMagic, sizeof(kResumptionMagic));
-    if (ssl->session->original_handshake_hash_len == 0) {
+    if (ssl->session->original_handshake_hash.empty()) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
       return false;
     }
-    SHA256_Update(&ctx, ssl->session->original_handshake_hash,
-                  ssl->session->original_handshake_hash_len);
+    SHA256_Update(&ctx, ssl->session->original_handshake_hash.data(),
+                  ssl->session->original_handshake_hash.size());
   }
 
   uint8_t hs_hash[EVP_MAX_MD_SIZE];
@@ -4295,20 +4355,14 @@ bool tls1_record_handshake_hashes_for_channel_id(SSL_HANDSHAKE *hs) {
     return false;
   }
 
-  static_assert(
-      sizeof(hs->new_session->original_handshake_hash) == EVP_MAX_MD_SIZE,
-      "original_handshake_hash is too small");
-
   size_t digest_len;
-  if (!hs->transcript.GetHash(hs->new_session->original_handshake_hash,
+  hs->new_session->original_handshake_hash.ResizeForOverwrite(
+      hs->transcript.DigestLen());
+  if (!hs->transcript.GetHash(hs->new_session->original_handshake_hash.data(),
                               &digest_len)) {
     return false;
   }
-
-  static_assert(EVP_MAX_MD_SIZE <= 0xff,
-                "EVP_MAX_MD_SIZE does not fit in uint8_t");
-  hs->new_session->original_handshake_hash_len = (uint8_t)digest_len;
-
+  assert(digest_len == hs->new_session->original_handshake_hash.size());
   return true;
 }
 

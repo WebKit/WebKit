@@ -89,10 +89,9 @@ DeleteByStatus::DeleteByStatus(StubInfoSummary summary, StructureStubInfo& stubI
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-DeleteByStatus DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback(
-    const ConcurrentJSLocker&, CodeBlock* block, StructureStubInfo* stubInfo)
+DeleteByStatus DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker& locker, CodeBlock* block, StructureStubInfo* stubInfo)
 {
-    StubInfoSummary summary = StructureStubInfo::summary(block->vm(), stubInfo);
+    StubInfoSummary summary = StructureStubInfo::summary(locker, block->vm(), stubInfo);
     if (!isInlineable(summary))
         return DeleteByStatus(summary, *stubInfo);
 
@@ -103,10 +102,9 @@ DeleteByStatus DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback(
         return DeleteByStatus(NoInformation);
 
     case CacheType::Stub: {
-        PolymorphicAccess* list = stubInfo->m_stub.get();
-
-        for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
-            const AccessCase& access = list->at(listIndex);
+        auto list = stubInfo->listedAccessCases(locker);
+        for (unsigned listIndex = 0; listIndex < list.size(); ++listIndex) {
+            const AccessCase& access = *list.at(listIndex);
             ASSERT(!access.viaGlobalProxy());
 
             Structure* structure = access.structure();

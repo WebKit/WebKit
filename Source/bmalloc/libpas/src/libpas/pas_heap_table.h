@@ -43,7 +43,8 @@ PAS_API void pas_heap_table_try_allocate_index(pas_large_heap* heap);
 
 static inline bool pas_heap_table_has_index(pas_large_heap* heap)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_HEAP_INFRASTRUCTURE);
+
     if (heap->table_state == pas_heap_table_state_uninitialized)
         pas_heap_table_try_allocate_index(heap);
     switch (heap->table_state) {

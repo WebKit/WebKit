@@ -32,6 +32,8 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -39,7 +41,7 @@ class WebExtensionContext;
 
 class WebExtensionAlarm : public RefCounted<WebExtensionAlarm> {
     WTF_MAKE_NONCOPYABLE(WebExtensionAlarm);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebExtensionAlarm);
 
 public:
     template<typename... Args>
@@ -70,7 +72,8 @@ private:
     WebExtensionAlarmParameters m_parameters;
 
     Function<void(WebExtensionAlarm&)> m_handler;
-    std::unique_ptr<WebCore::Timer> m_timer;
+    std::unique_ptr<RunLoop::Timer> m_timer;
+    bool m_hasFiredInitialTimer { false };
 };
 
 } // namespace WebKit

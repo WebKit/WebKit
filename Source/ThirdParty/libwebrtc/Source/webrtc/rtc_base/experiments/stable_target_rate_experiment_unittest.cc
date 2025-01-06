@@ -10,46 +10,45 @@
 
 #include "rtc_base/experiments/stable_target_rate_experiment.h"
 
-#include "test/field_trial.h"
+#include "test/explicit_key_value_config.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
+using test::ExplicitKeyValueConfig;
+
 TEST(StableBweExperimentTest, Default) {
-  StableTargetRateExperiment config =
-      StableTargetRateExperiment::ParseFromFieldTrials();
+  ExplicitKeyValueConfig field_trials("");
+  StableTargetRateExperiment config(field_trials);
   EXPECT_FALSE(config.IsEnabled());
   EXPECT_EQ(config.GetVideoHysteresisFactor(), 1.2);
   EXPECT_EQ(config.GetScreenshareHysteresisFactor(), 1.35);
 }
 
 TEST(StableBweExperimentTest, EnabledNoHysteresis) {
-  webrtc::test::ScopedFieldTrials field_trials(
-      "WebRTC-StableTargetRate/enabled:true/");
+  ExplicitKeyValueConfig field_trials("WebRTC-StableTargetRate/enabled:true/");
 
-  StableTargetRateExperiment config =
-      StableTargetRateExperiment::ParseFromFieldTrials();
+  StableTargetRateExperiment config(field_trials);
   EXPECT_TRUE(config.IsEnabled());
   EXPECT_EQ(config.GetVideoHysteresisFactor(), 1.2);
   EXPECT_EQ(config.GetScreenshareHysteresisFactor(), 1.35);
 }
 
 TEST(StableBweExperimentTest, EnabledWithHysteresis) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  ExplicitKeyValueConfig field_trials(
       "WebRTC-StableTargetRate/"
       "enabled:true,"
       "video_hysteresis_factor:1.1,"
       "screenshare_hysteresis_factor:1.2/");
 
-  StableTargetRateExperiment config =
-      StableTargetRateExperiment::ParseFromFieldTrials();
+  StableTargetRateExperiment config(field_trials);
   EXPECT_TRUE(config.IsEnabled());
   EXPECT_EQ(config.GetVideoHysteresisFactor(), 1.1);
   EXPECT_EQ(config.GetScreenshareHysteresisFactor(), 1.2);
 }
 
 TEST(StableBweExperimentTest, HysteresisOverrideVideoRateHystersis) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  ExplicitKeyValueConfig field_trials(
       "WebRTC-StableTargetRate/"
       "enabled:true,"
       "video_hysteresis_factor:1.1,"
@@ -57,8 +56,7 @@ TEST(StableBweExperimentTest, HysteresisOverrideVideoRateHystersis) {
       "WebRTC-VideoRateControl/video_hysteresis:1.3,"
       "screenshare_hysteresis:1.4/");
 
-  StableTargetRateExperiment config =
-      StableTargetRateExperiment::ParseFromFieldTrials();
+  StableTargetRateExperiment config(field_trials);
   EXPECT_TRUE(config.IsEnabled());
   EXPECT_EQ(config.GetVideoHysteresisFactor(), 1.1);
   EXPECT_EQ(config.GetScreenshareHysteresisFactor(), 1.2);

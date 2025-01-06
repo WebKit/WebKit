@@ -33,11 +33,14 @@
 #include <IOKit/hid/IOHIDElement.h>
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/cf/TypeCastsCF.h>
 
 WTF_DECLARE_CF_TYPE_TRAIT(IOHIDElement);
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HIDDevice);
 
 static int getDevicePropertyAsInt(IOHIDDeviceRef device, CFStringRef key)
 {

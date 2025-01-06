@@ -26,31 +26,20 @@
 namespace WebCore {
 
 class HTMLSlotElement;
-
-enum class DetailsState : bool {
-    Open,
-    Closed,
-};
-
-struct DetailsToggleEventData {
-    DetailsState oldState;
-    DetailsState newState;
-};
+class ToggleEventTask;
 
 class HTMLDetailsElement final : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLDetailsElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLDetailsElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDetailsElement);
 public:
     static Ref<HTMLDetailsElement> create(const QualifiedName& tagName, Document&);
+    ~HTMLDetailsElement();
 
     void toggleOpen();
 
     bool isActiveSummary(const HTMLSummaryElement&) const;
 
-    void queueDetailsToggleEventTask(DetailsState oldState, DetailsState newState);
-
-    std::optional<DetailsToggleEventData> queuedToggleEventData() const { return m_queuedToggleEventData; }
-    void setQueuedToggleEventData(DetailsToggleEventData data) { m_queuedToggleEventData = data; }
-    void clearQueuedToggleEventData() { m_queuedToggleEventData = std::nullopt; }
+    void queueDetailsToggleEventTask(ToggleState oldState, ToggleState newState);
 
 private:
     HTMLDetailsElement(const QualifiedName&, Document&);
@@ -58,7 +47,6 @@ private:
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     Vector<RefPtr<HTMLDetailsElement>> otherElementsInNameGroup();
     void ensureDetailsExclusivityAfterMutation();
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
@@ -70,7 +58,7 @@ private:
     WeakPtr<HTMLSummaryElement, WeakPtrImplWithEventTargetData> m_defaultSummary;
     RefPtr<HTMLSlotElement> m_defaultSlot;
 
-    std::optional<DetailsToggleEventData> m_queuedToggleEventData;
+    RefPtr<ToggleEventTask> m_toggleEventTask;
 };
 
 } // namespace WebCore

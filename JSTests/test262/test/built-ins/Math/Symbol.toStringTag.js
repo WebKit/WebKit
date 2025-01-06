@@ -16,6 +16,8 @@ features: [Symbol.toStringTag]
 
 assert.sameValue(Math[Symbol.toStringTag], 'Math');
 
-verifyNotEnumerable(Math, Symbol.toStringTag);
-verifyNotWritable(Math, Symbol.toStringTag);
-verifyConfigurable(Math, Symbol.toStringTag);
+verifyProperty(Math, Symbol.toStringTag, {
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

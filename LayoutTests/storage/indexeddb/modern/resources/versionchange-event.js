@@ -7,6 +7,7 @@ description("This test: \
 -Closes the first and second connections \
 -Makes sure the versionchange transaction for the second connection starts successfully");
 
+shouldBeTrue("'IDBVersionChangeEvent' in self");
 indexedDBTest(prepareDatabase, openSuccess);
 
 
@@ -26,6 +27,7 @@ function openSuccess()
 var dbname;
 function prepareDatabase(e)
 {
+    shouldBeTrue("event instanceof IDBVersionChangeEvent");
     var database = event.target.result;
     dbname = database.name;
 

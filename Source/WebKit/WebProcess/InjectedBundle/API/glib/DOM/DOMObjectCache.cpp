@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 
@@ -80,7 +81,7 @@ static DOMObjectCacheFrameObserverMap& domObjectCacheFrameObservers()
 }
 
 class DOMObjectCacheFrameObserver final: public WebCore::FrameDestructionObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DOMObjectCacheFrameObserver);
 public:
     DOMObjectCacheFrameObserver(WebCore::LocalFrame& frame)
         : FrameDestructionObserver(&frame)
@@ -109,7 +110,7 @@ public:
 
 private:
     class DOMWindowObserver final : public WebCore::LocalDOMWindowObserver {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(DOMWindowObserver);
     public:
         DOMWindowObserver(WebCore::LocalDOMWindow& window, DOMObjectCacheFrameObserver& frameObserver)
             : m_window(window)

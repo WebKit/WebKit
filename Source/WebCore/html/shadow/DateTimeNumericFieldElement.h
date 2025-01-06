@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class DateTimeNumericFieldElement : public DateTimeFieldElement {
-    WTF_MAKE_ISO_ALLOCATED(DateTimeNumericFieldElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DateTimeNumericFieldElement);
 public:
     struct Range {
         Range(int minimum, int maximum)

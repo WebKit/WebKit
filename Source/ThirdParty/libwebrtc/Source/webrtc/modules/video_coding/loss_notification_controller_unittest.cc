@@ -13,12 +13,12 @@
 #include <stdint.h>
 
 #include <limits>
+#include <optional>
 #include <string>
 #include <tuple>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -138,7 +138,7 @@ class LossNotificationControllerBaseTest : public ::testing::Test,
   }
 
   void ExpectKeyFrameRequest() {
-    EXPECT_EQ(LastLossNotification(), absl::nullopt);
+    EXPECT_EQ(LastLossNotification(), std::nullopt);
     EXPECT_TRUE(LastKeyFrameRequest());
   }
 
@@ -188,9 +188,9 @@ class LossNotificationControllerBaseTest : public ::testing::Test,
     return result;
   }
 
-  absl::optional<LossNotification> LastLossNotification() {
-    const absl::optional<LossNotification> result = last_loss_notification_;
-    last_loss_notification_ = absl::nullopt;
+  std::optional<LossNotification> LastLossNotification() {
+    const std::optional<LossNotification> result = last_loss_notification_;
+    last_loss_notification_ = std::nullopt;
     return result;
   }
 
@@ -198,13 +198,13 @@ class LossNotificationControllerBaseTest : public ::testing::Test,
 
   bool key_frame_requested_;
 
-  absl::optional<LossNotification> last_loss_notification_;
+  std::optional<LossNotification> last_loss_notification_;
 
   // First packet of last frame. (Note that if a test skips the first packet
   // of a subsequent frame, OnAssembledFrame is not called, and so this is
   // note read. Therefore, it's not a problem if it is not cleared when
   // the frame changes.)
-  absl::optional<Packet> previous_first_packet_in_frame_;
+  std::optional<Packet> previous_first_packet_in_frame_;
 };
 
 class LossNotificationControllerTest

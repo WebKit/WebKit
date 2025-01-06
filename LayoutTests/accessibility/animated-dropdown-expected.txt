@@ -1,0 +1,47 @@
+This test ensures the accessibility tree is correct after an animated dropdown is opened via button press.
+
+First traversal:
+
+{#main AXRole: AXGroup}
+
+{AXRole: AXGroup}
+
+{#button-one AXRole: AXButton}
+
+{AXRole: AXGroup}
+
+{AXRole: AXButton}
+
+{AXRole: AXGroup}
+
+{AXRole: AXLink}
+
+{AXRole: AXStaticText AXValue: apple.com}
+
+Second traversal:
+
+PASS: secondTraversal.includes('This text begins as hidden') === true
+PASS: !!accessibilityController.accessibleElementById('button-one').parentElement() === true
+
+{#main AXRole: AXGroup}
+
+{#button-one AXRole: AXButton}
+
+{AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: This text begins as hidden}
+
+{AXRole: AXGroup}
+
+{AXRole: AXButton}
+
+{AXRole: AXGroup}
+
+{AXRole: AXLink}
+
+{AXRole: AXStaticText AXValue: apple.com}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+apple.com

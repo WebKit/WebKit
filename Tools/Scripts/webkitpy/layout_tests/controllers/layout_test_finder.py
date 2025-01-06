@@ -24,7 +24,6 @@ import fnmatch
 import itertools
 import json
 import re
-import sys
 import urllib
 from collections import OrderedDict
 
@@ -328,8 +327,7 @@ class LayoutTestFinder(object):
                     else:
                         non_test_files[current_layout_tests_path].add(entry.name)
         finally:
-            if sys.version_info >= (3, 6):
-                it.close()
+            it.close()
 
         for search_path in reversed(current_search_paths):
             if search_path is None or not self.fs.isdir(search_path):
@@ -342,8 +340,7 @@ class LayoutTestFinder(object):
                     if entry.is_file(follow_symlinks=False):
                         non_test_files[search_path].add(entry.name)
             finally:
-                if sys.version_info >= (3, 6):
-                    it.close()
+                it.close()
 
         dirs -= skipped_directories
         dirs -= self.w3c_support_dirs.get(path, set())
@@ -529,16 +526,10 @@ class LayoutTestFinder(object):
         query = "" if query is None else query
         fragment = "" if fragment is None else fragment
 
-        if sys.version_info > (3,):
-            query = urllib.parse.quote(query, safe=safe_query, encoding="utf-8")
-            fragment = urllib.parse.quote(
-                fragment, safe=safe_fragment, encoding="utf-8"
-            )
-        else:
-            query = urllib.quote(query.encode("utf-8"), safe=safe_query).decode("ascii")
-            fragment = urllib.quote(
-                fragment.encode("utf-8"), safe=safe_fragment
-            ).decode("ascii")
+        query = urllib.parse.quote(query, safe=safe_query, encoding="utf-8")
+        fragment = urllib.parse.quote(
+            fragment, safe=safe_fragment, encoding="utf-8"
+        )
 
         return "{}{}".format(query, fragment)
 

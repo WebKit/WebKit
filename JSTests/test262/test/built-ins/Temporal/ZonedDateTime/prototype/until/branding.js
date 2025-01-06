@@ -11,7 +11,7 @@ const until = Temporal.ZonedDateTime.prototype.until;
 
 assert.sameValue(typeof until, "function");
 
-const args = [new Temporal.ZonedDateTime(123456n, new Temporal.TimeZone("UTC"))];
+const args = [new Temporal.ZonedDateTime(123456n, "UTC")];
 
 assert.throws(TypeError, () => until.apply(undefined, args), "undefined");
 assert.throws(TypeError, () => until.apply(null, args), "null");

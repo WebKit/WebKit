@@ -35,7 +35,7 @@
 #include "AudioUtilities.h"
 #include "Reverb.h"
 #include <JavaScriptCore/TypedArrays.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 // Note about empirical tuning:
 // The maximum FFT size affects reverb performance and accuracy.
@@ -47,7 +47,7 @@ constexpr size_t MaxFFTSize = 32768;
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ConvolverNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ConvolverNode);
 
 static unsigned computeNumberOfOutputChannels(unsigned inputChannels, unsigned responseChannels)
 {
@@ -131,11 +131,11 @@ ExceptionOr<void> ConvolverNode::setBufferForBindings(RefPtr<AudioBuffer>&& buff
     if (!isChannelCountGood)
         return Exception { ExceptionCode::NotSupportedError, "Buffer should have 1, 2 or 4 channels"_s };
 
-    // Wrap the AudioBuffer by an AudioBus. It's an efficient pointer set and not a memcpy().
+    // Wrap the AudioBuffer by an AudioBus. It's an efficient pointer set and not a memcpySpan().
     // This memory is simply used in the Reverb constructor and no reference to it is kept for later use in that class.
     auto bufferBus = AudioBus::create(numberOfChannels, bufferLength, false);
     for (unsigned i = 0; i < numberOfChannels; ++i)
-        bufferBus->setChannelMemory(i, buffer->channelData(i)->data(), bufferLength);
+        bufferBus->setChannelMemory(i, buffer->channelData(i)->typedMutableSpan().first(bufferLength));
 
     bufferBus->setSampleRate(buffer->sampleRate());
 

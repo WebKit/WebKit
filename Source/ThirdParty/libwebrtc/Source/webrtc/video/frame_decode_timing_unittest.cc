@@ -12,7 +12,8 @@
 
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/units/time_delta.h"
 #include "modules/video_coding/timing/timing.h"
 #include "rtc_base/containers/flat_map.h"
@@ -98,7 +99,7 @@ TEST_F(FrameDecodeTimingTest, FastForwardsFrameTooFarInThePast) {
 
   EXPECT_THAT(frame_decode_scheduler_.OnFrameBufferUpdated(
                   90000, 180000, kMaxWaitForFrame, false),
-              Eq(absl::nullopt));
+              Eq(std::nullopt));
 }
 
 TEST_F(FrameDecodeTimingTest, NoFastForwardIfOnlyFrameToDecode) {

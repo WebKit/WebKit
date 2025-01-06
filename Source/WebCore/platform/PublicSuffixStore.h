@@ -42,6 +42,8 @@ public:
     WEBCORE_EXPORT PublicSuffix publicSuffix(const URL&) const;
     WEBCORE_EXPORT String topPrivatelyControlledDomain(StringView host) const;
     WEBCORE_EXPORT void clearHostTopPrivatelyControlledDomainCache();
+    WEBCORE_EXPORT String topPrivatelyControlledDomainWithoutPublicSuffix(StringView host) const;
+    WEBCORE_EXPORT String domainWithoutPublicSuffix(StringView domain) const;
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT void enablePublicSuffixCache();
@@ -56,7 +58,7 @@ private:
     String platformTopPrivatelyControlledDomain(StringView host) const;
 
     mutable Lock m_HostTopPrivatelyControlledDomainCacheLock;
-    mutable HashMap<String, String, ASCIICaseInsensitiveHash> m_hostTopPrivatelyControlledDomainCache WTF_GUARDED_BY_LOCK(m_HostTopPrivatelyControlledDomainCacheLock);
+    mutable UncheckedKeyHashMap<String, String, ASCIICaseInsensitiveHash> m_hostTopPrivatelyControlledDomainCache WTF_GUARDED_BY_LOCK(m_HostTopPrivatelyControlledDomainCacheLock);
 #if PLATFORM(COCOA)
     mutable Lock m_publicSuffixCacheLock;
     std::optional<HashSet<PublicSuffix>> m_publicSuffixCache WTF_GUARDED_BY_LOCK(m_publicSuffixCacheLock);

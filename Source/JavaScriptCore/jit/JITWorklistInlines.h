@@ -34,6 +34,9 @@ namespace JSC {
 template<typename Visitor>
 void JITWorklist::iterateCodeBlocksForGC(Visitor& visitor, VM& vm, const Function<void(CodeBlock*)>& func)
 {
+    if (!vm.numberOfActiveJITPlans())
+        return;
+
     Locker locker { *m_lock };
     for (auto& entry : m_plans) {
         if (entry.value->vm() != &vm)

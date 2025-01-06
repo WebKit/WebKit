@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -19,6 +19,8 @@
 #include "aom_dsp/noise_model.h"
 #include "aom_dsp/noise_util.h"
 #include "aom_mem/aom_mem.h"
+#include "aom_ports/mem.h"
+#include "aom_scale/yv12config.h"
 
 #define kLowPolyNumParams 3
 
@@ -44,7 +46,7 @@ static const int kMaxLag = 4;
 GET_BLOCK_MEAN(uint8_t, lowbd)
 GET_BLOCK_MEAN(uint16_t, highbd)
 
-static INLINE double get_block_mean(const uint8_t *data, int w, int h,
+static inline double get_block_mean(const uint8_t *data, int w, int h,
                                     int stride, int x_o, int y_o,
                                     int block_size, int use_highbd) {
   if (use_highbd)
@@ -78,7 +80,7 @@ static INLINE double get_block_mean(const uint8_t *data, int w, int h,
 GET_NOISE_VAR(uint8_t, lowbd)
 GET_NOISE_VAR(uint16_t, highbd)
 
-static INLINE double get_noise_var(const uint8_t *data, const uint8_t *denoised,
+static inline double get_noise_var(const uint8_t *data, const uint8_t *denoised,
                                    int w, int h, int stride, int x_o, int y_o,
                                    int block_size_x, int block_size_y,
                                    int use_highbd) {
@@ -1555,7 +1557,7 @@ void aom_denoise_and_model_free(struct aom_denoise_and_model_t *ctx) {
 }
 
 static int denoise_and_model_realloc_if_necessary(
-    struct aom_denoise_and_model_t *ctx, YV12_BUFFER_CONFIG *sd) {
+    struct aom_denoise_and_model_t *ctx, const YV12_BUFFER_CONFIG *sd) {
   if (ctx->width == sd->y_width && ctx->height == sd->y_height &&
       ctx->y_stride == sd->y_stride && ctx->uv_stride == sd->uv_stride)
     return 1;
@@ -1624,7 +1626,7 @@ static int denoise_and_model_realloc_if_necessary(
 // TODO(aomedia:3151): Handle a monochrome image (sd->u_buffer and sd->v_buffer
 // are null pointers) correctly.
 int aom_denoise_and_model_run(struct aom_denoise_and_model_t *ctx,
-                              YV12_BUFFER_CONFIG *sd,
+                              const YV12_BUFFER_CONFIG *sd,
                               aom_film_grain_t *film_grain, int apply_denoise) {
   const int block_size = ctx->block_size;
   const int use_highbd = (sd->flags & YV12_FLAG_HIGHBITDEPTH) != 0;

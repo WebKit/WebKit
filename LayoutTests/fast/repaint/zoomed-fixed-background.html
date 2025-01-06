@@ -17,8 +17,10 @@
         }
     </style>
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
         function logRepaints() {
             if (!window.internals)
@@ -28,14 +30,17 @@
             window.internals.stopTrackingRepaints();
         }
 
-        function doTest()
+        async function doTest()
         {
-            if (window.eventSender)
-                eventSender.scalePageBy(2, 0, 0);
+            if (window.testRunner)
+                await testRunner.setPageScaleFactor(2, 0, 0);
 
             window.internals.startTrackingRepaints();
             window.scrollTo(0, 200);
             logRepaints();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
         
         window.addEventListener('load', doTest, false);

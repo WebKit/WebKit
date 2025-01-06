@@ -15,10 +15,14 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/pointerlock/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/pointerlock/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/pointerlock/constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerlock/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/pointerlock/mouse_buttons_back_forward.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerlock/movementX_Y_basic.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerlock/pointerlock_promise.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerlock/pointerlock_remove_target.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerlock/pointerlock_remove_target_on_mouseup.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerlock/pointerlock_shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerlock/pointerlock_unadjustedMovement.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerlock/pointerlock_without_gesture.html

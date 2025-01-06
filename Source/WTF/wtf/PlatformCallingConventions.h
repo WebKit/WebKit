@@ -39,9 +39,7 @@
 #define SYSV_ABI
 #endif
 
-#if CPU(X86) && COMPILER(MSVC)
-#define JSC_HOST_CALL_ATTRIBUTES __fastcall
-#elif CPU(X86)
+#if CPU(X86)
 #define JSC_HOST_CALL_ATTRIBUTES __attribute__ ((fastcall))
 #else
 #define JSC_HOST_CALL_ATTRIBUTES SYSV_ABI
@@ -66,21 +64,15 @@
 #ifndef CDECL
 #if !OS(WINDOWS)
 #define CDECL
-#elif COMPILER(MSVC)
-#define CDECL __cdecl
 #else
-#define CDECL __attribute__ ((__cdecl))
+#define CDECL __attribute__ ((cdecl))
 #endif
 #endif
 
 #if CPU(X86)
 #define WTF_COMPILER_SUPPORTS_FASTCALL_CALLING_CONVENTION 1
 #ifndef FASTCALL
-#if COMPILER(MSVC)
-#define FASTCALL __fastcall
-#else
 #define FASTCALL  __attribute__ ((fastcall))
-#endif
 #endif
 #else
 #define WTF_COMPILER_SUPPORTS_FASTCALL_CALLING_CONVENTION 0

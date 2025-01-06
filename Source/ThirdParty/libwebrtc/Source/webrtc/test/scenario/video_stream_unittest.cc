@@ -248,7 +248,7 @@ TEST(VideoStreamTest, ResolutionAdaptsToAvailableBandwidth) {
   num_qvga_frames_ = 0;
   num_vga_frames_ = 0;
 
-  s.RunFor(TimeDelta::Seconds(40));
+  s.RunFor(TimeDelta::Seconds(70));
   EXPECT_GT(num_qvga_frames_, 0u);
   EXPECT_GT(num_vga_frames_, 0u);
 }

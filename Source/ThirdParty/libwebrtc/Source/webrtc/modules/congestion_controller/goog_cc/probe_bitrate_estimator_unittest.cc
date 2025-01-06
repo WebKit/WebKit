@@ -13,8 +13,8 @@
 #include <stddef.h>
 
 #include <cstdint>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
@@ -55,7 +55,7 @@ class TestProbeBitrateEstimator : public ::testing::Test {
   }
 
  protected:
-  absl::optional<DataRate> measured_data_rate_;
+  std::optional<DataRate> measured_data_rate_;
   ProbeBitrateEstimator probe_bitrate_estimator_;
 };
 

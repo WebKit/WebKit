@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -41,7 +41,7 @@
  * \param[in,out]    v          An length-16 array of int32 serves as the
  *                              value.
  */
-static AOM_INLINE void av1_sort_fi32_16(float k[], int32_t v[]) {
+static inline void av1_sort_fi32_16(float k[], int32_t v[]) {
   SWAP(0, 1);
   SWAP(2, 3);
   SWAP(4, 5);
@@ -115,7 +115,7 @@ static AOM_INLINE void av1_sort_fi32_16(float k[], int32_t v[]) {
  * \param[in,out]    k          An length-8 array of float serves as the keys.
  * \param[in,out]    v          An length-8 array of int32 serves as the values.
  */
-static AOM_INLINE void av1_sort_fi32_8(float k[], int32_t v[]) {
+static inline void av1_sort_fi32_8(float k[], int32_t v[]) {
   SWAP(0, 1);
   SWAP(2, 3);
   SWAP(4, 5);

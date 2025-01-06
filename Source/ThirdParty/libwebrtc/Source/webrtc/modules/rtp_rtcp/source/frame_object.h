@@ -11,11 +11,13 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_FRAME_OBJECT_H_
 #define MODULES_RTP_RTCP_SOURCE_FRAME_OBJECT_H_
 
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
+#include "absl/types/variant.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/video_frame_metadata.h"
+#include "common_video/frame_instrumentation_data.h"
 
 namespace webrtc {
 
@@ -35,7 +37,10 @@ class RtpFrameObject : public EncodedFrame {
                  VideoRotation rotation,
                  VideoContentType content_type,
                  const RTPVideoHeader& video_header,
-                 const absl::optional<webrtc::ColorSpace>& color_space,
+                 const std::optional<webrtc::ColorSpace>& color_space,
+                 const std::optional<absl::variant<FrameInstrumentationSyncData,
+                                                   FrameInstrumentationData>>&
+                     frame_instrumentation_data,
                  RtpPacketInfos packet_infos,
                  rtc::scoped_refptr<EncodedImageBuffer> image_buffer);
 

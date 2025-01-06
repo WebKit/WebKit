@@ -357,7 +357,7 @@ void ResourceAdaptationProcessor::UpdateResourceLimitations(
 }
 
 void ResourceAdaptationProcessor::OnVideoSourceRestrictionsUpdated(
-    VideoSourceRestrictions restrictions,
+    VideoSourceRestrictions /* restrictions */,
     const VideoAdaptationCounters& adaptation_counters,
     rtc::scoped_refptr<Resource> reason,
     const VideoSourceRestrictions& unfiltered_restrictions) {

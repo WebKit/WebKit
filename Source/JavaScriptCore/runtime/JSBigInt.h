@@ -37,6 +37,8 @@
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class Int32BigIntImpl;
@@ -80,17 +82,17 @@ public:
 
     static JSBigInt* createFrom(JSGlobalObject*, VM&, int32_t value);
 
-    static size_t offsetOfLength()
+    static constexpr size_t offsetOfLength()
     {
         return OBJECT_OFFSETOF(JSBigInt, m_length);
     }
 
-    static size_t offsetOfSign()
+    static constexpr size_t offsetOfSign()
     {
         return OBJECT_OFFSETOF(JSBigInt, m_sign);
     }
 
-    inline static size_t offsetOfData()
+    static constexpr size_t offsetOfData()
     {
         return OBJECT_OFFSETOF(JSBigInt, m_data);
     }
@@ -493,6 +495,12 @@ public:
 
     static std::optional<double> tryExtractDouble(JSValue);
 
+    inline bool isZero() const
+    {
+        ASSERT(length() || !sign());
+        return !length();
+    }
+
 private:
     JSBigInt(VM&, Structure*, Digit*, unsigned length);
 
@@ -591,12 +599,6 @@ private:
 
     static String toStringBasePowerOfTwo(VM&, JSGlobalObject*, JSBigInt*, unsigned radix);
     static String toStringGeneric(VM&, JSGlobalObject*, JSBigInt*, unsigned radix);
-
-    inline bool isZero() const
-    {
-        ASSERT(length() || !sign());
-        return length() == 0;
-    }
 
     template <typename CharType>
     static JSValue parseInt(JSGlobalObject*, std::span<const CharType> data, ErrorParseMode);
@@ -739,3 +741,5 @@ ALWAYS_INLINE std::optional<double> JSBigInt::tryExtractDouble(JSValue value)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

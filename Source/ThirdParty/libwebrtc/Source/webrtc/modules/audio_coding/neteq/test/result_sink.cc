@@ -13,19 +13,18 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "rtc_base/ignore_wundef.h"
 #include "rtc_base/message_digest.h"
 #include "rtc_base/string_encode.h"
 #include "test/gtest.h"
 
 #ifdef WEBRTC_NETEQ_UNITTEST_BITEXACT
-RTC_PUSH_IGNORING_WUNDEF()
+
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/modules/audio_coding/neteq/neteq_unittest.pb.h"
 #else
 #include "modules/audio_coding/neteq/neteq_unittest.pb.h"
 #endif
-RTC_POP_IGNORING_WUNDEF()
+
 #endif
 
 namespace webrtc {

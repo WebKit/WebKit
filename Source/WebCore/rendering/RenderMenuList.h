@@ -40,13 +40,19 @@ class HTMLSelectElement;
 class RenderText;
 
 class RenderMenuList final : public RenderFlexibleBox, private PopupMenuClient {
-    WTF_MAKE_ISO_ALLOCATED(RenderMenuList);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMenuList);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMenuList);
 public:
     RenderMenuList(HTMLSelectElement&, RenderStyle&&);
     virtual ~RenderMenuList();
 
     HTMLSelectElement& selectElement() const;
+
+    // CheckedPtr interface.
+    uint32_t checkedPtrCount() const final { return RenderFlexibleBox::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return RenderFlexibleBox::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { RenderFlexibleBox::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { RenderFlexibleBox::decrementCheckedPtrCount(); }
 
 #if !PLATFORM(IOS_FAMILY)
     bool popupIsVisible() const { return m_popupIsVisible; }

@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 #import "WebPushDaemonMain.h"
 
@@ -39,11 +39,21 @@
 #import <WebCore/LogInitialization.h>
 #import <getopt.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
+#import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <wtf/LogInitialization.h>
 #import <wtf/MainThread.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/WTFProcess.h>
 #import <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/text/MakeString.h>
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPushDaemonMainAdditions.mm>)
+#import <WebKitAdditions/WebPushDaemonMainAdditions.mm>
+#endif
+
+#if !defined(WEB_PUSH_DAEMON_MAIN_ADDITIONS)
+#define WEB_PUSH_DAEMON_MAIN_ADDITIONS
+#endif
 
 using WebKit::Daemon::EncodedMessage;
 using WebPushD::WebPushDaemon;
@@ -109,13 +119,24 @@ int WebPushDaemonMain(int argc, char** argv)
 {
     @autoreleasepool {
         WTF::initializeMainThread();
-        
+
         auto transaction = adoptOSObject(os_transaction_create("com.apple.webkit.webpushd.push-service-main"));
+        auto peerEntitlementName = entitlementName;
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
         _CFPrefsSetDirectModeEnabled(YES);
 #endif
         applySandbox();
+
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+        if (!_set_user_dir_suffix("com.apple.webkit.webpushd")) {
+            auto error = errno;
+            auto errorMessage = strerror(error);
+            os_log_error(OS_LOG_DEFAULT, "Failed to set temp dir: %{public}s (%d)", errorMessage, error);
+            exit(1);
+        }
+        (void)NSTemporaryDirectory();
+#endif
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
         WTF::logChannels().initializeLogChannelsIfNecessary();
@@ -152,9 +173,9 @@ int WebPushDaemonMain(int argc, char** argv)
             }
         }
 
-        WebKit::startListeningForMachServiceConnections(machServiceName, entitlementName, connectionAdded, connectionRemoved, connectionEventHandler);
+        WEB_PUSH_DAEMON_MAIN_ADDITIONS;
 
-        ::WebPushD::WebPushDaemon::singleton().setMachServiceName(String::fromUTF8(machServiceName));
+        WebKit::startListeningForMachServiceConnections(machServiceName, peerEntitlementName, connectionAdded, connectionRemoved, connectionEventHandler);
 
         if (useMockPushService)
             ::WebPushD::WebPushDaemon::singleton().startMockPushService();
@@ -167,7 +188,9 @@ int WebPushDaemonMain(int argc, char** argv)
             String pushDatabasePath = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebPush"_s, "PushDatabase.db"_s });
 #endif
 
-            ::WebPushD::WebPushDaemon::singleton().startPushService(String::fromLatin1(incomingPushServiceName), pushDatabasePath);
+            String webClipCachePath = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebPush"_s, "WebClipCache.plist"_s });
+
+            ::WebPushD::WebPushDaemon::singleton().startPushService(String::fromLatin1(incomingPushServiceName), pushDatabasePath, webClipCachePath);
         }
     }
     CFRunLoopRun();
@@ -176,5 +199,5 @@ int WebPushDaemonMain(int argc, char** argv)
 
 } // namespace WebKit
 
-#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(WEB_PUSH_NOTIFICATIONS)
 

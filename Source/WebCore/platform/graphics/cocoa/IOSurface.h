@@ -31,11 +31,8 @@
 #include "IntSize.h"
 #include "ProcessIdentity.h"
 #include <CoreGraphics/CoreGraphics.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
-
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-#define HAVE_IOSURFACE_RGB10 1
-#endif
 
 namespace WTF {
 class MachSendRight;
@@ -46,7 +43,6 @@ namespace WebCore {
 
 class IOSurfacePool;
 
-enum class PixelFormat : uint8_t;
 enum class RenderingPurpose : uint8_t;
 enum class SetNonVolatileResult : uint8_t;
 
@@ -54,7 +50,7 @@ using IOSurfaceSeed = uint32_t;
 using PlatformDisplayID = uint32_t;
 
 class IOSurface final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IOSurface, WEBCORE_EXPORT);
 public:
     enum class Name : uint8_t {
         Default,
@@ -69,6 +65,7 @@ public:
         Snapshot,
         ShareableSnapshot,
         ShareableLocalSnapshot,
+        WebGPU,
     };
 
     enum class Format {
@@ -81,9 +78,10 @@ public:
 #endif
         RGBA, // NOLINT
         RGBX, // NOLINT
+#if HAVE(HDR_SUPPORT)
+        RGBA16F,
+#endif
     };
-
-    WEBCORE_EXPORT static IOSurface::Format formatForPixelFormat(WebCore::PixelFormat);
 
     enum class AccessMode : uint32_t {
         ReadWrite = 0,

@@ -34,9 +34,11 @@ namespace WebKit {
 
 #if !PLATFORM(IOS_FAMILY)
 
-WebTouchEvent::WebTouchEvent(WebEvent&& event, Vector<WebPlatformTouchPoint>&& touchPoints)
+WebTouchEvent::WebTouchEvent(WebEvent&& event, Vector<WebPlatformTouchPoint>&& touchPoints, Vector<WebTouchEvent>&& coalescedEvents, Vector<WebTouchEvent>&& predictedEvents)
     : WebEvent(WTFMove(event))
     , m_touchPoints(WTFMove(touchPoints))
+    , m_coalescedEvents(WTFMove(coalescedEvents))
+    , m_predictedEvents(WTFMove(predictedEvents))
 {
     ASSERT(isTouchEventType(type()));
 }

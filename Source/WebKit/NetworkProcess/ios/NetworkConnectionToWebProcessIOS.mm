@@ -40,7 +40,7 @@ namespace WebKit {
 WebPaymentCoordinatorProxy& NetworkConnectionToWebProcess::paymentCoordinator()
 {
     if (!m_paymentCoordinator)
-        m_paymentCoordinator = makeUnique<WebPaymentCoordinatorProxy>(*this);
+        m_paymentCoordinator = WebPaymentCoordinatorProxy::create(*this);
     return *m_paymentCoordinator;
 }
 
@@ -64,6 +64,16 @@ void NetworkConnectionToWebProcess::getWindowSceneAndBundleIdentifierForPaymentP
 void NetworkConnectionToWebProcess::getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
 {
     networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetPaymentCoordinatorEmbeddingUserAgent { webPageProxyIdentifier }, WTFMove(completionHandler));
+}
+
+CocoaWindow *NetworkConnectionToWebProcess::paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const
+{
+    return nil;
+}
+
+std::optional<SharedPreferencesForWebProcess> NetworkConnectionToWebProcess::sharedPreferencesForWebPaymentMessages() const
+{
+    return m_sharedPreferencesForWebProcess;
 }
 
 const String& NetworkConnectionToWebProcess::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
@@ -94,9 +104,9 @@ const String& NetworkConnectionToWebProcess::paymentCoordinatorSourceApplication
     return emptyString();
 }
 
-std::unique_ptr<PaymentAuthorizationPresenter> NetworkConnectionToWebProcess::paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy& coordinator, PKPaymentRequest *request)
+Ref<PaymentAuthorizationPresenter> NetworkConnectionToWebProcess::paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy& coordinator, PKPaymentRequest *request)
 {
-    return makeUnique<PaymentAuthorizationController>(coordinator, request);
+    return PaymentAuthorizationController::create(coordinator, request);
 }
 
 void NetworkConnectionToWebProcess::paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&)

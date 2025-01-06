@@ -23,16 +23,16 @@ function hashChanged()
     alert("Hash changed to " + documentURLHash() + " which is interesting because we shouldn't get a hashchange event in this test.");
 }
 
-function loaded()
+async function loaded()
 {
     if (sessionStorage.in_document_with_fragment_url_4) {
         alert("First load complete.  URL's current hash is " + documentURLHash());
         history.replaceState(null, null, "#foo");
         alert("After replaceState, the URL's current hash is " + documentURLHash());
         var rect = document.getElementById("clickanchor").getBoundingClientRect();
-        eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     } else {
         alert("Second load complete.  URL's current hash is " + documentURLHash());
         if (window.testRunner)

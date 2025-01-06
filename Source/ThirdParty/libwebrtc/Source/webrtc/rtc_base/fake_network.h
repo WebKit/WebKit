@@ -36,7 +36,7 @@ class FakeNetworkManager : public NetworkManagerBase {
   struct Iface {
     SocketAddress socket_address;
     AdapterType adapter_type;
-    absl::optional<AdapterType> underlying_vpn_adapter_type;
+    std::optional<AdapterType> underlying_vpn_adapter_type;
   };
   typedef std::vector<Iface> IfaceList;
 
@@ -53,7 +53,7 @@ class FakeNetworkManager : public NetworkManagerBase {
       const SocketAddress& iface,
       absl::string_view if_name,
       AdapterType type,
-      absl::optional<AdapterType> underlying_vpn_adapter_type = absl::nullopt) {
+      std::optional<AdapterType> underlying_vpn_adapter_type = std::nullopt) {
     SocketAddress address(if_name, 0);
     address.SetResolvedIP(iface.ipaddr());
     ifaces_.push_back({address, type, underlying_vpn_adapter_type});

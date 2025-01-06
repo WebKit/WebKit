@@ -67,14 +67,13 @@ ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector
     if (status)
         return Exception { ExceptionCode::OperationError };
 
-    uint8_t* p = head.data() + bytesWritten;
-    status = CCCryptorFinal(cryptor, p, head.end() - p, &bytesWritten);
-    p += bytesWritten;
+    auto p = head.mutableSpan().subspan(bytesWritten);
+    status = CCCryptorFinal(cryptor, p.data(), p.size(), &bytesWritten);
+    skip(p, bytesWritten);
     if (status)
         return Exception { ExceptionCode::OperationError };
 
-    ASSERT_WITH_SECURITY_IMPLICATION(p <= head.end());
-    head.shrink(p - head.begin());
+    head.shrink(head.size() - p.size());
 
     CCCryptorRelease(cryptor);
 
@@ -91,18 +90,18 @@ ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector
     size_t tailSize = data.size() - headSize;
     Vector<uint8_t> tail(CCCryptorGetOutputLength(cryptor, tailSize, true));
 
-    status = CCCryptorUpdate(cryptor, data.data() + headSize, tailSize, tail.data(), tail.size(), &bytesWritten);
+    auto dataAfterHeader = data.subspan(headSize);
+    status = CCCryptorUpdate(cryptor, dataAfterHeader.data(), dataAfterHeader.size(), tail.data(), tail.size(), &bytesWritten);
     if (status)
         return Exception { ExceptionCode::OperationError };
 
-    p = tail.data() + bytesWritten;
-    status = CCCryptorFinal(cryptor, p, tail.end() - p, &bytesWritten);
-    p += bytesWritten;
+    p = tail.mutableSpan().subspan(bytesWritten);
+    status = CCCryptorFinal(cryptor, p.data(), p.size(), &bytesWritten);
+    skip(p, bytesWritten);
     if (status)
         return Exception { ExceptionCode::OperationError };
 
-    ASSERT_WITH_SECURITY_IMPLICATION(p <= tail.end());
-    tail.shrink(p - tail.begin());
+    tail.shrink(tail.size() - p.size());
 
     CCCryptorRelease(cryptor);
 

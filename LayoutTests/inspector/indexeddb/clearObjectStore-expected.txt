@@ -4,6 +4,7 @@ CONSOLE MESSAGE: Created Database 'EmptyDatabase'
 == Running test suite: IndexedDB.clearObjectStore
 -- Running test case: ClearDatabases
 -- Running test case: CreateDatabaseAndClearObjectStore
+PASS: Database should have 3 object stores.
 PASS: 'Empty' object store should always be empty.
 PASS: 'Reviewers' object store should start with 4 entries.
 PASS: 'Stats' object store should start with 4 entries.

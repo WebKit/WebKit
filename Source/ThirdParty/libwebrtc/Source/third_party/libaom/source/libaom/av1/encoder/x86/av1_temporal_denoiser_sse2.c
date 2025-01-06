@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,7 +20,7 @@
 #include "av1/encoder/av1_temporal_denoiser.h"
 
 // Compute the sum of all pixel differences of this MB.
-static INLINE int sum_diff_16x1(__m128i acc_diff) {
+static inline int sum_diff_16x1(__m128i acc_diff) {
   const __m128i k_1 = _mm_set1_epi16(1);
   const __m128i acc_diff_lo =
       _mm_srai_epi16(_mm_unpacklo_epi8(acc_diff, acc_diff), 8);
@@ -36,7 +36,7 @@ static INLINE int sum_diff_16x1(__m128i acc_diff) {
 }
 
 // Denoise a 16x1 vector.
-static INLINE __m128i av1_denoiser_16x1_sse2(
+static inline __m128i av1_denoiser_16x1_sse2(
     const uint8_t *sig, const uint8_t *mc_running_avg_y, uint8_t *running_avg_y,
     const __m128i *k_0, const __m128i *k_4, const __m128i *k_8,
     const __m128i *k_16, const __m128i *l3, const __m128i *l32,
@@ -87,7 +87,7 @@ static INLINE __m128i av1_denoiser_16x1_sse2(
 }
 
 // Denoise a 16x1 vector with a weaker filter.
-static INLINE __m128i av1_denoiser_adj_16x1_sse2(
+static inline __m128i av1_denoiser_adj_16x1_sse2(
     const uint8_t *sig, const uint8_t *mc_running_avg_y, uint8_t *running_avg_y,
     const __m128i k_0, const __m128i k_delta, __m128i acc_diff) {
   __m128i v_running_avg_y = _mm_loadu_si128((__m128i *)(&running_avg_y[0]));

@@ -29,34 +29,34 @@
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPITabs {
 
-    [RaisesException, NeedsPage, ImplementedAs=createTab] void create([NSDictionary] any properties, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier, ImplementedAs=createTab] void create([NSDictionary] any properties, [Optional, CallbackHandler] function callback);
 
-    [RaisesException, NeedsPage] void query([NSDictionary] any info, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void query([NSDictionary] any info, [Optional, CallbackHandler] function callback);
 
     [RaisesException] void get(double tabID, [Optional, CallbackHandler] function callback);
-    [NeedsPage] void getCurrent([Optional, CallbackHandler] function callback);
-    [RaisesException, Dynamic, NeedsPage] void getSelected([Optional] double windowID, [Optional, CallbackHandler] function callback);
+    [NeedsPageIdentifier] void getCurrent([Optional, CallbackHandler] function callback);
+    [RaisesException, Dynamic, NeedsPageIdentifier] void getSelected([Optional] double windowID, [Optional, CallbackHandler] function callback);
 
     [RaisesException] void duplicate(double tabID, [Optional, NSDictionary] any properties, [Optional, CallbackHandler] function callback);
-    [RaisesException, NeedsPage] void update([Optional] double tabID, [NSDictionary] any properties, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void update([Optional] double tabID, [NSDictionary] any properties, [Optional, CallbackHandler] function callback);
     [RaisesException] void remove([NSObject] any tabIDs, [Optional, CallbackHandler] function callback);
 
-    [RaisesException, NeedsPage] void reload([Optional] double tabID, [Optional, NSDictionary] any properties, [Optional, CallbackHandler] function callback);
-    [RaisesException, NeedsPage] void goBack([Optional] double tabID, [Optional, CallbackHandler] function callback);
-    [RaisesException, NeedsPage] void goForward([Optional] double tabID, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void reload([Optional] double tabID, [Optional, NSDictionary] any properties, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void goBack([Optional] double tabID, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void goForward([Optional] double tabID, [Optional, CallbackHandler] function callback);
 
-    [RaisesException, NeedsPage] void getZoom([Optional] double tabID, [Optional, CallbackHandler] function callback);
-    [RaisesException, NeedsPage] void setZoom([Optional] double tabID, double zoomFactor, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void getZoom([Optional] double tabID, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void setZoom([Optional] double tabID, double zoomFactor, [Optional, CallbackHandler] function callback);
 
-    [RaisesException, NeedsPage] void detectLanguage([Optional] double tabID, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void detectLanguage([Optional] double tabID, [Optional, CallbackHandler] function callback);
 
-    [RaisesException, NeedsPage] void toggleReaderMode([Optional] double tabID, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void toggleReaderMode([Optional] double tabID, [Optional, CallbackHandler] function callback);
 
-    [RaisesException, NeedsPage] void captureVisibleTab([Optional] double windowID, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void captureVisibleTab([Optional] double windowID, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
 
-    [RaisesException, Dynamic, NeedsPage] void executeScript([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);
-    [RaisesException, Dynamic, NeedsPage] void insertCSS([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);
-    [RaisesException, Dynamic, NeedsPage] void removeCSS([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);
+    [RaisesException, Dynamic, NeedsPageIdentifier] void executeScript([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);
+    [RaisesException, Dynamic, NeedsPageIdentifier] void insertCSS([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);
+    [RaisesException, Dynamic, NeedsPageIdentifier] void removeCSS([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);
 
     [ProcessArgumentsLeftToRight, RaisesException, NeedsFrame] void sendMessage(double tabID, [Serialization=JSON] any message, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
     [RaisesException, NeedsFrame, NeedsScriptContext] WebExtensionAPIPort connect(double tabID, [Optional, NSDictionary] any options);

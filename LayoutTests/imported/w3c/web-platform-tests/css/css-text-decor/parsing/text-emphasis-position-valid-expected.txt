@@ -1,0 +1,7 @@
+
+FAIL e.style['text-emphasis-position'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['text-emphasis-position'] = "over left" should set the property value
+FAIL e.style['text-emphasis-position'] = "right under" should set the property value assert_equals: serialization should be canonical expected "under" but got "under right"
+PASS e.style['text-emphasis-position'] = "over" should set the property value
+PASS e.style['text-emphasis-position'] = "under" should set the property value
+

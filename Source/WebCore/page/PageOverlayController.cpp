@@ -37,10 +37,13 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "TiledBacking.h"
+#include <wtf/TZoneMallocInlines.h>
 
 // FIXME: Someone needs to call didChangeSettings() if we want dynamic updates of layer border/repaint counter settings.
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageOverlayController);
 
 PageOverlayController::PageOverlayController(Page& page)
     :  m_page(page)
@@ -72,7 +75,7 @@ void PageOverlayController::installedPageOverlaysChanged()
     else
         detachViewOverlayLayers();
 
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
+    if (RefPtr localMainFrame = m_page->localMainFrame()) {
         if (RefPtr frameView = localMainFrame->view())
             frameView->setNeedsCompositingConfigurationUpdate();
     }
@@ -218,7 +221,7 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
 
     overlay.setPage(protectedPage().ptr());
 
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
+    if (RefPtr localMainFrame = m_page->localMainFrame()) {
         if (RefPtr frameView = localMainFrame->view())
             frameView->enterCompositingMode();
     }
@@ -350,6 +353,9 @@ void PageOverlayController::updateSettingsForLayer(GraphicsLayer& layer)
     layer.setAcceleratesDrawing(settings->acceleratedDrawingEnabled());
     layer.setShowDebugBorder(settings->showDebugBorders());
     layer.setShowRepaintCounter(settings->showRepaintCounter());
+#if HAVE(HDR_SUPPORT)
+    layer.setHDRForImagesEnabled(settings->hdrForImagesEnabled());
+#endif
 }
 
 bool PageOverlayController::handleMouseEvent(const PlatformMouseEvent& mouseEvent)

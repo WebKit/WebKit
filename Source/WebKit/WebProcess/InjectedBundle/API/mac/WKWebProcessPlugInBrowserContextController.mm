@@ -64,6 +64,8 @@
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -253,7 +255,7 @@ static void didHandleOnloadEventsForFrame(WKBundlePageRef page, WKBundleFrameRef
 static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *contextController, WebKit::WebPage& page)
 {
     WKBundlePageLoaderClientV11 client;
-    memset(&client, 0, sizeof(client));
+    zeroBytes(client);
 
     client.base.version = 11;
     client.base.clientInfo = (__bridge void*)contextController;
@@ -350,7 +352,7 @@ static void didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef frame, uint
 static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *contextController, WebKit::WebPage& page)
 {
     WKBundlePageResourceLoadClientV1 client;
-    memset(&client, 0, sizeof(client));
+    zeroBytes(client);
 
     client.base.version = 1;
     client.base.clientInfo = (__bridge void*) contextController;
@@ -461,6 +463,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
     _formDelegate = formDelegate;
 
     class FormClient final : public API::InjectedBundle::FormClient {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(FormClient);
     public:
         explicit FormClient(WKWebProcessPlugInBrowserContextController *controller)
             : m_controller(controller)
@@ -596,6 +599,7 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
     _editingDelegate = editingDelegate;
 
     class Client final : public API::InjectedBundle::EditorClient {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(Client);
     public:
         explicit Client(WKWebProcessPlugInBrowserContextController *controller)
             : m_controller { controller }
@@ -615,6 +619,12 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
         bool shouldChangeSelectedRange(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>& fromRange, const std::optional<WebCore::SimpleRange>& toRange, WebCore::Affinity affinity, bool stillSelecting) final
         {
             if (!m_delegateMethods.shouldChangeSelectedRange)
+                return true;
+
+            if (!fromRange && !toRange)
+                return false;
+
+            if (!fromRange || !toRange)
                 return true;
 
             auto apiFromRange = adoptNS([[WKDOMRange alloc] _initWithImpl:createLiveRange(fromRange).get()]);

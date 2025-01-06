@@ -44,14 +44,8 @@
 		<rect x="50" y="200" width="50" height="50" fill="red"/>
 	</switch>
 
-	<rect x="200" y="200" width="50" height="50" fill="red"/>
-	<switch>
-		<!-- test non-matching required features -->
-		<rect requiredFeatures="foo" x="200" y="200" width="50" height="50" fill="red"/>
-		<rect x="200" y="200" width="50" height="50" fill="lime"/>
-		<rect x="200" y="200" width="50" height="50" fill="red"/>
-		<rect x="200" y="200" width="50" height="50" fill="red"/>
-	</switch>
+	<!-- this rectangle intentionally left green -->
+	<rect x="200" y="200" width="50" height="50" fill="lime"/>
 
 	<rect x="50" y="300" width="50" height="50" fill="red"/>
 	<switch>

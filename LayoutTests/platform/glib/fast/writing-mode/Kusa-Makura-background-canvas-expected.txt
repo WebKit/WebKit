@@ -665,25 +665,25 @@ layer at (-4042,0) size 4842x585 backgroundClip at (0,0) size 4842x585 clip at (
             text run at (840,144) width 336: "\x{306E}\x{3054}\x{3068}\x{304F}\x{3001}\x{65E5}\x{306E}\x{3042}\x{305F}\x{308B}\x{6240}\x{306B}\x{306F}\x{304D}\x{3063}\x{3068}\x{5F71}\x{304C}\x{3055}\x{3059}\x{3068}"
             text run at (867,0) width 113: "\x{609F}\x{3063}\x{305F}\x{3002}\x{4E09}\x{5341}\x{306E}"
           RenderInline {ruby} at (867,112) size 18x36
-            RenderInline (generated) at (867,110) size 18x36
-              RenderInline {rb} at (867,112) size 18x32
-                RenderText {#text} at (867,112) size 18x32
-                  text run at (867,112) width 33: "\x{4ECA}\x{65E5}"
-            RenderBlock {rt} at (857,110) size 11x36
+            RenderInline (generated) at (867,112) size 18x36
+              RenderInline {rb} at (867,114) size 18x32
+                RenderText {#text} at (867,114) size 18x32
+                  text run at (867,114) width 33: "\x{4ECA}\x{65E5}"
+            RenderBlock {rt} at (857,112) size 11x36
               RenderText {#text} at (0,0) size 10x36
                 text run at (0,0) width 36: "\x{3053}\x{3093}\x{306B}\x{3061}"
-          RenderText {#text} at (867,144) size 18x288
-            text run at (867,144) width 289: "\x{306F}\x{3053}\x{3046}\x{601D}\x{3046}\x{3066}\x{3044}\x{308B}\x{3002}\x{2015}\x{2015}\x{559C}\x{3073}\x{306E}\x{6DF1}\x{304D}\x{3068}\x{304D}"
-          RenderInline {ruby} at (867,432) size 18x27
-            RenderInline (generated) at (867,427) size 18x28
-              RenderInline {rb} at (867,433) size 18x16
-                RenderText {#text} at (867,433) size 18x16
-                  text run at (867,433) width 17: "\x{6182}"
-            RenderBlock {rt} at (857,427) size 11x28
+          RenderText {#text} at (867,146) size 18x288
+            text run at (867,146) width 289: "\x{306F}\x{3053}\x{3046}\x{601D}\x{3046}\x{3066}\x{3044}\x{308B}\x{3002}\x{2015}\x{2015}\x{559C}\x{3073}\x{306E}\x{6DF1}\x{304D}\x{3068}\x{304D}"
+          RenderInline {ruby} at (867,434) size 18x27
+            RenderInline (generated) at (867,429) size 18x28
+              RenderInline {rb} at (867,435) size 18x16
+                RenderText {#text} at (867,435) size 18x16
+                  text run at (867,435) width 17: "\x{6182}"
+            RenderBlock {rt} at (857,429) size 11x28
               RenderText {#text} at (0,0) size 10x27
                 text run at (0,0) width 27: "\x{3046}\x{308C}\x{3044}"
-          RenderText {#text} at (867,0) size 45x466
-            text run at (867,450) width 17: "\x{3044}"
+          RenderText {#text} at (867,0) size 45x468
+            text run at (867,452) width 17: "\x{3044}"
             text run at (895,0) width 96: "\x{3088}\x{3044}\x{3088}\x{6DF1}\x{304F}\x{3001}"
           RenderInline {ruby} at (895,96) size 17x27
             RenderInline (generated) at (895,91) size 17x28
@@ -2602,9 +2602,9 @@ layer at (-4042,0) size 4842x585 backgroundClip at (0,0) size 4842x585 clip at (
                 text run at (0,0) width 72: "\x{3081}\x{3044}\x{3052}\x{3064}\x{304D}\x{305F}\x{308A}\x{3066}"
           RenderInline {ruby} at (1553,0) size 45x463
             RenderInline (generated) at (1553,0) size 45x463
-              RenderInline {rb} at (1553,0) size 45x441
-                RenderText {#text} at (1553,0) size 45x412
-                  text run at (1553,440) width -28: "\x{76F8}"
+              RenderInline {rb} at (1553,0) size 45x449
+                RenderText {#text} at (1553,0) size 45x449
+                  text run at (1553,432) width 17: "\x{76F8}"
                   text run at (1581,0) width 16: "\x{7167}"
             RenderBlock {rt} at (1543,418) size 11x45
               RenderText {#text} at (0,0) size 10x45

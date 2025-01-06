@@ -848,13 +848,6 @@ function gc() {
     }
 }
 
-function minorGC() {
-    if (typeof GCController !== "undefined")
-        GCController.minorCollect();
-    else
-        testFailed("Minor GC is available only when you enable the --expose-gc option in V8.");
-}
-
 function isSuccessfullyParsed()
 {
     // FIXME: Remove this and only report unexpected syntax errors.

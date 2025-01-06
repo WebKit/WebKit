@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmBranchHintsSectionParser.h"
+#include "WasmTypeDefinitionInlines.h"
 
 namespace JSC {
 namespace Wasm {

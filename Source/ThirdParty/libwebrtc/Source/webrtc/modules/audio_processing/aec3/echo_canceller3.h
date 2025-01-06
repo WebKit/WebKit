@@ -15,9 +15,9 @@
 
 #include <atomic>
 #include <memory>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
@@ -88,12 +88,11 @@ class Aec3RenderQueueItemVerifier {
 // AnalyzeRender call which can be called concurrently with the other methods.
 class EchoCanceller3 : public EchoControl {
  public:
-  EchoCanceller3(
-      const EchoCanceller3Config& config,
-      const absl::optional<EchoCanceller3Config>& multichannel_config,
-      int sample_rate_hz,
-      size_t num_render_channels,
-      size_t num_capture_channels);
+  EchoCanceller3(const EchoCanceller3Config& config,
+                 const std::optional<EchoCanceller3Config>& multichannel_config,
+                 int sample_rate_hz,
+                 size_t num_render_channels,
+                 size_t num_capture_channels);
 
   ~EchoCanceller3() override;
 

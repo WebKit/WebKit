@@ -9,6 +9,26 @@ jsTestIsAsync = true;
 
 const statisticsUrl = "http://127.0.0.1:8000/temp";
 
+function completeTestWhenKeyDownIsReceived() {
+    if (testInput.value != "a") {
+        setTimeout(completeTestWhenKeyDownIsReceived, 100);
+        return;
+    }
+    shouldBeEqualToString("testInput.value", "a");
+
+    if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+        testFailed("Origin did not get user interaction credit.");
+    else
+        testPassed("Origin was granted user interaction.");
+
+    setTimeout(function() {
+        testFrame.src = "about:blank";
+        setTimeout(function() {
+            setEnableFeature(false, finishJSTest);
+        }, 0);
+    }, 0);
+}
+
 onload = function() {
     const testFrame = document.getElementById("testFrame");
 
@@ -18,35 +38,21 @@ onload = function() {
                 if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
                     testFailed("Host did not get set as prevalent resource.");
 
-                testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, false, function() {
+                testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, false, async function() {
                     if (testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
                         testFailed("Host did not get cleared of user interaction.");
 
                     testInput = document.getElementById("testInput");
 
-                    testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
-                        shouldBeEqualToString("testInput.value", "a");
-
-                        if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-                            testFailed("Origin did not get user interaction credit.");
-                        else
-                            testPassed("Origin was granted user interaction.");
-
-                        setTimeout(function() {
-                            testFrame.src = "about:blank";
-                            setTimeout(function() {
-                                setEnableFeature(false, finishJSTest);
-                            }, 0);
-                        }, 0);
-                    });
                     testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
                     testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
-                    testRunner.statisticsProcessStatisticsAndDataRecords();
+                    await testRunner.statisticsProcessStatisticsAndDataRecords();
 
                     debug("Simulate user typing letter 'a' into the field.");
                     testInput.focus();
                     if (window.eventSender)
                         eventSender.keyDown("a");
+                    completeTestWhenKeyDownIsReceived();
                 });
             });
         });

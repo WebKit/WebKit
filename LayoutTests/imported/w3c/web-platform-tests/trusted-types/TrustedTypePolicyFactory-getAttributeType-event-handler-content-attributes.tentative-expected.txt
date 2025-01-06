@@ -1,0 +1,84 @@
+
+PASS getAttributeType("dummy", "onabort", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onauxclick", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onbeforeinput", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onbeforetoggle", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onblur", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "oncancel", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "oncanplay", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "oncanplaythrough", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onchange", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onclick", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onclose", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "oncontextmenu", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "oncuechange", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "ondblclick", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "ondrag", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "ondragend", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "ondragenter", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "ondragleave", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "ondragover", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "ondragstart", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "ondrop", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "ondurationchange", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onemptied", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onended", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onerror", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onfocus", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onformdata", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "oninput", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "oninvalid", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onkeydown", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onkeypress", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onkeyup", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onload", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onloadeddata", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onloadedmetadata", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onloadstart", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onmousedown", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onmouseenter", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onmouseleave", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onmousemove", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onmouseout", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onmouseover", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onmouseup", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onpause", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onplay", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onplaying", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onprogress", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onratechange", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onreset", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onresize", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onscroll", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onsecuritypolicyviolation", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onseeked", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onseeking", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onselect", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onslotchange", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onstalled", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onsubmit", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onsuspend", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "ontimeupdate", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "ontoggle", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onvolumechange", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onwaiting", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onwheel", "dummyNs", attrNs)
+FAIL getAttributeType("dummy", "onafterprint", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onbeforeprint", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onbeforeunload", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onhashchange", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onlanguagechange", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onmessage", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onmessageerror", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onoffline", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "ononline", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onpagehide", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onpageshow", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onpopstate", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onrejectionhandled", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onstorage", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onunhandledrejection", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onunload", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onencrypted", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+FAIL getAttributeType("dummy", "onwaitingforkey", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+

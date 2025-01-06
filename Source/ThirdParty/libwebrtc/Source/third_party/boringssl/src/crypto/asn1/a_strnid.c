@@ -72,7 +72,7 @@
 DEFINE_LHASH_OF(ASN1_STRING_TABLE)
 
 static LHASH_OF(ASN1_STRING_TABLE) *string_tables = NULL;
-static struct CRYPTO_STATIC_MUTEX string_tables_lock = CRYPTO_STATIC_MUTEX_INIT;
+static CRYPTO_MUTEX string_tables_lock = CRYPTO_MUTEX_INIT;
 
 void ASN1_STRING_set_default_mask(unsigned long mask) {}
 
@@ -176,11 +176,11 @@ static const ASN1_STRING_TABLE *asn1_string_table_get(int nid) {
     return tbl;
   }
 
-  CRYPTO_STATIC_MUTEX_lock_read(&string_tables_lock);
+  CRYPTO_MUTEX_lock_read(&string_tables_lock);
   if (string_tables != NULL) {
     tbl = lh_ASN1_STRING_TABLE_retrieve(string_tables, &key);
   }
-  CRYPTO_STATIC_MUTEX_unlock_read(&string_tables_lock);
+  CRYPTO_MUTEX_unlock_read(&string_tables_lock);
   // Note returning |tbl| without the lock is only safe because
   // |ASN1_STRING_TABLE_add| cannot modify or delete existing entries. If we
   // wish to support that, this function must copy the result under a lock.
@@ -196,7 +196,7 @@ int ASN1_STRING_TABLE_add(int nid, long minsize, long maxsize,
   }
 
   int ret = 0;
-  CRYPTO_STATIC_MUTEX_lock_write(&string_tables_lock);
+  CRYPTO_MUTEX_lock_write(&string_tables_lock);
 
   if (string_tables == NULL) {
     string_tables = lh_ASN1_STRING_TABLE_new(table_hash, table_cmp);
@@ -232,7 +232,7 @@ int ASN1_STRING_TABLE_add(int nid, long minsize, long maxsize,
   ret = 1;
 
 err:
-  CRYPTO_STATIC_MUTEX_unlock_write(&string_tables_lock);
+  CRYPTO_MUTEX_unlock_write(&string_tables_lock);
   return ret;
 }
 

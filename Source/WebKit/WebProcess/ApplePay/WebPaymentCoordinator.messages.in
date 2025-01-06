@@ -24,7 +24,11 @@
 
 #if ENABLE(APPLE_PAY)
 
-messages -> WebPaymentCoordinator NotRefCounted {
+[
+    DispatchedFrom=UI,
+    DispatchedTo=WebContent
+]
+messages -> WebPaymentCoordinator {
 
     ValidateMerchant(String validationURLString)
     DidAuthorizePayment(WebCore::Payment payment)

@@ -33,6 +33,7 @@
 #include "FrameSelection.h"
 #include "HTMLBodyElement.h"
 #include "HTMLButtonElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -52,6 +53,8 @@
 #include "TextIterator.h"
 #include "WritingMode.h"
 #include <unicode/uchar.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace TextExtraction {
@@ -60,7 +63,7 @@ static constexpr auto minOpacityToConsiderVisible = 0.05;
 
 using TextNodesAndText = Vector<std::pair<Ref<Text>, String>>;
 using TextAndSelectedRange = std::pair<String, std::optional<CharacterRange>>;
-using TextAndSelectedRangeMap = HashMap<RefPtr<Text>, TextAndSelectedRange>;
+using TextAndSelectedRangeMap = UncheckedKeyHashMap<RefPtr<Text>, TextAndSelectedRange>;
 
 static inline TextNodesAndText collectText(const SimpleRange& range)
 {
@@ -250,6 +253,12 @@ enum class SkipExtraction : bool {
     SelfAndSubtree
 };
 
+static bool shouldTreatAsPasswordField(const Element* element)
+{
+    RefPtr input = dynamicDowncast<HTMLInputElement>(element);
+    return input && input->hasEverBeenPasswordField();
+}
+
 static inline std::variant<SkipExtraction, ItemData, URL, Editable> extractItemData(Node& node, TraversalContext& context)
 {
     CheckedPtr renderer = node.renderer();
@@ -260,6 +269,9 @@ static inline std::variant<SkipExtraction, ItemData, URL, Editable> extractItemD
         return { SkipExtraction::Self };
 
     if (RefPtr textNode = dynamicDowncast<Text>(node)) {
+        if (shouldTreatAsPasswordField(textNode->shadowHost()))
+            return { SkipExtraction::Self };
+
         if (auto iterator = context.visibleText.find(textNode); iterator != context.visibleText.end()) {
             auto& [textContent, selectedRange] = iterator->value;
             return { TextItemData { { }, selectedRange, textContent, { } } };
@@ -296,7 +308,7 @@ static inline std::variant<SkipExtraction, ItemData, URL, Editable> extractItemD
         return { Editable {
             labelText(*control),
             input ? input->placeholder() : nullString(),
-            input && input->isSecureField(),
+            shouldTreatAsPasswordField(element.get()),
             element->document().activeElement() == control
         } };
     }
@@ -453,8 +465,9 @@ Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, P
     return root;
 }
 
-struct StringsAndBlockOffset {
-    Vector<String> strings;
+using Token = std::variant<String, IntSize>;
+struct TokenAndBlockOffset {
+    Vector<Token> tokens;
     int offset { 0 };
 };
 
@@ -467,47 +480,47 @@ static IntSize reducePrecision(FloatSize size)
     };
 }
 
-static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets, ContainerNode& node, BlockFlowDirection direction, OnlyIncludeTextContent onlyIncludeTextContent)
+static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets, ContainerNode& node, FlowDirection direction)
 {
     CheckedPtr renderer = node.renderer();
     if (!renderer)
         return;
 
-    auto appendStrings = [&](Vector<String>&& strings, IntRect bounds) mutable {
+    auto appendTokens = [&](Vector<Token>&& tokens, IntRect bounds) mutable {
         static constexpr auto minPixelDistanceForNearbyText = 5;
-        if (strings.isEmpty() || bounds.width() <= minPixelDistanceForNearbyText || bounds.height() <= minPixelDistanceForNearbyText)
+        if (tokens.isEmpty() || bounds.width() <= minPixelDistanceForNearbyText || bounds.height() <= minPixelDistanceForNearbyText)
             return;
 
         auto offset = [&] {
             switch (direction) {
-            case BlockFlowDirection::TopToBottom:
+            case FlowDirection::TopToBottom:
                 return bounds.y();
-            case BlockFlowDirection::BottomToTop:
+            case FlowDirection::BottomToTop:
                 return bounds.maxY();
-            case BlockFlowDirection::LeftToRight:
+            case FlowDirection::LeftToRight:
                 return bounds.x();
-            case BlockFlowDirection::RightToLeft:
+            case FlowDirection::RightToLeft:
                 return bounds.maxX();
             }
             ASSERT_NOT_REACHED();
             return 0;
         }();
 
-        auto foundIndex = stringsAndOffsets.reverseFindIf([&](auto& item) {
+        auto foundIndex = tokensAndOffsets.reverseFindIf([&](auto& item) {
             return std::abs(offset - item.offset) <= minPixelDistanceForNearbyText;
         });
 
         if (foundIndex == notFound) {
-            stringsAndOffsets.append({ WTFMove(strings), offset });
+            tokensAndOffsets.append({ WTFMove(tokens), offset });
             return;
         }
 
-        stringsAndOffsets[foundIndex].strings.appendVector(WTFMove(strings));
+        tokensAndOffsets[foundIndex].tokens.appendVector(WTFMove(tokens));
     };
 
     if (CheckedPtr frameRenderer = dynamicDowncast<RenderIFrame>(*renderer)) {
         if (auto contentDocument = frameRenderer->iframeElement().protectedContentDocument())
-            extractRenderedText(stringsAndOffsets, *contentDocument, direction, onlyIncludeTextContent);
+            extractRenderedTokens(tokensAndOffsets, *contentDocument, direction);
         return;
     }
 
@@ -518,11 +531,10 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
 
         auto absoluteRect = renderer.absoluteBoundingBoxRect();
         auto roundedSize = reducePrecision(frameView->absoluteToDocumentRect(absoluteRect).size());
-        appendStrings({ makeString('{', roundedSize.width(), ',', roundedSize.height(), '}') }, frameView->contentsToRootView(absoluteRect));
+        appendTokens({ { roundedSize } }, frameView->contentsToRootView(absoluteRect));
     };
 
-    if (onlyIncludeTextContent == OnlyIncludeTextContent::No)
-        appendReplacedContentOrBackgroundImage(*renderer);
+    appendReplacedContentOrBackgroundImage(*renderer);
 
     for (auto& descendant : descendantsOfType<RenderObject>(*renderer)) {
         if (descendant.style().usedVisibility() == Visibility::Hidden)
@@ -535,61 +547,138 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
             continue;
 
         if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(descendant); textRenderer && textRenderer->hasRenderedText()) {
-            Vector<String> strings;
+            Vector<Token> tokens;
             for (auto token : textRenderer->text().simplifyWhiteSpace(isASCIIWhitespace).split(' ')) {
                 auto candidate = token.removeCharacters([](UChar character) {
                     return !u_isalpha(character) && !u_isdigit(character);
                 });
                 if (!candidate.isEmpty())
-                    strings.append(WTFMove(candidate));
+                    tokens.append({ WTFMove(candidate) });
             }
-            appendStrings(WTFMove(strings), frameView->contentsToRootView(descendant.absoluteBoundingBoxRect()));
+            appendTokens(WTFMove(tokens), frameView->contentsToRootView(descendant.absoluteBoundingBoxRect()));
             continue;
         }
 
         if (CheckedPtr frameRenderer = dynamicDowncast<RenderIFrame>(descendant)) {
             if (auto contentDocument = frameRenderer->iframeElement().protectedContentDocument())
-                extractRenderedText(stringsAndOffsets, *contentDocument, direction, onlyIncludeTextContent);
+                extractRenderedTokens(tokensAndOffsets, *contentDocument, direction);
             continue;
         }
 
-        if (onlyIncludeTextContent == OnlyIncludeTextContent::No)
-            appendReplacedContentOrBackgroundImage(descendant);
+        appendReplacedContentOrBackgroundImage(descendant);
     }
 }
 
-String extractRenderedText(Element& element, OnlyIncludeTextContent onlyIncludeTextContent)
+RenderedText extractRenderedText(Element& element)
 {
-    if (!element.renderer())
-        return emptyString();
+    CheckedPtr renderer = element.renderer();
+    if (!renderer)
+        return { };
 
-    auto direction = element.renderer()->style().blockFlowDirection();
+    RefPtr frameView = renderer->view().protectedFrameView();
+    auto direction = renderer->writingMode().blockDirection();
+    auto elementRectInDocument = frameView->absoluteToDocumentRect(renderer->absoluteBoundingBoxRect());
 
-    Vector<StringsAndBlockOffset> stringsAndOffsets;
-    extractRenderedText(stringsAndOffsets, element, direction, onlyIncludeTextContent);
+    Vector<TokenAndBlockOffset> allTokensAndOffsets;
+    extractRenderedTokens(allTokensAndOffsets, element, direction);
 
     bool ascendingOrder = [&] {
         switch (direction) {
-        case BlockFlowDirection::TopToBottom:
-        case BlockFlowDirection::LeftToRight:
+        case FlowDirection::TopToBottom:
+        case FlowDirection::LeftToRight:
             return true;
-        case BlockFlowDirection::BottomToTop:
-        case BlockFlowDirection::RightToLeft:
+        case FlowDirection::BottomToTop:
+        case FlowDirection::RightToLeft:
             return false;
         }
         ASSERT_NOT_REACHED();
         return true;
     }();
 
-    std::sort(stringsAndOffsets.begin(), stringsAndOffsets.end(), [&](auto& a, auto& b) {
+    std::sort(allTokensAndOffsets.begin(), allTokensAndOffsets.end(), [&](auto& a, auto& b) {
         return ascendingOrder ? a.offset < b.offset : a.offset > b.offset;
     });
 
-    auto flattenedStrings = stringsAndOffsets.map([](auto& item) {
-        return makeStringByJoining(item.strings, " "_s);
-    });
+    bool hasLargeReplacedDescendant = false;
+    StringBuilder textWithReplacedContent;
+    StringBuilder textWithoutReplacedContent;
+    auto appendText = [](StringBuilder& builder, const String& string) {
+        if (!builder.isEmpty())
+            builder.append(' ');
+        builder.append(string);
+    };
 
-    return makeStringByJoining(flattenedStrings, " "_s);
+    for (auto& [tokens, offset] : allTokensAndOffsets) {
+        for (auto& token : tokens) {
+            switchOn(token, [&](const String& text) {
+                appendText(textWithReplacedContent, text);
+                appendText(textWithoutReplacedContent, text);
+            }, [&](const IntSize& size) {
+                constexpr auto ratioToConsiderLengthAsLarge = 0.9;
+                if (size.width() > ratioToConsiderLengthAsLarge * elementRectInDocument.width() && size.height() > ratioToConsiderLengthAsLarge * elementRectInDocument.height())
+                    hasLargeReplacedDescendant = true;
+                appendText(textWithReplacedContent, makeString('{', size.width(), ',', size.height(), '}'));
+            });
+        }
+    }
+
+    return { textWithReplacedContent.toString(), textWithoutReplacedContent.toString(), hasLargeReplacedDescendant };
+}
+
+static Vector<std::pair<String, FloatRect>> extractAllTextAndRectsRecursive(Document& document)
+{
+    RefPtr bodyElement = document.body();
+    if (!bodyElement)
+        return { };
+
+    RefPtr view = document.view();
+    if (!view)
+        return { };
+
+    ListHashSet<Ref<HTMLFrameOwnerElement>> frameOwners;
+    Vector<std::pair<String, FloatRect>> result;
+    auto fullRange = makeRangeSelectingNodeContents(*bodyElement);
+    for (TextIterator iterator { fullRange, TextIteratorBehavior::EntersTextControls }; !iterator.atEnd(); iterator.advance()) {
+        RefPtr node = iterator.node();
+        if (!node)
+            continue;
+
+        if (RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(*node))
+            frameOwners.add(frameOwner.releaseNonNull());
+
+        auto trimmedText = iterator.text().trim(isASCIIWhitespace<UChar>);
+        if (trimmedText.isEmpty())
+            continue;
+
+        CheckedPtr renderer = node->renderer();
+        if (!renderer)
+            continue;
+
+        result.append({ trimmedText.toString(), view->contentsToRootView(renderer->absoluteBoundingBoxRect()) });
+    }
+
+    for (auto& frameOwner : frameOwners) {
+        RefPtr contentDocument = frameOwner->contentDocument();
+        if (!contentDocument)
+            continue;
+
+        result.appendVector(extractAllTextAndRectsRecursive(*contentDocument));
+    }
+
+    return result;
+}
+
+Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page& page)
+{
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+    if (!mainFrame)
+        return { };
+
+    RefPtr document = mainFrame->document();
+    if (!document)
+        return { };
+
+    return extractAllTextAndRectsRecursive(*document);
 }
 
 } // namespace TextExtractor

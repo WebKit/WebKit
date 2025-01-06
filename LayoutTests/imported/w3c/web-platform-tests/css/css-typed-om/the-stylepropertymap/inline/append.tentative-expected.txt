@@ -11,4 +11,5 @@ PASS Calling StylePropertyMap.append with a var ref throws TypeError
 PASS Appending a list-valued property with CSSStyleValue or String updates its values
 PASS Appending a list-valued property with list-valued string updates its values
 PASS StylePropertyMap.append is case-insensitive
+PASS StylePropertyMap.append rejects appending to CSS-wide keywords
 

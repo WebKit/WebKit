@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,37 +27,48 @@
 
 #ifdef __OBJC__
 
+#import <WebKit/WKWebExtensionAction.h>
+#import <WebKit/WKWebExtensionContextPrivate.h>
+#import <WebKit/WKWebExtensionControllerConfigurationPrivate.h>
+#import <WebKit/WKWebExtensionControllerDelegatePrivate.h>
+#import <WebKit/WKWebExtensionControllerPrivate.h>
+#import <WebKit/WKWebExtensionMatchPattern.h>
+#import <WebKit/WKWebExtensionMessagePort.h>
+#import <WebKit/WKWebExtensionPermission.h>
+#import <WebKit/WKWebExtensionPrivate.h>
+#import <WebKit/WKWebExtensionTab.h>
+#import <WebKit/WKWebExtensionTabConfiguration.h>
+#import <WebKit/WKWebExtensionWindow.h>
+#import <WebKit/WKWebExtensionWindowConfiguration.h>
 #import <WebKit/WebKit.h>
-#import <WebKit/_WKWebExtensionAction.h>
-#import <WebKit/_WKWebExtensionContextPrivate.h>
-#import <WebKit/_WKWebExtensionControllerConfigurationPrivate.h>
-#import <WebKit/_WKWebExtensionControllerDelegatePrivate.h>
-#import <WebKit/_WKWebExtensionControllerPrivate.h>
-#import <WebKit/_WKWebExtensionMatchPattern.h>
-#import <WebKit/_WKWebExtensionMessagePort.h>
-#import <WebKit/_WKWebExtensionPermission.h>
-#import <WebKit/_WKWebExtensionPrivate.h>
-#import <WebKit/_WKWebExtensionTab.h>
-#import <WebKit/_WKWebExtensionTabCreationOptions.h>
-#import <WebKit/_WKWebExtensionWindow.h>
 
-@interface TestWebExtensionsDelegate : NSObject <_WKWebExtensionControllerDelegate>
+@interface TestWebExtensionsDelegate : NSObject <WKWebExtensionControllerDelegate, WKWebExtensionControllerDelegatePrivate>
 
-@property (nonatomic, copy) NSArray<id <_WKWebExtensionWindow>> *(^openWindows)(_WKWebExtensionContext *);
-@property (nonatomic, copy) id <_WKWebExtensionWindow> (^focusedWindow)(_WKWebExtensionContext *);
+@property (nonatomic, copy) NSArray<id <WKWebExtensionWindow>> *(^openWindows)(WKWebExtensionContext *);
+@property (nonatomic, copy) id <WKWebExtensionWindow> (^focusedWindow)(WKWebExtensionContext *);
 
-@property (nonatomic, copy) void (^openNewWindow)(_WKWebExtensionWindowCreationOptions *, _WKWebExtensionContext *, void (^)(id<_WKWebExtensionWindow>, NSError *));
-@property (nonatomic, copy) void (^openNewTab)(_WKWebExtensionTabCreationOptions *, _WKWebExtensionContext *, void (^)(id<_WKWebExtensionTab>, NSError *));
-@property (nonatomic, copy) void (^openOptionsPage)(_WKWebExtensionContext *, void (^)(NSError *));
+#if PLATFORM(MAC)
+@property (nonatomic, copy) void (^openNewWindow)(WKWebExtensionWindowConfiguration *, WKWebExtensionContext *, void (^)(id<WKWebExtensionWindow>, NSError *));
+#endif
 
-@property (nonatomic, copy) void (^promptForPermissions)(id <_WKWebExtensionTab>, NSSet<NSString *> *, void (^)(NSSet<_WKWebExtensionPermission> *, NSDate *));
-@property (nonatomic, copy) void (^promptForPermissionMatchPatterns)(id <_WKWebExtensionTab>, NSSet<_WKWebExtensionMatchPattern *> *, void (^)(NSSet<_WKWebExtensionMatchPattern *> *, NSDate *));
-@property (nonatomic, copy) void (^promptForPermissionToAccessURLs)(id <_WKWebExtensionTab>, NSSet<NSURL *> *, void (^)(NSSet<NSURL *> *, NSDate *));
+@property (nonatomic, copy) void (^openNewTab)(WKWebExtensionTabConfiguration *, WKWebExtensionContext *, void (^)(id<WKWebExtensionTab>, NSError *));
+@property (nonatomic, copy) void (^openOptionsPage)(WKWebExtensionContext *, void (^)(NSError *));
+
+@property (nonatomic, copy) void (^promptForPermissions)(id <WKWebExtensionTab>, NSSet<NSString *> *, void (^)(NSSet<WKWebExtensionPermission> *, NSDate *));
+@property (nonatomic, copy) void (^promptForPermissionMatchPatterns)(id <WKWebExtensionTab>, NSSet<WKWebExtensionMatchPattern *> *, void (^)(NSSet<WKWebExtensionMatchPattern *> *, NSDate *));
+@property (nonatomic, copy) void (^promptForPermissionToAccessURLs)(id <WKWebExtensionTab>, NSSet<NSURL *> *, void (^)(NSSet<NSURL *> *, NSDate *));
 
 @property (nonatomic, copy) void (^sendMessage)(id message, NSString *applicationIdentifier, void (^)(id replyMessage, NSError *));
-@property (nonatomic, copy) void (^connectUsingMessagePort)(_WKWebExtensionMessagePort *);
+@property (nonatomic, copy) void (^connectUsingMessagePort)(WKWebExtensionMessagePort *);
 
-@property (nonatomic, copy) void (^presentPopupForAction)(_WKWebExtensionAction *);
+@property (nonatomic, copy) void (^didUpdateAction)(WKWebExtensionAction *);
+@property (nonatomic, copy) void (^presentPopupForAction)(WKWebExtensionAction *);
+
+@property (nonatomic, copy) void (^presentSidebar)(_WKWebExtensionSidebar *);
+
+@property (nonatomic, copy) void (^closeSidebar)(_WKWebExtensionSidebar *);
+
+@property (nonatomic, copy) void (^didUpdateSidebar)(_WKWebExtensionSidebar *);
 
 @end
 

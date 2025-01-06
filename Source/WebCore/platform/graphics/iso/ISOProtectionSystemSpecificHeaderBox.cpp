@@ -29,6 +29,7 @@
 #include "ISOProtectionSystemSpecificHeaderBox.h"
 
 #include <JavaScriptCore/DataView.h>
+#include <wtf/StdLibExtras.h>
 
 using JSC::DataView;
 
@@ -64,7 +65,7 @@ bool ISOProtectionSystemSpecificHeaderBox::parse(DataView& view, unsigned& offse
     if (systemID->byteLength() < 16)
         return false;
 
-    memcpy(m_systemID.data(), systemID->data(), 16);
+    memcpySpan(m_systemID.mutableSpan(), systemID->span().first(16));
 
     if (m_version) {
         uint32_t keyIDCount = 0;
@@ -82,7 +83,7 @@ bool ISOProtectionSystemSpecificHeaderBox::parse(DataView& view, unsigned& offse
             offset += 16;
             if (parsedKeyID->byteLength() < 16)
                 continue;
-            memcpy(currentKeyID.data(), parsedKeyID->data(), 16);
+            memcpySpan(currentKeyID.mutableSpan(), parsedKeyID->span().first(16));
         }
     }
 
@@ -98,7 +99,7 @@ bool ISOProtectionSystemSpecificHeaderBox::parse(DataView& view, unsigned& offse
     if (parsedData->byteLength() < dataSize)
         return false;
 
-    memcpy(m_data.data(), parsedData->data(), dataSize);
+    memcpySpan(m_data.mutableSpan(), parsedData->span().first(dataSize));
 
     return true;
 }

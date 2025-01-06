@@ -28,10 +28,10 @@
     Exposed=(Window,Worker,PaintWorklet),
     SkipVTableValidation,
     JSGenerateToJSObject,
+    JSCustomMarkFunction
 ] interface StylePropertyMapReadOnly {
     iterable<USVString, sequence<CSSStyleValue>>;
-    // FIXME: should be (undefined or CSSStyleValue), not null
-    [CallWith=CurrentScriptExecutionContext] CSSStyleValue? get([AtomString] USVString property);
+    [CallWith=CurrentScriptExecutionContext] (undefined or CSSStyleValue) get([AtomString] USVString property);
     [CallWith=CurrentScriptExecutionContext] sequence<CSSStyleValue> getAll([AtomString] USVString property);
     [CallWith=CurrentScriptExecutionContext] boolean has([AtomString] USVString property);
 

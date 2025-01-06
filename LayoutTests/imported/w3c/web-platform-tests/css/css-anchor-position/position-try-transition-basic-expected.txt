@@ -1,0 +1,4 @@
+
+FAIL Transition when @position-try is applied assert_equals: expected 250 but got 300
+FAIL Transition when @position-try is unapplied assert_equals: expected 200 but got 300
+

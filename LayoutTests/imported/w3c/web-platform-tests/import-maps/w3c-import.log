@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/bare-specifiers.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/data-url-specifiers.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/dynamic-integrity.html
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/external-import-map-errors.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/http-url-like-specifiers.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/import-maps-base-url.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/module-map-key.html

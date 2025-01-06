@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,12 @@
 
 #pragma once
 
+BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "BInline.h"
 #include "Sizes.h"
 #include "Vector.h"
+#include <optional>
 
 namespace bmalloc {
 
@@ -44,6 +47,8 @@ public:
         Value value;
     };
 
+    Map();
+
     size_t size() { return m_keyCount; }
     size_t capacity() { return m_table.size(); }
 
@@ -52,6 +57,20 @@ public:
     {
         auto& bucket = find(key, [&](const Bucket& bucket) { return bucket.key == key; });
         return bucket.value;
+    }
+
+    std::optional<Value> getOptional(const Key& key)
+    {
+        if (!size())
+            return std::nullopt;
+
+        auto& bucket = find(key, [&](const Bucket& bucket) {
+            return allowDeleting == AllowDeleting::DeletingAllowed ? bucket.key == key : !bucket.key || bucket.key == key;
+        });
+
+        if (bucket.key)
+            return bucket.value;
+        return std::nullopt;
     }
 
     void set(const Key& key, const Value& value)
@@ -143,6 +162,13 @@ private:
 };
 
 template<typename Key, typename Value, typename Hash, enum AllowDeleting allowDeleting>
+inline Map<Key, Value, Hash, allowDeleting>::Map()
+    : m_keyCount(0)
+    , m_tableMask(0)
+{
+}
+
+template<typename Key, typename Value, typename Hash, enum AllowDeleting allowDeleting>
 void Map<Key, Value, Hash, allowDeleting>::rehash()
 {
     auto oldTable = std::move(m_table);
@@ -165,3 +191,5 @@ void Map<Key, Value, Hash, allowDeleting>::rehash()
 template<typename Key, typename Value, typename Hash, enum AllowDeleting allowDeleting> const unsigned Map<Key, Value, Hash, allowDeleting>::minCapacity;
 
 } // namespace bmalloc
+
+BALLOW_UNSAFE_BUFFER_USAGE_END

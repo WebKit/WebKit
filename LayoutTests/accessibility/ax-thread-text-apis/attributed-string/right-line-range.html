@@ -1,0 +1,46 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- This is a new test added as part of the AccessibilityThreadTextApisEnabled effort. When the feature is enabled by default, move it to LayoutTests/accessibility/mac. -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p>First text</p>
+<p id="p1">Foo and bar</p>
+<p>Last text</p>
+
+<script>
+var output = "This test ensures basic right-line text marker functionality works.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    var startMarker, endMarker, markerRange;
+    setTimeout(async function() {
+        markerRange = await selectElementTextById("p1", webArea);
+        startMarker = webArea.startTextMarkerForTextMarkerRange(markerRange);
+
+        // When we're on a line start, right-line should return current line range.
+        output += expect("webArea.stringForTextMarkerRange(webArea.rightLineTextMarkerRangeForTextMarker(startMarker))", "'Foo and bar'");
+        // Move forwards off the line-start. We should still return the current line range.
+        startMarker = webArea.nextTextMarker(startMarker);
+        output += expect("webArea.stringForTextMarkerRange(webArea.rightLineTextMarkerRangeForTextMarker(startMarker))", "'Foo and bar'");
+
+        endMarker = webArea.endTextMarkerForTextMarkerRange(markerRange);
+        // For right-line, a marker pointing to the end of the line returns the next line range.
+        output += expect("webArea.stringForTextMarkerRange(webArea.rightLineTextMarkerRangeForTextMarker(endMarker))", "'Last text'");
+        // Move backwards one, meaning right-line should return the current line range.
+        endMarker = webArea.previousTextMarker(endMarker);
+        output += expect("webArea.stringForTextMarkerRange(webArea.rightLineTextMarkerRangeForTextMarker(endMarker))", "'Foo and bar'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

@@ -30,9 +30,10 @@
 #import <WebCore/CachedFramePlatformData.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 class WebCachedFramePlatformData : public WebCore::CachedFramePlatformData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebCachedFramePlatformData);
 public:
     WebCachedFramePlatformData(id webDocumentView) : m_webDocumentView(webDocumentView) { }
     

@@ -221,4 +221,55 @@ static INLINE uint64_t horizontal_add_uint64x2(const uint64x2_t a) {
 #endif
 }
 
+static INLINE uint64_t horizontal_long_add_uint32x4_x2(const uint32x4_t a[2]) {
+  return horizontal_long_add_uint32x4(a[0]) +
+         horizontal_long_add_uint32x4(a[1]);
+}
+
+static INLINE uint64_t horizontal_long_add_uint32x4_x4(const uint32x4_t a[4]) {
+  uint64x2_t sum = vpaddlq_u32(a[0]);
+  sum = vpadalq_u32(sum, a[1]);
+  sum = vpadalq_u32(sum, a[2]);
+  sum = vpadalq_u32(sum, a[3]);
+
+  return horizontal_add_uint64x2(sum);
+}
+
+static INLINE uint64_t horizontal_long_add_uint32x4_x8(const uint32x4_t a[8]) {
+  uint64x2_t sum[2];
+  sum[0] = vpaddlq_u32(a[0]);
+  sum[1] = vpaddlq_u32(a[1]);
+  sum[0] = vpadalq_u32(sum[0], a[2]);
+  sum[1] = vpadalq_u32(sum[1], a[3]);
+  sum[0] = vpadalq_u32(sum[0], a[4]);
+  sum[1] = vpadalq_u32(sum[1], a[5]);
+  sum[0] = vpadalq_u32(sum[0], a[6]);
+  sum[1] = vpadalq_u32(sum[1], a[7]);
+
+  return horizontal_add_uint64x2(vaddq_u64(sum[0], sum[1]));
+}
+
+static INLINE uint64_t
+horizontal_long_add_uint32x4_x16(const uint32x4_t a[16]) {
+  uint64x2_t sum[2];
+  sum[0] = vpaddlq_u32(a[0]);
+  sum[1] = vpaddlq_u32(a[1]);
+  sum[0] = vpadalq_u32(sum[0], a[2]);
+  sum[1] = vpadalq_u32(sum[1], a[3]);
+  sum[0] = vpadalq_u32(sum[0], a[4]);
+  sum[1] = vpadalq_u32(sum[1], a[5]);
+  sum[0] = vpadalq_u32(sum[0], a[6]);
+  sum[1] = vpadalq_u32(sum[1], a[7]);
+  sum[0] = vpadalq_u32(sum[0], a[8]);
+  sum[1] = vpadalq_u32(sum[1], a[9]);
+  sum[0] = vpadalq_u32(sum[0], a[10]);
+  sum[1] = vpadalq_u32(sum[1], a[11]);
+  sum[0] = vpadalq_u32(sum[0], a[12]);
+  sum[1] = vpadalq_u32(sum[1], a[13]);
+  sum[0] = vpadalq_u32(sum[0], a[14]);
+  sum[1] = vpadalq_u32(sum[1], a[15]);
+
+  return horizontal_add_uint64x2(vaddq_u64(sum[0], sum[1]));
+}
+
 #endif  // VPX_VPX_DSP_ARM_SUM_NEON_H_

@@ -156,7 +156,7 @@ class TestImporterTest(unittest.TestCase):
         }
         FAKE_FILES.update(FAKE_RESOURCES)
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
 
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/t/test.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
@@ -180,7 +180,7 @@ class TestImporterTest(unittest.TestCase):
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/file-to-import.html': 'to be imported',
         })
 
-        fs = self.import_downloaded_tests(['--no-fetch', '-d', 'w3c'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
 
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/file-to-import.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/dir-to-import/test-to-import.html'))
@@ -204,7 +204,7 @@ class TestImporterTest(unittest.TestCase):
             '/home/user/wpt/web-platform-tests/dir-to-skip/file-to-import.html': 'to be imported',
         })
 
-        fs = self.import_downloaded_tests(['-s', '/home/user/wpt', '--no-fetch', '-d', 'w3c'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['-s', '/home/user/wpt', '--no-fetch', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
 
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/file-to-import.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/dir-to-import/test-to-import.html'))
@@ -237,6 +237,42 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/support/test2.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/work-in-progress/test3.html'))
 
+    def test_skip_new_directories(self):
+        FAKE_FILES = {}
+        FAKE_FILES.update(FAKE_RESOURCES)
+        FAKE_FILES.update(
+            {
+                "/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json": """
+{
+"web-platform-tests/css": "skip-new-directories"
+}""",
+                "/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-viewport/computedStyle-zoom.html": MINIMAL_TESTHARNESS,
+                "/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-viewport/zoom/scroll-top-test-with-zoom.html": MINIMAL_TESTHARNESS,
+            }
+        )
+
+        fs = self.import_downloaded_tests(["--no-fetch", "--no-clean-dest-dir", "-d", "w3c"], FAKE_FILES)
+
+        import_expectations = json.loads(
+            fs.read_text_file(
+                "/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json"
+            )
+        )
+        self.assertEqual(
+            "skip", import_expectations["web-platform-tests/css/css-viewport"]
+        )
+
+        self.assertFalse(
+            fs.exists(
+                "/mock-checkout/LayoutTests/w3c/web-platform-tests/css/css-viewport/computedStyle-zoom.html"
+            )
+        )
+        self.assertFalse(
+            fs.exists(
+                "/mock-checkout/LayoutTests/w3c/web-platform-tests/css/css-viewport/zoom/scroll-top-test-with-zoom.html"
+            )
+        )
+
     def test_checkout_directory(self):
         FAKE_FILES = {
             '/mock-checkout/WebKitBuild2/w3c-tests/web-platform-tests/existing-test.html': '',
@@ -247,7 +283,7 @@ class TestImporterTest(unittest.TestCase):
 
         os.environ['WEBKIT_OUTPUTDIR'] = '/mock-checkout/WebKitBuild2'
         try:
-            fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+            fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
         finally:
             del os.environ['WEBKIT_OUTPUTDIR']
 
@@ -268,7 +304,7 @@ class TestImporterTest(unittest.TestCase):
 
         FAKE_FILES.update(FAKE_RESOURCES)
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c', '--clean-dest-dir'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
 
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/old-test.html'))
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/old-test-expected.txt'))
@@ -299,7 +335,7 @@ class TestImporterTest(unittest.TestCase):
 
         FAKE_FILES.update(FAKE_RESOURCES)
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir'], FAKE_FILES)
 
         # 'slow' should remain in tests-options.json.
         tests_options = json.loads(fs.read_text_file('/mock-checkout/LayoutTests/tests-options.json'))
@@ -337,7 +373,7 @@ class TestImporterTest(unittest.TestCase):
             '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/test.html': '-1',
         })
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--clean-dest-dir', 'web-platform-tests/b'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', 'web-platform-tests/b'], FAKE_FILES)
 
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/a/old-test.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/a/old-test-expected.txt'))
@@ -386,7 +422,7 @@ class TestImporterTest(unittest.TestCase):
             '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/test.html': '-1',
         })
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--clean-dest-dir', 'web-platform-tests/cssom'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', 'web-platform-tests/cssom'], FAKE_FILES)
 
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom-view/old-test.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom-view/old-test-expected.txt'))
@@ -415,7 +451,7 @@ class TestImporterTest(unittest.TestCase):
         host.executive = MockExecutive2()
         host.filesystem = MockFileSystem(files=FAKE_FILES)
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
 
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/__init__.py'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/__init__.py'))
@@ -436,7 +472,7 @@ class TestImporterTest(unittest.TestCase):
         host.executive = MockExecutive2()
         host.filesystem = MockFileSystem(files=FAKE_FILES)
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
 
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/obsolete.html'))
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/obsolete-expected.txt'))
@@ -454,7 +490,7 @@ class TestImporterTest(unittest.TestCase):
         host.executive = MockExecutive2()
         host.filesystem = MockFileSystem(files=FAKE_FILES)
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/new-manual.html'))
         self.assertEqual(tests_options, fs.read_text_file('/mock-checkout/LayoutTests/tests-options.json'))
 
@@ -493,7 +529,7 @@ class TestImporterTest(unittest.TestCase):
         }
         FAKE_FILES.update(FAKE_RESOURCES)
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
 
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/test.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
@@ -517,7 +553,7 @@ class TestImporterTest(unittest.TestCase):
         }
         FAKE_FILES.update(FAKE_RESOURCES)
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
         # test3
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/css-images/test3.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/css-images/test3-expected.html'))
@@ -587,7 +623,7 @@ class TestImporterTest(unittest.TestCase):
         }
         FAKE_FILES.update(FAKE_RESOURCES)
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
 
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.any.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.any.worker.html'))
@@ -620,7 +656,7 @@ class TestImporterTest(unittest.TestCase):
         }
         FAKE_FILES.update(FAKE_RESOURCES)
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
 
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.any.html'))
         self.assertTrue('<!-- META: variant=?1-10 -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.any.html'))
@@ -636,7 +672,7 @@ class TestImporterTest(unittest.TestCase):
         }
         FAKE_FILES.update(FAKE_RESOURCES)
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
 
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.any.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.any_1-10-expected.txt'))
@@ -654,7 +690,7 @@ class TestImporterTest(unittest.TestCase):
             '/test.checkout/LayoutTests/platform/unknown-platform/w3c/web-platform-tests/t/test-expected.txt': '4',
         }
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--clean-dest-dir', '-d', 'w3c'], FAKE_FILES, test_port=True)
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES, test_port=True)
 
         self.assertTrue(fs.exists('/test.checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
         self.assertTrue(fs.exists('/test.checkout/LayoutTests/w3c/web-platform-tests/t/test-expected.txt'))

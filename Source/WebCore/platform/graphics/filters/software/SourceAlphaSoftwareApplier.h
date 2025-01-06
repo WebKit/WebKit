@@ -21,13 +21,14 @@
 #pragma once
 
 #include "FilterEffectApplier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SourceAlpha;
 
 class SourceAlphaSoftwareApplier final : public FilterEffectConcreteApplier<SourceAlpha> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SourceAlphaSoftwareApplier);
     using Base = FilterEffectConcreteApplier<SourceAlpha>;
 
 public:

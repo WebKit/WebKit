@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
 
 namespace webrtc {
 
@@ -38,7 +38,7 @@ class FramerateController {
 
  private:
   double max_framerate_;
-  absl::optional<int64_t> next_frame_timestamp_ns_;
+  std::optional<int64_t> next_frame_timestamp_ns_;
 };
 
 }  // namespace webrtc

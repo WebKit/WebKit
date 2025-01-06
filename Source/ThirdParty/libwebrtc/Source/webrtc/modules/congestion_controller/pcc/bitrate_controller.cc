@@ -107,12 +107,11 @@ double PccBitrateController::ApplyDynamicBoundary(double rate_change,
   return rate_change;
 }
 
-absl::optional<DataRate>
-PccBitrateController::ComputeRateUpdateForSlowStartMode(
+std::optional<DataRate> PccBitrateController::ComputeRateUpdateForSlowStartMode(
     const PccMonitorInterval& monitor_interval) {
   double utility_value = utility_function_->Compute(monitor_interval);
   if (previous_utility_.has_value() && utility_value <= previous_utility_) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   previous_utility_ = utility_value;
   return monitor_interval.GetTargetSendingRate();

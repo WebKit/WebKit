@@ -399,7 +399,7 @@ TEST(Challenge, BasicPersistentCredential)
     EXPECT_NULL(removedCredential);
 }
 
-static void verifyCertificateAndPublicKey(SecTrustRef trust)
+void verifyCertificateAndPublicKey(SecTrustRef trust)
 {
     EXPECT_NOT_NULL(trust);
 

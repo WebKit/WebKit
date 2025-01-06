@@ -31,8 +31,8 @@ std::vector<SpatialLayer> GetSvcConfig(
     size_t num_spatial_layers,
     size_t num_temporal_layers,
     bool is_screen_sharing,
-    absl::optional<ScalableVideoController::StreamLayersConfig> config =
-        absl::nullopt);
+    std::optional<ScalableVideoController::StreamLayersConfig> config =
+        std::nullopt);
 
 }  // namespace webrtc
 

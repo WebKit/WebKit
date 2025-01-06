@@ -27,19 +27,79 @@
 #include "NativeImage.h"
 
 #if USE(SKIA)
-
 #include "GLContext.h"
+#include "GLFence.h"
 #include "GraphicsContextSkia.h"
-#include "NotImplemented.h"
 #include "PlatformDisplay.h"
 #include <skia/core/SkData.h>
 #include <skia/core/SkImage.h>
-
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN // GLib/Win ports
+#include <skia/gpu/ganesh/GrBackendSurface.h>
+#include <skia/gpu/ganesh/SkImageGanesh.h>
+#include <skia/private/chromium/SkImageChromium.h>
 #include <skia/core/SkPixmap.h>
-IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
+
+void PlatformImageNativeImageBackend::finishAcceleratedRenderingAndCreateFence()
+{
+    Locker locker { m_fenceLock };
+    if (m_fence)
+        return;
+
+    auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
+    if (!glContext || !glContext->makeContextCurrent())
+        return;
+
+    auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
+    RELEASE_ASSERT(grContext);
+
+    grContext->flush(m_platformImage);
+
+    if (GLFence::isSupported()) {
+        grContext->submit(GrSyncCpu::kNo);
+        m_fence = GLFence::create();
+    }
+
+    if (!m_fence)
+        grContext->submit(GrSyncCpu::kYes);
+}
+
+void PlatformImageNativeImageBackend::waitForAcceleratedRenderingFenceCompletion()
+{
+    Locker locker { m_fenceLock };
+    if (!m_fence)
+        return;
+
+    m_fence->serverWait();
+    m_fence = nullptr;
+}
+
+const GrDirectContext* PlatformImageNativeImageBackend::skiaGrContext() const
+{
+    return SkImages::GetContext(platformImage());
+}
+
+RefPtr<NativeImage> PlatformImageNativeImageBackend::copyAcceleratedNativeImageBorrowingBackendTexture() const
+{
+    auto image = platformImage();
+    if (!image)
+        return nullptr;
+
+    auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
+    if (!glContext || !glContext->makeContextCurrent())
+        return nullptr;
+
+    auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
+    RELEASE_ASSERT(grContext);
+
+    GrBackendTexture backendTexture;
+    if (!SkImages::GetBackendTextureFromImage(image, &backendTexture, false))
+        return nullptr;
+
+    return NativeImage::create(SkImages::BorrowTextureFrom(grContext, backendTexture, kTopLeft_GrSurfaceOrigin, image->colorType(), image->alphaType(), image->refColorSpace()));
+}
 
 IntSize PlatformImageNativeImageBackend::size() const
 {
@@ -67,6 +127,11 @@ DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
     return DestinationColorSpace::SRGB();
 }
 
+Headroom PlatformImageNativeImageBackend::headroom() const
+{
+    return Headroom::None;
+}
+
 std::optional<Color> NativeImage::singlePixelSolidColor() const
 {
     if (size() != IntSize(1, 1))
@@ -74,10 +139,10 @@ std::optional<Color> NativeImage::singlePixelSolidColor() const
 
     auto platformImage = this->platformImage();
     if (platformImage->isTextureBacked()) {
-        if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+        if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
             return std::nullopt;
 
-        GrDirectContext* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
+        GrDirectContext* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
         const auto& imageInfo = platformImage->imageInfo();
         uint32_t pixel;
         SkPixmap pixmap(imageInfo, &pixel, imageInfo.minRowBytes());

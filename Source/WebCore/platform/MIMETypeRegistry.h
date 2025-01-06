@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -38,8 +39,8 @@ struct TypeExtensionPair {
 WEBCORE_EXPORT const std::initializer_list<TypeExtensionPair>& commonMediaTypes();
 
 struct MIMETypeRegistryThreadGlobalData {
+    WTF_MAKE_TZONE_ALLOCATED(MIMETypeRegistryThreadGlobalData);
     WTF_MAKE_NONCOPYABLE(MIMETypeRegistryThreadGlobalData);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     MIMETypeRegistryThreadGlobalData(HashSet<String, ASCIICaseInsensitiveHash>&& supportedImageMIMETypesForEncoding)
         : m_supportedImageMIMETypesForEncoding(WTFMove(supportedImageMIMETypesForEncoding))

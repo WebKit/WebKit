@@ -48,7 +48,7 @@ struct GetByValHistory {
         uintptr_t filter = this->filter();
 
         TinyBloomFilter<uintptr_t> bloomFilter(filter);
-        uintptr_t implBits = bitwise_cast<uintptr_t>(impl);
+        uintptr_t implBits = std::bit_cast<uintptr_t>(impl);
         ASSERT(((static_cast<uint64_t>(implBits) << 8) >> 8) == static_cast<uint64_t>(implBits));
         if (bloomFilter.ruleOut(implBits)) {
             bloomFilter.add(implBits);

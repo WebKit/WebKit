@@ -27,19 +27,20 @@
 #include "config.h"
 #include "PlatformSpeechSynthesizer.h"
 
-#if ENABLE(SPEECH_SYNTHESIS) && USE(GSTREAMER)
+#if USE(FLITE) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
 #include "PlatformSpeechSynthesisUtterance.h"
 #include "PlatformSpeechSynthesisVoice.h"
 #include "WebKitAudioSinkGStreamer.h"
 #include "WebKitFliteSourceGStreamer.h"
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 class GstSpeechSynthesisWrapper {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GstSpeechSynthesisWrapper);
     WTF_MAKE_NONCOPYABLE(GstSpeechSynthesisWrapper);
 public:
     explicit GstSpeechSynthesisWrapper(const PlatformSpeechSynthesizer&);
@@ -264,4 +265,4 @@ void PlatformSpeechSynthesizer::resetState()
 
 } // namespace WebCore
 
-#endif // ENABLE(SPEECH_SYNTHESIS) && USE(GSTREAMER)
+#endif // USE(FLITE) && USE(GSTREAMER)

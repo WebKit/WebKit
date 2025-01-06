@@ -28,6 +28,7 @@
 
 #include "pas_bootstrap_heap_page_provider.h"
 #include "pas_simple_large_free_heap.h"
+#include "pas_small_medium_bootstrap_heap_page_provider.h"
 #include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
@@ -59,7 +60,7 @@ struct pas_megapage_cache_config {
 
 #define PAS_MEGAPAGE_CACHE_INITIALIZER { \
         .free_heap = PAS_SIMPLE_LARGE_FREE_HEAP_INITIALIZER, \
-        .provider = pas_bootstrap_heap_page_provider, \
+        .provider = pas_small_medium_bootstrap_heap_page_provider, \
         .provider_arg = NULL \
     }
 

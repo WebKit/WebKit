@@ -27,11 +27,16 @@
 #include "AudioSampleBufferList.h"
 
 #include "Logging.h"
+#include "NotImplemented.h"
+#include "SpanCoreAudio.h"
 #include "VectorMath.h"
 #include <Accelerate/Accelerate.h>
 #include <AudioToolbox/AudioConverter.h>
-#include <pal/cf/AudioToolboxSoftLink.h>
 #include <wtf/SetForScope.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/ZippedRange.h>
+
+#include <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebCore {
 
@@ -60,34 +65,37 @@ void AudioSampleBufferList::setSampleCount(size_t count)
 
 void AudioSampleBufferList::applyGain(AudioBufferList& bufferList, float gain, AudioStreamDescription::PCMFormat format)
 {
-    for (uint32_t i = 0; i < bufferList.mNumberBuffers; ++i) {
+    auto bufferSpan = span(bufferList);
+    for (auto& buffer : bufferSpan) {
         switch (format) {
         case AudioStreamDescription::Int16: {
-            int16_t* buffer = static_cast<int16_t*>(bufferList.mBuffers[i].mData);
-            int frameCount = bufferList.mBuffers[i].mDataByteSize / sizeof(int16_t);
-            for (int i = 0; i < frameCount; i++)
-                buffer[i] *= gain;
+            auto data = mutableSpan<int16_t>(buffer);
+            for (auto& value : data)
+                value *= gain;
             break;
         }
         case AudioStreamDescription::Int32: {
-            int32_t* buffer = static_cast<int32_t*>(bufferList.mBuffers[i].mData);
-            int frameCount = bufferList.mBuffers[i].mDataByteSize / sizeof(int32_t);
-            for (int i = 0; i < frameCount; i++)
-                buffer[i] *= gain;
-            break;
+            auto data = mutableSpan<int32_t>(buffer);
+            for (auto& value : data)
+                value *= gain;
             break;
         }
         case AudioStreamDescription::Float32: {
-            float* buffer = static_cast<float*>(bufferList.mBuffers[i].mData);
-            vDSP_vsmul(buffer, 1, &gain, buffer, 1, bufferList.mBuffers[i].mDataByteSize / sizeof(float));
+            auto data = mutableSpan<float>(buffer);
+            vDSP_vsmul(data.data(), 1, &gain, data.data(), 1, data.size());
             break;
         }
         case AudioStreamDescription::Float64: {
-            double* buffer = static_cast<double*>(bufferList.mBuffers[i].mData);
+            auto data = mutableSpan<double>(buffer);
             double gainAsDouble = gain;
-            vDSP_vsmulD(buffer, 1, &gainAsDouble, buffer, 1, bufferList.mBuffers[i].mDataByteSize / sizeof(double));
+            vDSP_vsmulD(data.data(), 1, &gainAsDouble, data.data(), 1, data.size());
             break;
         }
+        case AudioStreamDescription::Uint8:
+        case AudioStreamDescription::Int24:
+            notImplemented();
+            ASSERT_NOT_REACHED();
+            break;
         case AudioStreamDescription::None:
             ASSERT_NOT_REACHED();
             break;
@@ -102,42 +110,52 @@ void AudioSampleBufferList::applyGain(float gain)
 
 static void mixBuffers(WebAudioBufferList& destinationBuffer, const AudioBufferList& sourceBuffer, AudioStreamDescription::PCMFormat format, size_t frameCount)
 {
-    for (uint32_t i = 0; i < destinationBuffer.bufferCount(); i++) {
+    auto sourceBufferSpan = span(sourceBuffer);
+    auto destinationBufferSpan = span(*destinationBuffer.list());
+    for (auto [source, destination] : zippedRange(sourceBufferSpan, destinationBufferSpan)) {
         switch (format) {
         case AudioStreamDescription::Int16: {
-            ASSERT(frameCount <= destinationBuffer.buffer(i)->mDataByteSize / 2);
-            ASSERT(frameCount <= sourceBuffer.mBuffers[i].mDataByteSize / 2);
+            ASSERT(frameCount <= destination.mDataByteSize / 2);
+            ASSERT(frameCount <= source.mDataByteSize / 2);
 
-            auto* destination = static_cast<int16_t*>(destinationBuffer.buffer(i)->mData);
-            auto* source = static_cast<int16_t*>(sourceBuffer.mBuffers[i].mData);
-            for (size_t i = 0; i < frameCount; i++)
-                destination[i] += source[i];
+            auto sourceData = span<int16_t>(source).first(frameCount);
+            auto destinationData = mutableSpan<int16_t>(destination).first(frameCount);
+            for (auto [s, d] : zippedRange(sourceData, destinationData))
+                d += s;
             break;
         }
         case AudioStreamDescription::Int32: {
-            ASSERT(frameCount <= destinationBuffer.buffer(i)->mDataByteSize / 4);
-            ASSERT(frameCount <= sourceBuffer.mBuffers[i].mDataByteSize / 4);
+            ASSERT(frameCount <= destination.mDataByteSize / sizeof(int32_t));
+            ASSERT(frameCount <= source.mDataByteSize / sizeof(int32_t));
 
-            auto* destination = static_cast<int32_t*>(destinationBuffer.buffer(i)->mData);
-            vDSP_vaddi(destination, 1, reinterpret_cast<int32_t*>(sourceBuffer.mBuffers[i].mData), 1, destination, 1, frameCount);
+            auto sourceData = span<int32_t>(source).first(frameCount);
+            auto destinationData = mutableSpan<int32_t>(destination).first(frameCount);
+            VectorMath::add(destinationData, sourceData, destinationData);
             break;
         }
         case AudioStreamDescription::Float32: {
-            ASSERT(frameCount <= destinationBuffer.buffer(i)->mDataByteSize / 4);
-            ASSERT(frameCount <= sourceBuffer.mBuffers[i].mDataByteSize / 4);
+            ASSERT(frameCount <= destination.mDataByteSize / sizeof(float));
+            ASSERT(frameCount <= source.mDataByteSize / sizeof(float));
 
-            auto* destination = static_cast<float*>(destinationBuffer.buffer(i)->mData);
-            vDSP_vadd(destination, 1, reinterpret_cast<float*>(sourceBuffer.mBuffers[i].mData), 1, destination, 1, frameCount);
+            auto sourceData = span<float>(source).first(frameCount);
+            auto destinationData = mutableSpan<float>(destination).first(frameCount);
+            VectorMath::add(destinationData, sourceData, destinationData);
             break;
         }
         case AudioStreamDescription::Float64: {
-            ASSERT(frameCount <= destinationBuffer.buffer(i)->mDataByteSize / 8);
-            ASSERT(frameCount <= sourceBuffer.mBuffers[i].mDataByteSize / 8);
+            ASSERT(frameCount <= destination.mDataByteSize / sizeof(double));
+            ASSERT(frameCount <= source.mDataByteSize / sizeof(double));
 
-            auto* destination = static_cast<double*>(destinationBuffer.buffer(i)->mData);
-            vDSP_vaddD(destination, 1, reinterpret_cast<double*>(sourceBuffer.mBuffers[i].mData), 1, destination, 1, frameCount);
+            auto sourceData = span<double>(source).first(frameCount);
+            auto destinationData = mutableSpan<double>(destination).first(frameCount);
+            VectorMath::add(destinationData, sourceData, destinationData);
             break;
         }
+        case AudioStreamDescription::Uint8:
+        case AudioStreamDescription::Int24:
+            notImplemented();
+            ASSERT_NOT_REACHED();
+            break;
         case AudioStreamDescription::None:
             ASSERT_NOT_REACHED();
             break;
@@ -180,9 +198,9 @@ OSStatus AudioSampleBufferList::copyFrom(const AudioSampleBufferList& source, si
     m_sampleCount = frameCount;
 
     for (uint32_t i = 0; i < m_bufferList->bufferCount(); i++) {
-        uint8_t* sourceData = static_cast<uint8_t*>(source.bufferList().buffer(i)->mData);
-        uint8_t* destination = static_cast<uint8_t*>(m_bufferList->buffer(i)->mData);
-        memcpy(destination, sourceData, frameCount * m_internalFormat.bytesPerPacket());
+        auto sourceData = span<uint8_t>(*source.bufferList().buffer(i));
+        auto destination = mutableSpan<uint8_t>(*m_bufferList->buffer(i));
+        memcpySpan(destination, sourceData.first(frameCount * m_internalFormat.bytesPerPacket()));
     }
 
     return 0;
@@ -195,10 +213,12 @@ OSStatus AudioSampleBufferList::copyTo(AudioBufferList& buffer, size_t frameCoun
     if (buffer.mNumberBuffers > m_bufferList->bufferCount())
         return kAudio_ParamError;
 
-    for (uint32_t i = 0; i < buffer.mNumberBuffers; i++) {
-        uint8_t* sourceData = static_cast<uint8_t*>(m_bufferList->buffer(i)->mData);
-        uint8_t* destination = static_cast<uint8_t*>(buffer.mBuffers[i].mData);
-        memcpy(destination, sourceData, frameCount * m_internalFormat.bytesPerPacket());
+    auto sourceBuffers = span(*m_bufferList->list());
+    auto destinationBuffers = span(buffer);
+    for (auto [source, destination] : zippedRange(sourceBuffers, destinationBuffers)) {
+        auto sourceData = span<uint8_t>(source);
+        auto destinationData = mutableSpan<uint8_t>(destination);
+        memcpySpan(destinationData, sourceData.first(frameCount * m_internalFormat.bytesPerPacket()));
     }
 
     return 0;
@@ -229,10 +249,11 @@ void AudioSampleBufferList::zero()
     zeroABL(m_bufferList.get(), m_internalFormat.bytesPerPacket() * m_sampleCapacity);
 }
 
-void AudioSampleBufferList::zeroABL(AudioBufferList& buffer, size_t byteCount)
+void AudioSampleBufferList::zeroABL(AudioBufferList& bufferList, size_t byteCount)
 {
-    for (uint32_t i = 0; i < buffer.mNumberBuffers; ++i)
-        memset(buffer.mBuffers[i].mData, 0, byteCount);
+    auto bufferSpan = span(bufferList);
+    for (auto buffer : bufferSpan)
+        zeroSpan(mutableSpan<uint8_t>(buffer).first(byteCount));
 }
 
 struct AudioConverterFromABLContext {
@@ -258,9 +279,11 @@ static OSStatus audioConverterFromABLCallback(AudioConverterRef, UInt32* ioNumbe
 
     *ioNumberDataPackets = static_cast<UInt32>(context.packetsAvailableToConvert);
 
-    for (uint32_t i = 0; i < ioData->mNumberBuffers; ++i) {
-        ioData->mBuffers[i].mData = context.buffer.mBuffers[i].mData;
-        ioData->mBuffers[i].mDataByteSize = context.packetsAvailableToConvert * context.bytesPerPacket;
+    auto contextBuffers = span(context.buffer);
+    auto ioDataBuffers = span(*ioData);
+    for (auto [ioDataBuffer, contextBuffer] : zippedRange(ioDataBuffers, contextBuffers)) {
+        ioDataBuffer.mData = contextBuffer.mData;
+        ioDataBuffer.mDataByteSize = context.packetsAvailableToConvert * context.bytesPerPacket;
     }
     context.packetsAvailableToConvert = 0;
 
@@ -274,7 +297,7 @@ OSStatus AudioSampleBufferList::copyFrom(const AudioBufferList& source, size_t f
     AudioStreamBasicDescription inputFormat;
     UInt32 propertyDataSize = sizeof(inputFormat);
     PAL::AudioConverterGetProperty(converter, kAudioConverterCurrentInputStreamDescription, &propertyDataSize, &inputFormat);
-    ASSERT(frameCount <= source.mBuffers[0].mDataByteSize / inputFormat.mBytesPerPacket);
+    ASSERT(frameCount <= span(source)[0].mDataByteSize / inputFormat.mBytesPerPacket);
 
     AudioConverterFromABLContext context { source, frameCount, inputFormat.mBytesPerPacket };
 

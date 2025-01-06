@@ -30,6 +30,7 @@
 #include "JSWebExtensionAPIDevToolsInspectedWindow.h"
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
+#include "WebPageProxyIdentifier.h"
 
 namespace WebKit {
 
@@ -40,8 +41,8 @@ class WebExtensionAPIDevToolsInspectedWindow : public WebExtensionAPIObject, pub
 
 public:
 #if PLATFORM(COCOA)
-    void eval(WebPage&, NSString *expression, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void reload(WebPage&, NSDictionary *options, NSString **outExceptionString);
+    void eval(WebPageProxyIdentifier, NSString *expression, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void reload(WebPageProxyIdentifier, NSDictionary *options, NSString **outExceptionString);
 
     double tabId(WebPage&);
 #endif

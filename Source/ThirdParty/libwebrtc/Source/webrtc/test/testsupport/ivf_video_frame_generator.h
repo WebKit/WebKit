@@ -12,9 +12,11 @@
 #define TEST_TESTSUPPORT_IVF_VIDEO_FRAME_GENERATOR_H_
 
 #include <memory>
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
+#include "absl/strings/string_view.h"
+#include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/video/video_codec_type.h"
@@ -30,14 +32,15 @@ namespace test {
 // All methods except constructor must be used from the same thread.
 class IvfVideoFrameGenerator : public FrameGeneratorInterface {
  public:
-  explicit IvfVideoFrameGenerator(const std::string& file_name);
+  IvfVideoFrameGenerator(const Environment& env, absl::string_view file_name);
   ~IvfVideoFrameGenerator() override;
 
   VideoFrameData NextFrame() override;
+  void SkipNextFrame() override;
   void ChangeResolution(size_t width, size_t height) override;
   Resolution GetResolution() const override;
 
-  absl::optional<int> fps() const override { return absl::nullopt; }
+  std::optional<int> fps() const override { return std::nullopt; }
 
  private:
   class DecodedCallback : public DecodedImageCallback {
@@ -48,16 +51,14 @@ class IvfVideoFrameGenerator : public FrameGeneratorInterface {
     int32_t Decoded(VideoFrame& decoded_image) override;
     int32_t Decoded(VideoFrame& decoded_image, int64_t decode_time_ms) override;
     void Decoded(VideoFrame& decoded_image,
-                 absl::optional<int32_t> decode_time_ms,
-                 absl::optional<uint8_t> qp) override;
+                 std::optional<int32_t> decode_time_ms,
+                 std::optional<uint8_t> qp) override;
 
    private:
     IvfVideoFrameGenerator* const reader_;
   };
 
   void OnFrameDecoded(const VideoFrame& decoded_frame);
-  static std::unique_ptr<VideoDecoder> CreateVideoDecoder(
-      VideoCodecType codec_type);
 
   DecodedCallback callback_;
   std::unique_ptr<IvfFileReader> file_reader_;
@@ -81,7 +82,7 @@ class IvfVideoFrameGenerator : public FrameGeneratorInterface {
   Mutex frame_decode_lock_;
 
   rtc::Event next_frame_decoded_;
-  absl::optional<VideoFrame> next_frame_ RTC_GUARDED_BY(frame_decode_lock_);
+  std::optional<VideoFrame> next_frame_ RTC_GUARDED_BY(frame_decode_lock_);
 };
 
 }  // namespace test

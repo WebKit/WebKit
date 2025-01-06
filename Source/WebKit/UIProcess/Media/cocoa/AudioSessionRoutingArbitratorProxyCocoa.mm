@@ -43,13 +43,13 @@ AudioSessionRoutingArbitratorProxy::AudioSessionRoutingArbitratorProxy(WebProces
     , m_token(SharedRoutingArbitratorToken::create())
 {
     m_logIdentifier = m_token->logIdentifier();
-    SharedRoutingArbitrator::sharedInstance().setLogger(logger());
+    SharedRoutingArbitrator::sharedInstance().setLogger(Ref { logger() });
     proxy.addMessageReceiver(Messages::AudioSessionRoutingArbitratorProxy::messageReceiverName(), destinationId(), *this);
 }
 
 AudioSessionRoutingArbitratorProxy::~AudioSessionRoutingArbitratorProxy()
 {
-    RefAllowingPartiallyDestroyed<WebProcessProxy> process = m_process.get();
+    Ref<WebProcessProxy> process = m_process.get();
     process->removeMessageReceiver(Messages::AudioSessionRoutingArbitratorProxy::messageReceiverName(), destinationId());
 }
 

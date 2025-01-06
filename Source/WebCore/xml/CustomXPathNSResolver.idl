@@ -23,7 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Not using [IsWeakCallback] here as XPathNSResolver wrappers always temporary (no reference is kept)
-callback interface CustomXPathNSResolver {
+[ GenerateIsReachable=ImplScriptExecutionContext ] callback interface CustomXPathNSResolver {
     [ImplementedAs=lookupNamespaceURIForBindings, SkipCallbackInvokeCheck] DOMString? lookupNamespaceURI([AtomString] DOMString? prefix);
 };

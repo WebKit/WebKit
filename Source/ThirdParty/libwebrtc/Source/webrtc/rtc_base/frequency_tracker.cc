@@ -10,7 +10,8 @@
 
 #include "rtc_base/frequency_tracker.h"
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/units/frequency.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -21,11 +22,11 @@ namespace webrtc {
 FrequencyTracker::FrequencyTracker(TimeDelta max_window_size)
     : impl_(max_window_size.ms(), 1'000'000) {}
 
-absl::optional<Frequency> FrequencyTracker::Rate(Timestamp now) const {
-  if (absl::optional<int64_t> rate = impl_.Rate(now.ms())) {
+std::optional<Frequency> FrequencyTracker::Rate(Timestamp now) const {
+  if (std::optional<int64_t> rate = impl_.Rate(now.ms())) {
     return Frequency::MilliHertz(*rate);
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 void FrequencyTracker::Update(int64_t count, Timestamp now) {

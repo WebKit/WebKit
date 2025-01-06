@@ -37,6 +37,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -51,7 +52,8 @@ typedef Vector<RetainPtr<PlatformLayer>> PlatformLayerList;
 const int kDefaultTileSize = 512;
 
 class TileController final : public TiledBacking {
-    WTF_MAKE_NONCOPYABLE(TileController); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TileController, WEBCORE_EXPORT);
+    WTF_MAKE_NONCOPYABLE(TileController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TileController);
 
     friend class TileCoverageMap;
@@ -76,8 +78,8 @@ public:
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     WEBCORE_EXPORT void setAcceleratesDrawing(bool);
 
-    bool wantsDeepColorBackingStore() const { return m_wantsDeepColorBackingStore; }
-    WEBCORE_EXPORT void setWantsDeepColorBackingStore(bool);
+    ContentsFormat contentsFormat() const { return m_contentsFormat; }
+    WEBCORE_EXPORT void setContentsFormat(ContentsFormat);
 
     WEBCORE_EXPORT void setTilesOpaque(bool);
     bool tilesAreOpaque() const { return m_tilesAreOpaque; }
@@ -133,7 +135,8 @@ public:
 
     IntRect boundsAtLastRevalidate() const { return m_boundsAtLastRevalidate; }
     IntRect boundsAtLastRevalidateWithoutMargin() const;
-    void didRevalidateTiles();
+    void willRevalidateTiles(TileGrid&, TileRevalidationType);
+    void didRevalidateTiles(TileGrid&, TileRevalidationType, const HashSet<TileIndex>& tilesNeedingDisplay);
 
     bool shouldAggressivelyRetainTiles() const;
     bool shouldTemporarilyRetainTileCohorts() const;
@@ -156,7 +159,12 @@ private:
     float topContentInset() const { return m_topContentInset; }
 
     // TiledBacking member functions.
+    PlatformLayerIdentifier layerIdentifier() const final;
     void setClient(TiledBackingClient*) final;
+
+    TileGridIdentifier primaryGridIdentifier() const final;
+    std::optional<TileGridIdentifier> secondaryGridIdentifier() const final;
+
     void setVisibleRect(const FloatRect&) final;
     void setLayoutViewportRect(std::optional<FloatRect>) final;
     void setCoverageRect(const FloatRect&) final;
@@ -247,14 +255,15 @@ private:
     bool m_isInWindow { false };
     bool m_scrollingPerformanceTestingEnabled { false };
     bool m_acceleratesDrawing { false };
-    bool m_wantsDeepColorBackingStore { false };
     bool m_tilesAreOpaque { false };
     bool m_hasTilesWithTemporaryScaleFactor { false }; // Used to make low-res tiles when zooming.
     bool m_inLiveResize { false };
     bool m_tileSizeLocked { false };
     bool m_haveExternalVelocityData { false };
     bool m_isTileSizeUpdateDelayDisabledForTesting { false };
-    
+
+    ContentsFormat m_contentsFormat { ContentsFormat::RGBA8 };
+
     AllowScrollPerformanceLogging m_shouldAllowScrollPerformanceLogging { AllowScrollPerformanceLogging::Yes };
 
     Color m_tileDebugBorderColor;

@@ -93,10 +93,10 @@ layer at (0,0) size 785x2447
             RenderText at (5,5) size 27x17
               text run at (5,5) width 27: "One"
         RenderText {#text} at (0,0) size 0x0
-        RenderTable {TABLE} at (110,28) size 100x30 [border: (2px outset #808080)]
+        RenderTable {TABLE} at (110,28) size 100x30 [border: (2px outset #000000)]
           RenderTableSection {TBODY} at (2,2) size 96x26
             RenderTableRow {TR} at (0,2) size 96x22
-              RenderTableCell {TD} at (2,2) size 92x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 92x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 35x17
                   text run at (2,2) width 35: "Table"
         RenderText {#text} at (0,0) size 0x0
@@ -114,10 +114,10 @@ layer at (0,0) size 785x2447
             RenderText at (5,5) size 27x17
               text run at (5,5) width 27: "One"
         RenderText {#text} at (0,0) size 0x0
-        RenderTable {TABLE} at (10,58) size 200x66 [border: (2px outset #808080)]
+        RenderTable {TABLE} at (10,58) size 200x66 [border: (2px outset #000000)]
           RenderTableSection {TBODY} at (2,2) size 196x62
             RenderTableRow {TR} at (0,2) size 196x58
-              RenderTableCell {TD} at (2,2) size 192x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 192x58 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 161x53
                   text run at (2,2) width 159: "Floating table that should"
                   text run at (2,20) width 161: "shrink so it can be next to"
@@ -138,10 +138,10 @@ layer at (0,0) size 785x2447
               RenderText at (5,5) size 27x17
                 text run at (5,5) width 27: "One"
           RenderText {#text} at (0,0) size 0x0
-        RenderTable {TABLE} at (10,58) size 200x66 [border: (2px outset #808080)]
+        RenderTable {TABLE} at (10,58) size 200x66 [border: (2px outset #000000)]
           RenderTableSection {TBODY} at (2,2) size 196x62
             RenderTableRow {TR} at (0,2) size 196x58
-              RenderTableCell {TD} at (2,2) size 192x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 192x58 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 161x53
                   text run at (2,2) width 159: "Floating table that should"
                   text run at (2,20) width 161: "shrink so it can be next to"
@@ -162,10 +162,10 @@ layer at (0,0) size 785x2447
               RenderText at (5,5) size 27x17
                 text run at (5,5) width 27: "One"
           RenderText {#text} at (0,0) size 0x0
-        RenderTable {TABLE} at (110,28) size 100x120 [border: (2px outset #808080)]
+        RenderTable {TABLE} at (110,28) size 100x120 [border: (2px outset #000000)]
           RenderTableSection {TBODY} at (2,2) size 96x116
             RenderTableRow {TR} at (0,2) size 96x112
-              RenderTableCell {TD} at (2,2) size 92x112 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 92x112 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 88x107
                   text run at (2,2) width 86: "Floating table"
                   text run at (2,20) width 69: "that should"

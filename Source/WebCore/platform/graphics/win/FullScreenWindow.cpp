@@ -31,8 +31,11 @@
 #include "IntRect.h"
 #include "WebCoreInstanceHandle.h"
 #include <windows.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FullScreenWindow);
 
 FullScreenWindow::FullScreenWindow(FullScreenClient* client)
     : m_client(client)

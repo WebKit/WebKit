@@ -33,6 +33,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -46,7 +47,7 @@ struct DetectedText;
 namespace WebKit::ShapeDetection {
 
 class RemoteTextDetectorProxy : public WebCore::ShapeDetection::TextDetector {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteTextDetectorProxy);
 public:
     static Ref<RemoteTextDetectorProxy> create(Ref<IPC::StreamClientConnection>&&, RenderingBackendIdentifier, ShapeDetectionIdentifier);
 

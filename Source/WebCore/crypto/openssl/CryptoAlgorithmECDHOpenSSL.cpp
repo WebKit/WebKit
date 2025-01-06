@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey, UseCryptoKit)
+std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)
 {
     auto ctx = EvpPKeyCtxPtr(EVP_PKEY_CTX_new(baseKey.platformKey().get(), nullptr));
     if (!ctx)

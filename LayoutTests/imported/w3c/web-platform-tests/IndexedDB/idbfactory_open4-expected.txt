@@ -1,3 +1,0 @@
-
-PASS IDBFactory.open() - new database has default version
-

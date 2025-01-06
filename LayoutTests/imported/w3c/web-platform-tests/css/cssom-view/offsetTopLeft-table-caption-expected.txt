@@ -1,0 +1,7 @@
+I'm a
+reasonably
+tall caption.
+I'm a cell.
+
+PASS offset* APIs on tables with captions.
+

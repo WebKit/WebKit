@@ -25,13 +25,16 @@
 #include "DocumentInlines.h"
 #include "FEGaussianBlur.h"
 #include "NodeName.h"
+#include "SVGDocumentExtensions.h"
+#include "SVGFilter.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFEGaussianBlurElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFEGaussianBlurElement);
 
 inline SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

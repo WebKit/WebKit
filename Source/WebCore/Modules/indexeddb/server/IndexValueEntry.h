@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IDBKeyData.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ enum class CursorDuplicity;
 namespace IDBServer {
 
 class IndexValueEntry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IndexValueEntry);
 public:
     explicit IndexValueEntry(bool unique);
     ~IndexValueEntry();

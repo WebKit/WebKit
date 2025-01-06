@@ -10,6 +10,15 @@
 
 #include "api/audio_codecs/audio_encoder.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <string>
+
+#include "api/array_view.h"
+#include "api/call/bitrate_allocation.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/trace_event.h"
 
@@ -58,53 +67,54 @@ bool AudioEncoder::GetDtx() const {
   return false;
 }
 
-bool AudioEncoder::SetApplication(Application application) {
+bool AudioEncoder::SetApplication(Application /* application */) {
   return false;
 }
 
-void AudioEncoder::SetMaxPlaybackRate(int frequency_hz) {}
+void AudioEncoder::SetMaxPlaybackRate(int /* frequency_hz */) {}
 
-void AudioEncoder::SetTargetBitrate(int target_bps) {}
+void AudioEncoder::SetTargetBitrate(int /* target_bps */) {}
 
 rtc::ArrayView<std::unique_ptr<AudioEncoder>>
 AudioEncoder::ReclaimContainedEncoders() {
   return nullptr;
 }
 
-bool AudioEncoder::EnableAudioNetworkAdaptor(const std::string& config_string,
-                                             RtcEventLog* event_log) {
+bool AudioEncoder::EnableAudioNetworkAdaptor(
+    const std::string& /* config_string */,
+    RtcEventLog* /* event_log */) {
   return false;
 }
 
 void AudioEncoder::DisableAudioNetworkAdaptor() {}
 
 void AudioEncoder::OnReceivedUplinkPacketLossFraction(
-    float uplink_packet_loss_fraction) {}
+    float /* uplink_packet_loss_fraction */) {}
 
 void AudioEncoder::OnReceivedUplinkRecoverablePacketLossFraction(
-    float uplink_recoverable_packet_loss_fraction) {
+    float /* uplink_recoverable_packet_loss_fraction */) {
   RTC_DCHECK_NOTREACHED();
 }
 
 void AudioEncoder::OnReceivedTargetAudioBitrate(int target_audio_bitrate_bps) {
-  OnReceivedUplinkBandwidth(target_audio_bitrate_bps, absl::nullopt);
+  OnReceivedUplinkBandwidth(target_audio_bitrate_bps, std::nullopt);
 }
 
 void AudioEncoder::OnReceivedUplinkBandwidth(
-    int target_audio_bitrate_bps,
-    absl::optional<int64_t> bwe_period_ms) {}
+    int /* target_audio_bitrate_bps */,
+    std::optional<int64_t> /* bwe_period_ms */) {}
 
 void AudioEncoder::OnReceivedUplinkAllocation(BitrateAllocationUpdate update) {
   OnReceivedUplinkBandwidth(update.target_bitrate.bps(),
                             update.bwe_period.ms());
 }
 
-void AudioEncoder::OnReceivedRtt(int rtt_ms) {}
+void AudioEncoder::OnReceivedRtt(int /* rtt_ms */) {}
 
-void AudioEncoder::OnReceivedOverhead(size_t overhead_bytes_per_packet) {}
+void AudioEncoder::OnReceivedOverhead(size_t /* overhead_bytes_per_packet */) {}
 
-void AudioEncoder::SetReceiverFrameLengthRange(int min_frame_length_ms,
-                                               int max_frame_length_ms) {}
+void AudioEncoder::SetReceiverFrameLengthRange(int /* min_frame_length_ms */,
+                                               int /* max_frame_length_ms */) {}
 
 ANAStats AudioEncoder::GetANAStats() const {
   return ANAStats();

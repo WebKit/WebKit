@@ -165,7 +165,7 @@ FixedVector<T, N, Storage> &FixedVector<T, N, Storage>::operator=(
 template <class T, size_t N, class Storage>
 typename FixedVector<T, N, Storage>::reference FixedVector<T, N, Storage>::at(size_type pos)
 {
-    ASSERT(pos < N);
+    ASSERT(pos < mSize);
     return mStorage.at(pos);
 }
 
@@ -173,14 +173,14 @@ template <class T, size_t N, class Storage>
 typename FixedVector<T, N, Storage>::const_reference FixedVector<T, N, Storage>::at(
     size_type pos) const
 {
-    ASSERT(pos < N);
+    ASSERT(pos < mSize);
     return mStorage.at(pos);
 }
 
 template <class T, size_t N, class Storage>
 typename FixedVector<T, N, Storage>::reference FixedVector<T, N, Storage>::operator[](size_type pos)
 {
-    ASSERT(pos < N);
+    ASSERT(pos < mSize);
     return mStorage[pos];
 }
 
@@ -188,7 +188,7 @@ template <class T, size_t N, class Storage>
 typename FixedVector<T, N, Storage>::const_reference FixedVector<T, N, Storage>::operator[](
     size_type pos) const
 {
-    ASSERT(pos < N);
+    ASSERT(pos < mSize);
     return mStorage[pos];
 }
 

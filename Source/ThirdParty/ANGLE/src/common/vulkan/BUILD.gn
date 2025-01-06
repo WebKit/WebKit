@@ -155,4 +155,16 @@ if (angle_enable_vulkan) {
       }
     }
   }
+
+  if (angle_enable_vulkan_api_dump_layer) {
+    group("lunarg_vulkantools") {
+      data_deps = []
+      if (!is_fuchsia) {
+        data_deps += [ "$angle_lunarg_vulkantools_dir:lunarg_vulkantools" ]
+        if (!is_android) {
+          data_deps += [ "$angle_lunarg_vulkantools_dir:vulkan_gen_json_files" ]
+        }
+      }
+    }
+  }
 }

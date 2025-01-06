@@ -13,6 +13,7 @@
 #include <cstring>
 #include <limits>
 #include <map>
+#include <optional>
 #include <set>
 #include <utility>
 #include <vector>
@@ -54,7 +55,8 @@ std::unique_ptr<RtpFrameObject> CreateFrame(
       kVideoRotation_0,
       VideoContentType::UNSPECIFIED,
       video_header,
-      /*color_space=*/absl::nullopt,
+      /*color_space=*/std::nullopt,
+      /*frame_instrumentation_data=*/std::nullopt,
       RtpPacketInfos(),
       EncodedImageBuffer::Create(/*size=*/0));
   // clang-format on

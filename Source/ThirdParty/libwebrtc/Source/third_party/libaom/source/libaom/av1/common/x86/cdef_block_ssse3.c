@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -8,6 +8,17 @@
  * Media Patent License 1.0 was not distributed with this source code in the
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
+
+// Include SSSE3 CDEF code only for 32-bit x86, to support Valgrind.
+// For normal use, we require SSE4.1, so cdef_*_sse4_1 will be used instead of
+// these functions. However, 32-bit Valgrind does not support SSE4.1, so we
+// include a fallback to SSSE3 to improve performance
+
+#include "config/aom_config.h"
+
+#if !AOM_ARCH_X86
+#error "cdef_block_ssse3.c is included for compatibility with 32-bit x86 only"
+#endif  // !AOM_ARCH_X86
 
 #include "aom_dsp/aom_simd.h"
 #define SIMD_FUNC(name) name##_ssse3

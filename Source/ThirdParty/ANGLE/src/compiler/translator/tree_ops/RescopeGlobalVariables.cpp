@@ -47,7 +47,7 @@ class Rescoper : public TIntermTraverser
             {
                 TIntermFunctionDefinition *func = *pair.second.functions.begin();
                 // Function* may be a nullptr if the variable was used in a
-                // global initializer. Don't rescope, http://anglebug.com/8403
+                // global initializer. Don't rescope, http://anglebug.com/42266827
                 if (func != nullptr)
                 {
                     TIntermSequence *funcSequence = func->getBody()->getSequence();

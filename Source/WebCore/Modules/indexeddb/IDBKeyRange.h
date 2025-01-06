@@ -42,7 +42,7 @@ class IDBKey;
 class ScriptExecutionContext;
 
 class IDBKeyRange final : public ScriptWrappable, public RefCounted<IDBKeyRange> {
-    WTF_MAKE_ISO_ALLOCATED(IDBKeyRange);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBKeyRange);
 public:
     static Ref<IDBKeyRange> create(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, bool isLowerOpen, bool isUpperOpen);
     static Ref<IDBKeyRange> create(RefPtr<IDBKey>&&);

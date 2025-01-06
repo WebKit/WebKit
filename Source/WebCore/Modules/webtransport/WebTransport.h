@@ -47,6 +47,7 @@ class DatagramSource;
 class DeferredPromise;
 class JSDOMGlobalObject;
 class ReadableStream;
+class ReadableStreamSource;
 class ScriptExecutionContext;
 class SocketProvider;
 class WebTransportBidirectionalStreamSource;
@@ -54,8 +55,10 @@ class WebTransportDatagramDuplexStream;
 class WebTransportError;
 class WebTransportReceiveStreamSource;
 class WebTransportSession;
+class WorkerWebTransportSession;
 class WritableStream;
 
+struct WebTransportBidirectionalStreamConstructionParameters;
 struct WebTransportCloseInfo;
 struct WebTransportSendStreamOptions;
 struct WebTransportHash;
@@ -94,8 +97,10 @@ private:
     bool virtualHasPendingActivity() const final;
 
     void receiveDatagram(std::span<const uint8_t>) final;
-    void receiveIncomingUnidirectionalStream() final;
-    void receiveBidirectionalStream() final;
+    void receiveIncomingUnidirectionalStream(WebTransportStreamIdentifier) final;
+    void receiveBidirectionalStream(WebTransportBidirectionalStreamConstructionParameters&&) final;
+    void streamReceiveBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin) final;
+    void networkProcessCrashed() final;
 
     ListHashSet<Ref<WritableStream>> m_sendStreams;
     ListHashSet<Ref<ReadableStream>> m_receiveStreams;
@@ -120,10 +125,10 @@ private:
     PromiseAndWrapper m_draining;
     Ref<WebTransportDatagramDuplexStream> m_datagrams;
     RefPtr<WebTransportSession> m_session;
-
     Ref<DatagramSource> m_datagramSource;
     Ref<WebTransportReceiveStreamSource> m_receiveStreamSource;
     Ref<WebTransportBidirectionalStreamSource> m_bidirectionalStreamSource;
+    HashMap<WebTransportStreamIdentifier, Ref<WebTransportReceiveStreamSource>> m_readStreamSources;
 };
 
 }

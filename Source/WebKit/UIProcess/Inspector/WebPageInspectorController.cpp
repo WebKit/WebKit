@@ -39,6 +39,7 @@
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <JavaScriptCore/InspectorTargetAgent.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -48,6 +49,8 @@ static String getTargetID(const ProvisionalPageProxy& provisionalPage)
 {
     return WebPageInspectorTarget::toTargetID(provisionalPage.webPageID());
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageInspectorController);
 
 WebPageInspectorController::WebPageInspectorController(WebPageProxy& inspectedPage)
     : m_frontendRouter(FrontendRouter::create())
@@ -59,6 +62,8 @@ WebPageInspectorController::WebPageInspectorController(WebPageProxy& inspectedPa
     m_agents.append(WTFMove(targetAgent));
 }
 
+WebPageInspectorController::~WebPageInspectorController() = default;
+
 Ref<WebPageProxy> WebPageInspectorController::protectedInspectedPage()
 {
     return m_inspectedPage.get();
@@ -66,7 +71,7 @@ Ref<WebPageProxy> WebPageInspectorController::protectedInspectedPage()
 
 void WebPageInspectorController::init()
 {
-    String pageTargetId = WebPageInspectorTarget::toTargetID(m_inspectedPage->webPageID());
+    String pageTargetId = WebPageInspectorTarget::toTargetID(m_inspectedPage->webPageIDInMainFrameProcess());
     createInspectorTarget(pageTargetId, Inspector::InspectorTargetType::Page);
 }
 
@@ -222,6 +227,11 @@ void WebPageInspectorController::didCommitProvisionalPage(WebCore::PageIdentifie
         m_targetAgent->targetDestroyed(*target);
     m_targets.clear();
     m_targets.set(newTarget->identifier(), WTFMove(newTarget));
+}
+
+InspectorBrowserAgent* WebPageInspectorController::enabledBrowserAgent() const
+{
+    return m_enabledBrowserAgent.get();
 }
 
 WebPageAgentContext WebPageInspectorController::webPageAgentContext()

@@ -35,7 +35,9 @@ namespace WebCore {
 class ResourceError;
 class ResourceResponse;
 
-class FetchLoaderClient {
+class FetchLoaderClient : public CanMakeCheckedPtr<FetchLoaderClient> {
+    WTF_MAKE_TZONE_ALLOCATED(FetchLoaderClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FetchLoaderClient);
 public:
     virtual ~FetchLoaderClient() = default;
 

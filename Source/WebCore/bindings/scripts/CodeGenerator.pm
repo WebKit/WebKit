@@ -76,6 +76,7 @@ my %bufferSourceTypes = (
     "ArrayBuffer" => 1,
     "ArrayBufferView" => 1,
     "DataView" => 1,
+    "Float16Array" => 1,
     "Float32Array" => 1,
     "Float64Array" => 1,
     "Int16Array" => 1,

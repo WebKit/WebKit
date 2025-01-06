@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,8 +38,11 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MemoryPressureHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyTileGrid);
 
 LegacyTileGrid::LegacyTileGrid(LegacyTileCache& tileCache, const IntSize& tileSize)
     : m_tileCache(tileCache)
@@ -57,10 +60,11 @@ LegacyTileGrid::~LegacyTileGrid()
 
 IntRect LegacyTileGrid::visibleRect() const
 {
-    IntRect visibleRect = enclosingIntRect(m_tileCache.visibleRectInLayer(m_tileHostLayer.get()));
+    Ref tileCache = m_tileCache.get();
+    IntRect visibleRect = enclosingIntRect(tileCache->visibleRectInLayer(m_tileHostLayer.get()));
 
     // When fast scrolling to the top, move the visible rect there immediately so we have tiles when the scrolling completes.
-    if (m_tileCache.tilingMode() == LegacyTileCache::ScrollToTop)
+    if (tileCache->tilingMode() == LegacyTileCache::ScrollToTop)
         visibleRect.setY(0);
 
     return visibleRect;
@@ -98,7 +102,7 @@ void LegacyTileGrid::dropTilesBetweenRects(const IntRect& dropRect, const IntRec
 unsigned LegacyTileGrid::tileByteSize() const
 {
     IntSize tilePixelSize = m_tileSize;
-    tilePixelSize.scale(m_tileCache.screenScale());
+    tilePixelSize.scale(protectedTileCache()->screenScale());
     return LegacyTileLayerPool::bytesBackingLayerWithPixelSize(tilePixelSize);
 }
 
@@ -113,7 +117,7 @@ bool LegacyTileGrid::dropDistantTiles(unsigned tilesNeeded, double shortestDista
     unsigned bytesPerTile = tileByteSize();
     unsigned bytesNeeded = tilesNeeded * bytesPerTile;
     unsigned bytesUsed = tileCount() * bytesPerTile;
-    unsigned maximumBytes = m_tileCache.tileCapacityForGrid(this);
+    unsigned maximumBytes = protectedTileCache()->tileCapacityForGrid(this);
 
     int bytesToReclaim = int(bytesUsed) - (int(maximumBytes) - bytesNeeded);
     if (bytesToReclaim <= 0)
@@ -130,13 +134,11 @@ bool LegacyTileGrid::dropDistantTiles(unsigned tilesNeeded, double shortestDista
         if (distance <= shortestDistance)
             continue;
         toRemove.append(std::make_pair(distance, index));
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         std::push_heap(toRemove.begin(), toRemove.end(), isFartherAway<TileIndex>);
         if (toRemove.size() > tilesToRemoveCount) {
             std::pop_heap(toRemove.begin(), toRemove.end(), isFartherAway<TileIndex>);
             toRemove.removeLast();
         }
-ALLOW_DEPRECATED_DECLARATIONS_END
     }
     size_t removeCount = toRemove.size();
     for (size_t n = 0; n < removeCount; ++n)
@@ -257,14 +259,14 @@ void LegacyTileGrid::updateTileOpacity()
 {
     TileMap::iterator end = m_tiles.end();
     for (TileMap::iterator it = m_tiles.begin(); it != end; ++it)
-        [it->value->tileLayer() setOpaque:m_tileCache.tilesOpaque()];
+        [it->value->tileLayer() setOpaque:m_tileCache->tilesOpaque()];
 }
 
 void LegacyTileGrid::updateTileBorderVisibility()
 {
     TileMap::iterator end = m_tiles.end();
     for (TileMap::iterator it = m_tiles.begin(); it != end; ++it)
-        it->value->showBorder(m_tileCache.tileBordersVisible());
+        it->value->showBorder(m_tileCache->tileBordersVisible());
 }
 
 unsigned LegacyTileGrid::tileCount() const
@@ -299,7 +301,7 @@ bool LegacyTileGrid::checkDoSingleTileLayout()
 
 void LegacyTileGrid::updateHostLayerSize()
 {
-    CALayer* hostLayer = m_tileCache.hostLayer();
+    CALayer* hostLayer = protectedTileCache()->hostLayer();
     CGRect tileHostBounds = [hostLayer convertRect:[hostLayer bounds] toLayer:tileHostLayer()];
     CGSize transformedSize;
     transformedSize.width = CGRound(tileHostBounds.size.width);
@@ -377,7 +379,7 @@ void LegacyTileGrid::invalidateTiles(const IntRect& dirtyRect)
     // When using minimal coverage, drop speculative tiles instead of updating them.
     if (!shouldUseMinimalTileCoverage())
         return;
-    if (m_tileCache.tilingMode() != LegacyTileCache::Minimal && m_tileCache.tilingMode() != LegacyTileCache::Normal)
+    if (m_tileCache->tilingMode() != LegacyTileCache::Minimal && m_tileCache->tilingMode() != LegacyTileCache::Normal)
         return;
     IntRect visibleRect = this->visibleRect();
     unsigned count = invalidatedTiles.size();
@@ -390,8 +392,8 @@ void LegacyTileGrid::invalidateTiles(const IntRect& dirtyRect)
 
 bool LegacyTileGrid::shouldUseMinimalTileCoverage() const
 {
-    return m_tileCache.tilingMode() == LegacyTileCache::Minimal
-        || !m_tileCache.isSpeculativeTileCreationEnabled()
+    return m_tileCache->tilingMode() == LegacyTileCache::Minimal
+        || !m_tileCache->isSpeculativeTileCreationEnabled()
         || MemoryPressureHandler::singleton().isUnderMemoryPressure();
 }
 
@@ -450,7 +452,7 @@ double LegacyTileGrid::tileDistance2(const IntRect& visibleRect, const IntRect& 
     const double tilingBiasVeryLikely = 0.8;
     const double tilingBiasLikely = 0.9;
 
-    switch (m_tileCache.tilingDirection()) {
+    switch (m_tileCache->tilingDirection()) {
     case LegacyTileCache::TilingDirectionUp:
         verticalBias = tilingBiasVeryLikely;
         upwardBias = tilingBiasLikely;
@@ -546,7 +548,7 @@ void LegacyTileGrid::createTiles(LegacyTileCache::SynchronousTileCreationMode cr
 
     bool didCreateTiles = !!tilesToCreateCount;
     bool createMoreTiles = pendingTileCount > tilesToCreateCount;
-    m_tileCache.finishedCreatingTiles(didCreateTiles, createMoreTiles);
+    protectedTileCache()->finishedCreatingTiles(didCreateTiles, createMoreTiles);
 }
 
 void LegacyTileGrid::dumpTiles()

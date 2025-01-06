@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -22,7 +22,7 @@
 #include "config/aom_config.h"
 #include "config/av1_rtcd.h"
 
-static INLINE void store_output_w4(int32_t *const out, const __m128i *const in,
+static inline void store_output_w4(int32_t *const out, const __m128i *const in,
                                    const int stride, const int out_size) {
   for (int i = 0; i < out_size; ++i) {
     _mm_store_si128((__m128i *)(out + i * stride), in[i]);
@@ -80,7 +80,7 @@ void av1_fwht4x4_sse4_1(const int16_t *input, tran_low_t *output, int stride) {
   _mm_storeu_si128((__m128i *)(output + 12), op[3]);
 }
 
-static INLINE void load_buffer_4x4(const int16_t *input, __m128i *in,
+static inline void load_buffer_4x4(const int16_t *input, __m128i *in,
                                    int stride, int flipud, int fliplr,
                                    int shift) {
   if (!flipud) {
@@ -170,7 +170,7 @@ static void fdct4x4_sse4_1(__m128i *in, __m128i *out, int bit,
   out[3] = u3;
 }
 
-static INLINE void write_buffer_4x4(__m128i *res, int32_t *output) {
+static inline void write_buffer_4x4(__m128i *res, int32_t *output) {
   _mm_store_si128((__m128i *)(output + 0 * 4), res[0]);
   _mm_store_si128((__m128i *)(output + 1 * 4), res[1]);
   _mm_store_si128((__m128i *)(output + 2 * 4), res[2]);
@@ -371,7 +371,7 @@ void av1_fwd_txfm2d_4x4_sse4_1(const int16_t *input, int32_t *coeff,
   (void)bd;
 }
 
-static INLINE void load_buffer_8x8(const int16_t *input, __m128i *in,
+static inline void load_buffer_8x8(const int16_t *input, __m128i *in,
                                    int stride, int flipud, int fliplr,
                                    int shift) {
   __m128i u;
@@ -457,7 +457,7 @@ static INLINE void load_buffer_8x8(const int16_t *input, __m128i *in,
   in[15] = _mm_slli_epi32(in[15], shift);
 }
 
-static INLINE void col_txfm_8x8_rounding(__m128i *in, int shift) {
+static inline void col_txfm_8x8_rounding(__m128i *in, int shift) {
   const __m128i rounding = _mm_set1_epi32(1 << (shift - 1));
 
   in[0] = _mm_add_epi32(in[0], rounding);
@@ -495,7 +495,7 @@ static INLINE void col_txfm_8x8_rounding(__m128i *in, int shift) {
   in[15] = _mm_srai_epi32(in[15], shift);
 }
 
-static INLINE void col_txfm_4x8_rounding(__m128i *in, int shift) {
+static inline void col_txfm_4x8_rounding(__m128i *in, int shift) {
   const __m128i rounding = _mm_set1_epi32(1 << (shift - 1));
 
   in[0] = _mm_add_epi32(in[0], rounding);
@@ -517,7 +517,7 @@ static INLINE void col_txfm_4x8_rounding(__m128i *in, int shift) {
   in[7] = _mm_srai_epi32(in[7], shift);
 }
 
-static INLINE void write_buffer_8x8(const __m128i *res, int32_t *output) {
+static inline void write_buffer_8x8(const __m128i *res, int32_t *output) {
   _mm_store_si128((__m128i *)(output + 0 * 4), res[0]);
   _mm_store_si128((__m128i *)(output + 1 * 4), res[1]);
   _mm_store_si128((__m128i *)(output + 2 * 4), res[2]);
@@ -539,7 +539,7 @@ static INLINE void write_buffer_8x8(const __m128i *res, int32_t *output) {
   _mm_store_si128((__m128i *)(output + 15 * 4), res[15]);
 }
 
-static INLINE void write_buffer_16x8(const __m128i *res, int32_t *output,
+static inline void write_buffer_16x8(const __m128i *res, int32_t *output,
                                      const int stride) {
   _mm_storeu_si128((__m128i *)(output), res[0]);
   _mm_storeu_si128((__m128i *)(output + 4), res[1]);
@@ -1036,7 +1036,7 @@ void av1_fwd_txfm2d_8x8_sse4_1(const int16_t *input, int32_t *coeff, int stride,
 
 // Hybrid Transform 16x16
 
-static INLINE void convert_8x8_to_16x16(const __m128i *in, __m128i *out) {
+static inline void convert_8x8_to_16x16(const __m128i *in, __m128i *out) {
   int row_index = 0;
   int dst_index = 0;
   int src_index = 0;
@@ -1065,7 +1065,7 @@ static INLINE void convert_8x8_to_16x16(const __m128i *in, __m128i *out) {
   } while (row_index < 16);
 }
 
-static INLINE void load_buffer_16x16(const int16_t *input, __m128i *out,
+static inline void load_buffer_16x16(const int16_t *input, __m128i *out,
                                      int stride, int flipud, int fliplr,
                                      int shift) {
   __m128i in[64];
@@ -1110,7 +1110,7 @@ static INLINE void load_buffer_16x16(const int16_t *input, __m128i *out,
   convert_8x8_to_16x16(in, out);
 }
 
-static INLINE void load_buffer_8x16(const int16_t *input, __m128i *out,
+static inline void load_buffer_8x16(const int16_t *input, __m128i *out,
                                     int stride, int flipud, int fliplr,
                                     int shift) {
   const int16_t *topL = input;
@@ -1128,7 +1128,7 @@ static INLINE void load_buffer_8x16(const int16_t *input, __m128i *out,
   load_buffer_8x8(botL, out + 16, stride, flipud, fliplr, shift);
 }
 
-static INLINE void load_buffer_8x4(const int16_t *input, __m128i *out,
+static inline void load_buffer_8x4(const int16_t *input, __m128i *out,
                                    int stride, int flipud, int fliplr,
                                    int shift) {
   const int16_t *topL = input;
@@ -1146,7 +1146,7 @@ static INLINE void load_buffer_8x4(const int16_t *input, __m128i *out,
   load_buffer_4x4(topR, out + 4, stride, flipud, fliplr, shift);
 }
 
-static INLINE void load_buffer_16x4(const int16_t *input, __m128i *out,
+static inline void load_buffer_16x4(const int16_t *input, __m128i *out,
                                     int stride, int flipud, int fliplr,
                                     int shift) {
   const int16_t *topL = input;
@@ -1164,7 +1164,7 @@ static INLINE void load_buffer_16x4(const int16_t *input, __m128i *out,
   load_buffer_8x4(topR, out + 8, stride, flipud, fliplr, shift);
 }
 
-static INLINE void load_buffer_4x8(const int16_t *input, __m128i *out,
+static inline void load_buffer_4x8(const int16_t *input, __m128i *out,
                                    int stride, int flipud, int fliplr,
                                    int shift) {
   const int16_t *topL = input;
@@ -1183,7 +1183,7 @@ static INLINE void load_buffer_4x8(const int16_t *input, __m128i *out,
 }
 
 #if !CONFIG_REALTIME_ONLY
-static INLINE void load_buffer_4x16(const int16_t *input, __m128i *out,
+static inline void load_buffer_4x16(const int16_t *input, __m128i *out,
                                     const int stride, const int flipud,
                                     const int fliplr, const int shift) {
   const int16_t *topL = input;
@@ -1201,7 +1201,7 @@ static INLINE void load_buffer_4x16(const int16_t *input, __m128i *out,
 }
 #endif
 
-static INLINE void load_buffer_32x8n(const int16_t *input, __m128i *out,
+static inline void load_buffer_32x8n(const int16_t *input, __m128i *out,
                                      int stride, int flipud, int fliplr,
                                      int shift, const int height) {
   const int16_t *in = input;
@@ -1942,7 +1942,7 @@ void av1_fwd_txfm2d_16x16_sse4_1(const int16_t *input, int32_t *coeff,
   (void)bd;
 }
 
-static INLINE void flip_buf_sse4_1(__m128i *in, __m128i *out, int size) {
+static inline void flip_buf_sse4_1(__m128i *in, __m128i *out, int size) {
   for (int i = 0; i < size; i += 2) in[30 - i] = out[i];
   for (int i = 1; i < size; i += 2) in[size - i] = out[i];
 }

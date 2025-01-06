@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Media response origin validation failed.
+CONSOLE MESSAGE: Media response origin validation failed.
+
+
+PASS  Validate range response rewriting with regular fetch
+PASS  Validate range response rewriting with synthetic response
+

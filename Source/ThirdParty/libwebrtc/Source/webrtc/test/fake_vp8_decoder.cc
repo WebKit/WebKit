@@ -12,7 +12,8 @@
 
 #include <stddef.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
@@ -57,11 +58,11 @@ int32_t FakeVp8Decoder::Decode(const EncodedImage& input,
           .set_rotation(webrtc::kVideoRotation_0)
           .set_timestamp_ms(render_time_ms)
           .build();
-  frame.set_timestamp(input.RtpTimestamp());
+  frame.set_rtp_timestamp(input.RtpTimestamp());
   frame.set_ntp_time_ms(input.ntp_time_ms_);
 
-  callback_->Decoded(frame, /*decode_time_ms=*/absl::nullopt,
-                     /*qp=*/absl::nullopt);
+  callback_->Decoded(frame, /*decode_time_ms=*/std::nullopt,
+                     /*qp=*/std::nullopt);
 
   return WEBRTC_VIDEO_CODEC_OK;
 }

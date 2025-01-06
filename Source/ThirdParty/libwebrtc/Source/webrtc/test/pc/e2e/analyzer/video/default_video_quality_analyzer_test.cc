@@ -81,7 +81,7 @@ EncodedImage FakeEncode(const VideoFrame& frame) {
   packet_infos.push_back(RtpPacketInfo(
       /*ssrc=*/1,
       /*csrcs=*/{},
-      /*rtp_timestamp=*/frame.timestamp(),
+      /*rtp_timestamp=*/frame.rtp_timestamp(),
       /*receive_time=*/Timestamp::Micros(frame.timestamp_us() + 10000)));
   image.SetPacketInfos(RtpPacketInfos(packet_infos));
   return image;
@@ -211,8 +211,8 @@ void PassFramesThroughAnalyzer(DefaultVideoQualityAnalyzer& analyzer,
 TEST(DefaultVideoQualityAnalyzerTest, NormalScenario) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
                                        test::GetGlobalMetricsLogger(),
@@ -271,8 +271,8 @@ TEST(DefaultVideoQualityAnalyzerTest, NormalScenario) {
 TEST(DefaultVideoQualityAnalyzerTest, OneFrameReceivedTwice) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
                                        test::GetGlobalMetricsLogger(),
@@ -324,8 +324,8 @@ TEST(DefaultVideoQualityAnalyzerTest, OneFrameReceivedTwice) {
 TEST(DefaultVideoQualityAnalyzerTest, NormalScenario2Receivers) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   constexpr char kAlice[] = "alice";
   constexpr char kBob[] = "bob";
@@ -456,8 +456,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
      OneFrameReceivedTwiceBySamePeerWith2Receivers) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   constexpr char kAlice[] = "alice";
   constexpr char kBob[] = "bob";
@@ -514,8 +514,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
 TEST(DefaultVideoQualityAnalyzerTest, HeavyQualityMetricsFromEqualFrames) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions analyzer_options;
   analyzer_options.compute_psnr = true;
@@ -573,8 +573,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
      HeavyQualityMetricsFromShiftedFramesWithAdjustment) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions analyzer_options;
   analyzer_options.compute_psnr = true;
@@ -637,8 +637,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
 TEST(DefaultVideoQualityAnalyzerTest, CpuUsage) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
                                        test::GetGlobalMetricsLogger(),
@@ -693,8 +693,8 @@ TEST(DefaultVideoQualityAnalyzerTest, CpuUsage) {
 TEST(DefaultVideoQualityAnalyzerTest, RuntimeParticipantsAdding) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   constexpr char kAlice[] = "alice";
   constexpr char kBob[] = "bob";
@@ -849,8 +849,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
      SimulcastFrameWasFullyReceivedByAllPeersBeforeEncodeFinish) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
                                        test::GetGlobalMetricsLogger(),
@@ -911,8 +911,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
      FrameCanBeReceivedBySenderAfterItWasReceivedByReceiver) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   options.enable_receive_own_stream = true;
@@ -1008,8 +1008,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
      FrameCanBeReceivedByReceiverAfterItWasReceivedBySender) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   options.enable_receive_own_stream = true;
@@ -1104,8 +1104,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
 TEST(DefaultVideoQualityAnalyzerTest, CodecTrackedCorrectly) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
                                        test::GetGlobalMetricsLogger(),
@@ -1175,8 +1175,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
      FramesInFlightAreCorrectlySentToTheComparatorAfterStop) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
@@ -1267,8 +1267,8 @@ TEST(
     FramesInFlightAreCorrectlySentToTheComparatorAfterStopForSenderAndReceiver) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   options.enable_receive_own_stream = true;
@@ -1373,8 +1373,8 @@ TEST(
 TEST(DefaultVideoQualityAnalyzerTest, GetStreamFrames) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
@@ -1419,8 +1419,8 @@ TEST(DefaultVideoQualityAnalyzerTest, GetStreamFrames) {
 TEST(DefaultVideoQualityAnalyzerTest, ReceiverReceivedFramesWhenSenderRemoved) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
@@ -1462,8 +1462,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
      ReceiverReceivedFramesWhenSenderRemovedWithSelfview) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   options.enable_receive_own_stream = true;
@@ -1506,8 +1506,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
      SenderReceivedFramesWhenReceiverRemovedWithSelfview) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   options.enable_receive_own_stream = true;
@@ -1550,8 +1550,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
      SenderAndReceiverReceivedFramesWhenReceiverRemovedWithSelfview) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   options.enable_receive_own_stream = true;
@@ -1607,8 +1607,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
 TEST(DefaultVideoQualityAnalyzerTest, ReceiverRemovedBeforeCapturing2ndFrame) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
@@ -1648,8 +1648,8 @@ TEST(DefaultVideoQualityAnalyzerTest, ReceiverRemovedBeforeCapturing2ndFrame) {
 TEST(DefaultVideoQualityAnalyzerTest, ReceiverRemovedBeforePreEncoded) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
@@ -1691,8 +1691,8 @@ TEST(DefaultVideoQualityAnalyzerTest, ReceiverRemovedBeforePreEncoded) {
 TEST(DefaultVideoQualityAnalyzerTest, ReceiverRemovedBeforeEncoded) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
@@ -1735,8 +1735,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
      ReceiverRemovedBetweenSimulcastLayersEncoded) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
@@ -1782,8 +1782,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
 TEST(DefaultVideoQualityAnalyzerTest, UnregisterOneAndRegisterAnother) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
@@ -1844,8 +1844,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
      UnregisterOneAndRegisterAnotherRegisterBack) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
@@ -1900,8 +1900,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
      FramesInFlightAreAccountedForUnregisterPeers) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
@@ -1934,8 +1934,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
 TEST(DefaultVideoQualityAnalyzerTest, InfraMetricsAreReportedWhenRequested) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   options.report_infra_metrics = true;
@@ -1966,8 +1966,8 @@ TEST(DefaultVideoQualityAnalyzerTest, InfraMetricsAreReportedWhenRequested) {
 TEST(DefaultVideoQualityAnalyzerTest, InfraMetricsNotCollectedByDefault) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   options.report_infra_metrics = false;
@@ -1999,8 +1999,8 @@ TEST(DefaultVideoQualityAnalyzerTest,
      FrameDroppedByDecoderIsAccountedCorrectly) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   options.report_infra_metrics = false;
@@ -2041,8 +2041,8 @@ TEST_P(DefaultVideoQualityAnalyzerTimeBetweenFreezesTest,
        TimeBetweenFreezesIsEqualToStreamDurationWhenThereAreNoFeeezes) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
@@ -2094,8 +2094,8 @@ TEST_F(DefaultVideoQualityAnalyzerSimulatedTimeTest,
        PausedAndResumedStreamIsAccountedInStatsCorrectly) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   options.report_infra_metrics = false;
@@ -2172,8 +2172,8 @@ TEST_F(DefaultVideoQualityAnalyzerSimulatedTimeTest,
        PausedAndResumedTwoStreamsAreAccountedInStatsCorrectly) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzer analyzer(
       GetClock(), test::GetGlobalMetricsLogger(), AnalyzerOptionsForTest());
@@ -2250,8 +2250,8 @@ TEST_F(DefaultVideoQualityAnalyzerSimulatedTimeTest,
        PausedStreamIsAccountedInStatsCorrectly) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzerOptions options = AnalyzerOptionsForTest();
   options.report_infra_metrics = false;
@@ -2320,8 +2320,8 @@ TEST_F(DefaultVideoQualityAnalyzerSimulatedTimeTest,
        MemoryOverloadedAndThenAllFramesReceived) {
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
 
   DefaultVideoQualityAnalyzer analyzer(
       GetClock(), test::GetGlobalMetricsLogger(), AnalyzerOptionsForTest());
@@ -2382,8 +2382,8 @@ TEST(DefaultVideoQualityAnalyzerTest, CheckFrameSenderPeerName) {
   constexpr char kBobStreamLabel[] = "bob-video";
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator =
       test::CreateSquareFrameGenerator(kFrameWidth, kFrameHeight,
-                                       /*type=*/absl::nullopt,
-                                       /*num_squares=*/absl::nullopt);
+                                       /*type=*/std::nullopt,
+                                       /*num_squares=*/std::nullopt);
   DefaultVideoQualityAnalyzer analyzer(Clock::GetRealTimeClock(),
                                        test::GetGlobalMetricsLogger(),
                                        AnalyzerOptionsForTest());

@@ -28,7 +28,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 

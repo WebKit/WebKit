@@ -2,23 +2,17 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Testing basic video exchange from offerer to receiver</title>
         <script src="../../resources/testharness.js"></script>
         <script src="../../resources/testharnessreport.js"></script>
     </head>
     <body>
         <script>
-if (window.testRunner)
-    testRunner.setUserMediaPermission(true);
-
-
-function sdpWithoutCandidate(sdp)
+function sdpWithoutFmtp(sdp)
 {
     return sdp.split('\r\n').filter(line => {
-        return line.indexOf('a=candidate') !== 0 && line.indexOf('c=IN IP4') !== 0 && line.indexOf('m=video') !== 0 && line.indexOf('m=audio') !== 0;
+        return line.indexOf('a=fmtp') === -1;
     }).join('\r\n');
 }
-
 
 promise_test((test) => {
      var localConnection = new RTCPeerConnection();
@@ -44,8 +38,8 @@ promise_test((test) => {
         assert_equals(localConnection.pendingLocalDescription, null, "test 8");
 
         await localDescriptionPromise;
-        assert_equals(sdpWithoutCandidate(localConnection.pendingLocalDescription.sdp), sdpWithoutCandidate(currentSDP), "test 9");
-        assert_equals(sdpWithoutCandidate(localConnection.localDescription.sdp), sdpWithoutCandidate(currentSDP), "test 10");
+        assert_equals(sdpWithoutFmtp(localConnection.pendingLocalDescription.sdp), sdpWithoutFmtp(currentSDP), "test 9");
+        assert_equals(sdpWithoutFmtp(localConnection.localDescription.sdp), sdpWithoutFmtp(currentSDP), "test 10");
 
         remoteDescriptionPromise = remoteConnection.setRemoteDescription(desc);
         assert_equals(remoteConnection.currentLocalDescription, null, "test 11");
@@ -53,8 +47,8 @@ promise_test((test) => {
 
         await remoteDescriptionPromise;
         assert_equals(remoteConnection.currentRemoteDescription, null, "test 13");
-        assert_equals(remoteConnection.pendingRemoteDescription.sdp, currentSDP, "test 14");
-        assert_equals(remoteConnection.remoteDescription.sdp, currentSDP, "test 15");
+        assert_equals(sdpWithoutFmtp(remoteConnection.pendingRemoteDescription.sdp), sdpWithoutFmtp(currentSDP), "test 14");
+        assert_equals(sdpWithoutFmtp(remoteConnection.remoteDescription.sdp), sdpWithoutFmtp(currentSDP), "test 15");
     }).then(() => {
         return remoteConnection.createAnswer();
     }).then(async (desc) => {

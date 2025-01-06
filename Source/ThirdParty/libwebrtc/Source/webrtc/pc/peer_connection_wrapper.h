@@ -12,10 +12,10 @@
 #define PC_PEER_CONNECTION_WRAPPER_H_
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/data_channel_interface.h"
 #include "api/function_view.h"
 #include "api/jsep.h"
@@ -171,7 +171,7 @@ class PeerConnectionWrapper {
   // initialization parameters.
   rtc::scoped_refptr<DataChannelInterface> CreateDataChannel(
       const std::string& label,
-      const absl::optional<DataChannelInit>& config = absl::nullopt);
+      const std::optional<DataChannelInit>& config = std::nullopt);
 
   // Returns the signaling state of the underlying PeerConnection.
   PeerConnectionInterface::SignalingState signaling_state();

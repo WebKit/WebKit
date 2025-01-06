@@ -14,3 +14,17 @@ function finishTest(error)
 
     finishJSTest();
 }
+
+async function asyncReadFileAsText(file) 
+{
+    return new Promise((resolve, reject) => {
+        var reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = (event) => {
+            resolve(event.target.result); 
+        }
+        reader.onerror = (event) => {
+            reject(event.target.error);
+        }
+    });
+}

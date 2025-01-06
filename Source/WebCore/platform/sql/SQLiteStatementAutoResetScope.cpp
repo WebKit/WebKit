@@ -28,25 +28,19 @@
 
 #include "SQLiteStatement.h"
 #include <utility>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLiteStatementAutoResetScope);
 
 SQLiteStatementAutoResetScope::SQLiteStatementAutoResetScope(SQLiteStatement *statement)
     : m_statement(statement)
 {
 }
 
-SQLiteStatementAutoResetScope::SQLiteStatementAutoResetScope(SQLiteStatementAutoResetScope&& other)
-    : m_statement(other.m_statement)
-{
-    other.m_statement = nullptr;
-}
-
-SQLiteStatementAutoResetScope& SQLiteStatementAutoResetScope::operator=(SQLiteStatementAutoResetScope&& other)
-{
-    std::swap(m_statement, other.m_statement);
-    return *this;
-}
+SQLiteStatementAutoResetScope::SQLiteStatementAutoResetScope(SQLiteStatementAutoResetScope&&) = default;
+SQLiteStatementAutoResetScope& SQLiteStatementAutoResetScope::operator=(SQLiteStatementAutoResetScope&&) = default;
 
 SQLiteStatementAutoResetScope::~SQLiteStatementAutoResetScope()
 {

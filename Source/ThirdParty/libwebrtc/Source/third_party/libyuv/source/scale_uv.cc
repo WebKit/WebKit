@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "libyuv/scale.h"
+#include "libyuv/scale_uv.h"
 
 #include <assert.h>
 #include <string.h>
@@ -188,22 +188,24 @@ static void ScaleUVDown2(int src_width,
 // This is an optimized version for scaling down a UV to 1/4 of
 // its original size.
 #if HAS_SCALEUVDOWN4BOX
-static void ScaleUVDown4Box(int src_width,
-                            int src_height,
-                            int dst_width,
-                            int dst_height,
-                            int src_stride,
-                            int dst_stride,
-                            const uint8_t* src_uv,
-                            uint8_t* dst_uv,
-                            int x,
-                            int dx,
-                            int y,
-                            int dy) {
+static int ScaleUVDown4Box(int src_width,
+                           int src_height,
+                           int dst_width,
+                           int dst_height,
+                           int src_stride,
+                           int dst_stride,
+                           const uint8_t* src_uv,
+                           uint8_t* dst_uv,
+                           int x,
+                           int dx,
+                           int y,
+                           int dy) {
   int j;
   // Allocate 2 rows of UV.
   const int row_size = (dst_width * 2 * 2 + 15) & ~15;
   align_buffer_64(row, row_size * 2);
+  if (!row)
+    return 1;
   int row_stride = src_stride * (dy >> 16);
   void (*ScaleUVRowDown2)(const uint8_t* src_uv, ptrdiff_t src_stride,
                           uint8_t* dst_uv, int dst_width) =
@@ -255,6 +257,7 @@ static void ScaleUVDown4Box(int src_width,
     dst_uv += dst_stride;
   }
   free_aligned_buffer_64(row);
+  return 0;
 }
 #endif  // HAS_SCALEUVDOWN4BOX
 
@@ -324,10 +327,16 @@ static void ScaleUVDownEven(int src_width,
     }
   }
 #endif
-#if defined(HAS_SCALEUVROWDOWNEVEN_RVV)
+#if defined(HAS_SCALEUVROWDOWNEVEN_RVV) || defined(HAS_SCALEUVROWDOWN4_RVV)
   if (TestCpuFlag(kCpuHasRVV) && !filtering) {
-    ScaleUVRowDownEven =
-        (col_step == 4) ? ScaleUVRowDown4_RVV : ScaleUVRowDownEven_RVV;
+    #if defined(HAS_SCALEUVROWDOWNEVEN_RVV)
+      ScaleUVRowDownEven = ScaleUVRowDownEven_RVV;
+    #endif
+    #if defined(HAS_SCALEUVROWDOWN4_RVV)
+      if (col_step == 4) {
+        ScaleUVRowDownEven = ScaleUVRowDown4_RVV;
+      }
+    #endif
   }
 #endif
 
@@ -344,19 +353,19 @@ static void ScaleUVDownEven(int src_width,
 
 // Scale UV down with bilinear interpolation.
 #if HAS_SCALEUVBILINEARDOWN
-static void ScaleUVBilinearDown(int src_width,
-                                int src_height,
-                                int dst_width,
-                                int dst_height,
-                                int src_stride,
-                                int dst_stride,
-                                const uint8_t* src_uv,
-                                uint8_t* dst_uv,
-                                int x,
-                                int dx,
-                                int y,
-                                int dy,
-                                enum FilterMode filtering) {
+static int ScaleUVBilinearDown(int src_width,
+                               int src_height,
+                               int dst_width,
+                               int dst_height,
+                               int src_stride,
+                               int dst_stride,
+                               const uint8_t* src_uv,
+                               uint8_t* dst_uv,
+                               int x,
+                               int dx,
+                               int y,
+                               int dy,
+                               enum FilterMode filtering) {
   int j;
   void (*InterpolateRow)(uint8_t* dst_uv, const uint8_t* src_uv,
                          ptrdiff_t src_stride, int dst_width,
@@ -446,9 +455,10 @@ static void ScaleUVBilinearDown(int src_width,
   // TODO(fbarchard): Consider not allocating row buffer for kFilterLinear.
   // Allocate a row of UV.
   {
-    align_buffer_64(row, clip_src_width * 2);
-
     const int max_y = (src_height - 1) << 16;
+    align_buffer_64(row, clip_src_width * 2);
+    if (!row)
+      return 1;
     if (y > max_y) {
       y = max_y;
     }
@@ -470,24 +480,25 @@ static void ScaleUVBilinearDown(int src_width,
     }
     free_aligned_buffer_64(row);
   }
+  return 0;
 }
 #endif
 
 // Scale UV up with bilinear interpolation.
 #if HAS_SCALEUVBILINEARUP
-static void ScaleUVBilinearUp(int src_width,
-                              int src_height,
-                              int dst_width,
-                              int dst_height,
-                              int src_stride,
-                              int dst_stride,
-                              const uint8_t* src_uv,
-                              uint8_t* dst_uv,
-                              int x,
-                              int dx,
-                              int y,
-                              int dy,
-                              enum FilterMode filtering) {
+static int ScaleUVBilinearUp(int src_width,
+                             int src_height,
+                             int dst_width,
+                             int dst_height,
+                             int src_stride,
+                             int dst_stride,
+                             const uint8_t* src_uv,
+                             uint8_t* dst_uv,
+                             int x,
+                             int dx,
+                             int y,
+                             int dy,
+                             enum FilterMode filtering) {
   int j;
   void (*InterpolateRow)(uint8_t* dst_uv, const uint8_t* src_uv,
                          ptrdiff_t src_stride, int dst_width,
@@ -606,6 +617,8 @@ static void ScaleUVBilinearUp(int src_width,
     // Allocate 2 rows of UV.
     const int row_size = (dst_width * 2 + 15) & ~15;
     align_buffer_64(row, row_size * 2);
+    if (!row)
+      return 1;
 
     uint8_t* rowptr = row;
     int rowstride = row_size;
@@ -649,6 +662,7 @@ static void ScaleUVBilinearUp(int src_width,
     }
     free_aligned_buffer_64(row);
   }
+  return 0;
 }
 #endif  // HAS_SCALEUVBILINEARUP
 
@@ -657,14 +671,14 @@ static void ScaleUVBilinearUp(int src_width,
 // This is an optimized version for scaling up a plane to 2 times of
 // its original width, using linear interpolation.
 // This is used to scale U and V planes of NV16 to NV24.
-void ScaleUVLinearUp2(int src_width,
-                      int src_height,
-                      int dst_width,
-                      int dst_height,
-                      int src_stride,
-                      int dst_stride,
-                      const uint8_t* src_uv,
-                      uint8_t* dst_uv) {
+static void ScaleUVLinearUp2(int src_width,
+                             int src_height,
+                             int dst_width,
+                             int dst_height,
+                             int src_stride,
+                             int dst_stride,
+                             const uint8_t* src_uv,
+                             uint8_t* dst_uv) {
   void (*ScaleRowUp)(const uint8_t* src_uv, uint8_t* dst_uv, int dst_width) =
       ScaleUVRowUp2_Linear_Any_C;
   int i;
@@ -672,6 +686,7 @@ void ScaleUVLinearUp2(int src_width,
   int dy;
 
   // This function can only scale up by 2 times horizontally.
+  (void)src_width;
   assert(src_width == ((dst_width + 1) / 2));
 
 #ifdef HAS_SCALEUVROWUP2_LINEAR_SSSE3
@@ -689,6 +704,12 @@ void ScaleUVLinearUp2(int src_width,
 #ifdef HAS_SCALEUVROWUP2_LINEAR_NEON
   if (TestCpuFlag(kCpuHasNEON)) {
     ScaleRowUp = ScaleUVRowUp2_Linear_Any_NEON;
+  }
+#endif
+
+#ifdef HAS_SCALEUVROWUP2_LINEAR_RVV
+  if (TestCpuFlag(kCpuHasRVV)) {
+    ScaleRowUp = ScaleUVRowUp2_Linear_RVV;
   }
 #endif
 
@@ -710,20 +731,21 @@ void ScaleUVLinearUp2(int src_width,
 // This is an optimized version for scaling up a plane to 2 times of
 // its original size, using bilinear interpolation.
 // This is used to scale U and V planes of NV12 to NV24.
-void ScaleUVBilinearUp2(int src_width,
-                        int src_height,
-                        int dst_width,
-                        int dst_height,
-                        int src_stride,
-                        int dst_stride,
-                        const uint8_t* src_ptr,
-                        uint8_t* dst_ptr) {
+static void ScaleUVBilinearUp2(int src_width,
+                               int src_height,
+                               int dst_width,
+                               int dst_height,
+                               int src_stride,
+                               int dst_stride,
+                               const uint8_t* src_ptr,
+                               uint8_t* dst_ptr) {
   void (*Scale2RowUp)(const uint8_t* src_ptr, ptrdiff_t src_stride,
                       uint8_t* dst_ptr, ptrdiff_t dst_stride, int dst_width) =
       ScaleUVRowUp2_Bilinear_Any_C;
   int x;
 
   // This function can only scale up by 2 times.
+  (void)src_width;
   assert(src_width == ((dst_width + 1) / 2));
   assert(src_height == ((dst_height + 1) / 2));
 
@@ -742,6 +764,12 @@ void ScaleUVBilinearUp2(int src_width,
 #ifdef HAS_SCALEUVROWUP2_BILINEAR_NEON
   if (TestCpuFlag(kCpuHasNEON)) {
     Scale2RowUp = ScaleUVRowUp2_Bilinear_Any_NEON;
+  }
+#endif
+
+#ifdef HAS_SCALEUVROWUP2_BILINEAR_RVV
+  if (TestCpuFlag(kCpuHasRVV)) {
+    Scale2RowUp = ScaleUVRowUp2_Bilinear_RVV;
   }
 #endif
 
@@ -764,14 +792,14 @@ void ScaleUVBilinearUp2(int src_width,
 // This is an optimized version for scaling up a plane to 2 times of
 // its original width, using linear interpolation.
 // This is used to scale U and V planes of P210 to P410.
-void ScaleUVLinearUp2_16(int src_width,
-                         int src_height,
-                         int dst_width,
-                         int dst_height,
-                         int src_stride,
-                         int dst_stride,
-                         const uint16_t* src_uv,
-                         uint16_t* dst_uv) {
+static void ScaleUVLinearUp2_16(int src_width,
+                                int src_height,
+                                int dst_width,
+                                int dst_height,
+                                int src_stride,
+                                int dst_stride,
+                                const uint16_t* src_uv,
+                                uint16_t* dst_uv) {
   void (*ScaleRowUp)(const uint16_t* src_uv, uint16_t* dst_uv, int dst_width) =
       ScaleUVRowUp2_Linear_16_Any_C;
   int i;
@@ -779,6 +807,7 @@ void ScaleUVLinearUp2_16(int src_width,
   int dy;
 
   // This function can only scale up by 2 times horizontally.
+  (void)src_width;
   assert(src_width == ((dst_width + 1) / 2));
 
 #ifdef HAS_SCALEUVROWUP2_LINEAR_16_SSE41
@@ -817,20 +846,21 @@ void ScaleUVLinearUp2_16(int src_width,
 // This is an optimized version for scaling up a plane to 2 times of
 // its original size, using bilinear interpolation.
 // This is used to scale U and V planes of P010 to P410.
-void ScaleUVBilinearUp2_16(int src_width,
-                           int src_height,
-                           int dst_width,
-                           int dst_height,
-                           int src_stride,
-                           int dst_stride,
-                           const uint16_t* src_ptr,
-                           uint16_t* dst_ptr) {
+static void ScaleUVBilinearUp2_16(int src_width,
+                                  int src_height,
+                                  int dst_width,
+                                  int dst_height,
+                                  int src_stride,
+                                  int dst_stride,
+                                  const uint16_t* src_ptr,
+                                  uint16_t* dst_ptr) {
   void (*Scale2RowUp)(const uint16_t* src_ptr, ptrdiff_t src_stride,
                       uint16_t* dst_ptr, ptrdiff_t dst_stride, int dst_width) =
       ScaleUVRowUp2_Bilinear_16_Any_C;
   int x;
 
   // This function can only scale up by 2 times.
+  (void)src_width;
   assert(src_width == ((dst_width + 1) / 2));
   assert(src_height == ((dst_height + 1) / 2));
 
@@ -972,19 +1002,19 @@ static int UVCopy_16(const uint16_t* src_uv,
 // Scale a UV plane (from NV12)
 // This function in turn calls a scaling function
 // suitable for handling the desired resolutions.
-static void ScaleUV(const uint8_t* src,
-                    int src_stride,
-                    int src_width,
-                    int src_height,
-                    uint8_t* dst,
-                    int dst_stride,
-                    int dst_width,
-                    int dst_height,
-                    int clip_x,
-                    int clip_y,
-                    int clip_width,
-                    int clip_height,
-                    enum FilterMode filtering) {
+static int ScaleUV(const uint8_t* src,
+                   int src_stride,
+                   int src_width,
+                   int src_height,
+                   uint8_t* dst,
+                   int dst_stride,
+                   int dst_width,
+                   int dst_height,
+                   int clip_x,
+                   int clip_y,
+                   int clip_width,
+                   int clip_height,
+                   enum FilterMode filtering) {
   // Initial source x/y coordinate and step values as 16.16 fixed point.
   int x = 0;
   int y = 0;
@@ -1025,27 +1055,27 @@ static void ScaleUV(const uint8_t* src,
       // Optimized even scale down. ie 2, 4, 6, 8, 10x.
       if (!(dx & 0x10000) && !(dy & 0x10000)) {
 #if HAS_SCALEUVDOWN2
-        if (dx == 0x20000) {
+        if (dx == 0x20000 && dy == 0x20000) {
           // Optimized 1/2 downsample.
           ScaleUVDown2(src_width, src_height, clip_width, clip_height,
                        src_stride, dst_stride, src, dst, x, dx, y, dy,
                        filtering);
-          return;
+          return 0;
         }
 #endif
 #if HAS_SCALEUVDOWN4BOX
-        if (dx == 0x40000 && filtering == kFilterBox) {
+        if (dx == 0x40000 && dy == 0x40000 && filtering == kFilterBox) {
           // Optimized 1/4 box downsample.
-          ScaleUVDown4Box(src_width, src_height, clip_width, clip_height,
-                          src_stride, dst_stride, src, dst, x, dx, y, dy);
-          return;
+          return ScaleUVDown4Box(src_width, src_height, clip_width, clip_height,
+                                 src_stride, dst_stride, src, dst, x, dx, y,
+                                 dy);
         }
 #endif
 #if HAS_SCALEUVDOWNEVEN
         ScaleUVDownEven(src_width, src_height, clip_width, clip_height,
                         src_stride, dst_stride, src, dst, x, dx, y, dy,
                         filtering);
-        return;
+        return 0;
 #endif
       }
       // Optimized odd scale down. ie 3, 5, 7, 9x.
@@ -1056,7 +1086,7 @@ static void ScaleUV(const uint8_t* src,
           // Straight copy.
           UVCopy(src + (y >> 16) * (intptr_t)src_stride + (x >> 16) * 2,
                  src_stride, dst, dst_stride, clip_width, clip_height);
-          return;
+          return 0;
         }
 #endif
       }
@@ -1067,38 +1097,37 @@ static void ScaleUV(const uint8_t* src,
     // Arbitrary scale vertically, but unscaled horizontally.
     ScalePlaneVertical(src_height, clip_width, clip_height, src_stride,
                        dst_stride, src, dst, x, y, dy, /*bpp=*/2, filtering);
-    return;
+    return 0;
   }
   if ((filtering == kFilterLinear) && ((dst_width + 1) / 2 == src_width)) {
     ScaleUVLinearUp2(src_width, src_height, clip_width, clip_height, src_stride,
                      dst_stride, src, dst);
-    return;
+    return 0;
   }
   if ((clip_height + 1) / 2 == src_height &&
       (clip_width + 1) / 2 == src_width &&
       (filtering == kFilterBilinear || filtering == kFilterBox)) {
     ScaleUVBilinearUp2(src_width, src_height, clip_width, clip_height,
                        src_stride, dst_stride, src, dst);
-    return;
+    return 0;
   }
 #if HAS_SCALEUVBILINEARUP
   if (filtering && dy < 65536) {
-    ScaleUVBilinearUp(src_width, src_height, clip_width, clip_height,
-                      src_stride, dst_stride, src, dst, x, dx, y, dy,
-                      filtering);
-    return;
+    return ScaleUVBilinearUp(src_width, src_height, clip_width, clip_height,
+                             src_stride, dst_stride, src, dst, x, dx, y, dy,
+                             filtering);
   }
 #endif
 #if HAS_SCALEUVBILINEARDOWN
   if (filtering) {
-    ScaleUVBilinearDown(src_width, src_height, clip_width, clip_height,
-                        src_stride, dst_stride, src, dst, x, dx, y, dy,
-                        filtering);
-    return;
+    return ScaleUVBilinearDown(src_width, src_height, clip_width, clip_height,
+                               src_stride, dst_stride, src, dst, x, dx, y, dy,
+                               filtering);
   }
 #endif
   ScaleUVSimple(src_width, src_height, clip_width, clip_height, src_stride,
                 dst_stride, src, dst, x, dx, y, dy);
+  return 0;
 }
 
 // Scale an UV image.
@@ -1116,9 +1145,9 @@ int UVScale(const uint8_t* src_uv,
       src_height > 32768 || !dst_uv || dst_width <= 0 || dst_height <= 0) {
     return -1;
   }
-  ScaleUV(src_uv, src_stride_uv, src_width, src_height, dst_uv, dst_stride_uv,
-          dst_width, dst_height, 0, 0, dst_width, dst_height, filtering);
-  return 0;
+  return ScaleUV(src_uv, src_stride_uv, src_width, src_height, dst_uv,
+                 dst_stride_uv, dst_width, dst_height, 0, 0, dst_width,
+                 dst_height, filtering);
 }
 
 // Scale a 16 bit UV image.

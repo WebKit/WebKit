@@ -164,7 +164,7 @@ static std::optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const M
     if (!configuration.audio->spatialRendering.value_or(false))
         return info;
 
-    auto supportsSpatialPlayback = PlatformMediaSessionManager::sharedManager().supportsSpatialAudioPlaybackForConfiguration(configuration);
+    auto supportsSpatialPlayback = PlatformMediaSessionManager::singleton().supportsSpatialAudioPlaybackForConfiguration(configuration);
     if (!supportsSpatialPlayback.has_value())
         return std::nullopt;
 

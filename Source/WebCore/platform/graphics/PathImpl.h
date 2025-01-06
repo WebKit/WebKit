@@ -28,14 +28,14 @@
 #include "FloatRoundedRect.h"
 #include "PathElement.h"
 #include "PathSegment.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
 class PathImpl : public ThreadSafeRefCounted<PathImpl> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PathImpl);
 public:
     virtual ~PathImpl() = default;
 
@@ -47,6 +47,8 @@ public:
     }
 
     virtual bool isPathStream() const { return false; }
+
+    virtual bool definitelyEqual(const PathImpl&) const = 0;
 
     virtual Ref<PathImpl> copy() const = 0;
 
@@ -74,6 +76,8 @@ public:
 
     virtual std::optional<PathSegment> singleSegment() const { return std::nullopt; }
     virtual std::optional<PathDataLine> singleDataLine() const { return std::nullopt; }
+    virtual std::optional<PathRect> singleRect() const { return std::nullopt; }
+    virtual std::optional<PathRoundedRect> singleRoundedRect() const { return std::nullopt; }
     virtual std::optional<PathArc> singleArc() const { return std::nullopt; }
     virtual std::optional<PathClosedArc> singleClosedArc() const { return std::nullopt; }
     virtual std::optional<PathDataQuadCurve> singleQuadCurve() const { return std::nullopt; }

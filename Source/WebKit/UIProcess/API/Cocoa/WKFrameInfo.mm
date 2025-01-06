@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,6 +101,11 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return wrapper(_frameInfo->parentFrameHandle()).autorelease();
 }
 
+- (NSUUID *)_documentIdentifier
+{
+    return _frameInfo->documentID()->object();
+}
+
 - (pid_t)_processIdentifier
 {
     return _frameInfo->processID();
@@ -124,6 +129,26 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 - (NSString *)_title
 {
     return _frameInfo->title();
+}
+
+- (BOOL)_isScrollable
+{
+    return _frameInfo->frameInfoData().frameMetrics.isScrollable == WebKit::IsScrollable::Yes;
+}
+
+- (CGSize)_contentSize
+{
+    return (CGSize)_frameInfo->frameInfoData().frameMetrics.contentSize;
+}
+
+- (CGSize)_visibleContentSize
+{
+    return (CGSize)_frameInfo->frameInfoData().frameMetrics.visibleContentSize;
+}
+
+- (CGSize)_visibleContentSizeExcludingScrollbars
+{
+    return (CGSize)_frameInfo->frameInfoData().frameMetrics.visibleContentSizeExcludingScrollbars;
 }
 
 @end

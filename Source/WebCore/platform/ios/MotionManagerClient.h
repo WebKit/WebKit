@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MotionManage
 namespace WebCore {
 
 class MotionManagerClient : public CanMakeWeakPtr<MotionManagerClient> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MotionManagerClient);
 public:
     virtual ~MotionManagerClient() { };
 

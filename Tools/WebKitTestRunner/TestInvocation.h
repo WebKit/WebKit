@@ -32,20 +32,21 @@
 #include <WebKit/WKRetainPtr.h>
 #include <string>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTR {
 
-class TestInvocation final : public UIScriptContextDelegate {
+class TestInvocation final : public RefCounted<TestInvocation>, public UIScriptContextDelegate {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(TestInvocation);
 public:
-    explicit TestInvocation(WKURLRef, const TestOptions&);
+    static Ref<TestInvocation> create(WKURLRef, const TestOptions&);
     ~TestInvocation();
 
-    WKURLRef url() const;
+    WKURLRef url() const { return m_url.get(); }
     bool urlContains(StringView) const;
     
     const TestOptions& options() const { return m_options; }
@@ -85,6 +86,8 @@ public:
     void dumpResourceLoadStatisticsIfNecessary();
 
 private:
+    TestInvocation(WKURLRef, const TestOptions&);
+
     WKRetainPtr<WKMutableDictionaryRef> createTestSettingsDictionary();
 
     void waitToDumpWatchdogTimerFired();
@@ -97,6 +100,12 @@ private:
     
     void done();
     void setWaitUntilDone(bool);
+
+    // Returns true if the caller bundle should proceed with dumping.
+    // Returns false if the WKTR invokes dumping through page, asynchronously.
+    // Resets waitUntilDone.
+    bool resolveNotifyDone();
+    bool resolveForceImmediateCompletion();
 
     void dumpResults();
     static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);
@@ -149,6 +158,7 @@ private:
     bool m_shouldDumpResourceLoadStatistics { false };
     bool m_canOpenWindows { true };
     bool m_shouldDumpPrivateClickMeasurement { false };
+    bool m_shouldDumpBackForwardListsForAllWindows { false };
     WhatToDump m_whatToDump { WhatToDump::RenderTree };
 
     StringBuilder m_textOutput;

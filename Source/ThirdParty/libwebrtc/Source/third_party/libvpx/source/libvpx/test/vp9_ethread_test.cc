@@ -10,13 +10,14 @@
 
 #include <string>
 #include <vector>
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
 #include "test/md5_helper.h"
 #include "test/util.h"
 #include "test/y4m_video_source.h"
 #include "vp9/encoder/vp9_firstpass.h"
+#include "vpx_config.h"
 
 namespace {
 // FIRSTPASS_STATS struct:
@@ -113,6 +114,7 @@ class VPxFirstPassEncoderThreadTest
   vpx_fixed_buf_t firstpass_stats_;
 };
 
+#if !CONFIG_REALTIME_ONLY
 static void compare_fp_stats(vpx_fixed_buf_t *fp_stats, double factor) {
   // fp_stats consists of 2 set of first pass encoding stats. These 2 set of
   // stats are compared to check if the stats match or at least are very close.
@@ -166,8 +168,12 @@ static void compare_fp_stats_md5(vpx_fixed_buf_t *fp_stats) {
   memset((uint8_t *)fp_stats->buf, 0, fp_stats->sz);
   fp_stats->sz = 0;
 }
+#endif  // !CONFIG_REALTIME_ONLY
 
 TEST_P(VPxFirstPassEncoderThreadTest, FirstPassStatsTest) {
+#if CONFIG_REALTIME_ONLY
+  GTEST_SKIP();
+#else
   ::libvpx_test::Y4mVideoSource video("niklas_1280_720_30.y4m", 0, 60);
 
   first_pass_only_ = true;
@@ -216,6 +222,7 @@ TEST_P(VPxFirstPassEncoderThreadTest, FirstPassStatsTest) {
 
   // Compare to check if stats match with row-mt=0/1.
   compare_fp_stats_md5(&firstpass_stats_);
+#endif  // CONFIG_REALTIME_ONLY
 }
 
 class VPxEncoderThreadTest
@@ -399,17 +406,22 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(::libvpx_test::kTwoPassGood),
         ::testing::Range(0, 4)));  // cpu_used
 
-// Split this into two instantiations so that we can distinguish
-// between very slow runs ( ie cpu_speed 0 ) vs ones that can be
+constexpr libvpx_test::TestMode kOnePassTestModes[] = {
+  libvpx_test::kRealTime,
+#if !CONFIG_REALTIME_ONLY
+  libvpx_test::kOnePassGood,
+#endif
+};
+
+// Split this into multiple instantiations so that we can distinguish
+// between very slow runs ( i.e., cpu_speed 0 ) vs ones that can be
 // run nightly by adding Large to the title.
 INSTANTIATE_TEST_SUITE_P(
     VP9, VPxEncoderThreadTest,
     ::testing::Combine(
         ::testing::Values(
             static_cast<const libvpx_test::CodecFactory *>(&libvpx_test::kVP9)),
-        ::testing::Values(::libvpx_test::kTwoPassGood,
-                          ::libvpx_test::kOnePassGood,
-                          ::libvpx_test::kRealTime),
+        ::testing::ValuesIn(kOnePassTestModes),
         ::testing::Range(3, 10),   // cpu_used
         ::testing::Range(0, 3),    // tile_columns
         ::testing::Range(2, 5)));  // threads
@@ -419,11 +431,21 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Combine(
         ::testing::Values(
             static_cast<const libvpx_test::CodecFactory *>(&libvpx_test::kVP9)),
-        ::testing::Values(::libvpx_test::kTwoPassGood,
-                          ::libvpx_test::kOnePassGood,
-                          ::libvpx_test::kRealTime),
+        ::testing::ValuesIn(kOnePassTestModes),
         ::testing::Range(0, 3),    // cpu_used
         ::testing::Range(0, 3),    // tile_columns
         ::testing::Range(2, 5)));  // threads
+
+#if !CONFIG_REALTIME_ONLY
+INSTANTIATE_TEST_SUITE_P(
+    VP9LargeBest, VPxEncoderThreadTest,
+    ::testing::Combine(
+        ::testing::Values(
+            static_cast<const libvpx_test::CodecFactory *>(&libvpx_test::kVP9)),
+        ::testing::Values(libvpx_test::kOnePassBest),
+        ::testing::Range(0, 10),   // cpu_used
+        ::testing::Range(0, 3),    // tile_columns
+        ::testing::Range(2, 5)));  // threads
+#endif
 
 }  // namespace

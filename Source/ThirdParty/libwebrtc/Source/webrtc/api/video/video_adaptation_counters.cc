@@ -10,6 +10,8 @@
 
 #include "api/video/video_adaptation_counters.h"
 
+#include <string>
+
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {

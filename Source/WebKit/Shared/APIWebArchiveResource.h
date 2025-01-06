@@ -51,8 +51,8 @@ public:
     static Ref<WebArchiveResource> create(RefPtr<WebCore::ArchiveResource>&&);
 
     Ref<API::Data> data();
-    WTF::String URL();
-    WTF::String MIMEType();
+    WTF::String url();
+    WTF::String mimeType();
     WTF::String textEncoding();
 
     WebCore::ArchiveResource* coreArchiveResource();

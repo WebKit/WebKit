@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> animations</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t);
+
+    assert_false(model.autoplay, "autoplay should be false by default");
+    assert_false(model.loop, "loop should be false by default");
+    assert_equals(model.playbackRate, 1.0, "playbackRate should be 1.0 by default");
+    assert_equals(model.duration, 0, "duration should be 0 by default");
+    assert_true(model.paused, "paused should be true by default");
+}, `<model> with empty source gets the expected animation values`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/heart.usdz");
+    await model.ready;
+
+    assert_false(model.autoplay, "autoplay should be false for model without animation");
+    assert_false(model.loop, "loop should be false for model without animation");
+    assert_equals(model.playbackRate, 1.0, "playbackRate should be 1.0 for model without animation");
+    assert_equals(model.duration, 0, "duration should be 0 for model without animation");
+    assert_true(model.paused, "paused should be true for model without animation");
+}, `<model> source with no animation gets the expected animation values`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    await model.ready;
+
+    assert_false(model.autoplay, "autoplay should be false for model initially");
+    assert_false(model.loop, "loop should be false for model initially");
+    assert_equals(model.playbackRate, 1.0, "playbackRate should be 1.0 initially");
+    assert_approx_equals(model.duration, 60, 0.1, "duration is as expected for this model");
+    assert_true(model.paused, "paused should be true initially");
+}, `<model> source with animation gets the expected animation values`);
+
+</script>
+</body>

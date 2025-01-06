@@ -28,11 +28,11 @@
 #if ENABLE(WEBGL)
 #include "OESShaderMultisampleInterpolation.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(OESShaderMultisampleInterpolation);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OESShaderMultisampleInterpolation);
 
 OESShaderMultisampleInterpolation::OESShaderMultisampleInterpolation(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::OESShaderMultisampleInterpolation)

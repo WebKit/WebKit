@@ -12,6 +12,7 @@
 
 #include <string.h>
 
+#include <cstdint>
 #include <vector>
 
 // PacketTimeUpdateParams is defined in asyncpacketsocket.h.
@@ -172,12 +173,11 @@ absl::string_view RtpPacketTypeToString(RtpPacketType packet_type) {
   RTC_CHECK_NOTREACHED();
 }
 
-RtpPacketType InferRtpPacketType(rtc::ArrayView<const char> packet) {
-  if (webrtc::IsRtcpPacket(
-          rtc::reinterpret_array_view<const uint8_t>(packet))) {
+RtpPacketType InferRtpPacketType(rtc::ArrayView<const uint8_t> packet) {
+  if (webrtc::IsRtcpPacket(packet)) {
     return RtpPacketType::kRtcp;
   }
-  if (webrtc::IsRtpPacket(rtc::reinterpret_array_view<const uint8_t>(packet))) {
+  if (webrtc::IsRtpPacket(packet)) {
     return RtpPacketType::kRtp;
   }
   return RtpPacketType::kUnknown;
@@ -238,7 +238,7 @@ bool ValidateRtpHeader(const uint8_t* rtp,
 // ValidateRtpHeader() must be called before this method to make sure, we have
 // a sane rtp packet.
 bool UpdateRtpAbsSendTimeExtension(uint8_t* rtp,
-                                   size_t length,
+                                   size_t /* length */,
                                    int extension_id,
                                    uint64_t time_us) {
   //  0                   1                   2                   3

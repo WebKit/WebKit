@@ -64,9 +64,9 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/VM.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/ResourceUsage.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(COCOA)
 #include "ResourceUsageThread.h"
@@ -131,7 +131,7 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
         document->styleScope().releaseMemory();
         if (RefPtr fontSelector = document->fontSelectorIfExists())
             fontSelector->emptyCaches();
-        document->cachedResourceLoader().garbageCollectDocumentResources();
+        document->protectedCachedResourceLoader()->garbageCollectDocumentResources();
 
         if (RefPtr pluginDocument = dynamicDowncast<PluginDocument>(document))
             pluginDocument->releaseMemory();

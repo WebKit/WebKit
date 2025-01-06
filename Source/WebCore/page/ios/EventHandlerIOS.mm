@@ -33,9 +33,11 @@
 #import "Chrome.h"
 #import "ChromeClient.h"
 #import "DataTransfer.h"
+#import "DocumentInlines.h"
 #import "DragState.h"
 #import "EventNames.h"
 #import "FocusController.h"
+#import "FrameLoader.h"
 #import "HandleUserInputEventResult.h"
 #import "KeyboardEvent.h"
 #import "LocalFrame.h"
@@ -46,6 +48,7 @@
 #import "PlatformEventFactoryIOS.h"
 #import "PlatformKeyboardEvent.h"
 #import "RenderWidget.h"
+#import "ScrollingCoordinatorTypes.h"
 #import "WAKView.h"
 #import "WAKWindow.h"
 #import "WebEvent.h"
@@ -121,9 +124,9 @@ bool EventHandler::wheelEvent(WebEvent *event)
             processingSteps = { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch };
     }
 
-    bool eventWasHandled = handleWheelEvent(wheelEvent, processingSteps).wasHandled();
-    event.wasHandled = eventWasHandled;
-    return eventWasHandled;
+    auto [result, _] = handleWheelEvent(wheelEvent, processingSteps);
+    event.wasHandled = result.wasHandled();
+    return event.wasHandled;
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -142,30 +145,6 @@ void EventHandler::touchEvent(WebEvent *event)
     event.wasHandled = handleTouchEvent(PlatformEventFactory::createPlatformTouchEvent(event)).wasHandled();
 }
 #endif
-
-bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
-{
-    RefPtr page = m_frame->page();
-    if (!page)
-        return false;
-
-    KeyboardUIMode keyboardUIMode = page->chrome().client().keyboardUIMode();
-    bool handlingOptionTab = event && isKeyboardOptionTab(*event);
-
-    // If tab-to-links is off, option-tab always highlights all controls.
-    if ((keyboardUIMode & KeyboardAccessTabsToLinks) == 0 && handlingOptionTab)
-        return true;
-
-    // If system preferences say to include all controls, we always include all controls.
-    if (keyboardUIMode & KeyboardAccessFull)
-        return true;
-
-    // Otherwise tab-to-links includes all controls, unless the sense is flipped via option-tab.
-    if (keyboardUIMode & KeyboardAccessTabsToLinks)
-        return !handlingOptionTab;
-
-    return handlingOptionTab;
-}
 
 bool EventHandler::keyEvent(WebEvent *event)
 {
@@ -473,7 +452,7 @@ void EventHandler::mouseDown(WebEvent *event)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     // FIXME: Why is this here? EventHandler::handleMousePressEvent() calls it.
-    protectedFrame()->checkedLoader()->resetMultipleFormSubmissionProtection();
+    protectedFrame()->protectedLoader()->resetMultipleFormSubmissionProtection();
 
     m_mouseDownView = nil;
 
@@ -552,7 +531,7 @@ void EventHandler::dispatchSyntheticMouseMove(const PlatformMouseEvent& platform
     mouseMoved(platformMouseEvent);
 }
 
-bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
+HandleUserInputEventResult EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -563,7 +542,7 @@ bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& m
     return true;
 }
 
-bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
+HandleUserInputEventResult EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -573,7 +552,7 @@ bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mo
     return true;
 }
 
-bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
+HandleUserInputEventResult EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -603,11 +582,15 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
 void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow)
 {
     Ref frame = m_frame.get();
+    RefPtr frameView = frame->view();
+    if (!frameView)
+        return;
 
-    m_targetAutoscrollPositionInUnscrolledRootViewCoordinates = frame->view()->contentsToRootView(roundedIntPoint(positionInWindow)) - toIntSize(frame->view()->documentScrollPositionRelativeToViewOrigin());
+    m_targetAutoscrollPositionInRootView = roundedIntPoint(positionInWindow);
+    m_targetAutoscrollPositionInUnscrolledRootView = m_targetAutoscrollPositionInRootView - toIntSize(frameView->documentScrollPositionRelativeToViewOrigin());
 
     if (!m_isAutoscrolling)
-        m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates = m_targetAutoscrollPositionInUnscrolledRootViewCoordinates;
+        m_initialAutoscrollPositionInUnscrolledRootView = m_targetAutoscrollPositionInUnscrolledRootView;
 
     m_isAutoscrolling = true;
     m_autoscrollController->startAutoscrollForSelection(renderer);
@@ -616,7 +599,9 @@ void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatP
 void EventHandler::cancelSelectionAutoscroll()
 {
     m_isAutoscrolling = false;
-    m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates = std::nullopt;
+    m_initialAutoscrollPositionInUnscrolledRootView = std::nullopt;
+    m_targetAutoscrollPositionInRootView = { };
+    m_targetAutoscrollPositionInUnscrolledRootView = { };
     m_autoscrollController->stopAutoscrollTimer();
 }
 
@@ -675,13 +660,16 @@ static IntPoint adjustAutoscrollDestinationForInsetEdges(IntPoint autoscrollPoin
 
     return resultPoint;
 }
-    
+
 IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
 {
     Ref frame = m_frame.get();
-
     if (!frame->view())
         return { };
+
+    if (!frame->isMainFrame())
+        return m_targetAutoscrollPositionInRootView;
+
     Ref frameView = *frame->view();
 
     // All work is done in "unscrolled" root view coordinates (as if delegatesScrolling were off),
@@ -689,12 +677,12 @@ IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
     // can keep scrolling without the client pushing a new contents-space target position via startSelectionAutoscroll.
     auto scrollPosition = toIntSize(frameView->documentScrollPositionRelativeToViewOrigin());
     
-    FloatRect unobscuredContentRectInUnscrolledRootViewCoordinates = frameView->contentsToRootView(frameView->unobscuredContentRect());
-    unobscuredContentRectInUnscrolledRootViewCoordinates.move(-scrollPosition);
+    FloatRect unobscuredContentRectInUnscrolledRootView = frameView->contentsToRootView(frameView->unobscuredContentRect());
+    unobscuredContentRectInUnscrolledRootView.move(-scrollPosition);
 
-    return adjustAutoscrollDestinationForInsetEdges(m_targetAutoscrollPositionInUnscrolledRootViewCoordinates, m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates, unobscuredContentRectInUnscrolledRootViewCoordinates) + scrollPosition;
+    return adjustAutoscrollDestinationForInsetEdges(m_targetAutoscrollPositionInUnscrolledRootView, m_initialAutoscrollPositionInUnscrolledRootView, unobscuredContentRectInUnscrolledRootView) + scrollPosition;
 }
-    
+
 bool EventHandler::shouldUpdateAutoscroll()
 {
     return m_isAutoscrolling;

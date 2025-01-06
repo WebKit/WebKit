@@ -400,7 +400,7 @@ class Sequence
         @list.each {
             | item |
             if item.is_a? LocalLabel
-                mapping[item] = LocalLabel.unique(if comment then comment + "_" else "" end + item.cleanName)
+                mapping[item] = LocalLabel.unique(codeOrigin, if comment then comment + "_" else "" end + item.cleanName)
             end
         }
         

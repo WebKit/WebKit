@@ -8,5 +8,5 @@ link1
 link2
 Done
 
-PASS Click targets the nearest common ancestor
+FAIL Click targets the nearest common ancestor assert_equals: Click should be sent to the nearest common ancestor expected "mousedown@link1,mouseup@link_container1,click@link_container1,mousedown@link_container2,mouseup@link2,click@link_container2" but got "mousedown@link1,mouseup@link_container1,mousedown@link_container2,mouseup@link2,click@link_container2"
 

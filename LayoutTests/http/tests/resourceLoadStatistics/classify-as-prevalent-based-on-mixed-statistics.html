@@ -28,8 +28,8 @@
         });
     }
 
-    function runTestRunnerTest() { 
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
+    async function runTestRunnerTest() {
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, false, async function() {
             if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
                 testFailed("Host did not get set as non-prevalent resource.");
 
@@ -43,9 +43,8 @@
             testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin3);
             testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin1);
 
-            testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-
-            testRunner.statisticsProcessStatisticsAndDataRecords();
+            await testRunner.statisticsProcessStatisticsAndDataRecords();
+            completeTest();
         });
     }
 

@@ -134,7 +134,18 @@ sub new {
             $_[0] = $param;
         }
     }
-    return $class->SUPER::new(@_);
+    $user = $class->SUPER::new(@_);
+
+    # MySQL considers some non-ascii characters such as umlauts to equal
+    # ascii characters returning a user when it should not.
+    if ($user && ref $param eq 'HASH' && exists $param->{name}) {
+        my $login = $param->{name};
+        if (lc $login ne lc $user->login) {
+            $user = undef;
+        }
+    }
+
+    return $user;
 }
 
 sub super_user {

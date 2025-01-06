@@ -32,7 +32,7 @@
 #include "ScriptWrappable.h"
 #include "WorkletOptions.h"
 #include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -41,15 +41,14 @@ class Document;
 class WorkletGlobalScopeProxy;
 class WorkletPendingTasks;
 
-class Worklet : public RefCounted<Worklet>, public ScriptWrappable, public CanMakeWeakPtr<Worklet>, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(Worklet);
+class Worklet : public RefCountedAndCanMakeWeakPtr<Worklet>, public ScriptWrappable, public ActiveDOMObject {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Worklet);
 public:
-    virtual ~Worklet();
-
-    // ActiveDOMOject.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
-    
+
+    virtual ~Worklet();
+
     virtual void addModule(const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&&);
 
     void finishPendingTasks(WorkletPendingTasks&);

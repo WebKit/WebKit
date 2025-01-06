@@ -32,23 +32,23 @@
 #include "ExceptionOr.h"
 #include "ImageBuffer.h"
 #include "IntSize.h"
+#include "PaintRenderingContext2D.h"
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CanvasRenderingContext;
 class ImageBitmap;
-class PaintRenderingContext2D;
 
 namespace DisplayList {
 class DrawingContext;
 }
 
 class CustomPaintCanvas final : public RefCounted<CustomPaintCanvas>, public CanvasBase, private ContextDestructionObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CustomPaintCanvas);
 public:
 
     static Ref<CustomPaintCanvas> create(ScriptExecutionContext&, unsigned width, unsigned height);
@@ -58,12 +58,9 @@ public:
     RefPtr<PaintRenderingContext2D> getContext();
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
-    GraphicsContext* drawingContext() const final;
-    GraphicsContext* existingDrawingContext() const final;
 
     void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final { }
 
-    AffineTransform baseTransform() const final;
     Image* copiedImage() const final;
     void clearCopiedImage() const final;
 
@@ -83,12 +80,9 @@ private:
     void refCanvasBase() const final { ref(); }
     void derefCanvasBase() const final { deref(); }
     ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
-    void replayDisplayListImpl(GraphicsContext& target) const;
 
-    std::unique_ptr<CanvasRenderingContext> m_context;
-    mutable std::unique_ptr<DisplayList::DrawingContext> m_recordingContext;
+    std::unique_ptr<PaintRenderingContext2D> m_context;
     mutable RefPtr<Image> m_copiedImage;
-
     mutable std::unique_ptr<CSSParserContext> m_cssParserContext;
 };
 

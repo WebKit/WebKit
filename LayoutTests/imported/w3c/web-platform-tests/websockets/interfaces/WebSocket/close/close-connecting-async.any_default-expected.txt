@@ -1,0 +1,3 @@
+
+PASS close event should be fired asynchronously when WebSocket is connecting
+

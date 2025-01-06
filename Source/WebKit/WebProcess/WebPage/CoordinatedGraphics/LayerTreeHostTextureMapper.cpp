@@ -41,9 +41,12 @@
 #include <WebCore/Settings.h>
 #include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperLayer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LayerTreeHost);
 
 bool LayerTreeHost::prepareForRendering()
 {
@@ -61,7 +64,7 @@ bool LayerTreeHost::prepareForRendering()
 
 void LayerTreeHost::compositeLayersToContext()
 {
-    IntSize windowSize = expandedIntSize(m_rootLayer->size());
+    IntSize windowSize = flooredIntSize(m_rootLayer->size() * deviceScaleFactor());
     glViewport(0, 0, windowSize.width(), windowSize.height());
 
     m_textureMapper->beginPainting();
@@ -247,10 +250,6 @@ WebCore::GraphicsLayerFactory* LayerTreeHost::graphicsLayerFactory()
 }
 
 void LayerTreeHost::contentsSizeChanged(const WebCore::IntSize&)
-{
-}
-
-void LayerTreeHost::didChangeViewportAttributes(WebCore::ViewportAttributes&&)
 {
 }
 

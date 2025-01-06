@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "generate_cpp_files_for_headers", "split_srcs_and_hdrs")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 EFFECTS_FILES = [
     "GrAtlasedShaderHelpers.h",
@@ -55,16 +53,12 @@ EFFECTS_FILES = [
 split_srcs_and_hdrs(
     name = "effects",
     files = EFFECTS_FILES,
-)
-
-skia_filegroup(
-    name = "srcs",
-    srcs = [":effects_srcs"],
     visibility = ["//src/gpu/ganesh:__pkg__"],
 )
 
-skia_filegroup(
-    name = "private_hdrs",
-    srcs = [":effects_hdrs"],
-    visibility = ["//src/gpu/ganesh:__pkg__"],
+generate_cpp_files_for_headers(
+    name = "headers_to_compile",
+    headers = [
+        "GrAtlasedShaderHelpers.h",
+    ],
 )

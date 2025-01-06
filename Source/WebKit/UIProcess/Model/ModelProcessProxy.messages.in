@@ -22,7 +22,10 @@
 
 #if ENABLE(MODEL_PROCESS)
 
+[ExceptionForEnabledBy]
 messages -> ModelProcessProxy {
+
+    TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     DidCreateContextForVisibilityPropagation(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, WebKit::LayerHostingContextID contextID)

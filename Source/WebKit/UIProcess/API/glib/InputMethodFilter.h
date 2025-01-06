@@ -59,7 +59,11 @@ public:
 #if PLATFORM(GTK)
     using PlatformEventKey = GdkEvent;
 #elif PLATFORM(WPE)
-    using PlatformEventKey = struct wpe_input_keyboard_event;
+    using PlatformEventKey = void;
+
+#if ENABLE(WPE_PLATFORM)
+    void setUseWPEPlatformEvents(bool useWPEPlatformEvents) { m_useWPEPlatformEvents = useWPEPlatformEvents; }
+#endif
 #endif
     struct FilterResult {
         bool handled { false };
@@ -125,6 +129,10 @@ private:
         uint64_t cursorPosition;
         uint64_t selectionPosition;
     } m_surrounding;
+
+#if ENABLE(WPE_PLATFORM)
+    bool m_useWPEPlatformEvents { false };
+#endif
 };
 
 } // namespace WebKit

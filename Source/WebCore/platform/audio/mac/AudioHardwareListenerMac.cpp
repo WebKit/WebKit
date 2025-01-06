@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #include <algorithm>
+#include <wtf/StdLibExtras.h>
 
 enum {
     kAudioHardwarePropertyProcessIsRunning = 'prun'
@@ -41,13 +42,7 @@ static AudioHardwareActivityType isAudioHardwareProcessRunning()
     AudioObjectPropertyAddress propertyAddress = {
         kAudioHardwarePropertyProcessIsRunning,
         kAudioObjectPropertyScopeGlobal,
-#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        kAudioObjectPropertyElementMaster
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
     };
     
     if (!AudioObjectHasProperty(kAudioObjectSystemObject, &propertyAddress))
@@ -72,13 +67,7 @@ static AudioHardwareListener::BufferSizeRange currentDeviceSupportedBufferSizes(
     AudioObjectPropertyAddress defaultOutputDeviceDescriptor = {
         kAudioHardwarePropertyDefaultOutputDevice,
         kAudioObjectPropertyScopeGlobal,
-#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        kAudioObjectPropertyElementMaster
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
     };
 
     if (AudioObjectGetPropertyData(kAudioObjectSystemObject, &defaultOutputDeviceDescriptor, 0, 0, &descriptorSize, (void*)&deviceID))
@@ -90,13 +79,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     AudioObjectPropertyAddress bufferSizeDescriptor = {
         kAudioDevicePropertyBufferFrameSizeRange,
         kAudioObjectPropertyScopeGlobal,
-#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        kAudioObjectPropertyElementMaster,
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
     };
 
     if (AudioObjectGetPropertyData(deviceID, &bufferSizeDescriptor, 0, 0, &descriptorSize, &bufferSizes))
@@ -111,13 +94,7 @@ static const AudioObjectPropertyAddress& processIsRunningPropertyDescriptor()
     static const AudioObjectPropertyAddress processIsRunningProperty = {
         kAudioHardwarePropertyProcessIsRunning,
         kAudioObjectPropertyScopeGlobal,
-#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        kAudioObjectPropertyElementMaster
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
     };
 
     return processIsRunningProperty;
@@ -128,13 +105,7 @@ static const AudioObjectPropertyAddress& outputDevicePropertyDescriptor()
     static const AudioObjectPropertyAddress outputDeviceProperty = {
         kAudioHardwarePropertyDefaultOutputDevice,
         kAudioObjectPropertyScopeGlobal,
-#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        kAudioObjectPropertyElementMaster
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
     };
 
     return outputDeviceProperty;
@@ -154,7 +125,7 @@ AudioHardwareListenerMac::AudioHardwareListenerMac(Client& client)
     WeakPtr weakThis { *this };
     m_block = Block_copy(^(UInt32 count, const AudioObjectPropertyAddress properties[]) {
         if (weakThis)
-            weakThis->propertyChanged(count, properties);
+            weakThis->propertyChanged(unsafeMakeSpan(properties, count));
     });
 
     AudioObjectAddPropertyListenerBlock(kAudioObjectSystemObject, &processIsRunningPropertyDescriptor(), dispatch_get_main_queue(), m_block);
@@ -168,17 +139,16 @@ AudioHardwareListenerMac::~AudioHardwareListenerMac()
     Block_release(m_block);
 }
 
-void AudioHardwareListenerMac::propertyChanged(UInt32 propertyCount, const AudioObjectPropertyAddress properties[])
+void AudioHardwareListenerMac::propertyChanged(std::span<const AudioObjectPropertyAddress> properties)
 {
-    const AudioObjectPropertyAddress& deviceRunning = processIsRunningPropertyDescriptor();
-    const AudioObjectPropertyAddress& outputDevice = outputDevicePropertyDescriptor();
+    auto deviceRunning = asByteSpan(processIsRunningPropertyDescriptor());
+    auto outputDevice = asByteSpan(outputDevicePropertyDescriptor());
 
-    for (UInt32 i = 0; i < propertyCount; ++i) {
-        const AudioObjectPropertyAddress& property = properties[i];
-
-        if (!memcmp(&property, &deviceRunning, sizeof(AudioObjectPropertyAddress)))
+    for (auto& property : properties) {
+        auto propertyBytes = asByteSpan(property);
+        if (equalSpans(propertyBytes, deviceRunning))
             processIsRunningChanged();
-        else if (!memcmp(&property, &outputDevice, sizeof(AudioObjectPropertyAddress)))
+        else if (equalSpans(propertyBytes, outputDevice))
             outputDeviceChanged();
     }
 }

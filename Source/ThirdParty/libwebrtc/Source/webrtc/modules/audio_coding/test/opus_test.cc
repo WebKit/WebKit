@@ -13,6 +13,8 @@
 #include <string>
 
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/environment/environment_factory.h"
+#include "api/neteq/default_neteq_factory.h"
 #include "modules/audio_coding/codecs/opus/opus_interface.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/audio_coding/test/TestStereo.h"
@@ -22,8 +24,9 @@
 namespace webrtc {
 
 OpusTest::OpusTest()
-    : acm_receiver_(std::make_unique<acm2::AcmReceiver>(
-          acm2::AcmReceiver::Config(CreateBuiltinAudioDecoderFactory()))),
+    : neteq_(DefaultNetEqFactory().Create(CreateEnvironment(),
+                                          NetEq::Config(),
+                                          CreateBuiltinAudioDecoderFactory())),
       channel_a2b_(NULL),
       counter_(0),
       payload_type_(255),
@@ -82,18 +85,18 @@ void OpusTest::Perform() {
   WebRtcOpus_DecoderInit(opus_mono_decoder_);
   WebRtcOpus_DecoderInit(opus_stereo_decoder_);
 
-  ASSERT_TRUE(acm_receiver_.get() != NULL);
-  acm_receiver_->FlushBuffers();
+  ASSERT_TRUE(neteq_.get() != NULL);
+  neteq_->FlushBuffers();
 
   // Register Opus stereo as receiving codec.
   constexpr int kOpusPayloadType = 120;
   const SdpAudioFormat kOpusFormatStereo("opus", 48000, 2, {{"stereo", "1"}});
   payload_type_ = kOpusPayloadType;
-  acm_receiver_->SetCodecs({{kOpusPayloadType, kOpusFormatStereo}});
+  neteq_->SetCodecs({{kOpusPayloadType, kOpusFormatStereo}});
 
   // Create and connect the channel.
   channel_a2b_ = new TestPackStereo;
-  channel_a2b_->RegisterReceiverACM(acm_receiver_.get());
+  channel_a2b_->RegisterReceiverNetEq(neteq_.get());
 
   //
   // Test Stereo.
@@ -154,7 +157,7 @@ void OpusTest::Perform() {
 
   // Register Opus mono as receiving codec.
   const SdpAudioFormat kOpusFormatMono("opus", 48000, 2);
-  acm_receiver_->SetCodecs({{kOpusPayloadType, kOpusFormatMono}});
+  neteq_->SetCodecs({{kOpusPayloadType, kOpusFormatMono}});
 
   // Run Opus with 2.5 ms frame size.
   Run(channel_a2b_, audio_channels, 32000, 120);
@@ -353,8 +356,8 @@ void OpusTest::Run(TestPackStereo* channel,
 
     // Run received side of ACM.
     bool muted;
-    ASSERT_EQ(0, acm_receiver_->GetAudio(out_freq_hz_b, &audio_frame, &muted));
-    ASSERT_FALSE(muted);
+    ASSERT_EQ(NetEq::kOK, neteq_->GetAudio(&audio_frame, &muted));
+    ASSERT_TRUE(resampler_helper_.MaybeResample(out_freq_hz_b, &audio_frame));
 
     // Write output speech to file.
     out_file_.Write10MsData(

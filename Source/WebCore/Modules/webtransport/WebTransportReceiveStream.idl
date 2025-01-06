@@ -27,7 +27,9 @@
     EnabledBySetting=WebTransportEnabled,
     Exposed=(Window,Worker),
     SecureContext,
-    Transferable
+    Transferable,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] interface WebTransportReceiveStream : ReadableStream {
     Promise<WebTransportReceiveStreamStats> getStats();
 };

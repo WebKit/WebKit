@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class DOMImplementation final : public ScriptWrappable {
-    WTF_MAKE_ISO_ALLOCATED(DOMImplementation);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DOMImplementation);
 public:
     explicit DOMImplementation(Document&);
 
@@ -45,7 +45,7 @@ public:
     static bool hasFeature() { return true; }
     WEBCORE_EXPORT static Ref<CSSStyleSheet> createCSSStyleSheet(const String& title, const String& media);
 
-    static Ref<Document> createDocument(const String& contentType, LocalFrame*, const Settings&, const URL&, ScriptExecutionContextIdentifier = { });
+    static Ref<Document> createDocument(const String& contentType, LocalFrame*, const Settings&, const URL&, std::optional<ScriptExecutionContextIdentifier> = std::nullopt);
 
 private:
     Ref<Document> protectedDocument();

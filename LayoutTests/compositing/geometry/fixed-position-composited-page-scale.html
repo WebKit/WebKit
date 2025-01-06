@@ -13,15 +13,22 @@
 }
 </style>
 <script>
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
+
+async function runTest() {
   if (window.internals) {
     window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
-    window.internals.setPageScaleFactor(2, 0, 0);
+    await window.testRunner.setPageScaleFactor(2, 0, 0);
   }
-  if (window.testRunner)
+  if (window.testRunner) {
     testRunner.dumpAsText(true);
+    testRunner.notifyDone();
+  }
+}
 </script>
 </head>
-<body style="width:2000px;height:2000px;">
+<body onload="runTest()" style="width:2000px;height:2000px;">
 <div class="fixed-no-z-index">TEST</div><br>
 <div class="fixed-with-z-index">TEST</div>
 </body>

@@ -30,6 +30,7 @@
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/ExternalStringImpl.h>
+#include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/SymbolImpl.h>
@@ -41,6 +42,8 @@
 #include <unistd.h>
 #include <wtf/DataLog.h>
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -169,16 +172,17 @@ Ref<StringImpl> StringImpl::createWithoutCopyingNonEmpty(std::span<const LChar> 
     return adoptRef(*new StringImpl(characters, ConstructWithoutCopying));
 }
 
-template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternal(size_t length, CharacterType*& data)
+template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternal(size_t length, std::span<CharacterType>& data)
 {
     if (!length) {
-        data = nullptr;
+        data = { };
         return *empty();
     }
+
     return createUninitializedInternalNonEmpty(length, data);
 }
 
-template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, CharacterType*& data)
+template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, std::span<CharacterType>& data)
 {
     ASSERT(length);
 
@@ -188,19 +192,19 @@ template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninit
     if (length > maxInternalLength<CharacterType>())
         CRASH();
     StringImpl* string = static_cast<StringImpl*>(StringImplMalloc::malloc(allocationSize<CharacterType>(length)));
-    data = string->tailPointer<CharacterType>();
+    data = unsafeMakeSpan(string->tailPointer<CharacterType>(), length);
     return constructInternal<CharacterType>(*string, length);
 }
 
-template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, LChar*& data);
-template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, UChar*& data);
+template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, std::span<LChar>& data);
+template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, std::span<UChar>& data);
 
-Ref<StringImpl> StringImpl::createUninitialized(size_t length, LChar*& data)
+Ref<StringImpl> StringImpl::createUninitialized(size_t length, std::span<LChar>& data)
 {
     return createUninitializedInternal(length, data);
 }
 
-Ref<StringImpl> StringImpl::createUninitialized(size_t length, UChar*& data)
+Ref<StringImpl> StringImpl::createUninitialized(size_t length, std::span<UChar>& data)
 {
     return createUninitializedInternal(length, data);
 }
@@ -258,9 +262,9 @@ template<typename CharacterType> inline Ref<StringImpl> StringImpl::createIntern
 {
     if (characters.empty())
         return *empty();
-    CharacterType* data;
+    std::span<CharacterType> data;
     auto string = createUninitializedInternalNonEmpty(characters.size(), data);
-    copyCharacters(data, characters);
+    copyCharacters(data.data(), characters);
     return string;
 }
 
@@ -299,13 +303,14 @@ Ref<StringImpl> StringImpl::create8BitIfPossible(std::span<const UChar> characte
     if (characters.empty())
         return *empty();
 
-    LChar* data;
+    std::span<LChar> data;
     auto string = createUninitializedInternalNonEmpty(characters.size(), data);
 
+    size_t i = 0;
     for (auto character : characters) {
         if (!isLatin1(character))
             return create(characters);
-        *data++ = static_cast<LChar>(character);
+        data[i++] = static_cast<LChar>(character);
     }
 
     return string;
@@ -369,7 +374,7 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
         return *this;
 
     if (!(ored & ~0x7F)) {
-        UChar* data16;
+        std::span<UChar> data16;
         auto newImpl = createUninitializedInternalNonEmpty(m_length, data16);
         for (unsigned i = 0; i < m_length; ++i)
             data16[i] = toASCIILower(m_data16[i]);
@@ -381,17 +386,17 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
     int32_t length = m_length;
 
     // Do a slower implementation for cases that include non-ASCII characters.
-    UChar* data16;
+    std::span<UChar> data16;
     auto newImpl = createUninitializedInternalNonEmpty(m_length, data16);
 
     UErrorCode status = U_ZERO_ERROR;
-    int32_t realLength = u_strToLower(data16, length, m_data16, m_length, "", &status);
+    int32_t realLength = u_strToLower(data16.data(), length, m_data16, m_length, "", &status);
     if (U_SUCCESS(status) && realLength == length)
         return newImpl;
 
     newImpl = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
-    u_strToLower(data16, realLength, m_data16, m_length, "", &status);
+    u_strToLower(data16.data(), realLength, m_data16, m_length, "", &status);
     if (U_FAILURE(status))
         return *this;
     return newImpl;
@@ -400,7 +405,7 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
 Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned failingIndex)
 {
     ASSERT(is8Bit());
-    LChar* data8;
+    std::span<LChar> data8;
     auto newImpl = createUninitializedInternalNonEmpty(m_length, data8);
 
     for (unsigned i = 0; i < failingIndex; ++i) {
@@ -431,73 +436,94 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocale()
 
     if (m_length > MaxLength)
         CRASH();
-    int32_t length = m_length;
 
+    // First scan the string for uppercase and non-ASCII characters:
     if (is8Bit()) {
-        LChar* data8;
-        auto newImpl = createUninitialized(m_length, data8);
-        
-        // Do a faster loop for the case where all the characters are ASCII.
-        unsigned ored = 0;
-        for (int i = 0; i < length; ++i) {
+        for (unsigned i = 0; i < m_length; ++i) {
             LChar character = m_data8[i];
-            ored |= character;
-            data8[i] = toASCIIUpper(character);
+            if (UNLIKELY(!isASCII(character) || isASCIILower(character)))
+                return convertToUppercaseWithoutLocaleStartingAtFailingIndex8Bit(i);
         }
-        if (!(ored & ~0x7F))
-            return newImpl;
+        return *this;
+    }
+    return convertToUppercaseWithoutLocaleUpconvert();
+}
 
-        // Do a slower implementation for cases that include non-ASCII Latin-1 characters.
-        int numberSharpSCharacters = 0;
+Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned failingIndex)
+{
+    ASSERT(is8Bit());
+    std::span<LChar> destination;
+    auto newImpl = createUninitialized(m_length, destination);
 
-        // There are two special cases.
-        //  1. Some Latin-1 characters when converted to upper case are 16 bit characters.
-        //  2. Lower case sharp-S converts to "SS" (two characters)
-        for (int32_t i = 0; i < length; ++i) {
-            LChar character = m_data8[i];
-            if (UNLIKELY(character == smallLetterSharpS))
-                ++numberSharpSCharacters;
-            ASSERT(u_toupper(character) <= 0xFFFF);
-            UChar upper = u_toupper(character);
-            if (UNLIKELY(!isLatin1(upper))) {
-                // Since this upper-cased character does not fit in an 8-bit string, we need to take the 16-bit path.
-                goto upconvert;
-            }
-            data8[i] = static_cast<LChar>(upper);
-        }
-
-        if (!numberSharpSCharacters)
-            return newImpl;
-
-        // We have numberSSCharacters sharp-s characters, but none of the other special characters.
-        newImpl = createUninitialized(m_length + numberSharpSCharacters, data8);
-
-        LChar* dest = data8;
-
-        for (int32_t i = 0; i < length; ++i) {
-            LChar character = m_data8[i];
-            if (character == smallLetterSharpS) {
-                *dest++ = 'S';
-                *dest++ = 'S';
-            } else {
-                ASSERT(isLatin1(u_toupper(character)));
-                *dest++ = static_cast<LChar>(u_toupper(character));
-            }
-        }
-
-        return newImpl;
+    for (unsigned i = 0; i < failingIndex; ++i) {
+        ASSERT(isASCII(m_data8[i]));
+        ASSERT(!isASCIILower(m_data8[i]));
+        destination[i] = m_data8[i];
     }
 
-upconvert:
+    // Do a faster loop for the case where all the characters are ASCII.
+    unsigned ored = 0;
+    for (unsigned i = failingIndex; i < m_length; ++i) {
+        LChar character = m_data8[i];
+        ored |= character;
+        destination[i] = toASCIIUpper(character);
+    }
+    if (!(ored & ~0x7F))
+        return newImpl;
+
+    // Do a slower implementation for cases that include non-ASCII Latin-1 characters.
+    int numberSharpSCharacters = 0;
+
+    // There are two special cases.
+    //  1. Some Latin-1 characters when converted to upper case are 16 bit characters.
+    //  2. Lower case sharp-S converts to "SS" (two characters)
+    for (unsigned i = 0; i < m_length; ++i) {
+        LChar character = m_data8[i];
+        if (UNLIKELY(character == smallLetterSharpS))
+            ++numberSharpSCharacters;
+        ASSERT(u_toupper(character) <= 0xFFFF);
+        UChar upper = u_toupper(character);
+        if (UNLIKELY(!isLatin1(upper))) {
+            // Since this upper-cased character does not fit in an 8-bit string, we need to take the 16-bit path.
+            return convertToUppercaseWithoutLocaleUpconvert();
+        }
+        destination[i] = static_cast<LChar>(upper);
+    }
+
+    if (!numberSharpSCharacters)
+        return newImpl;
+
+    // We have numberSSCharacters sharp-s characters, but none of the other special characters.
+    if ((m_length + numberSharpSCharacters) > MaxLength)
+        return *this;
+    newImpl = createUninitialized(m_length + numberSharpSCharacters, destination);
+
+    size_t destinationIndex = 0;
+    for (unsigned i = 0; i < m_length; ++i) {
+        LChar character = m_data8[i];
+        if (character == smallLetterSharpS) {
+            destination[destinationIndex++] = 'S';
+            destination[destinationIndex++] = 'S';
+        } else {
+            ASSERT(isLatin1(u_toupper(character)));
+            destination[destinationIndex++] = static_cast<LChar>(u_toupper(character));
+        }
+    }
+
+    return newImpl;
+}
+
+Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocaleUpconvert()
+{
     auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
     auto source16 = upconvertedCharacters.span();
 
-    UChar* data16;
+    std::span<UChar> data16;
     auto newImpl = createUninitialized(source16.size(), data16);
-    
+
     // Do a faster loop for the case where all the characters are ASCII.
     unsigned ored = 0;
-    for (int i = 0; i < length; ++i) {
+    for (unsigned i = 0; i < m_length; ++i) {
         UChar character = source16[i];
         ored |= character;
         data16[i] = toASCIIUpper(character);
@@ -507,12 +533,12 @@ upconvert:
 
     // Do a slower implementation for cases that include non-ASCII characters.
     UErrorCode status = U_ZERO_ERROR;
-    int32_t realLength = u_strToUpper(data16, length, source16.data(), source16.size(), "", &status);
-    if (U_SUCCESS(status) && realLength == length)
+    int32_t realLength = u_strToUpper(data16.data(), m_length, source16.data(), source16.size(), "", &status);
+    if (U_SUCCESS(status) && realLength == static_cast<int32_t>(m_length))
         return newImpl;
     newImpl = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
-    u_strToUpper(data16, realLength, source16.data(), source16.size(), "", &status);
+    u_strToUpper(data16.data(), data16.size(), source16.data(), source16.size(), "", &status);
     if (U_FAILURE(status))
         return *this;
     return newImpl;
@@ -564,15 +590,15 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithLocale(const AtomString& local
 
     auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
     auto source16 = upconvertedCharacters.span();
-    UChar* data16;
+    std::span<UChar> data16;
     auto newString = createUninitialized(source16.size(), data16);
     UErrorCode status = U_ZERO_ERROR;
-    size_t realLength = u_strToLower(data16, source16.size(), source16.data(), source16.size(), locale, &status);
+    size_t realLength = u_strToLower(data16.data(), data16.size(), source16.data(), source16.size(), locale, &status);
     if (U_SUCCESS(status) && realLength == source16.size())
         return newString;
     newString = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
-    u_strToLower(data16, realLength, source16.data(), source16.size(), locale, &status);
+    u_strToLower(data16.data(), data16.size(), source16.data(), source16.size(), locale, &status);
     if (U_FAILURE(status))
         return *this;
     return newString;
@@ -599,15 +625,15 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithLocale(const AtomString& local
 
     auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
     auto source16 = upconvertedCharacters.span();
-    UChar* data16;
+    std::span<UChar> data16;
     auto newString = createUninitialized(source16.size(), data16);
     UErrorCode status = U_ZERO_ERROR;
-    size_t realLength = u_strToUpper(data16, source16.size(), source16.data(), source16.size(), locale, &status);
+    size_t realLength = u_strToUpper(data16.data(), data16.size(), source16.data(), source16.size(), locale, &status);
     if (U_SUCCESS(status) && realLength == source16.size())
         return newString;
     newString = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
-    u_strToUpper(data16, realLength, source16.data(), source16.size(), locale, &status);
+    u_strToUpper(data16.data(), data16.size(), source16.data(), source16.size(), locale, &status);
     if (U_FAILURE(status))
         return *this;
     return newString;
@@ -638,9 +664,9 @@ SlowPath:
         }
 
         if (!need16BitCharacters) {
-            LChar* data8;
+            std::span<LChar> data8;
             auto folded = createUninitializedInternalNonEmpty(m_length, data8);
-            copyCharacters(data8, { m_data8, failingIndex });
+            copyCharacters(data8.data(), { m_data8, failingIndex });
             for (unsigned i = failingIndex; i < m_length; ++i) {
                 auto character = m_data8[i];
                 if (isASCII(character))
@@ -667,7 +693,7 @@ SlowPath:
                 // String was all ASCII and no uppercase, so just return as-is.
                 return *this;
             }
-            UChar* data16;
+            std::span<UChar> data16;
             auto folded = createUninitializedInternalNonEmpty(m_length, data16);
             for (unsigned i = 0; i < m_length; ++i)
                 data16[i] = toASCIILower(m_data16[i]);
@@ -681,16 +707,16 @@ SlowPath:
     auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
     auto source16 = upconvertedCharacters.span();
 
-    UChar* data;
+    std::span<UChar> data;
     auto folded = createUninitializedInternalNonEmpty(source16.size(), data);
     UErrorCode status = U_ZERO_ERROR;
-    size_t realLength = u_strFoldCase(data, source16.size(), source16.data(), source16.size(), U_FOLD_CASE_DEFAULT, &status);
+    size_t realLength = u_strFoldCase(data.data(), source16.size(), source16.data(), source16.size(), U_FOLD_CASE_DEFAULT, &status);
     if (U_SUCCESS(status) && realLength == source16.size())
         return folded;
     ASSERT(realLength > source16.size());
     folded = createUninitializedInternalNonEmpty(realLength, data);
     status = U_ZERO_ERROR;
-    u_strFoldCase(data, realLength, source16.data(), source16.size(), U_FOLD_CASE_DEFAULT, &status);
+    u_strFoldCase(data.data(), realLength, source16.data(), source16.size(), U_FOLD_CASE_DEFAULT, &status);
     if (U_FAILURE(status))
         return *this;
     return folded;
@@ -710,9 +736,9 @@ ALWAYS_INLINE Ref<StringImpl> StringImpl::convertASCIICase(StringImpl& impl, std
     return impl;
 
 SlowPath:
-    CharacterType* newData;
+    std::span<CharacterType> newData;
     auto newImpl = createUninitializedInternalNonEmpty(data.size(), newData);
-    copyCharacters(newData, data.first(failingIndex));
+    copyCharacters(newData.data(), data.first(failingIndex));
     for (size_t i = failingIndex; i < data.size(); ++i)
         newData[i] = type == CaseConvertType::Lower ? toASCIILower(data[i]) : toASCIIUpper(data[i]);
     return newImpl;
@@ -776,14 +802,11 @@ template<typename CharacterType, class UCharPredicate> inline Ref<StringImpl> St
     
     while (true) {
         while (!from.empty() && predicate(from.front())) {
-            if (from.front() != ' ')
+            if (consume(from) != ' ')
                 changedToSpace = true;
-            from = from.subspan(1);
         }
-        while (!from.empty() && !predicate(from.front())) {
-            to[outc++] = from.front();
-            from = from.subspan(1);
-        }
+        while (!from.empty() && !predicate(from.front()))
+            to[outc++] = consume(from);
         if (!from.empty())
             to[outc++] = ' ';
         else
@@ -1113,30 +1136,30 @@ Ref<StringImpl> StringImpl::replace(size_t position, size_t lengthToReplace, Str
         CRASH();
 
     if (is8Bit() && (!string || string.is8Bit())) {
-        LChar* data;
+        std::span<LChar> data;
         auto newImpl = createUninitialized(length() - lengthToReplace + lengthToInsert, data);
-        copyCharacters(data, { m_data8, position });
+        copyCharacters(data.data(), { m_data8, position });
         if (string)
-            copyCharacters(data + position, string.span8().first(lengthToInsert));
-        copyCharacters(data + position + lengthToInsert, { m_data8 + position + lengthToReplace, length() - position - lengthToReplace });
+            copyCharacters(data.subspan(position).data(), string.span8().first(lengthToInsert));
+        copyCharacters(data.subspan(position + lengthToInsert).data(), { m_data8 + position + lengthToReplace, length() - position - lengthToReplace });
         return newImpl;
     }
-    UChar* data;
+    std::span<UChar> data;
     auto newImpl = createUninitialized(length() - lengthToReplace + lengthToInsert, data);
     if (is8Bit())
-        copyCharacters(data, { m_data8, position });
+        copyCharacters(data.data(), { m_data8, position });
     else
-        copyCharacters(data, { m_data16, position });
+        copyCharacters(data.data(), { m_data16, position });
     if (string) {
         if (string.is8Bit())
-            copyCharacters(data + position, string.span8().first(lengthToInsert));
+            copyCharacters(data.subspan(position).data(), string.span8().first(lengthToInsert));
         else
-            copyCharacters(data + position, string.span16().first(lengthToInsert));
+            copyCharacters(data.subspan(position).data(), string.span16().first(lengthToInsert));
     }
     if (is8Bit())
-        copyCharacters(data + position + lengthToInsert, { m_data8 + position + lengthToReplace, length() - position - lengthToReplace });
+        copyCharacters(data.subspan(position + lengthToInsert).data(), { m_data8 + position + lengthToReplace, length() - position - lengthToReplace });
     else
-        copyCharacters(data + position + lengthToInsert, { m_data16 + position + lengthToReplace, length() - position - lengthToReplace });
+        copyCharacters(data.subspan(position + lengthToInsert).data(), { m_data16 + position + lengthToReplace, length() - position - lengthToReplace });
     return newImpl;
 }
 
@@ -1183,42 +1206,42 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, std::span<const LChar> replac
     size_t dstOffset = 0;
 
     if (is8Bit()) {
-        LChar* data;
+        std::span<LChar> data;
         auto newImpl = createUninitialized(newSize, data);
 
         while ((srcSegmentEnd = find(pattern, srcSegmentStart)) != notFound) {
             srcSegmentLength = srcSegmentEnd - srcSegmentStart;
-            copyCharacters(data + dstOffset, { m_data8 + srcSegmentStart, srcSegmentLength });
+            copyCharacters(data.subspan(dstOffset).data(), { m_data8 + srcSegmentStart, srcSegmentLength });
             dstOffset += srcSegmentLength;
-            copyCharacters(data + dstOffset, replacement);
+            copyCharacters(data.subspan(dstOffset).data(), replacement);
             dstOffset += replacement.size();
             srcSegmentStart = srcSegmentEnd + 1;
         }
 
         srcSegmentLength = m_length - srcSegmentStart;
-        copyCharacters(data + dstOffset, { m_data8 + srcSegmentStart, srcSegmentLength });
+        copyCharacters(data.subspan(dstOffset).data(), { m_data8 + srcSegmentStart, srcSegmentLength });
 
         ASSERT(dstOffset + srcSegmentLength == newImpl.get().length());
 
         return newImpl;
     }
 
-    UChar* data;
+    std::span<UChar> data;
     auto newImpl = createUninitialized(newSize, data);
 
     while ((srcSegmentEnd = find(pattern, srcSegmentStart)) != notFound) {
         srcSegmentLength = srcSegmentEnd - srcSegmentStart;
-        copyCharacters(data + dstOffset, { m_data16 + srcSegmentStart, srcSegmentLength });
+        copyCharacters(data.subspan(dstOffset).data(), { m_data16 + srcSegmentStart, srcSegmentLength });
 
         dstOffset += srcSegmentLength;
-        copyCharacters(data + dstOffset, replacement);
+        copyCharacters(data.subspan(dstOffset).data(), replacement);
 
         dstOffset += replacement.size();
         srcSegmentStart = srcSegmentEnd + 1;
     }
 
     srcSegmentLength = m_length - srcSegmentStart;
-    copyCharacters(data + dstOffset, { m_data16 + srcSegmentStart, srcSegmentLength });
+    copyCharacters(data.subspan(dstOffset).data(), { m_data16 + srcSegmentStart, srcSegmentLength });
 
     ASSERT(dstOffset + srcSegmentLength == newImpl.get().length());
 
@@ -1259,44 +1282,44 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, std::span<const UChar> replac
     size_t dstOffset = 0;
 
     if (is8Bit()) {
-        UChar* data;
+        std::span<UChar> data;
         auto newImpl = createUninitialized(newSize, data);
 
         while ((srcSegmentEnd = find(pattern, srcSegmentStart)) != notFound) {
             srcSegmentLength = srcSegmentEnd - srcSegmentStart;
-            copyCharacters(data + dstOffset, { m_data8 + srcSegmentStart, srcSegmentLength });
+            copyCharacters(data.subspan(dstOffset).data(), { m_data8 + srcSegmentStart, srcSegmentLength });
 
             dstOffset += srcSegmentLength;
-            copyCharacters(data + dstOffset, replacement);
+            copyCharacters(data.subspan(dstOffset).data(), replacement);
 
             dstOffset += replacement.size();
             srcSegmentStart = srcSegmentEnd + 1;
         }
 
         srcSegmentLength = m_length - srcSegmentStart;
-        copyCharacters(data + dstOffset, { m_data8 + srcSegmentStart, srcSegmentLength });
+        copyCharacters(data.subspan(dstOffset).data(), { m_data8 + srcSegmentStart, srcSegmentLength });
 
         ASSERT(dstOffset + srcSegmentLength == newImpl.get().length());
 
         return newImpl;
     }
 
-    UChar* data;
+    std::span<UChar> data;
     auto newImpl = createUninitialized(newSize, data);
 
     while ((srcSegmentEnd = find(pattern, srcSegmentStart)) != notFound) {
         srcSegmentLength = srcSegmentEnd - srcSegmentStart;
-        copyCharacters(data + dstOffset, { m_data16 + srcSegmentStart, srcSegmentLength });
+        copyCharacters(data.subspan(dstOffset).data(), { m_data16 + srcSegmentStart, srcSegmentLength });
 
         dstOffset += srcSegmentLength;
-        copyCharacters(data + dstOffset, replacement);
+        copyCharacters(data.subspan(dstOffset).data(), replacement);
 
         dstOffset += replacement.size();
         srcSegmentStart = srcSegmentEnd + 1;
     }
 
     srcSegmentLength = m_length - srcSegmentStart;
-    copyCharacters(data + dstOffset, { m_data16 + srcSegmentStart, srcSegmentLength });
+    copyCharacters(data.subspan(dstOffset).data(), { m_data16 + srcSegmentStart, srcSegmentLength });
 
     ASSERT(dstOffset + srcSegmentLength == newImpl.get().length());
 
@@ -1351,43 +1374,43 @@ Ref<StringImpl> StringImpl::replace(StringView pattern, StringView replacement)
     // 4. This is 16 bit and replacement is 8 bit.
     if (srcIs8Bit && replacementIs8Bit) {
         // Case 1
-        LChar* data;
+        std::span<LChar> data;
         auto newImpl = createUninitialized(newSize, data);
         while ((srcSegmentEnd = find(pattern, srcSegmentStart)) != notFound) {
             srcSegmentLength = srcSegmentEnd - srcSegmentStart;
-            copyCharacters(data + dstOffset, { m_data8 + srcSegmentStart, srcSegmentLength });
+            copyCharacters(data.subspan(dstOffset).data(), { m_data8 + srcSegmentStart, srcSegmentLength });
             dstOffset += srcSegmentLength;
-            copyCharacters(data + dstOffset, replacement.span8().first(repStrLength));
+            copyCharacters(data.subspan(dstOffset).data(), replacement.span8().first(repStrLength));
             dstOffset += repStrLength;
             srcSegmentStart = srcSegmentEnd + patternLength;
         }
 
         srcSegmentLength = m_length - srcSegmentStart;
-        copyCharacters(data + dstOffset, { m_data8 + srcSegmentStart, srcSegmentLength });
+        copyCharacters(data.subspan(dstOffset).data(), { m_data8 + srcSegmentStart, srcSegmentLength });
 
         ASSERT(dstOffset + srcSegmentLength == newImpl.get().length());
 
         return newImpl;
     }
 
-    UChar* data;
+    std::span<UChar> data;
     auto newImpl = createUninitialized(newSize, data);
     while ((srcSegmentEnd = find(pattern, srcSegmentStart)) != notFound) {
         srcSegmentLength = srcSegmentEnd - srcSegmentStart;
         if (srcIs8Bit) {
             // Case 3.
-            copyCharacters(data + dstOffset, { m_data8 + srcSegmentStart, srcSegmentLength });
+            copyCharacters(data.subspan(dstOffset).data(), { m_data8 + srcSegmentStart, srcSegmentLength });
         } else {
             // Case 2 & 4.
-            copyCharacters(data + dstOffset, { m_data16 + srcSegmentStart, srcSegmentLength });
+            copyCharacters(data.subspan(dstOffset).data(), { m_data16 + srcSegmentStart, srcSegmentLength });
         }
         dstOffset += srcSegmentLength;
         if (replacementIs8Bit) {
             // Cases 2 & 3.
-            copyCharacters(data + dstOffset, replacement.span8().first(repStrLength));
+            copyCharacters(data.subspan(dstOffset).data(), replacement.span8().first(repStrLength));
         } else {
             // Case 4
-            copyCharacters(data + dstOffset, replacement.span16().first(repStrLength));
+            copyCharacters(data.subspan(dstOffset).data(), replacement.span16().first(repStrLength));
         }
         dstOffset += repStrLength;
         srcSegmentStart = srcSegmentEnd + patternLength;
@@ -1396,10 +1419,10 @@ Ref<StringImpl> StringImpl::replace(StringView pattern, StringView replacement)
     srcSegmentLength = m_length - srcSegmentStart;
     if (srcIs8Bit) {
         // Case 3.
-        copyCharacters(data + dstOffset, { m_data8 + srcSegmentStart, srcSegmentLength });
+        copyCharacters(data.subspan(dstOffset).data(), { m_data8 + srcSegmentStart, srcSegmentLength });
     } else {
         // Cases 2 & 4.
-        copyCharacters(data + dstOffset, { m_data16 + srcSegmentStart, srcSegmentLength });
+        copyCharacters(data.subspan(dstOffset).data(), { m_data16 + srcSegmentStart, srcSegmentLength });
     }
 
     ASSERT(dstOffset + srcSegmentLength == newImpl.get().length());
@@ -1518,18 +1541,16 @@ std::optional<UCharDirection> StringImpl::defaultWritingDirection()
 
 Ref<StringImpl> StringImpl::adopt(StringBuffer<LChar>&& buffer)
 {
-    unsigned length = buffer.length();
-    if (!length)
+    if (!buffer.length())
         return *empty();
-    return adoptRef(*new StringImpl(buffer.release(), length));
+    return adoptRef(*new StringImpl(buffer.release()));
 }
 
 Ref<StringImpl> StringImpl::adopt(StringBuffer<UChar>&& buffer)
 {
-    unsigned length = buffer.length();
-    if (!length)
+    if (!buffer.length())
         return *empty();
-    return adoptRef(*new StringImpl(buffer.release(), length));
+    return adoptRef(*new StringImpl(buffer.release()));
 }
 
 size_t StringImpl::sizeInBytes() const
@@ -1543,30 +1564,30 @@ size_t StringImpl::sizeInBytes() const
 
 Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const LChar> source)
 {
-    return tryGetUTF8ForCharacters([] (std::span<const char> converted) {
+    return tryGetUTF8ForCharacters([] (std::span<const char8_t> converted) {
         return CString { converted };
     }, source);
 }
 
 Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const UChar> characters, ConversionMode mode)
 {
-    return tryGetUTF8ForCharacters([] (std::span<const char> converted) {
+    return tryGetUTF8ForCharacters([] (std::span<const char8_t> converted) {
         return CString { converted };
     }, characters, mode);
 }
 
-Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(std::span<const UChar> span, ConversionMode mode, Vector<char, 1024>& bufferVector)
+Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(std::span<const UChar> span, ConversionMode mode, Vector<char8_t, 1024>& bufferVector)
 {
     ASSERT(bufferVector.size() == span.size() * 3);
     ConversionResult<char8_t> result;
     switch (mode) {
     case StrictConversion:
-        result = Unicode::convert(span, spanReinterpretCast<char8_t>(bufferVector.mutableSpan()));
+        result = Unicode::convert(span, bufferVector.mutableSpan());
         break;
     // FIXME: Lenient is exactly the same as "replacing unpaired surrogates with FFFD"; we don't need both.
     case StrictConversionReplacingUnpairedSurrogatesWithFFFD:
     case LenientConversion:
-        result = Unicode::convertReplacingInvalidSequences(span, spanReinterpretCast<char8_t>(bufferVector.mutableSpan()));
+        result = Unicode::convertReplacingInvalidSequences(span, bufferVector.mutableSpan());
         break;
     }
     if (result.code == ConversionResultCode::SourceInvalid)
@@ -1626,3 +1647,5 @@ bool equalIgnoringNullity(std::span<const UChar> a, StringImpl* b)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

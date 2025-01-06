@@ -15,12 +15,16 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/block-skipping.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/block-skipping.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/conditional-properties-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/conditional-properties-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/conditional-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/conditional-rules-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/conditional-rules-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/conditional-rules.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/contextually-invalid-selectors-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/contextually-invalid-selectors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/cssom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/delete-other-rule-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/has-nesting-expected.html
@@ -50,6 +54,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nest-containing-forgiving-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nest-containing-forgiving-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nest-containing-forgiving.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nested-declarations-cssom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nested-declarations-matching.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nested-rule-cssom-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-basic-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-basic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-basic.html
@@ -58,8 +65,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-type-selector.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/pseudo-part-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/pseudo-where-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/serialize-group-rules-with-decls.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-is-consistent-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-is-consistent-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-is-consistent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-rule-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-rule-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-rule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/top-level-is-scope.html

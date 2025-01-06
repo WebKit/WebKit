@@ -22,6 +22,8 @@
 #include "config.h"
 #include "StyleSurroundData.h"
 
+#include "RenderStyleDifference.h"
+
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleSurroundData);
@@ -62,5 +64,20 @@ bool StyleSurroundData::operator==(const StyleSurroundData& o) const
         && hasExplicitlySetBorderTopLeftRadius == o.hasExplicitlySetBorderTopLeftRadius
         && hasExplicitlySetBorderTopRightRadius == o.hasExplicitlySetBorderTopRightRadius;
 }
+
+#if !LOG_DISABLED
+void StyleSurroundData::dumpDifferences(TextStream& ts, const StyleSurroundData& other) const
+{
+    LOG_IF_DIFFERENT(hasExplicitlySetBorderBottomLeftRadius);
+    LOG_IF_DIFFERENT(hasExplicitlySetBorderBottomRightRadius);
+    LOG_IF_DIFFERENT(hasExplicitlySetBorderTopLeftRadius);
+    LOG_IF_DIFFERENT(hasExplicitlySetBorderTopRightRadius);
+
+    LOG_IF_DIFFERENT(offset);
+    LOG_IF_DIFFERENT(margin);
+    LOG_IF_DIFFERENT(padding);
+    LOG_IF_DIFFERENT(border);
+}
+#endif
 
 } // namespace WebCore

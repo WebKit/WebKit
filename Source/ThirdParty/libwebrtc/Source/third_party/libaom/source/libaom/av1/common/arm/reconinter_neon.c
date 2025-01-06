@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -21,10 +21,12 @@
 #include "av1/common/blockd.h"
 #include "config/av1_rtcd.h"
 
-static AOM_INLINE void diffwtd_mask_d16_neon(
-    uint8_t *mask, const bool inverse, const CONV_BUF_TYPE *src0,
-    int src0_stride, const CONV_BUF_TYPE *src1, int src1_stride, int h, int w,
-    ConvolveParams *conv_params, int bd) {
+static inline void diffwtd_mask_d16_neon(uint8_t *mask, const bool inverse,
+                                         const CONV_BUF_TYPE *src0,
+                                         int src0_stride,
+                                         const CONV_BUF_TYPE *src1,
+                                         int src1_stride, int h, int w,
+                                         ConvolveParams *conv_params, int bd) {
   const int round =
       2 * FILTER_BITS - conv_params->round_0 - conv_params->round_1 + (bd - 8);
   const int16x8_t round_vec = vdupq_n_s16((int16_t)(-round));
@@ -125,10 +127,10 @@ void av1_build_compound_diffwtd_mask_d16_neon(
   }
 }
 
-static AOM_INLINE void diffwtd_mask_neon(uint8_t *mask, const bool inverse,
-                                         const uint8_t *src0, int src0_stride,
-                                         const uint8_t *src1, int src1_stride,
-                                         int h, int w) {
+static inline void diffwtd_mask_neon(uint8_t *mask, const bool inverse,
+                                     const uint8_t *src0, int src0_stride,
+                                     const uint8_t *src1, int src1_stride,
+                                     int h, int w) {
   if (w >= 16) {
     int i = 0;
     do {

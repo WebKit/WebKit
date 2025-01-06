@@ -27,8 +27,11 @@
 #include "RegionContext.h"
 
 #include "Path.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RegionContext);
 
 void RegionContext::pushTransform(const AffineTransform& transform)
 {

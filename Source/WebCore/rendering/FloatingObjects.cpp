@@ -29,9 +29,14 @@
 #include "RenderBox.h"
 #include "RenderView.h"
 #include <wtf/HexNumber.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/TZoneMallocInlines.h>
+
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatingObject);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatingObjects);
+
 
 struct SameSizeAsFloatingObject {
     SingleThreadWeakPtr<RenderBox> renderer;

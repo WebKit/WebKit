@@ -10,7 +10,8 @@
 
 #include "video/rtp_streams_synchronizer2.h"
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "call/syncable.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -94,7 +95,7 @@ void RtpStreamsSynchronizer::UpdateDelay() {
 
   int64_t last_audio_receive_time_ms =
       audio_measurement_.latest_receive_time_ms;
-  absl::optional<Syncable::Info> audio_info = syncable_audio_->GetInfo();
+  std::optional<Syncable::Info> audio_info = syncable_audio_->GetInfo();
   if (!audio_info || !UpdateMeasurements(&audio_measurement_, *audio_info)) {
     return;
   }
@@ -105,7 +106,7 @@ void RtpStreamsSynchronizer::UpdateDelay() {
   }
 
   int64_t last_video_receive_ms = video_measurement_.latest_receive_time_ms;
-  absl::optional<Syncable::Info> video_info = syncable_video_->GetInfo();
+  std::optional<Syncable::Info> video_info = syncable_video_->GetInfo();
   if (!video_info || !UpdateMeasurements(&video_measurement_, *video_info)) {
     return;
   }

@@ -35,8 +35,8 @@
 namespace bmalloc {
 
 enum class CompactAllocationMode {
-    Compact,
-    NonCompact
+    NonCompact,
+    Compact
 };
 
 static constexpr unsigned numAllocationModes = 2;
@@ -46,10 +46,10 @@ static constexpr unsigned numAllocationModes = 2;
 BINLINE constexpr pas_allocation_mode asPasAllocationMode(CompactAllocationMode mode)
 {
     switch (mode) {
-    case CompactAllocationMode::Compact:
-        return pas_compact_allocation_mode;
     case CompactAllocationMode::NonCompact:
         return pas_non_compact_allocation_mode;
+    case CompactAllocationMode::Compact:
+        return pas_maybe_compact_allocation_mode;
     }
     RELEASE_BASSERT_NOT_REACHED();
 }

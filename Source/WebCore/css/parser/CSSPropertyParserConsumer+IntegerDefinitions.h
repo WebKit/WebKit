@@ -24,71 +24,50 @@
 
 #pragma once
 
-#include "CSSCalcParser.h"
-#include "CSSCalcSymbolsAllowed.h"
-#include "CSSCalcValue.h"
-#include "CSSParserToken.h"
-#include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+RawTypes.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
-#include "CalculationCategory.h"
-#include "Length.h"
-#include <limits>
-#include <optional>
-#include <wtf/Brigand.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-template<typename IntType, IntegerValueRange integerRange>
-std::optional<IntegerRaw<IntType, integerRange>> validatedRange(IntegerRaw<IntType, integerRange> value, CSSPropertyParserOptions)
-{
-    return value;
-}
-
-template<typename IntType, IntegerValueRange integerRange>
-struct IntegerKnownTokenTypeFunctionConsumer {
-    using RawType = IntegerRaw<IntType, integerRange>;
-
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<RawType>> consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
+struct IntegerValidator {
+    static constexpr std::optional<CSS::IntegerUnit> validate(CSSUnitType unitType, CSSPropertyParserOptions)
     {
-        ASSERT(range.peek().type() == FunctionToken);
+        return CSS::UnitTraits<CSS::IntegerUnit>::validate(unitType);
+    }
 
-        auto rangeCopy = range;
-        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, WTFMove(symbolsAllowed), options)) {
-            range = rangeCopy;
-            return {{ value.releaseNonNull() }};
-        }
-        return std::nullopt;
+    template<auto R, typename V> static bool isValid(CSS::IntegerRaw<R, V> raw, CSSPropertyParserOptions)
+    {
+        return isValidCanonicalValue(raw);
     }
 };
 
-template<typename IntType, IntegerValueRange integerRange>
-struct IntegerKnownTokenTypeNumberConsumer {
-    using RawType = IntegerRaw<IntType, integerRange>;
-
+template<typename Primitive, typename Validator> struct NumberConsumerForIntegerValues {
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<RawType> consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions)
+
+    static std::optional<typename Primitive::Raw> consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
     {
         ASSERT(range.peek().type() == NumberToken);
 
-        if (range.peek().numericValueType() == NumberValueType || range.peek().numericValue() < computeMinimumValue(integerRange))
+        if (range.peek().numericValueType() != IntegerValueType)
             return std::nullopt;
-        return RawType { clampTo<IntType>(range.consumeIncludingWhitespace().numericValue()) };
+
+        auto rawValue = typename Primitive::Raw { CSS::IntegerUnit::Integer, range.peek().numericValue() };
+
+        if constexpr (rawValue.range.options != CSS::RangeOptions::Default)
+            rawValue = performParseTimeClamp(rawValue);
+
+        if (!Validator::isValid(rawValue, options))
+            return std::nullopt;
+
+        range.consumeIncludingWhitespace();
+        return rawValue;
     }
 };
 
-template<typename IntType, IntegerValueRange integerRange>
-struct ConsumerDefinition<IntegerRaw<IntType, integerRange>> {
-    using RawType = IntegerRaw<IntType, integerRange>;
-    using type = brigand::list<RawType, UnevaluatedCalc<RawType>>;
-
-    using FunctionToken = IntegerKnownTokenTypeFunctionConsumer<IntType, integerRange>;
-    using NumberToken = IntegerKnownTokenTypeNumberConsumer<IntType, integerRange>;
+template<CSS::Range R, typename IntType>
+struct ConsumerDefinition<CSS::Integer<R, IntType>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Integer<R, IntType>>;
+    using NumberToken = NumberConsumerForIntegerValues<CSS::Integer<R, IntType>, IntegerValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers

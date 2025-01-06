@@ -12,6 +12,8 @@
 #define API_VIDEO_TRACK_SOURCE_PROXY_FACTORY_H_
 
 #include "api/media_stream_interface.h"
+#include "api/scoped_refptr.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {

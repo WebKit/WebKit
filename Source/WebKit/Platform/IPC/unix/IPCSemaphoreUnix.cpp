@@ -28,7 +28,6 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
-#include "WebCoreArgumentCoders.h"
 #include <wtf/UniStdExtras.h>
 
 #if OS(LINUX)

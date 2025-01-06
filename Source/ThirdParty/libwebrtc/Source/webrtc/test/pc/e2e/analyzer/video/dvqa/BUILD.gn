@@ -73,7 +73,6 @@ rtc_library("frames_storage") {
     "../../../../../../api/video:video_frame",
     "../../../../../../system_wrappers",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 if (rtc_include_tests) {

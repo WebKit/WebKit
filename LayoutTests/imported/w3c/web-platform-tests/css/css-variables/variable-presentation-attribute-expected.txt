@@ -26,7 +26,7 @@ PASS Testing 'font-style'.
 PASS Testing 'font-weight'.
 FAIL Testing 'glyph-orientation-horizontal'. assert_equals: Value Test. expected "13deg" but got "0deg"
 FAIL Testing 'glyph-orientation-vertical'. assert_equals: Value Test. expected "19deg" but got "0deg"
-FAIL Testing 'kerning'. assert_equals: Default value. expected "auto" but got "0"
+FAIL Testing 'kerning'. assert_equals: Default value. expected "auto" but got ""
 PASS Testing 'letter-spacing'.
 FAIL Testing 'lighting-color'. assert_equals: Default value. expected "" but got "rgb(255, 255, 255)"
 PASS Testing 'opacity'.

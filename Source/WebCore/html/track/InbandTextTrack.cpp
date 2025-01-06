@@ -34,11 +34,11 @@
 #include "InbandWebVTTTextTrack.h"
 #include "ScriptExecutionContext.h"
 #include "TextTrackClient.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(InbandTextTrack);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InbandTextTrack);
 
 Ref<InbandTextTrack> InbandTextTrack::create(ScriptExecutionContext& context, InbandTextTrackPrivate& trackPrivate)
 {
@@ -203,7 +203,7 @@ MediaTime InbandTextTrack::startTimeVariance() const
 }
 
 #if !RELEASE_LOG_DISABLED
-void InbandTextTrack::setLogger(const Logger& logger, const void* logIdentifier)
+void InbandTextTrack::setLogger(const Logger& logger, uint64_t logIdentifier)
 {
     TextTrack::setLogger(logger, logIdentifier);
     m_private->setLogger(logger, this->logIdentifier());

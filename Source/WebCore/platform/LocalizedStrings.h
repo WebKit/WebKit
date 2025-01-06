@@ -40,6 +40,7 @@
 namespace WebCore {
 
     class IntSize;
+    class DateComponents;
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT String truncatedStringForMenuItem(const String&);
@@ -62,7 +63,7 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTagAddHighlightToCurrentQuickNote();
     WEBCORE_EXPORT String contextMenuItemTagAddHighlightToNewQuickNote();
 #endif
-    WEBCORE_EXPORT String contextMenuItemTagCopyLinkToHighlight();
+    WEBCORE_EXPORT String contextMenuItemTagCopyLinkWithHighlight();
 
 #if ENABLE(CONTEXT_MENUS)
     WEBCORE_EXPORT String contextMenuItemTagOpenLinkInNewWindow();
@@ -160,6 +161,8 @@ namespace WebCore {
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     String contextMenuItemTagEnterVideoEnhancedFullscreen();
     String contextMenuItemTagExitVideoEnhancedFullscreen();
+    String contextMenuItemTagEnterVideoViewer();
+    String contextMenuItemTagExitVideoViewer();
 #endif
     String contextMenuItemTagMediaPlay();
     String contextMenuItemTagMediaPause();
@@ -174,8 +177,8 @@ namespace WebCore {
 #if HAVE(TRANSLATION_UI_SERVICES)
     String contextMenuItemTagTranslate(const String& selectedString);
 #endif
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    String contextMenuItemTagSwapCharacters();
+#if ENABLE(WRITING_TOOLS)
+    String contextMenuItemTagWritingTools();
 #endif
 #if ENABLE(UNIFIED_PDF)
     WEBCORE_EXPORT String contextMenuItemPDFOpenWithPreview();
@@ -400,6 +403,10 @@ namespace WebCore {
     WEBCORE_EXPORT String datePickerYearLabelTitle();
 #endif
 
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+    WEBCORE_EXPORT String inputWeekLabel(const DateComponents&);
+#endif
+
 #if ENABLE(WEB_AUTHN)
     WEBCORE_EXPORT String makeCredentialTouchIDPromptTitle(const String& bundleName, const String& domain);
     WEBCORE_EXPORT String getAssertionTouchIDPromptTitle(const String& bundleName, const String& domain);
@@ -418,6 +425,10 @@ namespace WebCore {
     WEBCORE_EXPORT String pdfPasswordFormTitle();
     WEBCORE_EXPORT String pdfPasswordFormSubtitle();
     WEBCORE_EXPORT String pdfPasswordFormInvalidPasswordSubtitle();
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    WEBCORE_EXPORT String fullscreenControllerViewSpatial();
+#endif
 
 #if PLATFORM(COCOA)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(CFSTR(string))

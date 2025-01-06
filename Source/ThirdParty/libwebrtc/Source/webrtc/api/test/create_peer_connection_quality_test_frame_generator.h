@@ -11,9 +11,9 @@
 #define API_TEST_CREATE_PEER_CONNECTION_QUALITY_TEST_FRAME_GENERATOR_H_
 
 #include <memory>
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/test/pclf/media_configuration.h"
 
@@ -26,7 +26,7 @@ namespace webrtc_pc_e2e {
 // weight and height.
 std::unique_ptr<test::FrameGeneratorInterface> CreateSquareFrameGenerator(
     const VideoConfig& video_config,
-    absl::optional<test::FrameGeneratorInterface::OutputType> type);
+    std::optional<test::FrameGeneratorInterface::OutputType> type);
 
 // Creates a frame generator that plays frames from the yuv file.
 std::unique_ptr<test::FrameGeneratorInterface> CreateFromYuvFileFrameGenerator(

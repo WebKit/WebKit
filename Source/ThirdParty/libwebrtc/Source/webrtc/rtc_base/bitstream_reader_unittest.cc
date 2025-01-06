@@ -15,9 +15,9 @@
 
 #include <array>
 #include <limits>
+#include <optional>
 
 #include "absl/numeric/bits.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "test/gmock.h"
@@ -28,26 +28,26 @@ namespace {
 
 TEST(BitstreamReaderTest, InDebugModeRequiresToCheckOkStatusBeforeDestruction) {
   const uint8_t bytes[32] = {};
-  absl::optional<BitstreamReader> reader(absl::in_place, bytes);
+  std::optional<BitstreamReader> reader(std::in_place, bytes);
 
   EXPECT_GE(reader->ReadBits(7), 0u);
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(OS_ANDROID)
-  EXPECT_DEATH(reader = absl::nullopt, "");
+  EXPECT_DEATH(reader = std::nullopt, "");
 #endif
   EXPECT_TRUE(reader->Ok());
-  reader = absl::nullopt;
+  reader = std::nullopt;
 }
 
 TEST(BitstreamReaderTest, InDebugModeMayCheckRemainingBitsInsteadOfOkStatus) {
   const uint8_t bytes[32] = {};
-  absl::optional<BitstreamReader> reader(absl::in_place, bytes);
+  std::optional<BitstreamReader> reader(std::in_place, bytes);
 
   EXPECT_GE(reader->ReadBit(), 0);
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(OS_ANDROID)
-  EXPECT_DEATH(reader = absl::nullopt, "");
+  EXPECT_DEATH(reader = std::nullopt, "");
 #endif
   EXPECT_GE(reader->RemainingBitCount(), 0);
-  reader = absl::nullopt;
+  reader = std::nullopt;
 }
 
 TEST(BitstreamReaderTest, ConsumeBits) {

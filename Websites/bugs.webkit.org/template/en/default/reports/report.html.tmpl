@@ -61,6 +61,11 @@
 %]
 
 [% IF debug %]
+  <p>Data hash:</p>
+  <pre>[% debug_hash FILTER html %]</pre>
+  <p>Data array:</p>
+  <pre>[% debug_array FILTER html %]</pre>
+  <p>Queries:</p>
   [% FOREACH query = queries %]
     <p>[% query.sql FILTER html %]</p>
   [% END %]

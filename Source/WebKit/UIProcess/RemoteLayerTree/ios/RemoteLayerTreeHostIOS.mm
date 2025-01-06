@@ -42,13 +42,22 @@
 #import "WKModelView.h"
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+#import "ModelPresentationManagerProxy.h"
+#import "WKPageHostedModelView.h"
+#endif
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+#import "WKSeparatedImageView.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
+RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     auto makeWithView = [&] (RetainPtr<UIView>&& view) {
-        return makeUnique<RemoteLayerTreeNode>(properties.layerID, properties.hostIdentifier(), WTFMove(view));
+        return RemoteLayerTreeNode::create(*properties.layerID, properties.hostIdentifier(), WTFMove(view));
     };
 
     switch (properties.type) {
@@ -63,10 +72,15 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
         return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 
     case PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer:
-        return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
+        return RemoteLayerTreeNode::createWithPlainLayer(*properties.layerID);
 
     case PlatformCALayer::LayerType::LayerTypeBackdropLayer:
         return makeWithView(adoptNS([[WKBackdropView alloc] init]));
+
+#if HAVE(CORE_MATERIAL)
+    case PlatformCALayer::LayerType::LayerTypeMaterialLayer:
+        return makeWithView(adoptNS([[WKMaterialView alloc] init]));
+#endif
 
     case PlatformCALayer::LayerType::LayerTypeTransformLayer:
         return makeWithView(adoptNS([[WKTransformView alloc] init]));
@@ -78,14 +92,28 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 
 #if HAVE(AVKIT)
         if (properties.videoElementData) {
-            if (auto videoManager = m_drawingArea->page().videoPresentationManager()) {
-                m_videoLayers.add(properties.layerID, properties.videoElementData->playerIdentifier);
+            if (auto videoManager = m_drawingArea->page() ? m_drawingArea->page()->videoPresentationManager() : nullptr) {
+                m_videoLayers.add(*properties.layerID, properties.videoElementData->playerIdentifier);
                 return makeWithView(videoManager->createViewWithID(properties.videoElementData->playerIdentifier, properties.hostingContextID(), properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));
             }
         }
 #endif
 
-        auto view = adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero pid:m_drawingArea->page().processID() contextID:properties.hostingContextID()]);
+        if (!m_drawingArea->page())
+            return nullptr;
+
+#if ENABLE(MODEL_PROCESS)
+        if (auto modelContext = properties.modelContext()) {
+            if (auto modelPresentationManager = m_drawingArea->page() ? m_drawingArea->page()->modelPresentationManagerProxy() : nullptr) {
+                if (auto view = modelPresentationManager->setUpModelView(*modelContext)) {
+                    m_modelLayers.add(modelContext->modelLayerIdentifier());
+                    return makeWithView(WTFMove(view));
+                }
+            }
+        }
+#endif
+
+        auto view = adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero pid:m_drawingArea->page()->legacyMainFrameProcessID() contextID:properties.hostingContextID()]);
         return makeWithView(WTFMove(view));
     }
     case PlatformCALayer::LayerType::LayerTypeShapeLayer:
@@ -97,20 +125,25 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
         // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
         return makeWithView(adoptNS([[UIView alloc] init]));
 
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    case PlatformCALayer::LayerType::LayerTypeSeparatedImageLayer:
+        return makeWithView(adoptNS([[WKSeparatedImageView alloc] init]));
+#endif
+
 #if ENABLE(MODEL_ELEMENT)
     case PlatformCALayer::LayerType::LayerTypeModelLayer:
 #if ENABLE(MODEL_PROCESS)
-        bool modelHandledOutOfProcess = m_drawingArea->page().preferences().modelProcessEnabled();
+        bool modelHandledOutOfProcess = m_drawingArea->page() && m_drawingArea->page()->preferences().modelProcessEnabled();
 #else
         bool modelHandledOutOfProcess = false;
 #endif
 
-        if (!modelHandledOutOfProcess && m_drawingArea->page().preferences().modelElementEnabled()) {
+        if (!modelHandledOutOfProcess && m_drawingArea->page() && m_drawingArea->page()->preferences().modelElementEnabled()) {
             if (auto* model = std::get_if<Ref<Model>>(&properties.additionalData)) {
 #if ENABLE(SEPARATED_MODEL)
                 return makeWithView(adoptNS([[WKSeparatedModelView alloc] initWithModel:*model]));
 #elif ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-                return makeWithView(adoptNS([[WKModelView alloc] initWithModel:*model layerID:properties.layerID page:m_drawingArea->page()]));
+                return makeWithView(adoptNS([[WKModelView alloc] initWithModel:*model layerID:*properties.layerID page:*m_drawingArea->page()]));
 #endif
             }
         }

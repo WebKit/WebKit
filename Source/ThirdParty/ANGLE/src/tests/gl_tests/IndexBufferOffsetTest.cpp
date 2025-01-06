@@ -282,10 +282,10 @@ TEST_P(IndexBufferOffsetTest, UInt32IndexSmallUpdates)
 // Test using an offset for an UInt8 index buffer after uploading data to a buffer that is in use
 TEST_P(IndexBufferOffsetTestES3, UseAsUBOThenUpdateThenUInt8Index)
 {
-    // http://anglebug.com/5950
+    // http://anglebug.com/42264483
     ANGLE_SKIP_TEST_IF(IsAMD() && IsVulkan() && IsWindows());
 
-    // http://anglebug.com/5957
+    // http://anglebug.com/42264490
     ANGLE_SKIP_TEST_IF(IsVulkan() && (IsPixel2() || IsPixel2XL()));
 
     GLubyte indexData[] = {0, 1, 2, 1, 2, 3};
@@ -295,7 +295,7 @@ TEST_P(IndexBufferOffsetTestES3, UseAsUBOThenUpdateThenUInt8Index)
 // Test using an offset for an UInt16 index buffer after uploading data to a buffer that is in use
 TEST_P(IndexBufferOffsetTestES3, UseAsUBOThenUpdateThenUInt16Index)
 {
-    // http://anglebug.com/5957
+    // http://anglebug.com/42264490
     ANGLE_SKIP_TEST_IF(IsVulkan() && (IsPixel2() || IsPixel2XL()));
 
     GLushort indexData[] = {0, 1, 2, 1, 2, 3};
@@ -308,7 +308,7 @@ TEST_P(IndexBufferOffsetTestES3, UseAsUBOThenUpdateThenUInt32Index)
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_OES_element_index_uint"));
 
-    // http://anglebug.com/5957
+    // http://anglebug.com/42264490
     ANGLE_SKIP_TEST_IF(IsVulkan() && (IsPixel2() || IsPixel2XL()));
 
     GLuint indexData[] = {0, 1, 2, 1, 2, 3};
@@ -319,10 +319,10 @@ TEST_P(IndexBufferOffsetTestES3, UseAsUBOThenUpdateThenUInt32Index)
 // with small buffer updates
 TEST_P(IndexBufferOffsetTestES3, UseAsUBOThenUpdateThenUInt8IndexSmallUpdates)
 {
-    // http://anglebug.com/5950
+    // http://anglebug.com/42264483
     ANGLE_SKIP_TEST_IF(IsAMD() && IsVulkan() && IsWindows());
 
-    // http://anglebug.com/5957
+    // http://anglebug.com/42264490
     ANGLE_SKIP_TEST_IF(IsVulkan() && (IsPixel2() || IsPixel2XL()));
 
     GLubyte indexData[] = {0, 1, 2, 1, 2, 3};
@@ -333,7 +333,7 @@ TEST_P(IndexBufferOffsetTestES3, UseAsUBOThenUpdateThenUInt8IndexSmallUpdates)
 // with small buffer updates
 TEST_P(IndexBufferOffsetTestES3, UseAsUBOThenUpdateThenUInt16IndexSmallUpdates)
 {
-    // http://anglebug.com/5957
+    // http://anglebug.com/42264490
     ANGLE_SKIP_TEST_IF(IsVulkan() && (IsPixel2() || IsPixel2XL()));
 
     GLushort indexData[] = {0, 1, 2, 1, 2, 3};
@@ -347,7 +347,7 @@ TEST_P(IndexBufferOffsetTestES3, UseAsUBOThenUpdateThenUInt32IndexSmallUpdates)
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_OES_element_index_uint"));
 
-    // http://anglebug.com/5957
+    // http://anglebug.com/42264490
     ANGLE_SKIP_TEST_IF(IsVulkan() && (IsPixel2() || IsPixel2XL()));
 
     GLuint indexData[] = {0, 1, 2, 1, 2, 3};

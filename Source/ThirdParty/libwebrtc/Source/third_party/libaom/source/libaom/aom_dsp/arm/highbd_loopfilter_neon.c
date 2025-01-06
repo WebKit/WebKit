@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2022, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,12 +16,12 @@
 #include "aom/aom_integer.h"
 #include "aom_dsp/arm/transpose_neon.h"
 
-static INLINE int16x4_t clip3_s16(const int16x4_t val, const int16x4_t low,
+static inline int16x4_t clip3_s16(const int16x4_t val, const int16x4_t low,
                                   const int16x4_t high) {
   return vmin_s16(vmax_s16(val, low), high);
 }
 
-static INLINE uint16x8_t convert_to_unsigned_pixel_u16(int16x8_t val,
+static inline uint16x8_t convert_to_unsigned_pixel_u16(int16x8_t val,
                                                        int bitdepth) {
   const int16x8_t low = vdupq_n_s16(0);
   const uint16x8_t high = vdupq_n_u16((1 << bitdepth) - 1);
@@ -30,14 +30,14 @@ static INLINE uint16x8_t convert_to_unsigned_pixel_u16(int16x8_t val,
 }
 
 // (abs(p1 - p0) > thresh) || (abs(q1 - q0) > thresh)
-static INLINE uint16x4_t hev(const uint16x8_t abd_p0p1_q0q1,
+static inline uint16x4_t hev(const uint16x8_t abd_p0p1_q0q1,
                              const uint16_t thresh) {
   const uint16x8_t a = vcgtq_u16(abd_p0p1_q0q1, vdupq_n_u16(thresh));
   return vorr_u16(vget_low_u16(a), vget_high_u16(a));
 }
 
 // abs(p0 - q0) * 2 + abs(p1 - q1) / 2 <= outer_thresh
-static INLINE uint16x4_t outer_threshold(const uint16x4_t p1,
+static inline uint16x4_t outer_threshold(const uint16x4_t p1,
                                          const uint16x4_t p0,
                                          const uint16x4_t q0,
                                          const uint16x4_t q1,
@@ -52,7 +52,7 @@ static INLINE uint16x4_t outer_threshold(const uint16x4_t p1,
 
 // abs(p1 - p0) <= inner_thresh && abs(q1 - q0) <= inner_thresh &&
 //   outer_threshold()
-static INLINE uint16x4_t needs_filter4(const uint16x8_t abd_p0p1_q0q1,
+static inline uint16x4_t needs_filter4(const uint16x8_t abd_p0p1_q0q1,
                                        const uint16_t inner_thresh,
                                        const uint16x4_t outer_mask) {
   const uint16x8_t a = vcleq_u16(abd_p0p1_q0q1, vdupq_n_u16(inner_thresh));
@@ -63,7 +63,7 @@ static INLINE uint16x4_t needs_filter4(const uint16x8_t abd_p0p1_q0q1,
 // abs(p2 - p1) <= inner_thresh && abs(p1 - p0) <= inner_thresh &&
 //   abs(q1 - q0) <= inner_thresh && abs(q2 - q1) <= inner_thresh &&
 //   outer_threshold()
-static INLINE uint16x4_t needs_filter6(const uint16x8_t abd_p0p1_q0q1,
+static inline uint16x4_t needs_filter6(const uint16x8_t abd_p0p1_q0q1,
                                        const uint16x8_t abd_p1p2_q1q2,
                                        const uint16_t inner_thresh,
                                        const uint16x4_t outer_mask) {
@@ -77,7 +77,7 @@ static INLINE uint16x4_t needs_filter6(const uint16x8_t abd_p0p1_q0q1,
 //   abs(p1 - p0) <= inner_thresh && abs(q1 - q0) <= inner_thresh &&
 //   abs(q2 - q1) <= inner_thresh && abs(q3 - q2) <= inner_thresh
 //   outer_threshold()
-static INLINE uint16x4_t needs_filter8(const uint16x8_t abd_p0p1_q0q1,
+static inline uint16x4_t needs_filter8(const uint16x8_t abd_p0p1_q0q1,
                                        const uint16x8_t abd_p1p2_q1q2,
                                        const uint16x8_t abd_p2p3_q2q3,
                                        const uint16_t inner_thresh,
@@ -92,7 +92,7 @@ static INLINE uint16x4_t needs_filter8(const uint16x8_t abd_p0p1_q0q1,
 // -----------------------------------------------------------------------------
 // filterN_masks functions.
 
-static INLINE void filter4_masks(const uint16x8_t p0q0, const uint16x8_t p1q1,
+static inline void filter4_masks(const uint16x8_t p0q0, const uint16x8_t p1q1,
                                  const uint16_t hev_thresh,
                                  const uint16x4_t outer_mask,
                                  const uint16_t inner_thresh,
@@ -112,7 +112,7 @@ static INLINE void filter4_masks(const uint16x8_t p0q0, const uint16x8_t p1q1,
 // abs(p1 - p0) <= flat_thresh && abs(q1 - q0) <= flat_thresh &&
 //   abs(p2 - p0) <= flat_thresh && abs(q2 - q0) <= flat_thresh
 // |flat_thresh| == 4 for 10 bit decode.
-static INLINE uint16x4_t is_flat3(const uint16x8_t abd_p0p1_q0q1,
+static inline uint16x4_t is_flat3(const uint16x8_t abd_p0p1_q0q1,
                                   const uint16x8_t abd_p0p2_q0q2,
                                   const int bitdepth) {
   const int flat_thresh = 1 << (bitdepth - 8);
@@ -121,7 +121,7 @@ static INLINE uint16x4_t is_flat3(const uint16x8_t abd_p0p1_q0q1,
   return vand_u16(vget_low_u16(b), vget_high_u16(b));
 }
 
-static INLINE void filter6_masks(
+static inline void filter6_masks(
     const uint16x8_t p2q2, const uint16x8_t p1q1, const uint16x8_t p0q0,
     const uint16_t hev_thresh, const uint16x4_t outer_mask,
     const uint16_t inner_thresh, const int bitdepth,
@@ -139,7 +139,7 @@ static INLINE void filter6_masks(
 //   abs(p[N+1] - p0) <= flat_thresh && abs(q[N+1] - q0) <= flat_thresh &&
 //   abs(p[N+2] - p0) <= flat_thresh && abs(q[N+1] - q0) <= flat_thresh
 // |flat_thresh| == 4 for 10 bit decode.
-static INLINE uint16x4_t is_flat4(const uint16x8_t abd_pnp0_qnq0,
+static inline uint16x4_t is_flat4(const uint16x8_t abd_pnp0_qnq0,
                                   const uint16x8_t abd_pn1p0_qn1q0,
                                   const uint16x8_t abd_pn2p0_qn2q0,
                                   const int bitdepth) {
@@ -150,7 +150,7 @@ static INLINE uint16x4_t is_flat4(const uint16x8_t abd_pnp0_qnq0,
   return vand_u16(vget_low_u16(c), vget_high_u16(c));
 }
 
-static INLINE void filter8_masks(
+static inline void filter8_masks(
     const uint16x8_t p3q3, const uint16x8_t p2q2, const uint16x8_t p1q1,
     const uint16x8_t p0q0, const uint16_t hev_thresh,
     const uint16x4_t outer_mask, const uint16_t inner_thresh,
@@ -175,7 +175,7 @@ static INLINE void filter8_masks(
 // filterN functions.
 
 // Calculate filter4() or filter2() based on |hev_mask|.
-static INLINE void filter4(const uint16x8_t p0q0, const uint16x8_t p0q1,
+static inline void filter4(const uint16x8_t p0q0, const uint16x8_t p0q1,
                            const uint16x8_t p1q1, const uint16x4_t hev_mask,
                            int bitdepth, uint16x8_t *const p1q1_result,
                            uint16x8_t *const p0q0_result) {
@@ -361,7 +361,7 @@ void aom_highbd_lpf_vertical_4_dual_neon(
                                  bd);
 }
 
-static INLINE void filter6(const uint16x8_t p2q2, const uint16x8_t p1q1,
+static inline void filter6(const uint16x8_t p2q2, const uint16x8_t p1q1,
                            const uint16x8_t p0q0, uint16x8_t *const p1q1_output,
                            uint16x8_t *const p0q0_output) {
   // Sum p1 and q1 output from opposite directions.
@@ -592,7 +592,7 @@ void aom_highbd_lpf_vertical_6_dual_neon(
                                  bd);
 }
 
-static INLINE void filter8(const uint16x8_t p3q3, const uint16x8_t p2q2,
+static inline void filter8(const uint16x8_t p3q3, const uint16x8_t p2q2,
                            const uint16x8_t p1q1, const uint16x8_t p0q0,
                            uint16x8_t *const p2q2_output,
                            uint16x8_t *const p1q1_output,
@@ -742,7 +742,7 @@ void aom_highbd_lpf_horizontal_8_dual_neon(
   aom_highbd_lpf_horizontal_8_neon(s + 4, pitch, blimit1, limit1, thresh1, bd);
 }
 
-static INLINE uint16x8_t reverse_low_half(const uint16x8_t a) {
+static inline uint16x8_t reverse_low_half(const uint16x8_t a) {
   return vcombine_u16(vrev64_u16(vget_low_u16(a)), vget_high_u16(a));
 }
 
@@ -846,7 +846,7 @@ void aom_highbd_lpf_vertical_8_dual_neon(
                                  bd);
 }
 
-static INLINE void filter14(
+static inline void filter14(
     const uint16x8_t p6q6, const uint16x8_t p5q5, const uint16x8_t p4q4,
     const uint16x8_t p3q3, const uint16x8_t p2q2, const uint16x8_t p1q1,
     const uint16x8_t p0q0, uint16x8_t *const p5q5_output,
@@ -1080,7 +1080,7 @@ void aom_highbd_lpf_horizontal_14_dual_neon(
   aom_highbd_lpf_horizontal_14_neon(s + 4, pitch, blimit1, limit1, thresh1, bd);
 }
 
-static INLINE uint16x8x2_t permute_acdb64(const uint16x8_t ab,
+static inline uint16x8x2_t permute_acdb64(const uint16x8_t ab,
                                           const uint16x8_t cd) {
   uint16x8x2_t acdb;
 #if AOM_ARCH_AARCH64

@@ -35,6 +35,7 @@
 #include "Operands.h"
 #include "ValueRecovery.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -129,16 +130,17 @@ struct OSRExit : public OSRExitBase {
         OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromDFG);
     }
 
-    static void compileExit(CCallHelpers&, VM&, const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*);
+    static void compileExit(CCallHelpers&, VM&, const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*, uint32_t osrExitIndex);
 
 private:
     static void emitRestoreArguments(CCallHelpers&, VM&, const Operands<ValueRecovery>&);
 };
 
 struct SpeculationFailureDebugInfo {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(SpeculationFailureDebugInfo);
     CodeBlock* codeBlock;
     ExitKind kind;
+    uint32_t exitIndex;
     BytecodeIndex bytecodeIndex;
 };
 

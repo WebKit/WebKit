@@ -33,9 +33,12 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/ProgressTracker.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebProgressTrackerClient);
 
 WebProgressTrackerClient::WebProgressTrackerClient(WebPage& webPage)
     : m_webPage(webPage)

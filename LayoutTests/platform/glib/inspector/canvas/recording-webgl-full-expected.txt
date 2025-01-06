@@ -21,21 +21,21 @@ frames:
         3: performActions
         4: Global Code
   1: (duration)
-    0: attachShader(1, 4)
+    0: attachShader(53, 59)
       swizzleTypes: [WebGLProgram, WebGLShader]
       trace:
         0: attachShader
         1: (anonymous function)
         2: executeFrameFunction
   2: (duration)
-    0: bindAttribLocation(1, 1, "test")
+    0: bindAttribLocation(53, 1, "test")
       swizzleTypes: [WebGLProgram, Number, String]
       trace:
         0: bindAttribLocation
         1: (anonymous function)
         2: executeFrameFunction
   3: (duration)
-    0: bindBuffer(1, 1)
+    0: bindBuffer(1, 23)
       swizzleTypes: [Number, WebGLBuffer]
       trace:
         0: bindBuffer
@@ -49,14 +49,14 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   5: (duration)
-    0: bindRenderbuffer(1, 3)
+    0: bindRenderbuffer(1, 7)
       swizzleTypes: [Number, WebGLRenderbuffer]
       trace:
         0: bindRenderbuffer
         1: (anonymous function)
         2: executeFrameFunction
   6: (duration)
-    0: bindTexture(1, 3)
+    0: bindTexture(1, 10)
       swizzleTypes: [Number, WebGLTexture]
       trace:
         0: bindTexture
@@ -161,7 +161,7 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   20: (duration)
-    0: compileShader(4)
+    0: compileShader(59)
       swizzleTypes: [WebGLShader]
       trace:
         0: compileShader
@@ -240,7 +240,7 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   32: (duration)
-    0: deleteBuffer(1)
+    0: deleteBuffer(23)
       swizzleTypes: [WebGLBuffer]
       trace:
         0: deleteBuffer
@@ -254,28 +254,28 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   34: (duration)
-    0: deleteProgram(1)
+    0: deleteProgram(53)
       swizzleTypes: [WebGLProgram]
       trace:
         0: deleteProgram
         1: (anonymous function)
         2: executeFrameFunction
   35: (duration)
-    0: deleteRenderbuffer(3)
+    0: deleteRenderbuffer(7)
       swizzleTypes: [WebGLRenderbuffer]
       trace:
         0: deleteRenderbuffer
         1: (anonymous function)
         2: executeFrameFunction
   36: (duration)
-    0: deleteShader(4)
+    0: deleteShader(59)
       swizzleTypes: [WebGLShader]
       trace:
         0: deleteShader
         1: (anonymous function)
         2: executeFrameFunction
   37: (duration)
-    0: deleteTexture(3)
+    0: deleteTexture(10)
       swizzleTypes: [WebGLTexture]
       trace:
         0: deleteTexture

@@ -42,7 +42,7 @@ public:
     {
     }
 
-    RenderElement& parent() const { return m_parent; }
+    RenderElement& parent() const { return m_parent.get(); }
     RenderObject* nextSibling() const { ASSERT(m_hasValidNextSibling); return m_nextSibling.get(); }
 
     void computeNextSibling(const Node&);
@@ -53,7 +53,7 @@ public:
     RenderObject* nextSiblingRenderer(const Node&) const;
 
 private:
-    RenderElement& m_parent;
+    CheckedRef<RenderElement> m_parent;
     SingleThreadWeakPtr<RenderObject> m_nextSibling;
     bool m_hasValidNextSibling { false };
 #if ASSERT_ENABLED

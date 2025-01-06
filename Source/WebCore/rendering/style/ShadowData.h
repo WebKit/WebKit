@@ -30,27 +30,25 @@
 #include "LengthBox.h"
 #include "LengthPoint.h"
 #include "StyleColor.h"
+#include "StylePrimitiveNumericTypes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-enum class ShadowStyle : uint8_t { Normal, Inset };
+namespace Style {
+struct BoxShadow;
+struct TextShadow;
+}
+
+enum class ShadowStyle : bool { Normal, Inset };
 
 // This class holds information about shadows for the text-shadow and box-shadow properties.
 
 class ShadowData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ShadowData);
 public:
-    ShadowData() = default;
-
-    ShadowData(const LengthPoint& location, Length radius, Length spread, ShadowStyle style, bool isWebkitBoxShadow, const StyleColor& color)
-        : m_location(location.x(), location.y())
-        , m_spread(spread)
-        , m_radius(radius)
-        , m_color(color)
-        , m_style(style)
-        , m_isWebkitBoxShadow(isWebkitBoxShadow)
-    {
-    }
+    ShadowData(Style::BoxShadow&&);
+    ShadowData(Style::TextShadow&&);
 
     ~ShadowData();
 
@@ -59,12 +57,16 @@ public:
 
     ShadowData& operator=(ShadowData&&) = default;
 
-    bool operator==(const ShadowData& o) const;
-    
-    const Length& x() const { return m_location.x(); }
-    const Length& y() const { return m_location.y(); }
-    const LengthPoint& location() const { return m_location; }
-    const Length& radius() const { return m_radius; }
+    bool operator==(const ShadowData&) const;
+
+    Style::BoxShadow asBoxShadow() const;
+    Style::TextShadow asTextShadow() const;
+
+    const Style::Length<>& x() const { return m_location.x(); }
+    const Style::Length<>& y() const { return m_location.y(); }
+    const SpaceSeparatedPoint<Style::Length<>>& location() const { return m_location; }
+    const Style::Length<CSS::Nonnegative>& radius() const { return m_blur; }
+    const Style::Length<>& spread() const { return m_spread; }
 
     LayoutUnit paintingExtent() const
     {
@@ -72,20 +74,18 @@ public:
         // extends to infinity. In 8-bit contexts, however, rounding causes the effect to become
         // undetectable at around 1.4x the radius.
         const float radiusExtentMultiplier = 1.4;
-        return LayoutUnit(ceilf(m_radius.value() * radiusExtentMultiplier));
+        return LayoutUnit(ceilf(m_blur.value * radiusExtentMultiplier));
     }
-
-    const Length& spread() const { return m_spread; }
 
     ShadowStyle style() const { return m_style; }
 
-    void setColor(const StyleColor& color) { m_color = color; }
-    const StyleColor& color() const { return m_color; }
+    void setColor(const Style::Color& color) { m_color = color; }
+    const Style::Color& color() const { return m_color; }
 
     bool isWebkitBoxShadow() const { return m_isWebkitBoxShadow; }
 
     const ShadowData* next() const { return m_next.get(); }
-    void setNext(std::unique_ptr<ShadowData>&& shadow) { m_next = WTFMove(shadow); }
+    void setNext(std::unique_ptr<ShadowData>&& next) { m_next = WTFMove(next); }
 
     void adjustRectForShadow(LayoutRect&) const;
     void adjustRectForShadow(FloatRect&) const;
@@ -99,12 +99,13 @@ public:
 private:
     void deleteNextLinkedListWithoutRecursion();
 
-    LengthPoint m_location;
-    Length m_spread;
-    Length m_radius; // This is the "blur radius", or twice the standard deviation of the Gaussian blur.
-    StyleColor m_color;
-    ShadowStyle m_style { ShadowStyle::Normal };
-    bool m_isWebkitBoxShadow { false };
+    Style::Color m_color;
+    SpaceSeparatedPoint<Style::Length<>> m_location;
+    Style::Length<CSS::Nonnegative> m_blur;
+    Style::Length<> m_spread;
+    ShadowStyle m_style;
+    bool m_isWebkitBoxShadow;
+
     std::unique_ptr<ShadowData> m_next;
 };
 

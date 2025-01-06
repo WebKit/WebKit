@@ -31,6 +31,9 @@
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SIMDHelpers.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -44,8 +47,8 @@ void BitVector::setSlow(const BitVector& other)
         newBitsOrPointer = other.m_bitsOrPointer;
     else {
         OutOfLineBits* newOutOfLineBits = OutOfLineBits::create(other.size());
-        memcpy(newOutOfLineBits->bits(), other.bits(), byteCount(other.size()));
-        newBitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits) >> 1;
+        memcpySpan(newOutOfLineBits->byteSpan(), other.byteSpan());
+        newBitsOrPointer = std::bit_cast<uintptr_t>(newOutOfLineBits) >> 1;
     }
     if (!isInline() && !isEmptyOrDeletedValue())
         OutOfLineBits::destroy(outOfLineBits());
@@ -59,7 +62,7 @@ void BitVector::resize(size_t numBits)
             return;
     
         OutOfLineBits* myOutOfLineBits = outOfLineBits();
-        m_bitsOrPointer = makeInlineBits(*myOutOfLineBits->bits());
+        m_bitsOrPointer = makeInlineBits(myOutOfLineBits->wordsSpan().front());
         OutOfLineBits::destroy(myOutOfLineBits);
         return;
     }
@@ -72,15 +75,14 @@ void BitVector::clearAll()
     if (isInline())
         m_bitsOrPointer = makeInlineBits(0);
     else
-        memset(outOfLineBits()->bits(), 0, byteCount(size()));
+        zeroSpan(outOfLineBits()->byteSpan());
 }
 
-BitVector::OutOfLineBits* BitVector::OutOfLineBits::create(size_t numBits)
+auto BitVector::OutOfLineBits::create(size_t numBits) -> OutOfLineBits*
 {
     numBits = (numBits + bitsInPointer() - 1) & ~(static_cast<size_t>(bitsInPointer()) - 1);
     size_t size = sizeof(OutOfLineBits) + sizeof(uintptr_t) * (numBits / bitsInPointer());
-    OutOfLineBits* result = new (NotNull, BitVectorMalloc::malloc(size)) OutOfLineBits(numBits);
-    return result;
+    return new (NotNull, BitVectorMalloc::malloc(size)) OutOfLineBits(numBits);
 }
 
 void BitVector::OutOfLineBits::destroy(OutOfLineBits* outOfLineBits)
@@ -101,32 +103,30 @@ void BitVector::resizeOutOfLine(size_t numBits, size_t shiftInWords)
 {
     ASSERT(numBits > maxInlineBits());
     OutOfLineBits* newOutOfLineBits = OutOfLineBits::create(numBits);
-    size_t newNumWords = newOutOfLineBits->numWords();
+    auto newWords = newOutOfLineBits->wordsSpan();
     if (isInline()) {
-        memset(newOutOfLineBits->bits(), 0, shiftInWords * sizeof(void*));
+        zeroSpan(newWords.first(shiftInWords));
         // Make sure that all of the bits are zero in case we do a no-op resize.
-        *(newOutOfLineBits->bits() + shiftInWords) = m_bitsOrPointer & ~(static_cast<uintptr_t>(1) << maxInlineBits());
-        RELEASE_ASSERT(shiftInWords + 1 <= newNumWords);
-        memset(newOutOfLineBits->bits() + shiftInWords + 1, 0, (newNumWords - 1 - shiftInWords) * sizeof(void*));
+        newWords[shiftInWords] = m_bitsOrPointer & ~(static_cast<uintptr_t>(1) << maxInlineBits());
+        zeroSpan(newWords.subspan(shiftInWords + 1));
     } else {
+        auto oldWords = outOfLineBits()->wordsSpan();
         if (numBits > size()) {
-            size_t oldNumWords = outOfLineBits()->numWords();
-            memset(newOutOfLineBits->bits(), 0, shiftInWords * sizeof(void*));
-            memcpy(newOutOfLineBits->bits() + shiftInWords, outOfLineBits()->bits(), oldNumWords * sizeof(void*));
-            RELEASE_ASSERT(shiftInWords + oldNumWords <= newNumWords);
-            memset(newOutOfLineBits->bits() + shiftInWords + oldNumWords, 0, (newNumWords - oldNumWords - shiftInWords) * sizeof(void*));
+            zeroSpan(newWords.first(shiftInWords));
+            memcpySpan(newWords.subspan(shiftInWords), oldWords);
+            zeroSpan(newWords.subspan(shiftInWords + oldWords.size()));
         } else
-            memcpy(newOutOfLineBits->bits(), outOfLineBits()->bits(), newOutOfLineBits->numWords() * sizeof(void*));
+            memcpySpan(newWords, oldWords.first(newOutOfLineBits->numWords()));
         OutOfLineBits::destroy(outOfLineBits());
     }
-    m_bitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits) >> 1;
+    m_bitsOrPointer = std::bit_cast<uintptr_t>(newOutOfLineBits) >> 1;
 }
 
 void BitVector::mergeSlow(const BitVector& other)
 {
     if (other.isInline()) {
         ASSERT(!isInline());
-        *bits() |= cleanseInlineBits(other.m_bitsOrPointer);
+        outOfLineBits()->wordsSpan().front() |= cleanseInlineBits(other.m_bitsOrPointer);
         return;
     }
     
@@ -134,57 +134,59 @@ void BitVector::mergeSlow(const BitVector& other)
     ASSERT(!isInline());
     ASSERT(!other.isInline());
     
-    OutOfLineBits* a = outOfLineBits();
-    const OutOfLineBits* b = other.outOfLineBits();
-    for (unsigned i = a->numWords(); i--;)
-        a->bits()[i] |= b->bits()[i];
+    auto a = outOfLineBits()->wordsSpan();
+    auto b = other.outOfLineBits()->wordsSpan();
+    for (size_t i = 0; i < a.size(); ++i)
+        a[i] |= b[i];
 }
 
 void BitVector::filterSlow(const BitVector& other)
 {
     if (other.isInline()) {
         ASSERT(!isInline());
-        *bits() &= cleanseInlineBits(other.m_bitsOrPointer);
+        outOfLineBits()->wordsSpan().front() &= cleanseInlineBits(other.m_bitsOrPointer);
         return;
     }
     
     if (isInline()) {
         ASSERT(!other.isInline());
-        m_bitsOrPointer &= *other.outOfLineBits()->bits();
+        m_bitsOrPointer &= other.outOfLineBits()->wordsSpan().front();
         m_bitsOrPointer |= (static_cast<uintptr_t>(1) << maxInlineBits());
         ASSERT(isInline());
         return;
     }
     
-    OutOfLineBits* a = outOfLineBits();
-    const OutOfLineBits* b = other.outOfLineBits();
-    for (unsigned i = std::min(a->numWords(), b->numWords()); i--;)
-        a->bits()[i] &= b->bits()[i];
+    auto a = outOfLineBits()->wordsSpan();
+    auto b = other.outOfLineBits()->wordsSpan();
+    auto commonSize = std::min(a.size(), b.size());
+    for (size_t i = 0; i < commonSize; ++i)
+        a[i] &= b[i];
     
-    for (unsigned i = b->numWords(); i < a->numWords(); ++i)
-        a->bits()[i] = 0;
+    if (a.size() > b.size())
+        zeroSpan(a.subspan(b.size()));
 }
 
 void BitVector::excludeSlow(const BitVector& other)
 {
     if (other.isInline()) {
         ASSERT(!isInline());
-        *bits() &= ~cleanseInlineBits(other.m_bitsOrPointer);
+        outOfLineBits()->wordsSpan().front() &= ~cleanseInlineBits(other.m_bitsOrPointer);
         return;
     }
     
     if (isInline()) {
         ASSERT(!other.isInline());
-        m_bitsOrPointer &= ~*other.outOfLineBits()->bits();
+        m_bitsOrPointer &= ~other.outOfLineBits()->wordsSpan().front();
         m_bitsOrPointer |= (static_cast<uintptr_t>(1) << maxInlineBits());
         ASSERT(isInline());
         return;
     }
     
-    OutOfLineBits* a = outOfLineBits();
-    const OutOfLineBits* b = other.outOfLineBits();
-    for (unsigned i = std::min(a->numWords(), b->numWords()); i--;)
-        a->bits()[i] &= ~b->bits()[i];
+    auto a = outOfLineBits()->wordsSpan();
+    auto b = other.outOfLineBits()->wordsSpan();
+    auto commonSize = std::min(a.size(), b.size());
+    for (size_t i = 0; i < commonSize; ++i)
+        a[i] &= ~b[i];
 }
 
 size_t BitVector::bitCountSlow() const
@@ -192,20 +194,27 @@ size_t BitVector::bitCountSlow() const
     ASSERT(!isInline());
     const OutOfLineBits* bits = outOfLineBits();
     size_t result = 0;
-    for (unsigned i = bits->numWords(); i--;)
-        result += bitCount(bits->bits()[i]);
+    for (auto word : bits->wordsSpan())
+        result += bitCount(word);
     return result;
 }
 
 bool BitVector::isEmptySlow() const
 {
     ASSERT(!isInline());
-    const OutOfLineBits* bits = outOfLineBits();
-    for (unsigned i = bits->numWords(); i--;) {
-        if (bits->bits()[i])
-            return false;
-    }
-    return true;
+    auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA -> std::optional<uint8_t> {
+        if (SIMD::isNonZero(input))
+            return 0;
+        return std::nullopt;
+    };
+
+    auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
+        return character;
+    };
+
+    using UnitType = std::conditional_t<sizeof(uintptr_t) == sizeof(uint32_t), uint32_t, uint64_t>;
+    auto span = spanReinterpretCast<const UnitType>(outOfLineBits()->wordsSpan());
+    return SIMD::find(span, vectorMatch, scalarMatch) == std::to_address(span.end());
 }
 
 bool BitVector::equalsSlowCase(const BitVector& other) const
@@ -220,36 +229,25 @@ bool BitVector::equalsSlowCaseFast(const BitVector& other) const
     if (isInline() != other.isInline())
         return equalsSlowCaseSimple(other);
     
-    const OutOfLineBits* myBits = outOfLineBits();
-    const OutOfLineBits* otherBits = other.outOfLineBits();
+    auto myWords = outOfLineBits()->wordsSpan();
+    auto otherWords = other.outOfLineBits()->wordsSpan();
     
-    size_t myNumWords = myBits->numWords();
-    size_t otherNumWords = otherBits->numWords();
-    size_t minNumWords;
-    size_t maxNumWords;
+    size_t myNumWords = myWords.size();
+    size_t otherNumWords = otherWords.size();
     
-    const OutOfLineBits* longerBits;
+    std::span<const uintptr_t> extraBits;
     if (myNumWords < otherNumWords) {
-        minNumWords = myNumWords;
-        maxNumWords = otherNumWords;
-        longerBits = otherBits;
+        extraBits = otherWords.subspan(myNumWords);
+        otherWords = otherWords.first(myNumWords);
     } else {
-        minNumWords = otherNumWords;
-        maxNumWords = myNumWords;
-        longerBits = myBits;
+        extraBits = myWords.subspan(otherNumWords);
+        myWords = myWords.first(otherNumWords);
     }
     
-    for (size_t i = minNumWords; i < maxNumWords; ++i) {
-        if (longerBits->bits()[i])
-            return false;
-    }
+    if (std::ranges::find_if(extraBits, [](auto word) { return !!word; }) != extraBits.end())
+        return false;
     
-    for (size_t i = minNumWords; i--;) {
-        if (myBits->bits()[i] != otherBits->bits()[i])
-            return false;
-    }
-
-    return true;
+    return equalSpans(myWords, otherWords);
 }
 
 bool BitVector::equalsSlowCaseSimple(const BitVector& other) const
@@ -265,10 +263,9 @@ bool BitVector::equalsSlowCaseSimple(const BitVector& other) const
 uintptr_t BitVector::hashSlowCase() const
 {
     ASSERT(!isInline());
-    const OutOfLineBits* bits = outOfLineBits();
     uintptr_t result = 0;
-    for (unsigned i = bits->numWords(); i--;)
-        result ^= bits->bits()[i];
+    for (auto word : outOfLineBits()->wordsSpan())
+        result ^= word;
     return result;
 }
 
@@ -279,3 +276,5 @@ void BitVector::dump(PrintStream& out) const
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

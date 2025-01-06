@@ -64,7 +64,7 @@ TEST(IndexedDB, IndexedDBPersistence)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBPersistence-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IndexedDBPersistence-1" withExtension:@"html"]];
     [webView loadRequest:request];
 
     RetainPtr<NSString> string1 = (NSString *)[getNextMessage() body];
@@ -79,7 +79,7 @@ TEST(IndexedDB, IndexedDBPersistence)
     // Make a new web view to finish the test
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBPersistence-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IndexedDBPersistence-2" withExtension:@"html"]];
     [webView loadRequest:request];
     RetainPtr<NSString> string3 = (NSString *)[getNextMessage() body];
 
@@ -99,7 +99,7 @@ TEST(IndexedDB, IndexedDBPersistencePrivate)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBPersistence-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IndexedDBPersistence-1" withExtension:@"html"]];
     [webView loadRequest:request];
 
     RetainPtr<NSString> string1 = (NSString *)[getNextMessage() body];
@@ -112,7 +112,7 @@ TEST(IndexedDB, IndexedDBPersistencePrivate)
     // Make a new web view to finish the test
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBPersistence-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IndexedDBPersistence-2" withExtension:@"html"]];
     [webView loadRequest:request];
     RetainPtr<NSString> string3 = (NSString *)[getNextMessage() body];
 
@@ -146,7 +146,7 @@ TEST(IndexedDB, IndexedDBDataRemoval)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBPersistence-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IndexedDBPersistence-1" withExtension:@"html"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
 
@@ -357,8 +357,8 @@ TEST(IndexedDB, IndexedDBThirdPartyStorageLayout)
 
 TEST(IndexedDB, MigrateThirdPartyDataToGeneralStorageDirectory)
 {
-    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
-    NSURL *resourceDatabase = [[NSBundle mainBundle] URLForResource:@"indexeddb-persistence-third-party" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceSalt = [NSBundle.test_resourcesBundle URLForResource:@"general-storage-directory" withExtension:@"salt"];
+    NSURL *resourceDatabase = [NSBundle.test_resourcesBundle URLForResource:@"indexeddb-persistence-third-party" withExtension:@"sqlite3"];
     NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *webkitOriginDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"EAO66s8JvCWNn4D3YQut5pXfiGF_UXNZGvMGN6aKILg/EAO66s8JvCWNn4D3YQut5pXfiGF_UXNZGvMGN6aKILg"];
     NSURL *webkitOriginFile = [webkitOriginDirectory URLByAppendingPathComponent:@"origin"];

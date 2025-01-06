@@ -20,6 +20,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr_vectors.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm_256_iv.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm_256_iv_fixtures.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm_96_iv_fixtures.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm_vectors.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa_oaep.https.any.js

@@ -57,9 +57,10 @@
 #include "UserAgentStyleSheets.h"
 #include <pal/FileSizeFormatter.h>
 #include <unicode/ubidi.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/URLParser.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(SERVICE_CONTROLS)
@@ -72,7 +73,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLAttachmentElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLAttachmentElement);
 
 using namespace HTMLNames;
 
@@ -335,7 +336,6 @@ void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
 
     m_imageElement = createContainedElement<HTMLImageElement>(previewArea, attachmentIconIdentifier());
     AttachmentImageEventsListener::addToImageForAttachment(*m_imageElement, *this);
-    setNeedsWideLayoutIconRequest();
     updateImage();
 
     m_placeholderElement = createContainedElement<HTMLDivElement>(previewArea, attachmentPlaceholderIdentifier());
@@ -365,9 +365,9 @@ public:
 
     void handleEvent(ScriptExecutionContext&, Event& event) final
     {
-        if (event.type() == eventNames().clickEvent) {
+        if (isAnyClick(event)) {
             auto& mouseEvent = downcast<MouseEvent>(event);
-            auto copiedEvent = MouseEvent::create(saveAtom(), Event::CanBubble::No, Event::IsCancelable::No, Event::IsComposed::No,
+            auto copiedEvent = MouseEvent::create(saveAtom(), Event::CanBubble::No, Event::IsCancelable::No, Event::IsComposed::No, MonotonicTime::now(),
                 mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenX(), mouseEvent.screenY(), mouseEvent.clientX(), mouseEvent.clientY(),
                 mouseEvent.modifierKeys(), mouseEvent.button(), mouseEvent.buttons(), mouseEvent.syntheticClickType(), nullptr);
 
@@ -433,6 +433,7 @@ void HTMLAttachmentElement::updateSaveButton(bool show)
 
         m_saveButton = createContainedElement<HTMLButtonElement>(*m_saveArea, attachmentSaveButtonIdentifier());
         m_saveButton->addEventListener(eventNames().clickEvent, AttachmentSaveEventListener::create(*this), { });
+        m_saveButton->addEventListener(eventNames().auxclickEvent, AttachmentSaveEventListener::create(*this), { });
     }
 }
 
@@ -523,7 +524,7 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes
         }
     }
 
-    setNeedsWideLayoutIconRequest();
+    setNeedsIconRequest();
     invalidateRendering();
 }
 
@@ -699,7 +700,7 @@ void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const At
     case AttributeNames::titleAttr:
         if (m_titleElement)
             m_titleElement->setTextContent(attachmentTitleForDisplay());
-        setNeedsWideLayoutIconRequest();
+        setNeedsIconRequest();
         break;
     case AttributeNames::subtitleAttr:
         if (m_subtitleElement)
@@ -718,7 +719,7 @@ void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const At
             ImageControlsMac::updateImageControls(*this);
         }
 #endif
-        setNeedsWideLayoutIconRequest();
+        setNeedsIconRequest();
         break;
     default:
         break;
@@ -819,7 +820,7 @@ void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSi
     else
         removeAttribute(subtitleAttr);
 
-    setNeedsWideLayoutIconRequest();
+    setNeedsIconRequest();
     invalidateRendering();
 }
 
@@ -909,33 +910,43 @@ void HTMLAttachmentElement::updateIconForWideLayout(Vector<uint8_t>&& iconSrcDat
     updateImage();
 }
 
-void HTMLAttachmentElement::setNeedsWideLayoutIconRequest()
+void HTMLAttachmentElement::setNeedsIconRequest()
 {
-    m_needsWideLayoutIconRequest = true;
+    m_needsIconRequest = true;
 }
 
 void HTMLAttachmentElement::requestWideLayoutIconIfNeeded()
 {
-    if (!m_needsWideLayoutIconRequest)
+    if (!m_needsIconRequest)
         return;
 
     if (!document().page() || !document().page()->attachmentElementClient())
         return;
 
-    m_needsWideLayoutIconRequest = false;
+    m_needsIconRequest = false;
 
     if (!m_imageElement)
         return;
+
+// FIXME: Remove after rdar://136373445 is fixed.
+#if PLATFORM(MAC)
+    RELEASE_LOG(Editing, "HTMLAttachmentElement[uuid=%s] requestAttachmentIcon with type='%s'", uniqueIdentifier().utf8().data(), attachmentType().utf8().data());
+#endif
 
     dispatchEvent(Event::create(eventNames().beforeloadEvent, Event::CanBubble::No, Event::IsCancelable::No));
     document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), FloatSize(attachmentIconSize, attachmentIconSize));
 }
 
-void HTMLAttachmentElement::requestIconWithSize(const FloatSize& size)
+void HTMLAttachmentElement::requestIconIfNeededWithSize(const FloatSize& size)
 {
     ASSERT(!isWideLayout());
+    if (!m_needsIconRequest)
+        return;
+
     if (!document().page() || !document().page()->attachmentElementClient())
         return;
+
+    m_needsIconRequest = false;
 
     queueTaskToDispatchEvent(TaskSource::InternalAsyncTask, Event::create(eventNames().beforeloadEvent, Event::CanBubble::No, Event::IsCancelable::No));
     document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), size);

@@ -8,9 +8,12 @@
 
 #include <WebCore/PlatformXR.h>
 #include <simd/simd.h>
+#include <wtf/TZoneMalloc.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 class PlatformXRPose {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PlatformXRPose);
 
 public:
     simd_float4x4 simdTransform() const { return m_simdTransform; }
@@ -32,5 +35,7 @@ public:
 private:
     simd_float4x4 m_simdTransform;
 };
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBXR) && PLATFORM(COCOA)

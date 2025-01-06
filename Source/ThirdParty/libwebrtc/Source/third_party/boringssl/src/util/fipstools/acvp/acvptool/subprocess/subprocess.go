@@ -48,8 +48,6 @@ type Subprocess struct {
 	pendingReads chan pendingRead
 	// readerFinished is a channel that is closed if `readerRoutine` has finished (e.g. because of a read error).
 	readerFinished chan struct{}
-	// readerError is set iff readerFinished is closed. If non-nil then it is the read error that caused `readerRoutine` to finished.
-	readerError error
 }
 
 // pendingRead represents an expected response from the modulewrapper.
@@ -104,11 +102,14 @@ func NewWithIO(cmd *exec.Cmd, in io.WriteCloser, out io.ReadCloser) *Subprocess 
 		"SHA2-256":          &hashPrimitive{"SHA2-256", 32},
 		"SHA2-384":          &hashPrimitive{"SHA2-384", 48},
 		"SHA2-512":          &hashPrimitive{"SHA2-512", 64},
+		"SHA2-512/224":      &hashPrimitive{"SHA2-512/224", 28},
 		"SHA2-512/256":      &hashPrimitive{"SHA2-512/256", 32},
 		"SHA3-224":          &hashPrimitive{"SHA3-224", 28},
 		"SHA3-256":          &hashPrimitive{"SHA3-256", 32},
 		"SHA3-384":          &hashPrimitive{"SHA3-384", 48},
 		"SHA3-512":          &hashPrimitive{"SHA3-512", 64},
+		"SHAKE-128":         &shake{"SHAKE-128", 16},
+		"SHAKE-256":         &shake{"SHAKE-256", 32},
 		"ACVP-AES-ECB":      &blockCipher{"AES", 16, 2, true, false, iterateAES},
 		"ACVP-AES-CBC":      &blockCipher{"AES-CBC", 16, 2, true, true, iterateAESCBC},
 		"ACVP-AES-CBC-CS3":  &blockCipher{"AES-CBC-CS3", 16, 1, false, true, iterateAESCBC},
@@ -126,6 +127,7 @@ func NewWithIO(cmd *exec.Cmd, in io.WriteCloser, out io.ReadCloser) *Subprocess 
 		"HMAC-SHA2-256":     &hmacPrimitive{"HMAC-SHA2-256", 32},
 		"HMAC-SHA2-384":     &hmacPrimitive{"HMAC-SHA2-384", 48},
 		"HMAC-SHA2-512":     &hmacPrimitive{"HMAC-SHA2-512", 64},
+		"HMAC-SHA2-512/224": &hmacPrimitive{"HMAC-SHA2-512/224", 28},
 		"HMAC-SHA2-512/256": &hmacPrimitive{"HMAC-SHA2-512/256", 32},
 		"HMAC-SHA3-224":     &hmacPrimitive{"HMAC-SHA3-224", 28},
 		"HMAC-SHA3-256":     &hmacPrimitive{"HMAC-SHA3-256", 32},
@@ -141,8 +143,10 @@ func NewWithIO(cmd *exec.Cmd, in io.WriteCloser, out io.ReadCloser) *Subprocess 
 		"RSA":               &rsa{},
 		"KAS-ECC-SSC":       &kas{},
 		"KAS-FFC-SSC":       &kasDH{},
+		"PBKDF":             &pbkdf{},
 	}
 	m.primitives["ECDSA"] = &ecdsa{"ECDSA", map[string]bool{"P-224": true, "P-256": true, "P-384": true, "P-521": true}, m.primitives}
+	m.primitives["EDDSA"] = &eddsa{"EDDSA", map[string]bool{"ED-25519": true}}
 
 	go m.readerRoutine()
 	return m
@@ -153,6 +157,7 @@ func (m *Subprocess) Close() {
 	m.stdout.Close()
 	m.stdin.Close()
 	m.cmd.Wait()
+	close(m.pendingReads)
 	<-m.readerFinished
 }
 
@@ -176,7 +181,7 @@ func (m *Subprocess) flush() error {
 func (m *Subprocess) enqueueRead(pending pendingRead) error {
 	select {
 	case <-m.readerFinished:
-		return m.readerError
+		panic("attempted to enqueue request after the reader failed")
 	default:
 	}
 
@@ -266,7 +271,7 @@ func (m *Subprocess) Transact(cmd string, expectedNumResults int, args ...[]byte
 	case <-done:
 		return result, nil
 	case <-m.readerFinished:
-		return nil, m.readerError
+		panic("was still waiting for a result when the reader finished")
 	}
 }
 
@@ -284,13 +289,11 @@ func (m *Subprocess) readerRoutine() {
 
 		result, err := m.readResult(pendingRead.cmd, pendingRead.expectedNumResults)
 		if err != nil {
-			m.readerError = err
-			return
+			panic(fmt.Errorf("failed to read from subprocess: %w", err))
 		}
 
 		if err := pendingRead.callback(result); err != nil {
-			m.readerError = err
-			return
+			panic(fmt.Errorf("result from subprocess was rejected: %w", err))
 		}
 	}
 }

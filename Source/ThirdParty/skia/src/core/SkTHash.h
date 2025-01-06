@@ -9,6 +9,7 @@
 #define SkTHash_DEFINED
 
 #include "include/core/SkTypes.h"
+#include "src/base/SkMathPriv.h"
 #include "src/core/SkChecksum.h"
 
 #include <initializer_list>
@@ -73,6 +74,17 @@ public:
     // Approximately how many bytes of memory do we use beyond sizeof(*this)?
     size_t approxBytesUsed() const { return fCapacity * sizeof(Slot); }
 
+    // Exchange two hash tables.
+    void swap(THashTable& that) {
+        std::swap(fCount, that.fCount);
+        std::swap(fCapacity, that.fCapacity);
+        std::swap(fSlots, that.fSlots);
+    }
+
+    void swap(THashTable&& that) {
+        *this = std::move(that);
+    }
+
     // !!!!!!!!!!!!!!!!!                 CAUTION                   !!!!!!!!!!!!!!!!!
     // set(), find() and foreach() all allow mutable access to table entries.
     // If you change an entry so that it no longer has the same key, all hell
@@ -130,11 +142,11 @@ public:
                 return false;
             }
             if (hash == s.fHash && key == Traits::GetKey(*s)) {
-               this->removeSlot(index);
-               if (4 * fCount <= fCapacity && fCapacity > 4) {
-                   this->resize(fCapacity / 2);
-               }
-               return true;
+                this->removeSlot(index);
+                if (4 * fCount <= fCapacity && fCapacity > 4) {
+                    this->resize(fCapacity / 2);
+                }
+                return true;
             }
             index = this->next(index);
         }
@@ -150,7 +162,12 @@ public:
     // Hash tables will automatically resize themselves when set() and remove() are called, but
     // resize() can be called to manually grow capacity before a bulk insertion.
     void resize(int capacity) {
+        // We must have enough capacity to hold every key.
         SkASSERT(capacity >= fCount);
+        // `capacity` must be a power of two, because we use `hash & (capacity-1)` to look up keys
+        // in the table (since this is faster than a modulo).
+        SkASSERT((capacity & (capacity - 1)) == 0);
+
         int oldCapacity = fCapacity;
         SkDEBUGCODE(int oldCount = fCount);
 
@@ -166,6 +183,22 @@ public:
             }
         }
         SkASSERT(fCount == oldCount);
+    }
+
+    // Reserve extra capacity. This only grows capacity; requests to shrink are ignored.
+    // We assume that the passed-in value represents the number of items that the caller wants to
+    // store in the table. The passed-in value is adjusted to honor the following rules:
+    // - Hash tables must have a power-of-two capacity.
+    // - Hash tables grow when they exceed 3/4 capacity, not when they are full.
+    void reserve(int n) {
+        int newCapacity = SkNextPow2(n);
+        if (n * 4 > newCapacity * 3) {
+            newCapacity *= 2;
+        }
+
+        if (newCapacity > fCapacity) {
+            this->resize(newCapacity);
+        }
     }
 
     // Call fn on every entry in the table.  You may mutate the entries, but be very careful.
@@ -447,7 +480,9 @@ public:
     };
 
     THashMap(std::initializer_list<Pair> pairs) {
-        fTable.resize(pairs.size() * 5 / 3);
+        int capacity = pairs.size() >= 4 ? SkNextPow2(pairs.size() * 4 / 3)
+                                         : 4;
+        fTable.resize(capacity);
         for (const Pair& p : pairs) {
             fTable.set(p);
         }
@@ -464,6 +499,13 @@ public:
 
     // Approximately how many bytes of memory do we use beyond sizeof(*this)?
     size_t approxBytesUsed() const { return fTable.approxBytesUsed(); }
+
+    // Reserve extra capacity.
+    void reserve(int n) { fTable.reserve(n); }
+
+    // Exchange two hash maps.
+    void swap(THashMap& that) { fTable.swap(that.fTable); }
+    void swap(THashMap&& that) { fTable.swap(std::move(that.fTable)); }
 
     // N.B. The pointers returned by set() and find() are valid only until the next call to set().
 
@@ -551,7 +593,9 @@ public:
 
     // Construct with an initializer list of Ts.
     THashSet(std::initializer_list<T> vals) {
-        fTable.resize(vals.size() * 5 / 3);
+        int capacity = vals.size() >= 4 ? SkNextPow2(vals.size() * 4 / 3)
+                                        : 4;
+        fTable.resize(capacity);
         for (const T& val : vals) {
             fTable.set(val);
         }
@@ -568,6 +612,13 @@ public:
 
     // Approximately how many bytes of memory do we use beyond sizeof(*this)?
     size_t approxBytesUsed() const { return fTable.approxBytesUsed(); }
+
+    // Reserve extra capacity.
+    void reserve(int n) { fTable.reserve(n); }
+
+    // Exchange two hash sets.
+    void swap(THashSet& that) { fTable.swap(that.fTable); }
+    void swap(THashSet&& that) { fTable.swap(std::move(that.fTable)); }
 
     // Copy an item into the set.
     void add(T item) { fTable.set(std::move(item)); }

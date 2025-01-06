@@ -23,13 +23,15 @@
 
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 struct RadialGradientAttributes;
 
 class SVGRadialGradientElement final : public SVGGradientElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGRadialGradientElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGRadialGradientElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGRadialGradientElement);
 public:
     static Ref<SVGRadialGradientElement> create(const QualifiedName&, Document&);
 
@@ -49,10 +51,10 @@ public:
     SVGAnimatedLength& fyAnimated() { return m_fy; }
     SVGAnimatedLength& frAnimated() { return m_fr; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGRadialGradientElement, SVGGradientElement>;
+
 private:
     SVGRadialGradientElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGRadialGradientElement, SVGGradientElement>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

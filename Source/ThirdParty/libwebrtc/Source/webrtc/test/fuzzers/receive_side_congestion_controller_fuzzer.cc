@@ -13,6 +13,7 @@
 #include <cstdint>
 
 #include "api/array_view.h"
+#include "api/environment/environment_factory.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/congestion_controller/include/receive_side_congestion_controller.h"
@@ -28,7 +29,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   Timestamp arrival_time = Timestamp::Micros(123'456'789);
   SimulatedClock clock(arrival_time);
   ReceiveSideCongestionController cc(
-      &clock,
+      CreateEnvironment(&clock),
       /*feedback_sender=*/[](auto...) {},
       /*remb_sender=*/[](auto...) {},
       /*network_state_estimator=*/nullptr);

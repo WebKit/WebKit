@@ -122,7 +122,7 @@ TEST(WebKit, FindMatches)
     PlatformWebView webView(context.get());
     
     WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    zeroBytes(loaderClient);
     
     loaderClient.base.version = 0;
     loaderClient.didFinishNavigation = didFinishNavigation;
@@ -130,7 +130,7 @@ TEST(WebKit, FindMatches)
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKPageFindMatchesClientV0 findMatchesClient;
-    memset(&findMatchesClient, 0, sizeof(findMatchesClient));
+    zeroBytes(findMatchesClient);
 
     findMatchesClient.base.version = 0;
     findMatchesClient.didFindStringMatches = didFindStringMatches;

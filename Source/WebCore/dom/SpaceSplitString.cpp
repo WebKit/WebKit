@@ -23,9 +23,13 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomStringHash.h>
+#include <wtf/text/ParsingUtilities.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpaceSplitStringData);
 
 static_assert(!(sizeof(SpaceSplitStringData) % sizeof(uintptr_t)), "SpaceSplitStringDataTail is aligned to WordSize");
 
@@ -82,7 +86,7 @@ struct SpaceSplitStringTableKeyTraits : public HashTraits<AtomString>
     static const int minimumTableSize = WTF::HashTableCapacityForSize<typicalNumberOfSpaceSplitString>::value;
 };
 
-typedef HashMap<AtomString, SpaceSplitStringData*, AtomStringHash, SpaceSplitStringTableKeyTraits> SpaceSplitStringTable;
+typedef UncheckedKeyHashMap<AtomString, SpaceSplitStringData*, AtomStringHash, SpaceSplitStringTableKeyTraits> SpaceSplitStringTable;
 
 static SpaceSplitStringTable& spaceSplitStringTable()
 {
@@ -164,7 +168,7 @@ private:
 class TokenAtomStringInitializer {
     WTF_MAKE_NONCOPYABLE(TokenAtomStringInitializer);
 public:
-    TokenAtomStringInitializer(const AtomString& keyString, AtomString* memory)
+    TokenAtomStringInitializer(const AtomString& keyString, std::span<AtomString> memory)
         : m_keyString(keyString)
         , m_memoryBucket(memory)
     { }
@@ -172,18 +176,18 @@ public:
     template<typename CharacterType> bool processToken(std::span<const CharacterType> characters)
     {
         if (characters.size() == m_keyString.length())
-            new (NotNull, m_memoryBucket) AtomString(m_keyString);
+            new (NotNull, m_memoryBucket.data()) AtomString(m_keyString);
         else
-            new (NotNull, m_memoryBucket) AtomString(characters);
-        ++m_memoryBucket;
+            new (NotNull, m_memoryBucket.data()) AtomString(characters);
+        skip(m_memoryBucket, 1);
         return true;
     }
 
-    const AtomString* nextMemoryBucket() const { return m_memoryBucket; }
+    const AtomString* nextMemoryBucket() const { return m_memoryBucket.data(); }
 
 private:
     const AtomString& m_keyString;
-    AtomString* m_memoryBucket;
+    std::span<AtomString> m_memoryBucket;
 };
 
 inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& keyString, unsigned tokenCount)
@@ -195,11 +199,13 @@ inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& 
     SpaceSplitStringData* spaceSplitStringData = static_cast<SpaceSplitStringData*>(fastMalloc(sizeToAllocate));
 
     new (NotNull, spaceSplitStringData) SpaceSplitStringData(keyString, tokenCount);
-    AtomString* tokenArrayStart = spaceSplitStringData->tokenArrayStart();
-    TokenAtomStringInitializer tokenInitializer(keyString, tokenArrayStart);
+    auto tokenArray = spaceSplitStringData->tokenArray();
+    TokenAtomStringInitializer tokenInitializer(keyString, tokenArray);
     tokenizeSpaceSplitString(tokenInitializer, keyString);
-    ASSERT(static_cast<unsigned>(tokenInitializer.nextMemoryBucket() - tokenArrayStart) == tokenCount);
+    ASSERT(static_cast<unsigned>(tokenInitializer.nextMemoryBucket() - tokenArray.data()) == tokenCount);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     ASSERT(reinterpret_cast<const char*>(tokenInitializer.nextMemoryBucket()) == reinterpret_cast<const char*>(spaceSplitStringData) + sizeToAllocate);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     return adoptRef(*spaceSplitStringData);
 }
@@ -234,13 +240,8 @@ void SpaceSplitStringData::destroy(SpaceSplitStringData* spaceSplitString)
 
     spaceSplitStringTable().remove(spaceSplitString->m_keyString);
 
-    unsigned i = 0;
-    unsigned size = spaceSplitString->size();
-    const AtomString* data = spaceSplitString->tokenArrayStart();
-    do {
-        data[i].~AtomString();
-        ++i;
-    } while (i < size);
+    for (auto& data : spaceSplitString->tokenArray())
+        data.~AtomString();
 
     spaceSplitString->~SpaceSplitStringData();
 

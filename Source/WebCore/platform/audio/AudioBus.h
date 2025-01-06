@@ -70,7 +70,7 @@ public:
     WEBCORE_EXPORT static RefPtr<AudioBus> create(unsigned numberOfChannels, size_t length, bool allocate = true);
 
     // Tells the given channel to use an externally allocated buffer.
-    WEBCORE_EXPORT void setChannelMemory(unsigned channelIndex, float* storage, size_t length);
+    WEBCORE_EXPORT void setChannelMemory(unsigned channelIndex, std::span<float> storage);
 
     // Channels
     unsigned numberOfChannels() const { return m_channels.size(); }
@@ -137,7 +137,7 @@ public:
     void copyWithGainFrom(const AudioBus& sourceBus, float targetGain);
 
     // Copies the sourceBus by scaling with sample-accurate gain values.
-    void copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, float* gainValues, unsigned numberOfGainValues);
+    void copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, std::span<float> gainValues);
 
     // Returns maximum absolute value across all channels (useful for normalization).
     float maxAbsValue() const;

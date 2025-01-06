@@ -26,10 +26,8 @@ size_t WebRtcSpl_FilterAR(const int16_t* a,
                           int16_t* state,
                           size_t state_length,
                           int16_t* state_low,
-                          size_t state_low_length,
                           int16_t* filtered,
-                          int16_t* filtered_low,
-                          size_t filtered_low_length)
+                          int16_t* filtered_low)
 {
     int64_t o;
     int32_t oLOW;

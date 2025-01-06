@@ -37,12 +37,15 @@
 #include "SVGURIReference.h"
 #include "StyleCachedImage.h"
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(TREE_DEBUGGING)
 #include <stdio.h>
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGResources);
 
 SVGResources::SVGResources()
 {

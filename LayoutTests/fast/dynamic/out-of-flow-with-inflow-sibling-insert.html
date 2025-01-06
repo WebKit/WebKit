@@ -1,0 +1,32 @@
+<style>
+.in_flow {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+
+.out_of_flow {
+  z-index: -10;
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  position: absolute;
+}
+
+.flex {
+  display: flex;
+}
+</style>
+<div class=flex>
+  <div class=flex id=container style="position: relative"></div>
+</div>
+<script>
+document.body.offsetHeight;
+let out_of_flow = document.createElement("div");
+out_of_flow.className = "out_of_flow";
+container.appendChild(out_of_flow);
+
+let in_flow = document.createElement("div");
+in_flow.className = "in_flow";
+container.appendChild(in_flow);
+</script>

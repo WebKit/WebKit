@@ -21,11 +21,11 @@ rtc_library("agc") {
   deps = [
     ":gain_control_interface",
     ":level_estimation",
-    "..:api",
     "..:apm_logging",
     "..:audio_buffer",
     "..:audio_frame_view",
     "../../../api:array_view",
+    "../../../api/audio:audio_processing",
     "../../../common_audio",
     "../../../common_audio:common_audio_c",
     "../../../rtc_base:checks",
@@ -39,7 +39,6 @@ rtc_library("agc") {
     "../agc2:input_volume_stats_reporter",
     "../vad",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("level_estimation") {
@@ -117,10 +116,7 @@ if (rtc_include_tests) {
       "../../../test:fileutils",
       "../../../test:test_support",
       "//testing/gtest",
-    ]
-    absl_deps = [
-      "//third_party/abseil-cpp/absl/strings",
-      "//third_party/abseil-cpp/absl/types:optional",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
   }
 }

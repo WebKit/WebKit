@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 
 #if !USE(SYSTEM_MALLOC)
 #include <bmalloc/Algorithm.h>
@@ -205,5 +206,88 @@ TEST(WTF_StdLibExtras, ByteCast)
     static_assert(std::same_as<std::span<const char8_t>, decltype(byteCast<char8_t>(scu8))>);
     static_assert(std::same_as<std::span<const std::byte>, decltype(byteCast<std::byte>(scu8))>);
 }
+
+TEST(WTF_StdLibExtras, SpanReinterpretCast_DynamicExtent)
+{
+    Vector<int32_t> signedInt { -3, -2, -1, 0, 1, 2 };
+    auto signedIntSpan = signedInt.span();
+    static_assert(std::same_as<std::span<const int32_t, std::dynamic_extent>, decltype(signedIntSpan)>);
+
+    // Cast from 4 bytes to 1 byte per item.
+    auto unsignedIntByteSpan = asByteSpan(signedIntSpan);
+    static_assert(std::same_as<std::span<const uint8_t, std::dynamic_extent>, decltype(unsignedIntByteSpan)>);
+    EXPECT_TRUE(!memcmp(signedIntSpan.data(), unsignedIntByteSpan.data(), unsignedIntByteSpan.size_bytes()));
+
+    // Cast from 4 bytes to 4 bytes per item.
+    auto unsignedIntSpan = spanReinterpretCast<const uint32_t>(signedIntSpan);
+    static_assert(std::same_as<std::span<const uint32_t, std::dynamic_extent>, decltype(unsignedIntSpan)>);
+    EXPECT_TRUE(!memcmp(signedIntSpan.data(), unsignedIntSpan.data(), unsignedIntSpan.size_bytes()));
+
+    // Cast from 4 bytes to 8 bytes per item.
+    auto unsignedLongSpan = spanReinterpretCast<const uint64_t>(signedIntSpan);
+    static_assert(std::same_as<std::span<const uint64_t, std::dynamic_extent>, decltype(unsignedLongSpan)>);
+    EXPECT_TRUE(!memcmp(signedIntSpan.data(), unsignedLongSpan.data(), unsignedLongSpan.size_bytes()));
+}
+
+/*
+TEST(WTF_StdLibExtras, SpanReinterpretCast_DynamicExtent_ManualRuntimeErrors)
+{
+    // Manual tests to check this release assert in WTF::spanReinterpretCast<>.
+    // if constexpr (sizeof(U) < sizeof(T) || sizeof(U) % sizeof(T))
+    //     RELEASE_ASSERT_WITH_MESSAGE(!(span.size_bytes() % sizeof(T)), "spanReinterpretCast will not change size in bytes from source");
+
+    // Cast from 1 byte per item to 4 bytes per item, with non-multiple of 4.
+    // Test 'sizeof(U) < sizeof(T)' results in a runtime crash.
+    //Vector<int8_t> signedIntByte { 1, 2, 3, 4, 5, 6, 7 };
+    //auto signedIntByteSpan = signedIntByte.span();
+    //(void)spanReinterpretCast<const int>(signedIntByteSpan);
+
+    // Cast from 4 bytes per item to 3 bytes per item, with non-multiple of 3.
+    // Test that '(sizeof(U) > sizeof(T)) && (sizeof(U) % sizeof(T))' results in a runtime crash.
+    //Vector<int32_t> signedInt { 1, 2, 3, 4 };
+    //auto signedIntSpan = signedInt.span();
+    //(void)spanReinterpretCast<const int8_t[3]>(signedIntSpan);
+}
+*/
+
+TEST(WTF_StdLibExtras, SpanReinterpretCast_NonDynamicExtent)
+{
+    Vector<int32_t> signedInt { -3, -2, -1, 0, 1, 2 };
+    std::span<const int32_t, 6> signedIntSpan { signedInt.data(), signedInt.size() };
+    static_assert(std::same_as<std::span<const int32_t, 6>, decltype(signedIntSpan)>);
+
+    // Cast from 4 bytes to 1 byte per item.
+    auto unsignedIntByteSpan = asByteSpan(signedIntSpan);
+    static_assert(std::same_as<std::span<const uint8_t>, decltype(unsignedIntByteSpan)>);
+    EXPECT_TRUE(!memcmp(signedIntSpan.data(), unsignedIntByteSpan.data(), unsignedIntByteSpan.size_bytes()));
+
+    // Cast from 4 bytes to 4 bytes per item.
+    auto unsignedIntSpan = spanReinterpretCast<const uint32_t>(signedIntSpan);
+    static_assert(std::same_as<std::span<const uint32_t, 6>, decltype(unsignedIntSpan)>);
+    EXPECT_TRUE(!memcmp(signedIntSpan.data(), unsignedIntSpan.data(), unsignedIntSpan.size_bytes()));
+
+    // Cast from 4 bytes to 8 bytes per item.
+    auto unsignedLongSpan = spanReinterpretCast<const uint64_t>(signedIntSpan);
+    static_assert(std::same_as<std::span<const uint64_t, 3>, decltype(unsignedLongSpan)>);
+    EXPECT_TRUE(!memcmp(signedIntSpan.data(), unsignedLongSpan.data(), unsignedLongSpan.size_bytes()));
+}
+
+/*
+TEST(WTF_StdLibExtras, SpanReinterpretCast_NonDynamicExtent_CompileTimeErros)
+{
+    // Manual tests to check this static assert in WTF::spanReinterpretCast<>.
+    //     static_assert(!((sizeof(U) * Extent) % sizeof(T)), "spanReinterpretCast will not change size in bytes from source");
+
+    // Cast from 1 byte per item to 4 bytes per item, with non-multiple of 4.
+    //Vector<int8_t> signedIntByte { 1, 2, 3, 4, 5, 6, 7 };
+    //std::span<const int8_t, 7> signedIntByteSpan { signedIntByte.data(), signedIntByte.size() };
+    //(void)spanReinterpretCast<const int>(signedIntByteSpan);
+
+    // Cast from 4 bytes per item to 3 bytes per item, with non-multiple of 3.
+    //Vector<int32_t> signedInt { 1, 2, 3, 4 };
+    //std::span<const int32_t, 4> signedIntSpan { signedInt.data(), signedInt.size() };
+    //(void)spanReinterpretCast<const int8_t[3]>(signedIntSpan);
+}
+*/
 
 } // namespace TestWebKitAPI

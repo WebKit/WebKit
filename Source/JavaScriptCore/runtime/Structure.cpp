@@ -39,6 +39,8 @@
 
 #define DUMP_STRUCTURE_ID_STATISTICS 0
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 #if DUMP_STRUCTURE_ID_STATISTICS
@@ -48,17 +50,17 @@ static HashSet<Structure*>& liveStructureSet = *(new HashSet<Structure*>);
 inline void StructureTransitionTable::setSingleTransition(VM& vm, JSCell* owner, Structure* structure)
 {
     ASSERT(isUsingSingleSlot());
-    m_data = bitwise_cast<intptr_t>(structure) | UsingSingleSlotFlag;
+    m_data = std::bit_cast<intptr_t>(structure) | UsingSingleSlotFlag;
     vm.writeBarrier(owner, structure);
 }
 
-bool StructureTransitionTable::contains(UniquedStringImpl* rep, unsigned attributes, TransitionKind transitionKind) const
+bool StructureTransitionTable::contains(PointerKey rep, unsigned attributes, TransitionKind transitionKind) const
 {
     if (isUsingSingleSlot()) {
         Structure* transition = trySingleTransition();
-        return transition && transition->m_transitionPropertyName == rep && transition->transitionPropertyAttributes() == attributes && transition->transitionKind() == transitionKind;
+        return transition && transition->m_transitionPropertyName == rep.pointer() && transition->transitionPropertyAttributes() == attributes && transition->transitionKind() == transitionKind;
     }
-    return map()->get(StructureTransitionTable::Hash::Key(rep, attributes, transitionKind));
+    return map()->get(StructureTransitionTable::Hash::createKey(rep, attributes, transitionKind));
 }
 
 void StructureTransitionTable::add(VM& vm, JSCell* owner, Structure* structure)
@@ -79,7 +81,7 @@ void StructureTransitionTable::add(VM& vm, JSCell* owner, Structure* structure)
     }
 
     // Add the structure to the map.
-    map()->set(StructureTransitionTable::Hash::Key(structure->m_transitionPropertyName.get(), structure->transitionPropertyAttributes(), structure->transitionKind()), structure);
+    map()->set(StructureTransitionTable::Hash::createFromStructure(structure), structure);
 }
 
 void Structure::dumpStatistics()
@@ -432,7 +434,7 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
 
     for (size_t i = structures.size(); i--;) {
         structure = structures[i];
-        if (!structure->m_transitionPropertyName || structure->transitionKind() == TransitionKind::SetBrand)
+        if (!structure->m_transitionPropertyName)
             continue;
         switch (structure->transitionKind()) {
         case TransitionKind::PropertyAddition: {
@@ -456,6 +458,9 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
             PropertyOffset offset = table->updateAttributeIfExists(structure->m_transitionPropertyName.get(), structure->transitionPropertyAttributes());
             ASSERT_UNUSED(offset, offset == structure->transitionOffset());
             break;
+        }
+        case TransitionKind::SetBrand: {
+            continue;
         }
         default:
             ASSERT_NOT_REACHED();
@@ -625,7 +630,7 @@ Structure* Structure::removeNewPropertyTransition(VM& vm, Structure* structure, 
     ASSERT(!Structure::removePropertyTransitionFromExistingStructure(structure, propertyName, offset));
     ASSERT(structure->getConcurrently(propertyName.uid()) != invalidOffset);
 
-    if (structure->transitionCountHasOverflowed()) {
+    if (structure->shouldDoCacheableDictionaryTransitionForRemoveAndAttributeChange()) {
         ASSERT(!isCopyOnWrite(structure->indexingMode()));
         Structure* transition = toUncacheableDictionaryTransition(vm, structure, deferred);
         ASSERT(structure != transition);
@@ -672,14 +677,49 @@ Structure* Structure::changePrototypeTransition(VM& vm, Structure* structure, JS
     ASSERT(isValidPrototype(prototype));
 
     DeferGC deferGC(vm);
+    JSObject* key = prototype.isNull() ? nullptr : asObject(prototype);
+
+    bool shouldChain = !structure->hasPolyProto() && structure->typeInfo().type() != GlobalObjectType && !structure->hasBeenDictionary();
+    if (shouldChain) {
+        ASSERT(structure->isObject());
+        if (Structure* existingTransition = structure->m_transitionTable.get(key, 0, TransitionKind::ChangePrototype)) {
+            ASSERT(!existingTransition->hasPolyProto());
+            existingTransition->checkOffsetConsistency();
+            return existingTransition;
+        }
+    }
+
+    // Changing [[Prototype]] means that we refresh this object completely.
+    // This is very likely that this object will behaves differently from the previous one.
+    // Let's pin the table and break the edge to the previous Structure.
+    Structure* transition = Structure::create(vm, structure, &deferred);
+    PropertyTable* table = structure->copyPropertyTableForPinning(vm);
+    transition->pin(Locker { transition->m_lock }, vm, table);
+    transition->m_prototype.set(vm, transition, prototype);
+    transition->setTransitionKind(TransitionKind::ChangePrototype);
+    transition->setMaxOffset(vm, structure->maxOffset());
+    checkOffset(transition->transitionOffset(), transition->inlineCapacity());
+    if (shouldChain) {
+        GCSafeConcurrentJSLocker locker(structure->m_lock, vm);
+        structure->m_transitionTable.add(vm, structure, transition);
+    }
+
+    transition->checkOffsetConsistency();
+    structure->checkOffsetConsistency();
+    return transition;
+}
+
+Structure* Structure::changeGlobalProxyTargetTransition(VM& vm, Structure* structure, JSGlobalObject* globalObject, DeferredStructureTransitionWatchpointFire& deferred)
+{
+    DeferGC deferGC(vm);
     Structure* transition = Structure::create(vm, structure, &deferred);
 
-    transition->m_prototype.set(vm, transition, prototype);
+    transition->setGlobalObject(vm, globalObject);
 
     PropertyTable* table = structure->copyPropertyTableForPinning(vm);
     transition->pin(Locker { transition->m_lock }, vm, table);
     transition->setMaxOffset(vm, structure->maxOffset());
-    
+
     transition->checkOffsetConsistency();
     return transition;
 }
@@ -730,7 +770,7 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
         return existingTransition;
     }
 
-    if (structure->transitionCountHasOverflowed()) {
+    if (structure->shouldDoCacheableDictionaryTransitionForRemoveAndAttributeChange()) {
         ASSERT(!isCopyOnWrite(structure->indexingMode()));
         Structure* transition = toUncacheableDictionaryTransition(vm, structure, deferred);
         ASSERT(structure != transition);
@@ -1678,6 +1718,9 @@ void dumpTransitionKind(PrintStream& out, TransitionKind kind)
     case TransitionKind::BecomePrototype:
         kindName = "BecomePrototype";
         break;
+    case TransitionKind::ChangePrototype:
+        kindName = "ChangePrototype";
+        break;
     case TransitionKind::SetBrand:
         kindName = "SetBrand";
         break;
@@ -1687,3 +1730,5 @@ void dumpTransitionKind(PrintStream& out, TransitionKind kind)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

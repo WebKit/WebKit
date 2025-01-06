@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderTreeBuilder.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,7 +35,7 @@ class RenderButton;
 class RenderMenuList;
 
 class RenderTreeBuilder::FormControls {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FormControls);
 public:
     FormControls(RenderTreeBuilder&);
 

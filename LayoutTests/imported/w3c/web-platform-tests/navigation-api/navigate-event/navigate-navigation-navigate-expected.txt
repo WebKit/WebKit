@@ -1,3 +1,3 @@
 
-FAIL navigate event for navigation.navigate() assert_equals: expected "replace" but got "push"
+PASS navigate event for navigation.navigate()
 

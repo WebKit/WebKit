@@ -6,10 +6,9 @@
  */
 #include "src/gpu/ganesh/GrProcessorSet.h"
 
-#include "src/core/SkBlendModePriv.h"
+#include "include/private/base/SkDebug.h"
 #include "src/gpu/ganesh/GrAppliedClip.h"
-#include "src/gpu/ganesh/GrCaps.h"
-#include "src/gpu/ganesh/GrUserStencilSettings.h"
+#include "src/gpu/ganesh/GrPaint.h"
 #include "src/gpu/ganesh/GrXferProcessor.h"
 #include "src/gpu/ganesh/effects/GrPorterDuffXferProcessor.h"
 
@@ -49,7 +48,7 @@ GrProcessorSet::~GrProcessorSet() {
     }
 }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 SkString GrProcessorSet::dumpProcessors() const {
     SkString result;
     if (this->hasColorFragmentProcessor()) {

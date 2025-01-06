@@ -36,6 +36,7 @@
 #import "JSWebExtensionWrapper.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionAPINamespace.h"
+#import "WebFrame.h"
 #import "WebProcess.h"
 
 namespace WebKit {

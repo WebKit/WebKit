@@ -8,6 +8,7 @@
 #ifndef LIBANGLE_CL_UTILS_H_
 #define LIBANGLE_CL_UTILS_H_
 
+#include "common/PackedCLEnums_autogen.h"
 #include "libANGLE/renderer/cl_types.h"
 
 #define ANGLE_CL_SET_ERROR(error) cl::gClErrorTls = error
@@ -50,6 +51,9 @@ inline bool OverlapRegions(size_t offset1, size_t offset2, size_t size)
 }
 
 bool IsValidImageFormat(const cl_image_format *imageFormat, const rx::CLExtensions &extensions);
+
+bool IsImageType(cl::MemObjectType memObjectType);
+bool IsBufferType(cl::MemObjectType memObjectType);
 
 extern thread_local cl_int gClErrorTls;
 

@@ -28,11 +28,13 @@
 
 #include "KeyedCoding.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class KeyedDecoderCF final : public KeyedDecoder {
+    WTF_MAKE_TZONE_ALLOCATED(KeyedDecoderCF);
 public:
     explicit KeyedDecoderCF(std::span<const uint8_t> data);
     ~KeyedDecoderCF() override;

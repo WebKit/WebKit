@@ -26,13 +26,16 @@
 #include "config.h"
 #include "Frame.h"
 
+#include "FrameLoaderClient.h"
 #include "HTMLFrameOwnerElement.h"
-#include "HistoryController.h"
+#include "HTMLIFrameElement.h"
+#include "LocalDOMWindow.h"
 #include "NavigationScheduler.h"
 #include "Page.h"
 #include "RemoteFrame.h"
 #include "RenderElement.h"
 #include "RenderWidget.h"
+#include "ScrollingCoordinator.h"
 #include "WindowProxy.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -95,7 +98,7 @@ public:
         return it->value.first && it->value.first->isRootFrame();
     }
 private:
-    HashMap<FrameIdentifier, std::pair<WeakPtr<LocalFrame>, WeakPtr<RemoteFrame>>> m_map;
+    UncheckedKeyHashMap<FrameIdentifier, std::pair<WeakPtr<LocalFrame>, WeakPtr<RemoteFrame>>> m_map;
 };
 #endif
 
@@ -108,15 +111,17 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
     , m_mainFrame(parent ? page.mainFrame() : *this)
     , m_settings(page.settings())
     , m_frameType(frameType)
-    , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
+    , m_navigationScheduler(makeUniqueRefWithoutRefCountedCheck<NavigationScheduler>(*this))
     , m_opener(opener)
-    , m_history(makeUniqueRef<HistoryController>(*this))
 {
     if (parent)
         parent->tree().appendChild(*this);
 
     if (ownerElement)
         ownerElement->setContentFrame(*this);
+
+    if (opener)
+        opener->m_openedFrames.add(*this);
 
 #if ASSERT_ENABLED
     FrameLifetimeVerifier::singleton().frameCreated(*this);
@@ -150,7 +155,7 @@ void Frame::detachFromPage()
     if (isRootFrame()) {
         if (m_page) {
             m_page->removeRootFrame(downcast<LocalFrame>(*this));
-            if (auto* scrollingCoordinator = m_page->scrollingCoordinator())
+            if (RefPtr scrollingCoordinator = m_page->scrollingCoordinator())
                 scrollingCoordinator->rootFrameWasRemoved(frameID());
         }
     }
@@ -167,7 +172,7 @@ void Frame::disconnectOwnerElement()
     frameWasDisconnectedFromOwner();
 }
 
-void Frame::takeWindowProxyFrom(Frame& frame)
+void Frame::takeWindowProxyAndOpenerFrom(Frame& frame)
 {
     ASSERT(is<LocalDOMWindow>(window()) != is<LocalDOMWindow>(frame.window()));
     ASSERT(m_windowProxy->frame() == this);
@@ -175,6 +180,13 @@ void Frame::takeWindowProxyFrom(Frame& frame)
     m_windowProxy = frame.windowProxy();
     frame.resetWindowProxy();
     m_windowProxy->replaceFrame(*this);
+
+    ASSERT(!m_opener);
+    m_opener = frame.m_opener;
+    for (auto& opened : frame.m_openedFrames) {
+        ASSERT(opened.m_opener.get() == &frame);
+        opened.m_opener = *this;
+    }
 }
 
 Ref<WindowProxy> Frame::protectedWindowProxy() const
@@ -182,7 +194,7 @@ Ref<WindowProxy> Frame::protectedWindowProxy() const
     return m_windowProxy;
 }
 
-CheckedRef<NavigationScheduler> Frame::checkedNavigationScheduler() const
+Ref<NavigationScheduler> Frame::protectedNavigationScheduler() const
 {
     return m_navigationScheduler.get();
 }
@@ -211,17 +223,35 @@ bool Frame::isRootFrameIdentifier(FrameIdentifier identifier)
 }
 #endif
 
-void Frame::setOpener(Frame* opener)
+void Frame::updateOpener(Frame& newOpener, NotifyUIProcess notifyUIProcess)
+{
+    if (notifyUIProcess == NotifyUIProcess::Yes)
+        loaderClient().updateOpener(newOpener);
+    if (m_opener)
+        m_opener->m_openedFrames.remove(*this);
+    newOpener.m_openedFrames.add(*this);
+    if (RefPtr page = this->page())
+        page->setOpenedByDOMWithOpener(true);
+    m_opener = newOpener;
+
+    reinitializeDocumentSecurityContext();
+}
+
+void Frame::disownOpener()
 {
     if (m_opener)
         m_opener->m_openedFrames.remove(*this);
-    if (opener) {
-        opener->m_openedFrames.add(*this);
-        if (RefPtr page = this->page())
-            page->setOpenedByDOMWithOpener(true);
-    }
-    m_opener = opener;
+    m_opener = nullptr;
 
+    reinitializeDocumentSecurityContext();
+}
+
+void Frame::setOpenerForWebKitLegacy(Frame* frame)
+{
+    ASSERT(!m_opener);
+    ASSERT(frame);
+    m_opener = frame;
+    m_page->setOpenedByDOMWithOpener(true);
     reinitializeDocumentSecurityContext();
 }
 
@@ -231,21 +261,9 @@ void Frame::detachFromAllOpenedFrames()
         frame.m_opener = nullptr;
 }
 
-Vector<Ref<Frame>> Frame::openedFrames()
-{
-    return WTF::map(m_openedFrames, [] (auto& frame) {
-        return Ref { frame };
-    });
-}
-
 bool Frame::hasOpenedFrames() const
 {
     return !m_openedFrames.isEmptyIgnoringNullReferences();
-}
-
-CheckedRef<HistoryController> Frame::checkedHistory() const
-{
-    return m_history.get();
 }
 
 void Frame::setOwnerElement(HTMLFrameOwnerElement* element)
@@ -255,6 +273,35 @@ void Frame::setOwnerElement(HTMLFrameOwnerElement* element)
         element->clearContentFrame();
         element->setContentFrame(*this);
     }
+    updateScrollingMode();
+}
+
+void Frame::setOwnerPermissionsPolicy(OwnerPermissionsPolicyData&& ownerPermissionsPolicy)
+{
+    m_ownerPermisssionsPolicyOverride = WTFMove(ownerPermissionsPolicy);
+}
+
+std::optional<OwnerPermissionsPolicyData> Frame::ownerPermissionsPolicy() const
+{
+    if (m_ownerPermisssionsPolicyOverride)
+        return m_ownerPermisssionsPolicyOverride;
+
+    RefPtr owner = ownerElement();
+    if (!owner)
+        return std::nullopt;
+
+    auto documentOrigin = owner->document().securityOrigin().data();
+    auto documentPolicy = owner->document().permissionsPolicy();
+
+    RefPtr iframe = dynamicDowncast<HTMLIFrameElement>(owner);
+    auto containerPolicy = iframe ? PermissionsPolicy::processPermissionsPolicyAttribute(*iframe) : PermissionsPolicy::PolicyDirective { };
+    return OwnerPermissionsPolicyData { WTFMove(documentOrigin), WTFMove(documentPolicy), WTFMove(containerPolicy) };
+}
+
+void Frame::updateSandboxFlags(SandboxFlags flags, NotifyUIProcess notifyUIProcess)
+{
+    if (notifyUIProcess == NotifyUIProcess::Yes)
+        loaderClient().updateSandboxFlags(flags);
 }
 
 } // namespace WebCore

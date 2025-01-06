@@ -15,6 +15,7 @@
 #include "include/private/SkPathRef.h"
 #include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkMalloc.h"
+#include "include/private/base/SkSpan_impl.h"
 #include "include/private/base/SkTArray.h"
 #include "include/private/base/SkTDArray.h"
 #include "include/private/base/SkTo.h"
@@ -325,7 +326,15 @@ bool SkPath::conservativelyContainsRect(const SkRect& rect) const {
                 int nextPt = pointCount;
                 segmentCount++;
 
-                if (SkPathVerb::kConic == verb) {
+                if (prevPt == pts[nextPt]) {
+                    // A pre-condition to getting here is that the path is convex, so if a
+                    // verb's start and end points are the same, it means it's the only
+                    // verb in the contour (and the only contour). While it's possible for
+                    // such a single verb to be a convex curve, we do not have any non-zero
+                    // length edges to conservatively test against without splitting or
+                    // evaluating the curve. For simplicity, just reject the rectangle.
+                    return false;
+                } else if (SkPathVerb::kConic == verb) {
                     SkConic orig;
                     orig.set(pts, *weight);
                     SkPoint quadPts[5];
@@ -1128,13 +1137,12 @@ SkPath& SkPath::addOval(const SkRect &oval, SkPathDirection dir, unsigned startP
 
     SkPath_OvalPointIterator ovalIter(oval, dir, startPointIndex);
     // The corner iterator pts are tracking "behind" the oval/radii pts.
-    SkPath_RectPointIterator rectIter(
-            oval, dir, startPointIndex + (dir == SkPathDirection::kCW ? 0 : 1));
-    const SkScalar kConicWeight = SK_ScalarRoot2Over2;
+    SkPath_RectPointIterator rectIter(oval, dir, startPointIndex + (dir == SkPathDirection::kCW ? 0 : 1));
+    const SkScalar weight = SK_ScalarRoot2Over2;
 
     this->moveTo(ovalIter.current());
     for (unsigned i = 0; i < 4; ++i) {
-        this->conicTo(rectIter.next(), ovalIter.next(), kConicWeight);
+        this->conicTo(rectIter.next(), ovalIter.next(), weight);
     }
     this->close();
 
@@ -1144,59 +1152,7 @@ SkPath& SkPath::addOval(const SkRect &oval, SkPathDirection dir, unsigned startP
 
     if (isOval) {
         SkPathRef::Editor ed(&fPathRef);
-        ed.setIsOval(SkPathDirection::kCCW == dir, startPointIndex % 4, /*isClosed=*/true);
-    }
-    return *this;
-}
-
-SkPath& SkPath::addOpenOval(const SkRect &oval, SkPathDirection dir, unsigned startPointIndex) {
-    assert_known_direction(dir);
-
-    // Canvas2D semantics are different than our standard addOval. In the case of an empty
-    // initial path, we inject a moveTo. In any other case, we actually start with a lineTo
-    // (as if we simply called arcTo). Thus, we only treat the result as an (open) oval for
-    // future queries if we started out empty.
-    bool wasEmpty = this->isEmpty();
-    if (wasEmpty) {
-        this->setFirstDirection((SkPathFirstDirection)dir);
-    } else {
-        this->setFirstDirection(SkPathFirstDirection::kUnknown);
-    }
-
-    SkAutoDisableDirectionCheck addc(this);
-    SkAutoPathBoundsUpdate apbu(this, oval);
-
-    SkDEBUGCODE(int initialVerbCount = fPathRef->countVerbs());
-    SkDEBUGCODE(int initialPointCount = fPathRef->countPoints());
-    SkDEBUGCODE(int initialWeightCount = fPathRef->countWeights());
-    // We reserve space for one extra verb. The caller usually adds kClose immediately
-    const int kVerbs = 6; // moveTo/lineTo + 4x conicTo + (kClose)?
-    const int kPoints = 9;
-    const int kWeights = 4;
-    this->incReserve(kPoints, kVerbs, kWeights);
-
-    SkPath_OvalPointIterator ovalIter(oval, dir, startPointIndex);
-    // The corner iterator pts are tracking "behind" the oval/radii pts.
-    SkPath_RectPointIterator rectIter(
-            oval, dir, startPointIndex + (dir == SkPathDirection::kCW ? 0 : 1));
-    const SkScalar kConicWeight = SK_ScalarRoot2Over2;
-
-    if (wasEmpty) {
-        this->moveTo(ovalIter.current());
-    } else {
-        this->lineTo(ovalIter.current());
-    }
-    for (unsigned i = 0; i < 4; ++i) {
-        this->conicTo(rectIter.next(), ovalIter.next(), kConicWeight);
-    }
-
-    SkASSERT(fPathRef->countVerbs() == initialVerbCount + kVerbs - 1); // See comment above
-    SkASSERT(fPathRef->countPoints() == initialPointCount + kPoints);
-    SkASSERT(fPathRef->countWeights() == initialWeightCount + kWeights);
-
-    if (wasEmpty) {
-        SkPathRef::Editor ed(&fPathRef);
-        ed.setIsOval(SkPathDirection::kCCW == dir, startPointIndex % 4, /*isClosed=*/false);
+        ed.setIsOval(SkPathDirection::kCCW == dir, startPointIndex % 4);
     }
     return *this;
 }
@@ -3503,12 +3459,12 @@ bool SkPath::IsCubicDegenerate(const SkPoint& p1, const SkPoint& p2,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-SkPathVerbAnalysis sk_path_analyze_verbs(const uint8_t vbs[], int verbCount) {
+SkPathVerbAnalysis SkPathPriv::AnalyzeVerbs(const uint8_t vbs[], int verbCount) {
     SkPathVerbAnalysis info = {false, 0, 0, 0};
     bool needMove = true;
     bool invalid = false;
 
-    if (verbCount >= (INT_MAX / 3)) {
+    if (verbCount >= (INT_MAX / 3)) SK_UNLIKELY {
         // A path with an extremely high number of quad, conic or cubic verbs could cause
         // `info.points` to overflow. To prevent against this, we reject extremely large paths. This
         // check is conservative and assumes the worst case (in particular, it assumes that every
@@ -3565,7 +3521,7 @@ SkPath SkPath::Make(const SkPoint pts[], int pointCount,
         return SkPath();
     }
 
-    const auto info = sk_path_analyze_verbs(vbs, verbCount);
+    const auto info = SkPathPriv::AnalyzeVerbs(vbs, verbCount);
     if (!info.valid || info.points > pointCount || info.weights > wCount) {
         SkDEBUGFAIL("invalid verbs and number of points/weights");
         return SkPath();
@@ -3618,9 +3574,9 @@ SkPath SkPath::MakeInternal(const SkPathVerbAnalysis& analysis,
                             SkPathFillType fillType,
                             bool isVolatile) {
   return SkPath(sk_sp<SkPathRef>(new SkPathRef(
-                                     SkPathRef::PointsArray(points, analysis.points),
-                                     SkPathRef::VerbsArray(verbs, verbCount),
-                                     SkPathRef::ConicWeightsArray(conics, analysis.weights),
+                                     SkSpan(points, analysis.points),
+                                     SkSpan(verbs, verbCount),
+                                     SkSpan(conics, analysis.weights),
                                      analysis.segmentMask)),
                 fillType, isVolatile, SkPathConvexity::kUnknown, SkPathFirstDirection::kUnknown);
 }

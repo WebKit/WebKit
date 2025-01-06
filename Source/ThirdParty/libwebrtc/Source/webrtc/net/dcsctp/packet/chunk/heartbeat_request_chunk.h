@@ -42,7 +42,7 @@ class HeartbeatRequestChunk : public Chunk,
   HeartbeatRequestChunk(HeartbeatRequestChunk&& other) = default;
   HeartbeatRequestChunk& operator=(HeartbeatRequestChunk&& other) = default;
 
-  static absl::optional<HeartbeatRequestChunk> Parse(
+  static std::optional<HeartbeatRequestChunk> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
@@ -50,7 +50,7 @@ class HeartbeatRequestChunk : public Chunk,
 
   const Parameters& parameters() const { return parameters_; }
   Parameters extract_parameters() && { return std::move(parameters_); }
-  absl::optional<HeartbeatInfoParameter> info() const {
+  std::optional<HeartbeatInfoParameter> info() const {
     return parameters_.get<HeartbeatInfoParameter>();
   }
 

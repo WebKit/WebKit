@@ -33,6 +33,8 @@ namespace WebCore {
 class AudioDestination;
 class AudioIOCallback;
 class CDMFactory;
+class MediaRecorderPrivateWriter;
+class MediaRecorderPrivateWriterListener;
 class NowPlayingManager;
 
 class WEBCORE_EXPORT MediaStrategy {
@@ -48,6 +50,9 @@ public:
     virtual void enableMockMediaSource();
     bool mockMediaSourceEnabled() const;
     static void addMockMediaSourceEngine();
+#endif
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
+    virtual std::unique_ptr<MediaRecorderPrivateWriter> createMediaRecorderPrivateWriter(const String&, MediaRecorderPrivateWriterListener&) const;
 #endif
 protected:
     MediaStrategy();

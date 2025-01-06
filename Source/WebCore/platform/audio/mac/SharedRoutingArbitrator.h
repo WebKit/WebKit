@@ -28,6 +28,7 @@
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
 
 #include "AudioSession.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -46,14 +47,14 @@ class Logger;
 namespace WebCore {
 
 class WEBCORE_EXPORT SharedRoutingArbitratorToken : public CanMakeWeakPtr<SharedRoutingArbitratorToken> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SharedRoutingArbitratorToken, WEBCORE_EXPORT);
 public:
     static UniqueRef<SharedRoutingArbitratorToken> create();
-    const void* logIdentifier() const;
+    uint64_t logIdentifier() const;
 private:
     friend UniqueRef<SharedRoutingArbitratorToken> WTF::makeUniqueRefWithoutFastMallocCheck<SharedRoutingArbitratorToken>();
     SharedRoutingArbitratorToken() = default;
-    mutable const void* m_logIdentifier;
+    mutable uint64_t m_logIdentifier { 0 };
 };
 
 class WEBCORE_EXPORT SharedRoutingArbitrator {

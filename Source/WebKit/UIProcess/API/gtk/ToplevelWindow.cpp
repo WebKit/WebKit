@@ -29,6 +29,7 @@
 #include "WebKitWebViewBasePrivate.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -42,6 +43,8 @@ static void toplevelWindowDestroyedCallback(gpointer, GObject* window)
 {
     toplevelWindows().remove(reinterpret_cast<GtkWindow*>(window));
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ToplevelWindow);
 
 ToplevelWindow* ToplevelWindow::forGtkWindow(GtkWindow* window)
 {

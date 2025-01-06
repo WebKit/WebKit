@@ -20,4 +20,6 @@ const instance = new Temporal.PlainYearMonth(2019, 10);
 for (const value of badOptions) {
   assert.throws(TypeError, () => instance.with({ year: 2020 }, value),
     `TypeError on wrong options type ${typeof value}`);
+  assert.throws(RangeError, () => instance.with({ month: -1 }, value),
+    "Partial date processed before throwing TypeError");
 };

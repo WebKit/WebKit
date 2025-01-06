@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT event.intercept() should provide popstate with a valid state object Test timed out
+PASS event.intercept() should provide popstate with a valid state object
 

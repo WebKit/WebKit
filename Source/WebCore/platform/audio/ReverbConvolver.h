@@ -36,6 +36,7 @@
 #include <memory>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
@@ -44,7 +45,7 @@ namespace WebCore {
 class AudioChannel;
 
 class ReverbConvolver final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ReverbConvolver);
     WTF_MAKE_NONCOPYABLE(ReverbConvolver);
 public:
     // maxFFTSize can be adjusted (from say 2048 to 32768) depending on how much precision is necessary.

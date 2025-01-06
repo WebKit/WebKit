@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017, Alliance for Open Media. All rights reserved
+# Copyright (c) 2017, Alliance for Open Media. All rights reserved.
 #
 # This source code is subject to the terms of the BSD 2 Clause License and the
 # Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License was
@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.5)
 
 string(TIMESTAMP year "%Y")
 set(asm_file_header_block "\;
-\; Copyright (c) ${year}, Alliance for Open Media. All rights reserved
+\; Copyright (c) ${year}, Alliance for Open Media. All rights reserved.
 \;
 \; This source code is subject to the terms of the BSD 2 Clause License and
 \; the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -23,7 +23,7 @@ set(asm_file_header_block "\;
 \;
 ")
 set(h_file_header_block "/*
- * Copyright (c) ${year}, Alliance for Open Media. All rights reserved
+ * Copyright (c) ${year}, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -36,7 +36,7 @@ set(h_file_header_block "/*
 \#define AOM_CONFIG_H_
 ")
 set(cmake_file_header_block "##
-## Copyright (c) ${year}, Alliance for Open Media. All rights reserved
+## Copyright (c) ${year}, Alliance for Open Media. All rights reserved.
 ##
 ## This source code is subject to the terms of the BSD 2 Clause License and
 ## the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -85,8 +85,7 @@ file(APPEND "${aom_config_h_template}" "\#endif  // AOM_CONFIG_H_")
 set(aom_asm_config_template "${AOM_CONFIG_DIR}/config/aom_config.asm.cmake")
 file(WRITE "${aom_asm_config_template}" ${asm_file_header_block})
 foreach(aom_var ${aom_build_vars})
-  if(NOT "${aom_var}" STREQUAL "INLINE"
-     AND NOT "${aom_var}" STREQUAL "AOM_RTCD_FLAGS")
+  if(NOT "${aom_var}" STREQUAL "AOM_RTCD_FLAGS")
     file(APPEND "${aom_asm_config_template}" "${aom_var} equ \${${aom_var}}\n")
   endif()
 endforeach()

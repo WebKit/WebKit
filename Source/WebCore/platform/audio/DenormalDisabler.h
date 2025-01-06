@@ -25,8 +25,10 @@
 #ifndef DenormalDisabler_h
 #define DenormalDisabler_h
 
-#include <wtf/MathExtras.h>
 #include <cinttypes>
+#include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -43,7 +45,7 @@ namespace WebCore {
 
 #ifdef HAVE_DENORMAL
 class DenormalDisabler final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DenormalDisabler);
 public:
     DenormalDisabler()
             : m_savedCSR(0)
@@ -102,7 +104,7 @@ private:
         } __attribute__ ((aligned (16)));
 
         fxsaveResult registerData;
-        memset(&registerData, 0, sizeof(fxsaveResult));
+        zeroBytes(registerData);
         asm volatile("fxsave %0" : "=m" (registerData));
         s_isSupported = registerData.CSRMask & 0x0040;
         s_isInited = true;
@@ -131,7 +133,7 @@ private:
 #else
 // FIXME: add implementations for other architectures and compilers
 class DenormalDisabler final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DenormalDisabler);
 public:
     DenormalDisabler() { }
 

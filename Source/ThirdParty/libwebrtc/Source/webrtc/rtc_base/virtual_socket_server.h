@@ -13,9 +13,9 @@
 
 #include <deque>
 #include <map>
+#include <optional>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/make_ref_counted.h"
 #include "api/ref_counted_base.h"
 #include "api/scoped_refptr.h"
@@ -28,7 +28,7 @@
 
 namespace rtc {
 
-class Packet;
+class VirtualSocketPacket;
 class VirtualSocketServer;
 class SocketAddressPair;
 
@@ -86,7 +86,8 @@ class VirtualSocket : public Socket, public sigslot::has_slots<> {
   // Removes stale packets from the network. Returns current size.
   size_t PurgeNetworkPackets(int64_t cur_time);
 
-  void PostPacket(webrtc::TimeDelta delay, std::unique_ptr<Packet> packet);
+  void PostPacket(webrtc::TimeDelta delay,
+                  std::unique_ptr<VirtualSocketPacket> packet);
   void PostConnect(webrtc::TimeDelta delay, const SocketAddress& remote_addr);
   void PostDisconnect(webrtc::TimeDelta delay);
 
@@ -118,7 +119,7 @@ class VirtualSocket : public Socket, public sigslot::has_slots<> {
     };
     AcceptResult Accept();
 
-    bool AddPacket(std::unique_ptr<Packet> packet);
+    bool AddPacket(std::unique_ptr<VirtualSocketPacket> packet);
     void PostConnect(webrtc::TimeDelta delay, const SocketAddress& remote_addr);
 
    private:
@@ -148,10 +149,11 @@ class VirtualSocket : public Socket, public sigslot::has_slots<> {
     PostedConnects posted_connects_ RTC_GUARDED_BY(mutex_);
 
     // Data which has been received from the network
-    std::list<std::unique_ptr<Packet>> recv_buffer_ RTC_GUARDED_BY(mutex_);
+    std::list<std::unique_ptr<VirtualSocketPacket>> recv_buffer_
+        RTC_GUARDED_BY(mutex_);
 
     // Pending sockets which can be Accepted
-    absl::optional<std::deque<SocketAddress>> listen_queue_
+    std::optional<std::deque<SocketAddress>> listen_queue_
         RTC_GUARDED_BY(mutex_);
   };
 

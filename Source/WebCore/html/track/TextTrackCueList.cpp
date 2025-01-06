@@ -29,14 +29,16 @@
 #if ENABLE(VIDEO)
 
 #include "TextTrackCueList.h"
+#include <algorithm>
+#include <ranges>
 
 // Checking sorting is too slow for general use; turn it on explicitly when working on this class.
 #undef CHECK_SORTING
 
 #ifdef CHECK_SORTING
-#define ASSERT_SORTED(begin, end) ASSERT(std::is_sorted(begin, end, cueSortsBefore))
+#define ASSERT_SORTED(range) ASSERT(std::ranges::is_sorted(range, cueSortsBefore))
 #else
-#define ASSERT_SORTED(begin, end) ((void)0)
+#define ASSERT_SORTED(range) ((void)0)
 #endif
 
 namespace WebCore {
@@ -92,7 +94,7 @@ TextTrackCueList& TextTrackCueList::activeCues()
         if (cue->isActive())
             activeCuesVector.append(cue);
     }
-    ASSERT_SORTED(activeCuesVector.begin(), activeCuesVector.end());
+    ASSERT_SORTED(activeCuesVector);
     m_activeCues->m_vector = WTFMove(activeCuesVector);
 
     // FIXME: This list of active cues is not updated as cues are added, removed, become active, and become inactive.
@@ -105,17 +107,17 @@ void TextTrackCueList::add(Ref<TextTrackCue>&& cue)
     ASSERT(!m_vector.contains(cue.ptr()));
 
     RefPtr<TextTrackCue> cueRefPtr { WTFMove(cue) };
-    unsigned insertionPosition = std::upper_bound(m_vector.begin(), m_vector.end(), cueRefPtr, cueSortsBefore) - m_vector.begin();
-    ASSERT_SORTED(m_vector.begin(), m_vector.end());
+    unsigned insertionPosition = std::ranges::upper_bound(m_vector, cueRefPtr, cueSortsBefore) - m_vector.begin();
+    ASSERT_SORTED(m_vector);
     m_vector.insert(insertionPosition, WTFMove(cueRefPtr));
-    ASSERT_SORTED(m_vector.begin(), m_vector.end());
+    ASSERT_SORTED(m_vector);
 }
 
 void TextTrackCueList::remove(TextTrackCue& cue)
 {
-    ASSERT_SORTED(m_vector.begin(), m_vector.end());
+    ASSERT_SORTED(m_vector);
     m_vector.remove(cueIndex(cue));
-    ASSERT_SORTED(m_vector.begin(), m_vector.end());
+    ASSERT_SORTED(m_vector);
 }
 
 void TextTrackCueList::clear()
@@ -127,22 +129,24 @@ void TextTrackCueList::clear()
 
 void TextTrackCueList::updateCueIndex(const TextTrackCue& cue)
 {
-    auto cuePosition = m_vector.begin() + cueIndex(cue);
-    auto afterCuePosition = cuePosition + 1;
+    auto vectorSpan = m_vector.mutableSpan();
+    auto cueIndex = this->cueIndex(cue);
+    auto valuesUntilCue = vectorSpan.first(cueIndex);
+    auto cuePosition = vectorSpan.subspan(cueIndex).begin();
+    auto valuesAfterCue = vectorSpan.subspan(cueIndex + 1);
+    ASSERT_SORTED(valuesUntilCue);
+    ASSERT_SORTED(valuesAfterCue);
 
-    ASSERT_SORTED(m_vector.begin(), cuePosition);
-    ASSERT_SORTED(afterCuePosition, m_vector.end());
-
-    auto reinsertionPosition = std::upper_bound(m_vector.begin(), cuePosition, *cuePosition, cueSortsBefore);
-    if (reinsertionPosition != cuePosition)
-        std::rotate(reinsertionPosition, cuePosition, afterCuePosition);
+    auto reinsertionPosition = std::ranges::upper_bound(valuesUntilCue, *cuePosition, cueSortsBefore);
+    if (std::to_address(reinsertionPosition) != std::to_address(cuePosition))
+        std::rotate(reinsertionPosition, cuePosition, valuesAfterCue.begin());
     else {
-        reinsertionPosition = std::upper_bound(afterCuePosition, m_vector.end(), *cuePosition, cueSortsBefore);
-        if (reinsertionPosition != afterCuePosition)
-            std::rotate(cuePosition, afterCuePosition, reinsertionPosition);
+        reinsertionPosition = std::ranges::upper_bound(valuesAfterCue, *cuePosition, cueSortsBefore);
+        if (std::to_address(reinsertionPosition) != valuesAfterCue.data())
+            std::rotate(cuePosition, valuesAfterCue.begin(), reinsertionPosition);
     }
 
-    ASSERT_SORTED(m_vector.begin(), m_vector.end());
+    ASSERT_SORTED(m_vector);
 }
 
 } // namespace WebCore

@@ -27,11 +27,12 @@
 #pragma once
 
 #include "Attribute.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 struct DoctypeData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DoctypeData);
 public:
     Vector<UChar> publicIdentifier;
     Vector<UChar> systemIdentifier;
@@ -41,7 +42,7 @@ public:
 };
 
 class HTMLToken {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(HTMLToken);
 public:
     enum class Type : uint8_t {
         Uninitialized,

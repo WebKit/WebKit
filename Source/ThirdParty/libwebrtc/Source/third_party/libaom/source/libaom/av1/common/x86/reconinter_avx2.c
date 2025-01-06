@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -19,7 +19,7 @@
 #include "aom_dsp/x86/synonyms_avx2.h"
 #include "av1/common/blockd.h"
 
-static INLINE __m256i calc_mask_avx2(const __m256i mask_base, const __m256i s0,
+static inline __m256i calc_mask_avx2(const __m256i mask_base, const __m256i s0,
                                      const __m256i s1) {
   const __m256i diff = _mm256_abs_epi16(_mm256_sub_epi16(s0, s1));
   return _mm256_abs_epi16(
@@ -135,7 +135,7 @@ void av1_build_compound_diffwtd_mask_avx2(uint8_t *mask,
   }
 }
 
-static INLINE __m256i calc_mask_d16_avx2(const __m256i *data_src0,
+static inline __m256i calc_mask_d16_avx2(const __m256i *data_src0,
                                          const __m256i *data_src1,
                                          const __m256i *round_const,
                                          const __m256i *mask_base_16,
@@ -151,7 +151,7 @@ static INLINE __m256i calc_mask_d16_avx2(const __m256i *data_src0,
   return diff_clamp;
 }
 
-static INLINE __m256i calc_mask_d16_inv_avx2(const __m256i *data_src0,
+static inline __m256i calc_mask_d16_inv_avx2(const __m256i *data_src0,
                                              const __m256i *data_src1,
                                              const __m256i *round_const,
                                              const __m256i *mask_base_16,
@@ -169,7 +169,7 @@ static INLINE __m256i calc_mask_d16_inv_avx2(const __m256i *data_src0,
   return diff_const_16;
 }
 
-static INLINE void build_compound_diffwtd_mask_d16_avx2(
+static inline void build_compound_diffwtd_mask_d16_avx2(
     uint8_t *mask, const CONV_BUF_TYPE *src0, int src0_stride,
     const CONV_BUF_TYPE *src1, int src1_stride, int h, int w, int shift) {
   const int mask_base = 38;
@@ -330,7 +330,7 @@ static INLINE void build_compound_diffwtd_mask_d16_avx2(
   }
 }
 
-static INLINE void build_compound_diffwtd_mask_d16_inv_avx2(
+static inline void build_compound_diffwtd_mask_d16_inv_avx2(
     uint8_t *mask, const CONV_BUF_TYPE *src0, int src0_stride,
     const CONV_BUF_TYPE *src1, int src1_stride, int h, int w, int shift) {
   const int mask_base = 38;
@@ -576,7 +576,7 @@ void av1_build_compound_diffwtd_mask_highbd_avx2(
         }
       }
     } else {
-      const __m128i xshift = xx_set1_64_from_32i(bd - 8 + DIFF_FACTOR_LOG2);
+      const __m128i xshift = _mm_set1_epi64x(bd - 8 + DIFF_FACTOR_LOG2);
       if (mask_type == DIFFWTD_38_INV) {
         for (int i = 0; i < h; ++i) {
           for (int j = 0; j < w; j += 16) {

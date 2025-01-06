@@ -30,6 +30,7 @@
 #include "APIGeolocationProvider.h"
 #include "WKGeolocationManager.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace API {
 template<> struct ClientTraits<WKGeolocationProviderBase> {
@@ -42,7 +43,7 @@ namespace WebKit {
 class WebGeolocationManagerProxy;
 
 class WebGeolocationProvider : public API::GeolocationProvider, API::Client<WKGeolocationProviderBase> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebGeolocationProvider);
 public:
     explicit WebGeolocationProvider(const WKGeolocationProviderBase*);
 

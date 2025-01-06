@@ -136,12 +136,12 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
     VisibleSelection oldSelection = frame->selection().selection();
     frame->selection().setSelection(range);
 
-    float scaleFactor = (options & SnapshotOptionsExcludeDeviceScaleFactor) ? 1 : frame->page()->deviceScaleFactor();
+    float scaleFactor = options.contains(SnapshotOption::ExcludeDeviceScaleFactor) ? 1 : frame->page()->deviceScaleFactor();
     IntRect paintRect = enclosingIntRect(unionRectIgnoringZeroRects(RenderObject::absoluteBorderAndTextRects(range)));
     IntSize backingStoreSize = paintRect.size();
     backingStoreSize.scale(scaleFactor);
 
-    auto snapshot = WebImage::create(backingStoreSize, snapshotOptionsToImageOptions(options | SnapshotOptionsShareable), DestinationColorSpace::SRGB());
+    auto snapshot = WebImage::create(backingStoreSize, snapshotOptionsToImageOptions(options | SnapshotOption::Shareable), DestinationColorSpace::SRGB());
     if (!snapshot->context())
         return nullptr;
 
@@ -156,9 +156,9 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
     OptionSet<PaintBehavior> oldPaintBehavior = frameView->paintBehavior();
     OptionSet<PaintBehavior> paintBehavior = oldPaintBehavior;
     paintBehavior.add({ PaintBehavior::SelectionOnly, PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting });
-    if (options & SnapshotOptionsForceBlackText)
+    if (options.contains(SnapshotOption::ForceBlackText))
         paintBehavior.add(PaintBehavior::ForceBlackText);
-    if (options & SnapshotOptionsForceWhiteText)
+    if (options.contains(SnapshotOption::ForceWhiteText))
         paintBehavior.add(PaintBehavior::ForceWhiteText);
 
     frameView->setPaintBehavior(paintBehavior);

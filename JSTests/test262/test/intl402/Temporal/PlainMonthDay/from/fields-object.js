@@ -11,8 +11,6 @@ features: [Temporal]
 const okTests = [
   [{ monthCode: "M08", day: 1, calendar: "gregory" }, "gregory", "monthCode and non-ISO Gregorian string calendar"],
   [{ monthCode: "M08", day: 1, calendar: "hebrew" }, "hebrew", "monthCode and non-ISO non-Gregorian string calendar"],
-  [{ monthCode: "M08", day: 1, calendar: Temporal.Calendar.from("gregory") }, "gregory", "monthCode and non-ISO Gregorian object calendar"],
-  [{ monthCode: "M08", day: 1, calendar: Temporal.Calendar.from("hebrew") }, "hebrew", "monthCode and non-ISO non-Gregorian object calendar"],
 ];
 
 for (const [argument, expectedCalendar, description] of okTests) {
@@ -24,8 +22,6 @@ for (const [argument, expectedCalendar, description] of okTests) {
 const notOkTests = [
   [{ month: 8, day: 1, calendar: "gregory" }, "month and non-ISO string calendar"],
   [{ month: 8, day: 1, calendar: "hebrew" }, "month and non-ISO non-Gregorian string calendar"],
-  [{ month: 8, day: 1, calendar: Temporal.Calendar.from("gregory") }, "month and non-ISO Gregorian object calendar"],
-  [{ month: 8, day: 1, calendar: Temporal.Calendar.from("hebrew") }, "month and non-ISO non-Gregorian object calendar"],
 ];
 
 for (const [argument, description] of notOkTests) {

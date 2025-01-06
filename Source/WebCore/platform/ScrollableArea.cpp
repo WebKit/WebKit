@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2010, Google Inc. All rights reserved.
- * Copyright (C) 2008, 2011, 2014-2016 Apple Inc. All Rights Reserved.
+ * Copyright (c) 2010-2023 Google Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All Rights Reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -45,6 +45,7 @@
 #include "ScrollbarGutter.h"
 #include "ScrollbarTheme.h"
 #include "ScrollbarsControllerMock.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -57,6 +58,8 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SameSizeAsSc
 }
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollableArea);
 
 struct SameSizeAsScrollableArea final : public CanMakeWeakPtr<SameSizeAsScrollableArea> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -88,7 +91,7 @@ ScrollbarsController& ScrollableArea::scrollbarsController() const
 {
     if (!m_scrollbarsController)
         const_cast<ScrollableArea&>(*this).internalCreateScrollbarsController();
-
+    RELEASE_ASSERT(m_scrollbarsController);
     return *m_scrollbarsController.get();
 }
 
@@ -912,10 +915,8 @@ LayoutRect ScrollableArea::getRectToExposeForScrollIntoView(const LayoutRect& vi
             // then treat it as fully visible to avoid unnecessary horizontal scrolling
             scrollX = alignX.getVisibleBehavior();
         } else if (intersectWidth == visibleBounds.width()) {
-            // If the rect is bigger than the visible area, don't bother trying to center. Other alignments will work.
+            // The rect is bigger than the visible area.
             scrollX = alignX.getVisibleBehavior();
-            if (scrollX == ScrollAlignment::Behavior::AlignCenter)
-                scrollX = ScrollAlignment::Behavior::NoScroll;
         } else if (intersectWidth > 0)
             // If the rectangle is partially visible, but not above the minimum threshold, use the specified partial behavior
             scrollX = alignX.getPartialBehavior();
@@ -954,10 +955,8 @@ LayoutRect ScrollableArea::getRectToExposeForScrollIntoView(const LayoutRect& vi
             // If the rectangle is fully visible, use the specified visible behavior.
             scrollY = alignY.getVisibleBehavior();
         } else if (intersectHeight == visibleBounds.height()) {
-            // If the rect is bigger than the visible area, don't bother trying to center. Other alignments will work.
+            // The rect is bigger than the visible area.
             scrollY = alignY.getVisibleBehavior();
-            if (scrollY == ScrollAlignment::Behavior::AlignCenter)
-                scrollY = ScrollAlignment::Behavior::NoScroll;
         } else if (intersectHeight > 0)
             // If the rectangle is partially visible, use the specified partial behavior
             scrollY = alignY.getPartialBehavior();
@@ -1003,10 +1002,18 @@ FloatSize ScrollableArea::deltaForPropagation(const FloatSize& biasedDelta) cons
 
 bool ScrollableArea::shouldBlockScrollPropagation(const FloatSize& biasedDelta) const
 {
-    return ((horizontalOverscrollBehaviorPreventsPropagation() || verticalOverscrollBehaviorPreventsPropagation())
-        && ((horizontalOverscrollBehaviorPreventsPropagation() && verticalOverscrollBehaviorPreventsPropagation())
-        || (horizontalOverscrollBehaviorPreventsPropagation() && !biasedDelta.height()) || (verticalOverscrollBehaviorPreventsPropagation()
-        && !biasedDelta.width())));
+    bool preventsHorizontalPropagation = horizontalOverscrollBehaviorPreventsPropagation();
+    bool preventsVerticalPropagation = verticalOverscrollBehaviorPreventsPropagation();
+    if (preventsHorizontalPropagation && preventsVerticalPropagation)
+        return true;
+
+    if (preventsHorizontalPropagation)
+        return !biasedDelta.height();
+
+    if (preventsVerticalPropagation)
+        return !biasedDelta.width();
+
+    return false;
 }
 
 ScrollingNodeID ScrollableArea::scrollingNodeIDForTesting()
@@ -1016,7 +1023,7 @@ ScrollingNodeID ScrollableArea::scrollingNodeIDForTesting()
     auto testingNodeID = scrollingNodeID();
     if (!testingNodeID)
         m_scrollingNodeIDForTesting = testingNodeID = ScrollingNodeID::generate();
-    return testingNodeID;
+    return *testingNodeID;
 }
 
 } // namespace WebCore

@@ -13,10 +13,10 @@
 
 #include <list>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
@@ -154,7 +154,7 @@ class RtcpTransceiverImpl {
   std::function<void(rtc::ArrayView<const uint8_t>)> rtcp_transport_;
 
   bool ready_to_send_;
-  absl::optional<rtcp::Remb> remb_;
+  std::optional<rtcp::Remb> remb_;
   // TODO(bugs.webrtc.org/8239): Remove entries from remote_senders_ that are no
   // longer needed.
   flat_map<uint32_t, RemoteSenderState> remote_senders_;

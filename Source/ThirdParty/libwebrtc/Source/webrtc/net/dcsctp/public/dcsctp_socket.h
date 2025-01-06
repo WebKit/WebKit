@@ -12,12 +12,14 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/units/timestamp.h"
 #include "net/dcsctp/public/dcsctp_handover_state.h"
 #include "net/dcsctp/public/dcsctp_message.h"
 #include "net/dcsctp/public/dcsctp_options.h"
@@ -49,11 +51,11 @@ struct SendOptions {
   // If set, will discard messages that haven't been correctly sent and
   // received before the lifetime has expired. This is only available if the
   // peer supports Partial Reliability Extension (RFC3758).
-  absl::optional<DurationMs> lifetime = absl::nullopt;
+  std::optional<DurationMs> lifetime = std::nullopt;
 
   // If set, limits the number of retransmissions. This is only available
   // if the peer supports Partial Reliability Extension (RFC3758).
-  absl::optional<size_t> max_retransmissions = absl::nullopt;
+  std::optional<size_t> max_retransmissions = std::nullopt;
 
   // If set, will generate lifecycle events for this message. See e.g.
   // `DcSctpSocketCallbacks::OnLifecycleMessageFullySent`. This value is decided
@@ -323,9 +325,21 @@ class DcSctpSocketCallbacks {
 
   // Returns the current time in milliseconds (from any epoch).
   //
+  // TODO(bugs.webrtc.org/15593): This method is deprecated, see `Now`.
+  //
   // Note that it's NOT ALLOWED to call into this library from within this
   // callback.
-  virtual TimeMs TimeMillis() = 0;
+  virtual TimeMs TimeMillis() { return TimeMs(0); }
+
+  // Returns the current time (from any epoch).
+  //
+  // This callback will eventually replace `TimeMillis()`.
+  //
+  // Note that it's NOT ALLOWED to call into this library from within this
+  // callback.
+  virtual webrtc::Timestamp Now() {
+    return webrtc::Timestamp::Millis(*TimeMillis());
+  }
 
   // Called when the library needs a random number uniformly distributed between
   // `low` (inclusive) and `high` (exclusive). The random numbers used by the
@@ -564,6 +578,16 @@ class DcSctpSocketInterface {
   virtual SendStatus Send(DcSctpMessage message,
                           const SendOptions& send_options) = 0;
 
+  // Sends the messages `messages` using the provided send options.
+  // Sending a message is an asynchronous operation, and the `OnError` callback
+  // may be invoked to indicate any errors in sending the message.
+  //
+  // This has identical semantics to Send, except that it may coalesce many
+  // messages into a single SCTP packet if they would fit.
+  virtual std::vector<SendStatus> SendMany(
+      rtc::ArrayView<DcSctpMessage> messages,
+      const SendOptions& send_options) = 0;
+
   // Resetting streams is an asynchronous operation and the results will
   // be notified using `DcSctpSocketCallbacks::OnStreamsResetDone()` on success
   // and `DcSctpSocketCallbacks::OnStreamsResetFailed()` on failure. Note that
@@ -597,10 +621,10 @@ class DcSctpSocketInterface {
                                              size_t bytes) = 0;
 
   // Retrieves the latest metrics. If the socket is not fully connected,
-  // `absl::nullopt` will be returned. Note that metrics are not guaranteed to
+  // `std::nullopt` will be returned. Note that metrics are not guaranteed to
   // be carried over if this socket is handed over by calling
   // `GetHandoverStateAndClose`.
-  virtual absl::optional<Metrics> GetMetrics() const = 0;
+  virtual std::optional<Metrics> GetMetrics() const = 0;
 
   // Returns empty bitmask if the socket is in the state in which a snapshot of
   // the state can be made by `GetHandoverStateAndClose()`. Return value is
@@ -613,7 +637,7 @@ class DcSctpSocketInterface {
   // The method fails if the socket is not in a state ready for handover.
   // nullopt indicates the failure. `DcSctpSocketCallbacks::OnClosed` will be
   // called on success.
-  virtual absl::optional<DcSctpSocketHandoverState>
+  virtual std::optional<DcSctpSocketHandoverState>
   GetHandoverStateAndClose() = 0;
 
   // Returns the detected SCTP implementation of the peer. As this is not

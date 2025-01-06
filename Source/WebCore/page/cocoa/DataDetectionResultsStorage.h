@@ -31,6 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 OBJC_CLASS DDScannerResult;
 OBJC_CLASS NSArray;
@@ -39,7 +40,7 @@ namespace WebCore {
 
 class DataDetectionResultsStorage {
     WTF_MAKE_NONCOPYABLE(DataDetectionResultsStorage);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DataDetectionResultsStorage);
 public:
     DataDetectionResultsStorage() = default;
 
@@ -56,7 +57,7 @@ public:
 
 private:
     RetainPtr<NSArray> m_documentLevelResults;
-    HashMap<ImageOverlayDataDetectionResultIdentifier, RetainPtr<DDScannerResult>> m_imageOverlayResults;
+    UncheckedKeyHashMap<ImageOverlayDataDetectionResultIdentifier, RetainPtr<DDScannerResult>> m_imageOverlayResults;
 };
 
 } // namespace WebCore

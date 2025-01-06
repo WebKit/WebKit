@@ -1,0 +1,10 @@
+
+FAIL role on Element must enqueue an attributeChanged reaction when adding role content attribute assert_array_equals: lengths differ, expected array ["attributeChanged"] length 1, got [] length 0
+FAIL role on Element must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got ["constructed"] length 1
+FAIL ariaColIndexText on Element must enqueue an attributeChanged reaction when adding aria-colindextext content attribute assert_array_equals: lengths differ, expected array ["attributeChanged"] length 1, got [] length 0
+FAIL ariaColIndexText on Element must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got ["constructed"] length 1
+PASS ariaDescription on Element must enqueue an attributeChanged reaction when adding aria-description content attribute
+PASS ariaDescription on Element must enqueue an attributeChanged reaction when replacing an existing attribute
+FAIL ariaRowIndexText on Element must enqueue an attributeChanged reaction when adding aria-rowindextext content attribute assert_array_equals: lengths differ, expected array ["attributeChanged"] length 1, got [] length 0
+FAIL ariaRowIndexText on Element must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got ["constructed"] length 1
+// tentative properties that were added mid-year... merge back in after Interop 2024 completes

@@ -3,7 +3,7 @@ This test checks that going back twice without committing doesn't corrupt the ba
 If testing manually, click here.
 
 ============== Back Forward List ==============
-curr->  http://127.0.0.1:8000/navigation/back-twice-without-commit.html  **nav target**
-        http://127.0.0.1:8000/navigation/resources/back-twice-page-2.html  **nav target**
-        http://127.0.0.1:8000/navigation/resources/back-twice-page-3.html  **nav target**
+curr->  http://127.0.0.1:8000/navigation/back-twice-without-commit.html
+        http://127.0.0.1:8000/navigation/resources/back-twice-page-2.html
+        http://127.0.0.1:8000/navigation/resources/back-twice-page-3.html
 ===============================================

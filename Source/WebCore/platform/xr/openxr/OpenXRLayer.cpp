@@ -19,12 +19,16 @@
 
 #include "config.h"
 #include "OpenXRLayer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 
 using namespace WebCore;
 
 namespace PlatformXR {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRLayer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRLayerProjection);
 
 // OpenXRLayerProjection
 

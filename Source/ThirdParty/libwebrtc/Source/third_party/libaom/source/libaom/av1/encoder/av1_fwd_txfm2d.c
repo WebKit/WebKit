@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,7 +20,7 @@
 #include "av1/encoder/av1_fwd_txfm1d.h"
 #include "av1/encoder/av1_fwd_txfm1d_cfg.h"
 
-static INLINE TxfmFunc fwd_txfm_type_to_func(TXFM_TYPE txfm_type) {
+static inline TxfmFunc fwd_txfm_type_to_func(TXFM_TYPE txfm_type) {
   switch (txfm_type) {
     case TXFM_TYPE_DCT4: return av1_fdct4;
     case TXFM_TYPE_DCT8: return av1_fdct8;
@@ -53,7 +53,7 @@ void av1_gen_fwd_stage_range(int8_t *stage_range_col, int8_t *stage_range_row,
   }
 }
 
-static INLINE void fwd_txfm2d_c(const int16_t *input, int32_t *output,
+static inline void fwd_txfm2d_c(const int16_t *input, int32_t *output,
                                 const int stride, const TXFM_2D_FLIP_CFG *cfg,
                                 int32_t *buf, int bd) {
   int c, r;
@@ -174,6 +174,7 @@ void av1_fwd_txfm2d_32x16_c(const int16_t *input, int32_t *output, int stride,
   fwd_txfm2d_c(input, output, stride, &cfg, txfm_buf, bd);
 }
 
+#if !CONFIG_REALTIME_ONLY
 void av1_fwd_txfm2d_4x16_c(const int16_t *input, int32_t *output, int stride,
                            TX_TYPE tx_type, int bd) {
   DECLARE_ALIGNED(32, int32_t, txfm_buf[4 * 16]);
@@ -181,6 +182,7 @@ void av1_fwd_txfm2d_4x16_c(const int16_t *input, int32_t *output, int stride,
   av1_get_fwd_txfm_cfg(tx_type, TX_4X16, &cfg);
   fwd_txfm2d_c(input, output, stride, &cfg, txfm_buf, bd);
 }
+#endif  // !CONFIG_REALTIME_ONLY
 
 void av1_fwd_txfm2d_16x4_c(const int16_t *input, int32_t *output, int stride,
                            TX_TYPE tx_type, int bd) {
@@ -190,6 +192,7 @@ void av1_fwd_txfm2d_16x4_c(const int16_t *input, int32_t *output, int stride,
   fwd_txfm2d_c(input, output, stride, &cfg, txfm_buf, bd);
 }
 
+#if !CONFIG_REALTIME_ONLY
 void av1_fwd_txfm2d_8x32_c(const int16_t *input, int32_t *output, int stride,
                            TX_TYPE tx_type, int bd) {
   DECLARE_ALIGNED(32, int32_t, txfm_buf[32 * 8]);
@@ -205,6 +208,7 @@ void av1_fwd_txfm2d_32x8_c(const int16_t *input, int32_t *output, int stride,
   av1_get_fwd_txfm_cfg(tx_type, TX_32X8, &cfg);
   fwd_txfm2d_c(input, output, stride, &cfg, txfm_buf, bd);
 }
+#endif  // !CONFIG_REALTIME_ONLY
 
 void av1_fwd_txfm2d_4x4_c(const int16_t *input, int32_t *output, int stride,
                           TX_TYPE tx_type, int bd) {
@@ -284,6 +288,7 @@ void av1_fwd_txfm2d_64x32_c(const int16_t *input, int32_t *output, int stride,
   // Note: no repacking needed here.
 }
 
+#if !CONFIG_REALTIME_ONLY
 void av1_fwd_txfm2d_16x64_c(const int16_t *input, int32_t *output, int stride,
                             TX_TYPE tx_type, int bd) {
   DECLARE_ALIGNED(32, int32_t, txfm_buf[64 * 16]);
@@ -310,6 +315,7 @@ void av1_fwd_txfm2d_64x16_c(const int16_t *input, int32_t *output, int stride,
   memset(output + 16 * 32, 0, 16 * 32 * sizeof(*output));
   // Note: no repacking needed here.
 }
+#endif  // !CONFIG_REALTIME_ONLY
 
 static const int8_t fwd_shift_4x4[3] = { 2, 0, 0 };
 static const int8_t fwd_shift_8x8[3] = { 2, -1, 0 };
@@ -380,7 +386,7 @@ static const int8_t *fwd_txfm_range_mult2_list[TXFM_TYPES] = {
   fidtx8_range_mult2, fidtx16_range_mult2, fidtx32_range_mult2
 };
 
-static INLINE void set_fwd_txfm_non_scale_range(TXFM_2D_FLIP_CFG *cfg) {
+static inline void set_fwd_txfm_non_scale_range(TXFM_2D_FLIP_CFG *cfg) {
   av1_zero(cfg->stage_range_col);
   av1_zero(cfg->stage_range_row);
 

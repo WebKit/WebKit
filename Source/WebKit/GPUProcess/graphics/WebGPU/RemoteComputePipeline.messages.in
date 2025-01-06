@@ -23,7 +23,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteComputePipeline NotRefCounted Stream {
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU,
+    EnabledBy=WebGPUEnabled
+]
+messages -> RemoteComputePipeline Stream {
     void Destruct()
     void GetBindGroupLayout(uint32_t index, WebKit::WebGPUIdentifier identifier)
     void SetLabel(String label)

@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+  body {
+    background: white;
+  }
+</style>
+</head>
+<body>
+<div style="width:100px; height: 100px; background: green"></div>
+<script>
+onload = () => { window.parent.postMessage("onload", "*"); }
+</script>
+</body>
+</html>

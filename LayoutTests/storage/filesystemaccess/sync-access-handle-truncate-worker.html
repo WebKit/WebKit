@@ -1,0 +1,14 @@
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+	testRunner.setOriginQuotaRatioEnabled(false); // Use fixed quota instead of quota based on disk space.
+	testRunner.setQuota(1024 * 1024); // 1 MB
+	testRunner.setAllowStorageQuotaIncrease(false);
+}
+worker = startWorker('resources/sync-access-handle-truncate.js');</script>
+</body>
+</html>

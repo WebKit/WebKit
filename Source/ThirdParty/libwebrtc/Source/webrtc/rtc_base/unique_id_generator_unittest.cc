@@ -18,8 +18,8 @@
 #include "api/array_view.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/helpers.h"
 #include "test/gmock.h"
 
 using ::testing::IsEmpty;

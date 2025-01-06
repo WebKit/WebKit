@@ -48,6 +48,23 @@ class RTC_EXPORT Clock {
     return ConvertTimestampToNtpTime(Timestamp::Millis(timestamp_ms)).ToMs();
   }
 
+  // Converts NtpTime to a Timestamp with UTC epoch.
+  // A `Minus Infinity` Timestamp is returned if the NtpTime is invalid.
+  static Timestamp NtpToUtc(NtpTime ntp_time) {
+    if (!ntp_time.Valid()) {
+      return Timestamp::MinusInfinity();
+    }
+    // Seconds since UTC epoch.
+    int64_t time = ntp_time.seconds() - kNtpJan1970;
+    // Microseconds since UTC epoch (not including NTP fraction)
+    time = time * 1'000'000;
+    // Fractions part of the NTP time, in microseconds.
+    int64_t time_fraction =
+        DivideRoundToNearest(int64_t{ntp_time.fractions()} * 1'000'000,
+                             NtpTime::kFractionsPerSecond);
+    return Timestamp::Micros(time + time_fraction);
+  }
+
   // Returns an instance of the real-time system clock implementation.
   static Clock* GetRealTimeClock();
 };

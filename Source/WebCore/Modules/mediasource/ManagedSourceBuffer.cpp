@@ -29,11 +29,11 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "ManagedMediaSource.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ManagedSourceBuffer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ManagedSourceBuffer);
 
 Ref<ManagedSourceBuffer> ManagedSourceBuffer::create(Ref<SourceBufferPrivate>&& sourceBufferPrivate, ManagedMediaSource& source)
 {

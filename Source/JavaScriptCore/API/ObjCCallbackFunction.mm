@@ -42,6 +42,8 @@
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 class CallbackArgument {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -51,9 +53,7 @@ public:
     std::unique_ptr<CallbackArgument> m_next;
 };
 
-CallbackArgument::~CallbackArgument()
-{
-}
+CallbackArgument::~CallbackArgument() = default;
 
 class CallbackArgumentBoolean final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) final
@@ -759,5 +759,7 @@ id tryUnwrapConstructor(JSObjectRef object)
         return nil;
     return impl->wrappedConstructor();
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

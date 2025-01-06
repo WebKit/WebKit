@@ -27,10 +27,13 @@
 
 #if (PLATFORM(IOS) || PLATFORM(VISION)) && USE(SYSTEM_PREVIEW)
 
+#import "PlatformUtilities.h"
+#import "TestNSBundleExtras.h"
 #import "TestUIDelegate.h"
-#import "TestWKWebView.h"
+#import "TestWKWebViewController.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKit.h>
@@ -122,12 +125,12 @@ TEST(WebKit, SystemPreviewLoad)
 
 TEST(WebKit, SystemPreviewFail)
 {
-    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration _setSystemPreviewEnabled:YES];
 
-    auto viewController = adoptNS([[UIViewController alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-    auto uiDelegate = adoptNS([[TestSystemPreviewUIDelegate alloc] init]);
+    RetainPtr viewController = adoptNS([[TestWKWebViewController alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    RetainPtr webView = [viewController webView];
+    RetainPtr uiDelegate = adoptNS([[TestSystemPreviewUIDelegate alloc] init]);
     uiDelegate.get().viewController = viewController.get();
     [webView setUIDelegate:uiDelegate.get()];
     [viewController setView:webView.get()];
@@ -156,7 +159,7 @@ TEST(WebKit, SystemPreviewBlobRevokedImmediately)
     [webView setUIDelegate:uiDelegate.get()];
     [viewController setView:webView.get()];
 
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"UnitBox" withExtension:@"usdz" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *modelURL = [NSBundle.test_resourcesBundle URLForResource:@"UnitBox" withExtension:@"usdz"];
     NSData *modelData = [NSData dataWithContentsOfURL:modelURL];
     NSString *modelBase64 = [modelData base64EncodedStringWithOptions:0];
     NSString *html = [NSString stringWithFormat:@"<script>let base64URL = 'data:model/vnd.usdz+zip;base64,%@';"
@@ -186,12 +189,12 @@ TEST(WebKit, SystemPreviewBlobRevokedImmediately)
 
 TEST(WebKit, SystemPreviewBlob)
 {
-    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration _setSystemPreviewEnabled:YES];
 
-    auto viewController = adoptNS([[UIViewController alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-    auto uiDelegate = adoptNS([[TestSystemPreviewUIDelegate alloc] init]);
+    RetainPtr viewController = adoptNS([[TestWKWebViewController alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    RetainPtr webView = [viewController webView];
+    RetainPtr uiDelegate = adoptNS([[TestSystemPreviewUIDelegate alloc] init]);
     uiDelegate.get().viewController = viewController.get();
     [webView setUIDelegate:uiDelegate.get()];
     [viewController setView:webView.get()];
@@ -220,7 +223,7 @@ TEST(WebKit, SystemPreviewUnknownMIMEType)
     [webView setUIDelegate:uiDelegate.get()];
     [viewController setView:webView.get()];
 
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"UnitBox" withExtension:@"usdz" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *modelURL = [NSBundle.test_resourcesBundle URLForResource:@"UnitBox" withExtension:@"usdz"];
     NSData *modelData = [NSData dataWithContentsOfURL:modelURL];
     NSString *modelBase64 = [modelData base64EncodedStringWithOptions:0];
     NSString *html = [NSString stringWithFormat:@"<script>let base64URL = 'data:application/octet-stream;base64,%@';"

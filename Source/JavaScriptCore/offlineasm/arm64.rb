@@ -584,7 +584,7 @@ class Sequence
                 /^ci/, /^ti/, "addis", "subis", "mulis", "smulli", "leai", "loadf", "storef", "loadlinkacqi", "storecondreli",
                 /^atomic[a-z]+i$/
                 size = 4
-            when "loadp", "storep", "loadq", "storeq", "loadd", "stored", "lshiftp", "lshiftq", "negp", "negq", "rshiftp", "rshiftq",
+            when "loadp", "storep", "loadq", "storeq", "loadqinc", "loadd", "stored", "lshiftp", "lshiftq", "negp", "negq", "rshiftp", "rshiftq",
                 "urshiftp", "urshiftq", "addp", "addq", "mulp", "mulq", "andp", "andq", "orp", "orq", "subp", "subq", "xorp", "xorq", "addd",
                 "divd", "subd", "muld", "sqrtd", /^bp/, /^bq/, /^btp/, /^btq/, /^cp/, /^cq/, /^tp/, /^tq/, /^bd/,
                 "jmp", "call", "leap", "leaq", "loadlinkacqq", "storecondrelq", /^atomic[a-z]+q$/, "loadv", "storev"
@@ -1011,6 +1011,8 @@ class Instruction
             emitARM64Access("ldr", "ldur", operands[1], operands[0], :ptr)
         when "loadq"
             emitARM64Access("ldr", "ldur", operands[1], operands[0], :quad)
+        when "loadqinc"
+            $asm.puts "ldr #{operands[1].arm64Operand(:quad)}, #{operands[0].arm64Operand(:quad)}, #{operands[2].value}"
         when "storei"
             emitARM64Unflipped("str", operands, :word)
         when "storep"
@@ -1055,7 +1057,7 @@ class Instruction
             emitARM64Branch("fcmp", operands, :double, "b.eq")
         when "bdneq"
             emitARM64Unflipped("fcmp", operands[0..1], :double)
-            isUnordered = LocalLabel.unique("bdneq")
+            isUnordered = LocalLabel.unique(codeOrigin, "bdneq")
             $asm.puts "b.vs #{LocalLabelReference.new(codeOrigin, isUnordered).asmLabel}"
             $asm.puts "b.ne #{operands[2].asmLabel}"
             isUnordered.lower($activeBackend)
@@ -1366,12 +1368,22 @@ class Instruction
             $asm.puts "Ljsc_llint_loh_adrp_#{uid}:"
             $asm.puts "adrp #{operands[1].arm64Operand(:quad)}, #{operands[0].asmLabel}@GOTPAGE"
             $asm.puts "Ljsc_llint_loh_ldr_#{uid}:"
+
+            $asm.putStr("#if CPU(ADDRESS32)")
+            $asm.puts "ldr #{operands[1].arm64Operand(:word)}, [#{operands[1].arm64Operand(:quad)}, #{operands[0].asmLabel}@GOTPAGEOFF]"
+            $asm.putStr("#else")
             $asm.puts "ldr #{operands[1].arm64Operand(:quad)}, [#{operands[1].arm64Operand(:quad)}, #{operands[0].asmLabel}@GOTPAGEOFF]"
+            $asm.putStr("#endif")
 
             # On Linux, use ELF GOT relocation specifiers.
             $asm.putStr("#elif OS(LINUX)")
+
             $asm.puts "adrp #{operands[1].arm64Operand(:quad)}, :got:#{operands[0].asmLabel}"
+            $asm.putStr("#if CPU(ADDRESS32)")
+            $asm.puts "ldr #{operands[1].arm64Operand(:word)}, [#{operands[1].arm64Operand(:quad)}, :got_lo12:#{operands[0].asmLabel}]"
+            $asm.putStr("#else")
             $asm.puts "ldr #{operands[1].arm64Operand(:quad)}, [#{operands[1].arm64Operand(:quad)}, :got_lo12:#{operands[0].asmLabel}]"
+            $asm.putStr("#endif")
 
             # Throw a compiler error everywhere else.
             $asm.putStr("#else")
@@ -1510,14 +1522,14 @@ class Instruction
         when "cfneq"
             $asm.puts "move $0, #{operands[2].arm64Operand(:word)}"
             emitARM64Unflipped("fcmp", operands[0..1], :float)
-            isUnordered = LocalLabel.unique("cdneq")
+            isUnordered = LocalLabel.unique(codeOrigin, "cdneq")
             $asm.puts "b.vs #{LocalLabelReference.new(codeOrigin, isUnordered).asmLabel}"
             $asm.puts "cset #{operands[2].arm64Operand(:word)}, ne"
             isUnordered.lower($activeBackend)
         when "cdneq"
             $asm.puts "move $0, #{operands[2].arm64Operand(:word)}"
             emitARM64Unflipped("fcmp", operands[0..1], :double)
-            isUnordered = LocalLabel.unique("cdneq")
+            isUnordered = LocalLabel.unique(codeOrigin, "cdneq")
             $asm.puts "b.vs #{LocalLabelReference.new(codeOrigin, isUnordered).asmLabel}"
             $asm.puts "cset #{operands[2].arm64Operand(:word)}, ne"
             isUnordered.lower($activeBackend)

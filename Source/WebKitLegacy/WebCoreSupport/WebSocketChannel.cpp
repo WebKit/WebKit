@@ -55,12 +55,16 @@
 #include <WebCore/UserContentProvider.h>
 #include <WebCore/WebSocketChannelClient.h>
 #include <WebCore/WebSocketHandshake.h>
-#include <wtf/FastMalloc.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 const Seconds TCPMaximumSegmentLifetime { 2_min };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketChannel);
 
 WebSocketChannel::WebSocketChannel(Document& document, WebSocketChannelClient& client, SocketProvider& provider)
     : m_document(document)
@@ -88,8 +92,10 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& requestedUR
     ASSERT(!m_handle);
     ASSERT(!m_suspended);
 
-    if (validatedURL->url != requestedURL && m_client)
-        m_client->didUpgradeURL();
+    if (validatedURL->url != requestedURL) {
+        if (RefPtr client = m_client.get())
+            client->didUpgradeURL();
+    }
 
     m_allowCookies = validatedURL->areCookiesAllowed;
     String userAgent = m_document->userAgent(m_document->url());
@@ -102,8 +108,7 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& requestedUR
     m_handshake = makeUnique<WebSocketHandshake>(validatedURL->url, protocol, userAgent, clientOrigin, m_allowCookies, isAppInitiated);
     m_handshake->reset();
     m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
-    if (m_progressIdentifier)
-        LegacyWebSocketInspectorInstrumentation::didCreateWebSocket(m_document.get(), m_progressIdentifier, validatedURL->url);
+    LegacyWebSocketInspectorInstrumentation::didCreateWebSocket(m_document.get(), m_progressIdentifier, validatedURL->url);
 
     auto* frame = m_document->frame();
     auto* page = m_document->page();
@@ -239,8 +244,8 @@ void WebSocketChannel::fail(String&& reason)
     m_deflateFramer.didFail();
     m_hasContinuousFrame = false;
     m_continuousFrameData.clear();
-    if (m_client)
-        m_client->didReceiveMessageError(WTFMove(reason));
+    if (RefPtr client = m_client.get())
+        client->didReceiveMessageError(WTFMove(reason));
 
     if (m_handle && !m_closed)
         m_handle->disconnect(); // Will call didCloseSocketStream() but maybe not synchronously.
@@ -249,7 +254,7 @@ void WebSocketChannel::fail(String&& reason)
 void WebSocketChannel::disconnect()
 {
     LOG(Network, "WebSocketChannel %p disconnect()", this);
-    if (m_progressIdentifier && m_document)
+    if (m_document)
         LegacyWebSocketInspectorInstrumentation::didCloseWebSocket(m_document.get(), m_progressIdentifier);
     m_client = nullptr;
     m_document = nullptr;
@@ -265,7 +270,7 @@ void WebSocketChannel::suspend()
 void WebSocketChannel::resume()
 {
     m_suspended = false;
-    if ((!m_buffer.isEmpty() || m_closed) && m_client && !m_resumeTimer.isActive())
+    if ((!m_buffer.isEmpty() || m_closed) && protectedClient() && !m_resumeTimer.isActive())
         m_resumeTimer.startOneShot(0_s);
 }
 
@@ -275,7 +280,7 @@ void WebSocketChannel::didOpenSocketStream(SocketStreamHandle& handle)
     ASSERT(&handle == m_handle);
     if (!m_document)
         return;
-    if (m_progressIdentifier && UNLIKELY(LegacyWebSocketInspectorInstrumentation::hasFrontends())) {
+    if (UNLIKELY(LegacyWebSocketInspectorInstrumentation::hasFrontends())) {
         auto cookieRequestHeaderFieldValue = [document = m_document] (const URL& url) -> String {
             if (!document || !document->page())
                 return { };
@@ -299,7 +304,7 @@ void WebSocketChannel::didOpenSocketStream(SocketStreamHandle& handle)
 void WebSocketChannel::didCloseSocketStream(SocketStreamHandle& handle)
 {
     LOG(Network, "WebSocketChannel %p didCloseSocketStream()", this);
-    if (m_progressIdentifier && m_document)
+    if (m_document)
         LegacyWebSocketInspectorInstrumentation::didCloseWebSocket(m_document.get(), m_progressIdentifier);
     ASSERT_UNUSED(handle, &handle == m_handle || !m_handle);
     m_closed = true;
@@ -311,7 +316,7 @@ void WebSocketChannel::didCloseSocketStream(SocketStreamHandle& handle)
         m_unhandledBufferedAmount = m_handle->bufferedAmount();
         if (m_suspended)
             return;
-        WebSocketChannelClient* client = m_client.get();
+        RefPtr client = m_client.get();
         m_client = nullptr;
         m_document = nullptr;
         m_handle = nullptr;
@@ -333,7 +338,7 @@ void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle& handle, st
         handle.disconnect();
         return;
     }
-    if (!m_client) {
+    if (!protectedClient()) {
         m_shouldDiscardReceivedData = true;
         handle.disconnect();
         return;
@@ -345,7 +350,7 @@ void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle& handle, st
         fail("Ran out of memory while receiving WebSocket data."_s);
         return;
     }
-    while (!m_suspended && m_client && !m_buffer.isEmpty()) {
+    while (!m_suspended && protectedClient() && !m_buffer.isEmpty()) {
         if (!processBuffer())
             break;
     }
@@ -358,8 +363,8 @@ void WebSocketChannel::didFailToReceiveSocketStreamData(SocketStreamHandle& hand
 
 void WebSocketChannel::didUpdateBufferedAmount(SocketStreamHandle&, size_t bufferedAmount)
 {
-    if (m_client)
-        m_client->didUpdateBufferedAmount(bufferedAmount);
+    if (RefPtr client = m_client.get())
+        client->didUpdateBufferedAmount(bufferedAmount);
 }
 
 void WebSocketChannel::didFailSocketStream(SocketStreamHandle& handle, const SocketStreamError& error)
@@ -381,8 +386,8 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle& handle, const Soc
         LOG_ERROR("%s", message.utf8().data());
     }
     m_shouldDiscardReceivedData = true;
-    if (m_client)
-        m_client->didReceiveMessageError(WTFMove(message));
+    if (RefPtr client = m_client.get())
+        client->didReceiveMessageError(WTFMove(message));
     handle.disconnect();
 }
 
@@ -433,17 +438,17 @@ bool WebSocketChannel::appendToBuffer(std::span<const uint8_t> data)
     return true;
 }
 
-void WebSocketChannel::skipBuffer(size_t len)
+void WebSocketChannel::skipBuffer(size_t length)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(len <= m_buffer.size());
-    memmove(m_buffer.data(), m_buffer.data() + len, m_buffer.size() - len);
-    m_buffer.shrink(m_buffer.size() - len);
+    ASSERT_WITH_SECURITY_IMPLICATION(length <= m_buffer.size());
+    memmoveSpan(m_buffer.mutableSpan(), m_buffer.subspan(length));
+    m_buffer.shrink(m_buffer.size() - length);
 }
 
 bool WebSocketChannel::processBuffer()
 {
     ASSERT(!m_suspended);
-    ASSERT(m_client);
+    ASSERT(protectedClient());
     ASSERT(!m_buffer.isEmpty());
     LOG(Network, "WebSocketChannel %p processBuffer() Receive buffer has %u bytes", this, static_cast<unsigned>(m_buffer.size()));
 
@@ -462,8 +467,7 @@ bool WebSocketChannel::processBuffer()
         if (headerLength <= 0)
             return false;
         if (m_handshake->mode() == WebSocketHandshake::Connected) {
-            if (m_progressIdentifier)
-                LegacyWebSocketInspectorInstrumentation::didReceiveWebSocketHandshakeResponse(m_document.get(), m_progressIdentifier, m_handshake->serverHandshakeResponse());
+            LegacyWebSocketInspectorInstrumentation::didReceiveWebSocketHandshakeResponse(m_document.get(), m_progressIdentifier, m_handshake->serverHandshakeResponse());
             String serverSetCookie = m_handshake->serverSetCookie();
             if (!serverSetCookie.isEmpty()) {
                 if (m_document && m_document->page() && m_document->page()->cookieJar().cookiesEnabled(*m_document))
@@ -471,7 +475,7 @@ bool WebSocketChannel::processBuffer()
             }
             LOG(Network, "WebSocketChannel %p Connected", this);
             skipBuffer(headerLength);
-            m_client->didConnect();
+            protectedClient()->didConnect();
             LOG(Network, "WebSocketChannel %p %u bytes remaining in m_buffer", this, static_cast<unsigned>(m_buffer.size()));
             return !m_buffer.isEmpty();
         }
@@ -491,10 +495,11 @@ bool WebSocketChannel::processBuffer()
 void WebSocketChannel::resumeTimerFired()
 {
     Ref<WebSocketChannel> protectedThis(*this); // The client can close the channel, potentially removing the last reference.
-    while (!m_suspended && m_client && !m_buffer.isEmpty())
+    while (!m_suspended && protectedClient() && !m_buffer.isEmpty()) {
         if (!processBuffer())
             break;
-    if (!m_suspended && m_client && m_closed && m_handle)
+    }
+    if (!m_suspended && protectedClient() && m_closed && m_handle)
         didCloseSocketStream(*m_handle);
 }
 
@@ -525,8 +530,8 @@ void WebSocketChannel::startClosingHandshake(int code, const String& reason)
     }
 
     m_closing = true;
-    if (m_client)
-        m_client->didStartClosingHandshake();
+    if (RefPtr client = m_client.get())
+        client->didStartClosingHandshake();
 }
 
 void WebSocketChannel::closingTimerFired()
@@ -544,7 +549,7 @@ bool WebSocketChannel::processFrame()
     WebSocketFrame frame;
     const uint8_t* frameEnd;
     String errorString;
-    WebSocketFrame::ParseFrameResult result = WebSocketFrame::parseFrame(m_buffer.data(), m_buffer.size(), frame, frameEnd, errorString);
+    WebSocketFrame::ParseFrameResult result = WebSocketFrame::parseFrame(m_buffer.mutableSpan(), frame, frameEnd, errorString);
     if (result == WebSocketFrame::FrameIncomplete)
         return false;
     if (result == WebSocketFrame::FrameError) {
@@ -624,9 +629,9 @@ bool WebSocketChannel::processFrame()
                 if (message.isNull())
                     fail("Could not decode a text frame as UTF-8."_s);
                 else
-                    m_client->didReceiveMessage(WTFMove(message));
+                    protectedClient()->didReceiveMessage(WTFMove(message));
             } else if (m_continuousFrameOpCode == WebSocketFrame::OpCodeBinary)
-                m_client->didReceiveBinaryData(WTFMove(continuousFrameData));
+                protectedClient()->didReceiveBinaryData(WTFMove(continuousFrameData));
         }
         break;
 
@@ -641,7 +646,7 @@ bool WebSocketChannel::processFrame()
             if (message.isNull())
                 fail("Could not decode a text frame as UTF-8."_s);
             else
-                m_client->didReceiveMessage(WTFMove(message));
+                protectedClient()->didReceiveMessage(WTFMove(message));
         } else {
             m_hasContinuousFrame = true;
             m_continuousFrameOpCode = WebSocketFrame::OpCodeText;
@@ -655,7 +660,7 @@ bool WebSocketChannel::processFrame()
         if (frame.final) {
             Vector<uint8_t> binaryData(frame.payload);
             skipBuffer(frameEnd - m_buffer.data());
-            m_client->didReceiveBinaryData(WTFMove(binaryData));
+            protectedClient()->didReceiveBinaryData(WTFMove(binaryData));
         } else {
             m_hasContinuousFrame = true;
             m_continuousFrameOpCode = WebSocketFrame::OpCodeBinary;
@@ -717,6 +722,11 @@ bool WebSocketChannel::processFrame()
         return false;
     }
     return true;
+}
+
+RefPtr<WebSocketChannelClient> WebSocketChannel::protectedClient() const
+{
+    return m_client.get();
 }
 
 void WebSocketChannel::enqueueTextFrame(CString&& string)

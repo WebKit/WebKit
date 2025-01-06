@@ -39,6 +39,21 @@ namespace WebKit {
 
 #define WEBRTC_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - WebRTCMonitor::" fmt, this, ##__VA_ARGS__)
 
+WebRTCMonitor::WebRTCMonitor(LibWebRTCNetwork& libWebRTCNetwork)
+    : m_libWebRTCNetwork(libWebRTCNetwork)
+{
+}
+
+void WebRTCMonitor::ref() const
+{
+    m_libWebRTCNetwork->ref();
+}
+
+void WebRTCMonitor::deref() const
+{
+    m_libWebRTCNetwork->deref();
+}
+
 void WebRTCMonitor::startUpdating()
 {
     WEBRTC_RELEASE_LOG("StartUpdating - Asking network process to start updating");
@@ -69,14 +84,14 @@ void WebRTCMonitor::networksChanged(Vector<RTCNetwork>&& networkList, RTCNetwork
     m_ipv4 = WTFMove(ipv4);
     m_ipv6 = WTFMove(ipv6);
 
-    for (auto& observer : m_observers)
-        observer.networksChanged(m_networkList, m_ipv4, m_ipv6);
+    for (Ref observer : m_observers)
+        observer->networksChanged(m_networkList, m_ipv4, m_ipv6);
 }
 
 void WebRTCMonitor::networkProcessCrashed()
 {
-    for (auto& observer : m_observers)
-        observer.networkProcessCrashed();
+    for (Ref observer : m_observers)
+        observer->networkProcessCrashed();
 }
 
 } // namespace WebKit

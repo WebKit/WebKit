@@ -27,7 +27,6 @@
 #import <dlfcn.h>
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
-#import <wtf/FileSystem.h>
 
 #pragma mark - Soft-link macros for use within a single source file
 
@@ -373,7 +372,7 @@ static void* lib##Library() \
     } \
     }
 
-#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) \
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS_AND_EXPORT(functionNamespace, framework, flags, export) \
     namespace functionNamespace { \
     export void* framework##Library(bool isOptional = false); \
     void* framework##Library(bool isOptional) \
@@ -381,7 +380,7 @@ static void* lib##Library() \
         static void* frameworkLibrary; \
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
-            frameworkLibrary = dlopen("/System/Library/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+            frameworkLibrary = dlopen("/System/Library/Frameworks/" #framework ".framework/" #framework, flags); \
             if (!isOptional) \
                 RELEASE_ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
         }); \
@@ -389,8 +388,14 @@ static void* lib##Library() \
     } \
     }
 
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) \
+    SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS_AND_EXPORT(functionNamespace, framework, RTLD_NOW, export)
+
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS(functionNamespace, framework, flags) \
+    SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS_AND_EXPORT(functionNamespace, framework, flags, )
+
 #define SOFT_LINK_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) \
-    SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, )
+    SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS(functionNamespace, framework, RTLD_NOW)
 
 #define SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) \
     namespace functionNamespace { \

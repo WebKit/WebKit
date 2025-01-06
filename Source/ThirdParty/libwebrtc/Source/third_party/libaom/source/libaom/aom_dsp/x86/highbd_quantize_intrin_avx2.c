@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,21 +15,21 @@
 
 #include "aom/aom_integer.h"
 
-static INLINE void init_one_qp(const __m128i *p, __m256i *qp) {
+static inline void init_one_qp(const __m128i *p, __m256i *qp) {
   const __m128i sign = _mm_srai_epi16(*p, 15);
   const __m128i dc = _mm_unpacklo_epi16(*p, sign);
   const __m128i ac = _mm_unpackhi_epi16(*p, sign);
   *qp = _mm256_insertf128_si256(_mm256_castsi128_si256(dc), ac, 1);
 }
 
-static INLINE void update_qp(__m256i *qp) {
+static inline void update_qp(__m256i *qp) {
   int i;
   for (i = 0; i < 5; ++i) {
     qp[i] = _mm256_permute2x128_si256(qp[i], qp[i], 0x11);
   }
 }
 
-static INLINE void init_qp(const int16_t *zbin_ptr, const int16_t *round_ptr,
+static inline void init_qp(const int16_t *zbin_ptr, const int16_t *round_ptr,
                            const int16_t *quant_ptr, const int16_t *dequant_ptr,
                            const int16_t *quant_shift_ptr, __m256i *qp,
                            int log_scale) {
@@ -59,7 +59,7 @@ static INLINE void init_qp(const int16_t *zbin_ptr, const int16_t *round_ptr,
 // Note:
 // *x is vector multiplied by *y which is 16 int32_t parallel multiplication
 // and right shift 16.  The output, 16 int32_t is save in *p.
-static INLINE __m256i mm256_mul_shift_epi32(const __m256i *x,
+static inline __m256i mm256_mul_shift_epi32(const __m256i *x,
                                             const __m256i *y) {
   __m256i prod_lo = _mm256_mul_epi32(*x, *y);
   __m256i prod_hi = _mm256_srli_epi64(*x, 32);

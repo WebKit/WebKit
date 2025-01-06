@@ -30,9 +30,12 @@
 
 #include "GamepadData.h"
 #include <WebCore/PlatformGamepad.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UIGamepad);
 
 UIGamepad::UIGamepad(WebCore::PlatformGamepad& platformGamepad)
     : m_index(platformGamepad.index())

@@ -183,6 +183,13 @@ bool GetCroppedWindowRect(HWND window,
       is_maximized) {
     // Only apply this cropping to windows with a resize border (otherwise,
     // it'd clip the edges of captured pop-up windows without this border).
+    RECT rect;
+    DwmGetWindowAttribute(window, DWMWA_EXTENDED_FRAME_BOUNDS, &rect,
+                          sizeof(RECT));
+    // it's means that the window edge is not transparent
+    if (original_rect && rect.left == original_rect->left()) {
+      return true;
+    }
     LONG style = GetWindowLong(window, GWL_STYLE);
     if (style & WS_THICKFRAME || style & DS_MODALFRAME) {
       int width = GetSystemMetrics(SM_CXSIZEFRAME);

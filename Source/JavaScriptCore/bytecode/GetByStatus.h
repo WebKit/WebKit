@@ -32,6 +32,7 @@
 #include "ExitFlag.h"
 #include "GetByVariant.h"
 #include "ICStatusMap.h"
+#include "InlineCacheCompiler.h"
 #include "ScopeOffset.h"
 #include "StubInfoSummary.h"
 
@@ -42,8 +43,9 @@ class CodeBlock;
 class JSModuleEnvironment;
 class JSModuleNamespaceObject;
 class ModuleNamespaceAccessCase;
-class ProxyObjectAccessCase;
 class StructureStubInfo;
+
+enum class CacheType : int8_t;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(GetByStatus);
 
@@ -140,13 +142,23 @@ public:
     void dump(PrintStream&) const;
 
     CacheableIdentifier singleIdentifier() const;
+
+    bool viaGlobalProxy() const
+    {
+        if (m_variants.isEmpty())
+            return false;
+        return m_variants.first().viaGlobalProxy();
+    }
+
+#if ENABLE(JIT)
+    CacheType preferredCacheType() const;
+#endif
     
 private:
     void merge(const GetByStatus&);
     
 #if ENABLE(JIT)
     GetByStatus(const ModuleNamespaceAccessCase&);
-    GetByStatus(const ProxyObjectAccessCase&);
     static GetByStatus computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, CodeBlock* profiledBlock, StructureStubInfo*, CallLinkStatus::ExitSiteData, CodeOrigin);
 #endif
     static GetByStatus computeFromLLInt(CodeBlock*, BytecodeIndex);

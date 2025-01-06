@@ -142,7 +142,6 @@ private:
 #if ENABLE(INPUT_TYPE_COLOR)
     String colorInputStyleSheet() const final;
 
-    void adjustColorWellStyle(RenderStyle&, const Element*) const final;
     void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) final;
 #endif
 
@@ -194,15 +193,12 @@ private:
 
     void adjustButtonLikeControlStyle(RenderStyle&, const Element&) const;
 
-    FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);
-
     Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const override;
 
     Color pictureFrameColor(const RenderObject&) override;
 
     Color controlTintColor(const RenderStyle&, OptionSet<StyleColorOptions>) const;
 
-    void adjustStyleForAlternateFormControlDesignTransition(RenderStyle&, const Element*) const;
     void adjustMinimumIntrinsicSizeForAppearance(StyleAppearance, RenderStyle&) const;
 };
 

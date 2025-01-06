@@ -35,22 +35,21 @@
 
 namespace WebCore {
 
-CSSGridIntegerRepeatValue::CSSGridIntegerRepeatValue(size_t repetitions, CSSValueListBuilder builder)
-    : CSSValueContainingVector(GridIntegerRepeatClass, SpaceSeparator, WTFMove(builder))
-    , m_repetitions(repetitions)
+CSSGridIntegerRepeatValue::CSSGridIntegerRepeatValue(Ref<CSSPrimitiveValue>&& repetitions, CSSValueListBuilder builder)
+    : CSSValueContainingVector(ClassType::GridIntegerRepeat, SpaceSeparator, WTFMove(builder))
+    , m_repetitions(WTFMove(repetitions))
 {
-    ASSERT(repetitions);
 }
 
-Ref<CSSGridIntegerRepeatValue> CSSGridIntegerRepeatValue::create(size_t repetitions, CSSValueListBuilder builder)
+Ref<CSSGridIntegerRepeatValue> CSSGridIntegerRepeatValue::create(Ref<CSSPrimitiveValue>&& repetitions, CSSValueListBuilder builder)
 {
-    return adoptRef(*new CSSGridIntegerRepeatValue(repetitions, WTFMove(builder)));
+    return adoptRef(*new CSSGridIntegerRepeatValue(WTFMove(repetitions), WTFMove(builder)));
 }
 
 String CSSGridIntegerRepeatValue::customCSSText() const
 {
     StringBuilder result;
-    result.append("repeat("_s, repetitions(), ", "_s);
+    result.append("repeat("_s, m_repetitions->cssText(), ", "_s);
     serializeItems(result);
     result.append(')');
     return result.toString();
@@ -58,7 +57,7 @@ String CSSGridIntegerRepeatValue::customCSSText() const
 
 bool CSSGridIntegerRepeatValue::equals(const CSSGridIntegerRepeatValue& other) const
 {
-    return m_repetitions == other.m_repetitions && itemsEqual(other);
+    return compareCSSValue(m_repetitions, other.m_repetitions) && itemsEqual(other);
 }
 
 } // namespace WebCore

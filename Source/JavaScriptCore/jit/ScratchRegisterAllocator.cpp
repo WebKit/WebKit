@@ -40,7 +40,7 @@ ScratchRegisterAllocator::ScratchRegisterAllocator(const RegisterSet& usedRegist
 {
 }
 
-ScratchRegisterAllocator::~ScratchRegisterAllocator() { }
+ScratchRegisterAllocator::~ScratchRegisterAllocator() = default;
 
 void ScratchRegisterAllocator::lock(GPRReg reg)
 {
@@ -162,13 +162,13 @@ unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpe
     RELEASE_ASSERT(extraBytesAtTopOfStack % sizeof(void*) == 0);
     if (!usedRegisters.numberOfSetRegisters())
         return 0;
-    ASSERT(!usedRegisters.hasAnyWideRegisters() || Options::useWebAssemblySIMD());
+    ASSERT(!usedRegisters.hasAnyWideRegisters() || Options::useWasmSIMD());
     JIT_COMMENT(jit, "Preserve registers to stack for call: ", usedRegisters, "; Extra bytes at top of stack: ", extraBytesAtTopOfStack);
 
     unsigned byteSizeOfSetRegisters = usedRegisters.byteSizeOfSetRegisters();
     unsigned stackOffset = byteSizeOfSetRegisters;
     stackOffset += extraBytesAtTopOfStack;
-    stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset);
+    stackOffset = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(stackOffset);
     jit.subPtr(
         MacroAssembler::TrustedImm32(stackOffset),
         MacroAssembler::stackPointerRegister);
@@ -211,7 +211,7 @@ void ScratchRegisterAllocator::restoreRegistersFromStackForCall(AssemblyHelpers&
         RELEASE_ASSERT(numberOfStackBytesUsedForRegisterPreservation == 0);
         return;
     }
-    ASSERT(!usedRegisters.hasAnyWideRegisters() || Options::useWebAssemblySIMD());
+    ASSERT(!usedRegisters.hasAnyWideRegisters() || Options::useWasmSIMD());
     JIT_COMMENT(jit, "Restore registers from stack for call: ", usedRegisters, "; Extra bytes at top of stack: ", extraBytesAtTopOfStack);
 
     AssemblyHelpers::LoadRegSpooler spooler(jit, MacroAssembler::stackPointerRegister);
@@ -251,7 +251,7 @@ void ScratchRegisterAllocator::restoreRegistersFromStackForCall(AssemblyHelpers&
 
     unsigned stackOffset = byteSizeOfSetRegisters;
     stackOffset += extraBytesAtTopOfStack;
-    stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset);
+    stackOffset = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(stackOffset);
 
     ASSERT(offset == byteSizeOfSetRegisters);
     RELEASE_ASSERT(stackOffset == numberOfStackBytesUsedForRegisterPreservation);

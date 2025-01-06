@@ -29,6 +29,8 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestProtocol.h"
+#import "TestUIDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -42,6 +44,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/UUID.h>
 #import <wtf/Vector.h>
+#import <wtf/text/MakeString.h>
 
 TEST(NetworkProcess, Entitlements)
 {

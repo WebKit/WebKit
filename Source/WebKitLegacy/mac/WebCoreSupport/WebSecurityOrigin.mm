@@ -101,7 +101,7 @@ using namespace WebCore;
     if (![anObject isMemberOfClass:[WebSecurityOrigin class]])
         return NO;
     
-    return [self _core]->equal([anObject _core]);
+    return [self _core]->equal(*[anObject _core]);
 }
 
 - (void)dealloc

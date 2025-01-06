@@ -40,7 +40,7 @@ struct NotificationEventInit : ExtendableEventInit {
 };
 
 class NotificationEvent final : public ExtendableEvent {
-    WTF_MAKE_ISO_ALLOCATED(NotificationEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NotificationEvent);
 public:
     ~NotificationEvent();
 

@@ -20,18 +20,7 @@ var skippedHourDay = Temporal.ZonedDateTime.from("2019-03-10T00:00[America/Vanco
 var repeatedHourDay = Temporal.ZonedDateTime.from("2019-11-03T00:00[America/Vancouver]");
 var inRepeatedHour = Temporal.ZonedDateTime.from("2019-11-03T01:00-07:00[America/Vancouver]");
 
-// subtract()
-
 var oneDay = new Temporal.Duration(0, 0, 0, 1);
-assert.sameValue(`${ Temporal.Duration.from({
-  days: 127,
-  hours: 1
-}).subtract(oneDay, { relativeTo: inRepeatedHour }) }`, "P126DT1H");
-var hours24 = new Temporal.Duration(0, 0, 0, 0, 24);
-assert.sameValue(`${ Temporal.Duration.from({
-  days: 127,
-  hours: 1
-}).subtract(hours24, { relativeTo: inRepeatedHour }) }`, "P126D");
 
 // total()
 var totalDays = Temporal.Duration.from({
@@ -54,19 +43,11 @@ assert.sameValue(Temporal.Duration.from({
 // Without a TZDB, it's not possible to get a ZonedDateTime with DST from a
 // string.
 
-assert.sameValue(
-  `${ oneDay.add(hours24, { relativeTo: "2019-11-02T00:00[America/Vancouver]" }) }`,
-  "P1DT24H"
-);
 var hours25 = new Temporal.Duration(0, 0, 0, 0, 25);
 assert.sameValue(`${ hours25.round({
   largestUnit: "days",
   relativeTo: "2019-11-03T00:00[America/Vancouver]"
 }) }`, "P1D");
-assert.sameValue(
-  `${ oneDay.subtract(hours24, { relativeTo: "2019-11-03T00:00[America/Vancouver]" }) }`,
-  "PT1H"
-);
 assert.sameValue(oneDay.total({
   unit: "hours",
   relativeTo: "2019-11-03T00:00[America/Vancouver]"

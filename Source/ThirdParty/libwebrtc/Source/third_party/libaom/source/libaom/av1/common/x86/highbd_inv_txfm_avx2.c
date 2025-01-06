@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -31,7 +31,7 @@
 //   ... ...
 //   v124, v125, v126, v127
 
-static INLINE __m256i highbd_clamp_epi16_avx2(__m256i u, int bd) {
+static inline __m256i highbd_clamp_epi16_avx2(__m256i u, int bd) {
   const __m256i zero = _mm256_setzero_si256();
   const __m256i one = _mm256_set1_epi16(1);
   const __m256i max = _mm256_sub_epi16(_mm256_slli_epi16(one, bd), one);
@@ -47,7 +47,7 @@ static INLINE __m256i highbd_clamp_epi16_avx2(__m256i u, int bd) {
   return clamped;
 }
 
-static INLINE void round_shift_4x4_avx2(__m256i *in, int shift) {
+static inline void round_shift_4x4_avx2(__m256i *in, int shift) {
   if (shift != 0) {
     __m256i rnding = _mm256_set1_epi32(1 << (shift - 1));
     in[0] = _mm256_add_epi32(in[0], rnding);
@@ -62,7 +62,7 @@ static INLINE void round_shift_4x4_avx2(__m256i *in, int shift) {
   }
 }
 
-static INLINE void round_shift_8x8_avx2(__m256i *in, int shift) {
+static inline void round_shift_8x8_avx2(__m256i *in, int shift) {
   round_shift_4x4_avx2(in, shift);
   round_shift_4x4_avx2(in + 4, shift);
   round_shift_4x4_avx2(in + 8, shift);
@@ -88,7 +88,7 @@ static void highbd_clamp_epi32_avx2(__m256i *in, __m256i *out,
   }
 }
 
-static INLINE __m256i highbd_get_recon_16x8_avx2(const __m256i pred,
+static inline __m256i highbd_get_recon_16x8_avx2(const __m256i pred,
                                                  __m256i res0, __m256i res1,
                                                  const int bd) {
   __m256i x0 = _mm256_cvtepi16_epi32(_mm256_castsi256_si128(pred));
@@ -102,7 +102,7 @@ static INLINE __m256i highbd_get_recon_16x8_avx2(const __m256i pred,
   return x0;
 }
 
-static INLINE void highbd_write_buffer_16xn_avx2(__m256i *in, uint16_t *output,
+static inline void highbd_write_buffer_16xn_avx2(__m256i *in, uint16_t *output,
                                                  int stride, int flipud,
                                                  int height, const int bd) {
   int j = flipud ? (height - 1) : 0;
@@ -114,7 +114,7 @@ static INLINE void highbd_write_buffer_16xn_avx2(__m256i *in, uint16_t *output,
     _mm256_storeu_si256((__m256i *)(output + i * stride), u);
   }
 }
-static INLINE __m256i highbd_get_recon_8x8_avx2(const __m256i pred, __m256i res,
+static inline __m256i highbd_get_recon_8x8_avx2(const __m256i pred, __m256i res,
                                                 const int bd) {
   __m256i x0 = pred;
   x0 = _mm256_add_epi32(res, x0);
@@ -124,7 +124,7 @@ static INLINE __m256i highbd_get_recon_8x8_avx2(const __m256i pred, __m256i res,
   return x0;
 }
 
-static INLINE void highbd_write_buffer_8xn_avx2(__m256i *in, uint16_t *output,
+static inline void highbd_write_buffer_8xn_avx2(__m256i *in, uint16_t *output,
                                                 int stride, int flipud,
                                                 int height, const int bd) {
   int j = flipud ? (height - 1) : 0;
@@ -231,14 +231,14 @@ static void transpose_8x8_flip_avx2(const __m256i *in, __m256i *out) {
   out[7] = _mm256_permute2f128_si256(x0, x1, 0x31);
 }
 
-static INLINE void load_buffer_32bit_input(const int32_t *in, int stride,
+static inline void load_buffer_32bit_input(const int32_t *in, int stride,
                                            __m256i *out, int out_size) {
   for (int i = 0; i < out_size; ++i) {
     out[i] = _mm256_loadu_si256((const __m256i *)(in + i * stride));
   }
 }
 
-static INLINE __m256i half_btf_0_avx2(const __m256i *w0, const __m256i *n0,
+static inline __m256i half_btf_0_avx2(const __m256i *w0, const __m256i *n0,
                                       const __m256i *rounding, int bit) {
   __m256i x;
   x = _mm256_mullo_epi32(*w0, *n0);
@@ -247,7 +247,7 @@ static INLINE __m256i half_btf_0_avx2(const __m256i *w0, const __m256i *n0,
   return x;
 }
 
-static INLINE __m256i half_btf_avx2(const __m256i *w0, const __m256i *n0,
+static inline __m256i half_btf_avx2(const __m256i *w0, const __m256i *n0,
                                     const __m256i *w1, const __m256i *n1,
                                     const __m256i *rounding, int bit) {
   __m256i x, y;
@@ -275,7 +275,7 @@ static void addsub_avx2(const __m256i in0, const __m256i in1, __m256i *out0,
   *out1 = a1;
 }
 
-static INLINE void idct32_stage4_avx2(
+static inline void idct32_stage4_avx2(
     __m256i *bf1, const __m256i *cospim8, const __m256i *cospi56,
     const __m256i *cospi8, const __m256i *cospim56, const __m256i *cospim40,
     const __m256i *cospi24, const __m256i *cospi40, const __m256i *cospim24,
@@ -298,7 +298,7 @@ static INLINE void idct32_stage4_avx2(
   bf1[22] = temp2;
 }
 
-static INLINE void idct32_stage5_avx2(
+static inline void idct32_stage5_avx2(
     __m256i *bf1, const __m256i *cospim16, const __m256i *cospi48,
     const __m256i *cospi16, const __m256i *cospim48, const __m256i *clamp_lo,
     const __m256i *clamp_hi, const __m256i *rounding, int bit) {
@@ -321,7 +321,7 @@ static INLINE void idct32_stage5_avx2(
   addsub_avx2(bf1[30], bf1[29], bf1 + 30, bf1 + 29, clamp_lo, clamp_hi);
 }
 
-static INLINE void idct32_stage6_avx2(
+static inline void idct32_stage6_avx2(
     __m256i *bf1, const __m256i *cospim32, const __m256i *cospi32,
     const __m256i *cospim16, const __m256i *cospi48, const __m256i *cospi16,
     const __m256i *cospim48, const __m256i *clamp_lo, const __m256i *clamp_hi,
@@ -350,7 +350,7 @@ static INLINE void idct32_stage6_avx2(
   bf1[21] = temp2;
 }
 
-static INLINE void idct32_stage7_avx2(__m256i *bf1, const __m256i *cospim32,
+static inline void idct32_stage7_avx2(__m256i *bf1, const __m256i *cospim32,
                                       const __m256i *cospi32,
                                       const __m256i *clamp_lo,
                                       const __m256i *clamp_hi,
@@ -378,7 +378,7 @@ static INLINE void idct32_stage7_avx2(__m256i *bf1, const __m256i *cospim32,
   addsub_avx2(bf1[28], bf1[27], bf1 + 28, bf1 + 27, clamp_lo, clamp_hi);
 }
 
-static INLINE void idct32_stage8_avx2(__m256i *bf1, const __m256i *cospim32,
+static inline void idct32_stage8_avx2(__m256i *bf1, const __m256i *cospim32,
                                       const __m256i *cospi32,
                                       const __m256i *clamp_lo,
                                       const __m256i *clamp_hi,
@@ -407,7 +407,7 @@ static INLINE void idct32_stage8_avx2(__m256i *bf1, const __m256i *cospim32,
   bf1[23] = temp2;
 }
 
-static INLINE void idct32_stage9_avx2(__m256i *bf1, __m256i *out,
+static inline void idct32_stage9_avx2(__m256i *bf1, __m256i *out,
                                       const int do_cols, const int bd,
                                       const int out_shift,
                                       const __m256i *clamp_lo,
@@ -2818,7 +2818,7 @@ static void iadst8x8_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
                    out_shift);
   }
 }
-static INLINE void idct64_stage8_avx2(
+static inline void idct64_stage8_avx2(
     __m256i *u, const __m256i *cospim32, const __m256i *cospi32,
     const __m256i *cospim16, const __m256i *cospi48, const __m256i *cospi16,
     const __m256i *cospim48, const __m256i *clamp_lo, const __m256i *clamp_hi,
@@ -2864,7 +2864,7 @@ static INLINE void idct64_stage8_avx2(
   u[43] = temp4;
 }
 
-static INLINE void idct64_stage9_avx2(__m256i *u, const __m256i *cospim32,
+static inline void idct64_stage9_avx2(__m256i *u, const __m256i *cospim32,
                                       const __m256i *cospi32,
                                       const __m256i *clamp_lo,
                                       const __m256i *clamp_hi,
@@ -2896,7 +2896,7 @@ static INLINE void idct64_stage9_avx2(__m256i *u, const __m256i *cospim32,
   }
 }
 
-static INLINE void idct64_stage10_avx2(__m256i *u, const __m256i *cospim32,
+static inline void idct64_stage10_avx2(__m256i *u, const __m256i *cospim32,
                                        const __m256i *cospi32,
                                        const __m256i *clamp_lo,
                                        const __m256i *clamp_hi,
@@ -2933,7 +2933,7 @@ static INLINE void idct64_stage10_avx2(__m256i *u, const __m256i *cospim32,
   u[47] = temp4;
 }
 
-static INLINE void idct64_stage11_avx2(__m256i *u, __m256i *out, int do_cols,
+static inline void idct64_stage11_avx2(__m256i *u, __m256i *out, int do_cols,
                                        int bd, int out_shift,
                                        const __m256i *clamp_lo,
                                        const __m256i *clamp_hi) {
@@ -4180,10 +4180,11 @@ static void highbd_inv_txfm2d_add_no_identity_avx2(const int32_t *input,
   }
 }
 
-void av1_highbd_inv_txfm2d_add_universe_avx2(const int32_t *input,
-                                             uint8_t *output, int stride,
-                                             TX_TYPE tx_type, TX_SIZE tx_size,
-                                             int eob, const int bd) {
+static void av1_highbd_inv_txfm2d_add_universe_avx2(const int32_t *input,
+                                                    uint8_t *output, int stride,
+                                                    TX_TYPE tx_type,
+                                                    TX_SIZE tx_size, int eob,
+                                                    const int bd) {
   switch (tx_type) {
     case DCT_DCT:
     case ADST_DCT:
@@ -4216,19 +4217,11 @@ void av1_highbd_inv_txfm_add_avx2(const tran_low_t *input, uint8_t *dest,
   const TX_SIZE tx_size = txfm_param->tx_size;
   switch (tx_size) {
     case TX_4X8:
-      av1_highbd_inv_txfm_add_4x8_sse4_1(input, dest, stride, txfm_param);
-      break;
     case TX_8X4:
-      av1_highbd_inv_txfm_add_8x4_sse4_1(input, dest, stride, txfm_param);
-      break;
     case TX_4X4:
-      av1_highbd_inv_txfm_add_4x4_sse4_1(input, dest, stride, txfm_param);
-      break;
     case TX_16X4:
-      av1_highbd_inv_txfm_add_16x4_sse4_1(input, dest, stride, txfm_param);
-      break;
     case TX_4X16:
-      av1_highbd_inv_txfm_add_4x16_sse4_1(input, dest, stride, txfm_param);
+      av1_highbd_inv_txfm_add_sse4_1(input, dest, stride, txfm_param);
       break;
     default:
       av1_highbd_inv_txfm2d_add_universe_avx2(

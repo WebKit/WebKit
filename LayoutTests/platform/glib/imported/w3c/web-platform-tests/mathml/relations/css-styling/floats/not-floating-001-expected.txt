@@ -1,0 +1,25 @@
+
+FAIL float child ignored in maction assert_approx_equals: inline size expected 20 +/- 1 but got 0
+FAIL float child ignored in menclose assert_approx_equals: inline size expected 95.15625 +/- 1 but got 39.15625
+FAIL float child ignored in merror assert_approx_equals: inline size expected 86 +/- 1 but got 30
+FAIL float child ignored in mfrac assert_approx_equals: inline size expected 22 +/- 1 but got 2
+FAIL float child ignored in mi assert_approx_equals: block size expected 126 +/- 1 but got 29
+FAIL float child ignored in mmultiscripts assert_approx_equals: inline size expected 40.890625 +/- 1 but got 20
+FAIL float child ignored in mn assert_approx_equals: block size expected 126 +/- 1 but got 29
+FAIL float child ignored in mo assert_approx_equals: block size expected 126 +/- 1 but got 29
+FAIL float child ignored in mover assert_approx_equals: inline size expected 20 +/- 1 but got 0
+FAIL float child ignored in mpadded assert_approx_equals: inline size expected 84 +/- 1 but got 28
+FAIL float child ignored in mphantom assert_approx_equals: inline size expected 84 +/- 1 but got 28
+FAIL float child ignored in mroot assert_approx_equals: inline size expected 51.546875 +/- 1 but got 0
+FAIL float child ignored in mrow assert_approx_equals: inline size expected 84 +/- 1 but got 28
+FAIL float child ignored in ms assert_approx_equals: block size expected 126 +/- 1 but got 29
+FAIL float child ignored in msqrt assert_approx_equals: inline size expected 100 +/- 1 but got 44
+FAIL float child ignored in mstyle assert_approx_equals: inline size expected 84 +/- 1 but got 28
+FAIL float child ignored in msub assert_approx_equals: inline size expected 40.890625 +/- 1 but got 0
+FAIL float child ignored in msubsup assert_approx_equals: inline size expected 40.890625 +/- 1 but got 20
+FAIL float child ignored in msup assert_approx_equals: inline size expected 40.890625 +/- 1 but got 0
+FAIL float child ignored in mtext assert_approx_equals: block size expected 126 +/- 1 but got 29
+FAIL float child ignored in munder assert_approx_equals: inline size expected 20 +/- 1 but got 0
+FAIL float child ignored in munderover assert_approx_equals: block size expected 65.0625 +/- 1 but got 20
+FAIL float child ignored in semantics assert_approx_equals: inline size expected 20 +/- 1 but got 0
+

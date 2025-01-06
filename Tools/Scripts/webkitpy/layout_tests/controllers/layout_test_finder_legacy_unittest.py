@@ -23,9 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import errno
 import json
-import sys
 import unittest
 
 from pyfakefs.fake_filesystem_unittest import TestCaseMixin
@@ -889,15 +887,9 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         path = fs.join(w3c_path, "resources", "resource-files.json")
         fs.remove(path)
 
-        if sys.version_info >= (3, 3):
-            with self.assertRaises(FileNotFoundError):
-                finder = LayoutTestFinder(self.port, None)
-                finder.find_tests_by_path(["imported/w3c"])
-        else:
-            with self.assertRaises(IOError) as cm:
-                finder = LayoutTestFinder(self.port, None)
-                finder.find_tests_by_path(["imported/w3c"])
-                self.assertEqual(errno.ENOENT, cm.exception.errno)
+        with self.assertRaises(FileNotFoundError):
+            finder = LayoutTestFinder(self.port, None)
+            finder.find_tests_by_path(["imported/w3c"])
 
     def test_chooses_best_expectation(self):
         finder = self.finder

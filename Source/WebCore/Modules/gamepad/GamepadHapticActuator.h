@@ -43,15 +43,15 @@ struct GamepadEffectParameters;
 
 class GamepadHapticActuator : public RefCounted<GamepadHapticActuator>, public ActiveDOMObject, public VisibilityChangeClient {
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     using EffectType = GamepadHapticEffectType;
     enum class Type : uint8_t { Vibration, DualRumble };
     enum class Result : uint8_t { Complete, Preempted };
 
     static Ref<GamepadHapticActuator> create(Document*, Type, Gamepad&);
     ~GamepadHapticActuator();
-
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     Type type() const { return m_type; }
     bool canPlayEffectType(EffectType) const;

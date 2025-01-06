@@ -1,4 +1,5 @@
 [
+    ["/ipc/coreipc.js", "ipc/coreipc.js"],
     ["/js-test-resources", "resources"],
     ["/media-resources", "media"],
     ["/modern-media-controls", "../Source/WebCore/Modules/modern-media-controls"],

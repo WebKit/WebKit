@@ -27,35 +27,20 @@
 
 #include "MessageSenderInlines.h"
 #include "PushMessageForTesting.h"
+#include <WebCore/PushPermissionState.h>
 #include <memory>
+#include <wtf/CompletionHandler.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
 using WebKit::WebPushD::PushMessageForTesting;
 
 namespace WebPushTool {
-class Connection;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebPushTool::Connection> : std::true_type { };
-}
-
-namespace WebPushTool {
-
-enum class Action {
-    StreamDebugMessages,
-};
 
 enum class PreferTestService : bool {
-    No,
-    Yes,
-};
-
-enum class Reconnect : bool {
     No,
     Yes,
 };
@@ -65,25 +50,23 @@ enum class WaitForServiceToExist : bool {
     Yes,
 };
 
-class Connection final : public CanMakeWeakPtr<Connection>, public IPC::MessageSender {
-    WTF_MAKE_FAST_ALLOCATED;
+class Connection final : public RefCountedAndCanMakeWeakPtr<Connection>, public IPC::MessageSender {
+    WTF_MAKE_TZONE_ALLOCATED(Connection);
 public:
-    static std::unique_ptr<Connection> create(std::optional<Action>, PreferTestService, Reconnect);
-    Connection(std::optional<Action>, PreferTestService, Reconnect);
+    static Ref<Connection> create(PreferTestService, String bundleIdentifier, String pushPartition);
+    Connection(PreferTestService, String bundleIdentifier, String pushPartition);
     ~Connection() final { }
 
     void connectToService(WaitForServiceToExist);
 
-    void setPushMessage(std::unique_ptr<PushMessageForTesting>&& message) { m_pushMessage = WTFMove(message); }
+    String bundleIdentifier() const { return m_bundleIdentifier; }
+    String pushPartition() const { return m_pushPartition; }
+
+    void sendPushMessage(PushMessageForTesting&&, CompletionHandler<void(String)>&&);
+    void getPushPermissionState(const String& scope, CompletionHandler<void(WebCore::PushPermissionState)>&&);
+    void requestPushPermission(const String& scope, CompletionHandler<void(bool)>&&);
 
 private:
-    void messageReceived(xpc_object_t);
-    void connectionDropped();
-
-    void startAction();
-    void startDebugStreamAction();
-    void sendPushMessage();
-
     void sendAuditToken();
 
     bool performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&) const final;
@@ -91,12 +74,11 @@ private:
     IPC::Connection* messageSenderConnection() const final { return nullptr; }
     uint64_t messageSenderDestinationID() const final { return 0; }
 
-    std::optional<Action> m_action;
-    bool m_reconnect { false };
-    RetainPtr<xpc_connection_t> m_connection;
-    const char* m_serviceName;
+    String m_bundleIdentifier;
+    String m_pushPartition;
 
-    std::unique_ptr<PushMessageForTesting> m_pushMessage;
+    RetainPtr<xpc_connection_t> m_connection;
+    ASCIILiteral m_serviceName;
 };
 
 } // namespace WebPushTool

@@ -302,7 +302,7 @@ void ScreenshareLayers::OnEncodeDone(size_t stream_index,
     return;
   }
 
-  absl::optional<DependencyInfo> dependency_info;
+  std::optional<DependencyInfo> dependency_info;
   auto it = pending_frame_configs_.find(rtp_timestamp);
   if (it != pending_frame_configs_.end()) {
     dependency_info = it->second;
@@ -510,9 +510,8 @@ Vp8EncoderConfig ScreenshareLayers::UpdateConfiguration(size_t stream_index) {
         static_cast<float>(*capture_framerate_) / *target_framerate_;
   }
 
-  if (bitrate_updated_ ||
-      encoder_config_.rc_target_bitrate !=
-          absl::make_optional(encoder_config_bitrate_kbps)) {
+  if (bitrate_updated_ || encoder_config_.rc_target_bitrate !=
+                              std::make_optional(encoder_config_bitrate_kbps)) {
     encoder_config_.rc_target_bitrate = encoder_config_bitrate_kbps;
 
     // Don't reconfigure qp limits during quality boost frames.

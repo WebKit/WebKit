@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -18,7 +18,7 @@
 #include "aom_dsp/arm/mem_neon.h"
 #include "aom_dsp/arm/sum_neon.h"
 
-static INLINE void highbd_obmc_sad_8x1_s16_neon(uint16x8_t ref,
+static inline void highbd_obmc_sad_8x1_s16_neon(uint16x8_t ref,
                                                 const int32_t *mask,
                                                 const int32_t *wsrc,
                                                 uint32x4_t *sum) {
@@ -42,7 +42,7 @@ static INLINE void highbd_obmc_sad_8x1_s16_neon(uint16x8_t ref,
   *sum = vrsraq_n_u32(*sum, abs_hi, 12);
 }
 
-static INLINE unsigned int highbd_obmc_sad_4xh_neon(const uint8_t *ref,
+static inline unsigned int highbd_obmc_sad_4xh_neon(const uint8_t *ref,
                                                     int ref_stride,
                                                     const int32_t *wsrc,
                                                     const int32_t *mask,
@@ -64,7 +64,7 @@ static INLINE unsigned int highbd_obmc_sad_4xh_neon(const uint8_t *ref,
   return horizontal_add_u32x4(sum);
 }
 
-static INLINE unsigned int highbd_obmc_sad_8xh_neon(const uint8_t *ref,
+static inline unsigned int highbd_obmc_sad_8xh_neon(const uint8_t *ref,
                                                     int ref_stride,
                                                     const int32_t *wsrc,
                                                     const int32_t *mask,
@@ -85,7 +85,7 @@ static INLINE unsigned int highbd_obmc_sad_8xh_neon(const uint8_t *ref,
   return horizontal_add_u32x4(sum);
 }
 
-static INLINE unsigned int highbd_obmc_sad_large_neon(const uint8_t *ref,
+static inline unsigned int highbd_obmc_sad_large_neon(const uint8_t *ref,
                                                       int ref_stride,
                                                       const int32_t *wsrc,
                                                       const int32_t *mask,
@@ -113,7 +113,7 @@ static INLINE unsigned int highbd_obmc_sad_large_neon(const uint8_t *ref,
   return horizontal_add_u32x4(vaddq_u32(sum[0], sum[1]));
 }
 
-static INLINE unsigned int highbd_obmc_sad_16xh_neon(const uint8_t *ref,
+static inline unsigned int highbd_obmc_sad_16xh_neon(const uint8_t *ref,
                                                      int ref_stride,
                                                      const int32_t *wsrc,
                                                      const int32_t *mask,
@@ -121,7 +121,7 @@ static INLINE unsigned int highbd_obmc_sad_16xh_neon(const uint8_t *ref,
   return highbd_obmc_sad_large_neon(ref, ref_stride, wsrc, mask, 16, h);
 }
 
-static INLINE unsigned int highbd_obmc_sad_32xh_neon(const uint8_t *ref,
+static inline unsigned int highbd_obmc_sad_32xh_neon(const uint8_t *ref,
                                                      int ref_stride,
                                                      const int32_t *wsrc,
                                                      const int32_t *mask,
@@ -152,7 +152,7 @@ static INLINE unsigned int highbd_obmc_sad_32xh_neon(const uint8_t *ref,
   return horizontal_add_u32x4(vaddq_u32(sum[0], sum[2]));
 }
 
-static INLINE unsigned int highbd_obmc_sad_64xh_neon(const uint8_t *ref,
+static inline unsigned int highbd_obmc_sad_64xh_neon(const uint8_t *ref,
                                                      int ref_stride,
                                                      const int32_t *wsrc,
                                                      const int32_t *mask,
@@ -160,7 +160,7 @@ static INLINE unsigned int highbd_obmc_sad_64xh_neon(const uint8_t *ref,
   return highbd_obmc_sad_large_neon(ref, ref_stride, wsrc, mask, 64, h);
 }
 
-static INLINE unsigned int highbd_obmc_sad_128xh_neon(const uint8_t *ref,
+static inline unsigned int highbd_obmc_sad_128xh_neon(const uint8_t *ref,
                                                       int ref_stride,
                                                       const int32_t *wsrc,
                                                       const int32_t *mask,

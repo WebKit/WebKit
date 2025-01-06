@@ -28,6 +28,13 @@ class TimeControlSupport extends MediaControllerSupport
 
     // Protected
 
+    enable()
+    {
+        super.enable();
+
+        this.control.supportsSeeking = !this.mediaController.host || this.mediaController.host.supportsSeeking;
+    }
+
     get control()
     {
         return this.mediaController.controls.timeControl;

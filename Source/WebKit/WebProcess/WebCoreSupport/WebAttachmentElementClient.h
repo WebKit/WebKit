@@ -28,20 +28,22 @@
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 #include <WebCore/AttachmentElementClient.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class WebAttachmentElementClient final : public WebCore::AttachmentElementClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebAttachmentElementClient);
 public:
     explicit WebAttachmentElementClient(WebPage&);
 
     void requestAttachmentIcon(const String& identifier, const WebCore::FloatSize&) final;
 
 private:
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
 };
 
 } // namespace WebKit

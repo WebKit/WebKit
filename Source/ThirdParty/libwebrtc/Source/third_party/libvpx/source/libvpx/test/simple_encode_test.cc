@@ -12,7 +12,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "test/video_source.h"
 #include "vp9/simple_encode.h"
 

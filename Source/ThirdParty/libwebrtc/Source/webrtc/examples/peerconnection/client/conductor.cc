@@ -11,48 +11,62 @@
 #include "examples/peerconnection/client/conductor.h"
 
 #include <stddef.h>
-#include <stdint.h>
 
 #include <memory>
+#include <optional>
+#include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "absl/types/optional.h"
-#include "api/audio/audio_mixer.h"
-#include "api/audio_codecs/audio_decoder_factory.h"
-#include "api/audio_codecs/audio_encoder_factory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/audio_options.h"
 #include "api/create_peerconnection_factory.h"
+#include "api/enable_media.h"
+#include "api/jsep.h"
+#include "api/make_ref_counted.h"
+#include "api/media_stream_interface.h"
+#include "api/peer_connection_interface.h"
+#include "api/rtc_error.h"
+#include "api/rtp_receiver_interface.h"
 #include "api/rtp_sender_interface.h"
-#include "api/video_codecs/video_decoder_factory.h"
+#include "api/scoped_refptr.h"
+#include "api/task_queue/default_task_queue_factory.h"
+#include "api/task_queue/task_queue_factory.h"
+#include "api/test/create_frame_generator.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_source_interface.h"
 #include "api/video_codecs/video_decoder_factory_template.h"
 #include "api/video_codecs/video_decoder_factory_template_dav1d_adapter.h"
 #include "api/video_codecs/video_decoder_factory_template_libvpx_vp8_adapter.h"
 #include "api/video_codecs/video_decoder_factory_template_libvpx_vp9_adapter.h"
 #include "api/video_codecs/video_decoder_factory_template_open_h264_adapter.h"
-#include "api/video_codecs/video_encoder_factory.h"
 #include "api/video_codecs/video_encoder_factory_template.h"
 #include "api/video_codecs/video_encoder_factory_template_libaom_av1_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_libvpx_vp8_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_libvpx_vp9_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
 #include "examples/peerconnection/client/defaults.h"
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_processing/include/audio_processing.h"
+#include "examples/peerconnection/client/main_wnd.h"
+#include "examples/peerconnection/client/peer_connection_client.h"
+#include "json/reader.h"
+#include "json/value.h"
+#include "json/writer.h"
 #include "modules/video_capture/video_capture.h"
 #include "modules/video_capture/video_capture_factory.h"
-#include "p2p/base/port_allocator.h"
 #include "pc/video_track_source.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/rtc_certificate_generator.h"
 #include "rtc_base/strings/json.h"
-#include "test/vcm_capturer.h"
+#include "system_wrappers/include/clock.h"
+#include "test/frame_generator_capturer.h"
+#include "test/platform_video_capturer.h"
+#include "test/test_video_capturer.h"
 
 namespace {
+using webrtc::test::TestVideoCapturer;
+
 // Names used for a IceCandidate JSON object.
 const char kCandidateSdpMidName[] = "sdpMid";
 const char kCandidateSdpMlineIndexName[] = "sdpMLineIndex";
@@ -75,40 +89,53 @@ class DummySetSessionDescriptionObserver
   }
 };
 
+std::unique_ptr<TestVideoCapturer> CreateCapturer(
+    webrtc::TaskQueueFactory& task_queue_factory) {
+  const size_t kWidth = 640;
+  const size_t kHeight = 480;
+  const size_t kFps = 30;
+  std::unique_ptr<webrtc::VideoCaptureModule::DeviceInfo> info(
+      webrtc::VideoCaptureFactory::CreateDeviceInfo());
+  if (!info) {
+    return nullptr;
+  }
+  int num_devices = info->NumberOfDevices();
+  for (int i = 0; i < num_devices; ++i) {
+    std::unique_ptr<TestVideoCapturer> capturer =
+        webrtc::test::CreateVideoCapturer(kWidth, kHeight, kFps, i);
+    if (capturer) {
+      return capturer;
+    }
+  }
+  auto frame_generator = webrtc::test::CreateSquareFrameGenerator(
+      kWidth, kHeight, std::nullopt, std::nullopt);
+  return std::make_unique<webrtc::test::FrameGeneratorCapturer>(
+      webrtc::Clock::GetRealTimeClock(), std::move(frame_generator), kFps,
+      task_queue_factory);
+}
 class CapturerTrackSource : public webrtc::VideoTrackSource {
  public:
-  static rtc::scoped_refptr<CapturerTrackSource> Create() {
-    const size_t kWidth = 640;
-    const size_t kHeight = 480;
-    const size_t kFps = 30;
-    std::unique_ptr<webrtc::test::VcmCapturer> capturer;
-    std::unique_ptr<webrtc::VideoCaptureModule::DeviceInfo> info(
-        webrtc::VideoCaptureFactory::CreateDeviceInfo());
-    if (!info) {
-      return nullptr;
+  static rtc::scoped_refptr<CapturerTrackSource> Create(
+      webrtc::TaskQueueFactory& task_queue_factory) {
+    std::unique_ptr<TestVideoCapturer> capturer =
+        CreateCapturer(task_queue_factory);
+    if (capturer) {
+      capturer->Start();
+      return rtc::make_ref_counted<CapturerTrackSource>(std::move(capturer));
     }
-    int num_devices = info->NumberOfDevices();
-    for (int i = 0; i < num_devices; ++i) {
-      capturer = absl::WrapUnique(
-          webrtc::test::VcmCapturer::Create(kWidth, kHeight, kFps, i));
-      if (capturer) {
-        return rtc::make_ref_counted<CapturerTrackSource>(std::move(capturer));
-      }
-    }
-
     return nullptr;
   }
 
  protected:
-  explicit CapturerTrackSource(
-      std::unique_ptr<webrtc::test::VcmCapturer> capturer)
+  explicit CapturerTrackSource(std::unique_ptr<TestVideoCapturer> capturer)
       : VideoTrackSource(/*remote=*/false), capturer_(std::move(capturer)) {}
 
  private:
   rtc::VideoSourceInterface<webrtc::VideoFrame>* source() override {
     return capturer_.get();
   }
-  std::unique_ptr<webrtc::test::VcmCapturer> capturer_;
+
+  std::unique_ptr<TestVideoCapturer> capturer_;
 };
 
 }  // namespace
@@ -140,22 +167,28 @@ bool Conductor::InitializePeerConnection() {
     signaling_thread_ = rtc::Thread::CreateWithSocketServer();
     signaling_thread_->Start();
   }
-  peer_connection_factory_ = webrtc::CreatePeerConnectionFactory(
-      nullptr /* network_thread */, nullptr /* worker_thread */,
-      signaling_thread_.get(), nullptr /* default_adm */,
-      webrtc::CreateBuiltinAudioEncoderFactory(),
-      webrtc::CreateBuiltinAudioDecoderFactory(),
+
+  webrtc::PeerConnectionFactoryDependencies deps;
+  deps.signaling_thread = signaling_thread_.get();
+  deps.task_queue_factory = webrtc::CreateDefaultTaskQueueFactory(),
+  deps.audio_encoder_factory = webrtc::CreateBuiltinAudioEncoderFactory();
+  deps.audio_decoder_factory = webrtc::CreateBuiltinAudioDecoderFactory();
+  deps.video_encoder_factory =
       std::make_unique<webrtc::VideoEncoderFactoryTemplate<
           webrtc::LibvpxVp8EncoderTemplateAdapter,
           webrtc::LibvpxVp9EncoderTemplateAdapter,
           webrtc::OpenH264EncoderTemplateAdapter,
-          webrtc::LibaomAv1EncoderTemplateAdapter>>(),
+          webrtc::LibaomAv1EncoderTemplateAdapter>>();
+  deps.video_decoder_factory =
       std::make_unique<webrtc::VideoDecoderFactoryTemplate<
           webrtc::LibvpxVp8DecoderTemplateAdapter,
           webrtc::LibvpxVp9DecoderTemplateAdapter,
           webrtc::OpenH264DecoderTemplateAdapter,
-          webrtc::Dav1dDecoderTemplateAdapter>>(),
-      nullptr /* audio_mixer */, nullptr /* audio_processing */);
+          webrtc::Dav1dDecoderTemplateAdapter>>();
+  webrtc::EnableMedia(deps);
+  task_queue_factory_ = deps.task_queue_factory.get();
+  peer_connection_factory_ =
+      webrtc::CreateModularPeerConnectionFactory(std::move(deps));
 
   if (!peer_connection_factory_) {
     main_wnd_->MessageBox("Error", "Failed to initialize PeerConnectionFactory",
@@ -358,7 +391,7 @@ void Conductor::OnMessageFromPeer(int peer_id, const std::string& message) {
       }
       return;
     }
-    absl::optional<webrtc::SdpType> type_maybe =
+    std::optional<webrtc::SdpType> type_maybe =
         webrtc::SdpTypeFromString(type_str);
     if (!type_maybe) {
       RTC_LOG(LS_ERROR) << "Unknown SDP type: " << type_str;
@@ -481,7 +514,7 @@ void Conductor::AddTracks() {
   }
 
   rtc::scoped_refptr<CapturerTrackSource> video_device =
-      CapturerTrackSource::Create();
+      CapturerTrackSource::Create(*task_queue_factory_);
   if (video_device) {
     rtc::scoped_refptr<webrtc::VideoTrackInterface> video_track_(
         peer_connection_factory_->CreateVideoTrack(video_device, kVideoLabel));

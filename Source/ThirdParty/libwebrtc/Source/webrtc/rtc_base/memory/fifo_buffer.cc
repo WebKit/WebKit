@@ -39,20 +39,20 @@ FifoBuffer::FifoBuffer(size_t size, Thread* owner)
 FifoBuffer::~FifoBuffer() {}
 
 bool FifoBuffer::GetBuffered(size_t* size) const {
-  webrtc::MutexLock lock(&mutex_);
+  RTC_DCHECK_RUN_ON(&callback_sequence_);
   *size = data_length_;
   return true;
 }
 
 StreamState FifoBuffer::GetState() const {
-  webrtc::MutexLock lock(&mutex_);
+  RTC_DCHECK_RUN_ON(&callback_sequence_);
   return state_;
 }
 
 StreamResult FifoBuffer::Read(rtc::ArrayView<uint8_t> buffer,
                               size_t& bytes_read,
                               int& error) {
-  webrtc::MutexLock lock(&mutex_);
+  RTC_DCHECK_RUN_ON(&callback_sequence_);
   const bool was_writable = data_length_ < buffer_length_;
   size_t copy = 0;
   StreamResult result = ReadLocked(buffer.data(), buffer.size(), &copy);
@@ -75,7 +75,7 @@ StreamResult FifoBuffer::Read(rtc::ArrayView<uint8_t> buffer,
 StreamResult FifoBuffer::Write(rtc::ArrayView<const uint8_t> buffer,
                                size_t& bytes_written,
                                int& error) {
-  webrtc::MutexLock lock(&mutex_);
+  RTC_DCHECK_RUN_ON(&callback_sequence_);
 
   const bool was_readable = (data_length_ > 0);
   size_t copy = 0;
@@ -94,12 +94,12 @@ StreamResult FifoBuffer::Write(rtc::ArrayView<const uint8_t> buffer,
 }
 
 void FifoBuffer::Close() {
-  webrtc::MutexLock lock(&mutex_);
+  RTC_DCHECK_RUN_ON(&callback_sequence_);
   state_ = SS_CLOSED;
 }
 
 const void* FifoBuffer::GetReadData(size_t* size) {
-  webrtc::MutexLock lock(&mutex_);
+  RTC_DCHECK_RUN_ON(&callback_sequence_);
   *size = (read_position_ + data_length_ <= buffer_length_)
               ? data_length_
               : buffer_length_ - read_position_;
@@ -107,8 +107,8 @@ const void* FifoBuffer::GetReadData(size_t* size) {
 }
 
 void FifoBuffer::ConsumeReadData(size_t size) {
-  webrtc::MutexLock lock(&mutex_);
-  RTC_DCHECK(size <= data_length_);
+  RTC_DCHECK_RUN_ON(&callback_sequence_);
+  RTC_DCHECK_LE(size, data_length_);
   const bool was_writable = data_length_ < buffer_length_;
   read_position_ = (read_position_ + size) % buffer_length_;
   data_length_ -= size;
@@ -118,7 +118,8 @@ void FifoBuffer::ConsumeReadData(size_t size) {
 }
 
 void* FifoBuffer::GetWriteBuffer(size_t* size) {
-  webrtc::MutexLock lock(&mutex_);
+  RTC_DCHECK_RUN_ON(&callback_sequence_);
+
   if (state_ == SS_CLOSED) {
     return nullptr;
   }
@@ -138,8 +139,8 @@ void* FifoBuffer::GetWriteBuffer(size_t* size) {
 }
 
 void FifoBuffer::ConsumeWriteBuffer(size_t size) {
-  webrtc::MutexLock lock(&mutex_);
-  RTC_DCHECK(size <= buffer_length_ - data_length_);
+  RTC_DCHECK_RUN_ON(&callback_sequence_);
+  RTC_DCHECK_LE(size, buffer_length_ - data_length_);
   const bool was_readable = (data_length_ > 0);
   data_length_ += size;
   if (!was_readable && size > 0) {

@@ -51,7 +51,6 @@ def main():
     if args.autoinstall and os.path.isdir(os.path.join(scripts, 'webkitpy')):
         sys.path.insert(0, scripts)
         import webkitpy
-        import rapidfuzz
         from webkitpy.autoinstalled import buildbot
 
     # This is work-around for https://bugs.webkit.org/show_bug.cgi?id=222361

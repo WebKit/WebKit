@@ -28,11 +28,12 @@
 #include "WebStorageConnection.h"
 #include <WebCore/StorageProvider.h>
 #include <WebCore/StorageUtilities.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 class WebStorageProvider final : public WebCore::StorageProvider {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebStorageProvider);
 public:
     WebStorageProvider(const String& mediaKeysStorageDirectory, FileSystem::Salt mediaKeysStorageSalt)
         : m_mediaKeysStorageDirectory(mediaKeysStorageDirectory)

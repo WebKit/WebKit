@@ -242,7 +242,7 @@ class WebSelectionServiceController;
 
     CGSize fixedLayoutSize;
     BOOL mainViewIsScrollingOrZooming;
-    int32_t didDrawTiles;
+    BOOL didDrawTiles;
     WTF::Lock pendingFixedPositionLayoutRectMutex;
     CGRect pendingFixedPositionLayoutRect;
 #endif

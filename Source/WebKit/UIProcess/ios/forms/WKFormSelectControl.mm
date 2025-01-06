@@ -108,9 +108,9 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
 
 - (NSString *)selectFormPopoverTitle
 {
-    if (![self.control isKindOfClass:[WKSelectPopover class]])
-        return nil;
-    return [(WKSelectPopover *)self.control tableViewController].title;
+    if (auto *popover = dynamic_objc_cast<WKSelectPopover>(self.control))
+        return [popover tableViewController].title;
+    return nil;
 }
 
 - (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex

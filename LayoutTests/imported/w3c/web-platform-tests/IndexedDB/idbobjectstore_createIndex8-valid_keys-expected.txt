@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.createIndex() - index can be valid keys
-

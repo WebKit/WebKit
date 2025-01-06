@@ -28,10 +28,13 @@
 
 #include "KeyedCoding.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBKeyData);
 
 IDBKeyData::IDBKeyData(const IDBKey* key)
 {
@@ -148,7 +151,7 @@ void IDBKeyData::encode(KeyedEncoder& encoder) const
         return;
     case IndexedDB::KeyType::Array: {
         auto& array = std::get<Vector<IDBKeyData>>(m_value);
-        encoder.encodeObjects("array"_s, array.begin(), array.end(), [](KeyedEncoder& encoder, const IDBKeyData& key) {
+        encoder.encodeObjects("array"_s, array, [](KeyedEncoder& encoder, const IDBKeyData& key) {
             key.encode(encoder);
         });
         return;
@@ -320,19 +323,10 @@ String IDBKeyData::loggingString() const
     switch (type()) {
     case IndexedDB::KeyType::Invalid:
         return "<invalid>"_s;
-    case IndexedDB::KeyType::Array: {
-        StringBuilder builder;
-        builder.append("<array> - { "_s);
-        auto& array = std::get<Vector<IDBKeyData>>(m_value);
-        for (size_t i = 0; i < array.size(); ++i) {
-            builder.append(array[i].loggingString());
-            if (i < array.size() - 1)
-                builder.append(", "_s);
-        }
-        builder.append(" }"_s);
-        result = builder.toString();
+    case IndexedDB::KeyType::Array:
+        result = makeString("<array> - { "_s, interleave(std::get<Vector<IDBKeyData>>(m_value), [](auto& builder, auto& item) { builder.append(item.loggingString()); }, ", "_s), " }"_s);
         break;
-    }
+
     case IndexedDB::KeyType::Binary: {
         StringBuilder builder;
         builder.append("<binary> - "_s);

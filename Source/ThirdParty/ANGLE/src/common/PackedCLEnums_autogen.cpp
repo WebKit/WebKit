@@ -1081,6 +1081,65 @@ std::ostream &operator<<(std::ostream &os, EventInfo value)
 }
 
 template <>
+ExecutionStatus FromCLenum<ExecutionStatus>(CLenum from)
+{
+    switch (from)
+    {
+        case CL_COMPLETE:
+            return ExecutionStatus::Complete;
+        case CL_RUNNING:
+            return ExecutionStatus::Running;
+        case CL_SUBMITTED:
+            return ExecutionStatus::Submitted;
+        case CL_QUEUED:
+            return ExecutionStatus::Queued;
+        default:
+            return ExecutionStatus::InvalidEnum;
+    }
+}
+
+CLenum ToCLenum(ExecutionStatus from)
+{
+    switch (from)
+    {
+        case ExecutionStatus::Complete:
+            return CL_COMPLETE;
+        case ExecutionStatus::Running:
+            return CL_RUNNING;
+        case ExecutionStatus::Submitted:
+            return CL_SUBMITTED;
+        case ExecutionStatus::Queued:
+            return CL_QUEUED;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, ExecutionStatus value)
+{
+    switch (value)
+    {
+        case ExecutionStatus::Complete:
+            os << "CL_COMPLETE";
+            break;
+        case ExecutionStatus::Running:
+            os << "CL_RUNNING";
+            break;
+        case ExecutionStatus::Submitted:
+            os << "CL_SUBMITTED";
+            break;
+        case ExecutionStatus::Queued:
+            os << "CL_QUEUED";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
 FilterMode FromCLenum<FilterMode>(CLenum from)
 {
     switch (from)

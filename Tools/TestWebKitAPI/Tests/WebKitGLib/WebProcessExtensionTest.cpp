@@ -195,7 +195,9 @@ static void emitURIChanged(GDBusConnection* connection, const char* uri)
 
 static void uriChangedCallback(WebKitWebPage* webPage, GParamSpec* pspec, WebKitWebProcessExtension* extension)
 {
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS
     WebKitFrame* frame = webkit_web_page_get_main_frame(webPage);
+    G_GNUC_END_IGNORE_DEPRECATIONS
     g_assert_true(WEBKIT_IS_FRAME(frame));
     g_assert_true(webkit_frame_is_main_frame(frame));
     g_assert_cmpstr(webkit_web_page_get_uri(webPage), ==, webkit_frame_get_uri(frame));
@@ -315,8 +317,6 @@ static gboolean contextMenuCallback(WebKitWebPage* page, WebKitContextMenu* menu
     return FALSE;
 }
 
-#if !ENABLE(2022_GLIB_API)
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 static void consoleMessageSentCallback(WebKitWebPage* webPage, WebKitConsoleMessage* consoleMessage)
 {
     g_assert_nonnull(consoleMessage);
@@ -324,7 +324,9 @@ static void consoleMessageSentCallback(WebKitWebPage* webPage, WebKitConsoleMess
         webkit_console_message_get_level(consoleMessage), webkit_console_message_get_text(consoleMessage),
         webkit_console_message_get_line(consoleMessage), webkit_console_message_get_source_id(consoleMessage));
     GUniquePtr<char> messageString(g_variant_print(variant.get(), FALSE));
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS
     GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(webkit_web_page_get_main_frame(webPage)));
+    G_GNUC_END_IGNORE_DEPRECATIONS
     GRefPtr<JSCValue> console = adoptGRef(jsc_context_evaluate(jsContext.get(), "window.webkit.messageHandlers.console", -1));
     g_assert_true(JSC_IS_VALUE(console.get()));
     if (jsc_value_is_object(console.get())) {
@@ -332,8 +334,6 @@ static void consoleMessageSentCallback(WebKitWebPage* webPage, WebKitConsoleMess
         g_assert_true(JSC_IS_VALUE(result.get()));
     }
 }
-G_GNUC_END_IGNORE_DEPRECATIONS;
-#endif
 
 static void emitFormControlsAssociated(GDBusConnection* connection, const char* formIds)
 {
@@ -555,8 +555,8 @@ static void pageCreatedCallback(WebKitWebProcessExtension* extension, WebKitWebP
 #if !ENABLE(2022_GLIB_API)
     g_signal_connect(webPage, "form-controls-associated-for-frame", G_CALLBACK(formControlsAssociatedForFrameCallback), extension);
     g_signal_connect(webPage, "will-submit-form", G_CALLBACK(willSubmitFormDeprecatedCallback), extension);
-    g_signal_connect(webPage, "console-message-sent", G_CALLBACK(consoleMessageSentCallback), nullptr);
 #endif
+    g_signal_connect(webPage, "console-message-sent", G_CALLBACK(consoleMessageSentCallback), nullptr);
     g_signal_connect(webPage, "user-message-received", G_CALLBACK(pageMessageReceivedCallback), extension);
 
     auto* formManager = webkit_web_page_get_form_manager(webPage, nullptr);
@@ -650,7 +650,9 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         if (!page)
             return;
 
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(webkit_web_page_get_main_frame(page)));
+        G_GNUC_END_IGNORE_DEPRECATIONS
         GRefPtr<JSCValue> titleValue = adoptGRef(jsc_context_evaluate(jsContext.get(), "document.title", -1));
         GUniquePtr<char> title(jsc_value_to_string(titleValue.get()));
         g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", title.get()));
@@ -662,7 +664,9 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         if (!page)
             return;
 
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
+        G_GNUC_END_IGNORE_DEPRECATIONS
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(frame));
         GRefPtr<JSCValue> jsDocument = adoptGRef(jsc_context_get_value(jsContext.get(), "document"));
         GRefPtr<JSCValue> jsInputElement = adoptGRef(jsc_value_object_invoke_method(jsDocument.get(), "getElementById", G_TYPE_STRING, elementID, G_TYPE_NONE));
@@ -679,7 +683,9 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         GRefPtr<WebKitScriptWorld> world = adoptGRef(webkit_script_world_new());
         g_assert_true(webkit_script_world_get_default() != world.get());
         g_assert_true(g_str_has_prefix(webkit_script_world_get_name(world.get()), "UniqueWorld_"));
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
+        G_GNUC_END_IGNORE_DEPRECATIONS
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context_for_script_world(frame, world.get()));
         GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(jsContext.get(), script, -1));
         g_dbus_method_invocation_return_value(invocation, 0);

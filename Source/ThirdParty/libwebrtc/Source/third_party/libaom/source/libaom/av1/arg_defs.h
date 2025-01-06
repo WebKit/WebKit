@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -124,6 +124,7 @@ typedef struct av1_codec_arg_definitions {
   arg_def_t fpmtarg;
   arg_def_t tile_cols;
   arg_def_t tile_rows;
+  arg_def_t auto_tiles;
   arg_def_t enable_tpl_model;
   arg_def_t enable_keyframe_filtering;
   arg_def_t tile_width;

@@ -18,21 +18,8 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
-namespace {
-
-// By default, pacer emergency stops encoder when buffer reaches a high level.
-bool IsPacerEmergencyStopDisabled() {
-  return field_trial::IsEnabled("WebRTC-DisablePacerEmergencyStop");
-}
-
-}  // namespace
-CongestionControlHandler::CongestionControlHandler()
-    : disable_pacer_emergency_stop_(IsPacerEmergencyStopDisabled()) {}
-
-CongestionControlHandler::~CongestionControlHandler() {}
 
 void CongestionControlHandler::SetTargetRate(
     TargetTransferRate new_target_rate) {
@@ -51,18 +38,17 @@ void CongestionControlHandler::SetPacerQueue(TimeDelta expected_queue_time) {
   pacer_expected_queue_ms_ = expected_queue_time.ms();
 }
 
-absl::optional<TargetTransferRate> CongestionControlHandler::GetUpdate() {
+std::optional<TargetTransferRate> CongestionControlHandler::GetUpdate() {
   RTC_DCHECK_RUN_ON(&sequenced_checker_);
   if (!last_incoming_.has_value())
-    return absl::nullopt;
+    return std::nullopt;
   TargetTransferRate new_outgoing = *last_incoming_;
   DataRate log_target_rate = new_outgoing.target_rate;
   bool pause_encoding = false;
   if (!network_available_) {
     pause_encoding = true;
-  } else if (!disable_pacer_emergency_stop_ &&
-             pacer_expected_queue_ms_ >
-                 PacingController::kMaxExpectedQueueLength.ms()) {
+  } else if (pacer_expected_queue_ms_ >
+             PacingController::kMaxExpectedQueueLength.ms()) {
     pause_encoding = true;
   }
   if (pause_encoding)
@@ -81,7 +67,7 @@ absl::optional<TargetTransferRate> CongestionControlHandler::GetUpdate() {
     last_reported_ = new_outgoing;
     return new_outgoing;
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 }  // namespace webrtc

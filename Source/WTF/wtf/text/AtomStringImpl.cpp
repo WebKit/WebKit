@@ -133,7 +133,7 @@ struct HashedUTF8CharactersTranslator {
             return Unicode::equal(string->span16(), characters.characters);
         }
 
-        auto charactersLatin1 = spanReinterpretCast<const LChar>(characters.characters);
+        auto charactersLatin1 = byteCast<LChar>(characters.characters);
         if (string->is8Bit())
             return WTF::equal(string->span8().data(), charactersLatin1);
         return WTF::equal(string->span16().data(), charactersLatin1);
@@ -141,14 +141,14 @@ struct HashedUTF8CharactersTranslator {
 
     static void translate(AtomStringTable::StringEntry& location, const HashedUTF8Characters& characters, unsigned hash)
     {
-        UChar* target;
+        std::span<UChar> target;
         auto newString = StringImpl::createUninitialized(characters.length.lengthUTF16, target);
 
-        auto result = Unicode::convert(characters.characters, { target, characters.length.lengthUTF16 });
+        auto result = Unicode::convert(characters.characters, target);
         RELEASE_ASSERT(result.code == Unicode::ConversionResultCode::Success);
 
         if (result.isAllASCII)
-            newString = StringImpl::create(spanReinterpretCast<const LChar>(characters.characters));
+            newString = StringImpl::create(byteCast<LChar>(characters.characters));
 
         auto* pointer = &newString.leakRef();
         pointer->setHash(hash);
@@ -476,7 +476,7 @@ RefPtr<AtomStringImpl> AtomStringImpl::lookUpSlowCase(StringImpl& string)
 
 RefPtr<AtomStringImpl> AtomStringImpl::add(std::span<const char8_t> characters)
 {
-    HashedUTF8Characters buffer { characters, computeUTF16LengthWithHash(spanReinterpretCast<const char8_t>(characters)) };
+    HashedUTF8Characters buffer { characters, computeUTF16LengthWithHash(characters) };
     if (!buffer.length.hash)
         return nullptr;
     return addToStringTable<HashedUTF8Characters, HashedUTF8CharactersTranslator>(buffer);

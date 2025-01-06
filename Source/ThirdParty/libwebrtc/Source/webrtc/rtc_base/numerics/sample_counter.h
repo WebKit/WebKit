@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
 
 namespace rtc {
 
@@ -24,10 +24,10 @@ class SampleCounter {
   SampleCounter();
   ~SampleCounter();
   void Add(int sample);
-  absl::optional<int> Avg(int64_t min_required_samples) const;
-  absl::optional<int> Max() const;
-  absl::optional<int> Min() const;
-  absl::optional<int64_t> Sum(int64_t min_required_samples) const;
+  std::optional<int> Avg(int64_t min_required_samples) const;
+  std::optional<int> Max() const;
+  std::optional<int> Min() const;
+  std::optional<int64_t> Sum(int64_t min_required_samples) const;
   int64_t NumSamples() const;
   void Reset();
   // Adds all the samples from the `other` SampleCounter as if they were all
@@ -37,8 +37,8 @@ class SampleCounter {
  protected:
   int64_t sum_ = 0;
   int64_t num_samples_ = 0;
-  absl::optional<int> max_;
-  absl::optional<int> min_;
+  std::optional<int> max_;
+  std::optional<int> min_;
 };
 
 class SampleCounterWithVariance : public SampleCounter {
@@ -46,7 +46,7 @@ class SampleCounterWithVariance : public SampleCounter {
   SampleCounterWithVariance();
   ~SampleCounterWithVariance();
   void Add(int sample);
-  absl::optional<int64_t> Variance(int64_t min_required_samples) const;
+  std::optional<int64_t> Variance(int64_t min_required_samples) const;
   void Reset();
   // Adds all the samples from the `other` SampleCounter as if they were all
   // individually added using `Add(int)` method.

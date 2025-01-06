@@ -23,6 +23,7 @@
 
 #if ENABLE(MODEL_PROCESS)
 
+[EnabledBy=ModelElementEnabled && ModelProcessEnabled]
 messages -> ModelProcessModelPlayerProxy {
     CreateLayer()
     
@@ -31,6 +32,13 @@ messages -> ModelProcessModelPlayerProxy {
     SizeDidChange(WebCore::LayoutSize layoutSize)
     SetBackgroundColor(WebCore::Color color)
     SetEntityTransform(WebCore::TransformationMatrix transform)
+    SetAutoplay(bool autoplay)
+    SetLoop(bool loop)
+    SetPlaybackRate(double playbackRate) -> (double effectivePlaybackRate) Async
+    SetPaused(bool paused) -> (bool succeeded) Async
+    SetCurrentTime(Seconds currentTime) -> () Async
+    SetEnvironmentMap(Ref<WebCore::SharedBuffer> data)
+    SetHasPortal(bool hasPortal)
 }
 
 #endif

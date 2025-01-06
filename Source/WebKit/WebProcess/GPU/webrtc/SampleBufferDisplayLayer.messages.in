@@ -23,7 +23,11 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
-messages -> SampleBufferDisplayLayer NotRefCounted {
+[
+    DispatchedFrom=GPU,
+    DispatchedTo=WebContent
+]
+messages -> SampleBufferDisplayLayer {
     SetDidFail(bool value)
 }
 

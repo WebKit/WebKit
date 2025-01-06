@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x138
   RenderBlock {HTML} at (0,0) size 800x138
     RenderBody {BODY} at (8,8) size 784x122
-      RenderTable {TABLE} at (0,0) size 200x122 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 200x122 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,13) size 198x108
           RenderTableRow {TR} at (0,2) size 198x104
-            RenderTableCell {TD} at (2,43) size 98x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,43) size 98x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,43) size 22x18
                 text run at (2,2) width 22: "foo"
-            RenderTableCell {TD} at (101,43) size 96x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (101,43) size 96x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,43) size 21x18
                 text run at (2,2) width 21: "bar"
 layer at (8,8) size 200x12 scrollWidth 397 scrollHeight 403

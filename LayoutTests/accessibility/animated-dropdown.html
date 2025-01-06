@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="resources/jquery-3.6.1.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<main id="main">
+  <section>
+	  <button id="button-one" class="dropdown">Expand first</button>
+	  <div style="display:none">This text begins as hidden</div>
+  </section>
+  <section><button>Foo</button></section>
+</main>
+<footer><a href="#url">apple.com</a></footer>
+<script>
+var output = "This test ensures the accessibility tree is correct after an animated dropdown is opened via button press.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += "First traversal:\n";
+    output += dumpAXSearchTraversal(accessibilityController.rootElement.childAtIndex(0));
+    var secondTraversal;
+    setTimeout(async function() {
+        // Expand the dropdown.
+        accessibilityController.accessibleElementById("button-one").press();
+        output += "\nSecond traversal:\n\n";
+        const expectedText = "This text begins as hidden";
+        await waitFor(() => {
+            secondTraversal = dumpAXSearchTraversal(accessibilityController.rootElement.childAtIndex(0));
+            return secondTraversal && secondTraversal.includes(expectedText);
+        });
+        output += expect(`secondTraversal.includes('${expectedText}')`, "true");
+        if (accessibilityController.platformName !== "ios") {
+            // The button won't have a parent if the implementation bug is present.
+            // iOS doesn't implement AccessibilityUIElement::parentElement (it arguably doesn't make sense to do so for iOS?).
+            output += expect("!!accessibilityController.accessibleElementById('button-one').parentElement()", "true");
+        }
+        output += secondTraversal;
+
+        document.getElementById("main").style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+
+$(document).ready(function () {
+    $(".dropdown").click((function(a) {
+        $(this).next().slideToggle();
+    }));
+});
+</script>
+</body>
+</html>

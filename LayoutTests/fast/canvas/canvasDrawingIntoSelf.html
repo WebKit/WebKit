@@ -1,11 +1,9 @@
-If this renders correctly you should see one big friendly green square.
+<p>If this renders correctly you should see one big friendly green square.</p>
 <canvas id="canvas" width="200" height="200" ></canvas>
 <script>
-if (window.testRunner)
-  testRunner.dumpAsText(true);
-
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
+context.imageSmoothingEnabled = false;
 context.fillStyle = 'red';
 context.fillRect(0,0,200,200);
 context.fillStyle = 'green';

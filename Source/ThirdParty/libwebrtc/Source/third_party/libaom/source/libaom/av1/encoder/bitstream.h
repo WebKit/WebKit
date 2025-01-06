@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,11 +16,16 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
 #include "av1/common/av1_common_int.h"
 #include "av1/common/blockd.h"
 #include "av1/common/enums.h"
 #include "av1/encoder/level.h"
 #include "aom_dsp/bitwriter.h"
+#include "aom_util/aom_pthread.h"
 
 struct aom_write_bit_buffer;
 struct AV1_COMP;
@@ -85,16 +90,21 @@ typedef struct {
 // payload written to 'dst'. This function does not write the OBU header, the
 // optional extension, or the OBU size to 'dst'.
 uint32_t av1_write_sequence_header_obu(const SequenceHeader *seq_params,
-                                       uint8_t *const dst);
+                                       uint8_t *const dst, size_t dst_size);
 
 // Writes the OBU header byte, and the OBU header extension byte when
-// 'obu_extension' is non-zero. Returns number of bytes written to 'dst'.
+// has_nonzero_operating_point_idc is true and the OBU is part of a frame.
+// Returns number of bytes written to 'dst'.
 uint32_t av1_write_obu_header(AV1LevelParams *const level_params,
                               int *frame_header_count, OBU_TYPE obu_type,
+                              bool has_nonzero_operating_point_idc,
                               int obu_extension, uint8_t *const dst);
 
-int av1_write_uleb_obu_size(size_t obu_header_size, size_t obu_payload_size,
-                            uint8_t *dest);
+// Encodes obu_payload_size as a leb128 integer and writes it to the dest
+// buffer. The output must fill the buffer exactly. Returns AOM_CODEC_OK on
+// success, AOM_CODEC_ERROR on failure.
+int av1_write_uleb_obu_size(size_t obu_payload_size, uint8_t *dest,
+                            size_t dest_size);
 
 // Pack tile data in the bitstream with tile_group, frame
 // and OBU header.
@@ -113,7 +123,8 @@ void av1_write_last_tile_info(
  * \ingroup high_level_algo
  * \callgraph
  */
-int av1_pack_bitstream(struct AV1_COMP *const cpi, uint8_t *dst, size_t *size,
+int av1_pack_bitstream(struct AV1_COMP *const cpi, uint8_t *dst,
+                       size_t dst_size, size_t *size,
                        int *const largest_tile_id);
 
 void av1_write_tx_type(const AV1_COMMON *const cm, const MACROBLOCKD *xd,

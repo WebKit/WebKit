@@ -80,6 +80,14 @@ PASS RSA-PSS with SHA-1, salted verification failure with altered signature
 PASS RSA-PSS with SHA-256, salted verification failure with altered signature
 PASS RSA-PSS with SHA-384, salted verification failure with altered signature
 PASS RSA-PSS with SHA-512, salted verification failure with altered signature
+PASS RSA-PSS with SHA-1 and no salt verification failure with wrong saltLength
+PASS RSA-PSS with SHA-256 and no salt verification failure with wrong saltLength
+PASS RSA-PSS with SHA-384 and no salt verification failure with wrong saltLength
+PASS RSA-PSS with SHA-512 and no salt verification failure with wrong saltLength
+PASS RSA-PSS with SHA-1, salted verification failure with wrong saltLength
+PASS RSA-PSS with SHA-256, salted verification failure with wrong saltLength
+PASS RSA-PSS with SHA-384, salted verification failure with wrong saltLength
+PASS RSA-PSS with SHA-512, salted verification failure with wrong saltLength
 PASS RSA-PSS with SHA-1 and no salt verification failure with altered plaintext
 PASS RSA-PSS with SHA-256 and no salt verification failure with altered plaintext
 PASS RSA-PSS with SHA-384 and no salt verification failure with altered plaintext

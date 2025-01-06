@@ -41,17 +41,24 @@
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/OrganizationStorageAccessPromptQuirk.h>
-#include <WebCore/PlatformDisplay.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
 #if PLATFORM(GTK)
+#include "Display.h"
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
 #endif
 
 using namespace WebKit;
+
+class UIClient;
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<UIClient> : std::true_type { };
+}
 
 class UIClient : public API::UIClient {
 public:
@@ -61,10 +68,10 @@ public:
     }
 
 private:
-    void createNewPage(WebPageProxy& page, Ref<API::PageConfiguration>&& configuration, WebCore::WindowFeatures&& windowFeatures, Ref<API::NavigationAction>&& apiNavigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) final
+    void createNewPage(WebPageProxy& page, Ref<API::PageConfiguration>&& configuration, Ref<API::NavigationAction>&& apiNavigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) final
     {
         WebKitNavigationAction navigationAction(WTFMove(apiNavigationAction));
-        completionHandler(webkitWebViewCreateNewPage(m_webView, WTFMove(configuration), WTFMove(windowFeatures), &navigationAction));
+        completionHandler(webkitWebViewCreateNewPage(m_webView, WTFMove(configuration), &navigationAction));
     }
 
     void showPage(WebPageProxy*) final
@@ -147,10 +154,7 @@ private:
     {
         GdkRectangle geometry = { 0, 0, 0, 0 };
         // Position a toplevel window is not supported under wayland.
-#if PLATFORM(WAYLAND)
-        if (WebCore::PlatformDisplay::sharedDisplay().type() != WebCore::PlatformDisplay::Type::Wayland)
-#endif
-        {
+        if (!Display::singleton().isWayland()) {
             gtk_window_get_position(window, &geometry.x, &geometry.y);
             if (geometry.x != targetGeometry->x || geometry.y != targetGeometry->y)
                 return FALSE;
@@ -180,10 +184,7 @@ private:
             // Querying and setting window positions is not supported in GTK4.
 #if !USE(GTK4)
             // Position a toplevel window is not supported under wayland.
-#if PLATFORM(WAYLAND)
-            if (WebCore::PlatformDisplay::sharedDisplay().type() != WebCore::PlatformDisplay::Type::Wayland)
-#endif // PLATFORM(WAYLAND)
-            {
+            if (!Display::singleton().isWayland()) {
                 if (geometry.x >= 0 && geometry.y >= 0) {
                     int x, y;
                     gtk_window_get_position(GTK_WINDOW(window), &x, &y);
@@ -257,9 +258,9 @@ private:
 #elif PLATFORM(WPE)
         // FIXME: I guess this is actually the view size in WPE. We need more refactoring here.
         WebCore::FloatRect rect;
-        auto& page = webkitWebViewGetPage(m_webView);
-        if (page.drawingArea())
-            rect.setSize(page.drawingArea()->size());
+        Ref page = webkitWebViewGetPage(m_webView);
+        if (page->drawingArea())
+            rect.setSize(page->drawingArea()->size());
         completionHandler(WTFMove(rect));
 #endif
     }

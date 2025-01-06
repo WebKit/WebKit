@@ -1,12 +1,6 @@
 <html>
 <head>
 <script>
-
-if (window.testRunner) {
-    testRunner.clearBackForwardList();
-    testRunner.dumpAsText();
-}
-
 function log(txt)
 {
     document.getElementById("logger").innerText += txt + "\n";
@@ -40,10 +34,14 @@ var URLsToTry = new Array(
 "file://anyfile.html/"
 );
 
-function runTest()
+async function runTest()
 {
+    testRunner?.dumpAsText();
+    testRunner?.waitUntilDone();
+    await testRunner?.clearBackForwardList();
     for (n in URLsToTry)
         tryURL(URLsToTry[n]);
+    testRunner?.notifyDone();
 }
 
 </script>

@@ -13,10 +13,10 @@
 
 #include <deque>
 #include <memory>
+#include <optional>
 #include <set>
 #include <unordered_map>
 
-#include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -90,10 +90,10 @@ class MultiReaderQueue {
   }
 
   // Extract element from specified head. Complexity O(1).
-  absl::optional<T> PopFront(size_t reader) {
+  std::optional<T> PopFront(size_t reader) {
     size_t pos = GetHeadPositionOrDie(reader);
     if (pos >= queue_.size()) {
-      return absl::nullopt;
+      return std::nullopt;
     }
 
     T out = queue_[pos];
@@ -109,10 +109,10 @@ class MultiReaderQueue {
   }
 
   // Returns element at specified head. Complexity O(1).
-  absl::optional<T> Front(size_t reader) const {
+  std::optional<T> Front(size_t reader) const {
     size_t pos = GetHeadPositionOrDie(reader);
     if (pos >= queue_.size()) {
-      return absl::nullopt;
+      return std::nullopt;
     }
     return queue_[pos];
   }

@@ -44,12 +44,12 @@ namespace WTR {
 static std::string computeSHA1HashStringForPixmap(const SkPixmap& pixmap)
 {
     size_t pixelsWidth = pixmap.width();
-    size_t pixelsHight = pixmap.height();
+    size_t pixelsHeight = pixmap.height();
     size_t bytesPerRow = pixmap.info().minRowBytes();
 
     SHA1 sha1;
-    const auto* bitmapData = pixmap.addr8();
-    for (size_t row = 0; row < pixelsHight; ++row) {
+    const auto* bitmapData = reinterpret_cast<const uint8_t*>(pixmap.addr32());
+    for (size_t row = 0; row < pixelsHeight; ++row) {
         sha1.addBytes(std::span { bitmapData, 4 * pixelsWidth });
         bitmapData += bytesPerRow;
     }

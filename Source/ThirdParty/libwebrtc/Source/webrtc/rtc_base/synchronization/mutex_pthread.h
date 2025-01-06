@@ -76,8 +76,8 @@ class RTC_LOCKABLE MutexImpl final {
     }
 
    private:
-    // Use two separate primitive types, rather than absl::optional, since the
-    // data race described below might invalidate absl::optional invariants.
+    // Use two separate primitive types, rather than std::optional, since the
+    // data race described below might invalidate std::optional invariants.
     bool is_owned_ = false;
     pthread_t latest_owner_ = pthread_self();
 #endif

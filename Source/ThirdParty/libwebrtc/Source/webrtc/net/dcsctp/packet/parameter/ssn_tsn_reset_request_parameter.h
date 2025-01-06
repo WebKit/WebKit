@@ -40,7 +40,7 @@ class SSNTSNResetRequestParameter
       ReconfigRequestSN request_sequence_number)
       : request_sequence_number_(request_sequence_number) {}
 
-  static absl::optional<SSNTSNResetRequestParameter> Parse(
+  static std::optional<SSNTSNResetRequestParameter> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

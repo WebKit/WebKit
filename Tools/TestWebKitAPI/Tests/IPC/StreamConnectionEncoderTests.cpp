@@ -50,7 +50,7 @@ TEST(StreamConnectionEncoderTest, MinimumMessageSizeCanEncodeExpectedMessageAtAn
 
     size_t minimumMessageSize = IPC::StreamConnectionEncoder::minimumMessageSize;
     for (size_t i = 0; i < maxAlignment; i += IPC::StreamConnectionEncoder::messageAlignment) {
-        IPC::StreamConnectionEncoder encoder { IPC::MessageName::SetStreamDestinationID, buffer + i,  minimumMessageSize };
+        IPC::StreamConnectionEncoder encoder { IPC::MessageName::SetStreamDestinationID, unsafeMakeSpan(buffer + i, minimumMessageSize) };
         encoder << static_cast<int64_t>(0);
         EXPECT_TRUE(encoder.isValid()) << i;
     }

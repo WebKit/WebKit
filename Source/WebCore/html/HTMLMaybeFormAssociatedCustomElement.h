@@ -32,7 +32,7 @@ namespace WebCore {
 class FormAssociatedCustomElement;
 
 class HTMLMaybeFormAssociatedCustomElement final : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLMaybeFormAssociatedCustomElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLMaybeFormAssociatedCustomElement);
 public:
     static Ref<HTMLMaybeFormAssociatedCustomElement> create(const QualifiedName& tagName, Document&);
 

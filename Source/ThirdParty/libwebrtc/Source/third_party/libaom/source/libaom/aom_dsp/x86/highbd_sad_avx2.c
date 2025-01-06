@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -19,7 +19,7 @@
 #include "aom_ports/mem.h"
 
 // SAD
-static INLINE unsigned int get_sad_from_mm256_epi32(const __m256i *v) {
+static inline unsigned int get_sad_from_mm256_epi32(const __m256i *v) {
   // input 8 32-bit summation
   __m128i lo128, hi128;
   __m256i u = _mm256_srli_si256(*v, 8);
@@ -37,7 +37,7 @@ static INLINE unsigned int get_sad_from_mm256_epi32(const __m256i *v) {
   return (unsigned int)_mm_cvtsi128_si32(lo128);
 }
 
-static INLINE void highbd_sad16x4_core_avx2(__m256i *s, __m256i *r,
+static inline void highbd_sad16x4_core_avx2(__m256i *s, __m256i *r,
                                             __m256i *sad_acc) {
   const __m256i zero = _mm256_setzero_si256();
   int i;
@@ -58,7 +58,7 @@ static INLINE void highbd_sad16x4_core_avx2(__m256i *s, __m256i *r,
 }
 
 // If sec_ptr = 0, calculate regular SAD. Otherwise, calculate average SAD.
-static INLINE void sad16x4(const uint16_t *src_ptr, int src_stride,
+static inline void sad16x4(const uint16_t *src_ptr, int src_stride,
                            const uint16_t *ref_ptr, int ref_stride,
                            const uint16_t *sec_ptr, __m256i *sad_acc) {
   __m256i s[4], r[4];
@@ -267,18 +267,14 @@ static AOM_FORCE_INLINE unsigned int aom_highbd_sad128xN_avx2(
                                           2 * ref_stride);                   \
   }
 
-HIGHBD_SADMXN_AVX2(16, 4)
 HIGHBD_SADMXN_AVX2(16, 8)
 HIGHBD_SADMXN_AVX2(16, 16)
 HIGHBD_SADMXN_AVX2(16, 32)
-HIGHBD_SADMXN_AVX2(16, 64)
 
-HIGHBD_SADMXN_AVX2(32, 8)
 HIGHBD_SADMXN_AVX2(32, 16)
 HIGHBD_SADMXN_AVX2(32, 32)
 HIGHBD_SADMXN_AVX2(32, 64)
 
-HIGHBD_SADMXN_AVX2(64, 16)
 HIGHBD_SADMXN_AVX2(64, 32)
 HIGHBD_SADMXN_AVX2(64, 64)
 HIGHBD_SADMXN_AVX2(64, 128)
@@ -286,17 +282,20 @@ HIGHBD_SADMXN_AVX2(64, 128)
 HIGHBD_SADMXN_AVX2(128, 64)
 HIGHBD_SADMXN_AVX2(128, 128)
 
-HIGHBD_SAD_SKIP_MXN_AVX2(16, 8)
+#if !CONFIG_REALTIME_ONLY
+HIGHBD_SADMXN_AVX2(16, 4)
+HIGHBD_SADMXN_AVX2(16, 64)
+HIGHBD_SADMXN_AVX2(32, 8)
+HIGHBD_SADMXN_AVX2(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY
+
 HIGHBD_SAD_SKIP_MXN_AVX2(16, 16)
 HIGHBD_SAD_SKIP_MXN_AVX2(16, 32)
-HIGHBD_SAD_SKIP_MXN_AVX2(16, 64)
 
-HIGHBD_SAD_SKIP_MXN_AVX2(32, 8)
 HIGHBD_SAD_SKIP_MXN_AVX2(32, 16)
 HIGHBD_SAD_SKIP_MXN_AVX2(32, 32)
 HIGHBD_SAD_SKIP_MXN_AVX2(32, 64)
 
-HIGHBD_SAD_SKIP_MXN_AVX2(64, 16)
 HIGHBD_SAD_SKIP_MXN_AVX2(64, 32)
 HIGHBD_SAD_SKIP_MXN_AVX2(64, 64)
 HIGHBD_SAD_SKIP_MXN_AVX2(64, 128)
@@ -304,6 +303,12 @@ HIGHBD_SAD_SKIP_MXN_AVX2(64, 128)
 HIGHBD_SAD_SKIP_MXN_AVX2(128, 64)
 HIGHBD_SAD_SKIP_MXN_AVX2(128, 128)
 
+#if !CONFIG_REALTIME_ONLY
+HIGHBD_SAD_SKIP_MXN_AVX2(16, 64)
+HIGHBD_SAD_SKIP_MXN_AVX2(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY
+
+#if !CONFIG_REALTIME_ONLY
 unsigned int aom_highbd_sad16x4_avg_avx2(const uint8_t *src, int src_stride,
                                          const uint8_t *ref, int ref_stride,
                                          const uint8_t *second_pred) {
@@ -315,6 +320,7 @@ unsigned int aom_highbd_sad16x4_avg_avx2(const uint8_t *src, int src_stride,
 
   return get_sad_from_mm256_epi32(&sad);
 }
+#endif  // !CONFIG_REALTIME_ONLY
 
 unsigned int aom_highbd_sad16x8_avg_avx2(const uint8_t *src, int src_stride,
                                          const uint8_t *ref, int ref_stride,
@@ -362,6 +368,7 @@ unsigned int aom_highbd_sad16x32_avg_avx2(const uint8_t *src, int src_stride,
   return sum;
 }
 
+#if !CONFIG_REALTIME_ONLY
 unsigned int aom_highbd_sad16x64_avg_avx2(const uint8_t *src, int src_stride,
                                           const uint8_t *ref, int ref_stride,
                                           const uint8_t *second_pred) {
@@ -395,6 +402,7 @@ unsigned int aom_highbd_sad32x8_avg_avx2(const uint8_t *src, int src_stride,
   }
   return get_sad_from_mm256_epi32(&sad);
 }
+#endif  // !CONFIG_REALTIME_ONLY
 
 unsigned int aom_highbd_sad32x16_avg_avx2(const uint8_t *src, int src_stride,
                                           const uint8_t *ref, int ref_stride,
@@ -444,6 +452,7 @@ unsigned int aom_highbd_sad32x64_avg_avx2(const uint8_t *src, int src_stride,
   return sum;
 }
 
+#if !CONFIG_REALTIME_ONLY
 unsigned int aom_highbd_sad64x16_avg_avx2(const uint8_t *src, int src_stride,
                                           const uint8_t *ref, int ref_stride,
                                           const uint8_t *second_pred) {
@@ -463,6 +472,7 @@ unsigned int aom_highbd_sad64x16_avg_avx2(const uint8_t *src, int src_stride,
   }
   return get_sad_from_mm256_epi32(&sad);
 }
+#endif  // !CONFIG_REALTIME_ONLY
 
 unsigned int aom_highbd_sad64x32_avg_avx2(const uint8_t *src, int src_stride,
                                           const uint8_t *ref, int ref_stride,
@@ -548,10 +558,10 @@ unsigned int aom_highbd_sad128x128_avg_avx2(const uint8_t *src, int src_stride,
 
 // SAD 4D
 // Combine 4 __m256i input vectors  v to uint32_t result[4]
-static INLINE void get_4d_sad_from_mm256_epi32(const __m256i *v,
+static inline void get_4d_sad_from_mm256_epi32(const __m256i *v,
                                                uint32_t *res) {
   __m256i u0, u1, u2, u3;
-  const __m256i mask = yy_set1_64_from_32i(~0);
+  const __m256i mask = _mm256_set1_epi64x(~0u);
   __m128i sad;
 
   // 8 32-bit summation
@@ -663,18 +673,14 @@ static AOM_FORCE_INLINE void aom_highbd_sadMxNxD_avx2(
                              sad_array);                                      \
   }
 
-HIGHBD_SAD_MXNX4D_AVX2(16, 4)
 HIGHBD_SAD_MXNX4D_AVX2(16, 8)
 HIGHBD_SAD_MXNX4D_AVX2(16, 16)
 HIGHBD_SAD_MXNX4D_AVX2(16, 32)
-HIGHBD_SAD_MXNX4D_AVX2(16, 64)
 
-HIGHBD_SAD_MXNX4D_AVX2(32, 8)
 HIGHBD_SAD_MXNX4D_AVX2(32, 16)
 HIGHBD_SAD_MXNX4D_AVX2(32, 32)
 HIGHBD_SAD_MXNX4D_AVX2(32, 64)
 
-HIGHBD_SAD_MXNX4D_AVX2(64, 16)
 HIGHBD_SAD_MXNX4D_AVX2(64, 32)
 HIGHBD_SAD_MXNX4D_AVX2(64, 64)
 HIGHBD_SAD_MXNX4D_AVX2(64, 128)
@@ -682,17 +688,20 @@ HIGHBD_SAD_MXNX4D_AVX2(64, 128)
 HIGHBD_SAD_MXNX4D_AVX2(128, 64)
 HIGHBD_SAD_MXNX4D_AVX2(128, 128)
 
-HIGHBD_SAD_SKIP_MXNX4D_AVX2(16, 8)
+#if !CONFIG_REALTIME_ONLY
+HIGHBD_SAD_MXNX4D_AVX2(16, 4)
+HIGHBD_SAD_MXNX4D_AVX2(16, 64)
+HIGHBD_SAD_MXNX4D_AVX2(32, 8)
+HIGHBD_SAD_MXNX4D_AVX2(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY
+
 HIGHBD_SAD_SKIP_MXNX4D_AVX2(16, 16)
 HIGHBD_SAD_SKIP_MXNX4D_AVX2(16, 32)
-HIGHBD_SAD_SKIP_MXNX4D_AVX2(16, 64)
 
-HIGHBD_SAD_SKIP_MXNX4D_AVX2(32, 8)
 HIGHBD_SAD_SKIP_MXNX4D_AVX2(32, 16)
 HIGHBD_SAD_SKIP_MXNX4D_AVX2(32, 32)
 HIGHBD_SAD_SKIP_MXNX4D_AVX2(32, 64)
 
-HIGHBD_SAD_SKIP_MXNX4D_AVX2(64, 16)
 HIGHBD_SAD_SKIP_MXNX4D_AVX2(64, 32)
 HIGHBD_SAD_SKIP_MXNX4D_AVX2(64, 64)
 HIGHBD_SAD_SKIP_MXNX4D_AVX2(64, 128)
@@ -700,21 +709,29 @@ HIGHBD_SAD_SKIP_MXNX4D_AVX2(64, 128)
 HIGHBD_SAD_SKIP_MXNX4D_AVX2(128, 64)
 HIGHBD_SAD_SKIP_MXNX4D_AVX2(128, 128)
 
-HIGHBD_SAD_MXNX3D_AVX2(16, 4)
+#if !CONFIG_REALTIME_ONLY
+HIGHBD_SAD_SKIP_MXNX4D_AVX2(16, 64)
+HIGHBD_SAD_SKIP_MXNX4D_AVX2(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY
+
 HIGHBD_SAD_MXNX3D_AVX2(16, 8)
 HIGHBD_SAD_MXNX3D_AVX2(16, 16)
 HIGHBD_SAD_MXNX3D_AVX2(16, 32)
-HIGHBD_SAD_MXNX3D_AVX2(16, 64)
 
-HIGHBD_SAD_MXNX3D_AVX2(32, 8)
 HIGHBD_SAD_MXNX3D_AVX2(32, 16)
 HIGHBD_SAD_MXNX3D_AVX2(32, 32)
 HIGHBD_SAD_MXNX3D_AVX2(32, 64)
 
-HIGHBD_SAD_MXNX3D_AVX2(64, 16)
 HIGHBD_SAD_MXNX3D_AVX2(64, 32)
 HIGHBD_SAD_MXNX3D_AVX2(64, 64)
 HIGHBD_SAD_MXNX3D_AVX2(64, 128)
 
 HIGHBD_SAD_MXNX3D_AVX2(128, 64)
 HIGHBD_SAD_MXNX3D_AVX2(128, 128)
+
+#if !CONFIG_REALTIME_ONLY
+HIGHBD_SAD_MXNX3D_AVX2(16, 4)
+HIGHBD_SAD_MXNX3D_AVX2(16, 64)
+HIGHBD_SAD_MXNX3D_AVX2(32, 8)
+HIGHBD_SAD_MXNX3D_AVX2(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY

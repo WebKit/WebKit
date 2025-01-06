@@ -11,6 +11,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(Math, "abs");
-verifyWritable(Math, "abs");
-verifyConfigurable(Math, "abs");
+verifyProperty(Math, "abs", {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

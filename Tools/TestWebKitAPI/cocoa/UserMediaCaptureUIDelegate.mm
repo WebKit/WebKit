@@ -32,11 +32,11 @@
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 
 @implementation UserMediaCaptureUIDelegate {
-    WKWebView* _webViewForPopup;
+    Vector<RetainPtr<WKWebView>> _createdWebViews;
 }
+@synthesize createWebViewWithConfiguration = _createWebViewWithConfiguration;
 @synthesize numberOfPrompts = _numberOfPrompts;
 @synthesize decision = _decision;
-@synthesize shouldCreateNewWebView = _shouldCreateNewWebView;
 
 -(id)init {
     self = [super init];
@@ -49,10 +49,6 @@
     }
 
     return self;
-}
-
--(void)setWebViewForPopup:(WKWebView*)webView {
-    _webViewForPopup = webView;
 }
 
 -(BOOL)wasPrompted {
@@ -132,10 +128,17 @@
 
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
-    if (_shouldCreateNewWebView)
-        return [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
+    if (_createWebViewWithConfiguration)
+        return _createWebViewWithConfiguration(configuration, navigationAction, windowFeatures);
+    _createdWebViews.append(adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]));
+    return _createdWebViews.last().get();
+}
 
-    return _webViewForPopup;
+- (void)_webView:(WKWebView *)webView decidePolicyForScreenCaptureUnmutingForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL authorized))decisionHandler
+{
+    ++_numberOfPrompts;
+    _wasPrompted = true;
+    decisionHandler(_getDisplayMediaDecision != WKDisplayCapturePermissionDecisionDeny);
 }
 
 #if PLATFORM(IOS_FAMILY)

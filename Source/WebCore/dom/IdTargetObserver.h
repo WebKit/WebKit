@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/CheckedPtr.h>
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -34,7 +34,7 @@ namespace WebCore {
 class IdTargetObserverRegistry;
 
 class IdTargetObserver : public CanMakeCheckedPtr<IdTargetObserver> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IdTargetObserver);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IdTargetObserver);
 public:
     virtual ~IdTargetObserver();

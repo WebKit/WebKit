@@ -31,6 +31,7 @@
 #include "InjectedBundlePage.h"
 #include "JSAccessibilityController.h"
 #include <WebKit/WKBundle.h>
+#include <WebKit/WKBundleFramePrivate.h>
 #include <WebKit/WKBundlePage.h>
 #include <WebKit/WKBundlePagePrivate.h>
 
@@ -101,10 +102,9 @@ bool AccessibilityController::enhancedAccessibilityEnabled()
 
 #if PLATFORM(COCOA)
 
-Ref<AccessibilityUIElement> AccessibilityController::rootElement()
+Ref<AccessibilityUIElement> AccessibilityController::rootElement(JSContextRef context)
 {
-    auto page = InjectedBundle::singleton().page()->page();
-    auto root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
+    auto root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(WKBundleFrameForJavaScriptContext(context)));
     return AccessibilityUIElement::create(root);
 }
 
@@ -163,9 +163,9 @@ void AccessibilityController::spinMainRunLoop() const
 
 #endif // PLATFORM(COCOA)
 
-RefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(int x, int y)
+RefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(JSContextRef context, int x, int y)
 {
-    auto uiElement = rootElement();
+    auto uiElement = rootElement(context);
     return uiElement->elementAtPoint(x, y);
 }
 

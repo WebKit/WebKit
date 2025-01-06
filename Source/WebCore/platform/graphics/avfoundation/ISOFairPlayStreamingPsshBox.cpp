@@ -27,6 +27,7 @@
 #include "ISOFairPlayStreamingPsshBox.h"
 
 #include <JavaScriptCore/DataView.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -68,7 +69,7 @@ bool ISOFairPlayStreamingKeyRequestInfoBox::parse(JSC::DataView& view, unsigned&
     m_keyID.resize(m_keyID.capacity());
     if (keyID->byteLength() < m_keyID.capacity())
         return false;
-    memcpy(m_keyID.data(), keyID->data(), m_keyID.capacity());
+    memcpySpan(m_keyID.mutableSpan(), keyID->span().first(m_keyID.capacity()));
 
     offset = localOffset;
     return true;
@@ -100,7 +101,7 @@ bool ISOFairPlayStreamingKeyAssetIdBox::parse(JSC::DataView& view, unsigned& off
     m_data.resize(dataSize);
     if (parsedData->byteLength() < dataSize)
         return false;
-    memcpy(m_data.data(), parsedData->data(), dataSize);
+    memcpySpan(m_data.mutableSpan(), parsedData->span().first(dataSize));
     offset = localOffset;
     return true;
 }
@@ -131,7 +132,7 @@ bool ISOFairPlayStreamingKeyContextBox::parse(JSC::DataView& view, unsigned& off
     m_data.resize(dataSize);
     if (parsedData->byteLength() < dataSize)
         return false;
-    memcpy(m_data.data(), parsedData->data(), dataSize);
+    memcpySpan(m_data.mutableSpan(), parsedData->span().first(dataSize));
     offset = localOffset;
     return true;
 }

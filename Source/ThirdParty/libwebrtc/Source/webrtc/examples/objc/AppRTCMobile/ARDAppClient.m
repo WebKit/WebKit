@@ -84,7 +84,8 @@ static int const kKbpsMultiplier = 1000;
                          repeats:(BOOL)repeats
                     timerHandler:(void (^)(void))timerHandler {
   NSParameterAssert(timerHandler);
-  if (self = [super init]) {
+  self = [super init];
+  if (self) {
     _timerHandler = timerHandler;
     _timer = [NSTimer scheduledTimerWithTimeInterval:interval
                                               target:self
@@ -140,7 +141,8 @@ static int const kKbpsMultiplier = 1000;
 }
 
 - (instancetype)initWithDelegate:(id<ARDAppClientDelegate>)delegate {
-  if (self = [super init]) {
+  self = [super init];
+  if (self) {
     _roomServerClient = [[ARDAppEngineClient alloc] init];
     _delegate = delegate;
     NSURL *turnRequestURL = [NSURL URLWithString:kARDIceServerRequestUrl];
@@ -160,7 +162,8 @@ static int const kKbpsMultiplier = 1000;
   NSParameterAssert(rsClient);
   NSParameterAssert(channel);
   NSParameterAssert(turnClient);
-  if (self = [super init]) {
+  self = [super init];
+  if (self) {
     _roomServerClient = rsClient;
     _channel = channel;
     _turnClient = turnClient;

@@ -25,11 +25,11 @@
 #include "UIEvent.h"
 
 #include "Node.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
     
-WTF_MAKE_ISO_ALLOCATED_IMPL(UIEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(UIEvent);
 
 UIEvent::UIEvent(enum EventInterfaceType eventInterface)
     : Event(eventInterface)

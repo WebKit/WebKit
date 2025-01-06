@@ -27,6 +27,7 @@
 
 #include "SpeechRecognitionConnectionClientIdentifier.h"
 #include "SpeechRecognitionRequestInfo.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class SpeechRecognitionRequest;
@@ -40,7 +41,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SpeechRecogn
 namespace WebCore {
 
 class SpeechRecognitionRequest : public CanMakeWeakPtr<SpeechRecognitionRequest> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SpeechRecognitionRequest, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT explicit SpeechRecognitionRequest(SpeechRecognitionRequestInfo&&);
 

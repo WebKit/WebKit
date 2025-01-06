@@ -201,7 +201,7 @@ TEST(VideoRtpDepacketizerVp8Test, WithPacketizer) {
   ASSERT_TRUE(packetizer.NextPacket(&packet));
 
   VideoRtpDepacketizerVp8 depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(packet.PayloadBuffer());
   ASSERT_TRUE(parsed);
 
@@ -225,7 +225,7 @@ TEST(VideoRtpDepacketizerVp8Test, ReferencesInputCopyOnWriteBuffer) {
 
   rtc::CopyOnWriteBuffer rtp_payload(packet);
   VideoRtpDepacketizerVp8 depacketizer;
-  absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
+  std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed =
       depacketizer.Parse(rtp_payload);
   ASSERT_TRUE(parsed);
 

@@ -24,6 +24,7 @@
 
 #include "CSSParserContext.h"
 #include "CSSParserEnum.h"
+#include "CSSProperty.h"
 #include "CSSSelectorParser.h"
 #include "CSSValue.h"
 #include "ColorTypes.h"
@@ -39,6 +40,7 @@ class Element;
 class ImmutableStyleProperties;
 class MutableStyleProperties;
 class StyleRuleBase;
+class StyleRuleNestedDeclarations;
 class StyleRuleKeyframe;
 class StyleSheetContents;
 
@@ -55,7 +57,7 @@ public:
 
     void parseSheet(StyleSheetContents&, const String&);
     
-    static RefPtr<StyleRuleBase> parseRule(const CSSParserContext&, StyleSheetContents*, const String&, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
+    static RefPtr<StyleRuleBase> parseRule(const CSSParserContext&, StyleSheetContents*, const String&, CSSParserEnum::NestedContext = { });
     
     RefPtr<StyleRuleKeyframe> parseKeyframeRule(const String&);
     static Vector<double> parseKeyframeKeyList(const String&);
@@ -65,25 +67,25 @@ public:
     static void parseSheetForInspector(const CSSParserContext&, StyleSheetContents&, const String&, CSSParserObserver&);
     static void parseDeclarationForInspector(const CSSParserContext&, const String&, CSSParserObserver&);
 
-    static ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important, const CSSParserContext&);
-    static ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomString& propertyName, const String&, bool important, const CSSParserContext&);
+    static ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, IsImportant, const CSSParserContext&);
+    static ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomString& propertyName, const String&, IsImportant, const CSSParserContext&);
     
     static RefPtr<CSSValue> parseSingleValue(CSSPropertyID, const String&, const CSSParserContext& = strictCSSParserContext());
 
     WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties&, const String&);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element&);
 
-    WEBCORE_EXPORT std::optional<CSSSelectorList> parseSelectorList(const String&, StyleSheetContents* = nullptr, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
+    WEBCORE_EXPORT std::optional<CSSSelectorList> parseSelectorList(const String&, StyleSheetContents* = nullptr, CSSParserEnum::NestedContext = { });
 
-    WEBCORE_EXPORT static Color parseColor(const String&, const CSSParserContext&);
-    // FIXME: All callers are not getting the right Settings for parsing due to lack of CSSParserContext and should switch to the parseColor function above.
+    // FIXME: All callers are not getting the right Settings, keyword resolution and calc resolution when using this
+    // function and should switch to the parseColorRaw() function in CSSPropertyParserConsumer+Color.h.
     WEBCORE_EXPORT static Color parseColorWithoutContext(const String&, bool strict = false);
-    static Color parseSystemColor(StringView);
+
     static std::optional<SRGBA<uint8_t>> parseNamedColor(StringView);
     static std::optional<SRGBA<uint8_t>> parseHexColor(StringView);
 
 private:
-    ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important);
+    ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, IsImportant);
 
     CSSParserContext m_context;
 };

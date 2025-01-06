@@ -50,7 +50,7 @@ class UniqueIDBDatabaseConnection;
 class UniqueIDBDatabaseTransaction;
 
 class UniqueIDBDatabaseManager : public CanMakeWeakPtr<UniqueIDBDatabaseManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(UniqueIDBDatabaseManager);
 public:
     virtual ~UniqueIDBDatabaseManager() { }
     virtual void registerConnection(UniqueIDBDatabaseConnection&) = 0;

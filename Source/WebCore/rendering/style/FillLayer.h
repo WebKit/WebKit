@@ -29,6 +29,7 @@
 #include "RenderStyleConstants.h"
 #include "StyleImage.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -60,7 +61,7 @@ struct FillRepeatXY {
 };
 
 class FillLayer : public RefCounted<FillLayer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FillLayer);
 public:
     static Ref<FillLayer> create(FillLayerType);
     static Ref<FillLayer> create(const FillLayer&);
@@ -164,8 +165,8 @@ public:
     void cullEmptyLayers();
 
     static FillAttachment initialFillAttachment(FillLayerType) { return FillAttachment::ScrollBackground; }
-    static FillBox initialFillClip(FillLayerType) { return FillBox::Border; }
-    static FillBox initialFillOrigin(FillLayerType type) { return type == FillLayerType::Background ? FillBox::Padding : FillBox::Border; }
+    static FillBox initialFillClip(FillLayerType) { return FillBox::BorderBox; }
+    static FillBox initialFillOrigin(FillLayerType type) { return type == FillLayerType::Background ? FillBox::PaddingBox : FillBox::BorderBox; }
     static FillRepeatXY initialFillRepeat(FillLayerType) { return { FillRepeat::Repeat, FillRepeat::Repeat }; }
     static CompositeOperator initialFillComposite(FillLayerType) { return CompositeOperator::SourceOver; }
     static BlendMode initialFillBlendMode(FillLayerType) { return BlendMode::Normal; }

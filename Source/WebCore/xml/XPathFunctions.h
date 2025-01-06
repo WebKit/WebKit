@@ -27,11 +27,13 @@
 #pragma once
 
 #include "XPathExpressionNode.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace XPath {
 
 class Function : public Expression {
+    WTF_MAKE_TZONE_ALLOCATED(Function);
 public:
     static std::unique_ptr<Function> create(const String& name);
     static std::unique_ptr<Function> create(const String& name, Vector<std::unique_ptr<Expression>> arguments);

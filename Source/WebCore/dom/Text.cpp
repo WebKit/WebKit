@@ -36,13 +36,13 @@
 #include "TextManipulationController.h"
 #include "TextNodeTraversal.h"
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Text);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Text);
 
 Ref<Text> Text::create(Document& document, String&& data)
 {
@@ -51,7 +51,8 @@ Ref<Text> Text::create(Document& document, String&& data)
 
 Ref<Text> Text::createEditingText(Document& document, String&& data)
 {
-    auto node = adoptRef(*new Text(document, WTFMove(data), TEXT_NODE, { TypeFlag::IsSpecialInternalNode }));
+    auto node = adoptRef(*new Text(document, WTFMove(data), TEXT_NODE, { }));
+    node->setStateFlag(StateFlag::IsSpecialInternalNode);
     ASSERT(node->isEditingText());
     return node;
 }
@@ -156,9 +157,10 @@ String Text::nodeName() const
     return "#text"_s;
 }
 
-Ref<Node> Text::cloneNodeInternal(Document& targetDocument, CloningOperation)
+Ref<Node> Text::cloneNodeInternal(TreeScope& treeScope, CloningOperation)
 {
-    return create(targetDocument, String { data() });
+    Ref document = treeScope.documentScope();
+    return create(document, String { data() });
 }
 
 static bool isSVGShadowText(const Text& text)

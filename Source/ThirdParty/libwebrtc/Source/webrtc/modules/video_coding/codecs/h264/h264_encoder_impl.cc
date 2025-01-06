@@ -18,13 +18,15 @@
 
 #include <algorithm>
 #include <limits>
+#include <optional>
 #include <string>
 
 #include "absl/strings/match.h"
-#include "absl/types/optional.h"
 #include "api/video/video_codec_constants.h"
 #include "api/video_codecs/scalability_mode.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "modules/video_coding/include/video_codec_interface.h"
+#include "modules/video_coding/include/video_error_codes.h"
 #include "modules/video_coding/svc/create_scalability_structure.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "modules/video_coding/utility/simulcast_utility.h"
@@ -63,7 +65,7 @@ enum H264EncoderImplEvent {
   kH264EncoderEventMax = 16,
 };
 
-int NumberOfThreads(absl::optional<int> encoder_thread_limit,
+int NumberOfThreads(std::optional<int> encoder_thread_limit,
                     int width,
                     int height,
                     int number_of_cores) {
@@ -107,7 +109,7 @@ VideoFrameType ConvertToVideoFrameType(EVideoFrameType type) {
   return VideoFrameType::kEmptyFrame;
 }
 
-absl::optional<ScalabilityMode> ScalabilityModeFromTemporalLayers(
+std::optional<ScalabilityMode> ScalabilityModeFromTemporalLayers(
     int num_temporal_layers) {
   switch (num_temporal_layers) {
     case 0:
@@ -121,7 +123,7 @@ absl::optional<ScalabilityMode> ScalabilityModeFromTemporalLayers(
     default:
       RTC_DCHECK_NOTREACHED();
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 }  // namespace
@@ -177,20 +179,15 @@ static void RtpFragmentize(EncodedImage* encoded_image, SFrameBSInfo* info) {
   }
 }
 
-H264EncoderImpl::H264EncoderImpl(const cricket::VideoCodec& codec)
-    : packetization_mode_(H264PacketizationMode::SingleNalUnit),
+H264EncoderImpl::H264EncoderImpl(const Environment& env,
+                                 H264EncoderSettings settings)
+    : env_(env),
+      packetization_mode_(settings.packetization_mode),
       max_payload_size_(0),
       number_of_cores_(0),
       encoded_image_callback_(nullptr),
       has_reported_init_(false),
       has_reported_error_(false) {
-  RTC_CHECK(absl::EqualsIgnoreCase(codec.name, cricket::kH264CodecName));
-  std::string packetization_mode_string;
-  if (codec.GetParam(cricket::kH264FmtpPacketizationMode,
-                     &packetization_mode_string) &&
-      packetization_mode_string == "1") {
-    packetization_mode_ = H264PacketizationMode::NonInterleaved;
-  }
   downscaled_buffers_.reserve(kMaxSimulcastStreams - 1);
   encoded_images_.reserve(kMaxSimulcastStreams);
   encoders_.reserve(kMaxSimulcastStreams);
@@ -337,7 +334,7 @@ int32_t H264EncoderImpl::InitEncode(const VideoCodec* inst,
     }
   }
 
-  SimulcastRateAllocator init_allocator(codec_);
+  SimulcastRateAllocator init_allocator(env_, codec_);
   VideoBitrateAllocation allocation =
       init_allocator.Allocate(VideoBitrateAllocationParameters(
           DataRate::KilobitsPerSec(codec_.startBitrate), codec_.maxFramerate));
@@ -540,7 +537,7 @@ int32_t H264EncoderImpl::Encode(
 
     encoded_images_[i]._encodedWidth = configurations_[i].width;
     encoded_images_[i]._encodedHeight = configurations_[i].height;
-    encoded_images_[i].SetRtpTimestamp(input_frame.timestamp());
+    encoded_images_[i].SetRtpTimestamp(input_frame.rtp_timestamp());
     encoded_images_[i].SetColorSpace(input_frame.color_space());
     encoded_images_[i]._frameType = ConvertToVideoFrameType(info.eFrameType);
     encoded_images_[i].SetSimulcastIndex(configurations_[i].simulcast_idx);
@@ -600,7 +597,8 @@ int32_t H264EncoderImpl::Encode(
       if (svc_controllers_[i]) {
         codec_specific.generic_frame_info =
             svc_controllers_[i]->OnEncodeDone(layer_frames[0]);
-        if (send_key_frame && codec_specific.generic_frame_info.has_value()) {
+        if (encoded_images_[i]._frameType == VideoFrameType::kVideoFrameKey &&
+            codec_specific.generic_frame_info.has_value()) {
           codec_specific.template_structure =
               svc_controllers_[i]->DependencyStructure();
         }

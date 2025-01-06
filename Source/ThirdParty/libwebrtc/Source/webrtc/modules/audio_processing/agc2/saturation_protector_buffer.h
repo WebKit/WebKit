@@ -12,8 +12,8 @@
 #define MODULES_AUDIO_PROCESSING_AGC2_SATURATION_PROTECTOR_BUFFER_H_
 
 #include <array>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
 
 namespace webrtc {
@@ -43,7 +43,7 @@ class SaturationProtectorBuffer {
 
   // Returns the oldest item in the buffer. Returns an empty value if the
   // buffer is empty.
-  absl::optional<float> Front() const;
+  std::optional<float> Front() const;
 
  private:
   int FrontIndex() const;

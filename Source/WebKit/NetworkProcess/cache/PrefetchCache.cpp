@@ -27,8 +27,11 @@
 #include "PrefetchCache.h"
 
 #include <WebCore/HTTPHeaderNames.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PrefetchCache);
 
 PrefetchCache::Entry::Entry(WebCore::ResourceResponse&& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& buffer)
     : response(WTFMove(response))

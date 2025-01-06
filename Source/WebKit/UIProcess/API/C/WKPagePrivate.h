@@ -127,7 +127,13 @@ enum {
     kWKMediaAudioMuted = 1 << 0,
     kWKMediaCaptureDevicesMuted = 1 << 1,
     kWKMediaScreenCaptureMuted = 1 << 2,
+    kWKMediaCameraCaptureMuted = 1 << 3,
+    kWKMediaMicrophoneCaptureMuted = 1 << 4,
+    kWKMediaScreenCaptureUnmuted = 1 << 5,
+    kWKMediaCameraCaptureUnmuted = 1 << 6,
+    kWKMediaMicrophoneCaptureUnmuted = 1 << 7,
 };
+
 typedef uint32_t WKMediaMutedState;
 WK_EXPORT void WKPageSetMuted(WKPageRef page, WKMediaMutedState muted);
 
@@ -166,6 +172,8 @@ WK_EXPORT void WKPageRestoreFromSessionStateWithoutNavigation(WKPageRef page, WK
 
 WK_EXPORT void WKPageSetIgnoresViewportScaleLimits(WKPageRef page, bool ignoresViewportScaleLimits);
 
+WK_EXPORT void WKPageSetUseDarkAppearanceForTesting(WKPageRef pageRef, bool useDarkAppearance);
+
 WK_EXPORT WKProcessID WKPageGetProcessIdentifier(WKPageRef page);
 WK_EXPORT WKProcessID WKPageGetGPUProcessIdentifier(WKPageRef page);
 
@@ -197,7 +205,7 @@ WK_EXPORT void WKPageSetPCMFraudPreventionValuesForTesting(WKPageRef page, WKStr
 typedef void (*WKPageSetPrivateClickMeasurementAppBundleIDForTestingFunction)(void* functionContext);
 WK_EXPORT void WKPageSetPrivateClickMeasurementAppBundleIDForTesting(WKPageRef pageRef, WKStringRef appBundleIDForTesting, WKPageSetPrivateClickMeasurementAppBundleIDForTestingFunction callback, void* callbackContext);
 
-WK_EXPORT void WKPageSetMockCameraOrientation(WKPageRef page, uint64_t orientation);
+WK_EXPORT void WKPageSetMockCameraOrientationForTesting(WKPageRef page, uint64_t rotation, WKStringRef persistentId);
 WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef page);
 WK_EXPORT void WKPageSetMockCaptureDevicesInterrupted(WKPageRef page, bool isCameraInterrupted, bool isMicrophoneInterrupted);
 WK_EXPORT void WKPageTriggerMockCaptureConfigurationChange(WKPageRef page, bool forMicrophone, bool forDisplay);
@@ -212,6 +220,21 @@ WK_EXPORT void WKPageDispatchActivityStateUpdateForTesting(WKPageRef page);
 
 WK_EXPORT void WKPagePermissionChanged(WKStringRef permissionName, WKStringRef originString);
 
+WK_EXPORT void WKPageExecuteCommandForTesting(WKPageRef pageRef, WKStringRef command, WKStringRef value);
+WK_EXPORT bool WKPageIsEditingCommandEnabledForTesting(WKPageRef page, WKStringRef command);
+WK_EXPORT void WKPageSetPermissionLevelForTesting(WKPageRef page, WKStringRef origin, bool allowed);
+WK_EXPORT void WKPageResetStateBetweenTests(WKPageRef pageRef);
+
+typedef void (*WKPageSetTopContentInsetForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageSetTopContentInsetForTesting(WKPageRef page, float contentInset, void* context, WKPageSetTopContentInsetForTestingFunction callback);
+typedef void (*WKPageSetPageScaleFactorForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageSetPageScaleFactorForTesting(WKPageRef page, float scaleFactor, WKPoint point, void* context, WKPageSetPageScaleFactorForTestingFunction completionHandler);
+typedef void (*WKPageClearBackForwardListForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageClearBackForwardListForTesting(WKPageRef page, void* context, WKPageClearBackForwardListForTestingFunction completionHandler);
+typedef void (*WKPageSetTracksRepaintsForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageSetTracksRepaintsForTesting(WKPageRef page, void* context, bool trackRepaints, WKPageSetTracksRepaintsForTestingFunction completionHandler);
+typedef void (*WKPageDisplayAndTrackRepaintsForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageDisplayAndTrackRepaintsForTesting(WKPageRef page, void* context, WKPageDisplayAndTrackRepaintsForTestingFunction completionHandler);
 #ifdef __cplusplus
 }
 #endif

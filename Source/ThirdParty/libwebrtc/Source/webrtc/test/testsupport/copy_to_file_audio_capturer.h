@@ -12,9 +12,9 @@
 #define TEST_TESTSUPPORT_COPY_TO_FILE_AUDIO_CAPTURER_H_
 
 #include <memory>
+#include <optional>
 #include <string>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "common_audio/wav_file.h"
 #include "modules/audio_device/include/test_audio_device.h"

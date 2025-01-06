@@ -35,9 +35,6 @@
 
             async function pause2()
             {
-                // At this point, we are interrupted, calling play should be a no-op and should not confuse our interruption state tracking.
-                video.play();
-
                 run('video.style.removeProperty("visibility")');
                 waitForEventOnce('play', play3);
             }

@@ -24,6 +24,8 @@ assert.sameValue(
   '`Set Iterator` is `SetIteratorProto[Symbol.toStringTag]`'
 );
 
-verifyNotEnumerable(SetIteratorProto, Symbol.toStringTag);
-verifyNotWritable(SetIteratorProto, Symbol.toStringTag);
-verifyConfigurable(SetIteratorProto, Symbol.toStringTag);
+verifyProperty(SetIteratorProto, Symbol.toStringTag, {
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

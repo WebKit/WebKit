@@ -31,8 +31,8 @@
 
     [RaisesException, Dynamic, ImplementedAs=createWindow] void create([Optional, NSDictionary] any info, [Optional, CallbackHandler] function callback);
 
-    [RaisesException, NeedsPage] void get(double windowID, [Optional, NSDictionary] any properties, [Optional, CallbackHandler] function callback);
-    [RaisesException, NeedsPage] void getCurrent([Optional, NSDictionary] any info, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void get(double windowID, [Optional, NSDictionary] any properties, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void getCurrent([Optional, NSDictionary] any info, [Optional, CallbackHandler] function callback);
     [RaisesException] void getLastFocused([Optional, NSDictionary] any info, [Optional, CallbackHandler] function callback);
     [RaisesException] void getAll([Optional, NSDictionary] any info, [Optional, CallbackHandler] function callback);
 

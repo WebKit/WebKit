@@ -14,26 +14,27 @@
 #include <algorithm>
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "net/dcsctp/common/sequence_numbers.h"
-#include "net/dcsctp/common/str_join.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_common.h"
 #include "net/dcsctp/packet/data.h"
 #include "net/dcsctp/packet/parameter/outgoing_ssn_reset_request_parameter.h"
 #include "net/dcsctp/packet/parameter/reconfiguration_response_parameter.h"
+#include "net/dcsctp/public/dcsctp_handover_state.h"
 #include "net/dcsctp/public/dcsctp_message.h"
 #include "net/dcsctp/public/types.h"
 #include "net/dcsctp/rx/interleaved_reassembly_streams.h"
 #include "net/dcsctp/rx/reassembly_streams.h"
 #include "net/dcsctp/rx/traditional_reassembly_streams.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/str_join.h"
 
 namespace dcsctp {
 namespace {
@@ -51,15 +52,11 @@ std::unique_ptr<ReassemblyStreams> CreateStreams(
 }  // namespace
 
 ReassemblyQueue::ReassemblyQueue(absl::string_view log_prefix,
-                                 TSN peer_initial_tsn,
                                  size_t max_size_bytes,
                                  bool use_message_interleaving)
     : log_prefix_(log_prefix),
       max_size_bytes_(max_size_bytes),
       watermark_bytes_(max_size_bytes * kHighWatermarkLimit),
-      last_assembled_tsn_watermark_(
-          tsn_unwrapper_.Unwrap(TSN(*peer_initial_tsn - 1))),
-      last_completed_reset_req_seq_nbr_(ReconfigRequestSN(0)),
       streams_(CreateStreams(
           log_prefix_,
           [this](rtc::ArrayView<const UnwrappedTSN> tsns,
@@ -118,10 +115,9 @@ void ReassemblyQueue::Add(TSN tsn, Data data) {
 void ReassemblyQueue::ResetStreamsAndLeaveDeferredReset(
     rtc::ArrayView<const StreamID> stream_ids) {
   RTC_DLOG(LS_VERBOSE) << log_prefix_ << "Resetting streams: ["
-                       << StrJoin(stream_ids, ",",
-                                  [](rtc::StringBuilder& sb, StreamID sid) {
-                                    sb << *sid;
-                                  })
+                       << webrtc::StrJoin(stream_ids, ",",
+                                          [](rtc::StringBuilder& sb,
+                                             StreamID sid) { sb << *sid; })
                        << "]";
 
   // https://tools.ietf.org/html/rfc6525#section-5.2.2
@@ -138,7 +134,7 @@ void ReassemblyQueue::ResetStreamsAndLeaveDeferredReset(
     // normally."
     auto deferred_actions =
         std::move(deferred_reset_streams_->deferred_actions);
-    deferred_reset_streams_ = absl::nullopt;
+    deferred_reset_streams_ = std::nullopt;
 
     for (auto& action : deferred_actions) {
       action();
@@ -155,7 +151,7 @@ void ReassemblyQueue::EnterDeferredReset(
     RTC_DLOG(LS_VERBOSE) << log_prefix_
                          << "Entering deferred reset; sender_last_assigned_tsn="
                          << *sender_last_assigned_tsn;
-    deferred_reset_streams_ = absl::make_optional<DeferredResetStreams>(
+    deferred_reset_streams_ = std::make_optional<DeferredResetStreams>(
         tsn_unwrapper_.Unwrap(sender_last_assigned_tsn),
         webrtc::flat_set<StreamID>(streams.begin(), streams.end()));
   }
@@ -172,39 +168,16 @@ void ReassemblyQueue::AddReassembledMessage(
     rtc::ArrayView<const UnwrappedTSN> tsns,
     DcSctpMessage message) {
   RTC_DLOG(LS_VERBOSE) << log_prefix_ << "Assembled message from TSN=["
-                       << StrJoin(tsns, ",",
-                                  [](rtc::StringBuilder& sb, UnwrappedTSN tsn) {
-                                    sb << *tsn.Wrap();
-                                  })
+                       << webrtc::StrJoin(
+                              tsns, ",",
+                              [](rtc::StringBuilder& sb, UnwrappedTSN tsn) {
+                                sb << *tsn.Wrap();
+                              })
                        << "], message; stream_id=" << *message.stream_id()
                        << ", ppid=" << *message.ppid()
                        << ", payload=" << message.payload().size() << " bytes";
 
-  for (const UnwrappedTSN tsn : tsns) {
-    if (tsn == last_assembled_tsn_watermark_.next_value()) {
-      // Update watermark, or insert into delivered_tsns_
-      last_assembled_tsn_watermark_.Increment();
-    } else {
-      delivered_tsns_.insert(tsn);
-    }
-  }
-
-  // With new TSNs in delivered_tsns, gaps might be filled.
-  MaybeMoveLastAssembledWatermarkFurther();
-
   reassembled_messages_.emplace_back(std::move(message));
-}
-
-void ReassemblyQueue::MaybeMoveLastAssembledWatermarkFurther() {
-  // `delivered_tsns_` contain TSNS when there is a gap between ranges of
-  // assembled TSNs. `last_assembled_tsn_watermark_` should not be adjacent to
-  // that list, because if so, it can be moved.
-  while (!delivered_tsns_.empty() &&
-         *delivered_tsns_.begin() ==
-             last_assembled_tsn_watermark_.next_value()) {
-    last_assembled_tsn_watermark_.Increment();
-    delivered_tsns_.erase(delivered_tsns_.begin());
-  }
 }
 
 void ReassemblyQueue::HandleForwardTsn(
@@ -228,33 +201,19 @@ void ReassemblyQueue::HandleForwardTsn(
 
   RTC_DLOG(LS_VERBOSE) << log_prefix_ << "ForwardTSN to " << *tsn.Wrap()
                        << " - performing.";
-  last_assembled_tsn_watermark_ = std::max(last_assembled_tsn_watermark_, tsn);
-  delivered_tsns_.erase(delivered_tsns_.begin(),
-                        delivered_tsns_.upper_bound(tsn));
-  MaybeMoveLastAssembledWatermarkFurther();
   queued_bytes_ -= streams_->HandleForwardTsn(tsn, skipped_streams);
   RTC_DCHECK(IsConsistent());
 }
 
 bool ReassemblyQueue::IsConsistent() const {
-  // `delivered_tsns_` and `last_assembled_tsn_watermark_` mustn't overlap or be
-  // adjacent.
-  if (!delivered_tsns_.empty() &&
-      last_assembled_tsn_watermark_.next_value() >= *delivered_tsns_.begin()) {
-    return false;
-  }
-
   // Allow queued_bytes_ to be larger than max_size_bytes, as it's not actively
-  // enforced in this class. This comparison will still trigger if queued_bytes_
-  // became "negative".
-  return (queued_bytes_ >= 0 && queued_bytes_ <= 2 * max_size_bytes_);
+  // enforced in this class. But in case it wraps around (becomes negative, but
+  // as it's unsigned, that would wrap to very big), this would trigger.
+  return (queued_bytes_ <= 2 * max_size_bytes_);
 }
 
 HandoverReadinessStatus ReassemblyQueue::GetHandoverReadiness() const {
   HandoverReadinessStatus status = streams_->GetHandoverReadiness();
-  if (!delivered_tsns_.empty()) {
-    status.Add(HandoverUnreadinessReason::kReassemblyQueueDeliveredTSNsGap);
-  }
   if (deferred_reset_streams_.has_value()) {
     status.Add(HandoverUnreadinessReason::kStreamResetDeferred);
   }
@@ -262,20 +221,10 @@ HandoverReadinessStatus ReassemblyQueue::GetHandoverReadiness() const {
 }
 
 void ReassemblyQueue::AddHandoverState(DcSctpSocketHandoverState& state) {
-  state.rx.last_assembled_tsn = last_assembled_tsn_watermark_.Wrap().value();
-  state.rx.last_completed_deferred_reset_req_sn =
-      last_completed_reset_req_seq_nbr_.value();
   streams_->AddHandoverState(state);
 }
 
 void ReassemblyQueue::RestoreFromState(const DcSctpSocketHandoverState& state) {
-  // Validate that the component is in pristine state.
-  RTC_DCHECK(last_completed_reset_req_seq_nbr_ == ReconfigRequestSN(0));
-
-  last_assembled_tsn_watermark_ =
-      tsn_unwrapper_.Unwrap(TSN(state.rx.last_assembled_tsn));
-  last_completed_reset_req_seq_nbr_ =
-      ReconfigRequestSN(state.rx.last_completed_deferred_reset_req_sn);
   streams_->RestoreFromState(state);
 }
 }  // namespace dcsctp

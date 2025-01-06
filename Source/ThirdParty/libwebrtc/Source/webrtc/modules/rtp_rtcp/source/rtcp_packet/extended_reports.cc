@@ -19,8 +19,6 @@
 
 namespace webrtc {
 namespace rtcp {
-constexpr uint8_t ExtendedReports::kPacketType;
-constexpr size_t ExtendedReports::kMaxNumberOfDlrrItems;
 // From RFC 3611: RTP Control Protocol Extended Reports (RTCP XR).
 //
 // Format for XR packets:
@@ -59,7 +57,7 @@ bool ExtendedReports::Parse(const CommonHeader& packet) {
   SetSenderSsrc(ByteReader<uint32_t>::ReadBigEndian(packet.payload()));
   rrtr_block_.reset();
   dlrr_block_.ClearItems();
-  target_bitrate_ = absl::nullopt;
+  target_bitrate_ = std::nullopt;
 
   const uint8_t* current_block = packet.payload() + kXrBaseLength;
   const uint8_t* const packet_end =

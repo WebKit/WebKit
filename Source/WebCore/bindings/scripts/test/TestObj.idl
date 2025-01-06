@@ -90,7 +90,7 @@ enum TestConfidence { "high", "kinda-low" };
     attribute record<DOMString, VoidCallback> stringVoidCallbackRecordAttr;
     attribute TestDictionary dictionaryAttr;
     attribute TestDictionary? nullableDictionaryAttr;
-    attribute (DOMString or [Clamp] long) annotatedTypeInUnionAttr;
+    attribute (DOMString or [Clamp] long or undefined) annotatedTypeInUnionAttr;
     attribute sequence<[Clamp] long> annotatedTypeInSequenceAttr;
 
     attribute TestEnumTypeWithAlternateImplementationName implementationEnumAttr;
@@ -480,7 +480,8 @@ enum TestConfidence { "high", "kinda-low" };
 typedef any AnyTypedef;
 
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary TestDictionary {
     TestEnumType enumerationValueWithoutDefault;
     TestEnumType enumerationValueWithDefault = "enumValue1";
@@ -524,6 +525,7 @@ typedef any AnyTypedef;
     ParentDictionary dictionaryMemberWithDefault = {};
     (long or Node) unionMember;
     (long or Node)? nullableUnionMember = null;
+    (undefined or Node) undefinedUnionMember;
     BufferSource bufferSourceValue;
     required BufferSource requiredBufferSourceValue;
     (DOMString or [Clamp] long) annotatedTypeInUnionMember;

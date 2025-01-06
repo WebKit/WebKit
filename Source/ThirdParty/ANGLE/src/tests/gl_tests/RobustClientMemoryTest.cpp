@@ -154,7 +154,7 @@ TEST_P(RobustClientMemoryTest, ReadPixels)
         return;
     }
 
-    // TODO(ynovikov): Looks like a driver bug on Intel HD 530 http://anglebug.com/1877
+    // TODO(ynovikov): Looks like a driver bug on Intel HD 530 http://anglebug.com/42260689
     ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsDesktopOpenGL());
 
     GLsizei dataDimension = 16;

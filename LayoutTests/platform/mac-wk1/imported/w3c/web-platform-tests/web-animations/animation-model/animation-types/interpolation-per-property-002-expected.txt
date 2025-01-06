@@ -33,6 +33,10 @@ PASS line-height uses discrete animation when animating between "normal" and "10
 PASS line-height uses discrete animation when animating between "normal" and "10" with linear easing
 PASS line-height uses discrete animation when animating between "normal" and "10" with effect easing
 PASS line-height uses discrete animation when animating between "normal" and "10" with keyframe easing
+PASS list-style (type: discrete) has testInterpolation function
+FAIL list-style uses discrete animation when animating between "inside url("http://localhost/test-1") circle" and "outside url("http://localhost/test-2") square" with linear easing assert_equals: The value should be inside url("http://localhost/test-1") circle at 499ms expected "inside url(\"http://localhost/test-1\") circle" but got "inside url(\"http://localhost/test-2\") circle"
+FAIL list-style uses discrete animation when animating between "inside url("http://localhost/test-1") circle" and "outside url("http://localhost/test-2") square" with effect easing assert_equals: The value should be inside url("http://localhost/test-1") circle at 940ms expected "inside url(\"http://localhost/test-1\") circle" but got "inside url(\"http://localhost/test-2\") circle"
+FAIL list-style uses discrete animation when animating between "inside url("http://localhost/test-1") circle" and "outside url("http://localhost/test-2") square" with keyframe easing assert_equals: The value should be inside url("http://localhost/test-1") circle at 940ms expected "inside url(\"http://localhost/test-1\") circle" but got "inside url(\"http://localhost/test-2\") circle"
 PASS list-style-image (type: discrete) has testInterpolation function
 FAIL list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 499ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
 FAIL list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
@@ -125,6 +129,10 @@ PASS outline-style uses discrete animation when animating between "none" and "do
 PASS outline-width (type: length) has testInterpolation function
 PASS outline-width supports animating as a length
 PASS outline-width supports animating as a length of rem
+PASS overflow (type: discrete) has testInterpolation function
+PASS overflow uses discrete animation when animating between "visible" and "hidden" with linear easing
+PASS overflow uses discrete animation when animating between "visible" and "hidden" with effect easing
+PASS overflow uses discrete animation when animating between "visible" and "hidden" with keyframe easing
 PASS overflow-wrap (type: discrete) has testInterpolation function
 PASS overflow-wrap uses discrete animation when animating between "normal" and "break-word" with linear easing
 PASS overflow-wrap uses discrete animation when animating between "normal" and "break-word" with effect easing
@@ -160,6 +168,18 @@ PASS perspective-origin (type: position) has testInterpolation function
 PASS perspective-origin supports animating as a length pair
 PASS perspective-origin supports animating as a length pair of rem
 PASS perspective-origin supports animating as a position of percent
+PASS place-content (type: discrete) has testInterpolation function
+PASS place-content uses discrete animation when animating between "start" and "end" with linear easing
+PASS place-content uses discrete animation when animating between "start" and "end" with effect easing
+PASS place-content uses discrete animation when animating between "start" and "end" with keyframe easing
+PASS place-items (type: discrete) has testInterpolation function
+PASS place-items uses discrete animation when animating between "start" and "end" with linear easing
+PASS place-items uses discrete animation when animating between "start" and "end" with effect easing
+PASS place-items uses discrete animation when animating between "start" and "end" with keyframe easing
+PASS place-self (type: discrete) has testInterpolation function
+PASS place-self uses discrete animation when animating between "start" and "end" with linear easing
+PASS place-self uses discrete animation when animating between "start" and "end" with effect easing
+PASS place-self uses discrete animation when animating between "start" and "end" with keyframe easing
 PASS pointer-events (type: discrete) has testInterpolation function
 PASS pointer-events uses discrete animation when animating between "fill" and "none" with linear easing
 PASS pointer-events uses discrete animation when animating between "fill" and "none" with effect easing
@@ -176,6 +196,26 @@ PASS resize (type: discrete) has testInterpolation function
 PASS resize uses discrete animation when animating between "both" and "horizontal" with linear easing
 PASS resize uses discrete animation when animating between "both" and "horizontal" with effect easing
 PASS resize uses discrete animation when animating between "both" and "horizontal" with keyframe easing
+PASS ruby-align (type: discrete) has testInterpolation function
+PASS ruby-align uses discrete animation when animating between "start" and "center" with linear easing
+PASS ruby-align uses discrete animation when animating between "start" and "center" with effect easing
+PASS ruby-align uses discrete animation when animating between "start" and "center" with keyframe easing
+PASS ruby-position (type: discrete) has testInterpolation function
+PASS ruby-position uses discrete animation when animating between "under" and "over" with linear easing
+PASS ruby-position uses discrete animation when animating between "under" and "over" with effect easing
+PASS ruby-position uses discrete animation when animating between "under" and "over" with keyframe easing
+PASS scroll-snap-align (type: discrete) has testInterpolation function
+PASS scroll-snap-align uses discrete animation when animating between "none" and "start" with linear easing
+PASS scroll-snap-align uses discrete animation when animating between "none" and "start" with effect easing
+PASS scroll-snap-align uses discrete animation when animating between "none" and "start" with keyframe easing
+PASS scroll-snap-stop (type: discrete) has testInterpolation function
+PASS scroll-snap-stop uses discrete animation when animating between "normal" and "always" with linear easing
+PASS scroll-snap-stop uses discrete animation when animating between "normal" and "always" with effect easing
+PASS scroll-snap-stop uses discrete animation when animating between "normal" and "always" with keyframe easing
+PASS scroll-snap-type (type: discrete) has testInterpolation function
+PASS scroll-snap-type uses discrete animation when animating between "none" and "x mandatory" with linear easing
+PASS scroll-snap-type uses discrete animation when animating between "none" and "x mandatory" with effect easing
+PASS scroll-snap-type uses discrete animation when animating between "none" and "x mandatory" with keyframe easing
 PASS scrollbar-color (type: colorPair) has testInterpolation function
 PASS scrollbar-color supports animating as color pair of rgb()
 PASS scrollbar-color supports animating as color pair of #RGB
@@ -220,6 +260,13 @@ PASS stop-color supports animating as color of rgba()
 PASS stop-color supports animating as color of hsla()
 PASS stop-opacity (type: opacity) has testInterpolation function
 PASS stop-opacity supports animating as a [0, 1] number
+PASS stroke-color (type: color) has testInterpolation function
+PASS stroke-color supports animating as color of rgb()
+PASS stroke-color supports animating as color of #RGB
+PASS stroke-color supports animating as color of hsl()
+PASS stroke-color supports animating as color of #RGBa
+PASS stroke-color supports animating as color of rgba()
+PASS stroke-color supports animating as color of hsla()
 PASS stroke-dasharray (type: dasharray) has testInterpolation function
 PASS stroke-dasharray supports animating as a percentage
 PASS stroke-dasharray supports animating as a positive number
@@ -258,9 +305,21 @@ PASS text-anchor uses discrete animation when animating between "middle" and "en
 PASS text-anchor uses discrete animation when animating between "middle" and "end" with effect easing
 PASS text-anchor uses discrete animation when animating between "middle" and "end" with keyframe easing
 PASS text-autospace (type: discrete) has testInterpolation function
-FAIL text-autospace uses discrete animation when animating between "normal" and "no-autospace" with linear easing assert_equals: The value should be normal at 0ms expected "normal" but got "no-autospace"
-FAIL text-autospace uses discrete animation when animating between "normal" and "no-autospace" with effect easing assert_equals: The value should be normal at 0ms expected "normal" but got "no-autospace"
-FAIL text-autospace uses discrete animation when animating between "normal" and "no-autospace" with keyframe easing assert_equals: The value should be normal at 0ms expected "normal" but got "no-autospace"
+PASS text-autospace uses discrete animation when animating between "normal" and "no-autospace" with linear easing
+PASS text-autospace uses discrete animation when animating between "normal" and "no-autospace" with effect easing
+PASS text-autospace uses discrete animation when animating between "normal" and "no-autospace" with keyframe easing
+PASS text-box-edge (type: discrete) has testInterpolation function
+PASS text-box-edge uses discrete animation when animating between "auto" and "text" with linear easing
+PASS text-box-edge uses discrete animation when animating between "auto" and "text" with effect easing
+PASS text-box-edge uses discrete animation when animating between "auto" and "text" with keyframe easing
+PASS text-box-trim (type: discrete) has testInterpolation function
+PASS text-box-trim uses discrete animation when animating between "none" and "trim-start" with linear easing
+PASS text-box-trim uses discrete animation when animating between "none" and "trim-start" with effect easing
+PASS text-box-trim uses discrete animation when animating between "none" and "trim-start" with keyframe easing
+PASS text-decoration (type: discrete) has testInterpolation function
+PASS text-decoration uses discrete animation when animating between "underline" and "overline" with linear easing
+PASS text-decoration uses discrete animation when animating between "underline" and "overline" with effect easing
+PASS text-decoration uses discrete animation when animating between "underline" and "overline" with keyframe easing
 PASS text-decoration-color (type: color) has testInterpolation function
 PASS text-decoration-color supports animating as color of rgb()
 PASS text-decoration-color supports animating as color of #RGB
@@ -272,6 +331,14 @@ PASS text-decoration-line (type: discrete) has testInterpolation function
 PASS text-decoration-line uses discrete animation when animating between "underline" and "overline" with linear easing
 PASS text-decoration-line uses discrete animation when animating between "underline" and "overline" with effect easing
 PASS text-decoration-line uses discrete animation when animating between "underline" and "overline" with keyframe easing
+PASS text-decoration-skip (type: discrete) has testInterpolation function
+PASS text-decoration-skip uses discrete animation when animating between "auto" and "none" with linear easing
+PASS text-decoration-skip uses discrete animation when animating between "auto" and "none" with effect easing
+PASS text-decoration-skip uses discrete animation when animating between "auto" and "none" with keyframe easing
+PASS text-decoration-skip-ink (type: discrete) has testInterpolation function
+PASS text-decoration-skip-ink uses discrete animation when animating between "auto" and "none" with linear easing
+PASS text-decoration-skip-ink uses discrete animation when animating between "auto" and "none" with effect easing
+PASS text-decoration-skip-ink uses discrete animation when animating between "auto" and "none" with keyframe easing
 PASS text-decoration-style (type: discrete) has testInterpolation function
 PASS text-decoration-style uses discrete animation when animating between "solid" and "dotted" with linear easing
 PASS text-decoration-style uses discrete animation when animating between "solid" and "dotted" with effect easing
@@ -372,6 +439,10 @@ PASS vector-effect (type: discrete) has testInterpolation function
 PASS vector-effect uses discrete animation when animating between "none" and "non-scaling-stroke" with linear easing
 PASS vector-effect uses discrete animation when animating between "none" and "non-scaling-stroke" with effect easing
 PASS vector-effect uses discrete animation when animating between "none" and "non-scaling-stroke" with keyframe easing
+PASS view-transition-class (type: discrete) has testInterpolation function
+PASS view-transition-class uses discrete animation when animating between "none" and "card scale-animation" with linear easing
+PASS view-transition-class uses discrete animation when animating between "none" and "card scale-animation" with effect easing
+PASS view-transition-class uses discrete animation when animating between "none" and "card scale-animation" with keyframe easing
 PASS view-transition-name (type: discrete) has testInterpolation function
 PASS view-transition-name uses discrete animation when animating between "none" and "header" with linear easing
 PASS view-transition-name uses discrete animation when animating between "none" and "header" with effect easing

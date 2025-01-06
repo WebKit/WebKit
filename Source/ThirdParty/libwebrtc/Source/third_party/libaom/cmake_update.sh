@@ -21,9 +21,9 @@
 # Toolchain for arm64:
 # - gcc-aarch64-linux-gnu
 # - g++-aarch64-linux-gnu
-# 32bit build environment for cmake. Including but potentially not limited to:
-# - lib32gcc-13-dev
-# - lib32stdc++-13-dev
+# Toolchain for x86:
+# - gcc-i686-linux-gnu
+# - g++-i686-linux-gnu
 # Alternatively: treat 32bit builds like Windows and manually tweak aom_config.h
 
 set -eE
@@ -107,6 +107,9 @@ function convert_to_windows() {
   rm "${1}.bak"
 }
 
+# Fetch the latest tags; used in creating aom_version.h.
+git -C "${SRC}" fetch --tags
+
 # Scope 'trap' error reporting to configuration generation.
 (
 TMP=$(mktemp -d "${BASE}/build.XXXX")
@@ -120,14 +123,15 @@ trap '{
 all_platforms="-DCONFIG_SIZE_LIMIT=1"
 all_platforms+=" -DDECODE_HEIGHT_LIMIT=16384 -DDECODE_WIDTH_LIMIT=16384"
 all_platforms+=" -DCONFIG_AV1_ENCODER=1"
-all_platforms+=" -DCONFIG_MAX_DECODE_PROFILE=0"
-all_platforms+=" -DCONFIG_NORMAL_TILE_MODE=1"
+all_platforms+=" -DCONFIG_AV1_DECODER=0"
 all_platforms+=" -DCONFIG_LIBYUV=0"
 # Use low bit depth.
 all_platforms+=" -DCONFIG_AV1_HIGHBITDEPTH=0"
 # Use real-time only build.
 all_platforms+=" -DCONFIG_REALTIME_ONLY=1"
 all_platforms+=" -DCONFIG_AV1_TEMPORAL_DENOISING=1"
+# Disable Quantization Matrix.
+all_platforms+=" -DCONFIG_QUANT_MATRIX=0"
 # avx2 optimizations account for ~0.3mb of the decoder.
 #all_platforms+=" -DENABLE_AVX2=0"
 toolchain="-DCMAKE_TOOLCHAIN_FILE=${SRC}/build/cmake/toolchains"
@@ -145,7 +149,8 @@ cp gen_src/usage_exit.c "${BASE}/source/gen_src"
 cp config/aom_version.h "${CFG}/config/"
 
 reset_dirs linux/ia32
-gen_config_files linux/ia32 "${toolchain}/x86-linux.cmake ${all_platforms} \
+gen_config_files linux/ia32 "${toolchain}/i686-linux-gcc.cmake \
+  ${all_platforms} \
   -DCONFIG_PIC=1 \
   -DAOM_RTCD_FLAGS=--require-mmx;--require-sse;--require-sse2"
 

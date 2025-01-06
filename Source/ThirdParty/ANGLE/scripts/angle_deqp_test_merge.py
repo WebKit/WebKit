@@ -30,7 +30,7 @@ def main(raw_args):
     parser = merge_api.ArgumentParser()
     args = parser.parse_args(raw_args)
 
-    # TODO(jmadill): Merge QPA files into one. http://anglebug.com/5236
+    # TODO(jmadill): Merge QPA files into one. http://anglebug.com/42263789
 
     return standard_isolated_script_merge.StandardIsolatedScriptMerge(
         args.output_json, args.summary_json, args.jsons_to_merge)

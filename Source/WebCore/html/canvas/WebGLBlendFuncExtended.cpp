@@ -28,16 +28,16 @@
 #if ENABLE(WEBGL)
 #include "WebGLBlendFuncExtended.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLBlendFuncExtended);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLBlendFuncExtended);
 
 WebGLBlendFuncExtended::WebGLBlendFuncExtended(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLBlendFuncExtended)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_blend_func_extended"_s);
+    context.protectedGraphicsContextGL()->ensureExtensionEnabled("GL_EXT_blend_func_extended"_s);
 }
 
 WebGLBlendFuncExtended::~WebGLBlendFuncExtended() = default;

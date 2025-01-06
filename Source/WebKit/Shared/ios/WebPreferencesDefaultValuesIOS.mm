@@ -28,11 +28,11 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 #import <pal/system/ios/Device.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 
@@ -71,7 +71,11 @@ void setAllowsDeprecatedSynchronousXMLHttpRequestDuringUnload(bool allowsRequest
 
 bool defaultMediaSourceEnabled()
 {
+#if PLATFORM(APPLETV)
+    return true;
+#else
     return !PAL::deviceClassIsSmallScreen();
+#endif
 }
 
 #endif
@@ -93,7 +97,7 @@ static bool isAsyncTextInputFeatureFlagEnabled()
 
 bool defaultUseAsyncUIKitInteractions()
 {
-    if (WebCore::CocoaApplication::isIBooks()) {
+    if (WTF::CocoaApplication::isIBooks()) {
         // FIXME: Remove this exception once rdar://119836700 is addressed.
         return false;
     }
@@ -120,6 +124,15 @@ bool defaultAutomaticLiveResizeEnabled()
     return false;
 #endif
 }
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPreferencesDefaultValuesIOSAdditions.mm>)
+#import <WebKitAdditions/WebPreferencesDefaultValuesIOSAdditions.mm>
+#else
+bool defaultVisuallyContiguousBidiTextSelectionEnabled()
+{
+    return false;
+}
+#endif
 
 } // namespace WebKit
 

@@ -33,9 +33,12 @@
 #include "ScrollExtents.h"
 #include "ScrollableArea.h"
 #include "TimingFunction.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollAnimationSmooth);
 
 static const float animationSpeed { 1000.0f };
 static const Seconds maxAnimationDuration { 200_ms };

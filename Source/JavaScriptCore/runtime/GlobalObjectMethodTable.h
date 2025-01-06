@@ -37,6 +37,7 @@ class JSValue;
 class Microtask;
 class RuntimeFlags;
 class SourceOrigin;
+class Structure;
 
 enum class CompilationType;
 enum class ScriptExecutionStatus;
@@ -66,13 +67,14 @@ struct GlobalObjectMethodTable {
     JSObject* (*currentScriptExecutionOwner)(JSGlobalObject*);
 
     ScriptExecutionStatus (*scriptExecutionStatus)(JSGlobalObject*, JSObject* scriptExecutionOwner);
-    void (*reportViolationForUnsafeEval)(JSGlobalObject*, JSString*);
+    void (*reportViolationForUnsafeEval)(JSGlobalObject*, const String&);
     String (*defaultLanguage)();
     JSPromise* (*compileStreaming)(JSGlobalObject*, JSValue);
     JSPromise* (*instantiateStreaming)(JSGlobalObject*, JSValue, JSObject*);
     JSGlobalObject* (*deriveShadowRealmGlobalObject)(JSGlobalObject*);
     String (*codeForEval)(JSGlobalObject*, JSValue);
-    bool (*canCompileStrings)(JSGlobalObject*, CompilationType, String, JSValue);
+    bool (*canCompileStrings)(JSGlobalObject*, CompilationType, String, const ArgList&);
+    Structure* (*trustedScriptStructure)(JSGlobalObject*);
 };
 
 } // namespace JSC

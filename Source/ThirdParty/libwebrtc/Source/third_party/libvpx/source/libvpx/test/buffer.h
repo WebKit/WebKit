@@ -15,7 +15,7 @@
 
 #include <limits>
 
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "test/acm_random.h"
 #include "vpx/vpx_integer.h"

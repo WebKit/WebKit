@@ -32,6 +32,7 @@
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKWebProcessPlugIn.h>
 #import <WebKit/WKWebProcessPlugInBrowserContextControllerPrivate.h>
+#import <wtf/StdLibExtras.h>
 
 void willAddMessageToConsoleCallback(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *)
 {
@@ -47,7 +48,7 @@ void willAddMessageToConsoleCallback(WKBundlePageRef page, WKStringRef message, 
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
 {
     WKBundlePageUIClientV4 client;
-    memset(&client, 0, sizeof(client));
+    zeroBytes(client);
     client.base.version = 4;
     client.willAddMessageToConsole = willAddMessageToConsoleCallback;
     WKBundlePageSetUIClient([browserContextController _bundlePageRef], &client.base);

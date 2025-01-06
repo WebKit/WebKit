@@ -31,16 +31,22 @@
 #include "DisplayRefreshMonitorManager.h"
 #include "Logging.h"
 #include "Page.h"
+#include "Timer.h"
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderingUpdateScheduler);
 
 RenderingUpdateScheduler::RenderingUpdateScheduler(Page& page)
     : m_page(page)
 {
     windowScreenDidChange(page.chrome().displayID());
 }
+
+RenderingUpdateScheduler::~RenderingUpdateScheduler() = default;
 
 bool RenderingUpdateScheduler::scheduleAnimation()
 {

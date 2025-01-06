@@ -32,6 +32,7 @@
 #import "UIKitSPI.h"
 #import "UIKitUtilities.h"
 #import "WKBrowserEngineDefinitions.h"
+#import "WKContentViewInteraction.h"
 #import "WKDeferringGestureRecognizer.h"
 #import "WKWebViewIOS.h"
 #import "WebPage.h"
@@ -135,8 +136,8 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     BOOL _backgroundColorSetByClient;
     BOOL _indicatorStyleSetByClient;
     BOOL _decelerationRateSetByClient;
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
     BOOL _contentInsetAdjustmentBehaviorWasExternallyOverridden;
 #endif
     BOOL _contentInsetWasExternallyOverridden;
@@ -181,8 +182,8 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 #endif
 
 
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
     _contentInsetAdjustmentBehaviorWasExternallyOverridden = (self.contentInsetAdjustmentBehavior != UIScrollViewContentInsetAdjustmentAutomatic);
 #endif
     
@@ -329,8 +330,8 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     [_internalDelegate _scheduleVisibleContentRectUpdate];
 }
 
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
 
 - (BOOL)_contentInsetAdjustmentBehaviorWasExternallyOverridden
 {
@@ -547,6 +548,13 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 #endif // PLATFORM(WATCHOS)
     else
         ASSERT_NOT_REACHED();
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    auto scope = [_internalDelegate->_contentView makeTextSelectionViewsNonInteractiveForScope];
+
+    return [super hitTest:point withEvent:event];
 }
 
 #if HAVE(PEPPER_UI_CORE)

@@ -39,12 +39,15 @@
 #import <AVFoundation/AVCaptureSession_Private.h>
 #import <AVFoundation/AVContentKeySession_Private.h>
 #import <AVFoundation/AVMediaSelectionGroup_Private.h>
+// FIXME: rdar://138773933
+IGNORE_WARNINGS_BEGIN("#warnings")
 #import <AVFoundation/AVOutputContext_Private.h>
 #import <AVFoundation/AVOutputDevice.h>
 #import <AVFoundation/AVPlayerItemOutput_Private.h>
 #import <AVFoundation/AVPlayerItem_Private.h>
 #import <AVFoundation/AVPlayerLayer_Private.h>
 #import <AVFoundation/AVPlayer_Private.h>
+IGNORE_WARNINGS_END
 
 #if ENABLE(MEDIA_SOURCE)
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
@@ -90,8 +93,8 @@ typedef NSString * AVVideoRange NS_TYPED_ENUM;
 @end
 #endif
 
-#if HAVE(AVPLAYER_SUPRESSES_AUDIO_RENDERING)
-@interface AVPlayer (AVPlayerSupressesAudioRendering)
+#if HAVE(AVPLAYER_SUPPRESSES_AUDIO_RENDERING)
+@interface AVPlayer (AVPlayerSuppressesAudioRendering)
 @property (nonatomic, getter=_suppressesAudioRendering, setter=_setSuppressesAudioRendering:) BOOL suppressesAudioRendering;
 @end
 #endif

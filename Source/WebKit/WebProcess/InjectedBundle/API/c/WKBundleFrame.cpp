@@ -38,6 +38,7 @@
 #include "WKData.h"
 #include "WebFrame.h"
 #include "WebPage.h"
+#include <WebCore/AXObjectCache.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/FocusController.h>
@@ -55,11 +56,6 @@ WKTypeID WKBundleFrameGetTypeID()
 bool WKBundleFrameIsMainFrame(WKBundleFrameRef frameRef)
 {
     return WebKit::toImpl(frameRef)->isMainFrame();
-}
-
-bool WKBundleFrameIsRemote(WKBundleFrameRef frameRef)
-{
-    return WebKit::toImpl(frameRef)->coreFrame()->frameType() == WebCore::Frame::FrameType::Remote;
 }
 
 WKBundleFrameRef WKBundleFrameGetParentFrame(WKBundleFrameRef frameRef)
@@ -146,12 +142,6 @@ WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frameRef)
     return toAPI(WebKit::toImpl(frameRef)->page());
 }
 
-void WKBundleFrameClearOpener(WKBundleFrameRef frameRef)
-{
-    if (auto* coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame())
-        coreFrame->setOpener(nullptr);
-}
-
 void WKBundleFrameStopLoading(WKBundleFrameRef frameRef)
 {
     WebKit::toImpl(frameRef)->stopLoading();
@@ -230,11 +220,17 @@ bool WKBundleFrameContainsAnyFormControls(WKBundleFrameRef frameRef)
 
 void WKBundleFrameSetTextDirection(WKBundleFrameRef frameRef, WKStringRef directionRef)
 {
+    if (!frameRef)
+        return;
+
     WebKit::toImpl(frameRef)->setTextDirection(WebKit::toWTFString(directionRef));
 }
 
 void WKBundleFrameSetAccessibleName(WKBundleFrameRef frameRef, WKStringRef accessibleNameRef)
 {
+    if (!frameRef)
+        return;
+
     WebKit::toImpl(frameRef)->setAccessibleName(AtomString { WebKit::toWTFString(accessibleNameRef) });
 }
 
@@ -260,6 +256,9 @@ WKDataRef WKBundleFrameCopyWebArchiveFilteringSubframes(WKBundleFrameRef frameRe
 
 bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
 {
+    if (!frameRef)
+        return true;
+
     auto* coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return true;
@@ -269,6 +268,7 @@ bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
 
 WKBundleHitTestResultRef WKBundleFrameCreateHitTestResult(WKBundleFrameRef frameRef, WKPoint point)
 {
+    ASSERT(frameRef);
     return WebKit::toAPI(WebKit::toImpl(frameRef)->hitTest(WebKit::toIntPoint(point)).leakRef());
 }
 
@@ -292,10 +292,39 @@ void WKBundleFrameFocus(WKBundleFrameRef frameRef)
 
 void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef message, WKStringRef group)
 {
+    if (!frameRef)
+        return;
+
     RefPtr coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return;
 
     if (RefPtr document = coreFrame->document())
         document->reportingScope().generateTestReport(WebKit::toWTFString(message), WebKit::toWTFString(group));
+}
+
+void* WKAccessibilityRootObject(WKBundleFrameRef frameRef)
+{
+    if (!frameRef)
+        return nullptr;
+
+    RefPtr frame = WebKit::toImpl(frameRef)->coreLocalFrame();
+    if (!frame)
+        return nullptr;
+
+    WebCore::AXObjectCache::enableAccessibility();
+
+    RefPtr document = frame->rootFrame().document();
+    if (!document)
+        return nullptr;
+
+    CheckedPtr axObjectCache = document->axObjectCache();
+    if (!axObjectCache)
+        return nullptr;
+
+    auto* root = axObjectCache->rootObject();
+    if (!root)
+        return nullptr;
+
+    return root->wrapper();
 }

@@ -105,6 +105,8 @@ template<> struct HashTraits<WebCore::ResourceCryptographicDigest> : GenericHash
         return { emptyAlgorithmValue, { } };
     }
 
+    static bool isEmptyValue(const WebCore::ResourceCryptographicDigest& value) { return value.algorithm == emptyAlgorithmValue; }
+
     static void constructDeletedValue(WebCore::ResourceCryptographicDigest& slot)
     {
         slot.algorithm = deletedAlgorithmValue;

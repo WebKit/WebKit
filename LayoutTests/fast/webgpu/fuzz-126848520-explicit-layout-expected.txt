@@ -1,5 +1,5 @@
      0                0
      8                0
-buffer length is 16 which is less than required bufferSize of 1073741820
+buffer length(16) minus offset(0), (resourceOffset(0) + dynamicOffset(0)), is less than required bufferSize(1073741820)
 done
 

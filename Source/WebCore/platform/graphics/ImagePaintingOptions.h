@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,11 @@ struct ImagePaintingOptions {
         || std::is_same_v<Type, ImageOrientation::Orientation>
         || std::is_same_v<Type, InterpolationQuality>
         || std::is_same_v<Type, AllowImageSubsampling>
-        || std::is_same_v<Type, ShowDebugBackground>;
+#if USE(SKIA)
+        || std::is_same_v<Type, StrictImageClamping>
+#endif
+        || std::is_same_v<Type, ShowDebugBackground>
+        || std::is_same_v<Type, Headroom>;
 
     // This is a single-argument initializer to support pattern of
     // ImageDrawResult drawImage(..., ImagePaintingOptions = { ImageOrientation::Orientation::FromImage });
@@ -87,7 +91,11 @@ struct ImagePaintingOptions {
     ImageOrientation orientation() const { return m_orientation; }
     InterpolationQuality interpolationQuality() const { return m_interpolationQuality; }
     AllowImageSubsampling allowImageSubsampling() const { return m_allowImageSubsampling; }
+#if USE(SKIA)
+    StrictImageClamping strictImageClamping() const { return m_strictImageClamping; }
+#endif
     ShowDebugBackground showDebugBackground() const { return m_showDebugBackground; }
+    Headroom headroom() const { return m_headroom; }
 
 private:
     void setOption(CompositeOperator compositeOperator) { m_compositeOperator = compositeOperator; }
@@ -97,7 +105,11 @@ private:
     void setOption(ImageOrientation::Orientation orientation) { m_orientation = orientation; }
     void setOption(InterpolationQuality interpolationQuality) { m_interpolationQuality = interpolationQuality; }
     void setOption(AllowImageSubsampling allowImageSubsampling) { m_allowImageSubsampling = allowImageSubsampling; }
+#if USE(SKIA)
+    void setOption(StrictImageClamping strictImageClamping) { m_strictImageClamping = strictImageClamping; }
+#endif
     void setOption(ShowDebugBackground showDebugBackground) { m_showDebugBackground = showDebugBackground; }
+    void setOption(Headroom headroom) { m_headroom = headroom; }
 
     BlendMode m_blendMode : 5 { BlendMode::Normal };
     DecodingMode m_decodingMode : 3 { DecodingMode::Synchronous };
@@ -105,10 +117,13 @@ private:
     ImageOrientation::Orientation m_orientation : 4 { ImageOrientation::Orientation::None };
     InterpolationQuality m_interpolationQuality : 4 { InterpolationQuality::Default };
     AllowImageSubsampling m_allowImageSubsampling : 1 { AllowImageSubsampling::No };
+#if USE(SKIA)
+    StrictImageClamping m_strictImageClamping: 1 { StrictImageClamping::Yes };
+#endif
     ShowDebugBackground m_showDebugBackground : 1 { ShowDebugBackground::No };
+    Headroom m_headroom { Headroom::FromImage };
 };
-static_assert(sizeof(ImagePaintingOptions) <= sizeof(uint64_t), "Pass by value");
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, ImagePaintingOptions);
 
-}
+} // namespace WebCore

@@ -9,7 +9,7 @@ defines:
   - ctors
   - MyBigInt64Array
   - CreateResizableArrayBuffer
-  - WriteToTypedArray
+  - MayNeedBigInt
   - Convert
   - ToNumbers
   - CreateRabForTest
@@ -17,15 +17,16 @@ defines:
   - TestIterationAndResize
 features: [BigInt]
 ---*/
-
-class MyUint8Array extends Uint8Array {
+// Helper to create subclasses without bombing out when `class` isn't supported
+function subClass(type) {
+  try {
+    return new Function('return class My' + type + ' extends ' + type + ' {}')();
+  } catch (e) {}
 }
 
-class MyFloat32Array extends Float32Array {
-}
-
-class MyBigInt64Array extends BigInt64Array {
-}
+const MyUint8Array = subClass('Uint8Array');
+const MyFloat32Array = subClass('Float32Array');
+const MyBigInt64Array = subClass('BigInt64Array');
 
 const builtinCtors = [
   Uint8Array,
@@ -39,15 +40,18 @@ const builtinCtors = [
   Uint8ClampedArray,
 ];
 
-// BigInt and Float16Array are newer features adding them above unconditionally
+// Big(U)int64Array and Float16Array are newer features adding them above unconditionally
 // would cause implementations lacking it to fail every test which uses it.
 if (typeof Float16Array !== 'undefined') {
   builtinCtors.push(Float16Array);
 }
 
-if (typeof BigInt !== 'undefined') {
-    builtinCtors.push(BigUint64Array);
-    builtinCtors.push(BigInt64Array);
+if (typeof BigUint64Array !== 'undefined') {
+  builtinCtors.push(BigUint64Array);
+}
+
+if (typeof BigInt64Array !== 'undefined') {
+  builtinCtors.push(BigInt64Array);
 }
 
 const floatCtors = [
@@ -60,26 +64,14 @@ if (typeof Float16Array !== 'undefined') {
   floatCtors.push(Float16Array);
 }
 
-const ctors = [
-  ...builtinCtors,
-  MyUint8Array,
-  MyFloat32Array
-];
+const ctors = builtinCtors.concat(MyUint8Array, MyFloat32Array);
 
-if (typeof BigInt !== 'undefined') {
+if (typeof MyBigInt64Array !== 'undefined') {
     ctors.push(MyBigInt64Array);
 }
 
 function CreateResizableArrayBuffer(byteLength, maxByteLength) {
   return new ArrayBuffer(byteLength, { maxByteLength: maxByteLength });
-}
-
-function WriteToTypedArray(array, index, value) {
-  if (array instanceof BigInt64Array || array instanceof BigUint64Array) {
-    array[index] = BigInt(value);
-  } else {
-    array[index] = value;
-  }
 }
 
 function Convert(item) {
@@ -98,12 +90,21 @@ function ToNumbers(array) {
   return result;
 }
 
+function MayNeedBigInt(ta, n) {
+  assert.sameValue(typeof n, 'number');
+  if ((BigInt64Array !== 'undefined' && ta instanceof BigInt64Array)
+      || (BigUint64Array !== 'undefined' && ta instanceof BigUint64Array)) {
+    return BigInt(n);
+  }
+  return n;
+}
+
 function CreateRabForTest(ctor) {
   const rab = CreateResizableArrayBuffer(4 * ctor.BYTES_PER_ELEMENT, 8 * ctor.BYTES_PER_ELEMENT);
   // Write some data into the array.
   const taWrite = new ctor(rab);
   for (let i = 0; i < 4; ++i) {
-    WriteToTypedArray(taWrite, i, 2 * i);
+    taWrite[i] = MayNeedBigInt(taWrite, 2 * i);
   }
   return rab;
 }
@@ -125,7 +126,7 @@ function TestIterationAndResize(iterable, expected, rab, resizeAfter, newByteLen
   let resized = false;
   var arrayValues = false;
 
-  for (const value of iterable) {
+  for (let value of iterable) {
     if (Array.isArray(value)) {
       arrayValues = true;
       values.push([

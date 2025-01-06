@@ -37,7 +37,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/break-avoidance-in-bottom-caption.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/captions.tentative-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/captions.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/fixedpos-in-footer-forced-break-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/fixedpos-in-footer-forced-break-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/fixedpos-in-footer-forced-break-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/footer.tentative-expected.xht

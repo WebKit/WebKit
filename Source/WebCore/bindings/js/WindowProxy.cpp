@@ -37,6 +37,7 @@
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -53,6 +54,8 @@ static void collectGarbageAfterWindowProxyDestruction()
     } else
         GCController::singleton().garbageCollectSoon();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WindowProxy);
 
 WindowProxy::WindowProxy(Frame& frame)
     : m_frame(frame)
@@ -209,11 +212,6 @@ void WindowProxy::attachDebugger(JSC::Debugger* debugger)
 DOMWindow* WindowProxy::window() const
 {
     return m_frame ? m_frame->window() : nullptr;
-}
-
-WindowProxy::ProxyMap::ValuesConstIteratorRange WindowProxy::jsWindowProxies() const
-{
-    return m_jsWindowProxies->values();
 }
 
 WindowProxy::ProxyMap WindowProxy::releaseJSWindowProxies()

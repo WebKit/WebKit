@@ -29,6 +29,7 @@
 #import <WebKit/_WKSameDocumentNavigationType.h>
 
 @class _WKContentRuleListAction;
+@class _WKPageLoadTiming;
 
 #if !TARGET_OS_IPHONE
 typedef NS_ENUM(NSInteger, _WKPluginModuleLoadPolicy) {
@@ -44,6 +45,7 @@ typedef NS_ENUM(NSInteger, _WKProcessTerminationReason) {
     _WKProcessTerminationReasonExceededCPULimit,
     _WKProcessTerminationReasonRequestedByClient,
     _WKProcessTerminationReasonCrash,
+    _WKProcessTerminationReasonExceededSharedProcessCrashLimit WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
 } WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
 typedef NS_ENUM(NSInteger, _WKSOAuthorizationLoadPolicy) {
@@ -77,6 +79,7 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webViewWebProcessDidBecomeUnresponsive:(WKWebView *)webView;
 
 - (NSData *)_webCryptoMasterKeyForWebView:(WKWebView *)webView;
+- (void)_webCryptoMasterKeyForWebView:(WKWebView *)webView completionHandler:(void (^)(NSData *))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
 - (void)_webView:(WKWebView *)webView authenticationChallenge:(NSURLAuthenticationChallenge *)challenge shouldAllowLegacyTLS:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 - (void)_webView:(WKWebView *)webView didNegotiateModernTLSForURL:(NSURL *)url WK_API_AVAILABLE(macos(12.0), ios(15.0));
@@ -107,6 +110,8 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView didChangeLookalikeCharactersFromURL:(NSURL *)originalURL toURL:(NSURL *)adjustedURL WK_API_AVAILABLE(macos(13.3), ios(16.4));
 - (void)_webView:(WKWebView *)webView didPromptForStorageAccess:(NSString *)topFrameDomain forSubFrameDomain:(NSString *)subFrameDomain forQuirk:(BOOL)forQuirk WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));
 
+- (void)_webView:(WKWebView *)webView backForwardListItemAdded:(WKBackForwardListItem *)itemAdded removed:(NSArray<WKBackForwardListItem *> *)itemsRemoved WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
+
 #if TARGET_OS_IPHONE
 - (void)_webView:(WKWebView *)webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:(NSString *)fileName uti:(NSString *)uti;
 - (void)_webView:(WKWebView *)webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)documentData;
@@ -116,10 +121,11 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView didFailToInitializePlugInWithInfo:(NSDictionary *)info WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webView:(WKWebView *)webView didBlockInsecurePluginVersionWithInfo:(NSDictionary *)info WK_API_AVAILABLE(macos(10.14));
 - (void)_webView:(WKWebView *)webView decidePolicyForPluginLoadWithCurrentPolicy:(_WKPluginModuleLoadPolicy)policy pluginInfo:(NSDictionary *)info completionHandler:(void (^)(_WKPluginModuleLoadPolicy policy, NSString * unavailabilityDescription))completionHandler WK_API_AVAILABLE(macos(10.14.4));
-- (void)_webView:(WKWebView *)webView backForwardListItemAdded:(WKBackForwardListItem *)itemAdded removed:(NSArray<WKBackForwardListItem *> *)itemsRemoved WK_API_AVAILABLE(macos(10.13.4));
 #endif
 
 - (void)_webView:(WKWebView *)webView willGoToBackForwardListItem:(WKBackForwardListItem *)item inPageCache:(BOOL)inPageCache WK_API_AVAILABLE(macos(10.13.4), ios(14.0));
 - (void)_webView:(WKWebView *)webView decidePolicyForSOAuthorizationLoadWithCurrentPolicy:(_WKSOAuthorizationLoadPolicy)policy forExtension:(NSString *)extension completionHandler:(void (^)(_WKSOAuthorizationLoadPolicy policy))completionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
+
+- (void)_webView:(WKWebView *)webView didGeneratePageLoadTiming:(_WKPageLoadTiming *)timing WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end

@@ -1,7 +1,7 @@
 
-FAIL Store handle in IndexedDB and read from pending transaction. promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL Store handle in IndexedDB and read from new transaction. promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL Store handles and blobs in IndexedDB. promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL Store handle in IndexedDB and read using a cursor. promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL Store handle in IndexedDB using inline keys. promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL Store handle in IndexedDB and read from pending transaction. promise_test: Unhandled rejection with value: object "TypeError: writer.write is not a function. (In 'writer.write(new Blob([contents]))', 'writer.write' is undefined)"
+FAIL Store handle in IndexedDB and read from new transaction. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL Store handles and blobs in IndexedDB. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL Store handle in IndexedDB and read using a cursor. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL Store handle in IndexedDB using inline keys. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
 

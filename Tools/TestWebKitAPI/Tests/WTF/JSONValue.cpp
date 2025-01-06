@@ -27,6 +27,7 @@
 
 #include "Test.h"
 #include <wtf/JSONValues.h>
+#include <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
 

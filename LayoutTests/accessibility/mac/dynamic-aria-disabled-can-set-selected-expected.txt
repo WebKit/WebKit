@@ -1,0 +1,14 @@
+This test ensures we properly report whether AXSelected is settable after dynamic changes.
+
+PASS: accessibilityController.accessibleElementById('radio').isAttributeSettable('AXSelected') === true
+PASS: accessibilityController.accessibleElementById('tree').isAttributeSettable('AXSelected') === true
+PASS: accessibilityController.accessibleElementById('treeitem').isAttributeSettable('AXSelected') === true
+PASS: accessibilityController.accessibleElementById('radio').isAttributeSettable('AXSelected') === false
+PASS: accessibilityController.accessibleElementById('tree').isAttributeSettable('AXSelected') === false
+PASS: accessibilityController.accessibleElementById('treeitem').isAttributeSettable('AXSelected') === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Radio
+Tree item

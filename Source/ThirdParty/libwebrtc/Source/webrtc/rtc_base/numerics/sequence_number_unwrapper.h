@@ -14,8 +14,9 @@
 #include <stdint.h>
 
 #include <limits>
+#include <optional>
+#include <type_traits>
 
-#include "absl/types/optional.h"
 #include "rtc_base/numerics/sequence_number_util.h"
 
 namespace webrtc {
@@ -69,7 +70,7 @@ class SeqNumUnwrapper {
   }
 
   int64_t last_unwrapped_ = 0;
-  absl::optional<T> last_value_;
+  std::optional<T> last_value_;
 };
 
 using RtpTimestampUnwrapper = SeqNumUnwrapper<uint32_t>;

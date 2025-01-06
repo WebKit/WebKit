@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -17,10 +17,10 @@
 #include "aom_dsp/x86/synonyms.h"
 
 #define pair_set_epi16(a, b) \
-  _mm_set1_epi32((int32_t)(((uint16_t)(a)) | (((uint32_t)(b)) << 16)))
+  _mm_set1_epi32((int32_t)(((uint16_t)(a)) | (((uint32_t)(uint16_t)(b)) << 16)))
 
 // Reverse the 8 16 bit words in __m128i
-static INLINE __m128i mm_reverse_epi16(const __m128i x) {
+static inline __m128i mm_reverse_epi16(const __m128i x) {
   const __m128i a = _mm_shufflelo_epi16(x, 0x1b);
   const __m128i b = _mm_shufflehi_epi16(a, 0x1b);
   return _mm_shuffle_epi32(b, 0x4e);

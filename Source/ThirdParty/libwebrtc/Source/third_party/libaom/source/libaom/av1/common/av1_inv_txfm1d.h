@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -18,14 +18,14 @@
 extern "C" {
 #endif
 
-static INLINE int32_t clamp_value(int32_t value, int8_t bit) {
+static inline int32_t clamp_value(int32_t value, int8_t bit) {
   if (bit <= 0) return value;  // Do nothing for invalid clamp bit.
   const int64_t max_value = (1LL << (bit - 1)) - 1;
   const int64_t min_value = -(1LL << (bit - 1));
   return (int32_t)clamp64(value, min_value, max_value);
 }
 
-static INLINE void clamp_buf(int32_t *buf, int32_t size, int8_t bit) {
+static inline void clamp_buf(int32_t *buf, int32_t size, int8_t bit) {
   for (int i = 0; i < size; ++i) buf[i] = clamp_value(buf[i], bit);
 }
 

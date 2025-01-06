@@ -32,7 +32,9 @@
 #include "TextManipulationItem.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Markable.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -43,7 +45,7 @@ class Element;
 class VisiblePosition;
 
 class TextManipulationController final : public CanMakeWeakPtr<TextManipulationController>, public CanMakeCheckedPtr<TextManipulationController> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextManipulationController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextManipulationController);
 public:
     TextManipulationController(Document&);
@@ -106,7 +108,7 @@ private:
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_manipulatedNodesWithNewContent;
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_addedOrNewlyRenderedNodes;
 
-    HashMap<String, bool> m_cachedFontFamilyExclusionResults;
+    UncheckedKeyHashMap<String, bool> m_cachedFontFamilyExclusionResults;
 
     bool m_didScheduleObservationUpdate { false };
 
@@ -114,9 +116,7 @@ private:
     Vector<TextManipulationItem> m_pendingItemsForCallback;
 
     Vector<ExclusionRule> m_exclusionRules;
-    HashMap<TextManipulationItemIdentifier, ManipulationItemData> m_items;
-    TextManipulationItemIdentifier m_itemIdentifier;
-    TextManipulationTokenIdentifier m_tokenIdentifier;
+    UncheckedKeyHashMap<TextManipulationItemIdentifier, ManipulationItemData> m_items;
 };
 
 } // namespace WebCore

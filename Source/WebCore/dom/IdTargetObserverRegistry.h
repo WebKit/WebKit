@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -38,7 +39,7 @@ namespace WebCore {
 class IdTargetObserver;
 
 class IdTargetObserverRegistry final : public CanMakeCheckedPtr<IdTargetObserverRegistry> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IdTargetObserverRegistry);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IdTargetObserverRegistry);
     friend class IdTargetObserver;
 public:
@@ -61,7 +62,7 @@ private:
         HashSet<CheckedRef<IdTargetObserver>> observers;
     };
 
-    using IdToObserverSetMap = HashMap<AtomString, std::unique_ptr<ObserverSet>>;
+    using IdToObserverSetMap = UncheckedKeyHashMap<AtomString, std::unique_ptr<ObserverSet>>;
     IdToObserverSetMap m_registry;
     CheckedPtr<ObserverSet> m_notifyingObserversInSet;
 };

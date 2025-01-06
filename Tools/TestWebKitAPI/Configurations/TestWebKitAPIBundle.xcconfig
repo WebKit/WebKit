@@ -1,0 +1,51 @@
+// Copyright (C) 2024 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+BUNDLE_LOADER = $(TEST_HOST);
+CLANG_ENABLE_OBJC_ARC = YES;
+CURRENT_PROJECT_VERSION = 1;
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GTEST_API_=;
+GENERATE_INFOPLIST_FILE = YES;
+INFOPLIST_KEY_NSPrincipalClass = GoogleTestLoader;
+MARKETING_VERSION = 1.0;
+PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.TestWebKitAPIBundle;
+PRODUCT_NAME = $(TARGET_NAME);
+TEST_HOST = $(BUILT_PRODUCTS_DIR)/TestWebKitAPI.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TestWebKitAPI;
+
+CODE_SIGN_IDENTITY[sdk=macosx*] = $(CODE_SIGN_IDENTITY_$(CONFIGURATION));
+CODE_SIGN_IDENTITY_Debug = $(CODE_SIGN_IDENTITY_$(USE_INTERNAL_SDK));
+CODE_SIGN_IDENTITY_Release = $(CODE_SIGN_IDENTITY_$(USE_INTERNAL_SDK));
+CODE_SIGN_IDENTITY_ = -;
+CODE_SIGN_IDENTITY_YES = $(WK_ENGINEERING_CODE_SIGN_IDENTITY);
+
+SWIFT_VERSION = 6.0;
+SWIFT_VERSION[sdk=macosx13*] = 5.0;
+SWIFT_VERSION[sdk=macosx14*] = 5.0;
+SWIFT_VERSION[sdk=iphone*17*] = 5.0;
+SWIFT_VERSION[sdk=watch*9*] = 5.0;
+SWIFT_VERSION[sdk=appletv*17*] = 5.0;
+SWIFT_VERSION[sdk=xr*1*] = 5.0;
+
+SWIFT_OBJC_BRIDGING_HEADER = Tests/WebKit Swift/TestWebKitAPIBundle-Bridging-Header.h;
+SWIFT_OPTIMIZATION_LEVEL = -O;
+SWIFT_OPTIMIZATION_LEVEL[config=Debug] = -Onone;

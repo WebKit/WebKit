@@ -49,6 +49,7 @@
 #include "StyleTreeResolver.h"
 #include "WindowEventLoop.h"
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS_FAMILY) || ENABLE(TOUCH_EVENTS)
@@ -57,6 +58,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedFrame);
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedFrameCounter, ("CachedFrame"));
 
@@ -197,7 +200,7 @@ CachedFrame::CachedFrame(Frame& frame)
 
     // The main frame is reused for the navigation and the opener link to its should thus persist.
     if (localFrame) {
-        CheckedRef frameLoader = localFrame->loader();
+        Ref frameLoader = localFrame->loader();
         if (!frame.isMainFrame())
             localFrame->detachFromAllOpenedFrames();
 
@@ -212,7 +215,7 @@ CachedFrame::CachedFrame(Frame& frame)
     // 1 - We reuse the main frame, so when it navigates to a new page load it needs to start with a blank FrameTree.
     // 2 - It's much easier to destroy a CachedFrame while it resides in the BackForwardCache if it is disconnected from its parent.
     Vector<Ref<Frame>> children;
-    for (auto* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
+    for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
         children.append(*child);
     for (auto& child : children)
         frame.tree().removeChild(child);
@@ -245,7 +248,7 @@ void CachedFrame::open()
     ASSERT(m_document || is<RemoteFrameView>(m_view.get()));
 
     if (RefPtr localFrameView = dynamicDowncast<LocalFrameView>(m_view.get()))
-        localFrameView->protectedFrame()->checkedLoader()->open(*this);
+        localFrameView->protectedFrame()->protectedLoader()->open(*this);
 }
 
 void CachedFrame::clear()
@@ -288,7 +291,7 @@ void CachedFrame::destroy()
     Ref frame = m_view->frame();
     if (!m_isMainFrame && m_view->frame().page()) {
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get()))
-            localFrame->checkedLoader()->detachViewsAndDocumentLoader();
+            localFrame->protectedLoader()->detachViewsAndDocumentLoader();
         frame->detachFromPage();
     }
     

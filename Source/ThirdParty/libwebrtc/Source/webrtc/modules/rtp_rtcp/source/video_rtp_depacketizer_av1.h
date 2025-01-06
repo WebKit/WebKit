@@ -14,7 +14,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "absl/types/optional.h"
+#include <optional>
+
 #include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/encoded_image.h"
@@ -34,7 +35,7 @@ class VideoRtpDepacketizerAv1 : public VideoRtpDepacketizer {
       rtc::ArrayView<const rtc::ArrayView<const uint8_t>> rtp_payloads)
       override;
 
-  absl::optional<ParsedRtpPayload> Parse(
+  std::optional<ParsedRtpPayload> Parse(
       rtc::CopyOnWriteBuffer rtp_payload) override;
 };
 

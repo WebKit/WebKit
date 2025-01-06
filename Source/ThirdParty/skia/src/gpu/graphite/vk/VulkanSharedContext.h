@@ -36,12 +36,14 @@ public:
 
     skgpu::VulkanMemoryAllocator* memoryAllocator() const { return fMemoryAllocator.get(); }
 
+    VkPhysicalDevice physDevice() const { return fPhysDevice; }
     VkDevice device() const { return fDevice; }
     uint32_t  queueIndex() const { return fQueueIndex; }
 
     std::unique_ptr<ResourceProvider> makeResourceProvider(SingleOwner*,
                                                            uint32_t recorderID,
-                                                           size_t resourceBudget) override;
+                                                           size_t resourceBudget,
+                                                           bool avoidBufferAlloc) override;
 
     bool checkVkResult(VkResult result) const;
 
@@ -59,6 +61,7 @@ private:
     sk_sp<const skgpu::VulkanInterface> fInterface;
     sk_sp<skgpu::VulkanMemoryAllocator> fMemoryAllocator;
 
+    VkPhysicalDevice fPhysDevice;
     VkDevice fDevice;
     uint32_t fQueueIndex;
 

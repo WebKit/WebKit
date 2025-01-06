@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -607,7 +607,7 @@ DECLARE_ALIGNED(32, static const uint8_t, filt4_global_avx2[32]) = {
     }                                                                          \
   } while (0)
 
-static INLINE void prepare_coeffs_lowbd(
+static inline void prepare_coeffs_lowbd(
     const InterpFilterParams *const filter_params, const int subpel_q4,
     __m256i *const coeffs /* [4] */) {
   const int16_t *const filter = av1_get_interp_filter_subpel_kernel(
@@ -635,7 +635,7 @@ static INLINE void prepare_coeffs_lowbd(
   coeffs[3] = _mm256_shuffle_epi8(coeffs_1, _mm256_set1_epi16(0x0e0cu));
 }
 
-static INLINE void prepare_coeffs_6t_lowbd(
+static inline void prepare_coeffs_6t_lowbd(
     const InterpFilterParams *const filter_params, const int subpel_q4,
     __m256i *const coeffs /* [4] */) {
   const int16_t *const filter = av1_get_interp_filter_subpel_kernel(
@@ -661,7 +661,7 @@ static INLINE void prepare_coeffs_6t_lowbd(
   coeffs[2] = _mm256_shuffle_epi8(coeffs_1, _mm256_set1_epi16(0x0c0au));
 }
 
-static INLINE void prepare_coeffs_6t(
+static inline void prepare_coeffs_6t(
     const InterpFilterParams *const filter_params, const int subpel_q4,
     __m256i *const coeffs /* [4] */) {
   const int16_t *filter = av1_get_interp_filter_subpel_kernel(
@@ -678,7 +678,7 @@ static INLINE void prepare_coeffs_6t(
   coeffs[2] = _mm256_shuffle_epi32(coeff, 0xaa);
 }
 
-static INLINE void prepare_coeffs(const InterpFilterParams *const filter_params,
+static inline void prepare_coeffs(const InterpFilterParams *const filter_params,
                                   const int subpel_q4,
                                   __m256i *const coeffs /* [4] */) {
   const int16_t *filter = av1_get_interp_filter_subpel_kernel(
@@ -697,7 +697,7 @@ static INLINE void prepare_coeffs(const InterpFilterParams *const filter_params,
   coeffs[3] = _mm256_shuffle_epi32(coeff, 0xff);
 }
 
-static INLINE void prepare_coeffs_12taps(
+static inline void prepare_coeffs_12taps(
     const InterpFilterParams *const filter_params, const int subpel_q4,
     __m256i *const coeffs /* [4] */) {
   const int16_t *filter = av1_get_interp_filter_subpel_kernel(
@@ -721,7 +721,7 @@ static INLINE void prepare_coeffs_12taps(
   coeffs[5] = _mm256_shuffle_epi32(coeff, 0x55);  // coeffs 10 11 10 11.. 10 11
 }
 
-static INLINE __m256i convolve_lowbd(const __m256i *const s,
+static inline __m256i convolve_lowbd(const __m256i *const s,
                                      const __m256i *const coeffs) {
   const __m256i res_01 = _mm256_maddubs_epi16(s[0], coeffs[0]);
   const __m256i res_23 = _mm256_maddubs_epi16(s[1], coeffs[1]);
@@ -735,7 +735,7 @@ static INLINE __m256i convolve_lowbd(const __m256i *const s,
   return res;
 }
 
-static INLINE __m256i convolve_lowbd_6tap(const __m256i *const s,
+static inline __m256i convolve_lowbd_6tap(const __m256i *const s,
                                           const __m256i *const coeffs) {
   const __m256i res_01 = _mm256_maddubs_epi16(s[0], coeffs[0]);
   const __m256i res_23 = _mm256_maddubs_epi16(s[1], coeffs[1]);
@@ -748,7 +748,7 @@ static INLINE __m256i convolve_lowbd_6tap(const __m256i *const s,
   return res;
 }
 
-static INLINE __m256i convolve_lowbd_4tap(const __m256i *const s,
+static inline __m256i convolve_lowbd_4tap(const __m256i *const s,
                                           const __m256i *const coeffs) {
   const __m256i res_23 = _mm256_maddubs_epi16(s[0], coeffs[0]);
   const __m256i res_45 = _mm256_maddubs_epi16(s[1], coeffs[1]);
@@ -759,7 +759,7 @@ static INLINE __m256i convolve_lowbd_4tap(const __m256i *const s,
   return res;
 }
 
-static INLINE __m256i convolve_6tap(const __m256i *const s,
+static inline __m256i convolve_6tap(const __m256i *const s,
                                     const __m256i *const coeffs) {
   const __m256i res_0 = _mm256_madd_epi16(s[0], coeffs[0]);
   const __m256i res_1 = _mm256_madd_epi16(s[1], coeffs[1]);
@@ -770,7 +770,7 @@ static INLINE __m256i convolve_6tap(const __m256i *const s,
   return res;
 }
 
-static INLINE __m256i convolve_12taps(const __m256i *const s,
+static inline __m256i convolve_12taps(const __m256i *const s,
                                       const __m256i *const coeffs) {
   const __m256i res_0 = _mm256_madd_epi16(s[0], coeffs[0]);
   const __m256i res_1 = _mm256_madd_epi16(s[1], coeffs[1]);
@@ -786,7 +786,7 @@ static INLINE __m256i convolve_12taps(const __m256i *const s,
   return res;
 }
 
-static INLINE __m256i convolve(const __m256i *const s,
+static inline __m256i convolve(const __m256i *const s,
                                const __m256i *const coeffs) {
   const __m256i res_0 = _mm256_madd_epi16(s[0], coeffs[0]);
   const __m256i res_1 = _mm256_madd_epi16(s[1], coeffs[1]);
@@ -799,7 +799,7 @@ static INLINE __m256i convolve(const __m256i *const s,
   return res;
 }
 
-static INLINE __m256i convolve_4tap(const __m256i *const s,
+static inline __m256i convolve_4tap(const __m256i *const s,
                                     const __m256i *const coeffs) {
   const __m256i res_1 = _mm256_madd_epi16(s[0], coeffs[0]);
   const __m256i res_2 = _mm256_madd_epi16(s[1], coeffs[1]);
@@ -808,7 +808,7 @@ static INLINE __m256i convolve_4tap(const __m256i *const s,
   return res;
 }
 
-static INLINE __m256i convolve_lowbd_x(const __m256i data,
+static inline __m256i convolve_lowbd_x(const __m256i data,
                                        const __m256i *const coeffs,
                                        const __m256i *const filt) {
   __m256i s[4];
@@ -821,7 +821,7 @@ static INLINE __m256i convolve_lowbd_x(const __m256i data,
   return convolve_lowbd(s, coeffs);
 }
 
-static INLINE __m256i convolve_lowbd_x_6tap(const __m256i data,
+static inline __m256i convolve_lowbd_x_6tap(const __m256i data,
                                             const __m256i *const coeffs,
                                             const __m256i *const filt) {
   __m256i s[4];
@@ -833,7 +833,7 @@ static INLINE __m256i convolve_lowbd_x_6tap(const __m256i data,
   return convolve_lowbd_6tap(s, coeffs);
 }
 
-static INLINE __m256i convolve_lowbd_x_4tap(const __m256i data,
+static inline __m256i convolve_lowbd_x_4tap(const __m256i data,
                                             const __m256i *const coeffs,
                                             const __m256i *const filt) {
   __m256i s[2];
@@ -844,7 +844,7 @@ static INLINE __m256i convolve_lowbd_x_4tap(const __m256i data,
   return convolve_lowbd_4tap(s, coeffs);
 }
 
-static INLINE void add_store_aligned_256(CONV_BUF_TYPE *const dst,
+static inline void add_store_aligned_256(CONV_BUF_TYPE *const dst,
                                          const __m256i *const res,
                                          const int do_average) {
   __m256i d;
@@ -858,7 +858,7 @@ static INLINE void add_store_aligned_256(CONV_BUF_TYPE *const dst,
   _mm256_store_si256((__m256i *)dst, d);
 }
 
-static INLINE __m256i comp_avg(const __m256i *const data_ref_0,
+static inline __m256i comp_avg(const __m256i *const data_ref_0,
                                const __m256i *const res_unsigned,
                                const __m256i *const wt,
                                const int use_dist_wtd_comp_avg) {
@@ -881,7 +881,7 @@ static INLINE __m256i comp_avg(const __m256i *const data_ref_0,
   return res;
 }
 
-static INLINE __m256i convolve_rounding(const __m256i *const res_unsigned,
+static inline __m256i convolve_rounding(const __m256i *const res_unsigned,
                                         const __m256i *const offset_const,
                                         const __m256i *const round_const,
                                         const int round_shift) {
@@ -891,7 +891,7 @@ static INLINE __m256i convolve_rounding(const __m256i *const res_unsigned,
   return res_round;
 }
 
-static INLINE __m256i highbd_comp_avg(const __m256i *const data_ref_0,
+static inline __m256i highbd_comp_avg(const __m256i *const data_ref_0,
                                       const __m256i *const res_unsigned,
                                       const __m256i *const wt0,
                                       const __m256i *const wt1,
@@ -909,7 +909,7 @@ static INLINE __m256i highbd_comp_avg(const __m256i *const data_ref_0,
   return res;
 }
 
-static INLINE __m256i highbd_convolve_rounding(
+static inline __m256i highbd_convolve_rounding(
     const __m256i *const res_unsigned, const __m256i *const offset_const,
     const __m256i *const round_const, const int round_shift) {
   const __m256i res_signed = _mm256_sub_epi32(*res_unsigned, *offset_const);

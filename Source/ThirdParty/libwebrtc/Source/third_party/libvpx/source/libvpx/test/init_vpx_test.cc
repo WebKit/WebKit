@@ -14,7 +14,7 @@
 
 #if !CONFIG_SHARED
 #include <string>
-#include "third_party/googletest/src/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 #if VPX_ARCH_ARM
 #include "vpx_ports/arm.h"
 #endif
@@ -53,6 +53,12 @@ void init_vpx_test() {
   }
   if (!(caps & HAS_NEON_I8MM)) {
     append_negative_gtest_filter(":NEON_I8MM.*:NEON_I8MM/*");
+  }
+  if (!(caps & HAS_SVE)) {
+    append_negative_gtest_filter(":SVE.*:SVE/*");
+  }
+  if (!(caps & HAS_SVE2)) {
+    append_negative_gtest_filter(":SVE2.*:SVE2/*");
   }
 #elif VPX_ARCH_ARM
   const int caps = arm_cpu_caps();

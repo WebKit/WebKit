@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 #include <wtf/dtoa.h>
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringConcatenate.h>
@@ -42,7 +44,7 @@ public:
     unsigned length() const { return lengthOfIntegerAsString(m_number); }
     bool is8Bit() const { return true; }
     template<typename CharacterType>
-    void writeTo(CharacterType* destination) const { writeIntegerToBuffer(m_number, destination); }
+    void writeTo(std::span<CharacterType> destination) const { writeIntegerToBuffer(m_number, destination); }
 
 private:
     Integer m_number;
@@ -60,7 +62,7 @@ public:
     unsigned length() const { return lengthOfIntegerAsString(static_cast<UnderlyingType>(m_enum)); }
     bool is8Bit() const { return true; }
     template<typename CharacterType>
-    void writeTo(CharacterType* destination) const { writeIntegerToBuffer(static_cast<UnderlyingType>(m_enum), destination); }
+    void writeTo(std::span<CharacterType> destination) const { writeIntegerToBuffer(static_cast<UnderlyingType>(m_enum), destination); }
 
 private:
     Enum m_enum;
@@ -71,16 +73,15 @@ class StringTypeAdapter<FloatingPoint, typename std::enable_if_t<std::is_floatin
 public:
     StringTypeAdapter(FloatingPoint number)
     {
-        numberToString(number, m_buffer);
-        m_length = std::strlen(&m_buffer[0]);
+        m_length = numberToStringAndSize(number, m_buffer).size();
     }
 
     unsigned length() const { return m_length; }
     bool is8Bit() const { return true; }
-    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, span()); }
+    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const { StringImpl::copyCharacters(destination.data(), span()); }
 
 private:
-    std::span<const LChar> span() const { return { byteCast<LChar>(&m_buffer[0]), m_length }; }
+    std::span<const LChar> span() const LIFETIME_BOUND { return byteCast<LChar>(std::span { m_buffer }).first(m_length); }
 
     NumberToStringBuffer m_buffer;
     unsigned m_length;
@@ -92,22 +93,20 @@ public:
     static FormattedNumber fixedPrecision(double number, unsigned significantFigures = 6, TrailingZerosPolicy trailingZerosTruncatingPolicy = TrailingZerosPolicy::Truncate)
     {
         FormattedNumber numberFormatter;
-        numberToFixedPrecisionString(number, significantFigures, numberFormatter.m_buffer, trailingZerosTruncatingPolicy == TrailingZerosPolicy::Truncate);
-        numberFormatter.m_length = std::strlen(&numberFormatter.m_buffer[0]);
+        numberFormatter.m_length = numberToFixedPrecisionString(number, significantFigures, numberFormatter.m_buffer, trailingZerosTruncatingPolicy == TrailingZerosPolicy::Truncate).size();
         return numberFormatter;
     }
 
     static FormattedNumber fixedWidth(double number, unsigned decimalPlaces)
     {
         FormattedNumber numberFormatter;
-        numberToFixedWidthString(number, decimalPlaces, numberFormatter.m_buffer);
-        numberFormatter.m_length = std::strlen(&numberFormatter.m_buffer[0]);
+        numberFormatter.m_length = numberToFixedWidthString(number, decimalPlaces, numberFormatter.m_buffer).size();
         return numberFormatter;
     }
 
     unsigned length() const { return m_length; }
-    const LChar* buffer() const { return byteCast<LChar>(&m_buffer[0]); }
-    std::span<const LChar> span() const { return { buffer(), length() }; }
+    const LChar* buffer() const LIFETIME_BOUND { return byteCast<LChar>(&m_buffer[0]); }
+    std::span<const LChar> span() const LIFETIME_BOUND { return byteCast<LChar>(std::span { m_buffer }).first(m_length); }
 
 private:
     NumberToStringBuffer m_buffer;
@@ -123,7 +122,7 @@ public:
 
     unsigned length() const { return m_number.length(); }
     bool is8Bit() const { return true; }
-    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, m_number.span()); }
+    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const { StringImpl::copyCharacters(destination.data(), m_number.span()); }
 
 private:
     const FormattedNumber& m_number;
@@ -135,14 +134,13 @@ public:
     static FormattedCSSNumber create(double number)
     {
         FormattedCSSNumber numberFormatter;
-        numberToCSSString(number, numberFormatter.m_buffer);
-        numberFormatter.m_length = std::strlen(&numberFormatter.m_buffer[0]);
+        numberFormatter.m_length = numberToCSSString(number, numberFormatter.m_buffer).size();
         return numberFormatter;
     } 
 
     unsigned length() const { return m_length; }
-    const LChar* buffer() const { return byteCast<LChar>(&m_buffer[0]); }
-    std::span<const LChar> span() const { return { buffer(), length() }; }
+    const LChar* buffer() const LIFETIME_BOUND { return byteCast<LChar>(&m_buffer[0]); }
+    std::span<const LChar> span() const LIFETIME_BOUND { return byteCast<LChar>(std::span { m_buffer }).first(m_length); }
 
 private:
     NumberToCSSStringBuffer m_buffer;
@@ -158,7 +156,7 @@ public:
 
     unsigned length() const { return m_number.length(); }
     bool is8Bit() const { return true; }
-    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, m_number.span()); }
+    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const { StringImpl::copyCharacters(destination.data(), m_number.span()); }
 
 private:
     const FormattedCSSNumber& m_number;

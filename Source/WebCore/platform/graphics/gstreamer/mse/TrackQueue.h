@@ -41,7 +41,7 @@ namespace WebCore {
 
 class TrackQueue {
 public:
-    TrackQueue(AtomString trackId);
+    TrackQueue(TrackID);
 
     typedef std::function<void(GRefPtr<GstMiniObject>&&)> NotEmptyHandler;
     typedef std::function<void()> LowLevelHandler;
@@ -79,7 +79,7 @@ private:
     GstClockTime durationEnqueued() const;
     void checkLowLevel();
 
-    AtomString m_trackId;
+    TrackID m_trackId;
     Deque<GRefPtr<GstMiniObject>> m_queue;
     LowLevelHandler m_lowLevelCallback;
     NotEmptyHandler m_notEmptyCallback;

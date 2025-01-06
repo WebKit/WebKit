@@ -36,6 +36,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/FunctionDispatcher.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -62,7 +63,7 @@ struct RangeResponseGeneratorDataTaskData : public CanMakeWeakPtr<RangeResponseG
 
 struct RangeResponseGenerator::Data {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    // The RangeResponseGenerator is used with a RefCountedSerialFunctionDispatcher which can do thread hoping over time.
+    // The RangeResponseGenerator is used with a GuaranteedSerialFunctionDispatcher which can do thread hoping over time.
     // The ResourceResponse contains WTF::Strings which must first be copied via isolatedCopy().
     Data(const ResourceResponse& response, PlatformMediaResource& resource)
         : originalResponse(ResourceResponse::fromCrossThreadData(response.crossThreadData()))
@@ -87,7 +88,7 @@ struct RangeResponseGenerator::Data {
     RefPtr<PlatformMediaResource> resource;
 };
 
-RangeResponseGenerator::RangeResponseGenerator(RefCountedSerialFunctionDispatcher& targetDispatcher)
+RangeResponseGenerator::RangeResponseGenerator(GuaranteedSerialFunctionDispatcher& targetDispatcher)
     : m_targetDispatcher(targetDispatcher)
 {
 }
@@ -97,7 +98,9 @@ RangeResponseGenerator::~RangeResponseGenerator() = default;
 HashMap<String, std::unique_ptr<RangeResponseGenerator::Data>>& RangeResponseGenerator::map()
 {
     assertIsCurrent(m_targetDispatcher.get());
+    IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
     return m_map;
+    IGNORE_CLANG_WARNINGS_END
 }
 
 static ResourceResponse synthesizedResponseForRange(const ResourceResponse& originalResponse, const ParsedRequestRange& parsedRequestRange, std::optional<size_t> totalContentLength)

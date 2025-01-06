@@ -26,6 +26,7 @@
 #include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/StdLibExtras.h>
 
 #if ENABLE(FUZZILLI)
 
@@ -133,12 +134,12 @@ void Fuzzilli::flushReprl(int32_t result)
 
 void Fuzzilli::initializeReprl()
 {
-    char helo[] = "HELO";
+    std::array<char, 4> helo { 'H', 'E', 'L', 'O' };
 
-    WRITE_TO_FUZZILLI(helo, 4);
-    READ_FROM_FUZZILLI(helo, 4);
+    WRITE_TO_FUZZILLI(helo.data(), helo.size());
+    READ_FROM_FUZZILLI(helo.data(), helo.size());
 
-    RELEASE_ASSERT_WITH_MESSAGE(!memcmp(helo, "HELO", 4), "[REPRL] Invalid response from parent");
+    RELEASE_ASSERT_WITH_MESSAGE(equalSpans(helo, "HELO"_span), "[REPRL] Invalid response from parent");
 
     // Mmap the data input buffer.
     reprlInputData = static_cast<char*>(mmap(0, REPRL_MAX_DATA_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, REPRL_DRFD, 0));

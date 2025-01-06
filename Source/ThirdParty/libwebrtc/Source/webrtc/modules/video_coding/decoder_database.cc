@@ -34,7 +34,7 @@ void VCMDecoderDatabase::DeregisterExternalDecoder(uint8_t payload_type) {
   // frame after RegisterReceiveCodec).
   if (current_decoder_ && current_decoder_->IsSameDecoder(it->second.get())) {
     // Release it if it was registered and in use.
-    current_decoder_ = absl::nullopt;
+    current_decoder_ = std::nullopt;
   }
   decoders_.erase(it);
 }
@@ -64,7 +64,7 @@ void VCMDecoderDatabase::RegisterReceiveCodec(
     const VideoDecoder::Settings& settings) {
   // If payload value already exists, erase old and insert new.
   if (payload_type == current_payload_type_) {
-    current_payload_type_ = absl::nullopt;
+    current_payload_type_ = std::nullopt;
   }
   decoder_settings_[payload_type] = settings;
 }
@@ -75,13 +75,13 @@ bool VCMDecoderDatabase::DeregisterReceiveCodec(uint8_t payload_type) {
   }
   if (payload_type == current_payload_type_) {
     // This codec is currently in use.
-    current_payload_type_ = absl::nullopt;
+    current_payload_type_ = std::nullopt;
   }
   return true;
 }
 
 void VCMDecoderDatabase::DeregisterReceiveCodecs() {
-  current_payload_type_ = absl::nullopt;
+  current_payload_type_ = std::nullopt;
   decoder_settings_.clear();
 }
 
@@ -96,12 +96,12 @@ VCMGenericDecoder* VCMDecoderDatabase::GetDecoder(
   }
   // If decoder exists - delete.
   if (current_decoder_.has_value()) {
-    current_decoder_ = absl::nullopt;
-    current_payload_type_ = absl::nullopt;
+    current_decoder_ = std::nullopt;
+    current_payload_type_ = std::nullopt;
   }
 
   CreateAndInitDecoder(frame);
-  if (current_decoder_ == absl::nullopt) {
+  if (current_decoder_ == std::nullopt) {
     return nullptr;
   }
 
@@ -109,7 +109,7 @@ VCMGenericDecoder* VCMDecoderDatabase::GetDecoder(
   callback->OnIncomingPayloadType(payload_type);
   if (current_decoder_->RegisterDecodeCompleteCallback(decoded_frame_callback) <
       0) {
-    current_decoder_ = absl::nullopt;
+    current_decoder_ = std::nullopt;
     return nullptr;
   }
 
@@ -144,7 +144,7 @@ void VCMDecoderDatabase::CreateAndInitDecoder(const EncodedFrame& frame) {
     decoder_item->second.set_max_render_resolution(frame_resolution);
   }
   if (!current_decoder_->Configure(decoder_item->second)) {
-    current_decoder_ = absl::nullopt;
+    current_decoder_ = std::nullopt;
     RTC_LOG(LS_ERROR) << "Failed to initialize decoder.";
   }
 }

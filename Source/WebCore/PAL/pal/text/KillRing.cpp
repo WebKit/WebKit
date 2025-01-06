@@ -25,10 +25,13 @@
 
 #include "config.h"
 #include "KillRing.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if !PLATFORM(MAC)
 
 namespace PAL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(KillRing);
 
 void KillRing::append(const String&)
 {

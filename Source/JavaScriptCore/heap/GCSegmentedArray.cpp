@@ -32,10 +32,5 @@ namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(GCSegmentedArray);
 
-using GCSegmentedArrayJSCell = GCSegmentedArray<const JSCell*>;
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(GCSegmentedArrayJSCell);
-
-
 } // namespace JSC
 

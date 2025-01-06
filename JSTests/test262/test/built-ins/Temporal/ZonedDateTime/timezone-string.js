@@ -9,5 +9,5 @@ features: [Temporal]
 
 ["UTC", "+01:30"].forEach((timeZone) => {
   const result = new Temporal.ZonedDateTime(0n, timeZone);
-  assert.sameValue(result.getISOFields().timeZone, timeZone, `time zone slot should store string "${timeZone}"`);
+  assert.sameValue(result.timeZoneId, timeZone, `time zone ID should be "${timeZone}"`);
 });

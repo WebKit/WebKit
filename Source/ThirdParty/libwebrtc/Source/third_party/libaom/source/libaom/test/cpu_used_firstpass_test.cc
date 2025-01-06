@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,6 +11,7 @@
 
 #include <cstdlib>
 
+#include "gtest/gtest.h"
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
 #include "test/i420_video_source.h"
@@ -73,6 +74,10 @@ class CpuUsedFirstpassTest
   double GetPsnrDiffThreshold() { return kPsnrDiffThreshold; }
 
   void DoTest() {
+    if (GET_PARAM(1) == second_pass_cpu_used_) {
+      GTEST_SKIP() << "Reference cpu used values match test cpu used values.";
+    }
+
     libaom_test::I420VideoSource video("niklas_640_480_30.yuv", 640, 480,
                                        cfg_.g_timebase.den, cfg_.g_timebase.num,
                                        0, 30);
@@ -84,7 +89,6 @@ class CpuUsedFirstpassTest
     ref_psnr = GetAveragePsnr();
 
     first_pass_cpu_used_ = GET_PARAM(1);
-    if (first_pass_cpu_used_ == second_pass_cpu_used_) return;
     ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
     psnr_diff = std::abs(ref_psnr - GetAveragePsnr());
     EXPECT_LT(psnr_diff, GetPsnrDiffThreshold())

@@ -27,7 +27,6 @@
 #include "UserMessage.h"
 
 #include "ArgumentCodersGLib.h"
-#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 

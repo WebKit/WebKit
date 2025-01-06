@@ -49,10 +49,19 @@
 #include "Text.h"
 #include "UserAgentParts.h"
 #include "ValidationMessageClient.h"
+#include <wtf/TZoneMalloc.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ValidationMessage);
+
 using namespace HTMLNames;
+
+Ref<ValidationMessage> ValidationMessage::create(HTMLElement& element)
+{
+    return adoptRef(*new ValidationMessage(element));
+}
 
 ValidationMessage::ValidationMessage(HTMLElement& element)
     : m_element(element)
@@ -95,7 +104,7 @@ void ValidationMessage::updateValidationMessage(HTMLElement& element, const Stri
         if (!updatedMessage.isEmpty()) {
             const AtomString& title = m_element->attributeWithoutSynchronization(titleAttr);
             if (!title.isEmpty())
-                updatedMessage = updatedMessage + '\n' + title;
+                updatedMessage = makeString(updatedMessage, '\n', title);
         }
     }
 

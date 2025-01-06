@@ -27,6 +27,7 @@
 
 #ifdef __cplusplus
 
+#include <wtf/Seconds.h>
 #include <wtf/text/ASCIILiteral.h>
 
 namespace WebKit::WebPushD {
@@ -34,10 +35,13 @@ namespace WebKit::WebPushD {
 // If an origin processes more than this many silent pushes, then it will be unsubscribed from push.
 constexpr unsigned maxSilentPushCount = 3;
 
+// getPendingPushMessage starts a timer with this time interval after returning a push message to the client. If the timer expires, then we increment the subscription's silent push count.
+static constexpr Seconds silentPushTimeoutForProduction { 30_s };
+static constexpr Seconds silentPushTimeoutForTesting { 1_s };
+
 constexpr auto protocolVersionKey = "protocol version"_s;
-constexpr uint64_t protocolVersionValue = 3;
+constexpr uint64_t protocolVersionValue = 5;
 constexpr auto protocolEncodedMessageKey = "encoded message"_s;
-constexpr auto protocolDebugMessageKey = "debug message"_s;
 
 // FIXME: ConnectionToMachService traits requires we have a message type, so keep this placeholder here
 // until we can remove that requirement.
@@ -45,6 +49,30 @@ enum class MessageType : uint8_t {
     EchoTwice
 };
 
+static constexpr unsigned long pushActionSetting = 0x8054000;
+
+#ifdef __OBJC__
+inline NSString *pushActionVersionKey()
+{
+    return @"WebPushActionVersion";
+}
+
+inline NSNumber *currentPushActionVersion()
+{
+    return @1;
+}
+
+inline NSString *pushActionPartitionKey()
+{
+    return @"WebPushActionPartition";
+}
+
+inline NSString *pushActionTypeKey()
+{
+    return @"WebPushActionType";
+}
+#endif // __OBJC__
+
 } // namespace WebKit::WebPushD
 
-#endif
+#endif // __cplusplus

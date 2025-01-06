@@ -37,68 +37,73 @@
 
 #if PLATFORM(MAC)
 #import <pal/spi/mac/NSTextInputContextSPI.h>
-
-// FIXME: Remove this after rdar://126379463 lands
-@interface WKTextSelectionRect : NSObject
-
-@property (nonatomic, readonly) NSRect rect;
-@property (nonatomic, readonly) NSWritingDirection writingDirection;
-@property (nonatomic, readonly) BOOL isVertical;
-@property (nonatomic, readonly) NSAffineTransform *transform;
-
-@end
 #endif
 
 RetainPtr<WKWebView> createWebViewForNSTextPlaceholder()
 {
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     [webView synchronouslyLoadHTMLString:@"<body contenteditable>Test</body><script>document.body.focus()</script>"];
     return webView;
 }
 
 TEST(NSTextPlaceholder, InsertTextPlaceholder)
 {
-    auto webView = createWebViewForNSTextPlaceholder();
+    RetainPtr webView = createWebViewForNSTextPlaceholder();
 
     __block bool isDone = false;
-    [(id<NSTextInputClient_Async_staging_126696059>)webView.get() insertTextPlaceholderWithSize:CGSizeMake(50, 100) completionHandler:^(NSTextPlaceholder * placeholder) {
+    [(id<NSTextInputClient_Async>)webView.get() insertTextPlaceholderWithSize:CGSizeMake(50, 100) completionHandler:^(NSTextPlaceholder *placeholder) {
         EXPECT_WK_STREQ("<div style=\"display: inline-block; vertical-align: top; visibility: hidden !important; width: 50px; height: 100px;\"></div>Test<script>document.body.focus()</script>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
         isDone = true;
-        EXPECT_TRUE(CGSizeEqualToSize([(WKTextSelectionRect *)[[placeholder rects] firstObject] rect].size, CGSizeMake(50, 100)));
+        EXPECT_TRUE(CGSizeEqualToSize(placeholder.rects.firstObject.rect.size, CGSizeMake(50, 100)));
     }];
+
     TestWebKitAPI::Util::run(&isDone);
 }
 
 TEST(NSTextPlaceholder, InsertAndRemoveTextPlaceholderWithoutIncomingText)
 {
-    auto webView = createWebViewForNSTextPlaceholder();
+    RetainPtr webView = createWebViewForNSTextPlaceholder();
 
     __block bool isDone = false;
-    [(id<NSTextInputClient_Async_staging_126696059>)webView.get() insertTextPlaceholderWithSize:CGSizeMake(50, 100) completionHandler:^(NSTextPlaceholder *placeholder) {
+    [(id<NSTextInputClient_Async>)webView.get() insertTextPlaceholderWithSize:CGSizeMake(50, 100) completionHandler:^(NSTextPlaceholder *placeholder) {
         EXPECT_WK_STREQ("<div style=\"display: inline-block; vertical-align: top; visibility: hidden !important; width: 50px; height: 100px;\"></div>Test<script>document.body.focus()</script>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
-        EXPECT_TRUE(CGSizeEqualToSize([(WKTextSelectionRect *)[[placeholder rects] firstObject] rect].size, CGSizeMake(50, 100)));
-        [(id<NSTextInputClient_Async_staging_126696059>)webView.get() removeTextPlaceholder:placeholder willInsertText:NO completionHandler:^{
+        EXPECT_TRUE(CGSizeEqualToSize(placeholder.rects.firstObject.rect.size, CGSizeMake(50, 100)));
+
+        EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"internals.isCaretVisible()"] boolValue]);
+
+        [(id<NSTextInputClient_Async>)webView.get() removeTextPlaceholder:placeholder willInsertText:NO completionHandler:^{
             EXPECT_WK_STREQ("Test<script>document.body.focus()</script>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+
+            EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"internals.isCaretVisible()"] boolValue]);
+
             isDone = true;
         }];
     }];
+
     TestWebKitAPI::Util::run(&isDone);
 }
 
 TEST(NSTextPlaceholder, InsertAndRemoveTextPlaceholderWithIncomingText)
 {
-    auto webView = createWebViewForNSTextPlaceholder();
+    RetainPtr webView = createWebViewForNSTextPlaceholder();
 
     __block bool isDone = false;
-    [(id<NSTextInputClient_Async_staging_126696059>)webView.get() insertTextPlaceholderWithSize:CGSizeMake(50, 100) completionHandler:^(NSTextPlaceholder *placeholder) {
+    [(id<NSTextInputClient_Async>)webView.get() insertTextPlaceholderWithSize:CGSizeMake(50, 100) completionHandler:^(NSTextPlaceholder *placeholder) {
         EXPECT_WK_STREQ("<div style=\"display: inline-block; vertical-align: top; visibility: hidden !important; width: 50px; height: 100px;\"></div>Test<script>document.body.focus()</script>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
-        EXPECT_TRUE(CGSizeEqualToSize([(WKTextSelectionRect *)[[placeholder rects] firstObject] rect].size, CGSizeMake(50, 100)));
-        [(id<NSTextInputClient_Async_staging_126696059>)webView.get() removeTextPlaceholder:placeholder willInsertText:YES completionHandler:^{
+        EXPECT_TRUE(CGSizeEqualToSize(placeholder.rects.firstObject.rect.size, CGSizeMake(50, 100)));
+
+        EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"internals.isCaretVisible()"] boolValue]);
+
+        [(id<NSTextInputClient_Async>)webView.get() removeTextPlaceholder:placeholder willInsertText:YES completionHandler:^{
             EXPECT_WK_STREQ("Test<script>document.body.focus()</script>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+
+            EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"internals.isCaretVisible()"] boolValue]);
+
             isDone = true;
         }];
     }];
+
     TestWebKitAPI::Util::run(&isDone);
 }
 

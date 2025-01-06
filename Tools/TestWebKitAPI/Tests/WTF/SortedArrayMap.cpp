@@ -29,44 +29,44 @@
 TEST(WTF, SortedArraySet)
 {
     static constexpr ComparableCaseFoldingASCIILiteral caseFoldingArray[] = {
-        "_",
-        "a",
-        "c",
-        "delightful",
-        "q",
-        "q_",
-        "r/y",
-        "s-z",
+        "_"_s,
+        "a"_s,
+        "c"_s,
+        "delightful"_s,
+        "q"_s,
+        "q_"_s,
+        "r/y"_s,
+        "s-z"_s,
     };
     static constexpr SortedArraySet caseFoldingSet { caseFoldingArray };
 
     static constexpr ComparableLettersLiteral lettersArray[] = {
-        "a",
-        "c",
-        "delightful",
-        "q",
-        "r/y",
-        "s-z",
+        "a"_s,
+        "c"_s,
+        "delightful"_s,
+        "q"_s,
+        "r/y"_s,
+        "s-z"_s,
     };
     static constexpr SortedArraySet lettersSet { lettersArray };
 
     static constexpr ComparableLettersLiteral scriptTypesArray[] = {
-        "application/ecmascript",
-        "application/javascript",
-        "application/x-ecmascript",
-        "application/x-javascript",
-        "text/ecmascript",
-        "text/javascript",
-        "text/javascript1.0",
-        "text/javascript1.1",
-        "text/javascript1.2",
-        "text/javascript1.3",
-        "text/javascript1.4",
-        "text/javascript1.5",
-        "text/jscript",
-        "text/livescript",
-        "text/x-ecmascript",
-        "text/x-javascript",
+        "application/ecmascript"_s,
+        "application/javascript"_s,
+        "application/x-ecmascript"_s,
+        "application/x-javascript"_s,
+        "text/ecmascript"_s,
+        "text/javascript"_s,
+        "text/javascript1.0"_s,
+        "text/javascript1.1"_s,
+        "text/javascript1.2"_s,
+        "text/javascript1.3"_s,
+        "text/javascript1.4"_s,
+        "text/javascript1.5"_s,
+        "text/jscript"_s,
+        "text/livescript"_s,
+        "text/x-ecmascript"_s,
+        "text/x-javascript"_s,
     };
     static constexpr SortedArraySet scriptTypesSet { scriptTypesArray };
 

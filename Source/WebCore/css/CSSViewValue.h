@@ -49,9 +49,9 @@ public:
 
     String customCSSText() const;
 
-    RefPtr<CSSValue> axis() const { return m_axis; }
-    RefPtr<CSSValue> startInset() const { return m_startInset; }
-    RefPtr<CSSValue> endInset() const { return m_endInset; }
+    const RefPtr<CSSValue>& axis() const { return m_axis; }
+    const RefPtr<CSSValue>& startInset() const { return m_startInset; }
+    const RefPtr<CSSValue>& endInset() const { return m_endInset; }
 
     bool equals(const CSSViewValue&) const;
 
@@ -75,7 +75,7 @@ public:
 
 private:
     CSSViewValue(RefPtr<CSSValue>&& axis, RefPtr<CSSValue>&& startInset, RefPtr<CSSValue>&& endInset)
-        : CSSValue(ViewClass)
+        : CSSValue(ClassType::View)
         , m_axis(WTFMove(axis))
         , m_startInset(WTFMove(startInset))
         , m_endInset(WTFMove(endInset))

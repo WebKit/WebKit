@@ -5,7 +5,7 @@
 * Convert to RGB formats for rendering/effects.
 * Rotate by 90/180/270 degrees to adjust for mobile devices in portrait mode.
 * Optimized for SSSE3/AVX2 on x86/x64.
-* Optimized for Neon on Arm.
+* Optimized for Neon/SVE2/SME on Arm.
 * Optimized for MSA on Mips.
 * Optimized for RVV on RISC-V.
 

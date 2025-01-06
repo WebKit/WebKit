@@ -20,7 +20,6 @@
 
 [
     CustomIsReachable,
-    CustomPushEventHandlerScope,
     CustomToJSObject,
     DOMJIT,
     ExportMacro=WEBCORE_EXPORT,

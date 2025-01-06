@@ -16,6 +16,7 @@
 #include <memory>
 #include <vector>
 
+#include "api/sequence_checker.h"
 #include "api/test/pclf/media_configuration.h"
 #include "modules/audio_device/include/test_audio_device.h"
 #include "rtc_base/swap_queue.h"

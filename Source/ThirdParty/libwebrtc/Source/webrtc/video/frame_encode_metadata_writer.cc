@@ -99,12 +99,13 @@ void FrameEncodeMetadataWriter::OnEncodeStarted(const VideoFrame& frame) {
 
   timing_frames_info_.resize(num_spatial_layers_);
   FrameMetadata metadata;
-  metadata.rtp_timestamp = frame.timestamp();
+  metadata.rtp_timestamp = frame.rtp_timestamp();
   metadata.encode_start_time_ms = rtc::TimeMillis();
   metadata.ntp_time_ms = frame.ntp_time_ms();
   metadata.timestamp_us = frame.timestamp_us();
   metadata.rotation = frame.rotation();
   metadata.color_space = frame.color_space();
+  metadata.is_steady_state_refresh_frame = frame.update_rect().IsEmpty();
   metadata.packet_infos = frame.packet_infos();
   for (size_t si = 0; si < num_spatial_layers_; ++si) {
     RTC_DCHECK(timing_frames_info_[si].frames.empty() ||
@@ -136,11 +137,12 @@ void FrameEncodeMetadataWriter::OnEncodeStarted(const VideoFrame& frame) {
   }
 }
 
-void FrameEncodeMetadataWriter::FillTimingInfo(size_t simulcast_svc_idx,
-                                               EncodedImage* encoded_image) {
+void FrameEncodeMetadataWriter::FillMetadataAndTimingInfo(
+    size_t simulcast_svc_idx,
+    EncodedImage* encoded_image) {
   MutexLock lock(&lock_);
-  absl::optional<size_t> outlier_frame_size;
-  absl::optional<int64_t> encode_start_ms;
+  std::optional<size_t> outlier_frame_size;
+  std::optional<int64_t> encode_start_ms;
   uint8_t timing_flags = VideoSendTiming::kNotTriggered;
 
   int64_t encode_done_ms = rtc::TimeMillis();
@@ -223,11 +225,11 @@ void FrameEncodeMetadataWriter::Reset() {
   stalled_encoder_logged_messages_ = 0;
 }
 
-absl::optional<int64_t>
+std::optional<int64_t>
 FrameEncodeMetadataWriter::ExtractEncodeStartTimeAndFillMetadata(
     size_t simulcast_svc_idx,
     EncodedImage* encoded_image) {
-  absl::optional<int64_t> result;
+  std::optional<int64_t> result;
   size_t num_simulcast_svc_streams = timing_frames_info_.size();
   if (simulcast_svc_idx < num_simulcast_svc_streams) {
     auto metadata_list = &timing_frames_info_[simulcast_svc_idx].frames;
@@ -256,6 +258,8 @@ FrameEncodeMetadataWriter::ExtractEncodeStartTimeAndFillMetadata(
       encoded_image->ntp_time_ms_ = metadata_list->front().ntp_time_ms;
       encoded_image->rotation_ = metadata_list->front().rotation;
       encoded_image->SetColorSpace(metadata_list->front().color_space);
+      encoded_image->SetIsSteadyStateRefreshFrame(
+          metadata_list->front().is_steady_state_refresh_frame);
       encoded_image->SetPacketInfos(metadata_list->front().packet_infos);
       metadata_list->pop_front();
     } else {

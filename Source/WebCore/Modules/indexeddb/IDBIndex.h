@@ -28,7 +28,7 @@
 #include "IDBCursor.h"
 #include "IDBIndexInfo.h"
 #include "IDBRequest.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace JSC {
@@ -43,7 +43,7 @@ class WebCoreOpaqueRoot;
 struct IDBKeyRangeData;
 
 class IDBIndex final : public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(IDBIndex);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBIndex);
 public:
     static UniqueRef<IDBIndex> create(ScriptExecutionContext&, const IDBIndexInfo&, IDBObjectStore&);
 
@@ -108,7 +108,7 @@ private:
 
     // IDBIndex objects are always owned by their referencing IDBObjectStore.
     // Indexes will never outlive ObjectStores so its okay to keep a raw C++ reference here.
-    IDBObjectStore& m_objectStore;
+    CheckedRef<IDBObjectStore> m_objectStore;
 };
 
 WebCoreOpaqueRoot root(IDBIndex*);

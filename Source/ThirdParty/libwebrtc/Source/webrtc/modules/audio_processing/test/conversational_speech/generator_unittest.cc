@@ -41,10 +41,10 @@
 #include <cmath>
 #include <map>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "common_audio/wav_file.h"
 #include "modules/audio_processing/test/conversational_speech/config.h"
 #include "modules/audio_processing/test/conversational_speech/mock_wavreader_factory.h"
@@ -152,7 +152,7 @@ void DeleteFolderAndContents(absl::string_view dir) {
   if (!DirExists(dir)) {
     return;
   }
-  absl::optional<std::vector<std::string>> dir_content = ReadDirectory(dir);
+  std::optional<std::vector<std::string>> dir_content = ReadDirectory(dir);
   EXPECT_TRUE(dir_content);
   for (const auto& path : *dir_content) {
     if (DirExists(path)) {

@@ -12,6 +12,11 @@
 
 #include <stddef.h>
 
+#include <string>
+
+#include "api/audio_codecs/audio_format.h"
+#include "api/call/transport.h"
+#include "rtc_base/string_encode.h"
 #include "rtc_base/strings/audio_format_to_string.h"
 #include "rtc_base/strings/string_builder.h"
 

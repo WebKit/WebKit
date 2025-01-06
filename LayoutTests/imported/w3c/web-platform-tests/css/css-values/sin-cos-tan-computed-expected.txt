@@ -2,6 +2,9 @@
 PASS cos(0) should be used-value-equivalent to 1
 PASS sin(0) should be used-value-equivalent to 0
 PASS tan(0) should be used-value-equivalent to 0
+PASS tan(315deg) should be used-value-equivalent to -1
+PASS tan(360deg) should be used-value-equivalent to 0
+PASS tan(405deg) should be used-value-equivalent to 1
 PASS calc(sin(pi/2 - pi/2) ) should be used-value-equivalent to 0
 PASS calc(cos(pi - 3.14159265358979323846) ) should be used-value-equivalent to 1
 PASS calc(cos(e - 2.7182818284590452354) ) should be used-value-equivalent to 1

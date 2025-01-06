@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -13,7 +13,7 @@
 #include "aom_dsp/fft_common.h"
 #include "config/aom_dsp_rtcd.h"
 
-static INLINE void simple_transpose(const float *A, float *B, int n) {
+static inline void simple_transpose(const float *A, float *B, int n) {
   for (int y = 0; y < n; y++) {
     for (int x = 0; x < n; x++) {
       B[y * n + x] = A[x * n + y];
@@ -31,7 +31,7 @@ static INLINE void simple_transpose(const float *A, float *B, int n) {
 // imaginary part of transformed imaginary columns. This function assembles
 // the correct outputs while putting the real and imaginary components
 // next to each other.
-static INLINE void unpack_2d_output(const float *col_fft, float *output,
+static inline void unpack_2d_output(const float *col_fft, float *output,
                                     int n) {
   for (int y = 0; y <= n / 2; ++y) {
     const int y2 = y + n / 2;
@@ -72,10 +72,10 @@ void aom_fft_2d_gen(const float *input, float *temp, float *output, int n,
   unpack(temp, output, n);
 }
 
-static INLINE void store_float(float *output, float input) { *output = input; }
-static INLINE float add_float(float a, float b) { return a + b; }
-static INLINE float sub_float(float a, float b) { return a - b; }
-static INLINE float mul_float(float a, float b) { return a * b; }
+static inline void store_float(float *output, float input) { *output = input; }
+static inline float add_float(float a, float b) { return a + b; }
+static inline float sub_float(float a, float b) { return a - b; }
+static inline float mul_float(float a, float b) { return a * b; }
 
 GEN_FFT_2(void, float, float, float, *, store_float)
 GEN_FFT_4(void, float, float, float, *, store_float, (float), add_float,
@@ -184,15 +184,15 @@ void aom_ifft_2d_gen(const float *input, float *temp, float *output, int n,
   transpose(temp, output, n);
 }
 
-GEN_IFFT_2(void, float, float, float, *, store_float)
-GEN_IFFT_4(void, float, float, float, *, store_float, (float), add_float,
+GEN_IFFT_2(static void, float, float, float, *, store_float)
+GEN_IFFT_4(static void, float, float, float, *, store_float, (float), add_float,
            sub_float)
-GEN_IFFT_8(void, float, float, float, *, store_float, (float), add_float,
+GEN_IFFT_8(static void, float, float, float, *, store_float, (float), add_float,
            sub_float, mul_float)
-GEN_IFFT_16(void, float, float, float, *, store_float, (float), add_float,
-            sub_float, mul_float)
-GEN_IFFT_32(void, float, float, float, *, store_float, (float), add_float,
-            sub_float, mul_float)
+GEN_IFFT_16(static void, float, float, float, *, store_float, (float),
+            add_float, sub_float, mul_float)
+GEN_IFFT_32(static void, float, float, float, *, store_float, (float),
+            add_float, sub_float, mul_float)
 
 void aom_ifft2x2_float_c(const float *input, float *temp, float *output) {
   aom_ifft_2d_gen(input, temp, output, 2, aom_fft1d_2_float, aom_fft1d_2_float,

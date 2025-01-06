@@ -10,13 +10,13 @@
 #include "api/test/metrics/metrics_logger.h"
 
 #include <map>
-#include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/numerics/samples_stats_counter.h"
 #include "api/test/metrics/metric.h"
+#include "api/units/timestamp.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -54,10 +54,10 @@ TEST(DefaultMetricsLoggerTest, LogSingleValueMetricRecordsMetric) {
   EXPECT_THAT(metric.time_series.samples[0].value, Eq(10.0));
   EXPECT_THAT(metric.time_series.samples[0].sample_metadata,
               Eq(std::map<std::string, std::string>{}));
-  ASSERT_THAT(metric.stats.mean, absl::optional<double>(10.0));
-  ASSERT_THAT(metric.stats.stddev, absl::nullopt);
-  ASSERT_THAT(metric.stats.min, absl::optional<double>(10.0));
-  ASSERT_THAT(metric.stats.max, absl::optional<double>(10.0));
+  ASSERT_THAT(metric.stats.mean, std::optional<double>(10.0));
+  ASSERT_THAT(metric.stats.stddev, std::nullopt);
+  ASSERT_THAT(metric.stats.min, std::optional<double>(10.0));
+  ASSERT_THAT(metric.stats.max, std::optional<double>(10.0));
 }
 
 TEST(DefaultMetricsLoggerTest, LogMetricWithSamplesStatsCounterRecordsMetric) {
@@ -95,10 +95,10 @@ TEST(DefaultMetricsLoggerTest, LogMetricWithSamplesStatsCounterRecordsMetric) {
   EXPECT_THAT(metric.time_series.samples[1].value, Eq(20.0));
   EXPECT_THAT(metric.time_series.samples[1].sample_metadata,
               Eq(std::map<std::string, std::string>{{"point_key2", "value2"}}));
-  ASSERT_THAT(metric.stats.mean, absl::optional<double>(15.0));
-  ASSERT_THAT(metric.stats.stddev, absl::optional<double>(5.0));
-  ASSERT_THAT(metric.stats.min, absl::optional<double>(10.0));
-  ASSERT_THAT(metric.stats.max, absl::optional<double>(20.0));
+  ASSERT_THAT(metric.stats.mean, std::optional<double>(15.0));
+  ASSERT_THAT(metric.stats.stddev, std::optional<double>(5.0));
+  ASSERT_THAT(metric.stats.min, std::optional<double>(10.0));
+  ASSERT_THAT(metric.stats.max, std::optional<double>(20.0));
 }
 
 TEST(DefaultMetricsLoggerTest,
@@ -113,10 +113,10 @@ TEST(DefaultMetricsLoggerTest,
   EXPECT_THAT(metrics[0].name, Eq("metric_name"));
   EXPECT_THAT(metrics[0].test_case, Eq("test_case_name"));
   EXPECT_THAT(metrics[0].time_series.samples, IsEmpty());
-  ASSERT_THAT(metrics[0].stats.mean, Eq(absl::nullopt));
-  ASSERT_THAT(metrics[0].stats.stddev, Eq(absl::nullopt));
-  ASSERT_THAT(metrics[0].stats.min, Eq(absl::nullopt));
-  ASSERT_THAT(metrics[0].stats.max, Eq(absl::nullopt));
+  ASSERT_THAT(metrics[0].stats.mean, Eq(std::nullopt));
+  ASSERT_THAT(metrics[0].stats.stddev, Eq(std::nullopt));
+  ASSERT_THAT(metrics[0].stats.min, Eq(std::nullopt));
+  ASSERT_THAT(metrics[0].stats.max, Eq(std::nullopt));
 }
 
 TEST(DefaultMetricsLoggerTest, LogMetricWithStatsRecordsMetric) {
@@ -137,10 +137,10 @@ TEST(DefaultMetricsLoggerTest, LogMetricWithStatsRecordsMetric) {
   EXPECT_THAT(metric.metric_metadata,
               Eq(std::map<std::string, std::string>{{"key", "value"}}));
   ASSERT_THAT(metric.time_series.samples, IsEmpty());
-  ASSERT_THAT(metric.stats.mean, absl::optional<double>(15.0));
-  ASSERT_THAT(metric.stats.stddev, absl::optional<double>(5.0));
-  ASSERT_THAT(metric.stats.min, absl::optional<double>(10.0));
-  ASSERT_THAT(metric.stats.max, absl::optional<double>(20.0));
+  ASSERT_THAT(metric.stats.mean, std::optional<double>(15.0));
+  ASSERT_THAT(metric.stats.stddev, std::optional<double>(5.0));
+  ASSERT_THAT(metric.stats.min, std::optional<double>(10.0));
+  ASSERT_THAT(metric.stats.max, std::optional<double>(20.0));
 }
 
 TEST(DefaultMetricsLoggerTest, LogSingleValueMetricRecordsMultipleMetrics) {
@@ -267,10 +267,10 @@ TEST(DefaultMetricsLoggerTest, AccumulatedMetricsReturnedInCollectedMetrics) {
               Eq(Timestamp::Seconds(1)));
   EXPECT_THAT(metric.time_series.samples[0].sample_metadata,
               Eq(std::map<std::string, std::string>{{"key", "value"}}));
-  ASSERT_THAT(metric.stats.mean, absl::optional<double>(10.0));
-  ASSERT_THAT(metric.stats.stddev, absl::optional<double>(0.0));
-  ASSERT_THAT(metric.stats.min, absl::optional<double>(10.0));
-  ASSERT_THAT(metric.stats.max, absl::optional<double>(10.0));
+  ASSERT_THAT(metric.stats.mean, std::optional<double>(10.0));
+  ASSERT_THAT(metric.stats.stddev, std::optional<double>(0.0));
+  ASSERT_THAT(metric.stats.min, std::optional<double>(10.0));
+  ASSERT_THAT(metric.stats.max, std::optional<double>(10.0));
 }
 
 TEST(DefaultMetricsLoggerTest,
@@ -300,10 +300,10 @@ TEST(DefaultMetricsLoggerTest,
               Eq(Timestamp::Seconds(1)));
   EXPECT_THAT(metrics[0].time_series.samples[0].sample_metadata,
               Eq(std::map<std::string, std::string>{{"key_s", "value_s"}}));
-  ASSERT_THAT(metrics[0].stats.mean, absl::optional<double>(10.0));
-  ASSERT_THAT(metrics[0].stats.stddev, absl::optional<double>(0.0));
-  ASSERT_THAT(metrics[0].stats.min, absl::optional<double>(10.0));
-  ASSERT_THAT(metrics[0].stats.max, absl::optional<double>(10.0));
+  ASSERT_THAT(metrics[0].stats.mean, std::optional<double>(10.0));
+  ASSERT_THAT(metrics[0].stats.stddev, std::optional<double>(0.0));
+  ASSERT_THAT(metrics[0].stats.min, std::optional<double>(10.0));
+  ASSERT_THAT(metrics[0].stats.max, std::optional<double>(10.0));
   EXPECT_THAT(metrics[1].name, Eq("metric_name1"));
   EXPECT_THAT(metrics[1].test_case, Eq("test_case_name1"));
   EXPECT_THAT(metrics[1].unit, Eq(Unit::kMilliseconds));
@@ -315,10 +315,10 @@ TEST(DefaultMetricsLoggerTest,
   EXPECT_THAT(metrics[1].time_series.samples[0].value, Eq(10.0));
   EXPECT_THAT(metrics[1].time_series.samples[0].sample_metadata,
               Eq(std::map<std::string, std::string>{}));
-  ASSERT_THAT(metrics[1].stats.mean, absl::optional<double>(10.0));
-  ASSERT_THAT(metrics[1].stats.stddev, absl::nullopt);
-  ASSERT_THAT(metrics[1].stats.min, absl::optional<double>(10.0));
-  ASSERT_THAT(metrics[1].stats.max, absl::optional<double>(10.0));
+  ASSERT_THAT(metrics[1].stats.mean, std::optional<double>(10.0));
+  ASSERT_THAT(metrics[1].stats.stddev, std::nullopt);
+  ASSERT_THAT(metrics[1].stats.min, std::optional<double>(10.0));
+  ASSERT_THAT(metrics[1].stats.max, std::optional<double>(10.0));
 }
 
 }  // namespace

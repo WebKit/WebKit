@@ -180,7 +180,15 @@ static ALWAYS_INLINE void putDirectWithReify(VM& vm, JSGlobalObject* globalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
     bool isJSFunction = baseObject->inherits<JSFunction>();
     if (isJSFunction) {
-        jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded<>(vm, globalObject, propertyName);
+        JSFunction* jsFunction = jsCast<JSFunction*>(baseObject);
+
+        if (propertyName == vm.propertyNames->prototype) {
+            slot.disableCaching();
+            if (FunctionRareData* rareData = jsFunction->rareData())
+                rareData->clear("Store to prototype property of a function");
+        }
+
+        jsFunction->reifyLazyPropertyIfNeeded<>(vm, globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
     }
 
@@ -201,16 +209,18 @@ static ALWAYS_INLINE void putDirectWithReify(VM& vm, JSGlobalObject* globalObjec
 
 static ALWAYS_INLINE void putDirectAccessorWithReify(VM& vm, JSGlobalObject* globalObject, JSObject* baseObject, PropertyName propertyName, GetterSetter* accessor, unsigned attribute)
 {
+    // baseObject is either JSFinalObject during object literal construction, or a userland JSFunction class
+    // constructor, both of which are guaranteed to be extensible and without non-configurable |propertyName|.
+    // Please also note that static "prototype" accessor in a `class` literal is a syntax error.
+
     auto scope = DECLARE_THROW_SCOPE(vm);
     bool isJSFunction = baseObject->inherits<JSFunction>();
     if (isJSFunction) {
+        ASSERT(propertyName != vm.propertyNames->prototype);
         jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded<>(vm, globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
     }
 
-    // baseObject is either JSFinalObject during object literal construction, or a userland JSFunction class
-    // constructor, both of which are guaranteed to be extensible and without non-configurable |propertyName|.
-    // Please also note that static "prototype" accessor in a `class` literal is a syntax error.
     ASSERT(canPutDirectFast(vm, originalStructureBeforePut(baseObject), propertyName, isJSFunction));
     scope.release();
     baseObject->putDirectAccessor(globalObject, propertyName, accessor, attribute);
@@ -280,7 +290,6 @@ JSC_DECLARE_COMMON_SLOW_PATH(slow_path_bitxor);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_typeof);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_typeof_is_object);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_typeof_is_function);
-JSC_DECLARE_COMMON_SLOW_PATH(slow_path_instanceof_custom);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_is_callable);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_is_constructor);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_strcat);
@@ -309,6 +318,8 @@ JSC_DECLARE_COMMON_SLOW_PATH(slow_path_put_by_val_with_this);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_define_data_property);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_define_accessor_property);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_throw_static_error);
+JSC_DECLARE_COMMON_SLOW_PATH(slow_path_instanceof_custom_from_instanceof);
+JSC_DECLARE_COMMON_SLOW_PATH(slow_path_throw_static_error_from_instanceof);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_new_promise);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_new_generator);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_new_array_with_spread);

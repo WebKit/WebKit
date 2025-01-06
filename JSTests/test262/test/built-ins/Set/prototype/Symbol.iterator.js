@@ -15,6 +15,8 @@ features: [Symbol.iterator]
 ---*/
 
 assert.sameValue(Set.prototype[Symbol.iterator], Set.prototype.values);
-verifyNotEnumerable(Set.prototype, Symbol.iterator);
-verifyWritable(Set.prototype, Symbol.iterator);
-verifyConfigurable(Set.prototype, Symbol.iterator);
+verifyProperty(Set.prototype, Symbol.iterator, {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

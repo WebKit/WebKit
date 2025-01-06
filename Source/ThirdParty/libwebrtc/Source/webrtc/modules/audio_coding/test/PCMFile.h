@@ -14,10 +14,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/audio/audio_frame.h"
 
 namespace webrtc {
@@ -68,7 +68,7 @@ class PCMFile {
   uint32_t timestamp_;
   bool read_stereo_;
   bool save_stereo_;
-  absl::optional<int> num_10ms_blocks_to_read_;
+  std::optional<int> num_10ms_blocks_to_read_;
   int blocks_read_ = 0;
 };
 

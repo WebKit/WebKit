@@ -1028,6 +1028,8 @@ void pas_large_sharing_pool_boot_free(
 {
     uint64_t epoch;
 
+    PAS_PROFILE(LARGE_SHARING_POOL_BOOT_FREE, range.begin, range.end);
+
     if (!pas_large_sharing_pool_enabled)
         return;
     
@@ -1040,6 +1042,8 @@ void pas_large_sharing_pool_free(pas_range range,
                                  pas_mmap_capability mmap_capability)
 {
     uint64_t epoch;
+
+    PAS_PROFILE(LARGE_SHARING_POOL_FREE, range.begin, range.end);
 
     if (!pas_large_sharing_pool_enabled)
         return;
@@ -1056,6 +1060,8 @@ bool pas_large_sharing_pool_allocate_and_commit(
     pas_mmap_capability mmap_capability)
 {
     static const bool verbose = false;
+
+    PAS_PROFILE(LARGE_SHARING_POOL_ALLOCATE_AND_COMMIT, range.begin, range.end);
     
     pas_large_free_heap_deferred_commit_log commit_log;
     uint64_t epoch;
@@ -1202,6 +1208,8 @@ pas_large_sharing_pool_compute_summary(
 {
     pas_large_sharing_node* node;
     pas_heap_summary result;
+
+    PAS_PROFILE(LARGE_SHARING_POOL_COMPUTE_SUMMARY, range.begin, range.end);
 
     pas_zero_memory(&result, sizeof(result));
     

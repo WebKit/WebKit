@@ -63,12 +63,12 @@ public:
     bool addParsedProperty(const CSSProperty&);
 
     // These expand shorthand properties into multiple properties.
-    bool setProperty(CSSPropertyID, const String& value, bool important, CSSParserContext, bool* didFailParsing = nullptr);
-    bool setProperty(CSSPropertyID, const String& value, bool important = false, bool* didFailParsing = nullptr);
-    void setProperty(CSSPropertyID, RefPtr<CSSValue>&&, bool important = false);
+    bool setProperty(CSSPropertyID, const String& value, CSSParserContext, IsImportant = IsImportant::No, bool* didFailParsing = nullptr);
+    bool setProperty(CSSPropertyID, const String& value, IsImportant = IsImportant::No, bool* didFailParsing = nullptr);
+    void setProperty(CSSPropertyID, RefPtr<CSSValue>&&, IsImportant = IsImportant::No);
 
     // These do not. FIXME: This is too messy, we can do better.
-    bool setProperty(CSSPropertyID, CSSValueID identifier, bool important = false);
+    bool setProperty(CSSPropertyID, CSSValueID identifier, IsImportant = IsImportant::No);
     bool setProperty(const CSSProperty&, CSSProperty* slot = nullptr);
 
     bool removeProperty(CSSPropertyID, String* returnText = nullptr);
@@ -86,7 +86,7 @@ public:
     int findCustomPropertyIndex(StringView propertyName) const;
 
     // Methods for querying and altering CSS custom properties.
-    bool setCustomProperty(const String& propertyName, const String& value, bool important, CSSParserContext);
+    bool setCustomProperty(const String& propertyName, const String& value, CSSParserContext, IsImportant = IsImportant::No);
     bool removeCustomProperty(const String& propertyName, String* returnText = nullptr);
 
 private:

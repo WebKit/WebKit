@@ -89,6 +89,7 @@ SkString SkCFTypeIDDescription(CFTypeID id) {
 template<typename CF> CFTypeID SkCFGetTypeID();
 #define SK_GETCFTYPEID(cf) \
 template<> CFTypeID SkCFGetTypeID<cf##Ref>() { return cf##GetTypeID(); }
+SK_GETCFTYPEID(CFArray);
 SK_GETCFTYPEID(CFBoolean);
 SK_GETCFTYPEID(CFDictionary);
 SK_GETCFTYPEID(CFNumber);
@@ -522,13 +523,14 @@ std::unique_ptr<SkAdvancedTypefaceMetrics> SkTypeface_Mac::onGetAdvancedMetrics(
     constexpr SkFontTableTag glyf = SkSetFourByteTag('g','l','y','f');
     constexpr SkFontTableTag loca = SkSetFourByteTag('l','o','c','a');
     constexpr SkFontTableTag CFF  = SkSetFourByteTag('C','F','F',' ');
-    if (!((this->getTableSize(glyf) && this->getTableSize(loca)) ||
-           this->getTableSize(CFF)))
-    {
+    if (this->getTableSize(glyf) && this->getTableSize(loca)) {
+        info->fType = SkAdvancedTypefaceMetrics::kTrueType_Font;
+    } else if (this->getTableSize(CFF)) {
+        info->fType = SkAdvancedTypefaceMetrics::kCFF_Font;
+    } else {
         return info;
     }
 
-    info->fType = SkAdvancedTypefaceMetrics::kTrueType_Font;
     CTFontSymbolicTraits symbolicTraits = CTFontGetSymbolicTraits(ctFont.get());
     if (symbolicTraits & kCTFontMonoSpaceTrait) {
         info->fStyle |= SkAdvancedTypefaceMetrics::kFixedPitch_Style;
@@ -728,6 +730,16 @@ bool SkTypeface_Mac::onGlyphMaskNeedsCurrentColor() const {
 
 CFArrayRef SkTypeface_Mac::getVariationAxes() const {
     fInitVariationAxes([this]{
+        // Prefer kCTFontVariationAxesAttribute, faster since it doesn't localize axis names.
+        SkUniqueCFRef<CTFontDescriptorRef> desc(CTFontCopyFontDescriptor(fFontRef.get()));
+        SkUniqueCFRef<CFTypeRef> cf(
+                CTFontDescriptorCopyAttribute(desc.get(), kCTFontVariationAxesAttribute));
+        CFArrayRef array;
+        if (cf && SkCFDynamicCast(cf.get(), &array, "Axes")) {
+            fVariationAxes.reset(array);
+            cf.release();
+            return;
+        }
         fVariationAxes.reset(CTFontCopyVariationAxes(fFontRef.get()));
     });
     return fVariationAxes.get();
@@ -883,6 +895,8 @@ std::unique_ptr<SkScalerContext> SkTypeface_Mac::onCreateScalerContext(
 }
 
 void SkTypeface_Mac::onFilterRec(SkScalerContextRec* rec) const {
+    rec->useStrokeForFakeBold();
+
     if (rec->fFlags & SkScalerContext::kLCD_BGROrder_Flag ||
         rec->fFlags & SkScalerContext::kLCD_Vertical_Flag)
     {

@@ -33,17 +33,21 @@
 #include "ReverbAccumulationBuffer.h"
 
 #include "VectorMath.h"
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include <algorithm>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReverbAccumulationBuffer);
 
 ReverbAccumulationBuffer::ReverbAccumulationBuffer(size_t length)
     : m_buffer(length)
 {
 }
 
-void ReverbAccumulationBuffer::readAndClear(float* destination, size_t numberOfFrames)
+void ReverbAccumulationBuffer::readAndClear(std::span<float> destination, size_t numberOfFrames)
 {
     size_t bufferLength = m_buffer.size();
     bool isCopySafe = m_readIndex <= bufferLength && numberOfFrames <= bufferLength;
@@ -56,14 +60,14 @@ void ReverbAccumulationBuffer::readAndClear(float* destination, size_t numberOfF
     size_t numberOfFrames1 = std::min(numberOfFrames, framesAvailable);
     size_t numberOfFrames2 = numberOfFrames - numberOfFrames1;
 
-    float* source = m_buffer.data();
-    memcpy(destination, source + m_readIndex, sizeof(float) * numberOfFrames1);
-    memset(source + m_readIndex, 0, sizeof(float) * numberOfFrames1);
+    auto source = m_buffer.span();
+    memcpySpan(destination, source.subspan(m_readIndex).first(numberOfFrames1));
+    zeroSpan(source.subspan(m_readIndex, numberOfFrames1));
 
     // Handle wrap-around if necessary
     if (numberOfFrames2 > 0) {
-        memcpy(destination + numberOfFrames1, source, sizeof(float) * numberOfFrames2);
-        memset(source, 0, sizeof(float) * numberOfFrames2);
+        memcpySpan(destination.subspan(numberOfFrames1), source.first(numberOfFrames2));
+        zeroSpan(source.first(numberOfFrames2));
     }
 
     m_readIndex = (m_readIndex + numberOfFrames) % bufferLength;
@@ -76,7 +80,7 @@ void ReverbAccumulationBuffer::updateReadIndex(int* readIndex, size_t numberOfFr
     *readIndex = (*readIndex + numberOfFrames) % m_buffer.size();
 }
 
-int ReverbAccumulationBuffer::accumulate(float* source, size_t numberOfFrames, int* readIndex, size_t delayFrames)
+int ReverbAccumulationBuffer::accumulate(std::span<float> source, size_t numberOfFrames, int* readIndex, size_t delayFrames)
 {
     size_t bufferLength = m_buffer.size();
     
@@ -89,18 +93,18 @@ int ReverbAccumulationBuffer::accumulate(float* source, size_t numberOfFrames, i
     size_t numberOfFrames1 = std::min(numberOfFrames, framesAvailable);
     size_t numberOfFrames2 = numberOfFrames - numberOfFrames1;
 
-    float* destination = m_buffer.data();
+    auto destination = m_buffer.span();
 
     bool isSafe = writeIndex <= bufferLength && numberOfFrames1 + writeIndex <= bufferLength && numberOfFrames2 <= bufferLength;
     ASSERT(isSafe);
     if (!isSafe)
         return 0;
 
-    VectorMath::add(source, destination + writeIndex, destination + writeIndex, numberOfFrames1);
+    VectorMath::add(source.first(numberOfFrames1), destination.subspan(writeIndex).first(numberOfFrames1), destination.subspan(writeIndex));
 
     // Handle wrap-around if necessary
     if (numberOfFrames2 > 0)       
-        VectorMath::add(source + numberOfFrames1, destination, destination, numberOfFrames2);
+        VectorMath::add(source.subspan(numberOfFrames1).first(numberOfFrames2), destination.first(numberOfFrames2), destination);
 
     return writeIndex;
 }

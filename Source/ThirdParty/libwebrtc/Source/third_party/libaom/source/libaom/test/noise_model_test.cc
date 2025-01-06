@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -17,8 +17,8 @@
 #include "aom_dsp/noise_model.h"
 #include "aom_dsp/noise_util.h"
 #include "config/aom_dsp_rtcd.h"
+#include "gtest/gtest.h"
 #include "test/acm_random.h"
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
 
 namespace {
 
@@ -532,8 +532,10 @@ typedef ::testing::Types<BitDepthParams<uint8_t, 8, false>,   // lowbd
                          BitDepthParams<uint16_t, 10, true>,  // highbd data
                          BitDepthParams<uint16_t, 12, true> >
     AllBitDepthParams;
+// Note the empty final argument can be removed if C++20 is made the minimum
+// requirement.
 INSTANTIATE_TYPED_TEST_SUITE_P(FlatBlockInstatiation, FlatBlockEstimatorTest,
-                               AllBitDepthParams);
+                               AllBitDepthParams, );
 
 template <typename T>
 class NoiseModelUpdateTest : public ::testing::Test, public T {
@@ -968,8 +970,10 @@ REGISTER_TYPED_TEST_SUITE_P(NoiseModelUpdateTest, UpdateFailsNoFlatBlocks,
                             NoiseStrengthChangeSignalsDifferentNoiseType,
                             NoiseCoeffsSignalsDifferentNoiseType);
 
+// Note the empty final argument can be removed if C++20 is made the minimum
+// requirement.
 INSTANTIATE_TYPED_TEST_SUITE_P(NoiseModelUpdateTestInstatiation,
-                               NoiseModelUpdateTest, AllBitDepthParams);
+                               NoiseModelUpdateTest, AllBitDepthParams, );
 
 TEST(NoiseModelGetGrainParameters, TestLagSize) {
   aom_film_grain_t film_grain;
@@ -1368,5 +1372,7 @@ TYPED_TEST_P(WienerDenoiseTest, GradientTest) {
 REGISTER_TYPED_TEST_SUITE_P(WienerDenoiseTest, InvalidBlockSize,
                             InvalidChromaSubsampling, GradientTest);
 
+// Note the empty final argument can be removed if C++20 is made the minimum
+// requirement.
 INSTANTIATE_TYPED_TEST_SUITE_P(WienerDenoiseTestInstatiation, WienerDenoiseTest,
-                               AllBitDepthParams);
+                               AllBitDepthParams, );

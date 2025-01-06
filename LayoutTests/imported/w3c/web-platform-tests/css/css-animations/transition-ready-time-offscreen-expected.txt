@@ -1,0 +1,3 @@
+
+PASS Transitions start at the same time regardless of on-screen status
+

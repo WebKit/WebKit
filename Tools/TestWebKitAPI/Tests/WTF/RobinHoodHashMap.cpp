@@ -35,7 +35,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/UniqueRef.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
@@ -997,7 +997,7 @@ TEST(WTF_RobinHoodHashMap, Ref_Value)
 
         MemoryCompactLookupOnlyRobinHoodHashMap<int, Ref<RefLogger>, RobinHoodHash<int>> map;
 
-        map.ensure(1, [&]() mutable {
+        map.ensure(1, [&] {
             Ref<RefLogger> ref(a);
             return ref;
         });

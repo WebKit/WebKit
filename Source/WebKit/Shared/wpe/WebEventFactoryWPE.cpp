@@ -168,10 +168,15 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(WPEEvent* event)
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(WPEEvent* event)
 {
+    auto phase = wpe_event_scroll_is_stop(event) ? WebWheelEvent::Phase::PhaseEnded : WebWheelEvent::Phase::PhaseChanged;
+    return createWebWheelEvent(event, phase);
+}
+
+WebWheelEvent WebEventFactory::createWebWheelEvent(WPEEvent* event, WebWheelEvent::Phase phase)
+{
     double deltaX, deltaY;
     wpe_event_scroll_get_deltas(event, &deltaX, &deltaY);
     bool hasPreciseScrollingDeltas = wpe_event_scroll_has_precise_deltas(event);
-    auto phase = wpe_event_scroll_is_stop(event) ? WebWheelEvent::Phase::PhaseEnded : WebWheelEvent::Phase::PhaseChanged;
     auto position = positionFromEvent(event);
 
     auto wheelTicks = FloatSize(deltaX, deltaY);
@@ -226,7 +231,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(WPEEvent* event, Vector<WebPl
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    return WebTouchEvent({ type.value(), modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), wallTimeForEvent(event) }, WTFMove(touchPoints));
+    return WebTouchEvent({ type.value(), modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), wallTimeForEvent(event) }, WTFMove(touchPoints), { }, { });
 }
 #endif // ENABLE(TOUCH_EVENTS)
 

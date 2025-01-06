@@ -60,6 +60,8 @@ void AnimationList::fillUnsetProperties()
     FILL_UNSET_PROPERTY(isPropertySet, property, fillProperty);
     FILL_UNSET_PROPERTY(isCompositeOperationSet, compositeOperation, fillCompositeOperation);
     FILL_UNSET_PROPERTY(isAllowsDiscreteTransitionsSet, allowsDiscreteTransitions, fillAllowsDiscreteTransitions);
+    FILL_UNSET_PROPERTY(isRangeStartSet, rangeStart, fillRangeStart);
+    FILL_UNSET_PROPERTY(isRangeEndSet, rangeEnd, fillRangeEnd);
 }
 
 bool AnimationList::operator==(const AnimationList& other) const

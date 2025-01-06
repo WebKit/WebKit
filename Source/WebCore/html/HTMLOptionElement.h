@@ -33,7 +33,8 @@ class HTMLSelectElement;
 enum class AllowStyleInvalidation : bool { No, Yes };
 
 class HTMLOptionElement final : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLOptionElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLOptionElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLOptionElement);
 public:
     static Ref<HTMLOptionElement> create(Document&);
     static Ref<HTMLOptionElement> create(const QualifiedName&, Document&);

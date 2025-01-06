@@ -43,9 +43,12 @@
 #include "WorkerThread.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/SourceProvider.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScheduledAction);
 
 std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolatedWorld, Strong<JSObject>&& function)
 {

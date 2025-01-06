@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,10 @@
  */
 
 #pragma once
+
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if ENABLE(ASSEMBLER)
 
@@ -103,7 +107,7 @@ enum class SavedFPWidth {
 };
 
 class Context;
-typedef void (*Function)(Context&);
+typedef void (SYSV_ABI *Function)(Context&);
 
 } // namespace Probe
 
@@ -119,6 +123,7 @@ typedef Vector<PrintRecord> PrintRecordList;
 using MacroAssemblerBase = TARGET_MACROASSEMBLER;
 
 class MacroAssembler : public MacroAssemblerBase {
+    WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(MacroAssembler);
 public:
     using Base = MacroAssemblerBase;
 
@@ -158,7 +163,9 @@ public:
     using MacroAssemblerBase::branch32;
     using MacroAssemblerBase::compare32;
     using MacroAssemblerBase::move;
+    using MacroAssemblerBase::move32ToFloat;
     using MacroAssemblerBase::moveDouble;
+    using MacroAssemblerBase::move64ToDouble;
     using MacroAssemblerBase::add32;
     using MacroAssemblerBase::mul32;
     using MacroAssemblerBase::and32;
@@ -169,6 +176,9 @@ public:
 #endif
 #if CPU(X86_64)
     using MacroAssemblerBase::branch64;
+#endif
+#if CPU(RISCV64)
+    using MacroAssemblerRISCV64::lshift64;
 #endif
     using MacroAssemblerBase::branchSub32;
     using MacroAssemblerBase::lshift32;
@@ -1039,6 +1049,11 @@ public:
         lshift64(src, imm, dest);
     }
 
+    void lshiftPtr(TrustedImm32 imm, RegisterID shiftAmount, RegisterID dest)
+    {
+        lshift64(imm, shiftAmount, dest);
+    }
+
     void rshiftPtr(Imm32 imm, RegisterID srcDest)
     {
         rshift64(trustedImm32ForShift(imm), srcDest);
@@ -1466,7 +1481,7 @@ public:
 
         // Try to force normalisation, and check that there's no change
         // in the bit pattern
-        if (bitwise_cast<uint64_t>(value * 1.0) != bitwise_cast<uint64_t>(value))
+        if (std::bit_cast<uint64_t>(value * 1.0) != std::bit_cast<uint64_t>(value))
             return shouldConsiderBlinding();
 
         value = std::abs(value);
@@ -1600,7 +1615,7 @@ public:
             if (jsValue.isDouble() && !shouldBlindDouble(jsValue.asDouble()))
                 return false;
 
-            if (!shouldBlindDouble(bitwise_cast<double>(value)))
+            if (!shouldBlindDouble(std::bit_cast<double>(value)))
                 return false;
         }
         }
@@ -1815,31 +1830,27 @@ public:
 
 #endif // USE(JSVALUE64)
 
-#if CPU(X86_64) || CPU(RISCV64)
-    void moveFloat(Imm32 imm, FPRegisterID dest)
+#if CPU(X86_64)
+    void move32ToFloat(Imm32 imm, FPRegisterID dest)
     {
         move(imm, scratchRegister());
         move32ToFloat(scratchRegister(), dest);
     }
 
-    void moveDouble(Imm64 imm, FPRegisterID dest)
+    void move64ToDouble(Imm64 imm, FPRegisterID dest)
     {
         move(imm, scratchRegister());
         move64ToDouble(scratchRegister(), dest);
     }
-#endif
-
-#if CPU(ARM64)
-    void moveFloat(Imm32 imm, FPRegisterID dest)
+#else
+    void move32ToFloat(Imm32 imm, FPRegisterID dest)
     {
-        move(imm, getCachedMemoryTempRegisterIDAndInvalidate());
-        move32ToFloat(getCachedMemoryTempRegisterIDAndInvalidate(), dest);
+        MacroAssemblerBase::move32ToFloat(imm.asTrustedImm32(), dest);
     }
 
-    void moveDouble(Imm64 imm, FPRegisterID dest)
+    void move64ToDouble(Imm64 imm, FPRegisterID dest)
     {
-        move(imm, getCachedMemoryTempRegisterIDAndInvalidate());
-        move64ToDouble(getCachedMemoryTempRegisterIDAndInvalidate(), dest);
+        MacroAssemblerBase::move64ToDouble(imm.asTrustedImm64(), dest);
     }
 #endif
 
@@ -2323,6 +2334,11 @@ public:
     {
         lshift32(src, trustedImm32ForShift(amount), dest);
     }
+
+    void lshift32(Imm32 amount, RegisterID shiftAmount, RegisterID dest)
+    {
+        lshift32(trustedImm32ForShift(amount), shiftAmount, dest);
+    }
     
     void rshift32(Imm32 imm, RegisterID dest)
     {
@@ -2408,11 +2424,12 @@ public:
 
     // This leaks memory. Must not be used for production.
     JS_EXPORT_PRIVATE void probeDebug(Function<void(Probe::Context&)>);
+    JS_EXPORT_PRIVATE void probeDebugSIMD(Function<void(Probe::Context&)>);
 
     // Let's you print from your JIT generated code.
     // See comments in MacroAssemblerPrinter.h for examples of how to use this.
-    template<typename... Arguments>
-    void print(Arguments&&... args);
+    void print(auto&&... args);
+    void println(auto&&... args);
 
     void print(Printer::PrintRecordList*);
 
@@ -2467,3 +2484,5 @@ public:
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

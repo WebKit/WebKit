@@ -36,6 +36,7 @@
 #include "HostWindow.h"
 #include "LocalFrameView.h"
 #include "ScreenProperties.h"
+#include "SystemSettings.h"
 #include "Widget.h"
 #include <gtk/gtk.h>
 
@@ -96,12 +97,9 @@ double fontDPI()
     }
 #endif
 
-    static GtkSettings* gtkSettings = gtk_settings_get_default();
-    if (gtkSettings) {
-        int gtkXftDpi;
-        g_object_get(gtkSettings, "gtk-xft-dpi", &gtkXftDpi, nullptr);
-        return gtkXftDpi / 1024.0;
-    }
+    auto xftDPI = SystemSettings::singleton().xftDPI();
+    if (xftDPI)
+        return xftDPI.value() / 1024.0;
 
     auto* data = screenData(primaryScreenDisplayID());
     return data ? data->dpi : 96.;

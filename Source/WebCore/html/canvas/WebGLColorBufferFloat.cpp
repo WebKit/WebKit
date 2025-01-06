@@ -28,11 +28,11 @@
 #if ENABLE(WEBGL)
 #include "WebGLColorBufferFloat.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLColorBufferFloat);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLColorBufferFloat);
 
 WebGLColorBufferFloat::WebGLColorBufferFloat(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLColorBufferFloat)

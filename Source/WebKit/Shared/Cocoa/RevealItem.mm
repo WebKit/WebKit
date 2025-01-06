@@ -27,7 +27,6 @@
 #import "RevealItem.h"
 
 #import "ArgumentCodersCocoa.h"
-#import "WebCoreArgumentCoders.h"
 #import <pal/cocoa/RevealSoftLink.h>
 
 namespace WebKit {

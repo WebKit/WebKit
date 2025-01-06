@@ -16,8 +16,8 @@
 #include <utility>
 #include <vector>
 
+#include "api/audio/audio_view.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
-#include "modules/audio_processing/include/audio_frame_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/numerics/safe_compare.h"
@@ -50,7 +50,7 @@ class MockVad : public VoiceActivityDetectorWrapper::MonoVad {
 TEST(GainController2VoiceActivityDetectorWrapper, CtorAndInitReadSampleRate) {
   auto vad = std::make_unique<MockVad>();
   EXPECT_CALL(*vad, SampleRateHz)
-      .Times(2)
+      .Times(1)
       .WillRepeatedly(Return(kSampleRate8kHz));
   EXPECT_CALL(*vad, Reset).Times(AnyNumber());
   auto vad_wrapper = std::make_unique<VoiceActivityDetectorWrapper>(
@@ -85,11 +85,9 @@ struct FrameWithView {
   explicit FrameWithView(int sample_rate_hz)
       : samples(rtc::CheckedDivExact(sample_rate_hz, kNumFramesPerSecond),
                 0.0f),
-        channel0(samples.data()),
-        view(&channel0, /*num_channels=*/1, samples.size()) {}
+        view(samples.data(), samples.size(), /*num_channels=*/1) {}
   std::vector<float> samples;
-  const float* const channel0;
-  const AudioFrameView<const float> view;
+  const DeinterleavedView<const float> view;
 };
 
 // Checks that the expected speech probabilities are returned.

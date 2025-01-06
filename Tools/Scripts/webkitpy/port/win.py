@@ -55,6 +55,7 @@ except ImportError:
 
 class WinPort(ApplePort):
     port_name = "win"
+    supports_localhost_aliases = True
 
     VERSION_MIN = Version(5, 1)
     VERSION_MAX = Version(10)
@@ -114,52 +115,33 @@ class WinPort(ApplePort):
             actual_text = delegate_regexp.sub("", actual_text)
         return ApplePort.do_text_results_differ(self, expected_text, actual_text)
 
-    def default_baseline_search_path(self, **kwargs):
-        version_name_map = VersionNameMap.map(self.host.platform)
-        if self._os_version < self.VERSION_MIN or self._os_version > self.VERSION_MAX:
-            fallback_versions = [self._os_version] if self._os_version else []
-        else:
-            sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())
-            fallback_versions = sorted_versions[sorted_versions.index(self._os_version):]
-
-        fallback_names = ['win-' + version_name_map.to_name(version, platform=self.port_name).lower().replace(' ', '') for version in fallback_versions]
-        fallback_names.append('win')
-
-        # FIXME: The AppleWin port falls back to AppleMac for some results.  Eventually we'll have a shared 'apple' port.
-        if self.get_option('webkit_test_runner'):
-            fallback_names.insert(0, 'win-wk2')
-            fallback_names.append('mac-wk2')
-            # Note we do not add 'wk2' here, even though it's included in _skipped_search_paths().
-        # FIXME: Perhaps we should get this list from MacPort?
-        fallback_names.append('mac')
-        result = list(map(self._webkit_baseline_path, fallback_names))
-        if apple_additions() and getattr(apple_additions(), "layout_tests_path", None):
-            result.insert(0, self._filesystem.join(apple_additions().layout_tests_path(), self.port_name))
-        return result
-
     def setup_environ_for_server(self, server_name=None):
         env = super(WinPort, self).setup_environ_for_server(server_name)
+        variables_to_copy = [
+            'COMSPEC',
+            'HOMEDRIVE',
+            'HOMEPATH',
+            'SYSTEMDRIVE',
+            'SYSTEMROOT',
+            'TEMP',
+            'TMP',
+            'WEBKIT_LIBRARIES',
+        ]
+        for variable in variables_to_copy:
+            self._copy_value_from_environ_if_set(env, variable)
         if 'WEBKIT_TESTFONTS' not in env:
             env['WEBKIT_TESTFONTS'] = self.path_from_webkit_base('Tools', 'WebKitTestRunner', 'fonts')
         if 'WEBKIT_LIBRARIES' in env:
-            lib = self._filesystem.join(env['WEBKIT_LIBRARIES'], 'bin64')
+            lib = self._filesystem.join(env['WEBKIT_LIBRARIES'], 'bin')
         else:
-            lib = self.path_from_webkit_base('WebKitLibraries', 'win', 'bin64')
+            lib = self.path_from_webkit_base('WebKitLibraries', 'win', 'bin')
         env['PATH'] = lib + ';' + env['PATH']
         env['PYTHONUTF8'] = '1'
         env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
         return env
 
-    def environment_for_api_tests(self):
-        env = super(WinPort, self).environment_for_api_tests()
-        variables_to_copy = [
-            'SYSTEMROOT',
-            'TEMP',
-            'TMP',
-        ]
-        for variable in variables_to_copy:
-            self._copy_value_from_environ_if_set(env, variable)
-        return env
+    def driver_name(self):
+        return "WebKitTestRunnerWS"
 
     def run_minibrowser(self, args):
         miniBrowser = self._build_path('MiniBrowser.exe')
@@ -168,20 +150,12 @@ class WinPort(ApplePort):
     def operating_system(self):
         return 'win'
 
-    def _port_flag_for_scripts(self):
-        if self.architecture() == 'x86_64':
-            return '--64-bit'
-        return None
-
     def _build_path(self, *comps):
         """Returns the full path to the test driver (DumpRenderTree)."""
         root_directory = self.get_option('_cached_root') or self.get_option('root')
         if not root_directory:
             ApplePort._build_path(self, *comps)  # Sets option _cached_root
-            binary_directory = 'bin32'
-            if self.architecture() == 'x86_64':
-                binary_directory = 'bin64'
-            root_directory = self._filesystem.join(self.get_option('_cached_root'), binary_directory)
+            root_directory = self._filesystem.join(self.get_option('_cached_root'), 'bin')
             self.set_option('_cached_root', root_directory)
 
         return self._filesystem.join(root_directory, *comps)
@@ -324,13 +298,6 @@ class WinPort(ApplePort):
         return True
 
     def setup_crash_log_saving(self):
-        if '_NT_SYMBOL_PATH' not in os.environ:
-            _log.warning("The _NT_SYMBOL_PATH environment variable is not set. Using Microsoft Symbol Server.")
-            os.environ['_NT_SYMBOL_PATH'] = 'SRV*http://msdl.microsoft.com/download/symbols'
-
-        # Add build path to symbol path
-        os.environ['_NT_SYMBOL_PATH'] += ";" + str(self._build_path())
-
         ntsd_path = self._ntsd_location()
         if not ntsd_path:
             _log.warning("Can't find ntsd.exe. Crash logs will not be saved.")
@@ -475,13 +442,6 @@ class WinPort(ApplePort):
 
         return True
 
-
-class WinCairoPort(WinPort):
-    port_name = "wincairo"
-    supports_localhost_aliases = True
-
-    DEFAULT_ARCHITECTURE = 'x86_64'
-
     def default_baseline_search_path(self, **kwargs):
         return list(map(self._webkit_baseline_path, self._search_paths()))
 
@@ -519,6 +479,6 @@ class WinCairoPort(WinPort):
         return paths
 
     def configuration_for_upload(self, host=None):
-        configuration = super(WinCairoPort, self).configuration_for_upload(host=host)
+        configuration = super(WinPort, self).configuration_for_upload(host=host)
         configuration['platform'] = self.port_name
         return configuration

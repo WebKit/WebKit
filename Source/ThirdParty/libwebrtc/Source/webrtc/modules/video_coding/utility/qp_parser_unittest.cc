@@ -55,21 +55,21 @@ const uint8_t kCodedFrameH264InterSliceQpDelta0[] = {0x00, 0x00, 0x00, 0x01,
 
 TEST(QpParserTest, ParseQpVp8) {
   QpParser parser;
-  absl::optional<uint32_t> qp = parser.Parse(
+  std::optional<uint32_t> qp = parser.Parse(
       kVideoCodecVP8, 0, kCodedFrameVp8Qp25, sizeof(kCodedFrameVp8Qp25));
   EXPECT_EQ(qp, 25u);
 }
 
 TEST(QpParserTest, ParseQpVp9) {
   QpParser parser;
-  absl::optional<uint32_t> qp = parser.Parse(
+  std::optional<uint32_t> qp = parser.Parse(
       kVideoCodecVP9, 0, kCodedFrameVp9Qp96, sizeof(kCodedFrameVp9Qp96));
   EXPECT_EQ(qp, 96u);
 }
 
 TEST(QpParserTest, ParseQpH264) {
   QpParser parser;
-  absl::optional<uint32_t> qp = parser.Parse(
+  std::optional<uint32_t> qp = parser.Parse(
       VideoCodecType::kVideoCodecH264, 0, kCodedFrameH264SpsPpsIdrQp38,
       sizeof(kCodedFrameH264SpsPpsIdrQp38));
   EXPECT_EQ(qp, 38u);
@@ -89,27 +89,27 @@ TEST(QpParserTest, ParseQpH264) {
 
 TEST(QpParserTest, ParseQpUnsupportedCodecType) {
   QpParser parser;
-  absl::optional<uint32_t> qp = parser.Parse(
+  std::optional<uint32_t> qp = parser.Parse(
       kVideoCodecGeneric, 0, kCodedFrameVp8Qp25, sizeof(kCodedFrameVp8Qp25));
   EXPECT_FALSE(qp.has_value());
 }
 
 TEST(QpParserTest, ParseQpNullData) {
   QpParser parser;
-  absl::optional<uint32_t> qp = parser.Parse(kVideoCodecVP8, 0, nullptr, 100);
+  std::optional<uint32_t> qp = parser.Parse(kVideoCodecVP8, 0, nullptr, 100);
   EXPECT_FALSE(qp.has_value());
 }
 
 TEST(QpParserTest, ParseQpEmptyData) {
   QpParser parser;
-  absl::optional<uint32_t> qp =
+  std::optional<uint32_t> qp =
       parser.Parse(kVideoCodecVP8, 0, kCodedFrameVp8Qp25, 0);
   EXPECT_FALSE(qp.has_value());
 }
 
 TEST(QpParserTest, ParseQpSpatialIdxExceedsMax) {
   QpParser parser;
-  absl::optional<uint32_t> qp =
+  std::optional<uint32_t> qp =
       parser.Parse(kVideoCodecVP8, kMaxSimulcastStreams, kCodedFrameVp8Qp25,
                    sizeof(kCodedFrameVp8Qp25));
   EXPECT_FALSE(qp.has_value());

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -63,7 +63,7 @@ DECLARE_ALIGNED(32, static const uint32_t,
 
 // Load weights needed for layer 0 (for 5x5 block processing),
 // and fill the registers appropriately to match source pixel mapping.
-static INLINE void prepare_weights_for_5x5_convolve(
+static inline void prepare_weights_for_5x5_convolve(
     const float *layer_config_weights, int off, float weight[5][8],
     const int cstep, __m256 *shuffle_weight, const __m256i weight_mask_0,
     const __m256i weight_mask_1) {
@@ -119,7 +119,7 @@ static INLINE void prepare_weights_for_5x5_convolve(
   } while (0)
 
 // Load masks needed for shuffling of output and weights.
-static INLINE void load_shuffle_masks_for_2x2_convolve(__m256i *output_mask,
+static inline void load_shuffle_masks_for_2x2_convolve(__m256i *output_mask,
                                                        __m256i *weight_mask) {
   // Load shuffle buffer needed to sort the output.
   *output_mask =
@@ -134,7 +134,7 @@ static INLINE void load_shuffle_masks_for_2x2_convolve(__m256i *output_mask,
 
 // Load weights needed for layer 1 and 2 (for 2x2 block processing),
 // and fill the registers appropriately to match source pixel mapping.
-static INLINE void prepare_weights_for_2x2_convolve(
+static inline void prepare_weights_for_2x2_convolve(
     const float *layer_config_weights, int off, const int cstep,
     __m256 *shuffle_weight, __m256i *weight_mask) {
   // Weights needed for 2x2 block.
@@ -182,7 +182,7 @@ static INLINE void prepare_weights_for_2x2_convolve(
   } while (0)
 
 // Do convolution on 8 horizontal 2x2 blocks.
-static INLINE void perform_convolve_for_8h_2x2_blocks(
+static inline void perform_convolve_for_8h_2x2_blocks(
     const float *input_ptr, int in_stride, __m256 *weight, __m256 *out_accum,
     __m256i shuffle_output_mask) {
   __m256 load_src[4];
@@ -209,7 +209,7 @@ static INLINE void perform_convolve_for_8h_2x2_blocks(
 }
 
 // Do convolution on 8 (4 horizontal x 2 vertical) 2x2 blocks.
-static INLINE void perform_convolve_for_4hx2v_2x2_blocks(
+static inline void perform_convolve_for_4hx2v_2x2_blocks(
     const float *input_ptr, int in_stride, __m256 *weight, __m256 *out_accum,
     __m256i shuffle_output_mask) {
   __m256 load_src[4];
@@ -363,7 +363,7 @@ static void cnn_convolve_no_maxpool_padding_valid_5x5_avx2(
 }
 
 // AVX2 implementation for layer 1.
-static INLINE void cnn_convolve_no_maxpool_padding_valid_layer1_avx2(
+static inline void cnn_convolve_no_maxpool_padding_valid_layer1_avx2(
     const float **input, int in_stride,
     const CNN_LAYER_CONFIG *const layer_config, float **output, int out_stride,
     int start_idx, const int cstep, const int channel_step) {
@@ -410,7 +410,7 @@ static INLINE void cnn_convolve_no_maxpool_padding_valid_layer1_avx2(
 }
 
 // AVX2 implementation for layer 2.
-static INLINE void cnn_convolve_no_maxpool_padding_valid_layer2_avx2(
+static inline void cnn_convolve_no_maxpool_padding_valid_layer2_avx2(
     const float **input, int in_stride,
     const CNN_LAYER_CONFIG *const layer_config, float **output, int out_stride,
     int start_idx, const int cstep, const int channel_step) {
@@ -466,7 +466,7 @@ static INLINE void cnn_convolve_no_maxpool_padding_valid_layer2_avx2(
 // As per the layer config set by av1_intra_mode_cnn_partition_cnn_config,
 // the filter_width and filter_height are equal to 2 for layer >= 1. So
 // convolution happens at 2x2 for layer >= 1.
-void cnn_convolve_no_maxpool_padding_valid_2x2_avx2(
+static void cnn_convolve_no_maxpool_padding_valid_2x2_avx2(
     const float **input, int in_width, int in_height, int in_stride,
     const CNN_LAYER_CONFIG *const layer_config, float **output, int out_stride,
     int start_idx, const int cstep, const int channel_step) {

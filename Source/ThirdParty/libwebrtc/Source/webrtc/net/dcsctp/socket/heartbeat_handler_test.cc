@@ -30,6 +30,7 @@ using ::testing::IsEmpty;
 using ::testing::NiceMock;
 using ::testing::Return;
 using ::testing::SizeIs;
+using ::webrtc::TimeDelta;
 
 constexpr DurationMs kHeartbeatInterval = DurationMs(30'000);
 
@@ -37,7 +38,8 @@ DcSctpOptions MakeOptions(DurationMs heartbeat_interval) {
   DcSctpOptions options;
   options.heartbeat_interval_include_rtt = false;
   options.heartbeat_interval = heartbeat_interval;
-  options.enable_zero_checksum = false;
+  options.zero_checksum_alternate_error_detection_method =
+      ZeroChecksumAlternateErrorDetectionMethod::None();
   return options;
 }
 
@@ -51,10 +53,10 @@ class HeartbeatHandlerTestBase : public testing::Test {
         }),
         handler_("log: ", options_, &context_, &timer_manager_) {}
 
-  void AdvanceTime(DurationMs duration) {
+  void AdvanceTime(webrtc::TimeDelta duration) {
     callbacks_.AdvanceTime(duration);
     for (;;) {
-      absl::optional<TimeoutID> timeout_id = callbacks_.GetNextExpiredTimeout();
+      std::optional<TimeoutID> timeout_id = callbacks_.GetNextExpiredTimeout();
       if (!timeout_id.has_value()) {
         break;
       }
@@ -80,7 +82,7 @@ class DisabledHeartbeatHandlerTest : public HeartbeatHandlerTestBase {
 };
 
 TEST_F(HeartbeatHandlerTest, HasRunningHeartbeatIntervalTimer) {
-  AdvanceTime(options_.heartbeat_interval);
+  AdvanceTime(options_.heartbeat_interval.ToTimeDelta());
 
   // Validate that a heartbeat request was sent.
   std::vector<uint8_t> payload = callbacks_.ConsumeSentPacket();
@@ -119,7 +121,7 @@ TEST_F(HeartbeatHandlerTest, RepliesToHeartbeatRequests) {
 }
 
 TEST_F(HeartbeatHandlerTest, SendsHeartbeatRequestsOnIdleChannel) {
-  AdvanceTime(options_.heartbeat_interval);
+  AdvanceTime(options_.heartbeat_interval.ToTimeDelta());
 
   // Grab the request, and make a response.
   std::vector<uint8_t> payload = callbacks_.ConsumeSentPacket();
@@ -134,7 +136,7 @@ TEST_F(HeartbeatHandlerTest, SendsHeartbeatRequestsOnIdleChannel) {
   HeartbeatAckChunk ack(std::move(req).extract_parameters());
 
   // Respond a while later. This RTT will be measured by the handler
-  constexpr DurationMs rtt(313);
+  constexpr TimeDelta rtt = TimeDelta::Millis(313);
 
   EXPECT_CALL(context_, ObserveRTT(rtt)).Times(1);
 
@@ -143,7 +145,7 @@ TEST_F(HeartbeatHandlerTest, SendsHeartbeatRequestsOnIdleChannel) {
 }
 
 TEST_F(HeartbeatHandlerTest, DoesntObserveInvalidHeartbeats) {
-  AdvanceTime(options_.heartbeat_interval);
+  AdvanceTime(options_.heartbeat_interval.ToTimeDelta());
 
   // Grab the request, and make a response.
   std::vector<uint8_t> payload = callbacks_.ConsumeSentPacket();
@@ -161,15 +163,15 @@ TEST_F(HeartbeatHandlerTest, DoesntObserveInvalidHeartbeats) {
 
   // Go backwards in time - which make the HEARTBEAT-ACK have an invalid
   // timestamp in it, as it will be in the future.
-  callbacks_.AdvanceTime(DurationMs(-100));
+  callbacks_.AdvanceTime(TimeDelta::Millis(-100));
 
   handler_.HandleHeartbeatAck(std::move(ack));
 }
 
 TEST_F(HeartbeatHandlerTest, IncreasesErrorIfNotAckedInTime) {
-  DurationMs rto(105);
+  TimeDelta rto = TimeDelta::Millis(105);
   EXPECT_CALL(context_, current_rto).WillOnce(Return(rto));
-  AdvanceTime(options_.heartbeat_interval);
+  AdvanceTime(options_.heartbeat_interval.ToTimeDelta());
 
   // Validate that a request was sent.
   EXPECT_THAT(callbacks_.ConsumeSentPacket(), Not(IsEmpty()));
@@ -179,7 +181,7 @@ TEST_F(HeartbeatHandlerTest, IncreasesErrorIfNotAckedInTime) {
 }
 
 TEST_F(DisabledHeartbeatHandlerTest, IsReallyDisabled) {
-  AdvanceTime(options_.heartbeat_interval);
+  AdvanceTime(options_.heartbeat_interval.ToTimeDelta());
 
   // Validate that a request was NOT sent.
   EXPECT_THAT(callbacks_.ConsumeSentPacket(), IsEmpty());

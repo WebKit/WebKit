@@ -28,6 +28,7 @@
 #if ENABLE(REVEAL)
 
 #import <wtf/RetainPtr.h>
+#import <wtf/text/WTFString.h>
 
 OBJC_CLASS RVItem;
 

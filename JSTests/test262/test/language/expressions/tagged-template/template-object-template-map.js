@@ -15,8 +15,9 @@ info: |
 ---*/
 var expect;
 var cache = [];
+var site = 1;
 function sameSite() {
-  tag`${Math.random()}`;
+  tag`${site++}`;
 }
 
 function tag(parameter) {

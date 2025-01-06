@@ -28,84 +28,84 @@
 #include <openssl/hmac.h>
 #include <openssl/sha.h>
 
+#include "bcm_interface.h"
+#include "../bcm_support.h"
 #include "../internal.h"
 
-#include "aes/aes.c"
-#include "aes/aes_nohw.c"
-#include "aes/key_wrap.c"
-#include "aes/mode_wrappers.c"
-#include "bn/add.c"
-#include "bn/asm/x86_64-gcc.c"
-#include "bn/bn.c"
-#include "bn/bytes.c"
-#include "bn/cmp.c"
-#include "bn/ctx.c"
-#include "bn/div.c"
-#include "bn/div_extra.c"
-#include "bn/exponentiation.c"
-#include "bn/gcd.c"
-#include "bn/gcd_extra.c"
-#include "bn/generic.c"
-#include "bn/jacobi.c"
-#include "bn/montgomery.c"
-#include "bn/montgomery_inv.c"
-#include "bn/mul.c"
-#include "bn/prime.c"
-#include "bn/random.c"
-#include "bn/rsaz_exp.c"
-#include "bn/shift.c"
-#include "bn/sqrt.c"
-#include "cipher/aead.c"
-#include "cipher/cipher.c"
-#include "cipher/e_aes.c"
-#include "cipher/e_aesccm.c"
-#include "cmac/cmac.c"
-#include "dh/check.c"
-#include "dh/dh.c"
-#include "digest/digest.c"
-#include "digest/digests.c"
-#include "digestsign/digestsign.c"
-#include "ecdh/ecdh.c"
-#include "ecdsa/ecdsa.c"
-#include "ec/ec.c"
-#include "ec/ec_key.c"
-#include "ec/ec_montgomery.c"
-#include "ec/felem.c"
-#include "ec/oct.c"
-#include "ec/p224-64.c"
-#include "ec/p256.c"
-#include "ec/p256-nistz.c"
-#include "ec/scalar.c"
-#include "ec/simple.c"
-#include "ec/simple_mul.c"
-#include "ec/util.c"
-#include "ec/wnaf.c"
-#include "hkdf/hkdf.c"
-#include "hmac/hmac.c"
-#include "md4/md4.c"
-#include "md5/md5.c"
-#include "modes/cbc.c"
-#include "modes/cfb.c"
-#include "modes/ctr.c"
-#include "modes/gcm.c"
-#include "modes/gcm_nohw.c"
-#include "modes/ofb.c"
-#include "modes/polyval.c"
-#include "rand/ctrdrbg.c"
-#include "rand/fork_detect.c"
-#include "rand/rand.c"
-#include "rand/urandom.c"
-#include "rsa/blinding.c"
-#include "rsa/padding.c"
-#include "rsa/rsa.c"
-#include "rsa/rsa_impl.c"
-#include "self_check/fips.c"
-#include "self_check/self_check.c"
-#include "service_indicator/service_indicator.c"
-#include "sha/sha1.c"
-#include "sha/sha256.c"
-#include "sha/sha512.c"
-#include "tls/kdf.c"
+// TODO(crbug.com/362530616): When delocate is removed, build these files as
+// separate compilation units again.
+#include "aes/aes.c.inc"
+#include "aes/aes_nohw.c.inc"
+#include "aes/key_wrap.c.inc"
+#include "aes/mode_wrappers.c.inc"
+#include "bn/add.c.inc"
+#include "bn/asm/x86_64-gcc.c.inc"
+#include "bn/bn.c.inc"
+#include "bn/bytes.c.inc"
+#include "bn/cmp.c.inc"
+#include "bn/ctx.c.inc"
+#include "bn/div.c.inc"
+#include "bn/div_extra.c.inc"
+#include "bn/exponentiation.c.inc"
+#include "bn/gcd.c.inc"
+#include "bn/gcd_extra.c.inc"
+#include "bn/generic.c.inc"
+#include "bn/jacobi.c.inc"
+#include "bn/montgomery.c.inc"
+#include "bn/montgomery_inv.c.inc"
+#include "bn/mul.c.inc"
+#include "bn/prime.c.inc"
+#include "bn/random.c.inc"
+#include "bn/rsaz_exp.c.inc"
+#include "bn/shift.c.inc"
+#include "bn/sqrt.c.inc"
+#include "cipher/aead.c.inc"
+#include "cipher/cipher.c.inc"
+#include "cipher/e_aes.c.inc"
+#include "cipher/e_aesccm.c.inc"
+#include "cmac/cmac.c.inc"
+#include "dh/check.c.inc"
+#include "dh/dh.c.inc"
+#include "digest/digest.c.inc"
+#include "digest/digests.c.inc"
+#include "digestsign/digestsign.c.inc"
+#include "ecdh/ecdh.c.inc"
+#include "ecdsa/ecdsa.c.inc"
+#include "ec/ec.c.inc"
+#include "ec/ec_key.c.inc"
+#include "ec/ec_montgomery.c.inc"
+#include "ec/felem.c.inc"
+#include "ec/oct.c.inc"
+#include "ec/p224-64.c.inc"
+#include "ec/p256.c.inc"
+#include "ec/p256-nistz.c.inc"
+#include "ec/scalar.c.inc"
+#include "ec/simple.c.inc"
+#include "ec/simple_mul.c.inc"
+#include "ec/util.c.inc"
+#include "ec/wnaf.c.inc"
+#include "hkdf/hkdf.c.inc"
+#include "hmac/hmac.c.inc"
+#include "modes/cbc.c.inc"
+#include "modes/cfb.c.inc"
+#include "modes/ctr.c.inc"
+#include "modes/gcm.c.inc"
+#include "modes/gcm_nohw.c.inc"
+#include "modes/ofb.c.inc"
+#include "modes/polyval.c.inc"
+#include "rand/ctrdrbg.c.inc"
+#include "rand/rand.c.inc"
+#include "rsa/blinding.c.inc"
+#include "rsa/padding.c.inc"
+#include "rsa/rsa.c.inc"
+#include "rsa/rsa_impl.c.inc"
+#include "self_check/fips.c.inc"
+#include "self_check/self_check.c.inc"
+#include "service_indicator/service_indicator.c.inc"
+#include "sha/sha1.c.inc"
+#include "sha/sha256.c.inc"
+#include "sha/sha512.c.inc"
+#include "tls/kdf.c.inc"
 
 
 #if defined(BORINGSSL_FIPS)
@@ -137,7 +137,7 @@ static void assert_within(const void *start, const void *symbol,
   }
 
   fprintf(
-      stderr,
+      CRYPTO_get_stderr(),
       "FIPS module doesn't span expected symbol. Expected %p <= %p < %p\n",
       start, symbol, end);
   BORINGSSL_FIPS_abort();
@@ -168,8 +168,6 @@ static void BORINGSSL_maybe_set_module_text_permissions(int permission) {}
 
 static void __attribute__((constructor))
 BORINGSSL_bcm_power_on_self_test(void) {
-  CRYPTO_library_init();
-
 #if !defined(OPENSSL_ASAN)
   // Integrity tests cannot run under ASAN because it involves reading the full
   // .text section, which triggers the global-buffer overflow detection.
@@ -195,10 +193,10 @@ int BORINGSSL_integrity_test(void) {
 
   assert_within(start, AES_encrypt, end);
   assert_within(start, RSA_sign, end);
-  assert_within(start, RAND_bytes, end);
+  assert_within(start, BCM_rand_bytes, end);
   assert_within(start, EC_GROUP_cmp, end);
-  assert_within(start, SHA256_Update, end);
-  assert_within(start, ECDSA_do_verify, end);
+  assert_within(start, BCM_sha256_update, end);
+  assert_within(start, ecdsa_verify_fixed, end);
   assert_within(start, EVP_AEAD_CTX_seal, end);
 
 #if defined(BORINGSSL_SHARED_LIBRARY)
@@ -211,7 +209,7 @@ int BORINGSSL_integrity_test(void) {
 #endif
 
   assert_within(rodata_start, kPrimes, rodata_end);
-  assert_within(rodata_start, kP256Params, rodata_end);
+  assert_within(rodata_start, kP256Field, rodata_end);
   assert_within(rodata_start, kPKCS1SigPrefixes, rodata_end);
 
   uint8_t result[SHA256_DIGEST_LENGTH];
@@ -227,7 +225,7 @@ int BORINGSSL_integrity_test(void) {
   HMAC_CTX_init(&hmac_ctx);
   if (!HMAC_Init_ex(&hmac_ctx, kHMACKey, sizeof(kHMACKey), kHashFunction,
                     NULL /* no ENGINE */)) {
-    fprintf(stderr, "HMAC_Init_ex failed.\n");
+    fprintf(CRYPTO_get_stderr(), "HMAC_Init_ex failed.\n");
     return 0;
   }
 
@@ -247,7 +245,7 @@ int BORINGSSL_integrity_test(void) {
 
   if (!HMAC_Final(&hmac_ctx, result, &result_len) ||
       result_len != sizeof(result)) {
-    fprintf(stderr, "HMAC failed.\n");
+    fprintf(CRYPTO_get_stderr(), "HMAC failed.\n");
     return 0;
   }
   HMAC_CTX_cleanse(&hmac_ctx); // FIPS 140-3, AS05.10.
@@ -263,6 +261,11 @@ int BORINGSSL_integrity_test(void) {
   OPENSSL_cleanse(result, sizeof(result)); // FIPS 140-3, AS05.10.
   return 1;
 }
+
+const uint8_t* FIPS_module_hash(void) {
+  return BORINGSSL_bcm_text_hash;
+}
+
 #endif  // OPENSSL_ASAN
 
 void BORINGSSL_FIPS_abort(void) {

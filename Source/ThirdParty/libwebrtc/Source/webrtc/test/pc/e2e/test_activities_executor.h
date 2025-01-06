@@ -11,10 +11,10 @@
 #ifndef TEST_PC_E2E_TEST_ACTIVITIES_EXECUTOR_H_
 #define TEST_PC_E2E_TEST_ACTIVITIES_EXECUTOR_H_
 
+#include <optional>
 #include <queue>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -43,17 +43,17 @@ class TestActivitiesExecutor {
   // If test is started, then it will be executed immediately according to its
   // schedule.
   void ScheduleActivity(TimeDelta initial_delay_since_start,
-                        absl::optional<TimeDelta> interval,
+                        std::optional<TimeDelta> interval,
                         std::function<void(TimeDelta)> func);
 
  private:
   struct ScheduledActivity {
     ScheduledActivity(TimeDelta initial_delay_since_start,
-                      absl::optional<TimeDelta> interval,
+                      std::optional<TimeDelta> interval,
                       std::function<void(TimeDelta)> func);
 
     TimeDelta initial_delay_since_start;
-    absl::optional<TimeDelta> interval;
+    std::optional<TimeDelta> interval;
     std::function<void(TimeDelta)> func;
   };
 

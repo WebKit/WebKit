@@ -38,6 +38,7 @@
 #include "SQLValue.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 
 
@@ -74,6 +75,8 @@
 //     Hence, there is no GC dependency at play here.
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLStatement);
 
 SQLStatement::SQLStatement(Database& database, const String& statement, Vector<SQLValue>&& arguments, RefPtr<SQLStatementCallback>&& callback, RefPtr<SQLStatementErrorCallback>&& errorCallback, int permissions)
     : m_statement(statement.isolatedCopy())

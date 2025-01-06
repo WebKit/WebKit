@@ -194,12 +194,12 @@ static int rsa_priv_print(BIO *bp, const EVP_PKEY *pkey, int indent) {
 static int do_dsa_print(BIO *bp, const DSA *x, int off, int ptype) {
   const BIGNUM *priv_key = NULL;
   if (ptype == 2) {
-    priv_key = x->priv_key;
+    priv_key = DSA_get0_priv_key(x);
   }
 
   const BIGNUM *pub_key = NULL;
   if (ptype > 0) {
-    pub_key = x->pub_key;
+    pub_key = DSA_get0_pub_key(x);
   }
 
   const char *ktype = "DSA-Parameters";
@@ -210,14 +210,15 @@ static int do_dsa_print(BIO *bp, const DSA *x, int off, int ptype) {
   }
 
   if (!BIO_indent(bp, off, 128) ||
-      BIO_printf(bp, "%s: (%u bit)\n", ktype, BN_num_bits(x->p)) <= 0 ||
+      BIO_printf(bp, "%s: (%u bit)\n", ktype, BN_num_bits(DSA_get0_p(x))) <=
+          0 ||
       // |priv_key| and |pub_key| may be NULL, in which case |bn_print| will
       // silently skip them.
       !bn_print(bp, "priv:", priv_key, off) ||
       !bn_print(bp, "pub:", pub_key, off) ||
-      !bn_print(bp, "P:", x->p, off) ||
-      !bn_print(bp, "Q:", x->q, off) ||
-      !bn_print(bp, "G:", x->g, off)) {
+      !bn_print(bp, "P:", DSA_get0_p(x), off) ||
+      !bn_print(bp, "Q:", DSA_get0_q(x), off) ||
+      !bn_print(bp, "G:", DSA_get0_g(x), off)) {
     return 0;
   }
 

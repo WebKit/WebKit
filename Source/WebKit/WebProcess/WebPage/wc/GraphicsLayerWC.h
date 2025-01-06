@@ -44,7 +44,7 @@ public:
         virtual void graphicsLayerAdded(GraphicsLayerWC&) = 0;
         virtual void graphicsLayerRemoved(GraphicsLayerWC&) = 0;
         virtual void commitLayerUpdateInfo(WCLayerUpdateInfo&&) = 0;
-        virtual RefPtr<WebCore::ImageBuffer> createImageBuffer(WebCore::FloatSize) = 0;
+        virtual RefPtr<WebCore::ImageBuffer> createImageBuffer(WebCore::FloatSize, float deviceScaleFactor) = 0;
     };
 
     GraphicsLayerWC(Type layerType, WebCore::GraphicsLayerClient&, Observer&);
@@ -53,7 +53,7 @@ public:
     void clearObserver() { m_observer = nullptr; }
 
     // GraphicsLayer
-    WebCore::PlatformLayerIdentifier primaryLayerID() const override;
+    std::optional<WebCore::PlatformLayerIdentifier> primaryLayerID() const override;
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const WebCore::FloatRect&, ShouldClipToLayer) override;
     void setContentsNeedsDisplay() override;
@@ -104,7 +104,7 @@ public:
 protected:
     friend WCTiledBacking;
 
-    RefPtr<WebCore::ImageBuffer> createImageBuffer(WebCore::FloatSize);
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(WebCore::FloatSize, float deviceScaleFactor);
     
 private:
     struct VisibleAndCoverageRects {
@@ -134,6 +134,7 @@ private:
     WebCore::Color m_debugBorderColor;
     OptionSet<WCLayerChange> m_uncommittedChanges;
     float m_debugBorderWidth { 0 };
+    bool m_isFlushing { false };
 };
 
 } // namespace WebKit

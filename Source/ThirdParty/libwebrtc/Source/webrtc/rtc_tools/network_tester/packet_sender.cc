@@ -54,7 +54,7 @@ absl::AnyInvocable<void() &&> UpdateTestSettingTask(
     if (!task_safety_flag->alive()) {
       return;
     }
-    if (absl::optional<ConfigReader::Config> config =
+    if (std::optional<ConfigReader::Config> config =
             config_reader->GetNextConfig()) {
       packet_sender->UpdateTestSetting(config->packet_size,
                                        config->packet_send_interval_ms);

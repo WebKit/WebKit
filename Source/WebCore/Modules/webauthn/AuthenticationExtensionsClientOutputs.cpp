@@ -30,6 +30,8 @@
 
 #include "CBORReader.h"
 #include "CBORWriter.h"
+#include "CredentialPropertiesOutput.h"
+#include <wtf/text/Base64.h>
 
 namespace WebCore {
 
@@ -107,6 +109,30 @@ Vector<uint8_t> AuthenticationExtensionsClientOutputs::toCBOR() const
     ASSERT(clientOutputs);
 
     return *clientOutputs;
+}
+
+AuthenticationExtensionsClientOutputsJSON AuthenticationExtensionsClientOutputs::toJSON() const
+{
+    AuthenticationExtensionsClientOutputsJSON result;
+    result.appid = appid;
+    result.credProps = credProps;
+    if (largeBlob) {
+        result.largeBlob = AuthenticationExtensionsClientOutputsJSON::LargeBlobOutputsJSON {
+            largeBlob->supported,
+            base64URLEncodeToString(largeBlob->blob->span()),
+            largeBlob->written,
+        };
+    }
+    if (prf) {
+        result.prf = AuthenticationExtensionsClientOutputsJSON::PRFOutputsJSON {
+            prf->enabled,
+            AuthenticationExtensionsClientOutputsJSON::PRFValuesJSON {
+                base64URLEncodeToString(largeBlob->blob->span()),
+                base64URLEncodeToString(largeBlob->blob->span()),
+            },
+        };
+    }
+    return result;
 }
 
 } // namespace WebCore

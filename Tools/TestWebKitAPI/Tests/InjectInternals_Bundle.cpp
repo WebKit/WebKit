@@ -52,7 +52,7 @@ private:
     virtual void didCreatePage(WKBundleRef, WKBundlePageRef page)
     {
         WKBundlePageLoaderClientV0 loaderClient;
-        memset(&loaderClient, 0, sizeof(loaderClient));
+        zeroBytes(loaderClient);
 
         loaderClient.base.version = 0;
         loaderClient.base.clientInfo = this;

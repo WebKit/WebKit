@@ -34,16 +34,12 @@ function shouldThrow(func, errorType, message) {
 {
     const instants = [
         new Temporal.Instant(0n),
-        Temporal.Instant.fromEpochSeconds(0),
         Temporal.Instant.fromEpochMilliseconds(0),
-        Temporal.Instant.fromEpochMicroseconds(0n),
         Temporal.Instant.fromEpochNanoseconds(0n),
         Temporal.Instant.from('1970-01-01T00:00:00Z'),
     ];
     instants.forEach((instant) => {
-        shouldBe(instant.epochSeconds, 0);
         shouldBe(instant.epochMilliseconds, 0);
-        shouldBe(instant.epochMicroseconds, 0n);
         shouldBe(instant.epochNanoseconds, 0n);
         shouldBe(instant.toString(), '1970-01-01T00:00:00Z');
         shouldBe(instant.toJSON(), '1970-01-01T00:00:00Z');
@@ -54,16 +50,12 @@ function shouldThrow(func, errorType, message) {
 {
     const instants = [
         new Temporal.Instant(1_000_000_000_000_000_000n),
-        Temporal.Instant.fromEpochSeconds(1_000_000_000),
         Temporal.Instant.fromEpochMilliseconds(1_000_000_000_000),
-        Temporal.Instant.fromEpochMicroseconds(1_000_000_000_000_000n),
         Temporal.Instant.fromEpochNanoseconds(1_000_000_000_000_000_000n),
         Temporal.Instant.from('2001-09-09T01:46:40Z'),
     ];
     instants.forEach((instant) => {
-        shouldBe(instant.epochSeconds, 1_000_000_000);
         shouldBe(instant.epochMilliseconds, 1_000_000_000_000);
-        shouldBe(instant.epochMicroseconds, 1_000_000_000_000_000n);
         shouldBe(instant.epochNanoseconds, 1_000_000_000_000_000_000n);
         shouldBe(instant.toString(), '2001-09-09T01:46:40Z');
         shouldBe(instant.toJSON(), '2001-09-09T01:46:40Z');
@@ -74,16 +66,12 @@ function shouldThrow(func, errorType, message) {
 {
     const instants = [
         new Temporal.Instant(-1_000_000_000_000_000_000n),
-        Temporal.Instant.fromEpochSeconds(-1_000_000_000),
         Temporal.Instant.fromEpochMilliseconds(-1_000_000_000_000),
-        Temporal.Instant.fromEpochMicroseconds(-1_000_000_000_000_000n),
         Temporal.Instant.fromEpochNanoseconds(-1_000_000_000_000_000_000n),
         Temporal.Instant.from('1938-04-24T22:13:20Z'),
     ];
     instants.forEach((instant) => {
-        shouldBe(instant.epochSeconds, -1_000_000_000);
         shouldBe(instant.epochMilliseconds, -1_000_000_000_000);
-        shouldBe(instant.epochMicroseconds, -1_000_000_000_000_000n);
         shouldBe(instant.epochNanoseconds, -1_000_000_000_000_000_000n);
         shouldBe(instant.toString(), '1938-04-24T22:13:20Z');
         shouldBe(instant.toJSON(), '1938-04-24T22:13:20Z');
@@ -98,9 +86,7 @@ function shouldThrow(func, errorType, message) {
         Temporal.Instant.from('2262-04-11T23:47:16.854775807Z'),
     ];
     instants.forEach((instant) => {
-        shouldBe(instant.epochSeconds, 9223372036);
         shouldBe(instant.epochMilliseconds, 9223372036854);
-        shouldBe(instant.epochMicroseconds, 9223372036854775n);
         shouldBe(instant.epochNanoseconds, 9223372036854775807n);
         shouldBe(instant.toString(), '2262-04-11T23:47:16.854775807Z');
         shouldBe(instant.toJSON(), '2262-04-11T23:47:16.854775807Z');
@@ -115,9 +101,7 @@ function shouldThrow(func, errorType, message) {
         Temporal.Instant.from('1677-09-21T00:12:43.145224192Z'),
     ];
     instants.forEach((instant) => {
-        shouldBe(instant.epochSeconds, -9223372036);
-        shouldBe(instant.epochMilliseconds, -9223372036854);
-        shouldBe(instant.epochMicroseconds, -9223372036854775n);
+        shouldBe(instant.epochMilliseconds, -9223372036855);
         shouldBe(instant.epochNanoseconds, -9223372036854775808n);
         shouldBe(instant.toString(), '1677-09-21T00:12:43.145224192Z');
         shouldBe(instant.toJSON(), '1677-09-21T00:12:43.145224192Z');
@@ -128,16 +112,12 @@ function shouldThrow(func, errorType, message) {
 {
     const instants = [
         new Temporal.Instant(86400_0000_0000_000_000_000n),
-        Temporal.Instant.fromEpochSeconds(86400_0000_0000),
         Temporal.Instant.fromEpochMilliseconds(86400_0000_0000_000),
-        Temporal.Instant.fromEpochMicroseconds(86400_0000_0000_000_000n),
         Temporal.Instant.fromEpochNanoseconds(86400_0000_0000_000_000_000n),
         Temporal.Instant.from('+275760-09-13T00:00:00Z'),
     ];
     instants.forEach((instant) => {
-        shouldBe(instant.epochSeconds, 86400_0000_0000);
         shouldBe(instant.epochMilliseconds, 86400_0000_0000_000);
-        shouldBe(instant.epochMicroseconds, 86400_0000_0000_000_000n);
         shouldBe(instant.epochNanoseconds, 86400_0000_0000_000_000_000n);
         shouldBe(instant.toString(), '+275760-09-13T00:00:00Z');
         shouldBe(instant.toJSON(), '+275760-09-13T00:00:00Z');
@@ -148,16 +128,12 @@ function shouldThrow(func, errorType, message) {
 {
     const instants = [
         new Temporal.Instant(-86400_0000_0000_000_000_000n),
-        Temporal.Instant.fromEpochSeconds(-86400_0000_0000),
         Temporal.Instant.fromEpochMilliseconds(-86400_0000_0000_000),
-        Temporal.Instant.fromEpochMicroseconds(-86400_0000_0000_000_000n),
         Temporal.Instant.fromEpochNanoseconds(-86400_0000_0000_000_000_000n),
         Temporal.Instant.from('-271821-04-20T00:00:00Z'),
     ];
     instants.forEach((instant) => {
-        shouldBe(instant.epochSeconds, -86400_0000_0000);
         shouldBe(instant.epochMilliseconds, -86400_0000_0000_000);
-        shouldBe(instant.epochMicroseconds, -86400_0000_0000_000_000n);
         shouldBe(instant.epochNanoseconds, -86400_0000_0000_000_000_000n);
         shouldBe(instant.toString(), '-271821-04-20T00:00:00Z');
         shouldBe(instant.toJSON(), '-271821-04-20T00:00:00Z');
@@ -184,21 +160,15 @@ function shouldThrow(func, errorType, message) {
 
 [
     // too large
-    [86400_0000_0000_000_001n, /\b8640000000000000001\b/],
+    [86400_0000_0000_001, /\b8640000000000001000000\b/],
     // too small
-    [-86400_0000_0000_000_001n, /-8640000000000000001\b/],
-    // test maxuint64 specifically
-    [1n << 64n, /\b18446744073709551616\b/],
-    // test maxuint128 specifically
-    [1n << 128n, /\b340282366920938463463374607431768211456\b/],
-    // much larger than maxint128
-    [1n << 129n, /\b680564733841876926926749214863536422912\b/],
-    // smaller than minint128
-    [-1n << 129n, /-680564733841876926926749214863536422912\b/],
-    // behaves sensibly even when the bigint is really long
-    [BigInt('9'.repeat(1000))],
-].forEach(([µs, messageMatch = undefined]) => {
-    shouldThrow(() => Temporal.Instant.fromEpochMicroseconds(µs), RangeError, messageMatch);
+    [-86400_0000_0000_001, /-8640000000000001000000\b/],
+    // test 2^53 - 1
+    [Number.MAX_SAFE_INTEGER, /\b9007199254740991000000\b/],
+    // test -(2^53 - 1)
+    [-Number.MAX_SAFE_INTEGER, /-9007199254740991000000\b/],
+].forEach(([ms, messageMatch = undefined]) => {
+    shouldThrow(() => Temporal.Instant.fromEpochMilliseconds(ms), RangeError, messageMatch);
 });
 
 // constructs from string
@@ -296,9 +266,6 @@ shouldBe(`${Temporal.Instant.from('1976-11-18T15:23:30.12345678Z')}`, '1976-11-1
 shouldBe(`${Temporal.Instant.from('1976-11-18T15:23:30.123456789Z')}`, '1976-11-18T15:23:30.123456789Z');
 // variant decimal separator
 shouldBe(`${Temporal.Instant.from('1976-11-18T15:23:30,12Z')}`, '1976-11-18T15:23:30.12Z');
-// variant minus sign
-shouldBe(`${Temporal.Instant.from('1976-11-18T15:23:30.12\u221202:00')}`, '1976-11-18T17:23:30.12Z');
-shouldBe(`${Temporal.Instant.from('\u2212009999-11-18T15:23:30.12Z')}`, '-009999-11-18T15:23:30.12Z');
 // mixture of basic and extended format
 shouldBe(`${Temporal.Instant.from('19761118T15:23:30.1+00:00')}`, '1976-11-18T15:23:30.1Z');
 shouldBe(`${Temporal.Instant.from('1976-11-18T152330.1+00:00')}`, '1976-11-18T15:23:30.1Z');
@@ -320,6 +287,12 @@ shouldBe(`${Temporal.Instant.from('1976-11-18T15Z')}`, '1976-11-18T15:00:00Z');
 shouldBe(`${Temporal.Instant.from('1976-11-18T15:23:30.123456789Z[u-ca=discord]')}`, '1976-11-18T15:23:30.123456789Z');
 // no junk at end of string
 shouldThrow(() => Temporal.Instant.from('1976-11-18T15:23:30.123456789Zjunk'), RangeError);
+// non-ASCII minusSign is invalid
+shouldThrow(() => Temporal.Instant.from('1976-11-18T15:23:30.12\u221202:00'), RangeError);
+shouldThrow(() => Temporal.Instant.from('\u2212009999-11-18T15:23:30.12Z'), RangeError);
+// TimeZone without Time
+shouldThrow(() => Temporal.Instant.from('2022-09-15Z'), RangeError);
+shouldThrow(() => Temporal.Instant.from('2022-09-15+01:00'), RangeError);
 
 // For convenience in several tests
 const epoch = new Temporal.Instant(0n);

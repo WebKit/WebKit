@@ -1,0 +1,55 @@
+load("//bazel:skia_rules.bzl", "generate_cpp_files_for_headers", "skia_filegroup", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+CORE_FILES = [
+    "AnalyticBlurMask.cpp",
+    "AnalyticBlurMask.h",
+    "AnalyticClip.h",
+    "BoundsManager.h",
+    "CoverageMaskShape.h",
+    "EdgeAAQuad.h",
+    "Geometry.h",
+    "IntersectionTree.cpp",
+    "IntersectionTree.h",
+    "Rect.h",
+    "Shape.cpp",
+    "Shape.h",
+    "SubRunData.h",
+    "Transform.cpp",
+    "Transform_graphite.h",
+]
+
+split_srcs_and_hdrs(
+    name = "core",
+    files = CORE_FILES,
+)
+
+skia_filegroup(
+    name = "geom_hdrs",
+    srcs = [":core_hdrs"],
+    visibility = ["//src/gpu/graphite:__pkg__"],
+)
+
+skia_filegroup(
+    name = "geom_srcs",
+    srcs = [":core_srcs"],
+    visibility = ["//src/gpu/graphite:__pkg__"],
+)
+
+generate_cpp_files_for_headers(
+    name = "headers_to_compile",
+    headers = [
+        "BoundsManager.h",
+        "CoverageMaskShape.h",
+        "EdgeAAQuad.h",
+        "Geometry.h",
+        "Rect.h",
+        "SubRunData.h",
+        "Transform_graphite.h",
+    ],
+)

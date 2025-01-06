@@ -21,6 +21,7 @@
 #pragma once
 
 #include <unicode/ubrk.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/icu/UTextProviderLatin1.h>
 #include <wtf/text/icu/UTextProviderUTF16.h>
@@ -156,7 +157,7 @@ private:
         if (!utf8Locale.length())
             return locale;
         Vector<char> scratchBuffer(utf8Locale.length() + 11, 0);
-        memcpy(scratchBuffer.data(), utf8Locale.data(), utf8Locale.length());
+        memcpySpan(scratchBuffer.mutableSpan(), utf8Locale.span());
 
         const char* keywordValue = nullptr;
         switch (behavior) {
@@ -181,7 +182,7 @@ private:
             return AtomString::fromUTF8(scratchBuffer.subspan(0, lengthNeeded));
         if (needsToGrowToProduceBuffer(status)) {
             scratchBuffer.grow(lengthNeeded + 1);
-            memset(scratchBuffer.data() + utf8Locale.length(), 0, scratchBuffer.size() - utf8Locale.length());
+            zeroSpan(scratchBuffer.mutableSpan().subspan(utf8Locale.length()));
             status = U_ZERO_ERROR;
             int32_t lengthNeeded2 = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.data(), scratchBuffer.size(), &status);
             if (!U_SUCCESS(status) || lengthNeeded != lengthNeeded2)

@@ -26,7 +26,10 @@
 #pragma once
 
 #include "RendererBufferFormat.h"
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 typedef struct _cairo cairo_t;
 
@@ -37,6 +40,7 @@ typedef GdkSnapshot GtkSnapshot;
 
 namespace WebCore {
 class IntRect;
+class NativeImage;
 }
 
 namespace WebKit {
@@ -44,16 +48,17 @@ namespace WebKit {
 class LayerTreeContext;
 class WebPageProxy;
 
-class AcceleratedBackingStore {
-    WTF_MAKE_NONCOPYABLE(AcceleratedBackingStore); WTF_MAKE_FAST_ALLOCATED;
+class AcceleratedBackingStore : public AbstractRefCounted {
+    WTF_MAKE_TZONE_ALLOCATED(AcceleratedBackingStore);
+    WTF_MAKE_NONCOPYABLE(AcceleratedBackingStore);
 public:
     static bool checkRequirements();
-    static std::unique_ptr<AcceleratedBackingStore> create(WebPageProxy&);
+    static RefPtr<AcceleratedBackingStore> create(WebPageProxy&);
     virtual ~AcceleratedBackingStore() = default;
 
     virtual void update(const LayerTreeContext&) { }
 #if USE(GTK4)
-    virtual void snapshot(GtkSnapshot*) = 0;
+    virtual bool snapshot(GtkSnapshot*) = 0;
 #else
     virtual bool paint(cairo_t*, const WebCore::IntRect&) = 0;
 #endif
@@ -61,11 +66,12 @@ public:
     virtual void unrealize() { };
     virtual int renderHostFileDescriptor() { return -1; }
     virtual RendererBufferFormat bufferFormat() const { return { }; }
+    virtual RefPtr<WebCore::NativeImage> bufferAsNativeImageForTesting() const = 0;
 
 protected:
-    AcceleratedBackingStore(WebPageProxy&);
+    explicit AcceleratedBackingStore(WebPageProxy&);
 
-    WebPageProxy& m_webPage;
+    WeakPtr<WebPageProxy> m_webPage;
 };
 
 } // namespace WebKit

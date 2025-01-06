@@ -16,7 +16,7 @@
 #include "rtc_base/system/rtc_export.h"
 
 namespace cricket {
-class PortAllocator;
+class PortAllocator;  // IWYU pragma: keep
 }  // namespace cricket
 
 namespace webrtc {

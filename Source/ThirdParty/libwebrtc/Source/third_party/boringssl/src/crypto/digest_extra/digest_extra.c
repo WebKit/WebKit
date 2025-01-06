@@ -61,6 +61,8 @@
 #include <openssl/blake2.h>
 #include <openssl/bytestring.h>
 #include <openssl/obj.h>
+#include <openssl/md4.h>
+#include <openssl/md5.h>
 #include <openssl/nid.h>
 
 #include "../asn1/internal.h"
@@ -220,6 +222,7 @@ int EVP_marshal_digest_algorithm(CBB *cbb, const EVP_MD *md) {
     return 0;
   }
 
+  // TODO(crbug.com/boringssl/710): Is this correct? See RFC 4055, section 2.1.
   if (!CBB_add_asn1(&algorithm, &null, CBS_ASN1_NULL) ||
       !CBB_flush(cbb)) {
     return 0;
@@ -263,3 +266,90 @@ static const EVP_MD evp_md_blake2b256 = {
 };
 
 const EVP_MD *EVP_blake2b256(void) { return &evp_md_blake2b256; }
+
+
+static void md4_init(EVP_MD_CTX *ctx) {
+  BSSL_CHECK(MD4_Init(ctx->md_data));
+}
+
+static void md4_update(EVP_MD_CTX *ctx, const void *data, size_t count) {
+  BSSL_CHECK(MD4_Update(ctx->md_data, data, count));
+}
+
+static void md4_final(EVP_MD_CTX *ctx, uint8_t *out) {
+  BSSL_CHECK(MD4_Final(out, ctx->md_data));
+}
+
+static const EVP_MD evp_md_md4 = {
+  NID_md4,
+  MD4_DIGEST_LENGTH,
+  0,
+  md4_init,
+  md4_update,
+  md4_final,
+  64,
+  sizeof(MD4_CTX),
+};
+
+const EVP_MD *EVP_md4(void) { return &evp_md_md4; }
+
+static void md5_init(EVP_MD_CTX *ctx) {
+  BSSL_CHECK(MD5_Init(ctx->md_data));
+}
+
+static void md5_update(EVP_MD_CTX *ctx, const void *data, size_t count) {
+  BSSL_CHECK(MD5_Update(ctx->md_data, data, count));
+}
+
+static void md5_final(EVP_MD_CTX *ctx, uint8_t *out) {
+  BSSL_CHECK(MD5_Final(out, ctx->md_data));
+}
+
+static const EVP_MD evp_md_md5 = {
+  NID_md5,
+  MD5_DIGEST_LENGTH,
+  0,
+  md5_init,
+  md5_update,
+  md5_final,
+  64,
+  sizeof(MD5_CTX),
+};
+
+const EVP_MD *EVP_md5(void) { return &evp_md_md5; }
+
+typedef struct {
+  MD5_CTX md5;
+  SHA_CTX sha1;
+} MD5_SHA1_CTX;
+
+static void md5_sha1_init(EVP_MD_CTX *md_ctx) {
+  MD5_SHA1_CTX *ctx = md_ctx->md_data;
+  BSSL_CHECK(MD5_Init(&ctx->md5) && SHA1_Init(&ctx->sha1));
+}
+
+static void md5_sha1_update(EVP_MD_CTX *md_ctx, const void *data,
+                            size_t count) {
+  MD5_SHA1_CTX *ctx = md_ctx->md_data;
+  BSSL_CHECK(MD5_Update(&ctx->md5, data, count) &&
+        SHA1_Update(&ctx->sha1, data, count));
+}
+
+static void md5_sha1_final(EVP_MD_CTX *md_ctx, uint8_t *out) {
+  MD5_SHA1_CTX *ctx = md_ctx->md_data;
+  BSSL_CHECK(MD5_Final(out, &ctx->md5) &&
+        SHA1_Final(out + MD5_DIGEST_LENGTH, &ctx->sha1));
+}
+
+const EVP_MD evp_md_md5_sha1 = {
+  NID_md5_sha1,
+  MD5_DIGEST_LENGTH + SHA_DIGEST_LENGTH,
+  0,
+  md5_sha1_init,
+  md5_sha1_update,
+  md5_sha1_final,
+  64,
+  sizeof(MD5_SHA1_CTX),
+};
+
+const EVP_MD *EVP_md5_sha1(void) { return &evp_md_md5_sha1; }

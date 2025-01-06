@@ -24,22 +24,14 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize,
-                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
-                    CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CleanDerivedSources, CompileJSC, CompileWebKit, ConfigureBuild, DetermineLabelOwner,
-                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub,
-                    InstallGtkDependencies, InstallHooks, InstallWpeDependencies, InstallWinDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
-                    MapBranchAlias, RemoveAndAddLabels, RetrievePRDataFromLabel, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
-                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests,
-                    RunWebKitPyTests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
-                    SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory, UpdatePullRequest,
-                    ValidateCommitMessage, ValidateChange, ValidateCommitterAndReviewer, WaitForCrashCollection,
-                    InstallBuiltProduct, ValidateRemote, ValidateSquashed, GITHUB_PROJECTS)
+from .steps import *
+from Shared.steps import *
 
 class Factory(factory.BuildFactory):
     findModifiedLayoutTests = False
     skipBuildIfNoResult = True
     branches = None
+    requiresUserValidation = False
 
     def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, **kwargs):
         factory.BuildFactory.__init__(self)
@@ -60,6 +52,8 @@ class Factory(factory.BuildFactory):
         self.addStep(ShowIdentifier())
         self.addStep(ApplyPatch())
         self.addStep(CheckOutPullRequest())
+        if self.requiresUserValidation:
+            self.addStep(ValidateUserForQueue())
         if self.findModifiedLayoutTests:
             self.addStep(GetUpdatedTestExpectations())
             self.addStep(FindModifiedLayoutTests(skipBuildIfNoResult=self.skipBuildIfNoResult))
@@ -95,6 +89,30 @@ class WatchListFactory(factory.BuildFactory):
         self.addStep(ApplyPatch())
         self.addStep(CheckOutPullRequest())
         self.addStep(ApplyWatchList())
+
+
+class SaferCPPStaticAnalyzerFactory(factory.BuildFactory):
+    findModifiedLayoutTests = False
+
+    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, **kwargs):
+        factory.BuildFactory.__init__(self)
+        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments))
+        self.addStep(CheckChangeRelevance())
+        self.addStep(ValidateChange())
+        self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
+        self.addStep(CheckOutSource())
+        self.addStep(FetchBranches())
+        self.addStep(ShowIdentifier())
+        self.addStep(InstallCMake())
+        self.addStep(InstallNinja())
+        self.addStep(PrintClangVersion())
+        self.addStep(CheckOutLLVMProject())
+        self.addStep(UpdateClang())
+        self.addStep(CheckOutPullRequest())
+        self.addStep(KillOldProcesses())
+        self.addStep(ValidateChange(addURLs=False))
+        self.addStep(ScanBuild())
 
 
 class BindingsFactory(Factory):
@@ -133,8 +151,6 @@ class BuildFactory(Factory):
         if platform in ['gtk', 'wpe']:
             self.addStep(CleanDerivedSources())
         self.addStep(CompileWebKit(skipUpload=self.skipUpload))
-        if platform == 'gtk':
-            self.addStep(InstallBuiltProduct())
 
 
 class TestFactory(Factory):
@@ -153,7 +169,7 @@ class TestFactory(Factory):
             self.addStep(InstallGtkDependencies())
         elif platform == 'wpe':
             self.addStep(InstallWpeDependencies())
-        elif platform == 'wincairo':
+        elif platform == 'win':
             self.addStep(InstallWinDependencies())
         self.getProduct()
         if self.willTriggerCrashLogSubmission:
@@ -228,6 +244,20 @@ class iOSTestsFactory(TestFactory):
     willTriggerCrashLogSubmission = True
 
 
+class visionOSBuildFactory(BuildFactory):
+    pass
+
+
+class visionOSEmbeddedBuildFactory(BuildFactory):
+    skipUpload = True
+
+
+class visionOSTestsFactory(TestFactory):
+    LayoutTestClass = RunWebKitTests
+    findModifiedLayoutTests = True
+    willTriggerCrashLogSubmission = True
+
+
 class macOSBuildFactory(BuildFactory):
     pass
 
@@ -260,6 +290,12 @@ class macOSWK2Factory(TestFactory):
     LayoutTestClass = RunWebKitTests
     findModifiedLayoutTests = True
     willTriggerCrashLogSubmission = True
+
+
+class PlayStationBuildFactory(BuildFactory):
+    branches = [r'main']
+    requiresUserValidation = True
+    skipUpload = True
 
 
 class WinBuildFactory(BuildFactory):

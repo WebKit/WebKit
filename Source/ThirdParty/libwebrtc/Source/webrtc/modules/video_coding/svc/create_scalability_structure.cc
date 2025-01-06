@@ -282,14 +282,14 @@ std::unique_ptr<ScalableVideoController> CreateScalabilityStructure(
   return nullptr;
 }
 
-absl::optional<ScalableVideoController::StreamLayersConfig>
+std::optional<ScalableVideoController::StreamLayersConfig>
 ScalabilityStructureConfig(ScalabilityMode name) {
   for (const auto& entry : kFactories) {
     if (entry.name == name) {
       return entry.config;
     }
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 }  // namespace webrtc

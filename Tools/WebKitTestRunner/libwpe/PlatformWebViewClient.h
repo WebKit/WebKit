@@ -33,7 +33,10 @@ namespace WTR {
 class PlatformWebViewClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~PlatformWebViewClient() = default;
+    virtual ~PlatformWebViewClient()
+    {
+        WKRelease(m_view);
+    }
 
     virtual void addToWindow() = 0;
     virtual void removeFromWindow() = 0;

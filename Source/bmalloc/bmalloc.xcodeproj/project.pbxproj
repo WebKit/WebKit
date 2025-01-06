@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		0F26A7A5205483130090A141 /* PerProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F26A7A42054830D0090A141 /* PerProcess.cpp */; };
 		0F5167741FAD685C008236A8 /* bmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5167731FAD6852008236A8 /* bmalloc.cpp */; };
+		0F5414442CFD832E0025EAD0 /* bmalloc_heap_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5414432CFD832E0025EAD0 /* bmalloc_heap_internal.h */; };
 		0F5549EF1FB54704007FF75A /* IsoPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5549EE1FB54701007FF75A /* IsoPage.cpp */; };
 		0F5BF1471F22A8B10029D91D /* HeapKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5BF1461F22A8B10029D91D /* HeapKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5BF1491F22A8D80029D91D /* PerHeapKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5BF1481F22A8D80029D91D /* PerHeapKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -139,12 +140,18 @@
 		4426E2811C838EE0008EB042 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 4426E27F1C838EE0008EB042 /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52F47249210BA30200B730BB /* MemoryStatusSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F47248210BA2F500B730BB /* MemoryStatusSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65072AE72B6195B90065065C /* TZoneHeapManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65072AE52B6195B90065065C /* TZoneHeapManager.cpp */; };
+		652E16972C4869D000C377D7 /* TZoneLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652E16962C4869D000C377D7 /* TZoneLog.cpp */; };
+		652E16982C4869D000C377D7 /* TZoneLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 652E16952C4869D000C377D7 /* TZoneLog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6599C5CC1EC3F15900A2F7BB /* AvailableMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */; };
 		6599C5CD1EC3F15900A2F7BB /* AvailableMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65FE739D2B79E09800C5CDAF /* TZoneHeapManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 65072AE62B6195B90065065C /* TZoneHeapManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7234F6B62D01112E000B645D /* pas_small_medium_bootstrap_heap_page_provider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7234F6B42D01112E000B645D /* pas_small_medium_bootstrap_heap_page_provider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7234F6B72D01112E000B645D /* pas_small_medium_bootstrap_free_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 7234F6B22D01112E000B645D /* pas_small_medium_bootstrap_free_heap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7234F6B82D01112E000B645D /* pas_small_medium_bootstrap_free_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 7234F6B32D01112E000B645D /* pas_small_medium_bootstrap_free_heap.c */; };
+		7234F6B92D01112E000B645D /* pas_small_medium_bootstrap_heap_page_provider.c in Sources */ = {isa = PBXBuildFile; fileRef = 7234F6B52D01112E000B645D /* pas_small_medium_bootstrap_heap_page_provider.c */; };
+		7234F6C42D011152000B645D /* pas_page_config_size_category.h in Headers */ = {isa = PBXBuildFile; fileRef = 7234F6C22D011152000B645D /* pas_page_config_size_category.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7939885B2076EEB60074A2E7 /* BulkDecommit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7939885A2076EEB50074A2E7 /* BulkDecommit.h */; };
 		795AB3C7206E0D340074FE76 /* PhysicalPageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 795AB3C6206E0D250074FE76 /* PhysicalPageMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7C571F0122388B840077A3C7 /* StdLibExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C571F0022388B840077A3C7 /* StdLibExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD0934331FCF406D00E85EB5 /* BCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = AD0934321FCF405000E85EB5 /* BCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD14AD29202529C400890E3B /* ProcessCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = AD14AD27202529A600890E3B /* ProcessCheck.h */; };
 		AD14AD2A202529C700890E3B /* ProcessCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = AD14AD28202529B000890E3B /* ProcessCheck.mm */; };
@@ -687,6 +694,7 @@
 		FE0383212ABC0E9F00A576A2 /* TZoneHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE03831F2ABC0E9F00A576A2 /* TZoneHeap.cpp */; };
 		FE0383232ABC988C00A576A2 /* TZoneHeapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE0383222ABC988C00A576A2 /* TZoneHeapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE48BD3B2321E8D700F136D0 /* FailureAction.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48BD3A2321E8CC00F136D0 /* FailureAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE9CD7E32D10847E00266FDD /* SegmentedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE9CD7E22D10847E00266FDD /* SegmentedVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC3A39324846A8100395B54 /* GigacageConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC3A39224846A6D00395B54 /* GigacageConfig.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC3A395248471FE00395B54 /* GigacageKind.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC3A394248471FE00395B54 /* GigacageKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
@@ -755,6 +763,7 @@
 		0F5193ED266C42AD00483A2C /* pas_basic_heap_config_enumerator_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_basic_heap_config_enumerator_data.c; path = libpas/src/libpas/pas_basic_heap_config_enumerator_data.c; sourceTree = "<group>"; };
 		0F5193F4266C42BF00483A2C /* pas_try_shrink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_try_shrink.h; path = libpas/src/libpas/pas_try_shrink.h; sourceTree = "<group>"; };
 		0F529DE02455463F00385A8C /* iso_heap_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iso_heap_ref.h; path = libpas/src/libpas/iso_heap_ref.h; sourceTree = "<group>"; };
+		0F5414432CFD832E0025EAD0 /* bmalloc_heap_internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bmalloc_heap_internal.h; path = libpas/src/libpas/bmalloc_heap_internal.h; sourceTree = "<group>"; };
 		0F5549EE1FB54701007FF75A /* IsoPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IsoPage.cpp; path = bmalloc/IsoPage.cpp; sourceTree = "<group>"; };
 		0F5BF1461F22A8B10029D91D /* HeapKind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HeapKind.h; path = bmalloc/HeapKind.h; sourceTree = "<group>"; };
 		0F5BF1481F22A8D80029D91D /* PerHeapKind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PerHeapKind.h; path = bmalloc/PerHeapKind.h; sourceTree = "<group>"; };
@@ -1361,11 +1370,17 @@
 		52F47248210BA2F500B730BB /* MemoryStatusSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MemoryStatusSPI.h; path = bmalloc/darwin/MemoryStatusSPI.h; sourceTree = "<group>"; };
 		65072AE52B6195B90065065C /* TZoneHeapManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TZoneHeapManager.cpp; path = bmalloc/TZoneHeapManager.cpp; sourceTree = "<group>"; };
 		65072AE62B6195B90065065C /* TZoneHeapManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneHeapManager.h; path = bmalloc/TZoneHeapManager.h; sourceTree = "<group>"; };
+		652E16952C4869D000C377D7 /* TZoneLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneLog.h; path = bmalloc/TZoneLog.h; sourceTree = "<group>"; };
+		652E16962C4869D000C377D7 /* TZoneLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TZoneLog.cpp; path = bmalloc/TZoneLog.cpp; sourceTree = "<group>"; };
 		6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AvailableMemory.cpp; path = bmalloc/AvailableMemory.cpp; sourceTree = "<group>"; };
 		6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AvailableMemory.h; path = bmalloc/AvailableMemory.h; sourceTree = "<group>"; };
+		7234F6B22D01112E000B645D /* pas_small_medium_bootstrap_free_heap.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = pas_small_medium_bootstrap_free_heap.h; path = libpas/src/libpas/pas_small_medium_bootstrap_free_heap.h; sourceTree = "<group>"; };
+		7234F6B32D01112E000B645D /* pas_small_medium_bootstrap_free_heap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_small_medium_bootstrap_free_heap.c; path = libpas/src/libpas/pas_small_medium_bootstrap_free_heap.c; sourceTree = "<group>"; };
+		7234F6B42D01112E000B645D /* pas_small_medium_bootstrap_heap_page_provider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = pas_small_medium_bootstrap_heap_page_provider.h; path = libpas/src/libpas/pas_small_medium_bootstrap_heap_page_provider.h; sourceTree = "<group>"; };
+		7234F6B52D01112E000B645D /* pas_small_medium_bootstrap_heap_page_provider.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_small_medium_bootstrap_heap_page_provider.c; path = libpas/src/libpas/pas_small_medium_bootstrap_heap_page_provider.c; sourceTree = "<group>"; };
+		7234F6C22D011152000B645D /* pas_page_config_size_category.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_page_config_size_category.h; path = libpas/src/libpas/pas_page_config_size_category.h; sourceTree = "<group>"; };
 		7939885A2076EEB50074A2E7 /* BulkDecommit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BulkDecommit.h; path = bmalloc/BulkDecommit.h; sourceTree = "<group>"; };
 		795AB3C6206E0D250074FE76 /* PhysicalPageMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PhysicalPageMap.h; path = bmalloc/PhysicalPageMap.h; sourceTree = "<group>"; };
-		7C571F0022388B840077A3C7 /* StdLibExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StdLibExtras.h; path = bmalloc/StdLibExtras.h; sourceTree = "<group>"; };
 		AD0934321FCF405000E85EB5 /* BCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BCompiler.h; path = bmalloc/BCompiler.h; sourceTree = "<group>"; };
 		AD14AD27202529A600890E3B /* ProcessCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessCheck.h; path = bmalloc/ProcessCheck.h; sourceTree = "<group>"; };
 		AD14AD28202529B000890E3B /* ProcessCheck.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProcessCheck.mm; path = bmalloc/ProcessCheck.mm; sourceTree = "<group>"; };
@@ -1396,6 +1411,7 @@
 		FE03831F2ABC0E9F00A576A2 /* TZoneHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TZoneHeap.cpp; path = bmalloc/TZoneHeap.cpp; sourceTree = "<group>"; };
 		FE0383222ABC988C00A576A2 /* TZoneHeapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneHeapInlines.h; path = bmalloc/TZoneHeapInlines.h; sourceTree = "<group>"; };
 		FE48BD3A2321E8CC00F136D0 /* FailureAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FailureAction.h; path = bmalloc/FailureAction.h; sourceTree = "<group>"; };
+		FE9CD7E22D10847E00266FDD /* SegmentedVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SegmentedVector.h; path = bmalloc/SegmentedVector.h; sourceTree = "<group>"; };
 		FEC3A39224846A6D00395B54 /* GigacageConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GigacageConfig.h; path = bmalloc/GigacageConfig.h; sourceTree = "<group>"; };
 		FEC3A394248471FE00395B54 /* GigacageKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GigacageKind.h; path = bmalloc/GigacageKind.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1496,6 +1512,8 @@
 				FE0383222ABC988C00A576A2 /* TZoneHeapInlines.h */,
 				65072AE52B6195B90065065C /* TZoneHeapManager.cpp */,
 				65072AE62B6195B90065065C /* TZoneHeapManager.h */,
+				652E16962C4869D000C377D7 /* TZoneLog.cpp */,
+				652E16952C4869D000C377D7 /* TZoneLog.h */,
 			);
 			name = iso;
 			sourceTree = "<group>";
@@ -1509,6 +1527,7 @@
 				0F8A812925F83E2500790B4A /* bmalloc_heap_config.h */,
 				0F8A811B25F83E2300790B4A /* bmalloc_heap_inlines.h */,
 				0F8A811F25F83E2400790B4A /* bmalloc_heap_innards.h */,
+				0F5414432CFD832E0025EAD0 /* bmalloc_heap_internal.h */,
 				0F8A812325F83E2400790B4A /* bmalloc_heap_ref.h */,
 				2C11E8932728DE27002162D0 /* bmalloc_type.c */,
 				2C11E8922728DE27002162D0 /* bmalloc_type.h */,
@@ -1851,6 +1870,7 @@
 				0F87005625AF8A1A000E1ABF /* pas_page_base_config_utils_inlines.h */,
 				0F87005025AF8A1A000E1ABF /* pas_page_base_inlines.h */,
 				0F87004A25AF8A19000E1ABF /* pas_page_config_kind.h */,
+				7234F6C22D011152000B645D /* pas_page_config_size_category.h */,
 				0F87006225AF8A1B000E1ABF /* pas_page_granule_use_count.h */,
 				0F87004925AF8A19000E1ABF /* pas_page_header_placement_mode.h */,
 				0F87006125AF8A1B000E1ABF /* pas_page_header_table.c */,
@@ -1973,6 +1993,10 @@
 				0FC40A922451498D00876DA0 /* pas_slow_path_mode.h */,
 				0FC40A612451498900876DA0 /* pas_slow_path_mode_prefix.h */,
 				0FC40AD52451499100876DA0 /* pas_small_large_map_entry.h */,
+				7234F6B32D01112E000B645D /* pas_small_medium_bootstrap_free_heap.c */,
+				7234F6B22D01112E000B645D /* pas_small_medium_bootstrap_free_heap.h */,
+				7234F6B52D01112E000B645D /* pas_small_medium_bootstrap_heap_page_provider.c */,
+				7234F6B42D01112E000B645D /* pas_small_medium_bootstrap_heap_page_provider.h */,
 				0FC40AEB2451499300876DA0 /* pas_snprintf.h */,
 				0FC40A1E2451498400876DA0 /* pas_status_reporter.c */,
 				0FC40A1B2451498400876DA0 /* pas_status_reporter.h */,
@@ -2180,8 +2204,8 @@
 				144469FD17A61F1F00F9EA1D /* PerThread.h */,
 				145F6878179E3A4400D65598 /* Range.h */,
 				148EFAE61D6B953B008E721E /* ScopeExit.h */,
+				FE9CD7E22D10847E00266FDD /* SegmentedVector.h */,
 				E31E747F2238CA5B005D084A /* StaticPerProcess.h */,
-				7C571F0022388B840077A3C7 /* StdLibExtras.h */,
 				1417F64F18B7280C0076FA99 /* valgrind.h */,
 				1479E21217A1A255006D4E9D /* Vector.h */,
 				1479E21417A1A63E006D4E9D /* VMAllocate.h */,
@@ -2304,14 +2328,15 @@
 				14DD78CD18F48D7500950702 /* Range.h in Headers */,
 				0F5BF1531F22E1570029D91D /* Scavenger.h in Headers */,
 				148EFAE81D6B953B008E721E /* ScopeExit.h in Headers */,
+				FE9CD7E32D10847E00266FDD /* SegmentedVector.h in Headers */,
 				14DD789018F48CEB00950702 /* Sizes.h in Headers */,
 				14DD78BC18F48D6B00950702 /* SmallLine.h in Headers */,
 				14DD78BD18F48D6B00950702 /* SmallPage.h in Headers */,
 				E31E74802238CA5C005D084A /* StaticPerProcess.h in Headers */,
-				7C571F0122388B840077A3C7 /* StdLibExtras.h in Headers */,
 				FE0383202ABC0E9F00A576A2 /* TZoneHeap.h in Headers */,
 				FE0383232ABC988C00A576A2 /* TZoneHeapInlines.h in Headers */,
 				65FE739D2B79E09800C5CDAF /* TZoneHeapManager.h in Headers */,
+				652E16982C4869D000C377D7 /* TZoneLog.h in Headers */,
 				14DD78CE18F48D7500950799 /* valgrind.h in Headers */,
 				14DD78CF18F48D7500950702 /* Vector.h in Headers */,
 				14DD78D018F48D7500950702 /* VMAllocate.h in Headers */,
@@ -2327,6 +2352,7 @@
 				DD4BEDC129CBA49700398E35 /* bmalloc_heap_config.h in Headers */,
 				DD4BEDAE29CBA49700398E35 /* bmalloc_heap_inlines.h in Headers */,
 				DD4BEC5A29CBA49700398E35 /* bmalloc_heap_innards.h in Headers */,
+				0F5414442CFD832E0025EAD0 /* bmalloc_heap_internal.h in Headers */,
 				DD4BED7329CBA49700398E35 /* bmalloc_heap_ref.h in Headers */,
 				DD4BEC8C29CBA49700398E35 /* bmalloc_type.h in Headers */,
 				DD4BEE2829CBA4E300398E35 /* BulkDecommit.h in Headers */,
@@ -2575,6 +2601,7 @@
 				DD4BEE0D29CBA49700398E35 /* pas_page_base_config_utils_inlines.h in Headers */,
 				DD4BED4A29CBA49700398E35 /* pas_page_base_inlines.h in Headers */,
 				DD4BEC7729CBA49700398E35 /* pas_page_config_kind.h in Headers */,
+				7234F6C42D011152000B645D /* pas_page_config_size_category.h in Headers */,
 				DD4BED6A29CBA49700398E35 /* pas_page_granule_use_count.h in Headers */,
 				DD4BED3429CBA49700398E35 /* pas_page_header_placement_mode.h in Headers */,
 				DD4BECE729CBA49700398E35 /* pas_page_header_table.h in Headers */,
@@ -2663,6 +2690,8 @@
 				DD4BECE129CBA49700398E35 /* pas_slow_path_mode.h in Headers */,
 				DD4BEC9029CBA49700398E35 /* pas_slow_path_mode_prefix.h in Headers */,
 				DD4BEDEF29CBA49700398E35 /* pas_small_large_map_entry.h in Headers */,
+				7234F6B72D01112E000B645D /* pas_small_medium_bootstrap_free_heap.h in Headers */,
+				7234F6B62D01112E000B645D /* pas_small_medium_bootstrap_heap_page_provider.h in Headers */,
 				DD4BECCB29CBA49700398E35 /* pas_snprintf.h in Headers */,
 				DD4BEDE429CBA49700398E35 /* pas_status_reporter.h in Headers */,
 				DD4BED7029CBA49700398E35 /* pas_stream.h in Headers */,
@@ -2871,6 +2900,7 @@
 				0F5BF1521F22E1570029D91D /* Scavenger.cpp in Sources */,
 				FE0383212ABC0E9F00A576A2 /* TZoneHeap.cpp in Sources */,
 				65072AE72B6195B90065065C /* TZoneHeapManager.cpp in Sources */,
+				652E16972C4869D000C377D7 /* TZoneLog.cpp in Sources */,
 				1440AFCD1A9527AF00837FAA /* Zone.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3012,6 +3042,9 @@
 				DD4BED3229CBA49700398E35 /* pas_simple_free_heap_helpers.c in Sources */,
 				DD4BEC9929CBA49700398E35 /* pas_simple_large_free_heap.c in Sources */,
 				DD4BEDC529CBA49700398E35 /* pas_simple_type.c in Sources */,
+				7234F6B82D01112E000B645D /* pas_small_medium_bootstrap_free_heap.c in Sources */,
+				7234F6C72D011EF3000B645D /* pas_small_medium_bootstrap_free_heap.h in Sources */,
+				7234F6B92D01112E000B645D /* pas_small_medium_bootstrap_heap_page_provider.c in Sources */,
 				DD4BEC7A29CBA49700398E35 /* pas_status_reporter.c in Sources */,
 				DD4BED2329CBA49700398E35 /* pas_stream.c in Sources */,
 				DD4BEE0729CBA49700398E35 /* pas_string_stream.c in Sources */,

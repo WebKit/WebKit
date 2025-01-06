@@ -89,7 +89,7 @@ public:
     operator tm() const
     {
         tm ret;
-        memset(&ret, 0, sizeof(ret));
+        zeroBytes(ret);
 
         ret.tm_year = m_year - 1900;
         ret.tm_mon = m_month;

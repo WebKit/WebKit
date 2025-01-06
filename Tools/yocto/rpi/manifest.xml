@@ -6,11 +6,13 @@
   <remote fetch="https://git.yoctoproject.org/git/" name="yocto"/>
   <remote fetch="https://github.com" name="github"/>
 
-  <!-- Yocto version: mickledore -->
+  <!-- Yocto version: scarthgap -->
 
-  <project remote="yocto"  revision="7235399a86b134e57d5eb783d7f1f57ca0439ae5" name="poky" path="sources/poky"/>
-  <project remote="github" revision="f29290563cb821fae95340ba959749641c69ed7f" name="openembedded/meta-openembedded" path="sources/meta-openembedded"/>
-  <project remote="yocto"  revision="9c81413d0b6f41f14f0f9c504d19e312c5b9958f" name="meta-raspberrypi" path="sources/meta-raspberrypi"/>
-  <project remote="github" revision="d14b0311f852651a0b0a48c4bc5be7cdde7ab2af" name="Igalia/meta-webkit.git" path="sources/meta-webkit"/>
+  <project remote="yocto"  revision="6879650b927c96a2464224cdc2bed8245511cbf1" name="poky" path="sources/poky"/>
+  <project remote="github" revision="80e01188fa822d87d301ee71973c462d7a865493" name="openembedded/meta-openembedded" path="sources/meta-openembedded"/>
+  <project remote="yocto"  revision="1918a27419dcd5e79954c0dc0edddcde91057a7e" name="meta-raspberrypi" path="sources/meta-raspberrypi"/>
+  <project remote="github" revision="ec00a77f921f2443280f70bb9ca8eef9fe4bc679" name="Igalia/meta-webkit.git" path="sources/meta-webkit"/>
+  <project remote="github" revision="df21b1563910c80d7e2964971b7c5b79b5186922" name="kraj/meta-clang.git" path="sources/meta-clang"/>
+  <project remote="github" revision="83cb90c618e24af9bc40fb25baab2a0acd47a560" name="OSSystems/meta-browser.git" path="sources/meta-browser"/>
 
 </manifest>

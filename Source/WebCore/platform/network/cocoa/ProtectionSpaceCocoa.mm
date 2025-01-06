@@ -27,7 +27,7 @@
 #import "ProtectionSpaceCocoa.h"
 
 #import <pal/spi/cf/CFNetworkSPI.h>
-#include <WebCore/RuntimeApplicationChecks.h>
+#import <wtf/RuntimeApplicationChecks.h>
 
 namespace WebCore {
 
@@ -87,7 +87,7 @@ static ProtectionSpace::AuthenticationScheme scheme(NSURLProtectionSpace *space)
         return ProtectionSpace::AuthenticationScheme::OAuth;
 
     ASSERT_NOT_REACHED();
-    return ProtectionSpace::AuthenticationScheme::Unknown;
+    return ProtectionSpace::AuthenticationScheme::Default;
 }
 
 ProtectionSpace::ProtectionSpace(NSURLProtectionSpace *space)

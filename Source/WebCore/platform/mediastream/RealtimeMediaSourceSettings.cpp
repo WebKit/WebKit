@@ -40,7 +40,7 @@ namespace WebCore {
 
 RealtimeMediaSourceSettings RealtimeMediaSourceSettings::isolatedCopy() const
 {
-    return { m_width, m_height , m_frameRate, m_facingMode, m_volume , m_sampleRate, m_sampleSize, m_echoCancellation, m_deviceId.isolatedCopy(), m_groupId.isolatedCopy(), m_label.isolatedCopy(), m_displaySurface, m_logicalSurface, m_whiteBalanceMode, m_zoom, m_torch, m_backgroundBlur, RealtimeMediaSourceSupportedConstraints { m_supportedConstraints } };
+    return { m_width, m_height , m_frameRate, m_facingMode, m_volume , m_sampleRate, m_sampleSize, m_echoCancellation, m_deviceId.isolatedCopy(), m_groupId.isolatedCopy(), m_label.isolatedCopy(), m_displaySurface, m_logicalSurface, m_whiteBalanceMode, m_zoom, m_torch, m_backgroundBlur, m_powerEfficient, RealtimeMediaSourceSupportedConstraints { m_supportedConstraints } };
 }
 
 VideoFacingMode RealtimeMediaSourceSettings::videoFacingModeEnum(const String& mode)
@@ -118,6 +118,9 @@ String RealtimeMediaSourceSettings::convertFlagsToString(const OptionSet<Realtim
         case RealtimeMediaSourceSettings::BackgroundBlur:
             builder.append("BackgroundBlur"_s);
             break;
+        case RealtimeMediaSourceSettings::PowerEfficient:
+            builder.append("PowerEfficient"_s);
+            break;
         }
     }
     builder.append(" ]"_s);
@@ -163,13 +166,15 @@ OptionSet<RealtimeMediaSourceSettings::Flag> RealtimeMediaSourceSettings::differ
         difference.add(RealtimeMediaSourceSettings::Torch);
     if (backgroundBlur() != that.backgroundBlur())
         difference.add(RealtimeMediaSourceSettings::BackgroundBlur);
+    if (powerEfficient() != that.powerEfficient())
+        difference.add(RealtimeMediaSourceSettings::PowerEfficient);
 
     return difference;
 }
 
 String convertEnumerationToString(VideoFacingMode enumerationValue)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 5> values {
         MAKE_STATIC_STRING_IMPL("unknown"),
         MAKE_STATIC_STRING_IMPL("user"),
         MAKE_STATIC_STRING_IMPL("environment"),
@@ -187,7 +192,7 @@ String convertEnumerationToString(VideoFacingMode enumerationValue)
 
 String RealtimeMediaSourceSettings::displaySurface(DisplaySurfaceType surface)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 5> values {
         MAKE_STATIC_STRING_IMPL("monitor"),
         MAKE_STATIC_STRING_IMPL("window"),
         MAKE_STATIC_STRING_IMPL("application"),

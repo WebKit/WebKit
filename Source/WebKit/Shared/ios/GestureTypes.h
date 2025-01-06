@@ -60,7 +60,10 @@ enum class SheetAction : uint8_t {
     Copy,
     SaveImage,
     PauseAnimation,
-    PlayAnimation
+    PlayAnimation,
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    ViewSpatial
+#endif
 };
 
 enum class SelectionFlags : uint8_t {
@@ -70,5 +73,13 @@ enum class SelectionFlags : uint8_t {
 };
 
 enum class RespectSelectionAnchor : bool { No, Yes };
+
+enum class TextInteractionSource : uint8_t {
+    Touch = 1 << 0,
+    Mouse = 1 << 1,
+};
+
+enum class SelectionEndpoint : bool { Start, End };
+enum class SelectionWasFlipped : bool { No, Yes };
 
 } // namespace WebKit

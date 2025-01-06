@@ -19,29 +19,24 @@
 namespace webrtc {
 
 TEST(PushResamplerTest, VerifiesInputParameters) {
-  PushResampler<int16_t> resampler;
-  EXPECT_EQ(0, resampler.InitializeIfNeeded(16000, 16000, 1));
-  EXPECT_EQ(0, resampler.InitializeIfNeeded(16000, 16000, 2));
-  EXPECT_EQ(0, resampler.InitializeIfNeeded(16000, 16000, 8));
+  PushResampler<int16_t> resampler1(160, 160, 1);
+  PushResampler<int16_t> resampler2(160, 160, 2);
+  PushResampler<int16_t> resampler3(160, 160, 8);
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 TEST(PushResamplerDeathTest, VerifiesBadInputParameters1) {
-  PushResampler<int16_t> resampler;
-  RTC_EXPECT_DEATH(resampler.InitializeIfNeeded(-1, 16000, 1),
-                   "src_sample_rate_hz");
+  RTC_EXPECT_DEATH(PushResampler<int16_t>(-1, 160, 1),
+                   "src_samples_per_channel");
 }
 
 TEST(PushResamplerDeathTest, VerifiesBadInputParameters2) {
-  PushResampler<int16_t> resampler;
-  RTC_EXPECT_DEATH(resampler.InitializeIfNeeded(16000, -1, 1),
-                   "dst_sample_rate_hz");
+  RTC_EXPECT_DEATH(PushResampler<int16_t>(160, -1, 1),
+                   "dst_samples_per_channel");
 }
 
 TEST(PushResamplerDeathTest, VerifiesBadInputParameters3) {
-  PushResampler<int16_t> resampler;
-  RTC_EXPECT_DEATH(resampler.InitializeIfNeeded(16000, 16000, 0),
-                   "num_channels");
+  RTC_EXPECT_DEATH(PushResampler<int16_t>(160, 16000, 0), "num_channels");
 }
 #endif
 

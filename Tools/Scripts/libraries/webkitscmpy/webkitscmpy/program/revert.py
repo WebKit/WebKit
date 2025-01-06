@@ -168,27 +168,29 @@ class Revert(Command):
                 return None, None
 
         # Retrieve information for the issue tracking the revert
-        revert_issue = Tracker.from_string(args.issue)
-        if not revert_issue:
-            sys.stderr.write('Could not find issue {}'.format(revert_issue))
-            return None, None
+        revert_radar_link, revert_bug_link, revert_issue = None, None, None
+        if args.update_issue:
+            revert_issue = Tracker.from_string(args.issue)
+            if not revert_issue:
+                sys.stderr.write('Could not find issue {}'.format(revert_issue))
+                return None, None
 
-        revert_radar_link, revert_bug_link = None, None
-        for issue_url in CommitProgram.bug_urls(revert_issue):
-            issue = Tracker.from_string(issue_url)
-            if not issue:
-                continue
-            if isinstance(issue.tracker, radar.Tracker):
-                revert_radar_link = issue_url
-            if isinstance(issue.tracker, bugzilla.Tracker):
-                revert_bug_link = issue_url
+            for issue_url in CommitProgram.bug_urls(revert_issue):
+                issue = Tracker.from_string(issue_url)
+                if not issue:
+                    continue
+                if isinstance(issue.tracker, radar.Tracker):
+                    revert_radar_link = issue_url
+                if isinstance(issue.tracker, bugzilla.Tracker):
+                    revert_bug_link = issue_url
 
         # FIXME: Add support for radar-based repositories
-        if revert_issue.redacted or isinstance(revert_issue.tracker, radar.Tracker):
+        is_redacted = revert_issue and (revert_issue.redacted or isinstance(revert_issue.tracker, radar.Tracker))
+        if not args.reason and (not args.update_issue or is_redacted):
             prompt = 'Enter a reason for the revert: '
             revert_reason = Terminal.input(prompt, alert_after=2 * Terminal.RING_INTERVAL)
         else:
-            revert_reason = revert_issue.title
+            revert_reason = args.reason or revert_issue.title
 
         env = os.environ
         env['COMMIT_MESSAGE_TITLE'] = cls.REVERT_TITLE_TEMPLATE.format(string_utils.join(reverted_commits))
@@ -283,14 +285,19 @@ class Revert(Command):
         if not args.commit:
             return cls.revert_commit(args, repository, None, commit_objects, **kwargs)
 
-        issue = cls.get_issue_info(args, repository, commit_objects, commit_issues, **kwargs)
-        if not issue:
-            return 1
+        if args.update_issue:
+            issue = cls.get_issue_info(args, repository, commit_objects, commit_issues, **kwargs)
+            if not issue:
+                return 1
+        else:
+            issue = None
 
         commit_identifiers, revert_reason = cls.create_revert_commit_msg(args, commit_objects, **kwargs)
         if not commit_identifiers:
             return 1
 
+        if not args.issue:
+            args.issue = revert_reason
         branch_point = PullRequest.pull_request_branch_point(repository, args, **kwargs)
         if not branch_point:
             return 1
@@ -298,8 +305,9 @@ class Revert(Command):
         if cls.revert_commit(args, repository, issue, commit_objects, **kwargs):
             return 1
 
-        if cls.relate_issues(args, repository, issue, commit_issues, revert_reason):
-            return 1
+        if args.update_issue:
+            if cls.relate_issues(args, repository, issue, commit_issues, revert_reason):
+                return 1
 
         if args.safe is not None:
             if args.pr is False:

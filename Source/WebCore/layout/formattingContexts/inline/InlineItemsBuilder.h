@@ -61,6 +61,8 @@ private:
     
     bool contentRequiresVisualReordering() const { return m_contentRequiresVisualReordering; }
 
+    void computeInlineBoxBoundaryTextSpacingsIfNeeded(const InlineItemList&);
+
     const ElementBox& root() const { return m_root; }
     InlineContentCache& inlineContentCache() { return m_inlineContentCache; }
 
@@ -72,6 +74,7 @@ private:
     bool m_contentRequiresVisualReordering { false };
     bool m_isTextAndForcedLineBreakOnlyContent { true };
     size_t m_inlineBoxCount { 0 };
+    bool m_hasTextAutospace { !root().style().textAutospace().isNoAutospace() };
 };
 
 }

@@ -29,12 +29,13 @@
 namespace WebCore {
 
 class DocumentFragment : public ContainerNode {
-    WTF_MAKE_ISO_ALLOCATED(DocumentFragment);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DocumentFragment);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DocumentFragment);
 public:
     WEBCORE_EXPORT static Ref<DocumentFragment> create(Document&);
     static Ref<DocumentFragment> createForInnerOuterHTML(Document&);
 
-    void parseHTML(const String&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent });
+    void parseHTML(const String&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent }, CustomElementRegistry* = nullptr);
     WEBCORE_EXPORT bool parseXML(const String&, Element* contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent });
 
     bool canContainRangeEndPoint() const final { return true; }
@@ -48,7 +49,7 @@ protected:
     String nodeName() const final;
 
 private:
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    Ref<Node> cloneNodeInternal(TreeScope&, CloningOperation) override;
     bool childTypeAllowed(NodeType) const override;
 };
 

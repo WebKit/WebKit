@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,10 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "APIError.h"
 #import "CocoaHelpers.h"
 #import "WKFrameInfoPrivate.h"
+#import "WKNSError.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
 #import "WebExtensionAPIScripting.h"
@@ -57,7 +59,7 @@ using namespace WebExtensionDynamicScripts;
 
 bool WebExtensionContext::isScriptingMessageAllowed()
 {
-    return isLoaded() && hasPermission(_WKWebExtensionPermissionScripting);
+    return isLoaded() && hasPermission(WKWebExtensionPermissionScripting);
 }
 
 void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(Expected<InjectionResults, WebExtensionError>&&)>&& completionHandler)
@@ -76,16 +78,16 @@ void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjecti
             return;
         }
 
-        auto *webView = tab->mainWebView();
+        auto *webView = tab->webView();
         if (!webView) {
             completionHandler(toWebExtensionError(apiName, nil, @"could not execute script on this tab"));
             return;
         }
 
-        auto scriptPairs = getSourcePairsForParameters(parameters, m_extension);
+        auto scriptPairs = getSourcePairsForParameters(parameters, *this);
         Ref executionWorld = toContentWorld(parameters.world);
 
-        executeScript(scriptPairs, webView, executionWorld, tab.get(), parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResults&& injectionResults) mutable {
+        executeScript(scriptPairs, webView, executionWorld, *tab, parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResults&& injectionResults) mutable {
             completionHandler(WTFMove(injectionResults));
         });
     });
@@ -107,17 +109,17 @@ void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionPa
             return;
         }
 
-        auto *webView = tab->mainWebView();
+        auto *webView = tab->webView();
         if (!webView) {
             completionHandler(toWebExtensionError(apiName, nil, @"could not inject stylesheet on this tab"));
             return;
         }
 
         // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
-        auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
+        auto injectedFrames = parameters.frameIdentifiers ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
 
-        auto styleSheetPairs = getSourcePairsForParameters(parameters, m_extension);
-        injectStyleSheets(styleSheetPairs, webView, *m_contentScriptWorld, parameters.styleLevel, injectedFrames, *this);
+        auto styleSheetPairs = getSourcePairsForParameters(parameters, *this);
+        injectStyleSheets(styleSheetPairs, webView, Ref { *m_contentScriptWorld }, parameters.styleLevel, injectedFrames, *this);
 
         completionHandler({ });
     });
@@ -138,7 +140,7 @@ void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionPa
         return;
     }
 
-    auto *webView = tab->mainWebView();
+    auto *webView = tab->webView();
     if (!webView) {
         completionHandler(toWebExtensionError(apiName, nil, @"could not remove stylesheet from this tab"));
         return;
@@ -148,9 +150,9 @@ void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionPa
     // and permission has been revoked since it inserted CSS. This allows for the extension to clean up.
 
     // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
-    auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
+    auto injectedFrames = parameters.frameIdentifiers ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
 
-    auto styleSheetPairs = getSourcePairsForParameters(parameters, m_extension);
+    auto styleSheetPairs = getSourcePairsForParameters(parameters, *this);
     removeStyleSheets(styleSheetPairs, webView, injectedFrames, *this);
 
     completionHandler({ });
@@ -283,8 +285,8 @@ void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>
         }
 
         auto removeUserScriptsAndStyleSheets = ^(String scriptID) {
-            RefPtr registeredScript = m_registeredScriptsMap.take(scriptID);
-            registeredScript->removeUserScriptsAndStyleSheets(scriptID);
+            if (RefPtr registeredScript = m_registeredScriptsMap.take(scriptID))
+                registeredScript->removeUserScriptsAndStyleSheets(scriptID);
         };
 
         for (auto& scriptID : ids)
@@ -296,7 +298,7 @@ void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>
 
 void WebExtensionContext::loadRegisteredContentScripts()
 {
-    if (!hasPermission(_WKWebExtensionPermissionScripting))
+    if (!hasPermission(WKWebExtensionPermissionScripting))
         return;
 
     [registeredContentScriptsStore() getScriptsWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }](NSArray *scripts, NSString *errorMessage) mutable {
@@ -306,7 +308,10 @@ void WebExtensionContext::loadRegisteredContentScripts()
         }
 
         Vector<WebExtensionRegisteredScriptParameters> parametersVector;
-        WebExtensionAPIScripting::parseRegisteredContentScripts(scripts, FirstTimeRegistration::Yes, parametersVector);
+        if (!WebExtensionAPIScripting::parseRegisteredContentScripts(scripts, FirstTimeRegistration::Yes, parametersVector, &errorMessage)) {
+            RELEASE_LOG_ERROR(Extensions, "Failed to parse injected content data for extension %{private}@. Error: %{public}@", (NSString *)m_uniqueIdentifier, errorMessage);
+            return;
+        }
 
         DynamicInjectedContentsMap injectedContentsMap;
         createInjectedContentForScripts(parametersVector, FirstTimeRegistration::Yes, injectedContentsMap, nil, &errorMessage);
@@ -359,8 +364,11 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
             return !!string.length;
         });
 
+        RefPtr extension = m_extension;
         for (NSString *scriptPath in scriptPaths) {
-            if (!extension().resourceStringForPath(scriptPath, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
+            RefPtr<API::Error> error;
+            if (!extension->resourceStringForPath(scriptPath, error)) {
+                recordError(::WebKit::wrapper(*error));
                 *errorMessage = toErrorString(callingAPIName, nil, @"invalid resource '%@'", scriptPath);
                 return false;
             }
@@ -373,7 +381,9 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         });
 
         for (NSString *styleSheetPath in styleSheetPaths) {
-            if (!extension().resourceStringForPath(styleSheetPath, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
+            RefPtr<API::Error> error;
+            if (!extension->resourceStringForPath(styleSheetPath, error)) {
+                recordError(::WebKit::wrapper(*error));
                 *errorMessage = toErrorString(callingAPIName, nil, @"invalid resource '%@'", styleSheetPath);
                 return false;
             }
@@ -419,8 +429,8 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         injectedContentData.injectsIntoAllFrames = parameters.allFrames.value_or(false);
         injectedContentData.contentWorldType = parameters.world.value_or(WebExtensionContentWorldType::ContentScript);
         injectedContentData.styleLevel = parameters.styleLevel.value_or(WebCore::UserStyleLevel::Author);
-        injectedContentData.scriptPaths = scriptPaths;
-        injectedContentData.styleSheetPaths = styleSheetPaths;
+        injectedContentData.scriptPaths = makeVector<String>(scriptPaths);
+        injectedContentData.styleSheetPaths = makeVector<String>(styleSheetPaths);
 
         injectedContentsMap.add(scriptID, WTFMove(injectedContentData));
     }

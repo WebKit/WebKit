@@ -34,7 +34,7 @@
 
 - (id)_initWithPageProxy:(NakedRef<WebKit::WebPageProxy>)page
 {
-    return [self _initWithPageProxyID:page->identifier() andWebPageID:page->webPageID()];
+    return [self _initWithPageProxyID:page->identifier() andWebPageID:page->webPageIDInMainFrameProcess()];
 }
 
 - (id)_initWithPage:(NakedRef<WebKit::WebPage>)page
@@ -55,7 +55,7 @@
 
 - (NSUInteger)hash
 {
-    return computeHash(_pageProxyID, _webPageID);
+    return computeHash(*_pageProxyID, _webPageID);
 }
 
 - (BOOL)isEqual:(id)object
@@ -68,7 +68,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-    [coder encodeInt64:_pageProxyID.toUInt64() forKey:@"pageProxyID"];
+    [coder encodeInt64:_pageProxyID->toUInt64() forKey:@"pageProxyID"];
     [coder encodeInt64:_webPageID forKey:@"webPageID"];
 }
 
@@ -84,11 +84,11 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[WKBrowsingContextHandle allocWithZone:zone] _initWithPageProxyID:_pageProxyID andWebPageID:ObjectIdentifier<WebCore::PageIdentifierType>(_webPageID)];
+    return [[WKBrowsingContextHandle allocWithZone:zone] _initWithPageProxyID:*_pageProxyID andWebPageID:ObjectIdentifier<WebCore::PageIdentifierType>(_webPageID)];
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p; pageProxyID = %llu; webPageID = %llu>", NSStringFromClass(self.class), self, _pageProxyID.toUInt64(), _webPageID];
+    return [NSString stringWithFormat:@"<%@: %p; pageProxyID = %llu; webPageID = %llu>", NSStringFromClass(self.class), self, _pageProxyID->toUInt64(), _webPageID];
 }
 @end

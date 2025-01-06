@@ -9,4 +9,7 @@ PASS Property line-height value '200%'
 PASS Property line-height value 'calc(200% + 10px)'
 PASS Property line-height value 'calc(10px - 0.5em)'
 PASS Property line-height value 'calc(10px + 0.5em)'
+PASS Property line-height value 'calc(10 + (sign(2cqw - 10px) * 5))'
+PASS Property line-height value 'calc(10% + (sign(2cqw - 10px) * 5%))'
+PASS Property line-height value 'calc(10px + (sign(2cqw - 10px) * 5px))'
 

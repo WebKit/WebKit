@@ -697,10 +697,10 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
     JSLockHolder locker(globalObject);
     String str = string->string();
     if (str.is8Bit()) {
-        LiteralParser parser(globalObject, str.span8(), StrictJSON);
+        LiteralParser<LChar, JSONReviverMode::Disabled> parser(globalObject, str.span8(), StrictJSON);
         return toRef(globalObject, parser.tryLiteralParse());
     }
-    LiteralParser parser(globalObject, str.span16(), StrictJSON);
+    LiteralParser<UChar, JSONReviverMode::Disabled> parser(globalObject, str.span16(), StrictJSON);
     return toRef(globalObject, parser.tryLiteralParse());
 }
 

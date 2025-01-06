@@ -13,8 +13,10 @@
 #include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkOnce.h"
 #include "src/base/SkVx.h"
+#include "src/core/SkPathPriv.h"
 
 #include <cstring>
+#include <utility>
 
 #ifdef SK_BUILD_FOR_ANDROID_FRAMEWORK
     static constexpr int kPathRefGenIDBitCnt = 30; // leave room for the fill type (skbug.com/1762)
@@ -208,8 +210,7 @@ void SkPathRef::CreateTransformedCopy(sk_sp<SkPathRef>* dst,
     const PathType newType =
             (rectStaysRect && src.fType != PathType::kArc) ? src.fType : PathType::kGeneral;
     (*dst)->fType = newType;
-    if (newType == PathType::kOval || newType == PathType::kOpenOval ||
-        newType == PathType::kRRect) {
+    if (newType == PathType::kOval || newType == PathType::kRRect) {
         unsigned start = src.fRRectOrOvalStartIdx;
         bool isCCW = SkToBool(src.fRRectOrOvalIsCCW);
         transform_dir_and_start(matrix, newType == PathType::kRRect, &isCCW, &start);
@@ -426,11 +427,7 @@ SkPoint* SkPathRef::growForVerb(int /* SkPath::Verb*/ verb, SkScalar weight) {
 
     fSegmentMask |= mask;
     fBoundsIsDirty = true;  // this also invalidates fIsFinite
-    if (verb == SkPath::kClose_Verb && fType == PathType::kOpenOval) {
-        fType = PathType::kOval;
-    } else {
-        fType = PathType::kGeneral;
-    }
+    fType = PathType::kGeneral;
 
     fVerbs.push_back(verb);
     if (SkPath::kConic_Verb == verb) {
@@ -625,7 +622,6 @@ bool SkPathRef::isValid() const {
         case PathType::kGeneral:
             break;
         case PathType::kOval:
-        case PathType::kOpenOval:
             if (fRRectOrOvalStartIdx >= 4) {
                 return false;
             }
@@ -684,7 +680,7 @@ void SkPathRef::reset() {
 }
 
 bool SkPathRef::dataMatchesVerbs() const {
-    const auto info = sk_path_analyze_verbs(fVerbs.begin(), fVerbs.size());
+    const auto info = SkPathPriv::AnalyzeVerbs(fVerbs.begin(), fVerbs.size());
     return info.valid                          &&
            info.segmentMask == fSegmentMask    &&
            info.points      == fPoints.size()  &&

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,6 +75,7 @@ enum class WebExtensionEventListenerType : uint8_t {
     TabsOnRemoved,
     TabsOnReplaced,
     TabsOnUpdated,
+    TestOnMessage,
     WebNavigationOnBeforeNavigate,
     WebNavigationOnCommitted,
     WebNavigationOnCompleted,
@@ -179,6 +180,8 @@ inline String toAPIString(WebExtensionEventListenerType eventType)
         return "onReplaced"_s;
     case WebExtensionEventListenerType::TabsOnUpdated:
         return "onUpdated"_s;
+    case WebExtensionEventListenerType::TestOnMessage:
+        return "onMessage"_s;
     case WebExtensionEventListenerType::WebNavigationOnBeforeNavigate:
         return "onBeforeNavigate"_s;
     case WebExtensionEventListenerType::WebNavigationOnCommitted:

@@ -29,12 +29,13 @@
 #if HAVE(APP_SSO)
 
 #import "APINavigationAction.h"
+#import "WKWebViewConfigurationInternal.h"
+#import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
-#import "WKWebViewInternal.h"
-#import "WebPageProxy.h"
 #import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/ResourceResponse.h>
 #import <wtf/BlockPtr.h>
@@ -97,13 +98,14 @@
 
 namespace WebKit {
 
-Ref<SOAuthorizationSession> PopUpSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
+Ref<SOAuthorizationSession> PopUpSOAuthorizationSession::create(Ref<API::PageConfiguration>&& configuration, RetainPtr<WKSOAuthorizationDelegate> delegate, WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
 {
-    return adoptRef(*new PopUpSOAuthorizationSession(delegate, page, WTFMove(navigationAction), WTFMove(newPageCallback), WTFMove(uiClientCallback)));
+    return adoptRef(*new PopUpSOAuthorizationSession(WTFMove(configuration), delegate, page, WTFMove(navigationAction), WTFMove(newPageCallback), WTFMove(uiClientCallback)));
 }
 
-PopUpSOAuthorizationSession::PopUpSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
+PopUpSOAuthorizationSession::PopUpSOAuthorizationSession(Ref<API::PageConfiguration>&& configuration, RetainPtr<WKSOAuthorizationDelegate> delegate, WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
     : SOAuthorizationSession(delegate, WTFMove(navigationAction), page, InitiatingAction::PopUp)
+    , m_configuration(WTFMove(configuration))
     , m_newPageCallback(WTFMove(newPageCallback))
     , m_uiClientCallback(WTFMove(uiClientCallback))
 {
@@ -182,11 +184,7 @@ void PopUpSOAuthorizationSession::initSecretWebView()
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("initSecretWebView");
     ASSERT(page());
-    auto initiatorWebView = page()->cocoaView();
-    if (!initiatorWebView)
-        return;
-    auto configuration = adoptNS([[initiatorWebView configuration] copy]);
-    [configuration _setRelatedWebView:initiatorWebView.get()];
+    RetainPtr configuration = wrapper(m_configuration);
     auto secretViewPreferences = adoptNS([[configuration preferences] copy]);
     [secretViewPreferences _setExtensibleSSOEnabled:NO];
     [configuration setPreferences:secretViewPreferences.get()];

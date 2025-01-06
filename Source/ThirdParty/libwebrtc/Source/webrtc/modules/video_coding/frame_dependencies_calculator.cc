@@ -41,7 +41,7 @@ absl::InlinedVector<int64_t, 5> FrameDependenciesCalculator::FromBuffersUsage(
       continue;
     }
     const BufferUsage& buffer = buffers_[buffer_usage.id];
-    if (buffer.frame_id == absl::nullopt) {
+    if (buffer.frame_id == std::nullopt) {
       RTC_LOG(LS_ERROR) << "Odd configuration: frame " << frame_id
                         << " references buffer #" << buffer_usage.id
                         << " that was never updated.";

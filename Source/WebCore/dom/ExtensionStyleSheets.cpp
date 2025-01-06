@@ -44,8 +44,11 @@
 #include "UserContentController.h"
 #include "UserContentURLPattern.h"
 #include "UserStyleSheet.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ExtensionStyleSheets);
 
 #if ENABLE(CONTENT_EXTENSIONS)
 using namespace ContentExtensions;
@@ -80,13 +83,13 @@ CSSStyleSheet* ExtensionStyleSheets::pageUserSheet()
     if (m_pageUserSheet)
         return m_pageUserSheet.get();
     
-    Page* owningPage = m_document->page();
+    RefPtr owningPage = m_document->page();
     if (!owningPage)
-        return 0;
+        return nullptr;
     
     String userSheetText = owningPage->userStyleSheet();
     if (userSheetText.isEmpty())
-        return 0;
+        return nullptr;
     
     m_pageUserSheet = createExtensionsStyleSheet(protectedDocument().get(), m_document->settings().userStyleSheetLocation(), userSheetText, UserStyleLevel::User);
 
@@ -148,7 +151,7 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
     for (const auto& userStyleSheet : m_pageSpecificStyleSheets)
         addStyleSheet(userStyleSheet);
 
-    owningPage->userContentProvider().forEachUserStyleSheet([&](const UserStyleSheet& userStyleSheet) {
+    owningPage->protectedUserContentProvider()->forEachUserStyleSheet([&](const UserStyleSheet& userStyleSheet) {
         if (userStyleSheet.pageID())
             return;
 

@@ -26,24 +26,30 @@
 #pragma once
 
 #include "PlatformAudioData.h"
+#include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/IteratorRange.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 struct AudioBuffer;
 struct AudioBufferList;
-typedef struct OpaqueCMBlockBuffer *CMBlockBufferRef;
-typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+typedef struct OpaqueCMBlockBuffer* CMBlockBufferRef;
+typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
 
 namespace WebCore {
 
 class CAAudioStreamDescription;
 
 class WebAudioBufferList final : public PlatformAudioData {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebAudioBufferList, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&);
     WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&, size_t sampleCount);
     WebAudioBufferList(const CAAudioStreamDescription&, CMSampleBufferRef);
+    WEBCORE_EXPORT virtual ~WebAudioBufferList();
+
+    static std::optional<std::pair<UniqueRef<WebAudioBufferList>, RetainPtr<CMBlockBufferRef>>> createWebAudioBufferListWithBlockBuffer(const CAAudioStreamDescription&, size_t sampleCount);
 
     void reset();
     WEBCORE_EXPORT void setSampleCount(size_t);
@@ -54,6 +60,18 @@ public:
     uint32_t bufferCount() const;
     uint32_t channelCount() const { return m_channelCount; }
     AudioBuffer* buffer(uint32_t index) const;
+
+    template <typename T = uint8_t>
+    std::span<T> bufferAsSpan(uint32_t index) const
+    {
+        ASSERT(index < m_list->mNumberBuffers);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        if (index < m_list->mNumberBuffers)
+            return unsafeMakeSpan(static_cast<T*>(m_list->mBuffers[index].mData), m_list->mBuffers[index].mDataByteSize / sizeof(T));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        return { };
+    }
+
     IteratorRange<AudioBuffer*> buffers() const;
 
     WEBCORE_EXPORT static bool isSupportedDescription(const CAAudioStreamDescription&, size_t sampleCount);
@@ -62,6 +80,8 @@ public:
 
 private:
     Kind kind() const { return Kind::WebAudioBufferList; }
+    void initializeList(std::span<uint8_t>, size_t);
+    RetainPtr<CMBlockBufferRef> setSampleCountWithBlockBuffer(size_t);
 
     size_t m_listBufferSize { 0 };
     uint32_t m_bytesPerFrame { 0 };

@@ -1,0 +1,78 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+
+        if (window.internals)
+            internals.setUsesOverlayScrollbars(true);
+
+        async function doTest()
+        {
+            description('Test scrollbar-width on overflow in iframe');
+            if (!window.internals) {
+                finishJSTest();
+                return;
+            }
+            
+            const iframe = document.getElementsByTagName('iframe')[0];
+            const iframeWindow = iframe.contentWindow;
+
+            const scroller = iframe.contentDocument.querySelector('.scroller');
+
+            iframeWindow.internals.setUsesOverlayScrollbars(true);
+
+            debug('Overflow in iframe should have scrollbar-width:none');
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.verticalScrollbarState(scroller);
+                let scrollbarWidth = state.indexOf('none') != -1;
+                if (scrollbarWidth)
+                    testPassed('Scrollbar state: ' + state);
+                return scrollbarWidth;
+            });
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+
+    <iframe srcdoc="
+        <style>
+        body {
+            scrollbar-width: thin;
+            height: 1000px;
+        }
+        .scroller {
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+            border: 1px solid black;
+            overflow: auto;
+            scrollbar-width: none;
+        }
+        .contents {
+            width: 100%;
+            height: 200%;
+        }
+        </style>
+        <div class='scroller'>
+            <div class='contents'></div>
+        </div>
+    "></iframe>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

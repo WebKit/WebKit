@@ -19,28 +19,45 @@
 
 #pragma once
 
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
+
+#if OS(UNIX)
+#include <wtf/unix/UnixFileDescriptor.h>
+#endif
 
 typedef struct __GLsync* GLsync;
 
 namespace WebCore {
 
 class GLFence {
+    WTF_MAKE_TZONE_ALLOCATED(GLFence);
     WTF_MAKE_NONCOPYABLE(GLFence);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     static bool isSupported();
-    enum class ShouldFlush : bool { No, Yes };
-    WEBCORE_EXPORT static std::unique_ptr<GLFence> create(ShouldFlush = ShouldFlush::Yes);
-    explicit GLFence(GLsync);
-    ~GLFence();
+    WEBCORE_EXPORT static std::unique_ptr<GLFence> create();
+#if OS(UNIX)
+    WEBCORE_EXPORT static std::unique_ptr<GLFence> createExportable();
+    WEBCORE_EXPORT static std::unique_ptr<GLFence> importFD(WTF::UnixFileDescriptor&&);
+#endif
+    virtual ~GLFence() = default;
 
-    enum class FlushCommands : bool { No, Yes };
-    unsigned wait(FlushCommands);
+    virtual void clientWait() = 0;
+    virtual void serverWait() = 0;
+#if OS(UNIX)
+    virtual WTF::UnixFileDescriptor exportFD() { return { }; }
+#endif
 
-private:
-    GLsync m_sync;
+protected:
+    GLFence() = default;
+
+    struct Capabilities {
+        bool eglSupported { false };
+        bool eglServerWaitSupported { false };
+        bool eglExportableSupported { false };
+        bool glSupported { false };
+    };
+    static const Capabilities& capabilities();
 };
 
 } // namespace WebCore

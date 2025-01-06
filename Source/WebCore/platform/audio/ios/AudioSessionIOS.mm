@@ -37,6 +37,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/LoggerHelper.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -99,6 +100,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSessionIOS);
+
 static WeakHashSet<AudioSessionIOS::CategoryChangedObserver>& audioSessionCategoryChangedObservers()
 {
     static NeverDestroyed<WeakHashSet<AudioSessionIOS::CategoryChangedObserver>> observers;
@@ -109,6 +112,11 @@ void AudioSessionIOS::addAudioSessionCategoryChangedObserver(const CategoryChang
 {
     audioSessionCategoryChangedObservers().add(observer);
     observer(AudioSession::sharedSession(), AudioSession::sharedSession().category());
+}
+
+Ref<AudioSessionIOS> AudioSessionIOS::create()
+{
+    return adoptRef(*new AudioSessionIOS);
 }
 
 AudioSessionIOS::AudioSessionIOS()
@@ -155,10 +163,6 @@ void AudioSessionIOS::setPresentingProcesses(Vector<audit_token_t>&& auditTokens
     ALWAYS_LOG(LOGIDENTIFIER);
 
     AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
-    if (![session respondsToSelector:@selector(setAuditTokensForProcessAssertion:error:)])
-        return;
-
-    ALWAYS_LOG(LOGIDENTIFIER);
     auto nsAuditTokens = adoptNS([[NSMutableArray alloc] init]);
     for (auto& token : auditTokens) {
         auto nsToken = adoptNS([[NSData alloc] initWithBytes:token.val length:sizeof(token.val)]);
@@ -208,7 +212,11 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, Mode newMode, RouteS
         break;
     case CategoryType::PlayAndRecord:
         categoryString = AVAudioSessionCategoryPlayAndRecord;
-        options |= AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionAllowBluetoothA2DP | AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowAirPlay;
+        options |= AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionAllowBluetoothA2DP | AVAudioSessionCategoryOptionAllowAirPlay;
+#if ENABLE(MEDIA_STREAM)
+        if (!AVAudioSessionCaptureDeviceManager::singleton().isReceiverPreferredSpeaker())
+#endif
+            options |= AVAudioSessionCategoryOptionDefaultToSpeaker;
         break;
     case CategoryType::AudioProcessing:
         categoryString = AVAudioSessionCategoryAudioProcessing;
@@ -223,6 +231,10 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, Mode newMode, RouteS
         case Mode::MoviePlayback:
             return AVAudioSessionModeMoviePlayback;
         case Mode::VideoChat:
+#if ENABLE(MEDIA_STREAM)
+            if (AVAudioSessionCaptureDeviceManager::singleton().isReceiverPreferredSpeaker())
+                return AVAudioSessionModeDefault;
+#endif
             return AVAudioSessionModeVideoChat;
         case Mode::Default:
             break;
@@ -232,12 +244,12 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, Mode newMode, RouteS
 
     bool needDeviceUpdate = false;
 #if ENABLE(MEDIA_STREAM)
-    auto preferredDeviceUID = AVAudioSessionCaptureDeviceManager::singleton().preferredAudioSessionDeviceUID();
-    if ((newCategory == CategoryType::PlayAndRecord || newCategory == CategoryType::RecordAudio) && !preferredDeviceUID.isEmpty()) {
-        if (m_lastSetPreferredAudioDeviceUID != preferredDeviceUID)
+    auto preferredMicrophoneID = AVAudioSessionCaptureDeviceManager::singleton().preferredMicrophoneID();
+    if ((newCategory == CategoryType::PlayAndRecord || newCategory == CategoryType::RecordAudio) && !preferredMicrophoneID.isEmpty()) {
+        if (m_lastSetPreferredMicrophoneID != preferredMicrophoneID)
             needDeviceUpdate = true;
     } else
-        m_lastSetPreferredAudioDeviceUID = emptyString();
+        m_lastSetPreferredMicrophoneID = emptyString();
 #endif
 
     AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
@@ -261,9 +273,9 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, Mode newMode, RouteS
 
 #if ENABLE(MEDIA_STREAM)
     if (needDeviceUpdate) {
-        AVAudioSessionCaptureDeviceManager::singleton().configurePreferredAudioCaptureDevice();
-        m_lastSetPreferredAudioDeviceUID = AVAudioSessionCaptureDeviceManager::singleton().preferredAudioSessionDeviceUID();
-        ALWAYS_LOG(identifier, "prefered device = ", m_lastSetPreferredAudioDeviceUID);
+        AVAudioSessionCaptureDeviceManager::singleton().configurePreferredMicrophone();
+        m_lastSetPreferredMicrophoneID = AVAudioSessionCaptureDeviceManager::singleton().preferredMicrophoneID();
+        ALWAYS_LOG(identifier, "prefered microphone = ", m_lastSetPreferredMicrophoneID);
     }
 #endif
     for (auto& observer : audioSessionCategoryChangedObservers())
@@ -348,7 +360,10 @@ size_t AudioSessionIOS::maximumNumberOfOutputChannels() const
 
 size_t AudioSessionIOS::preferredBufferSize() const
 {
-    return [[PAL::getAVAudioSessionClass() sharedInstance] preferredIOBufferDuration] * sampleRate();
+// FIXME: rdar://138773933
+IGNORE_WARNINGS_BEGIN("objc-multiple-method-names")
+     return [[PAL::getAVAudioSessionClass() sharedInstance] preferredIOBufferDuration] * sampleRate();
+IGNORE_WARNINGS_END
 }
 
 void AudioSessionIOS::setPreferredBufferSize(size_t bufferSize)
@@ -385,6 +400,8 @@ void AudioSessionIOS::updateSpatialExperience()
         case AudioSession::SoundStageSize::Large:
             return AVAudioSessionSoundStageSizeLarge;
         };
+        ASSERT_NOT_REACHED();
+        return AVAudioSessionSoundStageSizeAutomatic;
     }();
     NSError *error = nil;
     AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];

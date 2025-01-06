@@ -39,4 +39,8 @@ SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, CoreGraphics, PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreGraphics, CGContextSetOwnerIdentity, void, (CGContextRef context, task_id_token_t owner), (context, owner), PAL_EXPORT)
 #endif
 
+#if USE(CG) && PLATFORM(MAC)
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, CoreGraphics, CGWindowListCreateImage, CGImageRef, (CGRect screenBounds, CGWindowListOption listOption, CGWindowID windowID, CGWindowImageOption imageOption), (screenBounds, listOption, windowID, imageOption), PAL_EXPORT)
+#endif
+
 #endif

@@ -26,17 +26,16 @@
 #include "config.h"
 #include "CSSMathMax.h"
 
-#include "CSSCalcOperationNode.h"
 #include "CSSNumericArray.h"
 #include "ExceptionOr.h"
 #include <wtf/Algorithms.h>
 #include <wtf/FixedVector.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathMax);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSMathMax);
 
 ExceptionOr<Ref<CSSMathMax>> CSSMathMax::create(FixedVector<CSSNumberish>&& numberishes)
 {
@@ -99,17 +98,20 @@ auto CSSMathMax::toSumValue() const -> std::optional<SumValue>
     return currentMax;
 }
 
-RefPtr<CSSCalcExpressionNode> CSSMathMax::toCalcExpressionNode() const
+std::optional<CSSCalc::Child> CSSMathMax::toCalcTreeNode() const
 {
-    Vector<Ref<CSSCalcExpressionNode>> values;
-    values.reserveInitialCapacity(m_values->length());
-    for (auto& value : m_values->array()) {
-        if (auto valueNode = value->toCalcExpressionNode())
-            values.append(valueNode.releaseNonNull());
-    }
-    if (values.isEmpty())
-        return nullptr;
-    return CSSCalcOperationNode::createMinOrMaxOrClamp(CalcOperator::Max, WTFMove(values), CalculationCategory::Length);
+    CSSCalc::Children children = WTF::compactMap(m_values->array(), [](auto& child) {
+        return child->toCalcTreeNode();
+    });
+    if (children.isEmpty())
+        return std::nullopt;
+
+    auto max = CSSCalc::Max { .children = WTFMove(children) };
+    auto type = CSSCalc::toType(max);
+    if (!type)
+        return std::nullopt;
+
+    return CSSCalc::makeChild(WTFMove(max), *type);
 }
 
 } // namespace WebCore

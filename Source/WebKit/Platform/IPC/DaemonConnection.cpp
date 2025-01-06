@@ -53,7 +53,7 @@ void ConnectionToMachService<Traits>::sendWithReply(typename Traits::MessageType
 
 template class ConnectionToMachService<PCM::ConnectionTraits>;
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 template class ConnectionToMachService<WebPushD::ConnectionTraits>;
 #endif
 

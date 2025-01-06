@@ -32,7 +32,8 @@
 namespace WebCore {
 
 class MathMLUnknownElement final : public MathMLElement {
-    WTF_MAKE_ISO_ALLOCATED(MathMLUnknownElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MathMLUnknownElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLUnknownElement);
 public:
     static Ref<MathMLUnknownElement> create(const QualifiedName& tagName, Document& document)
     {

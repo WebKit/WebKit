@@ -28,6 +28,7 @@
 #if ENABLE(WEBXR)
 
 #include "HTMLCanvasElement.h"
+#include "WebXRLayer.h"
 #include "WebXRWebGLLayer.h"
 #include "XRSessionMode.h"
 
@@ -36,7 +37,7 @@ namespace WebCore {
 struct XRRenderStateInit;
 
 class WebXRRenderState : public RefCounted<WebXRRenderState> {
-    WTF_MAKE_ISO_ALLOCATED(WebXRRenderState);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRRenderState);
 public:
     static Ref<WebXRRenderState> create(XRSessionMode);
     ~WebXRRenderState();
@@ -55,6 +56,11 @@ public:
     RefPtr<WebXRWebGLLayer> baseLayer() const { return m_baseLayer; }
     void setBaseLayer(WebXRWebGLLayer* baseLayer) { m_baseLayer = baseLayer; }
 
+#if ENABLE(WEBXR_LAYERS)
+    const Vector<Ref<WebXRLayer>>& layers() const { return m_layers; }
+    void setLayers(const Vector<Ref<WebXRLayer>>&);
+#endif
+
     HTMLCanvasElement* outputCanvas() const { return m_outputCanvas.get(); }
     void setOutputCanvas(HTMLCanvasElement* canvas) { m_outputCanvas = canvas; }
 
@@ -72,6 +78,9 @@ private:
     } m_depth;
     std::optional<double> m_inlineVerticalFieldOfView; // in radians
     RefPtr<WebXRWebGLLayer> m_baseLayer;
+#if ENABLE(WEBXR_LAYERS)
+    Vector<Ref<WebXRLayer>> m_layers;
+#endif
     WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_outputCanvas;
     bool m_compositionEnabled { true };
 };

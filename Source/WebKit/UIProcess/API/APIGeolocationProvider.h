@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 class WebGeolocationManagerProxy;
@@ -34,7 +35,7 @@ class WebGeolocationManagerProxy;
 namespace API {
 
 class GeolocationProvider {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GeolocationProvider);
 public:
     virtual ~GeolocationProvider() { }
 

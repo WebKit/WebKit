@@ -55,6 +55,18 @@ bool ImageAdapter::getHBITMAP(HBITMAP bmp)
     return getHBITMAPOfSize(bmp, 0);
 }
 
+#if USE(SKIA)
+bool ImageAdapter::getHBITMAPOfSize(HBITMAP, const IntSize*)
+{
+    return false;
+}
+
+RefPtr<NativeImage> ImageAdapter::nativeImageOfHBITMAP(HBITMAP)
+{
+    return nullptr;
+}
+#endif
+
 } // namespace WebCore
 
 #endif // PLATFORM(WIN)

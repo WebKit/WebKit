@@ -10,16 +10,16 @@
 #include "modules/audio_device/test_audio_device_impl.h"
 
 #include <memory>
+#include <optional>
 #include <utility>
 
-#include "absl/types/optional.h"
+#include "api/audio/audio_device.h"
+#include "api/audio/audio_device_defines.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/audio_device/audio_device_buffer.h"
 #include "modules/audio_device/audio_device_generic.h"
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_device/include/audio_device_defines.h"
 #include "modules/audio_device/include/test_audio_device.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -52,7 +52,7 @@ class TestAudioTransport : public AudioTransport {
       uint32_t current_mic_level,
       bool key_pressed,
       uint32_t& new_mic_level,
-      absl::optional<int64_t> estimated_capture_time_ns) override {
+      std::optional<int64_t> estimated_capture_time_ns) override {
     new_mic_level = 1;
 
     if (mode_ != Mode::kRecording) {

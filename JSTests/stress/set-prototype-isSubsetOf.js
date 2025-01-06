@@ -1,5 +1,3 @@
-//@ runDefault("--useSetMethods=1")
-
 function assert(a, e, m) {
     if (a !== e)
         throw new Error(m);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +50,9 @@ enum {
 - (id)initWithResponse:(NSURLResponse *)response;
 #if TARGET_OS_IPHONE
 - (void)unblockWithCompletion:(void (^)(BOOL unblocked, NSError *error))completion;
+#endif
+#if HAVE(WEBFILTEREVALUATOR_AUDIT_TOKEN)
+@property (nonatomic, assign) audit_token_t browserAuditToken;
 #endif
 @end
 

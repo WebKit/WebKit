@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ public:
         TimedOut
     };
 
-    static VMInspector& instance();
+    static VMInspector& singleton();
 
     void add(VM*);
     void remove(VM*);
@@ -56,7 +56,7 @@ public:
 
     Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
-    template <typename Functor> void iterate(const Functor& functor) WTF_REQUIRES_LOCK(m_lock)
+    void iterate(const Invocable<IterationStatus(VM&)> auto& functor) WTF_REQUIRES_LOCK(m_lock)
     {
         for (VM* vm = m_vmList.head(); vm; vm = vm->next()) {
             IterationStatus status = functor(*vm);

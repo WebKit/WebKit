@@ -1,0 +1,28 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script>
+globalThis.testRunner?.waitUntilDone();
+const log = console.debug;
+
+onload = async () => {
+let adapter0 = await navigator.gpu.requestAdapter();
+let adapter1 = await navigator.gpu.requestAdapter({});
+let device0 = await adapter0.requestDevice();
+var samplerArray = [];
+
+for (let i=0; i < 10000; ++i) {
+    let sampler0 = device0.createSampler({
+      label: '\u0bcf\u01be\u5a8d\u{1f637}\ub1fa\u11b4\u0e95\udd93\u{1f95d}\ubc5f',
+      addressModeU: 'clamp-to-edge',
+      addressModeV: 'mirror-repeat',
+      addressModeW: 'clamp-to-edge',
+      minFilter: 'nearest',
+      lodMaxClamp: 89.84,
+    });
+    samplerArray.push(sampler0);
+}
+log('end');
+    globalThis.testRunner?.notifyDone();
+};
+</script>

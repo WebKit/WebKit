@@ -1,5 +1,3 @@
-//@ requireOptions("--useIntlDurationFormat=1")
-
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error(`expected ${expected} but got ${actual}`);
@@ -8,15 +6,6 @@ function shouldBe(actual, expected) {
 function shouldBeOneOf(actual, expectedArray) {
     if (!expectedArray.some((value) => value === actual))
         throw new Error('bad value: ' + actual + ' expected values: ' + expectedArray);
-}
-
-const icuVersion = $vm.icuVersion();
-function shouldBeForICUVersion(minimumVersion, actual, expected) {
-    if (icuVersion < minimumVersion)
-        return;
-
-    if (actual !== expected)
-        throw new Error(`expected ${expected} but got ${actual}`);
 }
 
 function shouldNotThrow(func) {

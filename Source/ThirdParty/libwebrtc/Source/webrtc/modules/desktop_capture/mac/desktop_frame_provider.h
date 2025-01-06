@@ -46,6 +46,8 @@ class DesktopFrameProvider {
   // Expected to be called before stopping the CGDisplayStreamRef streams.
   void Release();
 
+  bool allow_iosurface() const { return allow_iosurface_; }
+
  private:
   SequenceChecker thread_checker_;
   const bool allow_iosurface_;

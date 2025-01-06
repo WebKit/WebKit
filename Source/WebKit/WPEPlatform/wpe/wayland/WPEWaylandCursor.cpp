@@ -28,8 +28,11 @@
 
 #include "WPEDisplayWaylandPrivate.h"
 #include "WPEWaylandCursorTheme.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WPE {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WaylandCursor);
 
 WaylandCursor::WaylandCursor(WPEDisplayWayland* display)
     : m_display(display)

@@ -10,8 +10,17 @@
 
 #include "call/rtx_receive_stream.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <map>
+
+#include "api/array_view.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_rotation.h"
 #include "call/test/mock_rtp_packet_sink_interface.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "test/gmock.h"

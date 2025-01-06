@@ -30,6 +30,14 @@ namespace WebCore {
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+std::unique_ptr<LogClient>& logClient()
+{
+    static NeverDestroyed<std::unique_ptr<LogClient>> client;
+    return client;
+}
+#endif
+
 #define DEFINE_WEBCORE_LOG_CHANNEL(name) DEFINE_LOG_CHANNEL(name, LOG_CHANNEL_WEBKIT_SUBSYSTEM)
 WEBCORE_LOG_CHANNELS(DEFINE_WEBCORE_LOG_CHANNEL)
 

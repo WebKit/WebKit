@@ -40,7 +40,7 @@
 namespace TestWebKitAPI {
 
 namespace {
-static constexpr Seconds defaultSendTimeout = 1_s;
+static constexpr Seconds defaultTimeout = 1_s;
 
 enum TestObjectIdentifierTag { };
 using TestObjectIdentifier = ObjectIdentifier<TestObjectIdentifierTag>;
@@ -54,14 +54,14 @@ struct MockStreamTestMessage1 {
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
-    static constexpr IPC::MessageName name()  { return IPC::MessageName::RemoteRenderingBackend_ReleaseAllDrawingResources; }
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCStreamTester_EmptyMessage; }
     std::tuple<> arguments() { return { }; }
 };
 
 struct MockStreamTestMessage2 {
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = false;
-    static constexpr IPC::MessageName name()  { return IPC::MessageName::RemoteRenderingBackend_ReleaseAllDrawingResources; }
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCStreamTester_EmptyMessage; }
     explicit MockStreamTestMessage2(IPC::Semaphore&& s)
         : semaphore(WTFMove(s))
     {
@@ -74,10 +74,9 @@ struct MockStreamTestMessageWithAsyncReply1 {
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
-    static constexpr IPC::MessageName name()  { return IPC::MessageName::RemoteRenderingBackend_ReleaseRenderingResource; }
-    // Just using WebPage_GetBytecodeProfileReply as something that is async message name.
-    // If WebPage_GetBytecodeProfileReply is removed, just use another one.
-    static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_GetBytecodeProfileReply; }
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCStreamTester_AsyncPing; }
+    // Just using IPCStreamTester_AsyncPingReply as something that is async message name.
+    static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::IPCStreamTester_AsyncPingReply; }
     std::tuple<uint64_t> arguments() { return { contents }; }
     using ReplyArguments = std::tuple<uint64_t>;
     MockStreamTestMessageWithAsyncReply1(uint64_t contents)
@@ -87,6 +86,70 @@ struct MockStreamTestMessageWithAsyncReply1 {
     uint64_t contents;
 };
 
+class MockSyncMessage {
+public:
+    using Arguments = std::tuple<uint32_t>;
+    static IPC::MessageName name() { return IPC::MessageName::IPCStreamTester_SyncMessage; }
+    static constexpr bool isSync = true;
+    static constexpr bool isStreamEncodable = true;
+    static constexpr bool isReplyStreamEncodable = true;
+    using ReplyArguments = std::tuple<uint32_t>;
+    using Reply = CompletionHandler<void(uint32_t)>;
+    explicit MockSyncMessage(uint32_t value)
+        : m_arguments(value)
+    {
+    }
+    auto&& arguments()
+    {
+        return WTFMove(m_arguments);
+    }
+private:
+    std::tuple<uint32_t> m_arguments;
+};
+
+#if ENABLE(IPC_TESTING_API)
+class MockSyncMessageNotStreamEncodableBoth {
+public:
+    using Arguments = std::tuple<uint32_t>;
+    static IPC::MessageName name() { return IPC::MessageName::IPCStreamTester_SyncMessageNotStreamEncodableBoth; }
+    static constexpr bool isSync = true;
+    static constexpr bool isStreamEncodable = false;
+    static constexpr bool isReplyStreamEncodable = false;
+    using ReplyArguments = std::tuple<uint32_t>;
+    using Reply = CompletionHandler<void(uint32_t)>;
+    explicit MockSyncMessageNotStreamEncodableBoth(uint32_t value)
+        : m_arguments(value)
+    {
+    }
+    auto&& arguments()
+    {
+        return WTFMove(m_arguments);
+    }
+private:
+    std::tuple<uint32_t> m_arguments;
+};
+#endif
+
+class MockSyncMessageNotStreamEncodableReply {
+public:
+    using Arguments = std::tuple<uint32_t>;
+    static IPC::MessageName name() { return IPC::MessageName::IPCStreamTester_SyncMessageNotStreamEncodableReply; }
+    static constexpr bool isSync = true;
+    static constexpr bool isStreamEncodable = true;
+    static constexpr bool isReplyStreamEncodable = false;
+    using ReplyArguments = std::tuple<uint32_t>;
+    using Reply = CompletionHandler<void(uint32_t)>;
+    explicit MockSyncMessageNotStreamEncodableReply(uint32_t value)
+        : m_arguments(value)
+    {
+    }
+    auto&& arguments()
+    {
+        return WTFMove(m_arguments);
+    }
+private:
+    std::tuple<uint32_t> m_arguments;
+};
 
 class WaitForMessageMixin {
 public:
@@ -117,8 +180,6 @@ public:
     void addMessage(IPC::Decoder& decoder)
     {
         ASSERT(!m_closed);
-        if (m_asyncMessageHandler && m_asyncMessageHandler(decoder))
-            return;
         Locker locker { m_lock };
         m_messages.insert(0, { decoder.messageName(), decoder.destinationID() });
         m_continueWaitForMessage = true;
@@ -129,22 +190,25 @@ public:
         m_closed = true;
     }
 
-    // Handler returns false if the message should be just recorded.
-    void setAsyncMessageHandler(Function<bool(IPC::Decoder&)>&& handler)
-    {
-        m_asyncMessageHandler = WTFMove(handler);
-    }
-
 protected:
     Lock m_lock;
     Vector<MessageInfo> m_messages WTF_GUARDED_BY_LOCK(m_lock);
     std::atomic<bool> m_continueWaitForMessage { false };
     std::atomic<bool> m_closed { false };
-    Function<bool(IPC::Decoder&)> m_asyncMessageHandler;
 };
 
-class MockMessageReceiver : public IPC::Connection::Client, public WaitForMessageMixin {
+class MockMessageReceiver : public IPC::Connection::Client, public WaitForMessageMixin, public RefCounted<MockMessageReceiver> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MockMessageReceiver);
 public:
+    static Ref<MockMessageReceiver> create()
+    {
+        return adoptRef(*new MockMessageReceiver);
+    }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     // IPC::Connection::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder) override
     {
@@ -161,16 +225,41 @@ public:
         markClosed();
     }
 
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { ASSERT_NOT_REACHED(); }
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfDecodingFailure) final { ASSERT_NOT_REACHED(); }
+
+private:
+    MockMessageReceiver() = default;
 };
 
 class MockStreamMessageReceiver : public IPC::StreamMessageReceiver, public WaitForMessageMixin {
 public:
     // IPC::StreamMessageReceiver overrides.
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder& decoder) override
+    void didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder) override
     {
+        if (decoder.isSyncMessage()) {
+            if (m_syncMessageHandler && m_syncMessageHandler(connection, decoder))
+                return;
+            return;
+        }
+        if (m_asyncMessageHandler && m_asyncMessageHandler(decoder))
+            return;
         addMessage(decoder);
     }
+
+    // Handler returns false if the message should be just recorded.
+    void setAsyncMessageHandler(Function<bool(IPC::Decoder&)>&& handler)
+    {
+        m_asyncMessageHandler = WTFMove(handler);
+    }
+
+    // Handler returns false if the message should be just recorded.
+    void setSyncMessageHandler(Function<bool(IPC::StreamServerConnection&, IPC::Decoder&)>&& handler)
+    {
+        m_syncMessageHandler = WTFMove(handler);
+    }
+private:
+    Function<bool(IPC::Decoder&)> m_asyncMessageHandler;
+    Function<bool(IPC::StreamServerConnection&, IPC::Decoder&)> m_syncMessageHandler;
 };
 
 }
@@ -224,25 +313,25 @@ public:
 
 TEST_F(StreamConnectionTest, OpenConnections)
 {
-    auto connectionPair = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
+    auto connectionPair = IPC::StreamClientConnection::create(defaultBufferSizeLog2, defaultTimeout);
     ASSERT_TRUE(!!connectionPair);
     auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
     auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle), { }).releaseNonNull();
     auto cleanup = localReferenceBarrier();
-    MockMessageReceiver mockClientReceiver;
+    Ref mockClientReceiver = MockMessageReceiver::create();
     clientConnection->open(mockClientReceiver);
     serverQueue().dispatch([this, serverConnection] {
         assertIsCurrent(serverQueue());
         serverConnection->open(serverQueue());
         serverConnection->invalidate();
     });
-    mockClientReceiver.waitUntilClosed();
+    mockClientReceiver->waitUntilClosed();
     clientConnection->invalidate();
 }
 
 TEST_F(StreamConnectionTest, InvalidateUnopened)
 {
-    auto connectionPair = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
+    auto connectionPair = IPC::StreamClientConnection::create(defaultBufferSizeLog2, defaultTimeout);
     ASSERT_TRUE(!!connectionPair);
     auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
     auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle), { }).releaseNonNull();
@@ -256,6 +345,11 @@ TEST_F(StreamConnectionTest, InvalidateUnopened)
 
 class StreamMessageTest : public ::testing::TestWithParam<std::tuple<unsigned>>, public StreamConnectionTestBase {
 public:
+    StreamMessageTest()
+        : m_mockClientReceiver(MockMessageReceiver::create())
+    {
+    }
+
     unsigned bufferSizeLog2() const
     {
         return std::get<0>(GetParam());
@@ -264,7 +358,7 @@ public:
     void SetUp() override
     {
         setupBase();
-        auto connectionPair = IPC::StreamClientConnection::create(bufferSizeLog2());
+        auto connectionPair = IPC::StreamClientConnection::create(bufferSizeLog2(), defaultTimeout);
         ASSERT(!!connectionPair);
         auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
         auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle), { }).releaseNonNull();
@@ -276,11 +370,13 @@ public:
             assertIsCurrent(serverQueue());
             if (decoder.messageName() != MockStreamTestMessageWithAsyncReply1::name())
                 return false;
-            using AsyncReplyID =IPC::StreamServerConnection::AsyncReplyID;
+            using AsyncReplyID = IPC::StreamServerConnection::AsyncReplyID;
             auto contents = decoder.decode<uint64_t>();
+            ASSERT(contents);
             auto asyncReplyID = decoder.decode<AsyncReplyID>();
+            ASSERT(asyncReplyID);
             ASSERT(decoder.isValid());
-            m_serverConnection->sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(asyncReplyID.value_or(AsyncReplyID { }), contents.value_or(0));
+            m_serverConnection->sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(*asyncReplyID, *contents);
             return true;
         });
         serverQueue().dispatch([this, serverConnection = WTFMove(serverConnection)] () mutable {
@@ -309,7 +405,7 @@ protected:
         return ObjectIdentifier<TestObjectIdentifierTag>(77);
     }
 
-    MockMessageReceiver m_mockClientReceiver;
+    Ref<MockMessageReceiver> m_mockClientReceiver;
     RefPtr<IPC::StreamClientConnection> m_clientConnection;
     RefPtr<IPC::StreamConnectionWorkQueue> m_serverQueue;
     RefPtr<IPC::StreamServerConnection> m_serverConnection WTF_GUARDED_BY_CAPABILITY(serverQueue());
@@ -320,7 +416,7 @@ TEST_P(StreamMessageTest, Send)
 {
     auto cleanup = localReferenceBarrier();
     for (uint64_t i = 0u; i < 55u; ++i) {
-        auto result = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID(), defaultSendTimeout);
+        auto result = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID());
         EXPECT_EQ(result, IPC::Error::NoError);
     }
     serverQueue().dispatch([&] {
@@ -331,7 +427,7 @@ TEST_P(StreamMessageTest, Send)
         }
     });
     for (uint64_t i = 100u; i < 160u; ++i) {
-        auto message = m_mockClientReceiver.waitForMessage();
+        auto message = m_mockClientReceiver->waitForMessage();
         EXPECT_EQ(message.messageName, MockTestMessage1::name());
         EXPECT_EQ(message.destinationID, i);
     }
@@ -361,10 +457,10 @@ TEST_P(StreamMessageTest, SendWithSwitchingDestinationIDs)
     });
 
     for (uint64_t i = 0u; i < 777u; ++i) {
-        auto result = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID(), defaultSendTimeout);
+        auto result = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID());
         EXPECT_EQ(result, IPC::Error::NoError);
         if (i % 77) {
-            result = m_clientConnection->send(MockStreamTestMessage1 { }, other, defaultSendTimeout);
+            result = m_clientConnection->send(MockStreamTestMessage1 { }, other);
             EXPECT_EQ(result, IPC::Error::NoError);
         }
     }
@@ -386,10 +482,10 @@ TEST_P(StreamMessageTest, SendAndInvalidate)
     auto cleanup = localReferenceBarrier();
 
     for (uint64_t i = 0u; i < messageCount; ++i) {
-        auto result = m_clientConnection->send(MockStreamTestMessage2 { IPC::Semaphore { } }, defaultDestinationID(), defaultSendTimeout);
+        auto result = m_clientConnection->send(MockStreamTestMessage2 { IPC::Semaphore { } }, defaultDestinationID());
         EXPECT_EQ(result, IPC::Error::NoError);
     }
-    auto flushResult = m_clientConnection->flushSentMessages(defaultSendTimeout);
+    auto flushResult = m_clientConnection->flushSentMessages();
     EXPECT_EQ(flushResult, IPC::Error::NoError);
     m_clientConnection->invalidate();
 
@@ -408,8 +504,8 @@ TEST_P(StreamMessageTest, SendAsyncReply)
         auto result = m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReply1 { i }, [&, j = i] (uint64_t value) {
             EXPECT_GE(value, 100u) << j;
             replies.add(value);
-        }, defaultDestinationID(), defaultSendTimeout);
-        EXPECT_TRUE(result.isValid());
+        }, defaultDestinationID());
+        EXPECT_TRUE(!!result);
     }
     while (replies.size() < 55u)
         RunLoop::current().cycle();
@@ -440,8 +536,8 @@ TEST_P(StreamMessageTest, SendAsyncReplyCancel)
         auto result = m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReply1 { i }, [&, j = i] (uint64_t value) {
             EXPECT_EQ(value, 0u) << j; // Cancel handler returns 0 for uint64_t.
             replies.add(j);
-        }, defaultDestinationID(), defaultSendTimeout);
-        EXPECT_TRUE(result.isValid());
+        }, defaultDestinationID());
+        EXPECT_TRUE(!!result);
     }
     m_clientConnection->invalidate();
     workQueueWait.signal();
@@ -455,6 +551,86 @@ TEST_P(StreamMessageTest, SendAsyncReplyCancel)
     for (uint64_t i = 100u; i < 155u; ++i)
         EXPECT_TRUE(replies.contains(i));
 }
+
+TEST_P(StreamMessageTest, SendSyncMessage)
+{
+    const uint32_t messageCount = 2004u;
+    auto cleanup = localReferenceBarrier();
+    m_mockServerReceiver->setSyncMessageHandler([](IPC::StreamServerConnection& connection, IPC::Decoder& decoder) {
+        auto value = decoder.decode<uint32_t>();
+        connection.sendSyncReply<MockSyncMessage>(decoder.syncRequestID(), *value);
+        return true;
+    });
+    for (uint32_t i = 0u; i < messageCount; ++i) {
+        auto result = m_clientConnection->sendSync(MockSyncMessage { i }, defaultDestinationID());
+        EXPECT_TRUE(result.succeeded());
+        if (result.succeeded()) {
+            auto [sameValue] = result.reply();
+            EXPECT_EQ(i, sameValue);
+        }
+    }
+    m_clientConnection->invalidate();
+}
+
+TEST_P(StreamMessageTest, SendSyncMessageNotStreamEncodableReply)
+{
+    const uint32_t messageCount = 2004u;
+    auto cleanup = localReferenceBarrier();
+    m_mockServerReceiver->setSyncMessageHandler([](IPC::StreamServerConnection& connection, IPC::Decoder& decoder) {
+        auto value = decoder.decode<uint32_t>();
+        connection.sendSyncReply<MockSyncMessageNotStreamEncodableReply>(decoder.syncRequestID(), *value);
+        return true;
+    });
+    for (uint32_t i = 0u; i < messageCount; ++i) {
+        auto result = m_clientConnection->sendSync(MockSyncMessageNotStreamEncodableReply { i }, defaultDestinationID());
+        EXPECT_TRUE(result.succeeded());
+        if (result.succeeded()) {
+            auto [sameValue] = result.reply();
+            EXPECT_EQ(i, sameValue);
+        }
+    }
+    m_clientConnection->invalidate();
+}
+
+#if ENABLE(IPC_TESTING_API)
+// Tests the case where we send a sync reply cancel message for a decoding failure. This is
+// for the purposes of JS IPC Testing API to detect when a sync message was not handled.
+TEST_P(StreamMessageTest, SyncMessageDecodeFailureCancelled)
+{
+    const uint32_t messageCount = 20u;
+    auto cleanup = localReferenceBarrier();
+    serverQueue().dispatch([&] {
+        assertIsCurrent(serverQueue());
+        m_serverConnection->setIgnoreInvalidMessageForTesting();
+    });
+    m_mockServerReceiver->setSyncMessageHandler([](IPC::StreamServerConnection& connection, IPC::Decoder& decoder) -> bool {
+        auto value = decoder.decode<uint32_t>();
+        ASSERT(value);
+        if (*value % 2) {
+            connection.sendSyncReply<MockSyncMessageNotStreamEncodableBoth>(decoder.syncRequestID(), *value);
+            return true;
+        }
+        // Cause decode error.
+        EXPECT_FALSE(decoder.decode<uint64_t>());
+        return false;
+    });
+
+    for (uint32_t i = 0u; i < messageCount; ++i) {
+        auto result = m_clientConnection->sendSync(MockSyncMessageNotStreamEncodableBoth { i }, defaultDestinationID());
+        if  (i % 2) {
+            EXPECT_TRUE(result.succeeded());
+            if (result.succeeded()) {
+                auto [sameValue] = result.reply();
+                EXPECT_EQ(i, sameValue);
+            }
+        } else {
+            EXPECT_FALSE(result.succeeded());
+            EXPECT_EQ(IPC::Error::SyncMessageCancelled, result.error());
+        }
+    }
+    m_clientConnection->invalidate();
+}
+#endif
 
 INSTANTIATE_TEST_SUITE_P(StreamConnectionSizedBuffer,
     StreamMessageTest,

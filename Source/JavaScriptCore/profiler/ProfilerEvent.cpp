@@ -52,7 +52,7 @@ Ref<JSON::Value> Event::toJSON(Dumper& dumper) const
     result->setDouble(dumper.keys().m_time, m_time.secondsSinceEpoch().value());
     result->setDouble(dumper.keys().m_bytecodesID, m_bytecodes->id());
     if (m_compilation)
-        result->setValue(dumper.keys().m_compilationUID, m_compilation->uid().toJSON(dumper));
+        result->setString(dumper.keys().m_compilationUID, makeString(m_compilation->uid()));
     result->setString(dumper.keys().m_summary, String::fromUTF8(m_summary));
     if (m_detail.length())
         result->setString(dumper.keys().m_detail, String::fromUTF8(m_detail.span()));

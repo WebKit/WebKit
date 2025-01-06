@@ -1,0 +1,6 @@
+
+
+PASS select showPicker() requires a user gesture
+PASS select showPicker() does not throw when user activation is active
+PASS select showPicker() consumes user activation
+

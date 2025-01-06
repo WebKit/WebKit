@@ -27,12 +27,13 @@
 #include "CSSBackgroundRepeatValue.h"
 
 #include "CSSValueKeywords.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 CSSBackgroundRepeatValue::CSSBackgroundRepeatValue(CSSValueID xValue, CSSValueID yValue)
-    : CSSValue(BackgroundRepeatClass)
+    : CSSValue(ClassType::BackgroundRepeat)
     , m_xValue(xValue)
     , m_yValue(yValue)
 {

@@ -12,7 +12,7 @@
 
 #include <cstdint>
 
-#include "modules/rtp_rtcp/source/time_util.h"
+#include "modules/rtp_rtcp/source/ntp_time_util.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
@@ -97,11 +97,11 @@ NtpTime RemoteNtpTimeEstimator::EstimateNtp(uint32_t rtp_timestamp) {
   return receiver_capture;
 }
 
-absl::optional<int64_t>
+std::optional<int64_t>
 RemoteNtpTimeEstimator::EstimateRemoteToLocalClockOffset() {
   if (ntp_clocks_offset_estimator_.GetNumberOfSamplesStored() <
       kMinimumNumberOfSamples) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return ntp_clocks_offset_estimator_.GetFilteredValue();
 }

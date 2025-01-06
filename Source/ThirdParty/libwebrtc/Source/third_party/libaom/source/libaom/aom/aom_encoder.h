@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -30,7 +30,7 @@
 extern "C" {
 #endif
 
-#include "aom/aom_codec.h"
+#include "aom/aom_codec.h"  // IWYU pragma: export
 #include "aom/aom_external_partition.h"
 
 /*!\brief Current ABI version number
@@ -78,6 +78,8 @@ extern "C" {
  */
 #define AOM_CODEC_USE_PSNR 0x10000         /**< Calculate PSNR on each frame */
 #define AOM_CODEC_USE_HIGHBITDEPTH 0x40000 /**< Use high bitdepth */
+// 0x80000 was used for the experimental feature AOM_CODEC_USE_PRESET during
+// libaom v3.11.0 development but was removed before the release.
 
 /*!\brief Generic fixed size buffer structure
  *
@@ -637,6 +639,7 @@ typedef struct aom_codec_enc_cfg {
   /*!\brief Target data rate
    *
    * Target bitrate to use for this stream, in kilobits per second.
+   * Max allowed value is 2000000
    */
   unsigned int rc_target_bitrate;
 
@@ -801,6 +804,8 @@ typedef struct aom_codec_enc_cfg {
    *     S-Frame.
    *
    * Otherwise: the considered frame will be made into an S-Frame.
+   *
+   * \attention Not implemented.
    */
   unsigned int sframe_mode;
 
@@ -1006,11 +1011,11 @@ aom_codec_err_t aom_codec_enc_config_set(aom_codec_ctx_t *ctx,
 aom_fixed_buf_t *aom_codec_get_global_headers(aom_codec_ctx_t *ctx);
 
 /*!\brief usage parameter analogous to AV1 GOOD QUALITY mode. */
-#define AOM_USAGE_GOOD_QUALITY 0
+#define AOM_USAGE_GOOD_QUALITY 0u
 /*!\brief usage parameter analogous to AV1 REALTIME mode. */
-#define AOM_USAGE_REALTIME 1
+#define AOM_USAGE_REALTIME 1u
 /*!\brief usage parameter analogous to AV1 all intra mode. */
-#define AOM_USAGE_ALL_INTRA 2
+#define AOM_USAGE_ALL_INTRA 2u
 
 /*!\brief Encode a frame
  *
@@ -1044,6 +1049,11 @@ aom_fixed_buf_t *aom_codec_get_global_headers(aom_codec_ctx_t *ctx);
  *     Interface is not an encoder interface.
  * \retval #AOM_CODEC_INVALID_PARAM
  *     A parameter was NULL, the image format is unsupported, etc.
+ *
+ * \note
+ * `duration` is of the unsigned long type, which can be 32 or 64 bits.
+ * `duration` must be less than or equal to UINT32_MAX so that its range is
+ * independent of the size of unsigned long.
  */
 aom_codec_err_t aom_codec_encode(aom_codec_ctx_t *ctx, const aom_image_t *img,
                                  aom_codec_pts_t pts, unsigned long duration,

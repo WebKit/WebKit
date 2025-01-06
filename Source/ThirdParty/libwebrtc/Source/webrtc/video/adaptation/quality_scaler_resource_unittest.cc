@@ -11,8 +11,8 @@
 #include "video/adaptation/quality_scaler_resource.h"
 
 #include <memory>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/video_codecs/video_encoder.h"
 #include "call/adaptation/test/mock_resource_listener.h"

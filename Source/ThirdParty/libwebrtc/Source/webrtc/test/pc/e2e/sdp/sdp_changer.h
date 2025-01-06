@@ -12,11 +12,11 @@
 #define TEST_PC_E2E_SDP_SDP_CHANGER_H_
 
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/jsep.h"
 #include "api/rtp_parameters.h"

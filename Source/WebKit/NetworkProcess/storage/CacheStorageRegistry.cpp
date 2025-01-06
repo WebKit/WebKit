@@ -27,10 +27,18 @@
 #include "CacheStorageRegistry.h"
 
 #include "CacheStorageCache.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CacheStorageRegistry);
+
 CacheStorageRegistry::CacheStorageRegistry() = default;
+
+Ref<CacheStorageRegistry> CacheStorageRegistry::create()
+{
+    return adoptRef(*new CacheStorageRegistry());
+}
 
 void CacheStorageRegistry::registerCache(WebCore::DOMCacheIdentifier identifier, CacheStorageCache& cache)
 {

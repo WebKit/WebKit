@@ -124,4 +124,5 @@ INIT_MMX
   lea                predq, [predq+pred_str*2]
   sub                rowsd, 2
   jg .loop_4
+  emms
   RET

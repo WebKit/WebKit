@@ -84,8 +84,8 @@ public:
     const URL& url() const { return m_request.url(); }
 
     ResourceRequest resourceRequest() const;
-    FetchIdentifier navigationPreloadIdentifier() const { return m_navigationPreloadIdentifier; }
-    void setNavigationPreloadIdentifier(FetchIdentifier identifier) { m_navigationPreloadIdentifier = identifier; }
+    std::optional<FetchIdentifier> navigationPreloadIdentifier() const { return m_navigationPreloadIdentifier.asOptional(); }
+    void setNavigationPreloadIdentifier(std::optional<FetchIdentifier> identifier) { m_navigationPreloadIdentifier = identifier; }
 
     RequestPriority fetchPriorityHint() const { return m_fetchPriorityHint; }
 
@@ -111,7 +111,7 @@ private:
     RequestPriority m_fetchPriorityHint { RequestPriority::Auto };
     String m_referrer;
     Ref<AbortSignal> m_signal;
-    FetchIdentifier m_navigationPreloadIdentifier;
+    Markable<FetchIdentifier> m_navigationPreloadIdentifier;
     bool m_enableContentExtensionsCheck { true };
 };
 

@@ -12,8 +12,12 @@
 #define API_TEST_MOCK_DTMF_SENDER_H_
 
 #include <string>
+#include <type_traits>
 
 #include "api/dtmf_sender_interface.h"
+#include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
+#include "rtc_base/ref_counted_object.h"
 #include "test/gmock.h"
 
 namespace webrtc {
@@ -41,9 +45,9 @@ class MockDtmfSender : public DtmfSenderInterface {
               (override));
   MOCK_METHOD(void, UnregisterObserver, (), (override));
   MOCK_METHOD(bool, CanInsertDtmf, (), (override));
-  MOCK_METHOD(std::string, tones, (), (const override));
-  MOCK_METHOD(int, duration, (), (const override));
-  MOCK_METHOD(int, inter_tone_gap, (), (const override));
+  MOCK_METHOD(std::string, tones, (), (const, override));
+  MOCK_METHOD(int, duration, (), (const, override));
+  MOCK_METHOD(int, inter_tone_gap, (), (const, override));
 
  protected:
   MockDtmfSender() = default;

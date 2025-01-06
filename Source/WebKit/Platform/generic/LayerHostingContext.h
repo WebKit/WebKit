@@ -27,13 +27,15 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using LayerHostingContextID = uint32_t;
 
 class LayerHostingContext {
-    WTF_MAKE_NONCOPYABLE(LayerHostingContext); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(LayerHostingContext);
+    WTF_MAKE_NONCOPYABLE(LayerHostingContext);
 public:
 };
 

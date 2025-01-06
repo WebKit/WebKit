@@ -96,7 +96,7 @@ TEST(PasteWebArchive, SanitizesHTML)
 TEST(PasteWebArchive, PreservesMSOList)
 {
     auto *url = [NSURL URLWithString:@"file:///some-file.html"];
-    auto *markup = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mso-list" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"]];
+    auto *markup = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"mso-list" ofType:@"html"]];
     auto mainResource = adoptNS([[WebResource alloc] initWithData:markup URL:url MIMEType:@"text/html" textEncodingName:@"utf-8" frameName:nil]);
     auto archive = adoptNS([[WebArchive alloc] initWithMainResource:mainResource.get() subresources:nil subframeArchives:nil]);
 
@@ -147,7 +147,7 @@ TEST(PasteWebArchive, PreservesMSOList)
 TEST(PasteWebArchive, PreservesMSOListInCompatibilityMode)
 {
     auto *url = [NSURL URLWithString:@"file:///some-file.html"];
-    auto *markup = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mso-list-compat-mode" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"]];
+    auto *markup = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"mso-list-compat-mode" ofType:@"html"]];
     auto mainResource = adoptNS([[WebResource alloc] initWithData:markup URL:url MIMEType:@"text/html" textEncodingName:@"utf-8" frameName:nil]);
     auto archive = adoptNS([[WebArchive alloc] initWithMainResource:mainResource.get() subresources:nil subframeArchives:nil]);
 
@@ -187,7 +187,7 @@ TEST(PasteWebArchive, PreservesMSOListInCompatibilityMode)
 
 static NSData *msoListMarkupWithoutProperHTMLElement()
 {
-    auto *markup = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mso-list" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"]];
+    auto *markup = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"mso-list" ofType:@"html"]];
     auto *markupBytes = (uint8_t *)markup.bytes;
     unsigned length = markup.length;
     for (unsigned i = 0; i < length; i++) {
@@ -238,10 +238,10 @@ TEST(PasteWebArchive, PreservesPictureInsideSpan)
 
     auto mainResource = adoptNS([[WebResource alloc] initWithData:markupData URL:[NSURL URLWithString:@"foo.html"] MIMEType:@"text/html" textEncodingName:@"utf-8" frameName:nil]);
 
-    auto pngData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    auto pngData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]];
     auto pngResource = adoptNS([[WebResource alloc] initWithData:pngData URL:[NSURL URLWithString:@"1.png"] MIMEType:@"image/png" textEncodingName:nil frameName:nil]);
 
-    auto gifData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"apple" withExtension:@"gif" subdirectory:@"TestWebKitAPI.resources"]];
+    auto gifData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"apple" withExtension:@"gif"]];
     auto gifResource = adoptNS([[WebResource alloc] initWithData:gifData URL:[NSURL URLWithString:@"2.gif"] MIMEType:@"image/gif" textEncodingName:nil frameName:nil]);
 
     auto archive = adoptNS([[WebArchive alloc] initWithMainResource:mainResource.get() subresources:@[ pngResource.get(), gifResource.get() ] subframeArchives:@[ ]]);

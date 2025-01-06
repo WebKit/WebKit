@@ -71,7 +71,7 @@ private:
     void didCreatePage(WKBundleRef, WKBundlePageRef bundlePage) override
     {
         WKBundlePageLoaderClientV6 pageLoaderClient;
-        memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
+        zeroBytes(pageLoaderClient);
         
         pageLoaderClient.base.version = 6;
         pageLoaderClient.base.clientInfo = this;

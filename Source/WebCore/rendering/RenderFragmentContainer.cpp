@@ -48,11 +48,11 @@
 #include "RenderView.h"
 #include "StyleResolver.h"
 #include <wtf/HexNumber.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFragmentContainer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderFragmentContainer);
 
 RenderFragmentContainer::RenderFragmentContainer(Type type, Element& element, RenderStyle&& style, RenderFragmentedFlow* fragmentedFlow)
     : RenderBlockFlow(type, element, WTFMove(style), BlockFlowFlag::IsFragmentContainer)
@@ -143,7 +143,7 @@ LayoutPoint RenderFragmentContainer::fragmentedFlowPortionLocation() const
     LayoutPoint portionLocation;
     LayoutRect portionRect = fragmentedFlowPortionRect();
 
-    if (fragmentedFlow()->style().isFlippedBlocksWritingMode()) {
+    if (fragmentedFlow()->writingMode().isBlockFlipped()) {
         LayoutRect flippedFragmentedFlowPortionRect(portionRect);
         fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowPortionRect);
         portionLocation = flippedFragmentedFlowPortionRect.location();
@@ -210,7 +210,7 @@ void RenderFragmentContainer::styleDidChange(StyleDifference diff, const RenderS
     if (!isValid())
         return;
 
-    if (oldStyle && oldStyle->writingMode() != style().writingMode())
+    if (oldStyle && oldStyle->writingMode().computedWritingMode() !=writingMode().computedWritingMode())
         m_fragmentedFlow->fragmentChangedWritingMode(this);
 }
 
@@ -422,14 +422,14 @@ void RenderFragmentContainer::ensureOverflowForBox(const RenderBox& box, RefPtr<
         return;
     }
     
-    LayoutRect borderBox = box.borderBoxRectInFragment(this);
+    LayoutRect borderBox = box.borderBoxRect();
     LayoutRect clientBox;
     ASSERT(m_fragmentedFlow->objectShouldFragmentInFlowFragment(&box, this));
 
     if (!borderBox.isEmpty()) {
         borderBox = rectFlowPortionForBox(box, borderBox);
 
-        clientBox = box.clientBoxRectInFragment(this);
+        clientBox = box.clientBoxRect();
         clientBox = rectFlowPortionForBox(box, clientBox);
         
         m_fragmentedFlow->flipForWritingModeLocalCoordinates(borderBox);
@@ -509,7 +509,7 @@ LayoutRect RenderFragmentContainer::visualOverflowRectForBox(const RenderBox& bo
 LayoutRect RenderFragmentContainer::layoutOverflowRectForBoxForPropagation(const RenderBox& box)
 {
     // Only propagate interior layout overflow if we don't clip it.
-    LayoutRect rect = box.borderBoxRectInFragment(this);
+    LayoutRect rect = box.borderBoxRect();
     rect = rectFlowPortionForBox(box, rect);
     if (!box.hasNonVisibleOverflow()) {
         RefPtr<RenderOverflow> overflow;

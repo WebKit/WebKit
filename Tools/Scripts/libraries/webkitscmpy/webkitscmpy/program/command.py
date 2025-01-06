@@ -154,7 +154,7 @@ class FilteredCommand(Command):
                     more.kill()
                 child_error = child.stderr.read()
                 if child_error:
-                    (sys.stderr.buffer if sys.version_info > (3, 0) else sys.stderr).write(b'\n' + child_error)
+                    sys.stderr.buffer.write(b'\n' + child_error)
                 return child.returncode
 
         with Terminal.override_atty(sys.stdout, isatty=kwargs.get('isatty')), Terminal.override_atty(sys.stderr, isatty=kwargs.get('isatty')):
@@ -223,7 +223,7 @@ class FilteredCommand(Command):
             cwd=repository.root_path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            **(dict(encoding='utf-8') if sys.version_info > (3, 0) else dict())
+            encoding='utf-8',
         )
         log_output.poll()
 

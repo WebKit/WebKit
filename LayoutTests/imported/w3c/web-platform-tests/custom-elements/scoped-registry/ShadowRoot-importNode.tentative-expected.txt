@@ -1,0 +1,5 @@
+
+PASS ShadowRoot.importNode: an upgrade candidate from document
+PASS ShadowRoot.importNode: a custom element from another shadow tree
+PASS ShadowRoot.importNode: a template content from document
+

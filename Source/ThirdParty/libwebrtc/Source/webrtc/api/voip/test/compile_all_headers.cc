@@ -11,4 +11,3 @@
 // This file verifies that all include files in this directory can be
 // compiled without errors or other required includes.
 
-#include "api/voip/test/mock_voip_engine.h"

@@ -35,9 +35,12 @@
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollAnchoringController);
 
 ScrollAnchoringController::ScrollAnchoringController(ScrollableArea& owningScroller)
     : m_owningScrollableArea(owningScroller)

@@ -694,23 +694,30 @@ void DeleteSelectionCommand::handleGeneralDelete()
             if (firstPositionInOrBeforeNode(node.get()) >= m_downstreamEnd) {
                 // NodeTraversal::nextSkippingChildren just blew past the end position, so stop deleting
                 node = nullptr;
-            } else if (!m_downstreamEnd.deprecatedNode()->isDescendantOf(*node)) {
-                RefPtr<Node> nextNode = NodeTraversal::nextSkippingChildren(*node);
-                // if we just removed a node from the end container, update end position so the
-                // check above will work
-                updatePositionForNodeRemoval(m_downstreamEnd, *node);
-                removeNode(*node);
-                node = nextNode.get();
-            } else {
-                RefPtr lastDescendant { node->lastDescendant() };
-                if (m_downstreamEnd.deprecatedNode() == lastDescendant && m_downstreamEnd.deprecatedEditingOffset() >= caretMaxOffset(*lastDescendant)) {
-                    removeNode(*node);
-                    node = nullptr;
-                } else
-                    node = NodeTraversal::next(*node);
+                continue;
             }
+
+            if (!m_downstreamEnd.deprecatedNode()->isDescendantOf(*node)) {
+                RefPtr parentNode = node->parentNode();
+                if (!parentNode || canHaveChildrenForEditing(*parentNode)) {
+                    RefPtr nextNode = NodeTraversal::nextSkippingChildren(*node);
+                    // if we just removed a node from the end container, update end position so the
+                    // check above will work
+                    updatePositionForNodeRemoval(m_downstreamEnd, *node);
+                    removeNode(*node);
+                    node = nextNode.get();
+                    continue;
+                }
+            }
+
+            RefPtr lastDescendant { node->lastDescendant() };
+            if (m_downstreamEnd.deprecatedNode() == lastDescendant && m_downstreamEnd.deprecatedEditingOffset() >= caretMaxOffset(*lastDescendant)) {
+                removeNode(*node);
+                node = nullptr;
+            } else
+                node = NodeTraversal::next(*node);
         }
-        
+
         if (!m_downstreamEnd.isNull() && !m_downstreamEnd.isOrphan() && m_downstreamEnd.deprecatedNode() != startNode
             && !m_upstreamStart.deprecatedNode()->isDescendantOf(m_downstreamEnd.deprecatedNode())
             && m_downstreamEnd.deprecatedEditingOffset() >= caretMinOffset(*m_downstreamEnd.deprecatedNode())) {
@@ -810,7 +817,8 @@ void DeleteSelectionCommand::mergeParagraphs()
     
     if (mergeDestination == startOfParagraphToMove)
         return;
-        
+
+    VisiblePosition currentStartOfParagraphToMove = startOfParagraph(startOfParagraphToMove, CanSkipOverEditingBoundary);
     VisiblePosition endOfParagraphToMove = endOfParagraph(startOfParagraphToMove, CanSkipOverEditingBoundary);
     
     if (mergeDestination == endOfParagraphToMove)
@@ -847,8 +855,8 @@ void DeleteSelectionCommand::mergeParagraphs()
     // moveParagraphs will insert placeholders if it removes blocks that would require their use, don't let block
     // removals that it does cause the insertion of *another* placeholder.
     bool needPlaceholder = m_needPlaceholder;
-    bool paragraphToMergeIsEmpty = (startOfParagraphToMove == endOfParagraphToMove);
-    moveParagraph(startOfParagraphToMove, endOfParagraphToMove, mergeDestination, false, !paragraphToMergeIsEmpty);
+    bool paragraphToMergeIsEmpty = (currentStartOfParagraphToMove == endOfParagraphToMove);
+    moveParagraph(currentStartOfParagraphToMove, endOfParagraphToMove, mergeDestination, false, !paragraphToMergeIsEmpty);
     m_needPlaceholder = needPlaceholder;
     // The endingPosition was likely clobbered by the move, so recompute it (moveParagraph selects the moved paragraph).
 
@@ -948,7 +956,7 @@ String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelec
         return String();
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    for (auto& marker : protectedDocument()->markers().markersInRange(*rangeOfFirstCharacter, DocumentMarker::Type::Autocorrected)) {
+    for (auto& marker : protectedDocument()->markers().markersInRange(*rangeOfFirstCharacter, DocumentMarkerType::Autocorrected)) {
         int startOffset = marker->startOffset();
         if (startOffset == startOfSelection.deepEquivalent().offsetInContainerNode())
             return marker->description();

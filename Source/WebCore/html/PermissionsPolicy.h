@@ -25,23 +25,25 @@
 
 #pragma once
 
-#include "SecurityOriginData.h"
-#include <wtf/BitSet.h>
+#include "Allowlist.h"
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
+class Allowlist;
 class Document;
 class HTMLFrameOwnerElement;
 class HTMLIFrameElement;
+struct OwnerPermissionsPolicyData;
 
 class PermissionsPolicy {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PermissionsPolicy);
 public:
     PermissionsPolicy();
-    PermissionsPolicy(const HTMLFrameOwnerElement*, const SecurityOriginData&);
+    PermissionsPolicy(const Document&);
 
     enum class Feature : uint8_t {
         Camera = 0,
@@ -62,6 +64,7 @@ public:
 #endif
 #if ENABLE(WEB_AUTHN)
         PublickeyCredentialsGetRule,
+        DigitalCredentialsGetRule,
 #endif
 #if ENABLE(WEBXR)
         XRSpatialTracking,
@@ -73,28 +76,22 @@ public:
     static bool isFeatureEnabled(Feature, const Document&, ShouldReportViolation = ShouldReportViolation::Yes);
     bool inheritedPolicyValueForFeature(Feature) const;
 
-    // https://w3c.github.io/webappsec-permissions-policy/#allowlists
-    class Allowlist {
-    public:
-        Allowlist() = default;
-        enum AllowAllOriginsTag { AllowAllOrigins };
-        explicit Allowlist(AllowAllOriginsTag) : m_origins(AllowAllOrigins) { }
-        explicit Allowlist(const SecurityOriginData& origin): m_origins(HashSet<SecurityOriginData> { origin }) { }
-        explicit Allowlist(HashSet<SecurityOriginData>&& origins) : m_origins(WTFMove(origins)) { }
-        bool matches(const SecurityOriginData&) const;
+    // InheritedPolicy contains enabled features.
+    using InheritedPolicy = HashSet<Feature, IntHash<Feature>, WTF::StrongEnumHashTraits<Feature>>;
+    PermissionsPolicy(const InheritedPolicy& inheritedPolicy)
+        : m_inheritedPolicy(inheritedPolicy)
+    {
+    }
+    InheritedPolicy inheritedPolicy() const { return m_inheritedPolicy; }
 
-    private:
-        std::variant<HashSet<SecurityOriginData>, AllowAllOriginsTag> m_origins;
-    };
     // https://w3c.github.io/webappsec-permissions-policy/#policy-directives
     using PolicyDirective = HashMap<Feature, Allowlist, IntHash<Feature>, WTF::StrongEnumHashTraits<Feature>>;
     static PolicyDirective processPermissionsPolicyAttribute(const HTMLIFrameElement&);
 
 private:
-    bool computeInheritedPolicyValueInContainer(Feature, const HTMLFrameOwnerElement*, const SecurityOriginData&) const;
+    bool computeInheritedPolicyValueInContainer(Feature, const std::optional<OwnerPermissionsPolicyData>&, const SecurityOriginData&) const;
 
-    static constexpr size_t numOfFeatures = static_cast<size_t>(Feature::Invalid);
-    WTF::BitSet<numOfFeatures> m_inheritedPolicy;
+    InheritedPolicy m_inheritedPolicy;
 };
 
 } // namespace WebCore

@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include "ImageBuffer.h"
 #include "RenderReplaced.h"
 
 namespace WebCore {
 
 class RenderViewTransitionCapture final : public RenderReplaced {
-    WTF_MAKE_ISO_ALLOCATED(RenderViewTransitionCapture);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderViewTransitionCapture);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderViewTransitionCapture);
 public:
     RenderViewTransitionCapture(Type, Document&, RenderStyle&&);
@@ -40,6 +41,7 @@ public:
     bool setCapturedSize(const LayoutSize&, const LayoutRect& overflowRect, const LayoutPoint& layerToLayoutOffset);
 
     void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) override;
+    void intrinsicSizeChanged() override;
 
     void layout() override;
 
@@ -48,16 +50,24 @@ public:
     // Rect covered by the captured contents, in RenderLayer coordinates of the captured renderer
     LayoutRect captureOverflowRect() const { return m_overflowRect; }
 
+    LayoutRect captureLocalOverflowRect() const { return m_localOverflowRect; }
+
     // Inset of the scaled capture from the visualOverflowRect()
     LayoutPoint captureContentInset() const;
 
     bool canUseExistingLayers() const { return !hasNonVisibleOverflow(); }
+
+    bool paintsContent() const final;
+
+    RefPtr<ImageBuffer> image() { return m_oldImage; }
 
 private:
     ASCIILiteral renderName() const override { return "RenderViewTransitionCapture"_s; }
     String debugDescription() const override;
 
     void updateFromStyle() override;
+
+    Node* nodeForHitTest() const override;
 
     RefPtr<ImageBuffer> m_oldImage;
     // The overflow rect that the captured image represents, in RenderLayer coordinates
@@ -70,6 +80,7 @@ private:
     // The overflow rect of the snapshot (replaced content), scaled and positioned
     // so that the intrinsic size of the image fits the replaced content rect.
     LayoutRect m_localOverflowRect;
+    LayoutSize m_imageIntrinsicSize;
     // Scale factor between the intrinsic size and the replaced content rect size.
     FloatSize m_scale;
 };

@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Test view-timeline with document scrolling element. Test timed out
+PASS Test view-timeline with document scrolling element.
 

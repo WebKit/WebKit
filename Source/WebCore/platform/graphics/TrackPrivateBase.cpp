@@ -26,12 +26,15 @@
 #include "config.h"
 #include "TrackPrivateBase.h"
 #include <wtf/SharedTask.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
 
 #include "Logging.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TrackPrivateBase);
 
 std::optional<AtomString> TrackPrivateBase::trackUID() const
 {
@@ -128,7 +131,7 @@ bool TrackPrivateBase::hasOneClient() const
 
 static uint64_t s_uniqueId = 0;
 
-void TrackPrivateBase::setLogger(const Logger& logger, const void* logIdentifier)
+void TrackPrivateBase::setLogger(const Logger& logger, uint64_t logIdentifier)
 {
     m_logger = &logger;
     m_logIdentifier = childLogIdentifier(logIdentifier, ++s_uniqueId);

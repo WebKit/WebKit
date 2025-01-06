@@ -32,6 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVAssetResourceLoadingRequest;
@@ -48,16 +49,17 @@ class ResourceError;
 class ResourceResponse;
 
 class WebCoreAVFResourceLoader : public ThreadSafeRefCounted<WebCoreAVFResourceLoader> {
-    WTF_MAKE_NONCOPYABLE(WebCoreAVFResourceLoader); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebCoreAVFResourceLoader);
+    WTF_MAKE_NONCOPYABLE(WebCoreAVFResourceLoader);
 public:
-    static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, RefCountedSerialFunctionDispatcher&);
+    static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, GuaranteedSerialFunctionDispatcher&);
     virtual ~WebCoreAVFResourceLoader();
 
     void startLoading();
     void stopLoading();
 
 private:
-    WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, RefCountedSerialFunctionDispatcher&);
+    WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, GuaranteedSerialFunctionDispatcher&);
 
     friend class CachedResourceMediaLoader;
     friend class DataURLResourceMediaLoader;
@@ -75,12 +77,13 @@ private:
     std::unique_ptr<DataURLResourceMediaLoader> m_dataURLMediaLoader;
     std::unique_ptr<CachedResourceMediaLoader> m_resourceMediaLoader;
     RefPtr<PlatformResourceMediaLoader> m_platformMediaLoader;
+    bool m_isBlob { false };
     size_t m_responseOffset { 0 };
     int64_t m_requestedLength { 0 };
     int64_t m_requestedOffset { 0 };
     int64_t m_currentOffset { 0 };
 
-    Ref<RefCountedSerialFunctionDispatcher> m_targetDispatcher;
+    Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;
 };
 
 }

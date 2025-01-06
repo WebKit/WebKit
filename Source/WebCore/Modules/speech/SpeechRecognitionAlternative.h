@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class SpeechRecognitionAlternative final : public RefCounted<SpeechRecognitionAlternative> {
-    WTF_MAKE_ISO_ALLOCATED(SpeechRecognitionAlternative);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SpeechRecognitionAlternative);
 public:
     static Ref<SpeechRecognitionAlternative> create(String&& transcript, double confidence);
 

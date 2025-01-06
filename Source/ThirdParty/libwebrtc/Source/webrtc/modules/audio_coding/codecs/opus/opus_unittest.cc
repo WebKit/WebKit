@@ -187,7 +187,7 @@ void OpusTest::PrepareSpeechData(int block_length_ms, int loop_length_ms) {
                                 block_length_ms * sample_rate_khz * channels_));
 }
 
-void OpusTest::SetMaxPlaybackRate(WebRtcOpusEncInst* encoder,
+void OpusTest::SetMaxPlaybackRate(WebRtcOpusEncInst* /* encoder */,
                                   opus_int32 expect,
                                   int32_t set) {
   opus_int32 bandwidth;

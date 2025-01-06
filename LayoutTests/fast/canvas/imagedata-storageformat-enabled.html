@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ CanvasPixelFormatEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that ImageDataSettings contains storageFormat.");
+
+var canvas = document.createElement("canvas");
+canvas.width = 10;
+canvas.height = 10;
+var context = canvas.getContext("2d");
+var r = 0;
+var g = 128;
+var b = 255;
+var a = 255;
+context.fillStyle = `rgb(${r} ${g} ${b})`;
+context.fillRect(0, 0, 1, 1);
+
+function verifyImageData(variable, constructor, bytesPerElement, red, green, blue, alpha) {
+    shouldBe(variable + '.width', '1');
+    shouldBe(variable + '.height', '1');
+    shouldBe(variable + '.data.constructor', constructor);
+    shouldBe(variable + '.data.BYTES_PER_ELEMENT', String(bytesPerElement));
+    shouldBe(variable + '.data.length', '4');
+    shouldBe(variable + '.data.byteLength', String(bytesPerElement * 4));
+    shouldBe(variable + '.data.at(0)', String(red));
+    shouldBe(variable + '.data.at(1)', String(green));
+    shouldBe(variable + '.data.at(2)', String(blue));
+    shouldBe(variable + '.data.at(3)', String(alpha));
+}
+
+var created_imageData_uint8 = context.createImageData(1, 1, { storageFormat: "uint8" });
+verifyImageData('created_imageData_uint8', 'Uint8ClampedArray', 1, 0, 0, 0, 0);
+
+var gotten_imageData_uint8 = context.getImageData(0, 0, 1, 1, { storageFormat: "uint8" });
+verifyImageData('gotten_imageData_uint8', 'Uint8ClampedArray', 1, r, g, b, a);
+
+var created_imageData_float16 = context.createImageData(1, 1, { storageFormat: "float16" });
+verifyImageData('created_imageData_float16', 'Float16Array', 2, 0, 0, 0, 0);
+
+var gotten_imageData_float16 = context.getImageData(0, 0, 1, 1, { storageFormat: "float16" });
+debug('FIXME: gotten_imageData_float16.data below should eventually become Float16Array.');
+verifyImageData('gotten_imageData_float16', 'Uint8ClampedArray', 1, r, g, b, a);
+
+shouldThrowErrorName(`context.createImageData(1, 1, { storageFormat: "foo" })`, "TypeError")
+shouldThrowErrorName(`context.getImageData(0, 0, 1, 1, { storageFormat: "foo" })`, "TypeError")
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

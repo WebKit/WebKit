@@ -109,8 +109,13 @@ RTC_EXPORT bool ParseCandidate(absl::string_view message,
 // parameters are not considered to be part of the FMTP line, see the function
 // IsFmtpParam(). Returns true if the set of FMTP parameters is nonempty, false
 // otherwise.
-bool WriteFmtpParameters(const cricket::CodecParameterMap& parameters,
+bool WriteFmtpParameters(const webrtc::CodecParameterMap& parameters,
                          rtc::StringBuilder* os);
+
+// Parses a string into an FMTP parameter set, in key-value format.
+bool ParseFmtpParameterSet(absl::string_view line_params,
+                           webrtc::CodecParameterMap& codec_params,
+                           SdpParseError* error);
 
 }  // namespace webrtc
 

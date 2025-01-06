@@ -18,6 +18,7 @@
 #include "src/sksl/SkSLConstantFolder.h"
 #include "src/sksl/SkSLContext.h"
 #include "src/sksl/SkSLErrorReporter.h"
+#include "src/sksl/SkSLModule.h"
 #include "src/sksl/SkSLOperator.h"
 #include "src/sksl/SkSLString.h"
 #include "src/sksl/ir/SkSLBinaryExpression.h"
@@ -422,6 +423,7 @@ std::unique_ptr<SkSL::Module> Parser::moduleInheritingFrom(const SkSL::Module* p
     result->fParent = parentModule;
     result->fSymbols = std::move(fCompiler.fGlobalSymbols);
     result->fElements = std::move(fProgramElements);
+    result->fModuleType = fCompiler.context().fConfig->fModuleType;
     return result;
 }
 
@@ -636,8 +638,7 @@ bool Parser::prototypeFunction(SkSL::FunctionDeclaration* decl) {
     if (!decl) {
         return false;
     }
-    fProgramElements.push_back(std::make_unique<SkSL::FunctionPrototype>(
-            decl->fPosition, decl, fCompiler.context().fConfig->fIsBuiltinCode));
+    fProgramElements.push_back(std::make_unique<SkSL::FunctionPrototype>(decl->fPosition, decl));
     return true;
 }
 
@@ -673,8 +674,7 @@ bool Parser::defineFunction(SkSL::FunctionDeclaration* decl) {
     std::unique_ptr<FunctionDefinition> function = FunctionDefinition::Convert(context,
                                                                                pos,
                                                                                *decl,
-                                                                               std::move(block),
-                                                                               /*builtin=*/false);
+                                                                               std::move(block));
     if (!function) {
         return false;
     }
@@ -1261,7 +1261,7 @@ const Type* Parser::findType(Position pos,
         return context.fTypes.fPoison.get();
     }
     const SkSL::Type* type = &symbol->as<Type>();
-    if (!context.fConfig->fIsBuiltinCode) {
+    if (!context.fConfig->isBuiltinCode()) {
         if (!TypeReference::VerifyType(context, type, pos)) {
             return context.fTypes.fPoison.get();
         }

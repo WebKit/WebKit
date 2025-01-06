@@ -41,7 +41,7 @@
 #include "RTCPeerConnection.h"
 #include "RTCRtpCapabilities.h"
 #include "RTCRtpTransceiver.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -51,7 +51,7 @@ namespace WebCore {
 #define LOGIDENTIFIER_SENDER
 #endif
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RTCRtpSender);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCRtpSender);
 
 Ref<RTCRtpSender> RTCRtpSender::create(RTCPeerConnection& connection, Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpSenderBackend>&& backend)
 {

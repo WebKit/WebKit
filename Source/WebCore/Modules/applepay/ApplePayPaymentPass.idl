@@ -35,7 +35,8 @@
 
 [
     Conditional=APPLE_PAY,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary ApplePayPaymentPass {
     required DOMString primaryAccountIdentifier;
     required DOMString primaryAccountNumberSuffix;

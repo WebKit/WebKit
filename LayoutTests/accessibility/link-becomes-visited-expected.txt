@@ -1,0 +1,9 @@
+This test ensures that we properly report AXVisited after dynamic page changes.
+
+PASS: webArea.childAtIndex(0).boolAttributeValue('AXVisited') === false
+PASS: webArea.childAtIndex(0).boolAttributeValue('AXVisited') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+link

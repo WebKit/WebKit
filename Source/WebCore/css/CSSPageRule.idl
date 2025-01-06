@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,10 +20,9 @@
 
 // https://drafts.csswg.org/cssom/#csspagerule
 
-// Introduced in DOM Level 2:
 [
     Exposed=Window
-] interface CSSPageRule : CSSRule {
+] interface CSSPageRule : CSSGroupingRule {
     // FIXME: `selectorText` should not be nullable.
     attribute DOMString? selectorText;
     // FIXME: Add [SameObject] below after https://webkit.org/b/163414

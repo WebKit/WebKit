@@ -12,6 +12,14 @@ PASS testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png
 PASS testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 5.0)", "background-image") is "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 1)"
 PASS testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 700%)", "background-image") is "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 1)"
 PASS testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), -20)", "background-image") is "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0)"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(50%))", "background-image") is "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0.5)"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(-50%))", "background-image") is "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0)"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(150%))", "background-image") is "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 1)"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(0.5))", "background-image") is "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0.5)"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(-0.5))", "background-image") is "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0)"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(1.5))", "background-image") is "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 1)"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(100% + (50% * sign(2cqw - 10px))))", "background-image") is "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0.5)"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(1 + (0.5 * sign(2cqw - 10px))))", "background-image") is "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0.5)"
 Unprefixed
 
 

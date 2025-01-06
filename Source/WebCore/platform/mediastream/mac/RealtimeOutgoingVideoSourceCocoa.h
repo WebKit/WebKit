@@ -41,6 +41,8 @@ class RealtimeOutgoingVideoSourceCocoa final : public RealtimeOutgoingVideoSourc
 public:
     static Ref<RealtimeOutgoingVideoSourceCocoa> create(Ref<MediaStreamTrackPrivate>&&);
 
+    virtual ~RealtimeOutgoingVideoSourceCocoa();
+
 private:
     explicit RealtimeOutgoingVideoSourceCocoa(Ref<MediaStreamTrackPrivate>&&);
 

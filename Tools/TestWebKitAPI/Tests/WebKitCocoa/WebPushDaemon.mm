@@ -49,17 +49,21 @@
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKNotificationData.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKWebPushDaemonConnection.h>
+#import <WebKit/_WKWebPushSubscriptionData.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
 #import <mach/mach_init.h>
 #import <mach/task.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/UUID.h>
 #import <wtf/UniqueRef.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
+#import <wtf/text/MakeString.h>
 
 // FIXME: Work through enabling on iOS
 #if ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT) && PLATFORM(MAC)
@@ -72,12 +76,19 @@ static bool alertReceived = false;
 }
 -(void)clearMostRecents;
 
+@property BOOL expectsDelegateNotificationCallbacks;
 @property (nonatomic, readonly) RetainPtr<_WKNotificationData> mostRecentNotification;
 @property (nonatomic, readonly) RetainPtr<NSURL> mostRecentActionURL;
 @property (nonatomic, readonly) std::optional<uint64_t> mostRecentAppBadge;
 @end
 
 @implementation PushNotificationDelegate
+
+-(id)init {
+    if (self = [super init])
+        self.expectsDelegateNotificationCallbacks = YES;
+    return self;
+}
 
 -(void)clearMostRecents
 {
@@ -99,6 +110,8 @@ static bool alertReceived = false;
 
 - (void)websiteDataStore:(WKWebsiteDataStore *)dataStore showNotification:(_WKNotificationData *)notificationData
 {
+    RELEASE_ASSERT(_expectsDelegateNotificationCallbacks);
+
     _mostRecentNotification = notificationData;
 }
 
@@ -119,6 +132,8 @@ static bool alertReceived = false;
 
 namespace TestWebKitAPI {
 
+static bool done;
+
 static RetainPtr<NSURL> testWebPushDaemonLocation()
 {
     return [currentExecutableDirectory() URLByAppendingPathComponent:@"webpushd" isDirectory:NO];
@@ -126,6 +141,7 @@ static RetainPtr<NSURL> testWebPushDaemonLocation()
 
 enum LaunchOnlyOnce : BOOL { No, Yes };
 enum class InstallDataStoreDelegate : bool { No, Yes };
+enum class BuiltInNotificationsEnabled : bool { No, Yes };
 
 static NSDictionary<NSString *, id> *testWebPushDaemonPList(NSURL *storageLocation, LaunchOnlyOnce launchOnlyOnce)
 {
@@ -275,9 +291,8 @@ bool WebPushXPCConnectionMessageSender::performSendWithAsyncReplyWithoutUsingIPC
             return completionHandler(nullptr);
         }
 
-        size_t dataSize { 0 };
-        const uint8_t* data = static_cast<const uint8_t *>(xpc_dictionary_get_data(reply, WebKit::WebPushD::protocolEncodedMessageKey, &dataSize));
-        auto decoder = IPC::Decoder::create({ data, dataSize }, { });
+        auto data = xpc_dictionary_get_data_span(reply, WebKit::WebPushD::protocolEncodedMessageKey);
+        auto decoder = IPC::Decoder::create(data, { });
         ASSERT(decoder);
 
         completionHandler(decoder.get());
@@ -286,30 +301,35 @@ bool WebPushXPCConnectionMessageSender::performSendWithAsyncReplyWithoutUsingIPC
     return true;
 }
 
-static void sendConfigurationWithAuditToken(xpc_connection_t connection)
+static audit_token_t getSelfAuditToken()
 {
-    audit_token_t token = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    audit_token_t auditToken { };
     mach_msg_type_number_t auditTokenCount = TASK_AUDIT_TOKEN_COUNT;
-    kern_return_t result = task_info(mach_task_self(), TASK_AUDIT_TOKEN, (task_info_t)(&token), &auditTokenCount);
-    if (result != KERN_SUCCESS) {
-        EXPECT_TRUE(false);
-        return;
-    }
-
-    WebKit::WebPushD::WebPushDaemonConnectionConfiguration configuration;
-    configuration.hostAppAuditTokenData = Vector<unsigned char>(sizeof(token));
-    memcpy(configuration.hostAppAuditTokenData->data(), &token, sizeof(token));
-
-    auto sender = WebPushXPCConnectionMessageSender { connection };
-    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(configuration));
+    task_info(mach_task_self(), TASK_AUDIT_TOKEN, (task_info_t)(&auditToken), &auditTokenCount);
+    return auditToken;
 }
 
-RetainPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName)
+static WebKit::WebPushD::WebPushDaemonConnectionConfiguration defaultWebPushDaemonConfiguration()
+{
+    auto token = getSelfAuditToken();
+    Vector<uint8_t> auditToken(sizeof(token));
+    memcpySpan(auditToken.mutableSpan(), asByteSpan(token));
+
+    IGNORE_CLANG_WARNINGS_BEGIN("missing-designated-field-initializers")
+    return { .hostAppAuditTokenData = WTFMove(auditToken) };
+    IGNORE_CLANG_WARNINGS_END
+}
+
+RetainPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName, std::optional<WebKit::WebPushD::WebPushDaemonConnectionConfiguration> configuration = std::nullopt)
 {
     auto connection = adoptNS(xpc_connection_create_mach_service(serviceName, dispatch_get_main_queue(), 0));
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t) { });
     xpc_connection_activate(connection.get());
-    sendConfigurationWithAuditToken(connection.get());
+    auto sender = WebPushXPCConnectionMessageSender { connection.get() };
+
+    if (!configuration)
+        configuration = defaultWebPushDaemonConfiguration();
+    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(configuration.value()));
 
     return WTFMove(connection);
 }
@@ -327,40 +347,18 @@ TEST(WebPushD, BasicCommunication)
             interrupted = true;
             return;
         }
-        if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
-            return;
-        const char* debugMessage = xpc_dictionary_get_string(request, WebKit::WebPushD::protocolDebugMessageKey);
-        if (!debugMessage)
-            return;
+    });
+    xpc_connection_activate(connection.get());
 
-        NSString *nsMessage = [NSString stringWithUTF8String:debugMessage];
-
-        // Ignore possible connections/messages from webpushtool
-        if ([nsMessage hasPrefix:@"[webpushtool "])
-            return;
-
-        bool stringMatches = [nsMessage hasPrefix:@"[com.apple.WebKit.TestWebKitAPI"] || [nsMessage hasPrefix:@"[TestWebKitAPI"];
-        stringMatches = stringMatches && [nsMessage hasSuffix:@" Turned Debug Mode on"];
-
-        EXPECT_TRUE(stringMatches);
-        if (!stringMatches)
-            WTFLogAlways("String does not match, actual string was %@", nsMessage);
-
+    // Send a basic message and make sure its reply handler ran.
+    auto sender = WebPushXPCConnectionMessageSender { connection.get() };
+    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(defaultWebPushDaemonConfiguration()));
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushTopicsForTesting(), ^(Vector<String>, Vector<String>) {
         done = true;
     });
+    TestWebKitAPI::Util::run(&done);
 
-    xpc_connection_activate(connection.get());
-    sendConfigurationWithAuditToken(connection.get());
-
-    // Enable debug messages, and wait for the resulting debug message
-    {
-        auto sender = WebPushXPCConnectionMessageSender { connection.get() };
-        sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::SetDebugModeIsEnabled(true));
-        TestWebKitAPI::Util::run(&done);
-    }
-
-    // Sending a message with a higher protocol version should cause the connection to be terminated
-    auto sender = WebPushXPCConnectionMessageSender { connection.get() };
+    // Sending a message with a higher protocol version should cause the connection to be terminated.
     sender.setShouldIncrementProtocolVersionForTesting();
     __block bool messageReplied = false;
     sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RemoveAllPushSubscriptions(), ^(bool result) {
@@ -404,7 +402,7 @@ window.onload = function()
 async function subscribe(key)
 {
     try {
-        globalSubscription = await navigator.pushManager.subscribe({
+        globalSubscription = await window.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: key
         });
@@ -427,7 +425,7 @@ async function unsubscribe()
 async function getPushSubscription()
 {
     try {
-        let subscription = await navigator.pushManager.getSubscription();
+        let subscription = await window.pushManager.getSubscription();
         return subscription ? subscription.toJSON() : null;
     } catch (error) {
         return "Error: " + error;
@@ -479,6 +477,55 @@ async function unsubscribe()
     }
 }
 
+async function getNotificationPermissionFromServiceWorker()
+{
+    const channel = new MessageChannel();
+    const promise = new Promise((resolve) => {
+        channel.port1.onmessage = (event) => resolve(event.data);
+    });
+    globalRegistration.active.postMessage({ message: "notificationPermission", port: channel.port2 }, [channel.port2]);
+    return await promise;
+}
+
+async function getPushPermissionState()
+{
+    try {
+        return await globalRegistration.pushManager.permissionState();
+    } catch (error) {
+        return "Error: " + error;
+    }
+}
+
+async function getPushPermissionStateFromServiceWorker()
+{
+    const channel = new MessageChannel();
+    const promise = new Promise((resolve) => {
+        channel.port1.onmessage = (event) => resolve(event.data);
+    });
+    globalRegistration.active.postMessage({ message: "getPushPermissionState", port: channel.port2 }, [channel.port2]);
+    return await promise;
+}
+
+async function queryPermission(name)
+{
+    try {
+        let status = await navigator.permissions.query({ name });
+        return status.state;
+    } catch (error) {
+        return "Error: " + error;
+    }
+}
+
+async function queryPermissionFromServiceWorker(name)
+{
+    const channel = new MessageChannel();
+    const promise = new Promise((resolve) => {
+        channel.port1.onmessage = (event) => resolve(event.data);
+    });
+    globalRegistration.active.postMessage({ message: "queryPermission", arguments: [name], port: channel.port2 }, [channel.port2]);
+    return await promise;
+}
+
 async function getPushSubscription()
 {
     try {
@@ -498,6 +545,27 @@ async function disableShowNotifications()
     globalRegistration.active.postMessage({ message: "disableShowNotifications", port: channel.port2 }, [channel.port2]);
     return await promise;
 }
+
+async function getNotifications()
+{
+    const channel = new MessageChannel();
+    const promise = new Promise((resolve) => {
+        channel.port1.onmessage = (event) => resolve(event.data);
+    });
+    globalRegistration.active.postMessage({ message: "getNotifications", port: channel.port2 }, [channel.port2]);
+    return await promise;
+}
+
+async function closeAllNotifications()
+{
+    const channel = new MessageChannel();
+    const promise = new Promise((resolve) => {
+        channel.port1.onmessage = (event) => resolve(event.data);
+    });
+    globalRegistration.active.postMessage({ message: "closeAllNotifications", port: channel.port2 }, [channel.port2]);
+    return await promise;
+}
+
 </script>
 )SRC"_s;
 
@@ -505,62 +573,96 @@ static constexpr auto serviceWorkerScriptSource = R"SWRESOURCE(
 let globalPort;
 let showNotifications = true;
 
+function notificationToString(n)
+{
+    return "title: " + n.title + " body: " + n.body + " tag: " + n.tag + " dir: " + n.dir + " silent: " + n.silent + " data: " + n.data;
+}
+
 self.addEventListener("message", (event) => {
-    let { message, port } = event.data;
+    let { message, arguments, port } = event.data;
+    var closeAllNotifications = message === "closeAllNotifications";
     if (message === "setup") {
         globalPort = port;
         port.postMessage("Ready");
+    } else if (message === "notificationPermission") {
+        port.postMessage(Notification.permission);
+    } else if (message === "getPushPermissionState") {
+        registration.pushManager.permissionState().then(port.postMessage.bind(port), (error) => {
+            port.postMessage("getPushPermissionState failed: " + error);
+        });
+    } else if (message === "queryPermission") {
+        let [name] = arguments;
+        navigator.permissions.query({ name }).then((status) => {
+            port.postMessage(status.state);
+        }, (error) => {
+            port.postMessage("queryPermission failed: " + error);
+        });
     } else if (message === "disableShowNotifications") {
         showNotifications = false;
         port.postMessage(true);
-    }
-});
-
-self.addEventListener("pushnotification", async (event) => {
-    // If the tag is empty, do nothing
-    if (!event.proposedNotification.tag)
-        return;
-
-    var optionsFromTag = event.proposedNotification.tag.split(" ");
-    var newTitle;
-    var newBadge;
-    var newActionURL;
-    if (optionsFromTag[0] == "titleandbadge") {
-        newTitle = optionsFromTag[1];
-        newBadge = optionsFromTag[2];
-    } else if (optionsFromTag[0] == "title")
-        newTitle = optionsFromTag[1];
-    else if (optionsFromTag[0] == "badge")
-        newBadge = optionsFromTag[1];
-    else if (optionsFromTag[0] == "datatotitle")
-        newTitle = event.proposedNotification.data;
-    else if (optionsFromTag[0] == "defaultactionurl")
-        newActionURL = optionsFromTag[1];
-    else if (optionsFromTag[0] == "emptydefaultactionurl") {
-        self.registration.showNotification("Missing default action").then((value) => {
-            globalPort.postMessage("showNotification succeeded");
+    } else if (message === "getNotifications" || closeAllNotifications) {
+        registration.getNotifications().then((notifications) => {
+            var result = "";
+            for (n = 0; n < notifications.length; ++n) {
+                result += n + " - " + notificationToString(notifications[n]) + " ";
+                if (closeAllNotifications)
+                    notifications[n].close();
+            }
+            port.postMessage(result);
         }, (exception) => {
-            globalPort.postMessage("showNotification failed: " + exception);
+            port.postMessage("getNotifications failed: " + exception);
         });
     }
-
-    if (newTitle || newActionURL) {
-        if (!newTitle)
-            newTitle = event.proposedNotification.title;
-        if (!newActionURL)
-            newActionURL = event.proposedNotification.defaultAction;
-
-        self.registration.showNotification(newTitle, { "defaultAction": newActionURL });
-    }
-
-    if (newBadge)
-        navigator.setAppBadge(newBadge);
 });
 
 self.addEventListener("push", async (event) => {
+    if (event.notification) {
+        // If the tag is empty, do nothing
+        if (!event.notification.tag)
+            return;
+
+        var optionsFromTag = event.notification.tag.split(" ");
+        var newTitle;
+        var newBadge;
+        var newActionURL;
+        if (optionsFromTag[0] == "titleandbadge") {
+            newTitle = optionsFromTag[1];
+            newBadge = optionsFromTag[2];
+        } else if (optionsFromTag[0] == "title")
+            newTitle = optionsFromTag[1];
+        else if (optionsFromTag[0] == "badge")
+            newBadge = optionsFromTag[1];
+        else if (optionsFromTag[0] == "datatotitle")
+            newTitle = event.notification.data;
+        else if (optionsFromTag[0] == "defaultactionurl")
+            newActionURL = optionsFromTag[1];
+        else if (optionsFromTag[0] == "emptydefaultactionurl") {
+            self.registration.showNotification("Missing default action").then((value) => {
+                globalPort.postMessage("showNotification succeeded");
+            }, (exception) => {
+                globalPort.postMessage("showNotification failed: " + exception);
+            });
+        }
+
+        if (newTitle || newActionURL) {
+            if (!newTitle)
+                newTitle = event.notification.title;
+            if (!newActionURL)
+                newActionURL = event.notification.navigate;
+
+            self.registration.showNotification(newTitle, { "navigate": newActionURL });
+        }
+
+        if (newBadge)
+            navigator.setAppBadge(newBadge);
+
+        return;
+    }
+
     try {
         if (showNotifications) {
             await self.registration.showNotification("notification");
+            navigator.setAppBadge(42);
         }
         if (!event.data) {
             globalPort.postMessage("Received: null data");
@@ -578,10 +680,20 @@ self.addEventListener("notificationclick", () => {
 });
 )SWRESOURCE"_s;
 
+static void enableFeatureForPreferences(NSString *featureName, WKPreferences *preferences)
+{
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:featureName]) {
+            [preferences _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+}
+
 class WebPushDTestWebView {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebPushDTestWebView(const String& pushPartition, const std::optional<WTF::UUID>& dataStoreIdentifier, WKProcessPool *processPool, TestNotificationProvider& notificationProvider, ASCIILiteral html, InstallDataStoreDelegate installDataStoreDelegate)
+    WebPushDTestWebView(const String& pushPartition, const std::optional<WTF::UUID>& dataStoreIdentifier, WKProcessPool *processPool, TestNotificationProvider& notificationProvider, ASCIILiteral html, InstallDataStoreDelegate installDataStoreDelegate, BuiltInNotificationsEnabled builtInNotificationsEnabled)
         : m_pushPartition(pushPartition)
         , m_dataStoreIdentifier(dataStoreIdentifier)
         , m_notificationProvider(notificationProvider)
@@ -600,6 +712,12 @@ public:
             { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerScriptSource } }
         }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy));
 
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        // This step is required early to make sure the first NetworkProcess access has the correct
+        // setting in the NetworkProcessInitializationParameters
+        if (builtInNotificationsEnabled == BuiltInNotificationsEnabled::Yes)
+            enableFeatureForPreferences(@"BuiltInNotificationsEnabled", configuration.get().preferences);
+
         RetainPtr<_WKWebsiteDataStoreConfiguration> dataStoreConfiguration;
         if (dataStoreIdentifier)
             dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:*dataStoreIdentifier]);
@@ -611,7 +729,6 @@ public:
             (NSString *)kCFStreamPropertyHTTPSProxyPort: @(m_server->port())
         }];
         dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
-        dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
         dataStoreConfiguration.get().isDeclarativeWebPushEnabled = YES;
@@ -624,6 +741,9 @@ public:
 
         if (installDataStoreDelegate == InstallDataStoreDelegate::Yes) {
             m_delegate = adoptNS([[PushNotificationDelegate alloc] init]);
+            if (builtInNotificationsEnabled == BuiltInNotificationsEnabled::Yes)
+                m_delegate.get().expectsDelegateNotificationCallbacks = NO;
+
             m_dataStore.get()._delegate = m_delegate.get();
         }
 
@@ -641,7 +761,6 @@ public:
         }];
         Util::run(&done);
 
-        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         [configuration setProcessPool:processPool];
         [configuration setWebsiteDataStore:m_dataStore.get()];
         configuration.get().preferences._appBadgeEnabled = YES;
@@ -653,16 +772,12 @@ public:
         m_notificationProvider.setPermission(m_origin, true);
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-        NSArray<_WKFeature *> * features = WKPreferences._features;
-        for (_WKFeature *feature in features) {
-            if ([feature.key isEqualToString:@"DeclarativeWebPush"]) {
-                [configuration.get().preferences _setEnabled:YES forFeature:feature];
-                break;
-            }
-        }
+        enableFeatureForPreferences(@"DeclarativeWebPush", configuration.get().preferences);
 #endif
 
         m_webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+        [m_webView _setDontResetTransientActivationAfterRunJavaScript:YES];
 
         [m_webView setUIDelegate:m_delegate.get()];
 
@@ -683,6 +798,13 @@ public:
 
     RetainPtr<WKWebsiteDataStore> dataStore() { return m_dataStore; }
 
+    id requestNotificationPermission()
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await Notification.requestPermission()" withArguments:@{ } error:&error];
+        return error ?: obj;
+    }
+
     id subscribe(String key = validServerKey)
     {
         NSError *error = nil;
@@ -695,6 +817,46 @@ public:
     {
         NSError *error = nil;
         id obj = [m_webView objectByCallingAsyncFunction:@"return await unsubscribe()" withArguments:@{ } error:&error];
+        return error ?: obj;
+    }
+
+    id getNotificationPermission()
+    {
+        return [m_webView stringByEvaluatingJavaScript:@"Notification.permission"];
+    }
+
+    id getNotificationPermissionFromServiceWorker()
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await getNotificationPermissionFromServiceWorker()" withArguments:@{ } error:&error];
+        return error ?: obj;
+    }
+
+    id getPushPermissionState()
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await getPushPermissionState()" withArguments:@{ } error:&error];
+        return error ?: obj;
+    }
+
+    id getPushPermissionStateFromServiceWorker()
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await getPushPermissionStateFromServiceWorker()" withArguments:@{ } error:&error];
+        return error ?: obj;
+    }
+
+    id queryPermission(NSString *name)
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await queryPermission(name)" withArguments:@{ @"name": name } error:&error];
+        return error ?: obj;
+    }
+
+    id queryPermissionFromServiceWorker(NSString *name)
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await queryPermissionFromServiceWorker(name)" withArguments:@{ @"name": name } error:&error];
         return error ?: obj;
     }
 
@@ -742,6 +904,33 @@ public:
         ASSERT_TRUE([obj isEqual:@YES]);
     }
 
+    id getNotifications()
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await getNotifications()" withArguments:@{ } error:&error];
+        return error ?: obj;
+    }
+
+    NSNumber *getAppBadge()
+    {
+        __block bool done = false;
+        __block NSNumber *result = nil;
+        [m_webView.get().configuration.websiteDataStore _getAppBadgeForTesting:^(NSNumber *badge) {
+            result = badge;
+            done = true;
+        }];
+
+        TestWebKitAPI::Util::run(&done);
+        return result;
+    }
+
+    void closeAllNotifications()
+    {
+        NSError *error = nil;
+        [m_webView objectByCallingAsyncFunction:@"return await closeAllNotifications()" withArguments:@{ } error:&error];
+        EXPECT_NULL(error);
+    }
+
     void resetPermission()
     {
         m_notificationProvider.resetPermission(m_origin);
@@ -754,11 +943,11 @@ public:
 
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    void injectDeclarativePushMessage(ASCIILiteral json, ASCIILiteral url = "https://example.com"_s)
+    void injectDeclarativePushMessage(ASCIILiteral json)
     {
         WebKit::WebPushD::PushMessageForTesting message;
         message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
-        message.registrationURL = URL(url);
+        message.registrationURL = URL("https://example.com"_s);
         message.disposition = WebKit::WebPushD::PushMessageDisposition::Notification;
         message.payload = json;
 
@@ -817,6 +1006,19 @@ public:
             done = true;
         });
         TestWebKitAPI::Util::run(&done);
+    }
+
+    RetainPtr<NSDictionary> fetchPushMessage()
+    {
+        __block bool gotMessage = false;
+        __block RetainPtr<NSDictionary> message;
+        [m_dataStore _getPendingPushMessage:^(NSDictionary *rawMessage) {
+            message = rawMessage;
+            gotMessage = true;
+        }];
+        TestWebKitAPI::Util::run(&gotMessage);
+
+        return message;
     }
 
     RetainPtr<NSArray<NSDictionary *>> fetchPushMessages()
@@ -920,7 +1122,7 @@ public:
 
     void captureAllMessages()
     {
-        [m_testMessageHandler setWildcardMessageHandler:^(NSString *message){
+        [m_testMessageHandler setDidReceiveScriptMessage:^(NSString *message) {
             m_mostRecentMessage = message;
         }];
     }
@@ -929,6 +1131,8 @@ public:
     {
         return m_mostRecentMessage;
     }
+
+    NSURL *url() const { return m_url.get(); }
 
 private:
     String m_pushPartition;
@@ -946,9 +1150,10 @@ private:
 
 class WebPushDTest : public ::testing::Test {
 public:
-    WebPushDTest(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes, ASCIILiteral html = htmlSource, InstallDataStoreDelegate installDataStoreDelegate = InstallDataStoreDelegate::No)
+    WebPushDTest(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes, ASCIILiteral html = htmlSource, InstallDataStoreDelegate installDataStoreDelegate = InstallDataStoreDelegate::No, BuiltInNotificationsEnabled builtInNotificationsEnabled = BuiltInNotificationsEnabled::No)
         : m_html(html)
         , m_installDataStoreDelegate(installDataStoreDelegate)
+        , m_builtInNotificationsEnabled(builtInNotificationsEnabled)
     {
         m_tempDirectory = retainPtr(setUpTestWebPushD(launchOnlyOnce));
     }
@@ -960,19 +1165,19 @@ public:
 
         m_notificationProvider = makeUnique<TestWebKitAPI::TestNotificationProvider>(Vector<WKNotificationManagerRef> { [processPool _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
 
-        auto webView = makeUniqueRef<WebPushDTestWebView>(emptyString(), std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
+        auto webView = makeUniqueRef<WebPushDTestWebView>(emptyString(), std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
         m_webViews.append(WTFMove(webView));
 
-        auto webViewWithIdentifier1 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("0bf5053b-164c-4b7d-8179-832e6bf158df"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
+        auto webViewWithIdentifier1 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("0bf5053b-164c-4b7d-8179-832e6bf158df"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
         m_webViews.append(WTFMove(webViewWithIdentifier1));
 
-        auto webViewWithIdentifier2 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
+        auto webViewWithIdentifier2 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
         m_webViews.append(WTFMove(webViewWithIdentifier2));
 
-        auto webViewWithPartition = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
+        auto webViewWithPartition = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
         m_webViews.append(WTFMove(webViewWithPartition));
 
-        auto webViewWithPartitionAndIdentifier = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
+        auto webViewWithPartitionAndIdentifier = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
         m_webViews.append(WTFMove(webViewWithPartitionAndIdentifier));
     }
 
@@ -1008,6 +1213,7 @@ protected:
     Vector<UniqueRef<WebPushDTestWebView>> m_webViews;
     ASCIILiteral m_html;
     InstallDataStoreDelegate m_installDataStoreDelegate { InstallDataStoreDelegate::No };
+    BuiltInNotificationsEnabled m_builtInNotificationsEnabled { BuiltInNotificationsEnabled::No };
 };
 
 class WebPushDMultipleLaunchTest : public WebPushDTest {
@@ -1063,6 +1269,23 @@ TEST_F(WebPushDTest, SubscribeTest)
 
     auto& ignored = topics.second;
     ASSERT_EQ(ignored.size(), 0u);
+}
+
+TEST_F(WebPushDTest, SubscribeWithBadIPCVersionRaisesExceptionTest)
+{
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+    auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+    bool done = false;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetProtocolVersionForTesting(WebKit::WebPushD::protocolVersionValue + 1), [&done]() {
+        done = true;
+    });
+    TestWebKitAPI::Util::run(&done);
+
+    for (auto& v : webViews()) {
+        ASSERT_FALSE(v->hasPushSubscription());
+        id obj = v->subscribe();
+        ASSERT_TRUE([obj isEqual:@"Error: AbortError: Connection to web push daemon failed"]);
+    }
 }
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
@@ -1416,6 +1639,179 @@ TEST_F(WebPushDMultipleLaunchTest, GetPushSubscriptionAfterDaemonRelaunch)
     ASSERT_EQ(subscribedTopicsCount(), 0u);
 }
 
+class WebPushDBuiltInTest : public WebPushDTest {
+public:
+    WebPushDBuiltInTest()
+        : WebPushDTest(LaunchOnlyOnce::Yes, htmlSource, InstallDataStoreDelegate::Yes, BuiltInNotificationsEnabled::Yes)
+    {
+    }
+};
+
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+TEST_F(WebPushDBuiltInTest, ShowAndGetNotifications)
+{
+    auto& view = webViews().last();
+    view->subscribe();
+
+    auto dataStore = view->dataStore();
+
+    auto configuration = defaultWebPushDaemonConfiguration();
+    configuration.pushPartitionString = dataStore.get()._webPushPartition;
+    configuration.dataStoreIdentifier = WTF::UUID::fromNSUUID(dataStore.get()._identifier);
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service", WTFMove(configuration));
+    auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+
+    WebKit::WebPushD::PushMessageForTesting message;
+    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
+    message.pushPartitionString = dataStore.get()._webPushPartition;
+    message.registrationURL = view->url();
+    message.disposition = WebKit::WebPushD::PushMessageDisposition::Legacy;
+    message.payload = @"hello";
+
+    // No badge had been set, so confirm its `nil`
+    EXPECT_FALSE(view->getAppBadge());
+
+    done = false;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), ^(const String& error) {
+        if (!error.isEmpty())
+            NSLog(@"ERROR: %s", error.utf8().data());
+        done = true;
+    });
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    RetainPtr delegate = (PushNotificationDelegate *)dataStore.get()._delegate;
+    [dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *messages) {
+        EXPECT_EQ(messages.count, 1u);
+
+        [dataStore _processPushMessage:messages.firstObject completionHandler:^(bool handled) {
+            EXPECT_TRUE(handled);
+            done = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    id result = view->getNotifications();
+    EXPECT_TRUE([result isEqualToString:@"0 - title: notification body:  tag:  dir: auto silent: null data: null "]);
+
+    view->closeAllNotifications();
+
+    result = view->getNotifications();
+    EXPECT_TRUE([result isEqualToString:@""]);
+
+    // The push message handler should set the app badge to 42
+    EXPECT_TRUE([view->getAppBadge() isEqual:@42]);
+}
+
+TEST_F(WebPushDBuiltInTest, TestPermissionsAfterNotificatonRequestPermission)
+{
+    auto& view = webViews().last();
+
+    EXPECT_TRUE([view->getNotificationPermission() isEqual:@"default"]);
+    EXPECT_TRUE([view->getNotificationPermissionFromServiceWorker() isEqualToString:@"default"]);
+    EXPECT_TRUE([view->getPushPermissionState() isEqual:@"prompt"]);
+    EXPECT_TRUE([view->getPushPermissionStateFromServiceWorker() isEqualToString:@"prompt"]);
+    EXPECT_TRUE([view->queryPermission(@"push") isEqual:@"prompt"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"push") isEqual:@"prompt"]);
+    EXPECT_TRUE([view->queryPermission(@"notifications") isEqual:@"prompt"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"notifications") isEqual:@"prompt"]);
+
+    EXPECT_TRUE([view->requestNotificationPermission() isEqual:@"granted"]);
+
+    EXPECT_TRUE([view->getNotificationPermission() isEqual:@"granted"]);
+    EXPECT_TRUE([view->getNotificationPermissionFromServiceWorker() isEqualToString:@"granted"]);
+    EXPECT_TRUE([view->getPushPermissionState() isEqual:@"granted"]);
+    EXPECT_TRUE([view->getPushPermissionStateFromServiceWorker() isEqualToString:@"granted"]);
+    EXPECT_TRUE([view->queryPermission(@"push") isEqual:@"granted"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"push") isEqual:@"granted"]);
+    EXPECT_TRUE([view->queryPermission(@"notifications") isEqual:@"granted"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"notifications") isEqual:@"granted"]);
+}
+
+TEST_F(WebPushDBuiltInTest, TestPermissionsAfterSubscribe)
+{
+    auto& view = webViews().last();
+
+    EXPECT_FALSE(view->hasPushSubscription());
+    EXPECT_TRUE([view->getNotificationPermission() isEqual:@"default"]);
+    EXPECT_TRUE([view->getNotificationPermissionFromServiceWorker() isEqualToString:@"default"]);
+    EXPECT_TRUE([view->getPushPermissionState() isEqual:@"prompt"]);
+    EXPECT_TRUE([view->getPushPermissionStateFromServiceWorker() isEqualToString:@"prompt"]);
+    EXPECT_TRUE([view->queryPermission(@"push") isEqual:@"prompt"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"push") isEqual:@"prompt"]);
+    EXPECT_TRUE([view->queryPermission(@"notifications") isEqual:@"prompt"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"notifications") isEqual:@"prompt"]);
+
+    view->subscribe();
+
+    EXPECT_TRUE(view->hasPushSubscription());
+    EXPECT_TRUE([view->getNotificationPermission() isEqual:@"granted"]);
+    EXPECT_TRUE([view->getNotificationPermissionFromServiceWorker() isEqualToString:@"granted"]);
+    EXPECT_TRUE([view->getPushPermissionState() isEqual:@"granted"]);
+    EXPECT_TRUE([view->getPushPermissionStateFromServiceWorker() isEqualToString:@"granted"]);
+    EXPECT_TRUE([view->queryPermission(@"push") isEqual:@"granted"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"push") isEqual:@"granted"]);
+    EXPECT_TRUE([view->queryPermission(@"notifications") isEqual:@"granted"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"notifications") isEqual:@"granted"]);
+}
+
+TEST_F(WebPushDBuiltInTest, ImplicitSilentPushTimerCancelledOnShowingNotification)
+{
+    for (auto& v : webViews())
+        v->subscribe();
+    ASSERT_EQ(subscribedTopicsCount(), webViews().size());
+
+    for (auto& v : webViews()) {
+        ASSERT_TRUE(v->hasPushSubscription());
+
+        for (unsigned i = 0; i < WebKit::WebPushD::maxSilentPushCount; i++) {
+            v->injectPushMessage(@{ });
+            auto message = v->fetchPushMessage();
+            ASSERT_TRUE(v->expectDecryptedMessage(@"null data", message.get()));
+        }
+
+        [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTesting.seconds() + 0.5)];
+        ASSERT_TRUE(v->hasPushSubscription());
+    }
+}
+
+TEST_F(WebPushDBuiltInTest, ImplicitSilentPushTimerCausesUnsubscribe)
+{
+    for (auto& v : webViews()) {
+        v->subscribe();
+        v->disableShowNotifications();
+    }
+    ASSERT_EQ(subscribedTopicsCount(), webViews().size());
+
+    int i = 1;
+    for (auto& v : webViews()) {
+        ASSERT_TRUE(v->hasPushSubscription());
+
+        for (unsigned i = 0; i < WebKit::WebPushD::maxSilentPushCount; i++) {
+            v->injectPushMessage(@{ });
+            auto message = v->fetchPushMessage();
+
+            // _processPushMessage should return false since we disabled showing notifications above.
+            ASSERT_FALSE(v->expectDecryptedMessage(@"null data", message.get()));
+        }
+
+        bool unsubscribed = false;
+        TestWebKitAPI::Util::waitForConditionWithLogging([&] {
+            unsubscribed = !v->hasPushSubscription();
+            [NSThread sleepForTimeInterval:0.25];
+            return unsubscribed;
+        }, 5, @"Timed out waiting for push subscription to be unsubscribed.");
+        ASSERT_TRUE(unsubscribed);
+
+        // Unsubscribing from this data store should not affect subscriptions in other data stores.
+        ASSERT_EQ(subscribedTopicsCount(), webViews().size() - i);
+        i++;
+    }
+}
+
+#endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+
+
 class WebPushDInjectedPushTest : public WebPushDTest {
 public:
     void runTest(NSString *expectedMessage, NSDictionary *apsUserInfo)
@@ -1509,321 +1905,442 @@ TEST_F(WebPushDTest, NotificationClickExtendsITPCleanupTimerBy30Days)
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
 
-static constexpr ASCIILiteral json0 = ""_s;
-static constexpr ASCIILiteral json1 = "not really a string"_s;
-static constexpr ASCIILiteral json2 = "\"a string\""_s;
-static constexpr ASCIILiteral json3 = "4"_s;
-static constexpr ASCIILiteral json4 = "{ }"_s;
 static constexpr ASCIILiteral json5 = R"JSONRESOURCE(
 {
-    "default_action_url": "foo"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "foo"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json6 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json7 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": ""
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": ""
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json8 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": 4
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": 4
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json9 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "app_badge": ""
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "app_badge": ""
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json10 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "app_badge": -1
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "app_badge": -1
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json11 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "app_badge": { }
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "app_badge": { }
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json12 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "app_badge": 10
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "app_badge": 10
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json13 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "options": 0
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "options": 0
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json14 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "options": { }
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "options": { }
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json15 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "dir": 0
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "dir": 0
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json16 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "dir": "auto"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "dir": "auto"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json17 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "dir": "ltr"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "dir": "ltr"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json18 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "dir": "rtl"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "dir": "rtl"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json19 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "dir": "nonsense"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "dir": "nonsense"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json20 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "lang": { }
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "lang": { }
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json21 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "lang": "language"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "lang": "language"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json22 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "body": { }
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "body": { }
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json23 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "body": "world"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "body": "world"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json24 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "tag": { }
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "tag": { }
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json25 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "tag": "world"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "tag": "world"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json26 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "icon": 0
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "icon": 0
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json27 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "icon": "world"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "icon": "world"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json28 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "icon": "https://example.com/icon.png"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "icon": "https://example.com/icon.png"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json29 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "silent": 0
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "silent": 0
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json30 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "silent": true
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "silent": true
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json31 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "silent": false
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "silent": false
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json32 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "app_badge": "20"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "app_badge": "20"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json33 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "app_badge": "18446744073709551615"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "app_badge": "8031"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json34 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "app_badge": "18446744073709551616"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "app_badge": "18446744073709551616"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json35 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "mutable": 39
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "mutable": 39
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json36 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "mutable": { }
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "mutable": { }
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json37 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "mutable": "true"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "mutable": "true"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json38 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "mutable": true
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "mutable": true
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json39 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "mutable": true,
-    "app_badge": "12"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "mutable": true,
+        "app_badge": "12"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json40 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "mutable": true,
-    "tag": "title Gotcha!",
-    "app_badge": "12"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "mutable": true,
+        "tag": "title Gotcha!",
+        "app_badge": "12"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json41 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "mutable": true,
-    "tag": "badge 1024",
-    "app_badge": "12"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "mutable": true,
+        "tag": "badge 1024",
+        "app_badge": "12"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json42 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Hello world!",
-    "mutable": true,
-    "tag": "titleandbadge ThisRules 4096",
-    "app_badge": "12"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Hello world!",
+        "mutable": true,
+        "tag": "titleandbadge ThisRules 4096",
+        "app_badge": "12"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json43 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Test the data object",
-    "mutable": true,
-    "tag": "datatotitle",
-    "data": "Raw string",
-    "app_badge": "12"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Test the data object",
+        "mutable": true,
+        "tag": "datatotitle",
+        "data": "Raw string",
+        "app_badge": "12"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json44 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Test the data object",
-    "mutable": true,
-    "tag": "datatotitle",
-    "data": { "key": "value" },
-    "app_badge": "12"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Test the data object",
+        "mutable": true,
+        "tag": "datatotitle",
+        "data": { "key": "value" },
+        "app_badge": "12"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json45 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Test a default action URL override",
-    "mutable": true,
-    "tag": "defaultactionurl https://webkit.org/",
-    "app_badge": "12"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Test a default action URL override",
+        "mutable": true,
+        "tag": "defaultactionurl https://webkit.org/",
+        "app_badge": "12"
+    }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json46 = R"JSONRESOURCE(
 {
-    "default_action_url": "https://example.com/",
-    "title": "Test a missing default action URL override",
-    "mutable": true,
-    "tag": "emptydefaultactionurl",
-    "app_badge": "12"
+    "web_push": 8030,
+    "notification": {
+        "navigate": "https://example.com/",
+        "title": "Test a missing default action URL override",
+        "mutable": true,
+        "tag": "emptydefaultactionurl",
+        "app_badge": "12"
+    }
 }
 )JSONRESOURCE"_s;
 
 static constexpr ASCIILiteral errors[] = {
     "does not contain valid JSON"_s,
     "top level JSON value is not an object"_s,
-    "'default_action_url' member is specified but does not represent a valid URL"_s,
+    "'navigate' member is specified but does not represent a valid URL"_s,
     "'title' member is missing or is an empty string"_s,
     "'title' member is specified but is not a string"_s,
     "'app_badge' member is specified as a string that did not parse to to an unsigned long long"_s,
@@ -1843,11 +2360,6 @@ static constexpr ASCIILiteral errors[] = {
 };
 
 static std::pair<ASCIILiteral, ASCIILiteral> jsonAndErrors[] = {
-    { json0, errors[0] },
-    { json1, errors[0] },
-    { json2, errors[1] },
-    { json3, errors[1] },
-    { json4, errors[2] },
     { json5, errors[2] },
     { json6, errors[3] },
     { json7, errors[3] },
@@ -1913,7 +2425,6 @@ TEST(WebPushD, DeclarativeParsing)
 
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
-    dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
     clearWebsiteDataStore(dataStore.get());
 
@@ -1964,11 +2475,8 @@ TEST(WebPushD, DeclarativeWebPushHandling)
 {
     setUpTestWebPushD();
 
-    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
-
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
-    dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
     dataStoreConfiguration.get().isDeclarativeWebPushEnabled = YES;
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
     clearWebsiteDataStore(dataStore.get());
@@ -1976,10 +2484,12 @@ TEST(WebPushD, DeclarativeWebPushHandling)
     auto delegate = adoptNS([[PushNotificationDelegate alloc] init]);
     dataStore.get()._delegate = delegate.get();
 
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
     static bool done = false;
 
     WebKit::WebPushD::PushMessageForTesting message;
+    message.pushPartitionString = "TestWebKitAPI"_s;
     message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
     message.registrationURL = URL("https://example.com"_s);
     message.disposition = WebKit::WebPushD::PushMessageDisposition::Notification;
@@ -1990,29 +2500,269 @@ TEST(WebPushD, DeclarativeWebPushHandling)
     });
     TestWebKitAPI::Util::run(&done);
 
+    // Verify that even after having sent a push message to the daemon, there are no pending messages, as it was already handled.
     done = false;
     [dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *messages) {
-        EXPECT_EQ(messages.count, 1u);
-
-        [dataStore _processPushMessage:messages.firstObject completionHandler:^(bool handled) {
-            EXPECT_TRUE(handled);
-            EXPECT_TRUE([delegate.get().mostRecentNotification.get().userInfo[@"WebNotificationDefaultActionURLKey"] isEqualToString:@"https://example.com/"]);
-            EXPECT_EQ(delegate.get().mostRecentAppBadge, 18446744073709551615ULL);
-            done = true;
-        }];
-    }];
-    TestWebKitAPI::Util::run(&done);
-
-
-    // Verify that processing the most recent notification results in its action URL being sent to the data store delegate
-    done = false;
-    [dataStore _processPersistentNotificationClick:delegate.get().mostRecentNotification.get().userInfo completionHandler:^(bool handled) {
-        EXPECT_TRUE(handled);
-        EXPECT_TRUE([delegate.get().mostRecentActionURL.get().absoluteString isEqualToString:@"https://example.com/"]);
-
+        EXPECT_EQ(messages.count, 0u);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    RetainPtr configuration = adoptNS([[_WKWebPushDaemonConnectionConfiguration alloc] init]);
+    configuration.get().machServiceName = @"org.webkit.webpushtestdaemon.service";
+    configuration.get().bundleIdentifierOverrideForTesting = @"com.apple.WebKit.TestWebKitAPI";
+    configuration.get().hostApplicationAuditToken = getSelfAuditToken();
+    configuration.get().partition = @"TestWebKitAPI";
+    RetainPtr connection = adoptNS([[_WKWebPushDaemonConnection alloc] initWithConfiguration:configuration.get()]);
+
+    done = false;
+
+    [connection getNotifications:(NSURL *)message.registrationURL tag:@"" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(notifications);
+        EXPECT_EQ(notifications.count, 1u);
+        EXPECT_TRUE([notifications[0].title isEqualToString:@"Hello world!"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+#endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+
+    // FIXME: Figure out how to activate the notification programtically to verify the appropriate delegate callbacks are made
+}
+
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+
+TEST(WebPushD, WKWebPushDaemonConnectionRequestPushPermission)
+{
+    setUpTestWebPushD();
+
+    auto configuration = adoptNS([[_WKWebPushDaemonConnectionConfiguration alloc] init]);
+    configuration.get().machServiceName = @"org.webkit.webpushtestdaemon.service";
+    configuration.get().hostApplicationAuditToken = getSelfAuditToken();
+    auto connection = adoptNS([[_WKWebPushDaemonConnection alloc] initWithConfiguration:configuration.get()]);
+    auto url = adoptNS([[NSURL alloc] initWithString:@"https://webkit.org"]);
+
+    __block bool done = false;
+    [connection getPushPermissionStateForOrigin:url.get() completionHandler:^(_WKWebPushPermissionState state) {
+        done = true;
+        EXPECT_EQ(state, _WKWebPushPermissionStatePrompt);
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection requestPushPermissionForOrigin:url.get() completionHandler:^(BOOL granted) {
+        done = true;
+        EXPECT_TRUE(granted);
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection getPushPermissionStateForOrigin:url.get() completionHandler:^(_WKWebPushPermissionState state) {
+        done = true;
+        EXPECT_EQ(state, _WKWebPushPermissionStateGranted);
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+#endif
+
+TEST(WebPushD, WKWebPushDaemonConnectionPushNotifications)
+{
+    setUpTestWebPushD();
+
+    auto configuration = adoptNS([[_WKWebPushDaemonConnectionConfiguration alloc] init]);
+    configuration.get().machServiceName = @"org.webkit.webpushtestdaemon.service";
+    // Bundle identifier is required for making push subscription.
+    configuration.get().bundleIdentifierOverrideForTesting = @"com.apple.WebKit.TestWebKitAPI";
+    configuration.get().hostApplicationAuditToken = getSelfAuditToken();
+    auto connection = adoptNS([[_WKWebPushDaemonConnection alloc] initWithConfiguration:configuration.get()]);
+    auto url = adoptNS([[NSURL alloc] initWithString:@"https://webkit.org/sw.js"]);
+    RetainPtr applicationServerKey = [NSData dataWithBytes:(const void *)validServerKey.characters() length:validServerKey.length()];
+
+    __block bool done = false;
+    [connection subscribeToPushServiceForScope:url.get() applicationServerKey:applicationServerKey.get() completionHandler:^(_WKWebPushSubscriptionData *subscription, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(subscription);
+        EXPECT_WK_STREQ(@"https://webkit.org/push", subscription.endpoint.absoluteString);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection getSubscriptionForScope:url.get() completionHandler:^(_WKWebPushSubscriptionData *subscription, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(subscription);
+        EXPECT_WK_STREQ(@"https://webkit.org/push", subscription.endpoint.absoluteString);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection unsubscribeFromPushServiceForScope:url.get() completionHandler:^(BOOL unsubscribed, NSError * error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE(unsubscribed);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection getSubscriptionForScope:url.get() completionHandler:^(_WKWebPushSubscriptionData *subscription, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NULL(subscription);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    done = false;
+    [connection getNotifications:url.get() tag:@"" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(notifications);
+        EXPECT_EQ(notifications.count, 0u);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    RetainPtr notification = adoptNS([[_WKMutableNotificationData alloc] init]);
+    notification.get().title = @"Hello World!";
+    notification.get().dir = _WKNotificationDirectionLTR;
+    notification.get().lang = @"en";
+    notification.get().body = @"Body1";
+    notification.get().tag = @"Tag1";
+    notification.get().alert = _WKNotificationAlertSilent;
+    notification.get().data = [NSData data];
+    notification.get().securityOrigin = url.get();
+    notification.get().serviceWorkerRegistrationURL = url.get();
+    RetainPtr uuid1 = [NSUUID UUID];
+    notification.get().uuid = uuid1.get();
+
+    done = false;
+    [connection showNotification:notification.get() completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection getNotifications:url.get() tag:@"" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ(notifications.count, 1u);
+        if (notifications.count) {
+            EXPECT_TRUE([notifications[0].title isEqualToString:@"Hello World!"]);
+            EXPECT_EQ(notifications[0].dir, _WKNotificationDirectionLTR);
+            EXPECT_TRUE([notifications[0].lang isEqualToString:@"en"]);
+            EXPECT_TRUE([notifications[0].body isEqualToString:@"Body1"]);
+            EXPECT_TRUE([notifications[0].tag isEqualToString:@"Tag1"]);
+            EXPECT_EQ(notifications[0].alert, _WKNotificationAlertSilent);
+            EXPECT_TRUE([notifications[0].data isEqual:[NSData data]]);
+            EXPECT_TRUE([notifications[0].securityOrigin isEqual:notification.get().securityOrigin]);
+            EXPECT_TRUE([notifications[0].serviceWorkerRegistrationURL isEqual:url.get()]);
+            EXPECT_TRUE([notifications[0].uuid isEqual:uuid1.get()]);
+        }
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    [connection cancelNotification:url.get() uuid:uuid1.get()];
+
+    done = false;
+    [connection getNotifications:url.get() tag:@"" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(notifications);
+        EXPECT_EQ(notifications.count, 0u);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection showNotification:notification.get() completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    notification.get().body = @"Body2";
+    notification.get().tag = @"Tag2";
+    RetainPtr uuid2 = [NSUUID UUID];
+    notification.get().uuid = uuid2.get();
+    done = false;
+    [connection showNotification:notification.get() completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection getNotifications:url.get() tag:@"" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ(notifications.count, 2u);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection getNotifications:url.get() tag:@"Tag1" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ(notifications.count, 1u);
+        if (notifications.count)
+            EXPECT_TRUE([notifications[0].body isEqualToString:@"Body1"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection getNotifications:url.get() tag:@"Tag2" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ(notifications.count, 1u);
+        if (notifications.count)
+            EXPECT_TRUE([notifications[0].body isEqualToString:@"Body2"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    [connection cancelNotification:url.get() uuid:uuid1.get()];
+
+    done = false;
+    [connection getNotifications:url.get() tag:@"" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ(notifications.count, 1u);
+        if (notifications.count) {
+            EXPECT_TRUE([notifications[0].body isEqualToString:@"Body2"]);
+            EXPECT_TRUE([notifications[0].uuid isEqual:uuid2.get()]);
+        }
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+#endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+}
+
+TEST(WebPushD, WKWebPushDaemonConnectionSubscribeWithBadIPCVersionRaisesException)
+{
+    setUpTestWebPushD();
+
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+    auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+    bool done = false;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetProtocolVersionForTesting(WebKit::WebPushD::protocolVersionValue + 1), [&done]() {
+        done = true;
+    });
+    TestWebKitAPI::Util::run(&done);
+
+    auto configuration = adoptNS([[_WKWebPushDaemonConnectionConfiguration alloc] init]);
+    configuration.get().machServiceName = @"org.webkit.webpushtestdaemon.service";
+    // Bundle identifier is required for making push subscription.
+    configuration.get().bundleIdentifierOverrideForTesting = @"com.apple.WebKit.TestWebKitAPI";
+    configuration.get().hostApplicationAuditToken = getSelfAuditToken();
+    auto connection = adoptNS([[_WKWebPushDaemonConnection alloc] initWithConfiguration:configuration.get()]);
+    auto url = adoptNS([[NSURL alloc] initWithString:@"https://webkit.org/sw.js"]);
+    RetainPtr applicationServerKey = [NSData dataWithBytes:(const void *)validServerKey.characters() length:validServerKey.length()];
+
+    done = false;
+    RetainPtr<NSError> error;
+    [connection subscribeToPushServiceForScope:url.get() applicationServerKey:applicationServerKey.get() completionHandler:[&done, &error] (_WKWebPushSubscriptionData *subscription, NSError *subscriptionError) {
+        error = subscriptionError;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    ASSERT_TRUE([[error description] containsString:@"Connection to web push daemon failed"]);
 }
 
 class WebPushDPushNotificationEventTest : public WebPushDTest {
@@ -2054,7 +2804,6 @@ public:
 
         if (![recentTitle isEqualToString:title])
             NSLog(@"Most recent title: %@\nExpected title: %@", recentTitle, title);
-
     }
 
     void checkLastNotificationDefaultActionURL(NSString *actionURL)

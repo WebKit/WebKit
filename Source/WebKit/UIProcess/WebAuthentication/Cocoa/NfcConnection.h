@@ -27,10 +27,9 @@
 
 #if ENABLE(WEB_AUTHN) && HAVE(NEAR_FIELD)
 
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
-#include <wtf/WeakPtr.h>
 
 OBJC_CLASS NFReaderSession;
 OBJC_CLASS NSArray;
@@ -40,7 +39,7 @@ namespace WebKit {
 
 class NfcService;
 
-class NfcConnection : public RefCounted<NfcConnection>, public CanMakeWeakPtr<NfcConnection> {
+class NfcConnection : public RefCountedAndCanMakeWeakPtr<NfcConnection> {
 public:
     static Ref<NfcConnection> create(RetainPtr<NFReaderSession>&&, NfcService&);
     ~NfcConnection();

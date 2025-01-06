@@ -13,9 +13,9 @@
 
 #include <algorithm>
 #include <cmath>
-#include <limits>
+#include <cstdint>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/math_utils.h"
 
@@ -33,7 +33,7 @@ namespace webrtc_impl {
 // If you want a full-fledged moving window over N last samples,
 // please use webrtc::RollingAccumulator.
 //
-// The measures return absl::nullopt if no samples were fed (Size() == 0),
+// The measures return std::nullopt if no samples were fed (Size() == 0),
 // otherwise the returned optional is guaranteed to contain a value.
 //
 // [1]
@@ -108,50 +108,50 @@ class RunningStatistics {
 
   // Returns minimum among all seen samples, in O(1) time.
   // This isn't affected by RemoveSample().
-  absl::optional<T> GetMin() const {
+  std::optional<T> GetMin() const {
     if (size_ == 0) {
-      return absl::nullopt;
+      return std::nullopt;
     }
     return min_;
   }
 
   // Returns maximum among all seen samples, in O(1) time.
   // This isn't affected by RemoveSample().
-  absl::optional<T> GetMax() const {
+  std::optional<T> GetMax() const {
     if (size_ == 0) {
-      return absl::nullopt;
+      return std::nullopt;
     }
     return max_;
   }
 
   // Returns sum in O(1) time.
-  absl::optional<double> GetSum() const {
+  std::optional<double> GetSum() const {
     if (size_ == 0) {
-      return absl::nullopt;
+      return std::nullopt;
     }
     return sum_;
   }
 
   // Returns mean in O(1) time.
-  absl::optional<double> GetMean() const {
+  std::optional<double> GetMean() const {
     if (size_ == 0) {
-      return absl::nullopt;
+      return std::nullopt;
     }
     return mean_;
   }
 
   // Returns unbiased sample variance in O(1) time.
-  absl::optional<double> GetVariance() const {
+  std::optional<double> GetVariance() const {
     if (size_ == 0) {
-      return absl::nullopt;
+      return std::nullopt;
     }
     return cumul_ / size_;
   }
 
   // Returns unbiased standard deviation in O(1) time.
-  absl::optional<double> GetStandardDeviation() const {
+  std::optional<double> GetStandardDeviation() const {
     if (size_ == 0) {
-      return absl::nullopt;
+      return std::nullopt;
     }
     return std::sqrt(*GetVariance());
   }

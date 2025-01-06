@@ -434,7 +434,7 @@ void FuzzSocket(DcSctpSocketInterface& socket,
         SendOptions options;
         options.unordered = IsUnordered(flags & 0x01);
         options.max_retransmissions =
-            (flags & 0x02) != 0 ? absl::make_optional(0) : absl::nullopt;
+            (flags & 0x02) != 0 ? std::make_optional(0) : std::nullopt;
         options.lifecycle_id = LifecycleId(42);
         size_t payload_exponent = (flags >> 2) % 16;
         size_t payload_size = static_cast<size_t>(1) << payload_exponent;
@@ -446,7 +446,7 @@ void FuzzSocket(DcSctpSocketInterface& socket,
       case 7: {
         // Expire an active timeout/timer.
         uint8_t timeout_idx = state.GetByte();
-        absl::optional<TimeoutID> timeout_id = cb.ExpireTimeout(timeout_idx);
+        std::optional<TimeoutID> timeout_id = cb.ExpireTimeout(timeout_idx);
         if (timeout_id.has_value()) {
           socket.HandleTimeout(*timeout_id);
         }

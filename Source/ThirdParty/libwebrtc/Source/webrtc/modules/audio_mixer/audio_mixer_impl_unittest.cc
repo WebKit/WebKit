@@ -15,11 +15,11 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/audio/audio_mixer.h"
 #include "api/rtp_packet_info.h"
 #include "api/rtp_packet_infos.h"
@@ -121,7 +121,7 @@ class CustomRateCalculator : public OutputRateCalculator {
  public:
   explicit CustomRateCalculator(int rate) : rate_(rate) {}
   int CalculateOutputRateFromRange(
-      rtc::ArrayView<const int> preferred_rates) override {
+      rtc::ArrayView<const int> /* preferred_rates */) override {
     return rate_;
   }
 
@@ -448,7 +448,7 @@ TEST(AudioMixer, ShouldIncludeRtpPacketInfoFromAllMixedSources) {
   const uint32_t kCsrc3 = 23;
   const int kAudioLevel0 = 10;
   const int kAudioLevel1 = 40;
-  const absl::optional<uint32_t> kAudioLevel2 = absl::nullopt;
+  const std::optional<uint32_t> kAudioLevel2 = std::nullopt;
   const uint32_t kRtpTimestamp0 = 300;
   const uint32_t kRtpTimestamp1 = 400;
   const Timestamp kReceiveTime0 = Timestamp::Millis(10);
@@ -483,7 +483,7 @@ class HighOutputRateCalculator : public OutputRateCalculator {
  public:
   static const int kDefaultFrequency = 76000;
   int CalculateOutputRateFromRange(
-      rtc::ArrayView<const int> preferred_sample_rates) override {
+      rtc::ArrayView<const int> /* preferred_sample_rates */) override {
     return kDefaultFrequency;
   }
   ~HighOutputRateCalculator() override {}
@@ -517,13 +517,8 @@ TEST(AudioMixerDeathTest, MultipleChannelsAndHighRate) {
   other_frame->samples_per_channel_ = kSamplesPerChannel;
   mixer->AddSource(&other_source);
 
-#if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
+#if GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
   EXPECT_DEATH(mixer->Mix(kNumberOfChannels, &frame_for_mixing), "");
-#elif !RTC_DCHECK_IS_ON
-  mixer->Mix(kNumberOfChannels, &frame_for_mixing);
-  EXPECT_EQ(frame_for_mixing.num_channels_, kNumberOfChannels);
-  EXPECT_EQ(frame_for_mixing.sample_rate_hz_,
-            HighOutputRateCalculator::kDefaultFrequency);
 #endif
 }
 

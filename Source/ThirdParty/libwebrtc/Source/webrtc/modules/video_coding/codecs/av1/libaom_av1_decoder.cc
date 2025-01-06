@@ -157,8 +157,8 @@ int32_t LibaomAv1Decoder::Decode(const EncodedImage& encoded_image,
                                    .set_color_space(encoded_image.ColorSpace())
                                    .build();
 
-    decode_complete_callback_->Decoded(decoded_frame, absl::nullopt,
-                                       absl::nullopt);
+    decode_complete_callback_->Decoded(decoded_frame, std::nullopt,
+                                       std::nullopt);
   }
   return WEBRTC_VIDEO_CODEC_OK;
 }

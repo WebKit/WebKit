@@ -90,7 +90,11 @@ public:
 
     void updateConnection();
 
+    bool isPowerEfficient() const;
+
 private:
+    struct PromiseConverter;
+
     WebCore::RealtimeMediaSourceIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
     WebCore::CaptureDevice m_device;

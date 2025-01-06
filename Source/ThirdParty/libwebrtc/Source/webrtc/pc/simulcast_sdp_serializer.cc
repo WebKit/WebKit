@@ -11,6 +11,7 @@
 #include "pc/simulcast_sdp_serializer.h"
 
 #include <map>
+#include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -18,7 +19,6 @@
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/string_encode.h"
@@ -164,7 +164,7 @@ webrtc::RTCError ParseRidPayloadList(const std::string& payload_list,
   }
 
   for (const std::string& payload_type : string_payloads) {
-    absl::optional<int> value = rtc::StringToNumber<int>(payload_type);
+    std::optional<int> value = rtc::StringToNumber<int>(payload_type);
     if (!value.has_value()) {
       return ParseError("Invalid payload type: " + payload_type);
     }
@@ -196,7 +196,7 @@ std::string SimulcastSdpSerializer::SerializeSimulcastDescription(
        << simulcast.receive_layers();
   }
 
-  return sb.str();
+  return sb.Release();
 }
 
 // https://tools.ietf.org/html/draft-ietf-mmusic-sdp-simulcast-13#section-5.1
@@ -305,7 +305,7 @@ std::string SimulcastSdpSerializer::SerializeRidDescription(
     propertyDelimiter = kDelimiterSemicolon;
   }
 
-  return builder.str();
+  return builder.Release();
 }
 
 // https://tools.ietf.org/html/draft-ietf-mmusic-rid-15#section-10

@@ -25,13 +25,16 @@
 
 #pragma once
 
-#include <wtf/OSObjectPtr.h>
-#include <wtf/RunLoop.h>
-#include <wtf/Seconds.h>
-#include <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/OSObjectPtr.h>
+#import <wtf/Seconds.h>
+#import <wtf/spi/darwin/XPCSPI.h>
+
+#if USE(EXTENSIONKIT_PROCESS_TERMINATION)
+#import "ExtensionProcess.h"
+#endif
 
 #if PLATFORM(IOS_FAMILY)
-#include <wtf/Ref.h>
+#import <wtf/Ref.h>
 #endif
 
 namespace WebKit {
@@ -44,16 +47,22 @@ class ProcessAndUIAssertion;
 // 2) On iOS, make the process runnable for the duration of the watchdog
 //    to ensure it has a chance to terminate cleanly.
 class XPCConnectionTerminationWatchdog {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static void startConnectionTerminationWatchdog(AuxiliaryProcessProxy&, Seconds interval);
 
 private:
-    XPCConnectionTerminationWatchdog(AuxiliaryProcessProxy&, Seconds interval);
-    void watchdogTimerFired();
+    friend UniqueRef<XPCConnectionTerminationWatchdog> WTF::makeUniqueRefWithoutFastMallocCheck<XPCConnectionTerminationWatchdog>(AuxiliaryProcessProxy&);
 
-    OSObjectPtr<xpc_connection_t> m_xpcConnection;
-    RunLoop::Timer m_watchdogTimer;
+    explicit XPCConnectionTerminationWatchdog(AuxiliaryProcessProxy&);
+    void terminateProcess();
+
     Ref<ProcessAndUIAssertion> m_assertion;
+#if USE(EXTENSIONKIT_PROCESS_TERMINATION)
+    std::optional<ExtensionProcess> m_process;
+#else
+    OSObjectPtr<xpc_connection_t> m_xpcConnection;
+#endif
 };
 
 }

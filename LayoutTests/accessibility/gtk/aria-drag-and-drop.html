@@ -33,7 +33,7 @@
         for (var i = 1; i <= 8; i++) {
             var axElement = accessibilityController.accessibleElementById("test" + i);
             debug("test" + i + "\n\tariaDropEffects: " + axElement.ariaDropEffects +
-			       "\n\tariaIsGrabbed: " + axElement.ariaIsGrabbed +
+			       "\n\tisGrabbed: " + axElement.isGrabbed +
 			       "\n\thas grabbed attribute: " + hasGrabbedAttribute(axElement));
         }
 

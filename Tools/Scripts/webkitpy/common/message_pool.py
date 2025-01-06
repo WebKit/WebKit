@@ -48,12 +48,8 @@ import sys
 import time
 import traceback
 
-if sys.version_info > (3, 0):
-    import pickle
-    import queue
-else:
-    import cPickle as pickle
-    import Queue as queue
+import pickle
+import queue
 
 from webkitpy.common.host import Host
 from webkitpy.common.system import stack_utils

@@ -1,0 +1,19 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+install-name: /System/Library/PrivateFrameworks/IconServices.framework/IconServices
+current-version: 493
+reexported-libraries:
+-       targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+        libraries: [/System/Library/PrivateFrameworks/IconFoundation.framework/IconFoundation]
+exports:
+-       targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+        objc-classes: [ISIcon, ISImageDescriptor]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+install-name: /System/Library/PrivateFrameworks/IconFoundation.framework/IconFoundation
+current-version: 493
+exports: []
+...

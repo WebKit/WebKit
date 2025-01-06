@@ -30,6 +30,8 @@
 #include <emmintrin.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template <uintptr_t mask>
@@ -160,3 +162,5 @@ inline bool charactersAreAllLatin1(std::span<const CharacterType> span)
 } // namespace WTF
 
 using WTF::charactersAreAllASCII;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -32,12 +32,23 @@
 #include "EventNames.h"
 #include "SpeechSynthesisErrorEvent.h"
 #include "SpeechSynthesisEvent.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechSynthesisUtterance);
-    
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SpeechSynthesisUtterance);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechSynthesisUtteranceActivity);
+
+void SpeechSynthesisUtterance::ref() const
+{
+    RefCounted::ref();
+}
+
+void SpeechSynthesisUtterance::deref() const
+{
+    RefCounted::deref();
+}
+
 Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text)
 {
     auto utterance = adoptRef(*new SpeechSynthesisUtterance(context, text, { }));

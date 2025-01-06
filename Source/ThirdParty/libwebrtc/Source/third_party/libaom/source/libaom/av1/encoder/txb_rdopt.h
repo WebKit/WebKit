@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -86,8 +86,8 @@ int av1_cost_coeffs_txb(const MACROBLOCK *x, const int plane, const int block,
  * This function compute the entropy costs of the end of block position (eob)
  * and the transform type (tx_type) precisely.
  *
- * Then using \ref av1_cost_coeffs_txb_estimate to estimate the entropy costs
- * of coefficients in the transform block.
+ * Then using av1_cost_coeffs_txb_estimate() (see av1/encoder/txb_rdopt.c) to
+ * estimate the entropy costs of coefficients in the transform block.
  *
  * In the end, the function returns the sum of entropy costs of end of block
  * position (eob), transform type (tx_type) and coefficients.
@@ -119,40 +119,6 @@ int av1_cost_coeffs_txb_laplacian(const MACROBLOCK *x, const int plane,
                                   const TXB_CTX *const txb_ctx,
                                   const int reduced_tx_set_used,
                                   const int adjust_eob);
-
-/*!\brief Estimate the entropy cost of transform coefficients using Laplacian
- * distribution.
- *
- * \ingroup coefficient_coding
- *
- * This function assumes each transform coefficient is of its own Laplacian
- * distribution and the coefficient is the only observation of the Laplacian
- * distribution.
- *
- * Based on that, each coefficient's coding cost can be estimated by computing
- * the entropy of the corresponding Laplacian distribution.
- *
- * This function then return the sum of the estimated entropy cost for all
- * coefficients in the transform block.
- *
- * Note that the entropy cost of end of block (eob) and transform type (tx_type)
- * are not included.
- *
- * \param[in]    x              Pointer to structure holding the data for the
-                                current encoding macroblock
- * \param[in]    plane          The index of the current plane
- * \param[in]    block          The index of the current transform block in the
- * macroblock. It's defined by number of 4x4 units that have been coded before
- * the currernt transform block
- * \param[in]    tx_size        The transform size
- * \param[in]    tx_type        The transform type
- * \return       int            Estimated entropy cost of coefficients in the
- * transform block.
- */
-int av1_cost_coeffs_txb_estimate(const MACROBLOCK *x, const int plane,
-                                 const int block, const TX_SIZE tx_size,
-                                 const TX_TYPE tx_type);
-
 #ifdef __cplusplus
 }
 #endif

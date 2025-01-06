@@ -49,6 +49,9 @@ public:
     static Ref<RemoteVideoFrameObjectHeap> create(Ref<IPC::Connection>&&);
     ~RemoteVideoFrameObjectHeap();
 
+    void ref() const final { IPC::WorkQueueMessageReceiver::ref(); }
+    void deref() const final { IPC::WorkQueueMessageReceiver::deref(); }
+
     void close();
     RemoteVideoFrameProxy::Properties add(Ref<WebCore::VideoFrame>&&);
     RefPtr<WebCore::VideoFrame> get(RemoteVideoFrameReadReference&&);
@@ -58,6 +61,8 @@ public:
 
 private:
     explicit RemoteVideoFrameObjectHeap(Ref<IPC::Connection>&&);
+
+    Ref<IPC::Connection> protectedConnection() const { return m_connection; }
 
     // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

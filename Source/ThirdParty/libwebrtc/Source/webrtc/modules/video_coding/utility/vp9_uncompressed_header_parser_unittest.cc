@@ -31,7 +31,7 @@ TEST(Vp9UncompressedHeaderParserTest, FrameWithSegmentation) {
       0x2e, 0x73, 0xb7, 0xee, 0x22, 0x06, 0x81, 0x82, 0xd4, 0xef, 0xc3, 0x58,
       0x1f, 0x12, 0xd2, 0x7b, 0x28, 0x1f, 0x80, 0xfc, 0x07, 0xe0, 0x00, 0x00};
 
-  absl::optional<Vp9UncompressedHeader> frame_info =
+  std::optional<Vp9UncompressedHeader> frame_info =
       ParseUncompressedVp9Header(kHeader);
   ASSERT_TRUE(frame_info.has_value());
 
@@ -56,6 +56,7 @@ TEST(Vp9UncompressedHeaderParserTest, FrameWithSegmentation) {
   EXPECT_EQ(frame_info->tile_cols_log2, 0u);
   EXPECT_EQ(frame_info->tile_rows_log2, 0u);
   EXPECT_EQ(frame_info->render_size_offset_bits, 64u);
+  EXPECT_EQ(frame_info->loop_filter_params_offset_bits, 100u);
   EXPECT_EQ(frame_info->compressed_header_size, 23u);
   EXPECT_EQ(frame_info->uncompressed_header_size, 37u);
 
@@ -73,7 +74,7 @@ TEST(Vp9UncompressedHeaderParserTest, SegmentationWithDefaultPredProbs) {
   const uint8_t kHeader[] = {0x90, 0x49, 0x83, 0x42, 0x80, 0x2e,
                              0x30, 0x0,  0xb0, 0x0,  0x37, 0xff,
                              0x06, 0x80, 0x0,  0x0,  0x0,  0x0};
-  absl::optional<Vp9UncompressedHeader> frame_info =
+  std::optional<Vp9UncompressedHeader> frame_info =
       ParseUncompressedVp9Header(kHeader);
   ASSERT_TRUE(frame_info.has_value());
   EXPECT_THAT(frame_info->segmentation_pred_prob,
@@ -84,7 +85,7 @@ TEST(Vp9UncompressedHeaderParserTest, SegmentationWithSkipLevel) {
   const uint8_t kHeader[] = {0x90, 0x49, 0x83, 0x42, 0x80, 0x2e, 0x30, 0x00,
                              0xb0, 0x00, 0x37, 0xff, 0x06, 0x80, 0x01, 0x08,
                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-  absl::optional<Vp9UncompressedHeader> frame_info =
+  std::optional<Vp9UncompressedHeader> frame_info =
       ParseUncompressedVp9Header(kHeader);
   ASSERT_TRUE(frame_info.has_value());
   EXPECT_THAT(frame_info->segmentation_features[0][kVp9SegLvlSkip], Eq(1));

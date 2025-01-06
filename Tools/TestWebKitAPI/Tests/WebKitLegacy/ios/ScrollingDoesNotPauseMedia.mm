@@ -93,7 +93,7 @@ TEST(WebKitLegacy, ScrollingDoesNotPauseMedia)
     RetainPtr<ScrollingDoesNotPauseMediaDelegate> testController = adoptNS([ScrollingDoesNotPauseMediaDelegate new]);
     uiWebView.get().delegate = testController.get();
 
-    [uiWebView loadRequest:[NSURLRequest requestWithURL:[NSBundle.mainBundle URLForResource:@"one-video" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [uiWebView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"one-video" withExtension:@"html"]]];
 
     Util::run(&didFinishLoad);
     Util::run(&gotMainFrame);

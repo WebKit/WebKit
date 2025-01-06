@@ -14,7 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/crashtests/chrome-bug-1377573.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/crashtests/chrome-counter-in-multicol-details-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/crashtests/chrome-legacy-propagation-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/crashtests/chrome-legacy-propagation-remove-body-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/crashtests/firefox-bug-1715631.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/crashtests/firefox-bug-1930225.html

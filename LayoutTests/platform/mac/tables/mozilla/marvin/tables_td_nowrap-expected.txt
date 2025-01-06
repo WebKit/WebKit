@@ -9,13 +9,13 @@ layer at (0,0) size 800x600
           text run at (703,0) width 80: "heading will"
           text run at (0,18) width 127: "wrap atuomatically."
         RenderBR {BR} at (126,18) size 1x18
-      RenderTable {TABLE} at (0,36) size 248x52 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,36) size 248x52 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 246x50
           RenderTableRow {TR} at (0,2) size 246x22
-            RenderTableCell {TD} at (2,2) size 242x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 242x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 154x18
                 text run at (2,2) width 154: "The Eggplant Exchange"
           RenderTableRow {TR} at (0,26) size 246x22
-            RenderTableCell {TD} at (2,26) size 242x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,26) size 242x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 238x18
                 text run at (2,2) width 238: "Lots of Recipies for Eggplant Lovers"

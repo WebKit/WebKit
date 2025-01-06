@@ -27,7 +27,7 @@
 
 #include "PrivateClickMeasurementConnection.h"
 #include "PrivateClickMeasurementManagerInterface.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
@@ -37,9 +37,9 @@ class NetworkSession;
 namespace PCM {
 
 class ManagerProxy : public ManagerInterface {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ManagerProxy);
 public:
-    ManagerProxy(const String& machServiceName, NetworkSession&);
+    static Ref<ManagerProxy> create(const String& machServiceName, NetworkSession&);
 
     using ApplicationBundleIdentifier = String;
 
@@ -64,12 +64,16 @@ public:
     void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&) final;
 
 private:
+    ManagerProxy(const String& machServiceName, NetworkSession&);
+
     template<MessageType messageType, typename... Args>
     void sendMessage(Args&&...) const;
     template<MessageType messageType, typename... Args, typename... ReplyArgs>
     void sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&&, Args&&...) const;
 
-    Connection m_connection;
+    Ref<Connection> protectedConnection() const;
+
+    Ref<Connection> m_connection;
 };
 
 } // namespace PCM

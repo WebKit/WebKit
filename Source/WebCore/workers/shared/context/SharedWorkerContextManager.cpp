@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,12 @@
 #include "SharedWorkerThread.h"
 #include "SharedWorkerThreadProxy.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedWorkerContextManager);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedWorkerContextManager::Connection);
 
 SharedWorkerContextManager& SharedWorkerContextManager::singleton()
 {
@@ -89,7 +93,7 @@ void SharedWorkerContextManager::stopAllSharedWorkers()
         stopSharedWorker(m_workerMap.begin()->key);
 }
 
-void SharedWorkerContextManager::setConnection(std::unique_ptr<Connection>&& connection)
+void SharedWorkerContextManager::setConnection(RefPtr<Connection>&& connection)
 {
     ASSERT(!m_connection || m_connection->isClosed());
     m_connection = WTFMove(connection);

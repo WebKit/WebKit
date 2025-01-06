@@ -1,0 +1,9 @@
+
+FAIL Property position-try value 'none' assert_true: position-try doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try value 'normal none' assert_true: position-try doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try value 'flip-block' assert_true: position-try doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try value 'most-width none' assert_true: position-try doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try value 'most-height flip-block, flip-inline' assert_true: position-try doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try value 'most-width --foo, --bar' assert_true: position-try doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try value 'normal --foo' assert_true: position-try doesn't seem to be supported in the computed style expected true got false
+

@@ -30,6 +30,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/UniqueRef.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/ASCIILiteral.h>
 
 namespace WebKit {
@@ -79,12 +80,7 @@ void startListeningForMachServiceConnections(const char* serviceName, ASCIILiter
 
 RetainPtr<xpc_object_t> vectorToXPCData(Vector<uint8_t>&& vector)
 {
-    auto bufferSize = vector.size();
-    auto rawPointer = vector.releaseBuffer().leakPtr();
-    auto dispatchData = adoptNS(dispatch_data_create(rawPointer, bufferSize, dispatch_get_main_queue(), ^{
-        fastFree(rawPointer);
-    }));
-    return adoptNS(xpc_data_create_with_dispatch_data(dispatchData.get()));
+    return adoptNS(xpc_data_create_with_dispatch_data(makeDispatchData(WTFMove(vector)).get()));
 }
 
 OSObjectPtr<xpc_object_t> encoderToXPCData(UniqueRef<IPC::Encoder>&& encoder)

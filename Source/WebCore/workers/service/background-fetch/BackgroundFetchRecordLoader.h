@@ -26,16 +26,7 @@
 #pragma once
 
 #include <span>
-#include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class BackgroundFetchRecordLoaderClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::BackgroundFetchRecordLoaderClient> : std::true_type { };
-}
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
@@ -43,7 +34,7 @@ class ResourceError;
 class ResourceResponse;
 class SharedBuffer;
 
-class BackgroundFetchRecordLoaderClient : public CanMakeWeakPtr<BackgroundFetchRecordLoaderClient> {
+class BackgroundFetchRecordLoaderClient : public AbstractRefCountedAndCanMakeWeakPtr<BackgroundFetchRecordLoaderClient> {
 public:
     virtual ~BackgroundFetchRecordLoaderClient() = default;
 
@@ -53,7 +44,7 @@ public:
     virtual void didFinish(const ResourceError&) = 0;
 };
 
-class BackgroundFetchRecordLoader {
+class BackgroundFetchRecordLoader : public AbstractRefCounted {
 public:
     virtual ~BackgroundFetchRecordLoader() = default;
 

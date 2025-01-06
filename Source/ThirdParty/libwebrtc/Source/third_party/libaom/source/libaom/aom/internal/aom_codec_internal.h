@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -189,7 +189,7 @@ typedef const struct aom_codec_ctrl_fn_map {
 #define CTRL_MAP_END \
   { 0, NULL }
 
-static AOM_INLINE int at_ctrl_map_end(aom_codec_ctrl_fn_map_t *e) {
+static inline int at_ctrl_map_end(aom_codec_ctrl_fn_map_t *e) {
   return e->ctrl_id == 0 && e->fn == NULL;
 }
 
@@ -395,9 +395,20 @@ struct aom_internal_error_info {
 #endif
 #endif
 
+// Records the error code and error message. Does not call longjmp().
+void aom_set_error(struct aom_internal_error_info *info, aom_codec_err_t error,
+                   const char *fmt, ...) LIBAOM_FORMAT_PRINTF(3, 4);
+
 void aom_internal_error(struct aom_internal_error_info *info,
                         aom_codec_err_t error, const char *fmt, ...)
     LIBAOM_FORMAT_PRINTF(3, 4) CLANG_ANALYZER_NORETURN;
+
+// Calls aom_internal_error() with the error code and error message in `src`.
+// `info` and `src` must not point to the same struct, i.e., self copy is
+// prohibited.
+void aom_internal_error_copy(struct aom_internal_error_info *info,
+                             const struct aom_internal_error_info *src)
+    CLANG_ANALYZER_NORETURN;
 
 void aom_merge_corrupted_flag(int *corrupted, int value);
 #ifdef __cplusplus

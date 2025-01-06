@@ -31,6 +31,8 @@
 #include "JSGlobalObject.h"
 #include "JSGlobalObjectFunctions.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC  {
 
 template<typename IntlType>
@@ -197,24 +199,12 @@ void appendNumberFormatDigitOptionsToSkeleton(IntlType* intlInstance, StringBuil
     case RoundingMode::Trunc:
         skeletonBuilder.append(" rounding-mode-down"_s);
         break;
-    case RoundingMode::HalfCeil: {
-        // Only ICU69~ supports half-ceiling. Ignore this option if linked ICU does not support it.
-        // https://github.com/unicode-org/icu/commit/e8dfea9bb6bb27596731173b352759e44ad06b21
-        if (WTF::ICU::majorVersion() >= 69)
-            skeletonBuilder.append(" rounding-mode-half-ceiling"_s);
-        else
-            skeletonBuilder.append(" rounding-mode-half-up"_s); // Default option.
+    case RoundingMode::HalfCeil:
+        skeletonBuilder.append(" rounding-mode-half-ceiling"_s);
         break;
-    }
-    case RoundingMode::HalfFloor: {
-        // Only ICU69~ supports half-flooring. Ignore this option if linked ICU does not support it.
-        // https://github.com/unicode-org/icu/commit/e8dfea9bb6bb27596731173b352759e44ad06b21
-        if (WTF::ICU::majorVersion() >= 69)
-            skeletonBuilder.append(" rounding-mode-half-floor"_s);
-        else
-            skeletonBuilder.append(" rounding-mode-half-up"_s); // Default option.
+    case RoundingMode::HalfFloor:
+        skeletonBuilder.append(" rounding-mode-half-floor"_s);
         break;
-    }
     case RoundingMode::HalfExpand:
         skeletonBuilder.append(" rounding-mode-half-up"_s);
         break;
@@ -227,7 +217,7 @@ void appendNumberFormatDigitOptionsToSkeleton(IntlType* intlInstance, StringBuil
     }
 
     // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#integer-width
-    skeletonBuilder.append(" integer-width/"_s, WTF::ICU::majorVersion() >= 67 ? '*' : '+'); // Prior to ICU 67, use the symbol + instead of *.
+    skeletonBuilder.append(" integer-width/*"_s);
     for (unsigned i = 0; i < intlInstance->m_minimumIntegerDigits; ++i)
         skeletonBuilder.append('0');
 
@@ -265,23 +255,19 @@ void appendNumberFormatDigitOptionsToSkeleton(IntlType* intlInstance, StringBuil
         }
         case IntlRoundingType::MorePrecision:
         case IntlRoundingType::LessPrecision:
-            // Before Intl.NumberFormat v3, it was CompactRounding mode, where we do not configure anything.
-            // So, if linked ICU is ~68, we do nothing.
-            if (WTF::ICU::majorVersion() >= 69) {
-                // https://github.com/unicode-org/icu/commit/d7db6c1f8655bb53153695b09a50029fd04a8364
-                // https://github.com/unicode-org/icu/blob/main/docs/userguide/format_parse/numbers/skeletons.md#precision
-                skeletonBuilder.append(" ."_s);
-                for (unsigned i = 0; i < intlInstance->m_minimumFractionDigits; ++i)
-                    skeletonBuilder.append('0');
-                for (unsigned i = 0; i < intlInstance->m_maximumFractionDigits - intlInstance->m_minimumFractionDigits; ++i)
-                    skeletonBuilder.append('#');
-                skeletonBuilder.append('/');
-                for (unsigned i = 0; i < intlInstance->m_minimumSignificantDigits; ++i)
-                    skeletonBuilder.append('@');
-                for (unsigned i = 0; i < intlInstance->m_maximumSignificantDigits - intlInstance->m_minimumSignificantDigits; ++i)
-                    skeletonBuilder.append('#');
-                skeletonBuilder.append(intlInstance->m_roundingType == IntlRoundingType::MorePrecision ? 'r' : 's');
-            }
+            // https://github.com/unicode-org/icu/commit/d7db6c1f8655bb53153695b09a50029fd04a8364
+            // https://github.com/unicode-org/icu/blob/main/docs/userguide/format_parse/numbers/skeletons.md#precision
+            skeletonBuilder.append(" ."_s);
+            for (unsigned i = 0; i < intlInstance->m_minimumFractionDigits; ++i)
+                skeletonBuilder.append('0');
+            for (unsigned i = 0; i < intlInstance->m_maximumFractionDigits - intlInstance->m_minimumFractionDigits; ++i)
+                skeletonBuilder.append('#');
+            skeletonBuilder.append('/');
+            for (unsigned i = 0; i < intlInstance->m_minimumSignificantDigits; ++i)
+                skeletonBuilder.append('@');
+            for (unsigned i = 0; i < intlInstance->m_maximumSignificantDigits - intlInstance->m_minimumSignificantDigits; ++i)
+                skeletonBuilder.append('#');
+            skeletonBuilder.append(intlInstance->m_roundingType == IntlRoundingType::MorePrecision ? 'r' : 's');
             break;
         }
     }
@@ -292,10 +278,7 @@ void appendNumberFormatDigitOptionsToSkeleton(IntlType* intlInstance, StringBuil
     case IntlTrailingZeroDisplay::Auto:
         break;
     case IntlTrailingZeroDisplay::StripIfInteger:
-        // Only ICU69~ supports trailing zero display. Ignore this option if linked ICU does not support it.
-        // https://github.com/unicode-org/icu/commit/b79c299f90d4023ac237db3d0335d568bf21cd36
-        if (WTF::ICU::majorVersion() >= 69)
-            skeletonBuilder.append("/w"_s);
+        skeletonBuilder.append("/w"_s);
         break;
     }
 }
@@ -366,3 +349,5 @@ inline IntlMathematicalValue toIntlMathematicalValue(JSGlobalObject* globalObjec
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

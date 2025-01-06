@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "DebuggableInfoData.h"
 #include "WebPageProxyIdentifier.h"
+#include "WebProcess.h"
 #include <WebCore/Color.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/InspectorDebuggableType.h>
@@ -56,16 +57,21 @@ class WebInspectorUI final
     : public RefCounted<WebInspectorUI>
     , private IPC::Connection::Client
     , public WebCore::InspectorFrontendClient {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebInspectorUI);
 public:
     static Ref<WebInspectorUI> create(WebPage&);
     virtual ~WebInspectorUI();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     // Implemented in generated WebInspectorUIMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override { /* Do nothing, the inspected page process may have crashed and may be getting replaced. */ }
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override { closeWindow(); }
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) override { closeWindow(); }
 
     // Called by WebInspectorUI messages
     void establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, const DebuggableInfoData&, bool underTest, unsigned inspectionLevel);
@@ -178,21 +184,35 @@ public:
 private:
     explicit WebInspectorUI(WebPage&);
 
-    WebPage& m_page;
+    void didEstablishConnection();
+
+    template<typename T>
+    IPC::Error sendToParentProcess(T&& message)
+    {
+        return WebProcess::singleton().protectedParentProcessConnection()->send(std::forward<T>(message), m_inspectedPageIdentifier ? m_inspectedPageIdentifier->toUInt64() : 0);
+    }
+
+    template<typename T, typename C>
+    std::optional<IPC::AsyncReplyID> sendToParentProcessWithAsyncReply(T&& message, C&& completionHandler)
+    {
+        return WebProcess::singleton().protectedParentProcessConnection()->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), m_inspectedPageIdentifier ? m_inspectedPageIdentifier->toUInt64() : 0);
+    }
+
+    WeakRef<WebPage> m_page;
     Ref<WebCore::InspectorFrontendAPIDispatcher> m_frontendAPIDispatcher;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
 
     // Keep a pointer to the frontend's inspector controller rather than going through
     // corePage(), since we may need it after the frontend's page has started destruction.
-    WebCore::InspectorController* m_frontendController { nullptr };
+    WeakPtr<WebCore::InspectorController> m_frontendController;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    std::unique_ptr<WebInspectorUIExtensionController> m_extensionController;
+    RefPtr<WebInspectorUIExtensionController> m_extensionController;
 #endif
 
     RefPtr<IPC::Connection> m_backendConnection;
 
-    WebPageProxyIdentifier m_inspectedPageIdentifier;
+    Markable<WebPageProxyIdentifier> m_inspectedPageIdentifier;
     bool m_underTest { false };
     DebuggableInfoData m_debuggableInfo;
     bool m_dockingUnavailable { false };

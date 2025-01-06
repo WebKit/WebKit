@@ -11,11 +11,11 @@
 
 #include <stdio.h>
 
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/scoped_refptr.h"
 #include "api/test/create_frame_generator.h"
 #include "api/test/frame_generator_interface.h"
@@ -45,7 +45,7 @@ using ::testing::Test;
 
 // Remove files and directories in a directory non-recursively.
 void CleanDir(absl::string_view dir, size_t expected_output_files_count) {
-  absl::optional<std::vector<std::string>> dir_content =
+  std::optional<std::vector<std::string>> dir_content =
       test::ReadDirectory(dir);
   if (expected_output_files_count == 0) {
     ASSERT_TRUE(!dir_content.has_value() || dir_content->empty())
@@ -81,8 +81,8 @@ std::unique_ptr<test::FrameGeneratorInterface> CreateFrameGenerator(
     size_t width,
     size_t height) {
   return test::CreateSquareFrameGenerator(width, height,
-                                          /*type=*/absl::nullopt,
-                                          /*num_squares=*/absl::nullopt);
+                                          /*type=*/std::nullopt,
+                                          /*num_squares=*/std::nullopt);
 }
 
 void AssertFrameIdsAre(const std::string& filename,

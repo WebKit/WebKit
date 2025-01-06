@@ -29,11 +29,11 @@ namespace webrtc {
 // AudioChannel represents a single media session and provides APIs over
 // AudioIngress and AudioEgress. Note that a single RTP stack is shared with
 // these two classes as it has both sending and receiving capabilities.
-class AudioChannel : public rtc::RefCountInterface {
+class AudioChannel : public RefCountInterface {
  public:
-  AudioChannel(Transport* transport,
+  AudioChannel(const Environment& env,
+               Transport* transport,
                uint32_t local_ssrc,
-               TaskQueueFactory* task_queue_factory,
                AudioMixer* audio_mixer,
                rtc::scoped_refptr<AudioDecoderFactory> decoder_factory);
   ~AudioChannel() override;
@@ -59,7 +59,7 @@ class AudioChannel : public rtc::RefCountInterface {
                   std::unique_ptr<AudioEncoder> encoder) {
     egress_->SetEncoder(payload_type, encoder_format, std::move(encoder));
   }
-  absl::optional<SdpAudioFormat> GetEncoderFormat() const {
+  std::optional<SdpAudioFormat> GetEncoderFormat() const {
     return egress_->GetEncoderFormat();
   }
   void RegisterTelephoneEventType(int rtp_payload_type, int sample_rate_hz) {

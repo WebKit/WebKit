@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600 [color=#99DDBBCC] [bgcolor=#102030E0]
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderImage {IMG} at (0,414) size 21x128
+layer at (29,8) size 748x542
+  RenderHTMLCanvas {CANVAS} at (21,0) size 748x542
+layer at (8,550) size 16x16
+  RenderVideo {VIDEO} at (0,542) size 16x16

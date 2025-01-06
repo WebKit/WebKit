@@ -1,0 +1,5 @@
+
+PASS CSS animation correctly uses the <html> element as the source for the default scroll() timeline
+PASS CSS animation correctly uses the <html> element as the source for the root scroll() timeline
+PASS CSS animation correctly uses the <html> element as the source for the nearest scroll() timeline
+

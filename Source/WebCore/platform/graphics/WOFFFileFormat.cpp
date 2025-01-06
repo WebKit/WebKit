@@ -47,7 +47,9 @@ static bool readUInt32(SharedBuffer& buffer, size_t& offset, uint32_t& value)
     if (buffer.size() - offset < sizeof(value))
         return false;
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // non-Apple ports
     value = ntohl(*reinterpret_cast_ptr<const uint32_t*>(buffer.span().subspan(offset).data()));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     offset += sizeof(value);
 
     return true;
@@ -59,7 +61,9 @@ static bool readUInt16(SharedBuffer& buffer, size_t& offset, uint16_t& value)
     if (buffer.size() - offset < sizeof(value))
         return false;
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // non-Apple ports
     value = ntohs(*reinterpret_cast_ptr<const uint16_t*>(buffer.span().subspan(offset).data()));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     offset += sizeof(value);
 
     return true;
@@ -68,13 +72,13 @@ static bool readUInt16(SharedBuffer& buffer, size_t& offset, uint16_t& value)
 static bool writeUInt32(Vector<uint8_t>& vector, uint32_t value)
 {
     uint32_t bigEndianValue = htonl(value);
-    return vector.tryAppend(std::span { reinterpret_cast_ptr<uint8_t*>(&bigEndianValue), sizeof(bigEndianValue) });
+    return vector.tryAppend(asByteSpan(bigEndianValue));
 }
 
 static bool writeUInt16(Vector<uint8_t>& vector, uint16_t value)
 {
     uint16_t bigEndianValue = htons(value);
-    return vector.tryAppend(std::span { reinterpret_cast_ptr<uint8_t*>(&bigEndianValue), sizeof(bigEndianValue) });
+    return vector.tryAppend(asByteSpan(bigEndianValue));
 }
 
 static const uint32_t woffSignature = 0x774f4646; /* 'wOFF' */
@@ -105,7 +109,7 @@ public:
     {
         if (!m_vector.tryReserveCapacity(m_vector.size() + n))
             return false;
-        m_vector.append(std::span { static_cast<const uint8_t*>(data), n });
+        m_vector.append(unsafeMakeSpan(static_cast<const uint8_t*>(data), n));
         return true;
     }
 
@@ -255,7 +259,9 @@ bool convertWOFFToSfnt(SharedBuffer& woff, Vector<uint8_t>& sfnt)
             return false;
 
         // Write an sfnt table directory entry.
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         uint32_t* sfntTableDirectoryPtr = reinterpret_cast_ptr<uint32_t*>(sfnt.data() + sfntTableDirectoryCursor);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         *sfntTableDirectoryPtr++ = htonl(tableTag);
         *sfntTableDirectoryPtr++ = htonl(tableOrigChecksum);
         *sfntTableDirectoryPtr++ = htonl(sfnt.size());

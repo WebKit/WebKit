@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderTreeUpdater.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,7 +35,7 @@ class RenderObject;
 class RenderTreeBuilder;
 
 class RenderTreeBuilder::Ruby {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Ruby);
 public:
     Ruby(RenderTreeBuilder&);
 

@@ -27,11 +27,11 @@
 #include "config.h"
 #include "CSSTransitionEvent.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSTransitionEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSTransitionEvent);
 
 CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const String propertyName)
     : StyleOriginatedAnimationEvent(EventInterfaceType::CSSTransitionEvent, type, animation, scheduledTime, elapsedTime, pseudoElementIdentifier)

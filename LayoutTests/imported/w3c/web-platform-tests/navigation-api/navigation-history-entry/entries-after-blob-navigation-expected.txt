@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT entries() after navigation to a blob: URL Test timed out
+PASS entries() after navigation to a blob: URL
 

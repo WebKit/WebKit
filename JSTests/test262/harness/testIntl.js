@@ -2673,6 +2673,8 @@ function partitionDurationFormatPattern(durationFormat, duration) {
         nfOpts.style = "unit";
         nfOpts.unit = numberFormatUnit;
         nfOpts.unitDisplay = style;
+      } else {
+        nfOpts.useGrouping = false;
       }
 
       let nf = new Intl.NumberFormat(locale, nfOpts);

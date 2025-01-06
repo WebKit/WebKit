@@ -41,7 +41,7 @@ class UnresolvableAddressCause
       : unresolvable_address_(unresolvable_address.begin(),
                               unresolvable_address.end()) {}
 
-  static absl::optional<UnresolvableAddressCause> Parse(
+  static std::optional<UnresolvableAddressCause> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;

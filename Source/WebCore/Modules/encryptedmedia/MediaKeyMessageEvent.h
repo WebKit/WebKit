@@ -39,7 +39,7 @@ namespace WebCore {
 struct MediaKeyMessageEventInit;
 
 class MediaKeyMessageEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(MediaKeyMessageEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaKeyMessageEvent);
 public:
     using Type = MediaKeyMessageType;
     using Init = MediaKeyMessageEventInit;

@@ -64,7 +64,7 @@ static OSObjectPtr<dispatch_source_t>& timerEventSource()
 // One token for each of the memory pressure/memory warning notifications we listen for.
 // notifyutil -p org.WebKit.lowMemory[.begin/.end]
 // notifyutil -p org.WebKit.memoryWarning[.begin/.end]
-static int notifyTokens[6];
+static std::array<int, 6> notifyTokens;
 
 // Disable memory event reception for a minimum of s_minimumHoldOffTime
 // seconds after receiving an event. Don't let events fire any sooner than

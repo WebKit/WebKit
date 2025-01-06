@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests cloning a node in a shadow tree and inserts it into body.<br>
+WebKit should not hit any debug or release assertions.</p>
+<script>
+
+window.testRunner?.dumpAsText();
+
+const host = document.createElement('div');
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = '<div>PASS</div>';
+
+const otherHost = document.createElement('div');
+document.body.appendChild(otherHost);
+otherHost.attachShadow({mode: 'closed'}).append(shadowRoot.querySelector('div').cloneNode(true));
+
+</script>
+</body>
+</html>

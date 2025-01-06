@@ -14,12 +14,12 @@
 #include <memory>
 #include <vector>
 
+#include "api/audio/audio_device.h"
 #include "api/audio/audio_mixer.h"
+#include "api/audio/audio_processing.h"
 #include "api/scoped_refptr.h"
 #include "common_audio/resampler/include/push_resampler.h"
 #include "modules/async_audio_processing/async_audio_processing.h"
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -63,7 +63,7 @@ class AudioTransportImpl : public AudioTransport {
       uint32_t currentMicLevel,
       bool keyPressed,
       uint32_t& newMicLevel,
-      absl::optional<int64_t> estimated_capture_time_ns) override;
+      std::optional<int64_t> estimated_capture_time_ns) override;
 
   int32_t NeedMorePlayData(size_t nSamples,
                            size_t nBytesPerSample,

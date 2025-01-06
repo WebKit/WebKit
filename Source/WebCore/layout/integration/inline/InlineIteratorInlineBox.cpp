@@ -39,15 +39,18 @@ InlineBox::InlineBox(PathVariant&& path)
 {
 }
 
-std::pair<bool, bool> InlineBox::hasClosedLeftAndRightEdge() const
+RectEdges<bool> InlineBox::closedEdges() const
 {
     // FIXME: Layout knows the answer to this question so we should consult it.
+    RectEdges<bool> closedEdges { true };
     if (style().boxDecorationBreak() == BoxDecorationBreak::Clone)
-        return { true, true };
-    bool isLTR = style().isLeftToRightDirection();
+        return closedEdges;
+    auto writingMode = style().writingMode();
     bool isFirst = !previousInlineBox() && !renderer().isContinuation();
     bool isLast = !nextInlineBox() && !renderer().continuation();
-    return { isLTR ? isFirst : isLast, isLTR ? isLast : isFirst };
+    closedEdges.setStart(isFirst, writingMode);
+    closedEdges.setEnd(isLast, writingMode);
+    return closedEdges;
 };
 
 InlineBoxIterator InlineBox::nextInlineBox() const
@@ -81,6 +84,17 @@ LeafBoxIterator InlineBox::endLeafBox() const
     return { };
 }
 
+IteratorRange<BoxIterator> InlineBox::descendants() const
+{
+    BoxIterator begin(*this);
+    begin.traverseNextOnLine();
+
+    BoxIterator end(*this);
+    end.traverseNextOnLineSkippingChildren();
+
+    return { begin, end };
+}
+
 InlineBoxIterator::InlineBoxIterator(Box::PathVariant&& pathVariant)
     : BoxIterator(WTFMove(pathVariant))
 {
@@ -111,14 +125,14 @@ InlineBoxIterator firstInlineBoxFor(const RenderInline& renderInline)
 {
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(renderInline))
         return lineLayout->firstInlineBoxFor(renderInline);
-    return { BoxLegacyPath { renderInline.firstLineBox() } };
+    return { BoxLegacyPath { renderInline.firstLegacyInlineBox() } };
 }
 
 InlineBoxIterator firstRootInlineBoxFor(const RenderBlockFlow& block)
 {
-    if (auto* lineLayout = block.modernLineLayout())
+    if (auto* lineLayout = block.inlineLayout())
         return lineLayout->firstRootInlineBox();
-    return { BoxLegacyPath { block.firstRootBox() } };
+    return { BoxLegacyPath { block.legacyRootBox() } };
 }
 
 InlineBoxIterator inlineBoxFor(const LegacyInlineFlowBox& legacyInlineFlowBox)

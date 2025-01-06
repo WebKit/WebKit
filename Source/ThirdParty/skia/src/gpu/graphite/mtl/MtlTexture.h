@@ -9,6 +9,7 @@
 #define skgpu_graphite_MtlTexture_DEFINED
 
 #include "include/core/SkRefCnt.h"
+#include "include/ports/SkCFObject.h"
 #include "src/gpu/graphite/Texture.h"
 
 #import <Metal/Metal.h>
@@ -25,14 +26,12 @@ public:
     static sk_sp<Texture> Make(const MtlSharedContext*,
                                SkISize dimensions,
                                const TextureInfo&,
-                               std::string_view label,
                                skgpu::Budgeted);
 
     static sk_sp<Texture> MakeWrapped(const MtlSharedContext*,
                                       SkISize dimensions,
                                       const TextureInfo&,
-                                      sk_cfp<id<MTLTexture>>,
-                                      std::string_view label);
+                                      sk_cfp<id<MTLTexture>>);
 
     ~MtlTexture() override {}
 
@@ -43,7 +42,6 @@ private:
                SkISize dimensions,
                const TextureInfo& info,
                sk_cfp<id<MTLTexture>>,
-               std::string_view label,
                Ownership,
                skgpu::Budgeted);
 

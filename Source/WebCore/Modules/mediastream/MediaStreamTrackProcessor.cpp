@@ -27,16 +27,23 @@
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(WEB_CODECS)
 
+#include "CSSStyleImageValue.h"
 #include "ContextDestructionObserverInlines.h"
+#include "HTMLCanvasElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLVideoElement.h"
+#include "ImageBitmap.h"
 #include "JSWebCodecsVideoFrame.h"
 #include "Logging.h"
+#include "OffscreenCanvas.h"
 #include "ReadableStream.h"
-#include <wtf/IsoMallocInlines.h>
+#include "SVGImageElement.h"
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamTrackProcessor);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStreamTrackProcessor);
 
 ExceptionOr<Ref<MediaStreamTrackProcessor>> MediaStreamTrackProcessor::create(ScriptExecutionContext& context, Init&& init)
 {
@@ -64,14 +71,14 @@ MediaStreamTrackProcessor::~MediaStreamTrackProcessor()
 ExceptionOr<Ref<ReadableStream>> MediaStreamTrackProcessor::readable(JSC::JSGlobalObject& globalObject)
 {
     if (!m_readable) {
-        m_readableStreamSource = makeUniqueWithoutRefCountedCheck<Source>(m_track.get(), *this);
+        m_readableStreamSource = makeUniqueWithoutRefCountedCheck<Source>(m_track->privateTrack(), *this);
         auto readableOrException = ReadableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(&globalObject), *m_readableStreamSource);
         if (readableOrException.hasException()) {
             m_readableStreamSource = nullptr;
             return readableOrException.releaseException();
         }
         m_readable = readableOrException.releaseReturnValue();
-        m_videoFrameObserverWrapper->start();
+        Ref { *m_videoFrameObserverWrapper }->start();
     }
 
     return Ref { *m_readable };
@@ -91,7 +98,11 @@ void MediaStreamTrackProcessor::stopVideoFrameObserver()
 void MediaStreamTrackProcessor::tryEnqueueingVideoFrame()
 {
     RefPtr context = scriptExecutionContext();
-    if (!context || !m_videoFrameObserverWrapper || !m_readableStreamSource)
+    RefPtr videoFrameObserverWrapper = m_videoFrameObserverWrapper;
+    if (!context || !videoFrameObserverWrapper || !m_readableStreamSource)
+        return;
+
+    if (m_readableStreamSource->isCancelled())
         return;
 
     // FIXME: If the stream is waiting, we might want to buffer based on
@@ -99,7 +110,7 @@ void MediaStreamTrackProcessor::tryEnqueueingVideoFrame()
     if (!m_readableStreamSource->isWaiting())
         return;
 
-    if (auto videoFrame = m_videoFrameObserverWrapper->takeVideoFrame(*context))
+    if (auto videoFrame = videoFrameObserverWrapper->takeVideoFrame(*context))
         m_readableStreamSource->enqueue(*videoFrame, *context);
 }
 
@@ -119,36 +130,41 @@ MediaStreamTrackProcessor::VideoFrameObserverWrapper::VideoFrameObserverWrapper(
 
 void MediaStreamTrackProcessor::VideoFrameObserverWrapper::start()
 {
-    callOnMainThread([protectedThis = Ref { *this }] {
+    ASSERT(m_observer->isContextThread());
+    callOnMainThreadAndWait([protectedThis = Ref { *this }] {
         protectedThis->m_observer->start();
     });
 }
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackProcessor::VideoFrameObserver);
+
 MediaStreamTrackProcessor::VideoFrameObserver::VideoFrameObserver(ScriptExecutionContextIdentifier identifier, WeakPtr<MediaStreamTrackProcessor>&& processor, Ref<RealtimeMediaSource>&& source, unsigned short maxVideoFramesCount)
-    : m_contextIdentifier(identifier)
+    : m_realtimeVideoSource(WTFMove(source))
+    , m_contextIdentifier(identifier)
     , m_processor(WTFMove(processor))
-    , m_realtimeVideoSource(WTFMove(source))
     , m_maxVideoFramesCount(maxVideoFramesCount)
 {
-    ASSERT(!isMainThread());
+    ASSERT(isContextThread());
 }
 
 void MediaStreamTrackProcessor::VideoFrameObserver::start()
 {
-    ASSERT(isMainThread());
+    assertIsMainThread();
     m_isStarted = true;
     m_realtimeVideoSource->addVideoFrameObserver(*this);
 }
 
 MediaStreamTrackProcessor::VideoFrameObserver::~VideoFrameObserver()
 {
-    ASSERT(isMainThread());
+    assertIsMainThread();
     if (m_isStarted)
         m_realtimeVideoSource->removeVideoFrameObserver(*this);
 }
 
 RefPtr<WebCodecsVideoFrame> MediaStreamTrackProcessor::VideoFrameObserver::takeVideoFrame(ScriptExecutionContext& context)
 {
+    ASSERT(isContextThread());
+
     RefPtr<VideoFrame> videoFrame;
     {
         Locker lock(m_videoFramesLock);
@@ -169,6 +185,7 @@ RefPtr<WebCodecsVideoFrame> MediaStreamTrackProcessor::VideoFrameObserver::takeV
 
 void MediaStreamTrackProcessor::VideoFrameObserver::videoFrameAvailable(VideoFrame& frame, VideoFrameTimeMetadata)
 {
+    // Can be called on any thread.
     {
         Locker lock(m_videoFramesLock);
         m_videoFrames.append(frame);
@@ -184,18 +201,18 @@ void MediaStreamTrackProcessor::VideoFrameObserver::videoFrameAvailable(VideoFra
 }
 
 using MediaStreamTrackProcessorSource = MediaStreamTrackProcessor::Source;
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamTrackProcessorSource);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStreamTrackProcessorSource);
 
-MediaStreamTrackProcessor::Source::Source(Ref<MediaStreamTrack>&& track, MediaStreamTrackProcessor& processor)
-    : m_track(WTFMove(track))
+MediaStreamTrackProcessor::Source::Source(Ref<MediaStreamTrackPrivate>&& privateTrack, MediaStreamTrackProcessor& processor)
+    : m_privateTrack(WTFMove(privateTrack))
     , m_processor(processor)
 {
-    m_track->privateTrack().addObserver(*this);
+    m_privateTrack->addObserver(*this);
 }
 
 MediaStreamTrackProcessor::Source::~Source()
 {
-    m_track->privateTrack().removeObserver(*this);
+    m_privateTrack->removeObserver(*this);
 }
 
 void MediaStreamTrackProcessor::Source::trackEnded(MediaStreamTrackPrivate&)
@@ -203,31 +220,29 @@ void MediaStreamTrackProcessor::Source::trackEnded(MediaStreamTrackPrivate&)
     close();
 }
 
-bool MediaStreamTrackProcessor::Source::isWaiting() const
-{
-    return m_isWaiting;
-}
-
 void MediaStreamTrackProcessor::Source::close()
 {
-    if (!m_isCancelled)
-        controller().close();
+    if (m_isCancelled)
+        return;
+
+    m_isCancelled = true;
+    controller().close();
 }
 
 void MediaStreamTrackProcessor::Source::enqueue(WebCodecsVideoFrame& frame, ScriptExecutionContext& context)
 {
+    ASSERT(!m_isCancelled);
+
     auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
     if (!globalObject)
         return;
 
-    auto& vm = globalObject->vm();
+    Ref vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
 
     m_isWaiting = false;
 
-    Ref protectedThis { *this };
-
-    if (!m_isCancelled && controller().enqueue(toJS(globalObject, globalObject, frame)))
+    if (controller().enqueue(toJS(globalObject, globalObject, frame)))
         pullFinished();
 }
 
@@ -239,15 +254,13 @@ void MediaStreamTrackProcessor::Source::doStart()
 void MediaStreamTrackProcessor::Source::doPull()
 {
     m_isWaiting = true;
-    if (RefPtr protectedProcessor = m_processor.get())
-        protectedProcessor->tryEnqueueingVideoFrame();
+    Ref { m_processor.get() }->tryEnqueueingVideoFrame();
 }
 
 void MediaStreamTrackProcessor::Source::doCancel()
 {
     m_isCancelled = true;
-    if (RefPtr protectedProcessor = m_processor.get())
-        protectedProcessor->stopVideoFrameObserver();
+    Ref { m_processor.get() }->stopVideoFrameObserver();
 }
 
 } // namespace WebCore

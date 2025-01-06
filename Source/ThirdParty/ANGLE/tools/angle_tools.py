@@ -13,6 +13,7 @@ import subprocess
 
 is_windows = platform.system() == 'Windows'
 is_linux = platform.system() == 'Linux'
+is_mac = platform.system() == 'Darwin'
 
 
 def find_file_in_path(filename):
@@ -36,7 +37,7 @@ def upload_to_google_storage(bucket, files):
     file_dir = os.path.dirname(os.path.realpath(__file__))
     upload_script = os.path.join(file_dir, '..', 'third_party', 'depot_tools',
                                  'upload_to_google_storage.py')
-    upload_args = ['python', upload_script, '-b', bucket] + files
+    upload_args = ['python3', upload_script, '-b', bucket] + files
     return subprocess.call(upload_args) == 0
 
 

@@ -25,11 +25,11 @@
 
 #include "SVGNames.h"
 #include "SVGTransformable.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGAnimateTransformElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGAnimateTransformElement);
 
 inline SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedName& tagName, Document& document)
     : SVGAnimateElementBase(tagName, document)
@@ -67,7 +67,7 @@ void SVGAnimateTransformElement::attributeChanged(const QualifiedName& name, con
 
 String SVGAnimateTransformElement::animateRangeString(const String& string) const
 {
-    return SVGTransformValue::prefixForTransformType(m_type) + string + ')';
+    return makeString(SVGTransformValue::prefixForTransformType(m_type), string, ')');
 }
 
 }

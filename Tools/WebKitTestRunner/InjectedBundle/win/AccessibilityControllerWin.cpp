@@ -36,7 +36,7 @@ void AccessibilityController::resetToConsistentState()
     notImplemented();
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef id)
+RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSContextRef, JSStringRef id)
 {
     notImplemented();
     return nullptr;
@@ -53,13 +53,13 @@ void AccessibilityController::injectAccessibilityPreference(JSStringRef domain, 
     notImplemented();
 }
 
-Ref<AccessibilityUIElement> AccessibilityController::rootElement()
+Ref<AccessibilityUIElement> AccessibilityController::rootElement(JSContextRef)
 {
     notImplemented();
     return AccessibilityUIElement::create(nullptr);
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
+RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement(JSContextRef)
 {
     notImplemented();
     return nullptr;

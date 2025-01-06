@@ -14,11 +14,12 @@
 
 #include <algorithm>
 #include <fstream>
+#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/crypto_random.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -44,7 +45,7 @@ std::string Path(absl::string_view path) {
 void CleanDir(absl::string_view dir, size_t* num_deleted_entries) {
   RTC_DCHECK(num_deleted_entries);
   *num_deleted_entries = 0;
-  absl::optional<std::vector<std::string>> dir_content = ReadDirectory(dir);
+  std::optional<std::vector<std::string>> dir_content = ReadDirectory(dir);
   EXPECT_TRUE(dir_content);
   for (const auto& entry : *dir_content) {
     if (DirExists(entry)) {
@@ -119,6 +120,28 @@ TEST_F(FileUtilsTest, OutputPathFromRootWorkingDir) {
   ASSERT_THAT(result, EndsWith(expected_end));
 }
 
+TEST_F(FileUtilsTest, RandomOutputPathFromUnchangedWorkingDir) {
+  rtc::SetRandomTestMode(true);
+  std::string fixed_first_uuid = "def01482-f829-429a-bfd4-841706e92cdd";
+  std::string expected_end = ExpectedRootDirByPlatform() + fixed_first_uuid +
+                             std::string(kPathDelimiter);
+  std::string result = webrtc::test::OutputPathWithRandomDirectory();
+
+  ASSERT_THAT(result, EndsWith(expected_end));
+}
+
+TEST_F(FileUtilsTest, RandomOutputPathFromRootWorkingDir) {
+  ASSERT_EQ(0, chdir(kPathDelimiter.data()));
+
+  rtc::SetRandomTestMode(true);
+  std::string fixed_first_uuid = "def01482-f829-429a-bfd4-841706e92cdd";
+  std::string expected_end = ExpectedRootDirByPlatform() + fixed_first_uuid +
+                             std::string(kPathDelimiter);
+  std::string result = webrtc::test::OutputPathWithRandomDirectory();
+
+  ASSERT_THAT(result, EndsWith(expected_end));
+}
+
 TEST_F(FileUtilsTest, TempFilename) {
   std::string temp_filename = webrtc::test::TempFilename(
       webrtc::test::OutputPath(), "TempFilenameTest");
@@ -147,7 +170,8 @@ TEST_F(FileUtilsTest, GenerateTempFilename) {
 #define MAYBE_CreateDir CreateDir
 #endif
 TEST_F(FileUtilsTest, MAYBE_CreateDir) {
-  std::string directory = "fileutils-unittest-empty-dir";
+  std::string directory =
+      test::OutputPathWithRandomDirectory() + "fileutils-unittest-empty-dir";
   // Make sure it's removed if a previous test has failed:
   remove(directory.c_str());
   ASSERT_TRUE(webrtc::test::CreateDir(directory));
@@ -231,7 +255,7 @@ TEST_F(FileUtilsTest, WriteReadDeleteFilesAndDirs) {
 
   // Create an empty temporary directory for this test.
   const std::string temp_directory =
-      OutputPath() + Path("TempFileUtilsTestReadDirectory/");
+      OutputPathWithRandomDirectory() + Path("TempFileUtilsTestReadDirectory/");
   CreateDir(temp_directory);
   EXPECT_NO_FATAL_FAILURE(CleanDir(temp_directory, &num_deleted_entries));
   EXPECT_TRUE(DirExists(temp_directory));
@@ -247,7 +271,7 @@ TEST_F(FileUtilsTest, WriteReadDeleteFilesAndDirs) {
   EXPECT_TRUE(DirExists(temp_subdir));
 
   // Checks.
-  absl::optional<std::vector<std::string>> dir_content =
+  std::optional<std::vector<std::string>> dir_content =
       ReadDirectory(temp_directory);
   EXPECT_TRUE(dir_content);
   EXPECT_EQ(2u, dir_content->size());
@@ -271,6 +295,16 @@ TEST_F(FileUtilsTest, DirNameDoesntCareIfAPathEndsInPathSeparator) {
 
 TEST_F(FileUtilsTest, DirNameStopsAtRoot) {
   EXPECT_EQ(Path("/"), DirName(Path("/")));
+}
+
+TEST_F(FileUtilsTest, JoinFilenameDoesNotAppendExtraPathDelimiterIfExists) {
+  EXPECT_EQ(JoinFilename(Path("/some/path/"), "file.txt"),
+            Path("/some/path/file.txt"));
+}
+
+TEST_F(FileUtilsTest, JoinFilenameAppendsPathDelimiterIfMissing) {
+  EXPECT_EQ(JoinFilename(Path("/some/path"), "file.txt"),
+            Path("/some/path/file.txt"));
 }
 
 }  // namespace test

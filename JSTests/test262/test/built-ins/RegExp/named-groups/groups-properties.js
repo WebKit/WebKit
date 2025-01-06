@@ -27,6 +27,8 @@ assert.sameValue(counter, 0);
 
 // Properties are writable, enumerable and configurable
 // (from CreateDataProperty)
-verifyWritable(groups, "x");
-verifyEnumerable(groups, "x");
-verifyConfigurable(groups, "x");
+verifyProperty(groups, "x", {
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

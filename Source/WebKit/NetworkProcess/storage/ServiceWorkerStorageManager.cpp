@@ -29,8 +29,11 @@
 #include <WebCore/SWRegistrationDatabase.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerRegistrationKey.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerStorageManager);
 
 ServiceWorkerStorageManager::ServiceWorkerStorageManager(const String& path)
     : m_path(path)

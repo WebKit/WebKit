@@ -26,7 +26,7 @@ void TransposeWx8_SSSE3(const uint8_t* src,
                         uint8_t* dst,
                         int dst_stride,
                         int width) {
-  asm volatile(
+  asm volatile (
       // Read in the data from the source pointer.
       // First round of bit swap.
       LABELALIGN
@@ -116,7 +116,7 @@ void TransposeWx8_Fast_SSSE3(const uint8_t* src,
                              uint8_t* dst,
                              int dst_stride,
                              int width) {
-  asm volatile(
+  asm volatile (
       // Read in the data from the source pointer.
       // First round of bit swap.
       LABELALIGN
@@ -261,7 +261,7 @@ void TransposeUVWx8_SSE2(const uint8_t* src,
                          uint8_t* dst_b,
                          int dst_stride_b,
                          int width) {
-  asm volatile(
+  asm volatile (
       // Read in the data from the source pointer.
       // First round of bit swap.
       LABELALIGN
@@ -391,7 +391,7 @@ void Transpose4x4_32_SSE2(const uint8_t* src,
                           uint8_t* dst,
                           int dst_stride,
                           int width) {
-  asm volatile(
+  asm volatile (
       // Main loop transpose 4x4.  Read a column, write a row.
       "1:                                        \n"
       "movdqu      (%0),%%xmm0                   \n"  // a b c d
@@ -447,7 +447,7 @@ void Transpose4x4_32_AVX2(const uint8_t* src,
                           uint8_t* dst,
                           int dst_stride,
                           int width) {
-  asm volatile(
+  asm volatile (
       // Main loop transpose 2 blocks of 4x4.  Read a column, write a row.
       "1:                                        \n"
       "vmovdqu     (%0),%%xmm0                   \n"  // a b c d

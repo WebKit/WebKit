@@ -11,10 +11,10 @@
 #define NET_DCSCTP_TESTING_DATA_GENERATOR_H_
 
 #include <cstdint>
+#include <optional>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/data.h"
@@ -23,7 +23,7 @@ namespace dcsctp {
 
 struct DataGeneratorOptions {
   StreamID stream_id = StreamID(1);
-  absl::optional<MID> mid = absl::nullopt;
+  std::optional<MID> mid = std::nullopt;
   PPID ppid = PPID(53);
 };
 

@@ -23,4 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-callback FileSystemEntriesCallback = undefined (sequence<FileSystemEntry> entries);
+[ GenerateIsReachable=ImplScriptExecutionContext ] callback FileSystemEntriesCallback = undefined (sequence<FileSystemEntry> entries);

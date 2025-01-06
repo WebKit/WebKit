@@ -35,7 +35,7 @@ using PlatformEventKey = GdkEventKey;
 #define CONTROL_MASK GDK_CONTROL_MASK
 #define SHIFT_MASK GDK_SHIFT_MASK
 #elif PLATFORM(WPE)
-using PlatformEventKey = struct wpe_input_keyboard_event;
+using PlatformEventKey = void;
 #define KEY(x) WPE_KEY_##x
 #define CONTROL_MASK wpe_input_keyboard_modifier_control
 #define SHIFT_MASK wpe_input_keyboard_modifier_shift
@@ -112,9 +112,10 @@ static gboolean webkitInputMethodContextMockFilterKeyEvent(WebKitInputMethodCont
 #endif
     gunichar character = gdk_keyval_to_unicode(keyval);
 #elif PLATFORM(WPE)
-    uint32_t state = keyEvent->modifiers;
-    uint32_t keyval = keyEvent->key_code;
-    bool isKeyPress = keyEvent->pressed;
+    struct wpe_input_keyboard_event* wpeKeyEvent = static_cast<struct wpe_input_keyboard_event*>(keyEvent);
+    uint32_t state = wpeKeyEvent->modifiers;
+    uint32_t keyval = wpeKeyEvent->key_code;
+    bool isKeyPress = wpeKeyEvent->pressed;
     gunichar character = wpe_key_code_to_unicode(keyval);
 #endif
     bool isControl = state & CONTROL_MASK;

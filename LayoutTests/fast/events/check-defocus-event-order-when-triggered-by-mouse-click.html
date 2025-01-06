@@ -8,10 +8,12 @@ if (window.testRunner)
 
 window.onload = runTest;
 
-function runTest()
+async function runTest()
 {
-    if (!window.eventSender)
+    if (!window.eventSender || !window.testRunner)
         return;
+
+    testRunner.waitUntilDone();
 
     var firstInput = document.getElementById("firstInput");
     var secondInput = document.getElementById("secondInput");
@@ -20,13 +22,14 @@ function runTest()
     beginRecordingEvents();
     firstInput.focus();
     eventSender.keyDown("A");
-    eventSender.mouseMoveTo(secondInput.offsetLeft + secondInput.offsetWidth / 2,
+    await eventSender.asyncMouseMoveTo(secondInput.offsetLeft + secondInput.offsetWidth / 2,
                             secondInput.offsetTop + secondInput.offsetHeight / 2);
-    eventSender.mouseDown();
-    eventSender.mouseUp(); // Transfers focus to text field "second input".
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp(); // Transfers focus to text field "second input".
     endRecordingEvents();
     checkThatEventsFiredInOrder([["firstInput", "focus"], ["firstInput", "change"], ["firstInput", "blur"], ["secondInput", "focus"], ["secondInput", "click"]]);
     debug('<br /><span class="pass">TEST COMPLETE</span>');
+    testRunner.notifyDone();
 }
 </script>
 </head>

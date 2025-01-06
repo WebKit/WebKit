@@ -30,8 +30,11 @@
 
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PipelineLayoutImpl);
 
 PipelineLayoutImpl::PipelineLayoutImpl(WebGPUPtr<WGPUPipelineLayout>&& pipelineLayout, ConvertToBackingContext& convertToBackingContext)
     : m_backing(WTFMove(pipelineLayout))

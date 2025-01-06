@@ -47,18 +47,18 @@ public:
 
     friend bool operator==(const BorderValue&, const BorderValue&) = default;
 
-    void setColor(const StyleColor& color)
+    void setColor(const Style::Color& color)
     {
         m_color = color;
     }
 
-    const StyleColor& color() const { return m_color; }
+    const Style::Color& color() const { return m_color; }
 
     float width() const { return m_width; }
     BorderStyle style() const { return static_cast<BorderStyle>(m_style); }
 
 protected:
-    StyleColor m_color;
+    Style::Color m_color;
 
     float m_width { 3 };
 

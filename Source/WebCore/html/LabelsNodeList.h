@@ -31,7 +31,7 @@ namespace WebCore {
 class HTMLElement;
 
 class LabelsNodeList final : public CachedLiveNodeList<LabelsNodeList> {
-    WTF_MAKE_ISO_ALLOCATED(LabelsNodeList);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LabelsNodeList);
 public:
     static Ref<LabelsNodeList> create(HTMLElement&, const AtomString&);
     virtual ~LabelsNodeList();

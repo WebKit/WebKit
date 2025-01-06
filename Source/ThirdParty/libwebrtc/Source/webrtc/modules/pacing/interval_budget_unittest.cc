@@ -10,6 +10,8 @@
 
 #include "modules/pacing/interval_budget.h"
 
+#include <cstddef>
+
 #include "test/gtest.h"
 
 namespace webrtc {

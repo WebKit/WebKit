@@ -10,6 +10,19 @@ PASS pc.remoteDescription is null
 PASS pc.pendingRemoteDescription is null
 PASS pc.currentRemoteDescription is null
 
+*** 'track' event must fire before setRemoteDescription promise is fulfilled
+*** Check track event properties
+PASS pc.getReceivers().includes(trackEvent.receiver) is true
+PASS pc.getTransceivers().includes(trackEvent.transceiver) is true
+*** Remote track should be muted initially
+PASS trackEvent.track.muted is true
+*** Remote track properties should match track added at remote side (remotePc)
+PASS trackEvent.track.kind is remotePcAudioTrack.kind
+PASS trackEvent.track.id is remotePcAudioTrack.id
+FAIL trackEvent.track.label should be remote audio. Was .
+*** Check local and remote transceivers
+PASS trackEvent.transceiver.mid is remotePcAudioTransceiver.mid
+
 PASS remoteOffer1 set as remote description
 PASS pc.signalingState is 'have-remote-offer'
 FAIL pc.remoteDescription should be [object Object]. Was [object RTCSessionDescription].
@@ -26,6 +39,19 @@ PASS promise pc.setRemoteDescription({type:'pranswer', sdp:remoteOffer1.sdp}); r
 *** Create (remote) offer with video (remoteOffer2)
 *** Done, start testing with remoteOffer2
 PASS pc.signalingState is 'have-remote-offer'
+
+*** 'track' event must fire before setRemoteDescription promise is fulfilled
+*** Check track event properties
+PASS pc.getReceivers().includes(trackEvent.receiver) is true
+PASS pc.getTransceivers().includes(trackEvent.transceiver) is true
+*** Remote track should be muted initially
+PASS trackEvent.track.muted is true
+*** Remote track properties should match track added at remote side (remotePc)
+PASS trackEvent.track.kind is remotePcVideoTrack.kind
+PASS trackEvent.track.id is remotePcVideoTrack.id
+FAIL trackEvent.track.label should be remote video. Was .
+*** Check local and remote transceivers
+PASS trackEvent.transceiver.mid is remotePcVideoTransceiver.mid
 
 PASS remoteOffer2 set as remote description
 PASS pc.signalingState is 'have-remote-offer'

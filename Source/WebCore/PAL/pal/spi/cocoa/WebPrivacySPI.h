@@ -68,7 +68,7 @@ typedef NS_ENUM(NSInteger, WPNetworkAddressVersion) {
 @property (nonatomic, readonly) NSArray<WPLinkFilteringRule *> *rules;
 @end
 
-@interface WPTrackingDomain  : NSObject
+@interface WPTrackingDomain : NSObject
 @property (nonatomic, readonly) NSString *host;
 @property (nonatomic, readonly) NSString *owner;
 @property (nonatomic, readonly) BOOL canBlock;
@@ -163,11 +163,26 @@ typedef void (^WPRestrictedOpenerDomainsCompletionHandler)(NSArray<WPRestrictedO
 @end
 #endif
 
+#if !defined(HAS_WEB_PRIVACY_RESOURCE_MONITOR_URLS_API)
+@class WKContentRuleList;
+@class WKContentRuleListStore;
+
+typedef void (^WPRuleListPreparationCompletionHandler)(WKContentRuleList *, bool, NSError *);
+
+@interface WPResources (Staging_141646051)
+- (void)prepareResouceMonitorRulesForStore:(WKContentRuleListStore *)store completionHandler:(WPRuleListPreparationCompletionHandler)completionHandler;
+@end
+#endif
+
 WTF_EXTERN_C_BEGIN
 
 extern NSString *const WPNotificationUserInfoResourceTypeKey;
 extern NSNotificationName const WPResourceDataChangedNotificationName;
 
 WTF_EXTERN_C_END
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPrivacySPIAdditions.h>)
+#import <WebKitAdditions/WebPrivacySPIAdditions.h>
+#endif
 
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)

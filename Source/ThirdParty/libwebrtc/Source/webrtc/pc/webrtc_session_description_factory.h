@@ -19,17 +19,18 @@
 #include <string>
 
 #include "absl/functional/any_invocable.h"
+#include "api/field_trials_view.h"
 #include "api/jsep.h"
 #include "api/peer_connection_interface.h"
+#include "api/rtc_error.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_base.h"
-#include "p2p/base/transport_description.h"
+#include "call/payload_type.h"
 #include "p2p/base/transport_description_factory.h"
 #include "pc/media_session.h"
 #include "pc/sdp_state_provider.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/rtc_certificate_generator.h"
-#include "rtc_base/unique_id_generator.h"
 #include "rtc_base/weak_ptr.h"
 
 namespace webrtc {
@@ -53,6 +54,7 @@ class WebRtcSessionDescriptionFactory {
       rtc::scoped_refptr<rtc::RTCCertificate> certificate,
       std::function<void(const rtc::scoped_refptr<rtc::RTCCertificate>&)>
           on_certificate_ready,
+      PayloadTypeSuggester* pt_suggester,
       const FieldTrialsView& field_trials);
   ~WebRtcSessionDescriptionFactory();
 
@@ -73,9 +75,6 @@ class WebRtcSessionDescriptionFactory {
   void CreateAnswer(CreateSessionDescriptionObserver* observer,
                     const cricket::MediaSessionOptions& session_options);
 
-  void SetSdesPolicy(cricket::SecurePolicy secure_policy);
-  cricket::SecurePolicy SdesPolicy() const;
-
   void set_enable_encrypted_rtp_header_extensions(bool enable) {
     session_desc_factory_.set_enable_encrypted_rtp_header_extensions(enable);
   }
@@ -87,6 +86,9 @@ class WebRtcSessionDescriptionFactory {
   // For testing.
   bool waiting_for_certificate_for_testing() const {
     return certificate_request_state_ == CERTIFICATE_WAITING;
+  }
+  void SetInsecureForTesting() {
+    transport_desc_factory_.SetInsecureForTesting();
   }
 
  private:
@@ -144,6 +146,7 @@ class WebRtcSessionDescriptionFactory {
 
   std::function<void(const rtc::scoped_refptr<rtc::RTCCertificate>&)>
       on_certificate_ready_;
+
   rtc::WeakPtrFactory<WebRtcSessionDescriptionFactory> weak_factory_{this};
 };
 }  // namespace webrtc

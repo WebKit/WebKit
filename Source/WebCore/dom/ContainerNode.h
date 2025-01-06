@@ -33,17 +33,18 @@ class RadioNodeList;
 class RenderElement;
 
 class ContainerNode : public Node {
-    WTF_MAKE_ISO_ALLOCATED(ContainerNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ContainerNode);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ContainerNode);
 public:
     virtual ~ContainerNode();
 
-    Node* firstChild() const { return m_firstChild; }
-    RefPtr<Node> protectedFirstChild() const { return m_firstChild; }
+    Node* firstChild() const { return m_firstChild.get(); }
+    RefPtr<Node> protectedFirstChild() const { return m_firstChild.get(); }
     static constexpr ptrdiff_t firstChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_firstChild); }
-    Node* lastChild() const { return m_lastChild; }
-    RefPtr<Node> protectedLastChild() const { return m_lastChild; }
+    Node* lastChild() const { return m_lastChild.get(); }
+    RefPtr<Node> protectedLastChild() const { return m_lastChild.get(); }
     static constexpr ptrdiff_t lastChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_lastChild); }
-    bool hasChildNodes() const { return m_firstChild; }
+    bool hasChildNodes() const { return m_firstChild.get(); }
     bool hasOneChild() const { return m_firstChild && m_firstChild == m_lastChild; }
 
     bool directChildNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DirectChildNeedsStyleResolution); }
@@ -76,7 +77,7 @@ public:
 
     void takeAllChildrenFrom(ContainerNode*);
 
-    void cloneChildNodes(ContainerNode& clone);
+    void cloneChildNodes(TreeScope&, ContainerNode& clone);
 
     struct ChildChange {
         enum class Type : uint8_t { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildRemoved, NonContentsChildInserted, AllChildrenReplaced };
@@ -84,9 +85,10 @@ public:
         enum class AffectsElements : uint8_t { Unknown, No, Yes };
 
         ChildChange::Type type;
-        Element* siblingChanged;
-        Element* previousSiblingElement;
-        Element* nextSiblingElement;
+        // Making these raw pointers RefPtr leads to a Speedometer 3 regression.
+        SUPPRESS_UNCOUNTED_MEMBER Element* siblingChanged;
+        SUPPRESS_UNCOUNTED_MEMBER Element* previousSiblingElement;
+        SUPPRESS_UNCOUNTED_MEMBER Element* nextSiblingElement;
         ChildChange::Source source;
         AffectsElements affectsElements;
 
@@ -135,10 +137,10 @@ public:
     WEBCORE_EXPORT Element* firstElementChild() const;
     WEBCORE_EXPORT Element* lastElementChild() const;
     WEBCORE_EXPORT unsigned childElementCount() const;
-    ExceptionOr<void> append(FixedVector<NodeOrStringOrTrustedScript>&&);
-    ExceptionOr<void> prepend(FixedVector<NodeOrStringOrTrustedScript>&&);
+    ExceptionOr<void> append(FixedVector<NodeOrString>&&);
+    ExceptionOr<void> prepend(FixedVector<NodeOrString>&&);
 
-    ExceptionOr<void> replaceChildren(FixedVector<NodeOrStringOrTrustedScript>&&);
+    ExceptionOr<void> replaceChildren(FixedVector<NodeOrString>&&);
 
     ExceptionOr<void> ensurePreInsertionValidity(Node& newChild, Node* refChild);
     ExceptionOr<void> ensurePreInsertionValidityForPhantomDocumentFragment(NodeVector& newChildren, Node* refChild = nullptr);
@@ -173,8 +175,8 @@ private:
 
     bool isContainerNode() const = delete;
 
-    Node* m_firstChild { nullptr };
-    Node* m_lastChild { nullptr };
+    CheckedPtr<Node> m_firstChild;
+    CheckedPtr<Node> m_lastChild;
 };
 
 inline ContainerNode::ContainerNode(Document& document, NodeType type, OptionSet<TypeFlag> typeFlags)
@@ -201,10 +203,30 @@ inline Node* Node::firstChild() const
     return containerNode ? containerNode->firstChild() : nullptr;
 }
 
+inline RefPtr<Node> Node::protectedFirstChild() const
+{
+    return firstChild();
+}
+
 inline Node* Node::lastChild() const
 {
     auto* containerNode = dynamicDowncast<ContainerNode>(*this);
     return containerNode ? containerNode->lastChild() : nullptr;
+}
+
+inline RefPtr<Node> Node::protectedLastChild() const
+{
+    return lastChild();
+}
+
+inline bool Node::hasChildNodes() const
+{
+    return firstChild();
+}
+
+inline ContainerNode& TreeScope::rootNode() const
+{
+    return m_rootNode.get();
 }
 
 inline Node& Node::rootNode() const
@@ -223,7 +245,7 @@ inline ContainerNode& ContainerNode::rootNode() const
 
 inline void collectChildNodes(Node& node, NodeVector& children)
 {
-    for (Node* child = node.firstChild(); child; child = child->nextSibling())
+    for (SUPPRESS_UNCOUNTED_LOCAL Node* child = node.firstChild(); child; child = child->nextSibling())
         children.append(*child);
 }
 

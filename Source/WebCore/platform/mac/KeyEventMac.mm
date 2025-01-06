@@ -38,7 +38,7 @@ namespace WebCore {
 
 int windowsKeyCodeForKeyCode(uint16_t keyCode)
 {
-    static const int windowsKeyCode[] = {
+    static constexpr auto windowsKeyCode = std::to_array<int>({
         /* 0 */ VK_A,
         /* 1 */ VK_S,
         /* 2 */ VK_D,
@@ -166,7 +166,7 @@ int windowsKeyCodeForKeyCode(uint16_t keyCode)
         /* 0x7C */ VK_RIGHT, // Right Arrow
         /* 0x7D */ VK_DOWN, // Down Arrow
         /* 0x7E */ VK_UP, // Up Arrow
-    };
+    });
     if (keyCode < std::size(windowsKeyCode))
         return windowsKeyCode[keyCode];
     return 0;

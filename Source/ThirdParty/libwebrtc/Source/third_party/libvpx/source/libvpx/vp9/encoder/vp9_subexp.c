@@ -66,6 +66,7 @@ static int remap_prob(int v, int m) {
   };
   v--;
   m--;
+  assert(m >= 0);
   if ((m << 1) <= MAX_PROB)
     i = recenter_nonneg(v, m) - 1;
   else

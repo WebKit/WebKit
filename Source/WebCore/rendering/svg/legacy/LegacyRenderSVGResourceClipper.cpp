@@ -29,6 +29,7 @@
 #include "HitTestResult.h"
 #include "IntRect.h"
 #include "LegacyRenderSVGResourceClipperInlines.h"
+#include "LegacyRenderSVGShape.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
@@ -44,12 +45,12 @@
 #include "SVGResourcesCache.h"
 #include "SVGUseElement.h"
 #include "SVGVisitedRendererTracking.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceClipper);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceClipper);
 
 LegacyRenderSVGResourceClipper::LegacyRenderSVGResourceClipper(SVGClipPathElement& element, RenderStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceClipper, element, WTFMove(style))
@@ -73,24 +74,25 @@ void LegacyRenderSVGResourceClipper::removeClientFromCache(RenderElement& client
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-bool LegacyRenderSVGResourceClipper::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
+auto LegacyRenderSVGResourceClipper::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
 {
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);
 
     auto repaintRect = renderer.repaintRectInLocalCoordinates();
     if (repaintRect.isEmpty())
-        return true;
+        return { ApplyResult::ResourceApplied };
 
     auto boundingBox = renderer.objectBoundingBox();
     return applyClippingToContext(*context, renderer, boundingBox, boundingBox);
 }
 
-bool LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const AffineTransform& animatedLocalTransform, const FloatRect& objectBoundingBox, float usedZoom)
+auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const RenderElement& renderer, const AffineTransform& animatedLocalTransform, const FloatRect& objectBoundingBox, float usedZoom) -> OptionSet<ApplyResult>
 {
     // If the current clip-path gets clipped itself, we have to fall back to masking.
     if (style().clipPath())
-        return false;
+        return { };
+
     WindRule clipRule = WindRule::NonZero;
     Path clipPath;
 
@@ -123,13 +125,13 @@ bool LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
         if (!renderer)
             continue;
         if (rendererRequiresMaskClipping(*renderer))
-            return false;
+            return { };
 
         // For <use> elements, delegate the decision whether to use mask clipping or not to the referenced element.
         if (auto* useElement = dynamicDowncast<SVGUseElement>(graphicsElement.get())) {
             auto* clipChildRenderer = useElement->rendererClipChild();
             if (clipChildRenderer && rendererRequiresMaskClipping(*clipChildRenderer))
-                return false;
+                return { };
         }
 
         clipPath = graphicsElement->toClipPath();
@@ -154,8 +156,17 @@ bool LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
     // The SVG specification wants us to clip everything, if clip-path doesn't have a child.
     if (clipPath.isEmpty())
         clipPath.addRect(FloatRect());
+
+    OptionSet<ApplyResult> result = { ApplyResult::ResourceApplied };
+    if (auto* shapeRenderer = dynamicDowncast<LegacyRenderSVGShape>(renderer); shapeRenderer && shapeRenderer->shapeType() == LegacyRenderSVGShape::ShapeType::Rectangle) {
+        // When clipping a rect with a path, if we know the path is entirely inside the rect, we can skip a clip when filling the rect.
+        auto clipBounds = clipPath.fastBoundingRect();
+        if (objectBoundingBox.contains(clipBounds))
+            result.add(ApplyResult::ClipContainsRendererContent);
+    }
+
     context.clipPath(clipPath, clipRule);
-    return true;
+    return result;
 }
 
 ClipperData::Inputs LegacyRenderSVGResourceClipper::computeInputs(const GraphicsContext& context, const RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float usedZoom)
@@ -171,18 +182,19 @@ ClipperData::Inputs LegacyRenderSVGResourceClipper::computeInputs(const Graphics
     return { objectBoundingBox, clippedContentBounds, scale, usedZoom, context.paintingDisabled() };
 }
 
-bool LegacyRenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float usedZoom)
+auto LegacyRenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float usedZoom) -> OptionSet<ApplyResult>
 {
     LOG_WITH_STREAM(SVG, stream << "LegacyRenderSVGResourceClipper " << this << " applyClippingToContext: renderer " << &renderer << " objectBoundingBox " << objectBoundingBox << " clippedContentBounds " << clippedContentBounds);
 
     AffineTransform animatedLocalTransform = clipPathElement().animatedLocalTransform();
 
-    if (pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox, usedZoom)) {
+    auto clipResult = pathOnlyClipping(context, renderer, animatedLocalTransform, objectBoundingBox, usedZoom);
+    if (resourceWasApplied(clipResult)) {
         auto it = m_clipperMap.find(renderer);
         if (it != m_clipperMap.end())
             it->value->imageBuffer = nullptr;
 
-        return true;
+        return clipResult;
     }
 
     auto& clipperData = *m_clipperMap.ensure(renderer, [&]() {
@@ -193,7 +205,7 @@ bool LegacyRenderSVGResourceClipper::applyClippingToContext(GraphicsContext& con
         // FIXME (149469): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks nested clipping, though.
         clipperData.imageBuffer = context.createScaledImageBuffer(clippedContentBounds, clipperData.inputs.scale, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated); // FIXME
         if (!clipperData.imageBuffer)
-            return false;
+            return { };
 
         GraphicsContext& maskContext = clipperData.imageBuffer->context();
         maskContext.concatCTM(animatedLocalTransform);
@@ -206,7 +218,7 @@ bool LegacyRenderSVGResourceClipper::applyClippingToContext(GraphicsContext& con
             GraphicsContextStateSaver stateSaver(maskContext);
 
             if (!clipper->applyClippingToContext(maskContext, *this, objectBoundingBox, clippedContentBounds))
-                return false;
+                return { };
 
             succeeded = drawContentIntoMaskImage(Ref { *clipperData.imageBuffer }, objectBoundingBox, usedZoom);
             // The context restore applies the clipping on non-CG platforms.
@@ -218,10 +230,10 @@ bool LegacyRenderSVGResourceClipper::applyClippingToContext(GraphicsContext& con
     }
 
     if (!clipperData.imageBuffer)
-        return false;
+        return { };
 
     SVGRenderingContext::clipToImageBuffer(context, clippedContentBounds, clipperData.inputs.scale, clipperData.imageBuffer, true);
-    return true;
+    return { ApplyResult::ResourceApplied };
 }
 
 bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskImageBuffer, const FloatRect& objectBoundingBox, float usedZoom)

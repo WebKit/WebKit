@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -19,7 +19,7 @@ struct yv12_buffer_config;
 struct AV1_COMP;
 
 // Allocates memory for members of GlobalMotionData.
-static AOM_INLINE void gm_alloc_data(AV1_COMP *cpi, GlobalMotionData *gm_data) {
+static inline void gm_alloc_data(AV1_COMP *cpi, GlobalMotionData *gm_data) {
   AV1_COMMON *cm = &cpi->common;
   GlobalMotionInfo *gm_info = &cpi->gm_info;
 
@@ -36,7 +36,7 @@ static AOM_INLINE void gm_alloc_data(AV1_COMP *cpi, GlobalMotionData *gm_data) {
 }
 
 // Deallocates the memory allocated for members of GlobalMotionData.
-static AOM_INLINE void gm_dealloc_data(GlobalMotionData *gm_data) {
+static inline void gm_dealloc_data(GlobalMotionData *gm_data) {
   aom_free(gm_data->segment_map);
   gm_data->segment_map = NULL;
   for (int m = 0; m < RANSAC_NUM_MOTIONS; m++) {

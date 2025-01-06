@@ -15,8 +15,8 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <optional>
 
-#include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "api/units/data_size.h"
 #include "api/units/frequency.h"
@@ -155,9 +155,9 @@ void JitterEstimator::Reset() {
   var_frame_size_bytes2_ = 100;
   avg_frame_size_median_bytes_.Reset();
   max_frame_size_bytes_percentile_.Reset();
-  last_update_time_ = absl::nullopt;
-  prev_estimate_ = absl::nullopt;
-  prev_frame_size_ = absl::nullopt;
+  last_update_time_ = std::nullopt;
+  prev_estimate_ = std::nullopt;
+  prev_frame_size_ = std::nullopt;
   avg_noise_ms_ = 0.0;
   var_noise_ms2_ = 4.0;
   alpha_count_ = 1;
@@ -424,7 +424,7 @@ void JitterEstimator::PostProcessEstimate() {
 // otherwise tries to calculate an estimate.
 TimeDelta JitterEstimator::GetJitterEstimate(
     double rtt_multiplier,
-    absl::optional<TimeDelta> rtt_mult_add_cap) {
+    std::optional<TimeDelta> rtt_mult_add_cap) {
   TimeDelta jitter = CalculateEstimate() + OPERATING_SYSTEM_JITTER;
   Timestamp now = clock_->CurrentTime();
 

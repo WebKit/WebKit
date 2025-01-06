@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,8 +12,9 @@
 #include <tuple>
 #include <vector>
 
-#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 
+#include "config/aom_config.h"
 #include "config/av1_rtcd.h"
 
 #include "aom_ports/aom_timer.h"
@@ -22,6 +23,7 @@
 #include "test/util.h"
 
 #include "av1/common/common_data.h"
+#include "av1/common/filter.h"
 
 namespace {
 const int kTestIters = 10;
@@ -32,79 +34,11 @@ const int kHPad = 32;
 const int kXStepQn = 16;
 const int kYStepQn = 20;
 
+const int kNumFilterBanks = SWITCHABLE_FILTERS;
+
 using libaom_test::ACMRandom;
 using std::make_tuple;
 using std::tuple;
-
-enum NTaps { EIGHT_TAP, TEN_TAP, TWELVE_TAP };
-int NTapsToInt(NTaps ntaps) { return 8 + static_cast<int>(ntaps) * 2; }
-
-// A 16-bit filter with a configurable number of taps.
-class TestFilter {
- public:
-  void set(NTaps ntaps, bool backwards);
-
-  InterpFilterParams params_;
-
- private:
-  std::vector<int16_t> coeffs_;
-};
-
-void TestFilter::set(NTaps ntaps, bool backwards) {
-  const int n = NTapsToInt(ntaps);
-  assert(n >= 8 && n <= 12);
-
-  // The filter has n * SUBPEL_SHIFTS proper elements and an extra 8 bogus
-  // elements at the end so that convolutions can read off the end safely.
-  coeffs_.resize(n * SUBPEL_SHIFTS + 8);
-
-  // The coefficients are pretty much arbitrary, but convolutions shouldn't
-  // over or underflow. For the first filter (subpels = 0), we use an
-  // increasing or decreasing ramp (depending on the backwards parameter). We
-  // don't want any zero coefficients, so we make it have an x-intercept at -1
-  // or n. To ensure absence of under/overflow, we normalise the area under the
-  // ramp to be I = 1 << FILTER_BITS (so that convolving a constant function
-  // gives the identity).
-  //
-  // When increasing, the function has the form:
-  //
-  //   f(x) = A * (x + 1)
-  //
-  // Summing and rearranging for A gives A = 2 * I / (n * (n + 1)). If the
-  // filter is reversed, we have the same A but with formula
-  //
-  //   g(x) = A * (n - x)
-  const int I = 1 << FILTER_BITS;
-  const float A = 2.f * I / (n * (n + 1.f));
-  for (int i = 0; i < n; ++i) {
-    coeffs_[i] = static_cast<int16_t>(A * (backwards ? (n - i) : (i + 1)));
-  }
-
-  // For the other filters, make them slightly different by swapping two
-  // columns. Filter k will have the columns (k % n) and (7 * k) % n swapped.
-  const size_t filter_size = sizeof(coeffs_[0] * n);
-  int16_t *const filter0 = &coeffs_[0];
-  for (int k = 1; k < SUBPEL_SHIFTS; ++k) {
-    int16_t *filterk = &coeffs_[k * n];
-    memcpy(filterk, filter0, filter_size);
-
-    const int idx0 = k % n;
-    const int idx1 = (7 * k) % n;
-
-    const int16_t tmp = filterk[idx0];
-    filterk[idx0] = filterk[idx1];
-    filterk[idx1] = tmp;
-  }
-
-  // Finally, write some rubbish at the end to make sure we don't use it.
-  for (int i = 0; i < 8; ++i) coeffs_[n * SUBPEL_SHIFTS + i] = 123 + i;
-
-  // Fill in params
-  params_.filter_ptr = &coeffs_[0];
-  params_.taps = n;
-  // These are ignored by the functions being tested. Set them to whatever.
-  params_.interp_filter = EIGHTTAP_REGULAR;
-}
 
 template <typename SrcPixel>
 class TestImage {
@@ -244,14 +178,9 @@ void TestImage<SrcPixel>::Check() const {
 typedef tuple<int, int> BlockDimension;
 
 struct BaseParams {
-  BaseParams(BlockDimension dimensions, NTaps num_taps_x, NTaps num_taps_y,
-             bool average)
-      : dims(dimensions), ntaps_x(num_taps_x), ntaps_y(num_taps_y),
-        avg(average) {}
+  BaseParams(BlockDimension dimensions) : dims(dimensions) {}
 
   BlockDimension dims;
-  NTaps ntaps_x, ntaps_y;
-  bool avg;
 };
 
 template <typename SrcPixel>
@@ -271,54 +200,62 @@ class ConvolveScaleTestBase : public ::testing::Test {
   void SetParams(const BaseParams &params, int bd) {
     width_ = std::get<0>(params.dims);
     height_ = std::get<1>(params.dims);
-    ntaps_x_ = params.ntaps_x;
-    ntaps_y_ = params.ntaps_y;
     bd_ = bd;
-    avg_ = params.avg;
-
-    filter_x_.set(ntaps_x_, false);
-    filter_y_.set(ntaps_y_, true);
-    convolve_params_ =
-        get_conv_params_no_round(avg_ != false, 0, nullptr, 0, 1, bd);
 
     delete image_;
     image_ = new TestImage<SrcPixel>(width_, height_, bd_);
     ASSERT_NE(image_, nullptr);
   }
 
-  void SetConvParamOffset(int i, int j, int is_compound, int do_average,
-                          int use_dist_wtd_comp_avg) {
-    if (i == -1 && j == -1) {
-      convolve_params_.use_dist_wtd_comp_avg = use_dist_wtd_comp_avg;
-      convolve_params_.is_compound = is_compound;
-      convolve_params_.do_average = do_average;
-    } else {
-      convolve_params_.use_dist_wtd_comp_avg = use_dist_wtd_comp_avg;
-      convolve_params_.fwd_offset = quant_dist_lookup_table[j][i];
-      convolve_params_.bck_offset = quant_dist_lookup_table[j][1 - i];
-      convolve_params_.is_compound = is_compound;
-      convolve_params_.do_average = do_average;
+  std::vector<ConvolveParams> GetConvParams() {
+    std::vector<ConvolveParams> convolve_params;
+
+    ConvolveParams param_no_compound =
+        get_conv_params_no_round(0, 0, nullptr, 0, 0, bd_);
+    convolve_params.push_back(param_no_compound);
+
+    ConvolveParams param_compound_avg =
+        get_conv_params_no_round(1, 0, nullptr, 0, 1, bd_);
+    convolve_params.push_back(param_compound_avg);
+
+    ConvolveParams param_compound_avg_dist_wtd = param_compound_avg;
+    param_compound_avg_dist_wtd.use_dist_wtd_comp_avg = 1;
+
+    for (int i = 0; i < 2; ++i) {
+      for (int j = 0; j < 4; ++j) {
+        param_compound_avg_dist_wtd.fwd_offset = quant_dist_lookup_table[j][i];
+        param_compound_avg_dist_wtd.bck_offset =
+            quant_dist_lookup_table[j][1 - i];
+        convolve_params.push_back(param_compound_avg_dist_wtd);
+      }
     }
+
+    return convolve_params;
   }
 
   void Run() {
     ACMRandom rnd(ACMRandom::DeterministicSeed());
-    for (int i = 0; i < kTestIters; ++i) {
-      int is_compound = 0;
-      SetConvParamOffset(-1, -1, is_compound, 0, 0);
-      Prep(&rnd);
-      RunOne(true);
-      RunOne(false);
-      image_->Check();
+    std::vector<ConvolveParams> conv_params = GetConvParams();
 
-      is_compound = 1;
-      for (int do_average = 0; do_average < 2; do_average++) {
-        for (int use_dist_wtd_comp_avg = 0; use_dist_wtd_comp_avg < 2;
-             use_dist_wtd_comp_avg++) {
-          for (int j = 0; j < 2; ++j) {
-            for (int k = 0; k < 4; ++k) {
-              SetConvParamOffset(j, k, is_compound, do_average,
-                                 use_dist_wtd_comp_avg);
+    for (int i = 0; i < kTestIters; ++i) {
+      for (int subpel_search = USE_2_TAPS; subpel_search <= USE_8_TAPS;
+           ++subpel_search) {
+        for (int filter_bank_y = 0; filter_bank_y < kNumFilterBanks;
+             ++filter_bank_y) {
+          const InterpFilter filter_y =
+              static_cast<InterpFilter>(filter_bank_y);
+          filter_y_ =
+              av1_get_interp_filter_params_with_block_size(filter_y, width_);
+
+          for (int filter_bank_x = 0; filter_bank_x < kNumFilterBanks;
+               ++filter_bank_x) {
+            const InterpFilter filter_x =
+                static_cast<InterpFilter>(filter_bank_x);
+            filter_x_ =
+                av1_get_interp_filter_params_with_block_size(filter_x, width_);
+
+            for (const auto c : conv_params) {
+              convolve_params_ = c;
               Prep(&rnd);
               RunOne(true);
               RunOne(false);
@@ -329,7 +266,6 @@ class ConvolveScaleTestBase : public ::testing::Test {
       }
     }
   }
-
   void SpeedTest() {
     ACMRandom rnd(ACMRandom::DeterministicSeed());
     Prep(&rnd);
@@ -370,8 +306,8 @@ class ConvolveScaleTestBase : public ::testing::Test {
     assert(rnd);
 
     // Choose subpel_x_ and subpel_y_. They should be less than
-    // SCALE_SUBPEL_SHIFTS; we also want to add extra weight to "interesting"
-    // values: 0 and SCALE_SUBPEL_SHIFTS - 1
+    // SCALE_SUBPEL_SHIFTS; we also want to add extra weight to
+    // "interesting" values: 0 and SCALE_SUBPEL_SHIFTS - 1
     subpel_x_ = RandomSubpel(rnd);
     subpel_y_ = RandomSubpel(rnd);
 
@@ -379,10 +315,8 @@ class ConvolveScaleTestBase : public ::testing::Test {
   }
 
   int width_, height_, bd_;
-  NTaps ntaps_x_, ntaps_y_;
-  bool avg_;
   int subpel_x_, subpel_y_;
-  TestFilter filter_x_, filter_y_;
+  const InterpFilterParams *filter_x_, *filter_y_;
   TestImage<SrcPixel> *image_;
   ConvolveParams convolve_params_;
 };
@@ -398,9 +332,8 @@ typedef void (*LowbdConvolveFunc)(const uint8_t *src, int src_stride,
                                   ConvolveParams *conv_params);
 
 // Test parameter list:
-//  <tst_fun, dims, ntaps_x, ntaps_y, avg>
-typedef tuple<LowbdConvolveFunc, BlockDimension, NTaps, NTaps, bool>
-    LowBDParams;
+//  <tst_fun, dims, avg>
+typedef tuple<LowbdConvolveFunc, BlockDimension> LowBDParams;
 
 class LowBDConvolveScaleTest
     : public ConvolveScaleTestBase<uint8_t>,
@@ -412,12 +345,9 @@ class LowBDConvolveScaleTest
     tst_fun_ = GET_PARAM(0);
 
     const BlockDimension &block = GET_PARAM(1);
-    const NTaps ntaps_x = GET_PARAM(2);
-    const NTaps ntaps_y = GET_PARAM(3);
     const int bd = 8;
-    const bool avg = GET_PARAM(4);
 
-    SetParams(BaseParams(block, ntaps_x, ntaps_y, avg), bd);
+    SetParams(BaseParams(block), bd);
   }
 
   void RunOne(bool ref) override {
@@ -428,12 +358,12 @@ class LowBDConvolveScaleTest
     const int dst_stride = image_->dst_stride();
     if (ref) {
       av1_convolve_2d_scale_c(src, src_stride, dst, dst_stride, width_, height_,
-                              &filter_x_.params_, &filter_y_.params_, subpel_x_,
-                              kXStepQn, subpel_y_, kYStepQn, &convolve_params_);
+                              filter_x_, filter_y_, subpel_x_, kXStepQn,
+                              subpel_y_, kYStepQn, &convolve_params_);
     } else {
-      tst_fun_(src, src_stride, dst, dst_stride, width_, height_,
-               &filter_x_.params_, &filter_y_.params_, subpel_x_, kXStepQn,
-               subpel_y_, kYStepQn, &convolve_params_);
+      tst_fun_(src, src_stride, dst, dst_stride, width_, height_, filter_x_,
+               filter_y_, subpel_x_, kXStepQn, subpel_y_, kYStepQn,
+               &convolve_params_);
     }
   }
 
@@ -450,25 +380,40 @@ const BlockDimension kBlockDim[] = {
   make_tuple(64, 128), make_tuple(128, 64), make_tuple(128, 128),
 };
 
-const NTaps kNTaps[] = { EIGHT_TAP };
-
 TEST_P(LowBDConvolveScaleTest, Check) { Run(); }
 TEST_P(LowBDConvolveScaleTest, DISABLED_Speed) { SpeedTest(); }
 
 INSTANTIATE_TEST_SUITE_P(
     C, LowBDConvolveScaleTest,
     ::testing::Combine(::testing::Values(av1_convolve_2d_scale_c),
-                       ::testing::ValuesIn(kBlockDim),
-                       ::testing::ValuesIn(kNTaps), ::testing::ValuesIn(kNTaps),
-                       ::testing::Bool()));
+                       ::testing::ValuesIn(kBlockDim)));
+
+#if HAVE_NEON
+INSTANTIATE_TEST_SUITE_P(
+    NEON, LowBDConvolveScaleTest,
+    ::testing::Combine(::testing::Values(av1_convolve_2d_scale_neon),
+                       ::testing::ValuesIn(kBlockDim)));
+#endif  // HAVE_NEON
+
+#if HAVE_NEON_DOTPROD
+INSTANTIATE_TEST_SUITE_P(
+    NEON_DOTPROD, LowBDConvolveScaleTest,
+    ::testing::Combine(::testing::Values(av1_convolve_2d_scale_neon_dotprod),
+                       ::testing::ValuesIn(kBlockDim)));
+#endif  // HAVE_NEON_DOTPROD
+
+#if HAVE_NEON_I8MM
+INSTANTIATE_TEST_SUITE_P(
+    NEON_I8MM, LowBDConvolveScaleTest,
+    ::testing::Combine(::testing::Values(av1_convolve_2d_scale_neon_i8mm),
+                       ::testing::ValuesIn(kBlockDim)));
+#endif  // HAVE_NEON_I8MM
 
 #if HAVE_SSE4_1
 INSTANTIATE_TEST_SUITE_P(
     SSE4_1, LowBDConvolveScaleTest,
     ::testing::Combine(::testing::Values(av1_convolve_2d_scale_sse4_1),
-                       ::testing::ValuesIn(kBlockDim),
-                       ::testing::ValuesIn(kNTaps), ::testing::ValuesIn(kNTaps),
-                       ::testing::Bool()));
+                       ::testing::ValuesIn(kBlockDim)));
 #endif  // HAVE_SSE4_1
 
 #if CONFIG_AV1_HIGHBITDEPTH
@@ -481,9 +426,8 @@ typedef void (*HighbdConvolveFunc)(const uint16_t *src, int src_stride,
                                    ConvolveParams *conv_params, int bd);
 
 // Test parameter list:
-//  <tst_fun, dims, ntaps_x, ntaps_y, avg, bd>
-typedef tuple<HighbdConvolveFunc, BlockDimension, NTaps, NTaps, bool, int>
-    HighBDParams;
+//  <tst_fun, dims, avg, bd>
+typedef tuple<HighbdConvolveFunc, BlockDimension, int> HighBDParams;
 
 class HighBDConvolveScaleTest
     : public ConvolveScaleTestBase<uint16_t>,
@@ -495,12 +439,9 @@ class HighBDConvolveScaleTest
     tst_fun_ = GET_PARAM(0);
 
     const BlockDimension &block = GET_PARAM(1);
-    const NTaps ntaps_x = GET_PARAM(2);
-    const NTaps ntaps_y = GET_PARAM(3);
-    const bool avg = GET_PARAM(4);
-    const int bd = GET_PARAM(5);
+    const int bd = GET_PARAM(2);
 
-    SetParams(BaseParams(block, ntaps_x, ntaps_y, avg), bd);
+    SetParams(BaseParams(block), bd);
   }
 
   void RunOne(bool ref) override {
@@ -511,14 +452,14 @@ class HighBDConvolveScaleTest
     const int dst_stride = image_->dst_stride();
 
     if (ref) {
-      av1_highbd_convolve_2d_scale_c(
-          src, src_stride, dst, dst_stride, width_, height_, &filter_x_.params_,
-          &filter_y_.params_, subpel_x_, kXStepQn, subpel_y_, kYStepQn,
-          &convolve_params_, bd_);
+      av1_highbd_convolve_2d_scale_c(src, src_stride, dst, dst_stride, width_,
+                                     height_, filter_x_, filter_y_, subpel_x_,
+                                     kXStepQn, subpel_y_, kYStepQn,
+                                     &convolve_params_, bd_);
     } else {
-      tst_fun_(src, src_stride, dst, dst_stride, width_, height_,
-               &filter_x_.params_, &filter_y_.params_, subpel_x_, kXStepQn,
-               subpel_y_, kYStepQn, &convolve_params_, bd_);
+      tst_fun_(src, src_stride, dst, dst_stride, width_, height_, filter_x_,
+               filter_y_, subpel_x_, kXStepQn, subpel_y_, kYStepQn,
+               &convolve_params_, bd_);
     }
   }
 
@@ -535,16 +476,14 @@ INSTANTIATE_TEST_SUITE_P(
     C, HighBDConvolveScaleTest,
     ::testing::Combine(::testing::Values(av1_highbd_convolve_2d_scale_c),
                        ::testing::ValuesIn(kBlockDim),
-                       ::testing::ValuesIn(kNTaps), ::testing::ValuesIn(kNTaps),
-                       ::testing::Bool(), ::testing::ValuesIn(kBDs)));
+                       ::testing::ValuesIn(kBDs)));
 
 #if HAVE_SSE4_1
 INSTANTIATE_TEST_SUITE_P(
     SSE4_1, HighBDConvolveScaleTest,
     ::testing::Combine(::testing::Values(av1_highbd_convolve_2d_scale_sse4_1),
                        ::testing::ValuesIn(kBlockDim),
-                       ::testing::ValuesIn(kNTaps), ::testing::ValuesIn(kNTaps),
-                       ::testing::Bool(), ::testing::ValuesIn(kBDs)));
+                       ::testing::ValuesIn(kBDs)));
 #endif  // HAVE_SSE4_1
 
 #if HAVE_NEON
@@ -552,8 +491,7 @@ INSTANTIATE_TEST_SUITE_P(
     NEON, HighBDConvolveScaleTest,
     ::testing::Combine(::testing::Values(av1_highbd_convolve_2d_scale_neon),
                        ::testing::ValuesIn(kBlockDim),
-                       ::testing::ValuesIn(kNTaps), ::testing::ValuesIn(kNTaps),
-                       ::testing::Bool(), ::testing::ValuesIn(kBDs)));
+                       ::testing::ValuesIn(kBDs)));
 
 #endif  // HAVE_NEON
 

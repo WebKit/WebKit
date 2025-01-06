@@ -1,0 +1,58 @@
+
+PASS top: 1px is allowed in @position-try
+PASS bottom: 1px is allowed in @position-try
+PASS left: 1px is allowed in @position-try
+PASS right: 1px is allowed in @position-try
+PASS inset-block-start: 1px is allowed in @position-try
+PASS inset-block-end: 1px is allowed in @position-try
+PASS inset-inline-start: 1px is allowed in @position-try
+PASS inset-inline-end: 1px is allowed in @position-try
+PASS inset-block: 1px is allowed in @position-try
+PASS inset-inline: 1px is allowed in @position-try
+PASS inset: 1px is allowed in @position-try
+FAIL position-area: span-all is allowed in @position-try assert_equals: expected "@position-try --foo { position-area: span-all; }" but got "@position-try --foo { }"
+PASS margin-top: 1px is allowed in @position-try
+PASS margin-bottom: 1px is allowed in @position-try
+PASS margin-left: 1px is allowed in @position-try
+PASS margin-right: 1px is allowed in @position-try
+PASS margin-block-start: 1px is allowed in @position-try
+PASS margin-block-end: 1px is allowed in @position-try
+PASS margin-inline-start: 1px is allowed in @position-try
+PASS margin-inline-end: 1px is allowed in @position-try
+PASS margin-block: 1px is allowed in @position-try
+PASS margin-inline: 1px is allowed in @position-try
+PASS margin: 1px is allowed in @position-try
+PASS width: 1px is allowed in @position-try
+PASS height: 1px is allowed in @position-try
+PASS block-size: 1px is allowed in @position-try
+PASS inline-size: 1px is allowed in @position-try
+PASS min-width: 1px is allowed in @position-try
+PASS min-height: 1px is allowed in @position-try
+PASS min-block-size: 1px is allowed in @position-try
+PASS min-inline-size: 1px is allowed in @position-try
+PASS max-width: 1px is allowed in @position-try
+PASS max-height: 1px is allowed in @position-try
+PASS max-block-size: 1px is allowed in @position-try
+PASS max-inline-size: 1px is allowed in @position-try
+PASS justify-self: normal is allowed in @position-try
+PASS align-self: normal is allowed in @position-try
+PASS place-self: normal is allowed in @position-try
+PASS position-anchor: --anchor is allowed in @position-try
+PASS --custom: 1px is disallowed in @position-try
+PASS font-size: 1px is disallowed in @position-try
+PASS border-width: 1px is disallowed in @position-try
+PASS padding: 1px is disallowed in @position-try
+PASS display: 1px is disallowed in @position-try
+PASS position: 1px is disallowed in @position-try
+PASS float: 1px is disallowed in @position-try
+PASS justify-content: normal is disallowed in @position-try
+PASS align-content: normal is disallowed in @position-try
+PASS justify-items: normal is disallowed in @position-try
+PASS align-items: normal is disallowed in @position-try
+PASS top: revert is allowed in @position-try
+PASS top: revert-layer is allowed in @position-try
+PASS inset: revert is allowed in @position-try
+PASS inset: revert-layer is allowed in @position-try
+PASS top: 1px !important is disallowed in @position-try
+PASS inset: 1px !important is disallowed in @position-try
+

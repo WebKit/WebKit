@@ -27,7 +27,6 @@ import os
 import re
 import requests
 import socket
-import sys
 import time
 
 from datetime import datetime, timedelta
@@ -290,9 +289,7 @@ class BugzillaBeautifulSoup():
                 continue
             patch_id = int(digits.search(patch_tag["href"]).group(0))
             date_tag = row.find("td", text=date_format)
-            if sys.version_info > (3, 0) and date_tag:
-                date_tag = date_tag.text
-            if date_tag and datetime.strptime(date_format.search(date_tag).group(0), "%Y-%m-%d %H:%M") < since:
+            if date_tag and date_tag.text and datetime.strptime(date_format.search(date_tag.text).group(0), "%Y-%m-%d %H:%M") < since:
                 continue
             patch_ids.append(patch_id)
         return patch_ids

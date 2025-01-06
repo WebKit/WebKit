@@ -1,0 +1,25 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- This is a copy of existing test mac/lazy-spellchecking.html. After accessibilityThreadTextApisEnabled is enabled by default, this file should be removed. -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div contenteditable=true id="contenteditable" role="textbox">
+wrods is misspelled aab lotsi nowadays. euep.
+</div>
+
+<script>
+var output = "This test ensures that the proper attributes are present when \"lazy\" spellchecking happens.\n\n";
+
+if (window.accessibilityController) {
+    accessibilityController.setForceDeferredSpellChecking(true);
+    var contenteditable = accessibilityController.accessibleElementById("contenteditable");
+    output += `Attributed string with range: ${contenteditable.attributedStringForRange(0, 45)}\n`;
+    debug(output);
+}
+</script>
+</body>
+</html>

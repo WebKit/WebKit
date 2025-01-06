@@ -9,7 +9,7 @@
 // From: interpolateAtOffset(float interpolant, vec2 offset);
 // To: interpolateAtOffset(float interpolant, vec2(offset * (pre-rotation * viewportYScale)));
 //
-// See http://anglebug.com/3589
+// See http://anglebug.com/42262252
 
 #ifndef COMPILER_TRANSLATOR_TREEOPS_SPIRV_REWRITEINTERPOLATEATOFFSET_H_
 #define COMPILER_TRANSLATOR_TREEOPS_SPIRV_REWRITEINTERPOLATEATOFFSET_H_

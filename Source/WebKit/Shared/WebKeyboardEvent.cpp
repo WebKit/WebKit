@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebKeyboardEvent.h"
 
-#include "WebCoreArgumentCoders.h"
 #include <WebCore/KeypressCommand.h>
 
 namespace WebKit {

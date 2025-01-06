@@ -11,20 +11,20 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,56) size 784x56
         RenderBlock {BLOCKQUOTE} at (40,0) size 744x56
           RenderBlock {BLOCKQUOTE} at (40,0) size 704x56
-            RenderTable {TABLE} at (0,0) size 84x56 [border: (1px outset #808080)]
+            RenderTable {TABLE} at (0,0) size 84x56 [border: (1px outset #000000)]
               RenderTableSection {TBODY} at (1,1) size 82x54
                 RenderTableRow {TR} at (0,2) size 82x24
-                  RenderTableCell {TD} at (2,2) size 42x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                  RenderTableCell {TD} at (2,2) size 42x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 27x19
                       text run at (2,2) width 27: "One"
-                  RenderTableCell {TD} at (45,2) size 35x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                  RenderTableCell {TD} at (45,2) size 35x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 29x19
                       text run at (2,2) width 29: "Two"
                 RenderTableRow {TR} at (0,28) size 82x24
-                  RenderTableCell {TD} at (2,28) size 42x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                  RenderTableCell {TD} at (2,28) size 42x24 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 38x19
                       text run at (2,2) width 38: "Three"
-                  RenderTableCell {TD} at (45,28) size 35x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                  RenderTableCell {TD} at (45,28) size 35x24 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 31x19
                       text run at (2,2) width 31: "Four"
 selection start: position 0 of child 0 {TABLE} of child 0 {BLOCKQUOTE} of child 1 {BLOCKQUOTE} of child 2 {DIV} of body

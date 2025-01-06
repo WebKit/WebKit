@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: WebGL: INVALID_VALUE: bufferData: size more than 32-bits
 PASS gl.getError() is 0
 PASS gl.getError() is 1281
 PASS size is 0

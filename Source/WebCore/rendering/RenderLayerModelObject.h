@@ -31,13 +31,14 @@ namespace WebCore {
 class BlendingKeyframes;
 class RenderLayer;
 class RenderSVGResourceClipper;
+class RenderSVGResourceFilter;
 class RenderSVGResourceMarker;
 class RenderSVGResourceMasker;
 class RenderSVGResourcePaintServer;
 class SVGGraphicsElement;
 
 class RenderLayerModelObject : public RenderElement {
-    WTF_MAKE_ISO_ALLOCATED(RenderLayerModelObject);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderLayerModelObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderLayerModelObject);
 public:
     virtual ~RenderLayerModelObject();
@@ -100,6 +101,7 @@ public:
     RenderSVGResourcePaintServer* svgStrokePaintServerResourceFromStyle(const RenderStyle&) const;
 
     RenderSVGResourceClipper* svgClipperResourceFromStyle() const;
+    RenderSVGResourceFilter* svgFilterResourceFromStyle() const;
     RenderSVGResourceMasker* svgMaskerResourceFromStyle() const;
     RenderSVGResourceMarker* svgMarkerStartResourceFromStyle() const;
     RenderSVGResourceMarker* svgMarkerMidResourceFromStyle() const;

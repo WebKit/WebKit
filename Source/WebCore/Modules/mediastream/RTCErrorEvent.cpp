@@ -28,11 +28,11 @@
 
 #if ENABLE(WEB_RTC)
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RTCErrorEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCErrorEvent);
 
 RTCErrorEvent::RTCErrorEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::RTCErrorEvent, type, initializer, isTrusted)

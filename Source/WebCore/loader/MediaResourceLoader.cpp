@@ -38,10 +38,15 @@
 #include "FrameDestructionObserverInlines.h"
 #include "InspectorInstrumentation.h"
 #include "LocalFrameLoaderClient.h"
+#include "OriginAccessPatterns.h"
 #include "SecurityOrigin.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaResourceLoader);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaResource);
 
 static bool shouldRecordResponsesForTesting = false;
 
@@ -83,7 +88,7 @@ void MediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(Expe
     if (!m_document || !m_document->frame())
         return completionHandler(makeUnexpected(internalError(url)));
 
-    m_document->protectedFrame()->checkedLoader()->client().sendH2Ping(url, WTFMove(completionHandler));
+    m_document->protectedFrame()->protectedLoader()->client().sendH2Ping(url, WTFMove(completionHandler));
 }
 
 RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceRequest&& request, LoadOptions options)
@@ -170,8 +175,9 @@ RefPtr<Document> MediaResourceLoader::protectedDocument()
 const String& MediaResourceLoader::crossOriginMode() const
 {
     assertIsMainThread();
-
+    IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
     return m_crossOriginMode;
+    IGNORE_CLANG_WARNINGS_END
 }
 
 Vector<ResourceResponse> MediaResourceLoader::responsesForTesting() const
@@ -179,6 +185,39 @@ Vector<ResourceResponse> MediaResourceLoader::responsesForTesting() const
     assertIsMainThread();
 
     return m_responsesForTesting;
+}
+
+bool MediaResourceLoader::verifyMediaResponse(const URL& requestURL, const ResourceResponse& response, const SecurityOrigin* contextOrigin)
+{
+    assertIsMainThread();
+
+    // FIXME: We should probably implement https://html.spec.whatwg.org/multipage/media.html#verify-a-media-response
+    if (!requestURL.protocolIsInHTTPFamily() || response.httpStatusCode() != 206 || !response.contentRange().isValid() || !contextOrigin)
+        return true;
+
+    auto ensureResult = m_validationLoadInformations.ensure(requestURL, [&] () -> ValidationInformation {
+        // Synthetic responses, whose origin is the service worker origin, have basic tainting but their url is the request URL, which may have a different origin
+        bool hasContextOrigin = response.source() == ResourceResponse::Source::ServiceWorker && response.tainting() == ResourceResponse::Tainting::Basic;
+        Ref origin = hasContextOrigin ? *contextOrigin : SecurityOrigin::create(response.url());
+        return { WTFMove(origin), response.tainting() == ResourceResponse::Tainting::Opaque, response.source() == ResourceResponse::Source::ServiceWorker };
+    });
+
+    if (ensureResult.isNewEntry)
+        return true;
+
+    auto& validationInformation = ensureResult.iterator->value;
+
+    if (!validationInformation.origin->isOpaque() && !validationInformation.origin->canRequest(response.url(), OriginAccessPatternsForWebProcess::singleton()))
+        validationInformation.origin = SecurityOrigin::createOpaque();
+    if (response.tainting() == ResourceResponse::Tainting::Opaque)
+        validationInformation.usedOpaqueResponse = true;
+    if (response.source() == ResourceResponse::Source::ServiceWorker)
+        validationInformation.usedServiceWorker = true;
+
+    if (!validationInformation.usedServiceWorker || !validationInformation.usedOpaqueResponse)
+        return true;
+
+    return validationInformation.origin->canRequest(response.url(), OriginAccessPatternsForWebProcess::singleton());
 }
 
 Ref<MediaResource> MediaResource::create(MediaResourceLoader& loader, CachedResourceHandle<CachedRawResource>&& resource)
@@ -210,6 +249,8 @@ MediaResource::~MediaResource()
 {
     assertIsMainThread();
 
+    if (m_resource)
+        protectedResource()->removeClient(*this);
     protectedLoader()->removeResource(*this);
 }
 
@@ -240,6 +281,15 @@ void MediaResource::responseReceived(CachedResource& resource, const ResourceRes
         m_didPassAccessControlCheck.store(false);
         if (RefPtr client = this->client())
             client->accessControlCheckFailed(*this, ResourceError(errorDomainWebKitInternal, 0, response.url(), consoleMessage.get()));
+        ensureShutdown();
+        return;
+    }
+
+    if (!m_loader->verifyMediaResponse(resource.url(), response, resource.protectedOrigin().get())) {
+        static NeverDestroyed<const String> consoleMessage("Media response origin validation failed."_s);
+        m_loader->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
+        if (RefPtr client = this->client())
+            client->loadFailed(*this, ResourceError(errorDomainWebKitInternal, 0, response.url(), consoleMessage.get()));
         ensureShutdown();
         return;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,12 +30,6 @@
 
 namespace JSC { namespace Wasm {
 
-void LLIntTierUpCounter::addOSREntryDataForLoop(WasmInstructionStream::Offset offset, OSREntryData&& data)
-{
-    auto addResult = m_osrEntryData.add(offset, WTFMove(data));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-}
-
 auto LLIntTierUpCounter::osrEntryDataForLoop(WasmInstructionStream::Offset offset) const -> const OSREntryData&
 {
     auto entry = m_osrEntryData.find(offset);
@@ -43,6 +37,16 @@ auto LLIntTierUpCounter::osrEntryDataForLoop(WasmInstructionStream::Offset offse
     return entry->value;
 }
 
+
+void LLIntTierUpCounter::resetAndOptimizeSoon(MemoryMode mode)
+{
+    {
+        Locker locker { m_lock };
+        m_compilationStatus[static_cast<MemoryModeType>(mode)] = CompilationStatus::NotCompiled;
+        m_loopCompilationStatus[static_cast<MemoryModeType>(mode)] = CompilationStatus::NotCompiled;
+    }
+    optimizeSoon();
+}
 
 } } // namespace JSC::Wasm
 

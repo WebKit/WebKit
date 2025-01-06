@@ -30,6 +30,7 @@
 #include "StyleScopeRuleSets.h"
 
 #include "CSSStyleSheet.h"
+#include "CSSViewTransitionRule.h"
 #include "CascadeLevel.h"
 #include "DocumentInlines.h"
 #include "ExtensionStyleSheets.h"
@@ -212,6 +213,17 @@ bool ScopeRuleSets::hasScopeRules() const
     return false;
 }
 
+RefPtr<StyleRuleViewTransition> ScopeRuleSets::viewTransitionRule() const
+{
+    if (auto viewTransitionRule = m_authorStyle->viewTransitionRule())
+        return viewTransitionRule;
+    if (m_userStyle && m_userStyle->viewTransitionRule())
+        return m_userStyle->viewTransitionRule();
+    if (m_userAgentMediaQueryStyle && m_userAgentMediaQueryStyle->viewTransitionRule())
+        return m_userAgentMediaQueryStyle->viewTransitionRule();
+    return nullptr;
+}
+
 std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator& evaluator)
 {
     std::optional<DynamicMediaQueryEvaluationChanges> evaluationChanges;
@@ -290,20 +302,20 @@ void ScopeRuleSets::collectFeatures() const
 
     m_customPropertyNamesInStyleContainerQueries = std::nullopt;
 
-    m_cachedHasComplexSelectorsForStyleAttribute = std::nullopt;
+    m_cachedSelectorsForStyleAttribute = std::nullopt;
 
     m_features.shrinkToFit();
 }
 
 template<typename KeyType, typename RuleFeatureVectorType, typename Hash, typename HashTraits>
-static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& key, HashMap<KeyType, std::unique_ptr<Vector<InvalidationRuleSet>>, Hash, HashTraits>& ruleSetMap, const HashMap<KeyType, std::unique_ptr<RuleFeatureVectorType>, Hash, HashTraits>& ruleFeatures)
+static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& key, UncheckedKeyHashMap<KeyType, std::unique_ptr<Vector<InvalidationRuleSet>>, Hash, HashTraits>& ruleSetMap, const UncheckedKeyHashMap<KeyType, std::unique_ptr<RuleFeatureVectorType>, Hash, HashTraits>& ruleFeatures)
 {
     return ruleSetMap.ensure(key, [&] () -> std::unique_ptr<Vector<InvalidationRuleSet>> {
         auto* features = ruleFeatures.get(key);
         if (!features)
             return nullptr;
 
-        HashMap<std::tuple<uint8_t, bool, bool>, InvalidationRuleSet> invalidationRuleSetMap;
+        UncheckedKeyHashMap<std::tuple<uint8_t, bool, bool>, InvalidationRuleSet> invalidationRuleSetMap;
 
         for (auto& feature : *features) {
             auto key = std::tuple { static_cast<uint8_t>(feature.matchElement), static_cast<bool>(feature.isNegation), true };
@@ -381,31 +393,26 @@ const HashSet<AtomString>& ScopeRuleSets::customPropertyNamesInStyleContainerQue
     return *m_customPropertyNamesInStyleContainerQueries;
 }
 
-bool ScopeRuleSets::hasSelectorsForStyleAttribute() const
-{
-    return !!attributeInvalidationRuleSets(HTMLNames::styleAttr->localName());
-}
-
-bool ScopeRuleSets::hasComplexSelectorsForStyleAttribute() const
+SelectorsForStyleAttribute ScopeRuleSets::selectorsForStyleAttribute() const
 {
     auto compute = [&] {
         auto* ruleSets = attributeInvalidationRuleSets(HTMLNames::styleAttr->localName());
         if (!ruleSets)
-            return false;
+            return SelectorsForStyleAttribute::None;
         for (auto& ruleSet : *ruleSets) {
             if (ruleSet.matchElement != MatchElement::Subject)
-                return true;
+                return SelectorsForStyleAttribute::NonSubjectPosition;
         }
-        return false;
+        return SelectorsForStyleAttribute::SubjectPositionOnly;
     };
 
-    if (!m_cachedHasComplexSelectorsForStyleAttribute)
-        m_cachedHasComplexSelectorsForStyleAttribute = compute();
+    if (!m_cachedSelectorsForStyleAttribute)
+        m_cachedSelectorsForStyleAttribute = compute();
 
-    return *m_cachedHasComplexSelectorsForStyleAttribute;
+    return *m_cachedSelectorsForStyleAttribute;
 }
 
-bool ScopeRuleSets::hasMatchingUserOrAuthorStyle(const Function<bool(RuleSet&)>& predicate)
+bool ScopeRuleSets::hasMatchingUserOrAuthorStyle(const WTF::Function<bool(RuleSet&)>& predicate)
 {
     if (m_authorStyle && predicate(*m_authorStyle))
         return true;

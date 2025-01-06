@@ -54,7 +54,7 @@ struct WebKitWebSrcClass {
 };
 
 GType webkit_web_src_get_type(void);
-void webKitWebSrcSetResourceLoader(WebKitWebSrc*, const RefPtr<WebCore::PlatformMediaResourceLoader>&);
+void webKitWebSrcSetResourceLoader(WebKitWebSrc*, WebCore::PlatformMediaResourceLoader&);
 void webKitWebSrcSetReferrer(WebKitWebSrc*, const String&);
 bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc*);
 bool webKitSrcIsCrossOrigin(WebKitWebSrc*, const WebCore::SecurityOrigin&);

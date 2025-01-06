@@ -28,22 +28,6 @@
     <p>HTML content:</p>
     <div id="result"></div>
     <script type="text/javascript">
-        if (window.internals && window.testRunner)
-            testRunner.dumpAsText();
-
-        source.focus();
-        document.execCommand("selectAll");
-
-        if (window.eventSender) {
-            moveToCenter(source);
-            eventSender.leapForward(500);
-            eventSender.mouseDown();
-            eventSender.leapForward(1000);
-            moveToCenter(destination);
-            eventSender.leapForward(500);
-            eventSender.mouseUp();
-        }
-
         function handleBeforeInput(event)
         {
             if (event.inputType === "insertFromDrop") {
@@ -56,11 +40,31 @@
                 event.preventDefault();
         }
 
-        function moveToCenter(element)
+        async function moveToCenter(element)
         {
             let x = element.offsetParent.offsetLeft + element.offsetLeft + element.offsetWidth / 2;
             let y = element.offsetParent.offsetTop + element.offsetTop + element.offsetHeight / 2;
-            eventSender.mouseMoveTo(x, y);
+            await eventSender.asyncMouseMoveTo(x, y);
+        }
+
+        onload = async () => {
+            if (window.internals && window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+            source.focus();
+            document.execCommand("selectAll");
+
+            if (window.eventSender) {
+                await moveToCenter(source);
+                eventSender.leapForward(500);
+                await eventSender.asyncMouseDown();
+                eventSender.leapForward(1000);
+                await moveToCenter(destination);
+                eventSender.leapForward(500);
+                await eventSender.asyncMouseUp();
+            }
+            testRunner?.notifyDone();
         }
     </script>
 </body>

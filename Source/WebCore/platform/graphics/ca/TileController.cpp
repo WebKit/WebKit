@@ -39,6 +39,8 @@
 #include <utility>
 #include <wtf/MainThread.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 #if HAVE(IOSURFACE)
@@ -49,7 +51,11 @@
 #include "TileControllerMemoryHandlerIOS.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TileController);
 
 static const Seconds tileSizeUpdateDelay { 500_ms };
 
@@ -92,6 +98,24 @@ void TileController::setClient(TiledBackingClient* client)
     }
 
     m_client = nullptr;
+}
+
+PlatformLayerIdentifier TileController::layerIdentifier() const
+{
+    return owningGraphicsLayer()->platformCALayerIdentifier();
+}
+
+TileGridIdentifier TileController::primaryGridIdentifier() const
+{
+    return tileGrid().identifier();
+}
+
+std::optional<TileGridIdentifier> TileController::secondaryGridIdentifier() const
+{
+    if (m_zoomedOutTileGrid)
+        m_zoomedOutTileGrid->identifier();
+
+    return { };
 }
 
 void TileController::tileCacheLayerBoundsChanged()
@@ -153,16 +177,24 @@ void TileController::setContentsScale(float contentsScale)
         m_zoomedOutTileGrid = std::exchange(m_tileGrid, nullptr);
         m_zoomedOutTileGrid->setIsZoomedOutTileGrid(true);
         m_tileGrid = makeUnique<TileGrid>(*this);
+
+        if (m_client)
+            m_client->didAddGrid(*this, m_tileGrid->identifier());
+
         tileGridsChanged();
     }
 
     auto oldScale = tileGrid().scale();
     tileGrid().setScale(scale);
 
-    if (m_client && scale != oldScale)
-        m_client->tilingScaleFactorDidChange(*this, scale);
+    bool notifyClient = m_client && scale != oldScale;
+    if (notifyClient)
+        m_client->willRepaintTilesAfterScaleFactorChange(*this, tileGrid().identifier());
 
     tileGrid().setNeedsDisplay();
+
+    if (notifyClient)
+        m_client->didRepaintTilesAfterScaleFactorChange(*this, tileGrid().identifier());
 }
 
 float TileController::contentsScale() const
@@ -205,12 +237,12 @@ void TileController::setAcceleratesDrawing(bool acceleratesDrawing)
     tileGrid().updateTileLayerProperties();
 }
 
-void TileController::setWantsDeepColorBackingStore(bool wantsDeepColorBackingStore)
+void TileController::setContentsFormat(ContentsFormat contentsFormat)
 {
-    if (m_wantsDeepColorBackingStore == wantsDeepColorBackingStore)
+    if (m_contentsFormat == contentsFormat)
         return;
 
-    m_wantsDeepColorBackingStore = wantsDeepColorBackingStore;
+    m_contentsFormat = contentsFormat;
     tileGrid().updateTileLayerProperties();
 }
 
@@ -670,13 +702,22 @@ void TileController::tileRevalidationTimerFired()
         : OptionSet { TileGrid::UnparentAllTiles });
 }
 
-void TileController::didRevalidateTiles()
+void TileController::willRevalidateTiles(TileGrid& tileGrid, TileRevalidationType revalidationType)
+{
+    if (m_client)
+        m_client->willRevalidateTiles(*this, tileGrid.identifier(), revalidationType);
+}
+
+void TileController::didRevalidateTiles(TileGrid& tileGrid, TileRevalidationType revalidationType, const HashSet<TileIndex>& tilesNeedingDisplay)
 {
     m_boundsAtLastRevalidate = bounds();
 
     LOG_WITH_STREAM(Tiling, stream << "TileController " << this << " (bounds " << bounds() << ") didRevalidateTiles - tileCoverageRect " << tileCoverageRect() << " grid extent " << tileGridExtent() << " memory use " << (retainedTileBackingStoreMemory() / (1024 * 1024)) << "MB");
 
     updateTileCoverageMap();
+
+    if (m_client)
+        m_client->didRevalidateTiles(*this, tileGrid.identifier(), revalidationType, tilesNeedingDisplay);
 }
 
 unsigned TileController::blankPixelCount() const
@@ -821,7 +862,7 @@ Ref<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect, Ti
     layer->setName(makeString("tile at "_s, tileRect.location().x(), ',', tileRect.location().y()));
     layer->setContentsScale(m_deviceScaleFactor * temporaryScaleFactor);
     layer->setAcceleratesDrawing(m_acceleratesDrawing);
-    layer->setWantsDeepColorBackingStore(m_wantsDeepColorBackingStore);
+    layer->setContentsFormat(m_contentsFormat);
     layer->setNeedsDisplay();
     return layer;
 }
@@ -862,4 +903,6 @@ void TileController::logFilledVisibleFreshTile(unsigned blankPixelCount)
 
 } // namespace WebCore
 
-#endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // USE(CG)

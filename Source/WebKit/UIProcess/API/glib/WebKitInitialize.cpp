@@ -39,6 +39,10 @@
 #include <skia/core/SkGraphics.h>
 #endif
 
+#if USE(SYSPROF_CAPTURE)
+#include <wtf/SystemTracing.h>
+#endif
+
 namespace WebKit {
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -57,6 +61,8 @@ static void initializeRemoteInspectorServer()
             return nullptr;
 
         GUniquePtr<char> inspectorAddress(g_strdup(address));
+
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
         char* portPtr = g_strrstr(inspectorAddress.get(), ":");
         if (!portPtr)
             return nullptr;
@@ -73,6 +79,7 @@ static void initializeRemoteInspectorServer()
             addressPtr++;
             *(portPtr - 2) = '\0';
         }
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         return adoptGRef(g_inet_socket_address_new_from_string(addressPtr, port));
     };
@@ -104,6 +111,9 @@ void webkitInitialize()
     static std::once_flag onceFlag;
 
     std::call_once(onceFlag, [] {
+#if USE(SYSPROF_CAPTURE)
+        SysprofAnnotator::createIfNeeded("WebKit (UI)"_s);
+#endif
         InitializeWebKit2();
 #if USE(SKIA)
         SkGraphics::Init();

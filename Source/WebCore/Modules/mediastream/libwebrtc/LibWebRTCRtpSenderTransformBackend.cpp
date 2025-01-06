@@ -24,12 +24,15 @@
 
 #include "config.h"
 #include "LibWebRTCRtpSenderTransformBackend.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "LibWebRTCRtpTransformableFrame.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCRtpSenderTransformBackend);
 
 static inline LibWebRTCRtpSenderTransformBackend::MediaType mediaTypeFromSender(const webrtc::RtpSenderInterface& sender)
 {

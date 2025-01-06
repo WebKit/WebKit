@@ -1,6 +1,18 @@
 
-FAIL Operator dictionary chunk 1 - stretchy assert_true: stretchy is supported expected true got false
-FAIL Operator dictionary chunk 2 - stretchy assert_true: stretchy is supported expected true got false
-FAIL Operator dictionary chunk 3 - stretchy assert_true: stretchy is supported expected true got false
-FAIL Operator dictionary chunk 4 - stretchy assert_true: stretchy is supported expected true got false
+FAIL Operator dictionary chunk 1 - stretchy assert_approx_equals: Stretchy property for ⇟ infix should be 'true' expected 100 +/- 1 but got 50
+PASS Operator dictionary chunk 2 - stretchy
+FAIL Operator dictionary chunk 3 - stretchy assert_approx_equals: Stretchy property for ⤶ infix should be 'true' expected 100 +/- 1 but got 50
+FAIL Operator dictionary chunk 4 - stretchy assert_approx_equals: Stretchy property for ⬑ infix should be 'true' expected 100 +/- 1 but got 50
+stretchy for "⇟" (infix):
+⇟
+ VS
+⇟
+stretchy for "⤶" (infix):
+⤶
+ VS
+⤶
+stretchy for "⬑" (infix):
+⬑
+ VS
+⬑
 

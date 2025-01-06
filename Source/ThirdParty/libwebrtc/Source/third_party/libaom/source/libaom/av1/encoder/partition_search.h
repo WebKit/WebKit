@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,6 +11,8 @@
 
 #ifndef AOM_AV1_ENCODER_PARTITION_SEARCH_H_
 #define AOM_AV1_ENCODER_PARTITION_SEARCH_H_
+
+#include "config/aom_config.h"
 
 #include "av1/encoder/block.h"
 #include "av1/encoder/encoder.h"
@@ -39,10 +41,10 @@ void av1_nonrd_pick_partition(AV1_COMP *cpi, ThreadData *td,
                               RD_STATS *rd_cost, int do_recon, int64_t best_rd,
                               PC_TREE *pc_tree);
 #endif
-void av1_reset_part_sf(PARTITION_SPEED_FEATURES *part_sf);
-void av1_reset_sf_for_ext_part(AV1_COMP *const cpi);
 
 #if CONFIG_PARTITION_SEARCH_ORDER
+void av1_reset_part_sf(PARTITION_SPEED_FEATURES *part_sf);
+void av1_reset_sf_for_ext_part(AV1_COMP *const cpi);
 bool av1_rd_partition_search(AV1_COMP *const cpi, ThreadData *td,
                              TileDataEnc *tile_data, TokenExtra **tp,
                              SIMPLE_MOTION_DATA_TREE *sms_root, int mi_row,
@@ -58,16 +60,16 @@ bool av1_rd_pick_partition(AV1_COMP *const cpi, ThreadData *td,
                            SB_MULTI_PASS_MODE multi_pass_mode,
                            RD_RECT_PART_WIN_INFO *rect_part_win_info);
 
-static AOM_INLINE void set_cb_offsets(uint16_t *cb_offset,
-                                      const uint16_t cb_offset_y,
-                                      const uint16_t cb_offset_uv) {
+static inline void set_cb_offsets(uint16_t *cb_offset,
+                                  const uint16_t cb_offset_y,
+                                  const uint16_t cb_offset_uv) {
   cb_offset[PLANE_TYPE_Y] = cb_offset_y;
   cb_offset[PLANE_TYPE_UV] = cb_offset_uv;
 }
 
-static AOM_INLINE void update_cb_offsets(MACROBLOCK *x, const BLOCK_SIZE bsize,
-                                         const int subsampling_x,
-                                         const int subsampling_y) {
+static inline void update_cb_offsets(MACROBLOCK *x, const BLOCK_SIZE bsize,
+                                     const int subsampling_x,
+                                     const int subsampling_y) {
   x->cb_offset[PLANE_TYPE_Y] += block_size_wide[bsize] * block_size_high[bsize];
   if (x->e_mbd.is_chroma_ref) {
     const BLOCK_SIZE plane_bsize =

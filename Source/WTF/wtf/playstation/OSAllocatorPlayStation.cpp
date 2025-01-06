@@ -30,8 +30,11 @@
 #include <errno.h>
 #include <memory-extra/vss.h>
 #include <wtf/Assertions.h>
+#include <wtf/DataLog.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PageBlock.h>
+#include <wtf/SafeStrerror.h>
+#include <wtf/text/CString.h>
 
 namespace WTF {
 
@@ -124,9 +127,17 @@ void OSAllocator::releaseDecommitted(void* address, size_t bytes)
     RELEASE_ASSERT(success);
 }
 
-bool OSAllocator::protect(void* address, size_t bytes, bool readable, bool writable)
+bool OSAllocator::tryProtect(void* address, size_t bytes, bool readable, bool writable)
 {
     return memory_extra::vss::protect(address, bytes, readable, writable, -1);
+}
+
+void OSAllocator::protect(void* address, size_t bytes, bool readable, bool writable)
+{
+    if (bool result = tryProtect(address, bytes, readable, writable); UNLIKELY(!result)) {
+        dataLogLn("mprotect failed: ", safeStrerror(errno).data());
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 } // namespace WTF

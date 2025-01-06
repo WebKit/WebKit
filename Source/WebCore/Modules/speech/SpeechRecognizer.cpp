@@ -29,6 +29,7 @@
 #include "SpeechRecognitionRequest.h"
 #include "SpeechRecognitionUpdate.h"
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "MediaUtilities.h"
@@ -36,6 +37,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognizer);
 
 SpeechRecognizer::SpeechRecognizer(DelegateCallback&& delegateCallback, UniqueRef<SpeechRecognitionRequest>&& request)
     : m_delegateCallback(WTFMove(delegateCallback))

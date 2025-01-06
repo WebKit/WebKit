@@ -48,8 +48,8 @@ TEST(DecodedFramesHistory, ClearsHistory) {
   history.InsertDecoded(1234, 0);
   history.Clear();
   EXPECT_EQ(history.WasDecoded(1234), false);
-  EXPECT_EQ(history.GetLastDecodedFrameId(), absl::nullopt);
-  EXPECT_EQ(history.GetLastDecodedFrameTimestamp(), absl::nullopt);
+  EXPECT_EQ(history.GetLastDecodedFrameId(), std::nullopt);
+  EXPECT_EQ(history.GetLastDecodedFrameTimestamp(), std::nullopt);
 }
 
 TEST(DecodedFramesHistory, HandlesBigJumpInPictureId) {
@@ -74,7 +74,7 @@ TEST(DecodedFramesHistory, ForgetsTooOldHistory) {
 
 TEST(DecodedFramesHistory, ReturnsLastDecodedFrameId) {
   DecodedFramesHistory history(kHistorySize);
-  EXPECT_EQ(history.GetLastDecodedFrameId(), absl::nullopt);
+  EXPECT_EQ(history.GetLastDecodedFrameId(), std::nullopt);
   history.InsertDecoded(1234, 0);
   EXPECT_EQ(history.GetLastDecodedFrameId(), 1234);
   history.InsertDecoded(1235, 0);
@@ -83,7 +83,7 @@ TEST(DecodedFramesHistory, ReturnsLastDecodedFrameId) {
 
 TEST(DecodedFramesHistory, ReturnsLastDecodedFrameTimestamp) {
   DecodedFramesHistory history(kHistorySize);
-  EXPECT_EQ(history.GetLastDecodedFrameTimestamp(), absl::nullopt);
+  EXPECT_EQ(history.GetLastDecodedFrameTimestamp(), std::nullopt);
   history.InsertDecoded(1234, 12345);
   EXPECT_EQ(history.GetLastDecodedFrameTimestamp(), 12345u);
   history.InsertDecoded(1235, 12366);

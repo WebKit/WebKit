@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -44,11 +44,11 @@ static const int32_t NewSqrt2 = 5793;
 // 2^12 / sqrt(2)
 static const int32_t NewInvSqrt2 = 2896;
 
-static INLINE const int32_t *cospi_arr(int n) {
+static inline const int32_t *cospi_arr(int n) {
   return av1_cospi_arr_data[n - cos_bit_min];
 }
 
-static INLINE const int32_t *sinpi_arr(int n) {
+static inline const int32_t *sinpi_arr(int n) {
   return av1_sinpi_arr_data[n - cos_bit_min];
 }
 
@@ -62,20 +62,20 @@ extern const int16_t av1_sinpi_arr_q13_data[4][4];
 
 extern const int32_t av1_cospi_arr_s32_data[4][66];
 
-static INLINE const int16_t *cospi_arr_q13(int n) {
+static inline const int16_t *cospi_arr_q13(int n) {
   return av1_cospi_arr_q13_data[n - cos_bit_min];
 }
 
-static INLINE const int16_t *sinpi_arr_q13(int n) {
+static inline const int16_t *sinpi_arr_q13(int n) {
   return av1_sinpi_arr_q13_data[n - cos_bit_min];
 }
 
-static INLINE const int32_t *cospi_arr_s32(int n) {
+static inline const int32_t *cospi_arr_s32(int n) {
   return av1_cospi_arr_s32_data[n - cos_bit_min];
 }
 #endif  // HAVE_NEON
 
-static INLINE int32_t range_check_value(int32_t value, int8_t bit) {
+static inline int32_t range_check_value(int32_t value, int8_t bit) {
 #if CONFIG_COEFFICIENT_RANGE_CHECKING
   const int64_t max_value = (1LL << (bit - 1)) - 1;
   const int64_t min_value = -(1LL << (bit - 1));
@@ -94,12 +94,12 @@ static INLINE int32_t range_check_value(int32_t value, int8_t bit) {
   return value;
 }
 
-static INLINE int32_t round_shift(int64_t value, int bit) {
+static inline int32_t round_shift(int64_t value, int bit) {
   assert(bit >= 1);
   return (int32_t)((value + (1ll << (bit - 1))) >> bit);
 }
 
-static INLINE int32_t half_btf(int32_t w0, int32_t in0, int32_t w1, int32_t in1,
+static inline int32_t half_btf(int32_t w0, int32_t in0, int32_t w1, int32_t in1,
                                int bit) {
   int64_t result_64 = (int64_t)(w0 * in0) + (int64_t)(w1 * in1);
   int64_t intermediate = result_64 + (1LL << (bit - 1));
@@ -123,7 +123,7 @@ static INLINE int32_t half_btf(int32_t w0, int32_t in0, int32_t w1, int32_t in1,
   return (int32_t)(intermediate >> bit);
 }
 
-static INLINE uint16_t highbd_clip_pixel_add(uint16_t dest, tran_high_t trans,
+static inline uint16_t highbd_clip_pixel_add(uint16_t dest, tran_high_t trans,
                                              int bd) {
   return clip_pixel_highbd(dest + (int)trans, bd);
 }
@@ -166,7 +166,7 @@ typedef struct TXFM_2D_FLIP_CFG {
   int stage_num_row;
 } TXFM_2D_FLIP_CFG;
 
-static INLINE void get_flip_cfg(TX_TYPE tx_type, int *ud_flip, int *lr_flip) {
+static inline void get_flip_cfg(TX_TYPE tx_type, int *ud_flip, int *lr_flip) {
   switch (tx_type) {
     case DCT_DCT:
     case ADST_DCT:
@@ -206,13 +206,13 @@ static INLINE void get_flip_cfg(TX_TYPE tx_type, int *ud_flip, int *lr_flip) {
   }
 }
 
-static INLINE void set_flip_cfg(TX_TYPE tx_type, TXFM_2D_FLIP_CFG *cfg) {
+static inline void set_flip_cfg(TX_TYPE tx_type, TXFM_2D_FLIP_CFG *cfg) {
   get_flip_cfg(tx_type, &cfg->ud_flip, &cfg->lr_flip);
 }
 
 // Utility function that returns the log of the ratio of the col and row
 // sizes.
-static INLINE int get_rect_tx_log_ratio(int col, int row) {
+static inline int get_rect_tx_log_ratio(int col, int row) {
   if (col == row) return 0;
   if (col > row) {
     if (col == row * 2) return 1;
@@ -239,10 +239,10 @@ void av1_get_inv_txfm_cfg(TX_TYPE tx_type, TX_SIZE tx_size,
                           TXFM_2D_FLIP_CFG *cfg);
 extern const TXFM_TYPE av1_txfm_type_ls[5][TX_TYPES_1D];
 extern const int8_t av1_txfm_stage_num_list[TXFM_TYPES];
-static INLINE int get_txw_idx(TX_SIZE tx_size) {
+static inline int get_txw_idx(TX_SIZE tx_size) {
   return tx_size_wide_log2[tx_size] - tx_size_wide_log2[0];
 }
-static INLINE int get_txh_idx(TX_SIZE tx_size) {
+static inline int get_txh_idx(TX_SIZE tx_size) {
   return tx_size_high_log2[tx_size] - tx_size_high_log2[0];
 }
 

@@ -1,0 +1,32 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader1.type()))
+RUN(sourceBuffer.appendBuffer(loader1.initSegment()))
+EVENT(update)
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader1.mediaSegment(0)))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+RUN(sourceBuffer.remove(0, sourceBuffer.buffered.end(0)))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+RUN(sourceBuffer.appendBuffer(loader2.initSegment()))
+EVENT(update)
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader2.mediaSegment(0)))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+RUN(video.play())
+EXPECTED (video.currentTime >= '0.5') OK
+RUN(sourceBuffer.appendWindowStart = 0.3)
+RUN(sourceBuffer.appendWindowEnd = 0.6)
+RUN(sourceBuffer.appendBuffer(loader1.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader1.mediaSegment(0)))
+EVENT(update)
+RUN(video.currentTime = 0)
+EVENT(seeked)
+EXPECTED (video.currentTime >= '0.5') OK
+END OF TEST
+

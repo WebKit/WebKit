@@ -1,0 +1,19 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append all media segments
+RUN(source.endOfStream())
+EVENT(sourceended)
+EXPECTED (internals.elementIsBlockingDisplaySleep(video) == 'false') OK
+RUN(video.play())
+EVENT(playing)
+EVENT(timeupdate)
+EXPECTED (internals.elementIsBlockingDisplaySleep(video) == 'true') OK
+RUN(video.pause())
+EVENT(pause)
+EXPECTED (internals.elementIsBlockingDisplaySleep(video) == 'false') OK
+END OF TEST
+

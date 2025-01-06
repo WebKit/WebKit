@@ -57,30 +57,30 @@ AudioDecoderMultiChannelOpusImpl::~AudioDecoderMultiChannelOpusImpl() {
   WebRtcOpus_DecoderFree(dec_state_);
 }
 
-absl::optional<AudioDecoderMultiChannelOpusConfig>
+std::optional<AudioDecoderMultiChannelOpusConfig>
 AudioDecoderMultiChannelOpusImpl::SdpToConfig(const SdpAudioFormat& format) {
   AudioDecoderMultiChannelOpusConfig config;
   config.num_channels = format.num_channels;
   auto num_streams = GetFormatParameter<int>(format, "num_streams");
   if (!num_streams.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   config.num_streams = *num_streams;
 
   auto coupled_streams = GetFormatParameter<int>(format, "coupled_streams");
   if (!coupled_streams.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   config.coupled_streams = *coupled_streams;
 
   auto channel_mapping =
       GetFormatParameter<std::vector<unsigned char>>(format, "channel_mapping");
   if (!channel_mapping.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   config.channel_mapping = *channel_mapping;
   if (!config.IsOk()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return config;
 }

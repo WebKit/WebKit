@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,7 +20,6 @@ extern "C" {
 
 struct yv12_buffer_config;
 struct AV1_COMP;
-int av1_get_max_filter_level(const AV1_COMP *cpi);
 
 /*!\brief Algorithm for AV1 loop filter level selection.
  *

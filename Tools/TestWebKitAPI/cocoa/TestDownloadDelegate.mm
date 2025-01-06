@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "TestDownloadDelegate.h"
+#import "Utilities.h"
 
 #import <WebKit/WKNavigationDelegatePrivate.h>
 
@@ -57,6 +58,25 @@
     else
         completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
 }
+
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+- (void)_download:(WKDownload *)download decidePlaceholderPolicy:(void (^)(_WKPlaceholderPolicy, NSURL *))completionHandler
+{
+    _callbackRecord.append(DownloadCallback::DecidePlaceholderPolicy);
+    completionHandler(_WKPlaceholderPolicyDisable, nil);
+}
+
+- (void)_download:(WKDownload *)download didReceivePlaceholderURL:(NSURL *)url completionHandler:(void (^)(void))completionHandler
+{
+    _callbackRecord.append(DownloadCallback::DidReceivePlaceholderURL);
+    completionHandler();
+}
+
+- (void)_download:(WKDownload *)download didReceiveFinalURL:(NSURL *)url
+{
+    _callbackRecord.append(DownloadCallback::DidReceiveFinalURL);
+}
+#endif
 
 - (void)downloadDidFinish:(WKDownload *)download
 {

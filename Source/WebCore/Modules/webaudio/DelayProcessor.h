@@ -28,13 +28,14 @@
 #include "AudioParam.h"
 #include <memory>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class AudioDSPKernel;
     
 class DelayProcessor final : public AudioDSPKernelProcessor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DelayProcessor);
 public:
     DelayProcessor(BaseAudioContext&, float sampleRate, unsigned numberOfChannels, double maxDelayTime);
     virtual ~DelayProcessor();
@@ -45,7 +46,13 @@ public:
     double maxDelayTime() { return delayTime().maxValue(); }
 
 private:
+    Type processorType() const final { return Type::Delay; }
+
     Ref<AudioParam> m_delayTime;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DelayProcessor) \
+    static bool isType(const WebCore::AudioProcessor& processor) { return processor.processorType() == WebCore::AudioProcessor::Type::Delay; } \
+SPECIALIZE_TYPE_TRAITS_END()

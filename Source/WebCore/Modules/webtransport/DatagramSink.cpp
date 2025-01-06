@@ -54,25 +54,19 @@ void DatagramSink::write(ScriptExecutionContext& context, JSC::JSValue value, DO
     if (UNLIKELY(bufferSource.hasException(scope)))
         return promise.settle(Exception { ExceptionCode::ExistingExceptionError });
 
-    WTF::switchOn(bufferSource.releaseReturnValue(),
-        [&](auto&& arrayBufferOrView) {
-            send(arrayBufferOrView->span(), [promise = WTFMove(promise)] () mutable {
-                // FIXME: Reject if sending failed.
-                promise.resolve();
-            });
-        }
-    );
-}
-
-void DatagramSink::send(std::span<const uint8_t> datagram, CompletionHandler<void()>&& completionHandler)
-{
-    auto transport = m_transport.get();
+    RefPtr transport = m_transport.get();
     if (!transport)
-        return completionHandler();
+        return promise.settle(Exception { ExceptionCode::InvalidStateError });
+
     RefPtr session = transport->session();
     if (!session)
-        return completionHandler();
-    session->sendDatagram(datagram, WTFMove(completionHandler));
+        return promise.settle(Exception { ExceptionCode::InvalidStateError });
+
+    WTF::switchOn(bufferSource.releaseReturnValue(), [&](auto&& arrayBufferOrView) {
+        context.enqueueTaskWhenSettled(session->sendDatagram(arrayBufferOrView->span()), WebCore::TaskSource::Networking, [promise = WTFMove(promise)] (auto&&) mutable {
+            promise.resolve();
+        });
+    });
 }
 
 }

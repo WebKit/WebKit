@@ -5,18 +5,23 @@
  * found in the LICENSE file.
  */
 
-#include "include/effects/SkImageFilters.h"
 #include "modules/svg/include/SkSVGFeFlood.h"
-#include "modules/svg/include/SkSVGFilterContext.h"
+
+#include "include/core/SkScalar.h"
+#include "include/core/SkShader.h"
+#include "include/effects/SkImageFilters.h"
+#include "include/private/base/SkDebug.h"
 #include "modules/svg/include/SkSVGRenderContext.h"
-#include "modules/svg/include/SkSVGValue.h"
+
+class SkImageFilter;
+class SkSVGFilterContext;
 
 SkColor SkSVGFeFlood::resolveFloodColor(const SkSVGRenderContext& ctx) const {
     const auto floodColor = this->getFloodColor();
     const auto floodOpacity = this->getFloodOpacity();
     // Uninherited presentation attributes should have a concrete value by now.
     if (!floodColor.isValue() || !floodOpacity.isValue()) {
-        SkDebugf("unhandled: flood-color or flood-opacity has no value\n");
+        SkDEBUGF("unhandled: flood-color or flood-opacity has no value\n");
         return SK_ColorBLACK;
     }
 

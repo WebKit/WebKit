@@ -1,9 +1,12 @@
 
 PASS Test navigation with fragment: Empty hash should scroll to top.
 PASS Test navigation with fragment: Text directive with invalid syntax (context terms without "-") should not parse as a text directive.
+PASS Test navigation with fragment: Text directive with invalid syntax (only prefix, no start text) should not parse as a text directive.
+PASS Test navigation with fragment: Text directive with invalid syntax (only suffix, no start text) should not parse as a text directive.
 PASS Test navigation with fragment: Generic fragment directive with existing element fragment should scroll to element.
 PASS Test navigation with fragment: Uppercase TEXT directive should not parse as a text directive.
 PASS Test navigation with fragment: Exact text with no context should match text.
+PASS Test navigation with fragment: Case-insensitive search with no context should match text.
 PASS Test navigation with fragment: Exact text with prefix should match text.
 PASS Test navigation with fragment: Exact text with suffix should match text.
 PASS Test navigation with fragment: Exact text with prefix and suffix should match text.
@@ -38,4 +41,5 @@ PASS Test navigation with fragment: Text directive should match text within shad
 PASS Test navigation with fragment: Text directive should not scroll to hidden text.
 PASS Test navigation with fragment: Text directive should not scroll to display none text.
 FAIL Test navigation with fragment: Text directive should horizontally scroll into view. assert_true: expected true got false
+FAIL Test navigation with fragment: Text directive that spans a range larger than the viewport should scroll the start into view. assert_true: expected true got false
 

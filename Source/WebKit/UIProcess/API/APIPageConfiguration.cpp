@@ -50,6 +50,9 @@
 namespace API {
 using namespace WebKit;
 
+PageConfiguration::Data::Data()
+    : openedSite(aboutBlankURL()) { }
+
 Ref<WebKit::BrowsingContextGroup> PageConfiguration::Data::createBrowsingContextGroup()
 {
     return BrowsingContextGroup::create();
@@ -111,19 +114,61 @@ void PageConfiguration::setBrowsingContextGroup(RefPtr<BrowsingContextGroup>&& g
     m_data.browsingContextGroup = WTFMove(group);
 }
 
-RefPtr<WebKit::WebProcessProxy> PageConfiguration::openerProcess() const
+const std::optional<WebCore::WindowFeatures>& PageConfiguration::windowFeatures() const
 {
-    return m_data.openerProcess;
+    return m_data.windowFeatures;
 }
 
-void PageConfiguration::setOpenerProcess(RefPtr<WebKit::WebProcessProxy>&& process)
+void PageConfiguration::setWindowFeatures(WebCore::WindowFeatures&& windowFeatures)
 {
-    m_data.openerProcess = WTFMove(process);
+    m_data.windowFeatures = WTFMove(windowFeatures);
+}
+
+const WebCore::Site& PageConfiguration::openedSite() const
+{
+    return m_data.openedSite;
+}
+
+void PageConfiguration::setOpenedSite(const WebCore::Site& site)
+{
+    m_data.openedSite = site;
+}
+
+const WTF::String& PageConfiguration::openedMainFrameName() const
+{
+    return m_data.openedMainFrameName;
+}
+
+void PageConfiguration::setOpenedMainFrameName(const WTF::String& name)
+{
+    m_data.openedMainFrameName = name;
+}
+
+auto PageConfiguration::openerInfo() const -> const std::optional<OpenerInfo>&
+{
+    return m_data.openerInfo;
+}
+
+void PageConfiguration::setOpenerInfo(std::optional<OpenerInfo>&& info)
+{
+    m_data.openerInfo = WTFMove(info);
+}
+
+bool PageConfiguration::OpenerInfo::operator==(const OpenerInfo&) const = default;
+
+void PageConfiguration::setInitialSandboxFlags(WebCore::SandboxFlags sandboxFlags)
+{
+    m_data.initialSandboxFlags = sandboxFlags;
 }
 
 WebProcessPool& PageConfiguration::processPool() const
 {
     return m_data.processPool.get();
+}
+
+Ref<WebKit::WebProcessPool> PageConfiguration::protectedProcessPool() const
+{
+    return processPool();
 }
 
 void PageConfiguration::setProcessPool(RefPtr<WebProcessPool>&& processPool)
@@ -178,7 +223,7 @@ HashSet<WTF::String> PageConfiguration::maskedURLSchemes() const
 {
     if (m_data.maskedURLSchemesWasSet)
         return m_data.maskedURLSchemes;
-#if ENABLE(WK_WEB_EXTENSIONS)
+#if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
     if (webExtensionController() || weakWebExtensionController())
         return WebKit::WebExtensionMatchPattern::extensionSchemes();
 #endif
@@ -208,11 +253,6 @@ void PageConfiguration::setPreferences(RefPtr<WebPreferences>&& preferences)
 WebPageProxy* PageConfiguration::relatedPage() const
 {
     return m_data.relatedPage.get();
-}
-
-void PageConfiguration::setRelatedPage(WeakPtr<WebPageProxy>&& relatedPage)
-{
-    m_data.relatedPage = WTFMove(relatedPage);
 }
 
 WebPageProxy* PageConfiguration::pageToCloneSessionStorageFrom() const
@@ -302,6 +342,8 @@ void PageConfiguration::setDelaysWebProcessLaunchUntilFirstLoad(bool delaysWebPr
 
 bool PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() const
 {
+    if (preferences().siteIsolationEnabled())
+        return true;
     if (RefPtr processPool = m_data.processPool.getIfExists(); processPool && isInspectorProcessPool(*processPool)) {
         // Never delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
         RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> false because of WebInspector pool", this);
@@ -339,33 +381,21 @@ void PageConfiguration::setApplicationManifest(RefPtr<ApplicationManifest>&& app
 }
 #endif
 
-#if ENABLE(GPU_PROCESS)
-GPUProcessPreferencesForWebProcess PageConfiguration::preferencesForGPUProcess() const
+#if ENABLE(APPLE_PAY)
+
+bool PageConfiguration::applePayEnabled() const
 {
-    Ref preferences = m_data.preferences.get();
+    if (auto applePayEnabledOverride = m_data.applePayEnabledOverride)
+        return *applePayEnabledOverride;
 
-    return {
-        preferences->webGLEnabled(),
-        preferences->webGPUEnabled(),
-        preferences->webXREnabled(),
-        preferences->useGPUProcessForDOMRenderingEnabled(),
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-        preferences->useCGDisplayListsForDOMRendering(),
-#endif
-        allowTestOnlyIPC(),
-        preferences->lockdownFontParserEnabled()
-    };
+    return preferences().applePayEnabled();
 }
-#endif
 
-NetworkProcessPreferencesForWebProcess PageConfiguration::preferencesForNetworkProcess() const
+void PageConfiguration::setApplePayEnabled(bool enabled)
 {
-    Ref preferences = m_data.preferences.get();
-
-    return {
-        preferences->webTransportEnabled(),
-        processPool().usesSingleWebProcess(),
-    };
+    m_data.applePayEnabledOverride = enabled;
 }
+
+#endif
 
 } // namespace API

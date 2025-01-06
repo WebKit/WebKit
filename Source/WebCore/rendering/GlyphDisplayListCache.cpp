@@ -32,18 +32,31 @@
 #include "PaintInfo.h"
 #include "RenderLayer.h"
 #include "RenderStyleInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GlyphDisplayListCacheEntry);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GlyphDisplayListCache);
+
 struct GlyphDisplayListCacheKey {
+    GlyphDisplayListCacheKey(const TextRun& textRun, const FontCascade& font, const GraphicsContext& context)
+        : textRun(textRun)
+        , scaleFactor(context.scaleFactor())
+        , fontCascadeGeneration(font.generation())
+        , shouldSubpixelQuantizeFonts(context.shouldSubpixelQuantizeFonts())
+    {
+    }
+
     const TextRun& textRun;
-    const FontCascade& font;
-    GraphicsContext& context;
+    const FloatSize scaleFactor;
+    const unsigned fontCascadeGeneration;
+    const bool shouldSubpixelQuantizeFonts;
 };
 
 static void add(Hasher& hasher, const GlyphDisplayListCacheKey& key)
 {
-    add(hasher, key.textRun, key.context.scaleFactor().width(), key.context.scaleFactor().height(), key.font.generation(), key.context.shouldSubpixelQuantizeFonts());
+    add(hasher, key.textRun, key.scaleFactor.width(), key.scaleFactor.height(), key.fontCascadeGeneration, key.shouldSubpixelQuantizeFonts);
 }
 
 struct GlyphDisplayListCacheKeyTranslator {
@@ -56,9 +69,9 @@ struct GlyphDisplayListCacheKeyTranslator {
     {
         auto& entry = entryRef.get();
         return entry.m_textRun == key.textRun
-            && entry.m_scaleFactor == key.context.scaleFactor()
-            && entry.m_fontCascadeGeneration == key.font.generation()
-            && entry.m_shouldSubpixelQuantizeFont == key.context.shouldSubpixelQuantizeFonts();
+            && entry.m_scaleFactor == key.scaleFactor
+            && entry.m_fontCascadeGeneration == key.fontCascadeGeneration
+            && entry.m_shouldSubpixelQuantizeFont == key.shouldSubpixelQuantizeFonts;
     }
 };
 
@@ -71,7 +84,6 @@ GlyphDisplayListCache& GlyphDisplayListCache::singleton()
 void GlyphDisplayListCache::clear()
 {
     m_entriesForLayoutRun.clear();
-    m_entriesForFrequentlyPaintedLayoutRun.clear();
     m_entries.clear();
 }
 
@@ -109,10 +121,7 @@ DisplayList::DisplayList* GlyphDisplayListCache::getDisplayList(const LayoutRun&
         Ref entry { iterator->get() };
         auto* result = &entry->displayList();
         const_cast<LayoutRun&>(run).setIsInGlyphDisplayListCache();
-        if (isFrequentlyPainted)
-            m_entriesForFrequentlyPaintedLayoutRun.add(&run, WTFMove(entry));
-        else
-            m_entriesForLayoutRun.add(&run, WTFMove(entry));
+        m_entriesForLayoutRun.add(&run, WTFMove(entry));
         return result;
     }
 
@@ -122,10 +131,7 @@ DisplayList::DisplayList* GlyphDisplayListCache::getDisplayList(const LayoutRun&
         if (canShareDisplayList(*result))
             m_entries.add(entry.get());
         const_cast<LayoutRun&>(run).setIsInGlyphDisplayListCache();
-        if (isFrequentlyPainted)
-            m_entriesForFrequentlyPaintedLayoutRun.add(&run, WTFMove(entry));
-        else
-            m_entriesForLayoutRun.add(&run, WTFMove(entry));
+        m_entriesForLayoutRun.add(&run, WTFMove(entry));
         return result;
     }
 
@@ -149,8 +155,6 @@ DisplayList::DisplayList* GlyphDisplayListCache::getIfExistsImpl(const LayoutRun
         return nullptr;
     if (auto entry = m_entriesForLayoutRun.get(&run))
         return &entry->displayList();
-    if (auto entry = m_entriesForFrequentlyPaintedLayoutRun.get(&run))
-        return &entry->displayList();
     return nullptr;
 }
 
@@ -167,7 +171,6 @@ DisplayList::DisplayList* GlyphDisplayListCache::getIfExists(const InlineDisplay
 void GlyphDisplayListCache::remove(const void* run)
 {
     m_entriesForLayoutRun.remove(run);
-    m_entriesForFrequentlyPaintedLayoutRun.remove(run);
 }
 
 bool GlyphDisplayListCache::canShareDisplayList(const DisplayList::DisplayList& displayList)
@@ -180,6 +183,7 @@ bool GlyphDisplayListCache::canShareDisplayList(const DisplayList::DisplayList& 
             || std::holds_alternative<DisplayList::DrawImageBuffer>(item)
             || std::holds_alternative<DisplayList::DrawNativeImage>(item)
             || std::holds_alternative<DisplayList::BeginTransparencyLayer>(item)
+            || std::holds_alternative<DisplayList::BeginTransparencyLayerWithCompositeMode>(item)
             || std::holds_alternative<DisplayList::EndTransparencyLayer>(item)))
             return false;
     }

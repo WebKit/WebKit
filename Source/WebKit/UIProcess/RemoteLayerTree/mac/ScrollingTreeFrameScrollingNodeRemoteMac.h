@@ -28,12 +28,14 @@
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 #include <WebCore/ScrollingTreeFrameScrollingNodeMac.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class ScrollerPairMac;
 
 class ScrollingTreeFrameScrollingNodeRemoteMac : public WebCore::ScrollingTreeFrameScrollingNodeMac {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeFrameScrollingNodeRemoteMac);
 public:
     static Ref<ScrollingTreeFrameScrollingNodeRemoteMac> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeRemoteMac();

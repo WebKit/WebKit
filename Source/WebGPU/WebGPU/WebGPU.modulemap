@@ -1,4 +1,4 @@
-framework module WebGPU [extern_c] {
+framework module WebGPU {
   umbrella header "WebGPU.h"
   header "WebGPUExt.h"
   export *

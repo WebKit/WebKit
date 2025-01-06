@@ -9,23 +9,28 @@
 <input id="selectable">
 
 <script>
-if (window.testRunner)
-    window.testRunner.dumpAsText();
+onload = async () => {
+    if (!window.testRunner)
+        return;
 
-var selectable = document.getElementById('selectable');
-var multiselect = document.getElementById('multiselect');
-selectable.focus();
-selectable.onblur = function() {
-    multiselect.style.display='none';
-    document.write('PASS');
-};
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    var selectable = document.getElementById('selectable');
+    var multiselect = document.getElementById('multiselect');
+    selectable.focus();
+    selectable.onblur = function() {
+        multiselect.style.display='none';
+        document.write('PASS');
+    };
 
-if (window.eventSender) {
-    eventSender.mouseMoveTo(multiselect.offsetLeft + 5, multiselect.offsetTop + 5);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-} else {
-    document.write("To manually test, click on the 'a' option");
+    if (window.eventSender) {
+        await eventSender.asyncMouseMoveTo(multiselect.offsetLeft + 5, multiselect.offsetTop + 5);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+    } else {
+        document.write("To manually test, click on the 'a' option");
+    }
+    testRunner.notifyDone();
 }
 </script>
 

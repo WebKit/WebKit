@@ -27,6 +27,8 @@
 
 #include "Attribute.h"
 #include "SpaceSplitString.h"
+#include <wtf/IndexedRange.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -45,8 +47,11 @@ public:
     {
     }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     const Attribute& operator*() const { return m_array[m_offset]; }
     const Attribute* operator->() const { return &m_array[m_offset]; }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
     AttributeConstIterator& operator++() { ++m_offset; return *this; }
     AttributeConstIterator& operator--() { ++m_offset; return *this; }
 
@@ -182,6 +187,7 @@ private:
     void destroy();
 
     const Attribute* attributeBase() const;
+    std::span<const Attribute> attributeSpan() const { return unsafeMakeSpan(attributeBase(), length()); }
     const Attribute* findAttributeByName(const AtomString& name, bool shouldIgnoreAttributeCase) const;
 
     Ref<UniqueElementData> makeUniqueCopy() const;
@@ -203,6 +209,9 @@ public:
     ~ShareableElementData();
 
     static constexpr ptrdiff_t attributeArrayMemoryOffset() { return OBJECT_OFFSETOF(ShareableElementData, m_attributeArray); }
+
+    std::span<Attribute> span() { return unsafeMakeSpan(m_attributeArray, arraySize()); }
+    std::span<const Attribute> span() const { return unsafeMakeSpan(m_attributeArray, arraySize()); }
 
     Attribute m_attributeArray[0];
 };
@@ -281,9 +290,9 @@ ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const AtomString
 
 ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const QualifiedName& name) const
 {
-    const Attribute* attributes = attributeBase();
-    for (unsigned i = 0, count = length(); i < count; ++i) {
-        if (attributes[i].name().matches(name))
+    auto attributes = attributeSpan();
+    for (auto [i, attribute] : indexedRange(attributes)) {
+        if (attribute.name().matches(name))
             return i;
     }
     return attributeNotFound;
@@ -293,44 +302,37 @@ ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const QualifiedName
 // can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
 ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
 {
-    unsigned attributeCount = length();
-    if (!attributeCount)
+    auto attributes = attributeSpan();
+    if (attributes.empty())
         return attributeNotFound;
 
-    const Attribute* attributes = attributeBase();
-    const AtomString& caseAdjustedName = shouldIgnoreAttributeCase ? name.convertToASCIILowercase() : name;
+    auto& caseAdjustedName = shouldIgnoreAttributeCase ? name.convertToASCIILowercase() : name;
 
-    unsigned attributeIndex = 0;
-    do {
-        const Attribute& attribute = attributes[attributeIndex];
+    for (auto [i, attribute] : indexedRange(attributes)) {
         if (!attribute.name().hasPrefix()) {
             if (attribute.localName() == caseAdjustedName)
-                return attributeIndex;
+                return i;
         } else {
             if (attribute.name().toString() == caseAdjustedName)
-                return attributeIndex;
+                return i;
         }
-
-        ++attributeIndex;
-    } while (attributeIndex < attributeCount);
+    }
 
     return attributeNotFound;
 }
 
 ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const QualifiedName& name) const
 {
-    const Attribute* attributes = attributeBase();
-    for (unsigned i = 0, count = length(); i < count; ++i) {
-        if (attributes[i].name().matches(name))
-            return &attributes[i];
+    for (auto& attribute : attributeSpan()) {
+        if (attribute.name().matches(name))
+            return &attribute;
     }
-    return 0;
+    return nullptr;
 }
 
 inline const Attribute& ElementData::attributeAt(unsigned index) const
 {
-    RELEASE_ASSERT(index < length());
-    return attributeBase()[index];
+    return attributeSpan()[index];
 }
 
 inline void UniqueElementData::addAttribute(const QualifiedName& attributeName, const AtomString& value)

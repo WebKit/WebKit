@@ -56,6 +56,7 @@ static RetainPtr<WKWebView> createdWebView;
 {
     receivedScriptMessage = true;
     lastScriptMessage = message;
+    [receivedMessages addObject:message.body];
 }
 
 @end
@@ -102,16 +103,15 @@ TEST(WKWebView, LocalStorageProcessCrashes)
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     [configuration _setAllowUniversalAccessFromFileURLs:YES];
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"local-storage-process-crashes" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"local-storage-process-crashes" withExtension:@"html"]];
     [webView loadRequest:request];
 
-    receivedScriptMessage = false;
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    EXPECT_WK_STREQ(@"local:storage", [lastScriptMessage body]);
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] {
+        return [[lastScriptMessage body] isEqualToString:@"session:storage"];
+    }, 10, @"Warning: expected 'session:storage' message after page load");
 
-    receivedScriptMessage = false;
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    EXPECT_WK_STREQ(@"session:storage", [lastScriptMessage body]);
+    EXPECT_EQ([receivedMessages count], 2U);
+    EXPECT_WK_STREQ(@"local:storage", [receivedMessages firstObject]);
 
     readyToContinue = false;
     WKWebsiteDataStoreSyncLocalStorage((WKWebsiteDataStoreRef)configuration.get().websiteDataStore, nullptr, [](void*) {
@@ -157,7 +157,7 @@ TEST(WKWebView, LocalStorageProcessSuspends)
     [configuration _setAllowUniversalAccessFromFileURLs:YES];
 
     RetainPtr<WKWebView> webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"local-storage-process-suspends-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"local-storage-process-suspends-1" withExtension:@"html"]];
     [webView1 loadRequest:request];
 
     receivedScriptMessage = false;
@@ -165,7 +165,7 @@ TEST(WKWebView, LocalStorageProcessSuspends)
     EXPECT_WK_STREQ(@"value", [lastScriptMessage body]);
     
     RetainPtr<WKWebView> webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"local-storage-process-suspends-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"local-storage-process-suspends-2" withExtension:@"html"]];
     [webView2 loadRequest:request];
 
     receivedScriptMessage = false;
@@ -210,7 +210,7 @@ TEST(WKWebView, LocalStorageEmptyString)
     
         RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     
-        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"localstorage-empty-string-value" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"localstorage-empty-string-value" withExtension:@"html"]];
         [webView loadRequest:request];
     
         TestWebKitAPI::Util::run(&receivedScriptMessage);
@@ -233,7 +233,7 @@ TEST(WKWebView, LocalStorageEmptyString)
     // Make a new web view to finish the test.
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"localstorage-empty-string-value" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"localstorage-empty-string-value" withExtension:@"html"]];
     [webView loadRequest:request];
     
     TestWebKitAPI::Util::run(&receivedScriptMessage);
@@ -255,7 +255,7 @@ TEST(WKWebView, LocalStorageOpenWindowPrivate)
     [webView setUIDelegate:delegate.get()];
     [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"localstorage-open-window-private" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"localstorage-open-window-private" withExtension:@"html"]];
     [webView loadRequest:request];
     
     receivedScriptMessage = false;
@@ -273,7 +273,7 @@ TEST(WKWebView, PrivateBrowsingAffectsLocalStorage)
     auto delegate = adoptNS([[LocalStorageNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView loadRequest:request];
     
     TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
@@ -369,7 +369,7 @@ TEST(WKWebView, AuxiliaryWindowsShareLocalStorage)
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView loadRequest:request];
     
     TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
@@ -467,7 +467,9 @@ TEST(WKWebView, LocalStorageDifferentPageGroupSameProcess)
 
     [configuration _setGroupIdentifier:@"testgroupidentifier2"];
     // Ensure two pages use the same web process.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [configuration _setRelatedWebView:webView1.get()];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     // Network process would crash if the second page creates a new StorageArea.
     [webView2 synchronouslyLoadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
@@ -532,7 +534,7 @@ TEST(WKWebView, LocalStorageNoSizeOverflow)
 TEST(WebKit, LocalStorageCorruptedDatabase)
 {
     NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
-    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceSalt = [NSBundle.test_resourcesBundle URLForResource:@"general-storage-directory" withExtension:@"salt"];
     NSURL *localStorageDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/LocalStorage"];
     NSURL *localStorageFile = [localStorageDirectory URLByAppendingPathComponent:@"localstorage.sqlite3"];
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -601,7 +603,7 @@ TEST(WKWebView, LocalStorageDirectoryExcludedFromBackup)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:delegate.get()];
     didFinishNavigationBoolean = false;
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
 

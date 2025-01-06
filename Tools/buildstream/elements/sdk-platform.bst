@@ -32,6 +32,7 @@ depends:
 - sdk/libmanette.bst
 - sdk/libportal.bst
 - sdk/libsecret.bst
+- sdk/libspiel.bst
 - sdk/libusrsctp.bst
 - sdk/libwpe.bst
 - sdk/mold.bst
@@ -46,6 +47,7 @@ depends:
 - sdk/sccache.bst
 - sdk/sparkle-cdm.bst
 - sdk/svt-av1.bst
+- sdk/sysprof-capture.bst
 - sdk/unifdef.bst
 - sdk/woff2.bst
 - sdk/wpebackend-fdo.bst

@@ -1,0 +1,15 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let buffer = device.createBuffer({ size: 1280, usage: GPUBufferUsage.QUERY_RESOLVE });
+    let querySet = device.createQuerySet({ type: 'occlusion', count: 1 });
+    let commandEncoder = device.createCommandEncoder();
+    commandEncoder.resolveQuerySet(querySet, 0, 0, buffer, 1280);
+    await device.queue.onSubmittedWorkDone();
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.waitUntilDone();
+run();
+</script>

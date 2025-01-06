@@ -41,7 +41,9 @@
 #include "WebProcessPool.h"
 #include <wtf/DebugUtilities.h>
 #include <wtf/HexNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -54,12 +56,14 @@ static WeakHashSet<SuspendedPageProxy>& allSuspendedPages()
     return map;
 }
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SuspendedPageProxy);
+
 RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, const API::PageConfiguration& pageConfiguration)
 {
-    for (auto& suspendedPage : allSuspendedPages()) {
-        Ref process = suspendedPage.process();
+    for (Ref suspendedPage : allSuspendedPages()) {
+        Ref process = suspendedPage->process();
         if (&process->processPool() == &processPool
-            && process->registrableDomain() == registrableDomain
+            && process->site() && process->site()->domain() == registrableDomain
             && process->websiteDataStore() == &dataStore
             && process->crossOriginMode() != CrossOriginMode::Isolated
             && process->lockdownMode() == lockdownMode
@@ -96,7 +100,6 @@ static const MessageNameSet& messageNamesToIgnoreWhileSuspended()
         messageNames.get().add(IPC::MessageName::WebPageProxy_EditorStateChanged);
         messageNames.get().add(IPC::MessageName::WebPageProxy_PageExtendedBackgroundColorDidChange);
         messageNames.get().add(IPC::MessageName::WebPageProxy_SetRenderTreeSize);
-        messageNames.get().add(IPC::MessageName::WebPageProxy_SetStatusText);
         messageNames.get().add(IPC::MessageName::WebPageProxy_SetNetworkRequestsInProgress);
     });
 
@@ -104,16 +107,21 @@ static const MessageNameSet& messageNamesToIgnoreWhileSuspended()
 }
 #endif
 
+Ref<SuspendedPageProxy> SuspendedPageProxy::create(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&& browsingContextGroup, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
+{
+    return adoptRef(*new SuspendedPageProxy(page, WTFMove(process), WTFMove(mainFrame), WTFMove(browsingContextGroup), shouldDelayClosingUntilFirstLayerFlush));
+}
+
 SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&& browsingContextGroup, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
     : m_page(page)
-    , m_webPageID(page.webPageID())
+    , m_webPageID(page.webPageIDInMainFrameProcess())
     , m_process(WTFMove(process))
     , m_mainFrame(WTFMove(mainFrame))
     , m_browsingContextGroup(WTFMove(browsingContextGroup))
     , m_shouldDelayClosingUntilFirstLayerFlush(shouldDelayClosingUntilFirstLayerFlush)
     , m_suspensionTimeoutTimer(RunLoop::main(), this, &SuspendedPageProxy::suspensionTimedOut)
 #if USE(RUNNINGBOARD)
-    , m_suspensionActivity(m_process->throttler().backgroundActivity("Page suspension for back/forward cache"_s).moveToUniquePtr())
+    , m_suspensionActivity(m_process->throttler().backgroundActivity("Page suspension for back/forward cache"_s))
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     , m_contextIDForVisibilityPropagationInWebProcess(page.contextIDForVisibilityPropagationInWebProcess())
@@ -155,14 +163,10 @@ SuspendedPageProxy::~SuspendedPageProxy()
     m_process->removeSuspendedPageProxy(*this);
 }
 
-Ref<WebPageProxy> SuspendedPageProxy::protectedPage() const
+void SuspendedPageProxy::didDestroyNavigation(WebCore::NavigationIdentifier navigationID)
 {
-    return m_page.get();
-}
-
-void SuspendedPageProxy::didDestroyNavigation(uint64_t navigationID)
-{
-    protectedPage()->didDestroyNavigationShared(m_process.copyRef(), navigationID);
+    if (RefPtr page = m_page.get())
+        page->didDestroyNavigationShared(m_process.copyRef(), navigationID);
 }
 
 WebBackForwardCache& SuspendedPageProxy::backForwardCache() const
@@ -266,7 +270,7 @@ void SuspendedPageProxy::suspensionTimedOut()
     backForwardCache().removeEntry(*this); // Will destroy |this|.
 }
 
-WebPageProxy& SuspendedPageProxy::page() const
+WebPageProxy* SuspendedPageProxy::page() const
 {
     return m_page.get();
 }

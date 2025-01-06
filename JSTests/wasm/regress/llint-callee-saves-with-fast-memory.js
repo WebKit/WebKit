@@ -1,5 +1,5 @@
 //@ skip if $addressBits <= 32
-//@ requireOptions("--useWebAssemblyFastMemory=true")
+//@ requireOptions("--useWasmFastMemory=true")
 
 import * as assert from '../assert.js';
 import { instantiate } from '../wabt-wrapper.js';

@@ -25,11 +25,14 @@
 #if USE(TEXTURE_MAPPER)
 
 #include "BitmapTexture.h"
+#include "ClipPath.h"
 #include "FilterOperations.h"
+#include "FloatPolygon.h"
 #include "FloatQuad.h"
 #include "FloatRoundedRect.h"
 #include "GLContext.h"
 #include "GraphicsContext.h"
+#include "GraphicsTypesGL.h"
 #include "Image.h"
 #include "LengthFunctions.h"
 #include "TextureMapperFlags.h"
@@ -39,6 +42,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(CAIRO)
 #include "CairoUtilities.h"
@@ -49,16 +53,28 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureMapper);
+
+static size_t nextPowerOf2(size_t n)
+{
+    if (!n)
+        return 1;
+
+    const int totalBits = static_cast<int>(sizeof(size_t) * CHAR_BIT);
+    return static_cast<size_t>(1) << (totalBits - std::countl_zero(n - 1));
+}
+
 class TextureMapperGLData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(TextureMapperGLData);
 public:
     explicit TextureMapperGLData(void*);
     ~TextureMapperGLData();
 
     void initializeStencil();
     GLuint getStaticVBO(GLenum target, GLsizeiptr, const void* data);
-    GLuint getVAO();
     Ref<TextureMapperShaderProgram> getShaderProgram(TextureMapperShaderProgram::Options);
+    Ref<TextureMapperGPUBuffer> getBufferFromPool(size_t, TextureMapperGPUBuffer::Type);
+    int32_t maxTextureSize() const;
 
     TransformationMatrix projectionMatrix;
     TextureMapper::FlipY flipY { TextureMapper::FlipY::No };
@@ -68,8 +84,8 @@ public:
     bool didModifyStencil { false };
     GLint previousScissorState { 0 };
     GLint previousDepthState { 0 };
-    GLint viewport[4] { 0, };
-    GLint previousScissor[4] { 0, };
+    std::array<GLint, 4> viewport { };
+    std::array<GLint, 4> previousScissor { };
     double zNear { 0 };
     double zFar { 0 };
     RefPtr<BitmapTexture> currentSurface;
@@ -101,21 +117,25 @@ private:
     private:
         friend class TextureMapperGLData;
 
-        using GLContextDataMap = HashMap<void*, SharedGLData*>;
+        using GLContextDataMap = UncheckedKeyHashMap<void*, SharedGLData*>;
         static GLContextDataMap& contextDataMap()
         {
             static NeverDestroyed<GLContextDataMap> map;
             return map;
         }
 
-        SharedGLData() = default;
+        SharedGLData()
+        {
+            glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_maxTextureSize);
+        }
 
-        HashMap<unsigned, RefPtr<TextureMapperShaderProgram>> m_programs;
+        UncheckedKeyHashMap<unsigned, RefPtr<TextureMapperShaderProgram>> m_programs;
+        int32_t m_maxTextureSize;
     };
 
     Ref<SharedGLData> m_sharedGLData;
-    HashMap<const void*, GLuint> m_vbos;
-    GLuint m_vao { 0 };
+    UncheckedKeyHashMap<const void*, GLuint> m_vbos;
+    UncheckedKeyHashMap<uint64_t, Vector<Ref<TextureMapperGPUBuffer>>> m_buffers;
 };
 
 TextureMapperGLData::TextureMapperGLData(void* platformContext)
@@ -127,6 +147,9 @@ TextureMapperGLData::~TextureMapperGLData()
 {
     for (auto& entry : m_vbos)
         glDeleteBuffers(1, &entry.value);
+
+    for (auto& entry : m_buffers)
+        entry.value.clear();
 }
 
 void TextureMapperGLData::initializeStencil()
@@ -138,7 +161,6 @@ void TextureMapperGLData::initializeStencil()
 
     if (didModifyStencil)
         return;
-
     glClearStencil(0);
     glClear(GL_STENCIL_BUFFER_BIT);
     didModifyStencil = true;
@@ -157,11 +179,6 @@ GLuint TextureMapperGLData::getStaticVBO(GLenum target, GLsizeiptr size, const v
     return addResult.iterator->value;
 }
 
-GLuint TextureMapperGLData::getVAO()
-{
-    return m_vao;
-}
-
 Ref<TextureMapperShaderProgram> TextureMapperGLData::getShaderProgram(TextureMapperShaderProgram::Options options)
 {
     ASSERT(!options.isEmpty());
@@ -169,6 +186,34 @@ Ref<TextureMapperShaderProgram> TextureMapperGLData::getShaderProgram(TextureMap
         return TextureMapperShaderProgram::create(options);
     });
     return *addResult.iterator->value;
+}
+
+Ref<TextureMapperGPUBuffer> TextureMapperGLData::getBufferFromPool(size_t size, TextureMapperGPUBuffer::Type type)
+{
+    if (!size) {
+        // Use static zero buffer
+        static auto zeroBuffer = TextureMapperGPUBuffer::create(size, type, TextureMapperGPUBuffer::Usage::Dynamic);
+        return zeroBuffer;
+    }
+
+    RELEASE_ASSERT(size < std::numeric_limits<uint32_t>::max());
+    uint64_t key = (static_cast<uint64_t>(type) << 32) | static_cast<uint32_t>(size);
+    auto& buffers = m_buffers.ensure(key, [] {
+        return Vector<Ref<TextureMapperGPUBuffer>> { };
+    }).iterator->value;
+
+    for (auto& buffer : buffers) {
+        if (buffer->refCount() == 1)
+            return buffer;
+    }
+
+    buffers.append(TextureMapperGPUBuffer::create(size, type, TextureMapperGPUBuffer::Usage::Dynamic));
+    return buffers.last();
+}
+
+int32_t TextureMapperGLData::maxTextureSize() const
+{
+    return m_sharedGLData->m_maxTextureSize;
 }
 
 std::unique_ptr<TextureMapper> TextureMapper::create()
@@ -181,7 +226,7 @@ TextureMapper::TextureMapper()
 {
 }
 
-RefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size, OptionSet<BitmapTexture::Flags> flags)
+Ref<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size, OptionSet<BitmapTexture::Flags> flags)
 {
     return m_texturePool.acquireTexture(size, flags);
 }
@@ -209,8 +254,8 @@ void TextureMapper::beginPainting(FlipY flipY, BitmapTexture* surface)
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_SCISSOR_TEST);
     data().didModifyStencil = false;
-    glGetIntegerv(GL_VIEWPORT, data().viewport);
-    glGetIntegerv(GL_SCISSOR_BOX, data().previousScissor);
+    glGetIntegerv(GL_VIEWPORT, data().viewport.data());
+    glGetIntegerv(GL_SCISSOR_BOX, data().previousScissor.data());
     m_clipStack.reset(IntRect(0, 0, data().viewport[2], data().viewport[3]), flipY == FlipY::Yes ? ClipStack::YAxisMode::Default : ClipStack::YAxisMode::Inverted);
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &data().targetFrameBuffer);
     data().flipY = flipY;
@@ -285,11 +330,11 @@ void TextureMapper::drawNumber(int number, const Color& color, const FloatPoint&
     IntRect sourceRect(IntPoint::zero(), size);
     IntRect targetRect(roundedIntPoint(targetPoint), size);
 
-    RefPtr<BitmapTexture> texture = m_texturePool.acquireTexture(size, { BitmapTexture::Flags::SupportsAlpha });
+    auto texture = m_texturePool.acquireTexture(size, { BitmapTexture::Flags::SupportsAlpha });
     const unsigned char* bits = cairo_image_surface_get_data(surface);
     int stride = cairo_image_surface_get_stride(surface);
-    texture->updateContents(bits, sourceRect, IntPoint::zero(), stride);
-    drawTexture(*texture, targetRect, modelViewMatrix, 1.0f, AllEdgesExposed::Yes);
+    texture->updateContents(bits, sourceRect, IntPoint::zero(), stride, PixelFormat::BGRA8);
+    drawTexture(texture.get(), targetRect, modelViewMatrix, 1.0f, AllEdgesExposed::Yes);
 
     cairo_surface_destroy(surface);
     cairo_destroy(cr);
@@ -364,7 +409,9 @@ static int computeGaussianKernel(float radius, std::array<float, SimplifiedGauss
     unsigned kernelHalfSize = blurRadiusToKernelHalfSize(radius);
     RELEASE_ASSERT(kernelHalfSize <= GaussianKernelMaxHalfSize);
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
     float fullKernel[GaussianKernelMaxHalfSize];
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     fullKernel[0] = 1; // gauss(0, radius);
     float sum = fullKernel[0];
@@ -1188,8 +1235,10 @@ TextureMapper::~TextureMapper()
 void TextureMapper::bindDefaultSurface()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, data().targetFrameBuffer);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
     auto& viewport = data().viewport;
     glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     glDisable(GL_DEPTH_TEST);
     m_clipStack.apply();
     data().currentSurface = nullptr;
@@ -1317,6 +1366,67 @@ void TextureMapper::beginClip(const TransformationMatrix& modelViewMatrix, const
     clipStack().applyIfNeeded();
 }
 
+void TextureMapper::beginClip(const TransformationMatrix& modelViewMatrix, const ClipPath& clipPath)
+{
+    clipStack().push();
+    data().initializeStencil();
+
+    Ref<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::SolidColor);
+
+    glUseProgram(program->programID());
+    glEnableVertexAttribArray(program->vertexLocation());
+
+    // Compute the scissor rectangle from the clip path bounding box.
+    IntRect scissorRect = modelViewMatrix.mapQuad(clipPath.bounds()).enclosingBoundingBox();
+    IntRect viewport(data().viewport[0], data().viewport[1], data().viewport[2], data().viewport[3]);
+    scissorRect.intersect(viewport);
+
+    // Set up the scissor rectangle to limit stencil operations to the clip bounds.
+    glScissor(scissorRect.x(), (data().flipY == FlipY::Yes) ? scissorRect.y() : viewport.height() - scissorRect.maxY(),
+        scissorRect.width(), scissorRect.height());
+
+    int stencilIndex = clipStack().getStencilIndex();
+
+    glEnable(GL_STENCIL_TEST);
+
+    // Make sure we don't do any actual drawing.
+    glStencilFunc(GL_NEVER, stencilIndex, stencilIndex);
+
+    // Operate only on the stencilIndex and above.
+    glStencilMask(0xff & ~(stencilIndex - 1));
+
+    // Clear the stencil buffer at the current index.
+    static const TransformationMatrix fullProjectionMatrix = TransformationMatrix::rectToRect(FloatRect(0, 0, 1, 1), FloatRect(-1, -1, 2, 2));
+    static const GLfloat unitRect[] = { 0, 0, 1, 0, 1, 1, 0, 1 };
+    GLuint vbo = data().getStaticVBO(GL_ARRAY_BUFFER, sizeof(GLfloat) * 8, unitRect);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glVertexAttribPointer(program->vertexLocation(), 2, GL_FLOAT, false, 0, 0);
+    program->setMatrix(program->projectionMatrixLocation(), fullProjectionMatrix);
+    program->setMatrix(program->modelViewMatrixLocation(), TransformationMatrix());
+    glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+    // Now apply the current index to the new polygon.
+    glBindBuffer(GL_ARRAY_BUFFER, clipPath.bufferID());
+    glVertexAttribPointer(program->vertexLocation(), 2, GL_FLOAT, false, 0, clipPath.bufferDataOffsetAsPtr());
+    program->setMatrix(program->projectionMatrixLocation(), data().projectionMatrix);
+    program->setMatrix(program->modelViewMatrixLocation(), modelViewMatrix);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, clipPath.numberOfVertices());
+
+    // Clear the state.
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDisableVertexAttribArray(program->vertexLocation());
+    glStencilMask(0);
+
+    // Store the scissor box in the clip stack to prevent it from being reset.
+    clipStack().intersect(scissorRect);
+
+    // Increase stencilIndex and apply stencil testing.
+    clipStack().setStencilIndex(stencilIndex * 2);
+    clipStack().applyIfNeeded();
+}
+
 void TextureMapper::endClip()
 {
     clipStack().pop();
@@ -1328,11 +1438,21 @@ IntRect TextureMapper::clipBounds()
     return clipStack().current().scissorBox;
 }
 
+IntSize TextureMapper::maxTextureSize() const
+{
+    return IntSize(data().maxTextureSize(), data().maxTextureSize());
+}
+
 void TextureMapper::setDepthRange(double zNear, double zFar)
 {
     data().zNear = zNear;
     data().zFar = zFar;
     updateProjectionMatrix();
+}
+
+std::pair<double, double> TextureMapper::depthRange() const
+{
+    return { data().zNear, data().zFar };
 }
 
 void TextureMapper::updateProjectionMatrix()
@@ -1343,9 +1463,12 @@ void TextureMapper::updateProjectionMatrix()
         size = data().currentSurface->size();
         flipY = true;
     } else {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
         size = IntSize(data().viewport[2], data().viewport[3]);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         flipY = data().flipY == FlipY::Yes;
     }
+
     data().projectionMatrix = createProjectionMatrix(size, flipY, data().zNear, data().zFar);
 }
 
@@ -1354,6 +1477,16 @@ void TextureMapper::drawTextureExternalOES(GLuint texture, OptionSet<TextureMapp
     flags.add(TextureMapperFlags::ShouldUseExternalOESTextureRect);
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::Option::TextureExternalOES);
     drawTexturedQuadWithProgram(program.get(), { { texture, program->externalOESTextureLocation() } }, flags, targetRect, modelViewMatrix, opacity);
+}
+
+Ref<TextureMapperGPUBuffer> TextureMapper::acquireBufferFromPool(size_t size, TextureMapperGPUBuffer::Type type)
+{
+    size_t ceil = nextPowerOf2(size);
+    size_t floor = ceil >> 1; // half of ceil
+    size_t mid = floor + (floor >> 1); // (1.5 times floor)
+    size_t requestSize = (size <= mid) ? mid : ceil;
+
+    return data().getBufferFromPool(requestSize, type);
 }
 
 } // namespace WebCore

@@ -23,7 +23,7 @@ def RunSteps(api):
   api.vars.setup()
 
   now = api.time.utcnow()
-  src_path = api.path.start_dir.join('perf')
+  src_path = api.path.start_dir.joinpath('perf')
   with api.context(cwd=src_path):
     results = api.file.glob_paths(
         'find results',
@@ -31,7 +31,7 @@ def RunSteps(api):
         '*.json',
         test_data=['nanobench_abc123.json'])
   if len(results) != 1:  # pragma: nocover
-    raise Exception('Unable to find nanobench or skpbench JSON file!')
+    raise Exception('Unable to find nanobench JSON file!')
 
   src = results[0]
   basename = api.path.basename(src)

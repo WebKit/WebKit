@@ -29,7 +29,7 @@
 #include "WebURLSchemeTaskProxy.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 class ResourceError;
@@ -43,7 +43,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebURLSchemeHandlerProxy : public RefCounted<WebURLSchemeHandlerProxy>, public CanMakeWeakPtr<WebURLSchemeHandlerProxy> {
+class WebURLSchemeHandlerProxy : public RefCountedAndCanMakeWeakPtr<WebURLSchemeHandlerProxy> {
 public:
     static Ref<WebURLSchemeHandlerProxy> create(WebPage& page, WebURLSchemeHandlerIdentifier identifier)
     {
@@ -57,7 +57,8 @@ public:
     void loadSynchronously(WebCore::ResourceLoaderIdentifier, WebFrame&, const WebCore::ResourceRequest&, WebCore::ResourceResponse&, WebCore::ResourceError&, Vector<uint8_t>&);
 
     WebURLSchemeHandlerIdentifier identifier() const { return m_identifier; }
-    WebPage& page() { return m_webPage; }
+    WebPage& page() { return m_webPage.get(); }
+    Ref<WebPage> protectedPage();
 
     void taskDidPerformRedirection(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void taskDidReceiveResponse(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceResponse&);
@@ -70,7 +71,7 @@ private:
 
     RefPtr<WebURLSchemeTaskProxy> removeTask(WebCore::ResourceLoaderIdentifier);
 
-    WebPage& m_webPage;
+    WeakRef<WebPage> m_webPage;
     WebURLSchemeHandlerIdentifier m_identifier;
 
     HashMap<WebCore::ResourceLoaderIdentifier, RefPtr<WebURLSchemeTaskProxy>> m_tasks;

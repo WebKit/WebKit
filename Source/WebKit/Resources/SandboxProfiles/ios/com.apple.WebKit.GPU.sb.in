@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2024 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -97,12 +97,9 @@
                 (apply require-any filters)
                 (extension-class "com.apple.mediaserverd.read"))))
     ;; CoreMedia framework.
-    (allow mach-lookup (with telemetry)
-           (global-name "com.apple.coremedia.assetimagegenerator.xpc")
-           (global-name "com.apple.coremedia.audiodeviceclock.xpc") ; Needed for CMTimeBase
+    (allow mach-lookup
            (global-name "com.apple.coremedia.capturesession")      ; Actually for video capture
            (global-name "com.apple.coremedia.capturesource")       ; Also for video capture (<rdar://problem/15794291>).
-           (global-name "com.apple.coremedia.cpe.xpc") ; Needed for HDR playback.
 #if ENABLE(LINEAR_MEDIA_PLAYER)
            (global-name "com.apple.coremedia.mediaplaybackd.videotarget.xpc") ; Needed for FigVideoTarget
 #endif
@@ -113,26 +110,14 @@
            (global-name "com.apple.mediaexperience.endpoint.xpc")
 #endif
            (global-name "com.apple.coremedia.admin")
-           (global-name "com.apple.coremedia.asset.xpc")
-           (global-name "com.apple.coremedia.audioprocessingtap.xpc")
-           (global-name "com.apple.coremedia.customurlloader.xpc") ; Needed for custom media loading
-           (global-name "com.apple.coremedia.figcpecryptor")
-           (global-name "com.apple.coremedia.formatreader.xpc")
            (global-name "com.apple.coremedia.mediaparserd.fairplaypsshatomparser.xpc")
            (global-name "com.apple.coremedia.mediaparserd.formatreader.xpc")
            (global-name "com.apple.coremedia.mediaparserd.manifold.xpc")
-           (global-name "com.apple.coremedia.player.xpc")
-           (global-name "com.apple.coremedia.remaker")
            (global-name "com.apple.coremedia.routediscoverer.xpc")
            (global-name "com.apple.coremedia.routingcontext.xpc")
-           (global-name "com.apple.coremedia.samplebufferaudiorenderer.xpc")
-           (global-name "com.apple.coremedia.samplebufferrendersynchronizer.xpc")
-           (global-name "com.apple.coremedia.sandboxserver.xpc")
            (global-name "com.apple.coremedia.systemcontroller.xpc")
-           (global-name "com.apple.coremedia.visualcontext.xpc")
            (global-name "com.apple.coremedia.volumecontroller.xpc"))
 
-#if HAVE(MEDIAPLAYBACKD)
     (allow mach-lookup
         (global-name
             "com.apple.coremedia.mediaplaybackd.asset.xpc"
@@ -145,6 +130,9 @@
             "com.apple.coremedia.mediaplaybackd.figcontentkeysession.xpc"
             "com.apple.coremedia.mediaplaybackd.figcontentkeyboss.xpc"
             "com.apple.coremedia.mediaplaybackd.figcpecryptor.xpc"
+#if HAVE(AVMETRICS)
+            "com.apple.coremedia.mediaplaybackd.figmetriceventtimeline.xpc"
+#endif
             "com.apple.coremedia.mediaplaybackd.formatreader.xpc"
             "com.apple.coremedia.mediaplaybackd.player.xpc"
             "com.apple.coremedia.mediaplaybackd.remaker.xpc"
@@ -157,15 +145,11 @@
             "com.apple.coremedia.videocodecd.compressionsession.xpc"
             "com.apple.coremedia.videocodecd.decompressionsession"
             "com.apple.coremedia.videocodecd.decompressionsession.xpc"))
-#endif
 
     (allow mach-lookup (with report) (with telemetry)
-        (global-name "com.apple.coremedia.cpeprotector.xpc")
 #if !HAVE(REFACTORED_MEDIASERVERD)
         (global-name "com.apple.coremedia.endpoint.xpc")
 #endif
-        (global-name "com.apple.coremedia.figcontentkeysession.xpc")
-        (global-name "com.apple.coremedia.figcontentkeyboss.xpc")
         (global-name "com.apple.coremedia.routingsessionmanager.xpc")
         (global-name "com.apple.coremedia.sts"))
 
@@ -223,13 +207,6 @@
             (preference-domain "com.apple.coremedia"))
         (allow file-read* (with telemetry) (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
         (allow device-camera))
-
-    ;; Support incoming video connections
-    (allow mach-lookup (with telemetry)
-        (global-name "com.apple.coremedia.compressionsession"))
-    (allow mach-lookup
-        (global-name "com.apple.coremedia.decompressionsession")
-        (global-name "com.apple.coremedia.videoqueue"))
 )
 
 (define-once (accessibility-support)
@@ -268,7 +245,9 @@
     )
 
     (allow sysctl-read
-        (sysctl-name #"kern.bootsessionuuid"))
+        (sysctl-name
+            "kern.bootsessionuuid"
+            "kern.boottime"))
 
     (allow mach-lookup
        ;; <rdar://problem/47268166>
@@ -562,6 +541,8 @@
     (sysctl-name
         "hw.activecpu"
         "hw.cachelinesize"
+        "hw.cpufamily"
+        "hw.cpusubfamily"
         "hw.l2cachesize"
         "hw.logicalcpu_max"
         "hw.machine"
@@ -572,6 +553,10 @@
         "hw.physicalcpu_max"
         "hw.product" ;; <rdar://problem/81334849>
         "kern.bootargs"
+        "kern.hv_vmm_present"
+#if ASAN_ENABLED
+        "kern.osrelease"
+#endif
         "kern.osproductversion"
         "kern.osvariant_status"
         "kern.secure_kernel"
@@ -579,7 +564,9 @@
         "kern.willshutdown" ;; <rdar://122511261>
         "machdep.ptrauth_enabled"
         "vm.footprint_suspend"
-        "vm.malloc_ranges")) ;; <rdar://problem/105161083>
+        "vm.malloc_ranges") ;; <rdar://problem/105161083>
+    (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76782530>
+)
 
 (allow iokit-get-properties
     (iokit-property "AAPL,DisplayPipe")
@@ -750,11 +737,15 @@
 
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with telemetry))
-    (deny syscall-unix (with no-report) (syscall-number
-        SYS_faccessat))
     (when (defined? 'SYS_crossarch_trap)
         (deny syscall-unix (with no-report) (syscall-number
             SYS_crossarch_trap)))
+#if ASAN_ENABLED
+    (allow syscall-unix
+        (syscall-number
+            SYS_setrlimit
+            SYS_sigaltstack))
+#endif
     (allow syscall-unix (syscall-number
         SYS___disable_threadsignal
         SYS___mac_syscall
@@ -777,6 +768,7 @@
         SYS_dup
         SYS_dup2
         SYS_exit
+        SYS_faccessat
         SYS_fcntl
         SYS_fcntl_nocancel
         SYS_fileport_makefd
@@ -801,6 +793,7 @@
         SYS_gettid
         SYS_gettimeofday
         SYS_getuid
+        SYS_getxattr
         SYS_ioctl
         SYS_issetugid
         SYS_kdebug_trace64
@@ -922,6 +915,12 @@
         vm_remap_external))
 
 (deny syscall-mig (with telemetry))
+#if ASAN_ENABLED
+(allow syscall-mig
+    (kernel-mig-routine
+        mach_vm_region_recurse
+        task_set_exc_guard_behavior))
+#endif
 (allow syscall-mig (kernel-mig-routine
     _mach_make_memory_entry
     clock_get_time
@@ -958,6 +957,7 @@
     mach_vm_remap_external
     semaphore_create
     semaphore_destroy
+    task_create_identity_token
     task_get_special_port_from_user
     task_info_from_user
     task_restartable_ranges_register

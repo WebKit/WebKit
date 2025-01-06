@@ -26,19 +26,11 @@
 #pragma once
 
 #include "PlatformLayer.h"
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class SampleBufferDisplayLayerClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SampleBufferDisplayLayerClient> : std::true_type { };
-}
 
 namespace WTF {
 class MediaTime;
@@ -52,10 +44,13 @@ enum class VideoFrameRotation : uint16_t;
 
 using LayerHostingContextID = uint32_t;
 
-class SampleBufferDisplayLayerClient : public CanMakeWeakPtr<SampleBufferDisplayLayerClient> {
+class SampleBufferDisplayLayerClient : public AbstractRefCountedAndCanMakeWeakPtr<SampleBufferDisplayLayerClient> {
 public:
     virtual ~SampleBufferDisplayLayerClient() = default;
     virtual void sampleBufferDisplayLayerStatusDidFail() = 0;
+#if PLATFORM(IOS_FAMILY)
+    virtual bool canShowWhileLocked() const = 0;
+#endif
 };
 
 class SampleBufferDisplayLayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SampleBufferDisplayLayer, WTF::DestructionThread::MainRunLoop> {
@@ -97,6 +92,7 @@ public:
 protected:
     explicit SampleBufferDisplayLayer(SampleBufferDisplayLayerClient&);
 
+    bool canShowWhileLocked();
     WeakPtr<SampleBufferDisplayLayerClient> m_client;
 
 private:
@@ -106,6 +102,15 @@ private:
 inline SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerClient& client)
     : m_client(client)
 {
+}
+
+inline bool SampleBufferDisplayLayer::canShowWhileLocked()
+{
+#if PLATFORM(IOS_FAMILY)
+    return m_client && m_client->canShowWhileLocked();
+#else
+    return false;
+#endif
 }
 
 }

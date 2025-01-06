@@ -1,0 +1,16 @@
+Select me
+
+More text
+
+This test verifies that selection rects are hidden when scrolling an overflow scrollable container, if the selection spans across separate scroll views. To manually test, select the text below and scroll the red box; the selection should hide when scrolling and reappear when scrolling ends.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Selection appeared
+PASS Scrolled down
+PASS Selection disappeared
+PASS Ended touch
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

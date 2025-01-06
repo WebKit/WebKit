@@ -13,14 +13,15 @@
 #include <algorithm>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <tuple>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
-#include "api/call/call_factory_interface.h"
+#include "api/audio/audio_device.h"
+#include "api/enable_media_with_defaults.h"
 #include "api/field_trials_view.h"
 #include "api/jsep.h"
 #include "api/media_stream_interface.h"
@@ -40,8 +41,6 @@
 #include "media/base/media_engine.h"
 #include "media/base/stream_params.h"
 #include "media/engine/webrtc_media_engine.h"
-#include "media/engine/webrtc_media_engine_defaults.h"
-#include "modules/audio_device/include/audio_device.h"
 #include "p2p/base/p2p_constants.h"
 #include "p2p/base/port_allocator.h"
 #include "p2p/base/transport_info.h"
@@ -84,13 +83,8 @@ PeerConnectionFactoryDependencies CreatePeerConnectionFactoryDependencies() {
   dependencies.signaling_thread = rtc::Thread::Current();
   dependencies.task_queue_factory = CreateDefaultTaskQueueFactory();
   dependencies.trials = std::make_unique<FieldTrialBasedConfig>();
-  cricket::MediaEngineDependencies media_deps;
-  media_deps.task_queue_factory = dependencies.task_queue_factory.get();
-  media_deps.adm = FakeAudioCaptureModule::Create();
-  media_deps.trials = dependencies.trials.get();
-  SetMediaEngineDefaults(&media_deps);
-  dependencies.media_engine = cricket::CreateMediaEngine(std::move(media_deps));
-  dependencies.call_factory = CreateCallFactory();
+  dependencies.adm = FakeAudioCaptureModule::Create();
+  EnableMediaWithDefaults(dependencies);
   dependencies.sctp_factory = std::make_unique<FakeSctpTransportFactory>();
   return dependencies;
 }
@@ -337,7 +331,7 @@ TEST_F(PeerConnectionJsepTest,
 
   auto transceivers = callee->pc()->GetTransceivers();
   ASSERT_EQ(2u, transceivers.size());
-  EXPECT_EQ(absl::nullopt, transceivers[0]->mid());
+  EXPECT_EQ(std::nullopt, transceivers[0]->mid());
   EXPECT_EQ(caller_audio->mid(), transceivers[1]->mid());
 }
 
@@ -355,7 +349,7 @@ TEST_F(PeerConnectionJsepTest,
 
   auto transceivers = callee->pc()->GetTransceivers();
   ASSERT_EQ(2u, transceivers.size());
-  EXPECT_EQ(absl::nullopt, transceivers[0]->mid());
+  EXPECT_EQ(std::nullopt, transceivers[0]->mid());
   EXPECT_EQ(caller->pc()->GetTransceivers()[0]->mid(), transceivers[1]->mid());
   EXPECT_EQ(MediaStreamTrackInterface::kAudioKind,
             transceivers[1]->receiver()->track()->kind());
@@ -374,7 +368,7 @@ TEST_F(PeerConnectionJsepTest,
 
   auto transceivers = callee->pc()->GetTransceivers();
   ASSERT_EQ(2u, transceivers.size());
-  EXPECT_EQ(absl::nullopt, transceivers[0]->mid());
+  EXPECT_EQ(std::nullopt, transceivers[0]->mid());
   EXPECT_EQ(caller->pc()->GetTransceivers()[0]->mid(), transceivers[1]->mid());
   EXPECT_EQ(MediaStreamTrackInterface::kAudioKind,
             transceivers[1]->receiver()->track()->kind());
@@ -682,7 +676,7 @@ TEST_F(PeerConnectionJsepTest,
       caller->SetRemoteDescription(callee->CreateAnswerAndSetAsLocal()));
   EXPECT_TRUE(first_transceiver->stopped());
   // First transceivers are dissociated on caller side.
-  ASSERT_EQ(absl::nullopt, first_transceiver->mid());
+  ASSERT_EQ(std::nullopt, first_transceiver->mid());
   // They are disassociated on callee side.
   ASSERT_EQ(0u, callee->pc()->GetTransceivers().size());
 
@@ -701,7 +695,7 @@ TEST_F(PeerConnectionJsepTest,
   // associate the new transceivers.
   ASSERT_TRUE(
       caller->SetLocalDescription(CloneSessionDescription(offer.get())));
-  EXPECT_EQ(absl::nullopt, first_transceiver->mid());
+  EXPECT_EQ(std::nullopt, first_transceiver->mid());
   ASSERT_EQ(1u, caller->pc()->GetTransceivers().size());
   EXPECT_EQ(second_mid, caller->pc()->GetTransceivers()[0]->mid());
   ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
@@ -820,7 +814,7 @@ TEST_P(RecycleMediaSectionTest, CurrentLocalAndCurrentRemoteRejected) {
   // the MID for the new transceiver.
   ASSERT_TRUE(
       caller->SetLocalDescription(CloneSessionDescription(offer.get())));
-  EXPECT_EQ(absl::nullopt, first_transceiver->mid());
+  EXPECT_EQ(std::nullopt, first_transceiver->mid());
   EXPECT_EQ(second_mid, second_transceiver->mid());
 
   // Setting the remote offer will dissociate the previous transceiver and
@@ -883,7 +877,7 @@ TEST_P(RecycleMediaSectionTest, CurrentRemoteOnlyRejected) {
   // the MID for the new transceiver.
   ASSERT_TRUE(
       caller->SetLocalDescription(CloneSessionDescription(offer.get())));
-  EXPECT_EQ(absl::nullopt, caller_first_transceiver->mid());
+  EXPECT_EQ(std::nullopt, caller_first_transceiver->mid());
   EXPECT_EQ(second_mid, caller_second_transceiver->mid());
 
   // Setting the remote offer will dissociate the previous transceiver and
@@ -946,7 +940,7 @@ TEST_P(RecycleMediaSectionTest, CurrentLocalOnlyRejected) {
   // the MID for the new transceiver.
   ASSERT_TRUE(
       callee->SetLocalDescription(CloneSessionDescription(offer.get())));
-  EXPECT_EQ(absl::nullopt, callee_first_transceiver->mid());
+  EXPECT_EQ(std::nullopt, callee_first_transceiver->mid());
   EXPECT_EQ(second_mid, callee_second_transceiver->mid());
 
   // Setting the remote offer will dissociate the previous transceiver and
@@ -1951,7 +1945,7 @@ TEST_F(PeerConnectionJsepTest, RollbackKeepsTransceiverAndClearsMid) {
   // Transceiver can't be removed as track was added to it.
   EXPECT_EQ(callee->pc()->GetTransceivers().size(), 1u);
   // Mid got cleared to make it reusable.
-  EXPECT_EQ(callee->pc()->GetTransceivers()[0]->mid(), absl::nullopt);
+  EXPECT_EQ(callee->pc()->GetTransceivers()[0]->mid(), std::nullopt);
   // Transceiver should be counted as addTrack-created after rollback.
   EXPECT_TRUE(callee->SetRemoteDescription(caller->CreateOffer()));
   EXPECT_EQ(callee->pc()->GetTransceivers().size(), 1u);
@@ -1979,7 +1973,7 @@ TEST_F(PeerConnectionJsepTest,
   // Transceiver can't be removed as track was added to it.
   EXPECT_EQ(callee->pc()->GetTransceivers().size(), 1u);
   // Mid got cleared to make it reusable.
-  EXPECT_EQ(callee->pc()->GetTransceivers()[0]->mid(), absl::nullopt);
+  EXPECT_EQ(callee->pc()->GetTransceivers()[0]->mid(), std::nullopt);
   // Transceiver should be counted as addTrack-created after rollback.
   EXPECT_TRUE(callee->SetRemoteDescription(caller->CreateOffer()));
   EXPECT_EQ(callee->pc()->GetTransceivers().size(), 1u);
@@ -1994,9 +1988,9 @@ TEST_F(PeerConnectionJsepTest, RollbackRestoresMid) {
   auto offer = callee->CreateOffer();
   EXPECT_TRUE(callee->SetRemoteDescription(caller->CreateOffer()));
   EXPECT_EQ(callee->pc()->GetTransceivers().size(), 1u);
-  EXPECT_NE(callee->pc()->GetTransceivers()[0]->mid(), absl::nullopt);
+  EXPECT_NE(callee->pc()->GetTransceivers()[0]->mid(), std::nullopt);
   EXPECT_TRUE(callee->SetRemoteDescription(caller->CreateRollback()));
-  EXPECT_EQ(callee->pc()->GetTransceivers()[0]->mid(), absl::nullopt);
+  EXPECT_EQ(callee->pc()->GetTransceivers()[0]->mid(), std::nullopt);
   EXPECT_TRUE(callee->SetLocalDescription(std::move(offer)));
 }
 
@@ -2119,7 +2113,7 @@ TEST_F(PeerConnectionJsepTest, ImplicitlyRollbackTransceiversWithSameMids) {
   auto initial_mid = callee->pc()->GetTransceivers()[0]->mid();
   EXPECT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
   EXPECT_EQ(callee->pc()->GetTransceivers().size(), 2u);
-  EXPECT_EQ(callee->pc()->GetTransceivers()[0]->mid(), absl::nullopt);
+  EXPECT_EQ(callee->pc()->GetTransceivers()[0]->mid(), std::nullopt);
   EXPECT_EQ(callee->pc()->GetTransceivers()[1]->mid(),
             caller->pc()->GetTransceivers()[0]->mid());
   EXPECT_TRUE(callee->CreateAnswerAndSetAsLocal());  // Go to stable.
@@ -2299,8 +2293,8 @@ TEST_F(PeerConnectionJsepTest, RollbackAfterMultipleSLD) {
   EXPECT_TRUE(callee->observer()->legacy_renegotiation_needed());
   EXPECT_TRUE(callee->observer()->has_negotiation_needed_event());
   EXPECT_EQ(callee->pc()->GetTransceivers().size(), 2u);
-  EXPECT_EQ(callee->pc()->GetTransceivers()[0]->mid(), absl::nullopt);
-  EXPECT_EQ(callee->pc()->GetTransceivers()[1]->mid(), absl::nullopt);
+  EXPECT_EQ(callee->pc()->GetTransceivers()[0]->mid(), std::nullopt);
+  EXPECT_EQ(callee->pc()->GetTransceivers()[1]->mid(), std::nullopt);
 }
 
 TEST_F(PeerConnectionJsepTest, NoRollbackNeeded) {

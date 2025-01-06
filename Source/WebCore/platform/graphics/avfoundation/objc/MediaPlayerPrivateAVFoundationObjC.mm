@@ -60,7 +60,6 @@
 #import "PlatformTextTrack.h"
 #import "PlatformTimeRanges.h"
 #import "QueuedVideoOutput.h"
-#import "RuntimeApplicationChecks.h"
 #import "ScriptDisallowedScope.h"
 #import "SecurityOrigin.h"
 #import "SerializedPlatformDataCueMac.h"
@@ -107,6 +106,8 @@
 #import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -133,6 +134,8 @@
 #import "MediaRemoteSoftLink.h"
 
 #import <pal/cocoa/MediaToolboxSoftLink.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace std {
 template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionAVFObjC>>::iterator> {
@@ -163,15 +166,15 @@ SOFT_LINK_OPTIONAL(MediaToolbox, MTEnableCaption2015Behavior, Boolean, (), ())
 
 #if PLATFORM(IOS_FAMILY)
 
-#if HAVE(CELESTIAL)
-SOFT_LINK_PRIVATE_FRAMEWORK(Celestial)
-SOFT_LINK_CONSTANT(Celestial, AVController_RouteDescriptionKey_RouteCurrentlyPicked, NSString *)
-SOFT_LINK_CONSTANT(Celestial, AVController_RouteDescriptionKey_RouteName, NSString *)
-SOFT_LINK_CONSTANT(Celestial, AVController_RouteDescriptionKey_AVAudioRouteName, NSString *)
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
+SOFT_LINK_PRIVATE_FRAMEWORK(MediaExperience)
+SOFT_LINK_CONSTANT(MediaExperience, AVController_RouteDescriptionKey_RouteCurrentlyPicked, NSString *)
+SOFT_LINK_CONSTANT(MediaExperience, AVController_RouteDescriptionKey_RouteName, NSString *)
+SOFT_LINK_CONSTANT(MediaExperience, AVController_RouteDescriptionKey_AVAudioRouteName, NSString *)
 #define AVController_RouteDescriptionKey_RouteCurrentlyPicked getAVController_RouteDescriptionKey_RouteCurrentlyPicked()
 #define AVController_RouteDescriptionKey_RouteName getAVController_RouteDescriptionKey_RouteName()
 #define AVController_RouteDescriptionKey_AVAudioRouteName getAVController_RouteDescriptionKey_AVAudioRouteName()
-#endif // HAVE(CELESTIAL)
+#endif // HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
 
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -255,21 +258,8 @@ static dispatch_queue_t globalLoaderDelegateQueue()
     return globalQueue;
 }
 
-static void registerFormatReaderIfNecessary()
-{
-#if ENABLE(WEBM_FORMAT_READER)
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        // Like we do for other media formats, allow the format reader to run in the WebContent or GPU process
-        // (which is already appropriately sandboxed) rather than in a separate MediaToolbox XPC service.
-        RELEASE_ASSERT(isInGPUProcess() || isInWebProcess());
-        MTRegisterPluginFormatReaderBundleDirectory((__bridge CFURLRef)NSBundle.mainBundle.builtInPlugInsURL);
-        MTPluginFormatReaderDisableSandboxing();
-    });
-#endif
-}
-
 class MediaPlayerPrivateAVFoundationObjC::Factory final : public MediaPlayerFactory {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Factory);
 public:
     Factory()
     {
@@ -665,8 +655,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     m_videoLayerManager->setVideoLayer(m_videoLayer.get(), player->presentationSize());
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-    if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
-        [m_videoLayer setPIPModeEnabled:(player->fullscreenMode() & MediaPlayer::VideoFullscreenModePictureInPicture)];
+    [m_videoLayer setPIPModeEnabled:(player->fullscreenMode() & MediaPlayer::VideoFullscreenModePictureInPicture)];
 #endif
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
@@ -838,19 +827,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
 
 }
 
-static bool willUseWebMFormatReaderForType(const String& type)
-{
-#if ENABLE(WEBM_FORMAT_READER)
-    if (!SourceBufferParserWebM::isWebMFormatReaderAvailable())
-        return false;
-
-    return equalLettersIgnoringASCIICase(type, "video/webm"_s) || equalLettersIgnoringASCIICase(type, "audio/webm"_s);
-#else
-    UNUSED_PARAM(type);
-    return false;
-#endif
-}
-
 static URL conformFragmentIdentifierForURL(const URL& url)
 {
 #if PLATFORM(MAC)
@@ -913,19 +889,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
 
     [options setObject:@(AVAssetReferenceRestrictionForbidRemoteReferenceToLocal | AVAssetReferenceRestrictionForbidLocalReferenceToRemote) forKey:AVURLAssetReferenceRestrictionsKey];
 
-    RetainPtr<NSMutableDictionary> headerFields = adoptNS([[NSMutableDictionary alloc] init]);
-
-    String referrer = player->referrer();
-    if (!referrer.isEmpty())
-        [headerFields setObject:referrer forKey:@"Referer"];
-
-    String userAgent = player->userAgent();
-    if (!userAgent.isEmpty())
-        [headerFields setObject:userAgent forKey:@"User-Agent"];
-
-    if ([headerFields count])
-        [options setObject:headerFields.get() forKey:@"AVURLAssetHTTPHeaderFieldsKey"];
-
     if (shouldEnableInheritURIQueryComponent())
         [options setObject:@YES forKey:AVURLAssetInheritURIQueryComponentFromReferencingURIKey];
 
@@ -947,10 +910,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
 
     auto type = player->contentMIMEType();
 
-    // Don't advertise WebM MIME types or the format reader won't be loaded until rdar://72405127 is fixed.
-    auto willUseWebMFormatReader = willUseWebMFormatReaderForType(type);
-
-    if (PAL::canLoad_AVFoundation_AVURLAssetOutOfBandMIMETypeKey() && !type.isEmpty() && !player->contentMIMETypeWasInferredFromExtension() && !willUseWebMFormatReader) {
+    if (PAL::canLoad_AVFoundation_AVURLAssetOutOfBandMIMETypeKey() && !type.isEmpty() && !player->contentMIMETypeWasInferredFromExtension()) {
         auto codecs = player->contentTypeCodecs();
         if (!codecs.isEmpty()) {
             NSString *typeString = [NSString stringWithFormat:@"%@; codecs=\"%@\"", (NSString *)type, (NSString *)codecs];
@@ -1023,11 +983,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
         [options setObject:nsTypes.get() forKey:AVURLAssetAllowableCaptionFormatsKey];
     }
 
-    if (willUseWebMFormatReader)
-        registerFormatReaderIfNecessary();
-
-#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE) && HAVE(AVCONTENTKEYSPECIFIER)
-    if (!MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled() && PAL::canLoad_AVFoundation_AVURLAssetShouldEnableLegacyWebKitCompatibilityModeForContentKeyRequests())
+#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE)
+    if (!MediaSessionManagerCocoa::shouldUseModernAVContentKeySession() && PAL::canLoad_AVFoundation_AVURLAssetShouldEnableLegacyWebKitCompatibilityModeForContentKeyRequests())
         [options setObject:@YES forKey:AVURLAssetShouldEnableLegacyWebKitCompatibilityModeForContentKeyRequests];
 #endif
 
@@ -1052,10 +1009,9 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     AVAssetResourceLoader *resourceLoader = [m_avAsset resourceLoader];
     [resourceLoader setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
 
-    if (auto mediaResourceLoader = player->createResourceLoader()) {
-        m_targetDispatcher = mediaResourceLoader->targetDispatcher();
-        resourceLoader.URLSession = (NSURLSession *)adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:*mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue]).get();
-    }
+    Ref mediaResourceLoader = player->mediaResourceLoader();
+    m_targetDispatcher = mediaResourceLoader->targetDispatcher();
+    resourceLoader.URLSession = (NSURLSession *)adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue]).get();
 
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(chapterMetadataDidChange:) name:AVAssetChapterMetadataGroupsDidChangeNotification object:m_avAsset.get()];
 
@@ -1124,8 +1080,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 
     m_avPlayer.get().appliesMediaSelectionCriteriaAutomatically = NO;
 #if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
-    if ([m_avPlayer respondsToSelector:@selector(setVideoRangeOverride:)])
-        m_avPlayer.get().videoRangeOverride = convertDynamicRangeModeEnumToAVVideoRange(player->preferredDynamicRangeMode());
+    m_avPlayer.get().videoRangeOverride = convertDynamicRangeModeEnumToAVVideoRange(player->preferredDynamicRangeMode());
 #endif
 
     if ([m_videoLayer respondsToSelector:@selector(setToneMapToStandardDynamicRange:)])
@@ -1154,7 +1109,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     if (m_muted) {
         [m_avPlayer setMuted:m_muted];
 
-#if HAVE(AVPLAYER_SUPRESSES_AUDIO_RENDERING)
+#if HAVE(AVPLAYER_SUPPRESSES_AUDIO_RENDERING)
         if (player->isVideoPlayer())
             m_avPlayer.get().suppressesAudioRendering = YES;
 #endif
@@ -1394,8 +1349,7 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode(MediaPlayer::Vid
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)
     assertIsMainThread();
 
-    if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
-        [m_videoLayer setPIPModeEnabled:(mode & MediaPlayer::VideoFullscreenModePictureInPicture)];
+    [m_videoLayer setPIPModeEnabled:(mode & MediaPlayer::VideoFullscreenModePictureInPicture)];
     updateDisableExternalPlayback();
 #else
     UNUSED_PARAM(mode);
@@ -1685,7 +1639,7 @@ void MediaPlayerPrivateAVFoundationObjC::setMuted(bool muted)
         return;
 
     [m_avPlayer setMuted:m_muted];
-#if HAVE(AVPLAYER_SUPRESSES_AUDIO_RENDERING)
+#if HAVE(AVPLAYER_SUPPRESSES_AUDIO_RENDERING)
     if (!m_muted)
         m_avPlayer.get().suppressesAudioRendering = NO;
 #endif
@@ -2151,7 +2105,7 @@ static void fulfillRequestWithKeyData(AVAssetResourceLoadingRequest *request, Ar
         ASSERT(start <= std::numeric_limits<int>::max());
         ASSERT(end <= std::numeric_limits<int>::max());
         auto requestedKeyData = keyData->slice(static_cast<int>(start), static_cast<int>(end));
-        RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:requestedKeyData->data() length:requestedKeyData->byteLength()]);
+        RetainPtr nsData = toNSData(requestedKeyData->span());
         [dataRequest respondWithData:nsData.get()];
     }
 
@@ -2965,11 +2919,11 @@ void MediaPlayerPrivateAVFoundationObjC::keyAdded()
         m_keyURIToRequestMap.remove(keyId);
 }
 
-std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationObjC::createSession(const String& keySystem, LegacyCDMSessionClient& client)
+RefPtr<LegacyCDMSession> MediaPlayerPrivateAVFoundationObjC::createSession(const String& keySystem, LegacyCDMSessionClient& client)
 {
     if (!keySystemIsSupported(keySystem))
         return nullptr;
-    auto session = makeUnique<CDMSessionAVFoundationObjC>(this, client);
+    RefPtr session = CDMSessionAVFoundationObjC::create(this, client);
     m_session = *session;
     return WTFMove(session);
 }
@@ -3375,7 +3329,7 @@ MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateAVFoundationObjC::wire
 #if PLATFORM(IOS_FAMILY)
 static NSString *exernalDeviceDisplayNameForPlayer(AVPlayer *player)
 {
-#if HAVE(CELESTIAL)
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
     if (!PAL::isAVFoundationFrameworkAvailable())
         return nil;
 
@@ -3529,7 +3483,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback()
     if (!m_avPlayer)
         return;
 
-    if (RefPtr player = this->player(); player && [m_avPlayer respondsToSelector:@selector(setUsesExternalPlaybackWhileExternalScreenIsActive:)])
+    if (RefPtr player = this->player())
         [m_avPlayer setUsesExternalPlaybackWhileExternalScreenIsActive:(player->fullscreenMode() == MediaPlayer::VideoFullscreenModeStandard) || player->isVideoFullscreenStandby()];
 #endif
 }
@@ -3648,18 +3602,13 @@ void MediaPlayerPrivateAVFoundationObjC::setBufferingPolicy(MediaPlayer::Bufferi
     static_assert(static_cast<size_t>(MediaPlayer::BufferingPolicy::MakeResourcesPurgeable) == AVPlayerResourceConservationLevelReuseActivePlayerResources, "MediaPlayer::BufferingPolicy::MakeResourcesPurgeable is not AVPlayerResourceConservationLevelReuseActivePlayerResources as expected");
     static_assert(static_cast<size_t>(MediaPlayer::BufferingPolicy::PurgeResources) == AVPlayerResourceConservationLevelRecycleBuffer, "MediaPlayer::BufferingPolicy::PurgeResources is not AVPlayerResourceConservationLevelRecycleBuffer as expected");
 
-    if ([m_avPlayer respondsToSelector:@selector(setResourceConservationLevelWhilePaused:)]) {
-        m_avPlayer.get().resourceConservationLevelWhilePaused = static_cast<AVPlayerResourceConservationLevel>(policy);
+    m_avPlayer.get().resourceConservationLevelWhilePaused = static_cast<AVPlayerResourceConservationLevel>(policy);
 
-        // FIXME: Remove this workaround once rdar://123901202 is fixed.
-        if (isMovingFromResourcesPurgeableBufferPolicy && m_provider)
-            m_provider->recreateAudioMixIfNeeded();
+    // FIXME: Remove this workaround once rdar://123901202 is fixed.
+    if (isMovingFromResourcesPurgeableBufferPolicy && m_provider)
+        m_provider->recreateAudioMixIfNeeded();
 
-        updateStates();
-        return;
-    }
-#endif
-
+#else
     switch (policy) {
     case MediaPlayer::BufferingPolicy::Default:
         setAVPlayerItem(m_avPlayerItem.get());
@@ -3673,6 +3622,7 @@ void MediaPlayerPrivateAVFoundationObjC::setBufferingPolicy(MediaPlayer::Bufferi
         setAVPlayerItem(m_avPlayerItem.get());
         break;
     }
+#endif
 
     updateStates();
 }
@@ -3937,7 +3887,7 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateAVFoundationObjC::v
 
 std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateAVFoundationObjC::videoPlaybackQualityMetrics(AVPlayerLayer* videoLayer) const
 {
-    if (!videoLayer || ![videoLayer respondsToSelector:@selector(videoPerformanceMetrics)])
+    if (!videoLayer)
         return std::nullopt;
 
 #if PLATFORM(WATCHOS)
@@ -3949,16 +3899,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if (!metrics)
         return std::nullopt;
 
-    uint32_t displayCompositedFrames = 0;
-    if ([metrics respondsToSelector:@selector(numberOfDisplayCompositedVideoFrames)])
-        displayCompositedFrames = [metrics numberOfDisplayCompositedVideoFrames];
-
     return VideoPlaybackQualityMetrics {
         static_cast<uint32_t>([metrics totalNumberOfVideoFrames]),
         static_cast<uint32_t>([metrics numberOfDroppedVideoFrames]),
         static_cast<uint32_t>([metrics numberOfCorruptedVideoFrames]),
         [metrics totalFrameDelay],
-        displayCompositedFrames,
+        static_cast<uint32_t>([metrics numberOfDisplayCompositedVideoFrames]),
     };
 
 ALLOW_NEW_API_WITHOUT_GUARDS_END
@@ -4019,7 +3965,7 @@ END_BLOCK_OBJC_EXCEPTIONS
 void MediaPlayerPrivateAVFoundationObjC::setPreferredDynamicRangeMode(DynamicRangeMode mode)
 {
 #if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
-    if (m_avPlayer && [m_avPlayer respondsToSelector:@selector(setVideoRangeOverride:)])
+    if (m_avPlayer)
         m_avPlayer.get().videoRangeOverride = convertDynamicRangeModeEnumToAVVideoRange(mode);
 #else
     UNUSED_PARAM(mode);
@@ -4091,8 +4037,9 @@ void MediaPlayerPrivateAVFoundationObjC::updateSpatialTrackingLabel()
         return;
     }
 
-    if (m_videoLayer) {
-        // Let AVPlayer manage setting the spatial tracking label in its AVPlayerLayer itself;
+    if (m_videoLayer && isVisible()) {
+        // If the media player has a renderer, and that renderer belongs to a page that is visible,
+        // then let AVPlayer manage setting the spatial tracking label in its AVPlayerLayer itself;
         INFO_LOG(LOGIDENTIFIER, "No videoLayer, set STSLabel: nil");
         [m_avPlayer _setSTSLabel:nil];
         return;
@@ -4501,5 +4448,7 @@ NSArray* playerKVOProperties()
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

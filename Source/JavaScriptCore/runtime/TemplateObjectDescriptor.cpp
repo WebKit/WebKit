@@ -28,8 +28,6 @@
 
 namespace JSC {
 
-TemplateObjectDescriptor::~TemplateObjectDescriptor()
-{
-}
+TemplateObjectDescriptor::~TemplateObjectDescriptor() = default;
 
 } // namespace JSC

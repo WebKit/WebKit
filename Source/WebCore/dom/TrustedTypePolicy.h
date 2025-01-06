@@ -47,7 +47,7 @@ class WebCoreOpaqueRoot;
 enum class IfMissing : bool { Throw, ReturnNull };
 
 class TrustedTypePolicy : public ScriptWrappable, public RefCounted<TrustedTypePolicy> {
-    WTF_MAKE_ISO_ALLOCATED(TrustedTypePolicy);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TrustedTypePolicy);
 public:
     static Ref<TrustedTypePolicy> create(const String&, const TrustedTypePolicyOptions&);
     ~TrustedTypePolicy() = default;
@@ -57,7 +57,12 @@ public:
     ExceptionOr<String> getPolicyValue(TrustedType trustedTypeName, const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&, IfMissing = IfMissing::Throw);
     const String name() const { return m_name; }
 
-    const TrustedTypePolicyOptions& options() const { return m_options; }
+    const TrustedTypePolicyOptions& options() const
+    {
+        IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
+        return m_options;
+        IGNORE_CLANG_WARNINGS_END
+    }
     Lock& lock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
 private:

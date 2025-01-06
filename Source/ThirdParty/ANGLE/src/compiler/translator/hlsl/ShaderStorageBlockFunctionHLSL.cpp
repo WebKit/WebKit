@@ -102,7 +102,8 @@ void ShaderStorageBlockFunctionHLSL::OutputSSBOLoadFunctionBody(
     }
     else
     {
-        // TODO(jiajia.qin@intel.com): Process all possible return types. http://anglebug.com/1951
+        // TODO(jiajia.qin@intel.com): Process all possible return types.
+        // http://anglebug.com/40644618
         out << ";\n";
     }
 
@@ -189,7 +190,8 @@ void ShaderStorageBlockFunctionHLSL::OutputSSBOStoreFunctionBody(
     }
     else
     {
-        // TODO(jiajia.qin@intel.com): Process all possible return types. http://anglebug.com/1951
+        // TODO(jiajia.qin@intel.com): Process all possible return types.
+        // http://anglebug.com/40644618
     }
 }
 

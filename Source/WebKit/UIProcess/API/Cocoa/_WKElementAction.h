@@ -56,6 +56,9 @@ typedef NS_ENUM(NSInteger, _WKElementActionType) {
     _WKElementActionTypeImageExtraction WK_API_AVAILABLE(ios(15.0)),
     _WKElementActionTypeRevealImage WK_API_AVAILABLE(ios(15.0)),
     _WKElementActionTypeCopyCroppedImage WK_API_AVAILABLE(ios(16.0)),
+#if defined(TARGET_OS_VISION) && TARGET_OS_VISION && __VISION_OS_VERSION_MIN_REQUIRED >= 20000
+    _WKElementActionTypeViewSpatial WK_API_AVAILABLE(visionos(WK_XROS_TBA)),
+#endif
     _WKElementActionPlayAnimation,
     _WKElementActionPauseAnimation,
 } WK_API_AVAILABLE(macos(10.10), ios(8.0));

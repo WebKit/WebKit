@@ -47,8 +47,10 @@
 #include "ProcessProviderLibWPE.h"
 #endif
 
-#if !USE(SYSTEM_MALLOC) && OS(LINUX)
-#include <bmalloc/valgrind.h>
+#if USE(SYSPROF_CAPTURE)
+#include <wtf/text/StringToIntegerConversion.h>
+#include <wtf/text/StringView.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 #endif
 
 namespace WebKit {
@@ -56,6 +58,7 @@ namespace WebKit {
 #if OS(LINUX)
 static bool isFlatpakSpawnUsable()
 {
+    ASSERT(isInsideFlatpak());
     static std::optional<bool> ret;
     if (ret)
         return *ret;
@@ -89,61 +92,44 @@ static int connectionOptions()
     return IPC::PlatformConnectionOptions::SetCloexecOnClient | IPC::PlatformConnectionOptions::SetCloexecOnServer;
 }
 
-static bool isSandboxEnabled(const ProcessLauncher::LaunchOptions& launchOptions)
-{
-#if !USE(SYSTEM_MALLOC)
-    if (RUNNING_ON_VALGRIND)
-        return false;
-#endif
-
-    if (const char* sandboxEnv = g_getenv("WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS")) {
-        if (!strcmp(sandboxEnv, "1"))
-            return false;
-    }
-
-#if !ENABLE(2022_GLIB_API)
-    if (const char* sandboxEnv = g_getenv("WEBKIT_FORCE_SANDBOX")) {
-        if (!strcmp(sandboxEnv, "1"))
-            return true;
-
-        static bool once = false;
-        if (!once) {
-            g_warning("WEBKIT_FORCE_SANDBOX no longer allows disabling the sandbox. Use WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1 instead.");
-            once = true;
-        }
-    }
-#endif
-
-    return launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s) == "true"_s;
-}
-
 void ProcessLauncher::launchProcess()
 {
-    IPC::SocketPair socketPair = IPC::createPlatformConnection(connectionOptions());
+#if ENABLE(BUBBLEWRAP_SANDBOX)
+    RELEASE_ASSERT(m_launchOptions.processType != ProcessLauncher::ProcessType::DBusProxy);
+#endif
 
     GUniquePtr<gchar> processIdentifier(g_strdup_printf("%" PRIu64, m_launchOptions.processIdentifier.toUInt64()));
-    GUniquePtr<gchar> webkitSocket(g_strdup_printf("%d", socketPair.client));
+
+    IPC::SocketPair webkitSocketPair = IPC::createPlatformConnection(connectionOptions());
+    GUniquePtr<gchar> webkitSocket(g_strdup_printf("%d", webkitSocketPair.client.value()));
 
 #if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
     if (ProcessProviderLibWPE::singleton().isEnabled()) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
         unsigned nargs = 3;
         char** argv = g_newa(char*, nargs);
         unsigned i = 0;
         argv[i++] = processIdentifier.get();
         argv[i++] = webkitSocket.get();
         argv[i++] = nullptr;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-        m_processID = ProcessProviderLibWPE::singleton().launchProcess(m_launchOptions, argv, socketPair.client);
+        m_processID = ProcessProviderLibWPE::singleton().launchProcess(m_launchOptions, argv, webkitSocketPair.client.value());
         if (m_processID <= -1)
             g_error("Unable to spawn a new child process");
 
         // We've finished launching the process, message back to the main run loop.
-        RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = socketPair.server] {
-            didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { serverSocket });
+        RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = WTFMove(webkitSocketPair.server)] mutable {
+            didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { WTFMove(serverSocket) });
         });
 
         return;
     }
+#endif
+
+#if OS(LINUX)
+    IPC::SocketPair pidSocketPair = IPC::createPlatformConnection(IPC::PlatformConnectionOptions::SetCloexecOnClient | IPC::PlatformConnectionOptions::SetCloexecOnServer | IPC::PlatformConnectionOptions::SetPasscredOnServer);
+    GUniquePtr<gchar> pidSocketString(g_strdup_printf("%d", pidSocketPair.client.value()));
 #endif
 
     String executablePath;
@@ -166,7 +152,7 @@ void ProcessLauncher::launchProcess()
     }
 
     realExecutablePath = FileSystem::fileSystemRepresentation(executablePath);
-    unsigned nargs = 4; // size of the argv array for g_spawn_async()
+    unsigned nargs = 5; // size of the argv array for g_spawn_async()
 
 #if ENABLE(DEVELOPER_MODE)
     Vector<CString> prefixArgs;
@@ -183,6 +169,8 @@ void ProcessLauncher::launchProcess()
     }
 #endif
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
+
     char** argv = g_newa(char*, nargs);
     unsigned i = 0;
 #if ENABLE(DEVELOPER_MODE)
@@ -193,11 +181,14 @@ void ProcessLauncher::launchProcess()
     argv[i++] = const_cast<char*>(realExecutablePath.data());
     argv[i++] = processIdentifier.get();
     argv[i++] = webkitSocket.get();
+    argv[i++] = pidSocketString.get();
 #if ENABLE(DEVELOPER_MODE)
     if (configureJSCForTesting)
         argv[i++] = const_cast<char*>("--configure-jsc-for-testing");
 #endif
     argv[i++] = nullptr;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     // Warning: we want GIO to be able to spawn with posix_spawn() rather than fork()/exec(), in
     // order to better accommodate applications that use a huge amount of memory or address space
@@ -209,21 +200,40 @@ void ProcessLauncher::launchProcess()
     //
     // Please keep this comment in sync with the duplicate comment in XDGDBusProxy::launch.
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
-    g_subprocess_launcher_take_fd(launcher.get(), socketPair.client, socketPair.client);
+    int webkitClientSocketValue = webkitSocketPair.client.release();
+    g_subprocess_launcher_take_fd(launcher.get(), webkitClientSocketValue, webkitClientSocketValue);
+#if OS(LINUX)
+    int pidClientSocketValue = pidSocketPair.client.release();
+    g_subprocess_launcher_take_fd(launcher.get(), pidClientSocketValue, pidClientSocketValue);
+#endif
+
+#if USE(SYSPROF_CAPTURE)
+    UnixFileDescriptor sysprofFd;
+
+    if (const char* sysprofFdStr = getenv("SYSPROF_CONTROL_FD"))
+        sysprofFd = UnixFileDescriptor(parseInteger<int>(StringView(span(sysprofFdStr))).value_or(-1), UnixFileDescriptor::Duplicate);
+
+    if (sysprofFd) {
+        int fd = sysprofFd.release();
+        GUniquePtr<char> fdStr(g_strdup_printf("%d", fd));
+        g_subprocess_launcher_setenv(launcher.get(), "SYSPROF_CONTROL_FD", fdStr.get(), TRUE);
+        g_subprocess_launcher_take_fd(launcher.get(), fd, fd);
+    }
+#endif
 
     GUniqueOutPtr<GError> error;
     GRefPtr<GSubprocess> process;
 
 #if OS(LINUX)
-    bool sandboxEnabled = isSandboxEnabled(m_launchOptions);
+    bool sandboxEnabled = m_launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s) == "true"_s;
 
-    if (sandboxEnabled && isFlatpakSpawnUsable())
-        process = flatpakSpawn(launcher.get(), m_launchOptions, argv, socketPair.client, &error.outPtr());
+    if (sandboxEnabled && isInsideFlatpak() && isFlatpakSpawnUsable())
+        process = flatpakSpawn(launcher.get(), m_launchOptions, argv, webkitClientSocketValue, pidClientSocketValue, &error.outPtr());
 #if ENABLE(BUBBLEWRAP_SANDBOX)
     // You cannot use bubblewrap within Flatpak or some containers so lets ensure it never happens.
     // Snap can allow it but has its own limitations that require workarounds.
-    else if (sandboxEnabled && !isInsideFlatpak() && !isInsideSnap() && !isInsideUnsupportedContainer())
-        process = bubblewrapSpawn(launcher.get(), m_launchOptions, argv, &error.outPtr());
+    else if (sandboxEnabled && shouldUseBubblewrap())
+        process = bubblewrapSpawn(launcher.get(), m_launchOptions, m_dbusProxy, argv, &error.outPtr());
 #endif // ENABLE(BUBBLEWRAP_SANDBOX)
     else
 #endif // OS(LINUX)
@@ -232,6 +242,29 @@ void ProcessLauncher::launchProcess()
     if (!process.get())
         g_error("Unable to spawn a new child process: %s", error->message);
 
+#if OS(LINUX)
+    GRefPtr<GSocket> pidSocket = adoptGRef(g_socket_new_from_fd(pidSocketPair.server.release(), &error.outPtr()));
+    if (!pidSocket)
+        // Note: g_socket_new_from_fd() takes ownership of the fd only on success, so if this error
+        // were not fatal, we would need to close it here.
+        g_error("Failed to create pid socket wrapper: %s", error->message);
+
+    // We need to get the pid of the actual WebKit auxiliary process, not the bwrap or flatpak-spawn
+    // intermediate process. And do it without blocking, because process launching is slow.
+    g_socket_set_blocking(pidSocket.get(), FALSE);
+    m_socketMonitor.start(pidSocket.get(), G_IO_IN, RunLoop::main(), [protectedThis = Ref { *this }, this, pidSocket, serverSocket = WTFMove(webkitSocketPair.server)](GIOCondition condition) mutable -> gboolean {
+        if (!(condition & G_IO_IN))
+            g_error("Failed to read pid from child process");
+
+        m_processID = IPC::readPIDFromPeer(g_socket_get_fd(pidSocket.get()));
+        RELEASE_ASSERT(m_processID);
+
+        m_socketMonitor.stop();
+
+        didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { WTFMove(serverSocket) });
+        return G_SOURCE_REMOVE;
+    });
+#else
     const char* processIdStr = g_subprocess_get_identifier(process.get());
     if (!processIdStr)
         g_error("Spawned process died immediately. This should not happen.");
@@ -239,10 +272,10 @@ void ProcessLauncher::launchProcess()
     m_processID = g_ascii_strtoll(processIdStr, nullptr, 0);
     RELEASE_ASSERT(m_processID);
 
-    // We've finished launching the process, message back to the main run loop.
-    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = socketPair.server] {
-        didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { serverSocket });
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = WTFMove(webkitSocketPair.server)] {
+        didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { WTFMove(serverSocket) });
     });
+#endif
 }
 
 void ProcessLauncher::terminateProcess()

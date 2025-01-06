@@ -49,7 +49,7 @@ static ServiceWorkerClientFrameType toServiceWorkerClientFrameType(ScriptExecuti
         return ServiceWorkerClientFrameType::None;
 
     if (frame->isMainFrame()) {
-        if (auto* window = document->domWindow()) {
+        if (RefPtr window = document->domWindow()) {
             if (window->opener())
                 return ServiceWorkerClientFrameType::Auxiliary;
         }

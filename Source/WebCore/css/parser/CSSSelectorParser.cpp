@@ -32,6 +32,8 @@
 
 #include "CSSParserEnum.h"
 #include "CSSParserIdioms.h"
+#include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSSelector.h"
 #include "CSSSelectorInlines.h"
 #include "CSSTokenizer.h"
@@ -51,14 +53,47 @@ namespace WebCore {
 static AtomString serializeANPlusB(const std::pair<int, int>&);
 static bool consumeANPlusB(CSSParserTokenRange&, std::pair<int, int>&);
 
-MutableCSSSelectorList parseMutableCSSSelectorList(CSSParserTokenRange& range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext, CSSParserEnum::IsForgiving isForgiving)
+static void appendImplicitSelectorPseudoClassScopeIfNeeded(MutableCSSSelector& selector)
 {
-    CSSSelectorParser parser(context, styleSheet, isNestedContext);
+    if ((!selector.hasExplicitNestingParent() && !selector.hasExplicitPseudoClassScope()) || selector.startsWithExplicitCombinator()) {
+        auto scopeSelector = makeUnique<MutableCSSSelector>();
+        scopeSelector->setMatch(CSSSelector::Match::PseudoClass);
+        scopeSelector->setPseudoClass(CSSSelector::PseudoClass::Scope);
+        scopeSelector->setImplicit();
+        selector.appendTagHistoryAsRelative(WTFMove(scopeSelector));
+    }
+}
+
+static void appendImplicitSelectorNestingParentIfNeeded(MutableCSSSelector& selector)
+{
+    if (!selector.hasExplicitNestingParent() || selector.startsWithExplicitCombinator()) {
+        auto nestingParentSelector = makeUnique<MutableCSSSelector>();
+        nestingParentSelector->setMatch(CSSSelector::Match::NestingParent);
+        // https://drafts.csswg.org/css-nesting/#nesting
+        // Spec: nested rules with relative selectors include the specificity of their implied nesting selector.
+        selector.appendTagHistoryAsRelative(WTFMove(nestingParentSelector));
+    }
+}
+
+static void appendImplicitSelectorIfNeeded(MutableCSSSelector& selector, CSSParserEnum::NestedContextType last)
+{
+    if (last == CSSParserEnum::NestedContextType::Style) {
+        // For a rule inside a style rule, we had the implicit & if it's not there already or if it starts with a combinator > ~ +
+        appendImplicitSelectorNestingParentIfNeeded(selector);
+    } else if (last == CSSParserEnum::NestedContextType::Scope) {
+        // For a rule inside a scope rule, we had the implicit ":scope" if there is no explicit & or :scope already
+        appendImplicitSelectorPseudoClassScopeIfNeeded(selector);
+    }
+}
+
+MutableCSSSelectorList parseMutableCSSSelectorList(CSSParserTokenRange& range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::NestedContext nestedContext, CSSParserEnum::IsForgiving isForgiving)
+{
+    CSSSelectorParser parser(context, styleSheet, nestedContext);
     range.consumeWhitespace();
     auto consume = [&] {
-        if (isNestedContext == CSSParserEnum::IsNestedContext::Yes && isForgiving == CSSParserEnum::IsForgiving::No)
+        if (nestedContext && isForgiving == CSSParserEnum::IsForgiving::No)
             return parser.consumeNestedSelectorList(range);
-        if (isNestedContext == CSSParserEnum::IsNestedContext::Yes && isForgiving == CSSParserEnum::IsForgiving::Yes)
+        if (nestedContext && isForgiving == CSSParserEnum::IsForgiving::Yes)
             return parser.consumeNestedComplexForgivingSelectorList(range);
         if (isForgiving == CSSParserEnum::IsForgiving::Yes)
             return parser.consumeComplexForgivingSelectorList(range);
@@ -67,12 +102,19 @@ MutableCSSSelectorList parseMutableCSSSelectorList(CSSParserTokenRange& range, c
     auto result = consume();
     if (result.isEmpty() || !range.atEnd())
         return { };
+
+    // In nested context, add the implicit :scope or &
+    if (nestedContext) {
+        for (auto& selector : result)
+            appendImplicitSelectorIfNeeded(*selector, *nestedContext);
+    }
+
     return result;
 }
 
-std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext)
+std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::NestedContext nestedContext)
 {
-    auto result = parseMutableCSSSelectorList(range, context, styleSheet, isNestedContext, CSSParserEnum::IsForgiving::No);
+    auto result = parseMutableCSSSelectorList(range, context, styleSheet, nestedContext, CSSParserEnum::IsForgiving::No);
 
     if (result.isEmpty() || !range.atEnd())
         return { };
@@ -80,10 +122,10 @@ std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange range, c
     return CSSSelectorList { WTFMove(result) };
 }
 
-CSSSelectorParser::CSSSelectorParser(const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext)
+CSSSelectorParser::CSSSelectorParser(const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::NestedContext nestedContext)
     : m_context(context)
     , m_styleSheet(styleSheet)
-    , m_isNestedContext(isNestedContext)
+    , m_nestedContext(nestedContext)
 {
 }
 
@@ -207,19 +249,15 @@ MutableCSSSelectorList CSSSelectorParser::consumeNestedComplexForgivingSelectorL
     });
 }
 
-bool CSSSelectorParser::supportsComplexSelector(CSSParserTokenRange range, const CSSSelectorParserContext& context, CSSParserEnum::IsNestedContext isNestedContext)
+bool CSSSelectorParser::supportsComplexSelector(CSSParserTokenRange range, const CSSSelectorParserContext& context)
 {
     range.consumeWhitespace();
-    CSSSelectorParser parser(context, nullptr, isNestedContext);
+    CSSSelectorParser parser(context, nullptr);
 
     // @supports requires that all arguments parse.
     parser.m_disableForgivingParsing = true;
 
-    std::unique_ptr<MutableCSSSelector> mutableSelector;
-    if (isNestedContext == CSSParserEnum::IsNestedContext::Yes)
-        mutableSelector = parser.consumeNestedComplexSelector(range);
-    else
-        mutableSelector = parser.consumeComplexSelector(range);
+    auto mutableSelector = parser.consumeComplexSelector(range);
 
     if (parser.m_failedParsing || !range.atEnd() || !mutableSelector)
         return false;
@@ -275,6 +313,27 @@ static FixedVector<PossiblyQuotedIdentifier> consumeLangArgumentList(CSSParserTo
         list.append(WTFMove(item));
     }
     return FixedVector<PossiblyQuotedIdentifier> { WTFMove(list) };
+}
+
+static std::optional<FixedVector<AtomString>> consumeCommaSeparatedCustomIdentList(CSSParserTokenRange& range)
+{
+    Vector<AtomString> customIdents { };
+
+    do {
+        auto ident = CSSPropertyParserHelpers::consumeCustomIdentRaw(range, /* shouldLowercase */ true);
+        if (ident.isEmpty())
+            return std::nullopt;
+
+        customIdents.append(WTFMove(ident));
+    } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
+
+    if (!range.atEnd())
+        return std::nullopt;
+
+    // The parsing code guarantees there has to be at least one custom ident.
+    ASSERT(!customIdents.isEmpty());
+
+    return FixedVector<AtomString> { WTFMove(customIdents) };
 }
 
 enum class CompoundSelectorFlag {
@@ -802,7 +861,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
             auto list = consumeLangArgumentList(block);
             if (list.isEmpty() || !block.atEnd())
                 return nullptr;
-            selector->setArgumentList(WTFMove(list));
+            selector->setLangList(WTFMove(list));
             return selector;
         }
         case CSSSelector::PseudoClass::Is:
@@ -853,6 +912,13 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
             selector->setArgument(ident.value().toAtomString());
             return selector;
         }
+        case CSSSelector::PseudoClass::ActiveViewTransitionType: {
+            auto typeList = consumeCommaSeparatedCustomIdentList(block);
+            if (!typeList)
+                return nullptr;
+            selector->setArgumentList(WTFMove(*typeList));
+            return selector;
+        }
         default:
             break;
         }
@@ -881,27 +947,53 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
         case CSSSelector::PseudoElement::ViewTransitionImagePair:
         case CSSSelector::PseudoElement::ViewTransitionOld:
         case CSSSelector::PseudoElement::ViewTransitionNew: {
-            auto& ident = block.consumeIncludingWhitespace();
+            Vector<AtomString> nameAndClasses;
+
+            // Check for implicit universal selector.
+            if (m_context.viewTransitionClassesEnabled && block.peek().type() == DelimiterToken && block.peek().delimiter() == '.')
+                nameAndClasses.append(starAtom());
+
+            // Parse name or explicit universal selector.
+            if (nameAndClasses.isEmpty()) {
+                const auto& ident = block.consume();
+                if (ident.type() == IdentToken && isValidCustomIdentifier(ident.id()))
+                    nameAndClasses.append(ident.value().toAtomString());
+                else if (ident.type() == DelimiterToken && ident.delimiter() == '*')
+                    nameAndClasses.append(starAtom());
+                else
+                    return nullptr;
+            }
+
+            // Parse classes.
+            if (m_context.viewTransitionClassesEnabled) {
+                while (!block.atEnd() && !CSSTokenizer::isWhitespace(block.peek().type())) {
+                    if (block.peek().type() != DelimiterToken || block.consume().delimiter() != '.')
+                        return nullptr;
+
+                    if (block.peek().type() != IdentToken)
+                        return nullptr;
+                    nameAndClasses.append({ block.consume().value().toAtomString() });
+                }
+            }
+
+            block.consumeWhitespace();
+
             if (!block.atEnd())
                 return nullptr;
-            if (ident.type() == IdentToken && isValidCustomIdentifier(ident.id()))
-                selector->setArgumentList({ { ident.value().toAtomString() } });
-            else if (ident.type() == DelimiterToken && ident.delimiter() == '*')
-                selector->setArgumentList({ { starAtom() } });
-            else
-                return nullptr;
+
+            selector->setArgumentList(FixedVector<AtomString> { WTFMove(nameAndClasses) });
             return selector;
         }
 
         case CSSSelector::PseudoElement::Part: {
-            Vector<PossiblyQuotedIdentifier> argumentList;
+            Vector<AtomString> argumentList;
             do {
                 auto& ident = block.consumeIncludingWhitespace();
                 if (ident.type() != IdentToken)
                     return nullptr;
-                argumentList.append({ ident.value().toAtomString() });
+                argumentList.append(ident.value().toAtomString());
             } while (!block.atEnd());
-            selector->setArgumentList(FixedVector<PossiblyQuotedIdentifier> { WTFMove(argumentList) });
+            selector->setArgumentList(FixedVector<AtomString> { WTFMove(argumentList) });
             return selector;
         }
         case CSSSelector::PseudoElement::Slotted: {
@@ -923,7 +1015,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
 CSSSelector::Relation CSSSelectorParser::consumeCombinator(CSSParserTokenRange& range)
 {
     auto fallbackResult = CSSSelector::Relation::Subselector;
-    while (range.peek().type() == WhitespaceToken) {
+    while (CSSTokenizer::isWhitespace(range.peek().type())) {
         range.consume();
         fallbackResult = CSSSelector::Relation::DescendantSpace;
     }
@@ -1127,7 +1219,7 @@ void CSSSelectorParser::prependTypeSelectorIfNeeded(const AtomString& namespaceP
     // ::cue), we need a universal selector to set the combinator
     // (relation) on in the cases where there are no simple selectors preceding
     // the pseudo element.
-    bool isHostPseudo = compoundSelector.isHostPseudoSelector();
+    bool isHostPseudo = compoundSelector.isHostPseudoClass();
     if (isHostPseudo && elementName.isNull() && namespacePrefix.isNull())
         return;
     if (tag != anyQName() || isHostPseudo || isShadowDOM)

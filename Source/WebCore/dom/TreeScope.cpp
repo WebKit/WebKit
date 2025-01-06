@@ -32,6 +32,7 @@
 #include "Attr.h"
 #include "CSSStyleSheet.h"
 #include "CSSStyleSheetObservableArray.h"
+#include "CustomElementRegistry.h"
 #include "FocusController.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -62,17 +63,28 @@
 namespace WebCore {
 
 struct SameSizeAsTreeScope {
-    void* pointers[12];
+    void* pointers[13];
 };
 
 static_assert(sizeof(TreeScope) == sizeof(SameSizeAsTreeScope), "treescope should stay small");
 
 using namespace HTMLNames;
 
-TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document)
+struct SVGResourcesMap {
+    WTF_MAKE_NONCOPYABLE(SVGResourcesMap);
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    SVGResourcesMap() = default;
+
+    MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResources;
+    MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResourcesForRemoval;
+    MemoryCompactRobinHoodHashMap<AtomString, LegacyRenderSVGResourceContainer*> legacyResources;
+};
+
+TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document, RefPtr<CustomElementRegistry>&& registry)
     : m_rootNode(shadowRoot)
     , m_documentScope(document)
     , m_parentTreeScope(&document)
+    , m_customElementRegistry(WTFMove(registry))
 {
     shadowRoot.setTreeScope(*this);
 }
@@ -89,18 +101,18 @@ TreeScope::~TreeScope() = default;
 
 void TreeScope::ref() const
 {
-    if (auto* document = dynamicDowncast<Document>(m_rootNode))
+    if (auto* document = dynamicDowncast<Document>(m_rootNode.get()))
         document->ref();
     else
-        downcast<ShadowRoot>(m_rootNode).ref();
+        downcast<ShadowRoot>(m_rootNode.get()).ref();
 }
 
 void TreeScope::deref() const
 {
-    if (auto* document = dynamicDowncast<Document>(m_rootNode))
+    if (auto* document = dynamicDowncast<Document>(m_rootNode.get()))
         document->deref();
     else
-        downcast<ShadowRoot>(m_rootNode).deref();
+        downcast<ShadowRoot>(m_rootNode.get()).deref();
 }
 
 IdTargetObserverRegistry& TreeScope::ensureIdTargetObserverRegistry()
@@ -122,10 +134,41 @@ void TreeScope::destroyTreeScopeData()
 void TreeScope::setParentTreeScope(TreeScope& newParentScope)
 {
     // A document node cannot be re-parented.
-    ASSERT(!m_rootNode.isDocumentNode());
+    ASSERT(!m_rootNode->isDocumentNode());
 
     m_parentTreeScope = &newParentScope;
     setDocumentScope(newParentScope.documentScope());
+}
+
+void TreeScope::setCustomElementRegistry(Ref<CustomElementRegistry>&& registry)
+{
+    if (!m_customElementRegistry)
+        m_customElementRegistry = WTFMove(registry);
+}
+
+ExceptionOr<Ref<Node>> TreeScope::importNode(Node& nodeToImport, bool deep)
+{
+    switch (nodeToImport.nodeType()) {
+    case Node::DOCUMENT_FRAGMENT_NODE:
+        if (nodeToImport.isShadowRoot())
+            break;
+        FALLTHROUGH;
+    case Node::ELEMENT_NODE:
+    case Node::TEXT_NODE:
+    case Node::CDATA_SECTION_NODE:
+    case Node::PROCESSING_INSTRUCTION_NODE:
+    case Node::COMMENT_NODE:
+        return nodeToImport.cloneNodeInternal(*this, deep ? Node::CloningOperation::Everything : Node::CloningOperation::OnlySelf);
+
+    case Node::ATTRIBUTE_NODE: {
+        auto& attribute = uncheckedDowncast<Attr>(nodeToImport);
+        return Ref<Node> { Attr::create(documentScope(), attribute.qualifiedName(), attribute.value()) };
+    }
+    case Node::DOCUMENT_NODE: // Can't import a document into another document.
+    case Node::DOCUMENT_TYPE_NODE: // FIXME: Support cloning a DocumentType node per DOM4.
+        break;
+    }
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 RefPtr<Element> TreeScope::getElementById(const AtomString& elementId) const
@@ -332,7 +375,7 @@ const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScope::label
         // Populate the map on first access.
         m_labelsByForAttribute = makeUnique<TreeScopeOrderedMap>();
 
-        for (Ref label : descendantsOfType<HTMLLabelElement>(m_rootNode)) {
+        for (Ref label : descendantsOfType<HTMLLabelElement>(m_rootNode.get())) {
             const AtomString& forValue = label->attributeWithoutSynchronization(forAttr);
             if (!forValue.isEmpty())
                 addLabel(forValue, label);
@@ -463,7 +506,7 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
         lastNode = node;
     }
 
-    if (auto* rootDocument = dynamicDowncast<Document>(m_rootNode)) {
+    if (auto* rootDocument = dynamicDowncast<Document>(m_rootNode.get())) {
         if (Element* rootElement = rootDocument->documentElement()) {
             if (elements.isEmpty() || elements.last() != rootElement)
                 elements.append(rootElement);
@@ -482,7 +525,7 @@ RefPtr<Element> TreeScope::findAnchor(StringView name)
     if (RefPtr element = getElementById(name))
         return element;
     auto inQuirksMode = documentScope().inQuirksMode();
-    Ref rootNode = m_rootNode;
+    Ref rootNode = m_rootNode.get();
     for (Ref anchor : descendantsOfType<HTMLAnchorElement>(rootNode)) {
         if (inQuirksMode) {
             // Quirks mode, ASCII case-insensitive comparison of names.
@@ -582,7 +625,7 @@ RadioButtonGroups& TreeScope::radioButtonGroups()
 CSSStyleSheetObservableArray& TreeScope::ensureAdoptedStyleSheets()
 {
     if (UNLIKELY(!m_adoptedStyleSheets))
-        m_adoptedStyleSheets = CSSStyleSheetObservableArray::create(m_rootNode);
+        m_adoptedStyleSheets = CSSStyleSheetObservableArray::create(m_rootNode.get());
     return *m_adoptedStyleSheets;
 }
 
@@ -602,15 +645,6 @@ ExceptionOr<void> TreeScope::setAdoptedStyleSheets(Vector<Ref<CSSStyleSheet>>&& 
         return { };
     return ensureAdoptedStyleSheets().setSheets(WTFMove(sheets));
 }
-
-struct SVGResourcesMap {
-    WTF_MAKE_NONCOPYABLE(SVGResourcesMap); WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    SVGResourcesMap() = default;
-
-    MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResources;
-    MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResourcesForRemoval;
-    MemoryCompactRobinHoodHashMap<AtomString, LegacyRenderSVGResourceContainer*> legacyResources;
-};
 
 SVGResourcesMap& TreeScope::svgResourcesMap() const
 {

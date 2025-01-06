@@ -25,7 +25,8 @@
 namespace WebCore {
 
 class SVGPolygonElement final : public SVGPolyElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGPolygonElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGPolygonElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGPolygonElement);
 public:
     static Ref<SVGPolygonElement> create(const QualifiedName&, Document&);
 

@@ -24,6 +24,7 @@
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ class ResourceResponse;
 namespace WebKit {
 
 class WebKitWebResourceLoadManager {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebKitWebResourceLoadManager);
 public:
     explicit WebKitWebResourceLoadManager(WebKitWebView*);
     ~WebKitWebResourceLoadManager();

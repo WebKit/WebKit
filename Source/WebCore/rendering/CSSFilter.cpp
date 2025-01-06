@@ -39,8 +39,11 @@
 #include "SVGFilter.h"
 #include "SVGFilterElement.h"
 #include "SourceGraphic.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFilter);
 
 RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperations& operations, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
 {
@@ -354,7 +357,7 @@ RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage, FilterResults& re
     return result;
 }
 
-FilterStyleVector CSSFilter::createFilterStyles(const FilterStyle& sourceStyle) const
+FilterStyleVector CSSFilter::createFilterStyles(GraphicsContext& context, const FilterStyle& sourceStyle) const
 {
     ASSERT(supportedFilterRenderingModes().contains(FilterRenderingMode::GraphicsContext));
 
@@ -365,7 +368,7 @@ FilterStyleVector CSSFilter::createFilterStyles(const FilterStyle& sourceStyle) 
         if (function->filterType() == FilterEffect::Type::SourceGraphic)
             continue;
 
-        auto result = function->createFilterStyles(*this, lastStyle);
+        auto result = function->createFilterStyles(context, *this, lastStyle);
         if (result.isEmpty())
             return { };
 

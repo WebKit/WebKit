@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,6 +24,7 @@ import json
 import logging
 import os
 import requests
+import socket
 
 _log = logging.getLogger(__name__)
 
@@ -69,3 +70,12 @@ def load_password(name, default=None):
     except Exception as e:
         _log.error('Error in finding {} in passwords.json'.format(name))
     return default
+
+
+def get_custom_suffix():
+    hostname = socket.gethostname().strip()
+    if 'dev' in hostname:
+        return '-dev'
+    if 'uat' in hostname:
+        return '-uat'
+    return ''

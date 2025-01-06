@@ -27,12 +27,12 @@
 #include "BlockFormattingState.h"
 
 #include "RenderObject.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(BlockFormattingState);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BlockFormattingState);
 
 BlockFormattingState::BlockFormattingState(LayoutState& layoutState, const ElementBox& blockFormattingContextRoot)
     : FormattingState(Type::Block, layoutState)

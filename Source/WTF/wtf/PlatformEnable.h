@@ -87,7 +87,7 @@
 
 /* --------- Windows port --------- */
 #if PLATFORM(WIN)
-#include <wtf/PlatformEnableWinCairo.h>
+#include <wtf/PlatformEnableWin.h>
 #endif
 
 /* --------- PlayStation port --------- */
@@ -103,6 +103,10 @@
 /* ---------  ENABLE macro defaults --------- */
 
 /* Do not use PLATFORM() tests in this section ! */
+
+#if !defined(ENABLE_CONJECTURE_ASSERT)
+#define ENABLE_CONJECTURE_ASSERT 0
+#endif
 
 #if !defined(ENABLE_ACCESSIBILITY_ANIMATION_CONTROL)
 #define ENABLE_ACCESSIBILITY_ANIMATION_CONTROL 0
@@ -162,10 +166,6 @@
 
 #if !defined(ENABLE_CONTEXT_MENU_EVENT)
 #define ENABLE_CONTEXT_MENU_EVENT 1
-#endif
-
-#if !defined(ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-#define ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D 0
 #endif
 
 #if !defined(ENABLE_CUSTOM_CURSOR_SUPPORT)
@@ -288,6 +288,10 @@
 #define ENABLE_INPUT_TYPE_WEEK 0
 #endif
 
+#if !defined(ENABLE_INPUT_TYPE_WEEK_PICKER)
+#define ENABLE_INPUT_TYPE_WEEK_PICKER 0
+#endif
+
 #if !defined(ENABLE_IOS_GESTURE_EVENTS)
 #define ENABLE_IOS_GESTURE_EVENTS 0
 #endif
@@ -337,6 +341,10 @@
 
 #if !defined(ENABLE_MEDIA_RECORDER)
 #define ENABLE_MEDIA_RECORDER 0
+#endif
+
+#if !defined(ENABLE_MEDIA_RECORDER_WEBM)
+#define ENABLE_MEDIA_RECORDER_WEBM 0
 #endif
 
 #if !defined(ENABLE_MEDIA_SOURCE)
@@ -553,12 +561,24 @@
 #define ENABLE_WEBXR_HANDS 0
 #endif
 
+#if !defined(ENABLE_WEBXR_WEBGPU_BY_DEFAULT)
+#define ENABLE_WEBXR_WEBGPU_BY_DEFAULT 0
+#endif
+
+#if !defined(ENABLE_WEBXR_LAYERS)
+#define ENABLE_WEBXR_LAYERS (PLATFORM(VISION) && __VISION_OS_VERSION_MAX_ALLOWED >= 20200)
+#endif
+
 #if !defined(ENABLE_WHEEL_EVENT_LATCHING)
 #define ENABLE_WHEEL_EVENT_LATCHING 0
 #endif
 
 #if !defined(ENABLE_WHEEL_EVENT_REGIONS)
 #define ENABLE_WHEEL_EVENT_REGIONS 0
+#endif
+
+#if !defined(ENABLE_WRITING_TOOLS)
+#define ENABLE_WRITING_TOOLS 0
 #endif
 
 #if !defined(ENABLE_WKPDFVIEW)
@@ -579,6 +599,16 @@
  */
 #if !defined(ENABLE_MALLOC_HEAP_BREAKDOWN)
 #define ENABLE_MALLOC_HEAP_BREAKDOWN 0
+#endif
+
+// See RefTrackerMixin.h
+#if ASSERT_ENABLED
+#undef ENABLE_REFTRACKER
+#define ENABLE_REFTRACKER 1
+#endif
+
+#if !defined(ENABLE_REFTRACKER)
+#define ENABLE_REFTRACKER 0
 #endif
 
 #if !defined(ENABLE_CFPREFS_DIRECT_MODE)
@@ -674,7 +704,7 @@
 #if !defined(ENABLE_DFG_JIT) && ENABLE(JIT)
 
 /* Enable the DFG JIT on X86 and X86_64. */
-#if CPU(X86_64) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HURD) || OS(WINDOWS))
+#if CPU(X86_64) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HAIKU) || OS(HURD) || OS(WINDOWS))
 #define ENABLE_DFG_JIT 1
 #endif
 
@@ -704,20 +734,14 @@
 #define ENABLE_FAST_TLS_JIT 1
 #endif
 
-/* FIXME: This should be turned into an #error invariant */
-/* If the baseline jit is not available, then disable upper tiers as well. */
-#if !ENABLE(JIT)
-#undef ENABLE_DFG_JIT
-#undef ENABLE_FTL_JIT
-#define ENABLE_DFG_JIT 0
-#define ENABLE_FTL_JIT 0
+/* Ensure that upper tiers are disabled if baseline JIT is not available */
+#if !ENABLE(JIT) && (ENABLE(DFG_JIT) || ENABLE(FTL_JIT))
+#error "DFG and FTL JIT require baseline JIT to be enabled"
 #endif
 
-/* FIXME: This should be turned into an #error invariant */
-/* If the DFG jit is not available, then disable upper tiers as well: */
-#if !ENABLE(DFG_JIT)
-#undef ENABLE_FTL_JIT
-#define ENABLE_FTL_JIT 0
+/* Ensure that FTL JIT is disabled if DFG JIT is not available */
+#if !ENABLE(DFG_JIT) && ENABLE(FTL_JIT)
+#error "FTL JIT requires DFG JIT to be enabled"
 #endif
 
 /* This controls whether B3 is built. B3 is needed for FTL JIT and WebAssembly */
@@ -729,7 +753,7 @@
 #undef ENABLE_B3_JIT
 #define ENABLE_B3_JIT 1
 #undef ENABLE_WEBASSEMBLY_OMGJIT
-#define ENABLE_WEBASSEMBLY_OMGJIT 0
+#define ENABLE_WEBASSEMBLY_OMGJIT 1
 #undef ENABLE_WEBASSEMBLY_BBQJIT
 #define ENABLE_WEBASSEMBLY_BBQJIT 1
 #endif
@@ -805,15 +829,15 @@
 #endif
 
 /* Enable JIT'ing Regular Expressions that have nested parenthesis . */
-#if ENABLE(YARR_JIT) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)) || CPU(RISCV64))
+#if ENABLE(YARR_JIT) && (CPU(ARM64) || CPU(X86_64) || CPU(RISCV64))
 #define ENABLE_YARR_JIT_ALL_PARENS_EXPRESSIONS 1
 #define ENABLE_YARR_JIT_REGEXP_TEST_INLINE 1
 #endif
 
 /* Enable JIT'ing Regular Expressions that have back references. */
-#if ENABLE(YARR_JIT) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)) || CPU(RISCV64))
+#if ENABLE(YARR_JIT) && (CPU(ARM64) || CPU(X86_64) || CPU(RISCV64))
 #define ENABLE_YARR_JIT_BACKREFERENCES 1
-#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
+#if CPU(ARM64) || CPU(X86_64)
 #define ENABLE_YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS 1
 #else
 #define ENABLE_YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS 0
@@ -822,6 +846,11 @@
 
 #if ENABLE(YARR_JIT) && (CPU(ARM64) || CPU(X86_64) || CPU(RISCV64))
 #define ENABLE_YARR_JIT_UNICODE_EXPRESSIONS 1
+#endif
+
+/* Enables an optimiztion to advance two codepoints when we fail to match a non-BMP character */
+#if ENABLE(YARR_JIT) && CPU(ARM64)
+#define ENABLE_YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP 1
 #endif
 
 /* If either the JIT or the RegExp JIT is enabled, then the Assembler must be
@@ -853,30 +882,12 @@
 #define ENABLE_SIGNAL_BASED_VM_TRAPS 1
 #endif
 
-/* The unified Config record feature is not available for Windows because the
-   Windows port puts WTF in a separate DLL, and the offlineasm code accessing
-   the config record expects the config record to be directly accessible like
-   a global variable (and not have to go thru DLL shenanigans). C++ code would
-   resolve these DLL bindings automatically, but offlineasm does not.
-
-   The permanently freezing feature also currently relies on the Config records
-   being unified, and the Windows port also does not currently have an
-   implementation for the freezing mechanism anyway. For simplicity, we just
-   disable both the use of unified Config record and config freezing for the
-   Windows port.
-*/
-#if OS(WINDOWS)
-#define ENABLE_UNIFIED_AND_FREEZABLE_CONFIG_RECORD 0
-#else
-#define ENABLE_UNIFIED_AND_FREEZABLE_CONFIG_RECORD 1
-#endif
-
 #if !defined(ENABLE_MPROTECT_RX_TO_RWX)
 #define ENABLE_MPROTECT_RX_TO_RWX 0
 #endif
 
 /* CSS Selector JIT Compiler */
-#if !defined(ENABLE_CSS_SELECTOR_JIT) && ((CPU(X86_64) || CPU(ARM64)) && ENABLE(JIT) && (OS(DARWIN) || OS(WINDOWS) || PLATFORM(GTK) || PLATFORM(WPE)))
+#if !defined(ENABLE_CSS_SELECTOR_JIT) && ((CPU(X86_64) || CPU(ARM64)) && ENABLE(JIT))
 #define ENABLE_CSS_SELECTOR_JIT 1
 #endif
 
@@ -910,6 +921,14 @@
 #define ENABLE_JIT_OPERATION_DISASSEMBLY 1
 #endif
 
+#if CPU(ARM64E)
+#define ENABLE_JIT_SIGN_ASSEMBLER_BUFFER 1
+#endif
+
+#if !defined(ENABLE_JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES) && CPU(X86_64) && PLATFORM(MAC)
+#define ENABLE_JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES 1
+#endif
+
 #if !defined(ENABLE_BINDING_INTEGRITY) && !OS(WINDOWS)
 #define ENABLE_BINDING_INTEGRITY 1
 #endif
@@ -922,7 +941,7 @@
    that executes each opcode. It cannot be supported by the CLoop since there's no way to embed the
    OpcodeID word in the CLoop's switch statement cases. It is also currently not implemented for MSVC.
 */
-#if !defined(ENABLE_LLINT_EMBEDDED_OPCODE_ID) && !ENABLE(C_LOOP) && !COMPILER(MSVC) && (CPU(X86) || CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && OS(DARWIN)) || CPU(RISCV64))
+#if !defined(ENABLE_LLINT_EMBEDDED_OPCODE_ID) && !ENABLE(C_LOOP) && (CPU(X86) || CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && OS(DARWIN)) || CPU(RISCV64))
 #define ENABLE_LLINT_EMBEDDED_OPCODE_ID 1
 #endif
 
@@ -972,6 +991,10 @@
 #error "ENABLE(WEBXR_HANDS) requires ENABLE(WEBXR)"
 #endif
 
+#if ENABLE(WEBXR_LAYERS) && !ENABLE(WEBXR)
+#error "ENABLE(WEBXR_LAYERS) requires ENABLE(WEBXR)"
+#endif
+
 #if !defined(ENABLE_WEBPROCESS_CACHE)
 #define ENABLE_WEBPROCESS_CACHE 0
 #endif
@@ -994,6 +1017,6 @@
 #endif
 
 #if !defined(ENABLE_WRITING_SUGGESTIONS) \
-    && (PLATFORM(COCOA) && HAVE(INLINE_PREDICTIONS))
+    && (PLATFORM(COCOA) && HAVE(INLINE_PREDICTIONS) && !PLATFORM(MACCATALYST))
 #define ENABLE_WRITING_SUGGESTIONS 1
 #endif

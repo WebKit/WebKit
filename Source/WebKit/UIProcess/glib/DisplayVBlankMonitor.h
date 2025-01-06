@@ -26,17 +26,26 @@
 #pragma once
 
 #include <wtf/Condition.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
+
+namespace WebKit {
+class DisplayVBlankMonitor;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::DisplayVBlankMonitor> : std::true_type { };
+}
 
 namespace WebKit {
 
 using PlatformDisplayID = uint32_t;
 
 class DisplayVBlankMonitor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DisplayVBlankMonitor);
 public:
     static std::unique_ptr<DisplayVBlankMonitor> create(PlatformDisplayID);
     virtual ~DisplayVBlankMonitor();

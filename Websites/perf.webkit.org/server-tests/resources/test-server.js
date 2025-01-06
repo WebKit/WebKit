@@ -34,8 +34,7 @@ class TestServer {
 
     start()
     {
-        let testConfigContent = this.testConfig();
-        fs.writeFileSync(this._testConfigPath, JSON.stringify(testConfigContent, null, '    '));
+        this.writeTestConfig();
 
         this._ensureTestDatabase();
         this._ensureDataDirectory();
@@ -90,6 +89,18 @@ class TestServer {
             'dashboards': {},
             'summaryPages': []
         }
+    }
+
+    writeTestConfig(testConfigContent = null)
+    {
+        testConfigContent = testConfigContent || this.testConfig();
+        fs.writeFileSync(this._testConfigPath, JSON.stringify(testConfigContent, null, '    '));
+    }
+
+    overwriteTestConfig(override)
+    {
+        const testConfigContent = {...this.testConfig(), ...override};
+        this.writeTestConfig(testConfigContent);
     }
 
     _ensureDataDirectory()
@@ -254,6 +265,7 @@ class TestServer {
             this.timeout(10000);
             self.initDatabase();
             self.cleanDataDirectory();
+            self.writeTestConfig();
             originalRemote = global.RemoteAPI;
             global.RemoteAPI = self._remote;
             self._remote.clearCookies();

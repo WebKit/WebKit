@@ -29,12 +29,14 @@
 
 #include "VideoTrackPrivate.h"
 #include <webm/dom_types.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 struct VideoInfo;
 
 class VideoTrackPrivateWebM final : public VideoTrackPrivate {
+    WTF_MAKE_TZONE_ALLOCATED(VideoTrackPrivateWebM);
 public:
     static Ref<VideoTrackPrivateWebM> create(webm::TrackEntry&&);
     virtual ~VideoTrackPrivateWebM() = default;
@@ -44,6 +46,8 @@ public:
     AtomString language() const final;
     int trackIndex() const final;
     std::optional<bool> defaultEnabled() const final;
+    uint32_t width() const;
+    uint32_t height() const;
 
 private:
     VideoTrackPrivateWebM(webm::TrackEntry&&);
@@ -51,8 +55,6 @@ private:
     void setFormatDescription(Ref<VideoInfo>&&);
 
     String codec() const;
-    uint32_t width() const;
-    uint32_t height() const;
     double framerate() const;
     PlatformVideoColorSpace colorSpace() const;
     void updateConfiguration();

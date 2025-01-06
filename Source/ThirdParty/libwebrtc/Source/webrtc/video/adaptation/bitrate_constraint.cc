@@ -20,19 +20,19 @@
 namespace webrtc {
 
 BitrateConstraint::BitrateConstraint()
-    : encoder_settings_(absl::nullopt),
-      encoder_target_bitrate_bps_(absl::nullopt) {
+    : encoder_settings_(std::nullopt),
+      encoder_target_bitrate_bps_(std::nullopt) {
   sequence_checker_.Detach();
 }
 
 void BitrateConstraint::OnEncoderSettingsUpdated(
-    absl::optional<EncoderSettings> encoder_settings) {
+    std::optional<EncoderSettings> encoder_settings) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   encoder_settings_ = std::move(encoder_settings);
 }
 
 void BitrateConstraint::OnEncoderTargetBitrateUpdated(
-    absl::optional<uint32_t> encoder_target_bitrate_bps) {
+    std::optional<uint32_t> encoder_target_bitrate_bps) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   encoder_target_bitrate_bps_ = std::move(encoder_target_bitrate_bps);
 }
@@ -64,13 +64,13 @@ bool BitrateConstraint::IsAdaptationUpAllowed(
       return true;
     }
 
-    absl::optional<int> current_frame_size_px =
+    std::optional<int> current_frame_size_px =
         input_state.single_active_stream_pixels();
     if (!current_frame_size_px.has_value()) {
       return true;
     }
 
-    absl::optional<VideoEncoder::ResolutionBitrateLimits> bitrate_limits =
+    std::optional<VideoEncoder::ResolutionBitrateLimits> bitrate_limits =
         encoder_settings_->encoder_info().GetEncoderBitrateLimitsForResolution(
             // Need some sort of expected resulting pixels to be used
             // instead of unrestricted.

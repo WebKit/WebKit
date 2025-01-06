@@ -12,10 +12,10 @@
 #define TEST_PC_E2E_ANALYZER_HELPER_H_
 
 #include <map>
+#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/sequence_checker.h"
 #include "api/test/track_id_stream_info_map.h"
 #include "rtc_base/thread_annotations.h"
@@ -40,7 +40,7 @@ class AnalyzerHelper : public TrackIdStreamInfoMap {
   void AddTrackToStreamMapping(absl::string_view track_id,
                                absl::string_view receiver_peer,
                                absl::string_view stream_label,
-                               absl::optional<std::string> sync_group);
+                               std::optional<std::string> sync_group);
   void AddTrackToStreamMapping(std::string track_id, std::string stream_label);
   void AddTrackToStreamMapping(std::string track_id,
                                std::string stream_label,
